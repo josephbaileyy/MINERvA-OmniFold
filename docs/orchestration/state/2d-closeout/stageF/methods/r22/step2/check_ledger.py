@@ -243,6 +243,10 @@ def main():
         ab_new = "We present a simultaneous measurement"
         fake = [("T-AB", ab_old, ab_new)]
         es = "sec_execsummary.tex"
+        # the frozen-sentence plant edits a frozen sentence that still prints (a round may legitimately reword the
+        # first one, as r22 Step 3's B01-g-02 did), so the plant always changes its input
+        fz_file, fz = next((f, x) for x in N4_FROZEN for f in sorted(all_cur)
+                           if all_cur[f] and x.endswith(".") and x in printed(all_cur[f]) and x in all_cur[f])
         planted = [
             ("missing N: probe", dict(cur), lt + "\n| T1 | t | — | KEEP | — | `N:%s::@@NO SUCH TEXT@@` |\n" % f0, {}),
             ("dropped sentence", {**cur, f0: cur[f0].replace(s0.split()[0] + " " + s0.split()[1], "@@", 1)}, lt, {}),
@@ -257,14 +261,15 @@ def main():
             ("protected values file edited", dict(cur), lt, {"prot": {"values.tex": prot_cur["values.tex"] + "%x\n"}}),
             ("SEC4 phrase reworded", {**cur, "sec_validation.tex": cur["sec_validation.tex"].replace(
                 "lies entirely below its window", "lies below its window", 1)}, lt, {}),
-            ("n4 frozen sentence edited", dict(cur), lt,
-             {"all": {es: all_cur[es].replace("has been observed.", "was observed.")}}),
+            ("n4 frozen sentence edited", dict(cur), lt, {"all": {fz_file: all_cur[fz_file].replace(fz, fz[:-1] + " @@.", 1)}}),
         ]
         silent = [("pinned abstract pair", {"prot": {PAIRED: prot_old[PAIRED].replace(ab_old, ab_new, 1)},
                                             "pairs": fake, "pins": {"T-AB": pin(ab_old, ab_new)}}),
                   ("true L: probe", {"ledger": lt + "\n| T6 | t | — | CUT | — | `L:2d-unfolding/2D_OMNIFOLD_REFERENCE.md::isMinosMatchTrack` |\n"})]
         assert prot_old[PAIRED].count(ab_old) == 1, "self-test abstract anchor not unique"
-        base_fails = check(wt, cur, old, files, lt, prot_cur, prot_old, all_cur, all_old, frozen)[0]
+        # the plants run with N4_FROZEN (one of them edits a frozen sentence), so the baseline must too, whatever
+        # --no-n4-frozen says; otherwise a round that legitimately rewords a frozen sentence makes the silent controls fire
+        base_fails = check(wt, cur, old, files, lt, prot_cur, prot_old, all_cur, all_old, N4_FROZEN)[0]
 
         def run(c, l, o):
             pc = {**prot_cur, **o.get("prot", {})}

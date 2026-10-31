@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B’s run-period table gives the numerical comparisons a clearer, more parallel presentation than A’s densely packed sentence.
+2. B’s bootstrap discussion flows more smoothly because it avoids an additional interpretive caveat immediately before a paragraph addressing closely related limitations.
+3. The documents otherwise share essentially the same formal technical register and precise terminology, making B’s editorial advantage slight.

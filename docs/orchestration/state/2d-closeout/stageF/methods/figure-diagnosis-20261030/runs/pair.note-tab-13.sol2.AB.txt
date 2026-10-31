@@ -1,0 +1,10 @@
+D1: A | Clearly readable numerical entries; B’s dense upper-left matrix is harder to resolve at printed size.
+D2: EQUAL | A’s aligned triangular table and B’s orderly four-panel grid both suit their content.
+D3: B | A consistent, zero-centred diverging scale makes correlation signs and strengths readily distinguishable.
+D4: B | Observable labels identify the bin axes; A’s R00–R15 headers lack a physical mapping.
+D5: EQUAL | Neither item includes reference results or predictions.
+D6: A | The caption precisely identifies the covariance and explains the omitted triangle and diagonal.
+D7: B | Correlation patterns and differences between observables are apparent within seconds.
+OVERALL: B
+GAP: 1. Define the physical meaning and ordering of A’s cell identifiers. 2. Add a companion heatmap with labelled cells and a common −1 to +1 colour scale to expose patterns quickly.
+END

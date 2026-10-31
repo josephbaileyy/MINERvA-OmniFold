@@ -1,0 +1,10 @@
+D1: B | Larger labels and fewer competing annotations make the plot easier to read at printed size.
+D2: B | A compact panel and short caption provide better balance and less unused space.
+D3: A | Diverging colours clearly distinguish departures above and below the reference values.
+D4: B | Concise quantity-and-unit labels and proportional coordinates make positions easier to interpret.
+D5: A | Explicit ratio and difference panels make comparison with the prediction direct.
+D6: B | The caption identifies the quantity and main pattern without excessive procedural detail.
+D7: B | The main trend is apparent immediately, with little explanatory reading required.
+OVERALL: B
+GAP: 1. Enlarge A’s plotting area and labels within the available width; 2. Tighten panel spacing and margins; 3. Add panel labels and short titles identifying ratio and difference; 4. Shorten the caption and move detailed bin lists and integration methodology to the text; 5. Retain a concise, prominent explanation of equal-size cells and catch bins.
+END

@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. In the Figure 6 caption, Document A uses the standard participial phrasing "shown as a diagnostic only" to describe the displayed distribution, whereas Document B commits a semantic category error by asserting that "[e]fficiency is diagnostic only."
+2. Document A adheres to formal scientific register with "corrects acceptance," avoiding Document B's intrusion of informal software jargon ("natively corrects").
+3. In Section 5.2, Document A provides an authoritative analytical overview with a grammatically complete specification ("tested for coverage"), whereas Document B lapses into chronological lab-notebook narration ("The band was then rebuilt...") and an abrupt, incomplete predicate ("has not been tested").

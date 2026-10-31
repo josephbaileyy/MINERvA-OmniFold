@@ -1,0 +1,204 @@
+P2N	B01	sol2	BA	attempt=1	rc=1	secs=5	key=sol
+P1N	B01	sol2	r1	attempt=1	rc=1	secs=6	key=sol
+P2N	B01	sol2	AB	attempt=1	rc=1	secs=6	key=sol
+P2N	B01	sol2	BA	attempt=2	rc=1	secs=4	key=sol
+P2N	B01	sol2	BA	FAILED
+P1N	B01	sol2	r1	attempt=2	rc=1	secs=4	key=sol
+P1N	B01	sol2	r1	FAILED
+P2N	B01	sol2	AB	attempt=2	rc=1	secs=4	key=sol
+P2N	B01	sol2	AB	FAILED
+P1N	B01	sol2	r2	attempt=1	rc=1	secs=4	key=sol
+P1N	B01	sol2	r3	attempt=1	rc=1	secs=3	key=sol
+P2N	B02	sol2	AB	attempt=1	rc=1	secs=3	key=sol
+P1N	B01	sol2	r2	attempt=2	rc=1	secs=3	key=sol
+P1N	B01	sol2	r2	FAILED
+P1N	B01	sol2	r3	attempt=2	rc=1	secs=4	key=sol
+P1N	B01	sol2	r3	FAILED
+P2N	B02	sol2	AB	attempt=2	rc=1	secs=4	key=sol
+P2N	B02	sol2	AB	FAILED
+P2N	B02	sol2	BA	attempt=1	rc=1	secs=4	key=sol
+P1N	B02	sol2	r1	attempt=1	rc=1	secs=4	key=sol
+P1N	B02	sol2	r2	attempt=1	rc=1	secs=4	key=sol
+P1N	B02	sol2	r1	attempt=2	rc=1	secs=3	key=sol
+P1N	B02	sol2	r1	FAILED
+P2N	B02	sol2	BA	attempt=2	rc=1	secs=5	key=sol
+P2N	B02	sol2	BA	FAILED
+P1N	B02	sol2	r2	attempt=2	rc=1	secs=4	key=sol
+P1N	B02	sol2	r2	FAILED
+P2N	B03	sol2	BA	attempt=1	rc=1	secs=12	key=sol
+P2N	B03	sol2	AB	attempt=1	rc=1	secs=12	key=sol
+P1N	B02	sol2	r3	attempt=1	rc=1	secs=13	key=sol
+P1N	B02	sol2	r3	attempt=2	rc=1	secs=12	key=sol
+P1N	B02	sol2	r3	FAILED
+P2N	B03	sol2	BA	attempt=2	rc=1	secs=12	key=sol
+P2N	B03	sol2	BA	FAILED
+P2N	B03	sol2	AB	attempt=2	rc=1	secs=13	key=sol
+P2N	B03	sol2	AB	FAILED
+P1N	B03	sol2	r1	attempt=1	rc=1	secs=12	key=sol
+P1N	B03	sol2	r2	attempt=1	rc=1	secs=13	key=sol
+P1N	B03	sol2	r3	attempt=1	rc=1	secs=12	key=sol
+P1N	B03	sol2	r2	attempt=2	rc=1	secs=4	key=sol
+P1N	B03	sol2	r2	FAILED
+P1N	B03	sol2	r3	attempt=2	rc=1	secs=4	key=sol
+P1N	B03	sol2	r3	FAILED
+P1N	B03	sol2	r1	attempt=2	rc=1	secs=5	key=sol
+P1N	B03	sol2	r1	FAILED
+P2N	B04	sol2	AB	attempt=1	rc=1	secs=4	key=sol
+P1N	B04	sol2	r1	attempt=1	rc=1	secs=4	key=sol
+P2N	B04	sol2	BA	attempt=1	rc=1	secs=4	key=sol
+P1N	B04	sol2	r1	attempt=2	rc=1	secs=4	key=sol
+P1N	B04	sol2	r1	FAILED
+P2N	B04	sol2	AB	attempt=2	rc=1	secs=4	key=sol
+P2N	B04	sol2	AB	FAILED
+P2N	B04	sol2	BA	attempt=2	rc=1	secs=4	key=sol
+P2N	B04	sol2	BA	FAILED
+P2N	B05	sol2	AB	attempt=1	rc=1	secs=3	key=sol
+P1N	B04	sol2	r2	attempt=1	rc=1	secs=3	key=sol
+P1N	B04	sol2	r3	attempt=1	rc=1	secs=3	key=sol
+P2N	B02	gemini	AB	attempt=1	rc=0	secs=79	key=gemini
+P2N	B01	gemini	BA	attempt=1	rc=0	secs=81	key=gemini
+P2N	B05	sol2	AB	attempt=2	rc=1	secs=4	key=sol
+P2N	B05	sol2	AB	FAILED
+P1N	B04	sol2	r3	attempt=2	rc=1	secs=4	key=sol
+P1N	B04	sol2	r3	FAILED
+P1N	B04	sol2	r2	attempt=2	rc=1	secs=5	key=sol
+P1N	B04	sol2	r2	FAILED
+P2N	B05	sol2	BA	attempt=1	rc=1	secs=4	key=sol
+P1N	B05	sol2	r1	attempt=1	rc=1	secs=4	key=sol
+P1N	B05	sol2	r2	attempt=1	rc=1	secs=4	key=sol
+P1N	B05	sol2	r1	attempt=2	rc=1	secs=13	key=sol
+P1N	B05	sol2	r1	FAILED
+P2N	B05	sol2	BA	attempt=2	rc=1	secs=14	key=sol
+P2N	B05	sol2	BA	FAILED
+P1N	B05	sol2	r2	attempt=2	rc=1	secs=13	key=sol
+P1N	B05	sol2	r2	FAILED
+P1N	B05	sol2	r3	attempt=1	rc=1	secs=12	key=sol
+P2N	B07	sol2	AB	attempt=1	rc=1	secs=12	key=sol
+P2N	B07	sol2	BA	attempt=1	rc=1	secs=12	key=sol
+P1N	B05	sol2	r3	attempt=2	rc=1	secs=12	key=sol
+P1N	B05	sol2	r3	FAILED
+P2N	B07	sol2	BA	attempt=2	rc=1	secs=12	key=sol
+P2N	B07	sol2	BA	FAILED
+P2N	B07	sol2	AB	attempt=2	rc=1	secs=12	key=sol
+P2N	B07	sol2	AB	FAILED
+P1N	B07	sol2	r1	attempt=1	rc=1	secs=4	key=sol
+P1N	B07	sol2	r2	attempt=1	rc=1	secs=4	key=sol
+P1N	B07	sol2	r3	attempt=1	rc=1	secs=4	key=sol
+P1N	B07	sol2	r1	attempt=2	rc=1	secs=4	key=sol
+P1N	B07	sol2	r1	FAILED
+P1N	B07	sol2	r3	attempt=2	rc=1	secs=4	key=sol
+P1N	B07	sol2	r3	FAILED
+P1N	B07	sol2	r2	attempt=2	rc=1	secs=4	key=sol
+P1N	B07	sol2	r2	FAILED
+P2N	B09	sol2	AB	attempt=1	rc=1	secs=4	key=sol
+P1N	B09	sol2	r1	attempt=1	rc=1	secs=3	key=sol
+P2N	B09	sol2	BA	attempt=1	rc=1	secs=3	key=sol
+P2N	B09	sol2	AB	attempt=2	rc=1	secs=4	key=sol
+P2N	B09	sol2	AB	FAILED
+P1N	B09	sol2	r1	attempt=2	rc=1	secs=4	key=sol
+P1N	B09	sol2	r1	FAILED
+P2N	B09	sol2	BA	attempt=2	rc=1	secs=5	key=sol
+P2N	B09	sol2	BA	FAILED
+P1N	B09	sol2	r2	attempt=1	rc=1	secs=3	key=sol
+P1N	B09	sol2	r3	attempt=1	rc=1	secs=3	key=sol
+P2N	B11	sol2	AB	attempt=1	rc=1	secs=4	key=sol
+P1N	B09	sol2	r2	attempt=2	rc=1	secs=4	key=sol
+P1N	B09	sol2	r2	FAILED
+P1N	B09	sol2	r3	attempt=2	rc=1	secs=4	key=sol
+P1N	B09	sol2	r3	FAILED
+P2N	B11	sol2	AB	attempt=2	rc=1	secs=4	key=sol
+P2N	B11	sol2	AB	FAILED
+P2N	B11	sol2	BA	attempt=1	rc=1	secs=4	key=sol
+P2N	B01	gemini	AB	attempt=1	rc=0	secs=154	key=gemini
+P1N	B11	sol2	r1	attempt=1	rc=1	secs=13	key=sol
+P1N	B11	sol2	r2	attempt=1	rc=1	secs=12	key=sol
+P2N	B11	sol2	BA	attempt=2	rc=1	secs=11	key=sol
+P2N	B11	sol2	BA	FAILED
+P2N	B03	gemini	AB	attempt=1	rc=0	secs=84	key=gemini
+P1N	B11	sol2	r1	attempt=2	rc=1	secs=11	key=sol
+P1N	B11	sol2	r1	FAILED
+P2N	B02	gemini	BA	attempt=1	rc=0	secs=91	key=gemini
+P1N	B11	sol2	r2	attempt=2	rc=1	secs=12	key=sol
+P1N	B11	sol2	r2	FAILED
+P1N	B11	sol2	r3	attempt=1	rc=1	secs=12	key=sol
+P2N	B12	sol2	AB	attempt=1	rc=1	secs=11	key=sol
+P2N	B12	sol2	BA	attempt=1	rc=1	secs=12	key=sol
+P1N	B11	sol2	r3	attempt=2	rc=1	secs=12	key=sol
+P1N	B11	sol2	r3	FAILED
+P2N	B12	sol2	AB	attempt=2	rc=1	secs=4	key=sol
+P2N	B12	sol2	AB	FAILED
+P2N	B12	sol2	BA	attempt=2	rc=1	secs=3	key=sol
+P2N	B12	sol2	BA	FAILED
+P1N	B12	sol2	r1	attempt=1	rc=1	secs=4	key=sol
+P1N	B12	sol2	r2	attempt=1	rc=1	secs=4	key=sol
+P1N	B12	sol2	r3	attempt=1	rc=1	secs=4	key=sol
+P1N	B12	sol2	r1	attempt=2	rc=1	secs=4	key=sol
+P1N	B12	sol2	r1	FAILED
+P1N	B12	sol2	r2	attempt=2	rc=1	secs=4	key=sol
+P1N	B12	sol2	r2	FAILED
+P2N	B13	sol2	BA	attempt=1	rc=1	secs=3	key=sol
+P2N	B13	sol2	AB	attempt=1	rc=1	secs=4	key=sol
+P1N	B12	sol2	r3	attempt=2	rc=1	secs=6	key=sol
+P1N	B12	sol2	r3	FAILED
+P2N	B13	sol2	BA	attempt=2	rc=1	secs=4	key=sol
+P2N	B13	sol2	BA	FAILED
+P2N	B13	sol2	AB	attempt=2	rc=1	secs=4	key=sol
+P2N	B13	sol2	AB	FAILED
+P1N	B13	sol2	r1	attempt=1	rc=1	secs=5	key=sol
+P1N	B13	sol2	r2	attempt=1	rc=1	secs=3	key=sol
+P1N	B13	sol2	r3	attempt=1	rc=1	secs=4	key=sol
+P1N	B13	sol2	r1	attempt=2	rc=1	secs=3	key=sol
+P1N	B13	sol2	r1	FAILED
+P1N	B13	sol2	r2	attempt=2	rc=1	secs=4	key=sol
+P1N	B13	sol2	r2	FAILED
+P1N	B13	sol2	r3	attempt=2	rc=1	secs=3	key=sol
+P1N	B13	sol2	r3	FAILED
+P2N	B14	sol2	AB	attempt=1	rc=1	secs=4	key=sol
+P1N	B14	sol2	r1	attempt=1	rc=1	secs=13	key=sol
+P2N	B14	sol2	AB	attempt=2	rc=1	secs=12	key=sol
+P2N	B14	sol2	AB	FAILED
+P2N	B14	sol2	BA	attempt=1	rc=1	secs=14	key=sol
+P2N	B03	gemini	BA	attempt=1	rc=0	secs=74	key=gemini
+P1N	B14	sol2	r1	attempt=2	rc=1	secs=11	key=sol
+P1N	B14	sol2	r1	FAILED
+P1N	B14	sol2	r2	attempt=1	rc=1	secs=12	key=sol
+P2N	B14	sol2	BA	attempt=2	rc=1	secs=12	key=sol
+P2N	B14	sol2	BA	FAILED
+P1N	B14	sol2	r3	attempt=1	rc=1	secs=13	key=sol
+P1N	B14	sol2	r2	attempt=2	rc=1	secs=12	key=sol
+P1N	B14	sol2	r2	FAILED
+P2N	B15	sol2	AB	attempt=1	rc=1	secs=12	key=sol
+P2N	B15	sol2	BA	attempt=1	rc=1	secs=3	key=sol
+P2N	B15	sol2	AB	attempt=2	rc=1	secs=3	key=sol
+P2N	B15	sol2	AB	FAILED
+P1N	B14	sol2	r3	attempt=2	rc=1	secs=4	key=sol
+P1N	B14	sol2	r3	FAILED
+P2N	B15	sol2	BA	attempt=2	rc=1	secs=4	key=sol
+P2N	B15	sol2	BA	FAILED
+P1N	B15	sol2	r2	attempt=1	rc=1	secs=4	key=sol
+P1N	B15	sol2	r1	attempt=1	rc=1	secs=4	key=sol
+P1N	B15	sol2	r3	attempt=1	rc=1	secs=3	key=sol
+P1N	B15	sol2	r2	attempt=2	rc=1	secs=3	key=sol
+P1N	B15	sol2	r2	FAILED
+P1N	B15	sol2	r1	attempt=2	rc=1	secs=3	key=sol
+P1N	B15	sol2	r1	FAILED
+P2N	B05	gemini	AB	attempt=1	rc=0	secs=28	key=gemini
+P1N	B15	sol2	r3	attempt=2	rc=1	secs=5	key=sol
+P1N	B15	sol2	r3	FAILED
+P2N	B05	gemini	BA	attempt=1	rc=0	secs=40	key=gemini
+P2N	B04	gemini	BA	attempt=1	rc=0	secs=141	key=gemini
+P2N	B04	gemini	AB	attempt=1	rc=0	secs=152	key=gemini
+P2N	B09	gemini	AB	attempt=1	rc=0	secs=64	key=gemini
+P2N	B07	gemini	BA	attempt=1	rc=0	secs=74	key=gemini
+P2N	B11	gemini	AB	attempt=1	rc=0	secs=32	key=gemini
+P2N	B11	gemini	BA	attempt=1	rc=0	secs=23	key=gemini
+P2N	B07	gemini	AB	attempt=1	rc=0	secs=150	key=gemini
+P2N	B09	gemini	BA	attempt=1	rc=0	secs=88	key=gemini
+P2N	B12	gemini	AB	attempt=1	rc=0	secs=41	key=gemini
+P2N	B12	gemini	BA	attempt=1	rc=0	secs=114	key=gemini
+P2N	B14	gemini	AB	attempt=1	rc=0	secs=28	key=gemini
+P2N	B14	gemini	BA	attempt=1	rc=0	secs=24	key=gemini
+P2N	B13	gemini	AB	attempt=1	rc=0	secs=171	key=gemini
+P2N	B13	gemini	BA	attempt=1	rc=0	secs=163	key=gemini
+P2N	B15	gemini	AB	attempt=1	rc=0	secs=33	key=gemini
+P2N	B15	gemini	BA	attempt=1	rc=0	secs=43	key=gemini

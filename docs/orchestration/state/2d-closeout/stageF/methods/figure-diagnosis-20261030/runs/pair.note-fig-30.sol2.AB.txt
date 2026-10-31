@@ -1,0 +1,10 @@
+D1: B | Larger axis labels and panel headings make the main quantities easier to read at printed size.
+D2: A | The regular grid and consistent alignment make the row and column structure easier to follow.
+D3: A | One colour per prediction avoids the overlapping, sometimes difficult-to-distinguish curves in B.
+D4: B | Physical quantities, slice boundaries and units are explicit; A’s R00–R15 labels require further explanation.
+D5: A | Aligned prediction rows, common scales and ranked columns support direct comparison.
+D6: B | The caption is concise and states the main takeaway; A’s caption is dense with notation and qualifications.
+D7: B | The dominant uncertainty and its variation across phase space are apparent more quickly.
+OVERALL: B
+GAP: 1. Enlarge A’s tick labels and panel annotations. 2. Explain the R00–R15 cell mapping. 3. Reduce repeated annotation text. 4. Simplify the caption and move detailed covariance definitions to the main text. 5. Add a concise statement of the main visual takeaway.
+END

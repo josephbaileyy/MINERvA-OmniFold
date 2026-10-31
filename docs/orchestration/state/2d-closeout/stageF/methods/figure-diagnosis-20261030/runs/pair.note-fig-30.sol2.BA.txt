@@ -1,0 +1,10 @@
+D1: A | Larger axis titles, ticks and slice labels remain more readable at printed size than B’s small annotations and rotated cell labels.
+D2: B | A regular grid with ranked columns and clearly named rows gives the panels a stronger visual hierarchy.
+D3: B | Restrained, consistent colours and a common bar style reproduce more cleanly than A’s numerous overlapping coloured curves.
+D4: A | Both momentum axes have explicit quantities and units; B’s R00–R15 identifiers lack a readily accessible cell key.
+D5: B | Named prediction rows, common scales and ranked columns support systematic comparison.
+D6: A | Explicit legends and a concise caption make the encoding easier to decode than B’s lengthy, notation-heavy caption.
+D7: A | The caption states the main visual takeaway directly, and the dominant uncertainty is easy to locate.
+OVERALL: A
+GAP: For B: 1. Enlarge panel annotations and cell labels. 2. Reduce reliance on rotated labels. 3. Supply a compact key for R00–R15. 4. Define f, g and the covariance notation locally. 5. Shorten the caption and foreground how to read the panels.
+END

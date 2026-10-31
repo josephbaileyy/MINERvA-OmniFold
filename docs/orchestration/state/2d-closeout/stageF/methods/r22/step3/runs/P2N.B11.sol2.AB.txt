@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. The containment diagnostic uses clearer, more conventional technical phrasing, particularly “calibration and evaluation sets” and “(bin, pseudo-experiment) pairs.”
+2. The Figure 33 caption describes the plotting scales directly, avoiding A’s conversational aside “hence the two color schemes.”
+3. B reads more like polished manuscript prose through cleaner sentence division in the release discussion and omission of the lab-record phrasing “the battery of 2026-06-10.”

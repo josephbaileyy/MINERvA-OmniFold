@@ -1,0 +1,10 @@
+D1: B | Larger text and clearer spacing make model names and numerical entries easier to read.
+D2: B | Restrained horizontal rules give the table a cleaner hierarchy than A’s ruled rows.
+D3: EQUAL | Both are monochrome tables.
+D4: B | Pairing each χ² with its degrees of freedom makes the numerical context explicit for every prediction.
+D5: B | Adjacent full and shape-only results, with corresponding degrees of freedom, facilitate comparison.
+D6: A | The caption is more self-contained, explaining the entries and stating the common degrees of freedom without unexplained covariance symbols.
+D7: B | The shorter list and uncluttered structure make the main numerical differences quicker to identify.
+OVERALL: B
+GAP: (1) Enlarge A’s text; (2) replace rules between every row with top, header and bottom rules; (3) associate the common 144 degrees of freedom directly with the χ² headings.
+END

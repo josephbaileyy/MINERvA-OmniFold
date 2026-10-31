@@ -1,0 +1,10 @@
+D1: A | Larger, more generously spaced entries are easier to read at printed size.
+D2: A | A compact hierarchy aligns methods and observables clearly; B crowds two distinct comparisons together.
+D3: EQUAL | Both are monochrome tables.
+D4: A | Observable headers map directly to the values; B leaves n undefined and its grouped headings less explicit.
+D5: A | The prior baseline and common observable columns make comparisons across methods immediate.
+D6: A | The concise caption states the comparison clearly; B burdens the reader with dense qualifications and shorthand.
+D7: A | The reader can identify the baseline and compare methods quickly without decoding an extensive caption.
+OVERALL: A
+GAP: 1. Separate B’s truth comparisons and power alternatives into distinct panels or tables; 2. Shorten the caption and move extended methodological qualifications into the main text; 3. Define n and the P1–P3 and r/g labels in concise notes; 4. Give each statistic its own explicit column header; 5. Increase spacing and reduce label density.
+END

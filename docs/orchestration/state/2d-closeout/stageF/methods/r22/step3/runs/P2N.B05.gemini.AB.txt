@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B excises internal code-level artifacts present in Document A, which awkwardly cited raw ROOT histogram identifiers (`hXSec2D`, `hXSec_pt`, `hXSec_pz`) in the opening paragraph.
+2. In Section 6.2, Document B untangles a convoluted, sprawling run-on sentence from Document A into two cleanly constructed, logically separated statements in appropriate scientific passive voice.
+3. In Section 6.3, Document B replaces colloquial, informal phrasing ("does not let us determine", "our leading hypothesis is") with polished, disciplined academic diction ("cannot establish", "remains the leading, unconfirmed hypothesis").

@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. Document B adheres more closely to formal physics journal register by eliminating informal software terminology ("natively corrects") in favor of standard scientific phrasing ("corrects").
+2. Document B improves the syntactic cadence and conciseness of the Figure 6 caption by employing a smooth participial clause ("shown as a diagnostic only") instead of an awkward and repetitive sentence break ("Efficiency is diagnostic only").
+3. In Section 5.2, Document B provides superior editorial and technical precision by framing the scored bands in a balanced summary sentence and explicitly specifying that the statistical block was not tested "for coverage."

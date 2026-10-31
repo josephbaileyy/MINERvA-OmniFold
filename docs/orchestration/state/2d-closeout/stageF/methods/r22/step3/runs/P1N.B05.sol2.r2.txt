@@ -1,0 +1,8 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed particle-physics companion note, but recurring analysis-history bookkeeping, compressed terminology, and unnecessary presentation commentary warrant a dedicated language pass.
+1. QUOTE: "The regularization scan (App. A.4) was made for the exact-split cross-check on an earlier covariance and was not repeated for the quoted one."
+   REWRITE: The regularization scan in App. A.4 applies to the exact-split cross-check with an earlier covariance matrix; its conclusions have not been verified for the covariance matrix used here.
+2. QUOTE: "With the purity-based subtraction, the choice of GBDT estimator spreads the distance over about one unit, a methodological band: the exact-split cross-check gives 3.66, HistGBT 2.70 ± 0.04, and LightGBM with seeds 1–10 gives 2.64–2.75."
+   REWRITE: With purity-based subtraction, χ2 per bin varies by approximately one unit among the GBDT estimators: 3.66 for the exact-split cross-check, 2.70 ± 0.04 for HistGBT, and 2.64–2.75 for LightGBM with training seeds 1–10.
+3. QUOTE: "Bin-by-bin ratios to MINERvA Tune v1 on the (pT , p∥ ) grid of our result (left) and of the published data (right), on a common colour scale of 0.7–1.3; the panels have no printed titles."
+   REWRITE: Bin-by-bin ratios of this measurement (left) and the published data (right) to MINERvA Tune v1 on the (pT , p∥ ) grid, shown with a common colour scale spanning 0.7–1.3.

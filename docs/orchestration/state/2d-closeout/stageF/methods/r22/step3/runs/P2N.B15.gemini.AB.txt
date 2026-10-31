@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B maintains a formal, third-person declarative scientific register rather than using conversational imperatives and casual phrasing (e.g., stating that the smallest eigenvalue "lies at the numerical noise floor, so its sign carries no information and should not be checked" rather than "Do not check the sign of $\lambda_{\text{min}}$, which sits at the noise floor").
+2. Document B adopts standard journal typographic practice by identifying status via parenthetical text labels like "(fixed)" rather than colloquial Unicode checkmarks ("✓").
+3. Document B improves syntactic economy and precision in technical descriptions, recasting loose, fragmented clauses into cohesive academic prose (e.g., "passed its packaged verifier when replayed... without repository access").

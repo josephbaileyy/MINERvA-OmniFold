@@ -10,8 +10,8 @@ rating. **Nothing in the paper or the note has been changed.** Every change belo
   - Against its matched anchor item, each wins the pairwise comparison for gemini, 8 of 8. For sol they win 4, lose 3
     and tie 1.
 - **The note's result figures are below it.**
-  - They lose their pairwise comparison nearly throughout: gemini 10 of 11, the exception being Fig. 30; sol 8 of 8
-    of those with a complete pair.
+  - They lose their pairwise comparison nearly throughout: gemini 10 of 11, the exception being Fig. 30; sol 11 of
+    11.
   - They score about 3.0 to 3.2 on every dimension.
   - Their measured text is the smallest of any group: a median minimum glyph height of 2.5 pt, against the anchors'
     4.0 to 6.3 pt.
@@ -23,7 +23,7 @@ rating. **Nothing in the paper or the note has been changed.** Every change belo
   - note Fig. 25's caption claims a feature of the high-W, high-E_avail corner that its 1D projections cannot show,
     and speaks of a band that is not drawn.
 - **12 of 128 thirty-second takeaways were wrong.** Most misread a bias test or a descriptive number as a model test,
-  or ranked χ² values across different ndf (§5).
+  or compared χ² values across different cell sets (§5).
 
 ## 2. Method as run
 
@@ -45,11 +45,13 @@ rating. **Nothing in the paper or the note has been changed.** Every change belo
   - **Duplicate** (paper Fig. 4 under a second id): the **noise floor is 2 points for each rater**. A single item's
     score can move by 2 between identical inputs. So no single-item score difference of 2 or less is read as a
     finding. The findings here rest on agreement across items, raters and reps.
-- **Completeness:**
-  - Absolute scoring is complete for both raters.
-  - **sol's pairwise is partial: 39 of 64 calls.** codex-school ran out of credit partway through. The missing pairs
-    are mostly the note's tables and three note figures; gemini's pairwise is complete. The figure study's image calls
-    drained the account, which also stopped r22 Step 3's sol runs. That is recorded with Step 3.
+- **Completeness:** absolute scoring and pairwise are complete for both raters.
+  - **sol's pairwise ran in two parts.** 39 of 64 calls ran on 2026-10-30, before codex-school ran out of credit. The
+    figure study's image calls had drained the account, which also stopped r22 Step 3's sol runs, as recorded with
+    Step 3.
+  - **The other 25 ran on 2026-10-31,** on codex-school, after Step 3's runs (DECISION-20261031, #574). Each output's
+    `.account` names the account.
+  - They are the same jobs (`data/jobs.tsv`), with the same prompts and the same crops from 2026-10-30.
 - **Input defect, disclosed:** for note Fig. 25 only, the caption text given to the raters ran on into the following
   body paragraph. The crop override fixed the image box, not the caption bounds that the caption extractor read. The
   image the raters saw was correct.
@@ -91,11 +93,22 @@ marked many published figures down too. D3 is the dimension on which our figures
 
 A rater favours an item only if it picks it in both orders. Otherwise the result is a TIE.
 
-| | sol (39 of 64 calls) | gemini (64 of 64) |
+| | sol (64 of 64 calls) | gemini (64 of 64) |
 |---|---|---|
 | paper, 8 items | ours 4, anchor 3, tie 1 | ours 8 |
-| note figures, 11 | anchor 8 (3 without a complete pair) | anchor 10, ours 1 (Fig. 30) |
-| note tables, 13 | anchor 2, tie 1 (10 without a complete pair) | ours 5, anchor 5, tie 3 |
+| note figures, 11 | anchor 11 | anchor 10, ours 1 (Fig. 30) |
+| note tables, 13 | anchor 8, ours 3, tie 2 | ours 5, anchor 5, tie 3 |
+
+**Update (2026-10-31).** Before sol's last 25 calls, its column read:
+- note figures: anchor 8, with 3 without a complete pair;
+- note tables: anchor 2, tie 1, with 10 without a complete pair.
+The complete set does not change a finding:
+- the note's figures lose to their anchors for both raters;
+- the note's tables are mixed for both raters;
+- the paper's items are unchanged.
+
+Each of the 25 new outputs also ends with a GAP list of suggested changes. Those lists came after §6's consolidation, so
+they are not in `data/changes.tsv` (§6).
 
 ## 5. Takeaway check (`data/takeaway-check.tsv`)
 
@@ -109,16 +122,24 @@ CORRECT, 29 PARTIAL, 12 WRONG. The 12 WRONG fall into three kinds.
   its criteria;
 - paper Fig. 1: overlapping correlated bands read as agreement, which the caption rules out.
 
-**χ² ranked across different ndf:** two raters, on paper Table IV and note Table 16, called GiBUU best overall. Its
-58/8 is 7.3 per degree of freedom, against GENIE CV's 109/16 at 6.8.
+**χ² compared across different cell sets:** two raters, on paper Table IV and note Table 16, called GiBUU best
+overall.
+- GiBUU's χ² of 58 is on 8 cells; the others' are on all 16, from GENIE CV's 109 upward.
+- No per-ndf reading supports the call either: 58/8 is 7.3 per degree of freedom, worse than GENIE CV's 109/16 at 6.8.
+- So the raters most likely ranked the raw χ² across unequal cell sets.
+- *Corrected 2026-10-31:* the first version of this paragraph called it a ranking "across different ndf" and then gave
+  the per-ndf values, which do not put GiBUU first. The PRD-reviewer consult (#576) pointed this out.
 - The tables print χ² and ndf as pairs, under Joseph's DECISION-20261027.
-- This is reported as a reading risk for Joseph, not proposed as a change.
+- This was reported as a reading risk for Joseph, not proposed as a change. After the PRD-reviewer consult (#576),
+  Joseph chose to split each table into an "All 16 cells" block and an "8-cell subset" block
+  (DECISION-20261031-joseph-chi2-table-option-b.md, #581). That change is made in the next paper round.
 
 **Misread numbers:** note Fig. 11 (mode count), note Table 17 (which predictions agree best).
 
 ## 6. The proposed changes (`data/changes.tsv`)
 
-The raters' change lists were consolidated into 366 distinct changes and classified twice: by a lane classifier, and
+The raters' change lists, from the runs that existed on 2026-10-30 (that is, without sol's last 25 pairwise calls,
+§4), were consolidated into 366 distinct changes and classified twice: by a lane classifier, and
 by a fresh agent who did not see the first labels. They agreed on 354. Where they disagreed, the stricter class was
 taken.
 
@@ -184,7 +205,7 @@ whose producers are the `2d-unfolding` scripts that `make_figures.sh` runs at NE
 - **Recognition:** a rater may recognize a published anchor figure. This was not controlled.
 - **Matching:** the anchors match our items by kind (`data/match.tsv`). Several of our kinds have no close published
   counterpart: eigenmode maps, and fake-data tables.
-- **Coverage:** sol's pairwise is partial (§2).
+- **Coverage:** sol's pairwise ran in two parts, a day apart, on the same account and inputs (§2).
 
 ## 9. Files
 

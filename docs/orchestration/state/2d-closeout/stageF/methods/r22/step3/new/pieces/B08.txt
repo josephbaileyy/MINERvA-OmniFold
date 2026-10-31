@@ -1,0 +1,874 @@
+Five-dimensional estimator: validation and uncertainty
+
+This section validates the five-dimensional estimator behind the central values of §§7–8. It covers what
+each test isolates (§9.1), background subtraction and generator-sized truth changes (§9.2), why the
+estimator does not follow such changes (§9.3), model dependence and the reporting definitions it rules
+out (§9.4), the coverage test (§9.5) and the status of the five-axis covariance of the configuration-(a)
+central value (§9.6). The sixteen-cell result of configuration (e) follows in §10, and the calibrated
+generator tests built on a variant of this estimator in §11. The unbinned negative-weight background
+method itself is derived in App. C.
+
+9.1
+
+Which source of error is being tested
+
+Prior reweighting changes the frequencies of existing simulated truth events while retaining their
+detector-response simulation; a response mismatch instead changes how a given truth is reconstructed.
+Finite classifier capacity and iteration count approximate the inverse and can leave residuals in either
+case. Coverage asks whether the resulting intervals contain their specified target at the stated rate
+(§9.5). These mechanisms are separate: an incorrect generator prediction alone does not diagnose an
+interval failure. Each test below isolates one intervention.
+All 2D closures in §5 unfold reweighted simulated signal without background, so they do not test
+background subtraction.
+Table 11 lists the validation studies of the article and of this note (detector response: §5.1 and
+§11.2). Letters refer to Table 2.
+
+9.2
+
+Background subtraction and generator-sized truth changes
+
+Background subtraction. End-to-end five-dimensional pseudo-experiments add backgroundsimulation events and rebuild per-bin purity weights as in the measurement. At nominal truth they
+return the highest-W column of (Eavail , W ) 3.5 % to 4.1 % low and the highest-Eavail , highest-W cell
+1.7 % high; without background, the same experiments recover the truth to 0.22 %. Relative to these
+cells’ total uncertainty in the configuration-(a) covariance, the bias is 0.36–1.07 standard deviations.
+The bias comes from the purity-based subtraction (§C), enters no quoted covariance, and has no
+established size on data. Refined unbinned negative-weight subtraction (App. C), applied with a
+deterministic variant of the five-dimensional LightGBM production estimator, brings the highest-W
+column to 0.11 % to 0.24 % and the corner cell to 0.24 % over sixty nominal-truth experiments. Some
+joint cells remain up to 1.0 % high, up to 14 standard errors, against −0.2 % without background;
+the mechanism is not established. On data, the two treatments differ by a median of 0.36 % and at
+most 1.4 % over the reported functionals. These differences measure method sensitivity, not bias.
+Negative-weight subtraction is not used for the configuration-(a) five-dimensional central value; the
+sixteen-cell result uses it (§10).
+Generator-sized truth changes. The unfolding does not follow a GiBUU-to-GENIE Eavail shape
+reweighting of the truth (0.70–1.33 per Eavail bin, total preserved). The GENIE prediction behind
+
+Table 11: Validation studies of the article and of this note.
+Study
+
+Truth change
+
+Backgrounds Domain
+
+Criterion
+
+Two-dimensional
+reproduction (f),
+(a), (b)
+Three-,
+four-observable
+closure (a)
+Background closure
+(c), (d)
+Generator-sized
+change (d)
+Shapes held out of
+development (e)
+
+none: data against the
+publication
+
+data
+
+205 published bins
+
+none; descriptive
+
+injected bump in truth
+Eavail (three observables)
+or q3 (four)
+none (nominal truth)
+
+none
+
+one-dimensional
+marginals
+
+descriptive: residual ratio
+0.10 (Eavail ; §7.4, §5.1)
+
+included
+
+GiBUU/GENIE Eavail
+shape ratio
+NuWro and GENIE +
+MEC shapes, not used
+while (e) was chosen
+nominal; signal rate
+lowered by about 10%
+with a weak Eavail slope
+(weight 0.900–0.906 below
+3 GeV)
+each null hypothesis
+
+included
+
+42 (Eavail , W ) and
+109 joint cells
+42 (Eavail , W ) cells
+
+included
+
+42 (Eavail , W ) cells
+
+none; studies during
+estimator development
+recovery requirement; not
+met
+compared with the
+configuration-(a) total σ
+
+included
+
+153 cell and
+projection
+integrals
+
+upper bound on coverage
+at least 0.66 (0.94)
+
+included
+
+109 (GiBUU 72)
+joint cells
+
+size set by the calibration
+(§11.3)
+
+Coverage (c)
+
+Test calibration (e)
+
+the ratio uses a mis-sampled flux (§7.6), so the ratio is a valid known-truth deformation of generator
+size but not a measured GiBUU–GENIE difference. The (Eavail , W ) residuals have a median of 9.7 %;
+they reach 74 % in the highest-W column and several percent in the largest cells. The 74 % residual
+is in the cell 0.8 ≤ Eavail < 1.5 GeV, W ≥ 3 GeV, whose share of the cross section the deformation
+study did not record. A q3 deformation preserving the (Eavail , W ) truth shifts these cells by up
+to 37 %. Signal-only experiments with the same seeds reproduce both results. The residuals are
+therefore a property of the estimator (five iterations, the GBDT configuration of §3), not of the
+background treatment; their status in the quoted uncertainties is given in §9.3.
+
+9.3
+
+Why the estimator does not follow a generator-sized change
+
+Both OmniFold steps behave as intended: the first matches the reconstructed pseudo-data within
+statistical noise, and the second reproduces the truth-level weight sums to 0.5 %. Yet the unfolded
+result folds back onto the data less well than the true model does. With noise-free pseudo-data the
+unfolding recovers more than 99 % of the change that the departure produces in the reconstructed
+distribution, whereas the median (Eavail , W ) truth residual ranges from 5 % to 11 %, with 74 % in
+the worst cell. The unrecovered reconstructed-level difference is small relative to the departure but
+statistically significant at the analysis exposure.
+With noise-free pseudo-data, thirty iterations reduce the Eavail residual by 26 %; the Eavail
+residual continues to fall slowly, while the q3 residual grows with iterations. A larger classifier
+improves the reconstructed-level fit without reducing the Eavail truth residual, and removing the
+regression for events that fail reconstruction does not reduce that residual either. No single cause is
+established, and no estimator change within the scope of the study meets the recovery requirement,
+set before the test, for the GiBUU-to-GENIE departure. The Eavail and q3 residuals, a regularization
+(unfolding-model) bias of the estimator, enter no uncertainty quoted for the configuration-(a) central
+value. For the sixteen-cell result (§10), the model term of the reported covariance is the change in
+the unfolded data when the prior is reweighted to each generator (GENIE + MEC, NuWro, GiBUU;
+
+§10.2). This term is unscaled and is not a calibrated bound. The fake-data study of §10.3 measures
+the estimator’s bias and compares it with the reported covariance.
+Comparison with exact binned unfolding. A diagnostic in simulation compares the boostedtree residual with that of an exact binned iterative unfolding. The binned unfolding unfolds the
+same simulated events, with their exact efficiency and the response binned in the 10,499 occupied
+five-dimensional reconstructed cells, starting from the nominal prior. The comparison uses noise-free
+signal-only pseudo-data, the 109 supported fine joint cells (J cells) and the fixed historical truth
+deformations D1, W1, W3 and the q3 stress, pooled with W2 (all defined in §9.4). The boosted-tree
+comparator for W2 includes background; the outcome is unchanged without it. A residual is
+eligible when its diagnosis is stable under the truth resolution: of the 376 J-cell and deformation
+combinations with residuals above 2 %, 232 changed classification with the truth resolution or the
+response weighting and were excluded, leaving 144 (38 % of the 376). At five iterations the J-cell
+medians of the absolute residual agree: 9.5 %, 5.4 %, 5.6 % and 4.3 % for the boosted trees, against
+8.3 %, 5.4 %, 4.9 % and 5.3 % for the exact binned unfolding, for D1, W1, W3 and the q3 stress. Of
+the 144 eligible residuals, pooled over the deformations, 15 are dominated by the tree approximation.
+Only 2 of these 15 lie in identified quantities (as defined in the diagnostic record cited below), a
+share of 0.014 of the 144. Of the 144, 121 lie in quantities that the binned response constrains weakly
+at the analysis exposure. Their Cramér–Rao widths exceed 10 % at both truth resolutions tested
+(median 31 % at the coarser resolution, that of the J cells themselves), so the regularization trades a
+large variance for the bias. Longer noise-free exact iteration removes much of the residual for D1 (J
+median 3.3 % after 200 iterations and 0.8 % after 105 ) and part of it for W1 (3.3 % and 2.8 %). It
+does not do so for W3 and the q3 stress (4.4 % and 6.6 % after 200 iterations, 8.9 % and 6.7 % after
+105 ), whose within-cell binning bias grows with the iteration number. The long runs do not converge
+(only 9–34 of the 109 J quantities converge for each traced deformation), so these values are last
+iterates. The coarser muon projection retained only three cases and is uninformative. Within this
+comparison, the residual is consistent with the regularization of the inverse problem at this binning
+and prior, and the tree approximation is not supported as its main cause. This conclusion holds
+for a binned, signal-only and noise-free comparison at the simulation’s detector response, on the
+development truths, and for these 144 residuals only. It does not address what unbinned or biased
+estimators could recover, the coverage failure of §9.5 or the validity of any interval, and it establishes
+no impossibility. The precision thresholds that the diagnostic proposes are not acceptance criteria
+for any result in this note. The exclusions, definitions and numerical verification are in the binned
+response diagnostic record (Ref. [37], R1.14).
+Higher-capacity background refinement and data stability. The refinement classifier underfits, which causes the residual background bias (App. C). A candidate with raised refinement
+capacity, configuration (e) of the sixteen-cell result (§10), passes the nominal background-inclusive
+closure on 40 fresh pseudo-experiments (largest deviation 2.7 standard errors) and a pooled test of
+its statistical intervals (pull width 1.02). The pooled test does not establish coverage and width for
+every functional. The candidate fails the data-stability test, whose criterion was set before it was
+run: input perturbations within floating-point rounding move functionals by a median of 0.8 and at
+most 2.6 statistical standard deviations. The baseline estimator’s shifts, a median of 0.8 and at most
+2.5, place this instability in the estimator family. The instability also explains the difference of at
+most 1.2 % on data between the driver and the development pipeline. The data bootstrap, which
+refits the full chain per replica, already includes this rounding-level variability: each replica carries
+the same spread (median 0.23 % per joint cell), about 37 % of the bootstrap variance and below a
+
+tenth of any total uncertainty. Central values are therefore reproducible only to within this spread.
+The paired perturbation study of §9.4 tests whether the bootstrap contains this variability, for this
+candidate only.
+Unfolding-model dependence. For historical shapes held out while this candidate was assessed
+(NuWro; GENIE with enhanced meson-exchange currents), its unfolding-model dependence is median
+2 % to 6 % and at most 16 % to 31 %, within the configuration-(a) total uncertainty in 20 of the 42
+(Eavail , W ) cells. No uncertainty from this assessment is used for a quoted result.
+
+9.4
+
+Model dependence, variability and reporting resolution
+
+The scalar five-dimensional estimator studied here uses production LightGBM.
+These studies measure three different quantities: truth-dependent responses to iterations and
+capacity, small repeat variability at one setting, and appreciable prior sensitivity. Unfolding
+benchmarks also assess these quantities separately [50]. The studies do not establish a bias–variance
+tradeoff across estimator settings, and regularization bias can invalidate intervals based solely on
+estimator variability [51]; neither reference supplies the variance measurement that is missing for
+this estimator.
+The noise-free study unfolds the full simulation’s reweighted reconstructed events without
+background. Baseline classifiers and the missed-event regressor use 100 trees and 8 leaves; the
+capacity probe uses 400 trees and 31 leaves. Repeated experiments use estimator R, the raisedrefinement-capacity candidate of §9.3: five iterations, baseline OmniFold estimators and a separate
+400-tree, 31-leaf background-refinement classifier. With seed 42, its 40 nominal experiments and
+20 at each of five departures include Poisson pseudo-data, changing MC splits and background
+refinement. These experiments are not an independent validation: their samples were used during
+development, and their assessment seeds, although separate, were later also used in the estimator’s
+development.
+Saved fine-grid outputs are integrated into the supported J, H2 and EW cells of the table below.
+Unsupported cells remain in the full-domain rate. The interval assessment keeps all 42 EW cells,
+including the three that the support rule excludes (definitions and normalization checks in App. B.2).
+Label
+
+Meaning in this section
+
+J
+H2
+
+109 supported fine joint cells, subdividing all five axes
+27 supported coarser joint cells, also subdividing all five axes, not nested within
+J
+39 supported (Eavail , W ) cells (42 with the three unsupported cells)
+reporting definitions at J, H2 and EW resolution (“Reporting definitions” below)
+fixed historical truth deformations (next paragraph)
+the raised-refinement-capacity estimator of §9.3: baseline OmniFold classifiers
+with a 400-tree, 31-leaf background-refinement classifier
+
+EW
+RD1–RD3
+D1, W1–W3
+R
+
+The truth labels denote fixed historical deformations, built before the generator flux was repaired:
+D1 is a GiBUU/GENIE Eavail ratio, W1 a NuWro/GENIE Eavail ratio, W2 a GENIE MEC/CV
+(Eavail , W ) ratio, and W3 a NuWro/GENIE (pT , p∥ , Eavail ) ratio. Excluding D1 does not make the
+others corrected generator comparisons. The q3 stress changes the conditional distribution at fixed
+(Eavail , W ) with amplitude 0.3.
+
+
+Recovery changes, but not uniformly. Figure 26 shows the traces over the recorded iteration
+ranges (later checkpoint entries are excluded, App. B.2); none is extrapolated. D1 and W1 improve
+slowly. W3’s J-cell median absolute residual rises from 5.57 % at iteration 5 to 6.57 % at 200, and
+its maximum from 32.9 % to 44.8 %. The corresponding H2 medians are 3.42 % and 3.68 %. The
+persistence of the W3 residual is established over this finite scan only, not for unlimited iterations or
+for every possible classifier. The q3 stress shows how much the functional matters: its EW median
+residual rises from 4.99 % at iteration 5 to 6.42 % at 30 even while some joint-cell summaries improve.
+The capacity probe changes recovery. At five iterations, the most the computing budget allowed
+at that capacity, the larger classifiers lower the largest residual proxy over the development truths
+(lower row of Fig. 26) by 3% on J and 8% on H2, short of the improvement of at least 20% required
+before the larger capacity would be used. The joint-test estimator keeps five iterations under a rule
+fixed before the comparison. The rule would have replaced five iterations by 10, 15 or 20 only if one
+of these lowered its measure of model dependence, the largest residual proxy over the development
+truth changes, on the J or the H2 cells. None did. Because the measure is a maximum over the truth
+changes, the slow gains for D1 and W1 do not lower the measure: on H2, over the noise-free traces
+of Fig. 26, it is 0.314 at five iterations and at least 0.384 at 10, 15 or 20. The sixteen-cell result is
+reported on the same H2 grid after a purity merge of its supported boxes, with total uncertainties
+(§10.1).
+Reporting definitions for a five-dimensional measurement. The five-dimensional precision
+study assessed three reporting definitions at the development resolution: the 109 J cells (RD1),
+the 27 H2 cells (RD2) and the 39 EW cells (RD3). Its bounded unfolding-model component, the
+largest shift over five generator-sized truth departures at the smallest envelope the vertices allow, has
+median 12.0 %, 9.6 % and 13.4 % respectively (90th percentile 38.6, 22.5 and 39.2 %), with GiBUU
+the dominant vertex in most cells. The study set its total-width target, a median 68% half-width of
+at most 10 %, and its selection procedure before it was run. The study adds the model component
+linearly to the probabilistic half-width, cell by cell. The model component alone therefore exceeds
+the total-width target in RD1 and RD3, and in RD2 the target is exceeded once the flat 1.4 %
+normalization is added (median at least 11.0 %). The model-component target, a median of at most
+5 %, and the recovery target, recovery of at least 75% of a generator-sized departure (a residual
+proxy of Fig. 26 of at most 0.25, against 0.31–0.63 measured), fail in every definition. The selection
+procedure then takes RD3 as the fallback, and RD3 fails the total-width target. None of the three
+reporting definitions can meet these precision targets with any estimator configuration the study’s
+selection procedure permits within its computing budget. The limitation is the measured prior
+dependence, about 10–13% per coarse joint cell, which is comparable to the generator differences a
+user would need to resolve. It motivates the calibrated joint tests of §11, a separate inference that
+reports no measured cross section.
+Variability and interval behavior at five iterations. Figure 27 compares ensemble residual
+means and repeat standard deviations at the same setting. At historical W3 truth, EW29 has mean
+residual 23.67 % and repeat SD 0.56 %; EW7 has −6.81 % and 0.30 %. Small spread does not imply
+small bias. Coarser cells can have smaller residuals and spread, but they estimate different integrals,
+so their smaller residuals and spread are not an improvement in precision on an unchanged quantity.
+No matching repeat ensembles exist at more iterations or larger OmniFold capacity, so no tradeoff
+can be inferred.
+The statistical intervals of the development assessment take their width from 100 bootstrap
+replicas of one nominal development experiment and do not recompute it for each assessment
+
+Noise-free development traces: solid 100 trees / 8 leaves; dashed 400 / 31
+No repeat-variance axis; historical truth ratios, fixed detector response
+
+Median absolute residual (%)
+
+J: 109 supported joint cells
+D1 historical
+q3 stress
+W1 historical
+W3 historical
+
+12
+10
+
+H2: 27 supported joint cells
+8
+
+14
+
+7
+
+12
+
+6
+10
+
+5
+8
+6
+
+4
+
+8
+
+3
+
+6
+
+2
+4
+
+4
+
+1
+1
+
+5
+
+10
+
+30
+
+100 200
+
+2
+1
+
+5
+
+10
+
+30
+
+100 200
+
+0.7
+Historical recovery proxy
+
+EW: 39 supported projected cells
+
+1
+
+5
+
+10
+
+30
+
+100 200
+
+0.7
+0.5
+
+0.6
+
+0.6
+0.4
+
+0.5
+
+0.5
+
+0.4
+
+0.3
+
+0.3
+
+0.2
+
+1
+
+5
+10
+30
+100 200
+Iteration (available ranges only)
+
+0.4
+0.3
+
+1
+
+5
+10
+30
+100 200
+Iteration (available ranges only)
+
+1
+
+5
+10
+30
+100 200
+Iteration (available ranges only)
+
+Figure 26: Noise-free five-dimensional recovery of historical truths at fixed simulated response. Solid
+curves use 100 trees/8 leaves; dashed use 400/31 for OmniFold estimators. D1 and W1 extend to 40
+iterations, q3 stress to 30, W3 to 200, and capacity probes to 10; some baseline traces end at their
+last saved checkpoint. The upper row gives median |fˆ/ftrue − 1| over supported cells. The lower row
+gives the study’s residual proxy median(|fˆ/ftrue − 1|/|ftrue /f0 − 1|) for departures above 1%, with
+the required bound 0.25 dotted. Different denominators prevent interpreting one minus the proxy as
+an exact recovered fraction. The q3 stress has no eligible EW departure. These traces measure no
+repeat variance.
+
+
+One setting: R, five iterations; different cells estimate different quantities
+95% pointwise t / normal-model SD intervals; development reuse
+
+Repeat SD of relative residual (%)
+
+nominal: n = 40
+J
+4 × 10−1
+
+100
+
+W2: n = 20
+
+W3: n = 20
+2 × 100
+
+H2
+100
+
+3 × 10−1
+
+6 × 10−1
+2 × 10−1
+4 × 10−1
+3 × 10−1
+2 × 10−1
+
+10−1
+
+10−1
+−0.1
+0.0
+0.1
+0.2
+Mean signed relative residual (%)
+
+−4
+−2
+0
+2
+4
+Mean signed relative residual (%)
+
+−20
+
+−10
+0
+10
+20
+30
+Mean signed relative residual (%)
+
+Figure 27: Estimator R at five iterations. Each supported J or H2 cell gives the mean and SD of
+(fˆ − ftrue )/ftrue in the same background-inclusive ensemble: 40 nominal experiments, 20 each for W2
+and W3. Bars give pointwise 95% Student-t intervals for means and normal-model intervals for SDs,
+conditional on saved simulation. They supply neither simultaneous bounds nor total uncertainties.
+Truth panels and reporting cells form no frontier across estimator settings.
+experiment (Fig. 28). At nominal truth, EW41 contains the truth in 15 of 40 68% intervals (37.5%,
+pointwise exact 95% interval [22.7%, 54.2%]), so a pooled pass cannot qualify this cell. A 160experiment check with the width averaged over six bootstrap estimates changes the pull scales but
+does not validate the real-data procedure, which uses the data’s own width. Finite replica noise
+explains much of the apparent variation among the six estimates.
+A paired perturbation study supports the containment of rounding variability in the refit-perreplica bootstrap of R. Twenty edge-safe data jitters (uniform input perturbations within half a
+single-precision unit in the last place that keep the fine-grid membership fixed) give a J-cell median
+SD of 0.228 %, against a bootstrap SD of 0.368 %. Fifty bootstrap replicas with jittered partners
+give a median consistency ratio of 1.02 and an estimated numerical share of 0.37 of the bootstrap
+variance. In this design, adding the numerical variance to the bootstrap variance would count it
+twice. The stability failure and the study’s scope are in §9.3, interval coverage in §9.5.
+Prior sensitivity is not a measured real-data bias. Real-data prior shifts correlate with
+minus the noise-free residual at the same historical truth (Fig. 29). For W3 the correlation over J
+cells is 0.92, yet |shift| ≥ |residual| holds in only 71% of supported J cells (52% of H2 cells, 54% of
+EW cells). Maximum shifts over five historical vertices have medians 12.0%, 9.6% and 13.4% on
+J, H2 and EW; excluding D1 gives 11.2%, 4.3% and 9.9%. These envelopes are sensitivities: they
+provide no probabilities, covariance components or guaranteed bias bounds, and the truth of the
+data has not been shown to lie within their span.
+Deciding the tradeoff would require sharing pseudo-data and MC splits across a small set of
+iteration and capacity settings and measuring bias, variance and mean squared error for common
+functionals. That comparison would not validate intervals, which also requires an explicit treatment
+of physical nuisances and model dependence. No new ensemble enters these studies.
+
+
+Nominal (n=40)
+
+D1 historical (n=20)
+
+0.8
+
+q3 stress (n=20)
+
+0.6
+
+W1 historical (n=20)
+
+0.4
+
+W2 historical (n=20)
+
+0.2
+
+W3 historical (n=20)
+
+0.0
+0
+
+5
+
+10
+15
+20
+25
+30
+EW cell index (all 42 historical functionals)
+
+35
+
+Fraction in fixed ±σ interval
+
+1.0
+
+Coverage with 95% pointwise exact bounds
+
+Historical R statistical intervals: σ from 100 replicas of nominal seed 700000
+Reused assessment samples; no per-experiment or total-coverage claim
+1.0
+
+EW7
+EW41
+
+0.8
+
+0.6
+
+0.4
+
+0.2
+
+0.0
+
+40
+
+Nom.
+
+D1
+
+q3
+
+W1
+
+W2
+
+W3
+
+Figure 28: Development assessment of R: containment of the truth in fˆ ± σ, with σ fixed from the
+nominal bootstrap, for all 42 EW functionals. Right shows EW7 (Eavail ∈ [0.1, 0.2), W ∈ [1.1, 1.4)
+GeV) and EW41 (both above 3 GeV), with pointwise 95% Clopper–Pearson bounds. The dotted
+line gives nominal Gaussian 68.27% coverage. Zero of 20 intervals contain the truth; the upper 95%
+bound is 16.8%, which does not imply zero population coverage. The truth ratios are the historical
+deformations. No total uncertainty or newly validated interval is shown.
+
+Historical W3 at five iterations: correlation is not a per-cell bias bound
+J: r = 0.92; |shift| ≥ |bias|: 71%
+
+H2: r = 0.74; |shift| ≥ |bias|: 52%
+
+Data shift under W3 prior (%)
+
+EW: r = 0.92; |shift| ≥ |bias|: 54%
+
+10.0
+
+30
+
+30
+
+7.5
+
+20
+
+20
+5.0
+
+10
+
+10
+
+2.5
+0
+
+0.0
+
+−10
+
+0
+
+−2.5
+
+−20
+
+−5.0
+
+−30
+
+−7.5
+−30
+
+−20 −10
+0
+10
+20
+Minus noise-free W3 residual (%)
+
+30
+
+−10
+−20
+−5
+0
+5
+Minus noise-free W3 residual (%)
+
+10
+
+−20
+−10
+0
+10
+20
+Minus noise-free W3 residual (%)
+
+30
+
+Figure 29: Historical W3 at five iterations. Horizontal gives minus the noise-free relative truth
+residual; vertical gives the relative shift in real-data R when its MC prior changes to W3, normalized
+to CV-prior results. Points are supported cells, not independent repeated experiments. The diagonal
+marks equality. Strong correlation supplies no per-cell bound; shifts do not measure unknown
+real-data bias.
+
+
+9.5
+
+Five-dimensional coverage test
+
+An end-to-end independent-truth test assessed statistical intervals of a deterministic five-dimensional
+estimator variant with nominal-truth bias correction (1,200 pseudo-experiments over three truths).
+It failed its futility criterion, set before the test was run, at the nominal truth and under a 10%
+reduction of the signal rate with a weak Eavail slope (below). No frequentist coverage is therefore
+claimed for any five-dimensional interval. Figure 36 shows the coverage of each reported integral
+under the rate reduction. The intervals divide each estimate by 1 + β, where β is the relative closure
+bias at nominal truth, and add the standard error of β times the corrected estimate in quadrature
+to the statistical standard deviation. A quantity fails when the upper confidence bound on its
+coverage lies below 0.66 for 68% intervals or below 0.94 for 95% intervals. The second truth (the
+Eavail tilt) multiplies the true signal by 1 + 0.2 (Eavail /100 GeV − 12 ) without renormalization, with
+the background unchanged; below Eavail = 3 GeV the weight is 0.900–0.906. Under that change, 51
+of the 153 reported cell and projection integrals have 68% coverage confidently below nominal, with
+coverage as low as 0.060, and 42 of the 153 fail at 95%. At nominal truth two of the 153 fail at 95%,
+the lowest coverage being 0.850.
+Why the intervals miscover under the rate reduction. The diagnosis below uses the stored
+outputs and the code. The rate change itself is recovered: in the one locally stored pseudo-experiment
+the total changes by −9.58 % against −9.56 % injected, and over the 400 the total covers at 0.74
+(68%), so the miscoverage is not a normalization failure. Nor are the intervals too narrow: they
+use one nominal bootstrap σ at every truth, which for 10% fewer events is slightly too wide apart
+from the background not being redrawn (inferred spread about 1.15σ at W ≥ 3 GeV), and setting
+the spread equal to the half-width leaves the failing quantities’ coverage at 0.06–0.22. The purity
+subtraction does not apply a nominal signal fraction to the reduced data: it removes the absolute
+nominal background expectation, which is unchanged, and in the stored pseudo-experiment the
+subtracted total agrees with the pseudo-signal to 60 of 3.2 million events. The miscoverage is a
+residual bias that the nominal-truth bias correction does not remove. The rate change adds a positive
+bias that grows with W , about 0.2 % for 1.4 ≤ W < 2.2 GeV, 0.4 % for 2.2 ≤ W < 3 GeV, and
+0.7–1.1 % for W ≥ 3 GeV, which is 1.3–2.6 standard deviations against intervals of 0.16–0.43%,
+whatever the sign of the nominal bias β; removing that bias restores coverage to 0.62–0.82 at 68%
+and 0.92–0.99 at 95%. These per-quantity biases and spreads are inferred, not measured: the stored
+output records only hit counts, so each quantity’s mean shift and spread come from a Gaussian fit
+to its 68% and 95% coverage, checked against one recorded value (EW17: +1.04% fitted against
++1.05%). The source of the W -graded term is not established: its size and ordering roughly match,
+under an approximate assignment of background fractions to W bins, the rise of the background
+fraction by 0.111 fbkg , but the term may also arise from the estimator alone. A rerun of five of the
+same pseudo-experiments, without background and with the background scaled by 0.9 so that the
+background-to-signal ratio is restored, did not decide between the two: restoring the ratio raised the
+residual for W ≥ 3 GeV rather than removing it, and without background the residual persists.
+
+9.6
+
+The five-axis covariance of the configuration-(a) central value and its
+(Eavail , W ) projection
+
+Status. The five-axis covariance used in this note is the variant centered on the central value (cv);
+its (Eavail , W ) projection has 42 cells. The file and the projection are identified by their SHA-256
+checksums (Ref. [37], identities already fixed). The covariance does not meet the acceptance criteria
+of its specification, and its metadata mark it as not passing and as not to be used. The specification
+
+requires the null bound to be fixed before production, which was not done for this covariance, so
+it cannot meet that requirement. This note nevertheless uses this covariance and its projection.
+The use does not extend to any other covariance built to the same specification, including the two
+companion covariances of the measurements below.
+Construction. The covariance projects the corrected five-axis statistical covariance as M C5D M ⊤ ,
+without rebuilding it in the destination bins, and uses corrected systematic endpoints. Re-selected
+event loops bound the selection migrations that the single-pass shifted observables omit (§4.7). On
+the 10 694 reported cells of (pT , p∥ , Eavail , q3 , W ), the covariance is
+P
+
+P
+P
+CZ = D
+(4)
+A Lb + Cstat + CML ,
+V Cb D +
+R Cb +
+with the inflation D = diag(g),
+s
+
+cv , v
+max vuni,i
+blk,i
+≥ 1,
+gi =
+vblk,i
+
+gi ≡ 1 where vblk,i = 0.
+
+(5)
+
+
+P
+cv
+Here vblk = diag
+V Cb is the vertical block-sum diagonal; vuni is the unified-throw covariance
+diagonal centered on the central value. Where the denominator is zero, g = 1 is set by definition, not
+computed. The band groups V (vertical), R (residual) and A (re-selected lateral) must be disjoint
+and exhaust the 45 bands. The same inflation of the vertical bands can be transferred onto a sweep
+block, Csyst → (Csyst − Cvert ) + G Cvert G (G = diag g), only if the low-rank treatment, the mean
+shift and the selection-support bound above are documented (a condition set in July 2026). This
+transfer is positive-semidefinite by construction and never falls below the block baseline, whereas a
+direct rank-N swap is not positive-semidefinite.
+Centering, explicitly. Per-band blocks Cb use the MAT-conformant mean-centered ±1σ estimator
+cv . The unified-throw centerings differ by the
+of §A.2.5. Inflation in the CV-centered variant uses vuni
+outer product of measured joint mean shift ms (joint throw mean minus central value),
+cv
+mean
+Cuni
+= Cuni
++ ms ms⊤
+
+=⇒
+
+cv
+mean
+vuni,i
+− vuni,i
+= ms2i ,
+
+(6)
+
+so CV centering retains the mean shift as variance and mean centering removes it. The covariance
+used here is the
+√ CV-centered variant, which retains the shift deliberately; the mean-centered variant
+(mean) has a TrC lower by 7.13 %. A file’s variant is identified by its metadata, not by its path.
+The projection to (Eavail , W ). The quoted 42-cell covariance is CEW = M CZ M ⊤ , with M of
+shape 42 × 10 694 over kept axes (Eavail , W ). Each entry of M is the product of the dropped axes’
+bin widths, giving a differential density in cm2 /GeV2 /nucleon. Integrating a destination cell requires
+its own ∆Eavail ∆W . Rows follow the 7 × 6 (Eavail , W ) grid in measured C order. No source cell
+is dropped, and the result is exactly symmetric. Support and pinned masks and row-index arrays
+accompany the covariance and are byte-identical in the two variants. The covariance is paired with
+the central values of Fig. 24 by checksum: the central-value array of the projected source and that
+of the figure are byte-identical, with numerical agreement only as a cross-check.
+Conditioning, and why no rank is quoted. Measured extremes λmin = +4.359104 × 10−92
+and λmax = 1.488215 × 10−77 give λmin /λmax = 2.9 × 10−15 and condition number ≈ 3.4 × 1014 , at
+double precision’s edge. No eigenvalue is negative, but the smallest lie at the floating-point noise
+
+floor of a 10 694-term weighted sum. Their sign carries no information: nnegative = 0 describes this
+computation and does not show that the source’s negative directions were cured. Rank is a property
+of the cutoff, not of the matrix. The 42 eigenvalues decay smoothly across about fifteen orders of
+magnitude with no plateau. Retained counts are 26 at relative cutoff 10−6 , 36 at the code default
+10−12 , 41 at numpy.linalg.matrix_rank’s default nϵ = 9.3 × 10−15 , and 42 without a cutoff. No
+rank is therefore quoted for this covariance; in particular, 36 is the count at one cutoff, not a number
+of degrees of freedom. An inverse requires a declared regularization, and none is applied implicitly.
+What the covariance supports. Four measurements limit what the covariance supports. Items
+1, 2 and 4 use two companion covariances built at two estimator-seed settings; only item 3 describes
+this file.
+1. Estimator-seed sensitivity exceeds its limit. Companion covariances at seed offsets {0, 1200}
+give the correlation-sensitive measure sproj = 6.145 %, against the movement limit of 5 %,
+fixed on 2026-09-18 before production as a direct tolerance at the scale of the ensemble’s own
+precision. Ap160-throw ensemble determines a standard deviation only to a relative precision
+of about 1/ 2(N − 1) ≈ 5.6 % for independent Gaussian throws, so a smaller seed-induced
+drift could not be resolved against the width it would change. The limit is a declared stability
+tolerance, not a derived confidence threshold for a maximum over correlated projections. The
+diagonal-only measures pass (sagg = 0.471 %, smed = 0.485 %); the failing one probes the
+off-diagonal structure used by projections.
+2. Within the limits stated below, the sensitivity is not the statistic’s own resampling noise,
+which would fall with N . With the throw ensemble fixed and only the seed changed, the
+sensitivity does not fall over the tested ensemble sizes: mean 6.02 % over four disjoint 40-throw
+subsets, 6.02 % over two 80-throw halves, and 6.145 % over all N = 160 throws. The same-seed
+resampling floor falls steeply from 20.91 % at N = 40 to 7.57 % at N = 80, with two-point
+exponent 1.467; no floor measurement exists at N = 160. Three limits rule out a statement
+about infinite ensembles. First, the 40- and 80-throw points are nested subsets of the same
+160 throws, not independent ensembles. The flatness therefore holds within one ensemble, over
+a factor of four in N ; the behaviour at larger N is unmeasured. Second, the quoted ±0.39 %
+is subset scatter at a single seed pair (offsets {0, 1200}); the width of the distribution over
+seed pairs is unmeasured. Third, the statistic is a maximum over the declared offset set, so
+additional pairs can only raise it.
+3. Five of the covariance’s 45 bands fall outside the seed variation. The endpoint convention
+fixes the estimator seed for the muon-energy, muon-resolution
+and beam-angle blocks, so the
+√
+offset cannot reach them. They carry 26.0 % of Tr C and move by exactly zero; their seed
+sensitivity is unmeasured. Allowing them to vary could move the total in either direction, and
+neither is measured, because sproj maximizes relative changes over functionals rather than
+summing nonnegative component contributions.
+4. Seed shifts in central values are a small fraction of their uncertainty. Across the comparison’s 43
+projection functionals (42 destinations plus the all-ones total rate), shifts reach 0.761 %, versus
+relative uncertainties of order ten percent. They reach at most 6.02 % of quoted uncertainty,
+with median 1.06 %. The largest shift occurs in the destination cell driving the covariance
+result. Individual five-axis bins reach 49.8 % of their uncertainty; summing bins suppresses
+this movement in projections.
+
+
+The estimator-seed magnitude criterion specified before production has not been computed for this
+covariance. It was computed only for the two companion covariances built for that purpose, and
+their outcomes do not transfer to this covariance (Ref. [37], R1.4).

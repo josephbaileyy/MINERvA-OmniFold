@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A’s “computationally inexpensive adversarial stress test” is more precise and appropriately formal than B’s “arm is intentionally cheap and adversarial.”
+2. A’s future-work paragraph reads as finished manuscript prose, whereas B’s embedded source-file path and repository placeholder interrupt the register.
+3. Most of the prose is identical, with comparable technical specificity and organization, so A’s advantage is confined to local editorial improvements.

@@ -1,0 +1,10 @@
+D1: B | Slightly larger type and fewer columns make entries easier to read at printed size.
+D2: B | Compact, balanced columns avoid A’s excessive spacing beneath the long model heading.
+D3: EQUAL | Both are monochrome tables.
+D4: A | Model versions, diagnostic labels and the percentage convention are more explicitly identified.
+D5: B | The clearly labeled Prior row provides an immediately accessible baseline for comparing methods.
+D6: B | The caption explains the comparison and organization more naturally; A compresses several undefined symbols.
+D7: B | Readers can quickly identify the baseline and compare methods across observables.
+OVERALL: B
+GAP: 1. Wrap long model headings to balance column widths; 2. Reduce excessive horizontal spacing; 3. Increase body type where the recovered space permits; 4. Put (%) directly in the relative-difference headers; 5. Define the caption’s symbols and explain the unavailable GiBUU entries.
+END

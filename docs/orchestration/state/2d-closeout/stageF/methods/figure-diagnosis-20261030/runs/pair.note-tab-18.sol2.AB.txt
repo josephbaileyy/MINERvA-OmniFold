@@ -1,0 +1,10 @@
+D1: EQUAL | Both have clear, readable type and well-separated numerical entries at printed size.
+D2: A | Whitespace separates groups effectively; B’s heavy rules between every row add clutter.
+D3: EQUAL | Both are monochrome tables.
+D4: B | Both numerical columns explicitly identify the χ² statistic; A’s numerical headers identify only α.
+D5: A | The grouped structure and aligned α grid support systematic comparison across predictions and correlation treatments.
+D6: B | The caption states the degrees of freedom directly; A relies on another table and uses opaque shorthand.
+D7: B | Its shorter structure and two clearly named statistics make the comparison quicker to grasp.
+OVERALL: B
+GAP: 1. Add a χ² spanning header above A’s α columns. 2. State the degrees of freedom directly in the caption. 3. Replace “α of the declared grid” with a clear explanation of α and its endpoints. 4. Identify α = 0 explicitly as the common baseline to accelerate scanning.
+END

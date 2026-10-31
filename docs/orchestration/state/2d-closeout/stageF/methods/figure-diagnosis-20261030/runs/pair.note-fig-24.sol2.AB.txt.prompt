@@ -1,0 +1,21 @@
+You are an experienced referee and copy editor for Physical Review D. You are given two items, A and B, each a figure or a table cropped from its printed journal page at 300 DPI at printed size, with its caption; their caption texts are also given below. They show different content of the same kind. Judge only presentation, not the physics.
+
+For each dimension, say which item better meets the standard of a well-produced PRD figure or table: A, B or EQUAL.
+D1 LEGIBILITY at printed size. D2 LAYOUT. D3 COLOUR (write EQUAL for two tables). D4 AXES / HEADERS AND UNITS. D5 COMPARISON with references or predictions (EQUAL if neither has any). D6 LEGEND / CAPTION. D7 30-SECOND READ.
+
+Reply in exactly this format and nothing else:
+D1: A|B|EQUAL | <one-line reason>
+D2: ...
+D3: ...
+D4: ...
+D5: ...
+D6: ...
+D7: ...
+OVERALL: A|B|EQUAL
+GAP: <for the weaker item, the specific changes that would bring it to the other's standard, numbered, up to 6; or "none">
+END
+
+
+===== CAPTION TEXT =====
+A: Figure 24: Unfolded data and MINERvA Tune v1 (GENIE 2.12.6 with analysis tune weights, the OmniFold prior) in (Eavail , W ). Top gives dimensionless per-cell data/Tune on a 0.5–1.5 colour scale; bottom gives per-cell data − Tune in units of 10−40 cm2 /nucleon. Equal-size display cells are labelled by physical bin edges on the 7×6 reporting grid, with Eavail edges [0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100] GeV and W edges [0, 1.1, 1.4, 1.8, 2.2, 3.0, 100] GeV. The final interval on each axis, [3, 100] GeV, is a wide catch bin. The density ratio is independent of cell area; the bottom panel instead subtracts cell-integrated cross sections, (d2 σ/dEavail dW ) × ∆Eavail ∆W in cm2 /nucleon, so the catch-bin cells, which are wide, carry correspondingly larger values. Together the panels locate the positive excess at high Eavail and high W , with a secondary component at W < 1.1 GeV and a small deficit at W ≃ 1.4–1.8 GeV. Quoted percentage shares refer to cell-integrated positive excess in the bottom panel.
+B: FIG. 3. Efficiency for the νµ CC inclusive signal in bins of muon longitudinal and transverse momentum. The efficiency is highest (> 85%) for high p|| and low pT , corresponding to good acceptance into the MINOS ND.

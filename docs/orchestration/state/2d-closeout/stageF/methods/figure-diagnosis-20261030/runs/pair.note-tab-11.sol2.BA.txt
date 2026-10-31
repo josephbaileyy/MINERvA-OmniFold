@@ -1,0 +1,10 @@
+D1: EQUAL | Both use clear mathematical typography and readable table text.
+D2: B | Compact rows and restrained horizontal rules produce a more balanced, economical layout.
+D3: EQUAL | Both are tables.
+D4: A | Variable names and momentum units appear directly in the headers; B places essential units in its caption.
+D5: EQUAL | Neither presents comparisons with references or predictions.
+D6: A | The caption states the table’s purpose clearly; B’s caption is dense with notation and qualifications.
+D7: B | The compact presentation makes the full table easier to survey quickly.
+OVERALL: B
+GAP: 1. Divide A’s long table into adjacent blocks or clearly labeled continuations with repeated headers. 2. Reduce excessive vertical space within angular groups. 3. Simplify vertical rules while preserving clear group boundaries.
+END

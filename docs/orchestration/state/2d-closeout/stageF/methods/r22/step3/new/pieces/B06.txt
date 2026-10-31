@@ -1,0 +1,1008 @@
+Higher-dimensional extensions: available energy and momentum
+transfer
+
+Unbinned OmniFold adds an observable by adding an input to the step-1 and step-2 classifiers,
+without an explicit migration matrix or per-bin response tensor. It avoids the combinatorial
+binning penalty of matrix unfolding but still has a dimensional cost: classifier training, acceptance
+
+Kinematic variables unfolded simultaneously
+
+and support coverage, sample sparsity and uncertainty quantification become more demanding as
+observables are added. The primary methodological motivation is the absence of a practical analog of
+D’Agostini iterative Bayesian unfolding (IBU). We extend the measurement to d3 σ/(dpT dp∥ dEavail )
+with available energy as a third axis.
+MINERvA has published binned triple-differential results (Fig. 15, Table 29), including recent
+comparisons between low- and medium-energy beams [44]. The latter measure pT , p∥ , and available
+recoil energy for a quasielastic-like signal, for which the available energy is the sum of proton
+kinetic energies. This differs from the inclusive signal and species-dependent energy definition used
+here. What distinguishes this analysis is not the number of dimensions by itself but the unbinned,
+simultaneous CC-inclusive unfolding of three, four and five recorded high-level observables.
+The comparisons with generator predictions in this section and in Sec. 8 are descriptive comparisons of central values and do not identify a nuclear or interaction mechanism (§7.7). In three and
+four observables they use central values without uncertainties: no 3D or 4D covariance is quoted,
+and no generator χ2 , p-value or significance (§§7.6 and 7.8).
+CC inclusive
+CCQE / QE-like (incl. TKI)
+Pion production (CC & coherent)
+DIS / kaon
+
+e
+
+and beyond point-cloud inputs
+(toward the full final state)
+
+Nuclear-target ratio
+this work, OmniFold (5D)
+
+this work unbinned OmniFold
+(pT, p , Eavail, q3, W)
+
+5
+4
+
+triple-differential
+2203.08022
+
+3
+binned D'Agostini IBU: 29 of 30 measurements at 2 simultaneously unfolded variables
+
+2
+[target]
+2106.16210
+
+1
+2014
+
+2016
+
+2018
+
+2020
+Publication year
+
+2022
+
+2024
+
+2026
+
+Figure 15: Number of kinematic variables unfolded simultaneously in surveyed MINERvA differential
+cross-section measurements, by year, colored by channel (a double-differential d2 σ/dx dy counts
+as two). Prior results use explicit binned unfolding, including a triple-differential quasielastic-like
+measurement; this work extends an unbinned CC-inclusive unfolding of high-level event features
+to five recorded observables. Source: the MINERvA data-release page and the cited publications.
+The plotted inventory runs through 2025; newer measurements are listed in App. E. Classification
+uses each analysis’s headline differential result; flux, reconstruction, generator-tuning and total-only
+entries are excluded.
+
+
+7.1
+
+Operational definition and provenance
+
+Truth available energy is defined by its implementation, for which “low-recoil convention” is shorthand.
+In MeV, the truth function (CVUniverse::GetEAvailableTrue()) computes
+X
+X
+X
+X
+true
+Eavail
+=
+(E − 938.27) +
+(E − 135) +
+E+
+E.
+(1)
+p
+
+π±
+
+π0
+
+γ
+
+Protons and charged pions contribute the indicated kinetic-energy-like terms; neutral pions and
+photons contribute total energy. All other final-state species contribute zero, including neutrons,
+the primary muon, secondary e± , neutrinos, kaons, antiprotons, strange baryons, other mesons and
+nuclear-remnant records. Reconstructed available energy is the MAT calorimetric quantity
+h
+i
+reco
+tracker
+tracker
+ECAL
+ECAL
+Eavail
+= 1.17 (Eblob
+− Eµ-fuzz
+) + (Eblob
+− Eµ-fuzz
+) ,
+(2)
+implemented in the reconstruction function (CVUniverse::NewEavail()), with no final clamp to
+non-negative values.
+Both definitions are inherited from MAT-MINERvA rather than chosen for this analysis; the
+comparisons below record differences between conventions, not the origin of the inherited one. There
+is no unique published Eavail definition. Rodrigues et al. [5] give a closed list of five species: proton
+and charged-pion kinetic energy plus π 0 , electron and photon total energy. Equation (1) includes
+four of those five species and excludes secondary e± . The later definition of Ascencio et al. [8] is open:
+it includes all other final-state particles except neutrons, subtracting a nucleon mass for strange
+baryons, and so includes species omitted here. The charged-pion term is kinetic energy in Rodrigues
+and in Henry/Su et al. Eq. 4 [45], and charged-pion total energy in the minerva-ml implementation
+(App. F). We therefore do not claim that our definition matches “the published definition.”
+The charged-pion term subtracts the inherited constant 135 MeV rather than the charged-pion
+mass of about 139.57 MeV, and the production keeps that constant. Relative to the charged-pion
+mass, it moves 0.67 % of simulated events into another true-Eavail bin and changes no true-Eavail bin
+by more than 1.05 %. This effect has not been assessed against the projection of the five-dimensional
+covariance of the configuration-(a) central value, so its materiality is not established.
+The reconstructed coordinates share inputs. In units with c = 1, the implemented definitions
+(with reconstructed muon quantities) are
+Eνreco = Eµ + q0reco ,
+
+Q2reco = max 0, 2Eνreco (Eµ − pµ cos θµ ) − m2µ ,
+q
+reco
+q3 = Q2reco + (q0reco )2 ,
+q
+reco
+W
+= max{0, M 2 + 2M q0reco − Q2reco },
+
+(3)
+
+where m2µ = Eµ2 − p2µ and M is the average nucleon mass. The recoil-energy estimate q0reco differs
+reco ; truth E
+from the tracker-plus-ECAL available energy Eavail
+avail also omits energy carried by species
+such as neutrons and is not the full energy transfer. Thus five recorded coordinates do not establish
+five independently constrained physical directions. Adding a coordinate, supplying a new detector
+input, and resolving a new truth direction are separate questions.
+Unfolding and binning. Both definitions are evaluated for all twelve ME FHC playlists, and, for
+configuration (a), the 2D unfolding code is run with three classifier inputs, (pT , p∥ , Eavail ). Table 8
+lists the configuration (§3.2) of each result. The cross section is extracted with the 3D bin volume
+
+∆pT ∆p∥ ∆Eavail , and the flux Φ is still applied per pT bin, with the same value for every p∥ and
+Eavail bin. The Eavail binning [0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100] GeV ends in a wide final bin, the catch
+bin, so that the Eavail marginal contains the full CC-inclusive recoil tail. For configuration (a), the
+overall completeness of the unfolding input (§3.4) is c = 1.0000, as in 2D.
+Table 8: Configuration of each result in this section (Table 2). (e) and (f) use refined negative-weight
+subtraction with a 400-tree, 31-leaf refinement; (a) uses purity-based subtraction.
+Result
+
+Configuration
+
+3D and 4D central values, unless stated otherwise
+
+(e), deterministic LightGBM (the learner
+of (c))
+(f), LightGBM at seed 42 (the learner of
+2D result compared in §7.3
+(a))
+Figs. 17 and 23 and numbers read from them; 3D closure; (a), LightGBM
+classifier-family cross-check
+
+7.2
+
+The available-energy spectrum
+
+The unfolded dσ/dEavail , the 1D projection of the 3D result (Fig. 16), falls monotonically from
+2.18 × 10−38 cm2 /GeV/nucleon at the low-recoil peak to 6.7 × 10−41 in the catch bin, the expected
+CC-inclusive shape with most of the rate at Eavail ≲ 0.8 GeV.
+MINERvA ME FHC, 1.06 × 1021 POT
+
+1e 38
+unfolded data
+
+d /dEavail (cm2/nucleon/GeV)
+
+2.0
+
+catch bin [3, 100] GeV: 6.74e-41
+
+1.5
+1.0
+0.5
+0.0
+0.0
+
+0.5
+
+1.0
+
+1.5
+Eavail (GeV)
+
+2.0
+
+2.5
+
+3.0
+
+Figure 16: Unfolded dσ/dEavail , the 1D projection of the 3D measurement. The wide [3, 100] GeV
+catch bin is excluded from the axis; its value is annotated.
+
+7.3
+
+Validation against the 2D measurement
+
+Marginalizing over Eavail should reproduce the 2D result of §6, our validation reference in the absence
+of a directly matched published CC-inclusive 3D reference for this signal and phase space. The 3D
+marginal (configuration (e)) and the 2D result ((f)) share the refined negative-weight subtraction but
+differ in learner (Table 8). The normalization agrees closely: the marginal’s area-weighted total over
+
+the 205 reported cells agrees with the 2D result’s to 0.141 %, and the median per-bin ratio is 1.0010.
+The shape agrees less closely. The per-bin ratio of the marginal to the 2D result scatters by ∼ 3.7 %
+(standard deviation over the 205 cells). With the published covariance, the indicative distance of
+the marginal from the published result is χ2 /ndf = 4.52, above the 2D values: 2.27 for the quoted
+LightGBM central value and 3.66 for the exact-split cross-check. Figure 17 (configuration (a)) gives
+4.98. Because the two results share data and their cross-covariance is unavailable, this number is not
+a calibrated goodness-of-fit statistic.
+MINERvA ME FHC, 1.06 × 1021 POT
+
+16
+
+35
+
+4
+
+14
+
+30
+
+12
+
+2
+
+25
+
+0
+
+pull
+
+8
+
+bins
+
+p_|| bin
+
+10
+
+20
+15
+
+6
+2
+
+4
+2
+0
+
+mean=0.16
+rms =0.83
+2/ndf paper = 4.98
+
+10
+5
+
+4
+0
+
+2
+
+4
+
+6
+
+p_T bin
+
+8
+
+10
+
+12
+
+0
+
+14
+
+2
+
+1
+
+0
+
+1
+pull
+
+2
+
+3
+
+4
+
+Figure 17: Standardized per-bin differences of the Eavail -marginal, scaled by published uncertainties,
+on the 14 × 16 grid and in distribution. Shared data and unavailable cross-covariance make these
+descriptive; they are not formal independent-result pulls. Configuration (a), with purity-based
+subtraction (§3.2).
+
+7.4
+
+Closure: the one injected Eavail deformation is recovered
+
+A reweighting closure tests the 3D unfolding of configuration (a) only, on one injected deformation.
+The unfolding recovers a known +30 % Gaussian bump injected into pseudo-data in truth Eavail
+(center 0.3 GeV, width 0.15 GeV). The recovered step-2 mean weight is 1.048 against the injected
+1.0485. Residuals against reweighted truth on the Eavail -marginal have median 0.9999 and standard
+deviation 0.0006 (0.06 %); the per-3D-bin residual standard deviation is 3.2 % from MC statistics
+in sparse high-recoil corners. The closure’s marginal scatter is far below the 3.7 % data-versus-2D
+scatter. Because the closure uses configuration (a) and the data comparison sets (e) against (f),
+the ratio of the two scatters is not quoted. Total normalization matches to better than 1 %. In
+the metric of §5 (Eavail projection) the residual is 1.84 % against 18.1 % injected (ratio 0.102). No
+acceptance threshold set before the test is documented, so it has no pass or fail verdict.
+The test covers one shape, this Gaussian, injected into the pseudo-data and unfolded with the same
+detector response that the unfolding uses. For this injection the configuration-(a) estimator neither
+removes the injected feature nor creates a spurious one. That result is shown for configuration (a) only
+and does not extend to (e); since the data-versus-2D scatter sets (e) against (f), it is not interpreted as
+data–simulation structure resolved by the available-energy axis. The test does not exclude estimator
+bias for other deformations (§5.1). The hidden-variable closure exceeds its threshold at the largest
+amplitude (§5, App. D).
+
+7.5
+
+Classifier-family cross-check (GBDT vs. NN)
+
+Our gradient-boosted decision trees differ from the neural-network classifiers used in published
+OmniFold analyses [1, 18]. This cross-check uses the configuration-(a) GBDT unfold, with purity43
+
+based subtraction. The weight w = p/(1 − p) holds only if the GBDT output is a calibrated posterior.
+The step-1 reco classifier (data vs. MC reco) has a near-diagonal reliability curve, Brier ≈ 0.25 at
+AUC ≈ 0.537. Data and reco MC are nearly indistinguishable, so the reweight is a modest correction.
+A full OmniFold cross-check with a Keras multilayer perceptron (MLP), the same weighted 3D
+inputs and the same five-iteration loop gives a total ratio of 1.0078 to the GBDT result and median
+projection differences of 0.7 % to 1.4 % (Fig. 18). In the populated bulk the configuration-(a) result
+therefore agrees between the two tested classifier families.
+MINERvA ME FHC, 1.06 × 1021 POT
+
+10 39
+
+GBDT
+Keras MLP
+
+1.2
+1.1
+1.0
+0.9
+
+10 40
+
+0
+
+1
+
+2
+pT [GeV/c]
+
+3
+
+10 38
+
+10 39
+
+10 41
+
+10 40
+
+1.2
+1.1
+1.0
+0.9
+
+1.2
+1.1
+1.0
+0.9
+
+MLP/GBDT
+
+MLP/GBDT
+
+10 40
+
+10 39
+
+MLP/GBDT
+
+10 38
+
+(c) eavail
+d /dEavail [cm2/nucleon/(GeV)]
+
+(b) pz
+d /dp [cm2/nucleon/(GeV/c)]
+
+d /dpT [cm2/nucleon/(GeV/c)]
+
+(a) pt
+
+101
+p [GeV/c]
+
+10 1
+
+101
+100
+Eavail [GeV]
+
+Figure 18: Five-iteration OmniFold cross-check with identical weighted 3D inputs and extraction,
+changing only the classifier family. Top: absolutely normalized GBDT (configuration (a)) and
+Keras-MLP projections; bottom: binwise ratio. The MLP/GBDT total-cross-section ratio is 1.0078;
+median absolute projection differences are 1.20 % in pT , 1.36 % in p∥ , and 0.66 % in Eavail . Larger
+excursions occur only in sparsely populated outermost pT and p∥ bins.
+
+7.6
+
+Generator comparison in 3D
+
+The published ancillary files provide only binned 2D model histograms. Quantitative 3D comparisons,
+or comparisons in arbitrary projections, require generating truth-level events and histogramming
+them as d3 σ in the same fiducial phase space with the same truth Eavail definition. Because the
+unfolded result is at truth level, the comparisons need no detector simulation. The GENIE, NuWro
+and GiBUU samples were generated and processed for this analysis, and MINERvA Tune v1 was
+extracted from the analysis simulation’s truth with its full tune weight; no spectra were digitized or
+externally supplied.
+• GENIE 2.12.10 central value, generated with gevgen on a CH target with the MINERvA
+ME FHC flux, using the DefaultPlusValenciaMEC cross-section splines [4] but gevgen’s default
+event-generator list, which excludes MEC, so the sample has no 2p2h events (§7.7). It carries
+no MINERvA reweights, and its events are reweighted to the analysis flux as described below.
+• MINERvA Tune v1, the analysis tune (base GENIE + RPA, low-recoil 2p2h, and nonresonant-pion reweights), taken directly from the truth of the analysis simulation, which
+reproduces the normalization of the published ancillary curve to 0.01 %.
+
+• NuWro 21.09 [6], an independent generator on C with the same flux (after reweighting below)
+and phase space.
+• GiBUU 2019 [7], a transport-theory generator on C, built and run natively, without a
+container, with the same flux and phase space.
+NEUT [43] is not included.
+Flux repair and normalization. The GENIE (CV and +Valencia 2p2h) and NuWro samples
+were generated from a flux that had no PPFX weights, was capped at 50 GeV, and stored flux
+densities in variable-width bins that were sampled and normalized as contents, which under-weighted
+every wide high-energy bin and suppressed the high-p∥ predictions and the integrated rates (Ref. [37],
+R1.3). The repair reweights each event exactly to the analysis PPFX central-value flux on 0–100 GeV,
+with correctly sampled 50–100 GeV supplements. The repaired GENIE and NuWro predictions are
+used in §§7–8, except in three studies, flagged where they appear, that keep the unrepaired samples:
+the FSI-dial studies, the departure ratio of §9.2 and the NuWro-shaped prior of §12. GiBUU reads
+its own flux and receives an energy-dependent per-event reweight to the same convention, which
+changes its integrated cross section by a factor 0.9966. Its sample stops at Eν ≈ 20 GeV, so it is
+empty above p∥ ≈ 20 GeV/c. The analysis simulation, MINERvA Tune v1, is not affected. Each
+prediction is normalized by its own flux-averaged total CC cross section per nucleon.
+Figure 19 shows the comparison. Totals over the full measurement phase space follow GiBUU
+(2.22 × 10−38 ) < NuWro (2.66 × 10−38 ) < Tune v1 (2.71 × 10−38 ) < GENIE CV (2.76 × 10−38 )
+< data (3.07 × 10−38 cm2 /nucleon). All four under-predict the rate by 10 % to 28 % of the data.
+Integrating the reported Eavail range with the catch bin dropped gives the same order. All four closely
+track the pT and p∥ projections but differ in Eavail : NuWro and Tune v1 suppress the lowest-Eavail
+(quasielastic) bin below the untuned GENIE CV through RPA and nuclear effects, while GiBUU
+does not. Data lie above all four across the quasielastic–∆ dip, 0.1 ≤ Eavail < 0.4 GeV (in the lowest
+bin GiBUU reaches the data). Of the displayed projections, only Eavail locates this excess; the 2D
+(pT , p∥ ) measurement does not resolve it.
+MINERvA ME FHC, 1.06 × 1021 POT
+
+1e 39
+
+3.0
+
+5
+
+2.5
+2.0
+1.5
+1.0
+
+0
+
+1
+
+2
+pT (GeV/c)
+
+3
+
+4
+
+4
+3
+2
+
+0
+
+GENIE-CV
+Tune-v1
+NuWro
+GiBUU
+unfolded (this work)
+
+2.0
+
+1
+
+0.5
+0.0
+
+1e 38
+
+d /dEavail (cm2/.../nucleon)
+
+6
+d /dp (cm2/.../nucleon)
+
+d /dpT (cm2/.../nucleon)
+
+1e 38
+3.5
+
+0
+
+10
+
+20
+
+30
+40
+p (GeV/c)
+
+50
+
+60
+
+1.5
+1.0
+0.5
+0.0
+
+0.0
+
+0.5
+
+1.0
+
+1.5
+2.0
+Eavail (GeV)
+
+2.5
+
+3.0
+
+Figure 19: 1D projections of the unfolded 3D central cross section (black) versus truth-level predictions
+from GENIE 2.12 CV, MINERvA Tune v1, NuWro 21.09, and GiBUU 2019 (GENIE and NuWro:
+the flux-repaired predictions, §7.6). Models track the pT and p∥ shapes but differ on Eavail ; all
+under-predict the quasielastic–∆ dip (0.1 ≤ Eavail < 0.4 GeV). The wide Eavail catch bin is omitted
+from the axis. Data have no error bars because no 3D covariance is quoted (§7).
+For the integrated Eavail rate without the catch bin, GENIE CV, Tune v1, NuWro and GiBUU
+central values lie respectively 7.2 %, 9.5 %, 12.8 % and 22.3 % below the data. The exact projection
+
+of the five-dimensional covariance of §9.6 would supply a 3D covariance; it has been computed but is
+not quoted (§7) or used for any result in this note.
+
+7.7
+
+The low-available-energy excess and the known low-recoil deficit
+
+We compare the low-Eavail excess with candidate model changes, both by reweighting and by
+generating the relevant physics. MINERvA first isolated the rate enhancement between quasielastic
+and ∆ peaks, with multi-nucleon final states, in a low-three-momentum-transfer subsample [5]. The
+empirical tune was built to absorb it; our central values in muon kinematics and Eavail show the
+predictions falling short in the same region.
+The tested pion-FSI variations do not account for it. Reweighting 2M central-value GENIE
+events with GENIE’s grwght1p changes dσ/dEavail by less than a percent for both tested pionFSI dials. FrInel_pi shifts the spectrum by ≤ 0.74 % (peak in 0.10–0.20 GeV) and FrAbs_pi by
+≤ 0.82 % (peak in the lowest bin). Both are ratios within the unrepaired GENIE sample (§7.6), in
+which the flux defect cancels to first order. Neither was recomputed. The integrated rate moves
+by ±0.02–0.03 % at ±1σ. 1 A dial that moves the spectrum by less than 1 % cannot account
+for an excess of 8 % to 36 % per bin over the GENIE central value below Eavail = 0.4 GeV. This
+conclusion is limited to these dials and their range; other transport models or proton-FSI effects are
+not excluded. Recent MINERvA quasielastic-like measurements point toward overestimated proton
+and charged-pion FSI in their model comparisons [44]. Their different signal definition prevents
+directly identifying that effect with our inclusive discrepancy.
+Comparison with a missing 2p2h component. The base GENIE central value uses the default
+event-generator list and contains no meson-exchange-current (2p2h/MEC) events. None of the
+1.48 × 106 CC events of the generated sample is a MEC event, and the 50–100 GeV supplement is
+MEC-free as well. Before the flux reweight of §7.6, the sample’s unweighted modes are QE 11 %,
+RES 22 %, DIS 66 % and COH 0.9 %. 2p2h must therefore be added ; reweighting cannot supply
+it. The mode decomposition multiplies each bin of the central-value dσ/dEavail by the fraction of
+its events in each mode. Overlaid with data, it places the largest positive data−CV gaps in the
+quasielastic–∆ dip, [0.10, 0.20) and [0.20, 0.40). The CV is much closer to data in the QE-dominated
+[0, 0.10) and [0.40, 1.50) regions. At central value, 69 % of the positive deficit lies at Eavail ≤ 0.4 GeV,
+where 2p2h events populate. Closing the integrated deficit requires 2p2h at ≈ 45 % of the QE rate
+(68 % to 71 % in the two dip bins). This is the standard magnitude of the empirical and Valencia
+MEC models; the FSI shifts are below one percent (Fig. 20).
+GENIE with Valencia 2p2h enabled. We regenerated the GENIE central value with Valencia
+2p2h enabled (–event-generator-list Default+CCMEC, 2M events). The Nieves–Simo–Vacas MEC
+channel [46, 47] is present in the splines but absent from the total-CC cross-section graph written by
+GENIE’s gspl2root, so we normalize by the non-MEC CC count: QE+RES+DIS+COH is fixed to
+the known total, and MEC is added through 1/(1 − fMEC ) with fMEC = 2.87 %. 2p2h falls in the
+dip and brings all three low-Eavail bins toward data (Fig. 21). In central values, it closes 52 % of the
+data−CV gap at Eavail ≤ 0.4 GeV and 63 % of the integrated deficit (CV −7.2 % → −2.7 %). The
+prediction still falls short in the dip, especially [0.10, 0.20), but its integral over the reported Eavail
+1
+
+FrInel_pi is disabled in the standard MAT-MINERvA set of systematics. This is MINERvA’s current practice
+(private communication from the collaboration, 2026), and the reason is a degeneracy (of overlapping pion-FSI dials,
+one must be dropped), not a defect of that dial.
+
+
+range is closer to data than Tune v1 (−2.7 % against −9.5 %). Tune v1 adds MINERvA’s empirical
+low-recoil 2p2h enhancement and RPA to the stock Valencia MEC model. The central values are
+consistent with the known need for that enhancement, and with the NuWro and GiBUU predictions,
+whose native 2p2h is not enhanced, also falling below the data in the dip; they do not establish that
+need.
+2p2h leaves the high-Eavail [1.50, 3.00) bin unchanged. There, data exceed the GENIE CV by
+about 10 % (data/CV 1.10) and exceed Tune v1 as well; the high-Eavail excess over Tune v1 is
+localized on the (Eavail , W ) plane in §8.
+The generator’s 2p2h event category is also not the same as a two-body current: recent NEUT
+studies, for example, include two-body currents that contribute to one-particle–one-hole final states
+and examine their interplay with axial form factors [48]. Visible-energy comparisons can, moreover,
+depend on both the primary interaction and the subsequent hadronic transport.
+Ascencio et al. [8] report the same deficit in MINERvA’s dedicated low-recoil inclusive
+d2 σ/(dq3 dEavail ) measurement for q3 < 1.2 GeV at the same ⟨Eν ⟩ ∼ 6 GeV, finding GENIE and
+NuWro underpredicting their low-Eavail data without enhanced 2p2h. Our muon-kinematics
+extension integrates over all q3 instead of restricting q3 , which limits the comparison to the shape and
+direction in Eavail , without absolute normalization. In those terms our central values are consistent
+with that established low-recoil deficit. A bin-identical comparison of central values is in §7.8.
+MINERvA ME FHC, 1.06 × 1021 POT
+
+1e 38
+GENIE-CV QE
+GENIE-CV RES
+GENIE-CV DIS
+
+2.0
+
+GENIE-CV COH
+data GENIE-CV (2p2h-shaped gap)
+unfolded data
+
+d /dEavail (cm2/nucleon/GeV)
+
+2.0
+d /dEavail (cm2/nucleon/GeV)
+
+GENIE-CV (no 2p2h)
++ Valencia MEC (2p2h)
+unfolded data
+
+MINERvA ME FHC, 1.06 × 1021 POT
+
+1e 38
+
+1.5
+
+1.0
+
+1.5
+
+1.0
+
+0.5
+
+0.5
+0.0
+0.0
+
+0.0
+0.0
+
+0.5
+
+1.0
+
+1.5
+Eavail (GeV)
+
+2.0
+
+2.5
+
+3.0
+
+0.5
+
+1.0
+
+1.5
+Eavail (GeV)
+
+2.0
+
+2.5
+
+3.0
+
+Figure 21: GENIE regenerated with ValenFigure 20: Central-value dσ/dEavail by interac- cia 2p2h (red, stacked on no-2p2h CV; both
+tion mode, overlaid with unfolded data. The flux-repaired) closes about half the low-Eavail
+excess lies in the quasielastic–∆ dip (Eavail ≤ data−CV gap in central values (52 %). The re0.4 GeV), where a missing 2p2h component would mainder occupies the region the MINERvA tune’s
+populate. Data carry no error bars because no empirical enhancement is built to absorb. Data
+3D covariance is quoted (§7).
+carry no error bars because no 3D covariance is
+quoted (§7).
+
+7.8
+
+Fourth axis: three-momentum transfer q3
+
+The fourth axis adds one feature (§7), three-momentum transfer q3 = |⃗q |, chosen because its
+(Eavail , q3 ) plane separates quasielastic, 2p2h and resonance processes and permits bin-compatible
+comparison to MINERvA’s dedicated low-recoil d2 σ/dq3 dEavail measurement (Ascencio et al. [8]).
+Truth q3 comes from the generator (CVUniverse::Getq3True()); reconstructed q3 uses the muon Q2
+and the calorimetric recoil (CVUniverse::RecoQ3()). Both are evaluated for all twelve playlists, as
+
+for Eavail . Lateral systematic shifts change q3 but leave Eavail unchanged, so a shifted q3 is stored for
+each lateral universe instead of reusing the central value. The classifier inputs are (pT , p∥ , Eavail , q3 ),
+with deliberately coarse q3 binning [0, 0.2, 0.4, 0.6, 0.8, 1.2, 2.0, 100] GeV (seven bins including a final
+catch bin), giving 14 × 16 × 7 × 7 = 10 976 four-dimensional bins (4830 populated).
+Marginalization check (4D→3D). In configuration (a), the q3 marginalization reproduces the
+3D Eavail spectrum and low-recoil excess (Fig. 23, right). The Eavail -marginal data/Tune v1 ratio is
+1.21 in the lowest bin, dips to 1.01 across the quasielastic–∆ region, and rises to 1.16–1.23 in the
+high-Eavail DIS tail (integrated data/Tune v1 = 1.13). These ratios are to Tune v1, whereas §7.7
+uses untuned GENIE. Recovering the 3D result as a by-product of the higher-dimensional unfolding
+is the 4D→3D analog of the 3D→2D marginalization check (§7.3).
+The (Eavail , q3 ) plane. The (Eavail , q3 ) plane (Fig. 23, left) shows structure that the q3 marginal,
+integrated over Eavail , does not resolve; the marginal’s data/Tune v1 ratio is 1.03–1.19 (center). At
+fixed Eavail in the quasielastic–∆ dip, data/Tune v1 rises with q3 . The central value over-predicts
+low-q3 , moderate-Eavail cells (ratio down to 0.66); data excess concentrates at low Eavail (all q3 )
+and toward high q3 . The muon-only or fixed-q3 projections considered here do not resolve this
+correlation. It bears on the bin-compatible comparison with Ascencio et al. The map’s comparator
+is the MINERvA Tune v1 prior, distinct from the untuned GENIE sample of §7.7.
+No 4D uncertainty. Neither a 4D uncertainty nor a ratio of the covariance from simultaneous
+variation of every reweightable band and the flux multisim (the unified throw of §4.5) to the block
+covariance is reported. A corrected 4D covariance would use the actual minus and plus variation
+endpoints; MAT’s mean-centered covariance blocks, normalized by 1/N ; one fixed estimator seed;
+and mean-centered joint throws, with the mean shift reported separately. It would not subtract a
+scalar jitter floor. Because the single-pass shifted observables exist only for events selected at the
+central value, re-selected event loops (§4.7) would be needed to bound migration effects.
+Bin-identical comparison to the published low-recoil measurement. Supplemental data
+from Ref. [8] (44-cell d2 σ/(dEavail dq3 ) with its full covariance, distributed inside the public arXiv
+source package) permit a direct quantitative cross-check. Both measurements are merged onto their
+maximal common grid, the edges present in both binnings. Our (pT , p∥ ) marginalization is restricted
+to p∥ < 20 GeV/c to mirror the Ascencio muon selection (θµ < 20◦ , 1.5 < pµ < 20 GeV). Together,
+these give two super-cells, Eavail < 0.4 GeV in q3 ∈ [0.4, 0.6) and [0.6, 1.2) GeV: the low-recoil 2p2h
+region. Our central result lies 9.2 % and 6.0 % above Ascencio. No pulls or full-covariance χ2 are
+reported (§7; Fig. 22). Both share MINERvA flux/detector systematics, treated here as independent.
+The pµ and p∥ cuts differ by ≲ 6 % kinematic smearing at the 20 GeV boundary. The two analyses
+also define true Eavail differently (§7.1): in this analysis’s simulation, Ascencio’s broader definition
+moves 11.0 % of the population of our lowest true-Eavail bin (Eavail < 0.1 GeV) out of it. That shift
+has the sign and location of the residual. The two common cells, however, span our three lowest bins
+(Eavail < 0.4 GeV), and the aggregate shift over those bins has not been computed. The definition
+difference therefore remains an alternative explanation that is not excluded. At the 10 % scale of
+the residual, the comparison neither refutes nor validates the result. A comparison on all 44 cells
+has not been made; it requires re-unfolding on the Ascencio edges, which is straightforward for the
+unbinned method, and a systematic sweep on that binning.
+
+
+MINERvA ME FHC, 1.06 × 1021 POT
+
+d 2 /(dEavail dq3) (cm2/GeV2/nucleon)
+
+1e 38
+
+1e 38
+this work (4D marginal, pz < 20)
+Ascencio et al.
+
+2.6
+2.5
+
+1.45
+1.40
+
+2.4
+
+1.35
+
+2.3
+
+1.30
+
+2.2
+1.25
+0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40
+Eavail (GeV)
+
+0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40
+Eavail (GeV)
+
+Figure 22: Bin-identical comparison to Ascencio et al. [8] on the maximal common (Eavail , q3 ) grid.
+Our points have no uncertainty or χ2 drawn because no 4D covariance is quoted (§7); the published
+points carry the published covariance.
+MINERvA ME FHC, 1.06 × 1021 POT
+
+1.21
+
+0.8-1.5
+0.4-0.8
+0.2-0.4
+
+0.86
+
+0.66
+
+0.84
+
+1.12
+
+1.16
+
+0.81
+
+0.98
+
+1.12
+
+1.13
+
+1.0
+
+0.86
+
+0.93
+
+1.08
+
+1.16
+
+1.18
+
+1.17
+
+0.9
+
+1.20
+
+0.8
+
+0.0-0.1
+
+1.17
+
+1.11
+
+0.7
+
+-10
+2.0
+
+-2.
+1.2
+
+-1.
+0.8
+
+-0.
+
+-0.
+
+0.6
+
+0.4
+
+-0.
+
+-0.
+
+0.0
+
+1.22
+
+1.25
+
+0
+
+1.22
+
+1.26
+
+2
+
+1.22
+
+1.24
+
+8
+
+1.14
+
+1.23
+
+6
+
+1.07
+
+1.13
+
+4
+
+1.01
+
+2
+
+0.1-0.2
+
+0.0
+
+1.20
+
+1.150
+1.1
+
+0.71
+
+q3 [GeV]
+
+1.175
+
+1.2
+
+1.16
+
+0.66
+
+0.2
+
+E_avail [GeV]
+
+1.5-3.0
+
+1.125
+data/GENIE
+
+1.23
+
+data/GENIE
+
+3.0-100.0
+
+1.100
+1.075
+1.050
+
+1.15
+1.10
+1.05
+
+1.025
+1.000
+
+1.00
+0.0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+q3 [GeV] (low edge)
+
+1.2
+
+2.0
+
+0.0
+
+0.1
+
+0.2
+
+0.4
+
+0.8
+
+E_avail [GeV] (low edge)
+
+1.5
+
+3.0
+
+Figure 23: 4D data/Tune v1 ratio (“data/GENIE” in the figure) projected onto (Eavail , q3 ) (left; blank
+cells are kinematically empty), with q3 (center) and Eavail (right) marginals. The Eavail marginal
+reproduces the 3D low-recoil excess. In the displayed joint plane the data/Tune v1 ratio rises with
+q3 across the quasielastic–∆ dip. Configuration (a), with purity-based subtraction (§3.2).

@@ -1,0 +1,10 @@
+D1: B | Larger type and fewer columns make entries easier to read at printed size.
+D2: B | Its compact, regular grid provides clearer spacing between labels and numerical columns.
+D3: EQUAL | Both are monochrome tables.
+D4: B | Observable headers place degrees of freedom directly beside the corresponding comparisons.
+D5: EQUAL | Both clearly identify the truth reference and organize the comparisons consistently.
+D6: A | Its caption more fully explains sample counts, covariance treatments and flagged cells.
+D7: B | Readers can scan methods and compare values across observables more quickly.
+OVERALL: B
+GAP: 1. Increase A’s body type size. 2. Add space between χ², p and flagged-cell columns. 3. Put the shared degrees of freedom in the χ² headers. 4. Rewrite the caption as shorter sentences separating the test definition, covariance subtraction and notation.
+END

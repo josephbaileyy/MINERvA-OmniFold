@@ -1,0 +1,18 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical supplement, but recurring scope disclaimers, internal bookkeeping, and compressed or defensive phrasing warrant a dedicated language pass.
+1. QUOTE: "Statements in those sections about that
+central value and that covariance do not describe this result, and statements here do not describe
+them."
+   REWRITE: The central values and covariance reported here apply to configuration (e); those in Secs. 8 and 9 apply to configuration (a).
+2. QUOTE: "One control check failed: the offset check, which compares the offset corrections of two hybrid
+truths, gives χ2 = 245.74 for 16 degrees of freedom. The other control checks (numbers 0, 1, 2, 3, 4,
+5, 6, 8) passed. As fixed in advance, the six power alternatives built on that correction are therefore
+descriptive and not judged against the failure criteria; Table 16 gives them, with two descriptive
+variants of each tested truth."
+   REWRITE: The comparison of the offset corrections for two hybrid truths fails, with χ2 = 245.74 for 16 degrees of freedom; all other control checks pass. Under the predefined criteria, the six power alternatives based on this correction are therefore reported descriptively and excluded from the pass–fail assessment. Table 16 presents these alternatives and two descriptive variants for each tested truth.
+3. QUOTE: "Table 16: Descriptive fake-data numbers, none of them a test result. In-sample: against Ctotal + Cresp
+including the truth’s own generator shift, which is not evidence (— where the test already uses the
+full matrix). Model-only: against the statistical block and Cmodel without the truth’s own generator
+shift, omitting the interaction, flux, detector, lateral and normalization blocks, so a lower bound
+on Cmodel ’s reach."
+   REWRITE: Table 16: Descriptive comparisons for the fake-data samples. In-sample values use Ctotal + Cresp including the tested generator’s own shift and therefore do not provide independent validation; a dash denotes a test that already uses the full covariance. Model-only values use the statistical covariance and Cmodel with the tested generator’s shift removed. They omit the interaction, flux, detector, lateral and normalization contributions, providing a lower bound on the range of biases accommodated by Cmodel.

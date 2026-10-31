@@ -1,0 +1,10 @@
+D1: EQUAL | Both use readable type and clearly distinguish individual numerical entries.
+D2: B | Its compact layout and hierarchical headers make the table easier to navigate.
+D3: EQUAL | Both are monochrome tables.
+D4: B | The χ² spanning header and observable-specific degrees of freedom establish a clearer header hierarchy.
+D5: B | Methods and the prior appear together against a common truth reference, enabling direct comparison.
+D6: A | Its caption provides units, explains the covariance relationships, and identifies the final four columns.
+D7: B | Readers can quickly locate an observable and compare performance across methods.
+OVERALL: B
+GAP: 1. Add a spanning Cresp header above the four deposit columns. 2. Use deliberate spacing to distinguish uncertainty sources, aggregate quantities, and deposit categories.
+END

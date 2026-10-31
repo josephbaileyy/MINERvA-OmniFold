@@ -1,0 +1,10 @@
+D1: A | More open spacing makes method names and numerical entries easier to read at printed size.
+D2: A | Compact proportions and clear column rules produce a more balanced, navigable table.
+D3: EQUAL | Both are monochrome tables.
+D4: B | Pull and fractional difference are explicitly defined, with percentage units supplied in the caption.
+D5: A | The prior baseline and aligned method rows make comparisons easier to scan.
+D6: A | The caption states the comparison and organization clearly, with less dependence on unexplained notation.
+D7: A | Readers can identify the methods, observables and numerical pattern quickly.
+OVERALL: A
+GAP: 1. Shorten or wrap prediction headers to reduce width. 2. Strengthen visual separation between prediction groups. 3. Align numerical entries consistently on decimal points. 4. Put percentage units directly in the fractional-difference headers. 5. Explain cell labels and define caption symbols. 6. Explain missing-entry dashes in a table note.
+END

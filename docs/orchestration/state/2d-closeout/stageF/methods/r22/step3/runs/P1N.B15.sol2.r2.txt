@@ -1,0 +1,19 @@
+RATING: 3
+JUSTIFICATION: The technical detail is appropriate to a specialist appendix, but development-history narrative, internal release bookkeeping, and awkward status qualifications recur sufficiently to require a dedicated language pass.
+
+1. QUOTE: "An earlier release candidate, RC1, passed its packaged
+verifier when replayed from an empty directory in a separate AI-agent session (Opus 5.5) using only
+
+the package and its README, without repository access."
+   REWRITE: An independent replay of the earlier release candidate RC1 in an empty directory passed its packaged verification checks using only the package and README, without repository access.
+
+2. QUOTE: "Items labelled (fixed) have identities or values already fixed (bin edges: §G.3; checksums: Ref. [37],
+identities already fixed); the rest are packaging. A fixed identity specifies which object is meant, not
+whether the object is scientifically qualified."
+   REWRITE: Items marked “fixed” have established identities or values, documented by the bin edges in §G.3 and the checksums in Ref. [37]. The remaining requirements concern package assembly. An established identity specifies the object to be released but does not establish its suitability for scientific use.
+
+3. QUOTE: "Undeclared acceptance field. The record of the projection carries acceptance_question:
+UNDECLARED: when the projection was built, it had not been decided whether an acceptance correction
+is needed at the destination binning. The package must carry this field with its value until that is
+decided, so that no default in the data format makes that scientific choice."
+   REWRITE: Acceptance-correction status. The projection metadata contain the field acceptance_question with the value UNDECLARED because the need for an acceptance correction at the destination binning had not been determined when the projection was constructed. The release must retain this value until the correction requirement is explicitly resolved, preventing a data-format default from determining the treatment of acceptance.

@@ -1,0 +1,10 @@
+D1: B | Crisp numerical entries allow precise reading; A’s finest matrix cells are difficult to distinguish.
+D2: B | The compact triangular layout avoids redundancy; A repeats four large colour bars.
+D3: EQUAL | A uses a consistent diverging scale for signed correlations; B’s monochrome presentation is appropriate.
+D4: A | Observable names identify the bin axes; B’s R00–R15 cell labels lack a mapping.
+D5: EQUAL | Neither includes references or predictions.
+D6: B | The caption specifies the covariance, triangular convention and diagonal; A adds a vague interpretive claim.
+D7: A | Correlation patterns emerge immediately, whereas B requires scanning many numbers.
+OVERALL: B
+GAP: 1. Consolidate A’s identical colour bars. 2. Enlarge the dense matrix or provide a readable detail panel. 3. Explain bin ordering and define the displayed correlation coefficients in the caption. 4. Replace the vague expectation statement with concrete reading guidance.
+END

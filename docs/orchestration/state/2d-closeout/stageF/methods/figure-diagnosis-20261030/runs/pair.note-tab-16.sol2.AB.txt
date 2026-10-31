@@ -1,0 +1,10 @@
+D1: A | Larger text and fewer rows make labels and values easier to read at printed size.
+D2: A | Restrained horizontal rules provide clear structure with less visual clutter.
+D3: EQUAL | Both are monochrome tables.
+D4: A | Headers explicitly identify degrees of freedom, with denominators supplied for every entry.
+D5: EQUAL | Both align model predictions and paired fit statistics for straightforward comparison.
+D6: B | The caption clearly identifies both calculations and states the common degrees of freedom.
+D7: A | The shorter list and cleaner hierarchy make the main comparisons quicker to grasp.
+OVERALL: A
+GAP: 1. Increase B’s text size. 2. Replace row-by-row rules and the double header rule with restrained top, header and bottom rules. 3. State the common ndf in a header note for immediate interpretation.
+END

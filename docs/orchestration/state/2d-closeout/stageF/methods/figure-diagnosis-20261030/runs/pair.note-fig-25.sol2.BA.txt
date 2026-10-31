@@ -1,0 +1,10 @@
+D1: A | Larger, clearer axis labels and visible uncertainty bars support reading at printed size.
+D2: A | Panels use space efficiently; B leaves excessive empty space beneath the plotted points.
+D3: B | Distinct marker shapes supplement colour and help identify predictions in grayscale.
+D4: A | Momentum units and the dimensionless reference ratios are explicit; B omits cross-section units.
+D5: A | Ratios, a unity baseline, and clear error bars make model–data differences easier to assess.
+D6: A | The legend and caption match the display; B describes a generator “band” but shows separate markers.
+D7: A | The main discrepancies are immediately apparent; B’s broad logarithmic ranges compress the differences.
+OVERALL: A
+GAP: 1. Tighten B’s vertical ranges to the occupied data region. 2. Make data uncertainties clearly visible. 3. Add cross-section units. 4. Improve legend spacing and enlarge small annotations. 5. Replace “band” with wording matching the plotted predictions. 6. Add ratio panels to expose model–data differences.
+END

@@ -1,0 +1,17 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed technical companion, but recurring production terminology, project-status narration, and repetitive or informal phrasing warrant a dedicated language pass.
+1. QUOTE: "These are central-value ratios. No compatibility
+metric based on the configuration-(a) five-axis covariance is quoted, because the estimator-seed
+sensitivity of its construction, measured with two companion covariances, exceeds the limit set before
+production (§9.6); §10.4 gives a sixteen-cell χ2 comparison."
+   REWRITE: These ratios compare central values. The configuration-(a) five-axis covariance is not used for a compatibility test because its sensitivity to the estimator seed, assessed using two companion covariance estimates, exceeds the prespecified tolerance (§9.6). Section 10.4 presents a sixteen-cell χ2 comparison.
+2. QUOTE: "The response-mismatch closure of Appendix D is
+designed to test whether an incorrect hadronic response can move strength into or out of the low-W
+component. It has not yet produced a result."
+   REWRITE: The closure test described in Appendix D is intended to assess whether hadronic-response mismodeling redistributes strength into or out of the low-W component. Results from this test are not yet available.
+3. QUOTE: "If GiBUU is instead supplied with
+the shares that GENIE and NuWro carry above this energy, data/GiBUU becomes about 1.37 in the
+corner and 1.29 integrated. With the GENIE and NuWro fluxes corrected and GiBUU supplied with
+the shares above this energy, each generator’s central-value corner ratio lies close to its integrated
+ratio. GiBUU is lower than the others everywhere."
+   REWRITE: Estimating GiBUU’s missing contribution above this energy from the corresponding fractions in GENIE and NuWro gives data/GiBUU ratios of approximately 1.37 in the corner and 1.29 overall. After this correction and the GENIE and NuWro flux corrections, each generator’s central-value ratio in the corner is close to its integrated ratio. GiBUU predicts smaller cross sections than the other generators throughout the plane.

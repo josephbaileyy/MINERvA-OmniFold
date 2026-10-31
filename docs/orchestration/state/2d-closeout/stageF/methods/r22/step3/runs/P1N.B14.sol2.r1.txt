@@ -1,0 +1,12 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and precise, but repeated implementation bookkeeping, instructions governing diagnostic outputs, and collaboration-dependent plans give several passages the register of an internal project note.
+1. QUOTE: "Its first stage has been implemented but not yet run: no output has
+been produced and no pass threshold has been set."
+   REWRITE: The first stage is implemented, but no results are available and no acceptance criterion has been defined.
+2. QUOTE: "The implementation runs only as a pseudo-data closure and only on the
+five observables, and cannot be combined with truth-reweight injection or bootstrapping. It labels
+every output as a diagnostic that must not be quoted."
+   REWRITE: The test is restricted to pseudo-data closure in the five observables and excludes truth reweighting and bootstrapping. Its outputs serve solely as diagnostics and are excluded from the reported measurement.
+3. QUOTE: "It is deferred unless the reconstruction-only test shows
+material bias or the collaboration asks for the stronger response model."
+   REWRITE: The follow-up would be undertaken if the reconstruction-only test reveals substantial bias or if the collaboration requires a more realistic response model.

@@ -1,0 +1,18 @@
+RATING: 3.5
+JUSTIFICATION: The prose generally suits a detailed particle-physics write-up, but several passages contain cumbersome terminology, internal bookkeeping and repetitive explanation that warrant a dedicated language pass.
+1. QUOTE: "With the purity-based subtraction, the choice of GBDT estimator spreads the distance over
+about one unit, a methodological band: the exact-split cross-check gives 3.66, HistGBT 2.70 ± 0.04,
+and LightGBM with seeds 1–10 gives 2.64–2.75."
+   REWRITE: With purity-based subtraction, χ² per bin varies by approximately one across GBDT estimators: 3.66 for the exact-split cross-check, 2.70 ± 0.04 for HistGBT, and 2.64–2.75 for LightGBM with training seeds 1–10.
+2. QUOTE: "Every block is computed with the LightGBM
+estimator of the quoted central value (§3.2), and relative uncertainties are taken with respect to that
+central value, which is the universe sweep’s central value at training seed 42. Taken with respect to
+the exact-split cross-check instead, the same combined covariance has a per-bin median of 6.462 %."
+   REWRITE: All covariance components use the LightGBM estimator described in §3.2. Relative uncertainties are normalized to the central value obtained with training seed 42 in the systematic-universe analysis. Using the exact-split cross-check as the normalization instead gives a median relative uncertainty per bin of 6.462 % for the same combined covariance.
+3. QUOTE: "Figure 14: Bin-by-bin ratios to MINERvA Tune v1 on the (pT , p∥ ) grid of our result (left) and of the
+published data (right), on a common colour scale of 0.7–1.3; the panels have no printed titles. Both
+maps show the same tune deficit, with ratios above unity over most of the plane and below it at
+the lowest pT . The maps are close because both results depart from the tune in the same places by
+similar amounts. The direct comparison with the published data is the median bin ratio of Table 6
+and the residual map of Fig. 8."
+   REWRITE: Figure 14: Bin-by-bin ratios of this measurement (left) and the published data (right) to MINERvA Tune v1 on the (pT, p∥) grid, with a common colour scale of 0.7–1.3. Both measurements show similar deviations from the tune, with ratios above unity over most of the plane and below unity at the lowest pT. Table 6 and Fig. 8 compare the two measurements directly.

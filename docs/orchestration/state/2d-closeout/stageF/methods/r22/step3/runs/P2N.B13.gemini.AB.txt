@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B elevates the register in Section B.4 by replacing the clumsy, colloquial closing "These are requirements on such inference, with no new validation result here" with the formal and concise "No new validation result accompanies these requirements."
+2. Document B improves sentence rhythm and syntactic cohesion across Section B.4 by properly deploying semicolons between logically coordinated clauses and eliminating superfluous filler words such as "also" and "their."
+3. In Section B.5, Document B demonstrates superior grammatical and technical precision by using standard mathematical idiom ("with common probability" rather than "with a common probability") and the accurate perfect infinitive ("to have been lost").

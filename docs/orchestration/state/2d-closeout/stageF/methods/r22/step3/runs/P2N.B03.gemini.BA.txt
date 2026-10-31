@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A tabulates the multi-dimensional impact metrics of the run-period uncertainty in a clear, standard summary table (Table 3), whereas Document B packs these heterogeneous numbers into a dense, cumbersome run-on sentence.
+2. In §4.2, Document B inserts the phrase "causal efficiency advantage," which is unidiomatic jargon in particle physics unfolding and awkwardly preempts the clearer discussion of efficiency gains and regularization bias two sentences later.
+3. Document A maintains a superior editorial flow and register characteristic of PRD papers by delegating multi-metric systematic comparisons to structured tabular presentation rather than overloading the narrative prose.
