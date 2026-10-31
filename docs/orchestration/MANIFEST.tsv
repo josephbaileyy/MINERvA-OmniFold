@@ -1582,6 +1582,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/caveat-study/tools/tally.py	
 docs/orchestration/state/2d-closeout/stageF/methods/comparator-chi2-20261027/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/comparator-chi2-20261027/pdf-sha256.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/comparator-chi2-20261027/quotes.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/AMENDMENT-1.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/BINDING.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/CAPTION-FIXES.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/DECLARATION.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -1600,6 +1601,8 @@ docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/figs/mo
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/figs/tension_chi2_map.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/figs/tension_mode_maps.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/figs/tension_spectrum.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/palette.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/recolour.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/review/MEFHC_5iter_fig13.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/review/MEFHC_5iter_pull_full.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/review/MEFHC_5iter_xsec_paper_pt_slices.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -1860,6 +1863,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/a
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/capture.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/compare.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/mutate.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/overlap.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/raster.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/run.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/run_remote.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
