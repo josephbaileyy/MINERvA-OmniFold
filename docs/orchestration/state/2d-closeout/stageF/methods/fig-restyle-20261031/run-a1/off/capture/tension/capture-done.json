@@ -1,0 +1,9 @@
+{
+ "script": "/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a1/bound/deploy/2d-unfolding/diagnose_tension.py",
+ "argv": [
+  "--ours",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "--out-prefix",
+  "/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a1/off/out/tension"
+ ]
+}

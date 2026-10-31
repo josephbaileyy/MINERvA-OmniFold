@@ -1,0 +1,11 @@
+{
+ "script": "/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a1/bound/deploy/2d-unfolding/plot_2d_threeway_fig13.py",
+ "argv": [
+  "--infile",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "--paper",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "--out",
+  "/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a1/off/out/MEFHC_5iter_fig13.png"
+ ]
+}

@@ -1,0 +1,726 @@
+[
+ {
+  "i": 0,
+  "kind": "image",
+  "axes": 0,
+  "label": "_child0",
+  "hash": "bf6f2b496adbdb281801f32d4d4524bd5fd6a6c799ff51c16b1d070c606de4b6",
+  "dhash": "54b07936605e186eb5b935023b1a87b67b1f962bcd139c995da4cc3981df6f03",
+  "colours": {
+   "cmap": "RdBu_r"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "0c4467b158dbdd46b16a1d8043c53548b99d2a1fef1b7970fe276ab8bb7a9d6b",
+  "dhash": "f25ee58c4c986d780bf92e0dcdfb88d407b1f96ac5be2ee3b171315832a1bcfc",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "55f70395ce6f5010b5ed4ca732af7596f0fd4dcf58dd5fe43e2b5dd9ec7ecf0f",
+  "dhash": "82c1f1847b296a42ec2bf13c3821a30c87712b7ca3933b528ca8bf6061494a4c",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "2dc68d8c0077d115180d0adb609fc0846bea6a92c29f4b8d54e3a566483f4429",
+  "dhash": "94351315b37372e75ac3a33efa938b8853ee0afa8ef63d75280ef7f24d533d7a",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "946236881896606e8f6d6c55e98c7cd530b8a0ee027dc81cb7cb1847d6f31e01",
+  "dhash": "46fd6726d23f0ad66d22f67c960be3c3c301f729b39082c1bfbca5a52c99b881",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "985411214be552f3d37f6a3b471f68499dcd65b233eb1e18bf99ef15cc0325a3",
+  "dhash": "99ff70196434ca26c3825b4d258585bd6fb9821cc8bece0e2affd4ca2fa89e4f",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "d76120d3020a1c22fab1412f54af3313b041cc9e2cce4c35cdc689a30dcde3c1",
+  "dhash": "0c48e04250c76a6d6f3a7e2c5379ea33406d850367d251e9f24a795a7f310b26",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 7,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "204be01a00f211444330354e0553f29bf530a58d8a702edb4a6d5fb73196c837",
+  "dhash": "de60cf93a54e85553e31734850159386592f20b6ff0b4f423d43887b37f8658b",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 8,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "64b530782e48e1049c9ca2c877f77de065702ca5ff1c24792615eb7d06efa510",
+  "dhash": "9e81545b5f10ebc8289d6612a9224a63496578e55951e6d0afdb04bf16c731cd",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "9e1cf0d65b94c484b5ac59661b7b16665d5e60ce1d0e0cd1e3cdd08ded33c5bf",
+  "dhash": "fe1964c711168abe618731c9465acecab9cf81d4af574d527f88115318e7880f",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 10,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "b9b2894ae8d75b55564216bfe254d1d5fd3c5163bba59e7c46c931f2e8f7d6e2",
+  "dhash": "b02568320a242d5fd41ff8212ebef825785e732af9a7eb25c8e9769412a2d8db",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 11,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "e29d20b152d9b77ee5860c000cf8a5639f705de7130fec5bdbdd519ede8aff4b",
+  "dhash": "5cd61851053d636a64df394fda23a4bfe4370b6ad6deb12d558d43afc3c0447d",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 12,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "b81d622511a535214911eede27a8b2751aa2ac406de49aacf78e87b9a3964f0f",
+  "dhash": "50f18ae8f68b865b565a00a3e6ef7610fe1d8387ac64d2994f5c157900224bce",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 13,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "8b67f071e58e2bb358334486d1368d1835e38dca622fcbd60a78e0d715badabd",
+  "dhash": "1b086baf908469238477d344c108e344064b095b1e526068f915a97407124337",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 14,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "88a9774f53a3e4e40addc3cf7b0a2bb8562195c38eb5e6413b37309b9f9cbdab",
+  "dhash": "c9109e28288051d0468c75a26d45783500a904d8cbf4e2e21bb1f71d2e65baa1",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 15,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "80752b391226e19e8d167119dee4474f95daaa783879847413f6f5367e0d2f7b",
+  "dhash": "a482b7f42d50aeee0fb20098d40ac84b9d1f220afb1bab0c260bb3cce222256a",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 16,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "b5437e0a0014b60d00e5670a8b729a4a9977007f1bdc0f44094e353e827dcc3c",
+  "dhash": "68e8d1c074f65a4c6cb364559efb9f91d3f3997fa8eae66b42cfbb0b38703bb7",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 17,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "7d3bb8cf6f745dc337bb2e20a5296d7d2fe719fb0790def7a35118a27679c2e3",
+  "dhash": "4b93e4bbb6ba96223cd1c6d1d6d42a88283ec99fc3538374eaaa1e6996996228",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 18,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "23927f34f9c89c6ac169720bfc339454ceab78fdc40fae0845d01c3d2459c212",
+  "dhash": "bf56b50eb5087c631ddab71f1bbadad78f60577e5199e8d6a8965d99492cf5bb",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 19,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "56362d5798a15f73ac25bbeb79467746a6d25d4037b96f8e48f0aa096d10e6aa",
+  "dhash": "89bf7f8ddbddba994c57a6b4d40badab08e9c22329cac5bc1e69e18ed40b5122",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 20,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "0870ea63debcc2beb5975e97b5cfda8372a8b54b7a90f53af6d9a255d3cad164",
+  "dhash": "d3e259ed119508b85551301ca6478a50e3100221d83fa798b9a1ffdea515ec14",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 21,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "97bb186e7bd5de9fa4d35c25b19ab91e7fbad9db8db16e29265eb9b07ba33714",
+  "dhash": "483ca1beda15984265c755a18129f526066b43a752817671e7f4acdfdb011283",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 22,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "c0f6c17479be73d92c11f8a7e4f1f8cdff7980e3aaf72dda7a9fdc2b820c588e",
+  "dhash": "5d8e472be526782d60a8538f71ef34a2ce02087cd4d01a999f73eee27eed6383",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 23,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "58ce689285967d10919b40d16a93183cc0a15657bf1a6c4c931dcf3d3b90848a",
+  "dhash": "63945a52313ccd7d80e939579f8d3e9128cff5d40dd5a27b2720e1557322d4b3",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 24,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "8d5eaaa9ce3e74d71d764c07a43c726398538d726250b8b562fac0021e15bac2",
+  "dhash": "1a2d8cbf50a4de15b06f9ffd0be4a00704a432f82d5a21b94355d96c34b8ea7f",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 25,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "21a637bc3edebc4c5fca1717c3c4ec06dbda8d5f74260c4f684a2da896e711ad",
+  "dhash": "5a28203a5d3bf3bff6c60810902f919ba9d387e8cb38bdb4e6ecb2734086f95d",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 26,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "90ab178a6b8a7716bd77180efa45591fa43cbc97dd59b535405313c54c42d608",
+  "dhash": "0e4541644a31706e2ffbaf1c7c8593a4a61ec473d16f7cb4a57d4b3a2978bf13",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 27,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "5b3fd9c1a9f2f791b38edd728c2ef7ee705a50255e6ffe6b90cd29e021b8db95",
+  "dhash": "945918e47f88694066684aed3e10099db4df5bd6b2b76d5d75bb104e5f2379fa",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 28,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "2bc97dd14d0e48893400d8695e07fb8a12d78601c46a05973fe1f6722e837d60",
+  "dhash": "19d5d34cd7c7485f1c66413b1d95ce93641c0acfc31f4ebf3962604bdc1e38e8",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 29,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "bbb0375cc4f21403411c32d49b1a571f2c3402de8820aa717a8e6f427371db9e",
+  "dhash": "b0faf70f5c4bd533256558813370fb61f7888f7695b76dc6170c47563dccfa2d",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 30,
+  "kind": "patch",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "f503198c462fc97444277a83d57323efa6e20eb2cff9e7c7d1573b894ff8356f",
+  "dhash": "4305b280f948beaef827eb357ac7b38b95a98bf430949da8374aa4fe4c198658",
+  "colours": {
+   "face": [
+    "#4682B4FF"
+   ],
+   "edge": [
+    "#000000FF"
+   ]
+  },
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 31,
+  "kind": "line",
+  "axes": 1,
+  "label": "_child30",
+  "hash": "ca32f4304bdddc3ef22a328df5b1c112e4721937cfc96b44d1b1b1b90cd9fdad",
+  "dhash": "15c3e87bb2da9c82f5a9d522fa3793bde758284bb4db08fb1643332aa3317aa8",
+  "colours": {
+   "color": [
+    "#000000FF"
+   ],
+   "mfc": [
+    "#000000FF"
+   ],
+   "mec": [
+    "#000000FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 32,
+  "kind": "LineCollection",
+  "axes": 2,
+  "label": "_child0",
+  "hash": "c78f26eeb0efecdcc1a13ce55d6ce9d339e615e455c8f4efbfa1316d7269473f",
+  "dhash": "2062b477c651b3fc38ee2bc7849247c25be032f05a382689d12fc1abf3db4447",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#000000FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 33,
+  "kind": "QuadMesh",
+  "axes": 2,
+  "label": "_child1",
+  "hash": "ca4c343c6ab1cab43569290b334c482ba6996b31c0b72850282767d1c33f0fe6",
+  "dhash": "62e3baaa6f75c4b4e626bcb3f7d3883ea8e6809b23df9fbec6a2bc74f5a0c59a",
+  "colours": {
+   "face": [
+    "#C44E52FF"
+   ],
+   "edge": [],
+   "cmap": "RdBu_r"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 34,
+  "kind": "hist-input",
+  "axes": 1,
+  "label": "",
+  "hash": "7dfb5659fa0878a39438551c020f53a93263372aceb6a93b4e07bbfe5af8bab5",
+  "dhash": "7dfb5659fa0878a39438551c020f53a93263372aceb6a93b4e07bbfe5af8bab5",
+  "colours": {},
+  "gid": "restyle-hist",
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]
