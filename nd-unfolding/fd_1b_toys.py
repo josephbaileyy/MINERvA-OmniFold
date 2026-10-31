@@ -414,10 +414,9 @@ def run(a, refine_fn=None, unfold_fn=None) -> int:
             cache = ne.ModelCache(a.bank, [u for us in groups.values() for u in us], inputs, bkg)
         exp, x_true, info, treatment = experiment(a.mode, source_draw, seed, inputs, bkg, truth, ratio, a.bank,
                                                   a.detector_dir, cache)
-        xs, ev = s5n_pseudo.unfold_negweight(exp, ESTIMATOR_SEED, a.threads, ITERS, None, refine_fn, unfold_fn)
-        xs, x_true = np.asarray(xs, float), np.asarray(x_true, float)
-        if not (np.all(np.isfinite(xs)) and np.all(np.isfinite(x_true))):
-            raise Refusal(f"{target.name}: a non-finite unfolded value or truth")
+        x_true = np.asarray(x_true, float)  # the truth is checked before the unfold is spent on it
+        if not np.all(np.isfinite(x_true)):
+            raise Refusal(f"{target.name}: a non-finite truth")
         if a.mode in FIXED_TRUTH_MODES:
             if first_truth is None:
                 first_truth = x_true
@@ -425,6 +424,10 @@ def run(a, refine_fn=None, unfold_fn=None) -> int:
                 raise Refusal(f"{target.name}: its truth differs from this run's first toy's")
         elif not np.array_equal(x_true, half_truth(seed, inputs, truth, ratio)):
             raise Refusal(f"{target.name}: its truth is not its split's")
+        xs, ev = s5n_pseudo.unfold_negweight(exp, ESTIMATOR_SEED, a.threads, ITERS, None, refine_fn, unfold_fn)
+        xs = np.asarray(xs, float)
+        if not np.all(np.isfinite(xs)):
+            raise Refusal(f"{target.name}: a non-finite unfolded value")
         meta = {"schema": SCHEMA, "arm": a.arm, "mode": a.mode, "truth": truth, "truth_ratio_sha256": ratio_sha,
                 "pseudo_seed": seed, "universe": item if kind == "u" else None, "draw": d, "no_draws": a.no_draws,
                 "weight_treatment": treatment, "config": CONFIG, "capacity": None, "iters": ITERS,

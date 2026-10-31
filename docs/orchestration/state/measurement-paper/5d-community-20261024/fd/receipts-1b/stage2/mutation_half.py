@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""1B stage 2's mutation receipt for the half-MC truth fix (FD-1B-STAGE2-AMENDMENT-1.md): the toy mode holds one
+"""1B stage 2's mutation receipt for the half-MC truth fix (#602, after job 60624652's STOP): the toy mode holds one
 truth per run only where the mode fixes it, and checks each half-MC truth against its split; the scorer's half read-back
 returns a truth per toy, held to its split, and the lateral carry uses each toy's own. It runs stage 1's harness
 (``../stage1/mutation_fd_1b.py``) with this table in place of stage 1's. A mutant no test kills is UNKILLED, a finding.

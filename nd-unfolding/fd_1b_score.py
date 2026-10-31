@@ -196,7 +196,9 @@ def load_toys(toy_dir: Path, tag: str, arm: str, seeds: list[int], U: np.ndarray
               mode: str = "toy") -> tuple[np.ndarray, np.ndarray, list[dict]]:
     """The declared toys of a look: every one present, made by the declared estimator, with its draw equal to the
     draw re-derived from its seed. In toy mode all share one truth, and U x_T is returned once; in half mode each
-    toy's truth is its own seed's split's, and U x_T is returned per toy. Returns (U x_raw per toy, U x_T, draws)."""
+    toy's truth is its own seed's split's, and U x_T is returned per toy: its recorded split is checked here, and its
+    stored truth against that split by the toy mode at production (``fd_1b_toys.half_truth``; the scorer does not load
+    the MC). Returns (U x_raw per toy, U x_T, draws)."""
     partial = sorted(p.name for p in toy_dir.glob(f"{tag}_s*.npz.partial-*"))
     if partial:
         raise Invalid(f"interrupted products present: {partial[:3]}")
@@ -507,6 +509,8 @@ def cmd_repro(a) -> tuple[dict, int]:
 
 
 def cmd_pairs(a) -> tuple[dict, int]:
+    """The half-MC pilots against the full-MC pilots of the same seeds, each in sigma of its own truth, with no verdict.
+    Both output arrays have one row per seed: the half toys' truths are their own splits'."""
     s1, M_d, R, deltas, flux_p = _common_inputs(a)
     first = toys.ARMS["pilot"][1]
     seeds = list(range(first, first + a.n))

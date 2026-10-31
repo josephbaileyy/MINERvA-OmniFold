@@ -1,17 +1,17 @@
-# python3 mutation_half.py, 2026-10-31T21:58:27Z, local (macOS), rc=0
-sha256 e105b38a6a621215348963eee3223f66cc0478a4271a18d1f6cab9daa1bd5d9d  nd-unfolding/fd_1b_toys.py
-sha256 4cfa1487eeb0f68fc42e0e863fa0bb8fe0485ed81f9db59066e0af7ee9191e35  nd-unfolding/fd_1b_score.py
-sha256 e04fc754617b163f760ba747a90a3ce257cfc05b597df61601599a146e028cab  nd-unfolding/tests/test_fd_1b.py
-CONTROL  rc=0  64 passed in 11.01s
+# python3 mutation_half.py, 2026-10-31T22:11:06Z, local (macOS), rc=0
+sha256 869a65c3bcce1a3b56ecd197ecdf3b6cf2741e0611f91b582c3064f67967bc08  nd-unfolding/fd_1b_toys.py
+sha256 2b340dd0f635c0471b8749aa20937eb1fea5aee49aa7a2c340505e51a4ffaa92  nd-unfolding/fd_1b_score.py
+sha256 fbd24e169538290ec21637ebaa9a81ffc58ff6a5a56198b3c434f33b959c78cb  nd-unfolding/tests/test_fd_1b.py
+CONTROL  rc=0  65 passed in 10.82s
 H01  KILLED   fd_1b_toys.py    one truth per run in half mode too: the defect job 60624652 hit
-     2 failed, 62 passed in 11.03s
+     2 failed, 63 passed in 10.93s
      dies: ToyRuns::test_a_half_mc_step_of_two_seeds_runs_each_at_its_own_splits_truth
      dies: ToyRuns::test_a_half_toy_whose_truth_is_not_its_splits_is_refused
 H02  KILLED   fd_1b_toys.py    a half-MC truth is not checked against its split
-     1 failed, 63 passed in 11.13s
+     1 failed, 64 passed in 10.82s
      dies: ToyRuns::test_a_half_toy_whose_truth_is_not_its_splits_is_refused
 H03  KILLED   fd_1b_toys.py    toy mode no longer holds one truth per run
-     6 failed, 58 passed in 10.69s
+     6 failed, 59 passed in 12.10s
      dies: ReadBack::test_a_4a_refusal_leaves_the_coverage_verdict_standing
      dies: ReadBack::test_a_departing_draw_a_departing_truth_or_a_wrong_arm_is_invalid
      dies: ReadBack::test_the_score_readout_names_the_matrix_and_prints_no_cross_section
@@ -19,17 +19,19 @@ H03  KILLED   fd_1b_toys.py    toy mode no longer holds one truth per run
      dies: ToyRuns::test_a_control_toy_records_the_declared_estimator_draw_and_streams
      dies: ToyRuns::test_a_toy_step_whose_truths_differ_is_refused
 H04  KILLED   fd_1b_score.py   the scorer reads a half toy without checking its recorded split
-     1 failed, 63 passed in 10.77s
+     1 failed, 64 passed in 11.79s
      dies: ReadBack::test_half_toys_read_back_with_a_truth_each_held_to_their_split
 H05  KILLED   fd_1b_score.py   the scorer holds half toys to one truth
-     2 failed, 62 passed in 11.20s
+     3 failed, 62 passed in 16.35s
      dies: ReadBack::test_half_toys_read_back_with_a_truth_each_held_to_their_split
+     dies: ReadBack::test_pairs_reads_each_half_toy_against_its_own_truth
      dies: ToyRuns::test_a_half_mc_step_of_two_seeds_runs_each_at_its_own_splits_truth
 H06  KILLED   fd_1b_score.py   the scorer returns one truth for half toys
-     2 failed, 62 passed in 11.10s
+     3 failed, 62 passed in 12.61s
      dies: ReadBack::test_half_toys_read_back_with_a_truth_each_held_to_their_split
+     dies: ReadBack::test_pairs_reads_each_half_toy_against_its_own_truth
      dies: ToyRuns::test_a_half_mc_step_of_two_seeds_runs_each_at_its_own_splits_truth
 H07  KILLED   fd_1b_score.py   the lateral carry uses the first toy's truth
-     1 failed, 63 passed in 11.03s
+     1 failed, 64 passed in 11.40s
      dies: ReadBack::test_the_lateral_carry_uses_each_toys_own_truth
 SUMMARY  7 of 7 killed; unkilled: none

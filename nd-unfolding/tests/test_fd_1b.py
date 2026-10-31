@@ -838,12 +838,38 @@ class ReadBack(unittest.TestCase):
     def test_half_toys_read_back_with_a_truth_each_held_to_their_split(self):
         seeds = list(range(2_600_000, 2_600_008))
         T = np.array([self.x_t * (1 + 0.01 * k) for k in range(8)])
-        self._write_half(self.tmp / "ok", seeds, T, fs.s5c_pseudo.split_key_for)
+        self._write_half(self.tmp / "ok", seeds, T, s5c_pseudo.split_key_for)
         X, xt, _ = fs.load_toys(self.tmp / "ok", "t", "pilot", seeds, np.eye(16), self.p, "half")
         np.testing.assert_array_equal(xt, T)
-        self._write_half(self.tmp / "split", seeds, T, lambda s: fs.s5c_pseudo.split_key_for(s + 1))
+        self._write_half(self.tmp / "split", seeds, T, lambda s: s5c_pseudo.split_key_for(s + 1))
         with self.assertRaisesRegex(fs.Invalid, "split"):
             fs.load_toys(self.tmp / "split", "t", "pilot", seeds, np.eye(16), self.p, "half")
+
+    def test_pairs_reads_each_half_toy_against_its_own_truth(self):
+        seeds = list(range(2_600_000, 2_600_008))
+        T = np.array([self.x_t * (1 + 0.01 * k) for k in range(8)])
+        write_toys(self.tmp / "full", "pilot", seeds, self.X, self.x_t, self.p)
+        self._write_half(self.tmp / "half", seeds, T, s5c_pseudo.split_key_for)
+        s1 = {"f": self.f, "U": np.eye(16), "blocks": {"stat": self.M, "seed": np.zeros((16, 16))}, "C_e": self.M}
+        deltas = {b: np.zeros(16) for b in sa.LATERAL_BANDS}
+        out = self.tmp / "pairs.json"
+        argv = ["pairs", "--full", str(self.tmp / "full"), "--full-tag", "t", "--half", str(self.tmp / "half"),
+                "--half-tag", "t", "--n", "8", "--s1-npz", "x", "--flux-constraint", "x", "--lateral-dir", "x",
+                "--definition", "x", "--inputs-npz", "x", "--x01", "x", "--manifest", "x", "--out", str(out)]
+        with mock.patch.object(fs, "_common_inputs", return_value=(s1, self.M, self.M, deltas, self.p)), \
+                mock.patch("sys.stdout"):
+            self.assertEqual(fs.main(argv), 0)
+        r = json.loads(out.read_text())
+        rel = np.sqrt(np.diag(self.M)) / self.f
+        d = np.array(r["per_cell_paired_difference_full_minus_half_in_sigma"])
+        t = np.array(r["truth_difference_in_sigma"])
+        self.assertEqual((d.shape, t.shape, r["verdict"]), ((8, 16), (8, 16), None))
+        np.testing.assert_allclose(t, (self.x_t - T) / (rel * self.x_t), rtol=1e-12)
+        draws = [json.loads(json.dumps(toys.draw_for_seed(q, self.p, fs.declared_groups()))) for q in seeds]
+        Xs = fs.surrogate(self.X[:8], draws, deltas, self.f, self.x_t)  # zero laterals: only the normalization draw
+        zf = (Xs - self.x_t) / (rel * self.x_t)
+        zh = (Xs - T) / (rel * T)  # each half toy in sigma of its own truth
+        np.testing.assert_allclose(d, zf - zh, rtol=1e-12)
 
     def test_the_lateral_carry_uses_each_toys_own_truth(self):
         seeds = list(range(2_600_000, 2_600_004))
