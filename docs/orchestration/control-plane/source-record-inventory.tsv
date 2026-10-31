@@ -97,7 +97,7 @@ OI-50	active	WAITING-JOSEPH	declared	ac8e9b038d3461e9b464bd1400910d3b62b52abd172
 OI-51	active	WAITING-JOSEPH	migration-carried-forward	96bdec48d03cf5688e58a021e1ecd44cfb9b7af88fc00833043d88f52f65d809	WAITING-USER
 OI-52	active	WAITING-JOSEPH	declared	77797765d8bfa310ddeddb4d85f5a92c73d36bd1c9eed9ac8a95952cba18dfda	OWNER JOSEPH 2026-10-28 on the director's ruling — the premise is false (lanes read Iris; state/measurement-scoping/iris
 OI-53	retired	-	declared	d953e43ef780f3f0e1192d71aafc0e534b0ce929be37b98a1d695ab32260c51e	RETIRED 2026-10-29 as moot, by Joseph's decision to freeze CLAIMS.md (#516): it is ARCHIVAL now, no row is edited, so th
-OI-54	active	WAITING-JOSEPH	migration-carried-forward	9ebe8c18130428f4faf9db3581d05f4d0fa68f24077347e85e673177ba5c3685	WAITING-USER
+OI-54	active	WAITING-JOSEPH	migration-carried-forward	5a17028e77ee5114333e1f95d57658361177eeeb4f88136077efdcf049d555d7	TRACED 2026-10-30 by the close-items session, PROPOSED FOR RETIREMENT — neither session 98d9c5 nor its owner personal-or
 OI-55	retired	-	migration-carried-forward	3b5ad0a71fd3df25863bbe657fa374ebb1a513f54628ef7d53ab17ded4c9d407	CLOSED 2026-08-13 — recorded here because the answer existed only in a message for four hours
 OI-57	deferred	-	declared	929c2f0945ed36d1fa1b7ec69d17594260005f6587c89b941ab51e215b150e58	DEFERRED 2026-10-29 by the close-items session, until the next Gate-5 launch. See [RECORD-20261029-close-items-defer-gat
 OI-58	deferred	-	declared	bcb8212a9e673d33741fddcc653ff37476c477eaa3daec1b93b65002fedbf4c4	DEFERRED 2026-10-29 by the close-items session, until the next Gate-5 re-issue. See [RECORD-20261029-close-items-defer-g
