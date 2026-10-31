@@ -1,0 +1,22 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific iteration counts tested, "10, 15, or 20 iterations", replacing them with "none of the larger counts in the comparison". These numbers appear to have been moved to \nsec{sec:gbdt-model-dependence}.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER replaces "the precision target" in the subsection heading with "model dependence", dropping the heading's statement that the section covers the precision target. That topic appears to have been moved to a neighbouring section.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER drops the quantitative definition of the precision target ("\SI{10}{\percent} median half-width for the total 68\% interval"), the statement that none of the tested definitions meets it, and the specific breakdown across coarse joint, supported, and 27-cell partitions (including the "\SI{1.4}{\percent} normalization"). These facts appear to have been moved to \nsec{sec:gbdt-model-dependence}.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER drops "not" to state that error bars "do show" covariance correlations, directly contradicting BEFORE. Additionally, Table~\ref{tab:gen16} removes \fvval{label-gibuu} from the 16-cell predictions and restricts it to an "8-cell subset".
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds "of \nsec{sec:gbdt-model-dependence}", attributing the precision target to that section, which BEFORE does not state or support when compared in isolation.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER drops "no" from "so no held-out or cross-fitted split is used", asserting the exact opposite of what BEFORE states.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER drops "not" from "has not been identified", stating that the source of the shape difference has been identified and directly contradicting BEFORE.
+
+END
