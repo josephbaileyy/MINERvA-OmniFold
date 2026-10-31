@@ -240,16 +240,18 @@ Unfolded results can be compared with any prediction at truth level without simu
 \end{figure*}
 
 \begin{table}[tb]
-\caption{$\chi^2$ and its number of degrees of freedom of each prediction against the sixteen-cell result, under $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$, with $V_g$ the prediction's finite-sample (diagonal) covariance; shape-only $\chi^2$ frees the normalization.}
+\caption{$\chi^2$ and ndf for each prediction in the indicated comparison region, using $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance. Shape-only $\chi^2$ frees the normalization.}
 \label{tab:gen16}
 \centering\scriptsize
-  \begin{tabular}{@{}lcc@{}} \toprule
-Prediction & $\chi^2$ and ndf & shape-only \\ \midrule
-\fvval{label-gcv} & \fvval{g-gcv-total-chi2int}/\fvval{g-gcv-total-ndf} & \fvval{g-gcv-shape_only-chi2int}/\fvval{g-gcv-shape_only-ndf} \\
-\fvval{label-gmec} & \fvval{g-gmec-total-chi2int}/\fvval{g-gmec-total-ndf} & \fvval{g-gmec-shape_only-chi2int}/\fvval{g-gmec-shape_only-ndf} \\
-\fvval{label-nuwro} & \fvval{g-nuwro-total-chi2int}/\fvval{g-nuwro-total-ndf} & \fvval{g-nuwro-shape_only-chi2int}/\fvval{g-nuwro-shape_only-ndf} \\
-\fvval{label-gibuu} & \fvval{g-gibuu-total-chi2int}/\fvval{g-gibuu-total-ndf} & \fvval{g-gibuu-shape_only-chi2int}/\fvval{g-gibuu-shape_only-ndf} \\
-\fvval{label-tune} & \fvval{g-tune-total-chi2int}/\fvval{g-tune-total-ndf} & \fvval{g-tune-shape_only-chi2int}/\fvval{g-tune-shape_only-ndf} \\ \bottomrule
+  \begin{tabular}{@{}lcccc@{}} \toprule
+Prediction & $\chi^2$ & ndf & shape-only $\chi^2$ & ndf \\ \midrule
+\multicolumn{5}{@{}l}{All 16 cells} \\
+\fvval{label-gcv} & \fvval{g-gcv-total-chi2int} & \fvval{g-gcv-total-ndf} & \fvval{g-gcv-shape_only-chi2int} & \fvval{g-gcv-shape_only-ndf} \\
+\fvval{label-gmec} & \fvval{g-gmec-total-chi2int} & \fvval{g-gmec-total-ndf} & \fvval{g-gmec-shape_only-chi2int} & \fvval{g-gmec-shape_only-ndf} \\
+\fvval{label-nuwro} & \fvval{g-nuwro-total-chi2int} & \fvval{g-nuwro-total-ndf} & \fvval{g-nuwro-shape_only-chi2int} & \fvval{g-nuwro-shape_only-ndf} \\
+\fvval{label-tune} & \fvval{g-tune-total-chi2int} & \fvval{g-tune-total-ndf} & \fvval{g-tune-shape_only-chi2int} & \fvval{g-tune-shape_only-ndf} \\ \midrule
+\multicolumn{5}{@{}l}{8-cell subset: $\pPar<\fvval{h2-mid-pz}$~GeV/$c$} \\
+\fvval{label-gibuu} & \fvval{g-gibuu-total-chi2int} & \fvval{g-gibuu-total-ndf} & \fvval{g-gibuu-shape_only-chi2int} & \fvval{g-gibuu-shape_only-ndf} \\ \bottomrule
 \end{tabular}
 \end{table}
 

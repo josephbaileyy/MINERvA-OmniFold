@@ -1,0 +1,21 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the specific iteration counts "10, 15, or 20 iterations" stated in BEFORE, replacing them with the broader and vaguer phrasing "none of the larger counts", and omits that the referenced section gives "its values".
+
+Q2: VERDICT: DIFFERS
+DETAIL: In the subsection heading, AFTER drops "the precision target" and replaces it with "model dependence" (`\subsection{Reporting definitions and model dependence}`). This omission likely occurs because the precision target discussion was moved to a neighbouring passage.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER drops the quantitative definition of the precision target ("\SI{10}{\percent} median half-width for the total 68\% interval"), the specific binning evaluations ("\jtNcells{} coarse joint cells", "39 supported $(\Eavail,W)$ cells", and "27 cells"), and the "\SI{1.4}{\percent} normalization" shift, replacing them with a pointer that "its precision targets are described in \nsec{sec:gbdt-model-dependence}" where the content was moved.
+
+Q4: VERDICT: DIFFERS
+DETAIL: In Table~\ref{tab:gen16}, AFTER changes the caption from evaluating predictions "against the sixteen-cell result" to "in the indicated comparison region", and moves GiBUU (`\fvval{label-gibuu}`) to an unsupported "8-cell subset: $\pPar<\fvval{h2-mid-pz}$~GeV/$c$" rather than reporting its 16-cell result.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds "of \nsec{sec:gbdt-model-dependence}" to qualify "the precision target", which BEFORE does not support since the target was originally introduced in Sec.~\ref{sec:uncertainty-status}.
+
+Q6: VERDICT: SAME
+DETAIL: AFTER is verbatim identical to BEFORE, preserving all statements, qualifiers, and citations.
+
+Q7: VERDICT: SAME
+DETAIL: AFTER is verbatim identical to BEFORE.
+END

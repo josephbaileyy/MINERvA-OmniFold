@@ -1,0 +1,17 @@
+OK  Option B in NEW and BASE': and ndf for each prediction in the indicated comparison region
+OK  Option B in NEW and BASE': Shape-only
+OK  Option B in NEW and BASE': frees the normalization
+OK  Option B in NEW and BASE': All 16 cells
+OK  Option B in NEW and BASE': 8-cell subset
+OK  NEW prints: Interval coverage has not been validated.
+OK  NEW prints: keeps five iterations because none of the larger counts in the comparison of
+OK  NEW prints: that section gives the counts compared and the comparison
+OK  NEW prints: With the joint-test estimator, over the reporting definitions of a five-observable measure
+OK  NEW prints: The study and its precision targets are described in
+OK  NEW prints: Reporting definitions and model dependence
+OK  NEW prints: alone exceeds the precision target of
+OK  cut from NEW, still in BASE': Our precision target is a
+OK  cut from NEW, still in BASE': none of the reporting definitions of a five-observable measurement tested in the study mee
+OK  cut from NEW, still in BASE': because 10, 15, or 20 iterations did not reduce
+KEY PROOF :: PASS
+NEW = rater copy of 1405c8a32422b68e94c55471353a4242dfbd216c ; BASE' = rater copy of e10c4c082d6918fc8d2e21c7342206b606641f76

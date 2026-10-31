@@ -213,3 +213,91 @@ SAME were kept.
 
 **agy2's control** caught 3 of 3. A chunk with fewer than three negations is now topped up with identity fillers
 (`make_agy_pairs.py`), and all 3 fillers read SAME in the real file.
+
+## 6. Pass 3 (2026-10-31): χ² Option B and the three deferred paper gaps
+
+Recorded before any text of this pass is written and before any of its runs. The director started the pass on
+2026-10-31, after #588 and #589. **The base** is the paper as merged at origin/main `4121f185d60d`: pass 2's adopted
+text, whose sol2 P1 runs are `step2p/pass2/runs/P1.paper.sol2.r{1,2,3}.txt` (3, 3, 3).
+
+**Under the stopping rule** (STEP2-PLAN.md §5), this is the paper's third round. Passes 1 and 2 did not move P1 from 3.0
+against a target of 3.667. So if this pass does not move it either, the paper's register rounds stop.
+
+### 6.1 The two kinds of change
+
+**(i) Option B for paper Table IV (`tab:gen16`): decided, not judged.** Under
+`DECISION-20261031-joseph-chi2-table-option-b.md` (#581) item 1, it is made whatever the raters say.
+- **Rows:**
+  - "All 16 cells": GENIE 2.12.10 CV, GENIE 2.12.10 + Valencia MEC, NuWro 21.09 and MINERvA Tune v1;
+  - "8-cell subset: $\pPar<\fvval{h2-mid-pz}$~GeV/$c$": GiBUU 2019. The subset's bound is the macro the paper already
+    prints at `paper_body.tex:233` and `:238`.
+- **Columns:** χ², ndf, shape-only χ², ndf. No χ²/ndf ratio is printed. Every number is its `\fvval{}` macro, unchanged
+  (the `-chi2int` and `-ndf` macros the table uses now).
+- **The caption** is replaced by Joseph's approved text, word for word, with its math typeset as the table's current
+  caption typesets it:
+  `$\chi^2$ and ndf for each prediction in the indicated comparison region, using $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance. Shape-only $\chi^2$ frees the normalization.`
+  `step2p/check_paper.py` pins it as a pair (`PAIRS`/`PAIR_PINS`, id `chi2-option-b`).
+- **The number probe:** the table's source holds no digit outside a `\fvval{}` argument, apart from the "16" and "8" of
+  the block labels. The rendered table's numbers equal the values file's for those macros.
+
+**(ii) The three deferred gaps: judged, each only in the independent review's narrowed form**
+(`openai-review/REVIEW.md`, ALLOW-NARROW):
+- **paper-g-03 (FROZEN, line 19):** "Interval coverage has not been validated." It is integrated into the uncertainty
+  discussion.
+  - The sentence stays verbatim, and the FROZEN check (it prints once) still holds.
+  - The explanation of what the tests establish is kept.
+- **paper-g-02 (B3, line 54), the five-iterations sentence (F109 KEEP):**
+  - The new sentence states that five iterations were kept because larger tested counts did not reduce the largest
+    residual proxy over the development truth changes. That keeps the development-sample scope and the residual-proxy
+    definition.
+  - The tested counts (10, 15, 20) may leave the paper. Their home is the cited note section, with an `N:` probe.
+  - F109 prints in substance, with a `P::` probe of the new wording.
+- **paper-g-06 (B1, line 70), the precision-target discussion:** the deletion is limited to that discussion.
+  - The envelope's numerical size and diagnostic meaning are kept, with the note pointer.
+  - The acceptance-failure qualification where Fig. 3's covariance is used stays. That sentence is
+    G1b:paper-g-13, which stays byte-exact under A7.
+  - The note's home for the failed target is Sec. 9.4 ("none of its reporting definitions (RD1-RD3) met a precision
+    target"), with an `N:` probe.
+<!-- absence-ok: quotes printed paper and note sentences, the FROZEN one among them; not a claim that something has not been run -->
+
+**Held sentences.** §5's rule stands:
+- the five-iterations and envelope-target sentences are held for their facts, with (a)–(c);
+- the FROZEN pair, the A7 three, the abstracts, the title and Data availability stay byte-exact;
+- the KEEP list is enforced by `check_paper.py`.
+
+If a changed line moves the registry-pinned lines (ALIASES 38 and ATTRIBUTION 17, `paper_body.tex:50`; ALIASES 47),
+they are re-pinned with a record, as §3 item 5.
+
+### 6.2 One judgement, and the score
+
+- **BASE′** is the base with change (i) only.
+- **NEW** is BASE′ with the three gaps.
+- **Adoption:** §4's rule, unchanged, judges NEW against BASE′:
+  - NEW wins at least 3 of 4 blind P2 runs (sol2 and gemini, both orders);
+  - sol2 does not flip;
+  - NEW's sol2 P1 ×3 mean is at least 3.0, with its lowest run at least 3.
+  If it fails, the three gaps keep their base text, and change (i) stays.
+- **Measured either way:** BASE′ also gets sol2 P1 ×3. Change (i) is adopted whatever the outcome, so the round's
+  score is the adopted paper's P1 mean:
+  - NEW's if NEW is adopted;
+  - BASE′'s if not.
+  The paper moves if that mean is above 3.0.
+- **The rater:**
+  - sol2 is gpt-6.1-sol on codex-school (`SOL_RX=sol`, recorded per run), called one at a time with nothing else on
+    the account;
+  - gemini runs through agy;
+  - the prompts and blinding are as in pass 2.
+- **Before the runs:** each rater copy is cut from a build of the committed tree immediately before its runs, with a
+  `key()` check that every changed sentence prints in it.
+- **Outputs:** `step2p/pass3/`.
+
+### 6.3 Checks before the runs
+
+The usual list:
+- `check_paper.py`: its probes, the KEEP list, GATE, FROZEN, the new-number check and the pairs;
+- `check_held.py --fact-held`;
+- the two-direction review;
+- agy's agreement read with a planted control;
+- the build and every gate, and the record-checks.yml steps.
+
+For change (i), also its number probe. A failed check is reported, and the text is not judged until it passes.
