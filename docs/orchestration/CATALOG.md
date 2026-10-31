@@ -1654,6 +1654,14 @@ to drift. The five below are the subset that `docs/OPEN_ITEMS.md` rows actually 
   carry no ensemble-size key on any artifact. **Records/provenance only — it adopts nothing and
   changes no uncertainty model.** Re-runnable covering search beside it at
   [`state/declaration-v-5d-covering-search-20260822.sh`](state/declaration-v-5d-covering-search-20260822.sh).
+- [`PROVENANCE-20261031-declaration-v-fd-16-cell-blocks.md`](PROVENANCE-20261031-declaration-v-fd-16-cell-blocks.md)
+  — added 2026-10-31 by `OI-137`'s designated statistics owner (`DECISION-20261031-joseph-oi51-oi137-ud002.md`
+  item 2). **Declaration (v) for the 16-cell reported covariance C_total + C_resp**, block by block, with C_PL,5D
+  (revised product only) and V_g: estimand, estimator, normalization, N, inverted dimension and finite-ensemble
+  treatment, each cited at `4ede47e3`, plus every inversion site (all full-rank, p = n = 16 or 8). It cites the
+  August record above for the 10,694-bin family and does not redo it. **§6 is the recommendation to Joseph:
+  disclose, do not correct;** the data-dependent-truncation leg of Ruling 11 does not carry over to the 16-cell χ².
+  No factor computed, no covariance or note change.
 
 - [`BRIEF-20260901-greif-fps-thesis-implications-for-pet.md`](BRIEF-20260901-greif-fps-thesis-implications-for-pet.md)
   and [`BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md`](BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md)
