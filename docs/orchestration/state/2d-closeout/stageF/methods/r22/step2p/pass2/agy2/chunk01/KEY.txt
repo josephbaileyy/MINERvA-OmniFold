@@ -1,0 +1,2 @@
+planted (negation removed in AFTER): Q4 Q5 Q6
+fillers (identity pairs; SAME in pairs.txt): Q4 Q5 Q6

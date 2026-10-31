@@ -1,0 +1,19 @@
+Q1: VERDICT: SAME
+DETAIL: AFTER converts the coordinate clause "and it is cited below by section" into an appositive phrase ", cited below by section,", preserving all factual statements and qualifications.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER repositions the citation tag immediately following "LightGBM" rather than "seed~42" and adds a comma, leaving all facts, numbers, and qualifiers unchanged.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER restructures the two sentences into a single sentence by placing "Apart from the low stability of four of the sixteen cells (below)" at the beginning, preserving the scope and location of all stated limitations.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER drops the word "no" in "so held-out or cross-fitted split is used", asserting that a split is used instead of stating that "no held-out or cross-fitted split is used".
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER changes "does not cover" to "does cover", directly contradicting the limitation stated in BEFORE regarding neutron or muon deposits and scale effects.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER drops "not" to state that interval coverage "has been validated", contradicting BEFORE which states it "has not been validated".
+
+END

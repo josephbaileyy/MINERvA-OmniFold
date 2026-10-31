@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B’s abstract uses complete, clearly separated statements for the generator comparisons, avoiding A’s compressed and awkward “and GiBUU, on 8 cells, 58.”
+2. B integrates “cited below by section” into the introduction more smoothly, eliminating A’s loosely appended coordination.
+3. The preference is slight because most prose is identical, with both documents retaining dense sentences and repetitive qualifications despite an appropriately formal PRD register.

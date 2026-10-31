@@ -1,0 +1,19 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER drops the limiting words "rather than of" and instead states ", to multidimensional OmniFold in general", asserting or implying that the findings generalize broadly, which directly contradicts BEFORE.
+
+Q2: VERDICT: SAME
+DETAIL: AFTER converts the coordinate clause "and it is cited below by section" into a parenthetical modifier without changing any facts, qualifiers, or citations.
+
+Q3: VERDICT: SAME
+DETAIL: AFTER merely repositions "and seed~42" to the end of the list of parameters, preserving all original specifications, numbers, and references.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER changes "did not reduce" to "did reduce", reversing the causal claim, and introduces an unsupported definition of the metric ("; the proxy is the median ratio of the absolute fractional residual to the fractional truth departure, for departures above \SI{1}{\percent}").
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER introduces specific information not found in BEFORE by asserting that every definition "has a median half-width above this target", whereas BEFORE only states that none "meets this target" without specifying the metric as a median half-width.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER asserts that "its size is validated", directly contradicting BEFORE's statement that "its size is not validated".
+
+END

@@ -35,7 +35,7 @@ d-N-B0	capacity	refinement 100 trees, 8 leaves	refinement (classifier )?100 tree
 e-R-joint-test	paper-label	configuration (e)	[Cc]onfiguration[~ ]\(e\)	yes	default	docs/analysis-note/sec_method.tex	102	configuration~(e))	930807f525581634
 e-R-joint-test	paper-table	(e) joint-test estimator	\(e\) joint-test estimator	yes	default	docs/analysis-note/sec_method.tex	138	(e) joint-test estimator	f31ef4e68d2339fe
 e-R-joint-test	note-table	(e) joint-test estimator	\(e\) joint-test estimator	yes	default	docs/analysis-note/sec_method.tex	138	(e) joint-test estimator	f31ef4e68d2339fe
-e-R-joint-test	description	joint-test estimator	joint-test estimator	yes	default	docs/analysis-note/paper_body.tex	50	the joint-test estimator, a deterministic LightGBM	52bd6f35a5367d1e
+e-R-joint-test	description	joint-test estimator	joint-test estimator	yes	default	docs/analysis-note/paper_body.tex	50	the joint-test estimator, a deterministic LightGBM	07a348c82f88db98
 e-R-joint-test	contract-name	R (s5e candidate)	candidate [`\"]?R\b|\"candidate\": \"R\"	yes	default	docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json	26	"name": "R"	ddfad136ce1eb010
 e-R-joint-test	contract-name	R (s5p baseline_estimator)	baseline_estimator R|baseline estimator R	yes	default	docs/orchestration/state/s5p/contract.json	25	"name": "R"	ddfad136ce1eb010
 e-R-joint-test	contract-name	s5p configuration 1	configuration[ _]1\b	yes	opt-in	docs/orchestration/state/s5p/contract-amendment-2-stage2-studies.json	7	"configuration_1": {"name": "R"	3082bac1a87a5c9d
