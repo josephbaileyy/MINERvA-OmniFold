@@ -493,6 +493,7 @@ docs/orchestration/RECORD-20261030-close-items-oi74-tracked-changes.md	tracked	A
 docs/orchestration/RECORD-20261030-close-items-pr-p6-row-rules-retired.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261030-close-items-quarantine-receipt-anchored-patterns.md	tracked	ARCHIVAL	document		20261030	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261031-close-items-oi120-oi13-oi54-retired.md	tracked	ARCHIVAL	document		20261031	terminal		exact-path-only	yes
+docs/orchestration/RECORD-20261031-close-items-oi143b-traced.md	tracked	ARCHIVAL	document		20261031	terminal		exact-path-only	yes
 docs/orchestration/RECORD-20261031-close-items-oi62-traced.md	tracked	ARCHIVAL	document		20261031	terminal		exact-path-only	yes
 docs/orchestration/RECORDS-RULES.md	tracked	LIVE	document			open		route-only	no
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	tracked	LIVE	document	20260924-preparation-for-scalar5d-campaign	20260924	open		route-only	no
