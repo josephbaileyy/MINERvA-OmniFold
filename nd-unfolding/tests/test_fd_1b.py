@@ -43,6 +43,7 @@ import s5p_universe  # noqa: E402
 REPO = ND.parent
 DECL = REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-DECLARATION.md"
 DECL_SHA256_PREFIX = "07d0e0b6b722c7de"   # the file the director bound (FD-1B-BINDING.md)
+DECL2 = DECL.with_name("FD-1B-STAGE2-DECLARATION.md")
 EDGES = [np.array([0.0, 1.0, 2.0]), np.array([0.0, 1.0, 2.0]), np.array([0.0, 0.5, 1.0]),
          np.array([0.0, 1.0, 2.0, 3.0]), np.array([0.0, 1.5, 3.0])]
 SHAPE = tuple(len(e) - 1 for e in EDGES)
@@ -969,7 +970,7 @@ class Tasks(unittest.TestCase):
 
     def test_the_jobs_are_the_declarations_table(self):
         text = flat(DECL.read_text())
-        want = {"2a": (202, 3, 9, "3.0 h", "9.00"), "2b": (100, 2, 7, "2.5 h", "5.00"), "2c": (200, 3, 9, "3.0 h", "9.00"),
+        want = {"2b": (100, 2, 7, "2.5 h", "5.00"), "2c": (200, 3, 9, "3.0 h", "9.00"),
                 "3i": (200, 3, 9, "3.0 h", "9.00"), "3f": (400, 5, 10, "3.5 h", "17.50")}
         for job, (n, nodes, most, limit, cap) in want.items():
             spec = ft.JOBS[job]
@@ -982,6 +983,42 @@ class Tasks(unittest.TestCase):
         self.assertEqual(sum(ft.cap(j) for j in ft.JOBS), 49.5)
         self.assertEqual({s: sum(ft.cap(j) for j in ft.JOBS if j.startswith(s)) for s in "23"}, {"2": 23.0, "3": 26.5})
 
+    def test_2a_0_and_2a_are_the_first_declared_2a_split_as_the_stage_2_table(self):
+        self.assertIn("| 2a | 202 | 3 | 9 |", flat(DECL.read_text()))
+        first = [("pilot", "toy", 2_600_000 + i) for i in range(16)] + \
+                [("pilot", "half", 2_600_000 + i) for i in range(8)] + \
+                [("repro-g18", "half", 806_000), ("repro-ar23", "half", 807_000)] + \
+                [("derivation", "derivation", u) for u in ["CV"] + toys.s1_universes()]
+        a0, a = ft.expand("2a-0"), ft.expand("2a")
+        self.assertEqual(sorted(a0 + a, key=repr), sorted(first, key=repr))
+        self.assertEqual(len(a0) + len(a), len(set(a0 + a)))
+        self.assertEqual(sorted(a0, key=repr), sorted(
+            [("derivation", "derivation", u) for u in ("CV", "Flux_0", "MaRES_1", "GEANT_Pion_0")]
+            + [("pilot", "toy", 2_600_000), ("pilot", "toy", 2_600_001),
+               ("repro-g18", "half", 806_000), ("repro-ar23", "half", 807_000)], key=repr))
+        self.assertAlmostEqual(ft.cap("2a-0") + ft.cap("2a"), 9.0)
+        text = flat(DECL2.read_text())
+        for job, (n, nodes, most, wall, limit, cap) in {"2a-0": (8, 1, 1, "832 s", "1:00", "1.00"),
+                                                         "2a": (194, 3, 9, "2.08 h", "2:40", "8.00")}.items():
+            spec = ft.JOBS[job]
+            self.assertEqual((len(ft.expand(job)), spec["nodes"], spec["most_per_lane"]), (n, nodes, most))
+            self.assertEqual(max(len(c) for c in ft.chunks(ft.expand(job), nodes * 8)), most)
+            h, m, _ = spec["limit"].split(":")
+            self.assertEqual(f"{int(h)}:{m}", limit)
+            self.assertEqual(f"{ft.cap(job):.2f}", cap)
+            secs = most * 832
+            self.assertEqual(f"{secs} s" if secs < 3600 else f"{secs / 3600:.2f} h", wall)
+            self.assertIn(f"| {nodes} | {most} | {wall} | {limit} | {cap} |", text)
+            self.assertGreaterEqual(ft.hours(spec["limit"]) * 3600, 1.25 * secs)
+        self.assertIn(f"| {ft.cap('2b') + ft.cap('2c') + 9.0:.2f} |", text)
+
+    def test_a_derivation_selection_off_s1s_universes_is_refused(self):
+        with mock.patch.object(ft, "DERIVATION_FIRST", ("CV", "Flux_100")), self.assertRaisesRegex(SystemExit, "S1"):
+            ft.expand("2a-0")
+        with mock.patch.dict(ft.JOBS, {"2a-0": dict(ft.JOBS["2a-0"], items=[("derivation", "derivation", "all", None)])}), \
+                self.assertRaisesRegex(SystemExit, "selection"):
+            ft.expand("2a-0")
+
     def test_every_declared_toy_and_universe_runs_exactly_once(self):
         got: dict = {}
         for job in ft.JOBS:
@@ -992,7 +1029,8 @@ class Tasks(unittest.TestCase):
             self.assertEqual(got[(arm, "toy")], list(range(lo, hi + 1)))
         self.assertEqual(got[("pilot", "toy")], list(range(2_600_000, 2_600_016)))
         self.assertEqual(got[("pilot", "half")], list(range(2_600_000, 2_600_008)))
-        self.assertEqual(got[("derivation", "derivation")], ["CV"] + toys.s1_universes())
+        derivation = got[("derivation", "derivation")]  # 2a-0's four first, then 2a's rest
+        self.assertEqual((sorted(derivation), len(derivation)), (sorted(["CV"] + toys.s1_universes()), 176))
         self.assertEqual((got[("repro-g18", "half")], got[("repro-ar23", "half")]), ([806_000], [807_000]))
 
     def test_every_step_parses_as_a_declared_toy_run(self):

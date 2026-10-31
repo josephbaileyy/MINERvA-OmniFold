@@ -8,7 +8,7 @@ window, verdict and stop rule is the protocol's §4–§5. This declaration fixe
 
 **ASKS TO AUTHORIZE:** stage 2, within its bound ceiling of **23.0 CPU node-h**:
 - the login-node steps (0 node-h);
-- jobs 2a-0 and 2a (or 2a as first declared: ruling 1);
+- jobs 2a-0 and 2a (ruling 1);
 - gate D and the reproduction check;
 - jobs 2b and 2c, each only on its gate;
 - the control's interim and final readouts and 4A at the control;
@@ -92,11 +92,20 @@ lanes of 32 CPUs and 56 GB.
   Search: git grep -i -E "expectation (construction|mode|pseudo)" docs/orchestration/state, for seconds or walls @ d3087e82
 - 2a-0 also runs the reproduction check before 194 unfolds are spent.
 
-**Ruling 1 (for the director):** 2a-0 then 2a, as above (recommended). Or 2a as first declared (3 nodes, 3:00, cap
-9.00), accepting that a derivation wall above about 1,200 s puts its fullest lane past the limit. Either way stage 2
-stays at 23.00. Splitting a declared job is the director's to rule on. If 2a-0 is ruled, `fd_1b_tasks.JOBS` gains it
-in the L3 records PR, with its tests held against this table. That is a code change, so its diff is reviewed before
-the tables are cut.
+**Ruling 1 (the director, by cross-session message on 2026-10-31, ahead of the binding):** "the split is accepted.
+2a-0 runs first (1 node, 1:00, cap 1.00, 8 unfolds), then 2a (3 nodes, 2:40, cap 8.00, 194 unfolds)." The
+alternative, 2a as first declared (3 nodes, 3:00, cap 9.00), is not taken. The director also ruled that the code
+change go in this declaration's PR, "so the binding covers the code that submits":
+- `fd_1b_tasks.JOBS` gains 2a-0, and 2a takes the remainder at 2:40. The derivation's four first universes are
+  `DERIVATION_FIRST`, and a selection naming a universe S1 did not unfold is refused.
+- `DECLARED_CAPS` becomes 1.00 and 8.00 for the two jobs. The stage-2 ceiling check is unchanged.
+- `tests/test_fd_1b.py` holds the two jobs against this table:
+  - 2a-0 and 2a together are the first declaration's 202 unfolds, each exactly once;
+  - 2a-0's eight are the ones named above;
+  - each job's nodes, fullest lane, projected wall, limit and cap match this table's row;
+  - each limit is at least 1.25 × its projected wall.
+
+  The suite passes (56 tests).
 
 ## 5. Gates and stop rules, in order
 
@@ -106,17 +115,18 @@ the tables are cut.
      `peak_rss_kib`.
      - If w × 9 exceeds 0.8 × 2:40 (that is, w > 853 s), job 2a is re-priced before it is submitted.
      - If m exceeds 75 % of 56 GB, the job is likewise re-priced before it is submitted.
-     - A re-price is a declared amendment for the director.
+     - A re-price is a declared amendment, which goes to the director before 2a is submitted (ruling 1).
 2. **After 2a: gate D** (login node). Run `fd_1b_score.py gate-d` on the 176 derivation products.
    - PASS iff every ρ_c is in [0.9, 1.1]. A FAIL is a STOP before any coverage toy, reported as a measurement.
    - The half-MC pairs (`fd_1b_score.py pairs`, n 8) are printed beside it, with no verdict.
    - The 16 pilot toys' walls apply the protocol's §6 re-price rule to 2b and 2c: median > 1,040 s, or a lane's peak
      RSS above 42 GB.
-3. **2b is submitted only** when gate D, the reproduction and the walls all pass, and after a message to the director
-   giving gate D's readout.
+3. **2b is submitted only** when gate D, the reproduction and the walls all pass. It also needs a message to the
+   director giving gate D's readout, and the director's "go" (ruling 3).
 4. **After 2b: the interim look.** Run `fd_1b_score.py score --arm control --look interim` on toys 1–100, at 99.5 %.
    Any FAIL is the control's verdict and a STOP.
-5. **2c is submitted only** on the interim's CONTINUE.
+5. **2c is submitted only** on the interim's CONTINUE, after a message to the director and the director's "go"
+   (ruling 3).
 6. **After 2c: the final look** on all 300 toys, at 95 %, with ×0.7 and ×1.3, and 4A at the control.
    - The control's verdict is the protocol's §5.1.
    - Anything but PASS is a STOP: no stage-3 declaration is made, and the control is reported unrepaired.
@@ -148,12 +158,13 @@ A control FAIL says the machinery is ungraded and nothing about the reported int
 - **Enforced caps:** 1.00 + 8.00 + 5.00 + 9.00 = **23.00**, the bound stage-2 ceiling. Nothing is padded.
 - **Balance:** `iris` on login37 at 2026-10-31T10:50:53Z showed m3246 at 17,919.8 of 20,000 charged, so 2,080.2 left.
 
-## 8. For the director to rule
+## 8. Rulings (the director, by cross-session message on 2026-10-31, ahead of the binding)
 
-1. 2a-0 then 2a (recommended), or 2a as first declared (§4).
-2. The L3 records PR for the tables and `pins.json`'s digest, merged without a new binding if it changes only what §3
-   names (plus `fd_1b_tasks.JOBS`, if ruling 1 takes 2a-0).
-3. That 2b and 2c follow their gates (§5) without a further binding, each after a message to the director.
+1. **2a-0, then 2a** (§4), with the re-price trigger of §5 item 1. The `JOBS` change is in this PR.
+2. **The L3 records PR** carries the generated tables, `pins.json`'s digest and the L2 log, with no code. It merges on
+   the director's review without a new binding.
+3. **2b and 2c follow their gates (§5) under this stage-2 binding.** Each needs a message to the director and the
+   director's "go".
 
 A separate read-only review of this declaration runs on its PR. Its findings and their dispositions are recorded
 there before the binding.

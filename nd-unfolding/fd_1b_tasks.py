@@ -4,7 +4,8 @@ sections 6 and 7, bound by FD-1B-BINDING.md). Each job is one or more single-nod
 (``state/gpu-timing-20261023/tools/sbatch_timing_packed.sh``: ``--exclusive --no-requeue``, 8 lanes of 32 CPUs and
 56 GB), each lane running ``fd_f1_lane.py`` over its steps, each step one ``fd_1b_toys.py run`` invocation.
 
-The jobs' contents, nodes and limits are the declaration's section 7 table; the packer splits each job's items, in the
+The jobs' contents, nodes and limits are the declaration's section 7 table, with its job 2a split into 2a-0 and 2a by
+FD-1B-STAGE2-DECLARATION.md section 4 (the director's ruling 1); the packer splits each job's items, in the
 declared order, into contiguous chunks as even as possible over its lanes, and refuses a packing whose fullest lane
 differs from the declared "most per lane". A submit line is refused unless it is account m3246, QOS regular,
 constraint cpu, a limit under 12 h equal to the declared one, and the committed packer.
@@ -40,12 +41,16 @@ ACCOUNT, QOS, CONSTRAINT_FLAG = "m3246", "regular", "cpu"
 LANES_PER_NODE, CPUS, MEM = 8, 32, "56G"
 MAX_LIMIT_H = 12.0
 
-# (arm, mode, first, last) item runs, in the declared order; the derivation's 176 are one run of universes
-DERIVATION = ("derivation", "derivation", None, None)
+# (arm, mode, first, last) item runs, in the declared order. The derivation's 176 universes are split by the
+# stage-2 declaration: the four of DERIVATION_FIRST run in 2a-0, so their walls are measured first, and the rest in 2a.
+DERIVATION_FIRST = ("CV", "Flux_0", "MaRES_1", "GEANT_Pion_0")
 JOBS = {
-    "2a": {"nodes": 3, "limit": "03:00:00", "most_per_lane": 9,
-           "items": [("pilot", "toy", 2_600_000, 2_600_015), ("pilot", "half", 2_600_000, 2_600_007),
-                     ("repro-g18", "half", 806_000, 806_000), ("repro-ar23", "half", 807_000, 807_000), DERIVATION]},
+    "2a-0": {"nodes": 1, "limit": "01:00:00", "most_per_lane": 1,
+             "items": [("derivation", "derivation", "first", None), ("pilot", "toy", 2_600_000, 2_600_001),
+                       ("repro-g18", "half", 806_000, 806_000), ("repro-ar23", "half", 807_000, 807_000)]},
+    "2a": {"nodes": 3, "limit": "02:40:00", "most_per_lane": 9,
+           "items": [("pilot", "toy", 2_600_002, 2_600_015), ("pilot", "half", 2_600_000, 2_600_007),
+                     ("derivation", "derivation", "rest", None)]},
     "2b": {"nodes": 2, "limit": "02:30:00", "most_per_lane": 7, "items": [("control", "toy", 2_610_000, 2_610_099)]},
     "2c": {"nodes": 3, "limit": "03:00:00", "most_per_lane": 9, "items": [("control", "toy", 2_610_100, 2_610_299)]},
     "3i": {"nodes": 3, "limit": "03:00:00", "most_per_lane": 9,
@@ -53,7 +58,7 @@ JOBS = {
     "3f": {"nodes": 5, "limit": "03:30:00", "most_per_lane": 10,
            "items": [("g18", "toy", 2_620_100, 2_620_299), ("ar23", "toy", 2_630_100, 2_630_299)]},
 }
-DECLARED_CAPS = {"2a": 9.0, "2b": 5.0, "2c": 9.0, "3i": 9.0, "3f": 17.5}
+DECLARED_CAPS = {"2a-0": 1.0, "2a": 8.0, "2b": 5.0, "2c": 9.0, "3i": 9.0, "3f": 17.5}
 STAGE_CEILINGS = {"2": 23.0, "3": 26.5}
 
 
@@ -66,12 +71,24 @@ def cap(job: str) -> float:
     return JOBS[job]["nodes"] * hours(JOBS[job]["limit"])
 
 
+def derivation_universes(which: str) -> list[str]:
+    """The derivation's universes in S1's order: DERIVATION_FIRST ("first") or every other one ("rest")."""
+    every = ["CV"] + toys.s1_universes()
+    if not set(DERIVATION_FIRST) <= set(every):
+        raise SystemExit(f"[FAIL] DERIVATION_FIRST names universes S1 did not unfold: {set(DERIVATION_FIRST) - set(every)}")
+    if which == "first":
+        return list(DERIVATION_FIRST)
+    if which == "rest":
+        return [u for u in every if u not in DERIVATION_FIRST]
+    raise SystemExit(f"[FAIL] no derivation selection {which!r}")
+
+
 def expand(job: str) -> list[tuple[str, str, object]]:
     """The job's unfolds, one (arm, mode, seed or universe) per unfold, in the declared order."""
     out = []
     for arm, mode, first, last in JOBS[job]["items"]:
         if mode == "derivation":
-            out += [(arm, mode, u) for u in ["CV"] + toys.s1_universes()]
+            out += [(arm, mode, u) for u in derivation_universes(first)]
         else:
             out += [(arm, mode, s) for s in range(first, last + 1)]
     return out
