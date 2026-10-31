@@ -1,0 +1,25 @@
+# 1B job 2a (lanes); FD-1B-DECLARATION.md sections 6-7
+fd1b_2a_lane0	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	0
+fd1b_2a_lane1	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	1
+fd1b_2a_lane2	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	2
+fd1b_2a_lane3	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	3
+fd1b_2a_lane4	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	4
+fd1b_2a_lane5	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	5
+fd1b_2a_lane6	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	6
+fd1b_2a_lane7	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	7
+fd1b_2a_lane8	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	8
+fd1b_2a_lane9	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	9
+fd1b_2a_lane10	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	10
+fd1b_2a_lane11	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	11
+fd1b_2a_lane12	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	12
+fd1b_2a_lane13	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	13
+fd1b_2a_lane14	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	14
+fd1b_2a_lane15	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	15
+fd1b_2a_lane16	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	16
+fd1b_2a_lane17	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	17
+fd1b_2a_lane18	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	18
+fd1b_2a_lane19	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	19
+fd1b_2a_lane20	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	20
+fd1b_2a_lane21	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	21
+fd1b_2a_lane22	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	22
+fd1b_2a_lane23	fd_f1_lane.py	--steps	/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/tables/fd1b-2a-steps.tsv	--lane	23
