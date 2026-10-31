@@ -101,8 +101,15 @@ class EndToEnd(Base):
 
     @unittest.skipIf(os.environ.get("DEPOSIT_TARGETED_ONLY") == "1", "targeted-only mutant run")
     def test_the_committed_package_is_what_build_writes(self):
+        # the CSVs byte for byte; each JSON field by field but code_sha256 (P7's rule: the committed files record the
+        # code that wrote them, and the tool's own digest moves with any edit to it)
         for n in (*D.FILES, D.REFERENCE):
-            self.assertEqual((PKG / n).read_bytes(), (self.pkg / n).read_bytes(), n)
+            mine, theirs = (PKG / n).read_bytes(), (self.pkg / n).read_bytes()
+            if n.endswith(".csv"):
+                self.assertEqual(mine, theirs, n)
+            else:
+                self.assertEqual(D.without_code(mine.decode()), D.without_code(theirs.decode()), n)
+                self.assertEqual(json.loads(mine)["code_sha256"].keys(), json.loads(theirs)["code_sha256"].keys(), n)
 
     def test_the_measurement_does_not_name_the_reference_file(self):
         js = json.loads((self.pkg / "deposit.json").read_text())

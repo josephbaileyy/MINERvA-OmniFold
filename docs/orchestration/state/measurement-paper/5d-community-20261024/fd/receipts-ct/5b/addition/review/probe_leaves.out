@@ -1,0 +1,63 @@
+== f0b: 2206 numeric leaves, 1108 non-label string leaves, 7 nonzero |x|<1e-13
+   tiny /controls/offset_control_7/pairs_descriptive/0/p 1.7701746352968976e-25
+   tiny /controls/offset_control_7/pairs_descriptive/2/p 3.167515706929247e-19
+   tiny /controls/offset_control_7/pairs_descriptive/3/p 2.488429054302493e-19
+   tiny /truths/2/model_only/p 1.6629124336109874e-17
+   tiny /truths/11/grade/p 7.961554458095539e-29
+   tiny /truths/11/in_sample/p 2.2061291803273997e-22
+   diag /controls/closure_floor_max_abs 3.217964049651023e-05
+   string samples: ['/cells/0', '/cells/1', '/cells/2', '/cells/3', '/cells/4', '/cells/5']
+== f1: 2629 numeric leaves, 1333 non-label string leaves, 7 nonzero |x|<1e-13
+   tiny /controls/offset_control_7/pairs_descriptive/0/p 1.7701746352968976e-25
+   tiny /controls/offset_control_7/pairs_descriptive/2/p 3.167515706929247e-19
+   tiny /controls/offset_control_7/pairs_descriptive/3/p 2.488429054302493e-19
+   tiny /truths/2/model_only/p 1.6629124336109874e-17
+   tiny /truths/11/grade/p 7.961554458095539e-29
+   tiny /truths/11/in_sample/p 2.2061291803273997e-22
+   diag /controls/closure_floor_max_abs 3.217964049651023e-05
+   string samples: ['/cells/0', '/cells/1', '/cells/2', '/cells/3', '/cells/4', '/cells/5']
+== g: 861 numeric leaves, 175 non-label string leaves, 232 nonzero |x|<1e-13
+   tiny /predictions/0/f/0 3.2588494110256116e-39
+   tiny /predictions/0/f/1 3.6706869899515466e-39
+   tiny /predictions/0/f/2 6.311285362959607e-40
+   tiny /predictions/0/f/3 4.304968937170949e-40
+   tiny /predictions/0/f/4 4.8995722630406644e-39
+   tiny /predictions/0/f/5 9.981502501812427e-40
+   string samples: ['/cells/0', '/cells/1', '/cells/2', '/cells/3', '/cells/4', '/cells/5']
+== g_diag: 6006 numeric leaves, 703 non-label string leaves, 799 nonzero |x|<1e-13
+   tiny /predictions/0/comparisons/0/absolute/eigen/lambda/0 1.952771455151408e-79
+   tiny /predictions/0/comparisons/0/absolute/eigen/lambda/1 7.682721019043596e-80
+   tiny /predictions/0/comparisons/0/absolute/eigen/lambda/2 4.011821237237964e-80
+   tiny /predictions/0/comparisons/0/absolute/eigen/lambda/3 2.808911404564485e-80
+   tiny /predictions/0/comparisons/0/absolute/eigen/lambda/4 1.388345922068101e-80
+   tiny /predictions/0/comparisons/0/absolute/eigen/lambda/5 7.675051240281606e-81
+   diag /constants/reproduction 1e-10
+   string samples: ['/blocks/extra', '/blocks/finite_mc', '/blocks/groups/0', '/blocks/groups/1', '/blocks/groups/2', '/blocks/groups/3']
+== g_followup: 3052 numeric leaves, 1350 non-label string leaves, 107 nonzero |x|<1e-13
+   tiny /sens/records/0/stability/rel_lstsq_vs_cholesky 1.6893834710255147e-15
+   tiny /sens/records/0/stability/rel_mode_sum_vs_cholesky 1.2085589446567143e-14
+   tiny /sens/records/1/stability/rel_lstsq_vs_cholesky 7.382472020698253e-16
+   tiny /sens/records/1/stability/rel_mode_sum_vs_cholesky 5.315379854902742e-15
+   tiny /sens/records/2/stability/rel_lstsq_vs_cholesky 3.2611879700692346e-16
+   tiny /sens/records/2/stability/rel_mode_sum_vs_cholesky 1.3044751880276938e-15
+   diag /constants/reproduction 1e-10
+   string samples: ['/constants/cells/0', '/constants/cells/1', '/constants/cells/2', '/constants/cells/3', '/constants/cells/4', '/constants/cells/5']
+== g_sens2: 3464 numeric leaves, 1703 non-label string leaves, 155 nonzero |x|<1e-13
+   tiny /sens/records/0/stability/rel_lstsq_vs_cholesky 1.6893834710255147e-15
+   tiny /sens/records/0/stability/rel_mode_sum_vs_cholesky 1.2085589446567143e-14
+   tiny /sens/records/1/stability/rel_lstsq_vs_cholesky 5.114681806794606e-16
+   tiny /sens/records/1/stability/rel_mode_sum_vs_cholesky 1.8753833291580226e-15
+   tiny /sens/records/2/stability/rel_lstsq_vs_cholesky 8.425313439188429e-16
+   tiny /sens/records/2/stability/rel_mode_sum_vs_cholesky 1.4744298518579751e-15
+   diag /constants/reproduction 1e-10
+   diag /identity/0/relative_difference 0.0
+   diag /identity/1/relative_difference 0.0
+   string samples: ['/constants/families/detector/0', '/constants/families/flux/0', '/constants/families/lateral/0', '/constants/identity/0/0', '/constants/identity/0/2', '/constants/identity/1/0']
+== flux_boot: 624 numeric leaves, 190 non-label string leaves, 0 nonzero |x|<1e-13
+   diag /constants/reproduction 1e-10
+   diag /identity/genie_cv/relative_difference 0.0
+   diag /identity/genie_mec/relative_difference 0.0
+   diag /identity/gibuu/relative_difference 0.0
+   diag /identity/mnvtune_v1/relative_difference 0.0
+   diag /identity/nuwro/relative_difference 0.0
+   string samples: ['/bands/block/genie_cv/cells/0', '/bands/block/genie_cv/cells/1', '/bands/block/genie_cv/cells/2', '/bands/block/genie_cv/cells/3', '/bands/block/genie_cv/cells/4', '/bands/block/genie_cv/cells/5']

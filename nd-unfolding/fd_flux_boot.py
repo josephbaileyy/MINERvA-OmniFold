@@ -19,7 +19,8 @@ swapped block:
   D0^1/2 rho*_b D0^1/2, as G-SENS keeps variances when it shrinks correlations;
 * ``block`` (second): the replicate's block C*_b itself, variances included; its variances are biased low by about
   (1 - 1/n_eff) under resampling, which pushes its chi2 high.
-Each is swapped for the flux group in Stage G's reported matrix, C_total + C_resp + V_g, with every other block
+Each is swapped for the flux group in Stage G's reported matrix, C_total + C_resp + V_g (C_resp: the declared
+extra block, whose name the labels carry), with every other block
 unchanged, and each prediction's total and shape-only chi2 is recomputed on its own cells (GiBUU on its eight), by Stage
 G's own compare() in Stage G's absolute units on C_total + C_resp + (C - C_0) (amendment 1). The
 statistic is the distribution of each chi2 over the replicates; the band is its declared percentiles q, beside the
@@ -93,14 +94,23 @@ LABELS = {
             "bootstrap's estimate of chi2_hat's bias; halves: the percentiles from "
             f"replicates 1-{B_REPLICATES // 2} and {B_REPLICATES // 2 + 1}-{B_REPLICATES}, the Monte Carlo scatter. "
             "Neither band is an interval for the chi2 under the true correlations",
-    "units": "every chi2 by Stage G's compare() in Stage G's absolute units, on C_total + C_resp + (C - C_0) + V_g with "
-             "C the swapped flux block and C_0 S1's; shape-only adds Stage G's 100 f f^T; chi2 and ndf are unit-free; "
-             "correlations are unit-free",
+    "units": None,   # UNITS for the reported matrix; set below, and per run by labels()
     "not": "no p-value, reading, claim or paper text",
     "not_citable_for": ["that the chi2 is insensitive to the flux correlations",
                         "that the PPFX or constraint correlations are correct",
                         "an interval for the chi2 under the true flux correlations"],
 }
+
+
+UNITS = ("every chi2 by Stage G's compare() in Stage G's absolute units, on {reported} + (C - C_0) + V_g with "
+         "C the swapped flux block and C_0 S1's; shape-only adds Stage G's 100 f f^T; chi2 and ndf are unit-free; "
+         "correlations are unit-free")
+LABELS["units"] = UNITS.format(reported="C_total + C_resp")
+
+
+def labels(reported: str) -> dict:
+    """LABELS with the units naming the run's reported matrix (``C_total + <extra block name>``, Stage G's)."""
+    return {**LABELS, "units": UNITS.format(reported=reported)}
 
 
 def report(control, name, ok, why="differs"):
@@ -352,7 +362,8 @@ def run(a, pins=None, predictions=None) -> int:
     report("B5", "the correlation variant keeps S1's flux variances bit for bit in every replicate", not p5,
            f"{len(p5)}: {p5[:3]}")
     report("B6", f"every swapped matrix, the identity, {2 * B_REPLICATES} replicate variants and the uniform one, is "
-                 f"S1's other blocks + C_model + C_resp + its flux block to {TOL:g} relative (worst {p6[0]:.1e})",
+                 f"S1's other blocks + C_model{' + ' + a.extra_block_name if carries else ''} + its flux block to {TOL:g} "
+                 f"relative (worst {p6[0]:.1e})",
            p6[0] <= TOL, f"worst {p6[0]:.3e}")
 
     bands = {v: {spec["name"]: {"cells": names, "ndf": len(names), "chi2_stage_g": identity[spec["name"]]["chi2_stage_g"],
@@ -362,7 +373,7 @@ def run(a, pins=None, predictions=None) -> int:
                                 "shape_only": band([c[1] for c in chi[v][spec["name"]]],
                                                    identity[spec["name"]]["shape_only_stage_g"]), "label": LABEL}
                  for spec, names, *_ in preds} for v in VARIANTS}
-    readout = {"schema": "fd-flux-boot-readout/1", "labels": LABELS,
+    readout = {"schema": "fd-flux-boot-readout/1", "labels": labels(x.comps[0][1][0]),
                "controls_passed": ["D0", "D1", "D2", "D3", "D4", "D5", "B0", "B1", "B2", "B3", "B4", "B5", "B6"],
                "constants": {"replicates": B_REPLICATES, "universes": N_UNIVERSES, "seed": SEED,
                              "index_sha256": INDEX_SHA256, "percentiles": list(PERCENTILES),
