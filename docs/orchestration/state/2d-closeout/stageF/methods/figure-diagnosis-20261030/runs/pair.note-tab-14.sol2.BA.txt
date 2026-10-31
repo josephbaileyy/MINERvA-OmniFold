@@ -1,0 +1,10 @@
+D1: A | Larger type and shorter entries make values and labels easier to read at printed size.
+D2: A | More generous spacing and a simpler structure avoid B’s crowded labels and numerical blocks.
+D3: EQUAL | Both are monochrome tables.
+D4: EQUAL | Both clearly label their statistical quantities and specify the relevant degrees of freedom.
+D5: B | Parallel covariance blocks support direct comparison using consistently ordered statistics.
+D6: A | Its concise caption establishes the comparison without B’s dense notation and nested qualifications.
+D7: A | Readers can quickly identify the methods, observables and relative χ² values.
+OVERALL: A
+GAP: 1. Increase B’s body type size. 2. Shorten repeated truth labels using clearly defined abbreviations. 3. Add spacing between covariance blocks and between numerical and cell-list columns. 4. Align numerical precision consistently within columns. 5. Rewrite the caption into short sentences defining the test, covariance subtraction and symbols.
+END

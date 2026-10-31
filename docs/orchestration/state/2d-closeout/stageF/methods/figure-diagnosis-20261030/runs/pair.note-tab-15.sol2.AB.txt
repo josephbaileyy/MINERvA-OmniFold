@@ -1,0 +1,10 @@
+D1: B | Larger, more evenly spaced body text makes labels and values easier to read at printed size.
+D2: B | A coherent column structure avoids A’s crowded juxtaposition of two distinct result blocks.
+D3: EQUAL | Both tables use appropriate monochrome presentation.
+D4: B | The spanning header clearly groups observable columns; A leaves n undefined and compresses multiple statistics into one heading.
+D5: B | The explicit Prior row and aligned observable columns make comparison with the reference immediate.
+D6: B | The concise caption states the quantity, comparison and organization; A’s lengthy qualifications obscure its purpose.
+D7: B | Readers can quickly identify the methods, observables and relative numerical performance.
+OVERALL: B
+GAP: 1. Separate A’s truth and power-alternative blocks into labeled panels; 2. Shorten the caption and move detailed covariance qualifications to notes or main text; 3. Give χ² and p separate column headers; 4. Define n and place the P1–P3 and r/g key beside its panel; 5. Increase body-text size and spacing; 6. Align numerical columns consistently by decimal point.
+END

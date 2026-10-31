@@ -1,0 +1,10 @@
+D1: EQUAL | Both have sharp, readable type and clearly distinguishable numerical entries at printed size.
+D2: A | A has a clearer header hierarchy; B gives its many columns little visual grouping.
+D3: EQUAL | Both are monochrome tables.
+D4: A | A identifies each observable and its degrees of freedom; B lacks a spanning header identifying the four response categories.
+D5: A | A places the prior and unfolding methods together for direct comparison against the stated truth reference.
+D6: A | A’s caption states the comparison directly; B’s caption requires more decoding of symbols and abbreviated groups.
+D7: A | The methods, observables, and main numerical contrasts can be understood more quickly.
+OVERALL: A
+GAP: 1. Add a Cresp spanning header above B’s last four columns. 2. Visually separate uncertainty sources, aggregate quantities, and response categories. 3. Define abbreviated headers and distinguish covariance symbols from the relative uncertainties tabulated. 4. Streamline the caption around what readers should compare.
+END

@@ -1,0 +1,10 @@
+D1: A | Larger type and more generous spacing make individual entries easier to read at printed size.
+D2: A | The compact, page-wide arrangement is easier to scan than B’s long, narrow column.
+D3: EQUAL | Both are monochrome tables.
+D4: B | Explicit interval inequalities and momentum units in the header make bin definitions immediately clear.
+D5: EQUAL | Neither presents comparisons with reference values or predictions.
+D6: EQUAL | Both captions adequately explain the tabulated content and supply relevant context.
+D7: A | Sixteen clearly labeled rows and a median summary make the principal information quicker to grasp.
+OVERALL: A
+GAP: 1. Increase B’s type size and column spacing. 2. Divide the long table into adjacent blocks or clearly marked continuations with repeated headers. 3. Preserve the grouped angle labels and place breaks between complete angle groups.
+END

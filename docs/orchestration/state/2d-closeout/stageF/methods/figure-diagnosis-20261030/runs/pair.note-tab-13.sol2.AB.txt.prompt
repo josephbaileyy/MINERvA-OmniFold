@@ -1,0 +1,21 @@
+You are an experienced referee and copy editor for Physical Review D. You are given two items, A and B, each a figure or a table cropped from its printed journal page at 300 DPI at printed size, with its caption; their caption texts are also given below. They show different content of the same kind. Judge only presentation, not the physics.
+
+For each dimension, say which item better meets the standard of a well-produced PRD figure or table: A, B or EQUAL.
+D1 LEGIBILITY at printed size. D2 LAYOUT. D3 COLOUR (write EQUAL for two tables). D4 AXES / HEADERS AND UNITS. D5 COMPARISON with references or predictions (EQUAL if neither has any). D6 LEGEND / CAPTION. D7 30-SECOND READ.
+
+Reply in exactly this format and nothing else:
+D1: A|B|EQUAL | <one-line reason>
+D2: ...
+D3: ...
+D4: ...
+D5: ...
+D6: ...
+D7: ...
+OVERALL: A|B|EQUAL
+GAP: <for the weaker item, the specific changes that would bring it to the other's standard, numbered, up to 6; or "none">
+END
+
+
+===== CAPTION TEXT =====
+A: Table 13: Correlation matrix of the reported covariance Ctotal + Cresp on the sixteen cells (lower triangle; the diagonal is one).
+B: FIG. 12: Correlation matrices from the MultiFold method for the number of events per bin in the unfolded distributions of each observable of interest. The correlations in the results are roughly as expected given the nature of the systematic uncertainties applied to the simulation.

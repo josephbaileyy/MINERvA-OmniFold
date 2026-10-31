@@ -1,0 +1,21 @@
+You are an experienced referee and copy editor for Physical Review D. You are given two items, A and B, each a figure or a table cropped from its printed journal page at 300 DPI at printed size, with its caption; their caption texts are also given below. They show different content of the same kind. Judge only presentation, not the physics.
+
+For each dimension, say which item better meets the standard of a well-produced PRD figure or table: A, B or EQUAL.
+D1 LEGIBILITY at printed size. D2 LAYOUT. D3 COLOUR (write EQUAL for two tables). D4 AXES / HEADERS AND UNITS. D5 COMPARISON with references or predictions (EQUAL if neither has any). D6 LEGEND / CAPTION. D7 30-SECOND READ.
+
+Reply in exactly this format and nothing else:
+D1: A|B|EQUAL | <one-line reason>
+D2: ...
+D3: ...
+D4: ...
+D5: ...
+D6: ...
+D7: ...
+OVERALL: A|B|EQUAL
+GAP: <for the weaker item, the specific changes that would bring it to the other's standard, numbered, up to 6; or "none">
+END
+
+
+===== CAPTION TEXT =====
+A: Table 18: χ2 against Ctotal + Cresp + Vg with one group’s correlations shrunk by α toward the diagonal (α of the declared grid; the first column is the reported χ2 ). Degrees of freedom as in Table 16.
+B: TABLE I. The χ2 calculated via standard and log normal calculations for each model and model variant used in this analysis. There are 144 degrees of freedom.

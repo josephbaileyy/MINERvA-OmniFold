@@ -1,0 +1,10 @@
+D1: EQUAL | Both tables have readable type and clearly distinguishable numerical entries.
+D2: A | Its compact layout and grouped numerical columns make relationships easier to follow.
+D3: EQUAL | Both are monochrome tables.
+D4: A | Observable headers include degrees of freedom; B leaves the normalization of relative σ unspecified.
+D5: A | The truth reference and prior baseline make the comparison more self-contained.
+D6: A | Its caption states the comparison directly; B leaves “dominant block,” relative σ and V_g insufficiently explained.
+D7: A | The reader can quickly identify methods, observables and comparative χ² values.
+OVERALL: A
+GAP: 1. Give the 50%, 90% and 99% counts separate subheaders. 2. Define relative σ, its normalization, dominant block and V_g. 3. Include the referenced total χ² values or explicitly identify their location. 4. Tighten column spacing and simplify the caption.
+END

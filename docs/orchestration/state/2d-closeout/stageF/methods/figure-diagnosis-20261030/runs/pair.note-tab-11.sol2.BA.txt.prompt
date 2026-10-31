@@ -1,0 +1,21 @@
+You are an experienced referee and copy editor for Physical Review D. You are given two items, A and B, each a figure or a table cropped from its printed journal page at 300 DPI at printed size, with its caption; their caption texts are also given below. They show different content of the same kind. Judge only presentation, not the physics.
+
+For each dimension, say which item better meets the standard of a well-produced PRD figure or table: A, B or EQUAL.
+D1 LEGIBILITY at printed size. D2 LAYOUT. D3 COLOUR (write EQUAL for two tables). D4 AXES / HEADERS AND UNITS. D5 COMPARISON with references or predictions (EQUAL if neither has any). D6 LEGEND / CAPTION. D7 30-SECOND READ.
+
+Reply in exactly this format and nothing else:
+D1: A|B|EQUAL | <one-line reason>
+D2: ...
+D3: ...
+D4: ...
+D5: ...
+D6: ...
+D7: ...
+OVERALL: A|B|EQUAL
+GAP: <for the weaker item, the specific changes that would bring it to the other's standard, numbered, up to 6; or "none">
+END
+
+
+===== CAPTION TEXT =====
+A: TABLE I: Binning of the muon momentum pµ and forward angle θµ used in extracting a binned differential cross section, identical to that used in the T2K analysis associated with the data release used in this work [52].
+B: Table 11: The sixteen reported cells: boxes (pT , p∥ and q3 in GeV/c; Eavail and W in GeV), cellintegrated cross section f in units of 10−40 cm2 /nucleon, and per-cell relative σ (%) under Ctotal , under Cresp alone and under the reported Ctotal + Cresp (§10.2).

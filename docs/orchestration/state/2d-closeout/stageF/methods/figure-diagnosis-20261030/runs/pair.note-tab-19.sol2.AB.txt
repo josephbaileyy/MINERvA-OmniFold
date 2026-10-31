@@ -1,0 +1,10 @@
+D1: EQUAL | Both use readable type and clearly distinguish labels and numerical entries.
+D2: B | Its compact structure and aligned observable columns support easier scanning.
+D3: EQUAL | Both are tables.
+D4: B | Observable headers and degrees of freedom are explicit; A leaves the three cumulative thresholds weakly separated and relative σ undefined.
+D5: B | The Prior row provides an explicit baseline alongside the unfolding methods.
+D6: B | Its caption states the comparison target directly; A’s wording leaves the mode ordering and relative σ ambiguous.
+D7: B | Method performance across observables is immediately apparent; A requires more decoding.
+OVERALL: B
+GAP: 1. Give the 50%, 90%, and 99% thresholds separate aligned subheaders. 2. Define the normalization of relative σ. 3. Clarify that modes are ranked by their χ² contributions. 4. Tighten column spacing and shorten the caption.
+END

@@ -1,0 +1,10 @@
+D1: B | Larger labels and clearly resolved uncertainty bars are easier to read at printed size.
+D2: B | The stacked panels use space efficiently; A leaves excessive empty space below the plotted points.
+D3: A | Distinct model markers reinforce the colours and preserve identification in grayscale.
+D4: B | Momentum units and the dimensionless reference ratios are explicit; A omits cross-section units.
+D5: B | Ratios, a unity reference line and visible uncertainties make model–data differences easier to assess.
+D6: B | The caption identifies the reference and model versions; A describes an undrawn band and ends incompletely.
+D7: B | The main discrepancies are apparent quickly, whereas A’s logarithmic range compresses the comparisons.
+OVERALL: B
+GAP: 1. Tighten A’s vertical ranges to reduce empty space. 2. Make data uncertainties and bin extents clearly visible. 3. Add differential-cross-section units. 4. Provide ratio panels with a labelled reference and unity line. 5. Revise the caption to describe the displayed projections and markers accurately, identify model versions and complete the unfinished text.
+END
