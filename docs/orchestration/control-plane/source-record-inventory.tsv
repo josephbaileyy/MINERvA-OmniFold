@@ -3,7 +3,7 @@ OI-190	retired	-	declared	e214d52d14a140d0d82a31fd62930d02d508e67ba26293a2f75564
 OI-191	retired	-	declared	6c39adc76363598db781194ee7a5e33b1b8f7a8f13348fb79ede241ec84579d1	CLOSED 2026-09-25
 OI-192	retired	-	declared	fbebadf8c31f99a692d1538b286aa3824adf54939abf6a5d0bdbd21594b4d6c5	CLOSED 2026-09-26
 OI-193	retired	-	declared	bfd6105d976b47886ab47d1d707dfa7d2b95aa3f3065ea5f5e7b590157f0f2c1	CLOSED 2026-10-06
-OI-188	active	WAITING-JOSEPH	declared	6b9b4e8533d14c31b51d49f5c927fc15a28719727d8a4f4ac13a7e2adb27027d	OWNER JOSEPH 2026-10-29, WAITING-JOSEPH, on the director's ruling — continuing past the 2026-09-30 stop needs his fresh
+OI-188	retired	-	declared	9f9eef9e76d0e6819c4ff854bddf1808f0a95546817734bafc997457af7fa7f8	RETIRED 2026-10-31 by the close-items session, on the director's ruling — this records that the seven-cause campaign is
 OI-187	retired	-	migration-carried-forward	7b3861f98d5d918ada0bad05927a1516bcc4284569a372a3653c030b1671e041	RULED 2026-09-01 BY JOSEPH — (a) UPGRADE, NOT A SUBMISSION BLOCKER, and (b) THE DEPENDENCY IS RETAINED BY CHOICE — "keep
 OI-186	retired	-	declared	da08ed506f48e869f028cc8757e1989de12421d1e8ff7849c4c73f9ceae973a1	RETIRED 2026-10-28 by the close-items session — uq_math.py was corrected to VL33's 5.3478x at c9ba1b274. See [RECORD-202
 OI-185	retired	-	migration-carried-forward	6e212c982f2864fbc83fbe82ceddbfc129b93295cda51725b2976f6330d4acf6	DISCHARGED 2026-09-01 — RATIFIED AND RESTRUCTURED. Joseph ruled in his own turn: "Okay I like your recommendation for OI
@@ -38,7 +38,7 @@ OI-144	retired	-	migration-carried-forward	e5928037f0366b68fc68e67e65a99f362b97f
 OI-145	retired	-	migration-carried-forward	f8663be3ba263c3dec175e6d870c5fcddd79c7e3b2d369079d778c2442ad1739	REPINNED 2026-08-21 (ea1a3fd6) -- ACCEPTED AS A VERSIONED REPIN, NOT REVERTED AND NOT OVERWRITTEN. All 7 edits verified
 OI-146	retired	-	migration-carried-forward	6f571478221b81d9eacb508c4988297ac9ef61b8629f3f9dc7a1113516f5ed6d	CLOSED 2026-08-21 (4fb0e3d4) -- GATED WITH THEIR PARENTS AND NOW DEFINED FROM THEM. The bare literals 1.4 % / 1.8 % beca
 OI-70	retired	-	declared	a524e3b485fcbb80e031d41bf20bd2713e6aecec5264b53076da61d00c182923	RETIRED 2026-10-28 by the close-items session — every defect this row files is discharged (3d518f271, 18e942ee5, 1fc2394
-OI-71	active	WAITING-JOSEPH	migration-carried-forward	6bf07285524a7460c8b3cf2e1d2cbab687481a66bc037dd2902476de8f9d2540	WAITING-USER, AND NARROWER THAN THIS ROW SAID. CORRECTED 2026-08-15: the physics ground for quoting VL100 is MIS-TARGETE
+OI-71	retired	-	declared	8ed2ea44313e8359ede0983d6147f954da24c972b4af596331144ab5223fa207	RETIRED 2026-10-31 by the close-items session, on the director's ruling — PET is diagnostic, the note quotes no PET reco
 OI-72	retired	-	migration-carried-forward	08453ed7dad41224c113f311a9defc28e773c9cdaa2bff715178f9fc3d76c751	WITHDRAWN THE SAME HOUR IT WAS FILED — already found by lane B, already fixed, and the id is kept rather than reused. Fi
 OI-73	retired	-	declared	8baf4351d1559700801c030b2994fc7f8449cbb47cbd756016c3daf186ca74b1	RETIRED 2026-10-28 by its owner, the close-items session — LIVE-STATE.md is regenerated and FRESH, with the unread-waker
 OI-74	retired	-	declared	83a60dbaf957c17332d01b629a81f90214e7d4a507181d15b342841a9d41b7b7	RETIRED 2026-10-30 — the canonical checkout is fast-forwarded to ed3590ea2, with no tracked changes. The second bound ru
@@ -71,8 +71,8 @@ OI-25	deferred	-	declared	d8166de53494c54c699508fd821adf2fffd2c57333af4259df2a5d
 OI-26	deferred	-	declared	28852f84906c84127bb7a004c90b121176cd6f026bf6eb00c5c60bef7b7ed60f	DEFERRED 2026-10-29 by the close-items session, until the next required Gate-4 re-issue. See [RECORD-20261029-close-item
 OI-27	deferred	-	declared	505ba72b28b9d5b59e3df2f57c8ceff14a7c67cf618ab699b364bc7e0dd954cc	DEFERRED 2026-10-29 by the close-items session, until the next Gate-4 re-issue. See [RECORD-20261029-close-items-defer-g
 OI-28	deferred	-	declared	7151b750d5f7b4eba5aa8707dfa0d605612ba3a0bbbd5adfbe03caeb69fd52e4	DEFERRED 2026-10-29 by the close-items session, until the full-event FPS measurement and its acceptance diagnostics fini
-OI-29	active	WAITING-JOSEPH	migration-carried-forward	fbe9c87f2a4567a2387fdaf1468d85864bb15e55f4386aefbaafa906d2623f0f	WAITING-USER
-OI-30	active	WAITING-JOSEPH	declared	ab04e51e9fa079beed2b4394e8b0f76478a8c69d655cc4b377a0963e8aead63f	KEPT 2026-10-28 by the director, owner Joseph, WAITING-JOSEPH — which E_avail truth definition the analysis adopts. See
+OI-29	retired	-	declared	102cdc3f182f360c3e06e3197c64e40d0f40f18193ebfa7715ad5f9486ee2d87	RETIRED 2026-10-31 by the close-items session, on the director's ruling — the 1431-bin covariance it asks MINERvA to end
+OI-30	retired	-	declared	e0e9003c1541d3a86ef22b481697a57324d044d5413fcca16de3b8215334b088	RETIRED 2026-10-31 by the close-items session, on the director's ruling — the analysis defines the observable with the c
 OI-56	deferred	-	migration-carried-forward	04c5fd460f7864c0e7d4ec759dc00afca91511008b83cbb1ae0c8193522f3ef1	FROZEN — do not action pending the reco-underflow repair choice
 OI-31	active	WAITING-JOSEPH	migration-carried-forward	e044a73d211daa9aae2cb36f29badf314b03a582dbf5f79728b4954cb357a33e	WAITING-USER
 OI-32	deferred	-	declared	be3f1b081c7217dc4d2608d13c699d79656e72597ee24a841724a766ff9a87b6	DEFERRED 2026-10-29 on the director's ruling, until a recorded Joseph decision to quote a fine-grid full-covariance chi-
@@ -93,16 +93,16 @@ OI-46	retired	-	migration-carried-forward	36ffc3c94a84f03f1d0c7b9352bf1fd217c7c9
 OI-47	retired	-	declared	9469dd81994f457d9c8f4b9b540760fa1b46f46de0ce96a8ca6d345567f6e187	RETIRED 2026-10-29 on the director's ruling, as superseded by the per-session worktree practice — worktree.bgIsolation i
 OI-48	retired	-	migration-carried-forward	0b0bf4e60bb0a46ec892b797b000f021550645f46fa7ebfc123dc808f126c785	SUPERSEDED 2026-08-18 by OI-131 — THE DECISION THIS ROW RECORDS WAS REVERSED. Its narrative below is the 2026-08-13 stat
 OI-49	retired	-	declared	628e9089804cbbc59606e4d47d16d714e02e4b1089bac8b9424692cf132ffa84	RETIRED 2026-10-28 on the director's ruling as objectless — there is no tape copy to measure; the live question is OI-13
-OI-50	active	WAITING-JOSEPH	declared	ac8e9b038d3461e9b464bd1400910d3b62b52abd1723dde63325a8853e1ed7ce	OWNER JOSEPH 2026-10-28 on the director's ruling — the hashverify receipt is PASS 36/36, and its line 7 says closing the
+OI-50	retired	-	declared	4f9296c14db0784c2f66128ceb3cc786afc10a24585374d89bcc009a1c807fc2	RETIRED 2026-10-31 by the close-items session, on the director's ruling — the measurement it asked for is done: hsi hash
 OI-51	active	WAITING-JOSEPH	migration-carried-forward	96bdec48d03cf5688e58a021e1ecd44cfb9b7af88fc00833043d88f52f65d809	WAITING-USER
-OI-52	active	WAITING-JOSEPH	declared	77797765d8bfa310ddeddb4d85f5a92c73d36bd1c9eed9ac8a95952cba18dfda	OWNER JOSEPH 2026-10-28 on the director's ruling — the premise is false (lanes read Iris; state/measurement-scoping/iris
+OI-52	retired	-	declared	fbb76e0bef247b63b75437f319c9ac97d3e0b7e776113823a4fbf73397554151	RETIRED 2026-10-31 by the close-items session, on the director's ruling — Joseph read Iris on 2026-10-31: HPSS user quot
 OI-53	retired	-	declared	d953e43ef780f3f0e1192d71aafc0e534b0ce929be37b98a1d695ab32260c51e	RETIRED 2026-10-29 as moot, by Joseph's decision to freeze CLAIMS.md (#516): it is ARCHIVAL now, no row is edited, so th
 OI-54	retired	-	declared	4c21268a2543bd355b6dea950d81115a26fe9fb4dc1cfe93f0ac994d51f85675	RETIRED 2026-10-31 by the close-items session, on the director's ruling — stale: neither session 98d9c5 nor its owner is
 OI-55	retired	-	migration-carried-forward	3b5ad0a71fd3df25863bbe657fa374ebb1a513f54628ef7d53ab17ded4c9d407	CLOSED 2026-08-13 — recorded here because the answer existed only in a message for four hours
 OI-57	deferred	-	declared	929c2f0945ed36d1fa1b7ec69d17594260005f6587c89b941ab51e215b150e58	DEFERRED 2026-10-29 by the close-items session, until the next Gate-5 launch. See [RECORD-20261029-close-items-defer-gat
 OI-58	deferred	-	declared	bcb8212a9e673d33741fddcc653ff37476c477eaa3daec1b93b65002fedbf4c4	DEFERRED 2026-10-29 by the close-items session, until the next Gate-5 re-issue. See [RECORD-20261029-close-items-defer-g
-OI-59	active	WAITING-JOSEPH	declared	300a75b51ba8a9a5b704b74297d0d7762d9d07c356d55945146a1808d3611353	OWNER THE DIRECTOR 2026-10-28, WAITING-JOSEPH, on the director's ruling — the next step is Joseph's freeze question, whi
-OI-60	active	WAITING-JOSEPH	declared	5bb011b57a9826891604817e03e164b92f9bc893c2c6bacec9953b2a55bdcf2b	ON JOSEPH'S QUEUE 2026-10-29 (owner Joseph, WAITING-JOSEPH) for the RETROSPECTIVE CLOSE, which is his. The RE-RUN half i
+OI-59	retired	-	declared	3d1d591320f4d679f2b950065fdf879b9059b0f3c83f66009b16d64bc48fc3a7	RETIRED 2026-10-31 by the close-items session, on the director's ruling — the definitional caveat it found missing is pr
+OI-60	deferred	-	declared	272342d6a6e639bcf0f9a0ac90654678621a72ac2e9da67e232882efc207f1c6	DEFERRED 2026-10-31 by the close-items session, on the director's ruling — the RETROSPECTIVE close is retired (PET is di
 OI-61	deferred	-	declared	a39651474261f5d29221a8e52f1f8236134192083fd84b891ba026ff6a8b2a0a	DEFERRED 2026-10-29 by the close-items session, until whatever Gate-5 re-issue OI-60 rides. See [RECORD-20261029-close-i
 OI-62	retired	-	declared	47ebab0eaac37b53e8244c2dec5bf00f08a6de3a4e0c5f06ec9a24f2ddc18782	RETIRED 2026-10-31 by the close-items session, on the director's ruling — (a) is Joseph's 2026-08-13 decision; (b)'s blo
 OI-64#1	retired	-	declared	4ecfb397bee04799899934820d24bfa066e72980f6d8fb2a923a1060f9f37d01	RETIRED 2026-10-28 by the close-items session — the gate runs in the hook and CI; (f) and (g) were replaced by exact and
