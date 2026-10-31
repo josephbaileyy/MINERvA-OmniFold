@@ -1,0 +1,595 @@
+Fifth axis: W and the (Eavail , W ) plane
+
+For the central values, Valencia 2p2h closes about half of the low-recoil gap (§7.7) but leaves a separate
+excess over the MINERvA Tune v1 prior at high Eavail . There the predicted 2p2h contribution is
+zero, and the two tested pion final-state-interaction variations change the prediction by less than
+one percent, too little to explain the excess.
+GiBUU is low throughout the Eavail tail. Its W -integrated five-dimensional data/generator ratio
+is 1.59 at Eavail ∈ [0.8, 1.5) and 1.37 at [1.5, 3.0), in configuration (a), the LightGBM unfolding
+with purity-based subtraction (§3.2); its sample stops at Eν ≈ 20 GeV (§8.5). GENIE CV instead
+matches data at [0.8, 1.5) and is low at [1.5, 3.0), where its three-dimensional data/CV ratio is 1.10
+(§7.7) in configuration (e), the deterministic learner with refined negative-weight subtraction.
+Adding the hadronic invariant mass W as the fifth OmniFold axis maps where in W the high49
+
+Eavail excess lies. The validation of §9.1 includes a model-dependence study; it does not establish
+a bias–variance tradeoff across estimator settings and provides no new total uncertainty for this
+projection.
+
+8.1
+
+W as a fifth axis
+
+p
+Truth W is the experimenter’s invariant mass W = M 2 + 2M (Eν − Eµ ) − Q2 , with struck-nucleon
+mass M . Reconstructed W combines the calorimetric energy transfer q0 of the reconstructed-q3
+estimator and the muon-kinematic Q2 with the average nucleon mass. The external generator
+predictions instead compute truth W with the neutron mass for every event and place events with
+W 2 ≤ 0 in the lowest W bin, whereas the analysis uses the struck-nucleon mass and excludes
+such events from its five-observable truth sample. In the GENIE and NuWro samples this moves
+0.14–0.15% of the events into another W bin. In GENIE CV and NuWro (without their 50–100 GeV
+samples) it changes the coarse-cell predictions by about 0.1 % at the median and at most 2.2 %. In
+any cell, that is at most about one Monte Carlo standard error of the prediction. The change was
+not evaluated at cell level for GENIE+MEC and cannot be evaluated for GiBUU.
+Like q3 (§7.8), and unlike Eavail , W changes under the lateral systematic shifts, so a shifted W is
+stored for each lateral universe. The event-loop output files also store truth hadronic diagnostics:
+the proton and pion multiplicities and the polar angle of the summed momentum of all final-state
+particles other than muons and neutrinos. The W edges [0, 1.1, 1.4, 1.8, 2.2, 3.0, 100] GeV bracket
+the quasielastic peak, the ∆, the transition region and the DIS tail.
+The configuration-(a) five-dimensional unfolding in (pT , p∥ , Eavail , q3 , W ) agrees under marginalization with the lower-dimensional results: integrating over W reproduces the configuration-(a) 4D
+normalization to 0.11 % (5D/4D total = 1.0011) with median differences per axis of 0.3 % to 1.5 %,
+and dσ/dW is finite and non-negative in all six bins.
+
+8.2
+
+Implemented definitions of the five observables
+
+Table 9 gives the implemented truth and reconstructed definitions of the five unfolded observables,
+as used in the companion journal article. Eµ , pµ , and θµ are the muon energy, momentum,
+and angle; q0 is the calorimetric estimate of the energy transfer; M is the struck-nucleon mass,
+M̄ = (1.5Mn + Mp )/2.5. Exact Q2 is −(k − k ′ )2 from the generator’s four-vectors; truth W instead
+uses the massless-muon Q2 with θµ from the beam axis, a difference whose effect on W is given
+below.
+Reconstructed q3 and W combine the muon kinematics with the calorimetric estimate q0 of
+2
+2
+the energy transfer, which is separate from reconstructed Eavail . Since Wreco
+= (M̄ + q0 )2 − q3,reco
+and q3,reco increases with q0 at fixed muon kinematics, reconstructed W is an exact function of
+(pT , p∥ , q3 ), apart from the clamp at W 2 = 0, which applies to 1.5 % of simulated events.
+At truth level, q3 is computed from the true neutrino and muon four-vectors, but θµ , and with it
+pT and p∥ , is measured from a fixed beam axis tilted by 58.87 mrad from the detector axis rather
+than from the true neutrino direction. Truth W is therefore fixed by (pT , p∥ , q3 ) only up to that
+event-by-event angle, of about 1 mrad, and the choice of M : the residual is within ±2 MeV for 68%
+of events and within −49 to +67 MeV for 99.9%; 0.25 % of events (weighted) change their coarse W
+bin, and 0.15 % have no real solution.
+The five reconstructed inputs therefore share information and do not, by themselves, provide
+five independent constraints: the result is five simultaneous observables, not five independent
+measurements. The companion journal article distinguishes the five classifier inputs, the lowerdimensional support they populate, and the five reported observables. Only reconstructed W is
+
+Table 9: The five observables as implemented.
+Truth definition
+
+Reconstructed definition
+
+Shared inputs and
+conventions
+
+q3
+
+p
+Q2 + (Eν − Eµ )2 , exact
+Q2
+
+W
+
+p
+M 2 + 2M (Eν − Eµ ) − Q2 ,
+2
+Q = 4Eν Eµ sin2 (θµ /2)
+
+the same, from the
+MINERvA–MINOS muon
+1.17× calorimetric recoil energy in
+the tracker and electromagnetic
+calorimeter, muon deposits
+removed
+p
+Q2 + q02 ,
+2
+Q = 2Eν (Eµ − p∥ ) − m2µ ,
+E
+pν = Eµ + q0
+M̄ 2 + 2M̄ q0 − Q2 =
+p
+(M̄ + q0 )2 − q32
+
+muon only
+
+Eavail
+
+pµ sin θµ , pµ cos θµ , θµ from
+the beam axis
+proton kinetic energy,
+Eπ± − 135 MeV, π 0 and γ
+energy (§7.1)
+
+pT , p∥
+
+its own calorimetric
+estimator; 135 MeV
+convention
+muon kinematics and q0
+
+fixed by (pT , p∥ , q3 )
+when reconstructed;
+nearly so at truth
+
+fixed by the other inputs; reconstructed Eavail comes from a separate calorimetric estimator and is
+not a function of them. The nearly degenerate correlation directions of the joint-test metric (§11.1)
+are consistent with this redundancy, but that origin has not been shown, and the information added
+by W has not been measured.
+The analysis excludes events with negative truth W 2 , a weight fraction of 4.9 × 10−5 , from its
+five-observable truth sample and normalization; §8.1 gives the external predictions’ convention. The
+generators measure pT and p∥ about their own neutrino axis; their pT differs from the analysis truth
+pT by ±4 MeV for 68% of events. Over the 109 joint-test cells, this convention changes the analysis
+simulation’s cell contents by factors between 0.9965 and 1.0035 (median 1.000008), at the level of its
+Monte Carlo precision, and shifts GENIE’s central prediction by between −0.47 and +0.53 of each
+cell’s null standard deviation. For GENIE with MEC, NuWro and GiBUU its effect is not reliably
+determined (Ref. [37], R1.18).
+
+8.3
+
+Generator predictions and the target difference
+
+Table 10 lists the generator predictions compared in this note and tested in §11. All are per nucleon
+of the stated target and are binned with the same fine-grid-to-cell map.
+Table 10: Generator predictions.
+Prediction
+
+Target
+
+Eν coverage and flux
+
+Test cells
+
+Tune v1 (GENIE 2.12.6)
+GENIE 2.12.10 CV
+GENIE 2.12.10 + MEC
+NuWro 21.09
+GiBUU 2019
+
+CH
+CH
+CH
+C
+C
+
+analysis simulation
+0–50 GeV, reweighted; 50–100 GeV added
+as GENIE CV
+0.5–50 GeV, reweighted; 50–100 GeV added
+below 20 GeV, reweighted
+
+109
+109
+109
+109
+72
+
+Hydrogen has no quasielastic, 2p2h, or coherent νµ charged-current channel, so normalizing
+per nucleon does not remove the difference between the targets. In GENIE’s own CH sample, the
+carbon-only cross section per nucleon exceeds that of CH by 8.3 % for W < 1.1 GeV and is 2.2 %
+below it for 1.1 ≤ W < 1.4 GeV (5.6 % and −4.6 % with the overall normalization removed). The
+NuWro and GiBUU comparisons contain a target difference of this kind, which the tests of §11, as
+
+run, do not correct. Section 11.9 re-evaluates them with the correction.
+
+8.4
+
+Distribution of the excess in the (Eavail , W ) plane
+
+Figure 24 shows the unfolded five-dimensional result projected onto (Eavail , W ), with the MINERvA
+Tune v1 prediction subtracted. That prediction is the OmniFold prior, the simulation’s truth weighted
+by its full tune weight; the untuned GENIE CV of §8.5 is a separate prediction. In cell-integrated
+terms, the positive excess lies mostly at high Eavail and high W . The two highest-Eavail bands
+carry 57 % of it, and the region Eavail ≥ 0.8 GeV carries 67 %, with 83 % of that at W ≥ 1.8 GeV.
+The largest cell, the corner Eavail > 3 GeV, W > 3 GeV, holds 22 %. A secondary excess lies at
+W < 1.1 GeV, with a small deficit at W ≃ 1.4–1.8 GeV.
+These statements hold under the nominal detector response, and the regularization bias of Sec. 9
+is largest at high Eavail and high W . Estimator-seed shifts of central values are a small fraction of
+the projected uncertainties (§9.6). The seed sensitivity of the shares, which are ratios of central-value
+differences, has not been measured separately. The response-mismatch closure of Appendix D is
+designed to test whether an incorrect hadronic response can move strength into or out of the low-W
+component. It has not yet produced a result.
+
+
+100
+1.26
+
+1.23
+
+1.20
+
+1.12
+
+1.30
+
+1.30
+
+1.25
+
+1.21
+
+1.19
+
+1.15
+
+1.16
+
+1.29
+
+1.22
+
+1.05
+
+1.16
+
+1.12
+
+1.14
+
+1.27
+
+1.08
+
+0.89
+
+1.10
+
+1.07
+
+1.10
+
+1.26
+
+1.03
+
+0.92
+
+1.11
+
+1.08
+
+1.10
+
+1.23
+
+1.07
+
+0.96
+
+1.11
+
+1.08
+
+1.10
+
+1.24
+
+1.12
+
+1.00
+
+1.07
+
+1.03
+
+1.08
+
+Eavail (GeV), bin edges
+
+1.5
+
+1.4
+
+1.2
+
+0.8
+1.0
+
+0.4
+0.8
+
+0.2
+0.1
+
+unfolded / MINERvA Tune v1
+
+1.31
+
+3
+
+0.6
+
+0
+0
+
+1.1
+
+1.4
+
+1.8
+
+2.2
+
+3
+
+100
+
+100
+0.0
+
+0.0
+
+0.0
+
+0.3
+
+2.7
+
+8.5
+
+0.1
+
+0.2
+
+1.2
+
+4.1
+
+3.3
+
+0.3
+
+0.4
+
+1.1
+
+1.4
+
+1.8
+
+0.5
+
+0.1
+
+1.4
+
+1.5
+
+-1.9
+
+0.3
+
+0.2
+
+0.0
+
+2.6
+
+0.5
+
+-0.3
+
+0.1
+
+0.1
+
+0.0
+
+2.2
+
+0.4
+
+0.0
+
+0.1
+
+0.0
+
+0.0
+
+2.8
+
+0.3
+
+0.0
+
+0.1
+
+0.0
+
+0.0
+
+8
+
+Eavail (GeV), bin edges
+
+3
+
+6
+4
+
+1.5
+
+2
+
+0.8
+
+0
+
+0.4
+
+−2
+
+0.2
+
+−4
+−6
+
+0.1
+
+−8
+
+0
+0
+
+1.1
+
+1.4
+
+1.8
+
+2.2
+
+3
+
+100
+
+unfolded ¡ Tune v1 per cell (10 ¡40 cm 2 /nucleon)
+
+W (GeV), bin edges
+
+W (GeV), bin edges
+
+Figure 24: Unfolded data and MINERvA Tune v1 (GENIE 2.12.6 with analysis tune weights, the
+OmniFold prior) in (Eavail , W ). Top gives dimensionless per-cell data/Tune on a 0.5–1.5 colour scale;
+bottom gives per-cell data − Tune in units of 10−40 cm2 /nucleon. Equal-size display cells are labelled
+by physical bin edges on the 7×6 reporting grid, with Eavail edges [0, 0.1, 0.2, 0.4, 0.8, 1.5, 3.0, 100] GeV
+and W edges [0, 1.1, 1.4, 1.8, 2.2, 3.0, 100] GeV. The final interval on each axis, [3, 100] GeV, is a
+wide catch bin. The density ratio is independent of cell area; the bottom panel instead subtracts
+cell-integrated cross sections, (d2 σ/dEavail dW ) × ∆Eavail ∆W in cm2 /nucleon, so the catch-bin cells,
+which are wide, carry correspondingly larger values. Together the panels locate the positive excess
+at high Eavail and high W , with a secondary component at W < 1.1 GeV and a small deficit at
+W ≃ 1.4–1.8 GeV. Quoted percentage shares refer to cell-integrated positive excess in the bottom
+panel.
+
+8.5
+
+Comparison with four external generators
+
+All four external generators fall below the data in the high-Eavail , high-W corner. Figure 25 compares
+the (Eavail , W ) predictions of GENIE CV, GENIE+Valencia 2p2h/MEC, NuWro and GiBUU. As in
+§7.6, each is normalized by its flux-averaged total CC cross section per nucleon, and those of GENIE
+
+and NuWro are flux-corrected. The 3D and (Eavail , W ) comparisons use the same five-dimensional
+histogram of each generator. GENIE CV totals 2.76 × 10−38 cm2 /nucleon in the measurement phase
+space in both; GENIE+MEC uses the normalization convention of the 3D comparison.
+In the corner (Eavail ≥ 0.8 GeV, W ≥ 1.8 GeV), data/generator = 1.14, 1.14, 1.16 and 1.61,
+respectively. For GENIE and NuWro the corner ratios exceed their integrated ratios (1.11, 1.07
+and 1.15) by 1 % to 7 %, compared with 16 % for GiBUU, whose integrated ratio is 1.39 (σ =
+2.22 × 10−38 cm2 /nucleon, against 3.07 × 10−38 for the data).
+GiBUU’s larger contrast comes from its sample’s energy limit: it was generated only up to
+Eν ≈ 20 GeV (§7.6). In GENIE and NuWro, neutrinos above this energy carry 14.3 % to 14.8 %
+of the corner cross section and 6.8 % to 7.4 % overall. Removing them raises these generators’
+corner-to-integrated contrast to 9 % to 16 %, bracketing GiBUU’s. If GiBUU is instead supplied with
+the shares that GENIE and NuWro carry above this energy, data/GiBUU becomes about 1.37 in the
+corner and 1.29 integrated. With the GENIE and NuWro fluxes corrected and GiBUU supplied with
+the shares above this energy, each generator’s central-value corner ratio lies close to its integrated
+ratio. GiBUU is lower than the others everywhere.
+Valencia 2p2h raises the GENIE+MEC integrated prediction while leaving the corner essentially
+unchanged (1.142 → 1.139), since it populates low W . At W ∈ [2.2, 3.0) GeV, data/generator = 1.12,
+1.11, 1.13 and 1.34, again close to the integrated ratios. At 1.4 ≤ W < 1.8 GeV, instead, both
+GENIE predictions lie 9 % to 12 % above the data. These are central-value ratios. No compatibility
+metric based on the configuration-(a) five-axis covariance is quoted, because the estimator-seed
+sensitivity of its construction, measured with two companion covariances, exceeds the limit set before
+production (§9.6); §10.4 gives a sixteen-cell χ2 comparison.
+The localization in §8.4 is relative to MINERvA Tune v1; data exceed all four external generators
+both overall and in the corner.
+MINERvA ME FHC, 1.06×10 POT
+
+10−37
+
+data (unfolded)
+
+GENIE-CV
+
+NuWro
+
+GiBUU
+
+GENIE+MEC
+
+dσ/dW
+
+dσ/dE avail
+
+21
+
+10−37
+
+10−38
+
+10−38
+
+10−39
+
+10−39
+
+10−40
+
+10−40
+
+0
+
+0.5
+
+1
+
+1.5
+
+2
+
+2.5
+3
+Eavail (GeV)
+
+0
+
+data (unfolded)
+
+GENIE-CV
+
+NuWro
+
+GiBUU
+
+0.5
+
+1
+
+1.5
+
+2
+
+GENIE+MEC
+
+2.5
+
+3
+W (GeV)
+
+Figure 25: Projections of the unfolded (Eavail , W ) cross section onto Eavail (left) and W (right), with
+the predictions of four generators (GENIE CV, GENIE+MEC, NuWro, GiBUU; GENIE and NuWro
+flux-corrected, §7.6). In the high-W , high-Eavail corner, which the projections do not resolve, every
+generator lies below the data (§8.5) — GENIE and NuWro by about their overall normalization
+shortfall, GiBUU by more; adding 2p2h leaves the corner essentially unchanged because 2p2h
+populates low W .
+MINERvA shallow-inelastic neutrino and antineutrino measurements also report shape and
+
+normalization disagreements with generators [49]. They motivate tests across the resonance–DIS
+transition, but their selections and reported observables differ from this inclusive projection, so
+they provide physics context, not an independent confirmation of the same localized excess. A later
+significance for the location identified in the central-value map must account for any selection of the
+tested region made with these data. The published low-recoil cross-check in (Eavail , q3 ) (§7.8) gives
+central values 9.2 % and 6.0 % above the published measurement on the maximal common grid.

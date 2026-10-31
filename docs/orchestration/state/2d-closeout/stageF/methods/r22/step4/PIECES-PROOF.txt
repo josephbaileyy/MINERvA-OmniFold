@@ -1,0 +1,7 @@
+r22 Step 4: the note's pieces, cut by tools/split_base.py from main_note.pdf built at the committed tree 527a2a7ec (tracked
+tree clean); main_note.pdf sha256 begins 7da98d7a6e577496; 56,346 words.
+Against Step 3's adopted pieces (step3/adopted/pieces):
+- B05 (sec_results.tex: T1), B07 (sec_eavailw.tex: T2, T4) and B09 (sec_fived16.tex: T5) differ by this round's changes;
+- B08 holds the same words in another order (a float placed elsewhere); no B08 source changed;
+- the other eleven are byte-identical.
+Held check (tools/check_held_note.py): held quotes checked 29 (29 exact, gapped []), failures 0.
