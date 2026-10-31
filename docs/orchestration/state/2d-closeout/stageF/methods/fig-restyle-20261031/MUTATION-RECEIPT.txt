@@ -1,0 +1,32 @@
+python 3.12.2, matplotlib 3.10.1, numpy 1.26.4; deploy wt-fig
+control (unmutated copy): PASS ['SELF-TEST :: PASS']
+M1 a line's colours are not hashed (line, marker face and marker edge) (artists.py): KILLED
+     fires   a line's RGBA changed alone: WRONG
+M2 values hashed as float32 (a tolerance) (artists.py): KILLED
+     fires   one value moved by one ulp: WRONG
+M3 patches are not captured (artists.py): KILLED
+     fires   a series left out: WRONG
+M4 collections' colours are not hashed (face and edge) (artists.py): KILLED
+     fires   a scatter's RGBA changed alone: WRONG
+M5 labels are hashed (a restyle of a label fires) (artists.py): KILLED
+     silent  restyle (layout, fonts, labels, panel labels, text): WRONG
+M6 figures compared by item count only (compare.py): KILLED
+     fires   one value moved by one ulp: WRONG
+     fires   one series' RGBA changed: WRONG
+     fires   a line's RGBA changed alone: WRONG
+     fires   a scatter's RGBA changed alone: WRONG
+M7 wall-time lines not dropped (compare.py): KILLED
+     silent  a different wall time in the report: WRONG
+M8 outputs not compared (compare.py): KILLED
+     fires   a changed report value alone (check 4): WRONG
+M9 opened inputs not compared (compare.py): KILLED
+     fires   a changed input file (check 5): WRONG
+     fires   the same input under another name (check 5 names paths): WRONG
+M10 rasters compared by size only (raster.py): KILLED
+     fires   raster: one pixel changed: WRONG
+M11 capture wraps savefig before technote_style (the .pdf twin captured too) (capture.py): KILLED
+     silent  identical rerun: WRONG
+     silent  restyle (layout, fonts, labels, panel labels, text): WRONG
+     silent  a different wall time in the report: WRONG
+     silent  the figure unchanged when only the report is (check 3): WRONG
+MUTATION :: PASS (control passes, every mutant killed)
