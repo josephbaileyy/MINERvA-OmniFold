@@ -9,6 +9,11 @@ ends in a recommendation to Joseph (§6).
 **Measured at** `origin/main` = `4ede47e34505d65f09ef655d152bbd24a2bbb92a`. Every `file:line` below is at that commit,
 and each code file's sha256 prefix is in §7.
 
+**One cited file moved on `main` after that commit.** At `d1c7b80d`, PR #602 changed `nd-unfolding/fd_1b_score.py`
+(the half-MC truth guard), to `2b340dd0…`. Its inversion function `chi2_values` is byte-identical: the body at
+`4ede47e3:322-329` equals the body at `d1c7b80d:329-336`, by `diff`. So the 1B row of §4 holds, at the new lines. No
+other file cited here changed between the two commits.
+
 > **Ruling 7, verbatim** ([`DECISION-20260822-joseph-b1-lift-and-clause-c.md`](DECISION-20260822-joseph-b1-lift-and-clause-c.md)
 > `:186-200`): *"For OI-137, declaration (v) has already landed. Assign the remaining candidate-specific work to the
 > scalar-5D adoption/statistics owner. Do not apply a blanket Hartlap correction to the summed covariance. Require each
@@ -278,7 +283,7 @@ reported χ² is the Cholesky one.
 | flux bootstrap (3D) | `fd_flux_boot.py:151-156` → `G.compare` | C_total + C_resp + (C − C₀) + V_g | as Stage G | 16 (8): `bands.*.*.ndf` in `fd_flux_boot_readout.json` |
 | F0b, F1 (fake data) | `fd_f0_regrade.py:225-232` (`grade`) | (C + N)[idx]: C a reported-family matrix (relative), N the ratio-estimator variance of the weighted mean over the fake experiments (`:215-222`) | Cholesky | 16 (8): `truths[].ndf` in `fd_f0b_readout.json` (`b9db935a…`) and `fd_f1_readout.json` (`cbe411a9…`) |
 | cheap-tier readers | `fd_ct_readers.py:151-154` (`quad`), `:356-359` | C_e and C_total_resp, per cell set (all16, gibuu8) | Cholesky | 16 (8): `truths.*.matrices.*.*.ndf` in `fd_ct_chi2.json` |
-| 1B coverage scoring | `fd_1b_score.py:322-329` (`chi2_values`) | the 4A matrix M_d, and the transferred reported matrix | Cholesky, "no ridge or floor" (`:323`) | n of the cells scored |
+| 1B coverage scoring | `fd_1b_score.py:322-329` at `4ede47e3`, `:329-336` at `d1c7b80d` (`chi2_values`) | the 4A matrix M_d, and the transferred reported matrix | Cholesky, "no ridge or floor" (`:323`, `:330`) | n of the cells scored |
 | 5B periods and audit | `fd_ct_periods.py:409-410`; `fd_ct_5b_audit.py:197-202,543` | M = (C_total + C_resp) / (f fᵀ) | `np.linalg.inv`, or Cholesky whitening | 16 |
 
 **Two further finite-ensemble terms sit inside some of these matrices** and are not blocks of the reported covariance:
@@ -388,7 +393,7 @@ one.
 | C_resp | `nd-unfolding/build_cresp.py` (`fe1aec8b…`) `:10,36-37,111-113,187,191-192` |
 | C_PL,5D | `nd-unfolding/fd_ct_periods.py` (`ec6bc7f5…`) `:55-61,396,421-435`; `fd/readout/fd_ct_5b_periods.json` `a5b17895…` `C_PL5D` |
 | V_g | `nd-unfolding/fd_g_compare.py` (`0a3c09cd…`) `:9-11,147-172,335-338`; `fd/readout/fd_g_readout.json` `75a9ddee…` |
-| the inversion sites | `fd_g_compare.py:158-159`; `fd_g_diag.py` (`241bfd02…`) `:98-117,202`; `fd_g_followup.py` (`ec8cbc68…`) `:248-262`; `fd_flux_boot.py` (`d5b4bb09…`) `:151-156`; `fd_f0_regrade.py` (`0dfa722c…`) `:215-232`; `fd_ct_readers.py` (`f4cc51c8…`) `:151-154,356-359`; `fd_1b_score.py` (`507fb2ac…`) `:322-329`; `fd_ct_periods.py:409-410`; `fd_ct_5b_audit.py` (`d969d1ff…`) `:197-202,543` |
+| the inversion sites | `fd_g_compare.py:158-159`; `fd_g_diag.py` (`241bfd02…`) `:98-117,202`; `fd_g_followup.py` (`ec8cbc68…`) `:248-262`; `fd_flux_boot.py` (`d5b4bb09…`) `:151-156`; `fd_f0_regrade.py` (`0dfa722c…`) `:215-232`; `fd_ct_readers.py` (`f4cc51c8…`) `:151-154,356-359`; `fd_1b_score.py` (`507fb2ac…`; `2b340dd0…` at `d1c7b80d`) `:322-329` (`:329-336` at `d1c7b80d`); `fd_ct_periods.py:409-410`; `fd_ct_5b_audit.py` (`d969d1ff…`) `:197-202,543` |
 | the flux bootstrap | `FD-FLUX-BOOT-REPORT.md` §1–§2.1; `fd/readout/fd_flux_boot_readout.json` `b7b5652c…` |
 | the note's protocol and direction | `docs/analysis-note/app_statmethods_nd.tex:12,16,19` |
 | the 16-cell χ² quotes | `docs/analysis-note/sec_fived16.tex:117,182-196`; `docs/analysis-note/paper_body.tex:19,168` |
