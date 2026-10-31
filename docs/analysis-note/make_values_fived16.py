@@ -50,6 +50,36 @@ BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "d
          "V_g": r"$V_g$", "C_model:genie_mec": r"$C_{\mathrm{model}}$ (GENIE + MEC)",
          "C_model:nuwro": r"$C_{\mathrm{model}}$ (NuWro)", "C_model:gibuu": r"$C_{\mathrm{model}}$ (GiBUU)"}
 PRED = {"genie_cv": "gcv", "genie_mec": "gmec", "nuwro": "nuwro", "gibuu": "gibuu", "mnvtune_v1": "tune"}
+# each graded fake-data truth's printed name (for the generated list) and the words a sentence uses for it (for the check)
+TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
+               "W1": (r"the NuWro $\Eavail$ shape", r"NuWro $\Eavail$ shape"),
+               "W2": (r"the GENIE + MEC $(\Eavail,W)$ shape", r"$(\Eavail,W)$ shape"),
+               "W3": (r"the NuWro $(\pT,\pPar,\Eavail)$ shape", r"$(\pT,\pPar,\Eavail)$ shape"),
+               "q3": (r"the synthetic $q_3$ tilt", r"$q_3$ tilt"),
+               "stage0c_gibuu": (r"the GiBUU $\Eavail$ shape", r"GiBUU $\Eavail$ shape"),
+               "closure_nuwro": ("the NuWro closure", "NuWro closure"),
+               "A7_mnvtune": (r"the Tune~v1 hybrid truth", r"Tune~v1 hybrid"),
+               "A7_genie_cv": ("the GENIE CV hybrid truth", "GENIE CV hybrid"),
+               "A7_genie_mec": ("the GENIE + MEC hybrid truth", "GENIE + MEC hybrid"),
+               "A7_nuwro": ("the NuWro hybrid truth", "NuWro hybrid"),
+               "A7_gibuu": ("the GiBUU hybrid truth", "GiBUU hybrid")}
+# Every printed sentence that states which F0b truths the reported covariance lists. A re-pinned readout (the
+# run-period block's, PROPOSAL-20261031-5b-with-without.md section 3) changes that set while the hand-typed names stay,
+# so --check fails unless each sentence still agrees with the pinned F0b readout's triggers.listed:
+#   "keys": the truths the sentence's \fvval{f0b-<truth>-...} keys name, and the names it types, equal the listed set;
+#   "plural": at least `gibuu` listed GiBUU truths (the sentence says "GiBUU-like truths"), and every truth in `also`.
+# The anchor is the sentence's distinguishing clause; a missing anchor fails, so a moved sentence must be re-declared.
+LISTED_CLAIMS = [
+    ("paper_body.tex", "the listed truths are the", {"kind": "keys"}),
+    ("paper_body.tex", "at these GiBUU-like truths or at the $q_3$ tilt", {"kind": "plural", "gibuu": 2, "also": ["q3"]}),
+    ("sec_fived16.tex", "truths fail: the", {"kind": "keys"}),
+    ("sec_fived16.tex", "at these GiBUU-like truths or at the $q_3$ tilt", {"kind": "plural", "gibuu": 2, "also": ["q3"]}),
+    ("sec_fived16.tex", "The GiBUU-like truths fail the fake-data tests", {"kind": "plural", "gibuu": 2, "also": []}),
+    ("main_paper.tex", "at GiBUU-like truths or at a synthetic $q_{3}$ tilt", {"kind": "plural", "gibuu": 2, "also": ["q3"]}),
+]
+# the self-test's world fixture: the F0b readout with the run-period block (FD-CT-5B-ADDITION-REPORT.md), whose listed
+# truths are the q3 tilt and the GiBUU hybrid only, so every LISTED_CLAIMS sentence must fail against it
+WITH_CPL_F0B = (f"{FD}/fd/with-cpl/readout/fd_f0b_readout.json", "5f542830")
 
 
 def load():
@@ -278,6 +308,8 @@ def values(d):
         ag = d[tag]["triggers"]["all_graded"]    # denominators only: the counts are read by group, never pooled
         v[f"{tag}-all-truths"], v[f"{tag}-all-cells"] = str(ag["truths"]), str(ag["cells"])
         v[f"{tag}-nlisted"] = str(len(d[tag]["triggers"]["listed"]))
+        names = [TRUTH_LABEL[x["truth"]][0] for x in d[tag]["triggers"]["listed"]]
+        v[f"{tag}-listed-names"] = (", ".join(names[:-1]) + " and " + names[-1]) if len(names) > 1 else "".join(names) or "none"
         v[f"{tag}-nunlisted"] = str(ag["truths"] - len(d[tag]["triggers"]["listed"]))
         v[f"{tag}-nungraded"] = str(sum(1 for t in d[tag]["truths"] if not t.get("graded")))
     # Stage G per cell: pulls and g/f - 1 (percent)
@@ -425,6 +457,47 @@ def check_figures():
     return bad
 
 
+def _sentence(text, anchor):
+    """The sentence of `text` that contains `anchor` (sentences end at a full stop followed by a space and a capital)."""
+    i = text.index(anchor)
+    start = max([m.end() for m in re.finditer(r"\.\s+(?=[A-Z\\])", text[:i])] + [text.rfind("\n", 0, i) + 1])
+    m = re.search(r"\.(\s+(?=[A-Z\\])|\s*$)", text[i:], re.M)
+    return text[start:i + (m.start() + 1 if m else len(text) - i)]
+
+
+def check_listed_claims(f0b, texts):
+    """Each LISTED_CLAIMS sentence agrees with this F0b readout's listed truths; returns the failures."""
+    listed = [x["truth"] for x in f0b["triggers"]["listed"]]
+    graded = {t["name"] for t in f0b["truths"] if t.get("graded")}
+    bad = []
+    for name, anchor, rule in LISTED_CLAIMS:
+        text = texts[name]
+        if text.count(anchor) != 1:
+            bad.append(f"{name}: {anchor!r} occurs {text.count(anchor)} times, not once; re-declare the sentence")
+            continue
+        sent = _sentence(text, anchor)
+        if rule["kind"] == "keys":
+            keyed = set(re.findall(r"\\fvval\{f0b-([A-Za-z0-9_]+)-(?:zmax|p|cells|chi2)\}", sent))
+            unknown = keyed - graded
+            typed = {t for t in graded if TRUTH_LABEL[t][1] in sent}
+            if unknown:
+                bad.append(f"{name}: {anchor!r} keys truths the readout does not grade: {sorted(unknown)}")
+            if keyed != set(listed) or typed != set(listed):
+                bad.append(f"{name}: {anchor!r} names truths by key {sorted(keyed)} and by name {sorted(typed)}; "
+                           f"the pinned F0b readout lists {sorted(listed)}")
+        else:
+            ng = sum("gibuu" in t for t in listed)
+            missing = [t for t in rule["also"] if t not in listed]
+            if ng < rule["gibuu"] or missing:
+                bad.append(f"{name}: {anchor!r} needs at least {rule['gibuu']} listed GiBUU truths and {rule['also']}; "
+                           f"the pinned F0b readout lists {sorted(listed)}")
+    return bad
+
+
+def read_claim_texts():
+    return {name: (OUT.parent / name).read_text() for name in {c[0] for c in LISTED_CLAIMS}}
+
+
 def check_file(path, text):
     """--check's comparison: the committed file equals a fresh generation."""
     return path.exists() and path.read_text() == text
@@ -501,6 +574,49 @@ def self_test():
         print("  FAIL an H2 definition whose four lowest-stability cells differ from the decided ones was accepted"); ok = False
     except AssertionError:
         print("  ok   an H2 definition whose four lowest-stability cells differ from the decided ones is refused")
+    # the listed-truth sentences: silent on the committed tree, and each plant must fail at the sentence it changed
+    d, texts = load(), read_claim_texts()
+    if check_listed_claims(d["f0b"], texts):
+        print("  FAIL the committed listed-truth sentences disagree with the pinned F0b readout"); ok = False
+    else:
+        print(f"  ok   the {len(LISTED_CLAIMS)} committed listed-truth sentences agree with the pinned F0b readout")
+    raw = (ROOT / WITH_CPL_F0B[0]).read_bytes()
+    assert hashlib.sha256(raw).hexdigest().startswith(WITH_CPL_F0B[1]), "the with-block F0b fixture changed"
+    bad = check_listed_claims(json.loads(raw), texts)
+    if len(bad) == len(LISTED_CLAIMS):
+        print(f"  ok   the with-block F0b readout fails all {len(LISTED_CLAIMS)} sentences")
+    else:
+        print(f"  FAIL the with-block F0b readout failed {len(bad)} of {len(LISTED_CLAIMS)} sentences"); ok = False
+    gibuu_key = r"($p=\fvval{f0b-A7_gibuu-p}$; cells \fvval{f0b-A7_gibuu-cells})"
+    for what, name, anchor, edit in (
+            ("keys a truth the readout does not list", "paper_body.tex", "the listed truths are the",
+             lambda t: t.replace(r"tilt ($p=\fvval{f0b-q3-p}$)", r"tilt ($p=\fvval{f0b-q3-p}$, $\fvval{f0b-W3-p}$)", 1)),
+            ("drops a listed truth's keys", "paper_body.tex", "the listed truths are the",
+             lambda t: t.replace(gibuu_key, "", 1)),
+            ("types a name its keys do not name", "sec_fived16.tex", "truths fail: the",
+             lambda t: t.replace(r"the GiBUU $\Eavail$ shape, by its cell", r"the NuWro $\Eavail$ shape, by its cell", 1)),
+            ("loses its anchor", "main_paper.tex", "at GiBUU-like truths or at a synthetic $q_{3}$ tilt",
+             lambda t: t.replace("at GiBUU-like truths or at a synthetic", "at some truths or at a synthetic", 1))):
+        planted = dict(texts, **{name: edit(texts[name])})
+        if planted[name] == texts[name]:
+            print(f"  FAIL the plant that {what} did not apply"); ok = False
+            continue
+        hit = [b for b in check_listed_claims(d["f0b"], planted) if b.startswith(f"{name}: {anchor!r}")]
+        if hit:
+            print(f"  ok   a {name} sentence that {what} fails")
+        else:
+            print(f"  FAIL a {name} sentence that {what} passed"); ok = False
+    d = load()                                               # a readout listing one more truth fails the "keys" sentences
+    d["f0b"]["triggers"]["listed"].append({"truth": "W3", "cells": [], "p_lt_0.01": True})
+    if len([b for b in check_listed_claims(d["f0b"], texts) if "names truths by key" in b]) == 2:
+        print("  ok   a readout that lists one more truth fails both enumerating sentences")
+    else:
+        print("  FAIL a readout that lists one more truth did not fail both enumerating sentences"); ok = False
+    v = values(load())
+    if v["f0b-listed-names"] != r"the synthetic $q_3$ tilt, the GiBUU $\Eavail$ shape and the GiBUU hybrid truth":
+        print(f"  FAIL f0b-listed-names is {v['f0b-listed-names']!r}"); ok = False
+    else:
+        print("  ok   f0b-listed-names names the three listed truths in the readout's order")
     name = next(iter(FIGURES))                               # a figure that is not its source must fail --check
     with tempfile.TemporaryDirectory() as tmp:
         fig = OUT.parent / "figures" / name
@@ -526,7 +642,12 @@ def main(argv):
         return 0
     if argv[:1] == ["--self-test"]:
         return self_test()
-    text = render(values(load()))
+    d = load()
+    text = render(values(d))
+    bad = check_listed_claims(d["f0b"], read_claim_texts())
+    if bad:
+        sys.exit("VALUES-FIVED16 :: FAIL (a sentence's listed fake-data truths disagree with the pinned F0b readout)\n  "
+                 + "\n  ".join(bad))
     if argv[:1] == ["--check"]:
         if not check_file(OUT, text):
             sys.exit("VALUES-FIVED16 :: FAIL (values_fived16.tex differs from a fresh generation; regenerate it)")
@@ -534,7 +655,7 @@ def main(argv):
         if bad:
             sys.exit("VALUES-FIVED16 :: FAIL (a printed figure differs from its committed source)\n  " + "\n  ".join(bad))
         print(f"VALUES-FIVED16 :: PASS ({sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values, "
-              f"readouts pinned, {len(FIGURES)} figures equal their sources)")
+              f"readouts pinned, {len(FIGURES)} figures equal their sources, {len(LISTED_CLAIMS)} listed-truth sentences agree)")
         return 0
     OUT.write_text(text)
     print(f"wrote {OUT.name}: {sum(1 for l in text.splitlines() if l.startswith(chr(92) + "@namedef"))} values")
