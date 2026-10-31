@@ -51,6 +51,8 @@ RSS_LIMIT_KIB = int(0.75 * 56 * 2 ** 20)        # 75 % of a lane's 56 GiB (Slurm
 # (arm, mode, first, last) item runs, in the declared order. The derivation's 176 universes are split by the
 # stage-2 declaration: the four of DERIVATION_FIRST run in 2a-0, so their walls are measured first, and the rest in 2a.
 DERIVATION_FIRST = ("CV", "Flux_0", "MaRES_1", "GEANT_Pion_0")
+# the four job 60624652 left unmade, behind lane 2's refused half-MC step; 2a-r reruns them (FD-1B-STAGE2-AMENDMENT-1.md)
+DERIVATION_RERUN = ("2p2h_0", "2p2h_1", "2p2h_2", "AGKYxF1pi_0")
 JOBS = {
     "2a-0": {"nodes": 1, "limit": "01:00:00", "most_per_lane": 1,
              "items": [("derivation", "derivation", "first", None), ("pilot", "toy", 2_600_000, 2_600_001),
@@ -58,6 +60,10 @@ JOBS = {
     "2a": {"nodes": 3, "limit": "02:40:00", "most_per_lane": 9,
            "items": [("pilot", "toy", 2_600_002, 2_600_015), ("pilot", "half", 2_600_000, 2_600_007),
                      ("derivation", "derivation", "rest", None)]},
+    # amendment 1: all 8 half-MC pilots under the fixed truth guard (the two made before it quarantined, so the set is
+    # one code), then the four derivation universes; 12 over 8 lanes puts two half pilots on each of lanes 0-3
+    "2a-r": {"nodes": 1, "limit": "01:00:00", "most_per_lane": 2,
+             "items": [("pilot", "half", 2_600_000, 2_600_007), ("derivation", "derivation", "rerun", None)]},
     "2b": {"nodes": 2, "limit": "02:30:00", "most_per_lane": 7, "items": [("control", "toy", 2_610_000, 2_610_099)]},
     "2c": {"nodes": 3, "limit": "03:00:00", "most_per_lane": 9, "items": [("control", "toy", 2_610_100, 2_610_299)]},
     "3i": {"nodes": 3, "limit": "03:00:00", "most_per_lane": 9,
@@ -65,8 +71,12 @@ JOBS = {
     "3f": {"nodes": 5, "limit": "03:30:00", "most_per_lane": 10,
            "items": [("g18", "toy", 2_620_100, 2_620_299), ("ar23", "toy", 2_630_100, 2_630_299)]},
 }
-DECLARED_CAPS = {"2a-0": 1.0, "2a": 8.0, "2b": 5.0, "2c": 9.0, "3i": 9.0, "3f": 17.5}
+DECLARED_CAPS = {"2a-0": 1.0, "2a": 8.0, "2a-r": 1.0, "2b": 5.0, "2c": 9.0, "3i": 9.0, "3f": 17.5}
 STAGE_CEILINGS = {"2": 23.0, "3": 26.5}
+# An ended job counts against its stage's ceiling at its ledgered charge, NNodes x Elapsed seconds per submission
+# (receipts-1b/stage2/LEDGER.psv); a job not yet ended counts at its enforced cap. FD-1B-STAGE2-AMENDMENT-1.md's rule,
+# replacing the stage-2 binding's sum of caps. An ended job is never submitted again.
+CHARGED_NODE_S = {"2a-0": ((1, 834),), "2a": ((1, 6022), (1, 6046), (1, 6037))}
 
 
 def hours(limit: str) -> float:
@@ -78,13 +88,27 @@ def cap(job: str) -> float:
     return JOBS[job]["nodes"] * hours(JOBS[job]["limit"])
 
 
+def committed(job: str) -> float:
+    """What a job counts against its stage's ceiling: its ledgered charge once ended, otherwise its cap."""
+    if job not in CHARGED_NODE_S:
+        return cap(job)
+    charged = sum(n * s for n, s in CHARGED_NODE_S[job]) / 3600
+    if charged > cap(job) + 1e-9:
+        raise SystemExit(f"[FAIL] job {job}: its ledgered charge {charged:.4f} node-h exceeds its cap {cap(job)}")
+    return charged
+
+
 def derivation_universes(which: str) -> list[str]:
-    """The derivation's universes in S1's order: DERIVATION_FIRST ("first") or every other one ("rest")."""
+    """The derivation's universes: DERIVATION_FIRST ("first"), every other one in S1's order ("rest"), or
+    DERIVATION_RERUN ("rerun")."""
     every = ["CV"] + toys.s1_universes()
-    if not set(DERIVATION_FIRST) <= set(every):
-        raise SystemExit(f"[FAIL] DERIVATION_FIRST names universes S1 did not unfold: {set(DERIVATION_FIRST) - set(every)}")
+    for name, chosen in (("DERIVATION_FIRST", DERIVATION_FIRST), ("DERIVATION_RERUN", DERIVATION_RERUN)):
+        if not set(chosen) <= set(every):
+            raise SystemExit(f"[FAIL] {name} names universes S1 did not unfold: {set(chosen) - set(every)}")
     if which == "first":
         return list(DERIVATION_FIRST)
+    if which == "rerun":
+        return list(DERIVATION_RERUN)
     if which == "rest":
         return [u for u in every if u not in DERIVATION_FIRST]
     raise SystemExit(f"[FAIL] no derivation selection {which!r}")
@@ -173,12 +197,14 @@ def check_deploy(deploy: str) -> None:
 def submit_lines(job: str, deploy: str, pin: str) -> list[str]:
     spec = JOBS[job]
     check_deploy(deploy)
+    if job in CHARGED_NODE_S:
+        raise SystemExit(f"[FAIL] job {job} has ended (its charge is ledgered); it is not submitted again")
     if not 0 < hours(spec["limit"]) < MAX_LIMIT_H:
         raise SystemExit(f"[FAIL] job {job}: limit {spec['limit']} is not under {MAX_LIMIT_H} h")
     if abs(cap(job) - DECLARED_CAPS[job]) > 1e-9:
         raise SystemExit(f"[FAIL] job {job}: cap {cap(job)} != declared {DECLARED_CAPS[job]}")
     for stage, ceiling in STAGE_CEILINGS.items():
-        if sum(cap(j) for j in JOBS if j.startswith(stage)) > ceiling + 1e-9:
+        if sum(committed(j) for j in JOBS if j.startswith(stage)) > ceiling + 1e-9:
             raise SystemExit(f"[FAIL] stage {stage}'s caps exceed its ceiling {ceiling}")
     table = f"{deploy}/{TABLE_REL}/tasks-fd1b-{job}.tsv"
     out = []
