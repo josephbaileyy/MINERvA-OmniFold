@@ -11,7 +11,12 @@ It skips text, ticks, spines, grid lines, legends and the axes background, and a
 coordinates. These are what a restyle may change. Each kept artist is one item. Its hash is sha256 over its kind and
 each field's name and bytes, with numbers as contiguous float64 and a masked array as its data (masked entries NaN)
 plus its mask. Labels, axes index and scale are written to the index for reading, but are not hashed.
-A figure's record is the multiset of its items' hashes; compare.py compares two records."""
+A figure's record is the multiset of its items' hashes; compare.py compares two records.
+RESTYLE AMENDMENT 1 adds, per item, "dhash" (the same hash with the colour fields left out: color, mfc, mec, face,
+edge, cmap) and "colours" (those fields as hex strings), so that compare.py --recolour can hold the data bit for bit
+while checking each series' colour against the palette; "gid" (a patch drawn by Axes.hist carries
+"restyle-hist", set by capture.py); and items of kind "hist-input", one per Axes.hist call (capture.py), hashing the
+values hist was given, which compare.py's named binning exception compares bit for bit."""
 import hashlib
 import json
 
@@ -30,22 +35,37 @@ def _num(x):
     return np.ascontiguousarray(np.asarray(x, dtype=np.float64)), None
 
 
+COLOUR_FIELDS = ("color", "mfc", "mec", "face", "edge", "cmap")
+
+
+def _hex(v):
+    a = np.atleast_2d(np.asarray(v, dtype=float))
+    return ["#%02X%02X%02X%02X" % tuple(int(round(x * 255)) for x in r[:4]) for r in a] if a.size else []
+
+
 def _item(kind, fields):
     h = hashlib.sha256(kind.encode())
+    d = hashlib.sha256(kind.encode())
     arrays = {}
     for k in sorted(fields):
         v = fields[k]
-        h.update(b"\0" + k.encode() + b"\0")
+        hs = (h,) if k in COLOUR_FIELDS else (h, d)
+        for x in hs:
+            x.update(b"\0" + k.encode() + b"\0")
         if isinstance(v, str):
-            h.update(v.encode())
+            for x in hs:
+                x.update(v.encode())
             continue
         a, m = _num(v)
-        h.update(str(a.shape).encode() + a.tobytes())
+        for x in hs:
+            x.update(str(a.shape).encode() + a.tobytes())
         arrays[k] = a
         if m is not None:
-            h.update(b"mask" + np.ascontiguousarray(m).tobytes())
+            for x in hs:
+                x.update(b"mask" + np.ascontiguousarray(m).tobytes())
             arrays[k + ".mask"] = m
-    return h.hexdigest(), arrays
+    colours = {k: (fields[k] if isinstance(fields[k], str) else _hex(fields[k])) for k in fields if k in COLOUR_FIELDS}
+    return h.hexdigest(), d.hexdigest(), colours, arrays
 
 
 def _in_data(artist, ax):
@@ -78,10 +98,10 @@ def items(fig):
                     "xy": a.get_xydata(), "color": to_rgba(a.get_color(), a.get_alpha()),
                     "mfc": to_rgba(a.get_markerfacecolor()), "mec": to_rgba(a.get_markeredgecolor()),
                     "linestyle": str(a.get_linestyle()), "marker": str(a.get_marker()),
-                    "drawstyle": str(a.get_drawstyle())}
+                    "drawstyle": str(a.get_drawstyle())}, a.get_gid()
             elif isinstance(a, AxesImage):
                 yield "image", n, a.get_label(), {
-                    "array": a.get_array(), "extent": a.get_extent(), "clim": _clim(a), "cmap": _cmap(a)}
+                    "array": a.get_array(), "extent": a.get_extent(), "clim": _clim(a), "cmap": _cmap(a)}, a.get_gid()
             elif isinstance(a, Collection):
                 f = {"offsets": a.get_offsets(), "face": to_rgba_array(a.get_facecolors()),
                      "edge": to_rgba_array(a.get_edgecolors()), "cmap": _cmap(a)}
@@ -98,22 +118,29 @@ def items(fig):
                     f["vertices"] = np.concatenate([p.vertices for p in paths]) if paths else np.zeros((0, 2))
                     f["codes"] = np.concatenate([p.codes if p.codes is not None else np.zeros(len(p.vertices))
                                                  for p in paths]) if paths else np.zeros(0)
-                yield type(a).__name__, n, a.get_label(), f
+                yield type(a).__name__, n, a.get_label(), f, a.get_gid()
             elif isinstance(a, Patch) and _in_data(a, ax):
                 v = a.get_patch_transform().transform(a.get_path().vertices)
                 yield "patch", n, a.get_label(), {
-                    "vertices": v, "face": to_rgba(a.get_facecolor()), "edge": to_rgba(a.get_edgecolor())}
+                    "vertices": v, "face": to_rgba(a.get_facecolor()), "edge": to_rgba(a.get_edgecolor())}, a.get_gid()
+
+
+def hist_inputs(fig):
+    """(kind, axes, label, fields, gid) for each Axes.hist call capture.py recorded on the figure."""
+    for n, x in getattr(fig, "_restyle_hist_inputs", []):
+        yield "hist-input", n, "", {"values": x}, "restyle-hist"
 
 
 def collect(fig):
     arrays, index = {}, []
-    for i, (kind, n, label, fields) in enumerate(items(fig)):
-        h, arr = _item(kind, fields)
+    for i, (kind, n, label, fields, gid) in enumerate(list(items(fig)) + list(hist_inputs(fig))):
+        h, dh, colours, arr = _item(kind, fields)
         for k, v in arr.items():
             arrays[f"i{i}.{k}"] = v
-        ax = fig.axes[n]
-        index.append({"i": i, "kind": kind, "axes": n, "label": str(label), "hash": h,
-                      "scale": [ax.get_xscale(), ax.get_yscale()]})
+        ax = fig.axes[n] if n is not None else None
+        index.append({"i": i, "kind": kind, "axes": n, "label": str(label), "hash": h, "dhash": dh,
+                      "colours": colours, "gid": gid,
+                      "scale": [ax.get_xscale(), ax.get_yscale()] if ax is not None else None})
     return arrays, index
 
 

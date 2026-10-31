@@ -206,7 +206,7 @@ def draw_panel(ax, log_edges, paper_y, paper_err, omni_y, omni_err, truth_y,
     factor = 1.0e39 * scale
 
     sx, sy = stair_xy(x_plot_edges, truth_y * factor)
-    ax.plot(sx, sy, color="red", lw=_fs(1.6, 0.8),
+    ax.plot(sx, sy, color="red" if not RESTYLE else rs.PALETTE["tune"], lw=_fs(1.6, 0.8),
             label="GENIE 2.12.6 + MnvTune v1" if not RESTYLE else "GENIE 2.12.6 + MINERvA Tune v1")
 
     ax.errorbar(centers, paper_y * factor, yerr=paper_err * factor,
@@ -214,8 +214,8 @@ def draw_panel(ax, log_edges, paper_y, paper_err, omni_y, omni_err, truth_y,
                 ecolor="black", elinewidth=_fs(0.8, 0.4), capsize=_fs(1.5, 0.7),
                 label="Published (PRD 104, 092007)", zorder=3)
     ax.errorbar(centers, omni_y * factor, yerr=omni_err * factor,
-                xerr=half_widths, fmt="o", ms=_fs(2.2, 1.1), color="#1f77b4",
-                ecolor="#1f77b4", elinewidth=_fs(0.8, 0.4), capsize=_fs(1.3, 0.6),
+                xerr=half_widths, fmt="o", ms=_fs(2.2, 1.1), color=_fs("#1f77b4", rs.PALETTE["this_work"]),
+                ecolor=_fs("#1f77b4", rs.PALETTE["this_work"]), elinewidth=_fs(0.8, 0.4), capsize=_fs(1.3, 0.6),
                 label="This work (OmniFold)", zorder=4)
 
     ax.text(0.50, 0.96, title if not RESTYLE else rs.slice_label(title, unit=False), transform=ax.transAxes,
@@ -306,7 +306,8 @@ def plot_pz_slices(fig, outer, paper, paper_err, reported,
                    title, scale)
         setup_paper_axes(ax, row, col, 4, 4,
                          (PT_DISP_EDGES[0], PT_DISP_EDGES[-1]),
-                         ylim=(0, 2.4), yticks=[0, 1, 2])
+                         ylim=(0, 2.4) if not RESTYLE else (0, 3.0), yticks=[0, 1, 2])
+        # amendment 1 (Joseph, #591): headroom so that every slice label clears the data (tools/overlap.py)
         tick_labs = [0.4, 1.0, 1.5, 2.5, 4.5]
         ax.set_xticks(tick_positions(tick_labs, PT_EDGES, PT_DISP_EDGES))
         ax.set_xticklabels([str(x) for x in tick_labs])

@@ -14,7 +14,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DEPLOY = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else HERE.parents[7]
-FILES = ("artists.py", "capture.py", "compare.py", "raster.py", "textsize.py", "selftest.py", "toy_producer.py")
+FILES = ("artists.py", "capture.py", "compare.py", "raster.py", "textsize.py", "overlap.py", "selftest.py",
+         "toy_producer.py")
 
 MUTANTS = [
     ("a line's colours are not hashed (line, marker face and marker edge)", "artists.py",
@@ -31,7 +32,7 @@ MUTANTS = [
                      "edge": to_rgba_array(a.get_edgecolors()), "cmap": _cmap(a)}''',
      '''f = {"offsets": a.get_offsets(), "cmap": _cmap(a)}'''),
     ("labels are hashed (a restyle of a label fires)", "artists.py",
-     "h, arr = _item(kind, fields)", "h, arr = _item(kind + str(label), fields)"),
+     "h, dh, colours, arr = _item(kind, fields)", "h, dh, colours, arr = _item(kind + str(label), fields)"),
     ("figures compared by item count only", "compare.py",
      'cb, ca = Counter(x["hash"] for x in ib), Counter(x["hash"] for x in ia)',
      'cb, ca = Counter(len(ib) for x in ib), Counter(len(ia) for x in ia)'),
@@ -48,6 +49,17 @@ MUTANTS = [
      "fail = floor is not None and lo[0] < floor", "fail = floor is not None and lo[0] > floor"),
     ("the printed-width scaling dropped", "textsize.py",
      "scale = WIDTH_IN[stem] * 72 / page_w", "scale = 1.0"),
+    ("amendment 1: series colours not checked against the palette", "compare.py",
+     "            if want_c != got_c:", "            if False:"),
+    ("amendment 1: the recolour table ignored (every colour must stay)", "compare.py",
+     "        return c if ident is None else pal[ident] + c[7:]", "        return c"),
+    ("amendment 1: the binning exception applied to every figure", "compare.py",
+     """        keep = (lambda x: not (x["kind"] == "patch" and x.get("gid") == "restyle-hist")) if k.name[:-len(".json")] in rebin \\""",
+     """        keep = (lambda x: not (x["kind"] == "patch" and x.get("gid") == "restyle-hist")) if True \\"""),
+    ("amendment 1: the values given to hist not recorded", "capture.py",
+     """    fig.__dict__.setdefault("_restyle_hist_inputs", []).append((n, vals))""", """    pass"""),
+    ("amendment 1: the overlap test disabled", "overlap.py",
+     """                if any(_hits_box(g, box) for g in _geometry(a, ax)):""", """                if False:"""),
     ("capture wraps savefig before technote_style (the .pdf twin captured too)", "capture.py",
      "import technote_style  # noqa: E402,F401  (installs its .pdf-twin wrapper before ours)\n", ""),
 ]

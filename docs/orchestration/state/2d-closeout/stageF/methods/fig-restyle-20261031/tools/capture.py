@@ -11,7 +11,12 @@ runpy runs the script as __main__, as at re2c_run.sh:43-46. Before it runs:
   - ROOT.TFile.Open is wrapped, if ROOT imports, so each opened file's path and sha256 go to <capture-dir>/opened.tsv.
     Each existing file named in argv is also hashed there (kind "argv"), since a file opened from C++ or by a default
     path is seen only through the wrapper.
-It refuses to run with TECHNOTE_DARK set, which recolours every series. The producer's exit status is this script's."""
+It refuses to run with TECHNOTE_DARK set, which recolours every series. The producer's exit status is this script's.
+RESTYLE AMENDMENT 1: Axes.hist is wrapped. Each call's values are recorded on the figure (artists.py's "hist-input"
+items) and the patches it draws carry gid "restyle-hist", so that compare.py's named binning exception can hold the
+values bit for bit while the bins change. After each save, every text of the figure and its axes (ax.texts, fig.texts)
+is tested against every data artist's drawn geometry in display coordinates, and each overlap is written to
+<capture-dir>/<figure>.overlaps.tsv (overlap.py reports and gates them)."""
 import hashlib
 import json
 import os
@@ -22,6 +27,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import artists  # noqa: E402
+import overlap  # noqa: E402
 
 if os.environ.get("TECHNOTE_DARK"):
     sys.exit("capture.py: TECHNOTE_DARK is set; technote_style would recolour every series, so the run is refused")
@@ -67,6 +73,10 @@ def savefig(self, fname, *a, **k):
             arrays, index = artists.collect(self)
             artists.write(out / name, arrays, index)
         result = _inner(self, fname, *a, **k)
+        if outer:
+            with open(out / f"{name}.overlaps.tsv", "w") as f:
+                f.write("text\taxes\tartist\tartist_label\n")
+                f.writelines(f"{s!r}\t{n}\t{kind}\t{lab!r}\n" for s, n, kind, lab in overlap.overlaps(self))
         if outer:  # after the save has drawn the figure, so every tick label exists
             with open(out / f"{name}.textsizes.tsv", "w") as f:
                 f.write(f"# figure width (in)\t{self.get_size_inches()[0]!r}\n")
@@ -77,6 +87,27 @@ def savefig(self, fname, *a, **k):
 
 
 Figure.savefig = savefig
+
+from matplotlib.axes import Axes  # noqa: E402
+import numpy as _np  # noqa: E402
+
+_hist = Axes.hist
+
+
+def hist(self, x, *a, **k):
+    """Record the values given to hist (artists.py "hist-input") and tag the patches it draws."""
+    fig = self.figure
+    n = fig.axes.index(self)
+    vals = _np.concatenate([_np.ravel(_np.asarray(v, dtype=float)) for v in (x if isinstance(x, (list, tuple)) else [x])])
+    fig.__dict__.setdefault("_restyle_hist_inputs", []).append((n, vals))
+    out = _hist(self, x, *a, **k)
+    for p in self.patches:
+        if p.get_gid() is None:
+            p.set_gid("restyle-hist")
+    return out
+
+
+Axes.hist = hist
 plt.savefig = lambda fname, *a, **k: plt.gcf().savefig(fname, *a, **k)
 
 try:

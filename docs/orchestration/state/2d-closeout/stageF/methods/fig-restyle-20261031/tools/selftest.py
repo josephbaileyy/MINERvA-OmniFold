@@ -49,6 +49,15 @@ def textsize(run):
     return p.returncode, p.stdout + p.stderr
 
 
+def compare_recolour(b, a, *extra):
+    return compare(b, a, "--recolour", str(TOYREC), "--palette", str(TOYPAL), *extra)
+
+
+def overlap(run):
+    p = subprocess.run([PY, "-I", str(HERE / "overlap.py"), str(run), "--gate"], capture_output=True, text=True)
+    return p.returncode, p.stdout
+
+
 def raster(*args):
     p = subprocess.run([PY, "-I", str(HERE / "raster.py"), *map(str, args)], capture_output=True, text=True)
     return p.returncode, p.stdout
@@ -94,6 +103,16 @@ def main():
             "label-3.5": run(base, "label-3.5", data, "--label-size", "7.0"),
             "label-5.0": run(base, "label-5.0", data, "--label-size", "10.0"),
         }
+        global TOYPAL, TOYREC
+        TOYPAL, TOYREC = base / "palette.tsv", base / "recolour.tsv"
+        TOYPAL.write_text("identity\thex\nthis_work\t#D55E00\n")
+        TOYREC.write_text("figure\tbefore_rgb\tidentity\ntoy\t#4C72B0\tthis_work\n")
+        am = {n: run(base, n, data, f) for n, f in (("palette", "--palette"), ("palette-wrong", "--palette-wrong"),
+                                                      ("hist-ulp", "--hist-ulp"), ("overlap", "--overlap"))}
+        am["rebin"] = run(base, "rebin", data, "--palette", "--rebin")  # recoloured as mapped, so only the bins differ
+        am["palette-extra"] = run(base, "palette-extra", data, "--palette", "--palette-extra")
+        am["palette-ulp"] = run(base, "palette-ulp", data, "--palette", "--ulp")
+        am["rebin-ulp"] = run(base, "rebin-ulp", data, "--palette", "--rebin", "--hist-ulp")
         outs = ("--outputs", "out/toy_report.txt")
         expect("identical rerun", *compare(old, cases["rerun"], *outs), False)
         expect("restyle (layout, fonts, labels, panel labels, text)", *compare(old, cases["restyle"], *outs), False)
@@ -115,6 +134,33 @@ def main():
         rc, out = textsize(cases["label-3.5"])
         expect("  ... and the failing text is named", rc, out, True, "smallest 'tiny label'")
         expect("the same text printed at 5.0 pt (check 7)", *textsize(cases["label-5.0"]), False, "TEXTSIZE :: PASS")
+
+        # RESTYLE AMENDMENT 1: the recolour check, the named binning exception and the overlap gate
+        expect("recolour: the series recoloured as the table maps it", *compare_recolour(old, am["palette"]), False)
+        expect("recolour: the palette colour wrong by one unit", *compare_recolour(old, am["palette-wrong"]), True,
+               "the palette and recolour table give")
+        expect("recolour: a series the table does not map recoloured", *compare_recolour(old, am["palette-extra"]),
+               True, "the palette and recolour table give")
+        expect("recolour: a one-ulp value change still fires", *compare_recolour(old, am["palette-ulp"]), True,
+               "only before")
+        expect("rebin: zero-aligned bins, the figure named", *compare_recolour(old, am["rebin"], "--rebin", "toy.png"),
+               False)
+        expect("rebin: the same bins change, the figure not named", *compare_recolour(old, am["rebin"]), True,
+               "only before")
+        expect("rebin: a hist value moved by one ulp, the figure named",
+               *compare_recolour(old, am["rebin-ulp"], "--rebin", "toy.png"), True, "only before")
+        expect("rebin: a hist value moved by one ulp, plain check", *compare(old, am["hist-ulp"]), True, "only before")
+        expect("overlap: a text on the line", *overlap(am["overlap"]), True, "'on the line'")
+        expect("overlap: none", *overlap(old), False, "OVERLAP :: PASS")
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("rs", DEPLOY / "2d-unfolding" / "restyle_2026_10.py")
+        rs = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(rs)
+        rows = [l.split("\t") for l in (DEPLOY / "docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031"
+                                         / "palette.tsv").read_text().splitlines()[2:]]
+        same = {r[0]: r[1].upper() for r in rows} == {k: v.upper() for k, v in rs.PALETTE.items()}
+        expect("palette.tsv equals restyle_2026_10.PALETTE", 0 if same else 1,
+               "" if same else f"palette.tsv {rows} vs PALETTE {rs.PALETTE}", False)
 
         pa, pb = old / "out" / "toy.pdf", cases["rerun"] / "out" / "toy.pdf"
         extra = cases["rerun"] / "capture" / "toy" / "toy.pdf.json"

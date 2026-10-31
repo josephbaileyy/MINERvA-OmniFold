@@ -298,7 +298,14 @@ def main():
     axs[0].set_title("Per-bin pull (ours - paper) / sigma_total")
     plt.colorbar(im0, ax=axs[0], label="pull" if not restyled else "Standardized difference")
 
-    axs[1].hist(pull[mask], bins=30, color="steelblue", edgecolor="black")
+    # amendment 1 (the director's ruling (a)): zero-aligned bins of width 0.15, so that the reference line at 0 falls on
+    # a bin edge; the 30 equal bins over the values' own range put 0 inside a bin, a fifth of the way across
+    if restyled:
+        w = 0.15
+        bins = w * np.arange(int(np.floor(pull[mask].min() / w)), int(np.ceil(pull[mask].max() / w)) + 1)
+    else:
+        bins = 30
+    axs[1].hist(pull[mask], bins=bins, color="steelblue", edgecolor="black")
     axs[1].axvline(0, color="k", ls="--", lw=0.8)
     axs[1].set_xlabel("pull" if not restyled else "Standardized difference")
     axs[1].set_ylabel("bins" if not restyled else "Bins")
