@@ -1089,6 +1089,53 @@ class Tasks(unittest.TestCase):
         with mock.patch.dict(ft.JOBS, {"2b": dict(ft.JOBS["2b"], most_per_lane=6)}), self.assertRaises(SystemExit):
             ft.steps("2b", "a" * 64)
 
+    def _products(self, root, jobs, unfold=800.0, load=10.0, rss=1_000_000, numpy=None, skip=()):
+        for job in jobs:
+            for arm, mode, x in ft.expand(job):
+                path = ft.product_path(arm, mode, x)
+                if path.name in skip:
+                    continue
+                path.parent.mkdir(parents=True, exist_ok=True)
+                u = unfold(arm, mode, x) if callable(unfold) else unfold
+                meta = {"seconds_load": load, "seconds_unfold": u, "peak_rss_kib": rss,
+                        "numpy_version": numpy or np.__version__, "slurm_job": "1"}
+                np.savez(path, meta=np.array(json.dumps(meta)))
+
+    def test_walls_after_2a_0_count_each_steps_load_against_2a_s_limit(self):
+        # 2a's fullest lane has 2 steps and 9 unfolds: 2 L + 9 w against 0.8 x 2:40 = 7,680 s
+        for unfold, load, rss, verdict in ((800.0, 10.0, 1_000_000, "PASS"), (853.0, 0.0, 1_000_000, "PASS"),
+                                           (854.0, 0.0, 1_000_000, "REPRICE"), (850.0, 20.0, 1_000_000, "REPRICE"),
+                                           (800.0, 10.0, ft.RSS_LIMIT_KIB, "PASS"),
+                                           (800.0, 10.0, ft.RSS_LIMIT_KIB + 1, "REPRICE")):
+            with tempfile.TemporaryDirectory() as d, mock.patch.object(ft, "B", d):
+                self._products(d, ["2a-0"], unfold, load, rss)
+                out = ft.walls("2a-0")
+                self.assertTrue(out["verdict"].startswith(verdict), (unfold, load, rss, out["rule"]))
+                self.assertEqual(out["rule"]["2a_fullest_lane_s"], 2 * load + 9 * unfold)
+        self.assertEqual(ft.RSS_LIMIT_KIB, 44_040_192)
+
+    def test_walls_after_2a_take_the_16_pilot_toys_median(self):
+        for slow, verdict in ((1040.0, "PASS"), (1041.0, "REPRICE")):
+            # 8 of the 16 pilot toys at `slow` and 8 at 900 s: the median is their mean; other products are slower
+            fast = {f"fd1b_pilot_s{2_600_000 + i}.npz" for i in range(8)}
+            with tempfile.TemporaryDirectory() as d, mock.patch.object(ft, "B", d):
+                self._products(d, ["2a-0", "2a"], lambda arm, mode, x: (
+                    (900.0 if ft.product_path(arm, mode, x).name in fast else 2 * slow - 900.0)
+                    if (arm, mode) == ("pilot", "toy") else 5000.0))
+                out = ft.walls("2a")
+                self.assertTrue(out["verdict"].startswith(verdict), out["rule"])
+                self.assertEqual(out["rule"]["pilot_median_seconds_unfold"], slow)
+
+    def test_walls_refuse_a_missing_product_or_another_numpy(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(ft, "B", d):
+            self._products(d, ["2a-0"], skip={"fd1b_repro-ar23_s807000.npz"})
+            with self.assertRaisesRegex(SystemExit, "missing"):
+                ft.walls("2a-0")
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(ft, "B", d):
+            self._products(d, ["2a-0"], numpy="1.0.0")
+            with self.assertRaisesRegex(SystemExit, "numpy"):
+                ft.walls("2a-0")
+
     def test_tables_write_once(self):
         with tempfile.TemporaryDirectory() as d:
             with mock.patch("sys.stdout"):

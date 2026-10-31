@@ -5183,6 +5183,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage1/derivation_check.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage1/mutation.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage1/mutation_fd_1b.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage2/mutation.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage2/mutation_stage2.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/3b/3b-steps.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/3b/cluster_tests.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/3b/make_3b_tables.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

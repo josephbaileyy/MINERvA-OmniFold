@@ -12,6 +12,7 @@ constraint cpu, a limit under 12 h equal to the declared one, and the committed 
 
     fd_1b_tasks.py tables --job 2a --deploy D --pins-sha256 X --out-dir DIR
     fd_1b_tasks.py submit --job 2a --deploy D --pin SHA
+    fd_1b_tasks.py walls --after 2a-0 --out F     (FD-1B-STAGE2-DECLARATION.md section 5: the re-price rules)
 
 MEASURES: nothing. CANNOT AUTHORIZE: any job; each stage's binding names the jobs it authorizes.
 """
@@ -19,8 +20,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import statistics
 import sys
+from collections import Counter
 from pathlib import Path
+
+import numpy as np
 
 _ND = Path(__file__).resolve().parent
 if str(_ND) not in sys.path:
@@ -40,6 +45,8 @@ PACKER_REL = "docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_p
 ACCOUNT, QOS, CONSTRAINT_FLAG = "m3246", "regular", "cpu"
 LANES_PER_NODE, CPUS, MEM = 8, 32, "56G"
 MAX_LIMIT_H = 12.0
+TOY_UNIT_S = 832                                # the protocol's assumed toy wall (FD-1B-DECLARATION.md section 7)
+RSS_LIMIT_KIB = int(0.75 * 56 * 2 ** 20)        # 75 % of a lane's 56 GiB (Slurm's 56G), against ru_maxrss in KiB
 
 # (arm, mode, first, last) item runs, in the declared order. The derivation's 176 universes are split by the
 # stage-2 declaration: the four of DERIVATION_FIRST run in 2a-0, so their walls are measured first, and the rest in 2a.
@@ -112,6 +119,12 @@ def tag(arm: str, mode: str) -> str:
     return f"fd1b_{arm}" + ("_half" if (arm == "pilot" and mode == "half") else "")
 
 
+def product_path(arm: str, mode: str, x) -> Path:
+    """Where ``fd_1b_toys.py run`` writes the unfold of one seed or universe."""
+    name = f"{tag(arm, mode)}_{x}.npz" if mode == "derivation" else f"{tag(arm, mode)}_s{x}.npz"
+    return Path(out_dir(arm, mode)) / name
+
+
 def step_args(arm: str, mode: str, what: list, pins_sha256: str) -> list[str]:
     truth = toys.ARMS[arm][0]
     args = ["run", "--arm", arm, "--mode", mode]
@@ -177,6 +190,54 @@ def submit_lines(job: str, deploy: str, pin: str) -> list[str]:
     return out
 
 
+def read_walls(items: list) -> list[dict]:
+    """Each declared product's timing, memory and environment, refusing a missing product or another numpy."""
+    rows = []
+    for arm, mode, x in items:
+        p = product_path(arm, mode, x)
+        if not p.exists():
+            raise SystemExit(f"[FAIL] {p} is missing")
+        m = json.loads(str(np.load(p, allow_pickle=False)["meta"]))
+        if m.get("numpy_version") != np.__version__:
+            raise SystemExit(f"[FAIL] {p.name} was made under numpy {m.get('numpy_version')}, the login runs "
+                             f"{np.__version__}: the scorer would refuse it")
+        rows.append({"product": p.name, "arm": arm, "mode": mode, "seconds_load": m["seconds_load"],
+                     "seconds_unfold": m["seconds_unfold"], "peak_rss_kib": m["peak_rss_kib"],
+                     "slurm_job": m.get("slurm_job")})
+    return rows
+
+
+def walls(after: str) -> dict:
+    """The stage-2 declaration's re-price rules (section 5), REPRICE or PASS. After 2a-0: 2a's fullest lane, its
+    steps' loads at 2a-0's largest seconds_load and its unfolds at 2a-0's largest seconds_unfold, must stay within
+    0.8 x 2a's limit. After 2a: the 16 pilot toys' median seconds_unfold (the per-toy wall, the draw and pseudo-data
+    build included) must stay within 1.25 x 832 s. Both: every product's peak RSS within 75 % of 56 GiB."""
+    if after == "2a-0":
+        rows = read_walls(expand("2a-0"))
+        w, load = max(r["seconds_unfold"] for r in rows), max(r["seconds_load"] for r in rows)
+        n_steps = Counter(row[0] for row in steps("2a", "0" * 64))  # each step pays its own load
+        lanes = chunks(expand("2a"), JOBS["2a"]["nodes"] * LANES_PER_NODE)
+        per_lane = [n_steps[str(k)] * load + len(c) * w for k, c in enumerate(lanes)]
+        bound, limit = max(per_lane), 0.8 * hours(JOBS["2a"]["limit"]) * 3600
+        rule = {"2a_fullest_lane_s": bound, "limit_s": limit, "largest_seconds_unfold": w, "largest_seconds_load": load}
+        ok = bound <= limit
+    elif after == "2a":
+        rows = read_walls(expand("2a-0") + expand("2a"))
+        pilot = [r["seconds_unfold"] for r in rows if (r["arm"], r["mode"]) == ("pilot", "toy")]
+        if len(pilot) != 16:
+            raise SystemExit(f"[FAIL] {len(pilot)} pilot toys, the declaration has 16")
+        median, limit = statistics.median(pilot), 1.25 * TOY_UNIT_S
+        rule = {"pilot_median_seconds_unfold": median, "limit_s": limit}
+        ok = median <= limit
+    else:
+        raise SystemExit(f"[FAIL] no re-price rule after {after!r}")
+    rss = max(r["peak_rss_kib"] for r in rows)
+    rule.update({"largest_peak_rss_kib": rss, "rss_limit_kib": RSS_LIMIT_KIB})
+    ok &= rss <= RSS_LIMIT_KIB
+    return {"after": after, "label": "DERIVATION", "rule": rule, "products": rows,
+            "verdict": "PASS" if ok else "REPRICE: an amendment goes to the director before the next job"}
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -189,7 +250,17 @@ def main(argv=None) -> int:
     s.add_argument("--job", choices=sorted(JOBS), required=True)
     s.add_argument("--deploy", required=True)
     s.add_argument("--pin", required=True)
+    w = sub.add_parser("walls")
+    w.add_argument("--after", choices=("2a-0", "2a"), required=True)
+    w.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
+    if a.cmd == "walls":
+        if a.out.exists():
+            raise SystemExit(f"[FAIL] refusing to overwrite {a.out}")
+        out = walls(a.after)
+        a.out.write_text(json.dumps(out, indent=1) + "\n")
+        print(json.dumps({"out": str(a.out), "verdict": out["verdict"]}))
+        return 0 if out["verdict"] == "PASS" else 1
     if a.cmd == "submit":
         print("\n".join(submit_lines(a.job, a.deploy, a.pin)))
         return 0
