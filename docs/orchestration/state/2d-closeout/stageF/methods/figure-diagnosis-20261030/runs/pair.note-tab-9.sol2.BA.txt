@@ -1,0 +1,10 @@
+D1: B | Larger, more generously spaced text is easier to read at printed size.
+D2: B | Compact rows and restrained horizontal rules provide a cleaner structure.
+D3: EQUAL | Both are monochrome tables.
+D4: A | Mathematical column headers identify the variables and momentum units explicitly.
+D5: B | Common columns make differences among generator predictions easy to compare.
+D6: A | The caption explains the table’s purpose and identifies the source of the binning.
+D7: B | Readers can quickly identify the predictions, targets, coverage and test-cell counts.
+OVERALL: B
+GAP: 1. Increase A’s type size and row spacing. 2. Shorten the table by listing momentum edges once per angular interval, with corresponding bin-index ranges. 3. Remove vertical rules and retain horizontal rules only where needed to distinguish groups.
+END

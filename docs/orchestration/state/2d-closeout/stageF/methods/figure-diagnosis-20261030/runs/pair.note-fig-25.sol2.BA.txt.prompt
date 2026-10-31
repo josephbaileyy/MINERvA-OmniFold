@@ -1,0 +1,21 @@
+You are an experienced referee and copy editor for Physical Review D. You are given two items, A and B, each a figure or a table cropped from its printed journal page at 300 DPI at printed size, with its caption; their caption texts are also given below. They show different content of the same kind. Judge only presentation, not the physics.
+
+For each dimension, say which item better meets the standard of a well-produced PRD figure or table: A, B or EQUAL.
+D1 LEGIBILITY at printed size. D2 LAYOUT. D3 COLOUR (write EQUAL for two tables). D4 AXES / HEADERS AND UNITS. D5 COMPARISON with references or predictions (EQUAL if neither has any). D6 LEGEND / CAPTION. D7 30-SECOND READ.
+
+Reply in exactly this format and nothing else:
+D1: A|B|EQUAL | <one-line reason>
+D2: ...
+D3: ...
+D4: ...
+D5: ...
+D6: ...
+D7: ...
+OVERALL: A|B|EQUAL
+GAP: <for the weaker item, the specific changes that would bring it to the other's standard, numbered, up to 6; or "none">
+END
+
+
+===== CAPTION TEXT =====
+A: FIG. 9. Absolutely normalized ratios of data, GENIE 2.8.4, NuWro, and GiBUU to MnvGENIE v1 for pT and p|| . The transverse momentum projection shows tension between all models and data in the 0.55 < pT < 1.50 GeV range, with the highest pT bin modeled the best. In longitudinal momentum, all models underpredict the cross section, with the most significant discrepancy of a 20 to 40% normalization difference occurring with GiBUU.
+B: Figure 25: Unfolded (Eavail , W ) cross section versus the four-generator band (GENIE CV, GENIE+MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, §7.6). Every generator lies below the data in the high-W , high-Eavail corner — GENIE and NuWro by about their overall normalization shortfall, GiBUU by more; adding 2p2h leaves the corner unchanged because 2p2h populates low W . MINERvA shallow-inelastic neutrino and antineutrino measurements also report shape and normalization disagreements with generators [49]. They motivate tests across the resonance–DIS

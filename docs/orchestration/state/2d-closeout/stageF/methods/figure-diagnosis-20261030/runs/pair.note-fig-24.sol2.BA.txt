@@ -1,0 +1,10 @@
+D1: A | Larger axis labels and ticks remain easier to read at printed size; B’s cell annotations are comparatively small.
+D2: A | A has a compact, balanced composition; B has substantial whitespace and a disproportionately long caption.
+D3: B | Diverging colour scales clearly distinguish positive and negative departures from the reference values.
+D4: A | Physical axis spacing and concise labels make coordinates immediately interpretable; B’s equal-size bins require explanation.
+D5: B | Explicit ratio and difference panels, with numerical annotations, make comparison with the prediction straightforward.
+D6: A | The caption identifies the quantity and main visual feature concisely; B’s lengthy explanation obscures its central message.
+D7: A | The efficiency pattern and its interpretation are apparent quickly; B requires more reading to interpret the display.
+OVERALL: A
+GAP: 1. Enlarge B’s cell annotations and tick labels. 2. Reduce surrounding whitespace and tighten panel spacing. 3. Add panel labels for concise cross-referencing. 4. Shorten the caption and move extended methodological explanation into the main text. 5. Remove redundant bin-edge lists from the caption while retaining a clear statement that display cells have equal size.
+END

@@ -1,0 +1,21 @@
+You are an experienced referee and copy editor for Physical Review D. You are given two items, A and B, each a figure or a table cropped from its printed journal page at 300 DPI at printed size, with its caption; their caption texts are also given below. They show different content of the same kind. Judge only presentation, not the physics.
+
+For each dimension, say which item better meets the standard of a well-produced PRD figure or table: A, B or EQUAL.
+D1 LEGIBILITY at printed size. D2 LAYOUT. D3 COLOUR (write EQUAL for two tables). D4 AXES / HEADERS AND UNITS. D5 COMPARISON with references or predictions (EQUAL if neither has any). D6 LEGEND / CAPTION. D7 30-SECOND READ.
+
+Reply in exactly this format and nothing else:
+D1: A|B|EQUAL | <one-line reason>
+D2: ...
+D3: ...
+D4: ...
+D5: ...
+D6: ...
+D7: ...
+OVERALL: A|B|EQUAL
+GAP: <for the weaker item, the specific changes that would bring it to the other's standard, numbered, up to 6; or "none">
+END
+
+
+===== CAPTION TEXT =====
+A: Figure 30: The three eigenmodes that carry the largest shares of each sixteen-cell prediction’s χ2 (columns, by rank), for GENIE CV, GENIE + MEC, NuWro and MINERvA Tune v1 (rows), from the reported comparison on Ctotal + Cresp + Vg relative to f . The bars are each mode’s unit loadings on R00–R15, signed so that the largest loading is positive. Each panel gives the mode’s share of the χ2 , its relative σ and the prediction’s distance along it, the projection over σ. The residual is (f − g)/f , so a positive distance means that the data lie above the prediction along the mode as signed. GiBUU, compared on 8 cells, has no modes here.
+B: FIG. 5. Categorical breakdown of systematic uncertainties on the double-differential cross section measurement in slices of p|| (top) and pT (bottom). Flux is the dominant uncertainty in the majority of phase space, with muon reconstruction the other comparable uncertainty in some areas.
