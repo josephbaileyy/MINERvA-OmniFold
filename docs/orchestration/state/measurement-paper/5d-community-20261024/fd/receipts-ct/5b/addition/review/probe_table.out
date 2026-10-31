@@ -1,0 +1,5 @@
+FAIL control T Stage G genie_cv shape_only: each side names its matrix
+[STOP] T: Stage G genie_cv shape_only: each side names its matrix: differs
+cmd_table rc 1
+  without matrix of genie_cv total = 'C_total + C_resp + V_g'
+  without matrix of genie_cv shape_only = 'C_total + C_resp + V_g + 100 f f^T (free normalization)'

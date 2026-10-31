@@ -25,9 +25,9 @@ MUTANTS = [
     # control A, L: the audit and the labels
     (C, "A: stop unchecked", 'au["stop_condition"]["stop"] is False', "True"),
     (C, "A: audit's 5B readout unchecked", 'ins["readout_5b"] == PINS["periods"]', "True"),
-    (C, "L: context numbers unchecked", "    report(\"L\", f\"{k}: every number it quotes is the audit readout's "
+    (C, "L: context numbers unchecked", "f\"{k}: every number it quotes is the audit readout's, in order "
                                         "({', '.join(nums)})\", not missing,",
-     "    report(\"L\", f\"{k}: every number it quotes is the audit readout's ({', '.join(nums)})\", True,"),
+     "f\"{k}: every number it quotes is the audit readout's, in order ({', '.join(nums)})\", True,"),
     (C, "L: descriptive mark unchecked", '.startswith("descriptive; not a reason for the addition")', '.startswith("")'),
     (C, "L: labels not compared", 'labels.get(k) == LABELS[k] for k in ("block", "decision",',
      'True for k in ("block", "decision",'),
@@ -87,10 +87,25 @@ MUTANTS = [
     (C, "chain: the deposit without the variant",
      '[dep / n for n in (*DC.FILES, DC.REFERENCE)], 75, pins=dpins, variant="with-cpl")',
      '[dep / n for n in (*DC.FILES, DC.REFERENCE)], 75, pins=dpins)'),
-    (C, "chain: figures under the default name", '*(["--reported-block-name", NAME] if arm == "with" else [])', ""),
+    (C, "chain: figures under the default name", '*(["--reported-block-name", NAME] if arm == "with" else [])', "*[]"),
     (C, "argv: F0b drops its extra block", "        return [*p.f0(), *xb0, \"--out-json\", str(out), \"--out-npz\", "
                                            "str(out.parent.parent / \"fd_f0b_experiments.npz\")]",
      "        return [*p.f0(), \"--out-json\", str(out), \"--out-npz\", str(out.parent.parent / \"fd_f0b_experiments.npz\")]"),
+    # added after the review: each control's firing direction
+    (C, "A: a named clause allowed", '           and au["stop_condition"]["which"] == [])', ")"),
+    (C, "A: 5B readout's S1 unchecked", 'per["inputs_sha256"]["s1_npz"] == PINS["s1_npz"]', "True"),
+    (C, "B2: cresp's total unchecked", "and float(np.abs(rep - (cr[\"C_total_resp\"] + Cpl)).max()) <= TOL * scale)", ")"),
+    (C, "K0: overwrite allowed", 'report("K0", "no output exists (no overwrite)", not any((a.out_dir / n).exists() for n in names))',
+     'report("K0", "no output exists (no overwrite)", True)'),
+    (C, "K4: block rank unchecked", "and int(np.sum(lam > TOL * lam.max())) == 2)", ")"),
+    (C, "K5: without sigma unchecked", "rel[WITHOUT], dp[\"relative_sigma\"][WITHOUT]) <= TOL)", "rel[WITHOUT], rel[WITHOUT]) <= TOL)"),
+    (C, "K6: readback unchecked", "        report(\"K6\", f\"{k}: the CSV and the JSON read back bit for bit\", np.array_equal(back, p[\"matrices\"][k])",
+     "        report(\"K6\", f\"{k}: the CSV and the JSON read back bit for bit\", True"),
+    (C, "T: the with side's name unchecked", 'and p["with"]["matrix"] == want,', ","),
+    (C, "T: the order unchecked", '[p["name"] for p in old["g"]["predictions"]] == [p["name"] for p in new["g"]["predictions"]])', "True)"),
+    (C, "T: without pins unchecked", 'pins[f"{k}_without"] == COMMITTED[k][1])', "True)"),
+    (C, "L: order ignored", "                at_ = i + len(n.lstrip(\"+\"))\n", ""),
+    (FIG, "figures: F0b key report removed", '    report("K2", f"F0b records relative_sigma_plus_{name}", f"relative_sigma_plus_{name}" in b)\n', ""),
     # the deposit candidate's variant
     (DEP, "deposit: package reads the default key", '    C = np.array(dp["matrices"][v.key], float)\n    rho',
      '    C = np.array(dp["matrices"]["C_total_plus_C_resp"], float)\n    rho'),

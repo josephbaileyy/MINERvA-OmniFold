@@ -152,7 +152,8 @@ tool. The chain stops at the first nonzero exit and writes nothing more.
 only the upstream readout's sha256 replaced, by the sha256 the chain itself computed of the file the previous step just
 wrote. No downstream pin comes from the command line. The extra block's `--extra-block-sha256`, which F0b, F1, Stage G
 and the others take on their command line as before, is the chain's own digest of `cpl_block.npz`, as is F1's
-`--f0b-readout-sha256` of step 2's readout. The chain writes every pin set it used into its receipt and `pins/`.
+`--f0b-readout-sha256` of step 2's readout. The chain writes every pin set it passes in-process into its receipt and
+`pins/`. The without arm passes none: its tools run as their CLIs, on their default pins.
 
 **The without arm** runs each tool with its default pins, on its committed inputs and C_resp, as its last bound run did.
 Its outputs go to `without/` and are compared by control R with the committed readouts. They are receipts, not new
@@ -281,7 +282,7 @@ rule), and requires the same `code_sha256` keys.
 | **C** | a step exits 0 and writes every declared output; the block's readout names the npz it wrote; in the with arm, each readout names the block's sha256 wherever it records the extra block, and each upstream readout's sha256 as the chain computed it (G-DIAG, G-FOLLOWUP, G-SENS2, the flux bootstrap) |
 | **S** | the with arm's reported relative σ equals √diag(C_rep,PL)/f from `cpl_block.npz`, to 10⁻¹²: in Stage G's readout on every prediction's cells and in F0b's `relative_sigma_plus_C_resp + C_PL5D`; in the product by K3; in the deposit by its own P2 and P3 |
 | **L** | the block, decision and context strings (§2) are in the labels of the block, the product and the table, the contexts marked descriptive; every number a context quotes is the committed audit readout's as printed |
-| **T** | the table's "without" pins are the committed readouts'; each Stage G row names C_total + C_resp + V_g without and C_total + C_resp + C_PL5D + V_g with |
+| **T** | the table's "without" pins are the committed readouts'; Stage G's predictions and F0b's and F1's truths are the same, in the same order, on both sides; each Stage G row's without matrix begins C_total + C_resp + V_g, and its with matrix is the without's with C_resp read as `C_resp + C_PL5D` (so the shape-only rows keep Stage G's "+ 100 f f^T (free normalization)") |
 | — | each tool's own controls, unchanged |
 
 Any refusal is reported unrepaired, and the addition is not complete until a bound rerun passes.
@@ -330,7 +331,35 @@ F0b's and F1's experiment tables (`--out-npz`) stay on pscratch, as before. Noth
 
 ## 8. Pinned bytes
 
-To be filled when the code is committed. Inputs pinned now:
+### 8.1 The code (repository paths; the deploy checks each)
+
+| file | sha256 |
+|---|---|
+| `nd-unfolding/fd_cpl_addition.py` | `4eb7c4352400205f2059c891774c42245070af411ca0cf62baafd087e4a6a67a` |
+| `nd-unfolding/tests/test_fd_cpl_addition.py` | `26ab33fd175cae1f99754e7778eaf3530777f013e2450f66dac4ab5c2635214b` |
+| `nd-unfolding/fd_deposit_candidate.py` | `d50c11ebc1ebc6a99c3004d6844dea7eb6dce065abdc99713edd8f9d4675468a` (was `3f4c5d51…`) |
+| `nd-unfolding/tests/test_fd_deposit_candidate.py` | `bd36fe80b02afa4a02409de1a08c84e58e903f67c68f3181b281f47923d6ce68` |
+| `nd-unfolding/fd_g_figures.py` | `9c1697f25b00824d58db64dc5aeaf2ba895b9b4e4c4fc6c784807ecc38c9fb81` (was `06233dd9…`) |
+| `nd-unfolding/fd_flux_boot.py` | `d5b4bb095b526ad0aa79d09c9d26626ff624acb93fc9bac836b5c0167c769040` (was `cbd5ac9c…`) |
+| `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/addition/mutants_5b_addition.py` | `bc8c3e8dc21666aad1e6971a3cfe72cbcb22872effa731ee4d93fd41069d05d0` |
+| `nd-unfolding/fd_g_compare.py` | `0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f` (unchanged) |
+| `nd-unfolding/fd_g_diag.py` | `241bfd0228907e5488f13b7fd50bd490edd97a77cf283a8fb88d3dc6d8bdcc03` (unchanged) |
+| `nd-unfolding/fd_g_followup.py` | `ec8cbc6880f7a3f67eea5703ddeff958acb10462053696d2cfdb64de0ee5f60d` (unchanged) |
+| `nd-unfolding/fd_f0_regrade.py` | `0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2` (unchanged) |
+| `nd-unfolding/fd_data_product.py` | `1a42264faf4d8f3977a1eb5d66fa75604066200ac06e9034188860f9ff6ba8df` (unchanged) |
+| `nd-unfolding/fd_g_figures_check.py` | `95cf26811993772063a9d64d862fcde041ec3321f1f69874b99034d88c17d341` (unchanged) |
+| `nd-unfolding/tests/test_fd_g_figures.py` | `fb3dcc86e01eb48aaf7bed36bf5f1f25d624e3a6216ba5fddecc892347172fd9` (unchanged) |
+| `nd-unfolding/tests/test_fd_flux_boot.py` | `5b585d378fee6c15faad6c94c86c400ddd496dff90e172845bc1cceacacbc280` (unchanged) |
+
+**Locally,** with `-B` and a TMPDIR: `test_fd_cpl_addition` ran 67 tests, OK; with the three tools' and the unchanged
+consumers' suites, 403 ran (`test_fd_deposit_candidate`, `test_fd_g_figures`, `test_fd_flux_boot`,
+`test_fd_data_product`, `test_fd_g_compare`, `test_fd_g_diag`, `test_fd_g_followup`, `test_fd_f0_regrade`), all OK.
+**Mutation:** pass 1 at the working tree, 50 of 51 killed (`mutants_5b_addition-pass1.log`; the survivor, B1's symmetry,
+was a test gap and was fixed); pass 2 at `9113a84f`, **51 of 51 killed**, every file restored
+(`mutants_5b_addition.log`).
+
+### 8.2 The inputs (as each step reads them)
+
 
 | file | sha256 |
 |---|---|
@@ -378,6 +407,25 @@ To be filled when the code is committed. Inputs pinned now:
    only, so no pin of the with-block product can come from a command line (§4).
 7. **The product is derived from the committed data product,** not rebuilt from S1 and C_resp, so its cells, boxes
    and H2 relation keep the committed product's Q1 checks, and K2 ties the block to it bit for bit.
+
+### 10.1 The independent review and its dispositions
+
+A read-only review in its own detached worktree at `9113a84f`, given the code and this record. Its report is
+`fd/receipts-ct/5b/addition/review/REVIEW.txt` (verbatim), with its probes beside it.
+
+| # | finding | disposition |
+|---|---|---|
+| 1 | **High:** T required every Stage G row's matrix to be "C_total + C_resp + V_g", so the shape-only rows, which Stage G names "... + 100 f f^T (free normalization)", would stop the real chain at its last step; the product fixture agreed with the code, not with Stage G | **Fixed.** T now requires the with matrix to be the without's with C_resp read as the block's name (§5). The fixture uses Stage G's own `compare()` names. A `Table` test runs `table` on the committed readouts: it writes, pairs every leaf, and refuses a with side that kept the old shape-only name, a reordered side, and a without pin not the committed one |
+| 2 | **Medium:** T, B2, K4, K5, K6, K0's overwrite, A's `which` and A's 5B-readout clause had no firing test or mutant | **Fixed.** Each has a test in the firing direction and a mutant (63 mutants in all) |
+| 3 | Low: pass 1's receipt fails; one mutant was killed by a SyntaxError | Pass 1 is kept as the record of its survivor, which is now killed. The mutant now replaces the clause with `*[]`. Pass 2 is rerun at the final code |
+| 4 | Low: three tests refused for another reason (a KeyError; P0 pins) | **Fixed.** The figures report a missing F0b key as K2, and the test asserts it. The two deposit tests are renamed "at its pins", and a new test passes the variant's pins to the default check, which refuses at P2 on the content |
+| 5 | Low: `StepArgv` compares flag names only | Kept. The review's probe compared every flag's value for all ten scripts and found them equal (`review/probe_argv.out`) |
+| 6 | Low: R does not compare the readouts' strings | **Not changed:** the director accepted R's exclusions as listed, on 2026-10-31. The numbers behind those strings (z, shares, loadings) are compared |
+| 7 | Low: R is near bit-exact, so it can fail on environment drift; the PDFs need matplotlib 3.10.8 | Accepted. A spurious R failure is loud and is reported unrepaired, which is the safe direction. root_6_28 on the cluster has Python 3.11.14, numpy 1.26.4 and matplotlib 3.10.8, the versions the committed sidecars record (read on 2026-10-31). An absolute floor would blind comparisons of the cross sections (about 10⁻³⁹) |
+| 8 | Low: the table paired predictions and truths by position | **Fixed:** T checks the names and their order (§5) |
+| 9 | Low: L tested each quoted number as a substring | **Fixed:** the numbers must appear in the readout's order, and a test swaps PB's and PC's values |
+| 10 | Low: R's committed files are not sha-pinned at chain start; the without arm writes no pins | The deploy's HEAD = pin with 0 porcelain lines fixes every committed file to the bound commit. §3 now says the without arm passes no pins |
+<!-- absence-ok: the review's findings 2 and 10 describe this PR's own test suite and chain at 9113a84f, as its report states; each is fixed or dispositioned in its row -->
 
 ## 11. Not changed
 

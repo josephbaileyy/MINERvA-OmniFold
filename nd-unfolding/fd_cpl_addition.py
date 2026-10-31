@@ -147,9 +147,9 @@ def context_numbers(au: dict) -> dict:
     """The numbers the two context strings quote, from the audit readout, as they are printed there."""
     bp = au["item1_overlap"]["identification"]["best_pair_in_DR"]
     i3 = au["item3_5a_vs_5b"]["periods"]
-    return {"context_dr_pair": [f"{bp[X]['E']:.3f}" for X in ("PA", "PB", "PC")]
-            + [f"{max(abs(a) for X in ('PA', 'PB', 'PC') for a in bp[X]['a']):.2f}"]
-            + [c.split(":", 1)[1] for c in bp["candidates"]],
+    return {"context_dr_pair": [c.split(":", 1)[1] for c in bp["candidates"]]
+            + [f"{bp[X]['E']:.3f}" for X in ("PA", "PB", "PC")]
+            + [f"{max(abs(a) for X in ('PA', 'PB', 'PC') for a in bp[X]['a']):.2f}"],
             "context_5a_5b": [f"{100 * i3[X]['mean_offset'][k]:+.3f}%"
                               for X in ("PB", "PC") for k in ("5B", "5A")]
             + [f"{i3[X]['difference_chi2_combined_diagonal']:.1f}" for X in ("PB", "PC")]}
@@ -162,10 +162,15 @@ def check_labels(labels: dict, au: dict) -> None:
            and all(LABELS[k].startswith("descriptive; not a reason for the addition")
                    for k in ("context_dr_pair", "context_5a_5b")))
     for k, nums in context_numbers(au).items():
-        txt = LABELS[k].replace("−", "-")
-        missing = [n.lstrip("+") for n in nums if n.lstrip("+") not in txt]
-        report("L", f"{k}: every number it quotes is the audit readout's ({', '.join(nums)})", not missing,
-               f"missing {missing}")
+        txt, at_, missing = LABELS[k], 0, []
+        for n in nums:                       # each in the label, in the readout's order
+            i = txt.find(n.lstrip("+"), at_)
+            if i < 0:
+                missing.append(n)
+            else:
+                at_ = i + len(n.lstrip("+"))
+        report("L", f"{k}: every number it quotes is the audit readout's, in order ({', '.join(nums)})", not missing,
+               f"missing or out of order {missing}")
 
 
 def build_block(s1: dict, cr: dict, per: dict, au: dict) -> dict:
@@ -483,6 +488,11 @@ def curated(old: dict, new: dict, dp_old: dict, dp_new: dict) -> dict:
            "with": dp_new["relative_sigma"][REPORTED],
            "ratio": (np.array(dp_new["relative_sigma"][REPORTED]) / np.array(dp_old["relative_sigma"][WITHOUT])).tolist(),
            "matrices": {"without": "C_total + C_resp", "with": "C_total + C_resp + C_PL5D"}}
+    report("T", "Stage G's predictions are the same, in the same order, on both sides",
+           [p["name"] for p in old["g"]["predictions"]] == [p["name"] for p in new["g"]["predictions"]])
+    for r in ("f0b", "f1"):
+        report("T", f"{r}'s truths are the same, in the same order, on both sides",
+               [t["name"] for t in old[r]["truths"]] == [t["name"] for t in new[r]["truths"]])
     g = []
     for po, pn in zip(old["g"]["predictions"], new["g"]["predictions"]):
         for kind in ("total", "shape_only"):
@@ -550,8 +560,10 @@ def cmd_table(a, pins: dict | None) -> int:
     new = {k: r[f"{k}_with"] for k in READOUTS}
     c = curated(old, new, r["data_product_without"], r["data_product_with"])
     for p in c["stage_g"]:
-        report("T", f"Stage G {p['prediction']} {p['kind']}: each side names its matrix",
-               p["without"]["matrix"] == "C_total + C_resp + V_g" and p["with"]["matrix"] == f"C_total + {NAME} + V_g")
+        want = p["without"]["matrix"].replace("C_total + C_resp", f"C_total + {NAME}", 1)
+        report("T", f"Stage G {p['prediction']} {p['kind']}: each side names its matrix (the with side the without's, "
+                    f"with C_resp read as {NAME})", p["without"]["matrix"].startswith("C_total + C_resp + V_g")
+               and p["with"]["matrix"] == want, f"{p['without']['matrix']!r} / {p['with']['matrix']!r}")
     leaves = {k: [[p, x, y] for p, x, y in paired(old[k], new[k])] for k in READOUTS}
     counts = {k: len(v) for k, v in leaves.items()}
     unpaired = {k: sorted({p for p, _ in numeric_leaves(old[k])} - {q[0] for q in leaves[k]}) for k in READOUTS}

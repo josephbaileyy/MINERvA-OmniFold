@@ -288,6 +288,7 @@ def ratio_model(r: dict, form: str, gibuu_axis: str = GIBUU_AXES[0], name: str =
     var, cr = np.array(ref["variant"]["sigma_total_over_f"]), np.array(g["extra_block"]["relative_sigma"])
     report("K2", f"the error bar is C_total + {name}: sigma^2 = sigma(C_total)^2 + sigma({name})^2",
            ref["variant"]["covariance"] == "C_total" and rel(s16 ** 2, var ** 2 + cr ** 2) <= REPRO)
+    report("K2", f"F0b records relative_sigma_plus_{name}", f"relative_sigma_plus_{name}" in b)
     report("K2", f"F0b's sqrt(diag(C_total + {name}))/f is the same", rel(
         s16, b[f"relative_sigma_plus_{name}"]["C_total"]) <= REPRO and rel(cr, b["extra_block"]["relative_sigma"]) <= REPRO)
 

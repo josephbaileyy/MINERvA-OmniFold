@@ -140,8 +140,8 @@ class Labels(unittest.TestCase):
         au = json.loads(AUDIT.read_text())
         with quiet():
             A.check_labels(A.LABELS, au)
-        self.assertEqual(A.context_numbers(au)["context_dr_pair"], ["0.853", "0.560", "0.617", "1.51",
-                                                                    "GEANT_Pion#1", "meson#1"])
+        self.assertEqual(A.context_numbers(au)["context_dr_pair"], ["GEANT_Pion#1", "meson#1", "0.853", "0.560",
+                                                                    "0.617", "1.51"])
         self.assertEqual(A.context_numbers(au)["context_5a_5b"], ["-2.724%", "-2.699%", "+4.671%", "+4.806%",
                                                                   "81.6", "192.8"])
 
@@ -151,6 +151,14 @@ class Labels(unittest.TestCase):
         with quiet(), mock.patch.dict(A.LABELS, bad), self.assertRaises(A.Stop) as cm:
             A.check_labels(bad, au)
         self.assertEqual(cm.exception.control, "L")
+
+    def test_two_numbers_swapped_between_periods_fire_L(self):
+        au = json.loads(AUDIT.read_text())
+        t = A.LABELS["context_5a_5b"]
+        bad = dict(A.LABELS, context_5a_5b=t.replace("81.6", "@").replace("192.8", "81.6").replace("@", "192.8"))
+        with quiet(), mock.patch.dict(A.LABELS, bad), self.assertRaises(A.Stop) as cm:
+            A.check_labels(bad, au)
+        self.assertIn("out of order", str(cm.exception))
 
     def test_a_missing_decision_label_fires_L(self):
         au = json.loads(AUDIT.read_text())
@@ -175,7 +183,8 @@ def spd(rng, n=16, scale=1.0):
 class BlockTree:
     """S1's and C_resp's npz, a 5B readout with a rank-2 P, and the committed audit readout re-pointed at them."""
 
-    def __init__(self, root: Path, seed: int = 0, P_mutate=None, per_mutate=None, audit_mutate=None):
+    def __init__(self, root: Path, seed: int = 0, P_mutate=None, per_mutate=None, audit_mutate=None,
+                 cresp_mutate=None):
         self.root = root
         root.mkdir(parents=True, exist_ok=True)
         rng = np.random.default_rng(seed)
@@ -185,7 +194,10 @@ class BlockTree:
         Ct = Ce + Cm
         self.s1_npz, self.cresp_npz = root / "s1.npz", root / "cresp.npz"
         np.savez(self.s1_npz, f=f, C_e=Ce, C_model_abs=Cm, C_total=Ct)
-        np.savez(self.cresp_npz, C_resp=Cr, C_total_resp=Ct + Cr)
+        Ctr = Ct + Cr
+        if cresp_mutate:
+            Ctr = cresp_mutate(Ctr.copy())
+        np.savez(self.cresp_npz, C_resp=Cr, C_total_resp=Ctr)
         g1, g2 = rng.normal(0, 0.03, 16), rng.normal(0, 0.02, 16)
         P = 0.6 * np.outer(g1, g1) + 0.3 * np.outer(g2, g2)
         if P_mutate:
@@ -258,6 +270,20 @@ class Block(unittest.TestCase):
     def test_an_audit_on_another_5b_readout_refuses(self):
         self.refuses(BlockTree(self.tmp / "t", audit_mutate=lambda au: au["inputs_sha256"].update(
             readout_5b="0" * 64)), "A")
+
+    def test_a_stop_condition_with_a_clause_named_refuses(self):
+        self.refuses(BlockTree(self.tmp / "t", audit_mutate=lambda au: au["stop_condition"].update(which=["O"])), "A")
+
+    def test_a_5b_readout_on_another_s1_refuses(self):
+        self.refuses(BlockTree(self.tmp / "t", per_mutate=lambda per: per["inputs_sha256"].update(s1_npz="3" * 64)),
+                     "A")
+
+    def test_a_cresp_whose_total_is_not_its_parts_refuses_b2(self):
+        def m(C):
+            C[3, 3] *= 1 + 1e-9
+            return C
+        msg = self.refuses(BlockTree(self.tmp / "t", cresp_mutate=m), "B2")
+        self.assertIn("cresp.npz's C_total_resp + C_PL5D", msg)
 
     def test_a_pin_that_is_not_the_files_refuses(self):
         t = BlockTree(self.tmp / "t")
@@ -334,13 +360,13 @@ class ProductTree(BlockTree):
             sv = rng.uniform(0.001, 0.01, len(idx))
             Vg = np.zeros(16)
             Vg[idx] = (sv * self.f[idx]) ** 2
-            cmp = G.compare(self.f, g, Vg, rep, idx, "C_total + C_resp + C_PL5D")
+            cmp = G.compare(self.f, g, Vg, rep, idx, f"C_total + {A.NAME}")
             preds.append({"name": spec["name"], "file": spec["path"], "sha256": spec["sha256"], "label": spec["label"],
                           "cells": [CELLS[i] for i in idx], "reported_covariance": f"C_total + {A.NAME}",
                           "f": self.f[idx].tolist(), "g": g[idx].tolist(), "sigma_Vg_over_f": sv.tolist(),
                           "sigma_total_over_f": sig[idx].tolist(),
-                          **{k: {"chi2": cmp[k]["chi2"], "ndf": cmp[k]["ndf"], "p": 0.5,
-                                 "matrix": f"C_total + {A.NAME} + V_g"} for k in ("total", "shape_only")}})
+                          **{k: {"chi2": cmp[k]["chi2"], "ndf": cmp[k]["ndf"], "p": 0.5, "matrix": cmp[k]["matrix"]}
+                             for k in ("total", "shape_only")}})
         gr = {"schema": "fd-g-readout/2", "cells": CELLS, "predictions": preds,
               "extra_block": {"name": A.NAME, "key": A.XKEY, "role": "adopted",
                               "sha256": digest(self.blk / "cpl_block.npz")},
@@ -407,6 +433,54 @@ class Product(unittest.TestCase):
             dp["matrices"]["C_resp"][0][0] *= 1 + 1e-12
         self.refuses(ProductTree(self.tmp / "t", dp_mutate=m), "K2")
 
+    def test_an_existing_output_refuses(self):
+        t = ProductTree(self.tmp / "t")
+        (self.tmp / "out").mkdir()
+        (self.tmp / "out" / f"{A.PRODUCT_STEM}.json").write_text("{}")
+        with mock.patch("sys.stderr") as err:
+            self.assertEqual(t.product(self.tmp / "out"), 1)
+        self.assertIn("[STOP] K0:", "".join(str(c.args[0]) for c in err.write.call_args_list))
+        self.assertEqual((self.tmp / "out" / f"{A.PRODUCT_STEM}.json").read_text(), "{}")
+
+    def test_a_block_of_rank_three_refuses_k4(self):
+        t = ProductTree(self.tmp / "t")
+        z = A.load_npz(t.blk / "cpl_block.npz")
+        g3 = np.random.default_rng(4).normal(0, 0.01, 16) * t.f
+        z["C_PL5D"] = z["C_PL5D"] + np.outer(g3, g3)
+        z[A.REPORTED] = z[A.REPORTED] + np.outer(g3, g3)
+        (t.blk / "cpl_block.npz").write_bytes(A.npz_bytes(z))
+        bj = json.loads((t.blk / "cpl_block.json").read_text())
+        bj["npz"]["sha256"] = digest(t.blk / "cpl_block.npz")
+        (t.blk / "cpl_block.json").write_text(json.dumps(bj))
+        g = json.loads(t.g.read_text())
+        g["extra_block"]["sha256"] = digest(t.blk / "cpl_block.npz")
+        sig = np.sqrt(np.diag(z[A.REPORTED])) / t.f
+        for p in g["predictions"]:
+            p["sigma_total_over_f"] = sig[[CELLS.index(c) for c in p["cells"]]].tolist()
+        t.g.write_text(json.dumps(g))
+        t.ppins.update(block_npz=digest(t.blk / "cpl_block.npz"), block_json=digest(t.blk / "cpl_block.json"),
+                       g_readout=digest(t.g))
+        with mock.patch("sys.stderr") as err:
+            self.assertEqual(t.product(self.tmp / "out"), 1)
+        self.assertIn("[STOP] K4: C_PL5D is positive semidefinite and of rank 2",
+                      "".join(str(c.args[0]) for c in err.write.call_args_list))
+
+    def test_a_without_sigma_that_is_not_the_committed_products_refuses_k5(self):
+        def m(dp):
+            dp["relative_sigma"][A.WITHOUT][7] *= 1 + 1e-9
+        self.refuses(ProductTree(self.tmp / "t", dp_mutate=m), "K5")
+
+    def test_a_csv_that_does_not_read_back_refuses_k6(self):
+        t = ProductTree(self.tmp / "t")
+        orig = A.F.read_matrix_csv
+
+        def off(text):
+            M = orig(text)
+            M[0, 0] *= 1 + 1e-15
+            return M
+        with mock.patch.object(A.F, "read_matrix_csv", off):
+            self.refuses(t, "K6")
+
     def test_a_data_product_whose_matrix_is_not_its_parts_plus_the_block_refuses(self):
         def m(dp):
             dp["matrices"][A.WITHOUT][2][2] *= 1 + 1e-9
@@ -454,7 +528,7 @@ class Deposit(unittest.TestCase):
         self.assertEqual(js["source"], {"data_product": f"fd/with-cpl/data-product/{A.PRODUCT_STEM}.json",
                                         "sha256": self.pins["data_product"]})
 
-    def test_the_default_variant_refuses_the_revised_product(self):
+    def test_the_default_variant_refuses_the_revised_product_at_its_pins(self):
         self.assertEqual(self.build(self.tmp / "pkg-d", None), 1)
         self.assertFalse((self.tmp / "pkg-d").exists())
 
@@ -462,10 +536,19 @@ class Deposit(unittest.TestCase):
         v = A.deposit_variant({**self.pins, "g_readout": "2" * 64})
         self.assertEqual(self.build(self.tmp / "pkg-g", v), 1)
 
-    def test_the_variant_package_fails_the_default_check(self):
+    def test_the_variant_package_fails_the_default_check_at_its_pins(self):
         out = self.tmp / "pkg-x"
         self.assertEqual(self.build(out, A.deposit_variant(self.pins)), 0)
         self.assertEqual(self.check(out, None), 1)
+
+    def test_the_default_check_with_the_variants_pins_refuses_the_package_content(self):
+        out = self.tmp / "pkg-c"
+        self.assertEqual(self.build(out, A.deposit_variant(self.pins)), 0)
+        a = DC.build_args(["check", "--package", str(out), "--data-product", str(self.dp), "--g-readout",
+                           str(self.t.g)])
+        with quiet(), mock.patch("sys.stderr") as err:
+            self.assertEqual(DC.run(a, pins=self.pins), 1)          # past P0: the default key's matrix is not it
+        self.assertIn("P2", "".join(str(c.args[0]) for c in err.write.call_args_list))
 
     def test_a_package_edited_after_the_build_fails_the_variants_check(self):
         out = self.tmp / "pkg-e"
@@ -480,6 +563,79 @@ class Deposit(unittest.TestCase):
         self.assertEqual((DC.DEFAULT.key, DC.DEFAULT.name), ("C_total_plus_C_resp", "C_total + C_resp"))
         self.assertIs(DC.DEFAULT.labels, DC.LABELS)
         self.assertIs(DC.DEFAULT.pins, DC.PINS)
+
+
+# ------------------------------------------------------------------------------------------------ the table
+
+class Table(unittest.TestCase):
+    """cmd_table on the committed readouts, with a with side written as the tools write it for the combined block."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="cpl-table-"))
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        self.paths, self.pins = {}, {}
+        for k in A.READOUTS:
+            text = (REPO / A.COMMITTED[k][0]).read_text()
+            text = text.replace("C_total + C_resp", f"C_total + {A.NAME}").replace(
+                "relative_sigma_plus_C_resp", f"relative_sigma_plus_{A.NAME}")
+            self.write(k, json.loads(text))
+        dp = json.loads((REPO / A.COMMITTED["data_product"][0]).read_text())
+        w = np.array(dp["relative_sigma"][A.WITHOUT])
+        self.write("data_product", {"relative_sigma": {A.WITHOUT: w.tolist(), A.BLOCK: (0.3 * w).tolist(),
+                                                       A.REPORTED: (np.sqrt(1.09) * w).tolist()}})
+
+    def write(self, k, obj):
+        q = self.tmp / f"{k}_with.json"
+        q.write_text(json.dumps(obj))
+        self.paths[k], self.pins[f"{k}_with"] = q, digest(q)
+
+    def table(self):
+        argv = ["table"]
+        for k in (*A.READOUTS, "data_product"):
+            argv += [f"--{k.replace('_', '-')}-without", str(REPO / A.COMMITTED[k][0]),
+                     f"--{k.replace('_', '-')}-with", str(self.paths[k])]
+        argv += ["--audit-json", str(AUDIT), "--out-dir", str(self.tmp / "out")]
+        pins = {**self.pins, **{f"{k}_without": A.COMMITTED[k][1] for k in (*A.READOUTS, "data_product")}}
+        with quiet(), mock.patch("sys.stderr") as err:
+            rc = A.run(A.build_args(argv), pins=pins)
+        return rc, "".join(str(c.args[0]) for c in err.write.call_args_list)
+
+    def test_the_table_is_written_from_the_committed_readouts(self):
+        rc, err = self.table()
+        self.assertEqual(rc, 0, err)
+        js = json.loads((self.tmp / "out/fd_cpl_table.json").read_text())
+        self.assertEqual(js["unpaired_without_leaves"], {k: [] for k in A.READOUTS})
+        self.assertEqual(len(js["curated"]["stage_g"]), 10)
+        kinds = {r["kind"]: r for r in js["curated"]["stage_g"] if r["prediction"] == "genie_cv"}
+        self.assertEqual(kinds["shape_only"]["with"]["matrix"],
+                         f"C_total + {A.NAME} + V_g + 100 f f^T (free normalization)")
+        np.testing.assert_allclose(js["curated"]["sigma_over_f"]["ratio"], np.sqrt(1.09) * np.ones(16), rtol=1e-12)
+        self.assertTrue((self.tmp / "out/fd_cpl_table.md").read_text().startswith("# The 5B block's addition"))
+
+    def test_a_with_side_that_kept_the_old_shape_only_name_refuses(self):
+        g = json.loads(self.paths["g"].read_text())
+        g["predictions"][0]["shape_only"]["matrix"] = "C_total + C_resp + V_g + 100 f f^T (free normalization)"
+        self.write("g", g)
+        rc, err = self.table()
+        self.assertEqual(rc, 1)
+        self.assertIn("[STOP] T: Stage G genie_cv shape_only", err)
+        self.assertFalse((self.tmp / "out").exists())
+
+    def test_a_with_side_in_another_order_refuses(self):
+        g = json.loads(self.paths["g"].read_text())
+        g["predictions"][0], g["predictions"][1] = g["predictions"][1], g["predictions"][0]
+        self.write("g", g)
+        rc, err = self.table()
+        self.assertEqual(rc, 1)
+        self.assertIn("same order", err)
+
+    def test_a_without_side_that_is_not_the_committed_readout_refuses(self):
+        self.pins["g_with"] = digest(self.paths["g"])
+        argv_pins = dict(self.pins)
+        with mock.patch.dict(A.COMMITTED, {"g": (A.COMMITTED["g"][0], "4" * 64)}):
+            rc, err = self.table()
+        self.assertEqual(rc, 1)
+        self.assertIn("[STOP] T", err)
 
 
 # ------------------------------------------------------------------------------------------------ the figures
@@ -548,8 +704,9 @@ class Figures(unittest.TestCase):
         rename_tree(self.tree, A.NAME)
         self.tree.b["relative_sigma_plus_C_resp"] = self.tree.b.pop(f"relative_sigma_plus_{A.NAME}")
         self.tree.write("f0b_readout", self.tree.b)
-        with self.assertRaises((SystemExit, KeyError)):
+        with self.assertRaises(SystemExit) as cm:
             self.run_fig(A.NAME, figures=("ratio",))
+        self.assertIn(f"FAIL control K2: F0b records relative_sigma_plus_{A.NAME}", str(cm.exception))
 
     def test_a_renamed_tree_with_one_old_matrix_name_refuses_k5(self):
         rename_tree(self.tree, A.NAME)

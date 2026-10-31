@@ -1,0 +1,12 @@
+== f0b: values equal
+== f1: 1 differ
+    --f1-root: bound ['$OUT/f1c'] chain ['/P/fd-f1-20261027/f1c']
+== g: 1 differ
+    --extra-block: bound ['/pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz'] chain ['/P/cresp-20261026/out/cresp.npz']
+== g_diag: values equal
+== g_followup: values equal
+== g_sens2: values equal
+== flux_boot: values equal
+== data_product: values equal
+== figures: values equal
+== figures_check: values equal
