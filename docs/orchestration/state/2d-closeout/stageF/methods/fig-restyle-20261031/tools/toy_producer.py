@@ -1,7 +1,7 @@
 """A stand-in producer for selftest.py: the artist kinds of note Figs. 7-14, drawn in an old and a restyled form.
 
 usage: toy_producer.py INPUT.npy OUT_PREFIX [--style restyle-2026-10] [--ulp] [--rgba] [--line-rgba] [--scatter-rgba]
-                        [--drop] [--report-ulp] [--timing T]
+                        [--drop] [--report-ulp] [--timing T] [--label-size S]
 It reads INPUT.npy, draws a figure (two panels with a step line, error bars, a filled band, bars and a scatter; a heat
 map with a colour bar) and saves OUT_PREFIX.png (technote_style writes the .pdf twin), and writes OUT_PREFIX_report.txt.
 --style restyle-2026-10 changes only presentation: figure size, fonts, label strings, panel arrangement (a blank third
@@ -12,7 +12,8 @@ panel is removed), panel labels and a text note. The defects selftest.py plants:
   --scatter-rgba changes only the scatter's face colour (a collection);
   --report-ulp moves the reported value by one ulp and leaves the figure alone;
   --drop  leaves one series out;
-  --timing T prints a different wall time, which the comparison must ignore."""
+  --timing T prints a different wall time, which the comparison must ignore;
+  --label-size S adds one text, "tiny label", drawn at S pt (for textsize.py's floor)."""
 import sys
 
 import matplotlib.pyplot as plt
@@ -51,6 +52,8 @@ if restyle:
     for a, lab in zip(axs, ("(a)", "(b)")):
         a.text(0.02, 0.92, lab, transform=a.transAxes)
     fig.text(0.5, 0.01, "panel note", ha="center")
+if "--label-size" in sys.argv:
+    ax.text(0.5, 0.5, "tiny label", transform=ax.transAxes, fontsize=float(sys.argv[sys.argv.index("--label-size") + 1]))
 fig.tight_layout()
 fig.savefig(prefix + ".png", dpi=60)
 t = sys.argv[sys.argv.index("--timing") + 1] if "--timing" in sys.argv else "1.0"

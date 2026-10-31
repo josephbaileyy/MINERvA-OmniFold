@@ -24,7 +24,14 @@ M9 opened inputs not compared (compare.py): KILLED
      fires   the same input under another name (check 5 names paths): WRONG
 M10 rasters compared by size only (raster.py): KILLED
      fires   raster: one pixel changed: WRONG
-M11 capture wraps savefig before technote_style (the .pdf twin captured too) (capture.py): KILLED
+M11 the size floor's comparison inverted (textsize.py): KILLED
+     fires   a text printed at 3.5 pt, floor 4.0 (check 7): WRONG
+     fires     ... and the failing text is named: WRONG
+     silent  the same text printed at 5.0 pt (check 7): WRONG
+M12 the printed-width scaling dropped (textsize.py): KILLED
+     fires   a text printed at 3.5 pt, floor 4.0 (check 7): WRONG
+     fires     ... and the failing text is named: WRONG
+M13 capture wraps savefig before technote_style (the .pdf twin captured too) (capture.py): KILLED
      silent  identical rerun: WRONG
      silent  restyle (layout, fonts, labels, panel labels, text): WRONG
      silent  a different wall time in the report: WRONG

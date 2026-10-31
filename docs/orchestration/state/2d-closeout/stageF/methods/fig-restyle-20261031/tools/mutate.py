@@ -14,7 +14,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DEPLOY = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else HERE.parents[7]
-FILES = ("artists.py", "capture.py", "compare.py", "raster.py", "selftest.py", "toy_producer.py")
+FILES = ("artists.py", "capture.py", "compare.py", "raster.py", "textsize.py", "selftest.py", "toy_producer.py")
 
 MUTANTS = [
     ("a line's colours are not hashed (line, marker face and marker edge)", "artists.py",
@@ -44,6 +44,10 @@ MUTANTS = [
      "elif rows(pb) != rows(pa):", "elif False:"),
     ("rasters compared by size only", "raster.py",
      "bad += int(np.any(a != b, axis=2).sum())", "bad += 0"),
+    ("the size floor's comparison inverted", "textsize.py",
+     "fail = floor is not None and lo[0] < floor", "fail = floor is not None and lo[0] > floor"),
+    ("the printed-width scaling dropped", "textsize.py",
+     "scale = WIDTH_IN[stem] * 72 / page_w", "scale = 1.0"),
     ("capture wraps savefig before technote_style (the .pdf twin captured too)", "capture.py",
      "import technote_style  # noqa: E402,F401  (installs its .pdf-twin wrapper before ours)\n", ""),
 ]

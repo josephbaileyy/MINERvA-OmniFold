@@ -8,7 +8,9 @@ and raster.py must then:
                    a different wall time in the report;
   fire on          a one-ulp value change; one series' RGBA changed, and a line's or a scatter's alone; a series left
                    out; a changed input file (check 5); a report value changed alone (check 4); a figure record that
-                   --figures does not name; a one-pixel change to a raster (check 2).
+                   --figures does not name; a one-pixel change to a raster (check 2); a text printed at 3.5 pt
+                   under textsize.py's 4.0 pt floor (check 7), which must be named. It stays silent on the same
+                   text at 5.0 pt.
 Exit 0 and print SELF-TEST :: PASS only if every case behaves."""
 import shutil
 import subprocess
@@ -39,6 +41,12 @@ def compare(b, a, *extra):
     p = subprocess.run([PY, "-I", str(HERE / "compare.py"), str(b), str(a), "--figures", "toy.png",
                         "--strip", f"{b}=RUN", "--strip", f"{a}=RUN", *extra], capture_output=True, text=True)
     return p.returncode, p.stdout
+
+
+def textsize(run):
+    p = subprocess.run([PY, "-I", str(HERE / "textsize.py"), str(run), str(DEPLOY), "--floor", "4.0",
+                        "--width", "toy=6.5"], capture_output=True, text=True)
+    return p.returncode, p.stdout + p.stderr
 
 
 def raster(*args):
@@ -82,6 +90,9 @@ def main():
             "drop": run(base, "drop", data, "--drop"),
             "input": run(base, "input", changed),
             "same-input-copy": run(base, "same-input-copy", data2),
+            # the toy's 13 in canvas printed at 6.5 in: 7.0 pt drawn prints at 3.5 pt, 10.0 pt at 5.0 pt
+            "label-3.5": run(base, "label-3.5", data, "--label-size", "7.0"),
+            "label-5.0": run(base, "label-5.0", data, "--label-size", "10.0"),
         }
         outs = ("--outputs", "out/toy_report.txt")
         expect("identical rerun", *compare(old, cases["rerun"], *outs), False)
@@ -98,6 +109,12 @@ def main():
         expect("a changed input file (check 5)", *compare(old, cases["input"]), True, "opened files differ")
         rc, out = compare(old, cases["same-input-copy"])
         expect("the same input under another name (check 5 names paths)", rc, out, True, "opened files differ")
+
+        expect("a text printed at 3.5 pt, floor 4.0 (check 7)", *textsize(cases["label-3.5"]), True,
+               "3.50 pt  median")
+        rc, out = textsize(cases["label-3.5"])
+        expect("  ... and the failing text is named", rc, out, True, "smallest 'tiny label'")
+        expect("the same text printed at 5.0 pt (check 7)", *textsize(cases["label-5.0"]), False, "TEXTSIZE :: PASS")
 
         pa, pb = old / "out" / "toy.pdf", cases["rerun"] / "out" / "toy.pdf"
         extra = cases["rerun"] / "capture" / "toy" / "toy.pdf.json"

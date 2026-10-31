@@ -97,6 +97,7 @@ The tools are `fig-restyle-20261031/tools/`, committed with their tests:
 - `raster.py`: check 2;
 - `textsize.py`: check 7;
 - `run.sh`, `run_remote.sh`: the run;
+- `sheets.py`: Joseph's review sheets (§5.1);
 - `selftest.py`, `toy_producer.py`, `mutate.py`: the tests.
 
 1. **The record.** `capture.py` runs each producer as `re2c_run.sh`'s `step` does: `runpy`, with the deploy's
@@ -130,12 +131,14 @@ The tools are `fig-restyle-20261031/tools/`, committed with their tests:
    - each of the eleven must be at least 4.0 pt (ruling 3);
    - and no PDF text of "after" may contain `_` or `^`.
 8. **Tests in both directions.**
-   - **`selftest.py`, 17 cases on a toy producer with the artist kinds of Figs. 7–14:**
+   - **`selftest.py`, 20 cases on a toy producer with the artist kinds of Figs. 7–14:**
      - silent on an identical rerun, a restyle (size, fonts, labels, panel layout, panel labels, text) and a
        wall-time change;
      - fires on a one-ulp value, an RGBA change (a series; a line alone; a scatter alone), a dropped series, a
-       changed input, a report value changed alone, an unnamed figure record and a one-pixel raster change.
-   - **`MUTATION-RECEIPT.txt` (`mutate.py`):** the control passes, and all 11 mutants of the checkers are killed:
+       changed input, a report value changed alone, an unnamed figure record and a one-pixel raster change;
+     - check 7: a toy text printed at 3.5 pt fails the 4.0 pt floor and is named; the same text at 5.0 pt passes. The
+       toy's 13 in canvas is printed at 6.5 in, so the width scaling is exercised.
+   - **`MUTATION-RECEIPT.txt` (`mutate.py`):** the control passes, and all 13 mutants of the checkers are killed:
      - colours not hashed;
      - a float32 tolerance;
      - patches skipped;
@@ -144,6 +147,8 @@ The tools are `fig-restyle-20261031/tools/`, committed with their tests:
      - timing lines kept;
      - outputs or inputs not compared;
      - size-only raster comparison;
+     - the size floor's comparison inverted;
+     - the printed-width scaling dropped;
      - the wrong wrapper order.
    - **Checks 3 and 7 both ways.**
      - The ASCII check finds 2–30 lines in each of the five old figures checked, and none in the eleven restyled ones.
@@ -181,8 +186,10 @@ The tools are `fig-restyle-20261031/tools/`, committed with their tests:
 
 ## 5. Integration, after the checks pass and Joseph's review
 
-1. **Joseph's visual review** of the eleven, before and after side by side, comes before any install. The director
-   shows them to him.
+1. **Joseph's visual review** of the eleven comes before any install. The director shows them to him.
+   - `tools/sheets.py` makes one PDF per figure from the bound run's "after" PDFs and the committed copies, old on the
+     left and new on the right, both as vector graphics at the figure's printed width.
+   - Each sheet must be one page. The sheets and their SHA256SUMS go in `fig-restyle-20261031/review/`.
 2. **Install.** `make_figures.sh` installs the eleven from `fig-restyle-20261031/figs/` with the new digests. The RE-2
    install lines stay, as comments, under a dated note.
 3. **The RE-2 integration ledger (ruling 1: re-point, do not replace).**
@@ -193,20 +200,41 @@ The tools are `fig-restyle-20261031/tools/`, committed with their tests:
      its row, not from a fixed path.
    - **The history:** part C's copies and records stay where they are. A record, `fig-restyle-20261031/DIGESTS.tsv`,
      gives each figure's old and new digest with both SHA256SUMS entries.
-4. **The figure checks after the note build.**
-   - **The gate:** check 7 on the run's PDFs. Each figure prints at the width its `\includegraphics` gives, and
-     `textsize.py` reads that width from `restyle_2026_10.WIDTH`.
+4. **The figure checks after the note build (amended; ruling 4).**
+   - **The gate:** check 7, `textsize.py`, on the run's PDFs: the drawn font sizes, scaled to printed width, at a
+     4.0 pt floor (ruling 3). Each figure's printed width is `restyle_2026_10.WIDTH`, from its `\includegraphics`.
    - **The record:** the figures are re-cropped from the new note and primer PDFs (`figdiag.py crops`, `measure`) and
-     recorded beside the diagnosis's table.
-   - **An amendment, for the director.** The draft made the gate `figdiag.py measure`'s smallest word-box height, the
-     diagnosis's instrument. Dev draws show that this instrument does not measure matplotlib's text:
-     - pdftotext gives math sub- and superscripts, and a ")" after a superscript, boxes of 2.2–2.9 pt in every font set
-       tried, for text set at 6.5 pt;
-     - under matplotlib's default Type 3 embedding it gives ordinary text boxes about 1.9 times their size (5.5 pt
-       measures 10.4).
-     So a restyled figure cannot pass on that minimum, whatever its sizes. The diagnosis's §3 comparison with the
-     anchors' LaTeX text is confounded by this as well (§7 below).
-5. **Captions.** The Fig. 14 and Fig. 13 caption fixes (§2) are made with the install, through the ledger and agy.
+     recorded beside the diagnosis's table. That re-crop is a record only, not a gate.
+   - **Why the draft's gate was replaced.** The draft made the gate `figdiag.py measure`'s smallest pdftotext word box,
+     the diagnosis's instrument. On matplotlib's PDFs that box does not track the drawn size:
+     - with matplotlib's default Type 3 fonts, ordinary text measures about 1.9 times its size (5.5 pt reads 10.4);
+     - math sub- and superscripts, and a ")" after a superscript, measure 2.2–2.9 pt for text set at 6.5 pt, in every
+       font set tried.
+   - **Both measurements on the same PDFs** (the dry run's eleven, before and after; `SIZE-MEASURES.tsv`, in pt at
+     print):
+
+     | figure | pdftotext min, before | drawn min, before | pdftotext min, after | drawn min, after |
+     |---|---|---|---|---|
+     | `MEFHC_5iter_fig13` | 2.32 | 3.10 | 2.35 | 5.00 |
+     | `MEFHC_5iter_xsec_proj_pt` | 1.71 | 4.05 | 2.35 | 5.89 |
+     | `MEFHC_5iter_xsec_proj_pz` | 1.73 | 4.10 | 2.36 | 5.92 |
+     | `MEFHC_5iter_pull_full` | 4.43 | 3.03 | 3.49 | 5.12 |
+     | `MEFHC_5iter_xsec_paper_pt_slices` | 1.34 | 3.44 | 2.06 | 5.48 |
+     | `MEFHC_5iter_xsec_paper_pz_slices` | 1.35 | 3.45 | 2.08 | 5.52 |
+     | `tension_spectrum` | 0.83 | 2.45 | 2.19 | 5.50 |
+     | `tension_chi2_map` | 7.04 | 4.55 | 2.89 | 5.50 |
+     | `tension_mode_maps` | 7.18 | 4.64 | 4.13 | 5.50 |
+     | `model_comp_projections` | 1.89 | 3.40 | 2.78 | 5.50 |
+     | `model_comp_ratio_maps` | 7.54 | 4.88 | 4.13 | 5.50 |
+
+     - **Old text passes:** the pdftotext minimum passes old figures whose text prints small. Old Fig. 8 reads 4.43 pt
+       and draws 3.03; the old χ² map reads 7.04 and draws 4.55.
+     - **Restyled text fails:** it fails nine of the eleven restyled figures, at 2.06–3.49 pt, although they draw at
+       5.0–5.9 pt.
+     - **The drawn sizes are right:** they follow the code's font sizes exactly. They put six old figures below 4.0 pt,
+       and none after.
+5. **Captions.** The Fig. 14 and Fig. 13 caption fixes (§2) go into the next note round as truth fixes, through the
+   ledger and agy (ruling 6).
 6. **The note build and its gates.** The note, primer and paper are rebuilt with every gate and the `record-checks.yml`
    steps.
 
@@ -219,15 +247,16 @@ The tools are `fig-restyle-20261031/tools/`, committed with their tests:
    - The old copies stay where they are, as the history.
 2. **The primer's `MEFHC_5iter_fig13` is in scope,** since it comes from the same producer (§1, §5.4).
 3. **The floor is 4.0 pt,** the anchors' lower bound. The restyle aims for about 5 pt (§5.4).
+4. **The size gate is `textsize.py`** (§5.4, amended): drawn font sizes scaled to printed width, at 4.0 pt. The figdiag
+   re-crop stays as a record only, since its pdftotext boxes misread matplotlib's Type 3 text.
+5. **The units stay off Figs. 9–10.** Printing each panel's maximum would be a new number (§2).
+6. **Captions:** Fig. 14's "no printed titles" sentence and Fig. 13's colour fix go into the next note round, as truth
+   fixes.
+7. **Joseph's review sheets** are one PDF per figure from the bound run's outputs, old on the left and new on the right
+   (`tools/sheets.py`, §5.1).
 
-## 7. For the director
+## 7. Follow-ups
 
-- **§5.4's amendment.** The gate becomes `textsize.py` on the drawn font sizes, at the same 4.0 pt floor, and the
-  `figdiag.py` re-crop is kept as a record.
-- **The diagnosis report's §3** compares pdftotext word boxes of matplotlib figures with those of LaTeX-set anchors. By
-  §5.4, those are not on one scale.
-  - **What still holds:** the finding that the note's text prints small, from the drawn sizes: the smallest text is
-    2.45–4.88 pt before the restyle, and below 3.5 pt in six of the eleven.
-  - **What does not:** the table's medians cannot be read against the anchors' as the report reads them.
-  - **Proposal:** I propose a correction to the report in the same way as #584's.
-
+- **The diagnosis report's §3 text-size table** compares pdftotext boxes of matplotlib figures with those of LaTeX-set
+  anchors, which §5.4 shows are not on one scale. A correction PR, in #584's style, restates the finding on drawn sizes
+  (ruling 2 of the director's message of 2026-10-31).
