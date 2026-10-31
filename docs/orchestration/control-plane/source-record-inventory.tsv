@@ -42,7 +42,7 @@ OI-71	retired	-	declared	8ed2ea44313e8359ede0983d6147f954da24c972b4af596331144ab
 OI-72	retired	-	migration-carried-forward	08453ed7dad41224c113f311a9defc28e773c9cdaa2bff715178f9fc3d76c751	WITHDRAWN THE SAME HOUR IT WAS FILED — already found by lane B, already fixed, and the id is kept rather than reused. Fi
 OI-73	retired	-	declared	8baf4351d1559700801c030b2994fc7f8449cbb47cbd756016c3daf186ca74b1	RETIRED 2026-10-28 by its owner, the close-items session — LIVE-STATE.md is regenerated and FRESH, with the unread-waker
 OI-74	retired	-	declared	83a60dbaf957c17332d01b629a81f90214e7d4a507181d15b342841a9d41b7b7	RETIRED 2026-10-30 — the canonical checkout is fast-forwarded to ed3590ea2, with no tracked changes. The second bound ru
-OI-75	active	WAITING-JOSEPH	migration-carried-forward	f612cad2e7e9069f8ea688568c42980f480048666f419247006054a3a4d196b1	CARRIES OI-43 SINCE 2026-10-28 (director's ruling) — the cluster P4 hold that OI-43 asked to lift is this row's standing
+OI-75	retired	-	declared	242ee8f8181652bca55b068e1d48147183851eeadea65c38c63c7e96c5c86ec3	RETIRED 2026-10-31 by the close-items session, on Joseph's decision ("Yes, close it") — CLOSED AS HISTORICAL: the 2026-0
 OI-1	retired	-	declared	bf16595b42c225b0f9a51c749dd31156083dec013d724c2970f43f433681c2d2	RETIRED 2026-10-28 by the close-items session — repository CI exists (f96949944, .github/workflows/record-checks.yml). S
 OI-2	deferred	-	declared	f3a7b20f4ceb1b543df41be0d836f5e18b3410f9c24a86991ddb07d9c83e375a	DEFERRED 2026-10-29 on the director's ruling, until a recorded Joseph decision to quote a scalar-FPS (extended-fiducial)
 OI-3	deferred	-	declared	aafebb79404f35ba787c26d160752665cf1b9f7124ce16b01ea7eb46b6b5accf	DEFERRED 2026-10-29 on the director's ruling, until PET being reconsidered for publication (Joseph's decision). See [REC
@@ -74,11 +74,11 @@ OI-28	deferred	-	declared	7151b750d5f7b4eba5aa8707dfa0d605612ba3a0bbbd5adfbe03ca
 OI-29	retired	-	declared	102cdc3f182f360c3e06e3197c64e40d0f40f18193ebfa7715ad5f9486ee2d87	RETIRED 2026-10-31 by the close-items session, on the director's ruling — the 1431-bin covariance it asks MINERvA to end
 OI-30	retired	-	declared	e0e9003c1541d3a86ef22b481697a57324d044d5413fcca16de3b8215334b088	RETIRED 2026-10-31 by the close-items session, on the director's ruling — the analysis defines the observable with the c
 OI-56	deferred	-	migration-carried-forward	04c5fd460f7864c0e7d4ec759dc00afca91511008b83cbb1ae0c8193522f3ef1	FROZEN — do not action pending the reco-underflow repair choice
-OI-31	active	WAITING-JOSEPH	migration-carried-forward	e044a73d211daa9aae2cb36f29badf314b03a582dbf5f79728b4954cb357a33e	WAITING-USER
+OI-31	retired	-	declared	97a6fb2c9eed799641a6da52f4301e41a3b8122152973a4c31b176cda920c3e5	RETIRED 2026-10-31 by the close-items session, on Joseph's decision ("No, retire") — the ±10% E_avail envelope is not ad
 OI-32	deferred	-	declared	be3f1b081c7217dc4d2608d13c699d79656e72597ee24a841724a766ff9a87b6	DEFERRED 2026-10-29 on the director's ruling, until a recorded Joseph decision to quote a fine-grid full-covariance chi-
 OI-33	deferred	-	declared	3b46c9cd761c4c4165844ff7acdaed74c4f8d1be345f81ef6b37d201a49d203f	DEFERRED 2026-10-29 by the close-items session, until a decision to run full per-universe PET lateral retraining, meanin
 OI-34	deferred	-	declared	f06cb62d95fd42e387d4f19a04bfd9c0e18e4653997d271d99ae293a08a13463	DEFERRED 2026-10-29 on the director's ruling, until a recorded Joseph decision authorizing a new scalar unified-throw co
-OI-35	active	WAITING-JOSEPH	migration-carried-forward	f3ddee43bc2fc6fd2e4f5705d6432267962ec7c467b6d224828c52d865b6517c	WAITING-USER
+OI-35	retired	-	declared	5670e79ecd4bd37cc658c5fdcfc237b1bb8a856d78b6efd6098a6ba67d809a23	RETIRED 2026-10-31 by the close-items session, on Joseph's decision ("No, retire") — no request is made to NEUT's mainta
 OI-36	deferred	-	declared	25a22cb8399d946951ee95d375dd3b41886ddfe4ac9476f665daa571a38c24e2	DEFERRED 2026-10-29 by the close-items session, until the next authorized event-loop rerun (the row: add the true-neutri
 OI-37	deferred	-	declared	def0b829aa8256fe0492de25bae075060bf99e5d799a89d9d0755884fe2472b6	DEFERRED 2026-10-29 on the director's ruling, until an FPS covariance adoption being scheduled (Joseph's decision). See
 OI-38	retired	-	migration-carried-forward	78ff510a1fa694cedd454374924b23ebf09db011e23351e965637012453eb3cd	SUPERSEDED 2026-08-13 — historical control; preserve provenance, do not resume
@@ -94,7 +94,7 @@ OI-47	retired	-	declared	9469dd81994f457d9c8f4b9b540760fa1b46f46de0ce96a8ca6d345
 OI-48	retired	-	migration-carried-forward	0b0bf4e60bb0a46ec892b797b000f021550645f46fa7ebfc123dc808f126c785	SUPERSEDED 2026-08-18 by OI-131 — THE DECISION THIS ROW RECORDS WAS REVERSED. Its narrative below is the 2026-08-13 stat
 OI-49	retired	-	declared	628e9089804cbbc59606e4d47d16d714e02e4b1089bac8b9424692cf132ffa84	RETIRED 2026-10-28 on the director's ruling as objectless — there is no tape copy to measure; the live question is OI-13
 OI-50	retired	-	declared	4f9296c14db0784c2f66128ceb3cc786afc10a24585374d89bcc009a1c807fc2	RETIRED 2026-10-31 by the close-items session, on the director's ruling — the measurement it asked for is done: hsi hash
-OI-51	active	WAITING-JOSEPH	migration-carried-forward	96bdec48d03cf5688e58a021e1ecd44cfb9b7af88fc00833043d88f52f65d809	WAITING-USER
+OI-51	retired	-	declared	adce0741af4c5076322c5bb07ae5964f9fce58a85be8c0d3ed588ed015d4891b	RETIRED 2026-10-31 by the close-items session, on Joseph's decision ("Retire it") — the reply to Ben was written against
 OI-52	retired	-	declared	fbb76e0bef247b63b75437f319c9ac97d3e0b7e776113823a4fbf73397554151	RETIRED 2026-10-31 by the close-items session, on the director's ruling — Joseph read Iris on 2026-10-31: HPSS user quot
 OI-53	retired	-	declared	d953e43ef780f3f0e1192d71aafc0e534b0ce929be37b98a1d695ab32260c51e	RETIRED 2026-10-29 as moot, by Joseph's decision to freeze CLAIMS.md (#516): it is ARCHIVAL now, no row is edited, so th
 OI-54	retired	-	declared	4c21268a2543bd355b6dea950d81115a26fe9fb4dc1cfe93f0ac994d51f85675	RETIRED 2026-10-31 by the close-items session, on the director's ruling — stale: neither session 98d9c5 nor its owner is
@@ -130,13 +130,13 @@ OI-127	retired	-	declared	0d27002073acbb91f0c85e4580c55689e83f03d4b4ab361cc48cfb
 OI-128	deferred	-	declared	be387549bac5a8f6ea6878e57f1897cfb34068d5bcb8b6ef5de3bb9d27d916a2	DEFERRED 2026-10-28 by the close-items session, until p4_adopt_standard.py is invoked by a driver or a standard-P4 adopt
 OI-129	deferred	-	declared	8ddd7fd320c3ab7da0dde5b605c0a478991d3ac0480bceedae8cfad16d23804d	DEFERRED 2026-10-28 by the close-items session, until the next run of p4_project_4d.py or the next authorized edit to th
 OI-130	active	NOW	declared	d4b8054efe337e382b4defcfc52eb2e259b37253ac967bef9aabbe979eb0dbef	KEPT 2026-10-28 by the director's ruling, owner the paper rewrite lane after its n4 and r21 work; measured partial cover
-OI-131	active	NOW	migration-carried-forward	25772bf369c0bf850beae55aa9061ff864402175fc110b57da2281e2bcdfdc30	OPEN — filed 2026-08-18. Supersedes OI-48, whose decision was reversed. (b) IS NOW DISCHARGED BY MEASUREMENT, 2026-08-20
+OI-131	retired	-	declared	7c3c3b4211416f4f4fc9b1f4394c72d8792f040f921c08d3f31668b9b1cef61c	RETIRED WHOLE 2026-10-31 by the close-items session, on Joseph's decision ("Yes, single copy") — the 240 P3F objects sta
 OI-132	deferred	-	declared	ae7d87d987d0f2002205da3a97db2b32dc31150271eab0a977b4f5c26be67d74	DEFERRED 2026-10-29 on the director's ruling, until anyone needing to quote the OI-132 split, or to grade a data-only C_
 OI-133	deferred	-	declared	da56c4bbebc2b11cfc4095118461e18eaf0b73f406de246060a258dd3254018f	DEFERRED 2026-10-29 by the close-items session, until the next data-only launch, or a ruling on the artifact-schema chan
 OI-134	retired	-	migration-carried-forward	9f3018a7e1255cef48a068da6d14de467b7d7f6b2c18dded8c0b4fb3adf29d0f	BOTH ACTIONS EXECUTED 2026-08-19T12:40Z — and the authorised one FAILED, so the second was reached by a different route.
 OI-135	deferred	-	declared	1b28ec7cd9bc00538df308cbdc36465932a8ac1bae95639505130bd8807164d8	DEFERRED 2026-10-28 on the director's ruling, until profiles.json and waker-config.json deploy — job 57266000 is termina
 OI-136	deferred	-	declared	efe8c263bd1d710806dcf194fd80e0c349330f05a23a816af5d67beb0020dc69	DEFERRED 2026-10-28 by the close-items session on the director's ruling, until the next re-issue of the bindings that pi
-OI-137	active	WAITING-JOSEPH	declared	c558f18e801c8050e18a97755c42f4b9925f41ce2ff51669d4989f16d6ad4c4d	OWNER THE DIRECTOR 2026-10-28, HELD until a session holds the "scalar-5D adoption/statistics owner" role that Ruling 7 (
+OI-137	active	WAITING-JOSEPH	declared	22c58fd4657e452e81a9c0749dfbf300d7a8895047479bc7381230cbf93cb100	OWNER coverage-5b-audit FROM 2026-10-31, on Joseph's decision ("Yes, designate one") and the director's designation — th
 OI-138	deferred	-	declared	0526c7f1357e173fef9b40d5932db84d83e75408b3b8af191a0c837d125b6c12	DEFERRED 2026-10-29 by the close-items session, until Gate 6 being picked up again. See [RECORD-20261029-close-items-def
 OI-139	retired	-	declared	4197a8638d84679ff7206771688329189c6bfa36ea0a8583a2471c2b816b0d54	RETIRED 2026-10-28 by its owner, the close-items session, on the director's ruling — all 14 active-named receipts measur
 OI-178	retired	-	migration-carried-forward	718c5d215905f47ebd8ef1699cc39665f69039824892957358477401aab5da2d	DISCHARGED 2026-08-30

@@ -156,8 +156,11 @@ HPSS is a first-class design consideration, not cleanup afterthought. Preserve
 irreplaceable or no-longer-reproducible inputs/products on tape; include tape
 quota/headroom in production planning; and never delete a durable copy until a
 named owner has verified its replacement and release condition. Current HPSS
-facts and actions remain canonical in `OI-50`/`OI-55` of
-[`../OPEN_ITEMS.md`](../OPEN_ITEMS.md), not here.
+facts are not kept here. `OI-50`, `OI-52` and `OI-55` of
+[`../OPEN_ITEMS.md`](../OPEN_ITEMS.md) are retired; the latest reading (446 of
+512 GiB on the user quota, 2026-10-31) is in
+[`RECORD-20261031-close-items-waiting-joseph-rows-retired.md`](RECORD-20261031-close-items-waiting-joseph-rows-retired.md#4-oi-52-retired-with-josephs-iris-reading)
+§4. A new HPSS action is filed as a new open item.
 
 ## 8. Day-to-day operating loop
 

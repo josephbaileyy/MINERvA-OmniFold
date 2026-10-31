@@ -607,6 +607,42 @@ class ToyRuns(WorldCase):
         inputs, _ = self.loaded()
         np.testing.assert_array_equal(cv["w_truth"], inputs["w_truth"])  # no stream
 
+    def test_a_half_mc_step_of_two_seeds_runs_each_at_its_own_splits_truth(self):
+        # job 60624652's lanes 1 and 2 refused here: one truth per run is wrong in half mode, where each seed has a split
+        seeds = (2_600_000, 2_600_001)
+        with mock.patch("sys.stdout"):
+            self.assertEqual(toys.main(self.world.run_argv("pilot", "half", self.out, seeds="2600000:2600001")), 0)
+        inputs, _ = self.loaded()
+        x = {s: np.load(self.out / f"t_s{s}.npz")["xtrue_flat"] for s in seeds}
+        self.assertFalse(np.array_equal(x[seeds[0]], x[seeds[1]]))
+        for s in seeds:
+            np.testing.assert_array_equal(x[s], toys.half_truth(s, inputs, "nominal", None).ravel(order="C"))
+        X, xt, _ = fs.load_toys(self.out, "t", "pilot", list(seeds), np.eye(x[seeds[0]].size),
+                                toys.flux_probabilities(self.world.constraint), "half")
+        np.testing.assert_array_equal(xt, np.array([x[s] for s in seeds]))  # the scorer reads one truth per toy
+
+    def _run_with_a_moved_truth(self, arm, mode, seeds, call):
+        real, n = toys.experiment, [0]
+
+        def moved(*args, **kw):
+            exp, x_true, info, rec = real(*args, **kw)
+            n[0] += 1
+            if n[0] == call:
+                x_true = np.array(x_true, float)
+                x_true[0] += 1.0
+            return exp, x_true, info, rec
+        with mock.patch.object(toys, "experiment", side_effect=moved), mock.patch("sys.stdout"), \
+                mock.patch("sys.stderr"):
+            return toys.main(self.world.run_argv(arm, mode, self.out, seeds=seeds))
+
+    def test_a_toy_step_whose_truths_differ_is_refused(self):
+        self.assertEqual(self._run_with_a_moved_truth("control", "toy", "2610000:2610001", call=2), 4)
+        self.assertEqual(sorted(q.name for q in self.out.glob("*.npz")), ["t_s2610000.npz"])
+
+    def test_a_half_toy_whose_truth_is_not_its_splits_is_refused(self):
+        self.assertEqual(self._run_with_a_moved_truth("pilot", "half", "2600000:2600000", call=1), 4)
+        self.assertEqual(list(self.out.glob("*.npz")), [])
+
 
 # ------------------------------------------------------------------------------------------------------ the scorer
 
@@ -791,6 +827,59 @@ class ReadBack(unittest.TestCase):
         X, xt, draws = fs.load_toys(self.tmp, "t", "control", self.seeds, np.eye(16), self.p)
         np.testing.assert_array_equal(X, self.X)
         np.testing.assert_array_equal(xt, self.x_t)
+
+    def _write_half(self, d, seeds, T, split_of):
+        d.mkdir(parents=True)
+        for k, s in enumerate(seeds):
+            draw = json.loads(json.dumps(toys.draw_for_seed(s, self.p, fs.declared_groups())))
+            meta = toy_meta("pilot", s, draw, mode="half", experiment={"split_key": split_of(s)})
+            np.savez_compressed(d / f"t_s{s}.npz", xsec_flat=self.X[k], xtrue_flat=T[k], meta=json.dumps(meta))
+
+    def test_half_toys_read_back_with_a_truth_each_held_to_their_split(self):
+        seeds = list(range(2_600_000, 2_600_008))
+        T = np.array([self.x_t * (1 + 0.01 * k) for k in range(8)])
+        self._write_half(self.tmp / "ok", seeds, T, s5c_pseudo.split_key_for)
+        X, xt, _ = fs.load_toys(self.tmp / "ok", "t", "pilot", seeds, np.eye(16), self.p, "half")
+        np.testing.assert_array_equal(xt, T)
+        self._write_half(self.tmp / "split", seeds, T, lambda s: s5c_pseudo.split_key_for(s + 1))
+        with self.assertRaisesRegex(fs.Invalid, "split"):
+            fs.load_toys(self.tmp / "split", "t", "pilot", seeds, np.eye(16), self.p, "half")
+
+    def test_pairs_reads_each_half_toy_against_its_own_truth(self):
+        seeds = list(range(2_600_000, 2_600_008))
+        T = np.array([self.x_t * (1 + 0.01 * k) for k in range(8)])
+        write_toys(self.tmp / "full", "pilot", seeds, self.X, self.x_t, self.p)
+        self._write_half(self.tmp / "half", seeds, T, s5c_pseudo.split_key_for)
+        s1 = {"f": self.f, "U": np.eye(16), "blocks": {"stat": self.M, "seed": np.zeros((16, 16))}, "C_e": self.M}
+        deltas = {b: np.zeros(16) for b in sa.LATERAL_BANDS}
+        out = self.tmp / "pairs.json"
+        argv = ["pairs", "--full", str(self.tmp / "full"), "--full-tag", "t", "--half", str(self.tmp / "half"),
+                "--half-tag", "t", "--n", "8", "--s1-npz", "x", "--flux-constraint", "x", "--lateral-dir", "x",
+                "--definition", "x", "--inputs-npz", "x", "--x01", "x", "--manifest", "x", "--out", str(out)]
+        with mock.patch.object(fs, "_common_inputs", return_value=(s1, self.M, self.M, deltas, self.p)), \
+                mock.patch("sys.stdout"):
+            self.assertEqual(fs.main(argv), 0)
+        r = json.loads(out.read_text())
+        rel = np.sqrt(np.diag(self.M)) / self.f
+        d = np.array(r["per_cell_paired_difference_full_minus_half_in_sigma"])
+        t = np.array(r["truth_difference_in_sigma"])
+        self.assertEqual((d.shape, t.shape, r["verdict"]), ((8, 16), (8, 16), None))
+        np.testing.assert_allclose(t, (self.x_t - T) / (rel * self.x_t), rtol=1e-12)
+        draws = [json.loads(json.dumps(toys.draw_for_seed(q, self.p, fs.declared_groups()))) for q in seeds]
+        Xs = fs.surrogate(self.X[:8], draws, deltas, self.f, self.x_t)  # zero laterals: only the normalization draw
+        zf = (Xs - self.x_t) / (rel * self.x_t)
+        zh = (Xs - T) / (rel * T)  # each half toy in sigma of its own truth
+        np.testing.assert_allclose(d, zf - zh, rtol=1e-12)
+
+    def test_the_lateral_carry_uses_each_toys_own_truth(self):
+        seeds = list(range(2_600_000, 2_600_004))
+        draws = [json.loads(json.dumps(toys.draw_for_seed(s, self.p, fs.declared_groups()))) for s in seeds]
+        deltas = {b: np.linspace(0.1, 0.2, 16) * (i + 1) for i, b in enumerate(sa.LATERAL_BANDS)}
+        T = np.array([self.x_t * (1 + 0.1 * k) for k in range(4)])
+        out = fs.surrogate(self.X[:4], draws, deltas, self.f, T)
+        for t in range(4):
+            np.testing.assert_array_equal(out[t], fs.surrogate(self.X[t:t + 1], draws[t:t + 1], deltas, self.f, T[t])[0])
+        self.assertFalse(np.allclose(out[1], fs.surrogate(self.X[1:2], draws[1:2], deltas, self.f, T[0])[0]))
 
     def test_a_departing_draw_a_departing_truth_or_a_wrong_arm_is_invalid(self):
         for tamper in (("draw", 7), ("truth", 50)):

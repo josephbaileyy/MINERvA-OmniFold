@@ -1,0 +1,2898 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "c6bd5c5f3077f73d331d4923194d6e870186ee516979309cbb40653e24be9706",
+  "dhash": "73ef8c605a36ef7ee0a34217cfab749d75499a4afcb19c5d498ed3e00be6cb74",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "a20da8aa8bd9d5bc6104b150da0cabe67ec578305d1d200b7ae622725266afbb",
+  "dhash": "c9f04ea4b8a89fe1d159bce4c9ba25aafd2ba860873ee62d235679a43e291e6f",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "LineCollection",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "90b211e1699a12e12e65e7427d79245619cd7fdd822f781dbf2681b601a8d26a",
+  "dhash": "6716b76c5dc5238f0bb34a7f7035df2f2ad1eb4fc6fb0724bb58c2fbe9c384dc",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "dcd7adbd4d078c0ad3c47b6b2d184a8770b005892a7e3c126c92b2ec7872c522",
+  "dhash": "748c27abc61793b83d9d64eda18ea89c9c623fcde3c3735bd25aebe391daf5b8",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "526dcb6ef29479f6f0a542befd6e97bde675e99119500fb88f22cd61e2833a22",
+  "dhash": "ab8b85537eed374400208a5d5eacb6d2e658ce3f54c78727fcd9a2ac33b0bdc7",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "5a8d8b35f909a1d4c2169c09a9fc27485c91182b2a186cef2635df7cd2d3a549",
+  "dhash": "98007e4f0684136b8a01090af0b38e410ecb8d7f32537c4920935af7e74e8af1",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 6,
+  "kind": "line",
+  "axes": 0,
+  "label": "_nolegend_",
+  "hash": "84e362f34d79354cc8c14d87edf02f68da50d6f6f2c6fa9657653001010f03d2",
+  "dhash": "642d5b6aa6e17d2b67142d344ea3de2ff6d3249c4703b8d56dc783b29c97d9fe",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 7,
+  "kind": "patch",
+  "axes": 0,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "d9a9e37105b7a73a69b61f77f9bb892eacfd26cae0916332f5638c93a1e551f1",
+  "dhash": "bc604208faa62cc4fe547a47d5a92a60f086744a3d17b7513150c65c0ae13122",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 8,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "3bad94e730fbf7e7491f9d44e5d35b5ee828ece41bd7e92ff4386269e2e87bc5",
+  "dhash": "6a1bab3212cd00d62a94aa5b11ef13ddfb5c653b9f45b805794cb6de095a1633",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 9,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "a7dc1c3acc6a21810e23a3794f4815832e9ff2a9cc85d9845ba16d5d8e3d7f7e",
+  "dhash": "c6f09bf624284b900cf7f242f1157347c050dde41237a0200b5d042c218a0a82",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 10,
+  "kind": "LineCollection",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "56f99adf9597b2449202584b2536cc3794bdb3037715aea828b0ab7306be65c3",
+  "dhash": "a149a28fce03ae9711dfd26fc543a287b3c1b83ceb044f8ed605bc02028dc0e4",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 11,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "40e48903ce7786b1150be367b6133c9089b64360c1164fbc3228c43efb95e9b8",
+  "dhash": "8b69bfeeeab4fc4ddc812383b44a7e09861c7cece9592a1820e75f0c552e950b",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 12,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "0aee45136441d26e66a57d02e0bd283f833ed5a849bf1dc96ec65633d46ad3a3",
+  "dhash": "bc649018f669bf6ce1ad04919af575f8d628950836e85ad35b6fd06348ff126b",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 13,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "0e4bb99d1d3df9fc0a58390f669560092f0a3d6d22b2dca6e0fbdc255f2cbd48",
+  "dhash": "4739028130dbb44a45612eab3dd1745429a11b78752b5f33f4ab9cd510f76cc5",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 14,
+  "kind": "line",
+  "axes": 1,
+  "label": "_nolegend_",
+  "hash": "7ceaa366d0dde3b0792073db0a74a6b43462855adcba51dbaf561ff48bac85a8",
+  "dhash": "c39c8af60c4caebc157e16dd76b77c001a4a2edcd65e808d81d5615833038536",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 15,
+  "kind": "patch",
+  "axes": 1,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "399b72be52243a5df06b0ed345aba65dd422436bcf8942ae65e87949efde12e8",
+  "dhash": "343de875e1885615d8ac314b977d393a60e892b035eb80f47fcc56d2c20a5d09",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 16,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "f8220092d77d9333ad6264ecd547fc82638884c8d304529c380e4bd8b781b890",
+  "dhash": "6b52fe171033257e92eacabb8be5d464ab3e5fb952865c79afd2c50d03f5f197",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 17,
+  "kind": "LineCollection",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "efcd872014d3b9320c0dc14834e0c3a33b8e6e6416b17f45a3dece0894a069a1",
+  "dhash": "0ffb9c433e3d1cc03ece6853d3e0681238eedd36a9c2b71005be794477eaaecd",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 18,
+  "kind": "LineCollection",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "521fe77c8c66895c129594b05809d8b011954a0478613e3717eb30c6e9055a64",
+  "dhash": "fae5c4906611264c7e0232b4b6972df29ea1136e3bd04dae3d71bc0da8e6ec50",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 19,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "4c6626aa41e883256b02e43722fd4e94b04bde51707b80f86993590827893181",
+  "dhash": "97d6fb09ddd13c0ae6c191fd25bd0e281186e5d1e1d8ff22f4d4a34d1805b360",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 20,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "62717973950297192f031fe47c41335fcdeaa3edf66e1ab7b1c53dffa1164861",
+  "dhash": "f7eddc564afd1a916ad82f87a561e19636f8a0d2872da8f788c08c59dd96a008",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 21,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "3f5fbebc29ff4a1432924337743acec9f454221bc4e5b72732e0024fcb6da7ac",
+  "dhash": "cfac81a4d19899850f78beb89e7da74f989d73a7f3a6702d9ac95e69cc9382f7",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 22,
+  "kind": "line",
+  "axes": 2,
+  "label": "_nolegend_",
+  "hash": "74afdce7bc78a6b1cdc42b275c77fd45627083f85a7b83d69d051e14e6ff415a",
+  "dhash": "2a0f9e30528da3e5f26d80856d864aac144ef85300a0d2d9d20ed081128b0656",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 23,
+  "kind": "patch",
+  "axes": 2,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "0be56235cc6b397cf76f0370652947a4640a43c0f754a055aad781f4c8434d19",
+  "dhash": "22a7946008ab4d7db520c33670db33c1cee80d598e9c6f97b0cd19a5714e1d15",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 24,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "a11c9d53d40128a5fb0db1f1f81bfd477d782e67483a71bbade15fbf3630fea9",
+  "dhash": "10d28c2f969e9fbcf984ef28fee19d20727f8c2c3f745aeb3bb6ac442d867c84",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 25,
+  "kind": "LineCollection",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "610f939d7eca6f415808fb2d153f73fbc7b127e99e82d4bfc8a5cba58be1c22f",
+  "dhash": "ff6f3324ce5cae46c575567faf02c3fb9f7efd519674055e9823f7a3573e6c1b",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 26,
+  "kind": "LineCollection",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "51b0b8faf0055bb79e9c39a8ce24e829820abf3bb7aa4d78cf44f8d95c3eb05c",
+  "dhash": "d5ed34f388a1879bd6522ed75afccaed1a11523b1b7c95fd3f58f214174a6a75",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 27,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "49c41fd914dd2e52c61bf4dcfe1ca78f32983c1ca7e1fa1d6800797eccc81292",
+  "dhash": "e7d52487b79c203205a4c59ba15922fcbc5e3aa6dc785ec510d3b906893efc5c",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 28,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "e45f32385c43d0ce364d829cccc0bc774eeae8128c14018cc5b75bb713681713",
+  "dhash": "1ef8bfadc27be7737b2bcd547a7fa2dd0c1a394b0acd080e7136e7340abe77b7",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 29,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "13d683fa2f32a3cab6a913dec6f0753262370c636a64463cc9a7528c60973150",
+  "dhash": "6744477d1e3e398bdb43cf08c45a9af5ff5ecdd9b7620558a1fbec6d44ec6081",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 30,
+  "kind": "line",
+  "axes": 3,
+  "label": "_nolegend_",
+  "hash": "91df33b3bfba9aa65334bbc0df17c8276615e44f1c92dc15c018ecbe04b18e9c",
+  "dhash": "dd88589db26224dc2eaa676eecc695a7f76930d6646fbac7d20d456e36089661",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 31,
+  "kind": "patch",
+  "axes": 3,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "9fe0df0d986c6f21ba139fcbd26d1a3e313ad44461e0b6344f71bed6ef0e40f8",
+  "dhash": "88bb3535b89bb4f50522b3584c0d84e79ed02221d5405cb59ac68d9916b54c30",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 32,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "60113f0cc21c7a7eb00c497ace0a4819ef5e304c62bede445b9f83290e67f188",
+  "dhash": "acb4fa2959b326348e5d931a353c0ca1ce7a203b0b198c4361f041a60a22d4b7",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 33,
+  "kind": "LineCollection",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "9b74b44800b42889456afbe0b067e8349af1647784e2484df352c759cf6a38d3",
+  "dhash": "8a676c126a8eb1a4062fc9859bcf383f3a59083c63c074d333d8609019dfa0b9",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 34,
+  "kind": "LineCollection",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "270c01ac623c0b000c494231503ecb4a2a6582a63c8e5d7f9b1ca3fb52b45b0f",
+  "dhash": "fd37aaf9fbb398c51a5939c312ce1522d4dbf1104ebf608d479b35cd2b20f3ea",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 35,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "8a1b0df0d4a543a444728837436545a794b266cfa25d26deec8b8640a996e12f",
+  "dhash": "87f563002fb5b379fe580b523ed43b1ef9e1f1bc40eaffbeef2f45ec11f6284d",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 36,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "9db8d2514e929314440317af7ebb262b81b2cc2bbf6543841ed24e88251f092b",
+  "dhash": "d23ce9ce2e0f19f35e6c03aa06f95abe698ce4d85181ce125ca15995aaaafb45",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 37,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "6ad70307bc1af7761f2931ee3973b24d56f91fe17b9402c17c0b31718c39fe3d",
+  "dhash": "bc97a0a9d28d4b04a458db8d7e17e741f034e9d4deb09276ed57fa992931e7fe",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 38,
+  "kind": "line",
+  "axes": 4,
+  "label": "_nolegend_",
+  "hash": "7add61c871a3dfcd5e65804fc92be44b3e2b2500f579d5aee27634115009b5e6",
+  "dhash": "7cdfef2e8f9fe3a02eb99da93f4cd4027da7db565fac78572e65f115ebc01b29",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 39,
+  "kind": "patch",
+  "axes": 4,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "b3cbb11d4bc12c90328eb5f8771e273c7eb7e40751f168b62753b9ca97c3bd43",
+  "dhash": "c7867c6ad1d085cf2e8c972db948693d89a29d6724ee2c67088f8f536865487c",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 40,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "9c4a50001b51479819e35ba66ea1c1dc0d64efffae2bbc35a2afe2c89b0d0b96",
+  "dhash": "dd0d111e945a7983504a9342ad57672bc5780da4884aee10ec391aea58c70824",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 41,
+  "kind": "LineCollection",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "342d026b7e771bc024263225587a487f52530fbd3dd677cc1d8451a6cc425484",
+  "dhash": "b4eda07bf4c1e27eaf701c2e89898011d1e00018ebf9b03f58c17629d7677e6a",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 42,
+  "kind": "LineCollection",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "49a796f2605cc30a9e194dd96ff2782297f337ad52918a16edd64c3299c9370b",
+  "dhash": "0e13512bf8752bc9544fde1d484c009a0256cfb24135b883185bccb65b578759",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 43,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "aa1625b6fe739389ca24e31075b7e35527380378fbc07d78caa4a81c08a0d934",
+  "dhash": "501950cc6042655a8017c11d13a62048d852bf0042ef85bb6351bfd1e380d459",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 44,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "8f7a76e7cbe8afc867374d0435ced0694fe088cdef7607245603222738eee1b8",
+  "dhash": "2e4212b406074b8f1a8f3ff09ed4e76e8d74dcfed99551ef6d970760741c1856",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 45,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "3ef80a574767f37bd078f7f56a84a5d23e8ad8db6a1d5a58a2ede794ff1b58c7",
+  "dhash": "05c70012971f140cd4e9f19d62b89b7e2137b5868991b89e0a95db72d5f3a657",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 46,
+  "kind": "line",
+  "axes": 5,
+  "label": "_nolegend_",
+  "hash": "e5b27b1b669e3b9db1e942e174d56f251ecf0414df2dce60395297e567594fe8",
+  "dhash": "fa5e26be831d1e657e2230180a51d42cf7fdda083756522b0d543c41e02f8d2d",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 47,
+  "kind": "patch",
+  "axes": 5,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "0c59551b6664340e6f65159ea6047ec6c2cc50db2f69acb565b96e93c2fa94cf",
+  "dhash": "b2024e96deef89a19d14908bc4153ace60c12b724c79f6181811ef10b17d231b",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 48,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "57831f14ac98001000b3767c73265a237cac777db397172b68144ca1c53d2dc5",
+  "dhash": "53ab0119c68dbba4a398fefa3bb50a8fd39650a80c2bc8d8b4fe73b7b6bac424",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 49,
+  "kind": "LineCollection",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "86a79115ed2f164706c7144e906024cd889c9dc14b9cae2ee4f96745c578ed1e",
+  "dhash": "0d4e2323f802c5f30162446e05fcb443c5a10f75a65eef0392ee0ff6adec8702",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 50,
+  "kind": "LineCollection",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "0b001da7712cd96aae231ae4a764fb583cf709da59802e6438aea3943143e73c",
+  "dhash": "72a4fbacd055a8eaf5644ad3fee65603f598d6f8fae8541308de2398e72eeb56",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 51,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "e3d19314ec3da83fe730f5f79a2649ecc393cfc1b372c4dd6e49f4b9c3c9a1f2",
+  "dhash": "d10db7c76dea2ff12a710b1856cedf8bde4dde2ec14ca2014b253cf5419fc309",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 52,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "606fc5464854a1d1761b286f29cd330cb9217ef21bf1b7f05db0aeef35d9a4a9",
+  "dhash": "d216a986dbe021221e98c7a574375f87fc607f54196e31eaedf78d6e6fb53454",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 53,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "eb7258759dfb2bb3e7b90749766df7d48decd8da567f84cefe8e83d48ed72149",
+  "dhash": "e36d913fc5f9f2f830a224b03eafd28c57962a1b082fff391efcbfbbf100096d",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 54,
+  "kind": "line",
+  "axes": 6,
+  "label": "_nolegend_",
+  "hash": "e2de567c018ba97e50a6a81dc7512363cca42588580c1e469af9020b5665e8fc",
+  "dhash": "70099f5489216d66d071eb9583b25f4cb4262b74b1ca43aa3d3e14e5bfb2c0b0",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 55,
+  "kind": "patch",
+  "axes": 6,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "a52f668a8a9688a24c9e377c078fd7d373d1ae75df23ddd4f66220024b5e1be1",
+  "dhash": "33b420e4f5107ccb91a77a0fd72dc0ddd402cb4239d321e529fc984f498c3afb",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 56,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "84ed626f50386a5b3b0c5b540b5fc8e3b8cc097e5b039d6aef69ec2ed760868e",
+  "dhash": "2b6a1105cb8b71c4a0641367860c59e30405a228bbfa0d7089e7777b7f615518",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 57,
+  "kind": "LineCollection",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "9ddff7757c10519c8c0382264ff279d21b3b7714eed3ddb4da44682b35eb13f4",
+  "dhash": "c361230f1d18b5f123bbec7cef874847337c790ee56e6093d2808db26e75b371",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 58,
+  "kind": "LineCollection",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "b5647622144fb95f874e844220e3b1b3166048324df0bada8908ec2297199821",
+  "dhash": "761d1bcf9854004557ce84ba8b03f2ab9c24bd6876f6409bcf1deab66d11990a",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 59,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "5db591fe7aec881278d6fb4f51d0851c2729aeb88a54cec360edfaa0dfcb227d",
+  "dhash": "61d38996fb20c6465db5e7642bbdee7db6976644141df101998129a07f70e2cd",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 60,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "5e8ab5b895e857d44bfd561f88f711c25764f5f5f5a3077ea7626de6d7fe40c3",
+  "dhash": "79091ed4276a1b495fc2cfb10c702fad6a753470019cee28f46264e97c9b95da",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 61,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "ff1a9a830505c16cb571bf4c735fc97cfda1b182a0c66c06980d92dca36d240e",
+  "dhash": "e7c144fdc5629b5c5903ad80a65ad6092d9431c7b3b14ae6cd7e894bedece103",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 62,
+  "kind": "line",
+  "axes": 7,
+  "label": "_nolegend_",
+  "hash": "fe584785ebedff7bd2e9432ee4992d1ed36300af6808c7520a612b680a33a9ef",
+  "dhash": "cf3909fdfcf8ee9326c8b20d2f57ace8d0b0679c5393828aac11438e27049f4d",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 63,
+  "kind": "patch",
+  "axes": 7,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "40b7cdc9ca74f1503a0293166c1aa4cca5b38aba659bb1f166b6d3f380a3b363",
+  "dhash": "2919f91cd5cf1f83b7cc59afcdf7bd6a1a59dab8a8ccc6bf715ea2581cf7c07d",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 64,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "eaefc23513386d0636e6f10c64404bda117021573dd844d83c31897404fdd06e",
+  "dhash": "09adeb65f95811e3b51e2a19b5392386d7c0f4ebac6fb54392bcdc127f2f57c7",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 65,
+  "kind": "LineCollection",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "6e067c98175e5887c1c86f81d59ca0af0902c2e410001d89af71669357f10349",
+  "dhash": "c39dbf4441dd48da14116d8c1dd563a0373b0c80ac0be44fdf63078706013528",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 66,
+  "kind": "LineCollection",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "8ba7f75121a43f3623f5914504ec4a0ef1a41ff3b6120f02eb3ea8ff849d7b4e",
+  "dhash": "3ed1cf280f4ee698c86aa84d5b7adf16d840c6db29c8b6ffc6c9e1f45111d1ea",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 67,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "0e418c2de0d9e4529d364210deea93e7e933242dc3d6ae4ea509d471f8d477d7",
+  "dhash": "3d2729df4c7eaeb2950e7e662bc3ae96e9b4edcfb479eea9dfb47aac8b0b0ccf",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 68,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "49b72f53c81ec6a7d31e73c1c738194cadd4b359a9e6aba20e9a64a56ec5dfa7",
+  "dhash": "cf26c465fe959476331f358111ca9752383dbd5b1e01858d0f6a2c476bd5220b",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 69,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "f226939854fbdb269323b8c6a691f8d144786da39a28190e927e5c033d5ad09a",
+  "dhash": "1914c8416e06037b8a0b8922c72b5250c81d64a3f1edeb5fdbf72baa601861ce",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 70,
+  "kind": "line",
+  "axes": 8,
+  "label": "_nolegend_",
+  "hash": "566d22fcb1f6c6044c2d9756c0173929de31dbecf69949db2741f4ad47e70bf9",
+  "dhash": "e47418904ecb9b727abf9cf20ad8e9ee7e0b38647afa05454166d8e8b566ebdc",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 71,
+  "kind": "patch",
+  "axes": 8,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "80f743f316a8b7064bacd407827c0663ac47f490da5b297660f71ac80bfe367a",
+  "dhash": "875fe643d3ad23af5ab9eb500f4515686a598e8c780d5890f640272334dcb14e",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 72,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "6b0d9729f774e140df6fb652a8f458f38746ca11857c6532004536f0112c4eab",
+  "dhash": "d9a91f7b43fbcee6424ed9db8716436c28fab15f0ba2d74ac910fd6289e6ec5c",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 73,
+  "kind": "LineCollection",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "2a771a3aa5fc05e90f359d06fa4c4c4af2f9084c14946149544278243744dfe7",
+  "dhash": "ef2d6bc4a727d144ed80023a18ccbbfde7d19c187da56289dcc120a8240f2e33",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 74,
+  "kind": "LineCollection",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "03427083640bdc228a22ed3a46d25b6ac250e4cac7ad10edcc44f4b9d11a3688",
+  "dhash": "3fd74db40ea110f1811e2fc5aea154681b5a845d9d0cc682e19c0e8106c04fcd",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 75,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "8935a22f9fad24f923eed0c250dd56b0d80b45b33ed353dee09067bc7b654d45",
+  "dhash": "14dfe948af4ca48ab5fa26e87f4b6f0d48bdcf7f690f23851afd7382d7fbd7b8",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 76,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "aa29ff2f32e22d4db9ffe988e242dd43851d0e052ba62e45919b4667b06199ed",
+  "dhash": "ea5f99254e55824bb49bf1b0f2ce6cc62bfc59b8fad2bc293415d55c3182c69d",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 77,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "4eabb4474a134bad3f5628cab7573b3b7199e7992c3285c0c8906ddc161bc868",
+  "dhash": "c59e051f1062d4b7fe896d36eaa1dbbcfa1eed0ac97c97318cb29ecc2a36a3fc",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 78,
+  "kind": "line",
+  "axes": 9,
+  "label": "_nolegend_",
+  "hash": "eb07c454e92ced90158ba9ee5624bcae2b879a1b800640bb8943033a569f76a2",
+  "dhash": "e81f2e3fc3ce566184cd2c10c287bfe53aea7455c3b8e3ceb72d8e8205d9ad08",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 79,
+  "kind": "patch",
+  "axes": 9,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "924648c582b3a9a2c1e3731eae322a26c56c95607d7b2d3bf42cde299917fcb9",
+  "dhash": "bb49235dafbb1642683e13e8b2a02c385a0a0fe66eee2fe6daa76c2bde77a8b0",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 80,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "189e011ed378a9672a2a218874011eca2dd0a093a5a9575b565056473de2b05a",
+  "dhash": "88dd183be358304fd2e8a298d9706fae533aa2048936dbc5249f19a622e32d32",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 81,
+  "kind": "LineCollection",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "5e3d118996c1b950e83b0313ef6bc58caf72771bdaa8d90c91aece393f213eb3",
+  "dhash": "0eb2cda843bba41575400540d731ad6d2e59871e1595abbe526f9b4239b62c13",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 82,
+  "kind": "LineCollection",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "005c96e3aad1bab79da6dbd41d421a592458e3e56b05b74cf2312bebe1a2f743",
+  "dhash": "f0111d2c20849ee021ad1219bb6be1842aa631a3aa8f5bc3b69c20e357c3fcfa",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 83,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "2893694f627ce41d0d64ee9540e85b4ae672ede10ab9ff2802b3228401f96a54",
+  "dhash": "7d6e006f03fedf81b799e5b23e951de10f35a2da8f8464ad39176d6343e836d1",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 84,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "ef0af279e79045acaecfe1b5257556b8baec4509360484c9657642146a39ef43",
+  "dhash": "f2cd36ed4c007e089bc7af1916f86d508ea8a337a435b14e73f3644b349948ed",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 85,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "165d35d1786fadbc3b5522c7fe0cf0006837239e34b10898039ea736ccdb6a7a",
+  "dhash": "6f7f082e0e2320b966ca50b1a33d8d353741da45122e3b568cc22728da9543d4",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 86,
+  "kind": "line",
+  "axes": 10,
+  "label": "_nolegend_",
+  "hash": "fc1b15f13abb558120187e64b54ceeb72ee9a441c66f8514787c6ad166dbfd30",
+  "dhash": "a5e1643545775a3a552be746648d6d31c6efb55e22a43eb57e5b4e7ef95a65de",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 87,
+  "kind": "patch",
+  "axes": 10,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "2bad421b12af20bdeb98c9970679fa1165f5a24e8c0c2b0bc1bf1f2c26efd32c",
+  "dhash": "ed1c6660e17050f8b07ee162af7e33102872b88cddf695e1b761c19a7b80a854",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 88,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "60614a5168fab1e2e870fb1f0f3f722e3094f5f863c9fb479b0eaea278478603",
+  "dhash": "92fe99fd3da09eb132887a5292779a01d710878b9a05f08beb29fe927314a67a",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 89,
+  "kind": "LineCollection",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "2fb6e4f6b23c5a0fc27892ac6d03985c68e4410190aa1ed85e0b440c40338f38",
+  "dhash": "9e31e1e840de5976b919d64cd83921fd3e7a18ba317f671de013e2a55489e547",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 90,
+  "kind": "LineCollection",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "0cc3aa159f6744ac62b97b9f18a345937982b774cbf4d69f78018335bf38be83",
+  "dhash": "b0794b11d62f47d331032b869aadfe219c11476a8928bb4bbf70620f26812e4d",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 91,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "f528ac9eb4d13f424d4ee717922d4c75ab7dc63ac9a67370a8e4b6ad4b48db85",
+  "dhash": "6c37e7de4f6b75a99cbf33c0aaed1d29568f85b9ec9958728aacaa92ab9dd5db",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 92,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "c3db111abf1412dcc78fd021ee033200eb1a1906f91370115610c0a48ffbe24d",
+  "dhash": "54d01c09c3006e79866263a657de28c636e5c5ee48caa878110e7036b553c259",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 93,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "902d6e90c3e1f2924d8a8eb5a5c813122b01cb129850f20c53660c6472a5c186",
+  "dhash": "b93aecd63f98c1b304163343b33e01785ffe97c419fe2e88a73236fd0beeea80",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 94,
+  "kind": "line",
+  "axes": 11,
+  "label": "_nolegend_",
+  "hash": "0c4c966435ab08ed7a1f962d344ab36975f980fae0a86a1c8f422d1f643e492a",
+  "dhash": "12cc528d334ab4bb537b8a8d1890c6f471c756c0f12b3922fc2ac78bf8090495",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 95,
+  "kind": "patch",
+  "axes": 11,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "e00624968870cf0f016c223e58dd7f69e42b1c7734ccb3bcdc944bff1145a794",
+  "dhash": "0510cc71f168b80766218ca4087cf2c7f437aaf90c385fa1b7b1f91189f4f6fd",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 96,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "3077798ff352a046d6f6707105a0a0ecf690f112fd0555a6a6f80ae4ea1d1c08",
+  "dhash": "8964ad68973b2e0aa93bb4ff425c4c9671ab53af13ed37fda2526799f434291f",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 97,
+  "kind": "LineCollection",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "48672a18175a46e734c1f51519b954611889d882d1765079997ab763dfb57db5",
+  "dhash": "c8a05ebbb4971144f7eced04313f7a8fc5b2cadbc1d3d0624d37b17a2f534613",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 98,
+  "kind": "LineCollection",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "a06d0bcc6292dc0b16f5e18754edea9d535f04e8f3675b8edf487dee7ffa0c2a",
+  "dhash": "a982868e47d988a836b8ea54305898963c19b438c57da92290d086f7fda75a42",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 99,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "ff7f9c17c75148897994c8bd6264f2fdcf69dafcbe6cdc37ff92f78f001322bf",
+  "dhash": "3a401339b466f8c4b43bbd93e12347c9331a06082bd4603c471fb2d3efadc9e3",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 100,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "740eb7d2c2e7250d8bb2211c47747eca3f05859562f603b20fd4ca57adb4a042",
+  "dhash": "62c6fe63e157d4dc1a65d3adf9a9e9a6a1e2ae39904bc2e2181e633e991129c3",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 101,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "7f225ff32d8ee4d06e847a10d2e2b05d1dc8a740f3c8068bd73f180e1b427175",
+  "dhash": "c93af481546918330fdc9eaf4ebe35866d420449fa7e800e761d0d27b3c959fd",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 102,
+  "kind": "line",
+  "axes": 12,
+  "label": "_nolegend_",
+  "hash": "bd8a1792f7604d4f28fb5f895da17ec347e0f26bbd77f48d5c41d0c4b27d1b63",
+  "dhash": "66910fb3eb8814ea5a259313b0f4658c3a99a8952fd0e371f6081bb3fcf953dc",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 103,
+  "kind": "patch",
+  "axes": 12,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "f758b33b15801e39e1bfaddbc78339ad22b12362bfec5dd36c96bfe8abd7d2c0",
+  "dhash": "81cbd431e034cedabd2e216ed852d686bd46f6da2fa8bbedbce278adb02a94b8",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 104,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "adcf7aa76ad6420a34c3712c1caee3fb31c67bcb43119ca8ac07e0e3d36a4433",
+  "dhash": "28b9cacbb139cb5852d7e5834d1bcd60c8bc2bc6f1acc066b47b2bd26bb32962",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 105,
+  "kind": "LineCollection",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "195982f42b2bf1d0a166db0629668361fe09c830b184bf05175c0a9c5b1b3046",
+  "dhash": "63fa7d9c5b5be5c71476d0e7c6be6e943c700227c649234cc051a5b8d336ce05",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 106,
+  "kind": "LineCollection",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "0c341aa0bf39b2211c2cf60137fa4fa55499c4279c40926d385d7e9c5f364b5c",
+  "dhash": "da14029a3495ad2daec58fa549ba558abd3e398eb7cd9555059f8019c4f8e653",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 107,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "ad8cb54f24d5942cd53a4e5c3f2457e1275a76c643e7f8e544887dce58510e15",
+  "dhash": "e554adf892f1651e46e19c32306200a0d594c825bfeff9db7ec5a46185c0f609",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 108,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "0d491d9e0f544406589d0a67e60a0dfaa9c2b5920358e42757f86b0cea52514a",
+  "dhash": "fceab8996d1934cb8969e6e63fed270d14fb3159a998e4ca0c127ba9d2a0158e",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 109,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "b5bfa12af3a6c5d5910d0b293a42d9496094fcd6beb4a726f878bf043ba5dc38",
+  "dhash": "7d588da23a1da214366c8beb740dfb94fad657fc867e36675845198c77ac7226",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 110,
+  "kind": "line",
+  "axes": 13,
+  "label": "_nolegend_",
+  "hash": "1549d3da4458142a7ab98de7e13b0a8c3c5638e3415c0d5ea8455af5df061abb",
+  "dhash": "dafef1cba6b561db078004b20eba12ab25e1fcb79248cf16637c0253677ed9a0",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 111,
+  "kind": "patch",
+  "axes": 13,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "8db890fcdd61ce4ac66f62830550a4ce0d5ccad122521003191cff55c92aaa68",
+  "dhash": "3bf211d1e7a65a70cf64ac73710af3f9c809df407a0a805a5eb4c0713dd7dda0",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 112,
+  "kind": "line",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "4fba2e5ebb610d324f7e19427fa148e8c59829760ab1a5feaf4cfd1d9f113e9d",
+  "dhash": "dd83d46ae2450da0245facf1ef0f245ff83c3831753d1bf674d6336a6bf07a12",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 113,
+  "kind": "LineCollection",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "e67aca0f5ff9c546fc193da09ac1e9444efed94eb49691e8d6ffc28d36193045",
+  "dhash": "51bfb242f9003726dccfcb072319960dad869ed1c85104ad5e69a24d1c25eb92",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 114,
+  "kind": "LineCollection",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "238efb40eeaecb3d46e7954e71c66698c6ab5a756472e4cd7c11c399d35eafa7",
+  "dhash": "38d62e72e07d7fb6221967bb6d2d01b29e5e76f2bf0f2e65c597bfd23b8cdf68",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 115,
+  "kind": "line",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "e97c98c4f91f6e4ab0b77925cf7adde7179d952d486eb2ac8cc37a036b5b8b12",
+  "dhash": "01d3e7148e7209e086499b5c6ca0ab8ec020688fa0e9790bd9aca4b5c8212f96",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 116,
+  "kind": "line",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "67ff04d519e6c42a04a29a111d5337a901ae46f027b1d49af58c261809a86706",
+  "dhash": "1f2c93b499309f59fb7cf695d007a326c327aa298dc60aced9e9681c5e0d8a8b",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 117,
+  "kind": "line",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "b38c220b484a7d501b6ee8b08318b1775d473d1c98e6e669e807f151c20d76a4",
+  "dhash": "b6defe848cc1bf4751f5058948d3509ecb6e134f30cf197dc98cf6ce7b726968",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 118,
+  "kind": "line",
+  "axes": 14,
+  "label": "_nolegend_",
+  "hash": "cf7bb5b3b227844158e796fa60afd881896377b738ac80c50fbcbcb8a0109bd6",
+  "dhash": "12a39d4e656f9767c5617c9dab709be40cb9581244e246504405eb39221b343e",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 119,
+  "kind": "patch",
+  "axes": 14,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "6f7b79ed7f2a70e81d3768bffc1aaa48e085a94984420745f753d7c022ab696e",
+  "dhash": "137ee3c883b76c3edd565a57cdb13d1f42c30227e61883b14d941eb457a73baa",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 120,
+  "kind": "line",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "49abecd90e48e0f7b1d19bad633c41c627b0f06bf152d7b0b656e69e2a430fa4",
+  "dhash": "32be86a6625eba513e5b5075f0f36a244e7c39e8a023bdb12c6f5124247bf760",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 121,
+  "kind": "LineCollection",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "9184e0a37d8c4445cbdc0d68b5625369748bf4e68fa8f2f6c23ce09b901fc089",
+  "dhash": "b1552bb271c440154cce964e9a77f3534f6048b05c4176a4138465aa2d5e33e6",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 122,
+  "kind": "LineCollection",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "2fedab77ee72ad5ec41ba825860a8640c1479f3ffc95c4c586b7feb997f82226",
+  "dhash": "71b03f35f1c04a4b0112555bc3c98c9e5470ad8f991d2a0ffa92b6fb8cf31665",
+  "colours": {
+   "face": [],
+   "edge": [
+    "#D55E00FF"
+   ],
+   "cmap": "viridis"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 123,
+  "kind": "line",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "7406698778cf1b8b2a048d412cb5e5c08d16e7ce6b1396f4a0a0f55f106a3747",
+  "dhash": "276924caefdf8c1a0fc9a7c059762fe5fc8ee0fbcd056c9aee99fff2b9b86164",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 124,
+  "kind": "line",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "dab1e57bf7eb0b032dce8ae494dbc22beb9b75c179ca2f88e5ece2694e2343f8",
+  "dhash": "758d7d216b38e6c0364d41d82434dfe1206ef5c54440277241e54b0e0a29c212",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 125,
+  "kind": "line",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "7c3243ea868c5ef344a443c3e1dbeb76d67fce7c49a9c1af24b9a9192d9befe3",
+  "dhash": "1e251f913244b779b1bca847114ea3bd5bbe3b104c7c0851d5c352c3fb1e88c9",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 126,
+  "kind": "line",
+  "axes": 15,
+  "label": "_nolegend_",
+  "hash": "f0ef2943ab0dbefe55c8d0e00a5d50c973cce70f1873a2a2140114b8054cbcc7",
+  "dhash": "1c4715440fb751642d67489c2e532b847abf99d25e5ac80a034aff41b2dea9f4",
+  "colours": {
+   "color": [
+    "#D55E00FF"
+   ],
+   "mfc": [
+    "#D55E00FF"
+   ],
+   "mec": [
+    "#D55E00FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 127,
+  "kind": "patch",
+  "axes": 15,
+  "label": "GENIE 2.12.6 + MINERvA Tune v1",
+  "hash": "ea04921dbfc46c094650825dce5851a3bd3ef2eebdd5c727fb0bb287b3137341",
+  "dhash": "dce074cbdbda23b20c796384b4a27b64fb65d33311e0278298ec6fcf76839a35",
+  "colours": {
+   "face": [
+    "#C44E5200"
+   ],
+   "edge": [
+    "#4C72B0FF"
+   ]
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

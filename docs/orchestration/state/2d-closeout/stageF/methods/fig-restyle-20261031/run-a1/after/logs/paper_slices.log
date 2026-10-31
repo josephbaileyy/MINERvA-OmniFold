@@ -1,0 +1,21 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[INFO] Truth-normalization flux source: embedded hFlux_pt
+wrote /pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a1/after/out/MEFHC_5iter_xsec_paper_pt_slices.png  (chi2/ndf = 178499.6/205)
+wrote /pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a1/after/out/MEFHC_5iter_xsec_paper_pz_slices.png  (chi2/ndf = 178499.6/205)
+
+============================================================
+Paper Fig. 13 comparison summary (statistical errors only)
+============================================================
+input file: /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root
+nIterations = 5
+p_T slices total chi2/ndf  = 178499.6/205  = 870.73
+p_|| slices total chi2/ndf = 178499.6/205  = 870.73
+NOTE: statistical-only chi2; paper uses full covariance.
