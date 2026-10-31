@@ -1,0 +1,16 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and suitable for a detailed technical companion, but recurring scope disclaimers, internal bookkeeping, and compressed diagnostic descriptions require a dedicated language pass to reach well-edited PRD register.
+1. QUOTE: "Statements in those sections about that
+central value and that covariance do not describe this result, and statements here do not describe
+them."
+   REWRITE: The central values and covariances discussed in those sections and here refer to distinct measurements.
+2. QUOTE: "One control check failed: the offset check, which compares the offset corrections of two hybrid
+truths, gives χ2 = 245.74 for 16 degrees of freedom. The other control checks (numbers 0, 1, 2, 3, 4,
+5, 6, 8) passed. As fixed in advance, the six power alternatives built on that correction are therefore
+descriptive and not judged against the failure criteria; Table 16 gives them, with two descriptive
+variants of each tested truth."
+   REWRITE: The offset consistency check, which compares the offset corrections for two hybrid truths, failed, yielding χ2 = 245.74 for 16 degrees of freedom. All other control checks passed. Under the predefined procedure, the six power alternatives that use this correction are therefore reported only for descriptive purposes and excluded from the pass–fail assessment. Table 16 presents these alternatives and two diagnostic comparisons for each tested truth.
+3. QUOTE: "Table 16: Descriptive fake-data numbers, none of them a test result. In-sample: against Ctotal + Cresp
+including the truth’s own generator shift, which is not evidence (— where the test already uses the
+full matrix)."
+   REWRITE: Table 16: Diagnostic fake-data comparisons excluded from the pass–fail assessment. The in-sample comparison uses Ctotal + Cresp including the generator shift associated with the tested truth and therefore does not provide independent validation. A dash indicates that the corresponding test already uses the full covariance matrix.

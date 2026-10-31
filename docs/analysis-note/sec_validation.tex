@@ -149,7 +149,7 @@ The failure is one of width, not bias. The per-bin pattern, which is descriptive
 
 Unlike the band's replicas, the central value has completeness exactly~1. A secondary analysis, added after the pilot, applies the band's division to the toys. Scored against the same band, the divided toys overcover: $C_1=\covTwoDRepCOne$, with its interval above the window. The attribution rule was fixed before the full run, but its clause for the undercoverage outcome was written after the pilot pulls had been seen. Under this rule the primary undercoverage is attributed to the completeness term of the band. The attribution is partial: in the replica form, the $\pPar$ \SIrange{40}{60}{GeV/c} column still undercovers.
 
-Two bands were scored: the completeness-divided band above and, only post hoc (below), the undivided band, rebuilt without this term. The quoted statistical block has not been tested for coverage.
+The band was then rebuilt without this term. The resulting undivided band was rescored only post hoc (below), and the quoted statistical block has not been tested.
 % FACT (2026-10-18): "the rebuilt band is the quoted one" was false of Q (stageC/production/DESIGN.md §3.4, S1).
 % J3/J4 provisional (DECISION-20261018, packet W3: D2); KNOWN_ISSUES 85 re-scoped to S1 (J5).
 % plain-language pass (DECISION-20261018-joseph-plain-language-pass). Printed pointer moved to this comment: the rebuild's
@@ -206,6 +206,6 @@ Because $\sigma_i$ is estimated from the same toys that are evaluated, these fig
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.62\textwidth]{MEFHC_5iter_xsec_eff_heatmap}
-  \caption{Selection efficiency on the $(\pT,\pPar)$ truth grid, shown as a diagnostic only; OmniFold's miss treatment corrects acceptance (\S\ref{sec:method-algo}).}
+  \caption{Selection efficiency on the $(\pT,\pPar)$ truth grid. Efficiency is diagnostic only; OmniFold's miss treatment natively corrects acceptance (\S\ref{sec:method-algo}).}
   \label{fig:eff}
 \end{figure}

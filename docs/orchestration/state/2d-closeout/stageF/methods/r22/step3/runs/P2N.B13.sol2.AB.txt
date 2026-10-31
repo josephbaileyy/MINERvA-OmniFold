@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A’s probability-model paragraph flows more smoothly, avoiding B’s nested “which” clauses and parenthetical digression.
+2. A’s inference paragraph uses separate sentences to distinguish uncertainty propagation from resampling, giving the explanation a slightly more measured technical cadence.
+3. Most prose is identical, so A’s advantage concerns small differences in sentence construction rather than overall technical density or detail.

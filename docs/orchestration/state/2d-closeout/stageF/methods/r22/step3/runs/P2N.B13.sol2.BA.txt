@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. In §B.4, A connects related claims with more fluent sentence structure, giving the discussion a smoother technical register.
+2. A’s “No new validation result accompanies these requirements” is more polished and formal than B’s “These are requirements on such inference, with no new validation result here.”
+3. The preference is slight because most prose is identical, and A’s added parenthetical qualification in §B.5 makes that passage more cumbersome.

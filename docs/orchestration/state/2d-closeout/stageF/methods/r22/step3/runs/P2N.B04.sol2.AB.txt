@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B’s explicit phrase “has not been tested for coverage” is more precise editorially than A’s unqualified “has not been tested.”
+2. B’s figure caption reads more smoothly, integrating the diagnostic qualification and avoiding the unnecessary adverb “natively.”
+3. The remaining prose is essentially identical, so these small wording improvements support only a slight preference.

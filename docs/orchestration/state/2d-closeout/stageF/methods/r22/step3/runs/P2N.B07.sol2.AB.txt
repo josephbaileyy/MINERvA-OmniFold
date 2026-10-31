@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A’s “The event-loop output files also store” provides a concrete subject and a more direct construction than B’s “Truth hadronic diagnostics are also stored.”
+2. That explicit reference to the output files connects the diagnostics sentence more clearly to the preceding discussion of stored systematic variations.
+3. The remaining prose is essentially identical in register, organization, and technical density, so the preference is slight.

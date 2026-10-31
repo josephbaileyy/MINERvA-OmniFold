@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically precise, but repeated project-status reporting, internal instructions, and managerial language give several passages the register of an internal note and warrant a dedicated language pass.
+1. QUOTE: "Its first stage has been implemented but not yet run: no output has been produced and no pass threshold has been set."
+   REWRITE: The first stage is implemented but has not been run, and its acceptance criterion remains to be defined.
+2. QUOTE: "It labels every output as a diagnostic that must not be quoted."
+   REWRITE: All outputs are designated for diagnostic use only.
+3. QUOTE: "It is deferred unless the reconstruction-only test shows material bias or the collaboration asks for the stronger response model."
+   REWRITE: The correlated-response study would be undertaken if the reconstruction-only test revealed material bias or the collaboration required a more realistic response model.

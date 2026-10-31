@@ -1,0 +1,17 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and technically fluent, but recurrent internal bookkeeping, development-history narrative, and awkward qualifications distinguish it from a well-edited long PRD write-up and warrant a dedicated language pass.
+1. QUOTE: "An earlier release candidate, RC1, passed its packaged
+verifier when replayed from an empty directory in a separate AI-agent session (Opus 5.5) using only
+
+the package and its README, without repository access."
+   REWRITE: An earlier release candidate, RC1, passed its packaged verification checks in an isolated environment using only the package and its README, without repository access.
+2. QUOTE: "The broader result package must contain every item below; RC7 does not contain all of them.
+Items labelled (fixed) have identities or values already fixed (bin edges: §G.3; checksums: Ref. [37],
+identities already fixed); the rest are packaging. A fixed identity specifies which object is meant, not
+whether the object is scientifically qualified."
+   REWRITE: The full result release requires the following items, some of which are absent from RC7. Items labelled “fixed” have specified identities or values (bin edges: §G.3; checksums: Ref. [37]); the remaining work concerns packaging. The designation identifies the object and does not establish its scientific validity.
+3. QUOTE: "Undeclared acceptance field. The record of the projection carries acceptance_question:
+UNDECLARED: when the projection was built, it had not been decided whether an acceptance correction
+is needed at the destination binning. The package must carry this field with its value until that is
+decided, so that no default in the data format makes that scientific choice."
+   REWRITE: The projection metadata record acceptance_question: UNDECLARED because the need for an acceptance correction at the destination binning remains unresolved. The released package must retain this explicit value until the question is resolved, preventing a format default from implicitly specifying the correction status.

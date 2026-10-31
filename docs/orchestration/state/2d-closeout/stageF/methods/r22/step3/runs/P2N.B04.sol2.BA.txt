@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B’s “The band was then rebuilt without this term” provides a more direct, natural transition between the coverage analysis and the rescoring discussion.
+2. B distributes that explanation across sentences more smoothly than A’s enumeration interrupted by “only post hoc (below)” and “rebuilt without this term.”
+3. The preference is slight because the prose is otherwise nearly identical, with both documents maintaining the formal register and specialist detail appropriate to a long PRD technical write-up.

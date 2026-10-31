@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A presents the parallel run-period uncertainty summaries in a table, relieving an otherwise crowded paragraph and improving readability.
+2. A avoids B’s additional sentence about a “causal efficiency advantage,” which sounds awkward and repeats the caution developed immediately afterward.
+3. The documents otherwise have essentially identical prose and specialist register, making A’s editorial advantage slight.

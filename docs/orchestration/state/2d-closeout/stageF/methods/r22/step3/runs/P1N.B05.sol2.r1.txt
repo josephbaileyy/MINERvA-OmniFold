@@ -1,0 +1,13 @@
+RATING: 3.5
+JUSTIFICATION: The prose largely suits a detailed particle-physics companion note, but development-history asides, internal analysis labels, and several awkwardly compressed formulations warrant a dedicated language pass.
+1. QUOTE: "The regularization scan (App. A.4) was made for the
+exact-split cross-check on an earlier covariance and was not repeated for the quoted one."
+   REWRITE: The regularization scan in App. A.4 used an earlier covariance for the exact-split cross-check; no corresponding scan was performed for the covariance reported here.
+2. QUOTE: "The public release cannot establish
+the origin of this difference, for which the FHC-only constraint file remains the leading, unconfirmed
+hypothesis of this analysis."
+   REWRITE: The publicly available files do not establish the origin of this difference. The FHC-only constraint file is the principal suspected source, but this attribution remains unverified.
+3. QUOTE: "With the purity-based subtraction, the choice of GBDT estimator spreads the distance over
+about one unit, a methodological band: the exact-split cross-check gives 3.66, HistGBT 2.70 ± 0.04,
+and LightGBM with seeds 1–10 gives 2.64–2.75."
+   REWRITE: With purity-based subtraction, χ2 per bin varies by approximately one unit across the GBDT estimators: 3.66 for the exact-split cross-check, 2.70 ± 0.04 for HistGBT, and 2.64–2.75 for LightGBM with training seeds 1–10.

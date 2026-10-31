@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B integrates the training-seed explanation into a smoother causal sentence, avoiding A’s repeated statements about the block.
+2. B explains what the four records represent before qualifying their independence, giving the caveat a clearer progression.
+3. B’s wording “do not draw the systematic parameters” and “cannot test the interval widths” is more direct than A’s corresponding phrasing, although the documents otherwise share essentially the same register.

@@ -1,0 +1,19 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and appropriate for a detailed particle-physics supplement, but recurring development-history narration, cumbersome internal labels, and repeated qualifications require a dedicated language pass.
+1. QUOTE: "The test scored
+the completeness-divided band, the first-built statistical band, quoted when the test ran, whose
+replicas divide by a bootstrapped completeness. The undivided band is the rebuilt band, without
+the division, since superseded."
+   REWRITE: The test evaluated the statistical band quoted at the time, whose replicas were divided by a bootstrapped completeness factor. A subsequent version omitted this division; that version has also been superseded.
+2. QUOTE: "With the current inputs, validated total uncertainties for all 205 bins, the integral
+and the projections therefore cannot be obtained. They would require independent populations
+or a validated generative law, a continuous nuisance generator for tests of total intervals, and an
+untouched generator-truth domain for bias checks (§4.6). This is a limit of the available inputs, not
+a general impossibility result for 2D unfolding."
+   REWRITE: Validating the total uncertainties for all 205 bins, the integral and the projections requires independent populations or a validated generative law, a continuous nuisance generator to test total intervals, and a generator-level truth domain reserved for bias checks (§4.6). The available inputs do not meet these requirements.
+3. QUOTE: "The attribution rule was
+fixed before the full run, but its clause for the undercoverage outcome was written after the pilot
+pulls had been seen. Under this rule the primary undercoverage is attributed to the completeness
+term of the band. The attribution is partial: in the replica form, the p∥ 40 GeV/c to 60 GeV/c
+column still undercovers."
+   REWRITE: The attribution rule was specified before the full run, although its undercoverage criterion was formulated after inspection of the pilot pulls. This criterion identifies the completeness term as a contributor to the observed undercoverage, but does not fully explain it: undercoverage persists in the replica formulation for the p∥ column from 40 GeV/c to 60 GeV/c.

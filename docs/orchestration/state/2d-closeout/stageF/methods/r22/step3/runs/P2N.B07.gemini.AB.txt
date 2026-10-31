@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. Document B avoids pipeline-specific software implementation jargon ("event-loop output files"), maintaining the formal, archival register appropriate for a Physical Review publication.
+2. Document B's phrasing ("Truth hadronic diagnostics are also stored") maintains grammatical parallelism with the preceding passive clause ("a shifted W is stored for each lateral universe"), whereas Document A awkwardly elevates a local file artifact to the grammatical subject.
+3. Because both documents are otherwise identical in their high technical density and formal particle physics vocabulary, Document B's elimination of this single internal-collaboration colloquialism gives it a slight preference.

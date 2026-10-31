@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. Document A avoids the inclusion of raw software code artifacts in the narrative prose, whereas Document B inappropriately leaks internal ROOT histogram names into its introductory paragraph.
+2. In Sec. 6.2, Document A expresses the treatment of the covariance matrix and pseudo-inverse across two clear, well-balanced sentences, avoiding Document B's convoluted and awkwardly nested run-on sentence.
+3. In Sec. 6.3, Document A adheres to a polished, formal scientific register, whereas Document B slips into colloquial phrasing when discussing the unconfirmed hypothesis.

@@ -1,0 +1,19 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally direct and technically formal, but recurrent bookkeeping, repetitive scope disclaimers, and awkward shorthand warrant a dedicated language pass.
+
+1. QUOTE: "Statements in those sections about that
+central value and that covariance do not describe this result, and statements here do not describe
+them."
+   REWRITE: The discussion in each section applies only to the corresponding result and covariance.
+
+2. QUOTE: "One control check failed: the offset check, which compares the offset corrections of two hybrid
+truths, gives χ2 = 245.74 for 16 degrees of freedom. The other control checks (numbers 0, 1, 2, 3, 4,
+5, 6, 8) passed. As fixed in advance, the six power alternatives built on that correction are therefore
+descriptive and not judged against the failure criteria; Table 16 gives them, with two descriptive
+variants of each tested truth."
+   REWRITE: The consistency check comparing the offset corrections for two hybrid truths failed, yielding χ2 = 245.74 for 16 degrees of freedom; all other control checks passed. Under the prespecified criteria, the six power alternatives that use this correction are reported descriptively and excluded from the pass–fail assessment. Table 16 presents these alternatives and two supplementary comparisons for each tested truth.
+
+3. QUOTE: "Descriptive fake-data numbers, none of them a test result. In-sample: against Ctotal + Cresp
+including the truth’s own generator shift, which is not evidence (— where the test already uses the
+full matrix)."
+   REWRITE: Supplementary fake-data comparisons, reported descriptively. The in-sample comparison uses Ctotal + Cresp with the tested truth’s own generator shift included and therefore does not provide independent validation of the covariance. A dash indicates that the primary test already uses the full matrix.

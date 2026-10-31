@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B’s account of the RC1 replay uses a more compact sentence structure and states the verification outcome more directly.
+2. B integrates the eigenvalue-checking instruction into explanatory prose, giving it a smoother technical register than A’s abrupt “Do not check” imperative.
+3. B’s explicit “(fixed)” labels read more naturally in a formal release specification than A’s checkmarks, although the otherwise nearly identical prose makes the preference slight.

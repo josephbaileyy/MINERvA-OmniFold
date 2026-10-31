@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: Much of the prose suits a detailed particle-physics write-up, but the estimator discussion repeatedly shifts into internal record keeping and development history, warranting a dedicated language pass.
+1. QUOTE: "Seed 42 was chosen on computing cost: building the statistical band at seed 42 was the cheaper of the two costed ways to give the central value and the statistical band a common seed."
+   REWRITE: Using seed 42 for both the central value and the statistical ensemble minimized the computational cost among the two options considered.
+2. QUOTE: "Its seed was not fixed, and its run log was not found; two driver revisions regenerate it to 7 × 10−15 . It is not invariant to the estimator seed, however: one reseeded run (random_state 1/2/3) moves every bin, by a median of 0.18 % (maximum 1.6 %), and gives χ2 /ndf = 3.57. The spread over seeds is unmeasured."
+   REWRITE: The estimator seed was unspecified, and the original run log is unavailable. Two driver versions reproduce the result within 7 × 10−15. A rerun with different estimator seeds (random_state 1/2/3) changes all bins, with a median change of 0.18 % and a maximum of 1.6 %, and yields χ2 /ndf = 3.57. The variation across seeds has not been quantified.
+3. QUOTE: "The exact-split central value was the quoted 2D central value until 2026-10-11; studies labeled exact-split use it and have not been recomputed."
+   REWRITE: Studies labeled “exact-split” use the central value from configuration (b) and have not been repeated with the nominal configuration (f).

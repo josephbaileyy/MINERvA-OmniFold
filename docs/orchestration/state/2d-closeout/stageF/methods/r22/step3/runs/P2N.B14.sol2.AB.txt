@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. “Computationally inexpensive adversarial stress test” is more precise and more consistent with formal technical register than “intentionally cheap and adversarial.”
+2. The future-work paragraph is more self-contained and publication-oriented, referring to separate documentation without embedding a source-file path.
+3. Most prose is identical, so B’s modest improvements in register and presentation warrant only a slight preference.

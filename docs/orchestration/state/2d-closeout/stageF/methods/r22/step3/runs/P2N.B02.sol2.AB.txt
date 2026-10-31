@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 1
+REASONS:
+1. B’s regeneration sentence uses a clearer subject and avoids A’s redundant closing phrase, “as inferred from the two regenerations.”
+2. B connects the coincident seed-variation medians in one cohesive sentence, giving the comparison a smoother and more formal presentation.
+3. B’s Table 1 caption establishes PET’s diagnostic status before stating the validation limitation, producing a more natural progression within otherwise nearly identical prose.

@@ -1,0 +1,16 @@
+RATING: 3
+JUSTIFICATION: The prose is technically fluent and appropriately detailed for a specialist companion note, but recurrent repository bookkeeping, development history, repetitive qualifications and informal procedural language require a dedicated language pass.
+1. QUOTE: "The provenance of the records the note
+cites, the fixed identities and audit record of the five-axis covariance of the configuration-(a) central
+value, the test-suite discipline, and superseded values and withdrawn results are kept in the analysis
+repository’s records document, Ref. [37]; each citation names the entry’s number or heading."
+   REWRITE: Reference [37] documents provenance, the construction and validation of the five-axis covariance for configuration (a), testing procedures, and superseded results; citations identify the relevant entries.
+2. QUOTE: "The thresholds lie comfortably above the 0.166% ML floor
+of the earlier ten-seed scan, which was in force when the tests were graded (Ref. [37], superseded
+values: retired material)."
+   REWRITE: The closure thresholds exceed the training-seed variation of 0.166% estimated in the earlier ten-seed scan; that estimate has since been superseded (Ref. [37]).
+3. QUOTE: "The fixed-truth test (§5.2) found the diagonal of the first-built Cstat undercovering in
+its tails (C2 = 0.912, unevenly across bins); the band was rebuilt in response, and the rebuilt
+band has not been independently re-tested. The statistical block quoted here is a different
+ensemble and has not been tested either."
+   REWRITE: The fixed-truth test (§5.2) found insufficient tail coverage for the initial statistical covariance, with C2 = 0.912 and coverage varying across bins. Neither the revised uncertainty band nor the distinct ensemble used for the quoted statistical covariance has undergone an independent coverage test.

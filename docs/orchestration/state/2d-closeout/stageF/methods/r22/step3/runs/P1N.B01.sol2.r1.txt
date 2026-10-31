@@ -1,0 +1,13 @@
+RATING: 3.5
+JUSTIFICATION: Most of the prose suits a detailed particle-physics technical note, but recurrent internal bookkeeping, repetitive validation caveats, and informal descriptions of analysis history warrant a dedicated language pass.
+1. QUOTE: "The comparison is descriptive; its
+covariance lacks independent validation, validated coverage and calibrated significance (§4.6), and
+its readiness for publication as a measurement has not been established."
+   REWRITE: The comparison is preliminary and descriptive: the covariance has not been independently validated, interval coverage has not been established, and statistical significances have not been calibrated (§4.6).
+2. QUOTE: "The quoted 2D statistical block has had no coverage
+test; the fixed-truth coverage studies scored two earlier statistical bands, of which the first-built
+undercovers in its tails (C2 = 0.912, vs. 0.954; §4.2, §5.2)."
+   REWRITE: Coverage has not been tested for the reported 2D statistical covariance component. Fixed-truth studies evaluated two earlier statistical uncertainty bands; the original band exhibited insufficient tail coverage, with C2 = 0.912 compared with the nominal value of 0.954 (§4.2, §5.2).
+3. QUOTE: "The decisions use completed
+pseudo-experiments; lost ones, recovered for reporting only, change none (§11.6)."
+   REWRITE: The rejection decisions are based on the completed pseudo-experiments. Including the missing pseudo-experiments recovered for reporting leaves all decisions unchanged (§11.6).

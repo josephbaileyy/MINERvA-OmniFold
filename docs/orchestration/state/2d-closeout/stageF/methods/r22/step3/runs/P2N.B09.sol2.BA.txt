@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 1
+REASONS:
+1. A’s training-seed explanation presents the cause and consequence in a smoother sequence, avoiding B’s slightly cumbersome “was measured and is zero” construction.
+2. A explains the relationship between the four records and two truths more cleanly than B’s awkward “they are two truths, each counted” phrasing.
+3. A’s “its Poisson pseudo-experiments do not draw the systematic parameters” is more direct and idiomatic than B’s “Poisson pseudo-experiments with no draws,” although the documents otherwise have nearly identical registers.

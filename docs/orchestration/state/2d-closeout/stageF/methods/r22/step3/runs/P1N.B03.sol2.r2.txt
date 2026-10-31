@@ -1,0 +1,16 @@
+RATING: 3.5
+JUSTIFICATION: The prose is generally precise and technically appropriate, but recurring audit-style bookkeeping, internal production labels, and repetitive caveats give several passages the register of an internal note and warrant a dedicated language pass.
+
+1. QUOTE: "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver;
+the others are accepted by inference, because the same code produced them (Ref. [37], R1.16)."
+   REWRITE: Re-execution of the production code reproduces seven systematic universes within 1.4 × 10−11 (§4.1; Ref. [37], R1.16). The remaining universes were generated with the same code but have not been checked individually.
+
+2. QUOTE: "Both programs that use the covariance for the reported results, the χ2
+comparison (§A.3.2) and the program that draws Fig. 4, check that its stored set of cells equals
+the published set, and the check passes in every run of both on the quoted covariance."
+   REWRITE: The covariance used for the χ2 comparison (§A.3.2) and Fig. 4 contains the published set of cells, as verified by both analysis programs.
+
+3. QUOTE: "The statistical block quoted here has had no coverage test: the fixed-truth coverage studies of
+§5.2 scored two earlier statistical bands, not this block. No coverage test on held-out simulation has
+been run, and no design for one has been registered in advance."
+   REWRITE: The coverage of the present statistical block has not been tested. The fixed-truth studies in §5.2 evaluated two earlier statistical uncertainty estimates and therefore do not validate this block.

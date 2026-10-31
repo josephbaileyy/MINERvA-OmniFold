@@ -1,0 +1,13 @@
+RATING: 3
+JUSTIFICATION: The prose is generally precise and appropriate in technical depth, but recurrent internal bookkeeping, development-history references, and repetitive qualifications require a dedicated language pass to reach a well-edited PRD register.
+1. QUOTE: "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver;
+the others are accepted by inference, because the same code produced them (Ref. [37], R1.16)."
+   REWRITE: The analysis code reproduces seven universes from the July ensemble (§4.1) to within 1.4 × 10−11. The remaining universes were generated with the same code but were not individually checked (Ref. [37], R1.16).
+2. QUOTE: "Both programs that use the covariance for the reported results, the χ2
+comparison (§A.3.2) and the program that draws Fig. 4, check that its stored set of cells equals
+the published set, and the check passes in every run of both on the quoted covariance."
+   REWRITE: The χ2 analysis (§A.3.2) and the uncertainty projections in Fig. 4 both verify that the covariance contains exactly the published set of measurement cells.
+3. QUOTE: "The universe × retraining values and the band-centering numbers cannot be
+recomputed from the saved covariance products; they were therefore not recomputed independently,
+and their verification is limited to the checksums of their inputs."
+   REWRITE: The saved covariance products do not contain sufficient information to reproduce the universe × retraining estimates or the band-centering offsets. These quantities have not been independently reproduced; only the integrity of their input files has been verified using checksums.

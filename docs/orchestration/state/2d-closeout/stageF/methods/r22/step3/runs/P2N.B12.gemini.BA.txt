@@ -1,0 +1,6 @@
+WINNER: A
+STRENGTH: 2
+REASONS:
+1. In the overview of the appendices, Document A maintains a formal, professional register by defining the physical and procedural mechanism of the Appendix D closure test, whereas Document B lapses into informal project-tracking shorthand ("a protocol implemented but not yet run").
+2. In Sec. A.2.6, Document A articulates the distinctions between the published paper and the software framework using precise, syntactically clean sentences, avoiding Document B's clumsy and ambiguous zeugmatic phrasing ("It leaves to MAT, or does not state...").
+3. Document A integrates repository conventions and implementation details smoothly within standard expository prose, whereas Document B interrupts the prose flow with an unnumbered, uncaptioned table that awkwardly forces multi-argument Python calls and command-line flags into a "Label" column.
