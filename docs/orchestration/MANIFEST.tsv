@@ -1580,6 +1580,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/caveat-study/tools/tally.py	
 docs/orchestration/state/2d-closeout/stageF/methods/comparator-chi2-20261027/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/comparator-chi2-20261027/pdf-sha256.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/comparator-chi2-20261027/quotes.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/BINDING.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/CAPTION-FIXES.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/DECLARATION.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/MUTATION-RECEIPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
