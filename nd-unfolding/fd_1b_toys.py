@@ -82,6 +82,8 @@ ARMS = {"control": ("nominal", 2_610_000, 2_610_299), "g18": ("genie_v3_g18", 2_
         "derivation": ("nominal", None, None)}
 MODES = {"control": ("toy",), "g18": ("toy",), "ar23": ("toy",), "pilot": ("toy", "half"),
          "repro-g18": ("half",), "repro-ar23": ("half",), "derivation": ("derivation",)}
+# the modes whose every unfold has one truth; a half-MC truth is its own seed's split's (s5n_pseudo.build_pseudo)
+FIXED_TRUTH_MODES = ("toy", "derivation")
 DETECTOR_DRAW_ORDER = ne.DETECTOR_BANDS          # MinosEfficiency, GEANT_Neutron, GEANT_Pion, GEANT_Proton
 LATERAL_DRAW_ORDER = s1_assemble.LATERAL_BANDS
 INTERACTION_BANDS = tuple(sorted(b for b in s1_assemble.EXPECT
@@ -305,10 +307,22 @@ def mc_template_streams(exp: dict, b: int) -> dict:
     return rep
 
 
+def truth_model(truth: str) -> tuple[str, float]:
+    """``s5n_pseudo.truth_weight``'s (name, amplitude) for a truth: the nominal, or a bridged ratio at amplitude 1."""
+    return ("nominal", 0.0) if truth == "nominal" else ("ratio_nd", 1.0)
+
+
+def half_truth(seed: int, inputs: dict, truth: str, ratio: dict | None) -> np.ndarray:
+    """A half-MC seed's truth from its split alone, as ``s5n_pseudo.build_pseudo`` makes it: half B's reweighted
+    truth, which no draw enters (the draws scale w_reco, the truth reads w_truth)."""
+    name, amplitude = truth_model(truth)
+    is_b = s5c_pseudo.half_mask(inputs["MCgen"].shape[0], s5c_pseudo.split_key_for(seed))
+    return np.asarray(s5n_pseudo.true_xsec(inputs, is_b, s5n_pseudo.truth_weight(name, inputs, amplitude, ratio)), float)
+
+
 def experiment(mode: str, d: dict | None, seed: int | None, inputs: dict, bkg: dict, truth: str, ratio: dict | None,
                bank: Path, det_dir: Path, cache) -> tuple[dict, np.ndarray, dict, dict]:
-    amplitude = 0.0 if truth == "nominal" else 1.0
-    name = "nominal" if truth == "nominal" else "ratio_nd"
+    name, amplitude = truth_model(truth)
     rec: dict = {}
     if mode == "half":
         split = s5c_pseudo.split_key_for(seed)
@@ -400,14 +414,20 @@ def run(a, refine_fn=None, unfold_fn=None) -> int:
             cache = ne.ModelCache(a.bank, [u for us in groups.values() for u in us], inputs, bkg)
         exp, x_true, info, treatment = experiment(a.mode, source_draw, seed, inputs, bkg, truth, ratio, a.bank,
                                                   a.detector_dir, cache)
+        x_true = np.asarray(x_true, float)  # the truth is checked before the unfold is spent on it
+        if not np.all(np.isfinite(x_true)):
+            raise Refusal(f"{target.name}: a non-finite truth")
+        if a.mode in FIXED_TRUTH_MODES:
+            if first_truth is None:
+                first_truth = x_true
+            elif not np.array_equal(x_true, first_truth):
+                raise Refusal(f"{target.name}: its truth differs from this run's first toy's")
+        elif not np.array_equal(x_true, half_truth(seed, inputs, truth, ratio)):
+            raise Refusal(f"{target.name}: its truth is not its split's")
         xs, ev = s5n_pseudo.unfold_negweight(exp, ESTIMATOR_SEED, a.threads, ITERS, None, refine_fn, unfold_fn)
-        xs, x_true = np.asarray(xs, float), np.asarray(x_true, float)
-        if not (np.all(np.isfinite(xs)) and np.all(np.isfinite(x_true))):
-            raise Refusal(f"{target.name}: a non-finite unfolded value or truth")
-        if first_truth is None:
-            first_truth = x_true
-        elif not np.array_equal(x_true, first_truth):
-            raise Refusal(f"{target.name}: its truth differs from this run's first toy's")
+        xs = np.asarray(xs, float)
+        if not np.all(np.isfinite(xs)):
+            raise Refusal(f"{target.name}: a non-finite unfolded value")
         meta = {"schema": SCHEMA, "arm": a.arm, "mode": a.mode, "truth": truth, "truth_ratio_sha256": ratio_sha,
                 "pseudo_seed": seed, "universe": item if kind == "u" else None, "draw": d, "no_draws": a.no_draws,
                 "weight_treatment": treatment, "config": CONFIG, "capacity": None, "iters": ITERS,

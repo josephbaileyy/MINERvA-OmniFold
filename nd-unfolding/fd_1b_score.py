@@ -48,6 +48,7 @@ if str(_ND) not in sys.path:
     sys.path.insert(0, str(_ND))
 import fd_1b_toys as toys  # noqa: E402
 import s1_assemble as sa  # noqa: E402
+import s5c_pseudo  # noqa: E402
 
 _VL = REPO / "2d-unfolding/uq/coverage_fixed_truth/score_coverage.py"
 _spec = importlib.util.spec_from_file_location("vl169_score_coverage", _VL)
@@ -194,7 +195,10 @@ def declared_groups() -> dict[str, list[str]]:
 def load_toys(toy_dir: Path, tag: str, arm: str, seeds: list[int], U: np.ndarray, flux_p: np.ndarray,
               mode: str = "toy") -> tuple[np.ndarray, np.ndarray, list[dict]]:
     """The declared toys of a look: every one present, made by the declared estimator, with its draw equal to the
-    draw re-derived from its seed, and all with the same truth. Returns (U x_raw per toy, U x_T, draws)."""
+    draw re-derived from its seed. In toy mode all share one truth, and U x_T is returned once; in half mode each
+    toy's truth is its own seed's split's, and U x_T is returned per toy: its recorded split is checked here, and its
+    stored truth against that split by the toy mode at production (``fd_1b_toys.half_truth``; the scorer does not load
+    the MC). Returns (U x_raw per toy, U x_T, draws)."""
     partial = sorted(p.name for p in toy_dir.glob(f"{tag}_s*.npz.partial-*"))
     if partial:
         raise Invalid(f"interrupted products present: {partial[:3]}")
@@ -205,7 +209,7 @@ def load_toys(toy_dir: Path, tag: str, arm: str, seeds: list[int], U: np.ndarray
     truth_name = toys.ARMS[arm][0]
     expect = {"arm": arm, "mode": mode, "no_draws": False, "truth": truth_name,
               "truth_ratio_sha256": toys.committed_ratio_sha256(truth_name)}
-    X, draws, truth, code = [], [], None, None
+    X, draws, truths, code = [], [], [], None
     for s in seeds:
         p = toy_dir / f"{tag}_s{s}.npz"
         try:
@@ -224,28 +228,31 @@ def load_toys(toy_dir: Path, tag: str, arm: str, seeds: list[int], U: np.ndarray
         got = {k: m["draw"].get(k) for k in want} if m.get("draw") else None
         if got != want:
             raise Invalid(f"{p.name}: its recorded draw departs from the declared draw for seed {s}")
+        if mode == "half" and (m.get("experiment") or {}).get("split_key") != s5c_pseudo.split_key_for(s):
+            raise Invalid(f"{p.name}: its recorded split is not seed {s}'s")
         z = np.load(p, allow_pickle=False)
         xt = np.asarray(z["xtrue_flat"], float)
         if not np.all(np.isfinite(xt)):
             raise Invalid(f"{p.name}: a non-finite truth")
-        if truth is None:
-            truth = xt
-        elif not np.array_equal(xt, truth):
+        if mode in toys.FIXED_TRUTH_MODES and truths and not np.array_equal(xt, truths[0]):
             raise Invalid(f"{p.name}: its stored truth differs from the arm's first toy's")
+        truths.append(xt)
         x = np.asarray(z["xsec_flat"], float)
         if not np.all(np.isfinite(x)):
             raise Invalid(f"{p.name}: a non-finite unfolded value")
         X.append(U @ x)
         draws.append(want)
-    return np.array(X), U @ truth, draws
+    T = np.array([U @ t for t in truths])
+    return np.array(X), (T[0] if mode in toys.FIXED_TRUTH_MODES else T), draws
 
 
 def surrogate(X_raw: np.ndarray, draws: list[dict], deltas: dict, f: np.ndarray, x_t: np.ndarray) -> np.ndarray:
-    """x_hat = (U x_raw + sum_b s_b Delta_b^T / 2) (1 + 0.014 z), Delta_b^T = Delta_b x_T / f."""
-    g = x_t / f
+    """x_hat = (U x_raw + sum_b s_b Delta_b^T / 2) (1 + 0.014 z), Delta_b^T = Delta_b x_T / f, with x_T one truth or
+    one per toy (half mode)."""
+    g = np.broadcast_to(x_t / f, X_raw.shape)
     out = np.empty_like(X_raw)
     for t, d in enumerate(draws):
-        lat = sum(d["lateral_s"][b] * deltas[b] * g / 2.0 for b in sa.LATERAL_BANDS)
+        lat = sum(d["lateral_s"][b] * deltas[b] * g[t] / 2.0 for b in sa.LATERAL_BANDS)
         out[t] = (X_raw[t] + lat) * (1.0 + NORM * d["normalization_z"])
     return out
 
@@ -502,6 +509,8 @@ def cmd_repro(a) -> tuple[dict, int]:
 
 
 def cmd_pairs(a) -> tuple[dict, int]:
+    """The half-MC pilots against the full-MC pilots of the same seeds, each in sigma of its own truth, with no verdict.
+    Both output arrays have one row per seed: the half toys' truths are their own splits'."""
     s1, M_d, R, deltas, flux_p = _common_inputs(a)
     first = toys.ARMS["pilot"][1]
     seeds = list(range(first, first + a.n))
