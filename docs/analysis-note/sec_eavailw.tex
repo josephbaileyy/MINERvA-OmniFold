@@ -19,7 +19,7 @@ Truth $W$ is the experimenter's invariant mass $W=\sqrt{M^{2}+2M(E_\nu-E_\mu)-Q^
 % error max 0.88 / 1.13; GENIE+MEC not measured at cell level; the 50-100 GeV supplements excluded; GiBUU not evaluable).
 % Search: GENIE+MEC cell level; J-cell shifts (M4-W-RECORD.md:9, "GENIE+MEC was not measured at cell level", and :129-139, GENIE CV and NuWro only; README-gen5d-build.md:60-77 gives GENIE MEC W-bin event counts, not cell shifts) @ 1a015eef
 
-Like $q_{3}$ (\S\ref{sec:4d}), and unlike $\Eavail$, $W$ changes under the lateral systematic shifts, so a shifted $W$ is stored for each lateral universe. The event-loop output files also store truth hadronic diagnostics: the proton and pion multiplicities and the leading-hadron angle. The $W$ edges $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$ bracket the quasielastic peak, the $\Delta$, the transition region and the DIS tail.
+Like $q_{3}$ (\S\ref{sec:4d}), and unlike $\Eavail$, $W$ changes under the lateral systematic shifts, so a shifted $W$ is stored for each lateral universe. The event-loop output files also store truth hadronic diagnostics: the proton and pion multiplicities and the polar angle of the summed final-state hadronic momentum, with muons and neutrinos excluded. The $W$ edges $[0,1.1,1.4,1.8,2.2,3.0,100]\,\si{GeV}$ bracket the quasielastic peak, the $\Delta$, the transition region and the DIS tail.
 
 The configuration-(a) five-dimensional unfolding in $(\pT,\pPar,\Eavail,q_{3},W)$ agrees under marginalization with the lower-dimensional results: integrating over $W$ reproduces the configuration-(a) 4D normalization to \SI{\eavailMargin}{\percent} (5D/4D total $=1.0011$) with median differences per axis of \SIrange{0.3}{1.5}{\percent}, and $d\sigma/dW$ is finite and non-negative in all six bins.
 
@@ -153,7 +153,7 @@ The localization in \S\ref{sec:eavailw-map} is relative to MINERvA Tune~v1; data
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{eavailW_band}
-  \caption{Unfolded $(\Eavail,W)$ cross section versus the four-generator band (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models}). Every generator lies below the data in the high-$W$, high-$\Eavail$ corner --- GENIE and NuWro by about their overall normalization shortfall, GiBUU by more; adding 2p2h leaves the corner unchanged because 2p2h populates low $W$.}
+  \caption{Projections of the unfolded $(\Eavail,W)$ cross section onto $\Eavail$ (left) and $W$ (right), with the predictions of four generators (GENIE~CV, GENIE$+$MEC, NuWro, GiBUU; GENIE and NuWro flux-corrected, \S\ref{sec:3d-models}). In the high-$W$, high-$\Eavail$ corner, which the projections do not resolve, every generator lies below the data (\S\ref{sec:eavailw-band}) --- GENIE and NuWro by about their overall normalization shortfall, GiBUU by more; adding 2p2h leaves the corner essentially unchanged because 2p2h populates low $W$.}
   \label{fig:eavailWband}
 \end{figure}
 
