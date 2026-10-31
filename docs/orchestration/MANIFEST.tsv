@@ -4113,6 +4113,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/runs/adoption.tsv	
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/runs/status-20261030.tsv	tracked	MACHINE	state-artifact	2d-closeout	20261030	generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/runs/status.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step4/PIECES-PROOF.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4/STEP4-NOTE-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step4/agy-read.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step4/agy/chunk01/KEY.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step4/agy/chunk01/agy-control.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
