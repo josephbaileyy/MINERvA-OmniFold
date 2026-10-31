@@ -1,7 +1,7 @@
 # Restyle of the note's 2D result figures (Figs. 7–14): declaration (2026-10-31, paper rewrite lane)
 
-**Status.** A draft, for the director to bind. **No code has changed and nothing has run.** The base is origin/main
-`bab87aeb3`.
+**Status.** For the director to bind. The director answered §6's three questions on 2026-10-31, and they are now
+rulings. **No code has changed and nothing has run.** The base is origin/main `bab87aeb3`.
 
 **Under** [DECISION-20261031-joseph-rater-account-figures-chi2-consult.md](../../../../../DECISION-20261031-joseph-rater-account-figures-chi2-consult.md)
 item 2 (#574). Joseph chose: "Restyle the note's 2D result figures (Figs. 7–14): readable font sizes, proper axis labels
@@ -29,7 +29,8 @@ and are overridden by the installs, so they are not this restyle's producers.
 | 14 | `fig:modelmaps` | `model_comp_ratio_maps` | `compare_to_models.py` | models |
 
 **Other users of the same files.**
-- The primer includes `MEFHC_5iter_fig13` (`primer_body.tex`), so the restyle reaches the primer's copy too.
+- The primer includes `MEFHC_5iter_fig13` (`primer_body.tex`). Its copy is in scope, since the same producer draws
+  it (ruling 2).
 - The paper includes none of the eleven.
 - `make_figures.sh:295` asserts that `MEFHC_5iter_pull_full.pdf` is 864 × 360 pt before it crops
   `paper_validation_residual.pdf`. No `.tex` file includes that crop on `bab87aeb3`. The restyle keeps Fig. 8's canvas
@@ -118,24 +119,32 @@ The checks are in a new `fig-restyle-20261031/tools/`, committed with tests befo
 
 1. **Install.** `make_figures.sh` installs the eleven from `fig-restyle-20261031/figs/` with the new digests. The RE-2
    install lines stay, as comments, under a dated note.
-2. **The RE-2 integration ledger.** Its eleven `G` rows (`re2-integration/ledger.tsv`, for example `FIG-MEFHC_5iter_fig13`)
-   pin each figure to part C's SHA256SUMS and the copy in `re2-integration/figs/`. They are re-pointed to the restyle
-   run's SHA256SUMS and copies, by a recorded amendment. `check_ledger.py` reads the copy's directory from the row, not
-   from a fixed path. Part C's records stay as they are. See question 1.
+2. **The RE-2 integration ledger (ruling 1: re-point, do not replace).**
+   - **Today:** its eleven `G` rows (`re2-integration/ledger.tsv`, for example `FIG-MEFHC_5iter_fig13`) pin each figure
+     to part C's SHA256SUMS and to the copy in `re2-integration/figs/`.
+   - **After:** the restyled PDFs are new files with new digests, in `fig-restyle-20261031/figs/`. The eleven rows are
+     re-pointed to them and to the restyle run's SHA256SUMS. `check_ledger.py` then reads each copy's directory from
+     its row, not from a fixed path.
+   - **The history:** part C's copies and records stay where they are. A record, `fig-restyle-20261031/DIGESTS.tsv`,
+     gives each figure's old and new digest with both SHA256SUMS entries.
 3. **The note build and its gates.** The note, primer and paper are rebuilt with every gate and the
    `record-checks.yml` steps.
 4. **The figure checks, re-cropped from the new note PDF** with the diagnosis tools (`figdiag.py crops` and
    `measure`). Each of Figs. 7–14 must meet both:
-   - its smallest printed word-box height (`figdiag.py measure`, the instrument of report §3) is at least 4.0 pt, just under
-     the lowest anchor group's median minimum (4.03 pt, anchor C). The note's median was 2.48 pt;
+   - its smallest printed word-box height (`figdiag.py measure`, the instrument of report §3) is at least 4.0 pt
+     (ruling 3). That is the anchors' lower bound: the lowest anchor group's median minimum is 4.03 pt (anchor C),
+     against the note's 2.48 pt. The restyle aims for about 5 pt;
    - no figure text matches a raw-ASCII pattern (`_`, or `^` outside math).
+
+   The primer's copy of `MEFHC_5iter_fig13` is cropped from the primer PDF and must meet the same two checks.
 5. **Joseph's visual review** of the eleven, before the merge.
 
-## 6. Questions for the director
+## 6. Rulings (the director, 2026-10-31)
 
-1. **The `G` rows.** Should they be re-pointed as in §5.2, or should the restyled copies replace
-   `re2-integration/figs/` in place? Re-pointing keeps part C's copy equal to its SHA256SUMS. Replacing them is the
-   smaller diff.
-2. **The primer.** The primer's copy of `MEFHC_5iter_fig13` changes with the note's. Is that in scope?
-3. **The size floor.** Is 4.0 pt (§5.4) the right floor for every figure's smallest text? The anchor groups' medians of
-   the minimum are 4.03 to 6.26 pt, and of the tenth percentile 5.05 to 12.18 pt (report §3).
+1. **The `G` rows are re-pointed, not replaced in place.**
+   - The restyled PDFs are new files with new digests.
+   - The eleven `G` rows of `re2-integration/ledger.tsv` are re-pointed to them.
+   - A record gives each old and new digest (`DIGESTS.tsv`, §5.2).
+   - The old copies stay where they are, as the history.
+2. **The primer's `MEFHC_5iter_fig13` is in scope,** since it comes from the same producer (§1, §5.4).
+3. **The floor is 4.0 pt,** the anchors' lower bound. The restyle aims for about 5 pt (§5.4).
