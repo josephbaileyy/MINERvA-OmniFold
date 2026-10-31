@@ -8,7 +8,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
 | OI-188 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-29, WAITING-JOSEPH, on the director's ruling — continuing past the 2026-09-30 stop needs his fresh |
-| OI-143 | WAITING-JOSEPH | migration-carried-forward | (a) LANDED 2026-08-21 (ea1a3fd6); (b) NARROWED AND STILL OPEN. (a) A JSON declaring a top-level _fixture key is held out |
+| OI-143 | WAITING-JOSEPH | migration-carried-forward | TRACED 2026-10-31 by the close-items session, PROPOSED: DECISION 1 ANSWERED, THE RESIDUAL DEFERRED — the tests/fixtures/ |
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
 | OI-9 | NOW | migration-carried-forward | OPEN |
 | OI-29 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
