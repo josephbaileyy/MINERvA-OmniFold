@@ -20,6 +20,9 @@ export XMODEL_DIR=${XMODEL_DIR:?set XMODEL_DIR to a scratch directory} OLD=$1 NE
 RATERS=${RATERS:-sol2 gemini} JOBS=${JOBS:-3}
 case $SOL_RX in sol|sol2) ;; *) echo "SOL_RX must be sol or sol2"; exit 2 ;; esac
 for r in $RATERS; do case $r in sol2|gemini) ;; *) echo "RATERS takes sol2 and gemini"; exit 2 ;; esac; done
+# One piece id per argument: zsh does not word-split an unquoted "$IDS", and a joined list was once run as id B01 with
+# order "B02" (2026-10-31).
+for id in "$@"; do case $id in B[0-9][0-9]) ;; *) echo "bad piece id: '$id' (one id per argument, e.g. B01)"; exit 2 ;; esac; done
 mkdir -p "$OUT"
 one() { kind=$1; m=$2; id=$3; o=$4; out=$OUT/$kind.$id.$m.$o.md
   eval "$(sed -n '/^with_timeout() {/,/^}/p' "$T/gapjob.sh")"
