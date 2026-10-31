@@ -86,6 +86,8 @@ def main():
     ap.add_argument("--model", default=os.path.join(
                         ANC_DIR, "model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt"),
                     help="MINERvA Tune v1 model CSV for the dominant-bin overlay.")
+    import restyle_2026_10 as rs
+    rs.add_option(ap)
     args = ap.parse_args()
 
     lines = []   # mirror stdout into tension_report.txt
@@ -264,29 +266,40 @@ def main():
 
 
 def _plots(lam, lam_max, contrib, order, U, d, per_bin, mask, args, n, chi2_modes):
+    # restyle (--style restyle-2026-10): each figure at its printed width with fonts for print and labels in math. The
+    # spectrum's two panels are stacked, so that the spectrum and the chi^2 map, printed side by side at 0.49
+    # textwidth each, have the same height and leave no blank band; the mode maps get panel labels (a)-(f).
+    import restyle_2026_10 as rs
+    restyled = rs.on(args)
+    if restyled:
+        rs.apply(6.5)
+    ms = 4 if not restyled else 1.6
     # (1) eigenvalue spectrum + cumulative chi^2 (modes sorted by contribution)
-    fig, axs = plt.subplots(1, 2, figsize=(13, 5))
-    axs[0].semilogy(np.sort(lam / lam_max)[::-1], ".-", ms=4)
-    axs[0].set_xlabel("mode (largest -> smallest lambda)")
-    axs[0].set_ylabel("lambda / lambda_max")
+    if not restyled:
+        fig, axs = plt.subplots(1, 2, figsize=(13, 5))
+    else:
+        fig, axs = plt.subplots(2, 1, figsize=(rs.WIDTH["spectrum"], 2.6))
+    axs[0].semilogy(np.sort(lam / lam_max)[::-1], ".-", ms=ms, **({} if not restyled else {"lw": 0.8}))
+    axs[0].set_xlabel("mode (largest -> smallest lambda)" if not restyled else r"Mode, by eigenvalue $\lambda$ (largest first)")
+    axs[0].set_ylabel("lambda / lambda_max" if not restyled else r"$\lambda/\lambda_{\max}$")
     axs[0].set_title("Paper TotalCov eigenvalue spectrum (205 reported bins)")
     axs[0].grid(alpha=0.3)
     cum = np.cumsum(contrib[order]) / chi2_modes
-    axs[1].plot(np.arange(1, n + 1), cum, ".-", ms=4)
-    axs[1].axhline(0.9, color="r", ls="--", lw=0.8, label="90% of chi^2")
-    axs[1].set_xlabel("modes ranked by chi^2 contribution")
-    axs[1].set_ylabel("cumulative chi^2 fraction")
+    axs[1].plot(np.arange(1, n + 1), cum, ".-", ms=ms, **({} if not restyled else {"lw": 0.8}))
+    axs[1].axhline(0.9, color="r", ls="--", lw=0.8, label="90% of chi^2" if not restyled else r"90% of $\chi^2$")
+    axs[1].set_xlabel("modes ranked by chi^2 contribution" if not restyled else r"Modes, by $\chi^2$ contribution")
+    axs[1].set_ylabel("cumulative chi^2 fraction" if not restyled else r"Cumulative $\chi^2$ fraction")
     axs[1].set_title("How few modes carry the chi^2")
     axs[1].legend(); axs[1].grid(alpha=0.3)
-    fig.tight_layout(); fig.savefig(f"{args.out_prefix}_spectrum.png", dpi=130)
+    fig.tight_layout(); fig.savefig(f"{args.out_prefix}_spectrum.png", dpi=130 if not restyled else 300)
     plt.close(fig)
 
     # (2) dominant eigenvector kinematic maps
     ntop = min(args.top, n)
     ncol = 3
     nrow = int(np.ceil(ntop / ncol))
-    fig, axs = plt.subplots(nrow, ncol, figsize=(4.2 * ncol, 3.4 * nrow),
-                            squeeze=False)
+    fig, axs = plt.subplots(nrow, ncol, figsize=(4.2 * ncol, 3.4 * nrow) if not restyled else
+                            (rs.WIDTH["mode_maps"], 1.75 * nrow), squeeze=False)
     lam_rank = np.argsort(np.argsort(lam))
     for j in range(nrow * ncol):
         ax = axs[j // ncol][j % ncol]
@@ -299,22 +312,28 @@ def _plots(lam, lam_max, contrib, order, U, d, per_bin, mask, args, n, chi2_mode
                        vmin=-vmax, vmax=vmax, extent=[0, N_PT, 0, N_PZ])
         ax.set_title(f"mode #{j} (lam_rank {lam_rank[k]}/{n}, "
                      f"chi2 {contrib[k]:.0f})", fontsize=9)
-        ax.set_xlabel("p_T bin"); ax.set_ylabel("p_|| bin")
+        if not restyled:
+            ax.set_xlabel("p_T bin"); ax.set_ylabel("p_|| bin")
+        else:
+            ax.set_xlabel(f"{rs.PT} bin"); ax.set_ylabel(f"{rs.PZ} bin")
+            rs.above(ax, f"({'abcdefghijkl'[j]})")
+            rs.integer_ticks(ax)
         plt.colorbar(im, ax=ax)
     fig.suptitle("Eigenvectors carrying the chi^2 tension, mapped to (p_T, p_||)")
-    fig.tight_layout(); fig.savefig(f"{args.out_prefix}_mode_maps.png", dpi=130)
+    fig.tight_layout(); fig.savefig(f"{args.out_prefix}_mode_maps.png", dpi=130 if not restyled else 300)
     plt.close(fig)
 
     # (3) per-bin chi^2 contribution heatmap
-    fig, ax = plt.subplots(figsize=(7, 5))
+    fig, ax = plt.subplots(figsize=(7, 5) if not restyled else (rs.WIDTH["chi2_map"], 2.6))
     g = grid_from_reported(per_bin, mask)
     vmax = np.nanpercentile(np.abs(g), 99)
     im = ax.imshow(g.T, aspect="auto", origin="lower", cmap="RdBu_r",
                    vmin=-vmax, vmax=vmax, extent=[0, N_PT, 0, N_PZ])
-    ax.set_xlabel("p_T bin"); ax.set_ylabel("p_|| bin")
+    ax.set_xlabel("p_T bin" if not restyled else f"{rs.PT} bin")
+    ax.set_ylabel("p_|| bin" if not restyled else f"{rs.PZ} bin")
     ax.set_title("Per-bin chi^2 contribution  r_i (V^-1 r)_i  (sum = chi^2)")
-    plt.colorbar(im, ax=ax, label="chi^2 contribution")
-    fig.tight_layout(); fig.savefig(f"{args.out_prefix}_chi2_map.png", dpi=130)
+    plt.colorbar(im, ax=ax, label="chi^2 contribution" if not restyled else r"$\chi^2$ contribution")
+    fig.tight_layout(); fig.savefig(f"{args.out_prefix}_chi2_map.png", dpi=130 if not restyled else 300)
     plt.close(fig)
 
 

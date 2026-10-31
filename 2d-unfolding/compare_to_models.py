@@ -81,7 +81,10 @@ def main():
                     help="Model CSV as NAME:PATH (repeatable). Default: MINERvA "
                          "Tune v1 from the ancillary.")
     ap.add_argument("--out-prefix", default=DEFAULT_OUT_PREFIX)
+    import restyle_2026_10 as rs
+    rs.add_option(ap)
     args = ap.parse_args()
+    restyled = rs.on(args)
     models = args.model or [f"MINERvA_Tune_v1:{DEFAULT_MODEL}"]
 
     lines = []
@@ -138,32 +141,44 @@ def main():
         emit_chi2(ours_v - mv, f"ours vs {name}")
 
     # ---- 1D projections overlay --------------------------------------------
-    fig, axs = plt.subplots(1, 2, figsize=(13, 5))
-    for axis, ax, xlabel in [("pt", axs[0], "p_T (GeV/c)"),
-                             ("pz", axs[1], "p_|| (GeV/c)")]:
+    # restyle (--style restyle-2026-10): each figure at its printed width with fonts for print, labels and units in
+    # math, the model's name without underscores, and panel labels on the ratio maps; colours and values unchanged.
+    if restyled:
+        rs.apply(6.5)
+    shown = (lambda s: s) if not restyled else (lambda s: s.replace("_", " "))
+    msz = 4 if not restyled else 2.2
+    fig, axs = plt.subplots(1, 2, figsize=(13, 5) if not restyled else (rs.WIDTH["projections"], 2.35))
+    for axis, ax, xlabel in [("pt", axs[0], "p_T (GeV/c)" if not restyled else f"{rs.PT} {rs.GEVC}"),
+                             ("pz", axs[1], "p_|| (GeV/c)" if not restyled else f"{rs.PZ} {rs.GEVC}")]:
         edges, y_ours = project(ours_v[mask], mask, axis)
         _, y_data = project(data_v[mask], mask, axis)
         ctr = 0.5 * (edges[:-1] + edges[1:])
-        ax.step(ctr, y_data, where="mid", color="k", lw=2, label="Published (PRD 104, 092007)",
-                marker=technote_style.gen_marker("data"), markersize=4)
-        ax.step(ctr, y_ours, where="mid", color="C0", lw=1.5, ls="--",
+        ax.step(ctr, y_data, where="mid", color="k", lw=2 if not restyled else 1.1, label="Published (PRD 104, 092007)",
+                marker=technote_style.gen_marker("data"), markersize=msz)
+        ax.step(ctr, y_ours, where="mid", color="C0", lw=1.5 if not restyled else 0.9, ls="--",
                 label="This work (OmniFold)")
         for j, (name, mv) in enumerate(model_vs.items()):
             _, y_m = project(mv[mask], mask, axis)
-            ax.step(ctr, y_m, where="mid", color=f"C{j+1}", lw=1.5, label=name,
-                    marker=technote_style.gen_marker(name), markersize=4)
-        ax.set_xlabel(xlabel); ax.set_ylabel(rf"$d\sigma/d{axis}$ (cm$^2$/(GeV/c)/nucleon)")
+            ax.step(ctr, y_m, where="mid", color=f"C{j+1}", lw=1.5 if not restyled else 0.9, label=shown(name),
+                    marker=technote_style.gen_marker(name), markersize=msz)
+        ax.set_xlabel(xlabel)
+        if not restyled:
+            ax.set_ylabel(rf"$d\sigma/d{axis}$ (cm$^2$/(GeV/c)/nucleon)")
+        else:
+            ax.set_ylabel((r"$d\sigma/dp_T$" if axis == "pt" else r"$d\sigma/dp_\parallel$")
+                          + r" (cm$^2$/(GeV/$c$)/nucleon)")
+            ax.ticklabel_format(axis="y", style="sci", scilimits=(0, 0), useMathText=True)
         ax.set_title(f"Projection onto {xlabel}"); ax.legend(); ax.grid(alpha=0.3)
     fig.suptitle("2D OmniFold vs data vs MINERvA Tune v1 - 1D projections")
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     technote_style.minerva_tag(fig)
-    fig.savefig(f"{args.out_prefix}_projections.png", dpi=130)
+    fig.savefig(f"{args.out_prefix}_projections.png", dpi=130 if not restyled else 300)
     plt.close(fig)
 
     # ---- per-bin ratio heatmaps (ours/model, data/model) -------------------
     name0 = next(iter(model_vs))
     mv0 = model_vs[name0]
-    fig, axs = plt.subplots(1, 2, figsize=(12, 5))
+    fig, axs = plt.subplots(1, 2, figsize=(12, 5) if not restyled else (rs.WIDTH["ratio_maps"], 2.45))
     for ax, num, tag in [(axs[0], ours_v, "ours"), (axs[1], data_v, "data")]:
         g = np.full((N_PT, N_PZ), np.nan)
         for gid in np.where(mask)[0]:
@@ -171,11 +186,15 @@ def main():
                 g[gid // N_PZ, gid % N_PZ] = num[gid] / mv0[gid]
         im = ax.imshow(g.T, aspect="auto", origin="lower", cmap="RdBu_r",
                        vmin=0.7, vmax=1.3, extent=[0, N_PT, 0, N_PZ])
-        ax.set_xlabel("p_T bin"); ax.set_ylabel("p_|| bin")
+        if not restyled:
+            ax.set_xlabel("p_T bin"); ax.set_ylabel("p_|| bin")
+        else:
+            ax.set_xlabel(f"{rs.PT} bin"); ax.set_ylabel(f"{rs.PZ} bin")
+            rs.above(ax, {"ours": "(a) This work", "data": "(b) Published data"}[tag])
         ax.set_title(f"{tag} / {name0}")
-        plt.colorbar(im, ax=ax, label="ratio")
+        plt.colorbar(im, ax=ax, label="ratio" if not restyled else f"Ratio to {shown(name0)}")
     fig.suptitle(f"Ratio to {name0}")
-    fig.tight_layout(); fig.savefig(f"{args.out_prefix}_ratio_maps.png", dpi=130)
+    fig.tight_layout(); fig.savefig(f"{args.out_prefix}_ratio_maps.png", dpi=130 if not restyled else 300)
     plt.close(fig)
 
     rpt = f"{args.out_prefix}_report.txt"
