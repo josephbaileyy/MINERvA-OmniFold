@@ -192,12 +192,33 @@ For each block of the declaration's §3: whether the toys' draw reproduces S1's 
 - The fixture tests show ρ = 1 to 10⁻⁹ when the toys' shifts carry S1's blocks, and ρ < 0.9 when S1's interaction
   blocks are 4× the toys'. The second fixture is the prior-part gap's signature.
 
+### 4.1 The same code on the real inputs (DERIVATION)
+
+`fd/receipts-1b/stage1/derivation_check.py` (sha256 `ec3a31a3…`) ran on login37 at 2026-10-31T10:52:40Z, at 0 node-h,
+from a clean clone of this PR's head (`633e6ba6`, in `$P/fd-1b-20261030/stage1-derivation/`), under the compute
+environment (`root_6_28`: Python 3.11.14, numpy 1.26.4, the numpy the tests ran under). It read only what §8 permits
+in stage 1: S1's assembly npz, the 10 lateral unfolds, the committed records, and the bank's and constraint file's
+listings and weights. It prints no cross-section value. Output: `derivation-check.out`, rc 0.
+
+| check | result |
+|---|---|
+| S1's npz digest and block set | `db000707…`, 46 blocks; the seed block is exactly 0; M_d = C_e − seed to 9 × 10⁻¹⁹ relative |
+| the surrogates' share of C_e's trace | **0.2899**, the 29.0 % every report states |
+| Δ_b from the lateral unfolds, X01 applied | all 5 lateral blocks reproduced as ¼ ΔΔᵀ at rtol 10⁻¹⁰ |
+| M_d and the reported matrix, relative form | both positive definite; condition numbers 2,897 and 2,737 |
+| the real bank | exactly S1's 33 interaction bands (Rvp1pi dropped), groups equal to the scorer's; Flux universes 0–99 |
+| the flux probabilities | sum 1; n_eff 19.06, S1's recorded value; largest 0.128 |
+| the test truths | both bridged ratios carry the committed F1 prep digests |
+| the expected over-coverage, context only | C1 mean 0.791, minimum 0.701; C2 mean 0.983; σ_reported / σ_drawn 1.04–1.85 per cell. This reproduces `LIMITATION-PLAN.md:198-200` independently |
+
 ## 5. Choices the code makes that the stage-2 declaration must state, for the director
 
 1. **The laterals' transfer.** The binding writes the surrogate as x̂ += Σ_b s_b Δ_b / 2. The code adds Δ_b^T = Δ_b ⊙
    x_T / f, carried to the truth as §2 carries M_d, so the toys' lateral spread equals M_d^T's lateral block. Taken
    literally, untransferred Δ_b would differ from M_d^T's lateral block by x_T / f per cell, and that would bias the
-   control by construction. **For the director to confirm.**
+   control by construction. **Confirmed by the director** (cross-session message, 2026-10-31): the binding's form "was
+   shorthand, and the carried form is what makes the control unbiased". The stage-2 declaration records it as the
+   binding's intended reading.
 2. **The order of the two surrogates.** The normalization factor multiplies after the lateral shift is added. The
    difference from the other order is second-order.
 3. **The pilot runs at the nominal truth,** as the control does. Its 8 half-MC toys use the same seeds and the same
