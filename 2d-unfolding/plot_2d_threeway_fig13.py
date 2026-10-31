@@ -306,7 +306,8 @@ def plot_pz_slices(fig, outer, paper, paper_err, reported,
                    title, scale)
         setup_paper_axes(ax, row, col, 4, 4,
                          (PT_DISP_EDGES[0], PT_DISP_EDGES[-1]),
-                         ylim=(0, 2.4), yticks=[0, 1, 2])
+                         ylim=(0, 2.4) if not RESTYLE else (0, 3.0), yticks=[0, 1, 2])
+        # amendment 1 (Joseph, #591): headroom so that every slice label clears the data (tools/overlap.py)
         tick_labs = [0.4, 1.0, 1.5, 2.5, 4.5]
         ax.set_xticks(tick_positions(tick_labs, PT_EDGES, PT_DISP_EDGES))
         ax.set_xticklabels([str(x) for x in tick_labs])
