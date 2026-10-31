@@ -10,7 +10,7 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-188 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-29, WAITING-JOSEPH, on the director's ruling — continuing past the 2026-09-30 stop needs his fresh |
 | OI-143 | WAITING-JOSEPH | migration-carried-forward | TRACED 2026-10-31 by the close-items session, PROPOSED: DECISION 1 ANSWERED, THE RESIDUAL DEFERRED — the tests/fixtures/ |
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
-| OI-9 | NOW | migration-carried-forward | OPEN |
+| OI-9 | NOW | migration-carried-forward | TRACED 2026-10-31 by the close-items session, PROPOSED FOR DEFERRAL — still a live code task: the checks are inline at p |
 | OI-29 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
 | OI-30 | WAITING-JOSEPH | declared | KEPT 2026-10-28 by the director, owner Joseph, WAITING-JOSEPH — which E_avail truth definition the analysis adopts. See |
 | OI-31 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER |
