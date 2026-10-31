@@ -136,7 +136,7 @@ OI-133	deferred	-	declared	da56c4bbebc2b11cfc4095118461e18eaf0b73f406de246060a25
 OI-134	retired	-	migration-carried-forward	9f3018a7e1255cef48a068da6d14de467b7d7f6b2c18dded8c0b4fb3adf29d0f	BOTH ACTIONS EXECUTED 2026-08-19T12:40Z — and the authorised one FAILED, so the second was reached by a different route.
 OI-135	deferred	-	declared	1b28ec7cd9bc00538df308cbdc36465932a8ac1bae95639505130bd8807164d8	DEFERRED 2026-10-28 on the director's ruling, until profiles.json and waker-config.json deploy — job 57266000 is termina
 OI-136	deferred	-	declared	efe8c263bd1d710806dcf194fd80e0c349330f05a23a816af5d67beb0020dc69	DEFERRED 2026-10-28 by the close-items session on the director's ruling, until the next re-issue of the bindings that pi
-OI-137	active	WAITING-JOSEPH	declared	22c58fd4657e452e81a9c0749dfbf300d7a8895047479bc7381230cbf93cb100	OWNER coverage-5b-audit FROM 2026-10-31, on Joseph's decision ("Yes, designate one") and the director's designation — th
+OI-137	active	NOW	declared	22c58fd4657e452e81a9c0749dfbf300d7a8895047479bc7381230cbf93cb100	OWNER coverage-5b-audit FROM 2026-10-31, on Joseph's decision ("Yes, designate one") and the director's designation — th
 OI-138	deferred	-	declared	0526c7f1357e173fef9b40d5932db84d83e75408b3b8af191a0c837d125b6c12	DEFERRED 2026-10-29 by the close-items session, until Gate 6 being picked up again. See [RECORD-20261029-close-items-def
 OI-139	retired	-	declared	4197a8638d84679ff7206771688329189c6bfa36ea0a8583a2471c2b816b0d54	RETIRED 2026-10-28 by its owner, the close-items session, on the director's ruling — all 14 active-named receipts measur
 OI-178	retired	-	migration-carried-forward	718c5d215905f47ebd8ef1699cc39665f69039824892957358477401aab5da2d	DISCHARGED 2026-08-30

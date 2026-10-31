@@ -8,4 +8,4 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | source record | derived queue | classification rule | source state prefix |
 |---|---|---|---|
 | OI-7 | BLOCKED-EXTERNAL | migration-carried-forward | BLOCKED RE-SCOPED BY MEASUREMENT 2026-08-20: THE RESIDUAL IS DOCUMENTATION AND RECEIPT-ROUTING, NOT PHYSICS, AND IT IS S |
-| OI-137 | WAITING-JOSEPH | declared | OWNER coverage-5b-audit FROM 2026-10-31, on Joseph's decision ("Yes, designate one") and the director's designation — th |
+| OI-137 | NOW | declared | OWNER coverage-5b-audit FROM 2026-10-31, on Joseph's decision ("Yes, designate one") and the director's designation — th |
