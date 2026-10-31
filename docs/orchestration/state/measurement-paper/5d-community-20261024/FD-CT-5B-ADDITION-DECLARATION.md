@@ -235,7 +235,7 @@ The named fields are read from the committed readouts in a test (`Committed`). T
 **Unchanged:** `fd_g_compare.py`, `fd_g_diag.py`, `fd_g_followup.py`, `fd_f0_regrade.py`, `fd_g_figures_check.py`,
 `fd_data_product.py`, and every committed readout.
 
-**Tests:** `nd-unfolding/tests/test_fd_cpl_addition.py`, 67 tests, each check in both directions:
+**Tests:** `nd-unfolding/tests/test_fd_cpl_addition.py`, 80 tests, each check in both directions:
 - **pure parts:** the npz's bytes (two calls, two processes, a changed array); R's comparison on a committed readout
   (equal to itself; a changed number at 10⁻⁹ found and a last bit not; structure; bools and nulls by type; the
   exclusions); the labels' context numbers against the committed audit readout, and a changed number, a missing label
@@ -252,6 +252,11 @@ The named fields are read from the committed readouts in a test (`Committed`). T
   records no new option;
 - **the flux bootstrap, both directions:** the default `units` label equals the committed readout's; a run on a block
   renamed in Stage G names it in `units`, changes no other label and no number; a name not Stage G's refuses (D5);
+- **after the review:** the table run on the committed readouts, with a with side written as the tools write it, pairs
+  every leaf and refuses a with side that kept the old shape-only name, a reordered side, and a without file not the
+  committed one (`Table`). Firing tests were added for B2, A's `which` and A's 5B-readout clause, the product's K0
+  overwrite, K4, K5 and K6, two numbers swapped in a context label, and the default deposit check refusing the
+  variant's package on its content (P2);
 - **the chain:** the runner passes pins in-process and sets the tool's argv, and stops on an exit code, a missing output
   or a failed check; the deposit variant reaches the tool through the bootstrap; every step's flags equal its bound
   run's script, in both arms (`StepArgv`); the without arm with each tool replaced by a copy of its committed output
@@ -265,7 +270,7 @@ The named fields are read from the committed readouts in a test (`Committed`). T
 which moves with any edit. It now compares the CSVs byte for byte and each JSON by the tool's own `without_code` (P7's
 rule), and requires the same `code_sha256` keys.
 
-**Mutation receipt:** `fd/receipts-ct/5b/addition/mutants_5b_addition.{py,log}`, 51 mutants over the four files.
+**Mutation receipt:** `fd/receipts-ct/5b/addition/mutants_5b_addition.{py,log}`, 63 mutants over the four files (§8.1).
 **Independent review:** as for the audit, under `fd/receipts-ct/5b/addition/review/`.
 
 ## 5. Controls (each refuses with nothing further written)
@@ -335,13 +340,13 @@ F0b's and F1's experiment tables (`--out-npz`) stay on pscratch, as before. Noth
 
 | file | sha256 |
 |---|---|
-| `nd-unfolding/fd_cpl_addition.py` | `4eb7c4352400205f2059c891774c42245070af411ca0cf62baafd087e4a6a67a` |
-| `nd-unfolding/tests/test_fd_cpl_addition.py` | `26ab33fd175cae1f99754e7778eaf3530777f013e2450f66dac4ab5c2635214b` |
+| `nd-unfolding/fd_cpl_addition.py` | `7c5fe70882599c1d1da0b0061397ccd162eca9c5baa2d27619c0ff5be9fd2685` |
+| `nd-unfolding/tests/test_fd_cpl_addition.py` | `33ef14d2da2ce9108e1ace3c7654249ec4876b83a3927aebd821c37629bc3b10` |
 | `nd-unfolding/fd_deposit_candidate.py` | `d50c11ebc1ebc6a99c3004d6844dea7eb6dce065abdc99713edd8f9d4675468a` (was `3f4c5d51…`) |
 | `nd-unfolding/tests/test_fd_deposit_candidate.py` | `bd36fe80b02afa4a02409de1a08c84e58e903f67c68f3181b281f47923d6ce68` |
-| `nd-unfolding/fd_g_figures.py` | `9c1697f25b00824d58db64dc5aeaf2ba895b9b4e4c4fc6c784807ecc38c9fb81` (was `06233dd9…`) |
+| `nd-unfolding/fd_g_figures.py` | `f5f87b7588e120833d8be49cacf38061f2352a1861d26e29237defc1c2f0edad` (was `06233dd9…`) |
 | `nd-unfolding/fd_flux_boot.py` | `d5b4bb095b526ad0aa79d09c9d26626ff624acb93fc9bac836b5c0167c769040` (was `cbd5ac9c…`) |
-| `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/addition/mutants_5b_addition.py` | `bc8c3e8dc21666aad1e6971a3cfe72cbcb22872effa731ee4d93fd41069d05d0` |
+| `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ct/5b/addition/mutants_5b_addition.py` | `df6aa7fff279fcc89276ece02b097f22802cca3d283c8ac3a4ab2dee0e4a264c` |
 | `nd-unfolding/fd_g_compare.py` | `0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f` (unchanged) |
 | `nd-unfolding/fd_g_diag.py` | `241bfd0228907e5488f13b7fd50bd490edd97a77cf283a8fb88d3dc6d8bdcc03` (unchanged) |
 | `nd-unfolding/fd_g_followup.py` | `ec8cbc6880f7a3f67eea5703ddeff958acb10462053696d2cfdb64de0ee5f60d` (unchanged) |
@@ -351,12 +356,17 @@ F0b's and F1's experiment tables (`--out-npz`) stay on pscratch, as before. Noth
 | `nd-unfolding/tests/test_fd_g_figures.py` | `fb3dcc86e01eb48aaf7bed36bf5f1f25d624e3a6216ba5fddecc892347172fd9` (unchanged) |
 | `nd-unfolding/tests/test_fd_flux_boot.py` | `5b585d378fee6c15faad6c94c86c400ddd496dff90e172845bc1cceacacbc280` (unchanged) |
 
-**Locally,** with `-B` and a TMPDIR: `test_fd_cpl_addition` ran 67 tests, OK; with the three tools' and the unchanged
-consumers' suites, 403 ran (`test_fd_deposit_candidate`, `test_fd_g_figures`, `test_fd_flux_boot`,
-`test_fd_data_product`, `test_fd_g_compare`, `test_fd_g_diag`, `test_fd_g_followup`, `test_fd_f0_regrade`), all OK.
-**Mutation:** pass 1 at the working tree, 50 of 51 killed (`mutants_5b_addition-pass1.log`; the survivor, B1's symmetry,
-was a test gap and was fixed); pass 2 at `9113a84f`, **51 of 51 killed**, every file restored
-(`mutants_5b_addition.log`).
+**Locally,** at `d26fbed8`, with `-B`, a TMPDIR and single-threaded BLAS: the nine modules of §6 **ran 419 tests, OK,
+none skipped** (`fd/receipts-ct/5b/addition/unittest.log`), 80 of them in `test_fd_cpl_addition`.
+**Mutation,** each pass's log under `fd/receipts-ct/5b/addition/`:
+- pass 1, on the working tree before the first commit: 50 of 51 killed (`-pass1.log`). The survivor, B1's symmetry, was
+  a test gap, since the test's asymmetry also raised P's rank; fixed;
+- pass 1b at `9113a84f`: 51 of 51, superseded by the review's fixes. Its log was not kept, because the next run
+  overwrote it, and its result is the one reported to the director on 2026-10-31;
+- pass 2 at `74302064`, after the review, with 63 mutants: 61 of 63 (`-pass2.log`). The two survivors were test gaps:
+  K6's test also tripped the correlation's readback, and T's without-pin test was refused first by the file's digest.
+  Both are fixed;
+- **pass 3 at `d26fbed8`: 63 of 63 killed, every file restored** (`mutants_5b_addition.log`).
 
 ### 8.2 The inputs (as each step reads them)
 

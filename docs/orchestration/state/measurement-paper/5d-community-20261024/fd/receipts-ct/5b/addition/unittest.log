@@ -1,3 +1,4 @@
+at d26fbed85, OMP/OPENBLAS/MKL/VECLIB threads 1
 ....................PASS control T Stage G's predictions are the same, in the same order, on both sides
 PASS control T f0b's truths are the same, in the same order, on both sides
 PASS control T f1's truths are the same, in the same order, on both sides
@@ -653,12 +654,12 @@ PASS control K6 sens: no text covers a drawn point, bar end or bar
 PASS control K8 sens: a PDF with no raster image, its fonts embedded as TrueType
 PASS control K8 sens: drawing it twice gives the same bytes
 [FIG] sens: 57 drawn items, 34953 bytes
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o0/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o0/fd_g_fig_ratio.json", "sha256": "215ddf04d351ab1bf1e8286a4e5d530879fb4751e144bef2a5629213daaf6951"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o0/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o0/fd_g_fig_modes.json", "sha256": "025c986c36f1dba2b5fb0b906b8b111bbeee23b2ae679a9389864e17655cbf0d"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o0/fd_g_fig_sens.pdf", "sha256": "66c9dc6f4d384e8fedec76793cb1489e5b65e74b82e94ede8bcd2378172cab72"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o0/fd_g_fig_sens.json", "sha256": "ecf1882fed304c35e8f1b4404aa2be85f8214e43a901d854e41a65432ae86dfd"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o0/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o0/fd_g_fig_ratio.json", "sha256": "0dd7b41bb371ae1f6fa13389d62fc4669420295af46b506d4147bd6c5668e2b4"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o0/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o0/fd_g_fig_modes.json", "sha256": "f15aeda455afc190fa5ad8a84b2367bdf04bae9b45b4359a74637e9219a055ea"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o0/fd_g_fig_sens.pdf", "sha256": "66c9dc6f4d384e8fedec76793cb1489e5b65e74b82e94ede8bcd2378172cab72"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o0/fd_g_fig_sens.json", "sha256": "ed9504f7b2ab8d93d7730344a0110e164d35cef26e19a54b195051b02707fe50"}
 PASS control K0 no output exists (no overwrite)
 PASS control K0 g_readout sha256 is the pin
 PASS control K0 g_readout schema is fd-g-readout/2
@@ -864,8 +865,8 @@ PASS control K6 ratio: no text covers a drawn point, bar end or bar
 PASS control K8 ratio: a PDF with no raster image, its fonts embedded as TrueType
 PASS control K8 ratio: drawing it twice gives the same bytes
 [FIG] ratio: 106 drawn items, 29229 bytes
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o1/fd_g_fig_ratio.pdf", "sha256": "e6fb78def349a0e59ae1568e30d0becd075accba819fbf72f7411d7019e2c0e9"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o1/fd_g_fig_ratio.json", "sha256": "b59fc19bdec981373bb3bfe53837a5e9985ba4476c875057c16a200f597f7001"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o1/fd_g_fig_ratio.pdf", "sha256": "e6fb78def349a0e59ae1568e30d0becd075accba819fbf72f7411d7019e2c0e9"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o1/fd_g_fig_ratio.json", "sha256": "cfdd3d4ea9eaf4f59c97cb9a8908e908f716da459220a0f9642b6238aa1e285c"}
 PASS control K0 no output exists (no overwrite)
 PASS control K0 g_readout sha256 is the pin
 PASS control K0 g_readout schema is fd-g-readout/2
@@ -1067,8 +1068,8 @@ PASS control K6 ratio: no text covers a drawn point, bar end or bar
 PASS control K8 ratio: a PDF with no raster image, its fonts embedded as TrueType
 PASS control K8 ratio: drawing it twice gives the same bytes
 [FIG] ratio: 108 drawn items, 29023 bytes
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o2/fd_g_fig_ratio.pdf", "sha256": "176f1ff70dade1c9ccafd75638f6c5eebfafd47b0078f8a84555e0de985e3747"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o2/fd_g_fig_ratio.json", "sha256": "cc1d3909f00c397a924078adff4ee84becac73d0c7d1687b608afe30acb11e3a"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o2/fd_g_fig_ratio.pdf", "sha256": "176f1ff70dade1c9ccafd75638f6c5eebfafd47b0078f8a84555e0de985e3747"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o2/fd_g_fig_ratio.json", "sha256": "ad835a91deb71e5f8d30cd276e9ac08fa3b15b1aa37d72daec636b01a3761231"}
 PASS control K0 no output exists (no overwrite)
 PASS control K0 g_readout sha256 is the pin
 PASS control K0 g_readout schema is fd-g-readout/2
@@ -1264,8 +1265,8 @@ PASS control K6 ratio: no text covers a drawn point, bar end or bar
 PASS control K8 ratio: a PDF with no raster image, its fonts embedded as TrueType
 PASS control K8 ratio: drawing it twice gives the same bytes
 [FIG] ratio: 102 drawn items, 28253 bytes
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o3/fd_g_fig_ratio.pdf", "sha256": "374bea9851b4852e77f3ae660c5f58102109a2a2787580b7c7170c56f5dabf21"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-kc9oz226/o3/fd_g_fig_ratio.json", "sha256": "070400cf3f0a7b0bcd1c6cbd1172b6f5569b890ac5dfff3e5f78ca9f9985e502"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o3/fd_g_fig_ratio.pdf", "sha256": "374bea9851b4852e77f3ae660c5f58102109a2a2787580b7c7170c56f5dabf21"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ps31f8x3/o3/fd_g_fig_ratio.json", "sha256": "83839a83c19110dba047c95774c09e858a28966cb39e81415b3503283db61f71"}
 .PASS control K0 no output exists (no overwrite)
 PASS control K0 g_readout sha256 is the pin
 PASS control K0 g_readout schema is fd-g-readout/2
@@ -1870,12 +1871,12 @@ PASS control K6 sens: no text covers a drawn point, bar end or bar
 PASS control K8 sens: a PDF with no raster image, its fonts embedded as TrueType
 PASS control K8 sens: drawing it twice gives the same bytes
 [FIG] sens: 57 drawn items, 34953 bytes
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-8ad_net7/clean/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-8ad_net7/clean/fd_g_fig_ratio.json", "sha256": "215ddf04d351ab1bf1e8286a4e5d530879fb4751e144bef2a5629213daaf6951"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-8ad_net7/clean/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-8ad_net7/clean/fd_g_fig_modes.json", "sha256": "025c986c36f1dba2b5fb0b906b8b111bbeee23b2ae679a9389864e17655cbf0d"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-8ad_net7/clean/fd_g_fig_sens.pdf", "sha256": "66c9dc6f4d384e8fedec76793cb1489e5b65e74b82e94ede8bcd2378172cab72"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-8ad_net7/clean/fd_g_fig_sens.json", "sha256": "ecf1882fed304c35e8f1b4404aa2be85f8214e43a901d854e41a65432ae86dfd"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-np03sd5u/clean/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-np03sd5u/clean/fd_g_fig_ratio.json", "sha256": "0dd7b41bb371ae1f6fa13389d62fc4669420295af46b506d4147bd6c5668e2b4"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-np03sd5u/clean/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-np03sd5u/clean/fd_g_fig_modes.json", "sha256": "f15aeda455afc190fa5ad8a84b2367bdf04bae9b45b4359a74637e9219a055ea"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-np03sd5u/clean/fd_g_fig_sens.pdf", "sha256": "66c9dc6f4d384e8fedec76793cb1489e5b65e74b82e94ede8bcd2378172cab72"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-np03sd5u/clean/fd_g_fig_sens.json", "sha256": "ed9504f7b2ab8d93d7730344a0110e164d35cef26e19a54b195051b02707fe50"}
 .PASS control K1 G-DIAG, G-FOLLOWUP and G-SENS2 ran on this Stage G readout
 PASS control K1 G-FOLLOWUP ran on this G-DIAG readout
 PASS control K1 G-SENS2 ran on, and references, this G-FOLLOWUP readout
@@ -3888,7 +3889,7 @@ PASS control K6 ratio:gibuu:legend names its own series
 PASS control K6 ratio:mnvtune_v1:err sits in its own data's panel
 PASS control K6 ratio:mnvtune_v1:legend names its own series
 PASS control K6 ratio: the drawn gids are the model's
-FAIL control K6 ratio: every artist with ink is a model item: 1 outside the model, e.g. [<matplotlib.lines.Line2D object at 0x12bb8ea20>]
+FAIL control K6 ratio: every artist with ink is a model item: 1 outside the model, e.g. [<matplotlib.lines.Line2D object at 0x134416a50>]
 PASS control K0 no output exists (no overwrite)
 PASS control K0 g_readout sha256 is the pin
 PASS control K0 g_readout schema is fd-g-readout/2
@@ -4119,7 +4120,7 @@ PASS control K6 ratio:gibuu:legend names its own series
 PASS control K6 ratio:mnvtune_v1:err sits in its own data's panel
 PASS control K6 ratio:mnvtune_v1:legend names its own series
 PASS control K6 ratio: the drawn gids are the model's
-FAIL control K6 ratio: every artist with ink is a model item: 1 outside the model, e.g. [<matplotlib.lines.Line2D object at 0x12bb2c6e0>]
+FAIL control K6 ratio: every artist with ink is a model item: 1 outside the model, e.g. [<matplotlib.lines.Line2D object at 0x136442360>]
 .PASS control K0 no output exists (no overwrite)
 PASS control K0 g_readout sha256 is the pin
 PASS control K0 g_readout schema is fd-g-readout/2
@@ -9918,9 +9919,9 @@ PASS control K4 mnvtune_v1 rank 3: top_modes[2] is modes_by_chi2[2], with its si
 PASS control K4 mnvtune_v1 rank 3: the modes are in descending chi2
 PASS control K4 mnvtune_v1 rank 3: unit loadings, signed with the largest |loading| positive
 PASS control K4 mnvtune_v1 rank 3: (projection/sigma)^2 is the mode's chi2
-.FAIL control K0 no output exists (no overwrite): /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-jwcvm5zz/out/fd_g_fig_modes.json
-FAIL control K0 no output exists (no overwrite): /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-jwcvm5zz/out/fd_g_fig_ratio.pdf
-FAIL control K0 no output exists (no overwrite): /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-jwcvm5zz/out/fd_g_fig_sens.pdf
+.FAIL control K0 no output exists (no overwrite): /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ef9ypwbf/out/fd_g_fig_modes.json
+FAIL control K0 no output exists (no overwrite): /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ef9ypwbf/out/fd_g_fig_ratio.pdf
+FAIL control K0 no output exists (no overwrite): /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-ef9ypwbf/out/fd_g_fig_sens.pdf
 .PASS control K3 the definition reports exactly R00-R15
 PASS control K3 GiBUU's cells are Stage G's p_parallel < 4.5 cells
 PASS control K3 every other prediction is on all sixteen cells
@@ -10700,12 +10701,12 @@ PASS control K6 sens: no text covers a drawn point, bar end or bar
 PASS control K8 sens: a PDF with no raster image, its fonts embedded as TrueType
 PASS control K8 sens: drawing it twice gives the same bytes
 [FIG] sens: 57 drawn items, 34953 bytes
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-9jx4pjhe/out/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-9jx4pjhe/out/fd_g_fig_ratio.json", "sha256": "215ddf04d351ab1bf1e8286a4e5d530879fb4751e144bef2a5629213daaf6951"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-9jx4pjhe/out/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-9jx4pjhe/out/fd_g_fig_modes.json", "sha256": "025c986c36f1dba2b5fb0b906b8b111bbeee23b2ae679a9389864e17655cbf0d"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-9jx4pjhe/out/fd_g_fig_sens.pdf", "sha256": "66c9dc6f4d384e8fedec76793cb1489e5b65e74b82e94ede8bcd2378172cab72"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-9jx4pjhe/out/fd_g_fig_sens.json", "sha256": "ecf1882fed304c35e8f1b4404aa2be85f8214e43a901d854e41a65432ae86dfd"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-wahszf5a/out/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-wahszf5a/out/fd_g_fig_ratio.json", "sha256": "0dd7b41bb371ae1f6fa13389d62fc4669420295af46b506d4147bd6c5668e2b4"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-wahszf5a/out/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-wahszf5a/out/fd_g_fig_modes.json", "sha256": "f15aeda455afc190fa5ad8a84b2367bdf04bae9b45b4359a74637e9219a055ea"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-wahszf5a/out/fd_g_fig_sens.pdf", "sha256": "66c9dc6f4d384e8fedec76793cb1489e5b65e74b82e94ede8bcd2378172cab72"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-wahszf5a/out/fd_g_fig_sens.json", "sha256": "ed9504f7b2ab8d93d7730344a0110e164d35cef26e19a54b195051b02707fe50"}
 ..PASS control K5 g_followup_readout: the reported matrix and label are G-SENS's
 PASS control K5 g_sens2_readout: the reported matrix and label are G-SENS's
 PASS control K5 G-SENS2's referenced families are G-FOLLOWUP's
@@ -10994,8 +10995,8 @@ PASS control K6 modes: no text covers a drawn point, bar end or bar
 PASS control K8 modes: a PDF with no raster image, its fonts embedded as TrueType
 PASS control K8 modes: drawing it twice gives the same bytes
 [FIG] modes: 95 drawn items, 32018 bytes
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-jgv2149a/out/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-jgv2149a/out/fd_g_fig_modes.json", "sha256": "025c986c36f1dba2b5fb0b906b8b111bbeee23b2ae679a9389864e17655cbf0d"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-rhsrle8f/out/fd_g_fig_modes.pdf", "sha256": "8472ece3a07e1a842fb8da04d6b981b4bb1ddca3e2a2f54c862dcdfe316f116c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-rhsrle8f/out/fd_g_fig_modes.json", "sha256": "f15aeda455afc190fa5ad8a84b2367bdf04bae9b45b4359a74637e9219a055ea"}
 .PASS control K0 no output exists (no overwrite)
 PASS control K0 g_readout sha256 is the pin
 PASS control K0 g_readout schema is fd-g-readout/2
@@ -11206,8 +11207,8 @@ PASS control K6 ratio: no text covers a drawn point, bar end or bar
 PASS control K8 ratio: a PDF with no raster image, its fonts embedded as TrueType
 PASS control K8 ratio: drawing it twice gives the same bytes
 [FIG] ratio: 111 drawn items, 29339 bytes
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-r7magcu2/out/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-r7magcu2/out/fd_g_fig_ratio.json", "sha256": "215ddf04d351ab1bf1e8286a4e5d530879fb4751e144bef2a5629213daaf6951"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-4lf9azcc/out/fd_g_fig_ratio.pdf", "sha256": "17e2e2d5233305be11d3c5b36d0ff76bca9c153da96dd196298a424ededc141c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-fig-4lf9azcc/out/fd_g_fig_ratio.json", "sha256": "0dd7b41bb371ae1f6fa13389d62fc4669420295af46b506d4147bd6c5668e2b4"}
 ......................................PASS control Q0 no output exists (no overwrite)
 FAIL control Q0 s1_npz sha256 is the pin: d72a77d3fb0753b977a764bbce25999ab1ce06a88d3eb52472a368f109f66027 != 0000000000000000000000000000000000000000000000000000000000000000
 PASS control Q0 no output exists (no overwrite)
@@ -12461,13 +12462,13 @@ PASS control Q6 C_resp: the CSV and the JSON read back bit for bit
 PASS control Q6 C_total_plus_C_resp: the CSV and the JSON read back bit for bit
 PASS control Q6 corr_C_total_plus_C_resp: the CSV and the JSON read back bit for bit
 PASS control Q6 the cells CSV reads back f and every relative sigma bit for bit
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-pf_labfw/out/fd_data_product_cells.csv", "sha256": "839b5b575a19edbfe04a3008dcfb1dcef213787d8888c658f3e21f641a6952f0"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-pf_labfw/out/fd_data_product_C_e.csv", "sha256": "df008a584358623cd342f484052dabb3d701ef1d4ebf0e2295dd129f50a01dd3"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-pf_labfw/out/fd_data_product_C_model_abs.csv", "sha256": "bf3cccb1ddcfe6b2496e99a29c2016f7736ce75089b6832a44fb019ca5a1feac"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-pf_labfw/out/fd_data_product_C_resp.csv", "sha256": "ba1243f5464cee3c239f472e5eeaf7ae01840f10c59e72b5f744e4411094457a"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-pf_labfw/out/fd_data_product_C_total_plus_C_resp.csv", "sha256": "6cd496cfb2c36b96ae9e88c1425c66fb686a7e80794b54c9028b982865d5ce3c"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-pf_labfw/out/fd_data_product_corr_C_total_plus_C_resp.csv", "sha256": "8670dc637f0b7816882f9b59aa66a0ae029635cddd48b33649dba7090e00e983"}
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-pf_labfw/out/fd_data_product.json", "sha256": "bfab85144cbbd37ab7825e7c107253e5a735784cb42eda9e60aad62ce54cf6cf"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-vj9e7ofx/out/fd_data_product_cells.csv", "sha256": "839b5b575a19edbfe04a3008dcfb1dcef213787d8888c658f3e21f641a6952f0"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-vj9e7ofx/out/fd_data_product_C_e.csv", "sha256": "df008a584358623cd342f484052dabb3d701ef1d4ebf0e2295dd129f50a01dd3"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-vj9e7ofx/out/fd_data_product_C_model_abs.csv", "sha256": "bf3cccb1ddcfe6b2496e99a29c2016f7736ce75089b6832a44fb019ca5a1feac"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-vj9e7ofx/out/fd_data_product_C_resp.csv", "sha256": "ba1243f5464cee3c239f472e5eeaf7ae01840f10c59e72b5f744e4411094457a"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-vj9e7ofx/out/fd_data_product_C_total_plus_C_resp.csv", "sha256": "6cd496cfb2c36b96ae9e88c1425c66fb686a7e80794b54c9028b982865d5ce3c"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-vj9e7ofx/out/fd_data_product_corr_C_total_plus_C_resp.csv", "sha256": "8670dc637f0b7816882f9b59aa66a0ae029635cddd48b33649dba7090e00e983"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-dp-vj9e7ofx/out/fd_data_product.json", "sha256": "bfab85144cbbd37ab7825e7c107253e5a735784cb42eda9e60aad62ce54cf6cf"}
 .FAIL control Q0 no output exists (no overwrite): differs
 FAIL control Q0 no output exists (no overwrite): differs
 FAIL control Q0 no output exists (no overwrite): differs
@@ -12544,7 +12545,7 @@ PASS control G4 every prediction's integrals are positive on its cells
 [G] nuwro      16 cells, reported: total chi2 60.38/16 p 4.52e-07 [C_total + V_g, 16x16, rank 16]; shape-only chi2 58.03/15 p 5.49e-07 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
 [G] gibuu       8 cells, reported: total chi2 7.61/8 p 0.473 [C_total + V_g, 8x8, rank 8]; shape-only chi2 7.48/7 p 0.38 [C_total + V_g + 100 f f^T (free normalization), 8x8, rank 8; mode along f, see the readout's shape_only.mode]
 [G] mnvtune_v1 16 cells, reported: total chi2 14.63/16 p 0.552 [C_total + V_g, 16x16, rank 16]; shape-only chi2 14.56/15 p 0.483 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-g-i6pk0_w2/t/out/readout.json", "sha256": "2d2bf95f717b700242eaa6c66963454c1836fd972219e991de2f4b5d21f35f40"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-g-t6c0fy04/t/out/readout.json", "sha256": "2d2bf95f717b700242eaa6c66963454c1836fd972219e991de2f4b5d21f35f40"}
 .PASS control G0 S1 assembly, definition, 3 records and 5 predictions match their digests
 PASS control G1 every prediction carries xsec, sumw2 and nevt on the fine grid, finite, sumw2 >= 0, as named
 PASS control G2 S1's f, C_e, C_total, C_model_abs and U have the declared shapes
@@ -12640,7 +12641,7 @@ PASS control G4 every prediction's integrals are positive on its cells
 [G] nuwro      16 cells, reported: total chi2 60.38/16 p 4.52e-07 [C_total + V_g, 16x16, rank 16]; shape-only chi2 58.03/15 p 5.49e-07 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
 [G] gibuu       8 cells, reported: total chi2 7.61/8 p 0.473 [C_total + V_g, 8x8, rank 8]; shape-only chi2 7.48/7 p 0.38 [C_total + V_g + 100 f f^T (free normalization), 8x8, rank 8; mode along f, see the readout's shape_only.mode]
 [G] mnvtune_v1 16 cells, reported: total chi2 14.63/16 p 0.552 [C_total + V_g, 16x16, rank 16]; shape-only chi2 14.56/15 p 0.483 [C_total + V_g + 100 f f^T (free normalization), 16x16, rank 16; mode along f, see the readout's shape_only.mode]
-{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-g-lq4fzf1j/t/out/readout.json", "sha256": "5dc67dbcc2608787dae0b21717f425f5edf848745f4e8c6aeb9818b28bcc5a71"}
+{"wrote": "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-g-vxxj7q9j/t/out/readout.json", "sha256": "5dc67dbcc2608787dae0b21717f425f5edf848745f4e8c6aeb9818b28bcc5a71"}
 ................................../private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/wt/nd-unfolding/tests/test_fd_g_diag.py:692: RuntimeWarning: divide by zero encountered in divide
   with mock.patch.object(D, "residual", lambda f, g, i, sc: ((f - g) / g * sc)[i]):
 .............................................................................................................PASS control 0 f4 products match their D16 sha256
@@ -12865,7 +12866,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 2 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 128 cells |z| > 2 (Gaussian reference 5.82); 7 of 8 truths p < 0.01 (reference 0.08)
 [F0] denominators: 0 of 192 cells, 11 of 12 truths (references 8.74, 0.12); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-m9rnkqwn/tree/out/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-m9rnkqwn/tree/out/table.npz"], "readout_sha256": "9121f67dc3c4ecaba3d33ed87f6c58efff12e05c1e44e5676449e8c512114bd5", "table_sha256": "d868cb3e338142c6143c70b82cf839be4045f5018bbe63ee978b64ff8514acd1"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-89rhwa8f/tree/out/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-89rhwa8f/tree/out/table.npz"], "readout_sha256": "6ad5137bf0d7a64061916b1e7617e5d8c0d7abbf113c0f2008db4640ef4a881b", "table_sha256": "d868cb3e338142c6143c70b82cf839be4045f5018bbe63ee978b64ff8514acd1"}
 ..PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 8 records match their recorded sha256
 PASS control 2 every product was made by (e) at its declared truth
@@ -12897,7 +12898,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 2 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 224 cells |z| > 2 (Gaussian reference 10.19); 14 of 14 truths p < 0.01 (reference 0.14)
 [F0] denominators: 0 of 288 cells, 18 of 18 truths (references 13.10, 0.18); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-_233q4ih/tree/out/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-_233q4ih/tree/out/table.npz"], "readout_sha256": "5e3fd7ad583c026fde78a68ba2e46faac81db37cbdd9fdad7faa25eaf75857d2", "table_sha256": "1dcb27323faa8e908ab76b5aeb9a6ad737fc8b9be7777fa28937fdb0f8aa01c6"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-y2gmx99l/tree/out/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-y2gmx99l/tree/out/table.npz"], "readout_sha256": "c5ff2a591f183fe6204dfb5ec0f4ac517fc5030240f5c6c1f90965e88361742f", "table_sha256": "1dcb27323faa8e908ab76b5aeb9a6ad737fc8b9be7777fa28937fdb0f8aa01c6"}
 ......PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 8 records match their recorded sha256
 PASS control 2 every product was made by (e) at its declared truth
@@ -12929,7 +12930,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 1 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 224 cells |z| > 2 (Gaussian reference 10.19); 14 of 14 truths p < 0.01 (reference 0.14)
 [F0] denominators: 0 of 288 cells, 16 of 18 truths (references 13.10, 0.18); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-wevy218s/tree/f0/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-wevy218s/tree/f0/table.npz"], "readout_sha256": "0629efd6c2cfbe6547718158ef6e3ac597c396fa0c518cdbca5de7b4c58d3ee8", "table_sha256": "761c1eceb8f20c4717645ef4517fb9bc6d64fa0b3dd3aec999f4f24add938f1c"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-u0a0yp1w/tree/f0/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-u0a0yp1w/tree/f0/table.npz"], "readout_sha256": "fd0ef235440d936488700647c8fe0a80c8f35c182afe1b17d01a6d7e66e7e321", "table_sha256": "761c1eceb8f20c4717645ef4517fb9bc6d64fa0b3dd3aec999f4f24add938f1c"}
 PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 9 records match their recorded sha256
 PASS control 2 every product was made by (e) at its declared truth
@@ -12966,7 +12967,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 1 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 224 cells |z| > 2 (Gaussian reference 10.19); 14 of 14 truths p < 0.01 (reference 0.14)
 [F0] denominators: 0 of 288 cells, 16 of 18 truths (references 13.10, 0.18); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-wevy218s/tree/f0b/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-wevy218s/tree/f0b/table.npz"], "readout_sha256": "625b636e8cf51dba350aafa72edaccb3ad218444147d4619815744d97e1b2fc9", "table_sha256": "761c1eceb8f20c4717645ef4517fb9bc6d64fa0b3dd3aec999f4f24add938f1c"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-u0a0yp1w/tree/f0b/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-u0a0yp1w/tree/f0b/table.npz"], "readout_sha256": "9dd66777c12a852dc5b3a526c3631c65e9af2797d19066eab21a65260ce086f3", "table_sha256": "761c1eceb8f20c4717645ef4517fb9bc6d64fa0b3dd3aec999f4f24add938f1c"}
 PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 8 records match their recorded sha256
 PASS control 2 every product was made by (e) at its declared truth
@@ -12998,7 +12999,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 1 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 224 cells |z| > 2 (Gaussian reference 10.19); 14 of 14 truths p < 0.01 (reference 0.14)
 [F0] denominators: 0 of 288 cells, 16 of 18 truths (references 13.10, 0.18); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-wevy218s/tree/f0/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-wevy218s/tree/f0/table.npz"], "readout_sha256": "0629efd6c2cfbe6547718158ef6e3ac597c396fa0c518cdbca5de7b4c58d3ee8", "table_sha256": "761c1eceb8f20c4717645ef4517fb9bc6d64fa0b3dd3aec999f4f24add938f1c"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-u0a0yp1w/tree/f0/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-u0a0yp1w/tree/f0/table.npz"], "readout_sha256": "fd0ef235440d936488700647c8fe0a80c8f35c182afe1b17d01a6d7e66e7e321", "table_sha256": "761c1eceb8f20c4717645ef4517fb9bc6d64fa0b3dd3aec999f4f24add938f1c"}
 PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 9 records match their recorded sha256
 PASS control 2 every product was made by (e) at its declared truth
@@ -13035,7 +13036,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 0 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 224 cells |z| > 2 (Gaussian reference 10.19); 10 of 14 truths p < 0.01 (reference 0.14)
 [F0] denominators: 0 of 288 cells, 10 of 18 truths (references 13.10, 0.18); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-wevy218s/tree/f0b/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-wevy218s/tree/f0b/table.npz"], "readout_sha256": "5e814770e7dfd1d1e81a8b81daa0a68f4990729ee3f79667e67784ca9237e138", "table_sha256": "761c1eceb8f20c4717645ef4517fb9bc6d64fa0b3dd3aec999f4f24add938f1c"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-u0a0yp1w/tree/f0b/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-u0a0yp1w/tree/f0b/table.npz"], "readout_sha256": "40b15208fc531f09f4885087e1b644812655e4bc6b5bb55bde0c64e99e42f355", "table_sha256": "761c1eceb8f20c4717645ef4517fb9bc6d64fa0b3dd3aec999f4f24add938f1c"}
 .PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 8 records match their recorded sha256
 PASS control 2 every product was made by (e) at its declared truth
@@ -13067,7 +13068,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 2 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 224 cells |z| > 2 (Gaussian reference 10.19); 14 of 14 truths p < 0.01 (reference 0.14)
 [F0] denominators: 0 of 288 cells, 18 of 18 truths (references 13.10, 0.18); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-t7wkj5q5/tree/f0/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-t7wkj5q5/tree/f0/table.npz"], "readout_sha256": "5825d032e8e716d27777630d061b8e5169ccf3480dcab80ff54f66939f43474a", "table_sha256": "1dcb27323faa8e908ab76b5aeb9a6ad737fc8b9be7777fa28937fdb0f8aa01c6"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-gx_0lp0y/tree/f0/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-gx_0lp0y/tree/f0/table.npz"], "readout_sha256": "43586621c74920548eec118297788718f6800a3c64e89e7f87f590b2873fcc9d", "table_sha256": "1dcb27323faa8e908ab76b5aeb9a6ad737fc8b9be7777fa28937fdb0f8aa01c6"}
 PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 9 records match their recorded sha256
 PASS control 2 every product was made by (e) at its declared truth
@@ -13104,7 +13105,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 1 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 224 cells |z| > 2 (Gaussian reference 10.19); 10 of 14 truths p < 0.01 (reference 0.14)
 [F0] denominators: 0 of 288 cells, 12 of 18 truths (references 13.10, 0.18); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-t7wkj5q5/tree/f0b/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-t7wkj5q5/tree/f0b/table.npz"], "readout_sha256": "739e51882f82305d6c78498970e271ecd4a8dc86fde7b107f5d666ae763cf094", "table_sha256": "1dcb27323faa8e908ab76b5aeb9a6ad737fc8b9be7777fa28937fdb0f8aa01c6"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-gx_0lp0y/tree/f0b/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-gx_0lp0y/tree/f0b/table.npz"], "readout_sha256": "799b7f54110e1c9dcae115528e1352137a772c734b38d92a80b57955fd2aeefd", "table_sha256": "1dcb27323faa8e908ab76b5aeb9a6ad737fc8b9be7777fa28937fdb0f8aa01c6"}
 .PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 8 records match their recorded sha256
 PASS control 2 every product was made by (e) at its declared truth
@@ -13136,7 +13137,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 2 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 224 cells |z| > 2 (Gaussian reference 10.19); 14 of 14 truths p < 0.01 (reference 0.14)
 [F0] denominators: 0 of 288 cells, 18 of 18 truths (references 13.10, 0.18); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-ojd_367w/tree/f0/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-ojd_367w/tree/f0/table.npz"], "readout_sha256": "f9ca455d65cdfc74f375006f016465ea8feea49a460b0824dd621adf692e67bc", "table_sha256": "1dcb27323faa8e908ab76b5aeb9a6ad737fc8b9be7777fa28937fdb0f8aa01c6"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-vs3sjm3m/tree/f0/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-vs3sjm3m/tree/f0/table.npz"], "readout_sha256": "1244cf6beb3a12621eb9e52cffa81b5177ba894587161fddf925ce716e92da02", "table_sha256": "1dcb27323faa8e908ab76b5aeb9a6ad737fc8b9be7777fa28937fdb0f8aa01c6"}
 PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 9 records match their recorded sha256
 PASS control 2 every product was made by (e) at its declared truth
@@ -13173,7 +13174,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 1 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 224 cells |z| > 2 (Gaussian reference 10.19); 10 of 14 truths p < 0.01 (reference 0.14)
 [F0] denominators: 0 of 288 cells, 12 of 18 truths (references 13.10, 0.18); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-ojd_367w/tree/f0b/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-ojd_367w/tree/f0b/table.npz"], "readout_sha256": "7e940e1cd0ffba24410f0dcdf2b6d2297b055ac40376f185179e32b623d5a988", "table_sha256": "1dcb27323faa8e908ab76b5aeb9a6ad737fc8b9be7777fa28937fdb0f8aa01c6"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-vs3sjm3m/tree/f0b/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-vs3sjm3m/tree/f0b/table.npz"], "readout_sha256": "91b17fc940bb0fdb62415b709c22d0f0ff00790a6c13cc37c57e9b5ac9fe59e5", "table_sha256": "1dcb27323faa8e908ab76b5aeb9a6ad737fc8b9be7777fa28937fdb0f8aa01c6"}
 .PASS control 0 f4 products match their D16 sha256
 PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 9 records match their recorded sha256
@@ -13309,7 +13310,7 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 2 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 128 cells |z| > 2 (Gaussian reference 5.82); 7 of 8 truths p < 0.01 (reference 0.08)
 [F0] denominators: 0 of 192 cells, 11 of 12 truths (references 8.74, 0.12); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-lert1s3l/tree/f0/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-lert1s3l/tree/f0/table.npz"], "readout_sha256": "ebaf0e0f23a36e6f202bb7854faf5e1a9ac3153f3303c8e3768aacd3f22f3e42", "table_sha256": "d868cb3e338142c6143c70b82cf839be4045f5018bbe63ee978b64ff8514acd1"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-kxpbzinb/tree/f0/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-kxpbzinb/tree/f0/table.npz"], "readout_sha256": "1624e2840280ef07189b875bbcb4d80e5bb52a4520761e9dd0c17ecdc086caa0", "table_sha256": "d868cb3e338142c6143c70b82cf839be4045f5018bbe63ee978b64ff8514acd1"}
 PASS control 0 f4 products match their D16 sha256
 PASS control 1 353 products and 9 records match their recorded sha256
 PASS control 2 every product was made by (e) at its declared truth
@@ -13346,11 +13347,11 @@ PASS control 8 every truth integral is positive on all 16 cells
 [F0] prior: 0 of 32 cells |z| > 2 (Gaussian reference 1.46); 2 of 2 truths p < 0.01 (reference 0.02)
 [F0] vertex-family: 0 of 128 cells |z| > 2 (Gaussian reference 5.82); 7 of 8 truths p < 0.01 (reference 0.08)
 [F0] denominators: 0 of 192 cells, 10 of 12 truths (references 8.74, 0.12); read by group
-{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-lert1s3l/tree/f0b/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-lert1s3l/tree/f0b/table.npz"], "readout_sha256": "9124f74e9d266393d859247fc411f20bc372f0d0fb63e0c0be8cd103f056c0e8", "table_sha256": "d868cb3e338142c6143c70b82cf839be4045f5018bbe63ee978b64ff8514acd1"}
+{"wrote": ["/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-kxpbzinb/tree/f0b/readout.json", "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/71f27b67-dd03-4235-a8c6-c96eb2b6c57e/scratchpad/tmp/fd-f0-kxpbzinb/tree/f0b/table.npz"], "readout_sha256": "8ae663677caf80c6bd2b157144a69aae4e36dd2ef492e6b0b0a9d983d174950d", "table_sha256": "d868cb3e338142c6143c70b82cf839be4045f5018bbe63ee978b64ff8514acd1"}
 ..REFUSED leak guard: x carries 16 number(s) equal to f, an absolute cell value or f - g (ruling 6); nothing more was written
 ..........
 ----------------------------------------------------------------------
-Ran 419 tests in 319.866s
+Ran 419 tests in 254.840s
 
 OK
 rc=0
