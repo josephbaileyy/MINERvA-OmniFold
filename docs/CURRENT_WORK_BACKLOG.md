@@ -23,5 +23,5 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-59 | WAITING-JOSEPH | declared | OWNER THE DIRECTOR 2026-10-28, WAITING-JOSEPH, on the director's ruling — the next step is Joseph's freeze question, whi |
 | OI-60 | WAITING-JOSEPH | declared | ON JOSEPH'S QUEUE 2026-10-29 (owner Joseph, WAITING-JOSEPH) for the RETROSPECTIVE CLOSE, which is his. The RE-RUN half i |
 | OI-62 | WAITING-JOSEPH | migration-carried-forward | (a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER |
-| OI-120 | WAITING-JOSEPH | migration-carried-forward | WAITING-USER (raised 2026-08-14 by the personal-account mediator; first filing into block 120-129) |
+| OI-120 | WAITING-JOSEPH | migration-carried-forward | TRACED 2026-10-30 by the close-items session, PROPOSED FOR RETIREMENT — Joseph decided all three parts on 2026-08-14 ("F |
 | OI-137 | WAITING-JOSEPH | declared | OWNER THE DIRECTOR 2026-10-28, HELD until a session holds the "scalar-5D adoption/statistics owner" role that Ruling 7 ( |
