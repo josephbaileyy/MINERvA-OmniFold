@@ -14,9 +14,6 @@ never derived from OI state prose; terminal and deferred records never enter thi
 | OI-6 | NOW | paper rewrite lane | publication/P2 | Narrowed to the configuration-(a) 5D central value, where the note says the revisit is open (app_negweight.tex:126); moot once (a) stops being reported in the note. | docs/OPEN_ITEMS.md (`OI-6`) |
 | OI-130 | NOW | paper rewrite lane | publication/P2 | After the paper lane's n4 and r21 work: enumerate every quoted value to its artifact and preservation state, report the counts, then remediate by class. | docs/OPEN_ITEMS.md (`OI-130`) |
 | OI-172 | NOW | paper rewrite lane | publication/P2 | After n4 and r21: draft the cause-1 statement the 2026-09-01 ruling requires. A grep did not find it in the note; that is not proven absent. | docs/OPEN_ITEMS.md (`OI-172`) |
-| OI-75 | WAITING-JOSEPH | Joseph | provenance/P1 | Reconcile the unrecorded standard-P4 Stage-3 run with the standing no-run hold before preserving or using its products. | docs/OPEN_ITEMS.md (`OI-75`) |
-| OI-131(a) | WAITING-JOSEPH | Joseph | provenance/P1 | Decide whether an irreplaceable subset of the CFS-only P3F objects warrants a second copy. | docs/OPEN_ITEMS.md (`OI-131`) |
-| OI-131(b) | BLOCKED-EXTERNAL | storage / Joseph | provenance/P1 | Re-read and record measured HPSS quota after accounting catches up; do not promote the predicted reduction. | docs/OPEN_ITEMS.md (`OI-131`) |
 
 ## Machine-enforced contract
 
