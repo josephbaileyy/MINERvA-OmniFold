@@ -1,0 +1,11 @@
+# 1B stage 1, cluster reads (metadata only): ssh saul.nersc.gov
+# du -sb --apparent-size bank_sweep_5d_bkgaware bank_detector; ls | wc -l; ls -l Flux_0_wr.npy of_inputs_5d.npz; ls -d fd-1b-20261030; squeue -u josephrb -h | wc -l
+login37
+2026-10-30T23:10:22Z
+71581990858	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware
+2126459206	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector
+701
+-rw-rw---- 1 josephrb josephrb  131396540 Jul 14 06:00 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_0_wr.npy
+-rw-rw---- 1 josephrb josephrb 1548438020 Jun 27 18:31 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+ls: cannot access '/pscratch/sd/j/josephrb/fd-1b-20261030': No such file or directory
+0
