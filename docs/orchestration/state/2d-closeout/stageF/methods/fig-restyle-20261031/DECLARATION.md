@@ -1,7 +1,11 @@
 # Restyle of the note's 2D result figures (Figs. 7–14): declaration (2026-10-31, paper rewrite lane)
 
-**Status.** For the director to bind. The director answered §6's three questions on 2026-10-31, and they are now
-rulings. **No code has changed and nothing has run.** The base is origin/main `bab87aeb3`.
+**Status.** For the director to bind, with its code. The director answered §6's three questions on 2026-10-31, and
+they are now rulings.
+- **Done:** the code and its tests are committed. Dev draws on a Perlmutter login node ran under the director's approval
+  of 2026-10-31; their outputs are never installed or committed. A dry run of the run driver passed (§4).
+- **Not done:** the bound run, Joseph's review and any install.
+The base is origin/main `bab87aeb3`.
 
 **Under** [DECISION-20261031-joseph-rater-account-figures-chi2-consult.md](../../../../../DECISION-20261031-joseph-rater-account-figures-chi2-consult.md)
 item 2 (#574). Joseph chose: "Restyle the note's 2D result figures (Figs. 7–14): readable font sizes, proper axis labels
@@ -40,86 +44,148 @@ and are overridden by the installs, so they are not this restyle's producers.
 
 ## 2. What changes (STYLE only)
 
-The changes below are the diagnosis's most-supported STYLE rows for these figures (report §6, items 2–7). Each is
-limited to how existing content is drawn.
+The changes come from the diagnosis's most-supported STYLE rows for these figures (report §6, items 2–7). They are
+written as `--style restyle-2026-10`, which is off by default, in the six producers, with shared helpers in
+`2d-unfolding/restyle_2026_10.py`.
+- **Printed size.** Each figure is drawn at the width the note prints it (`restyle_2026_10.WIDTH`: the
+  `\includegraphics` fraction of the 469.755 pt text width). A font size in the code is then its printed size.
+- **Fig. 8 keeps its 12 × 5 in canvas.** `make_figures.sh:295` asserts its 864 × 360 pt page before the crop, so its
+  text is set larger to print at about 5 pt.
 
-| figure | change |
-|---|---|
-| all | tick labels, axis titles, legends and annotations enlarged so that every figure meets §5.4's floor at the width the note includes it |
-| all | axis, legend and colour-bar labels typeset in math (e.g. $p_T$ (GeV/$c$)), not ASCII (`p_T`, `MINERvA_Tune_v1`) |
-| 8 | the axis label "Pull" reads "Standardized difference" (the caption already says it "is descriptive, not a pull between independent results") |
-| 9, 10 | each slice panel labelled with its bin interval; the y axes give their physical units, and any scale factor already applied is stated in the label |
-| 9, 10, 11 | blank bands removed and the panels enlarged into the space |
-| 14 | panel labels "(a) Our result" and "(b) Published data", drawn as text, not titles (`technote_style.py` strips titles) |
+| figure | file(s) | change |
+|---|---|---|
+| 7 (top), and the primer | `MEFHC_5iter_fig13` | same layout fractions on a 4.03 in canvas; fonts for print; slice labels and "×" factors in math; "MnvTune v1" → "MINERvA Tune v1"; axis titles in math with units; the legend left-aligned in its empty cell; inner rows' hidden tick labels (they showed at the right edge) and colliding end ticks ("60 4") removed |
+| 7 (bottom) | `MEFHC_5iter_xsec_proj_pt`, `_pz` | printed size; units "(cm$^2$/(GeV/$c$)/nucleon)"; the y offset in math (×10$^{-38}$); ratio label "This work / GENIE" |
+| 8 | `MEFHC_5iter_pull_full` | the same canvas at 14.5 pt; axis labels in math; "pull" → "Standardized difference" in both panels; "Bins"; the sample tag at the same size |
+| 9, 10 | `MEFHC_5iter_xsec_paper_pt_slices`, `_pz_slices` | printed size; each panel's interval printed above it, with its unit; y label "$d^2\sigma/dp_T\,dp_\parallel$, scaled"; the legend in the empty cell (Fig. 9) or the top margin (Fig. 10); an x label on every panel with none below; the blank band left by the suppressed title removed |
+| 11 | `tension_spectrum`, `tension_chi2_map` | the spectrum's two panels stacked, so the two files have the same height side by side and leave no blank band; labels in math |
+| 12 | `tension_mode_maps` | printed size; labels in math; panel labels (a)–(f) above the panels; ticks at whole bins |
+| 13 | `model_comp_projections` | printed size; labels and units in math; the model's name without underscores; the y offset in math |
+| 14 | `model_comp_ratio_maps` | printed size; labels in math; "(a) This work" and "(b) Published data" above the panels; colour bar "Ratio to MINERvA Tune v1" |
+
+**Why titles are not used.** `technote_style.py` suppresses `set_title` and `suptitle`, which is why Figs. 9 and 10
+printed no slice labels. The restyle draws labels as text.
+
+**A row not made as written.** The draft's row for Figs. 9 and 10, "the y axes give their physical units", is not made.
+- **Why:** each panel is scaled to its own maximum, and its "×10^n" note gives only the order of that factor. A
+  physical unit would need each panel's maximum printed, which is a new number (CONTENT).
+- **Instead:** the label says "scaled", as before, and the existing notes stay.
 
 **Not changed:**
-- **No plotted number.** Values, errors, bin edges, binning, the order of the data, every scale factor, and the colour
-  map's limits stay the same. A label may state a scale factor that the code already applies. A rescale of the plotted
-  values to new units is out of scope.
-- **No colour, marker or line style of a data series.** Note Fig. 13's caption-side colour fix (decision item 4) relies
-  on Tune v1 staying blue.
-- **No CONTENT or PROTECTED row** of `changes.tsv`: no ratio or residual panels, no uncertainty bars added to Fig. 13,
-  no mode-rank annotations on Fig. 12, no χ²/ndf.
-- **No caption, and no other note or paper text.** Any caption wording a restyle makes stale goes to the next note
-  round as a truth fix, through the ledger and agy.
-- **No other figure.** `technote_style.py` is not edited, since every plotting script imports it.
-
-**How the code changes.** Each producer gets a `--style restyle-2026-10` option, off by default. Every existing
-invocation then draws the old figure, and the change is confined to the run in §4. The option touches only figure
-size, layout, fonts, label strings and text annotations.
+- **No plotted number.** Values, errors, bin edges, binning, data order, every scale factor and the colour limits stay
+  the same.
+- **No colour, marker or line style of a data series.** Note Fig. 13's caption-side colour fix relies on Tune v1 staying
+  blue.
+- **No CONTENT or PROTECTED row** of `changes.tsv`:
+  - no ratio or residual panels;
+  - no uncertainty bars on Fig. 13;
+  - no mode-rank or χ² annotations on Fig. 12, which its suppressed titles held;
+  - no χ²/ndf.
+- **No caption in this change.** Two caption sentences must change with the install, as truth fixes through the ledger
+  and agy:
+  - Fig. 14's "the panels have no printed titles", now that the panels carry labels;
+  - Fig. 13's colour, already planned (CAPTION-FIXES.md).
+  The other captions stay true, including Fig. 11's "(left)"/"(right)".
+- **No other figure.** `technote_style.py` is not edited. With the option off, every producer draws its old figure (§3
+  check 2, arm "off").
 
 ## 3. The checks
 
-The checks are in a new `fig-restyle-20261031/tools/`, committed with tests before the run.
+The tools are `fig-restyle-20261031/tools/`, committed with their tests:
+- `capture.py`, `artists.py`: the record of what each saved figure draws;
+- `compare.py`: checks 3–5;
+- `raster.py`: check 2;
+- `textsize.py`: check 7;
+- `run.sh`, `run_remote.sh`: the run;
+- `selftest.py`, `toy_producer.py`, `mutate.py`: the tests.
 
-1. **Array capture.** A runner (`capture.py`) runs each producer through `re2c_run.sh`'s `step` invocation, with
-   `Figure.savefig` wrapped once more. At each save it writes every data artist's arrays to an `.npz`:
-   - line x/y data;
-   - collection offsets, segments, paths and colour arrays;
-   - image and mesh arrays with their extents and colour limits;
-   - patch geometry;
-   - each artist's face and edge RGBA.
-   Text, ticks, spines and the legend frame are not captured.
-2. **Identity control: the before run is the committed figure.** The producers at `bab87aeb3` are run first, without
-   the option. Their eleven PDFs are rasterized at 300 DPI and must equal the committed copies' rasters pixel for pixel.
-   PDFs drawn on the cluster carry timestamps, so they are not byte-compared (RE2-DECLARATION-C §7, ruling Q3). If any
-   raster differs, the run stops and comes back.
-3. **Equality before and after.** For each figure, the multiset of captured arrays, each with its RGBA, must be equal
-   before and after:
-   - bit for bit, with no tolerance;
-   - per figure, not per axes, since removing blank bands moves panels.
-   An added or missing data artist fails.
-4. **The producers' other outputs.** Every non-figure output is byte-identical before and after: the χ² and pull
-   printouts, the `.txt` and `.json` reports, and each step's stdout with timing lines removed.
-5. **Inputs.** Each `TFile.Open` is logged with the file's sha256. Both runs must open the same set, and `E_R` must be
-   `a5c13fc3…` (`partb/out/ER/xsec.root`). The published covariance file must be `6c6dce72…`.
-6. **No stray writes.** Files under `$A/2d-unfolding` newer than a marker stamped at the start must be none.
-7. **Self-tests, in the direction each check acts.**
-   - A planted one-ulp change to one value, and a changed RGBA, must fail check 3.
-   - An identical rerun of the before code must pass it.
-   - A one-pixel change must fail check 2.
+1. **The record.** `capture.py` runs each producer as `re2c_run.sh`'s `step` does: `runpy`, with the deploy's
+   `2d-unfolding/uq`, `2d-unfolding` and root on `sys.path`.
+   - **Data:** `Figure.savefig` is wrapped outermost, after `technote_style`'s `.pdf`-twin wrapper. At each save it
+     writes every data artist's arrays and RGBA, hashed bit for bit (`artists.py`):
+     - lines, with their style and marker;
+     - collections: offsets, segments, data-space paths, colour arrays and limits;
+     - images and meshes;
+     - data-space patches.
+     Text, ticks, spines, grid lines and legends are not captured.
+   - **Text:** after the save, it also writes each drawn text's font size (unhashed).
+   - **Refusal:** it refuses to run with `TECHNOTE_DARK` set, which recolours every series.
+2. **Identity control.** The eleven PDFs of two arms must rasterize at 300 DPI to the committed copies' pixels:
+   - **"before":** the base commit's producers;
+   - **"off":** the bound commit's producers without the option.
+   Cluster PDFs carry timestamps, so they are not byte-compared (RE2-DECLARATION-C §7, ruling Q3).
+3. **Equality before and after.** For each figure, the multiset of captured item hashes of "before" and "after" must be
+   equal. An added, missing or changed data artist fails. Each step's records must be exactly the figures named.
+4. **The other outputs.** These must be identical after the run directories' and deploys' paths are replaced and lines
+   reporting a wall time are dropped:
+   - `model_comp_report.txt` and `tension_report.txt`;
+   - each step's stdout, which carries the χ² and pull printouts.
+5. **Inputs.** Both arms must open the same files with the same sha256:
+   - each `TFile.Open` is logged, and every existing file named in argv is hashed;
+   - E_R is `a5c13fc3…` and the published covariance `6c6dce72…` (`logs/inputs.sha256`).
+6. **No stray writes.** No file under `$A/2d-unfolding` or `$A/docs` may be newer than a marker stamped at each arm's
+   start.
+7. **Printed text size, from what is drawn** (`textsize.py`, which replaces the draft's instrument; see §5.4):
+   - every text's font size times printed width over the PDF's page width;
+   - each of the eleven must be at least 4.0 pt (ruling 3);
+   - and no PDF text of "after" may contain `_` or `^`.
+8. **Tests in both directions.**
+   - **`selftest.py`, 17 cases on a toy producer with the artist kinds of Figs. 7–14:**
+     - silent on an identical rerun, a restyle (size, fonts, labels, panel layout, panel labels, text) and a
+       wall-time change;
+     - fires on a one-ulp value, an RGBA change (a series; a line alone; a scatter alone), a dropped series, a
+       changed input, a report value changed alone, an unnamed figure record and a one-pixel raster change.
+   - **`MUTATION-RECEIPT.txt` (`mutate.py`):** the control passes, and all 11 mutants of the checkers are killed:
+     - colours not hashed;
+     - a float32 tolerance;
+     - patches skipped;
+     - labels hashed;
+     - count-only comparison;
+     - timing lines kept;
+     - outputs or inputs not compared;
+     - size-only raster comparison;
+     - the wrong wrapper order.
+   - **Checks 3 and 7 both ways.**
+     - The ASCII check finds 2–30 lines in each of the five old figures checked, and none in the eleven restyled ones.
+     - On the old figures, the floor fires for six of the eleven (2.45–3.45 pt: Figs. 7 top, 8, 9, 10, the spectrum
+       of 11, and 13). The other five are at 4.05–4.88 pt.
 
 ## 4. The run
 
-- **Where:** a Perlmutter login node, with no Slurm, `source setup_salloc_env.sh` and 0 node-h. RE-2 measured about
-  12 s per plotting step (RE2-DECLARATION-C §8). The whole run is capped at 15 minutes with `timeout 900`, as
-  `re2c_run.sh` is.
-- **Deploys:** two clean deploys in a new `/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/`, one of
-  `bab87aeb3` and one of the bound commit. No existing checkout is moved or written.
-- **Order:**
-  1. the before run and check 2;
-  2. the after run;
-  3. checks 3–6.
-  A failure stops the sequence.
-- **Fetched back read-only:** the eleven PDFs, the `.npz` captures, the logs, a `SHA256SUMS`, and the opened-file list.
-  They are committed under `fig-restyle-20261031/run/`. The new PDFs go in `fig-restyle-20261031/figs/`.
+- **Driver:** `run.sh <base> <bound> <local out dir>`, run from a local clone.
+  - **Deploys:** each commit is archived with `git archive` (`technote_style.py`, `2d-unfolding/`, and for the bound
+    commit `tools/`), together with a `COMMIT` file. Each is unpacked in a new
+    `/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run/<base|bound>/deploy`. No existing checkout is moved or
+    written, and the run root must not exist.
+  - **Arms:** three run in turn (`run_remote.sh`):
+    - "before": the base commit's producers;
+    - "off": the bound commit's producers, without the option;
+    - "after": the bound commit's producers, with the option.
+    The checks' own code is the bound commit's in every arm.
+- **Steps:** `re2c_run.sh:160-170`'s six figure steps, with the same argv except for output paths.
+  - **One change from `re2c_run.sh`:** the working directory is the arm's own directory, not `$A/2d-unfolding`, so that
+    nothing is written under `$A`.
+  - **Why it is safe:** every default input path of the six producers is absolute (`DEFAULT_*`, `ANC_DIR`). Checks 5
+    and 6 confirm it.
+- **Where:** a Perlmutter login node, with no Slurm and 0 node-h. Each arm stops itself at 15 minutes (`timeout 900`).
+  In the dry run under the dev directory, the "after" arm took 53 s.
+- **Fetched back:** the PDFs, captures, logs and `SHA256SUMS`, but no PNGs. The checks run locally and write
+  `CHECKS.txt`. The new PDFs and the run's records are committed under `fig-restyle-20261031/figs/` and `run/`.
 - **CFS and HPSS:** nothing is written.
+- **Dry run** (dev, approved 2026-10-31; outputs not installed or committed): `run.sh bab87aeb3 4437aaf8` under
+  `dev/runtest1`. `RUN CHECKS :: PASS`:
+  - check 2: 22 of 22 pixel-equal;
+  - checks 3–5: COMPARE PASS;
+  - check 6: 0 files in each arm;
+  - check 7: 5.00–5.92 pt, and no ASCII.
 
-## 5. Integration, after the checks pass
+## 5. Integration, after the checks pass and Joseph's review
 
-1. **Install.** `make_figures.sh` installs the eleven from `fig-restyle-20261031/figs/` with the new digests. The RE-2
+1. **Joseph's visual review** of the eleven, before and after side by side, comes before any install. The director
+   shows them to him.
+2. **Install.** `make_figures.sh` installs the eleven from `fig-restyle-20261031/figs/` with the new digests. The RE-2
    install lines stay, as comments, under a dated note.
-2. **The RE-2 integration ledger (ruling 1: re-point, do not replace).**
+3. **The RE-2 integration ledger (ruling 1: re-point, do not replace).**
    - **Today:** its eleven `G` rows (`re2-integration/ledger.tsv`, for example `FIG-MEFHC_5iter_fig13`) pin each figure
      to part C's SHA256SUMS and to the copy in `re2-integration/figs/`.
    - **After:** the restyled PDFs are new files with new digests, in `fig-restyle-20261031/figs/`. The eleven rows are
@@ -127,17 +193,22 @@ The checks are in a new `fig-restyle-20261031/tools/`, committed with tests befo
      its row, not from a fixed path.
    - **The history:** part C's copies and records stay where they are. A record, `fig-restyle-20261031/DIGESTS.tsv`,
      gives each figure's old and new digest with both SHA256SUMS entries.
-3. **The note build and its gates.** The note, primer and paper are rebuilt with every gate and the
-   `record-checks.yml` steps.
-4. **The figure checks, re-cropped from the new note PDF** with the diagnosis tools (`figdiag.py crops` and
-   `measure`). Each of Figs. 7–14 must meet both:
-   - its smallest printed word-box height (`figdiag.py measure`, the instrument of report §3) is at least 4.0 pt
-     (ruling 3). That is the anchors' lower bound: the lowest anchor group's median minimum is 4.03 pt (anchor C),
-     against the note's 2.48 pt. The restyle aims for about 5 pt;
-   - no figure text matches a raw-ASCII pattern (`_`, or `^` outside math).
-
-   The primer's copy of `MEFHC_5iter_fig13` is cropped from the primer PDF and must meet the same two checks.
-5. **Joseph's visual review** of the eleven, before the merge.
+4. **The figure checks after the note build.**
+   - **The gate:** check 7 on the run's PDFs. Each figure prints at the width its `\includegraphics` gives, and
+     `textsize.py` reads that width from `restyle_2026_10.WIDTH`.
+   - **The record:** the figures are re-cropped from the new note and primer PDFs (`figdiag.py crops`, `measure`) and
+     recorded beside the diagnosis's table.
+   - **An amendment, for the director.** The draft made the gate `figdiag.py measure`'s smallest word-box height, the
+     diagnosis's instrument. Dev draws show that this instrument does not measure matplotlib's text:
+     - pdftotext gives math sub- and superscripts, and a ")" after a superscript, boxes of 2.2–2.9 pt in every font set
+       tried, for text set at 6.5 pt;
+     - under matplotlib's default Type 3 embedding it gives ordinary text boxes about 1.9 times their size (5.5 pt
+       measures 10.4).
+     So a restyled figure cannot pass on that minimum, whatever its sizes. The diagnosis's §3 comparison with the
+     anchors' LaTeX text is confounded by this as well (§7 below).
+5. **Captions.** The Fig. 14 and Fig. 13 caption fixes (§2) are made with the install, through the ledger and agy.
+6. **The note build and its gates.** The note, primer and paper are rebuilt with every gate and the `record-checks.yml`
+   steps.
 
 ## 6. Rulings (the director, 2026-10-31)
 
@@ -148,3 +219,15 @@ The checks are in a new `fig-restyle-20261031/tools/`, committed with tests befo
    - The old copies stay where they are, as the history.
 2. **The primer's `MEFHC_5iter_fig13` is in scope,** since it comes from the same producer (§1, §5.4).
 3. **The floor is 4.0 pt,** the anchors' lower bound. The restyle aims for about 5 pt (§5.4).
+
+## 7. For the director
+
+- **§5.4's amendment.** The gate becomes `textsize.py` on the drawn font sizes, at the same 4.0 pt floor, and the
+  `figdiag.py` re-crop is kept as a record.
+- **The diagnosis report's §3** compares pdftotext word boxes of matplotlib figures with those of LaTeX-set anchors. By
+  §5.4, those are not on one scale.
+  - **What still holds:** the finding that the note's text prints small, from the drawn sizes: the smallest text is
+    2.45–4.88 pt before the restyle, and below 3.5 pt in six of the eleven.
+  - **What does not:** the table's medians cannot be read against the anchors' as the report reads them.
+  - **Proposal:** I propose a correction to the report in the same way as #584's.
+
