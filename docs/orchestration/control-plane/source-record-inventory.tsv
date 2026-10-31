@@ -55,7 +55,7 @@ OI-9	active	NOW	migration-carried-forward	00e9f8796f268caab4914f3c9c5df07ec2c63a
 OI-10	retired	-	declared	27ee96465117fa87f31197455e1808c176ab54d75434b4770b5ffd959476f275	RETIRED 2026-10-28 by the close-items session — KNOWN_ISSUES row 8 is FIXED (bce7fa4b, af542919). See [RECORD-20261028-c
 OI-11	retired	-	declared	74b86c98ff751b6ac797af356e1fc3eadd245ba1594a107fa31d89c73bff8787	RETIRED 2026-10-28 on the director's ruling — KNOWN_ISSUES row J36 is closed with a measured bound (Joseph's choice). Se
 OI-12	retired	-	declared	d758050a16c3d5d0a5d6c472520f5cf793a439a65a3c2ed4a7207a9acc194c2a	RETIRED 2026-10-29 as fixed at c3aef8d5a: mat_gates's diagonal bound is now relative, power-tested at the adopted scale,
-OI-13	active	WAITING-JOSEPH	migration-carried-forward	c899bf49b52d5749e43415e88370f87157d28249520d181c134e71651e3e2935	WAITING-USER
+OI-13	active	WAITING-JOSEPH	migration-carried-forward	487a90647ebe9641331f385a44ae17c8d3e33b120adf6c2887cf93ee64305ad7	TRACED 2026-10-30 by the close-items session, PROPOSED FOR RETIREMENT — the retired-bar self-report is KNOWN_ISSUES 40,
 OI-14	deferred	-	declared	9e904244a4f34e4d653509ff1e4d15c90f0a253595d8e99bb75fca0e02be4066	DEFERRED 2026-10-29 by the close-items session, until PET closure-test work resuming (the row: re-offer to whoever owns
 OI-15	retired	-	migration-carried-forward	865afc899570c06c1594dbe81423a8a5f5f7e7d67fb55c13a3d59b3f1378a7d6	PREMISE FALSE 2026-08-13 — the seed control already exists and is already receipt-bound; what is missing is execution-en
 OI-16	retired	-	migration-carried-forward	f0a268219dc04e993dadbcf2f272af4d89434e7c701e43ac9ed199d1e94157ea	DISCHARGED 2026-08-13 — reopens only if k is lowered
@@ -115,7 +115,7 @@ OI-91	retired	-	migration-carried-forward	5f1d4759e941537c8d96e78f3266efc3156db9
 OI-93	retired	-	declared	e70b5f94379bf2cd14ee2b0d10464b151f1be5dd2b8ed52435bbb583b29cd159	RETIRED 2026-10-28 on the director's ruling — no publication consumer inverts a truncated C_stat; the generic hazard liv
 OI-92	retired	-	migration-carried-forward	46814e957d7f5411a0d96e7d821bafeaeb6b83574fc9aa9107dbfc591c220ce6	CLOSED 2026-08-14 — PREMISE REFUTED, C_stat IS CORRECTLY NAMED, NO JOSEPH TURN NEEDED. (raised same day by lane C)
 OI-94	deferred	-	declared	0f37375f3f2219a431cd6c95fa84e986437efc2210f80d2f031392e1b59e94e4	DEFERRED 2026-10-29 by the close-items session, until the PET extraction-stage subtraction landing, and only if PET C_st
-OI-120	active	WAITING-JOSEPH	migration-carried-forward	5984185f2ccca724621947d58cd424c79d14db17a51cd8a60baca3f09e86acb1	WAITING-USER (raised 2026-08-14 by the personal-account mediator; first filing into block 120-129)
+OI-120	active	WAITING-JOSEPH	migration-carried-forward	749a4817088aa2f1b45ae62184fbd3e84aab18b6dc4e10aaab0092e29deb9f40	TRACED 2026-10-30 by the close-items session, PROPOSED FOR RETIREMENT — Joseph decided all three parts on 2026-08-14 ("F
 OI-121	deferred	-	declared	eda33318be02f0d18fb2c07b36a772a864a36bbabedfb951ff070f76662849ae	DEFERRED 2026-10-29 on the director's ruling, until OI-126 being reconsidered (estimator-equivalence plus coverage, DECI
 OI-122	retired	-	migration-carried-forward	c68f553dc1b0e9f5d2d42a8252593ce5d12b989562c8b80cfe35a2c1030e3123	BOTH ACTIONS EXECUTED 2026-08-14 by lane C. Action 1 authorized by Joseph, verbatim "Yes I authorize it", committed at 4
 OI-80	retired	-	declared	e8b4350c306744ab52cfc0c2ea217f3047188e8db47a71b519681f34b64426de	OPEN — POINTER, not a second row. Raised 2026-08-14 by lane B independently and CONCURRENTLY with OI-122; that row is th
