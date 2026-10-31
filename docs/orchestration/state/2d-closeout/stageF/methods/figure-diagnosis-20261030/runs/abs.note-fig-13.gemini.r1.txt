@@ -1,0 +1,18 @@
+D1: 3 | raw scientific notation multipliers (1e-38, 1e-39) and undersized header text
+D2: 3 | missing panel labels ((a), (b)) and redundant duplicate legend
+D3: 3 | curve colour contradicts caption (blue in plot vs orange in caption) and red dashed curve is obscured under the black curve in greyscale
+D4: 3 | unformatted code notation in axis labels (p_T, p_||, d\sigma/dpt, d\sigma/dpz) and raw 1e-38/1e-39 multipliers
+D5: 2 | lack of ratio panels and uncertainty bars to distinguish and compare the overlapping measurements
+D6: 2 | curve colour directly contradicts caption (blue vs orange), legend uses raw code name (MINERvA_Tune_v1), and legend is duplicated
+D7: 3 | colour contradiction with caption and overlapping measurement curves impede rapid comprehension
+TAKEAWAY: The OmniFold measurement closely reproduces the published MINERvA cross-section projections in muon transverse and longitudinal momentum, while MINERvA Tune v1 substantially underpredicts the data in the peak region.
+CHANGES:
+1. Legend and Caption: Change the MINERvA Tune v1 line colour to orange to match the caption (or edit the caption to say blue) and remove raw underscores in the legend ("MINERvA Tune v1").
+2. Panels: Add panel labels "(a)" and "(b)" to identify the $p_T$ and $p_\parallel$ distributions, and remove the redundant legend box from the right panel.
+3. Comparison: Add lower subpanels showing the ratio of the new measurement and simulation to the published data to allow quantitative comparison.
+4. Uncertainties: Add vertical error bars or uncertainty bands for the data and unfolded measurement points.
+5. Axis labels: Format axis labels in proper LaTeX math typography ($p_T$, $p_\parallel$, $d\sigma/dp_T$, and $d\sigma/dp_\parallel$).
+6. Multipliers: Replace raw scientific notation multipliers ("1e-38", "1e-39") with properly formatted powers of ten incorporated into the axis labels ($10^{-38}\text{ cm}^2/(\text{GeV}/c)/\text{nucleon}$).
+7. Header: Increase font size and improve positioning of the experiment and POT annotation ("MINERvA ME FHC, $1.06 \times 10^{21}\text{ POT}$").
+8. Aspect / Range: Adjust the upper limit of the $p_\parallel$ axis or use a broken/log scale to eliminate the large empty whitespace between 25 and 50 GeV/c.
+END

@@ -1,0 +1,16 @@
+D1: 5 | -
+D2: 3 | Value column (lack of decimal alignment and slash-separated multi-values)
+D4: 3 | Value column header and inconsistent precision between χ²/bin rows (2.27 vs 0.929)
+D6: 3 | Caption placement below table and lack of self-contained description
+D7: 4 | -
+TAKEAWAY: The new measurement is highly consistent with the previously published result across all 205 bins, with total and median cross-section ratios within 1% and a descriptive χ²/bin of 0.929 when incorporating both covariances.
+CHANGES:
+1. Caption placement: Move the caption above the table to conform to PRD style conventions.
+2. Caption content: Make the caption self-contained by specifying the physical observable/channel and explicitly naming the publication or experiment for Ref. [3].
+3. Column 1 header: Remove "(205 reported bins)" from the header and place this bin-count information in the caption or a table note.
+4. Value column alignment: Align numerical entries on their decimal points rather than center-aligning them.
+5. Rows 4 and 5 precision: Report consistent decimal precision for both $\chi^2/\text{bin}$ values (e.g., 2.270 and 0.929, or 2.27 and 0.93).
+6. Row 3 ("Bins within 5 %/10 %/20 %"): Split the three threshold coverage values into separate rows or dedicated columns instead of a single slash-separated string.
+7. Row 6 ("Published-$\sigma$ standardized-difference mean / RMS"): Split the mean and RMS into separate rows or separate columns rather than packing both into one cell ("0.060/0.535").
+8. Row grouping: Insert subtle vertical spacing between distinct metric categories (cross-section ratios, threshold coverage, $\chi^2$ values, and residual statistics).
+END

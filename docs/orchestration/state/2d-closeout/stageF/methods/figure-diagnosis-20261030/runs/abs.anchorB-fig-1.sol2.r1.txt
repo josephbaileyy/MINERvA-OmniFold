@@ -1,0 +1,15 @@
+D1: 4 | Thin component curves and small inset legends are harder to read than the data and total prediction.
+D2: 4 | Closely packed panel headings and crowded bottom-row tick labels reduce visual separation.
+D3: 2 | Most interaction components become similar solid grey curves in greyscale; QE+2p2h and RES also have similar hues in the deuteranopia simulation.
+D4: 5 | -
+D5: 4 | Overlapping component curves hinder individual comparisons; data versus total prediction remains clear.
+D6: 5 | -
+D7: 3 | The 25 panels, changing multipliers and overlapping components make systematic trends slow to extract.
+TAKEAWAY: MnvGENIE v1 broadly follows the data’s shapes but tends to undershoot higher-momentum bins, where the modeled DIS contribution becomes prominent.
+CHANGES:
+1. Give interaction components distinct dash patterns that remain identifiable in greyscale, and reproduce those patterns in both legends.
+2. Increase component line weights slightly and choose colours with stronger separation under deuteranopia.
+3. Reduce crowding between panel headings, curves and adjacent bottom-row tick labels.
+4. Place every multiplier in the same position within its panel and state explicitly in the caption which plotted quantities it scales.
+5. Add a compact data-to-total-prediction ratio display if systematic agreement across momentum bins is the intended emphasis.
+END

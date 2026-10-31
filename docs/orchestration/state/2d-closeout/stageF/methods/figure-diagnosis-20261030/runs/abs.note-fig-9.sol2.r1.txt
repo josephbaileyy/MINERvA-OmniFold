@@ -1,0 +1,15 @@
+D1: 3 | Tick labels, legend text and per-panel χ² annotations are too small for comfortable reading at printed size.
+D2: 2 | All 14 panels lack slice-range labels; excessive whitespace above the grid reduces space available for the plots.
+D3: 4 | -
+D4: 3 | The scaled cross-section ordinate lacks units, and the pT interval associated with each panel is absent.
+D5: 3 | Overlapping points and histogram steps, tiny statistical errors and compressed peaks make differences difficult to assess.
+D6: 4 | -
+D7: 3 | Missing slice labels and small annotations prevent a quick interpretation of how agreement changes across panels.
+TAKEAWAY: The unfolded points broadly follow the simulated histogram’s falling shapes, with visible discrepancies around the peaks and in the final panels.
+CHANGES:
+1. Label every panel with its pT interval and units.
+2. Remove the large blank area above the grid and enlarge the panels and their text.
+3. State the cross-section units and define the panel-specific scaling explicitly.
+4. Enlarge the legend, tick labels and χ² annotations to remain readable at final printed size.
+5. Add a compact ratio or residual display to make point–histogram differences easier to assess.
+END

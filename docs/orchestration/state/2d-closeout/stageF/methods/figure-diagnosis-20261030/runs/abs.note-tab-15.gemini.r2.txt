@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 2 | side-by-side concatenation of two unrelated sub-tables leaving rows 7–12 blank on the right
+D4: 2 | combined header "in-sample \chi^2, p" spanning two columns and missing degrees of freedom for in-sample and model-only columns
+D6: 3 | caption contains conversational commentary and omits definitions of column n and the sub-table structure
+D7: 2 | false row-level alignment between independent sub-tables and inconsistent metrics across tests
+TAKEAWAY: Full in-sample covariance adequately absorbs model shifts, whereas evaluating data against model-only uncertainties produces massive chi-squared values and demonstrates strong rejection power against shape alternatives P1 and P2.
+CHANGES:
+1. Split the table into two separate tables or vertically stacked panels (a) and (b) to eliminate false row correspondence and the empty lower-right space.
+2. Replace the combined header "in-sample \chi^2, p" with a spanning header over separate subheaders for \chi^2 and p.
+3. Report degrees of freedom (n or ndf) for the in-sample and model-only columns.
+4. Add p-values for the model-only column or explicitly state in a footnote why they are omitted.
+5. Standardize numerical format and precision for p-values across all columns.
+6. Add subtle vertical whitespace between distinct generator families (MINERvA Tune, GENIE, NuWro, GiBUU) in the truth column.
+7. Clarify in the column header or caption whether n denotes degrees of freedom or number of bins.
+8. Revise the caption to remove argumentative commentary ("none of them a test result", "which is not evidence") in favor of concise, objective descriptions.
+END

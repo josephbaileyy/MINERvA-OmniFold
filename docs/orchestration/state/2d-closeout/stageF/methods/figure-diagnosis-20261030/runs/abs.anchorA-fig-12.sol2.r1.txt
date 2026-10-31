@@ -1,0 +1,14 @@
+D1: 5 | -
+D2: 4 | Panels lack letter identifiers.
+D3: 3 | Greyscale renders positive and negative correlations with similar darkness, obscuring their sign.
+D4: 3 | All vertical matrix axes lack labels; colour bars lack a correlation-coefficient label; flattened muon-bin ordering is unexplained.
+D5: 5 | -
+D6: 5 | -
+D7: 4 | -
+TAKEAWAY: The matrices show predominantly positive correlations, with broad correlations between nearby bins and additional band structure in the muon distribution.
+CHANGES:
+1. Replace the colour map with a diverging palette whose positive and negative branches remain distinguishable in greyscale, or add labelled contours to identify negative correlations.
+2. Label each vertical axis with the corresponding observable’s bin index and label the colour bars “Correlation coefficient.”
+3. Explain the flattened muon-bin ordering in the caption and mark boundaries between bin groups on the matrix.
+4. Add panel identifiers (a)–(d) for unambiguous reference.
+END

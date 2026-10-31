@@ -1,0 +1,15 @@
+D1: 3 | Tick labels, axis labels and statistics-box text are too small at printed size.
+D2: 4 | -
+D3: 3 | The greyscale heatmap renders positive and negative differences with similar shades, obscuring their signs.
+D4: 3 | The colour bar and histogram use “pull,” whereas the caption defines a descriptive standardized difference.
+D5: 4 | -
+D6: 4 | -
+D7: 3 | The unexplained “χ²/ndf paper” annotation complicates interpretation of the otherwise straightforward residual distribution.
+TAKEAWAY: The standardized differences cluster near zero, with mean 0.06 and RMS 0.54, and a few larger deviations.
+CHANGES:
+1. Increase tick-label, axis-label and statistics-box font sizes for the final printed dimensions.
+2. Replace “pull” on both axes with “standardized difference.”
+3. Add sign-specific contours or symbols to the heatmap so positive and negative values remain distinguishable in greyscale.
+4. Explain what “χ²/ndf paper = 2.27” compares in the caption, or remove the annotation.
+5. Label the panels “(a)” and “(b)” for unambiguous reference.
+END

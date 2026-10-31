@@ -1,0 +1,10 @@
+D1: A | Typography and numerical values in A are exceptionally sharp and legible, whereas B features crowded tick marks and dense, tiny cells in the first panel.
+D2: A | A uses a clean lower-triangular table layout with standard booktabs rules, while B wastes space with four redundant colorbars and lacks subpanel identifiers.
+D3: B | B effectively uses a diverging colormap to visually encode correlation magnitude and sign, whereas A is an uncolored table.
+D4: A | A clearly labels all row and column indices, whereas B completely omits labels on all four vertical axes and lacks a quantity label on the colorbars.
+D5: EQUAL | Neither item includes a comparison to a theoretical prediction or reference dataset.
+D6: A | A provides a concise, self-contained caption defining the matrix, while B lacks panel definitions and inappropriately includes speculative discussion.
+D7: B | The 2D heatmaps allow immediate visual grasp of correlation structures and block patterns across observables, which cannot be quickly extracted from 120 numbers in a table.
+OVERALL: A
+GAP: 1. Add descriptive labels to all vertical axes indicating the observable and bin index. 2. Consolidate the four redundant colorbars into a single shared colorbar to the right. 3. Add subpanel identifiers ((a)–(d)) to the plots and reference them in the caption. 4. Add a quantity label to the colorbar (e.g., "Correlation coefficient"). 5. Remove interpretive discussion from the caption and explicitly define the observables and panels. 6. Use a perceptually uniform, colorblind-friendly diverging colormap that remains distinguishable in grayscale.
+END

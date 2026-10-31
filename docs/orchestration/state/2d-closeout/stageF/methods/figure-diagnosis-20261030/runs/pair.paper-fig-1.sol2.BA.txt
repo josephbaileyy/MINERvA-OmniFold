@@ -1,0 +1,10 @@
+D1: A | Larger labels, legends and data marks remain easier to read at printed size.
+D2: A | The simpler two-panel arrangement provides clearer spacing and a less crowded visual hierarchy.
+D3: B | Restrained comparison colours and a diverging residual scale give colour a clear, consistent purpose.
+D4: B | Momentum notation, differential quantities, scale factors and units are more explicitly specified.
+D5: B | Ratio panels, uncertainty bands and standardized residuals make differences from the reference easier to assess.
+D6: B | The caption explains every panel, defines the uncertainty treatment and warns against misinterpreting band overlap.
+D7: A | The distributions and their component contributions can be understood with less scanning and caption reading.
+OVERALL: B
+GAP: 1. Add data-to-prediction ratio panels. 2. Define the data error bars in the caption. 3. Include prediction uncertainty if available. 4. Use consistent momentum symbols and explicit unit conventions. 5. Reduce repeated legend space to accommodate comparison panels while preserving readable type.
+END

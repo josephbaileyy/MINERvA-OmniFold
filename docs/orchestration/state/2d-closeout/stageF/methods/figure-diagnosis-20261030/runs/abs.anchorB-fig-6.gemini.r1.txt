@@ -1,0 +1,17 @@
+D1: 4 | -
+D2: 3 | missing panel labels ((a), (b)) and duplicated legend across panels
+D3: 2 | component curves indistinguishable in greyscale due to identical solid line styles
+D4: 4 | -
+D5: 3 | compressed high-momentum tails on linear scale lacking ratio or residual panels
+D6: 3 | duplicate legend in both panels and lack of designation for total vs components
+D7: 3 | unlabelled panels and indistinguishable greyscale curves impede rapid interpretation
+TAKEAWAY: MINERvA measured differential cross sections in muon transverse and longitudinal momenta are well described by the MnvGENIE v1 model, driven predominantly by quasi-elastic scattering and resonance production at lower momenta and deep inelastic scattering at higher momenta.
+CHANGES:
+1. Panel labels: Label the top panel "(a)" and bottom panel "(b)", and update the caption to reference them explicitly.
+2. Line styles: Assign distinct line styles (e.g., solid for total, dashed, dotted, dash-dotted for components) and higher-contrast colours so all theoretical components are distinguishable in greyscale and under colour-blindness.
+3. Legend consolidation: Remove the duplicate legend from the bottom panel and indicate in the legend that MnvGENIE v1 is the total sum of the components.
+4. Ratio panels: Add ratio subpanels (Data/MnvGENIE v1) below each distribution to enable quantitative comparison across the compressed high-momentum tails.
+5. Axis units: Change "Nucleon" to lowercase "nucleon" and absorb the scale factor into the y-axis labels, e.g., $d\sigma/dp_T\ (10^{-39}\ \text{cm}^2/\text{GeV}/\text{nucleon})$.
+6. Origin ticks: Adjust the tick positioning or suppress the redundant origin label to eliminate crowding between the x- and y-axis "0" ticks in the top panel.
+7. Line contrast: Increase the line weight and darken the colour of the pale "Other CC" curve so it does not wash out against the background.
+END

@@ -1,0 +1,12 @@
+D1: 4 | -
+D2: 3 | The reconstructed definitions for q₃ and W nearly touch, weakening row separation.
+D4: 3 | The observable-name column has no header.
+D6: 3 | The caption does not explain q₀, M, or M̄, or identify the truth and reconstruction conventions.
+D7: 3 | Long prose and stacked equations obscure the comparison between truth and reconstructed definitions.
+TAKEAWAY: The five observables have distinct truth and reconstructed definitions, with several reconstructed quantities sharing muon kinematics and energy inputs.
+CHANGES:
+1. Add “Observable” above the first column.
+2. Increase vertical spacing between the q₃ and W rows, especially in the reconstructed-definition column.
+3. Expand the caption to define q₀, M, and M̄ and briefly explain the truth/reconstruction distinction.
+4. Shorten repeated prose and align corresponding expressions to make the truth-to-reconstruction comparison easier to scan.
+END

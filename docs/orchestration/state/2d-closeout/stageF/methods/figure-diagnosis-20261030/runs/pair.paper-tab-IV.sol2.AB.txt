@@ -1,0 +1,10 @@
+D1: EQUAL | Both use readable type and clearly distinguish model names and numerical entries.
+D2: A | Restrained horizontal rules and balanced spacing produce a cleaner table.
+D3: EQUAL | Both are monochrome tables.
+D4: B | Both statistical columns are explicitly named; A’s “shape-only” header leaves the numerical format implicit.
+D5: EQUAL | Both align model entries with two statistical comparisons for straightforward scanning.
+D6: A | The caption identifies the comparison target, covariance treatment, and meaning of shape-only.
+D7: A | Minimal ruling and prominently displayed degrees of freedom make the results quicker to assess.
+OVERALL: A
+GAP: 1. Remove B’s horizontal rules between every row. 2. State the comparison target in B’s caption. 3. Briefly explain the distinction between its two statistical treatments. 4. Place the common degrees of freedom in a header or compact table note.
+END

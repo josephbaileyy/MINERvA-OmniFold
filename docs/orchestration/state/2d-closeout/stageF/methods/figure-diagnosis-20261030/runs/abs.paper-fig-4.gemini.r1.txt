@@ -1,0 +1,17 @@
+D1: 4 | -
+D2: 3 | unlabelled panels and large empty whitespace in the lower panel
+D3: 4 | -
+D4: 3 | unlabelled horizontal axis
+D5: 3 | separate lower panel with disparate vertical scale for GiBUU
+D6: 4 | -
+D7: 3 | split panels with disparate vertical scales and crowded top panel
+TAKEAWAY: Most model predictions agree with the data within 10–30% across the sixteen kinematic cells, whereas GiBUU substantially underpredicts the data with ratios reaching approximately 2.1 in the low-longitudinal-momentum, high-energy-transfer cells.
+CHANGES:
+1. Panels: Add panel labels "(a)" and "(b)" to the upper and lower panels, respectively, and update the caption to reference them.
+2. Horizontal axis: Add an explicit axis title (such as "Kinematic cell") for the R00–R15 bins.
+3. Lower panel y-axis: Extend the lower limit of the y-axis below 1.0 (e.g., to 0.8) so the unity reference line and the lower error bar of cell R11 do not overlap the bottom frame.
+4. Lower panel layout: Reorganize the lower panel to eliminate the large empty whitespace for the eight omitted cells (R04–R07, R12–R15), or plot GiBUU on a shared panel with an adjusted scale.
+5. Top panel data points: Increase the horizontal spacing (dodge) between the four model markers within each cell to reduce crowding and overlapping error bars.
+6. Top panel x-axis: Add tick marks along the bottom border of the top panel to clearly align cells between the upper and lower panels.
+7. Legend: Move the GiBUU entry from the main top legend to the lower panel where its data actually appear.
+END

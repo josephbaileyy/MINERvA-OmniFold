@@ -1,0 +1,18 @@
+D1: 3 | overlapping data markers, invisible error bars, and cramped y-axis labels
+D2: 3 | missing panel labels ((a), (b)) and excessive empty vertical space below $10^{-39}$
+D3: 2 | GENIE-CV, NuWro, and GiBUU markers indistinguishable in greyscale and under deuteranopia simulation
+D4: 2 | y-axis labels missing physical units on both panels
+D5: 2 | compressed four-decade log scale without ratio panels obscuring differences between data and generators
+D6: 3 | duplicated legend showing connecting lines that do not exist in the plotted data points
+D7: 2 | wide logarithmic scaling and overlapping markers preventing verification of generator discrepancies described in caption
+TAKEAWAY: Differential cross sections fall with increasing $E_{\rm avail}$ and peak near $W \approx 1.25\text{ GeV}$, but the wide logarithmic scale obscures whether any generator systematically underpredicts the data.
+CHANGES:
+1. y-axis labels: Add physical units (e.g., $\text{cm}^2/\text{GeV}$ or appropriate differential cross-section units) to both $d\sigma/dE_{\rm avail}$ and $d\sigma/dW$.
+2. Comparison layout: Add lower ratio panels (Data/MC or MC/Data) beneath both distributions to clearly show relative discrepancies between models and data.
+3. Generator representation: Draw generator predictions as continuous curves or a combined envelope/band as described in the caption rather than overlapping discrete markers.
+4. Colour and line styles: Use high-contrast, colourblind-safe colours combined with distinct line patterns (solid, dashed, dotted) so generators remain distinguishable in greyscale and deuteranopia.
+5. Data points: Include visible statistical and systematic error bars on the unfolded data points.
+6. Panel labelling and legend: Add panel labels "(a)" and "(b)", and replace the duplicated in-panel legends with a single shared legend.
+7. y-axis range: Raise the y-axis lower limit from $10^{-40}$ to $10^{-39}$ to eliminate the empty bottom decade and expand the plotted data region.
+8. x-axis range for $W$: Restrict the lower limit of the $W$ axis to start near the physical threshold ($\sim 0.5\text{ GeV}$) instead of 0 to eliminate unphysical empty space.
+END

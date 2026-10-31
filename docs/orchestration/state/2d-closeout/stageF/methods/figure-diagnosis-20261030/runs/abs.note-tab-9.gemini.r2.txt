@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | Column 4 ("Test cells") numerical entries left-aligned instead of right-aligned, and excessive table width
+D4: 3 | Column 4 header "Test cells" lacks units or definition, and Column 3 mixes qualitative descriptions with units in table cells
+D6: 2 | Caption ("Table 9: Generator predictions.") is not self-contained, lacks explanation of models and symbols, and does not follow PRD numbering convention
+D7: 3 | Undefined "Test cells" and vague entries ("analysis simulation", "as GENIE CV") obscure the scope and meaning of the comparison
+TAKEAWAY: The table summarizes the generator models, target materials, neutrino energy coverage/flux handling, and number of evaluated test cells used for model comparisons.
+CHANGES:
+1. Column 4 ("Test cells"): Right-align (or center) the numerical values so that the two-digit integer "72" aligns properly by digit place under the three-digit "109" values.
+2. Table width: Reduce the table width to natural column widths instead of stretching across the page, eliminating the large empty gap before the final column.
+3. Caption: Expand the caption to follow PRD style ("TABLE IX. ...") and provide a self-contained explanation of the generators, targets (CH, C), flux treatments, and the definition of "test cells".
+4. Column 4 header: Change "Test cells" to clearly indicate a quantity, e.g., "Number of test cells" or "Test cells ($N$)".
+5. Column 1 header: Rename "Prediction" to "Generator" or "Model" to accurately describe the listed tunes and models.
+6. Column 3 ("$E_\nu$ coverage and flux"): Replace informal shorthand "as GENIE CV" with the explicit energy range, and provide the specific $E_\nu$ coverage for "Tune v1" instead of "analysis simulation".
+7. Column 3: Standardize the presentation of energy units (GeV) or move the unit into the column header.
+8. Acronyms: Define abbreviations (CV, MEC, GENIE, GiBUU, NuWro) in the caption or in a table footnote.
+END

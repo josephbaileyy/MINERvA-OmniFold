@@ -1,0 +1,12 @@
+D1: 4 | Dense multiline body cells leave little breathing room.
+D2: 3 | Rows lack clear vertical separation; “LightGBM, seed 42” wraps awkwardly across three lines.
+D4: 5 | -
+D6: 3 | The caption dominates the table with detailed training and seed specifications.
+D7: 4 | The long “Used for” entries slow comparison.
+TAKEAWAY: Both estimators use the same background treatment, but serve different dimensional results, and their results are not combined.
+CHANGES:
+1. Add vertical space between the two estimator rows.
+2. Put “LightGBM” and “seed 42” on separate, intact lines in the two-observable estimator cell.
+3. Format the joint-test “Used for” cell as distinct lines for central values, the 5D result, held-out shapes, and the precision study.
+4. Shorten the caption by moving detailed reproducibility and seed specifications to the referenced methods section.
+END

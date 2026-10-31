@@ -1,0 +1,18 @@
+D1: 3 | top POT annotation and statistics box font size and formatting
+D2: 3 | missing panel labels (a) and (b)
+D3: 2 | diverging colormap in greyscale (positive and negative differences are indistinguishable in black and white)
+D4: 3 | axis labels ("pull" contradicts caption; `p_|| bin` and `p_T bin` lack LaTeX formatting and physical units)
+D5: 3 | colorbar range ([-5, 5] is excessively wide for data within [-2.5, 2], washing out contrast)
+D6: 4 | -
+D7: 3 | washed-out 2D color scale and bin-index axes impeding rapid kinematic interpretation
+TAKEAWAY: The current result closely reproduces the published measurement across the phase space, with standardized differences centered near zero (mean = 0.06) and an RMS of 0.54 reflecting strong correlation between the samples.
+CHANGES:
+1. Panel labels: Add "(a)" and "(b)" labels to the left and right panels, respectively, and reference them explicitly in the caption.
+2. Colormap: Choose a colormap that preserves sign distinction when converted to greyscale, ensuring positive and negative differences do not map to identical grey levels.
+3. Colorbar dynamic range: Narrow the colorbar scale from [-5, 5] to approximately [-2.5, 2.5] to reveal the spatial distribution of differences across the kinematic bins.
+4. Variable nomenclature: Replace the label "pull" on both the colorbar and the histogram x-axis with the standardized difference notation $(N_{\text{this}} - N_{\text{pub}})/\sigma_{\text{pub}}$ to eliminate contradiction with the caption.
+5. Axis labels and units: Format `p_|| bin` and `p_T bin` using standard math typesetting ($p_\parallel$, $p_T$) and provide physical momentum ranges or units (GeV/$c$).
+6. Statistics box: Change the monospace font to standard journal typography and define or clarify the $\chi^2/\text{ndf paper}$ entry.
+7. Annotation font size: Increase the font size of the "MINERvA ME FHC, $1.06 \times 10^{21}$ POT" annotation to match the legibility of the tick and axis labels.
+8. Histogram y-axis: Change the y-axis label from "bins" to "Number of bins" or "Entries".
+END

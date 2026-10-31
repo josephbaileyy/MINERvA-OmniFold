@@ -1,0 +1,17 @@
+D1: 3 | Tick labels, legend text and χ² annotations are too small; histogram strokes are thin.
+D2: 2 | All 14 panels lack slice-range labels; excessive top whitespace reduces usable plotting space.
+D3: 4 | The histogram is faint in greyscale, although its line form distinguishes it from the points.
+D4: 2 | The scaled cross-section axis lacks units, and the pT interval defining each panel is absent.
+D5: 3 | The linear horizontal range compresses most points into the left edge; overlapping points and histogram obscure local differences.
+D6: 5 | -
+D7: 3 | Missing slice identities and densely compressed peaks prevent a quick interpretation of how agreement varies across panels.
+TAKEAWAY: The unfolded points broadly follow the simulated shapes, with visible differences around the peaks in several panels.
+CHANGES:
+1. Label every panel with its pT interval and units.
+2. Increase tick-label, axis-label, legend and annotation font sizes at the final printed size.
+3. Remove excessive top whitespace and use the recovered space to enlarge the panels.
+4. Give the cross-section axis explicit units and clearly define the panel scaling factors.
+5. Thicken and darken the histogram stroke so it remains clear in greyscale.
+6. Add a clearly labelled shared horizontal-axis title spanning the panel grid.
+7. Provide peak-region enlargements or compact ratio panels to make local differences readable while retaining the full momentum range.
+END

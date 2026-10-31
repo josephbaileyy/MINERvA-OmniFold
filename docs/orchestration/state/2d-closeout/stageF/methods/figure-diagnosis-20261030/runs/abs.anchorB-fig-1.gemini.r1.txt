@@ -1,0 +1,17 @@
+D1: 3 | Top plot legend font size, faint line weights for interaction components, and crowded tick labels at bottom panel boundaries
+D2: 3 | Missing (a) and (b) subfigure labels, and missing bottom x-axis ticks and labels under columns 4 and 5 of the bottom plot
+D3: 2 | Interaction component curves (rely solely on color hue with thin solid lines; indistinguishable in greyscale and deuteranopia)
+D4: 3 | Missing x-axis tick marks and labels for columns 4 and 5 in the bottom plot, and colliding tick numbers ("20" and "5") across panel borders
+D5: 3 | Absence of data/prediction ratio panels and non-uniform panel multipliers that hinder direct comparison across kinematic slices
+D6: 3 | Duplicate, inconsistent legend placement (cramped inside the first data panel in the top plot versus standalone in the bottom plot)
+D7: 3 | High cognitive load from 25 unlabelled panels with changing scale multipliers, indistinguishable component curves, and no ratio panels
+TAKEAWAY: MINERvA double-differential neutrino event rates in muon longitudinal and transverse momenta are reasonably well described by MnvGENIE v1, illustrating the kinematic transition from quasi-elastic and resonant scattering at lower momentum to deep inelastic scattering at higher momentum.
+CHANGES:
+1. Label the top and bottom multi-panel plots as (a) and (b) both on the figure and in the caption to clearly identify the two momentum projections.
+2. Assign distinct line styles (e.g., dashed, dotted, dash-dotted) and increased line weights to the neutrino interaction components so they are distinguishable in greyscale and under deuteranopia.
+3. Remove the cramped legend from inside the top-left data panel and use a single unified legend placed outside the data panels.
+4. Add x-axis ticks and numeric tick labels to the bottom of panels in columns 4 and 5 of the bottom plot ($0.70 < p_T/\mathrm{GeV} < 0.85$ and $0.85 < p_T/\mathrm{GeV} < 1.00$).
+5. Adjust tick spacing or prune end ticks on the bottom plot x-axis to eliminate label collisions (e.g., "20" and "5") at panel boundaries.
+6. Include data-to-prediction ratio subpanels below the distributions to permit direct quantitative assessment of model agreement across all bins.
+7. Format the vertical axis unit following standard PRD conventions (e.g., $d^2N/dp_T dp_\parallel$ $[10^{-3}\ \mathrm{GeV}^{-2}]$) and explicitly indicate the multiplier application in the panel labels or axis definition.
+END

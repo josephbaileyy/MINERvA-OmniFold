@@ -1,0 +1,13 @@
+D1: 4 | Dense slice labels and tightly spaced bottom-row longitudinal-momentum tick labels.
+D2: 4 | Crowded panel grids; the two projections require substantial visual scanning.
+D3: 3 | RES, Soft DIS and Other CC become similar thin grey curves; several component colours also converge under deuteranopia.
+D4: 4 | Longitudinal-momentum tick labels near 10 and 20 are tightly spaced.
+D5: 4 | Data and total prediction compare clearly, but overlapping component curves are harder to follow.
+D6: 5 | -
+D7: 4 | -
+TAKEAWAY: MnvGENIE v1 broadly follows the measured shapes, but the data generally exceed its peaks in the higher-momentum slices.
+CHANGES:
+1. Give each interaction component a distinct dash pattern, retained consistently in both grids and legends.
+2. Reduce crowding between the bottom-row longitudinal-momentum tick labels by slightly reducing their font size or adjusting their placement.
+3. Add concise group labels identifying the top grid as longitudinal-momentum slices and the bottom grid as transverse-momentum slices.
+END

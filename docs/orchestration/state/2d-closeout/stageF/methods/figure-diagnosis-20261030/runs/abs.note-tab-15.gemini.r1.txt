@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 2 | side-by-side juxtaposition of unrelated power-alternative data with truth rows, creating false horizontal correspondence and leaving rows 7–12 blank
+D4: 3 | column header "in-sample \chi^2, p" spanning two distinct quantities without separate sub-headers
+D6: 3 | caption fails to define column quantity n, labels W1–W3, and the side-by-side structure of the two data sets
+D7: 3 | side-by-side arrangement of two distinct tests falsely implies row-wise relationships and obscures the primary comparison
+TAKEAWAY: Excluding systematic uncertainties dramatically inflates model-only $\chi^2$ across generator variations, while the full in-sample covariance accommodates most shifts and power alternatives test sensitivity to specific kinematic shape reweightings.
+CHANGES:
+1. Split the table into two separate stacked tables or sub-tables (e.g., Table 15(a) for truth tests and 15(b) for power alternatives) to eliminate the empty bottom-right space and false row associations.
+2. Column header "in-sample \chi^2, p": replace with a spanning header "in-sample" and separate sub-column headers "$\chi^2$" and "$p$".
+3. Column header "n": explicitly label the quantity and meaning (e.g., degrees of freedom or number of bins) in the header or caption.
+4. Body text: define the shorthand labels "W1", "W2", and "W3" in the caption or table footnotes.
+5. Columns "p": standardize precision and numerical formatting across all $p$-value entries instead of mixing differing decimal counts and scientific notation.
+6. Column "model-only \chi^2": provide the corresponding degrees of freedom and $p$-values, or explain in the caption why they are omitted.
+7. Caption: define the meaning of em-dashes ("—") appearing in the data cells.
+8. Rows: add thin horizontal rules or vertical white space grouping baseline models separately from alternative generator shifts (NuWro, GiBUU).
+END

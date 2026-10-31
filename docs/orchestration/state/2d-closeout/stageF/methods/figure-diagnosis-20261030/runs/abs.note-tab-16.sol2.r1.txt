@@ -1,0 +1,10 @@
+D1: 5 | -
+D2: 5 | -
+D4: 4 | “shape-only” does not explicitly identify the entries as χ²/ndf.
+D6: 3 | The caption leaves Ctotal, Cresp, and Vg undefined and does not explain the shape-only normalization.
+D7: 5 | -
+TAKEAWAY: GiBUU 2019 has the lowest displayed χ² per degree of freedom in both comparisons.
+CHANGES:
+1. Label the numerical columns “χ²/ndf” and “Shape-only χ²/ndf.”
+2. Define Ctotal, Cresp, and Vg in the caption and state how the shape-only comparison treats normalization.
+END

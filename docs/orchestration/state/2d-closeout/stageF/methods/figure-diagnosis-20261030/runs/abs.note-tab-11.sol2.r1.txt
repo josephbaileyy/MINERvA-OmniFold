@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 4 | The f column is right-aligned rather than decimal-aligned.
+D4: 4 | Uncertainty headers show covariance labels without explicitly identifying σ (%).
+D6: 4 | Ctotal and Cresp are not defined in the caption; their interpretation depends on §10.2.
+D7: 5 | -
+TAKEAWAY: The median relative uncertainty increases modestly from 6.74% to 7.29% when the response contribution is included, with individual combined uncertainties spanning 4.20–14.00%.
+CHANGES:
+1. Decimal-align the f values while preserving their reported precision.
+2. Add a spanning header “Relative uncertainty σ (%)” over the final three columns.
+3. Briefly define Ctotal and Cresp in the caption so the table can stand alone.
+END

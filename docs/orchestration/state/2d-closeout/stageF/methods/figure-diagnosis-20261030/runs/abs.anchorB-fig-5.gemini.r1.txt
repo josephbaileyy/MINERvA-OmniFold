@@ -1,0 +1,18 @@
+D1: 2 | top-left panel legend font size and origin tick collisions
+D2: 2 | excessive vertical whitespace between grids and hanging panels without bottom x-axes
+D3: 2 | identical solid line styles rendering systematic uncertainties indistinguishable in greyscale
+D4: 3 | missing x-axis tick marks and labels below columns 4 and 5 in the bottom grid
+D5: 3 | data curve occlusion by the embedded legend in the top-left panel
+D6: 2 | top-left panel data obstruction and misspelled label "Statisical"
+D7: 3 | fragmented dual-grid presentation and cluttered, indistinguishable low-uncertainty curves
+TAKEAWAY: Flux uncertainty dominates across most of the kinematic phase space, with muon reconstruction uncertainty contributing significantly in specific regions such as low longitudinal momentum and high transverse momentum.
+CHANGES:
+1. Legend text: Correct the spelling of "Statisical" to "Statistical" in both legends.
+2. Legend placement: Remove the legend from inside the top-left panel to prevent obscuring the curves, and combine into a single shared legend outside the plotting areas.
+3. Line styles: Use distinct line styles (e.g., dashed, dotted, dash-dotted) and weights for the systematic uncertainty categories so they can be differentiated in greyscale.
+4. Vertical whitespace: Eliminate the large blank gap between the top and bottom panel grids to bring the figure to a cohesive journal aspect ratio.
+5. Bottom-grid axes: Add x-axis tick marks and labels beneath columns 4 and 5 in the bottom grid.
+6. Panel labelling: Add subfigure labels "(a)" and "(b)" to clearly distinguish the $p_\parallel$-sliced and $p_T$-sliced panel sets.
+7. Tick collisions: Increase padding or offset the "0.0" y-axis tick label so it does not collide with the bottom axis frame and x-axis origin tick.
+8. Axis scale clarity: Add appropriate tick intervals and specify the scale type for the muon longitudinal momentum axis in the bottom grid.
+END

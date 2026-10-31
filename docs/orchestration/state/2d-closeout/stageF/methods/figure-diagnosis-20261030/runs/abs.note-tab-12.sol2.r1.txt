@@ -1,0 +1,12 @@
+D1: 5 | -
+D2: 4 | Last four columns lack a spanning header identifying their grouping.
+D4: 4 | “lateral,” “norm.,” “p,” and “EM” need clearer definitions.
+D6: 3 | Caption does not define R00–R15 or explain how Cresp relates to the other covariance groups.
+D7: 4 | -
+TAKEAWAY: The median relative uncertainty is 6.45% for Ce and 3.34% for Cmodel, while statistical uncertainty is small at 0.24%.
+CHANGES:
+1. Add a Cresp spanning header above “p,” “meson,” “EM,” and “other.”
+2. Define the R00–R15 cell labels in the caption or provide a precise reference to their definitions.
+3. Expand or define “lateral,” “norm.,” “p,” and “EM.”
+4. Explain in the caption how Cresp relates to the groups entering Ce and Cmodel.
+END

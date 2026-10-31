@@ -1,0 +1,10 @@
+D1: A | A maintains legible font sizes and clear data markers at print scale, whereas B has tiny, low-contrast text for annotations, ticks, and legend.
+D2: A | A uses a compact shared-axis grid maximizing panel area, whereas B wastes page area with large inter-panel gaps and empty space at the top.
+D3: A | A uses high-contrast, distinct colors to cleanly separate physics processes, whereas B uses only a single purple curve without channel differentiation.
+D4: A | A clearly specifies slice ranges with units on each subpanel and gives complete physical units on axes, whereas B lacks slice headers and y-axis units.
+D5: A | A compares data against prediction broken down by reaction mechanism, whereas B shows only an aggregate curve without channel decomposition.
+D6: A | A follows PRD caption conventions ("FIG. 7.") with clear phrasing and legible legends, whereas B uses non-standard caption formatting and a cramped legend.
+D7: A | A immediately conveys kinematic progression and dominant physics mechanisms per slice, whereas B leaves the reader unable to identify which slice each panel represents.
+OVERALL: A
+GAP: 1. Add explicit kinematic slice headers (e.g., $p_\parallel$ intervals) to each subpanel. 2. Remove inter-panel whitespace and share interior axes to enlarge data panels and eliminate top whitespace. 3. Include complete physical cross-section units on the vertical axis instead of an ambiguous "scaled" label. 4. Increase font sizes of axis numbers, legend text, and statistical annotations for print readability. 5. Decompose model predictions into constituent interaction channels or provide ratio panels for meaningful physical comparison. 6. Format caption to PRD style ("FIG. 10.") and provide a self-contained description.
+END

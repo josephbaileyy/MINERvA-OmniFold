@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 4 | Uneven spacing of the three mode-count columns weakens their grouping.
+D4: 3 | The σ (%) header does not identify the relative uncertainty’s reference quantity.
+D6: 3 | The caption leaves “relative σ” and the block label V_g undefined.
+D7: 4 | -
+TAKEAWAY: Across all five predictions, just two or three modes carry half the reported χ², with the leading mode contributing about 27–48%.
+CHANGES:
+1. Give the mode counts separate 50%, 90%, and 99% subheaders under a centered “Modes required” heading, with even column spacing.
+2. Define the reference quantity for relative σ in the caption and use a more explicit uncertainty header.
+3. Define V_g and explain what the dominant block identifies in the caption.
+END

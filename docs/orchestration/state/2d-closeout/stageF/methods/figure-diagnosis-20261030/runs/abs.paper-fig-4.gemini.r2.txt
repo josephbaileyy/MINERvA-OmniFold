@@ -1,0 +1,15 @@
+D1: 3 | Kinematic cell definition table below the horizontal axis (font size too small for PRD print)
+D2: 3 | Panels lack subpanel labels (a)/(b) and lower panel contains excessive empty whitespace
+D3: 5 | -
+D4: 3 | Horizontal axis lacks a quantity label for the cell identifiers (R00–R15)
+D5: 4 | -
+D6: 5 | -
+D7: 4 | -
+TAKEAWAY: Most generator models agree with the data within 10–30% across the sixteen kinematic cells, whereas GiBUU substantially underpredicts the cross section by up to a factor of two in the low-$p_\parallel$ cells.
+CHANGES:
+1. Panel labels: Add subpanel labels "(a)" and "(b)" to the upper and lower panels and update the caption to reference them.
+2. Horizontal axis: Add an explicit axis label (e.g., "Kinematic cell") adjacent to or above the R00–R15 tick labels.
+3. Kinematic cut table: Increase the font size of the kinematic definitions and numerical bounds below the x-axis to meet journal legibility standards.
+4. Lower panel layout: Compact the lower panel or mark omitted bins explicitly to avoid large blank areas for cells R04–R07 and R12–R15 where GiBUU predictions are absent.
+5. Legend organization: Group or annotate the legend entries to clearly associate the first four models with the upper panel and GiBUU with the lower panel.
+END

@@ -1,0 +1,15 @@
+D1: 5 | -
+D2: 3 | column f (lack of decimal alignment)
+D4: 3 | column headers (missing units across all columns)
+D6: 4 | -
+D7: 4 | -
+TAKEAWAY: The cell-integrated cross sections span 3.2 to 49.6 × 10⁻⁴⁰ cm²/nucleon across the 16 kinematic boxes, with marginal relative uncertainties typically around 7.3% (median 7.29%, ranging from 4.20% to 14.00%).
+CHANGES:
+1. Column headers: add physical units to all column headers (GeV/c for pT, p∥, q3; GeV for Eavail, W; 10⁻⁴⁰ cm²/nucleon for f; % for marginal σ/f).
+2. Column f: align all values on the decimal point rather than left-aligning them.
+3. Column f: format values with consistent decimal precision across all rows.
+4. Rows R00–R15: insert subtle vertical spacing (such as \addlinespace) every four rows or between R07 and R08 to delineate the kinematic blocks.
+5. Median row: provide the median value for column f, or insert an em-dash to explicitly indicate that it is not computed.
+6. Caption: remove unit definitions from the caption body once they are placed directly in the column headers.
+7. Kinematic range columns: center the intervals or align on the hyphens to improve horizontal layout consistency.
+END

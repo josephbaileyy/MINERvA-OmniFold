@@ -1,0 +1,12 @@
+D1: 5 | -
+D2: 5 | -
+D3: 2 | Nonmonotonic greyscale colourbar assigns similar shades to low and high efficiencies, making their ordering ambiguous.
+D4: 5 | -
+D5: 5 | -
+D6: 4 | White region within the axes is unexplained in the colourbar or caption.
+D7: 4 | Efficiency ordering is clear in colour but difficult to recover in greyscale.
+TAKEAWAY: Efficiency is highest at high longitudinal and low transverse muon momentum and falls toward the low-longitudinal, high-transverse boundary.
+CHANGES:
+1. Replace the efficiency colourmap with a sequential map whose lightness changes monotonically, and verify its greyscale and deuteranopia renderings.
+2. Explain the white region within the axes in the caption or a small key.
+END

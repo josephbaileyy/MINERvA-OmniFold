@@ -1,0 +1,10 @@
+D1: A | Larger axis labels and tick numerals are easier to read at printed size.
+D2: A | A single compact panel and short caption give a better balance of plot and explanatory text.
+D3: B | The diverging scale makes deviations above and below unity immediately distinguishable.
+D4: A | Properly typeset momentum variables and GeV units communicate physical coordinates directly.
+D5: B | Matched panels and a common scale support comparison of both results against the same prediction.
+D6: A | The caption identifies the quantity and main feature concisely; B is repetitive and includes unnecessary production commentary.
+D7: A | The plotted quantity, physical coordinates and principal trend are apparent more quickly.
+OVERALL: A
+GAP: 1. Enlarge B’s axis labels and tick numerals. 2. Typeset momentum symbols properly. 3. Supply physical bin edges and units, directly or through a clearly referenced mapping. 4. Label the panels “Our result” and “Published data.” 5. Shorten the caption, removing repetition and the statement about absent titles. 6. Use one shared colour bar to reduce duplication.
+END

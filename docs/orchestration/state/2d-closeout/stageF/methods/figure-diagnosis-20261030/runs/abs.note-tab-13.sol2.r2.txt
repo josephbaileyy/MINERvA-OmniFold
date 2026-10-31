@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 4 | Positive and negative entries are not aligned on their decimal points.
+D4: 4 | Cell identifiers R00–R15 are consistent but unexplained.
+D6: 3 | The caption does not identify the sixteen cells or explain where their definitions can be found.
+D7: 4 | The strongest correlations receive no visual emphasis in the dense numerical triangle.
+TAKEAWAY: Correlations are predominantly positive, with the strongest between R11 and R13 (0.92) and the most negative between R03 and R11 (−0.46).
+CHANGES:
+1. Align numerical columns on decimal points, reserving space for minus signs.
+2. Add a caption reference to the definitions or ordering of cells R00–R15.
+3. Consider restrained typographic emphasis for the largest absolute correlations, explaining the convention in the caption.
+END

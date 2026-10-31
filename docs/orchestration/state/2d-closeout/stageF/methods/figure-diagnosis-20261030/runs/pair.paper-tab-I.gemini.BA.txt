@@ -1,0 +1,10 @@
+D1: B | Table B has clear, complete typography, whereas Table A is vertically truncated and cluttered with repetitive math notation.
+D2: B | Table B uses standard PRD horizontal rules with no vertical lines, whereas Table A uses prohibited vertical rules and runs off the page.
+D3: EQUAL | Both are monochrome tables without colour.
+D4: B | Table B uses concise, effective headers, whereas Table A redundantly repeats the header variables and relational operators across every cell.
+D5: EQUAL | Neither table presents comparisons with references or predictions.
+D6: B | Table B follows PRD caption formatting with a period and a concise lead-in title, whereas Table A uses a nonstandard colon and minimal explanation.
+D7: B | Table B is immediately intelligible in under 30 seconds, whereas Table A is an overwhelming, repetitive index that is cut off.
+OVERALL: B
+GAP: 1. Remove all vertical rules and interior gridlines, using only horizontal rules at the top, bottom, and below column headers per PRD standards. 2. Prevent vertical clipping by splitting the table across multiple columns or into a two-column spread. 3. Replace redundant variable names and inequality signs in the cells with concise range notation (e.g., [0.2, 0.6] or 0.2–0.6). 4. Change the caption label from "TABLE I:" to "TABLE I." to adhere to APS/PRD style. 5. Add a concise title phrase at the beginning of the caption (e.g., "TABLE I. Phase-space binning...").
+END

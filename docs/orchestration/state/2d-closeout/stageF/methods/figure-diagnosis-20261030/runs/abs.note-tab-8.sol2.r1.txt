@@ -1,0 +1,12 @@
+D1: 4 | -
+D2: 3 | The stacked equations in the q₃ and W rows nearly touch across the row boundary.
+D4: 3 | The leftmost observable column has no header.
+D6: 3 | The generic caption provides no key to symbols such as q₀ and M̄ or to the calorimeter terminology.
+D7: 3 | Long prose cells and stacked equations make the truth–reconstruction comparison slow to scan.
+TAKEAWAY: The table compares truth and reconstructed definitions of five observables, highlighting their shared muon and calorimetric inputs.
+CHANGES:
+1. Add “Observable” above the leftmost column.
+2. Increase vertical padding between the q₃ and W rows so their equations form clearly separate groups.
+3. Break long definitions into shorter, consistently aligned lines, especially in the reconstructed E_avail cell.
+4. Expand the caption with a concise symbol key and definitions of specialized terminology needed to read the table independently.
+END

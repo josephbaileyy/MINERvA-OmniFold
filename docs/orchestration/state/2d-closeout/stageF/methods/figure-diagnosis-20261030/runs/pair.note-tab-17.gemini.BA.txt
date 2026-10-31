@@ -1,0 +1,10 @@
+D1: A | A has larger, comfortably spaced typography that is easily legible at single-column width, whereas B has tiny, crowded text across 11 columns.
+D2: B | B adheres to PRD convention by using horizontal rules only without vertical lines, whereas A uses prohibited vertical rules and has an orphaned top rule.
+D3: EQUAL | Both items are black-and-white tables with no color.
+D4: A | A provides clean, well-centered hierarchical column headers, whereas B suffers from repetitive subheaders, missing grouping rules, and awkward whitespace under wide model names.
+D5: B | B directly compares five theoretical model predictions against data using covariance-weighted pulls and relative differences, whereas A only evaluates unfolding methods without uncertainties.
+D6: A | A uses standard PRD Roman numeral numbering and a self-contained caption, whereas B uses non-standard Arabic numbering and leaves key symbols undefined.
+D7: A | A immediately conveys the performance ranking of unfolding methods across observables, whereas B presents an undigested 160-value data matrix with no summary row.
+OVERALL: A
+GAP: 1. Align numerical columns on the decimal point rather than right-aligning text strings. 2. Add column-grouping sub-rules (\cmidrule) under the spanning model headers to clearly associate the pull and (g − f)/f subheaders. 3. Follow PRD caption conventions (TABLE XVII. with a period) and define all notation (f, g, σ, and cell IDs). 4. Wrap wide model headers to eliminate the excessive horizontal gap between subheaders. 5. Include summary statistics (e.g., mean pull or total χ²) per model to enable rapid comparison. 6. Place the percent unit (%) directly in the (g − f)/f column subheaders rather than solely in the caption.
+END

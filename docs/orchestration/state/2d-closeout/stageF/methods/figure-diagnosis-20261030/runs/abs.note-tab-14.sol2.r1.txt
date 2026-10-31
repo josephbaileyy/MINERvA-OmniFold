@@ -1,0 +1,13 @@
+D1: 4 | Body rows are tightly spaced.
+D2: 4 | Long cell lists leave little separation before the following χ² column.
+D4: 4 | The “covariance” heading does not clearly describe entries naming a removed generator contribution.
+D6: 3 | The generator-shift clause is difficult to parse; “hybrid,” W1–W3, and R cell identifiers are unexplained.
+D7: 4 | -
+TAKEAWAY: GiBUU hybrid and the synthetic q₃ tilt show the strongest disagreement, while including Cresp generally improves agreement.
+CHANGES:
+1. Increase body-row spacing slightly.
+2. Increase the gutter between the first “cells” column and the following χ² column.
+3. Rename “covariance” to identify the removed contribution explicitly, and explain “full” and “−generator.”
+4. Split the caption into shorter sentences separating the test definition, covariance treatment, and definition of n.
+5. Define or provide explicit references for “hybrid,” W1–W3, and the R cell identifiers.
+END

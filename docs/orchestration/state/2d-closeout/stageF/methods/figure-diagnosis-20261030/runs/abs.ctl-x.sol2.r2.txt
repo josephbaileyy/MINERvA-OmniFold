@@ -1,0 +1,17 @@
+D1: 2 | Tick labels, legends and panel headings are too small; error bars are barely discernible.
+D2: 3 | The panels occupy a small central area, with excessive surrounding whitespace and a large gap before the caption.
+D3: 2 | The saturated green background and reddish foreground give poor contrast; the greyscale and deuteranopia copies remain low contrast.
+D4: 3 | Repeated W-bin tick numbers and top Eavail interval labels are crowded and difficult to read.
+D5: 3 | Overlapping markers in panel (b) impede comparison of the three series; their error bars are difficult to resolve.
+D6: 3 | Small, low-contrast legend text and symbols hinder identification; the caption’s grey references do not appear grey in the colour image.
+D7: 3 | Tiny plotting elements and weak contrast slow recognition of the difference between panels.
+TAKEAWAY: Panel (a) shows substantial structured recovery residuals, while the three deformation tests in panel (b) generally lie closer to zero.
+CHANGES:
+1. Replace the green plotting background with white and use dark text and axes.
+2. Enlarge both panels to use the available figure width and reduce the surrounding whitespace.
+3. Increase tick, axis-label, legend and panel-heading font sizes.
+4. Use distinct dark colours together with clearly different marker shapes that remain distinguishable in greyscale.
+5. Increase error-bar visibility and slightly offset the three series horizontally in panel (b).
+6. Clarify the grouped horizontal axis with stronger group boundaries and larger Eavail interval labels.
+7. Render the injected-change step and uncertainty band in neutral greys consistent with the caption.
+END

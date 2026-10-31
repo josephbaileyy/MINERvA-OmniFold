@@ -1,0 +1,18 @@
+D1: 4 | -
+D2: 3 | missing panel labels (a) and (b)
+D3: 3 | diverging colormap is symmetric in greyscale luminance, making excess and deficit indistinguishable in black and white
+D4: 4 | -
+D5: 3 | lack of experimental uncertainty estimates on cell comparison values
+D6: 3 | caption references quoted percentage shares that are absent from the figure
+D7: 4 | -
+TAKEAWAY: Unfolded data exceed the MINERvA Tune v1 prediction by 10–30% across most of $(E_{\mathrm{avail}}, W)$ phase space, with the integrated cross-section excess concentrated in the high-$E_{\mathrm{avail}}$, high-$W$ region and at low $W < 1.1\text{ GeV}$, alongside a localized deficit around $W \simeq 1.4\text{–}1.8\text{ GeV}$.
+CHANGES:
+1. Panel labels: Add "(a)" and "(b)" labels to the top and bottom panels, and update the caption to refer to panels (a) and (b) instead of "Top" and "bottom".
+2. Caption / bottom panel: Either overlay the quoted percentage shares onto the bottom panel cells or remove the sentence referencing them from the caption.
+3. Colormap: Replace the symmetric diverging colormap with one that maintains monotonic or distinct luminance in greyscale so positive and negative values can be distinguished in black-and-white print.
+4. Uncertainties: Add uncertainty values (or indicate statistical significance) for the per-cell ratios and differences so readers can assess agreement.
+5. Layout / x-axis: Remove the redundant "$W\text{ (GeV), bin edges}$" label and tick marks from the top panel so the vertically stacked panels share a single x-axis.
+6. Colorbar labels: Make model nomenclature consistent across colorbars by changing "Tune v1" to "MINERvA Tune v1" on the bottom colorbar.
+7. Text contrast: Adjust the text color threshold so numbers on darker backgrounds (e.g., "1.30" in row 6, column 1 of the top panel) render in white for legibility.
+8. Axis labels: Simplify axis titles to standard format ($E_{\mathrm{avail}}\text{ (GeV)}$ and $W\text{ (GeV)}$) and keep the explanation of equal-size display bins within the caption.
+END

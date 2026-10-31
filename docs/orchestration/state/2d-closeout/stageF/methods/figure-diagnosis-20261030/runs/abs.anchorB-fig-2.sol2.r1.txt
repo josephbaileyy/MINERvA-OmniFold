@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 5 | -
+D3: 3 | Both heatmaps use a colour scale with nonmonotonic greyscale brightness: intermediate values appear lighter than the maximum, making magnitude ambiguous in black and white.
+D4: 5 | -
+D5: 5 | -
+D6: 5 | -
+D7: 4 | -
+TAKEAWAY: Both momentum projections concentrate near the diagonal, with some migration into neighbouring bins.
+CHANGES:
+1. Replace the colour map in both panels with a sequential map whose brightness changes monotonically across 0–1, and verify it in greyscale and under deuteranopia simulation.
+END

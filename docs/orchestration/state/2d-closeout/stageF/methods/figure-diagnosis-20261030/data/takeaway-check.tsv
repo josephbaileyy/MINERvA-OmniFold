@@ -1,0 +1,129 @@
+item	rater_rep	verdict	reason
+note-fig-10	gemini r1	PARTIAL	shape tracking is right, but it reads the per-panel chi^2 as 'massive discrepancies'; Fig. 9's caption calls it a stat-only descriptive scale
+note-fig-10	gemini r2	PARTIAL	locates the discrepancy at 'higher kinematics/lower pT' vaguely (it grows in the higher-p_par rows) and spends the takeaway on missing labels
+note-fig-10	sol2 r1	CORRECT	points above simulation at peaks and tails, largest in the bottom rows, as rendered; consistent with the tune deficit in Sec. 8.5
+note-fig-10	sol2 r2	CORRECT	excess over the MC prior growing toward the lower (higher-p_par) rows matches the render
+note-fig-11	gemini r1	WRONG	90% of chi^2 is reached at about 87 modes, not ~75, and 'localized in a few bins' conflicts with the text's 'no single band carries more than 15%'
+note-fig-11	gemini r2	PARTIAL	~80 modes understates the ~87 crossing; the hotspots are real but the text's point is that chi^2 is spread over many modes
+note-fig-11	sol2 r1	CORRECT	about 12 decades, about 90 modes to 90%, a few large positive bins: matches the render and Sec. 8.4
+note-fig-11	sol2 r2	CORRECT	same reading as r1; consistent with the spread-over-many-modes statement
+note-fig-12	gemini r1	PARTIAL	spatial split right, but omits the caption's eigenvalue grouping (smallest-lambda vs moderate-lambda)
+note-fig-12	gemini r2	CORRECT	three smallest-lambda modes at the highest-p_par edge, three moderate-lambda below, as the caption and text say
+note-fig-12	sol2 r1	PARTIAL	spatial split right, but omits the lambda grouping the caption ties to it
+note-fig-12	sol2 r2	PARTIAL	same as sol2 r1
+note-fig-13	gemini r1	CORRECT	measurement on top of published; Tune v1 below at the peak (Sec. 8.5)
+note-fig-13	gemini r2	CORRECT	same; Tune v1 under the peak
+note-fig-13	sol2 r1	CORRECT	same
+note-fig-13	sol2 r2	CORRECT	same
+note-fig-14	gemini r1	CORRECT	deficit at lowest pT, ratios above unity elsewhere, both maps alike: the caption's statement
+note-fig-14	gemini r2	CORRECT	same, in the caption's terms
+note-fig-14	sol2 r1	CORRECT	same
+note-fig-14	sol2 r2	CORRECT	same
+note-fig-24	gemini r1	CORRECT	10-30% excess, integrated excess at high E_avail/high W and low W, ~10% deficit at 1.4-1.8 (0.89 cell): matches caption and render
+note-fig-24	gemini r2	CORRECT	same three features as the caption
+note-fig-24	sol2 r1	CORRECT	same three features
+note-fig-24	sol2 r2	CORRECT	same three features
+note-fig-25	gemini r1	PARTIAL	describes the falling spectra but says discrepancies are obscured, missing the caption's point that every generator is below the data at high W and E_avail
+note-fig-25	gemini r2	PARTIAL	same miss: the takeaway is that the log scale hides the generator deficit the caption states
+note-fig-25	sol2 r1	CORRECT	predictions below the data at the high ends, GiBUU lowest: consistent with Sec. 7.8
+note-fig-25	sol2 r2	CORRECT	data above all four at the largest E_avail and W, GiBUU lowest
+note-fig-30	gemini r1	CORRECT	GENIE CV, GENIE+MEC and Tune v1 led by modes 7 and 13 at 4.6-12.6 sigma; NuWro by 15, 10, 5: as rendered
+note-fig-30	gemini r2	PARTIAL	modes 7 and 13 carry 60-68% for those three, not up to 80%
+note-fig-30	sol2 r1	CORRECT	leading shares 40.6-47.9% for the GENIE family and Tune, 31.3% NuWro; all leading distances negative
+note-fig-30	sol2 r2	CORRECT	leading mode 31-48%, all four leading distances negative
+note-fig-7	gemini r1	CORRECT	agreement with published, peaks near 0.6 GeV/c and 3-4.5 GeV/c, GENIE below at the peaks (Sec. 8.1, 8.5)
+note-fig-7	gemini r2	CORRECT	reproduces published slices and the expected peaks, 10-20% above GENIE
+note-fig-7	sol2 r1	CORRECT	follows published, above GENIE, peaked projections
+note-fig-7	sol2 r2	PARTIAL	comparison right, but omits the caption's main content (the pT and p_par peaks and their physics)
+note-fig-8	gemini r1	CORRECT	centred near zero, mean 0.06, RMS 0.54 (values.tex)
+note-fig-8	gemini r2	PARTIAL	numbers right, but attributes the RMS to 'strong correlation between the samples', which the item does not show; it is descriptive only
+note-fig-8	sol2 r1	CORRECT	mean 0.06, RMS 0.54, a few larger deviations
+note-fig-8	sol2 r2	CORRECT	same
+note-fig-9	gemini r1	PARTIAL	shape tracking right; the rest is a critique (unlabelled slices), not the content
+note-fig-9	gemini r2	PARTIAL	same: the takeaway is mostly that labels and compression prevent interpretation
+note-fig-9	sol2 r1	CORRECT	points follow the MC-prior shapes with differences at the peaks
+note-fig-9	sol2 r2	CORRECT	same
+note-tab-11	gemini r1	CORRECT	f 3.21-49.6, combined sigma 4.20-14.00%, median 7.29%, C_resp median 2.14%
+note-tab-11	gemini r2	CORRECT	same values; C_total median 6.74%
+note-tab-11	sol2 r1	CORRECT	6.74% to 7.29% median, 4.20-14.00% span
+note-tab-11	sol2 r2	CORRECT	6.74 to 7.29, C_resp median 2.14
+note-tab-12	gemini r1	CORRECT	C_e median 6.45, flux 3.55 and lateral 2.38 largest, C_model 11.36 (R02) and 11.15 (R11), meson/proton lead C_resp
+note-tab-12	gemini r2	CORRECT	C_e 4.05-8.47%, C_model below 4% in 10 of 16 cells with R02, R11 above 11%
+note-tab-12	sol2 r1	CORRECT	6.45, 3.34, stat 0.24
+note-tab-12	sol2 r2	CORRECT	C_model exceeds C_e in R02, R03, R11
+note-tab-13	gemini r1	CORRECT	mostly positive, four pairs at 0.81-0.92, minimum -0.46
+note-tab-13	gemini r2	CORRECT	69% of entries in 0.1-0.7, max 0.92, min -0.46
+note-tab-13	sol2 r1	CORRECT	0.92 at R11-R13; negatives cluster on R02, R03
+note-tab-13	sol2 r2	CORRECT	0.92 at R11-R13, -0.46 at R03-R11
+note-tab-14	gemini r1	PARTIAL	lumps both GiBUU truths together: the GiBUU E_avail shape has chi^2 25.5, p 0.062 and fails only by cell R06
+note-tab-14	gemini r2	WRONG	gives the q3 tilt 'multiple outlier cells' (it has none) and both GiBUU truths p << 1e-5 (the E_avail shape has p 0.062)
+note-tab-14	sol2 r1	PARTIAL	GiBUU hybrid and q3 tilt are the worst, but the third failing truth (GiBUU E_avail shape, R06) is missed
+note-tab-14	sol2 r2	PARTIAL	same omission of the third failing truth
+note-tab-15	gemini r1	WRONG	reads the in-sample numbers as the covariance 'accommodating' shifts; the caption says the in-sample numbers are not evidence and none is a test result
+note-tab-15	gemini r2	WRONG	claims 'strong rejection power' and 'adequately absorbs'; the caption makes all of these descriptive, and the power alternatives are descriptive after a failed control
+note-tab-15	sol2 r1	CORRECT	model-only much larger than in-sample; P1, P2 p below P3 on both truths
+note-tab-15	sol2 r2	CORRECT	descriptive framing kept; GiBUU hybrid model-only largest (24825)
+note-tab-16	gemini r1	CORRECT	GiBUU lowest raw chi^2 (on 8/7 dof); GENIE CV best among 16-dof predictions
+note-tab-16	gemini r2	CORRECT	per dof GENIE CV (6.8) and GiBUU (7.3) lowest total, GiBUU (4.0) and GENIE CV (7.2) lowest shape-only
+note-tab-16	sol2 r1	WRONG	per dof GiBUU is not lowest in the full comparison: 58.46/8 = 7.3 vs GENIE CV 109.35/16 = 6.8
+note-tab-16	sol2 r2	CORRECT	lowest listed values for GiBUU on fewer dof, Tune v1 highest (329.72)
+note-tab-17	gemini r1	PARTIAL	underprediction and GiBUU's -52% right, but calling Tune v1 comparatively close blurs Table 16 (Tune v1 has the largest chi^2)
+note-tab-17	gemini r2	WRONG	Tune v1 and GENIE+MEC have the two largest chi^2 (330, 272), not the closest agreement
+note-tab-17	sol2 r1	CORRECT	most (g-f)/f negative; GiBUU largest deficits
+note-tab-17	sol2 r2	CORRECT	most predictions below; GiBUU largest discrepancies
+note-tab-18	gemini r1	PARTIAL	GiBUU is mixed, not opposite: it falls under interaction and lateral shrinkage and rises only under flux, detector and all four
+note-tab-18	gemini r2	WRONG	GiBUU is not stable: it rises to 70.8 (flux) and 89.9 (four together) at alpha = 1
+note-tab-18	sol2 r1	CORRECT	flux and four-together drive the falls; GiBUU smaller falls and some rises
+note-tab-18	sol2 r2	CORRECT	GiBUU rises at full shrinkage in the flux, detector and combined blocks
+note-tab-19	gemini r1	CORRECT	2-3 modes for 50%, top mode 26.8-47.9%, interaction for 3 of 5
+note-tab-19	gemini r2	CORRECT	2-3 / 6-13 modes, top share 27-48%, mostly interaction
+note-tab-19	sol2 r1	CORRECT	two or three modes for half, 27-48%
+note-tab-19	sol2 r2	CORRECT	4-9 modes for 90%, 27-48%
+note-tab-5	gemini r1	PARTIAL	picks chi^2/bin 0.929 (double-counts shared systematics) as the agreement measure and omits 2.27
+note-tab-5	gemini r2	PARTIAL	'highly consistent across all 205 bins' with 0.929 omits the published-covariance chi^2 2.27 and the descriptive caveat
+note-tab-5	sol2 r1	CORRECT	ratio 1.010, 95.1% within 10%
+note-tab-5	sol2 r2	CORRECT	same
+note-tab-6	gemini r1	CORRECT	systematic 5.94%, ML 0.05%, combined 6.41% below 6.85%
+note-tab-6	gemini r2	CORRECT	same; 'consistent' is the text's 'comparable'
+note-tab-6	sol2 r1	CORRECT	systematics dominate; 6.414% below 6.85%
+note-tab-6	sol2 r2	CORRECT	same
+note-tab-8	gemini r1	CORRECT	truth vs reconstructed definitions of the five observables
+note-tab-8	gemini r2	CORRECT	same, plus shared conventions
+note-tab-8	sol2 r1	CORRECT	same, shared muon and calorimetric inputs
+note-tab-8	sol2 r2	CORRECT	same
+note-tab-9	gemini r1	CORRECT	GiBUU on 72 cells, others on 109
+note-tab-9	gemini r2	PARTIAL	lists the columns only; omits the 109 vs 72 cell and energy-coverage difference
+note-tab-9	sol2 r1	CORRECT	109 vs 72 cells; GiBUU most restricted coverage
+note-tab-9	sol2 r2	CORRECT	same
+paper-fig-1	gemini r1	CORRECT	close reproduction, residual mean 0.060 and RMS 0.535, Tune v1 below
+paper-fig-1	gemini r2	WRONG	'within uncertainties' is what the caption rules out: the bands are correlated, so their overlap is not a compatibility test
+paper-fig-1	sol2 r1	CORRECT	follows published with slightly smaller median uncertainty; Tune v1 below
+paper-fig-1	sol2 r2	CORRECT	same
+paper-fig-2	gemini r1	CORRECT	negative-weight removes the ~4% high-W bias in the projection cells (text: below 0.3% there)
+paper-fig-2	gemini r2	PARTIAL	'near zero across all kinematic cells' overstates: the text leaves up to 1% in some joint cells
+paper-fig-2	sol2 r1	CORRECT	removes the projection residual; localized joint-cell residuals remain
+paper-fig-2	sol2 r2	CORRECT	same, with positive joint-cell residuals noted
+paper-fig-3	gemini r1	WRONG	claims (b) brings residuals within the uncertainty and 'resolves' (a); the text says within it in about half the cells, from a covariance that fails its criteria, and (a), (b) use different truths
+paper-fig-3	gemini r2	WRONG	'within experimental systematic uncertainties' contradicts the text's 'within the quoted total uncertainty in about half of those cells'
+paper-fig-3	sol2 r1	CORRECT	large structured residuals in (a); smaller in (b) with excursions beyond the band
+paper-fig-3	sol2 r2	PARTIAL	true, but implies (b) fixes (a) without the excursions beyond the band or the different truths
+paper-fig-4	gemini r1	PARTIAL	GiBUU ratio 2.1 in R02 is right, but calling 10-30% deviations 'agreement' blurs Table IV, where every prediction is strongly disfavoured
+paper-fig-4	gemini r2	PARTIAL	same 'agree within 10-30%' framing; GiBUU factor ~2 is right
+paper-fig-4	sol2 r1	CORRECT	most ratios near or above unity; GiBUU largest, R02 (2.10) and R03 (1.81)
+paper-fig-4	sol2 r2	PARTIAL	'cluster around unity' blurs that most upper-panel ratios are above one (data above predictions); GiBUU 2.1 in R02 right
+paper-tab-I	gemini r1	CORRECT	joint-test for 3D/4D/5D and shape tests; two-observable for 2D and covariance
+paper-tab-I	gemini r2	CORRECT	same
+paper-tab-I	sol2 r1	CORRECT	same background treatment, different results, not combined
+paper-tab-I	sol2 r2	CORRECT	same
+paper-tab-II	gemini r1	PARTIAL	says passing truths have no outlier cells and omits the third listed truth (GiBUU E_avail shape, R06)
+paper-tab-II	gemini r2	WRONG	reads the bias tests as model exclusion ('strongly excluded', 'compatibility with the sixteen cells') and gives the q3 tilt outlier cells it does not have
+paper-tab-II	sol2 r1	PARTIAL	C_resp lowers every chi^2 and the two worst are right, but the third listed truth is missed
+paper-tab-II	sol2 r2	PARTIAL	same omission
+paper-tab-III	gemini r1	CORRECT	f about 3-50, sigma 4-14%, median 7.29%
+paper-tab-III	gemini r2	CORRECT	3.2-49.6, 4.20-14.00%, median 7.29%
+paper-tab-III	sol2 r1	CORRECT	includes the full-covariance caveat
+paper-tab-III	sol2 r2	CORRECT	3.21-49.6, 4.20-14.00%, 7.29%
+paper-tab-IV	gemini r1	WRONG	GiBUU is not best overall per dof: 58/8 = 7.3 vs GENIE CV 109/16 = 6.8
+paper-tab-IV	gemini r2	CORRECT	GENIE CV best overall, GiBUU best shape-only, Tune v1 worst
+paper-tab-IV	sol2 r1	CORRECT	GiBUU lowest raw values on fewer dof; 58 to 28 when the normalization is freed
+paper-tab-IV	sol2 r2	CORRECT	all well above unity; GENIE CV lowest full, GiBUU lowest shape-only

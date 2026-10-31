@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 4 | Uneven spacing between the three mode-count columns.
+D4: 4 | The 50/90/99% mode-count columns lack individually aligned subheadings.
+D6: 3 | “Relative σ” lacks a reference quantity, and the block label V_g is undefined.
+D7: 4 | -
+TAKEAWAY: Across the predictions, 4–9 eigenmodes carry 90% of the reported χ², with the leading mode contributing approximately 27–48%.
+CHANGES:
+1. Give the mode-count group three evenly spaced columns with aligned subheadings “50%,” “90%,” and “99%.”
+2. Define the reference quantity used for relative σ in the caption.
+3. Explain the block label V_g in the caption.
+END

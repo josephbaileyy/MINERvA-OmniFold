@@ -1,0 +1,18 @@
+D1: 3 | Exponent offsets ("1e-38", "1e-39") on 1D panels, tiny POT headers, and crowded markers in 2D subpanels
+D2: 3 | Missing panel identifiers ((a), (b), (c)), middle block omitted from caption, and orphan tick labels in top grid
+D3: 2 | Blue markers (OmniFold) and black markers (Published) indistinguishable in greyscale
+D4: 3 | Raw exponent offsets ("1e-38", "1e-39") on y-axes, inconsistent units between 2D and 1D panels, and orphan tick labels
+D5: 3 | Omission of published comparison data from 1D projections and lack of ratio panels for 2D distributions
+D6: 2 | Complete omission of legend in middle grid and conflicting marker styling/entries between top and bottom panels
+D7: 3 | Cognitive overload from 34 panels, redundant 2D slicings, and mismatch between caption and layout
+TAKEAWAY: The OmniFold unbinned unfolding method reproduces the published MINERvA 2D cross sections and expected 1D kinematic peaks in $p_T$ and $p_\parallel$, exhibiting modest (~10–20%) discrepancies relative to the GENIE prediction.
+CHANGES:
+1. Distinguish data series in greyscale: Change the marker symbol or use open markers for "This work (OmniFold)" so it is distinguishable from solid black "Published" markers in black-and-white printing.
+2. Fix exponent labels on 1D axes: Replace raw matplotlib offset text ("1e-38" and "1e-39") with properly formatted scale factors incorporated into the axis titles.
+3. Add panel labels and update caption: Label the three sections as (a), (b), and (c) (or omit the redundant middle grid), and update the caption to describe all panels and define all series.
+4. Add legend to middle block: Provide a legend in the middle grid of $p_\parallel$ slices, or remove the block if redundant.
+5. Include published data in 1D projections: Add the "Published (PRD 104, 092007)" data points to the 1D projection plots and their ratio panels.
+6. Harmonize styling across subfigures: Keep color and marker conventions consistent between 2D and 1D panels (OmniFold changes from blue in 2D to black in 1D).
+7. Standardize units: Ensure identical notation across panels, consistently using $\text{GeV}/c$ rather than mixing with $\text{GeV}$, and matching capitalization of nucleon.
+8. Remove orphan tick marks: Eliminate the floating $x$-axis tick labels in row 3 (columns 3 and 4) of the top grid that hang into the empty space above the legend.
+END

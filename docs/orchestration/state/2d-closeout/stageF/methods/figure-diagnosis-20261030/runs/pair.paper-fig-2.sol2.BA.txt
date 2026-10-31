@@ -1,0 +1,10 @@
+D1: A | Less crowded data points and tick labels make individual results easier to read.
+D2: A | The regular panel grid separates kinematic regions more cleanly than B’s crowded lower strip.
+D3: B | Blue circles and red squares provide strong contrast and redundant shape coding.
+D4: A | Physical variables, units and angular ranges are easier to locate; B’s axes carry excessive explanatory text.
+D5: A | The common ratio scale, unity line and prior overlay support consistent comparisons across panels.
+D6: B | The caption specifies both methods and the error-bar meaning; A leaves its shaded band unexplained.
+D7: B | The two methods and their departures from zero are apparent quickly, especially in panel (a).
+OVERALL: A
+GAP: 1. Split or enlarge B’s crowded lower panel. 2. Reduce overlapping joint-cell tick labels. 3. Move detailed bin definitions from axis labels into the caption. 4. Add unobtrusive grouping guides to panel (b). 5. Increase the smallest labels and ensure error bars remain distinguishable at printed size.
+END

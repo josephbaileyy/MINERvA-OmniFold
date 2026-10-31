@@ -1,0 +1,10 @@
+D1: B | Larger axis labels and tick text remain easier to read at printed size.
+D2: B | The balanced two-by-two arrangement uses space more efficiently and maintains consistent panel sizing.
+D3: A | The restrained diverging palette communicates signed deviations more comfortably than B’s saturated red–blue scale.
+D4: B | Observable labels use clearer mathematical notation; A’s “pull” labels conflict with its caption’s qualification.
+D5: A | The published reference and normalization are explicitly defined, making the comparison interpretable.
+D6: A | The caption precisely defines the plotted quantity and states an important limitation of its interpretation.
+D7: B | The diagonal structure and differences among observables are immediately apparent.
+OVERALL: B
+GAP: 1. Enlarge A’s axis labels, ticks, and statistics text. 2. Reduce excess whitespace and bring caption typography into proportion. 3. Use proper mathematical notation for momentum components. 4. Replace “pull” with “standardized difference” throughout. 5. Define the displayed χ²/ndf statistic and replace the ambiguous “paper” label.
+END

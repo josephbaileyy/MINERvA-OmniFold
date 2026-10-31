@@ -1,0 +1,15 @@
+D1: 4 | -
+D2: 3 | row titles
+D3: 5 | -
+D4: 3 | horizontal axis label
+D5: 4 | -
+D6: 5 | -
+D7: 4 | -
+TAKEAWAY: Discrepancies between data and predictions are dominated by two shared eigenmodes (modes 7 and 13) for GENIE CV, GENIE + MEC, and MINERvA Tune v1, carrying 60%–80% of their total $\chi^2$ with multi-sigma pulls, while NuWro is driven by a distinct set of modes.
+CHANGES:
+1. Horizontal axis: Add an x-axis label (e.g., "Kinematic bin" or "Cell") beneath the bottom row to define the quantity represented by R00–R15.
+2. Row titles: Center each model name across the three columns (or place them as row headers) rather than placing them solely above the first column, which leaves awkward empty whitespace above columns 2 and 3.
+3. Vertical axis label: Center the "loading" label along the full vertical height of the four rows, or repeat it on each row, rather than aligning it only with row 3.
+4. X-axis tick labels: Angle the labels R00–R15 at 45 degrees rather than 90 degrees vertical to improve natural reading flow.
+5. In-panel annotations: Add slight margin or padding above the tallest bars (e.g., mode 7 in row 2, column 2 and row 4, column 2) to prevent the bar from nearly colliding with the annotation text.
+END

@@ -1,0 +1,16 @@
+D1: 3 | Tick labels, legend text and χ² annotations are too small across the 16 panels.
+D2: 2 | Panels lack slice labels or identifiers; excessive whitespace above the grid reduces usable plotting space.
+D3: 4 | -
+D4: 2 | The p∥ slice ranges and units are missing; the scaled cross-section axes lack units and a clear scaling definition.
+D5: 3 | Overlapping markers and histogram lines obscure differences in several panels; panel-dependent scale factors complicate magnitude comparisons.
+D6: 4 | -
+D7: 3 | Missing slice labels and unexplained scaling prevent a quick understanding of how the discrepancy varies across kinematics.
+TAKEAWAY: The unfolded points generally lie above the simulated prediction around the peaks and along the falling tails, with visibly larger differences in the bottom row.
+CHANGES:
+1. Label every panel with its p∥ interval and unit, and add panel identifiers.
+2. Remove the large blank area above the grid and use the space to enlarge panels and text.
+3. Increase tick-label, axis-label, legend and annotation font sizes for the final printed size.
+4. Give the cross-section units and explicitly define the per-panel scaling, including the displayed powers of ten.
+5. Add compact data-to-prediction ratio panels or a companion ratio figure to expose differences hidden by overlap.
+6. Explain the χ²/n notation and statistical-error convention in the caption.
+END

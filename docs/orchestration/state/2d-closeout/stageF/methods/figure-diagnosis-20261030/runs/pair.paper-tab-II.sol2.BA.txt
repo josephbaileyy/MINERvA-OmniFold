@@ -1,0 +1,10 @@
+D1: A | Larger type and more generous spacing make entries easier to read at printed size.
+D2: A | Compact columns and consistent spacing avoid B’s crowded lower rows.
+D3: EQUAL | Both are monochrome tables.
+D4: EQUAL | Both clearly identify columns and specify the relevant degrees of freedom.
+D5: B | Parallel covariance groups make the two comparison conditions explicit and directly comparable.
+D6: B | The caption defines the outlier threshold, covariance choices and generator exclusions.
+D7: A | Readers can quickly identify the baseline and compare methods across observables.
+OVERALL: A
+GAP: 1. Increase B’s body type size. 2. Widen the cells columns to separate long cell lists from adjacent numerical entries. 3. Shorten or wrap truth labels to allow more balanced column spacing.
+END

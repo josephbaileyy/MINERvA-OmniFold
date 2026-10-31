@@ -1,0 +1,10 @@
+D1: 5 | -
+D2: 5 | -
+D4: 4 | “shape-only” does not explicitly identify its entries as χ²/ndf.
+D6: 4 | Ctotal and Cresp are not defined in the caption.
+D7: 4 | Different degrees of freedom require readers to calculate ratios to compare fit quality.
+TAKEAWAY: All predictions have χ²/ndf substantially above unity; GENIE CV has the lowest full ratio, while GiBUU has the lowest shape-only ratio.
+CHANGES:
+1. Label the numeric columns “Full χ²/ndf” and “Shape-only χ²/ndf.”
+2. Briefly define Ctotal and Cresp in the caption.
+END

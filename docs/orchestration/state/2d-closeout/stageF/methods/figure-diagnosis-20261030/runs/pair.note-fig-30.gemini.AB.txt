@@ -1,0 +1,15 @@
+D1: A | A maintains crisp typography and legible bin labels throughout, whereas B suffers from cramped tick marks, tangled curves near the baseline, and a misspelled legend ("Statisical").
+D2: A | A uses a cohesive, well-aligned 4×3 grid, whereas B awkwardly stacks two mismatched grids separated by a large blank gap and crowds a legend over data in the first panel.
+D3: A | A employs a clean, model-differentiated color scheme with clear contrast, whereas B uses saturated multi-colored lines that overlap and become indistinguishable near zero.
+D4: A | A features clearly defined axes, unit loadings, and model headers, whereas B has awkwardly formatted headers ("p_{||}/GeV") and severely bunched tick labels ("5", "10", "20") on the bottom panels.
+D5: A | A quantitatively evaluates four theoretical models against data with explicit statistical metrics ($\chi^2$ share, $\sigma$, projection distance), whereas B displays only internal systematic breakdowns without reference predictions.
+D6: A | A provides a thorough caption explaining all conventions, metrics, and exclusions, whereas B has a minimal caption, unformatted math variables ("p||", "pT"), and duplicate typos in its legends.
+D7: A | A allows the reader to instantly identify which phase-space regions drive discrepancies for each model, whereas B requires extensive effort to untangle 25 panels of overlapping systematic curves.
+OVERALL: A
+GAP: 1. Correct the spelling of "Statistical" in both legends.
+2. Relocate the legend in the top panel array out of the active plotting area into a dedicated space.
+3. Eliminate the large vertical white gap between the top and bottom panel arrays to create a unified figure layout.
+4. Resolve curve crowding near the baseline by grouping minor systematic uncertainties or using distinct line styles.
+5. Apply standard LaTeX math typography ($p_\parallel$, $p_T$) in headers, axis labels, and caption, and fix crowded x-axis tick spacing on the bottom row.
+6. Expand the caption to define all systematic error categories and specify the phase-space coverage.
+END

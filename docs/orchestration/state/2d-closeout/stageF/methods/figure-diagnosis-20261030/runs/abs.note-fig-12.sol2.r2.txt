@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | Six panels lack identifiers or eigenmode labels.
+D3: 2 | Positive and negative loadings become indistinguishable in greyscale.
+D4: 3 | Axis labels show literal underscores; colourbars have no quantity labels.
+D5: 3 | Panel-specific colour scales hinder direct comparison of loading magnitudes.
+D6: 3 | No key links individual panels to the smallest-λ and moderate-λ groups described in the caption.
+D7: 3 | Missing mode identifiers and eigenvalues prevent readers from connecting the spatial patterns to the caption’s λ classification.
+TAKEAWAY: Three modes concentrate near the highest longitudinal-momentum bins, while three show structure at lower longitudinal-momentum bins.
+CHANGES:
+1. Label panels (a)–(f), and identify each mode and its eigenvalue or λ group.
+2. Typeset axis labels as \(p_T\) bin and \(p_\parallel\) bin, removing literal underscores.
+3. Label the colourbars “Eigenvector component” or the appropriate plotted quantity.
+4. Preserve loading sign in black-and-white printing, for example with clearly explained positive and negative contour styles.
+5. Use common symmetric colour limits across panels, or explicitly explain the independent scaling.
+6. Update the caption to identify the panels belonging to each λ group.
+END

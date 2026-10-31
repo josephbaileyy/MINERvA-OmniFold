@@ -1,0 +1,10 @@
+D1: A | A provides clean row spacing without horizontal rules crowding the text, ensuring superior legibility at printed size.
+D2: A | A correctly places the caption above the table and uses standard booktabs rules, whereas B places the caption below and uses horizontal rules between every row.
+D3: EQUAL | Both items are monochrome tables with no colour elements.
+D4: B | B provides complete and parallel column headers ("Standard $\chi^2$" and "Log-normal $\chi^2$"), whereas A has an incomplete and asymmetric header ("shape-only").
+D5: A | A reports model-specific degrees of freedom and separates shape from normalization, enabling an accurate and physically meaningful comparison.
+D6: A | A places the caption above the table per PRD standards and thoroughly defines the covariance components, notation, and dataset, whereas B's caption is misplaced and minimal.
+D7: A | A is quickly digestible due to its concise row count, uncluttered layout, and explicit $\chi^2/\text{ndf}$ values, whereas B presents a dense grid of large unreduced numbers.
+OVERALL: A
+GAP: 1. Move the caption above the table in accordance with PRD table formatting. 2. Remove all interior horizontal rules between rows and the double top rule, using only standard booktabs horizontal rules. 3. Expand the caption to specify the experimental dataset and explain the covariance treatment used in the calculations. 4. Format values as $\chi^2/\text{ndf}$ (or reduced $\chi^2$) to make goodness-of-fit immediately apparent. 5. Replace "Process Variant" with "Model" or "Prediction" to better reflect the comparison of distinct generators and tunes.
+END

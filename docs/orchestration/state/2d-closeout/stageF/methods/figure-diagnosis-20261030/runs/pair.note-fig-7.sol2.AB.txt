@@ -1,0 +1,10 @@
+D1: B | Larger lettering, markers and panel labels remain readable at printed size; A’s upper grids are too small.
+D2: B | Two consistent panel grids provide clearer organization; A combines dense grids and projections with uneven spacing.
+D3: B | Distinct component colours establish a clearer hierarchy; A’s blue and black measurements are harder to separate.
+D4: B | Axis titles, ticks and slice boundaries are easier to read, with units included in the slice labels.
+D5: A | Dedicated data/model ratio panels make deviations easier to quantify, and published measurements provide another comparison.
+D6: B | The readable legends and concise caption clearly identify the panel groups and prediction components.
+D7: B | Larger panels and consistent styling make the figure’s structure and comparisons apparent more quickly.
+OVERALL: B
+GAP: 1. Split A into separate figures for slices and projections; 2. Enlarge slice labels, ticks, markers and legends; 3. Reduce excess whitespace and align panel groups; 4. Distinguish the two measurement series using different marker shapes; 5. Make momentum units explicit in slice labels; 6. Revise the caption to identify all comparison series and explain panel scale factors.
+END

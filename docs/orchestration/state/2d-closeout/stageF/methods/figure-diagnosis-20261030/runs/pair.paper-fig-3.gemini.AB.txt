@@ -1,0 +1,10 @@
+D1: A | A provides sharp contrast and clearly resolved data points, whereas B suffers from washed-out light-blue markers and illegibly overlapping error bars.
+D2: A | A features clean panel headers and unoccluded legends, whereas B has redundant top titles, misplaced panel tags below the axis, and legends overlapping the data.
+D3: A | A uses a distinct, colorblind-friendly palette with neutral grey reference shading, whereas B relies on overlapping monochromatic blue bands that blur into an indistinct mass.
+D4: A | A includes explicit units, clear hierarchical binning, and informative technical subheadings, whereas B lacks units, repeats redundant titles, and has a case mismatch with its caption.
+D5: A | A clearly displays comparisons against stepped truth and covariance uncertainty bands, whereas B's overlapping analytic bands obscure validation of the numerical points.
+D6: A | A provides an unoccluded legend and a comprehensive caption defining all error bars and conventions, whereas B's legend covers data and its caption omits error bar definitions.
+D7: A | A allows immediate comprehension of residual performance across kinematic cells, whereas B requires tedious effort to disentangle cluttered bands and overlapping markers.
+OVERALL: A
+GAP: 1. Remove the redundant top titles and relocate panel tags (a) and (b) to standard positions above or inside the panels. 2. Reposition legends into clear whitespace so they do not obstruct data points, error bars, or shaded bands. 3. Replace the monochromatic blue palette with distinct, high-contrast colors, and avoid overlapping opaque/translucent bands. 4. Darken the lightest markers and error bars and resolve the visual crowding of data points near the center. 5. Harmonize notation between the figure axes ($Z_T$) and the caption ($z_T$), and specify units on both axes. 6. Explicitly define what the error bars represent in the caption.
+END

@@ -1,0 +1,10 @@
+D1: EQUAL | Both use clear, consistently sized type with readable mathematical notation.
+D2: B | Restrained horizontal rules and a compact structure give the table a cleaner visual hierarchy.
+D3: EQUAL | Both are tables.
+D4: A | Momentum units appear directly in the column header; B leaves units and the percentage designation in its caption.
+D5: EQUAL | Neither presents a comparison with reference values or predictions.
+D6: B | The caption thoroughly defines the quantities, uncertainties, boundary conventions and comparison requirements.
+D7: B | The compact table, aligned values and separated median row support a faster initial scan.
+OVERALL: B
+GAP: 1. Replace vertical rules with restrained horizontal rules and whitespace; 2. Strengthen separation between angular groups using consistent spacing; 3. Arrange the long table in clearly labelled blocks or continued sections to reduce vertical scanning.
+END

@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | Missing column 1 header and lack of vertical separation between multiline rows
+D4: 3 | Missing column 1 header and missing units for observables
+D6: 3 | Terse caption lacking experimental context, symbol definitions, and PRD numbering format
+D7: 3 | Dangling "$Q^2$" in row 3 truth definition and conflation of two observables in row 1
+TAKEAWAY: The table summarizes and compares the truth-level definitions, reconstructed definitions, and shared conventions for the five kinematic variables ($p_T$, $p_\parallel$, $E_{\rm avail}$, $q_3$, and $W$) used in the analysis.
+CHANGES:
+1. Column 1 header: Add an explicit heading such as "Observable" above the first column.
+2. Units: Add physical units (e.g., $\text{GeV}$ or $\text{GeV}/c$) for each observable in the first column or its header.
+3. Row separation: Add vertical whitespace between rows to cleanly separate adjacent multiline expressions.
+4. Row 3 truth definition: Complete or remove the dangling "$Q^2$" symbol under the $q_3$ definition.
+5. Caption: Expand the caption to provide experimental context, define symbols ($q_0, \bar{M}$), and use PRD style ("TABLE VIII.").
+6. Row 1 observables: Split $p_T$ and $p_\parallel$ into separate rows to clearly display all five observables promised by the caption.
+7. Row 2 reference: Replace the informal blue hyperlink "(§7.1)" with standard PRD text format (e.g., "Sec. VII A").
+8. Row 4 equation layout: Format the multiline expression for reconstructed $W$ using standard relation alignment rather than trailing an equals sign.
+END

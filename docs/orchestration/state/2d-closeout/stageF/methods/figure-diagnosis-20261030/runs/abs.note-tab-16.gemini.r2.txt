@@ -1,0 +1,15 @@
+D1: 5 | -
+D2: 2 | table horizontal placement and lack of decimal alignment
+D4: 3 | header "shape-only" missing quantity name and lowercase "prediction"
+D6: 2 | caption lacking observable context, covariance definitions, and explanation for GiBUU ndf
+D7: 3 | combined χ²/ndf slash notation impeding immediate comparison between models with differing ndf
+TAKEAWAY: None of the generator models describe the data well (χ²/ndf ≫ 1), though GENIE 2.12.10 CV and GiBUU 2019 give the lowest χ² per degree of freedom for both total and shape-only comparisons.
+CHANGES:
+1. Table layout: Center the table horizontally beneath the full-width caption rather than placing it to the right with large blank space on the left.
+2. Caption: State the measured reaction channel/observable, define the covariance matrix symbols (C_total, C_resp, V_g), and explain why GiBUU has 8 degrees of freedom instead of 16.
+3. Header (column 3): Change "shape-only" to "Shape-only χ²" (or "χ²_shape/ndf") so the quantity being reported is explicit.
+4. Header (column 1): Capitalize "prediction" to "Prediction" or change to "Model".
+5. Columns 2 and 3: Separate χ² and ndf into dedicated columns, or report the reduced χ²/ndf directly so readers do not have to perform mental division across differing ndf.
+6. Data columns: Align all numerical entries on the decimal point.
+7. Caption: Replace informal phrasing ("with the shape-only χ² beside it") with standard scientific wording (e.g., "for total and shape-only uncertainties").
+END
