@@ -1,0 +1,13 @@
+D1: 4 | -
+D2: 4 | -
+D4: 3 | The power-alternative column “n” is undefined, and fixed-decimal and scientific-notation p values are difficult to compare.
+D6: 3 | The seven-line caption crowds the table with covariance qualifications and alternative definitions.
+D7: 3 | The lengthy caption and coded P1r–P3g labels slow identification of the main comparisons.
+TAKEAWAY: The descriptive model-only χ² values are generally much larger than the in-sample values, while P1 and P2 have smaller listed p values than P3 on both truths.
+CHANGES:
+1. Define “n” explicitly in the caption or column heading.
+2. Shorten the caption’s covariance discussion and move detailed qualifications to the surrounding text.
+3. Label the left and right column groups “Descriptive comparisons” and “Power alternatives” to clarify their separate row structures.
+4. Add a compact key for P1–P3 and r/g immediately below the table.
+5. Standardize p-value formatting and align mantissas or decimal points consistently.
+END

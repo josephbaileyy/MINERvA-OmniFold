@@ -1,0 +1,15 @@
+D1: A | A maintains legible, crisp font sizes for all labels and annotations at printed size, whereas B has microscopic axis text and severely compressed data points.
+D2: A | A efficiently packs panels with shared axes and no dead space, whereas B wastes area with wide inter-panel gaps, empty grid slots, and 75% unused horizontal domain per panel.
+D3: A | A uses a distinct multi-color scheme to separate the total prediction and individual reaction channels, whereas B uses a single thin, pale line with poor contrast.
+D4: A | A explicitly identifies kinematic slice ranges and scale factors with proper physical units on every panel, whereas B omits slice definitions entirely and lacks units on the vertical axis.
+D5: A | A compares data against total prediction and six decomposed interaction processes, whereas B shows only an aggregate simulation curve with uncontextualized chi-squared values.
+D6: A | A follows standard PRD caption styling ("FIG. 7.") with clear external legends, whereas B uses non-standard "Figure 9:" with an overly discursive caption that still fails to define the panels.
+D7: A | A allows instant comprehension of cross-section shapes and channel contributions across kinematics, whereas B cannot be understood in 30 seconds due to missing slice labels and compressed distributions.
+OVERALL: A
+GAP: 1. Add kinematic slice ranges (e.g., $p_T$ bins) to the header of each individual panel.
+2. Truncate the $p_\parallel$ axis (e.g., to 20 GeV/c) to eliminate the large unused horizontal space in every panel.
+3. Remove gaps between panels to share interior tick axes and eliminate empty grid slots and canvas whitespace.
+4. Increase font sizes for axis labels, tick numbers, and legends to ensure legibility at standard printed column width.
+5. Add explicit physical units to the vertical axis rather than an undefined "scaled" label.
+6. Adopt standard PRD caption conventions ("FIG. 9.") and relocate methodological narrative into the main text.
+END

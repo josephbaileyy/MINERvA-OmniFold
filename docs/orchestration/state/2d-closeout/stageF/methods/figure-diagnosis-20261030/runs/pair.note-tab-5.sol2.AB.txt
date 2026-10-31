@@ -1,0 +1,10 @@
+D1: A | Larger type and generous row spacing make the entries easier to read at printed size.
+D2: B | Compact alignment and grouped columns give the table a clearer visual hierarchy.
+D3: EQUAL | Both are tables.
+D4: B | Observable symbols and degrees of freedom explicitly identify each numerical column.
+D5: A | Ratios, agreement fractions, and standardized differences make agreement with the reference easy to assess.
+D6: B | The caption clearly identifies the compared quantities and explains the organization.
+D7: B | The regular method-by-observable grid supports rapid scanning and comparison.
+OVERALL: B
+GAP: 1. Shorten A’s long row labels. 2. Group normalization, bin agreement, and uncertainty-based diagnostics. 3. Replace “this” with a specific measurement label. 4. Define the bin-ratio and standardized-difference conventions in the caption.
+END

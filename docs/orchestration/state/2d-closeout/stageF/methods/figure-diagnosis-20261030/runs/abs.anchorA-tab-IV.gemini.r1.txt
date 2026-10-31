@@ -1,0 +1,16 @@
+D1: 5 | -
+D2: 3 | Table rules (vertical lines and stray header rule) and center-aligned numeric columns
+D4: 3 | Column headers (missing units for observables and scale factor for triangular discriminator)
+D6: 3 | Caption (lacks definition of acronyms, scale factor, and statement that lower values indicate better agreement)
+D7: 3 | Table presentation (unstated direction of merit and lack of visual distinction for best results)
+TAKEAWAY: MultiFold achieves the closest agreement with the truth-level cross section (lowest triangular discriminator) across all four observables, substantially outperforming single-variable unfolding methods and the unadjusted prior.
+CHANGES:
+1. Table rules: Remove all vertical rules to conform to standard Physical Review D style.
+2. Super-header rule: Add a full-width horizontal rule above "Triangular Discriminator" and remove the stray vertical rule segment to its left.
+3. Column alignment: Align numerical values in columns 2–5 on the decimal point rather than centering them.
+4. Observable headers: Include units for all kinematic observables (e.g., $\text{GeV}$ or $\text{GeV}/c$ for $p_\mu$ and $\delta p_{\text{T}}$; $\text{rad}$ or $\text{deg}$ for $\delta\alpha_{\text{T}}$ and $\delta\phi_{\text{T}}$).
+5. Discriminator scale: Specify the multiplier or scale factor (e.g., $\times 10^{-3}$) for the triangular discriminator in the super-header or caption.
+6. Row grouping: Add vertical whitespace between the "Prior" baseline row and the unfolding method rows to visually separate the input model from the algorithms.
+7. Caption: Expand the caption to define abbreviations (e.g., IBU), clarify what "Prior" represents, and explicitly state that lower discriminator values indicate better agreement with truth.
+8. Data emphasis: Bold the lowest (best-performing) value in each column to allow readers to immediately identify the winning method.
+END

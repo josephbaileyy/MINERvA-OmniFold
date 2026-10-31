@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | lack of spanner headers for deposit categories and absence of row grouping
+D4: 3 | missing units in column headers and uncontextualized deposit categories (p, meson, EM, other)
+D6: 3 | caption abuts the top table rule, omits definition of cells R00–R15, and defines an absent C_total
+D7: 3 | omission of the defined C_total column and disjointed column ordering of C_resp categories
+TAKEAWAY: Relative uncertainties across cells are dominated by experimental systematics (median $C_\text{e} = 6.45\%$, primarily flux and lateral) and model variations (median 3.34%, peaking above 11% in R02 and R11), with proton and meson categories driving the detector response.
+CHANGES:
+1. Caption spacing: Add vertical whitespace between the caption and the top table rule to eliminate the collision between the text and the rule.
+2. Spanner header: Add a spanning header over the last four columns labeled "$C_\text{resp}$ deposit categories" to clarify their identity and grouping.
+3. Total column: Add a column for $C_\text{total}$ as defined in the caption ($C_\text{total} = C_\text{e} + C_\text{model}$), or remove its definition from the caption text.
+4. Column ordering: Reorder the columns so that the four $C_\text{resp}$ deposit columns are placed beside the `detector` column, keeping summary columns ($C_\text{e}$, $C_\text{model}$, and $C_\text{total}$) grouped at the right.
+5. Units in headers: Specify the unit "(%)" directly in the column headers or in a dedicated sub-header row.
+6. Row grouping: Insert subtle vertical spacing (such as `\addlinespace`) every four rows to assist the reader in tracking values across all 13 columns.
+7. Caption content: Define what physical kinematic bins "cell" (R00–R15) represents, and clarify that $C_\text{e}$ is the quadrature sum of the preceding experimental groups.
+8. Header consistency: Standardize header naming by expanding abbreviations ("stat.", "norm.") to match unabbreviated titles ("interaction", "detector").
+END

@@ -1,0 +1,14 @@
+D1: 3 | The five-row cell-definition key and long legend use small text at printed size.
+D2: 4 | -
+D3: 4 | -
+D4: 5 | -
+D5: 5 | -
+D6: 4 | -
+D7: 4 | -
+TAKEAWAY: Most upper-panel ratios lie near or moderately above unity, while GiBUU shows larger departures, especially in R02 and R03.
+CHANGES:
+1. Enlarge the legend and cell-definition text, using the excess vertical whitespace to accommodate them.
+2. Shorten repeated target qualifications in the legend and retain those details in the caption.
+3. Strengthen greyscale separation of the upper-panel series by combining open and filled markers.
+4. Label the panels “(a)” and “(b)” and identify GiBUU explicitly beside the lower panel.
+END

@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | Value column alignment (centered instead of decimal-aligned) and compound slash entries
+D4: 3 | header "(205 reported bins)" and inconsistent decimal precision between rows 4 (2.27) and 5 (0.929)
+D6: 3 | caption lacks identification of the physical observable, dataset, and definition of "indicative $\chi^2$"
+D7: 4 | -
+TAKEAWAY: The new measurement agrees closely with the published result of Ref. [3], with total cross section and median bin ratios within 1% and an indicative $\chi^2/\mathrm{bin}$ of 0.929 when accounting for both covariance matrices.
+CHANGES:
+1. "Value" column: Align numerical entries on the decimal point rather than centering the column.
+2. Row 3: Split the slash-separated threshold values ("86.8/95.1/99.0 %") into distinct rows or sub-columns, and remove the space before "%" symbols.
+3. Row 6: Split "mean / RMS" into two separate rows for standardized-difference mean (0.060) and RMS (0.535).
+4. Rows 4 and 5: Standardize decimal precision between the two $\chi^2/\mathrm{bin}$ rows (e.g., format 2.27 as 2.270, or round 0.929 to 0.93).
+5. Column header "Quantity (205 reported bins)": Move "(205 reported bins)" out of the header text into the table caption or an explanatory table note.
+6. Table body: Introduce vertical grouping space between the cross-section ratios, threshold percentages, and $\chi^2$ / pull statistics.
+7. Caption: Specify the physical observable/channel under study, identify "this measurement", and define the meaning of "indicative $\chi^2$".
+8. Top margin: Increase top clearance to eliminate the stray text descenders visible above the top horizontal rule.
+END

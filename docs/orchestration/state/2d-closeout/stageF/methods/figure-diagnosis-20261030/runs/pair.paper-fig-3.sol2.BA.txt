@@ -1,0 +1,10 @@
+D1: A | Larger labels, ticks and symbols remain easier to read at printed size.
+D2: A | More generous spacing and simpler panel headings reduce crowding.
+D3: B | Distinct hues and marker shapes separate series, with neutral grey references.
+D4: A | Clear, conventional axes are easier to decode than B’s densely nested cell labels.
+D5: A | Analytic curves, uncertainty bands and the unbiased reference support immediate comparison.
+D6: A | Shorter legend entries and a more focused caption make the visual encoding easier to follow.
+D7: A | The trends and departures from the reference are apparent within a quick scan.
+OVERALL: A
+GAP: 1. Enlarge B’s tick labels and markers; 2. Simplify panel headings; 3. Replace repeated cell numbers with clearer grouped axis labels; 4. Shorten legend entries; 5. Move development history and ancillary results from the caption to the main text.
+END

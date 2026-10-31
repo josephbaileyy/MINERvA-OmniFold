@@ -1,0 +1,10 @@
+D1: B | B has significantly larger, bolder tick marks and labels that remain clearly legible at printed journal width.
+D2: B | B features a clean, well-spaced 2x2 grid with square matrix aspect ratios, whereas A clutters the interior with repeated axis labels across six panels.
+D3: A | A uses a centered diverging colormap scaled to each mode's dynamic range, whereas B applies a [-1, 1] diverging colormap to mostly positive data, washing out contrast.
+D4: EQUAL | B uses publication-quality LaTeX math typography but omits vertical axis labels, while A labels both axes but uses unformatted code strings with underscores.
+D5: EQUAL | Neither item includes comparisons with external references or theoretical predictions.
+D6: B | B follows standard PRD caption conventions ("FIG. 12:") and clearly describes the content, whereas A fails to map its caption narrative to the unlabeled panels.
+D7: B | B conveys the correlation structure of each observable at a glance, whereas A requires deciphering six unlabeled panels with disparate scales.
+OVERALL: B
+GAP: 1. Increase font sizes for axis labels, tick numbers, and colorbar annotations to ensure legibility at printed size. 2. Replace raw code strings (`p_T bin`, `p_|| bin`) with publication-quality LaTeX math notation ($p_\mathrm{T}$ bin, $p_\parallel$ bin). 3. Add subpanel identifiers (e.g., (a)–(f)) and label the specific eigenmode or eigenvalue for each panel. 4. Remove redundant interior x- and y-axis labels and tick numbers across adjacent panels to reduce clutter. 5. Adopt standard PRD caption styling ("FIG. 12:" instead of "Figure 12:"). 6. Explicitly connect the caption's description of leading and moderate eigenmodes to the labeled subpanels.
+END

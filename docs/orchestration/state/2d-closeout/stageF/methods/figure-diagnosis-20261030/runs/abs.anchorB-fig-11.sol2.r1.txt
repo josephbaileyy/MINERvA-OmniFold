@@ -1,0 +1,14 @@
+D1: 4 | Several lower-grid bin-range annotations nearly fill their panel widths.
+D2: 4 | Dense panel grids make navigation between the two slicing directions slow.
+D3: 2 | NuWro and GiBUU have nearly identical grey tones; solid model curves are difficult to distinguish in greyscale.
+D4: 3 | The lower grid’s two rightmost columns lack numerical longitudinal-momentum tick labels.
+D5: 3 | Overlapping solid prediction curves near unity cannot be reliably traced in greyscale.
+D6: 5 | -
+D7: 4 | -
+TAKEAWAY: The data generally lie above the predictions across much of the displayed phase space, and no model follows all the measured trends.
+CHANGES:
+1. Give each model a distinct line style and reproduce those styles in both legends, ensuring identification in greyscale.
+2. Add longitudinal-momentum tick labels beneath the lowest occupied panels in the lower grid’s two rightmost columns.
+3. Shorten the lower-grid bin annotations by placing the common momentum unit in a shared label.
+4. Add identifiers to the upper and lower panel groups and identify their respective slicing directions in the caption.
+END

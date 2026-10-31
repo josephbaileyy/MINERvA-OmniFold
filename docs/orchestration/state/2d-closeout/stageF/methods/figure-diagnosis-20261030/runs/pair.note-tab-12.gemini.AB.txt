@@ -1,0 +1,10 @@
+D1: B | B features a larger, more legible font size at printed scale than A's tightly packed 13-column layout.
+D2: A | A uses clean horizontal rules conforming to PRD style, whereas B has prohibited vertical rules and a broken header grid.
+D3: EQUAL | Both items are black-and-white tables with no colour elements.
+D4: B | B explicitly specifies the metric ($\chi^2$), kinematic observables, and degrees of freedom, whereas A omits units and the $C_{\mathrm{resp}}$ spanner from its headers.
+D5: B | B quantitatively compares unfolding methods against the truth-level reference cross section, whereas A contains no reference or prediction comparison.
+D6: B | B adheres to PRD caption style with Roman numeral capitalization (TABLE III) and a concise summary, whereas A uses non-standard numbering (Table 12) and defines an unused quantity.
+D7: B | B communicates the relative performance of all methods across observables at a glance, whereas A is an overwhelming numerical matrix requiring detailed study.
+OVERALL: B
+GAP: 1. Change caption numbering from "Table 12:" to PRD-standard Roman numeral format ("TABLE XII."). 2. Add a spanning header for $C_{\mathrm{resp}}$ over the last four columns to clarify their grouping. 3. Include the units (%) directly in the column headers rather than relying solely on the caption. 4. Remove the unused definition of $C_{\mathrm{total}}$ from the caption. 5. Visually emphasize the summary row (median) to improve scannability and 30-second readability.
+END

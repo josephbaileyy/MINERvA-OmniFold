@@ -1,0 +1,10 @@
+D1: B | Larger lettering and simpler panels make labels and curves easier to read at printed size.
+D2: B | Two consistently arranged panels provide a clearer hierarchy than A’s mixed plots, heatmap and text block.
+D3: A | A restrained palette and distinct line styles separate the comparisons more reliably.
+D4: A | Momentum units, normalization, ratio baselines and heatmap bin-edge conventions are more explicit.
+D5: A | Ratios, uncertainty bands and standardized residuals make differences substantially easier to assess.
+D6: A | The caption explains every panel and explicitly addresses the correlated uncertainty bands.
+D7: B | The measured distributions, total prediction and component breakdown are immediately recognizable.
+OVERALL: A
+GAP: 1. Add data-to-prediction ratio panels with clearly defined uncertainties; 2. Distinguish component curves with additional line styles and stronger contrast; 3. Use one shared legend to reduce repetition; 4. Define the error bars and component abbreviations in the caption.
+END

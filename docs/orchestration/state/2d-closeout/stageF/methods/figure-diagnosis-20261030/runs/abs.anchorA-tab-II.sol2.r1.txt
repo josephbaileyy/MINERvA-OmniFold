@@ -1,0 +1,13 @@
+D1: 5 | -
+D2: 4 | Vertical rules add clutter; interval endpoints are centered rather than aligned.
+D4: 4 | Range separators differ between columns, and endpoint decimal formatting varies.
+D6: 4 | “STVs” is undefined, and the provenance statement is wordy.
+D7: 5 | -
+TAKEAWAY: Each of the three observables has eight bins, with unequal widths.
+CHANGES:
+1. Remove the vertical rules and separate columns with whitespace.
+2. Align corresponding interval endpoints within each column.
+3. Use en dashes consistently for all bin ranges.
+4. Standardize endpoint decimal formatting within each column while preserving the stated boundaries.
+5. Expand “STVs” and shorten the caption’s provenance statement to “using the binning of the T2K analysis in Ref. [6].”
+END

@@ -1,0 +1,13 @@
+D1: 5 | -
+D2: 4 | Panels lack identifying letters or short titles.
+D3: 3 | Greyscale colour bars assign similar shades to excesses and deficits, obscuring their signs without reading cell numbers.
+D4: 5 | -
+D5: 5 | -
+D6: 5 | -
+D7: 4 | Interpreting the large upper-right residual requires the caption’s lengthy explanation of cell integration and catch bins.
+TAKEAWAY: Unfolded data mostly exceed Tune v1, with the largest cell-integrated excess at high Eavail and high W, a secondary low-W excess, and a localized deficit around W = 1.4–1.8 GeV.
+CHANGES:
+1. Add panel labels and concise titles: “(a) Data / Tune v1” and “(b) Cell-integrated data − Tune v1.”
+2. Add hatching or outlines to below-unity ratio cells and negative residual cells so their signs remain visually distinguishable in greyscale.
+3. Mark the final row and column as catch bins and foreground the caption’s explanation that residuals are integrated over physical bin areas.
+END

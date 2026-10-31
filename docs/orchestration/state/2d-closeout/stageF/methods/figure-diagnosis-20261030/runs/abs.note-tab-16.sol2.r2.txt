@@ -1,0 +1,12 @@
+D1: 5 | -
+D2: 4 | Numeric entries are centered rather than aligned on decimal points and slashes.
+D4: 4 | “shape-only” does not explicitly identify the entries as χ²/ndf.
+D6: 3 | The caption leaves Ctotal, Cresp, and Vg undefined and uses the vague phrase “against.”
+D7: 4 | GiBUU’s different ndf is visible but unexplained, complicating comparison.
+TAKEAWAY: GiBUU 2019 has the lowest listed full and shape-only χ² values, with fewer degrees of freedom, while MINERvA Tune v1 has the highest.
+CHANGES:
+1. Align the numeric columns consistently on decimal points and slashes.
+2. Label the numeric columns “Full χ²/ndf” and “Shape-only χ²/ndf.”
+3. Replace “against” in the caption with an explicit description of how the covariance sum enters the comparison, and briefly identify its terms.
+4. Add a short note explaining GiBUU’s smaller number of degrees of freedom.
+END

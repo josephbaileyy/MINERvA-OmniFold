@@ -1,0 +1,10 @@
+D1: A | Item A maintains sharp, easily legible markers and typography, whereas Item B suffers from heavily overlapping points, colliding error bars, and shrunken tick labels.
+D2: A | Item A uses an efficient two-panel stacked layout with clear cell hierarchies, whereas Item B redundantly repeats identical y-axis labels and tick numbers across all nine subpanels.
+D3: A | Item A uses clean, distinct, colorblind-friendly markers and lines, whereas Item B displays overlapping colored markers and severe white cutout artifacts inside the shaded prior band.
+D4: A | Item A explicitly defines variables, provides percent and physical units on bin boundaries, and uses proper minus signs, avoiding Item B's ninefold axis repetition and non-standard bracketed units.
+D5: A | Item A displays comparison against the reference truth cleanly via quantitative percentage residuals, whereas Item B's comparison to the prior prediction is marred by rendering defects and obscured by overlapping data points.
+D6: A | Item A adheres to PRD caption style ("FIG. 2." with period) and thoroughly defines all markers, samples, and uncertainties, whereas Item B uses non-standard punctuation ("FIG. 10:") and leaves the prior band undefined.
+D7: A | Item A allows the reader to assess closure performance across all cells within seconds, whereas Item B presents an overwhelming 3×3 grid of repetitive axes, cluttered points, and varying momentum cutoffs.
+OVERALL: A
+GAP: 1. Share y-axes across rows and remove redundant y-axis titles and tick labels from interior columns to expand data plotting area. 2. Fix the rendering defect creating spurious white cutouts inside the gray "Prior" uncertainty band and define the band in the legend and caption. 3. Apply horizontal offsets to the IBU-UniFold and MultiFold data points to prevent error bars and markers from overlapping. 4. Assign standard subpanel identifiers (e.g., (a)–(i)) to each kinematic slice and move the isolated top-left legend to a unified header or shared key. 5. Adopt PRD caption and typography standards by replacing "FIG. 10:" with "FIG. 10.", using parentheses for units `(GeV/c)`, and defining all acronyms.
+END

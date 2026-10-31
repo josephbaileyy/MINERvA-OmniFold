@@ -1,0 +1,16 @@
+D1: 2 | Tick labels, axis titles, legend text and χ² annotations are too small at printed size; statistical error bars are difficult to resolve.
+D2: 2 | The 16 panels lack slice ranges or panel identifiers, and substantial whitespace above the grid wastes space.
+D3: 5 | -
+D4: 2 | The scaled cross-section axis lacks physical units and an explicit scaling definition; p∥ slice ranges and units are absent.
+D5: 4 | Small overlay panels make the size of departures between points and prediction difficult to assess.
+D6: 5 | -
+D7: 3 | Missing slice labels prevent readers from connecting the changing discrepancies to p∥.
+TAKEAWAY: The unfolded points broadly follow the simulated shapes but show increasingly prominent excesses over the prediction in the lower rows.
+CHANGES:
+1. Enlarge tick labels, axis titles, legend text and χ² annotations to remain readable at journal size.
+2. Label every panel with its p∥ interval in GeV/c and a panel identifier.
+3. Reduce the whitespace above the grid and use the recovered space to enlarge the panels.
+4. Give the cross-section axis its physical units and explicitly define the displayed scaling factors.
+5. Increase marker and error-bar visibility while preserving separation from the prediction.
+6. Add a compact ratio or residual presentation if quantitative comparison is the intended main message.
+END

@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 4 | Cross-section values are right-aligned rather than decimal-aligned; the 16 rows lack visual grouping.
+D4: 5 | -
+D6: 3 | The five-line caption is crowded with definitions, qualifications, and cross-references.
+D7: 4 | The repeated cell boundaries make the table harder to scan quickly.
+TAKEAWAY: The sixteen cell-integrated cross sections span 3.21–49.6 × 10⁻⁴⁰ cm²/nucleon, with marginal relative uncertainties of 4.20–14.00% and a median of 7.29%.
+CHANGES:
+1. Align the f column on the decimal point while preserving the reported precision.
+2. Add modest vertical spacing after R03, R07, and R11 to distinguish the four pT–p∥ groups.
+3. Shorten the caption by moving the analysis-grid explanation and detailed covariance definition to the surrounding text, retaining units and the covariance caveat.
+END

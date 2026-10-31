@@ -1,0 +1,17 @@
+D1: 3 | font sizes of tick labels, axis labels, legend text, and panel annotations
+D2: 2 | missing $p_\parallel$ slice labels on panels, excessive top whitespace, and unshared internal axis ticks
+D3: 5 | -
+D4: 2 | y-axis missing physical units, undefined scaling, and missing $p_\parallel$ slice ranges and units
+D5: 3 | individual panel peak-scaling obscuring cross-slice comparison and lack of ratio panels
+D6: 4 | -
+D7: 2 | omitted $p_\parallel$ slice definitions and unexplained per-panel normalization preventing clear interpretation
+TAKEAWAY: The unfolded OmniFold cross section roughly follows the GENIE simulation shape at lower $p_T$ but exhibits large discrepancies at higher kinematics, though the complete absence of $p_\parallel$ slice labels and physical cross-section scaling severely impedes physical interpretation.
+CHANGES:
+1. Panel labels: Add explicit $p_\parallel$ slice ranges with units (e.g., $\text{GeV}/c$) to each panel or row to identify the kinematic slices.
+2. Y-axis label and units: Specify physical units for $d^2\sigma/(dp_T dp_\parallel)$ (e.g., $\text{cm}^2/(\text{GeV}/c)^2/\text{nucleon}$) and define or remove the per-panel "scaled" normalization.
+3. Top whitespace: Eliminate the large blank space above the grid by positioning the header metadata immediately above the panels.
+4. Shared axes: Remove redundant interior tick numbers on internal panel borders and share the axes cleanly across columns and rows.
+5. Font sizes: Increase the font size of axis labels, tick labels, legend entries, and $\chi^2/n$ annotations to ensure legibility at standard printed width.
+6. Comparison panels: Include ratio or difference subpanels to allow quantitative evaluation of the large model deviations.
+7. Caption and legend consistency: Harmonize the caption reference ("simulated truth") with the legend description ("GENIE 2.12.6 + MnvTune v1").
+END

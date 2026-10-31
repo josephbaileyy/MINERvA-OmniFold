@@ -1,0 +1,10 @@
+D1: B | Short, clearly separated entries are easier to read than A’s dense multiline definitions.
+D2: B | Compact columns and consistent row alignment make the table easier to navigate.
+D3: EQUAL | Both are tables.
+D4: B | Every column identifies its observable and unit; A leaves its observable column unheaded.
+D5: EQUAL | Neither presents a comparison with reference results or predictions.
+D6: B | The caption explains the table’s purpose and identifies the source of the binning.
+D7: B | Readers can quickly identify the observables, units and bin boundaries.
+OVERALL: B
+GAP: 1. Add an observable-column header. 2. State applicable units. 3. Separate observable groups with more consistent spacing. 4. Align multiline equations and continuation text. 5. Expand the caption to explain the truth–reconstruction comparison and define auxiliary symbols.
+END

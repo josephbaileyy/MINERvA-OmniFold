@@ -1,0 +1,15 @@
+D1: 4 | -
+D2: 3 | uneven column widths, overextended horizontal rules, and lack of row/column grouping
+D4: 3 | missing row-stub header and undefined kinematic quantities/units for cells R00–R14
+D6: 3 | caption fails to define the sixteen cells (R00–R15) or the covariance components
+D7: 3 | 15×15 dense numerical triangle without cell definitions or visual heatmap representation
+TAKEAWAY: The sixteen cells exhibit predominantly positive correlations (typically between 0.1 and 0.7, peaking at 0.92) with a few moderate anti-correlations down to -0.46.
+CHANGES:
+1. Row stub header: add a header (e.g., "Cell") above the row labels R01–R15 in the top-left corner.
+2. Column widths: set a uniform width for all data columns (R00–R14) so column spacing is not distorted by negative signs.
+3. Row and column grouping: insert subtle whitespace (such as `\addlinespace`) every 4 or 5 rows and columns to aid grid tracking across the 15×15 matrix.
+4. Table rules: trim the table width so the horizontal rules terminate at column R14 rather than extending past it into empty space.
+5. Caption: define the physical observables and kinematic boundaries defining cells R00–R15 (or cite the table where they are defined), and define $C_{\rm total}$ and $C_{\rm resp}$.
+6. Quantity specification: add a header or caption note indicating that the tabulated numbers are correlation coefficients $\rho_{ij}$.
+7. Presentation format: replace or supplement this numerical table in the main text with a 2D color correlation heatmap, moving the raw 120-number table to supplemental material.
+END

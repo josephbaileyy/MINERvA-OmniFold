@@ -1,0 +1,10 @@
+D1: B | Tick labels, text annotations, and exponents in A are too small to read at printed column width, whereas B maintains large, crisp, legible typography throughout.
+D2: B | B maximizes plot area with a compact, abutting shared-axis panel layout, whereas A has extensive wasted whitespace at the top and redundant margins.
+D3: B | B uses a distinct color palette to separate physical reaction channels, whereas A utilizes only a single faint purple curve.
+D4: B | B provides explicit kinematic slice ranges for every panel alongside full physical units, whereas A omits panel slice boundaries entirely and lacks units on the y-axis.
+D5: B | B decomposes the model prediction into constituent reaction processes against data, whereas A shows only a single aggregate curve and uncontextualized chi-squared values.
+D6: B | B conforms to PRD caption conventions ("FIG. 7.") with self-contained descriptions and full legends, whereas A uses non-standard styling ("Figure 10:") and an incomplete caption.
+D7: B | B is immediately interpretable across two complementary kinematic projections, whereas A cannot be understood in 30 seconds because panel slice definitions are absent.
+OVERALL: B
+GAP: 1. Add explicit kinematic slice ranges to headers on all panels. 2. Remove top whitespace and adopt an abutting shared-axis layout to maximize figure area. 3. Substantially enlarge font sizes for tick labels, axis labels, and panel annotations. 4. Provide complete physical units on the y-axis instead of an unscaled label. 5. Decompose the theoretical prediction into constituent reaction processes. 6. Adopt standard PRD caption conventions ("FIG. 10.") and provide a self-contained description.
+END

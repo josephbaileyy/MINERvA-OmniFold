@@ -1,0 +1,12 @@
+D1: 4 | -
+D2: 3 | The long “cells” entries crowd the adjacent χ² column; covariance entries sit too close to n.
+D4: 4 | -
+D6: 3 | The caption’s long sentence obscures the comparison and leaves “hybrid,” W1–W3, and the cell identifiers unexplained.
+D7: 4 | -
+TAKEAWAY: GiBUU hybrid and the synthetic q₃ tilt show the strongest discrepancies, while including response covariance generally improves agreement.
+CHANGES:
+1. Increase the gutters between covariance and n, and between the first cells column and the second χ² column.
+2. Align numerical columns on decimal points, accommodating scientific notation consistently.
+3. Split the caption into short sentences describing the tests, covariance subtraction, and flagged cells.
+4. Define the row labels “hybrid” and W1–W3, and explain how the R-number cell identifiers are located.
+END

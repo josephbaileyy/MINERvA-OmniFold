@@ -1,0 +1,13 @@
+D1: 4 | -
+D2: 3 | Row spacing between multiline entries and redundant "Background treatment" column
+D4: 4 | Column header "Used for"
+D6: 3 | Caption text (excessive technical detail crowding the table)
+D7: 4 | -
+TAKEAWAY: The joint-test estimator is applied to higher-dimensional (3D, 4D, and 5D) central values and shape tests, while the two-observable estimator is used for the 2D measurement and covariance.
+CHANGES:
+1. Row spacing: Add vertical space (such as `\addlinespace`) between the first and second rows to clearly separate the multiline entries.
+2. Column "Background treatment": Remove this redundant column or consolidate it into a footnote or caption note, as both rows contain identical text.
+3. Column header "Used for": Replace the informal header "Used for" with a standard noun phrase such as "Application" or "Target measurement".
+4. Column "Estimator": Balance the level of detail between entries and adjust column width to avoid orphaning "42" on its own line.
+5. Caption: Shorten the caption by removing methodological narrative and citation references that belong in the main text to avoid crowding the compact table.
+END

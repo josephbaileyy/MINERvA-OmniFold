@@ -1,0 +1,15 @@
+D1: A | A features large, crisp labels and distinct histogram lines, whereas B has tiny fonts, overlapping point markers, and y-axis titles colliding with tick labels.
+D2: A | A uses a compact vertical layout well-suited for a single PRD column, whereas B wastes over half the vertical space on an excessive log scale and duplicates the legend across both panels.
+D3: A | A uses distinct, high-contrast colors for separated histogram lines, whereas B uses small markers plotted directly over each other, making colors indistinguishable.
+D4: A | A includes clear axis labels, ratio baselines, and units, whereas B completely omits cross-section units on the y-axes and uses raw text for math subscripts.
+D5: A | A shows ratios relative to a baseline model to clearly resolve 10–40% discrepancies, whereas B squashes data and models into an indistinguishable cluster across four orders of magnitude.
+D6: A | A follows PRD caption formatting ("FIG. 9.") and proper math notation, whereas B uses non-PRD numbering ("Figure 25:"), informal section symbols ("§7.6"), and redundant in-panel legends.
+D7: A | A allows the reader to instantly identify model agreement and normalization differences, whereas B requires deciphering overlapping dots in largely empty plots.
+OVERALL: A
+GAP: 1. Convert cross sections to ratio-to-baseline plots (or narrow the y-axis range) to eliminate wasted vertical space and make generator differences visible.
+2. Add physical units to the y-axis labels and increase label offset to prevent collisions with the tick labels.
+3. Render generator predictions as stepped curves or bands instead of discrete markers that obscure the data points.
+4. Consolidate the legend into a single shared location instead of duplicating it in both panels.
+5. Adopt PRD caption and typography standards ("FIG. 25.", proper math mode for kinematic variables, and standard citation style instead of "§7.6").
+6. Remove the detached header text from the top margin and integrate experimental details into the caption.
+END

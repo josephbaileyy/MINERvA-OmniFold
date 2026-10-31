@@ -1,0 +1,29 @@
+You are an experienced referee and copy editor for Physical Review D, judging one table as it prints in a journal page. You are given an image of the table, cropped from its printed page at 300 DPI at printed size, with its caption. The caption text is also given below. Judge only what is visible: presentation, not the physics or the correctness of the numbers.
+
+Score each dimension from 1 to 5:
+5 = at the standard of a well-produced PRD table, nothing to change;
+4 = minor issues a copy editor would note;
+3 = noticeable issues a referee would ask to fix;
+2 = serious issues that impede reading;
+1 = unusable for this purpose.
+
+D1 LEGIBILITY at printed size: font size, density, spacing.
+D2 LAYOUT: rules, column alignment (decimal alignment), grouping of rows and columns, width.
+D4 HEADERS AND UNITS: every column headed, with its quantity and unit; consistent number formats and precision.
+D6 CAPTION: whether the caption makes the table self-contained without crowding it.
+D7 READ: how easily a PRD reader takes the table's main message in about 30 seconds.
+
+Every score below 4 must name the visible element at fault.
+
+Reply in exactly this format and nothing else:
+D1: <score> | <element at fault, or "-">
+D2: <score> | <...>
+D4: <score> | <...>
+D6: <score> | <...>
+D7: <score> | <...>
+TAKEAWAY: <in one sentence, the main result you take from this table in about 30 seconds>
+CHANGES:
+1. <a specific change, naming the element and what to do>
+2. ...
+(up to 8 changes; write "1. none" if none)
+END

@@ -1,0 +1,10 @@
+D1: A | Open spacing and short entries make the symbols and numbers easier to read at printed size.
+D2: A | Compact columns and regular rows are easier to scan than B’s crowded, multiline cells.
+D3: EQUAL | Both are tables; colour is not a differentiating factor.
+D4: A | Every column has an explicit observable and unit; B leaves its observable column unlabelled and units unstated.
+D5: EQUAL | Neither presents a comparison with reference results or predictions.
+D6: A | The caption explains the table’s purpose and provenance; B’s caption provides little context.
+D7: A | The binning scheme is immediately apparent, whereas B requires sustained reading across lengthy definitions.
+OVERALL: A
+GAP: 1. Shorten B’s cells by moving explanatory prose into table notes. 2. Add spacing between observable rows. 3. Label the first column “Observable.” 4. State applicable units. 5. Expand the caption to explain the truth/reconstruction comparison and define conventions.
+END

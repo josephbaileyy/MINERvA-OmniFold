@@ -1,0 +1,18 @@
+D1: 3 | slice header text colliding with data error bars and cramped legend text in panel (1,1)
+D2: 2 | missing subfigure labels (a) and (b), and missing panels in the bottom grid leaving columns 4-5 without aligned axes
+D3: 2 | model curves indistinguishable in greyscale due to identical solid line styles
+D4: 2 | missing x-axis tick labels under columns 4 and 5 in the bottom grid and colliding "2 0" tick numbers in the top grid
+D5: 3 | identical solid line styles hindering distinction between individual model predictions and data
+D6: 3 | duplicate legends, with the top legend cramped inside active data panel (1,1)
+D7: 3 | visual overload from 25 panels presenting redundant projections without panel labels or caption guidance
+TAKEAWAY: None of the generator models (untuned GENIE, NuWro, GiBUU) describe the measured MINERvA cross section relative to MnvGENIE v1 across the full 2D phase space, with agreement confined to low longitudinal momentum and intermediate transverse momentum.
+CHANGES:
+1. Model curves: assign distinct line styles (e.g., solid, dashed, dash-dotted, dotted) in addition to colors so that the models are distinguishable in greyscale print.
+2. Figure layout: add subfigure labels "(a)" and "(b)" to the top and bottom grids, and update the caption to define both representations (slices in $p_\parallel$ vs slices in $p_T$).
+3. Bottom grid x-axis: add numerical tick labels (5, 10, 20) under columns 4 and 5 along the bottom edge of row 2 where no row 3 panels exist.
+4. Panel headers: expand the y-axis upper limit or increase the top margin of each panel to prevent data error bars from colliding with the slice cut text.
+5. Legends: remove the redundant, cramped legend from panel (1,1) of the top grid and maintain a single shared legend outside the data panels.
+6. Top grid x-axis ticks: remove redundant or colliding boundary tick labels ("2" and "0") between adjacent panel columns.
+7. Y-axis label: reformat "${\rm d}^2\sigma/{\rm d}p_T\,{\rm d}p_\parallel / {\rm MnvGENIE\ v1}$" to standard ratio notation such as "Ratio to MnvGENIE v1" or $[{\rm d}^2\sigma/{\rm d}p_T{\rm d}p_\parallel] / [{\rm d}^2\sigma/{\rm d}p_T{\rm d}p_\parallel]_{\rm MnvGENIE\ v1}$ to eliminate ambiguous slash notation.
+8. Panel selection: move one of the two redundant slicing projections (e.g., the bottom grid) to an appendix or supplemental material to streamline the presentation.
+END

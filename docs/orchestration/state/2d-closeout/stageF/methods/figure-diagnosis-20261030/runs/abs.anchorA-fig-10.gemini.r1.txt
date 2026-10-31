@@ -1,0 +1,18 @@
+D1: 3 | crowded markers and overlapping error bars in low-momentum bins of forward-angle panels
+D2: 3 | redundant y-axis labels and tick numbers on interior panels
+D3: 2 | IBU-UniFold and MultiFold markers in greyscale (identical filled circles and grey levels)
+D4: 4 | -
+D5: 3 | unidentified purple curve and inner band, and identical marker shapes for unfolding methods
+D6: 2 | missing legend entries for the purple line and inner band, and caption omitting model definitions
+D7: 3 | unidentified curves and bands, and indistinguishable unfolding results in greyscale
+TAKEAWAY: Both IBU-UniFold and MultiFold unfolding methods accurately reproduce the true CC0π cross section within uncertainties across all kinematic bins, showing marked improvement over the prior model.
+CHANGES:
+1. Marker shapes: Change the marker symbol for MultiFold (e.g., to open squares or triangles) so that IBU-UniFold and MultiFold are distinguishable in black-and-white print.
+2. Purple line in legend: Add the purple stepped line to the legend and caption, identifying what distribution or central value it represents.
+3. Inner band in legend: Add the inner stepped band appearing in panels 3–9 to the legend and caption to define what uncertainty or model it denotes.
+4. Shared y-axes: Remove redundant "Ratio to Data Truth" labels and y-axis tick values from the middle and right columns, sharing the y-axis across rows to reduce clutter and enlarge the plotting panels.
+5. Caption definition of methods: Expand the caption text to define IBU-UniFold, MultiFold, the Prior, and the dashed reference line at unity.
+6. Panel labels: Add standard subpanel labels ((a)–(i)) to each panel for unambiguous referencing in the text.
+7. Axis truncation indicator: Add an axis break or visual indicator on the $p_\mu$ axis to show where the high-momentum bins extending to 30 GeV/c are truncated.
+8. Marker crowding: Increase horizontal bin offsets or decrease marker sizes in the low-$p_\mu$ region of forward-angle panels (panels 7–9) to minimize error-bar overlap.
+END

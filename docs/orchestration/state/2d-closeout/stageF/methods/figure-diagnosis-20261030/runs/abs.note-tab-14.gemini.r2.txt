@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | super-header column spans and decimal alignment in $p$ columns
+D4: 3 | super-headers omitting $\chi^2$ and inconsistent $p$-value precision
+D6: 3 | undefined cell labels (R02, R06, R07) in caption
+D7: 3 | orphaned $\chi^2$ column headers and unsegmented model rows
+TAKEAWAY: Most generator models pass the fake-data test with acceptable $\chi^2$ and no outlier cells, whereas GiBUU and the synthetic $q_3$ tilt show severe bias and failure ($\chi^2 \gg 16$, $p \ll 10^{-5}$, and multiple outlier cells).
+CHANGES:
+1. Expand the multicolumn super-headers $C_{\text{total}} + C_{\text{resp}}$ and $C_{\text{total}}$ to span all three subordinate columns ($\chi^2$, $p$, and cells) instead of only spanning $p$ and cells.
+2. Add partial horizontal rules (`\cmidrule`) directly beneath the $C_{\text{total}} + C_{\text{resp}}$ and $C_{\text{total}}$ super-headers to clearly demarcate the two covariance groupings.
+3. Align the values in both $p$ columns on the decimal point, and format scientific notation uniformly.
+4. Standardize the numerical precision of the $p$-values across rows rather than mixing two, three, and four decimal places with exponential notation.
+5. Insert subtle vertical whitespace (`\addlinespace`) between model families (prior, GENIE, NuWro, GiBUU, synthetic) to facilitate row-by-row scanning.
+6. Define the cell notation (e.g., what "R02, R06, R07" represent, such as recoil kinematic bins) explicitly in the caption.
+7. Clarify the "covariance" header and column entries, as model names prefixed with minus signs describe truth shift subtractions rather than covariance types.
+8. Tighten the excessive horizontal whitespace between the first four columns to make the table more compact.
+END

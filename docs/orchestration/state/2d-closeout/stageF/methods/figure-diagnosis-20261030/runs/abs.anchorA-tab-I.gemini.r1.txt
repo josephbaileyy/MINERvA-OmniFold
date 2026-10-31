@@ -1,0 +1,15 @@
+D1: 4 | -
+D2: 2 | vertical rules, centered alignment, and bottom truncation
+D4: 3 | inconsistent decimal precision and repeated variable names in data cells
+D6: 4 | caption names forward angle $\theta_\mu$ rather than $\cos \theta_\mu$
+D7: 3 | repetitive inequality expressions and bottom truncation
+TAKEAWAY: The table specifies the two-dimensional kinematic binning grid in muon scattering angle cosine ($\cos \theta_\mu$) and momentum ($p_\mu$) across 50+ bins used for differential cross-section extraction.
+CHANGES:
+1. Layout: Remove all vertical rules between columns to conform to PRD style.
+2. Data cells: Replace repeated inequality expressions (e.g., $a < p_\mu < b$) with concise range notation (e.g., $[a, b)$) or separate lower/upper bound columns, eliminating redundant variable names.
+3. Alignment: Align numerical values on the decimal point or range delimiter instead of centering them horizontally.
+4. Precision: Enforce consistent decimal precision across entries (e.g., format integers as $0.0$ and $30.0$, and retain trailing zeros such as $0.90$).
+5. Row grouping: Replace solid horizontal rules between angular blocks with subtle vertical whitespace.
+6. Pagination: Reformat the table into multiple columns or across pages so that bin 50 and any subsequent rows are not cut off at the bottom margin.
+7. Caption: Update the caption text to specify the cosine of the muon angle ($\cos \theta_\mu$) rather than $\theta_\mu$, and define the bin boundary inclusion convention.
+END

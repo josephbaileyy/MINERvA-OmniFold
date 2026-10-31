@@ -1,0 +1,12 @@
+D1: 5 | -
+D2: 5 | -
+D4: 4 | -
+D6: 3 | Caption leaves covariance symbols and “declared grid” unexplained and delegates degrees of freedom to Table 16.
+D7: 4 | -
+TAKEAWAY: Shrinking correlations generally lowers χ², especially for flux or all four groups together, whereas GiBUU shows smaller reductions and sometimes increases.
+CHANGES:
+1. Define Ctotal, Cresp, and Vg briefly in the caption.
+2. Replace “α of the declared grid” with an explicit explanation of α = 0 and α = 1.
+3. Replace “the first column” with “the α = 0 column.”
+4. State the degrees of freedom directly instead of referring readers to Table 16.
+END

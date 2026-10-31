@@ -1,0 +1,16 @@
+D1: 3 | top panel legend font size and thin component lines
+D2: 3 | bottom grid panels in row 2 columns 4–5 missing horizontal tick labels
+D3: 2 | unstacked component curves indistinguishable in greyscale
+D4: 3 | y-axis unit expression with repeated slashes and dimension error
+D5: 4 | -
+D6: 3 | duplicate top panel legend crowding data
+D7: 4 | -
+TAKEAWAY: MnvGENIE v1 generally reproduces the shape of the MINERvA double-differential cross section across muon momentum slices, showing the transition from quasielastic to resonance and DIS dominance, but systematically underestimates the data near the cross-section peaks.
+CHANGES:
+1. Unstacked component curves: assign distinct line styles (e.g., dotted, dashed, dash-dotted) and heavier stroke weights to RES, True DIS, Soft DIS, and Other CC so they remain distinguishable in greyscale and under deuteranopia.
+2. Bottom grid panels in row 2, columns 4 and 5: add horizontal axis tick labels (5, 10, 20) along the bottom frames of these panels because they lack panels beneath them.
+3. Top panel legend: remove the small, crowded legend inside the top-left data panel and rely on a single unified legend for the entire figure.
+4. Y-axis unit label: reformat "($\times 10^{-39}\ \text{cm}^2/\text{GeV}^2/\text{c}^2/\text{Nucleon}$)" to remove chained slashes and fix dimensions, using standard PRD notation such as "$10^{-39}\ \text{cm}^2\,c^2\,\text{GeV}^{-2}/\text{nucleon}$" or "$10^{-39}\ \text{cm}^2/(\text{GeV}/c)^2/\text{nucleon}$".
+5. Panel group labels: add prominent subfigure labels "(a)" and "(b)" to clearly distinguish the $p_{||}$ slices from the $p_T$ slices.
+6. Bottom grid horizontal axis: clarify the compressed spacing between 10 and 20 GeV with appropriate tick scaling or explicit indication of non-linear binning.
+END

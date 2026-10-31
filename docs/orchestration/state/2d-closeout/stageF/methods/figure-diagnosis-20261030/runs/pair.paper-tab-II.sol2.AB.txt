@@ -1,0 +1,10 @@
+D1: B | Larger type and more generous spacing make entries easier to read at printed size.
+D2: B | Clear column boundaries and shorter labels give the table a less crowded layout.
+D3: EQUAL | Both are monochrome tables.
+D4: B | Observable headings and degrees of freedom appear directly above each numerical column.
+D5: B | The explicit Prior row and consistent columns make benchmark comparisons easier to scan.
+D6: B | The caption states the comparison plainly; A compresses several qualifications into one dense sentence.
+D7: B | Readers can quickly identify the methods, observables and corresponding results.
+OVERALL: B
+GAP: 1. Increase A’s type size and row spacing. 2. Shorten or wrap long truth labels. 3. Add separation between cell lists and adjacent numerical columns. 4. Simplify the caption and explain “Cov.”, z and the generator-omission notation in a table note.
+END

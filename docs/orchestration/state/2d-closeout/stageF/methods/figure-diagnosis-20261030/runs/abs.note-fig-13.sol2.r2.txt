@@ -1,0 +1,14 @@
+D1: 4 | Exposure annotation is small.
+D2: 5 | -
+D3: 3 | Dashed measurement and black published curve merge in greyscale where they overlap.
+D4: 4 | Horizontal labels use literal “p_T” and “p_||” rather than mathematical subscripts.
+D5: 4 | -
+D6: 3 | Caption calls MINERvA Tune v1 orange, but its plotted curve and legend key are blue.
+D7: 4 | -
+TAKEAWAY: The measurement closely follows the published distributions, while MINERvA Tune v1 undershoots both peaks.
+CHANGES:
+1. Change “orange” to “blue” in the caption.
+2. Strengthen the measurement’s dashed styling and add a compact ratio or difference panel to resolve its overlap with the published curve in greyscale.
+3. Typeset momentum components consistently as mathematical subscripts on both axes.
+4. Enlarge the exposure annotation slightly.
+END

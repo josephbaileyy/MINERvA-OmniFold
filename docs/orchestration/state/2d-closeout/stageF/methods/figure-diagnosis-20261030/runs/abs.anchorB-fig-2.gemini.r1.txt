@@ -1,0 +1,18 @@
+D1: 4 | origin tick labels (0.0) crowding
+D2: 3 | panel labels ((a) and (b) missing)
+D3: 2 | colormap (non-monotonic luminance in greyscale)
+D4: 3 | colorbar z-axis label (# Normalized Entries)
+D5: 4 | diagonal reference line (y = x) missing
+D6: 3 | colorbar definition missing in caption
+D7: 3 | greyscale readability due to non-monotonic colormap
+TAKEAWAY: The reconstruction of muon kinematics exhibits good fidelity with minimal smearing, as the migration matrices for both transverse momentum ($p_T$) and longitudinal momentum ($p_\parallel$) are predominantly concentrated along the diagonal.
+CHANGES:
+1. Colormap: Replace the diverging colormap with a perceptually uniform sequential colormap (e.g., viridis) that increases monotonically in lightness for greyscale legibility.
+2. Colorbar label: Replace "# Normalized Entries" with a standard physical or statistical quantity such as "Conditional probability" or "Fraction of events", removing the "#" symbol.
+3. Panel labels: Add explicit subpanel labels (a) and (b) to the panels, and update the caption to reference (a) and (b) rather than "top" and "bottom".
+4. Caption: Define the color scale in the caption and specify how the matrices are normalized (e.g., row-normalized to unity for each true-momentum bin).
+5. Axis labels: Format kinematic variables in standard math notation, using italic $p_T$ and $p_\parallel$ (replacing the ASCII vertical bars `||` with $\parallel$).
+6. Reference line: Add a dashed line along the diagonal ($y = x$) in each panel to guide the eye across the non-uniform binning.
+7. Colorbar layout: Consolidate the two identical colorbars into a single shared colorbar for both panels to eliminate redundancy and save horizontal space.
+8. Tick labels: Offset or suppress the `0.0` tick label at the origin of the top panel to resolve the crowding between orthogonal axes.
+END

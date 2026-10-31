@@ -1,0 +1,18 @@
+D1: 3 | MC truth histogram line weight (too thin for print/greyscale) and undersized, detached top header
+D2: 2 | missing panel $p_T$ slice labels, excessive top whitespace, and redundant interior tick labels
+D3: 4 | -
+D4: 2 | missing units on the y-axis label, missing x-axis labels on columns 3–4, and absent $p_T$ slice variable and unit
+D5: 3 | uniform 0–60 GeV/c x-range compressing peak distributions into a narrow band and inconsistent vertical scaling across panels
+D6: 3 | legend placement inside panel 1 crowding data points instead of using the vacant bottom-right panel space
+D7: 2 | missing $p_T$ slice labels preventing identification of kinematic regions and their agreement with simulation
+TAKEAWAY: The unfolded OmniFold cross section broadly traces the shape of the GENIE simulation truth across muon longitudinal momentum, but kinematic trends cannot be properly evaluated because the transverse momentum slices are completely unlabeled.
+CHANGES:
+1. Add kinematic slice labels (e.g., $p_T$ ranges with units of $\mathrm{GeV}/c$) and panel identifiers to each individual panel.
+2. Include physical units on the y-axis label (e.g., $\mathrm{cm}^2/\mathrm{GeV}^2/\mathrm{nucleon}$) and define the scaling factor clearly.
+3. Add the x-axis label "$p_{||}\ (\mathrm{GeV}/c)$" to the bottom-most panels of columns 3 and 4.
+4. Move the legend and the experiment/POT header into the vacant panel space at the bottom right (row 4, columns 3 and 4).
+5. Truncate the x-axis upper limit (e.g., to 20 or 25 $\mathrm{GeV}/c$) on the low-$p_T$ slices to eliminate dead whitespace and expand the peak region for visual comparison.
+6. Increase the line weight of the purple GENIE simulation histogram to improve contrast against data points and in greyscale.
+7. Remove redundant interior x- and y-axis tick numbers to reduce visual clutter and allow panels to share axes cleanly.
+8. Eliminate the excessive blank whitespace at the top of the figure above the panel grid.
+END

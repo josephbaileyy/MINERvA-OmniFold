@@ -1,0 +1,15 @@
+D1: 5 | -
+D2: 5 | -
+D3: 2 | colormap
+D4: 4 | -
+D5: 5 | -
+D6: 4 | -
+D7: 3 | colormap
+TAKEAWAY: The νµ CC inclusive selection efficiency is highest at forward kinematics (high p|| and low pT) where acceptance into the MINOS Near Detector is greatest, and drops significantly at lower longitudinal momentum and higher transverse momentum.
+CHANGES:
+1. Colormap: replace the diverging blue-orange palette with a perceptually uniform, sequential colormap (such as viridis or cividis) that is monotonic in lightness to ensure legibility in greyscale printing.
+2. Colorbar: define unpopulated/zero-acceptance bins (currently white) with a distinct color (such as light grey) or an explicit note so they are not confused with intermediate efficiency values.
+3. Colorbar: overlay contour lines or bin values, or rescale the maximum, so the region exceeding 85% efficiency claimed in the caption can be directly verified.
+4. Axis labels: replace the double vertical bar characters in p|| with the standard parallel symbol (p∥) and typeset the subscript in pT in roman font (pT).
+5. Horizontal axis: add a tick label for the lower axis boundary or start the axis cleanly at a labelled tick.
+END

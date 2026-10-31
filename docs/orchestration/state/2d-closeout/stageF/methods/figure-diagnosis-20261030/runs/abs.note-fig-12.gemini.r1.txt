@@ -1,0 +1,17 @@
+D1: 3 | font size of tick, axis, and colorbar labels
+D2: 2 | panel labels and redundant unshared axes
+D3: 2 | diverging colormap in greyscale
+D4: 2 | axis labels, fractional tick labels, and unlabelled colorbars
+D5: 3 | colorbar scale limits
+D6: 2 | colorbar labels and mode/eigenvalue annotations
+D7: 3 | panel labels and mode identification
+TAKEAWAY: The leading χ²-carrying eigenmodes of the covariance matrix split between boundary modes concentrated in the highest-p∥ bins and bulk modes distributed across the interior (p_T, p_∥) phase space.
+CHANGES:
+1. Panel labels and headers: Add panel identifiers ((a)–(f)) and title each panel with its mode index and eigenvalue λ to match the caption.
+2. Colorbar unification: Use a consistent numerical range across all panels (or a single shared colorbar) so amplitudes can be directly compared.
+3. Greyscale colormap: Replace the diverging colormap with a greyscale-safe scheme or add contour lines so positive and negative values do not map to the same dark shade in black and white.
+4. Axis label typography: Typeset axis labels with proper math notation ($p_T$ bin, $p_\parallel$ bin) instead of raw ASCII (`p_T bin`, `p_|| bin`).
+5. Colorbar label: Add an axis title to the colorbar defining the plotted quantity (e.g., eigenvector component $v_i$).
+6. Shared axes: Share the x-axes along columns and y-axes along rows to eliminate redundant interior labels and enlarge the panels.
+7. Integer tick marks: Replace fractional tick labels (2.5, 7.5, 12.5) with integer bin indices.
+END

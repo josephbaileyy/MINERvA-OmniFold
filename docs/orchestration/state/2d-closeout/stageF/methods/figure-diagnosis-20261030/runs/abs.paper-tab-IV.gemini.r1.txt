@@ -1,0 +1,14 @@
+D1: 5 | -
+D2: 3 | column spacing and width
+D4: 3 | Column 3 header ("shape-only")
+D6: 3 | Caption (omits explanation for GiBUU 2019's 8/7 degrees of freedom)
+D7: 4 | -
+TAKEAWAY: All model predictions describe the data poorly with $\chi^2/\text{ndf} \gg 1$, though GiBUU 2019 yields the best overall and shape-only agreement, while MINERvA Tune v1 yields the worst.
+CHANGES:
+1. Column 3 header: change "shape-only" to specify the quantity, such as "$\chi^2$/ndf (shape-only)", or use a spanning header "$\chi^2$/ndf" across columns 2 and 3 with subheadings "Total" and "Shape-only".
+2. Column 2 header: change "$\chi^2$ and ndf" to "$\chi^2$/ndf" (or "Total $\chi^2$/ndf") to match the slash-separated ratio format in the rows.
+3. Caption: add an explanation or footnote clarifying why GiBUU 2019 has 8 and 7 degrees of freedom while the caption specifies a sixteen-cell result.
+4. Table width and column spacing: reduce the overall table width or column separation to remove the excessive blank space between the "Prediction" column and the numerical columns.
+5. Column alignment: align the denominator digits in columns 2 and 3 so that single-digit values (`/8` and `/7`) align with the units place of two-digit values (`/16` and `/15`).
+6. Column 3 header alignment: center the header directly over the numerical entries in its column.
+END

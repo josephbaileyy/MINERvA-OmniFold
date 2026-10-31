@@ -1,0 +1,12 @@
+D1: 5 | -
+D2: 3 | The wide GENIE + Valencia MEC group leaves excessive internal whitespace and crowds its pull column against the preceding group.
+D4: 4 | Percentage units appear only in the caption; R03 includes a distracting “−0.00” pull.
+D6: 3 | The caption does not define f, g, σ, the covariance terms, or the R00–R15 cell labels.
+D7: 4 | -
+TAKEAWAY: Most predictions have negative fractional residuals, with GiBUU showing particularly large deficits on several shared cells.
+CHANGES:
+1. Wrap the “GENIE 2.12.10 + Valencia MEC” heading to reduce its width and balance spacing within and between model groups.
+2. Add (%) to each fractional-residual subheading.
+3. Print the R03 GENIE CV pull as 0.00.
+4. Define the caption’s symbols and explain the cell labels, or provide precise references to their definitions.
+END

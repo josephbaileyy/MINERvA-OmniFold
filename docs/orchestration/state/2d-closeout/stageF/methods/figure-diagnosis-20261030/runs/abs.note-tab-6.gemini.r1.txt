@@ -1,0 +1,15 @@
+D1: 5 | -
+D2: 3 | columns 3 and 4 lack decimal alignment, and missing dividing rule above summary rows
+D4: 3 | missing units in column 3 header, repeated "%" in column 4 entries, and inconsistent decimal precision (6.85 % vs 3 decimal places)
+D6: 4 | -
+D7: 4 | -
+TAKEAWAY: Systematic uncertainty dominates the total uncertainty budget at 5.94% median relative uncertainty while machine learning noise is negligible at 0.05%, yielding a combined median relative uncertainty of 6.41% that is slightly below the published reference total of 6.85%.
+CHANGES:
+1. Column 3 header: Specify physical units for $\sqrt{\mathrm{Tr}\,C}$ (e.g., $10^{-39}\text{ cm}^2$).
+2. Column 4 header and cells: Move the percent sign into the header (e.g., "per-bin median rel. $\sigma$ (%)") and delete the "%" symbol from each data cell.
+3. Column 4 precision: Format "6.85 %" to three decimal places ("6.850") to maintain consistent precision across all rows.
+4. Columns 3 and 4 alignment: Align numeric data on the decimal point rather than center-aligning the columns.
+5. Horizontal rules: Insert a midrule above "Combined (block sum)" to clearly delineate the individual uncertainty components from the summary and reference rows.
+6. Column 2 values: Standardize the $N$ column to integer counts, replacing "43 bands+1" with the total universe count (187) or moving descriptive text to a footnote.
+7. Row ordering: Order the component rows logically by uncertainty magnitude (Systematic, Run period, Statistical, ML noise) to improve scanning flow.
+END

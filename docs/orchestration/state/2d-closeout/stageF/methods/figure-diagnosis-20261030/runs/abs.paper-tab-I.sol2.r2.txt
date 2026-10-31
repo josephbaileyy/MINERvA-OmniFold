@@ -1,0 +1,12 @@
+D1: 4 | Dense multiline cells, especially in the “Used for” column.
+D2: 3 | The two body rows lack separating space; “seed 42” wraps awkwardly in the estimator column.
+D4: 5 | -
+D6: 3 | The caption crowds the table with training and seed details, occupying nearly as much height as the table itself.
+D7: 4 | The estimators’ distinct uses are clear, but lengthy configuration details slow comparison.
+TAKEAWAY: Both estimators use the same background treatment, while the joint-test estimator supplies higher-dimensional results and studies and the two-observable estimator supplies the 2D central value and covariance.
+CHANGES:
+1. Shorten the caption by moving detailed training and seed conventions to the main text or cited configuration reference.
+2. Add vertical space between the two estimator rows to make their boundaries clear across all columns.
+3. Keep “seed 42” together on one line in the estimator column.
+4. Separate the joint-test estimator’s “Used for” entries with deliberate line breaks so each application is easy to scan.
+END

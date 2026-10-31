@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | vertical rules and unaligned range entries
+D4: 3 | inconsistent range separators (hyphens vs en-dashes) and irregular decimal precision
+D6: 3 | undefined acronym STVs and variable order mismatch with column headers
+D7: 4 | -
+TAKEAWAY: The table specifies eight analysis bin intervals for each of three single transverse kinematic variables ($\delta p_{\text{T}}$, $\delta\phi_{\text{T}}$, and $\delta\alpha_{\text{T}}$) adopted from a prior T2K cross-section measurement.
+CHANGES:
+1. Rules: Remove vertical column dividers and add standard PRD horizontal rules above the headers, below the headers, and at the bottom of the table.
+2. Alignment: Align column entries on the range separators instead of centering them.
+3. Range separators: Replace hyphens in the $\delta p_{\text{T}}$ column with en-dashes to maintain consistency with the other columns.
+4. Precision: Format bin edges with consistent decimal precision and avoid mixing decimal numbers with symbolic $\pi$.
+5. Column order: Reorder the headers to match the order mentioned in the caption ($\delta p_{\text{T}}, \delta\alpha_{\text{T}}, \delta\phi_{\text{T}}$).
+6. Units: Replace "(radians)" with the standard abbreviation "(rad)" in the column headers.
+7. Caption: Define the acronym "STVs" (single transverse variables) to make the table self-contained.
+8. Row indexing: Add a dedicated bin index column (1–8) to clearly identify corresponding bins across variables.
+END

@@ -1,0 +1,16 @@
+D1: 2 | Tick labels, slice boundaries, scale factors and legends in both upper grids are too small at printed size.
+D2: 3 | The dense upper grids are disproportionately small relative to the bottom projections; the four plot groups lack panel labels.
+D3: 3 | Published and OmniFold points become difficult to distinguish in greyscale, especially where their markers overlap.
+D4: 4 | -
+D5: 3 | Overlapping points and error bars in the upper grids obscure differences between the published and OmniFold results.
+D6: 4 | -
+D7: 3 | Tiny slice annotations and numerous panel scale factors make the upper grids difficult to absorb quickly.
+TAKEAWAY: OmniFold broadly follows the published distributions and generally lies above the GENIE prediction, with the projections showing pronounced transverse- and longitudinal-momentum peaks.
+CHANGES:
+1. Enlarge both upper grids, preferably by separating the slice distributions and projections into separate figures.
+2. Increase tick, slice-boundary, scale-factor and legend font sizes in both grids.
+3. Give published and OmniFold results distinct marker shapes and open versus filled symbols that remain identifiable in greyscale.
+4. Make overlapping uncertainty bars distinguishable through contrasting line styles and marker sizes.
+5. Add panel labels to the four plot groups and identify them explicitly in the caption.
+6. Reduce the large vertical gaps between plot groups and use the recovered space to enlarge the plots.
+END

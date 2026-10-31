@@ -1,0 +1,12 @@
+D1: 5 | -
+D2: 5 | -
+D4: 3 | column headers for numeric data (omit the tabulated quantity $\chi^2$)
+D6: 3 | caption text (omits explicit degrees of freedom and ambiguously refers to $\alpha=0$ as the "first column")
+D7: 4 | -
+TAKEAWAY: Shrinking systematic correlations toward the diagonal ($\alpha \to 1$) substantially reduces $\chi^2$ across most model predictions, driven primarily by flux and combined correlations, whereas GiBUU displays an opposite trend.
+CHANGES:
+1. Column headers: Add a spanning header (e.g., "$\chi^2$") over columns 3–7 ($\alpha = 0$ to $\alpha = 1$) to identify the tabulated quantity.
+2. Caption: Replace "Degrees of freedom as in Table 16" with the explicit number of degrees of freedom ($N_{\rm dof}$) to make the table self-contained.
+3. Caption: Clarify "(the first column is the reported $\chi^2$)" to explicitly state "(the $\alpha = 0$ column is the reported $\chi^2$)".
+4. Column headers: Group the parameter columns under a single header for $\alpha$ (or subheadings $0, 0.1, 0.25, 0.5, 1.0$) rather than repeating "$\alpha =$" in each column heading.
+END

@@ -1,0 +1,17 @@
+D1: 4 | cell annotation text contrast (white text on medium-red cells in top row)
+D2: 3 | panel labels missing and redundant x-axis on top panel
+D3: 3 | diverging colormap luminance in greyscale (deficits and excesses map to identical grey levels)
+D4: 4 | axis titles include non-standard ", bin edges"
+D5: 4 | absence of uncertainty indications (statistical/systematic) for cell values
+D6: 3 | caption refers to "quoted percentage shares" in bottom panel that are absent from the figure
+D7: 4 | -
+TAKEAWAY: Unfolded data exceed MINERvA Tune v1 by 10–30% across most of $(E_\mathrm{avail}, W)$ space—dominated in integrated yield by the high-$E_\mathrm{avail}$, high-$W$ catch bins and low-$W$ region—interrupted only by a localized ~10% deficit around $W \simeq 1.4\text{--}1.8\text{ GeV}$.
+CHANGES:
+1. Panel labels: add "(a)" and "(b)" labels to the upper-left of the top and bottom panels, and update caption references from "Top" and "bottom" to "(a)" and "(b)".
+2. Shared x-axis: remove the redundant x-axis title and tick labels from the top panel, and reduce the vertical whitespace between panels.
+3. Caption consistency: reconcile the caption with the bottom panel by either adding the percentage shares to the display cells or removing the sentence referencing "quoted percentage shares".
+4. Greyscale accessibility: replace the blue-white-red colormap with one that maintains monotonic or distinct luminance in greyscale, or add hatching/stippling to negative cells to prevent deficits and excesses appearing identical in black and white.
+5. Axis titles: simplify axis titles to standard PRD notation "$E_\mathrm{avail}\text{ (GeV)}$" and "$W\text{ (GeV)}$", removing ", bin edges" and explaining the grid boundary alignment in the caption.
+6. Annotation text contrast: adjust text color threshold in the top panel so that cells with medium background shading (such as 1.31 and 1.30 in the top row) use black text rather than low-contrast white text.
+7. Uncertainties: provide representative statistical and systematic uncertainties per cell, or specify typical percentage uncertainties in the caption.
+END

@@ -1,0 +1,16 @@
+D1: 5 | -
+D2: 3 | column f (decimal alignment)
+D4: 3 | column headers (missing units)
+D6: 4 | -
+D7: 4 | -
+TAKEAWAY: The 16-cell integrated cross sections range from approximately 3 to 50 × 10⁻⁴⁰ cm²/nucleon across the kinematic bins, with marginal relative uncertainties between 4% and 14% and a median uncertainty of 7.29%.
+CHANGES:
+1. Column headers (pT, p∥, Eavail, q3, W): Add physical units (GeV/c or GeV) directly beneath or alongside each kinematic variable name.
+2. Column header f: Add the unit (10⁻⁴⁰ cm²/nucleon) directly to the header.
+3. Column header marginal σ/f: Add the unit (%) to the header.
+4. Column f: Align numerical values on the decimal point rather than right-aligning them so that decimal points line up vertically.
+5. Column f: Make decimal precision consistent across all entries, or ensure decimal alignment cleanly accommodates the mixed one- and two-decimal values.
+6. Table body: Insert a small vertical space (e.g., \addlinespace) every four rows to visually group the 16 cells by their pT and p∥ kinematic boundaries.
+7. Median row: Provide the median cross section value under column f, or insert an em-dash in the empty cell to indicate it is intentionally omitted.
+8. Caption: Remove redundant unit listings from the caption text once units are added to the column headers.
+END

@@ -1,0 +1,10 @@
+D1: A | Axis titles, tick marks, and colorbar numbers in A are large and easily legible at printed size, while B's labels and ticks are noticeably undersized.
+D2: A | A features a balanced, well-spaced 2x2 grid, whereas B packs six panels with disparate colorbars and lacks panel tags or subfigure titles.
+D3: A | A uses a consistent $[-1, 1]$ diverging colormap across all panels, whereas B applies inconsistent, arbitrary colorbar limits across its six panels.
+D4: A | A uses proper LaTeX math formatting and integer bin ticks, whereas B uses raw code strings (`p_T`, `p_||`) and non-integer bin ticks.
+D5: EQUAL | Neither item includes comparisons with external reference data or theoretical predictions.
+D6: A | A uses standard PRD prefixing and matches panel labels to observables, while B lacks panel labels, uses "Figure", and has ambiguous text-to-panel mapping.
+D7: A | A is instantly readable as four correlation matrices with a unified scale, whereas B requires substantial effort to interpret unlabeled panels with varying scales.
+OVERALL: A
+GAP: 1. Format axis labels with proper LaTeX notation ($p_{\mathrm{T}}$, $p_\parallel$) rather than raw code text. 2. Add panel identifiers ((a)–(f)) and label each mode's eigenvalue $\lambda$. 3. Use integer tick marks for discrete bin indices instead of fractional values. 4. Unify colorbar scale limits across panels to allow direct visual comparison of mode amplitudes. 5. Increase font sizes of axis titles, tick marks, and colorbar annotations for print legibility. 6. Adopt PRD caption style ("FIG. 12.") and explicitly tie the caption text to labeled panels.
+END

@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | missing panel labels ((a)-(d)) and redundant separate colorbars for each panel
+D3: 2 | diverging red-white-blue colormap (positive and negative extremes map to identical dark tones in greyscale)
+D4: 2 | missing y-axis labels on all four panels and missing quantity label on colorbars
+D5: 4 | -
+D6: 3 | unlabelled colorbars lacking a metric title ("Correlation coefficient")
+D7: 3 | unlabelled vertical axes and lack of panel identifiers
+TAKEAWAY: Unfolded event count distributions from MultiFold display strong positive bin-to-bin correlations along the diagonal and between neighboring bins across all four observables.
+CHANGES:
+1. Y-axes: add y-axis labels to all four panels matching the observable and bin index of the x-axis (e.g., "$(p_\mu, \cos\theta_\mu)\text{ Bin}$", "$\delta p_{\text{T}}\text{ Bin}$", "$\delta\alpha_{\text{T}}\text{ Bin}$", "$\delta\phi_{\text{T}}\text{ Bin}$").
+2. Panels: add standard PRD panel identifiers ((a), (b), (c), (d)) to the subplots and refer to them in the caption.
+3. Colorbars: remove the four individual colorbars and replace them with a single shared vertical colorbar on the right.
+4. Colorbar: add an axis label/title defining the plotted metric (e.g., "Correlation coefficient").
+5. Colormap: replace the red-white-blue diverging colormap with a perceptually uniform colormap that preserves contrast and sign distinguishability when printed in greyscale.
+6. Caption or axes: provide the kinematic intervals corresponding to the bin indices, particularly for the flattened 2D $(p_\mu, \cos\theta_\mu)$ distribution.
+END

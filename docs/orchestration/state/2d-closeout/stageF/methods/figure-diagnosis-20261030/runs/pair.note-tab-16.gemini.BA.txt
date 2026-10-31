@@ -1,0 +1,10 @@
+D1: A | A provides cleanly aligned integer values, whereas B uses crowded, unaligned slash notation (value/ndf).
+D2: B | B correctly positions the caption above the table and uses standard open-row rules, whereas A places the caption below and uses excessive gridlines.
+D3: EQUAL | Both items are black-and-white tables with no colour.
+D4: A | A uses proper title-cased, descriptive headers with explicit math notation, whereas B uses uncapitalized and incomplete column labels.
+D5: A | A provides a consistent, direct comparison across 13 models with uniform degrees of freedom, whereas B has unexplained variations in degrees of freedom.
+D6: A | A uses standard PRD table numbering (TABLE I) and provides complete context including degrees of freedom, whereas B uses thesis styling and colloquial phrasing.
+D7: A | A allows immediate visual scanning and comparison of values, whereas B requires deciphering unaligned slash fractions with unequal denominators.
+OVERALL: A
+GAP: 1. Capitalize column headers to Title Case (e.g., "Prediction", "Shape-only $\chi^2$"). 2. Separate $\chi^2$ values and degrees of freedom into distinct columns or report $\chi^2/\text{ndf}$ with decimal alignment instead of unaligned slash notation. 3. Adopt standard PRD table numbering and typography ("TABLE XVI." instead of "Table 16:"). 4. Explain the varying degrees of freedom (8/7 for GiBUU vs 16/15 for others) in the caption or a footnote. 5. Match caption width to table width to eliminate asymmetrical margins and excessive whitespace. 6. Rephrase caption to eliminate informal wording ("beside it") and clearly define all matrix terms.
+END

@@ -1,0 +1,17 @@
+D1: 3 | bottom x-axis tick labels (1–6) and obscured error bars
+D2: 4 | -
+D3: 3 | panel (b) markers (purple diamonds vs. blue circles under deuteranopia; green triangles against grey band in greyscale)
+D4: 3 | panel (b) y-axis label and top/bottom x-axis quantity and unit labels
+D5: 3 | overlapping markers in panel (b)
+D6: 5 | -
+D7: 3 | non-parallel reference baselines (injected step in a vs. uncertainty band in b) and dense 2D bin indexing
+TAKEAWAY: The joint-test estimator (400 trees, 31 leaves) successfully reduces unfolding residuals across multiple unseen model deformations to within the experimental systematic uncertainty, resolving the large residual biases of up to ~75% present in the development variant (100 trees, 8 leaves).
+CHANGES:
+1. Bottom x-axis: Increase the font size of the repeating sub-bin tick labels (1–6) or replace them with grouped tick marks to ensure legibility at printed size.
+2. Panel (b) data markers: Apply a slight horizontal offset (dodging) among the three marker series within each bin so overlapping points and error bars can be distinguished.
+3. Panel (b) marker colours: Replace the blue/purple/teal palette with colours and marker styles that maintain high contrast under deuteranopia (avoiding adjacent blue and purple hues) and against the grey uncertainty band in greyscale.
+4. Panel (b) y-axis: Add the y-axis label `(unfolded − truth)/truth (%)` to panel (b), or abut panels (a) and (b) and remove the redundant internal y-axis tick labels.
+5. Top and bottom x-axes: Add an explicit quantity and unit label to the top axis (e.g., "$E_\text{avail}$ (GeV)") and define the units and bin boundaries for $W$ on the bottom axis.
+6. Bottom x-axis label: Remove the parenthetical note "(GeV, top)" from the bottom axis title once the top axis is directly labelled.
+7. Reference baselines: Display the experimental covariance uncertainty band in panel (a) or indicate the injected truth changes in panel (b) to provide a consistent reference baseline across panels.
+END

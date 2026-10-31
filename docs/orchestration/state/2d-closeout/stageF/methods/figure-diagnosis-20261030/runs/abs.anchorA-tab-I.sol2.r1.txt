@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 4 | Long interval expressions sit close to the central vertical rule; numerical bounds are not aligned consistently.
+D4: 4 | Integer upper limits such as 30 mix with decimal forms such as 1.0 and 2.0.
+D6: 4 | The phrase linking the T2K analysis, data release, and present work is cumbersome.
+D7: 4 | The long sequence of interval expressions slows comparison across angular groups.
+TAKEAWAY: The table defines indexed momentum bins within angular slices, with momentum boundaries varying by slice.
+CHANGES:
+1. Align the lower bounds, inequality signs, and upper bounds within each interval column, and increase padding beside the central rule.
+2. Use a consistent convention for trailing zeros in momentum boundaries.
+3. Shorten the caption’s final clause to “using the same binning as the T2K data release analyzed here [52].”
+END

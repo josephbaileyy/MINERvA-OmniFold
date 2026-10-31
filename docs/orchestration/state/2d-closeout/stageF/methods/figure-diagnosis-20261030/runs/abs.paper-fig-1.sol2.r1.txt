@@ -1,0 +1,13 @@
+D1: 5 | -
+D2: 4 | -
+D3: 3 | Greyscale residual heatmap loses the sign of deviations; the two uncertainty bands become nearly indistinguishable.
+D4: 5 | -
+D5: 4 | -
+D6: 5 | -
+D7: 4 | -
+TAKEAWAY: OmniFold closely follows the published result with slightly smaller median relative uncertainty, while MINERvA Tune v1 generally lies below both.
+CHANGES:
+1. Add sign-specific hatching or labelled contours to the residual heatmap so positive and negative deviations remain distinguishable in greyscale.
+2. Give the OmniFold uncertainty band a distinct hatch pattern, reproduced in the legend, to distinguish it from the published band in greyscale.
+3. Add panel labels to the two projection groups, residual heatmap and numerical summary, and reference them in the caption.
+END

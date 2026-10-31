@@ -1,0 +1,10 @@
+D1: B | Item B features significantly larger, clearer typography and comfortable row spacing, whereas Item A is densely packed with very small type.
+D2: A | Item A adheres to PRD style by using standard horizontal rules without vertical lines, whereas Item B uses prohibited vertical rules and has an irregular top rule.
+D3: EQUAL | Both items are monochrome tables with no colour elements.
+D4: B | Item B clearly labels the overarching quantity and uses proper mathematical notation for observables, whereas Item A omits percentage units and has awkwardly spaced spanning headers.
+D5: B | Item B provides a concise, effective comparison against a clear baseline (Prior), whereas Item A presents 160 unsummarized per-cell values without aggregate comparison metrics.
+D6: B | Item B follows standard PRD caption formatting ("TABLE IV:") with self-contained description, whereas Item A uses non-standard numbering ("Table 17:") and undefined shorthand variables.
+D7: B | Item B conveys the relative performance of all methods within seconds, whereas Item A's large raw numerical matrix cannot be interpreted in 30 seconds.
+OVERALL: B
+GAP: 1. Add summary statistics (such as mean pull, RMS, or total chi-squared) so model performance can be assessed without parsing 160 raw values. 2. Adopt standard PRD caption conventions ("TABLE XVII:") and define all mathematical symbols and kinematic cell boundaries. 3. Include percentage signs in the sub-headers (e.g., "(g − f)/f [%]"). 4. Add horizontal sub-rules under spanning model headers to visually group the corresponding pull and difference subcolumns. 5. Align numerical values on the decimal point across all columns. 6. Consider presenting the per-cell distributions as a figure or moving the raw cell matrix to supplemental material.
+END

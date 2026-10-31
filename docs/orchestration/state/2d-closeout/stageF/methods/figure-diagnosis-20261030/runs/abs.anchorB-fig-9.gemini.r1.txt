@@ -1,0 +1,18 @@
+D1: 5 | -
+D2: 3 | panel labels (missing "(a)" and "(b)" labels on the two panels)
+D3: 3 | model curves (all use solid line styles, rendering them indistinguishable in greyscale)
+D4: 4 | -
+D5: 4 | -
+D6: 4 | -
+D7: 4 | -
+TAKEAWAY: Across both transverse and longitudinal muon momentum, MINERvA cross-section data systematically exceeds MnvGENIE v1 and all model predictions, with notable model tension at intermediate pT and GiBUU underpredicting the longitudinal cross section by 20% to 40%.
+CHANGES:
+1. Model curves: differentiate GENIE 2.8.4, NuWro 19.02, and GiBUU 2019 using distinct line styles (e.g., solid, dashed, dash-dotted) so they are distinguishable in greyscale.
+2. Panel labels: add "(a)" and "(b)" labels to the top and bottom panels and reference them in the caption.
+3. Y-axis limits: harmonize the y-axis ranges and tick marks between both panels (e.g., 0.7 to 1.35) for direct visual comparability.
+4. X-axis labels: include kinematic variable symbols in the axis titles, e.g., "Muon Transverse Momentum pT (GeV)" and "Muon Longitudinal Momentum p|| (GeV)".
+5. Y-axis labels: reformat the ratio notation to avoid ambiguous double slashes, e.g., (dσ/dpT) / (dσ/dpT)_MnvGENIE v1 or "Ratio to MnvGENIE v1".
+6. Tick labels: format tick values with consistent decimal precision, changing "1" to "1.0" on the y-axes and adding decimals to integer ticks on the top x-axis.
+7. Legend: add an entry for the horizontal dotted line representing the MnvGENIE v1 baseline.
+8. Caption: include version numbers for NuWro (19.02) and GiBUU (2019) to match the legend.
+END

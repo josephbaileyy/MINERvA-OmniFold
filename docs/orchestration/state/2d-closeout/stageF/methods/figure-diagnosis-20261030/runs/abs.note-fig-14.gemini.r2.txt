@@ -1,0 +1,17 @@
+D1: 4 | axis and colorbar label font sizes
+D2: 3 | missing panel labels ((a), (b)) and redundant middle colorbar
+D3: 2 | diverging colormap non-monotonic in greyscale (deficits and excesses both appear dark)
+D4: 3 | axis labels in raw code syntax (p_T bin, p_|| bin) lacking LaTeX formatting and physical units
+D5: 4 | lack of on-panel labels distinguishing our result from published data
+D6: 3 | missing panel titles or legends identifying datasets and redundant duplicate colorbar
+D7: 3 | unlabeled panels and raw bin indices force reliance on caption to interpret the comparison
+TAKEAWAY: Both the new result and the published data exhibit a consistent pattern of departure from MINERvA Tune v1 across the (p_T, p_\parallel) phase space, showing a deficit at low p_T and an excess across the rest of the plane.
+CHANGES:
+1. Add panel labels and descriptive titles, such as "(a) This work" and "(b) Published data", above or inside the respective panels.
+2. Remove the middle colorbar between the two panels and use a single shared colorbar on the far right.
+3. Share the vertical axis between panels by removing the duplicate tick marks and axis label from the right panel once the middle colorbar is removed.
+4. Typeset axis labels in LaTeX math notation, replacing "p_T bin" and "p_|| bin" with $p_T$ and $p_\parallel$ alongside physical kinematic units or explicit bin index notation.
+5. Choose a colormap with a monotonic luminance gradient or add contour overlays so that ratios below unity remain distinguishable from ratios above unity in black-and-white print.
+6. Increase the font sizes of axis labels, colorbar tick labels, and the "ratio" label to improve readability at printed journal width.
+7. Remove the self-referential note "the panels have no printed titles" from the caption once panel titles or labels are incorporated.
+END

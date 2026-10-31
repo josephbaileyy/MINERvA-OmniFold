@@ -1,0 +1,33 @@
+ours	anchor	kind
+paper-tab-I	anchorA-tab-I	definitions table
+paper-fig-1	anchorB-fig-6	data against a reference, projections with bands
+paper-fig-2	anchorA-fig-10	closure / validation residual against truth
+paper-fig-3	anchorC-fig-2	bias against the true value, per bin
+paper-tab-II	anchorA-tab-III	test-statistic table
+paper-tab-III	anchorA-tab-I	results table with bin boxes
+paper-fig-4	anchorB-fig-11	data and predictions as ratios
+paper-tab-IV	anchorB-tab-I	chi-squared of predictions table
+note-fig-7	anchorB-fig-7	double-differential cross section in slices
+note-tab-5	anchorA-tab-III	summary-statistics table
+note-fig-8	anchorA-fig-12	2D map
+note-fig-9	anchorB-fig-7	double-differential cross section in slices
+note-fig-10	anchorB-fig-7	double-differential cross section in slices
+note-tab-6	anchorA-tab-III	numbers table (uncertainty budget)
+note-fig-11	anchorA-fig-12	2D map with a summary panel
+note-fig-12	anchorA-fig-12	2D maps
+note-fig-13	anchorB-fig-6	data against references, projections
+note-fig-14	anchorB-fig-3	2D heat map
+note-tab-8	anchorA-tab-II	definitions table
+note-tab-9	anchorA-tab-I	definitions table
+note-fig-24	anchorB-fig-3	2D heat map
+note-fig-25	anchorB-fig-9	data against generator predictions, projections
+note-tab-11	anchorA-tab-I	results table with bin boxes
+note-tab-12	anchorA-tab-III	numbers table (per-cell uncertainties)
+note-tab-13	anchorA-fig-12	correlation matrix (the anchor shows it as a figure)
+note-tab-14	anchorA-tab-III	test-statistic table
+note-tab-15	anchorA-tab-IV	numbers table
+note-tab-16	anchorB-tab-I	chi-squared of predictions table
+note-tab-17	anchorA-tab-IV	per-cell numbers by prediction
+note-tab-18	anchorB-tab-I	chi-squared of predictions table
+note-fig-30	anchorB-fig-5	per-bin bar panels by category
+note-tab-19	anchorA-tab-III	numbers table

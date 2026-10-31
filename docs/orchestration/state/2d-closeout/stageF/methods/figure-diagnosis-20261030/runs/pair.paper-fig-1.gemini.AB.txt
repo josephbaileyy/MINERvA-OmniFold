@@ -1,0 +1,10 @@
+D1: A | A uses clean LaTeX typography proportional to PRD print size without B's colliding axis multiplier and crowded marker caps.
+D2: A | A organizes projections, ratio subpanels, and residual summaries efficiently, whereas B redundantly duplicates the full legend in both panels.
+D3: A | A employs distinguishable colors with translucent uncertainty bands and a perceptually balanced diverging colormap, whereas B uses low-contrast, unshaded lines.
+D4: A | A adheres to PRD conventions with proper math notation, absorbed scale factors, and standard units, whereas B has floating multipliers and non-standard multi-slash units.
+D5: A | A provides explicit ratio panels, correlated ±1σ uncertainty bands, and a complete 2D residual pull distribution, whereas B lacks ratio panels and model uncertainties.
+D6: A | A provides a single well-placed legend and an informative, self-contained caption explaining all conventions, whereas B duplicates its legend and has a minimal caption.
+D7: A | A enables instant evaluation of model-data compatibility and residual quality through ratio panels and summary metrics, which B lacks.
+OVERALL: A
+GAP: 1. Add ratio subpanels beneath each kinematic projection to quantify fractional deviations between data and predictions. 2. Consolidate the legend into a single shared box rather than duplicating the identical 7-line legend across both panels. 3. Correct axis formatting by absorbing the floating 10⁻³⁹ factor into the axis label, using standard symbols (pT, p∥), and eliminating multi-slash unit notation. 4. Display theoretical/model uncertainty bands and specify whether data error bars represent statistical or total uncertainties. 5. Replace low-contrast line colors (such as light pink) with high-contrast, distinguishable styles or shaded fills. 6. Expand the caption to define the data set, error bar conventions, and model components.
+END

@@ -1,0 +1,10 @@
+D1: A | Larger text, markers and curves remain substantially easier to read at printed size.
+D2: A | Compact, aligned panels use space efficiently; B leaves excessive whitespace while shrinking its plots.
+D3: A | Stronger colour contrast and dashed styling make the prediction and its components easier to distinguish.
+D4: A | Explicit slice ranges and prominent shared axes identify each panel; B omits slice labels and leaves its scaling convention unclear.
+D5: A | Data–prediction differences are easier to inspect; B compresses most structure against the left edge of each panel.
+D6: A | The readable legend and concise caption establish the figure’s meaning faster than B’s small legend and lengthy caption.
+D7: A | The observables, slice ordering and comparison are apparent quickly; B requires substantial decoding.
+OVERALL: A
+GAP: 1. Enlarge B’s panels and typography by removing excess whitespace. 2. Label every panel with its slice range and units. 3. State the cross-section units and define the displayed scale factors explicitly. 4. Choose horizontal limits that expose the populated region, using insets for tails if necessary. 5. Increase prediction-line contrast and legend size. 6. Shorten the caption and move detailed normalization and statistical explanations into the main text.
+END

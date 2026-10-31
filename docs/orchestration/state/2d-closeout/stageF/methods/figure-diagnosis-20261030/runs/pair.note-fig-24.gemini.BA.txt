@@ -1,0 +1,10 @@
+D1: A | A has large, high-contrast labels and ticks, whereas B is cluttered with 84 tiny in-cell numbers suffering from poor contrast against colored backgrounds.
+D2: A | A features a clean, well-proportioned layout, while B is visually crowded with two dense annotated matrices and vertically elongated colorbars.
+D3: B | B correctly uses diverging colormaps centered on physical baselines (1.0 for ratio, 0 for difference), whereas A uses a diverging colormap for a strictly unipolar efficiency.
+D4: A | A uses standard continuous linear axes with proper units, whereas B plots wildly disparate bin widths (0.1 to 97 GeV) onto an equal-cell grid with awkward ", bin edges" labels.
+D5: B | B directly compares unfolded data to theoretical predictions (MINERvA Tune v1) via ratio and difference panels, whereas A contains no reference or prediction.
+D6: A | A adheres to PRD caption style ("FIG. 3.") and provides a concise physics takeaway, while B uses non-PRD numbering ("Figure 24:") and an overlong caption devoted to explaining display artifacts.
+D7: A | A can be understood within seconds, whereas B requires extensive reading and mental arithmetic to disentangle equal-sized catch bins, dual metrics, and dense cell numbers.
+OVERALL: A
+GAP: 1. Replace the equal-size grid display with true physical or logarithmic coordinate scaling to avoid severe geometric distortion of bin widths. 2. Isolate the [3, 100] GeV catch bins into dedicated overflow panels or detached bins rather than plotting 97-GeV intervals as standard cells. 3. Remove in-cell numerical text annotations to eliminate visual clutter and illegible low-contrast text. 4. Standardize axis and colorbar labels to standard PRD notation without ad-hoc suffixes like ", bin edges". 5. Adopt PRD caption style ("FIG. 24.") and streamline caption text to emphasize physical results rather than apologizing for plotting conventions.
+END

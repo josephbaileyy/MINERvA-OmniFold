@@ -1,0 +1,13 @@
+D1: 4 | Small, vertically rotated R00–R15 tick labels.
+D2: 5 | -
+D3: 5 | -
+D4: 4 | The horizontal axis lacks an explicit “cell” label; loadings are dimensionless but not identified as such.
+D5: 5 | -
+D6: 5 | -
+D7: 4 | Mode shares and signed distances require reading annotations across twelve panels.
+TAKEAWAY: Each prediction’s leading mode accounts for roughly 31–48% of its χ², and all four leading modes have negative signed distances of substantial magnitude.
+CHANGES:
+1. Enlarge the bottom-row R00–R15 tick labels slightly.
+2. Add a shared horizontal-axis label, “Cell,” and change the vertical label to “Unit loading (dimensionless).”
+3. Emphasize the χ² share and signed distance within each panel’s annotations to make the principal comparisons faster.
+END

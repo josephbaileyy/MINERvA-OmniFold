@@ -1,0 +1,17 @@
+D1: 4 | -
+D2: 3 | row titles left-aligned over column 1 only and off-center y-axis label
+D3: 4 | -
+D4: 3 | missing horizontal axis title for bins R00–R15
+D5: 3 | columns sorted by rank rather than eigenmode, scrambling cross-model comparison
+D6: 4 | -
+D7: 3 | eigenmodes scrambled across columns and model distances shown only as numerical text annotations
+TAKEAWAY: For GENIE CV, GENIE + MEC, and MINERvA Tune v1, data discrepancies are dominated by the same two covariance eigenmodes (modes 7 and 13) at 4–13$\sigma$, whereas NuWro deviates primarily along different modes (modes 15, 10, and 5).
+CHANGES:
+1. Horizontal axis: Add an axis title (e.g., "Analysis cell" or "Kinematic bin") beneath the R00–R15 tick labels on the bottom row.
+2. Column alignment: Organize columns by fixed eigenmode (e.g., mode 7, mode 13, mode 15) across all rows rather than sorting by model-dependent $\chi^2$ rank, avoiding repeated mode plots and enabling direct vertical comparison.
+3. Graphical comparison: Display the prediction distances (in units of $\sigma$) graphically (e.g., as pull markers or offset indicators) rather than relying solely on numerical text annotations.
+4. Row headers: Center model names across all three columns of each row, or place them in panel strip headers, rather than left-aligning them solely over the first column.
+5. Y-axis label: Center the "loading" axis label vertically across the entire four-row block on the left margin.
+6. Shared horizontal axes: Either add tick labels to rows 1–3 or remove the vertical gaps between rows so panels vertically abut and unambiguously share the bottom axis.
+7. Cell group indicators: Clarify the meaning of the vertical divider lines marking the 4-cell blocks (R00–R03, R04–R07, etc.) in the caption or via secondary grouping labels.
+END

@@ -1,0 +1,10 @@
+D1: A | A features larger, clearer typography and comfortable row spacing, making it far more legible at printed size than B's small, dense text and cramped superscripts.
+D2: A | A provides a coherent, fully populated rectangular layout, whereas B awkwardly joins two disparate tables side-by-side, leaving a massive empty block on the lower right.
+D3: EQUAL | Both items are black-and-white tables with no colour.
+D4: A | A features clear, hierarchical headers with a spanning category and distinct observable labels, whereas B combines \chi^2 and p under a single ambiguous header over two columns.
+D5: A | A provides a consistent, direct comparison of multiple unfolding methods against the prior baseline across all observables, whereas B presents a fragmented, incomplete set of comparisons with missing values.
+D6: A | A's caption is concise, informative, and clearly states what is tabulated, whereas B's caption is an overlong, conversational paragraph filled with methodological caveats and informal disclaimers.
+D7: A | A enables an immediate 30-second grasp of the comparative performance of each unfolding method, whereas B is visually fragmented, cluttered with dashes, and requires deciphering a dense caption.
+OVERALL: A
+GAP: 1. Split the disparate datasets (truth models vs. power alternatives) into two separate tables to eliminate the large empty block on the right. 2. Provide separate column headers for \chi^2 and p under in-sample rather than grouping them under a single merged header. 3. Condense the caption to a concise description of the contents, moving lengthy methodological explanations and disclaimers into the main text. 4. Replace or clearly define cryptic row and column abbreviations (such as P1r, P2g, W1, W2). 5. Adopt standard PRD table numbering and style (TABLE XV. instead of Table 15:). 6. Increase font size and row padding to improve legibility at printed column width.
+END

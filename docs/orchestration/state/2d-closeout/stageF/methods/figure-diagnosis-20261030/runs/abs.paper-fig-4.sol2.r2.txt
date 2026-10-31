@@ -1,0 +1,13 @@
+D1: 3 | Small cell-definition text and R00–R15 labels require close reading at printed size.
+D2: 4 | Generous whitespace above the panels and below the cell key could support larger text.
+D3: 4 | Upper-panel series have similar grey tones; distinct marker shapes preserve identification.
+D4: 5 | -
+D5: 4 | The different vertical scales require care when comparing GiBUU with the upper-panel predictions.
+D6: 4 | Long target and qualification statements make the legend cumbersome.
+D7: 4 | Ratios are readily understood, but interpreting individual cells requires consulting the dense five-row key.
+TAKEAWAY: Most upper-panel ratios cluster around unity, while GiBUU ratios are consistently above unity and reach about 2.1 in R02.
+CHANGES:
+1. Enlarge the R00–R15 labels and cell-definition text, reclaiming space from the large vertical gaps.
+2. Shorten the legend entries by moving target-composition qualifications into the caption.
+3. Add panel labels identifying the upper predictions and lower GiBUU comparison, explicitly noting their different vertical scales.
+END
