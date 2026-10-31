@@ -100,6 +100,11 @@ The adopted note is `f13912b6`.
   - `--all-pieces` checks NEW as before: 64 rows, 183 probes, 0 failures, self-test PASS on NEW's files.
 - **Registry:** the round's re-pins are all in adopted files and stand: `app_guide.tex:8` (B12) and
   `sec_method.tex:48`, `:79` (B02). `check_registry.py` passes, and the regenerated records are unchanged.
+- **The records-move ledger.** B12-g-04 turned the glossary's J28 row into a sentence. So row L-thin-C02's `N:` probe
+  of `records-move-ledger.md` named text that no longer printed, and the records-move self-test caught it in the CI
+  steps. The probe now names the new sentence, and the row is marked "probe updated for r22 Step 3", as Step 2 marked
+  its own.
+- **The CI steps** (`record-checks.yml`, run locally after merging origin/main) pass: 37 steps, 0 failed.
 
 ## Score and the stopping rule (§5)
 
