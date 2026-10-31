@@ -1,0 +1,10 @@
+D1: EQUAL | Both use clear, readable type with distinguishable mathematical symbols and numbers.
+D2: A | Restrained rules and a compact layout make the complete table easier to scan; B requires substantial vertical tracking.
+D3: EQUAL | Both are tables.
+D4: B | Momentum units appear directly in the header, and explicit inequalities make the bin definitions easy to interpret.
+D5: EQUAL | Neither presents a comparison with reference values or predictions.
+D6: A | The caption defines the reported quantities, units, uncertainty convention and median, though it is dense.
+D7: A | The complete sixteen-cell summary and median communicate the table’s main information quickly.
+OVERALL: A
+GAP: 1. Split B into clearly labelled continuation panels or parallel blocks to reduce vertical tracking; 2. Repeat column headers in each block; 3. Preserve the shared angular labels and group boundaries throughout.
+END

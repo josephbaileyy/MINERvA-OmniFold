@@ -1,0 +1,10 @@
+D1: 5 | -
+D2: 5 | -
+D4: 4 | Energy units appear repeatedly in the entries rather than in the energy-coverage heading.
+D6: 3 | “Generator predictions” does not explain “Test cells,” CV, MEC, CH, or the reference flux for reweighting.
+D7: 4 | -
+TAKEAWAY: Four predictions use 109 test cells, while GiBUU uses 72 and has the lowest stated upper energy limit.
+CHANGES:
+1. Expand the caption to define “Test cells,” CV, MEC, and CH and identify the reference flux used for reweighting.
+2. Separate energy coverage from flux treatment into two columns, placing GeV in the energy-coverage heading.
+END

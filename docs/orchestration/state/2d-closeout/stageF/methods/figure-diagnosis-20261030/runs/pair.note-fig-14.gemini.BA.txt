@@ -1,0 +1,10 @@
+D1: A | A features large, crisp, and properly scaled axis and tick labels, whereas B's text is tiny, thin, and illegible at print size.
+D2: A | A has a well-balanced single-panel layout, whereas B wastes space with duplicate colorbars and lacks panel labels or titles.
+D3: A | A uses a perceptually uniform colormap that clearly contrasts with empty phase space, whereas B's white midpoint at 1.0 blends into the white background and unmeasured bins.
+D4: A | A displays physical momentum variables with units (GeV) and LaTeX formatting, whereas B shows unitless integer bin indices with raw underscores.
+D5: B | B shows ratios to a reference prediction (MINERvA Tune v1) and compares two datasets, whereas A displays only an efficiency map without references or predictions.
+D6: A | A follows PRD caption conventions and clearly explains physical trends, whereas B uses non-standard numbering, British spelling, and apologetic meta-text.
+D7: A | A conveys its physical acceptance message immediately, whereas B requires decoding unphysical bin indices and searching the caption to identify the panels.
+OVERALL: A
+GAP: 1. Replace unitless integer bin indices with physical momentum axes ($p_\parallel$ and $p_T$) in GeV with proper tick values. 2. Increase font sizes of axis labels, tick numbers, and colorbar annotations for print legibility. 3. Add explicit panel titles or labels (e.g., "(a) OmniFold result" and "(b) Published data"). 4. Remove the redundant second colorbar and share a single colorbar between panels. 5. Distinguish unmeasured/empty bins from ratio = 1.0 bins (e.g., using a non-white midpoint or distinct background fill). 6. Conform caption to PRD style ("FIG. 14."), adopt American spelling ("color"), and remove meta-commentary.
+END

@@ -1,0 +1,16 @@
+D1: 3 | irregular horizontal column spacing and dense 16-row block lacking row grouping
+D2: 2 | unspanned model headers causing severe column width distortion and missing sub-rules (cmidrules)
+D4: 3 | missing unit [%] in (g - f)/f subheaders and unphysical -0.00 in cell R03 pull
+D6: 2 | caption fails to define symbols (f, g, sigma), covariance terms, and physical meaning of cells R00–R15
+D7: 3 | absence of summary statistics (such as chi^2/ndf or mean/RMS pull) to compare overall model performance
+TAKEAWAY: All generator models predominantly underpredict the measured cross sections across the 16 cells (yielding negative relative differences down to -52%), with GiBUU showing the largest deviations and pulls while the GENIE models and MINERvA Tune v1 provide comparatively closer agreement.
+CHANGES:
+1. Model headers: wrap each model name in \multicolumn{2}{c}{...} across its two sub-columns to eliminate the severely distorted column gaps.
+2. Header rules: add \cmidrule(lr) under each spanned model header to clearly demarcate the pull and (g - f)/f subheaders.
+3. Subheader units: add [%] to the (g - f)/f column subheaders to specify the unit of relative difference.
+4. Cell R03: change -0.00 to 0.00 in the GENIE 2.12.10 CV pull column to eliminate the unphysical negative zero.
+5. Row spacing: insert a vertical space (\addlinespace) every four rows (after R03, R07, and R11) to break up the dense 16-row block into readable groups.
+6. Summary row: add a bottom row reporting summary statistics (such as total chi^2/ndf or RMS pull) for each prediction.
+7. Caption definitions: explicitly define f (data), g (prediction), sigma, the covariance components, and the physical/kinematic definition of cells R00–R15 in the caption.
+8. Column alignment: align all numeric columns strictly on the decimal point using siunitx or dcolumn.
+END

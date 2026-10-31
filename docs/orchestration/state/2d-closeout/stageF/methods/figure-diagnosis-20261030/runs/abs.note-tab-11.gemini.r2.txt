@@ -1,0 +1,15 @@
+D1: 5 | -
+D2: 3 | Column f decimal alignment, lack of grouping between kinematic row blocks, and right-shifted alignment under the wide $C_\text{total} + C_\text{resp}$ header.
+D4: 2 | Missing units across all column headers, missing quantity and unit labels ($\sigma$, %) for the uncertainty columns, and inconsistent decimal precision in column f.
+D6: 4 | Caption section reference style ("§10.2" with colored hyperlink instead of "Sec. 10.2").
+D7: 3 | Uncertainty headers ($C_\text{total}$, $C_\text{resp}$, $C_\text{total} + C_\text{resp}$), which lack quantity symbols and percent signs, forcing the reader to consult the caption text to understand the values.
+TAKEAWAY: Across the 16 kinematic cells, cell-integrated cross sections range from ~3 to 50 $\times 10^{-40}\text{ cm}^2/\text{nucleon}$ with a median combined relative uncertainty of 7.3%, driven primarily by total systematics (median 6.7%) with detector response contributing subdominantly (median 2.1%).
+CHANGES:
+1. Column headers ($p_T, p_\parallel, E_\text{avail}, q_3, W, f$): Add explicit units to each header (e.g., $\text{GeV}/c$, $\text{GeV}$, and $10^{-40}\text{ cm}^2/\text{nucleon}$).
+2. Column headers ($C_\text{total}, C_\text{resp}, C_\text{total} + C_\text{resp}$): Add a spanner header "Relative uncertainty $\sigma$ (%)" or append "(%)" and $\sigma$ to clarify that values are percentage uncertainties.
+3. Column $f$: Align entries on the decimal point and adopt consistent decimal precision across all rows.
+4. Rows R00–R15: Insert small vertical spacing (`\addvspace`) every four rows to visually delineate the four $(p_T, p_\parallel)$ kinematic blocks.
+5. Column $C_\text{total} + C_\text{resp}$: Center the numbers or split the header over two lines so values do not sit awkwardly flush against the right margin with excess white space on the left.
+6. Caption: Replace the section symbol and colored hyperlink "§10.2" with standard PRD style "Sec. 10.2".
+7. Kinematic range columns ($p_T$ through $W$): Align range entries on the en-dash rather than plain centering to enhance vertical scanning.
+END

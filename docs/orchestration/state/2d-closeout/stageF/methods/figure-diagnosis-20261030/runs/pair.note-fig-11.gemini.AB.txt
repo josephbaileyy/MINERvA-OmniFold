@@ -1,0 +1,10 @@
+D1: B | All labels, tick marks, and annotations in B are clear and legible at printed size, whereas A has microscopic, illegible text on its left subplots.
+D2: B | B features a clean, well-aligned 2x2 grid, whereas A has an unbalanced layout with tiny squished subplots and large empty whitespace.
+D3: B | B uses an intuitive, well-centered diverging colormap spanning [-1, 1] appropriate for correlations, whereas A's diverging palette for $\chi^2$ contribution is poorly motivated.
+D4: B | B typesets all variables and axis labels cleanly in LaTeX math mode, whereas A relies on crude, unformatted ASCII strings.
+D5: EQUAL | Neither item presents a comparison with theoretical predictions or reference datasets.
+D6: B | B adheres to PRD caption style ("FIG. 12:") with helpful physical context, whereas A uses "Figure 11:", unformatted legend math, and an incomplete description.
+D7: B | B is immediately readable as four correlation matrices, whereas A is difficult to interpret quickly due to mismatched panel scales and cryptic labelling.
+OVERALL: B
+GAP: 1. Enlarge font sizes for all axis titles, tick marks, and legends on the left subplots to ensure legibility at journal print size. 2. Harmonize the layout by matching panel heights, aligning subplots consistently, and eliminating the large empty whitespace above the left panels. 3. Typeset all mathematical symbols and axis labels in proper LaTeX (e.g., $p_\parallel$, $p_\mathrm{T}$, $\chi^2$, $\lambda/\lambda_\mathrm{max}$). 4. Adopt standard PRD caption conventions ("FIG. 11.") and expand the caption to explain the plotted quantities, mode rankings, and color scale. 5. Refine the 2D contribution map and colorbar presentation to integrate coherently with the decomposition spectra.
+END

@@ -1,0 +1,18 @@
+D1: 3 | axis tick labels and colorbar ticks (undersized), and unformatted axis labels (`p_|| bin`, `p_T bin`)
+D2: 2 | panel labels and organization (no subpanel tags (a)–(f), unordered modes, and unshared redundant axes)
+D3: 2 | colormap (symmetric luminance in red-blue map makes positive and negative eigenvector components indistinguishable in greyscale)
+D4: 2 | colorbar axes (missing quantity labels and units), fractional bin tick marks (2.5, 7.5), and raw code labels
+D5: 2 | colorbar ranges (inconsistent numerical limits across panels prevent visual comparison of relative amplitudes)
+D6: 2 | panel annotations and legends (no labels, titles, or eigenvalue values linking panels to the caption)
+D7: 3 | panel identification (lack of panel labels, ordering, and eigenvalues prevents identifying individual modes quickly)
+TAKEAWAY: The leading $\chi^2$-carrying covariance eigenmodes split into two distinct kinematic structures: three smallest-$\lambda$ modes concentrated along the maximum-$p_\parallel$ boundary and three moderate-$\lambda$ modes populating the interior phase space.
+CHANGES:
+1. Panel labels and titles: Add subpanel tags (a)–(f) and individual panel titles displaying the mode index and eigenvalue $\lambda$.
+2. Panel ordering: Arrange the panels systematically by eigenvalue, placing the three smallest-$\lambda$ modes in the top row and the three moderate-$\lambda$ modes in the bottom row.
+3. Colorbar unification: Replace the six separate colorbars with a single, shared colorbar with a consistent numerical scale across all panels.
+4. Colorbar annotation: Add a descriptive label and symbol/unit (or indicate dimensionless) to the colorbar defining the plotted eigenmode component.
+5. Axis typography: Replace raw-text labels `p_|| bin` and `p_T bin` with standard LaTeX mathematical notation ($p_\parallel$ bin, $p_T$ bin).
+6. Shared axes and integer ticks: Share outer x- and y-axes across the grid to eliminate redundant interior labels, and replace half-integer ticks (2.5, 7.5, ...) with integer bin ticks.
+7. Greyscale accessibility: Use a diverging colormap with asymmetric luminance or add contour lines so positive and negative component signs remain distinguishable in black-and-white print.
+8. Phase space boundary: Increase the line weight and contrast of the faint stepped boundary outlining the kinematically allowed phase space.
+END

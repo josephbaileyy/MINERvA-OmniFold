@@ -1,0 +1,12 @@
+D1: 4 | Thin projection guides and pale transverse-momentum annotations
+D2: 4 | Overlapping vectors and construction lines near the interaction vertex in the 3D panel
+D3: 3 | Bright green lepton annotations have weak contrast; lepton and proton colours become similar in greyscale and the deuteranopia simulation
+D4: 5 | -
+D5: 5 | -
+D6: 5 | -
+D7: 4 | Dense construction geometry in the 3D panel slows interpretation
+TAKEAWAY: The schematic shows how projected lepton and proton momenta define the transverse imbalance δpT and the angles δφT and δαT.
+CHANGES:
+1. Darken the green lepton vectors and labels, and distinguish lepton and proton vectors with line styles that remain clear in greyscale.
+2. Strengthen the thin projection guides and separate crowded annotations around the interaction vertex in the 3D panel.
+END

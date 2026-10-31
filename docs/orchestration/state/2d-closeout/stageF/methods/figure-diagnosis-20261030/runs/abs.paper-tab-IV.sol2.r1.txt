@@ -1,0 +1,10 @@
+D1: 5 | -
+D2: 5 | -
+D4: 4 | The “shape-only” header leaves χ²/ndf implicit.
+D6: 3 | C_total and C_resp are undefined in the caption, limiting self-containment.
+D7: 5 | -
+TAKEAWAY: GiBUU 2019 has the lowest listed χ² values, with fewer degrees of freedom, and freeing normalization reduces its χ² from 58 to 28.
+CHANGES:
+1. Label the numeric columns “χ²/ndf” and “Shape-only χ²/ndf” to match the entries.
+2. Define C_total and C_resp briefly in the caption.
+END

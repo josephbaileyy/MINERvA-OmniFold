@@ -1,0 +1,13 @@
+D1: 4 | -
+D2: 3 | The truth comparisons and power alternatives share rows without a clear visual division, suggesting unintended correspondence.
+D4: 3 | The two in-sample columns share one heading; the power-alternative column’s n is undefined.
+D6: 3 | The seven-line caption crowds the table and buries essential definitions in long sentences.
+D7: 3 | Two independent numerical blocks and dense caption qualifications obscure the main comparison.
+TAKEAWAY: The descriptive model-only χ² values vary widely across truths, with GiBUU hybrid largest, while the power-alternative numbers depend strongly on shape and truth.
+CHANGES:
+1. Divide the truth comparisons and power alternatives into separately labeled panels, removing implied row correspondence.
+2. Give the in-sample χ² and p columns individual headings under an “In-sample” group heading.
+3. Define n explicitly in the caption or column heading.
+4. Shorten the caption’s opening and move the covariance qualifications and alternative definitions into compact table notes.
+5. Apply a consistent significant-figure convention to p values, retaining scientific notation where needed.
+END

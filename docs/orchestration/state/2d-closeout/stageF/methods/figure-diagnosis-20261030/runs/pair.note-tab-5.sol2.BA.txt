@@ -1,0 +1,10 @@
+D1: B | Larger type and more generous spacing make labels and values easier to read.
+D2: B | Restrained horizontal rules and a clear two-column structure produce a cleaner layout.
+D3: EQUAL | Both are monochrome tables.
+D4: A | Observable-specific headers explicitly state the degrees of freedom for each χ² comparison.
+D5: A | The shared observable columns make comparisons among methods against truth immediate.
+D6: B | The caption identifies the reference measurement and qualifies interpretation of the χ² values.
+D7: A | The compact matrix allows readers to identify the best-performing methods quickly.
+OVERALL: B
+GAP: 1. Remove internal vertical rules. 2. Add padding around the mathematical headers. 3. Increase spacing between data rows. 4. Shorten the caption to reduce its visual dominance.
+END

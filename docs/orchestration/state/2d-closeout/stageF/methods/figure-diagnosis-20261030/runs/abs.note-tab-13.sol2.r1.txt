@@ -1,0 +1,11 @@
+D1: 4 | Numerical entries are small and closely spaced.
+D2: 5 | -
+D4: 3 | Cell identifiers R00–R15 have no visible definitions or mapping.
+D6: 3 | The caption does not explain Ctotal, Cresp, or what the sixteen cells represent.
+D7: 4 | Finding the strongest correlations requires scanning the numerical triangle.
+TAKEAWAY: Correlations are predominantly positive, with the strongest off-diagonal value, 0.92, between R11 and R13 and several negative correlations involving R02 and R03.
+CHANGES:
+1. Define R00–R15 through a compact cell mapping or an explicit reference to the figure or table defining them.
+2. Expand the caption to identify Ctotal and Cresp and describe the sixteen cells.
+3. Modestly increase numerical font size or row spacing to ease reading at printed size.
+END

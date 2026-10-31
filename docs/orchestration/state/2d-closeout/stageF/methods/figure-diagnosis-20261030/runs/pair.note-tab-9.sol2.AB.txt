@@ -1,0 +1,10 @@
+D1: A | Larger type and more open spacing make entries easier to read at printed size.
+D2: A | Compact layout and restrained horizontal rules provide a cleaner hierarchy.
+D3: EQUAL | Both are tables.
+D4: B | Explicit momentum units, angular intervals and bin indices make the definitions more self-contained.
+D5: EQUAL | Neither presents results compared with reference measurements or predictions.
+D6: B | The caption explains the table’s purpose, provenance and connection to the analysis.
+D7: A | The reader can scan all generator configurations and their differences quickly.
+OVERALL: A
+GAP: 1. Increase B’s type size and column width. 2. Reduce repeated interval notation using a clearly defined compact format. 3. Simplify vertical rules while preserving angular-group separators. 4. Repeat column headers on each continuation.
+END

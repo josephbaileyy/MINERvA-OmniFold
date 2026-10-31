@@ -1,0 +1,14 @@
+D1: 5 | -
+D2: 4 | Excess whitespace between the cell-definition key and caption.
+D3: 4 | Greyscale error bars have similar tones; closely spaced circle and square series require careful tracking.
+D4: 5 | -
+D5: 5 | -
+D6: 4 | Long target and applicability qualifications make the legend cumbersome.
+D7: 4 | Decoding the five-row cell-definition key slows identification of the relevant kinematic regions.
+TAKEAWAY: Data/GiBUU exceeds unity in every displayed cell, sometimes substantially, while the other predictions show smaller, cell-dependent departures from unity.
+CHANGES:
+1. Reduce the blank space between the cell-definition key and caption.
+2. Shorten legend entries to model names and move target and applicability qualifications into the caption.
+3. Add compact kinematic group headings above the four column blocks to make the cell key easier to scan.
+4. Use more distinct grey levels for the circle and square series while retaining their different marker shapes.
+END

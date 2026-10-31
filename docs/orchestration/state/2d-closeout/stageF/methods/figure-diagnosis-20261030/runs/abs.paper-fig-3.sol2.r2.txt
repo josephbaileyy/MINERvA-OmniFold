@@ -1,0 +1,15 @@
+D1: 4 | Closely spaced, repeated W-bin tick labels
+D2: 4 | Long panel headings and substantial space between plots and caption
+D3: 4 | Circle and diamond colours become similar under deuteranopia; marker shapes preserve identification
+D4: 4 | W-bin indices require additional lookup to interpret physical ranges
+D5: 5 | -
+D6: 4 | Panel (a)’s highest point crowds the second legend entry
+D7: 4 | Dense headings and legend descriptions slow identification of the comparison
+TAKEAWAY: Panel (a) shows large residuals for the development variant, while panel (b) shows smaller residuals for the joint-test estimator across three different shape changes.
+CHANGES:
+1. Shorten panel headings and move classifier settings into compact annotations or the caption.
+2. Move panel (a)’s legend away from the highest residual point.
+3. Give the physical W-bin boundaries in the caption.
+4. Reduce the gap between the plots and caption.
+5. Increase the colour contrast between panel (b)’s circles and diamonds while retaining their distinct shapes.
+END

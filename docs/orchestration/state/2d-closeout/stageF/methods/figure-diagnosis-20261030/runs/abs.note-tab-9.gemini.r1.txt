@@ -1,0 +1,14 @@
+D1: 5 | -
+D2: 3 | Excessive horizontal void before column 4 and left-aligned integers under "Test cells"
+D4: 3 | Cryptic "Test cells" header and informal specifications ("analysis simulation", "as GENIE CV") in column 3
+D6: 2 | Caption is a brief label that fails to make the table self-contained or define abbreviations
+D7: 3 | Undefined "Test cells" and missing context require searching the main text to understand the comparison
+TAKEAWAY: Five neutrino event generator configurations are compared across target materials and energy/flux coverage, with GiBUU evaluated on 72 test cells while all other models cover 109.
+CHANGES:
+1. Caption: Expand caption to follow PRD style (TABLE IX), describe the comparison, and define abbreviations (CV, MEC).
+2. Layout: Remove the excessive horizontal space between columns 3 and 4 by setting a natural table width instead of stretching across the page.
+3. "Test cells" column: Right-align the numerical values so the digits align properly (72 under 109).
+4. "Test cells" header: Clarify the header to state the quantity being counted (e.g., "Number of kinematic bins" or "Phase-space cells").
+5. "$E_\nu$ coverage and flux" column: Replace informal text ("analysis simulation", "as GENIE CV") with explicit energy coverage and flux definitions.
+6. "Target" column: Center the chemical symbols (CH, C) under the column header.
+END

@@ -1,0 +1,10 @@
+D1: B | Larger axis and colour-bar text is easier to read at printed size.
+D2: B | The panel grid has a better balance between plots, labels and caption.
+D3: EQUAL | Both use appropriate diverging colour maps with numerical colour bars.
+D4: B | Mathematical observable labels are clearer than A’s literal underscores and parallel-symbol notation.
+D5: EQUAL | Neither includes reference data or predictions for comparison.
+D6: A | The caption gives a concrete spatial takeaway; B’s concluding interpretation is vague.
+D7: B | The dominant correlation patterns and observable identities are quicker to grasp.
+OVERALL: B
+GAP: 1. Enlarge axis and colour-bar text. 2. Use proper mathematical subscripts and parallel symbols. 3. Reduce the caption’s visual dominance and excess intervening space. 4. Identify each eigenmode by rank and eigenvalue. 5. State explicitly what the colour-bar values represent.
+END

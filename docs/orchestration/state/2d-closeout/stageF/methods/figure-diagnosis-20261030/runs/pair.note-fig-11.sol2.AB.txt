@@ -1,0 +1,10 @@
+D1: B | Panel labels, ticks and colour-bar values are substantially easier to read at printed size.
+D2: B | Four consistently sized panels use space efficiently; A has excessive whitespace and undersized left panels.
+D3: A | The softer diverging palette conveys signed values with less visual harshness than B’s saturated red and blue.
+D4: B | Observable symbols and bin labels are clearer and more consistently typeset.
+D5: EQUAL | Neither includes reference data or predictions; A’s 90% line is a diagnostic threshold.
+D6: B | The caption explicitly identifies the correlated quantities and their relationship to the unfolded observables.
+D7: B | The consistent matrix layout and readable scales make the main patterns quicker to grasp.
+OVERALL: B
+GAP: 1. Enlarge A’s two left panels and their text; 2. Remove excess upper whitespace and balance panel placement; 3. Use consistent mathematical typography throughout; 4. Identify all three panels separately in the caption; 5. Explain the signed per-bin χ² contributions and identify the covariance being decomposed.
+END

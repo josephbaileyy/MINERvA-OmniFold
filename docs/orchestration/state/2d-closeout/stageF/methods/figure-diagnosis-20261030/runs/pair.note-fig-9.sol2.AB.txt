@@ -1,0 +1,10 @@
+D1: B | Larger panel labels, ticks and legend text remain more readable at printed size.
+D2: B | Tightly aligned panels and shared labels use space more efficiently; A has substantial unused space.
+D3: B | Distinct colours make the prediction components easy to distinguish from the black data points.
+D4: B | Explicit slice ranges, cross-section units and panel multipliers clarify the axes; A omits slice ranges and complete units.
+D5: B | Data and predictions are readily compared on clearly documented scales; A’s scaling and prominent χ² annotations impede comparison.
+D6: B | The concise caption and readable legends establish the plotted quantities and components quickly.
+D7: B | Panel headings and consistent visual hierarchy communicate the figure’s organization immediately.
+OVERALL: B
+GAP: 1. Enlarge panel text and legend. 2. Reduce whitespace and tighten panel alignment. 3. Label every slice with its range and units. 4. Supply complete cross-section units and explain all scaling. 5. Reduce the prominence of χ² annotations. 6. Shorten the caption by moving normalization and methodological detail into the main text.
+END

@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 4 | Decimal points in the f column are not aligned; the four kinematic row blocks lack visual separation.
+D4: 5 | -
+D6: 4 | The long caption combines essential definitions with interpretive guidance and reference details.
+D7: 4 | The five interval columns dominate the table, making comparisons of cross sections and uncertainties slower.
+TAKEAWAY: The sixteen cell-integrated cross sections have marginal relative uncertainties of 4.20–14.00%, with a median of 7.29%; quantitative comparisons require the full covariance.
+CHANGES:
+1. Align the f column on decimal points while preserving its reported precision.
+2. Add modest vertical spacing after R03, R07, and R11 to distinguish the four kinematic blocks.
+3. Shorten the caption by moving the analysis-grid explanation and its reference to the surrounding text.
+END

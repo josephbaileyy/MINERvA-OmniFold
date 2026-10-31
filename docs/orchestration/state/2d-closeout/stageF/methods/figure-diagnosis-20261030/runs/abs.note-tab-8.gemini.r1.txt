@@ -1,0 +1,16 @@
+D1: 5 | -
+D2: 3 | first row grouping (p_T, p_\parallel) and in-cell formula line breaks
+D4: 3 | column 1 header and units
+D6: 2 | caption
+D7: 4 | -
+TAKEAWAY: The table defines the five kinematic observables ($p_T, p_\parallel, E_{\text{avail}}, q_3, W$) used in the MINERvA analysis, comparing their generator-level truth definitions against their detector-reconstructed implementations.
+CHANGES:
+1. Column 1 header: Add a descriptive header (e.g., "Observable") to the empty top-left header cell.
+2. Units: Add physical units (e.g., GeV/$c$ for momenta and GeV for energy and invariant mass) to the observable labels or specify them in the column header.
+3. First row ($p_T, p_\parallel$): Split $p_T$ and $p_\parallel$ into two separate rows with individual definitions rather than combining them into a single row.
+4. Caption: Change "Table 8" to Roman numeral "Table VIII" per PRD style, and expand the caption text to explain the experimental context (MINERvA neutrino scattering) to make the table self-contained.
+5. Symbol definitions: Define all kinematic and intermediate variables ($q_0$, $M$, $\bar{M}$, $m_\mu$, $E_\nu$, $E_\mu$, $\theta_\mu$) in the caption or in table footnotes.
+6. Row 3, column 2 layout: Adjust line breaking so that "exact $Q^2$" remains together rather than leaving "$Q^2$" orphaned on a separate line.
+7. Row 4 equations: Align and reformat the stacked equations in row 4 (columns 2 and 3) to prevent awkward mid-expression wrapping across lines.
+8. Section cross-reference: Replace the internal reference "(§7.1)" in row 2 with an explicit, self-contained description of the calorimetric estimator.
+END

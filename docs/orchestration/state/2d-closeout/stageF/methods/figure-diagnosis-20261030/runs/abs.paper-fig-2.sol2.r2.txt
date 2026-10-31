@@ -1,0 +1,13 @@
+D1: 4 | Panel (b) markers and tick labels are small relative to the surrounding text.
+D2: 5 | -
+D3: 4 | Dense near-zero circles and squares are harder to separate in greyscale.
+D4: 4 | Both x-axis labels are lengthy and slow to parse.
+D5: 4 | Overlapping near-zero markers in panel (b) hinder cell-by-cell comparison.
+D6: 5 | -
+D7: 4 | Panel (b)’s dense cell sequence requires sustained inspection.
+TAKEAWAY: The square series avoids the large negative projection residuals seen for circles, although positive residuals remain in several joint-cell groups.
+CHANGES:
+1. Move the W-bin edges from panel (a)’s x-axis label into the caption and shorten both x-axis labels.
+2. Slightly enlarge panel (b)’s tick labels and markers.
+3. Use open circles and filled squares to improve separation where the series overlap, especially in greyscale.
+END

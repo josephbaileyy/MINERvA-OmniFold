@@ -1,0 +1,17 @@
+D1: 4 | heatmap x-axis tick labels
+D2: 3 | subpanel labels and bottom-right quadrant whitespace
+D3: 2 | heatmap colormap and top-panel error bands in greyscale
+D4: 4 | bottom-left heatmap bin edge tick alignment
+D5: 4 | overlapping uncertainty bands in ratio panels
+D6: 4 | colorbar missing indicator for unmeasured bins
+D7: 4 | bottom-right text quadrant instead of graphical distribution
+TAKEAWAY: OmniFold accurately reproduces the published MINERvA differential cross sections across both $p_T$ and $p_\parallel$ within uncertainties (median relative uncertainty 6.41% vs 6.85%, residual RMS 0.535), with both datasets showing consistent deviations from the MINERvA Tune v1 prediction.
+CHANGES:
+1. Add subpanel labels ((a), (b), (c), (d)) to all panels and reference them in the caption rather than using spatial descriptors ("Top", "Bottom left", "Bottom right").
+2. Replace the text-only bottom-right quadrant with a 1D histogram of the standardized residuals, displaying the summary statistics as an inset.
+3. Replace the diverging blue-white-red colormap in the 2D residual plot with a greyscale-safe colormap or overlay contour lines so positive and negative residuals can be distinguished in black-and-white print.
+4. Add hatching or distinct border outlines to one of the two $\pm 1\sigma$ uncertainty bands so they remain distinguishable in greyscale.
+5. Add a swatch or entry to the colorbar defining the grey color for unmeasured bins referenced in the caption.
+6. Align and clearly mark all bin boundaries or add grid lines on the bottom-left heatmap to eliminate ambiguity caused by equal-sized bin rendering.
+7. Add thin outlines to the shaded bands in the ratio subpanels to clarify their overlapping extents around unity.
+END

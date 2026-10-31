@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 4 | Last four columns lack a spanning header identifying their shared grouping.
+D4: 4 | “p” and “EM” are undefined abbreviations.
+D6: 3 | Caption does not explain the R00–R15 cell labels or define Cresp.
+D7: 4 | -
+TAKEAWAY: The median relative uncertainty is 6.45% for Ce versus 3.34% for Cmodel, although the model contribution is larger in several cells.
+CHANGES:
+1. Add a spanning Cresp header above “p,” “meson,” “EM,” and “other.”
+2. Define the R00–R15 cell labels in the caption or provide an explicit cross-reference to their definitions.
+3. Define Cresp and expand “p” and “EM” in the caption.
+END

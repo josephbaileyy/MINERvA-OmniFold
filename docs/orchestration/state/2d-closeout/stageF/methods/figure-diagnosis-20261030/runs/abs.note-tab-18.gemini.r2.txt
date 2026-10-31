@@ -1,0 +1,14 @@
+D1: 5 | -
+D2: 5 | -
+D4: 3 | column headers (omits quantity $\chi^2$)
+D6: 3 | caption (omits degrees of freedom, referencing Table 16)
+D7: 4 | -
+TAKEAWAY: Shrinking systematic correlation off-diagonal elements toward zero ($\alpha \to 1$) substantially reduces $\chi^2$ values for most model predictions—with flux uncertainties and all four groups combined driving the largest reductions—while GiBUU maintains an already low, stable $\chi^2$ throughout.
+CHANGES:
+1. Column headers: add a spanning header $\chi^2$ over the five numeric columns ($\alpha = 0$ through $\alpha = 1$) to clearly identify the tabulated quantity.
+2. Caption: explicitly state the number of degrees of freedom directly in the caption rather than referring the reader to Table 16.
+3. Caption: replace "the first column is the reported $\chi^2$" with "the $\alpha = 0$ column is the reported $\chi^2$" to avoid ambiguity with the table's text columns.
+4. Row labels: capitalize "the four together" (e.g., "All four combined") for consistent capitalization with the other entries.
+5. Column headers: capitalize "group" and "prediction" to match standard Physical Review D heading style.
+6. Caption: remove the unwanted space before the closing parenthesis in "reported $\chi^2$ )".
+END

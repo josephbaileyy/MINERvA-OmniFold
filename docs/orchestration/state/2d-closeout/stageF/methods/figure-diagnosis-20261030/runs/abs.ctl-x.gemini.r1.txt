@@ -1,0 +1,18 @@
+D1: 2 | x-axis tick labels, panel headers, and legend text (font sizes far too small and unreadable at printed size)
+D2: 3 | outer canvas margins (excessive border padding) and compressed horizontal cell layout
+D3: 1 | bright green background and red text/markers (catastrophic contrast failure in color, greyscale, and deuteranopia simulation)
+D4: 2 | bottom x-axis tick labels (continuous string "123456..." running together without spacing or cell separators)
+D5: 3 | panel (b) data markers (all three models plotted in red with overlapping tiny markers, obscuring individual model comparisons)
+D6: 3 | panel (a) legend symbol (mismatch between diamond in legend and circular markers in plot) and tiny legend text
+D7: 2 | overall visual styling (jarring red-on-green palette and unreadable x-axis bin numbering impede rapid comprehension)
+TAKEAWAY: The joint-test estimator recovers deformed truth distributions across diverse shape variations with fractional residuals largely within the total experimental uncertainty band, whereas the development variant exhibits substantial systematic residuals.
+CHANGES:
+1. Background: Replace the bright green background with a clean white background across the entire figure and panels.
+2. Text and axes color: Change red text, axes, tick marks, and plot lines to black for high contrast in print, greyscale, and color-blind viewings.
+3. Panel (b) series colors: Assign distinct, colorblind-friendly colors (e.g., blue, vermilion, black) to the three shape-change models rather than plotting all three in red.
+4. X-axis tick formatting: Break up the continuous string of digits "123456..." by grouping them under major E_avail bin brackets, adding vertical divider gridlines, and labeling W bins clearly.
+5. Font sizes: Enlarge the fonts for tick labels, top E_avail bin headers, panel titles, and legend text to standard PRD publication size.
+6. Y-axis scaling: Adjust the vertical range (e.g., -40% to +50%) to reduce the empty space above +40% and expand visual separation around the zero line.
+7. Panel (a) legend marker: Align the marker symbol in the legend (currently a diamond) with the circular points plotted in the panel.
+8. Cropping: Crop the large excess green borders surrounding the panels to maximize the printable area of the data axes.
+END

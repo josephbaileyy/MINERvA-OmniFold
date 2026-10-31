@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | Both panels devote most of their plotting area to empty space below the points.
+D3: 3 | Generator markers become similar grey tones in greyscale; GENIE-CV and NuWro also converge in the deuteranopia simulation.
+D4: 3 | Both differential-cross-section axes lack units.
+D5: 3 | Overlapping markers and the broad logarithmic ranges obscure prediction–data differences.
+D6: 3 | The caption describes a four-generator band, but the figure shows separate markers without a band.
+D7: 3 | The separate projections do not directly display the joint high-W, high-Eavail corner emphasized in the caption.
+TAKEAWAY: Predictions generally fall below the data at the high ends of both distributions, with GiBUU showing the largest visible deficit.
+CHANGES:
+1. Tighten both vertical ranges to remove the largely empty lower decades.
+2. Add complete units and any normalization convention to both cross-section axis labels.
+3. Add prediction/data panels with a clearly identified data-uncertainty band.
+4. Increase generator-marker separation using larger distinctive shapes and small horizontal offsets identified in the caption.
+5. Replace “four-generator band” with “four generator predictions,” unless an actual envelope is drawn.
+6. Add a joint-distribution view highlighting the claimed corner, or restrict the caption to what the projections show.
+END

@@ -1,0 +1,13 @@
+D1: 5 | -
+D2: 4 | -
+D3: 4 | Identical marker shapes and dash styles weaken series identification in greyscale.
+D4: 5 | -
+D5: 3 | Panel (b) clips the steep calibration’s resolution band and error bars at both vertical limits.
+D6: 3 | The caption calls the analytic MSE prediction a red dotted line; the plotted line and legend show blue dashed.
+D7: 4 | -
+TAKEAWAY: The MSE calibration compresses measured values toward zero with a narrower resolution band, while the Gaussian Ansatz follows an approximately unit slope with a broader band.
+CHANGES:
+1. Correct the caption to identify the analytic MSE prediction as the blue dashed line.
+2. Use different marker shapes and line styles for MSE and MLC so identification survives greyscale reproduction.
+3. Expand panel (b)’s vertical limits to display the full resolution bands and error bars.
+END

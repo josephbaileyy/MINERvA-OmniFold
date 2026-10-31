@@ -1,0 +1,10 @@
+D1: B | Larger text, markers and curves remain readable at printed size; A’s annotations and legend are too small.
+D2: B | Tightly aligned panels use space efficiently; A has excessive whitespace and undersized plotting areas.
+D3: EQUAL | Both distinguish the principal comparison clearly through contrasting colours and black markers.
+D4: B | Explicit slice boundaries and dimensional axis labels make each panel interpretable; A lacks slice labels and clear units.
+D5: B | Measurements, uncertainties and predictions are easier to compare on clearly labelled scales.
+D6: B | The legends identify the plotted contributions, and the caption explains both panel groups; A leaves slicing and scaling unclear.
+D7: B | The variables, slice ranges and principal comparisons are apparent quickly; A requires substantial decoding.
+OVERALL: B
+GAP: 1. Enlarge panel text, markers and legend. 2. Reduce outer whitespace and panel gaps. 3. Label every slice with its range and units. 4. Give complete axis units and explain all scaling factors. 5. Define the chi-squared notation and error-bar conventions. 6. Make the caption explain panel ordering and identify the compared samples directly.
+END

@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 5 | -
+D3: 3 | NuWro and GiBUU have nearly identical grey tones and identical solid line styles; GENIE and GiBUU become similar blues under deuteranopia.
+D4: 5 | -
+D5: 4 | Overlapping solid prediction curves are difficult to follow in the longitudinal panel.
+D6: 5 | -
+D7: 4 | Model identification requires extra effort in greyscale.
+TAKEAWAY: Data generally lie above the predictions, especially at intermediate transverse momentum, while GiBUU shows the largest deficit in longitudinal momentum.
+CHANGES:
+1. Give GENIE, NuWro and GiBUU distinct line styles, applied consistently in both panels and the legend, so each remains identifiable in greyscale and where curves overlap.
+END

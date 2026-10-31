@@ -1,0 +1,15 @@
+D1: 5 | -
+D2: 3 | Column 4 decimal misalignment and missing horizontal rule above summary rows
+D4: 3 | Column 3 header missing physical units and Column 4 repeating % with inconsistent decimal precision
+D6: 3 | Caption placed below table and missing physical observable and unit definitions
+D7: 4 | -
+TAKEAWAY: Systematic uncertainty dominates the budget at 5.94%, while machine learning noise is negligible at 0.05%, yielding a combined median relative uncertainty of 6.41% that is consistent with the published 6.85% total.
+CHANGES:
+1. Column 3 header: Add physical units for $\sqrt{\mathrm{Tr}\,C}$ and factor out the common power of ten ($10^{-39}$) into the header.
+2. Column 4 header and cells: Move the `%` symbol into the column header and remove `%` from each individual data cell.
+3. Column 4 entries: Align all numbers strictly on the decimal point and standardize precision to three decimal places (e.g., `6.850`).
+4. Table rules: Insert a horizontal dividing rule above `Combined (block sum)` to separate individual components from the totals.
+5. Column 2: Replace the text entry `43 bands+1` with an integer count, leaving descriptive band counts to the row label or caption.
+6. Caption position and label: Relocate the caption above the table and format the title as `TABLE VI.` per PRD convention.
+7. Caption text: State the specific physical observable/cross-section channel and define the units of covariance matrix $C$ to make the table self-contained.
+END

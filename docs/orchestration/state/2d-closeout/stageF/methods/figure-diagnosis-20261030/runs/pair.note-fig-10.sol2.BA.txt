@@ -1,0 +1,10 @@
+D1: A | Larger labels, markers and legend text remain readable at printed size; B’s annotations are too small.
+D2: A | Compact, aligned panels use space efficiently; B has excessive whitespace and undersized plotting text.
+D3: EQUAL | Both clearly distinguish black data markers from coloured predictions.
+D4: A | Slice boundaries and physical units are explicit; B lacks panel slice labels and clearly explained ordinate scaling and units.
+D5: A | Data, prediction and component comparisons are readily identifiable; B’s small legend and annotations impede comparison.
+D6: A | Readable legends and the caption explain the panel groups and component curves more effectively.
+D7: A | The slice organisation and comparison can be understood quickly; B requires deciphering unlabeled panels.
+OVERALL: A
+GAP: 1. Enlarge B’s axis labels, ticks, legend and annotations. 2. Label every panel with its slice boundaries and units. 3. State the ordinate’s physical units and explain all scaling factors. 4. Reduce excess whitespace and enlarge the panels. 5. Place a readable shared legend outside the data region. 6. Explain panel ordering and scaling in the caption.
+END

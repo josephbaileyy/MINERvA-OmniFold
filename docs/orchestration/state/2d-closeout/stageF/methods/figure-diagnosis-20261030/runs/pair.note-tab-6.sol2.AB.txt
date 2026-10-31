@@ -1,0 +1,10 @@
+D1: EQUAL | Both use readable type with clear mathematical symbols and numerals.
+D2: B | Compact grouped columns organize the content better; A’s long component labels crowd the count column.
+D3: EQUAL | Both are monochrome tables.
+D4: B | Observable headers and degrees of freedom are explicit; A omits units for its absolute uncertainty measure.
+D5: A | The emphasized combined result and adjacent published reference support a direct comparison.
+D6: A | The caption explains the covariance summary, component counts, and reference comparison more fully.
+D7: B | The concise method-by-observable grid permits faster scanning and comparison.
+OVERALL: B
+GAP: 1. Shorten A’s component labels and move procedural details into the caption; 2. Increase separation between component labels and N; 3. Specify units for √(Tr C); 4. Clarify the mixed count convention in N; 5. Tighten the caption while preserving definitions and reference context.
+END

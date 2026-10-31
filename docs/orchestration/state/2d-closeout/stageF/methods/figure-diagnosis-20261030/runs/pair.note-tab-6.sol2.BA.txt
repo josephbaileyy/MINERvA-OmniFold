@@ -1,0 +1,10 @@
+D1: EQUAL | Both use clear type and readable mathematical notation at printed size.
+D2: A | Its compact layout and shorter entries make the columns easier to scan.
+D3: EQUAL | Both are monochrome tables.
+D4: A | The χ² heading and observable-specific degrees of freedom are explicit; B omits units for its absolute uncertainty column.
+D5: B | The bold combined row sits directly above the published reference, facilitating comparison.
+D6: B | Its caption explains the metrics, component counts, and reference comparison more fully.
+D7: A | Readers can identify the observables, methods, and relative performance quickly.
+OVERALL: A
+GAP: 1. Add units to B’s absolute uncertainty heading. 2. Shorten component labels and move procedural details into notes. 3. Clarify the mixed meanings of N across rows. 4. Condense the caption around definitions needed to interpret the table.
+END

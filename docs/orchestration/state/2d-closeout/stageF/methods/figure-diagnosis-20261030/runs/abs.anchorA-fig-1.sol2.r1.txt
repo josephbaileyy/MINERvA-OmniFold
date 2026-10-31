@@ -1,0 +1,13 @@
+D1: 3 | Detector geometry and event tracks are extremely fine and faint, especially inside the simulation monitor.
+D2: 4 | The Step 2 return arrow has endpoints that are awkward to follow around the right monitor.
+D3: 4 | Orange and blue become similar greys; written labels and arrow positions preserve their identities.
+D4: 5 | -
+D5: 4 | The schematic identifies data and simulation, but Step 2’s two comparison samples are not visually explicit.
+D6: 5 | -
+D7: 4 | The two-stage workflow is apparent, but understanding the Step 2 comparison requires the caption.
+TAKEAWAY: OmniFold reweights detector simulation to match data, transfers those weights to particle level, and feeds updated particle-level weights back into the simulation.
+CHANGES:
+1. Simplify the detector drawings and increase the contrast and thickness of their event tracks, particularly inside the simulation monitor.
+2. Reposition the Step 2 loop so its origin, destination and arrowhead are immediately clear.
+3. Add concise labels within the particle-level simulation panel identifying the weighted and unweighted samples compared in Step 2.
+END

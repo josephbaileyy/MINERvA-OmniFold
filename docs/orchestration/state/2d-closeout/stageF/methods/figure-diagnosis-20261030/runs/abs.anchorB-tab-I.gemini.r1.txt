@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | horizontal rules between every row
+D4: 3 | "Process Variant" column header
+D6: 3 | caption omits the dataset/observable being compared and definitions of acronyms
+D7: 4 | -
+TAKEAWAY: Across all 144 degrees of freedom, every model exhibits significant tension with the data ($\chi^2 \ge 327$), with GENIE + RPA providing the best overall agreement in both standard and log-normal metrics.
+CHANGES:
+1. Rules: Remove all horizontal rules between individual rows in the table body, adhering to standard PRD styling.
+2. First column header: Change "Process Variant" to "Model Variant" or "Generator / Tune" to accurately describe the listed models.
+3. Top and header rules: Use standard PRD/RevTeX table rules (double rule at top and bottom, single rule beneath the column headings).
+4. Caption: Specify the experimental dataset and observable being compared, and define model acronyms (e.g., RPA, 2p2h, DIS).
+5. Data presentation: Include $\chi^2/\mathrm{dof}$ alongside total $\chi^2$, and bold the minimum $\chi^2$ value in each column to highlight the best-fit model.
+6. Row grouping: Group rows logically by base generator (e.g., MnvGENIE variants, GENIE variants, NuWro, GiBUU) separated by subtle vertical whitespace.
+7. Model label formatting: Standardize spacing around '+' across all model names (e.g., change "MnvGENIE v1+" to "MnvGENIE v1 + ").
+8. Column alignment: Right-align or align the numerical entries directly beneath the $\chi^2$ header symbols.
+END

@@ -1,0 +1,10 @@
+D1: EQUAL | Both have readable type and clearly distinguishable mathematical or textual entries.
+D2: A | Grouped bins and consistent alignment scan more cleanly than B’s densely wrapped cells and orphaned “42.”
+D3: EQUAL | Both are tables.
+D4: EQUAL | Both provide clear column headers; A supplies momentum units, while B requires none.
+D5: EQUAL | Neither directly compares results with references or predictions.
+D6: A | Its concise caption establishes purpose and provenance; B buries the table’s purpose beneath implementation details.
+D7: A | The binning structure is immediately apparent; B requires sustained reading to extract the estimator differences.
+OVERALL: A
+GAP: 1. Shorten B’s caption and move training and seed details to the methods text. 2. Rebalance column widths and shorten entries to reduce wrapping, keeping “seed 42” together. 3. Add space between estimator rows to clarify their correspondence across columns.
+END

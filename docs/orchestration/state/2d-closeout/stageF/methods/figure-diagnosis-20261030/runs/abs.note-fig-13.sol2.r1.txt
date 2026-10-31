@@ -1,0 +1,15 @@
+D1: 3 | Tick labels, axis labels and legend text are too small at printed size; dashed lines are thin.
+D2: 4 | -
+D3: 4 | -
+D4: 4 | -
+D5: 3 | The dashed OmniFold curves nearly coincide with the black published curves, making differences difficult to assess.
+D6: 3 | The caption calls MINERvA Tune v1 orange, but its plotted line and legend key are blue.
+D7: 4 | -
+TAKEAWAY: The measurement closely follows the published distributions, while MINERvA Tune v1 lies below both around their peaks.
+CHANGES:
+1. Enlarge tick labels, axis labels and legend text for the final printed size.
+2. Thicken the OmniFold dashed lines and use a more conspicuous dash pattern.
+3. Add a compact ratio or difference panel to resolve the overlapping measurement and published curves.
+4. Change “orange” to “blue” in the caption, or identify Tune v1 by its square markers.
+5. Use consistent longitudinal-momentum notation on the right panel’s horizontal and vertical axes.
+END

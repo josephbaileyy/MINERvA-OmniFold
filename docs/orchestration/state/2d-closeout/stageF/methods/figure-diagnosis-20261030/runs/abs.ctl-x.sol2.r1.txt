@@ -1,0 +1,17 @@
+D1: 2 | Tick labels, legends and panel headings are too small; error bars are barely discernible.
+D2: 3 | The panels occupy a small central rectangle, with excessive surrounding whitespace and a large gap before the caption.
+D3: 2 | Red marks on the saturated green background have poor contrast; the greyscale and deuteranopia copies remain low contrast.
+D4: 3 | Repeated W-bin numbers and upper Eavail interval labels are crowded and difficult to read.
+D5: 3 | Overlapping markers in panel (b) make the three residual series and their error bars difficult to compare.
+D6: 3 | Both legends are too small, particularly the dense four-entry legend in panel (b).
+D7: 3 | Tiny annotations, low contrast and dense cell indexing slow extraction of the comparison between panels.
+TAKEAWAY: Panel (b) shows residuals generally closer to zero than panel (a), although some cells retain substantial excursions.
+CHANGES:
+1. Enlarge both panels and reduce the surrounding whitespace and gap before the caption.
+2. Use a white plotting background with dark text, axes and reference lines.
+3. Increase tick, axis-label, legend and panel-heading font sizes at final printed size.
+4. Use distinct, high-contrast colours together with clearly differentiated marker shapes that survive greyscale reproduction.
+5. Separate the three series slightly within each cell in panel (b), and increase error-bar visibility.
+6. Group the horizontal axis visibly by Eavail interval and simplify the repeated W-bin labels.
+7. Shorten the legends and move classifier settings into the caption to free space for readable panel titles.
+END

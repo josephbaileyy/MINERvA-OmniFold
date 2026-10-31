@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | Both panels devote most of their height to empty decades below the plotted points.
+D3: 3 | Generator markers overlap and have similar grey tones in greyscale; the colour-blindness simulation further reduces colour separation.
+D4: 3 | Both differential-cross-section axes lack units.
+D5: 3 | Overlapping data and generator markers obscure small differences; the broad logarithmic range compresses their separation.
+D6: 4 | The caption describes a generator “band,” but the legend and plots show individual predictions.
+D7: 3 | Separate one-dimensional panels do not identify the joint high-W, high-Eavail corner emphasized by the caption.
+TAKEAWAY: At the largest displayed Eavail and W, the data lie above all four predictions, with GiBUU lowest.
+CHANGES:
+1. Raise both logarithmic y-axis minima to remove the unused lower decades.
+2. Add the appropriate cross-section units to both y-axis labels.
+3. Use more distinct open and filled generator markers that remain identifiable in greyscale.
+4. Add data-to-prediction ratios with clearly visible data uncertainties to make the small differences readable.
+5. Replace “four-generator band” in the caption with wording describing the four individual predictions.
+6. Describe the displayed projections in the caption; support the joint-corner statement with a two-dimensional or explicitly selected-region view.
+END

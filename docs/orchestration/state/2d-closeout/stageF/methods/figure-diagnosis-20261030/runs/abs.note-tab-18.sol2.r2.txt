@@ -1,0 +1,11 @@
+D1: 5 | -
+D2: 5 | -
+D4: 4 | Numeric columns are headed only by α; a spanning χ² header would identify the tabulated quantity directly.
+D6: 3 | “α of the declared grid” is unclear, covariance symbols are unexplained locally, and degrees of freedom require Table 16.
+D7: 4 | Repeated prediction names make comparisons across groups somewhat slow.
+TAKEAWAY: Shrinking correlations generally lowers χ², especially for flux and the four groups together, although GiBUU shows increases at full shrinkage in several blocks.
+CHANGES:
+1. Add a spanning χ² header above the five α columns.
+2. Replace “α of the declared grid” with a clear explanation of the shrinkage parameter and its endpoints.
+3. Define the covariance symbols briefly in the caption and state the applicable degrees of freedom explicitly.
+END

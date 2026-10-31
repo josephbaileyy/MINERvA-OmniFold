@@ -1,0 +1,15 @@
+D1: 4 | -
+D2: 3 | vertical rules, stray vertical mark above top rule, and non-decimal column alignment
+D4: 3 | floating $\chi^2$ superheader outside the table boundary and missing kinematic units
+D6: 4 | -
+D7: 4 | -
+TAKEAWAY: All unfolding methods substantially reduce the $\chi^2$ relative to the prior across all four observables, with IBU-UniFold and MultiFold achieving the closest agreement with the truth-level cross sections.
+CHANGES:
+1. Rules: Remove all vertical rules throughout the table and eliminate the stray vertical mark above the top rule to comply with PRD table standards.
+2. Spanner header: Move the $\chi^2$ header below the top horizontal rule as a centered spanner over the four observable columns, supported by a partial horizontal rule.
+3. Decimal alignment: Align numbers in the data columns by their decimal point rather than centering them, ensuring values such as 298.2 and 2.1 align properly.
+4. Stub column alignment: Left-align the "Method" header and the method names in the first column instead of centering them.
+5. Degrees of freedom: Relocate "DoF=58" and "DoF=8" from the variable header cells into a dedicated subheader row or report $\chi^2/\text{dof}$ directly.
+6. Units: Include physical units for the kinematic observables in the column headers (e.g., $\text{GeV}/c$ for $p_\mu$ and $\delta p_{\mathrm{T}}$).
+7. Caption: Define the abbreviation "IBU" (Iterative Bayesian Unfolding) in the caption to ensure the table is fully self-contained.
+END

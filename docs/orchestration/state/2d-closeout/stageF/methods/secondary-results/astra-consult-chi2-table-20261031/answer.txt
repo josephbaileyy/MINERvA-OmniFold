@@ -1,0 +1,37 @@
+I recommend separating GiBUU into a visibly labelled subset block and printing χ² and ndf in separate columns. This defines the comparison’s scope; it does not require an extended caveat.
+
+1. **Publication practice and the limits of the evidence.** The supplied decision records a review of six MINERvA, T2K, NOvA and MicroBooNE papers: none printed the *evaluated* χ²/ndf ratio. That supports retaining χ² with ndf, but the underlying review and papers are absent, so it does not establish how those publications handled unequal bin sets.
+
+   My editorial judgment is that identifying the fitted or compared region through table headings, separate blocks, or a short caption sentence/footnote is ordinary cross-section reporting. Reporting χ² with ndf is also conventional. I cannot establish from these files whether blocks or footnotes are more frequent in PRD’s specific subset-comparison cases. An extended warning about ranking would be unusual in presentation, but a one-sentence scope statement would not strike me as excessive disclosure.
+
+   P values can accompany goodness-of-fit statistics, but they do not make different regions into a common model-ranking test. The supplied evidence does not establish their frequency in this particular situation. Leaving the distinction solely in the surrounding prose is demonstrably insufficient for these readers.
+
+2. **Two concrete options.**
+
+   **Option A — minimal caption change.** Keep all entries and append exactly:
+
+   > “GiBUU uses only the 8 cells with \(p_\parallel<4.5\) GeV/c; all other predictions use 16 cells. These are different comparison regions.”
+
+   This adds approximately 24 words, with no numerical changes. **Inference:** it should reduce the mistake for caption readers, but leaves all five predictions visually grouped together and therefore does not reliably remove the quick-scan misreading.
+
+   **Option B — separate blocks and separate columns.** Use this layout, retaining the existing prediction names:
+
+   | Prediction | χ² | ndf | Shape-only χ² | ndf |
+   |---|---:|---:|---:|---:|
+   | **All 16 cells** | | | | |
+   | GENIE 2.12.10 CV | 109 | 16 | 109 | 15 |
+   | GENIE 2.12.10 + Valencia MEC | 272 | 16 | 258 | 15 |
+   | NuWro 21.09 | 188 | 16 | 188 | 15 |
+   | MINERvA Tune v1 | 330 | 16 | 311 | 15 |
+   | **8-cell subset: \(p_\parallel<4.5\) GeV/c** | | | | |
+   | GiBUU 2019 | 58 | 8 | 28 | 7 |
+
+   Replace the caption with:
+
+   > “χ² and ndf for each prediction in the indicated comparison region, using \(C_{\rm total}+C_{\rm resp}+V_g\), where \(V_g\) is the prediction’s finite-sample (diagonal) covariance. Shape-only χ² frees the normalization.”
+
+   This adds two short block headings and replaces, rather than extends, the caption. **Inference:** it directly addresses the visual source of the misreading, though no layout guarantees correct interpretation. Apply the same structure to note Table 16, preserving its existing precision.
+
+3. **Recommendation.** Choose Option B. It follows the recorded decision allowing separate columns and makes the unequal scope visible where readers inspect the numbers.
+
+   Printing evaluated χ²/ndf would likely worsen the problem by suggesting comparable scores. Dividing by ndf does not equalize phase-space coverage or sensitivity. Also, the reported quick-read ranking contains an arithmetic inconsistency: approximately 7.3 is *higher* than 6.8. Correcting that ranking still would not justify comparing overall agreement across the unequal cell sets.

@@ -1,0 +1,14 @@
+D1: 5 | -
+D2: 3 | modes for 50/90/99 % sub-columns and top mode header alignment
+D4: 3 | modes for 50/90/99 % column header
+D6: 3 | caption
+D7: 4 | -
+TAKEAWAY: Across all evaluated model predictions, the total $\chi^2$ is heavily concentrated in just 2–3 eigenmodes carrying 50% of the discrepancy, with the leading mode alone accounting for 27–48% and primarily originating from the interaction block.
+CHANGES:
+1. Replace "modes for 50/90/99 %" with a spanning header (e.g., "Modes") and three dedicated sub-column headings ("50%", "90%", "99%") bordered by a partial horizontal rule (`\cmidrule`).
+2. Center or properly align the header "top mode (% of $\chi^2$)" over its numerical values to eliminate the empty space on the left of the column.
+3. Balance horizontal column spacing to reduce the excessive whitespace between the mode counts and the top mode column.
+4. Define the symbol "$V_g$" in the caption or replace it with a descriptive label consistent with "interaction" and "flux".
+5. State the total number of degrees of freedom/eigenmodes and the specific dataset or measurement being evaluated in the caption.
+6. Clarify the meaning of "$\sigma$ (%)" in the caption (e.g., relative eigenvalue uncertainty).
+END

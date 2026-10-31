@@ -1,0 +1,17 @@
+D1: 3 | Axis titles, tick labels and colorbar numbers are small at printed size.
+D2: 3 | The six panels lack identifiers linking them to the modes discussed in the caption.
+D3: 2 | Positive and negative components become indistinguishable in greyscale.
+D4: 4 | Bin-index labels use literal underscores and informal mathematical notation.
+D5: 3 | Different colorbar ranges hinder direct comparison of component magnitudes across panels.
+D6: 3 | Colorbars lack a quantity label; panels provide no mode identities or eigenvalues.
+D7: 3 | The caption distinguishes smallest-λ and moderate-λ modes without identifying their panels.
+TAKEAWAY: Three modes concentrate near the highest longitudinal-momentum bins, while three show structure at lower longitudinal-momentum bins.
+CHANGES:
+1. Increase axis-title, tick-label and colorbar-label font sizes for printed readability.
+2. Label panels (a)–(f) and identify each mode’s eigenvalue or eigenvalue rank.
+3. Explicitly identify the smallest-λ and moderate-λ panels in the caption.
+4. Add sign contours or another monochrome-readable encoding to distinguish positive and negative components.
+5. Use a common symmetric color scale across panels, or explicitly explain the independent scales.
+6. Label the colorbars with the plotted component quantity and normalization.
+7. Typeset axis labels as mathematical p_T and p_∥ bin indices without literal underscores.
+END

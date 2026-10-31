@@ -1,0 +1,10 @@
+D1: EQUAL | Both tables feature clear, sharp typography that is readily legible at printed size.
+D2: A | Table A uses standard PRD horizontal booktabs rules without vertical lines, whereas Table B uses prohibited vertical rules and lacks top/bottom rules.
+D3: EQUAL | Both items are tables, for which colour is not applicable per instructions.
+D4: A | Table A has well-structured, clear column headers with appropriate units, while Table B spells out units ("radians") and inverts column order relative to its caption.
+D5: A | Table A provides an explicit side-by-side comparison between truth-level predictions and reconstructed definitions, whereas Table B provides no comparison.
+D6: B | Table B follows PRD style using Roman numerals and provides a descriptive, self-contained caption with a proper citation, unlike Table A's terse caption and Arabic numbering.
+D7: A | Table A's structured multi-column layout allows rapid comprehension of definitions and conventions, whereas Table B's formatting defects cause visual distraction.
+OVERALL: A
+GAP: 1. Remove all vertical rules between columns in accordance with PRD style. 2. Add top and bottom horizontal rules to properly enclose the table. 3. Use consistent en-dashes for bin ranges across all columns instead of mixing hyphens and en-dashes. 4. Reorder the columns to match the sequence of observables stated in the caption. 5. Adopt standard unit formatting (e.g., replace spelled-out "radians" with "rad"). 6. Align numerical values by decimal points or range delimiters rather than centering them.
+END

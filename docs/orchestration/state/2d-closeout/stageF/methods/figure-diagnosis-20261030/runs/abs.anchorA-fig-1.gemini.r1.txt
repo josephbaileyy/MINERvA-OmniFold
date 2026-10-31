@@ -1,0 +1,18 @@
+D1: 2 | detector tracks (hairline thickness and faint colors render tracks nearly invisible at printed size, particularly in the simulation monitor)
+D2: 3 | cartoon computer monitor frames (waste space and shrink content) and convoluted arrow routing
+D3: 2 | detector tracks (cyan track disappears entirely in greyscale; magenta track is barely visible)
+D4: 5 | -
+D5: 3 | detector event displays (Nature and Simulation are drawn at different scales, preventing direct visual comparison)
+D6: 3 | detector tracks lack an explanatory legend, and the "Push Weights" arrow is omitted from the caption
+D7: 3 | workflow arrows and distracting clip-art monitors (convoluted left-hand arrows and unexplained "Push Weights" delay comprehension)
+TAKEAWAY: OmniFold unfolds T2K neutrino data by iteratively reweighting simulated detector events to match data (Step 1) and pulling those weights to reweight truth-level generator events (Step 2).
+CHANGES:
+1. Detector event displays: Increase the line weight and contrast of the reconstructed tracks and wireframes so they remain clearly visible at printed scale and in greyscale.
+2. Simulation panels: Remove the cartoon computer monitor frames and stands, replacing them with standard rectangular panels matching the Nature row.
+3. Detector-level panels: Display the simulated detector event at the same scale as the Nature detector event to facilitate direct visual comparison.
+4. Step 1 arrows: Redraw the left-hand comparison arrows between Nature and Simulation with clear, untangled paths and distinct arrowheads.
+5. Caption and diagram consistency: Either explain the "Push Weights" iteration arrow in the caption text or remove it from the diagram.
+6. Legend: Add a legend or caption key identifying the particle tracks shown in the detector displays.
+7. Typography: Standardize font families and sizes across all annotations, replacing the mixed sans-serif labels ("Geant4", "NEUT, GENIE, ...") with journal-standard typography.
+8. Color contrast: Darken the orange text and arrows ("Step 1...", "Pull Weights") to ensure adequate contrast against the white background and distinct greyscale reproduction.
+END

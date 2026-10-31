@@ -1,0 +1,15 @@
+D1: 3 | Axis labels, tick labels and colour-bar text are small at printed size.
+D2: 4 | -
+D3: 3 | In greyscale, both ends of the diverging colour scale become dark, obscuring whether ratios exceed or fall below unity.
+D4: 4 | -
+D5: 5 | -
+D6: 5 | -
+D7: 4 | -
+TAKEAWAY: Both maps show similar departures from unity, with ratios generally above one across most bins and below one at the lowest transverse-momentum bins.
+CHANGES:
+1. Enlarge axis labels, tick labels and colour-bar text for comfortable reading at printed size.
+2. Add panel labels “(a) Our result” and “(b) Published data” above the maps.
+3. Add labelled contours identifying ratios below, at and above unity so the direction of departure remains clear in greyscale.
+4. Shade or hatch the blank lower-right regions and explain their meaning in the caption; white currently also represents ratios near unity.
+5. Typeset the axis variables mathematically as \(p_T\) and \(p_\parallel\), retaining “bin” to identify the coordinates as indices.
+END

@@ -1,0 +1,10 @@
+D1: A | A maintains clear, readable font sizes throughout, whereas B's left subplots have microscopic, illegible text at printed size.
+D2: A | A uses a balanced, well-aligned 2x2 grid, whereas B has severe panel height mismatches and large empty whitespace above the left plots.
+D3: A | A provides a clean, consistent diverging colormap across all correlation matrices, whereas B has inconsistent visual styling and uneven contrast.
+D4: A | A properly typesets mathematical symbols in LaTeX, whereas B relies on unformatted ASCII text without math formatting.
+D5: EQUAL | Neither figure presents a comparison with theoretical predictions or reference datasets (the 90% line in B is an internal threshold).
+D6: A | A follows standard PRD caption conventions and clear syntax, whereas B uses non-standard numbering ("Figure 11:"), poor spacing, and an unformatted ASCII legend.
+D7: A | A is immediately interpretable as four correlation matrices with a uniform scale, whereas B requires deciphering disjointed, poorly labeled panels.
+OVERALL: A
+GAP: 1. Increase font sizes for all axis titles, tick marks, and legends on the left subplots to ensure legibility at printed size. 2. Typeset all mathematical symbols in LaTeX (e.g., $\lambda/\lambda_{\max}$, $\chi^2$, $p_\parallel$, $p_{\mathrm{T}}$) instead of plain ASCII strings. 3. Rebalance the layout by matching panel heights and eliminating the large blank whitespace above the left subplots. 4. Follow PRD caption style ("FIG. 11.") and fix punctuation and spacing around mathematical symbols in the caption. 5. Provide proper units and standard labels for all axes and colorbars.
+END

@@ -1,0 +1,17 @@
+D1: 2 | axis labels, tick labels, and legend text on the two left subpanels
+D2: 2 | excessive empty whitespace above the left subpanels and missing panel labels (a, b, c)
+D3: 3 | diverging colormap in the heatmap maps both positive and negative extremes to dark shades in greyscale
+D4: 2 | unformatted ASCII axis labels (`p_||`, `p_T`, `lambda`, `chi^2`) and missing kinematic units for momentum bins
+D5: 3 | lack of visual correspondence between eigenvalue rank (left) and $\chi^2$-contribution rank (center)
+D6: 3 | caption inconsistency describing three panels as only "(left)" and "(right)", and raw text in the legend (`90% of chi^2`)
+D7: 3 | microscopic text and unbalanced layout obscuring the link between eigenmodes and localized phase-space $\chi^2$ contributions
+TAKEAWAY: The covariance eigenvalue spectrum spans over ten orders of magnitude with ~75 modes accounting for 90% of the total $\chi^2$, which is localized in a few high-momentum bins.
+CHANGES:
+1. Left subpanels: Increase font sizes of all axis labels, tick labels, and the legend to match standard PRD journal text size.
+2. Layout: Restructure the panels (e.g., stack the two 1D plots vertically on the left) to eliminate the large empty whitespace above them and balance panel heights.
+3. Panel labelling: Add subpanel identifiers (a), (b), and (c), and update the caption to reference (a), (b), and (c) instead of "(left)" and "(right)".
+4. Typography: Typeset all axis titles, legends, and colorbar labels in proper LaTeX math notation ($\lambda/\lambda_{\max}$, $\chi^2$, $p_T$, $p_\parallel$) rather than raw ASCII text (`lambda`, `chi^2`, `p_||`).
+5. Heatmap axes: Provide physical kinematic ranges with units (e.g., $\text{GeV}/c$) alongside or in place of integer bin indices.
+6. Heatmap colormap: Replace the diverging colormap with a palette that maintains distinct luminance across positive, zero, and negative values in greyscale.
+7. Left subpanels comparison: Clarify in the caption or text how the eigenvalue ranking relates to the $\chi^2$-contribution ranking.
+END

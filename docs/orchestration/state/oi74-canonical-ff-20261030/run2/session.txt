@@ -1,0 +1,66 @@
+$ ssh saul.nersc.gov 'bash -s' < ff2.sh   # ff2.sh sha256 c0e393b0…
+host login37
+date_utc 2026-10-30T23:15:50Z
+git git version 2.51.0
+P1 squeue_me_jobs 0
+P2 head 32e403b84e9e8f9d9bc435028749f896653c7a43
+P2 branch main
+P3 tracked_rc 0
+  tracked|  M docs/orchestration/LIVE-STATE.md
+  tracked|  M docs/orchestration/state/live-state-last-known.json
+P4 untracked_before 731
+P6 aside_listing LIVE-STATE.md SHA256SUMS live-state-last-known.json 
+P6 tree_equals_aside YES
+W2 checkout_rc 0
+W2 tracked_after_restore 0
+From github.com:josephbaileyy/MINERvA-OmniFold
+   eac51ab2e..ed3590ea2  main       -> github/main
+ * [new branch]          decl/fd-ct-5b-addition-20261030 -> github/decl/fd-ct-5b-addition-20261030
+W3 fetch_rc 0
+W3 github_main ed3590ea245f23bd4c7d1f21e1dd4b6dd0fa558e
+W3 behind 3768 ahead 0
+  untracked-not-ignored| docs/orchestration/dashboard.html
+  untracked-not-ignored| docs/orchestration/dashboard_collector.py
+  untracked-not-ignored| docs/orchestration/test_dashboard_collector.py
+  untracked-not-ignored| nd-unfolding/tests/test_cstat_100rep.py
+P5 added 13720 present 6 identical 6 differ 0 untracked_not_ignored 4
+W5 rehash docs/orchestration/dashboard.html want 26993f762bdbdf1cbeaa56eebf37a1c5d802d868 have 26993f762bdbdf1cbeaa56eebf37a1c5d802d868
+W5 rehash docs/orchestration/dashboard_collector.py want f08b12e8be73d3eda1096f627f052b953baac141 have f08b12e8be73d3eda1096f627f052b953baac141
+W5 rehash docs/orchestration/test_dashboard_collector.py want e10f59723336f335d46bc57c9b69b89fcbf556f8 have e10f59723336f335d46bc57c9b69b89fcbf556f8
+W5 rehash nd-unfolding/tests/test_cstat_100rep.py want 5ce3dbdf84f3cf1a0b779bb7924c2eade424baf2 have 5ce3dbdf84f3cf1a0b779bb7924c2eade424baf2
+W5 moved /pscratch/sd/j/josephrb/oi74-ff-20261030/untracked-at-added-paths
+  moved| 5bc229c6ab5efb7e85ee04a87af4aa90fed425ef51af637052143b3b84d22b00  docs/orchestration/dashboard.html
+  moved| e65cb1936e1ea895724b6f8428b1f5e98ee4338dd7f89d4552b7d7e9ab6071b2  docs/orchestration/dashboard_collector.py
+  moved| 74eb77f57a3c4f7c077aa797c310b5cf42c7c8b0bf7eabbf740c2a28cbe5ba70  docs/orchestration/test_dashboard_collector.py
+  moved| ec47ec61524d3dec8dc8f4dbda9ecd97afb161794ad4a61b9f8d37bbe51f5aad  nd-unfolding/tests/test_cstat_100rep.py
+P1b squeue_rc 0 squeue_me_jobs 0
+W4 start 2026-10-30T23:16:08Z
+Updating files:   3% (532/14001)Updating files:   4% (561/14001)Updating files:   5% (701/14001)Updating files:   6% (841/14001)Updating files:   7% (981/14001)Updating files:   7% (1035/14001)Updating files:   8% (1121/14001)Updating files:   9% (1261/14001)Updating files:  10% (1401/14001)Updating files:  10% (1417/14001)Updating files:  11% (1541/14001)Updating files:  12% (1681/14001)Updating files:  13% (1821/14001)Updating files:  14% (1961/14001)Updating files:  14% (2088/14001)Updating files:  15% (2101/14001)Updating files:  16% (2241/14001)Updating files:  17% (2381/14001)Updating files:  18% (2521/14001)Updating files:  19% (2661/14001)Updating files:  19% (2768/14001)Updating files:  20% (2801/14001)Updating files:  21% (2941/14001)Updating files:  22% (3081/14001)Updating files:  23% (3221/14001)Updating files:  24% (3361/14001)Updating files:  24% (3398/14001)Updating files:  25% (3501/14001)Updating files:  26% (3641/14001)Updating files:  27% (3781/14001)Updating files:  28% (3921/14001)Updating files:  28% (3986/14001)Updating files:  29% (4061/14001)Updating files:  30% (4201/14001)Updating files:  31% (4341/14001)Updating files:  32% (4481/14001)Updating files:  33% (4621/14001)Updating files:  33% (4624/14001)Updating files:  34% (4761/14001)Updating files:  35% (4901/14001)Updating files:  36% (5041/14001)Updating files:  37% (5181/14001)Updating files:  38% (5321/14001)Updating files:  38% (5379/14001)Updating files:  39% (5461/14001)Updating files:  40% (5601/14001)Updating files:  41% (5741/14001)Updating files:  42% (5881/14001)Updating files:  42% (5944/14001)Updating files:  43% (6021/14001)Updating files:  44% (6161/14001)Updating files:  45% (6301/14001)Updating files:  46% (6441/14001)Updating files:  46% (6450/14001)Updating files:  47% (6581/14001)Updating files:  48% (6721/14001)Updating files:  49% (6861/14001)Updating files:  49% (6959/14001)Updating files:  50% (7001/14001)Updating files:  51% (7141/14001)Updating files:  52% (7281/14001)Updating files:  53% (7421/14001)Updating files:  53% (7450/14001)Updating files:  54% (7561/14001)Updating files:  55% (7701/14001)Updating files:  56% (7841/14001)Updating files:  57% (7981/14001)Updating files:  57% (8074/14001)Updating files:  58% (8121/14001)Updating files:  59% (8261/14001)Updating files:  59% (8314/14001)Updating files:  60% (8401/14001)Updating files:  61% (8541/14001)Updating files:  62% (8681/14001)Updating files:  62% (8697/14001)Updating files:  63% (8821/14001)Updating files:  63% (8935/14001)Updating files:  64% (8961/14001)Updating files:  65% (9101/14001)Updating files:  66% (9241/14001)Updating files:  67% (9381/14001)Updating files:  68% (9521/14001)Updating files:  69% (9661/14001)Updating files:  69% (9791/14001)Updating files:  70% (9801/14001)Updating files:  71% (9941/14001)Updating files:  72% (10081/14001)Updating files:  73% (10221/14001)Updating files:  74% (10361/14001)Updating files:  75% (10501/14001)Updating files:  75% (10639/14001)Updating files:  76% (10641/14001)Updating files:  77% (10781/14001)Updating files:  78% (10921/14001)Updating files:  79% (11061/14001)Updating files:  80% (11201/14001)Updating files:  81% (11341/14001)Updating files:  81% (11416/14001)Updating files:  82% (11481/14001)Updating files:  83% (11621/14001)Updating files:  84% (11761/14001)Updating files:  85% (11901/14001)Updating files:  86% (12041/14001)Updating files:  87% (12181/14001)Updating files:  87% (12226/14001)Updating files:  88% (12321/14001)Updating files:  89% (12461/14001)Updating files:  90% (12601/14001)Updating files:  91% (12741/14001)Updating files:  91% (12866/14001)Updating files:  92% (12881/14001)Updating files:  93% (13021/14001)Updating files:  94% (13161/14001)Updating files:  95% (13301/14001)Updating files:  95% (13325/14001)Updating files:  96% (13441/14001)Updating files:  97% (13581/14001)Updating files:  98% (13721/14001)Updating files:  98% (13798/14001)Updating files:  99% (13861/14001)Updating files: 100% (14001/14001)Updating files: 100% (14001/14001), done.
+Updating 32e403b84..ed3590ea2
+Fast-forward
+W4 merge_rc 0 end 2026-10-30T23:16:33Z
+C1 head ed3590ea245f23bd4c7d1f21e1dd4b6dd0fa558e
+C1 branch main
+C1 head_equals_fetched_main YES
+C2 tracked_changes 0
+C3 untracked_after 726 before 731
+C3 untracked_not_grown YES
+  aside_check| LIVE-STATE.md: OK
+  aside_check| live-state-last-known.json: OK
+  moved_check| docs/orchestration/dashboard.html: OK
+  moved_check| docs/orchestration/dashboard_collector.py: OK
+  moved_check| docs/orchestration/test_dashboard_collector.py: OK
+  moved_check| nd-unfolding/tests/test_cstat_100rep.py: OK
+C5 docs/orchestration/dashboard.html tracked_and_equal YES
+C5 docs/orchestration/dashboard_collector.py tracked_and_equal YES
+C5 docs/orchestration/test_dashboard_collector.py tracked_and_equal YES
+C5 nd-unfolding/tests/test_cstat_100rep.py tracked_and_equal YES
+C4 changed_paths A 13720 M 274 D 7
+C4 nd_unfolding_sh_naming_tree old 200 new 214
+C4 sh_py_naming_tree new 576
+C4 blob 2d-unfolding/uq/coverage_fixed_truth/fixed_truth_toy.py old absent new c586b706c90f871724e56bd5d724ec62c0d397ee
+C4 blob 2d-unfolding/unfold_2d_omnifold_unbinned.py old 9b43a07ad9be9fa0697f88c6c1934e7cc2591daf new 1a0c4a99ddf0ef715c02e48c605ddc03fb2c0647
+C4 blob unbinned_unfolding/python/omnifold.py old 5966663bfe88809fd245d4dd2edb472eb6514480 new 5966663bfe88809fd245d4dd2edb472eb6514480
+date_utc_end 2026-10-30T23:16:40Z
+DONE
+ssh_rc 0

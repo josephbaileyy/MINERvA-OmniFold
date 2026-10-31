@@ -1,0 +1,10 @@
+D1: A | Labels and ticks are consistently readable; B’s two left panels use much smaller text.
+D2: A | A balanced grid uses space efficiently; B has excessive whitespace and mismatched panel sizes.
+D3: EQUAL | Both use appropriate zero-centred diverging scales with clear colour bars.
+D4: A | Mathematical notation and bin labels are cleaner; B exposes code-style underscores and informal axis text.
+D5: EQUAL | Neither presents a comparison with an external reference or prediction.
+D6: B | Its concise caption explicitly identifies the spectrum, cumulative curve and contribution map.
+D7: A | The consistent panel structure makes the quantities and correlation patterns easier to grasp quickly.
+OVERALL: A
+GAP: 1. Enlarge B’s left panels and their text. 2. Align panel heights and reduce unused whitespace. 3. Use consistent typography across panels. 4. Replace code-style axis labels with properly typeset mathematical notation. 5. Add panel identifiers and reference them in the caption.
+END

@@ -1,0 +1,10 @@
+D1: EQUAL | Both use clear, comfortably readable type and numerals at printed size.
+D2: B | Sparse horizontal rules and compact spacing give the table a cleaner visual hierarchy.
+D3: EQUAL | Both are monochrome tables.
+D4: A | Its two statistic columns have more clearly separated, explicit headers.
+D5: B | Reporting degrees of freedom beside each statistic makes differences in comparison scope immediately visible.
+D6: B | The caption specifies the comparison target, covariance treatment, and meaning of shape-only.
+D7: B | Minimal ruling and compact organization make predictions and their statistics quicker to scan.
+OVERALL: B
+GAP: 1. Remove A’s rules between every data row, retaining rules around the header and table boundaries. 2. Tighten excessive vertical spacing. 3. State the comparison target and covariance treatment in the caption. 4. Place the shared 144 degrees of freedom near the statistic headers.
+END

@@ -1,0 +1,16 @@
+D1: 4 | -
+D2: 3 | inter-column spacing between covariance blocks and row grouping
+D4: 3 | column header "cells" and inconsistent precision across p columns
+D6: 3 | caption phrasing ("where the second column says so (-)") and undefined symbol z
+D7: 4 | -
+TAKEAWAY: Most generator models pass the 16-cell fake-data tests with acceptable χ2 and no outlier cells, whereas the GiBUU hybrid model and the synthetic q3 tilt show severe tension with very large χ2 (p ≪ 10⁻⁵) and localized outliers in cells R02, R06, and R07.
+CHANGES:
+1. Inter-column spacing: Increase horizontal separation between the Ctotal + Cresp block and the Ctotal block to prevent the outlier cell list (R02, R06, R07) from colliding with the adjacent χ2 column.
+2. Sub-rules: Extend the horizontal rule (cmidrule) over Ctotal + Cresp to span all three of its subcolumns, including the cells column.
+3. Column header "cells": Change the header to "Cells (|z| > 2)" or "Outliers (|z| > 2)" to specify the reported quantity.
+4. p-value precision and formatting: Adopt a consistent formatting rule for the p columns rather than mixing varying decimal places, scientific notation, and arbitrary bounds (< 10⁻³⁰).
+5. Row grouping: Insert thin vertical whitespace (addlinespace) between model families (simulation prior, GENIE, NuWro, GiBUU, synthetic) to aid row scanning.
+6. Caption phrasing: Replace the colloquial text "where the second column says so (−)" with standard scientific prose such as "where the generator component is subtracted as indicated by (−)".
+7. Caption punctuation: Remove the extraneous space before the comma in "against Ctotal ,".
+8. Caption definition: Explicitly define the residual/pull variable z in the caption to make the table fully self-contained.
+END

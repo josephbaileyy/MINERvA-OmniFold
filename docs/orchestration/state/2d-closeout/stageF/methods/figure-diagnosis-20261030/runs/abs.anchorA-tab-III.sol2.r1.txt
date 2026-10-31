@@ -1,0 +1,9 @@
+D1: 5 | -
+D2: 4 | Numeric entries are centered rather than aligned on decimal points, most visibly in the first numeric column.
+D4: 5 | -
+D6: 5 | -
+D7: 5 | -
+TAKEAWAY: Every unfolding method gives smaller χ² values than the prior for all four observables, with IBU-UniFold giving the smallest values throughout.
+CHANGES:
+1. Align numeric entries on their decimal points, especially in the (pμ, cos θμ) column.
+END

@@ -1,0 +1,15 @@
+D1: 5 | -
+D2: 4 | Repeated large titles and detached panel labels use excessive space.
+D3: 4 | The unbiased reference loses colour emphasis in greyscale; the palest series have weak contrast.
+D4: 5 | -
+D5: 3 | Overlapping bands, error bars and dashed predictions obscure comparisons near the origin in panel (b).
+D6: 5 | -
+D7: 4 | Overlapping uncertainty displays slow interpretation of panel (b).
+TAKEAWAY: The calibration departs from the identity line, with the prior mean shifting the response and the prior width changing its slope.
+CHANGES:
+1. Replace the repeated titles with one smaller shared title.
+2. Move labels (a) and (b) into consistent positions inside the upper panel corners.
+3. Give the unbiased reference a distinct dash pattern and slightly heavier stroke so it remains prominent in greyscale.
+4. Reduce band opacity and draw analytic dashed curves above the bands and error bars, especially in panel (b).
+5. Darken the palest series while retaining their distinct marker shapes.
+END

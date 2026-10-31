@@ -1,0 +1,18 @@
+D1: 3 | overlapping data and generator markers, small y-axis labels, and faint POT header
+D2: 3 | excessive empty vertical space from 10^-40 to 10^-39, duplicate legends, and missing (a)/(b) panel labels
+D3: 2 | generator markers indistinguishable in greyscale and under deuteranopia (red GENIE-CV vs green NuWro)
+D4: 3 | missing physical units on both y-axis labels (dσ/dE_avail and dσ/dW)
+D5: 2 | compressed three-decade log scale without ratio panels, overlapping points, and invisible data uncertainties
+D6: 2 | duplicate legends across both panels, mismatched data marker symbol (cross in legend vs circle in plot), and phantom connecting lines
+D7: 2 | inability to discern generator differences or verify the claimed high-W/high-E_avail deficit without ratio panels
+TAKEAWAY: Unfolded cross sections in E_avail and W fall by over an order of magnitude and generators broadly track the trend, but specific model discrepancies are obscured by the compressed log scale.
+CHANGES:
+1. Ratio panels: Add bottom subpanels showing the ratio of predictions to data (or data to generator) with uncertainties to make model differences quantitatively visible.
+2. Y-axis units: Add physical units (e.g., cm²/GeV/nucleon) to the y-axis labels on both panels.
+3. Uncertainty representation: Display visible statistical and systematic error bars on the unfolded data points.
+4. Vertical axis range: Truncate the lower y-axis limit to ~10^-39 to eliminate the empty decade and expand the dynamic range of the plotted points.
+5. Legend consolidation: Remove the duplicate legend from the right panel and use a single shared legend across panels.
+6. Legend marker consistency: Fix the legend symbols so the data marker matches the plot (circle rather than cross) and remove connecting line segments if curves are not drawn.
+7. Colour and marker accessibility: Differentiate generators using distinct marker shapes (open vs filled) or distinct line styles so they remain identifiable in greyscale and under deuteranopia.
+8. Panel labelling: Add subpanel tags "(a)" and "(b)" and clarify in the caption how these 1D distributions relate to the stated 2D (E_avail, W) cross section.
+END

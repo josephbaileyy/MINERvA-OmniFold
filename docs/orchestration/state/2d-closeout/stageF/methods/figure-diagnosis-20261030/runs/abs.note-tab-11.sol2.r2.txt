@@ -1,0 +1,12 @@
+D1: 5 | -
+D2: 4 | Decimal points in the f column are misaligned; four-row blocks lack visual separation.
+D4: 4 | Uncertainty columns are headed by covariance symbols although their entries are relative standard deviations.
+D6: 4 | The caption leaves Ctotal and Cresp unexplained and uses the vague phrase “under the reported.”
+D7: 4 | Repeated box boundaries dominate visually over the uncertainty comparison.
+TAKEAWAY: Adding the response contribution modestly increases the median relative uncertainty from 6.74% to 7.29%, with a median response-only uncertainty of 2.14%.
+CHANGES:
+1. Align the f column on decimal points while preserving its displayed precision.
+2. Add modest vertical space after R03, R07, and R11 to distinguish the four kinematic blocks.
+3. Label the uncertainty columns explicitly as relative σ (%) for each covariance choice.
+4. Define Ctotal and Cresp briefly in the caption and replace “under the reported” with a direct description of the combined covariance.
+END

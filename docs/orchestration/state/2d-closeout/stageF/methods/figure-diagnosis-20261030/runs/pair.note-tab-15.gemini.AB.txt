@@ -1,0 +1,10 @@
+D1: B | Table B features larger typography and clear spacing that are easily legible at printed size, whereas Table A has dense text and tiny exponents.
+D2: B | Table B provides a cohesive single-column layout, whereas Table A awkwardly stitches two disparate tables side-by-side with large empty areas and lacks a bottom rule.
+D3: EQUAL | Both are monochrome tables without colour.
+D4: B | Table B features clear hierarchical headers with separate observable columns, whereas Table A lumps two variables under a single un-split header.
+D5: B | Table B provides an explicit baseline ("Prior") across all observables for direct comparison, whereas Table A has missing reference values and disjointed models.
+D6: B | Table B uses standard PRD Roman numeral numbering and a concise, objective caption, whereas Table A uses Arabic numbering and an informal, rambling caption.
+D7: B | Table B communicates its comparison and main findings within seconds, whereas Table A is fragmented, cluttered, and confusing to interpret.
+OVERALL: B
+GAP: 1. Split the power-alternative tests into a separate table or stacked panel rather than merging two tables side-by-side with empty rows. 2. Separate "in-sample \chi^2, p" into two distinct columns with individual subheaders. 3. Add a closing bottom horizontal rule to properly delimit the table. 4. Change table numbering to PRD Roman numerals (e.g., TABLE XV) and rewrite the caption to be concise, formal, and objective. 5. Populate baseline reference values consistently to facilitate direct comparisons. 6. Increase font size and row spacing to ensure legibility at printed size.
+END

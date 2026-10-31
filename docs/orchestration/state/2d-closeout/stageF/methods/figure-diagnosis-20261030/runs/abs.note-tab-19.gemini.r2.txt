@@ -1,0 +1,15 @@
+D1: 4 | -
+D2: 3 | modes for 50/90/99 % sub-columns and top-mode column alignment
+D4: 3 | modes for 50/90/99 % compound header and lowercase column titles
+D6: 3 | caption
+D7: 4 | -
+TAKEAWAY: Across all neutrino model predictions, the reported χ2 is heavily dominated by just a few eigenmodes (2–3 modes account for 50% and 6–13 carry 99%), with the single leading mode responsible for 27%–48% of the χ2 and driven primarily by interaction systematics.
+CHANGES:
+1. Column header "modes for 50/90/99 %": split into a spanning header (e.g., "Modes for cumulative χ2 share") with three separate sub-column headers ("50%", "90%", "99%") and a partial rule (cmidrule).
+2. Column headers: capitalize all headers according to PRD style ("Prediction", "Top mode (% of χ2)", "σ (%)", "Block").
+3. Column "top mode (% of χ2)": break the header into two lines or center-align the column data to eliminate the large blank void under the left side of the header.
+4. Header "σ (%)": clarify the definition of σ in the header or caption (e.g., relative standard deviation or fractional uncertainty of the mode).
+5. Cell "$V_g$" in the "block" column: replace the raw symbol with a standard descriptive label (or define the systematic error block in the caption).
+6. Caption: define "relative σ", explain the systematic block categories (including $V_g$), and state the total number of eigenmodes/degrees of freedom for context.
+7. Caption: remove the unwanted space before the percent sign in "50/90/99 %" to read "50/90/99%".
+END
