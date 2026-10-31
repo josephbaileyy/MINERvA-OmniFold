@@ -20,5 +20,5 @@ visible here and in `OPEN_ITEMS.md`; omission from `CURRENT_WORK.md` is not reti
 | OI-52 | WAITING-JOSEPH | declared | OWNER JOSEPH 2026-10-28 on the director's ruling — the premise is false (lanes read Iris; state/measurement-scoping/iris |
 | OI-59 | WAITING-JOSEPH | declared | OWNER THE DIRECTOR 2026-10-28, WAITING-JOSEPH, on the director's ruling — the next step is Joseph's freeze question, whi |
 | OI-60 | WAITING-JOSEPH | declared | ON JOSEPH'S QUEUE 2026-10-29 (owner Joseph, WAITING-JOSEPH) for the RETROSPECTIVE CLOSE, which is his. The RE-RUN half i |
-| OI-62 | WAITING-JOSEPH | migration-carried-forward | (a) RESOLVED 2026-08-13 by Joseph; (b) MECHANISM LANDED 2026-08-14, CONVENTION STILL HIS; (c) still WAITING-USER |
+| OI-62 | WAITING-JOSEPH | migration-carried-forward | TRACED 2026-10-31 by the close-items session, PROPOSED FOR RETIREMENT — (a) is Joseph's decision of 2026-08-13 (551d16c6 |
 | OI-137 | WAITING-JOSEPH | declared | OWNER THE DIRECTOR 2026-10-28, HELD until a session holds the "scalar-5D adoption/statistics owner" role that Ruling 7 ( |
