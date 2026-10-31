@@ -8,7 +8,11 @@ every replaced block becomes one pair: BEFORE = the base sentences, AFTER = the 
 are not paired (cuts are covered by the fact ledger's probes and the two-direction review). Pairs are split into
 chunks of N (default 40); each chunk gets a control copy in which three pairs' AFTER carry a planted change of meaning:
 a negation removed ("not " / "no " deleted once), so a correct check must flag them DIFFERS. Pass rule, fixed before
-any run: agy marks at least 2 of the 3 planted pairs DIFFERS in each control. Writes <outdir>/chunk<k>/{pairs.txt,
+any run: agy marks at least 2 of the 3 planted pairs DIFFERS in each control. A chunk with fewer than three AFTER
+passages carrying a negation is topped up with FILLERS: unchanged batch sentences that carry one, chosen by the same
+seeded generator, each entered as an identity pair (BEFORE = AFTER) in both files. In the control a filler's AFTER
+loses its negation and must read DIFFERS; in pairs.txt it must read SAME, so the fillers also test the silent
+direction. Their ids are in KEY.txt. Writes <outdir>/chunk<k>/{pairs.txt,
 pairs-control.txt, KEY.txt} and prompt.txt."""
 import difflib
 import random
@@ -57,13 +61,26 @@ for c, ch in enumerate(chunks, 1):
     real = [f"Q{n}. [{f} {BATCH[f]}{i}]\nBEFORE: {b}\nAFTER: {a}\n" for n, (f, i, b, a) in enumerate(ch, 1)]
     (d / "pairs.txt").write_text(head + "\n".join(real))
     cand = [n for n, (_, _, _, a) in enumerate(ch, 1) if re.search(r"\b(not|no) ", a)]
+    fill = []
+    if len(cand) < 3:
+        keep = [(f, s) for f in BATCH for s in cl.sentences(cl.printed((W / "docs/analysis-note" / f).read_text()))
+                if s in set(cl.sentences(cl.printed(cl.git_show(W, BASE, f"docs/analysis-note/{f}"))))
+                and re.search(r"\b(not|no) ", s) and len(s) < 400]
+        fill = rng.sample(keep, 3 - len(cand))
+        real += [f"Q{len(ch) + k}. [{f} filler]\nBEFORE: {s}\nAFTER: {s}\n" for k, (f, s) in enumerate(fill, 1)]
+        (d / "pairs.txt").write_text(head + "\n".join(real))
+        ch = ch + [(f, "filler", s, s) for f, s in fill]
+        cand = cand + list(range(len(ch) - len(fill) + 1, len(ch) + 1))
     plant = sorted(rng.sample(cand, min(3, len(cand))))
     ctl = []
     for n, (f, i, b, a) in enumerate(ch, 1):
         if n in plant:
             a = re.sub(r"\b(not|no) ", "", a, count=1)
-        ctl.append(f"Q{n}. [{f} {BATCH[f]}{i}]\nBEFORE: {b}\nAFTER: {a}\n")
+        ctl.append(f"Q{n}. [{f} {BATCH[f] if i != 'filler' else ''}{i}]\nBEFORE: {b}\nAFTER: {a}\n")
     (d / "pairs-control.txt").write_text(head + "\n".join(ctl))
-    (d / "KEY.txt").write_text("planted (negation removed in AFTER): " + " ".join(f"Q{n}" for n in plant) + "\n")
+    fq = [n for n, (_, i, _, _) in enumerate(ch, 1) if i == "filler"]
+    (d / "KEY.txt").write_text("planted (negation removed in AFTER): " + " ".join(f"Q{n}" for n in plant) + "\n"
+                               + ("fillers (identity pairs; SAME in pairs.txt): " + " ".join(f"Q{n}" for n in fq)
+                                  + "\n" if fq else ""))
     print(f"chunk{c:02d}: {len(ch)} pairs, planted {plant}, {sum(len(b) + len(a) for _, _, b, a in ch)} chars")
 print("pairs", len(pairs), "chunks", len(chunks))

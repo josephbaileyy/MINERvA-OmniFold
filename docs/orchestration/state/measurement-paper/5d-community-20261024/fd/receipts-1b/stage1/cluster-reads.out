@@ -1,0 +1,38 @@
++ hostname
+login37
++ date -u +%FT%TZ
+2026-10-30T16:26:44Z
++ iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2171.9            10000.0     17915.0      20000.0
+m3246_g             1296.2            90000.0    142654.7     180000.0
++ P=/pscratch/sd/j/josephrb
++ ls -la /pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latdump /pscratch/sd/j/josephrb/s5p-20260926/lateral
+/pscratch/sd/j/josephrb/s5p-20260926/lateral:
+total 8
+drwxrwx---  2 josephrb josephrb 4096 Sep 27 07:16 .
+drwxrwx--- 21 josephrb josephrb 4096 Oct  6 20:50 ..
+
+/pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latdump:
+total 16
+drwxrwx--- 4 josephrb josephrb 4096 Sep 26 23:37 .
+drwxrwx--- 6 josephrb josephrb 4096 Sep 27 03:10 ..
+drwxrwx--- 2 josephrb josephrb 4096 Sep 27 01:45 inventory
+drwxrwx--- 2 josephrb josephrb 4096 Sep 27 01:33 logs
++ ls /pscratch/sd/j/josephrb/s5p-20260926/runs/s3/latunf
+inventory
+lat_BeamAngleX_0_b-_j-.npz
+lat_BeamAngleX_1_b-_j-.npz
+lat_BeamAngleY_0_b-_j-.npz
+lat_BeamAngleY_1_b-_j-.npz
+lat_Muon_Energy_MINERvA_0_b-_j-.npz
+lat_Muon_Energy_MINERvA_1_b-_j-.npz
+lat_Muon_Energy_MINOS_0_b-_j-.npz
+lat_Muon_Energy_MINOS_1_b-_j-.npz
+lat_MuonResolution_0_b-_j-.npz
+lat_MuonResolution_1_b-_j-.npz
+logs
++ wc -l /pscratch/sd/j/josephrb/s5p-20260926/measure/lateral-dumps-sha256-before-removal.txt
+20 /pscratch/sd/j/josephrb/s5p-20260926/measure/lateral-dumps-sha256-before-removal.txt
++ squeue -u josephrb -h -o '%i %j %T'

@@ -1,0 +1,25 @@
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+PASS control A0 the 5B readout is fd-ct-5b-periods/1 on this S1 assembly, C_resp and definition
+PASS control A1 C_PL,5D rebuilt from the unfolds equals the committed one
+PASS control A1 the noise floor rebuilt equals the committed one
+PASS control A1 sigma_M equals the committed one
+PASS control A1 the exposure shares equal the committed ones
+PASS control A1 g_X and its noise sigma equal the committed ones
+PASS control A2 S1 has 38 bands, 5 laterals, normalization, stat and seed
+PASS control A2 every block maps to one of S1's seven groups
+PASS control A2 C_e is the sum of S1's blocks
+PASS control A2 C_model's vertices are GENIE+MEC, NuWro, GiBUU, and S^T S is C_model_frac
+PASS control A2 C_model_abs = diag(f) C_model diag(f)
+PASS control A2 S1's blocks, the three C_model vertices and the four C_resp species sum to M
+PASS control A3 the 5B readout's g_5a is the 5A readout's central g
+PASS control A3 2D's seed-42 r = x / t equals playlist_term.npz's r_X
+PASS control A3 2D's committed bootstrap noise share is reproduced
+PASS control A3 the central value's cell integrals are S1's f
+PASS control A3 5A's g, reprojected, equals the committed 5A readout's
+[5B audit] O False (fired by []; 51 candidates), N False (s_med 0.0240), R False (median retention 0.9902); stop False
+{"wrote": "/pscratch/sd/j/josephrb/fd-ct-5b-audit-20261030/fd_ct_5b_audit.json", "sha256": "6d34d7f8034ea956cf22c092fb31d608f330daabdd721285302868806d50692c"}
+rc=0

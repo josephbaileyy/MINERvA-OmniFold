@@ -1,12 +1,13 @@
 """Apply r22 Step 2's paper adoption rule (STEP2-PLAN.md section 4, the paper rule, as r21; committed before any score).
 
-usage: python3 -I adopt_step2p.py BASE_P1_DIR RUNS_DIR
+usage: python3 -I adopt_step2p.py BASE_P1_DIR RUNS_DIR [BASE_P1_PATTERN]
 The paper is adopted if, and only if, all three hold:
   1. NEW beats the base in at least 3 of the 4 blind P2 runs (sol2 and gemini, each in both orders); a run without a
      WINNER line (failed both attempts) counts as a loss for NEW;
   2. sol2 picks the same version in both orders;
   3. NEW's 3 sol2 P1 runs have a mean at least the base's mean and a lowest run at least the base's lowest run (base:
-     BASE_P1_DIR/P1__base-paper-f47b1b4a__sol2__r{1,2,3}.txt).
+     BASE_P1_DIR/P1__base-paper-f47b1b4a__sol2__r{1,2,3}.txt, or BASE_P1_PATTERN with {k} for the run number: pass 2
+     of STEP2-PAPER.md section 5 judges against the merged paper, whose P1 runs are step2p/runs/P1.paper.sol2.r{k}.txt).
 Writes RUNS_DIR/adoption.tsv and prints it. AB: A = base, B = NEW; BA: A = NEW, B = base."""
 import re
 import statistics as st
@@ -33,7 +34,8 @@ for m in ("sol2", "gemini"):
 wins = sum(x == "NEW" for x in v.values())
 noflip = v["sol2.AB"] is not None and v["sol2.AB"] == v["sol2.BA"]
 new = [rating(D / f"P1.paper.sol2.r{k}.md") for k in (1, 2, 3)]
-base = [rating(B / f"P1__base-paper-f47b1b4a__sol2__r{k}.txt") for k in (1, 2, 3)]
+pat = sys.argv[3] if len(sys.argv) > 3 else "P1__base-paper-f47b1b4a__sol2__r{k}.txt"
+base = [rating(B / pat.format(k=k)) for k in (1, 2, 3)]
 p1ok = None not in new and None not in base and st.mean(new) >= st.mean(base) and min(new) >= min(base)
 adopt = wins >= 3 and noflip and p1ok
 fmt = lambda xs: ",".join("-" if x is None else f"{x:g}" for x in xs)  # noqa: E731
