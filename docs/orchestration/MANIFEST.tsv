@@ -1583,6 +1583,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/comparator-chi2-20261027/quo
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/CAPTION-FIXES.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/DECLARATION.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/MUTATION-RECEIPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/SIZE-MEASURES.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/artists.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/capture.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/compare.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -1591,6 +1592,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/r
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/run.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/run_remote.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/selftest.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/sheets.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/textsize.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools/toy_producer.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig1-check/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
