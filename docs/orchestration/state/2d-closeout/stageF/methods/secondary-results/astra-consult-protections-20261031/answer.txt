@@ -1,0 +1,27 @@
+Yes. Several strict protections remain. **I recommend preserving strict control of scientific meaning, while relaxing routine wording locks and literal build checks.** These are proposed changes to the rules, not permissions already granted.
+
+One record inconsistency needs reconciliation: the October 28 decision explicitly released Data Availability, while the October 30 decisions require pinned approval for the proposed edits and `STATE-NOW.md` treats A1 as generally strict. I use the stated current rule below.
+
+- **A1 — Data Availability: relax routine wording control.** Permit editorial changes checked against the package manifest, preserving accurate access and deposit status; reserve Joseph’s approval for release commitments. This protects truth and author ownership, with the principal risk being an accidental promise of availability or reproducibility beyond what exists.
+
+- **A4 — Abstracts: relax per-edit approval to approval of the complete revised abstract.** Allow sentence splitting and equivalent phrasing under scientific review, retaining Joseph’s final approval because the abstract carries the paper’s principal claims. The risk is that compression strengthens a conclusion or removes a limitation essential to interpreting it.
+
+- **A5 — Title: keep Joseph’s approval.** This protects author ownership and the advertised scope of the work; an apparently stylistic change can broaden that scope. The title is excluded from the reported blinded ratings, so its lock cannot explain those scores.
+
+- **A7 — Claims and sentences that scope claims: keep substantive changes strict, relax demonstrably equivalent wording.** Permit copyediting only after a documented review confirms unchanged populations, assumptions, uncertainty, evidential strength, and conclusions; unresolved equivalence or any substantive change goes to Joseph. This protects scientific claims and author responsibility, and the danger is silently converting a conditional or descriptive result into a stronger assertion.
+
+- **FROZEN coverage sentence: relax byte identity, retain its explicit meaning.** Allow an equivalent formulation such as “Coverage of these intervals has not been validated,” with unambiguous scope and the existing placement safeguards. This protects truth; replacing it with “coverage remains under study,” or confusing absent validation with demonstrated failure, would change what readers learn.
+
+- **B4 — Gate-bound phrases: relax literal wording locks while retaining the gates’ scientific checks.** Permit reviewed rewording and corresponding gate updates together, preserving receipt-linked numbers, units, scope, and citation targets, with checks that still reject incorrect content. This protects a mechanical verification mechanism whose underlying purpose is integrity; careless repinning could make the gate accept a scientific error.
+
+- **`\pubhold`, acknowledgments, and named credit: keep Joseph’s control.** These protect author ownership, attribution, and release or funding commitments; relaxing them risks unauthorized commitments or miscrediting people. The inventory says holds and acknowledgments are excluded from rating copies, so changing their protection offers no demonstrated scoring benefit.
+
+- **Truth guardrail: keep strict.** It protects whether a sentence is true as readers understand it, rather than particular words. Relaxing it would permit misleading claims; a note pointer cannot repair an overstatement in the paper.
+
+- **C items — honesty-required disclosures: keep mandatory publication, with flexible wording and the already authorized relocation.** Preserve the material facts in the paper or published note, with pointers and verification, and retain local qualification wherever the paper otherwise becomes misleading. Removing these facts from both documents risks concealing post hoc choices, missing uncertainty components, validation limits, or failures of declared criteria.
+
+**Inference:** B4’s literal matching and A1’s per-edit wording control are the strongest candidates for avoidable register costs. Readers need accurate numbers, provenance, and availability statements; they do not need the particular strings used to enforce them. A7’s blanket sentence locks may also obstruct better prose, but their semantic risk is higher. The frozen coverage sentence is already concise, so its practical cost is probably small.
+
+The repeated 3.0 scores and protected-text quotations do **not** establish that relaxing protections will improve quality: the supplied record says quote slots refill and previous removals did not raise P1.
+
+My recommendation is one explicit ruling separating immutable scientific content from editable expression, followed by a coherent editorial pass and Joseph’s and Ben’s reading. Preserve the adopted KEEP outcomes unless separately reconsidered; use rater comments as diagnostic suggestions, not grounds for deleting necessary disclosures.

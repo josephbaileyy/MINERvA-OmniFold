@@ -1,0 +1,18 @@
+# How each protection stands on 2026-10-31 (the director's summary, for the reviewer)
+
+Relaxed already:
+- B2 "no fact leaves both documents": implementation detail and provenance may leave both documents if an internal ledger keeps them (#521); limitations and disclosures may leave the paper if the note keeps them, with a pointer (#522).
+- "Held" sentences (quoted by a declined rater gap) are held for their facts, not their bytes, except the categories below (director's rule, 10-30).
+- The KEEP list (B3) is read in substance: a qualifier stays with its claim, wording may change (director's reading of DECISION-20261023 :35-36).
+- n4's eight frozen note sentences: freeze lifted (10-30).
+
+Still strict (byte-exact or Joseph's sign-off per edit):
+- A1 Data Availability, A4 the abstracts, A5 the title: any edit is a pinned before/after pair Joseph approves.
+- A7 claims, and sentences scoping a claim: byte-exact unless Joseph signs off.
+- The FROZEN sentence ("Interval coverage has not been validated."): may move or be consolidated, not reworded.
+- B4 gate-bound phrases: byte-exact because build gates (SEC4) match them literally.
+- \pubhold, acknowledgments, credit to named people: Joseph's.
+- The truth guardrail: a qualifier stays where omission makes a sentence false (not a wording rule).
+- The C items (honesty-required disclosures): may move paper→note, must remain in a published document.
+
+Observed effect: the paper's register score (P1, sol2) stayed at 3.0 for three rounds against the PRD anchors' 3.67; raters repeatedly quote protected or fact-preserving wording; the third paper round lost 0 of 4 when narrowed rewrites kept every fact.
