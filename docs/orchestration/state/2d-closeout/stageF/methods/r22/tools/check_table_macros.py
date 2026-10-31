@@ -95,7 +95,8 @@ def main():
         planted_src = src.replace("\\\\\n", " 99 \\\\\n", 1)
         ok &= bool(check(planted_src, vals, text, allow))
         k, v = numeric_macros(src, vals)[0]
-        planted_text = text.replace(v, v + "1", 1)
+        at = text.index(allow[0])  # plant inside the table's own block, not at an earlier mention of the same value
+        planted_text = text[:at] + text[at:].replace(v, v + "1", 1)
         ok &= bool(check(src, vals, planted_text, allow))
         print("TABLE-MACROS SELF-TEST ::", "PASS" if ok else "FAIL")
         return 0 if ok else 1
