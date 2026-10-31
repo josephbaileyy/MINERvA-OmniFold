@@ -1,0 +1,34 @@
+# python3 mutation_amend1.py, 2026-10-31T22:21:08Z, local (macOS), on main 2aa16538 + this PR, rc=0
+sha256 8889fcb9128abdddc1a50f1f68f02ce554ba6b9e23546b2d739be798170437f7  nd-unfolding/fd_1b_tasks.py
+sha256 aa3b4f3a07897c34dbbce9935d1a600dc92210c57f49d5703f3c7b78483d0ac6  nd-unfolding/tests/test_fd_1b.py
+CONTROL  rc=0  69 passed in 11.69s
+A01  KILLED   fd_1b_tasks.py   an ended job counts at its cap: the binding's cap-sum reading, which refuses 2a-r
+     3 failed, 66 passed in 12.64s
+     dies: Tasks::test_2a_r_is_the_unmade_and_the_quarantined_under_one_node
+     dies: Tasks::test_an_ended_job_counts_at_its_charge_and_a_charge_above_its_cap_refuses
+     dies: Tasks::test_submit_lines_are_regular_cpu_under_12_h_through_the_committed_packer
+A02  KILLED   fd_1b_tasks.py   a ledgered charge above its cap is accepted
+     1 failed, 68 passed in 13.06s
+     dies: Tasks::test_an_ended_job_counts_at_its_charge_and_a_charge_above_its_cap_refuses
+A03  KILLED   fd_1b_tasks.py   an ended job can be submitted again
+     1 failed, 68 passed in 11.56s
+     dies: Tasks::test_an_ended_job_is_not_submitted_again
+A04  KILLED   fd_1b_tasks.py   a charge constant departs from the committed ledger
+     2 failed, 67 passed in 11.05s
+     dies: Tasks::test_an_ended_job_counts_at_its_charge_and_a_charge_above_its_cap_refuses
+     dies: Tasks::test_the_ledgered_charges_are_the_committed_ledger_rows
+A05  KILLED   fd_1b_tasks.py   2a-r reruns a derivation universe 60624652 did make
+     1 failed, 68 passed in 12.60s
+     dies: Tasks::test_2a_r_is_the_unmade_and_the_quarantined_under_one_node
+A06  KILLED   fd_1b_tasks.py   2a-r leaves a quarantined half pilot unmade
+     1 failed, 68 passed in 11.38s
+     dies: Tasks::test_2a_r_is_the_unmade_and_the_quarantined_under_one_node
+A07  KILLED   fd_1b_tasks.py   the ceiling check sums caps, not ledgered charges
+     3 failed, 66 passed in 10.88s
+     dies: Tasks::test_2a_r_is_the_unmade_and_the_quarantined_under_one_node
+     dies: Tasks::test_an_ended_job_counts_at_its_charge_and_a_charge_above_its_cap_refuses
+     dies: Tasks::test_submit_lines_are_regular_cpu_under_12_h_through_the_committed_packer
+A08  KILLED   fd_1b_tasks.py   the rerun selection runs other universes
+     1 failed, 68 passed in 11.12s
+     dies: Tasks::test_2a_r_is_the_unmade_and_the_quarantined_under_one_node
+SUMMARY  8 of 8 killed; unkilled: none
