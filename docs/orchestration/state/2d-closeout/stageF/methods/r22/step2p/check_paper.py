@@ -86,6 +86,15 @@ def keep_rows(text):
             yield cells[0], re.findall(r"`([^`]*)`", cells[3])
 
 
+def keep_plant(cur):
+    """cur with the first KEEP probe that appears verbatim in it reworded (its last character replaced)."""
+    for fid, probes in keep_rows(R21_LEDGER.read_text()):
+        for q in probes:
+            if len(q) > 20 and q in cur:
+                return cur.replace(q, q[:-1] + "@", 1)
+    return cur
+
+
 def printed(src):
     src = "\n".join(re.sub(r"(?<!\\)%.*", "", l) for l in src.splitlines())
     return re.sub(r"\s+", " ", src).strip()
@@ -246,7 +255,9 @@ def main():
              {"prot": {PAIRED: prot_old[PAIRED].replace(ab_old, ab_new, 1)}, "pairs": fake, "pins": {}}),
             ("protected note file edited", cur, lt, {"prot": {"sec_5d.tex": prot_cur["sec_5d.tex"] + "%x\n"}}),
             ("protected values file edited", cur, lt, {"prot": {"values.tex": prot_cur["values.tex"] + "%x\n"}}),
-            ("KEEP rewording unnamed", cur, FIDRX.sub("F-id", lt), {}),
+            # rewords one KEEP item that prints verbatim in the current body, and strips the ledger's F-ids, so that the
+            # plant tests check 8 whether or not this tree already rewords a KEEP item (pass 3's adopted paper does not)
+            ("KEEP rewording unnamed", keep_plant(cur), FIDRX.sub("F-id", lt), {}),
         ]
         silent = [("pinned pair", {"prot": {PAIRED: prot_old[PAIRED].replace(ab_old, ab_new, 1)},
                                    "pairs": fake, "pins": {"T-AB": pin(ab_old, ab_new)}}),

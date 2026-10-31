@@ -1,0 +1,6 @@
+WINNER: B
+STRENGTH: 2
+REASONS:
+1. Document B eliminates the awkward and redundant phrasing at the end of Sec. III ("counts compared and the comparison" in Document A) in favor of concise, precise wording.
+2. Document B properly introduces and defines the precision target within the body of Sec. III A, preventing the jarring, citation-dependent reference found in Sec. VI of Document A.
+3. The paragraph break introduced in the Introduction of Document B provides better structural cadence and prevents critical validation caveats from being buried in a dense block of text.

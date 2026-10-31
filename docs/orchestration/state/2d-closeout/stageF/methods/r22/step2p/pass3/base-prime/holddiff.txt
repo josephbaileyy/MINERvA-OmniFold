@@ -1,0 +1,9 @@
+raw words: normal=8430 rater=8412
+  replace: normal[7454:7455] [-crosssection-]  rater[7454:7455] {+cross-section+}
+  replace: normal[7484:7486] [-target- ing-]  rater[7484:7485] {+targeting+}
+  delete: normal[7518:7523] [-[HOLD: funding and grant acknowledgments]-]  rater[7517:7517] {++}
+  delete: normal[7757:7769] [-[HOLD: deposit identifier and access route, after the separately authorized release decision.]-]  rater[7751:7751] {++}
+  hold span in normal build: [HOLD: funding and grant acknowledgments]
+  hold span in normal build: [HOLD: deposit identifier and access route, after the separately authorized release decision.]
+holds in normal=2; 'HOLD' in rater=False; non-hold diffs after hyphen normalization=0
+VERDICT: PASS (only hold text differs)
