@@ -16,6 +16,11 @@ the recolour table maps for that figure (figure, before RGB, identity) must beco
 identity, at its own alpha, and every other colour must stay exactly as it was. --rebin FIGURE (repeatable) names the
 figures whose Axes.hist patches (gid "restyle-hist") may change: they are left out of the dhash comparison, while the
 values hist was given ("hist-input" items) stay in it, bit for bit. Only the figures named are excepted.
+RESTYLE AMENDMENT 2 (AMENDMENT-2.md): with --styles STYLES.tsv --restyle RESTYLE.tsv as well, check 3 pairs the items
+by their hashes with colours and line styles left out ("xhash"), still bit for bit, and then requires each paired
+item's colours as above and its line style and marker: an item the restyle table maps (figure, before RGB, before
+linestyle, before marker; identity) must take its identity's declared linestyle and marker (STYLES.tsv), and every
+other item's linestyle, marker and drawstyle must stay exactly as they were. A drawstyle never changes.
 Prints one line per check and a final COMPARE :: PASS or FAIL."""
 import json
 import re
@@ -59,6 +64,27 @@ def recolour_maps():
     return pal, rec
 
 
+def restyle_maps():
+    if "--styles" not in sys.argv:
+        return None, None
+    sty = {r[0]: {"linestyle": r[1], "marker": r[2]} for r in table(opt("--styles"))}
+    res = {(r[0], r[1].upper(), r[2], r[3]): r[4] for r in table(opt("--restyle"))}
+    unknown = sorted({i for i in res.values() if i not in sty})
+    if unknown:
+        sys.exit(f"compare.py: the restyle table names identities {unknown} that the styles table does not declare")
+    return sty, res
+
+
+def expected_style(colours, style, fig, sty, res):
+    """The line style an after-item must have, given its before-item's colours and style."""
+    if not style:
+        return style
+    c = colours.get("color")
+    c = (c[0] if isinstance(c, list) and c else c) or ""
+    ident = res.get((fig, c[:7].upper(), style.get("linestyle"), style.get("marker")))
+    return style if ident is None else dict(style, **sty[ident])
+
+
 def expected(colours, fig, pal, rec):
     """The colours an after-item must have, given its before-item's colours."""
     def one(c):
@@ -75,6 +101,11 @@ def figures(run):
 
 def check_figures(b, a, want):
     pal, rec = recolour_maps()
+    sty, res = restyle_maps()
+    if sty is not None:
+        if pal is None:
+            sys.exit("compare.py: --styles needs --recolour and --palette")
+        return check_figures_recoloured(b, a, want, pal, rec, sty, res)
     if pal is not None:
         return check_figures_recoloured(b, a, want, pal, rec)
     fails, fb, fa = [], figures(b), figures(a)
@@ -106,8 +137,18 @@ def check_figures(b, a, want):
     return fails
 
 
-def check_figures_recoloured(b, a, want, pal, rec):
+def check_figures_recoloured(b, a, want, pal, rec, sty=None, res=None):
     fails, fb, fa = [], figures(b), figures(a)
+    hk = "dhash" if sty is None else "xhash"          # amendment 2: the hash with colours and line styles left out
+
+    def look(x):                                       # what the comparison requires of an item beyond its data
+        return {"colours": x["colours"]} if sty is None else {"colours": x["colours"], "style": x["style"]}
+
+    def want_look(x, fig):
+        out = {"colours": expected(x["colours"], fig, pal, rec)}
+        if sty is not None:
+            out["style"] = expected_style(x["colours"], x["style"], fig, sty, res)
+        return out
     rebin = {sys.argv[i + 1] for i, x in enumerate(sys.argv) if x == "--rebin"}
     if want:
         for side, f in (("before", fb), ("after", fa)):
@@ -126,25 +167,26 @@ def check_figures_recoloured(b, a, want, pal, rec):
             else (lambda x: True)
         ib = [x for x in json.loads(fb[k].read_text()) if keep(x)]
         ia = [x for x in json.loads(fa[k].read_text()) if keep(x)]
-        cb, ca = Counter(x["dhash"] for x in ib), Counter(x["dhash"] for x in ia)
+        cb, ca = Counter(x[hk] for x in ib), Counter(x[hk] for x in ia)
         if cb != ca:
-            gone = [x for x in ib if (cb - ca)[x["dhash"]]]
-            new = [x for x in ia if (ca - cb)[x["dhash"]]]
+            gone = [x for x in ib if (cb - ca)[x[hk]]]
+            new = [x for x in ia if (ca - cb)[x[hk]]]
             desc = lambda xs: "; ".join(f"{x['kind']} on axes {x['axes']} {x['label']!r}" for x in xs[:4])
             fails.append(f"figure {k}: {len(gone)} item(s) only before ({desc(gone)}), "
                          f"{len(new)} only after ({desc(new)})")
             continue
         bad = 0
         for dh in cb:
-            want_c = sorted(json.dumps(expected(x["colours"], fig, pal, rec), sort_keys=True) for x in ib if x["dhash"] == dh)
-            got_c = sorted(json.dumps(x["colours"], sort_keys=True) for x in ia if x["dhash"] == dh)
+            want_c = sorted(json.dumps(want_look(x, fig), sort_keys=True) for x in ib if x[hk] == dh)
+            got_c = sorted(json.dumps(look(x), sort_keys=True) for x in ia if x[hk] == dh)
             if want_c != got_c:
                 bad += 1
-                x = next(x for x in ia if x["dhash"] == dh)
-                fails.append(f"figure {k}: {x['kind']} on axes {x['axes']} {x['label']!r} has colours {got_c[0][:120]}, "
-                             f"the palette and recolour table give {want_c[0][:120]}")
+                x = next(x for x in ia if x[hk] == dh)
+                fails.append(f"figure {k}: {x['kind']} on axes {x['axes']} {x['label']!r} has {got_c[0][:160]}, "
+                             f"the palette{'' if sty is None else ', styles'} and recolour table give {want_c[0][:160]}")
         if not bad:
             print(f"  equal  {k}: {len(ib)} data artists, colours as the palette maps them"
+                  + ("" if sty is None else ", line styles as declared")
                   + (" (bins free: hist values equal)" if k.name[:-len(".json")] in rebin else ""))
     for k in sorted(set(fa) - set(fb)):
         fails.append(f"figure {k}: captured after, not before")
