@@ -162,6 +162,25 @@ mode = "self" if "--self-test-pin" in sys.argv[1:] else "check"
 sys.exit(1 if os.environ.get("BUILD_TEST_PIN_FAIL") == mode else 0)
 """
 
+# The sixteen-cell values generator and the Supplemental Material check (build_all.sh step 10, since 2026-10-27 and
+# 2026-10-29) read committed readouts the sandbox does not have; they are stubbed like the others, and their own
+# behaviour is tested by their --self-test (CI's "five-observable values fresh" step and make_supplemental.py's).
+# Before these stubs the sandbox had neither script, so every harness run stopped at step 10 (23 tests failed).
+FAKE_VALUES = r"""#!/usr/bin/env python3
+import os, sys
+with open(os.environ["BUILD_TEST_LOG"], "a") as fh:
+    fh.write("values: reached with args %r\n" % (sys.argv[1:],))
+mode = "self" if "--self-test" in sys.argv[1:] else "check"
+sys.exit(1 if os.environ.get("BUILD_TEST_VALUES_FAIL") == mode else 0)
+"""
+FAKE_SUPPLEMENTAL = r"""#!/usr/bin/env python3
+import os, sys
+with open(os.environ["BUILD_TEST_LOG"], "a") as fh:
+    fh.write("supplemental: reached with args %r\n" % (sys.argv[1:],))
+mode = "self" if "--self-test" in sys.argv[1:] else "check"
+sys.exit(1 if os.environ.get("BUILD_TEST_SUPPLEMENTAL_FAIL") == mode else 0)
+"""
+
 
 class BuildAllHarness(unittest.TestCase):
     maxDiff = None
@@ -187,6 +206,12 @@ class BuildAllHarness(unittest.TestCase):
         self._install(self.sandbox / "check_sec4_receipts.py", FAKE_SEC4)
         self._install(self.sandbox / "check_body_pointers.py", FAKE_BODY_LINT)
         self._install(self.sandbox / "check_note_records.py", FAKE_PIN)
+        self._install(self.sandbox / "make_values_fived16.py", FAKE_VALUES)
+        self._install(self.sandbox / "make_supplemental.py", FAKE_SUPPLEMENTAL)
+        # The pending-placeholder check (build_all.sh, after the containment) extracts each PDF's text with pdftotext,
+        # which the minimal PATH below does not reach; the fake PDFs are plain text, so a shim that copies them is the
+        # extraction, as in ResultLineNamesItsObjectTest.
+        self._install(self.bin / "pdftotext", '#!/bin/sh\ncat "$1" > "$2"\n')
 
     def _install(self, path, body):
         path.write_text(body)
@@ -205,7 +230,8 @@ class BuildAllHarness(unittest.TestCase):
             lg.write_text("stale clean log\n")
             os.utime(str(lg), (old, old))
 
-    def run_build(self, mode, containment_rc="0", drop_latexmk=False, sec4_fail="", bodylint_fail="", pin_fail=""):
+    def run_build(self, mode, containment_rc="0", drop_latexmk=False, sec4_fail="", bodylint_fail="", pin_fail="",
+                  values_fail="", supplemental_fail=""):
         env = dict(os.environ)
         # NERSC exports `module` as a Bash function and recreates it through
         # BASH_ENV.  If either reaches the fixture shell, build_all.sh loads the
@@ -221,6 +247,8 @@ class BuildAllHarness(unittest.TestCase):
         env["BUILD_TEST_SEC4_FAIL"] = sec4_fail   # "check" or "self": that sec4 invocation exits 1
         env["BUILD_TEST_BODYLINT_FAIL"] = bodylint_fail   # likewise for the body-pointer lint
         env["BUILD_TEST_PIN_FAIL"] = pin_fail             # likewise for the records-pin check
+        env["BUILD_TEST_VALUES_FAIL"] = values_fail       # likewise for make_values_fived16.py
+        env["BUILD_TEST_SUPPLEMENTAL_FAIL"] = supplemental_fail   # likewise for make_supplemental.py
         # A minimal PATH plus the shim dir, so the fake latexmk is the only one reachable.
         base = "/usr/bin:/bin:/usr/sbin:/sbin"
         env["PATH"] = base if drop_latexmk else "%s:%s" % (self.bin, base)
@@ -345,6 +373,24 @@ class TestTheHappyPath(BuildAllHarness):
                 self.assertNotEqual(0, proc.returncode, proc.stdout)
                 self.assertIn("pin: reached", self.calls)
                 self.assertNotIn("latexmk: fake invoked", self.calls)
+
+    def test_a_failing_values_or_supplemental_check_fails_the_build_before_any_latexmk(self):
+        """A stale values_fived16.tex or Supplemental Material file must stop the build before any LaTeX run."""
+        for kw, tag in (("values_fail", "values"), ("supplemental_fail", "supplemental")):
+            for which in ("check", "self"):
+                with self.subTest(failing=tag, which=which):
+                    self.log.write_text("")
+                    proc = self.run_build("build", **{kw: which})
+                    self.assertNotEqual(0, proc.returncode, proc.stdout)
+                    self.assertIn(tag + ": reached", self.calls)
+                    self.assertNotIn("latexmk: fake invoked", self.calls)
+
+    def test_the_values_and_supplemental_checks_run_after_their_self_tests(self):
+        self.run_build("build")
+        for tag in ("values", "supplemental"):
+            with self.subTest(tag=tag):
+                self.assertLess(self.calls.index(tag + ": reached with args ['--self-test']"),
+                                self.calls.index(tag + ": reached with args ['--check']"))
 
     def test_the_records_pin_runs_and_its_self_test_runs_first(self):
         self.run_build("build")
