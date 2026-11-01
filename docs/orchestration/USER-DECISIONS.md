@@ -47,6 +47,21 @@ Move a row here only after Joseph's verbatim choice is captured.
 - Decision recorded (UTC): 2026-10-31T22:03:02Z (`96f539cd9`, the decision record's commit)
 - Agent interpretation: no change is owed. The paper says the constant *"is used consistently by the analysis and
   every prediction"* (`docs/analysis-note/paper_body.tex:35` @ `4ede47e34`).
+- Reopened for pricing 2026-10-31, without being reversed:
+  [`DECISION-20261031-joseph-eavail-switch-pricing-and-edits.md`](DECISION-20261031-joseph-eavail-switch-pricing-and-edits.md)
+  item 1 (`b1348c794`), with Joseph's verbatim "Price a switch to 139.57".
+  - The price is
+    [`ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md`](ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md)
+    (#622).
+  - Its §7 measures the switch's first-order size on the 16 reported cells: at most 0.21σ per cell, and 0.42σ as one
+    coherent shift.
+- Kept 2026-11-01: Joseph verbatim "Keep 135 (Recommended)" (sha256 of the text plus a final newline begins
+  `d13ef6f830671ea8`).
+  - Recorded in [`DECISION-20261101-joseph-eavail-keep-135.md`](DECISION-20261101-joseph-eavail-keep-135.md) (#636).
+  - Decision recorded (UTC): 2026-11-01T13:31:32Z (`dfd153aa8`).
+  - State stays DECIDED, A.
+  - That decision's item 2, the departure sentence after Eq. (1), belongs to the paper rewrite lane.
+  - Its item 3, the correction of `docs/EAVAIL_DEFINITION.md`, is this row's follow-up.
 - Implementation owner: none
 - Implementation commit: none owed
 - Verification/review commit: PENDING

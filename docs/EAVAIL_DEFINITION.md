@@ -100,23 +100,39 @@ MeV is meant. The difference is **4.57 MeV per charged pion**.
 | events changing truth bin | **439 / 65,911 = 0.666%** |
 | worst single bin | **+1.049%**, in bin 1 |
 
-**Materiality against the adopted covariance** (13.69% median per-bin, `VALIDATION_LEDGER.md` — **cite
-it by the string `adopted median per-bin fraction **13.69%**`, not by line number**: it was at `:1043`
-when first cited at 02:34Z and at `:1116` by 17:53Z the same day, because Gate 5 appended 73 lines above
-it, and `:1043` now lands inside a heading reading *"CANDIDATE; final lateral replacement pending"* —
-a citation labelled "adopted" resolving into a candidate entry, `BEN-219`) is
-**bracketed `[7.7%, 297%]`**. Both ends re-derive from the same two operands: `1.049 / 13.69 = 7.66%`,
-and `7.66% × √1507 = 297%` for the ~1507 5D bins per E_avail slice. **The upper end IS the lower times
-√1507** — it is one assumption varied, not two independently asserted endpoints. That is a bracket, not
-a result:
+**The table above is OI-30(c)'s 2026-08 figure.** It was measured on a 65,911-event sample whose binning that record
+does not identify, so it is not a 16-cell number.
 
-> **The `7.7%` end assumes the ~1507 5D bins per E_avail slice are perfectly correlated. It is the most
-> favourable reading available, not the answer.** The honest label is **consistent with immaterial; not
-> proven immaterial.**
+**The size on the reported result is now measured** (PR #622,
+[`orchestration/ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md`](orchestration/ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md)
+§7, 2026-11-01). The method:
+- the switch is applied as the exact per-event shift `MC_eavail − 0.00457 × MC_npip`, on the 5D omnifile's
+  completeness denominator;
+- the 135 histogram is control-checked bitwise against `of_inputs_5d.npz`'s `denom_nd`;
+- §7.5 shows the shift exact: 0 of 34.9M charged pions have E ≤ 139.57 MeV.
 
-The single step that would close it is projecting the adopted covariance onto the E_avail marginal
-**retaining off-diagonals**, and comparing +1.049% against that. It has not been done. It requires no
-rerun.
+The results:
+
+| quantity | value |
+|---|---|
+| largest cell move, prior level / first-order unfolded | **−1.26 % / −1.23 %** (R06), **0.21 σ** of the reported C_total + C_resp |
+| the whole 16-cell shift, √(ΔᵀC⁻¹Δ) against C_total + C_resp | **0.43 / 0.42** (0.43 / 0.42 with C_PL,5D) |
+| weight changing fine E_avail bin | 0.646 % |
+| fine E_avail bins | +0.97 % ([0, 0.1)) to −0.35 % ([3, 100)) at prior level |
+| net change of the 16-cell total | 0, to float precision |
+
+**The unfolded column is first order.** Each event carries its fine cell's nominal unfolded-to-prior ratio, so the
+step-2 retraining effect is not in it.
+
+**The coherent norm is the better measure.** The shifts move together, so it is about 1.5× the per-cell σ's in
+quadrature.
+
+**These replace this section's earlier bracket `[7.7%, 297%]`,** which rested on a 1,507-bin assumption and was
+"consistent with immaterial; not proven immaterial". The off-diagonal projection that the bracket said would close it
+is the full-covariance norm above.
+
+**On that size, Joseph kept 135** ([`orchestration/DECISION-20261101-joseph-eavail-keep-135.md`](orchestration/DECISION-20261101-joseph-eavail-keep-135.md);
+UD-002 stands).
 
 **`135` is NOT a compatibility constraint with either comparator.** Neither Rodrigues 2016 nor
 Ascencio 2022 states any numeric mass, and `kEAvail` did not exist until a month after Ascencio v1. The
@@ -132,15 +148,26 @@ pion mass I think."* That is the whole of the affirmative case: **single author,
 reviewed.** It is real evidence and it is weak evidence, and it should be quoted with the hedge intact
 rather than paraphrased into confidence.
 
-**Correcting it is a SIX-site change or nothing:** `CVUniverse.h:364`, four generator converters, **and
-`nd-unfolding/pet/pointcloud_projection.py:51`** (`M_PION_EAVAIL = 135.0`) — the sixth is in the **live
-PET path** and was missing from every earlier statement of this list, including two rewrites of this
-document (session D, `BEN-177`). They must move in one commit, or the four-generator comparison silently
-compares two different observables. **Two of the four converters bind by comment; the other two carry a
-bare `0.135` with no reference to `CVUniverse` at all** — the weaker coupling, hence the likelier silent
-desync (session A). Not applied; nothing quoted moves.
+**The constant lives at SEVEN sites,** listed in PR #622 §1 at `c7c3ab21`:
+1. `MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:364`, the event loop's `GetEAvailableTrue()`;
+2. `3d-unfolding/genie/genie_to_xsec3d.py:42` (`MASS_PI_PM`). `gen_to_xsec5d.py`, `gen_to_xsec_eavailW.py`,
+   `genie_mec_to_xsec3d.py`, `fsi_variation_xsec3d.py` and `mode_decomp_eavail.py` import it;
+3. `3d-unfolding/genie/nuwro_to_flat_5d.C:44`;
+4. `3d-unfolding/genie/nuwro_to_flat.C:31`;
+5. `3d-unfolding/genie/gibuu_to_xsec3d.py:53`;
+6. `3d-unfolding/genie/gibuu_to_xsec_eavailW.py:38`;
+7. `nd-unfolding/pet/pointcloud_projection.py:51` (`M_PION_EAVAIL = 135.0`), in the PET path.
 
-**A hazard in the sixth site specifically, which repairing it creates:** `pointcloud_projection.py`
+**Two corrections to the earlier version of this list:**
+- **The count.** It counted "four generator converters" and six sites. NuWro has two flatteners, sites 3 and 4.
+- **The binding.** It said two converters bind to `CVUniverse` by comment. Three do: sites 2–4 say "match CVUniverse".
+  The two GiBUU readers, sites 5 and 6, carry a bare `0.135` with no reference, which is the weaker coupling and the
+  likelier silent desync (session A).
+
+**Any future change must move all seven in one commit,** or the generator comparison silently compares two different
+observables. With 135 kept, none is changed and nothing quoted moves.
+
+**A hazard in site 7 specifically, which repairing it would create:** `pointcloud_projection.py`
 holds `M_PION_EAVAIL = 135.0` and `M_PI = 139.57` four lines apart, deliberately separated. **Setting
 the convention constant to `139.57` makes them identical and the separation invisible**, so a later
 reader cannot tell the two were ever distinct quantities. Rename or comment at the same time.
@@ -180,8 +207,9 @@ Stated explicitly, because this is the section the rest of the document exists t
    of events change truth bin. **Nor that it was chosen** — see item 6. It is a position we can now
    *declare and defend*, arrived at by inheritance; "declared" describes what this document does with
    it, never how it came about.
-3. **Not** that the `135` constant is proven immaterial. `[7.7%, 297%]`, most-favourable end quoted
-   first, projection not done.
+3. **Not** that the `135` constant is immaterial in general. Its measured size on the 16 reported cells is at most
+   0.21 σ per cell and 0.42 σ as one coherent shift, to first order (§3; PR #622 §7). That size is stated, not
+   rounded to zero.
 4. **Not** that we match a neutral "reference implementation." `GENIEXSecExtract`'s `kEAvail`
    kaon/strange-baryon/antibaryon branches were added 2022-03-07 in a commit titled *"adding NuE low
    recoil"*, by an author of arXiv:2312.16631 — **the same paper `CVUniverse.h:163` cites as our
@@ -199,7 +227,8 @@ Stated explicitly, because this is the section the rest of the document exists t
 ## Provenance of the statements here
 
 **Measured in this repo and re-derivable:** every number in §2 and §3, the `OI-59` ratios, and the
-zero-η/K⁰_S census. Operands are in `OI-30`, `OI-56`, `OI-59` and
+zero-η/K⁰_S census. §3's measured size comes from the scripts and outputs under
+`orchestration/state/eavail-switch-pricing-20261031/step0/`. Operands are in `OI-30`, `OI-56`, `OI-59` and
 `evidence/prepublication-2026-08-20-0b329e8a:docs/orchestration/ADVISORY-20260813-eavail-published-conventions.md`.
 
 **Relayed from lane A and NOT independently verified by the author of this document:** the
@@ -212,5 +241,6 @@ gh api "repos/MinervaExpt/GENIEXSecExtract/commits?path=src/XSec.cxx"
 gh api repos/MinervaExpt/GENIEXSecExtract/commits/564e2788051f
 ```
 
-**Index:** `OI-30` (the `135` constant), `OI-56` (the convention difference, FROZEN), `OI-59` (the
+**Index:** `OI-30` (the `135` constant; UD-002, kept by `DECISION-20261101-joseph-eavail-keep-135.md`), `OI-56`
+(the convention difference, FROZEN), `OI-59` (the
 cross-check caveat), `OI-63` (advisor items, deferred), `docs/PUBLICATION_COMPLETION_RUNBOOK.md` §P7.
