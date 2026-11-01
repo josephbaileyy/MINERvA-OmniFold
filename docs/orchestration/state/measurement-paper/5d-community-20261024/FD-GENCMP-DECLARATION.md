@@ -20,12 +20,23 @@
 - the phase-1 target and convention studies on the 109 joint-test cells: MP3-A, MP3-B, MP3-C and MP-5
   (`../phase1/mp3a/`, `../phase1/mp3b/REPORT.md`, `../phase1/mp3c/REPORT.md`, `../phase1/mp5/REPORT.md`).
 
+**Director's rulings of 2026-11-01 on this declaration (by message), applied here:**
+1. the code and its tests land on this branch before the binding, which pins them by blob digest; an independent
+   read-only review of the declaration and the code (a fresh Sonnet subagent, not sol) is recorded verbatim beside this
+   file, `FD-GENCMP-REVIEW-PROMPT.txt` and `FD-GENCMP-REVIEW-ANSWER.txt`;
+2. Q26's 3D side uses σ₁₆ only, with PROJ3D as a labelled descriptive row, and its outcome reads only "agree / differ at
+   the σ₁₆ scale, descriptive" (§4, §7);
+3. the inventory's 0.47% is the coarse joint grid's off-support share (`paper_body.tex:44`), not the unreported boxes;
+   step C prints the four boxes' own share;
+4. step D is bound, with the 0.25 node-h probe first and the 4.0 node-h cap; which route the paper uses if the two
+   disagree is fixed in §5 now.
+
 **Declares:**
 - step 0, input verification;
 - step A (Q08), the CH correction of NuWro and GiBUU on the sixteen cells;
 - step B (Q10), the predictions rebuilt from their event records in the analysis definitions of W and pT;
 - step C (Q26), the sixteen-cell result against the 2D and 3D results where they overlap;
-- step D (Q08, second route), native CH generation for NuWro, **priced here and run only if the binding names it**;
+- step D (Q08, second route), native CH generation for NuWro, bound by ruling 4 with a probe first;
 - the inputs (`fd/gencmp/INPUTS.sha256`), controls, readouts, price, stop rules, and what the paper would say in every
   outcome.
 
@@ -54,9 +65,9 @@ covariance, of C_model, or of the 2D covariance Q.
 | A | Q08 | NuWro and GiBUU corrected to CH, x_CH = (12/13) x_C + (1/13) x_H, from the committed fine-grid products, on Table IV's cells and covariances | local (committed inputs) | 0 |
 | B | Q10 | all four external predictions, both targets, rebuilt from their event records with the analysis W and the beam-axis pT | one regular CPU node | ≤ 2.0 (cap) |
 | C | Q26 | the sixteen cells summed over each (pT, p∥) quadrant, against the 2D result and the 3D result there | login node | 0 (login node) |
-| D | Q08 | NuWro generated natively on CH (its `CH.txt` mixture), then step B's chain | regular CPU nodes | ≤ 4.0 (cap), only if bound |
+| D | Q08 | NuWro generated natively on CH (its `CH.txt` mixture), then step B's chain | regular CPU nodes | ≤ 4.0 (cap), after a 0.25 probe |
 
-**Campaign cap:** 2.0 node-h for steps 0–C; 6.0 with D. The last recorded group balance is 2,074.5 node-h
+**Campaign cap:** 6.0 node-h: 2.0 for steps 0–C and 4.0 for D. The last recorded group balance is 2,074.5 node-h
 (`FD-1B-STAGE2-REPORT.md:47`, as quoted in the inventory §1), so half of it is about 1,037. No step comes near it.
 
 **The question for each limitation, and what this does not try to answer:**
@@ -72,16 +83,16 @@ covariance, of C_model, or of the 2D covariance Q.
 
 ## 1. Step 0: the inputs
 
-**The file** `fd/gencmp/INPUTS.sha256` (in this PR) lists 239 inputs in seven families, each line `sha256  path`:
+**The file** `fd/gencmp/INPUTS.sha256` (in this PR) lists 241 inputs in seven families, each line `sha256  path`:
 
 | family | what | lines | where the digest comes from |
 |---|---|---:|---|
 | A | the five frozen 5D predictions of Table IV and `phi_t.npz` | 6 | committed manifests (`SHA256SUMS-s5p-archive-20261006.txt` and the FD-G pins) |
-| B | the generator event records and their flux files: two GENIE gst files, two GENIE 50–100 GeV supplements, NuWro `nuwro_flat5d_p1..p8.root` and its supplement, 80 GiBUU `FinalEvents.dat` | 100 | the build receipts `gen5d/gen5d-build.json` and `gen5d_fluxfix/gen5d-fluxfix*.json`, read with O_NOATIME |
+| B | the generator event records and their flux files: two GENIE gst files, two GENIE 50–100 GeV supplements, NuWro `nuwro_flat5d_p1..p8.root` and its supplement, 80 GiBUU `FinalEvents.dat`, GiBUU's cvmfs flux file | 101 | the build receipts `gen5d/gen5d-build.json` and `gen5d_fluxfix/gen5d-fluxfix*.json`, read with O_NOATIME |
 | C | the analysis-MC neutrino-direction pools `pool_b0..b5.npy` (MP-5 §2) | 6 | the MP-5 receipt `mp5_genie.json`, read with O_NOATIME |
 | D | the hydrogen event records: 30 MP3-B NuWro chunk files (k1) and 80 MP3-C GiBUU tasks | 110 | the committed `phase1/mp3b/runA/gen/output_sha256.txt` and `phase1/mp3c/prod/output_sha256.txt` |
 | E | S1's assembly, C_resp, the run-period block, and P5 (the fine-grid result whose cell integrals are f) | 4 | committed records (FD-G-REPORT, `cmodel_5d.json` `inputs.p5_sha256`) |
-| F | the 2D central value and Q; the 3D central value and the trunk-projected 3D covariance | 4 | `DECISION-20261011-joseph-2d-central-lightgbm-seed42.md`, `DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md` §1, `RESULT-20260923-issue26-issue5.md:23`, `OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md` |
+| F | the 2D central value, Q and `playlist_term.npz` (Q's 205-cell index, `cells`); the 3D central value and the trunk-projected 3D covariance | 5 | `DECISION-20261011-joseph-2d-central-lightgbm-seed42.md`, `DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md` §1, `RESULT-20260923-issue26-issue5.md:23`, `OUTCOME-20260922-3d-covariance-projected-from-the-adopted-trunk.md` |
 | G | the committed fine-grid target products (MP3-A GENIE, MP3-B NuWro, MP3-C GiBUU frozen and alt), the data product, both G readouts, the cell definition and `cmodel_5d.json` | 9 | `shasum -a 256` of the committed files |
 
 **The rule.** Step 0 opens every input that a step reads, computes its sha256, and stops that step if any digest
@@ -104,6 +115,11 @@ inventory §7). GENCMP does
 - NuWro: `mp3b_fine_nuwro.npz` keys `xsec_CH`, `sumw2_CH` (k1, the primary card).
 - GiBUU: `mp3c_fine_gibuu_frozen.npz` keys `xsec_CH`, `sumw2_CH` (the frozen weight; MP3-C's primary).
 
+**The data side** comes from the committed with-block product: f, C_resp and C_PL,5D from `fd/with-cpl/block/cpl_block.npz`
+(`d9aa32fd…`), and C_e and C_model_abs from `fd/with-cpl/data-product/fd_data_product_cpl.json`, so C_total = C_e +
+C_model_abs. Control R: f equals `cmodel_5d.json`'s x to 1e-12, and C_total + C_resp + C_PL,5D equals the block's
+stored sum to 1e-12 of the largest variance.
+
 **The comparison** is FD-G's, unchanged: cell integrals X = Σ_f x_f vol_f with S1's functional matrix U
 (`s1_assemble.fine_map` on the H2 definition, map `930326a3…`), the total and shape-only χ² against
 C_total + C_resp + C_PL,5D + V_g and against C_total + C_resp + V_g, with V_g = diag(U sumw2) as FD-G defines it.
@@ -115,8 +131,11 @@ above p∥ = 4.5 GeV/c formed, exactly as FD-G §2.
   code, NuWro's and GiBUU's committed χ² in both readouts (`fd/with-cpl/readout/fd_g_readout.json` and
   `fd/readout/fd_g_readout.json`; total and shape-only, both covariances) to a relative 1e-9. If A0 fails, step A stops
   and reports; it does not search for the difference.
-- **A1.** `xsec_C12_frozen` equals the frozen product `nuwro_cv_xsec5d_full.npz` (`475a2871…`) and
-  `gibuu_cv_xsec5d_fluxfix.npz` (`48917692…`) bitwise on all 65,856 cells (read on the login node with O_NOATIME).
+- **A1.** `xsec_C12_frozen` and `sumw2_C12_frozen` equal the frozen products `nuwro_cv_xsec5d_full.npz` (`475a2871…`)
+  and `gibuu_cv_xsec5d_fluxfix.npz` (`48917692…`) bitwise on all 65,856 cells. `fd_gencmp.py a1` reads them on a login
+  node with O_NOATIME and writes a readout; `fd_gencmp.py ch` refuses unless that readout passed on the same npz digests.
+- **A (CH).** (12/13) `xsec_C12_frozen` + (1/13) `xsec_H`, in `mp3b_build.py`'s floating-point order, equals the
+  committed `xsec_CH` bitwise, and likewise for sumw2.
 - **A2.** Every CH cell integral is positive on the cells compared.
 
 **Readouts, per generator:** total and shape-only χ², ndf and p, in both covariances, for carbon (A0's) and CH; Δχ²;
@@ -157,8 +176,8 @@ each event's lepton is rotated by a neutrino direction n drawn from the analysis
   the same rule.
 
 **Draws.** Five seeds, 202611011 to 202611015, each drawing one n per event (and, for NuWro, one azimuth). The primary
-prediction is the mean over the five fine-grid products, with sumw2 from the per-event weights and the five-seed
-spread recorded per cell. **If the five-seed spread of any cell integral exceeds 0.2 of that cell's reported σ, this is
+prediction is the mean over the five fine-grid products, with sumw2 the mean of the five seeds' sumw2 (the
+events and weights are the same in every seed; only their bins move), and the five-seed spread recorded per cell. **If the five-seed spread of any cell integral exceeds 0.2 of that cell's reported σ, this is
 reported, and the mean is still the primary.**
 
 **Samples rebuilt:** GENIE CV and GENIE + MEC (main and 50–100 GeV supplement), NuWro C12 (p1–p8 and supplement), NuWro
@@ -203,9 +222,11 @@ E_avail, q3 and W inside those. So the overlaps are the four (pT, p∥) quadrant
 | QD | 0.7–4.5 | 4.5–60 | R12–R15 | none |
 
 (From `h2_definition.json`: `unreported_boxes` [[2],[6],[10],[14]] and `h2_to_reporting_cell`.) Step C's code
-enumerates every union of reported cells that is a (pT, p∥, E_avail) box spanning all q3 and W. If it finds any region
-besides these four quadrants, that region is added to the 3D comparison and reported. The 4D result is not part of this
-declaration.
+enumerates every (pT, p∥, E_avail) box on the H2 edges that spans all q3 and W, has an E_avail edge inside the axis,
+and is a union of reported cells (unreported boxes allowed). Any such region is added to the 3D comparison and
+reported. On the committed definition the test suite finds none (`test_enumeration_on_the_definition`), and finds
+some on a synthetic definition where every box is its own cell, so the enumeration can find one. Unions of quadrants
+are not separate regions. The 4D result is not part of this declaration.
 
 **The sixteen-cell side.** S_q = Σ_{c∈q} f_c, with σ² = aᵀ C a for the reported matrix C_total + C_resp + C_PL,5D, and
 for the matrix without C_PL,5D.
@@ -215,8 +236,12 @@ for the matrix without C_PL,5D.
   added in quadrature. The readout prints each unreported box's share of its quadrant in P5 and in MnvTune v1's truth.
   QA and QB are labelled "includes unreported boxes at their central value, ±100%".
 
-**The 2D side.** The seed-42 matched CV (`4f5a1b6d…`) integrated over each quadrant with its bin areas, and σ² from Q
-(`s5_plus_playlist.npz`, `8ccb4d72…`) aggregated over the same bins.
+**The 2D side.** The seed-42 matched CV (`4f5a1b6d…`, `hXSec2D`) integrated over each quadrant with its bin areas, and
+σ² = aᵀ Q a from Q (`s5_plus_playlist.npz`, `8ccb4d72…`, key `total_plus_C_PL`) over the same bins. Q's 205 cells are
+the flat C-order (pT, p∥) indices in `playlist_term.npz` key `cells` (`c1723cb5…`), the index `combine_s5.py` checked
+Q against. Two structural checks: Q's `area` equals the 2D bin areas on those cells to 1e-12, and the median of
+√diag(Q)/x lies in [0.01, 0.5], so Q is in the units of x. The largest |CV/`cells_x_EU` − 1| (Q's own central value,
+the E_U estimator) is printed as a diagnostic.
 
 **The 3D side.** The 3D central value (`xsec_3d_MEFHC_5iter_lgbm.root`, `0dd94830…`) integrated over each quadrant
 and over all E_avail. No 3D covariance is adopted. The trunk projection `20c16e16…` exists but is not adopted, and its
@@ -246,10 +271,11 @@ outcome is fixed now:
   It is reported, and it goes to the director and Joseph before any paper text. Its investigation is not part of this
   declaration.
 
-For the 3D comparison, where σ_low is not available, the rule uses σ₁₆ alone, and the outcome is labelled "against the
-sixteen-cell uncertainty only".
+For the 3D comparison no adopted covariance exists, so the outcome is only "agree at the σ₁₆ scale (descriptive)" if
+|d_q| ≤ 2σ₁₆, or "differ at the σ₁₆ scale (descriptive)" otherwise. Neither reads as a validation, and neither is a new
+problem by itself. The PROJ3D row has no outcome.
 
-## 5. Step D (Q08, second route): native CH generation for NuWro, priced, run only if bound
+## 5. Step D (Q08, second route): native CH generation for NuWro (ruling 4)
 
 **Why it is separate.** For an incoherent target, the CH cross section per nucleon is (12 σ_C + σ_H)/13, so step A's
 combination and a native CH generation predict the same quantity. A native run checks the combination's code and
@@ -275,8 +301,18 @@ and returns with the measured projection.
 
 **Its control and rule.** Per cell, the native CH integral against step A's CH integral, with z_c = Δ_c / √(var_A +
 var_D) from their sumw2. **Agree:** Σ z_c² over the sixteen cells below the 0.99 quantile of χ²₁₆ (32.0), and no
-|z_c| > 3.5. **Otherwise:** reported as a discrepancy between the two routes; the combination is then not used for any
-printed number until the director and Joseph rule.
+|z_c| > 3.5. The same comparison is made in the analysis definitions, against step B's CH combination.
+
+**Which route the paper uses, fixed now (director's ruling 4).** Step A's combination, in every outcome.
+- **If they agree,** the paper adds the clause in §7.
+- **If they disagree,** the report gives both χ² and the per-cell z. The paper's CH numbers stay step A's, and the
+  disagreement goes to the director and Joseph, who may change that before any text.
+- **The reason for choosing A.** Each component of step A passed its own gates as a separate product (MP3-B B1–B4),
+  and the same products are already the note's CH re-evaluation (`sec_joint.tex`). A native mixture adds one
+  normalisation this lane has not yet checked: how NuWro weights a multi-isotope target. So a disagreement points
+  first at that step.
+- **No frozen product exists for the native sample.** Step B's B0 therefore has no target for it. Its rebuild is
+  checked only through this rule.
 
 ## 6. Price, QOS and storage
 
@@ -285,7 +321,7 @@ printed number until the director and Joseph rule.
 | 0, C | login node | none | — | 0 |
 | A | local, from committed files (plus A1's O_NOATIME reads on a login node) | none | — | 0 |
 | B | 1 node | regular | 3 h | 2.0 |
-| D (if bound) | ≤ 2 nodes | regular | 3 h | 4.0, after a 0.25 probe |
+| D (bound) | ≤ 2 nodes | regular | 3 h | 4.0, after a 0.25 probe |
 
 - **The B projection.** MP-5's GENIE CV rotation rebuild ran in 451 s on 32 cores (0.0157 node-h on shared,
   `../phase1/mp5/REPORT.md` §6). Step B rebuilds about ten samples, each six times (n = ẑ for B0, then five draws), plus
@@ -305,12 +341,13 @@ proposal, fixed before the numbers so that no outcome is chosen because it looks
 |---|---|---|
 | Q08 | A0 and A1 pass, whatever the sign of Δχ² | :42 and :232: "NuWro and GiBUU are on carbon, with no correction to CH" becomes "NuWro and GiBUU, generated on carbon, are corrected to CH by adding each generator's free-proton prediction with weight 1/13 per nucleon". Table IV shows the CH rows. The carbon rows and the GENIE-hydrogen sensitivity go to the note. The GiBUU row carries its hydrogen label (§2) in a table note. If a χ² rises, the text says so, with the size |
 | Q08 | A0 or A1 fails | No change to the paper. The report says why, and the present sentences stay |
-| Q08 | step D run and agrees | One clause: "a native CH generation of NuWro agrees with the combination" |
-| Q08 | step D run and disagrees | Reported as a discrepancy. No CH number is printed until Joseph rules |
+| Q08 | step D agrees | One clause: "a native CH generation of NuWro agrees with the combination" |
+| Q08 | step D disagrees | The paper keeps step A's CH rows (§5). The report gives both routes' χ² and per-cell z, and the disagreement goes to the director and Joseph before any text |
 | Q10 | B0 passes for a generator | :42: "Unlike the analysis definitions, the predictions compute W with the neutron mass … and measure pT about their own neutrino axis" is removed for that generator, and a sentence states the method: "The predictions use the analysis definitions of W and of the muon angle, with the neutrino direction drawn from the analysis simulation". Table IV uses the rebuilt values. If the change is below every cell's 0.1 σ, the sentence may say so |
 | Q10 | B0 fails for a generator | That generator keeps its present sentence, now naming it alone |
 | Q10 | the five-seed spread exceeds 0.2 σ in a cell | The size is reported; the paper wording is unchanged by it, and the note gets the spread |
-| Q26 | every quadrant "agree", 2D and 3D | :119: "only the three-observable marginal has been compared with the lower-dimensional result" becomes "Summed over each of the four (pT, p∥) quadrants, the sixteen-cell result agrees with the two-dimensional result to between X and Y per cent, within the uncertainties of the two for any non-negative correlation between them, and with the 3D central value to between X′ and Y′ per cent". QA and QB carry their unreported-box label |
+| Q26 | every quadrant "agree" against 2D | :119: "only the three-observable marginal has been compared with the lower-dimensional result" becomes "Summed over each of the four (pT, p∥) quadrants, the sixteen-cell result agrees with the two-dimensional result to between X and Y per cent, within the uncertainties of the two for any non-negative correlation between them". QA and QB carry their unreported-box label |
+| Q26 | 3D, either outcome | One descriptive clause only: "and agrees with (or differs from) the three-observable central value by X′–Y′ per cent at the scale of the sixteen-cell uncertainty; no 3D covariance is adopted". It reads as no validation in either direction |
 | Q26 | some quadrant "agree below a correlation" | As above, with that quadrant's ρ* stated: "… agrees if the correlation between the two results is below ρ*" |
 | Q26 | some quadrant "differ" | A new problem. The difference, its size and its quadrant go to the director and Joseph. No paper text until they rule |
 
@@ -327,15 +364,47 @@ In every outcome the report gives the numbers, including any that make a compari
 
 ## 9. The code, and what the binding should name
 
-The code is not written. It is a short reader for step A and step C (`nd-unfolding/fd_gencmp.py`, importing FD-G's
-`fd_g_compare.py` integration and χ² functions and `s1_assemble.fine_map`) and a rebuild driver for step B
-(`nd-unfolding/fd_gencmp_rebuild.py`, importing the frozen converters and MP-5's rotation), with tests on synthetic
-fixtures and on A0 and B0's bitwise targets.
-<!-- absence-ok: a statement about this lane's own work at the time of writing -->
+The code and its tests are on this branch (director's ruling 1). The binding pins each file by blob digest.
 
-**Proposed order:** the code and its tests land in this PR, or in a code addendum to it, before the binding. Each file
-is then named by its blob digest, as FD-G §8 did. **No code runs on real inputs before the binding.** If the director
-prefers to bind the method first and the code in a second binding, step A's local reader would be the first thing run.
+| file | what |
+|---|---|
+| `nd-unfolding/fd_gencmp.py` | steps 0, A (`a1`, `ch`), C (`overlap`), D (`native`) and step B's readout (`defs`); imports FD-G's `compare`, `GIBUU_CELLS` and `Stop`, and `s1_assemble.fine_map` and `functional_matrix` |
+| `nd-unfolding/fd_gencmp_kin.py` | step B kinematics, pure numpy; imports MP-5's `rotate` and `draw_directions` |
+| `nd-unfolding/fd_gencmp_rebuild.py` | step B and D rebuild driver (ROOT); imports the frozen extractors and builders (`gen_to_xsec5d`, `gen5d_flux_reweight`, `gen5d_flux_supplement`, `mp3b_build`, `mp3c_build`) |
+| `nd-unfolding/tests/test_fd_gencmp.py` | 29 tests, synthetic inputs; every control is tested on both sides |
+| `nd-unfolding/tests/test_fd_gencmp_rebuild.py` | 29 tests, synthetic inputs, including a TMemFile round trip that needs PyROOT |
+
+**Test runs.**
+- Locally (numpy 1.26.4, no ROOT): `python3 -m unittest discover -s tests -p 'test_fd_gencmp*.py'` gives 58 run, OK, 2
+  skipped (the ROOT round trip, and the O_NOATIME atime test, which needs Linux).
+- On a Perlmutter login node, from a copy of these files under `/pscratch/sd/j/josephrb/gencmp-tests-20261101/` with
+  synthetic inputs only:
+  - `root_6_28` (ROOT 6.28/12): the rebuild suite, including `test_tmemfile_roundtrip`, passes once the pin test is
+    updated for the GiBUU flux line;
+  - `omnifold_py310` (numpy 2.2.6, uproot 5.6.9): `test_fd_gencmp.py`, 29 OK.
+
+**How the frozen code reads inputs without moving their atime.**
+- **Data.** `fd_gencmp_rebuild.py` reads every input's bytes through O_NOATIME and checks its pin. For the frozen
+  modules, which open ROOT files by path, it puts a `MemROOT` proxy in place of their `ROOT` global. The proxy serves
+  `TFile.Open` and `RDataFrame(tree, path)` from `TMemFile`s over the verified bytes, and it refuses any path not
+  verified this way and any write-mode open. No frozen file is edited.
+- **Code.** The frozen code tree `s5p-20260926/gen5d/code/tree` is copied through O_NOATIME into the run directory, and
+  each file's digest is recorded, before the driver imports from that copy (`--gen5d-tree`). 11 of its 12 `.py` files
+  are byte-identical to the repository's copies. `2d-unfolding/unfold_2d_omnifold_unbinned.py` has changed since, so
+  the frozen copy, not the repository's, is the one imported.
+- **The GiBUU flux file** (cvmfs `MINERvA_MEflux.dat`) is pinned in INPUTS family B. Its digest, `37b56a0a…`, is the
+  frozen build receipt's, and equals a direct sha256 on 2026-11-01. The driver's `--allow-meta-pin` is not used.
+
+**What the driver restates, and the control on each.**
+- MP-5's lepton, phase-space and W statements, generalised to every sample. Tested against `mp5_genie.events` itself.
+- GiBUU's per-file event statements, because the frozen reader drops px, py and E_mu after its phase-space mask.
+  Checked at runtime and in tests against `extract_gibuu`.
+- `mp3c_build.gibuu_density`, which opens its files by path. Checked by test parity.
+- The two-line GENIE supplement formula, and the flux-fix constants A and B, which live only in the unpinned main
+  product's meta. Checked by B0.
+
+**The independent review** (ruling 1) is `FD-GENCMP-REVIEW-PROMPT.txt` and `FD-GENCMP-REVIEW-ANSWER.txt` beside this file,
+with the head it reviewed named in the answer's header.
 
 ## 10. Not established, and known limits
 

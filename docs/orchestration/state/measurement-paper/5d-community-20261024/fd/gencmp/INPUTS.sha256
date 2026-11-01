@@ -110,6 +110,7 @@ f19b6c31137b166cbf89613a07a14f741efabb325956290e93edef8288ca5312  /pscratch/sd/j
 2a4ad5520c97ffc48095f06f007a8bdf393f19a28e42854e3feccf76ea830f2f  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/nuwro/nuwro_supp_flat5d.root
 3980f63a08f1ad19843ae83a965bd9dadf49057249c5926293c3358d571bbf20  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e50.root
 0b9d68ab2a769a012f9b184e060fa1bbee414537206c8b52e4b8eba568e30398  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/xsec_graphs_regen_e100.root
+37b56a0a0f12d33a5100cd4a3896c09b9ab745a7d57d4118bafb66aec0f4dc95  /cvmfs/nova.opensciencegrid.org/externals/gibuu/v2019/Linux64bit+2.6-2.12-e15/GiBUU/buuinput2019/neutrino/MINERvA_MEflux.dat
 # family C: analysis-MC neutrino-direction pools (MP5 section 2), pscratch measurement-paper/phase1/mp5/run/pool/
 587358a997860d61533dac0610c2098ad2e999b861858c8756714cdb440518d3  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b0.npy
 71545c153416b7da9e89b47321a5d04e9e005f0ad43b8eed60f5eeea27916761  /pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b1.npy
@@ -235,7 +236,8 @@ d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f  docs/orchestra
 e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz
 # family F: 2D and 3D results (Q26)
 4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c  /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root
-8ccb4d723c3dbf737a7fb1d5236e5e25409c41b42b64ac55dccbbc12f595600e  CFS m3246/josephrb/<combination dir per DECISION-20261017 section 1>/s5_plus_playlist.npz
+8ccb4d723c3dbf737a7fb1d5236e5e25409c41b42b64ac55dccbbc12f595600e  /global/cfs/cdirs/m3246/josephrb/2d-closeout-playlist-combination-20261017/s5_plus_playlist.npz
+c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476  /global/cfs/cdirs/m3246/josephrb/2d-closeout-playlist-term-20261016/playlist_term.npz
 0dd94830821576a3b060fae2d4a20564610c535ed06046cd1eb05cd11885dd59  /pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root
 20c16e16a35a837b09d7fe39bcf6bb8ee5828d5283fc5c2f756e3a5371e1f69e  /pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root
 # family G: committed fine-grid target products (Q08 step A), repository paths
