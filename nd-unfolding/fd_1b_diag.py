@@ -10,10 +10,12 @@ Readouts, all DERIVATION:
 * per cell: g_c = f_c / x_T,c, rho_c (gate D's, recomputed and held to the committed readout bit for bit) and
   rho_raw,c, rho with every band's block uncarried.
 
-Rules (the declaration's section 3), each PASS or FAIL:
-* L1, named bands: some set B of at most K_MAX bands such that rho with S1's blocks in place of the toys' for the
-  bands in B lies in GATE_D_WINDOW in every cell. Every minimal such set is listed.
-* L2, the carry: rho_raw lies in GATE_D_WINDOW in every cell.
+Rules (the declaration's section 2), each PASS or FAIL:
+* L1, named bands: the minimal sets B (|B| <= K_MAX, searched by size) for which rho with S1's diagonal in place of
+  the toys' for the bands in B lies in GATE_D_WINDOW (inclusive) in every cell. L1 PASS iff such sets exist and the
+  union of ALL of them names at most K_MAX bands; those are the named bands. Their intersection is reported too.
+* L2, the carry: rho_raw lies in GATE_D_WINDOW in every cell. A PASS means removing the carry closes the gap, not
+  that the carry is wrong.
 LOCALIZED iff L1 or L2 passes; otherwise NOT LOCALIZED. The window is gate D's, unrelaxed.
 
     fd_1b_diag.py --derivation D --tag fd1b_derivation --s1-npz S --flux-constraint C --gate-d G --out O
@@ -23,6 +25,7 @@ MEASURES: the readouts above. CANNOT AUTHORIZE: an amendment, a toy redesign, a 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import itertools
 import json
 import sys
@@ -36,14 +39,15 @@ if str(_ND) not in sys.path:
 import fd_1b_score as fs  # noqa: E402
 import s1_assemble as sa  # noqa: E402
 
-K_MAX = 3           # the most bands a localized cause may name (declaration section 3)
+K_MAX = 3           # the most bands a localized cause may name (declaration section 2)
 WINDOW = fs.GATE_D_WINDOW
-LISTED_MAX = 200    # minimal sets listed in full up to this many; the count is always given
+LISTED_MAX = 200    # minimal sets listed up to this many; the count, union and intersection always cover all of them
+GATE_D_SHA256 = "e1838c0ae2e66c1a0dffd505c41da44381a2d2b798cfc17d353e2d1260542c63"  # receipts-1b/stage2/run/score
 
 
 def ratio(num: np.ndarray, den: np.ndarray) -> list:
-    """sqrt(num / den) per cell, None where S1's diagonal is zero."""
-    return [float(np.sqrt(n / d)) if d > 0 else None for n, d in zip(num, den)]
+    """sqrt(num / den) per cell; where S1's diagonal is zero, "inf" if the toys' is not and None if both are."""
+    return [float(np.sqrt(n / d)) if d > 0 else ("inf" if n > 0 else None) for n, d in zip(num, den)]
 
 
 def in_window(rho: np.ndarray) -> bool:
@@ -52,17 +56,20 @@ def in_window(rho: np.ndarray) -> bool:
 
 def localized_bands(e: dict, m: dict, Ed: np.ndarray, Md: np.ndarray, k_max: int = K_MAX) -> dict:
     """L1: the smallest sets B (|B| <= k_max) for which rho with S1's diagonal in place of the toys' for B is in the
-    window in every cell; e and m map each band to its diagonal (toys', carried; S1's)."""
+    window in every cell; e and m map each band to its diagonal (toys', carried; S1's). The numerator is a sum of
+    covariance diagonals (fixed, toys' outside B, S1's inside), so it is never negative. PASS iff such sets exist and
+    their union, over all of them, has at most k_max bands."""
     bands = sorted(e)
     for k in range(1, k_max + 1):
-        hits = []
-        for B in itertools.combinations(bands, k):
-            num = Ed - sum(e[b] - m[b] for b in B)
-            if np.all(num >= 0) and in_window(np.sqrt(num / Md)):
-                hits.append([x.removeprefix("band:") for x in B])
+        hits = [[x.removeprefix("band:") for x in B] for B in itertools.combinations(bands, k)
+                if in_window(np.sqrt((Ed - sum(e[b] - m[b] for b in B)) / Md))]
         if hits:
-            return {"verdict": "PASS", "size": k, "n_sets": len(hits), "sets": hits[:LISTED_MAX]}
-    return {"verdict": "FAIL", "size": None, "n_sets": 0, "sets": []}
+            union = sorted(set().union(*hits))
+            inter = sorted(set(hits[0]).intersection(*hits))
+            return {"verdict": "PASS" if len(union) <= k_max else "FAIL", "size": k, "n_sets": len(hits),
+                    "named": union if len(union) <= k_max else [], "union": union, "intersection": inter,
+                    "sets": hits[:LISTED_MAX]}
+    return {"verdict": "FAIL", "size": None, "n_sets": 0, "named": [], "union": [], "intersection": [], "sets": []}
 
 
 def diagnose(d: dict, s1: dict) -> dict:
@@ -99,9 +106,12 @@ def main(argv=None) -> int:
         print(f"[fd-1b-diag] refusing to overwrite {a.out}", file=sys.stderr)
         return 4
     try:
+        if sa.sha256(a.gate_d) != GATE_D_SHA256:
+            raise fs.Invalid(f"{a.gate_d} is not gate D's committed readout ({GATE_D_SHA256[:16]}...)")
         s1 = fs.load_s1(a.s1_npz)
         d = fs.derivation_blocks(a.derivation, a.tag, s1, a.flux_constraint)
         out = {**fs.header(s1, "DERIVATION"), **diagnose(d, s1)}
+        out["code_sha256"]["fd_1b_diag.py"] = hashlib.sha256(Path(__file__).resolve().read_bytes()).hexdigest()
         gd = json.loads(a.gate_d.read_text())
         if gd.get("rho") != out["rho"]:
             raise fs.Invalid("rho does not reproduce gate D's committed readout bit for bit")

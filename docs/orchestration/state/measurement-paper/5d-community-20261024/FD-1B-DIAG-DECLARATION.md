@@ -37,13 +37,16 @@ unchanged and its tests passing. It computes each band's block with S1's estimat
 unfolds; uncarried, E_raw,b; and carried by diag(g) with g = f / x_T, E_b. S1's blocks are M_b, and M_d is S1's drawn
 matrix.
 
-The run refuses (exit 4) unless its ρ equals gate D's committed ρ bit for bit.
+The run refuses (exit 4) unless the `--gate-d` file is the committed readout (sha256 `e1838c0a…`, pinned in code)
+and its ρ equals that readout's ρ bit for bit. The readout records `fd_1b_diag.py`'s own sha256.
 
 - **(i) Per band, all 38 bands** (Flux; the 33 interaction bands, 2p2h with 3 universes and 32 with 2; the 4
   detector bands), per cell c:
   - the carried σ ratio √(E_b,cc / M_b,cc);
   - the raw σ ratio √(E_raw,b,cc / M_b,cc);
   - S1's share M_b,cc / M_d,cc and the toys' share E_b,cc / E_d,cc.
+  - Where S1's diagonal M_b,cc is zero, a ratio reads "inf" if the toys' is not zero and null if both are. No rule
+    reads these ratios.
 - **(ii) The raw shifts without the carry:** ρ_raw,c = √(E_d,raw,cc / M_d,cc), with every band's block uncarried and
   S1's stat, normalization and lateral blocks as in gate D.
 - **(iii) The carry against ρ:** g_c beside ρ_c and ρ_raw,c, per cell. This is descriptive, with no verdict of its
@@ -57,21 +60,37 @@ The run refuses (exit 4) unless its ρ equals gate D's committed ρ bit for bit.
       ρ_c(−B) = √( (E_d,cc − Σ_{b∈B} (E_b,cc − M_b,cc)) / M_d,cc ),
 
   puts **every** cell's ρ_c(−B) in [0.9, 1.1].
-  - Sets are searched by size, 1 then 2 then 3, and the smallest size with any such set is reported.
-  - Every set of that size is listed (up to 200), with their count.
-  - L1 PASS names the bands in those sets.
+  - Sets are searched by size, 1 then 2 then 3, and the smallest size with any such set is the minimal size.
+  - Every minimal set is counted, and their union and intersection are taken over all of them. Up to 200 are listed.
+  - **L1 PASS** if minimal sets exist **and their union has at most K_MAX bands**. Those bands are the named
+    bands. A union larger than K_MAX reads L1 FAIL: the departure is then diffuse, not named.
+  - The window is inclusive at both edges, as in gate D.
+  - The numerator is a sum of covariance diagonals (the fixed blocks, the toys' outside B, S1's inside), so it is
+    never negative.
+  - L1 cannot pass trivially, since gate D failed and the search starts at size 1.
 - **L2, the carry.** ρ_raw,c lies in [0.9, 1.1] in **every** cell.
+  - A PASS means that removing the carry closes the gap. It does not show that the carry is wrong.
+  - Uncarried is the only alternative tested, and it is tested for all bands at once. A carry problem in only some
+    bands is a question for the amendment.
 - **LOCALIZED** if L1 or L2 passes, and the readout states which. Otherwise **NOT LOCALIZED**.
 
-K_MAX = 3 is this declaration's choice: a cause that needs four or more of the 38 bands substituted is not named
-bands in any useful sense. The director may bind another value before the run.
+**Two choices for the director to bind:**
+1. **K_MAX = 3.** A cause that needs four or more of the 38 bands substituted is not named bands in any useful
+   sense. It is a constant in `fd_1b_diag.py`, pinned by a test, so another value needs a code change and a new M3.
+2. **The band scope: all 38 bands,** not only the interaction group the decision names for readout (i). The
+   decision's fork says "named bands" without a group. #618 had already published the flux group outside the window
+   in 9 cells, and that informed this choice, which is disclosed here.
 
 ## 3. Time-box
 
-- **One run** on login37 under `nice -n 19`, 0 node-h. It may not start before this declaration is bound and merged.
-- **The deadline is 24 h from that merge.** By then the readout is committed and the report PR is open.
-- **Refusals.** A refusal (exit 4) is a STOP and is reported unrepaired. A run that has not ended by the deadline is
-  reported as **NOT DIAGNOSED**.
+- **One run** on login37 under `nice -n 19`, 0 node-h. It starts only after the director's binding record of this
+  declaration is on `main`.
+- **The deadline is 24 h from the binding record's merge.** By then the readout is committed and the report PR is
+  open.
+- **Failures.** A run that exits non-zero and writes no readout may be rerun **once**, after a message to the
+  director giving the cause. A second non-zero exit is a **STOP**, reported unrepaired. A run that writes a readout
+  is never rerun.
+- **NOT DIAGNOSED** covers two cases: a run that has not ended by the deadline, and a report PR not open by then.
 - **A STOP or NOT DIAGNOSED** takes the "otherwise" branch of §4.
 
 ## 4. The fork, fixed before any number is read
@@ -102,7 +121,7 @@ M3`. The porcelain must be empty, and HEAD must be M3.
 
 $P, $B, $PY and $CON are as in `FD-1B-STAGE2-DECLARATION.md` §2.
 
-**D3. The report.** Copy `diag.json` and `diag.log` down, then open a report PR. It gives the readouts, L1 and L2
+**D3. The report.** Copy `diag.json` and `diag.log` down to `fd/receipts-1b/diag/`, then open a report PR. It gives the readouts, L1 and L2
 with their verdicts, and the fork's branch. It also gives the time from merge to report.
 
 ## 6. Not changed

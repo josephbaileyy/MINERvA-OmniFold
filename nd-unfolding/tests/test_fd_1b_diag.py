@@ -4,7 +4,10 @@ both directions: each localization rule passes the fixture built to satisfy it a
 * one band whose toy shifts S1 does not hold: L1 names exactly that band, and the run reads LOCALIZED;
 * S1's blocks equal to the toys' uncarried ones: L2 passes with rho_raw = 1;
 * three such bands: L1 names exactly that set; four: L1 fails at K_MAX = 3, L2 fails, NOT LOCALIZED;
-* rho reproduces gate D's readout bit for bit, and a departing readout refuses; a missing product refuses.
+* L1 on constructed diagonals: ties are all listed and their union named; a union over K_MAX fails; a substitution
+  that fixes one cell but breaks another is no hit (every cell); the window's edges are inside; truncation keeps the
+  count;
+* the shares add up; rho reproduces gate D's readout bit for bit; each refusal says why.
 
 No real data are read: the fixtures are synthetic derivation products and a synthetic S1 assembly."""
 from __future__ import annotations
@@ -68,8 +71,9 @@ class World:
                             **{"C_" + k.replace(":", "_"): v for k, v in blocks.items()},
                             meta=json.dumps({"blocks": sorted(blocks)}))
 
-    def run(self, name="diag", gate_d=None):
-        """Gate D, then the diagnosis against gate D's readout; returns (rc, readout or None, gate D's readout)."""
+    def run(self, name="diag", gate_d=None, pin=True, stderr=None):
+        """Gate D, then the diagnosis against gate D's readout, pinned as the committed one unless ``pin`` is False;
+        returns (rc, readout or None, gate D's readout)."""
         gd = self.tmp / f"{name}-gate-d.json"
         out = self.tmp / f"{name}.json"
         common = ["--derivation", str(self.der), "--tag", "t", "--s1-npz", str(self.s1),
@@ -80,7 +84,9 @@ class World:
             fs.main(["gate-d", *common, "--out", str(gd)])
             if gate_d is not None:
                 gd.write_text(json.dumps(gate_d(json.loads(gd.read_text()))))
-            rc = fdg.main([*common, "--gate-d", str(gd), "--out", str(out)])
+            with mock.patch.object(fdg, "GATE_D_SHA256", digest(gd) if pin else fdg.GATE_D_SHA256), \
+                    mock.patch("sys.stderr", stderr) if stderr is not None else mock.patch("sys.stderr"):
+                rc = fdg.main([*common, "--gate-d", str(gd), "--out", str(out)])
         return rc, (json.loads(out.read_text()) if out.exists() else None), json.loads(gd.read_text())
 
 
@@ -103,7 +109,9 @@ class Diagnosis(unittest.TestCase):
         self.assertEqual(r["rho"], gd["rho"])
         self.assertEqual((r["L1_named_bands"]["verdict"], r["L1_named_bands"]["size"]), ("PASS", 1))
         self.assertEqual(r["L1_named_bands"]["sets"], [["MaRES"]])
+        self.assertEqual(r["L1_named_bands"]["named"], ["MaRES"])
         self.assertEqual(r["verdict"], "LOCALIZED")
+        self.assertIn("fd_1b_diag.py", r["code_sha256"])
         np.testing.assert_allclose(r["per_band"]["MaRES"]["sigma_ratio"], 10.0, rtol=1e-9)
         np.testing.assert_allclose(r["per_band"]["MaRES"]["sigma_ratio_raw"], 10.0 / 1.4, rtol=1e-9)
         self.assertEqual(r["per_band"]["MaRES"]["group"], "interaction")
@@ -128,24 +136,80 @@ class Diagnosis(unittest.TestCase):
         self.assertEqual(r["verdict"], "NOT LOCALIZED")
         self.assertEqual(fdg.K_MAX, 3)
 
-    def test_the_window_is_gate_ds_unrelaxed(self):
+    def test_the_window_is_gate_ds_unrelaxed_and_inclusive(self):
         self.assertEqual(tuple(fdg.WINDOW), (0.9, 1.1))
         self.assertIs(fdg.WINDOW, fs.GATE_D_WINDOW)
+        self.assertTrue(fdg.in_window(np.array([0.9, 1.0, 1.1])))
+        self.assertFalse(fdg.in_window(np.array([0.9, 1.1000001])))
+        self.assertFalse(fdg.in_window(np.array([0.8999999, 1.0])))
 
-    def test_rho_must_reproduce_gate_ds_readout_and_a_missing_product_refuses(self):
+    @staticmethod
+    def diag(**bands):
+        """A two-cell L1 world: fixed 0.1, M_d 1; each band ``name=(e_cell0, e_cell1)`` against S1's 0.3."""
+        m = {f"band:{b}": np.array([0.3, 0.3]) for b in bands}
+        e = {f"band:{b}": np.array(v, float) for b, v in bands.items()}
+        Ed = 0.1 + sum(e.values())
+        Md = np.ones(2) * (0.1 + 0.3 * len(bands))
+        return e, m, Ed, Md
+
+    def test_l1_lists_every_tie_and_names_their_union(self):
+        e, m, Ed, Md = self.diag(A=(0.45, 0.45), B=(0.45, 0.45), C=(0.3, 0.3))  # either A or B alone is enough
+        L = fdg.localized_bands(e, m, Ed, Md)
+        self.assertEqual((L["verdict"], L["size"], L["n_sets"], L["sets"]), ("PASS", 1, 2, [["A"], ["B"]]))
+        self.assertEqual((L["named"], L["union"], L["intersection"]), (["A", "B"], ["A", "B"], []))
+        with mock.patch.object(fdg, "LISTED_MAX", 1):
+            L = fdg.localized_bands(e, m, Ed, Md)
+        self.assertEqual((L["n_sets"], L["sets"], L["union"]), (2, [["A"]], ["A", "B"]))  # the count and union are all
+
+    def test_l1_fails_when_the_union_names_more_than_k_max(self):
+        e, m, Ed, Md = self.diag(**{b: (0.39, 0.39) for b in "ABCDE"}, F=(0.3, 0.3))  # rho^2 1.237; any one of five -> 1.189
+        self.assertFalse(fdg.in_window(np.sqrt(Ed / Md)))
+        L = fdg.localized_bands(e, m, Ed, Md)
+        self.assertEqual((L["verdict"], L["size"], L["n_sets"], L["named"]), ("FAIL", 1, 5, []))
+        self.assertEqual(L["union"], list("ABCDE"))
+
+    def test_l1_holds_every_cell_not_only_the_cells_out_of_the_window(self):
+        # A fixes cell 0 but breaks cell 1, where B's excess offsets A's deficit; only {A, B} holds both
+        e, m, Ed, Md = self.diag(A=(0.6, 0.0), B=(0.3, 0.6), C=(0.3, 0.3))
+        self.assertFalse(fdg.in_window(np.sqrt(Ed / Md)))
+        L = fdg.localized_bands(e, m, Ed, Md)
+        self.assertEqual((L["verdict"], L["size"], L["sets"]), ("PASS", 2, [["A", "B"]]))
+
+    def test_the_shares_add_up(self):
+        w = self.world(scale={"MaRES": 10.0}, s1_factor={"MaRES": 0.01})
+        rc, r, _ = w.run()
+        z = np.load(w.s1)
+        fixed = sum(np.diag(z[k]) for k in z.files if k.startswith("C_") and (k in ("C_stat", "C_normalization")
+                                                                              or k.startswith("C_lat_")))
+        Md = sum(np.diag(z[k]) for k in z.files if k.startswith("C_") and k not in ("C_e", "C_seed"))
+        Ed = np.array(r["rho"]) ** 2 * Md
+        s1 = sum(np.array(v["share_s1"]) for v in r["per_band"].values())
+        toys = sum(np.array(v["share_toys"]) for v in r["per_band"].values())
+        np.testing.assert_allclose(s1 + fixed / Md, 1.0, rtol=1e-12)
+        np.testing.assert_allclose(toys + fixed / Ed, 1.0, rtol=1e-12)
+
+    def test_each_refusal_says_why(self):
+        import io
         w = self.world(scale={"MaRES": 10.0}, s1_factor={"MaRES": 0.01})
         moved = lambda g: {**g, "rho": [v * (1 + 1e-15) if i == 3 else v for i, v in enumerate(g["rho"])]}  # noqa: E731
-        rc, r, _ = w.run("moved", gate_d=moved)
-        self.assertEqual((rc, r), (4, None))
+        for name, kw, why in (("moved", {"gate_d": moved}, "does not reproduce gate D"),
+                              ("unpinned", {"pin": False}, "is not gate D's committed readout")):
+            err = io.StringIO()
+            rc, r, _ = w.run(name, stderr=err, **kw)
+            self.assertEqual((rc, r), (4, None))
+            self.assertIn(why, err.getvalue())
         (w.der / "t_MaRES_1.npz").unlink()
-        rc, r, _ = w.run("missing")
+        err = io.StringIO()
+        rc, r, _ = w.run("missing", stderr=err)
         self.assertEqual((rc, r), (4, None))
+        self.assertIn("no derivation product for MaRES_1", err.getvalue())
 
     def test_a_readout_is_never_overwritten(self):
         w = self.world()
         rc, r, _ = w.run("once")
         self.assertEqual(rc, 0)
-        with mock.patch.object(fs, "S1_NPZ_SHA256", digest(w.s1)), \
+        with mock.patch.object(fs, "S1_NPZ_SHA256", digest(w.s1)), mock.patch.object(fdg, "GATE_D_SHA256",
+                                                                                     digest(w.tmp / "once-gate-d.json")), \
                 mock.patch.object(sa, "CONSTRAINT_SHA256", digest(w.constraint)), mock.patch("sys.stderr"):
             self.assertEqual(fdg.main(["--derivation", str(w.der), "--tag", "t", "--s1-npz", str(w.s1),
                                        "--flux-constraint", str(w.constraint), "--gate-d",
