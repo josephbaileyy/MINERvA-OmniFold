@@ -1,0 +1,8 @@
+host=login37 now=2026-10-31T19:25:33Z
+Submitted batch job 60624652
+Submitted batch job 60624653
+Submitted batch job 60624654
+rc=0
+60624654 fd1b2an2 PENDING 2:40:00 1 (Priority)
+60624653 fd1b2an1 PENDING 2:40:00 1 (Priority)
+60624652 fd1b2an0 PENDING 2:40:00 1 (Priority)
