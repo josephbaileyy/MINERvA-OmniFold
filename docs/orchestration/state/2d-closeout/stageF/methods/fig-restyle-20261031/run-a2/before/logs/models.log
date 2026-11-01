@@ -1,0 +1,23 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+========================================================================
+THREE-WAY COMPARISON  -  ours / published data / generator model
+========================================================================
+reported bins: 205
+sigma_tot: ours/data = 1.0077
+model MINERvA_Tune_v1: sigma_tot/data = 0.9124
+
+--- chi^2 in paper TotalCov (ndf = 205) ---
+  ours vs data (sanity ~3.66)     chi2 =       465.42   ndf = 205   chi2/ndf =   2.270
+  data vs MINERvA_Tune_v1         chi2 =      6773.05   ndf = 205   chi2/ndf =  33.039
+  ours vs MINERvA_Tune_v1         chi2 =      6424.80   ndf = 205   chi2/ndf =  31.340
+
+wrote /pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a2/before/out/model_comp_report.txt, /pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a2/before/out/model_comp_projections.png, /pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a2/before/out/model_comp_ratio_maps.png
