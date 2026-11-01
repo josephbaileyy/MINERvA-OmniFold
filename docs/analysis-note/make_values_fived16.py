@@ -511,9 +511,9 @@ def values(d, arm="with"):
     lo, hi = gd["window"]
     assert gd["verdict"] == "FAIL" and dg["verdict"] == "NOT LOCALIZED" and dg["L1_named_bands"]["n_sets"] == 0
     assert dg["rho"] == gd["rho"] and dg["window"] == gd["window"] and len(gd["rho"]) == 16
-    assert math.isclose(1 - lo, hi - 1), "the window is not symmetric about one"
     v["cov1b-ncells-out"] = str(sum(not lo <= r <= hi for r in gd["rho"]))
-    v["cov1b-window-pct"] = f"{100 * (hi - 1):.0f}"
+    v["cov1b-win-lo"], v["cov1b-win-hi"] = f"{lo:.1f}", f"{hi:.1f}"
+    v["cov1b-rho-min"], v["cov1b-rho-max"] = f"{min(gd['rho']):.2f}", f"{max(gd['rho']):.2f}"
     v["cov1b-kmax-word"] = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}[dg["k_max"]]
     v["cov1b-nbands"] = str(len(dg["per_band"]))
     return v

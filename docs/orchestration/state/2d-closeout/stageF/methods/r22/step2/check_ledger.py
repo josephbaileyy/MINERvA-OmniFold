@@ -98,12 +98,15 @@ def git_show(wt, rev, path):
     return r.stdout if r.returncode == 0 else ""
 
 
+def table_lines(text):
+    return [x for x in text.splitlines() if x.startswith("| ") and not x.startswith("| id ") and not x.startswith("|---")]
+
+
 def rows(text):
-    for line in text.splitlines():
-        if line.startswith("| ") and not line.startswith("| id ") and not line.startswith("|---"):
-            c = [x.strip() for x in line.strip().strip("|").split(" | ")]
-            if len(c) == 6:
-                yield c
+    for line in table_lines(text):
+        c = [x.strip() for x in line.strip().strip("|").split(" | ")]
+        if len(c) == 6:
+            yield c
 
 
 def pin(old, new):
@@ -191,6 +194,10 @@ def check(wt, cur, old, files, ledger_text, prot_cur, prot_old, all_cur, all_old
                 fails.append(f"{rid}: R: probe names {f}, not a records file")
             elif kind == "R" and not present:
                 fails.append(f"{rid}: NOT IN THE RECORDS ({f}): {lit[:90]!r}")
+    # a row whose cells hold " | " (a quoted markdown table, say) does not split into six and would be skipped silently
+    for line in table_lines(ledger_text):
+        if len([x for x in line.strip().strip("|").split(" | ")]) != 6:
+            fails.append(f"MALFORMED ROW (not six columns; a probe holding ' | '?): {line[:90]!r}")
     ch = changed(cur, old, files)
     for sid, f, s in ch:
         if sid not in named:
@@ -289,6 +296,7 @@ def main():
             ("SEC4 phrase reworded", {**cur, "sec_validation.tex": cur["sec_validation.tex"].replace(
                 "lies entirely below its window", "lies below its window", 1)}, lt, {}),
             ("n4 frozen sentence edited", dict(cur), lt, {"all": {fz_file: all_cur[fz_file].replace(fz, fz[:-1] + " @@.", 1)}}),
+            ("ledger row holding ' | '", dict(cur), lt + "\n| T7 | t | — | CUT | — | `L:KNOWN_ISSUES.md::a | b` |\n", {}),
             ("declared removed label still referenced", {**cur, lf: cur[lf].replace("\\label{%s}" % lab0, "", 1)}, lt,
              {"removed": {**REMOVED_LABELS, lf: {lab0}},
               "all": {lf: all_cur[lf].replace("\\label{%s}" % lab0, "", 1) + "\n\\ref{%s}\n" % lab0}}),
