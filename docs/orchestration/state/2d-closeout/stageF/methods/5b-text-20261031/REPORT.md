@@ -121,3 +121,20 @@ tagged.
 
 **The built abstracts,** as the PDFs print them, go to the director for Joseph's approval of each whole abstract.
 #619 does not merge before he approves.
+
+## Joseph's approval and the pins (2026-11-01)
+
+- **Approved:** Joseph approved both whole abstracts exactly as built at `6ed1e5c91` ("Approve both (Recommended)").
+  The director relayed it, rebuilt both PDFs at that head, and recorded the approval. The abstract sources are
+  byte-identical at that head and at this one.
+- **Pinned:** `ABSTRACT_PINS` holds the two pairs' `--pins` values: 5B-c `fd090d51b370d29a`, 5B-a `ccc3fecf293bf597`.
+- **Main merged:** `origin/main` (`8fcc9e689`) is merged into the round, with no conflicts. The ledger's base is now
+  `8fcc9e689`. Against `ac8fb9ae3`, the install round's five caption sentences (#631, under its own ledger) read as
+  uncovered. Against `8fcc9e689`, the round's own 17 changed sentences remain, all covered.
+- **A self-test fix in `r22/step2/check_ledger.py`:** the "undeclared abstract edit" plant replaced "We report a
+  simultaneous measurement", which the approved note abstract no longer contains. So the plant left its input unchanged
+  and could not fail. While the pairs were unpinned, the baseline's own failure hid this. The plant now adds text
+  before `\end{abstract}`, and an assert requires it to change its input. Before and after, on this tree: the 5B
+  wrapper's self-test goes from FAIL (that plant NOT CAUGHT) to PASS. The step3, step4 and step4-install wrappers print
+  the same lines as before. On this tree their abstract plants fail as they did, because their base abstract no longer
+  matches the note's, so their baselines already fail check 4. Each wrapper is valid at its own round's head.

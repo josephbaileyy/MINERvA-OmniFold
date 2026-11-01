@@ -1,4 +1,4 @@
-# The 5B text round: fact ledger (base ac8fb9ae3)
+# The 5B text round: fact ledger (base ac8fb9ae3; from 2026-11-01, merged main 8fcc9e689)
 
 Sentence ids are those of `5b-text-20261031/check_ledger.py --list`. The decisions: DECISION-20261030-joseph-4b-not-now-5b-audit-then-add.md item 2 (the block is added to the reported covariance; with and without), DECISION-20261031-joseph-j1-j2-and-protections-split.md (J1(a), J2(a), the referee's corrections), PROPOSAL-20261031-5b-with-without.md (accepted items 0 and 3). Every number prints through `\fvval` from `make_values_fived16.py`, which pins the with-block readouts (`fd/with-cpl/`) as reported and the committed ones as `-nopl`.
 
