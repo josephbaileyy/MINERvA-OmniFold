@@ -104,8 +104,8 @@ LISTED_CLAIMS = [
     ("sec_fived16.tex", "truths meet it: the GiBUU", {"kind": "without"}),
     ("sec_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
     ("sec_fived16.tex", "so the GiBUU comparison carries that limitation", {"kind": "both", "family": "gibuu"}),
-    ("main_paper.tex", "at a GiBUU-like truth and at a synthetic $q_{3}$ tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
-    ("main_note.tex", "at a GiBUU-like truth and at a synthetic $q_{3}$ tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
+    ("main_paper.tex", "at a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
+    ("main_note.tex", "At a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
 
 
@@ -253,6 +253,8 @@ def values(d, arm="with"):
         name = p["label"].split(";")[0].split(",")[0]                    # the readout's own name
         v[f"label-{PRED[p['name']]}"] = ("MINERvA Tune~v1" if name == "MINERvA Tune v1" else name.replace(" ", "~", 1))
         v[f"{k}-ncells"] = str(p["n_cells"])
+        WORDS = {7: "seven", 8: "eight", 9: "nine", 16: "sixteen"}   # the abstracts print the count in words
+        v[f"{k}-ncells-word"] = WORDS[p["n_cells"]]
     # G-SENS: chi2 at each alpha per family, and the sentence's bounds (16-cell predictions only)
     recs = d["sens2"]["sens"]["records"] + d["fup"]["sens"]["records"]
     for r in recs:
@@ -692,8 +694,8 @@ def self_test():
             ("drops a GiBUU truth of its family", "sec_fived16.tex", "so the GiBUU comparison carries that limitation",
              lambda t: t.replace(r"thresholds at the GiBUU hybrid truth under the reported covariance, and also",
                                  r"thresholds under the reported covariance, and also", 1)),
-            ("loses its anchor", "main_paper.tex", "at a GiBUU-like truth and at a synthetic $q_{3}$ tilt",
-             lambda t: t.replace("at a GiBUU-like truth and at a synthetic", "at GiBUU-like truths and at a synthetic", 1))):
+            ("loses its anchor", "main_paper.tex", "at a GiBUU-like truth and a synthetic momentum-transfer tilt",
+             lambda t: t.replace("at a GiBUU-like truth and a synthetic", "at GiBUU-like truths and a synthetic", 1))):
         planted = dict(texts, **{name: edit(texts[name])})
         if planted[name] == texts[name]:
             print(f"  FAIL the plant that {what} did not apply"); ok = False
