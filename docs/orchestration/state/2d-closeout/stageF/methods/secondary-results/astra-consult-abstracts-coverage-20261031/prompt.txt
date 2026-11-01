@@ -1,0 +1,18 @@
+You are an independent senior referee for Physical Review D and an experienced neutrino cross-section physicist. You are reading a git checkout of the MINERvA-OmniFold analysis at commit 039596e09 (the open PR "the 5B text round"), in the current directory. Work strictly read-only: do not edit, create, stage or commit anything, and do not run builds or network commands.
+
+The PI asks: what should the paper and note abstracts say so that they sound like other PRD cross-section papers, neither underreporting the result nor qualifying it too much? And is there a way to resolve, or handle better, the coverage issue?
+
+Read:
+- The abstracts: docs/analysis-note/main_paper.tex and docs/analysis-note/main_note.tex (the abstract environments). For contrast, the paper abstract before this PR: `git show origin/main:docs/analysis-note/main_paper.tex`.
+- What changed and why: docs/orchestration/state/2d-closeout/stageF/methods/5b-text-20261031/REPORT.md.
+- Coverage and the fake-data study, under docs/orchestration/state/measurement-paper/5d-community-20261024/: LIMITATION-PLAN.md (section 1, coverage), LIMITATION-PLAN-ADDENDUM-20261028.md, FD-1B-DECLARATION.md (the coverage test's protocol; note its section 5.2 on what a pass means), FD-1B-STAGE2-REPORT.md (it stopped at gate D), FD-F0b-REPORT.md, FD-F1-REPORT.md, FD-PLAN.md section 7 and FD-DIRECTOR-RULINGS.md section 2 (the fake-data thresholds, fixed in advance), and FD-CT-5B-ADDITION-REPORT.md (the run-period block C_PL,5D, added after the data were seen).
+- The rules the text is bound by: docs/orchestration/DECISION-20261031-joseph-protections-split.md if present (otherwise `git grep -l protections -- docs/orchestration/DECISION-20261031*`), which keeps the truth guardrail strict and requires the honesty disclosures to stay published.
+- The paper body's sections on the uncertainty, fake-data study and limitations, as needed (docs/analysis-note/paper_body.tex).
+
+Deliver, in under 1,100 words:
+1. A short diagnosis of each abstract: which sentences read unlike a PRD abstract (over-qualified, hedged, jargon, record-keeping register) and which underreport or overclaim. Quote the phrases.
+2. A proposed whole paper abstract and a whole note abstract, every number and claim taken from the sources (cite the file for each number). Keep every material limitation a reader needs in the abstract, and nothing a reader does not.
+3. Coverage: what typical PRD cross-section papers say (or do not say) about the coverage of their intervals; whether this result's situation (bias exceeding the uncertainty at some alternative truths; a coverage test stopped at its machinery gate) needs an abstract statement, and in what words; and any concrete, feasible way to resolve or reduce the coverage issue given what the records show (costs and limits from the records; mark your own estimates as such). Say plainly if no general validation is possible.
+4. A one-paragraph overall recommendation.
+
+Mark every inference as an inference. Cite file:line for factual claims.

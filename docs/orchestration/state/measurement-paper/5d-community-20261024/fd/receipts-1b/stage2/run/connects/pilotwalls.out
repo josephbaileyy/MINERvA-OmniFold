@@ -1,0 +1,4 @@
+host=login37 now=2026-10-31T21:51:28Z deploy_head=664c38dbffdca4fe3873a5ebf61cb2f949005b59
+rc=0
+{"label": "DERIVATION, pre-gate readout (not walls --after 2a)", "present": 192, "missing": ["fd1b_pilot_half_s2600001.npz", "fd1b_pilot_half_s2600002.npz", "fd1b_pilot_half_s2600003.npz", "fd1b_pilot_half_s2600005.npz", "fd1b_pilot_half_s2600006.npz", "fd1b_pilot_half_s2600007.npz", "fd1b_derivation_2p2h_0.npz", "fd1b_derivation_2p2h_1.npz", "fd1b_derivation_2p2h_2.npz", "fd1b_derivation_AGKYxF1pi_0.npz"], "pilot_n": 16, "pilot_median_seconds_unfold": 664.8005, "pilot_min": 644.842, "pilot_max": 720.831, "pilot_limit_s": 1040.0, "largest_peak_rss_kib": 18439836, "rss_limit_kib": 44040192, "numpy_versions": ["1.26.4"], "derivation_seconds_unfold": [648.191, 729.7249999999999, 801.386], "half_seconds_unfold": [379.881, 388.688]}
+ssh_rc=0

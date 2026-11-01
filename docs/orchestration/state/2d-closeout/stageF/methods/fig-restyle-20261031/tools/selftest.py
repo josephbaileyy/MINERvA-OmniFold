@@ -11,6 +11,11 @@ and raster.py must then:
                    --figures does not name; a one-pixel change to a raster (check 2); a text printed at 3.5 pt
                    under textsize.py's 4.0 pt floor (check 7), which must be named. It stays silent on the same
                    text at 5.0 pt.
+RESTYLE AMENDMENT 1 adds the recolour, binning-exception and overlap cases; RESTYLE AMENDMENT 2 adds, with the toy's
+styles and restyle tables: a step line restyled as declared (silent), with the wrong marker, an undeclared line-style
+change or a one-ulp value (each fires), the same restyle under amendment 1's check (fires: it needs the declaration);
+the names gate on "MINERvA Tune v1" (fires), on the full names (silent) and on a figure with no legend record (fires);
+and styles.tsv against restyle_2026_10's LINESTYLE, MARKER and NAMES.
 Exit 0 and print SELF-TEST :: PASS only if every case behaves."""
 import shutil
 import subprocess
@@ -51,6 +56,17 @@ def textsize(run):
 
 def compare_recolour(b, a, *extra):
     return compare(b, a, "--recolour", str(TOYREC), "--palette", str(TOYPAL), *extra)
+
+
+def compare_restyle(b, a, *extra):
+    return compare(b, a, "--recolour", str(TOYREC), "--palette", str(TOYPAL), "--styles", str(TOYSTY),
+                   "--restyle", str(TOYRES), *extra)
+
+
+def names(run, *extra):
+    p = subprocess.run([PY, "-I", str(HERE / "names.py"), str(run), "--styles", str(TOYSTY), "--gate", *extra],
+                       capture_output=True, text=True)
+    return p.returncode, p.stdout + p.stderr
 
 
 def overlap(run):
@@ -113,6 +129,16 @@ def main():
         am["palette-extra"] = run(base, "palette-extra", data, "--palette", "--palette-extra")
         am["palette-ulp"] = run(base, "palette-ulp", data, "--palette", "--ulp")
         am["rebin-ulp"] = run(base, "rebin-ulp", data, "--palette", "--rebin", "--hist-ulp")
+        global TOYSTY, TOYRES
+        TOYSTY, TOYRES = base / "styles.tsv", base / "restyle.tsv"
+        TOYSTY.write_text("identity\tlinestyle\tmarker\tname\npublished\tNone\ts\tPublished (PRD 104, 092007)\n"
+                          "this_work\tNone\to\tThis work (OmniFold)\n")
+        TOYRES.write_text("figure\tbefore_rgb\tbefore_linestyle\tbefore_marker\tidentity\n"
+                          "toy\t#000000\t-\tNone\tpublished\ntoy\t#4C72B0\tNone\to\tthis_work\n")
+        a2 = {n: run(base, n, data, "--palette", *f) for n, f in (
+            ("restyle2", ("--restyle2",)), ("restyle2-wrong", ("--restyle2", "--restyle2-wrong-marker")),
+            ("restyle2-unmapped", ("--restyle2", "--restyle2-unmapped")), ("restyle2-ulp", ("--restyle2", "--ulp")),
+            ("names-full", ("--restyle2", "--names-full")))}
         outs = ("--outputs", "out/toy_report.txt")
         expect("identical rerun", *compare(old, cases["rerun"], *outs), False)
         expect("restyle (layout, fonts, labels, panel labels, text)", *compare(old, cases["restyle"], *outs), False)
@@ -150,6 +176,21 @@ def main():
         expect("rebin: a hist value moved by one ulp, the figure named",
                *compare_recolour(old, am["rebin-ulp"], "--rebin", "toy.png"), True, "only before")
         expect("rebin: a hist value moved by one ulp, plain check", *compare(old, am["hist-ulp"]), True, "only before")
+        # RESTYLE AMENDMENT 2: the style check and the names gate
+        expect("restyle2: the step line restyled as the table declares", *compare_restyle(old, a2["restyle2"]), False,
+               "line styles as declared")
+        expect("restyle2: the wrong marker", *compare_restyle(old, a2["restyle2-wrong"]), True,
+               "styles and recolour table give")
+        expect("restyle2: a line style the table does not map changed", *compare_restyle(old, a2["restyle2-unmapped"]),
+               True, "styles and recolour table give")
+        expect("restyle2: a one-ulp value change still fires", *compare_restyle(old, a2["restyle2-ulp"]), True,
+               "only before")
+        expect("restyle2: the restyle under amendment 1's check (undeclared)", *compare_recolour(old, a2["restyle2"]),
+               True, "only before")
+        expect("names: 'MINERvA Tune v1' in a legend", *names(cases["restyle"]), True, "'MINERvA Tune v1'")
+        expect("names: the identities' full names", *names(a2["names-full"]), False, "NAMES :: PASS")
+        expect("names: a named figure with no legend record", *names(a2["names-full"], "--figures", "toy.png,none.png"),
+               True, "none.png: no legend record")
         expect("overlap: a text on the line", *overlap(am["overlap"]), True, "'on the line'")
         expect("overlap: none", *overlap(old), False, "OVERLAP :: PASS")
         import importlib.util
@@ -158,9 +199,15 @@ def main():
         spec.loader.exec_module(rs)
         rows = [l.split("\t") for l in (DEPLOY / "docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031"
                                          / "palette.tsv").read_text().splitlines()[2:]]
-        same = {r[0]: r[1].upper() for r in rows} == {k: v.upper() for k, v in rs.PALETTE.items()}
-        expect("palette.tsv equals restyle_2026_10.PALETTE", 0 if same else 1,
-               "" if same else f"palette.tsv {rows} vs PALETTE {rs.PALETTE}", False)
+        same = {r[0]: r[1].upper() for r in rows} == {k: v.upper() for k, v in {**rs.PALETTE, **rs.NEUTRAL}.items()}
+        expect("palette.tsv equals restyle_2026_10.PALETTE and NEUTRAL", 0 if same else 1,
+               "" if same else f"palette.tsv {rows} vs PALETTE {rs.PALETTE}, NEUTRAL {rs.NEUTRAL}", False)
+        rows = [l.split("\t") for l in (DEPLOY / "docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031"
+                                         / "styles.tsv").read_text().splitlines()[2:]]
+        decl = {r[0]: (r[1], r[2], r[3]) for r in rows}
+        same = decl == {k: (rs.LINESTYLE[k], rs.MARKER[k], rs.NAMES[k]) for k in rs.NAMES}
+        expect("styles.tsv equals restyle_2026_10.LINESTYLE, MARKER and NAMES", 0 if same else 1,
+               "" if same else f"styles.tsv {decl}", False)
 
         pa, pb = old / "out" / "toy.pdf", cases["rerun"] / "out" / "toy.pdf"
         extra = cases["rerun"] / "capture" / "toy" / "toy.pdf.json"

@@ -44,6 +44,8 @@ REPO = ND.parent
 DECL = REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-DECLARATION.md"
 DECL_SHA256_PREFIX = "07d0e0b6b722c7de"   # the file the director bound (FD-1B-BINDING.md)
 DECL2 = DECL.with_name("FD-1B-STAGE2-DECLARATION.md")
+AMEND1 = DECL.with_name("FD-1B-STAGE2-AMENDMENT-1.md")
+LEDGER = DECL.parent / "fd/receipts-1b/stage2/LEDGER.psv"
 EDGES = [np.array([0.0, 1.0, 2.0]), np.array([0.0, 1.0, 2.0]), np.array([0.0, 0.5, 1.0]),
          np.array([0.0, 1.0, 2.0, 3.0]), np.array([0.0, 1.5, 3.0])]
 SHAPE = tuple(len(e) - 1 for e in EDGES)
@@ -1069,8 +1071,8 @@ class Tasks(unittest.TestCase):
             self.assertIn(f"| {job} | {n} | {nodes} | {most} |", text)
             self.assertIn(f"| {limit} | {cap} |", text)
             self.assertEqual(max(len(c) for c in ft.chunks(ft.expand(job), nodes * 8)), most)
-        self.assertEqual(sum(ft.cap(j) for j in ft.JOBS), 49.5)
-        self.assertEqual({s: sum(ft.cap(j) for j in ft.JOBS if j.startswith(s)) for s in "23"}, {"2": 23.0, "3": 26.5})
+        self.assertEqual(sum(ft.cap(j) for j in ft.JOBS if j != "2a-r"), 49.5)  # the declarations' caps
+        self.assertEqual(round(sum(ft.committed(j) for j in ft.JOBS if j.startswith("3")), 9), 26.5)
 
     def test_2a_0_and_2a_are_the_first_declared_2a_split_as_the_stage_2_table(self):
         self.assertIn("| 2a | 202 | 3 | 9 |", flat(DECL.read_text()))
@@ -1101,6 +1103,51 @@ class Tasks(unittest.TestCase):
             self.assertGreaterEqual(ft.hours(spec["limit"]) * 3600, 1.25 * secs)
         self.assertIn(f"| {ft.cap('2b') + ft.cap('2c') + 9.0:.2f} |", text)
 
+    def test_2a_r_is_the_unmade_and_the_quarantined_under_one_node(self):
+        half = [("pilot", "half", 2_600_000 + i) for i in range(8)]
+        rerun = [("derivation", "derivation", u) for u in ("2p2h_0", "2p2h_1", "2p2h_2", "AGKYxF1pi_0")]
+        self.assertEqual(ft.expand("2a-r"), half + rerun)
+        self.assertTrue(set(ft.DERIVATION_RERUN) <= set(ft.derivation_universes("rest")))  # 2a's, never 2a-0's
+        self.assertEqual([len(c) for c in ft.chunks(ft.expand("2a-r"), 8)], [2, 2, 2, 2, 1, 1, 1, 1])
+        self.assertEqual((ft.JOBS["2a-r"]["nodes"], ft.JOBS["2a-r"]["limit"], ft.cap("2a-r")), (1, "01:00:00", 1.0))
+        self.assertEqual(len(ft.submit_lines("2a-r", DEP, "abc")), 1)
+        text = flat(AMEND1.read_text())
+        wall = ft.JOBS["2a-r"]["most_per_lane"] * 832
+        self.assertIn(f"| 1 | 8 | 2 | {wall:,} s | 1:00 | 1.00 |", text)  # the amendment's job table
+        self.assertGreaterEqual(ft.hours(ft.JOBS["2a-r"]["limit"]) * 3600, 1.25 * wall)
+        total = sum(ft.committed(j) for j in ft.JOBS if j.startswith("2"))
+        self.assertIn(f"| stage 2 | | | {total:.3f} ≤ 23.00 |", text)  # the amendment's ceiling table
+
+    def test_the_ledgered_charges_are_the_committed_ledger_rows(self):
+        got: dict = {}
+        for line in LEDGER.read_text().splitlines():
+            if line.startswith("#"):
+                continue
+            jobid, name, state, code, elapsed, nnodes = line.split("|")[:6]
+            h, m, sec = (int(v) for v in elapsed.split(":"))
+            job = re.fullmatch(r"fd1b(.+)n\d+", name).group(1)
+            got.setdefault(job, []).append((int(nnodes), 3600 * h + 60 * m + sec))
+        self.assertEqual({j: sorted(v) for j, v in got.items()}, {j: sorted(v) for j, v in ft.CHARGED_NODE_S.items()})
+
+    def test_an_ended_job_counts_at_its_charge_and_a_charge_above_its_cap_refuses(self):
+        self.assertAlmostEqual(ft.committed("2a-0"), 834 / 3600)
+        self.assertAlmostEqual(ft.committed("2a"), (6022 + 6046 + 6037) / 3600)
+        self.assertEqual(ft.committed("2b"), 5.0)  # not ended: its cap
+        self.assertAlmostEqual(sum(ft.committed(j) for j in ft.JOBS if j.startswith("2")), 20.26083333, places=6)
+        self.assertGreater(sum(ft.cap(j) for j in ft.JOBS if j.startswith("2")), 23.0)  # the cap-sum reading refuses
+        with mock.patch.dict(ft.CHARGED_NODE_S, {"2a-0": ((1, 3601),)}):
+            with self.assertRaisesRegex(SystemExit, "exceeds its cap"):
+                ft.committed("2a-0")
+            with self.assertRaisesRegex(SystemExit, "exceeds its cap"):
+                ft.submit_lines("2a-r", DEP, "abc")
+        with mock.patch.dict(ft.CHARGED_NODE_S, {"2a-0": ((1, 3600),)}):
+            self.assertEqual(ft.committed("2a-0"), 1.0)  # at its cap exactly, accepted
+
+    def test_an_ended_job_is_not_submitted_again(self):
+        for job in ("2a-0", "2a"):
+            with self.assertRaisesRegex(SystemExit, "has ended"):
+                ft.submit_lines(job, DEP, "abc")
+
     def test_a_derivation_selection_off_s1s_universes_is_refused(self):
         with mock.patch.object(ft, "DERIVATION_FIRST", ("CV", "Flux_100")), self.assertRaisesRegex(SystemExit, "S1"):
             ft.expand("2a-0")
@@ -1111,6 +1158,8 @@ class Tasks(unittest.TestCase):
     def test_every_declared_toy_and_universe_runs_exactly_once(self):
         got: dict = {}
         for job in ft.JOBS:
+            if job == "2a-r":  # amendment 1's rerun, held to its own test
+                continue
             for arm, mode, x in ft.expand(job):
                 got.setdefault((arm, mode), []).append(x)
         for arm in ("control", "g18", "ar23"):
@@ -1142,7 +1191,7 @@ class Tasks(unittest.TestCase):
         self.assertIn("#SBATCH --exclusive", packer)
         self.assertIn("#SBATCH --no-requeue", packer)
         self.assertIn("#SBATCH --nodes=1", packer)
-        for job in ft.JOBS:
+        for job in [j for j in ft.JOBS if j not in ft.CHARGED_NODE_S]:
             lines = ft.submit_lines(job, DEP, "abc")
             self.assertEqual(len(lines), ft.JOBS[job]["nodes"])
             for n, line in enumerate(lines):
@@ -1171,8 +1220,9 @@ class Tasks(unittest.TestCase):
         with mock.patch.dict(ft.JOBS, {"2b": dict(ft.JOBS["2b"], limit="02:00:00")}), \
                 self.assertRaisesRegex(SystemExit, "declared"):
             ft.submit_lines("2b", DEP, "abc")
-        # 3 nodes x 2.5 h = 7.5 declared, but stage 2 is then 25.5 > 23.0: only the ceiling can refuse
-        with mock.patch.dict(ft.JOBS, {"2b": dict(ft.JOBS["2b"], nodes=3)}), mock.patch.dict(ft.DECLARED_CAPS, {"2b": 7.5}), \
+        # 4 nodes x 2.5 h = 10.0 declared, but stage 2 then counts 0.23 + 5.03 + 1 + 10 + 9 = 25.26 > 23.0: only the
+        # ceiling can refuse
+        with mock.patch.dict(ft.JOBS, {"2b": dict(ft.JOBS["2b"], nodes=4)}), mock.patch.dict(ft.DECLARED_CAPS, {"2b": 10.0}), \
                 self.assertRaisesRegex(SystemExit, "ceiling"):
             ft.submit_lines("2b", DEP, "abc")
         with mock.patch.dict(ft.JOBS, {"2b": dict(ft.JOBS["2b"], most_per_lane=6)}), self.assertRaises(SystemExit):

@@ -52,6 +52,9 @@ the merge. Each check is its own named step, and every step runs even when an ea
 - the note checkers' tests: `pytest` on `docs/analysis-note/test_check_sec4_receipts.py` (one pinned package,
   `pytest==8.3.4`, is installed for it), and `check_note_records.py --self-test` (on `records-inventory-base.json`)
   and `--self-test-pin`. `build_all.sh` runs the checkers themselves locally, not these tests;
+- `build_all.sh`'s own harness, `pytest` on `docs/analysis-note/test_build_all.py` (since 2026-11-01): the real script
+  in a sandbox with a fake `latexmk` and `pdftotext` and stubbed checkers and generators, in both directions. It
+  needs no LaTeX;
 - the source layout: `docs/analysis-note/reflow_tex.py --note --check` fails when any hand-written note source
   splits a prose paragraph or a comment block over several lines
   (`DECISION-20261026-joseph-fps-scope-r04-sensitivity-and-tex-reflow.md` section 3; generated files, and the

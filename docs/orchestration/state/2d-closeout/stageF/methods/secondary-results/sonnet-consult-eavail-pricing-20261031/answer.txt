@@ -1,0 +1,55 @@
+**Referee read of the E_avail 135 vs 139.57 MeV pricing** (read-only, from the four files only; I could not see the code)
+
+**1. Is the reasoning sound?**
+
+(a) **The exact-substitute claim.** It is exact if two conditions hold, and the assessment does not show either.
+- E_avail has to be a plain sum of (E_π − m) over π± plus the other terms. Then 139.57 differs from 135 by exactly 4.57 MeV × n_π±.
+- `MC_npip` has to count the same π± as `GetEAvailableTrue` sums over. The two are separate functions (`CVUniverse.h:257-265` versus `:361-374`). The assessment only shows that `MC_npip` uses an E − 139.57 > 0 test.
+
+The stated exception is essentially empty. A real π± has E ≥ 139.57, so the only pions affected are those at rest or lost to float rounding. The real risks are the ones I just listed, plus these:
+- units (GeV vs MeV);
+- float32 rounding at bin edges, which I infer is negligible;
+- the "control" through MP-2's join, which covers only analysis rows, not the truth-denominator rows.
+
+I would not rely on the join control alone. Rerun the event loop on one small file at 139.57, and compare it event by event with `MC_eavail − 0.00457·MC_npip` on both truth trees. This should cost minutes of CPU.
+
+(b) **The 2D result.** I think it is right, with one condition: no truth-level signal definition, tune weight or background weight uses truth E_avail. The assessment checks the unfold code but not the event-loop inputs. This is cheap to verify. Compare the 2D inputs before and after the shift. The 3D marginal's 0.141% agreement with 2D does move, as the assessment notes.
+
+(c) **The bracket.** It is credible as an order of magnitude. The fraction 4.57/700 = 0.653% is arithmetically right, and 0.1–2% per pion matches it. Weaknesses:
+- It assumes exactly one π± near 0.8 GeV. The true multiplicity there is unknown and could be above 1, so the bound is not conservative.
+- The density at the 0.8 edge is guessed from a coarse bin.
+- The shifts are coherent. Cells above 0.8 lose, cells below gain, and the same shift applies to every generator prediction. Quoting each cell against its diagonal σ therefore understates a shape or χ² effect.
+
+Step 0 is the right measurement, but I would change its design. A prior-level count answers the wrong question. Apply the exact shift to the MC events carrying the nominal unfolded OmniFold weights. That gives the unfolded effect directly, neglecting only retraining. (Inference: per-event weights are stored. Please check.) Then run one seed-matched unfold at 139.57 for under 1 node-h. Compare its difference from the 135 unfold with C_seed, to measure the retraining term instead of asserting it is second order.
+
+**2. Is keeping 135 with a disclosure acceptable?**
+
+Physically, yes. The shift is about 0.65% of the [0.8, 1.5) bin per pion, and a referee would not require the switch. Two cautions:
+- **The disclosure sentence as drafted is misleading.** Your own definition record measures a much larger departure from the open published convention (K±, p̄, strange baryons, neutral kaons). It is +212 MeV/event with 4.8% of events changing truth bin, against 0.67% for the pion constant. A sentence saying the definition departs "by 4.57 MeV per charged pion" reads as the only departure. Do not write "only". Name the species differences too. The record already says there is no single published definition, so "MINERvA's published E_avail" overstates what exists.
+- **A referee may ask why a charged-pion kinetic energy subtracts the π⁰ mass.** "Because it is inherited" is a weak answer, and "defined constant" can look like a bug relabelled as a definition. A measured size in σ units answers that question, so quote it.
+
+**3. Which option, and what threshold?**
+
+Because the species gap is larger than the pion constant, switching 135 alone buys little comparability. Option (c) is not worth 208 node-h. Between (a) and (b), I would use these thresholds on the step-0 result (my judgement, not a standard):
+- Choose (a) if max |Δ|/σ is below about 0.15 and the full-covariance norm of the shift vector is below about 0.3 σ. This is likely, but the interpolated R06 bound (0.32σ) is above that line, so step 0 decides it.
+- Choose (b) if any cell is at or above about 0.25σ, or if the full-covariance norm is at or above about 0.5 σ.
+- Between those, take (b) only if the files survive.
+
+A mixed-definition document is acceptable if each printed number is tagged and no number from a 135 product is compared with one from a 139.57 product. The validation studies characterize the estimator, so their validity is unaffected. But the following would need care:
+- the joint test and its calibration, if the paper quotes the joint test as describing the 16-cell result;
+- the F0 grade;
+- the Ascencio cross-check's 11% migration figure;
+- the 3D marginal agreement.
+
+If any of those is quoted next to the result, it needs the same definition.
+
+**4. What the assessment misses**
+
+- **Retention.** The pscratch exposure date of 2026-11-09 makes keeping the files cheap insurance (about 320 GiB) whichever option you choose. Also confirm that the lateral, 5B and bank files carry `MC_npip`.
+- **Hidden costs.** The real cost is records, not node-h. There are about 1,243 generated keys, about 134 hand-typed numbers and hash-pinned ledgers. The `make_values` hard asserts may trip, for example the R04 smallest-σ assert.
+- **Doc drift.** `EAVAIL_DEFINITION.md` lists six sites and the assessment lists seven. Fix the doc whichever way you go.
+- **Two closure figures have no tracked producer.** That is a standing reproducibility defect independent of this decision.
+- **Constants.** If you switch, rename `M_PION_EAVAIL` in `pointcloud_projection.py` so it stays distinguishable from `M_PI`. Also add a test that all seven sites agree.
+- **Net conservation.** The bracket shows a 0.081% net move across the 16 cells. That should be zero if the cells partition the space, so explain it.
+
+**Recommendation.** Do the step-0 measurement and the one-file exactness rerun now, and keep the event-loop files regardless. If the unfolded effect is below about 0.15σ per cell, keep 135. In that case rewrite the disclosure to name both the pion constant and the species differences, and quote the measured size. If it is above about 0.25σ, do the scoped switch (b), with all seven sites in one commit, a tagged definition on every printed number, and the joint test and F0 grade kept on the same definition as the result they describe. I would not buy (c).

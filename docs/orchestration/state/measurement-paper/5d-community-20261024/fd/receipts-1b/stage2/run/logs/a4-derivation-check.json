@@ -1,0 +1,46 @@
+{
+ "label": "DERIVATION",
+ "s1_npz_sha256": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+ "blocks": 46,
+ "seed_block_max_abs_rel": 0.0,
+ "M_d_equals_C_e_minus_seed_rel": 9.226683201400865e-19,
+ "surrogate_share_of_C_e_trace": 0.28993761711911276,
+ "lateral_blocks_reproduced_rtol_1e-10": [
+  "BeamAngleX",
+  "BeamAngleY",
+  "MuonResolution",
+  "Muon_Energy_MINERvA",
+  "Muon_Energy_MINOS"
+ ],
+ "M_d_relative_eigen": {
+  "min": 1.080405255253311e-05,
+  "max": 0.03130376795811989,
+  "cond": 2897.4098196866357
+ },
+ "reported_relative_eigen": {
+  "min": 1.881100671781899e-05,
+  "max": 0.05148861000767766,
+  "cond": 2737.153347508209
+ },
+ "expected_overcoverage_context_only": {
+  "c1_mean": 0.7909639866545402,
+  "c1_min": 0.7006940444232204,
+  "c2_mean": 0.9832485901580075,
+  "sigma_ratio_min": 1.0379228906697264,
+  "sigma_ratio_max": 1.845617297347002
+ },
+ "bank_interaction_bands": 33,
+ "bank_groups_equal_scorer_groups": true,
+ "bank_flux_ids_0_99": true,
+ "flux_probabilities": {
+  "sum": 0.9999999999999999,
+  "n_eff": 19.060534772246488,
+  "max": 0.12773176698465924
+ },
+ "truth_ratio_sha256": {
+  "genie_v3_g18": "25477aaeaf7b58ed87e9bf70ced3cd9bf2b0ae2a3e6d4cbc08b9e8f7378c95b4",
+  "genie_v3_ar23": "eab33d6d8479dc23fce4ab3f22bba36100a6c8b3dee8570f1c3071a1da582fc2"
+ },
+ "numpy": "1.26.4",
+ "python": "3.11.14"
+}

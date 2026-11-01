@@ -1,0 +1,11 @@
+host=login37 now=2026-10-31T21:07:42Z
+60624652|fd1b2an0|FAILED|1:0|01:40:22|1|2026-10-31T12:26:06|2026-10-31T14:06:28
+  steps not COMPLETED 0:0: 2
+60624653|fd1b2an1|COMPLETED|0:0|01:40:46|1|2026-10-31T12:26:06|2026-10-31T14:06:52
+  steps not COMPLETED 0:0: 0
+60624654|fd1b2an2|COMPLETED|0:0|01:40:37|1|2026-10-31T12:26:06|2026-10-31T14:06:43
+  steps not COMPLETED 0:0: 0
+lane rc!=0: 0
+products: derivation=172 pilot=16 pilot-half=2
+STOP: a 2a job or step did not complete 0:0
+ssh_rc=2

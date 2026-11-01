@@ -1,0 +1,7 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are checking edits to a physics analysis note. Each numbered pair has a BEFORE passage and an AFTER passage, in the note's LaTeX source. For each pair, compare AFTER with BEFORE only, and list EVERY difference in meaning between them: each fact, number, qualifier, limitation, attribution or claim that AFTER adds, drops, changes, strengthens or weakens. Do not judge which version is correct, and ignore differences of layout or LaTeX markup that do not change what a reader is told. If the two say the same thing, say NONE.
+
+Answer in this format, one block per pair, in order:
+Qn: DIFFERENCES: NONE, or a numbered list, each item quoting the words concerned in BEFORE and in AFTER
+End with a line: END

@@ -1,0 +1,66 @@
+host=login37 now=2026-10-31T19:24:40Z state=[COMPLETED]
+60623576|fd1b2a-0n0|COMPLETED|0:0|00:13:54|1|2026-10-31T12:10:33|2026-10-31T12:24:27
+--- steps
+60623576|COMPLETED|0:0|00:13:54
+60623576.batch|COMPLETED|0:0|00:13:54
+60623576.extern|COMPLETED|0:0|00:13:54
+60623576.0|COMPLETED|0:0|00:13:12
+60623576.1|COMPLETED|0:0|00:12:09
+60623576.2|COMPLETED|0:0|00:12:02
+60623576.3|COMPLETED|0:0|00:13:50
+60623576.4|COMPLETED|0:0|00:12:52
+60623576.5|COMPLETED|0:0|00:11:30
+60623576.6|COMPLETED|0:0|00:06:26
+60623576.7|COMPLETED|0:0|00:06:24
+--- lane rc
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[f1-lane] fd1b_2a-0_pilot_toy_2600000 rc=0 end=2026-10-31T19:22:45Z
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[s5c] task=4 name=fd1b_2a-0_lane4 rc=0 end=2026-10-31T19:22:45Z
+{"out": "fd1b_pilot_s2600001.npz", "rc": 0, "seconds_unfold": 692.633}
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[f1-lane] fd1b_2a-0_pilot_toy_2600001 rc=0 end=2026-10-31T19:22:39Z
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[s5c] task=5 name=fd1b_2a-0_lane5 rc=0 end=2026-10-31T19:22:39Z
+{"out": "fd1b_repro-g18_s806000.npz", "rc": 0, "seconds_unfold": 350.284}
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[f1-lane] fd1b_2a-0_repro-g18_half_806000 rc=0 end=2026-10-31T19:17:00Z
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[s5c] task=6 name=fd1b_2a-0_lane6 rc=0 end=2026-10-31T19:17:01Z
+{"out": "fd1b_repro-ar23_s807000.npz", "rc": 0, "seconds_unfold": 350.115}
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[f1-lane] fd1b_2a-0_repro-ar23_half_807000 rc=0 end=2026-10-31T19:17:02Z
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[s5c] task=7 name=fd1b_2a-0_lane7 rc=0 end=2026-10-31T19:17:03Z
+[timing] 2026-10-31T19:24:27.820Z lines 0..7 done rc=0
+--- products
+/pscratch/sd/j/josephrb/fd-1b-20261030/runs/derivation:
+fd1b_derivation_CV.npz
+fd1b_derivation_Flux_0.npz
+fd1b_derivation_GEANT_Pion_0.npz
+fd1b_derivation_MaRES_1.npz
+
+/pscratch/sd/j/josephrb/fd-1b-20261030/runs/pilot:
+fd1b_pilot_s2600000.npz
+fd1b_pilot_s2600001.npz
+
+/pscratch/sd/j/josephrb/fd-1b-20261030/runs/repro-ar23:
+fd1b_repro-ar23_s807000.npz
+
+/pscratch/sd/j/josephrb/fd-1b-20261030/runs/repro-g18:
+fd1b_repro-g18_s806000.npz
+repro rc=0
+{"out": "/pscratch/sd/j/josephrb/fd-1b-20261030/score/repro.json", "verdict": "PASS"}
+walls rc=0
+{"out": "/pscratch/sd/j/josephrb/fd-1b-20261030/score/walls-2a-0.json", "verdict": "PASS"}
+{"2a_fullest_lane_s": 7244.506, "limit_s": 7680.0, "largest_seconds_unfold": 801.386, "largest_seconds_load": 16.016, "largest_peak_rss_kib": 18175300, "rss_limit_kib": 44040192}
+fd1b_derivation_CV.npz 13.183 656.768 18103416
+fd1b_derivation_Flux_0.npz 13.182 760.714 17980028
+fd1b_derivation_MaRES_1.npz 13.129 801.386 18175300
+fd1b_derivation_GEANT_Pion_0.npz 13.187 739.012 18139728
+fd1b_pilot_s2600000.npz 13.093 699.283 16109244
+fd1b_pilot_s2600001.npz 13.124 692.633 16068364
+fd1b_repro-g18_s806000.npz 13.176 350.284 10678108
+fd1b_repro-ar23_s807000.npz 16.016 350.115 10657700
+{"label": "DERIVATION", "rows": [{"ours": "fd1b_repro-g18_s806000.npz", "f1c": "pe/genie_v3_g18/ratio_nd_a1_s806000.npz", "bitwise_equal": true}, {"ours": "fd1b_repro-ar23_s807000.npz", "f1c": "pe/genie_v3_ar23/ratio_nd_a1_s807000.npz", "bitwise_equal": true}], "verdict": "PASS"}
+ssh_rc=0

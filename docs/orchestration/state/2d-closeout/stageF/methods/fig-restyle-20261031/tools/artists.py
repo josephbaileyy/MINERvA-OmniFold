@@ -16,7 +16,11 @@ RESTYLE AMENDMENT 1 adds, per item, "dhash" (the same hash with the colour field
 edge, cmap) and "colours" (those fields as hex strings), so that compare.py --recolour can hold the data bit for bit
 while checking each series' colour against the palette; "gid" (a patch drawn by Axes.hist carries
 "restyle-hist", set by capture.py); and items of kind "hist-input", one per Axes.hist call (capture.py), hashing the
-values hist was given, which compare.py's named binning exception compares bit for bit."""
+values hist was given, which compare.py's named binning exception compares bit for bit.
+RESTYLE AMENDMENT 2 adds, per item, "xhash" (the hash with the colour fields and the line-style fields left out:
+linestyle, marker, drawstyle) and "style" (those three fields), so that compare.py --styles can hold the data bit for
+bit while checking each series' line and marker against its identity's declared style; and legend_texts(fig), the
+legend entries names.py checks against each identity's one name."""
 import hashlib
 import json
 
@@ -36,6 +40,7 @@ def _num(x):
 
 
 COLOUR_FIELDS = ("color", "mfc", "mec", "face", "edge", "cmap")
+STYLE_FIELDS = ("linestyle", "marker", "drawstyle")
 
 
 def _hex(v):
@@ -46,10 +51,11 @@ def _hex(v):
 def _item(kind, fields):
     h = hashlib.sha256(kind.encode())
     d = hashlib.sha256(kind.encode())
+    xh = hashlib.sha256(kind.encode())
     arrays = {}
     for k in sorted(fields):
         v = fields[k]
-        hs = (h,) if k in COLOUR_FIELDS else (h, d)
+        hs = (h,) if k in COLOUR_FIELDS else (h, d) if k in STYLE_FIELDS else (h, d, xh)
         for x in hs:
             x.update(b"\0" + k.encode() + b"\0")
         if isinstance(v, str):
@@ -65,7 +71,8 @@ def _item(kind, fields):
                 x.update(b"mask" + np.ascontiguousarray(m).tobytes())
             arrays[k + ".mask"] = m
     colours = {k: (fields[k] if isinstance(fields[k], str) else _hex(fields[k])) for k in fields if k in COLOUR_FIELDS}
-    return h.hexdigest(), d.hexdigest(), colours, arrays
+    style = {k: fields[k] for k in fields if k in STYLE_FIELDS}
+    return h.hexdigest(), d.hexdigest(), xh.hexdigest(), colours, style, arrays
 
 
 def _in_data(artist, ax):
@@ -134,14 +141,24 @@ def hist_inputs(fig):
 def collect(fig):
     arrays, index = {}, []
     for i, (kind, n, label, fields, gid) in enumerate(list(items(fig)) + list(hist_inputs(fig))):
-        h, dh, colours, arr = _item(kind, fields)
+        h, dh, xh, colours, style, arr = _item(kind, fields)
         for k, v in arr.items():
             arrays[f"i{i}.{k}"] = v
         ax = fig.axes[n] if n is not None else None
-        index.append({"i": i, "kind": kind, "axes": n, "label": str(label), "hash": h, "dhash": dh,
-                      "colours": colours, "gid": gid,
+        index.append({"i": i, "kind": kind, "axes": n, "label": str(label), "hash": h, "dhash": dh, "xhash": xh,
+                      "colours": colours, "style": style, "gid": gid,
                       "scale": [ax.get_xscale(), ax.get_yscale()] if ax is not None else None})
     return arrays, index
+
+
+def legend_texts(fig):
+    """(axes index, text) for every entry of every legend the figure draws (axes and figure legends)."""
+    out = []
+    for n, ax in enumerate(fig.axes):
+        if ax.get_legend() is not None:
+            out += [(n, t.get_text()) for t in ax.get_legend().get_texts()]
+    out += [(None, t.get_text()) for leg in fig.legends for t in leg.get_texts()]
+    return out
 
 
 def texts(fig):

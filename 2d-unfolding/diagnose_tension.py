@@ -279,14 +279,19 @@ def _plots(lam, lam_max, contrib, order, U, d, per_bin, mask, args, n, chi2_mode
         fig, axs = plt.subplots(1, 2, figsize=(13, 5))
     else:
         fig, axs = plt.subplots(2, 1, figsize=(rs.WIDTH["spectrum"], 2.6))
-    axs[0].semilogy(np.sort(lam / lam_max)[::-1], ".-", ms=ms, **({} if not restyled else {"lw": 0.8}))
+    # amendment 2: in the restyle the curves are dark grey and the reference line mid grey, since red now means This
+    # work in the series figures (restyle_2026_10.NEUTRAL)
+    axs[0].semilogy(np.sort(lam / lam_max)[::-1], ".-", ms=ms,
+                    **({} if not restyled else {"lw": 0.8, "color": rs.NEUTRAL["curve"]}))
     axs[0].set_xlabel("mode (largest -> smallest lambda)" if not restyled else r"Mode, by eigenvalue $\lambda$ (largest first)")
     axs[0].set_ylabel("lambda / lambda_max" if not restyled else r"$\lambda/\lambda_{\max}$")
     axs[0].set_title("Paper TotalCov eigenvalue spectrum (205 reported bins)")
     axs[0].grid(alpha=0.3)
     cum = np.cumsum(contrib[order]) / chi2_modes
-    axs[1].plot(np.arange(1, n + 1), cum, ".-", ms=ms, **({} if not restyled else {"lw": 0.8}))
-    axs[1].axhline(0.9, color="r", ls="--", lw=0.8, label="90% of chi^2" if not restyled else r"90% of $\chi^2$")
+    axs[1].plot(np.arange(1, n + 1), cum, ".-", ms=ms,
+                **({} if not restyled else {"lw": 0.8, "color": rs.NEUTRAL["curve"]}))
+    axs[1].axhline(0.9, color="r" if not restyled else rs.NEUTRAL["reference"], ls="--", lw=0.8,
+                   label="90% of chi^2" if not restyled else r"90% of $\chi^2$")
     axs[1].set_xlabel("modes ranked by chi^2 contribution" if not restyled else r"Modes, by $\chi^2$ contribution")
     axs[1].set_ylabel("cumulative chi^2 fraction" if not restyled else r"Cumulative $\chi^2$ fraction")
     axs[1].set_title("How few modes carry the chi^2")

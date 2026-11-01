@@ -1,0 +1,16 @@
+host=login37 start=2026-11-01T01:33:07Z
+-rw-rw---- 1 josephrb josephrb 41134080 Oct 31 18:33 /pscratch/sd/j/josephrb/fd-1b-20261030/stage2.tar
+ef432a3e3ecb45eb558991b0c135d1a3096f03994224bd2ef6529ae1df937f56  /pscratch/sd/j/josephrb/fd-1b-20261030/stage2.tar
+mkdir: /home/j/josephrb/fd-1b-20261030
+put  '/pscratch/sd/j/josephrb/fd-1b-20261030/stage2.tar' : '/home/j/josephrb/fd-1b-20261030/stage2.tar' ( 41134080 bytes, 631093.0 KBS (cos=4))
+put rc=0
+6f0b83a5f315b50562ce39f9933aa358 (md5) /home/j/josephrb/fd-1b-20261030/stage2.tar
+hashverify rc=0
+/home/j/josephrb/fd-1b-20261030/stage2.tar: (md5) OK
+fd-1b-20261030:
+-rw-r-----    1 josephrb  josephrb    41134080 Oct 31 18:33 stage2.tar
+get  '/pscratch/sd/j/josephrb/fd-1b-20261030/stage2-retrieved.tar' : '/home/j/josephrb/fd-1b-20261030/stage2.tar' (2026/10/31 18:33:09 41134080 bytes, 634402.1 KBS )
+retrieval cmp: identical
+ef432a3e3ecb45eb558991b0c135d1a3096f03994224bd2ef6529ae1df937f56  /pscratch/sd/j/josephrb/fd-1b-20261030/stage2-retrieved.tar
+done 2026-11-01T01:33:12Z
+ssh_rc=0

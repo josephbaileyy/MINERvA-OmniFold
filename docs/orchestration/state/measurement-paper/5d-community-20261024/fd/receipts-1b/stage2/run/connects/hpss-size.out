@@ -1,0 +1,14 @@
+host=login37 now=2026-11-01T01:32:55Z
+39895668	/pscratch/sd/j/josephrb/fd-1b-20261030/runs
+20000	/pscratch/sd/j/josephrb/fd-1b-20261030/logs
+104502	/pscratch/sd/j/josephrb/fd-1b-20261030/score
+374747	/pscratch/sd/j/josephrb/fd-1b-20261030/quarantine
+170298	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json
+40565215	total
+ls: cannot access '/pscratch/sd/j/josephrb/fd-1b-20261030/stage2.tar': No such file or directory
+*** ls: No such file or directory [-2: HPSS_ENOENT] 
+    /home/j/josephrb/fd-1b-20261030
+935270287	96	/home/j/josephrb/
+-----------------------
+935270287	total 512-byte blocks, 96 Files (478,858,386,760 bytes)
+ssh_rc=0
