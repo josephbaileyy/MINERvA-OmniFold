@@ -1,9 +1,9 @@
 # RESTYLE AMENDMENT 2: red for This work, and one style and one name per series (2026-10-31, paper rewrite lane)
 
 **Status.** For the director to bind, with its code.
-- **Done:** the code, its tests and the mutation receipt are committed (§4).
+- **Done:** the code, its tests and the mutation receipt are committed (§4). The dry run of the run driver passed
+  (§5), under the director's approval of 2026-10-31.
 - **Not done:**
-  - the dry run of the run driver, which needs the director's approval for dev draws on login37 (pending approval, §5);
   - the bound rerun;
   - Joseph's third look;
   - the install.
@@ -160,10 +160,17 @@ each with the identity whose style it must take.
     run's `run/` and amendment 1's `run-a1/` stay.
   - Login node only, 0 node-h, inputs read-only.
 - **Outputs:** `run-a2/`, `figs-a2/` and `review-a2/`, beside the earlier runs' directories, which stay as the history.
-- **Dry run:** pending approval. `RESTYLE_RUN_ROOT=<dev>/runtest-a2 run.sh bab87aeb3 <head>` needs the director's
-  approval for dev draws, under the same terms as before. Its outputs would not be installed or committed. It is the
-  first test of restyle.tsv against a real capture, and of the producers' restyle paths, which need ROOT and the inputs
-  and cannot run locally.
+- **Dry run** (dev, approved by the director on 2026-10-31 under the same terms as before; outputs not installed or
+  committed): `RESTYLE_RUN_ROOT=/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/dev/runtest-a2 run.sh bab87aeb3
+  c3dbe30f4`, on a login node at 0 node-h. `RUN CHECKS :: PASS`. It was the first test of restyle.tsv against a real
+  capture and of the producers' restyle paths:
+  - check 2: 22 of 22 pixel-equal ("before" and "off" against the committed copies);
+  - check 3: `COMPARE :: PASS` with the palette, the styles and restyle tables and the pull figure's exception
+    ("colours as the palette maps them, line styles as declared" in every figure);
+  - names: `NAMES :: PASS` (18 legend entries in 11 figures);
+  - check 7: 5.00–5.92 pt; `OVERLAP :: PASS`; no raw `_` or `^`.
+  - Seen by eye: in `model_comp_projections` the Published squares sit almost wholly behind This work's circles,
+    since the two agree to about 1 %. That is the data, not a drawing defect; Joseph's third look can judge it.
 
 ## 6. Captions, for the install round (STEP4 part 2)
 
@@ -202,7 +209,7 @@ These are truth fixes, made with the install:
 
 ## 8. After binding
 
-1. The dry run, if approved, then the bound rerun into `run-a2`.
+1. The bound rerun into `run-a2` (the dry run passed, §5).
 2. New sheets, `review-a2/`, for Joseph's third look.
 3. Then the install (DECLARATION.md §5, with `figs-a2/`), with STEP4's T3, R and T6 and §6's caption fixes, in their
    own PR.
