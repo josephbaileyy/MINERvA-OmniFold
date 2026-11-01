@@ -53,8 +53,8 @@ Move a row here only after Joseph's verbatim choice is captured.
   - The price is
     [`ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md`](ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md)
     (#622).
-  - Its §7 measures the switch's first-order size on the 16 reported cells: at most 0.21σ per cell, and 0.42σ as one
-    coherent shift.
+  - Its §7 measures the switch's first-order size on the 16 reported cells: at most 0.19σ per cell, and 0.42σ as one
+    coherent shift, under the reported covariance (0.21σ and 0.42σ without the run-period block C_PL,5D).
 - Kept 2026-11-01: Joseph verbatim "Keep 135 (Recommended)" (sha256 of the text plus a final newline begins
   `d13ef6f830671ea8`).
   - Recorded in [`DECISION-20261101-joseph-eavail-keep-135.md`](DECISION-20261101-joseph-eavail-keep-135.md) (#636).

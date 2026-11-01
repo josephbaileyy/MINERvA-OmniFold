@@ -38,8 +38,10 @@ sample. Any statement that this analysis "matches the published E_avail definiti
 paper is a claim we cannot support and should not be made.
 
 The charged-pion half of the convention is **settled and matches the νe reference**: arXiv:2312.16631
-Eq. 4 reads `E_avail = Σ_p T_p + Σ_π± T_π± + Σ_π0 E_π0` — kinetic for protons and charged pions, total
-for π⁰. Ours agrees. (`minerva-ml` uses total energy for charged pions, which adds ~140 MeV/pion; that
+Eq. 4 is the closed three-term sum `E_avail = Σ_p T_p + Σ_π± T_π± + Σ_π0 E_π0` — kinetic for protons and
+charged pions, total for π⁰. Ours agrees, up to the `135` MeV constant (§3). The sentence after the equation, not
+the equation itself, adds the weak decay products of strange or heavier-quark baryons; we do not implement that
+clause (§2, last paragraphs). (Both checked against the arXiv v2 PDF, 2026-11-01.) (`minerva-ml` uses total energy for charged pions, which adds ~140 MeV/pion; that
 is a defect in that code, not in ours. **The same comparison runs the other way on e±, where
 `minerva-ml` matches the νμ paper and we do not** — see §2 and §5(6). Both halves are stated here so
 neither is read alone.)
@@ -77,9 +79,14 @@ The fidelity figure is **37.6× smaller than the effect it measures** (`4.837 / 
 makes the comparison sound. (`OI-56` rounds this to "37×"; both are the same operands.) It is computed from `part_gen[:,:,4]` of `G2_FPS_MEFHC_P12.npz` (49,152,885 rows) — raw PDG
 codes, no ROOT and no event-loop rerun.
 
-**One clause is inert on this sample rather than unresolved.** Eq. 4's "strange, *or heavier quark*"
-extension: η (221), η′ (331) and K⁰_S (310) are **zero across all 49.15M rows** — GENIE emits 311/130 —
-and there are no charm baryons. So the extension has nothing to act on here.
+**Half of one clause is inert on this sample; the other half is not.** The sentence after arXiv:2312.16631
+Eq. 4 (§1) reads: *"The weak decay products of strange, or heavier quark, baryons are included by adding their
+total energies to the sum, and by subtracting (or adding) a nucleon mass in the case of baryons (antibaryons)."*
+There are no charm baryons in the sample, so its *heavier-quark* part has nothing to act on here. Its *strange*
+part does: Λ and Σ are in the sample, we exclude them (the list above), and catching them directly adds 48.89
+MeV/signal event ([OI-30 advisory](https://github.com/josephbaileyy/MINERvA-OmniFold/blob/0b329e8ae8482e6334a68faf947fc80ae7265ac9/docs/orchestration/ADVISORY-20260813-oi30-eavail-residuals.md)
+§3–§4). The clause names baryons only, so it does not cover the neutral mesons of the open list. Of those, η (221),
+η′ (331) and K⁰_S (310) are **zero across all 49.15M rows** (GENIE emits 311/130).
 
 **The e± case cuts against us and is stated for that reason.** Rodrigues includes electron total
 energy. We exclude it. On this one species `minerva-ml` matches the νμ paper and **we do not**.
@@ -115,8 +122,8 @@ The results:
 
 | quantity | value |
 |---|---|
-| largest cell move, prior level / first-order unfolded | **−1.26 % / −1.23 %** (R06), **0.21 σ** of the reported C_total + C_resp |
-| the whole 16-cell shift, √(ΔᵀC⁻¹Δ) against C_total + C_resp | **0.43 / 0.42** (0.43 / 0.42 with C_PL,5D) |
+| largest cell move, prior level / first-order unfolded | **−1.26 % / −1.23 %** (R06): **0.19 σ** of the reported C_total + C_resp + C_PL,5D (0.21 σ without the run-period block) |
+| the whole 16-cell shift, √(ΔᵀC⁻¹Δ), against the reported C_total + C_resp + C_PL,5D | **0.43 / 0.42** (0.43 / 0.42 without the run-period block) |
 | weight changing fine E_avail bin | 0.646 % |
 | fine E_avail bins | +0.97 % ([0, 0.1)) to −0.35 % ([3, 100)) at prior level |
 | net change of the 16-cell total | 0, to float precision |
@@ -208,7 +215,8 @@ Stated explicitly, because this is the section the rest of the document exists t
    *declare and defend*, arrived at by inheritance; "declared" describes what this document does with
    it, never how it came about.
 3. **Not** that the `135` constant is immaterial in general. Its measured size on the 16 reported cells is at most
-   0.21 σ per cell and 0.42 σ as one coherent shift, to first order (§3; PR #622 §7). That size is stated, not
+   0.19 σ per cell and 0.42 σ as one coherent shift under the reported covariance, to first order (0.21 σ and
+   0.42 σ without the run-period block; §3; PR #622 §7). That size is stated, not
    rounded to zero.
 4. **Not** that we match a neutral "reference implementation." `GENIEXSecExtract`'s `kEAvail`
    kaon/strange-baryon/antibaryon branches were added 2022-03-07 in a commit titled *"adding NuE low
