@@ -14,9 +14,15 @@ Case 4 (#413 at a55e2686, before r19): the first lines of reference [1] were emi
 body, ahead of the ACKNOWLEDGMENTS heading, and the rest of [1] follows the data-availability text. Blinding cuts the
 references at '[1] ', so it dropped the end of the body, the acknowledgments and the data-availability section. Move the
 fragment to just before the rest of [1] and rejoin the paragraph it split. This runs first; cases 1-3 then apply.
+Case 5 (the 5B text round, 2026-10-31): as case 2 (the acknowledgments' tail and both headings first), and the first
+references, [1] to part of [n], were emitted after the acknowledgments' first part and ahead of the data-availability
+text, whose last sentence is followed by the rest of [n] and then [n+1]. Blinding cuts at '[1] ', so it dropped the
+data-availability section. Move the fragment to just before the rest of [n]. This runs after case 4; case 2 then
+applies.
 Fail if the section's first sentence is not found once, if case 2's tail is not the acknowledgments' end, if case 4's
 fragment or its continuation is not where that layout puts them, or if a reference line precedes the heading in a layout
 no case describes. Every move keeps the word multiset."""
+import re
 import sys
 p = sys.argv[1]; L = open(p, encoding="utf-8").read().split("\n")
 words0 = sorted(" ".join(L).split())
@@ -56,6 +62,39 @@ if len(r) == 1 and len(a) == 1 and r[0] < a[0] < h[0]:  # case 4
     assert sorted(" ".join(L).split()) == words0, "word multiset changed"
     open(p, "w", encoding="utf-8").write("\n".join(L))
     print("moved reference [1]'s first %d lines out of the body, to before the rest of [1]" % len(frag))
+if len(r) == 1 and len(a) == 1 and h[0] < a[0] < r[0]:  # case 5
+    b = [i for i, l in enumerate(L) if l.startswith(first)]
+    if len(b) == 1 and r[0] < b[0]:
+        k = r[0]
+        while k < len(L) and L[k].strip():
+            k += 1
+        frag = L[r[0]:k]
+        nums = [int(m.group(1)) for m in (re.match(r"^\[(\d+)\] ", l) for l in frag) if m]
+        if frag[-1].rstrip().endswith((".", "]")) or not nums:
+            sys.exit("FAIL: case 5 layout but the [1] block before the data-availability text is not a fragment")
+        end = [i for i in range(b[0], len(L)) if L[i].rstrip().endswith("does not reproduce.")]
+        if len(end) != 1: sys.exit("FAIL: case 5 layout but the data-availability text's last sentence not found once")
+        c = end[0] + 1
+        while c < len(L) and not L[c].strip():
+            c += 1
+        nxt = [i for i in range(c, len(L)) if L[i].startswith("[")]
+        if c == len(L) or L[c].startswith("[") or not nxt or not L[nxt[0]].startswith("[%d] " % (nums[-1] + 1)) \
+                or nxt[0] - c > 4:
+            sys.exit("FAIL: case 5 layout but the rest of [%d] is not the block between the data-availability text "
+                     "and [%d]" % (nums[-1], nums[-1] + 1))
+        s1 = k
+        while s1 < len(L) and not L[s1].strip():
+            s1 += 1
+        L[c:c] = frag
+        del L[r[0]:s1]
+        r = [i for i, l in enumerate(L) if l.startswith("[1] ")]
+        h = [i for i, l in enumerate(L) if l.strip() == "DATA AVAILABILITY"]
+        a = [i for i, l in enumerate(L) if l.strip() == "ACKNOWLEDGMENTS"]
+        b = [i for i, l in enumerate(L) if l.startswith(first)]
+        assert len(r) == 1 and b[0] < r[0], (b, r)
+        assert sorted(" ".join(L).split()) == words0, "word multiset changed"
+        print("moved references [1] to part of [%d] (%d lines) out of the acknowledgments, to before the rest of [%d]"
+              % (nums[-1], len(frag), nums[-1]))
 if len(a) == 1 and h[0] < a[0]:
     t1 = h[0]
     while t1 > 0 and not L[t1 - 1].strip():  # blank lines between the tail and the heading

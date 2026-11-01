@@ -25,7 +25,7 @@ cl.ABSTRACT = [
     ("5B-a1", r"It is reported in sixteen cells, with a covariance whose median per-cell uncertainty is \fvval{sigmed-C_total_resp}\%.",
      r"It is reported in sixteen cells, with a covariance whose median per-cell uncertainty is \fvval{sigmed-reported}\%."),
     ("5B-a2", r"In a fake-data study, the reported uncertainty does not cover the estimator's bias at GiBUU-like truths or at a synthetic $q_{3}$ tilt.",
-     r"In a fake-data study, the estimator's bias exceeds the stated comparison thresholds at a GiBUU-like truth and at a synthetic $q_{3}$ tilt."),
+     r"In a fake-data study, the estimator's bias exceeds the thresholds set against the reported uncertainty at a GiBUU-like truth and at a synthetic $q_{3}$ tilt."),
 ]
 # set when Joseph approves the revised note abstract as a whole: sha256(old + "\0" + new)[:16] per pair
 cl.ABSTRACT_PINS = {}
