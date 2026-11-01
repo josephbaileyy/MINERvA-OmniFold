@@ -51,6 +51,9 @@ RECORDS = {"app_provenance.tex", "app_history.tex", "app_release_records.tex", "
 PROTECTED = ["values.tex", "values_inference.tex", "values_fived16.tex", "app_history.tex", "main_paper.tex",
              "paper_body.tex"]
 PAIRED = "main_note.tex"
+# labels a round removes by decision, per batch file (a round's wrapper sets it): check 3 allows each, and fails if it is
+# still defined in that file or still referenced (\ref, \ref*, \eqref, ...) by any source
+REMOVED_LABELS = {}
 # (id, old, new) of the abstract pairs; ABSTRACT_PINS[id] = sha256(old + "\0" + new)[:16], set when the director
 # passes the pinned pair to Joseph (#524 item 1). Empty until then: main_note.tex must stay byte-identical.
 # Approved by Joseph exactly as pinned: DECISION-20261030-joseph-note-abstract-pairs.md (#536).
@@ -95,12 +98,15 @@ def git_show(wt, rev, path):
     return r.stdout if r.returncode == 0 else ""
 
 
+def table_lines(text):
+    return [x for x in text.splitlines() if x.startswith("| ") and not x.startswith("| id ") and not x.startswith("|---")]
+
+
 def rows(text):
-    for line in text.splitlines():
-        if line.startswith("| ") and not line.startswith("| id ") and not line.startswith("|---"):
-            c = [x.strip() for x in line.strip().strip("|").split(" | ")]
-            if len(c) == 6:
-                yield c
+    for line in table_lines(text):
+        c = [x.strip() for x in line.strip().strip("|").split(" | ")]
+        if len(c) == 6:
+            yield c
 
 
 def pin(old, new):
@@ -138,9 +144,16 @@ def frozen_fails(all_cur, all_old, frozen):
     return fails
 
 
-def check(wt, cur, old, files, ledger_text, prot_cur, prot_old, all_cur, all_old, frozen, pairs=None, pins=None):
+def refs_to(lab, texts):
+    rx = re.compile(r"\\\w*ref\*?\{" + re.escape(lab) + r"\}")
+    return sorted(f for f, t in texts.items() if t and rx.search(t))
+
+
+def check(wt, cur, old, files, ledger_text, prot_cur, prot_old, all_cur, all_old, frozen, pairs=None, pins=None,
+          removed=None):
     pairs = ABSTRACT if pairs is None else pairs
     pins = ABSTRACT_PINS if pins is None else pins
+    removed = REMOVED_LABELS if removed is None else removed
     fails, named, n_rows, n_probes = [], set(), 0, 0
     D = wt / "docs/analysis-note"
     cache = {}
@@ -181,6 +194,10 @@ def check(wt, cur, old, files, ledger_text, prot_cur, prot_old, all_cur, all_old
                 fails.append(f"{rid}: R: probe names {f}, not a records file")
             elif kind == "R" and not present:
                 fails.append(f"{rid}: NOT IN THE RECORDS ({f}): {lit[:90]!r}")
+    # a row whose cells hold " | " (a quoted markdown table, say) does not split into six and would be skipped silently
+    for line in table_lines(ledger_text):
+        if len([x for x in line.strip().strip("|").split(" | ")]) != 6:
+            fails.append(f"MALFORMED ROW (not six columns; a probe holding ' | '?): {line[:90]!r}")
     ch = changed(cur, old, files)
     for sid, f, s in ch:
         if sid not in named:
@@ -188,8 +205,15 @@ def check(wt, cur, old, files, ledger_text, prot_cur, prot_old, all_cur, all_old
     for f in files:
         lo = set(re.findall(r"\\label\{([^}]*)\}", old[f]))
         ln = set(re.findall(r"\\label\{([^}]*)\}", cur[f]))
-        for lab in sorted(lo - ln):
+        gone = removed.get(f, set())
+        for lab in sorted(lo - ln - gone):
             fails.append(f"LABEL REMOVED {f}: {lab}")
+        for lab in sorted(gone & ln):
+            fails.append(f"LABEL DECLARED REMOVED but still defined in {f}: {lab}")
+    for f, labs in removed.items():
+        for lab in sorted(labs):
+            for g in refs_to(lab, all_cur):
+                fails.append(f"LABEL DECLARED REMOVED from {f} but still referenced in {g}: {lab}")
     for f in PROTECTED:
         if prot_cur.get(f) != prot_old.get(f):
             fails.append(f"PROTECTED changed: {f}")
@@ -239,9 +263,16 @@ def main():
         ok = True
         f0 = "sec_5d.tex"
         s0 = next(s for s in sentences(printed(old[f0])) if len(s) > 40 and s in printed(cur[f0]))
-        ab_old = "We report a simultaneous measurement"
-        ab_new = "We present a simultaneous measurement"
+        # the plants' anchor is the base abstract's first four words, so it exists in any round's base (main's abstract
+        # began "We report" until #619 and "We present" after it)
+        ab_line = next(x for x in prot_old[PAIRED].split("\\begin{abstract}", 1)[1].split("\n")
+                       if x.strip() and not x.lstrip().startswith("%"))
+        ab_old = " ".join(ab_line.split()[:4])
+        ab_new = ab_old + " @@"
         fake = [("T-AB", ab_old, ab_new)]
+        # a batch label that no source references, and its file, for the removed-label plants
+        lf, lab0 = next((f, x) for f in sorted(cur) for x in re.findall(r"\\label\{([^}]*)\}", cur[f])
+                        if not refs_to(x, all_cur))
         es = "sec_execsummary.tex"
         # the undeclared edit plants text at the abstract's end, which no pair declares, so it changes its input once a
         # pinned pair has replaced ab_old (5B-a replaced it, and the old plant's replace then left the file unchanged)
@@ -265,8 +296,18 @@ def main():
             ("SEC4 phrase reworded", {**cur, "sec_validation.tex": cur["sec_validation.tex"].replace(
                 "lies entirely below its window", "lies below its window", 1)}, lt, {}),
             ("n4 frozen sentence edited", dict(cur), lt, {"all": {fz_file: all_cur[fz_file].replace(fz, fz[:-1] + " @@.", 1)}}),
+            ("ledger row holding ' | '", dict(cur), lt + "\n| T7 | t | — | CUT | — | `L:KNOWN_ISSUES.md::a | b` |\n", {}),
+            ("declared removed label still referenced", {**cur, lf: cur[lf].replace("\\label{%s}" % lab0, "", 1)}, lt,
+             {"removed": {**REMOVED_LABELS, lf: {lab0}},
+              "all": {lf: all_cur[lf].replace("\\label{%s}" % lab0, "", 1) + "\n\\ref{%s}\n" % lab0}}),
         ]
-        silent = [("pinned abstract pair", {"prot": {PAIRED: prot_old[PAIRED].replace(ab_old, ab_new, 1)},
+        silent = [("declared removed label, unreferenced", {"cur": {lf: cur[lf].replace("\\label{%s}" % lab0, "", 1)},
+                                                          "removed": {**REMOVED_LABELS, lf: {lab0}},
+                                                          "all": {lf: all_cur[lf].replace("\\label{%s}" % lab0, "", 1)},
+                                                          # dropping a \label also changes its sentence, which check 2
+                                                          # rightly reports; this control reads check 3's failures only
+                                                          "only": "LABEL"}),
+                  ("pinned abstract pair", {"prot": {PAIRED: prot_old[PAIRED].replace(ab_old, ab_new, 1)},
                                             "pairs": fake, "pins": {"T-AB": pin(ab_old, ab_new)}}),
                   ("true L: probe", {"ledger": lt + "\n| T6 | t | — | CUT | — | `L:2d-unfolding/2D_OMNIFOLD_REFERENCE.md::isMinosMatchTrack` |\n"})]
         assert prot_old[PAIRED].count(ab_old) == 1, "self-test abstract anchor not unique"
@@ -278,13 +319,15 @@ def main():
         def run(c, l, o):
             pc = {**prot_cur, **o.get("prot", {})}
             ac = {**all_cur, **o.get("all", {})}
-            return check(wt, c, old, files, l, pc, prot_old, ac, all_old, N4_FROZEN, o.get("pairs"), o.get("pins"))[0]
+            return check(wt, {**c, **o.get("cur", {})}, old, files, l, pc, prot_old, ac, all_old, N4_FROZEN,
+                         o.get("pairs"), o.get("pins"), o.get("removed"))[0]
         for name, c, l, o in planted:
             caught = len(run(c, l, o)) > len(base_fails)
             ok &= caught
             print(f"  {name}: {'caught' if caught else 'NOT CAUGHT'}")
         for name, o in silent:
-            quiet = run(cur, o.get("ledger", lt), o) == base_fails
+            keep = [x for x in base_fails if o.get("only", "") in x]
+            quiet = [x for x in run(cur, o.get("ledger", lt), o) if o.get("only", "") in x] == keep
             ok &= quiet
             print(f"  {name}: {'silent' if quiet else 'FIRED (should be silent)'}")
         print("SELF-TEST ::", "PASS" if ok else "FAIL")

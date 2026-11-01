@@ -1,0 +1,25 @@
+Do not use any tools, commands or files: everything you need is in this message. Answer directly, in text, in full.
+
+You are checking edits to a physics analysis note. Each numbered pair has a BEFORE passage and an AFTER passage, in the note's LaTeX source. For each pair, compare AFTER with BEFORE only, and list EVERY difference in meaning between them: each fact, number, qualifier, limitation, attribution or claim that AFTER adds, drops, changes, strengthens or weakens. Do not judge which version is correct, and ignore differences of layout or LaTeX markup that do not change what a reader is told. If the two say the same thing, say NONE.
+
+Answer in this format, one block per pair, in order:
+Qn: DIFFERENCES: NONE, or a numbered list, each item quoting the words concerned in BEFORE and in AFTER
+End with a line: END
+
+
+===== BEGIN FILE pairs-control.txt =====
+(Each pair is one passage of a physics analysis note, BEFORE and AFTER a register rewrite. Judge AFTER against BEFORE.)
+
+Q1. [sec_3d.tex TD26]
+BEFORE: Relative to the charged-pion mass, it moves \SI{0.67}{\percent} of simulated events into another true-$\Eavail$ bin and changes no true-$\Eavail$ bin by more than \SI{1.05}{\percent}. This effect has not been assessed against the projection of the five-dimensional covariance of the configuration-(a) central value, so its materiality is not established.
+AFTER: Relative to the charged-pion mass, it moves \fvval{eavbin-share}\,\% of the simulated signal weight into another of the seven true-$\Eavail$ bins of the fine grid and changes such bin by more than \fvval{eavbin-max}\,\%. This effect has not been assessed against the projection of the five-dimensional covariance of the configuration-(a) central value. On the sixteen-cell result of Sec.~\ref{sec:fived16}, from configuration~(e), to first order in the unfolding and without retraining, replacing the constant by the charged-pion mass moves the cross section by at most \fvval{eav-cellmax}$\sigma$ in any cell and by \fvval{eav-coherent}$\sigma$ as one coherent shift, the norm of the shift under the reported covariance (\fvval{eav-cellmax-nopl}$\sigma$ and \fvval{eav-coherent-nopl}$\sigma$ without the run-period block).
+
+Q2. [sec_systematics.tex filler]
+BEFORE: A small share of the aggregate variance does not make a bin irrelevant to a quoted result.
+AFTER: A small share of the aggregate variance does make a bin irrelevant to a quoted result.
+
+Q3. [sec_3d.tex filler]
+BEFORE: Data have no error bars because no 3D covariance is quoted (\S\ref{sec:3d}).} \label{fig:3dmodels} \end{figure} For the integrated $\Eavail$ rate without the catch bin, GENIE CV, Tune~v1, NuWro and GiBUU central values lie respectively $\SI{7.2}{\percent}$, $\SI{9.5}{\percent}$, $\SI{12.8}{\percent}$ and $\SI{22.3}{\percent}$ below the data.
+AFTER: Data have error bars because no 3D covariance is quoted (\S\ref{sec:3d}).} \label{fig:3dmodels} \end{figure} For the integrated $\Eavail$ rate without the catch bin, GENIE CV, Tune~v1, NuWro and GiBUU central values lie respectively $\SI{7.2}{\percent}$, $\SI{9.5}{\percent}$, $\SI{12.8}{\percent}$ and $\SI{22.3}{\percent}$ below the data.
+
+===== END FILE pairs-control.txt =====

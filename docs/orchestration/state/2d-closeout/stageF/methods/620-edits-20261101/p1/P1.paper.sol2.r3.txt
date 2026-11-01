@@ -1,0 +1,8 @@
+RATING: 3
+JUSTIFICATION: The prose is generally competent and formal, but repeated qualifications, internal estimator labels, and development and validation bookkeeping frequently interrupt the argument and warrant a dedicated language pass.
+1. QUOTE: "This reproducible central value is that of its own systematic-universe ensemble, so its covariance is built with the same estimator."
+   REWRITE: The central value and the systematic-universe covariance are computed with the same estimator.
+2. QUOTE: "The joint-test estimator keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence, measured as the largest residual proxy over the truth changes used in its development."
+   REWRITE: We use five iterations because increasing the number to 10, 15, or 20 did not reduce the residual diagnostic used to assess model dependence across the tested truth deformations.
+3. QUOTE: "A coverage test at these two tunes, declared in advance for the covariance without the run-period block, with pseudo-experiments that also draw the flux, interaction, and detector uncertainties, was stopped at one of its gates before any coverage pseudo-experiment ran:"
+   REWRITE: The prespecified coverage test at these two tunes used the covariance without the run-period contribution and required sampling the flux, interaction, and detector uncertainties. No coverage pseudo-experiments were performed because a preliminary check found that the sampled uncertainties did not reproduce the corresponding covariance components.
