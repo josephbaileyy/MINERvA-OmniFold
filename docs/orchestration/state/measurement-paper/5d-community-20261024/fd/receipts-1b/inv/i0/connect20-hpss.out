@@ -1,0 +1,13 @@
+host=login37 start=2026-11-01T19:23:45Z
+-rw-rw---- 1 josephrb josephrb 57405440 Nov  1 11:23 /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0.tar
+7aa607b54f87a1a9f98bc3a331c5c41fcec0fd408266db96c71784e7bc5910ed  /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0.tar
+mkdir: /home/j/josephrb/fd-1b-inv-20261101
+put  '/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0.tar' : '/home/j/josephrb/fd-1b-inv-20261101/i0.tar' ( 57405440 bytes, 932242.5 KBS (cos=4))
+10a862570c2dbe4fd1abf59a2e750c3d (md5) /home/j/josephrb/fd-1b-inv-20261101/i0.tar
+hashverify rc=0
+/home/j/josephrb/fd-1b-inv-20261101/i0.tar: (md5) OK
+fd-1b-inv-20261101:
+-rw-r-----    1 josephrb  josephrb    57405440 Nov  1 11:23 i0.tar
+get  '/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0-retrieved.tar' : '/home/j/josephrb/fd-1b-inv-20261101/i0.tar' (2026/11/01 11:23:46 57405440 bytes, 647910.5 KBS )
+retrieval cmp: identical
+done 2026-11-01T19:23:49Z

@@ -1,0 +1,5 @@
+9a4142d348f591134ba4912a2197ca958ea387ec58b095622bce5f206d007021  i0.json
+588c464a96c3b477a80ddc0089d950a47edc03f568f2d3c1dfbae445df5615bc  i0.log
+cdca54d048edd798c7b3e9e0877971d9d77c82c73d3def79f5e8e57b42fa60b3  stage.log
+29994972cdaecfbc7dec79f627cc5d519a272c3c98821b94ce8ead9fc9a9ef55  staged.json (on pscratch $V/i0/in and in the HPSS i0.tar; not committed: it names the staged products)
+7aa607b54f87a1a9f98bc3a331c5c41fcec0fd408266db96c71784e7bc5910ed  i0.tar (HPSS fd-1b-inv-20261101/i0.tar)
