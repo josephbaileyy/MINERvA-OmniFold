@@ -15,6 +15,7 @@ docs/orchestration/ASSESSMENT-20260918-integrated-acceptance-and-E1.md	tracked	L
 docs/orchestration/ASSESSMENT-20260929-s5p-recompute-A6-A8.md	tracked	LIVE	document		20260929	open		route-only	no
 docs/orchestration/ASSESSMENT-20261008-2d-estimator-pairing.md	tracked	LIVE	document		20261008	open		route-only	no
 docs/orchestration/ASSESSMENT-20261008-2d-total-uncertainty-feasibility.md	tracked	LIVE	document		20261008	open		route-only	no
+docs/orchestration/ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md	tracked	LIVE	document	20261006-s5p-campaign	20261031	open		route-only	no
 docs/orchestration/AUDIT-FINDINGS-20260728.md	tracked	ARCHIVAL	audit		20260728	terminal		exact-path-only	yes
 docs/orchestration/AUDIT-FINDINGS-20260729-B.md	tracked	ARCHIVAL	audit		20260729	terminal		exact-path-only	yes
 docs/orchestration/AUDIT-FINDINGS-20260731.md	tracked	ARCHIVAL	audit		20260731	terminal		exact-path-only	yes
@@ -5860,6 +5861,24 @@ docs/orchestration/state/data-survey-20261022/scripts/diff_branches.py	tracked	M
 docs/orchestration/state/data-survey-20261022/scripts/list_branches.py	tracked	MACHINE	state-artifact	data-survey-20261022		generated		exact-path-only	yes
 docs/orchestration/state/data-survey-20261022/scripts/release_inventory.py	tracked	MACHINE	state-artifact	data-survey-20261022		generated		exact-path-only	yes
 docs/orchestration/state/declaration-v-5d-covering-search-20260822.sh	tracked	MACHINE	state-artifact		20260822	open		exact-path-only	no
+docs/orchestration/state/eavail-switch-pricing-20261031/bracket_16cell.py	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/bracket_16cell.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/cluster-outputs-sha256.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/eavail_step0.py	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/eavail_step0b.py	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0-atime-test-transcript.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0-log.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0-run-transcript.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0-stat-transcript.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0-time-v.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0-treecheck-transcript.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0.json	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.py	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0b-log.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0b-run-transcript.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0b-time-v.txt	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
+docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0b.json	tracked	MACHINE	state-artifact	eavail-switch-pricing-20261031		generated		exact-path-only	yes
 docs/orchestration/state/f17a-k0-7ac0edec-20260830T000215Z-canonical-recapture.json	tracked	MACHINE	state-artifact		20260830	generated		exact-path-only	yes
 docs/orchestration/state/f17a-k0-7ac0edec-20260830T000215Z-canonical.json	tracked	MACHINE	state-artifact		20260830	generated		exact-path-only	yes
 docs/orchestration/state/f17a-k0-7ac0edec-20260830T000215Z-deploy-recapture.json	tracked	MACHINE	state-artifact		20260830	generated		exact-path-only	yes

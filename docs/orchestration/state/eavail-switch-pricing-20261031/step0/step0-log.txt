@@ -1,0 +1,5 @@
+[1] sha256 ok: {'/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root': True, '/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz': True} (9 s)
+[2] read trees: truth_denom 32849103 rows, signal 32849103 rows (31 s)
+[2] C1 {'edges_equal': True, 'bitwise_equal': True, 'max_rel_diff': 0.0, 'sum_mine': 5778936.126366272, 'sum_npz': 5778936.126366272}
+[3] MP-2: 34858834 charged pions, 0 with E <= 139.57 MeV (114 s)
+[done] 114 s; every atime unchanged

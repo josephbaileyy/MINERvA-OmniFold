@@ -1,0 +1,37 @@
+# step0 (1), stat only (no content read; stat does not change atime)
+2026-11-01T02:42:22Z
+login37
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root|size=4825716683|atime=2026-10-20 17:59:04.000000000 -0700|mtime=2026-06-06 22:33:10.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz|size=1548438020|atime=2026-10-31 17:07:33.000000000 -0700|mtime=2026-06-27 18:31:48.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC_universes_full_bkgaware.root|size=171117093365|atime=2026-09-27 08:25:39.000000000 -0700|mtime=2026-07-13 23:08:20.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1A_universes_full_bkgaware.root|size=13967366108|atime=2026-10-20 00:53:47.000000000 -0700|mtime=2026-07-13 21:23:31.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1B_universes_full_bkgaware.root|size=3754803912|atime=2026-09-14 20:46:58.000000000 -0700|mtime=2026-07-13 20:24:37.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1C_universes_full_bkgaware.root|size=7169599337|atime=2026-09-14 20:57:51.000000000 -0700|mtime=2026-07-13 20:43:56.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1D_universes_full_bkgaware.root|size=20851460255|atime=2026-09-14 21:01:44.000000000 -0700|mtime=2026-07-13 22:10:51.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1E_universes_full_bkgaware.root|size=17441205238|atime=2026-09-14 20:24:44.000000000 -0700|mtime=2026-07-13 21:42:42.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1F_universes_full_bkgaware.root|size=24243323810|atime=2026-09-14 20:32:00.000000000 -0700|mtime=2026-07-13 22:24:06.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1G_universes_full_bkgaware.root|size=20516264281|atime=2026-09-14 18:53:35.000000000 -0700|mtime=2026-07-13 22:05:43.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1L_universes_full_bkgaware.root|size=2004993044|atime=2026-09-14 20:57:36.000000000 -0700|mtime=2026-07-13 20:12:59.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1M_universes_full_bkgaware.root|size=30899506609|atime=2026-09-14 20:59:41.000000000 -0700|mtime=2026-07-13 23:01:33.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1N_universes_full_bkgaware.root|size=17753617857|atime=2026-09-14 18:08:25.000000000 -0700|mtime=2026-07-13 21:48:43.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1O_universes_full_bkgaware.root|size=5408395011|atime=2026-09-14 20:47:34.000000000 -0700|mtime=2026-07-13 20:32:34.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_1P_universes_full_bkgaware.root|size=7125869263|atime=2026-09-14 20:45:58.000000000 -0700|mtime=2026-07-13 20:44:33.000000000 -0700
+# bank directory (entries stat'd, not read)
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware|dir|atime=2026-10-31 16:53:58.000000000 -0700
+files=701 bytes=71581937610 oldest_atime=2026-10-24+17:47:00.0000000000 newest_atime=2026-10-31+17:01:21.0000000000
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz|2163648810|2026-10-31+16:54:09.0000000000|2026-07-14+06:13:05.0000000000
+# MP-2 S1 dumps
+s1_1A.npz|1119102836|2026-10-24+01:15:15.0000000000
+s1_1B.npz|300848534|2026-10-24+01:16:21.0000000000
+s1_1C.npz|574257002|2026-10-24+01:18:29.0000000000
+s1_1D.npz|1669981694|2026-10-24+01:24:53.0000000000
+s1_1E.npz|1397489408|2026-10-24+01:30:18.0000000000
+s1_1F.npz|1943905574|2026-10-24+01:37:46.0000000000
+s1_1G.npz|1636192502|2026-10-24+01:44:11.0000000000
+s1_1L.npz|160120118|2026-10-24+01:44:48.0000000000
+s1_1M.npz|2468716890|2026-10-24+01:54:32.0000000000
+s1_1N.npz|1424961470|2026-10-24+01:59:20.0000000000
+s1_1O.npz|434691206|2026-10-24+02:00:53.0000000000
+s1_1P.npz|572513768|2026-10-24+02:02:57.0000000000
+# new output dir exists?
+ls: cannot access '/pscratch/sd/j/josephrb/eavail-step0-20261031': No such file or directory
