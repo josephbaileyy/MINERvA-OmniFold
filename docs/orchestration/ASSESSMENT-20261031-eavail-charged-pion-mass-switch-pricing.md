@@ -132,7 +132,7 @@ Reco coordinates, data and weights are unchanged. The unfold changes in two ways
 | **C_PL,5D** (5B) | yes | 5B job A (merges, dumps, ALL unfold) and job B (33 period unfolds), then the 5B readers and the addition chain |
 | **Stage G, G-DIAG, G-FOLLOWUP, G-SENS2, the flux bootstrap, figures, data product, deposit** | yes | login-node reruns on the new inputs, plus the generator grids for Stage G |
 | **F0b, F1** (fake data) | yes | F1's pseudo-data (F1a, F1b′ reconversion, F1c unfolds). F0b re-grades A7 products, so a consistent F0b needs A7 (optional row) |
-| **1B** (running, no report yet) | yes | its stage 2 on the new inputs |
+| **1B** (stage 2 STOPped at gate D, `FD-1B-STAGE2-REPORT.md`) | yes | whatever stage the director takes it to, on the new inputs |
 | **CT-3b closures** | yes | 13 closures |
 | **Joint test** (`values_inference.tex`; `\jtNcells` at `paper_body.tex:41,70`) and **closure figures** (`paper_fig_bkg_residual`, `paper_fig_deformation`, `paper_body.tex:130,142`) | yes (fine grid with 7 E_avail bins) | A7 products (optional row). **The two figures' producers are not in the tracked tree** (`state/2d-closeout/stageF/figure-diagnosis-20261030/FIGURE-DIAGNOSIS-REPORT.md:233-234`), so they cannot be regenerated as things stand |
 | **Scalar-5D adopted covariance** (`values.tex:182-221`) and **PET** (`values.tex:101-130`) | yes | **not priced here.** Neither is on the director's list. The note prints both (`sec_5d`, `sec_pet`) |
@@ -184,7 +184,7 @@ Search: measured wall or node-h for the `of_inputs_5d.npz` dump, the universe-ba
 | step | what | node-h | source |
 |---|---|---:|---|
 | O1 | A7 calibration and power products, for F0's grade and the joint test | **207.899** measured (shared arrays of 34 tasks, 2.0 h each) | `DELIVERY-20261006-s5p-campaign-terminal.md:102`; `state/s5p/prod/queues/pow.q:2` |
-| O2 | 1B stage 2 on the new definition | 5.261 spent so far; 2a-r 1.0, 2b 5.0 and 2c 9.0 capped, not yet run | `fd/receipts-1b/stage2/LEDGER.psv:2-5` |
+| O2 | 1B stage 2 on the new definition | **5.489** measured for stage 2 as run (jobs 2a-0, 2a, 2a-r), which STOPped at gate D before any coverage toy; 2b (cap 5.0) and 2c (cap 9.0) were not submitted | `FD-1B-STAGE2-REPORT.md:31-43` (landed on `main` at `70eaad8f`, after this record's pin; the only change since the pin to anything cited here) |
 | O3 | the scalar-5D adopted covariance and PET | not priced | — |
 
 **Wall time and order.** The critical path, without queue waits:
