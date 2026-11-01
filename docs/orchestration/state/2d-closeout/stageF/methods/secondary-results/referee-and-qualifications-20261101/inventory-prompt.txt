@@ -1,0 +1,26 @@
+You are an independent analyst for a physics project (an OmniFold unfolding of the MINERvA inclusive νμ CC cross section in five observables). The project lead asked: "Is it possible to get a fully validated measurement and report clean results? The next goal should be trying to resolve all of the qualifications so we don't need to include them." Your job is to give him an honest, evidence-based answer that he can act on, working only from the committed records.
+
+## Where to work (read-only)
+- The repository is a detached git worktree at `/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/wt-qual` (main at bc07ed0e). Read anything in it. Use `git -C <that path>` for history if useful, with `GIT_OPTIONAL_LOCKS=0`.
+- Write ONLY one file: `/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/qual/REPORT.md` (create the directory). Do not edit, commit, stage or check out anything in the worktree, and do not write anywhere else.
+- Do not ssh, do not run jobs, do not touch any cluster path, do not call other models or CLIs (no codex, agy, claude). Never read `~/q3-custodian-key.age`. Do not read anything under `/Users/josephbailey/local-research/MINERvA-OmniFold` (use the worktree instead).
+
+## Starting points (find more yourself)
+- The paper: `docs/analysis-note/main_paper.tex` (abstract) and `docs/analysis-note/paper_body.tex`. Values printed via `\fvval{key}` are defined in `docs/analysis-note/values_fived16.tex` and similar `values*.tex` files.
+- The companion note's sections, e.g. `docs/analysis-note/sec_fived16.tex`, `sec_3d.tex`, `sec_method.tex`.
+- Decision records: `docs/orchestration/DECISION-*.md` (especially `DECISION-20261028-joseph-coverage-scoping.md`, `DECISION-20261029-joseph-limitations-may-leave-paper.md`, `DECISION-20261031-joseph-j1-j2-and-protections-split.md`, `DECISION-20261030-joseph-fund-1b-with-4a.md`, `DECISION-20261031-joseph-three-covariance-files-and-1b-diagnosis.md`, `DECISION-20261101-joseph-eavail-keep-135.md`).
+- Plans and results of the validation work: `grep -ril` for LIMITATION-PLAN, FD-1B-*, FD-F0b-*, FD-F1-*, FD-G-*, FD-CT-*, C_PL5D / run-period, under `docs/orchestration/state/measurement-paper/5d-community-20261024/` and `docs/orchestration/`.
+- The register and caveat studies: `docs/orchestration/state/2d-closeout/stageF/methods/caveat-study/REPORT.md`, `register-retrospective-20261028/REPORT.md`, `register-prd-study/REPORT.md`.
+- Compute rules: the standing grant is jobs under 12 h each, no GPU, no premium QOS; anything beyond needs the lead's approval. Look for measured costs (node-hours) in the run reports.
+
+## What to produce in REPORT.md
+1. **Inventory.** Every qualification, limitation, caveat or disclosure the current paper (abstract plus body) prints. For each, one row: a short quote; the governing record (path:line); the underlying cause (what in the analysis makes it necessary); and a class:
+   - R = resolvable by further analysis, so that the sentence could then be removed or turned into a positive validated statement. Say what analysis, what it would cost (node-hours, people-time, or new samples), whether it fits the standing compute grant, what the records say about earlier attempts (e.g. a stopped test), and your honest estimate of the chance it succeeds;
+   - M = could move to the note now under the 10-29 decision (pointer left in the paper), without being false;
+   - K = must stay because removing it makes a paper sentence false or hides a material fact; or it is inherent to the data, the generators or the method, and no analysis removes it (say why).
+   A row may carry two classes (e.g. R and M).
+2. **Counts.** How many qualifications in each class. Use the caveat study's method if it states one, otherwise say how you counted. Compare with the caveat study's published-paper range.
+3. **The honest answer.** Can this measurement become "fully validated with clean results"? Separate what can be resolved, at what cost, from what can't. In particular address: interval coverage (why the 1B coverage test stopped, and whether any coverage validation is feasible); the run-period block added after the fact; fake-data bias above thresholds at the GiBUU-like truth and the q3 tilt; and anything else that dominates.
+4. **A recommended plan.** The work ordered by value per cost, with what each step would let the paper stop saying. Mark the steps that need the lead's decision (compute beyond the grant, a change to a claim, or a scientific choice).
+
+Rules: cite path:line for every factual claim. Never invent a number, identifier or result; if the records don't say, write "not in the records". Distinguish what the records measured from your own judgement. Be candid: if a goal is infeasible, say so and why. Your final message should be a ten-line summary of REPORT.md's conclusions.
