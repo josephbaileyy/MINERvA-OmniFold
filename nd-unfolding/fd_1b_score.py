@@ -429,42 +429,55 @@ def cmd_score(a) -> tuple[dict, int]:
     return out, 0 if out["verdict"] in ("PASS", "CONTINUE") else 1
 
 
-def cmd_gate_d(a) -> tuple[dict, int]:
-    s1 = load_s1(a.s1_npz)
-    M_d = drawn_matrix(s1)
+def derivation_blocks(derivation: Path, tag: str, s1: dict, flux_constraint: Path) -> dict:
+    """Gate D's inputs from the 176 noise-free derivation unfolds: each band's block by S1's own estimator, raw (in the
+    runs' truth space, U x_hat) and carried to f by diag(f / x_T) as the control's intervals are (sigma_c^T =
+    sqrt(M_cc) / f_c x_T,c; review finding 1: not f / x_hat(CV)), with S1's stat, normalization and lateral blocks
+    beside them. Raises Insufficient for a missing product and Invalid for a product that is not the declared run."""
     f, U = s1["f"], s1["U"]
-    w = sa.flux_weights(a.flux_constraint)
-    out = header(s1, "DERIVATION")
+    w = sa.flux_weights(flux_constraint)
     x = {}
-    for tag in ["CV"] + toys.s1_universes():
-        p = a.derivation / f"{a.tag}_{tag}.npz"
+    for u in ["CV"] + toys.s1_universes():
+        p = derivation / f"{tag}_{u}.npz"
         if not p.exists():
-            out.update({"verdict": "INSUFFICIENT", "reason": f"no derivation product for {tag}"})
-            return out, 1
+            raise Insufficient(f"no derivation product for {u}")
         try:
-            m = sa.check_meta(p, toys.SCHEMA, expect={"arm": "derivation", "mode": "derivation", "universe": tag})
+            m = sa.check_meta(p, toys.SCHEMA, expect={"arm": "derivation", "mode": "derivation", "universe": u})
         except SystemExit as e:
-            out.update({"verdict": "INVALID", "reason": str(e)})
-            return out, 1
-        if json.loads(json.dumps(toys.single_universe(tag))) != m["draw"]:
-            out.update({"verdict": "INVALID", "reason": f"{p.name}: its draw is not universe {tag} alone"})
-            return out, 1
-        x[tag] = U @ np.asarray(np.load(p, allow_pickle=False)["xsec_flat"], float)
+            raise Invalid(str(e)) from None
+        if json.loads(json.dumps(toys.single_universe(u))) != m["draw"]:
+            raise Invalid(f"{p.name}: its draw is not universe {u} alone")
+        x[u] = U @ np.asarray(np.load(p, allow_pickle=False)["xsec_flat"], float)
     truth = None
-    for tag in x:
-        xt = np.asarray(np.load(a.derivation / f"{a.tag}_{tag}.npz", allow_pickle=False)["xtrue_flat"], float)
+    for u in x:
+        xt = np.asarray(np.load(derivation / f"{tag}_{u}.npz", allow_pickle=False)["xtrue_flat"], float)
         if truth is None:
             truth = xt
         elif not np.array_equal(xt, truth):
-            out.update({"verdict": "INVALID", "reason": f"derivation product {tag}: its truth differs from CV's"})
-            return out, 1
-    # carried to f as the control's intervals are: sigma_c^T = sqrt(M_cc) / f_c x_T,c, so a toy covariance E in the
-    # toy's space predicts the control through diag(f / x_T) E diag(f / x_T) (review finding 1: not f / x_hat(CV))
+            raise Invalid(f"derivation product {u}: its truth differs from CV's")
     g = f / (U @ truth)
-    E = {k: v for k, v in s1["blocks"].items() if k == "stat" or k == "normalization" or k.startswith("lat:")}
+    raw = {}
     for b in sorted(sa.EXPECT):
         X = np.array([x[f"{b}_{i}"] for i in range(sa.EXPECT[b])])
-        E[f"band:{b}"] = sa.mat_cov(X, w if b == sa.FLUX else None) * np.outer(g, g)
+        raw[f"band:{b}"] = sa.mat_cov(X, w if b == sa.FLUX else None)
+    fixed = {k: v for k, v in s1["blocks"].items() if k == "stat" or k == "normalization" or k.startswith("lat:")}
+    return {"x": x, "x_t": U @ truth, "g": g, "raw": raw, "fixed": fixed,
+            "carried": {k: v * np.outer(g, g) for k, v in raw.items()}}
+
+
+def cmd_gate_d(a) -> tuple[dict, int]:
+    s1 = load_s1(a.s1_npz)
+    M_d = drawn_matrix(s1)
+    out = header(s1, "DERIVATION")
+    try:
+        d = derivation_blocks(a.derivation, a.tag, s1, a.flux_constraint)
+    except Insufficient as e:
+        out.update({"verdict": "INSUFFICIENT", "reason": str(e)})
+        return out, 1
+    except Invalid as e:
+        out.update({"verdict": "INVALID", "reason": str(e)})
+        return out, 1
+    E = {**d["fixed"], **d["carried"]}
     E_d = sum(E.values())
     rho = np.sqrt(np.diag(E_d) / np.diag(M_d))
     per_group = {}

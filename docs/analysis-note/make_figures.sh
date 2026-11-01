@@ -225,18 +225,46 @@ install_re2_fig MEFHC_fig6_7_uncertainty_pt.pdf        6055be9534cfaa1e149d59ec5
 install_re2_fig MEFHC_fig6_7_uncertainty_pz.pdf        ef0de3504fcbfb49d83073f0cf59ef7af5abf00ce1bda22fe5943a49bb0e6f62
 install_re2_fig uq_spread_2d.pdf                       a51bc4ee186a2c3bba942f6de6cd4bed74b8de7508e763e0b0bc698a0a78e9de
 install_re2_fig uq_corr_2d.pdf                         fea063cc6eeba9925bef2ac7c096118fdd23a7f443aea8afde4392de214c75b1
-install_re2_fig MEFHC_5iter_fig13.pdf                  4924917e903b5e4ee6133f5e37b91aa11f301d7ea7242561680ea1ba10a4fb3b
-install_re2_fig MEFHC_5iter_pull_full.pdf              3d108335117afd57b14f4bf1661ac8e06ffdbfdfb1ceb17903fa00724b40396f
+# install_re2_fig MEFHC_5iter_fig13.pdf                  4924917e903b5e4ee6133f5e37b91aa11f301d7ea7242561680ea1ba10a4fb3b
+# install_re2_fig MEFHC_5iter_pull_full.pdf              3d108335117afd57b14f4bf1661ac8e06ffdbfdfb1ceb17903fa00724b40396f
 install_re2_fig MEFHC_5iter_xsec_eff_heatmap.pdf       1008a7e9e0832c1607bfce9bd38ee52b5af86baed4fb868171fdc56ab5df24ab
-install_re2_fig MEFHC_5iter_xsec_paper_pt_slices.pdf   8836d7b56b75131c6affa81a2a752655208c40e01ff53270ebd7acfd306f04a8
-install_re2_fig MEFHC_5iter_xsec_paper_pz_slices.pdf   6f7a11aff1da1c84c8c7cd211dc8e5714fa15334eafbd83ae0ef4c45f0a84d8f
-install_re2_fig MEFHC_5iter_xsec_proj_pt.pdf           ea2c1dce31ba543d059dab3c5a844990928a45c03bd3675d3b094ae441626249
-install_re2_fig MEFHC_5iter_xsec_proj_pz.pdf           e728d02ecb66077dc0b7de68c9d8bf32b87c7e844bf5d6d8e1ccfe70bdf61db8
-install_re2_fig model_comp_projections.pdf             2c39fe21ed16fc31d5c08d7012cf6248a3aae575f5dc162081b1e79929ebf8d8
-install_re2_fig model_comp_ratio_maps.pdf              266c856435e8944cf5cbf654e9dfe455d6318c6a6000acc89e25c3bd6fafc343
-install_re2_fig tension_chi2_map.pdf                   30a3598db8b99ebacc41dd8d2b48ec6861e5d80524ab48ad551b4e56e869155a
-install_re2_fig tension_mode_maps.pdf                  adf5bf3feb8732553c64dfc9aa795eeee91f07dbe2d096fc725b9f9a8492667d
-install_re2_fig tension_spectrum.pdf                   295b17cd6c26cb741e23baec3cfd8d5a930b76246cec200e69fb60fc53e3c5d3
+# install_re2_fig MEFHC_5iter_xsec_paper_pt_slices.pdf   8836d7b56b75131c6affa81a2a752655208c40e01ff53270ebd7acfd306f04a8
+# install_re2_fig MEFHC_5iter_xsec_paper_pz_slices.pdf   6f7a11aff1da1c84c8c7cd211dc8e5714fa15334eafbd83ae0ef4c45f0a84d8f
+# install_re2_fig MEFHC_5iter_xsec_proj_pt.pdf           ea2c1dce31ba543d059dab3c5a844990928a45c03bd3675d3b094ae441626249
+# install_re2_fig MEFHC_5iter_xsec_proj_pz.pdf           e728d02ecb66077dc0b7de68c9d8bf32b87c7e844bf5d6d8e1ccfe70bdf61db8
+# install_re2_fig model_comp_projections.pdf             2c39fe21ed16fc31d5c08d7012cf6248a3aae575f5dc162081b1e79929ebf8d8
+# install_re2_fig model_comp_ratio_maps.pdf              266c856435e8944cf5cbf654e9dfe455d6318c6a6000acc89e25c3bd6fafc343
+# install_re2_fig tension_chi2_map.pdf                   30a3598db8b99ebacc41dd8d2b48ec6861e5d80524ab48ad551b4e56e869155a
+# install_re2_fig tension_mode_maps.pdf                  adf5bf3feb8732553c64dfc9aa795eeee91f07dbe2d096fc725b9f9a8492667d
+# install_re2_fig tension_spectrum.pdf                   295b17cd6c26cb741e23baec3cfd8d5a930b76246cec200e69fb60fc53e3c5d3
+# 2026-11-01: the eleven figures above that the 2D figure restyle redrew (fig-restyle-20261031/DECLARATION.md section 5;
+# BINDING.md, BINDING-A1.md, BINDING-A2.md; Joseph's "Install them" after his third look) are no longer installed from
+# RE-2 part C; their lines above stay as comments. They are installed below from fig-restyle-20261031/figs-a2/, the
+# bound rerun's "after" PDFs (run-a2/after/SHA256SUMS); DIGESTS.tsv there gives each figure's RE-2 and restyled
+# digests. The figure data are RE-2's, bit for bit (compare.py's data-only hash, run-a2/CHECKS.txt).
+RSG="$REPO/docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/figs-a2"
+install_restyle_fig() {  # install_restyle_fig <basename under $RSG and in $FIGDIR> <sha256>
+  local src="$RSG/$1" dst="$FIGDIR/$1" want="$2"
+  if [[ "$(sha256_of "$src")" != "$want" ]]; then
+    echo "REFUSE install: $src does not have sha256 $want" >&2; exit 1
+  fi
+  cp "$src" "$dst"
+  if [[ "$(sha256_of "$dst")" != "$want" ]]; then
+    echo "REFUSE install: $dst differs from $src after the copy" >&2; exit 1
+  fi
+  echo "  installed $1 ($want)"
+}
+install_restyle_fig MEFHC_5iter_fig13.pdf                 a5530bfc0c3220a0a522dfcaa52f143752dd67465c525237acb0ad8cf722237f
+install_restyle_fig MEFHC_5iter_xsec_proj_pt.pdf          bfff6d0b8034436f6bd46d92a9d67e029812fb545f38a36eeb30ca5cbad157c2
+install_restyle_fig MEFHC_5iter_xsec_proj_pz.pdf          ff27c7d477af3c4099631c39e462972842b9fe805264c507876b8b40570f9e58
+install_restyle_fig MEFHC_5iter_pull_full.pdf             fd84d992f3b212be3be6da06badbe3dfb5123f160f34f10e81d7f65cc80afd3d
+install_restyle_fig MEFHC_5iter_xsec_paper_pt_slices.pdf  ed6fb4162bdf84f6c57fedde39912fff13d0f387e5e5bc6d7a028af3ecdb2cdd
+install_restyle_fig MEFHC_5iter_xsec_paper_pz_slices.pdf  18252c59b3a0572d490c63770df1ec2e38b8989bf3be8165985cbac799d6daf4
+install_restyle_fig tension_spectrum.pdf                  5de8157fb9831a9b6b895f231ac771488e1eef1334c0bef7e19885e676b83c5d
+install_restyle_fig tension_chi2_map.pdf                  7161ded1a2a6666de6c04d55652c00bf2435a72a38e8ef0e422a6105c002ef08
+install_restyle_fig tension_mode_maps.pdf                 7ea2d004150d1633b7e92b655d9664f7d183444a46fd48830b43f7592cfc2c71
+install_restyle_fig model_comp_projections.pdf            44f2a7b7800b5c59821e0bda87e12c137237f1bed89fe9fae87a2a4aa15294c0
+install_restyle_fig model_comp_ratio_maps.pdf             838e5fc4669cf4d58b20f81dbda29f5131c1a57a9d34202948b9830ab51648bd
 
 echo
 echo "== 3D/4D configuration-(e) figures from RE-1 run 2 F2 (digest-checked copy) =="

@@ -1,0 +1,25 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER states that the reported covariance includes "$+C_{\mathrm{PL,5D}}$", asserting an additional covariance component that BEFORE does not support.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER introduces extensive technical details and claims unsupported by BEFORE, including the origin of the run-period block ("accounts for an inconsistency among the three run-period groups"), matrix decomposition choices, and block breakdown. It also replaces the median uncertainty macro "\fvval{sigmed-C_total_resp}\%" with "\fvval{sigmed-reported}\%".
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER changes the evaluated covariance to include "$+C_{\mathrm{PL,5D}}$", removes the GiBUU $\Eavail$ shape from the truths listed under the reported covariance, and adds new claims about behavior "Without $C_{\mathrm{PL,5D}}$".
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states that the reported covariance is "$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$" rather than "$C_{\mathrm{total}}+C_{\mathrm{resp}}$", which BEFORE does not support.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER asserts that Table~\ref*{N-tab:fived16-cells} provides uncertainties under "$C_{\mathrm{PL,5D}}$ separately, and without $C_{\mathrm{PL,5D}}$", and redefines the marginal relative uncertainty in the caption to include "$+C_{\mathrm{PL,5D}}$".
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER replaces the per-cell and median marginal relative uncertainty quantities from "\fvval{sig-C_total_resp-R00}" through R15 and "\fvval{sigmed-C_total_resp}" with "\fvval{sig-reported-R00}" through R15 and "\fvval{sigmed-reported}". This reports values corresponding to an altered covariance definition unsupported by BEFORE.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER defines $\sigma$ using "$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$" instead of "$C_{\mathrm{total}}+C_{\mathrm{resp}}$", incorporating a term not supported by BEFORE.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER restructures the table to report $\chi^2$ against the reported covariance with "$+C_{\mathrm{PL,5D}}$" as well as "without $C_{\mathrm{PL,5D}}$", removes the dedicated "ndf" columns, and adds unsupported discussion including "The run-period block was added after the data were seen".
+
+END

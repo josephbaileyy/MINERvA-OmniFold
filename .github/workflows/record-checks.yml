@@ -205,6 +205,16 @@ jobs:
         if: ${{ !cancelled() }}
         run: python3 -m pytest -q -p no:cacheprovider docs/analysis-note/test_check_sec4_receipts.py
 
+      # build_all.sh's own harness: the real script, run in a sandbox with fake latexmk and pdftotext and stubbed
+      # checkers, in both directions (a stale or unbuilt PDF, a failing checker or generator, an unresolved reference
+      # must each fail it; a clean build must pass). It needs no LaTeX. Wired in after #625 made it pass on main
+      # (it had failed 23 of 81 there unnoticed, since nothing ran it).
+      - name: "note: build_all.sh harness tests (test_build_all.py)"
+        if: ${{ !cancelled() }}
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python3 -m pytest -q -p no:cacheprovider docs/analysis-note/test_build_all.py
+
       - name: "note: records-move self-test (check_note_records.py --self-test)"
         if: ${{ !cancelled() }}
         run: python3 docs/analysis-note/check_note_records.py --self-test docs/analysis-note/records-inventory-base.json docs/analysis-note

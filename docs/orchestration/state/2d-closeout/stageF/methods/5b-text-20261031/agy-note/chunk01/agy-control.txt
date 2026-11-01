@@ -1,0 +1,31 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER changes the macro reporting the median uncertainty from `\fvval{sigmed-C_total_resp}` to `\fvval{sigmed-reported}`, referencing a different covariance definition not supported by BEFORE.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER states the reported covariance includes the run-period block by adding `+C_{\mathrm{PL,5D}}`, which BEFORE does not state or support.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER adds columns and discussion for the run-period block `$C_{\mathrm{PL,5D}}$` and the expanded reported covariance `$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$`, including the statement that `the run-period block $C_{\mathrm{PL,5D}}$ is described in \S\ref{sec:fived16-pl}`, none of which is present in BEFORE.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER adds `+C_{\mathrm{PL,5D}}` to the correlation matrix and introduces an entire new subsection, `\subsection{The run-period block}`, containing extensive background, audit descriptions, and numerical statements not supported by BEFORE.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER adds a third column group `without $C_{\mathrm{PL,5D}}$` to Table~\ref{tab:fived16-fd} and states that under the reported covariance only two truths exceed the threshold, omitting `the GiBUU $\Eavail$ shape` which BEFORE explicitly states fails under the reported covariance.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER adds `+C_{\mathrm{PL,5D}}` and asserts that the in-sample test `is evidence`, directly contradicting BEFORE's statement that it `is not evidence`.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER adds `+C_{\mathrm{PL,5D}}` to the reported covariance, adds `and both again without $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-pl})`, and drops the qualification `with its number of degrees of freedom`.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER adds `$C_{\mathrm{PL,5D}}$` and the `without $C_{\mathrm{PL,5D}}$` results to Tables~\ref{tab:fived16-gen} and~\ref{tab:fived16-pulls}, and narrows the failure under the reported covariance to `the GiBUU hybrid truth` rather than `The GiBUU-like truths`.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER adds `+C_{\mathrm{PL,5D}}` to the covariance evaluated in Table~\ref{tab:fived16-sens} and in the accompanying text describing the eigenmode decomposition, which is not supported by BEFORE.
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER adds `+C_{\mathrm{PL,5D}}` to the reported comparison covariance in the caption of the figure (`$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$`), which is absent from BEFORE.
+
+END

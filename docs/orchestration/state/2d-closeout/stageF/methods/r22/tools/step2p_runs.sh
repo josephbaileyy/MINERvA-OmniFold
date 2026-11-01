@@ -11,11 +11,13 @@
 # codex-school); output names keep "sol2", the rater, and status.tsv records the key. RATERS (default "sol2 gemini")
 # and JOBS (default 3) as in step2_runs.sh: pass 3 runs sol with JOBS=1, alone. P1_OLD=1 also runs P1 x3 on OLD
 # (P1old.paper.sol2.rN.md), BASE' of section 6.2.
+# The 5B text round (5b-text-20261031/, the director's ruling of 2026-10-31: "one P1 x3 non-regression only, no
+# P2"): P1_ONLY=1 runs P1 sol2 r1-r3 on NEW and nothing else; OLD is then not read.
 set -u
 T=$(cd "$(dirname "$0")" && pwd); M=${M:?set M to the stageF/methods directory}
 export RX=$M/register-method/tools/run_x.sh P2=$M/rater-calibration/prompts/P2.prompt.txt P1=$M/rater-calibration/prompts/P1.prompt.txt
 export XMODEL_DIR=${XMODEL_DIR:?set XMODEL_DIR to a scratch directory} OLD=$1 NEW=$2 OUT=$3 T SOL_RX=${SOL_RX:-sol2}
-RATERS=${RATERS:-sol2 gemini} JOBS=${JOBS:-3} P1_OLD=${P1_OLD:-0}
+RATERS=${RATERS:-sol2 gemini} JOBS=${JOBS:-3} P1_OLD=${P1_OLD:-0} P1_ONLY=${P1_ONLY:-0}
 case $SOL_RX in sol|sol2) ;; *) echo "SOL_RX must be sol or sol2"; exit 2 ;; esac
 mkdir -p "$OUT"
 one() { kind=$1; m=$2; o=$3; out=$OUT/$kind.paper.$m.$o.md
@@ -38,6 +40,10 @@ one() { kind=$1; m=$2; o=$3; out=$OUT/$kind.paper.$m.$o.md
   done
   printf '%s\t%s\t%s\tFAILED\n' "$kind" "$m" "$o" >> "$OUT/status.tsv"; }
 export -f one
+if [ "$P1_ONLY" = 1 ]; then
+  printf '%s\n' "P1 sol2 r1" "P1 sol2 r2" "P1 sol2 r3" | xargs -P "$JOBS" -L 1 bash -c 'one "$@"' _
+  exit 0
+fi
 case " $RATERS " in *" sol2 "*)
 ( printf '%s\n' "P2 sol2 AB" "P2 sol2 BA" "P1 sol2 r1" "P1 sol2 r2" "P1 sol2 r3"
   [ "$P1_OLD" = 1 ] && printf '%s\n' "P1old sol2 r1" "P1old sol2 r2" "P1old sol2 r3"

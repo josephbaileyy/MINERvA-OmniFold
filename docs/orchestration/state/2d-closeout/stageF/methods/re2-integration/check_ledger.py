@@ -27,6 +27,14 @@ and whitespace collapsed. Row kinds:
      docs/analysis-note/figures/<basename> and the committed copy re2-integration/figs/<basename> must both have
      <sha256>; <SHA256SUMS file> must list exactly <sha256> for <entry>; and make_figures.sh must install the file with
      that pin ("install_re2_fig <basename> <sha256>").
+       G <id> <basename> <sha256> <SHA256SUMS file> <its entry> <copy directory>
+     A row re-pointed by the 2D figure restyle (fig-restyle-20261031/DECLARATION.md section 5 item 3, ruling 1:
+     re-point, do not replace) names its committed copy's directory, relative to the repository root; the copy is
+     read there, and make_figures.sh must install it with "install_restyle_fig <basename> <sha256>". The figure's
+     RE-2 digests stay in fig-restyle-20261031/DIGESTS.tsv.
+  --figures checks the G rows and Fig. 1 only, with no posted-text sweep. The V, M and F rows record the RE-2
+  integration's text of 2026-10-23; later note rounds rewrote that text, so the full run no longer applies to the
+  current tree, while the figure pins still do.
 
 Also:
   - Fig. 1: docs/analysis-note/figures/paper_fig1_validation.pdf and the committed copy fig1/fig1_validation.pdf both
@@ -100,11 +108,12 @@ def lookup(path, key):
     return float(obj)
 
 
-def check_rows(wt, ledger):
+def check_rows(wt, ledger, figures_only=False):
     note = wt / "docs/analysis-note"
-    posted = posted_files(note)
+    posted = [] if figures_only else posted_files(note)
     cache = {f: printed(note / f) for f in posted}
-    macros = re.findall(r"\\newcommand\{\\([A-Za-z]+)\}\{([^}]*)\}", cache.get("values.tex", printed(note / "values.tex")))
+    macros = [] if figures_only else re.findall(r"\\newcommand\{\\([A-Za-z]+)\}\{([^}]*)\}",
+                                                 cache.get("values.tex", printed(note / "values.tex")))
     tables = {}
     fails, failed, counts = 0, set(), {"V": 0, "M": 0, "F": 0, "G": 0}
     mkfig = (note / "make_figures.sh").read_text()
@@ -125,6 +134,8 @@ def check_rows(wt, ledger):
         kind = c[0]
         if kind not in counts:
             print(f"MALFORMED row: {line[:80]!r}"); fails += 1; continue
+        if figures_only and kind != "G":
+            continue
         counts[kind] += 1
         if kind == "V":
             if len(c) != 11:
@@ -145,18 +156,19 @@ def check_rows(wt, ledger):
             if octx != "-":
                 stale(rid, octx)
         elif kind == "G":
-            if len(c) != 6:
+            if len(c) not in (6, 7):
                 fail(c[1] if len(c) > 1 else "?", "MALFORMED G row"); continue
-            _, rid, base, sha, sums, entry = c
-            for path in (note / "figures" / base, HERE / "figs" / base):
+            _, rid, base, sha, sums, entry = c[:6]
+            copydir, installer = (wt / c[6], "install_restyle_fig") if len(c) == 7 else (HERE / "figs", "install_re2_fig")
+            for path in (note / "figures" / base, copydir / base):
                 h = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else "missing"
                 if h != sha:
                     fail(rid, f"FIGURE {path.name} at {path.parent.name}/ has sha256 {h}, pinned {sha}")
             listed = [l.split()[0] for l in (wt / sums).read_text().splitlines() if l.split()[1:] == [entry]]
             if listed != [sha]:
                 fail(rid, f"SHA256SUMS {sums} lists {listed} for {entry}, not {sha}")
-            if not re.search(r"^install_re2_fig\s+" + re.escape(base) + r"\s+" + sha + r"\s*$", mkfig, re.M):
-                fail(rid, f"make_figures.sh does not install {base} with pin {sha}")
+            if not re.search(r"^" + installer + r"\s+" + re.escape(base) + r"\s+" + sha + r"\s*$", mkfig, re.M):
+                fail(rid, f"make_figures.sh does not install {base} with pin {sha} ({installer})")
         elif kind == "M":
             if len(c) != 7:
                 fail(c[1] if len(c) > 1 else "?", "MALFORMED M row"); continue
@@ -223,14 +235,15 @@ def check_protected(wt, base):
 def main():
     args = sys.argv[1:]
     self_test = "--self-test" in args
-    args = [a for a in args if a != "--self-test"]
+    figures_only = "--figures" in args
+    args = [a for a in args if a not in ("--self-test", "--figures")]
     base, ledger = BASE_DEFAULT, HERE / "ledger.tsv"
     if "--base" in args:
         i = args.index("--base"); base = args[i + 1]; del args[i:i + 2]
     if "--ledger" in args:
         i = args.index("--ledger"); ledger = Path(args[i + 1]); del args[i:i + 2]
     wt = Path(args[0]).resolve()
-    if self_test:
+    if self_test and not figures_only:
         bad = ("V\tSELFTEST-V\tvalues.tex\t125\t2.65\t2.64\t\\newcommand{\\chiPaper}{2.64}\t-\t"
                "re2/run/partc_r2/partc-r2/values_table.tsv\tm-chiPaper\trefined_rendered\n"
                "M\tSELFTEST-M\tqrCmodelMedian\tdocs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/"
@@ -252,6 +265,28 @@ def main():
               "that is not the table's, a macro that is "
               "not its product's value, and an old text still printed in another posted file)")
         sys.exit(0)
+    if figures_only:
+        if self_test:  # both directions: the committed rows pass; a wrong pin and a re-pointed row at a wrong copy fail
+            _, f0, _ = check_rows(wt, ledger, figures_only=True)
+            rows = [l for l in ledger.read_text().splitlines() if l.startswith("G\t") and len(l.split("\t")) == 7]
+            bad = ("G\tSELFTEST-G6\tuq_corr_2d.pdf\t" + "0" * 64 + "\tdocs/orchestration/state/2d-closeout/stageF/methods/"
+                   "re2/run/partc_r2/partc-r2/SHA256SUMS\t./stat/uq_corr_2d.pdf\n")
+            if rows:  # a re-pointed row whose copy directory is the RE-2 one, where the restyled file is not
+                c = rows[0].split("\t")
+                bad += "\t".join(["G", "SELFTEST-G7"] + c[2:6] + ["docs/orchestration/state/2d-closeout/stageF/methods/"
+                                                                   "re2-integration/figs"]) + "\n"
+            with tempfile.NamedTemporaryFile("w", suffix=".tsv", delete=False) as t:
+                t.write(ledger.read_text() + bad)
+            _, _, failed = check_rows(wt, Path(t.name), figures_only=True)
+            want = {"SELFTEST-G6"} | ({"SELFTEST-G7"} if rows else set())
+            ok = f0 == 0 and failed == want
+            print(f"FIGURES SELF-TEST :: {'PASS' if ok else 'FAIL'} (committed rows {f0} failures; planted failures "
+                  f"{sorted(failed)}, want {sorted(want)})")
+            sys.exit(0 if ok else 1)
+        counts, fails, _ = check_rows(wt, ledger, figures_only=True)
+        fails += check_fig(wt)
+        print(f"LEDGER FIGURES :: {'PASS' if not fails else 'FAIL'} (G {counts['G']} rows and Fig. 1; {fails} failures)")
+        sys.exit(1 if fails else 0)
     counts, fails, _ = check_rows(wt, ledger)
     fails += check_fig(wt)
     fails += check_sec4(wt)

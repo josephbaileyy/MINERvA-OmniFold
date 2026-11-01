@@ -1,0 +1,182 @@
+[
+ {
+  "i": 0,
+  "kind": "line",
+  "axes": 0,
+  "label": "Published (PRD 104, 092007)",
+  "hash": "59d44867da98676b4e69538fed3f57c6db40277d3dcbe62f5a41e955bf1d2016",
+  "dhash": "3c68d68b69902c17af1384ddb43d7171c421f1a8c4a64e9d52e08e627f381d8e",
+  "xhash": "9c1e92c4ef405d28b4ded57f00efa7ecdfb9f1ad6183dc2a9583ef67be38fdbc",
+  "colours": {
+   "color": [
+    "#000000FF"
+   ],
+   "mfc": [
+    "#000000FF"
+   ],
+   "mec": [
+    "#000000FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "o",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 1,
+  "kind": "line",
+  "axes": 0,
+  "label": "This work (OmniFold)",
+  "hash": "09987c5c5c89549d09eb0ba60185f55795dc95e573b71db5b133837a3b7ec1b8",
+  "dhash": "17732c4a57ddee4b1b8050d4b31ad5d3f1396aab69bc11af6a74c4f2c154f31d",
+  "xhash": "ae76a8e30b6e36a1a9552782b39604cc4e06a1d30f59aac53d613b697fbf5cb9",
+  "colours": {
+   "color": [
+    "#C44E52FF"
+   ],
+   "mfc": [
+    "#C44E52FF"
+   ],
+   "mec": [
+    "#C44E52FF"
+   ]
+  },
+  "style": {
+   "linestyle": "--",
+   "marker": "None",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 2,
+  "kind": "line",
+  "axes": 0,
+  "label": "MINERvA_Tune_v1",
+  "hash": "056c3cbe364bfeda1df22f8113ad020c87ef13e84e42ddc431cb13d78761c537",
+  "dhash": "0294329d7056bc54460d6c74d3076c005c55b34988b365ead9819ea29b5f19c2",
+  "xhash": "5f46f87814237e4e8b4c54a3b2368f5fc11a37209acc4ae132951f5a5c8db419",
+  "colours": {
+   "color": [
+    "#4C72B0FF"
+   ],
+   "mfc": [
+    "#4C72B0FF"
+   ],
+   "mec": [
+    "#4C72B0FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "s",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 3,
+  "kind": "line",
+  "axes": 1,
+  "label": "Published (PRD 104, 092007)",
+  "hash": "1b5da91e06eeba33e16b251dc6f494cd44dc212d171cc9cc70c7628e0e08a490",
+  "dhash": "878361da4b3e10e30cf7a6cea07346a27b859ead4f7e662b1bfb61781e0fd2ae",
+  "xhash": "569a5e583f4c32564d06d6311df3685199a1deb83cd56993971367b41f1c9aa5",
+  "colours": {
+   "color": [
+    "#000000FF"
+   ],
+   "mfc": [
+    "#000000FF"
+   ],
+   "mec": [
+    "#000000FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "o",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 4,
+  "kind": "line",
+  "axes": 1,
+  "label": "This work (OmniFold)",
+  "hash": "ecadb9fe72425f7f43ea6344a4528fc3ed140519f4700beeb5cfb62a1fa863d0",
+  "dhash": "5c1062dbda660307324dcd9db5dd38762f38775312f304210cbf060cbb760672",
+  "xhash": "66563ea6e2e90bc164a6d95c7d282bc05b7b9b6df13d9d4be3c17f8857f68219",
+  "colours": {
+   "color": [
+    "#C44E52FF"
+   ],
+   "mfc": [
+    "#C44E52FF"
+   ],
+   "mec": [
+    "#C44E52FF"
+   ]
+  },
+  "style": {
+   "linestyle": "--",
+   "marker": "None",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ },
+ {
+  "i": 5,
+  "kind": "line",
+  "axes": 1,
+  "label": "MINERvA_Tune_v1",
+  "hash": "53ad5d5a1ad90000f06e6e6af0b6133f71b4ed55ad6ad7171626ba8e16ea3e09",
+  "dhash": "cf8f94407926ab8adccbbde0985a06405bd1e1dd47c16070ecb41cb690cb0c96",
+  "xhash": "d893a555790d4007ecad74eccfc724caf3d72d405dcd6926f94af8a9a03d698b",
+  "colours": {
+   "color": [
+    "#4C72B0FF"
+   ],
+   "mfc": [
+    "#4C72B0FF"
+   ],
+   "mec": [
+    "#4C72B0FF"
+   ]
+  },
+  "style": {
+   "linestyle": "-",
+   "marker": "s",
+   "drawstyle": "steps-mid"
+  },
+  "gid": null,
+  "scale": [
+   "linear",
+   "linear"
+  ]
+ }
+]

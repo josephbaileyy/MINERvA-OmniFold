@@ -1,0 +1,31 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER replaces the uncertainty macro with `\fvval{sigmed-reported}\%` instead of BEFORE's `\fvval{sigmed-C_total_resp}\%`, asserting a value based on a modified covariance not supported by BEFORE.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER expands the reported covariance by adding `+C_{\mathrm{PL,5D}}`, introducing an additional run-period systematic component that BEFORE does not support.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER adds columns and definitions for `C_{\mathrm{PL,5D}}` and `reported` (`C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}`), including the text `under $C_{\mathrm{PL,5D}}$ alone and under the reported $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$` and the reference `\S\ref{sec:fived16-pl}`, none of which are supported by BEFORE.
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER changes the correlation matrix to include `+C_{\mathrm{PL,5D}}` and inserts extensive new content not present in BEFORE, specifically the paragraph beginning `Every $\chi^2$ of this section inverts...` and the entire subsection `\subsection{The run-period block}`.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER redefines the reported covariance to include `C_{\mathrm{PL,5D}}`, adds columns evaluated `without $C_{\mathrm{PL,5D}}$`, and drops the finding that the `GiBUU $\Eavail$ shape` fails under the reported covariance (stating instead that it only exceeds thresholds `without $C_{\mathrm{PL,5D}}$`).
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER changes the covariance tested from `$C_{\mathrm{total}}+C_{\mathrm{resp}}$` to `the reported $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$`, adding a run-period covariance term not supported by BEFORE.
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER adds `+C_{\mathrm{PL,5D}}` to the reported covariance and adds `and both again without $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-pl})`, while dropping the qualifier `with its number of degrees of freedom`.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER incorporates `C_{\mathrm{PL,5D}}` into the reported covariance and pull tables, adds columns for `without $C_{\mathrm{PL,5D}}$`, and alters the qualification of GiBUU by stating its shape bias exceeds thresholds only `without $C_{\mathrm{PL,5D}}$` rather than under the reported covariance.
+
+Q9: VERDICT: DIFFERS
+DETAIL: AFTER replaces `$C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$` with `$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$` in both the table caption and trailing text, asserting that the sensitivity test and eigenmode decomposition use an additional covariance component not present in BEFORE.
+
+Q10: VERDICT: DIFFERS
+DETAIL: AFTER changes the covariance of the reported comparison from `$C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$` to `$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$`, incorporating the run-period block which is unsupported by BEFORE.
+
+END
