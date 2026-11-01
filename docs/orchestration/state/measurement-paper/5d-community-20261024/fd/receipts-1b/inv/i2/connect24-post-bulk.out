@@ -1,0 +1,33 @@
+host=login37 start=2026-11-01T21:41:34Z
+== sacct
+60658473|fd1b_inv_i2n0|COMPLETED|0:0|01:28:02|1|2026-11-01T12:05:37|2026-11-01T13:33:39
+60658474|fd1b_inv_i2n1|COMPLETED|0:0|01:18:34|1|2026-11-01T12:05:37|2026-11-01T13:24:11
+60658475|fd1b_inv_i2n2|COMPLETED|0:0|01:18:07|1|2026-11-01T12:19:09|2026-11-01T13:37:16
+60658476|fd1b_inv_i2n3|COMPLETED|0:0|01:17:30|1|2026-11-01T12:19:55|2026-11-01T13:37:25
+== lanes
+job 60658473: s5c rc!=0 lines: 0  rc=0 lines: 8
+job 60658474: s5c rc!=0 lines: 0  rc=0 lines: 8
+job 60658475: s5c rc!=0 lines: 0  rc=0 lines: 8
+job 60658476: s5c rc!=0 lines: 0  rc=0 lines: 8
+== products: 204 of 204; partials: 0
+== walls of the bulk
+n=204 seconds_unfold median 725.1 max 849.6; peak_rss_kib max 20934284
+== atime sidecars
+sidecars=204 moved=[]
+sources atime/mtime/size: UNCHANGED (272)
+== i2
+i2 rc=0 wall_s=3
+{"out": "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2/i2.json", "step": "I2", "verdict": "O1"}
+-rw-rw---- 1 josephrb josephrb 62900 Nov  1 13:41 /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2/i2.json
+a9d3dc9c0e331eb635d6598c03b5bf95f6931f88c0cf0a43a1e73e2df9135bdb  /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2/i2.json
+== HPSS
+-rw-rw---- 1 josephrb josephrb 44195840 Nov  1 13:41 /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2.tar
+528c2eb2aaaeeccdd461ca131043901754f127f093b1860a5e0849534e23defe  /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2.tar
+| josephrb usage on HPSS charged to m3246 |  446.01GiB |   512.00GiB |          87.1% |          - |           - |              - |
+put  '/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2.tar' : '/home/j/josephrb/fd-1b-inv-20261101/i2.tar' ( 44195840 bytes, 750671.4 KBS (cos=4))
+4bba8d767f795cb96553462c815fda6c (md5) /home/j/josephrb/fd-1b-inv-20261101/i2.tar
+hashverify rc=0
+/home/j/josephrb/fd-1b-inv-20261101/i2.tar: (md5) OK
+get  '/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2-retrieved.tar' : '/home/j/josephrb/fd-1b-inv-20261101/i2.tar' (2026/11/01 13:41:41 44195840 bytes, 577480.9 KBS )
+retrieval cmp: identical
+end=2026-11-01T21:41:43Z
