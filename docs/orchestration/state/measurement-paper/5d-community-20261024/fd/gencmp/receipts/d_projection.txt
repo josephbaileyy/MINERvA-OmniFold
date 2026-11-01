@@ -1,0 +1,8 @@
+GENCMP step D projection (before the production submission)
+probe job 60658883: 64/64 chunks rc=0, flat=0; mean wall 29.88 s per 2000 events (max 31.85 s), 64 concurrent on one node
+probe charge: ElapsedRaw 66 s x billing 256/256 = 0.0183 node-h
+production: 138 chunks (128 x 15625 + 10 x 10000) concurrent on one node; if all the probe's time were per event,
+  15625/2000 x 31.9 s = 249 s per chunk; x2 for hyperthread sharing and x3 for a worst-case alternate chain: < 25 min.
+limits: generation 45 min (<= 0.75 node-h); rebuild 60 min (<= 1.0 node-h); D total <= 0.018 + 0.75 + 1.0 = 1.77 of the 4.0 cap
+diagnostic, not a declared test: probe chunk c1's NuWro test-event total 3.654e-38 per nucleon against
+  (12 x 3.6818e-38 [production C12 p1] + 2.3368e-38 [MP3-B H c01]) / 13 = 3.578e-38, +2.1%, mostly DIS (dyn 4)

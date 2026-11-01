@@ -1,0 +1,10 @@
+/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c001/a0/flat5d.root
+/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c002/a0/flat5d.root
+/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c003/a0/flat5d.root
+/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c004/a0/flat5d.root
+/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c005/a0/flat5d.root
+/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c006/a0/flat5d.root
+/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c007/a0/flat5d.root
+/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c008/a0/flat5d.root
+/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c009/a0/flat5d.root
+/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c010/a0/flat5d.root

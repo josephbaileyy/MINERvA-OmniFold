@@ -1,0 +1,293 @@
+{
+ "schema": "fd-gencmp-overlap/1",
+ "step": "C (Q26)",
+ "quadrants": {
+  "QA": {
+   "cells": [
+    "R00",
+    "R01",
+    "R02",
+    "R03"
+   ],
+   "S16": 7.991162724304507e-39,
+   "sigma16_reported": 5.464101241595538e-40,
+   "sigma16_without_C_PL5D": 5.330966823610066e-40,
+   "unreported_boxes_P5": {
+    "2": 0.0,
+    "6": 8.933142942126571e-46
+   },
+   "unreported_share_P5": 1.1178777419907999e-07,
+   "unreported_share_MnvTune": 1.08051577819826e-07,
+   "label": "includes unreported boxes at their central value, +-100%",
+   "2D": {
+    "S": 8.013551005863895e-39,
+    "sigma": 5.3722579360156705e-40,
+    "d": -2.2388281559387923e-41,
+    "d_pct": -0.27938028400898984,
+    "outcome": "agree below a correlation",
+    "bound_any_rho": 1.836866111597348e-41,
+    "bound_rho0": 1.5325476528903008e-39,
+    "rho_star": 0.999930237656021,
+    "z_rho0": -0.029217077220619996,
+    "primary": "the reported matrix C_total + C_resp + C_PL5D (declaration section 4)",
+    "printed_only_without_C_PL5D": {
+     "outcome": "agree below a correlation",
+     "bound_any_rho": 8.258222481120922e-42,
+     "bound_rho0": 1.5136758253406117e-39,
+     "rho_star": 0.9998109955215412,
+     "z_rho0": -0.029581342563028707,
+     "label": "printed only, no outcome is read from it: the sixteen-cell matrix without C_PL5D against Q, which includes C_PL; not a like-for-like pair"
+    }
+   },
+   "3D": {
+    "S": 8.004564310924301e-39,
+    "d": -1.3401586619793827e-41,
+    "d_pct": -0.16742431067114927,
+    "outcome": "agree at the sigma_16 scale (descriptive)",
+    "d_over_sigma16": -0.024526607446022565,
+    "descriptive_PROJ3D": {
+     "variance": 1.7990789978053842e-79,
+     "sigma": 4.241555136745701e-40,
+     "negative_variance": false,
+     "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value (OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"
+    }
+   }
+  },
+  "QB": {
+   "cells": [
+    "R04",
+    "R05",
+    "R06",
+    "R07"
+   ],
+   "S16": 6.775116961991457e-39,
+   "sigma16_reported": 3.2760325440810332e-40,
+   "sigma16_without_C_PL5D": 2.8122985651333246e-40,
+   "unreported_boxes_P5": {
+    "10": 0.0,
+    "14": 0.0
+   },
+   "unreported_share_P5": 0.0,
+   "unreported_share_MnvTune": 0.0,
+   "label": "includes unreported boxes at their central value, +-100%",
+   "2D": {
+    "S": 6.787832716596249e-39,
+    "sigma": 3.293991205122105e-40,
+    "d": -1.2715754604791587e-41,
+    "d_pct": -0.18733158484742773,
+    "outcome": "agree below a correlation",
+    "bound_any_rho": 3.5917322082143444e-42,
+    "bound_rho0": 9.291451402079187e-40,
+    "rho_star": 0.9998276494200964,
+    "z_rho0": -0.027370868241201003,
+    "primary": "the reported matrix C_total + C_resp + C_PL5D (declaration section 4)",
+    "printed_only_without_C_PL5D": {
+     "outcome": "agree",
+     "bound_any_rho": 9.633852799775606e-41,
+     "bound_rho0": 8.662424898115477e-40,
+     "rho_star": 1.0123053350920443,
+     "z_rho0": -0.02935841812044551,
+     "label": "printed only, no outcome is read from it: the sixteen-cell matrix without C_PL5D against Q, which includes C_PL; not a like-for-like pair"
+    }
+   },
+   "3D": {
+    "S": 6.830842994639586e-39,
+    "d": -5.572603264812859e-41,
+    "d_pct": -0.8158002268806142,
+    "outcome": "agree at the sigma_16 scale (descriptive)",
+    "d_over_sigma16": -0.17010219495166956,
+    "descriptive_PROJ3D": {
+     "variance": 1.9523448397984346e-80,
+     "sigma": 1.3972633394598294e-40,
+     "negative_variance": false,
+     "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value (OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"
+    }
+   }
+  },
+  "QC": {
+   "cells": [
+    "R08",
+    "R09",
+    "R10",
+    "R11"
+   ],
+   "S16": 6.69073173099476e-39,
+   "sigma16_reported": 3.5651119370748645e-40,
+   "sigma16_without_C_PL5D": 3.2982717829143544e-40,
+   "unreported_boxes_P5": {},
+   "unreported_share_P5": 0.0,
+   "unreported_share_MnvTune": 0.0,
+   "label": "complete",
+   "2D": {
+    "S": 6.795531076689958e-39,
+    "sigma": 3.47984160189241e-40,
+    "d": -1.0479934569519818e-40,
+    "d_pct": -1.5421803610711327,
+    "outcome": "agree below a correlation",
+    "bound_any_rho": 1.70540670364909e-41,
+    "bound_rho0": 9.963798612604498e-40,
+    "rho_star": 0.9892269463842254,
+    "z_rho0": -0.2103602245886904,
+    "primary": "the reported matrix C_total + C_resp + C_PL5D (declaration section 4)",
+    "printed_only_without_C_PL5D": {
+     "outcome": "agree below a correlation",
+     "bound_any_rho": 3.6313963795611124e-41,
+     "bound_rho0": 9.589138507338429e-40,
+     "rho_star": 0.9894748096937339,
+     "z_rho0": -0.2185792719856883,
+     "label": "printed only, no outcome is read from it: the sixteen-cell matrix without C_PL5D against Q, which includes C_PL; not a like-for-like pair"
+    }
+   },
+   "3D": {
+    "S": 6.741821624392943e-39,
+    "d": -5.108989339818231e-41,
+    "d_pct": -0.7578054752046759,
+    "outcome": "agree at the sigma_16 scale (descriptive)",
+    "d_over_sigma16": -0.14330515927671267,
+    "descriptive_PROJ3D": {
+     "variance": 3.734161792517832e-80,
+     "sigma": 1.932397938447936e-40,
+     "negative_variance": false,
+     "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value (OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"
+    }
+   }
+  },
+  "QD": {
+   "cells": [
+    "R12",
+    "R13",
+    "R14",
+    "R15"
+   ],
+   "S16": 9.192542979856633e-39,
+   "sigma16_reported": 5.036477093255108e-40,
+   "sigma16_without_C_PL5D": 4.626473976028574e-40,
+   "unreported_boxes_P5": {},
+   "unreported_share_P5": 0.0,
+   "unreported_share_MnvTune": 0.0,
+   "label": "complete",
+   "2D": {
+    "S": 9.133315764715924e-39,
+    "sigma": 5.129714699053357e-40,
+    "d": 5.922721514070822e-41,
+    "d_pct": 0.648474405861621,
+    "outcome": "agree below a correlation",
+    "bound_any_rho": 1.864752115964988e-41,
+    "bound_rho0": 1.4377770954437617e-39,
+    "rho_star": 0.9984710429170934,
+    "z_rho0": 0.08238720080935505,
+    "primary": "the reported matrix C_total + C_resp + C_PL5D (declaration section 4)",
+    "printed_only_without_C_PL5D": {
+     "outcome": "agree",
+     "bound_any_rho": 1.0064814460495666e-40,
+     "bound_rho0": 1.3815677231978709e-39,
+     "rho_star": 1.0034879323471264,
+     "z_rho0": 0.08573914133375506,
+     "label": "printed only, no outcome is read from it: the sixteen-cell matrix without C_PL5D against Q, which includes C_PL; not a like-for-like pair"
+    }
+   },
+   "3D": {
+    "S": 9.211348001311068e-39,
+    "d": -1.8805021454435646e-41,
+    "d_pct": -0.2041505917674491,
+    "outcome": "agree at the sigma_16 scale (descriptive)",
+    "d_over_sigma16": -0.037337649127044556,
+    "descriptive_PROJ3D": {
+     "variance": 1.1142694390392721e-79,
+     "sigma": 3.338067463427413e-40,
+     "negative_variance": false,
+     "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value (OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"
+    }
+   }
+  }
+ },
+ "eavail_regions_formable": [],
+ "diagnostic_cv_over_Q_x_max_rel": 0.0,
+ "total_2d": 3.073023056386603e-38,
+ "total_3d": 3.07885769312679e-38,
+ "rule": "agree: |d| <= 2|s16 - slow|; agree below a correlation: <= 2 sqrt(s16^2 + slow^2), rho* printed; differ otherwise (a new problem, to the director and Joseph). 3D: the sigma_16 scale only, descriptive, never a validation in either direction",
+ "inputs": {
+  "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json": {
+   "sha256": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89",
+   "pinned": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/block/cpl_block.npz": {
+   "sha256": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+   "pinned": "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl.json": {
+   "sha256": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+   "pinned": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/pv-ladder/readouts/cmodel_5d.json": {
+   "sha256": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+   "pinned": "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz": {
+   "sha256": "e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2",
+   "pinned": "e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz": {
+   "sha256": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c",
+   "pinned": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root": {
+   "sha256": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c",
+   "pinned": "4f5a1b6d44b9e7212b233650bb00bfb626ae65461e3bf8033cd67866dbd7eb2c",
+   "atime_unchanged": true
+  },
+  "/global/cfs/cdirs/m3246/josephrb/2d-closeout-playlist-combination-20261017/s5_plus_playlist.npz": {
+   "sha256": "8ccb4d723c3dbf737a7fb1d5236e5e25409c41b42b64ac55dccbbc12f595600e",
+   "pinned": "8ccb4d723c3dbf737a7fb1d5236e5e25409c41b42b64ac55dccbbc12f595600e",
+   "atime_unchanged": true
+  },
+  "/global/cfs/cdirs/m3246/josephrb/2d-closeout-playlist-term-20261016/playlist_term.npz": {
+   "sha256": "c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476",
+   "pinned": "c1723cb5e185ae7a6176fbbe523432ab87877c8cddcfe721eaed71f0a43b9476",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root": {
+   "sha256": "0dd94830821576a3b060fae2d4a20564610c535ed06046cd1eb05cd11885dd59",
+   "pinned": "0dd94830821576a3b060fae2d4a20564610c535ed06046cd1eb05cd11885dd59",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root": {
+   "sha256": "20c16e16a35a837b09d7fe39bcf6bb8ee5828d5283fc5c2f756e3a5371e1f69e",
+   "pinned": "20c16e16a35a837b09d7fe39bcf6bb8ee5828d5283fc5c2f756e3a5371e1f69e",
+   "atime_unchanged": true
+  }
+ },
+ "atime_deviations": [],
+ "code_sha256": {
+  "fd_gencmp.py": "675f3431012640ce960f062dce64e840d6b170e659bfc87a2028ded6db3abbb2",
+  "fd_g_compare.py": "0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f",
+  "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/fd_gencmp.py",
+  "overlap",
+  "--p5",
+  "/pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz",
+  "--mnvtune",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz",
+  "--cv2d",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/uq/2d_xsec_MEFHC_5iter_lgbm_uni_full_CV.root",
+  "--q2d",
+  "/global/cfs/cdirs/m3246/josephrb/2d-closeout-playlist-combination-20261017/s5_plus_playlist.npz",
+  "--playlist",
+  "/global/cfs/cdirs/m3246/josephrb/2d-closeout-playlist-term-20261016/playlist_term.npz",
+  "--cv3d",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/xsec_3d_MEFHC_5iter_lgbm.root",
+  "--proj3d",
+  "/pscratch/sd/j/josephrb/z2m-products/PROJ3D/cov_5d_to_ptpzeavail_from_adopted_trunk.root",
+  "--out",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/c/overlap.json"
+ ]
+}
