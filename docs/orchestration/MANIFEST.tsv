@@ -220,6 +220,7 @@ docs/orchestration/DECISION-20261031-joseph-note-abstract-reorder.md	tracked	LIV
 docs/orchestration/DECISION-20261031-joseph-oi151-option-c.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261031-joseph-oi51-oi137-ud002.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261031-joseph-rater-account-figures-chi2-consult.md	tracked	LIVE	document		20261031	open		route-only	no
+docs/orchestration/DECISION-20261031-joseph-restyle-install-and-astra-abstract-consult.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261031-joseph-restyle-review-and-palette.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261031-joseph-restyle-second-look.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261031-joseph-three-covariance-files-and-1b-diagnosis.md	tracked	LIVE	document		20261031	open		route-only	no
@@ -5155,6 +5156,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-con
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/abstracts-input.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-eavail-pricing-20261031/INPUTS.SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-eavail-pricing-20261031/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-eavail-pricing-20261031/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-eavail-pricing-20261031/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/sf1/results/README.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/sf1/results/check-all-GENIE_2_12_10_CV.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
