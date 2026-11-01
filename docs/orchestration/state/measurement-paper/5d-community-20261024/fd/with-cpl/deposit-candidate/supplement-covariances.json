@@ -1,0 +1,39 @@
+{
+ "schema": "fd-supplement-covariances/1",
+ "status": "candidate, not deposited: nothing is uploaded and no DOI is minted until Joseph releases it",
+ "what": "the 5D result's covariance on R00-R15 in (cm^2/nucleon)^2, three ways; the files differ only by C_PL,5D: reported = without + C_PL,5D, bit for bit",
+ "reported": "covariance-reported.csv",
+ "files": [
+  {
+   "name": "covariance-reported.csv",
+   "matrix": "C_total_plus_C_resp_plus_C_PL5D",
+   "label": "the reported covariance, C_total + C_resp + C_PL,5D = C_e + C_model_abs + C_resp + C_PL,5D",
+   "reported": true,
+   "sha256": "76730c5b7143f8933019a502ca23eed635e45340f7d1ed5534813b2242956170",
+   "source": "fd_data_product_cpl_C_total_plus_C_resp_plus_C_PL5D.csv"
+  },
+  {
+   "name": "covariance-without-C_PL5D.csv",
+   "matrix": "C_total_plus_C_resp",
+   "label": "the reported covariance without the run-period block: C_total + C_resp = C_e + C_model_abs + C_resp",
+   "reported": false,
+   "sha256": "20a4b9d8e41c2b53a65b20beebf7abcb2bf46d5fb4de2a30af1ca8e327361ad8",
+   "source": "fd_data_product_cpl_C_total_plus_C_resp.csv"
+  },
+  {
+   "name": "covariance-C_PL5D.csv",
+   "matrix": "C_PL5D",
+   "label": "the run-period block C_PL,5D alone",
+   "reported": false,
+   "sha256": "03babead4dff1bf19980319a867c9b830a5b7f85896792edc6f07a62c6e991c9",
+   "source": "fd_data_product_cpl_C_PL5D.csv"
+  }
+ ],
+ "source": {
+  "data_product": "fd/with-cpl/data-product/fd_data_product_cpl.json",
+  "sha256": "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50"
+ },
+ "code_sha256": {
+  "fd_supplement_covariances.py": "ccf1b7b5f64ca1dd6d77a06982ec2b5335c0922ff9b9bc7d0fed528a4055f2c7"
+ }
+}
