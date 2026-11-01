@@ -45,6 +45,14 @@ READOUTS = {
     # the two tunes' generation records, for their names; their digests are the F1c pin's f1b3-SHA256SUMS
     "f1meta-g18": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_g18_xsec5d.meta.json", "4fe333b8"),
     "f1meta-ar23": (f"{FD}/fd/receipts-f1/run/cluster/f1b3/gen5d/genie_v3_ar23_xsec5d.meta.json", "d7d136e5"),
+    # the pion-constant departure of Eq. (1), as full-covariance norms of its first-order shift under each arm's matrix
+    # (ASSESSMENT-20261031-eavail-charged-pion-mass-switch-pricing.md section 7.3; JSON despite the suffix)
+    "eav": ("docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0_metric.txt", "3e8bd546"),
+    # the same switch at prior level on the analysis's seven fine E_avail bins (that record's section 7.2)
+    "eav0": ("docs/orchestration/state/eavail-switch-pricing-20261031/step0/step0.json", "c284a6b3"),
+    # the stopped 1B coverage test: gate D (FD-1B-STAGE2-REPORT.md section 4.1) and its diagnosis (FD-1B-DIAG-REPORT.md)
+    "gated": (f"{FD}/fd/receipts-1b/stage2/run/score/gate-d.json", "e1838c0a"),
+    "diag1b": (f"{FD}/fd/receipts-1b/diag/diag.json", "6fd6669e"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -63,7 +71,7 @@ ARMS = {"with": {"dp": "C_total_plus_C_resp_plus_C_PL5D", "rep": "C_total + C_re
         "without": {"dp": "C_total_plus_C_resp", "rep": "C_total + C_resp", "x": "C_resp",
                     "f1sig": "relative_sigma_plus_C_resp"}}
 # the key families whose values depend on the reported matrix; any other key must be equal in the two arms
-MATRIX_KEYS = re.compile(r"^(g-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|sig(med|min|max)?-(reported|C_PL5D)|trig-)")
+MATRIX_KEYS = re.compile(r"^(g-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|eav-|sig(med|min|max)?-(reported|C_PL5D)|trig-)")
 # the figures the note and the paper print, copied into figures/: each must equal its committed source (with the block)
 # and the digest its sidecar records (FD-G-FIGURES-REPORT.md section 1; FD-CT-5B-ADDITION-REPORT.md section 3)
 FIGURES = {"fd_g_fig_ratio.pdf": "b57cbb2c", "fd_g_fig_modes.pdf": "980351ed"}
@@ -486,6 +494,28 @@ def values(d, arm="with"):
     v["f1-grp-reftruths"] = f"{gt['gaussian_reference_truths']:.2f}"
     # the held-out group stays out of all_graded, so F0b's pooled denominators are unchanged
     assert gt["truths"] == 4 and f1["triggers"]["all_graded"] == d["f0b"]["triggers"]["all_graded"]
+    # Eq. (1)'s pion constant against the charged-pion mass, first order in the unfolding, under this arm's matrix:
+    # "at most" the largest |shift| / sigma over the cells (ceiled), and the shift's full-covariance norm
+    em = d["eav"]["first_order_unfolded"][ARMS[arm]["dp"]]
+    v["eav-cellmax"] = f"{math.ceil(100 * em['max_abs_over_sigma']) / 100:.2f}"
+    v["eav-coherent"] = f"{em['norm_sqrt_dCinvd']:.2f}"
+    # at prior level, on the completeness denominator (control C1: bitwise the 135 denom_nd): the weight share that
+    # changes fine E_avail bin, and "no bin by more than" the largest |relative change| of the seven (ceiled)
+    td = d["eav0"]["truth_denom"]
+    assert d["eav0"]["control_C1"]["bitwise_equal"] and len(td["ebins_all_rel_change"]) == 7
+    v["eavbin-share"] = f"{100 * td['weight_share_changing_fine_eavail_bin']:.2f}"
+    v["eavbin-max"] = f"{math.ceil(10000 * max(abs(x) for x in td['ebins_all_rel_change'])) / 100:.2f}"
+    # the stopped 1B test: the sentence says gate D failed, the diagnosis localized nothing within its K_MAX bands, and
+    # the count of cells whose sigma ratio lies outside the window; each is asserted so a changed readout stops the run
+    gd, dg = d["gated"], d["diag1b"]
+    lo, hi = gd["window"]
+    assert gd["verdict"] == "FAIL" and dg["verdict"] == "NOT LOCALIZED" and dg["L1_named_bands"]["n_sets"] == 0
+    assert dg["rho"] == gd["rho"] and dg["window"] == gd["window"] and len(gd["rho"]) == 16
+    assert math.isclose(1 - lo, hi - 1), "the window is not symmetric about one"
+    v["cov1b-ncells-out"] = str(sum(not lo <= r <= hi for r in gd["rho"]))
+    v["cov1b-window-pct"] = f"{100 * (hi - 1):.0f}"
+    v["cov1b-kmax-word"] = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}[dg["k_max"]]
+    v["cov1b-nbands"] = str(len(dg["per_band"]))
     return v
 
 
