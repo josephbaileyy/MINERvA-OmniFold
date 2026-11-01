@@ -1,0 +1,58 @@
+Q1: DIFFERENCES: NONE
+
+Q2: DIFFERENCES: NONE
+
+Q3: DIFFERENCES:
+1. Reference to Table~\ref{tab:estimators}:
+   BEFORE: "Table~\ref{tab:estimators} lists the two estimators and the results each is used for."
+   AFTER: "The results use two estimators."
+   AFTER drops the citation/reference to Table~\ref{tab:estimators} and the statement that the table lists the results each estimator is used for.
+2. Number of iterations, model capacity, and scikit-learn citation:
+   BEFORE: [not stated]
+   AFTER: "Both use five OmniFold iterations, gradient-boosted decision trees~\cite{Pedregosa:2011sklearn,Ke:2017lightgbm} of nominal capacity (100 trees, 8 leaves) in both OmniFold steps"
+   AFTER adds that both estimators use five OmniFold iterations and decision trees with nominal capacity (100 trees, 8 leaves) in both steps, and adds the citation `\cite{Pedregosa:2011sklearn}`.
+3. Scope of negative-weight background subtraction and refinement:
+   BEFORE: "The two-observable central value uses LightGBM~\cite{Ke:2017lightgbm} at seed~42, with negative-weight background subtraction and a refinement of 400 trees and 31 leaves."
+   AFTER: "Both use ... negative-weight background subtraction with a refinement classifier at 400 trees and 31 leaves."
+   AFTER attributes negative-weight background subtraction and the 400-tree/31-leaf refinement classifier to both estimators, whereas BEFORE attributed them only to the two-observable central value.
+4. Estimator seed specification:
+   BEFORE: "seed~42"
+   AFTER: "a fixed seed"
+   AFTER weakens the specific seed number (42) to an unspecified "fixed seed".
+5. Outputs of the two-observable estimator:
+   BEFORE: "The two-observable central value uses LightGBM"
+   AFTER: "The two-observable estimator, LightGBM~\cite{Ke:2017lightgbm} at a fixed seed, gives the two-dimensional central value and its covariance (Sec.~\ref{sec:repro2d})."
+   AFTER adds that this estimator provides the covariance, adds the cross-reference `(Sec.~\ref{sec:repro2d})`, and refers to the central value as "two-dimensional" rather than "two-observable".
+
+Q4: DIFFERENCES:
+1. Entire Table~\ref{tab:estimators} dropped:
+   BEFORE: `\begin{table}[tb] ... \end{table}`
+   AFTER: [omitted entirely]
+   AFTER drops Table~\ref{tab:estimators} entirely, thereby dropping the following specific facts, rules, and attributions:
+2. OmniFold iterations and model capacity:
+   BEFORE: "Both use five OmniFold iterations, gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both OmniFold steps, and refined negative-weight background subtraction."
+   AFTER: [omitted]
+3. Determinism and reproducibility of the joint-test estimator:
+   BEFORE: "The joint-test estimator is a deterministic LightGBM (fixed seeds, reproducible training)"
+   AFTER: [omitted]
+4. Seed formula for the refinement classifier:
+   BEFORE: "and the refinement classifier of the two-observable estimator is seeded at the estimator seed plus three."
+   AFTER: [omitted]
+5. Non-combination of estimator results:
+   BEFORE: "Results from the two estimators are not combined."
+   AFTER: [omitted]
+6. Configuration cross-reference:
+   BEFORE: "\nsec{sec:method-config} gives the configuration behind each result."
+   AFTER: [omitted]
+7. Specific background treatment and result applications for the joint-test estimator:
+   BEFORE: "\pcell{0.24\columnwidth}{joint-test estimator} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} & \pcell{0.38\columnwidth}{3D and 4D central values; sixteen-cell 5D result (Sec.~\ref{sec:result16}); held-out shapes (Fig.~\ref{fig:deformation}b); precision study}"
+   AFTER: [omitted]
+8. Specific seed and table entry for the two-observable estimator:
+   BEFORE: "\pcell{0.24\columnwidth}{two-observable estimator: LightGBM, seed 42} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} & \pcell{0.38\columnwidth}{2D central value and covariance (Sec.~\ref{sec:repro2d})}"
+   AFTER: [omitted]
+
+Q5: DIFFERENCES: NONE
+
+Q6: DIFFERENCES: NONE
+
+END

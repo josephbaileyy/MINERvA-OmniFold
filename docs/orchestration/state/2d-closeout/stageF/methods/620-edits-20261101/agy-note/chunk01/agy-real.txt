@@ -1,0 +1,13 @@
+Q1: DIFFERENCES:
+1. Specific value changed: BEFORE says "\SI{0.67}{\percent}", whereas AFTER replaces this with the macro value "\fvval{eavbin-share}\,\%".
+2. Subject of the shift changed: BEFORE specifies "simulated events", whereas AFTER specifies "simulated signal weight".
+3. Bin specification added: BEFORE says "into another true-$\Eavail$ bin", whereas AFTER adds details qualifying the bins as "into another of the seven true-$\Eavail$ bins of the fine grid".
+4. Upper bound value changed: BEFORE specifies "\SI{1.05}{\percent}", whereas AFTER replaces this with the macro value "\fvval{eavbin-max}\,\%".
+5. Claim dropped: BEFORE concludes with ", so its materiality is not established.", which AFTER completely drops.
+6. Assessment and quantitative findings added: BEFORE contains no assessment on the sixteen-cell result, whereas AFTER adds: "On the sixteen-cell result of Sec.~\ref{sec:fived16}, from configuration~(e), to first order in the unfolding and without retraining, replacing the constant by the charged-pion mass moves the cross section by at most \fvval{eav-cellmax}$\sigma$ in any cell and by \fvval{eav-coherent}$\sigma$ as one coherent shift, the norm of the shift under the reported covariance (\fvval{eav-cellmax-nopl}$\sigma$ and \fvval{eav-coherent-nopl}$\sigma$ without the run-period block)."
+
+Q2: DIFFERENCES: NONE
+
+Q3: DIFFERENCES: NONE
+
+END

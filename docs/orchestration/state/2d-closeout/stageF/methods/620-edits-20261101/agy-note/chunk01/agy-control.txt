@@ -1,0 +1,14 @@
+Q1: DIFFERENCES:
+1. Metric and value moved: BEFORE states "\SI{0.67}{\percent} of simulated events", whereas AFTER states "\fvval{eavbin-share}\,\% of the simulated signal weight", changing the specific numerical value (0.67%) to a macro variable and changing the measured entity from simulated events to simulated signal weight.
+2. Destination bins: BEFORE states "into another true-$\Eavail$ bin", whereas AFTER states "into another of the seven true-$\Eavail$ bins of the fine grid", adding the specific count of bins ("seven") and specifying the grid type ("fine grid").
+3. Magnitude and direction of bin changes: BEFORE states "changes no true-$\Eavail$ bin by more than \SI{1.05}{\percent}", whereas AFTER states "changes such bin by more than \fvval{eavbin-max}\,\%", reversing a negative bound across all bins (no bin changed by more than 1.05%) into an affirmative statement that it changes such bin by more than a macro value, and replacing the numerical threshold "\SI{1.05}{\percent}" with "\fvval{eavbin-max}\,\%".
+4. Materiality conclusion: BEFORE includes ", so its materiality is not established.", whereas AFTER omits this clause, dropping the explicit claim that materiality has not been established.
+5. Effect on sixteen-cell result: BEFORE omits this entirely, whereas AFTER adds: "On the sixteen-cell result of Sec.~\ref{sec:fived16}, from configuration~(e), to first order in the unfolding and without retraining, replacing the constant by the charged-pion mass moves the cross section by at most \fvval{eav-cellmax}$\sigma$ in any cell and by \fvval{eav-coherent}$\sigma$ as one coherent shift, the norm of the shift under the reported covariance (\fvval{eav-cellmax-nopl}$\sigma$ and \fvval{eav-coherent-nopl}$\sigma$ without the run-period block).", adding a quantitative assessment of the shift on the configuration-(e) sixteen-cell result.
+
+Q2: DIFFERENCES:
+1. Relevance of a small variance share: BEFORE states "A small share of the aggregate variance does not make a bin irrelevant to a quoted result.", whereas AFTER states "A small share of the aggregate variance does make a bin irrelevant to a quoted result.", reversing the claim from stating that a small share does not make a bin irrelevant to stating that it does.
+
+Q3: DIFFERENCES:
+1. Presence of error bars: BEFORE states "Data have no error bars", whereas AFTER states "Data have error bars", changing the claim from data having no error bars to data having error bars.
+
+END

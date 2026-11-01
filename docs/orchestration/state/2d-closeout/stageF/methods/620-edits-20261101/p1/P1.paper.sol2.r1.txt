@@ -1,0 +1,20 @@
+RATING: 3
+JUSTIFICATION: The prose is generally grammatical and precise, but recurring internal labels, development narratives, and repetitive caveats give several sections the register of an analysis note and warrant a dedicated language pass.
+
+1. QUOTE: "The two-observable estimator, LightGBM [26] at a fixed
+seed, gives the two-dimensional central value and its covariance (Sec. IV B). This reproducible central value is
+that of its own systematic-universe ensemble, so its covariance is built with the same estimator."
+   REWRITE: For the two-dimensional result, we use LightGBM [26] with a fixed random seed to obtain both the central value and the systematic-universe ensemble used to construct its covariance (Sec. IV B).
+
+2. QUOTE: "It was added
+after these differences were seen, following an audit whose
+stopping criterion was fixed in advance. Passing that
+audit does not validate the block: its size and coverage
+have not been independently validated."
+   REWRITE: The run-period covariance was introduced after the differences were observed and assessed using an audit with a predefined stopping criterion. Its magnitude and coverage remain independently unvalidated.
+
+3. QUOTE: "The joint-test estimator keeps five iterations because 10,
+15, or 20 iterations did not reduce its model dependence,
+measured as the largest residual proxy over the truth
+changes used in its development."
+   REWRITE: We use five iterations because increasing the count to 10, 15, or 20 did not reduce the maximum residual used to assess model dependence across the truth deformations tested during estimator development.

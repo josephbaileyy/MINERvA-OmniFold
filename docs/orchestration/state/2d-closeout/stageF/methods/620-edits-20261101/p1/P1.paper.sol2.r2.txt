@@ -1,0 +1,20 @@
+RATING: 3
+JUSTIFICATION: The prose is generally clear and technically controlled, but recurring internal labels, development and audit narratives, and repeated qualifications give several sections the register of an analysis note and warrant a dedicated language pass.
+1. QUOTE: "The joint-test estimator keeps five iterations because 10,
+15, or 20 iterations did not reduce its model dependence,
+measured as the largest residual proxy over the truth
+changes used in its development. The comparison and its
+values are given in Ref. [14], Sec. 9.4."
+   REWRITE: We use five iterations because increasing the number to 10, 15, or 20 did not reduce the estimated model dependence, quantified by the maximum residual proxy across the truth deformations used to develop the estimator (Ref. [14], Sec. 9.4).
+2. QUOTE: "It was added
+after these differences were seen, following an audit whose
+stopping criterion was fixed in advance. Passing that
+audit does not validate the block: its size and coverage
+have not been independently validated."
+   REWRITE: The run-period covariance was introduced in response to the observed differences among periods. Its magnitude and coverage have not been independently validated.
+3. QUOTE: "Apart from the low stability of four of the sixteen cells
+(below), the limitations of these results are stated with
+the results they qualify, in Secs. III–V, and those of the
+calibrated tests in the companion note. The principal
+ones are these."
+   REWRITE: The principal limitations concern interval coverage, reconstruction stability in four cells, and the interpretation of the calibrated tests.

@@ -1,0 +1,46 @@
+Q1: DIFFERENCES: NONE
+
+Q2: DIFFERENCES:
+1. BEFORE: "so the five reconstructed inputs share information and do not provide five independent constraints."
+   AFTER: "The five reconstructed inputs therefore share information and do provide five independent constraints."
+   AFTER states that the inputs "do provide five independent constraints", directly contradicting BEFORE which states that they "do not provide five independent constraints".
+
+Q3: DIFFERENCES:
+1. BEFORE: "Table~\ref{tab:estimators} lists the two estimators and the results each is used for."
+   AFTER: "The results use two estimators."
+   AFTER drops the reference and attribution pointing the reader to Table~\ref{tab:estimators}.
+2. BEFORE: [Not present]
+   AFTER: "Both use five OmniFold iterations, gradient-boosted decision trees~\cite{Pedregosa:2011sklearn,Ke:2017lightgbm} of nominal capacity (100 trees, 8 leaves) in both OmniFold steps"
+   AFTER adds the specifications that both estimators use five OmniFold iterations and nominal tree capacity (100 trees, 8 leaves) in both OmniFold steps, and adds the citation to Pedregosa:2011sklearn.
+3. BEFORE: "The two-observable central value uses LightGBM~\cite{Ke:2017lightgbm} at seed~42, with negative-weight background subtraction and a refinement of 400 trees and 31 leaves."
+   AFTER: "Both use ... negative-weight background subtraction with a refinement classifier at 400 trees and 31 leaves."
+   AFTER attributes the negative-weight background subtraction and the 400-tree/31-leaf refinement classifier to both estimators, whereas BEFORE specified it only for the two-observable central value.
+4. BEFORE: "seed~42"
+   AFTER: "a fixed seed"
+   BEFORE specifies the exact numerical seed ("seed~42"), whereas AFTER weakens/generalizes this to an unspecified "fixed seed".
+5. BEFORE: "The two-observable central value uses LightGBM~\cite{Ke:2017lightgbm} at seed~42"
+   AFTER: "gives the two-dimensional central value and its covariance (Sec.~\ref{sec:repro2d})"
+   AFTER adds that the two-observable estimator provides the covariance of the two-dimensional central value, and adds the section cross-reference (Sec.~\ref{sec:repro2d}).
+
+Q4: DIFFERENCES:
+1. BEFORE: "\caption{Estimators. Both use five OmniFold iterations, gradient-boosted trees of nominal capacity (100 trees, 8 leaves) in both OmniFold steps, and refined negative-weight background subtraction. The joint-test estimator is a deterministic LightGBM (fixed seeds, reproducible training), and the refinement classifier of the two-observable estimator is seeded at the estimator seed plus three. Results from the two estimators are not combined. \nsec{sec:method-config} gives the configuration behind each result.}"
+   AFTER: [omitted]
+   AFTER drops Table~\ref{tab:estimators} and its caption entirely, omitting the claims that both estimators use five iterations, nominal capacity trees (100 trees, 8 leaves), and refined negative weights; that the joint-test estimator is deterministic LightGBM with reproducible training; that the two-observable refinement classifier is seeded at the estimator seed plus three; that results are not combined; and the reference to \nsec{sec:method-config}.
+2. BEFORE: "\pcell{0.24\columnwidth}{joint-test estimator} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} & \pcell{0.38\columnwidth}{3D and 4D central values; sixteen-cell 5D result (Sec.~\ref{sec:result16}); held-out shapes (Fig.~\ref{fig:deformation}b); precision study}"
+   AFTER: [omitted]
+   AFTER drops the joint-test estimator's background refinement configuration (400 trees, 31 leaves) and its use cases (3D/4D central values, sixteen-cell 5D result in Sec.~\ref{sec:result16}, held-out shapes in Fig.~\ref{fig:deformation}b, and the precision study).
+3. BEFORE: "\pcell{0.24\columnwidth}{two-observable estimator: LightGBM, seed 42} & \pcell{0.30\columnwidth}{negative weights; refinement 400 trees, 31 leaves} & \pcell{0.38\columnwidth}{2D central value and covariance (Sec.~\ref{sec:repro2d})}"
+   AFTER: [omitted]
+   AFTER drops the two-observable estimator row, including its seed (42), background refinement parameters (400 trees, 31 leaves), and its use for the 2D central value and covariance (Sec.~\ref{sec:repro2d}).
+
+Q5: DIFFERENCES:
+1. BEFORE: "10, 15, or 20 iterations did not reduce its model dependence"
+   AFTER: "10, 15, or 20 iterations did reduce its model dependence"
+   AFTER claims that 10, 15, or 20 iterations did reduce model dependence, directly contradicting BEFORE which states that they did not reduce it.
+
+Q6: DIFFERENCES:
+1. BEFORE: "with no reference period"
+   AFTER: "with reference period"
+   AFTER claims that the block is built with a reference period, contradicting BEFORE which states it is built with no reference period.
+
+END
