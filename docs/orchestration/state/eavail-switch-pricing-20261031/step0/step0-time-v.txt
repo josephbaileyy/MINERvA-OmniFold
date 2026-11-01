@@ -1,0 +1,23 @@
+	Command being timed: "/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python -I -B code/eavail_step0.py --out /pscratch/sd/j/josephrb/eavail-step0-20261031 --fine-map code/fine_map_h2.npy"
+	User time (seconds): 76.38
+	System time (seconds): 45.60
+	Percent of CPU this job got: 106%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:54.55
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 10595380
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 19781234
+	Voluntary context switches: 2276
+	Involuntary context switches: 13262
+	Swaps: 0
+	File system inputs: 13413088
+	File system outputs: 64
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

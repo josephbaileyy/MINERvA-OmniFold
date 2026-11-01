@@ -1,0 +1,4 @@
+[e] branches read: 10 lateral, 4 5B, 12 MP-1 zero, 13 universe; bank keys 20 (14 s)
+[a] read central and trees (34 s)
+[c] tuple multiset equal: True; min E' 0
+[done] 239 s; every atime unchanged

@@ -1,0 +1,10 @@
+# step0 tree-identity check (O_NOATIME)
+2026-11-01T02:48:05Z
+login37
+before atime=2026-10-20 17:59:04.000000000 -0700
+entries 32849103 32849103 nbranches 9 16
+branches only in signal: ['sim', 'sim_W', 'sim_eavail', 'sim_pass', 'sim_pz', 'sim_q3', 'w_reco']
+elementwise equal in order: False equal as sorted multisets: True
+first 3 truth_denom: [0.38810949 1.64609239 0.59330632] first 3 signal: [0.38810949 1.64609239 0.59330632]
+signal sim_pass true rows: 20498013 of 32849103
+after  atime=2026-10-20 17:59:04.000000000 -0700

@@ -1,0 +1,25 @@
+# step0 run (login node, no Slurm; O_NOATIME reads; outputs in the new dir only)
+2026-11-01T02:45:40Z
+login37
+# stat before (targets)
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root|atime=2026-10-20 17:59:04.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz|atime=2026-10-31 17:07:33.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1A.npz|atime=2026-10-24 01:15:15.000000000 -0700
+rc=0
+[1] sha256 ok: {'/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root': True, '/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz': True} (9 s)
+[2] read trees: truth_denom 32849103 rows, signal 32849103 rows (31 s)
+[2] C1 {'edges_equal': True, 'bitwise_equal': True, 'max_rel_diff': 0.0, 'sum_mine': 5778936.126366272, 'sum_npz': 5778936.126366272}
+[3] MP-2: 34858834 charged pions, 0 with E <= 139.57 MeV (114 s)
+[done] 114 s; every atime unchanged
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:54.55
+	Maximum resident set size (kbytes): 10595380
+# stat after (targets)
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/runEventLoopOmniFold_5D_MEFHC.root|atime=2026-10-20 17:59:04.000000000 -0700
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz|atime=2026-10-31 17:07:33.000000000 -0700
+/pscratch/sd/j/josephrb/measurement-paper/phase1/mp2/s1/s1_1A.npz|atime=2026-10-24 01:15:15.000000000 -0700
+total 9
+drwxrwx--- 2 josephrb josephrb  4096 Oct 31 19:45 code
+-rw-rw---- 1 josephrb josephrb   913 Oct 31 19:47 step0.err
+-rw-rw---- 1 josephrb josephrb 18628 Oct 31 19:47 step0.json
+-rw-rw---- 1 josephrb josephrb   506 Oct 31 19:47 step0.log
+c284a6b3092610f2

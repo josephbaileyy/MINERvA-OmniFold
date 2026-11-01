@@ -1,0 +1,42 @@
+# step0b run (login node, no Slurm; O_NOATIME reads; outputs in the new dir only)
+2026-11-01T02:52:37Z
+login37
+d93f130cc1387485
+03d86ecf8f9ed0a4
+rc=1
+[e] branches read: 10 lateral, 4 5B, 12 MP-1 zero, 13 universe; bank keys 20 (13 s)
+[a] read central and trees (35 s)
+[c] tuple multiset equal: False; min E' 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:28.88
+	Maximum resident set size (kbytes): 10612100
+Traceback (most recent call last):
+IndexError: boolean index did not match indexed array along axis 0; size of axis is 32849103 but size of corresponding boolean axis is 32846302
+Command exited with non-zero status 1
+total 37
+drwxrwx--- 2 josephrb josephrb  4096 Oct 31 19:52 code
+-rw-rw---- 1 josephrb josephrb  1403 Oct 31 19:56 step0b.err
+-rw-rw---- 1 josephrb josephrb   160 Oct 31 19:55 step0b.log
+-rw-rw---- 1 josephrb josephrb   913 Oct 31 19:47 step0.err
+-rw-rw---- 1 josephrb josephrb 18628 Oct 31 19:47 step0.json
+-rw-rw---- 1 josephrb josephrb   506 Oct 31 19:47 step0.log
+
+# step0b rerun after fixing a weight-length bug and NaN-aware tuple comparison
+2026-11-01T02:56:26Z
+login37
+2cfe0dba37de8be1
+rc=0
+[e] branches read: 10 lateral, 4 5B, 12 MP-1 zero, 13 universe; bank keys 20 (14 s)
+[a] read central and trees (34 s)
+[c] tuple multiset equal: True; min E' 0
+[done] 239 s; every atime unchanged
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:59.66
+	Maximum resident set size (kbytes): 12441384
+total 37
+drwxrwx--- 2 josephrb josephrb  4096 Oct 31 19:52 code
+-rw-rw---- 1 josephrb josephrb   915 Oct 31 20:00 step0b.err
+-rw-rw---- 1 josephrb josephrb 30927 Oct 31 20:00 step0b.json
+-rw-rw---- 1 josephrb josephrb   195 Oct 31 20:00 step0b.log
+-rw-rw---- 1 josephrb josephrb   913 Oct 31 19:47 step0.err
+-rw-rw---- 1 josephrb josephrb 18628 Oct 31 19:47 step0.json
+-rw-rw---- 1 josephrb josephrb   506 Oct 31 19:47 step0.log
+d0ea2797fc1f8db4

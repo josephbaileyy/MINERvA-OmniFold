@@ -17,7 +17,8 @@ stays the defined constant until Joseph decides. The director takes this to an i
 
 **CANNOT AUTHORIZE:**
 - the switch itself. That is Joseph's decision (UD-002);
-- any job, connection, storage action or code change. No cluster was contacted;
+- any job, connection, storage action or code change. §1–§6 contacted no cluster. §7's step 0 later ran read-only on a
+  login node, under the director's leave and terms;
 - any change to the paper, the note or a register.
 
 **CITABLE FOR:** the site list, the dependency map, the cost table as sourced, and the committed-array estimate with
@@ -33,7 +34,7 @@ its stated assumptions.
 - Two delegated searches (the measured walls; the downstream records and text) were spot-checked line by line against
   the ledgers and sources they cite.
 - §4 is arithmetic on committed arrays on the session's own machine, with its script and output committed
-  (`state/eavail-switch-pricing-20261031/`). No cluster was contacted.
+  (`state/eavail-switch-pricing-20261031/`). §1–§6 contacted no cluster; §7 records step 0's reads.
 
 ---
 
@@ -65,6 +66,13 @@ covariance and the 3D/4D central values. The cap total is about **35**, with no 
 - re-making the A7 calibration and power products, which back F0's grade and the joint test: **207.9** node-h measured;
 - completing 1B on the new definition.
 
+**Step 0 has since measured the size (§7, addendum of 2026-11-01).**
+- **Per cell:** at most −1.26 % at prior level and −1.23 % unfolded to first order, in R06. That is 0.21 σ.
+- **As one coherent shift:** √(ΔᵀC⁻¹Δ) is about **0.42**.
+- **Every file the cheap route needs exists, and carries `MC_npip`.**
+
+The bracket below stands as written.
+
 **Size before any rerun (§4).** From committed fine-grid unfolded arrays:
 - **per charged pion,** the 11 cells that border E_avail = 0.8 GeV move by **0.1–1.9 %**, which is **up to 0.32 σ** of
   the reported uncertainty, in R06;
@@ -91,7 +99,7 @@ covariance and the 3D/4D central values. The cap total is about **35**, with no 
 
 | # | site | role | constant | its use |
 |---|---|---|---|---|
-| 1 | `MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:364` | the event loop's `GetEAvailableTrue()` (`:361-374`) | `double mass_pion = 135;` (MeV) | `:369`. The loop stores it as `MC_eavail` at `runEventLoopOmniFold.cpp:589` (signal) and `:1140` (truth denominator). Every dump, unfold input, MP-1, W2 and 5B event loop builds on it |
+| 1 | `MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:364` | the event loop's `GetEAvailableTrue()` (`:361-374`) | `double mass_pion = 135;` (MeV) | `:369`. The loop stores it as `MC_eavail` at `runEventLoopOmniFold.cpp:589`, in the truth-denominator loop `LoopAndFillUnbinnedMCTruthDenom` (`:408`), and at `:1140`, in the selected-signal loop `LoopAndFillUnbinnedMCSelectedSignalReco` (`:936`). *(Corrected on 2026-11-01: the first version of this row swapped the two labels.)* Every dump, unfold input, MP-1, W2 and 5B event loop builds on it |
 | 2 | `3d-unfolding/genie/genie_to_xsec3d.py:42` | GENIE `eavail_true` (`:47-55`) | `MASS_PI_PM = 0.135` (GeV) | `:53`. Imported by `gen_to_xsec5d.py:57,98` (the Stage G and C_model generator grids, injected into C++ at `:90-98`), `gen_to_xsec_eavailW.py:37`, `genie_mec_to_xsec3d.py:41`, `fsi_variation_xsec3d.py:35` and `mode_decomp_eavail.py:41` |
 | 3 | `3d-unfolding/genie/nuwro_to_flat_5d.C:44` | the NuWro 5D flattener | `const double MPI = 0.135` | `:65`. It is baked into the flat files that `gen_to_xsec5d.py` reads |
 | 4 | `3d-unfolding/genie/nuwro_to_flat.C:31` | the NuWro 3D flattener | `MPI = 0.135` | `:52` |
@@ -147,8 +155,10 @@ on recorded figures.
 ### 3.1 Route A: no new event loop
 
 The shift is applied at the dump, from each event loop's own `MC_eavail` and `MC_npip`:
-- **The branches:** `MC_npip` is written in the signal tree (`runEventLoopOmniFold.cpp:437,593`) and in the truth
-  denominator (`:642-643,1144`), and has been since `eb344265` (2026-06-06).
+- **The branches:** `MC_npip` is written in the truth-denominator loop (`runEventLoopOmniFold.cpp:408`: branch
+  `:437`, value `:593`, and the cache for truth-only misses `:642-643`) and in the selected-signal loop (`:936`, value
+  `:1144`), and has been since `eb344265` (2026-06-06). *(Corrected on 2026-11-01: the first version swapped the two
+  loops' labels.)*
 - **On the universe omnifile:** MP-1's receipt lists it among the 5D universe omnifile's `mc_signal_reco` columns
   (`state/measurement-paper/phase1/mp1/receipts/checks/r4_prod_vs_base_cv.json`).
 - **Why it equals the switch:** `MC_npip` counts π± with E − 139.57 > 0 (`CVUniverse.h:257-265`). So
@@ -245,6 +255,9 @@ The operand is the mean of the 20 committed replicas. Cells are mapped by the co
 `s1_assemble.fine_map`.
 
 ### 4.2 The estimate, per charged pion
+
+**Superseded by step 0's exact numbers (§7.2).** The conditional multiplicity near 0.8 GeV is about 0.85. Scaled by
+it, this bracket contains 15 of the 16 exact prior values. R00 lies just above it, at +0.280 % against +0.261 %.
 
 Positive means the cell gains. σ is the reported relative σ of C_total + C_resp (`fd_data_product.json`).
 
@@ -344,11 +357,11 @@ second order. It needs the files to exist, which §3.2 cannot confirm, and the d
 
 **This is for the director's independent read, then Joseph.**
 
-1. **Measure the exact size first** (§4.3, step 0).
+1. **Measure the exact size first** (§4.3, step 0). **Done: see §7.**
    - **Cost:** minutes on a login node, 0 node-h, read-only.
    - **Why:** it replaces a factor-of-3 bracket with the prior-level number per cell and per fine bin, which is what
      the choice turns on.
-   - **What it needs:** the director's leave to connect. I have not connected.
+   - **What it needs:** the director's leave to connect. *(The director gave leave on 2026-11-01, and step 0 ran: §7.)*
 2. **Decide now whether to keep the event-loop files past 2026-11-09.**
    - **The trade:** Route A costs about 15 node-h. Route B adds event loops whose CPU cost is unmeasured.
      <!-- absence-ok: "unmeasured" is scoped to the Search line in §3.1 and §3.2 -->
@@ -370,10 +383,272 @@ second order. It needs the files to exist, which §3.2 cannot confirm, and the d
      note.
 
 **My recommendation is 1 and 2 now, then (a) unless step 0 shows a cell moving by more than a few tenths of σ.**
+**Step 0's outcome, and what it does to this, is in §7.9.**
 - **Why (a):** the case for 139.57 is definitional alignment, not precision.
 - **Why (b) and (c) cost more than node-h:** (b) leaves two definitions in one document, and (c) costs 208 node-h for
   the alignment.
 - **If Joseph prefers alignment anyway, (b) is the economical form,** provided the files survive.
+
+## 7. Addendum (2026-11-01): step 0, run under the director's leave
+
+**Terms (the director, in session):** login node only, 0 node-h, no Slurm, read-only on every existing file, outputs
+only in a new directory, nothing to CFS or HPSS, no edit to any cluster checkout, and no touch, copy or move that changes
+a file's purge exposure. The referee's additions (a)–(e) were run under the same terms. A 139.57 unfold and any event-loop
+rerun were not authorized and did not run (§7.8 prices them).
+
+**Where it ran:**
+- `login37`, 2026-11-01T02:42–03:00Z;
+- the interpreter `$HOME/.conda/envs/omnifold_py310/bin/python` (uproot 5.6.9, numpy 2.2.6, no ROOT, no `conda
+  activate`);
+- every output only in `/pscratch/sd/j/josephrb/eavail-step0-20261031/`, which did not exist beforehand (§7.1).
+  <!-- absence-ok: measured: `ls -ld` of the path returned "No such file or directory" in step0-stat-transcript.txt, and `mkdir` then created it (step0-atime-test-transcript.txt) -->
+
+**Receipts** (`state/eavail-switch-pricing-20261031/step0/`):
+
+| file | what it is |
+|---|---|
+| `eavail_step0.py` (`03d86ecf…`), `eavail_step0b.py` (`2cfe0dba…`) | the two scripts |
+| `step0.json` (`c284a6b3…`), `step0b.json` (`d0ea2797…`) | their outputs |
+| `step0-log.txt`, `step0b-log.txt`, and the `/usr/bin/time -v` records | logs |
+| `step0-stat-transcript.txt`, `step0-atime-test-transcript.txt`, `step0-run-transcript.txt`, `step0-treecheck-transcript.txt`, `step0b-run-transcript.txt` | the cluster-reads transcripts |
+| `cluster-outputs-sha256.txt` | the outputs' digests on pscratch |
+| `step0_metric.py` and `step0_metric.txt` | the covariance-metric arithmetic, run locally on committed inputs |
+
+The fine-to-cell map that was uploaded (`fine_map_h2.npy`, `b66aa989…`) is `s1_assemble.fine_map` of the committed
+definition. The script refuses it unless its array digest is the pinned `930326a3…`.
+
+### 7.0 How reading was kept from changing purge exposure
+
+**On pscratch, a plain read moves a file's access time, and purge follows access time.** A test on a file created in the
+new directory showed it:
+- atime set to 2026-09-01;
+- after a read with `O_NOATIME`, still 2026-09-01;
+- after a plain `cat`, 2026-10-31 19:43:53 (`step0-atime-test-transcript.txt`).
+
+**So every target was opened with `O_NOATIME`,** which Linux allows the file's owner:
+- the 5D omnifile and `of_inputs_5d.npz`;
+- the central product;
+- the 12 MP-2 dumps;
+- the lateral, 5B, MP-1 and universe event-loop files;
+- the bank's `cv.npz`.
+
+**Each target's stat was recorded before and after,** and a moved atime would have stopped the run (exit 4). None moved.
+The transcripts also show `stat` of the main targets before and after, unchanged. The sha256 in step (1) was read the same
+way.
+
+### 7.1 What exists (step 1, by `stat`, which reads no content)
+
+From `step0-stat-transcript.txt`, 2026-11-01T02:42:22Z:
+
+| file | size (bytes) | atime (UTC−7) | sha256 |
+|---|---:|---|---|
+| `runEventLoopOmniFold_5D_MEFHC.root` (the 5D omnifile) | 4,825,716,683 | 2026-10-20 17:59 | `b6d2651c…`, the pinned digest |
+| `of_inputs_5d.npz` | 1,548,438,020 | 2026-10-31 17:07, accessed by another reader that day | `07fccc1a…`, the pinned digest |
+| `…_5D_MEFHC_universes_full_bkgaware.root` (the merge) | 171,117,093,365 | 2026-09-27 08:25 | size only |
+| the 12 per-playlist universe loops | 2.0–30.9 GB each | 2026-09-14 for 11; 1A 2026-10-20 | sizes only |
+| `bank_sweep_5d_bkgaware/` | 701 files, 71,581,937,610 bytes | 2026-10-24 to 2026-10-31 | `cv.npz`: 2,163,648,810 bytes |
+| MP-2 S1 dumps `s1_<pl>.npz` | 12 files, 13.7 GB | 2026-10-24 | — |
+
+**Every file the cheap route needs exists today.** The atimes match `FD-CT-RETENTION.md:64-65`: the per-playlist loops
+are exposed from 2026-11-09 and the merge from 2026-11-22. The 5D omnifile is exposed eight weeks after 2026-10-20.
+
+### 7.2 The exact size: prior level and first-order unfolded
+
+**Prior level** (`step0.json`, `truth_denom`):
+- **The population:** the completeness denominator, selected exactly as `collect_truth_denom_nd` selects it: finite,
+  0 ≤ w < 10⁴, the p_T/p∥ box, θ_μ < 20°, and w × POT scale (0.212405).
+- **The shift:** E_avail′ = `MC_eavail` − 0.00457 × `MC_npip`.
+- **Control C1:** the 135 histogram on the fine grid **equals `of_inputs_5d.npz`'s `denom_nd` bitwise** (32,846,302 of
+  32,849,103 rows kept, Σw = 5,778,936.126366272 on both sides).
+- **mc_signal_reco** gives the same numbers, because its truth rows are the same multiset (§7.5).
+
+**First-order unfolded** (`step0b.json`, referee's item (a)):
+- **No S1 product stores a per-event OmniFold weight.** `s5p_numerics.py:214` writes `xsec_flat` and `shape`, and
+  `s5c_unfold.py:124-138` histograms `wpush × w_truth` without saving `wpush`.
+- **So each truth event carries its 135 fine cell's unfolded-to-prior ratio:** u_e = w_e · X_k / D_k.
+  - X_k = `xsec_flat`·vol, from the central product `data_b-_j-.npz`. Its sha256 `fb5cc679…` is checked, and it equals
+    data_R and P5.
+  - D_k is the 135 truth denominator.
+  - Every MCgen row passes truth (MP-2's receipt: `n_pass_truth_false` 0), so completeness is 1, and the flux factor
+    cancels because p_T does not shift.
+- **Control C2:** under 135, Σ u_e per cell reproduces the data product's f to **3.6 × 10⁻¹⁵** (relative).
+- **What it leaves out:** the event moves with its cell's mean weight. The step-2 retraining on the shifted feature is
+  not in it (§7.8).
+
+| cell | prior | prior / σ | unfolded, first order | unfolded / σ | σ (C_total + C_resp) |
+|---|---:|---:|---:|---:|---:|
+| R00 | +0.280 % | +0.039 | +0.254 % | +0.036 | 7.10 % |
+| R02 | −1.135 % | −0.081 | −1.102 % | −0.079 | 14.00 % |
+| R03 | −0.312 % | −0.025 | −0.308 % | −0.024 | 12.64 % |
+| R04 | +0.180 % | +0.043 | +0.161 % | +0.038 | 4.20 % |
+| R06 | **−1.261 %** | **−0.214** | **−1.231 %** | **−0.209** | 5.89 % |
+| R07 | −0.324 % | −0.041 | −0.316 % | −0.040 | 7.98 % |
+| R08 | +0.497 % | +0.079 | +0.474 % | +0.076 | 6.25 % |
+| R10 | −0.703 % | −0.082 | −0.699 % | −0.081 | 8.59 % |
+| R11 | −0.196 % | −0.014 | −0.195 % | −0.014 | 13.69 % |
+| R12 | +0.383 % | +0.058 | +0.372 % | +0.056 | 6.63 % |
+| R15 | −0.735 % | −0.093 | −0.725 % | −0.091 | 7.94 % |
+
+R01, R05, R09, R13 and R14 do not move, to float precision.
+
+**The 7 fine E_avail bins:**
+
+| bin (GeV) | prior | unfolded, first order |
+|---|---:|---:|
+| [0, 0.1) | +0.967 % | +0.882 % |
+| [0.1, 0.2) | +0.883 % | +0.708 % |
+| [0.2, 0.4) | +0.243 % | +0.211 % |
+| [0.4, 0.8) | −0.073 % | −0.020 % |
+| [0.8, 1.5) | −0.182 % | −0.102 % |
+| [1.5, 3) | −0.197 % | −0.216 % |
+| [3, 100) | −0.352 % | −0.330 % |
+
+**Other measured figures:**
+- 0.646 % of the denominator's weight changes fine E_avail bin. OI-30(c) recorded 0.666 % on its own sample and binning.
+- The weighted mean `MC_npip` over the denominator is 1.1263.
+
+**Against §4's committed-array bracket:**
+- 15 of 16 exact prior values lie inside the bracket scaled by the measured multiplicity near 0.8 GeV (0.853, the mean
+  of the two narrow bins either side).
+- **R00 lies just above it:** +0.280 % against a top of +0.261 %.
+- The fine-bin bracket's +4.39 % for [0, 0.1) was, as §4.2 warned, inflated by assumption 2: the multiplicity there is
+  0.115.
+
+### 7.3 The shift as a full-covariance norm (referee's item (b))
+
+Δ_c = (relative change) × f_c. Cholesky on the committed 16 × 16 matrices; `step0_metric.txt`.
+
+| shift | matrix | √(Δᵀ C⁻¹ Δ) | Δᵀ C⁻¹ Δ | largest \|Δ_c\|/σ_c | diagonal quadrature √Σ(Δ_c/σ_c)² |
+|---|---|---:|---:|---:|---:|
+| prior level | C_total + C_resp | **0.430** | 0.184 | 0.214 (R06) | 0.288 |
+| prior level | + C_PL,5D | 0.426 | 0.181 | 0.192 | 0.269 |
+| unfolded, first order | C_total + C_resp | **0.421** | 0.177 | 0.209 (R06) | 0.281 |
+| unfolded, first order | + C_PL,5D | 0.417 | 0.174 | 0.188 | 0.262 |
+
+**The referee is right that the shifts are coherent:**
+- The full-covariance norm is about **1.5×** the diagonal quadrature, and **2×** the largest single cell.
+- **Measured along its own direction, the switch moves the 16-cell result by about 0.42 σ.**
+- Adding C_PL,5D changes this by less than 1 %.
+
+**One caution about using this as a χ² effect:** a switch also moves every generator prediction, through sites 2–6.
+A data–prediction χ² changes by the difference of the two shifts, which is not computed here.
+<!-- absence-ok: a scoping statement of this record's own arithmetic -->
+
+### 7.4 The conditional charged-pion multiplicity near 0.8 GeV
+
+From the denominator under 135, w-weighted (`step0.json`, `multiplicity_135_eavail_bins`):
+
+| E_avail (GeV) | mean n_π± | n = 0 | 1 | 2 | ≥ 3 |
+|---|---:|---:|---:|---:|---:|
+| [0.6, 0.7) | 0.761 | 0.384 | 0.499 | 0.096 | 0.022 |
+| [0.7, 0.75) | 0.809 | 0.363 | 0.499 | 0.111 | 0.027 |
+| [0.75, 0.8) | 0.839 | 0.350 | 0.499 | 0.119 | 0.031 |
+| [0.8, 0.85) | 0.866 | 0.341 | 0.497 | 0.126 | 0.036 |
+| [0.85, 0.9) | 0.891 | 0.332 | 0.495 | 0.133 | 0.040 |
+| [0.9, 1.0) | 0.928 | 0.322 | 0.488 | 0.142 | 0.048 |
+
+Over the fine bins, from [0, 0.1) up, the mean is 0.115, 0.304, 0.497, 0.709, 1.026, 1.491 and 2.281.
+
+### 7.5 Exactness (referee's item (c))
+
+**From the code** (`MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h` at `c7c3ab21`):
+- **`GetNChargedPionsTrue(ke_thresh_MeV = 0.0)`, `:257-265`:** loops `i < mc_nFSPart` over `mc_FSPartPDG`, accepts
+  `p == 211 || p == -211`, and counts when `mc_FSPartE − 139.57 > ke_thresh_MeV`.
+- **`GetEAvailableTrue()`, `:361-374`:** loops the same `i < mc_nFSPart` over the same `mc_FSPartPDG` and
+  `mc_FSPartE`, and adds `mc_FSPartE − 135` for `pdg == 211 || pdg == -211`.
+- **What is the same:**
+  - the same final-state list;
+  - the same species test;
+  - the same energy branch in the same unit (MeV);
+  - no status selection in either.
+- **The calls:** the event loop calls both on the same universe object with the default threshold, at
+  `runEventLoopOmniFold.cpp:589,593` (the truth-denominator loop, `:408`) and `:1140,1144` (the selected-signal
+  loop, `:936`).
+- **So `MC_eavail − 0.00457 × MC_npip` is exactly the 139.57 sum,** except for a π± with stored E ≤ 139.57 MeV. That
+  pion is summed by E_avail but not counted by `MC_npip`.
+
+**From the data:**
+- **MP-2's join counts 0 such pions of 34,858,834** (`step0.json`, `mp2_pi_pm_low_E`), and 0 with E ≤ 135 MeV.
+- **The join covers every MCgen row:** 32,849,103 rows placed and matched. Its control C3 recomputed MAT's
+  `GetEAvailableTrue` from each row's particle list and matched the stored `MC_eavail` bitwise on all 32,849,103 rows
+  (`state/measurement-paper/phase1/mp2/s1_receipt.json`, `controls.C1_admission`, `C2_join`, `C3_fs_content`). So these
+  are the particles the function summed.
+- **The truth-denominator rows are covered by a tuple identity, not by a join.** The multiset of
+  (`MC`, `MC_pz`, `MC_eavail`, `MC_q3`, `MC_W`, `MC_npip`, `w_truth`) tuples in `mc_truth_denom` **equals** that in
+  `mc_signal_reco`:
+  - both trees have 32,849,103 rows;
+  - each has 2,801 non-finite (sentinel) rows, compared NaN-aware;
+  - 0 sorted rows differ;
+  - each of the 7 columns is equal as a multiset (`step0b.json`, `c_*`; `step0-treecheck-transcript.txt` shows the two
+    are distinct trees, with different branches and order).
+- **So the truth-denominator rows are the same events,** and MP-2's count covers them too.
+- **No negatives:** the shifted E_avail has minimum 0, with 0 negative rows (0 under 135 as well).
+
+**Recorded honestly:** the first step-0b run reported the tuple test False and then failed, with a weight-length bug. The
+False came from comparing NaN sentinels without `equal_nan`. Both are fixed in the committed script, and the transcript
+keeps both runs.
+
+### 7.6 The bracket's 0.081 % and leakage (referee's item (d))
+
+**The 0.081 % was not a net move.** `bracket_16cell.py:54` prints half the sum of |Δ| over the 16 cells. That is the
+gross migration between cells as a share of their total, mislabelled "sum of moves".
+- **Step 0 measures the same quantity at 0.110 %.**
+- **The net 16-cell change is −1.6 × 10⁻¹⁶** at prior level, and 0.0 first-order unfolded. So nothing leaks out of the
+  reported cells.
+- The unreported H2 boxes (2, 6, 10, 14) hold 2.9 × 10⁻⁸ of the denominator's weight, so there is no partition gap of any
+  consequence.
+
+### 7.7 Which files carry `MC_npip` (referee's item (e))
+
+Read from the tree metadata (`step0b.json`, `branches`). **Every file below has `MC_npip` and `MC_eavail` in both
+`mc_signal_reco` and `mc_truth_denom`:**
+- the 10 lateral endpoint omnifiles
+  (`active_universe_5d/standard/merged/runEventLoopOmniFold_5D_MEFHC_active_{BeamAngleX,BeamAngleY,MuonResolution,Muon_Energy_MINERvA,Muon_Energy_MINOS}_{0,1}.root`);
+- the 4 5B merges (`fd-ct-5b-20261030/merged/…_{ALL,PA,PB,PC}_zero.root`);
+- MP-1's 12 zero loops they merge from;
+- the 12 per-playlist universe loops and their merge.
+
+**The bank's `cv.npz` carries no pion count.** Its 20 keys are `MCgen`, `MCreco`, `td_{pt,pz,ea,q3,w}`, weights, edges
+and flux. So the bank's truth coordinates must be re-dumped from the universe omnifiles: §3.1 step A2, now with its
+source confirmed to exist and to carry the branch.
+
+### 7.8 Optional next steps (priced; not run; Joseph decides)
+
+**O4: a one-file event-loop exactness rerun.**
+- **What:** one playlist's CV event loop built with `mass_pion = 139.57`, compared row by row with the stored
+  `MC_eavail − 0.00457 × MC_npip`.
+- **Cost:** MP-1's measured CPU event loops average **0.030 node-h per playlist pass**, derived (3.913 node-h for 132
+  passes, `phase1/LEDGER.tsv:25-30`). Steps took 220–4927 s.
+- **Estimate:** under 0.1 node-h on the shared QOS, with a cap of 0.25.
+- **What it adds beyond §7.5:** a test of the implementation, in a separate scratch build. The algebra and MP-2's count
+  already establish the identity.
+
+**O5: a seed-matched 139.57 unfold of the (e) central value.**
+- **What:**
+  - re-dump `of_inputs_5d.npz` with the shifted MCgen and denominator: unmeasured, analogue 5B's ALL `nn_dump` lane, 7:12;
+    <!-- absence-ok: "unmeasured" is scoped to the Search line in §3.1 -->
+  - one seed-42 unfold: `seconds_unfold` 692.9 for the central value;
+  - compare with §7.2's first-order column.
+- **What it measures:** the step-2 retraining effect that §7.2 leaves out.
+- **Cost:** about 0.25–0.5 node-h on one exclusive CPU node (cap 1.0). That matches the referee's "under 1 node-h".
+
+Neither is authorized by step 0.
+
+### 7.9 What this changes in §6
+
+- **Item 1 is done.** The size is exact at prior level and to first order unfolded:
+  - per cell, at most 0.21 σ (R06);
+  - as one coherent shift, about **0.42 σ**.
+- **Item 2 is unchanged.** Every file the cheap route needs exists, and carries `MC_npip`, today. The per-playlist
+  universe loops are exposed from 2026-11-09.
+- **The recommendation.** The rule written before step 0 was "(a) unless a cell moves by more than a few tenths of σ".
+  Per cell, the measured 0.21 σ meets that rule, so it gives **(a)**.
+  - **The coherent norm is the better measure,** as the referee says. At 0.42 σ it sits inside "a few tenths", not below
+    it.
+  - **I keep (a) as my recommendation for one reason:** a switch moves the predictions with the data, so the comparisons
+    the paper draws move by less than 0.42 σ. That reason is argued, not measured.
+  - **The call is Joseph's,** and this section gives him both numbers. O5 would remove the remaining first-order caveat,
+    for under 1 node-h, if he wants it before deciding.
 
 ---
 
