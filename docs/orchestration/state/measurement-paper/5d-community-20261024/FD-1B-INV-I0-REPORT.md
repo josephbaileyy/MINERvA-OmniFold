@@ -109,6 +109,9 @@ The per-band terms, the cells where each band is noise-consistent, and q = √(b
 - It is on HPSS at `fd-1b-inv-20261101/i0.tar`. `hashcreate` and `hashverify` returned OK (md5 `10a86257…`), and a
   retrieved copy was identical under `cmp`.
 - Nothing went to CFS. Nothing on pscratch was deleted except the retrieved copy, after the `cmp`.
+- **HPSS space.** `hpssquota` was not read before the put. The director's instruction to read it first arrived after
+  connect 20 had run. It was read afterwards, in connect 21 at 19:27Z: 446.01 of 512.00 GiB used, so about 66 GiB
+  free. The tar, at 57.4 MB, is under 0.1 % of that, so the whole of `i0/`, staged copies included, is on HPSS.
 
 ## 6. Descriptive readouts (no verdict role)
 
