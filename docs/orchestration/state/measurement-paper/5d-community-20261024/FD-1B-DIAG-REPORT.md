@@ -111,7 +111,36 @@ the other thirty summed. The rows add to ρ_c² − 1.
 
 These are DERIVATION numbers. No mechanism is asserted, and none is tested here.
 
-## 5. Not changed
+## 5. Deviation from binding ruling 6
+
+Ruling 6 of `FD-1B-DIAG-BINDING.md` says the lane "changes no file's purge exposure" (per #622 §7). D2 did not keep
+to it.
+- **The plain reads.** `fd_1b_diag.py` opened its declared inputs with plain reads, not `O_NOATIME`: `np.load` by
+  path on the 176 derivation products and on S1's assembly, and a plain read of the flux constraint file. On
+  pscratch a plain read moves atime, and purge follows atime.
+- **Connect 17's stat results.** Run at 06:42:01Z on login37, it read no content
+  ([`stat17.out`](fd/receipts-1b/diag/stat17.out)):
+
+| file | atime (UTC) |
+|---|---|
+| `$P/s1-20261024/s1_assembly.npz` (S1's lane) | 2026-11-01 06:32:55 |
+| `…/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt` | 2026-11-01 06:32:56 |
+| `$B/runs/derivation/fd1b_derivation_CV.npz` | 2026-11-01 06:32:56 |
+| `$B/runs/derivation/fd1b_derivation_MaRES_1.npz` | 2026-11-01 06:32:57 |
+| `$B/runs/derivation/fd1b_derivation_2p2h_0.npz` | 2026-11-01 06:32:56 |
+
+  All five moved to inside D2's run (06:32:01–06:32:57Z).
+- **No atime is restored,** per the director's ruling: a further write to another lane's files would be worse than
+  the deviation.
+- **The director's reading:** reading an authorized run's declared inputs is ordinary use. A moved atime only
+  lengthens retention, and S1's assembly is on the keep list. Future bindings will scope the clause to files a run
+  does not need.
+- **The readout is unaffected.** An access time does not enter any computation, and the run's ρ reproduced gate D's
+  committed readout bit for bit.
+
+The lane reported the deviation to the director before being asked.
+
+## 6. Not changed
 
 The protocol, gate D's window, the tested matrix, the reported covariance, κ, every claim and number. Nothing was
 submitted, and nothing went to CFS or HPSS.

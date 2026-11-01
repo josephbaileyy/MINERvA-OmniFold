@@ -1,0 +1,7 @@
+host=login37 now=2026-11-01T06:42:01Z
+2026-11-01 06:32:55.000000000 +0000 /pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz
+2026-11-01 06:32:56.000000000 +0000 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+2026-11-01 06:32:56.000000000 +0000 /pscratch/sd/j/josephrb/fd-1b-20261030/runs/derivation/fd1b_derivation_CV.npz
+2026-11-01 06:32:57.000000000 +0000 /pscratch/sd/j/josephrb/fd-1b-20261030/runs/derivation/fd1b_derivation_MaRES_1.npz
+2026-11-01 06:32:56.000000000 +0000 /pscratch/sd/j/josephrb/fd-1b-20261030/runs/derivation/fd1b_derivation_2p2h_0.npz
+ssh_rc=0
