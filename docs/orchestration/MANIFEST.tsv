@@ -229,6 +229,7 @@ docs/orchestration/DECISION-20261031-joseph-three-covariance-files-and-1b-diagno
 docs/orchestration/DECISION-20261031-joseph-triage-q1-q2-q4-q5.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261101-joseph-abstracts-approved-and-event-loop-retention.md	tracked	LIVE	document		20261101	open		route-only	no
 docs/orchestration/DECISION-20261101-joseph-eavail-keep-135.md	tracked	LIVE	document		20261101	open		route-only	no
+docs/orchestration/DECISION-20261101-joseph-eventloops-copy-to-cfs.md	tracked	LIVE	document		20261101	open		route-only	no
 docs/orchestration/DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md	tracked	LIVE	document		20261101	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
