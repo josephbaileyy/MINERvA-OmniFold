@@ -1,0 +1,11 @@
+host=login37 start=2026-11-01T06:32:01Z
+D1 porcelain_lines=0 head=ea2977613cd051dc3c2b321c7fad44f7a6d3ef2c
+D1 fd_1b_diag.py sha256 96d72445033705be  gate-d e1838c0ae2e66c1a
+D1 derivation products: 176
+D2 wall_s=3
+{"out": "/pscratch/sd/j/josephrb/fd-1b-20261030/score/diag.json", "verdict": "NOT LOCALIZED", "L1": "FAIL", "L2": "FAIL"}
+rc=0
+-rw-rw---- 1 josephrb josephrb 69691 Oct 31 23:32 /pscratch/sd/j/josephrb/fd-1b-20261030/score/diag.json
+6fd6669efdae5e8dd0934962b4547537a92d37371df6ad481c7df7dd2dfb2a4f  /pscratch/sd/j/josephrb/fd-1b-20261030/score/diag.json
+end=2026-11-01T06:32:57Z
+ssh_rc=0
