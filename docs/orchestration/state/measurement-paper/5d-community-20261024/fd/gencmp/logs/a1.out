@@ -1,0 +1,3 @@
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/a/a1.json", "sha256": "c46b92627a6f8b42e18db549c9dd1e151daa8e13efe8bbb418ae80cb40019611"}
+PASS control A1 the committed C12 arrays equal the frozen products bitwise
+rc=0

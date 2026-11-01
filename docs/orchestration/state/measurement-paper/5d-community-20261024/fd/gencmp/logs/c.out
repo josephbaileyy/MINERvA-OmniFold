@@ -1,0 +1,17 @@
+PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+PASS control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures
+PASS control C1 the quadrant edges are bin edges of the 3D grid
+PASS control C3 the 3D integral reproduces the 3D status headline 3.079e-38 to four figures
+PASS control C PROJ3D's row index is unique and inside the 14 x 16 x 7 grid
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/c/overlap.json", "sha256": "82b3528a452e423a06ab5d9c2566dd99aa8636c83ce04ebc25c31c01fda714f9"}
+[C] QA 2D agree below a correlation; 3D agree at the sigma_16 scale (descriptive)
+[C] QB 2D agree below a correlation; 3D agree at the sigma_16 scale (descriptive)
+[C] QC 2D agree below a correlation; 3D agree at the sigma_16 scale (descriptive)
+[C] QD 2D agree below a correlation; 3D agree at the sigma_16 scale (descriptive)

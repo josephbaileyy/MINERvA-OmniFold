@@ -1,0 +1,53 @@
+{
+ "schema": "fd-gencmp-a1/1",
+ "pass": true,
+ "bitwise": {
+  "nuwro": {
+   "xsec": true,
+   "sumw2": true
+  },
+  "gibuu": {
+   "xsec": true,
+   "sumw2": true
+  }
+ },
+ "inputs": {
+  "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/docs/orchestration/state/measurement-paper/phase1/mp3b/runA/out_r2/build_k1/mp3b_fine_nuwro.npz": {
+   "sha256": "63dbfa4096aa338da078fd74c1d6e477b17f8836764cbd08536b9f005c05fb04",
+   "pinned": "63dbfa4096aa338da078fd74c1d6e477b17f8836764cbd08536b9f005c05fb04",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz": {
+   "sha256": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070",
+   "pinned": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/docs/orchestration/state/measurement-paper/phase1/mp3c/out_b/eval_frozen/mp3c_fine_gibuu_frozen.npz": {
+   "sha256": "f9244ebc66909abda82de9237f1c3aa86792d20f129ceff72ff53b562d302cd6",
+   "pinned": "f9244ebc66909abda82de9237f1c3aa86792d20f129ceff72ff53b562d302cd6",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz": {
+   "sha256": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18",
+   "pinned": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18",
+   "atime_unchanged": true
+  }
+ },
+ "atime_deviations": [],
+ "code_sha256": {
+  "fd_gencmp.py": "675f3431012640ce960f062dce64e840d6b170e659bfc87a2028ded6db3abbb2",
+  "fd_g_compare.py": "0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f",
+  "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/fd_gencmp.py",
+  "a1",
+  "--nuwro-frozen",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz",
+  "--gibuu-frozen",
+  "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz",
+  "--out",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/a/a1.json"
+ ]
+}
