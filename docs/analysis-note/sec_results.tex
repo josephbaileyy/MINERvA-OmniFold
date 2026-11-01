@@ -2,7 +2,7 @@
 \label{sec:results}
 
 
-The error bars on the unfolded points of Fig.~\ref{fig:xsec} are the bin errors stored with the unfolded histogram and its projections, not the covariance of \S\ref{sec:systematics}. The published points in its top panel carry the square root of the diagonal of the published statistical covariance, and Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} carry statistical errors only. The uncertainty budget of \S\ref{sec:systematics} is shown in Fig.~\ref{fig:uqbands} and Table~\ref{tab:uq}.
+The error bars on the unfolded points of Fig.~\ref{fig:xsec} are the bin errors stored with the unfolded histogram and its projections, not the covariance of \S\ref{sec:systematics}. The published points in its top panel carry the square root of the diagonal of the published statistical covariance, and Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} carry the same bin errors as the unfolded points. The uncertainty budget of \S\ref{sec:systematics} is shown in Fig.~\ref{fig:uqbands} and Table~\ref{tab:uq}.
 % PHASE2 Q2, from the producers: plot_2d_threeway_fig13.py th2_to_array (hXSec2D.GetBinError) and paper_arrays
 % (sqrt of StatOnlyCovariance diagonal); plot_2d_cross_section.py plot_1d_projection (hXSec_pt / hXSec_pz GetBinError).
 % J3/J4 provisional (DECISION-20261018, packet J3: no claim change; the sentence states what the producers draw).
@@ -20,7 +20,7 @@ The shapes are those expected for CC-inclusive scattering at $\langle E_\nu\rang
   \includegraphics[width=0.62\textwidth]{MEFHC_5iter_fig13}\\
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pt}
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pz}
-  \caption{Unfolded 2D cross section (top, in the format of Fig.~13 of Ref.~\cite{MINERvA:2021owq}) and its $\pT$ and $\pPar$ projections (bottom). The $\pT$ peak at ${\sim}\SI{0.6}{GeV/c}$ reflects the $Q^{2}\lesssim\SI{1}{GeV^2}$ momentum-transfer scale; the $\pPar$ peak reflects the medium-energy flux maximum. The error bars on this measurement are the statistical uncertainty of the reweighted simulated sample (the square root of the summed squared event weights, combined with the uncertainty of the completeness correction), not the reported covariance; those on the published data (top) are the square roots of the diagonal of its statistical covariance.}
+  \caption{Unfolded 2D cross section (top, in the format of Fig.~13 of Ref.~\cite{MINERvA:2021owq}) and its $\pT$ and $\pPar$ projections (bottom). The $\pT$ peak at ${\sim}\SI{0.6}{GeV/c}$ reflects the $Q^{2}\lesssim\SI{1}{GeV^2}$ momentum-transfer scale; the $\pPar$ peak reflects the medium-energy flux maximum. The vertical error bars on this measurement are the weight statistics of the reweighted simulated sample (the square root of the summed squared event weights, combined in quadrature with the bin error propagated for the completeness ratio, which is one by construction); they are neither the data's statistical uncertainty nor the reported covariance. Those on the published data (top) are the square roots of the diagonal of its statistical covariance. Horizontal bars span the bins.}
   \label{fig:xsec}
 \end{figure}
 
@@ -69,7 +69,7 @@ Per-bin differences standardized by the published uncertainty (Fig.~\ref{fig:pul
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pt_slices}
-  \caption{Unfolded cross section (points) and GENIE 2.12.6 $+$ MINERvA Tune~v1 \emph{simulated truth} (histogram), sliced in $\pT$ versus $\pPar$. The histogram is the analysis MC truth denominator with the unfolded result's flux, nucleon-count and efficiency normalization, so the two differ only as data versus MC prior; no published measurement is used, and only the \emph{panel format} follows Fig.~13 of Ref.~\cite{MINERvA:2021owq}. The error bars are the statistical uncertainty of the reweighted simulated sample, as in Fig.~\ref{fig:xsec}, not the reported covariance, and only these enter the annotated per-panel $\chi^{2}$, which is a descriptive scale. Comparisons \emph{with the published data} are in Figs.~\ref{fig:pull} and~\ref{fig:model} and Table~\ref{tab:compare}.}
+  \caption{Unfolded cross section (points) and GENIE 2.12.6 $+$ MINERvA Tune~v1 \emph{simulated truth} (histogram), sliced in $\pT$ versus $\pPar$. The histogram is the analysis MC truth denominator with the unfolded result's flux, nucleon-count and efficiency normalization, so the two differ only as data versus MC prior; no published measurement is used, and only the \emph{panel format} follows Fig.~13 of Ref.~\cite{MINERvA:2021owq}. The vertical error bars are the weight statistics of the reweighted simulated sample, as in Fig.~\ref{fig:xsec}, neither the data's statistical uncertainty nor the reported covariance, and only these enter the annotated per-panel $\chi^{2}$, which is a descriptive scale. Comparisons \emph{with the published data} are in Figs.~\ref{fig:pull} and~\ref{fig:model} and Table~\ref{tab:compare}.}
   %
   % (\texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds it from
   % \texttt{hOFTruthDenom2D}; listed in App.~\ref{app:codebase})

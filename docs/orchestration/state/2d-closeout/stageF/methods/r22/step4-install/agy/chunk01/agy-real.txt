@@ -1,0 +1,21 @@
+Q1: DIFFERENCES:
+1. Nature of the error bars in Figs.~\ref{fig:ptslices}--\ref{fig:pzslices}: BEFORE states they "carry statistical errors only", whereas AFTER changes this to "carry the same bin errors as the unfolded points".
+
+Q2: DIFFERENCES:
+1. Error bars for this measurement in Fig.~\ref{fig:xsec}: AFTER adds that "The vertical error bars on this measurement are the weight statistics of the reweighted simulated sample (the square root of the summed squared event weights, combined in quadrature with the bin error propagated for the completeness ratio, which is one by construction); they are neither the data's statistical uncertainty nor the reported covariance." (in BEFORE: omitted / not present).
+2. Vertical error bars for the published data in Fig.~\ref{fig:xsec}: AFTER adds that "Those on the published data (top) are the square roots of the diagonal of its statistical covariance." (in BEFORE: omitted / not present).
+3. Horizontal bars in Fig.~\ref{fig:xsec}: AFTER adds that "Horizontal bars span the bins." (in BEFORE: omitted / not present).
+
+Q3: DIFFERENCES:
+1. Nature of the error bars in Fig.~\ref{fig:ptslices}: BEFORE states "Points carry statistical errors only", whereas AFTER changes this to "The vertical error bars are the weight statistics of the reweighted simulated sample, as in Fig.~\ref{fig:xsec}, neither the data's statistical uncertainty nor the reported covariance".
+2. Error bars in Fig.~\ref{fig:pzslices}: BEFORE specifies "with statistical errors only and no published measurement", whereas AFTER changes this to "with the same error bars and no published measurement".
+
+Q4: DIFFERENCES:
+1. Visual representation of this measurement in Fig.~\ref{fig:model}: BEFORE specifies "(dashed)", whereas AFTER changes it to "(red circles)".
+2. Visual representation of published data in Fig.~\ref{fig:model}: BEFORE specifies "(black)", whereas AFTER changes it to "(black squares)".
+3. Model attribution and style in Fig.~\ref{fig:model}: BEFORE describes the curve as "MINERvA Tune v1 (blue)", whereas AFTER adds the event generator and specifies the line format as "GENIE 2.12.6 $+$ MINERvA Tune~v1 (blue line)".
+4. Uncertainty display in Fig.~\ref{fig:model}: AFTER adds the note "Uncertainties are not drawn." (in BEFORE: omitted / not present).
+5. Sub-panel lettering in Fig.~\ref{fig:model_comp_ratio_maps}: BEFORE labels the panels as "(left)" and "(right)", whereas AFTER adds letter labels: "(a, left)" and "(b, right)".
+6. Caption note on printed titles in Fig.~\ref{fig:model_comp_ratio_maps}: BEFORE includes "; the panels have no printed titles.", whereas AFTER drops this clause (in AFTER: omitted / not present).
+
+END
