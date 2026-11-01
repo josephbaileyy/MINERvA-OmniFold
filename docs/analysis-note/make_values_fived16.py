@@ -53,6 +53,10 @@ READOUTS = {
     # the stopped 1B coverage test: gate D (FD-1B-STAGE2-REPORT.md section 4.1) and its diagnosis (FD-1B-DIAG-REPORT.md)
     "gated": (f"{FD}/fd/receipts-1b/stage2/run/score/gate-d.json", "e1838c0a"),
     "diag1b": (f"{FD}/fd/receipts-1b/diag/diag.json", "6fd6669e"),
+    # why C_model's coverage is not validated (DECISION-20261024-joseph-5d-community-standard-route.md item 3): the binding
+    # Stage 0 (5d-design-20261023/STAGE0-REPORT.md) and the reconstruction-information test R10 (measurement-scoping/r10)
+    "stage0": ("docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/stage0-binding.json", "df70af43"),
+    "r10": ("docs/orchestration/state/measurement-scoping/r10/outputs/r10_results.json", "dafcc55e"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -337,6 +341,9 @@ def values(d, arm="with"):
     v["h2-lowstab-cells"] = ", ".join(lowstab[:-1]) + " and " + lowstab[-1]
     v["h2-lowstab-min"], v["h2-lowstab-max"] = (f"{min(stab[k] for k in lowstab):.2f}", f"{max(stab[k] for k in lowstab):.2f}")
     assert (v["h2-lowstab-min"], v["h2-lowstab-max"]) == ("0.16", "0.25"), "the printed range differs from the decision's"
+    rest = [stab[k] for k in stab if k not in lowstab]                 # the note prints the other twelve's range beside them
+    assert len(rest) == 12
+    v["h2-stab-rest-min"], v["h2-stab-rest-max"] = f"{min(rest):.2f}", f"{max(rest):.2f}"
     # C_model,5D: its vertices' trace shares, and the numbers its labels state (parsed, so a changed label stops here)
     for k, x in d["cmodel"]["trace_share_by_vertex"].items():
         v[f"cmodel-trace-{k}"] = f"{x:.3f}"
@@ -516,6 +523,28 @@ def values(d, arm="with"):
     v["cov1b-rho-min"], v["cov1b-rho-max"] = f"{min(gd['rho']):.2f}", f"{max(gd['rho']):.2f}"
     v["cov1b-kmax-word"] = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five"}[dg["k_max"]]
     v["cov1b-nbands"] = str(len(dg["per_band"]))
+    # Stage 0 stopped: both definitions fail 0a and pass 0b. The note names the families below the per-family bar and
+    # says whether each pooled value meets its bar, so both are asserted here
+    s0 = d["stage0"]
+    rl, rs = s0["rules"], s0["results"]
+    assert s0["mode"] == "binding" and s0["verdict"] == "STOP" and rl["form"] == "M2"
+    assert all(not rs[k]["0a"]["pass"] and rs[k]["0b"]["pass"] for k in ("J", "H2"))
+    v["s0-cfam-min"], v["s0-pooled-min"] = f"{rl['c_family_min']:.2f}", f"{rl['pooled_min']:.2f}"
+    low = {"J": ("NuWro", "GiBUU"), "H2": ("GiBUU",)}
+    for k, fams in low.items():
+        c = {f: x["c_M2"] for f, x in rs[k]["0a"]["families"].items()}
+        assert {f for f in c if c[f] < rl["c_family_min"]} == set(fams), f"Stage 0 {k}: the families below the bar changed"
+        for f in fams:
+            v[f"s0-{k.lower()}-{f.lower()}"] = f"{c[f]:.3f}"
+        v[f"s0-{k.lower()}-pooled"] = f"{rs[k]['0a']['pooled_M2']:.3f}"
+    assert rs["J"]["0a"]["pooled_M2"] < rl["pooled_min"] <= rs["H2"]["0a"]["pooled_M2"], "the pooled clauses changed"
+    # the note calls Stage 0's sets the J (109) and H2 (27) cells of sec_5d.tex; GiBUU's one fold departs in every cell
+    assert (rs["J"]["0a"]["families"]["GiBUU"]["n_pairs"], rs["H2"]["0a"]["families"]["GiBUU"]["n_pairs"]) == (109, 27)
+    # R10 ended INCOMPLETE: no configuration passed, and none met the residual leg at any departure
+    rv = d["r10"]["verdict"]
+    assert rv["verdict"] == "INCOMPLETE" and rv["passing"] == [] and rv["n_decisive"] == len(rv["per_config"])
+    assert all(x["leg_b_departures"] == 0 for x in rv["per_config"].values())
+    v["r10-nconfig"] = str(rv["n_decisive"])
     return v
 
 

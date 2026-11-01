@@ -1,0 +1,13 @@
+# r22/tools/check_held.py --fact-held --pair-applied G1:paper-s-09 on the rater copy of 4ec9118f5's paper text (the final paper text; the last commit changes only the note) (blind; rater-calibration/tools/analyze.py)
+  FAIL G1:paper-g-08: held quote no longer prints exactly: 'In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBU'
+  FAIL G1:paper-s-08: held quote no longer prints exactly: 'Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths'
+  FAIL G1b:paper-g-14: held quote no longer prints exactly: 'Rounding-level changes of its inputs move its results by up to 2.6 statistical standard de'
+  FAIL G1b:paper-s-07: held quote no longer prints exactly: 'We report a simultaneous measurement of the νµ charged-current inclusive cross section in '
+held quotes checked exactly 14, exempt by applied pair ['G1b:paper-s-05'], held for facts 8, failures 4
+
+# Dispositions (Stage 0 / R10 round, 2026-11-01): the same four flags as the 620 and 5B rounds' CHECK-HELD.txt, none of
+# them this round's. This round changes one paper sentence, the C_model sentence, which holds no held quote.
+# - G1:paper-g-08, G1b:paper-s-07 (the paper abstract) and G1:paper-s-08 (the body's J1(a) sentence): decided changes
+#   that landed with #619.
+# - G1b:paper-g-14: not a text change; pdftotext breaks the sentence at its hyphen in the rater copy.
+# The rater copy's holddiff reads "VERDICT: PASS (only hold text differs)".
