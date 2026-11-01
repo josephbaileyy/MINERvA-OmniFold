@@ -1,0 +1,25 @@
+Q1: VERDICT: DIFFERS
+DETAIL: AFTER states that the reported covariance includes an additional term, quoting `"$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$"`, whereas BEFORE states it is `"$C_{\mathrm{total}}+C_{\mathrm{resp}}$"`.
+
+Q2: VERDICT: DIFFERS
+DETAIL: AFTER introduces extensive new claims and qualifiers not found in BEFORE, including that `"$C_{\mathrm{PL,5D}}$ accounts for an inconsistency among the three run-period groups"` and details regarding its audit, rank, and construction.
+
+Q3: VERDICT: DIFFERS
+DETAIL: AFTER adds `"$C_{\mathrm{PL,5D}}$"` to the reported covariance and states that the GiBUU $\Eavail$ shape only meets the listing criterion `"Without $C_{\mathrm{PL,5D}}$"`, whereas BEFORE explicitly lists it under the reported covariance (`"the listed truths are the GiBUU $\Eavail$ shape..."`).
+
+Q4: VERDICT: DIFFERS
+DETAIL: AFTER states that the reported covariance includes `"$+C_{\mathrm{PL,5D}}$"` (`"$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$"`), which is not supported by BEFORE.
+
+Q5: VERDICT: DIFFERS
+DETAIL: AFTER introduces reporting uncertainties under `"$C_{\mathrm{PL,5D}}$ separately, and without $C_{\mathrm{PL,5D}}$"`, and changes the diagonal covariance definition in the caption to include `"$+C_{\mathrm{PL,5D}}$"`.
+
+Q6: VERDICT: DIFFERS
+DETAIL: AFTER changes the reported per-cell and median marginal relative uncertainties from the total-plus-response covariance (`"\fvval{sig-C_total_resp-R00}"` and `"\fvval{sigmed-C_total_resp}"`) to the newly defined reported covariance (`"\fvval{sig-reported-R00}"` and `"\fvval{sigmed-reported}"`).
+
+Q7: VERDICT: DIFFERS
+DETAIL: AFTER incorporates the additional covariance block into the error bar definition, quoting `"$C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$"`, which BEFORE does not state.
+
+Q8: VERDICT: DIFFERS
+DETAIL: AFTER drops a negation to claim correlations are something `"the error bars do show"` (contradicting BEFORE's `"do not show"`), and adds new comparative results and text regarding the run-period block (`"The run-period block was added after the data were seen..."`).
+
+END

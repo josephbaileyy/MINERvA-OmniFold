@@ -1,0 +1,9 @@
+# make_values_fived16.py --self-test against seven mutants of the listed-truth guard and the -nopl merge (2026-10-31).
+# Each mutant is one replacement in a copy of the committed generator; the original was restored and compared (cmp).
+check disabled: self-test rc 1 -> KILLED
+keys always ok: self-test rc 1 -> KILLED
+without always ok: self-test rc 1 -> KILLED
+both always ok: self-test rc 1 -> KILLED
+count always ok: self-test rc 1 -> KILLED
+sentence = whole text: self-test rc 1 -> KILLED
+nopl stray not checked: self-test rc 1 -> KILLED

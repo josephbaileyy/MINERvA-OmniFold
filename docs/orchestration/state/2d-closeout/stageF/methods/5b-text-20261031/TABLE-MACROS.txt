@@ -1,0 +1,11 @@
+# r22/tools/check_table_macros.py on the restructured generator tables (5B text round, at 5da83a76d)
+## paper Table IV
+  FAIL rendered numbers differ from their macros: printed ['16', '15', '105', '101', '109', '109', '224', '223', '272', '258', '16', '84', '131', '114', '188', '188', '16', '2', '262', '262', '330', '311', '3.8', '0.4', '4.5', '8', '7', '45', '25', '58', '28'], macros ['16', '15', '105', '101', '109', '109', '224', '223', '272', '258', '131', '114', '188', '188', '262', '262', '330', '311', '4.5', '8', '7', '45', '25', '58', '28']
+TABLE-MACROS :: FAIL (tab:gen16: 25 numbers, each its macro)
+## note Table 16
+TABLE-MACROS :: PASS (tab:fived16-gen: 30 numbers, each its macro)
+## paper Table IV, check 2 again on the left column only (page 9, x 0-306 pt), the generator labels' version numbers removed
+The FAIL above is the two-column page: pdftotext -layout puts the right column's flux-bootstrap sentence (16th-84th, chi2, 3.8 %, 0.4 %) on the table's lines.
+printed ['16', '15', '105', '101', '109', '109', '224', '223', '272', '258', '131', '114', '188', '188', '262', '262', '330', '311', '4.5', '8', '7', '45', '25', '58', '28']
+macros  ['16', '15', '105', '101', '109', '109', '224', '223', '272', '258', '131', '114', '188', '188', '262', '262', '330', '311', '4.5', '8', '7', '45', '25', '58', '28']
+TABLE IV (left column) :: PASS

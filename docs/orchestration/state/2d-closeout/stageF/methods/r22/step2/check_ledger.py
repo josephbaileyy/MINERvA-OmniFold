@@ -243,6 +243,9 @@ def main():
         ab_new = "We present a simultaneous measurement"
         fake = [("T-AB", ab_old, ab_new)]
         es = "sec_execsummary.tex"
+        # the undeclared edit plants text at the abstract's end, which no pair declares, so it changes its input once a
+        # pinned pair has replaced ab_old (5B-a replaced it, and the old plant's replace then left the file unchanged)
+        ab_edit = prot_cur[PAIRED].replace("\\end{abstract}", "@@\n\\end{abstract}", 1)
         # the frozen-sentence plant edits a frozen sentence that still prints (a round may legitimately reword the
         # first one, as r22 Step 3's B01-g-02 did), so the plant always changes its input
         fz_file, fz = next((f, x) for x in N4_FROZEN for f in sorted(all_cur)
@@ -255,7 +258,7 @@ def main():
             ("R: probe naming a note file", dict(cur), lt + "\n| T3 | t | — | CUT | — | `R:%s::the` |\n" % f0, {}),
             ("false L: probe", dict(cur), lt + "\n| T4 | t | — | CUT | — | `L:KNOWN_ISSUES.md::@@NOT THERE@@` |\n", {}),
             ("L: probe naming a note source", dict(cur), lt + "\n| T5 | t | — | CUT | — | `L:docs/analysis-note/%s::the` |\n" % f0, {}),
-            ("undeclared abstract edit", dict(cur), lt, {"prot": {PAIRED: prot_cur[PAIRED].replace(ab_old, ab_new, 1)}}),
+            ("undeclared abstract edit", dict(cur), lt, {"prot": {PAIRED: ab_edit}}),
             ("declared but unpinned abstract pair", dict(cur), lt,
              {"prot": {PAIRED: prot_old[PAIRED].replace(ab_old, ab_new, 1)}, "pairs": fake, "pins": {}}),
             ("protected values file edited", dict(cur), lt, {"prot": {"values.tex": prot_cur["values.tex"] + "%x\n"}}),
@@ -267,6 +270,7 @@ def main():
                                             "pairs": fake, "pins": {"T-AB": pin(ab_old, ab_new)}}),
                   ("true L: probe", {"ledger": lt + "\n| T6 | t | — | CUT | — | `L:2d-unfolding/2D_OMNIFOLD_REFERENCE.md::isMinosMatchTrack` |\n"})]
         assert prot_old[PAIRED].count(ab_old) == 1, "self-test abstract anchor not unique"
+        assert ab_edit != prot_cur[PAIRED], "self-test undeclared abstract edit does not change its input"
         # the plants run with N4_FROZEN (one of them edits a frozen sentence), so the baseline must too, whatever
         # --no-n4-frozen says; otherwise a round that legitimately rewords a frozen sentence makes the silent controls fire
         base_fails = check(wt, cur, old, files, lt, prot_cur, prot_old, all_cur, all_old, N4_FROZEN)[0]

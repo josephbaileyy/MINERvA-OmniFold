@@ -713,11 +713,14 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
     # the posted note (main_note) is an outward build with a clean body, like the paper and the primer.
     # Each strike-carrying body also strikes the literal of one production CONTEXT_EXEMPT entry, and the directory
     # carries each entry's source text, because the checker refuses a stale exemption (review F8).
-    BODIES = {"main_records": r"struck $\dead{1.234}$ here and $\dead{1.014}$",
+    BODIES = {"main_records": r"struck $\dead{1.234}$ here and $\dead{1.014}$, $\dead{1.65}$ and $\dead{6.86}$",
               "pet_note": r"struck $\dead{5.678}$ here and $\dead{0.912}$",
               "main_note": "clean posted note", "main_paper": "clean paper", "main_primer": "clean primer"}
     EXEMPT_SOURCES = {"sec_validation.tex": "the injected bump (mean weight 1.014)\n",
-                      "values.tex": "\\newcommand{\\covTwoDCTwo}{0.912}\n"}
+                      "values.tex": "\\newcommand{\\covTwoDCTwo}{0.912}\n",
+                      "values_fived16.tex": "\\@namedef{fv@g-tune-pull-R15}{1.65}\n",
+                      "../orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/figures/fd_g_fig_modes.json":
+                          '{"sigma": 0.06858631491192879}\n'}
     BODY_FILES = {"main_records": "app_history", "pet_note": "app_history_pet", "main_note": "body_main_note",
                   "main_paper": "body_main_paper", "main_primer": "body_main_primer"}
     # What each fake PDF "renders": each strike-carrying build shows its own struck literal (its positive control).
@@ -734,6 +737,7 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
         (shim / "pdftotext").chmod(0o755)
         self.env = dict(os.environ, PATH=f"{shim}{os.pathsep}{os.environ.get('PATH', '')}")
         for name, text in ResultLineNamesItsObjectTest.EXEMPT_SOURCES.items():
+            (self.note / name).parent.mkdir(parents=True, exist_ok=True)
             (self.note / name).write_text(text)
         for driver, body in self.BODIES.items():
             stem = self.BODY_FILES[driver]
@@ -871,7 +875,7 @@ class StruckOnlyInHistoryTest(unittest.TestCase):
         code, line, out = self._run("--source-only")
         self.assertEqual(code, 1, out)
         self.assertIn("appear in pet_note.pdf", out)
-        self.assertIn("records.pdf carries 1/2 struck literals (positive control OK)", out)
+        self.assertIn("records.pdf carries 1/4 struck literals (positive control OK)", out)  # 1.234, 1.014, 1.65, 6.86
 
     def test_a_pet_note_strike_in_the_paper_FAILS(self):
         """The outward builds are checked against the PET note's struck literals too."""
@@ -915,7 +919,7 @@ class PostedNoteIsOutwardTest(unittest.TestCase):
             "\\documentclass{article}\n\\input{body_main_note}\n\\input{app_history}\n")
         code, line, out = self._run("--source-only")
         self.assertEqual(code, 1, out)
-        self.assertIn("main_note (note build) reaches 2 \\dead{} use(s) via app_history.tex", out)
+        self.assertIn("main_note (note build) reaches 4 \\dead{} use(s) via app_history.tex", out)
 
     def test_a_struck_literal_in_the_posted_note_pdf_FAILS(self):
         for value in ("1.234", "5.678"):   # the records' strike, and the PET note's
@@ -1183,8 +1187,9 @@ class ContextExemptLiteralTest(unittest.TestCase):
                 self.assertEqual(build, "main_note")
                 self.assertIn(printed, (HERE / source).read_text(encoding="utf-8"))
                 self.assertIn(value, struck)
-                self.assertIsNotNone(re.search(pattern, printed.replace("\\newcommand{\\covTwoDCTwo}{0.912}",
-                                                                        "C2 = 0.912")))
+                rendered = self.mod.CONTEXT_RENDERED.get((build, value),
+                                                         printed.replace("\\newcommand{\\covTwoDCTwo}{0.912}", "C2 = 0.912"))
+                self.assertIsNotNone(re.search(pattern, rendered))
 
 
 # The mutation runner points the whole suite at a mutated copy without editing anything.
