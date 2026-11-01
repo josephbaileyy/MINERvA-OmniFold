@@ -1,0 +1,31 @@
+# unmutated suite, fd_1b_inv.py sha256 71b3903aa1329807, tests sha256 a14a8672b956fda5, on top of 26f9cf01e:
+48 passed in 10.61s
+# mutants (python3 mutation.py, run from nd-unfolding/):
+KILLED   B1: noise if EITHER side under its floor
+KILLED   resolution threshold 4 -> 1
+KILLED   fallback may read SUPPORTED
+KILLED   all-SUPPORTED skips I1 (M2)
+KILLED   upper floor = point floor
+KILLED   B2: F_truth not gated
+KILLED   half-of-the-log test weakened
+KILLED   opposite-side factors counted
+KILLED   headline account at 4 (M3)
+KILLED   rho reproduction control skipped
+KILLED   S1 block reproduction skipped
+KILLED   S1_CV vs jitter base skipped
+KILLED   mode CV control skipped
+KILLED   O_NOATIME flag dropped
+KILLED   atime-moved refusal in stage skipped
+KILLED   prior factor applied after the product
+KILLED   mode B background not applied
+KILLED   template not taken from the mode
+KILLED   mode A non-finite kept
+KILLED   noise factor for pairs 1
+KILLED   N1: peak RSS not recorded
+KILLED   N1: wall limit doubled
+KILLED   N1: RSS limit ignored
+KILLED   N1: REPRICE exits 0
+KILLED   N2: one-code check skipped
+KILLED   N2: code digest not compared
+KILLED   N4: a moved atime exits 0
+27 of 27 killed
