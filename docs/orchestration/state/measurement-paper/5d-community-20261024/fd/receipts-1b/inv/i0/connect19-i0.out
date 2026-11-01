@@ -1,0 +1,14 @@
+host=login37 start=2026-11-01T19:21:51Z
+deploy porcelain_lines=0 head=b1c615f12fca5f8597d34750b2c074f1fd7b2cdd
+fd_1b_inv.py sha256 71b3903aa1329807  gate-d e1838c0ae2e66c1a
+spec items=396
+stat-before lines=396
+stage rc=0 wall_s=3
+{"staged": 396, "missing": []}
+i0 rc=0 wall_s=3
+{"out": "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/i0.json", "step": "I0", "verdict": "REJECTED"}
+atime/mtime/size: UNCHANGED on all 396 sources
+-rw-rw---- 1 josephrb josephrb 163958 Nov  1 11:22 /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/i0.json
+9a4142d348f591134ba4912a2197ca958ea387ec58b095622bce5f206d007021  /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/i0.json
+29994972cdaecfbc7dec79f627cc5d519a272c3c98821b94ce8ead9fc9a9ef55  /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in/staged.json
+end=2026-11-01T19:22:54Z

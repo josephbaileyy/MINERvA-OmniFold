@@ -1,0 +1,24 @@
+host=login37 start=2026-11-01T19:20:59Z
+== section 4 (I0)
+derivation | n=176 | bytes=33316949 | oldest_atime=2026-11-01T06:32:56Z (/pscratch/sd/j/josephrb/fd-1b-20261030/runs/derivation/fd1b_derivation_Flux_66.npz) | newest_atime=2026-11-01T06:32:56Z | exposed_from=2026-12-27
+s1_uni | n=176 | bytes=16910385 | oldest_atime=2026-10-25T06:02:08Z (/pscratch/sd/j/josephrb/s1-20261024/runs/uni/S1_FrAbs_pi_0.npz) | newest_atime=2026-10-25T16:46:48Z | exposed_from=2026-12-20
+s1_assembly | n=1 | bytes=119273 | oldest_atime=2026-11-01T06:32:55Z (/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz) | newest_atime=2026-11-01T06:32:55Z | exposed_from=2026-12-27
+jitter_data_base | n=1 | bytes=95564 | oldest_atime=2026-10-30T21:14:00Z (/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz) | newest_atime=2026-10-30T21:14:00Z | exposed_from=2026-12-25
+jitter_data | n=20 | bytes=1911491 | oldest_atime=2026-10-23T21:32:35Z (/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j12.npz) | newest_atime=2026-10-23T21:32:35Z | exposed_from=2026-12-18
+jitter_nom_base | n=1 | bytes=183898 | oldest_atime=2026-10-25T16:50:15Z (/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/nom/nom_b-_j-.npz) | newest_atime=2026-10-25T16:50:15Z | exposed_from=2026-12-20
+jitter_nom | n=20 | bytes=3678353 | oldest_atime=2026-10-23T10:02:44Z (/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/nom/nom_b-_j1.npz) | newest_atime=2026-10-23T10:02:44Z | exposed_from=2026-12-18
+flux_constraint | n=1 | bytes=25403 | oldest_atime=2026-11-01T06:32:56Z (/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt) | newest_atime=2026-11-01T06:32:56Z | exposed_from=2026-12-27
+== section 8 (I1, I2)
+inputs_npz | n=1 | bytes=1548438020 | oldest_atime=2026-11-01T00:07:33Z (/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz) | newest_atime=2026-11-01T00:07:33Z | exposed_from=2026-12-27
+bkg_dump | n=1 | bytes=16017201 | oldest_atime=2026-10-31T23:53:58Z (/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz) | newest_atime=2026-10-31T23:53:58Z | exposed_from=2026-12-26
+bank_cv | n=1 | bytes=2163648810 | oldest_atime=2026-10-31T23:54:09Z (/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz) | newest_atime=2026-10-31T23:54:09Z | exposed_from=2026-12-26
+bank_interaction | n=268 | bytes=26577287712 | oldest_atime=2026-10-31T23:54:26Z (/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/FrElas_pi_0_wt.npy) | newest_atime=2026-11-01T00:01:21Z | exposed_from=2026-12-26
+detector_dump | n=32 | bytes=2126450976 | oldest_atime=2026-11-01T00:01:17Z (/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_wr.npy) | newest_atime=2026-11-01T00:01:29Z | exposed_from=2026-12-27
+pins | n=1 | bytes=170298 | oldest_atime=2026-11-01T01:33:08Z (/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json) | newest_atime=2026-11-01T01:33:08Z | exposed_from=2026-12-27
+== the investigation directory
+ls: cannot access '/pscratch/sd/j/josephrb/fd-1b-inv-20261101': No such file or directory
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+m3246               2177.4            10000.0     17930.6      20000.0
+m3246_g             1296.2            90000.0    143255.1     180000.0
+end=2026-11-01T19:21:01Z
