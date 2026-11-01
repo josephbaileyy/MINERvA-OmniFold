@@ -13,7 +13,11 @@ imports without ROOT. The one case that needs real ROOT (a TMemFile over verifie
 * section 1: the O_NOATIME reader leaves atime unchanged and reports a moved atime; a mismatched or absent pin refuses;
   MemROOT refuses any ROOT read of an unverified path; --out that exists refuses before anything is read.
 * B2's factor-2 rule in both directions, and its reference counts against probe_gen.json.
-* a sample that fails B0 writes only its gen product and stops; the next sample still runs every variant."""
+* nothing of a sample is written before its B0 passes (target-bitwise branch tested on both sides), a B2 stop (factor 2,
+  or M4-W's population not matched) writes nothing further; the other samples continue and the exit code is 3;
+  rebuild.json's status record says which samples are complete. ch_b0 on both sides.
+* the frozen code tree is copied through the pinned O_NOATIME reader; a tampered byte, an unpinned .py or a pinned
+  file the tree lacks refuses, and main exits 2 before ROOT is imported."""
 import hashlib
 import io
 import json
@@ -581,36 +585,243 @@ class WriteVariant(Tmp):
             RB.write_variant(self.tmp, "s", "bad", x[:10], x, x, {})
 
 
+def synthetic_loader(bad=()):
+    """A LOADERS entry: one synthetic part (326 in phase space, 81 with W^2 < 0 under the analysis W) whose frozen
+    reference equals its own gen selection, except for the samples named in bad (one pt moved by 1e-12)."""
+    def loader(ctx, name, files, tmeta):
+        p = synthetic_part(hitnuc=np.full(400, 2112))
+
+        def build(keep, cols):
+            n = G5.hist([cols[a] for a in G5.AXES], None, [G5.EDGES[a] for a in G5.AXES]).reshape(-1)
+            return n * 1e-40, n * 1e-80, n
+        p.build = build
+        keep, cols, _ = RB.select(p)
+        ref = {k: v.copy() for k, v in cols.items()}
+        if name in bad:
+            ref["pt"][0] += 1e-12
+        return [p], {"main": ref}, {}
+    return loader
+
+
 class RunSamples(Tmp):
-    """A sample failing B0 writes only gen and stops; the next one runs every variant and B2 is recorded."""
+    """Run.sample and run_samples with the heavy readers replaced by a synthetic loader: nothing is written before B0
+    passes, a B2 stop writes nothing further, the other samples continue, and status/exit code say so."""
 
-    def test_b0_failure_stops_only_that_sample(self):
-        def loader(ctx, name, files, tmeta):
-            p = synthetic_part(hitnuc=np.full(400, 2112))
-
-            def build(keep, cols):
-                n = G5.hist([cols[a] for a in G5.AXES], None, [G5.EDGES[a] for a in G5.AXES]).reshape(-1)
-                return n * 1e-40, n * 1e-80, n
-            p.build = build
-            keep, cols, _ = RB.select(p)
-            ref = {k: v.copy() for k, v in cols.items()}
-            if name == "bad":
-                ref["pt"][0] += 1e-12
-            return [p], {"main": ref}, {}
+    def go(self, samples, loaders, m4w=None, targets=None, npz=None):
         ctx = RB.Ctx(G5, RB.MemROOT(FakeROOT()), RB.Inputs({}), (None, None, None))
         run = RB.Run(ctx, self.tmp, "/none")
-        with mock.patch.dict(RB.LOADERS, {"bad": loader, "good": loader}), \
+        with mock.patch.dict(RB.LOADERS, loaders), \
+                mock.patch.dict(RB.TARGETS, targets or {}, clear=True), \
+                mock.patch.dict(RB.M4W_REF, m4w or {}, clear=True), \
+                mock.patch.object(RB, "load_npz", npz or (lambda inputs, path: self.fail(path))), \
                 mock.patch.object(RB, "sample_files", lambda c, n: {"main": []}), \
-                mock.patch.object(RB.Run, "load_pools", lambda self: synthetic_pools()):
-            self.assertFalse(run.sample("bad"))
-            self.assertTrue(run.sample("good"))
-        files = sorted(os.listdir(self.tmp))
-        self.assertEqual([f for f in files if f.startswith("bad_")], ["bad_gen.npz"])
-        self.assertEqual(len([f for f in files if f.startswith("good_")]), len(RB.variants("good")))
-        self.assertEqual(run.res["samples"]["bad"]["stage"], "B0")
+                mock.patch.object(RB.Run, "load_pools", lambda self_: synthetic_pools()):
+            rc = RB.run_samples(run, samples)
+        return run, rc, sorted(os.listdir(self.tmp))
+
+    def test_b0_failure_writes_nothing_and_stops_only_that_sample(self):
+        run, rc, files = self.go(["bad", "good"], {"bad": synthetic_loader({"bad"}), "good": synthetic_loader()})
+        self.assertEqual(rc, 3)
+        self.assertEqual([f for f in files if f.startswith("bad_")], [])
+        self.assertEqual(run.res["status"]["bad"], {"B0": False, "B2": "n/a", "complete": False,
+                                                    "variants_written": []})
         self.assertFalse(run.res["B0"]["bad"]["pass"])
-        self.assertTrue(run.res["B0"]["good"]["pass"])
-        self.assertIn("good", run.res["B2"])
+        good = run.res["status"]["good"]
+        self.assertEqual(good["variants_written"], [v.name for v in RB.variants("good")])
+        self.assertTrue(good["B0"] and good["complete"] and run.res["B0"]["good"]["pass"])
+        self.assertEqual(good["B2"], "n/a")
+        self.assertEqual(len([f for f in files if f.startswith("good_")]), len(RB.variants("good")))
+
+    def test_all_complete_exits_zero(self):
+        run, rc, _ = self.go(["good"], {"good": synthetic_loader()})
+        self.assertEqual(rc, 0)
+        self.assertTrue(run.res["status"]["good"]["complete"])
+
+    def test_an_error_stops_only_that_sample(self):
+        def boom(ctx, name, files, tmeta):
+            raise SystemExit("an event outside the declared E_nu bins")
+        run, rc, files = self.go(["boom", "good"], {"boom": boom, "good": synthetic_loader()})
+        self.assertEqual(rc, 3)
+        self.assertFalse(run.res["status"]["boom"]["complete"])
+        self.assertEqual(run.res["samples"]["boom"]["stage"], "error")
+        self.assertTrue(run.res["status"]["good"]["complete"])
+
+    def b2_case(self, ref):
+        loaders = {"genie_cv": synthetic_loader(), "good": synthetic_loader()}
+        return self.go(["genie_cv", "good"], loaders, m4w={"genie_cv": ref})
+
+    def test_b2_passes_on_the_m4w_population_and_fraction(self):
+        run, rc, files = self.b2_case((81, 326))
+        self.assertEqual(rc, 0)
+        st = run.res["status"]["genie_cv"]
+        self.assertEqual((st["B2"], st["complete"]), ("pass", True))
+        self.assertTrue(run.res["B2"]["genie_cv"]["population_matches_m4w"])
+        self.assertIn("genie_cv_ana_s202611011.npz", files)
+
+    def assert_b2_stop(self, run, rc, files, why):
+        self.assertEqual(rc, 3)
+        st = run.res["status"]["genie_cv"]
+        self.assertEqual(st, {"B0": True, "B2": "stop", "complete": False, "variants_written": ["gen"]})
+        self.assertEqual([f for f in files if f.startswith("genie_cv_")], ["genie_cv_gen.npz"])
+        self.assertIn(why, run.res["B2"]["genie_cv"]["stop_reason"])
+        self.assertEqual(run.res["samples"]["genie_cv"]["stage"], "B2")
+        self.assertTrue(run.res["status"]["good"]["complete"])
+
+    def test_b2_population_mismatch_stops(self):
+        run, rc, files = self.b2_case((81, 327))      # the same fraction to 0.3%, one event more in M4-W's population
+        self.assertTrue(run.res["B2"]["genie_cv"]["rule"]["pass"])
+        self.assert_b2_stop(run, rc, files, "population")
+
+    def test_b2_fraction_outside_factor_two_stops(self):
+        run, rc, files = self.b2_case((20, 326))      # population equal, fraction 4x M4-W's
+        self.assertTrue(run.res["B2"]["genie_cv"]["population_matches_m4w"])
+        self.assert_b2_stop(run, rc, files, "factor 2")
+
+    def target_case(self, edit=None):
+        """genie_mec with a synthetic frozen target equal to the gen product, or with one cell edited."""
+        x, v, n, _, _ = RB.assemble("genie_mec", synthetic_loader()(None, "genie_mec", None, None)[0],
+                                    RB.Variant("gen", None, "gen"), None, {})
+        tgt = {"xsec_flat": x.copy(), "sumw2_flat": v.copy(), "nevt_flat": n.copy(), "meta_json": np.asarray("{}")}
+        if edit:
+            k = int(np.flatnonzero(tgt[edit])[0])
+            tgt[edit][k] = np.nextafter(tgt[edit][k], np.inf)
+        return self.go(["genie_mec"], {"genie_mec": synthetic_loader()},
+                        targets={"genie_mec": ("/frozen/genie_mec.npz", "xsec_flat", "sumw2_flat")},
+                        npz=lambda inputs, path: tgt)
+
+    def test_b0_target_bitwise_passes(self):
+        run, rc, files = self.target_case()
+        b0 = run.res["B0"]["genie_mec"]
+        self.assertTrue(b0["pass"] and b0["xsec_bitwise"] and b0["sumw2_bitwise"])
+        self.assertTrue(b0["xsec"]["bitwise_equal"] and b0["nevt_reported"]["bitwise_equal"])
+        self.assertEqual(rc, 0)
+
+    def test_b0_target_one_cell_of_xsec_or_sumw2_refuses(self):
+        for key, flag in (("xsec_flat", "xsec_bitwise"), ("sumw2_flat", "sumw2_bitwise")):
+            with self.subTest(key=key):
+                for f in os.listdir(self.tmp):
+                    os.remove(self.tmp / f)
+                run, rc, files = self.target_case(key)
+                b0 = run.res["B0"]["genie_mec"]
+                self.assertFalse(b0["pass"] or b0[flag])
+                other = "sumw2_bitwise" if flag == "xsec_bitwise" else "xsec_bitwise"
+                self.assertTrue(b0[other])
+                self.assertEqual((rc, files), (3, []))
+                self.assertFalse(run.res["status"]["genie_mec"]["B0"])
+
+
+class Complete(unittest.TestCase):
+    def test_each_clause(self):
+        dec = RB.variants("genie_cv")
+        full = [v.name for v in dec]
+        self.assertTrue(RB.is_complete({"B0": True, "B2": "pass", "variants_written": full}, dec))
+        self.assertTrue(RB.is_complete({"B0": True, "B2": "n/a", "variants_written": full}, dec))
+        self.assertFalse(RB.is_complete({"B0": False, "B2": "n/a", "variants_written": full}, dec))
+        self.assertFalse(RB.is_complete({"B0": True, "B2": "stop", "variants_written": full}, dec))
+        self.assertFalse(RB.is_complete({"B0": True, "B2": "pass", "variants_written": full[:-1]}, dec))
+
+
+class ChB0(Tmp):
+    def run_ch(self, edit=None, h_pass=True):
+        ctx = RB.Ctx(G5, None, RB.Inputs({}), (None, None, None))
+        run = RB.Run(ctx, self.tmp, "/none")
+        xc, vc, xh, vh = (RNG.uniform(0, 1, 50) for _ in range(4))
+        ref = {"xsec_CH": 12.0 / 13.0 * xc + 1.0 / 13.0 * xh,
+               "sumw2_CH": (12.0 / 13.0) ** 2 * vc + (1.0 / 13.0) ** 2 * vh}
+        if edit:
+            ref[edit][7] = np.nextafter(ref[edit][7], 2.0)
+        run.gen = {"nuwro_C12": (xc, vc), "nuwro_H": (xh, vh)}
+        run.res["B0"] = {"nuwro_C12": {"pass": True}, "nuwro_H": {"pass": h_pass}}
+        with mock.patch.object(RB, "load_npz", lambda inputs, path: ref):
+            run.ch_b0()
+        return run.res["B0"]
+
+    def test_pass(self):
+        r = self.run_ch()["nuwro_CH"]
+        self.assertTrue(r["pass"] and r["xsec_bitwise"] and r["sumw2_bitwise"])
+
+    def test_one_cell_refuses(self):
+        for key in ("xsec_CH", "sumw2_CH"):
+            self.assertFalse(self.run_ch(key)["nuwro_CH"]["pass"], key)
+
+    def test_not_formed_when_a_component_failed_b0(self):
+        self.assertNotIn("nuwro_CH", self.run_ch(h_pass=False))
+        self.assertNotIn("gibuu_CH", self.run_ch())
+
+
+class FrozenTreeCopy(Tmp):
+    def tree(self):
+        src = self.tmp / "tree"
+        files = {"3d-unfolding/genie/gen_to_xsec5d.py": b"X = 1\n", "2d-unfolding/u2d.py": b"Y = 2\n"}
+        for rel, b in files.items():
+            (src / rel).parent.mkdir(parents=True, exist_ok=True)
+            self.file(str(Path("tree") / rel), b)
+        (src / "3d-unfolding/genie/__pycache__").mkdir()
+        (src / "3d-unfolding/genie/__pycache__/gen_to_xsec5d.cpython-312.pyc").write_bytes(b"pyc")
+        (src / "3d-unfolding/genie/notes.txt").write_text("not code")
+        pins = {str(src / rel): hashlib.sha256(b).hexdigest() for rel, b in files.items()}
+        return src, files, pins
+
+    def test_pinned_tree_is_copied(self):
+        src, files, pins = self.tree()
+        inp = RB.Inputs(pins)
+        rec = RB.copy_frozen_tree(str(src), self.tmp / "out/frozen_tree", inp)
+        self.assertEqual(sorted(rec["files"]), sorted(files))
+        for rel, b in files.items():
+            self.assertEqual((self.tmp / "out/frozen_tree" / rel).read_bytes(), b)
+            self.assertEqual(rec["files"][rel], hashlib.sha256(b).hexdigest())
+        copied = sorted(str(q.relative_to(self.tmp / "out/frozen_tree"))
+                        for q in (self.tmp / "out/frozen_tree").rglob("*") if q.is_file())
+        self.assertEqual(copied, sorted(files))
+        self.assertEqual(len(inp.records), 2)
+
+    @unittest.skipUnless(hasattr(os, "O_NOATIME"), "O_NOATIME exists on Linux (Perlmutter) only")
+    def test_copy_leaves_atime_unchanged(self):
+        src, files, pins = self.tree()
+        inp = RB.Inputs(pins)
+        RB.copy_frozen_tree(str(src), self.tmp / "o", inp)
+        self.assertTrue(all(r["o_noatime"] and r["atime_unchanged"] for r in inp.records))
+
+    def test_tampered_byte_refuses(self):
+        src, files, pins = self.tree()
+        q = src / "2d-unfolding/u2d.py"
+        q.write_bytes(b"Y = 3\n")
+        with self.assertRaises(RB.InputRefused):
+            RB.copy_frozen_tree(str(src), self.tmp / "o", RB.Inputs(pins))
+
+    def test_unpinned_extra_py_refuses_before_any_read(self):
+        src, files, pins = self.tree()
+        (src / "3d-unfolding/extra.py").write_text("Z = 0\n")
+        inp = RB.Inputs(pins)
+        with self.assertRaises(RB.InputRefused):
+            RB.copy_frozen_tree(str(src), self.tmp / "o", inp)
+        self.assertEqual(inp.records, [])
+        self.assertFalse((self.tmp / "o").exists())
+
+    def test_pinned_but_absent_refuses(self):
+        src, files, pins = self.tree()
+        pins[str(src / "3d-unfolding/xsec_3d.py")] = "a" * 64
+        with self.assertRaises(RB.InputRefused):
+            RB.copy_frozen_tree(str(src), self.tmp / "o", RB.Inputs(pins))
+
+    def test_main_refuses_a_tampered_tree_before_importing_root(self):
+        src, files, pins = self.tree()
+        (src / "2d-unfolding/u2d.py").write_bytes(b"tampered\n")
+        pin_file = self.file("P.sha256", "".join(f"{d}  {p}\n" for p, d in pins.items()).encode())
+        out = self.tmp / "run"
+        with mock.patch.object(RB.gfr, "import_root", side_effect=AssertionError("ROOT imported")):
+            rc = RB.main(["--out", str(out), "--inputs", str(pin_file), "--gen5d-tree-src", str(src)])
+        self.assertEqual(rc, 2)
+        rb = json.loads((out / "rebuild.json").read_text())
+        self.assertEqual(rb["exit"], 2)
+        self.assertIn("differs from the pinned", rb["error"])
+
+    def test_the_committed_pins_name_the_twelve_tree_files(self):
+        tree = RB.gfr.DEFAULTS["gen5d_tree"]
+        got = [p for p in RB.read_pins([RB.INPUTS]) if p.startswith(tree + os.sep)]
+        self.assertEqual(len(got), 12)
+        self.assertTrue(all(p.endswith(".py") for p in got))
+        self.assertIn(os.path.join(tree, "3d-unfolding/genie/gen_to_xsec5d.py"), got)
 
 
 if __name__ == "__main__":

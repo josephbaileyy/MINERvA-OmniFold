@@ -52,6 +52,9 @@ TOL = 1e-12
 SEED_SPREAD_FLAG = 0.2                       # declaration section 3
 D_SUMZ2_MAX, D_ZMAX = 32.0, 3.5              # declaration section 5: chi2_16 0.99 quantile, and the per-cell bound
 VL173_2D_INTEGRAL = 3.0730e-38               # VALIDATION_LEDGER.md VL173, five figures
+TOTAL_3D = 3.079e-38                         # 3d-unfolding/3D_OMNIFOLD_STATUS.md headline, "Total sigma (3D integral)", four figures
+FROZEN_NUWRO = "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz"
+FROZEN_GIBUU = "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz"
 FD = _REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024"
 P1 = _REPO / "docs/orchestration/state/measurement-paper/phase1"
 INPUTS = FD / "fd/gencmp/INPUTS.sha256"
@@ -71,7 +74,8 @@ LABELS = {
     "gibuu_CH": "B3 (sampling closure) failed on hydrogen; a post-hoc bias check of its premise passed at <= 0.1 sigma_c; "
                 "46% of the hydrogen sample is DIS that does not conserve energy (binding addendum 9 section 4)",
     "genie_H": "mixed: carbon of this generator + GENIE CV hydrogen (13 x MP3-A xsec_H1); a sensitivity, never the "
-               "primary; adds no covariance block",
+               "primary; adds no covariance block. GENIE's hydrogen sample is thin (MP3-B section 6: B4 not met, 21 "
+               "cells above 1/3, worst 1.41), so this spread is largely that sample's own noise",
     "gibuu_alt": "GiBUU CH with MP3-C's alternative (post-hoc bias check) weight; printed beside the primary",
 }
 QUADRANTS = {   # declaration section 4; checked against the definition by quadrant_cells()
@@ -99,7 +103,10 @@ def load_pins(path: Path = INPUTS) -> dict[str, str]:
 
 
 def read_noatime(path: Path) -> tuple[bytes, bool]:
-    """The file's bytes through an O_NOATIME descriptor, and whether its atime is unchanged."""
+    """The file's bytes through an O_NOATIME descriptor, and whether its atime is unchanged. A pscratch file is refused
+    where O_NOATIME does not exist, since a plain read moves its purge clock."""
+    if str(path).startswith("/pscratch/") and not hasattr(os, "O_NOATIME"):
+        raise Stop("0", f"{path}: O_NOATIME is unavailable here, and a plain read would move the file's atime")
     before = os.stat(path).st_atime_ns
     flags = os.O_RDONLY | getattr(os, "O_NOATIME", 0)
     with os.fdopen(os.open(path, flags), "rb") as fh:
@@ -215,9 +222,11 @@ def cmd_a1(a) -> int:
 def cmd_ch(a) -> int:
     inp = Inputs()
     a1 = json.loads(Path(a.a1_json).read_text())
-    a1_ok = a1.get("pass") is True and all(
-        a1["inputs"].get(str(p), {}).get("sha256") == inp.pins[str(p)] for p in (NUWRO_NPZ, GIBUU_NPZ))
-    report("A1", "the A1 readout passed, on these npz files", a1_ok)
+    seen = {v.get("sha256") for v in a1.get("inputs", {}).values()}
+    need = [inp.pins[str(p)] for p in (NUWRO_NPZ, GIBUU_NPZ)] + [inp.pins[k] for k in (FROZEN_NUWRO, FROZEN_GIBUU)
+                                                                if k in inp.pins]
+    a1_ok = a1.get("pass") is True and len(need) == 4 and set(need) <= seen
+    report("A1", "the A1 readout passed, on these npz files and frozen products (matched by digest, not by path)", a1_ok)
     U, R = cell_matrix(), result(inp)
     nw, gb, gba, ge = (inp.npz(p) for p in (NUWRO_NPZ, GIBUU_NPZ, GIBUU_ALT_NPZ, GENIE_H_NPZ))
     committed = {k: {p["name"]: p for p in inp.json(path)["predictions"]}
@@ -278,18 +287,28 @@ def seed_mean(d: Path, sample: str, seeds) -> tuple[np.ndarray, np.ndarray, list
     return np.mean([x for x, _ in xs], axis=0), np.mean([v for _, v in xs], axis=0), [x for x, _ in xs]
 
 
+def rebuild_status(rb: dict) -> dict:
+    """Per sample: B0, B2 and complete, from rebuild.json's status record; a sample without one is not complete."""
+    out = {}
+    for s, st in rb.get("status", {}).items():
+        out[s] = {"B0": st.get("B0") is True, "B2": st.get("B2"), "complete": st.get("complete") is True}
+    return out
+
+
 def cmd_defs(a) -> int:
     import fd_gencmp_kin as kin
     inp = Inputs()
     U, R = cell_matrix(), result(inp)
     sig = np.sqrt(np.diag(R["reported"]))
     rb = json.loads((a.rebuild_dir / "rebuild.json").read_text())
-    b0 = {s: r.get("pass") for s, r in rb.get("B0", {}).items()}
+    status = rebuild_status(rb)
+    b0 = {s: st["B0"] for s, st in status.items()}
     out, d = {}, a.rebuild_dir
 
     def build(sample, cells):
-        """{'gen': (x, s2), 'ana': (x, s2), 'seeds': [x...], 'wonly': ..., 'axisonly': ...} or None if B0 failed."""
-        if b0.get(sample) is not True:
+        """{'gen': (x, s2), 'ana': (x, s2), 'seeds': [x...], 'wonly': ..., 'axisonly': ...}, or None unless the sample is
+        complete (B0 passed, B2 did not stop, every variant written)."""
+        if not status.get(sample, {}).get("complete"):
             return None
         r = {"gen": load_rebuilt(d, sample, "gen")}
         x, v, xs = seed_mean(d, sample, kin.SEEDS)
@@ -329,6 +348,8 @@ def cmd_defs(a) -> int:
         if pc is not None and ph is not None:
             ch = {k: combine(*pc[k], *ph[k]) for k in ("gen", "ana", "wonly", "axisonly")}
             ch["seeds"] = [F_C * xc + F_H * xh for xc, xh in zip(pc["seeds"], ph["seeds"])]
+            if "ana_mn" in pc:          # carbon's M_n variant with hydrogen's first-seed analysis product (M_p)
+                ch["ana_mn"] = combine(*pc["ana_mn"], *load_rebuilt(d, f"{gen}_H", f"ana_s{kin.SEEDS[0]}"))
             ref = inp.npz(NUWRO_NPZ if gen == "nuwro" else GIBUU_NPZ)
             report("B0", f"{gen}: the rebuilt CH combination in the generator definitions equals step A's bitwise",
                    np.array_equal(ch["gen"][0], ref["xsec_CH"]) and np.array_equal(ch["gen"][1], ref["sumw2_CH"]))
@@ -339,7 +360,8 @@ def cmd_defs(a) -> int:
                  for t in ("carbon", "CH") if t in out[g]} for g in out}
     write(a.out, {"schema": "fd-gencmp-defs/1", "step": "B (Q10)", "rebuild_json_sha256":
                   hashlib.sha256((a.rebuild_dir / "rebuild.json").read_bytes()).hexdigest(),
-                  "B0": b0, "generators": out, "table_2x2": table, "inputs": inp.record,
+                  "status": status, "not_read": sorted(k for k, v in status.items() if not v["complete"]),
+                  "generators": out, "table_2x2": table, "inputs": inp.record,
                   "candidate": "the corner 'CH, analysis definitions' is the candidate for Table IV, which only Joseph "
                                "can adopt",
                   "not": "no reading, Table IV change or paper text (FD-GENCMP section 7)"})
@@ -432,6 +454,8 @@ def cmd_overlap(a) -> int:
                and len(qc[q]["boxes"]) == 8 for q in qc),
            json.dumps(qc))
     regions = enumerate_eavail_regions(defn)
+    report("C", "no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an "
+                "amendment before it is compared)", not regions, json.dumps(regions))
     p5 = np.asarray(inp.npz(a.p5)["xsec_flat"], float)
     report("C0", "P5's integrals over the sixteen cells equal f (to 1e-12)", np.allclose(U @ p5, f, rtol=TOL, atol=0))
     tune = np.asarray(inp.npz(a.mnvtune)["xsec_flat"], float)
@@ -466,6 +490,9 @@ def cmd_overlap(a) -> int:
     report("C1", "the quadrant edges are bin edges of the 3D grid",
            all(np.any(np.isclose(f_pt, v)) for v in (0.0, 0.7, 4.5)) and all(np.any(np.isclose(f_pz, v)) for v in (1.5, 4.5, 60.0)))
     v3 = np.einsum("i,j,k->ijk", np.diff(f_pt), np.diff(f_pz), np.diff(f_ea))
+    total3d = float((cv3 * v3).sum())
+    report("C3", "the 3D integral reproduces the 3D status headline 3.079e-38 to four figures",
+           abs(total3d - TOTAL_3D) <= 0.0005e-38, f"{total3d!r}")
     c3pt, c3pz = 0.5 * (f_pt[:-1] + f_pt[1:]), 0.5 * (f_pz[:-1] + f_pz[1:])
     proj_C, (_, _) = root_hist(inp.bytes(a.proj3d), "hCov_proj_pt_pz_eavail")
     proj_idx, _ = root_hist(inp.bytes(a.proj3d), "hRowIndex")
@@ -500,24 +527,30 @@ def cmd_overlap(a) -> int:
         if covered:
             s2 = float(np.sqrt(aq @ Q @ aq))
             rec["2D"] = {"S": S2, "sigma": s2, "d": S16 - S2, "d_pct": 100 * (S16 / S2 - 1), **rule(S16 - S2, s_rep, s2),
-                         "without_C_PL5D": rule(S16 - S2, s_nopl, s2)}
+                         "primary": "the reported matrix C_total + C_resp + C_PL5D (declaration section 4)",
+                         "printed_only_without_C_PL5D": {
+                             **rule(S16 - S2, s_nopl, s2),
+                             "label": "printed only, no outcome is read from it: the sixteen-cell matrix without "
+                                      "C_PL5D against Q, which includes C_PL; not a like-for-like pair"}}
         else:
-            rec["2D"] = {"S": S2, "label": "Q does not cover this quadrant", "d_pct": 100 * (S16 / S2 - 1)}
+            rec["2D"] = {"label": "Q does not cover this quadrant; no 2D comparison is formed"}
         m3 = ((Qd["pt"][0] < c3pt) & (c3pt < Qd["pt"][1]))[:, None, None] & \
              ((Qd["pz"][0] < c3pz) & (c3pz < Qd["pz"][1]))[None, :, None]
         S3 = float((cv3 * v3 * m3).sum())
         rec["3D"] = {"S": S3, "d": S16 - S3, "d_pct": 100 * (S16 / S3 - 1), **rule(S16 - S3, s_rep, None)}
         pm = (Qd["pt"][0] < c3pt[ppt]) & (c3pt[ppt] < Qd["pt"][1]) & (Qd["pz"][0] < c3pz[ppz]) & (c3pz[ppz] < Qd["pz"][1])
         ap = np.where(pm, pv, 0.0)
+        var_p = float(ap @ proj_C @ ap)
         rec["3D"]["descriptive_PROJ3D"] = {
-            "sigma": float(np.sqrt(max(ap @ proj_C @ ap, 0.0))),
+            "variance": var_p, "sigma": float(np.sqrt(var_p)) if var_p >= 0 else None,
+            "negative_variance": var_p < 0,
             "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value "
                      "(OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"}
         rows[q] = rec
     write(a.out, {"schema": "fd-gencmp-overlap/1", "step": "C (Q26)", "quadrants": rows,
                   "eavail_regions_formable": regions,
                   "diagnostic_cv_over_Q_x_max_rel": float(np.max(np.abs(flat[cells2d] / np.asarray(qz["cells_x_EU"], float) - 1))),
-                  "total_2d": total2d, "total_3d": float((cv3 * v3).sum()),
+                  "total_2d": total2d, "total_3d": total3d,
                   "rule": "agree: |d| <= 2|s16 - slow|; agree below a correlation: <= 2 sqrt(s16^2 + slow^2), rho* printed; "
                           "differ otherwise (a new problem, to the director and Joseph). 3D: the sigma_16 scale only, "
                           "descriptive, never a validation in either direction",
@@ -539,30 +572,41 @@ def native_rule(gA, VA, gD, VD, cells) -> dict:
 
 
 def cmd_native(a) -> int:
+    """Step D in both definitions. The primary route is the generator definitions; the analysis route is always formed
+    when its three samples are complete, and printed beside it (declaration section 5)."""
+    import fd_gencmp_kin as kin
     inp = Inputs()
     U, R = cell_matrix(), result(inp)
+    status = rebuild_status(json.loads((a.rebuild_dir / "rebuild.json").read_text()))
+    report("D", "nuwro_CHnative is complete in the rebuild (B0 alignment passed, every variant written)",
+           status.get("nuwro_CHnative", {}).get("complete") is True, json.dumps(status.get("nuwro_CHnative")))
     nw = inp.npz(NUWRO_NPZ)
     gA, VA = integrate(U, nw["xsec_CH"], nw["sumw2_CH"], ALL_CELLS)
     xD, sD = load_rebuilt(a.rebuild_dir, "nuwro_CHnative", "gen")
     gD, VD = integrate(U, xD, sD, ALL_CELLS)
-    rec = {"generator_definitions": {"rule": native_rule(gA, VA, gD, VD, ALL_CELLS),
+    rec = {"generator_definitions": {"role": "primary: this route's rule decides 'agree' (declaration section 5)",
+                                     "rule": native_rule(gA, VA, gD, VD, ALL_CELLS),
                                      "native_chi2": chi2_pair(R, gD, VD, ALL_CELLS),
                                      "combination_chi2": chi2_pair(R, gA, VA, ALL_CELLS)}}
-    if a.analysis:
-        import fd_gencmp_kin as kin
-        xa, sa_, _ = seed_mean(a.rebuild_dir, "nuwro_CHnative", kin.SEEDS)
+    if all(status.get(k, {}).get("complete") for k in ("nuwro_C12", "nuwro_H")):
         pc = seed_mean(a.rebuild_dir, "nuwro_C12", kin.SEEDS)
         ph = seed_mean(a.rebuild_dir, "nuwro_H", kin.SEEDS)
-        xcmb, scmb = combine(pc[0], pc[1], ph[0], ph[1])
-        g1, V1 = integrate(U, xcmb, scmb, ALL_CELLS)
+        xa, sa_, _ = seed_mean(a.rebuild_dir, "nuwro_CHnative", kin.SEEDS)
+        g1, V1 = integrate(U, *combine(pc[0], pc[1], ph[0], ph[1]), ALL_CELLS)
         g2, V2 = integrate(U, xa, sa_, ALL_CELLS)
-        rec["analysis_definitions"] = {"rule": native_rule(g1, V1, g2, V2, ALL_CELLS),
+        rec["analysis_definitions"] = {"role": "printed beside the primary; a disagreement here is reported and named in "
+                                               "the paper's clause (section 7)",
+                                       "rule": native_rule(g1, V1, g2, V2, ALL_CELLS),
                                        "native_chi2": chi2_pair(R, g2, V2, ALL_CELLS)}
+    else:
+        rec["analysis_definitions"] = {"not_formed": "nuwro_C12 or nuwro_H is not complete in the rebuild"}
+    rec["agree"] = rec["generator_definitions"]["rule"]["agree"]
     rec["paper_uses"] = ("step A's combination in every outcome (declaration section 5); a disagreement is reported with "
                          "both numbers and goes to the director and Joseph")
-    write(a.out, {"schema": "fd-gencmp-native/1", "step": "D (Q08)", **rec, "inputs": inp.record,
+    write(a.out, {"schema": "fd-gencmp-native/1", "step": "D (Q08)", **rec, "status": status, "inputs": inp.record,
                   "atime_deviations": inp.atime_deviations()})
-    print(f"[D] agree (generator definitions): {rec['generator_definitions']['rule']['agree']}", flush=True)
+    ana = rec["analysis_definitions"].get("rule", {}).get("agree", "not formed")
+    print(f"[D] agree (generator definitions, primary): {rec['agree']}; analysis definitions: {ana}", flush=True)
     return 0
 
 
@@ -587,7 +631,6 @@ def build_args(argv=None):
         s.add_argument(f"--{k}", type=Path, required=True)
     s = sub.add_parser("native")
     s.add_argument("--rebuild-dir", type=Path, required=True)
-    s.add_argument("--analysis", action="store_true", help="also compare in the analysis definitions (step B's seeds)")
     s.add_argument("--out", type=Path, required=True)
     return p.parse_args(argv)
 

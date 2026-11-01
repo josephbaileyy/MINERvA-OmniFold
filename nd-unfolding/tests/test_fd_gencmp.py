@@ -66,9 +66,10 @@ class Fixture:
         self.write_readouts()
         self.paths = {"BLOCK": d / "block.npz", "DATA_PRODUCT": d / "dp.json", "CMODEL": d / "cmodel.json",
                       "NUWRO_NPZ": d / "nuwro.npz", "GIBUU_NPZ": d / "gibuu.npz", "GIBUU_ALT_NPZ": d / "gibuu_alt.npz",
-                      "GENIE_H_NPZ": d / "genie.npz", "READOUT_REPORTED": d / "rep.json", "READOUT_NOPL": d / "nopl.json"}
+                      "GENIE_H_NPZ": d / "genie.npz", "READOUT_REPORTED": d / "rep.json", "READOUT_NOPL": d / "nopl.json",
+                      "FROZEN_NUWRO": str(d / "nuwro_frozen.npz"), "FROZEN_GIBUU": str(d / "gibuu_frozen.npz")}
 
-    def write_readouts(self, bump=0.0):
+    def write_readouts(self, bump=0.0, bump_shape=0.0):
         rows = {"reported": [], "without_C_PL5D": []}
         for name, cells in (("nuwro", G.ALL_CELLS), ("gibuu", G.GIBUU_CELLS)):
             z = np.load(self.d / f"{name}.npz")
@@ -76,7 +77,7 @@ class Fixture:
             for key, C in (("reported", self.R["reported"]), ("without_C_PL5D", self.R["nopl"])):
                 c = fg.compare(self.f, g, Vg, C, cells, key)
                 rows[key].append({"name": name, "total": {"chi2": c["total"]["chi2"] * (1 + bump)},
-                                  "shape_only": {"chi2": c["shape_only"]["chi2"]}})
+                                  "shape_only": {"chi2": c["shape_only"]["chi2"] * (1 + bump_shape)}})
         (self.d / "rep.json").write_text(json.dumps({"predictions": rows["reported"]}))
         (self.d / "nopl.json").write_text(json.dumps({"predictions": rows["without_C_PL5D"]}))
 
@@ -108,8 +109,9 @@ class WithFixture(unittest.TestCase):
     def a1_json(self, ok=True):
         pins = self.fx.pins()
         p = self.d / "a1_out.txt"
-        p.write_text(json.dumps({"pass": ok, "inputs": {str(self.d / f"{n}.npz"): {"sha256": pins[str(self.d / f"{n}.npz")]}
-                                                         for n in ("nuwro", "gibuu")}}))
+        names = ("nuwro", "gibuu", "nuwro_frozen", "gibuu_frozen")
+        p.write_text(json.dumps({"pass": ok, "inputs": {f"/elsewhere/{n}.npz": {"sha256": pins[str(self.d / f"{n}.npz")]}
+                                                         for n in names}}))      # other paths: A1 matches by digest
         return p
 
 
@@ -269,7 +271,9 @@ class StepC(WithFixture):
         np.savez(self.d / "q.npz", total_plus_C_PL=np.diag((0.06 * x) ** 2), area=w2.ravel()[cells], cells_x_EU=x)
         np.savez(self.d / "pl.npz", cells=cells)
         write_root(self.d / "cv2.root", {"hXSec2D": (cv, e_pt, e_pz)})
-        cv3 = RNG.uniform(0.5, 1.5, (14, 16, 7)) * 1e-40
+        cv3 = RNG.uniform(0.5, 1.5, (14, 16, 7))
+        cv3 *= G.TOTAL_3D / (cv3 * np.einsum("i,j,k->ijk", np.diff(e_pt), np.diff(e_pz), np.diff(e_ea))).sum()
+        self.cv3, self.edges = cv3, (e_pt, e_pz, e_ea)
         write_root(self.d / "cv3.root", {"hXSec3D": (cv3, e_pt, e_pz, e_ea)})
         idx = np.sort(RNG.choice(14 * 16 * 7, 1431, replace=False)).astype(float)
         ax = np.arange(1432, dtype=float)
@@ -310,7 +314,8 @@ class StepC(WithFixture):
         out = self.d / "ov2_out.txt"
         G.main(self.args(out))
         r = json.loads(out.read_text())
-        self.assertEqual(r["quadrants"]["QD"]["2D"]["label"], "Q does not cover this quadrant")
+        self.assertEqual(r["quadrants"]["QD"]["2D"]["label"], "Q does not cover this quadrant; no 2D comparison is formed")
+        self.assertNotIn("d_pct", r["quadrants"]["QD"]["2D"])
         self.assertNotIn("outcome", r["quadrants"]["QD"]["2D"])
         self.assertIn("outcome", r["quadrants"]["QA"]["2D"])
 
@@ -329,6 +334,195 @@ class StepC(WithFixture):
             G.main(self.args(self.d / "x_out.txt"))
         self.assertIn("C0", str(e.exception))
 
+
+class StepCRefusals(StepC):
+    def refuses(self, control):
+        with self.assertRaises(fg.Stop) as e:
+            G.main(self.args(self.d / "x_out.txt"))
+        self.assertIn(control, str(e.exception))
+        self.assertFalse((self.d / "x_out.txt").exists())
+
+    def test_c1_refuses_a_2d_grid_without_the_quadrant_edge(self):
+        e_pt, e_pz = self.edges[0].copy(), self.edges[1]
+        e_pt[np.isclose(e_pt, 0.7)] = 0.71
+        write_root(self.d / "cv2.root", {"hXSec2D": (self.cv, e_pt, e_pz)})
+        self.refuses("C1")
+
+    def test_c1_refuses_a_3d_grid_without_the_quadrant_edge(self):
+        e_pt, e_pz, e_ea = self.edges
+        e_pz2 = e_pz.copy()
+        e_pz2[np.isclose(e_pz2, 4.5)] = 4.6
+        write_root(self.d / "cv3.root", {"hXSec3D": (self.cv3, e_pt, e_pz2, e_ea)})
+        self.refuses("C1")
+
+    def test_area_check_refuses(self):
+        q = dict(np.load(self.d / "q.npz"))
+        q["area"] = q["area"].copy()
+        q["area"][17] *= 1.01
+        np.savez(self.d / "q.npz", **q)
+        self.refuses("area")
+
+    def test_units_check_refuses(self):
+        q = dict(np.load(self.d / "q.npz"))
+        q["total_plus_C_PL"] = q["total_plus_C_PL"] * 1e6
+        np.savez(self.d / "q.npz", **q)
+        self.refuses("units")
+
+    def test_quadrant_definition_check_refuses(self):
+        bad = {**G.QUADRANTS, "QA": {**G.QUADRANTS["QA"], "unreported": [2]}}
+        with mock.patch.object(G, "QUADRANTS", bad):
+            self.refuses("declared ones")
+
+    def test_proj3d_index_check_refuses_a_duplicate(self):
+        idx = np.sort(RNG.choice(14 * 16 * 7, 1431, replace=False)).astype(float)
+        idx[5] = idx[4]
+        ax = np.arange(1432, dtype=float)
+        write_root(self.d / "proj.root", {"hCov_proj_pt_pz_eavail": (np.diag(np.full(1431, 1e-82)), ax, ax),
+                                          "hRowIndex": (idx, ax)})
+        self.refuses("PROJ3D")
+
+    def test_c3_refuses_a_wrong_3d_total(self):
+        e_pt, e_pz, e_ea = self.edges
+        write_root(self.d / "cv3.root", {"hXSec3D": (self.cv3 * 1.001, e_pt, e_pz, e_ea)})
+        self.refuses("3D integral")
+
+    def test_an_eavail_region_stops_for_an_amendment(self):
+        with mock.patch.object(G, "enumerate_eavail_regions", lambda defn: [{"cells": [0]}]):
+            self.refuses("amendment")
+
+    def test_without_c_pl_is_printed_only(self):
+        out = self.d / "ov3_out.txt"
+        G.main(self.args(out))
+        r = json.loads(out.read_text())["quadrants"]["QC"]["2D"]
+        self.assertIn("printed only", r["printed_only_without_C_PL5D"]["label"])
+        self.assertIn("reported matrix", r["primary"])
+
+
+class MoreRefusals(WithFixture):
+    def test_r_refuses_f_not_cmodel_x(self):
+        cm = json.loads((self.d / "cmodel.json").read_text())
+        cm["x"][4] *= 1 + 1e-9
+        (self.d / "cmodel.json").write_text(json.dumps(cm))
+        with self.assertRaises(fg.Stop) as e:
+            G.result(G.Inputs())
+        self.assertIn("cmodel", str(e.exception))
+
+    def test_a2_refuses_negative_vg(self):
+        R = {"f": np.ones(16), "reported": np.eye(16), "nopl": np.eye(16)}
+        Vg = np.zeros(16)
+        Vg[2] = -1e-9
+        with self.assertRaises(fg.Stop) as e:
+            G.chi2_pair(R, np.ones(16), Vg, G.ALL_CELLS)
+        self.assertIn("A2", str(e.exception))
+
+    def test_a0_refuses_a_shape_only_chi2_off_by_1e_6(self):
+        self.fx.write_readouts(bump_shape=1e-6)
+        with self.assertRaises(fg.Stop) as e:
+            G.main(["ch", "--a1-json", str(self.a1_json()), "--out", str(self.d / "x_out.txt")])
+        self.assertIn("shape_only", str(e.exception))
+
+    def test_a1_readout_missing_a_frozen_digest_refuses(self):
+        p = self.a1_json()
+        r = json.loads(p.read_text())
+        r["inputs"].pop("/elsewhere/gibuu_frozen.npz")
+        p.write_text(json.dumps(r))
+        with self.assertRaises(fg.Stop) as e:
+            G.main(["ch", "--a1-json", str(p), "--out", str(self.d / "x_out.txt")])
+        self.assertIn("A1", str(e.exception))
+
+
+class RebuildReaders(WithFixture):
+    """defs and native end to end on a synthetic rebuild directory."""
+
+    def rebuild(self, status_override=None, ch_defect=False):
+        rd = self.d / "rb"
+        rd.mkdir()
+        status = {}
+
+        def put(sample, x, v, variants):
+            for var in variants:
+                np.savez(rd / f"{sample}_{var}.npz", xsec_flat=x * (1 + 1e-3 * (var != "gen")), sumw2_flat=v,
+                         nevt_flat=np.ones(N))
+        allv = ["gen", "wonly", "axisonly"] + [f"ana_s{s}" for s in K.SEEDS]
+        for name in ("genie_cv", "genie_mec"):
+            put(name, RNG.uniform(1e-42, 2e-42, N), RNG.uniform(1e-90, 2e-90, N), allv)
+            status[name] = {"B0": True, "B2": "pass", "complete": True}
+        for gen in ("nuwro", "gibuu"):
+            z = np.load(self.d / f"{gen}.npz")
+            xc = z["xsec_C12_frozen"] * (1 + 1e-6) if (ch_defect and gen == "nuwro") else z["xsec_C12_frozen"]
+            put(f"{gen}_C12", xc, z["sumw2_C12_frozen"], allv + (["ana_mn"] if gen == "gibuu" else []))
+            put(f"{gen}_H", z["xsec_H"], z["sumw2_H"], allv)
+            status[f"{gen}_C12"] = status[f"{gen}_H"] = {"B0": True, "B2": "pass", "complete": True}
+        nw = np.load(self.d / "nuwro.npz")
+        put("nuwro_CHnative", nw["xsec_CH"], nw["sumw2_CH"], allv)
+        status["nuwro_CHnative"] = {"B0": True, "B2": "n/a", "complete": True}
+        status.update(status_override or {})
+        for s_, st in (status_override or {}).items():
+            if not st.get("complete"):
+                for f in rd.glob(f"{s_}_ana_s*.npz"):
+                    f.unlink()                          # a B2 stop writes no analysis products
+        (rd / "rebuild.json").write_text(json.dumps({"status": status}))
+        return rd
+
+    def test_defs_reads_complete_samples_and_skips_a_b2_stop(self):
+        rd = self.rebuild({"genie_mec": {"B0": True, "B2": "stop", "complete": False}})
+        out = self.d / "defs_out.txt"
+        G.main(["defs", "--rebuild-dir", str(rd), "--out", str(out)])
+        r = json.loads(out.read_text())
+        self.assertEqual(r["not_read"], ["genie_mec"])
+        self.assertNotIn("CH", r["generators"]["genie_mec"])
+        self.assertIn("CH", r["generators"]["nuwro"])
+        self.assertIn("ana_mn_delta_over_sigma", r["generators"]["gibuu"]["CH"])
+        self.assertEqual(len(r["generators"]["gibuu"]["CH"]["cells"]), 8)
+
+    def test_defs_refuses_a_rebuilt_ch_that_is_not_step_a(self):
+        rd = self.rebuild(ch_defect=True)
+        with self.assertRaises(fg.Stop) as e:
+            G.main(["defs", "--rebuild-dir", str(rd), "--out", str(self.d / "x_out.txt")])
+        self.assertIn("B0", str(e.exception))
+
+    def test_native_runs_both_routes(self):
+        rd = self.rebuild()
+        out = self.d / "nat_out.txt"
+        G.main(["native", "--rebuild-dir", str(rd), "--out", str(out)])
+        r = json.loads(out.read_text())
+        self.assertTrue(r["agree"])                      # the native sample is step A's CH here
+        self.assertIn("rule", r["analysis_definitions"])
+        self.assertIn("step A's combination", r["paper_uses"])
+
+    def test_native_refuses_an_incomplete_native_sample(self):
+        rd = self.rebuild({"nuwro_CHnative": {"B0": False, "B2": "n/a", "complete": False}})
+        with self.assertRaises(fg.Stop) as e:
+            G.main(["native", "--rebuild-dir", str(rd), "--out", str(self.d / "x_out.txt")])
+        self.assertIn("nuwro_CHnative", str(e.exception))
+
+
+class NoAtimeRefusals(unittest.TestCase):
+    def test_pscratch_refused_without_o_noatime(self):
+        saved = getattr(os, "O_NOATIME", None)
+        try:
+            if saved is not None:
+                del os.O_NOATIME
+            with self.assertRaises(fg.Stop):
+                G.read_noatime(Path("/pscratch/sd/x/never-opened.npz"))
+        finally:
+            if saved is not None:
+                os.O_NOATIME = saved
+
+    def test_a_moved_atime_is_detected(self):
+        with tempfile.NamedTemporaryFile(delete=False) as fh:
+            fh.write(b"abc")
+        from types import SimpleNamespace
+        for step, want in ((0, True), (1, False)):
+            calls = []
+
+            def fake(path, *a, **k):
+                calls.append(1)
+                return SimpleNamespace(st_atime_ns=1_000 + step * (len(calls) - 1))
+            with mock.patch.object(G.os, "stat", fake):
+                _, ok = G.read_noatime(Path(fh.name))
+            self.assertEqual(ok, want)
+        os.unlink(fh.name)
 
 class Kinematics(unittest.TestCase):
     def test_masses_are_gen_to_xsec5d_s(self):

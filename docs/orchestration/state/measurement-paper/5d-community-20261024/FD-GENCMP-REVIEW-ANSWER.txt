@@ -1,0 +1,151 @@
+# FD-GENCMP independent review: the reviewer's final message, verbatim
+# Reviewer: a fresh Claude Sonnet subagent (Agent tool, model sonnet), not sol; read-only on a detached worktree
+# of branch docs/fd-gencmp-declaration-20261101 at 98d6a839ce772e79eacb7cf25034137ed9e89c5d, 2026-11-01.
+# Prompt: FD-GENCMP-REVIEW-PROMPT.txt with <WORKTREE> = that worktree's path. The text below is extracted
+# byte-for-byte from the agent's transcript (its last assistant message). The lane's responses are in
+# FD-GENCMP-DECLARATION.md section 11.
+
+Review of the GENCMP declaration and code at the worktree head. I read everything listed and ran the unit tests: 58 run, OK, 2 skipped. That matches the declaration's 29 + 29. The worktree is clean afterwards. I also ran a synthetic-data script from the scratchpad (not the repo) that exercises `defs` and `native`, which the test suite never does. I ran nothing on real data and no git writes.
+
+Paths below are relative to the review worktree. `DECL` is `docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-DECLARATION.md`. `GC` is `nd-unfolding/fd_gencmp.py`, `RB` is `nd-unfolding/fd_gencmp_rebuild.py`, and `T`/`TR` are the two test files.
+
+## Question A: can an outcome be chosen because it looks better?
+
+**A1. The paper wording is asymmetric: good outcomes get fixed sentences, bad ones get deferral. Should fix before binding.**
+- Step C: "Q26 | some quadrant 'differ' | … No paper text until they rule" (DECL:352). Every agreeing outcome has fixed text (DECL:349-351). The existing sentence at `paper_body.tex:119` ("only the three-observable marginal has been compared") would stay, so a failed comparison is never disclosed on a pre-fixed schedule.
+- Step D: "agree" adds a clause (DECL:344). "Disagree" says the "paper keeps step A's CH rows… before any text" (DECL:345) and nothing is fixed for disclosure.
+- Q10: "B0 fails → keeps its present sentence" (DECL:347). Nothing says the failure is reported in the paper.
+- Fix: for each bad branch, fix a minimum disclosure sentence now.
+
+**A2. Step D's "agree" is not defined across its two routes. Should fix before binding.**
+- DECL:303-304 makes the same comparison in generator definitions and in analysis definitions. DECL:344 says "step D agrees" with no combination rule.
+- The analysis route is optional on the CLI (`GC:590`, `--analysis` is `store_true`). The only line printed is `[D] agree (generator definitions)` (`GC:565`).
+- If one route agrees and the other does not, the clause could be added or withheld after seeing the numbers.
+
+**A3. Partial or stopped samples have no §7 row. Should fix before binding.**
+- DECL:346-347 are per generator ("B0 passes for a generator"). B0 is per sample (nuwro_C12 and nuwro_H separately; `GC:292`, `GC:326-329`). A generator with C12 passing and H failing has no stated outcome.
+- Which corner goes to Table IV in that case is also unstated. `GC:327-329` forms a carbon-only readout when only C12 passes.
+- A B2 STOP (DECL:197-198) and a seed-spread flag have no paper row for the stop case.
+
+**A4. Step C's primary covariance is not designated. Should fix before binding.**
+- DECL:231-232 computes σ₁₆ for the reported matrix and for the matrix without C_PL,5D. `GC:502-503` gives an outcome for each.
+- §7 says "agree" without saying which matrix governs. The code prints only the reported one at `GC:526`.
+- The no-C_PL variant is also paired with a Q that includes C_PL (`total_plus_C_PL`), so it is not a like-for-like pair.
+- Fix: state that the reported matrix is primary and the other is printed only.
+
+**A5. One-sided discretion in Q10 wording. Minor.**
+- DECL:346: "If the change is below every cell's 0.1 σ, the sentence may say so." The wording is permitted only when the change is small.
+- DECL:354 requires the report to give numbers, not the paper.
+
+**A6. The "agree" tier gets easier as σ₁₆ is inflated. Minor, a power note.**
+- The unreported boxes add ±100% in quadrature to σ₁₆ (`GC:487-488`), and the "agree" band is 2|σ₁₆ − σ_low|. QA and QB therefore pass the strict tier more readily because they carry more uncertainty.
+- The label does disclose this; the point is that there is no stated power for step C.
+
+**A7. Sensitivity rows are not locked out in every case. Minor.**
+- A-H and the GiBUU alt weight are marked "never in its place" (DECL:144). The GiBUU M_n variant (`ana_mn`, DECL:174) has no such statement, though no promotion route exists.
+- The GENIE-hydrogen sample is thin: MP3-B B4 was not met, with 21 cells above 1/3 and a worst case of 1.41 (`phase1/mp3b/REPORT.md:148`). The A-H "spread" is largely that sample's own noise, and the declaration does not say so.
+
+I found no open threshold, seed, card or variant choice beyond those above. Seeds (DECL:178), the k1 card, the frozen GiBUU weight, the 0.2σ flag, step D's 32.0 and 3.5, and C3 are all fixed.
+
+## Question B: controls that cannot fail
+
+The first group are controls that are implemented but have a hole.
+
+**B1. B1 cannot fail. Should fix before binding.**
+- DECL:194-195 says the pools "must reproduce MP-5's recorded α summary".
+- `RB:763`: "printed, not gated". `RB:755-765` compares against hard-coded constants (`RB:82`) copied from REPORT text. There is no tolerance and no pass field.
+- `TR:562-569` only checks the summary function.
+- Fix: gate it with a tolerance declared now, or reword the declaration to "printed".
+
+**B2. `defs` and `native` do not honour B0 or B2 status. Should fix before binding.** I reproduced both with the scratchpad script.
+- `defs` reads only `rebuild.json["B0"]` (`GC:287`). A sample that STOPPED at B2 (`RB:855-857`) has B0 true and no `ana_s*` files. `defs` then crashes: `FileNotFoundError … nuwro_C12_ana_s202611011.npz`. Nothing is written for the other samples, against DECL:189 ("stops that sample only").
+- `cmd_native` never opens `rebuild.json` (`GC:541-566`). `RB:837` writes the `gen` product before the B0 check at `RB:842`. I wrote a `nuwro_CHnative_gen.npz` whose B0 was `pass:false` and `native` read it and returned an agree/disagree verdict (printed `False`). The `--analysis` path likewise uses `nuwro_C12` and `nuwro_H` seeds with no B0 or B2 check (`GC:553-556`).
+- The step D rule can therefore run on a sample that failed its own control.
+
+**B3. The atime check is weak. Should fix before binding.**
+- `GC:101-107` uses `getattr(os, "O_NOATIME", 0)` and never refuses on pscratch when the flag is missing. `RB:126-127` does refuse. So `a1` and `overlap` can read pscratch files with a plain open.
+- The stat comparison would not reliably show the move under relatime.
+- In `T`, the only atime test passes and is skipped locally (`T:387-396`). Nothing tests the "moved atime" branch for `GC`. The rebuild version is tested with a mock (`TR:223-237`).
+- By declaration (DECL:361) a moved atime is reported and the run continues, so it is a record, not a gate.
+
+**B4. Several named controls are untested in the refusing direction. Should fix before binding.** DECL:374 says "every control is tested on both sides". That is false for:
+- C1 edge checks (`GC:450-451`, `GC:466-467`).
+- The Q `area` check (`GC:452`).
+- The Q units check (`GC:453-455`).
+- The quadrant-definition check (`GC:430-433`).
+- The PROJ3D index check (`GC:473-474`).
+- R's f-versus-cmodel half (`GC:155`). `T:181-187` only perturbs the sum.
+- A2's `Vg >= 0` half.
+- A0's shape-only half (`write_readouts(bump)` changes only `total`, `T:78`).
+- B0's target-bitwise branch and `gfr.compare_arrays` (`RB:866-875`). `T:587-612` uses `target=None`, so that branch never executes.
+- `ch_b0` (`RB:884-898`).
+- B2's STOP path through `Run.sample`. Only `b2_rule` is tested (`TR:545`), and "good" and "bad" are not in `M4W_REF`.
+- `cmd_defs` and `cmd_native` end to end. `T` has no test for either: `grep` finds only `native_rule` and the `overlap` args helper.
+
+**B5. Step C's 3D side has no control. Should fix before binding.**
+- C3 and the units check cover the 2D side only. For `hXSec3D` only edges are checked (C1).
+- `GC:520` writes `total_3d` but never gates it, so a density-versus-per-bin error would go through.
+- The paper already cites 0.141% for the 3D versus 2D totals (`paper_body.tex:119`), which would be an obvious gate.
+- Related: when `covered` is false, S2 sums only the bins that are in Q (`GC:492-493`). The printed `d_pct` is then against an incomplete S2 (`GC:505`).
+
+**B6. Step D's probe projection and 4.0 node-h cap are not in code. Should fix, or state it is manual.**
+- `grep` for probe/cap/sacct in `fd_gencmp*.py` finds nothing. DECL:359 lists it as a stop rule.
+
+**B7. Code-tree identity is recorded but not gated. Minor.**
+- `RB:974` (`module_digests`) records digests only. DECL:391-392 describes copying through O_NOATIME into the run directory, but there is no code for it and no pin of the tree files.
+- B0's bitwise check would catch behavioural differences.
+
+**B8. B2's population match is recorded but not gated. Minor.**
+- `RB:852`: `population_matches_m4w` is recorded only. The factor-2 band on counts of about 30 is a loose check.
+
+The controls below are implemented, can fail, and are tested where they refuse:
+- Pin mismatch and unpinned input (`T:170-179`, `TR:250-262`).
+- A1 (`T:134`, `T:155`).
+- The CH bitwise check (`T:139`).
+- C0 (`T:324`), C2 (`T:299`) and C3 (`T:317`).
+- Step D's rule (`T:207`).
+- Step C's outcome rule at each boundary (`T:191`).
+- B2's factor-2 rule as a function (`TR:545`).
+- A0, except for the shape-only half noted in B4.
+
+## Secondary
+
+**S1. A1's readout is bound to a path, so cross-machine use fails closed.** Should fix.
+- `GC:218-219` looks up `a1["inputs"][str(NUWRO_NPZ)]`. The key is the absolute path in whichever checkout ran `a1`. DECL:135 says `a1` runs on a login node and `ch` runs locally, so the keys will differ. `T` runs both in one directory and cannot see this.
+- The A1 JSON is also an unsigned attestation: the test hand-writes it (`T:108-113`).
+
+**S2. DECL:123 writes "V_g = diag(U sumw2)", but the code and FD-G use U² sumw2.** Minor.
+- `GC:166` and `fd_g_compare.py:337`: `(Ucells ** 2) @ s2`. The code is right and the declaration notation is wrong.
+
+**S3. The INPUTS header says "Step 0 re-verifies every line before any read", but there is no verify-all.** Minor.
+- Only files that are read get checked. Family E, for example (S1 assembly and the run-period block), is never opened.
+- `cell_matrix()` (`GC:142-143`) reads `h2_definition.json` by path, not through `Inputs`, in `ch`, `defs` and `native`. `sa.fine_map` checks the fine-map hash, so the content is covered indirectly.
+
+**S4. Enumerated E_avail regions are listed but never compared.** Minor.
+- DECL:226 says "Any such region is added to the 3D comparison". `GC:434` and `GC:518` only list them. The committed definition yields none, so this is moot today.
+
+**S5. The GiBUU M_n variant is not in the CH readout.** Minor.
+- DECL:174 says it is printed. `GC:330` omits `ana_mn` from the CH parts, so it appears for carbon only.
+
+**S6. `GC:513` clips negative PROJ3D variance to zero.** Minor.
+- `max(ap @ proj_C @ ap, 0.0)` hides a bad matrix. The row is descriptive only.
+
+**S7. `controls_passed` is a hard-coded list** (`GC:259`). Minor. It is safe because any failure raises before the write.
+
+I checked these and found no discrepancy:
+- Geometry: for every cell, the rows of U equal the fine cells where `m[cmap] == c`. The quadrant box sets match the H2 boxes. The unreported boxes 2, 6, 10 and 14 fall in QA and QB as declared.
+- Local pins: all 10 repo-relative digests in INPUTS match.
+- VL173: the 3.0730e-38 integral matches the ledger.
+- M4-W: the counts in `RB:80` match `probe_gen.json`.
+- Compute rules: DECISION item 2 (CPU only, regular QOS, no writes to CFS, half-balance rule) matches DECL §6.
+- Test counts: 29 and 29.
+- The committed fd_g_readout JSON structure matches how A0 indexes it (`name`, `total.chi2`, `shape_only.chi2`).
+- The rotation convention: R maps ẑ to n, and E_avail and q3 are taken from unrotated vectors.
+
+## Verdicts
+
+**A:** findings A1 (should fix), A2 (should fix), A3 (should fix), A4 (should fix), A5 (minor), A6 (minor), A7 (minor).
+
+**B:** findings B1 (should fix), B2 (should fix), B3 (should fix), B4 (should fix), B5 (should fix), B6 (should fix), B7 (minor), B8 (minor).
+
+Nothing here changes a number by itself. Each of the should-fix items is cheaper to settle before binding, because binding pins the code by blob digest and any later change needs a bound amendment.

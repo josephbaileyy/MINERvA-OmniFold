@@ -23,11 +23,16 @@ gen5d_flux_supplement.cmd_supplement), the flux-fix constants A and B (cmd_rewei
 I/O (section 1): every input is checked against INPUTS.sha256 before use; /pscratch files are read through
 os.open(O_RDONLY | O_NOATIME) with atime compared; ROOT files are served to the frozen code as TMemFiles over those
 bytes (MemROOT, installed as the ``ROOT`` global of every frozen module), so the frozen RDataFrame paths run unchanged
-and any ROOT read of an unverified path is refused. Outputs only under --out, which must not exist.
+and any ROOT read of an unverified path is refused. Outputs only under --out, which must not exist. Before any module
+of the frozen code tree is imported, every .py file of --gen5d-tree-src is copied through the same pinned reader into
+<out>/frozen_tree (INPUTS family H; an unpinned, absent or mismatched file refuses with exit 2) and imported from there.
 
 Outputs: <out>/<sample>_<variant>.npz (xsec_flat, sumw2_flat, nevt_flat float64 (65856,), meta_json) and
-<out>/rebuild.json. Exit 0 every sample completed; 3 a sample stopped (B0, B2, input refusal, error); 2 refused to
-start.
+<out>/rebuild.json. No variant file of a sample is written before its B0 passes, and none after a B2 stop.
+rebuild.json["status"][sample] = {"B0": bool, "B2": "pass"|"stop"|"n/a", "complete": bool, "variants_written": [...]},
+complete meaning B0 passed, B2 did not stop and every declared variant was written. B2 stops genie_cv or nuwro_C12 if
+its wonly main-part in-phase-space count differs from M4-W's, or its W^2 < 0 fraction is outside a factor 2 of M4-W's.
+Exit 0 every sample complete; 3 a sample stopped (B0, B2, input refusal, error); 2 refused to start.
 
 MEASURES: the rebuilt products and controls B0, B1 (printed), B2. CANNOT AUTHORIZE: a Table IV number, a claim or
 paper text, or a reading of the products (the declaration's CANNOT AUTHORIZE).
@@ -790,11 +795,16 @@ def write_variant(out: Path, sample: str, variant: str, x, v, n, meta: dict) -> 
 # ---------------------------------------------------------------- the run
 
 
+def is_complete(stat: dict, declared: list[Variant]) -> bool:
+    """B0 passed, B2 did not stop, and every declared variant was written, in order."""
+    return bool(stat["B0"] and stat["B2"] != "stop" and stat["variants_written"] == [v.name for v in declared])
+
+
 class Run:
     def __init__(self, ctx: Ctx, out: Path, pool_dir: str):
         self.ctx, self.out, self.pool_dir = ctx, out, pool_dir
         self.pools = None
-        self.res: dict = {"B0": {}, "B1": None, "B2": {}, "samples": {}, "outputs": {}}
+        self.res: dict = {"status": {}, "B0": {}, "B1": None, "B2": {}, "samples": {}, "outputs": {}}
         self.gen: dict = {}
 
     def load_pools(self):
@@ -806,7 +816,11 @@ class Run:
         return self.pools
 
     def sample(self, name: str) -> bool:
-        st = self.res["samples"].setdefault(name, {"status": "running", "variants": []})
+        """One sample's variants in order. Nothing is written before B0 passes; a B2 stop writes nothing further.
+        status[name] = {B0, B2 ('pass'|'stop'|'n/a'), complete, variants_written}."""
+        st = self.res["samples"].setdefault(name, {"status": "running"})
+        stat = self.res["status"].setdefault(name, {"B0": False, "B2": "n/a", "complete": False,
+                                                     "variants_written": []})
         ctx = self.ctx
         tgt = TARGETS.get(name)
         target = load_npz(ctx.inputs, tgt[0]) if tgt else None
@@ -818,7 +832,8 @@ class Run:
             ctx.mem.release()
         dV = ctx.g5.widths(*ctx.g5.AXES).reshape(-1)
         cache: dict = {}
-        for var in variants(name):
+        declared = variants(name)
+        for var in declared:
             pools = self.load_pools() if var.seed is not None else None
             x, v, n, counts, cols_of = assemble(name, parts, var, pools, cache)
             meta = {"schema": "fd-gencmp-rebuild/1", "sample": name, "variant": var.name,
@@ -831,32 +846,47 @@ class Run:
                                                                         for p in parts},
                     "sigma_in_grid_cm2": float(x @ dV),
                     "declaration": "FD-GENCMP-DECLARATION.md section 3"}
+            print(name, var.name, json.dumps(counts, default=_jsonable), flush=True)
             if var.name == "gen":
                 b0 = self.b0(name, parts, refs, checks, cols_of, counts, target, tgt, x, v, n)
                 meta["B0"] = b0
-            self.res["outputs"][f"{name}_{var.name}"] = write_variant(self.out, name, var.name, x, v, n, meta)
-            st["variants"].append(var.name)
-            print(name, var.name, json.dumps(counts, default=_jsonable), flush=True)
-            if var.name == "gen":
-                self.gen[name] = (x, v)
+                stat["B0"] = b0["pass"]
                 if not b0["pass"]:
-                    st.update(status="STOP", stage="B0")
+                    st.update(status="STOP", stage="B0", reason="B0 failed; no variant written")
                     return False
+                self.gen[name] = (x, v)
             if var.name == "wonly":
-                c = counts["main"]
-                b2 = {"main": {"n_W2_negative": c["n_W2_negative_dropped"], "n_in_ps": c["n_in_ps"],
-                               "fraction": c["n_W2_negative_dropped"] / max(c["n_in_ps"], 1)},
-                      "all_parts": {k: c_["n_W2_negative_dropped"] / max(c_["n_in_ps"], 1) for k, c_ in counts.items()}}
-                if name in M4W_REF:
-                    b2["rule"] = b2_rule(c["n_W2_negative_dropped"], c["n_in_ps"], M4W_REF[name])
-                    b2["population_matches_m4w"] = c["n_in_ps"] == M4W_REF[name][1]
-                self.res["B2"][name] = b2
-                print("B2", name, json.dumps(b2), flush=True)
-                if name in M4W_REF and not b2["rule"]["pass"]:
-                    st.update(status="STOP", stage="B2")
+                b2 = self.b2(name, counts)
+                stat["B2"] = "n/a" if "rule" not in b2 else ("pass" if b2["pass"] else "stop")
+                if stat["B2"] == "stop":
+                    st.update(status="STOP", stage="B2", reason=b2["stop_reason"])
                     return False
-        st["status"] = "done"
-        return True
+            self.res["outputs"][f"{name}_{var.name}"] = write_variant(self.out, name, var.name, x, v, n, meta)
+            stat["variants_written"].append(var.name)
+        stat["complete"] = is_complete(stat, declared)
+        st["status"] = "done" if stat["complete"] else "STOP"
+        return stat["complete"]
+
+    def b2(self, name: str, counts: dict) -> dict:
+        """B2 on wonly's main part (M4-W's population: n = z, < 50 GeV, in phase space). For genie_cv and nuwro_C12
+        the in-phase-space count must equal M4-W's exactly and the W^2 < 0 fraction be within a factor 2 of its."""
+        c = counts["main"]
+        b2 = {"main": {"n_W2_negative": c["n_W2_negative_dropped"], "n_in_ps": c["n_in_ps"],
+                       "fraction": c["n_W2_negative_dropped"] / max(c["n_in_ps"], 1)},
+              "all_parts": {k: c_["n_W2_negative_dropped"] / max(c_["n_in_ps"], 1) for k, c_ in counts.items()}}
+        if name in M4W_REF:
+            ref = M4W_REF[name]
+            b2["rule"] = b2_rule(c["n_W2_negative_dropped"], c["n_in_ps"], ref)
+            b2["population_matches_m4w"] = c["n_in_ps"] == ref[1]
+            b2["pass"] = bool(b2["population_matches_m4w"] and b2["rule"]["pass"])
+            if not b2["population_matches_m4w"]:
+                b2["stop_reason"] = f"population: {c['n_in_ps']} in-phase-space events, M4-W measured {ref[1]}"
+            elif not b2["rule"]["pass"]:
+                b2["stop_reason"] = (f"W^2 < 0 fraction {b2['rule']['fraction']:.3e} is {b2['rule']['ratio']:.3f} x "
+                                     f"M4-W's {b2['rule']['m4w_fraction']:.3e}, outside a factor 2")
+        self.res["B2"][name] = b2
+        print("B2", name, json.dumps(b2), flush=True)
+        return b2
 
     def b0(self, name, parts, refs, checks, cols_of, counts, target, tgt, x, v, n) -> dict:
         al = alignment(parts, cols_of, refs)
@@ -914,6 +944,53 @@ def module_digests(roots) -> tuple[dict, list]:
     return out, reads
 
 
+def run_samples(run: Run, samples, after=None) -> int:
+    """Each sample in turn; an error or a stop ends that sample only. 0 every sample complete, else 3."""
+    rc = 0
+    for s in samples:
+        try:
+            if not run.sample(s):
+                rc = 3
+        except (Exception, SystemExit) as e:  # noqa: BLE001 -- one sample stops, the others continue
+            run.res["status"].setdefault(s, {"B0": False, "B2": "n/a", "complete": False, "variants_written": []})
+            run.res["status"][s]["complete"] = False
+            run.res["samples"].setdefault(s, {}).update(status="STOP", stage="error", reason=repr(e),
+                                                        traceback=traceback.format_exc())
+            print("STOP", s, repr(e), flush=True)
+            rc = 3
+        finally:
+            run.ctx.mem.release()
+        if after is not None:
+            after()
+    return rc
+
+
+def copy_frozen_tree(src: str, dst: Path, inputs: Inputs) -> dict:
+    """Every .py file of the frozen code tree, read through the pinned O_NOATIME reader and written to dst under the
+    same relative path (declaration section 9; INPUTS family H). Refuses an unpinned .py, a pinned .py the tree lacks,
+    and any digest mismatch; __pycache__ and non-.py files are not copied."""
+    srcp = os.path.abspath(src)
+    found = []
+    for root, dirs, names in os.walk(srcp):
+        dirs[:] = sorted(d for d in dirs if d != "__pycache__")
+        found += [os.path.join(root, f) for f in sorted(names) if f.endswith(".py")]
+    pinned = sorted(p for p in inputs.pins if p.startswith(srcp + os.sep) and p.endswith(".py"))
+    if not found:
+        raise InputRefused(f"{srcp}: no .py file")
+    if sorted(found) != pinned:
+        raise InputRefused(f"{srcp}: unpinned .py {sorted(set(found) - set(pinned))}, "
+                           f"pinned but absent {sorted(set(pinned) - set(found))}")
+    files = {}
+    for f in found:
+        buf = inputs.read(f)
+        rel = os.path.relpath(f, srcp)
+        t = dst / rel
+        t.parent.mkdir(parents=True, exist_ok=True)
+        t.write_bytes(buf)
+        files[rel] = hashlib.sha256(t.read_bytes()).hexdigest()
+    return {"src": srcp, "dst": str(dst), "files": files}
+
+
 def build_args(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", type=Path, required=True, help="output directory; must not exist")
@@ -922,8 +999,10 @@ def build_args(argv=None):
                     help=f"pin file(s) in INPUTS.sha256 format (default {INPUTS.relative_to(_REPO)}); repeat to add "
                          "step D's pins")
     ap.add_argument("--pool-dir", default=POOL_DIR)
-    ap.add_argument("--gen5d-tree", default=gfr.DEFAULTS["gen5d_tree"],
-                    help="the sha-pinned export gen_to_xsec5d is imported from (as the frozen chain did)")
+    ap.add_argument("--gen5d-tree-src", default=gfr.DEFAULTS["gen5d_tree"],
+                    help="the frozen code tree the gen5d build ran from; its .py files are copied (pinned, O_NOATIME) "
+                         "into <out>/frozen_tree and imported from there")
+    ap.add_argument("--gen5d-tree", default=None, help=argparse.SUPPRESS)     # tests only: import from here instead
     ap.add_argument("--nproc", type=int, default=32, help="processes for the GiBUU ASCII reads")
     ap.add_argument("--allow-meta-pin", action="store_true",
                     help="pin the GiBUU flux file (absent from INPUTS.sha256) from the verified frozen GiBUU product's "
@@ -965,36 +1044,33 @@ def main(argv=None) -> int:
     rc = 0
     run = None
     try:
+        res["frozen_tree"] = copy_frozen_tree(a.gen5d_tree_src, a.out / "frozen_tree", inputs)
+    except (OSError, InputRefused) as e:
+        res.update(error=repr(e))
+        print("REFUSED: frozen tree", repr(e), flush=True)
+        _dump(a.out, res, None, inputs, t0, 2)
+        return 2
+    tree = a.gen5d_tree or str(a.out / "frozen_tree")
+    try:
         ROOT = gfr.import_root()
-        g5 = gfr.load_g5(a.gen5d_tree)
+        g5 = gfr.load_g5(tree)
         _G5 = g5
         mem = MemROOT(ROOT)
-        res["memroot_installed_in"] = install_memroot(ROOT, mem, [_REPO, a.gen5d_tree])
+        res["memroot_installed_in"] = install_memroot(ROOT, mem, [_REPO, tree])
         res["environment"] = gfr.environment()
-        res["code"], res["code_reads_on_pscratch"] = module_digests([_REPO, a.gen5d_tree])
+        res["code"], res["code_reads_on_pscratch"] = module_digests([_REPO, tree])
         z = np.load(io.BytesIO(inputs.read(os.path.join(sup.OUT, "phi_t.npz"))), allow_pickle=False)
         ctx = Ctx(g5, mem, inputs, (z["edges"], z["phi_t_density"], float(z["Phi_t"])), a.nproc, a.allow_meta_pin,
                   (tuple(a.nuwro_chnative_main), tuple(a.nuwro_chnative_supp)))
         run = Run(ctx, a.out, a.pool_dir)
-        for s in a.samples:
-            try:
-                if not run.sample(s):
-                    rc = 3
-            except (Exception, SystemExit) as e:  # noqa: BLE001 -- one sample stops, the others continue
-                run.res["samples"].setdefault(s, {"variants": []}).update(
-                    status="STOP", stage="error", error=repr(e), traceback=traceback.format_exc())
-                print("STOP", s, repr(e), flush=True)
-                rc = 3
-            finally:
-                mem.release()
-            _dump(a.out, res, run, inputs, t0, None)
+        rc = run_samples(run, a.samples, lambda: _dump(a.out, res, run, inputs, t0, None))
         run.ch_b0()
     except (Exception, SystemExit) as e:  # noqa: BLE001 -- recorded, then refused
         res.update(error=repr(e), traceback=traceback.format_exc())
         print("REFUSED", repr(e), flush=True)
         rc = 2
     _dump(a.out, res, run, inputs, t0, rc)
-    print("REBUILD", json.dumps({s: r.get("status") for s, r in (run.res["samples"] if run else {}).items()}),
+    print("REBUILD", json.dumps(run.res["status"] if run else {}),
           "exit", rc, flush=True)
     return rc
 
