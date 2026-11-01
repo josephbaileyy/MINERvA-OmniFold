@@ -1,0 +1,106 @@
+......../pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp3c/mp3c_build.py:99: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmp1sso5v7b/job' mode='r' encoding='UTF-8'>
+  for line in open(jobcard).read().splitlines():
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+....REFUSED: frozen tree InputRefused('/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmpk22xrfsb/tree/2d-unfolding/u2d.py: sha256 92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f differs from the pinned 7e08b2f3475a394e11a587e072fe534e1d2ca576b3bb9dac679f1317fc8d0f50', {'path': '/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmpk22xrfsb/tree/2d-unfolding/u2d.py', 'bytes': 9, 'sha256': '92e78d0b032962f47792a9fa95fd981ef63e1e3ef074d536d6304c75eddbe29f', 'o_noatime': True, 'atime_ns_before': 1793563187000000000, 'atime_ns_after': 1793563187000000000, 'atime_unchanged': True, 'sha256_pinned': '7e08b2f3475a394e11a587e072fe534e1d2ca576b3bb9dac679f1317fc8d0f50', 'sha256_match': False})
+.............REFUSED: /pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmp51x0a5td/out exists
+.REFUSED: pins unreadable: [Errno 2] No such file or directory: '/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmpuwlw6qq1/absent.sha256'
+......good gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 good {"xsec_bitwise": null, "sumw2_bitwise": null, "pass": true}
+good wonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+B2 good {"main": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167}, "all_parts": {"main": 0.24846625766871167}}
+good ana_s202611011 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 79, "n_kept": 246}}
+good ana_s202611012 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+good ana_s202611013 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 323, "n_W2_negative_dropped": 78, "n_kept": 245}}
+good ana_s202611014 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 79, "n_kept": 245}}
+good ana_s202611015 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+good axisonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 0, "n_kept": 325}}
+.STOP boom SystemExit('an event outside the declared E_nu bins')
+good gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 good {"xsec_bitwise": null, "sumw2_bitwise": null, "pass": true}
+good wonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+B2 good {"main": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167}, "all_parts": {"main": 0.24846625766871167}}
+good ana_s202611011 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 80, "n_kept": 245}}
+good ana_s202611012 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 80, "n_kept": 245}}
+good ana_s202611013 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 322, "n_W2_negative_dropped": 77, "n_kept": 245}}
+good ana_s202611014 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 79, "n_kept": 246}}
+good ana_s202611015 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 323, "n_W2_negative_dropped": 78, "n_kept": 245}}
+good axisonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 0, "n_kept": 325}}
+.bad gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 bad {"xsec_bitwise": null, "sumw2_bitwise": null, "pass": false}
+good gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 good {"xsec_bitwise": null, "sumw2_bitwise": null, "pass": true}
+good wonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+B2 good {"main": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167}, "all_parts": {"main": 0.24846625766871167}}
+good ana_s202611011 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 79, "n_kept": 245}}
+good ana_s202611012 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 323, "n_W2_negative_dropped": 79, "n_kept": 244}}
+good ana_s202611013 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+good ana_s202611014 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 322, "n_W2_negative_dropped": 78, "n_kept": 244}}
+good ana_s202611015 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 327, "n_W2_negative_dropped": 81, "n_kept": 246}}
+good axisonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 0, "n_kept": 324}}
+.genie_mec gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 genie_mec {"xsec_bitwise": true, "sumw2_bitwise": true, "pass": true}
+genie_mec wonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+B2 genie_mec {"main": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167}, "all_parts": {"main": 0.24846625766871167}}
+genie_mec ana_s202611011 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 80, "n_kept": 245}}
+genie_mec ana_s202611012 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 80, "n_kept": 245}}
+genie_mec ana_s202611013 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 80, "n_kept": 246}}
+genie_mec ana_s202611014 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 79, "n_kept": 245}}
+genie_mec ana_s202611015 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 327, "n_W2_negative_dropped": 81, "n_kept": 246}}
+genie_mec axisonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 0, "n_kept": 325}}
+.genie_mec gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 genie_mec {"xsec_bitwise": false, "sumw2_bitwise": true, "pass": false}
+genie_mec gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 genie_mec {"xsec_bitwise": true, "sumw2_bitwise": false, "pass": false}
+.genie_cv gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 genie_cv {"xsec_bitwise": null, "sumw2_bitwise": null, "pass": true}
+genie_cv wonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+B2 genie_cv {"main": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167}, "all_parts": {"main": 0.24846625766871167}, "rule": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167, "m4w": [20, 326], "m4w_fraction": 0.06134969325153374, "ratio": 4.05, "rule": "0.5 <= fraction / M4-W fraction <= 2", "pass": false}, "population_matches_m4w": true, "pass": false, "stop_reason": "W^2 < 0 fraction 2.485e-01 is 4.050 x M4-W's 6.135e-02, outside a factor 2"}
+good gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 good {"xsec_bitwise": null, "sumw2_bitwise": null, "pass": true}
+good wonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+B2 good {"main": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167}, "all_parts": {"main": 0.24846625766871167}}
+good ana_s202611011 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 80, "n_kept": 246}}
+good ana_s202611012 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 80, "n_kept": 244}}
+good ana_s202611013 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 80, "n_kept": 244}}
+good ana_s202611014 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 323, "n_W2_negative_dropped": 79, "n_kept": 244}}
+good ana_s202611015 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+good axisonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+.genie_cv gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 genie_cv {"xsec_bitwise": null, "sumw2_bitwise": null, "pass": true}
+genie_cv wonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+B2 genie_cv {"main": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167}, "all_parts": {"main": 0.24846625766871167}, "rule": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167, "m4w": [81, 326], "m4w_fraction": 0.24846625766871167, "ratio": 1.0, "rule": "0.5 <= fraction / M4-W fraction <= 2", "pass": true}, "population_matches_m4w": true, "pass": true}
+genie_cv ana_s202611011 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+genie_cv ana_s202611012 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 323, "n_W2_negative_dropped": 79, "n_kept": 244}}
+genie_cv ana_s202611013 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 80, "n_kept": 244}}
+genie_cv ana_s202611014 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 79, "n_kept": 246}}
+genie_cv ana_s202611015 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 80, "n_kept": 244}}
+genie_cv axisonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+good gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 good {"xsec_bitwise": null, "sumw2_bitwise": null, "pass": true}
+good wonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+B2 good {"main": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167}, "all_parts": {"main": 0.24846625766871167}}
+good ana_s202611011 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 80, "n_kept": 244}}
+good ana_s202611012 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+good ana_s202611013 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 79, "n_kept": 245}}
+good ana_s202611014 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 80, "n_kept": 245}}
+good ana_s202611015 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 325, "n_W2_negative_dropped": 80, "n_kept": 245}}
+good axisonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 0, "n_kept": 324}}
+.genie_cv gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 genie_cv {"xsec_bitwise": null, "sumw2_bitwise": null, "pass": true}
+genie_cv wonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+B2 genie_cv {"main": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167}, "all_parts": {"main": 0.24846625766871167}, "rule": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167, "m4w": [81, 327], "m4w_fraction": 0.24770642201834864, "ratio": 1.0030674846625767, "rule": "0.5 <= fraction / M4-W fraction <= 2", "pass": true}, "population_matches_m4w": false, "pass": false, "stop_reason": "population: 326 in-phase-space events, M4-W measured 327"}
+good gen {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 0, "n_kept": 326}}
+B0 good {"xsec_bitwise": null, "sumw2_bitwise": null, "pass": true}
+good wonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 326, "n_W2_negative_dropped": 81, "n_kept": 245}}
+B2 good {"main": {"n_W2_negative": 81, "n_in_ps": 326, "fraction": 0.24846625766871167}, "all_parts": {"main": 0.24846625766871167}}
+good ana_s202611011 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 79, "n_kept": 245}}
+good ana_s202611012 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 323, "n_W2_negative_dropped": 79, "n_kept": 244}}
+good ana_s202611013 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 322, "n_W2_negative_dropped": 78, "n_kept": 244}}
+good ana_s202611014 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 79, "n_kept": 245}}
+good ana_s202611015 {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 327, "n_W2_negative_dropped": 81, "n_kept": 246}}
+good axisonly {"main": {"n_entries": 400, "n_cc": 400, "n_in_ps": 324, "n_W2_negative_dropped": 0, "n_kept": 324}}
+........
+----------------------------------------------------------------------
+Ran 47 tests in 7.953s
+
+OK

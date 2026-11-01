@@ -6,7 +6,8 @@
 [`FD-GENCMP-DECLARATION.md`](FD-GENCMP-DECLARATION.md) at M = `3410ed0c`.
 
 **MEASURES:** steps 0, A, B, C and D as declared. Each step's readout is in `fd/gencmp/readout/`, and its receipts and
-logs are in `fd/gencmp/receipts/` and `fd/gencmp/logs/`.
+logs are in `fd/gencmp/receipts/` and `fd/gencmp/logs/` (all 17 files of the run's `logs/`, also in the HPSS archive;
+`logs/htar.log` is the first archive attempt's log, and `receipts/htar.log` the final one's).
 
 **CANNOT AUTHORIZE:** any paper edit, any Table IV change, any claim (binding ruling 4). §5 proposes the §7 wording and
 nothing beyond it.
@@ -25,7 +26,7 @@ nothing beyond it.
 |---|---|---|---|---:|
 | A | Q08 | A0, A1, A (CH bitwise), A2, R: all PASS | "A0 and A1 pass": NuWro's χ² falls and GiBUU's total χ² rises | 0 (local) |
 | B | Q10 | B0 (6 samples + 2 CH combinations), B2 (exact M4-W population): all PASS; B1 printed | "B0 passes" for all four generators; seed spread below the 0.2 σ flag | 0.0675 |
-| C | Q26 | R, C0, C1 (2D, 3D), C3 (2D, 3D), structural: all PASS | 2D: every quadrant "agree below a correlation", ρ* 0.989–1.000. 3D: "agree at the σ₁₆ scale (descriptive)" | 0 (login node) |
+| C | Q26 | R, C0, C1 (2D, 3D), C3 (2D, 3D), structural: all PASS | 2D: every quadrant "agree below a correlation", ρ* 0.9892 (QC) to 0.9999. 3D: "agree at the σ₁₆ scale (descriptive)" | 0 (login node) |
 | D | Q08 | native sample complete; rule on the primary route | "agree" on both routes | 0.0905 |
 
 - **Total charge:** 0.158 node-h against the 6.0 cap.
@@ -118,10 +119,10 @@ was written to CFS.
 
 | quadrant | S₁₆ (σ₁₆) | 2D S (σ₂D) | d, % | outcome (reported matrix) | ρ* | z at ρ = 0 | 3D: d, % | d/σ₁₆ (3D, descriptive) |
 |---|---|---|---|---|---:|---:|---:|---:|
-| QA (pT < 0.7, p∥ 1.5–4.5) | 7.991e-39 (6.84%) | 8.014e-39 (5.37e-40) | −0.28 | agree below a correlation | 1.000 | −0.03 | −0.17 | −0.03 |
-| QB (pT < 0.7, p∥ 4.5–60) | 6.775e-39 (4.84%) | 6.788e-39 (3.29e-40) | −0.19 | agree below a correlation | 1.000 | −0.03 | −0.82 | −0.17 |
-| QC (pT 0.7–4.5, p∥ 1.5–4.5) | 6.691e-39 (5.33%) | 6.796e-39 (3.48e-40) | −1.54 | agree below a correlation | 0.989 | −0.21 | −0.76 | −0.14 |
-| QD (pT 0.7–4.5, p∥ 4.5–60) | 9.193e-39 (5.48%) | 9.133e-39 (5.13e-40) | +0.65 | agree below a correlation | 0.998 | +0.08 | −0.20 | −0.04 |
+| QA (pT < 0.7, p∥ 1.5–4.5) | 7.991e-39 (6.84%) | 8.014e-39 (5.37e-40) | −0.28 | agree below a correlation | 0.9999 | −0.03 | −0.17 | −0.03 |
+| QB (pT < 0.7, p∥ 4.5–60) | 6.775e-39 (4.84%) | 6.788e-39 (3.29e-40) | −0.19 | agree below a correlation | 0.9998 | −0.03 | −0.82 | −0.17 |
+| QC (pT 0.7–4.5, p∥ 1.5–4.5) | 6.691e-39 (5.33%) | 6.796e-39 (3.48e-40) | −1.54 | agree below a correlation | 0.9892 | −0.21 | −0.76 | −0.14 |
+| QD (pT 0.7–4.5, p∥ 4.5–60) | 9.193e-39 (5.48%) | 9.133e-39 (5.13e-40) | +0.65 | agree below a correlation | 0.9985 | +0.08 | −0.20 | −0.04 |
 
 - **Why the outcome reads "agree below a correlation".** σ₁₆ and σ₂D are close in every quadrant, so the
   any-correlation band 2|σ₁₆ − σ₂D| is narrow: 3.6e-42 to 1.9e-41, against S near 7–9e-39. Each |d| lies just outside
@@ -206,7 +207,7 @@ was written to CFS.
 - **Q26, every quadrant "agree below a correlation".**
   - Proposed for `:119`: "Summed over each of the four (pT, p∥) quadrants, the sixteen-cell result agrees with the
     two-dimensional result to between −1.5 and +0.7 per cent; the two agree within their uncertainties unless their
-    correlation exceeds 0.989 to 1.000."
+    correlation exceeds 0.989 (quadrant QC) or 0.998 (the other three)."
   - With the 3D clause: "and with the three-observable central value to between −0.8 and −0.2 per cent at the scale of
     the sixteen-cell uncertainty; no 3D covariance is adopted."
 

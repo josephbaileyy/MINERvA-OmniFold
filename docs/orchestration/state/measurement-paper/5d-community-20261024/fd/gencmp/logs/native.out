@@ -1,0 +1,5 @@
+PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control D nuwro_CHnative is complete in the rebuild (B0 alignment passed, every variant written)
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/d/native.json", "sha256": "df48fbebb27ea1ad97a5628d083166b88b96f7d8206ce7b2fa29a1d8d58e1957"}
+[D] agree (generator definitions, primary): True; analysis definitions: True
