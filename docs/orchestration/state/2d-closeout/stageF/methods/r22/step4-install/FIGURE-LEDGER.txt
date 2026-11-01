@@ -1,0 +1,12 @@
+  rows: V 0, M 0, F 0, G 16; old-text sweep over 0 posted files
+  figure docs/analysis-note/figures/paper_fig1_validation.pdf 71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427 OK
+  figure docs/orchestration/state/2d-closeout/stageF/methods/re2-integration/fig1/fig1_validation.pdf 71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427 OK
+LEDGER FIGURES :: PASS (G 16 rows and Fig. 1; 0 failures)
+  rows: V 0, M 0, F 0, G 16; old-text sweep over 0 posted files
+SELFTEST-G6: FIGURE uq_corr_2d.pdf at figures/ has sha256 fea063cc6eeba9925bef2ac7c096118fdd23a7f443aea8afde4392de214c75b1, pinned 0000000000000000000000000000000000000000000000000000000000000000
+SELFTEST-G6: FIGURE uq_corr_2d.pdf at figs/ has sha256 fea063cc6eeba9925bef2ac7c096118fdd23a7f443aea8afde4392de214c75b1, pinned 0000000000000000000000000000000000000000000000000000000000000000
+SELFTEST-G6: SHA256SUMS docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/SHA256SUMS lists ['fea063cc6eeba9925bef2ac7c096118fdd23a7f443aea8afde4392de214c75b1'] for ./stat/uq_corr_2d.pdf, not 0000000000000000000000000000000000000000000000000000000000000000
+SELFTEST-G6: make_figures.sh does not install uq_corr_2d.pdf with pin 0000000000000000000000000000000000000000000000000000000000000000 (install_re2_fig)
+SELFTEST-G7: FIGURE MEFHC_5iter_fig13.pdf at figs/ has sha256 4924917e903b5e4ee6133f5e37b91aa11f301d7ea7242561680ea1ba10a4fb3b, pinned a5530bfc0c3220a0a522dfcaa52f143752dd67465c525237acb0ad8cf722237f
+  rows: V 0, M 0, F 0, G 18; old-text sweep over 0 posted files
+FIGURES SELF-TEST :: PASS (committed rows 0 failures; planted failures ['SELFTEST-G6', 'SELFTEST-G7'], want ['SELFTEST-G6', 'SELFTEST-G7'])

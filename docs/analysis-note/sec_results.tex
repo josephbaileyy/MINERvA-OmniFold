@@ -20,7 +20,7 @@ The shapes are those expected for CC-inclusive scattering at $\langle E_\nu\rang
   \includegraphics[width=0.62\textwidth]{MEFHC_5iter_fig13}\\
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pt}
   \includegraphics[width=0.49\textwidth]{MEFHC_5iter_xsec_proj_pz}
-  \caption{Unfolded 2D cross section (top, in the format of Fig.~13 of Ref.~\cite{MINERvA:2021owq}) and its $\pT$ and $\pPar$ projections (bottom). The $\pT$ peak at ${\sim}\SI{0.6}{GeV/c}$ reflects the $Q^{2}\lesssim\SI{1}{GeV^2}$ momentum-transfer scale; the $\pPar$ peak reflects the medium-energy flux maximum.}
+  \caption{Unfolded 2D cross section (top, in the format of Fig.~13 of Ref.~\cite{MINERvA:2021owq}) and its $\pT$ and $\pPar$ projections (bottom). The $\pT$ peak at ${\sim}\SI{0.6}{GeV/c}$ reflects the $Q^{2}\lesssim\SI{1}{GeV^2}$ momentum-transfer scale; the $\pPar$ peak reflects the medium-energy flux maximum. The error bars on this measurement are the statistical uncertainty of the reweighted simulated sample (the square root of the summed squared event weights, combined with the uncertainty of the completeness correction), not the reported covariance; those on the published data (top) are the square roots of the diagonal of its statistical covariance.}
   \label{fig:xsec}
 \end{figure}
 
@@ -69,7 +69,7 @@ Per-bin differences standardized by the published uncertainty (Fig.~\ref{fig:pul
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pt_slices}
-  \caption{Unfolded cross section (points) and GENIE 2.12.6 $+$ MINERvA Tune~v1 \emph{simulated truth} (histogram), sliced in $\pT$ versus $\pPar$. The histogram is the analysis MC truth denominator with the unfolded result's flux, nucleon-count and efficiency normalization, so the two differ only as data versus MC prior; no published measurement is used, and only the \emph{panel format} follows Fig.~13 of Ref.~\cite{MINERvA:2021owq}. Points carry statistical errors only, and only these enter the annotated per-panel $\chi^{2}$, which is a descriptive scale. Comparisons \emph{with the published data} are in Figs.~\ref{fig:pull} and~\ref{fig:model} and Table~\ref{tab:compare}.}
+  \caption{Unfolded cross section (points) and GENIE 2.12.6 $+$ MINERvA Tune~v1 \emph{simulated truth} (histogram), sliced in $\pT$ versus $\pPar$. The histogram is the analysis MC truth denominator with the unfolded result's flux, nucleon-count and efficiency normalization, so the two differ only as data versus MC prior; no published measurement is used, and only the \emph{panel format} follows Fig.~13 of Ref.~\cite{MINERvA:2021owq}. The error bars are the statistical uncertainty of the reweighted simulated sample, as in Fig.~\ref{fig:xsec}, not the reported covariance, and only these enter the annotated per-panel $\chi^{2}$, which is a descriptive scale. Comparisons \emph{with the published data} are in Figs.~\ref{fig:pull} and~\ref{fig:model} and Table~\ref{tab:compare}.}
   %
   % (\texttt{2d-unfolding/plot\_2d\_paper\_comparison.py} builds it from
   % \texttt{hOFTruthDenom2D}; listed in App.~\ref{app:codebase})
@@ -79,7 +79,7 @@ Per-bin differences standardized by the published uncertainty (Fig.~\ref{fig:pul
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.99\textwidth]{MEFHC_5iter_xsec_paper_pz_slices}
-  \caption{Unfolded cross section versus simulated truth (Fig.~\ref{fig:ptslices}), sliced in $\pPar$ versus $\pT$, with statistical errors only and no published measurement.}
+  \caption{Unfolded cross section versus simulated truth (Fig.~\ref{fig:ptslices}), sliced in $\pPar$ versus $\pT$, with the same error bars and no published measurement.}
   \label{fig:pzslices}
 \end{figure}
 
@@ -157,14 +157,14 @@ GENIE 2.12.6~\cite{Andreopoulos:2009rq} with MINERvA Tune v1 under-predicts the 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\textwidth]{model_comp_projections}
-  \caption{Projections of this measurement (dashed) and the published data (black); MINERvA Tune v1 (blue) lies below the data in the peak.}
+  \caption{Projections of this measurement (red circles) and the published data (black squares), with GENIE 2.12.6 $+$ MINERvA Tune~v1 (blue line), which lies below the data in the peak. Uncertainties are not drawn.}
   \label{fig:model}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{model_comp_ratio_maps}
-  \caption{Bin-by-bin ratios to MINERvA Tune~v1 on the $(\pT,\pPar)$ grid of our result (left) and of the published data (right), on a common colour scale of $0.7$--$1.3$; the panels have no printed titles. Both maps show the same tune deficit, with ratios above unity over most of the plane and below it at the lowest $\pT$. The maps are close because both results depart from the tune in the same places by similar amounts. The direct comparison with the published data is the median bin ratio of Table~\ref{tab:compare} and the residual map of Fig.~\ref{fig:pull}.}
+  \caption{Bin-by-bin ratios to MINERvA Tune~v1 on the $(\pT,\pPar)$ grid of our result (a, left) and of the published data (b, right), on a common colour scale of $0.7$--$1.3$. Both maps show the same tune deficit, with ratios above unity over most of the plane and below it at the lowest $\pT$. The maps are close because both results depart from the tune in the same places by similar amounts. The direct comparison with the published data is the median bin ratio of Table~\ref{tab:compare} and the residual map of Fig.~\ref{fig:pull}.}
   %
   % (\texttt{2d-unfolding/compare\_to\_models.py}; listed in App.~\ref{app:codebase})
   \label{fig:modelmaps}
