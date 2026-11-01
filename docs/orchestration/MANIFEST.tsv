@@ -221,8 +221,10 @@ docs/orchestration/DECISION-20261031-joseph-note-abstract-reorder.md	tracked	LIV
 docs/orchestration/DECISION-20261031-joseph-oi151-option-c.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261031-joseph-oi51-oi137-ud002.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261031-joseph-rater-account-figures-chi2-consult.md	tracked	LIVE	document		20261031	open		route-only	no
+docs/orchestration/DECISION-20261031-joseph-restyle-install-and-astra-abstract-consult.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261031-joseph-restyle-review-and-palette.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261031-joseph-restyle-second-look.md	tracked	LIVE	document		20261031	open		route-only	no
+docs/orchestration/DECISION-20261031-joseph-three-covariance-files-and-1b-diagnosis.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-20261031-joseph-triage-q1-q2-q4-q5.md	tracked	LIVE	document		20261031	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
@@ -5125,6 +5127,9 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-cons
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-5b-presentation-20261031/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-5b-presentation-20261031/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-5b-presentation-20261031/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-abstracts-coverage-20261031/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-abstracts-coverage-20261031/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-abstracts-coverage-20261031/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-cheap-tier-20261030/INPUTS.SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-cheap-tier-20261030/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-cheap-tier-20261030/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -5150,6 +5155,15 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-cons
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-table-20261028/inputs/PROMPT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-table-20261028/inputs/note-table.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/r18-paper-inventory.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/INPUTS.SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/abstracts-input.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-eavail-pricing-20261031/INPUTS.SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-eavail-pricing-20261031/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-eavail-pricing-20261031/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-eavail-pricing-20261031/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/sf1/results/README.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/sf1/results/check-all-GENIE_2_12_10_CV.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes

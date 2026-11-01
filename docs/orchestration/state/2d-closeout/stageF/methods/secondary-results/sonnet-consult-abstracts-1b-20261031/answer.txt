@@ -1,0 +1,56 @@
+1. Accuracy and register of the new abstracts
+
+The numbers are directionally consistent with the addendum. Adding a PSD block lowers χ², so 109–272 becoming 105–224 and 58 becoming 45 is expected (addendum §5.4). I cannot check the new values themselves.
+
+- **Bias sentence, wording.** The new wording is better than the old one. "Does not cover" was coverage language, and the note says coverage is unvalidated. But "thresholds set against the reported uncertainty" is opaque to a reader. It does not say who set them or whether they were pre-specified. It reads as hedging, so I would call it a slight underclaim. If the thresholds are fixed fractions of σ, say so. If they were pre-specified, say that.
+- **Bias sentence, matrix (inference).** Check that the exceedance was re-evaluated against the with-block covariance. A larger covariance makes exceedance harder, so a result computed against the old matrix may no longer hold.
+- **Paper abstract, missing limitation.** It no longer carries any coverage limitation. The note abstract states "coverage not validated", but the paper abstract dropped the only sentence that pointed that way. I recommend adding one clause: "The coverage of the reported intervals has not been validated."
+- **Note abstract, structure.** It calls F1 a "bias test" and the GiBUU/q3 study a "fake-data study", which is confusing. I would merge the two. Its statement that bias is below the reported uncertainty in every cell is supported by F1's largest |z| of 0.644. It also drops the old ~1% integral cross-check, so confirm that omission is intended.
+- **Minor.** Add "for 8 degrees of freedom" to the GiBUU χ². "Held-out" is jargon.
+
+2. Mention the run-period block in the abstract?
+
+Yes, I recommend it. Three reasons:
+- The block was added after the data were seen.
+- It changes the headline numbers (7.29% becomes 7.86%, and the χ² values change).
+- The block is built from observed differences, so it contains them by construction (addendum §5.3).
+
+Abstracts are what gets quoted, and the body alone is not enough for a post-hoc choice that moves quoted numbers.
+
+Minimal wording: "…a covariance whose median per-cell uncertainty is 7.86% (7.29% without a run-period component added after the data were examined)."
+
+For the note: "The covariance includes a run-period component added after the data were examined; results without it are given in Sec. X."
+
+3. Without-block covariance in the Supplemental Material
+
+Yes. Common practice, for example HEPData, is to release the full covariance matrix, and to release alternatives or components when a choice drives the numbers. I recommend shipping three things:
+- The reported total.
+- The without-block total.
+- C_PL,5D on its own.
+
+Label which file is the reported one, give hashes, and state that the file-level difference is only C_PL,5D. Releasing the without-block matrix also answers the objection that the block was added to lower the χ². Adding the block cannot raise χ² (addendum §5.4).
+
+4. Next steps for 1B
+
+**What gate D showed:**
+- Flux is not clean either. 9 of 16 cells lie outside [0.9, 1.1], with a median near 1.
+- Detector is mostly fine, with 3 cells outside.
+- Interaction dominates. ρ_c appears to track the interaction ratio (R08: 6.52 and ρ 2.30; R05 and R07 are both low). That is an inference from the table.
+- The anticipated prior-versus-response gap predicts ratios below 1. The table shows ratios above 1 in 13 of 16 cells, so that gap does not explain the failure.
+
+**Recommendation: (a), then decide.**
+- **Cost.** About 0 node-h. It runs on the login node from the 176 products and the S1 npz already on disk (no cluster compute needed), taking hours to days including the declaration (my estimate).
+- **What to compute.** Per-band ratios within the interaction group. Also compare raw shifts without the diag(f/x_T) carry, and print f/x_T per cell against ρ_c.
+- **Why.** This separates a carry artifact from real fixed-truth versus data-unfold differences. Redesigning the toys before knowing which it is risks a toy that matches S1's blocks by construction.
+
+**(b)** Redesign, rerun the derivation, re-run gate D. The derivation rerun is about 4–5 node-h (arithmetic from 5.49 node-h for 204 products). Declared 2b and 2c add about 9.5 projected, and stage 3 about 17.8. That needs a new declaration and probably a ceiling amendment. The paper would then use the protocol wording (pass means "no undercoverage detected at the study's sensitivity"), plus these limits: no run-period block, 71% of C_e tested, no C_model, no C_resp, two GENIE v3 truths only.
+
+**(c)** I do not recommend it. Flux fails the window in 9 cells, and stat is only 0.1% of trace, so little of the reported covariance would be tested. If used, the paper would have to state coverage as untested for most of the matrix.
+
+**(d)** Stop. The paper keeps "coverage not validated" and adds one sentence: a pre-registered toy test was stopped at its derivation gate because the toy ensemble did not reproduce the covariance blocks (5 of 16 cells inside the window), and no coverage toy was run. I recommend disclosing the failed attempt in all cases.
+
+Do not relax the [0.9, 1.1] window after seeing the failure. Any tested matrix is the one without the run-period block, and that must be stated. Case (a) changes no paper text until it concludes.
+
+**Overall recommendation:**
+- Do (a) now at 0 node-h with a time-box and a pre-declared fork: go to (b) only if the cause is localized (specific bands or the carry), otherwise (d).
+- In Part A, add the run-period clause and the "coverage not validated" clause to the abstracts, and ship the without-block and block files.
