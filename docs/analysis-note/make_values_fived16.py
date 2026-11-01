@@ -341,6 +341,9 @@ def values(d, arm="with"):
     v["h2-lowstab-cells"] = ", ".join(lowstab[:-1]) + " and " + lowstab[-1]
     v["h2-lowstab-min"], v["h2-lowstab-max"] = (f"{min(stab[k] for k in lowstab):.2f}", f"{max(stab[k] for k in lowstab):.2f}")
     assert (v["h2-lowstab-min"], v["h2-lowstab-max"]) == ("0.16", "0.25"), "the printed range differs from the decision's"
+    rest = [stab[k] for k in stab if k not in lowstab]                 # the note prints the other twelve's range beside them
+    assert len(rest) == 12
+    v["h2-stab-rest-min"], v["h2-stab-rest-max"] = f"{min(rest):.2f}", f"{max(rest):.2f}"
     # C_model,5D: its vertices' trace shares, and the numbers its labels state (parsed, so a changed label stops here)
     for k, x in d["cmodel"]["trace_share_by_vertex"].items():
         v[f"cmodel-trace-{k}"] = f"{x:.3f}"
@@ -535,6 +538,8 @@ def values(d, arm="with"):
             v[f"s0-{k.lower()}-{f.lower()}"] = f"{c[f]:.3f}"
         v[f"s0-{k.lower()}-pooled"] = f"{rs[k]['0a']['pooled_M2']:.3f}"
     assert rs["J"]["0a"]["pooled_M2"] < rl["pooled_min"] <= rs["H2"]["0a"]["pooled_M2"], "the pooled clauses changed"
+    # the note calls Stage 0's sets the J (109) and H2 (27) cells of sec_5d.tex; GiBUU's one fold departs in every cell
+    assert (rs["J"]["0a"]["families"]["GiBUU"]["n_pairs"], rs["H2"]["0a"]["families"]["GiBUU"]["n_pairs"]) == (109, 27)
     # R10 ended INCOMPLETE: no configuration passed, and none met the residual leg at any departure
     rv = d["r10"]["verdict"]
     assert rv["verdict"] == "INCOMPLETE" and rv["passing"] == [] and rv["n_decisive"] == len(rv["per_config"])
