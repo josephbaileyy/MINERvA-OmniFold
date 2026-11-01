@@ -1,0 +1,1 @@
+d8df2ab42e63f701f2a9c8fe45b5eb0f3c815de4d8739efcc96a27fcf611ada0  rater-copy/manuscript.blind.txt of 620-edits-20261101 (the referees' paper text; main_paper at 291ac142 = bc07ed0e)

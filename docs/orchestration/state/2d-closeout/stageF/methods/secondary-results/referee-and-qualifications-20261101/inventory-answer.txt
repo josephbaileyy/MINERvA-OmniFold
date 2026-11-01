@@ -1,0 +1,255 @@
+I could not write `REPORT.md`. The Write call to `/private/tmp/claude-501/…/scratchpad/qual/REPORT.md` was rejected ("Subagents should return findings as text"), and I did not work around it through Bash. The full report is below, and the worktree is untouched. I created the empty `scratchpad/qual` directory.
+
+## Ten-line summary
+
+1. **"Zero qualifications" is infeasible.** Of 44 distinct qualifications in the current paper, 26 (59%) are class K and cannot be removed by any analysis. 10 can only be moved to the note, and 11 are R in any form.
+2. **Even the best case leaves the 26 K.** If every R is resolved and every M moved, 26 remain. By my own rough count that is about 4.4 per 1,000 words, at the top of the caveat study's published range of 1.4–4.5 (`CS:161`).
+3. **Roughly 5 sentences would vanish if the R steps succeed.** These are the NuWro/GiBUU target correction, the prediction-definition mismatch, the lower-dimensional comparison, the ensemble-size note, and the GiBUU range only if a new sample is generated. About 4 more would be narrowed.
+4. **Coverage cannot be validated.** At the GiBUU-like and q3-tilt truths the bias already exceeds the uncertainty, so coverage is at most 0.5 in the flagged cells whatever the spread (`LP:115-122`). At the GENIE v3 truths a test is possible in principle, but 1B stopped at gate D, with 11 of 16 cells outside [0.9, 1.1] (`FD-1B-STAGE2-REPORT.md:142`). The diagnosis could not localise a cause (`FD-1B-DIAG-REPORT.md:10-15`).
+5. **The nested alternative costs about 1,800 node-h per arm** (`LP:227-228`), about 87% of the 2,074.5 node-h left, and a pass would test a matrix that excludes the run-period block.
+6. **The run-period block cannot be un-added or validated.** It is built from observed offsets and "cannot fail" (`FD-CT-5B-REPORT.md:129`). Only an outside explanation of the cause changes that.
+7. **The fake-data bias is inherent to the information in the data.** Binned unfolding leaves a similar residual (IBU-1, D-ID). The only way to remove the sentence is an assigned bias term, which does so "only by construction" (`LP:318-319`).
+8. **Two disclosures the paper does not make.** The pre-registered held-out-family calibration of C_model (Stage 0) returned STOP (`STAGE0-REPORT.md:25-30`), but the paper says only "not validated" (`PB:80`). The four low-stability cells are in the paper only, not in the note, so they cannot yet be "moved".
+9. **A date constraint.** The per-playlist event loops are exposed to purge from 2026-11-09, and Joseph chose to let them age out (`DEC-20261101-joseph-abstracts-approved….md:44-47`).
+10. **Recommendation:** redefine "clean" as "each remaining qualification stated once, with its measured size". Then do the 0 node-h steps first (§7).
+
+---
+
+# REPORT: Can the 16-cell measurement become "fully validated, with clean results"?
+
+Read-only analysis of the committed records at main `bc07ed0e`. No cluster access, jobs or model calls.
+
+## 1. Conventions and limits
+
+**Path legend.**
+- `PB` = `docs/analysis-note/paper_body.tex`; `MP` = `…/main_paper.tex`; `VF` = `…/values_fived16.tex`.
+- `FD` = `docs/orchestration/state/measurement-paper/5d-community-20261024/`.
+- `LP` = `FD/LIMITATION-PLAN.md`; `LPA` = `FD/LIMITATION-PLAN-ADDENDUM-20261028.md`.
+- `CS` = `docs/orchestration/state/2d-closeout/stageF/methods/caveat-study/REPORT.md`.
+- `PI` = `…/methods/protections-inventory-20261028/REPORT.md`.
+- `DEC-…` files are in `docs/orchestration/`. `KI` = `KNOWN_ISSUES.md` at the repository root.
+
+**Evidence status.**
+- A claim with a path:line is what the record says.
+- "(arithmetic)" is my calculation on cited numbers. "(my judgement)" is mine, including every success probability.
+- "Not in the records" means I searched and found nothing.
+
+**Not done.**
+- I did not read the whole note, build anything, or re-measure cluster state.
+- I checked whether the note prints a fact only for the M rows, Stage 0 and R10, and only by grep over `docs/analysis-note/*.tex`.
+
+**Compute rules.**
+- The standing grant is jobs under 12 h, CPU only, no premium QOS, nothing to CFS (`DEC-20261030-joseph-fund-1b-with-4a.md:43-44`).
+- The group pool is the real limit, and the director keeps measurement work within half of what remains (`LPA:459-461`).
+- The last balance is 17,925.5 of 20,000 node-h charged (`FD-1B-STAGE2-REPORT.md:47`). That leaves 2,074.5, and half is 1,037 (arithmetic).
+
+## 2. Inventory (44 distinct issues)
+
+**How I counted.** One row per distinct issue, with restatements in the abstract, body and Limitations list folded together. The caveat study counted "distinct issues" by issue label (`CS:117`, `CS:174-177`). I hand-counted without its coders or quote tool, so counts are comparable only roughly (the study states ±25% between its own coders, `CS:139-140`).
+
+**Classes.**
+- **R**: resolvable by analysis, so the sentence could go or become a positive validated statement.
+- **M**: could move to the note under `DEC-20261029-joseph-limitations-may-leave-paper.md:21-29`, leaving a pointer and a note-prints-it probe, without making a paper sentence false (`:31-33`). Moving does not resolve anything.
+- **K**: must stay.
+
+| ID | Quote (short) | Paper locus | Governing record | Underlying cause | Class |
+|---|---|---|---|---|---|
+| Q01 | "The coverage of the reported uncertainty intervals has not been validated." | `MP:46`; `PB:19, 151, 285` | `DEC-20261031-joseph-three-covariance…:59-69`; `DEC-20261024-joseph-5d-community-standard-route.md:46-47`; `FD-1B-STAGE2-REPORT.md:109-117`; `FD-1B-DIAG-REPORT.md:10-15` | Bias exceeds σ at some truths (`LP:115-122`); toy machinery failed gate D; nested design about 1,800 node-h per arm (`LP:227-228`) | K (R only narrowed, over grant) |
+| Q02 | "The two-dimensional covariance has not been independently validated, and its coverage has not been tested" | `PB:106, 108, 285` | `PI:386` (quoting `DEC-20261014-joseph-2d-endpoint-and-open-items.md:49-53`: "no independent production-size MC"); `KI:74-75`; `OUTCOME-20261005-2d-fixed-truth-coverage-fail.md:9-10` | No independent production-size MC; a re-test needs "non-circular MC" (`KI:74`) | K |
+| Q03 | 3D/4D central values "lack intervals of validated coverage" | `PB:15, 267, 285` | `PB:267`; `LP:75-77` | No covariance; same problem as Q01 | M |
+| Q04 | "findings are those of one OmniFold implementation on one data set…" | `PB:19` | `DEC-20261027-joseph-measurement-framing….md:22-29`; `CS:308` | Scope | K |
+| Q05 | "simultaneous but not independent" | `PB:15, 40` | `PB:40` | Reconstructed W is a function of reconstructed (pT, p∥, q3) | K |
+| Q06 | "an earlier production of the MINERvA open-data release" | `PB:27`; `MP:77` | `PI:660-662` (C21) | Re-running means a new measurement | K |
+| Q07 | E_avail "No single published definition exists"; switch moves result ≤ 0.19σ per cell, 0.42σ coherent | `PB:37` | `DEC-20261101-joseph-eavail-keep-135.md:31-41`; `VF:468-471` | Definitional choice; Joseph kept 135 MeV | K (size sentence also M) |
+| Q08 | NuWro and GiBUU "on carbon, with no correction to CH"; target difference "does not correct" | `PB:42, 232` | `PB:42`; CH correction per fine cell, `analysis-note/sec_joint.tex:309`; `docs/orchestration/state/measurement-paper/PLAN.md:294` | Predictions generated on carbon; the correction exists for the joint-test cells, not the 16 | R |
+| Q09 | "GiBUU … on the eight cells covered by its sample"; "stops at Eν≈20 GeV" | `MP:46`; `PB:42, 232` | `KI:72` (KI 82); `FD-DIRECTOR-RULINGS.md:70-78` | Jobcard cuts at 20 GeV; missing share 4.9–5.3% of σ at p∥ 6–10, 43–44% at 10–20 | R (K if no new sample) |
+| Q10 | "predictions compute W with the neutron mass … and measure pT about their own neutrino axis" | `PB:42` | `PB:42`; `sec_eavailw.tex` | Predictions use their own conventions | R |
+| Q11 | Two estimators "not combined"; no held-out or cross-fitted split; no hyperparameter search on data | `PB:53-55` | `PB:53-55` | Method design | K |
+| Q12 | "none of the reporting definitions … meets this target"; envelope "10–13% per cell" | `PB:63` | `DEC-20261024-joseph-5d-community-standard-route.md:49` (targets are goals); `OUTCOME-20260925-s5n-stage1-development-fail.md:75-76` | Regularisation bias retained from the prior | K (also M) |
+| Q13 | "4 boxes remain unreported"; 0.47% of signal outside | `PB:44, 68` | `DEC-20261024-joseph-h2-16-cell-definition.md:15-20`; `VF:1626-1627` | Reporting definition | K |
+| Q14 | Coverage "is pointwise … not … simultaneous" | `PB:74, 108` | `PB:74` | Definition of the property tested | K |
+| Q15 | C_model "not a calibrated bound … coverage at truths held out … has not been validated" | `PB:80` | `PB:80`; Stage 0 (§6); `FD-1B-DECLARATION.md:102` | C_model is 0.4196 of C_total's trace | K |
+| Q16 | C_resp "does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale" | `PB:80` | `DEC-20261026-joseph-adopt-cresp.md:42-43`; `LPA:176-189` | Only a ±1σ scale per species is covered | R (partly) |
+| Q17 | Run-period differences: "The cause is not known." | `PB:80, 111` | `FD-CT-5B-REPORT.md:149-154`; `FD-CT-5B-AUDIT-REPORT.md:46-52`; `2d-closeout/period-unfold-20261014/REPORT.md:3-4, 14` | About 7% p∥ step near 8 GeV/c in one period group; cause not determined | R (low chance) |
+| Q18 | Block "has rank 2, is not corrected for the bootstrap noise … size is poorly determined: 0.73–2.56" | `PB:80`; `VF:1642-1646` | `FD-CT-5B-REPORT.md:129, 180` | Three groups give about 1.83 effective dof | R (partly) |
+| Q19 | "estimated after differences … were observed"; "its own consistency check cannot fail" | `MP:46`; `PB:80, 111, 258` | `DEC-20261030-joseph-4b-not-now-5b-audit-then-add.md:39-51`; `FD-CT-5B-REPORT.md:28, 129` | Built from observed offsets after the data were read | K |
+| Q20 | "No finite-ensemble correction"; statistical block from 50 replicas | `PB:83` | `VF:1661-1662`; `FD-1B-DECLARATION.md:95` (stat is 0.0010 of trace) | Finite ensembles | R (cheap, immaterial) |
+| Q21 | "correlated shape difference … source … has not been identified" | `MP:46`; `PB:92` | `PB:92` | No recorded route | K |
+| Q22 | "The learner was selected after the … comparisons" | `PB:94` | `PI:476-496` (C8) | Post hoc choice | K |
+| Q23 | 2D covariance omits G2 approximation, learner dependence, regularisation; "no calibrated significance" | `PB:106` | `PI:365-392` (C1, C6) | Known approximations | K |
+| Q24 | Published flux uncertainty larger "for a reason the released inputs do not let us determine" | `PB:106` | `PI:468-475` (C7) | Inputs unavailable | K |
+| Q25 | 2D model term "not a calibrated bound"; iteration counts differ | `PB:114` | `PB:114` | Different choices | K |
+| Q26 | "only the three-observable marginal has been compared with the lower-dimensional result" | `PB:119` | `PB:119` | No 16-cell comparison done | R |
+| Q27 | Purity bias up to 4%; refined leaves "up to 1% in some joint cells" | `PB:121-123` | `OUTCOME-20260925-s5n…:68-74` | Refinement classifier underfits | M |
+| Q28 | Recovery of generator-sized change "only part … up to 74%" | `PB:135` | `OUTCOME-20260925-s5n…:75-76`; `ibu1/REPORT.md:22, 60`; `next-preparation-20261009/d-id/REPORT.md:27` | Regularisation; binned unfolding is similar | K |
+| Q29 | "earlier purity-subtracted … covariance … fails its specified acceptance criteria" | `PB:135`, Fig. 3 | `PI:650-658`; note `sec_5d.tex:250` | Permanent predeclaration failure | M |
+| Q30 | "Neither seed set was held out" | `PB:140` | `PI:667-673` | Development history; not found in the note | M (note first) |
+| Q31 | Diagnostic "does not address what unbinned information could recover" | `PB:144` | `sec_5d.tex:83` | Scope of the diagnostic | M |
+| Q32 | Earlier coverage test: "51 of the 153 … as low as 0.06"; source "not established" | `PB:149-151` | `OUTCOME-20260925-s5c-tier-s-futility-fail.md:30-34`; `sec_5d.tex:212` | Earlier estimator failed a predeclared test | M |
+| Q33 | "unstable under perturbations … within floating-point rounding … up to 2.6" | `PB:156` | `sec_5d.tex:90, 192` | Bootstrap already holds this variability | M |
+| Q34 | "The truths are not held out: they are the simulation's prior…" | `PB:162` | `PB:162` | Test design | K |
+| Q35 | "residual bias exceeding predeclared … thresholds at a GiBUU-like truth and a synthetic … tilt" | `MP:46`; `PB:186` | `DEC-20261031-joseph-j1-j2….md:40-47`; `FD-DIRECTOR-RULINGS.md:35-41`; `VF:712, 1006` | Prior retained far from the simulation | K |
+| Q36 | Without the block the GiBUU E_avail shape is also listed (R06, z 2.01 vs 1.76) | `PB:186` | `DEC-20261031-joseph-j1-j2….md:40-45`; `VF:1038-1039` | Same bias | K |
+| Q37 | GENIE v3 "partial evidence … not independent"; tunes share a QE model | `PB:189` | `FD-F1-REPORT.md:35-40`; `LPA:69-70`; `DEC-20261031-joseph-triage-q1-q2-q4-q5.md:17-23, 45` | No independent generator family (NEUT retired) | K |
+| Q38 | "only event counts fluctuate … The simulated detector response is not probed" | `PB:74, 189` | `LPA:187-189`; `FD-CT-3B-REPORT.md:79, 96-118` | Fake data share the analysis response; no threshold set | R (Joseph) |
+| Q39 | 1B "stopped at one of its gates … for reasons not established" | `PB:189` | `DEC-20261031-joseph-three-covariance…:57-58`; `FD-1B-STAGE2-REPORT.md:109-117` | History; disclosure required "in every outcome" | K |
+| Q40 | χ² sensitivity to flux correlations; bands "not intervals for the χ² under the true correlations" | `PB:261` | `LP:475-476` ("inherent"); `LP:399-400` | Flux block nearly fully correlated | K |
+| Q41 | Hybrid nulls: "no such bound has been shown … not physical exclusions" | `PB:289` | `sec_joint.tex:141, 161` | Fine-grid residual unmeasured; no recoil-scale band | K |
+| Q42 | "Four of the sixteen cells, R02, R06, R10 and R15 … stability 0.16–0.25" | `PB:288` | `DEC-20261024-joseph-h2-16-cell-definition.md:42-43`; `DEC-20261029-…:24-27`; `FD-DIRECTOR-RULINGS.md:30-33` | Large migration | M + R |
+| Q43 | Miscoverage "attributed to a residual bias, but whether … same origin is not established" | `PB:276` | `PB:276` | Unresolved attribution | K |
+| Q44 | `\pubhold` funding and deposit; release "not yet deposited" | `MP:54, 77` | `PI:129-148` (A2); `MP:4` | Administrative | R (admin; Joseph) |
+
+## 3. Counts, and comparison with the caveat study
+
+| Class | Rows | Count |
+|---|---|---:|
+| K only | Q01, 02, 04, 05, 06, 11, 13, 14, 15, 19, 21, 22, 23, 24, 25, 28, 34, 35, 36, 37, 39, 40, 41, 43 | 24 |
+| K and M | Q07, Q12 | 2 |
+| M only | Q03, 27, 29, 30, 31, 32, 33 | 7 |
+| R and M | Q42 | 1 |
+| R only | Q08, 09, 10, 16, 17, 18, 20, 26, 38, 44 | 10 |
+| **Total** | | **44** |
+
+Any K is 26 (59%), any R is 11 (25%), and any M is 10 (23%).
+
+**Comparison with the study.**
+- The published-paper range (six PRD papers of 7,000–12,000 words) is 2.4–7.8 statements and 1.4–4.5 distinct caveats per 1,000 words. The study's r17 paper (8,785 words) had 22.9 and 10.0 (`CS:161-162`).
+- The study says a register round cannot close that gap. Closing it means "moving secondary results to the note together with their caveats, which changes the paper's claims", which is Joseph's decision (`CS:311`).
+- My count for the current paper, by my own regex (not the study's tool), is about 5.9k words (131 abstract plus about 5,790 body, excluding tables and captions). That gives 7.4 per 1,000 words.
+- After all M moves it is 34 issues, 5.7 per 1,000 words (arithmetic). After also resolving every R it is 26, 4.4 per 1,000 words (arithmetic), at the top of the published range (4.5).
+- The units differ from the study's, so this shows only that the K floor sits at the upper end of the published range.
+- None of the nine comparators reports a predeclared coverage test (`CS:284-289`). Joseph's own decision says validated coverage at held-out truths "is not a requirement for publishing" (`DEC-20261024-joseph-5d-community-standard-route.md:46-47`). The bar the lead asks for is higher than the field's.
+
+## 4. What can be resolved, at what cost (R rows)
+
+Costs are CPU node-h on regular QOS. Probabilities are my judgement.
+
+| ID | Analysis | Cost | Fits grant | Earlier attempts (records) | Chance |
+|---|---|---|---|---|---|
+| Q08 | CH correction (12/13 C + 1/13 H) to the 16 cells; it exists per fine cell for 109 NuWro and 72 GiBUU cells (`sec_joint.tex:309`) | MP3-B was at most about 0.6 node-h (`PLAN.md:294`); the reader is not priced; probably 0 | Yes | Descriptive version done; both corrections "move the prediction toward the data". GiBUU hydrogen has a failed sampling-closure check and 46% energy-non-conserving DIS (`sec_joint.tex:327`) | 80% NuWro, 50% GiBUU. Changes Table IV χ², so Joseph decides |
+| Q09 | Regenerate GiBUU with a higher energy cut ("not blocked by availability", `KI:72`) | Not in the records; H probe ≤ 2.3 node-h is the nearest analogue (`BINDING-PHASE1-20261019.md:40`) | Probably, after a probe | Parked: "the 20 GeV cap (KI 82) stays" (`PLAN.md:295`) | 40% |
+| Q10 | Recompute predictions with the analysis W and pT definitions from event records | Not in the records | Probably | Definitions compared in the note (`PB:42`) | 70%; changes numbers |
+| Q16 | New response variants (neutron, resolution, energy-dependent, larger scale), then 3b-style closures | About 0.86 per ±1σ pair plus unpriced code (`LPA:261-264`) | Yes | 3b ran 13 closures for 0.436 node-h (`FD-CT-3B-REPORT.md:36`) | 60% to get a number; under 10% to remove the sentence. Adding a component post-read is Joseph's (`LPA:284-286`) |
+| Q17 | (a) Send the prepared MINERvA question (status "PREPARED, NOT SENT", `QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md:8`). (b) 12-playlist unfolds | (a) 0. (b) 5B cost 0.896 for 3 groups (`FD-CT-5B-REPORT.md:59`); about 3–4 for 12 playlists (my arithmetic, not in records) | (a) is Joseph's act; (b) fits | 2D test: the step "SURVIVES UNFOLDING", cause "not citable" (`period-unfold-20261014/REPORT.md:3-4, 14`). 5B: dr_PC/PA +5.186%, χ²_M 10.996 against noise 1.204, "above every draw" (`FD-CT-5B-REPORT.md:153`) | 10–15% from our side |
+| Q18 | As Q17(b) | As Q17(b) | Yes | About 1.83 effective dof (`FD-CT-5B-REPORT.md:129`) | 50% to sharpen; stays "built from observed differences" |
+| Q20 | More bootstrap replicas | 250 × 0.0226 (`LPA:119`) ≈ 5.7 node-h (arithmetic) | Yes | n/a | 95%, but the stat block is 0.0010 of the trace (`FD-1B-DECLARATION.md:95`). Polish no reader will notice |
+| Q26 | Compare the 16-cell result with the 2D/3D integral | Login-node reader, not priced | Yes | n/a | 80% to run; could expose a new problem |
+| Q38 | Print 3b's closures as a bounded statement: species ≤ 0.40σ, ±4% median 0.50σ, maximum 0.97σ (`FD-CT-3B-REPORT.md:96-106`) | 0 (already run) | Yes | Settings and threshold deferred by Joseph 2026-10-14 (`LPA:217-218`); "no pass threshold is set" (`FD-CT-3B-REPORT.md:79`) | 70%; threshold choice decides the wording |
+| Q42 | Post hoc merge of the low-stability cells. A merge is a linear map f' = A f, C' = A C Aᵀ (my judgement) | Not in the records | Yes | "Cell merges or new cuts after the data read stay inadmissible" (`DEC-20261027-joseph-measurement-framing….md:45-46`); Joseph may still change R00–R15, labelled post hoc (`FD-DIRECTOR-RULINGS.md:30-33`) | Technically 90%; not recommended |
+| Q44 | Deposit and funding text | 0 compute | n/a | `MP:4` | Joseph's decisions |
+
+## 5. The honest answer, by topic
+
+### 5.1 Interval coverage: why 1B stopped, and whether any validation is feasible
+
+**What 1B was.** A nominal control plus two held-out GENIE v3 truths, funded at 44.5–145 node-h, with the control gating everything and "Its failure is a STOP" (`DEC-20261030-joseph-fund-1b-with-4a.md:25-30`).
+
+**Why it stopped.**
+- Gate D compares the toys' spread with S1's covariance blocks per cell and must lie in [0.9, 1.1]. ρ_c ran 0.696–2.296, with 2 cells below and 9 above, so 11 of 16 were outside (`FD-1B-STAGE2-REPORT.md:142`).
+- By group the interaction median was 1.659 (range 0.418–6.521), flux 0.996 and detector 0.973 (`:146-150`).
+- The interaction ratio is above 1 in 13 of 16 cells, opposite to the declaration's anticipated gap. "No other mechanism is offered" (`:178-185`).
+- The free diagnosis failed both its tests. No set of ≤ 3 bands fixes R08 and R07 (`FD-1B-DIAG-REPORT.md:38-57`), and the uncarried alternative is in the window in only 4 of 16 cells (`:59-84`). So 1B stops (`:10-15`), as the pre-set fork required (`DEC-20261031-joseph-three-covariance…:46-56`).
+- The stage 2 run cost 5.489 node-h against a cap of 23.00 (`FD-1B-STAGE2-REPORT.md:38`), about 4–12% of the funded range (arithmetic). A separate half-MC defect was found and repaired, and does not explain gate D (`:61-105`).
+
+**What is and is not feasible.**
+- **At the GiBUU-like and q3-tilt truths it is impossible by construction.** If a cell's bias exceeds σ, coverage is at most 0.5 for any symmetric error (`LP:115-122`). The plan lists R02, R06, R07, R10 and R15 for A7 GiBUU with mean 0.502 (`LP:135`). This was computed before the run-period block, so it is indicative only.
+- **At the GENIE v3 truths a test is possible in principle.** The bias there is at most 0.644σ (`FD-F1-REPORT.md:35-40`), so coverage turns on spread against width (`LPA:66-68`).
+- **The machinery is the obstacle.**
+  - The 5D lateral dumps no longer exist, so that block is a surrogate (`FD-1B-DECLARATION.md:99`).
+  - C_model and C_resp are not drawn (`:102-103`), and the control tests only 71.0% of C_e (`:106-108`).
+  - No repair is named (`FD-1B-DIAG-REPORT.md:12`).
+- **The only recorded independent design is nested.** It costs 6.04 node-h per experiment, about 1,800 node-h per arm (`LP:227-228`). That is about 87% of the 2,074.5 left and 1.7 times the half-of-remaining rule (arithmetic), so it needs the lead's decision.
+- **A pass would be weak.**
+  - Its fixed meaning is "no undercoverage detected at the study's sensitivity", "not a validation of coverage" (`FD-1B-DECLARATION.md:184-187`).
+  - The per-cell standard error is 0.0269 (`:126`).
+  - The test arms are expected to over-cover at zero bias, with mean 1σ coverage 0.791, because C_model is in the reported matrix but not in the toys (`LP:198-200`).
+- **It would test the wrong matrix.** 1B tests the covariance without the run-period block (`FD-1B-STAGE1-REPORT.md:17-19`; `DEC-20261030-joseph-4b…:53-54`), but the reported one now includes it (`PB:80`).
+- **The cheap stand-ins are descriptive only.** F0's offset control failed at χ²₁₆ = 245.74 and A7's draws differ from S1's (`LPA:339-342`).
+
+**Conclusion.** "The coverage … has not been validated" holds in every outcome (`DEC-20261031-joseph-three-covariance…:67-69`). The best case is a narrowed statement at GENIE-family truths, for 1,800 node-h or more and weeks of development. It would still not cover GiBUU-like truths, the run-period block or the detector response. I rate a clean "validated" at essentially zero (my judgement).
+
+### 5.2 The run-period block added after the fact
+
+- **What happened.**
+  - 5B unfolded three run-period groups on the 16 cells. Double ratios differ beyond bootstrap noise, above every noise draw in all six comparisons (`FD-CT-5B-REPORT.md:147-154`).
+  - Joseph ruled "audit, then add" (`DEC-20261030-joseph-4b…:39-51`). The audit's pre-fixed stop condition stayed silent (`FD-CT-5B-AUDIT-REPORT.md:46-52`).
+  - The block (rank 2, median σ 2.337%, 0.31 of the reported σ, `FD-CT-5B-REPORT.md:180`) raises the median from 7.29% to 7.86% (`VF:2267-2268`).
+- **Why the qualification stays.** The block "contains them by construction and cannot fail" (`FD-CT-5B-REPORT.md:129`). It is "NOT CITABLE FOR … a validated size" (`:28`), the cause is unknown (`period-unfold-20261014/REPORT.md:14`), and the audit passing "does not validate the block" (`PB:80`).
+- **Dropping it is worse.** The paper would print 7.29% while omitting an observed inconsistency.
+- **What could change it.** Only an outside explanation or a per-playlist study that localises the effect. 5A, the 2D projection, hit a leak-guard STOP and is unresolved (`FD-CT-READERS-REPORT.md:186-222`).
+
+### 5.3 Fake-data bias at the GiBUU-like truth and the q3 tilt
+
+- **What is measured.**
+  - With the block the GiBUU hybrid gives χ² 171.01 for 16 ndf (cells R02, R06) and the q3 tilt 52.48. Without it the values are 175.13 and 53.42 (`VF:710-713, 1006-1007`).
+  - The p = 0.01 threshold is 32.0 (`LP:111`).
+  - Both truths are listed by the predeclared criteria (`FD-DIRECTOR-RULINGS.md:35-41`).
+- **Cause.** The estimator keeps part of its prior.
+  - Exact binned unfolding leaves a median residual within a factor 2 of OmniFold's (`ibu1/REPORT.md:22, 60`; overall verdict UNRESOLVED).
+  - D-ID assigned branch C, consistent with finite-iteration regularisation (`d-id/REPORT.md:27`).
+  - s5n found the estimator "does not follow physically anchored truth departures (up to 74%)", and judged revision pointless (`OUTCOME-20260925-s5n…:75-76`).
+  - The R10 test of more reconstructed information is INCOMPLETE, with 0 PASS, 5 FAIL, 6 UNDETERMINED (`measurement-scoping/r10/REPORT.md:24-34`).
+- **The q3 tilt is "a declared stress amplitude, not an anchor"** (`OUTCOME-20260925-s5n…:41-42`). Dropping it now would be selective reporting after the criteria were predeclared, and Joseph ruled that both lists be stated (`DEC-20261031-joseph-j1-j2….md:40-47`).
+- **Options.**
+  - **Keep and quantify** (option c): 0 cost, "re-describes" (`LP:373-385`). This is the present state.
+  - **Assigned non-closure term** (option a): 0 node-h and about one session-day (`LP:311-312`).
+    - Median σ would rise from 7.29% to 10.44% (GiBUU only), 9.08% (q3 only) or 12.30% (four truths), and the largest cell R06 from 5.89% to 29.29% (`LP:286-291`).
+    - Graded truths pass by construction (`LP:295`), and it removes "not covered" "only by construction" (`LP:318-319`). It changes the covariance, breaks κ = 1 and is Joseph's (`LP:482-483`).
+    - I would present it as an option for a bias-inclusive total, not as a way to make the sentence disappear.
+  - **Generator-shape component** (option b): no scaling of the existing vertices covers the bias (`LP:342-343`).
+- **Conclusion.** Not resolvable by analysis.
+
+### 5.4 Anything else that dominates
+
+- **C_model is 0.4196 of C_total's trace** (`FD-1B-DECLARATION.md:102`) and is the least validated component (§6).
+- **The gate-D mismatch is itself a result.** The toys' interaction spread exceeds S1's in 13 of 16 cells (`FD-1B-STAGE2-REPORT.md:178-183`), and which yardstick is wrong is unknown.
+- **Response mismatch beyond C_resp** was rated by the independent consult as higher priority than a coverage pass (`secondary-results/astra-consult-coverage-20261028/answer.txt:72`). The ±4% closure reaches 0.97σ in a cell (`FD-CT-3B-REPORT.md:106`).
+- **The generator χ² are robust to the flux-correlation qualification.** With the interaction, flux, detector and lateral correlations removed, every 16-cell prediction keeps χ² ≥ 41 for 16 dof (`VF:1881`; `PB:261`).
+- **The run-period block** is small in trace (0.0609 of the matrix, `FD-CT-5B-REPORT.md:180`) but visible, moving the median from 7.29% to 7.86%.
+
+## 6. Two disclosures the paper does not make
+
+1. **Stage 0 STOP.**
+   - The pre-registered calibration-transfer test of the model term (hold one generator family out) returned STOP. Neither reporting definition passed.
+   - On H2, GiBUU scored c_F 0.259 (7 of 27) against a 0.60 bar for every family. The pooled value 0.697 passed (`5d-design-20261023/STAGE0-REPORT.md:25-30, 105-116`).
+   - Stage 0 graded the 27 H2 boxes, not the 16 cells (`LP:106-108`).
+   - The paper says only that held-out coverage "has not been validated" (`PB:80`), although `DEC-20261024-joseph-5d-community-standard-route.md:46-47` says the paper states why: "Stage 0 and R10 are reported".
+   - My grep of `docs/analysis-note/*.tex` for Stage 0, calibration transfer, 0.259 and the Stage 0 report file found no hit.
+   - R10's INCOMPLETE is likewise unprinted (`r10/REPORT.md:24-34`).
+   - The lead should rule whether the current wording suffices.
+2. **Low-stability cells appear only in the paper.** My grep of the note's section, appendix and main files for "low-stability", "lowstab" and "reconstruction stability" found nothing. `VF:1614-1616` defines the values and `PB:288` is the only print. The 10-29 decision requires a note-prints-it probe (`:27-28`), so print it in the note first.
+
+Smaller points the paper does not print:
+- F0's offset control failed and gates only the descriptive rows (`FD-F0b-REPORT.md:33, 86`).
+- The positive-control margin of the 16-cell definition is "thin" (`DEC-20261024-joseph-h2-16-cell-definition.md:39-41`).
+
+## 7. Recommended plan, by value per cost
+
+"[J]" marks a step that needs the lead's or Joseph's decision: compute beyond the grant, a change to a claim or number, or a scientific choice.
+
+| Step | What | Cost | What the paper could then stop saying | Decision |
+|---|---|---|---|---|
+| 0 | **Define "done."** Offer: every qualification stated once, with its measured size, in physics register (`CS:306-309`). "Zero" is infeasible (§0). | 0 | Sets the target | [J] |
+| 1 | **Close the disclosure gaps (§6).** Print Stage 0 STOP and R10 INCOMPLETE, or rule the wording sufficient. Print the low-stability cells in the note. | 0 | Adds a qualification (Q15 sharpened), but it is the one material omission I found | [J] (claim wording) |
+| 2 | **Move the M items** (Q03, 27, 29, 30, 31, 32, 33, 42, and size sentences of Q07 and Q12), note-first. Keep the one pointer. | 0 | 7–10 sentences (44 to about 34); nothing resolved | Authorised by the 10-29 decision; abstract and claims stay Joseph's (`:36-37`) |
+| 3 | **Readers:** Q08 (CH correction), Q26, Q10 | About 0 node-h, not priced | Q08 and Q10 sentences; Q26 becomes positive or reveals a problem | [J] where a Table IV number changes |
+| 4 | **Q38:** print 3b's closures as a bounded statement | 0 (done) | "response not probed" becomes "probed within X" | [J] (threshold) |
+| 5 | **Run-period:** send the prepared expert question; optionally 12-playlist 5D unfolds. Check retention first. | (a) 0; (b) about 3–4 (my arithmetic) | At best an explanation; the block stays "built from observed differences" | [J] (outward contact) |
+| 6 | **GiBUU above 20 GeV:** probe first | Unpriced | The "eight cells" scope, if a 16-cell GiBUU χ² can be formed | [J] if large |
+| 7 | **C_resp extension (3c)** | About 0.86 per pair plus code | Narrows Q16 only | [J] (covariance change) |
+| 8 | **Option (a), assigned bias term** | 0 | "Exceeds thresholds" only by construction; uncertainty 10–12% | [J] (covariance, κ) |
+| 9 | **Not recommended:** revive 1B, or the nested design | At least 1,800 per arm | A narrowed coverage statement at GENIE-family truths | [J] plus group allocation |
+
+**Time constraints.**
+- Per-playlist universe event loops (about 159 GiB) are exposed to purge from 2026-11-09 and their merge from 2026-11-22. Joseph chose to let them age out, so any E_avail switch or new universes would need unmeasured reruns (`DEC-20261101-joseph-abstracts-approved….md:44-47`).
+- The 5D lateral dumps are already gone (`FD-1B-DECLARATION.md:99`).
+- Retention of the 5B period merges and the MP-1 and W2b dumps is "not checked" (`LPA:495-496`; `FD-CT-5B-REPORT.md:235`).
+
+**Candid judgement (mine).** The measurement as it stands is defensible and carefully qualified. Making it "fully validated" is a research programme on how much information the open data and available generators can support, and 26 of 44 qualifications trace to that. More node-hours will not change it. The most useful decisions are what "clean" may mean (Step 0), the disclosure gaps (Step 1), and the 0 node-h steps (2–4) before any compute.
+
+## 8. Limits
+
+- Counts and classes are my judgement. A few rows could go the other way (Q12, Q27, Q29, Q41).
+- Success probabilities are mine and in no record.
+- I confirmed the note's printing of a fact only by grep. Q29, Q31, Q32 and Q33 are printed in the note. Q30 and Q42 were not found, and Stage 0 and R10 were not found.
+- Cluster balances and retention dates are the records' statements, not re-measured.
