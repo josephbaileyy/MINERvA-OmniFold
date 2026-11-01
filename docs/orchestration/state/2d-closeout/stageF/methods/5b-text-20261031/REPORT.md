@@ -90,3 +90,34 @@ tagged.
 - **The with-block headline numbers in the abstracts:** 7.86 %; 105–224; GiBUU 45. Without the block they would be
   7.29 %, 109–272 and 58. The referee endorsed the with-block headline. Whether the abstract should mention the block is
   his to say.
+
+## The abstracts, finalized (2026-11-01)
+
+**Joseph's choice:** "astra's, minus exclusions"
+(`DECISION-20261031-joseph-abstracts-astra-without-exclusions-line.md`, #632).
+- **The text:** both abstracts are the astra consult's §2 drafts
+  (`secondary-results/astra-consult-abstracts-coverage-20261031/answer.txt`), each without "These comparisons do not
+  establish generator exclusions." That sentence stays in the body (`paper_body.tex` sec:limits).
+- **Kept, as the director listed:**
+  - the run-period clause, with no without-block number;
+  - "predeclared" thresholds: FD-DIRECTOR-RULINGS.md §2, bound 2026-10-25 (`092702292`) before F0's report
+    (`28c4870f4`), and reused unchanged by F0b and the with-block chain;
+  - one coverage sentence, last.
+- **Every number prints through `\fvval`:** 7.86 %, 105–224, 16, 45, and "eight", from a new `g-gibuu-ncells-word`
+  key.
+- **The guard's two abstract anchors** follow the new wording, and still require exactly one listed GiBUU truth and the
+  q3 tilt.
+- **The ledger:** the note's pair is the whole revised abstract plus its source comment. It is unpinned until Joseph
+  approves; a dry run with the pins gives 0 failures.
+
+**Checks, on the final text:**
+- build PASS; values `--check` and self-test PASS; reflow PASS;
+- the ledger: 10 rows, 48 probes, 0 failures apart from the unpinned pair, by design;
+- `check_held` (`CHECK-HELD.txt`): four quotes flagged.
+  - Three are the decided changes: the paper abstract's two sentences (#632, A4) and the body's J1(a) sentence.
+  - The fourth, G1b:paper-g-14, is not a text change. The sentence is byte-identical; pdftotext broke it at its hyphen
+    after the column reflowed, and `key()` does not fold the dropped hyphen.
+- P1 ×3 (sol, on the rater copy of the final commit): 3, 3, 3, so the non-regression holds.
+
+**The built abstracts,** as the PDFs print them, go to the director for Joseph's approval of each whole abstract.
+#619 does not merge before he approves.

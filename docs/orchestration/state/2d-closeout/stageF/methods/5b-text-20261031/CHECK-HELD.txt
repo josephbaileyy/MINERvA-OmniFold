@@ -1,4 +1,11 @@
+# r22/tools/check_held.py --fact-held --pair-applied G1:paper-s-09 on the rater copy of 5d6d831fc (the final abstracts)
   FAIL G1:paper-g-08: held quote no longer prints exactly: 'In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBU'
   FAIL G1:paper-s-08: held quote no longer prints exactly: 'Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths'
+  FAIL G1b:paper-g-14: held quote no longer prints exactly: 'Rounding-level changes of its inputs move its results by up to 2.6 statistical standard de'
   FAIL G1b:paper-s-07: held quote no longer prints exactly: 'We report a simultaneous measurement of the νµ charged-current inclusive cross section in '
-held quotes checked exactly 14, exempt by applied pair ['G1b:paper-s-05'], held for facts 8, failures 3
+held quotes checked exactly 14, exempt by applied pair ['G1b:paper-s-05'], held for facts 8, failures 4
+
+# Dispositions (5B text round, 2026-11-01):
+# - G1:paper-g-08 and G1b:paper-s-07: the paper abstract, replaced whole by Joseph's choice (DECISION-20261031-joseph-abstracts-astra-without-exclusions-line.md, #632; A4: he approves the whole abstract).
+# - G1:paper-s-08: the body's 'does not cover ... GiBUU-like truths' sentence, replaced under J1(a).
+# - G1b:paper-g-14: NOT a text change. git diff ac8fb9ae3..HEAD -- paper_body.tex has 0 lines with 'Rounding-level'; the sentence is byte-identical. The rater copy's pdftotext broke it at the hyphen ('Roundinglevel', manuscript.txt line 718) because the column reflowed above it, and check_held's key() maps the hyphen to a separator, so the joined word no longer matches. The earlier copy of 5da83a76d located it exactly.
