@@ -22,6 +22,13 @@ M = [
  ("template not taken from the mode", 'MC_KEYS = ("w_truth", "w_reco", "denom_nd", "tmpl_w")', 'MC_KEYS = ("w_truth", "w_reco", "denom_nd")'),
  ("mode A non-finite kept", 'w = universe_weights(bank, tag, "zero")', 'w = universe_weights(bank, tag, "keep")'),
  ("noise factor for pairs 1", "return (n - 1) / n", "return 1.0"),
+ ("N1: peak RSS not recorded", '"peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, ', ''),
+ ("N1: wall limit doubled", "ok = s_max <= UNIT_SECONDS and r_max <= RSS_LIMIT_KIB", "ok = s_max <= 2 * UNIT_SECONDS and r_max <= RSS_LIMIT_KIB"),
+ ("N1: RSS limit ignored", "ok = s_max <= UNIT_SECONDS and r_max <= RSS_LIMIT_KIB", "ok = s_max <= UNIT_SECONDS"),
+ ("N1: REPRICE exits 0", 'return 0 if res["verdict"] == "PASS" else 1', 'return 0'),
+ ("N2: one-code check skipped", "if len(vals) != 1 or metas[next(iter(metas))].get(key) is None:", "if False:"),
+ ("N2: code digest not compared", 'ONE_CODE_KEYS = ("code_sha256", "input_npz_sha256"', 'ONE_CODE_KEYS = ("input_npz_sha256"'),
+ ("N4: a moved atime exits 0", "return status | 8", "return status"),
 ]
 rows = []
 try:

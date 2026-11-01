@@ -1,5 +1,5 @@
-# unmutated suite, fd_1b_inv.py sha256 c3da31d6ceab85da, tests sha256 c5dd5561623b92ef, on top of 5e8db09e4:
-40 passed in 8.39s
+# unmutated suite, fd_1b_inv.py sha256 71b3903aa1329807, tests sha256 a14a8672b956fda5, on top of 26f9cf01e:
+48 passed in 10.61s
 # mutants (python3 mutation.py, run from nd-unfolding/):
 KILLED   B1: noise if EITHER side under its floor
 KILLED   resolution threshold 4 -> 1
@@ -21,4 +21,11 @@ KILLED   mode B background not applied
 KILLED   template not taken from the mode
 KILLED   mode A non-finite kept
 KILLED   noise factor for pairs 1
-20 of 20 killed
+KILLED   N1: peak RSS not recorded
+KILLED   N1: wall limit doubled
+KILLED   N1: RSS limit ignored
+KILLED   N1: REPRICE exits 0
+KILLED   N2: one-code check skipped
+KILLED   N2: code digest not compared
+KILLED   N4: a moved atime exits 0
+27 of 27 killed

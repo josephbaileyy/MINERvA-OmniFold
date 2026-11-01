@@ -28,6 +28,15 @@
 - M4: `O_NOATIME` is proven over the call graph by a test (§8, §10);
 - m1–m3, below and in §3, §4 and §6.
 
+**Revision 2 (2026-11-01)** answers the re-review:
+- N1: every product records its peak RSS, and `fd_1b_inv.py walls` evaluates I2-0's re-price trigger, exiting
+  non-zero on REPRICE (§6);
+- N2: `i2` refuses a product set whose code, inputs, configuration, iterations or seed are mixed (§6);
+- N4: the job's atime check has a test in the direction it acts;
+- N6: the call-graph test runs mode A at a real universe (§8, §10).
+
+N3, I1's verdict over all 11 cells, belongs to I1's amendment (§5).
+
 **MEASURES:** nothing. No step has run, and no product has been read for this declaration.
 - The numbers quoted here come from committed records, each cited where it is used.
 - The algebra in §2 is first-order and labelled as such.
@@ -203,6 +212,9 @@ input. I1 tests it before any O3 stands.
   - If I1 reads SUPPORTED in all 11 cells, the investigation's finding is O3 and I2 does not run. Otherwise I2 runs.
 - **The jitter code and argv** come to the director as an amendment, to be reviewed and bound before I1 runs. That
   includes the call-graph `O_NOATIME` test of §8. The price is fixed now (§9).
+- **The amendment also defines I1's verdict over all 11 cells (review N3).** I0's REJECTED cells are carried into
+  it, so "SUPPORTED in all 11" cannot be read from I1's own cells alone. A test holds the mixed case: some cells
+  REJECTED at I0, the rest SUPPORTED at I1, and I2 still runs.
 
 ## 6. Step I2: S1's mechanism, decomposed at the nominal truth (pilot ≤ 1.0, bulk ≤ 14.0 node-h)
 
@@ -225,7 +237,12 @@ Each mode also runs once at u = CV, as a control: 3 unfolds. That makes 204 unfo
 
 Its products count toward the 204, and they are not rerun.
 - **The re-price trigger:** if the pilot's largest `seconds_unfold` exceeds the bulk's unit of 1,370 s, or any peak
-  RSS exceeds 75 % of a lane's 56 GB, the bulk is re-priced by amendment before it is submitted.
+  RSS exceeds 75 % of a lane's 56 GB (44,040,192 KiB, stage 2's limit), the bulk is re-priced by amendment before it
+  is submitted.
+  - **Enforced in code (revision 2, review N1):** every product records `peak_rss_kib`, and `fd_1b_inv.py walls`
+    reads the eight pilot products. It returns PASS (rc 0) or REPRICE (rc 1), and refuses (rc 4) if a pilot product is
+    missing.
+  - The bulk is submitted only after `walls` reads PASS.
 - **The bulk's item order:** round-robin by mode, so that no lane holds more than 3 mode-A items.
 
 **Controls.** Any failure is INVALID, and I2 is reported unrepaired.
@@ -233,6 +250,10 @@ Its products count toward the 204, and they are not rerun.
 - The interaction group's √(E/M) from the staged copies reproduces gate D's committed per-group ratio bit for bit.
 - Every universe's weight files carry the digests the stage-2 pins file recorded.
 - Every product's meta names its own mode and universe.
+- **One code and one input set (revision 2, review N2):** every mode product, the CV controls and the pilot's
+  included, carries identical `code_sha256`, input, background and pins digests, configuration, iterations and
+  estimator seed. Otherwise `i2` refuses. The pilot's products join the bulk's, so a code change between them cannot
+  pass silently.
 
 **Readouts,** each group sum built with the pair estimator and carried by g as gate D's E is:
 - for the interaction group, per cell, A_c, B_c and C_c, beside E_c (gate D) and M_c (S1);
@@ -308,7 +329,8 @@ None of these is a coverage result. A later coverage ensemble needs its own decl
   - **Replaced loaders:** `s5c_unfold.load_inputs`, `s5p_universe.weights` (read eagerly, since numpy cannot memmap
     a file handle) and the pins file's read and hash all go through these file objects. A test holds each loader equal,
     array by array, to the path-based loader it replaces.
-- **Coverage over the call graph (review M4).** A test runs `unfold` (modes A at CV, B and C) and `stage` on fixtures
+- **Coverage over the call graph (review M4).** A test runs `unfold` (mode A at CV and at a real universe, B and C)
+  and `stage` on fixtures
   with `os.open`, `open` and `io.open` instrumented. It fails if any input is opened other than through `os.open` with
   the flag, and it checks that the reads it guards were seen. A positive control shows the instrument catches
   `s5p_universe.weights`' plain read. I1's amendment must pass the same test.
@@ -363,16 +385,19 @@ None of these is a coverage result. A later coverage ensemble needs its own decl
      - `unfold`, modes A, B and C, composed from `s5p_universe`, `s5p_nullexp`, `fd_1b_toys` and `s5n_pseudo`, which
        are imported and left unchanged;
      - `i2`, the reader and rule I2.
-   - `nd-unfolding/tests/test_fd_1b_inv.py`, 40 tests. They cover:
+   - `nd-unfolding/tests/test_fd_1b_inv.py`, 48 tests. They cover:
      - each rule in each direction on synthetic fixtures, including review B1's R00 MaRES shape, which reads REJECTED;
      - B2's F_truth condition and M3's separate counts;
      - the telescoping identity;
      - the bitwise CV controls, and the run's CV product against the derivation's;
      - mode B against the derivation's own factors, C against `prior_inputs`, and A against `universe_inputs`;
      - every `O_NOATIME` loader against its path loader, the call-graph test, EPERM, and stage's atime refusal;
-     - I2 end to end on staged mode products, with its refusals.
-   - **The mutation receipt,** 20 mutants over the rules, the controls and the read path, all 20 killed with the
-     unmutated suite green (40 passed): [`fd/receipts-1b/inv/mutation.py`](fd/receipts-1b/inv/mutation.py), run from
+     - I2 end to end on staged mode products, with its refusals, including a mixed product set for each of the seven
+       shared keys;
+     - the pilot's re-price trigger in both directions, at both of its limits, and its refusal;
+     - the job's exit when an opened file's atime moves, and peak RSS in every product.
+   - **The mutation receipt,** 27 mutants over the rules, the controls, the pilot's trigger, the one-code check and
+     the read path, all 27 killed with the unmutated suite green (48 passed): [`fd/receipts-1b/inv/mutation.py`](fd/receipts-1b/inv/mutation.py), run from
      `nd-unfolding/`, and its output [`mutation.out`](fd/receipts-1b/inv/mutation.out), which names the code's digests. Its first run left 4 alive: the half-of-the-log test, the side test, the mode template and
      mode A's non-finite zeroing. Each now has a test that kills it.
 3. **The review:** `coverage-5b-audit` reviews the declaration and the code (the decision), and the dispositions are

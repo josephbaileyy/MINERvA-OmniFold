@@ -12,6 +12,7 @@ Subcommands:
   the unfolding MC, ``s5p_universe.universe_inputs``), B (the response alone in the MC: the derivation's own source
   factors) or C (the prior alone: truth and reco weights x the fine-cell mean factor, the denominator per cell by the
   same factor), on the derivation CV experiment's pseudo-data (section 6);
+* ``walls``: I2-0's re-price trigger, PASS or REPRICE, exiting non-zero on REPRICE so the bulk is not submitted;
 * ``i2``: the interaction group's factors sqrt(E/M) = F_src F_prior F_truth and rule I2 per out-of-window cell.
 
 Every pscratch input is opened with O_NOATIME. ``stage`` copies small inputs and checks each source's atime; the
@@ -22,6 +23,7 @@ holds equal to the path-based loaders they replace. ``s5p_universe``, ``s5p_null
     fd_1b_inv.py stage --spec SPEC.json --out DIR
     fd_1b_inv.py i0 --staged DIR --definition H2DEF --gate-d G [--receipt R] --out O
     fd_1b_inv.py unfold --mode A --universes MaRES_0,MaRES_1 --npz N --bkg B --bank K --detector-dir D --pins P ...
+    fd_1b_inv.py walls --unfolds U --tag T --out W          # I2-0's re-price trigger: rc 0 PASS, 1 REPRICE
     fd_1b_inv.py i2 --staged DIR --unfolds U --tag T --gate-d G --i0 I0 --out O
 
 MEASURES: the declared readouts, labelled DERIVATION. CANNOT AUTHORIZE: a coverage verdict, a change to the toys,
@@ -34,6 +36,7 @@ import hashlib
 import json
 import math
 import os
+import resource
 import shutil
 import sys
 import time
@@ -46,6 +49,7 @@ if str(_ND) not in sys.path:
     sys.path.insert(0, str(_ND))
 import fd_1b_diag as fdg  # noqa: E402
 import fd_1b_score as fs  # noqa: E402
+import fd_1b_tasks  # noqa: E402
 import fd_1b_toys as toys  # noqa: E402
 import s1_assemble as sa  # noqa: E402
 import s5c_unfold  # noqa: E402
@@ -69,6 +73,14 @@ N_INTERACTION_OUT = 15          # the interaction ratio's cells outside the wind
 NOATIME_FLAG = getattr(os, "O_NOATIME", None)
 # the unfolding-MC keys a mode replaces; the pseudo-data, truth, flux and template coordinates stay the CV's
 MC_KEYS = ("w_truth", "w_reco", "denom_nd", "tmpl_w")
+# I2-0, the pilot (declaration section 6): its eight products, and the re-price trigger the bulk must pass
+PILOT = (("A", "CV"), ("B", "CV"), ("C", "CV"), ("A", "MaRES_0"), ("B", "MaRES_0"), ("C", "MaRES_0"),
+         ("A", "2p2h_0"), ("A", "LowQ2_1"))
+UNIT_SECONDS = 1370.0                       # the bulk's unit, S1's measured top (section 9)
+RSS_LIMIT_KIB = fd_1b_tasks.RSS_LIMIT_KIB  # stage 2's: 75 % of a lane's 56 GiB, against ru_maxrss in KiB
+# what every product of one I2 set must share (review N2: the pilot's products join the bulk's)
+ONE_CODE_KEYS = ("code_sha256", "input_npz_sha256", "bkg_dump_sha256", "pins_sha256", "config", "iters",
+                 "estimator_seed")
 
 
 class Refusal(RuntimeError):
@@ -540,7 +552,7 @@ def run_unfold(a, unfold_fn=None) -> int:
                 "pins_sha256": a.expect_pins_sha256, "alignment": alignment,
                 "code_sha256": {**toys.code_digests(), "fd_1b_inv.py": s5n_pseudo.sha256_path(Path(__file__).resolve())},
                 "slurm_job": os.environ.get("SLURM_JOB_ID"), "seconds_unfold": round(time.time() - t1, 3),
-                "numpy_version": np.__version__}
+                "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, "numpy_version": np.__version__}
         status |= s5n_pseudo.write_product(target, {"xsec_flat": xs.ravel(order="C"),
                                                     "xtrue_flat": np.asarray(x_true, float).ravel(order="C")}, meta)
         print(json.dumps({"out": target.name, "seconds_unfold": meta["seconds_unfold"]}), flush=True)
@@ -551,6 +563,27 @@ def run_unfold(a, unfold_fn=None) -> int:
         print(f"[fd-1b-inv] DEVIATION: atime moved on {chk['moved']}", file=sys.stderr)
         return status | 8
     return status
+
+
+def pilot_walls(unfolds: Path, tag: str) -> dict:
+    """I2-0's re-price trigger (declaration section 6, review N1): PASS iff all eight pilot products exist and the
+    largest seconds_unfold is at most UNIT_SECONDS and the largest peak RSS at most RSS_LIMIT_KIB; otherwise REPRICE
+    (the bulk is re-priced by amendment before it is submitted). A missing pilot product refuses."""
+    rows = []
+    for mode, u in PILOT:
+        p = unfolds / f"{tag}_{mode}_{u}.npz"
+        if not p.exists():
+            raise Refusal(f"pilot product {p.name} is missing")
+        m = json.loads(str(np.load(p, allow_pickle=False)["meta"]))
+        if (m.get("mode"), m.get("universe")) != (mode, u) or m.get("peak_rss_kib") is None:
+            raise Refusal(f"{p.name}: not pilot item {mode} {u}, or no peak_rss_kib")
+        rows.append({"item": f"{mode}_{u}", "seconds_unfold": float(m["seconds_unfold"]),
+                     "peak_rss_kib": int(m["peak_rss_kib"])})
+    s_max = max(r["seconds_unfold"] for r in rows)
+    r_max = max(r["peak_rss_kib"] for r in rows)
+    ok = s_max <= UNIT_SECONDS and r_max <= RSS_LIMIT_KIB
+    return {"schema": SCHEMA, "step": "I2-0", "items": rows, "max_seconds_unfold": s_max, "unit_seconds": UNIT_SECONDS,
+            "max_peak_rss_kib": r_max, "rss_limit_kib": RSS_LIMIT_KIB, "verdict": "PASS" if ok else "REPRICE"}
 
 
 # ---------------------------------------------------------------------------------------------------------- rule I2
@@ -626,9 +659,10 @@ def i2(staged: Path, unfolds: Path, tag: str, gate_d: Path, i0_readout: Path, i1
         raise fs.Invalid("the interaction ratio does not reproduce gate D's committed readout bit for bit")
     U, g, x_cv_d = s1["U"], d["g"], d["x"]["CV"]
     cv_flat = _xs(load_npz_plain(staged / "derivation" / f"{DER_TAG}_CV.npz"))
-    mode_blocks, shifts = {}, {}
+    mode_blocks, shifts, metas = {}, {}, {}
     for mode in MODES:
         cvp = load_npz_plain(unfolds / f"{tag}_{mode}_CV.npz")
+        metas[f"{mode}_CV"] = json.loads(str(cvp["meta"]))
         if not np.array_equal(_xs(cvp), cv_flat):
             raise fs.Invalid(f"mode {mode} at CV does not reproduce the derivation CV product bitwise")
         blocks = {}
@@ -640,10 +674,15 @@ def i2(staged: Path, unfolds: Path, tag: str, gate_d: Path, i0_readout: Path, i1
                 meta = json.loads(str(z["meta"]))
                 if (meta.get("mode"), meta.get("universe"), meta.get("schema")) != (mode, f"{b}_{i}", SCHEMA):
                     raise fs.Invalid(f"{p.name}: not mode {mode}, universe {b}_{i}")
+                metas[f"{mode}_{b}_{i}"] = meta
                 X.append(U @ _xs(z))
                 shifts[(mode, f"{b}_{i}")] = g * (X[-1] - x_cv_d)
             blocks[f"band:{b}"] = sa.mat_cov(np.array(X)) * np.outer(g, g)
         mode_blocks[mode] = blocks
+    for key in ONE_CODE_KEYS:
+        vals = {json.dumps(v.get(key), sort_keys=True) for v in metas.values()}
+        if len(vals) != 1 or metas[next(iter(metas))].get(key) is None:
+            raise fs.Invalid(f"the mode products are not one code and one input set: {key} takes {len(vals)} values")
     A, B, C = (group_sum(mode_blocks[k]) for k in MODES)
     F = factors(np.diag(e), B, A, np.diag(m))
     cells = [f"R{c:02d}" for c in range(sa.N_CELLS)]
@@ -709,6 +748,10 @@ def main(argv=None) -> int:
     p.add_argument("--expect-pins-sha256", required=True)
     p.add_argument("--threads", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "32")))
     p.add_argument("--tag", default="fd1b_inv")
+    p = sub.add_parser("walls")
+    p.add_argument("--unfolds", type=Path, required=True)
+    p.add_argument("--tag", default="fd1b_inv")
+    p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("i2")
     for k in ("staged", "unfolds", "gate-d", "i0", "out"):
         p.add_argument(f"--{k}", type=Path, required=True)
@@ -720,6 +763,12 @@ def main(argv=None) -> int:
             return run_unfold(a)
         if a.out.exists():
             raise Refusal(f"refusing to overwrite {a.out}")
+        if a.cmd == "walls":
+            res = pilot_walls(a.unfolds, a.tag)
+            a.out.write_text(json.dumps(res, indent=1) + "\n")
+            print(json.dumps({"out": str(a.out), "verdict": res["verdict"], "max_seconds_unfold": res["max_seconds_unfold"],
+                              "max_peak_rss_kib": res["max_peak_rss_kib"]}))
+            return 0 if res["verdict"] == "PASS" else 1
         if a.cmd == "stage":
             rec = stage(json.loads(a.spec.read_text()), a.out)
             (a.out / "staged.json").write_text(json.dumps(rec, indent=1) + "\n")

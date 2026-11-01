@@ -241,6 +241,9 @@ class Staged:
             for p in reversed(ps):
                 p.stop()
 
+    ONE = {"code_sha256": {"fd_1b_inv.py": "c" * 64}, "input_npz_sha256": "i" * 64, "bkg_dump_sha256": "b" * 64,
+           "pins_sha256": "p" * 64, "config": "R", "iters": 5, "estimator_seed": 42}
+
     def write_modes(self, a_scale=1.0, b_scale=1.0, c_scale=0.1, tamper=None):
         """Mode products for I2: A's and B's carried shifts are S1's shifts x a_scale, x b_scale; C's x c_scale."""
         u_dir = self.tmp / "unf"
@@ -250,14 +253,16 @@ class Staged:
         f_s1 = np.load(self.root / "uni" / f"{inv.S1_TAG}_CV.npz")["xsec_flat"]
         for mode, k in (("A", a_scale), ("B", b_scale), ("C", c_scale)):
             np.savez_compressed(u_dir / f"t_{mode}_CV.npz", xsec_flat=cvp if tamper != ("cv", mode) else cvp * (1 + 1e-15),
-                                meta=json.dumps({"schema": inv.SCHEMA, "mode": mode, "universe": "CV"}))
+                                meta=json.dumps({"schema": inv.SCHEMA, "mode": mode, "universe": "CV", **self.ONE}))
             for b in inv.INTERACTION:
                 for i in range(sa.EXPECT[b]):
                     xs1 = np.load(self.root / "uni" / f"{inv.S1_TAG}_{b}_{i}.npz")["xsec_flat"]
                     x = x_cv + k * (xs1 - f_s1) / g
-                    meta = {"schema": inv.SCHEMA, "mode": mode, "universe": f"{b}_{i}"}
+                    meta = {"schema": inv.SCHEMA, "mode": mode, "universe": f"{b}_{i}", **self.ONE}
                     if tamper == ("meta", mode):
                         meta["mode"] = "Z"
+                    if isinstance(tamper, tuple) and tamper[0] == "one" and (mode, f"{b}_{i}") == tamper[1]:
+                        meta[tamper[2]] = tamper[3]
                     np.savez_compressed(u_dir / f"t_{mode}_{b}_{i}.npz", xsec_flat=x, meta=json.dumps(meta))
         return u_dir
 
@@ -451,12 +456,90 @@ class Modes(unittest.TestCase):
         self.assertTrue(np.array_equal(a, b))
         self.assertFalse(np.array_equal(np.load(out_i / "t_B_MaRES_0.npz")["xsec_flat"], b))
 
+    def test_the_job_exits_non_zero_when_an_opened_files_atime_moves(self):
+        # review N4: the sidecar's check in the direction it acts
+        out = self.tmp / "atime"
+
+        def touching(exp, *a, **k):
+            st = os.stat(self.w.inputs)
+            os.utime(self.w.inputs, ns=(st.st_atime_ns + 10 ** 9, st.st_mtime_ns))
+            return fake_unfold(exp, *a, **k)
+
+        argv = ["unfold", "--mode", "B", "--universes", "CV", "--npz", str(self.w.inputs), "--bkg", str(self.w.bkg),
+                "--bank", str(self.w.bank), "--detector-dir", str(self.w.det), "--pins", str(self.w.pins),
+                "--expect-pins-sha256", digest(self.w.pins), "--out", str(out)]
+        with mock.patch.object(s5n_pseudo, "unfold_negweight", touching):
+            self.assertEqual(inv.main(argv), 8)
+        side = json.loads(next(out.glob("atime-*.json")).read_text())
+        self.assertEqual(side["moved"], [str(self.w.inputs)])
+
+    def test_products_record_peak_rss(self):
+        out = self.tmp / "rss"
+        argv = ["unfold", "--mode", "C", "--universes", "CV", "--npz", str(self.w.inputs), "--bkg", str(self.w.bkg),
+                "--bank", str(self.w.bank), "--detector-dir", str(self.w.det), "--pins", str(self.w.pins),
+                "--expect-pins-sha256", digest(self.w.pins), "--out", str(out), "--tag", "t"]
+        with mock.patch.object(s5n_pseudo, "unfold_negweight", fake_unfold):
+            self.assertEqual(inv.main(argv), 0)
+        meta = json.loads(str(np.load(out / "t_C_CV.npz")["meta"]))
+        self.assertIsInstance(meta["peak_rss_kib"], int)
+        self.assertGreater(meta["peak_rss_kib"], 0)
+
     def test_a_universe_outside_the_interaction_set_refuses(self):
         argv = ["unfold", "--mode", "A", "--universes", "Flux_3", "--npz", str(self.w.inputs), "--bkg", str(self.w.bkg),
                 "--bank", str(self.w.bank), "--detector-dir", str(self.w.det), "--pins", str(self.w.pins),
                 "--expect-pins-sha256", digest(self.w.pins), "--out", str(self.tmp / "x")]
         with mock.patch.object(s5n_pseudo, "unfold_negweight", fake_unfold):
             self.assertEqual(inv.main(argv), 4)
+
+
+# -------------------------------------------------------------------------------------------- I2-0's re-price trigger
+
+
+class PilotWalls(unittest.TestCase):
+    """Review N1: the trigger is evaluated in code, PASS or REPRICE, and the CLI exits non-zero on REPRICE."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="fd1b-inv-walls-"))
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp)
+
+    def write(self, seconds=1200.0, rss=20_000_000, skip=None, over=None):
+        for mode, u in inv.PILOT:
+            if (mode, u) == skip:
+                continue
+            s, r = (seconds, rss) if (mode, u) != (over or (None,))[0:2] else over[2:]
+            np.savez_compressed(self.tmp / f"t_{mode}_{u}.npz", xsec_flat=np.zeros(3),
+                                meta=json.dumps({"mode": mode, "universe": u, "seconds_unfold": s, "peak_rss_kib": r}))
+
+    def run_cli(self, name):
+        return inv.main(["walls", "--unfolds", str(self.tmp), "--tag", "t", "--out", str(self.tmp / name)])
+
+    def test_inside_both_limits_passes_and_the_edges_are_inside(self):
+        self.write(seconds=inv.UNIT_SECONDS, rss=inv.RSS_LIMIT_KIB)
+        self.assertEqual(inv.pilot_walls(self.tmp, "t")["verdict"], "PASS")
+        self.assertEqual(self.run_cli("w.json"), 0)
+
+    def test_one_slow_unfold_reprices(self):
+        self.write(over=("A", "2p2h_0", inv.UNIT_SECONDS + 0.1, 20_000_000))
+        self.assertEqual(inv.pilot_walls(self.tmp, "t")["verdict"], "REPRICE")
+        self.assertEqual(self.run_cli("w.json"), 1)
+
+    def test_one_large_rss_reprices(self):
+        self.write(over=("B", "MaRES_0", 900.0, inv.RSS_LIMIT_KIB + 1))
+        self.assertEqual(inv.pilot_walls(self.tmp, "t")["verdict"], "REPRICE")
+        self.assertEqual(self.run_cli("w.json"), 1)
+
+    def test_a_missing_pilot_product_or_rss_refuses(self):
+        self.write(skip=("C", "CV"))
+        with self.assertRaisesRegex(inv.Refusal, "missing"):
+            inv.pilot_walls(self.tmp, "t")
+        self.assertEqual(self.run_cli("w.json"), 4)
+
+    def test_the_limit_is_stage_twos(self):
+        self.assertEqual(inv.RSS_LIMIT_KIB, 44_040_192)
+        self.assertEqual(inv.UNIT_SECONDS, 1370.0)
+        self.assertEqual(len(set(inv.PILOT)), 8)
 
 
 # ------------------------------------------------------------------------------------------------------- rule I2
@@ -535,7 +618,7 @@ class I2(unittest.TestCase):
             for i in range(sa.EXPECT[b]):
                 xD = np.load(self.w.root / "derivation" / f"{inv.DER_TAG}_{b}_{i}.npz")["xsec_flat"]
                 np.savez_compressed(u / f"t_B_{b}_{i}.npz", xsec_flat=xD,
-                                    meta=json.dumps({"schema": inv.SCHEMA, "mode": "B", "universe": f"{b}_{i}"}))
+                                    meta=json.dumps({"schema": inv.SCHEMA, "mode": "B", "universe": f"{b}_{i}", **Staged.ONE}))
         r = self.w.run_i2(self.i0, u)
         self.assertEqual({v["mechanism"] for v in r["attribution"].values()}, {"H1"})
         self.assertEqual(r["headline"]["headline"], "H1")
@@ -547,6 +630,15 @@ class I2(unittest.TestCase):
                 self.w.run_i2(self.i0, self.w.write_modes(tamper=tamper))
         with self.assertRaisesRegex(fs.Invalid, "interaction cells outside"):
             self.w.run_i2(self.i0, self.w.write_modes(), n_out=99)
+
+    def test_a_mixed_product_set_refuses(self):
+        # review N2: the pilot's products join the bulk's, so one changed code or input between them must refuse
+        for key, val in (("code_sha256", {"fd_1b_inv.py": "d" * 64}), ("input_npz_sha256", "x" * 64),
+                         ("bkg_dump_sha256", "x" * 64), ("pins_sha256", "x" * 64), ("config", "B0"), ("iters", 6),
+                         ("estimator_seed", 43)):
+            shutil.rmtree(self.tmp / "unf", ignore_errors=True)
+            with self.assertRaisesRegex(fs.Invalid, f"not one code and one input set: {key}"):
+                self.w.run_i2(self.i0, self.w.write_modes(tamper=("one", ("C", "MaRES_1"), key, val)))
 
     def test_i2_waits_for_i1_when_i0_sent_the_run_there(self):
         r0 = json.loads(self.i0.read_text())
@@ -642,7 +734,18 @@ class CallGraph(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tmp = Path(tempfile.mkdtemp(prefix="fd1b-inv-cg-"))
-        cls.w = ToyWorld(cls.tmp)
+        cls.w = w = ToyWorld(cls.tmp)
+        # review N6: the bank's CV file gets the td_* coordinates mode A's denominator reads, then the manifest and
+        # the pins are remade over it, so mode A runs at a real universe end to end
+        z = dict(np.load(w.bank / "cv.npz", allow_pickle=True))
+        edges = s5c_unfold.load_inputs(w.inputs)["edges"]
+        rng = np.random.default_rng(3)
+        for k, e in zip(("td_pt", "td_pz", "td_ea", "td_q3", "td_w"), edges):
+            z[k] = rng.uniform(e[0], e[-1], 50)
+        np.savez(w.bank / "cv.npz", **z)
+        w.manifest.write_text("".join(f"{digest(p)}  {p}\n" for p in sorted(w.bank.iterdir()))
+                              + f"{digest(w.receipt)}  {w.receipt}\n")
+        w.pins.write_text(json.dumps(toys.make_pins(w.bank, w.det, w.manifest, w.receipt)))
 
     @classmethod
     def tearDownClass(cls):
@@ -692,7 +795,7 @@ class CallGraph(unittest.TestCase):
 
         def go():
             with mock.patch.object(s5n_pseudo, "unfold_negweight", fake_unfold):
-                for mode, us in (("B", "CV,MaRES_0"), ("C", "LowQ2_1"), ("A", "CV")):
+                for mode, us in (("B", "CV,MaRES_0"), ("C", "LowQ2_1"), ("A", "CV,MaCCQE_1")):
                     argv = ["unfold", "--mode", mode, "--universes", us, "--npz", str(self.w.inputs), "--bkg",
                             str(self.w.bkg), "--bank", str(self.w.bank), "--detector-dir", str(self.w.det), "--pins",
                             str(self.w.pins), "--expect-pins-sha256", pins_sha, "--out", str(out)]
@@ -702,7 +805,8 @@ class CallGraph(unittest.TestCase):
         opened = {p for p, _ in rec["os"] if p in ins}
         # the instrument must see the reads it guards: the inputs, the background, the pins, the CV bank file and a
         # universe's weights were all opened
-        for must in (self.w.inputs, self.w.bkg, self.w.pins, self.w.bank / "cv.npz", self.w.bank / "MaRES_0_wr.npy"):
+        for must in (self.w.inputs, self.w.bkg, self.w.pins, self.w.bank / "cv.npz", self.w.bank / "MaRES_0_wr.npy",
+                     self.w.bank / "MaCCQE_1_tdw.npy"):
             self.assertIn(str(must), opened)
         self.assertEqual([p for p in rec["plain"] if p in ins], [])
         self.assertEqual([p for p, flag in rec["os"] if p in ins and not flag], [])
