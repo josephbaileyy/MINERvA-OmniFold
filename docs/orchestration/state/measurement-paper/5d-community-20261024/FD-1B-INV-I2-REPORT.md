@@ -15,16 +15,29 @@ F_truth (H3, R05).** No cell is attributed to F_src (H4), and none is unresolved
   block, by F_prior = √(B/A), with median 2.72 and range 0.49–6.51.
 - **H3 and H4 are each refuted as the account** (1 and 0 cells, the level being 3 or fewer). They are counted
   separately and never pooled with H1.
+- **H1's additivity prediction failed.** §3 of the declaration predicts, under H1, "A ≈ B + C … and B/A outside the
+  window". The second part holds in 16 of 16 cells. The first fails at the group level, where F_prior is computed:
+  - the residual block(A − B − C) is a median 2.52× A's σ (range 0.41–6.81, above 1 in 13 of 16 cells);
+  - it is 0.96× B's σ (range 0.61–1.19), so B + C misses A by about B's own size;
+  - A lies a median 0.59 of its own σ from C alone (§4.3).
+
+  **So the attribution is to F_prior, by the bound rule.** The data show that S1's object at the nominal truth is not
+  the toys' object, which is what O1 means. They do not show that S1's object contains the toys' object plus a prior
+  part. The rule's reading "H1 → O1" stands.
 - **Cost:** 5.621 node-h, against I2's caps of 1.0 + 14.0. I2-0 used 0.251 and the bulk 5.370 (§1).
-- **Deviations:** none. Access times are unchanged on every source (§1).
+- **Deviations: two, both in report routing (§1.1).** The I0 report did not reach `coverage-5b-audit` before I2-0 was
+  submitted, and I2-0's readout did not reach it before the bulk was submitted. Access times are unchanged on every
+  source (§1).
 
 **Under binding ruling 4(a), this O1 does not validate S1's interaction block, and this report must not read that
 way.** The question it raises goes to Joseph in §5, unanswered.
 
 **MEASURES:** the declared I2 readouts at the nominal derivation CV pseudo-data, labelled DERIVATION, and rule I2's
 per-cell attribution. **CANNOT SUPPORT:**
-- **That C (the prior alone) is what separates A from B.** The additivity readout does not hold (§4.3). F_prior
-  measures the response alone against S1's whole universe, not against the response plus C.
+- **That S1's universe holds the toys' response part plus a prior part.** Additivity fails at the group level by about
+  B's own size (§4.3). F_prior measures the response alone against S1's whole universe, not against the response
+  plus C.
+- **Why A and B differ.** This report does not measure how mode A's weights move against mode B's.
 - **That either block is the right one** for the reported intervals (§5).
 - **Any statement about gate D in the cells where flux carries part of ρ_c² − 1** (R05, R00; §3).
 - **Any claim about the coverage of the reported intervals,** in either direction.
@@ -65,8 +78,8 @@ Gate D's FAIL, the diagnosis's NOT LOCALIZED, and I0's H2 REJECTED stand.
   product differs from CV and is finite.
 - The bulk was submitted only after PASS, under ruling 1.
 
-**The bulk's walls.** Over 196 items, `seconds_unfold` has median 724.7 s and maximum 826.0 s. Peak RSS has maximum
-20,934,284 KiB.
+**All 204 products' walls** (connect 24, pilot included). `seconds_unfold` has median 725.1 s and maximum 849.6 s,
+the pilot's. Peak RSS has maximum 20,934,284 KiB.
 
 **Products.**
 - 204 of 204: 68 per mode, the three CV controls included. No partials.
@@ -95,7 +108,22 @@ Gate D's FAIL, the diagnosis's NOT LOCALIZED, and I0's H2 REJECTED stand.
 - each connect's script and transcript;
 - the four task tables, with their generator and digests (`tables/`);
 - the 40 lane logs' digests (`lanes.SHA256SUMS`);
+- `group_additivity.py` and its output `group_additivity.json` (§4.3);
 - `SHA256SUMS`.
+
+### 1.1 Deviations: report routing
+
+The declaration's §10.4 says: "Each step's report goes to `coverage-5b-audit` and the director before the next step
+is submitted." Twice it reached the director but not `coverage-5b-audit`.
+
+| report | to the director | to `coverage-5b-audit` | next submission |
+|---|---|---|---|
+| I0 | message at 19:23:37Z; #645 opened at 19:26:08Z | not sent. The audit first saw it as #650's base | I2-0 at 19:27:46Z |
+| I2-0's readout (connect 22) | message at 19:55:25Z | not sent | the bulk at 19:55:28Z |
+
+- **The effect on the numbers or the route: none.** The audit reproduced I0 to 7 × 10⁻¹⁶ in its review of #650.
+  REJECTED in every cell sends the run to I2 whatever a review says. `walls` PASS is the bulk's bound trigger.
+- **The status:** reported here unrepaired, for the director. No waiver was given.
 
 ## 2. The factors, per cell
 
@@ -185,9 +213,11 @@ This is the share of ρ_c² − 1 that the interaction bands' terms carry, per g
   B/A outside the window".
   - The second part holds: F_prior is outside the window in all 16 cells.
   - The first part does not.
-- **The readout.** The declared readout is the residual block(A − B − C), as a σ ratio √(residual / A) per band-cell.
-  - Over band-cells it has median 0.49 and quartiles 0.19 and 1.89.
-  - In seven bands the median over cells is above 1:
+- **The readout per band.** The declared readout is the residual block(A − B − C), as a σ ratio √(residual / A) per
+  band-cell.
+  - Over band-cells it has median 0.49 and quartiles 0.19 and 1.89. That median is pulled down by small bands where
+    additivity is exact; for example, EtaNCEL has C = 0 and a residual of 0 in all 16 cells.
+  - In ten bands the median over cells is above 1:
 
     | band | median over cells | cells above 1 |
     |---|---:|---:|
@@ -195,19 +225,56 @@ This is the share of ρ_c² − 1 that the interaction bands' terms carry, per g
     | MvRES | 4.06 | 11 of 16 |
     | Rvp2pi | 3.90 | 13 of 16 |
     | Theta_Delta2Npi | 2.56 | 11 of 16 |
-    | MaCCQE | 1.67 | 9 of 16 |
+    | MaCCQE | 1.66 | 9 of 16 |
     | Rvn2pi | 1.66 | 10 of 16 |
-    | MFP_pi | 1.60 | 15 of 16 |
+    | MFP_pi | 1.59 | 15 of 16 |
+    | Rvn1pi | 1.49 | 10 of 16 |
+    | VecFFCCQEshape | 1.23 | 9 of 16 |
+    | MFP_N | 1.11 | 9 of 16 |
+
+- **The readout at the group level, where F_prior is computed** (audit R1 on #650). This is arithmetic on committed
+  readouts, by `group_additivity.py` in the receipts. It opens no product.
+  - **The method:** each band's blocks are rebuilt from `i2.json`'s per-band σ ratios and `diag.json`'s per-band
+    shares of M and E. The script refuses unless the rebuilt bands sum to the readout's A, B and C. They do, to
+    4.4 × 10⁻¹⁶.
+  - **The result:**
+
+    | group, σ ratio | median | range | cells above 1 |
+    |---|---:|---:|---:|
+    | √(Σ residual / A) | **2.52** | 0.41–6.81 | 13 of 16 |
+    | √(Σ residual / B) | **0.96** | 0.61–1.19 | 6 of 16 |
+
+  - **Per cell, against A:** R08 6.81, R00 5.78, R11 4.79, R10 4.00 and R04 3.77, down to R03 0.77, R05 0.52 and
+    R07 0.41.
+- **With signs.** A pair band's diagonal entry is d², with d = (s₊ − s₋)/2. So |d_A|, |d_B|, |d_C| and
+  |d_A − d_B − d_C| fix the relative signs.
+  - **The fit:** 32 pair bands × 16 cells, to within 6 × 10⁻¹⁶ in each. 2p2h, with three universes, is left out; it is
+    at most 1.9 % of A.
+  - **Ambiguous fits:** 64 band-cells fit two sign choices equally. All 64 are in EtaNCEL, MaNCEL, NormNCRES and
+    NormDISCC, where a component is zero, so the choice changes no sum.
+  - **The result:**
+
+    | group, √(Σ x² / Σ d_A²) | median | range |
+    |---|---:|---:|
+    | x = d_A − d_C | **0.59** | 0.17–0.97 |
+    | x = d_A − d_B − d_C | 2.53 | 0.41–6.83 |
+    | x = d_A − d_B | 3.20 | 0.67–6.25 |
+
+  - **Reading:** at the group level, A lies about 0.6 of its own σ from C alone (median 0.59). B + C misses A by
+    about B's own size.
+  - These figures agree, to rounding, with the audit's independent computation on #650.
 
   - **What the residual holds.** The declaration (§6) names the completeness change and the second order. By C's
     construction it also holds the variation of the truth weights within a fine cell, which C's fine-cell mean r
     leaves out. This report does not measure how the residual divides among these.
 - **The prior share.** C/A, as a block ratio at the group level, has median 0.476 and range 0.156–1.390.
-- **What this limits.** F_prior = √(B/A) compares the response alone with S1's whole universe at the same truth. The
-  part of A that B lacks is not C alone.
+- **What this limits.** F_prior = √(B/A) compares the response alone with S1's whole universe at the same truth.
+  - **Read plainly:** the toys' object is mostly not a component of S1's universe at the nominal truth. It is not a
+    component plus something extra.
   - The O1 stands under the bound rule.
-  - This report cannot say that "the prior", in C's sense, is the part the toys cannot produce. It can say only that
-    the toys' object is the response alone, and S1's is not.
+  - **This report cannot say** that S1's universe holds the response part B and a prior part on top. It can say only
+    that the toys' object is the response alone, that S1's is not, and that S1's lies closer to C alone than to B + C.
+  - It does not measure why.
 
 NormDISCC's blocks are zero on every side in every cell (its two universes give identical shifts), so its per-band
 ratios are undefined. The per-band A, B and C against M and E are in `i2.json` (`per_band`), as σ ratios.
@@ -234,8 +301,13 @@ interaction block at the data. Both are diagonal entries of the group sum, in (c
 - **The question for Joseph, not answered here:** should the reported intervals carry the response-only spread
   var(r), and leave the prior part to C_model, which already holds a model-dependence term? It is a question about
   what the covariance is for.
-- **What this report does not do.** It does not say which block is right. §4.3 adds one fact to the question: B
-  and A differ by more than C.
+- **The measured fact §4.3 adds to the question.**
+  - **The source of the question:** it comes from the declaration's first-order algebra, which is labelled inference
+    (§2): S1's shift ≈ −r + p.
+  - **At the group level the readout does not show that algebra.** A lies a median 0.59 of its own σ from C alone.
+    |A − B| is 3.20 of A's σ, and B + C misses A by 0.96 of B's σ.
+  - **So:** a response-only part of B's size is not visible inside S1's universe at the nominal truth.
+- **What this report does not do.** It does not say which block is right.
 
 ## 6. Storage
 
