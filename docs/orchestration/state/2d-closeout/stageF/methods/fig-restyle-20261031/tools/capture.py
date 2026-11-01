@@ -16,7 +16,9 @@ RESTYLE AMENDMENT 1: Axes.hist is wrapped. Each call's values are recorded on th
 items) and the patches it draws carry gid "restyle-hist", so that compare.py's named binning exception can hold the
 values bit for bit while the bins change. After each save, every text of the figure and its axes (ax.texts, fig.texts)
 is tested against every data artist's drawn geometry in display coordinates, and each overlap is written to
-<capture-dir>/<figure>.overlaps.tsv (overlap.py reports and gates them)."""
+<capture-dir>/<figure>.overlaps.tsv (overlap.py reports and gates them).
+RESTYLE AMENDMENT 2: after each save, every legend entry is written to <capture-dir>/<figure>.legend.tsv (names.py).
+"""
 import hashlib
 import json
 import os
@@ -77,6 +79,10 @@ def savefig(self, fname, *a, **k):
             with open(out / f"{name}.overlaps.tsv", "w") as f:
                 f.write("text\taxes\tartist\tartist_label\n")
                 f.writelines(f"{s!r}\t{n}\t{kind}\t{lab!r}\n" for s, n, kind, lab in overlap.overlaps(self))
+        if outer:  # RESTYLE AMENDMENT 2: each legend entry, for names.py
+            with open(out / f"{name}.legend.tsv", "w") as f:
+                f.write("axes\ttext\n")
+                f.writelines(f"{n}\t{t!r}\n" for n, t in artists.legend_texts(self))
         if outer:  # after the save has drawn the figure, so every tick label exists
             with open(out / f"{name}.textsizes.tsv", "w") as f:
                 f.write(f"# figure width (in)\t{self.get_size_inches()[0]!r}\n")

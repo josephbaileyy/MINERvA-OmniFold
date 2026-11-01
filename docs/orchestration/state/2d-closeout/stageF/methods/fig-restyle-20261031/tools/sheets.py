@@ -6,7 +6,8 @@ OLD_DIR holds the committed copies (re2-integration/figs/), NEW_DIR the bound ru
 Each sheet places both PDFs, as vector graphics, at the width the note prints the figure (restyle_2026_10.WIDTH, from
 DEPLOY/2d-unfolding), so that the sheet shows them at print scale. It is built with pdflatex. Writes
 OUT_DIR/<figure>.pdf for the eleven figures and OUT_DIR/SHA256SUMS. Exit 1 if a PDF is missing, a build fails or a
-sheet is not one page."""
+sheet is not one page.
+RESTYLE AMENDMENT 2: where red changes meaning between the two copies, the sheet's header says so (NOTE)."""
 import hashlib
 import re
 import shutil
@@ -25,6 +26,10 @@ FIGS = [("MEFHC_5iter_fig13", "fig13", "Fig. 7 (top); also the primer"), ("MEFHC
         ("tension_spectrum", "spectrum", "Fig. 11 (left)"), ("tension_chi2_map", "chi2_map", "Fig. 11 (right)"),
         ("tension_mode_maps", "mode_maps", "Fig. 12"), ("model_comp_projections", "projections", "Fig. 13"),
         ("model_comp_ratio_maps", "ratio_maps", "Fig. 14")]
+# RESTYLE AMENDMENT 2: the committed fig13 and p_T, p_parallel projections draw Tune v1 in red; the amended ones draw
+# This work (OmniFold) in red (AMENDMENT-2.md section 2)
+RED = "Red means Tune v1 on the left (the committed copy) and This work (OmniFold) on the right."
+NOTE = {"MEFHC_5iter_fig13": RED, "MEFHC_5iter_xsec_proj_pt": RED, "MEFHC_5iter_xsec_proj_pz": RED}
 
 
 def page(pdf):
@@ -46,7 +51,8 @@ def main():
 \usepackage[paperwidth={2 * w + 1.2:.3f}in,paperheight={max(hs) + 1.6:.3f}in,margin=0.4in]{{geometry}}
 \usepackage{{graphicx}}\pagestyle{{empty}}\setlength{{\parindent}}{{0pt}}
 \begin{{document}}\sffamily\footnotesize
-{where}: \texttt{{{stem.replace('_', r'\_')}}}, at its printed width ({w:.2f} in)\par\medskip
+{where}: \texttt{{{stem.replace('_', r'\_')}}}, at its printed width ({w:.2f} in)\par
+{(r"\textbf{" + NOTE[stem] + "}") if stem in NOTE else ""}\par\medskip
 \begin{{minipage}}[t]{{{w:.3f}in}}Before: the committed copy\par\smallskip\includegraphics[width={w:.3f}in]{{a.pdf}}\end{{minipage}}\hspace{{0.4in}}%
 \begin{{minipage}}[t]{{{w:.3f}in}}After: \texttt{{-{{}}-style restyle-2026-10}}\par\smallskip\includegraphics[width={w:.3f}in]{{b.pdf}}\end{{minipage}}
 \end{{document}}

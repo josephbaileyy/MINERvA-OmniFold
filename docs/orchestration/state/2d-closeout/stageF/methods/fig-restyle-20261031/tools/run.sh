@@ -13,6 +13,9 @@
 # RESTYLE AMENDMENT 1 (AMENDMENT-1.md): checks 3-5 run with the palette (--recolour recolour.tsv --palette palette.tsv)
 # and the one named binning exception (--rebin MEFHC_5iter_pull_full.png), and the overlap gate (overlap.py --gate)
 # holds every in-panel text of the eleven "after" figures clear of the data.
+# RESTYLE AMENDMENT 2 (AMENDMENT-2.md): check 3 also holds each series line to its identity's declared style (--styles
+# styles.tsv --restyle restyle.tsv, on the data-only hash), and the names gate (names.py --gate) holds every legend
+# entry of the eleven "after" figures to an identity's one name or a declared non-series entry (legend-other.tsv).
 # Writes <local out dir>/CHECKS.txt. Exit 0 only if every check passes.
 set -o pipefail
 BASE=$1; BOUND=$2; OUT=$3
@@ -20,8 +23,9 @@ BASE=$1; BOUND=$2; OUT=$3
 HERE=$(cd "$(dirname "$0")" && pwd)
 REPO=$(git -C "$HERE" rev-parse --show-toplevel)
 # RESTYLE_RUN_ROOT moves the run root, for a dry run under the dev directory; the bound run uses the default. The first
-# bound run (BINDING.md) used .../run; amendment 1's bound rerun uses .../run-a1, since a run root must not exist.
-R=${RESTYLE_RUN_ROOT:-/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a1}
+# bound run (BINDING.md) used .../run, amendment 1's bound rerun .../run-a1, and amendment 2's uses .../run-a2, since
+# a run root must not exist.
+R=${RESTYLE_RUN_ROOT:-/pscratch/sd/j/josephrb/2d-closeout-restyle-20261031/run-a2}
 H=saul.nersc.gov
 TOOLS=docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/tools
 FIGS="MEFHC_5iter_fig13 MEFHC_5iter_xsec_proj_pt MEFHC_5iter_xsec_proj_pz MEFHC_5iter_pull_full
@@ -60,7 +64,10 @@ ok=1
         --strip "$R/base/deploy=DEPLOY" --strip "$R/bound/deploy=DEPLOY" \
         --outputs out/model_comp_report.txt,out/tension_report.txt,logs/models.log,logs/tension.log,logs/fig13.log,logs/paper_slices.log,logs/xsec_proj.log,logs/pull_full.log \
         --recolour "$T/../recolour.tsv" --palette "$T/../palette.tsv" --rebin MEFHC_5iter_pull_full.png \
+        --styles "$T/../styles.tsv" --restyle "$T/../restyle.tsv" \
         || ok=0
+    python3 -I "$T/names.py" "$OUT/after" --styles "$T/../styles.tsv" --other "$T/../legend-other.tsv" \
+        --figures "$(for f in $FIGS; do printf '%s.png,' "$f"; done | sed 's/,$//')" --gate || ok=0
     python3 -I "$T/overlap.py" "$OUT/after" --figures "$(for f in $FIGS; do printf '%s.png,' "$f"; done | sed 's/,$//')" --gate \
         || ok=0
     python3 -I "$T/textsize.py" "$OUT/after" "$OUT/pack/bound" --floor 4.0 || ok=0

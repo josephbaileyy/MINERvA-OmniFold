@@ -168,9 +168,9 @@ def _plot_1d_projection(h_xsec, h_truth, xlabel, ylabel, outname, title="", rest
 
     ax_top.errorbar(centers, vals, yerr=errs, xerr=widths,
                      **ours, **k,
-                     label="This work (OmniFold)")
+                     label="This work (OmniFold)" if not restyle else rs.NAMES["this_work"])
     ax_top.stairs(truth, edges, color=tune, linewidth=1.2 if not restyle else 0.9,
-                  label="GENIE 2.12.6 + MnvTune v1" if not restyle else "GENIE 2.12.6 + MINERvA Tune v1")
+                  label="GENIE 2.12.6 + MnvTune v1" if not restyle else rs.NAMES["tune"])
     ax_top.set_ylabel(ylabel, fontsize=10 if not restyle else None)
     ax_top.legend(fontsize=9 if not restyle else None)
     if restyle:

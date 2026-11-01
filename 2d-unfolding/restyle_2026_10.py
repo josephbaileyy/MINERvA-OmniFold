@@ -4,7 +4,8 @@ Each producer of those figures takes ``--style restyle-2026-10``, off by default
 figure it drew before. With the option, a producer draws its figure at the width the note prints it, so that a font
 size here is the printed size, and uses the label strings below. The option changes figure size, layout, fonts, label
 strings and text annotations only: no plotted value, colour, marker, line style or colour limit (DECLARATION.md §2,
-checked by fig-restyle-20261031/tools/compare.py).
+checked by fig-restyle-20261031/tools/compare.py). Amendments 1 and 2 set the colours, markers and line styles of the
+series identities (PALETTE, MARKER, LINESTYLE, NAMES, NEUTRAL below); the plotted values stay.
 
 The note's text width is 469.755 pt = 6.5 in (main_note.log, `\\textwidth`); WIDTH gives each figure's printed width,
 from its `\\includegraphics` in sec_results.tex.
@@ -21,8 +22,20 @@ WIDTH = {  # printed width (in) = the \includegraphics fraction of \textwidth
 # RESTYLE AMENDMENT 1 (fig-restyle-20261031/AMENDMENT-1.md; Joseph, #591): one colour per series identity in all
 # eleven figures, colourblind-safe. Markers and line styles carry the greyscale separation (Tune v1 and This work are
 # close in lightness).
-PALETTE = {"published": "#000000", "tune": "#4C72B0", "this_work": "#D55E00"}
-PALETTE_NAME = {"published": "black", "tune": "blue", "this_work": "vermillion"}
+# RESTYLE AMENDMENT 2 (AMENDMENT-2.md; Joseph, #613): This work is red, #FF0000, the red with the best protanopia
+# separation from Tune v1's blue and from black (AMENDMENT-2.md section 2).
+PALETTE = {"published": "#000000", "tune": "#4C72B0", "this_work": "#FF0000"}
+PALETTE_NAME = {"published": "black", "tune": "blue", "this_work": "red"}
+# RESTYLE AMENDMENT 2: one style and one legend name per series identity in every figure. Published: filled squares,
+# no line; This work: filled circles, no line; Tune v1: a solid step line, no markers. Error bars are drawn only where
+# a figure has the series' uncertainty (AMENDMENT-2.md section 3).
+MARKER = {"published": "s", "this_work": "o", "tune": "None"}
+LINESTYLE = {"published": "None", "this_work": "None", "tune": "-"}
+NAMES = {"published": "Published (PRD 104, 092007)", "this_work": "This work (OmniFold)",
+         "tune": "GENIE 2.12.6 + MINERvA Tune v1"}
+# RESTYLE AMENDMENT 2: colours with no series identity, for a figure whose red would read as This work (the tension
+# spectrum's curves and its reference line).
+NEUTRAL = {"curve": "#404040", "reference": "#808080"}
 PT = r"$p_T$"
 PZ = r"$p_\parallel$"
 GEVC = r"(GeV/$c$)"
