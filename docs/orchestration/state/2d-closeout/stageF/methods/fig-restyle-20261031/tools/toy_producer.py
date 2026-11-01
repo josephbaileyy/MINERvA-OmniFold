@@ -21,7 +21,13 @@ RESTYLE AMENDMENT 1 (a histogram of x - 1 is drawn in its own small axes in ever
   --palette-extra  the scatter is recoloured too, which the toy's table does not map;
   --rebin          the histogram's bins are zero-aligned (width 0.15) instead of 6 equal bins;
   --hist-ulp       one value given to the histogram moves by one ulp;
-  --overlap        a text is placed on the step line's first point."""
+  --overlap        a text is placed on the step line's first point.
+RESTYLE AMENDMENT 2 (a dashed grey reference line at y = 0 is drawn in every case):
+  --restyle2       the step line is drawn as the toy's "published" style, squares with no line (ls "None"), as the toy's
+                   restyle table maps it;
+  --restyle2-wrong-marker  diamonds instead of squares;
+  --restyle2-unmapped      the reference line, which the table does not map, turns dotted;
+  --names-full     the legend entries are the identities' full names, not "Published data" and "MINERvA Tune v1"."""
 import sys
 
 import matplotlib.pyplot as plt
@@ -50,8 +56,15 @@ else:
     axs3[2].set_axis_off()
     axs = axs3[:2]
 ax = axs[0]
-ax.step(x, y, where="mid", color="k" if "--line-rgba" not in sys.argv else "#010101", label="data" if not restyle else "Published data")
-ax.errorbar(x, y, yerr=e, fmt="o", color=col, label="MINERvA_Tune_v1" if not restyle else "MINERvA Tune v1")
+names = "--names-full" in sys.argv
+step_style = {}
+if "--restyle2" in sys.argv:
+    step_style = {"ls": "None", "marker": "s" if "--restyle2-wrong-marker" not in sys.argv else "D"}
+ax.step(x, y, where="mid", color="k" if "--line-rgba" not in sys.argv else "#010101",
+        label=("data" if not restyle else "Published data") if not names else "Published (PRD 104, 092007)", **step_style)
+ax.errorbar(x, y, yerr=e, fmt="o", color=col,
+            label=("MINERvA_Tune_v1" if not restyle else "MINERvA Tune v1") if not names else "This work (OmniFold)")
+ax.axhline(0.0, color="#808080", ls="--" if "--restyle2-unmapped" not in sys.argv else ":", lw=0.5)
 ax.fill_between(x, y - e, y + e, color="#C44E52", alpha=0.3)
 if "--drop" not in sys.argv:
     ax.bar(x, 0.5 * y, width=0.4, color="#2ca02c")

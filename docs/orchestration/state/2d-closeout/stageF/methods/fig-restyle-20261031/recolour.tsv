@@ -1,4 +1,4 @@
-# RESTYLE AMENDMENT 1: each figure's before-colours (the committed figures, measured from run/before/capture) and the series identity they draw (AMENDMENT-1.md section 2).
+# RESTYLE AMENDMENTS 1 and 2: each figure's before-colours (the committed figures, measured from run/before/capture) and the identity they map to (AMENDMENT-1.md section 2; AMENDMENT-2.md section 2 adds the tension spectrum's two rows, which have no series identity).
 figure	before_rgb	identity
 MEFHC_5iter_fig13	#1F77B4	this_work
 MEFHC_5iter_fig13	#FF0000	tune
@@ -12,3 +12,5 @@ MEFHC_5iter_xsec_paper_pz_slices	#000000	this_work
 MEFHC_5iter_xsec_paper_pz_slices	#9467BD	tune
 model_comp_projections	#C44E52	this_work
 model_comp_projections	#4C72B0	tune
+tension_spectrum	#C44E52	curve
+tension_spectrum	#FF0000	reference

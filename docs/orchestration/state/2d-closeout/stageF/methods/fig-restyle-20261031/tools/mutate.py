@@ -14,7 +14,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DEPLOY = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else HERE.parents[7]
-FILES = ("artists.py", "capture.py", "compare.py", "raster.py", "textsize.py", "overlap.py", "selftest.py",
+FILES = ("artists.py", "capture.py", "compare.py", "raster.py", "textsize.py", "overlap.py", "names.py", "selftest.py",
          "toy_producer.py")
 
 MUTANTS = [
@@ -32,7 +32,8 @@ MUTANTS = [
                      "edge": to_rgba_array(a.get_edgecolors()), "cmap": _cmap(a)}''',
      '''f = {"offsets": a.get_offsets(), "cmap": _cmap(a)}'''),
     ("labels are hashed (a restyle of a label fires)", "artists.py",
-     "h, dh, colours, arr = _item(kind, fields)", "h, dh, colours, arr = _item(kind + str(label), fields)"),
+     "h, dh, xh, colours, style, arr = _item(kind, fields)",
+     "h, dh, xh, colours, style, arr = _item(kind + str(label), fields)"),
     ("figures compared by item count only", "compare.py",
      'cb, ca = Counter(x["hash"] for x in ib), Counter(x["hash"] for x in ia)',
      'cb, ca = Counter(len(ib) for x in ib), Counter(len(ia) for x in ia)'),
@@ -60,6 +61,19 @@ MUTANTS = [
      """    fig.__dict__.setdefault("_restyle_hist_inputs", []).append((n, vals))""", """    pass"""),
     ("amendment 1: the overlap test disabled", "overlap.py",
      """                if any(_hits_box(g, box) for g in _geometry(a, ax)):""", """                if False:"""),
+    ("amendment 2: line styles not checked", "compare.py",
+     "    check_style = sty is not None", "    check_style = False"),
+    ("amendment 2: the restyle table ignored (every line style must stay)", "compare.py",
+     '    ident = res.get((fig, c[:7].upper(), style.get("linestyle"), style.get("marker")))', "    ident = None"),
+    ("amendment 2: the data-only hash includes the line-style fields", "artists.py",
+     "hs = (h,) if k in COLOUR_FIELDS else (h, d) if k in STYLE_FIELDS else (h, d, xh)",
+     "hs = (h,) if k in COLOUR_FIELDS else (h, d, xh) if k in STYLE_FIELDS else (h, d, xh)"),
+    ("amendment 2: the names gate disabled", "names.py",
+     "            if text not in names and (stem, text) not in other:", "            if False:"),
+    ("amendment 2: legend entries not captured", "capture.py",
+     '                f.writelines(f"{n}\\t{t!r}\\n" for n, t in artists.legend_texts(self))', "                pass"),
+    ("amendment 2: a named figure with no legend record passes", "names.py",
+     '            fails.append(f"{w}: no legend record in {run}/capture")', "            pass"),
     ("capture wraps savefig before technote_style (the .pdf twin captured too)", "capture.py",
      "import technote_style  # noqa: E402,F401  (installs its .pdf-twin wrapper before ours)\n", ""),
 ]

@@ -1,5 +1,7 @@
-# RESTYLE AMENDMENT 1: one colour per series identity (AMENDMENT-1.md section 2). Must equal 2d-unfolding/restyle_2026_10.py PALETTE.
+# RESTYLE AMENDMENT 1, as amended by AMENDMENT 2: one colour per series identity (AMENDMENT-2.md section 2), then the colours with no series identity (curve, reference). Must equal 2d-unfolding/restyle_2026_10.py PALETTE and NEUTRAL.
 identity	hex	name
 published	#000000	black
 tune	#4C72B0	blue
-this_work	#D55E00	vermillion
+this_work	#FF0000	red
+curve	#404040	dark grey (no series identity)
+reference	#808080	mid grey (no series identity)

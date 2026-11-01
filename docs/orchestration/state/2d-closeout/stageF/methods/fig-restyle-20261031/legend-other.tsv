@@ -1,0 +1,3 @@
+# RESTYLE AMENDMENT 2: legend entries that name no series identity, per figure (names.py). Every other legend entry must be an identity's name in styles.tsv.
+figure	text
+tension_spectrum	90% of $\chi^2$

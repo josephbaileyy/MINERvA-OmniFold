@@ -153,16 +153,26 @@ def main():
         edges, y_ours = project(ours_v[mask], mask, axis)
         _, y_data = project(data_v[mask], mask, axis)
         ctr = 0.5 * (edges[:-1] + edges[1:])
-        ax.step(ctr, y_data, where="mid", color="k", lw=2 if not restyled else 1.1, label="Published (PRD 104, 092007)",
-                marker=technote_style.gen_marker("data"), markersize=msz)
-        ax.step(ctr, y_ours, where="mid", color="C0" if not restyled else rs.PALETTE["this_work"],
-                lw=1.5 if not restyled else 0.9, ls="--",
-                label="This work (OmniFold)")
+        # amendment 2: Published and This work as their markers with no line (ls "none" keeps the step's data and
+        # drawstyle), Tune v1 as a bare step, each under its one name (restyle_2026_10.MARKER, LINESTYLE, NAMES)
+        if not restyled:
+            ax.step(ctr, y_data, where="mid", color="k", lw=2, label="Published (PRD 104, 092007)",
+                    marker=technote_style.gen_marker("data"), markersize=msz)
+            ax.step(ctr, y_ours, where="mid", color="C0", lw=1.5, ls="--", label="This work (OmniFold)")
+        else:
+            ax.step(ctr, y_data, where="mid", color="k", lw=1.1, ls=rs.LINESTYLE["published"],
+                    marker=rs.MARKER["published"], markersize=msz, label=rs.NAMES["published"])
+            ax.step(ctr, y_ours, where="mid", color=rs.PALETTE["this_work"], lw=0.9, ls=rs.LINESTYLE["this_work"],
+                    marker=rs.MARKER["this_work"], markersize=msz, label=rs.NAMES["this_work"])
         for j, (name, mv) in enumerate(model_vs.items()):
             _, y_m = project(mv[mask], mask, axis)
             mcol = f"C{j+1}" if not (restyled and "tune" in name.lower()) else rs.PALETTE["tune"]
-            ax.step(ctr, y_m, where="mid", color=mcol, lw=1.5 if not restyled else 0.9, label=shown(name),
-                    marker=technote_style.gen_marker(name), markersize=msz)
+            if restyled and "tune" in name.lower():
+                ax.step(ctr, y_m, where="mid", color=mcol, lw=0.9, ls=rs.LINESTYLE["tune"], marker=rs.MARKER["tune"],
+                        label=rs.NAMES["tune"])
+            else:
+                ax.step(ctr, y_m, where="mid", color=mcol, lw=1.5 if not restyled else 0.9, label=shown(name),
+                        marker=technote_style.gen_marker(name), markersize=msz)
         ax.set_xlabel(xlabel)
         if not restyled:
             ax.set_ylabel(rf"$d\sigma/d{axis}$ (cm$^2$/(GeV/c)/nucleon)")

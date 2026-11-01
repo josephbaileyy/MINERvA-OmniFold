@@ -1,0 +1,5 @@
+# RESTYLE AMENDMENT 2: one line style, marker and legend name per series identity (AMENDMENT-2.md section 3). Must equal 2d-unfolding/restyle_2026_10.py LINESTYLE, MARKER and NAMES.
+identity	linestyle	marker	name
+published	None	s	Published (PRD 104, 092007)
+this_work	None	o	This work (OmniFold)
+tune	-	None	GENIE 2.12.6 + MINERvA Tune v1
