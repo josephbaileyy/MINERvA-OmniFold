@@ -1602,6 +1602,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/BINDING
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/BINDING.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/CAPTION-FIXES.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/DECLARATION.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/DIGESTS.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/MUTATION-RECEIPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/RUN-A1-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/fig-restyle-20261031/RUN-A2-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -4843,6 +4844,24 @@ docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/runs/P2N.B15.sol2.
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/runs/adoption.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/runs/status-20261030.tsv	tracked	MACHINE	state-artifact	2d-closeout	20261030	generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/runs/status.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/FIGURE-LEDGER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/STEP4-INSTALL-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy-read.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy/chunk01/KEY.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy/chunk01/agy-control.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy/chunk01/agy-control.txt.prompt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy/chunk01/agy-real.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy/chunk01/agy-real.txt.prompt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy/chunk01/pairs-control.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy/chunk01/pairs.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy/status.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/check_ledger.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/ledger.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/recrop/crops.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/recrop/items.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/recrop/text-size.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/review.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step4/PIECES-PROOF.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step4/STEP4-NOTE-REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/r22/step4/agy-read.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes

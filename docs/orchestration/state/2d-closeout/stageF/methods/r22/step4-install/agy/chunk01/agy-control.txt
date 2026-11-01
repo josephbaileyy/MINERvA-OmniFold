@@ -1,0 +1,51 @@
+Q1: DIFFERENCES:
+1. BEFORE: "Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} carry statistical errors only."
+AFTER: "Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} carry the same bin errors as the unfolded points."
+Difference: AFTER changes the nature of the uncertainties in Figs.~\ref{fig:ptslices}--\ref{fig:pzslices} from being "statistical errors only" to being "the same bin errors as the unfolded points".
+
+Q2: DIFFERENCES:
+1. BEFORE: [Not present]
+AFTER: "The vertical error bars on this measurement are the weight statistics of the reweighted simulated sample (the square root of the summed squared event weights, combined in quadrature with the bin error propagated for the completeness ratio, which is one by construction); they are neither the data's statistical uncertainty nor the reported covariance."
+Difference: AFTER adds an explicit definition of the vertical error bars on this measurement, describing how they are computed and clarifying that they are neither the data's statistical uncertainty nor the reported covariance.
+2. BEFORE: [Not present]
+AFTER: "Those on the published data (top) are the square roots of the diagonal of its statistical covariance."
+Difference: AFTER adds a description stating that the vertical error bars on the published data (top panel) are the square roots of the diagonal of its statistical covariance.
+3. BEFORE: [Not present]
+AFTER: "Horizontal bars span the bins."
+Difference: AFTER adds the factual claim that horizontal bars span the bins.
+4. BEFORE: "their cross-covariance is not available."
+AFTER: "their cross-covariance is available."
+Difference: AFTER changes the claim regarding the cross-covariance from being "not available" to being "available".
+
+Q3: DIFFERENCES:
+1. BEFORE: "Points carry statistical errors only"
+AFTER: "The vertical error bars are the weight statistics of the reweighted simulated sample, as in Fig.~\ref{fig:xsec}, neither the data's statistical uncertainty nor the reported covariance"
+Difference: In Fig.~\ref{fig:ptslices}, AFTER replaces the claim that points carry statistical errors only with the specification that the error bars are the weight statistics of the reweighted simulated sample and are neither the data's statistical uncertainty nor the reported covariance.
+2. BEFORE: "with statistical errors only"
+AFTER: "with the same error bars"
+Difference: In Fig.~\ref{fig:pzslices}, AFTER changes the characterization of the uncertainties from "statistical errors only" to "the same error bars" (referencing the definition in Fig.~\ref{fig:ptslices}).
+3. BEFORE: "and no published measurement."
+AFTER: "and published measurement."
+Difference: In Fig.~\ref{fig:pzslices}, BEFORE claims that there is "no published measurement", whereas AFTER changes this to claim that the published measurement is included ("and published measurement").
+
+Q4: DIFFERENCES:
+1. BEFORE: "this measurement (dashed)"
+AFTER: "this measurement (red circles)"
+Difference: AFTER changes the visual representation of this measurement from a dashed curve to red circles.
+2. BEFORE: "the published data (black)"
+AFTER: "the published data (black squares)"
+Difference: AFTER specifies the marker shape for the published data as "black squares" rather than simply "black".
+3. BEFORE: "; MINERvA Tune v1 (blue)"
+AFTER: ", with GENIE 2.12.6 $+$ MINERvA Tune~v1 (blue line)"
+Difference: AFTER adds the generator attribution "GENIE 2.12.6 $+$" to the model description and specifies that it is shown as a "(blue line)" rather than just "(blue)".
+4. BEFORE: [Not present]
+AFTER: "Uncertainties are drawn."
+Difference: AFTER adds the statement that uncertainties are drawn in Fig.~\ref{fig:model}.
+5. BEFORE: "of our result (left) and of the published data (right)"
+AFTER: "of our result (a, left) and of the published data (b, right)"
+Difference: AFTER adds subfigure panel identifiers "(a," and "(b," for the respective panels.
+6. BEFORE: "; the panels have no printed titles."
+AFTER: [Not present]
+Difference: AFTER drops the limitation/note stating that the panels have no printed titles.
+
+END
