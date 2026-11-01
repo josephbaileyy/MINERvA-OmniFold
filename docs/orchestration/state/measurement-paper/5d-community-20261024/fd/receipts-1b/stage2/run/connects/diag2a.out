@@ -1,0 +1,72 @@
+host=login37 now=2026-10-31T21:08:08Z
+=== sacct steps
+60624652|fd1b2an0|FAILED|1:0|01:40:22||nid004172
+60624652.batch|batch|FAILED|1:0|01:40:22|122548K|nid004172
+60624652.extern|extern|COMPLETED|0:0|01:40:22||nid004172
+60624652.0|line3|COMPLETED|0:0|01:33:17|19356924K|nid004172
+60624652.1|line0|COMPLETED|0:0|01:40:14|39195340K|nid004172
+60624652.2|line2|FAILED|4:0|00:13:09|20643256K|nid004172
+60624652.3|line5|COMPLETED|0:0|01:38:44|20817412K|nid004172
+60624652.4|line7|COMPLETED|0:0|01:37:59|20722376K|nid004172
+60624652.5|line4|COMPLETED|0:0|01:34:50|19046720K|nid004172
+60624652.6|line1|FAILED|4:0|01:09:09|24257208K|nid004172
+60624652.7|line6|COMPLETED|0:0|01:38:05|20619124K|nid004172
+=== logs present
+-rw-rw---- 1 josephrb josephrb 1028 Oct 31 14:06 fd1b2an0_60624652.out
+total 860
+drwxrwx--- 4 josephrb josephrb  4096 Oct 31 12:26 .
+drwxrwx--- 9 josephrb josephrb  4096 Oct 31 12:26 ..
+drwxrwx--- 2 josephrb josephrb  4096 Oct 31 14:06 inventory
+-rw-rw---- 1 josephrb josephrb 35953 Oct 31 14:06 line0-60624652.log
+-rw-rw---- 1 josephrb josephrb 32346 Oct 31 14:03 line10-60624653.log
+-rw-rw---- 1 josephrb josephrb 32346 Oct 31 14:04 line11-60624653.log
+-rw-rw---- 1 josephrb josephrb 32346 Oct 31 14:03 line12-60624653.log
+-rw-rw---- 1 josephrb josephrb 32342 Oct 31 14:05 line13-60624653.log
+-rw-rw---- 1 josephrb josephrb 32345 Oct 31 14:04 line14-60624653.log
+-rw-rw---- 1 josephrb josephrb 32343 Oct 31 14:05 line15-60624653.log
+-rw-rw---- 1 josephrb josephrb 30155 Oct 31 13:35 line1-60624652.log
+-rw-rw---- 1 josephrb josephrb 32345 Oct 31 14:03 line16-60624654.log
+-rw-rw---- 1 josephrb josephrb 32371 Oct 31 14:00 line17-60624654.log
+-rw-rw---- 1 josephrb josephrb 32385 Oct 31 13:58 line18-60624654.log
+-rw-rw---- 1 josephrb josephrb 32411 Oct 31 14:00 line19-60624654.log
+-rw-rw---- 1 josephrb josephrb 32353 Oct 31 14:04 line20-60624654.log
+-rw-rw---- 1 josephrb josephrb 32370 Oct 31 14:03 line21-60624654.log
+-rw-rw---- 1 josephrb josephrb 32390 Oct 31 13:55 line22-60624654.log
+-rw-rw---- 1 josephrb josephrb 32390 Oct 31 14:06 line23-60624654.log
+-rw-rw---- 1 josephrb josephrb 10304 Oct 31 12:39 line2-60624652.log
+-rw-rw---- 1 josephrb josephrb 32377 Oct 31 13:59 line3-60624652.log
+-rw-rw---- 1 josephrb josephrb 32346 Oct 31 14:01 line4-60624652.log
+-rw-rw---- 1 josephrb josephrb 32330 Oct 31 14:04 line5-60624652.log
+-rw-rw---- 1 josephrb josephrb 32339 Oct 31 14:04 line6-60624652.log
+-rw-rw---- 1 josephrb josephrb 32338 Oct 31 14:04 line7-60624652.log
+-rw-rw---- 1 josephrb josephrb 32338 Oct 31 14:06 line8-60624653.log
+-rw-rw---- 1 josephrb josephrb 32338 Oct 31 14:04 line9-60624653.log
+drwxrwx--- 2 josephrb josephrb  4096 Oct 31 12:26 logs
+=== batch log tail
+[timing] 2026-10-31T19:26:12.590Z job=60624652 host=nid004172 deploy=/pscratch/sd/j/josephrb/fd-1b-20261030/deploy/stage2 pin=664c38dbffdca4fe3873a5ebf61cb2f949005b59 lines=0..7 cpt=32 mem=56G gres=inherit
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-10-31T19:26:12.722Z launch line 0
+[timing] 2026-10-31T19:26:12.727Z launch line 1
+[timing] 2026-10-31T19:26:12.732Z launch line 2
+[timing] 2026-10-31T19:26:12.737Z launch line 3
+[timing] 2026-10-31T19:26:12.742Z launch line 4
+[timing] 2026-10-31T19:26:12.747Z launch line 5
+[timing] 2026-10-31T19:26:12.751Z launch line 6
+[timing] 2026-10-31T19:26:12.757Z launch line 7
+[timing] 2026-10-31T21:06:26.786Z lines 0..7 done rc=1
+=== grep errors in batch log
+16:[timing] 2026-10-31T21:06:26.786Z lines 0..7 done rc=1
+=== partials
+ls: cannot access '/pscratch/sd/j/josephrb/fd-1b-20261030/runs/*/*.partial-*': No such file or directory
+=== pilot-half
+total 376
+drwxrwx--- 2 josephrb josephrb   4096 Oct 31 13:29 .
+drwxrwx--- 9 josephrb josephrb   4096 Oct 31 12:26 ..
+-rw-rw---- 1 josephrb josephrb 185460 Oct 31 13:29 fd1b_pilot_half_s2600000.npz
+-rw-rw---- 1 josephrb josephrb 185191 Oct 31 12:33 fd1b_pilot_half_s2600004.npz
+ssh_rc=0

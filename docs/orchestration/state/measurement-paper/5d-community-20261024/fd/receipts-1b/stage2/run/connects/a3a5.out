@@ -1,0 +1,20 @@
+host=login37 start=2026-10-31T23:16:22Z
+A3 porcelain_lines=0 head=e3c91978bced44ad85b97f50c17acd21429bfbcc
+A3 diff_M2_R2_outside=[]
+A4 submit 2a-r lines=1 limit_ok=1 table=present pin_ok=1
+A4 pins_sha256=5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248
+A4 check_pins rc=0: pins unchanged
+A4 derivation_check rc=0
+A4 derivation_check diff rc=0 lines=0
+A4 squeue jobs=0 fd1b=0
+A4 iris rc=0 at 2026-10-31T23:17:29Z:
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+m3246               2177.1            10000.0     17925.5      20000.0
+A4 m3246 remaining=2074.5 half=1037.25
+A4 the 10 unmade products are absent:
+  yes
+d7b6d0207c05e1c81eee316cffa66ac570ae56ce5a96b918fae835022a46ac14  /pscratch/sd/j/josephrb/fd-1b-20261030/quarantine/fd1b_pilot_half_s2600000.npz
+a19f14db359b15949789f21515dca0cda7c4038b0d5c66c79fa87cfbbaaff0af  /pscratch/sd/j/josephrb/fd-1b-20261030/quarantine/fd1b_pilot_half_s2600004.npz
+A5 pilot-half npz left=0
+A5 done at 2026-10-31T23:17:29Z
+ssh_rc=0

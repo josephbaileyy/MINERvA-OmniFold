@@ -1,0 +1,19 @@
+host=login37 start=2026-10-31T19:07:50Z
+L4 porcelain_lines=0 head=664c38dbffdca4fe3873a5ebf61cb2f949005b59
+L4 diff_M_R_outside_L3=[]
+L5 submit 2a-0 lines=1 want=1 limit_ok=1 table=present pin_ok=1
+L5 submit 2a lines=3 want=3 limit_ok=3 table=present pin_ok=3
+L5 submit 2b lines=2 want=2 limit_ok=2 table=present pin_ok=2
+L5 submit 2c lines=3 want=3 limit_ok=3 table=present pin_ok=3
+L5 pins_sha256=5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248
+L5 check_pins rc=0: pins unchanged
+L5 derivation_check rc=0
+L5 derivation_check diff rc=0 lines=0
+L5 squeue jobs=0 fd1b=0
+L5 iris rc=0 at 2026-10-31T19:08:50Z:
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2171.9            10000.0     17919.9      20000.0
+m3246_g             1296.2            90000.0    142857.5     180000.0
+L5 done
+ssh_rc=0
