@@ -1038,6 +1038,31 @@ class ExemptionGuardTest(unittest.TestCase):
         self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] is STALE: 1.014 is no longer struck", out)
 
 
+    SIDECAR = "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json"
+
+    def test_an_outside_source_missing_in_the_standalone_shape_SKIPS(self):
+        """The standalone note repository has no ../orchestration: the 6.86 exemption's sidecar cannot be read there,
+        so the guard says SKIP with its reason (not a false STALE), and the in-tree exemptions are still checked."""
+        (self.note / self.SIDECAR).unlink()
+        subprocess.run(["git", "init", "-q", str(self.note)], check=True)       # the note is its own checkout's top
+        code, line, out = self._run()
+        self.assertEqual(code, 0, out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '6.86')] SKIP: its source", out)
+        self.assertNotIn("is STALE", out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '1.014')] holds", out)
+
+    def test_an_outside_source_missing_in_the_canonical_layout_FAILS(self):
+        """In <repo>/docs/analysis-note the sidecar is required: missing, the exemption is STALE."""
+        note = self.tmp / "repo" / "docs" / "analysis-note"
+        shutil.copytree(self.note, note)
+        subprocess.run(["git", "init", "-q", str(self.tmp / "repo")], check=True)
+        self.assertFalse((note / self.SIDECAR).exists())
+        self.note = note
+        code, line, out = self._run()
+        self.assertEqual(code, 1, out)
+        self.assertIn("CONTEXT_EXEMPT[('main_note', '6.86')] is STALE", out)
+
+
 class PinCheckTest(unittest.TestCase):
     """check_note_records.py pin (plan commit 3) on synthetic git repositories, in both directions."""
 

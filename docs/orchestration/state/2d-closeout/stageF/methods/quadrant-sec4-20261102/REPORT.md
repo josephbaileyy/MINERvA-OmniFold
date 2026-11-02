@@ -249,5 +249,32 @@ A coverage result that lands later replaces its clause (decision item 2).
 | local CI (`run_ci.py`) | see the PR |
 | the reading copy | 21 pages: the paper's pages 4–6 and 8–12, each followed by its base page, then the new page 13; the note's new pages 67–69, with base page 67 |
 
+## Follow-up (director, 2026-11-02): the containment check in the standalone note repository
+
+**The defect.**
+- #665 pointed the `CONTEXT_EXEMPT[('main_note', '6.86')]` exemption at a figure sidecar outside the note tree
+  (`../orchestration/…/fd_g_fig_modes.json`).
+- The standalone Analysis-Note repository has no `../orchestration`, so the staleness guard reported a false STALE, and
+  its `build_all.sh` exited 1. Canonical passed.
+
+**The fix** (`check_dead_containment.py`; the director's option 2):
+- **The check is unchanged** when the source is inside the note tree, or when it is present.
+- **A missing out-of-tree source is still STALE in the canonical layout.** The layout test is `canonical_layout()`:
+  `<git toplevel>/docs/analysis-note`, as `check_note_records.py pin` decides it.
+- **Anywhere else, the guard reports SKIP with its reason.** That covers the standalone repository and a copy, as the
+  other repository-dependent checks do. The canonical build enforces it.
+
+**The tests** (`test_build_all.py::ExemptionGuardTest`):
+- **The standalone shape** (the note at the top of its own git checkout, no sidecar): SKIP, exit 0, no "is STALE", and
+  the in-tree exemptions still hold. With the SKIP branch disabled, this test fails.
+- **The canonical layout** (`<repo>/docs/analysis-note`, sidecar missing): STALE, exit 1.
+
+**The shown result** (`STANDALONE-CHECK.txt`):
+- `bash build_all.sh` in a copy of `docs/analysis-note` outside any repository returns **rc 0** (paper 13 pp, note
+  134 pp, primer 15 pp).
+- In that copy, the check prints the SKIP. The base code reproduces the false STALE, exit 1.
+- In the canonical worktree, the exemption still "holds", from the sidecar.
+- `test_build_all.py`: 85 passed.
+
 Nothing is submitted, deposited or tagged.
 <!-- absence-ok: the report quotes the paper's coverage and validation statements before and after, with their sources; the uncomputed interior chi2 is a fact about k.json (fd_xcov.route_a records r0, r1 and outcomes) -->
