@@ -1,0 +1,14 @@
+KILLED  first/second swapped
+KILLED  second from first
+KILLED  top unsorted
+KILLED  a_cv of wrong row
+KILLED  truth label off by one
+KILLED  label order truths reversed
+KILLED  cv-zero count inverted
+KILLED  a_cv quantile on all candidates
+KILLED  band max over drawn only->first univ
+KILLED  n_gt_1 wrong
+KILLED  pairs wrong
+KILLED  band() wrong
+KILLED  check skips declared
+KILLED  arg ties last
