@@ -236,5 +236,126 @@ class NoiseFloor(unittest.TestCase):
         self.assertNotIn("within", E2.reading(3.0, 0.3)["sentence"])
 
 
+REAL = ND / "tests/fixtures/e2a1_real"          # PROVENANCE.tsv there: copied from the committed records
+# the environment E2's chi2 step runs in (RE-1's: Linux, numpy 1.26.4), where E-1's readouts were made; C3 holds there
+# to 5.2e-15 (receipt x_e2a1_sweep.tsv), and the test asserts it exactly only there
+RUN_ENV = sys.platform == "linux" and np.__version__ == "1.26.4"
+
+
+def real(name):
+    return json.loads((REAL / name).read_text())
+
+
+def _with(d, **kw):
+    out = json.loads(json.dumps(d))
+    for k, v in kw.items():
+        if v is None:
+            out.pop(k, None)
+        else:
+            out[k] = v
+    return out
+
+
+# addendum E2-A1: each mutant of the committed GiBUU / NuWro ratio fields must fail leg (iii)
+DOMAIN_MUTANTS = {
+    "CH GiBUU carries the truth_cut form": lambda g, n: (_with(g, truth_cut={"axis": "pz", "below": 10.0}), n, g),
+    "CH GiBUU pz_max_cells 9": lambda g, n: (_with(g, pz_max_cells=9.0), n, g),
+    "CH GiBUU pz_max_cells absent": lambda g, n: (_with(g, pz_max_cells=None), n, g),
+    "committed GiBUU pz_max_cells absent": lambda g, n: (g, n, _with(g, pz_max_cells=None)),
+    "committed GiBUU carries a truth_cut": lambda g, n: (g, n, _with(g, truth_cut={"axis": "pz", "below": 10.0})),
+    "CH NuWro carries pz_max_cells": lambda g, n: (g, _with(n, pz_max_cells=10.0), g),
+    "CH NuWro carries a truth_cut": lambda g, n: (g, _with(n, truth_cut={"axis": "pz", "below": 10.0}), g),
+}
+
+
+class RealFormat(unittest.TestCase):
+    """Addendum E2-A1: R1 leg (iii), B2, C1, C2 and C3 on the real committed formats (the director's sweep)."""
+
+    def setUp(self):
+        self.fields = real("ratio_domain_fields.json")["files"]
+        self.metas = real("committed_metas.json")["metas"]
+
+    def test_the_job_writes_only_under_the_rerun_directory(self):
+        txt = JOB.read_text()
+        self.assertIn("#SBATCH -o /pscratch/sd/j/josephrb/gencmp-e2a1-20261102/logs/", txt)
+        self.assertIn("\nR=/pscratch/sd/j/josephrb/gencmp-e2a1-20261102\n", txt)
+        self.assertNotIn("gencmp-e2-20261102", txt)
+
+    def test_leg_iii_passes_on_the_committed_fields(self):
+        g, n = self.fields["gibuu"], self.fields["nuwro"]
+        self.assertEqual(E2.domain_failures(g, n, g), [])
+
+    def test_every_leg_iii_mutant_fails(self):
+        g, n = self.fields["gibuu"], self.fields["nuwro"]
+        for name, m in DOMAIN_MUTANTS.items():
+            with self.subTest(name):
+                self.assertTrue(E2.domain_failures(*m(g, n)))
+
+    def ratio_sha(self, v):
+        pins = gc.load_pins(E2.INPUTS)
+        return pins[str(E2.SCRATCH / E2.PREP / f"{v}.json")]
+
+    def check(self, PA, v, meta):
+        cfg = json.loads(E2.CONFIG.read_text())["rungs"][E2.RUNG]
+        PA.check_meta(v, meta, PA.tasks(E2.PVL / "tasks.tsv")[f"L-5D-PV_e_{v}"],
+                      {"vertices": {v: {"ratio_sha256": self.ratio_sha(v)}}}, cfg, None)
+
+    def seed43(self, m):
+        m = json.loads(json.dumps(m))
+        m["estimator_seed"] = 43
+        m["refinement"]["classifier_params"]["random_state"] = 46
+        for p in m["estimator_params"]:
+            p["random_state"] = 43
+        return m
+
+    def test_b2_check_meta_passes_on_the_committed_vertices_at_seed_42(self):
+        import pvl_analyze as PA
+        for v in ("tune_v1", "genie_mec", "nuwro", "gibuu"):
+            with self.subTest(v):
+                self.check(PA, v, self.metas[v])
+
+    def test_b2_at_seed_43_refuses_the_committed_meta_and_accepts_its_seed_43_form(self):
+        import pvl_analyze as PA
+        for v in ("nuwro", "gibuu"):
+            with self.subTest(v), E2.declared_seed(PA, 43):
+                with self.assertRaises(SystemExit):
+                    self.check(PA, v, self.metas[v])
+                self.check(PA, v, self.seed43(self.metas[v]))
+                self.assertEqual(E2.params_but_seed(self.seed43(self.metas[v])["estimator_params"], 43),
+                                 E2.params_but_seed(self.metas[v]["estimator_params"], 42))
+
+    def test_b2_code_leg_on_the_committed_record_and_the_deploys(self):
+        now = real("code_at_deploy.json")["code_sha256"]
+        old = self.metas["nuwro"]["code_sha256"]
+        self.assertEqual(E2.code_differ(old, now), ["pvl_lib.py"])
+        self.assertLessEqual(set(E2.code_differ(old, now)), E2.CODE_ALLOWED_TO_DIFFER)
+        moved = _with(now, versions=dict(now["versions"], numpy="2.2.6"))
+        self.assertFalse(set(E2.code_differ(old, moved)) <= E2.CODE_ALLOWED_TO_DIFFER)
+        self.assertFalse(set(E2.code_differ(old, _with(now, candidate=None))) <= E2.CODE_ALLOWED_TO_DIFFER)
+
+    def test_c1_c2_c3_on_the_committed_s_data_product_and_e1_readouts(self):
+        cm = json.loads(E2.CMODEL5.read_text())
+        S = np.asarray(cm["S"], float)
+        S_bad = S * (1 + 1e-6)
+        self.assertTrue(E2.c1_ok(S.copy(), cm))
+        self.assertFalse(E2.c1_ok(S_bad, cm))
+        f, Cma, arms = E2.rest_matrices()
+        self.assertTrue(E2.c2_ok(f, S, Cma))
+        self.assertFalse(E2.c2_ok(f, S_bad, Cma))
+        for arm, C_rest in arms.items():
+            with self.subTest(arm):
+                r1 = E2.e1_readout(arm)
+                rows = E2.chi2_rows(r1, f, C_rest, S)
+                base = set(E2.c3_failures(r1, rows))
+                if RUN_ENV:
+                    self.assertEqual(base, set())
+                else:   # another BLAS: the shape-only chi2 (C + 100 f f^T) moves by up to ~2e-10 (receipt)
+                    self.assertTrue(all(x.endswith("shape_only") for x in base), sorted(base))
+                self.assertEqual(len(E2.c3_failures(r1, E2.chi2_rows(r1, f, C_rest, S_bad))), 8)
+                moved = json.loads(json.dumps(r1))
+                moved["predictions"][[p["name"] for p in moved["predictions"]].index("gibuu")]["total"]["chi2"] *= 1 + 1e-9
+                self.assertEqual(set(E2.c3_failures(moved, rows)) - base, {"gibuu total"})
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,11 @@
+# Fixtures for nd-unfolding/tests/test_fd_gencmp_e2.py class RealFormat (GENCMP amendment E addendum E2-A1, 2026-11-02).
+#
+# Copied from the committed records, read on login37 (RE-1's environment) by the probes in
+# docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/sweep-a1/, from E2's first
+# run's staged copies (/pscratch/sd/j/josephrb/gencmp-e2-20261102/inputs/), each opened O_NOATIME and checked against
+# its pin in fd/gencmp-e2/INPUTS.sha256 before it was read. Nothing was written on the cluster but /dev/shm scripts,
+# deleted after each run.
+file	content	source record
+committed_metas.json	the meta of L-5D-PV_e_{tune_v1,genie_mec,nuwro,gibuu}, verbatim	pv-ladder-20261024/products/L-5D-PV_e_<v>.npz (meta), pinned in INPUTS
+code_at_deploy.json	the code record a seed-42 arm-e pvl_unfold at M'' 885e366e would write in RE-1's environment	computed by sweep-a1/e2a1_probe2.py from $R/deploy (s5e_candidate.install("R"), then pvl_unfold.py:186-188)
+ratio_domain_fields.json	the axes key, and the truth_cut and pz_max_cells keys where present, of the committed GiBUU and NuWro ratios	pv-ladder-20261024/prep/ratios/L-5D-PV/{gibuu,nuwro}.json, pinned in INPUTS

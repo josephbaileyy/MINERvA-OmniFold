@@ -1,0 +1,23 @@
+# Addendum E2-A1, the director's sweep (2026-11-02): every E2 control against the real committed formats before the
+# rerun. Probes in sweep-a1/ (scripts and outputs), run on login37 in RE-1's environment (Python 3.11.14, numpy 1.26.4,
+# lightgbm 4.6.0) from E2's first deploy at M'' 885e366e, whose code for these controls is E2-A1's but for leg (iii)
+# and the named helpers; pscratch reads are the first run's staged, pinned copies, opened O_NOATIME and checked against
+# fd/gencmp-e2/INPUTS.sha256. Local tests: nd-unfolding/tests/test_fd_gencmp_e2.py class RealFormat, on fixtures
+# copied from the same records (tests/fixtures/e2a1_real/PROVENANCE.tsv).
+control	what it checks	real source	result on the real record	where shown
+stage S	each staged copy is its pinned bytes	the 18 pinned pscratch inputs	PASS (18 staged; atime moved on 0)	first run, logs/stage.log
+V	step A's carbon arrays are the staged carbon files; x_CH = combine(C, H)	step A's committed products; the staged gen5d files	PASS (both)	first run, logs/vertices.log
+R1 (i)	carbon pvl_ratios reproduces the 7 committed ratio files' numbers	committed prep ratios L-5D-PV	PASS (7 of 7)	first run, logs/ratios.log
+R1 (ii)	CH tune_v1, genie_mec, genie_mec_sq = the carbon run's	both runs' files	PASS (3 of 3)	first run, logs/ratios.log
+R1 (iii) at M''	CH GiBUU carries truth_cut {pz, 10}	committed and CH gibuu.json	FAIL on correct inputs (the defect E2-A1 repairs): the files carry pz_max_cells 10.0 and no truth_cut	first run, logs/ratios.log
+R1 (iii) E2-A1	CH GiBUU pz_max_cells = 10, no truth_cut, as committed; CH NuWro neither	committed gibuu.json/nuwro.json fields (fixture); first run's CH files	PASS on the committed fields and on the first run's CH files (prep_ch: gibuu pz_max_cells 10.0, no truth_cut; nuwro neither); 7 field mutants fail	RealFormat; x_e2a1_mutants.tsv; sweep-a1/e2a1_probe.out.json
+B2 seed 42	pvl_analyze.check_meta	the committed L-5D-PV_e_{tune_v1,genie_mec,nuwro,gibuu} metas	PASS (4 of 4)	sweep-a1/e2a1_probe.out.json; RealFormat
+B2 seed 43	check_meta under declared_seed(43): refuses a seed-42 meta, accepts its seed-43 form (estimator_seed 43, refinement random_state 46, estimator random_state 43)	committed nuwro and gibuu metas	PASS: committed refused ("estimator_seed = 42, expected 43"); seed-43 form accepted; committed refinement random_state is 45 (= 42 + 3)	sweep-a1/e2a1_probe.out.json; RealFormat
+B2 params	params_but_seed: every estimator's random_state is the seed; parameters equal but for it	committed nuwro and gibuu estimator_params	PASS (random_state set {42}; the 43-form equals the original but for it)	sweep-a1/e2a1_probe.out.json; RealFormat
+B2 code	a seed-42 rerun's code record differs from the committed vertex's only in pvl_lib.py	the committed nuwro meta's code_sha256; the record a rerun at M'' would write here (s5e_candidate.install("R") then pvl_unfold.py:186-188)	PASS: differs in ['pvl_lib.py'] only; versions equal (3.11.14, 1.26.4, 4.6.0)	sweep-a1/e2a1_probe2.out.json; RealFormat
+R2	the seed-42 NuWro carbon rerun's xsec_flat = the committed product's, bitwise	the committed L-5D-PV_e_nuwro.npz	operand checked (float64, 65,856 cells; equal to itself, unequal when one cell moves). The rerun side cannot be tested before the run; a failure stops the run at R2 ("[STOP] FAIL control R2"), final	sweep-a1/e2a1_probe.out.json
+C1	the carbon products give cmodel_5d.json's S bitwise	the four committed products; cmodel_5d.json	PASS	sweep-a1/e2a1_probe.out.json
+C2	diag(f) S^T S diag(f) = the data product's C_model_abs (1e-12 of its largest entry)	cmodel_5d.json; fd_data_product_cpl.json; cpl_block.npz	PASS (cluster and locally)	sweep-a1/e2a1_probe3.out.json; RealFormat
+C3	with the carbon S, each corner prediction's chi2 = E-1's (1e-10 relative)	E-1's with and nopl readouts; the data product; the block	PASS in the run environment: max relative difference 5.2e-15 over 16 values (every shape-only value exactly 0). On macOS numpy, the shape-only values (C + 100 f f^T) differ by up to 1.7e-10, so the local test asserts C3 exactly only in the run environment	sweep-a1/e2a1_probe3.out.json; RealFormat
+C0	pins: cmodel_5d.json, data product, block, E-1 readouts, products as unfold recorded	committed files	PASS for the committed pins (tests); the products-as-recorded checks run only after the unfold	RealFormat; Pins
+job	the unfold job (five srun steps, R1.ok gate, memory split)	the cluster	not testable before the run; a failed step leaves a product missing, and unfold stops at "all 5 products exist", final	x_e2_unfold.sh
