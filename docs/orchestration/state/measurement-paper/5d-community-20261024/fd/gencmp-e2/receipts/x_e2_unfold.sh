@@ -5,6 +5,10 @@
 #SBATCH -t 00:25:00
 #SBATCH -A m3246
 #SBATCH -J gencmp-e2
+#SBATCH --exclusive
+#SBATCH --no-requeue
+#SBATCH --export=ALL,HOME=/global/homes/j/josephrb
+#SBATCH -o /pscratch/sd/j/josephrb/gencmp-e2-20261102/logs/e2-unfold-%j.out
 # GENCMP amendment E, step E2's unfold (FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md section 2): NuWro CH, GiBUU CH and the
 # NuWro carbon control R2, three pvl_unfold runs of 32 threads at once on one node, in the environment the PV ladder ran
 # in (RE-1's setup_salloc_env.sh). From the deploy at the bound commit with empty porcelain; writes only under $R.
@@ -14,6 +18,7 @@ mkdir -p "$R/logs" "$R/tmp" || exit 2
 cd "$R/deploy" || exit 9
 [ "$(git rev-parse HEAD)" = "$M" ] || { echo "HEAD not the bound commit"; exit 9; }
 [ -z "$(git status --porcelain)" ] || { echo "porcelain not empty"; exit 9; }
+[ -f "$R/prep_ch/R1.ok" ] || { echo "R1 has not passed: no unfold (B1)"; exit 9; }
 source /pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh > "$R/logs/env-unfold.log" 2>&1
 case "$(python -V 2>&1)" in *3.11*) ;; *) echo "environment did not activate"; exit 2 ;; esac
 export TMPDIR=$R/tmp PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
@@ -27,7 +32,7 @@ JOBMEM=${SLURM_MEM_PER_NODE:-$(scontrol show job "$SLURM_JOB_ID" | grep -o 'Allo
 MEM=$(( JOBMEM * 95 / 100 / 3 ))
 NPZ="$R/inputs/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz"; BKG="$R/inputs/s5c-20260924/runs/p2/bkg_dump.npz"
 pids=()
-for t in "nuwro_ch:$R/prep/L-5D-PV/nuwro.json" "gibuu_ch:$R/prep/L-5D-PV/gibuu.json" \
+for t in "nuwro_ch:$R/prep_ch/L-5D-PV/nuwro.json" "gibuu_ch:$R/prep_ch/L-5D-PV/gibuu.json" \
          "nuwro_carbon_R2:$R/inputs/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json"; do
   task=${t%%:*}; RF=${t#*:}; SHA=$(sha256sum "$RF" | cut -c1-64)
   srun -n1 -c 42 --mem="${MEM}M" --exact --cpu-bind=cores \

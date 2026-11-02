@@ -8,15 +8,18 @@ prior reweighted by the vertex's gated shape ratio to GENIE 2.12 CV (pvl_ratios.
 prediction changes: GENCMP step A's CH combination in the generator definitions, x_CH = (12/13) x_C + (1/13) x_H
 (the committed mp3b/mp3c products), so the reference and the definitions stay as C_model's.
 
-Subcommands, each refusing to overwrite what it writes:
+Subcommands, each refusing to overwrite what it writes; each writes a receipt (V.ok, R1.ok, U.ok) only when its controls
+pass, and each later step refuses without the receipts before it (B1):
 
 * ``stage``      (login node) O_NOATIME copies of every pscratch input into <run>/inputs/ (fd_gencmp_e.cmd_stage).
-* ``vertices``   (login node) the two CH vertex files, in the gen5d form pvl_ratios reads, and config_ch.json: the
+* ``vertices``   (login node) the two CH vertex files, in the gen5d form pvl_ratios reads, config_carbon.json (the
+                 committed config, staged paths) and config_ch.json: the
                  committed config with every pscratch path pointing at its staged copy and the two vertices at the CH
                  files. Control V: the committed step-A carbon arrays are the staged carbon vertex files bitwise, and
                  x_CH is fd_gencmp.combine of carbon and hydrogen bitwise.
-* ``ratios``     (login node) pvl_ratios on config_ch.json. Control R1: the tune_v1 and genie_mec ratio files (and the
-                 latter's PC fallback) hold the committed prep's numbers (r, k), every number equal.
+* ``ratios``     (login node) pvl_ratios on the committed config (staged paths only) and on config_ch.json. Control R1:
+                 the carbon run's seven ratio files hold the committed prep's numbers (1e-12 relative); the CH run's
+                 unchanged files are the carbon run's; CH GiBUU carries the committed p_par < 10 truth cut.
 * ``unfold``     (in the one CPU job, after its three srun steps of pvl_unfold, launched as the PV ladder launched its
                  own: NuWro CH, GiBUU CH and, as control R2, NuWro carbon with the committed prep ratio) the products'
                  digests and R2: the carbon rerun reproduces the committed L-5D-PV_e_nuwro product's xsec_flat bitwise.
@@ -59,6 +62,12 @@ PRODUCTS = "pv-ladder-20261024/products"
 PREP = "pv-ladder-20261024/prep/ratios/L-5D-PV"
 RUNG = "L-5D-PV"
 CH_VERTICES = {"nuwro": gc.NUWRO_NPZ, "gibuu": gc.GIBUU_NPZ}       # step A's committed products
+STEP_A_SHA256 = {"nuwro": "63dbfa4096aa338da078fd74c1d6e477b17f8836764cbd08536b9f005c05fb04",  # fd/gencmp/INPUTS:244
+                 "gibuu": "f9244ebc66909abda82de9237f1c3aa86792d20f129ceff72ff53b562d302cd6"}  # fd/gencmp/INPUTS:245
+RATIO_FILES = ("tune_v1", "genie_mec", "genie_mec_sq", "nuwro", "nuwro_sq", "gibuu", "gibuu_sq")
+GIBUU_TRUTH_CUT = {"axis": "pz", "below": 10.0}                      # pvl_ratios.py:129-130 with config pz_max 10
+CODE_ALLOWED_TO_DIFFER = {"pvl_lib.py"}       # a307faca..: classify_cells appended, no existing line changed
+CORNER = ("genie_cv", "genie_mec", "nuwro", "gibuu")                 # the four predictions (E section 8); not mnvtune_v1
 E1 = FD / "fd/gencmp-e/rerun1/chain/chdefs"                          # E-1's readouts (#662)
 E1_SHA256 = {"with": "a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875",
              "nopl": "d9a1ce38040b8cd3c2a6deb787f8a7dc90aca5c4d3a5a8d25a60b7f8ab582ed9"}
@@ -66,7 +75,8 @@ DP = FD / "fd/with-cpl/data-product/fd_data_product_cpl.json"
 DP_SHA256 = "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50"
 BLOCK = FD / "fd/with-cpl/block/cpl_block.npz"
 BLOCK_SHA256 = "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f"
-DELTA_FLAG = 2.3                                                     # binding ruling 4 (the disclosed GiBUU rise)
+DELTA_FLAG = 2.3     # binding ruling 4: "the GiBUU rise already disclosed (2.3)" (#651 item 1's +2.3, 45 to 48); its
+                     # operand is the reported covariance's chi2: the with arm's total chi2 of the four predictions
 TOL = 1e-10
 Stop, report = E.Stop, E.report
 
@@ -121,6 +131,7 @@ def cmd_vertices(a) -> int:
     for name, npz in CH_VERTICES.items():
         carbon = staged(a.run_dir, cfg["vertices"][name]["path"])
         report("V", f"{name}: the staged carbon file is the config's", sha256(carbon) == cfg["vertices"][name]["sha256"])
+        report("V", f"{name}: step A's product is its pinned bytes", sha256(npz) == STEP_A_SHA256[name])
         with np.load(carbon, allow_pickle=True) as zc, np.load(npz, allow_pickle=False) as zs:
             arrays = ch_arrays({k: zc[k] for k in zc.files if k != "meta_json"}, {k: zs[k] for k in zs.files})
         p = out / f"{name}_ch_xsec5d.npz"
@@ -129,23 +140,44 @@ def cmd_vertices(a) -> int:
         ch[name] = (p, sha256(p))
     cc = config_ch(cfg, a.run_dir, ch)
     E.write_new(out / "config_ch.json", (json.dumps(cc, indent=1) + "\n").encode())
-    print(f"[V] {len(ch)} CH vertex files and config_ch.json written", flush=True)
+    E.write_new(out / "config_carbon.json", (json.dumps(config_ch(cfg, a.run_dir, {}), indent=1) + "\n").encode())
+    E.write_new(out / "V.ok", b"V passed\n")                          # B1: later steps require it
+    print(f"[V] {len(ch)} CH vertex files, config_ch.json and config_carbon.json written", flush=True)
     return 0
 
 
 # ---------------------------------------------------------------- ratios
 
 
+def gate(path: Path, what: str) -> None:
+    """B1: a step runs only after the receipts of the controls before it."""
+    report("G", f"{what} passed before this step ({path.name})", path.exists())
+
+
 def cmd_ratios(a) -> int:
+    """R1: pvl_ratios on the committed config (staged paths only) reproduces every committed L-5D-PV ratio file's
+    numbers (to 1e-12 relative), so the ratio path is the committed one for all three vertices, GiBUU's p_par < 10
+    truth cut included; then pvl_ratios on config_ch.json, whose GiBUU file must carry the same truth cut and whose
+    unchanged files must equal the carbon run's."""
     import pvl_ratios
-    cfg = a.run_dir / "vertices" / "config_ch.json"
-    rc = pvl_ratios.main(["--config", str(cfg), "--rung", RUNG, "--out", str(a.run_dir / "prep")])
-    report("R1", "pvl_ratios ran", rc == 0, f"rc {rc}")
-    new, old = a.run_dir / "prep" / RUNG, staged(a.run_dir, SCRATCH / PREP)
+    gate(a.run_dir / "vertices" / "V.ok", "V")
+    for tag in ("carbon", "ch"):
+        rc = pvl_ratios.main(["--config", str(a.run_dir / "vertices" / f"config_{tag}.json"), "--rung", RUNG,
+                              "--out", str(a.run_dir / f"prep_{tag}")])
+        report("R1", f"pvl_ratios ran on config_{tag}.json", rc == 0, f"rc {rc}")
+    old, car, ch = staged(a.run_dir, SCRATCH / PREP), a.run_dir / "prep_carbon" / RUNG, a.run_dir / "prep_ch" / RUNG
+    ex = ("/source", "/reference")
+    for name in RATIO_FILES:
+        bad = A.compare_numbers(json.loads((old / f"{name}.json").read_text()), json.loads((car / f"{name}.json").read_text()), ex)
+        report("R1", f"carbon {name}.json holds the committed prep's numbers", not bad, str(bad[:5]))
     for name in ("tune_v1", "genie_mec", "genie_mec_sq"):
-        bad = A.compare_numbers(json.loads((old / f"{name}.json").read_text()),
-                                json.loads((new / f"{name}.json").read_text()), ("/source", "/reference"))
-        report("R1", f"{name}.json holds the committed prep's numbers", not bad, str(bad[:5]))
+        bad = A.compare_numbers(json.loads((car / f"{name}.json").read_text()), json.loads((ch / f"{name}.json").read_text()), ex)
+        report("R1", f"CH run's {name}.json is the carbon run's", not bad, str(bad[:5]))
+    g_ch, n_ch = (json.loads((ch / f"{v}.json").read_text()) for v in ("gibuu", "nuwro"))
+    report("R1", "CH GiBUU's ratio carries the p_par < 10 truth cut, as the committed one does",
+           g_ch.get("truth_cut") == GIBUU_TRUTH_CUT == json.loads((old / "gibuu.json").read_text()).get("truth_cut"))
+    report("R1", "CH NuWro's ratio carries no truth cut", "truth_cut" not in n_ch)
+    E.write_new(a.run_dir / "prep_ch" / "R1.ok", b"R1 passed\n")
     return 0
 
 
@@ -155,18 +187,52 @@ def cmd_ratios(a) -> int:
 UNFOLDS = ("nuwro_ch", "gibuu_ch", "nuwro_carbon_R2")
 
 
+def provenance(a, rec: dict) -> dict:
+    """B2: pvl_analyze.check_meta on all three products (rung, arm, mode, inputs, ratio, features, seed, iterations,
+    threads, the refinement at R's settings, both prior guards), the two CH products against the NuWro carbon rerun's
+    code and estimator parameters; and the rerun's record against the committed vertex's: equal but for the code
+    files allowed to differ (CODE_ALLOWED_TO_DIFFER)."""
+    import pvl_analyze as PA
+    cfg = json.loads(CONFIG.read_text())["rungs"][RUNG]
+    T = PA.tasks(PVL / "tasks.tsv")
+    outd = a.run_dir / "unfold"
+    meta = {k: json.loads(str(np.load(outd / f"L-5D-PV_e_{k}.npz", allow_pickle=True)["meta"])) for k in UNFOLDS}
+    prep_ch = a.run_dir / "prep_ch" / RUNG
+    ratios_r2 = {"vertices": {"nuwro": {"ratio_sha256": sha256(staged(a.run_dir, SCRATCH / PREP / "nuwro.json"))}}}
+    PA.check_meta("L-5D-PV_e_nuwro_carbon_R2.npz", meta["nuwro_carbon_R2"], T["L-5D-PV_e_nuwro"], ratios_r2, cfg, None)
+    ref = dict(meta["nuwro_carbon_R2"], _name="L-5D-PV_e_nuwro_carbon_R2.npz")
+    for v in ("nuwro", "gibuu"):
+        ratios = {"vertices": {v: {"ratio_sha256": sha256(prep_ch / f"{v}.json")}}}
+        PA.check_meta(f"L-5D-PV_e_{v}_ch.npz", meta[f"{v}_ch"], T[f"L-5D-PV_e_{v}"], ratios, cfg, ref)
+    old = json.loads(str(np.load(staged(a.run_dir, SCRATCH / PRODUCTS / "L-5D-PV_e_nuwro.npz"), allow_pickle=True)["meta"]))
+    differ = sorted(k for k in set(old["code_sha256"]) | set(ref["code_sha256"])
+                    if old["code_sha256"].get(k) != ref["code_sha256"].get(k))
+    report("B2", "the NuWro carbon rerun's estimator parameters are the committed vertex's",
+           old["estimator_params"] == ref["estimator_params"])
+    report("B2", "its code differs from the committed vertex's only in the files allowed to",
+           set(differ) <= CODE_ALLOWED_TO_DIFFER, str(differ))
+    return {"check_meta": "passed for all three", "code_files_differing_from_the_committed_vertex": differ}
+
+
 def cmd_unfold(a) -> int:
     """After the job's three srun steps (receipts/x_e2_unfold.sh, launched as the PV ladder launched its own,
-    sbatch_pvl.sh:70-83): the products' digests, and control R2."""
+    sbatch_pvl.sh:70-83): the products' digests, control R2, and the products' provenance (B2)."""
     outd = a.run_dir / "unfold"
+    gate(a.run_dir / "prep_ch" / "R1.ok", "R1")
     report("U", "unfold.json does not exist (no overwrite)", not (outd / "unfold.json").exists())
     rec = {"products": {k: sha256(outd / f"L-5D-PV_e_{k}.npz") for k in UNFOLDS if (outd / f"L-5D-PV_e_{k}.npz").exists()}}
     report("U", "all three products exist", len(rec["products"]) == len(UNFOLDS), str(sorted(rec["products"])))
     new = np.load(outd / "L-5D-PV_e_nuwro_carbon_R2.npz", allow_pickle=True)["xsec_flat"]
     ref = np.load(staged(a.run_dir, SCRATCH / PRODUCTS / "L-5D-PV_e_nuwro.npz"), allow_pickle=True)["xsec_flat"]
     rec["R2_bitwise"] = bool(np.array_equal(new, ref))
+    try:
+        rec["provenance"] = provenance(a, rec)
+    except SystemExit as e:
+        rec["provenance"] = {"failed": str(e)}
     E.write_new(outd / "unfold.json", (json.dumps(rec, indent=1) + "\n").encode())
     report("R2", "the NuWro carbon rerun reproduces the committed L-5D-PV_e_nuwro bitwise", rec["R2_bitwise"])
+    report("B2", "every product passed check_meta", "failed" not in rec["provenance"], str(rec["provenance"]))
+    E.write_new(outd / "U.ok", b"R2 and B2 passed\n")
     return 0
 
 
@@ -191,7 +257,7 @@ def chi2_rows(readout: dict, f: np.ndarray, C_rest: np.ndarray, S: np.ndarray) -
     C = C_rest + model_abs(f, S)
     out = {}
     for p in readout["predictions"]:
-        if p["name"] == "mnvtune_v1":
+        if p["name"] not in CORNER:                  # the four corner predictions; MnvTune v1 is the prior, not compared
             continue
         cells = [int(c[1:]) for c in p["cells"]]
         g, Vg = np.zeros(f.size), np.zeros(f.size)
@@ -206,6 +272,9 @@ def cmd_chi2(a) -> int:
     import build_cmodel5d as BC
     out = a.run_dir / "chi2"
     report("C", f"{out} does not exist (no overwrite)", not out.exists())
+    for path, what in ((a.run_dir / "vertices" / "V.ok", "V"), (a.run_dir / "prep_ch" / "R1.ok", "R1"),
+                       (a.run_dir / "unfold" / "U.ok", "R2 and B2")):
+        gate(path, what)
     cm = json.loads(A.pinned(CMODEL5, CMODEL5_SHA256, "cmodel_5d.json", "C0"))
     defn_rmap, n, *_ = BC.load_definition(BC._HERE / "readouts" / "h2_definition.json",
                                           _REPO / "docs/orchestration/state/s5p/stage1/stage1_inspect.json", BC.EXPECT)
@@ -247,16 +316,20 @@ def cmd_chi2(a) -> int:
                            for k in ("total", "shape_only")} for name in carbon}
     deltas = [v[k]["delta"] for arm in res.values() for v in arm.values() for k in ("total", "shape_only")]
     dmax = float(max(abs(x) for x in deltas))
+    dflag = float(max(abs(res["with"][p]["total"]["delta"]) for p in CORNER))
     rec = {"schema": "fd-gencmp-e2/1", "S_carbon": S_c.tolist(), "S_CH": S_ch.tolist(),
-           "vertices": list(BC.VERTICES), "chi2": res, "delta_max_abs": dmax,
-           "delta_flag": {"threshold": DELTA_FLAG, "exceeded": dmax > DELTA_FLAG,
+           "vertices": list(BC.VERTICES), "predictions": list(CORNER), "chi2": res, "delta_max_abs": dmax,
+           "delta_flag": {"operand": "max |Delta| of the with arm's total chi2 over the four predictions (the reported "
+                                     "covariance)", "value": dflag, "threshold": DELTA_FLAG, "exceeded": dflag > DELTA_FLAG,
                           "rule": "binding ruling 4: above it, the director also brings Joseph the question of "
                                   "rebuilding the reported C_model on CH; no covariance changes without him"},
+           "realisation": "one pair of unfolds (seed 42), the carbon and CH priors; no unfold-to-unfold noise floor is "
+                          "estimated (the closures are not redone)",
            "unfold": rec_u, "label": "C_model with CH shape ratios for NuWro and GiBUU (generator definitions); "
                                      "GENIE+MEC unchanged; a measurement of #651 item 6's caveat, not a new covariance"}
     out.mkdir(parents=True)
     E.write_new(out / "e2.json", (json.dumps(rec, indent=1, default=float) + "\n").encode())
-    print(f"[E2] max |Delta chi2| = {dmax:.3f} (flag above {DELTA_FLAG}: {dmax > DELTA_FLAG})", flush=True)
+    print(f"[E2] flag operand {dflag:.3f} (above {DELTA_FLAG}: {dflag > DELTA_FLAG}); max |Delta| {dmax:.3f}", flush=True)
     return 0
 
 

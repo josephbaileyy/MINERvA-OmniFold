@@ -135,12 +135,26 @@ class Pins(unittest.TestCase):
         self.assertEqual(E2.sha256(E2.BLOCK), E2.BLOCK_SHA256)
         for arm, h in E2.E1_SHA256.items():
             self.assertEqual(E2.sha256(E2.E1 / arm / "readout" / "fd_g_readout.json"), h)
+        for name, npz in E2.CH_VERTICES.items():                          # S1: step A's products, pinned
+            self.assertEqual(E2.sha256(npz), E2.STEP_A_SHA256[name])
+
+    def test_the_gate_refuses_a_missing_receipt_and_passes_a_present_one(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as t:
+            p = Path(t) / "R1.ok"
+            with self.assertRaises(E2.Stop):
+                E2.gate(p, "R1")
+            p.write_text("R1 passed\n")
+            E2.gate(p, "R1")
+
+    def test_the_corner_is_the_four_predictions_without_the_prior(self):
+        self.assertEqual(E2.CORNER, ("genie_cv", "genie_mec", "nuwro", "gibuu"))
 
     def test_the_inputs_file_pins_what_the_steps_stage(self):
         pins = {Path(p).relative_to(E2.SCRATCH).as_posix() for p in gc.load_pins(E2.INPUTS)}
         cfg = json.loads(E2.CONFIG.read_text())
         want = {Path(cfg["rungs"][E2.RUNG][k]["path"]).relative_to(E2.SCRATCH).as_posix() for k in ("npz", "bkg")}
-        want |= {f"{E2.PREP}/{n}.json" for n in ("tune_v1", "genie_mec", "genie_mec_sq", "nuwro")}
+        want |= {f"{E2.PREP}/{n}.json" for n in E2.RATIO_FILES}
         want |= {f"{E2.PRODUCTS}/L-5D-PV_e_{v}.npz" for v in ("tune_v1",) + BC.VERTICES}
         self.assertTrue(want <= pins, sorted(want - pins))
 
