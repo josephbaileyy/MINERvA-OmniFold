@@ -223,10 +223,13 @@ A coverage result that lands later replaces its clause (decision item 2).
    - "(p ≥ 0.87)" is true either way. "1.17–1.24" read as the full range of the family is not established at its lower
      end.
    - Options for Joseph: keep it, or say "1.17 and 1.24 at the two ends" or "χ² ≤ 1.24".
-3. **`check_held.py` now flags G1b:paper-g-09.**
+3. **G1b:paper-g-09 is released from the hold (the director's ruling on #695).**
    - This is the old IV B sentence "The learner was selected after …", held byte-exact by the r22 round's rule.
-   - Decision item 2 orders that paragraph rewritten, so the flag follows from the decision.
-   - The other three flags are pre-existing: G1:paper-g-08, G1:paper-s-08 and G1b:paper-s-07.
+   - Decision item 2 orders that paragraph rewritten, and the director ruled that #690 stands over the hold.
+   - It is in `check_held.py` RELEASED with that reason, and `r22/STEP2-PAPER.md` records the release. Its facts are
+     ledger row Q-6.
+   - `check_held.py` is back at the three pre-existing flags: G1:paper-g-08, G1:paper-s-08 and G1b:paper-s-07.
+     `CHECK-HELD.txt` shows the same copy before the release (4 flags) and after (3).
    - G1b:paper-g-20, the A7 coverage sentence, is not flagged: it moved verbatim.
 4. **The paper is 13 pages; the base is 12.** Page 13 holds only references [25] and [26]. I did not cut a fact to win
    them back.
@@ -244,7 +247,7 @@ A coverage result that lands later replaces its clause (decision item 2).
 | `build_all.sh` | PASS: paper 13 pp, note 134 pp, primer 15 pp; no "??". The paper's one overfull box is the base's (Table III) |
 | the two-direction review (`review.md`) | nothing false. 3 Medium: 2 fixed, 1 to Joseph (point 1). 7 Low: 5 fixed, 1 to Joseph (point 2), 1 reported (the page count) |
 | the rater copy | `make_rater_copy.sh` exits 0 on the clean tree; holddiff's multiset check PASSES |
-| `check_held.py --fact-held` (`CHECK-HELD.txt`) | 4 flags: the 3 pre-existing, and G1b:paper-g-09 (point 3) |
+| `check_held.py --fact-held` (`CHECK-HELD.txt`) | the 3 pre-existing flags; G1b:paper-g-09 released (point 3) |
 | `generate_manifest.py --check --at-sha HEAD` | see the PR |
 | local CI (`run_ci.py`) | see the PR |
 | the reading copy | 21 pages: the paper's pages 4–6 and 8–12, each followed by its base page, then the new page 13; the note's new pages 67–69, with base page 67 |
