@@ -1,0 +1,123 @@
+**Review of ADDENDUM E2 and its code (head 6815238f6).** `tests/test_fd_gencmp_e2.py` gives 11 passed. Nothing was run on real data and nothing was written to the repo.
+
+I checked all 15 `INPUTS.sha256` digests against `pv-ladder/config.json`, `prep-SHA256SUMS` and `build_cmodel5d.EXPECT`: all match. The four code-pinned digests (`cmodel_5d.json`, the data product, `cpl_block.npz`, and E-1's `with` and `nopl` readouts) match the bytes in the worktree. The job's `pvl_unfold` argv matches `sbatch_pvl.sh:77-83`. The "0.2253 node-h in 811 s" figure at `LEDGER.tsv:8` is right. The `sbatch_pvl.sh:58-83` and `build_cmodel5d.py:5-10` citations are right. Cost is fine: 25 min is 0.417 node-h, under the 0.5 cap.
+
+## Question A: can a result be chosen because it looks better?
+
+**A1. The flag at 2.3 has an operand that is not pinned to the ruling, and all signed Δ are printed.** Severity: should fix before binding.
+- Ruling 4 (`BINDING.md:56-58`) says "would change the reported covariance's χ² by more than the GiBUU rise already disclosed (2.3)".
+- The only disclosed 2.3 is step A's GiBUU rise of +2.29 (`FD-GENCMP-REPORT.md:66`, "47.55 … **+2.29**"). That is the with arm, total χ², generator definitions, 8 cells.
+- The code flags on the maximum |Δ| over four predictions, two arms and two kinds (`fd_gencmp_e2.py:248-253`, `addendum:87-88`). The nopl arm, shape-only χ², and GENIE+MEC (χ² of about 229) can therefore trigger it.
+- The report prints every signed Δ, so the director could still read the ruling as "with arm, total only, GiBUU only" after seeing the numbers. That is an open choice.
+- Fix: state in the addendum which reading the flag takes, and that no other reading applies.
+- Related minor point: 2.3 is the rounded 2.29, and the same record also shows 47.78 − 45.25 = 2.53 for the analysis-definitions corner. Say which "rise" is meant.
+
+**A2. A stop has no stated rule for a rerun or repair.** Severity: should fix.
+- `addendum:79,97` say a failed control means no E2 number is used and the caveat stays. Nothing says whether E2 may be rerun, re-staged or repaired after a stop.
+- The "any control fails" row lists only (V, R1, R2, C1, C2, C3). It omits the stage, pin and product-digest checks (the S, U and C0 labels in the code). It also omits a job failure, timeout, a step that exits nonzero, or a numpy-version difference that fails C1's bitwise test.
+- A repair round after seeing which control failed is how a result gets selected. Fix: add one row. "Any other stop, or a stopped run: no E2 number, no rerun without a new binding."
+- Δ itself is never printed before the C-controls pass (`e2.json` is written after C1 to C3), so no Δ is seen on a stop.
+
+**A3. "The four predictions" are not named, and `mnvtune_v1` is excluded without saying so.** Severity: minor.
+- `chi2_rows` drops `mnvtune_v1` by name (`fd_gencmp_e2.py:194-195`). The other four are `genie_cv`, `genie_mec`, `nuwro` and `gibuu`. The addendum says only "four".
+- `mnvtune_v1` is the prediction with the largest χ² and its χ² also moves with C_model. Excluding it follows declaration §8's "four corner predictions", but the addendum should say so, since the replacement sentence reads as general.
+
+**A4. The 2.3 threshold is uninformative for large-χ² predictions.** Severity: minor, not a selection issue.
+- E-1 shows GENIE+MEC at about 229 and 278. A shift of about 1% moves it by more than 2.3 in absolute χ².
+- So the flag fires almost regardless of result. That is fixed in advance, so it is not result-dependent, but it means the flag does not discriminate.
+
+**A5. Nothing in the addendum depends on the sign of Δ in an unfixed way.** Δ = χ²_CH − χ²_carbon, and Δ_max uses the absolute value. The only sign-dependent item is the optional "rise" wording in A1.
+
+## Question B: controls and computations
+
+**B1. R2 and the other run-time controls do not gate downstream steps.** Severity: should fix before binding. This is close to blocking, given `CLAUDE.md`'s "enforce rules in code".
+- `cmd_unfold` writes `unfold.json` with `R2_bitwise` before calling `report("R2", …)` (`fd_gencmp_e2.py:167-169`).
+- `cmd_chi2` reads `unfold.json` (line 218) and never checks `rec_u["R2_bitwise"]` (lines 217-223). It also checks no receipt that V or R1 passed.
+- The job script (`x_e2_unfold.sh:30-43`) does not require R1 to have passed. `sbatch_pvl.sh:33-35` gates later jobs on a `gates/*.ok` file; this script has no equivalent.
+- If R2 fails, `chi2` still produces `e2.json` with Δ values, with a failed R2 only recorded inside it. That contradicts `addendum:79`, "Any failed control stops E2".
+- Fix: `chi2` should refuse unless `R2_bitwise` is true, and V and R1 should write pass receipts that the job and `chi2` require.
+
+**B2. The CH unfold products' provenance and prior guards are never checked.** Severity: should fix before binding.
+- The committed vertex products pass `pvl_analyze.check_meta` in `build_cmodel5d.load_products` (`build_cmodel5d.py:126`). That check covers the refinement ran at R's settings, the completeness and r-spread guards (≤ GUARD_TOL), same code and estimator params, ratio sha, seed, threads and iterations.
+- `fd_gencmp_e2.py` never calls it. It records only the sha256 of the three products (line 163) and R2's `xsec_flat` equality for the carbon rerun.
+- The two CH products could fail a prior guard, run without the refinement, or have used the wrong ratio file, and E2 would use them. Only R2 constrains the NuWro-carbon run.
+- The addendum's "same estimator settings, seed and threads" (`addendum:48`) is thus unverified for the CH runs.
+- Fix: run `check_meta` on all three products against synthetic task entries. Check each product's `ratio_sha256` against the `$R/prep` file for its task.
+
+**B3. GiBUU's domain has no run-time control.** Severity: should fix.
+- "GiBUU's p_∥ < 10 GeV/c domain … unchanged" (`addendum:46`) is checked only by a unit test of `config_ch` copying `pz_max` (`test_fd_gencmp_e2.py:77`).
+- R1 compares only `tune_v1`, `genie_mec` and `genie_mec_sq`. These share the reference and gate with the CH vertices, so they catch common-path changes. They never exercise the GiBUU truth-cut path (`pvl_ratios.py:119,129-130`).
+- R2 covers only NuWro.
+- `cmd_ratios` does not even assert `truth_cut == {"axis":"pz","below":10.0}` on `gibuu.json`, or its absence on `nuwro.json`.
+- Fix: assert the truth cut on the CH ratio files. Better, also re-derive the carbon GiBUU ratio with the same machinery and compare it to the committed `gibuu.json` (52438000…, pinned in `prep-SHA256SUMS` but not staged).
+
+**B4. Controls that can fail, and the direction each was tested in.**
+- **V:** implemented (`fd_gencmp_e2.py:89-94`), can fail, and tested both ways (`test_fd_gencmp_e2.py:47-56`). It is a strong control for the carbon arrays, the grid, and CH = combine(C, H). It does not pin step A's bytes; see S1.
+- **R1:** implemented (lines 139-149) and can fail. The comparison function is tested (`test_fd_gencmp_e2.py:84-88`), but `cmd_ratios` itself is not. It uses 1e-12 relative tolerance, not "equal" (see S3). It cannot detect GiBUU-specific defects (B3).
+- **R2:** implemented (lines 165-169), `np.array_equal`, so it can fail. No test, and not gating (B1). It covers only the NuWro path.
+- **C1:** implemented (line 216), bitwise on S, can fail. It could fail spuriously on a different numpy build, and A2 says nothing about what then. No test.
+- **C2:** implemented (lines 230-231), can fail. No test.
+- **C3:** implemented (lines 241-245) over both arms and both kinds. It can fail on a wrong `C_rest`, and the nopl arm's C_resp is also checked. No test.
+- Only V, the config repointing, `compare_numbers`, S's arithmetic, the χ² rows and the pins are tested. `cmd_vertices`, `cmd_ratios`, `cmd_unfold` and `cmd_chi2` have no tests, as `addendum:135` admits.
+- The `Chi2` tests (lines 105-128) cover one hand-built C_rest. They do not test the two arms' C_rest assembly. C3 is the only check of that, and it runs only at run time.
+
+**B5. The CH vertex changes only the target.**
+- `config_ch` repoints paths only and copies each vertex dict (`fd_gencmp_e2.py:100-113`). It keeps the reference, `pz_max` and `stat_max`, and replaces only `path`, `sha256` and `label`.
+- The CH file carries the carbon file's edges and replaces only `xsec_flat` and `sumw2_flat` (lines 95-96). It is read by `pvl_ratios.load_gen5d`.
+- `pvl_ratios`' `checked()` verifies the file against `sha256(p)`, which is computed at write time (`fd_gencmp_e2.py:129`).
+- Seed, threads and iterations match the PV ladder in the job. This part is sound, subject to B2 and B3.
+
+**B6. The job script launches like the PV ladder, with these differences.** Severity: should fix, then minor.
+- Same `srun -n1 -c 42 --mem=… --exact --cpu-bind=cores`, `mnv_guarded_run`, flags, 95%/3 memory split and environment. R2 can hold.
+- **No `-o` or `-D`:** `x_e2_unfold.sh` has no `#SBATCH -o`. Slurm writes `slurm-<jobid>.out` into the submission directory, which can be outside `$R`. This conflicts with `addendum:107`, "Writes go only under $R". The ladder passed `--output=<OUT>/logs/…` on the command line. Severity: should fix.
+- Missing `--exclusive`, `--no-requeue` and `--export=ALL,HOME=/global/homes/j/josephrb` (`sbatch_pvl.sh:3-7`). These are minor if regular is exclusive, which I did not confirm. A requeue would hit "refuse to overwrite" and be harmless.
+- The expected sha for each ratio file is computed from the file itself (line 32), not from a committed record. It is staged-and-verified for the carbon file, and for the CH files only by whatever R1 did.
+- A failed `srun` step only echoes (line 42). The `unfold` call then fails on a missing product. This is acceptable.
+
+**B7. S_CH uses `build_cmodel5d`'s own arithmetic.**
+- `factor()` (lines 176-181) is `BC.factor`'s computation using `BC.integrals`, `P.rel_shift` and `BC.VERTICES`.
+- The tune_v1 zero and the GENIE+MEC row are the committed products (`xs_ch = dict(xs_c)`, lines 219-223).
+- It is tested for equality against `BC.factor` on the real geometry (`test_fd_gencmp_e2.py:92-97`). C1 checks it on real data.
+
+**B8. The χ² recompute is right.**
+- `with` is C_e + C_resp + C_PL5D (line 232). `nopl` is C_e + C_resp (line 233).
+- `C = C_rest + diag(f) SᵀS diag(f)` (lines 184-191), with g from the readout's `g` and V_g = (sigma_Vg_over_f · f)² on each prediction's cells, which is a faithful inversion of `fd_g_compare.compare` (lines 171-172).
+- The nopl readout's C_resp came from `cresp.npz`, not `cpl_block.npz`. E2 takes `blk["C_resp"]` from the latter. The E-1 E0/XC controls passed, which implies they agree. If they do not, C3 fails closed on the nopl arm.
+
+**B9. pscratch reads and writes.**
+- The 15 inputs are read O_NOATIME by `cmd_stage` via `gc.read_noatime`, and later steps use the copies. This is correct for the data.
+- The job sources `setup_salloc_env.sh` from `/pscratch/sd/j/josephrb/MINERvA-OmniFold` (`x_e2_unfold.sh:17`) with an ordinary read. `addendum:108` says "every pscratch original is read O_NOATIME" and "every later step reads the copies". The setup script is an original read normally. The source of the deploy clone is unstated. Severity: should fix, as a statement of the exception.
+- `E.cmd_stage` does not check that `$R` is absent. `addendum:30` says it is "absent before the first step", yet the script needs `$R/deploy`.
+
+## Secondary: addendum versus code, and unsupported claims
+
+**S1. "Committed inputs, each checked against a sha256 in the code: step A's two products" (`addendum:63-64`) is false.** Severity: should fix.
+- `fd_gencmp_e2.py` pins `cmodel_5d.json`, the data product, `cpl_block.npz` and E-1's readouts. It has no sha for `NUWRO_NPZ` or `GIBUU_NPZ` (lines 52-69).
+- The files are pinned in `fd/gencmp/INPUTS.sha256:244-245`: `63dbfa40…` and `f9244ebc…`. I confirmed they match the worktree.
+- The fix is a two-line pin or a correction of the sentence.
+
+**S2. Test count and listing.** Severity: minor.
+- "11 tests" is right.
+- "every committed pin" is not exhaustive: the INPUTS test (`test_fd_gencmp_e2.py:139-145`) checks path coverage only, not digests. I checked the digests manually.
+
+**S3. "R1: every number equal" (`addendum:75`)** is 1e-12 relative (`fd_cpl_addition.compare_numbers`). Severity: minor.
+
+**S4. "Δ_max … changes the χ² by at most Δ_max" (`addendum:95`)** reads as a bound. Severity: should fix, wording.
+- It is one realisation: two unfolds with different priors, seed 42, with no estimate of unfold sensitivity.
+- R2 shows bitwise reproducibility of an identical input. It does not show how much a tiny prior change moves an unfold.
+- The closures are not redone (`addendum:141`), so there is no noise floor. Say "differs by Δ_max in this realisation" or add the limit.
+
+**S5. `addendum:8-9,95` versus the header `CANNOT AUTHORIZE: … a paper edit`.** Severity: minor.
+- Row 1 says the caveat "is replaced by" a sentence. That comes from E §8 and ruling 4, so it is already bound, but the two statements read as in tension. State that the row is E §8's.
+
+**S6. "all present (`stat`, 2026-11-02)"** (`addendum:54`) cannot be verified from here. The system date is 2026-11-01. Minor.
+
+**S7. Environment.** Minor, unverified.
+- `addendum:101` says every step runs in RE-1's environment (Python 3.11), while E-1's login steps ran in `root_6_28` (E-A1: uproot absent there).
+- I did not check whether the `fd_gencmp_e2` import closure (`s1_assemble`, `s5p_stage1_inspect`, `fd_data_product`, `fd_deposit_candidate`) runs in each.
+
+## Verdicts
+
+**A:** There is no choice left open on Δ's definition, the arm or kind set, or the sign. Three things are not closed: the flag's operand (A1), the rule after a stop (A2), and the unnamed exclusion of `mnvtune_v1` (A3). A1 and A2 should be fixed in the addendum before binding.
+
+**B:** V, C1, C2, C3, S_CH and the χ² recompute are implemented correctly and can fail. R1 and R2 can fail, but R2 does not gate `chi2` (B1), the CH products skip `check_meta` and its prior guards (B2), and the GiBUU path has no run-time control (B3). The job also writes its stdout outside `$R` (B6), and S1 is a false claim in the addendum. B1, B2, B3, B6 and S1 should be fixed before binding. I found nothing that blocks binding on its own, but B1 comes close.

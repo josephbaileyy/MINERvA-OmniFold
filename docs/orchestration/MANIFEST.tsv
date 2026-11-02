@@ -6361,6 +6361,9 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-REPORT.md	
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-BINDING.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-REVIEW-ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-REVIEW-PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-BINDING.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
@@ -6659,6 +6662,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/run
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/run1/receipts/e_cr.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/run1/receipts/e_deploy.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/run1/receipts/e_run.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/INPUTS.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/x_e2_unfold.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/INPUTS.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/figures/fd_g_fig_ratio.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/figures/fd_g_fig_ratio.pdf	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
