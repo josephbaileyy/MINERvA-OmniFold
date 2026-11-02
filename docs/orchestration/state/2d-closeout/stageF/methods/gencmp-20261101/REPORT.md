@@ -143,8 +143,8 @@ The principal lines:
 | the two-direction review (`review.md`) | no High; 3 Medium and 6 Low, all fixed or documented; no number wrong |
 | `check_held.py --fact-held` (`CHECK-HELD.txt`) | 3 flags, all pre-existing (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07), none of them this round's. The fourth earlier flag, G1b:paper-g-14, no longer fires; its source sentence is unchanged, and why its extracted text now matches was not investigated |
 | the rater copy's holddiff | multiset VERDICT PASS (the same words); the ordered diff shows one "the" at a different reading-order position near the acknowledgment hold span, with no word added or lost; its cause in the extraction was not investigated |
-| `generate_manifest.py --check --at-sha HEAD` | see the manifest commit |
-| local CI | @CI@ |
+| `generate_manifest.py --check --at-sha HEAD` | OK after the `[manifest]` commit, which adds the round's nine new files |
+| local CI (`run_ci.py`, on the reflowed tree) | 38 of 38 steps pass. The first run failed step 33 (`reflow_tex.py --note`): a new comment block spanned several lines. The reflow is committed, and the typeset note text is byte-identical before and after it |
 
 **Not run:** agy and P1. The director named the checks of #638 (ledger, review, check_held, build_all).
 
