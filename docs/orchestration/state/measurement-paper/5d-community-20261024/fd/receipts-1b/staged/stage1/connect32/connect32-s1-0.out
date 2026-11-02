@@ -1,0 +1,36 @@
+host=login37 start=2026-11-02T16:15:34Z
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2189.6            10000.0     17949.1      20000.0
+balance_node_h=2050.9 half=1025.5 cap=73.0
+deploy porcelain_lines=0 head=24c83ab839647dd5113847f3de11447eecd9c10e
+blob 74aa8daced207af0ea8e3b5e0d3136e5535f76a1 nd-unfolding/fd_1b_mc.py
+blob 0b08d17384642a6382f2c8069bd29fa2b0ef123f nd-unfolding/tests/test_fd_1b_mc.py
+blob 71ca615a67dfbd098852dd713677ad3179617ff6 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py
+blob 6ca37839374afa3fdf1c43c0ed6e13039409cad9 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/mutation_mc.py
+blob 3004edbcf6112c6d9813459f6b51bc88b70a6d2f docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/mutation_mc.out
+blob 1810161d53c6b849d0dce7fb506d88d551d89900 nd-unfolding/fd_1b_null.py
+blob 31a88850a7999884150fef402fb0f22cba9005ed nd-unfolding/fd_1b_moded.py
+fd_1b_mc.py sha256 1a2f825fe4a7f31e800fab96d12fd97e210ea89f11cb0e395bd2bb99ef379a4a
+pinned=701 named=7
+sources=1513 i0_in=397 i2_unf=408 unique=1513
+stat-before lines=1513
+{"out": "/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz", "source_sha256": "5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb", "n_ref": 14, "n_univ": 100}
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:09.50
+	Maximum resident set size (kbytes): 183436
+	Exit status: 0
+flux_universes.npz sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5
+{"out": "/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/receipt.json", "step": "receipt", "verdict": "STOP"}
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:26:25
+	Maximum resident set size (kbytes): 11764112
+	Exit status: 0
+receipt verdict STOP bound 10.0 n_draws 900 cap 250000
+single max_abs_ratio {'wt': 429.5894769478108, 'wr': 429.5894718232873, 'bkgw': 44.766123118569446}
+composite wt all_draws_max 269.5234600905809 all_draws_rows_above 2477 declared {'evaluated': True, 'rows': 2477, 'max': 255.0178018086916, 'rows_above': 161}
+composite wr all_draws_max 276.91343322751277 all_draws_rows_above 17835 declared {'evaluated': True, 'rows': 17835, 'max': 251.75113619297562, 'rows_above': 799}
+composite bkgw all_draws_max 26.46274693954427 all_draws_rows_above 465 declared {'evaluated': True, 'rows': 465, 'max': 23.644100769452916, 'rows_above': 24}
+composite denom all_draws_max 7.157775658179456 all_draws_rows_above 0 declared {'evaluated': True, 'rows': 0, 'max': None, 'rows_above': 0}
+atime moved [] opened 706
+STOP: the receipt holds the bulk
+end=2026-11-02T17:43:36Z

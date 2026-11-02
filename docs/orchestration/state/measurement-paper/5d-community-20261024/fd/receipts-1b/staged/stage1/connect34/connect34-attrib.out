@@ -1,0 +1,16 @@
+host=login23 start=2026-11-02T19:25:38Z
+deploy porcelain_lines=0 head=24c83ab839647dd5113847f3de11447eecd9c10e
+fd_1b_mc.py sha256 1a2f825fe4a7f31e800fab96d12fd97e210ea89f11cb0e395bd2bb99ef379a4a
+n1_attrib.py sha256 954b44c89b3b7a2acb69956664e6a07ebea7de4b2a4afd3350f99fec5978f2f4
+/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/receipt.json sha256 c8fcd7f97b95ae39824d3cea476782f46dcef5fdcdde54f325d8906607b2abed
+/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5
+stat-before lines=1513
+{"out": "/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/attrib/n1_attrib.json", "mismatches": [], "atime_moved": []}
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:03:19
+	Maximum resident set size (kbytes): 10969536
+	File system inputs: 272582136
+	Exit status: 0
+n1_attrib rc=0
+c7da3aa4129eeced710e34840d47c4105c8a59ba9aaaf7e8788896016dbd6681  /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/attrib/n1_attrib.json
+sources atime/mtime/size: UNCHANGED (1513)
+end=2026-11-02T20:29:03Z
