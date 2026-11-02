@@ -1,0 +1,11 @@
+deploy ok at 1d936338d55645a5204c39ff9b02ea3290496003
+env 3.11.14 1.26.4 3.10.8
+tests rc=1 Ran 43 tests in 10.665s FAILED (errors=9) 
+== stage 2026-11-02T02:50:36Z
+stage rc=0 2026-11-02T02:50:37Z
+== materialize 2026-11-02T02:50:37Z
+materialize rc=0 2026-11-02T02:50:38Z
+== chain 2026-11-02T02:50:38Z
+chain rc=0 2026-11-02T02:51:33Z
+porcelain after: empty
+end 2026-11-02T02:51:34Z

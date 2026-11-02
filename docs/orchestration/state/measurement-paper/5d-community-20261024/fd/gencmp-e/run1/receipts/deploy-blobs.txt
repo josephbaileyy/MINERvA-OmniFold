@@ -1,0 +1,6 @@
+07899d161bdb84fe6e6b549a3b8ee5886dde77a7 nd-unfolding/fd_gencmp_e.py
+9e0272fab22643749df64ea91a6727130a77c9f5 nd-unfolding/fd_gencmp.py
+51b77bb53b195d622b66bf4daad902e45f09a66c nd-unfolding/fd_g_figures.py
+fdaa9dc13c983249d385d16425aff26bdf235097 nd-unfolding/fd_g_figures_check.py
+fe60ff68344facab0436f2befd97ced6a490d477 nd-unfolding/tests/test_fd_gencmp_e.py
+728e7812efe47b71da102f7a180fd7870e2cfb60 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/INPUTS.sha256

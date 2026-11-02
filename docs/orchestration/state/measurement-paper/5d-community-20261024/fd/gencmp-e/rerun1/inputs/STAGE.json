@@ -1,0 +1,174 @@
+{
+ "schema": "fd-gencmp-e-stage/1",
+ "copied": {
+  "2d-closeout-re2-20261023/partb/out/ER/xsec.root": {
+   "sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+   "atime_unchanged": true
+  },
+  "2d-closeout-re2-20261023/partc-r2/combination/s5_plus_playlist.npz": {
+   "sha256": "b57d6c96fb143952f82f6466c36f017ad17327983618f837eff97364c8c33440",
+   "atime_unchanged": true
+  },
+  "2d-closeout-re2-20261023/partc-r2/playlist/playlist_term.npz": {
+   "sha256": "dbb067aa3c1085b2c40b89c5ace165eadb5721148d72eb1496edc14c3a5a7b1e",
+   "atime_unchanged": true
+  },
+  "MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt": {
+   "sha256": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2",
+   "atime_unchanged": true
+  },
+  "cresp-20261026/out/cresp.npz": {
+   "sha256": "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/genie_cv_ana_s202611011.npz": {
+   "sha256": "1b88cb6219b1808f662cda2d3d46a32bcb5e4001ee8e8debeb49317e1cffbba2",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/genie_cv_ana_s202611012.npz": {
+   "sha256": "92ef433d93a3342f5edc50ab45caf03c6893f773ee55a525abbdc620d6e67aeb",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/genie_cv_ana_s202611013.npz": {
+   "sha256": "8282d80bb0326c848ef1f233f2d44a8f7233a2312be7f4f08c0a99bf8e7263d1",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/genie_cv_ana_s202611014.npz": {
+   "sha256": "ecea7eb2123fa25dbbac333648f36f5ef731bf47720c3137bb12142655d92495",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/genie_cv_ana_s202611015.npz": {
+   "sha256": "af337fbcfb0fa6a64f8b5f46dec3cbbdcead363e96b9a4b8a02b83c1197f6b5d",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/genie_mec_ana_s202611011.npz": {
+   "sha256": "2aeb2913948d31fec39b4b351be1b2a5d216a8e502ed4a444cf8f240569b55c5",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/genie_mec_ana_s202611012.npz": {
+   "sha256": "5caf4a7a9496e31cfd12a8ab3b7a43b7afc089aaf01d25b2ab21f6e944706fe6",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/genie_mec_ana_s202611013.npz": {
+   "sha256": "c98d67ff3c8c9e1167be71b5dd069301fe219a30bf5ad92286dd9a46d134cfa8",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/genie_mec_ana_s202611014.npz": {
+   "sha256": "a139bfb5a5117f4ebf06c53835ec0f9a3f8ed0c8ba0029e6b0bc34612c9c47d1",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/genie_mec_ana_s202611015.npz": {
+   "sha256": "e13d77e4a982c481915576b7e135475a893ff1cec4fc9cae0770de6b99f4172b",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/gibuu_C12_ana_s202611011.npz": {
+   "sha256": "07077d8f5b3a2123b9cabe62fd55a42e09d6006e40c2d3c6d476090e890aa774",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/gibuu_C12_ana_s202611012.npz": {
+   "sha256": "532493b8cbe0465bd71fc847541ac56a8cf2c1c7ffbca2847f6debff51bfde3f",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/gibuu_C12_ana_s202611013.npz": {
+   "sha256": "df35456b14f551a50bb547a17c4502117bf4258dde6c52ae9b042132fc3bd21b",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/gibuu_C12_ana_s202611014.npz": {
+   "sha256": "686d176c016c2eec1a468d5d26da358b7e7f4301938638e53f8feae99927e885",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/gibuu_C12_ana_s202611015.npz": {
+   "sha256": "d484a95a0086299b335aa6197d0fd33835112596e6e7acab8a684ecee8a46882",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/gibuu_H_ana_s202611011.npz": {
+   "sha256": "bb451a4477566ef39c91064059ceea60179a1d02f28e838633730c9bd18c003c",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/gibuu_H_ana_s202611012.npz": {
+   "sha256": "b5a0b6a9bbdfd06c13e4d332221f53d7a38900df85eb59a71e94456a487d0a64",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/gibuu_H_ana_s202611013.npz": {
+   "sha256": "7c14049e6ea0dbacd42537bd3a86b3f2717700c679674a00cde9e42b9fa50a27",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/gibuu_H_ana_s202611014.npz": {
+   "sha256": "1ddca10a914e5e0a455d3e8fae4dc9c761463fdec39d0ed3f0d619e42476a440",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/gibuu_H_ana_s202611015.npz": {
+   "sha256": "74a58bb06c7739097679de815f5b4e1c3d2a362724775316ff1dd8681a7c3be7",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/nuwro_C12_ana_s202611011.npz": {
+   "sha256": "596bfecabcad9a2add10937e2af23bdef5bc4644f3ccda9051bc2129d8a40484",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/nuwro_C12_ana_s202611012.npz": {
+   "sha256": "a4ad0b0a5fa059f7ab831d22e57fd8fd3f9f0f26468edbb36adfcf1df86d62b4",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/nuwro_C12_ana_s202611013.npz": {
+   "sha256": "cc25772b00235ba209be8c41228a3dc667127b15a7fe4c6aee3d6956653ea2c9",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/nuwro_C12_ana_s202611014.npz": {
+   "sha256": "dd8cd9dfc7c7549be92a76b01c01db27a240faa7f33508540ae72c9985c817a1",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/nuwro_C12_ana_s202611015.npz": {
+   "sha256": "8b065863e3c679185f177505a7b08571cb5fcaececd887853173ce011f32492e",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/nuwro_H_ana_s202611011.npz": {
+   "sha256": "add193f2430984f8a79efac47ca4d64c8c232a6ca7ba40646849fbabec442740",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/nuwro_H_ana_s202611012.npz": {
+   "sha256": "d6c8cef05d14b3d5d60057a2c149d2c8da6ba0a93fd84f3f46305bd83e9e988f",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/nuwro_H_ana_s202611013.npz": {
+   "sha256": "38594b6081d6de07c4257c9f3c33af3b253ff82980f97716c0d3282a6e776e97",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/nuwro_H_ana_s202611014.npz": {
+   "sha256": "b61af0e121a3eecc43ae416ac21cad27ff4809fb1089aaead4cd01b9152efb6b",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/nuwro_H_ana_s202611015.npz": {
+   "sha256": "3737f9e11d25d58abc9c258be5a2b33d92d756567e79722ac753ceda1aee8abd",
+   "atime_unchanged": true
+  },
+  "gencmp-20261101/b/out/rebuild.json": {
+   "sha256": "e2ba8d54cfbd122d1951613aea82121422708c96fcf4f66edd6bd55797a4ccca",
+   "atime_unchanged": true
+  },
+  "s1-20261024/s1_assembly.npz": {
+   "sha256": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+   "atime_unchanged": true
+  },
+  "s5p-20260926/gen5d/mnvtune_v1_xsec5d.npz": {
+   "sha256": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c",
+   "atime_unchanged": true
+  },
+  "s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz": {
+   "sha256": "cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2",
+   "atime_unchanged": true
+  },
+  "s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz": {
+   "sha256": "c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f",
+   "atime_unchanged": true
+  },
+  "s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz": {
+   "sha256": "48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18",
+   "atime_unchanged": true
+  },
+  "s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz": {
+   "sha256": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070",
+   "atime_unchanged": true
+  }
+ },
+ "atime_deviations": []
+}
