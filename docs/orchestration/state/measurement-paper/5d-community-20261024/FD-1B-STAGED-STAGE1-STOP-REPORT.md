@@ -40,8 +40,8 @@ whose composite |a_D| / max_j |a_uj| exceeds N1's bound of 10, in three of the f
   The 1,513-path stat list is unchanged after the receipt (connect 33) and after the attribution (connect 34).
 - **A defect in binding 2's bound code, masked by the STOP (D2, §5; found by `coverage-5b-audit`).** A toy draws its
   pseudo-data with `rng.poisson`, which refuses a negative mean. Two universes, LowQ2_1 and HighQ2_1, carry negative
-  weights, and the product rule keeps the sign. So 684 of the 900 declared toys would have refused. Had N1 passed,
-  the bulk would have failed on most of its toys.
+  weights, and the product rule keeps the sign. So 684 of the 900 declared toys would have refused, S1-0's one toy
+  (G18 3,620,000) among them. Had N1 passed, D2 would have stopped stage 1 at S1-0.
 - **Deviations and errata:** §5.
   - My amendment under-stated the receipt's read volume (erratum E1). The receipt read 68.4 GB of universe files, not
     26.6 GB, five times by the code, with about 208 GB measured.
@@ -250,8 +250,11 @@ The draws are the same construction at every truth, so this is the draws' spread
    - **Why nothing caught it.**
      - The central, seed, block and stat roles draw at the mean (`_MeanRNG`) or use the real data. So do S1's own
        universe unfolds, which is why S1 ran with these weights.
-     - S1-0's pilot holds one toy (G18 3,620,000). The plug-in pilot has no AR23 toy. The S1-0 readout would have
-       shown it only if that seed drew either universe.
+     - S1-0's pilot holds one toy, G18 3,620,000 (`PILOT_COMMON`). Its draw holds both HighQ2_1 and LowQ2_1. The
+       audit found this with `draw_for_seed`, and it is reproduced here: the interaction draw does not depend on
+       the flux probabilities. That toy would have raised, and `main` maps the `ValueError` to rc 4. S1-0's controls
+       would then have failed, and ruling 6 would have held the bulk. **So D2 would have stopped stage 1 at S1-0,**
+       had N1 passed, at most 1.0 node-h in.
      - No test sends a negative composite through `toy_experiment`.
    - **Its standing.** A defect, reported unrepaired. It does not change the STOP, which comes first. Any redesign must
      state what a toy does with a negative expected count. That is a method choice for the director and Joseph (the
