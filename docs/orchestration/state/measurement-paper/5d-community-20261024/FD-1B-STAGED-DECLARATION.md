@@ -1,6 +1,24 @@
-# DECLARATION 1B staged method coverage, revision 1: stage 0 κ as the hard gate, then held-out-tune coverage with the covariance remade at each truth (2026-11-01)
+# DECLARATION 1B staged method coverage, revision 2: stage 0 κ as the hard gate, then held-out-tune coverage with the covariance remade at each truth (2026-11-01)
 
 **By** the measurement session `coverage-5b`, for `coverage-5b-audit` to review and the director to bind.
+
+**What changed from revision 1** (head `589cfcbc`), on `coverage-5b-audit`'s review (issuecomment-6570466640),
+upheld by the director:
+- **R1.** §4.5's power argument now rests on the estimator's prior dependence, measured by I2's mode C (C/A median
+  0.476), not on F_truth, and it states what is expected at first order if the procedure is sound.
+- **R2.** §5.2's null is no longer the Gaussian P₀. It is simulated from the declared draw laws under an exactly
+  matched C_T, by a declared function (`nd-unfolding/fd_1b_null.py`, new here with 23 tests and an 18-of-18 mutation
+  receipt), evaluated at each truth before any toy error is read.
+  - The family size per truth is now ≤ 0.05 by construction (0.025 over the cells, 0.025 joint), against revision 1's
+    0.074. Across truths it is ≤ 0.10, or ≤ 0.15 with the plug-in.
+  - `arith.py` checks the null at the data's point from committed readouts, with the lateral split bracketed.
+- **R3.** §4.2 states one composition rule. It reduces exactly to S1's single-universe arrays and keeps S1's
+  treatment of zero, negative and non-finite weights. §9 adds a bitwise control against κ's nature, and binding 2's
+  first receipt counts the rows where the rule departs from a pure product.
+- **M1:** every flag gets a bias-versus-width attribution (§5.1), and §5.4 adds the predicted offset of the
+  un-centred draws. **M2:** sizes are stated per truth and across truths (§5.2), and clause F carries them (§12).
+  **m1:** clause P's χ² carry-over needs ndf = 16. **m2:** §6's control (b) is labelled a plumbing check.
+- **Stage 0 is untouched** and stays byte-identical to `55435ec0`.
 
 **What changed from revision 0** (head `466b6ac7`), on the director's two points before the audit's review:
 - **Point 1.** A pass carries over to the procedure's full covariance at the ensemble's truth T, not to the reported
@@ -174,10 +192,40 @@ unfolded once.
 | normalization | x̂ × (1 + 0.014 z), z ~ N(0, 1) | S1's 1.4 % |
 | seed | not drawn. The estimator seed is 42, and S1 measured the block as exactly zero | S1-REPORT §7 |
 
-**Composition.** When several universes are drawn together, their weight ratios to the CV multiply, row by row: truth
-weight, reco weight, background weight and the denominator's per-event weight (tdw). This is how
-`ne.ModelCache.product` already composes reco and truth factors. There is at most one flux universe, and it sets the
-flux histogram. Non-finite weights are zeroed, as S1's loader does.
+**Composition: one rule (revision 2, the audit's R3).**
+
+**Loading.** Each drawn universe's arrays are first loaded exactly as S1's block and κ load them:
+`s5p_universe.weights(bank, tag, nonfinite="zero")` (the detector dump for the detector bands), then
+`s5p_universe.universe_inputs`. So non-finite weights are zeroed, and negative weights are kept.
+
+**The rule.** Take a draw D = (u₁, …, u_k) in `fd_1b_toys.draw`'s order: the flux universe, the interaction bands
+sorted, then the detector bands. Each per-row array a ∈ {w_truth, w_reco, bkg_w, tdw} composes as follows.
+- **On rows where a_CV ≠ 0:** a_D = a_{u₁} ⊙ Π_{j≥2} (a_{u_j} / a_CV). Negative ratios are kept, and nothing is
+  clipped.
+- **On rows where a_CV = 0,** where no ratio exists: a_D = a_{u₁} + Σ_{j≥2} a_{u_j}.
+
+**What it reduces to.** For k = 1 the product and the sum are empty, so a_D = a_{u₁} exactly. A single drawn universe is
+therefore S1's and κ's nature bitwise. This is a §9 control and a test in binding 2.
+
+**The other arrays:**
+- **The denominator** is `s5p_universe.denominator` of the composite tdw, as `universe_inputs` builds it.
+  - A detector-dump universe that carries its own `denom_nd` histogram enters by its cell ratio to the CV's
+    histogram, on cells where the CV is > 0. For k = 1 this again gives `universe_inputs`' array.
+  - Binding 2's first receipt compares each detector universe's `denom_nd` with the CV's. If they are bitwise equal,
+    the factor is 1 and the branch is inert, and the receipt says which.
+- **The flux histogram** is the one flux universe's (`flux_universe_bins`), as in `universe_inputs`.
+
+**Not used:** the `ne.ModelCache` / `checked_ratio` path (ratio 1 where the CV ≤ 0, negatives clipped, no tdw), which
+revision 1 named by mistake.
+
+**Counted before S1-0, in the real bank, by binding 2's first receipt (login node, 0 node-h),** per universe and
+array:
+- rows with a_CV = 0 and a_u ≠ 0;
+- rows with a_CV < 0;
+- rows with a_u < 0;
+- rows non-finite before zeroing.
+
+These are the rows where the rule departs from a pure product of ratios, or where S1's loader alters a weight.
 
 **Each toy's truth** is the nature's own: `true_xsec` over the composite truth weights × r_T, with the composite
 denominator and the nature's flux. The error is **e = U x̂ − U x_true**, after the lateral and normalization
@@ -228,7 +276,11 @@ with covering errors the toys never contain.
 - Both are positive semi-definite. Adding them makes every per-cell interval wider and every χ² smaller
   ((C + P)⁻¹ ≼ C⁻¹).
 - **So a pass carries over to the procedure's full covariance at T:** C_T + C_resp(T) + C_PL,5D(T), every block at
-  the ensemble's truth T. A cell or χ² region that covers under C_T also covers under that matrix.
+  the ensemble's truth T. A cell that covers under C_T also covers under that matrix.
+  - The χ² region carries over only when both matrices have ndf = 16 (the audit's m1). With a rank-deficient C_T, the
+    non-null χ² drops components the full-rank matrix counts, and the χ² quantile changes with ndf.
+  - S1's C_total has rank 16 at 10⁻¹² (`s1_assembly.json`), so the condition is expected to hold. It is checked, not
+    assumed.
 - **It does not carry over to the reported covariance,** which is made at the data's point. The block's dependence on
   the truth at which it is made is the finding that led here (I2's F_truth, §7). Nothing in stage 1 relates C_T to the
   matrix made at the data.
@@ -245,62 +297,142 @@ The 5D lateral dumps no longer exist, so the lateral bands cannot be remade at a
 - **So the lateral block is carried at each truth, not tested.** Its share of S1's C_total trace is 0.1406
   (`FD-1B-DECLARATION.md` §3). Every report and the paper text (§12) state this.
 
-### 4.5 Why stage 1 can fail (inference, not measured)
+### 4.5 Why stage 1 can fail (inference, not measured; revision 2, the audit's R1)
 
-Write the estimator to first order about the nominal MC m₀ as U(d; m) ≈ T(m) + R(m)(d − d(m)). Take a universe u,
-with δ = m_u − m₀.
-- **At T = nominal,** S1's shift and the toy's error are equal and opposite (#655 §3.2). That is why κ = 1 at first
-  order.
-- **At T ≠ nominal,** the remade block's shift carries an extra term, δR · (d_T − d(m₀)): the response's change times
-  the truth's departure. The toy's error is R₀ Δd_T − ΔT_T, with both Δs at T.
-- **Closure fixes no first-order relation between them** off the diagonal, so stage 1 is a test with power to fail
-  in either direction.
-- **No outcome is predicted.** I2's F_truth (median 0.68 between the nominal and data points) shows that the
-  interaction block moves materially with the truth, and that is all this inference rests on.
+**The setup.** Write B(m_n, m_s) = U(D(m_n); m_s) − T(m_n): the estimator's error when nature is m_n and the
+unfolding uses the simulation m_s. Closure is B(m, m) = 0 for every m.
+- At truth T, a toy drawing universe u has error B(m_T ⊕ u, m₀).
+- The remade block's shift for u is B(m_T, m_u) − B(m_T, m₀).
+
+**The invariance.** Take an estimator that depends on the simulation only through its response p(reco | truth):
+prior-independent.
+- Then B depends on (m_n, m_s) only through the difference of their responses, and vanishes when they agree.
+- Stage 1's truths are truth reweights, so they leave the response unchanged. A universe changes the response by the
+  same δK on m_T as on m₀.
+- **So at every T,** the toy's error and the remade shift are equal and opposite at first order, band by band, as on
+  the diagonal (#655 §3.2).
+- **The block's truth dependence (I2's F_truth) sits on both sides of that equality,** so it gives no power. It is
+  dropped as a ground.
+
+**Where the power comes from: the prior dependence.** That is the estimator's response to the simulation's truth
+distribution at a fixed response.
+- I2's mode C measures it directly. Mode C is a pure prior reweight (`fd_1b_inv.prior_mc`), and a prior-independent
+  estimator gives C = 0.
+- `i2.json`'s `prior_share_C_over_A` has median **0.476**, range 0.156–1.390 over the 16 cells (`arith.out`).
+- The prior enters the toy's error and the remade shift with different weights once m_T ≠ m₀. The difference is first
+  order in the truth's departure times that sensitivity, and it can go in either direction.
+- The same prior dependence sets the zeroth-order term B(m_T, m₀), F1's bias.
+
+**What is expected at first order if the procedure is sound** (the covariance procedure describes the error at T):
+- each cell's in-interval count is consistent with the draw-matched null p_c(T) of §5.2, and the joint count with
+  q(T);
+- the toys' mean error is B(m_T, m₀) plus the un-centred draws' offset (§5.4). It is C_model's term that must absorb
+  B(m_T, m₀);
+- departures are expected first where the prior share is large and the tune departs most from the nominal.
+
+**No outcome is predicted.**
 
 ## 5. Grading, fixed before any number is read
 
-All thresholds are computed by `arith.py` and committed in `arith.out`. They are not retyped by hand in code: §11's
-scorer imports them or recomputes them with the same function and checks the values.
+**One implementation.** Every threshold is computed by `nd-unfolding/fd_1b_null.py`:
+- at each truth, from its null, by §11's scorer, which imports the module;
+- here, by `arith.py`, which imports it too and checks its binomial duality against scipy's Clopper–Pearson.
+
+The module's tests and mutation receipt are in this PR. The numbers below are committed in `arith.out`.
 
 ### 5.1 Statistics per truth T, over its 300 toys
 
-- **Per-cell in-interval fraction** p̂_c = #{t : |e_tc| ≤ σ_c} / 300, with σ_c = √(C_T)_cc. The nominal content is
-  P₀ = erf(1/√2) = 0.682689.
+- **Per-cell in-interval fraction** p̂_c = #{t : |e_tc| ≤ σ_c} / 300, with σ_c = √(C_T)_cc. It is read against the
+  draw-matched null content p_c(T) of §5.2, not against the Gaussian P₀ = erf(1/√2) = 0.682689, which is printed
+  beside it.
   - It is reported with its Clopper–Pearson interval at 95 %, two-sided.
 - **χ² on the non-null subspace.** Eigendecompose C_T and keep the eigenvalues above 10⁻¹² of the largest (S1's
   rank convention, S1-REPORT §4). Then χ²_t = Σ_k (v_kᵀ e_t)² / λ_k over the kept k, with ndf the number kept.
   - If ndf = 16, the code checks that χ²_t equals the Cholesky χ² the paper uses (`paper_body.tex`, "Every χ² …
     by Cholesky decomposition") to 10⁻⁹ relative, or INVALID.
-- **The joint in-region fraction** q̂ = #{t : χ²_t ≤ F⁻¹_{χ²(ndf)}(P₀)} / 300, with its Clopper–Pearson interval.
-- **Pulls,** per cell: the mean and standard deviation of e_tc / σ_c, with their standard errors. These are
-  descriptive.
+- **The joint in-region fraction** q̂ = #{t : χ²_t ≤ F⁻¹_{χ²(ndf)}(P₀)} / 300, with its Clopper–Pearson interval. It
+  is read against the null's q(T).
+- **Pulls,** per cell: the mean and standard deviation of e_tc / σ_c, with their standard errors.
+- **The bias-versus-width attribution, for every flagged cell** (the audit's M1; `fd_1b_null.attribute`):
+  - the pull mean and the pull standard deviation, with their standard errors;
+  - the count of the centred errors, #{|e_tc − ē_c| ≤ σ_c}.
+  - The reading is fixed now:
+    - **"bias"** if the centred count is not flagged;
+    - **"width"** if it is flagged and the pull mean is within 2 standard errors of 0;
+    - **"both"** otherwise.
+  - A flag from a bias inside an MSE-exact C_T is real under-coverage at that truth, but a different finding from
+    "too narrow". The attribution names which.
 - **Mean χ²/ndf** with its standard error (0.020 at ndf 16 for an exact χ²). Descriptive.
-- **The under-coverage factor,** per cell: k_c = Q_{P₀}(|e_tc|) / σ_c, the scale σ_c would need for the content P₀.
-  Descriptive. It is the "by a factor" of §12's failure text.
+- **The under-coverage factor,** per cell: s_c = Q_{p_c(T)}(|e_tc|) / σ_c, the scale σ_c would need to hold the null
+  content. Descriptive. It is the "by a factor" of §12's failure text.
 
-### 5.2 The rule, per truth
+### 5.2 The rule, per truth (revision 2: a null matched to the draws)
+
+**Why not P₀.** The declared draws are partly two-point: 32 pair and 4 detector bands at ±endpoints, 2p2h at one of
+3, and the 5 lateral bands at s_b = ±1. A sum dominated by one two-point term holds less than P₀ inside its own exact
+σ. In the audit's bracket, with one lateral band carrying the lateral block, R00, R01 and R12 would hold 0.648–0.658
+under an exactly correct covariance. Against P₀, the per-truth false-flag rate would then be about 0.14, not the
+declared 0.035.
+
+**The null, a declared function of the remade blocks** (`fd_1b_null.null_contents`), evaluated at each truth T after
+the remade blocks exist and **before any toy error is read**:
+- **The laws.** Each drawn band is a discrete law: its universes' centred shift vectors at T, with their draw
+  probabilities.
+  - A pair band's two endpoints at ½ each, 2p2h's three at ⅓, the 100 flux universes at w_u / Σw, a detector band's
+    two endpoints, and a lateral band's ±Δ_b(T)/2.
+  - Centring removes the probability-weighted mean, so each law's covariance is its band's block exactly. The tests
+    check this against `s1_assemble.mat_cov`.
+- **The Gaussian part.** Stat, normalization and C_model_abs(T) are one Gaussian with their summed covariance.
+  - C_model is in the null's error on purpose. The rule asks whether C_T's intervals hold their nominal content given
+    the draws' shape, and a Gaussian share holds P₀ by definition.
+  - Leaving C_model out of the error, as the audit's bracket did, would raise the null to about 0.75 where C_model is
+    large. The rule would then flag the bias C_model is built to absorb.
+- **The match.** The components must sum to C_T to 10⁻¹² relative, or the null refuses (`check_matched`).
+- **The simulation.** 2,000,000 error vectors at seed 3,642,000 give p_c(T) per cell and q(T) for the χ² region.
+  - The Monte Carlo standard error is at most 3.3 × 10⁻⁴.
+  - Each flag count is computed at the content minus 3 standard errors. That can only lower the count, and so the
+    false-flag rate.
+- **Where it runs:** in the readout on a login node, at 0 node-h.
 
 | reading | condition |
 |---|---|
-| **cell c under-covers** | #{|e_tc| ≤ σ_c} ≤ **181** of 300. Equivalently, the one-sided Clopper–Pearson upper bound at 1 − 0.05/16 = 0.996875 is below P₀ (Bonferroni over the 16 cells) |
-| **joint under-coverage** | #{χ²_t in region} ≤ **190** of 300. Equivalently, the one-sided upper bound at 0.95 is below P₀ |
+| **cell c under-covers** | #{|e_tc| ≤ σ_c} ≤ k_c(T), the largest k with P(Bin(300, p_c(T)) ≤ k) < 0.025/16. This is the exact one-sided Clopper–Pearson duality, with Bonferroni over the 16 cells |
+| **joint under-coverage** | #{χ²_t in region} ≤ k_J(T), the largest k with P(Bin(300, q(T)) ≤ k) < 0.025 |
 | **COVERS at T** | no cell under-covers, and there is no joint under-coverage |
 | **UNDER-COVERS at T** | otherwise. The report names each cell and states whether the joint fraction is under too |
 | **INVALID at T** | any §9 control fails for T. Reported unrepaired; the other truths are still graded if their controls pass |
 
 **The rule is one-sided.** Over-coverage is reported, but it is not a failure:
-- a cell **over-covers** if its count is at least **227** (the lower bound at 0.996875 is above P₀);
+- a cell **over-covers** if its one-sided lower bound at 1 − 0.025/16 is above p_c(T). At p_c = P₀ that is a count of at
+  least 229;
 - C_model is an unscaled envelope, so over-coverage where it dominates is expected, and the paper text states the
   fractions (§12).
 
-**Size and power** (`arith.out`):
-- At true content P₀, the chance of a cell flag is 0.0022 per cell, and 0.035 over 16 independent cells. A joint flag
-  has chance 0.039.
-- A cell is flagged with probability 0.57 at true content 0.60, 0.81 at 0.58 and 0.97 at 0.55.
-- The joint fraction is flagged with probability 0.70 at 0.62 and 0.89 at 0.60.
-- **So stage 1 resolves under-coverage of about 0.08–0.10 in content per cell, or 0.06 jointly.** Smaller deficits can
-  pass, and the report states the resolution beside any COVERS.
+**Size** (the audit's M2):
+- **Per truth,** the family (16 cell flags and the joint flag) has size at most 0.025 + 0.025 = **0.05** by the union
+  bound, whatever p_c(T) and q(T) turn out to be. `fd_1b_null.size` prints the exact sum at the null for each truth.
+- **Across truths,** at most **0.10** for the two tunes and **0.15** with the plug-in. A "one tune under-covers"
+  outcome carries that size.
+- **Revision 1's rule,** 0.05/16 per cell and 0.05 joint against P₀, had 0.074 per truth even with a Gaussian null,
+  and about 0.14 in the audit's worst lateral bracket.
+
+**The check at the data's point** (`arith.out` `null_at_data_proxy`, from committed readouts only; a proxy, labelled
+as such in `arith.py`):
+
+| lateral split (bracket) | p_c: min, median | lowest cells | k_c there | cells' false-flag sum |
+|---|---|---|---|---:|
+| 5 equal bands | 0.676, 0.681 | R10 0.676, R00 0.677 | 177 | 0.018 |
+| one band carries it | **0.645**, 0.680 | R00 0.645, R01 0.647, R12 0.657 | 168, 168, 171 | 0.018 |
+
+- With the null matched, the cells' false-flag sum stays at about 0.018, and the per truth at ≤ 0.043 with the joint
+  at its 0.025.
+- The truths' own p_c(T) use the remade shifts themselves, so this bracket only shows the size is held.
+
+**Power,** against the Gaussian null for orientation (`arith.out`): a cell is flagged with probability 0.52 at true
+content 0.60, 0.78 at 0.58 and 0.96 at 0.55. The joint count is flagged with probability 0.62 at 0.62 and 0.84 at
+0.60.
+- **So stage 1 resolves under-coverage of about 0.10 in content per cell, or 0.08 jointly,** below the null.
+- Smaller deficits can pass, and the report states the resolution beside any COVERS.
 
 ### 5.3 What is graded where
 
@@ -314,13 +446,17 @@ scorer imports them or recomputes them with the same function and checks the val
   doing.
 - **The bias:** the toys' mean error, U-weighted, against σ_c, per cell. It is F1's bias at the nature-drawn truth, as
   a check against F1 (`FD-F1-REPORT.md:39`, |z| ≤ 0.644).
+- **The predicted offset of the un-centred draws** (the audit's M1): −Σ_b Σ_u p_u (U x̂_u(T) − U x̂_T), over the drawn
+  bands and their draw probabilities, from the remade products at no unfold cost.
+  - MAT mean-centring drops a band's mean shift from its block, but the toys draw it. The sign is the swap's.
+  - It is printed beside the toys' mean error, and is what the mean error minus F1's bias should be at first order.
 - **The leave-out-MEC variant,** C_T⁻ = C_e(T) + diag(x̂_T) C_model⁻ diag(x̂_T). C_model⁻ is C_model rebuilt from the
   NuWro and GiBUU shifts only, as in F1's descriptive variant (§3 (6)). §5.1's statistics and §5.2's thresholds are
   applied to C_T⁻ for both tunes. Its reading is fixed now (director's point 2, on #664):
   - **Why only one case can move.** C_model = Σ_k s_k s_kᵀ, so C_model⁻ ≼ C_model and C_T⁻ ≼ C_T. Under C_T⁻ every
     per-cell count and the joint count are at most their counts under C_T.
-  - **A tune that UNDER-COVERS under C_T** under-covers at least as much under C_T⁻. The variant is printed and adds
-    no reading.
+  - **A tune that UNDER-COVERS under C_T:** its counts can only fall under C_T⁻ (each is read against C_T⁻'s own
+    draw-matched null). The variant is printed and adds no reading.
   - **A tune that COVERS under C_T, and also under C_T⁻,** reads "covers without the GENIE + MEC shift".
   - **A tune that COVERS under C_T, but has a cell or the joint count flagged under C_T⁻** by §5.2's thresholds, reads
     "its coverage in cells [list] (and jointly, if flagged) rests on the GENIE + MEC shift".
@@ -354,7 +490,11 @@ is the unfolding's estimate of nature, made by the production run on the data, t
 **Its controls,** each a hard INVALID for the plug-in only:
 - **(a)** the captured run's x̂ equals S1's central product (`CENTRAL_SHA256 fb5cc679…`) bitwise;
 - **(b)** the plug-in truth is r_i = w_push,i on truth-passing rows (1 elsewhere), with the denominator reweighted
-  cell by cell as `s5p_universe.prior_inputs` does. Its U x_T must equal U f to 10⁻¹², as Ddl's control did (#655 §8);
+  cell by cell as `s5p_universe.prior_inputs` does. Its U x_T must equal U f to 10⁻¹², as Ddl's control did (#655 §8).
+  - This holds by construction (the audit's m2): `prior_inputs` keeps the CV completeness, so x_T is x̂ by
+    `unfold`'s own formula.
+  - It checks the plumbing (the right weights, rows and denominator reach the truth). It is not evidence about the
+    truth;
 - **(c)** the weights' digest is in every plug-in product.
 
 **What it adds and what it cannot:**
@@ -440,6 +580,12 @@ of stage 1.
 - **The seed check:** x̂_T at seed 45 equals seed 42 bitwise (§4.3).
 - **Consistency of d_T:** the toy path at T with no draws and every Poisson draw at its mean builds the same
   experiment arrays as the remade blocks' d_T, bitwise. This costs no unfold.
+- **The single-universe nature (the audit's R3).** §4.2's rule with k = 1 gives arrays bitwise equal to
+  `s5p_universe.universe_inputs`' for MaRES_0, Flux_0 and GEANT_Pion_0. Its experiment at the nominal truth is bitwise
+  `fd_1b_moded.d_experiment`'s, which is κ's nature. This costs no unfold, and a failure is INVALID for all of
+  stage 1.
+- **The null:** `check_matched` passes at 10⁻¹². The null is computed and committed (its digest in the readout)
+  before the scorer opens any toy product.
 - **C_T** is symmetric to 10⁻¹² and positive semi-definite at 10⁻¹² relative; ndf is recorded. If ndf = 16, the
   Cholesky check of §5.1 applies.
 - **One code and one input set** across every product of a truth: `code_sha256`, the input, background and pins
@@ -472,19 +618,27 @@ submission.**
 
 ## 11. Stage 1's code, to come as binding 2
 
-The code is not written in this revision. It will import and not copy:
+**In this PR:** `nd-unfolding/fd_1b_null.py`, the §5.2 rule's one implementation. It comes with
+`tests/test_fd_1b_null.py` (23 passed) and `fd/receipts-1b/staged/mutation_null.{py,out}` (18 of 18 killed, with
+digests; a kill counts only on a test failure).
+
+**Still to come, in binding 2:** the toy, block and scorer code. It will import and not copy:
 - the draws and source factors (`fd_1b_toys`);
 - the nature arrays (`s5p_universe.universe_inputs`, `fd_1b_moded.d_experiment`'s construction);
 - the remade blocks (`fd_1b_inv.mode_inputs("A", …)`, `s1_assemble.mat_cov`, `flux_weights`, `model_abs`);
 - the surrogates (`fd_1b_score.surrogate`);
 - the bootstrap (`s5n_pseudo.bootstrap_replica`);
-- the capture (§6).
+- the capture (§6);
+- the null and the flag rule (`fd_1b_null`).
 
 **The tests** will include, at least:
-- the composition rule (§4.2) against single-universe arrays;
+- the composition rule (§4.2): a single universe bitwise against `universe_inputs`. The fixture holds a CV ≤ 0 row, a
+  CV = 0 row with a non-zero universe weight, a negative universe weight, a non-finite weight, a tdw row and a
+  detector-dump universe carrying `denom_nd`;
+- the bank row counts of §4.2's receipt, on a toy bank;
 - the truth's flux and denominator under a flux draw;
 - every §9 control in both directions (it fires on a defect and is silent on a correct run);
-- §5.2's thresholds against `arith.out`;
+- the null's inputs built from the remade products: each law's covariance equals its band's block;
 - the Cholesky equality;
 - the one-sidedness;
 - the capture's bitwise identity with the uncaptured unfold, on a toy.
@@ -520,13 +674,19 @@ clause S appear in every stage-1 outcome (director's point 2, on #664).
 - **Clause P (pass, per tune):**
   > At [tune], the errors were covered ($\chi^2/\mathrm{ndf}$ = [a]; per-cell 68\,\% content [p–q]\,\%), and would
   > remain covered with $C_{\mathrm{resp}}$ and $C_{\mathrm{PL,5D}}$ added at that truth.
+
+  "and would remain covered …" is printed in that form only if ndf(C_T) = 16 at that tune. Otherwise it reads "and
+  each cell would remain covered …" (m1).
 - **Clause V (leave-out-MEC, per tune, only when §5.4 reads "rests on the GENIE + MEC shift"):**
   > At [tune], coverage in cells [list] rests on the GENIE + MEC shift[, whose 2p2h family the tune shares].
 
   The bracketed phrase is printed for G18 only.
 - **Clause F (failure, per tune):**
   > At [tune], the covariance rebuilt at its truth, without $C_{\mathrm{resp}}$ and $C_{\mathrm{PL,5D}}$, under-covered
-  > in cells [list] by factors [k_c][, and jointly].
+  > in cells [list] by factors [s_c][, and jointly], [from a bias of the result / from too narrow an interval / from
+  > both]; the test's false-flag rate is at most 0.05 at each tune and 0.10 over both.
+
+  The bracketed cause is §5.1's attribution, per cell. The rate is §5.2's size.
 
 **The outcomes:**
 - **Both COVER:** T, M, P(G18), [V(G18)], P(AR23), [V(AR23)], S.
@@ -547,7 +707,8 @@ under-covered in cells …)]".
 stopped-attempt disclosure stays.
 
 **In every outcome,** the note states:
-- the resolution of §5.2, about 0.08–0.10 in content per cell;
+- the resolution of §5.2, about 0.10 in content per cell and 0.08 jointly;
+- the size, at most 0.05 per tune and 0.10 over both (0.15 with the plug-in);
 - the two overlaps of §3 (6);
 - that the d_T-at-means block stands in for a per-toy block.
 
