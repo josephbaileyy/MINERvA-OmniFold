@@ -74,6 +74,32 @@ The deploy verifies each of these with `git rev-parse M:<path>` and stops on any
    It goes to the director. Declaration X (#653's route B) is reviewed and bound separately. It cites
    `fd/gencmp-e/INPUTS.sha256` at M.
 
+## Addendum E-A1 (director, 2026-11-01, later)
+
+**The stop.** The first run stopped as bound. E-R0 passed in all 26 checks. In E-1's nopl arm, `fd_g_figures` exited 1
+on K6, because the declared legend qualifiers ran off the page. XC did not run. C-R ran in omnifold_py310, as the
+director ruled by message: uproot is absent from root_6_28. That is a deviation from §7 and ruling 1, and the report
+records it.
+
+**Binds** addendum E-A1 as merged in PR #659 at **M′ = `1d936338d55645a5204c39ff9b02ea3290496003`** (PR head
+`c6356fe45b37b0801de60a23fa3d644a5b8a4388`).
+- **What changed:** only the `gencmp-chdefs` legend qualifiers and the checker's declared names, plus the label test.
+  Each label keeps "CH, analysis definitions".
+- **The blobs at M′:**
+  - `fd_g_figures.py` `4e760ef762467204ae1b7d306df82938a7b94bbf`;
+  - `fd_g_figures_check.py` `e938eeaa4abf4d33a31c96589d8f3c230db5ee90`;
+  - `tests/test_fd_gencmp_e.py` `e16c168778b60519d2d06159455d92ca43aad684`.
+  `fd_gencmp_e.py`, `fd_gencmp.py` and INPUTS are unchanged from M.
+- **What the director checked:** the diff (3 code files, scope as ruled) and the digests above. The lane reported 266
+  passed and 3 skipped, and its local K controls K0–K8 at 0 FAIL, with the checker at 498 OK.
+
+**Rulings.**
+1. The rerun is a fresh clone at M′, run in `$P/gencmp-e-20261101/rerun1/`. E-S, E-M and the full chain are rerun, and
+   R0 re-gates everything. The first run's directory stays untouched as the record.
+2. C-R stands as run, since it does not use the figure tool. Its readings go to Joseph with X, under §8's "a quadrant's
+   reading changes" row (QA).
+3. Everything else in this binding stands.
+
 ## Fixed, unchanged
 
 Every claim and number in the paper until Joseph rules on the report; the reported covariance; Table IV as adopted
