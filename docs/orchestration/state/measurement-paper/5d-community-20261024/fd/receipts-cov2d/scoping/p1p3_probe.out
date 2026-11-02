@@ -1,0 +1,101 @@
+122d727f75eba65830b3645d225f04aa85f2922b4fce764167fc68024f70820b  josephrb_p1p3_probe.py
+host=login23 utc=2026-11-02T19:56:50Z
+== P3: stat
+CV FILE /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root size=2144008221 mtime=1779094334 atime=1792770770
+UNI FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root size=171117087867 mtime=1783523295 atime=1792844873
+MC FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root size=5143 mtime=1777003503 atime=1793330591
+FLUXU FILE /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root size=6396 mtime=1780107151 atime=1793377438
+ACT_DIR DIR /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged entries=21
+  SHA256SUMS size=1250 mtime=1791821526 atime=1792858663
+  merge_BeamAngleX_0.log size=3406 mtime=1784361874 atime=1789086926
+  merge_BeamAngleX_1.log size=3406 mtime=1784361872 atime=1789086927
+  merge_BeamAngleY_0.log size=3406 mtime=1784361874 atime=1789086927
+  merge_BeamAngleY_1.log size=3406 mtime=1784361873 atime=1789086927
+  merge_MuonResolution_0.log size=3510 mtime=1784361986 atime=1789086927
+  merge_MuonResolution_1.log size=3510 mtime=1784361990 atime=1789086926
+  merge_Muon_Energy_MINERvA_0.log size=3640 mtime=1784361989 atime=1789086926
+  merge_Muon_Energy_MINERvA_1.log size=3640 mtime=1784361987 atime=1789086926
+  merge_Muon_Energy_MINOS_0.log size=3588 mtime=1784362095 atime=1789086926
+  merge_Muon_Energy_MINOS_1.log size=3588 mtime=1784362095 atime=1789086927
+  runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root size=53845911012 mtime=1784361874 atime=1792799531
+  runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_1.root size=53844600453 mtime=1784361872 atime=1792823403
+  runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_0.root size=53845291390 mtime=1784361874 atime=1792814605
+  runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_1.root size=53845371537 mtime=1784361873 atime=1792814601
+  runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_0.root size=53845199952 mtime=1784361986 atime=1792823557
+  runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_1.root size=53845210317 mtime=1784361990 atime=1792823557
+  runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_0.root size=53845254183 mtime=1784361989 atime=1792823696
+  runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_1.root size=53845155381 mtime=1784361987 atime=1792823696
+  runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_0.root size=53841190691 mtime=1784362095 atime=1792823696
+  runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_1.root size=53845919075 mtime=1784362095 atime=1792823696
+PU_DIR DIR /pscratch/sd/j/josephrb/2d-closeout-period-unfold-20261014/inputs entries=4
+  runEventLoopOmniFold_ALL.root size=2144008371 mtime=1792036168 atime=1792826575
+  runEventLoopOmniFold_PA.root size=1101561461 mtime=1792036159 atime=1792828444
+  runEventLoopOmniFold_PB.root size=665513423 mtime=1792036162 atime=1792829299
+  runEventLoopOmniFold_PC.root size=376932485 mtime=1792036163 atime=1792830246
+RE2_STAGED MISSING /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs
+PL_CV_DIR DIR /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding entries=24
+  runEventLoopOmniFold_1A.root size=176231152 mtime=1778821499 atime=1792036632
+  runEventLoopOmniFold_1A_universes_full.root size=13967417576 mtime=1783521544 atime=1792019500
+  runEventLoopOmniFold_1B.root size=47169324 mtime=1778829992 atime=1792036643
+  runEventLoopOmniFold_1B_universes_full.root size=3754793236 mtime=1783489737 atime=1792019556
+  runEventLoopOmniFold_1C.root size=90403772 mtime=1778830958 atime=1792036644
+  runEventLoopOmniFold_1C_universes_full.root size=7169588316 mtime=1783491073 atime=1792019606
+  runEventLoopOmniFold_1D.root size=263666751 mtime=1778839792 atime=1792036646
+  runEventLoopOmniFold_1D_universes_full.root size=20851499421 mtime=1783499001 atime=1792020165
+  runEventLoopOmniFold_1E.root size=219367258 mtime=1779094265 atime=1792036652
+  runEventLoopOmniFold_1E_universes_full.root size=17441223965 mtime=1783497653 atime=1792019717
+  runEventLoopOmniFold_1F.root size=304896181 mtime=1778841279 atime=1792036658
+  runEventLoopOmniFold_1F_universes_full.root size=24243358082 mtime=1783502605 atime=1792019773
+  runEventLoopOmniFold_1G.root size=257639835 mtime=1778838187 atime=1792036670
+  runEventLoopOmniFold_1G_universes_full.root size=20516184032 mtime=1783501371 atime=1792019831
+  runEventLoopOmniFold_1L.root size=25071003 mtime=1778831134 atime=1792036676
+  runEventLoopOmniFold_1L_universes_full.root size=2004991684 mtime=1783498312 atime=1792019888
+  runEventLoopOmniFold_1M.root size=382873832 mtime=1778835337 atime=1792036677
+  runEventLoopOmniFold_1M_universes_full.root size=30899666424 mtime=1783509033 atime=1792020286
+  runEventLoopOmniFold_1N.root size=221391219 mtime=1778839166 atime=1792036687
+  runEventLoopOmniFold_1N_universes_full.root size=17753623260 mtime=1783505619 atime=1792020288
+  runEventLoopOmniFold_1O.root size=66979991 mtime=1778832993 atime=1792036692
+  runEventLoopOmniFold_1O_universes_full.root size=5408394362 mtime=1783501594 atime=1792020036
+  runEventLoopOmniFold_1P.root size=88639735 mtime=1778832621 atime=1792036694
+  runEventLoopOmniFold_1P_universes_full.root size=7125876607 mtime=1783504062 atime=1792020089
+== P1: branches (uproot 5.6.9, O_NOATIME descriptor)
+CV /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root
+  tree data;1 entries=4119797 branches=3
+    first 60: ['measured', 'measured_pz', 'measured_pass']
+    truth-like (0): []
+  key dataPOTUsed;1 TParameter<double>
+  key hasTruthOnlyMisses;1 TParameter<int>
+  key mcPOTUsed;1 TParameter<double>
+  tree mc_background;1 entries=658227 branches=4
+    first 60: ['sim_background', 'sim_background_pz', 'sim_background_pass', 'w_bkg']
+    truth-like (1): ['w_bkg']
+  tree mc_signal_reco;1 entries=32849103 branches=7
+    first 60: ['sim', 'sim_pz', 'sim_pass', 'w_reco', 'MC', 'MC_pz', 'w_truth']
+    truth-like (2): ['w_reco', 'w_truth']
+  tree mc_truth_denom;1 entries=32849103 branches=3
+    first 60: ['MC', 'MC_pz', 'w_truth']
+    truth-like (1): ['w_truth']
+  key nTruthOnlyMisses;1 TParameter<long>
+  stat before size=2144008221 mtime=1779094334 atime=1792770770
+  stat after  size=2144008221 mtime=1779094334 atime=1792770770
+UNI /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root
+  tree data;1 entries=4119797 branches=6
+    first 60: ['measured', 'measured_pz', 'measured_eavail', 'measured_q3', 'measured_W', 'measured_pass']
+    truth-like (3): ['measured_eavail', 'measured_q3', 'measured_W']
+  key dataPOTUsed;1 TParameter<double>
+  key hasTruthOnlyMisses;1 TParameter<int>
+  key mcPOTUsed;1 TParameter<double>
+  tree mc_background;1 entries=658227 branches=240
+    first 60: ['sim_background', 'sim_background_pz', 'sim_background_eavail', 'sim_background_q3', 'sim_background_W', 'sim_background_pass', 'w_bkg', 'bkg_nuPDG', 'bkg_current', 'bkg_inttype', 'bkg_vtx_x', 'bkg_vtx_y', 'bkg_vtx_z', 'w_bkg_2p2h_0', 'w_bkg_2p2h_1', 'w_bkg_2p2h_2', 'w_bkg_AGKYxF1pi_0', 'w_bkg_AGKYxF1pi_1', 'w_bkg_AhtBY_0', 'w_bkg_AhtBY_1', 'w_bkg_BeamAngleX_0', 'sim_background_BeamAngleX_0', 'sim_background_pz_BeamAngleX_0', 'sim_background_q3_BeamAngleX_0', 'sim_background_W_BeamAngleX_0', 'w_bkg_BeamAngleX_1', 'sim_background_BeamAngleX_1', 'sim_background_pz_BeamAngleX_1', 'sim_background_q3_BeamAngleX_1', 'sim_background_W_BeamAngleX_1', 'w_bkg_BeamAngleY_0', 'sim_background_BeamAngleY_0', 'sim_background_pz_BeamAngleY_0', 'sim_background_q3_BeamAngleY_0', 'sim_background_W_BeamAngleY_0', 'w_bkg_BeamAngleY_1', 'sim_background_BeamAngleY_1', 'sim_background_pz_BeamAngleY_1', 'sim_background_q3_BeamAngleY_1', 'sim_background_W_BeamAngleY_1', 'w_bkg_BhtBY_0', 'w_bkg_BhtBY_1', 'w_bkg_CCQEPauliSupViaKF_0', 'w_bkg_CCQEPauliSupViaKF_1', 'w_bkg_CV1uBY_0', 'w_bkg_CV1uBY_1', 'w_bkg_CV2uBY_0', 'w_bkg_CV2uBY_1', 'w_bkg_EtaNCEL_0', 'w_bkg_EtaNCEL_1', 'w_bkg_Flux_0', 'w_bkg_Flux_1', 'w_bkg_Flux_2', 'w_bkg_Flux_3', 'w_bkg_Flux_4', 'w_bkg_Flux_5', 'w_bkg_Flux_6', 'w_bkg_Flux_7', 'w_bkg_Flux_8', 'w_bkg_Flux_9']
+    truth-like (211): ['sim_background_eavail', 'sim_background_q3', 'sim_background_W', 'w_bkg', 'w_bkg_2p2h_0', 'w_bkg_2p2h_1', 'w_bkg_2p2h_2', 'w_bkg_AGKYxF1pi_0', 'w_bkg_AGKYxF1pi_1', 'w_bkg_AhtBY_0', 'w_bkg_AhtBY_1', 'w_bkg_BeamAngleX_0', 'sim_background_q3_BeamAngleX_0', 'sim_background_W_BeamAngleX_0', 'w_bkg_BeamAngleX_1', 'sim_background_q3_BeamAngleX_1', 'sim_background_W_BeamAngleX_1', 'w_bkg_BeamAngleY_0', 'sim_background_q3_BeamAngleY_0', 'sim_background_W_BeamAngleY_0', 'w_bkg_BeamAngleY_1', 'sim_background_q3_BeamAngleY_1', 'sim_background_W_BeamAngleY_1', 'w_bkg_BhtBY_0', 'w_bkg_BhtBY_1', 'w_bkg_CCQEPauliSupViaKF_0', 'w_bkg_CCQEPauliSupViaKF_1', 'w_bkg_CV1uBY_0', 'w_bkg_CV1uBY_1', 'w_bkg_CV2uBY_0', 'w_bkg_CV2uBY_1', 'w_bkg_EtaNCEL_0', 'w_bkg_EtaNCEL_1', 'w_bkg_Flux_0', 'w_bkg_Flux_1', 'w_bkg_Flux_2', 'w_bkg_Flux_3', 'w_bkg_Flux_4', 'w_bkg_Flux_5', 'w_bkg_Flux_6', 'w_bkg_Flux_7', 'w_bkg_Flux_8', 'w_bkg_Flux_9', 'w_bkg_Flux_10', 'w_bkg_Flux_11', 'w_bkg_Flux_12', 'w_bkg_Flux_13', 'w_bkg_Flux_14', 'w_bkg_Flux_15', 'w_bkg_Flux_16', 'w_bkg_Flux_17', 'w_bkg_Flux_18', 'w_bkg_Flux_19', 'w_bkg_Flux_20', 'w_bkg_Flux_21', 'w_bkg_Flux_22', 'w_bkg_Flux_23', 'w_bkg_Flux_24', 'w_bkg_Flux_25', 'w_bkg_Flux_26', 'w_bkg_Flux_27', 'w_bkg_Flux_28', 'w_bkg_Flux_29', 'w_bkg_Flux_30', 'w_bkg_Flux_31', 'w_bkg_Flux_32', 'w_bkg_Flux_33', 'w_bkg_Flux_34', 'w_bkg_Flux_35', 'w_bkg_Flux_36', 'w_bkg_Flux_37', 'w_bkg_Flux_38', 'w_bkg_Flux_39', 'w_bkg_Flux_40', 'w_bkg_Flux_41', 'w_bkg_Flux_42', 'w_bkg_Flux_43', 'w_bkg_Flux_44', 'w_bkg_Flux_45', 'w_bkg_Flux_46']
+  tree mc_signal_reco;1 entries=32849103 branches=470
+    first 60: ['sim', 'sim_pz', 'sim_eavail', 'sim_q3', 'sim_W', 'sim_pass', 'w_reco', 'MC', 'MC_pz', 'MC_eavail', 'MC_q3', 'MC_W', 'MC_nproton', 'MC_npip', 'MC_hadangle', 'w_truth', 'w_truth_2p2h_0', 'w_truth_2p2h_1', 'w_truth_2p2h_2', 'w_truth_AGKYxF1pi_0', 'w_truth_AGKYxF1pi_1', 'w_truth_AhtBY_0', 'w_truth_AhtBY_1', 'w_truth_BeamAngleX_0', 'MC_BeamAngleX_0', 'MC_pz_BeamAngleX_0', 'MC_q3_BeamAngleX_0', 'MC_W_BeamAngleX_0', 'w_truth_BeamAngleX_1', 'MC_BeamAngleX_1', 'MC_pz_BeamAngleX_1', 'MC_q3_BeamAngleX_1', 'MC_W_BeamAngleX_1', 'w_truth_BeamAngleY_0', 'MC_BeamAngleY_0', 'MC_pz_BeamAngleY_0', 'MC_q3_BeamAngleY_0', 'MC_W_BeamAngleY_0', 'w_truth_BeamAngleY_1', 'MC_BeamAngleY_1', 'MC_pz_BeamAngleY_1', 'MC_q3_BeamAngleY_1', 'MC_W_BeamAngleY_1', 'w_truth_BhtBY_0', 'w_truth_BhtBY_1', 'w_truth_CCQEPauliSupViaKF_0', 'w_truth_CCQEPauliSupViaKF_1', 'w_truth_CV1uBY_0', 'w_truth_CV1uBY_1', 'w_truth_CV2uBY_0', 'w_truth_CV2uBY_1', 'w_truth_EtaNCEL_0', 'w_truth_EtaNCEL_1', 'w_truth_Flux_0', 'w_truth_Flux_1', 'w_truth_Flux_2', 'w_truth_Flux_3', 'w_truth_Flux_4', 'w_truth_Flux_5', 'w_truth_Flux_6']
+    truth-like (422): ['sim_eavail', 'sim_q3', 'sim_W', 'w_reco', 'MC_eavail', 'MC_q3', 'MC_W', 'w_truth', 'w_truth_2p2h_0', 'w_truth_2p2h_1', 'w_truth_2p2h_2', 'w_truth_AGKYxF1pi_0', 'w_truth_AGKYxF1pi_1', 'w_truth_AhtBY_0', 'w_truth_AhtBY_1', 'w_truth_BeamAngleX_0', 'MC_q3_BeamAngleX_0', 'MC_W_BeamAngleX_0', 'w_truth_BeamAngleX_1', 'MC_q3_BeamAngleX_1', 'MC_W_BeamAngleX_1', 'w_truth_BeamAngleY_0', 'MC_q3_BeamAngleY_0', 'MC_W_BeamAngleY_0', 'w_truth_BeamAngleY_1', 'MC_q3_BeamAngleY_1', 'MC_W_BeamAngleY_1', 'w_truth_BhtBY_0', 'w_truth_BhtBY_1', 'w_truth_CCQEPauliSupViaKF_0', 'w_truth_CCQEPauliSupViaKF_1', 'w_truth_CV1uBY_0', 'w_truth_CV1uBY_1', 'w_truth_CV2uBY_0', 'w_truth_CV2uBY_1', 'w_truth_EtaNCEL_0', 'w_truth_EtaNCEL_1', 'w_truth_Flux_0', 'w_truth_Flux_1', 'w_truth_Flux_2', 'w_truth_Flux_3', 'w_truth_Flux_4', 'w_truth_Flux_5', 'w_truth_Flux_6', 'w_truth_Flux_7', 'w_truth_Flux_8', 'w_truth_Flux_9', 'w_truth_Flux_10', 'w_truth_Flux_11', 'w_truth_Flux_12', 'w_truth_Flux_13', 'w_truth_Flux_14', 'w_truth_Flux_15', 'w_truth_Flux_16', 'w_truth_Flux_17', 'w_truth_Flux_18', 'w_truth_Flux_19', 'w_truth_Flux_20', 'w_truth_Flux_21', 'w_truth_Flux_22', 'w_truth_Flux_23', 'w_truth_Flux_24', 'w_truth_Flux_25', 'w_truth_Flux_26', 'w_truth_Flux_27', 'w_truth_Flux_28', 'w_truth_Flux_29', 'w_truth_Flux_30', 'w_truth_Flux_31', 'w_truth_Flux_32', 'w_truth_Flux_33', 'w_truth_Flux_34', 'w_truth_Flux_35', 'w_truth_Flux_36', 'w_truth_Flux_37', 'w_truth_Flux_38', 'w_truth_Flux_39', 'w_truth_Flux_40', 'w_truth_Flux_41', 'w_truth_Flux_42']
+  tree mc_truth_denom;1 entries=32849103 branches=236
+    first 60: ['MC', 'MC_pz', 'MC_eavail', 'MC_q3', 'MC_W', 'MC_nproton', 'MC_npip', 'MC_hadangle', 'w_truth', 'w_truth_2p2h_0', 'w_truth_2p2h_1', 'w_truth_2p2h_2', 'w_truth_AGKYxF1pi_0', 'w_truth_AGKYxF1pi_1', 'w_truth_AhtBY_0', 'w_truth_AhtBY_1', 'w_truth_BeamAngleX_0', 'pT_truth_BeamAngleX_0', 'pz_truth_BeamAngleX_0', 'q3_truth_BeamAngleX_0', 'W_truth_BeamAngleX_0', 'w_truth_BeamAngleX_1', 'pT_truth_BeamAngleX_1', 'pz_truth_BeamAngleX_1', 'q3_truth_BeamAngleX_1', 'W_truth_BeamAngleX_1', 'w_truth_BeamAngleY_0', 'pT_truth_BeamAngleY_0', 'pz_truth_BeamAngleY_0', 'q3_truth_BeamAngleY_0', 'W_truth_BeamAngleY_0', 'w_truth_BeamAngleY_1', 'pT_truth_BeamAngleY_1', 'pz_truth_BeamAngleY_1', 'q3_truth_BeamAngleY_1', 'W_truth_BeamAngleY_1', 'w_truth_BhtBY_0', 'w_truth_BhtBY_1', 'w_truth_CCQEPauliSupViaKF_0', 'w_truth_CCQEPauliSupViaKF_1', 'w_truth_CV1uBY_0', 'w_truth_CV1uBY_1', 'w_truth_CV2uBY_0', 'w_truth_CV2uBY_1', 'w_truth_EtaNCEL_0', 'w_truth_EtaNCEL_1', 'w_truth_Flux_0', 'w_truth_Flux_1', 'w_truth_Flux_2', 'w_truth_Flux_3', 'w_truth_Flux_4', 'w_truth_Flux_5', 'w_truth_Flux_6', 'w_truth_Flux_7', 'w_truth_Flux_8', 'w_truth_Flux_9', 'w_truth_Flux_10', 'w_truth_Flux_11', 'w_truth_Flux_12', 'w_truth_Flux_13']
+    truth-like (231): ['MC_eavail', 'MC_q3', 'MC_W', 'w_truth', 'w_truth_2p2h_0', 'w_truth_2p2h_1', 'w_truth_2p2h_2', 'w_truth_AGKYxF1pi_0', 'w_truth_AGKYxF1pi_1', 'w_truth_AhtBY_0', 'w_truth_AhtBY_1', 'w_truth_BeamAngleX_0', 'pT_truth_BeamAngleX_0', 'pz_truth_BeamAngleX_0', 'q3_truth_BeamAngleX_0', 'W_truth_BeamAngleX_0', 'w_truth_BeamAngleX_1', 'pT_truth_BeamAngleX_1', 'pz_truth_BeamAngleX_1', 'q3_truth_BeamAngleX_1', 'W_truth_BeamAngleX_1', 'w_truth_BeamAngleY_0', 'pT_truth_BeamAngleY_0', 'pz_truth_BeamAngleY_0', 'q3_truth_BeamAngleY_0', 'W_truth_BeamAngleY_0', 'w_truth_BeamAngleY_1', 'pT_truth_BeamAngleY_1', 'pz_truth_BeamAngleY_1', 'q3_truth_BeamAngleY_1', 'W_truth_BeamAngleY_1', 'w_truth_BhtBY_0', 'w_truth_BhtBY_1', 'w_truth_CCQEPauliSupViaKF_0', 'w_truth_CCQEPauliSupViaKF_1', 'w_truth_CV1uBY_0', 'w_truth_CV1uBY_1', 'w_truth_CV2uBY_0', 'w_truth_CV2uBY_1', 'w_truth_EtaNCEL_0', 'w_truth_EtaNCEL_1', 'w_truth_Flux_0', 'w_truth_Flux_1', 'w_truth_Flux_2', 'w_truth_Flux_3', 'w_truth_Flux_4', 'w_truth_Flux_5', 'w_truth_Flux_6', 'w_truth_Flux_7', 'w_truth_Flux_8', 'w_truth_Flux_9', 'w_truth_Flux_10', 'w_truth_Flux_11', 'w_truth_Flux_12', 'w_truth_Flux_13', 'w_truth_Flux_14', 'w_truth_Flux_15', 'w_truth_Flux_16', 'w_truth_Flux_17', 'w_truth_Flux_18', 'w_truth_Flux_19', 'w_truth_Flux_20', 'w_truth_Flux_21', 'w_truth_Flux_22', 'w_truth_Flux_23', 'w_truth_Flux_24', 'w_truth_Flux_25', 'w_truth_Flux_26', 'w_truth_Flux_27', 'w_truth_Flux_28', 'w_truth_Flux_29', 'w_truth_Flux_30', 'w_truth_Flux_31', 'w_truth_Flux_32', 'w_truth_Flux_33', 'w_truth_Flux_34', 'w_truth_Flux_35', 'w_truth_Flux_36', 'w_truth_Flux_37', 'w_truth_Flux_38']
+  key nTruthOnlyMisses;1 TParameter<long>
+  stat before size=171117087867 mtime=1783523295 atime=1792844873
+  stat after  size=171117087867 mtime=1783523295 atime=1792844873
+rc=0
+ls: cannot access '/dev/shm/josephrb_p1p3_probe.py': No such file or directory
