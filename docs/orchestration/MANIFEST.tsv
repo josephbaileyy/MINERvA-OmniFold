@@ -7998,6 +7998,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/run/rec
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/run/receipts/x_v0.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/run/receipts/x_v0_a1.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/run/sacct.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/run/v0-a1/v0.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/run/v0/v0.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/run/v1-a2/v1.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/run/v1-probe/v1.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/limitation-plan/external_citations.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

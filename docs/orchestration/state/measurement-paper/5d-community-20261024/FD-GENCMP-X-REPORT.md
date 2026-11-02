@@ -21,19 +21,23 @@ joint χ²₄ has p ≥ 0.05 and every |z| ≤ 2.50.
 - an event-by-event weight check of AGKYxF1pi, AhtBY, BhtBY or MinosEfficiency (§3).
 
 **Records** are under `fd/xcov/run/`:
-- `v1-probe/`, `v1-a2/` and `k/`: those steps' readouts;
+- `v0/`, `v0-a1/`, `v1-probe/`, `v1-a2/` and `k/`: those steps' readouts;
 - `logs/` and `receipts/`;
 - `sacct.txt`;
 - `diag/`: §4's diagnostic;
 - `hpss/`: §8's file list.
 
-**Not in git: the two V0 readouts and BOOT's nine lane records.** They stay on pscratch, listed by sha256 in §8's file
-list.
-- The shared checker `verify_receipt_artifacts.py` gives a false MISSING for them. Each names an input or product bare,
-  for example `of_inputs_5d.npz`, and also cites it by its full pscratch path. `classify_bare` tests MISSING before
-  BY-PATH.
-- This is the same defect that kept E2's vertex configs out of git.
-- Their key fields are in §2: V0's digests and outcomes, and BOOT's B0 and lane results.
+**The two V0 readouts were committed after the report**, once the checker fix (#687) merged. Each committed copy's
+sha256 equals its entry in §8's file list. Before #687, the shared checker `verify_receipt_artifacts.py` gave a false
+MISSING for them: each names an input bare, for example `of_inputs_5d.npz`, and also cites it by its full pscratch path,
+and `classify_bare` tested MISSING before BY-PATH.
+
+**Not in git: BOOT's nine lane records**, by the director's decision. They stay on pscratch, listed by sha256 in §8's
+file list, and their key fields (B0 and the lane results) are in §2.
+- Each names its replica products bare. Their output directory appears only in the record's `argv`, so no full-path
+  citation of the products exists, and the checker still reads them MISSING after #687.
+- The director chose not to widen the shared checker to treat an `argv` directory as a declared directory, since that
+  would loosen it for every receipt.
 
 `$R` = `/pscratch/sd/j/josephrb/gencmp-x-20261102/`.
 
@@ -232,7 +236,7 @@ path, read O_NOATIME by `fd/xcov/run/receipts/x_filelist.py`:
 |---|---|---|---|---|
 | `gencmp-x-20261102/` | 162 | 1,612,547,259 | `run/hpss/files.sha256` | `2293c8842f5f72da40dcac84cf534d64c3fb8e30ef4e3ad0723d34a6f70ee14a` |
 
-No tar was made. `k.json`'s and `v1.json`'s listed sha256 equal the committed copies'. V0-A1's `maps.npz` (37.7 MB) and
+No tar was made. `k.json`'s, `v1.json`'s and the two `v0.json`s' listed sha256 equal the committed copies'. V0-A1's `maps.npz` (37.7 MB) and
 BOOT's replica `.npz` files are in the list but not in git.
 
 **After maintenance.** One catch-up archive runs for E2, E2-A1 and X with the bound procedure. Its result is a
