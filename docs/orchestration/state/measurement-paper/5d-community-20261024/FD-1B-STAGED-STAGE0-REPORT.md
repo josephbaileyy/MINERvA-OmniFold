@@ -17,11 +17,16 @@ to 1.0570 (R08), with median 0.9994. The nearest approach to an edge is 0.043, i
 - **The gate (binding 1, ruling 2).** Stage 1 may proceed only after three things: `coverage-5b-audit` acknowledges
   this report, binding 2 binds §11's code (amendment 1, #673), and Joseph is told. None of these has happened yet,
   and nothing has been submitted for stage 1.
-- **Every control passed** (§3). Nothing read INVALID, either for rule K or for the grid part.
+- **Every control passed** (§3). Nothing read INVALID, either for rule K or for the grid part. The read rule was
+  broken once, on the staged S1 assembly (deviation 5).
 - **The grid check** (descriptive, §5): B does not depend on the grid, and the sub-cell hypothesis is not supported
   for it. C depends on the grid, and the hypothesis is supported for it.
 - **Cost:** 3.12 node-h against the 5.5 node-h cap (§1).
-- **Deviations:** four, in §6. No access time moved, either on the 272 sources or in any of the 104 atime sidecars.
+- **Deviations:** five, in §6.
+  - **Access times:** none moved in the tracked set: the 272 sources and the 104 per-item sidecars.
+  - **What was not tracked:** the staged copies in `$V/i0/in`, and I2's products in `$V/i2/unf`.
+  - **One of those moved.** The readout read the staged S1 assembly without `O_NOATIME`, and its atime moved
+    (deviation 5, the audit's D1). κ is unaffected, because the content is digest-checked.
 - **HPSS:** not copied yet. HPSS was in maintenance at every attempt. Both archives stay on pscratch under their
   recorded digests (§1, §6). By the director's ruling, HPSS does not gate.
 
@@ -44,7 +49,7 @@ Gate D's FAIL, the diagnosis, I0, I2 and every claim and number in the paper are
 | 26 | 06:45:34–06:46:35 | fresh clone at M, the task tables, D-0's submission | job 60678921 |
 | 27 | 07:09:41–about 08:14 (killed) | after D-0: ledger, lanes, products, `walls`, controls, atime; HPSS | walls PASS; the HPSS step hung and was killed (§6.2) |
 | 29 | 10:52:15 | HPSS retry for `stage0-d0.tar` | STOP: maintenance had not cleared |
-| 28 | 10:53:59–10:54:03 | the bulk's submission, after walls PASS and the audit's written acknowledgement | jobs 60683107, 60683108 |
+| 28 | 10:53:59–10:54:03 | the bulk's submission, after walls PASS and the audit's written acknowledgement (#667 comment created 10:53:27Z) | jobs 60683107, 60683108 (submitted 10:54:03Z) |
 | 30 | 12:22:23–12:23:57 | after the bulk: ledger, lanes, products, atime, **the readout**, `stage0.tar`, an HPSS probe | rule K PASS; HPSS still in maintenance |
 | 31 | 12:25:44 | read-only: the readout log, `walls-d0.json`, the tables' digests, `SHA256SUMS` | — |
 
@@ -135,7 +140,9 @@ A cell is "in" if its value lies in [0.9, 1.1], edges inside. The last two colum
 
 ## 3. Controls (#655 §8)
 
-All of these passed. Each one raises `Invalid` or `Refusal` in the code when it fails, and none was raised:
+Each of these raises `Invalid` or `Refusal` in the code when it fails, and none was raised. The read rule's tracked
+checks are in the last two rows. They do not cover the staged copies, one of which was read without `O_NOATIME`
+(deviation 5):
 
 | control | where it is enforced | result |
 |---|---|---|
@@ -145,7 +152,8 @@ All of these passed. Each one raises `Invalid` or `Refusal` in the code when it 
 | every product names its own mode, grid, universe and truth | `d_blocks`, `grid_check` | all 104 |
 | every universe's weight files carry the pins file's digests | `run_unfold`, per item | all 104 |
 | the grid part: nominal-grid B and C equal I2's products bitwise, and occupancy is identical across the six universes | `grid_check` | equal; identical (`verdict: READ`) |
-| reads with `O_NOATIME`; an atime sidecar per item | every unfold | 104 sidecars, one per item (8 from D-0, 96 from the bulk), `moved` empty in all |
+| reads with `O_NOATIME`; an atime sidecar per item | every unfold, over the files `inv`'s readers open | 104 sidecars, one per item (8 from D-0, 96 from the bulk), `moved` empty in all |
+| the staged copies in `$V/i0/in` and I2's products in `$V/i2/unf` | **not tracked**; `load_s1` reads the assembly plainly | the assembly's atime moved (deviation 5) |
 | `stat` of the 272 sources: atime, mtime, size | connects 28 and 30, before the bulk, after it and after the readout | unchanged |
 
 The Ddl controls do not apply, because the option was excluded from stage 0 (binding 1, ruling 1).
@@ -211,10 +219,11 @@ B's R06 γ is 1.1009, out; C's R06 γ is 1.0999, in. The readout's own counts ag
 ## 6. Deviations
 
 These are also in [`DEVIATIONS.md`](fd/receipts-1b/staged/stage0/DEVIATIONS.md). Items 1–3 are the ones the
-director's ruling of 2026-11-02 asked to be recorded.
+director's ruling of 2026-11-02 asked to be recorded. Item 5 is the audit's D1.
 
 1. **The D-0 readout was routed late.**
-   - D-0 completed at 07:07Z, and walls read PASS at connect 27 (07:09Z).
+   - D-0 completed at 07:07Z. Walls read PASS during connect 27, which began at 07:09:41Z; the exact time is not
+     recorded.
    - The readout reached `coverage-5b-audit` and the director at about 08:17Z. I held it while connect 27's HPSS step
      hung, when it should have gone as soon as the gate's data existed.
    - Nothing was submitted in between. The director asked for it.
@@ -237,11 +246,36 @@ director's ruling of 2026-11-02 asked to be recorded.
    - The audit verified the tables' contents directly, so the bulk's item set does not rest on the generator.
 4. **A unit nit.** sacct's MaxRSS is in KiB, so D-0's step peaks are 21.7–23.1 GB (20.2–21.5 GiB). My D-0 readout
    said 21.2–22.5 GB. This has no effect on the gate, which reads `peak_rss_kib`.
+5. **The staged S1 assembly was read without `O_NOATIME`, and its atime moved** (`coverage-5b-audit`'s D1 on #679,
+   issuecomment-6577256203).
+   - **The defect.** `fd_1b_score.load_s1` (`fd_1b_score.py:127–129`) reads its file twice with plain reads: once for
+     the digest (`sa.require_sha`), once for the arrays (`np.load`). The bound readout calls it on the staged copy
+     `$V/i0/in/s1/s1_assembly.npz` (`fd_1b_moded.py:447`). This breaks #655 §8's rule that the staged copies are
+     read with `O_NOATIME`.
+   - **Why nothing caught it.** The sidecars record only what `inv`'s readers open. The 272-path stat list holds the
+     unfold inputs, the bank, the detector dumps and the pins. Neither covers the staged copies in `$V/i0/in` or
+     I2's products in `$V/i2/unf`.
+   - **What moved**, as the audit measured:
+     - At connect 25, the `i0/in` group's newest atime was 2026-11-01T21:41:37Z.
+     - At about 12:35Z on 2026-11-02, the assembly's atime was 2026-11-02T12:31:06Z. Its mtime and size were
+       unchanged.
+     - The audit's own rerun of the bound readout, at about 12:31Z, set that value. My connect-30 readout, at about
+       12:22Z, read the file by the same path, so it will have moved it first **(inference: the audit's read
+       overwrote the value)**.
+   - **It is not restored.**
+   - **The effect on κ: none.** `require_sha` checks the content's digest on every read. The atime rule protects the
+     purge exposure and the read record.
+   - **Under #655 §8's reads clause,** a moved atime is a deviation, reported and not restored, and not an INVALID.
+   - **The fix belongs to binding 2 (#673), before S1-0.** Stage 1's `fd_1b_mc.py` calls the same `load_s1`.
+     - `load_s1` reads through `inv`'s `O_NOATIME` reader, for both the digest and the arrays.
+     - The stat lists cover every staged copy and I2 product that stage 1 reads.
+     - A test fails if the flag is missing.
 
 ## 7. For the audit and the director
 
 1. **The audit's acknowledgement of this report** is the first of the three conditions in binding 1, ruling 2.
-2. **Binding 2** of amendment 1 (#673) is the second. After it, the bound order is:
+2. **Binding 2** of amendment 1 (#673) is the second. It now also carries D1's three fixes (deviation 5). After it,
+   the bound order is:
    - one connect for `stage-flux` and `receipt` (N1);
    - the tables;
    - the S1-0 submission, whose line goes to the director first.
