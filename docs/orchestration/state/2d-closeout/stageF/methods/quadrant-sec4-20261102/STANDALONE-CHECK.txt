@@ -1,0 +1,26 @@
+# The containment check in the standalone shape (director, 2026-11-02; RECORD-20261102-director-analysis-note-sync-8db2910b.md)
+# copy: git ls-files docs/analysis-note of the branch, extracted outside any git checkout, at <scratch>/e1/standalone-q4/analysis-note (no ../orchestration beside it)
+
+## bash build_all.sh in the copy
+build_all rc=0
+=== page counts ===
+  main_note.pdf  134 pp
+  main_primer.pdf 15 pp
+  main_paper.pdf 13 pp
+  pet_note.pdf   26 pp
+  main_records.pdf 59 pp
+
+## check_dead_containment.py in the copy, this branch's code
+  ok   CONTEXT_EXEMPT[('main_note', '1.014')] holds: sec_validation.tex prints '(mean weight 1.014)' and 1.014 is still struck
+  ok   CONTEXT_EXEMPT[('main_note', '0.912')] holds: values.tex prints '\\newcommand{\\covTwoDCTwo}{0.912}' and 0.912 is still struck
+  ok   CONTEXT_EXEMPT[('main_note', '1.65')] holds: values_fived16.tex prints '\\@namedef{fv@g-tune-pull-R15}{1.65}' and 1.65 is still struck
+  ok   CONTEXT_EXEMPT[('main_note', '6.86')] SKIP: its source ../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json lies outside the note tree, which is not <repo>/docs/analysis-note here (the standalone note repository or a copy); enforced by the canonical build
+RESULT :: PASS :: head=unknown tree=unknown scope=? (tree_state.py helper not found) mode=strict 
+
+## the same check, the base code (7bac3c634): the false STALE the director reported
+  FAIL CONTEXT_EXEMPT[('main_note', '6.86')] is STALE: ../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json no longer contains '"sigma": 0.06855283880067227', so the context it exempts no longer prints from it. Delete the entry rather than keep a blind spot.
+RESULT :: FAIL :: head=unknown tree=unknown scope=? (tree_state.py helper not found) mode=strict 
+
+## the canonical worktree, this branch's code: the sidecar is read and the exemption holds
+  ok   CONTEXT_EXEMPT[('main_note', '6.86')] holds: ../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json prints '"sigma": 0.06855283880067227' and 6.86 is still struck
+RESULT :: PASS :: head=9872fd50607fad894ffd21b6625523f17bcfbf34 tree=dirty(tracked=2,untracked=0) scope=docs/analysis-note mode=strict 
