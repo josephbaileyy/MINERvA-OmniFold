@@ -56,6 +56,8 @@ RATIO_TOL = 1e-6
 STAT_REPLICAS = tuple(range(1, 101))
 P_MIN, Z_MAX = 0.05, 2.50                                      # the director's ruling 3
 NPZ_NAME, BKG_NAME = "of_inputs_5d.npz", "bkg_dump.npz"       # staged by v0 under <run>/inputs/
+PD_REL = 1e-12                                                 # V_d's smallest eigenvalue over its largest
+K_TOL = 1e-10
 NORM = 0.014
 N_Q = 4
 QNAMES = ("QA", "QB", "QC", "QD")
@@ -122,8 +124,8 @@ def mask_2d_data(pt, pz, passed) -> np.ndarray:
 def subsequence_join(big: np.ndarray, small: np.ndarray) -> tuple[np.ndarray, int]:
     """Map each row of ``small`` (n x 2, float32) to an index of ``big`` (m x 2), in order and injectively, by exact
     equality: the greedy earliest match, which embeds ``small`` in ``big`` whenever any order-preserving embedding
-    exists. Returns (map, number of rows whose match is ambiguous, i.e. equal to the next row of ``big`` too); refuses
-    if ``small`` is not a subsequence."""
+    exists. Returns (map, the number of ``small`` rows whose key occurs more than once anywhere in ``big``, so whose
+    match may be another event with the same coordinates); refuses if ``small`` is not a subsequence."""
     big = np.ascontiguousarray(big, np.float32)
     small = np.ascontiguousarray(small, np.float32)
     bk = big.view(np.uint64).ravel() if big.shape[1] == 2 else None
@@ -131,23 +133,23 @@ def subsequence_join(big: np.ndarray, small: np.ndarray) -> tuple[np.ndarray, in
     if bk is None or sk is None:
         raise Stop("J", "the join takes two float32 columns")
     out = np.empty(sk.size, np.int64)
-    i, n_amb = 0, 0
+    i = 0
     for r in range(sk.size):
         while i < bk.size and bk[i] != sk[r]:
             i += 1
         if i == bk.size:
             raise Stop("J", f"row {r} of the 5D sample has no 2D match at or after the previous one")
         out[r] = i
-        if i + 1 < bk.size and bk[i + 1] == sk[r]:
-            n_amb += 1
         i += 1
-    return out, n_amb
+    keys, counts = np.unique(bk, return_counts=True)
+    dup = keys[counts > 1]
+    return out, int(np.isin(sk, dup).sum())        # rows whose (pT, p_par) occurs more than once in the 2D sample
 
 
 def mc_positional(pt2, pz2, mcgen, w2=None, w5=None) -> dict:
     """V0, MC: the 2D tree's (MC, MC_pz) equal the npz's MCgen columns 0-1 as float32 on every row but the sentinel
     rows; with weights, w5 / w2 is one constant (a POT scale) to RATIO_TOL."""
-    mcgen = np.asarray(mcgen)
+    mcgen = np.asarray(mcgen, np.float32)
     n = mcgen.shape[0]
     rec = {"rows_2d": int(np.asarray(pt2).size), "rows_5d": int(n)}
     if np.asarray(pt2).size != n:
@@ -279,8 +281,8 @@ def verdict(d: np.ndarray, Vd: np.ndarray) -> dict:
     """Ruling 3: agree iff the joint chi2_4 of the four d under Vd has p >= 0.05 AND every |z| <= 2.50. A quadrant
     with |z| > 2.50 is a named "differ"; a joint p < 0.05 with no quadrant over is a "differ" of the joint."""
     lam = np.linalg.eigvalsh((Vd + Vd.T) / 2)
-    if lam.min() <= 0:
-        raise Stop("K", f"V_d is not positive definite (smallest eigenvalue {lam.min():.3e})")
+    if lam.min() <= PD_REL * lam.max():
+        raise Stop("K", f"V_d is not positive definite (eigenvalues {lam.min():.3e} .. {lam.max():.3e})")
     z = d / np.sqrt(np.diag(Vd))
     chi2 = float(d @ np.linalg.solve(Vd, d))
     p = chi2_sf4(chi2)
@@ -307,15 +309,17 @@ def bound_matrix(S16: np.ndarray, S2: np.ndarray) -> np.ndarray:
 
 
 def route_a(d, C16q, C2q, K_rest, M, grid: int = 10001) -> dict:
-    """The fallback (ruling 1): the bounded cross terms r * M (M the sum of bound_matrix over the unpaired blocks),
-    evaluated at r = 0 and r = 1 with the three-way reading, and r*, the first r on the grid where the reading changes."""
-    at = {r: verdict(d, Vd_of(C16q, C2q, K_rest + r * M)) for r in (0.0, 1.0)}
-    out = {"r0": at[0.0], "r1": at[1.0], "r_star": None}
-    if at[0.0]["outcome"] == at[1.0]["outcome"]:
-        return {**out, "outcome": at[0.0]["outcome"]}
+    """The fallback (ruling 1): the cross terms r * M (M the sum of bound_matrix over the unbounded-pairing blocks),
+    read on the whole grid r in [0, 1]: one reading if it never changes, otherwise "<reading at 0> only if r < r*", r*
+    the first change (every change is listed). This is a one-parameter family, not every admissible correlation."""
     rs = np.linspace(0, 1, grid)
-    flip = next(r for r in rs[1:] if verdict(d, Vd_of(C16q, C2q, K_rest + r * M))["outcome"] != at[0.0]["outcome"])
-    return {**out, "outcome": f"{at[0.0]['outcome']} only if r < r*", "r_star": float(flip)}
+    outs = [verdict(d, Vd_of(C16q, C2q, K_rest + r * M))["outcome"] for r in rs]
+    changes = [float(rs[i]) for i in range(1, grid) if outs[i] != outs[i - 1]]
+    out = {"r0": verdict(d, Vd_of(C16q, C2q, K_rest)), "r1": verdict(d, Vd_of(C16q, C2q, K_rest + M)),
+           "r_star": changes[0] if changes else None, "changes_at": changes}
+    if not changes:
+        return {**out, "outcome": outs[0]}
+    return {**out, "outcome": f"{outs[0]} only if r < r*"}
 
 
 def stat_cross(S16_reps: np.ndarray, S2_reps: np.ndarray, sig16: np.ndarray, sig2: np.ndarray) -> dict:
@@ -369,3 +373,46 @@ def main(argv=None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+def same_block(a, b, tol: float = K_TOL) -> bool:
+    """K1's comparison: equal to ``tol`` relative to the larger matrix's largest entry, with no absolute floor (the
+    blocks' entries are ~1e-80, below numpy's default atol)."""
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    scale = max(np.abs(a).max(), np.abs(b).max())
+    return a.shape == b.shape and scale > 0 and bool(np.all(np.abs(a - b) <= tol * scale))
+
+
+def ratio_test(w2u, w2c, w5u, w5c, sentinel) -> dict:
+    """V1 for one weight of one universe: the quotient of the two sides' universe-to-CV ratios on the rows where both
+    CV weights are non-zero (sentinel rows excepted) must be one constant to RATIO_TOL; non-finite quotients fail."""
+    w2u, w2c, w5u, w5c = (np.asarray(v, float) for v in (w2u, w2c, w5u, w5c))
+    use = (w2c != 0) & (w5c != 0) & ~np.asarray(sentinel, bool)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        q = (w5u[use] / w5c[use]) / (w2u[use] / w2c[use])
+    fin = np.isfinite(q)
+    med = float(np.median(q[fin])) if fin.any() else float("nan")
+    rel = float(np.max(np.abs(q[fin] / med - 1))) if fin.any() else float("inf")
+    return {"rows": int(use.sum()), "nonfinite": int((~fin).sum()), "scale": med, "max_rel": rel,
+            "pass": bool(rel <= RATIO_TOL and (~fin).sum() == 0 and use.sum() > 0)}
+
+
+def joint_psd(S16: np.ndarray, S2: np.ndarray, K: np.ndarray, tol: float = PD_REL) -> bool:
+    """K2: the joint matrix [[S16, K], [K^T, S2]] is positive semidefinite (smallest eigenvalue >= -tol * largest)."""
+    J = np.block([[S16, K], [K.T, S2]])
+    lam = np.linalg.eigvalsh((J + J.T) / 2)
+    return bool(lam.min() >= -tol * lam.max())
+
+
+def r_band(d, C16q, C2q, K_rest, R, se, sig16, sig2) -> dict:
+    """Information only (route B; the director's rule is unchanged): the reading with route B's diagonal correlations
+    moved by -1 and +1 jackknife SE (clipped to [-1, 1]), to show how sensitive a reading is to R's sampling error."""
+    out = {}
+    for name, sgn in (("minus_se", -1.0), ("plus_se", 1.0)):
+        Rm = np.array(R, float, copy=True)
+        np.fill_diagonal(Rm, np.clip(np.diag(Rm) + sgn * np.asarray(se), -1.0, 1.0))
+        try:
+            out[name] = verdict(d, Vd_of(C16q, C2q, K_rest + Rm * np.outer(sig16, sig2)))
+        except Stop as e:
+            out[name] = {"stop": str(e)}
+    return out

@@ -6,7 +6,9 @@ ambiguous row), the 2D data mask at each window edge, MC row identity (a differi
 draws against RE-2's and s5n_pseudo's own, the mapped replica, the cross blocks against each side's own rule, the bound
 matrix's PSD joint, the chi2_4 survival function, the rule at each of its branches, route A's r*, and route B's
 correlation."""
+import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -16,6 +18,7 @@ ND = Path(__file__).resolve().parents[1]
 sys.path.insert(1, str(ND))
 import fd_gencmp as gc  # noqa: E402
 import fd_xcov as X  # noqa: E402
+import fd_xcov_steps as XS  # noqa: E402
 import s1_assemble as sa  # noqa: E402
 import s5n_pseudo  # noqa: E402
 
@@ -240,6 +243,122 @@ class Shares(unittest.TestCase):
         Vd = X.Vd_of(a, b, k)
         sh = X.shares({"a": a}, {"b": b}, {"k": k}, Vd)
         self.assertTrue(np.allclose(np.sum(list(sh.values()), axis=0), 1.0))
+
+
+class AuditFixes(unittest.TestCase):
+    """The review's findings (FD-GENCMP-X-REVIEW-ANSWER.txt), each control both ways."""
+
+    def test_same_block_refuses_a_scaled_block_at_1e_80(self):
+        a = spd(4) * 1e-80
+        self.assertTrue(X.same_block(a, a * (1 + 1e-12)))
+        self.assertFalse(X.same_block(a, a * 1.5))
+        self.assertFalse(X.same_block(a, a * (1 + 1e-9)))
+        self.assertTrue(np.allclose(a, a * 1.5, rtol=1e-10))                   # numpy's default atol passes it (B1)
+
+    def test_ratio_test_passes_a_constant_scale_and_refuses_one_row(self):
+        n = 1000
+        w2c, w2u = RNG.uniform(0.5, 2, n), RNG.uniform(0.5, 2, n)
+        sent = np.zeros(n, bool)
+        w5c, w5u = 7.0 * w2c, 7.0 * w2u
+        r = X.ratio_test(w2u, w2c, w5u, w5c, sent)
+        self.assertTrue(r["pass"])
+        self.assertAlmostEqual(r["scale"], 1.0)
+        w5u2 = w5u.copy()
+        w5u2[500] *= 1 + 1e-5
+        self.assertFalse(X.ratio_test(w2u, w2c, w5u2, w5c, sent)["pass"])
+        w2u0 = w2u.copy()
+        w2u0[3] = 0.0                                                        # a non-finite quotient
+        self.assertFalse(X.ratio_test(w2u0, w2c, w5u, w5c, sent)["pass"])
+
+    def test_joint_psd_both_ways(self):
+        S16, S2 = spd(4), spd(4)
+        self.assertTrue(X.joint_psd(S16, S2, 0.5 * X.bound_matrix(S16, S2)))
+        self.assertFalse(X.joint_psd(S16, S2, 3.0 * X.bound_matrix(S16, S2)))
+
+    def test_route_a_reads_the_whole_grid_and_lists_every_change(self):
+        C, M = np.eye(4), np.eye(4) * 0.9
+        out = X.route_a(np.array([0.0, 1.5, 0.0, 0.0]), C, C, np.zeros((4, 4)), M, grid=1001)
+        self.assertEqual(len(out["changes_at"]), 1)
+        self.assertEqual(out["r_star"], out["changes_at"][0])
+        same = X.route_a(np.array([0.0, 4.0, 0.0, 0.0]), C, C, np.zeros((4, 4)), M, grid=101)   # z = 2.83 at r = 0
+        self.assertEqual((same["outcome"], same["changes_at"]), ("differ", []))     # differ at both ends and between
+
+    def test_a_badly_conditioned_vd_refuses(self):
+        with self.assertRaises(gc.Stop):
+            X.verdict(np.zeros(4), np.diag([1e-80, 1e-80, 1e-80, 1e-97]))
+
+    def test_the_ambiguity_count_sees_a_non_adjacent_duplicate(self):
+        big = RNG.uniform(0, 5, (100, 2)).astype(np.float32)
+        big[90] = big[10]
+        _, amb = X.subsequence_join(big, big[[10, 50]])
+        self.assertEqual(amb, 1)
+
+    def test_mc_positional_takes_a_float64_mcgen(self):
+        mc = RNG.uniform(0, 5, (3000, 5)).astype(np.float32)
+        mc[:X.SENTINEL_ROWS] = -9999.0
+        self.assertTrue(X.mc_positional(mc[:, 0].astype(float), mc[:, 1].astype(float), mc.astype(float))["pass"])
+
+    def test_the_r_band_reports_both_sides(self):
+        out = X.r_band(np.array([0.1, 0.1, 0.1, 0.1]), np.eye(4), np.eye(4), np.zeros((4, 4)), 0.5 * np.eye(4),
+                       0.1 * np.ones(4), np.ones(4), np.ones(4))
+        self.assertEqual(set(out), {"minus_se", "plus_se"})
+
+
+class Order(unittest.TestCase):
+    """Rulings A1 and A2: K runs once, after BOOT has ended; V1's full readout or an over-cap probe."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.d = Path(self.tmp.name)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def lane(self, tag, name, rec):
+        p = self.d / "boot" / tag
+        p.mkdir(parents=True, exist_ok=True)
+        (p / name).write_text(json.dumps(rec))
+
+    def test_boot_is_not_due_when_v0_failed(self):
+        self.assertTrue(XS.boot_state(self.d, False)["ended"])
+
+    def test_boot_has_not_ended_without_its_native_lane(self):
+        self.assertFalse(XS.boot_state(self.d, True)["ended"])
+
+    def test_boot_has_ended_after_a_failed_b0(self):
+        self.lane("native", "lane_1_1.json", {"B0_bitwise": False})
+        self.assertEqual(XS.boot_state(self.d, True), {"due": True, "ended": True, "b0": False, "lanes": 0})
+
+    def test_boot_needs_all_eight_lanes_after_b0(self):
+        self.lane("native", "lane_1_1.json", {"B0_bitwise": True})
+        for i in range(7):
+            self.lane("xcov", f"lane_{i}.json", {})
+        self.assertFalse(XS.boot_state(self.d, True)["ended"])
+        self.lane("xcov", "lane_7.json", {})
+        self.assertTrue(XS.boot_state(self.d, True)["ended"])
+
+    def test_v1_state(self):
+        with self.assertRaises(gc.Stop):
+            XS.v1_state(self.d)
+        (self.d / "v1-probe").mkdir()
+        (self.d / "v1-probe" / "v1.json").write_text(json.dumps({"within_full_cap": True}))
+        with self.assertRaises(gc.Stop):                                    # a probe within the cap needs the full run
+            XS.v1_state(self.d)
+        (self.d / "v1-probe" / "v1.json").write_text(json.dumps({"within_full_cap": False}))
+        self.assertEqual(XS.v1_state(self.d)["bands_pass"], {})            # every band bounded
+        (self.d / "v1").mkdir()
+        (self.d / "v1" / "v1.json").write_text(json.dumps({"bands_pass": {"MaRES": True}}))
+        self.assertEqual(XS.v1_state(self.d)["bands_pass"], {"MaRES": True})
+
+    def test_the_committed_pins_are_the_committed_bytes(self):
+        for path, h in XS.COMMITTED.items():
+            self.assertEqual(XS.committed_sha(path, h, "test"), path.read_bytes())
+
+    def test_the_draw_check_formats_mc_and_bkg_as_re2_prints_them(self):
+        line = X.draw_sums_line(4, (50, 60, 30))
+        _, m, g = X.draws_2d(4, 50, 60, 30)
+        self.assertEqual(line["mc"], f"mc factor sum={m.sum():.6g} (n=60")
+        self.assertEqual(line["bkg"], f"bkg factor sum={g.sum():.6g} (n=30")
 
 
 if __name__ == "__main__":

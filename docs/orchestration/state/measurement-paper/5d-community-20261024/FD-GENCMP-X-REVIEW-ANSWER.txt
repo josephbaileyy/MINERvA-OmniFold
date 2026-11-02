@@ -1,0 +1,174 @@
+Review of the GENCMP X declaration and code at head a293dc3de. The 32 unit tests pass (`32 passed in 0.13s`). I changed nothing and ran nothing on real data.
+
+## A. Outcome-selection findings
+
+**A1. An undeclared branch: V1's full run may never happen.**
+- Declaration lines 157-158 say the full V1 run is submitted only if the probe projects within its cap. They do not say what follows if it doesn't.
+- `cmd_k` requires `v1/v1.json` (`fd_xcov_steps.py:363`). The probe writes to `v1-probe` (`fd_xcov_steps.py:205`), so K would crash.
+- The operator would then choose between "all 38 bands bounded", "wait and rerun", or "skip V1".
+- The projection depends on time, not on results, so this is low risk. It is still a route choice left open.
+- Severity: should fix before binding.
+
+**A2. The positive-definiteness stop, and when K runs, leave a rerun route.**
+- Declaration lines 221-222 and 263 say a non-PD V_d stops K and no X number is used. They do not say the stop is final.
+- `verdict` raises (`fd_xcov.py:282-283`) before `write_json`, so `k/` is never created. Nothing stops K being rerun on route A after seeing a stop under route B.
+- `cmd_k` writes `k/` once (`fd_xcov_steps.py:313-315`). Run before BOOT finishes, it locks in a route-A result. Order is not enforced.
+- Declare that a PD stop under B is final, and that K runs only after BOOT has finished or failed.
+- Severity: should fix.
+
+**A3. "Fixed before any number is read" (declaration line 250) is not literally true.**
+- C-R's committed readout `fd/gencmp-e/c-r/overlap_refined.json` already holds S16, S2D, d and σ for all four quadrants. It also holds z at ρ=0 and ρ*.
+- The values:
+
+| Quadrant | z at ρ=0 | ρ* |
+|---|---|---|
+| QA | 0.01 | 1.0003 |
+| QB | -0.03 | 0.9997 |
+| QC | -0.2 | 0.9902 |
+| QD | 0.09 | 0.9982 |
+
+- With σ16≈σ2D, the outcome turns entirely on K, which is not yet seen. The rule is not tuned to a sign or size.
+- The text should say d is known and K is not.
+- Severity: should fix (wording).
+
+**A4. Route A's "r in [0,1]" is not a bound on all correlations, but the paper text says "allowed anywhere from 0 to 1".**
+- `bound_matrix` (`fd_xcov.py:303-306`) is S16^½·S2D^½. Its diagonal is below σ16σ2D.
+- I built a feasible joint PSD matrix with perfect correlation in one quadrant. Var(d_0) was 0.0 against 0.0513 at r=1 (S16 and S2D 4×4 with quadrant correlations 0.5 and 0.2).
+- So agreement at r=1 does not cover every admissible correlation. The text at declaration lines 260-261 overstates this.
+- It also departs from the scoping, which uses r×σσ per quadrant (`FD-GENCMP-XCOV-SCOPING.md:236`).
+- Either say "within this one-parameter family", or use a true bound.
+- Severity: should fix before binding.
+
+**A5. Route B's reading uses the point estimate R, and its jackknife SE feeds no rule.**
+- V_d,qq is about (σ16-σ2)² + 2(1-R)σσ. With ρ near 0.99 and d about 1e-41, z is hypersensitive to R's sampling error. R comes from 100 pairs, with SE printed only (`fd_xcov.py:321-334`).
+- A "differ" could be an artifact of R's noise, and the text bars softening it (declaration line 262).
+- Declare in advance how an SE-sensitive "differ" is reported. For example, print the z range over R±SE as information only. Do not change the rule.
+- Severity: should fix.
+
+**A6. Route A's r\* scan is skipped when the endpoints agree.**
+- `route_a` returns at `fd_xcov.py:314-315` without scanning the interior.
+- Agree at both ends implies agree throughout, because χ² is convex in r.
+- Differ at both ends does not imply differ throughout, because the interior can dip below the threshold.
+- The "differ only if r<r\*" case is also missing from §5.
+- Severity: minor.
+
+**A7. The paper's "agree" sentence (declaration line 259) lists "run-period offsets" among the computed covariances.**
+- The C_PL pair is constructed, with perfect within-period correlation (declaration line 214, ruling 4). The sentence does not say so.
+- V1 also dropped the background-weight comparison that the scoping had (declaration lines 153-155; scoping line 218). §8 declares this. The sentence should carry it.
+- Severity: minor, since Joseph approves the final text.
+
+The primary, variant and sensitivity designations and the V1 band demotion are fixed and do not see d. The route switch itself is mechanical, at `fd_xcov_steps.py:436`.
+
+## B. Controls and computations
+
+**B1. Five K1 checks cannot fail. Blocks binding.**
+- Lines `fd_xcov_steps.py:403-404`, `414-417` and `422-423` call `np.allclose(..., rtol=K_TOL)` with the default `atol=1e-8`.
+- The checks cover normalization (both sides), C_PL5D, C_PL_R and C_model_abs, whose entries are about 1e-80. They are always true.
+- Demonstration with the committed C_PL5D and periods: relative reproduction is 1.5e-16, but a block scaled by 1.5 (and by 100) also passes `allclose(rtol=1e-10)`.
+- The declaration's claim (lines 199-200) that each cross block uses exactly the products inside both stated covariances is untested for these five.
+- The band and lateral checks use `atol=K_TOL*max` and are fine.
+- Fix: set `atol=0`, or use a relative-to-max tolerance as in the band checks.
+
+**B2. Some K1 and K0 ties are missing.**
+- There is no K1 for C_model,2D. `M2q` (`fd_xcov_steps.py:346-351`) is never compared with any stated block. Declaration lines 197-199 list no 2D C_model check either.
+- K0 compares C_model,2D's cells with `cells2d` taken from `playlist_term.npz` (`fd_xcov_steps.py:326,347`), not Q_R's, as declaration line 192 says.
+- Nothing ties `sqrt(diag(C16q - box_var))` or `sqrt(diag(Q2q))` to C-R's `sigma16_reported` and `2D.sigma`. Only the sums are tied (declaration line 65). The variances are the heart of the test.
+- Severity: should fix.
+
+**B3. Scoping's K2 is not implemented.**
+- Scoping line 234 requires every joint block and each 2×2 to be PSD. `cmd_k` has no such check.
+- Route B's stat block is not PSD by construction (declaration lines 220-222). V_d being PD is weaker than the joint matrix being PSD. An overstated K can still leave V_d PD and inflate χ².
+- Severity: should fix.
+
+**B4. The PD test is the sign of the smallest eigenvalue only (`fd_xcov.py:282`).**
+- A V_d with condition number about 1e17 passes. I fed `verdict` diag(1e-80, 1e-80, 1e-80, 1e-97) and it returned "differ".
+- Add a relative threshold on the smallest eigenvalue. The tests use only O(1) scales.
+- Severity: minor.
+
+**B5. The printed variants can abort the primary.**
+- `alone` and `nopl` (`fd_xcov_steps.py:457-460`) go through `verdict`, which raises `Stop` on non-PD. That kills K before `write_json`, so the primary is lost to a variant failure.
+- Severity: minor.
+
+**B6. Direction coverage per control.** (i) implemented, (ii) can fail on a realistic defect, (iii) tested in the direction it acts. The steps have no end-to-end test (declaration lines 314-315).
+
+| Control | (i) | (ii) | (iii) |
+|---|---|---|---|
+| V0 counts (`fd_xcov_steps.py:133-138`) | yes | yes | no test |
+| MC row identity (`fd_xcov.py:147`) | yes | yes | yes |
+| Data and background joins | yes | yes | function tested both ways; the unmatched-row classing cannot fail (descriptive only) |
+| Draw check (`fd_xcov_steps.py:155-160`) | yes | yes, since n and the sum are in the substring | only the data line's format is tested. I read the driver and the mc and bkg formats match. |
+| V1 ratio test | yes | yes | no test at all |
+| B0 | yes | yes | not testable locally. `test_native_draws_reproduce_s5n_pseudo_bitwise` tests the replacement, not the pinned S1 file |
+| K0 | partly (see B2) | partly | no test |
+| K1, bands and laterals | yes | yes | no test |
+| K1, five blocks | yes | no (B1) | no |
+| PD stop | yes | yes | tested only at O(1) scale |
+
+**B7. `mc_positional` compares `float32(pt2)` with the unconverted MCgen (`fd_xcov.py:156`).**
+- If the npz MCgen is float64, nearly every row differs and V0 fails loudly. The declaration says "as float32".
+- I could not check the dtype.
+- Severity: minor.
+
+**B8. Join ambiguity is undercounted.**
+- It is counted only for an adjacent equal row (`fd_xcov.py:141`). A non-adjacent duplicate coordinate could be assigned to the wrong earlier row.
+- Severity: minor.
+
+**B9. In route A, the shares and ρ_q omit the bounded term.**
+- `shares` (`fd_xcov.py:337-343`) and `rho` (`fd_xcov_steps.py:464`) leave out the bounded term. The shares then do not sum to 1.
+- Severity: minor.
+
+**Verified correct:**
+- Replica b's seeds and stream lengths match RE-2 (`fd_xcov.py:49,176-181`).
+- Data goes through J as `d[j]`, MC by position, background as `g[entry]` (`fd_xcov.py:211-213`).
+- RE-2's partb runs used `--bootstrap-streams three`, so the background stream exists (`partb_runs.tsv:190`).
+- `Vd_of` has the right sign for d = S16 − S2D.
+- `cross_cov` equals `mat_cov` on the diagonal.
+- The normalization cross term and the C_PL5D formula are right. C_PL5D reproduces to 1.5e-16 from the committed periods.
+- `chi2_sf4` is exact.
+- The z and p rule matches ruling 3.
+- Route B's key names and tags are consistent.
+
+## S. Secondary findings
+
+**S1. Declaration line 97 says committed inputs are "each read with its committed digest". They are not.**
+- `cpl_block.npz`, the data-product json, C-R's readout, `cmodel_5d.json`, `cmodel_2d.json`, `fd_ct_5b_periods.json` and `playlist_term.json` are read without a digest (`fd_xcov_steps.py:329-333,346,406-407,419`).
+- `S1_<b>_<i>.npz` is checked only in K, not in V1's `weight_files` (`fd_xcov_steps.py:193`).
+- S1's `data_b1_j101.npz` is not digest-checked before the B0 compare (`fd_xcov_steps.py:301`).
+- Severity: should fix, or reword to say the git blob at the bound commit is the pin.
+
+**S2. `cmd_k` takes the 2D edges from `sa.s1.FINE` (`fd_xcov_steps.py:327`) rather than from `hXSec2D`.**
+- `cmd_overlap` reads the histogram edges. A mismatch would be caught only by the S2D check.
+- Severity: minor.
+
+**S3. `x_boot.sh` redirects to `$R/logs/...` (lines 21,23) and sets `TMPDIR=$R/tmp`. Nothing creates either directory.**
+- V0 creates only `inputs/` and `v0/`.
+- If the runbook doesn't create `$R/logs`, the lane redirects fail and the lanes don't run.
+- Severity: should fix, with a `mkdir -p`.
+
+**S4. Cost mismatch.**
+- BOOT is declared at 2.75 node-h but requested with `-t 03:00:00`, which is 3.0 node-h (declaration line 272; `x_boot.sh:4`).
+- The total cap of 4.75 is therefore up to 5.0.
+- Lane 1's 14 unfolds at about 655 s each are about 2.55 h of wall.
+- The other cost figures check out: 0.02281 node-h per unfold is S1's 1.825 node-h for 80 unfolds, and 101 unfolds give 2.30.
+- Severity: minor.
+
+**S5. Rerun hazards.**
+- A V0 that crashes after staging cannot be rerun (`fd_xcov_steps.py:115-116` refuses to overwrite).
+- BOOT's mapped lanes are not gated on B0, so up to 100 replicas could be spent before a B0 failure is known.
+- Severity: minor.
+
+**S6. Records that check out.**
+- E's INPUTS digest `a5f8e3ae…` matches the file on disk.
+- X's INPUTS has 392 pins: 175 U, 100 S1, 100 logs, 10 S3, and 7 others.
+- All 385 `partb` digests match `re2/run/hpss/members.sha256` (385 checked, 0 mismatches).
+- `INPUT_NPZ_SHA256`, `BKG_SHA256` and `X01_SHA256` match `s1_assemble.py`.
+- The detector-dump digest `c52dca58…` is in the sf1 manifest.
+- The S5_R digest `631cf255…` is in the RE-2 part C record.
+- Count claims such as 4,091,707 and the 175-universe list are as cited, but I could not verify them against pscratch.
+- **No pscratch plain read or write outside `$R`** (checked by reading, not running). Every pscratch read goes through `read_noatime`, `Inputs.verify` or `Inputs.fileobj`. BOOT reads the staged copies.
+
+## Verdicts
+
+**A.** Not safe to bind as written. No step lets a result choose its own outcome through a threshold or the primary/variant labels. Those are fixed, and V0, V1 and BOOT never see d. But route selection can still be influenced after numbers are seen in two ways, A1 and A2. The "0 to 1" wording overstates the route-A bound (A4). The Route B reading ignores R's sampling error (A5). The "before any number is read" claim is false for d (A3).
+
+**B.** The algebra is right, but the control set is weaker than the declaration says. Five K1 checks cannot fail (B1), which blocks binding. C_model,2D has no tie to a stated block, and the variances are not tied to C-R (B2). K2's joint PSD check is missing (B3). The steps' controls have no end-to-end test, and several are not exercised in the direction they act (B6).

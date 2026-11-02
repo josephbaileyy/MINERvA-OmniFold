@@ -51,6 +51,19 @@ CMODEL2 = REPO / "2d-unfolding/pv2d/cmodel/cmodel_2d.json"
 PERIODS5 = FD / "fd/readout/fd_ct_5b_periods.json"
 PL_JSON = REPO / "docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/playlist/playlist_term.json"
 DEFINITION = gc.DEFINITION
+COMMITTED = {   # sha256 of each committed input K reads (each also fixed by the bound commit's git blob)
+    CR: "f1f2fb7813e7f4904f5a6bcfc897a8f0a8e19b001809ebecb4975ec8bcd3c906",
+    CPL_BLOCK: "d9aa32fdb64357760348c9ccbc32fbea81d517f0f0786eedf17ab4946eaca59f",
+    DP: "d6752d2c64aad4426375c03a3171a7015f031e2027928cf89aea6cd3bbb84d50",
+    CMODEL5: "3cfdc6a5b8c6cea5f99b4678e27f6ca5f7973ee57a79b9d139798f0751cfcd60",
+    CMODEL2: "aabc66d106a49484d486fb055bfb4280187898f98ca406e010f153af57702dd0",
+    PERIODS5: "a5b17895b1189543d773e94717e14cd9b1409535e366c96788f94bf6f40759db",
+    PL_JSON: "a952adda441e1fa7d29eb44e064b11991a09ded3682c2530193222e45164ed26",
+    S1_JSON: "81e5ef3fe8e7b055360dc43b8a8240c9b5c39c8aa6e7c507b3211d305b326b21",
+}
+CMODEL_R = REPO / "docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/cmodel/cmodel_R.json"
+COMMITTED[CMODEL_R] = "571b1e8bd9fe1de6ebf18d70bd1311aec63d2470a7c8daa01cb2b3303d5c0569"   # partc-r2/SHA256SUMS:15
+V1_FULL_CAP_S = 1.75 * 3600                     # the full run's cap in seconds of one node (declaration section 6)
 LATERAL_BANDS = list(sa.LATERAL_BANDS)                                    # BeamAngleX ... Muon_Energy_MINOS
 K_TOL = 1e-10
 
@@ -103,19 +116,12 @@ def hist2d_cells(data: bytes, cells2d: np.ndarray) -> np.ndarray:
 
 def cmd_v0(a) -> int:
     out = a.run_dir / "v0"
-    if out.exists():
-        raise X.Stop("-", f"refusing to overwrite {out}")
+    if (out / "v0.json").exists():
+        raise X.Stop("-", f"refusing to overwrite {out / 'v0.json'}")
     inp = X.Inputs()
-    # stage the two 5D inputs (boot reads the copies, so s5p_numerics opens no pscratch original)
-    staged = {}
-    for src in (NPZ_5D, BKG_5D):
-        data = inp.bytes(src)
-        dst = a.run_dir / "inputs" / src.name
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        if dst.exists():
-            raise X.Stop("-", f"refusing to overwrite {dst}")
-        dst.write_bytes(data)
-        staged[src.name] = hashlib.sha256(data).hexdigest()
+    # stage the two 5D inputs (boot reads the copies, so s5p_numerics opens no pscratch original); a copy left by an
+    # interrupted V0 is reused only if it is the pinned bytes
+    staged = {src.name: hashlib.sha256(stage(inp, src, a.run_dir).read_bytes()).hexdigest() for src in (NPZ_5D, BKG_5D)}
     z = np.load(io.BytesIO((a.run_dir / "inputs" / NPZ_5D.name).read_bytes()), allow_pickle=False)
     edges = [np.asarray(z[f"edges_{i}"], float) for i in range(int(z["nedges"]))]
     import s5n_pseudo
@@ -162,7 +168,7 @@ def cmd_v0(a) -> int:
                        and rec["draw_check"]["matching"] == len(X.STAT_REPLICAS))
     rec["route"] = "B" if rec["pass"] else "A (the statistical stream falls back to r in [0, 1]; ruling 1)"
     rec["inputs"], rec["atime_deviations"] = inp.record, inp.atime_deviations()
-    out.mkdir(parents=True)
+    out.mkdir(parents=True, exist_ok=True)
     if rec["pass"]:
         np.savez(out / "maps.npz", j=joins["data"]["map"], entry=joins["background"]["map"])
         rec["maps_sha256"] = hashlib.sha256((out / "maps.npz").read_bytes()).hexdigest()
@@ -190,6 +196,8 @@ def universe_list() -> list[tuple[str, int]]:
 
 def weight_files(b: str, i: int, sf1: dict, det: dict) -> dict:
     """The wt and wr files S1's product for b:i read, by the digests its metadata records."""
+    s1meta = json.loads(S1_JSON.read_text())["meta"]["inputs_sha256"]
+    committed_sha(S1DIR / f"S1_{b}_{i}.npz", s1meta[f"S1_{b}_{i}.npz"], "S1 product")
     meta = json.loads(str(np.load(S1DIR / f"S1_{b}_{i}.npz", allow_pickle=False)["meta"]))
     want = meta["bank_weight_sha256"]
     out = {}
@@ -236,14 +244,9 @@ def cmd_v1(a) -> int:
             path, h = files[k]
             inp.pins[str(path)] = h                       # pinned by S1's product metadata (and the manifest)
             w5u = np.load(io.BytesIO(inp.bytes(path)), allow_pickle=False).astype(float)
-            use = (np.asarray(w2c) != 0) & (w5c != 0) & ~sent
-            q = (w5u[use] / w5c[use]) / (np.asarray(w2u, float)[use] / np.asarray(w2c, float)[use])
-            fin = np.isfinite(q)
-            med = float(np.median(q[fin])) if fin.any() else float("nan")
-            r[k] = {"rows": int(use.sum()), "nonfinite": int((~fin).sum()), "scale": med,
-                    "max_rel": float(np.max(np.abs(q[fin] / med - 1))) if fin.any() else float("inf")}
-            scales.append(med)
-        r["pass"] = all(r[k]["max_rel"] <= X.RATIO_TOL and r[k]["nonfinite"] == 0 for k in ("wt", "wr"))
+            r[k] = X.ratio_test(w2u, w2c, w5u, w5c, sent)
+            scales.append(r[k]["scale"])
+        r["pass"] = all(r[k]["pass"] for k in ("wt", "wr"))
         r["seconds"] = round(time.time() - t1, 1)
         res[f"{b}:{i}"] = r
     bands = {}
@@ -257,6 +260,7 @@ def cmd_v1(a) -> int:
     if a.probe:
         per = np.mean([r["seconds"] for r in res.values()])
         rec["projected_seconds_175"] = round(t_hash + 175 * per, 0)
+        rec["within_full_cap"] = bool(rec["projected_seconds_175"] <= V1_FULL_CAP_S)
     write_json(out / "v1.json", rec)
     return 0
 
@@ -298,6 +302,8 @@ def cmd_boot(a) -> int:
                        for b in reps for p in [outd / f"{tag}_b{b}_j{100 + b}.npz"] if p.exists()}
     if a.native and 1 in reps:                            # control B0
         new = np.load(outd / f"{tag}_b1_j101.npz", allow_pickle=False)["xsec_flat"]
+        s1meta = json.loads(S1_JSON.read_text())["meta"]["inputs_sha256"]
+        committed_sha(S1DIR / "data_b1_j101.npz", s1meta["data_b1_j101.npz"], "B0 reference")
         ref = np.load(S1DIR / "data_b1_j101.npz", allow_pickle=False)["xsec_flat"]
         rec["B0_bitwise"] = bool(np.array_equal(new, ref))
     rec["code_sha256"] = {Path(f).name: hashlib.sha256(Path(f).read_bytes()).hexdigest()
@@ -309,10 +315,38 @@ def cmd_boot(a) -> int:
 # ---------------------------------------------------------------- k
 
 
+def read_committed(path: Path) -> bytes:
+    return committed_sha(path, COMMITTED[path], "committed input")
+
+
+def boot_state(run_dir: Path, v0_pass: bool) -> dict:
+    """Ruling A2: K runs once, after BOOT has ended or was never due. BOOT is due iff V0 passed; it has ended when its
+    native lane has written its record and, if B0 held, all eight mapped lanes have too."""
+    if not v0_pass:
+        return {"due": False, "ended": True, "b0": None, "lanes": 0}
+    nat = list((run_dir / "boot" / "native").glob("lane_*.json"))
+    if not nat:
+        return {"due": True, "ended": False, "b0": None, "lanes": 0}
+    b0 = bool(json.loads(nat[0].read_text()).get("B0_bitwise"))
+    lanes = sorted((run_dir / "boot" / "xcov").glob("lane_*.json"))
+    return {"due": True, "ended": (not b0) or len(lanes) == 8, "b0": b0, "lanes": len(lanes)}
+
+
+def v1_state(run_dir: Path) -> dict:
+    """Ruling A1: the full V1 readout, or a probe that projected beyond the full run's cap, in which case every band is
+    bounded; anything else stops K."""
+    full, probe = run_dir / "v1" / "v1.json", run_dir / "v1-probe" / "v1.json"
+    if full.exists():
+        return {"source": "full", "bands_pass": json.loads(full.read_text())["bands_pass"]}
+    if probe.exists() and not json.loads(probe.read_text()).get("within_full_cap", True):
+        return {"source": "probe beyond the full run's cap: every band bounded", "bands_pass": {}}
+    raise X.Stop("K", "no full V1 readout, and no probe that projected beyond the full run's cap")
+
+
 def cmd_k(a) -> int:
     out = a.run_dir / "k"
     if out.exists():
-        raise X.Stop("-", f"refusing to overwrite {out}")
+        raise X.Stop("-", f"refusing to overwrite {out}: K runs once (a stop is final)")
     inp = X.Inputs()
     ctrl = {}
 
@@ -320,32 +354,60 @@ def cmd_k(a) -> int:
         ctrl[name] = bool(ok)
         X.report(name.split()[0], name, ok, str(detail))
 
+    v0 = json.loads((a.run_dir / "v0" / "v0.json").read_text())
+    bs = boot_state(a.run_dir, v0["pass"])
+    if not bs["ended"]:
+        raise X.Stop("K", f"BOOT has not ended ({bs}); K runs once, after it")
+    v1 = v1_state(a.run_dir)
+    rec = {"schema": "fd-xcov-k/1", "boot": bs, "v1_source": v1["source"]}
+    try:
+        res = k_compute(a, inp, check, v0, bs, v1)
+        rec.update(res)
+        rc = 0
+    except X.Stop as e:                      # a stop is recorded, so K cannot be rerun on another route (ruling A2)
+        rec["stop"], rc = str(e), 1
+    rec.update(controls=ctrl, inputs=inp.record, atime_deviations=inp.atime_deviations())
+    write_json(out / "k.json", rec)
+    print(f"[K] {rec.get('route')}: {rec.get('primary', {}).get('outcome', rec.get('stop'))}", flush=True)
+    return rc
+
+
+def k_compute(a, inp, check, v0, bs, v1) -> dict:
     defn = json.loads(DEFINITION.read_text())
     U = gc.cell_matrix()
     qz, pl, s5 = inp.npz(Q_R), inp.npz(CPL_R), inp.npz(S5_R)
     cells2d, area, x = np.asarray(pl["cells"], int), np.asarray(qz["area"], float), np.asarray(qz["cells_x_EU"], float)
-    e_pt, e_pz = (np.asarray(sa.s1.FINE[k], float) for k in ("pt", "pz"))
-    A, B = X.quadrant_vectors(defn, cells2d, area, e_pt, e_pz)
-    blk = np.load(CPL_BLOCK, allow_pickle=False)
-    dp = json.loads(DP.read_text())
+    _, (e_pt, e_pz) = gc.root_hist(inp.bytes(RE2 / "partb/out/ER/xsec.root"), "hXSec2D")
+    A, B = X.quadrant_vectors(defn, cells2d, area, np.asarray(e_pt, float), np.asarray(e_pz, float))
+    blk = np.load(io.BytesIO(read_committed(CPL_BLOCK)), allow_pickle=False)
+    dp, cr = json.loads(read_committed(DP)), json.loads(read_committed(CR))["quadrants"]
     f = np.asarray(blk["f"], float)
     s1 = inp.npz(S1_NPZ)
-    cr = json.loads(CR.read_text())["quadrants"]
     S16 = np.array([cr[q]["S16"] for q in X.QNAMES])
     S2 = B @ x
-    check("C-R S2D: B x reproduces C-R's E_R quadrant sums (1e-12)",
-          np.allclose(S2, [cr[q]["2D"]["S"] for q in X.QNAMES], rtol=1e-12, atol=0))
-    check("C-R S16: A f plus the unreported boxes reproduce C-R's S16 (1e-12)", np.allclose(
-        A @ f + [sum(cr[q]["unreported_boxes_P5"].values()) for q in X.QNAMES], S16, rtol=1e-12, atol=0))
-    d = S16 - S2
+    boxes = np.array([sum(cr[q]["unreported_boxes_P5"].values()) for q in X.QNAMES])
     box_var = np.diag([sum(v ** 2 for v in cr[q]["unreported_boxes_P5"].values()) for q in X.QNAMES])
-
-    # own matrices at quadrant level
+    check("K0 C-R's S2D is B x (1e-12)", np.allclose(S2, [cr[q]["2D"]["S"] for q in X.QNAMES], rtol=1e-12, atol=0))
+    check("K0 C-R's S16 is A f plus the boxes (1e-12)", np.allclose(A @ f + boxes, S16, rtol=1e-12, atol=0))
+    d = S16 - S2
     C16q = A @ np.asarray(blk["C_total_plus_C_resp_plus_C_PL5D"], float) @ A.T + box_var
     Q2q = B @ np.asarray(qz["total_plus_C_PL"], float) @ B.T
-    cm2 = json.loads(CMODEL2.read_text())
-    check("K0 C_model,2D's cells are Q_R's", list(cm2["cells"]) == cells2d.tolist())
+    check("K0 C-R's sigma16 and 2D sigma are sqrt(diag) of C16q and B Q_R B^T (1e-12)",
+          np.allclose(np.sqrt(np.diag(C16q)), [cr[q]["sigma16_reported"] for q in X.QNAMES], rtol=1e-12, atol=0)
+          and np.allclose(np.sqrt(np.diag(Q2q)), [cr[q]["2D"]["sigma"] for q in X.QNAMES], rtol=1e-12, atol=0))
+    cm2, cmr = json.loads(read_committed(CMODEL2)), json.loads(read_committed(CMODEL_R))
+    check("K0 C_model,2D's cells are C_PL_R's (the 205-cell index C-R used)", list(cm2["cells"]) == cells2d.tolist())
+    check("K0 cmodel_R.json was built from this cmodel_2d.json",
+          cmr["inputs"]["cmodel_json"]["sha256"] == COMMITTED[CMODEL2])
     S2m = np.asarray(cm2["S"], float)
+    Cabs2 = (S2m.T @ S2m) * np.outer(x, x)
+    sQ, sQM = (np.asarray(cmr["per_cell"][k], float) for k in ("sigma_Q_R", "sigma_Q_R_plus_C_model"))
+    diagQ = np.diag(np.asarray(qz["total_plus_C_PL"], float))
+    rel = np.allclose(sQ, np.sqrt(diagQ) / x, rtol=X.K_TOL, atol=0)
+    absu = np.allclose(sQ, np.sqrt(diagQ), rtol=X.K_TOL, atol=0)
+    want = np.sqrt(diagQ + np.diag(Cabs2)) / (x if rel else 1.0)
+    check("K1 C_model,2D from its vertices gives cmodel_R.json's per-cell sigma of Q_R + C_model (1e-10)",
+          (rel or absu) and np.allclose(sQM, want, rtol=X.K_TOL, atol=0))
     V2m = [B @ (x * s) for s in S2m]
     M2q = sum(np.outer(v, v) for v in V2m)
     C2q = Q2q + M2q
@@ -360,117 +422,120 @@ def cmd_k(a) -> int:
         return hist2d_cells(inp.bytes(path), cells2d)
 
     crosses, bounded = {}, {}
-    v1 = json.loads((a.run_dir / "v1" / "v1.json").read_text())
     w = sa.flux_weights(stage(inp, CONSTRAINT, a.run_dir))
-    s1meta = json.loads(S1_JSON.read_text())["meta"]["inputs_sha256"]
+    s1meta = json.loads(read_committed(S1_JSON))["meta"]["inputs_sha256"]
     by_band = {}
     for b, i in universe_list():
         by_band.setdefault(b, []).append(i)
     for b, idx in sorted(by_band.items()):
-        X16 = np.array([A @ (U @ sa.xs(S1DIR / f"S1_{b}_{i}.npz")) for i in sorted(idx)
-                        if committed_sha(S1DIR / f"S1_{b}_{i}.npz", s1meta[f"S1_{b}_{i}.npz"], "S1 product")])
+        for i in idx:
+            committed_sha(S1DIR / f"S1_{b}_{i}.npz", s1meta[f"S1_{b}_{i}.npz"], "S1 product")
+        X16 = np.array([A @ (U @ sa.xs(S1DIR / f"S1_{b}_{i}.npz")) for i in sorted(idx)])
         X2 = np.array([B @ vec2(RE2 / f"partb/out/U_{b}_{i}/xsec.root") for i in sorted(idx)])
         ww = w if b == sa.FLUX else None
-        check(f"K1 16 band {b}: the products give S1's block (1e-10)",
-              np.allclose(X.cross_cov(X16, X16, ww), own16(f"C_band_{b}"), rtol=K_TOL, atol=K_TOL * abs(own16(f"C_band_{b}")).max()))
-        check(f"K1 2D band {b}: the products give S5_R's block (1e-10)",
-              np.allclose(X.cross_cov(X2, X2, ww), own2(f"band_{b}"), rtol=K_TOL, atol=K_TOL * abs(own2(f"band_{b}")).max()))
-        K = X.cross_cov(X16, X2, ww)
+        check(f"K1 16 band {b}: the products give S1's block (1e-10)", X.same_block(X.cross_cov(X16, X16, ww), own16(f"C_band_{b}")))
+        check(f"K1 2D band {b}: the products give S5_R's block (1e-10)", X.same_block(X.cross_cov(X2, X2, ww), own2(f"band_{b}")))
         if v1["bands_pass"].get(b):
-            crosses[f"band:{b}"] = K
+            crosses[f"band:{b}"] = X.cross_cov(X16, X2, ww)
         else:
-            bounded[f"band:{b}"] = X.psd_sqrt(own16(f"C_band_{b}")) @ X.psd_sqrt(own2(f"band_{b}"))
+            bounded[f"band:{b}"] = X.bound_matrix(own16(f"C_band_{b}"), own2(f"band_{b}"))
     flux5 = np.asarray(np.load(io.BytesIO((a.run_dir / "inputs" / X.NPZ_NAME).read_bytes()), allow_pickle=False)["flux"], float)
     scale = sa.x01_scale(stage(inp, X01, a.run_dir), flux5)
-    pti = sa.pt_index()
-    ipt2 = cells2d // (len(e_pz) - 1)
+    pti, ipt2 = sa.pt_index(), cells2d // (len(e_pz) - 1)
     for b in LATERAL_BANDS:
         X16, X2 = [], []
         for i in (0, 1):
             p5 = S1DIR / f"lat_{b}_{i}_b-_j-.npz"
             committed_sha(p5, s1meta[p5.name], "S1 lateral")
-            xs5 = sa.xs(p5) * (scale[i][pti] if b == sa.MINOS else 1.0)
-            X16.append(A @ (U @ xs5))
+            X16.append(A @ (U @ (sa.xs(p5) * (scale[i][pti] if b == sa.MINOS else 1.0))))
             v = vec2(RE2 / f"partb/out/S3_{b.replace('_', '')}{i}/xsec.root")
             X2.append(B @ (v * (scale[i][ipt2] if b == sa.MINOS else 1.0)))
         X16, X2 = np.array(X16), np.array(X2)
-        check(f"K1 16 lateral {b} (1e-10)", np.allclose(X.cross_cov(X16, X16), own16(f"C_lat_{b}"), rtol=K_TOL,
-                                                        atol=K_TOL * abs(own16(f"C_lat_{b}")).max()))
-        check(f"K1 2D lateral {b} (1e-10)", np.allclose(X.cross_cov(X2, X2), own2(f"band_{b}"), rtol=K_TOL,
-                                                        atol=K_TOL * abs(own2(f"band_{b}")).max()))
+        check(f"K1 16 lateral {b} (1e-10)", X.same_block(X.cross_cov(X16, X16), own16(f"C_lat_{b}")))
+        check(f"K1 2D lateral {b} (1e-10)", X.same_block(X.cross_cov(X2, X2), own2(f"band_{b}")))
         crosses[f"lat:{b}"] = X.cross_cov(X16, X2)
     n16, n2 = X.NORM * (A @ f), X.NORM * (B @ x)
-    check("K1 normalization, both sides (1e-10)", np.allclose(np.outer(n16, n16), own16("C_normalization"), rtol=K_TOL)
-          and np.allclose(np.outer(n2, n2), own2("band___Normalization_flat"), rtol=K_TOL))
+    check("K1 16 normalization (1e-10)", X.same_block(np.outer(n16, n16), own16("C_normalization")))
+    check("K1 2D normalization (1e-10)", X.same_block(np.outer(n2, n2), own2("band___Normalization_flat")))
     crosses["normalization"] = np.outer(n16, n2)
-    per = json.loads(PERIODS5.read_text())
-    k16, k2 = float(per["constants"]["k"]), float(json.loads(PL_JSON.read_text())["report"]["k_factor"])
+    per, plj = json.loads(read_committed(PERIODS5)), json.loads(read_committed(PL_JSON))
+    k16, k2 = float(per["constants"]["k"]), float(plj["report"]["k_factor"])
     V16p, V2p = [], []
-    for X_ in ("PA", "PB", "PC"):
-        g16 = np.asarray(per["g_vs_5A"]["periods"][X_]["g_5b"], float)
-        e16 = float(per["constants"]["exposure_share"][X_])
-        V16p.append(np.sqrt(k16 * e16) * (A @ (f * g16)))
-        V2p.append(np.sqrt(k2) * (B @ (np.sqrt(np.asarray(pl[f"e_{X_}"], float)) * x * np.asarray(pl[f"g_{X_}"], float))))
-    check("K1 C_PL5D from its periods (1e-10)", np.allclose(sum(np.outer(v, v) for v in V16p),
-                                                       A @ np.asarray(blk["C_PL5D"], float) @ A.T, rtol=K_TOL))
-    check("K1 C_PL_R from its periods (1e-10)", np.allclose(sum(np.outer(v, v) for v in V2p),
-                                                       B @ np.asarray(pl["C_PL"], float) @ B.T, rtol=K_TOL))
+    for P_ in ("PA", "PB", "PC"):
+        g16 = np.asarray(per["g_vs_5A"]["periods"][P_]["g_5b"], float)
+        V16p.append(np.sqrt(k16 * float(per["constants"]["exposure_share"][P_])) * (A @ (f * g16)))
+        V2p.append(np.sqrt(k2) * (B @ (np.sqrt(np.asarray(pl[f"e_{P_}"], float)) * x * np.asarray(pl[f"g_{P_}"], float))))
+    check("K1 C_PL5D from its periods (1e-10)", X.same_block(sum(np.outer(v, v) for v in V16p),
+                                                        A @ np.asarray(blk["C_PL5D"], float) @ A.T))
+    check("K1 C_PL_R from its periods (1e-10)", X.same_block(sum(np.outer(v, v) for v in V2p),
+                                                        B @ np.asarray(pl["C_PL"], float) @ B.T))
     crosses["C_PL (constructed, period-paired)"] = X.outer_pairs(V16p, V2p)
-    cm5 = json.loads(CMODEL5.read_text())
+    cm5 = json.loads(read_committed(CMODEL5))
     check("K0 the C_model vertices are paired in one order", list(cm5["vertices"]) == list(cm2["vertices"]))
-    V16m = [A @ (f * np.asarray(s, float)) for s in cm5["S"]]
-    check("K1 C_model_abs from its vertices (1e-10)", np.allclose(
-        sum(np.outer(v, v) for v in V16m), A @ np.asarray(dp["matrices"]["C_model_abs"], float) @ A.T, rtol=K_TOL))
+    V16m = [A @ (f * np.asarray(s_, float)) for s_ in cm5["S"]]
+    check("K1 C_model_abs from its vertices (1e-10)", X.same_block(sum(np.outer(v, v) for v in V16m),
+                                                              A @ np.asarray(dp["matrices"]["C_model_abs"], float) @ A.T))
     crosses["C_model (vertex-paired)"] = X.outer_pairs(V16m, V2m)
-
-    # the statistical stream: route B if V0 and B0 held and every paired replica exists, else route A
-    v0 = json.loads((a.run_dir / "v0" / "v0.json").read_text())
+    # the statistical stream (ruling 1): route B iff V0 and B0 held, every paired replica exists, and K2 holds for it
     S16stat, S2stat = own16("C_stat"), own2("stat")
-    lanes = sorted((a.run_dir / "boot" / "xcov").glob("lane_*.json")) if v0["pass"] else []
-    natives = sorted((a.run_dir / "boot" / "native").glob("lane_*.json"))
-    b0 = any(json.loads(p.read_text()).get("B0_bitwise") for p in natives)
-    prods = {}
-    for p in lanes:
-        prods.update(json.loads(p.read_text())["products"])
-    want = {f"xcov_b{b}_j{100 + b}.npz" for b in X.STAT_REPLICAS}
-    route = "B" if (v0["pass"] and b0 and set(prods) >= want) else "A"
-    stat = None
-    if route == "B":
-        S16r = np.array([A @ (U @ sa.xs(a.run_dir / "boot" / "xcov" / n))
-                         for n in sorted(want, key=lambda s: int(s.split("_b")[1].split("_")[0]))
-                         if committed_sha(a.run_dir / "boot" / "xcov" / n, prods[n], "paired replica")])
-        S2r = np.array([B @ vec2(RE2 / f"partb/out/S1_{b:03d}/xsec.root") for b in X.STAT_REPLICAS])
-        stat = X.stat_cross(S16r, S2r, np.sqrt(np.diag(S16stat)), np.sqrt(np.diag(S2stat)))
-        crosses["stat (paired replicas)"] = stat["K"]
+    route, stat, why = "A", None, []
+    if v0["pass"] and bs["b0"]:
+        prods = {}
+        for p in sorted((a.run_dir / "boot" / "xcov").glob("lane_*.json")):
+            prods.update(json.loads(p.read_text())["products"])
+        want = [f"xcov_b{b}_j{100 + b}.npz" for b in X.STAT_REPLICAS]
+        if all(n in prods for n in want):
+            for n in want:
+                committed_sha(a.run_dir / "boot" / "xcov" / n, prods[n], "paired replica")
+            S16r = np.array([A @ (U @ sa.xs(a.run_dir / "boot" / "xcov" / n)) for n in want])
+            S2r = np.array([B @ vec2(RE2 / f"partb/out/S1_{b:03d}/xsec.root") for b in X.STAT_REPLICAS])
+            stat = X.stat_cross(S16r, S2r, np.sqrt(np.diag(S16stat)), np.sqrt(np.diag(S2stat)))
+            if X.joint_psd(S16stat, S2stat, stat["K"]):
+                route = "B"
+                crosses["stat (paired replicas)"] = stat["K"]
+            else:
+                why.append("K2 failed for the statistical block: falls back to route A")
+        else:
+            why.append("paired replicas missing")
+    else:
+        why.append("V0 failed" if not v0["pass"] else "B0 failed")
     K = sum(crosses.values())
-
+    check("K2 the joint matrix of the paired blocks is PSD", X.joint_psd(C16q, C2q, K))
     M = sum(bounded.values(), np.zeros((X.N_Q, X.N_Q)))
     if route == "A":
         M = M + X.bound_matrix(S16stat, S2stat)
-
-    def evaluate(C2, Kx, label):
-        if not M.any():
-            Vd = X.Vd_of(C16q, C2, Kx)
-            return {"label": label, "route": "B", **X.verdict(d, Vd), "Vd": Vd.tolist()}
-        return {"label": label, "route": "A" if route == "A" else "B, with bands bounded", **X.route_a(d, C16q, C2, Kx, M)}
-
-    primary = evaluate(C2q, K, "primary: the reported sixteen-cell matrix against Q_R + C_model,2D (vertex-paired)")
-    alone = evaluate(Q2q, K - crosses["C_model (vertex-paired)"], "printed: against Q_R alone (C_model,16 unpaired)")
-    nopl = evaluate(C2q, K - crosses["C_PL (constructed, period-paired)"],
-                    "sensitivity: the C_PL pair set to 0")
     blocks16 = {"C_total + C_resp + C_PL,5D": C16q - box_var, "unreported boxes": box_var}
     blocks2 = {"Q_R": Q2q, "C_model,2D": M2q}
-    Vd = X.Vd_of(C16q, C2q, K)
-    rho = {q: float((K[i, i]) / np.sqrt(C16q[i, i] * C2q[i, i])) for i, q in enumerate(X.QNAMES)}
-    rec = {"schema": "fd-xcov-k/1", "route": route, "d": d.tolist(), "S16": S16.tolist(), "S2D": S2.tolist(),
-           "rho_q": rho, "primary": primary, "Q_R_alone": alone, "C_PL_pair_zero": nopl,
-           "shares_primary": X.shares(blocks16, blocks2, crosses, Vd),
-           "crosses": {k: v.tolist() for k, v in crosses.items()}, "bounded": sorted(bounded),
-           "own": {"C16q": C16q.tolist(), "C2q": C2q.tolist(), "Q2q": Q2q.tolist(), "M2q": M2q.tolist()},
-           "stat": None if stat is None else {k: np.asarray(v).tolist() for k, v in stat.items()},
-           "controls": ctrl, "inputs": inp.record, "atime_deviations": inp.atime_deviations(),
-           "rule": "agree iff joint chi2_4 p >= 0.05 and every |z| <= 2.50; a quadrant over 2.50 is a named differ, "
-                   "and so is a joint p < 0.05 with no quadrant over (the director's ruling 3)"}
-    write_json(out / "k.json", rec)
-    print(f"[K] route {route}: primary {primary['outcome']}", flush=True)
-    return 0
+
+    def evaluate(C2, Kx, label, primary=False):
+        try:
+            if not M.any():
+                Vd = X.Vd_of(C16q, C2, Kx)
+                r = {"label": label, "route": "B", **X.verdict(d, Vd), "Vd": Vd.tolist()}
+                if stat is not None and route == "B":
+                    r["information_R_plus_minus_SE"] = X.r_band(d, C16q, C2, Kx - stat["K"], stat["R"],
+                                                                stat["rho_diag_jackknife_se"], np.sqrt(np.diag(S16stat)),
+                                                                np.sqrt(np.diag(S2stat)))
+                return r
+            return {"label": label, "route": "A" if route == "A" else "B, with bands bounded",
+                    **X.route_a(d, C16q, C2, Kx, M)}
+        except X.Stop as e:
+            if primary:
+                raise
+            return {"label": label, "stop": str(e)}
+
+    primary = evaluate(C2q, K, "primary: the reported sixteen-cell matrix against Q_R + C_model,2D (vertex-paired)", True)
+    alone = evaluate(Q2q, K - crosses["C_model (vertex-paired)"], "printed: against Q_R alone (C_model,16 unpaired)")
+    nopl = evaluate(C2q, K - crosses["C_PL (constructed, period-paired)"], "sensitivity: the C_PL pair set to 0")
+    sh = {"r0": X.shares(blocks16, blocks2, crosses, X.Vd_of(C16q, C2q, K))}
+    if M.any():
+        sh["r1"] = X.shares(blocks16, blocks2, {**crosses, "bounded (r = 1)": M}, X.Vd_of(C16q, C2q, K + M))
+    rho = {f"r{r_:g}": {q: float((K + r_ * M)[i, i] / np.sqrt(C16q[i, i] * C2q[i, i])) for i, q in enumerate(X.QNAMES)}
+           for r_ in ((0.0, 1.0) if M.any() else (0.0,))}
+    return {"route": route, "route_reasons": why, "d": d.tolist(), "S16": S16.tolist(), "S2D": S2.tolist(),
+            "rho_q": rho, "primary": primary, "Q_R_alone": alone, "C_PL_pair_zero": nopl, "shares": sh,
+            "crosses": {k: v.tolist() for k, v in crosses.items()}, "bounded": sorted(bounded),
+            "own": {"C16q": C16q.tolist(), "C2q": C2q.tolist(), "Q2q": Q2q.tolist(), "M2q": M2q.tolist()},
+            "stat": None if stat is None else {k: np.asarray(v).tolist() for k, v in stat.items()},
+            "rule": "agree iff joint chi2_4 p >= 0.05 and every |z| <= 2.50; a quadrant over 2.50 is a named differ, "
+                    "and so is a joint p < 0.05 with no quadrant over (the director's ruling 3)"}

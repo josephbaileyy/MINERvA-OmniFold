@@ -9,6 +9,7 @@
 # From the deploy at the bound commit with empty porcelain; writes only under $R. No set -u (conda).
 R=/pscratch/sd/j/josephrb/gencmp-x-20261102
 M=${BOUND:?set BOUND to the bound commit}
+mkdir -p "$R/logs" "$R/tmp" || exit 2
 cd "$R/deploy" || exit 9
 [ "$(git rev-parse HEAD)" = "$M" ] || { echo "HEAD not the bound commit"; exit 9; }
 [ -z "$(git status --porcelain)" ] || { echo "porcelain not empty"; exit 9; }
