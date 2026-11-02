@@ -374,6 +374,30 @@ readouts. All are labelled DERIVATION.
 - **The correlation structure.**
 - **That S1's block is right or wrong.**
 
+### 11.1 If κ passes: what a later coverage design could grade (inference, before any number is read)
+
+**What a κ PASS establishes.** Nature as the universe, unfolded with the nominal simulation, realizes S1's mechanism
+at the point where S1's mechanism is made at the same truth as its toys. That is the closure diagonal (§3.2). It
+says nothing about the data's point, where M is made.
+
+**A coverage design has a valid object** only where the block it grades is made at the ensemble's own truth point:
+- **At the nominal truth.** Draws with nature as the universe (and Poisson), graded against S1's mechanism made at
+  the nominal pseudo-data: I2's A, uncarried, with the other blocks made the same way. This tests the method — the
+  estimator and the covariance construction — at one point. It does not test the reported intervals.
+- **At a held-out tune's truth** (G18 or AR23). The same, with S1's mechanism rerun on that tune's pseudo-data as the
+  graded block. This tests the method at a truth away from the nominal, which a nominal-truth κ cannot.
+
+**The reported intervals** are made with M at the data's point, at the simulation's scale. An ensemble at any
+data-like truth graded against M meets §3.2's off-diagonal problem: in the linear limit it is out by g per cell.
+Each of the constructions that could address that is a new design, and none is declared here:
+- universe draws that move the data-like nature by the simulation-scale amount (an additive universe shift);
+- or a block remade at each ensemble's own truth, which is a different covariance from the reported one, so a
+  covariance question for Joseph.
+
+**So** a κ PASS would license a method-coverage ensemble at the nominal or a held-out-tune truth, graded against
+blocks made at that truth. It would not license a direct coverage statement about the reported intervals. The flux
+and detector groups are outside κ in every case.
+
 ## 12. For the director, and through the director for Joseph
 
 1. **The rule (B1).** No nature construction compared with M has first-order power to pass (§3.2, §3.3). The rule is
