@@ -88,6 +88,14 @@ def main(argv=None) -> int:
     FG.report("G0", "defs.json's sha256 is the pin", got == DEFS_PIN, f"{got} != {DEFS_PIN}")
     substitute(r, json.loads(a.defs.read_text()))
     model = FG.ratio_model(r, a.ratio_form, a.gibuu_axis, name=BLOCK)
+    # the model names Stage G's readout as every value's source; for the four rebuilt predictions, g and the label
+    # came from defs.json and from QUALIFIER here, while f and sigma_total_over_f stay Stage G's
+    for it in model["items"]:
+        for n in REBUILT:
+            stage_g = f"fd_g_readout.json predictions[name={n}]"
+            it["source"] = [f"defs.json generators[{n}].CH.analysis_definitions.chi2.reported.g" if src == f"{stage_g}.g"
+                            else f"{stage_g}.label (substituted by fd_gencmp_figures.py)" if src == f"{stage_g}.label"
+                            else src for src in it["source"]]
     FG.check_gibuu(model)
     FG.check_labels(model, r)
     FG.check_panels(model)

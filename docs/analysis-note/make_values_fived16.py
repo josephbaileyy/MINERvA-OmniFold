@@ -160,7 +160,7 @@ GENCMP4 = ("genie_cv", "genie_mec", "nuwro", "gibuu")      # the four prediction
 def table4(d, arm):
     """Table IV's five predictions in this arm's matrix, each with total, shape_only, cells, pulls and g_over_f_minus_1:
     for GENIE CV, GENIE + MEC, NuWro and GiBUU, GENCMP's corner "CH, analysis definitions" (defs.json), every sample of
-    which passed B0 and B2 and is complete; for MINERvA Tune v1, Stage G's record. The data side (cells, f, sigma, ndf)
+    which passed B0, and B2 where it applies ("n/a" for the samples B2 does not test), and is complete; for MINERvA Tune v1, Stage G's record. The data side (cells, f, sigma, ndf)
     must be Stage G's, so only the predictions differ."""
     mat = "reported" if arm == "with" else "without_C_PL5D"
     gd = d["gdefs"]
@@ -223,7 +223,8 @@ def gencmp_values(d, arm):
     gg = {t: gc["generators"]["gibuu"][t]["chi2"][mat]["total"]["chi2"] for t in ("carbon", "CH", "CH_genie_hydrogen")}
     assert gg["CH_genie_hydrogen"] < gg["carbon"] < gg["CH"], "GiBUU's sign no longer depends on the hydrogen sample"
     # the hydrogen label of GiBUU's table note, parsed from the readout (MP3-C's label and binding addendum 9 sec. 4),
-    # and the hydrogen weight from NuWro's combination label (the same construction for both, declaration sec. 2)
+    # and the hydrogen weight. Only NuWro's combination label states the weight ("12:1 per nucleon"), so only it is
+    # asserted here; GiBUU's is the same construction by FD-GENCMP-DECLARATION.md sec. 2, which no GiBUU readout states
     lab = gd["generators"]["gibuu"]["CH"]["label"]
     assert lab == gc["generators"]["gibuu"]["CH"]["label"]
     m = re.fullmatch(r"B3 \(sampling closure\) failed on hydrogen; a post-hoc bias check of its premise passed at <= "
@@ -868,6 +869,25 @@ def self_test():
         print("  FAIL an H2 definition whose four lowest-stability cells differ from the decided ones was accepted"); ok = False
     except AssertionError:
         print("  ok   an H2 definition whose four lowest-stability cells differ from the decided ones is refused")
+    # GENCMP: each fact the text states about Table IV's predictions is asserted, so each plant must be refused
+    for what, plant in (("has a sample that failed B0", lambda d: d["gdefs"]["status"]["gibuu_H"].update(B0=False)),
+                        ("gives a Table IV chi2 that is not its 2 x 2 corner",
+                         lambda d: d["gdefs"]["table_2x2"]["nuwro"]["CH"]["analysis_definitions"]["reported"].update(total=1.0)),
+                        ("moves a cell by 0.08 sigma", lambda d: d["gdefs"]["generators"]["genie_cv"]["CH"]["delta_over_sigma"]
+                         .__setitem__(0, 0.08)),
+                        ("gives GiBUU's GENIE-hydrogen total above carbon",
+                         lambda d: d["gch"]["generators"]["gibuu"]["CH_genie_hydrogen"]["chi2"]["reported"]["total"]
+                         .update(chi2=46.0)),
+                        ("has native NuWro disagree", lambda d: d["gnat"]["generator_definitions"]["rule"].update(agree=False)),
+                        ("puts a quadrant sum above the 3D central value",
+                         lambda d: d["gover"]["quadrants"]["QA"]["3D"].update(d_pct=0.1))):
+        d = load()
+        plant(d)
+        try:
+            values(d)
+            print(f"  FAIL a GENCMP readout that {what} was accepted"); ok = False
+        except AssertionError:
+            print(f"  ok   a GENCMP readout that {what} is refused")
     # the listed-truth sentences: silent on the committed tree, and each plant must fail at the sentence it changed
     d, dn, texts = load(), load(NOPL_READOUTS), read_claim_texts()
     if check_listed_claims(d["f0b"], texts, dn["f0b"]):

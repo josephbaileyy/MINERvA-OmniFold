@@ -37,9 +37,9 @@
    "fd_g_compare.py": "0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f",
    "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
    "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71",
-   "fd_gencmp_figures.py": "4382e6d18770fcc9a7f179b90289717f1a2d124145ed2388f431cf65a31883b1"
+   "fd_gencmp_figures.py": "9173a028665c97dd2ef5230446d76742204d32c269f723895c515b636d7d4f9a"
   },
-  "commit": "dfa1373705994fd100a2a996deb5df2c2ebc26f4",
+  "commit": "647977f671e646139badb4c9ca616c4f645dd2f1",
   "clean": true
  },
  "versions": {
@@ -823,7 +823,7 @@
     "kind": "line",
     "source": [
      "fd_g_readout.json predictions[name=genie_cv].f",
-     "fd_g_readout.json predictions[name=genie_cv].g"
+     "defs.json generators[genie_cv].CH.analysis_definitions.chi2.reported.g"
     ],
     "axes": 0,
     "x": [
@@ -891,7 +891,7 @@
     "kind": "yerr",
     "source": [
      "fd_g_readout.json predictions[name=genie_cv].f",
-     "fd_g_readout.json predictions[name=genie_cv].g",
+     "defs.json generators[genie_cv].CH.analysis_definitions.chi2.reported.g",
      "fd_g_readout.json predictions[name=genie_cv].sigma_total_over_f"
     ],
     "axes": 0,
@@ -975,7 +975,7 @@
     "gid": "ratio:genie_cv:legend",
     "kind": "legend",
     "source": [
-     "fd_g_readout.json predictions[name=genie_cv].label"
+     "fd_g_readout.json predictions[name=genie_cv].label (substituted by fd_gencmp_figures.py)"
     ],
     "axes": null,
     "text": "GENIE 2.12.10 CV, no MEC: analysis definitions",
@@ -987,7 +987,7 @@
     "kind": "line",
     "source": [
      "fd_g_readout.json predictions[name=genie_mec].f",
-     "fd_g_readout.json predictions[name=genie_mec].g"
+     "defs.json generators[genie_mec].CH.analysis_definitions.chi2.reported.g"
     ],
     "axes": 0,
     "x": [
@@ -1055,7 +1055,7 @@
     "kind": "yerr",
     "source": [
      "fd_g_readout.json predictions[name=genie_mec].f",
-     "fd_g_readout.json predictions[name=genie_mec].g",
+     "defs.json generators[genie_mec].CH.analysis_definitions.chi2.reported.g",
      "fd_g_readout.json predictions[name=genie_mec].sigma_total_over_f"
     ],
     "axes": 0,
@@ -1139,7 +1139,7 @@
     "gid": "ratio:genie_mec:legend",
     "kind": "legend",
     "source": [
-     "fd_g_readout.json predictions[name=genie_mec].label"
+     "fd_g_readout.json predictions[name=genie_mec].label (substituted by fd_gencmp_figures.py)"
     ],
     "axes": null,
     "text": "GENIE 2.12.10 + Valencia MEC: analysis definitions",
@@ -1151,7 +1151,7 @@
     "kind": "line",
     "source": [
      "fd_g_readout.json predictions[name=nuwro].f",
-     "fd_g_readout.json predictions[name=nuwro].g"
+     "defs.json generators[nuwro].CH.analysis_definitions.chi2.reported.g"
     ],
     "axes": 0,
     "x": [
@@ -1219,7 +1219,7 @@
     "kind": "yerr",
     "source": [
      "fd_g_readout.json predictions[name=nuwro].f",
-     "fd_g_readout.json predictions[name=nuwro].g",
+     "defs.json generators[nuwro].CH.analysis_definitions.chi2.reported.g",
      "fd_g_readout.json predictions[name=nuwro].sigma_total_over_f"
     ],
     "axes": 0,
@@ -1303,7 +1303,7 @@
     "gid": "ratio:nuwro:legend",
     "kind": "legend",
     "source": [
-     "fd_g_readout.json predictions[name=nuwro].label"
+     "fd_g_readout.json predictions[name=nuwro].label (substituted by fd_gencmp_figures.py)"
     ],
     "axes": null,
     "text": "NuWro 21.09: CH, analysis definitions",
@@ -1315,7 +1315,7 @@
     "kind": "line",
     "source": [
      "fd_g_readout.json predictions[name=gibuu].f",
-     "fd_g_readout.json predictions[name=gibuu].g"
+     "defs.json generators[gibuu].CH.analysis_definitions.chi2.reported.g"
     ],
     "axes": 1,
     "x": [
@@ -1359,7 +1359,7 @@
     "kind": "yerr",
     "source": [
      "fd_g_readout.json predictions[name=gibuu].f",
-     "fd_g_readout.json predictions[name=gibuu].g",
+     "defs.json generators[gibuu].CH.analysis_definitions.chi2.reported.g",
      "fd_g_readout.json predictions[name=gibuu].sigma_total_over_f"
     ],
     "axes": 1,
@@ -1411,7 +1411,7 @@
     "gid": "ratio:gibuu:legend",
     "kind": "legend",
     "source": [
-     "fd_g_readout.json predictions[name=gibuu].label"
+     "fd_g_readout.json predictions[name=gibuu].label (substituted by fd_gencmp_figures.py)"
     ],
     "axes": null,
     "text": "GiBUU 2019: CH, analysis definitions; $p_\\parallel$ < 4.5 cells only",
