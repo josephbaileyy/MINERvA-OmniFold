@@ -1,0 +1,34 @@
+KILLED   coarse grid drops the H2 edges
+KILLED   fine grid not halved
+KILLED   B's factor grid ignored
+KILLED   C's factor grid ignored
+KILLED   B's background factor dropped
+KILLED   D unfolds with the universe MC
+KILLED   D's nature is the nominal MC
+KILLED   unreported rows take a cell's factor
+KILLED   Ddl's factor not applied
+KILLED   Ddl's nominal-truth check skipped
+KILLED   dl digest not checked
+KILLED   --grid pairing not enforced
+KILLED   grid universes not enforced
+KILLED   rule D passes at 15 of 16
+KILLED   partial level at 4
+KILLED   window edges exclusive
+KILLED   matched reading needs more than 8
+KILLED   sub-cell hypothesis read as OR
+KILLED   the rule's object is the raw shift
+KILLED   Dnom CV control skipped
+KILLED   data-like truth control skipped
+KILLED   nominal grid vs I2 skipped
+KILLED   one-code check skipped
+KILLED   readout dl digest skipped
+KILLED   M reproduction skipped
+KILLED   readout reads plainly
+KILLED   walls limit doubled
+KILLED   walls RSS ignored
+KILLED   REPRICE exits 0
+KILLED   a moved atime exits 0
+KILLED   peak RSS not recorded
+KILLED   unit at 1,370 s
+unmutated: 30 passed in 3.78s
+32 of 32 killed
