@@ -1,0 +1,33 @@
+You are an experienced Physical Review D referee and editor in experimental neutrino physics (unfolded cross sections, systematic-universe covariances, coverage studies). The authors plan a coverage test of their reported covariance and must decide now, before the result, how the paper will describe its scope. The author's specific worry: the proposed wording may ADD caveats to a paper already judged over-qualified (about 10 distinct caveats per 1,000 words, against 1.4-4.5 in published PRD neutrino papers).
+
+The test (summary): at two held-out generator tunes (G18, AR23; G18 shares a 2p2h family with one generator in the model term, and the tunes share a quasielastic model), 300 pseudo-experiments per tune are drawn with every uncertainty group. Each systematic band is drawn at its +/-1 sigma endpoint, and the bands' event-weight shifts are ADDED (first order), matching how the covariance C_T is built: a sum of per-band blocks, each band varied alone, with no cross-band terms. The few negative expected counts (from two bands with negative weights) are clipped to zero; the clipping offset is measured per cell in sigma units. The pseudo-data come from the same simulated universes the covariance is built from. Each pseudo-experiment is unfolded by the production procedure; the covariance is remade by the same procedure at each tune's truth; grading is by per-cell in-interval fractions and a joint chi2 against a simulated null.
+
+Below: (A) the proposal's section with the planned paper clauses (clause M, clause S additions, a "cannot support" line); (B) the paper's current coverage statement in Limitations; (C) an independent reviewer's suggested additions: state that the pseudo-data use the same universes as the covariance so missing sources are not probed, that negative counts were clipped, and that bands were drawn at +/-1 sigma.
+
+Answer as a referee:
+1. Which scope facts MUST appear in the paper for a referee to accept a coverage statement from this test, and which belong in the companion note only?
+2. Does each planned clause, and each of (C)'s additions, add a caveat in the paper's text? For each, say whether it can instead be stated as a neutral methods description (what was done) rather than a qualifier (what was not shown), or moved to the note.
+3. Write the paper text you would want to see after (i) a pass at both tunes and (ii) a failure at one tune, as short as possible, in PRD register, with no internal labels. Keep it to the facts a referee needs.
+4. Would a referee consider "first-order composition" a limitation that must be stated, or standard multi-universe practice that needs no comment?
+Under 500 words.
+
+===== (A) the proposal's wording section =====
+## 2c. The narrower claim (B3): wording drafted for Joseph
+
+The claim is now that C_T covers natures drawn from its own first-order model. That must reach the paper text, not
+just a note line. The wording is Joseph's. A draft follows.
+- **Clause M (declaration §12), amended:**
+  > The pseudo-data were drawn with the statistical, flux, interaction, detector, lateral and normalization
+  > uncertainties, each universe's departure from the nominal simulation added to first order as
+  > $C_{\mathrm{total}}$'s blocks are built, and unfolded with the nominal simulation, and $C_{\mathrm{total}}$ was
+  > rebuilt by the same procedure at each tune's truth, with the lateral block carried to each truth rather than
+  > rebuilt.
+- **§13 CANNOT SUPPORT, added:** *coverage of natures in which two or more bands' shifts act on the same event
+  together, beyond first order. C_T omits these terms by construction, and the toys do not draw them.*
+- **Clause S, added in every outcome:**
+  > The uncertainties were combined to first order, as the covariance is built, so this does not test their joint
+  > higher-order effects.
+
+
+===== (B) paper Limitations, item 1 (current main) =====
+\item The two-dimensional covariance has not been independently validated, and its coverage has not been tested (Sec.~\ref{sec:uq2d}); the three- and four-observable central values lack intervals of validated coverage (Sec.~\ref{sec:central}); and the coverage of the sixteen-cell total uncertainties is not validated (the fake-data tests of Sec.~\ref{sec:fd16} assess the estimator's bias).
