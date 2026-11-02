@@ -1,0 +1,27 @@
+**Verdict:** your draft is mostly faithful to the report, but it has one real overclaim and a few smaller imprecisions. All figures below are from `FD-GENCMP-X-REPORT.md` §1 and §3–4 and `FD-GENCMP-X-DECLARATION.md` §3–5.
+
+**(1) Accuracy against the report**
+- **Differences, χ² and z.** The differences (+0.141, −0.217, −1.478, +0.724) round to −1.5 and +0.7 per cent. χ²₄ is 1.17 at r=0 and 1.24 at r=1, with p = 0.883 and 0.871. The largest |z| is 0.985 (QC, r=1), so "none exceeds one standard deviation" is true but only just.
+- **"Any value from 0 to 1" is an overclaim.** Declaration §3 says the bounded block is "a one-parameter family, not every admissible correlation (A4): a correlation outside it can make Var(d_q) smaller than r = 1 does". The paper text is required to say "within this family". Your draft drops that qualifier.
+- **"p = 0.88" sits beside "χ² = 1.2".** That is the r=0 value. Quote the range (1.17 to 1.24; p = 0.87 to 0.88), or say "at most 1.24".
+- **"Could not be matched exactly" is misleading.** The four bands failed on non-finite quotients only (18 to 45,158 of 32.8 million rows). On finite rows the spread is 5.96e-8, and the report says the cause was not established. The honest statement is that the weight agreement could not be verified, not that it was found to disagree.
+- **"Run-period terms they share".** The declaration calls the C_PL pairing "constructed" (ruling 4), and the original text says "by construction". Keep that word, because the pairing is an assumption.
+- **Unreported boxes.** The sixteen-cell sums in QA and QB include unreported boxes at P5's value with a ±100% variance. A referee will want that disclosed, probably in the next sentence or a caption.
+
+**(2) Overclaimed and underclaimed**
+- **Overclaimed:** "any value from 0 to 1" (above).
+- **Underclaimed, robustness.** Both the variant against Q_R alone (C_model,16 unpaired) and the sensitivity with the C_PL pair set to zero also agree. Their χ²₄ ranges from 0.78 to 1.16, with p of at least 0.88. This is worth one clause.
+- **Underclaimed, limited range.** The implied correlation between the two results is already 0.77 to 0.92 at r=0 and 0.96 to 0.99 at r=1, so χ² moves only from 1.17 to 1.24. That shows the conclusion is insensitive to the unmeasured term.
+- **Caution on strength.** χ² = 1.2 for 4 degrees of freedom is on the low side, with only about 12% of draws lower. The two results share data and simulation, and the unreported-box variance is large. The test shows consistency, not independent validation, so avoid "validates" or "confirms".
+- **Not read.** I did not read the per-block shares of σ_d² in `k.json`. Check them before the text implies the test has power.
+
+**(3) Tighter wording** is in the recommended sentence at the end.
+
+**(4) The three-observable-marginal sentence**
+- **It must be reworded either way.** "Only the three-observable marginal has been compared" becomes false once this comparison lands.
+- **Check that 0.141 is not QA's d.** The marginal's total agrees "to 0.141%", and C-R's QA difference is +0.141%. Identical to three digits is suspicious. Confirm they are different quantities before keeping the sentence.
+- **If distinct, keep it as one subordinate clause.** It has no covariance or test attached, so say so, and say which estimator each result comes from. The sixteen-cell result and the "joint-test estimator" are not obviously the same thing. If the number turns out to be QA's d, drop the sentence.
+
+**Recommended sentence** (replaces the first sentence at line 120):
+
+"Summed over each of the four (p_T, p_∥) quadrants, the sixteen-cell result differs from the two-dimensional result by −1.5 to +0.7 per cent. With the covariance between the two results computed from the systematic universes, lateral shifts, generator-model shifts and (by construction) run-period terms they share, the four differences give χ² = 1.17–1.24 for four degrees of freedom (p = 0.87–0.88), and none exceeds one standard deviation. The statistical correlation between the two results, and that of four systematic bands whose event weights could not be verified to match, were not measured; they were varied from zero to full correlation within a one-parameter family that keeps the joint covariance valid, and the agreement holds throughout that family."

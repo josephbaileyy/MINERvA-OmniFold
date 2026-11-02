@@ -1,0 +1,14 @@
+You are an independent referee-style reviewer for a MINERvA neutrino cross-section paper (Phys. Rev. D register). READ-ONLY: do not edit, create or commit anything. Read with `git -C <wt> show origin/main:<path>`.
+
+Worktree: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/wt
+D = docs/orchestration/state/measurement-paper/5d-community-20261024/
+
+Read: D/FD-GENCMP-X-REPORT.md (sections 0-1, 3-4 and 6), D/FD-GENCMP-X-DECLARATION.md section 5, and docs/analysis-note/paper_body.tex line 120 (the sentence to be replaced: "Of the joint-test estimator's results, only the three-observable marginal has been compared with the lower-dimensional result it extends. Its area-weighted total agrees ...").
+
+Result in brief: the sixteen-cell 5D result summed per (pT, p_par) quadrant is compared with the adopted 2D result using a measured cross-covariance (systematic universes, laterals, generator vertices, run-period terms paired by construction). The statistical cross term could not be paired (the paired block made the joint matrix non-PSD), so it and four systematic bands are bounded over r in [0,1]. Outcome: agree at every r; chi2_4 = 1.17 (p = 0.88) at r=0, 1.24 (p = 0.87) at r=1; no |z| above 1.0; differences -1.5% to +0.7%.
+
+The declaration's route-A minimum text contains two phrases that are false for this outcome ("and paired bootstrap replicas they share"; "signal weights were checked to agree event by event" holds for 34 of 38 bands only). Proposed replacement for the first sentence at line 120 (the second sentence about the three-observable marginal would be kept, reworded to follow):
+
+"Summed over each of the four (pT, p_par) quadrants, the sixteen-cell result agrees with the two-dimensional result, which differs from it by -1.5 to +0.7 per cent: with the covariance between the two results computed from the systematic universes, lateral shifts, generator shifts and run-period terms they share, the four differences give chi2 = 1.2 for four degrees of freedom (p = 0.88), and none exceeds one standard deviation. Their statistical correlation, and that of four systematic bands whose event weights could not be matched exactly, is not measured; the agreement holds for any value from 0 to 1."
+
+Questions: (1) Is this accurate against the report, and fair to a referee? (2) Is anything overclaimed or underclaimed? (3) Suggest a tighter version in PRD register (no internal jargon like "route A", "V1", "K2"). (4) Should the paper keep the three-observable-marginal sentence after it? Under 350 words, ending with your recommended sentence.

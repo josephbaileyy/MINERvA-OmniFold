@@ -1,0 +1,31 @@
+### 1. Accuracy Against (B)
+
+* **Candidate 1 (Accurate, minor imprecision):** 
+  * Accurately states quadrant differences ($-1.5\%$ to $+0.7\%$), test statistics ($\chi^2 = 1.17\text{--}1.24$, $p = 0.87\text{--}0.88$), and significance ($|z| \le 0.985 < 1.0\sigma$).
+  * Correctly reflects that the statistical block and four systematic bands were bounded rather than evaluated directly.
+  * *Minor overstatement:* Describing $r = 1$ as "full correlation" is slightly imprecise; $r=1$ scales the geometric-mean bounding matrix ($M = S_{16}^{1/2} S_{2\text{D}}^{1/2}$), rather than setting all bin-to-bin correlation coefficients to unity.
+* **Candidate 2 (Factually inaccurate and overclaimed):**
+  * *False claim:* Stating the covariance is computed from "statistical components they share" is factually untrue. The paired bootstrap cross-covariance failed positive-semidefiniteness (K2) and was discarded; statistical correlation was unmeasured.
+  * *Overclaim:* Stating agreement holds "whatever the unmeasured part of their correlation" overclaims coverage. The test scanned only a specific one-parameter ray ($r \in [0, 1]$), not the entire space of admissible cross-covariance matrices.
+
+---
+
+### 2. Referee Assessment of Candidates
+
+I would accept a condensed **Candidate 1** over Candidate 2. Candidate 2 is unacceptable for publication due to technical falsehoods and unearned claims of generality. 
+
+However, Candidate 1 is **too long (three sentences) and too internal**. Cataloging internal pipeline bookkeeping ("lateral shifts, generator-model shifts... run-period terms", "four systematic bands whose event weights could not be verified") reads like an internal validation report or collaboration note rather than archival PRD text.
+
+---
+
+### 3. Recommended Replacement
+
+> "Summed over each of the four $(p_T, p_\parallel)$ quadrants, the sixteen-cell result agrees with the two-dimensional result to within $-1.5\%$ to $+0.7\%$ ($\chi^2 = 1.2$ for 4 degrees of freedom, $p \ge 0.87$, with no quadrant difference exceeding $1.0\sigma$), evaluated using shared systematic covariances and bounding unmeasured cross-correlations across a positive-semidefinite family, with their area-weighted totals agreeing to \SI{0.141}{\percent}."
+
+---
+
+### 4. Remaining Referee Inquiries
+
+1. **Failure of empirical statistical correlation:** Why could the statistical cross-correlation between two estimators applied to identical data not be evaluated directly (e.g., via bootstrap), and what caused the sample covariance to lose positive-definiteness?
+2. **Unverified systematic weights:** Which four systematic bands could not be verified event-by-event, and was this failure due to unpopulated bins, undefined weights (e.g., division by zero), or physical model divergences?
+3. **Ansatz dependency:** Does the consistency ($\chi^2 \approx 1.2$) persist under less restrictive, non-uniform cross-correlation assumptions across kinematic quadrants?
