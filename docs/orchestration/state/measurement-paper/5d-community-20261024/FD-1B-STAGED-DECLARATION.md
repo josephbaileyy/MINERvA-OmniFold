@@ -1,6 +1,17 @@
-# DECLARATION 1B staged method coverage, revision 0: stage 0 κ as the hard gate, then held-out-tune coverage with the covariance remade at each truth (2026-11-01)
+# DECLARATION 1B staged method coverage, revision 1: stage 0 κ as the hard gate, then held-out-tune coverage with the covariance remade at each truth (2026-11-01)
 
 **By** the measurement session `coverage-5b`, for `coverage-5b-audit` to review and the director to bind.
+
+**What changed from revision 0** (head `466b6ac7`), on the director's two points before the audit's review:
+- **Point 1.** A pass carries over to the procedure's full covariance at the ensemble's truth T, not to the reported
+  covariance made at the data's point. This is reworded at every site that stated it (§4.3, §13), and §12's paper
+  text claims no more.
+  - Clause F no longer says "lower bounds" (§12).
+- **Point 2.** The tunes' overlaps with C_model and with each other are in the paper text's scope in every outcome
+  (§12, clause T: G18 "only partly held out").
+  - The leave-out-MEC variant's reading is fixed before any number is read (§5.4).
+- **The director ruled on §14.2:** a stage-0 PARTIAL waits for Joseph.
+- **#655 is closed unmerged,** with a pointer to this PR.
 
 **Under** [`DECISION-20261101-joseph-1b-staged-method-coverage.md`](../../../DECISION-20261101-joseph-1b-staged-method-coverage.md)
 (#663; Joseph: "Staged method-coverage (Recommended)"), every item, and the director's brief of 2026-11-01. The consult
@@ -216,8 +227,13 @@ That is **227 unfolds per truth.**
 with covering errors the toys never contain.
 - Both are positive semi-definite. Adding them makes every per-cell interval wider and every χ² smaller
   ((C + P)⁻¹ ≼ C⁻¹).
-- **So a cell or a χ² region that covers under C_T also covers under the reported covariance at T.** An under-coverage
-  under C_T is not shown to persist under the reported covariance. Every report says so.
+- **So a pass carries over to the procedure's full covariance at T:** C_T + C_resp(T) + C_PL,5D(T), every block at
+  the ensemble's truth T. A cell or χ² region that covers under C_T also covers under that matrix.
+- **It does not carry over to the reported covariance,** which is made at the data's point. The block's dependence on
+  the truth at which it is made is the finding that led here (I2's F_truth, §7). Nothing in stage 1 relates C_T to the
+  matrix made at the data.
+- **An under-coverage under C_T** is not shown to persist under the procedure's full covariance at T.
+- Every report says all three. (Director's point 1, on #664.)
 
 ### 4.4 The lateral block, carried
 
@@ -298,8 +314,20 @@ scorer imports them or recomputes them with the same function and checks the val
   doing.
 - **The bias:** the toys' mean error, U-weighted, against σ_c, per cell. It is F1's bias at the nature-drawn truth, as
   a check against F1 (`FD-F1-REPORT.md:39`, |z| ≤ 0.644).
-- **The leave-out-MEC variant:** §5.1's statistics with C_model rebuilt from NuWro and GiBUU only, as F1's descriptive
-  variant (§3 (6)). It is read for G18 especially.
+- **The leave-out-MEC variant,** C_T⁻ = C_e(T) + diag(x̂_T) C_model⁻ diag(x̂_T). C_model⁻ is C_model rebuilt from the
+  NuWro and GiBUU shifts only, as in F1's descriptive variant (§3 (6)). §5.1's statistics and §5.2's thresholds are
+  applied to C_T⁻ for both tunes. Its reading is fixed now (director's point 2, on #664):
+  - **Why only one case can move.** C_model = Σ_k s_k s_kᵀ, so C_model⁻ ≼ C_model and C_T⁻ ≼ C_T. Under C_T⁻ every
+    per-cell count and the joint count are at most their counts under C_T.
+  - **A tune that UNDER-COVERS under C_T** under-covers at least as much under C_T⁻. The variant is printed and adds
+    no reading.
+  - **A tune that COVERS under C_T, and also under C_T⁻,** reads "covers without the GENIE + MEC shift".
+  - **A tune that COVERS under C_T, but has a cell or the joint count flagged under C_T⁻** by §5.2's thresholds, reads
+    "its coverage in cells [list] (and jointly, if flagged) rests on the GENIE + MEC shift".
+    - For G18, whose Valencia 2p2h shares that shift's family, this reading **enters the paper text** (§12, clause V).
+    - For AR23, no overlap with that shift is recorded. The reading is reported, and it enters the paper text through
+      the same clause.
+  - **The variant changes no verdict.** §5.2's reading under C_T is the verdict.
 - **4A-style correlation:** the toys' 16 × 16 sample covariance against C_e(T), as eigen-direction variance ratios.
   Descriptive only, since the addendum's 4A belongs to the superseded design.
 
@@ -472,28 +500,43 @@ coverage at truths held out of its construction has not been validated". What fo
 an earlier route to a calibrated model term with validated coverage did not pass (…)", is kept as history unless
 Joseph rules otherwise (§14.5).
 
-**Both tunes COVER:**
-> At two GENIE v3 tunes held out of the analysis, G18_10a_02_11b and AR23_20i_00_000, pseudo-data drawn with the
-> statistical, flux, interaction, detector, lateral and normalization uncertainties and unfolded with the nominal
-> simulation had errors covered by $C_{\mathrm{total}}$ rebuilt by the same procedure at each tune's truth
-> ($\chi^2/\mathrm{ndf}$ = [a] and [b]; per-cell 68\,\% content [p–q]\,\% and [r–s]\,\%). The lateral block was carried
-> to each truth, not rebuilt, and $C_{\mathrm{resp}}$ and $C_{\mathrm{PL,5D}}$, which were not drawn, were left out,
-> which can only widen the intervals. This tests the method at two truths, which share their quasielastic model; it
-> is not a coverage rate and not a property of the reported intervals in nature. The interaction block depends on
-> the truth at which it is built: [the median per-cell ratio of A_T to A_nom and of the nominal to the data block,
-> 0.68].
+**Every outcome's text is built from the clauses below, verbatim.** Only the bracketed values change. Clause T and
+clause S appear in every stage-1 outcome (director's point 2, on #664).
 
-**One tune covers and the other under-covers** (per tune, as decision item 2 requires):
-> At G18_10a_02_11b [or AR23], … covered (…). At AR23_20i_00_000 [or G18], the covariance rebuilt at its truth
-> under-covered in cells [list] by factors [k_c], and [jointly / not jointly]; the uncertainties in those cells
-> should be read as lower bounds at truths like that tune's.
+- **Clause T (the truths):**
+  > Pseudo-data were generated at two GENIE v3 tunes not used in the analysis: G18_10a_02_11b, which is only partly
+  > held out of the model term's construction, since its Valencia 2p2h model belongs to the same family as the
+  > GENIE + MEC shift used to build $C_{\mathrm{model}}$; and AR23_20i_00_000, which shares G18_10a_02_11b's Nieves
+  > quasielastic model.
+- **Clause M (the method):**
+  > The pseudo-data were drawn with the statistical, flux, interaction, detector, lateral and normalization
+  > uncertainties and unfolded with the nominal simulation, and $C_{\mathrm{total}}$ was rebuilt by the same procedure
+  > at each tune's truth, with the lateral block carried to each truth rather than rebuilt.
+- **Clause S (the scope):**
+  > This tests the method with its covariance rebuilt at each of two truths. It is not a coverage rate. It does not test
+  > the reported intervals, which are built at the data, and the interaction block depends on the truth at which it
+  > is built ([median per-cell ratio, the nominal to the data block, 0.68; at the tunes, A_T/A_nom = …]).
+  > $C_{\mathrm{resp}}$ and $C_{\mathrm{PL,5D}}$ were not drawn and were left out of the rebuilt covariance.
+- **Clause P (pass, per tune):**
+  > At [tune], the errors were covered ($\chi^2/\mathrm{ndf}$ = [a]; per-cell 68\,\% content [p–q]\,\%), and would
+  > remain covered with $C_{\mathrm{resp}}$ and $C_{\mathrm{PL,5D}}$ added at that truth.
+- **Clause V (leave-out-MEC, per tune, only when §5.4 reads "rests on the GENIE + MEC shift"):**
+  > At [tune], coverage in cells [list] rests on the GENIE + MEC shift[, whose 2p2h family the tune shares].
 
-The scope sentences of the pass text are kept.
+  The bracketed phrase is printed for G18 only.
+- **Clause F (failure, per tune):**
+  > At [tune], the covariance rebuilt at its truth, without $C_{\mathrm{resp}}$ and $C_{\mathrm{PL,5D}}$, under-covered
+  > in cells [list] by factors [k_c][, and jointly].
 
-**Both tunes under-cover:**
-> At both held-out tunes the covariance rebuilt at each truth under-covered: at G18_10a_02_11b in cells [list] by
-> factors [k_c], at AR23_20i_00_000 in cells [list] by factors [k_c]. The uncertainties in those cells should be
-> read as lower bounds.
+**The outcomes:**
+- **Both COVER:** T, M, P(G18), [V(G18)], P(AR23), [V(AR23)], S.
+- **One covers, one under-covers:** T, M, P and [V] for the tune that covers, F for the one that under-covers, S.
+- **Both under-cover:** T, M, F(G18), F(AR23), S.
+
+**What clause F does not say.** It makes no "lower bound" statement about the reported uncertainties. The consult's
+wording ("should be read as lower bounds") is not used, because an under-coverage under C_T is not shown to persist
+under the procedure's full covariance at T, nor under the reported covariance (§4.3). Whether to say more is Joseph's
+(decision item 5).
 
 No covariance is inflated without Joseph.
 
@@ -519,19 +562,18 @@ stopped-attempt disclosure stays.
 - **the response model:** every nature uses the nominal detector response;
 - **a block remade per toy** (§4.3).
 
-An under-coverage under C_T is not shown to persist under the full reported covariance (§4.3). A pass under C_T
-carries over to it.
+**A pass under C_T** carries over to the procedure's full covariance at T (C_T + C_resp(T) + C_PL,5D(T)), not to the
+reported covariance made at the data's point. An under-coverage under C_T is not shown to persist under the full
+covariance at T (§4.3).
 
 ## 14. For the director
 
-1. **#655: closed unmerged, with its four artifacts carried here byte-identical** (§2). The code, tests and mutation
+1. **#655: closed unmerged** on the director's instruction, with a pointer to this PR. Its four artifacts are carried here byte-identical (§2). The code, tests and mutation
    receipt are stage 0's. `FD-1B-MODED-DECLARATION.md` is the record of the design finding (its §3), and it lands on
    `main` with this PR.
    - I chose this over merging #655 because #655 conflicts with `main` in the generated `MANIFEST.tsv`, and carrying
      the files lands one current version once.
-   - I will not close #655 myself until you confirm.
-2. **PARTIAL at stage 0** (§2): I declare that stage 1 waits for Joseph. The decision names only FAIL as a stop, so
-   this is your ruling.
+2. **PARTIAL at stage 0** (§2): stage 1 waits for Joseph, as the director ruled on #664.
 3. **The plug-in** (§6): included, priced separately at +24 node-h of cap (73.0 for stage 1, 78.5 with stage 0). The
    code is small and touches no production file. Drop it if you prefer: the base stands alone.
 4. **The plug-in's capture re-reads the real data** once, by S1's central path, and must reproduce S1's central
