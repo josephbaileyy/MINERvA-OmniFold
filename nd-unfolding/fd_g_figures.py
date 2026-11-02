@@ -101,6 +101,19 @@ QUALIFIERS = {"nuwro": (G.C12_LABEL,), "gibuu": (G.C12_LABEL, "p_parallel < 4.5 
               "mnvtune_v1": ("prior (not an independent prediction)",)}
 # K7: wherever Stage G's label carries one of these, the drawn name carries it too (the director's request item 1)
 REQUIRED = (G.C12_LABEL, "prior (not an independent prediction)", "p_parallel < 4.5 cells only")
+# --prediction-set: each set's legend qualifiers and required strings. "stage-g" is Stage G's five predictions (the
+# default: today's figures); "gencmp-chdefs" is GENCMP step B's corner "CH, analysis definitions", whose labels
+# fd_gencmp_e.CHDEFS writes (FD-GENCMP-AMENDMENT-E-DECLARATION.md section 4); its predictions come in through run().
+CH_DEFS = "CH, analysis definitions"
+PREDICTION_SETS = {
+    "stage-g": (QUALIFIERS, REQUIRED),
+    "gencmp-chdefs": ({"genie_cv": (CH_DEFS,), "genie_mec": (CH_DEFS,), "nuwro": (CH_DEFS, "hydrogen: supplement FLAGGED"),
+                       "gibuu": (CH_DEFS, "hydrogen: closure B3 failed", "p_parallel < 4.5 cells only"),
+                       "mnvtune_v1": ("prior (not an independent prediction)",)},
+                      (CH_DEFS, "hydrogen: supplement FLAGGED", "hydrogen: closure B3 failed",
+                       "prior (not an independent prediction)", "p_parallel < 4.5 cells only")),
+}
+DEFAULT_SET = "stage-g"
 DISPLAY = (("p_parallel", r"$p_\parallel$"), ("C12", r"$^{12}$C"))  # plain readout text -> drawn text, and back (K7)
 COLORS = {"genie_cv": MF.COLORS["GENIE-CV"], "genie_mec": MF.COLORS["GENIE+MEC"], "nuwro": MF.COLORS["NuWro"],
           "gibuu": MF.COLORS["GiBUU"], "mnvtune_v1": "#6b6b6b"}
@@ -171,8 +184,9 @@ def load(a, pins: dict) -> dict:
     return r
 
 
-def check_chain(r: dict, pins: dict, name: str = BLOCK) -> None:
+def check_chain(r: dict, pins: dict, name: str = BLOCK, predictions=None) -> None:
     """K1: the readouts were made from one another and from the same inputs."""
+    predictions = G.PREDICTIONS if predictions is None else predictions
     g, dg, fu, s2, b = (r[k] for k in INPUTS[:5])
     ins = {k: r[k]["inputs_sha256"] for k in INPUTS[:5]}
     report("K1", "G-DIAG, G-FOLLOWUP and G-SENS2 ran on this Stage G readout",
@@ -192,7 +206,7 @@ def check_chain(r: dict, pins: dict, name: str = BLOCK) -> None:
            and all(ins[k]["extra_block"] == xb["sha256"] for k in INPUTS[1:4]))
     names = [p["name"] for p in g["predictions"]]
     report("K1", "Stage G holds the five predictions in order, with their labels", names == list(ORDER) and all(
-        p["label"] == s["label"] and p["sha256"] == s["sha256"] for p, s in zip(g["predictions"], G.PREDICTIONS)))
+        p["label"] == s["label"] and p["sha256"] == s["sha256"] for p, s in zip(g["predictions"], predictions)))
     report("K1", "every readout ran on the same five predictions", all(
         ins[k][p["name"]] == p["sha256"] for k in INPUTS[1:4] for p in g["predictions"]))
     report("K1", "G-DIAG holds the five predictions in order", [p["name"] for p in dg["predictions"]] == list(ORDER))
@@ -851,7 +865,8 @@ def sidecar(name: str, model: dict, pdf: bytes, a, pins: dict, code: dict) -> di
             "versions": {"python": sys.version.split()[0], "numpy": np.__version__,
                          "matplotlib": matplotlib.__version__},
             "argv": list(sys.argv), "options": {"ratio_form": a.ratio_form, "gibuu_axis": a.gibuu_axis,
-                                                **{f"reported_block_{k}": v for k, v in named(a).items()}},
+                                                **{f"reported_block_{k}": v for k, v in named(a).items()},
+                                                **prediction_set_option(a)},
             "plotted": model}
 
 
@@ -864,6 +879,9 @@ def build_args(argv):
     ap.add_argument("--gibuu-axis", choices=GIBUU_AXES, default=GIBUU_AXES[0])
     ap.add_argument("--reported-block-name", default=BLOCK,
                     help="the adopted extra block every readout names; default C_resp")
+    ap.add_argument("--prediction-set", choices=PREDICTION_SETS, default=DEFAULT_SET,
+                    help="the predictions' legend qualifiers; a set other than stage-g needs its predictions passed to "
+                         "run() (fd_gencmp_e.py chain)")
     ap.add_argument("--out-dir", type=Path, required=True)
     a = ap.parse_args(argv)
     if len(set(a.figures)) != len(a.figures):
@@ -878,18 +896,34 @@ def named(a) -> dict:
     return {} if name == BLOCK else {"name": name}
 
 
+def prediction_set_option(a) -> dict:
+    """The set as a sidecar option, only when it is not the default (so the default sidecar is today's)."""
+    name = vars(a).get("prediction_set", DEFAULT_SET)
+    return {} if name == DEFAULT_SET else {"prediction_set": name}
+
+
+def use_prediction_set(name: str) -> None:
+    """Make the legend's qualifiers and K7's required strings those of the set ``name``."""
+    global QUALIFIERS, REQUIRED
+    QUALIFIERS, REQUIRED = PREDICTION_SETS[name]
+
+
 MODEL = {"ratio": lambda r, a: ratio_model(r, a.ratio_form, a.gibuu_axis, **named(a)),
          "modes": lambda r, a: modes_model(r, **named(a)), "sens": lambda r, a: sens_model(r, **named(a))}
 
 
-def run(a, pins=None) -> int:
+def run(a, pins=None, predictions=None) -> int:
     pins = PINS if pins is None else pins
+    pset = vars(a).get("prediction_set", DEFAULT_SET)
+    report("K0", f"the {pset} set has its predictions", pset == DEFAULT_SET or predictions is not None,
+           "a set other than stage-g is drawn only with its predictions passed in (fd_gencmp_e.py chain)")
+    use_prediction_set(pset)
     MF.style()
     outs = [a.out_dir / f"{NAMES[n]}{ext}" for n in a.figures for ext in (".pdf", ".json")]
     report("K0", "no output exists (no overwrite)", not any(p.exists() for p in outs),
            ", ".join(str(p) for p in outs if p.exists()))
     r = load(a, pins)
-    check_chain(r, pins, **named(a))
+    check_chain(r, pins, **named(a), predictions=predictions)
     code = code_record()
     done = []
     for n in a.figures:

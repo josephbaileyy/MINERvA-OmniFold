@@ -39,6 +39,19 @@ NAMES = {"genie_cv": "GENIE 2.12.10 CV, no MEC", "genie_mec": "GENIE 2.12.10 + V
          "nuwro": "NuWro 21.09: $^{12}$C target; no correction to CH applied",
          "gibuu": "GiBUU 2019: $^{12}$C target; no correction to CH applied; $p_\\parallel$ < 4.5 cells only",
          "mnvtune_v1": "MINERvA Tune v1: prior (not an independent prediction)"}
+# --prediction-set: each set's declared names and required strings, written out here independently of the figure tool.
+# "gencmp-chdefs" is GENCMP step B's corner "CH, analysis definitions" (FD-GENCMP-AMENDMENT-E-DECLARATION.md section 4).
+PREDICTION_SETS = {
+    "stage-g": (NAMES, MUST),
+    "gencmp-chdefs": ({"genie_cv": "GENIE 2.12.10 CV, no MEC: CH, analysis definitions",
+                       "genie_mec": "GENIE 2.12.10 + Valencia MEC: CH, analysis definitions",
+                       "nuwro": "NuWro 21.09: CH, analysis definitions; hydrogen: supplement FLAGGED",
+                       "gibuu": "GiBUU 2019: CH, analysis definitions; hydrogen: closure B3 failed; $p_\\parallel$ < 4.5 "
+                                "cells only",
+                       "mnvtune_v1": "MINERvA Tune v1: prior (not an independent prediction)"},
+                      ("CH, analysis definitions", "hydrogen: supplement FLAGGED", "hydrogen: closure B3 failed",
+                       "prior (not an independent prediction)", "p_parallel < 4.5 cells only")),
+}
 ORDER = ("genie_cv", "genie_mec", "nuwro", "gibuu", "mnvtune_v1")
 SIXTEEN = ("genie_cv", "genie_mec", "nuwro", "mnvtune_v1")
 TOP = 3
@@ -288,7 +301,10 @@ def main(argv=None) -> int:
     for k in INPUTS:
         ap.add_argument("--" + k.replace("_", "-"), dest=k, type=Path, required=True)
     ap.add_argument("--figures-dir", type=Path, required=True)
+    ap.add_argument("--prediction-set", choices=PREDICTION_SETS, default="stage-g")
     a = ap.parse_args(argv)
+    global NAMES, MUST
+    NAMES, MUST = PREDICTION_SETS[a.prediction_set]
     ck = Checker()
     r = {k: json.loads(getattr(a, k).read_text()) for k in INPUTS}
     digests = {k: sha256(getattr(a, k)) for k in INPUTS}
@@ -303,6 +319,8 @@ def main(argv=None) -> int:
         ck(f"{name}: the sidecar names its figure and file", s["figure"] == name and s["file"] == f"{stem}.pdf")
         ck(f"{name}: the PDF's sha256 is the sidecar's", pdf.exists() and sha256(pdf) == s["pdf_sha256"])
         ck(f"{name}: the inputs' sha256 are the sidecar's", s["inputs_sha256"] == digests)
+        ck(f"{name}: the sidecar was drawn for the {a.prediction_set} set",
+           s["options"].get("prediction_set", "stage-g") == a.prediction_set)
         m = s["plotted"]
         seen: set = set()
         CHECK[name](m, r, ck, seen, s["options"])
