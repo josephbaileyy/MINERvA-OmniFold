@@ -69,6 +69,12 @@ READOUTS = {
     # Stage G as first made, on the predictions in their generator definitions with NuWro and GiBUU on carbon (the
     # with arm of FD-CT-5B-ADDITION-REPORT.md section 3), for the note's table of that comparison only
     "g0": (f"{FD}/fd/with-cpl/readout/fd_g_readout.json", "b55366b3"),
+    # GENCMP addendum E2 (FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-REPORT.md sec. 3 and 5;
+    # DECISION-20261102-joseph-cmodel-keep-carbon-state-effect.md): the chi2 of Table IV's four predictions with C_model's
+    # NuWro and GiBUU shape ratios from CH, and C_model removed and doubled, with the per-cell sigma (a text receipt). Each
+    # holds both arms, so both arms read the same files
+    "e2": (f"{FD}/fd/gencmp-e2/rerun1/chi2/e2.json", "0aa73ebf"),
+    "e2sens": (f"{FD}/fd/gencmp-e2/rerun1/sens/x_e2_sens.out.txt", "223f3f88"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -95,7 +101,7 @@ MATRIX_KEYS = re.compile(r"^(g-|gs-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|eav-|sig
 FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures", "f547bc92"),
            "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures", "f5f9e530")}
 # the readouts that are text receipts, not JSON
-TEXT_READOUTS = {"gprobe"}
+TEXT_READOUTS = {"gprobe", "e2sens"}
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -221,6 +227,7 @@ def gencmp_values(d, arm):
         for part in ("total", "shape_only"):
             x = ana[n, "carbon"][part]["chi2"]
             v[f"g-{PRED[n]}-carbon-{part}-chi2"], v[f"g-{PRED[n]}-carbon-{part}-chi2int"] = f"{x:.2f}", f"{x:.0f}"
+            v[f"g-{PRED[n]}-carbon-{part}-chi2r1"] = f"{x:.1f}"
     rise = ana["gibuu", "CH"]["total"]["chi2"] - ana["gibuu", "carbon"]["total"]["chi2"]
     assert rise > 0 and ana["gibuu", "CH"]["shape_only"]["chi2"] < ana["gibuu", "carbon"]["shape_only"]["chi2"], \
         "the clause says GiBUU's total chi2 rises with the correction and its shape-only chi2 falls"
@@ -287,6 +294,81 @@ def gencmp_values(d, arm):
     m = re.fullmatch(r"(\d)\.(\d)\d*e-0?(\d+)", f"{q['QA']['unreported_share_P5']:.1e}")
     v["g3d-qa-unrep"] = rf"{m.group(1)}.{m.group(2)}\times10^{{-{m.group(3)}}}"
     assert q["QB"]["unreported_share_P5"] == 0 and all(q[x]["label"] == "complete" for x in ("QC", "QD"))
+    return v
+
+
+def e2_values(d, arm):
+    """GENCMP addendum E2: Table IV's four predictions with C_model's NuWro and GiBUU shape ratios taken from CH instead
+    of carbon, everything else fixed, and with C_model removed (x0) and doubled (x2), in both arms ("with", "nopl") and
+    both kinds; and the per-cell sigma, carbon against CH. The reported covariance keeps C_model on carbon (x1). Every
+    key holds both E2 arms, so the two calls of values() give equal keys; this arm's carbon chi2 must be Table IV's."""
+    e2, s = d["e2"], d["e2sens"]
+    head, _, body = s.partition("\n{")
+    assert all(x.startswith(("PASS ", "[PASS ")) for x in head.splitlines()), "the sensitivity receipt's controls changed"
+    s = json.loads("{" + body)
+    assert e2["schema"] == "fd-gencmp-e2/2" and e2["predictions"] == list(GENCMP4) and s["all_pass"] is True
+    assert e2["vertices"] == ["genie_mec", "nuwro", "gibuu"] and e2["S_carbon"][0] == e2["S_CH"][0], \
+        "the note says only NuWro's and GiBUU's components change"
+    assert all(e2["S_carbon"][i] != e2["S_CH"][i] for i in (1, 2)), "the note says NuWro's and GiBUU's components change"
+    v = {}
+    sgn = lambda x: f"{x:+.2f}"  # noqa: E731   printed in math mode, so "-" is a minus
+    for a in ("with", "nopl"):
+        for n in GENCMP4:
+            for part in ("total", "shape_only"):
+                r, q = e2["chi2"][a][n][part], s["chi2"][a][n][part]
+                assert (q["carbon"], q["CH"]) == (r["carbon"], r["CH"]) and abs(r["delta"] - (r["CH"] - r["carbon"])) < 1e-9
+                assert q["removed"] > q["carbon"] > q["doubled"], f"{a} {n} {part}: chi2 does not fall as C_model grows"
+                k = f"e2-{a}-{PRED[n]}-{part}"
+                for tag, x in (("x0", q["removed"]), ("x1", q["carbon"]), ("x2", q["doubled"]), ("ch", q["CH"])):
+                    v[f"{k}-{tag}"] = f"{x:.2f}"
+                v[f"{k}-dch"], v[f"{k}-dx2"] = sgn(r["CH"] - r["carbon"]), sgn(q["doubled"] - q["carbon"])
+                v[f"{k}-dx0"] = sgn(q["removed"] - q["carbon"])
+                assert r["CH"] != r["carbon"], f"{a} {n} {part}: the note says every prediction's chi2 moves"
+    t4 = table4(d, arm)                               # x1 is the reported covariance: Table IV's chi2 in this arm
+    a = "with" if arm == "with" else "nopl"
+    assert all(abs(e2["chi2"][a][n][part]["carbon"] / t4[n][part]["chi2"] - 1) < 1e-10
+               for n in GENCMP4 for part in ("total", "shape_only")), "E2's carbon chi2 is not Table IV's"
+    # the largest |change| over both arms and kinds, which the note names: GENIE + MEC, shape-only, without C_PL,5D
+    big = max(((abs(e2["chi2"][a][n][p]["delta"]), a, n, p) for a in ("with", "nopl") for n in GENCMP4
+               for p in ("total", "shape_only")))
+    assert big[1:] == ("nopl", "genie_mec", "shape_only") and abs(big[0] - e2["delta_max_abs"]) < 1e-12
+    assert e2["chi2"]["nopl"]["genie_mec"]["shape_only"]["delta"] < 0, "the note prints that change as a fall"
+    # removing C_model raises GiBUU's total most, in both arms (the note names it)
+    assert all(max(GENCMP4, key=lambda n: s["chi2"][a][n]["total"]["removed"] - s["chi2"][a][n]["total"]["carbon"])
+               == "gibuu" for a in ("with", "nopl"))
+    v["e2-dmax"] = f"{big[0]:.2f}"
+    # GiBUU: with C_model's shape ratios also from CH, its CH total lies below its carbon total (analysis definitions),
+    # so more than half of the rise is the pairing of the CH prediction with C_model's carbon shape ratios
+    mat = "reported" if arm == "with" else "without_C_PL5D"
+    carb = d["gdefs"]["generators"]["gibuu"]["carbon"]["analysis_definitions"]["chi2"][mat]["total"]["chi2"]
+    g = e2["chi2"][a]["gibuu"]["total"]
+    # the text says the rise comes from that pairing: with CH shape ratios GiBUU's CH total falls below carbon
+    assert carb < g["carbon"] and g["CH"] < carb, "GiBUU's rise no longer comes from C_model's carbon shape ratios"
+    v["e2-with-gibuu-total-chr1"] = f"{e2['chi2']['with']['gibuu']['total']['CH']:.1f}"
+    # per-cell sigma: the whole matrix, carbon against CH, and C_model's own (sigma/f, the column norms of S)
+    for a in ("with", "nopl"):
+        x = s["sigma"][f"{a}_total"]
+        rel = x["per_cell_rel_change"]
+        i = max(range(16), key=lambda j: abs(rel[j]))
+        assert i == x["cell"] and rel[i] < 0
+        v[f"e2-sig-{a}-cell"], v[f"e2-sig-{a}-fall"] = CELLS[i], f"{-100 * rel[i]:.1f}"
+        v[f"e2-sig-{a}-carbon"], v[f"e2-sig-{a}-ch"] = f"{x['sigma_over_f_carbon']:.4f}", f"{x['sigma_over_f_CH']:.4f}"
+    rel = s["sigma"]["with_total"]["per_cell_rel_change"]
+    up = [CELLS[j] for j in range(16) if rel[j] > 0]
+    assert len(up) == 1 and all(r != 0 for r in rel), "the note says the sigma falls in all cells but one"
+    assert v["e2-sig-nopl-cell"] == v["e2-sig-with-cell"], "the note gives both arms' largest sigma fall in one cell"
+    v["e2-sig-with-nfall"], v["e2-sig-with-upcell"] = str(16 - len(up)), up[0]
+    v["e2-sig-with-up"] = f"{100 * max(rel):.1f}"
+    m = s["sigma"]["C_model"]
+    mc, mch = m["per_cell_sigma_over_f_carbon"], m["per_cell_sigma_over_f_CH"]
+    assert m["n_cells"] == 16 and m["cells_with_zero_carbon_sigma"] == 0 and min(mc) > 0
+    i = max(range(16), key=lambda j: abs(mch[j] - mc[j]))
+    j = max(range(16), key=lambda j: abs(mch[j] / mc[j] - 1))
+    assert (i, j) == (m["cell"], m["cell_rel"]) and mch[i] < mc[i] and mch[j] > mc[j]
+    assert mc[j] < sorted(mc)[4], "the note says C_model is small in the cell of its largest relative change"
+    v["e2-cm-cell"], v["e2-cm-carbon"], v["e2-cm-ch"] = CELLS[i], f"{mc[i]:.4f}", f"{mch[i]:.4f}"
+    v["e2-cm-relcell"], v["e2-cm-relcarbon"], v["e2-cm-relch"] = CELLS[j], f"{mc[j]:.4f}", f"{mch[j]:.4f}"
+    v["e2-cm-rel"] = f"{100 * (mch[j] / mc[j] - 1):.1f}"
     return v
 
 
@@ -437,6 +519,7 @@ def values(d, arm="with"):
         WORDS = {7: "seven", 8: "eight", 9: "nine", 16: "sixteen"}   # the abstracts print the count in words
         v[f"{k}-ncells-word"] = WORDS[len(p["cells"])]
     v.update(gencmp_values(d, arm))
+    v.update(e2_values(d, arm))
     # G-SENS: chi2 at each alpha per family, and the sentence's bounds (16-cell predictions only)
     recs = d["sens2"]["sens"]["records"] + d["fup"]["sens"]["records"]
     for r in recs:
@@ -914,6 +997,38 @@ def self_test():
             print(f"  FAIL a GENCMP readout that {what} was accepted"); ok = False
         except AssertionError:
             print(f"  ok   a GENCMP readout that {what} is refused")
+    # E2: each fact the text states about C_model's target is asserted, so each plant must be refused
+    def e2_set(d, n, field, x):       # one chi2 changed in e2.json and in the receipt alike, its delta kept consistent
+        r = d["e2"]["chi2"]["with"][n]["total"]
+        assert d["e2sens"].count(repr(r[field])) == 1
+        d["e2sens"] = d["e2sens"].replace(repr(r[field]), repr(x))
+        r[field] = x
+        r["delta"] = r["CH"] - r["carbon"]
+    for what, plant, why in (("gives a carbon chi2 that is not Table IV's", lambda d: e2_set(d, "nuwro", "carbon", 128.0),
+                              "not Table IV's"),
+                             ("puts GiBUU's CH total with CH shape ratios above its carbon value",
+                              lambda d: e2_set(d, "gibuu", "CH", 46.0), "comes from C_model's"),
+                             ("changes GENIE + MEC's component", lambda d: d["e2"]["S_CH"][0].__setitem__(0, 0.0),
+                              "only NuWro's and GiBUU's"),
+                             ("leaves NuWro's component unchanged",
+                              lambda d: d["e2"]["S_CH"].__setitem__(1, list(d["e2"]["S_carbon"][1])),
+                              "NuWro's and GiBUU's components change"),
+                             ("leaves NuWro's chi2 unmoved",
+                              lambda d: e2_set(d, "nuwro", "CH", d["e2"]["chi2"]["with"]["nuwro"]["total"]["carbon"] + 0.0),
+                              "every prediction's chi2 moves"),
+                             ("records a failed control",
+                              lambda d: d.update(e2sens=d["e2sens"].replace("PASS control C0", "FAIL control C0", 1)),
+                              "controls changed")):
+        d = load()
+        plant(d)
+        try:
+            values(d)
+            print(f"  FAIL an E2 readout that {what} was accepted"); ok = False
+        except AssertionError as e:
+            if why in str(e):
+                print(f"  ok   an E2 readout that {what} is refused")
+            else:
+                print(f"  FAIL an E2 readout that {what} was refused by another guard: {e}"); ok = False
     # the listed-truth sentences: silent on the committed tree, and each plant must fail at the sentence it changed
     d, dn, texts = load(), load(NOPL_READOUTS), read_claim_texts()
     if check_listed_claims(d["f0b"], texts, dn["f0b"]):
