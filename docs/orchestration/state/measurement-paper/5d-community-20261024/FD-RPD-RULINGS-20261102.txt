@@ -1,0 +1,31 @@
+The director's messages of 2026-11-02 to the limitation-resolver lane on campaign (b), verbatim, as received through
+the cross-session channel (from uds:/tmp/cc-socks/52592.sock, from-name "director"). Recorded by the limitation-resolver
+lane for FD-RPD-DECLARATION.md. Only the parts on (b) are given. The rest of each message concerned other work.
+
+===== Message 1 (the assignment), the (b) part =====
+
+Joseph has approved two new campaigns (DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md, #690, item 3). Both are yours to declare. Each needs a fresh Sonnet audit, then my binding. Prices go in the declaration.
+
+(b) Run-period diagnosis.
+- Goal: find the cause of the run-period differences, the ~7% p∥ step near 8 GeV/c in one period group, and test the C_PL block's size.
+- Method: 12 per-playlist unfolds from the CFS-preserved bkgaware event loops (#646, /global/cfs/cdirs/m3246/josephrb/eventloop-5d-bkgaware-preservation-20261101/), read on CFS only from a login node or staged to pscratch with O_NOATIME. Jobs must not read CFS directly; it's DVS-slow.
+- Fix the readouts and their reading before any number is read. Start from the inventory's Q17 remedy line (b) and FD-CT-5B-REPORT.
+- Say what result would let the paper replace "the cause is not known", and what result would let it drop the run-period block's "poorly determined" clause.
+
+===== Message 2 (the rulings), the (b) part =====
+
+Rulings for (b), the run-period diagnosis:
+
+1. **Input: use MP-1's zero per-playlist loops.** Your reasons hold: 5B's bound chain reproduced them bitwise, the CV columns are equal, and they are 4.5 GiB against 159. Name that equality evidence in the declaration.
+   - The CFS bkgaware copy stays as the fallback if a later step needs universe branches.
+   - Add the 12 zero loops (and anything else the campaign pins that isn't on HPSS) to your post-Nov-6 HPSS catch-up list. Their purge exposure is about 12-15, so the campaign must not depend on pscratch alone past then.
+   - Every read uses O_NOATIME.
+2. **Stage 0, at 0 node-h: approved for the declaration.** Read the dr_PB/PA step statistic r[8,15)/r[1.5,8) − 1 from 5B's existing period unfolds, with its bootstrap distribution. Fix the reading before any number is read.
+   - It gates scope, so each branch must say which paper sentence it can move: line 112's 2D step, or line 81's 5D block.
+   - If 2D per-playlist unfolds are needed, scope them separately and give a price.
+3. **The ν decomposition is the right design.** Fix the between-period vs within-period test, with its simulated null, before any playlist number is read.
+   - Name the outcome that permits quoting a 12-playlist interval (your ~0.82–1.38) and the outcome that keeps "poorly determined".
+   - The 1G/1L/1M shared-flux clustering must be tested, not assumed.
+4. **What the paper may say.** State in advance which result would let the paper drop "the cause is not known". If the honest outcome is "the step is localized to playlists sharing flux file X, cause still unknown", that wording is decided now, and it is still progress.
+
+Then do the Sonnet audit, then my binding. (c)'s scoping runs in parallel at 0 cost.
