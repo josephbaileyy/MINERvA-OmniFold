@@ -1,0 +1,17 @@
+host=login37 start=2026-11-02T10:53:59Z
+walls PASS
+deploy porcelain_lines=0 head=b3705d4360520612842c4c819ac6f51041f274f2
+make_stage0_tables.py: OK
+d0-steps.tsv: OK
+tasks-d0.tsv: OK
+bulk-steps.tsv: OK
+tasks-bulk.tsv: OK
+stat-before lines=272
+sbatch -A m3246 -q regular -C cpu -t 02:15:00 -J fd1b_d_n0 -o /pscratch/sd/j/josephrb/fd-1b-staged-20261102/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-staged-20261102/deploy/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh /pscratch/sd/j/josephrb/fd-1b-staged-20261102/deploy b3705d4360520612842c4c819ac6f51041f274f2 /pscratch/sd/j/josephrb/fd-1b-staged-20261102/tables/tasks-bulk.tsv /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage0/lanes 32 56G 0 7 inherit
+sbatch -A m3246 -q regular -C cpu -t 02:15:00 -J fd1b_d_n1 -o /pscratch/sd/j/josephrb/fd-1b-staged-20261102/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-staged-20261102/deploy/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh /pscratch/sd/j/josephrb/fd-1b-staged-20261102/deploy b3705d4360520612842c4c819ac6f51041f274f2 /pscratch/sd/j/josephrb/fd-1b-staged-20261102/tables/tasks-bulk.tsv /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage0/lanes 32 56G 8 15 inherit
+Submitted batch job 60683107
+Submitted batch job 60683108
+rc=0
+60683108 fd1b_d_n1 PENDING 2:15:00 1 (Priority)
+60683107 fd1b_d_n0 PENDING 2:15:00 1 (Priority)
+end=2026-11-02T10:54:03Z

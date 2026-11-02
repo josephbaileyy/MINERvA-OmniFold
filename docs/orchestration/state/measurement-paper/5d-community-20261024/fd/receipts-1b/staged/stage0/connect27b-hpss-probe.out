@@ -1,0 +1,7 @@
+# connect 27's HPSS step hung at `hsi -q mkdir -p fd-1b-staged-20261102` (PID 52882, elapsed 01:04:59 at 08:13Z).
+# The hsi process and its connect shell (PID 51744) were killed by PID at about 08:14Z; nothing after the hpssquota
+# line of connect27-post-d0.out ran (no put, hashcreate, hashverify, retrieval or cmp). Probe, login37:
+probe start 08:14:56Z
+*** HSI - Waiting for <<HPSS Maintenance>> flag to clear. Check <https://www.nersc.gov/users/status> for status. ***
+probe rc=0 end 08:16:26Z   (timeout 90 s; rc is the pipeline's tail, not hsi's)
+# The tar stays on pscratch: stage0-d0.tar, sha256 a97f366cc15afc553d3f4407ec6406205a04c51b839963b7133129a4f6d5c6b9.

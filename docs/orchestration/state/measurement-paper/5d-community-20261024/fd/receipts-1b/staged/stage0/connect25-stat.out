@@ -1,0 +1,22 @@
+host=login37 start=2026-11-02T06:44:46Z
+W absent: /pscratch/sd/j/josephrb/fd-1b-staged-20261102
+inputs_npz | n=1 | bytes=1548438020 | oldest_atime=2026-11-01T00:07:33Z | newest_atime=2026-11-01T00:07:33Z | exposed_from=2026-12-27
+bkg_dump | n=1 | bytes=16017201 | oldest_atime=2026-10-31T23:53:58Z | newest_atime=2026-10-31T23:53:58Z | exposed_from=2026-12-26
+bank_cv | n=1 | bytes=2163648810 | oldest_atime=2026-10-31T23:54:09Z | newest_atime=2026-10-31T23:54:09Z | exposed_from=2026-12-26
+pins | n=1 | bytes=170298 | oldest_atime=2026-11-01T01:33:08Z | newest_atime=2026-11-01T01:33:08Z | exposed_from=2026-12-27
+bank_interaction | n=268 | bytes=26577287712 | oldest_atime=2026-10-31T23:54:26Z | newest_atime=2026-11-01T00:01:21Z | exposed_from=2026-12-26
+detector_dump | n=32 | bytes=2126450976 | oldest_atime=2026-11-01T00:01:17Z | newest_atime=2026-11-01T00:01:29Z | exposed_from=2026-12-27
+i0_staged | n=397 | bytes=56358617 | oldest_atime=2026-11-01T19:22:51Z | newest_atime=2026-11-01T21:41:37Z | exposed_from=2026-12-27
+i2_unf | n=204 | bytes=38500523 | oldest_atime=2026-11-01T21:42:53Z | newest_atime=2026-11-01T21:42:54Z | exposed_from=2026-12-27
+i2_unf count A/B/C: 68/68/68
+/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in/derivation
+/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in/s1
+== iris
+m3246               2183.1            10000.0     17938.6      20000.0
+== hpssquota
+|                                    home |   24.64GiB |    40.00GiB |          61.6% |    272.73K |       1.00M |          27.3% |
+|                                pscratch |   17.07TiB |    20.00TiB |          85.3% |      2.44M |      10.00M |          24.4% |
+| josephrb usage on HPSS charged to m3246 |  446.01GiB |   512.00GiB |          87.1% |          - |           - |              - |
++-----------------------------------------+------------+-------------+----------------+------------+-------------+----------------+
+== squeue
+end=2026-11-02T06:44:49Z
