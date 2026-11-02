@@ -1,0 +1,114 @@
+ok   all 2490 base keys print the base value
+ok   140 added keys: 132 e2- and 8 g-*-carbon-*-chi2r1
+ok   64 e2- chi2 keys equal their readout fields as printed
+     106 of the added keys print, at: ['paper_body.tex', 'sec_fived16.tex']
+
+key	value	printed at
+e2-cm-carbon	0.1136	sec_fived16.tex:343
+e2-cm-cell	R02	sec_fived16.tex:343
+e2-cm-ch	0.0968	sec_fived16.tex:343
+e2-cm-rel	47.8	sec_fived16.tex:343
+e2-cm-relcarbon	0.0051	sec_fived16.tex:343
+e2-cm-relcell	R12	sec_fived16.tex:343
+e2-cm-relch	0.0075	sec_fived16.tex:343
+e2-dmax	6.07	sec_fived16.tex:343
+e2-nopl-gcv-shape_only-ch	109.68	sec_fived16.tex:393
+e2-nopl-gcv-shape_only-dch	-0.64	sec_fived16.tex:393
+e2-nopl-gcv-shape_only-x0	126.64	sec_fived16.tex:393
+e2-nopl-gcv-shape_only-x1	110.32	sec_fived16.tex:393
+e2-nopl-gcv-shape_only-x2	107.82	sec_fived16.tex:393
+e2-nopl-gcv-total-ch	110.40	sec_fived16.tex:392
+e2-nopl-gcv-total-dch	-0.82	sec_fived16.tex:392
+e2-nopl-gcv-total-x0	126.90	sec_fived16.tex:392
+e2-nopl-gcv-total-x1	111.22	sec_fived16.tex:392
+e2-nopl-gcv-total-x2	108.86	sec_fived16.tex:392
+e2-nopl-gibuu-shape_only-ch	20.61	sec_fived16.tex:399
+e2-nopl-gibuu-shape_only-dch	-4.05	sec_fived16.tex:399
+e2-nopl-gibuu-shape_only-x0	143.87	sec_fived16.tex:399
+e2-nopl-gibuu-shape_only-x1	24.66	sec_fived16.tex:399
+e2-nopl-gibuu-shape_only-x2	21.20	sec_fived16.tex:399
+e2-nopl-gibuu-total-ch	57.73	sec_fived16.tex:398
+e2-nopl-gibuu-total-dch	-3.68	sec_fived16.tex:398
+e2-nopl-gibuu-total-x0	175.39	sec_fived16.tex:398
+e2-nopl-gibuu-total-x1	61.41	sec_fived16.tex:398
+e2-nopl-gibuu-total-x2	58.95	sec_fived16.tex:398
+e2-nopl-gmec-shape_only-ch	257.67	sec_fived16.tex:395
+e2-nopl-gmec-shape_only-dch	-6.07	sec_fived16.tex:395
+e2-nopl-gmec-shape_only-x0	297.63	sec_fived16.tex:395
+e2-nopl-gmec-shape_only-x1	263.74	sec_fived16.tex:395
+e2-nopl-gmec-shape_only-x2	258.24	sec_fived16.tex:395
+e2-nopl-gmec-total-ch	273.15	sec_fived16.tex:394
+e2-nopl-gmec-total-dch	-4.79	sec_fived16.tex:394
+e2-nopl-gmec-total-x0	316.63	sec_fived16.tex:394
+e2-nopl-gmec-total-x1	277.94	sec_fived16.tex:394
+e2-nopl-gmec-total-x2	271.63	sec_fived16.tex:394
+e2-nopl-nuwro-shape_only-ch	183.18	sec_fived16.tex:397
+e2-nopl-nuwro-shape_only-dch	+2.66	sec_fived16.tex:397
+e2-nopl-nuwro-shape_only-x0	192.38	sec_fived16.tex:397
+e2-nopl-nuwro-shape_only-x1	180.52	sec_fived16.tex:397
+e2-nopl-nuwro-shape_only-x2	179.84	sec_fived16.tex:397
+e2-nopl-nuwro-total-ch	183.20	sec_fived16.tex:396
+e2-nopl-nuwro-total-dch	+2.58	sec_fived16.tex:396
+e2-nopl-nuwro-total-x0	192.42	sec_fived16.tex:396
+e2-nopl-nuwro-total-x1	180.62	sec_fived16.tex:396
+e2-nopl-nuwro-total-x2	179.93	sec_fived16.tex:396
+e2-sig-nopl-fall	9.5	sec_fived16.tex:343
+e2-sig-with-carbon	0.1405	sec_fived16.tex:343
+e2-sig-with-cell	R02	sec_fived16.tex:343
+e2-sig-with-ch	0.1273	sec_fived16.tex:343
+e2-sig-with-fall	9.4	sec_fived16.tex:343
+e2-sig-with-nfall	15	sec_fived16.tex:343
+e2-sig-with-up	0.3	sec_fived16.tex:343
+e2-sig-with-upcell	R12	sec_fived16.tex:343
+e2-with-gcv-shape_only-ch	101.58	sec_fived16.tex:383
+e2-with-gcv-shape_only-dch	-0.54	sec_fived16.tex:383
+e2-with-gcv-shape_only-x0	118.10	sec_fived16.tex:383
+e2-with-gcv-shape_only-x1	102.11	sec_fived16.tex:383
+e2-with-gcv-shape_only-x2	99.69	sec_fived16.tex:383
+e2-with-gcv-total-ch	106.27	sec_fived16.tex:382
+e2-with-gcv-total-dch	-0.92	paper_body.tex:233 sec_fived16.tex:343 sec_fived16.tex:382
+e2-with-gcv-total-dx0	+14.57	paper_body.tex:233
+e2-with-gcv-total-dx2	-2.21	paper_body.tex:233
+e2-with-gcv-total-x0	121.76	sec_fived16.tex:382
+e2-with-gcv-total-x1	107.18	sec_fived16.tex:382
+e2-with-gcv-total-x2	104.98	sec_fived16.tex:382
+e2-with-gibuu-shape_only-ch	18.61	sec_fived16.tex:389
+e2-with-gibuu-shape_only-dch	-3.58	sec_fived16.tex:389
+e2-with-gibuu-shape_only-x0	139.76	sec_fived16.tex:389
+e2-with-gibuu-shape_only-x1	22.19	sec_fived16.tex:389
+e2-with-gibuu-shape_only-x2	19.00	sec_fived16.tex:389
+e2-with-gibuu-total-ch	45.10	sec_fived16.tex:343 sec_fived16.tex:388
+e2-with-gibuu-total-chr1	45.1	paper_body.tex:233
+e2-with-gibuu-total-dch	-2.68	paper_body.tex:233 sec_fived16.tex:343 sec_fived16.tex:388
+e2-with-gibuu-total-dx0	+119.05	paper_body.tex:233
+e2-with-gibuu-total-dx2	-2.28	paper_body.tex:233
+e2-with-gibuu-total-x0	166.83	sec_fived16.tex:343 sec_fived16.tex:388
+e2-with-gibuu-total-x1	47.78	sec_fived16.tex:343 sec_fived16.tex:388
+e2-with-gibuu-total-x2	45.50	sec_fived16.tex:388
+e2-with-gmec-shape_only-ch	223.33	sec_fived16.tex:385
+e2-with-gmec-shape_only-dch	-5.67	sec_fived16.tex:385
+e2-with-gmec-shape_only-x0	261.03	sec_fived16.tex:385
+e2-with-gmec-shape_only-x1	229.00	sec_fived16.tex:385
+e2-with-gmec-shape_only-x2	223.82	sec_fived16.tex:385
+e2-with-gmec-total-ch	223.53	sec_fived16.tex:384
+e2-with-gmec-total-dch	-5.56	paper_body.tex:233 sec_fived16.tex:343 sec_fived16.tex:384
+e2-with-gmec-total-dx0	+32.45	paper_body.tex:233
+e2-with-gmec-total-dx2	-5.21	paper_body.tex:233
+e2-with-gmec-total-x0	261.54	sec_fived16.tex:384
+e2-with-gmec-total-x1	229.09	sec_fived16.tex:384
+e2-with-gmec-total-x2	223.88	sec_fived16.tex:384
+e2-with-nuwro-shape_only-ch	108.07	sec_fived16.tex:387
+e2-with-nuwro-shape_only-dch	+0.54	sec_fived16.tex:387
+e2-with-nuwro-shape_only-x0	120.84	sec_fived16.tex:387
+e2-with-nuwro-shape_only-x1	107.52	sec_fived16.tex:387
+e2-with-nuwro-shape_only-x2	106.77	sec_fived16.tex:387
+e2-with-nuwro-total-ch	127.86	sec_fived16.tex:386
+e2-with-nuwro-total-dch	+0.17	paper_body.tex:233 sec_fived16.tex:343 sec_fived16.tex:386
+e2-with-nuwro-total-dx0	+12.55	paper_body.tex:233
+e2-with-nuwro-total-dx2	-0.83	paper_body.tex:233
+e2-with-nuwro-total-x0	140.25	sec_fived16.tex:386
+e2-with-nuwro-total-x1	127.69	sec_fived16.tex:386
+e2-with-nuwro-total-x2	126.87	sec_fived16.tex:386
+g-gibuu-carbon-total-chi2r1	45.5	paper_body.tex:233
+
+VALUES-CHECK :: PASS
