@@ -1,0 +1,16 @@
+host=login37 start=2026-11-02T06:45:34Z
+deploy porcelain_lines=0 head=b3705d4360520612842c4c819ac6f51041f274f2
+fd_1b_moded.py sha256 420088436948d9422dd82f7663ae4f6c6728329f6462cf6353f6ad7737f2b992
+fd_1b_inv.py sha256 71b3903aa1329807
+pilot lanes 8; bulk lanes 16 most per lane 6 fine-grid items per lane max 1 Dnom 64 grid 32
+3da6aafe1a763e179bf73abdb36bf3a9ec0dd07a32936740d657b2ca1f615884  make_stage0_tables.py
+e95640583cb2e56bd33908d958145db472b613e68be7993f00789b9052e4da01  d0-steps.tsv
+44cac1149949a6c35654c958a2786a408da0293bc1cb6f0e0f08211fdcf28c1b  tasks-d0.tsv
+b4d71202d6443195ebdd44a6b0cbde1f47146a6578b3c15a8adac0d4c1a33329  bulk-steps.tsv
+3fc66a9088f902de444e059398654351c1d09d561daf9e19778abbb1dec82da7  tasks-bulk.tsv
+stat-before lines=272
+sbatch -A m3246 -q regular -C cpu -t 01:00:00 -J fd1b_d0 -o /pscratch/sd/j/josephrb/fd-1b-staged-20261102/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-staged-20261102/deploy/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh /pscratch/sd/j/josephrb/fd-1b-staged-20261102/deploy b3705d4360520612842c4c819ac6f51041f274f2 /pscratch/sd/j/josephrb/fd-1b-staged-20261102/tables/tasks-d0.tsv /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage0/lanes 32 56G 0 7 inherit
+Submitted batch job 60678921
+rc=0
+60678921 fd1b_d0 PENDING 1:00:00 1 (Priority)
+end=2026-11-02T06:46:35Z
