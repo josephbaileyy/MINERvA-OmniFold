@@ -256,6 +256,13 @@ class AuditFixes(unittest.TestCase):
         self.assertFalse(X.same_block(a, a * (1 + 1e-9)))
         self.assertTrue(np.allclose(a, a * 1.5, rtol=1e-10))                   # numpy's default atol passes it (B1)
 
+    def test_same_block_on_zero_blocks(self):
+        z, a = np.zeros((4, 4)), np.full((4, 4), 1e-84)
+        self.assertTrue(X.same_block(z, z.copy()))          # NormDISCC: identical universes on both sides (X-A2)
+        self.assertFalse(X.same_block(z, a))
+        self.assertFalse(X.same_block(a, z))
+        self.assertFalse(X.same_block(z, np.zeros((4, 5))))
+
     def test_ratio_test_passes_a_constant_scale_and_refuses_one_row(self):
         n = 1000
         w2c, w2u = RNG.uniform(0.5, 2, n), RNG.uniform(0.5, 2, n)

@@ -403,10 +403,15 @@ if __name__ == "__main__":
 
 def same_block(a, b, tol: float = K_TOL) -> bool:
     """K1's comparison: equal to ``tol`` relative to the larger matrix's largest entry, with no absolute floor (the
-    blocks' entries are ~1e-80, below numpy's default atol)."""
+    blocks' entries are ~1e-80, below numpy's default atol). Two exactly-zero blocks are the same block (addendum
+    X-A2: a band whose universes are identical, e.g. NormDISCC on CC signal, has a zero block on both sides)."""
     a, b = np.asarray(a, float), np.asarray(b, float)
+    if a.shape != b.shape:
+        return False
     scale = max(np.abs(a).max(), np.abs(b).max())
-    return a.shape == b.shape and scale > 0 and bool(np.all(np.abs(a - b) <= tol * scale))
+    if scale == 0:
+        return True
+    return bool(np.all(np.abs(a - b) <= tol * scale))
 
 
 def ratio_test(w2u, w2c, w5u, w5c, sentinel) -> dict:
