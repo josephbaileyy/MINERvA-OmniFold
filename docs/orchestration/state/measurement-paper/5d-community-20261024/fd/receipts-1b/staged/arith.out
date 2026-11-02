@@ -1,0 +1,104 @@
+{
+ "schema": "fd-1b-staged-arith/1",
+ "grading": {
+  "p0": 0.6826894921370859,
+  "n_toys": 300,
+  "cell": {
+   "confidence": 0.996875,
+   "flag_if_count_at_most": 181,
+   "fraction": 0.6033333333333334,
+   "false_flag_at_p0_per_cell": 0.0022288138208045034,
+   "false_flag_at_p0_any_of_16_if_independent": 0.03507106338685939,
+   "over_if_count_at_least": 227,
+   "power": {
+    "0.62": 0.29509809354706484,
+    "0.60": 0.5686406736441394,
+    "0.58": 0.8096361982469287,
+    "0.55": 0.9726675849347319,
+    "0.50": 0.9998688103743657
+   }
+  },
+  "joint": {
+   "confidence": 0.95,
+   "flag_if_count_at_most": 190,
+   "fraction": 0.6333333333333333,
+   "false_flag_at_p0": 0.03919380483459794,
+   "power": {
+    "0.64": 0.4262978030485341,
+    "0.62": 0.7025490376336729,
+    "0.60": 0.8924687663288554,
+    "0.58": 0.9738290061686193,
+    "0.55": 0.9985646502020101
+   }
+  },
+  "binomial_sd_at_p0": 0.02687158036927326,
+  "chi2_mean_over_ndf_se_at_ndf16": 0.020412414523193152
+ },
+ "price": {
+  "unit_s": 1062.0,
+  "s1_per_universe_node_h": 0.022828295454545455,
+  "s1_per_seed_node_h": 0.0228125,
+  "per_truth": {
+   "rebuild": {
+    "CV": 1,
+    "seed_check": 1,
+    "flux": 100,
+    "interaction": 67,
+    "detector": 8,
+    "stat": 50
+   },
+   "rebuild_total": 227,
+   "toys": 300,
+   "total": 527
+  },
+  "stage1_base_items": 1058,
+  "plugin_items": 528,
+  "pilot": {
+   "items": 8,
+   "nodes": 1,
+   "limit_s": 3600,
+   "fullest_lane_s": 1062.0,
+   "reserved_node_h": 1.0
+  },
+  "bulk_base": {
+   "items": 1050,
+   "nodes": 6,
+   "per_lane_max": 22,
+   "limit_s": 28800,
+   "fullest_lane_s": 23364.0,
+   "fill": 0.81125,
+   "reserved_node_h": 48.0
+  },
+  "bulk_base_when_plugin": {
+   "items": 1051,
+   "nodes": 6,
+   "per_lane_max": 22,
+   "limit_s": 28800,
+   "fullest_lane_s": 23364.0,
+   "fill": 0.81125,
+   "reserved_node_h": 48.0
+  },
+  "bulk_plugin": {
+   "items": 527,
+   "nodes": 3,
+   "per_lane_max": 22,
+   "limit_s": 28800,
+   "fullest_lane_s": 23364.0,
+   "fill": 0.81125,
+   "reserved_node_h": 24.0
+  },
+  "cap_base_node_h": 49.0,
+  "cap_with_plugin_node_h": 73.0,
+  "expected_base_node_h_s1_rate": 24.15233659090909,
+  "expected_with_plugin_node_h_s1_rate": 36.20567659090909,
+  "expected_base_node_h_i2_median_8_lanes": 26.637354166666668,
+  "expected_with_plugin_node_h_i2_median_8_lanes": 39.93085416666667,
+  "campaign_cap_with_stage0": {
+   "base": 54.5,
+   "with_plugin": 78.5
+  },
+  "half_balance": 1034.7,
+  "above_half_balance": false
+ },
+ "declared_seeds_found_in_repo": []
+}
