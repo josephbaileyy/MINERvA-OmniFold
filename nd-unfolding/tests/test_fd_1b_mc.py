@@ -625,12 +625,18 @@ class Pipeline(unittest.TestCase):
         for b in sa.LATERAL_BANDS:
             d = rng.normal(0, 0.01, n) * cls.f
             cls.delta[b] = d if d[np.argmax(np.abs(d))] > 0 else -d
-        cls.s_mec = np.where(np.arange(n) < 4, 0.1, 0.001)
-        cls.s_other = np.where(np.arange(n) < 4, 0.08, 0.002)     # dominant in C_T^- there, not in C_T
-        cls.frac = np.outer(cls.s_mec, cls.s_mec) + np.outer(cls.s_other, cls.s_other)
         w = rng.uniform(0.5, 4.0, 100)
         cls.constraint = cls.tmp / "constraint.txt"
         cls.constraint.write_text("".join(f"Flux {i} {w[i]!r}\n" for i in range(100)))
+        # C_model's two vertices, scaled to C_e's fractional diagonal ce, so that clause S's lists take every case:
+        # R00-R03 MEC only (C_T's list, not C_T^-'s); R04-R07 a share near 0.35 (in neither, but in both at 0.25);
+        # R08-R11 the other vertex (in both); R12-R13 both vertices (in C_T's and C_T^-'s, not in C_T^- read on C_T)
+        ce = np.diag(cls.c_e(cls)) / cls.X_T ** 2
+        c = np.arange(n)
+        cls.s_mec = np.where(c < 4, np.sqrt(6 * ce), np.where((c >= 12) & (c < 14), np.sqrt(6 * ce), 0.001))
+        cls.s_other = np.where((c >= 4) & (c < 8), np.sqrt(0.54 * ce),
+                               np.where((c >= 8) & (c < 14), np.sqrt(3 * ce), 0.001))
+        cls.frac = np.outer(cls.s_mec, cls.s_mec) + np.outer(cls.s_other, cls.s_other)
         # the staged assembly, in load_s1's layout
         blocks = {f"band:{b}": sa.mat_cov(rng.normal(0, 0.01, cls.Xb[b].shape) * cls.f)
                   for b in sa.EXPECT}
@@ -694,14 +700,19 @@ class Pipeline(unittest.TestCase):
             self.draws.append(dr)
         return d
 
-    def expected(self) -> dict:
-        """C_e, C_T and the leave-out C_T^- built from the fixture's parts by S1's estimators."""
+    def c_e(self) -> np.ndarray:
+        """C_e built from the fixture's parts by S1's estimators."""
         w = np.array([float(l.split()[2]) for l in self.constraint.read_text().splitlines()])
         g = self.X_T / self.f
         C_e = sum(sa.mat_cov(X, w if b == sa.FLUX else None) for b, X in self.Xb.items())
         C_e = C_e + np.cov(self.R, rowvar=False, ddof=1)
         C_e = C_e + sum(np.outer(d * g / 2, d * g / 2) for d in self.delta.values())
-        C_e = C_e + np.outer(sa.NORM_FRACTION * self.X_T, sa.NORM_FRACTION * self.X_T)
+        return C_e + np.outer(sa.NORM_FRACTION * self.X_T, sa.NORM_FRACTION * self.X_T)
+
+    def expected(self) -> dict:
+        """C_e, C_T and the leave-out C_T^- built from the fixture's parts by S1's estimators."""
+        w = np.array([float(l.split()[2]) for l in self.constraint.read_text().splitlines()])
+        C_e = self.c_e()
         C_mabs = sa.model_abs(self.X_T, self.frac)
         C_minus = sa.model_abs(self.X_T, np.outer(self.s_other, self.s_other))
         p = {b: (w / w.sum() if b == sa.FLUX else np.full(len(X), 1 / len(X))) for b, X in self.Xb.items()}
@@ -747,9 +758,13 @@ class Pipeline(unittest.TestCase):
         dom = lambda C, Cm: [f"R{c:02d}" for c in range(self.N) if Cm[c, c] > 0.5 * C[c, c]]  # noqa: E731
         want = {"C_T": dom(ex["C_T"], ex["C_mabs"]), "C_T_minus_mec": dom(ex["C_e"] + ex["C_minus"], ex["C_minus"])}
         self.assertEqual(ro["clause_S_model_dominant_cells"], want)
-        self.assertTrue(want["C_T"])
-        self.assertTrue(want["C_T_minus_mec"])
-        self.assertNotEqual(dom(ex["C_T"], ex["C_minus"]), want["C_T_minus_mec"])   # the leave-out list is its own
+        cells = lambda *r: [f"R{c:02d}" for c in r]  # noqa: E731
+        self.assertEqual(want, {"C_T": cells(0, 1, 2, 3, 8, 9, 10, 11, 12, 13),
+                                "C_T_minus_mec": cells(8, 9, 10, 11, 12, 13)})
+        # the fixture separates every wrong reading: the leave-out list read on C_T, C_T's list, a threshold of 0.25
+        self.assertNotEqual(dom(ex["C_T"], ex["C_minus"]), want["C_T_minus_mec"])
+        share = np.diag(ex["C_mabs"]) / np.diag(ex["C_T"])
+        self.assertTrue(np.all((share[4:8] > 0.25) & (share[4:8] < 0.5)))
         self.assertNotIn("n1_max_composite_over_max_single", ro["descriptive"])     # N1 is read by its own step
 
     def test_n1_reads_the_toys_record_without_grading(self):
@@ -854,6 +869,35 @@ class N1Composite(Case):
         res = self.composite()
         self.assertFalse(res["stop"])
         self.assertEqual({v["declared"]["rows"] for v in res["arrays"].values()}, {0})
+
+    def test_cv_zero_rows_bound_by_band_count_and_the_exact_pass_sums(self):
+        wt = np.array(self.inputs["w_truth"], float)
+        wt[100:110] = 0.0
+        inputs = dict(self.inputs, w_truth=wt)
+        worst = np.zeros(10)
+        for tags in self.draws:
+            ui = mc.compose(inputs, self.bkg, self.bank_cv, tags, self.weights, self.flux)[0]
+            s = [mc._single(inputs, self.bkg, self.bank_cv, t, self.weights(t), self.flux)[0]["wt"] for t in tags]
+            r = np.abs(ui["w_truth"][100:110]) / np.max(np.abs(np.array(s))[:, 100:110], axis=0)
+            worst = np.maximum(worst, r)
+        want = float(worst.max())
+        self.assertGreater(want, 2.5)                      # three positive weights summed: near 3
+        with mock.patch.object(mc, "N1_BOUND", 2.5):       # above every non-zero-CV row's composite (about 1.2)
+            res = mc.composite_n1(inputs, self.bkg, self.bank_cv, self.weights, self.flux, self.draws)
+        v = res["arrays"]["wt"]
+        self.assertEqual(v["all_draws_max"], 3.0)          # the bands with a non-zero weight
+        self.assertEqual((v["all_draws_rows_above"], v["declared"]["rows"]), (10, 10))
+        self.assertAlmostEqual(v["declared"]["max"], want, places=12)
+        self.assertEqual(v["declared"]["rows_above"], int(np.sum(worst > 2.5)))
+        self.assertGreater(v["declared"]["rows_above"], 0)
+
+    def test_declared_draws_are_all_three_truths_seeds(self):
+        flux_p = mc.via_noatime(toys.flux_probabilities, self.w.constraint)
+        groups = toys.interaction_groups(self.w.bank)
+        got = mc.declared_draws(flux_p, groups)
+        self.assertEqual(len(got), 900)
+        for k, seed in ((0, 3620000), (299, 3620299), (300, 3630000), (599, 3630299), (600, 3640000), (899, 3640299)):
+            self.assertEqual(got[k], mc.draw_universes(toys.draw_for_seed(seed, flux_p, groups)), seed)
 
     def test_rows_beyond_the_cap_are_not_evaluated_and_stop(self):
         with mock.patch.object(mc, "N1_BOUND", 1.0), mock.patch.object(mc, "N1_CANDIDATE_CAP", 0):

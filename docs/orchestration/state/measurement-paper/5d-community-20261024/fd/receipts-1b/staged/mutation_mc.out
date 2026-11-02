@@ -1,5 +1,5 @@
 sha256 1a2f825fe4a7f31e800fab96d12fd97e210ea89f11cb0e395bd2bb99ef379a4a  fd_1b_mc.py
-sha256 3ba6045d795f1297b49ece93ba3ce030027eb0502524888a8a01ebd32f4fb5de  tests/test_fd_1b_mc.py
+sha256 e786b4d95fdbe171cce24c001cb55eab70bd11c384a25478be279ce294face2c  tests/test_fd_1b_mc.py
 sha256 ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
 KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
 KILLED   ratio composition inverted
@@ -74,7 +74,12 @@ KILLED   B3: readout ignores what the null was made from
 KILLED   B3: the null does not record the cmodel json
 KILLED   B4: clause S's leave-out list on C_T
 KILLED   B4: clause S's threshold at the whole
+KILLED   C1 (audit): the CV-zero all-draws bound halved
+KILLED   C1 (audit): the exact pass's CV-zero rows as a product
+KILLED   C1 (audit): declared draws hold one truth
+KILLED   C1 (audit): N2's threshold at 0.25
+KILLED   C1 (audit): N2's C_T^- list is C_T's
 KILLED   minor: partial products not refused
 KILLED   D1: readout reads the assembly plainly
-unmutated: 59 passed in 15.42s
-74 of 74 killed
+unmutated: 61 passed in 15.63s
+79 of 79 killed

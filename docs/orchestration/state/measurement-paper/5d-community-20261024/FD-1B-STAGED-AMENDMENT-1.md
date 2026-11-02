@@ -36,6 +36,21 @@ minors.
   - the generator's lanes point at the directory it writes;
   - N1's stop is proposed to rest on the composite (§5).
 
+**Revision 3** meets `coverage-5b-audit`'s condition C1 on revision 2 (#673, issuecomment-6579056469). It changes
+the tests and the receipt only; `fd_1b_mc.py` is unchanged at `1a2f825f…`.
+- **Five of the audit's mutants survived;** each was a test gap. They are now killed:
+  - the CV-zero all-draws bound halved;
+  - the exact pass's CV-zero branch taken as a product;
+  - `declared_draws` holding one truth;
+  - N2's threshold at 0.25;
+  - N2's C_T⁻ list replaced by C_T's.
+- **How:**
+  - A new test puts CV-zero rows in the composite's population.
+  - Another checks `declared_draws` against all 900 seeds of the three truths.
+  - Clause S's fixture is rebuilt so that the C_T list, the C_T⁻ list, the C_T⁻ list read on C_T and a 0.25 reading
+    all differ, and the test asserts each.
+- **Also:** the audit's advisory A1, the receipt's cap and its cost, is in §5.3.
+
 **MEASURES:** nothing. No job for stage 1 has run. This amendment cannot authorize S1-0. Under binding 1's ruling 2,
 stage 1 waits for four things:
 - stage 0's PASS;
@@ -48,13 +63,13 @@ stage 1 waits for four things:
 | file | sha256 | status |
 |---|---|---|
 | `nd-unfolding/fd_1b_mc.py` | `1a2f825f…` | new (revision 0 `90ae99f2…`, revision 1 `66679b27…`) |
-| `nd-unfolding/tests/test_fd_1b_mc.py` | `3ba6045d…` | new: 59 tests |
+| `nd-unfolding/tests/test_fd_1b_mc.py` | `e786b4d9…` | new: 61 tests (revision 2 `3ba6045d…`) |
 | `nd-unfolding/fd_1b_null.py` | `ec1402db…` | unchanged from `main` (binding 1 left it unbound) |
-| `fd/receipts-1b/staged/mutation_mc.{py,out}` | — | 74 of 74 killed (§1.2) |
+| `fd/receipts-1b/staged/mutation_mc.{py,out}` | — | 79 of 79 killed (§1.2) |
 | `fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py` | — | the committed generator (§4) |
 
 **The test suites** (`TMPDIR` set): `test_fd_1b_mc.py`, `test_fd_1b_null.py` and `test_fd_1b_moded.py` together pass
-116 (59, 23 and 34). Stage 0's files are untouched. `fd_1b_score.py`, `s1_assemble.py`, `fd_1b_toys.py`, `fd_1b_inv.py`
+118 (61, 23 and 34). Stage 0's files are untouched. `fd_1b_score.py`, `s1_assemble.py`, `fd_1b_toys.py`, `fd_1b_inv.py`
 and `fd_1b_moded.py` are byte-identical to `main`.
 
 ### 1.1 What the module does (by subcommand)
@@ -154,7 +169,9 @@ and `fd_1b_moded.py` are byte-identical to `main`.
 - **the job path:** the input, flux-table, weight-pin and push digests, and a non-finite toy truth, each refused with
   its own message.
 
-**The mutation receipt** (`mutation_mc.py`, with digests; a kill counts only on a test failure): 74 of 74 killed.
+**The mutation receipt** (`mutation_mc.py`, with digests; a kill counts only on a test failure): 79 of 79 killed.
+- Revision 3 added the audit's 5 C1 survivors. All 19 of the audit's revision-2 mutants are killed by its own
+  script against the revision-3 tests.
 - Revision 1 added §2 (vi)'s five mutants, and all five were killed at their first run.
 - Revision 2 added the audit's 27, two of them re-aimed at lines that revision 2 changed, plus 12 more for B2–B4,
   the partials and `receipt`'s read.
@@ -314,7 +331,9 @@ The bulk table needs the push weights' digest, so it is made after S1-0.
 **The order after binding 2:**
 1. **One connect:**
    - `stage-flux` and `receipt` on a login node, at 0 node-h, every read through O_NOATIME, with their outputs read
-     before anything is submitted;
+     before anything is submitted. `receipt` runs under `/usr/bin/time -v`, so its wall and peak RSS are recorded
+     (the audit's A1). It makes about four passes over the bank: the singles, the two composite passes, and the pin
+     hashing in each `_weights`;
    - the tables;
    - S1-0's submission, its line sent to the director first.
 2. **S1-0's readout** goes to the audit and the director:
@@ -356,3 +375,9 @@ The bulk table needs the push weights' digest, so it is made after S1-0.
    - **The receipt runs on a login node.** It makes one or two passes over the 26.6 GB bank, at `nice 19`.
    - If NERSC's login-node limits stop it, it moves to a one-node job. That is not in the declared price, so it would
      be yours to price.
+   - **The cap (the audit's A1).** The all-draws value is expected to exceed 10 on many rows (§3). If more than
+     250,000 rows per array exceed it, the receipt STOPs on the cap and not on any composite.
+     - That fails closed at 0 node-h, before S1-0, but it would cost an amendment.
+     - The first pass's `all_draws_rows_above` shows at once whether this happens.
+     - The choice is yours: keep the cap, or rule now on a larger one. The exact pass holds rows × 175 × 8 bytes per
+       array, so 1,000,000 rows is about 1.4 GB per array, or about 5.6 GB for the four.

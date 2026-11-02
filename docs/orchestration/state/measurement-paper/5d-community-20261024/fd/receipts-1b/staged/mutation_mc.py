@@ -84,6 +84,11 @@ M = [
  ("B3: the null does not record the cmodel json", '"cmodel_json_sha256": sa.sha256(a.cmodel_json),', ''),
  ("B4: clause S's leave-out list on C_T", '"C_T_minus_mec": model_dominant(rm["C_e"] + C_mabs_minus, C_mabs_minus)', '"C_T_minus_mec": model_dominant(rm["C_T"], C_mabs_minus)'),
  ("B4: clause S's threshold at the whole", 'return [f"R{c:02d}" for c in range(C.shape[0]) if C_mabs[c, c] > 0.5 * C[c, c]]', 'return [f"R{c:02d}" for c in range(C.shape[0]) if C_mabs[c, c] > C[c, c]]'),
+ ("C1 (audit): the CV-zero all-draws bound halved", "0.0), nonzero[k])", "0.0), nonzero[k] / 2)"),
+ ("C1 (audit): the exact pass's CV-zero rows as a product", "comp = np.where(m, np.prod(np.abs(v), axis=1), np.abs(v.sum(axis=1)))", "comp = np.prod(np.abs(v), axis=1)"),
+ ("C1 (audit): declared draws hold one truth", "for t in TRUTHS for s in TOY_SEEDS[t]]", "for t in (\"g18\",) for s in TOY_SEEDS[t]]"),
+ ("C1 (audit): N2's threshold at 0.25", "if C_mabs[c, c] > 0.5 * C[c, c]]", "if C_mabs[c, c] > 0.25 * C[c, c]]"),
+ ("C1 (audit): N2's C_T^- list is C_T's", '"C_T_minus_mec": model_dominant(rm["C_e"] + C_mabs_minus, C_mabs_minus)', '"C_T_minus_mec": model_dominant(rm["C_T"], rm["C_model_abs"])'),
  ("minor: partial products not refused", '    if left:\n        raise Refusal(f"partial', '    if False:\n        raise Refusal(f"partial'),
  ("D1: readout reads the assembly plainly", "        raise Refusal(\"the null was not made from these products\")\n    s1 = via_noatime(fs.load_s1, ", "        raise Refusal(\"the null was not made from these products\")\n    s1 = fs.load_s1("),
 ]
