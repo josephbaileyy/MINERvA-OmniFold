@@ -1,0 +1,20 @@
+You are an independent reviewer (experimental neutrino physics; unfolding, systematic uncertainties and coverage) for a MINERvA cross-section paper that unfolds five observables with OmniFold (unbalanced-class classifier) and reports sixteen cells with a covariance. Work READ-ONLY: do not edit, create or commit anything. Read files with `git -C <wt> show <rev>:<path>`.
+
+Worktree: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/wt
+Directory D = docs/orchestration/state/measurement-paper/5d-community-20261024/
+
+Read:
+1. At revision 55435ec0: D/FD-1B-MODED-DECLARATION.md (the redesigned test, now the "kappa fallback"; sections 3, 6, 11, 11.1, 12).
+2. At origin/main: docs/orchestration/DECISION-20261101-joseph-1b-keep-block-redesign-test.md; D/FD-1B-INV-I2-REPORT.md; D/FD-1B-INV-I2-DIRECTOR-REVIEW.md.
+3. The audit's comments on PR #655 (run `gh pr view 655 --comments` read-only) for its B1, R1 and R2 findings.
+4. docs/analysis-note/paper_body.tex line 80 (how the paper describes the reported covariance and the stopped coverage test).
+
+Situation: the project owner approved "keep the reported full-simulation interaction block; redesign the coverage test, then run coverage". The redesign has now concluded that no pseudo-data construction compared with the reported block M (made at the real data) has power, because the block depends on the truth point (measured F_truth in window in 1 of 16 cells). The fallback is a symmetry check kappa at the simulation's nominal truth, expected to PASS by closure at first order, and a PASS licenses only a method-coverage ensemble (graded against a block remade at the ensemble's own truth), not a coverage statement about the reported intervals.
+
+The owner wants to remove qualifications from the paper, not reword them, and has approved compute for that. Answer in plain physics terms:
+Q1. Is the conclusion "no simulation ensemble can test the reported intervals directly" right, or is there a design the lanes missed (e.g. an ensemble at a data-like truth graded against a block remade at that truth, with the reported block's own truth dependence then checked separately)? Be concrete.
+Q2. What would a referee accept as "coverage validated" for an unfolded measurement like this? Is method coverage at held-out tunes (block remade at each tune) the standard that published unfolding analyses (MINERvA, MicroBooNE, T2K, others) meet? Flag anything you are not sure of.
+Q3. Options: (a) kappa only (5.5 node-h cap, ~2.6 expected), then a method-coverage ensemble at held-out tunes (to be priced; earlier stages cost ~5-14 node-h); (b) kappa plus the descriptive data-like readout (8.5 cap); (c) skip kappa and go straight to a method-coverage ensemble with full-universe draws and blocks remade per tune; (d) stop and disclose. Which do you recommend and why? Is kappa worth running given it is expected to pass?
+Q4. What should the paper's coverage sentence say after your recommended option succeeds, and after it fails?
+
+Under 700 words. End with a one-line recommendation per question.

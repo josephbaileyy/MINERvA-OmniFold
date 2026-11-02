@@ -1,0 +1,59 @@
+**Q1. Is "no simulation ensemble can test the reported intervals directly" right?**
+
+It is right only in a trivial sense. A realized interval has no coverage, and only the procedure that makes intervals does. The lanes treat "graded against the reported block M" as the only valid object. I think that demand is the mistake.
+
+The standard design is the one you describe, and the declaration (§11.1) names it but sets it aside as "a different covariance from the reported one". It is the same procedure applied at a different truth. The design has four parts:
+- Build the pseudo-data at a data-like truth. The best choice is the plug-in truth, meaning the unfolding's own final truth weights at the data. §3.3 sets this aside as "not available" without a change to `s5c_unfold.unfold`, but that is a code task and not an impossibility. Held-out tunes (G18, AR23) are the second choice.
+- Run the full production procedure on each pseudo-dataset, with the block remade at that truth.
+- Grade the pulls and χ² against that covariance.
+- Check the truth dependence separately. The per-truth blocks give A_tune/A_nom for free. That shows whether the 0.68 median F_truth is a property of the method. Where the plug-in block can be built, M' against M (the real-data block) also shows whether the plug-in is a faithful stand-in.
+
+The lanes' argument that nothing "at means" reaches the data's own draw (iii) is true, but it matters less than they imply. Coverage is graded over draws, and the plug-in truth already encodes the data's reco-level shape (ii).
+
+Separately, κ is nearly tautological. Closure fixes it at first order, and F_src was 16 of 16 in the window.
+
+**Q2. What would a referee accept as "coverage validated"?**
+
+Method coverage at truths outside the model family, with every part of the procedure remade at each truth, is the defensible standard. Held-out tunes graded against blocks remade per tune meet it.
+
+I am not certain about how common this is in published work. My recollection, which I have not checked, is that MINERvA, MicroBooNE and T2K mostly run a handful of fake-data studies at alternative models and check χ² or bias against the reported covariance. Few publish a coverage rate. If that is right, this would exceed the usual bar.
+
+Three caveats:
+- Two tunes give two truths, not a population. State per-tune pulls, not a "coverage rate".
+- Confirm that G18 and AR23 were not used to build C_model, the generator-shape term built from the three generator shifts.
+- Grade with χ² on the covariance's non-null subspace and a binomial interval on the in-interval fraction, not only the [0.9, 1.1] size-ratio window.
+
+The paper's actual qualification (`paper_body.tex` line 80) concerns C_model's coverage at held-out truths. That is exactly what a tune ensemble addresses, whereas κ (the interaction-only symmetry check) does not.
+
+**Q3. Which option?**
+
+I recommend (c), declared as one staged design.
+- κ alone cannot change the paper. It passes by closure at first order, and the declaration itself says so.
+- Its 68 nominal unfolds are the nominal-truth anchor of the ensemble. Run them as stage 0 with a hard gate, and a κ FAIL would stop the spend. That avoids a separate decision round, and the extra audit cycle costs more than the roughly 2.6 node-h.
+- Option (b) has no verdict role and no paper value.
+- Option (d) is honest but gives up a result that is within reach.
+
+The design needs these parts:
+- Truths: nominal anchor, G18, AR23 and, if exposing the final weights is cheap and re-pinned, the plug-in point.
+- Nature draws: all uncertainty groups, not interaction only.
+- Block: remade per truth.
+- Price: from the measured 850 s per unfold, before approval.
+
+**Q4. What should the coverage sentence say?**
+
+After a pass, it states a result and drops the "not validated" clause:
+- "Pseudo-data at two generator tunes held out of the model term's construction [and at a truth reweighted to the unfolded data], unfolded with the nominal simulation, had errors consistent with the covariance built by the same procedure at that truth (χ²/ndf = …; X of 16 cells within 1σ)."
+- Add one fact, not a hedge: the interaction block depends on the truth at which it is built (median ratio 0.68 between the nominal and data points).
+- Do not claim coverage of the reported intervals as a property of nature.
+
+After a failure, it states the finding:
+- "At tune X the covariance under-covered in cells …, by a factor …; the uncertainties in those cells should be read as lower bounds."
+- Do not inflate the covariance without Joseph's decision.
+
+The stopped-attempt disclosure stays until the new result supersedes it.
+
+**Recommendations**
+- Q1: The conclusion is wrong. Grade the procedure remade at each truth, including a plug-in truth, and check the block's truth dependence separately.
+- Q2: Yes, held-out-tune method coverage with the block remade per tune is the defensible standard. I am unsure how often it is met in practice, and two tunes support per-tune pulls only.
+- Q3: Option (c), as one staged declaration with κ as stage 0.
+- Q4: After a pass, state the result with its scope. After a failure, state the under-coverage by cell and tune.
