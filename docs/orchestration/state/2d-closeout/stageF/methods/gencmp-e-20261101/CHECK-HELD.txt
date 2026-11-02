@@ -1,4 +1,4 @@
-# check_held on the rater copy of 3572ebb56 (the GENCMP amendment E round's text)
+# check_held on the rater copy of 3572ebb56 (the GENCMP amendment E round's first pass), and of d2ec66601 (its second pass)
 
 command: python3 -I r22/tools/check_held.py <methods>/r22 <methods>/rater-calibration/tools/analyze.py <blind.txt> --pair-applied G1:paper-s-09 --fact-held
 
@@ -53,3 +53,11 @@ multiset VERDICT: PASS
     blinded copy (`blind.blind.txt`) is not produced.
   - **At the base:** a4cd6ffcf's rater copy builds with rc 0.
   - **The fix is for the director:** a layout change or a new case in `fix_da_order.py`. No word is changed for it.
+
+## The second pass (d2ec66601, after the director's rulings on #665)
+
+- make_rater_copy.sh: rc 0, the blinded copy written ("data-availability heading in reading order"). The ratio caption's
+  new sentence puts the references back on page 12, so fix_da_order.py meets the base's layout again.
+- check_held: the same 3 pre-existing flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07); held quotes checked
+  exactly 14, held for facts 8.
+- holddiff: multiset VERDICT PASS.

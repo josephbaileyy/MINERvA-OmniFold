@@ -90,23 +90,38 @@ Each still holds against the new table values (review: 23.2–38.3 %, ≤ 17.8 %
 | plain re-pin, before ruling A | the generator's diff equals `values_diff.tsv` exactly (316 keys) |
 | `check_values.py` (`VALUES-CHECK.txt`) | PASS: 252 = the tsv without gs-, and gs- = #656. Planting a changed value of either kind makes it FAIL |
 | `make_values_fived16.py --check` and `--self-test` | PASS: 2490 values, 2 figures equal their sources. Two new plants, each refused by its own guard. Swapping diag, fup or sens2 for the old Stage G file is refused |
-| the ledger (`check_ledger.py`, base `a4cd6ffcf`) | 6 rows, 26 probes, 10 changed base sentences, 0 failures; self-test PASS |
+| the ledger (`check_ledger.py`, base `a4cd6ffcf`) | 8 rows, 32 probes, 12 changed base sentences, 0 failures; self-test PASS |
 | `build_all.sh` | PASS: all five PDFs (paper 12 pp, note 131 pp, primer 15 pp); no "??" and no "[PENDING" |
-| layout | **NEW:** the paper's page 11 has an 11.2 pt overfull vbox, which the base does not have. The shorter sensitivity paragraph moves the text up, so the first reference starts at the foot of page 11's left column (at the base it started on page 12). The 9.7 pt hbox at Table III is the base's |
+| layout | the paper's one overfull box is the base's (Table III, 9.7 pt). The first pass had an 11.2 pt overfull vbox on page 11 (the first reference had moved to the foot of page 11). The second pass's two-line caption sentence (E7) puts the references back on page 12, and that box is gone with no float or bibliography change |
 | the two-direction review (`review.md`) | no High and nothing false. 1 Medium (the ratio legend's qualifiers in the paper) goes to the director. Of the 3 Low, 2 are fixed and 1 is reported |
 | `check_held.py --fact-held` (`CHECK-HELD.txt`) | 3 flags, all pre-existing (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07) |
-| the rater copy | holddiff's multiset check PASSES. **`make_rater_copy.sh` exits 1** at `fix_da_order.py`: "a reference line precedes the DATA AVAILABILITY heading … no case describes this layout". It is the page-11 move above; at the base it exits 0. The rater text, on which check_held ran, is written before that step. The blinded copy is not produced |
+| the rater copy | `make_rater_copy.sh` exits 0 and writes the blinded copy; holddiff's multiset check PASSES. In the first pass it exited 1 at `fix_da_order.py` on page 11's layout; no new `fix_da_order` case was needed |
 | `check_dead_containment.py`; `test_build_all.py` containment tests | PASS; 15 passed |
 | `generate_manifest.py --check --at-sha HEAD` | OK after the `[manifest]` commit, which adds the round's seven new files |
 | local CI (`run_ci.py`) | 38 of 38 steps pass |
-| the reading copy | 22 pages: the paper's pages 9–12 and the note's pages 73–79, each changed page followed by its base page |
+| the reading copies | first pass, 22 pages (the paper's pages 9–12 and the note's pages 73–79, each followed by its base page); second pass, 8 pages (the paper's pages 9–12, the only pages it changes, each followed by its base page) |
 
-## For the director
+## The second pass: the director's rulings of 2026-11-01 on #665
 
-1. **Page 11's layout** (the overfull box and the rater-copy stop). No word can fix it within the order. It needs a
-   layout change (a float or bibliography placement) or a new layout case in `fix_da_order.py`.
-2. **The ratio legend in the paper** (review 1). E-A1's qualifiers name a NuWro hydrogen flag and a "B3" closure that
-   the paper does not define.
-3. **The lost pointer** (review 2). The paper no longer points to `sec:fived16-gen-target`.
+1. **Page 11's layout.** It is fixed by the caption sentence of item 2, with no float or bibliography change. The
+   paper's overfull boxes are now the base's one, and `make_rater_copy.sh` exits 0 with the blinded copy.
+2. **The ratio legend's flags** are defined in plain words in the ratio caption. The figure stays as bound. The caption
+   sentence: "In the legend, GiBUU's 'closure B3 failed' is the sampling-closure check that failed on its hydrogen
+   sample (the footnote to Table III), and NuWro's 'supplement FLAGGED' marks the part of its free-proton sample generated at neutrino energies
+   of 50–100 GeV, in which the events lost to generator aborts were not shown to be negligible (the note's Sec. 11.9)."
+   - **Sources:**
+     - B3 is the sampling closure, failed on hydrogen: `phase1/mp3c/REPORT.md:7-8`.
+     - The supplement is the 50–100 GeV part of NuWro's hydrogen sample: `phase1/mp3b/REPORT.md:34` (the 50–100 GeV supplement), `:45` (H_supp, its sample).
+     - It is FLAGGED because its 95 % abort bound, 1.8e-4, is above the 1e-4 bar, "not assumed negligible":
+       `phase1/mp3b/REPORT.md:54-56`.
+     - The note states the same at `sec_joint.tex:327`.
+   - **Not taken from the director's example.** The example said NuWro's sample "includes a supplement rerun on
+     alternate seeds". MP3-B §2 says instead that the aborted chunks of both the main sample and the supplement were
+     rerun on alternate seeds (`mp3b/REPORT.md:48-51`, the column "aborts (rerun on alt-1)"), and that the supplement is flagged for its abort bound. So the
+     caption names the flag's reason, and not the reruns.
+   - "The footnote to Table III", not "the note": the paper calls the analysis note "the note" (Ref. [14]).
+3. **The pointer.** `(\nsec{sec:fived16-gen-target})` is restored after the generator-definition GiBUU numbers at
+   `paper_body.tex:233`. It joins that sentence's existing parenthesis ("…; GENIE's hydrogen sample is thin, so this
+   spread is largely its noise; Ref. [14], Sec. 10.6"), so two parentheses do not stand side by side.
 
 Nothing is submitted, deposited or tagged.
