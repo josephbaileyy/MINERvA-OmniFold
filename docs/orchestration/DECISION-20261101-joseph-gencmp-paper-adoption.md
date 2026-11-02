@@ -100,4 +100,25 @@
      the lane may measure it.
    - **Review:** the paper lane's PR is reviewed against this record before merge.
 
+## Correction (director, 2026-11-01, later)
+
+Step C of FD-GENCMP (#648 §2.3) compared the sixteen cells against a superseded 2D result.
+- **What it used:** E_U (`4f5a1b6d…`) and Q (`s5_plus_playlist.npz`, `8ccb4d72…`), from DECISION-20261017.
+- **What is adopted:** `DECISION-20261024-joseph-adopt-re2-2d-refined.md:30` makes E_R the adopted 2D result, with
+  Q_R (`b57d6c96…`, `RE2-PARTC-REPORT.md:132`) as its headline uncertainty, and says "This replaces `E_U` and Q."
+- **Who caught it:** the declaration, its review and the director's binding (#647) all missed it.
+  limitation-resolver found it on 2026-11-01 while scoping item 5.
+
+**What this does to the numbers quoted above.**
+- The quadrant differences (−1.54% to +0.65%) and the ρ* values quoted to Joseph in items 3, 5 and 6 are against
+  E_U and Q, not against the adopted result.
+- RE2-PARTC-REPORT §6 puts E_R − E_U at a median 0.06σ and a maximum 0.48σ of Q_R per cell.
+- Items 1–4 do not read step C and are unaffected.
+
+**What follows.**
+- Item 5's scoping is done against E_R and Q_R.
+- Step C is rerun against them, at 0 node-h, under a bound amendment.
+- Its report supersedes #648 §2.3's 2D numbers.
+- Joseph is told of the correction with the rerun's result.
+
 Nothing is submitted, deposited or tagged.

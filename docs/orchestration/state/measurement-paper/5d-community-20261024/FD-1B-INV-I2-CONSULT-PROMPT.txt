@@ -1,0 +1,22 @@
+You are an independent reviewer (experimental neutrino physics, unfolding and systematic uncertainties) for a MINERvA cross-section paper that unfolds five observables with OmniFold and reports sixteen cells with a covariance. Work READ-ONLY: do not edit, create or commit anything. Read files with `git -C <wt> show <rev>:<path>`.
+
+Worktree: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/wt
+Revision of the reports: 835268e52bcad142a94b799a09012afe413e8b96
+Directory: docs/orchestration/state/measurement-paper/5d-community-20261024/
+
+Read in order:
+1. FD-1B-INV-I2-REPORT.md (the result), then FD-1B-INV-I0-REPORT.md.
+2. FD-1B-INV-DECLARATION.md (sections 2, 3, 6: the definitions of E, M, A, B, C, the factors and the first-order algebra s ~ -r + p) and FD-1B-INV-BINDING.md (conditions (a)-(c)).
+3. FD-1B-STAGE2-REPORT.md (gate D: the coverage-toy interaction block vs the reported block, window [0.9, 1.1]).
+4. docs/analysis-note/paper_body.tex line 80 (how the paper describes the reported covariance and the stopped coverage test) and the 1B disclosure in docs/analysis-note/sec_fived16.tex (search "1B" / "gate D").
+
+Background in one line: gate D compared the interaction-systematic block the coverage pseudo-experiments would realize (toys: pseudo-data drawn with the response shifted, unfolded with the nominal MC; object E) with the reported covariance's interaction block built from full multi-universe reweights of the MC re-unfolding the data (S1; object M). They disagree by factors 0.4-6.5 in sigma. The investigation shows the toys' object is the response-only shift (B), while S1's is the full universe (A), and A is closer to the prior-only part C than to B + C.
+
+The project owner (a physicist) must decide what comes next. Answer, in plain physics terms:
+Q1. What does O1 ("gate D compared unlike objects") mean for the paper? Is the reported interaction covariance (full-universe, standard MINERvA multi-universe practice) undermined, vindicated, or neither? Is the stopped coverage test now explained?
+Q2. Condition (a)'s question: should the reported intervals carry the response-only spread var(r) and leave the prior part to C_model (which already holds a generator-shape model-dependence term), or keep the full-universe block, or report both? What would a referee expect, and what is the community practice (MINERvA, T2K, MicroBooNE, others) for what a "systematic universe" covariance represents in an unfolded measurement?
+Q3. What does the additivity failure (A not ~ B + C; A ~ C) suggest physically about how OmniFold responds to a full universe reweight?
+Q4. What is the cheapest next step that would let the paper drop the qualification "coverage at truths held out of its construction has not been validated"? E.g. redesign the toys so they realize the same object as the reported block (and at what likely cost relative to the earlier 1B stages), or change the block, or something else. Be concrete about what the test should draw and compare.
+Q5. Anything in the I2 report that overclaims or that you would not accept.
+
+Under 800 words. End with a one-line recommendation per question.
