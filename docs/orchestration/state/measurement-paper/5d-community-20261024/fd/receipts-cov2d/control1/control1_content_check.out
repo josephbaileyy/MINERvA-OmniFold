@@ -1,0 +1,77 @@
+1b1edc0510f4742fc68a01e0fb3031b6490f0f3f85a4918240aa51b22d8745e0  josephrb_control1_content_check.py
+host=login11 utc=2026-11-02T22:05:37Z uproot=5.6.9 numpy=2.2.6 nice=19 step=2000000
+stat before CV size=2144008221 mtime=1779094334 atime=1792770770
+stat before UNI size=171117087867 mtime=1783523295 atime=1792844873
+trees CV=['data', 'mc_background', 'mc_signal_reco', 'mc_truth_denom'] UNI=['data', 'mc_background', 'mc_signal_reco', 'mc_truth_denom']
+tree data: entries CV=4119797 UNI=4119797 branches CV=3 UNI=6 shared=3
+  shared: ['measured', 'measured_pass', 'measured_pz']
+  rows 0..2000000 of 4119797 done utc=22:05:43Z
+  rows 2000000..4000000 of 4119797 done utc=22:05:43Z
+  rows 4000000..4119797 of 4119797 done utc=22:05:43Z
+  EQUAL  data.measured rows=4119797 bitwise_diff=0 value_diff=0 sha256 CV=d66df76a880e71a7 UNI=d66df76a880e71a7
+  EQUAL  data.measured_pass rows=4119797 bitwise_diff=0 value_diff=0 sha256 CV=21fa0375e1026407 UNI=21fa0375e1026407
+  EQUAL  data.measured_pz rows=4119797 bitwise_diff=0 value_diff=0 sha256 CV=f8c5755a6fa2c1ab UNI=f8c5755a6fa2c1ab
+tree mc_background: entries CV=658227 UNI=658227 branches CV=4 UNI=240 shared=4
+  shared: ['sim_background', 'sim_background_pass', 'sim_background_pz', 'w_bkg']
+  rows 0..658227 of 658227 done utc=22:05:45Z
+  EQUAL  mc_background.sim_background rows=658227 bitwise_diff=0 value_diff=0 sha256 CV=908dd5b84063a1d7 UNI=908dd5b84063a1d7
+  EQUAL  mc_background.sim_background_pass rows=658227 bitwise_diff=0 value_diff=0 sha256 CV=1663019b4a12b973 UNI=1663019b4a12b973
+  EQUAL  mc_background.sim_background_pz rows=658227 bitwise_diff=0 value_diff=0 sha256 CV=d0b89aae69c46f9d UNI=d0b89aae69c46f9d
+  EQUAL  mc_background.w_bkg rows=658227 bitwise_diff=0 value_diff=0 sha256 CV=33953037eaca4bdf UNI=33953037eaca4bdf
+tree mc_signal_reco: entries CV=32849103 UNI=32849103 branches CV=7 UNI=470 shared=7
+  shared: ['MC', 'MC_pz', 'sim', 'sim_pass', 'sim_pz', 'w_reco', 'w_truth']
+  rows 0..2000000 of 32849103 done utc=22:05:48Z
+  rows 2000000..4000000 of 32849103 done utc=22:05:51Z
+  rows 4000000..6000000 of 32849103 done utc=22:05:54Z
+  rows 6000000..8000000 of 32849103 done utc=22:05:57Z
+  rows 8000000..10000000 of 32849103 done utc=22:05:59Z
+  rows 10000000..12000000 of 32849103 done utc=22:06:02Z
+  rows 12000000..14000000 of 32849103 done utc=22:06:04Z
+  rows 14000000..16000000 of 32849103 done utc=22:06:07Z
+  rows 16000000..18000000 of 32849103 done utc=22:06:09Z
+  rows 18000000..20000000 of 32849103 done utc=22:06:12Z
+  rows 20000000..22000000 of 32849103 done utc=22:06:14Z
+  rows 22000000..24000000 of 32849103 done utc=22:06:17Z
+  rows 24000000..26000000 of 32849103 done utc=22:06:20Z
+  rows 26000000..28000000 of 32849103 done utc=22:06:22Z
+  rows 28000000..30000000 of 32849103 done utc=22:06:25Z
+  rows 30000000..32000000 of 32849103 done utc=22:06:27Z
+  rows 32000000..32849103 of 32849103 done utc=22:06:29Z
+  EQUAL  mc_signal_reco.MC rows=32849103 bitwise_diff=0 value_diff=0 sha256 CV=f35e813ec21082f4 UNI=f35e813ec21082f4
+  EQUAL  mc_signal_reco.MC_pz rows=32849103 bitwise_diff=0 value_diff=0 sha256 CV=92b5915eb9ffb38f UNI=92b5915eb9ffb38f
+  EQUAL  mc_signal_reco.sim rows=32849103 bitwise_diff=0 value_diff=0 sha256 CV=8edd18e81179ceb3 UNI=8edd18e81179ceb3
+  EQUAL  mc_signal_reco.sim_pass rows=32849103 bitwise_diff=0 value_diff=0 sha256 CV=e90cd373a0cafd3f UNI=e90cd373a0cafd3f
+  EQUAL  mc_signal_reco.sim_pz rows=32849103 bitwise_diff=0 value_diff=0 sha256 CV=f214f8d1191af3df UNI=f214f8d1191af3df
+  EQUAL  mc_signal_reco.w_reco rows=32849103 bitwise_diff=0 value_diff=0 sha256 CV=ab9eb53e80f28aa7 UNI=ab9eb53e80f28aa7
+  EQUAL  mc_signal_reco.w_truth rows=32849103 bitwise_diff=0 value_diff=0 sha256 CV=da41105fc3fb5a68 UNI=da41105fc3fb5a68
+tree mc_truth_denom: entries CV=32849103 UNI=32849103 branches CV=3 UNI=236 shared=3
+  shared: ['MC', 'MC_pz', 'w_truth']
+  rows 0..2000000 of 32849103 done utc=22:06:30Z
+  rows 2000000..4000000 of 32849103 done utc=22:06:31Z
+  rows 4000000..6000000 of 32849103 done utc=22:06:33Z
+  rows 6000000..8000000 of 32849103 done utc=22:06:34Z
+  rows 8000000..10000000 of 32849103 done utc=22:06:35Z
+  rows 10000000..12000000 of 32849103 done utc=22:06:37Z
+  rows 12000000..14000000 of 32849103 done utc=22:06:38Z
+  rows 14000000..16000000 of 32849103 done utc=22:06:39Z
+  rows 16000000..18000000 of 32849103 done utc=22:06:40Z
+  rows 18000000..20000000 of 32849103 done utc=22:06:42Z
+  rows 20000000..22000000 of 32849103 done utc=22:06:43Z
+  rows 22000000..24000000 of 32849103 done utc=22:06:44Z
+  rows 24000000..26000000 of 32849103 done utc=22:06:45Z
+  rows 26000000..28000000 of 32849103 done utc=22:06:47Z
+  rows 28000000..30000000 of 32849103 done utc=22:06:48Z
+  rows 30000000..32000000 of 32849103 done utc=22:06:49Z
+  rows 32000000..32849103 of 32849103 done utc=22:06:50Z
+  EQUAL  mc_truth_denom.MC rows=32849103 bitwise_diff=0 value_diff=0 sha256 CV=6d7a8ac52ccbdc8c UNI=6d7a8ac52ccbdc8c
+  EQUAL  mc_truth_denom.MC_pz rows=32849103 bitwise_diff=0 value_diff=0 sha256 CV=cf76661c98d409be UNI=cf76661c98d409be
+  EQUAL  mc_truth_denom.w_truth rows=32849103 bitwise_diff=0 value_diff=0 sha256 CV=8b9bdded9e784cc8 UNI=8b9bdded9e784cc8
+info dataPOTUsed;1 TParameter<double>: [1.057394261158926e+21, 1.057394261158926e+21]
+info hasTruthOnlyMisses;1 TParameter<int>: [12, 12]
+info mcPOTUsed;1 TParameter<double>: [4.978198462880827e+21, 4.978198462880827e+21]
+info nTruthOnlyMisses;1 TParameter<long>: [8999007, 8999007]
+stat after  CV size=2144008221 mtime=1779094334 atime=1792770770
+stat after  UNI size=171117087867 mtime=1783523295 atime=1792844873
+CONTROL1 PASS failures=0
+rc=0
+ls: cannot access '/dev/shm/josephrb_control1_content_check.py': No such file or directory
