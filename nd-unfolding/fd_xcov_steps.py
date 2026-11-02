@@ -452,9 +452,9 @@ def k_own_only(a) -> int:
     import tempfile
     inp, ctrl = X.Inputs(), {}
 
-    def check(name, ok, detail=""):
+    def check(name, ok, detail=""):                 # records every control and goes on, so one pass lists them all
         ctrl[name] = bool(ok)
-        X.report(name.split()[0], name, ok, str(detail))
+        print(f"[{'PASS' if ok else 'FAIL'} {name.split()[0]}] {name}" + ("" if ok else f": {detail}"), flush=True)
 
     v0 = json.loads((a.run_dir / V0_DIR / "v0.json").read_text())
     bs = boot_state(a.run_dir, v0["pass"])
@@ -465,7 +465,8 @@ def k_own_only(a) -> int:
             rc = 0
         except X.Stop as e:
             rec["stop"], rc = str(e), 1
-    rec.update(controls=ctrl, n_controls=len(ctrl), all_pass=rc == 0 and all(ctrl.values()),
+    rec.update(controls=ctrl, n_controls=len(ctrl), failing=[k for k, v in ctrl.items() if not v],
+               all_pass=rc == 0 and all(ctrl.values()),
                atime_deviations=inp.atime_deviations())
     print(json.dumps(rec, default=float), flush=True)
     return rc
