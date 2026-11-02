@@ -1,0 +1,5 @@
+JobID|JobName|Partition|QOS|NNodes|State|ExitCode|Start|End|Elapsed|Timelimit|NodeList
+60678999|gencmp-x-v1|regular_milan_ss11|regular_1|1|COMPLETED|0:0|2026-11-01T22:58:31|2026-11-01T23:02:45|00:04:14|00:15:00|nid006654
+60679146|gencmp-x-v1|regular_milan_ss11|regular_1|1|FAILED|1:0|2026-11-01T23:28:36|2026-11-01T23:32:50|00:04:14|01:45:00|nid006988
+60679576|gencmp-x-boot|regular_milan_ss11|regular_1|1|COMPLETED|0:0|2026-11-01T23:42:45|2026-11-02T02:38:08|02:55:23|03:00:00|nid006724
+60694933|gencmp-x-v1|regular_milan_ss11|regular_1|1|COMPLETED|0:0|2026-11-02T08:25:16|2026-11-02T08:54:18|00:29:02|01:45:00|nid006611
