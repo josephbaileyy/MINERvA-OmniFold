@@ -1,7 +1,7 @@
 # The quadrant-sentence and Section IV paper round: the independent two-direction review, with dispositions
 
 **The reviewer:** a fresh general-purpose subagent, read-only. It was given:
-- the diff `7bac3c634..6fd6361eb`, with both builds;
+- the diff `7bac3c634..6fd6361eb` (rebased onto `848c7df7a` as `5b9fa6236`), with both builds;
 - the director's work order, verbatim;
 - the authorities: DECISION-20261102 (#690); the X report, declaration, `k.json` and `fd_xcov.py`; the amendment E
   report §3.2 and `overlap_refined.json`; the GENCMP declaration's rule and §10; OUTCOME-20261005; the note's sources;

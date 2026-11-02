@@ -233,7 +233,7 @@ A coverage result that lands later replaces its clause (decision item 2).
 5. **Kept in IV A:** "It was added after these differences were seen, following an audit whose stopping criterion was
    fixed in advance." It is a disclosure that the abstract relies on, not a validation sentence.
 
-## Checks, on the final text (`eb0de39db` and its records commit)
+## Checks, on the final text (`fbac3d4b5` and its records commit; before the rebase onto `848c7df7a`, `eb0de39db`, with the same `docs/analysis-note`)
 
 | check | result |
 |---|---|
