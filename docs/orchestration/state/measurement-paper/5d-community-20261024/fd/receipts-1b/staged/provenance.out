@@ -1,0 +1,234 @@
+$ git rev-parse HEAD
+a4cd6ffcf34ec8247a82f00bd6fdcc0e3a937196
+rc=0
+
+$ git grep -n -E G18|AR23|g18|ar23|G1810a|AR2320i -- nd-unfolding/pv-ladder/build_cmodel5d.py nd-unfolding/pv-ladder/config.json nd-unfolding/pv-ladder/readouts/cmodel_5d.json nd-unfolding/pv-ladder/readouts/h2_definition.json nd-unfolding/s1_assemble.py nd-unfolding/s5c_unfold.py nd-unfolding/s5c_pseudo.py nd-unfolding/s5n_pseudo.py nd-unfolding/s5e_candidate.py nd-unfolding/omnifold_nn_core.py nd-unfolding/xsec_nd.py nd-unfolding/s5p_universe.py nd-unfolding/s5p_nullexp.py
+(empty)
+rc=1
+
+$ git grep -n -E ^VERTICES|for k in \( -- nd-unfolding/pv-ladder/build_cmodel5d.py
+nd-unfolding/pv-ladder/build_cmodel5d.py:9:over the reporting cells c of readouts/h2_definition.json, for k in (GENIE+MEC, NuWro, GiBUU); X_0 is L-5D-PV_e_tune_v1.
+nd-unfolding/pv-ladder/build_cmodel5d.py:47:VERTICES = ("genie_mec", "nuwro", "gibuu")
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/pv-ladder/build_cmodel5d.py
+dfcbb2c6c 2026-10-24 first-add
+rc=0
+
+$ git log -1 --format=%h %ad last-change --date=short -- nd-unfolding/pv-ladder/build_cmodel5d.py
+dfcbb2c6c 2026-10-24 last-change
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/pv-ladder/config.json
+06436fb32 2026-10-24 first-add
+rc=0
+
+$ git log -1 --format=%h %ad last-change --date=short -- nd-unfolding/pv-ladder/config.json
+06436fb32 2026-10-24 last-change
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/pv-ladder/readouts/cmodel_5d.json
+3aadb536e 2026-10-24 first-add
+rc=0
+
+$ git log -1 --format=%h %ad last-change --date=short -- nd-unfolding/pv-ladder/readouts/cmodel_5d.json
+3aadb536e 2026-10-24 last-change
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/pv-ladder/readouts/h2_definition.json
+5c440914d 2026-10-24 first-add
+rc=0
+
+$ git log -1 --format=%h %ad last-change --date=short -- nd-unfolding/pv-ladder/readouts/h2_definition.json
+5c440914d 2026-10-24 last-change
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/s1_assemble.py
+6dbc8d20c 2026-10-24 first-add
+rc=0
+
+$ git log -1 --format=%h %ad last-change --date=short -- nd-unfolding/s1_assemble.py
+fe5d79c61 2026-10-24 last-change
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/s5c_unfold.py
+50402c0a3 2026-09-24 first-add
+rc=0
+
+$ git log -1 --format=%h %ad last-change --date=short -- nd-unfolding/s5c_unfold.py
+50402c0a3 2026-09-24 last-change
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/s5c_pseudo.py
+2f4432d61 2026-09-24 first-add
+rc=0
+
+$ git log -1 --format=%h %ad last-change --date=short -- nd-unfolding/s5c_pseudo.py
+55759309c 2026-09-25 last-change
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/s5n_pseudo.py
+430413eb0 2026-09-25 first-add
+rc=0
+
+$ git log -1 --format=%h %ad last-change --date=short -- nd-unfolding/s5n_pseudo.py
+82dc15175 2026-09-25 last-change
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/s5e_candidate.py
+700797e36 2026-09-25 first-add
+rc=0
+
+$ git log -1 --format=%h %ad last-change --date=short -- nd-unfolding/s5e_candidate.py
+700797e36 2026-09-25 last-change
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/omnifold_nn_core.py
+21f2a0030 2026-06-03 first-add
+rc=0
+
+$ git log -1 --format=%h %ad last-change --date=short -- nd-unfolding/omnifold_nn_core.py
+7916931fd 2026-06-04 last-change
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- 3d-unfolding/genie/gen5d_v3.py
+b40761c1d 2026-10-27 first-add
+rc=0
+
+$ git log --diff-filter=A --format=%h %ad first-add --date=short -- nd-unfolding/fd_f1_prep.py
+b40761c1d 2026-10-27 first-add
+rc=0
+
+$ git log --all -SG18_10a --format=%h %ad %s --date=short --reverse
+f0352ea45 2026-10-11 [inelastic] High-region investigation: reductions, decomposition, literature, memo (INCONCLUSIVE)
+6f48a9e8b 2026-10-11 [inelastic] Close-out: bounded interpretation corrections and a no-run feasibility section (pre-review)
+db87bf784 2026-10-11 [inelastic] Close-out: apply the targeted review's single correction pass; record it
+caf95593c 2026-10-12 [inelastic] Second close-out: corrected validation proposal and reviewer brief
+cdc103144 2026-10-12 [research] Synthesize the Valencia and high-region studies as a research extension
+d534b7ea1 2026-10-14 [2d-closeout] Stage D preparation: inventory and price of the independent inputs
+0d677d654 2026-10-16 [docs] Compare bounded future research decisions
+21c90f13b 2026-10-17 [docs] Integrate the reviewed closeout preparation documents
+90f042ef8 2026-10-17 [docs] Integrate the reviewed closeout preparation documents
+a619f0a47 2026-10-25 [5d-community] FD plan: scope the 5D fake-data test and generator comparisons (0 node-h)
+11b78fdef 2026-10-27 [fd] LIMITATION-PLAN: a costed scoping of the 5D result's three limitations
+670500987 2026-10-27 [decision] Joseph: the F1 bias test uses both GENIE v3 tunes
+b40761c1d 2026-10-27 [fd] F1 declaration: the GENIE v3 held-out bias test, code, tests and procedure
+c95971ef1 2026-10-27 [record] F1 binding: the GENIE v3 held-out bias test, at deploy pin 5015535e
+183b31e44 2026-10-27 [fd] F1 run receipts: deploy, F1a GO, F1b OUT_OF_MEMORY (STOP)
+08a0b3ab5 2026-10-27 [fd] F1 amendment 1: the re-pilot at production concurrency after F1b's OOM STOP
+f09b9a9c4 2026-10-27 [fd] F1 amendment 1: the review round (start-up OOM, P = 16, full-size re-pilot)
+3ce59e273 2026-10-28 [fd] F1 amendment 2: F1b′ in one wave of 14 long tasks, gated on the committed re-pilot records
+d92e24305 2026-10-28 [fd] F1 amendment 2: fold in the independent review
+3a0d2dc79 2026-10-28 [fd] F1 amendment 2: the disclosure sweep commits complete command bodies
+ee9a9a3a7 2026-10-28 [fd] F1 receipts: amendment-2 deploy and tests, and the F1b-prime submit (gate3 GO, job 60436278)
+741ad029e 2026-10-28 [fd] F1 first receipt commit: F1b-prime records and the F1c tables (the F1c deploy pin)
+153473134 2026-10-28 [fd] F1 receipts: land the gen5d meta JSONs held out of the F1c pin; F1c deploy and submit
+7af6ef388 2026-10-28 [fd] F1 receipts: config-f1.json and the k1_p5_rerun.npz it cites (director ruling (c))
+eeff25b58 2026-10-28 [fd] F1 report: the GENIE v3 held-out bias test, run under FD-F1-BINDING and amendments 1 and 2
+589f07805 2026-10-28 [paper] Step (c), 1A half: the GENIE v3 held-out bias test in Sec. I, the abstracts, IV H and the note
+1bcccc381 2026-10-28 [paper] Step (c) 1A: the review's fixes (ADOPT-AFTER-FIXES, no BLOCKING), agy passes 4-5, and P02's agy pass
+9e99fe9c5 2026-10-28 [record] Step (c) 1A: PRD read r6 of the composites as printed, its agy pass, and the director's C1A-ALLOW confirmation
+0be5f0ff1 2026-10-28 [record] The final draft (d) for Joseph: FINAL-DRAFT.md, with the built paper, note and paper redline
+9c4b930ca 2026-10-28 [record] Independent consult on the importance of a coverage test
+838bde1e4 2026-10-28 [record] LIMITATION-PLAN addendum: coverage, response mismatch, the χ² calibration and the run-period trace, costed
+d9e5c4a94 2026-10-28 [paper] d2: Joseph's decisions on (d) applied, and the independent raters' choices (FINAL-DRAFT-2.md)
+100701c1b 2026-10-29 [r21] Steps 0 and 1: the baseline, the reverse outline, the fact ledger, the writer brief and the checker
+996ecf83a 2026-10-29 [r21] Measurement and report: ADOPTED (pairwise 4 of 4, no sol2 flip, P1 3,3,3)
+79c93221d 2026-10-29 [r22] Step 1 report: the gap diagnosis, in three states (committed, #521, #522)
+816e96ddc 2026-10-30 [r22] Step 2 note round: measured and adopted (every piece passes the rule)
+fe0beda43 2026-10-30 [r22] Step 2 paper round: plan, gap list, held sentences, re-scored base and checkers (before any text)
+fcdc1afed 2026-10-30 [declaration] 1B with 4A, stage 1: the coverage protocol, fixed before any toy, and its stages
+ffd732a2e 2026-10-30 [r22] Step 2 paper round: the rewrite, its review fixes and the B4 re-pin (not yet measured or adopted)
+93e9aa450 2026-10-30 [r22] Paper pass 2: the judged text, fixed before the adoption runs
+68de952c5 2026-10-30 [r22] Step 3: NEW's pieces, cut from a build of 928fec6b, with the key() proof
+c0ce80981 2026-10-30 [report] 1B with 4A, stage 1: the toy mode, scorer and task tables, tested and mutated
+287d4f593 2026-10-31 [r22] Step 3: the adopted note's pieces, cut from a build of f13912b6, with their proof
+d7c256794 2026-10-31 [r22] Step 4: the note's pieces from a build of 527a2a7e, with their proof (held 29/29)
+66477cc56 2026-10-31 [r22] Paper pass 3: NEW not adopted (0 of 4 P2); the adopted paper is BASE' (base plus Option B); P1 3,3,3 stops the rounds
+a55c3ad03 2026-10-31 [records] The 5B text round's report, P1 x3 on the final text (3, 3, 3), the rater copy and the probe receipts
+a0eb3a200 2026-11-01 [records] The 620 round: report, agy's targeted read (6 of 6 control), P1 x3 (3, 3, 3), the rater copy
+rc=0
+
+$ git log --all -SAR23_20i --format=%h %ad %s --date=short --reverse
+f0352ea45 2026-10-11 [inelastic] High-region investigation: reductions, decomposition, literature, memo (INCONCLUSIVE)
+6f48a9e8b 2026-10-11 [inelastic] Close-out: bounded interpretation corrections and a no-run feasibility section (pre-review)
+db87bf784 2026-10-11 [inelastic] Close-out: apply the targeted review's single correction pass; record it
+caf95593c 2026-10-12 [inelastic] Second close-out: corrected validation proposal and reviewer brief
+cdc103144 2026-10-12 [research] Synthesize the Valencia and high-region studies as a research extension
+d534b7ea1 2026-10-14 [2d-closeout] Stage D preparation: inventory and price of the independent inputs
+0d677d654 2026-10-16 [docs] Compare bounded future research decisions
+21c90f13b 2026-10-17 [docs] Integrate the reviewed closeout preparation documents
+90f042ef8 2026-10-17 [docs] Integrate the reviewed closeout preparation documents
+a619f0a47 2026-10-25 [5d-community] FD plan: scope the 5D fake-data test and generator comparisons (0 node-h)
+11b78fdef 2026-10-27 [fd] LIMITATION-PLAN: a costed scoping of the 5D result's three limitations
+670500987 2026-10-27 [decision] Joseph: the F1 bias test uses both GENIE v3 tunes
+b40761c1d 2026-10-27 [fd] F1 declaration: the GENIE v3 held-out bias test, code, tests and procedure
+183b31e44 2026-10-27 [fd] F1 run receipts: deploy, F1a GO, F1b OUT_OF_MEMORY (STOP)
+08a0b3ab5 2026-10-27 [fd] F1 amendment 1: the re-pilot at production concurrency after F1b's OOM STOP
+f09b9a9c4 2026-10-27 [fd] F1 amendment 1: the review round (start-up OOM, P = 16, full-size re-pilot)
+3ce59e273 2026-10-28 [fd] F1 amendment 2: F1b′ in one wave of 14 long tasks, gated on the committed re-pilot records
+d92e24305 2026-10-28 [fd] F1 amendment 2: fold in the independent review
+3a0d2dc79 2026-10-28 [fd] F1 amendment 2: the disclosure sweep commits complete command bodies
+ee9a9a3a7 2026-10-28 [fd] F1 receipts: amendment-2 deploy and tests, and the F1b-prime submit (gate3 GO, job 60436278)
+741ad029e 2026-10-28 [fd] F1 first receipt commit: F1b-prime records and the F1c tables (the F1c deploy pin)
+153473134 2026-10-28 [fd] F1 receipts: land the gen5d meta JSONs held out of the F1c pin; F1c deploy and submit
+7af6ef388 2026-10-28 [fd] F1 receipts: config-f1.json and the k1_p5_rerun.npz it cites (director ruling (c))
+eeff25b58 2026-10-28 [fd] F1 report: the GENIE v3 held-out bias test, run under FD-F1-BINDING and amendments 1 and 2
+589f07805 2026-10-28 [paper] Step (c), 1A half: the GENIE v3 held-out bias test in Sec. I, the abstracts, IV H and the note
+1bcccc381 2026-10-28 [paper] Step (c) 1A: the review's fixes (ADOPT-AFTER-FIXES, no BLOCKING), agy passes 4-5, and P02's agy pass
+9e99fe9c5 2026-10-28 [record] Step (c) 1A: PRD read r6 of the composites as printed, its agy pass, and the director's C1A-ALLOW confirmation
+0be5f0ff1 2026-10-28 [record] The final draft (d) for Joseph: FINAL-DRAFT.md, with the built paper, note and paper redline
+9c4b930ca 2026-10-28 [record] Independent consult on the importance of a coverage test
+838bde1e4 2026-10-28 [record] LIMITATION-PLAN addendum: coverage, response mismatch, the χ² calibration and the run-period trace, costed
+d9e5c4a94 2026-10-28 [paper] d2: Joseph's decisions on (d) applied, and the independent raters' choices (FINAL-DRAFT-2.md)
+100701c1b 2026-10-29 [r21] Steps 0 and 1: the baseline, the reverse outline, the fact ledger, the writer brief and the checker
+996ecf83a 2026-10-29 [r21] Measurement and report: ADOPTED (pairwise 4 of 4, no sol2 flip, P1 3,3,3)
+79c93221d 2026-10-29 [r22] Step 1 report: the gap diagnosis, in three states (committed, #521, #522)
+816e96ddc 2026-10-30 [r22] Step 2 note round: measured and adopted (every piece passes the rule)
+fe0beda43 2026-10-30 [r22] Step 2 paper round: plan, gap list, held sentences, re-scored base and checkers (before any text)
+fcdc1afed 2026-10-30 [declaration] 1B with 4A, stage 1: the coverage protocol, fixed before any toy, and its stages
+ffd732a2e 2026-10-30 [r22] Step 2 paper round: the rewrite, its review fixes and the B4 re-pin (not yet measured or adopted)
+93e9aa450 2026-10-30 [r22] Paper pass 2: the judged text, fixed before the adoption runs
+68de952c5 2026-10-30 [r22] Step 3: NEW's pieces, cut from a build of 928fec6b, with the key() proof
+287d4f593 2026-10-31 [r22] Step 3: the adopted note's pieces, cut from a build of f13912b6, with their proof
+d7c256794 2026-10-31 [r22] Step 4: the note's pieces from a build of 527a2a7e, with their proof (held 29/29)
+66477cc56 2026-10-31 [r22] Paper pass 3: NEW not adopted (0 of 4 P2); the adopted paper is BASE' (base plus Option B); P1 3,3,3 stops the rounds
+a55c3ad03 2026-10-31 [records] The 5B text round's report, P1 x3 on the final text (3, 3, 3), the rater copy and the probe receipts
+a0eb3a200 2026-11-01 [records] The 620 round: report, agy's targeted read (6 of 6 control), P1 x3 (3, 3, 3), the rater copy
+rc=0
+
+$ git log --all -Sgenie_v3_g18 --format=%h %ad %s --date=short --reverse
+b40761c1d 2026-10-27 [fd] F1 declaration: the GENIE v3 held-out bias test, code, tests and procedure
+08a0b3ab5 2026-10-27 [fd] F1 amendment 1: the re-pilot at production concurrency after F1b's OOM STOP
+3ce59e273 2026-10-28 [fd] F1 amendment 2: F1b′ in one wave of 14 long tasks, gated on the committed re-pilot records
+741ad029e 2026-10-28 [fd] F1 first receipt commit: F1b-prime records and the F1c tables (the F1c deploy pin)
+153473134 2026-10-28 [fd] F1 receipts: land the gen5d meta JSONs held out of the F1c pin; F1c deploy and submit
+7af6ef388 2026-10-28 [fd] F1 receipts: config-f1.json and the k1_p5_rerun.npz it cites (director ruling (c))
+da5f157f4 2026-10-28 [fd] F1 second receipt commit: the F1c product manifest and F1c records
+eeff25b58 2026-10-28 [fd] F1 report: the GENIE v3 held-out bias test, run under FD-F1-BINDING and amendments 1 and 2
+ef8bb1a3b 2026-10-28 [fd] F1 report: fold in the independent review
+589f07805 2026-10-28 [paper] Step (c), 1A half: the GENIE v3 held-out bias test in Sec. I, the abstracts, IV H and the note
+1bcccc381 2026-10-28 [paper] Step (c) 1A: the review's fixes (ADOPT-AFTER-FIXES, no BLOCKING), agy passes 4-5, and P02's agy pass
+9e99fe9c5 2026-10-28 [record] Step (c) 1A: PRD read r6 of the composites as printed, its agy pass, and the director's C1A-ALLOW confirmation
+c0ce80981 2026-10-30 [report] 1B with 4A, stage 1: the toy mode, scorer and task tables, tested and mutated
+8621740e1 2026-10-31 [report] 1B stage 1: the derivation check on the real inputs, and the director's lateral confirmation
+7173b9508 2026-10-31 [1b] Stage-2 declaration: the derivation runs, gate D and the nominal control
+54e3647a8 2026-10-31 [1b] Stage 2: the review's fixes — exact commands, the re-price rules in code, a mutation receipt
+32d3f6e36 2026-10-31 [report] The 5B block's addition, run as bound: revised products beside the current ones
+1a4815a8a 2026-10-31 [1b] Stage-2 report: gate D FAIL, a STOP before any coverage toy
+rc=0
+
+$ git grep -n -l inelastic-high-region-20261011 -- docs/orchestration/DECISION-* nd-unfolding
+(empty)
+rc=1
+
+$ git grep -n -E authorizes nothing|names G18_10a -- docs/orchestration/state/inelastic-high-region-20261011/REPORT.md
+docs/orchestration/state/inelastic-high-region-20261011/REPORT.md:19:**Proposal changes.** One change goes beyond interpretation. The V2 proposal (§8) now names G18_10a_02_11b and
+docs/orchestration/state/inelastic-high-region-20261011/REPORT.md:1078:**No automatic launch.** A favorable review authorizes nothing. Each stage below needs Joseph's own authorization,
+rc=0
+
+$ git grep -n -o -E held out of (the analysis|its construction) -- docs/analysis-note/paper_body.tex
+docs/analysis-note/paper_body.tex:81:held out of its construction
+docs/analysis-note/paper_body.tex:190:held out of the analysis
+rc=0
+

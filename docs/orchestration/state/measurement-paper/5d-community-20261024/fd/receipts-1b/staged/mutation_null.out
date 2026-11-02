@@ -1,0 +1,23 @@
+sha256 ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
+sha256 c546c20d0901bc792a761f665870d2b585d72188511ac41dde8b9056082d222a  tests/test_fd_1b_null.py
+KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
+KILLED   laws not centred
+KILLED   two-point at full delta
+KILLED   law covariance unweighted
+KILLED   match check skipped
+KILLED   probabilities not checked
+KILLED   Gaussian part dropped
+KILLED   one law draw shared
+KILLED   content strict
+KILLED   joint cut at 0.5
+KILLED   null space kept
+KILLED   chi2 not divided
+KILLED   flag at the cdf, not below
+KILLED   no Bonferroni
+KILLED   margin raises the null
+KILLED   size omits the joint
+KILLED   attribution uncentred
+KILLED   width needs no zero mean
+KILLED   binomial pmf flipped
+unmutated: 23 passed in 1.28s
+18 of 18 killed
