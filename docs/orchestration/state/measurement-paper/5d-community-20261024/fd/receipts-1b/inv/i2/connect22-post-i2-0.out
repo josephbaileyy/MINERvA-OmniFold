@@ -1,0 +1,81 @@
+host=login37 start=2026-11-01T19:54:42Z
+== sacct
+60656806|fd1b_inv_i20|COMPLETED|0:0|00:15:03|1|2026-11-01T11:38:27|2026-11-01T11:53:30
+60656806.batch|batch|COMPLETED|0:0|00:15:03|1|2026-11-01T11:38:27|2026-11-01T11:53:30
+60656806.extern|extern|COMPLETED|0:0|00:15:03|1|2026-11-01T11:38:27|2026-11-01T11:53:30
+60656806.0|line4|COMPLETED|0:0|00:14:46|1|2026-11-01T11:38:32|2026-11-01T11:53:18
+60656806.1|line6|COMPLETED|0:0|00:13:51|1|2026-11-01T11:38:32|2026-11-01T11:52:23
+60656806.2|line3|COMPLETED|0:0|00:14:58|1|2026-11-01T11:38:32|2026-11-01T11:53:30
+60656806.3|line0|COMPLETED|0:0|00:12:20|1|2026-11-01T11:38:32|2026-11-01T11:50:52
+60656806.4|line7|COMPLETED|0:0|00:13:14|1|2026-11-01T11:38:32|2026-11-01T11:51:46
+60656806.5|line1|COMPLETED|0:0|00:12:23|1|2026-11-01T11:38:32|2026-11-01T11:50:55
+60656806.6|line5|COMPLETED|0:0|00:14:52|1|2026-11-01T11:38:32|2026-11-01T11:53:24
+60656806.7|line2|COMPLETED|0:0|00:12:20|1|2026-11-01T11:38:32|2026-11-01T11:50:52
+== lanes
+[f1-lane] fd1b_inv_i2-0_A_CV rc=0 end=2026-11-01T19:50:52Z
+[s5c] task=0 name=fd1b_inv_i2-0_lane0 rc=0 end=2026-11-01T19:50:52Z
+[f1-lane] fd1b_inv_i2-0_B_CV rc=0 end=2026-11-01T19:50:54Z
+[s5c] task=1 name=fd1b_inv_i2-0_lane1 rc=0 end=2026-11-01T19:50:55Z
+[f1-lane] fd1b_inv_i2-0_C_CV rc=0 end=2026-11-01T19:50:52Z
+[s5c] task=2 name=fd1b_inv_i2-0_lane2 rc=0 end=2026-11-01T19:50:52Z
+[f1-lane] fd1b_inv_i2-0_A_MaRES_0 rc=0 end=2026-11-01T19:53:30Z
+[s5c] task=3 name=fd1b_inv_i2-0_lane3 rc=0 end=2026-11-01T19:53:30Z
+[f1-lane] fd1b_inv_i2-0_B_MaRES_0 rc=0 end=2026-11-01T19:53:17Z
+[s5c] task=4 name=fd1b_inv_i2-0_lane4 rc=0 end=2026-11-01T19:53:18Z
+[f1-lane] fd1b_inv_i2-0_C_MaRES_0 rc=0 end=2026-11-01T19:53:23Z
+[s5c] task=5 name=fd1b_inv_i2-0_lane5 rc=0 end=2026-11-01T19:53:24Z
+[f1-lane] fd1b_inv_i2-0_A_2p2h_0 rc=0 end=2026-11-01T19:52:22Z
+[s5c] task=6 name=fd1b_inv_i2-0_lane6 rc=0 end=2026-11-01T19:52:23Z
+[f1-lane] fd1b_inv_i2-0_A_LowQ2_1 rc=0 end=2026-11-01T19:51:45Z
+[s5c] task=7 name=fd1b_inv_i2-0_lane7 rc=0 end=2026-11-01T19:51:46Z
+== products
+8
+atime-A-60656806-1066358.json
+atime-A-60656806-1066359.json
+atime-A-60656806-1066360.json
+atime-A-60656806-1066362.json
+atime-B-60656806-1066363.json
+atime-B-60656806-1066364.json
+atime-C-60656806-1066357.json
+atime-C-60656806-1066361.json
+fd1b_inv_A_2p2h_0.npz
+fd1b_inv_A_CV.npz
+fd1b_inv_A_LowQ2_1.npz
+fd1b_inv_A_MaRES_0.npz
+fd1b_inv_B_CV.npz
+fd1b_inv_B_MaRES_0.npz
+fd1b_inv_C_CV.npz
+fd1b_inv_C_MaRES_0.npz
+== walls
+{"out": "/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2/walls-i2-0.json", "verdict": "PASS", "max_seconds_unfold": 849.632, "max_peak_rss_kib": 20786436}
+walls rc=0
+== CV controls (against the staged derivation CV copy)
+A CV bitwise = True seconds_unfold 691.593 peak_rss_kib 20330332 code 71b3903aa1329807
+B CV bitwise = True seconds_unfold 693.377 peak_rss_kib 20198672 code 71b3903aa1329807
+C CV bitwise = True seconds_unfold 691.102 peak_rss_kib 20191588 code 71b3903aa1329807
+A_MaRES_0 differs from CV: True finite: True
+B_MaRES_0 differs from CV: True finite: True
+C_MaRES_0 differs from CV: True finite: True
+A_2p2h_0 differs from CV: True finite: True
+A_LowQ2_1 differs from CV: True finite: True
+== atime sidecars
+atime-A-60656806-1066358.json files 4 moved []
+atime-A-60656806-1066359.json files 8 moved []
+atime-A-60656806-1066360.json files 8 moved []
+atime-A-60656806-1066362.json files 8 moved []
+atime-B-60656806-1066363.json files 8 moved []
+atime-B-60656806-1066364.json files 4 moved []
+atime-C-60656806-1066357.json files 4 moved []
+atime-C-60656806-1066361.json files 8 moved []
+sources atime/mtime/size: UNCHANGED (16)
+== HPSS
+-rw-rw---- 1 josephrb josephrb 2068480 Nov  1 11:54 /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2-0.tar
+de8da96263ba6689f69e981fdc9f723ecadafdefb0d545784a0e3416990f526f  /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2-0.tar
+| josephrb usage on HPSS charged to m3246 |  446.01GiB |   512.00GiB |          87.1% |          - |           - |              - |
+put  '/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2-0.tar' : '/home/j/josephrb/fd-1b-inv-20261101/i2-0.tar' ( 2068480 bytes, 167694.3 KBS (cos=4))
+b29f741370780c1c4d5d48e9e4d06f63 (md5) /home/j/josephrb/fd-1b-inv-20261101/i2-0.tar
+hashverify rc=0
+/home/j/josephrb/fd-1b-inv-20261101/i2-0.tar: (md5) OK
+get  '/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2-0-retrieved.tar' : '/home/j/josephrb/fd-1b-inv-20261101/i2-0.tar' (2026/11/01 11:54:45 2068480 bytes, 312316.3 KBS )
+retrieval cmp: identical
+end=2026-11-01T19:54:47Z

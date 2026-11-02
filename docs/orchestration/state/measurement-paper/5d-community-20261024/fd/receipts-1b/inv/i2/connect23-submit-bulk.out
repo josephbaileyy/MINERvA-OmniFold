@@ -1,0 +1,22 @@
+host=login37 start=2026-11-01T19:55:28Z
+walls PASS
+deploy porcelain_lines=0 head=b1c615f12fca5f8597d34750b2c074f1fd7b2cdd
+i2-0-steps.tsv: OK
+i2-steps.tsv: OK
+tasks-i2-0.tsv: OK
+tasks-i2.tsv: OK
+stat-before lines=272
+sbatch -A m3246 -q regular -C cpu -t 03:30:00 -J fd1b_inv_i2n0 -o /pscratch/sd/j/josephrb/fd-1b-inv-20261101/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-inv-20261101/deploy/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh /pscratch/sd/j/josephrb/fd-1b-inv-20261101/deploy b1c615f12fca5f8597d34750b2c074f1fd7b2cdd /pscratch/sd/j/josephrb/fd-1b-inv-20261101/tables/tasks-i2.tsv /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2/lanes 32 56G 0 7 inherit
+sbatch -A m3246 -q regular -C cpu -t 03:30:00 -J fd1b_inv_i2n1 -o /pscratch/sd/j/josephrb/fd-1b-inv-20261101/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-inv-20261101/deploy/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh /pscratch/sd/j/josephrb/fd-1b-inv-20261101/deploy b1c615f12fca5f8597d34750b2c074f1fd7b2cdd /pscratch/sd/j/josephrb/fd-1b-inv-20261101/tables/tasks-i2.tsv /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2/lanes 32 56G 8 15 inherit
+sbatch -A m3246 -q regular -C cpu -t 03:30:00 -J fd1b_inv_i2n2 -o /pscratch/sd/j/josephrb/fd-1b-inv-20261101/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-inv-20261101/deploy/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh /pscratch/sd/j/josephrb/fd-1b-inv-20261101/deploy b1c615f12fca5f8597d34750b2c074f1fd7b2cdd /pscratch/sd/j/josephrb/fd-1b-inv-20261101/tables/tasks-i2.tsv /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2/lanes 32 56G 16 23 inherit
+sbatch -A m3246 -q regular -C cpu -t 03:30:00 -J fd1b_inv_i2n3 -o /pscratch/sd/j/josephrb/fd-1b-inv-20261101/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-inv-20261101/deploy/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh /pscratch/sd/j/josephrb/fd-1b-inv-20261101/deploy b1c615f12fca5f8597d34750b2c074f1fd7b2cdd /pscratch/sd/j/josephrb/fd-1b-inv-20261101/tables/tasks-i2.tsv /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i2/lanes 32 56G 24 31 inherit
+Submitted batch job 60658473
+Submitted batch job 60658474
+Submitted batch job 60658475
+Submitted batch job 60658476
+rc=0
+60658476 fd1b_inv_i2n3 PENDING 3:30:00 1 (Priority)
+60658475 fd1b_inv_i2n2 PENDING 3:30:00 1 (Priority)
+60658474 fd1b_inv_i2n1 PENDING 3:30:00 1 (Priority)
+60658473 fd1b_inv_i2n0 PENDING 3:30:00 1 (Priority)
+end=2026-11-01T19:55:31Z

@@ -1,0 +1,51 @@
+{
+ "schema": "fd-1b-inv/1",
+ "step": "I2-0",
+ "items": [
+  {
+   "item": "A_CV",
+   "seconds_unfold": 691.593,
+   "peak_rss_kib": 20330332
+  },
+  {
+   "item": "B_CV",
+   "seconds_unfold": 693.377,
+   "peak_rss_kib": 20198672
+  },
+  {
+   "item": "C_CV",
+   "seconds_unfold": 691.102,
+   "peak_rss_kib": 20191588
+  },
+  {
+   "item": "A_MaRES_0",
+   "seconds_unfold": 849.632,
+   "peak_rss_kib": 20783808
+  },
+  {
+   "item": "B_MaRES_0",
+   "seconds_unfold": 837.035,
+   "peak_rss_kib": 20531360
+  },
+  {
+   "item": "C_MaRES_0",
+   "seconds_unfold": 844.055,
+   "peak_rss_kib": 20723968
+  },
+  {
+   "item": "A_2p2h_0",
+   "seconds_unfold": 779.878,
+   "peak_rss_kib": 20786436
+  },
+  {
+   "item": "A_LowQ2_1",
+   "seconds_unfold": 742.033,
+   "peak_rss_kib": 20728824
+  }
+ ],
+ "max_seconds_unfold": 849.632,
+ "unit_seconds": 1370.0,
+ "max_peak_rss_kib": 20786436,
+ "rss_limit_kib": 44040192,
+ "verdict": "PASS"
+}
