@@ -1,0 +1,34 @@
+**Recommendation: (b), with two cheap additions. Don't rebuild.**
+
+**Is it a real inconsistency?** Yes, but a minor one that a disclosed number covers. The data are on CH, and the GENIE+MEC vertex is already CH. The NuWro and GiBUU vertices are the only ones reweighted by carbon shape ratios. Hydrogen is 1/13 of the nucleons, and the data's prior shape is CH-like. So CH is the more principled input.
+
+Three things keep it small:
+- C_model is the sum of three unscaled shape shifts, with no validated coverage. Its construction already involves several arbitrary choices:
+  - which generators are in the set;
+  - no scaling;
+  - the generators' own definitions rather than the analysis definitions (E2 §7 says this stays);
+  - the carbon-versus-CH choice.
+  Moving the target on two of three vertices is one more choice of the same kind.
+- The GiBUU hydrogen component is the weak part. Closure B3 failed on hydrogen, and 46% of that sample is DIS that does not conserve energy. A CH-built GiBUU ratio imports that flaw at weight 1/13. It is not clearly "more right", only different. Your 6.07 shift may partly reflect that sample.
+- A rebuild would not make C_model fully consistent anyway. The shapes would still come from the generators' own definitions while Table IV uses the analysis definitions. Chasing consistency one axis at a time is how you get a paper round per axis.
+
+One point cuts the other way. For GiBUU, carbon C_model with CH predictions gives 47.78. CH C_model gives 45.10, close to the earlier carbon-carbon 45.3. The disclosed "GiBUU rise of +2.3" is therefore largely this target mismatch, not GiBUU physics. The measured statement should say so rather than leave the rise standing as a result.
+
+**Do conclusions change?** No.
+- Every χ² stays far beyond its degrees of freedom: 106 and 128 for 16 cells, 224 for GENIE+MEC, and 45 for GiBUU's 8 cells.
+- The ordering is unchanged: GENIE CV, then NuWro, then GENIE+MEC for the 16-cell fits.
+- The largest shift is 5.6 in the reported with-block total (GENIE+MEC, about 2.4%). The 6.07 is for a variant that is not the reported covariance.
+- The 2.3 flag was fixed in advance, and Addendum A4 already concedes it does not discriminate for large χ². Crossing it is a process trigger, not evidence that the physics moved.
+
+**What a referee will ask.** They will ask whether the result depends on a non-validated model term built from the wrong target. A measured, signed statement answers that. A rebuild moves every number and re-pins the supplemental covariance files. It would replace one uncalibrated construction with another, and nothing would be validated afterward.
+
+**Additions to (b), with no new unfolds:**
+1. Report the C_model scale sensitivity from the existing S: χ² with C_model removed, and with it doubled, for the same four predictions. If those swings are much larger than 6, "within C_model's own arbitrariness" becomes a measurement instead of my inference. I have not seen those numbers.
+2. Report the largest change in per-cell uncertainty when C_model moves to CH. That change is also available from S_CH. χ² is a global number, and a referee may ask about cells.
+
+**Wording notes:**
+- State all signed Δ values, not only the maximum.
+- The "within seed variation" clause should not be used. You say the estimator is seed-invariant, so the noise floor is not the comparison here.
+- Replace the GiBUU "rise" sentence as above.
+
+**Recommendation:** Adopt (b) with the two sensitivity additions; rebuild only if Joseph wants single-target consistency as a principle, not because of a χ² effect.

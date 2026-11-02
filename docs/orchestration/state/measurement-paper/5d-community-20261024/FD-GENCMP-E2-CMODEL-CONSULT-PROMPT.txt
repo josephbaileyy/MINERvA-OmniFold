@@ -1,0 +1,18 @@
+You are an independent reviewer (experimental neutrino physics; unfolding uncertainties) for a MINERvA cross-section paper that reports sixteen cells with a covariance and compares them with generator predictions by chi2. Work READ-ONLY: do not edit, create or commit anything. Read files with `git -C <wt> show origin/main:<path>`.
+
+Worktree: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/wt
+D = docs/orchestration/state/measurement-paper/5d-community-20261024/
+
+Read:
+1. docs/analysis-note/paper_body.tex lines 78-82 and 112-116 (what C_total and the model term C_model are: three generator-shape shifts, GENIE+MEC, NuWro, GiBUU, each a real-data unfold with the prior reweighted to that generator's shape ratio to GENIE; "unscaled generator-shape dependence, not a calibrated bound").
+2. docs/orchestration/DECISION-20261101-joseph-gencmp-paper-adoption.md (Table IV now shows NuWro and GiBUU corrected to CH; item 6's caveat says C_model's shape ratios still come from the carbon generators).
+3. D/FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md and the "Addendum E2" sections of D/FD-GENCMP-AMENDMENT-E-BINDING.md.
+
+New measured result (not yet committed; take as given): rebuilding C_model with NuWro and GiBUU shape ratios from CH (12/13 carbon + 1/13 hydrogen) instead of carbon, everything else fixed, changes Table IV's chi2 against the reported covariance as follows (total chi2, carbon-C_model -> CH-C_model): GENIE CV 107.18 -> 106.27 (16 cells); GENIE+MEC 229.09 -> 223.53 (16); NuWro 127.69 -> 127.86 (16); GiBUU 47.78 -> 45.10 (8 cells). The largest change over both covariance variants and total/shape-only is 6.07 (GENIE+MEC shape-only, without the run-period block). The estimator is deterministic (seed-invariant), and carbon and CH vertices unfold the same data, so these differences are exact for this data, not noise. The pre-declared flag (a with-arm total change above 2.3) is exceeded, which by rule brings the owner the question below.
+
+Question for the owner: should the reported covariance's C_model be rebuilt on CH?
+(a) Rebuild: the reported covariance, every Table IV chi2, the per-cell uncertainties, the fake-data listing, the Stage G diagnostics and the Supplemental covariance files all change; a substantial recompute and paper round.
+(b) Keep the carbon C_model and replace the caveat with the measured statement (e.g. "taking C_model's NuWro and GiBUU shape ratios from CH instead of carbon changes the chi2 by at most 6.1").
+(c) Something else.
+
+Answer in plain physics terms: which is more defensible to a referee, and why? Is the CH-vs-carbon choice of the shape ratio a real inconsistency (the data are on CH, and Table IV's predictions are now CH), or within C_model's own arbitrariness? Do any conclusions change? Under 450 words; end with a one-line recommendation.
