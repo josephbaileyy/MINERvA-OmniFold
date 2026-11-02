@@ -309,6 +309,7 @@ def e2_values(d, arm):
     assert e2["schema"] == "fd-gencmp-e2/2" and e2["predictions"] == list(GENCMP4) and s["all_pass"] is True
     assert e2["vertices"] == ["genie_mec", "nuwro", "gibuu"] and e2["S_carbon"][0] == e2["S_CH"][0], \
         "the note says only NuWro's and GiBUU's components change"
+    assert all(e2["S_carbon"][i] != e2["S_CH"][i] for i in (1, 2)), "the note says NuWro's and GiBUU's components change"
     v = {}
     sgn = lambda x: f"{x:+.2f}"  # noqa: E731   printed in math mode, so "-" is a minus
     for a in ("with", "nopl"):
@@ -321,6 +322,8 @@ def e2_values(d, arm):
                 for tag, x in (("x0", q["removed"]), ("x1", q["carbon"]), ("x2", q["doubled"]), ("ch", q["CH"])):
                     v[f"{k}-{tag}"] = f"{x:.2f}"
                 v[f"{k}-dch"], v[f"{k}-dx2"] = sgn(r["CH"] - r["carbon"]), sgn(q["doubled"] - q["carbon"])
+                v[f"{k}-dx0"] = sgn(q["removed"] - q["carbon"])
+                assert r["CH"] != r["carbon"], f"{a} {n} {part}: the note says every prediction's chi2 moves"
     t4 = table4(d, arm)                               # x1 is the reported covariance: Table IV's chi2 in this arm
     a = "with" if arm == "with" else "nopl"
     assert all(abs(e2["chi2"][a][n][part]["carbon"] / t4[n][part]["chi2"] - 1) < 1e-10
@@ -339,7 +342,8 @@ def e2_values(d, arm):
     mat = "reported" if arm == "with" else "without_C_PL5D"
     carb = d["gdefs"]["generators"]["gibuu"]["carbon"]["analysis_definitions"]["chi2"][mat]["total"]["chi2"]
     g = e2["chi2"][a]["gibuu"]["total"]
-    assert g["CH"] < carb and g["carbon"] - g["CH"] > (g["carbon"] - carb) / 2, "GiBUU's rise is no longer mostly C_model's"
+    # the text says the rise comes from that pairing: with CH shape ratios GiBUU's CH total falls below carbon
+    assert carb < g["carbon"] and g["CH"] < carb, "GiBUU's rise no longer comes from C_model's carbon shape ratios"
     v["e2-with-gibuu-total-chr1"] = f"{e2['chi2']['with']['gibuu']['total']['CH']:.1f}"
     # per-cell sigma: the whole matrix, carbon against CH, and C_model's own (sigma/f, the column norms of S)
     for a in ("with", "nopl"):
@@ -352,6 +356,7 @@ def e2_values(d, arm):
     rel = s["sigma"]["with_total"]["per_cell_rel_change"]
     up = [CELLS[j] for j in range(16) if rel[j] > 0]
     assert len(up) == 1 and all(r != 0 for r in rel), "the note says the sigma falls in all cells but one"
+    assert v["e2-sig-nopl-cell"] == v["e2-sig-with-cell"], "the note gives both arms' largest sigma fall in one cell"
     v["e2-sig-with-nfall"], v["e2-sig-with-upcell"] = str(16 - len(up)), up[0]
     v["e2-sig-with-up"] = f"{100 * max(rel):.1f}"
     m = s["sigma"]["C_model"]
@@ -360,6 +365,7 @@ def e2_values(d, arm):
     i = max(range(16), key=lambda j: abs(mch[j] - mc[j]))
     j = max(range(16), key=lambda j: abs(mch[j] / mc[j] - 1))
     assert (i, j) == (m["cell"], m["cell_rel"]) and mch[i] < mc[i] and mch[j] > mc[j]
+    assert mc[j] < sorted(mc)[4], "the note says C_model is small in the cell of its largest relative change"
     v["e2-cm-cell"], v["e2-cm-carbon"], v["e2-cm-ch"] = CELLS[i], f"{mc[i]:.4f}", f"{mch[i]:.4f}"
     v["e2-cm-relcell"], v["e2-cm-relcarbon"], v["e2-cm-relch"] = CELLS[j], f"{mc[j]:.4f}", f"{mch[j]:.4f}"
     v["e2-cm-rel"] = f"{100 * (mch[j] / mc[j] - 1):.1f}"
@@ -1001,9 +1007,15 @@ def self_test():
     for what, plant, why in (("gives a carbon chi2 that is not Table IV's", lambda d: e2_set(d, "nuwro", "carbon", 128.0),
                               "not Table IV's"),
                              ("puts GiBUU's CH total with CH shape ratios above its carbon value",
-                              lambda d: e2_set(d, "gibuu", "CH", 46.0), "mostly C_model's"),
+                              lambda d: e2_set(d, "gibuu", "CH", 46.0), "comes from C_model's"),
                              ("changes GENIE + MEC's component", lambda d: d["e2"]["S_CH"][0].__setitem__(0, 0.0),
                               "only NuWro's and GiBUU's"),
+                             ("leaves NuWro's component unchanged",
+                              lambda d: d["e2"]["S_CH"].__setitem__(1, list(d["e2"]["S_carbon"][1])),
+                              "NuWro's and GiBUU's components change"),
+                             ("leaves NuWro's chi2 unmoved",
+                              lambda d: e2_set(d, "nuwro", "CH", d["e2"]["chi2"]["with"]["nuwro"]["total"]["carbon"] + 0.0),
+                              "every prediction's chi2 moves"),
                              ("records a failed control",
                               lambda d: d.update(e2sens=d["e2sens"].replace("PASS control C0", "FAIL control C0", 1)),
                               "controls changed")):
