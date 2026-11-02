@@ -1,0 +1,20 @@
+[PASS S] the inputs file names at least one scratch input
+[PASS S] MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz is the pinned bytes
+[PASS S] methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz is the pinned bytes
+[PASS S] pv-ladder-20261024/prep/ratios/L-5D-PV/genie_mec.json is the pinned bytes
+[PASS S] pv-ladder-20261024/prep/ratios/L-5D-PV/genie_mec_sq.json is the pinned bytes
+[PASS S] pv-ladder-20261024/prep/ratios/L-5D-PV/gibuu.json is the pinned bytes
+[PASS S] pv-ladder-20261024/prep/ratios/L-5D-PV/gibuu_sq.json is the pinned bytes
+[PASS S] pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json is the pinned bytes
+[PASS S] pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro_sq.json is the pinned bytes
+[PASS S] pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json is the pinned bytes
+[PASS S] pv-ladder-20261024/products/L-5D-PV_e_genie_mec.npz is the pinned bytes
+[PASS S] pv-ladder-20261024/products/L-5D-PV_e_gibuu.npz is the pinned bytes
+[PASS S] pv-ladder-20261024/products/L-5D-PV_e_nuwro.npz is the pinned bytes
+[PASS S] pv-ladder-20261024/products/L-5D-PV_e_tune_v1.npz is the pinned bytes
+[PASS S] s5c-20260924/runs/p2/bkg_dump.npz is the pinned bytes
+[PASS S] s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz is the pinned bytes
+[PASS S] s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz is the pinned bytes
+[PASS S] s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz is the pinned bytes
+[PASS S] s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz is the pinned bytes
+[S] 18 inputs staged; atime moved on 0

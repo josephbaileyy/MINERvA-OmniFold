@@ -1,0 +1,20 @@
+[PASS G] V passed before this step (V.ok)
+[pvl] L-5D-PV genie_mec: tiers {"own ratio": {"cells": 259, "prior_weight_share": 0.36918967245730894}, "coarse cell": {"cells": 5337, "prior_weight_share": 0.5869723487292252}, "r = 1": {"cells": 5098, "prior_weight_share": 0.04383797881346563}}, k=0.955885, r on CV>0 cells in [0.8667, 1.2571], median |r-1| 0.0096
+[pvl] L-5D-PV nuwro: tiers {"own ratio": {"cells": 292, "prior_weight_share": 0.3923609361755829}, "coarse cell": {"cells": 5504, "prior_weight_share": 0.5657588563627615}, "r = 1": {"cells": 4898, "prior_weight_share": 0.0418802074616555}}, k=1.036764, r on CV>0 cells in [0.5071, 1.9070], median |r-1| 0.0044
+[pvl] L-5D-PV gibuu: tiers {"own ratio": {"cells": 93, "prior_weight_share": 0.19091781117944298}, "coarse cell": {"cells": 4196, "prior_weight_share": 0.6032257920820201}, "r = 1": {"cells": 6405, "prior_weight_share": 0.20585639673853673}}, k=1.205931, r on CV>0 cells in [0.4403, 1.9806], median |r-1| 0.0000
+[PASS R1] pvl_ratios ran on config_carbon.json
+[pvl] L-5D-PV genie_mec: tiers {"own ratio": {"cells": 259, "prior_weight_share": 0.36918967245730894}, "coarse cell": {"cells": 5337, "prior_weight_share": 0.5869723487292252}, "r = 1": {"cells": 5098, "prior_weight_share": 0.04383797881346563}}, k=0.955885, r on CV>0 cells in [0.8667, 1.2571], median |r-1| 0.0096
+[pvl] L-5D-PV nuwro: tiers {"own ratio": {"cells": 306, "prior_weight_share": 0.40111517814092207}, "coarse cell": {"cells": 5410, "prior_weight_share": 0.5523719145026347}, "r = 1": {"cells": 4978, "prior_weight_share": 0.04651290735644304}}, k=1.063337, r on CV>0 cells in [0.4867, 1.8610], median |r-1| 0.0134
+[pvl] L-5D-PV gibuu: tiers {"own ratio": {"cells": 102, "prior_weight_share": 0.2021577949994956}, "coarse cell": {"cells": 4254, "prior_weight_share": 0.5972559192443259}, "r = 1": {"cells": 6338, "prior_weight_share": 0.20058628575617846}}, k=1.243492, r on CV>0 cells in [0.4554, 1.9841], median |r-1| 0.0000
+[PASS R1] pvl_ratios ran on config_ch.json
+[PASS R1] carbon tune_v1.json holds the committed prep's numbers
+[PASS R1] carbon genie_mec.json holds the committed prep's numbers
+[PASS R1] carbon genie_mec_sq.json holds the committed prep's numbers
+[PASS R1] carbon nuwro.json holds the committed prep's numbers
+[PASS R1] carbon nuwro_sq.json holds the committed prep's numbers
+[PASS R1] carbon gibuu.json holds the committed prep's numbers
+[PASS R1] carbon gibuu_sq.json holds the committed prep's numbers
+[PASS R1] CH run's tune_v1.json is the carbon run's
+[PASS R1] CH run's genie_mec.json is the carbon run's
+[PASS R1] CH run's genie_mec_sq.json is the carbon run's
+[PASS R1] CH GiBUU carries pz_max_cells = 10 and no truth_cut, as the committed GiBUU does; CH NuWro neither

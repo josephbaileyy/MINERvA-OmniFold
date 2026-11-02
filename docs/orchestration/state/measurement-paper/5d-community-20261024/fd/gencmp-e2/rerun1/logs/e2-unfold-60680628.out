@@ -1,0 +1,15 @@
+2026-11-02T08:21:40Z
+nid005950
+steps=5 cpus_per_step=42 cpus_on_node=256 mem_per_step=92682M
+[PASS G] R1 passed before this step (R1.ok)
+[PASS U] unfold.json does not exist (no overwrite)
+[PASS U] all 5 products exist
+[PASS B2] the seed-43 pair's code is the seed-42 rerun's
+[PASS B2] the seed-43 pair's estimator parameters are the seed-42 rerun's but for random_state
+[PASS B2] the NuWro carbon rerun's estimator parameters are the committed vertex's
+[PASS B2] its code differs from the committed vertex's only in the files allowed to
+[PASS R2] the NuWro carbon rerun reproduces the committed L-5D-PV_e_nuwro bitwise
+[PASS B2] every product passed check_meta
+rc=0
+2026-11-02T08:34:45Z
+porcelain after: empty

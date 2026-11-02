@@ -1,0 +1,16 @@
+...../pscratch/sd/j/josephrb/gencmp-e2a1-20261102/deploy/nd-unfolding/pv-ladder/pvl_analyze.py:43: ResourceWarning: unclosed file <_io.TextIOWrapper name='/pscratch/sd/j/josephrb/gencmp-e2a1-20261102/deploy/nd-unfolding/pv-ladder/tasks.tsv' mode='r' encoding='UTF-8'>
+  rows = [ln.rstrip("\n").split("\t") for ln in open(path) if ln.strip() and not ln.startswith("#")]
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+........[PASS G] R1 passed before this step (R1.ok)
+......PASS control C0 data product sha256 is the pin
+[PASS C0] the with-block npz is its pinned bytes
+[PASS C0] E-1's with Stage G readout is the committed one
+[PASS C0] E-1's nopl Stage G readout is the committed one
+.....[PASS V] step A's carbon xsec and sumw2 are the staged carbon vertex file's, bitwise
+.[PASS V] step A's carbon xsec and sumw2 are the staged carbon vertex file's, bitwise
+[PASS V] step A's CH arrays are combine(carbon, hydrogen), bitwise
+.
+----------------------------------------------------------------------
+Ran 26 tests in 0.176s
+
+OK
