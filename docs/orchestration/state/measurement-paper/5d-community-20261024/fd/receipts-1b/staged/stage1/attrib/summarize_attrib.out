@@ -1,0 +1,38 @@
+source n1_attrib.json sha256 c7da3aa4129eeced710e34840d47c4105c8a59ba9aaaf7e8788896016dbd6681
+bound 10.0 n_draws 900 mismatches [] atime_moved []
+
+== wt: all_draws_rows_above 2477 declared rows_above 161 max 255.0178018086916
+|a_CV|, all non-zero rows: {'q00': 0.00027560029276517135, 'q05': 0.07661189539287748, 'q50': 0.18195710576558624, 'q95': 0.2273738855428879, 'q100': 3.895271731713644}
+|a_CV|, rows above: {'q00': 0.00027560029276517135, 'q05': 0.0004603949668658684, 'q50': 0.0074230943973245455, 'q95': 0.21196312799388103, 'q100': 0.5640198043099447}  rows above with a_CV = 0: 0
+  small-CV (|a_CV| < 0.01): 95 rows; worst median 18.90 max 255.02; largest r median 21.39 max 429.59; n(r>1) median 36 range 6-38
+  ordinary (|a_CV| >= 0.01): 66 rows; worst median 10.77 max 24.77; largest r median 2.46 max 17.21; n(r>1) median 14.5 range 7-38
+largest-r band: {'LowQ2': 81, '2p2h': 19, 'MaRES': 15, 'HighQ2': 15, 'MFP_pi': 10, 'FrCEx_pi': 7, 'FrAbs_pi': 5, 'BhtBY': 4, 'FrCEx_N': 3, 'FrElas_N': 1, 'Rvn2pi': 1}
+second-r band: {'2p2h': 42, 'HighQ2': 39, 'LowQ2': 31, 'FrCEx_pi': 16, 'FrAbs_pi': 10, 'FrCEx_N': 10, 'MaRES': 5, 'AhtBY': 4, 'MFP_pi': 3, 'Rvp2pi': 1}
+top 10 of 23 pairs: {'LowQ2+2p2h': 42, 'LowQ2+HighQ2': 39, '2p2h+LowQ2': 16, 'HighQ2+LowQ2': 15, 'MaRES+FrCEx_pi': 8, 'MFP_pi+FrCEx_pi': 5, 'MaRES+FrCEx_N': 5, 'MFP_pi+FrAbs_pi': 4, 'BhtBY+AhtBY': 4, '2p2h+FrCEx_N': 3}
+worst truth: {'g18': 65, 'plugin': 49, 'ar23': 47}
+bands with R_b > 2 on some row above (max, rows R_b>10, rows R_b>2): {'2p2h': (6.37, 0, 72), 'AhtBY': (6.61, 0, 4), 'BhtBY': (6.7, 0, 4), 'Flux': (2.13, 0, 2), 'FrAbs_pi': (2.86, 0, 9), 'FrCEx_N': (2.25, 0, 3), 'FrCEx_pi': (3.38, 0, 14), 'FrElas_N': (2.18, 0, 2), 'HighQ2': (429.59, 25, 81), 'LowQ2': (158.08, 72, 112), 'MFP_pi': (4.31, 0, 13), 'MaRES': (2.05, 0, 2)}
+
+== wr: all_draws_rows_above 17835 declared rows_above 799 max 251.75113619297562
+|a_CV|, all non-zero rows: {'q00': 0.0002717546402585681, 'q05': 0.07554695474464253, 'q50': 0.1784435875725416, 'q95': 0.22404499662027771, 'q100': 3.850547659978899}
+|a_CV|, rows above: {'q00': 0.0002717546402585681, 'q05': 0.0019976962608173336, 'q50': 0.18126503862803575, 'q95': 0.25282052964703006, 'q100': 1.5799909351596486}  rows above with a_CV = 0: 0
+  small-CV (|a_CV| < 0.01): 97 rows; worst median 18.32 max 251.75; largest r median 21.39 max 429.59; n(r>1) median 34 range 7-38
+  ordinary (|a_CV| >= 0.01): 702 rows; worst median 10.93 max 28.92; largest r median 2.13 max 27.90; n(r>1) median 34.0 range 6-38
+largest-r band: {'GEANT_Neutron': 129, 'MFP_pi': 113, 'FrAbs_pi': 95, 'MaRES': 88, 'LowQ2': 83, '2p2h': 80, 'FrCEx_pi': 74, 'GEANT_Pion': 41, 'FrCEx_N': 38, 'Rvn2pi': 20, 'HighQ2': 15, 'Rvp2pi': 8, 'BhtBY': 6, 'MFP_N': 3, 'AGKYxF1pi': 3, 'FrElas_N': 1, 'Theta_Delta2Npi': 1, 'FrElas_pi': 1}
+second-r band: {'FrAbs_pi': 152, 'FrCEx_N': 138, 'GEANT_Neutron': 95, 'FrCEx_pi': 79, 'MFP_pi': 74, 'MaRES': 53, '2p2h': 52, 'HighQ2': 40, 'LowQ2': 33, 'GEANT_Pion': 31, 'Rvn2pi': 17, 'Rvp2pi': 10, 'Theta_Delta2Npi': 7, 'AhtBY': 5, 'Flux': 4, 'FrInel_N': 3, 'GEANT_Proton': 2, 'AGKYxF1pi': 1, 'MFP_N': 1, 'FrElas_N': 1, 'MvRES': 1}
+top 10 of 84 pairs: {'2p2h+FrCEx_N': 56, 'MFP_pi+FrAbs_pi': 51, 'LowQ2+2p2h': 43, 'LowQ2+HighQ2': 40, 'MFP_pi+GEANT_Neutron': 36, 'GEANT_Neutron+FrAbs_pi': 33, 'FrCEx_pi+FrAbs_pi': 30, 'GEANT_Neutron+MFP_pi': 30, 'GEANT_Neutron+MaRES': 26, 'MaRES+FrCEx_N': 24}
+worst truth: {'g18': 283, 'plugin': 276, 'ar23': 240}
+bands with R_b > 2 on some row above (max, rows R_b>10, rows R_b>2): {'2p2h': (7.98, 0, 144), 'AGKYxF1pi': (5.94, 0, 4), 'AhtBY': (6.61, 0, 5), 'BhtBY': (6.7, 0, 5), 'Flux': (2.27, 0, 18), 'FrAbs_pi': (4.54, 0, 111), 'FrCEx_N': (2.25, 0, 67), 'FrCEx_pi': (5.05, 0, 93), 'FrElas_N': (2.18, 0, 14), 'GEANT_Neutron': (27.9, 1, 128), 'GEANT_Pion': (3.79, 0, 28), 'GEANT_Proton': (2.13, 0, 1), 'HighQ2': (429.59, 25, 82), 'LowQ2': (158.08, 73, 116), 'MFP_N': (6.76, 0, 5), 'MFP_pi': (9.76, 0, 125), 'MaRES': (2.05, 0, 4)}
+
+== bkgw: all_draws_rows_above 465 declared rows_above 24 max 23.644100769452916
+|a_CV|, all non-zero rows: {'q00': 0.0009126502570542873, 'q05': 0.07969586647072516, 'q50': 0.18401013634925792, 'q95': 0.2802095473085699, 'q100': 2.4117900065801283}
+|a_CV|, rows above: {'q00': 0.0009126502570542873, 'q05': 0.0009817141299269816, 'q50': 0.1986217697818533, 'q95': 0.23172634099070105, 'q100': 0.23181867002190912}  rows above with a_CV = 0: 0
+  small-CV (|a_CV| < 0.01): 3 rows; worst median 13.06 max 23.64; largest r median 42.64 max 44.77; n(r>1) median 11 range 11-36
+  ordinary (|a_CV| >= 0.01): 21 rows; worst median 10.74 max 17.31; largest r median 2.41 max 4.82; n(r>1) median 33 range 13-37
+largest-r band: {'GEANT_Neutron': 7, 'FrAbs_pi': 5, 'LowQ2': 3, 'GEANT_Pion': 2, 'MFP_pi': 2, 'MaRES': 2, 'Flux': 2, 'FrCEx_pi': 1}
+second-r band: {'FrAbs_pi': 8, 'MFP_pi': 5, 'HighQ2': 3, 'MaRES': 2, 'Flux': 2, 'FrCEx_N': 1, 'FrCEx_pi': 1, 'GEANT_Neutron': 1, 'FrInel_N': 1}
+top 10 of 15 pairs: {'GEANT_Neutron+FrAbs_pi': 4, 'LowQ2+HighQ2': 3, 'FrAbs_pi+MFP_pi': 2, 'MaRES+FrAbs_pi': 2, 'FrAbs_pi+Flux': 2, 'GEANT_Neutron+MFP_pi': 2, 'GEANT_Pion+MFP_pi': 1, 'GEANT_Pion+FrCEx_N': 1, 'MFP_pi+FrCEx_pi': 1, 'MFP_pi+GEANT_Neutron': 1}
+worst truth: {'plugin': 11, 'ar23': 10, 'g18': 3}
+bands with R_b > 2 on some row above (max, rows R_b>10, rows R_b>2): {'Flux': (2.27, 0, 9), 'FrAbs_pi': (4.82, 0, 9), 'FrCEx_pi': (2.22, 0, 2), 'GEANT_Neutron': (4.57, 0, 6), 'HighQ2': (6.28, 0, 3), 'LowQ2': (44.77, 3, 3), 'MFP_pi': (3.89, 0, 4)}
+
+== denom: all_draws_rows_above 0 declared rows_above 0 max None
+|a_CV|, all non-zero rows: {'q00': 0.0719875536957956, 'q05': 0.4391418807033253, 'q50': 51.490855358237795, 'q95': 2682.1034777942996, 'q100': 35193.511213219776}
