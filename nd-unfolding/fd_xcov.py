@@ -380,6 +380,9 @@ def build_args(argv=None):
         s = sub.add_parser(name)
         s.add_argument("--run-dir", type=Path, required=True)
         s.add_argument("--probe", action="store_true", help="v1 only: one band and Flux 0-9, then the price")
+        s.add_argument("--dry", action="store_true", help="v1 only: every lookup, no weight array read, nothing written")
+        s.add_argument("--own-only", action="store_true",
+                       help="k only: K0, K1 and K2 on each side's own matrices; no cross block, z or chi2; nothing written")
     s = sub.add_parser("boot")
     s.add_argument("--run-dir", type=Path, required=True)
     s.add_argument("--replicas", required=True, help="first:last of the bootstrap seeds this lane runs")
@@ -400,10 +403,39 @@ if __name__ == "__main__":
 
 def same_block(a, b, tol: float = K_TOL) -> bool:
     """K1's comparison: equal to ``tol`` relative to the larger matrix's largest entry, with no absolute floor (the
-    blocks' entries are ~1e-80, below numpy's default atol)."""
+    blocks' entries are ~1e-80, below numpy's default atol). Two exactly-zero blocks are the same block (addendum
+    X-A2: a band whose universes are identical, e.g. NormDISCC on CC signal, has a zero block on both sides)."""
     a, b = np.asarray(a, float), np.asarray(b, float)
+    if a.shape != b.shape:
+        return False
     scale = max(np.abs(a).max(), np.abs(b).max())
-    return a.shape == b.shape and scale > 0 and bool(np.all(np.abs(a - b) <= tol * scale))
+    if scale == 0:
+        return True
+    return bool(np.all(np.abs(a - b) <= tol * scale))
+
+
+def null_ratio(blocks, C_side) -> float:
+    """The largest |entry| of a band's quadrant-level blocks on one side over the largest |entry| of that side's own
+    matrix (C16q or C2q, as in K2)."""
+    floor = float(np.abs(np.asarray(C_side, float)).max())
+    top = max(float(np.abs(np.asarray(b, float)).max()) for b in blocks)
+    return top / floor if floor > 0 else float("inf")
+
+
+def k1_band(p16, c16, p2, c2, C16q, C2q, tol: float = K_TOL, null_tol: float = PD_REL) -> dict:
+    """K1 for one band (addendum X-A2, the director's ruling): the band is null on a side when every entry of both of
+    that side's blocks (from the products and committed) is below ``null_tol`` times the side's largest entry. Null
+    on both sides: K1 asserts that, not equality. Null on one side only: K1 fails on both. Otherwise same_block on
+    each side, its tolerance unchanged."""
+    r16, r2 = null_ratio((p16, c16), C16q), null_ratio((p2, c2), C2q)
+    n16, n2 = r16 < null_tol, r2 < null_tol
+    if n16 and n2:
+        kind, ok16, ok2 = "null", True, True
+    elif n16 or n2:
+        kind, ok16, ok2 = "mixed", False, False
+    else:
+        kind, ok16, ok2 = "equal", same_block(p16, c16, tol), same_block(p2, c2, tol)
+    return {"kind": kind, "ok16": ok16, "ok2": ok2, "ratio16": r16, "ratio2": r2}
 
 
 def ratio_test(w2u, w2c, w5u, w5c, sentinel) -> dict:

@@ -1,0 +1,1 @@
+{"max_diff_q": 9.13789176053807e-106, "max_block_q": 3.241587925637011e-104, "max_Q2q": 2.829619831551258e-79, "floor_PD_REL_x_maxQ2q": 2.829619831551258e-91, "tol_x_floor": 2.8296198315512584e-101, "passes_with_floor": true, "margin": 30965.784074735424, "block_over_maxQ2q": 1.145591322725464e-25, "2d_band_blocks_below_floor": ["band_NormDISCC"], "n_2d_band_blocks": 44}

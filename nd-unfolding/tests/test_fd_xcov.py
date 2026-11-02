@@ -256,6 +256,42 @@ class AuditFixes(unittest.TestCase):
         self.assertFalse(X.same_block(a, a * (1 + 1e-9)))
         self.assertTrue(np.allclose(a, a * 1.5, rtol=1e-10))                   # numpy's default atol passes it (B1)
 
+    def test_same_block_on_zero_blocks(self):
+        z, a = np.zeros((4, 4)), np.full((4, 4), 1e-84)
+        self.assertTrue(X.same_block(z, z.copy()))          # NormDISCC: identical universes on both sides (X-A2)
+        self.assertFalse(X.same_block(z, a))
+        self.assertFalse(X.same_block(a, z))
+        self.assertFalse(X.same_block(z, np.zeros((4, 5))))
+
+    def test_k1_band_null_rule(self):
+        C16q, C2q = spd(4), spd(4) * 1e-78
+        z = np.zeros((4, 4))
+        m = spd(4)
+        n2 = np.abs(C2q).max() * 1.1e-25 * m / np.abs(m).max()           # 2D NormDISCC: cancellation noise
+        r = X.k1_band(z, z.copy(), n2, n2 * 1.028, C16q, C2q)           # the two 2D blocks differ by 2.8%
+        self.assertEqual((r["kind"], r["ok16"], r["ok2"], r["ratio16"]), ("null", True, True, 0.0))
+        self.assertLess(r["ratio2"], 1e-24)
+        big2 = C2q * 1e-6                                                # 2D not null, 16 null: mixed fails
+        r = X.k1_band(z, z.copy(), big2, big2.copy(), C16q, C2q)
+        self.assertEqual((r["kind"], r["ok16"], r["ok2"]), ("mixed", False, False))
+        r = X.k1_band(C16q * 1e-6, C16q * 1e-6, n2, n2.copy(), C16q, C2q)
+        self.assertEqual((r["kind"], r["ok16"], r["ok2"]), ("mixed", False, False))
+        C2e = np.eye(4) * 2.0 ** -260                                    # exactly at the floor is not below it
+        at = np.full((4, 4), 1e-12 * 2.0 ** -260)                        # (powers of 2: the ratio is 1e-12 exactly)
+        r = X.k1_band(C16q * 1e-6, C16q * 1e-6, at, at * 0.972, C16q, C2e)
+        self.assertEqual(r["ratio2"], 1e-12)
+        self.assertEqual((r["kind"], r["ok2"]), ("equal", False))
+        small = C2q * 1e-11                                              # informative block: tolerance unchanged
+        r = X.k1_band(C16q * 1e-6, C16q * 1e-6, small, small * (1 + 1e-9), C16q, C2q)
+        self.assertEqual((r["kind"], r["ok16"], r["ok2"]), ("equal", True, False))
+        r = X.k1_band(C16q * 1e-6, C16q * 1e-6, small, small * (1 + 1e-12), C16q, C2q)
+        self.assertEqual((r["kind"], r["ok16"], r["ok2"]), ("equal", True, True))
+        r = X.k1_band(z, z.copy(), z, z.copy(), C16q, C2q)               # zero on both: null (and same_block agrees)
+        self.assertEqual(r["kind"], "null")
+        for p16, c16 in ((z, np.full((4, 4), 1e-3)), (np.full((4, 4), 1e-3), z)):   # either 16 block not null
+            r = X.k1_band(p16, c16, n2, n2, C16q, C2q)
+            self.assertEqual((r["kind"], r["ok16"]), ("mixed", False))
+
     def test_ratio_test_passes_a_constant_scale_and_refuses_one_row(self):
         n = 1000
         w2c, w2u = RNG.uniform(0.5, 2, n), RNG.uniform(0.5, 2, n)
@@ -347,8 +383,8 @@ class Order(unittest.TestCase):
             XS.v1_state(self.d)
         (self.d / "v1-probe" / "v1.json").write_text(json.dumps({"within_full_cap": False}))
         self.assertEqual(XS.v1_state(self.d)["bands_pass"], {})            # every band bounded
-        (self.d / "v1").mkdir()
-        (self.d / "v1" / "v1.json").write_text(json.dumps({"bands_pass": {"MaRES": True}}))
+        (self.d / XS.V1_DIR).mkdir()
+        (self.d / XS.V1_DIR / "v1.json").write_text(json.dumps({"bands_pass": {"MaRES": True}}))
         self.assertEqual(XS.v1_state(self.d)["bands_pass"], {"MaRES": True})
 
     def test_the_committed_pins_are_the_committed_bytes(self):
@@ -426,6 +462,61 @@ class BkgLeg(unittest.TestCase):
         rec = X.p1_streams_record((P1 / "p1streams_absent.root").read_bytes())
         self.assertIsNone(rec)
         self.assertEqual(X.bkg_stream_check(rec, 1), ["no p1Streams record"])
+
+
+LOOKUP = ND / "tests/fixtures/xcov_v1_lookup"   # PROVENANCE.tsv there: the detector receipt's digest map, verbatim
+
+
+def digest_maps():
+    sf1 = {p: h for h, p in (ln.split(None, 1) for ln in XS.SF1.read_text().splitlines() if ln.strip())}
+    sf1 = {p.strip(): h for p, h in sf1.items()}
+    d = json.loads((LOOKUP / "detector_files_sha256.json").read_text())
+    return sf1, {str(XS.DET_RECEIPT.parent / Path(p).name): h for p, h in d["files_sha256"].items()}
+
+
+class V1Lookup(unittest.TestCase):
+    """Addendum X-A2: weight_files on the real digest maps (the committed SF1 manifest, the detector receipt)."""
+
+    def test_every_class_resolves_to_its_sorted_first_with_its_count(self):
+        sf1, det = digest_maps()
+        for (b, i, k), n in {("2p2h", 0, "wt"): 1, ("EtaNCEL", 0, "wt"): 22, ("EtaNCEL", 0, "wr"): 8,
+                             ("Rvn1pi", 0, "wt"): 2}.items():
+            with self.subTest(f"{b}:{i}:{k}"):
+                path, h, nm = XS.weight_files(b, i, sf1, det)[k]
+                hits = sorted(p for p, v in {**sf1, **det}.items() if v == h and p.endswith(f"_{k}.npy"))
+                self.assertEqual((nm, str(path)), (n, hits[0]))
+
+    def test_the_full_lookup_resolves_every_universe(self):
+        sf1, det = digest_maps()
+        hist = {}
+        for b, i in XS.universe_list():
+            for k, (_, _, nm) in XS.weight_files(b, i, sf1, det).items():
+                hist[nm] = hist.get(nm, 0) + 1
+        self.assertEqual(hist, {1: 322, 22: 16, 8: 8, 2: 4})
+
+    def test_a_digest_no_pinned_file_carries_stops(self):
+        sf1, det = digest_maps()
+        _, h, _ = XS.weight_files("EtaNCEL", 0, sf1, det)["wt"]
+        sf1 = {p: v for p, v in sf1.items() if v != h}
+        det = {p: v for p, v in det.items() if v != h}
+        with self.assertRaises(gc.Stop):
+            XS.weight_files("EtaNCEL", 0, sf1, det)
+
+    def test_multi_match_classes_name_the_bands_they_span(self):
+        c = XS.multi_match_classes({"EtaNCEL:0:wt": ("h", 22), "MaNCEL:1:wt": ("h", 22), "MaRES:0:wt": ("g", 1),
+                                    "Rvn1pi:0:wr": ("r", 2)})
+        self.assertEqual(c["h"]["bands"], ["EtaNCEL", "MaNCEL"])
+        self.assertEqual(c["h"]["n_files"], 22)
+        self.assertNotIn("g", c)
+        self.assertEqual(c["r"]["lookups"], ["Rvn1pi:0:wr"])
+
+    def test_npy_shape_reads_the_header_only(self):
+        with tempfile.TemporaryDirectory() as td:
+            for ver in ((1, 0), (2, 0)):
+                p = Path(td) / f"a{ver[0]}.npy"
+                with open(p, "wb") as fh:
+                    np.lib.format.write_array(fh, np.zeros(37, np.float32), version=ver)
+                self.assertEqual(XS.npy_shape(p), (37,))
 
 
 if __name__ == "__main__":

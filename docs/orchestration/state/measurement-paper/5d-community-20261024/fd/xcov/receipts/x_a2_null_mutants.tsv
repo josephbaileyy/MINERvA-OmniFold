@@ -1,0 +1,12 @@
+# Addendum X-A2, the director's null-band rule (fd_xcov.k1_band, null_ratio): code mutants. Each row is one edit to
+# fd_xcov.py at d670e9a5's content, then `pytest tests/test_fd_xcov.py -k "null_rule or zero_blocks"`, then the file
+# restored from the copy held in memory; the unmutated file gives 60 passed before and after. Written 2026-11-02 by a
+# one-off script in $TMPDIR (deleted).
+mutant	what it breaks	verdict
+"mixed" returns True, True	a band null on one side only would pass	CAUGHT
+r < null_tol becomes r <= null_tol	a block exactly at 1e-12 of its side would count as null	CAUGHT
+null_ratio reads only the committed block	a side whose products block is not null would count as null	CAUGHT
+null_ratio reads only the products block	a side whose committed block is not null would count as null	CAUGHT
+"null" applies same_block instead	the 2D NormDISCC noise block would fail again	CAUGHT
+"elif n16 or n2" becomes "elif n16 and n2"	the mixed case would fall through to same_block	CAUGHT
+non-null bands return True, True	the 1e-10 comparison would be skipped for informative blocks	CAUGHT
