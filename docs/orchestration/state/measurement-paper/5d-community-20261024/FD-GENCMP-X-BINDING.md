@@ -59,4 +59,56 @@
 6. **The report** gives every step's controls and readouts, the §5 outcome, its cost from `sacct`, and every
    deviation unprompted.
 
+## Addendum X-A1 (director, 2026-11-02)
+
+**The defect.** V0's draw check failed on 0 of 100 replicas. The cause was in the check itself.
+- It required a background draw-sum line in RE-2's replica logs.
+- RE-2's negweight-refined mode prints that line only in the purity branch (`re2_driver.py:2123`), so the line cannot
+  exist in this mode.
+- The background stream is recorded instead in each replica's `p1Streams` provenance record
+  (`re2_driver.py:2221-2230`).
+- Every other V0 leg passed:
+  - the counts exactly;
+  - the MC rows, apart from the 2,801 sentinels;
+  - the data and background joins, complete with 0 ambiguous rows;
+  - the data and MC draw sums.
+- Nothing K-dependent had been computed.
+
+**The director's ruling (by message).** The defect is in the control, not in the pairing, so this is a repair and not a
+route choice. It is bound before it runs.
+
+**Binds** addendum X-A1 as merged in PR #671 at **M′ = `f14119b11ccd151f910163455e575196be38b96a`** (PR head `62b1a523ee197d200a17a89b9e0266dc6eeb7b1d`):
+- **What changes.** The draw check's background leg reads `bootstrap_seed`, `seed_offsets.bkg`, `n.bkg` and `sum.bkg`
+  from each replica's pinned `xsec.root` `p1Streams` record, read through `Inputs.bytes`: O_NOATIME, and checked
+  against `fd/xcov/INPUTS.sha256`, which is unchanged.
+- **What stays.** The data and MC legs are unchanged.
+- **Plumbing.** V0 writes to `$R/v0-a1/`, and BOOT runs from `$R/deploy-a1` at M′.
+- **The blobs at M′:**
+  - `nd-unfolding/fd_xcov.py` `e708f3cffcfd62fe3eb5f38b2681ec467bee516f`;
+  - `nd-unfolding/fd_xcov_steps.py` `aedfa0b831279193e37d761607c7acaeaefb50cc`;
+  - `nd-unfolding/tests/test_fd_xcov.py` `033831e881457506b62452920d69376bf8103088`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/receipts/x_boot.sh` `084fe2331f48af2843198df5047cd1c233608df7`;
+  plus the fixtures and `x_a1_mutants.tsv` as merged. `x_v1.sh` is unchanged.
+
+**What the director checked.**
+- The diff: only the background leg and the run-directory plumbing change.
+- The tests, run locally at the head: `test_fd_xcov.py`, `test_fd_gencmp.py` and `test_fd_gencmp_e.py` gave 147 passed,
+  1 skipped.
+  - The new `BkgLeg` tests pass on replica 1's real record.
+  - They fail on a wrong seed offset, n ± 1, sum ± 1, a wrong bootstrap seed, a missing key, the wrong replica, a short
+    stream, a wrong seed, and an absent record.
+  - The three guard mutants are caught (`x_a1_mutants.tsv`).
+
+**Rulings.**
+1. **V0-A1 runs** on a login node, in omnifold_py310, from a fresh clone `$R/deploy-a1` at M′, into `$R/v0-a1/`.
+   - The first `$R/v0/v0.json` stays untouched as the record.
+   - **Route B continues only if V0-A1 passes in full.** Otherwise route A stands.
+2. **V1 full (job 60679146)** was submitted from `$R/deploy` at M under the original binding, after its probe passed.
+   That is accepted: V1 does not read V0, and its code is unchanged.
+3. **BOOT and K** run only after V0-A1's result. BOOT runs from `$R/deploy-a1`.
+4. **The report** gives both V0 runs. Its deviations are:
+   - the four-log diagnostic;
+   - the fixture read;
+   - the /dev/shm writes.
+
 Nothing is submitted, deposited or tagged.
