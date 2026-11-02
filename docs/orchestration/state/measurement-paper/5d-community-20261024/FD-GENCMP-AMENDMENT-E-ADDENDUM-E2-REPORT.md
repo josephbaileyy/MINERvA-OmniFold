@@ -33,12 +33,11 @@
 - `run1/`: the first run, which stopped;
 - `rerun1/`: the E2-A1 rerun. It holds `chi2/e2.json`, `unfold/unfold.json`, logs, receipts, inventories, `sacct.txt`,
   `sens/` (§5) and `hpss/`.
-- **Not in git: the four vertex configs** (`vertices/config_carbon.json` and `config_ch.json` of each run). They stay on
-  pscratch and are listed by sha256 in §8's file lists; they go to HPSS with the catch-up archive.
-  - The shared checker `verify_receipt_artifacts.py` gives a false MISSING for them. Each names RE-1's
-    `k1_p5_rerun.npz` bare in a label, and the same receipt cites it by its full pscratch path.
-  - `classify_bare` tests MISSING before BY-PATH, so the checker refuses the commit.
-  - The director agreed to leave them out of git.
+- **The four vertex configs** (`vertices/config_carbon.json` and `config_ch.json` of each run) were committed after
+  the report, once the checker fix (#687) merged. Each committed copy's sha256 equals its entry in §8's file lists.
+  - Before #687, the shared checker `verify_receipt_artifacts.py` gave a false MISSING for them. Each names RE-1's
+    `k1_p5_rerun.npz` bare in a label, and the same receipt cites it by its full pscratch path. `classify_bare`
+    tested MISSING before BY-PATH, so the checker refused the commit.
 
 **Run directories:**
 - `$R1` = `/pscratch/sd/j/josephrb/gencmp-e2-20261102/`;
@@ -279,7 +278,7 @@ every file's sha256, size and path, read O_NOATIME by `fd/gencmp-e2/receipts/x_f
 - No tar was made.
 - The two lists' 133 paths are exactly the archive attempt's explicit list (`rerun1/hpss/htar_files.txt`).
 - `e2.json`'s listed sha256 equals the committed copy's.
-- The four vertex configs kept out of git (see Records) are in these lists, each with its sha256.
+- The four vertex configs (see Records) are in these lists, each with its sha256; the committed copies match.
 
 **The archive attempt.**
 - `rerun1/receipts/x_e2_hpss.sh` started on saul at 11:11:39 UTC on 2026-11-02 and recorded `hpssquota` first
