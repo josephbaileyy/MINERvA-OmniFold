@@ -33,7 +33,7 @@ Sentences are quoted as they print. Section numbers are the built PDFs'; the not
 "one-parameter" is added, and the χ² range becomes its upper bound. The third sentence is the reworked marginal clause.
 > Summed over each of the four (pT, p∥) quadrants, the sixteen-cell result agrees with the two-dimensional result: the
 > sums differ by −1.5 to +0.7 per cent, and with the covariance between the two results evaluated from the systematic
-> variations they share, the four differences give χ² ≤ 1.24 for four degrees of freedom (p ≥ 0.87), with no
+> variations they share, the four differences give χ² ≤ 1.25 for four degrees of freedom (p ≥ 0.87), with no
 > quadrant beyond one standard deviation. The statistical correlation, and that of four systematic terms that could not
 > be evaluated directly, are bounded within a one-parameter family of valid covariances, over which the agreement holds. Of the
 > joint-test estimator's other results, only the three-observable marginal has been compared with the two-dimensional
@@ -46,7 +46,7 @@ The paragraph's last sentence, on the normalization and closure checks, is uncha
 | printed | key | source | value |
 |---|---|---|---|
 | −1.5 to +0.7 per cent | `x-dpct-min`, `x-dpct-max` | C-R, `quadrants.*.2D.d_pct` | QC −1.478, QD +0.724 (QA +0.141, QB −0.217) |
-| χ² ≤ 1.24 | `x-chi2-hi` | X, `primary.r1`, the family's largest value (convexity) | 1.2402 at r = 1 (1.170 at r = 0, in the note's Table 14) |
+| χ² ≤ 1.25 | `x-chi2-hi` | X, `primary.r1`, the family's largest value (convexity), rounded up | 1.2402 at r = 1 (1.170 at r = 0, in the note's Table 14) |
 | p ≥ 0.87 | `x-p-min` | X, the smaller p, rounded down | 0.871 at r = 1 (0.883 at r = 0) |
 | no quadrant beyond one standard deviation | (asserted) | X, the largest \|z\| | 0.985, QC at r = 1 |
 | four systematic terms | (asserted) | X, `bounded` | AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency |
@@ -67,7 +67,7 @@ The paragraph's last sentence, on the normalization and closure checks, is uncha
 `k.json` records the readings at r = 0 and r = 1, and whether the reading changes anywhere on the 10,001-point grid. It
 does not change.
 - **Every |z| < 1 over the family.** Each quadrant's variance is linear in r, so each |z| is largest at an end.
-- **χ² ≤ 1.24 and p ≥ 0.87 over the family.** χ² is convex in r, so its largest value, and the smallest p, are at an
+- **χ² ≤ 1.25 and p ≥ 0.87 over the family.** χ² is convex in r, so its largest value, and the smallest p, are at an
   end.
 - **χ² has no lower bound over the family.** Convexity does not bound the minimum, and `k.json` lacks the bounded
   blocks needed to compute χ² inside [0, 1]. So the paper prints the upper bound only (Joseph, on #695); the note's
@@ -214,12 +214,15 @@ A coverage result that lands later replaces its clause (decision item 2).
 
 1. **"one-parameter": applied (Joseph, on #695).** The paper now reads "bounded within a one-parameter family of valid
    covariances". This is the X declaration's A4 qualifier (`FD-GENCMP-X-DECLARATION.md:247`, `:389`).
-2. **The χ² range: replaced by its upper bound (Joseph, on #695).** The paper now reads "χ² ≤ 1.24 for four degrees of
-   freedom (p ≥ 0.87)". 1.24 is `x-chi2-hi`, the r = 1 end. χ² is convex in r, so the family's largest value is at an
+2. **The χ² range: replaced by its upper bound (Joseph, on #695).** The paper now reads "χ² ≤ 1.25 for four degrees of
+   freedom (p ≥ 0.87)". 1.25 is `x-chi2-hi`, the r = 1 end rounded up. χ² is convex in r, so the family's largest value is at an
    end, and `quadrant_values` asserts it is the r = 1 end. `x-chi2-lo` is dropped; the r = 0 value, 1.170, stays in the
    note's Table 14.
-   - **Rounding.** The r = 1 value is 1.2402, which rounds to the printed 1.24 but lies 0.0002 above it. A strictly
-     rounded-up bound would print 1.25 (or 1.241 at three decimals). The text prints 1.24, as Joseph worded it.
+   - **Rounding: the director's ruling (2026-11-02, on #695).** An upper bound has to be true. The r = 1 value is 1.2402,
+     which lies above 1.24, so the bound is rounded up to 1.25 (`bound_up`). The lower bound on p is rounded down:
+     min p = 0.8714 prints as 0.87 (`bound_down`), which was already a true bound. `quadrant_values` asserts that the
+     printed χ² bound is at least the r = 1 value and the printed p at most min p. Two self-test plants, one rounding χ²
+     to nearest and one rounding p up, are each refused by that assertion.
 3. **G1b:paper-g-09 is released from the hold (the director's ruling on #695).**
    - This is the old IV B sentence "The learner was selected after …", held byte-exact by the r22 round's rule.
    - Decision item 2 orders that paragraph rewritten, and the director ruled that #690 stands over the hold.

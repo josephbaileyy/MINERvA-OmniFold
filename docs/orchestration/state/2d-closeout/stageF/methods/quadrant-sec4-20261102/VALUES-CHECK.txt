@@ -65,7 +65,7 @@ x-QD-rho1	0.98	sec_fived16.tex:81
 x-QD-z0	+0.275	sec_fived16.tex:81
 x-QD-z1	+0.694	sec_fived16.tex:81
 x-bounded	AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency	sec_fived16.tex:67
-x-chi2-hi	1.24	paper_body.tex:121
+x-chi2-hi	1.25	paper_body.tex:121
 x-dpct-max	+0.7	paper_body.tex:121
 x-dpct-min	-1.5	paper_body.tex:121
 x-nbands	38	sec_fived16.tex:67

@@ -393,6 +393,16 @@ def solve(A, b):
     return x
 
 
+def bound_up(x):
+    """x rounded up to two decimals: an upper bound that prints true."""
+    return f"{math.ceil(100 * x - 1e-9) / 100:.2f}"
+
+
+def bound_down(x):
+    """x rounded down to two decimals: a lower bound that prints true."""
+    return f"{math.floor(100 * x + 1e-9) / 100:.2f}"
+
+
 def quadrant_values(d):
     """C-R's per-quadrant reading and GENCMP X's joint test, for the paper's quadrant sentence and the note's tables."""
     v, Q = {}, ["QA", "QB", "QC", "QD"]
@@ -461,12 +471,13 @@ def quadrant_values(d):
         assert min(rho, key=rho.get) == "QC" and max(rho.values()) == rho["QA"], "the correlations' range changed"
     # the paper: "chi2 <= 1.24 for four degrees of freedom (p >= 0.87), with no quadrant beyond one standard deviation"
     # (Joseph's answer on #695). chi2 is convex in r, so its largest value over [0, 1] is at an end: the r = 1 end, here.
-    # The bound prints at two decimals as Joseph worded it; the r = 1 value itself is printed to three in the note's table
+    # Each printed bound must be true: chi2's rounded up, p's rounded down (the director's ruling on rounding, #695)
     c0, c1 = p["r0"]["chi2_4"], p["r1"]["chi2_4"]
     assert c1 > c0, "the paper prints the r = 1 chi2 as the family's largest"
-    v["x-chi2-hi"] = f"{c1:.2f}"
     pmin = min(p["r0"]["p"], p["r1"]["p"])
-    v["x-p-min"] = f"{math.floor(100 * pmin) / 100:.2f}"
+    v["x-chi2-hi"], v["x-p-min"] = bound_up(c1), bound_down(pmin)
+    assert float(v["x-chi2-hi"]) >= c1 and float(v["x-p-min"]) <= pmin, \
+        "a printed bound is not a bound: chi2 <= x-chi2-hi and p >= x-p-min must hold"
     zmax = max(abs(z) for r in ("r0", "r1") for z in p[r]["z"])
     assert zmax < 1, "the paper says no quadrant lies beyond one standard deviation"
     v["x-zmax"] = f"{zmax:.3f}"
@@ -1158,6 +1169,21 @@ def self_test():
                 print(f"  ok   a quadrant readout that {what} is refused")
             else:
                 print(f"  FAIL a quadrant readout that {what} was refused by another guard: {e}"); ok = False
+    # the printed bounds: rounding chi2 to nearest (1.2402 -> 1.24) or p up (0.8714 -> 0.88) must be refused
+    for name, wrong, what in (("bound_up", lambda x: f"{x:.2f}", "the chi2 bound rounded to nearest"),
+                              ("bound_down", lambda x: f"{math.ceil(100 * x) / 100:.2f}", "the p bound rounded up")):
+        keep = globals()[name]
+        globals()[name] = wrong
+        try:
+            values(load())
+            print(f"  FAIL {what} was accepted"); ok = False
+        except AssertionError as e:
+            if "a printed bound is not a bound" in str(e):
+                print(f"  ok   {what} is refused")
+            else:
+                print(f"  FAIL {what} was refused by another guard: {e}"); ok = False
+        finally:
+            globals()[name] = keep
     # the listed-truth sentences: silent on the committed tree, and each plant must fail at the sentence it changed
     d, dn, texts = load(), load(NOPL_READOUTS), read_claim_texts()
     if check_listed_claims(d["f0b"], texts, dn["f0b"]):
