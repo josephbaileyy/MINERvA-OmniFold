@@ -29,12 +29,13 @@ Sentences are quoted as they print. Section numbers are the built PDFs'; the not
 > lower-dimensional result it extends. Its area-weighted total agrees with the two-dimensional result to 0.141 %, a
 > comparison across the two estimators.
 
-**After.** The first two sentences are the decided text, word for word. The third is the reworked marginal clause.
+**After.** The first two sentences are the decided text, word for word, with Joseph's two amendments on #695 (below):
+"one-parameter" is added, and the χ² range becomes its upper bound. The third sentence is the reworked marginal clause.
 > Summed over each of the four (pT, p∥) quadrants, the sixteen-cell result agrees with the two-dimensional result: the
 > sums differ by −1.5 to +0.7 per cent, and with the covariance between the two results evaluated from the systematic
-> variations they share, the four differences give χ² = 1.17–1.24 for four degrees of freedom (p ≥ 0.87), with no
+> variations they share, the four differences give χ² ≤ 1.24 for four degrees of freedom (p ≥ 0.87), with no
 > quadrant beyond one standard deviation. The statistical correlation, and that of four systematic terms that could not
-> be evaluated directly, are bounded within a family of valid covariances, over which the agreement holds. Of the
+> be evaluated directly, are bounded within a one-parameter family of valid covariances, over which the agreement holds. Of the
 > joint-test estimator's other results, only the three-observable marginal has been compared with the two-dimensional
 > result, agreeing with it to 0.141 % in area-weighted total over all 205 reported cells (Ref. [14], Sec. 10.2).
 
@@ -45,7 +46,7 @@ The paragraph's last sentence, on the normalization and closure checks, is uncha
 | printed | key | source | value |
 |---|---|---|---|
 | −1.5 to +0.7 per cent | `x-dpct-min`, `x-dpct-max` | C-R, `quadrants.*.2D.d_pct` | QC −1.478, QD +0.724 (QA +0.141, QB −0.217) |
-| χ² = 1.17–1.24 | `x-chi2-lo`, `x-chi2-hi` | X, `primary.r0` and `primary.r1` | 1.170 at r = 0, 1.240 at r = 1 |
+| χ² ≤ 1.24 | `x-chi2-hi` | X, `primary.r1`, the family's largest value (convexity) | 1.2402 at r = 1 (1.170 at r = 0, in the note's Table 14) |
 | p ≥ 0.87 | `x-p-min` | X, the smaller p, rounded down | 0.871 at r = 1 (0.883 at r = 0) |
 | no quadrant beyond one standard deviation | (asserted) | X, the largest \|z\| | 0.985, QC at r = 1 |
 | four systematic terms | (asserted) | X, `bounded` | AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency |
@@ -68,9 +69,9 @@ does not change.
 - **Every |z| < 1 over the family.** Each quadrant's variance is linear in r, so each |z| is largest at an end.
 - **χ² ≤ 1.24 and p ≥ 0.87 over the family.** χ² is convex in r, so its largest value, and the smallest p, are at an
   end.
-- **The lower end, 1.17, is the r = 0 value only.** Convexity does not bound the minimum. `k.json` lacks the bounded
-  blocks needed to compute χ² inside [0, 1], so a value below 1.17 there is not excluded (see the points for Joseph
-  below).
+- **χ² has no lower bound over the family.** Convexity does not bound the minimum, and `k.json` lacks the bounded
+  blocks needed to compute χ² inside [0, 1]. So the paper prints the upper bound only (Joseph, on #695); the note's
+  Table 14 gives both ends.
 
 `quadrant_values` asserts each stated fact, and seven self-test plants are each refused by their own assertion:
 - route A and the four bounded bands;
@@ -211,18 +212,14 @@ A coverage result that lands later replaces its clause (decision item 2).
 
 ## Points for the director and Joseph
 
-1. **"a family of valid covariances" has no "one-parameter".**
-   - The X declaration (A4, `FD-GENCMP-X-DECLARATION.md:247`, `:389`) said the paper text would read "within a
-     one-parameter family".
-   - The decided sentence, which I did not change, omits the qualifier.
-   - The note states it: "a one-parameter family … not every admissible correlation".
-   - If Joseph wants it in the paper, it is a two-word change to his text.
-2. **"χ² = 1.17–1.24" is the pair of end values.**
-   - The upper end and "p ≥ 0.87" hold over the whole family, as shown above.
-   - Whether χ² dips below 1.17 inside the family is not recorded, and cannot be computed from the committed records.
-   - "(p ≥ 0.87)" is true either way. "1.17–1.24" read as the full range of the family is not established at its lower
-     end.
-   - Options for Joseph: keep it, or say "1.17 and 1.24 at the two ends" or "χ² ≤ 1.24".
+1. **"one-parameter": applied (Joseph, on #695).** The paper now reads "bounded within a one-parameter family of valid
+   covariances". This is the X declaration's A4 qualifier (`FD-GENCMP-X-DECLARATION.md:247`, `:389`).
+2. **The χ² range: replaced by its upper bound (Joseph, on #695).** The paper now reads "χ² ≤ 1.24 for four degrees of
+   freedom (p ≥ 0.87)". 1.24 is `x-chi2-hi`, the r = 1 end. χ² is convex in r, so the family's largest value is at an
+   end, and `quadrant_values` asserts it is the r = 1 end. `x-chi2-lo` is dropped; the r = 0 value, 1.170, stays in the
+   note's Table 14.
+   - **Rounding.** The r = 1 value is 1.2402, which rounds to the printed 1.24 but lies 0.0002 above it. A strictly
+     rounded-up bound would print 1.25 (or 1.241 at three decimals). The text prints 1.24, as Joseph worded it.
 3. **G1b:paper-g-09 is released from the hold (the director's ruling on #695).**
    - This is the old IV B sentence "The learner was selected after …", held byte-exact by the r22 round's rule.
    - Decision item 2 orders that paragraph rewritten, and the director ruled that #690 stands over the hold.

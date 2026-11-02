@@ -459,10 +459,12 @@ def quadrant_values(d):
     for r in ("r0", "r1"):                             # the note prints each end's range as QC's to QA's
         rho = k["rho_q"][r]
         assert min(rho, key=rho.get) == "QC" and max(rho.values()) == rho["QA"], "the correlations' range changed"
-    # the paper: "chi2 = 1.17-1.24 for four degrees of freedom (p >= 0.87), with no quadrant beyond one standard deviation"
+    # the paper: "chi2 <= 1.24 for four degrees of freedom (p >= 0.87), with no quadrant beyond one standard deviation"
+    # (Joseph's answer on #695). chi2 is convex in r, so its largest value over [0, 1] is at an end: the r = 1 end, here.
+    # The bound prints at two decimals as Joseph worded it; the r = 1 value itself is printed to three in the note's table
     c0, c1 = p["r0"]["chi2_4"], p["r1"]["chi2_4"]
-    assert c0 < c1, "the paper prints the chi2 at r = 0 first"
-    v["x-chi2-lo"], v["x-chi2-hi"] = f"{c0:.2f}", f"{c1:.2f}"
+    assert c1 > c0, "the paper prints the r = 1 chi2 as the family's largest"
+    v["x-chi2-hi"] = f"{c1:.2f}"
     pmin = min(p["r0"]["p"], p["r1"]["p"])
     v["x-p-min"] = f"{math.floor(100 * pmin) / 100:.2f}"
     zmax = max(abs(z) for r in ("r0", "r1") for z in p[r]["z"])
@@ -1145,7 +1147,7 @@ def self_test():
                              ("gives a chi2 at r = 0 that its blocks do not",
                               lambda d: d["xk"]["primary"]["r0"].update(chi2_4=1.2), "rebuilt from the blocks"),
                              ("gives a chi2 at r = 1 below that at r = 0",
-                              lambda d: d["xk"]["primary"]["r1"].update(chi2_4=1.0), "chi2 at r = 0 first")):
+                              lambda d: d["xk"]["primary"]["r1"].update(chi2_4=1.0), "the family's largest")):
         d = load()
         plant(d)
         try:

@@ -1,7 +1,7 @@
 ok   all 2630 base keys print the base value
-ok   86 added keys: 44 cr- and 42 x-
-ok   86 added keys equal their readout fields as printed
-     86 of the added keys print, at: ['paper_body.tex', 'sec_fived16.tex']
+ok   85 added keys: 44 cr- and 41 x-
+ok   85 added keys equal their readout fields as printed
+     85 of the added keys print, at: ['paper_body.tex', 'sec_fived16.tex']
 
 key	value	printed at
 cr-QA-cells	R00--R03	sec_fived16.tex:58
@@ -66,7 +66,6 @@ x-QD-z0	+0.275	sec_fived16.tex:81
 x-QD-z1	+0.694	sec_fived16.tex:81
 x-bounded	AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency	sec_fived16.tex:67
 x-chi2-hi	1.24	paper_body.tex:121
-x-chi2-lo	1.17	paper_body.tex:121
 x-dpct-max	+0.7	paper_body.tex:121
 x-dpct-min	-1.5	paper_body.tex:121
 x-nbands	38	sec_fived16.tex:67

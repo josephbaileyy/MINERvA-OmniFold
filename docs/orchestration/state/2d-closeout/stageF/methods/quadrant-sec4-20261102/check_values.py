@@ -53,7 +53,7 @@ def expected(cr, k):
         want[f"x-{key}-zmax"] = f"{max(abs(z) for r in ('r0', 'r1') for z in k[name][r]['z']):.3f}"
     pct = [cr["quadrants"][n]["2D"]["d_pct"] for n in Q]
     want["x-dpct-min"], want["x-dpct-max"] = f"{min(pct):.1f}", f"{max(pct):+.1f}"
-    want["x-chi2-lo"], want["x-chi2-hi"] = f"{p['r0']['chi2_4']:.2f}", f"{p['r1']['chi2_4']:.2f}"
+    want["x-chi2-hi"] = f"{p['r1']['chi2_4']:.2f}"
     want["x-p-min"] = f"{math.floor(100 * min(p['r0']['p'], p['r1']['p'])) / 100:.2f}"
     want["x-zmax"] = want["x-prim-zmax"]
     want["x-nbands-paired"] = str(sum(c.startswith("band:") for c in k["crosses"]))
