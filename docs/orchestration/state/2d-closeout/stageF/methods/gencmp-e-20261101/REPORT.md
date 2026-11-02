@@ -124,4 +124,12 @@ Each still holds against the new table values (review: 23.2–38.3 %, ≤ 17.8 %
    `paper_body.tex:233`. It joins that sentence's existing parenthesis ("…; GENIE's hydrogen sample is thin, so this
    spread is largely its noise; Ref. [14], Sec. 10.6"), so two parentheses do not stand side by side.
 
+## Follow-up (director, 2026-11-02): review 6
+
+- **The change.** The note's modes caption now defines NuWro's "supplement FLAGGED" in the paper ratio caption's
+  words, and points to `sec:joint5d-ch` (ledger E9).
+- **The sources** are the same as item 2's: `phase1/mp3b/REPORT.md:34`, `:45` and `:54-56`; `sec_joint.tex:327`.
+- **Not defined:** "closure B3 failed". GiBUU has no modes panel, so the modes figure does not print it
+  (`pdftotext figures/fd_g_fig_modes.pdf`).
+
 Nothing is submitted, deposited or tagged.
