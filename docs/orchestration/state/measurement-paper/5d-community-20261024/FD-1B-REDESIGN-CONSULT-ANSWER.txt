@@ -1,0 +1,43 @@
+**Q1. First-order composition.**
+- It is defensible, and it matches the question the covariance answers. C_T is a sum of per-band blocks, each from one band varied alone. A nature whose departure is the sum of single-band departures is therefore the model C_T encodes. Drawing each band at a ±1σ endpoint with probability ½ gives each band variance Δ²/4, which matches the block. The standard multi-universe toy also adds shifts band by band, so a referee will know the construction.
+- It tests more than the algebra:
+  - The unfold is nonlinear. The toy unfolds the summed shift once, while C_T sums separate unfolds, so the test probes the linearisation.
+  - It tests the per-truth rebuild and the prior dependence at the held-out tunes. Declaration §4.5 puts the test's power there, and the composition rule does not change it. That prior dependence is exactly what the paper's "held-out truths" qualifier concerns.
+- It does not test:
+  - Cross-band terms. A product nature has them, and C_T omits them by design.
+  - Uncertainty sources missing from the bank. The nature is built from the same universes as the blocks, so the test is partly circular.
+  - Non-Gaussian tails from two-point draws.
+- A referee will ask how large the omitted cross terms are. You can answer that cheaply at the observable level. On the login node, compare the reco-weighted histogram per cell under product and under additive composition on the declared draws, and express the difference in units of σ_c. It needs no unfolds. That turns "not tested" into a number.
+- The redesign followed the STOP, and the proposal says so. The ground it gives (C_T's construction) is independent of the receipt's values, which is the right defence.
+
+**Q2. Clipping.**
+- Option (a) is the right practical choice. A signed Poisson (b) is not usable, because the shared estimator drops non-positive counts. (c) is the same as (a) but less transparent. (d) is not a design.
+- It does bias the toys. The pseudo-data have mean Σλ⁺, while the nature's truth keeps the negative weights. Observed minus true is then +|Σλ⁻| in the affected cells, which are the LowQ2 and HighQ2 cells. The pulls shift upward in those cells, so a failure there could be this artefact and not under-coverage. The bias is deterministic and small if the clipped fraction is small.
+- Recording only the overall fraction Σλ⁻/Σλ is not enough. The bias is local, so record it per reco cell and per truth cell. Better, give the offset in the unfolded result as a fraction of σ_c, computed at the means for one unfold per truth.
+- Alternatively, clip the nature itself at the row level (option e), so truth, data and denominator share one positive-weight nature. I would add (e) to the choice.
+
+**Q3. The §2c wording.**
+- It is accurate but incomplete. Add these points:
+  - The pseudo-data use the same universes as the covariance, so sources absent from the bank are not probed.
+  - Rows with negative expected counts were clipped to zero, with the clipped fraction as measured.
+  - Bands were sampled at ±1σ endpoints.
+  - The observable-level cross-term size, if you take it.
+- The CANNOT SUPPORT line should also say that nothing is shown about multiplicative composition.
+- "Combined to first order, as the covariance is built" is correct. A reader may still take "covered" as covering the reported uncertainties. §12's existing clause S ("not a coverage rate… not the reported intervals") must stay in every outcome.
+
+**Q4. Run or stop.**
+- Run it. The 73 node-h is about 3.6% of the 2,051 node-h balance. The receipt, denominator and cap checks all STOP at 0 node-h, so the downside is a login-node hour or two.
+- The result would address the qualifier the paper actually carries. It is a per-tune statement under stated scope, not a coverage rate.
+- Conditions:
+  - Declare now that a second STOP ends stage 1 without another redesign unless Joseph rules otherwise.
+  - Take (a) or (e) with per-cell clipping reported.
+  - Add the cross-term check.
+- On the cap, option (ii) (exact evaluation of every row) avoids a foreseeable cap STOP and costs about 1 to 2 hours of login-node time.
+
+**Recommendations**
+- Q1: Accept first-order composition, and add the observable-level cross-term measurement.
+- Q2: Take (a), or (e) at the row level, with the clipped offset reported per cell in σ_c units.
+- Q3: Approve the §2c text after adding the same-universes, clipping and endpoint caveats.
+- Q4: Run, with no second redesign without Joseph.
+
+I did not check the code. This is from the proposal, stop report, declaration and decision text.

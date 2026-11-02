@@ -1,0 +1,17 @@
+You are an independent reviewer (experimental neutrino physics; unfolding, systematic-universe covariances, coverage studies) for a MINERvA cross-section paper. READ-ONLY: do not edit, create or commit anything. Read with `git -C <wt> show <rev>:<path>` and `gh pr view 697 --comments` (read-only).
+
+Worktree: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/wt
+D = docs/orchestration/state/measurement-paper/5d-community-20261024/
+
+Read: (1) the stage-1 STOP report merged on origin/main (search D for FD-1B-STAGED-STAGE1-STOP*.md or the stop report added by PR #696); (2) the redesign proposal in PR #697 at head 883c26c4 (list its files with `gh pr view 697 --json files` and read the proposal .md); (3) D/FD-1B-STAGED-DECLARATION.md sections 4, 5, 12 and 13 on origin/main for context; (4) docs/orchestration/DECISION-20261101-joseph-1b-staged-method-coverage.md.
+
+Situation in one line: a held-out-tune method-coverage ensemble was bound; before any toy, a guard found that composing all universes' event weights multiplicatively pushes many rows above 10x the CV weight (mostly ordinary rows compounding over ~38 bands, plus a few small-CV rows with one large LowQ2/HighQ2 ratio), and the audit also found the bound code would have crashed on negative Poisson means from two universes with negative weights. The redesign composes natures to first order, a_D = a_u1 + sum_{j>=2}(a_uj - a_CV), on the ground that the graded covariance C_T is a sum of per-band blocks with no cross-band terms, and clips negative expected counts to zero (option a) for consistency with the code's mean path. Price 73 node-h.
+
+The project owner must choose: (A) run the redesign or take the fallback (stage 1 stopped, paper unchanged, coverage stays untested); (B) the treatment of negative expected counts, options (a)-(d) in the proposal's section 2a; (C) the paper wording in section 2c that scopes the claim to first-order natures.
+
+Answer in plain physics terms:
+Q1. Is first-order (additive) composition of universes a defensible way to draw "nature" for a coverage test of a covariance built as a sum of per-band blocks? What does it test and not test? Would a referee accept it?
+Q2. Is clipping negative expected counts to zero (a) the right choice versus a signed Poisson, the mean, or refusal? Any bias in the coverage reading from it, and is recording the clipped fraction enough?
+Q3. Is the section 2c wording accurate and sufficient?
+Q4. Run it or stop? Is a first-order method-coverage result worth 73 node-h for the paper's coverage statement?
+Under 500 words, ending with a one-line recommendation per question.

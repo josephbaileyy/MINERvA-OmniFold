@@ -233,7 +233,9 @@ docs/orchestration/DECISION-20261101-joseph-eavail-keep-135.md	LIVE	open	""
 docs/orchestration/DECISION-20261101-joseph-eventloops-copy-to-cfs.md	LIVE	open	""
 docs/orchestration/DECISION-20261101-joseph-gencmp-paper-adoption.md	LIVE	open	""
 docs/orchestration/DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md	LIVE	open	""
+docs/orchestration/DECISION-20261102-joseph-695-quadrant-wording-and-merge.md	LIVE	open	""
 docs/orchestration/DECISION-20261102-joseph-cmodel-keep-carbon-state-effect.md	LIVE	open	""
+docs/orchestration/DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	ARCHIVAL	terminal	""
@@ -517,6 +519,8 @@ docs/orchestration/RECORD-20261031-close-items-oi62-traced.md	ARCHIVAL	terminal	
 docs/orchestration/RECORD-20261031-close-items-oi9-traced.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261031-close-items-waiting-joseph-rows-retired.md	ARCHIVAL	terminal	""
 docs/orchestration/RECORD-20261031-close-items-waiting-joseph-triage.md	ARCHIVAL	terminal	""
+docs/orchestration/RECORD-20261102-director-analysis-note-sync-8db2910b.md	LIVE	open	""
+docs/orchestration/RECORD-20261102-director-hpss-deferral.md	LIVE	open	""
 docs/orchestration/RECORDS-RULES.md	LIVE	open	""
 docs/orchestration/RECOVERY-MANIFEST-20260924-preparation-epoch.md	LIVE	open	
 docs/orchestration/RELEASE-MANIFEST-20261006-s5p-joint-5d-inference.md	LIVE	open	
@@ -1132,6 +1136,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-BIND
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-A1.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-BINDING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-DECLARATION.md	LIVE	open	""
@@ -1140,8 +1145,10 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-BINDI
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-ADDENDUM-A1.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-ADDENDUM-A2.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-BINDING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-DECLARATION.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-XCOV-SCOPING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PLAN.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PSCRATCH-RETENTION-PROPOSAL.md	LIVE	open	""

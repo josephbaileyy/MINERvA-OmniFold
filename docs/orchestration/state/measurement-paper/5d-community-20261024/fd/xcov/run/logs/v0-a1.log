@@ -1,0 +1,33 @@
+2026-11-02T07:28:17Z
+login37
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-x-20261102/v0-a1/v0.json", "sha256": "ad70afad5b2e8afd33098fcc4ae4f3a77be57d82b3b860b08ddd6458262d7e71"}
+[V0] counts True mc True joins {'data': True, 'background': True} -> route B
+	Command being timed: "env -u PYTHONPATH python -B nd-unfolding/fd_xcov.py v0 --run-dir /pscratch/sd/j/josephrb/gencmp-x-20261102"
+	User time (seconds): 177.90
+	System time (seconds): 48.90
+	Percent of CPU this job got: 101%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:43.99
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 7304032
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 19031719
+	Voluntary context switches: 6278
+	Involuntary context switches: 504370
+	Swaps: 0
+	File system inputs: 5288248
+	File system outputs: 73784
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+rc=0
+2026-11-02T07:32:01Z
+/pscratch/sd/j/josephrb/gencmp-x-20261102/v0/v0.json: OK
+first v0.json unchanged
+porcelain after: empty
+end

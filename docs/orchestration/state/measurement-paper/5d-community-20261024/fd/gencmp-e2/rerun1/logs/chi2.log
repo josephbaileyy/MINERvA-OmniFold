@@ -1,0 +1,18 @@
+[PASS C] /pscratch/sd/j/josephrb/gencmp-e2a1-20261102/chi2 does not exist (no overwrite)
+[PASS G] V passed before this step (V.ok)
+[PASS G] R1 passed before this step (R1.ok)
+[PASS G] R2 and B2 passed before this step (U.ok)
+PASS control C0 cmodel_5d.json sha256 is the pin
+[PASS C1] the carbon products give cmodel_5d.json's S bitwise
+[PASS C0] nuwro CH: the product is the one unfold recorded
+[PASS C0] gibuu CH: the product is the one unfold recorded
+[PASS C0] nuwro carbon seed 43: the product is the one unfold recorded
+[PASS C0] gibuu carbon seed 43: the product is the one unfold recorded
+PASS control C0 data product sha256 is the pin
+[PASS C0] the with-block npz is its pinned bytes
+[PASS C2] diag(f) S^T S diag(f) from cmodel_5d.json's S is the data product's C_model_abs (1e-12)
+[PASS C0] E-1's with Stage G readout is the committed one
+[PASS C3] with: the carbon S reproduces E-1's chi2 for every corner prediction and kind (1e-10)
+[PASS C0] E-1's nopl Stage G readout is the committed one
+[PASS C3] nopl: the carbon S reproduces E-1's chi2 for every corner prediction and kind (1e-10)
+[E2] flag operand 5.560 (above 2.3: True); max |Delta| 6.074; max |Delta_noise| 0.000

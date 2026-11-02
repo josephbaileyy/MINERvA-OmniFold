@@ -1,0 +1,16 @@
+{
+ "products": {
+  "nuwro_ch": "6ed4e81f8005cbf7d13e146a450f172967ff49fc43e4056b1a6dd17bb626f72d",
+  "gibuu_ch": "d89fbe6e41dc1db577bbea318701d36c07a7200facf3f4a2230183317cabd7bb",
+  "nuwro_carbon_R2": "243a07b01411f940a9031d1677a32c5dbee5bb3e4b72cc3bece3c3bf31297309",
+  "nuwro_carbon_s43": "5d773dc7a4ab2bec5e807972282af6ddea3cab755623c899b75a9d34fb61dc72",
+  "gibuu_carbon_s43": "8a115592e6045f765518c434290e97991aec13754a3efc7d1171cd5a82e82f82"
+ },
+ "R2_bitwise": true,
+ "provenance": {
+  "check_meta": "passed for all five (the seed-43 pair at seed 43)",
+  "code_files_differing_from_the_committed_vertex": [
+   "pvl_lib.py"
+  ]
+ }
+}

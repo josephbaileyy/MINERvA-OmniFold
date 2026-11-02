@@ -111,4 +111,53 @@ route choice. It is bound before it runs.
    - the fixture read;
    - the /dev/shm writes.
 
+## Addendum X-A2 (director, 2026-11-02)
+
+**The stop.** The full V1 (job 60679146) failed after 4:14 with "EtaNCEL:0 wt: 22 files carry its digest". The cause
+was `weight_files`, which required exactly one pinned file per digest. Identical digests are byte-identical files, so
+the rule should have been "at least one".
+- The match histogram over 350 lookups is {1: 322, 2: 4, 8: 8, 22: 16}.
+- The multi-match classes span:
+  - the NC knobs: EtaNCEL, MaNCEL, NormNCRES, NormDISCC;
+  - GEANT_Neutron, GEANT_Pion and GEANT_Proton;
+  - MinosEfficiency;
+  - Rvn1pi.
+
+**The director's rulings (by message).**
+- **The lookup rule.** Take the sorted-first file and record n_matches. Stop on zero matches.
+- **Before resubmission, a full lookup sweep.** Every lookup is checked once on its own, with no weight array read.
+- **K's own-side controls, dry-run first** on the real products, with no cross quantity computed.
+- **The 2D NormDISCC block failed K1 on cancellation noise.** Its block is 1.1e-25 of max|C2q|. So **explicit null
+  bands** take the place of a scale floor:
+  - a band is null on a side when its blocks are below 1e-12 (PD_REL) of that side's max|C_side|;
+  - a band null on both sides is asserted null;
+  - a band null on one side only fails;
+  - every other band keeps `same_block` at 1e-10, plus the zero rule.
+
+**Binds** addendum X-A2 as merged in PR #681 at **M‴ = `b2e2d23263d379e8d5affc1f27aaea18175bb66c`** (PR head `b3b8479d651c287105a0c106b3526d1247fc9f46`).
+The blobs at M‴:
+  - `nd-unfolding/fd_xcov.py` `2bef2618a5fa43a8414b3ebe1ce646d24a21ca99`;
+  - `nd-unfolding/fd_xcov_steps.py` `ed21d590b1627f181ce73607a05acacdb8382cbc`;
+  - `nd-unfolding/tests/test_fd_xcov.py` `050691ee13ada48ad3d0161e2c6c9091523f32a6`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/receipts/x_v1.sh` `8f6995d610a165aecd575767f5847a40cf07482b`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/receipts/x_boot.sh` `084fe2331f48af2843198df5047cd1c233608df7`;
+
+`x_v1.sh`'s only change moves its `cd` to `$R/deploy-a2`.
+
+**What the director checked.**
+- **The diff:** the lookup rule, the dry modes (`v1 --dry`, `k --own-only`), the null rule and the run-directory
+  plumbing.
+- **The tests.** `test_fd_xcov.py`, `test_fd_gencmp.py` and `test_fd_gencmp_e.py` gave 154 passed and 1 skipped
+  locally at the head.
+- **The receipts.**
+  - The V1 dry sweep: 175 universes, 350 lookups, 0 zero-match, 0 failing.
+  - The K own-side dry run at `d670e9a5`: 102/102 PASS. NormDISCC is the only null band, on both sides.
+  - The null-rule mutants: 7 of 7 caught.
+- **The lane's extension of the null rule to the 5 lateral bands is accepted.** No verdict changes.
+
+**Rulings.**
+1. **The order:** a fresh clone at M‴ into `$R/deploy-a2`, then the full V1 into `v1-a2`, then K.
+2. **The cost.** X stands at 3.064 of 5.0 node-h. The V1 rerun is ≤ 1.75, so the worst case is ≤ 4.81.
+3. **K's stop is final, as bound.** The report gives every V1 run, every dry run and the null-band list.
+
 Nothing is submitted, deposited or tagged.

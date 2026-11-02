@@ -1,0 +1,42 @@
+# check_held on the rater copy of ad9403f5d (the GENCMP addendum E2 paper round, after its review), built from the clean tree
+
+command: python3 -I r22/tools/check_held.py <methods>/r22 <methods>/rater-calibration/tools/analyze.py <blind.txt> --pair-applied G1:paper-s-09 --fact-held
+
+  FAIL G1:paper-g-08: held quote no longer prints exactly: 'In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBU'
+  FAIL G1:paper-s-08: held quote no longer prints exactly: 'Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths'
+  FAIL G1b:paper-s-07: held quote no longer prints exactly: 'We report a simultaneous measurement of the νµ charged-current inclusive cross section in '
+held quotes checked exactly 14, exempt by applied pair ['G1b:paper-s-05'], held for facts 8, failures 3
+
+## holddiff (rater copy against the normal build)
+
+raw words: normal=9597 rater=9580
+  replace: normal[8594:8595] [-crosssection-]  rater[8594:8595] {+cross-section+}
+  delete: normal[8657:8662] [-[HOLD: funding and grant acknowledgments]-]  rater[8657:8657] {++}
+  delete: normal[8896:8908] [-[HOLD: deposit identifier and access route, after the separately authorized release decision.]-]  rater[8891:8891] {++}
+  hold span in normal build: [HOLD: funding and grant acknowledgments]
+  hold span in normal build: [HOLD: deposit identifier and access route, after the separately authorized release decision.]
+holds in normal=2; 'HOLD' in rater=False; non-hold diffs after hyphen normalization=0
+VERDICT: PASS (only hold text differs)
+
+## make_rater_copy.sh
+
+  source: <worktree> (ad9403f5d; dirty files in analysis-note: 0)
+  holds found: 2; sharing a sentence: 0
+  normal: main_paper uses \externaldocument; built main_note first (133 pages)
+  normal build: 12 pages
+  rater: main_paper uses \externaldocument; built main_note first (133 pages)
+  rater build: 12 pages
+  holds in normal=2; 'HOLD' in rater=False; non-hold diffs after hyphen normalization=0
+  VERDICT: PASS (only hold text differs)
+  rater text = normal text minus 2 hold spans
+  data-availability heading in reading order
+  single-line drops: 2; words in=9571 out=8626
+
+## Dispositions
+
+- G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07: pre-existing flags, the same quotes the #638, #642, #656 and #665
+  rounds recorded. This round changes none of their source sentences: `git diff 63493acdc ad9403f5d --
+  docs/analysis-note/paper_body.tex` changes the generator-comparison paragraph and its source comment only.
+- holddiff: PASS, only hold text differs.
+- make_rater_copy.sh: rc 0, the blinded copy written. The longer paragraph moves the data-availability paragraph to run
+  from page 11 onto page 12; fix_da_order.py still finds the heading in reading order.

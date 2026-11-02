@@ -209,6 +209,53 @@ class BareCitationsAndLogEvidence(unittest.TestCase):
         body = {"a": "GATE5_REPLICA_WEIGHTS.npz", "b": "/pscratch/x/GATE5_REPLICA_WEIGHTS.npz"}
         self.assertEqual("BY-PATH", self._classify("GATE5_REPLICA_WEIGHTS.npz", body, set())[0])
 
+    def test_BY_PATH_is_tested_before_MISSING_when_the_full_path_resolves(self):
+        """SILENT on good input (2026-11-02): the receipt's own directory is tracked and lacks the
+        file, but the same receipt cites it by a cluster path. That is not the trap."""
+        body = {"label": "P5 (read as RE-1's k1_p5_rerun.npz)",
+                "path": "/pscratch/sd/j/josephrb/gencmp-e2a1-20261102/inputs/re1/out/5d/k1_p5_rerun.npz"}
+        self.assertEqual(("BY-PATH", body["path"]),
+                         self._classify("k1_p5_rerun.npz", body, {self.COMPANION + "/V.ok"}))
+
+    def test_a_checkout_path_outside_the_area_resolves(self):
+        """X's V0 record shape: a staged input named bare and by its cluster-checkout path, which
+        normalises to a repo path outside the deliverable area."""
+        body = {"inputs": {"of_inputs_5d.npz": "sha"},
+                "pinned": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz"}
+        self.assertEqual("BY-PATH", self._classify("of_inputs_5d.npz", body,
+                                                   {self.COMPANION + "/v0.log"})[0])
+
+    def test_a_tracked_relative_path_citation_resolves(self):
+        body = {"a": "x.npz", "b": "sub/x.npz"}
+        self.assertEqual("BY-PATH", self._classify("x.npz", body,
+                                                   {self.COMPANION + "/y.json", AREA + "sub/x.npz"})[0])
+
+    def test_no_full_path_citation_is_still_MISSING(self):
+        """FIRES: bare only, in a tracked directory that lacks it."""
+        body = {"products": {"xcov_b1_j101.npz": "sha"}}
+        self.assertEqual("MISSING", self._classify("xcov_b1_j101.npz", body,
+                                                   {self.COMPANION + "/lane_1_13.json"})[0])
+
+    def test_a_full_path_citation_that_does_not_resolve_is_still_MISSING(self):
+        """FIRES: a path into the deliverable area that git does not carry is the trap itself, and
+        a relative path that matches nothing tracked locates nothing."""
+        for other in (AREA + "probe-receipt/x.npz", V.repo_root() + "/" + AREA + "elsewhere/x.npz",
+                      "run-3/x.npz"):
+            body = {"a": "x.npz", "b": other}
+            self.assertEqual("MISSING", self._classify("x.npz", body, {self.COMPANION + "/y.json"})[0],
+                             other)
+
+    def test_negative_control_MISSING_first_refuses_the_real_shapes(self):
+        """The suite can fail: with the resolving-path test removed, both real shapes go MISSING."""
+        saved = V.resolving_path_citation
+        try:
+            V.resolving_path_citation = lambda *a, **k: None
+            body = {"label": "k1_p5_rerun.npz", "path": "/pscratch/x/k1_p5_rerun.npz"}
+            self.assertEqual("MISSING", self._classify("k1_p5_rerun.npz", body, {self.COMPANION + "/V.ok"})[0])
+        finally:
+            V.resolving_path_citation = saved
+        self.assertEqual("BY-PATH", self._classify("k1_p5_rerun.npz", body, {self.COMPANION + "/V.ok"})[0])
+
     def test_a_slurm_filename_pattern_is_not_a_citation(self):
         """SILENT on a pattern: `%x_%j.out` names no file, so no tail of it is a bare citation."""
         for t in ("/pscratch/x/%x_%j.out", "--error=/p/a1/slurm-%j.err", "boot5dG_%a_%A.out", "s-%5j.log"):

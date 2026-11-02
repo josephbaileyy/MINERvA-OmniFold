@@ -1,0 +1,8 @@
+e708f3cffcfd62fe3eb5f38b2681ec467bee516f nd-unfolding/fd_xcov.py
+aedfa0b831279193e37d761607c7acaeaefb50cc nd-unfolding/fd_xcov_steps.py
+033831e881457506b62452920d69376bf8103088 nd-unfolding/tests/test_fd_xcov.py
+afec433069781af3eab9af86464e878140097cef docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/INPUTS.sha256
+e57a3150e0420b61732b0648094f500cc41dec02 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/receipts/x_v1.sh
+084fe2331f48af2843198df5047cd1c233608df7 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/xcov/receipts/x_boot.sh
+6a3ad35140e2475014446f915aad51bcaef89ca2 nd-unfolding/tests/fixtures/xcov_p1streams/p1streams_present.root
+fad3fb3d2a34ed4a9b042a93a6318c686b7a5620 nd-unfolding/tests/fixtures/xcov_p1streams/p1streams_absent.root

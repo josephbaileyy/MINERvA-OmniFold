@@ -1,0 +1,4 @@
+86e6c3971a11d7e81025f9fb6890c70bef8f8813 nd-unfolding/fd_gencmp_e2.py
+2738ccd1cfaa13d4e46d10279de64ebbc428b115 nd-unfolding/tests/test_fd_gencmp_e2.py
+60e1f823b969a3305934ea24052faeb41723d415 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/x_e2_unfold.sh
+1fe20983ad8b99e823538eaf73932d70ddd444ff docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/INPUTS.sha256

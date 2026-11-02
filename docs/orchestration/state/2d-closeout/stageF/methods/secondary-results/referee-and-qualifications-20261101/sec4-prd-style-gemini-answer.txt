@@ -1,0 +1,37 @@
+### 1. Handling of Untested Coverage in PRD
+
+In published PRD neutrino cross-section measurements (MINERvA, MicroBooNE, T2K, NOvA), **frequentist coverage of unfolded covariance matrices is virtually never evaluated or claimed.** Regularized unfolding inherently trades bias for variance; nominal $1\sigma$ (68.3%) coverage across bins is mathematically non-trivial and rarely achieved without over-inflation. 
+
+Instead, the community standard is:
+* Report uncertainties as standard error propagation (multisim/bootstrap covariance).
+* Assess estimator bias and robustness via **closure tests and fake-data/stress tests** with alternate generators.
+* If a bias is within uncertainties, no extra coverage tuning is done; if significant, an ad-hoc systematic or model term is added.
+
+**Recommendations on current text:**
+* **Cut entirely (or keep only in the analysis note):** Historical dead-ends such as *"the first two tests of an earlier route ... did not pass"*. PRD reports the adopted method and its properties, not abandoned development paths.
+* **Consolidate into Limitations:** The broad disclaimer that uncertainties represent propagated statistical and systematic variations rather than guaranteed frequentist coverage. 
+* **Keep in Section IV:** The factual definitions of what $C_{\mathrm{model}}$ and $C_{\mathrm{PL}}$ capture (e.g., sensitivity to generator shape; empirical run-period spread), retaining the fact that they are empirical envelopes rather than calibrated bounds.
+
+---
+
+### 2. Presentation of IV B (2D Benchmark)
+
+The content belongs in the paper, but the phrasing is overly apologetic. In PRD, this is typically framed as a **consistency benchmark** or **cross-check**. Stating that the learner was chosen after comparing implementations is an essential disclosure of post-hoc model selection, but it should be reported neutrally as a methodological caveat rather than a disqualification of the test.
+
+---
+
+### 3. Concrete Rewritten Text
+
+#### Section IV B (Last paragraph)
+> We adopt the LightGBM estimator for the central value to maintain consistency with the covariance evaluation. Because this choice was finalized after comparing both LightGBM and exact-split implementations against the published measurement, this comparison serves as a consistency benchmark rather than a blind validation. The central value agrees closely with the purity-subtracted exact-split result, differing by a median of \SI{1.03}{\percent} per bin (maximum \SI{17.6}{\percent}; see \nsec{sec:method-config}).
+
+#### Section IV A ($C_{\mathrm{model}}$ and $C_{\mathrm{PL,5D}}$ validation)
+> The model term $C_{\mathrm{model}}$ is constructed from the variation in the unfolded result when the prior is reweighted to GENIE + MEC, NuWro, and GiBUU. It reflects sensitivity to the generator shape rather than a validated frequentist coverage bound (\nsec{sec:fived16-cov}). [...] The run-period block $C_{\mathrm{PL,5D}}$ accounts for observed differences among the three run-period groups exceeding their bootstrap scatter. As in the two-dimensional result (Sec.~\ref{sec:uq2d}), it is constructed from double ratios across groups with no reference period (rank~\fvval{pl-rank}). Because it is empirically derived from only three groups, its magnitude carries substantial uncertainty: the 68\,\% interval on the ratio of its true to estimated size is \fvval{pl-sigratio-lo}--\fvval{pl-sigratio-hi} (\nsec{sec:fived16-pl}).
+
+#### Section IV C (2D Validation and Coverage)
+> The statistical block (median uncertainty \SI{0.676}{\percent}) is evaluated from 300 bootstrap replicas at the central training seed, resampling background templates simultaneously. Following standard practice for unfolded cross sections, reported uncertainties reflect propagated statistical and systematic variance rather than formal Neyman confidence coverage across bins or projections. The run-period block assigns an empirical \SI{2.0}{\percent} uncertainty to the integrated cross section to absorb the observed $\sim$\SI{7}{\percent} step in $\pPar$ near \SI{8}{GeV/c}. Finally, $C_{\mathrm{model}}$ (median \SI{\cmodelMedian}{\percent}) quantifies sensitivity to the unfolding prior shape, but is not treated as a calibrated bound on unfolding bias.
+
+---
+
+### Community Practice Flags
+* **Prior-shape covariance ($C_{\mathrm{model}}$):** Practices diverge across collaborations. While some include alternate generators in the covariance, others (notably recent MicroBooNE and MINERvA analyses) avoid adding model spreads directly to the covariance matrix to prevent double-counting or masking discrepancies in generator comparisons, presenting them instead as separate comparisons. Presenting $C_{\mathrm{model}}$ both with and without the total is fully acceptable and transparent.

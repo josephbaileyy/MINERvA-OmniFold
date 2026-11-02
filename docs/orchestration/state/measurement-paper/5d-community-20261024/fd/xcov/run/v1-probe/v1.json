@@ -1,0 +1,381 @@
+{
+ "schema": "fd-xcov-v1/1",
+ "probe": true,
+ "universe_omnifile_positional": {
+  "rows_2d": 32849103,
+  "rows_5d": 32849103,
+  "sentinel_rows": 2801,
+  "differing_rows": 0,
+  "weight_scale": 0.21240500334472884,
+  "weight_ratio_max_rel": 2.220446049250313e-16,
+  "zero_weight_2d_rows": 0,
+  "zero_weight_mismatch": 0,
+  "weight_note": "descriptive: the pairing needs the same events (the coordinates); the weights' ratio is recorded, and V1 compares universe-to-CV ratios, which a per-row CV scale cancels",
+  "pass": true
+ },
+ "universes": {
+  "MaRES:0": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999931324,
+    "max_rel": 5.957084936447643e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999943445,
+    "max_rel": 5.957952731172611e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.3
+  },
+  "MaRES:1": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999953435,
+    "max_rel": 5.958458615396012e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000043003,
+    "max_rel": 5.9587836664931615e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.2
+  },
+  "Flux:0": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.000000000006274,
+    "max_rel": 5.954741322256041e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999944982,
+    "max_rel": 5.957613047335997e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.1
+  },
+  "Flux:1": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999956763,
+    "max_rel": 5.9587443534958595e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999964391,
+    "max_rel": 5.956823456720883e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.3
+  },
+  "Flux:2": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000041716,
+    "max_rel": 5.957234161524383e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000065679,
+    "max_rel": 5.9572405008978535e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.3
+  },
+  "Flux:3": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000095564,
+    "max_rel": 5.9603568192123646e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999880966,
+    "max_rel": 5.957945425905109e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.3
+  },
+  "Flux:4": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999994548,
+    "max_rel": 5.9594038148702566e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000015157,
+    "max_rel": 5.9578791677949994e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.3
+  },
+  "Flux:5": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.000000000002319,
+    "max_rel": 5.954831494570101e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000040423,
+    "max_rel": 5.950239700958093e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.2
+  },
+  "Flux:6": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000019942,
+    "max_rel": 5.9588027845336455e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999948335,
+    "max_rel": 5.956772630710816e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.2
+  },
+  "Flux:7": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999973415,
+    "max_rel": 5.957754534158255e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000001963,
+    "max_rel": 5.958754978330205e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.2
+  },
+  "Flux:8": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 0.9999999999969491,
+    "max_rel": 5.956298099185631e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000058313,
+    "max_rel": 5.9576904964941946e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.3
+  },
+  "Flux:9": {
+   "wt": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000003144,
+    "max_rel": 5.952954840182656e-08,
+    "pass": true
+   },
+   "wr": {
+    "rows": 32846302,
+    "nonfinite": 0,
+    "scale": 1.0000000000125455,
+    "max_rel": 5.9557131115717254e-08,
+    "pass": true
+   },
+   "pass": true,
+   "seconds": 5.2
+  }
+ },
+ "bands_pass": {
+  "MaRES": true,
+  "Flux": true
+ },
+ "scale_spread": 1.2290168882600483e-11,
+ "seconds_hash": 150.8,
+ "seconds_total": 231.8,
+ "inputs": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz": {
+   "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+   "pinned": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root": {
+   "sha256": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "pinned": "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/detector-dump.json": {
+   "sha256": "c52dca58d6eab1494c217fd3dc55296a20f09ca6c02db23307dd11cac55c562e",
+   "pinned": "c52dca58d6eab1494c217fd3dc55296a20f09ca6c02db23307dd11cac55c562e",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_0_wt.npy": {
+   "sha256": "13ac09032f021eb1f764e6827e7eec3053e34c4e0a490786f09948d6cb117025",
+   "pinned": "13ac09032f021eb1f764e6827e7eec3053e34c4e0a490786f09948d6cb117025",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_0_wr.npy": {
+   "sha256": "f47ddc67bdb786d90f4fe419808f18e9d2c40fa5a5092499561c71b38c2e783d",
+   "pinned": "f47ddc67bdb786d90f4fe419808f18e9d2c40fa5a5092499561c71b38c2e783d",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_1_wt.npy": {
+   "sha256": "450a1c2073396b66ce59301623d8575604d3956dd4024d18526f5aa7657f5fe9",
+   "pinned": "450a1c2073396b66ce59301623d8575604d3956dd4024d18526f5aa7657f5fe9",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/MaRES_1_wr.npy": {
+   "sha256": "5f3b2fbf3259421a150de5da5243153097432da948eb8b79f6fee8831bf494df",
+   "pinned": "5f3b2fbf3259421a150de5da5243153097432da948eb8b79f6fee8831bf494df",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_0_wt.npy": {
+   "sha256": "07d8d89da4de5e7f024bfb7126615c063796599126e8f0ed306a79d763eaf176",
+   "pinned": "07d8d89da4de5e7f024bfb7126615c063796599126e8f0ed306a79d763eaf176",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_0_wr.npy": {
+   "sha256": "b26907593412bb0b6a667d5bafcfb937bae7728a234d3ba241d70e504fb0a81c",
+   "pinned": "b26907593412bb0b6a667d5bafcfb937bae7728a234d3ba241d70e504fb0a81c",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_1_wt.npy": {
+   "sha256": "1b18f21ce47ee20c1c32a14c8114b987ad7773d8f3f4812e325016f464320547",
+   "pinned": "1b18f21ce47ee20c1c32a14c8114b987ad7773d8f3f4812e325016f464320547",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_1_wr.npy": {
+   "sha256": "0282323ac8c9ad3033db224508adeb6878cc273c4fbbaf8b76ac55882248f3d0",
+   "pinned": "0282323ac8c9ad3033db224508adeb6878cc273c4fbbaf8b76ac55882248f3d0",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_2_wt.npy": {
+   "sha256": "3c1f0073ce2d9f8a40672d14fd9711cadc91fd3bc74a3f598b4984c724a9bbfe",
+   "pinned": "3c1f0073ce2d9f8a40672d14fd9711cadc91fd3bc74a3f598b4984c724a9bbfe",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_2_wr.npy": {
+   "sha256": "84cbb50f66f9c85c754d2d4e55d5c0b4b6c279cd6e31176b17567bd02740418a",
+   "pinned": "84cbb50f66f9c85c754d2d4e55d5c0b4b6c279cd6e31176b17567bd02740418a",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_3_wt.npy": {
+   "sha256": "d887055dae3b358c833de1116e873e80780b63ca59ac7d4dc9ddfa7431dadbee",
+   "pinned": "d887055dae3b358c833de1116e873e80780b63ca59ac7d4dc9ddfa7431dadbee",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_3_wr.npy": {
+   "sha256": "827b3e5bc2ac6471a3cfb1786625528bbb49a9c7216b562ba42b699b70512914",
+   "pinned": "827b3e5bc2ac6471a3cfb1786625528bbb49a9c7216b562ba42b699b70512914",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_4_wt.npy": {
+   "sha256": "f49687c6c88c141ebeddcb92bb0b6f7aba4635f6a60741a3f21260f5a1fe0d9d",
+   "pinned": "f49687c6c88c141ebeddcb92bb0b6f7aba4635f6a60741a3f21260f5a1fe0d9d",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_4_wr.npy": {
+   "sha256": "90dcfdeca438ffe0692f07a136a21756e45462389b25a952638716e71d88ed1e",
+   "pinned": "90dcfdeca438ffe0692f07a136a21756e45462389b25a952638716e71d88ed1e",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_5_wt.npy": {
+   "sha256": "c812cd1c9d422cbee902372f491fd42989e6b43882c756d7bd9323d792486f37",
+   "pinned": "c812cd1c9d422cbee902372f491fd42989e6b43882c756d7bd9323d792486f37",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_5_wr.npy": {
+   "sha256": "f3b16e0b06d1d25575448581f6e8fc7c5cbcc749ae8ad2f076584f0e3c6dba06",
+   "pinned": "f3b16e0b06d1d25575448581f6e8fc7c5cbcc749ae8ad2f076584f0e3c6dba06",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_6_wt.npy": {
+   "sha256": "8af1a517a21ef2a3604369bc66f47074549173e4eee2c7165a1d52ebbd321206",
+   "pinned": "8af1a517a21ef2a3604369bc66f47074549173e4eee2c7165a1d52ebbd321206",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_6_wr.npy": {
+   "sha256": "0986cb4335f428c6d7b980d648a3570bf5576b1669240cb7321fd2d0c63c1e33",
+   "pinned": "0986cb4335f428c6d7b980d648a3570bf5576b1669240cb7321fd2d0c63c1e33",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_7_wt.npy": {
+   "sha256": "049ca4bd994ab861fe866ad98e258c31f18e1965ccdc27f33d118e8256003374",
+   "pinned": "049ca4bd994ab861fe866ad98e258c31f18e1965ccdc27f33d118e8256003374",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_7_wr.npy": {
+   "sha256": "767ff787e47fa8b8eff121d748c74bac3d53d6d89405574177999fa837894a0e",
+   "pinned": "767ff787e47fa8b8eff121d748c74bac3d53d6d89405574177999fa837894a0e",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_8_wt.npy": {
+   "sha256": "0c5f27c18013dfd4fb5a9fc7aa25f92b227f4a2ebf1b1edfa81211af8d7e1bb3",
+   "pinned": "0c5f27c18013dfd4fb5a9fc7aa25f92b227f4a2ebf1b1edfa81211af8d7e1bb3",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_8_wr.npy": {
+   "sha256": "a55308dc4ffd00d479bada4db312021d714d3e391051cfdb8fa11de5e60458d1",
+   "pinned": "a55308dc4ffd00d479bada4db312021d714d3e391051cfdb8fa11de5e60458d1",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_9_wt.npy": {
+   "sha256": "366cab5e87c7acc561d30da63a51e7d590a693280af6a02b954a169f3f3cadad",
+   "pinned": "366cab5e87c7acc561d30da63a51e7d590a693280af6a02b954a169f3f3cadad",
+   "atime_unchanged": true
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_9_wr.npy": {
+   "sha256": "c41c110acf4bfbfd8e8c9dc935ee0295eb66395abb0d8ddde074c4fc36977920",
+   "pinned": "c41c110acf4bfbfd8e8c9dc935ee0295eb66395abb0d8ddde074c4fc36977920",
+   "atime_unchanged": true
+  }
+ },
+ "atime_deviations": [],
+ "projected_seconds_175": 1068.0,
+ "within_full_cap": true
+}

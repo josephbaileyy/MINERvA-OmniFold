@@ -1,0 +1,8 @@
+# Fixture for nd-unfolding/tests/test_fd_xcov.py class V1Lookup (GENCMP X addendum X-A2, 2026-11-02).
+#
+# The files_sha256 map of the detector receipt fd_xcov_steps.DET_RECEIPT
+# (/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/detector-dump.json), read on login37 (omnifold_py310) through
+# fd_xcov.Inputs.bytes from the X-A1 deploy: O_NOATIME (atime unchanged) and checked against its pin in
+# fd/xcov/INPUTS.sha256 (c52dca58...). Copied verbatim, with the receipt's sha256. Nothing was written on the cluster.
+file	content	source record
+detector_files_sha256.json	{source, sha256, files_sha256} of the detector receipt	DET_RECEIPT, pinned in fd/xcov/INPUTS.sha256

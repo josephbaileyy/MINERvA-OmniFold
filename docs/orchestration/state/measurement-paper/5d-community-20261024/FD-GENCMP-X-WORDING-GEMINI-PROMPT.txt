@@ -1,0 +1,313 @@
+You are an experienced Physical Review D referee in experimental neutrino physics (cross-section measurements, unfolding, covariance matrices). You are reviewing ONE sentence of a MINERvA paper. Below are (A) the paper paragraph as it stands, (B) the analysis report and declaration that the sentence must faithfully summarize, and (C) two candidate replacement texts. Judge as a referee would.
+
+Answer:
+1. Is each candidate accurate against (B)? List any overclaim or misleading phrase.
+2. Which would you, as referee, rather see in the paper, and why? Is either too long or too internal for PRD?
+3. Write your own recommended replacement (it replaces the first sentence of the paragraph; the paragraph's 0.141% marginal sentence may follow as a clause). Keep it in PRD register, no internal labels.
+4. Anything a referee would still ask about this comparison after reading your sentence.
+Under 450 words.
+
+===== (A) paper_body.tex line 120, current paragraph =====
+Of the joint-test estimator's results, only the three-observable marginal has been compared with the lower-dimensional result it extends. Its area-weighted total agrees with the two-dimensional result to \SI{0.141}{\percent}, a comparison across the two estimators. The normalization checks of the earlier purity-subtracted five-observable central value are described in \nsec{sec:eavailw-axis}, and the closure checks of its estimator in three and four observables in \nsec{sec:closure-map}.
+
+===== (B1) FD-GENCMP-X-REPORT.md =====
+# REPORT: GENCMP X — the sixteen-cell quadrant sums against the 2D result, with their covariance (2026-11-02)
+
+**By** the limitation-resolver lane (Claude), for the director and for Joseph.
+
+**Under** [`FD-GENCMP-X-BINDING.md`](FD-GENCMP-X-BINDING.md):
+- the declaration [`FD-GENCMP-X-DECLARATION.md`](FD-GENCMP-X-DECLARATION.md), bound in #666 at M = `260e299b`;
+- addendum [X-A1](FD-GENCMP-X-ADDENDUM-A1.md), bound in #672 at M′ = `f14119b1`;
+- addendum [X-A2](FD-GENCMP-X-ADDENDUM-A2.md), bound in #684 at M‴ = `b2e2d232`.
+
+**MEASURES:** each (p_T, p_∥) quadrant's sixteen-cell sum against the 2D result's sum over the same region (C-R's d),
+with the covariance between the two results built from what they share. Read by the director's ruling 3: agree iff the
+joint χ²₄ has p ≥ 0.05 and every |z| ≤ 2.50.
+
+**CANNOT AUTHORIZE:**
+- a paper edit. `paper_body.tex:119` is untouched, and §6's text is the declaration's minimum, for Joseph to approve;
+- a change to either result's covariance.
+
+**NOT CITABLE FOR:**
+- a measured statistical correlation between the two results. Route B's paired estimate failed K2 (§4), so the
+  statistical correlation is bounded, not measured;
+- an event-by-event weight check of AGKYxF1pi, AhtBY, BhtBY or MinosEfficiency (§3).
+
+**Records** are under `fd/xcov/run/`:
+- `v1-probe/`, `v1-a2/` and `k/`: those steps' readouts;
+- `logs/` and `receipts/`;
+- `sacct.txt`;
+- `diag/`: §4's diagnostic;
+- `hpss/`: §8's file list.
+
+**Not in git: the two V0 readouts and BOOT's nine lane records.** They stay on pscratch, listed by sha256 in §8's file
+list.
+- The shared checker `verify_receipt_artifacts.py` gives a false MISSING for them. Each names an input or product bare,
+  for example `of_inputs_5d.npz`, and also cites it by its full pscratch path. `classify_bare` tests MISSING before
+  BY-PATH.
+- This is the same defect that kept E2's vertex configs out of git.
+- Their key fields are in §2: V0's digests and outcomes, and BOOT's B0 and lane results.
+
+`$R` = `/pscratch/sd/j/josephrb/gencmp-x-20261102/`.
+
+## 1. Outcome
+
+**Agree, in every reading and at every r.**
+- The statistical stream is bounded (route A): K2 failed for the paired statistical block (§4).
+- Four bands are also bounded: AGKYxF1pi, AhtBY, BhtBY and MinosEfficiency, which failed V1 (§3).
+- The bounded part is varied over r ∈ [0, 1] in the declared one-parameter family, read on its 10,001-point grid. No
+  quadrant exceeds 2.50 anywhere on the grid, the joint p never falls below 0.05, and r* does not exist.
+<!-- absence-ok: readout facts from k/k.json (quadrants_over empty, changes_at empty, r_star null at every grid point), not a claim that a result was not produced -->
+
+**Every control passed:** K0, K1 (one null band, NormDISCC, §4) and K2 on the joint matrix of the paired blocks, 99 of
+99, with no atime deviation.
+
+**With C-R's numbers, for Joseph.** C-R's columns are from the amendment E report's §3.2 (`fd/gencmp-e/c-r/overlap_refined.json`).
+K0 verified that X's S₁₆ and S₂D are C-R's, so d is the same quantity in both. C-R's ρ is the single correlation of step
+C's rule. X's r is the correlation assigned to the bounded part only. They are different parameters.
+
+| quadrant | C-R: d, % (E_R, Q_R) | C-R reading (ρ*) | C-R z at ρ = 0 | X z, r = 0 | X z, r = 1 |
+|---|---:|---|---:|---:|---:|
+| QA | +0.141 | agree (1.0003) | +0.015 | +0.051 | +0.163 |
+| QB | −0.217 | agree below a correlation (0.9997) | −0.032 | −0.106 | −0.312 |
+| QC | −1.478 | agree below a correlation (0.9902) | −0.202 | −0.415 | −0.985 |
+| QD | +0.724 | agree below a correlation (0.9982) | +0.092 | +0.275 | +0.694 |
+| **joint** | — | — | — | **χ²₄ = 1.170, p = 0.883** | **χ²₄ = 1.240, p = 0.871** |
+
+The X columns are the primary reading: the reported sixteen-cell matrix against Q_R + C_model,2D, with C_model's
+vertices paired.
+
+**The printed readings** (`k/k.json`) also agree at every r:
+
+| reading | r = 0: χ²₄, p | r = 1: χ²₄, p | largest \|z\| |
+|---|---|---|---:|
+| primary | 1.170, 0.883 | 1.240, 0.871 | 0.985 (QC, r = 1) |
+| against Q_R alone (C_model,16 unpaired) | 0.782, 0.941 | 0.926, 0.921 | 0.720 (QD, r = 1) |
+| sensitivity: the C_PL pair set to 0 | 0.802, 0.938 | 1.163, 0.884 | 0.467 (QC, r = 1) |
+
+The implied per-quadrant correlation between the two results (K + rM)ᵢᵢ / √(C16qᵢᵢ C2qᵢᵢ):
+- at r = 0: 0.92, 0.91, 0.77 and 0.89;
+- at r = 1: 0.99, 0.99, 0.96 and 0.98.
+
+## 2. Every step, in order
+
+| step | where | from | result | node-h |
+|---|---|---|---|---:|
+| deploy | saul | fresh clone at M; blobs = the binding's; tests in both environments | OK | 0 |
+| V0 | login37, 3:36 | `$R/deploy` at M | **FAIL**: the draw check matched 0 of 100 replicas. The background leg looked for a log line that RE-2 never prints in negweight-refined mode. Route A was read; the other legs passed (`v0/v0.json`, sha256 `eeadfb96…`) | 0 |
+| V1 probe | job 60678999, 4:14 | `$R/deploy` | PASS: MaRES and Flux 0–9; projected 1,068 s for 175 universes, within the cap | 0.0706 |
+| V1 full | job 60679146, 4:14 | `$R/deploy` | **STOP**: "EtaNCEL:0 wt: 22 files carry its digest" (the exactly-one lookup rule). No readout | 0.0706 |
+| X-A1 | #671, bound #672 | — | V0's background leg reads each replica's p1Streams record | — |
+| deploy-a1 | saul | fresh clone at M′; blobs and tests | OK | 0 |
+| V0-A1 | login37, 3:44 | `$R/deploy-a1` | **PASS**: counts, MC rows, both joins, and all three draw legs for all 100 replicas; route B (`v0-a1/v0.json`, sha256 `ad70afad…`). The first `v0.json` is unchanged | 0 |
+| BOOT | job 60679576, 2:55:23 | `$R/deploy-a1` | B0 PASS (the unreplaced replica reproduces S1's bitwise); the native lane and all 8 lanes rc 0; 100 paired replicas | 2.923 |
+| V1 dry sweep | login37, 297 s | a clone of X-A2's branch at `a6736d33` | PASS: 175 universes, 350 lookups, 0 zero-match (X-A2 §4) | 0 |
+| K own-side dry runs | login37 | X-A2's branch | `a6736d33` stopped (16-cell NormDISCC); `92be5e32` stopped (2D NormDISCC); `312022c3` 101/102; `d670e9a5` 102/102 (X-A2 §4) | 0 |
+| X-A2 | #681, bound #684 | — | the lookup takes byte-identical copies; K1's null bands | — |
+| deploy-a2 | saul | fresh clone at M‴; 5 of 5 blobs = the binding's; tests 60 OK (omnifold_py310) and 60 OK with 6 skips (root_6_28) | OK | 0 |
+| V1 (X-A2) | job 60694933, 29:02 | `$R/deploy-a2` | **34 of 38 bands pass**; 4 bounded (§3) (`v1-a2/v1.json`, sha256 `06707138…`) | 0.484 |
+| K | login37, 11.3 s | `$R/deploy-a2` | **agree** (route A); 99/99 controls (`k/k.json`, sha256 `f3dc2a34…`) | 0 |
+
+**Porcelain.** Each step's deploy had empty porcelain before and after. The logs record it, and K's script output
+records it for K. Atime deviations: none in V0, V0-A1, the V1 probe, V1-A2 or K.
+
+## 3. V1: four bands bounded
+
+**The rule** (declaration §2.2, as reviewed). For each weight of each universe, the quotient of the two sides'
+universe-to-CV ratios is computed on rows where both CV weights are non-zero, sentinel rows excepted. It must be one
+constant to RATIO_TOL = 1e-6. Any non-finite quotient fails.
+
+**34 of 38 bands pass.** Over all 350 lookups the largest relative spread on finite rows is 5.96e-8, at float32
+precision.
+
+**The four that fail do so on non-finite quotients only:**
+
+| universe | wt: non-finite rows | wr: non-finite rows | finite rows' max spread | passes |
+|---|---:|---:|---:|---|
+| AGKYxF1pi:0 | 11,913 | 11,913 | 5.96e-8 | no |
+| AGKYxF1pi:1 | 45,158 | 45,158 | 5.96e-8 | no |
+| AhtBY:0 | 24 | 24 | 5.96e-8 | no |
+| AhtBY:1 | 0 | 0 | 5.96e-8 | yes |
+| BhtBY:0 | 18 | 18 | 5.96e-8 | no |
+| BhtBY:1 | 121 | 121 | 5.96e-8 | no |
+| MinosEfficiency:0 | 0 | 18 | 5.96e-8 | no |
+| MinosEfficiency:1 | 0 | 18 | 5.96e-8 | no |
+
+There are 32,846,302 rows per weight. A band fails if any of its universes fails, so AhtBY fails through universe 0.
+A failed band joins the bounded set (declaration §2.2, ruling 1): its cross block is bounded, not paired.
+
+**Not established.** Whether the non-finite rows are both sides' weights at zero (agreeing) or one side's alone is not
+established. Nothing read them. They would change no reading here: the outcome holds at every r with these bands
+bounded.
+<!-- absence-ok: scoping statement; the cause of the non-finite quotients was not examined, and the report says so -->
+
+**Byte-identical weight files** (X-A2's lookup) resolve in six classes, as the dry sweep found:
+- 22 files: EtaNCEL, GEANT_Neutron, GEANT_Pion, GEANT_Proton, MaNCEL, MinosEfficiency, NormDISCC and NormNCRES;
+- 8 files: EtaNCEL, MaNCEL, NormDISCC and NormNCRES;
+- four 2-file classes (Rvn1pi).
+
+## 4. K
+
+**Controls, 99 of 99:**
+- K0: the structural checks;
+- K1: per band, lateral shift, normalization, C_PL and C_model block;
+- K2: the joint matrix of the paired blocks is PSD.
+
+**The null band.** NormDISCC is null on both sides: its 16-cell blocks are exactly zero, and its 2D blocks' largest
+entry is 1.15e-25 of max|C2q|. K1 asserts that, under X-A2's rule. No other band is null.
+
+**Route A for the statistical stream.** `k.json` records the reason: "K2 failed for the statistical block: falls back to
+route A".
+- V0-A1 and B0 passed and all 100 paired replicas exist, so route B was attempted.
+- The joint matrix [[S16stat, K_stat], [K_statᵀ, S2stat]] was not PSD, so under ruling 1 the statistical stream is
+  bounded, together with the four V1 bands.
+
+**The diagnostic** (approved by the director; outside the bound steps; changes no reading).
+- **Where:** `diag/x_k2_stat_diag.py`, run on login37 in omnifold_py310 with `$R/deploy-a2`'s functions, imported
+  read-only.
+- **Reads:** inputs through `Inputs` (O_NOATIME, pin-checked), and the paired replicas through `committed_sha`.
+- **Writes:** nothing under `$R`. The recursive listing's digest was equal before and after, and the deploy's porcelain
+  stayed empty.
+- **Prints:** dimensionless magnitudes only (`diag/x_k2_stat_diag.out.json`).
+- **Controls:** its R̂ equals `k.json`'s exactly, and the joint matrix is again not PSD.
+
+Results:
+- **The joint statistical matrix:** smallest eigenvalue over largest −0.0328 (K2's tolerance is −1e-12).
+- **ρ̂ is not above 1.** The paired ρ̂ per quadrant is QA 0.803, QB 0.735, QC 0.678 and QD 0.838. K_stat = R̂ ∘ σ16 σ2ᵀ
+  with each side's stated σ, so each quadrant's 2×2 stays PSD up to |ρ| = 1. Every one does.
+- **The failure is the 4×4 structure.**
+  - The largest scale on the cross block that keeps the joint matrix PSD is t* = 0.927.
+  - The most negative direction carries 55% of its weight on the 16-cell side and 45% on the 2D side.
+  - Each side's stated statistical correlations differ from the paired replicas' own sample correlations: by up to 0.31
+    off the diagonal on the 16-cell side, and up to 0.10 on the 2D side.
+  - The replicas' σ is 0.99–1.15 of the stated σ (16-cell) and 0.99–1.07 (2D).
+  - The replicas' own 8×8 sample correlation is PSD (smallest eigenvalue 0.066).
+- **What that means:** the cross correlations estimated from the paired replicas do not fit the within-side
+  correlations of the stated statistical matrices. Those stated matrices are S1's `C_stat` and S5_R's `stat`, built from
+  other replica sets.
+
+## 5. Reads and writes
+
+- **Reads:** every pscratch read in V0, V1, BOOT and K went through the bound `Inputs` class (O_NOATIME, pin-checked),
+  or through `committed_sha` for products. Atime deviations: none in any readout.
+- **Writes:** only under `$R`. Scratch scripts went in `/dev/shm` and were deleted.
+- **Archive:** HPSS is deferred (§8).
+
+## 6. The paper's minimum text (declaration §5, route-A row), for Joseph
+
+The declaration fixes the route-A minimum as the route-B sentence plus a clause. Filled in from §1:
+
+> "Summed over each of the four (p_T, p_∥) quadrants, the sixteen-cell result agrees with the two-dimensional result:
+> their four differences give χ² = 1.17 for four degrees of freedom (p = 0.88), and none exceeds 2.5 standard
+> deviations of its difference. The covariance between the two results is computed from the systematic universes,
+> lateral shifts, generator vertices and paired bootstrap replicas they share, with their run-period terms paired period
+> by period by construction. The universes' signal weights were checked to agree event by event. The statistical
+> correlation and the correlation of four systematic bands, which are not measured, are varied from 0 to 1 within a
+> one-parameter family that keeps the joint covariance valid."
+<!-- absence-ok: the declaration's fixed minimum text for the route-A outcome (declaration section 5); 'not measured' describes the bounded correlations by design -->
+
+**Two phrases of the route-B sentence do not hold as written under this outcome**, so they are flagged for Joseph and
+the director, not changed here:
+- **"and paired bootstrap replicas they share".** The paired replicas' cross block was not used (§4). The statistical
+  correlation is the bounded one named in the added clause.
+- **"The universes' signal weights were checked to agree event by event".** This holds for 34 of 38 bands. The other
+  four are the bounded ones in the clause (§3).
+
+**Also for Joseph:**
+- χ² = 1.17 is the reading at r = 0. At r = 1 it is 1.24 (p = 0.87).
+- `paper_body.tex:119` is not touched.
+
+## 7. Deviations
+
+===== (B2) FD-GENCMP-X-DECLARATION.md sections 3-5 and 8 =====
+## 3. The cross blocks
+
+All are formed at quadrant level: A (4×16) holds the reported cells, and B (4×205) the 2D bins with their areas.
+
+| block | rule | source |
+|---|---|---|
+| each of the 38 bands (175 universes) | K_b = Σ_u w_u (X₁₆,u − X̄₁₆)(X₂D,u − X̄₂D)ᵀ / Σ w. This is each side's own rule (`s1_assemble.mat_cov`, `build_repair.wcov`): Flux weighted by the constraint weights and centred on the weighted mean, every other band unweighted (`fd_xcov.cross_cov`) | X₁₆,u = A U x_u (S1's committed products); X₂D,u = B vec(`U_<b>_<u>`) |
+| each of the 5 laterals | the same rule on the two endpoints. `Muon_Energy_MINOS` is rescaled on both sides by the same X01 factors, per p_T (`s1_assemble.x01_scale`) | S1's `lat_*`; RE-2's `S3_*` |
+| normalization | (0.014 A f)(0.014 B x)ᵀ, the same rank-1 rule on both sides | f; x = `E_R` |
+| C_PL (constructed; ruling 4) | Σ_X v₁₆,X v₂D,Xᵀ, with v₁₆,X = √(k₁₆ e₁₆,X) A(f∘g₁₆,X) and v₂D,X = √k₂D B(√e₂D,X ∘ x ∘ g₂D,X), over PA, PB, PC | `fd_ct_5b_periods.json`; `playlist_term.npz`/`.json` |
+| C_model (vertex-paired; ruling 2) | Σ_k (A(f∘s₁₆,k))(B(x∘s₂D,k))ᵀ over GENIE+MEC, NuWro, GiBUU | `cmodel_5d.json`; `cmodel_2d.json` |
+| statistical, route B | K_stat = R ⊙ (σ₁₆ σ₂Dᵀ). R is the 4×4 sample correlation of the 100 paired replicas' quadrant sums, and σ is each side's stated statistical σ (S1's `C_stat`, S5_R's `stat`). The diagonal ρ's jackknife SE is printed | BOOT; RE-2's replicas 1–100 |
+| statistical, route A, and any band failing V1 | r·M, with M = S₁₆^½ S₂D^½ for each such block. This keeps the joint matrix PSD for every r ∈ [0, 1] (`fd_xcov.bound_matrix`). **It is a one-parameter family, not every admissible correlation (A4):** a correlation outside it can make Var(d_q) smaller than r = 1 does. The paper text says "within this family" | each side's stated block |
+| no partner | C_resp, the unreported boxes, and 2D's C08_R enter V_d in full. The 5D seed block is exactly 0 | — |
+
+**The joint matrix is PSD by construction** for every block formed as paired outer products: the universes, laterals,
+normalization, C_PL and C_model. Route B's statistical block is not, because its σ come from different replicas than R.
+V_d must be positive definite, or K stops and reports.
+
+## 4. The rule (ruling 3), fixed now
+
+**The primary reading:** C₂D = `Q_R` + C_model,2D, the C_PL pair constructed, and route B.
+- z_q = d_q/√V_d,qq, and χ²₄ = dᵀ V_d⁻¹ d, with p = e^(−χ²/2)(1 + χ²/2) (exact for 4 degrees of freedom).
+- **"agree"** iff p ≥ 0.05 and every |z_q| ≤ 2.50.
+- **"differ"** otherwise:
+  - each quadrant with |z| > 2.50 is named;
+  - a joint p < 0.05 with no quadrant over is named "joint".
+
+**V_d must be positive definite.** Its smallest eigenvalue must exceed 1e-12 of its largest (B4), or the reading is a
+stop.
+
+**Route A, or bands bounded (A6).** The rule is read at every point of a 10,001-point grid on [0, 1].
+- If the reading never changes, that is the reading.
+- Otherwise it is "⟨reading at r = 0⟩ only if r < r*", with r* the first change. Every change is listed.
+
+**Route B: R's sampling error (A5).** The readout also prints, for information only, the reading with route B's
+diagonal correlations moved by −1 and +1 jackknife SE. The rule reads the point estimate. A reading that the ±SE
+readings do not share is reported as SE-sensitive, beside the reading, and is not changed by it.
+
+**Always printed:**
+- d, S₁₆ and S₂D;
+- z, χ²₄ and p;
+- the 2×2 ρ_q = K_qq/√(C₁₆,qq C₂D,qq);
+- each block's share of σ_d²: own blocks add, and a cross block subtracts twice its diagonal. Under route A the
+  shares and ρ_q are printed at r = 0 and at r = 1, the bounded term included (B9);
+- every cross block;
+- R and its jackknife SE;
+- the variant against `Q_R` alone (C_model,16 unpaired), labelled "printed";
+- the sensitivity with the C_PL pair set to 0, labelled.
+
+**No outcome is read from the variant or the sensitivity.** Either may stop on its own without stopping the primary
+(B5). No tolerance or threshold here is relaxed after a run. A change needs a new declaration and binding.
+
+## 5. Outcomes, and what the paper says in each (fixed before any number is read)
+
+`paper_body.tex:119`'s first sentence stays until Joseph rules (#651 item 5). Every outcome goes to Joseph with C-R's
+numbers (#662 §3.2, including QA's changed reading). The wording below is the minimum, and Joseph approves the final
+text.
+
+<!-- absence-ok: proposed paper text per outcome, fixed before any number is read; 'not measured' describes the route-A fallback's design -->
+| outcome | the paper (minimum) |
+|---|---|
+| agree (route B) | "Summed over each of the four (p_T, p_∥) quadrants, the sixteen-cell result agrees with the two-dimensional result: their four differences give χ² = … for four degrees of freedom (p = …), and none exceeds 2.5 standard deviations of its difference. The covariance between the two results is computed from the systematic universes, lateral shifts, generator vertices and paired bootstrap replicas they share, with their run-period terms paired period by period by construction. The universes' signal weights were checked to agree event by event." |
+| agree (route A, or bands bounded, at every r) | the same, with "The statistical correlation [and the correlation of …], which is not measured, is varied from 0 to 1 within a one-parameter family that keeps the joint covariance valid." |
+| "agree only if r < r*" | "… agrees if [the statistical fluctuations / …], whose correlation is not measured, are correlated by less than r* in that family; above that, … differs." |
+| "differ only if r < r*" | treated as a "differ" (the row below), with r* stated |
+| differ (any form) | **No paper text until the director and Joseph rule.** If it stands, the minimum is "In the … quadrant[s] [or: jointly], the sixteen-cell sums differ from the two-dimensional result (χ² = … for four degrees of freedom, p = …; z = …), with the covariance between the two results computed from the components they share. The cause is not established." It may not be softened into a bound |
+| any stop (K0, K1, K2, a non-positive-definite V_d, K run before BOOT ended) | no X number is used. The paper keeps its present sentence, and the report names the check. A stop is final under this binding |
+
+## 6. Host, cost, reads and writes, HPSS
+## 8. Limits
+
+- **Unpaired blocks** (C_resp, the boxes, C08_R) enter V_d in full. That is correct within the stated covariances,
+  and their shares are printed.
+- **The C_PL pair** is a construction by the two blocks' shared rule, not a measurement. The z with it at 0 is
+  printed.
+- **V1 compares the signal-row weights,** not the denominator or background weights (§2.2). The paper text says
+  "signal weights" (A7).
+- **The join's ambiguous rows** are those whose (p_T, p_∥) occurs more than once in the 2D sample. They are counted and
+  printed, and the greedy match may pair such a row with another event of the same coordinates (B8).
+- **Route B's statistical block** scales a 100-pair correlation by σ from S1's 50 and RE-2's 300 replicas. R's
+  estimation error is printed as its jackknife SE.
+- **A "differ"** says the two estimators' quadrant sums disagree beyond their stated covariances and the cross
+  covariance measured here. It does not say which is right, and neither covariance prices unfolding bias.
+
+## 9. Review
+
+===== (C) candidates =====
+Candidate 1: "Summed over each of the four (pT, p∥) quadrants, the sixteen-cell result differs from the two-dimensional result by −1.5 to +0.7 per cent. With the covariance between the two results computed from the systematic universes, lateral shifts, generator-model shifts and, by construction, run-period terms they share, the four differences give χ² = 1.17–1.24 for four degrees of freedom (p = 0.87–0.88), and none exceeds one standard deviation. Their statistical correlation, and that of four systematic bands whose event weights could not be verified to match, were varied from zero to full correlation within a one-parameter family that keeps the joint covariance valid; the agreement holds throughout."
+
+Candidate 2: "Summed over each of the four (pT, p∥) quadrants, the sixteen-cell result agrees with the two-dimensional result to within −1.5 to +0.7 per cent: with the covariance between them computed from the systematic and statistical components they share, χ² = 1.2 for four degrees of freedom (p = 0.88), and the agreement holds whatever the unmeasured part of their correlation."
