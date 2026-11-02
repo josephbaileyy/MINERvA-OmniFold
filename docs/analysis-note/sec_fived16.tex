@@ -40,6 +40,9 @@ median & \multicolumn{6}{c}{} & \fvval{sigmed-C_total} & \fvval{sigmed-C_resp} &
 }
 \end{table}
 
+Summed over each of the four $(\pT,\pPar)$ quadrants divided at $\pT=\fvval{h2-mid-pt}$ and $\pPar=\fvval{h2-mid-pz}$~GeV/$c$, the sixteen-cell result lies \fvval{g3d-pct-lo}--\fvval{g3d-pct-hi}\,\% below the three-observable central value of \S\ref{sec:3d}, the largest difference being \fvval{g3d-zmax} of the sixteen-cell uncertainty of the quadrant sum. This comparison is descriptive, not a test: the three-observable central value carries no uncertainty here, since no 3D covariance is adopted, so it reads as agreement or disagreement in neither direction. The two quadrants with $\pT<\fvval{h2-mid-pt}$~GeV/$c$ include unreported boxes at their central value, a share of at most $\fvval{g3d-qa-unrep}$ of the sum.
+% GENCMP round (DECISION-20261101-joseph-gencmp-paper-adoption.md item 4: the note only, "descriptive, not a test"): fd/gencmp/readout/overlap.json quadrants[*].3D (d_pct -0.17, -0.82, -0.76, -0.20; d_over_sigma16 up to -0.170, QB; outcome "agree at the sigma_16 scale (descriptive)", binding ruling 3), QA's unreported_share_P5 1.1e-7 (QB's boxes hold zero); FD-GENCMP-REPORT.md sec. 2.3. The 2D quadrant comparison is held for the correlation scoping (item 5) and is not printed.
+
 \subsection{The reported covariance}
 \label{sec:fived16-cov}
 The reported covariance is $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$, with $C_{\mathrm{total}}=C_{\mathrm{e}}+C_{\mathrm{model}}$; the run-period block $C_{\mathrm{PL,5D}}$ is described in \S\ref{sec:fived16-pl}. $C_{\mathrm{e}}$ sums the statistical bootstrap of configuration~(e); the PPFX flux universes, weighted by the neutrino--electron and inverse-muon-decay constraint; the interaction-model and detector bands, which reweight simulated events; the lateral bands, which shift reconstructed kinematics (\S\ref{sec:systematics}); the normalization; and the training-seed block. With full-sample binning and deterministic training, the unfolds at the other seeds are bitwise equal to the central one, so the measured training-seed block is zero in every cell. Table~\ref{tab:fived16-groups} gives each group's per-cell relative $\sigma$.
@@ -198,25 +201,25 @@ The two tunes use the same quasielastic cross-section model, GENIE's \texttt{Nie
 
 \subsection{Comparison with generator predictions}
 \label{sec:fived16-gen}
-Table~\ref{tab:fived16-gen} compares the result with five generator predictions. Each gives the $\chi^2$ against the reported covariance plus $V_g$, $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance, and the shape-only $\chi^2$, with the normalization free, and both again without $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-pl}). No diagonal-only $\chi^2$ is formed. GiBUU's sample has no events above $E_\nu=\fvval{cmodel-gibuu-enu}$~GeV, so it is compared on the 8 cells below $\pPar=\fvval{h2-mid-pz}$~GeV/$c$ only, and no value is formed on the other 8. In the GENIE CV and NuWro samples, at least \fvval{gagg-genie_cv-hi}\% and \fvval{gagg-nuwro-hi}\%, respectively, of the cross section above $\pPar=\fvval{h2-mid-pz}$~GeV/$c$ comes from $E_\nu>\fvval{gagg-ecut}$~GeV. Between $\pPar=\fvval{gagg-pz-lo}$ and \fvval{h2-mid-pz}~GeV/$c$, they are \fvval{gagg-genie_cv-lo}\% and \fvval{gagg-nuwro-lo}\%. These GENIE CV and NuWro fractions, not GiBUU values, are what a sample stopping at $E_\nu=\fvval{gagg-ecut}$~GeV would miss. The NuWro and GiBUU predictions are on a carbon target, with no correction to CH. MINERvA Tune~v1 is the simulation's prior, not an independent prediction. Because $C_{\mathrm{model}}$ holds the GENIE + MEC, NuWro and GiBUU shifts, those comparisons each use a covariance built in part from the compared generator, and the GENIE CV comparison does so through the reference of the ratios.
+Table~\ref{tab:fived16-gen} compares the result with five generator predictions. Each gives the $\chi^2$ against the reported covariance plus $V_g$, $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance, and the shape-only $\chi^2$, with the normalization free, and both again without $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-pl}). No diagonal-only $\chi^2$ is formed. GiBUU's sample has no events above $E_\nu=\fvval{cmodel-gibuu-enu}$~GeV, so it is compared on the 8 cells below $\pPar=\fvval{h2-mid-pz}$~GeV/$c$ only, and no value is formed on the other 8. In the GENIE CV and NuWro samples, at least \fvval{gagg-genie_cv-hi}\% and \fvval{gagg-nuwro-hi}\%, respectively, of the cross section above $\pPar=\fvval{h2-mid-pz}$~GeV/$c$ comes from $E_\nu>\fvval{gagg-ecut}$~GeV. Between $\pPar=\fvval{gagg-pz-lo}$ and \fvval{h2-mid-pz}~GeV/$c$, they are \fvval{gagg-genie_cv-lo}\% and \fvval{gagg-nuwro-lo}\%. These GENIE CV and NuWro fractions, not GiBUU values, are what a sample stopping at $E_\nu=\fvval{gagg-ecut}$~GeV would miss. All five predictions are in the analysis definitions of $W$ and of the muon angle, and NuWro and GiBUU, generated on carbon, are corrected to CH by adding each generator's own free-proton prediction with weight \fvval{g-ch-hweight} per nucleon (\S\ref{sec:fived16-gen-target}). MINERvA Tune~v1 is the simulation's prior, not an independent prediction. Because $C_{\mathrm{model}}$ holds the GENIE + MEC, NuWro and GiBUU shifts, those comparisons each use a covariance built in part from the compared generator, and the GENIE CV comparison does so through the reference of the ratios.
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{$\chi^2$ against the reported covariance plus $V_g$, $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance, with the shape-only $\chi^2$ beside it; the same two without the run-period block, against $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$; and the last column the $\chi^2$ without the response and run-period blocks, against $C_{\mathrm{total}}+V_g$. The ndf of each block is given in its heading.}
+\caption{$\chi^2$ against the reported covariance plus $V_g$, $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$, where $V_g$ is the prediction's finite-sample (diagonal) covariance, with the shape-only $\chi^2$ beside it, and the same two without the run-period block, against $C_{\mathrm{total}}+C_{\mathrm{resp}}+V_g$. All five predictions are in the analysis definitions, with NuWro and GiBUU corrected to CH; the paper prints these values. The ndf of each block is given in its heading.}
 \label{tab:fived16-gen}
-\begin{tabular}{@{}lccccc@{}}
+\begin{tabular}{@{}lcccc@{}}
 \toprule
- & \multicolumn{2}{c}{reported covariance} & \multicolumn{2}{c}{without $C_{\mathrm{PL,5D}}$} & $C_{\mathrm{total}}$ \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-6}
-prediction & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ \\
+ & \multicolumn{2}{c}{reported covariance} & \multicolumn{2}{c}{without $C_{\mathrm{PL,5D}}$} \\ \cmidrule(lr){2-3}\cmidrule(l){4-5}
+prediction & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ & shape-only $\chi^2$ \\
 \midrule
-\multicolumn{6}{@{}l}{All 16 cells: ndf \fvval{g-gcv-total-ndf}, shape-only \fvval{g-gcv-shape_only-ndf}} \\
-\fvval{label-gcv} & \fvval{g-gcv-total-chi2} & \fvval{g-gcv-shape_only-chi2} & \fvval{g-gcv-total-chi2-nopl} & \fvval{g-gcv-shape_only-chi2-nopl} & \fvval{g-gcv-nocresp-chi2} \\
-\fvval{label-gmec} & \fvval{g-gmec-total-chi2} & \fvval{g-gmec-shape_only-chi2} & \fvval{g-gmec-total-chi2-nopl} & \fvval{g-gmec-shape_only-chi2-nopl} & \fvval{g-gmec-nocresp-chi2} \\
-\fvval{label-nuwro} & \fvval{g-nuwro-total-chi2} & \fvval{g-nuwro-shape_only-chi2} & \fvval{g-nuwro-total-chi2-nopl} & \fvval{g-nuwro-shape_only-chi2-nopl} & \fvval{g-nuwro-nocresp-chi2} \\
-\fvval{label-tune} & \fvval{g-tune-total-chi2} & \fvval{g-tune-shape_only-chi2} & \fvval{g-tune-total-chi2-nopl} & \fvval{g-tune-shape_only-chi2-nopl} & \fvval{g-tune-nocresp-chi2} \\
+\multicolumn{5}{@{}l}{All 16 cells: ndf \fvval{g-gcv-total-ndf}, shape-only \fvval{g-gcv-shape_only-ndf}} \\
+\fvval{label-gcv} & \fvval{g-gcv-total-chi2} & \fvval{g-gcv-shape_only-chi2} & \fvval{g-gcv-total-chi2-nopl} & \fvval{g-gcv-shape_only-chi2-nopl} \\
+\fvval{label-gmec} & \fvval{g-gmec-total-chi2} & \fvval{g-gmec-shape_only-chi2} & \fvval{g-gmec-total-chi2-nopl} & \fvval{g-gmec-shape_only-chi2-nopl} \\
+\fvval{label-nuwro} & \fvval{g-nuwro-total-chi2} & \fvval{g-nuwro-shape_only-chi2} & \fvval{g-nuwro-total-chi2-nopl} & \fvval{g-nuwro-shape_only-chi2-nopl} \\
+\fvval{label-tune} & \fvval{g-tune-total-chi2} & \fvval{g-tune-shape_only-chi2} & \fvval{g-tune-total-chi2-nopl} & \fvval{g-tune-shape_only-chi2-nopl} \\
 \midrule
-\multicolumn{6}{@{}l}{8-cell subset, $\pPar<\fvval{h2-mid-pz}$~GeV/$c$: ndf \fvval{g-gibuu-total-ndf}, shape-only \fvval{g-gibuu-shape_only-ndf}} \\
-\fvval{label-gibuu} & \fvval{g-gibuu-total-chi2} & \fvval{g-gibuu-shape_only-chi2} & \fvval{g-gibuu-total-chi2-nopl} & \fvval{g-gibuu-shape_only-chi2-nopl} & \fvval{g-gibuu-nocresp-chi2} \\
+\multicolumn{5}{@{}l}{8-cell subset, $\pPar<\fvval{h2-mid-pz}$~GeV/$c$: ndf \fvval{g-gibuu-total-ndf}, shape-only \fvval{g-gibuu-shape_only-ndf}} \\
+\fvval{label-gibuu} & \fvval{g-gibuu-total-chi2} & \fvval{g-gibuu-shape_only-chi2} & \fvval{g-gibuu-total-chi2-nopl} & \fvval{g-gibuu-shape_only-chi2-nopl} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -225,7 +228,7 @@ Table~\ref{tab:fived16-pulls} gives each cell's pull and $(g-f)/f$.
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{Per-cell pull $(f-g)/\sigma$ against $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ and $(g-f)/f$ (\%) for each prediction; GiBUU on its eight cells only.}
+\caption{Per-cell pull $(f-g)/\sigma$ against $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ and $(g-f)/f$ (\%) for each prediction of Table~\ref{tab:fived16-gen}; GiBUU on its eight cells only.}
 \label{tab:fived16-pulls}
 \scriptsize\setlength{\tabcolsep}{3pt} \resizebox{\textwidth}{!}{
 \begin{tabular}{@{}lrrrrrrrrrr@{}}
@@ -256,45 +259,45 @@ R15 & \fvval{g-gcv-pull-R15} & \fvval{g-gcv-gf-R15} & \fvval{g-gmec-pull-R15} & 
 
 The fake-data bias exceeds the stated thresholds at the GiBUU hybrid truth under the reported covariance, and also at the GiBUU $\Eavail$ shape without $C_{\mathrm{PL,5D}}$ (\S\ref{sec:fived16-fd}), so the GiBUU comparison carries that limitation.
 
-The sensitivity of the reported $\chi^2$ to the correlations is probed by shrinking one group's correlations toward the diagonal by a fraction $\alpha$ of the way, with its variances kept. These are descriptive sensitivities, not alternative results. Shrinking only the flux correlations by \fvval{sens-alpha-pct}\,\% lowers the $\chi^2$ of the 16-cell predictions by \fvval{sens-flux-fall-lo}--\fvval{sens-flux-fall-hi}\,\%. The same change to the detector or lateral correlations lowers it by at most \fvval{sens-detlat-fall-max}\,\%. With the correlations of the interaction, flux, detector and lateral groups removed, every 16-cell prediction keeps $\chi^2\geq\fvval{sens-joint-chi2-min}$ for 16 degrees of freedom. Table~\ref{tab:fived16-sens} gives each group's sensitivity, GiBUU's eight-cell values included. The flux correlations are themselves estimated from the \fvval{fb-universes} PPFX flux universes (\S\ref{sec:fived16-cov}). Rebuilding the flux block from \fvval{fb-replicates} bootstrap replicates of those universes, with its variances kept, gives \fvval{fb-plo}--\fvval{fb-phi}\,\% percentile bands of the total $\chi^2$: \fvval{label-gcv} \fvval{fb-gcv-lo}--\fvval{fb-gcv-hi} around \fvval{g-gcv-total-chi2int}, \fvval{label-gmec} \fvval{fb-gmec-lo}--\fvval{fb-gmec-hi} around \fvval{g-gmec-total-chi2int}, \fvval{label-nuwro} \fvval{fb-nuwro-lo}--\fvval{fb-nuwro-hi} around \fvval{g-nuwro-total-chi2int}, \fvval{label-tune} \fvval{fb-tune-lo}--\fvval{fb-tune-hi} around \fvval{g-tune-total-chi2int}, and \fvval{label-gibuu}, on its \fvval{g-gibuu-total-ndf} cells, \fvval{fb-gibuu-lo}--\fvval{fb-gibuu-hi} around \fvval{g-gibuu-total-chi2int}. In each, the bootstrap median lies above the reported value, by \fvval{fb-gcv-offset}, \fvval{fb-gmec-offset}, \fvval{fb-nuwro-offset}, \fvval{fb-tune-offset} and \fvval{fb-gibuu-offset} in the same order. These bands measure the estimation scatter of the reported $\chi^2$ given these universes, not how much it would change if the flux correlations were wrong, which the shrinking above probes; they are not intervals for the $\chi^2$ under the true correlations.
+The sensitivities, the flux bootstrap and the eigenmode breakdown that follow were computed for the predictions in their generator definitions, with NuWro and GiBUU on carbon (Table~\ref{tab:fived16-gen-stageg}). The sensitivity of the reported $\chi^2$ to the correlations is probed by shrinking one group's correlations toward the diagonal by a fraction $\alpha$ of the way, with its variances kept. These are descriptive sensitivities, not alternative results. Shrinking only the flux correlations by \fvval{sens-alpha-pct}\,\% lowers the $\chi^2$ of the 16-cell predictions by \fvval{sens-flux-fall-lo}--\fvval{sens-flux-fall-hi}\,\%. The same change to the detector or lateral correlations lowers it by at most \fvval{sens-detlat-fall-max}\,\%. With the correlations of the interaction, flux, detector and lateral groups removed, every 16-cell prediction keeps $\chi^2\geq\fvval{sens-joint-chi2-min}$ for 16 degrees of freedom. Table~\ref{tab:fived16-sens} gives each group's sensitivity, GiBUU's eight-cell values included. The flux correlations are themselves estimated from the \fvval{fb-universes} PPFX flux universes (\S\ref{sec:fived16-cov}). Rebuilding the flux block from \fvval{fb-replicates} bootstrap replicates of those universes, with its variances kept, gives \fvval{fb-plo}--\fvval{fb-phi}\,\% percentile bands of the total $\chi^2$: \fvval{gs-label-gcv} \fvval{fb-gcv-lo}--\fvval{fb-gcv-hi} around \fvval{gs-gcv-total-chi2int}, \fvval{gs-label-gmec} \fvval{fb-gmec-lo}--\fvval{fb-gmec-hi} around \fvval{gs-gmec-total-chi2int}, \fvval{gs-label-nuwro} \fvval{fb-nuwro-lo}--\fvval{fb-nuwro-hi} around \fvval{gs-nuwro-total-chi2int}, \fvval{gs-label-tune} \fvval{fb-tune-lo}--\fvval{fb-tune-hi} around \fvval{gs-tune-total-chi2int}, and \fvval{gs-label-gibuu}, on its \fvval{gs-gibuu-total-ndf} cells, \fvval{fb-gibuu-lo}--\fvval{fb-gibuu-hi} around \fvval{gs-gibuu-total-chi2int}. In each, the bootstrap median lies above the reported value, by \fvval{fb-gcv-offset}, \fvval{fb-gmec-offset}, \fvval{fb-nuwro-offset}, \fvval{fb-tune-offset} and \fvval{fb-gibuu-offset} in the same order. These bands measure the estimation scatter of the reported $\chi^2$ given these universes, not how much it would change if the flux correlations were wrong, which the shrinking above probes; they are not intervals for the $\chi^2$ under the true correlations.
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{$\chi^2$ against $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ with one group's correlations shrunk by $\alpha$ toward the diagonal ($\alpha$ of the declared grid; the first column is the reported $\chi^2$). Degrees of freedom as in Table~\ref{tab:fived16-gen}.}
+\caption{$\chi^2$ against $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ with one group's correlations shrunk by $\alpha$ toward the diagonal ($\alpha$ of the declared grid; the first column is the reported $\chi^2$), for the predictions in their generator definitions, with NuWro and GiBUU on carbon (Table~\ref{tab:fived16-gen-stageg}). Degrees of freedom as in Table~\ref{tab:fived16-gen}.}
 \label{tab:fived16-sens}
 \begin{tabular}{@{}llrrrrr@{}}
 \toprule
 group & prediction & $\alpha=\fvval{sens-alpha-0}$ & $\alpha=\fvval{sens-alpha-0p1}$ & $\alpha=\fvval{sens-alpha-0p25}$ & $\alpha=\fvval{sens-alpha-0p5}$ & $\alpha=\fvval{sens-alpha-1}$ \\
 \midrule
-interaction & \fvval{label-gcv} & \fvval{sens-interaction-gcv-a0} & \fvval{sens-interaction-gcv-a0.1} & \fvval{sens-interaction-gcv-a0.25} & \fvval{sens-interaction-gcv-a0.5} & \fvval{sens-interaction-gcv-a1} \\
- & \fvval{label-gmec} & \fvval{sens-interaction-gmec-a0} & \fvval{sens-interaction-gmec-a0.1} & \fvval{sens-interaction-gmec-a0.25} & \fvval{sens-interaction-gmec-a0.5} & \fvval{sens-interaction-gmec-a1} \\
- & \fvval{label-nuwro} & \fvval{sens-interaction-nuwro-a0} & \fvval{sens-interaction-nuwro-a0.1} & \fvval{sens-interaction-nuwro-a0.25} & \fvval{sens-interaction-nuwro-a0.5} & \fvval{sens-interaction-nuwro-a1} \\
- & \fvval{label-gibuu} & \fvval{sens-interaction-gibuu-a0} & \fvval{sens-interaction-gibuu-a0.1} & \fvval{sens-interaction-gibuu-a0.25} & \fvval{sens-interaction-gibuu-a0.5} & \fvval{sens-interaction-gibuu-a1} \\
- & \fvval{label-tune} & \fvval{sens-interaction-tune-a0} & \fvval{sens-interaction-tune-a0.1} & \fvval{sens-interaction-tune-a0.25} & \fvval{sens-interaction-tune-a0.5} & \fvval{sens-interaction-tune-a1} \\
+interaction & \fvval{gs-label-gcv} & \fvval{sens-interaction-gcv-a0} & \fvval{sens-interaction-gcv-a0.1} & \fvval{sens-interaction-gcv-a0.25} & \fvval{sens-interaction-gcv-a0.5} & \fvval{sens-interaction-gcv-a1} \\
+ & \fvval{gs-label-gmec} & \fvval{sens-interaction-gmec-a0} & \fvval{sens-interaction-gmec-a0.1} & \fvval{sens-interaction-gmec-a0.25} & \fvval{sens-interaction-gmec-a0.5} & \fvval{sens-interaction-gmec-a1} \\
+ & \fvval{gs-label-nuwro} & \fvval{sens-interaction-nuwro-a0} & \fvval{sens-interaction-nuwro-a0.1} & \fvval{sens-interaction-nuwro-a0.25} & \fvval{sens-interaction-nuwro-a0.5} & \fvval{sens-interaction-nuwro-a1} \\
+ & \fvval{gs-label-gibuu} & \fvval{sens-interaction-gibuu-a0} & \fvval{sens-interaction-gibuu-a0.1} & \fvval{sens-interaction-gibuu-a0.25} & \fvval{sens-interaction-gibuu-a0.5} & \fvval{sens-interaction-gibuu-a1} \\
+ & \fvval{gs-label-tune} & \fvval{sens-interaction-tune-a0} & \fvval{sens-interaction-tune-a0.1} & \fvval{sens-interaction-tune-a0.25} & \fvval{sens-interaction-tune-a0.5} & \fvval{sens-interaction-tune-a1} \\
 \addlinespace
-flux & \fvval{label-gcv} & \fvval{sens-flux-gcv-a0} & \fvval{sens-flux-gcv-a0.1} & \fvval{sens-flux-gcv-a0.25} & \fvval{sens-flux-gcv-a0.5} & \fvval{sens-flux-gcv-a1} \\
- & \fvval{label-gmec} & \fvval{sens-flux-gmec-a0} & \fvval{sens-flux-gmec-a0.1} & \fvval{sens-flux-gmec-a0.25} & \fvval{sens-flux-gmec-a0.5} & \fvval{sens-flux-gmec-a1} \\
- & \fvval{label-nuwro} & \fvval{sens-flux-nuwro-a0} & \fvval{sens-flux-nuwro-a0.1} & \fvval{sens-flux-nuwro-a0.25} & \fvval{sens-flux-nuwro-a0.5} & \fvval{sens-flux-nuwro-a1} \\
- & \fvval{label-gibuu} & \fvval{sens-flux-gibuu-a0} & \fvval{sens-flux-gibuu-a0.1} & \fvval{sens-flux-gibuu-a0.25} & \fvval{sens-flux-gibuu-a0.5} & \fvval{sens-flux-gibuu-a1} \\
- & \fvval{label-tune} & \fvval{sens-flux-tune-a0} & \fvval{sens-flux-tune-a0.1} & \fvval{sens-flux-tune-a0.25} & \fvval{sens-flux-tune-a0.5} & \fvval{sens-flux-tune-a1} \\
+flux & \fvval{gs-label-gcv} & \fvval{sens-flux-gcv-a0} & \fvval{sens-flux-gcv-a0.1} & \fvval{sens-flux-gcv-a0.25} & \fvval{sens-flux-gcv-a0.5} & \fvval{sens-flux-gcv-a1} \\
+ & \fvval{gs-label-gmec} & \fvval{sens-flux-gmec-a0} & \fvval{sens-flux-gmec-a0.1} & \fvval{sens-flux-gmec-a0.25} & \fvval{sens-flux-gmec-a0.5} & \fvval{sens-flux-gmec-a1} \\
+ & \fvval{gs-label-nuwro} & \fvval{sens-flux-nuwro-a0} & \fvval{sens-flux-nuwro-a0.1} & \fvval{sens-flux-nuwro-a0.25} & \fvval{sens-flux-nuwro-a0.5} & \fvval{sens-flux-nuwro-a1} \\
+ & \fvval{gs-label-gibuu} & \fvval{sens-flux-gibuu-a0} & \fvval{sens-flux-gibuu-a0.1} & \fvval{sens-flux-gibuu-a0.25} & \fvval{sens-flux-gibuu-a0.5} & \fvval{sens-flux-gibuu-a1} \\
+ & \fvval{gs-label-tune} & \fvval{sens-flux-tune-a0} & \fvval{sens-flux-tune-a0.1} & \fvval{sens-flux-tune-a0.25} & \fvval{sens-flux-tune-a0.5} & \fvval{sens-flux-tune-a1} \\
 \addlinespace
-detector & \fvval{label-gcv} & \fvval{sens-detector-gcv-a0} & \fvval{sens-detector-gcv-a0.1} & \fvval{sens-detector-gcv-a0.25} & \fvval{sens-detector-gcv-a0.5} & \fvval{sens-detector-gcv-a1} \\
- & \fvval{label-gmec} & \fvval{sens-detector-gmec-a0} & \fvval{sens-detector-gmec-a0.1} & \fvval{sens-detector-gmec-a0.25} & \fvval{sens-detector-gmec-a0.5} & \fvval{sens-detector-gmec-a1} \\
- & \fvval{label-nuwro} & \fvval{sens-detector-nuwro-a0} & \fvval{sens-detector-nuwro-a0.1} & \fvval{sens-detector-nuwro-a0.25} & \fvval{sens-detector-nuwro-a0.5} & \fvval{sens-detector-nuwro-a1} \\
- & \fvval{label-gibuu} & \fvval{sens-detector-gibuu-a0} & \fvval{sens-detector-gibuu-a0.1} & \fvval{sens-detector-gibuu-a0.25} & \fvval{sens-detector-gibuu-a0.5} & \fvval{sens-detector-gibuu-a1} \\
- & \fvval{label-tune} & \fvval{sens-detector-tune-a0} & \fvval{sens-detector-tune-a0.1} & \fvval{sens-detector-tune-a0.25} & \fvval{sens-detector-tune-a0.5} & \fvval{sens-detector-tune-a1} \\
+detector & \fvval{gs-label-gcv} & \fvval{sens-detector-gcv-a0} & \fvval{sens-detector-gcv-a0.1} & \fvval{sens-detector-gcv-a0.25} & \fvval{sens-detector-gcv-a0.5} & \fvval{sens-detector-gcv-a1} \\
+ & \fvval{gs-label-gmec} & \fvval{sens-detector-gmec-a0} & \fvval{sens-detector-gmec-a0.1} & \fvval{sens-detector-gmec-a0.25} & \fvval{sens-detector-gmec-a0.5} & \fvval{sens-detector-gmec-a1} \\
+ & \fvval{gs-label-nuwro} & \fvval{sens-detector-nuwro-a0} & \fvval{sens-detector-nuwro-a0.1} & \fvval{sens-detector-nuwro-a0.25} & \fvval{sens-detector-nuwro-a0.5} & \fvval{sens-detector-nuwro-a1} \\
+ & \fvval{gs-label-gibuu} & \fvval{sens-detector-gibuu-a0} & \fvval{sens-detector-gibuu-a0.1} & \fvval{sens-detector-gibuu-a0.25} & \fvval{sens-detector-gibuu-a0.5} & \fvval{sens-detector-gibuu-a1} \\
+ & \fvval{gs-label-tune} & \fvval{sens-detector-tune-a0} & \fvval{sens-detector-tune-a0.1} & \fvval{sens-detector-tune-a0.25} & \fvval{sens-detector-tune-a0.5} & \fvval{sens-detector-tune-a1} \\
 \addlinespace
-lateral & \fvval{label-gcv} & \fvval{sens-lateral-gcv-a0} & \fvval{sens-lateral-gcv-a0.1} & \fvval{sens-lateral-gcv-a0.25} & \fvval{sens-lateral-gcv-a0.5} & \fvval{sens-lateral-gcv-a1} \\
- & \fvval{label-gmec} & \fvval{sens-lateral-gmec-a0} & \fvval{sens-lateral-gmec-a0.1} & \fvval{sens-lateral-gmec-a0.25} & \fvval{sens-lateral-gmec-a0.5} & \fvval{sens-lateral-gmec-a1} \\
- & \fvval{label-nuwro} & \fvval{sens-lateral-nuwro-a0} & \fvval{sens-lateral-nuwro-a0.1} & \fvval{sens-lateral-nuwro-a0.25} & \fvval{sens-lateral-nuwro-a0.5} & \fvval{sens-lateral-nuwro-a1} \\
- & \fvval{label-gibuu} & \fvval{sens-lateral-gibuu-a0} & \fvval{sens-lateral-gibuu-a0.1} & \fvval{sens-lateral-gibuu-a0.25} & \fvval{sens-lateral-gibuu-a0.5} & \fvval{sens-lateral-gibuu-a1} \\
- & \fvval{label-tune} & \fvval{sens-lateral-tune-a0} & \fvval{sens-lateral-tune-a0.1} & \fvval{sens-lateral-tune-a0.25} & \fvval{sens-lateral-tune-a0.5} & \fvval{sens-lateral-tune-a1} \\
+lateral & \fvval{gs-label-gcv} & \fvval{sens-lateral-gcv-a0} & \fvval{sens-lateral-gcv-a0.1} & \fvval{sens-lateral-gcv-a0.25} & \fvval{sens-lateral-gcv-a0.5} & \fvval{sens-lateral-gcv-a1} \\
+ & \fvval{gs-label-gmec} & \fvval{sens-lateral-gmec-a0} & \fvval{sens-lateral-gmec-a0.1} & \fvval{sens-lateral-gmec-a0.25} & \fvval{sens-lateral-gmec-a0.5} & \fvval{sens-lateral-gmec-a1} \\
+ & \fvval{gs-label-nuwro} & \fvval{sens-lateral-nuwro-a0} & \fvval{sens-lateral-nuwro-a0.1} & \fvval{sens-lateral-nuwro-a0.25} & \fvval{sens-lateral-nuwro-a0.5} & \fvval{sens-lateral-nuwro-a1} \\
+ & \fvval{gs-label-gibuu} & \fvval{sens-lateral-gibuu-a0} & \fvval{sens-lateral-gibuu-a0.1} & \fvval{sens-lateral-gibuu-a0.25} & \fvval{sens-lateral-gibuu-a0.5} & \fvval{sens-lateral-gibuu-a1} \\
+ & \fvval{gs-label-tune} & \fvval{sens-lateral-tune-a0} & \fvval{sens-lateral-tune-a0.1} & \fvval{sens-lateral-tune-a0.25} & \fvval{sens-lateral-tune-a0.5} & \fvval{sens-lateral-tune-a1} \\
 \addlinespace
-the four together & \fvval{label-gcv} & \fvval{sens-c_e_systematic-gcv-a0} & \fvval{sens-c_e_systematic-gcv-a0.1} & \fvval{sens-c_e_systematic-gcv-a0.25} & \fvval{sens-c_e_systematic-gcv-a0.5} & \fvval{sens-c_e_systematic-gcv-a1} \\
- & \fvval{label-gmec} & \fvval{sens-c_e_systematic-gmec-a0} & \fvval{sens-c_e_systematic-gmec-a0.1} & \fvval{sens-c_e_systematic-gmec-a0.25} & \fvval{sens-c_e_systematic-gmec-a0.5} & \fvval{sens-c_e_systematic-gmec-a1} \\
- & \fvval{label-nuwro} & \fvval{sens-c_e_systematic-nuwro-a0} & \fvval{sens-c_e_systematic-nuwro-a0.1} & \fvval{sens-c_e_systematic-nuwro-a0.25} & \fvval{sens-c_e_systematic-nuwro-a0.5} & \fvval{sens-c_e_systematic-nuwro-a1} \\
- & \fvval{label-gibuu} & \fvval{sens-c_e_systematic-gibuu-a0} & \fvval{sens-c_e_systematic-gibuu-a0.1} & \fvval{sens-c_e_systematic-gibuu-a0.25} & \fvval{sens-c_e_systematic-gibuu-a0.5} & \fvval{sens-c_e_systematic-gibuu-a1} \\
- & \fvval{label-tune} & \fvval{sens-c_e_systematic-tune-a0} & \fvval{sens-c_e_systematic-tune-a0.1} & \fvval{sens-c_e_systematic-tune-a0.25} & \fvval{sens-c_e_systematic-tune-a0.5} & \fvval{sens-c_e_systematic-tune-a1} \\
+the four together & \fvval{gs-label-gcv} & \fvval{sens-c_e_systematic-gcv-a0} & \fvval{sens-c_e_systematic-gcv-a0.1} & \fvval{sens-c_e_systematic-gcv-a0.25} & \fvval{sens-c_e_systematic-gcv-a0.5} & \fvval{sens-c_e_systematic-gcv-a1} \\
+ & \fvval{gs-label-gmec} & \fvval{sens-c_e_systematic-gmec-a0} & \fvval{sens-c_e_systematic-gmec-a0.1} & \fvval{sens-c_e_systematic-gmec-a0.25} & \fvval{sens-c_e_systematic-gmec-a0.5} & \fvval{sens-c_e_systematic-gmec-a1} \\
+ & \fvval{gs-label-nuwro} & \fvval{sens-c_e_systematic-nuwro-a0} & \fvval{sens-c_e_systematic-nuwro-a0.1} & \fvval{sens-c_e_systematic-nuwro-a0.25} & \fvval{sens-c_e_systematic-nuwro-a0.5} & \fvval{sens-c_e_systematic-nuwro-a1} \\
+ & \fvval{gs-label-gibuu} & \fvval{sens-c_e_systematic-gibuu-a0} & \fvval{sens-c_e_systematic-gibuu-a0.1} & \fvval{sens-c_e_systematic-gibuu-a0.25} & \fvval{sens-c_e_systematic-gibuu-a0.5} & \fvval{sens-c_e_systematic-gibuu-a1} \\
+ & \fvval{gs-label-tune} & \fvval{sens-c_e_systematic-tune-a0} & \fvval{sens-c_e_systematic-tune-a0.1} & \fvval{sens-c_e_systematic-tune-a0.25} & \fvval{sens-c_e_systematic-tune-a0.5} & \fvval{sens-c_e_systematic-tune-a1} \\
 \addlinespace
 \bottomrule
 \end{tabular}
@@ -305,26 +308,86 @@ The $\chi^2$ can be decomposed along the eigenmodes of each prediction's covaria
 \begin{figure}[tbp]
 \centering
 \includegraphics[width=\linewidth]{figures/fd_g_fig_modes.pdf}
-\caption{The three eigenmodes that carry the largest shares of each sixteen-cell prediction's $\chi^2$ (columns, by rank), for GENIE CV, GENIE + MEC, NuWro and MINERvA Tune~v1 (rows), from the reported comparison on $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ relative to $f$. The bars are each mode's unit loadings on R00--R15, signed so that the largest loading is positive. Each panel gives the mode's share of the $\chi^2$, its relative $\sigma$ and the prediction's distance along it, the projection over $\sigma$. The residual is $(f-g)/f$, so a positive distance means that the data lie above the prediction along the mode as signed. GiBUU, compared on 8 cells, has no modes here.}
+\caption{The three eigenmodes that carry the largest shares of each sixteen-cell prediction's $\chi^2$ (columns, by rank), for GENIE CV, GENIE + MEC, NuWro and MINERvA Tune~v1 (rows) in their generator definitions, with NuWro on carbon (Table~\ref{tab:fived16-gen-stageg}), from the reported comparison on $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}+V_g$ relative to $f$. The bars are each mode's unit loadings on R00--R15, signed so that the largest loading is positive. Each panel gives the mode's share of the $\chi^2$, its relative $\sigma$ and the prediction's distance along it, the projection over $\sigma$. The residual is $(f-g)/f$, so a positive distance means that the data lie above the prediction along the mode as signed. GiBUU, compared on 8 cells, has no modes here.}
 \label{fig:fived16-modes}
 \end{figure}
 
 \begin{table}[htbp]
 \centering\footnotesize
-\caption{Eigenmode breakdown of the reported $\chi^2$: the fewest modes, in $\chi^2$ order, carrying \fvval{diag-fractions}\,\% of it, and the top mode's share of the $\chi^2$, its relative $\sigma$ and its dominant block.}
+\caption{Eigenmode breakdown of the reported $\chi^2$: the fewest modes, in $\chi^2$ order, carrying \fvval{diag-fractions}\,\% of it, and the top mode's share of the $\chi^2$, its relative $\sigma$ and its dominant block, for the predictions in their generator definitions, with NuWro and GiBUU on carbon (Table~\ref{tab:fived16-gen-stageg}).}
 \label{tab:fived16-diag}
 \begin{tabular}{@{}lcccrrl@{}}
 \toprule
 prediction & \multicolumn{3}{c}{modes for \fvval{diag-fractions}\,\%} & top mode (\% of $\chi^2$) & $\sigma$ (\%) & block \\
 \midrule
-\fvval{label-gcv} & \fvval{diag-gcv-reported-modes50} & \fvval{diag-gcv-reported-modes90} & \fvval{diag-gcv-reported-modes99} & \fvval{diag-gcv-reported-top-share} & \fvval{diag-gcv-reported-top-sigma} & \fvval{diag-gcv-reported-top-block} \\
-\fvval{label-gmec} & \fvval{diag-gmec-reported-modes50} & \fvval{diag-gmec-reported-modes90} & \fvval{diag-gmec-reported-modes99} & \fvval{diag-gmec-reported-top-share} & \fvval{diag-gmec-reported-top-sigma} & \fvval{diag-gmec-reported-top-block} \\
-\fvval{label-nuwro} & \fvval{diag-nuwro-reported-modes50} & \fvval{diag-nuwro-reported-modes90} & \fvval{diag-nuwro-reported-modes99} & \fvval{diag-nuwro-reported-top-share} & \fvval{diag-nuwro-reported-top-sigma} & \fvval{diag-nuwro-reported-top-block} \\
-\fvval{label-gibuu} & \fvval{diag-gibuu-reported-modes50} & \fvval{diag-gibuu-reported-modes90} & \fvval{diag-gibuu-reported-modes99} & \fvval{diag-gibuu-reported-top-share} & \fvval{diag-gibuu-reported-top-sigma} & \fvval{diag-gibuu-reported-top-block} \\
-\fvval{label-tune} & \fvval{diag-tune-reported-modes50} & \fvval{diag-tune-reported-modes90} & \fvval{diag-tune-reported-modes99} & \fvval{diag-tune-reported-top-share} & \fvval{diag-tune-reported-top-sigma} & \fvval{diag-tune-reported-top-block} \\
+\fvval{gs-label-gcv} & \fvval{diag-gcv-reported-modes50} & \fvval{diag-gcv-reported-modes90} & \fvval{diag-gcv-reported-modes99} & \fvval{diag-gcv-reported-top-share} & \fvval{diag-gcv-reported-top-sigma} & \fvval{diag-gcv-reported-top-block} \\
+\fvval{gs-label-gmec} & \fvval{diag-gmec-reported-modes50} & \fvval{diag-gmec-reported-modes90} & \fvval{diag-gmec-reported-modes99} & \fvval{diag-gmec-reported-top-share} & \fvval{diag-gmec-reported-top-sigma} & \fvval{diag-gmec-reported-top-block} \\
+\fvval{gs-label-nuwro} & \fvval{diag-nuwro-reported-modes50} & \fvval{diag-nuwro-reported-modes90} & \fvval{diag-nuwro-reported-modes99} & \fvval{diag-nuwro-reported-top-share} & \fvval{diag-nuwro-reported-top-sigma} & \fvval{diag-nuwro-reported-top-block} \\
+\fvval{gs-label-gibuu} & \fvval{diag-gibuu-reported-modes50} & \fvval{diag-gibuu-reported-modes90} & \fvval{diag-gibuu-reported-modes99} & \fvval{diag-gibuu-reported-top-share} & \fvval{diag-gibuu-reported-top-sigma} & \fvval{diag-gibuu-reported-top-block} \\
+\fvval{gs-label-tune} & \fvval{diag-tune-reported-modes50} & \fvval{diag-tune-reported-modes90} & \fvval{diag-tune-reported-modes99} & \fvval{diag-tune-reported-top-share} & \fvval{diag-tune-reported-top-sigma} & \fvval{diag-tune-reported-top-block} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Cell R04 ($\pT<\fvval{h2-mid-pt}$, $\pPar\geq\fvval{h2-mid-pz}$, $\Eavail<\fvval{h2-mid-eavail}$, $q_3<\fvval{h2-mid-q3}$) has the smallest relative $\sigma$ of the sixteen, \fvval{r04-sigma-total}\,\%, of which flux is the largest group at \fvval{r04-sigma-flux}\,\%. Under the flux block alone its correlation with the \fvval{r04-ncorr} cells that load with it in the top modes is \fvval{r04-corrflux-min}--\fvval{r04-corrflux-max}; under the reported covariance it is \fvval{r04-corr-min}--\fvval{r04-corr-max}.
 
+\subsection{The predictions' target and definitions}
+\label{sec:fived16-gen-target}
+% GENCMP round (DECISION-20261101-joseph-gencmp-paper-adoption.md items 1-4 and 6; director's rulings of 2026-11-01). Sources: FD-GENCMP-REPORT.md sec. 2.1-2.4 (#648) and its readouts fd/gencmp/readout/{defs,ch,native,overlap}.json and receipts/d_projection.txt, each pinned in make_values_fived16.py; the construction and the definitions, FD-GENCMP-DECLARATION.md sec. 2-3 and 5; C_model's samples, nd-unfolding/pv-ladder/config.json:58-65 (the frozen C12 products of the declaration's control A1). The sensitivities, the bootstrap and the modes above are Stage G's (FD-G, FD-CT-5B-ADDITION-REPORT.md) and run on the predictions of Table tab:fived16-gen-stageg; the director has commissioned their recompute on Table IV's predictions as a GENCMP amendment, after which the scoping sentence and captions above go.
+The predictions of Table~\ref{tab:fived16-gen} differ from the generators' own products in two ways. First, NuWro and GiBUU, generated on carbon, are corrected to CH per fine cell as $x_{\mathrm{CH}}=\tfrac{12}{13}\,x_{\mathrm{C}}+\tfrac{1}{13}\,x_{\mathrm{H}}$, with $x_{\mathrm{H}}$ the generator's own free-proton product, as in \S\ref{sec:joint5d-ch}. Second, all four use the analysis definitions of $W$ and of the muon angle: $W$ is computed with the struck nucleon's mass, or an average nucleon mass where the generator records no single struck nucleon, and the muon angle is measured from the beam axis, each event's neutrino direction being drawn from the analysis simulation's distribution in its $E_\nu$ bin. The prediction is the mean over five such draws. With the generators' own definitions restored, every sample reproduces its committed product bit for bit. The change of definitions moves no cell of any of the four by more than \fvval{gdef-dmax} of the cell's reported $\sigma$, and the standard deviation over the five draws is at most \fvval{gdef-seedmax}\,$\sigma$. MINERvA Tune~v1 is already in the analysis definitions and is unchanged.
+
+Table~\ref{tab:fived16-gen-target} gives the carbon values and the sensitivities. On carbon, in the analysis definitions, NuWro gives \fvval{g-nuwro-carbon-total-chi2} (shape-only \fvval{g-nuwro-carbon-shape_only-chi2}) and GiBUU \fvval{g-gibuu-carbon-total-chi2} (\fvval{g-gibuu-carbon-shape_only-chi2}). The correction lowers NuWro's total $\chi^2$ and raises GiBUU's by \fvval{g-gibuu-chrise}, while GiBUU's shape-only $\chi^2$ falls. On the joint cells of \S\ref{sec:joint5d-ch} both corrections move the prediction toward the data; in the sixteen-cell comparison GiBUU's total $\chi^2$, on its eight cells, rises. That rise depends on the hydrogen sample: with GENIE CV's hydrogen in place of GiBUU's own, in the generators' own definitions, GiBUU's total is \fvval{g-gibuu-genieh-total-chi2}, below its carbon value of \fvval{g-gibuu-gen-carbon-total-chi2}. GENIE's hydrogen sample is thin, so that spread is largely its own Monte Carlo noise, and the GENIE-hydrogen rows are sensitivities, never the comparison. GiBUU's CH comparison carries the label of \S\ref{sec:joint5d-ch}: the sampling-closure check failed on its hydrogen sample, a bias check of that check's premise, added post hoc, passed at $\le\fvval{g-gibuu-hlab-sigc}\,\sigma_c$, and deep-inelastic events, \fvval{g-gibuu-hlab-dis}\,\% of its hydrogen sample, do not conserve energy.
+
+A native CH generation of NuWro, with only the target changed in the production card, was compared cell by cell with the combination under a rule fixed in advance: $\sum z^2<\fvval{gnat-rule-sumz2}$ over the sixteen cells and no $|z|>\fvval{gnat-rule-zmax}$, with $z$ from the two samples' Monte Carlo variances. It agrees in the generators' definitions ($\sum z^2=\fvval{gnat-gen-sumz2}$, largest $|z|=\fvval{gnat-gen-zmax}$) and in the analysis definitions (\fvval{gnat-ana-sumz2} and \fvval{gnat-ana-zmax}). Its $\chi^2$ is \fvval{g-nuwro-native-gen-total-chi2} against the combination's \fvval{g-nuwro-gen-ch-total-chi2}; the comparison uses the combination. A diagnostic that was not a declared test: in one chunk of the generation's probe, NuWro's total cross section per nucleon is \fvval{gnat-probe-pct}\,\% above $(12\sigma_{\mathrm{C}}+\sigma_{\mathrm{H}})/13$ computed from one chunk each of the production carbon sample and the free-proton sample, mostly in deep-inelastic events.
+
+The $C_{\mathrm{model}}$ components of the reported covariance are built from the generators' samples in their own definitions, with NuWro and GiBUU on carbon, not from the predictions of Table~\ref{tab:fived16-gen}. Table~\ref{tab:fived16-gen-stageg} gives the comparison in the generators' own definitions with NuWro and GiBUU on carbon, the predictions on which the sensitivities, the flux bootstrap and the eigenmode breakdown of \S\ref{sec:fived16-gen} were computed.
+% absence-ok: the C_model clause states which samples C_model was built from (config.json:58-65); its effect on the comparison is not measured, and the director notes it for the GENCMP amendment
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption{The carbon values and the sensitivities of the CH correction. Rows marked (generator) are in the generators' own definitions; the others in the analysis definitions. GENIE CV's hydrogen is a sensitivity only. The native NuWro rows are a check of the combination, which the comparison uses.}
+\label{tab:fived16-gen-target}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \multicolumn{2}{c}{reported covariance} & \multicolumn{2}{c}{without $C_{\mathrm{PL,5D}}$} \\ \cmidrule(lr){2-3}\cmidrule(l){4-5}
+prediction & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ & shape-only $\chi^2$ \\
+\midrule
+\multicolumn{5}{@{}l}{NuWro~21.09, 16 cells} \\
+carbon & \fvval{g-nuwro-carbon-total-chi2} & \fvval{g-nuwro-carbon-shape_only-chi2} & \fvval{g-nuwro-carbon-total-chi2-nopl} & \fvval{g-nuwro-carbon-shape_only-chi2-nopl} \\
+CH, Table~\ref{tab:fived16-gen} & \fvval{g-nuwro-total-chi2} & \fvval{g-nuwro-shape_only-chi2} & \fvval{g-nuwro-total-chi2-nopl} & \fvval{g-nuwro-shape_only-chi2-nopl} \\
+carbon (generator) & \fvval{g-nuwro-gen-carbon-total-chi2} & \fvval{g-nuwro-gen-carbon-shape_only-chi2} & \fvval{g-nuwro-gen-carbon-total-chi2-nopl} & \fvval{g-nuwro-gen-carbon-shape_only-chi2-nopl} \\
+CH (generator) & \fvval{g-nuwro-gen-ch-total-chi2} & \fvval{g-nuwro-gen-ch-shape_only-chi2} & \fvval{g-nuwro-gen-ch-total-chi2-nopl} & \fvval{g-nuwro-gen-ch-shape_only-chi2-nopl} \\
+CH, GENIE CV's hydrogen (generator) & \fvval{g-nuwro-genieh-total-chi2} & \fvval{g-nuwro-genieh-shape_only-chi2} & \fvval{g-nuwro-genieh-total-chi2-nopl} & \fvval{g-nuwro-genieh-shape_only-chi2-nopl} \\
+native CH (generator) & \fvval{g-nuwro-native-gen-total-chi2} & \fvval{g-nuwro-native-gen-shape_only-chi2} & \fvval{g-nuwro-native-gen-total-chi2-nopl} & \fvval{g-nuwro-native-gen-shape_only-chi2-nopl} \\
+native CH & \fvval{g-nuwro-native-ana-total-chi2} & \fvval{g-nuwro-native-ana-shape_only-chi2} & \fvval{g-nuwro-native-ana-total-chi2-nopl} & \fvval{g-nuwro-native-ana-shape_only-chi2-nopl} \\
+\midrule
+\multicolumn{5}{@{}l}{GiBUU~2019, 8 cells with $\pPar<\fvval{h2-mid-pz}$~GeV/$c$} \\
+carbon & \fvval{g-gibuu-carbon-total-chi2} & \fvval{g-gibuu-carbon-shape_only-chi2} & \fvval{g-gibuu-carbon-total-chi2-nopl} & \fvval{g-gibuu-carbon-shape_only-chi2-nopl} \\
+CH, Table~\ref{tab:fived16-gen} & \fvval{g-gibuu-total-chi2} & \fvval{g-gibuu-shape_only-chi2} & \fvval{g-gibuu-total-chi2-nopl} & \fvval{g-gibuu-shape_only-chi2-nopl} \\
+carbon (generator) & \fvval{g-gibuu-gen-carbon-total-chi2} & \fvval{g-gibuu-gen-carbon-shape_only-chi2} & \fvval{g-gibuu-gen-carbon-total-chi2-nopl} & \fvval{g-gibuu-gen-carbon-shape_only-chi2-nopl} \\
+CH (generator) & \fvval{g-gibuu-gen-ch-total-chi2} & \fvval{g-gibuu-gen-ch-shape_only-chi2} & \fvval{g-gibuu-gen-ch-total-chi2-nopl} & \fvval{g-gibuu-gen-ch-shape_only-chi2-nopl} \\
+CH, GENIE CV's hydrogen (generator) & \fvval{g-gibuu-genieh-total-chi2} & \fvval{g-gibuu-genieh-shape_only-chi2} & \fvval{g-gibuu-genieh-total-chi2-nopl} & \fvval{g-gibuu-genieh-shape_only-chi2-nopl} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering\footnotesize
+\caption{The comparison of Table~\ref{tab:fived16-gen} as first made, with the predictions in their generator definitions and NuWro and GiBUU on carbon, with no correction to CH: against the reported covariance plus $V_g$ and without the run-period block, as in Table~\ref{tab:fived16-gen}, and in the last column against $C_{\mathrm{total}}+V_g$, without the response and run-period blocks. The sensitivities, the flux bootstrap and the eigenmode breakdown of \S\ref{sec:fived16-gen} were computed on these predictions.}
+\label{tab:fived16-gen-stageg}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+ & \multicolumn{2}{c}{reported covariance} & \multicolumn{2}{c}{without $C_{\mathrm{PL,5D}}$} & $C_{\mathrm{total}}$ \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(l){6-6}
+prediction & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ & shape-only $\chi^2$ & $\chi^2$ \\
+\midrule
+\multicolumn{6}{@{}l}{All 16 cells: ndf \fvval{gs-gcv-total-ndf}, shape-only \fvval{gs-gcv-shape_only-ndf}} \\
+\fvval{gs-label-gcv} & \fvval{gs-gcv-total-chi2} & \fvval{gs-gcv-shape_only-chi2} & \fvval{gs-gcv-total-chi2-nopl} & \fvval{gs-gcv-shape_only-chi2-nopl} & \fvval{gs-gcv-nocresp-chi2} \\
+\fvval{gs-label-gmec} & \fvval{gs-gmec-total-chi2} & \fvval{gs-gmec-shape_only-chi2} & \fvval{gs-gmec-total-chi2-nopl} & \fvval{gs-gmec-shape_only-chi2-nopl} & \fvval{gs-gmec-nocresp-chi2} \\
+\fvval{gs-label-nuwro} & \fvval{gs-nuwro-total-chi2} & \fvval{gs-nuwro-shape_only-chi2} & \fvval{gs-nuwro-total-chi2-nopl} & \fvval{gs-nuwro-shape_only-chi2-nopl} & \fvval{gs-nuwro-nocresp-chi2} \\
+\fvval{gs-label-tune} & \fvval{gs-tune-total-chi2} & \fvval{gs-tune-shape_only-chi2} & \fvval{gs-tune-total-chi2-nopl} & \fvval{gs-tune-shape_only-chi2-nopl} & \fvval{gs-tune-nocresp-chi2} \\
+\midrule
+\multicolumn{6}{@{}l}{8-cell subset, $\pPar<\fvval{h2-mid-pz}$~GeV/$c$: ndf \fvval{gs-gibuu-total-ndf}, shape-only \fvval{gs-gibuu-shape_only-ndf}} \\
+\fvval{gs-label-gibuu} & \fvval{gs-gibuu-total-chi2} & \fvval{gs-gibuu-shape_only-chi2} & \fvval{gs-gibuu-total-chi2-nopl} & \fvval{gs-gibuu-shape_only-chi2-nopl} & \fvval{gs-gibuu-nocresp-chi2} \\
+\bottomrule
+\end{tabular}
+\end{table}

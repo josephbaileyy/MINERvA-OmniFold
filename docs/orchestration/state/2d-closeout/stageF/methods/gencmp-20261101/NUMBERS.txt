@@ -1,0 +1,82 @@
+g-gcv-total-chi2int | 107 | 107 | defs.json:4471 | ok
+g-gcv-total-chi2 | 107.18 | 107.18 | defs.json:4471 | ok
+g-gcv-shape_only-chi2int | 102 | 102 | defs.json:4472 | ok
+g-gcv-shape_only-chi2 | 102.11 | 102.11 | defs.json:4472 | ok
+g-gcv-total-chi2int-nopl | 111 | 111 | defs.json:4475 | ok
+g-gcv-total-chi2-nopl | 111.22 | 111.22 | defs.json:4475 | ok
+g-gcv-shape_only-chi2int-nopl | 110 | 110 | defs.json:4476 | ok
+g-gcv-shape_only-chi2-nopl | 110.32 | 110.32 | defs.json:4476 | ok
+g-gmec-total-chi2int | 229 | 229 | defs.json:4495 | ok
+g-gmec-total-chi2 | 229.09 | 229.09 | defs.json:4495 | ok
+g-gmec-shape_only-chi2int | 229 | 229 | defs.json:4496 | ok
+g-gmec-shape_only-chi2 | 229.00 | 229.00 | defs.json:4496 | ok
+g-gmec-total-chi2int-nopl | 278 | 278 | defs.json:4499 | ok
+g-gmec-total-chi2-nopl | 277.94 | 277.94 | defs.json:4499 | ok
+g-gmec-shape_only-chi2int-nopl | 264 | 264 | defs.json:4500 | ok
+g-gmec-shape_only-chi2-nopl | 263.74 | 263.74 | defs.json:4500 | ok
+g-nuwro-total-chi2int | 128 | 128 | defs.json:4541 | ok
+g-nuwro-total-chi2 | 127.69 | 127.69 | defs.json:4541 | ok
+g-nuwro-shape_only-chi2int | 108 | 108 | defs.json:4542 | ok
+g-nuwro-shape_only-chi2 | 107.52 | 107.52 | defs.json:4542 | ok
+g-nuwro-total-chi2int-nopl | 181 | 181 | defs.json:4545 | ok
+g-nuwro-total-chi2-nopl | 180.62 | 180.62 | defs.json:4545 | ok
+g-nuwro-shape_only-chi2int-nopl | 181 | 181 | defs.json:4546 | ok
+g-nuwro-shape_only-chi2-nopl | 180.52 | 180.52 | defs.json:4546 | ok
+g-gibuu-total-chi2int | 48 | 48 | defs.json:4587 | ok
+g-gibuu-total-chi2 | 47.78 | 47.78 | defs.json:4587 | ok
+g-gibuu-shape_only-chi2int | 22 | 22 | defs.json:4588 | ok
+g-gibuu-shape_only-chi2 | 22.19 | 22.19 | defs.json:4588 | ok
+g-gibuu-total-chi2int-nopl | 61 | 61 | defs.json:4591 | ok
+g-gibuu-total-chi2-nopl | 61.41 | 61.41 | defs.json:4591 | ok
+g-gibuu-shape_only-chi2int-nopl | 25 | 25 | defs.json:4592 | ok
+g-gibuu-shape_only-chi2-nopl | 24.66 | 24.66 | defs.json:4592 | ok
+g-nuwro-carbon-total-chi2int | 130 | 130 | defs.json:4519 | ok
+g-nuwro-carbon-total-chi2 | 129.98 | 129.98 | defs.json:4519 | ok
+g-nuwro-carbon-shape_only-chi2int | 113 | 113 | defs.json:4520 | ok
+g-nuwro-carbon-shape_only-chi2 | 112.93 | 112.93 | defs.json:4520 | ok
+g-nuwro-carbon-total-chi2int-nopl | 187 | 187 | defs.json:4523 | ok
+g-nuwro-carbon-total-chi2-nopl | 187.42 | 187.42 | defs.json:4523 | ok
+g-nuwro-carbon-shape_only-chi2int-nopl | 187 | 187 | defs.json:4524 | ok
+g-nuwro-carbon-shape_only-chi2-nopl | 187.39 | 187.39 | defs.json:4524 | ok
+g-gibuu-carbon-total-chi2int | 45 | 45 | defs.json:4565 | ok
+g-gibuu-carbon-total-chi2 | 45.49 | 45.49 | defs.json:4565 | ok
+g-gibuu-carbon-shape_only-chi2int | 25 | 25 | defs.json:4566 | ok
+g-gibuu-carbon-shape_only-chi2 | 24.94 | 24.94 | defs.json:4566 | ok
+g-gibuu-carbon-total-chi2int-nopl | 59 | 59 | defs.json:4569 | ok
+g-gibuu-carbon-total-chi2-nopl | 58.65 | 58.65 | defs.json:4569 | ok
+g-gibuu-carbon-shape_only-chi2int-nopl | 28 | 28 | defs.json:4570 | ok
+g-gibuu-carbon-shape_only-chi2-nopl | 27.86 | 27.86 | defs.json:4570 | ok
+g-gibuu-chrise | 2.3 | 2.3 | defs.json table_2x2 gibuu CH - carbon | ok
+g-nuwro-gen-carbon-total-chi2r1 | 130.7 | 130.7 | ch.json:35 | ok
+g-gibuu-gen-carbon-total-chi2r1 | 45.3 | 45.3 | ch.json:1163 | ok
+g-nuwro-gen-ch-total-chi2r1 | 128.4 | 128.4 | ch.json:397 | ok
+g-gibuu-gen-ch-total-chi2r1 | 47.5 | 47.5 | ch.json:1389 | ok
+g-nuwro-genieh-total-chi2r1 | 120.5 | 120.5 | ch.json:760 | ok
+g-gibuu-genieh-total-chi2r1 | 44.2 | 44.2 | ch.json:1616 | ok
+gnat-gen-sumz2 | 17.9 | 17.9 | native.json:25 | ok
+gnat-gen-zmax | 2.2 | 2.2 | native.json:26 | ok
+g-nuwro-native-gen-total-chi2 | 134.02 | 134.02 | native.json:51 | ok
+gnat-ana-sumz2 | 16.9 | 16.9 | native.json:736 | ok
+gnat-ana-zmax | 2.2 | 2.2 | native.json:737 | ok
+g-nuwro-native-ana-total-chi2 | 134.71 | 134.71 | native.json:762 | ok
+gnat-rule-sumz2 | 32.0 | 32.0 | native.json:6 | ok
+gdef-dmax | 0.063 | 0.063 | defs.json:1631 (genie_mec, R07) | ok
+gdef-dmax-bound | 0.07 | 0.07 | ceil of gdef-dmax | ok
+gdef-seedmax | 0.052 | 0.052 | defs.json:4415 (gibuu, cell R08) | ok
+gnat-probe-pct | 2.1 | 2.1 | d_projection.txt:8 | ok
+g3d-pct-lo | 0.2 | 0.2 | overlap.json:45 (QA) | ok
+g3d-pct-hi | 0.8 | 0.8 | overlap.json:96 (QB) | ok
+g3d-zmax | 0.17 | 0.17 | overlap.json:98 (QB) | ok
+g3d-qa-unrep | 1.1\times10^{-7} | 1.1\times10^{-7} | overlap.json:19 | ok
+g-gibuu-hlab-sigc | 0.1 | 0.1 | defs.json:4452 | ok
+g-gibuu-hlab-dis | 46 | 46 | defs.json:4452 | ok
+g-ch-hweight | 1/13 | 1/13 | defs.json:3393 | ok
+g-ext-chi2int-min16 | 107 | 107 | min of g-{gcv,gmec,nuwro}-total | ok
+g-ext-chi2int-max16 | 229 | 229 | max of the same | ok
+g-ext-chi2int-min16-nopl | 111 | 111 | without C_PL | ok
+g-ext-chi2int-max16-nopl | 278 | 278 | without C_PL | ok
+pl-chi2fall-total-lo | 3.6 | 3.6 | Table IV with / without C_PL | ok
+pl-chi2fall-total-hi | 29.3 | 29.3 | same | ok
+pl-chi2fall-shape_only-lo | 7.4 | 7.4 | Table IV with / without C_PL | ok
+pl-chi2fall-shape_only-hi | 40.4 | 40.4 | same | ok
+DIFFS: 0 of 81
