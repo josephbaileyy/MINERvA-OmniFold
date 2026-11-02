@@ -1,0 +1,47 @@
+{
+ "control_R_equals_k_json_R": true,
+ "control_joint_psd_false_as_K_found": true,
+ "joint_lambda_min_over_max": -0.03278302744216465,
+ "PD_REL_tolerance": 1e-12,
+ "joint_correlation_form_lambda_min": -0.0803402766999697,
+ "joint_correlation_form_min_eigvec_weight_16_vs_2d": [
+  0.5491033842851328,
+  0.45089661571486683
+ ],
+ "rho_hat_diag": {
+  "QA": 0.8033666606249961,
+  "QB": 0.7353023741043972,
+  "QC": 0.678383460545987,
+  "QD": 0.8382334759031457
+ },
+ "rho_max_for_each_2x2_psd_given_stated_sigma": 1.0,
+ "rho_hat_offdiag_max_abs": 0.2997906764796362,
+ "t_star_largest_scale_on_cross_block_keeping_joint_psd": 0.9271909032495674,
+ "own_stat_corr_lambda_min": {
+  "16": 0.7227696316068671,
+  "2D": 0.709803308477087
+ },
+ "stated_vs_replica_within_side": {
+  "16": {
+   "max_abs_offdiag_corr_diff": 0.3110004884286924,
+   "replica_sigma_over_stated": [
+    0.990079704528234,
+    0.9940106610338025,
+    1.1468431272859965,
+    1.082115222478885
+   ]
+  },
+  "2D": {
+   "max_abs_offdiag_corr_diff": 0.10226557698535937,
+   "replica_sigma_over_stated": [
+    0.9928492889482063,
+    1.0677557941952007,
+    0.9963209882739574,
+    1.0632454444353887
+   ]
+  }
+ },
+ "replica_sample_joint_correlation_lambda_min": 0.06636614898638854,
+ "n_replicas": 100,
+ "atime_deviations": []
+}
