@@ -52,12 +52,20 @@ TOL = 1e-12
 SEED_SPREAD_FLAG = 0.2                       # declaration section 3
 D_SUMZ2_MAX, D_ZMAX = 32.0, 3.5              # declaration section 5: chi2_16 0.99 quantile, and the per-cell bound
 VL173_2D_INTEGRAL = 3.0730e-38               # VALIDATION_LEDGER.md VL173, five figures
+ER_2D_INTEGRAL = 3.069e-38                   # RE2-PARTC-REPORT.md:278-279, E_R's hXSec2D.Integral("width"), four figures
+# step C's 2D arm: purity (E_U and Q, GENCMP as bound) or refined (E_R and Q_R, the adopted result since
+# DECISION-20261024-joseph-adopt-re2-2d-refined.md; step C-R, FD-GENCMP-AMENDMENT-E-DECLARATION.md section 5):
+# C3's reference integral and its tolerance, and the label the readout carries
+ARMS_2D = {"purity": (VL173_2D_INTEGRAL, 0.00005e-38, "VL173's 3.0730e-38 to five figures", "E_U with Q"),
+           "refined": (ER_2D_INTEGRAL, 0.0005e-38, "E_R's recorded 3.069e-38 to four figures", "E_R with Q_R")}
 TOTAL_3D = 3.079e-38                         # 3d-unfolding/3D_OMNIFOLD_STATUS.md headline, "Total sigma (3D integral)", four figures
 FROZEN_NUWRO = "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz"
 FROZEN_GIBUU = "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz"
 FD = _REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024"
 P1 = _REPO / "docs/orchestration/state/measurement-paper/phase1"
 INPUTS = FD / "fd/gencmp/INPUTS.sha256"
+OVERLAP_C = FD / "fd/gencmp/readout/overlap.json"     # GENCMP step C's committed readout (#648), for C-R3D
+OVERLAP_C_SHA256 = "82b3528a452e423a06ab5d9c2566dd99aa8636c83ce04ebc25c31c01fda714f9"
 DEFINITION = _ND / "pv-ladder/readouts/h2_definition.json"
 CMODEL = _ND / "pv-ladder/readouts/cmodel_5d.json"
 BLOCK = FD / "fd/with-cpl/block/cpl_block.npz"
@@ -444,7 +452,14 @@ def root_hist(data: bytes, name: str):
 
 
 def cmd_overlap(a) -> int:
-    inp = Inputs()
+    arm = vars(a).get("arm", "purity")
+    pins = {}
+    for path in (vars(a).get("inputs") or [INPUTS]):
+        for k, v in load_pins(path).items():
+            if pins.get(k, v) != v:
+                raise Stop("0", f"{k} is pinned twice, to different digests")
+            pins[k] = v
+    inp = Inputs(pins)
     defn = inp.json(DEFINITION)
     U, R = cell_matrix(), result(inp)
     f = R["f"]
@@ -477,9 +492,12 @@ def cmd_overlap(a) -> int:
     rel_sig = np.sqrt(np.diag(Q)) / np.asarray(qz["cells_x_EU"], float)
     report("C", "Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]", 0.01 <= np.median(rel_sig) <= 0.5,
            f"median {np.median(rel_sig)}")
+    if arm == "refined":
+        report("C", "Q is the refined arm's (its npz key arm)", str(qz.get("arm", "")) == "refined",
+               f"{qz.get('arm')!r}")
+    ref, tol, ref_label, result_2d = ARMS_2D[arm]
     total2d = float((flat[cells2d] * area).sum())
-    report("C3", "the 2D integral reproduces VL173's 3.0730e-38 to five figures",
-           abs(total2d - VL173_2D_INTEGRAL) <= 0.00005e-38, f"{total2d!r}")
+    report("C3", f"the 2D integral reproduces {ref_label}", abs(total2d - ref) <= tol, f"{total2d!r}")
     ipt, ipz = np.unravel_index(cells2d, cv.shape)
     cpt, cpz = 0.5 * (e_pt[ipt] + e_pt[ipt + 1]), 0.5 * (e_pz[ipz] + e_pz[ipz + 1])
     all_pt, all_pz = np.unravel_index(np.arange(flat.size), cv.shape)
@@ -547,7 +565,20 @@ def cmd_overlap(a) -> int:
             "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value "
                      "(OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"}
         rows[q] = rec
-    write(a.out, {"schema": "fd-gencmp-overlap/1", "step": "C (Q26)", "quadrants": rows,
+    if arm == "refined":                    # C-R3D: the 3D rows read the same pinned inputs as step C, so are its own
+        raw = OVERLAP_C.read_bytes()
+        report("C-R3D", "step C's committed readout is the pinned bytes", hashlib.sha256(raw).hexdigest() == OVERLAP_C_SHA256)
+        prior = json.loads(raw)["quadrants"]
+
+        def row3d(r):
+            t = r["3D"]
+            return [t["S"], t["d"], t["d_pct"], t["descriptive_PROJ3D"]["variance"]]
+
+        report("C-R3D", "every quadrant's 3D row equals step C's committed one (to 1e-12)", all(
+            np.allclose(row3d(rows[q]), row3d(prior[q]), rtol=TOL, atol=0) and rows[q]["3D"]["outcome"] ==
+            prior[q]["3D"]["outcome"] for q in rows))
+    write(a.out, {"schema": "fd-gencmp-overlap/1", "step": "C (Q26)" if arm == "purity" else "C-R (Q26)",
+                  "arm_2d": arm, "result_2d": result_2d, "quadrants": rows,
                   "eavail_regions_formable": regions,
                   "diagnostic_cv_over_Q_x_max_rel": float(np.max(np.abs(flat[cells2d] / np.asarray(qz["cells_x_EU"], float) - 1))),
                   "total_2d": total2d, "total_3d": total3d,
@@ -629,6 +660,10 @@ def build_args(argv=None):
     s = sub.add_parser("overlap")
     for k in ("p5", "mnvtune", "cv2d", "q2d", "playlist", "cv3d", "proj3d", "out"):
         s.add_argument(f"--{k}", type=Path, required=True)
+    s.add_argument("--arm", choices=tuple(ARMS_2D), default="purity",
+                   help="the 2D result: purity (E_U, Q; GENCMP step C) or refined (E_R, Q_R; step C-R)")
+    s.add_argument("--inputs", type=Path, action="append",
+                   help="an inputs file; repeatable, each pin must agree (default fd/gencmp/INPUTS.sha256)")
     s = sub.add_parser("native")
     s.add_argument("--rebuild-dir", type=Path, required=True)
     s.add_argument("--out", type=Path, required=True)
