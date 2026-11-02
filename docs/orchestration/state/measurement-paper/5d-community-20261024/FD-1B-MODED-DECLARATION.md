@@ -16,6 +16,9 @@ rulings:
   - The rule is now **κ: D at the nominal truth against I2's mode A**, where first order fixes κ = 1 if the toy
     realizes S1's mechanism.
   - D at the data-like truth (Ddl) is an **option**, descriptive only, priced separately (§3.4).
+- **The audit's re-check (R1, R2), at `f85f1c7a`.** Revision 1 at first claimed that in the linear limit ρ_D = g,
+  so that Ddl would read FAIL against M "from the scale alone". **That claim is withdrawn.** §3.2 records the
+  correction, §11.1 drops what rested on it, and §6 and §12 give the expectation for κ.
 - **M1.** κ is read per cell, and every outcome goes to Joseph.
 - **M2.** The grid check prints its occupancy and does not count reporting cells where B vanishes by construction.
 - **Minor.** m1: the mutation receipt records its digests and counts a kill only on a test failure. m2: the
@@ -80,18 +83,39 @@ as d(m). The estimator closes on its own simulation: U(d(m); m) = T(m) for every
 - D's error, ∂_d U · Δd − ΔT, is −∂_m U · Δm;
 - that is minus S1's mechanism at the nominal truth, which is I2's A shift.
 
-**So κ = 1 at first order if the toy realizes S1's mechanism.** Departures are of second order in the universe's
-size, the ±1σ non-linearity. The pair estimator does not see the sign.
+**So κ = 1 at first order, fixed by closure,** for any nature that is the full universe unfolded by an estimator that
+closes (audit R2). A κ PASS therefore measures only the second-order departures at ±1σ: whether the full universe
+(its truth reweight, completeness and background) is as symmetric under the swap as its first order. It shows no
+design property beyond that. The pair estimator does not see the sign.
+- **The precedent:** I2's F_src = √(E/B) is the response-only analogue, the response put in the pseudo-data against
+  the same response put in the MC, on the same diagonal. It was 0.986–1.015, in the window in 16 of 16 cells.
+- **What κ can add** is whether the rest of the full universe is symmetric too. I2's additivity residual shows those
+  parts do not simply sum with B.
 
 **Off the diagonal.** M is made at (real data, m₀), where the data are not the simulation. The closure identity
 constrains U only on the diagonal, so it fixes no first-order relation between D's error and S1's shift there.
 - Their relation is set by second-order terms times the data's distance from m₀. That is the same order as whatever
   makes F_truth depart from 1.
-- **In the linear limit** (every second-order term zero), λ = κ = 1 and F_truth = g, so ρ_D = g. A universe moves
-  S1's simulation at the simulation's scale, but moves a data-like nature at the nature's scale, and the two differ
-  by g per cell.
-- **Arithmetic on I0's committed `g`:** 4 of 16 cells lie in [0.9, 1.1]. So even an estimator with no second-order
-  term would read FAIL against M, from the scale alone.
+- **B1's empirical prediction.** Under the carry's premise λ ≈ 1, and with κ ≈ 1, ρ_D ≈ F_truth. I2 measured F_truth
+  in the window in 1 of 16 cells (R08).
+
+**Withdrawn: the linear-limit claim** (audit R1 on #655). Revision 1 at `6190c5e2` argued that with every second-order
+term zero, M = A_unc and so ρ_D = g. That fails for this estimator:
+- **The estimator scales with the data** (inference from the code). `omnifold_loop` with `kind="lgbm"` fits
+  unbalanced classes, so x̂ is homogeneous of degree 1 in the data's counts at the classifier's optimum. IBU is so
+  exactly.
+- **So S1's shift lives in the cross term.** Euler's relation gives U = ∂_d U · d, and so ∂_m U = (∂_m ∂_d U) · d.
+  S1's shift sits entirely in the cross term and scales with d. Zeroing every second-order term zeroes S1's block
+  itself.
+- **The consistent idealisation is a uniform scale,** data = g · d(m₀). There M = g² · A_unc, which is the carry, so
+  F_truth = 1 and ρ_D = κ.
+- **The measured F_truth contradicts both idealisations:**
+  - carried, median 0.683, in the window in 1 of 16 cells;
+  - uncarried, median 0.597, in the window in 1 of 16 (R06).
+
+**The κ fallback rests on two grounds only:**
+- (1) off the diagonal, closure fixes no first-order relation between D's error and S1's shift;
+- (2) B1's empirical prediction ρ_D ≈ F_truth, in the window in 1 of 16 cells.
 
 ### 3.3 What a nature construction could reach (the audit's checklist)
 
@@ -110,8 +134,7 @@ F_truth's departure can come from three places:
 - None of I0's or I2's declared readouts separates (i), (ii), (iii) and the second-order term in F_truth. So I cannot
   say that F_truth comes mostly from what any construction reaches. <!-- absence-ok: scoped to the declared readouts
   of I0 and I2, which their reports list in full (FD-1B-INV-I0-REPORT.md, FD-1B-INV-I2-REPORT.md); no search claim -->
-- Even a construction reaching (i) and (ii) would leave §3.2's off-diagonal argument and the linear-limit scale g
-  standing.
+- Even a construction reaching (i) and (ii) would leave §3.2's off-diagonal argument standing.
 - **So no construction compared with M has first-order power to pass.** Under the director's ruling, the rule
   becomes **Dnom against A only: κ, the symmetry question**.
 - **The final-weights construction** is not built. Revision 0's objection would also apply to it: the weights carry
@@ -141,8 +164,10 @@ background. r is applied to signal rows only, and the background is u's template
 
 ### 3.5 What κ can and cannot say
 
-**A κ PASS shows** that the new toy, with nature as the universe, realizes S1's mechanism at the nominal truth. This
-is the design question, at the one point where first order fixes the answer.
+**A κ PASS shows** that the second-order departures of the full universe at ±1σ are below the window at the nominal
+truth. Closure already fixes κ = 1 at first order (§3.2), and I2's response-only analogue F_src read in the window
+in 16 of 16 cells, so a PASS is the expected outcome. What it adds is that the full universe is symmetric under the
+swap as well: its truth reweight, completeness and background.
 
 **It does not reach M.**
 - The gap F_truth between S1's mechanism on the nominal pseudo-data and on the data remains. It is a property of S1's
@@ -214,13 +239,14 @@ Where the universe's reco and truth ratios agree, B vanishes there by constructi
 
 | rule K | condition | reading | next |
 |---|---|---|---|
-| **PASS** | κ in the window in all 16 cells | nature = universe, unfolded with the nominal simulation, realizes S1's mechanism at the nominal truth, cell by cell, on the diagonal | to Joseph |
+| **PASS** | κ in the window in all 16 cells | the full universe's second-order departures at ±1σ under the swap are below the window at the nominal truth. Closure fixes κ = 1 at first order, so this is the expected outcome (I2's response-only analogue F_src: 16 of 16). It licenses method coverage only (§11.1) | to Joseph |
 | **PARTIAL** | in the window in 8 to 15 cells | it does so except in the named cells | to Joseph |
 | **FAIL** | in the window in fewer than 8 cells | it does not | to Joseph |
 | **INVALID** | any control in §8 fails, except the grid part's | none | reported unrepaired, to the director |
 
-**Every outcome goes to Joseph.** No outcome opens a coverage ensemble by itself: a PASS establishes the design at
-the nominal truth, not the object M (§3.5).
+**Every outcome goes to Joseph.** No outcome opens a coverage ensemble by itself. A PASS is the expected outcome and
+establishes the full universe's symmetry under the swap at the nominal truth, not the object M (§3.5, §11.1).
+A PARTIAL or FAIL would show second-order departures above the window, or a construction defect in the toy.
 
 **Per cell.** For every cell, the report states whether κ and F_truth each lie in the window.
 
@@ -322,7 +348,7 @@ is told before each connect and each submission.
 ## 10. Code, tests and review
 
 **The code:**
-- `nd-unfolding/fd_1b_moded.py`, blob sha256 `4bfc6e71eae9bfe694d0da59361b172807a4cba4c717a59615e43e89c4a93a43`;
+- `nd-unfolding/fd_1b_moded.py`, blob sha256 `420088436948d9422dd82f7663ae4f6c6728329f6462cf6353f6ad7737f2b992`;
 - it imports `fd_1b_inv.py`, unchanged at `71b3903a…`, which I2 ran;
 - its subcommands are `dltruth`, `unfold` (Dnom, Ddl, or B and C with `--grid` and `--definition`), `walls` and
   `readout` (with `--dl` for the option).
@@ -376,9 +402,9 @@ readouts. All are labelled DERIVATION.
 
 ### 11.1 If κ passes: what a later coverage design could grade (inference, before any number is read)
 
-**What a κ PASS establishes.** Nature as the universe, unfolded with the nominal simulation, realizes S1's mechanism
-at the point where S1's mechanism is made at the same truth as its toys. That is the closure diagonal (§3.2). It
-says nothing about the data's point, where M is made.
+**What a κ PASS establishes.** The full universe's second-order departures at ±1σ under the swap are below the window
+on the closure diagonal, at the nominal truth (§3.2, audit R2). It says nothing about the data's point, where M is
+made.
 
 **A coverage design has a valid object** only where the block it grades is made at the ensemble's own truth point:
 - **At the nominal truth.** Draws with nature as the universe (and Poisson), graded against S1's mechanism made at
@@ -387,12 +413,11 @@ says nothing about the data's point, where M is made.
 - **At a held-out tune's truth** (G18 or AR23). The same, with S1's mechanism rerun on that tune's pseudo-data as the
   graded block. This tests the method at a truth away from the nominal, which a nominal-truth κ cannot.
 
-**The reported intervals** are made with M at the data's point, at the simulation's scale. An ensemble at any
-data-like truth graded against M meets §3.2's off-diagonal problem: in the linear limit it is out by g per cell.
-Each of the constructions that could address that is a new design, and none is declared here:
-- universe draws that move the data-like nature by the simulation-scale amount (an additive universe shift);
-- or a block remade at each ensemble's own truth, which is a different covariance from the reported one, so a
-  covariance question for Joseph.
+**The reported intervals** are made with M at the data's point. An ensemble at any data-like truth graded against M
+meets §3.2's off-diagonal problem: closure fixes no first-order relation there. B1's empirical expectation is a
+departure of about F_truth.
+- **The construction that could address this** is a block remade at each ensemble's own truth. That is a different
+  covariance from the reported one, so it is a covariance question for Joseph. It is not declared here.
 
 **So** a κ PASS would license a method-coverage ensemble at the nominal or a held-out-tune truth, graded against
 blocks made at that truth. It would not license a direct coverage statement about the reported intervals. The flux
@@ -400,8 +425,16 @@ and detector groups are outside κ in every case.
 
 ## 12. For the director, and through the director for Joseph
 
-1. **The rule (B1).** No nature construction compared with M has first-order power to pass (§3.2, §3.3). The rule is
-   therefore κ, Dnom against A, at a cap of **5.5 node-h**, for Joseph to choose to run or not.
+1. **The rule (B1).** The fallback to κ rests on two grounds (§3.2):
+   - off the diagonal, closure fixes no first-order relation between D's error and S1's shift;
+   - B1's empirical prediction ρ_D ≈ F_truth, which I2 measured in the window in 1 of 16 cells.
+
+   The rule is therefore κ, Dnom against A, at a cap of **5.5 node-h**, for Joseph to choose to run or not.
+   - **The expectation:** κ = 1 at first order, fixed by closure. I2's response-only analogue F_src was in the window
+     in 16 of 16 cells, so a PASS is the expected outcome.
+   - **What a PASS measures:** only the second-order departures at ±1σ, that is, whether the full universe's truth
+     reweight, completeness and background are symmetric under the swap.
+   - **What it licenses:** method coverage only (§11.1).
 2. **The Ddl option** (§3.4): descriptive only, +3.0 node-h of cap (8.5 in all).
    - **My recommendation:** add it only if a later ensemble at a per-cell data-like truth is in view. Its λ is what
      such a design would rest on, and it tests nothing about the toy.

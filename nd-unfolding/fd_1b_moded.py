@@ -400,7 +400,7 @@ def d_blocks(unfolds: Path, tag: str, mode: str, U: np.ndarray, metas: dict) -> 
 def grid_check(unfolds: Path, i2_unfolds: Path, tag: str, i2_tag: str, U: np.ndarray, x_cv_d: np.ndarray,
                metas: dict) -> dict:
     """The grid readout (section 5). A product that is not its declared item, or a nominal-grid product that is not
-    I2's bitwise, makes the grid part INVALID and leaves rule D's readout standing (the director's ruling 4)."""
+    I2's bitwise, makes the grid part INVALID and leaves rule K's readout standing (the director's ruling 4)."""
     out, stats = {}, {}
     try:
         for mode in GRID_MODES:

@@ -1,4 +1,4 @@
-sha256 4bfc6e71eae9bfe694d0da59361b172807a4cba4c717a59615e43e89c4a93a43  fd_1b_moded.py
+sha256 420088436948d9422dd82f7663ae4f6c6728329f6462cf6353f6ad7737f2b992  fd_1b_moded.py
 sha256 a1110a3843773027fa35b1853fce2f78745eec748e5a922dd3ca5eb84ef7037a  tests/test_fd_1b_moded.py
 sha256 71b3903aa1329807af7e48b29b4ffd3336ad637d4b8c7e43ae0a6cbe28bcdf1f  fd_1b_inv.py
 KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
@@ -43,5 +43,5 @@ KILLED   M2: per-cell alone counted by cell, not row
 KILLED   Ddl's factor not applied
 KILLED   rule K reads rho instead of kappa
 KILLED   grid needs no definition
-unmutated: 34 passed in 4.60s
+unmutated: 34 passed in 4.71s
 41 of 41 killed
