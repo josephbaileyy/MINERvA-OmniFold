@@ -1,3 +1,7 @@
+sha256 4bfc6e71eae9bfe694d0da59361b172807a4cba4c717a59615e43e89c4a93a43  fd_1b_moded.py
+sha256 a1110a3843773027fa35b1853fce2f78745eec748e5a922dd3ca5eb84ef7037a  tests/test_fd_1b_moded.py
+sha256 71b3903aa1329807af7e48b29b4ffd3336ad637d4b8c7e43ae0a6cbe28bcdf1f  fd_1b_inv.py
+KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
 KILLED   coarse grid drops the H2 edges
 KILLED   fine grid not halved
 KILLED   B's factor grid ignored
@@ -6,16 +10,12 @@ KILLED   B's background factor dropped
 KILLED   D unfolds with the universe MC
 KILLED   D's nature is the nominal MC
 KILLED   unreported rows take a cell's factor
-KILLED   Ddl's factor not applied
 KILLED   Ddl's nominal-truth check skipped
 KILLED   dl digest not checked
 KILLED   --grid pairing not enforced
 KILLED   grid universes not enforced
-KILLED   rule D passes at 15 of 16
 KILLED   partial level at 4
 KILLED   window edges exclusive
-KILLED   matched reading needs more than 8
-KILLED   sub-cell hypothesis read as OR
 KILLED   the rule's object is the raw shift
 KILLED   Dnom CV control skipped
 KILLED   data-like truth control skipped
@@ -30,5 +30,18 @@ KILLED   REPRICE exits 0
 KILLED   a moved atime exits 0
 KILLED   peak RSS not recorded
 KILLED   unit at 1,370 s
-unmutated: 30 passed in 3.78s
-32 of 32 killed
+KILLED   B1: lambda without the carry
+KILLED   ruling 4: a grid failure voids rule D
+KILLED   M2: rows alone miscounted
+KILLED   lambda reading threshold above 8
+KILLED   rule K passes at 15 of 16
+KILLED   rule K opens an ensemble on PASS
+KILLED   sub-cell hypothesis read as OR
+KILLED   M2: construction-limited cells counted
+KILLED   M2: occupancy consistency skipped
+KILLED   M2: per-cell alone counted by cell, not row
+KILLED   Ddl's factor not applied
+KILLED   rule K reads rho instead of kappa
+KILLED   grid needs no definition
+unmutated: 34 passed in 4.60s
+41 of 41 killed

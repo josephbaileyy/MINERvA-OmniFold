@@ -5,9 +5,10 @@ truth, reconstruction and background together (``s5p_universe.universe_inputs``,
 with), and they are unfolded with the nominal simulation by S1's estimator and settings. Each product stores the
 unfolded result and the universe's own truth; the readout's per-universe object is the error e(u) = U x_hat - U T_u.
 
-* ``Ddl``: at the data-like truth, the simulation reweighted per reporting cell by r_c = f_c / (U x_T)_c, so the
-  CV nature's truth equals S1's data result f in every cell (``dltruth`` writes r_c);
-* ``Dnom``: at the nominal truth (r = 1), the comparison with I2's mode A at matched truth;
+* ``Dnom``: at the nominal truth (r = 1). Rule K compares its block with I2's mode A, uncarried: on the closure
+  diagonal (prior = nature) swapping the side that carries the universe keeps the error's size at first order;
+* ``Ddl``: an option, descriptive only, at the data-like truth r_c = f_c / (U x_T)_c per reporting cell
+  (``dltruth`` writes r_c), read against S1's block M;
 * ``B`` and ``C`` on a named fine-cell grid (``coarse``, ``nominal``, ``fine``): I2's response-only and cell-mean
   truth-reweight modes with only their factor grid changed; ``nominal`` is I2's own construction.
 
@@ -52,13 +53,14 @@ INTERACTION = inv.INTERACTION
 # and FrAbs_pi, whose residual was among the smallest of the bands with A/M near 1
 GRID_UNIVERSES = ("MaRES_0", "MvRES_0", "Rvp2pi_0", "Theta_Delta2Npi_0", "MaCCQE_0", "FrAbs_pi_0")
 # the pilot (declaration section 7): its eight products and the re-price trigger the bulk must pass
-PILOT = (("Ddl", None, "CV"), ("Dnom", None, "CV"), ("Ddl", None, "MaRES_0"), ("Ddl", None, "2p2h_0"),
-         ("Ddl", None, "LowQ2_1"), ("Dnom", None, "MaRES_0"), ("B", "fine", "MaRES_0"), ("C", "fine", "MaRES_0"))
+PILOT = (("Dnom", None, "CV"), ("Dnom", None, "MaRES_0"), ("Dnom", None, "2p2h_0"), ("Dnom", None, "LowQ2_1"),
+         ("B", "fine", "MaRES_0"), ("C", "fine", "MaRES_0"), ("B", "coarse", "MaRES_0"), ("C", "coarse", "MaRES_0"))
 UNIT_SECONDS = 1062.0           # 1.25 x 849.6 s, the largest of I2's 204 measured unfolds (section 7)
 RSS_LIMIT_KIB = inv.RSS_LIMIT_KIB
 ONE_CODE_KEYS = inv.ONE_CODE_KEYS
 DL_TOLERANCE = 1e-12            # the data-like CV nature's truth against f, relative, per cell
-ACCOUNT = 8                     # a partial pass or a matched comparison: at least half of the 16 cells in the window
+ACCOUNT = 8                     # a partial pass: at least half of the 16 cells in the window
+ALONE_MAX = 0.5                 # a reporting cell is construction-limited on a grid if more than half its rows are alone
 Refusal = inv.Refusal
 
 
@@ -91,7 +93,37 @@ def check_fine_grid(inputs: dict) -> None:
         raise Refusal("the inputs' edges are not s5p_stage1_inspect.FINE")
 
 
-def grid_inputs(mode: str, tag: str, grid: str, inputs: dict, bkg: dict, bank: Path) -> tuple[dict, dict, dict]:
+QUANTILES = (0.0, 0.01, 0.1, 0.5, 0.9, 0.99, 1.0)
+
+
+def grid_stats(inputs: dict, edges: list, k_wr: np.ndarray, k_wt: np.ndarray, cell: np.ndarray) -> dict:
+    """Review M2: how full the factor grid is, and how far the universe's reco and truth weight ratios differ per
+    row. In a cell holding one truth-passing row g_f = 1 / k_wt, so B's factor there is k_wr / k_wt: B vanishes by
+    construction where that ratio is 1 and occupancy is 1. ``alone_by_cell`` is, per reporting cell (``cell``, from
+    ``row_cell``), the fraction of its truth-passing rows that are alone in their factor-grid cell."""
+    inside, idx = s5p_truths.cell_of(np.asarray(inputs["MCgen"]), edges)
+    pt = np.asarray(inputs["pass_truth"], bool)
+    sel = pt[inside]
+    flat = np.ravel_multi_index([i[sel] for i in idx], [len(e) - 1 for e in edges])
+    counts = np.bincount(flat)
+    occ = counts[counts > 0]
+    alone_row = counts[flat] == 1
+    rc = np.asarray(cell)[np.flatnonzero(inside)[sel]]
+    n_c = np.bincount(rc[rc >= 0], minlength=sa.N_CELLS)
+    a_c = np.bincount(rc[rc >= 0], weights=alone_row[rc >= 0].astype(float), minlength=sa.N_CELLS)
+    both = np.asarray(inputs["pass_reco"], bool) & pt & (k_wt > 0)
+    q = k_wr[both] / k_wt[both]
+    return {"cells": int(np.prod([len(e) - 1 for e in edges])), "occupied_cells": int(occ.size),
+            "rows_per_occupied_cell": dict(zip(map(str, QUANTILES), np.quantile(occ, QUANTILES).tolist())),
+            "rows_per_occupied_cell_mean": float(occ.mean()),
+            "fraction_of_rows_alone": float((occ == 1).sum() / occ.sum()),
+            "alone_by_cell": [float(a / n) if n > 0 else None for a, n in zip(a_c, n_c)],
+            "k_wr_over_k_wt": dict(zip(map(str, QUANTILES), np.quantile(q, QUANTILES).tolist())),
+            "fraction_k_ratio_off_one": float(np.mean(np.abs(q - 1) > 1e-9))}
+
+
+def grid_inputs(mode: str, tag: str, grid: str, inputs: dict, bkg: dict, bank: Path,
+                cell: np.ndarray) -> tuple[dict, dict, dict]:
     """I2's B or C for one universe with its factor grid replaced: B's truth-preserving g_f and C's fine-cell mean r
     are computed on ``grid``; the unfolding, C's denominator factor and the extraction stay on the analysis grid.
     At ``nominal`` this is ``fd_1b_inv.mode_inputs`` exactly."""
@@ -102,9 +134,10 @@ def grid_inputs(mode: str, tag: str, grid: str, inputs: dict, bkg: dict, bank: P
     on_grid = dict(inputs, edges=grid_edges(grid)) if grid != "nominal" else inputs
     w = inv.universe_weights(bank, tag, "keep")
     _, k_b, k_wt, rec = inv.response_factors(w, inputs, bkg, tag)
+    k_wr = ne.checked_ratio(w["wr"], np.asarray(inputs["w_reco"], float), np.asarray(inputs["pass_reco"], bool),
+                            f"{tag}:wr", {}, clip_negative=True)
+    rec = dict(rec, grid_stats=grid_stats(inputs, on_grid["edges"], k_wr, k_wt, cell))
     if mode == "B":
-        k_wr = ne.checked_ratio(w["wr"], np.asarray(inputs["w_reco"], float), np.asarray(inputs["pass_reco"], bool),
-                                f"{tag}:wr", {}, clip_negative=True)
         fs_ = k_wr * ne.truth_preserving(k_wt, on_grid, np.ones(inputs["MCgen"].shape[0], bool))
         return (dict(inputs, w_reco=np.asarray(inputs["w_reco"], float) * fs_),
                 dict(bkg, bkg_w=np.asarray(bkg["bkg_w"], float) * k_b), rec)
@@ -205,6 +238,11 @@ def run_unfold(a, unfold_fn=None) -> int:
         if not np.array_equal(U @ np.asarray(x_nom, float).ravel(order="C"), np.asarray(dl["U_xT"], float)):
             raise Refusal("this run's nominal truth is not the one the data-like factors were made against")
         r, dl_sha, truth = r * dl_weight(row_cell(inputs, fm), dl["r_cell"]), a.expect_dl_sha256, "data-like"
+    cell = None
+    if a.mode in GRID_MODES:
+        if a.definition is None:
+            raise Refusal("the grid check needs --definition, for each row's reporting cell")
+        cell = row_cell(inputs, sa.fine_map(a.definition))
     legal = {u for us in groups.values() for u in us} | {"CV"}
     a.out.mkdir(parents=True, exist_ok=True)
     status = 0
@@ -227,7 +265,7 @@ def run_unfold(a, unfold_fn=None) -> int:
             ui, ub, info = inv.mode_inputs("A", tag, inputs, bkg, a.bank, bank_cv)
             exp, x_true = d_experiment(inputs, bkg, ui, ub, r)
         else:
-            ui, ub, info = grid_inputs(a.mode, tag, a.grid, inputs, bkg, a.bank)
+            ui, ub, info = grid_inputs(a.mode, tag, a.grid, inputs, bkg, a.bank, cell)
             exp, x_true = inv.with_mc(exp_cv, ui, ub), x_nom
         xs, ev = (unfold_fn or s5n_pseudo.unfold_negweight)(exp, toys.ESTIMATOR_SEED, a.threads, toys.ITERS)
         xs = np.asarray(xs, float)
@@ -281,35 +319,47 @@ def in_window(x) -> np.ndarray:
     return (x >= WINDOW[0]) & (x <= WINDOW[1])
 
 
-def d_outcome(rho: np.ndarray) -> dict:
-    """Rule D (declaration section 6): PASS if rho_D is in the window in all 16 cells, PARTIAL if in at least 8,
-    FAIL otherwise. R00 and R05 are graded as every other cell."""
-    rho = np.asarray(rho, float)
-    inside = in_window(rho)
-    n = int(inside.sum())
-    verdict = "PASS" if n == rho.size else "PARTIAL" if n >= ACCOUNT else "FAIL"
-    return {"verdict": verdict, "cells_in_window": n,
-            "above": [f"R{c:02d}" for c in np.flatnonzero(rho > WINDOW[1])],
-            "below": [f"R{c:02d}" for c in np.flatnonzero(rho < WINDOW[0])],
-            "next": "the coverage ensemble may be declared" if verdict == "PASS" else "to Joseph"}
-
-
-def kappa_reading(kappa: np.ndarray) -> dict:
-    """The matched-truth diagnostic: D at the nominal truth against I2's A. ``matched`` if in the window in at
-    least 8 cells."""
+def rule_k(kappa: np.ndarray) -> dict:
+    """Rule K (declaration section 6): kappa = sqrt(Dnom / A_uncarried) per cell. PASS if in the window in all 16
+    cells, PARTIAL if in at least 8, FAIL otherwise. R00 and R05 are graded as every other cell. Every outcome goes
+    to Joseph: no outcome opens an ensemble by itself."""
+    kappa = np.asarray(kappa, float)
     n = int(in_window(kappa).sum())
-    return {"cells_in_window": n, "reading": "matched" if n >= ACCOUNT else "unmatched"}
+    verdict = "PASS" if n == kappa.size else "PARTIAL" if n >= ACCOUNT else "FAIL"
+    return {"verdict": verdict, "cells_in_window": n,
+            "above": [f"R{c:02d}" for c in np.flatnonzero(kappa > WINDOW[1])],
+            "below": [f"R{c:02d}" for c in np.flatnonzero(kappa < WINDOW[0])], "next": "to Joseph"}
 
 
-def grid_reading(gamma: np.ndarray, phi: np.ndarray) -> dict:
-    """The grid check's fixed reading (section 5): a mode depends on the grid if coarse/nominal or fine/nominal is
-    outside the window in at least 8 cells; the sub-cell hypothesis is supported if coarse/nominal > 1.1 in at least
-    8 cells AND fine/nominal < 0.9 in at least 8."""
+def lambda_reading(lam: np.ndarray) -> dict:
+    """The Ddl option (descriptive): lambda = sqrt(Ddl / (g^2 Dnom)), the per-cell data-like truth's effect beyond
+    the carry. ``carry-like`` if in the window in at least 8 cells."""
+    n = int(in_window(lam).sum())
+    return {"cells_in_window": n, "reading": "carry-like" if n >= ACCOUNT else "beyond the carry"}
+
+
+def per_cell(readouts: dict) -> dict:
+    """Review M1: for each cell, whether each named readout lies in the window."""
+    w = {k: in_window(v) for k, v in readouts.items()}
+    n = len(next(iter(readouts.values())))
+    return {f"R{c:02d}": {k: bool(v[c]) for k, v in w.items()} for c in range(n)}
+
+
+def grid_reading(gamma: np.ndarray, phi: np.ndarray, keep_coarse: np.ndarray, keep_fine: np.ndarray) -> dict:
+    """The grid check's fixed reading (section 5), over the reporting cells that are not construction-limited on the
+    grid in question (``keep_*``; review M2): a mode depends on the grid if coarse/nominal or fine/nominal is
+    outside the window in at least half of the counted cells; the sub-cell hypothesis is supported if coarse/nominal
+    > 1.1 in at least half of its counted cells AND fine/nominal < 0.9 in at least half of its. A leg with no counted
+    cell cannot support anything."""
     gamma, phi = np.asarray(gamma, float), np.asarray(phi, float)
-    out_g, out_f = int((~in_window(gamma)).sum()), int((~in_window(phi)).sum())
-    return {"coarse_out": out_g, "fine_out": out_f, "grid_dependent": out_g >= ACCOUNT or out_f >= ACCOUNT,
-            "coarse_above": int((gamma > WINDOW[1]).sum()), "fine_below": int((phi < WINDOW[0]).sum()),
-            "subcell_hypothesis_supported": bool((gamma > WINDOW[1]).sum() >= ACCOUNT and (phi < WINDOW[0]).sum() >= ACCOUNT)}
+    kg, kf = np.asarray(keep_coarse, bool), np.asarray(keep_fine, bool)
+    half = lambda k: max(1, -(-int(k.sum()) // 2))  # noqa: E731
+    out_g, out_f = int((~in_window(gamma[kg])).sum()), int((~in_window(phi[kf])).sum())
+    up_g, dn_f = int((gamma[kg] > WINDOW[1]).sum()), int((phi[kf] < WINDOW[0]).sum())
+    return {"coarse_counted": int(kg.sum()), "fine_counted": int(kf.sum()), "coarse_out": out_g, "fine_out": out_f,
+            "grid_dependent": bool((kg.any() and out_g >= half(kg)) or (kf.any() and out_f >= half(kf))),
+            "coarse_above": up_g, "fine_below": dn_f,
+            "subcell_hypothesis_supported": bool(kg.any() and kf.any() and up_g >= half(kg) and dn_f >= half(kf))}
 
 
 # ---------------------------------------------------------------------------------------------------------- readout
@@ -347,73 +397,107 @@ def d_blocks(unfolds: Path, tag: str, mode: str, U: np.ndarray, metas: dict) -> 
     return {"cv": cv, **out}
 
 
-def readout(staged: Path, unfolds: Path, i2_unfolds: Path, i2_json: Path, i0_json: Path, dl_path: Path,
+def grid_check(unfolds: Path, i2_unfolds: Path, tag: str, i2_tag: str, U: np.ndarray, x_cv_d: np.ndarray,
+               metas: dict) -> dict:
+    """The grid readout (section 5). A product that is not its declared item, or a nominal-grid product that is not
+    I2's bitwise, makes the grid part INVALID and leaves rule D's readout standing (the director's ruling 4)."""
+    out, stats = {}, {}
+    try:
+        for mode in GRID_MODES:
+            S = {}
+            for gname in GRIDS:
+                s = np.zeros(sa.N_CELLS)
+                for u in GRID_UNIVERSES:
+                    p = unfolds / product_name(tag, mode, gname, u)
+                    z = inv.load_npz(p)
+                    meta = _meta(z)
+                    if (meta.get("mode"), meta.get("grid"), meta.get("universe")) != (mode, gname, u):
+                        raise fs.Invalid(f"{p.name}: not mode {mode}, grid {gname}, universe {u}")
+                    metas[f"{mode}_{gname}_{u}"] = meta
+                    st = (meta.get("mode_info") or {}).get("grid_stats")
+                    if st is None:
+                        raise fs.Invalid(f"{p.name}: no grid statistics")
+                    stats[f"{mode}_{gname}_{u}"] = st
+                    if gname == "nominal":
+                        ref = inv.load_npz(i2_unfolds / f"{i2_tag}_{mode}_{u}.npz")
+                        if not np.array_equal(np.asarray(z["xsec_flat"], float), np.asarray(ref["xsec_flat"], float)):
+                            raise fs.Invalid(f"{p.name}: the nominal grid does not reproduce I2's product bitwise")
+                    s += (U @ (np.asarray(z["xsec_flat"], float) - x_cv_d)) ** 2
+                S[gname] = s
+            gamma, phi = np.sqrt(S["coarse"] / S["nominal"]), np.sqrt(S["fine"] / S["nominal"])
+            keep = {}
+            for gname in ("coarse", "fine"):
+                alone = {json.dumps(stats[f"{mode}_{gname}_{u}"]["alone_by_cell"]) for u in GRID_UNIVERSES}
+                if len(alone) != 1:
+                    raise fs.Invalid(f"{mode} {gname}: the occupancy differs between universes")
+                a_c = json.loads(alone.pop())
+                keep[gname] = np.array([x is not None and x <= ALONE_MAX for x in a_c])
+            out[mode] = {"coarse_over_nominal": gamma.tolist(), "fine_over_nominal": phi.tolist(),
+                         "counted_coarse": keep["coarse"].tolist(), "counted_fine": keep["fine"].tolist(),
+                         "reading": grid_reading(gamma, phi, keep["coarse"], keep["fine"])}
+    except fs.Invalid as e:
+        return {"verdict": "INVALID", "why": str(e)}
+    return {"verdict": "READ", **out, "grid_stats": stats}
+
+
+def readout(staged: Path, unfolds: Path, i2_unfolds: Path, i2_json: Path, i0_json: Path, dl_path: Path | None,
             definition: Path, tag: str, i2_tag: str = "fd1b_inv") -> dict:
+    """Rule K on Dnom against I2's uncarried A, the grid check, and, if ``dl_path`` is given (the Ddl option, section
+    3.4), Ddl against M as descriptive readouts only."""
     s1 = fs.load_s1(staged / "s1" / "s1_assembly.npz")
     U, f = s1["U"], s1["f"]
-    U_def = sa.functional_matrix(sa.fine_map(definition))
     r2, r0 = json.loads(i2_json.read_text()), json.loads(i0_json.read_text())
     m = sum(v for k, v in s1["blocks"].items() if k.startswith("band:") and sa.group_of(k) == "interaction")
     M = np.diag(m)
     if M.tolist() != r2["M"]:
         raise fs.Invalid("S1's interaction block from the staged assembly is not I2's M bitwise")
-    dl = json.loads(dl_path.read_text())
     x_cv_der = np.asarray(inv.load_npz(staged / "derivation" / f"{inv.DER_TAG}_CV.npz")["xsec_flat"], float)
     metas: dict = {}
-    blk = {mode: d_blocks(unfolds, tag, mode, U, metas) for mode in D_MODES}
+    modes = D_MODES if dl_path is not None else ("Dnom",)
+    blk = {mode: d_blocks(unfolds, tag, mode, U, metas) for mode in modes}
     if not np.array_equal(np.asarray(blk["Dnom"]["cv"]["xsec_flat"], float), x_cv_der):
         raise fs.Invalid("Dnom at CV does not reproduce the derivation CV product bitwise")
-    T_dl = U_def @ np.asarray(blk["Ddl"]["cv"]["xtrue_flat"], float)
-    if np.max(np.abs(T_dl / f - 1)) > DL_TOLERANCE:
-        raise fs.Invalid("the data-like CV nature's truth is not f")
-    grid = {}
-    for mode in GRID_MODES:
-        S = {}
-        for gname in GRIDS:
-            s = np.zeros(sa.N_CELLS)
-            for u in GRID_UNIVERSES:
-                p = unfolds / product_name(tag, mode, gname, u)
-                z = inv.load_npz(p)
-                meta = _meta(z)
-                if (meta.get("mode"), meta.get("grid"), meta.get("universe")) != (mode, gname, u):
-                    raise fs.Invalid(f"{p.name}: not mode {mode}, grid {gname}, universe {u}")
-                metas[f"{mode}_{gname}_{u}"] = meta
-                if gname == "nominal":
-                    ref = inv.load_npz(i2_unfolds / f"{i2_tag}_{mode}_{u}.npz")
-                    if not np.array_equal(np.asarray(z["xsec_flat"], float), np.asarray(ref["xsec_flat"], float)):
-                        raise fs.Invalid(f"{p.name}: the nominal grid does not reproduce I2's product bitwise")
-                s += (U @ (np.asarray(z["xsec_flat"], float) - x_cv_der)) ** 2
-            S[gname] = s
-        gamma, phi = np.sqrt(S["coarse"] / S["nominal"]), np.sqrt(S["fine"] / S["nominal"])
-        grid[mode] = {"coarse_over_nominal": gamma.tolist(), "fine_over_nominal": phi.tolist(),
-                      "reading": grid_reading(gamma, phi)}
+    if dl_path is not None:
+        T_dl = sa.functional_matrix(sa.fine_map(definition)) @ np.asarray(blk["Ddl"]["cv"]["xtrue_flat"], float)
+        if np.max(np.abs(T_dl / f - 1)) > DL_TOLERANCE:
+            raise fs.Invalid("the data-like CV nature's truth is not f")
+    grid = grid_check(unfolds, i2_unfolds, tag, i2_tag, U, x_cv_d=x_cv_der, metas=metas)
     for key in ONE_CODE_KEYS:
         vals = {json.dumps(v.get(key), sort_keys=True) for v in metas.values()}
         if len(vals) != 1 or metas[next(iter(metas))].get(key) is None:
             raise fs.Invalid(f"the products are not one code and one input set: {key} takes {len(vals)} values")
-    if {v.get("dl_sha256") for k, v in metas.items() if k.startswith("Ddl_")} != {sa.sha256(dl_path)}:
-        raise fs.Invalid("the Ddl products do not all carry this data-like truth's digest")
     diag_sum = lambda d: sum(np.diag(v) for v in d.values())  # noqa: E731
-    D_dl, D_nom = diag_sum(blk["Ddl"]["error"]), diag_sum(blk["Dnom"]["error"])
-    A_raw = np.asarray(r2["A"], float) / np.asarray(r0["g"], float) ** 2
-    rho, kappa = np.sqrt(D_dl / M), np.sqrt(D_nom / A_raw)
-    full = sum(blk["Ddl"]["error"].values())
-    corr = lambda C: C / np.sqrt(np.outer(np.diag(C), np.diag(C)))  # noqa: E731
-    dcorr = (corr(full) - corr(m))[~np.eye(sa.N_CELLS, dtype=bool)]
-    return {"schema": SCHEMA, "step": "D", "label": "DERIVATION", "cells": [f"R{c:02d}" for c in range(sa.N_CELLS)],
-            "window": list(WINDOW), "M": M.tolist(), "D_dl": D_dl.tolist(), "D_nom": D_nom.tolist(),
-            "A_uncarried": A_raw.tolist(), "rho_D": rho.tolist(), "rule_D": d_outcome(rho), "kappa": kappa.tolist(),
-            "kappa_reading": kappa_reading(kappa),
-            "descriptive": {
-                "raw_shift_over_M": np.sqrt(diag_sum(blk["Ddl"]["raw"]) / M).tolist(),
-                "truth_spread_over_M": np.sqrt(diag_sum(blk["Ddl"]["truth"]) / M).tolist(),
-                "D_dl_over_D_nom": np.sqrt(D_dl / D_nom).tolist(),
-                "F_truth_i2": r2["factors"]["F_truth"],
-                "corr_D_minus_corr_M_max_abs": float(np.max(np.abs(dcorr))),
-                "per_band_D_dl_over_M": {b: fdg.ratio(np.diag(blk["Ddl"]["error"][b]), np.diag(s1["blocks"][f"band:{b}"]))
-                                         for b in INTERACTION}},
-            "grid_check": grid, "dl_sha256": sa.sha256(dl_path), "r_cell": dl["r_cell"],
-            "i2_sha256": sa.sha256(i2_json), "i0_sha256": sa.sha256(i0_json)}
+    g = np.asarray(r0["g"], float)
+    A_raw = np.asarray(r2["A"], float) / g ** 2
+    D_nom = diag_sum(blk["Dnom"]["error"])
+    kappa = np.sqrt(D_nom / A_raw)
+    f_truth = np.asarray(r2["factors"]["F_truth"], float)
+    out = {"schema": SCHEMA, "step": "D", "label": "DERIVATION", "cells": [f"R{c:02d}" for c in range(sa.N_CELLS)],
+           "window": list(WINDOW), "M": M.tolist(), "D_nom": D_nom.tolist(), "A_uncarried": A_raw.tolist(),
+           "kappa": kappa.tolist(), "rule_K": rule_k(kappa),
+           "per_cell": per_cell({"kappa": kappa, "F_truth": f_truth}),
+           "descriptive": {"F_truth_i2": r2["factors"]["F_truth"],
+                           "raw_shift_over_A": np.sqrt(diag_sum(blk["Dnom"]["raw"]) / A_raw).tolist(),
+                           "truth_spread_over_A": np.sqrt(diag_sum(blk["Dnom"]["truth"]) / A_raw).tolist(),
+                           "per_band_D_nom": {b: np.diag(blk["Dnom"]["error"][b]).tolist() for b in INTERACTION}},
+           "grid_check": grid, "i2_sha256": sa.sha256(i2_json), "i0_sha256": sa.sha256(i0_json)}
+    if dl_path is not None:
+        if {v.get("dl_sha256") for k, v in metas.items() if k.startswith("Ddl_")} != {sa.sha256(dl_path)}:
+            raise fs.Invalid("the Ddl products do not all carry this data-like truth's digest")
+        D_dl = diag_sum(blk["Ddl"]["error"])
+        rho, lam = np.sqrt(D_dl / M), np.sqrt(D_dl / (g ** 2 * D_nom))
+        corr = lambda C: C / np.sqrt(np.outer(np.diag(C), np.diag(C)))  # noqa: E731
+        dcorr = (corr(sum(blk["Ddl"]["error"].values())) - corr(m))[~np.eye(sa.N_CELLS, dtype=bool)]
+        out["ddl_option"] = {
+            "role": "descriptive: no verdict (section 3.4)", "D_dl": D_dl.tolist(), "rho_D": rho.tolist(),
+            "lambda": lam.tolist(), "lambda_reading": lambda_reading(lam),
+            "identity_max_rel": float(np.max(np.abs(lam * kappa * f_truth / rho - 1))),
+            "per_cell": per_cell({"rho_D": rho, "kappa": kappa, "lambda": lam, "F_truth": f_truth}),
+            "corr_D_minus_corr_M_max_abs": float(np.max(np.abs(dcorr))),
+            "per_band_D_dl_over_M": {b: fdg.ratio(np.diag(blk["Ddl"]["error"][b]), np.diag(s1["blocks"][f"band:{b}"]))
+                                     for b in INTERACTION},
+            "dl_sha256": sa.sha256(dl_path), "r_cell": json.loads(dl_path.read_text())["r_cell"]}
+    return out
 
 
 # -------------------------------------------------------------------------------------------------------------- CLI
@@ -443,8 +527,9 @@ def main(argv=None) -> int:
     p.add_argument("--tag", default="fd1b_d")
     p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("readout")
-    for k in ("staged", "unfolds", "i2-unfolds", "i2", "i0", "dl", "definition", "out"):
+    for k in ("staged", "unfolds", "i2-unfolds", "i2", "i0", "definition", "out"):
         p.add_argument(f"--{k}", type=Path, required=True)
+    p.add_argument("--dl", type=Path, default=None, help="the Ddl option's data-like truth (descriptive readouts)")
     p.add_argument("--tag", default="fd1b_d")
     a = ap.parse_args(argv)
     try:
@@ -466,7 +551,7 @@ def main(argv=None) -> int:
                               "fd_1b_inv.py": sa.sha256(Path(inv.__file__).resolve())}
         a.out.write_text(json.dumps(res, indent=1) + "\n")
         print(json.dumps({"out": str(a.out), "step": res["step"],
-                          "verdict": res["rule_D"]["verdict"] if a.cmd == "readout" else None}))
+                          "verdict": res["rule_K"]["verdict"] if a.cmd == "readout" else None}))
         return 0
     except (Refusal, SystemExit, ValueError, OSError) as e:
         if isinstance(e, SystemExit) and not isinstance(e.code, str):

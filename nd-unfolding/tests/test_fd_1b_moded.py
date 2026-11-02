@@ -97,6 +97,7 @@ class ToyCase(unittest.TestCase):
         for k, e in zip(("td_pt", "td_pz", "td_ea", "td_q3", "td_w"), cls.inputs["edges"]):
             z[k] = rng.uniform(e[0], e[-1], 50)
         cls.bank_cv = z
+        cls.cell = md.row_cell(cls.inputs, TOY_FM)
         # the jobs build mode A's universe MC from the bank's own cv.npz: this module's private world carries the
         # truth-denominator coordinates there too, with its manifest and pins re-made over the changed file
         np.savez(cls.w.bank / "cv.npz", **z)
@@ -122,7 +123,7 @@ class GridModes(ToyCase):
     def test_the_nominal_grid_is_i2s_b_and_c_bitwise(self):
         for mode in md.GRID_MODES:
             for u in ("MaRES_0", "LowQ2_1"):
-                mine = md.grid_inputs(mode, u, "nominal", self.inputs, self.bkg, self.w.bank)
+                mine = md.grid_inputs(mode, u, "nominal", self.inputs, self.bkg, self.w.bank, self.cell)
                 ref = inv.mode_inputs(mode, u, self.inputs, self.bkg, self.w.bank, self.bank_cv)
                 for k in ("w_truth", "w_reco", "denom_nd"):
                     np.testing.assert_array_equal(np.asarray(mine[0][k], float), np.asarray(ref[0][k], float), (mode, u, k))
@@ -130,9 +131,9 @@ class GridModes(ToyCase):
 
     def test_another_grid_changes_the_factors_and_leaves_the_rest(self):
         for mode, key in (("B", "w_reco"), ("C", "w_truth")):
-            nom = md.grid_inputs(mode, "MaRES_0", "nominal", self.inputs, self.bkg, self.w.bank)[0]
+            nom = md.grid_inputs(mode, "MaRES_0", "nominal", self.inputs, self.bkg, self.w.bank, self.cell)[0]
             for g in ("coarse", "fine"):
-                ui = md.grid_inputs(mode, "MaRES_0", g, self.inputs, self.bkg, self.w.bank)[0]
+                ui = md.grid_inputs(mode, "MaRES_0", g, self.inputs, self.bkg, self.w.bank, self.cell)[0]
                 self.assertFalse(np.array_equal(ui[key], nom[key]), (mode, g))
                 for e, f in zip(ui["edges"], self.inputs["edges"]):     # the unfolding grid is untouched
                     np.testing.assert_array_equal(e, f)
@@ -142,9 +143,33 @@ class GridModes(ToyCase):
     def test_cv_is_the_cv_on_every_grid(self):
         for mode in md.GRID_MODES:
             for g in md.GRIDS:
-                ui, ub, _ = md.grid_inputs(mode, "CV", g, self.inputs, self.bkg, self.w.bank)
+                ui, ub, _ = md.grid_inputs(mode, "CV", g, self.inputs, self.bkg, self.w.bank, self.cell)
                 for k in ("w_truth", "w_reco", "denom_nd"):
                     self.assertIs(ui[k], self.inputs[k])
+
+    def test_grid_stats_count_rows_alone_and_the_ratio_spread(self):
+        n = self.inputs["MCgen"].shape[0]
+        one = md.grid_stats(self.inputs, md.grid_edges("nominal"), np.ones(n), np.ones(n), self.cell)
+        self.assertEqual((one["fraction_k_ratio_off_one"], one["k_wr_over_k_wt"]["0.5"]), (0.0, 1.0))
+        pt = np.asarray(self.inputs["pass_truth"], bool)
+        self.assertEqual(sum([one["rows_per_occupied_cell_mean"] * one["occupied_cells"]]), float(pt.sum()))
+        # a grid of one cell per row: every row is alone
+        gen = np.asarray(self.inputs["MCgen"])[pt][:3]
+        tiny = dict(self.inputs, MCgen=gen, pass_truth=np.ones(3, bool), pass_reco=np.ones(3, bool))
+        edges = [np.sort(np.r_[gen[:, k].min() - 1, (np.sort(gen[:, k])[:-1] + np.sort(gen[:, k])[1:]) / 2, gen[:, k].max() + 1])
+                 for k in range(5)]
+        st = md.grid_stats(tiny, edges, np.r_[1.0, 2.0, 1.0], np.ones(3), np.r_[0, 0, 1])
+        self.assertEqual((st["fraction_of_rows_alone"], st["occupied_cells"]), (1.0, 3))
+        self.assertAlmostEqual(st["fraction_k_ratio_off_one"], 1 / 3)
+        # two rows share a cell and one is alone: a third of the ROWS are alone (half of the occupied cells)
+        pair = dict(tiny, MCgen=np.array([[0.2] * 5, [0.3] * 5, [1.5] * 5]))
+        st = md.grid_stats(pair, [np.array([0.0, 1.0, 2.0])] * 5, np.ones(3), np.ones(3), np.r_[0, 0, 1])
+        self.assertEqual(st["occupied_cells"], 2)
+        self.assertAlmostEqual(st["fraction_of_rows_alone"], 1 / 3)
+        self.assertEqual(st["rows_per_occupied_cell_mean"], 1.5)
+        # per reporting cell: R00 holds the shared pair (none alone), R01 the lone row; the rest hold no row
+        self.assertEqual(st["alone_by_cell"][:2], [0.0, 1.0])
+        self.assertTrue(all(x is None for x in st["alone_by_cell"][2:]))
 
     def test_the_fine_grid_check_refuses_foreign_edges(self):
         with self.assertRaisesRegex(inv.Refusal, "FINE"):
@@ -262,15 +287,25 @@ class Jobs(ToyCase):
                          "not the one the data-like factors were made against")
 
     def test_grid_is_required_for_b_and_c_and_refused_for_d(self):
-        with mock.patch.object(s5n_pseudo, "unfold_negweight", fake_unfold):
+        definition = self.tmp / "def.json"
+        definition.write_text("{}")
+        with mock.patch.object(s5n_pseudo, "unfold_negweight", fake_unfold), \
+                mock.patch.object(sa, "fine_map", lambda d: TOY_FM):
             self.refuses(self.argv("B", self.tmp / "y1", "CV"), "--grid is required")
             self.refuses(self.argv("Dnom", self.tmp / "y2", "CV", grid="fine"), "--grid is required")
-            self.assertEqual(md.main(self.argv("C", self.tmp / "y3", "MaRES_0", grid="coarse")), 0)
-            self.assertTrue((self.tmp / "y3" / "t_C_coarse_MaRES_0.npz").exists())
+            self.refuses(self.argv("C", self.tmp / "y4", "MaRES_0", grid="coarse"), "needs --definition")
+            self.assertEqual(md.main(self.argv("C", self.tmp / "y3", "MaRES_0", grid="coarse", definition=definition)), 0)
+            gs = json.loads(str(np.load(self.tmp / "y3" / "t_C_coarse_MaRES_0.npz")["meta"]))["mode_info"]["grid_stats"]
+            self.assertEqual(gs["cells"], int(np.prod([len(e) - 1 for e in md.grid_edges("coarse")])))
+            self.assertGreater(gs["rows_per_occupied_cell_mean"], 1.0)
 
     def test_the_grid_check_runs_only_its_six_universes(self):
         with mock.patch.object(s5n_pseudo, "unfold_negweight", fake_unfold):
-            self.refuses(self.argv("B", self.tmp / "z1", "LowQ2_1", grid="fine"), "grid check's declared universes")
+            definition = self.tmp / "def.json"
+            definition.write_text("{}")
+            with mock.patch.object(sa, "fine_map", lambda d: TOY_FM):
+                self.refuses(self.argv("B", self.tmp / "z1", "LowQ2_1", grid="fine", definition=definition),
+                             "grid check's declared universes")
             self.refuses(self.argv("Dnom", self.tmp / "z2", "Flux_3"), "not one of the 67 interaction universes")
 
     def test_the_job_exits_non_zero_when_an_opened_files_atime_moves(self):
@@ -317,7 +352,7 @@ class PilotWalls(unittest.TestCase):
         self.write(over=(("B", "fine", "MaRES_0"), md.UNIT_SECONDS + 0.1, 20_000_000))
         self.assertEqual(md.pilot_walls(self.tmp, "t")["verdict"], "REPRICE")
         self.assertEqual(self.cli(), 1)
-        self.write(over=(("Ddl", None, "2p2h_0"), 900.0, md.RSS_LIMIT_KIB + 1))
+        self.write(over=(("Dnom", None, "2p2h_0"), 900.0, md.RSS_LIMIT_KIB + 1))
         self.assertEqual(md.pilot_walls(self.tmp, "t")["verdict"], "REPRICE")
 
     def test_a_missing_pilot_product_refuses(self):
@@ -338,36 +373,53 @@ class PilotWalls(unittest.TestCase):
 
 
 class Rules(unittest.TestCase):
-    def test_rule_d_reads_pass_partial_and_fail_at_its_edges(self):
-        self.assertEqual(md.d_outcome(np.full(16, 1.0))["verdict"], "PASS")
-        self.assertEqual(md.d_outcome(np.r_[np.full(15, 1.0), 0.9])["verdict"], "PASS")    # the edge is inside
-        self.assertEqual(md.d_outcome(np.r_[np.full(15, 1.0), 1.1])["verdict"], "PASS")
-        r = md.d_outcome(np.r_[np.full(8, 1.0), np.full(8, 1.3)])
-        self.assertEqual((r["verdict"], r["cells_in_window"], r["next"]), ("PARTIAL", 8, "to Joseph"))
-        r = md.d_outcome(np.r_[np.full(7, 1.0), np.full(9, 0.5)])
-        self.assertEqual((r["verdict"], len(r["below"]), r["next"]), ("FAIL", 9, "to Joseph"))
+    def test_rule_k_reads_pass_partial_and_fail_at_its_edges(self):
+        self.assertEqual(md.rule_k(np.full(16, 1.0))["verdict"], "PASS")
+        self.assertEqual(md.rule_k(np.r_[np.full(15, 1.0), 0.9])["verdict"], "PASS")    # the edge is inside
+        self.assertEqual(md.rule_k(np.r_[np.full(15, 1.0), 1.1])["verdict"], "PASS")
+        r = md.rule_k(np.r_[np.full(8, 1.0), np.full(8, 1.3)])
+        self.assertEqual((r["verdict"], r["cells_in_window"]), ("PARTIAL", 8))
+        r = md.rule_k(np.r_[np.full(7, 1.0), np.full(9, 0.5)])
+        self.assertEqual((r["verdict"], len(r["below"])), ("FAIL", 9))
+        for k in (np.ones(16), np.full(16, 0.5)):        # no outcome opens an ensemble by itself
+            self.assertEqual(md.rule_k(k)["next"], "to Joseph")
 
     def test_r00_and_r05_are_not_exempt(self):
         for c in (0, 5):
-            rho = np.ones(16)
-            rho[c] = 1.5
-            r = md.d_outcome(rho)
+            k = np.ones(16)
+            k[c] = 1.5
+            r = md.rule_k(k)
             self.assertEqual((r["verdict"], r["above"]), ("PARTIAL", [f"R{c:02d}"]))
 
-    def test_the_matched_truth_reading(self):
-        self.assertEqual(md.kappa_reading(np.r_[np.full(8, 1.0), np.full(8, 2.0)])["reading"], "matched")
-        self.assertEqual(md.kappa_reading(np.r_[np.full(7, 1.0), np.full(9, 2.0)])["reading"], "unmatched")
+    def test_lambda_and_the_per_cell_reading(self):
+        self.assertEqual(md.lambda_reading(np.r_[np.full(8, 1.0), np.full(8, 1.5)])["reading"], "carry-like")
+        self.assertEqual(md.lambda_reading(np.r_[np.full(7, 1.0), np.full(9, 1.5)])["reading"], "beyond the carry")
+        pc = md.per_cell({"rho_D": np.r_[1.0, 0.5], "kappa": np.r_[1.0, 1.0], "lambda": np.r_[1.0, 0.7]})
+        self.assertEqual(pc["R01"], {"rho_D": False, "kappa": True, "lambda": False})
+        self.assertEqual(pc["R00"], {"rho_D": True, "kappa": True, "lambda": True})
 
     def test_the_grid_reading(self):
-        flat = md.grid_reading(np.ones(16), np.ones(16))
+        all16 = np.ones(16, bool)
+        flat = md.grid_reading(np.ones(16), np.ones(16), all16, all16)
         self.assertEqual((flat["grid_dependent"], flat["subcell_hypothesis_supported"]), (False, False))
-        hyp = md.grid_reading(np.full(16, 1.3), np.full(16, 0.7))
+        hyp = md.grid_reading(np.full(16, 1.3), np.full(16, 0.7), all16, all16)
         self.assertEqual((hyp["grid_dependent"], hyp["subcell_hypothesis_supported"]), (True, True))
-        # moving with the grid the other way is grid dependence without the hypothesis
-        rev = md.grid_reading(np.full(16, 0.7), np.full(16, 1.3))
+        rev = md.grid_reading(np.full(16, 0.7), np.full(16, 1.3), all16, all16)
         self.assertEqual((rev["grid_dependent"], rev["subcell_hypothesis_supported"]), (True, False))
-        edge = md.grid_reading(np.r_[np.full(8, 1.2), np.ones(8)], np.r_[np.full(7, 0.8), np.ones(9)])
+        edge = md.grid_reading(np.r_[np.full(8, 1.2), np.ones(8)], np.r_[np.full(7, 0.8), np.ones(9)], all16, all16)
         self.assertEqual((edge["grid_dependent"], edge["subcell_hypothesis_supported"]), (True, False))
+
+    def test_construction_limited_cells_are_not_counted(self):
+        # review M2: where B vanishes by construction (rows alone in their cell) its shrinkage is not evidence
+        all16 = np.ones(16, bool)
+        fine_ok = np.r_[np.ones(4, bool), np.zeros(12, bool)]
+        phi = np.r_[np.ones(4), np.full(12, 0.5)]        # shrinks only where the fine grid is construction-limited
+        r = md.grid_reading(np.full(16, 1.3), phi, all16, fine_ok)
+        self.assertEqual((r["fine_counted"], r["fine_below"], r["subcell_hypothesis_supported"]), (4, 0, False))
+        r = md.grid_reading(np.full(16, 1.3), np.full(16, 0.5), all16, fine_ok)
+        self.assertEqual((r["fine_below"], r["subcell_hypothesis_supported"]), (4, True))
+        none = md.grid_reading(np.full(16, 1.3), np.full(16, 0.5), all16, np.zeros(16, bool))
+        self.assertEqual((none["fine_counted"], none["subcell_hypothesis_supported"]), (0, False))
 
 
 # ---------------------------------------------------------------------------------------------------------- readout
@@ -386,8 +438,9 @@ class Readout(unittest.TestCase):
         self.d = fs.derivation_blocks(self.w.root / "derivation", inv.DER_TAG, self.s1, self.w.constraint)
         m = sum(v for k, v in self.s1["blocks"].items() if k.startswith("band:") and sa.group_of(k) == "interaction")
         self.i2 = self.tmp / "i2.json"
-        self.i2.write_text(json.dumps({"M": np.diag(m).tolist(), "A": (np.diag(m) * self.d["g"] ** 2).tolist(),
-                                       "factors": {"F_truth": [1.0] * 16}}))
+        A = 4.0 * np.diag(m) * self.d["g"] ** 2      # A unlike M: Dnom's errors are written twice S1's, so kappa = 1
+        self.i2.write_text(json.dumps({"M": np.diag(m).tolist(), "A": A.tolist(),
+                                       "factors": {"F_truth": np.sqrt(A / np.diag(m)).tolist()}}))
         self.i0 = self.tmp / "i0.json"
         self.i0.write_text(json.dumps({"g": self.d["g"].tolist()}))
         self.dl = self.tmp / "dl.json"
@@ -429,31 +482,49 @@ class Readout(unittest.TestCase):
                         meta["iters"] = 6
                     if tamper == "sha" and (mode, b, i) == ("Ddl", "MaRES", 1):
                         meta["dl_sha256"] = "0" * 64
-                    save(md.product_name("t", mode, None, f"{b}_{i}"), t + scale * (xs1 - f), t, **meta)
+                    k = 2.0 if mode == "Dnom" else 1.0
+                    save(md.product_name("t", mode, None, f"{b}_{i}"), t + k * scale * (xs1 - f), t, **meta)
         for mode in md.GRID_MODES:
             for g in md.GRIDS:
                 for k, u in enumerate(md.GRID_UNIVERSES):
                     x = cv_der * (1 + 0.01 * (k + 1) * {"coarse": 1.3, "nominal": 1.0, "fine": 0.7}[g])
-                    save(md.product_name("t", mode, g, u), x, self.w.x_t, mode=mode, grid=g, universe=u, dl_sha256=None)
+                    alone = [0.9 if (g == "fine" and c >= 12) else 0.1 for c in range(16)]
+                    if tamper == "occupancy" and (mode, g, k) == ("B", "fine", 3):
+                        alone[0] = 0.2
+                    save(md.product_name("t", mode, g, u), x, self.w.x_t, mode=mode, grid=g, universe=u, dl_sha256=None,
+                         mode_info={"grid_stats": {"alone_by_cell": alone}})
                     if g == "nominal":
                         ref = x * (1 + 1e-15) if tamper == "grid" and (mode, k) == ("C", 2) else x
                         np.savez_compressed(i2_dir / f"fd1b_inv_{mode}_{u}.npz", xsec_flat=ref)
         return u_dir, i2_dir
 
-    def go(self, u_dir, i2_dir, i2=None):
+    def go(self, u_dir, i2_dir, i2=None, ddl=True):
         with mock.patch.object(sa, "fine_map", lambda d: None), mock.patch.object(sa, "functional_matrix", lambda fm: np.eye(16)):
-            return md.readout(self.w.root, u_dir, i2_dir, i2 or self.i2, self.i0, self.dl, self.definition, "t")
+            return md.readout(self.w.root, u_dir, i2_dir, i2 or self.i2, self.i0, self.dl if ddl else None,
+                              self.definition, "t")
 
-    def test_d_equal_to_s1_passes_and_reads_the_grid_hypothesis(self):
-        r = self.go(*self.write(scale=1.0))
-        np.testing.assert_allclose(r["rho_D"], 1.0, rtol=1e-9)
-        self.assertEqual(r["rule_D"]["verdict"], "PASS")
+    def test_d_equal_to_a_passes_rule_k_and_reads_the_grid_hypothesis(self):
+        r = self.go(*self.write(scale=1.0), ddl=False)
         np.testing.assert_allclose(r["kappa"], 1.0, rtol=1e-9)
-        self.assertEqual(r["kappa_reading"]["reading"], "matched")
+        self.assertEqual((r["rule_K"]["verdict"], r["rule_K"]["next"]), ("PASS", "to Joseph"))
+        self.assertNotIn("ddl_option", r)
         for mode in md.GRID_MODES:
-            np.testing.assert_allclose(r["grid_check"][mode]["coarse_over_nominal"], 1.3, rtol=1e-9)
-            self.assertTrue(r["grid_check"][mode]["reading"]["subcell_hypothesis_supported"])
-        self.assertEqual(r["dl_sha256"], digest(self.dl))
+            gc = r["grid_check"][mode]
+            np.testing.assert_allclose(gc["coarse_over_nominal"], 1.3, rtol=1e-9)
+            self.assertEqual((gc["reading"]["coarse_counted"], gc["reading"]["fine_counted"]), (16, 12))
+            self.assertTrue(gc["reading"]["subcell_hypothesis_supported"])
+
+    def test_the_ddl_option_is_descriptive_and_keeps_the_identity(self):
+        r = self.go(*self.write(scale=1.0))
+        o = r["ddl_option"]
+        self.assertTrue(o["role"].startswith("descriptive"))
+        np.testing.assert_allclose(o["rho_D"], 1.0, rtol=1e-9)
+        # review B1: rho_D = lambda kappa F_truth exactly; here lambda = 1 / (2 g) and F_truth = 2 g
+        self.assertLess(o["identity_max_rel"], 1e-12)
+        np.testing.assert_allclose(o["lambda"], 0.5 / self.d["g"], rtol=1e-9)
+        self.assertEqual(set(o["per_cell"]), {f"R{c:02d}" for c in range(16)})
+        self.assertEqual(o["dl_sha256"], digest(self.dl))
+        self.assertEqual(r["rule_K"]["verdict"], "PASS")
 
     def test_dltruth_is_f_over_the_nominal_truth_per_cell(self):
         with mock.patch.object(sa, "fine_map", lambda d: None), mock.patch.object(sa, "functional_matrix", lambda fm: np.eye(16)):
@@ -461,14 +532,14 @@ class Readout(unittest.TestCase):
         np.testing.assert_allclose(r["r_cell"], self.w.f / self.w.x_t, rtol=1e-15)
         self.assertEqual(r["U_xT"], self.w.x_t.tolist())
 
-    def test_d_larger_than_s1_fails(self):
-        r = self.go(*self.write(scale=1.2))
-        np.testing.assert_allclose(r["rho_D"], 1.2, rtol=1e-9)
-        self.assertEqual((r["rule_D"]["verdict"], len(r["rule_D"]["above"])), ("FAIL", 16))
+    def test_d_larger_than_a_fails(self):
+        r = self.go(*self.write(scale=1.2), ddl=False)
+        np.testing.assert_allclose(r["kappa"], 1.2, rtol=1e-9)
+        self.assertEqual((r["rule_K"]["verdict"], len(r["rule_K"]["above"])), ("FAIL", 16))
 
     def test_controls_refuse(self):
-        for tamper, msg in (("dnom-cv", "derivation CV"), ("dl-truth", "is not f"), ("grid", "I2's product"),
-                            ("one", "one code"), ("sha", "this data-like truth")):
+        for tamper, msg in (("dnom-cv", "derivation CV"), ("dl-truth", "is not f"),
+                            ("one", "one code"), ("sha", "this data-like truth")):  # the last three need the Ddl option
             with self.assertRaisesRegex(fs.Invalid, msg, msg=tamper):
                 self.go(*self.write(tamper=tamper))
         bad = self.tmp / "i2-bad.json"
@@ -477,6 +548,15 @@ class Readout(unittest.TestCase):
         bad.write_text(json.dumps(r2))
         with self.assertRaisesRegex(fs.Invalid, "I2's M"):
             self.go(*self.write(), i2=bad)
+
+    def test_a_grid_control_failure_is_invalid_for_the_grid_part_only(self):
+        # the director's ruling 4: rule D's readout stands
+        for tamper, why in (("grid", "I2's product"), ("occupancy", "occupancy differs")):
+            r = self.go(*self.write(tamper=tamper), ddl=False)
+            self.assertEqual(r["grid_check"]["verdict"], "INVALID")
+            self.assertIn(why, r["grid_check"]["why"])
+            self.assertEqual(r["rule_K"]["verdict"], "PASS")
+        self.assertEqual(self.go(*self.write(), ddl=False)["grid_check"]["verdict"], "READ")
 
     def test_the_readout_reads_with_o_noatime_only(self):
         u_dir, i2_dir = self.write()

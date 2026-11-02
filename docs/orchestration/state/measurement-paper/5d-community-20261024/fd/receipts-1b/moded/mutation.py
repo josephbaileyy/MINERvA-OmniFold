@@ -1,6 +1,10 @@
-import subprocess, sys
+import hashlib, subprocess, sys
 from pathlib import Path
-src = Path("fd_1b_moded.py"); orig = src.read_text()
+src, tests = Path("fd_1b_moded.py"), Path("tests/test_fd_1b_moded.py")
+orig = src.read_text()
+for p in (src, tests, Path("fd_1b_inv.py")):
+    print(f"sha256 {hashlib.sha256(p.read_bytes()).hexdigest()}  {p}")
+print("KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill")
 M = [
  ("coarse grid drops the H2 edges", "e[-1:], np.asarray(s1i.H2_EDGES[a], float)]", "e[-1:]]"),
  ("fine grid not halved", "np.concatenate([e, 0.5 * (e[:-1] + e[1:])])", "np.concatenate([e])"),
@@ -10,16 +14,12 @@ M = [
  ("D unfolds with the universe MC", "return inv.with_mc(exp, inputs, bkg), x_true", "return exp, x_true"),
  ("D's nature is the nominal MC", "toys.build_full(ui, ub, r, ones_s, ones_b, None, expectation=True)", "toys.build_full(inputs, bkg, r, ones_s, ones_b, None, expectation=True)"),
  ("unreported rows take a cell's factor", "m = cell >= 0\n", "m = cell >= -1\n"),
- ("Ddl's factor not applied", 'r, dl_sha, truth = r * dl_weight(row_cell(inputs, fm), dl["r_cell"]), a.expect_dl_sha256, "data-like"', 'r, dl_sha, truth = r, a.expect_dl_sha256, "data-like"'),
  ("Ddl's nominal-truth check skipped", 'if not np.array_equal(U @ np.asarray(x_nom, float).ravel(order="C"), np.asarray(dl["U_xT"], float)):', "if False:"),
  ("dl digest not checked", "if sa.sha256(path) != expect_sha256:", "if False:"),
  ("--grid pairing not enforced", "if (a.mode in GRID_MODES) != (a.grid is not None):", "if False:"),
  ("grid universes not enforced", "if a.mode in GRID_MODES and tag not in GRID_UNIVERSES + (\"CV\",):", "if False:"),
- ("rule D passes at 15 of 16", 'verdict = "PASS" if n == rho.size else', 'verdict = "PASS" if n >= rho.size - 1 else'),
  ("partial level at 4", "ACCOUNT = 8 ", "ACCOUNT = 4 "),
  ("window edges exclusive", "return (x >= WINDOW[0]) & (x <= WINDOW[1])", "return (x > WINDOW[0]) & (x < WINDOW[1])"),
- ("matched reading needs more than 8", '"matched" if n >= ACCOUNT else', '"matched" if n > ACCOUNT else'),
- ("sub-cell hypothesis read as OR", '"subcell_hypothesis_supported": bool((gamma > WINDOW[1]).sum() >= ACCOUNT and', '"subcell_hypothesis_supported": bool((gamma > WINDOW[1]).sum() >= ACCOUNT or'),
  ("the rule's object is the raw shift", 'rows["error"].append(x - t)', 'rows["error"].append(x - X_cv)'),
  ("Dnom CV control skipped", 'if not np.array_equal(np.asarray(blk["Dnom"]["cv"]["xsec_flat"], float), x_cv_der):', "if False:"),
  ("data-like truth control skipped", "if np.max(np.abs(T_dl / f - 1)) > DL_TOLERANCE:", "if False:"),
@@ -34,6 +34,19 @@ M = [
  ("a moved atime exits 0", "return status | 8", "return status"),
  ("peak RSS not recorded", '"peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, ', ""),
  ("unit at 1,370 s", "UNIT_SECONDS = 1062.0 ", "UNIT_SECONDS = 1370.0 "),
+ ("B1: lambda without the carry", "np.sqrt(D_dl / (g ** 2 * D_nom))", "np.sqrt(D_dl / D_nom)"),
+ ("ruling 4: a grid failure voids rule D", '    except fs.Invalid as e:\n        return {"verdict": "INVALID", "why": str(e)}', '    except fs.Invalid as e:\n        raise'),
+ ("M2: rows alone miscounted", "float((occ == 1).sum() / occ.sum())", "float((occ == 1).sum() / occ.size)"),
+ ("lambda reading threshold above 8", '"carry-like" if n >= ACCOUNT else', '"carry-like" if n > ACCOUNT else'),
+ ("rule K passes at 15 of 16", 'verdict = "PASS" if n == kappa.size else', 'verdict = "PASS" if n >= kappa.size - 1 else'),
+ ("rule K opens an ensemble on PASS", '"next": "to Joseph"}', '"next": "to Joseph" if verdict != "PASS" else "ensemble"}'),
+ ("sub-cell hypothesis read as OR", "up_g >= half(kg) and dn_f >= half(kf)", "up_g >= half(kg) or dn_f >= half(kf)"),
+ ("M2: construction-limited cells counted", "keep[gname] = np.array([x is not None and x <= ALONE_MAX for x in a_c])", "keep[gname] = np.ones(len(a_c), bool)"),
+ ("M2: occupancy consistency skipped", "if len(alone) != 1:", "if False:"),
+ ("M2: per-cell alone counted by cell, not row", "weights=alone_row[rc >= 0].astype(float)", "weights=np.ones(int((rc >= 0).sum()))"),
+ ("Ddl's factor not applied", 'r, dl_sha, truth = r * dl_weight(row_cell(inputs, fm), dl["r_cell"]), a.expect_dl_sha256, "data-like"', 'r, dl_sha, truth = r, a.expect_dl_sha256, "data-like"'),
+ ("rule K reads rho instead of kappa", "kappa = np.sqrt(D_nom / A_raw)", "kappa = np.sqrt(D_nom / M)"),
+ ("grid needs no definition", 'if a.definition is None:\n            raise Refusal("the grid check needs --definition', 'if False:\n            raise Refusal("the grid check needs --definition'),
 ]
 rows = []
 try:
@@ -41,9 +54,9 @@ try:
         assert orig.count(old) == 1, name
         src.write_text(orig.replace(old, new))
         r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", "tests/test_fd_1b_moded.py"], capture_output=True, text=True)
-        killed = r.returncode != 0
-        rows.append((name, "KILLED" if killed else "SURVIVED"))
-        print(f"{'KILLED  ' if killed else 'SURVIVED'} {name}", flush=True)
+        state = "KILLED" if r.returncode == 1 else "SURVIVED" if r.returncode == 0 else f"ERROR rc={r.returncode}"
+        rows.append((name, state))
+        print(f"{state:8s} {name}", flush=True)
 finally:
     src.write_text(orig)
 r = subprocess.run([sys.executable, "-m", "pytest", "-q", "tests/test_fd_1b_moded.py"], capture_output=True, text=True)
