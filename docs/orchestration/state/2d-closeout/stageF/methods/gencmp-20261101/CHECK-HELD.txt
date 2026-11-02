@@ -1,0 +1,35 @@
+# check_held on the rater copy of 4b5ec82ed (the GENCMP round's final text)
+
+command: python3 -I r22/tools/check_held.py <methods>/r22 <methods>/rater-calibration/tools/analyze.py <blind.txt> --pair-applied G1:paper-s-09 --fact-held
+
+  FAIL G1:paper-g-08: held quote no longer prints exactly: 'In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBU'
+  FAIL G1:paper-s-08: held quote no longer prints exactly: 'Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths'
+  FAIL G1b:paper-s-07: held quote no longer prints exactly: 'We report a simultaneous measurement of the νµ charged-current inclusive cross section in '
+held quotes checked exactly 14, exempt by applied pair ['G1b:paper-s-05'], held for facts 8, failures 3
+
+## holddiff (rater copy against the normal build)
+
+raw words: normal=9457 rater=9440
+  delete: normal[8132:8133] [-the-]  rater[8132:8132] {++}
+  insert: normal[8448:8448] [--]  rater[8447:8448] {+the+}
+  replace: normal[8454:8455] [-crosssection-]  rater[8454:8455] {+cross-section+}
+  delete: normal[8517:8522] [-[HOLD: funding and grant acknowledgments]-]  rater[8517:8517] {++}
+  delete: normal[8755:8767] [-[HOLD: deposit identifier and access route, after the separately authorized release decision.]-]  rater[8750:8750] {++}
+  hold span in normal build: [HOLD: funding and grant acknowledgments]
+  hold span in normal build: [HOLD: deposit identifier and access route, after the separately authorized release decision.]
+  NON-HOLD DIFF delete: [-the-] {++}
+  NON-HOLD DIFF insert: [--] {+the+}
+holds in normal=2; 'HOLD' in rater=False; non-hold diffs after hyphen normalization=2
+VERDICT: FAIL
+multiset: only normal {}; only rater {}
+multiset VERDICT: PASS
+
+## Dispositions
+
+- G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07: pre-existing flags, the same quotes the #638 and #642 rounds recorded;
+  this round changes none of their source sentences (git diff dfa137370..4b5ec82ed touches none of them).
+- G1b:paper-g-14, flagged in #642's run, does not fire here. Its source sentence is unchanged by this round; why its
+  extracted text now matches was not investigated.
+- holddiff: the word multiset is identical (multiset VERDICT PASS). The ordered diff's two non-hold entries are one
+  "the" that the rater copy extracts at a different position in reading order (normal word 8132, rater 8447), near
+  the acknowledgment hold span; no word is added or lost. Its cause in the extraction was not investigated.
