@@ -26,6 +26,7 @@ import s1_assemble as sa  # noqa: E402
 
 P = Path("/pscratch/sd/j/josephrb")
 RE2 = P / "2d-closeout-re2-20261023"
+V0_DIR = "v0-a1"   # addendum X-A1: the amended V0; the first run's v0/v0.json stays as the record
 CV_OMNI = Path("/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root")
 # RE-2's CV omnifile (re2_env.sh:9-10); part B's pscratch stage of it, the same digest, was removed (deletions.tsv:2)
 UNI_OMNI = P / "MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root"
@@ -115,7 +116,7 @@ def hist2d_cells(data: bytes, cells2d: np.ndarray) -> np.ndarray:
 
 
 def cmd_v0(a) -> int:
-    out = a.run_dir / "v0"
+    out = a.run_dir / V0_DIR
     if (out / "v0.json").exists():
         raise X.Stop("-", f"refusing to overwrite {out / 'v0.json'}")
     inp = X.Inputs()
@@ -156,14 +157,22 @@ def cmd_v0(a) -> int:
         except X.Stop as e:
             joins[name] = {"pass": False, "why": str(e)}
     rec["joins"] = {k: {kk: vv for kk, vv in v.items() if kk != "map"} for k, v in joins.items()}
-    # the draw check: the regenerated sums of RE-2's replicas 1-100 are the ones their logs printed
-    drawn = {}
+    # the draw check: the regenerated data and MC sums of RE-2's replicas 1-100 are the ones their logs printed, and
+    # the background stream is the one each replica's p1Streams record states (addendum X-A1)
+    drawn, legs, bkg_why = {}, {"data": 0, "mc": 0, "bkg": 0}, {}
     for b_ in X.STAT_REPLICAS:
         log = inp.bytes(RE2 / f"partb/logs/S1_{b_:03d}.log").decode(errors="replace")
         lines = X.draw_sums_line(b_)
-        drawn[b_] = all(v in log for v in lines.values())
-    rec["draw_check"] = {"replicas": len(drawn), "matching": int(sum(drawn.values())),
-                         "first_mismatch": next((b_ for b_, ok in drawn.items() if not ok), None)}
+        bad = X.bkg_stream_check(X.p1_streams_record(inp.bytes(RE2 / f"partb/out/S1_{b_:03d}/xsec.root")), b_)
+        ok = {"data": lines["data"] in log, "mc": lines["mc"] in log, "bkg": not bad}
+        for k, v in ok.items():
+            legs[k] += int(v)
+        if bad:
+            bkg_why[b_] = bad
+        drawn[b_] = all(ok.values())
+    rec["draw_check"] = {"replicas": len(drawn), "matching": int(sum(drawn.values())), "matching_by_leg": legs,
+                         "first_mismatch": next((b_ for b_, ok in drawn.items() if not ok), None),
+                         "bkg_failures": {str(k): v for k, v in list(bkg_why.items())[:5]}}
     rec["pass"] = bool(rec["counts_ok"] and rec["mc"]["pass"] and all(v["pass"] for v in joins.values())
                        and rec["draw_check"]["matching"] == len(X.STAT_REPLICAS))
     rec["route"] = "B" if rec["pass"] else "A (the statistical stream falls back to r in [0, 1]; ruling 1)"
@@ -281,10 +290,10 @@ def cmd_boot(a) -> int:
     npz, bkg = a.run_dir / "inputs" / X.NPZ_NAME, a.run_dir / "inputs" / X.BKG_NAME
     rec = {"schema": "fd-xcov-boot/1", "native": bool(a.native), "replicas": reps, "threads": a.threads}
     if not a.native:
-        v0 = json.loads((a.run_dir / "v0" / "v0.json").read_text())
+        v0 = json.loads((a.run_dir / V0_DIR / "v0.json").read_text())
         if not v0["pass"]:
             raise X.Stop("B", "V0 did not pass: route B has no maps, and the fallback needs no replicas")
-        mp = a.run_dir / "v0" / "maps.npz"
+        mp = a.run_dir / V0_DIR / "maps.npz"
         if hashlib.sha256(mp.read_bytes()).hexdigest() != v0["maps_sha256"]:
             raise X.Stop("B", "maps.npz is not the file V0 recorded")
         m = np.load(mp, allow_pickle=False)
@@ -354,7 +363,7 @@ def cmd_k(a) -> int:
         ctrl[name] = bool(ok)
         X.report(name.split()[0], name, ok, str(detail))
 
-    v0 = json.loads((a.run_dir / "v0" / "v0.json").read_text())
+    v0 = json.loads((a.run_dir / V0_DIR / "v0.json").read_text())
     bs = boot_state(a.run_dir, v0["pass"])
     if not bs["ended"]:
         raise X.Stop("K", f"BOOT has not ended ({bs}); K runs once, after it")

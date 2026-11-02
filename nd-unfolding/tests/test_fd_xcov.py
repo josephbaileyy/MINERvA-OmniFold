@@ -6,6 +6,7 @@ ambiguous row), the 2D data mask at each window edge, MC row identity (a differi
 draws against RE-2's and s5n_pseudo's own, the mapped replica, the cross blocks against each side's own rule, the bound
 matrix's PSD joint, the chi2_4 survival function, the rule at each of its branches, route A's r*, and route B's
 correlation."""
+import importlib.util
 import json
 import sys
 import tempfile
@@ -359,6 +360,72 @@ class Order(unittest.TestCase):
         _, m, g = X.draws_2d(4, 50, 60, 30)
         self.assertEqual(line["mc"], f"mc factor sum={m.sum():.6g} (n=60")
         self.assertEqual(line["bkg"], f"bkg factor sum={g.sum():.6g} (n=30")
+
+
+P1 = ND / "tests/fixtures/xcov_p1streams"     # PROVENANCE.tsv there: replica 1's real p1Streams record, in a ROOT file
+
+
+def p1_record():
+    return X.p1_streams_record((P1 / "p1streams_present.root").read_bytes())
+
+
+def _mutate(path, value):
+    def f(rec):
+        rec = json.loads(json.dumps(rec))
+        *head, last = path
+        d = rec
+        for k in head:
+            d = d[k]
+        d[last] = value(d[last])
+        return rec
+    return f
+
+
+# addendum X-A1 condition 2: each mutant of replica 1's real record must fail the background leg
+BKG_MUTANTS = {
+    "seed offset 20,000,001": _mutate(("seed_offsets", "bkg"), lambda v: v + 1),
+    "stream size n - 1": _mutate(("n", "bkg"), lambda v: v - 1),
+    "stream size n + 1": _mutate(("n", "bkg"), lambda v: v + 1),
+    "sum + 1": _mutate(("sum", "bkg"), lambda v: v + 1.0),
+    "sum - 1": _mutate(("sum", "bkg"), lambda v: v - 1.0),
+    "bootstrap seed 2": _mutate(("bootstrap_seed",), lambda v: 2),
+    "sum.bkg key absent": lambda rec: {k: v for k, v in rec.items() if k != "sum"},
+}
+
+
+@unittest.skipUnless(importlib.util.find_spec("uproot"), "the record is read with uproot (omnifold_py310)")
+class BkgLeg(unittest.TestCase):
+    def test_the_real_record_is_read_from_its_tnamed(self):
+        rec = p1_record()
+        self.assertEqual(rec["seed_offsets"], {"bkg": 20_000_000, "data": 0, "mc": 10_000_000})
+        self.assertEqual(rec["bootstrap_seed"], 1)
+
+    def test_replica_1s_real_record_passes_against_the_regenerated_stream(self):
+        self.assertEqual(X.bkg_stream_check(p1_record(), 1), [])
+
+    def test_every_mutant_of_the_real_record_fails(self):
+        rec = p1_record()
+        for name, mutant in BKG_MUTANTS.items():
+            with self.subTest(name):
+                self.assertTrue(X.bkg_stream_check(mutant(rec), 1))
+
+    def test_the_real_record_fails_for_another_replica(self):
+        self.assertTrue(X.bkg_stream_check(p1_record(), 2))
+
+    def test_a_regeneration_at_the_wrong_offset_or_size_fails(self):
+        rec = p1_record()
+        self.assertTrue(X.bkg_stream_check(rec, 1, X.N_2D_BKG - 1))
+        old = X.SEED_BKG
+        try:
+            X.SEED_BKG = old + 1
+            self.assertTrue(X.bkg_stream_check(dict(rec, seed_offsets=dict(rec["seed_offsets"], bkg=old + 1)), 1))
+        finally:
+            X.SEED_BKG = old
+
+    def test_a_file_without_p1streams_fails(self):
+        rec = X.p1_streams_record((P1 / "p1streams_absent.root").read_bytes())
+        self.assertIsNone(rec)
+        self.assertEqual(X.bkg_stream_check(rec, 1), ["no p1Streams record"])
 
 
 if __name__ == "__main__":
