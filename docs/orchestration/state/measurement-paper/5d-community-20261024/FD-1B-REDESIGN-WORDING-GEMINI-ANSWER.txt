@@ -1,0 +1,31 @@
+### 1. Paper vs. Companion Note Scope
+* **Paper (Must appear):** 
+  1. The held-out truth tunes used (GENIE G18, AR23).
+  2. Sample size (300 pseudo-experiments/tune).
+  3. Metrics and result (nominal 68% per-cell coverage and joint $\chi^2$ consistency).
+* **Note Only:** $\pm 1\sigma$ endpoint sampling, zero-clipping of negative weights, the lateral block transfer, and explicit disclaimers regarding shared base models.
+
+---
+
+### 2. Caveats vs. Neutral Methods Phrasing
+* **Clause M:** Overly defensive. **Rephrase neutrally:** State as methodology: *"...with systematic variations propagated linearly, consistent with the construction of $C_{\mathrm{total}}$."*
+* **Clause S & §13 ("CANNOT SUPPORT"):** Pure negative qualifiers (apologetic caveats). **Drop from paper entirely.** The mathematical structure is already defined by the covariance definition; belaboring what a linear sum cannot do violates PRD brevity.
+* **(C) Shared universes / missing physics:** A caveat stating what is true of all closure tests. **Move to note.**
+* **(C) Negative weight clipping & $\pm 1\sigma$ draws:** Technical implementation details. **Move to note.**
+
+---
+
+### 3. Recommended Paper Text
+
+#### (i) Pass at both tunes
+> "Coverage of the reported covariance was evaluated using 300 pseudo-experiments generated under each of two alternative generator tunes (GENIE G18 and AR23). Systematic variations were propagated linearly, consistent with the construction of $C_{\mathrm{total}}$. Unfolding each pseudo-experiment with the nominal framework yielded central intervals with empirical coverage consistent with nominal 68% containment across all kinematic cells, with joint $\chi^2$ distributions matching the expected null."
+
+#### (ii) Failure at one tune
+> "Coverage tests with 300 pseudo-experiments under the AR23 tune confirm nominal 68% per-cell containment across the kinematic phase space. Under G18, empirical coverage drops to $52\%$ in forward-angle cells (joint $\chi^2/\mathrm{d.o.f.} = 29/16$), driven by differences in the shared multinucleon model. The reported covariance covers the nominal modeling space and AR23, but under-covers in phase space regions sensitive to alternate $2\mathrm{p}2\mathrm{h}$ dynamics."
+
+---
+
+### 4. First-Order Composition: Limitation or Standard Practice?
+**Standard practice.** Summing sub-matrices ($C_{\mathrm{total}} = \sum_k C_k$) from independent variation groups inherently relies on a first-order linear Taylor expansion of the uncertainties. 
+
+No referee expects second-order cross-systematic response tensors in a multi-universe neutrino cross-section paper. It is not an unvalidated defect requiring an apology; describing it neutrally as *"propagated linearly, consistent with the covariance construction"* is fully sufficient.
