@@ -1,0 +1,20 @@
+login37
+2026-11-02T08:14:45Z
+stage rc=0
+[PASS S] s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz is the pinned bytes
+[PASS S] s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz is the pinned bytes
+[S] 18 inputs staged; atime moved on 0
+2026-11-02T08:14:52Z
+vertices rc=0
+[PASS V] step A's carbon xsec and sumw2 are the staged carbon vertex file's, bitwise
+[PASS V] step A's CH arrays are combine(carbon, hydrogen), bitwise
+[V] 2 CH vertex files, config_ch.json and config_carbon.json written
+2026-11-02T08:14:52Z
+ratios rc=0
+[PASS R1] CH run's genie_mec.json is the carbon run's
+[PASS R1] CH run's genie_mec_sq.json is the carbon run's
+[PASS R1] CH GiBUU carries pz_max_cells = 10 and no truth_cut, as the committed GiBUU does; CH NuWro neither
+2026-11-02T08:15:39Z
+porcelain after: empty
+/pscratch/sd/j/josephrb/gencmp-e2a1-20261102/prep_ch/R1.ok
+/pscratch/sd/j/josephrb/gencmp-e2a1-20261102/vertices/V.ok

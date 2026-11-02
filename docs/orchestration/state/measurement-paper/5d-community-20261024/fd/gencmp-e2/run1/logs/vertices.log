@@ -1,0 +1,10 @@
+[PASS V] /pscratch/sd/j/josephrb/gencmp-e2-20261102/vertices does not exist (no overwrite)
+[PASS V] nuwro: the staged carbon file is the config's
+[PASS V] nuwro: step A's product is its pinned bytes
+[PASS V] step A's carbon xsec and sumw2 are the staged carbon vertex file's, bitwise
+[PASS V] step A's CH arrays are combine(carbon, hydrogen), bitwise
+[PASS V] gibuu: the staged carbon file is the config's
+[PASS V] gibuu: step A's product is its pinned bytes
+[PASS V] step A's carbon xsec and sumw2 are the staged carbon vertex file's, bitwise
+[PASS V] step A's CH arrays are combine(carbon, hydrogen), bitwise
+[V] 2 CH vertex files, config_ch.json and config_carbon.json written
