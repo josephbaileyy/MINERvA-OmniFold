@@ -1,0 +1,8 @@
+# check_held.py --fact-held on the rater copy of eb0de39db (clean tree), with --pair-applied G1:paper-s-09
+# command: python3 -I r22/tools/check_held.py <methods>/r22 <methods>/rater-calibration/tools/analyze.py blind.txt --pair-applied G1:paper-s-09 --fact-held (exit 1)
+# expected: the three pre-existing flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07) and G1b:paper-g-09, the IV B sentence DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md item 2 rewrites (REPORT.md, for the director)
+  FAIL G1:paper-g-08: held quote no longer prints exactly: 'In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBU'
+  FAIL G1:paper-s-08: held quote no longer prints exactly: 'Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths'
+  FAIL G1b:paper-g-09: held quote no longer prints exactly: 'The learner was selected after the LightGBM and exact-split comparisons with the published'
+  FAIL G1b:paper-s-07: held quote no longer prints exactly: 'We report a simultaneous measurement of the νµ charged-current inclusive cross section in '
+held quotes checked exactly 14, exempt by applied pair ['G1b:paper-s-05'], held for facts 8, failures 4
