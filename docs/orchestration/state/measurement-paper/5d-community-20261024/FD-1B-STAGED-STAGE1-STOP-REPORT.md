@@ -38,8 +38,14 @@ whose composite |a_D| / max_j |a_uj| exceeds N1's bound of 10, in three of the f
   STOP under ruling 9.
 - **Access times:** none moved. The receipt's own record shows 706 files opened through `O_NOATIME`, none moved.
   The 1,513-path stat list is unchanged after the receipt (connect 33) and after the attribution (connect 34).
-- **Deviations and errata:** §5. My amendment under-stated the receipt's read volume: it read a 68.4 GB bank, not 26.6 GB, five times by the
-  code, with about 208 GB measured (erratum E1). I0's and I2's `load_s1` read the staged S1 assembly without `O_NOATIME` (erratum E2, ruling 8).
+- **A defect in binding 2's bound code, masked by the STOP (D2, §5; found by `coverage-5b-audit`).** A toy draws its
+  pseudo-data with `rng.poisson`, which refuses a negative mean. Two universes, LowQ2_1 and HighQ2_1, carry negative
+  weights, and the product rule keeps the sign. So 684 of the 900 declared toys would have refused. Had N1 passed,
+  the bulk would have failed on most of its toys.
+- **Deviations and errata:** §5.
+  - My amendment under-stated the receipt's read volume (erratum E1). The receipt read 68.4 GB of universe files, not
+    26.6 GB, five times by the code, with about 208 GB measured.
+  - I0's and I2's `load_s1` read the staged S1 assembly without `O_NOATIME` (erratum E2, ruling 8).
 - **HPSS:** deferred until NERSC's maintenance ends on 2026-11-06 at 17:00
   (`RECORD-20261102-director-hpss-deferral.md`, #685). Nothing of stage 1 is archived yet. The pscratch originals
   stay until each copy is verified.
@@ -194,9 +200,9 @@ The draws are the same construction at every truth, so this is the draws' spread
 
 | | my amendment | measured or counted (connect 32) |
 |---|---|---|
-| the bank the receipt reads | "the 26.6 GB bank" (§5.3) | **68.4 GB**: 700 pinned universe files (66.24 GB bank, 2.13 GB detector dump), plus the 2.16 GB bank CV and the 1.55 GB inputs (sizes from the stat list) |
+| the bank the receipt reads | "the 26.6 GB bank" (§5.3) | **68.4 GB** of universe files alone: 700 pinned files (66.24 GB bank, 2.13 GB detector dump). With the 2.16 GB bank CV and the 1.55 GB inputs, 72.1 GB (sizes from the stat list) |
 | passes over it | "one or two" (§5.3); "about four" (§4) | **five** by the code: one in the singles (`universe_weights`), and two in each composite pass, because `_weights` hashes each universe's four files and then loads them |
-| bytes read (`/usr/bin/time` "File system inputs" × 512 B) | 27–106 GB | **208.1 GB** (406,519,308 blocks), about 3.0 volumes of the 68.4 GB bank |
+| bytes read (`/usr/bin/time` "File system inputs" × 512 B) | 27–106 GB | **208.1 GB** (406,519,308 blocks), about 3.0 volumes of the 68.4 GB of universe files. Connect 34, four passes by the code: 139.6 GB (272,582,136 blocks), about 2.0 volumes |
 | wall | not estimated | 1:26:25 |
 | peak RSS | not estimated | 11.76 GB |
 
@@ -204,7 +210,7 @@ The draws are the same construction at every truth, so this is the draws' spread
   - The 26.6 GB is stage 0's interaction subset (268 files, connect 25). Stage 1 reads every pinned universe:
     all 175 universes S1 unfolded: 100 Flux, 67 interaction and 8 detector.
   - The pass count left out the pin hashing (§5.3) or under-counted it (§4).
-  - The audit's "about 8 times the 26.6 GB bank" inherits my 26.6.
+  - The audit's "about 8 times the 26.6 GB bank" used my 26.6. The audit records that error as its own as well.
 - **The unit.** "File system inputs" is `getrusage`'s `ru_inblock`, which Linux counts in 512-byte blocks. On
   Lustre it may count differently, so the 208 GB is an estimate of the bytes read (the audit's caution), not a
   measurement of them.
@@ -231,6 +237,25 @@ The draws are the same construction at every truth, so this is the draws' spread
 4. **Connect 32's poll changed login node.** Connect 33 answered from login23, where connect 32 had run on login37.
    pscratch is shared, so the stat reads the same inodes. The detached processes ran wholly on the node that started
    them.
+5. **(D2) A defect in binding 2's bound code, masked by the STOP** (`coverage-5b-audit`'s review of #696 and #697,
+   issuecomment-6588835818; verified here).
+   - **The path.** Every toy draws pseudo-data with `rng.poisson` (`fd_1b_toys.build_full`, `fd_1b_toys.py:284–287`
+     at M2, through `fd_1b_mc.toy_experiment`). numpy raises `ValueError` on a negative mean.
+   - **The weights.** In the receipt (§2), only LowQ2_1 and HighQ2_1 carry negative weights: 462 and 99 rows in `wt`
+     and `wr`, 50 and 5 in `bkgw`. Declaration §4.2 keeps negative weights, and the product rule carries their sign
+     into the composite.
+   - **The toys.** By the audit's recount with `draw_for_seed`, 684 of the 900 declared draws hold LowQ2_1 or
+     HighQ2_1. That is consistent with each pair band at either endpoint with probability ½. Each such toy would
+     have refused (rc 4).
+   - **Why nothing caught it.**
+     - The central, seed, block and stat roles draw at the mean (`_MeanRNG`) or use the real data. So do S1's own
+       universe unfolds, which is why S1 ran with these weights.
+     - S1-0's pilot holds one toy (G18 3,620,000). The plug-in pilot has no AR23 toy. The S1-0 readout would have
+       shown it only if that seed drew either universe.
+     - No test sends a negative composite through `toy_experiment`.
+   - **Its standing.** A defect, reported unrepaired. It does not change the STOP, which comes first. Any redesign must
+     state what a toy does with a negative expected count. That is a method choice for the director and Joseph (the
+     redesign proposal, #697). The audit had acknowledged #673 without it, and says so.
 
 ## 6. For the audit and the director
 
