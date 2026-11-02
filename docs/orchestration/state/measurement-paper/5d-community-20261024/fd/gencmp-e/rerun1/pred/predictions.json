@@ -1,0 +1,61 @@
+{
+ "schema": "fd-gencmp-e-predictions/1",
+ "set": "chdefs",
+ "predictions": [
+  {
+   "name": "genie_cv",
+   "path": "gencmp_e/genie_cv_ch_ana.npz",
+   "sha256": "0796848009ab3bc24984102aa2a1a4030663caf83dd70be73d1188bd1acc83a4",
+   "meta": [
+    "prediction",
+    "genie_cv"
+   ],
+   "cells": "all",
+   "label": "GENIE 2.12.10 CV, no MEC; CH, analysis definitions (rebuilt, GENCMP step B)"
+  },
+  {
+   "name": "genie_mec",
+   "path": "gencmp_e/genie_mec_ch_ana.npz",
+   "sha256": "0e86e2ef6ddb8e1f6e83c751394b73b3bdf16844765f790c4cb9835535410da8",
+   "meta": [
+    "prediction",
+    "genie_mec"
+   ],
+   "cells": "all",
+   "label": "GENIE 2.12.10 + Valencia MEC; CH, analysis definitions (rebuilt, GENCMP step B)"
+  },
+  {
+   "name": "nuwro",
+   "path": "gencmp_e/nuwro_ch_ana.npz",
+   "sha256": "b3d1b28d5b2cc365ad9d7d5a5a002795bcbf248811f07a210e542a50dcf8d6a0",
+   "meta": [
+    "prediction",
+    "nuwro"
+   ],
+   "cells": "all",
+   "label": "NuWro 21.09; CH, analysis definitions (rebuilt, GENCMP step B): C12 + free proton, 12:1 per nucleon; hydrogen: supplement FLAGGED; NuWro 21.09 C12 + NuWro free-proton, 12:1 per nucleon; four hydrogen chunks rerun on alternate seeds, supplement FLAGGED (MP3-B section 2)"
+  },
+  {
+   "name": "gibuu",
+   "path": "gencmp_e/gibuu_ch_ana.npz",
+   "sha256": "617ce7a1f83284c03d9a8d269bd5029e7332168a97a07544187952c9333607ca",
+   "meta": [
+    "prediction",
+    "gibuu"
+   ],
+   "cells": "gibuu",
+   "label": "GiBUU 2019; CH, analysis definitions (rebuilt, GENCMP step B): C12 + free proton, 12:1 per nucleon; hydrogen: closure B3 failed; B3 (sampling closure) failed on hydrogen; a post-hoc bias check of its premise passed at <= 0.1 sigma_c; 46% of the hydrogen sample is DIS that does not conserve energy (binding addendum 9 section 4); no events above E_nu = 20 GeV (KNOWN_ISSUES 82), so it is compared on the eight p_parallel < 4.5 cells only and not shown above p_parallel 4.5 (FD-DIRECTOR-RULINGS.md section 5)"
+  },
+  {
+   "name": "mnvtune_v1",
+   "path": "gen5d/mnvtune_v1_xsec5d.npz",
+   "sha256": "bf7bd27873427d4b1ff9864403b895529931f113440acec3daa28479f958466c",
+   "meta": [
+    "schema",
+    "s5p-mc-truth-pred/1"
+   ],
+   "cells": "all",
+   "label": "MINERvA Tune v1, the analysis MC truth: prior (not an independent prediction)"
+  }
+ ]
+}

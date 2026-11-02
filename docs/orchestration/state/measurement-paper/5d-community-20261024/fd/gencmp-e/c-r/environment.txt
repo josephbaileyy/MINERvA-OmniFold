@@ -1,0 +1,6 @@
+python 3.10.19
+numpy 2.2.6
+uproot 5.6.9
+executable /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
+login37
+2026-11-02T02:30:54Z

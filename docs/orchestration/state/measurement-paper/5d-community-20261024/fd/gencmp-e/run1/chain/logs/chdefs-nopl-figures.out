@@ -1,0 +1,198 @@
+PASS control K0 the gencmp-chdefs set has its predictions
+PASS control K0 no output exists (no overwrite)
+PASS control K0 g_readout sha256 is the pin
+PASS control K0 g_readout schema is fd-g-readout/2
+PASS control K0 g_diag_readout sha256 is the pin
+PASS control K0 g_diag_readout schema is fd-g-diag-readout/1
+PASS control K0 g_followup_readout sha256 is the pin
+PASS control K0 g_followup_readout schema is fd-g-followup-readout/1
+PASS control K0 g_sens2_readout sha256 is the pin
+PASS control K0 g_sens2_readout schema is fd-g-sens2-readout/1
+PASS control K0 f0b_readout sha256 is the pin
+PASS control K0 f0b_readout schema is fd-f0b-readout/1
+PASS control K0 definition sha256 is the pin
+PASS control K0 definition schema is h2-definition/1
+PASS control K1 G-DIAG, G-FOLLOWUP and G-SENS2 ran on this Stage G readout
+PASS control K1 G-FOLLOWUP ran on this G-DIAG readout
+PASS control K1 G-SENS2 ran on, and references, this G-FOLLOWUP readout
+PASS control K1 every readout ran on this definition
+PASS control K1 every readout ran on Stage G's S1 product
+PASS control K1 C_resp is adopted, and every readout ran on the same C_resp
+PASS control K1 Stage G holds the five predictions in order, with their labels
+PASS control K1 every readout ran on the same five predictions
+PASS control K1 G-DIAG holds the five predictions in order
+PASS control K3 the definition reports exactly R00-R15
+PASS control K3 GiBUU's cells are Stage G's p_parallel < 4.5 cells
+PASS control K3 every other prediction is on all sixteen cells
+PASS control K2 genie_cv: f is the same data on its cells
+PASS control K2 genie_cv: sigma_total_over_f is the same on its cells
+PASS control K2 genie_cv: the reported covariance is C_total + C_resp
+PASS control K2 genie_cv: f and g are positive
+PASS control K2 genie_cv: g/f - 1 is g_over_f_minus_1
+PASS control K2 genie_mec: f is the same data on its cells
+PASS control K2 genie_mec: sigma_total_over_f is the same on its cells
+PASS control K2 genie_mec: the reported covariance is C_total + C_resp
+PASS control K2 genie_mec: f and g are positive
+PASS control K2 genie_mec: g/f - 1 is g_over_f_minus_1
+PASS control K2 nuwro: f is the same data on its cells
+PASS control K2 nuwro: sigma_total_over_f is the same on its cells
+PASS control K2 nuwro: the reported covariance is C_total + C_resp
+PASS control K2 nuwro: f and g are positive
+PASS control K2 nuwro: g/f - 1 is g_over_f_minus_1
+PASS control K2 gibuu: f is the same data on its cells
+PASS control K2 gibuu: sigma_total_over_f is the same on its cells
+PASS control K2 gibuu: the reported covariance is C_total + C_resp
+PASS control K2 gibuu: f and g are positive
+PASS control K2 gibuu: g/f - 1 is g_over_f_minus_1
+PASS control K2 mnvtune_v1: f is the same data on its cells
+PASS control K2 mnvtune_v1: sigma_total_over_f is the same on its cells
+PASS control K2 mnvtune_v1: the reported covariance is C_total + C_resp
+PASS control K2 mnvtune_v1: f and g are positive
+PASS control K2 mnvtune_v1: g/f - 1 is g_over_f_minus_1
+PASS control K2 the error bar is C_total + C_resp: sigma^2 = sigma(C_total)^2 + sigma(C_resp)^2
+PASS control K2 F0b records relative_sigma_plus_C_resp
+PASS control K2 F0b's sqrt(diag(C_total + C_resp))/f is the same
+PASS control K3 cells R00-R03 share their p_T and p_parallel box
+PASS control K3 cells R04-R07 share their p_T and p_parallel box
+PASS control K3 cells R08-R11 share their p_T and p_parallel box
+PASS control K3 cells R12-R15 share their p_T and p_parallel box
+PASS control K3 ratio:gibuu is on GiBUU's eight cells only, as points
+PASS control K3 ratio:gibuu:err is on GiBUU's eight cells only, as points
+PASS control K7 the five names differ, and none starts another
+PASS control K7 ratio:genie_cv:legend names genie_cv as Stage G's label does, with its qualifiers
+PASS control K7 ratio:genie_mec:legend names genie_mec as Stage G's label does, with its qualifiers
+PASS control K7 ratio:nuwro:legend names nuwro as Stage G's label does, with its qualifiers
+PASS control K7 ratio:gibuu:legend names gibuu as Stage G's label does, with its qualifiers
+PASS control K7 ratio:mnvtune_v1:legend names mnvtune_v1 as Stage G's label does, with its qualifiers
+PASS control K6 ratio:genie_cv:err sits in its own data's panel
+PASS control K6 ratio:genie_cv:legend names its own series
+PASS control K6 ratio:genie_mec:err sits in its own data's panel
+PASS control K6 ratio:genie_mec:legend names its own series
+PASS control K6 ratio:nuwro:err sits in its own data's panel
+PASS control K6 ratio:nuwro:legend names its own series
+PASS control K6 ratio:gibuu:err sits in its own data's panel
+PASS control K6 ratio:gibuu:legend names its own series
+PASS control K6 ratio:mnvtune_v1:err sits in its own data's panel
+PASS control K6 ratio:mnvtune_v1:legend names its own series
+PASS control K6 ratio: the drawn gids are the model's
+PASS control K6 ratio: every artist with ink is a model item
+PASS control K6 ratio: the axes are the model's
+PASS control K6 ratio:ref:0 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:0:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:0:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:0:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:ref:1 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:1:4 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:1:8 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:sep:1:12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_cv is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_cv:err is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_cv:legend is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_mec is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_mec:err is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:genie_mec:legend is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:nuwro is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:nuwro:err is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:nuwro:legend is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:gibuu is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:gibuu:err is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:gibuu:legend is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:mnvtune_v1 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:mnvtune_v1:err is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:mnvtune_v1:legend is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:keylabel:pt is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R00 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R01 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R02 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R03 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R04 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R05 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R06 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R07 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R08 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R09 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R10 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R11 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R13 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R14 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pt:R15 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:keylabel:pz is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R00 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R01 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R02 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R03 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R04 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R05 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R06 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R07 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R08 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R09 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R10 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R11 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R13 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R14 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:pz:R15 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:keylabel:eavail is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R00 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R01 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R02 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R03 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R04 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R05 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R06 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R07 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R08 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R09 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R10 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R11 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R13 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R14 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:eavail:R15 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:keylabel:q3 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R00 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R01 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R02 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R03 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R04 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R05 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R06 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R07 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R08 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R09 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R10 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R11 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R13 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R14 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:q3:R15 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:keylabel:W is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R00 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R01 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R02 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R03 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R04 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R05 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R06 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R07 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R08 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R09 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R10 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R11 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R12 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R13 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R14 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:key:W:R15 is drawn as the model holds it (values, style, axes)
+PASS control K6 ratio:ylabel:0 is the model's
+PASS control K6 ratio:ylabel:1 is the model's
+PASS control K6 ratio:ticks:1: the tick labels are the model's
+PASS control K6 ratio: only the model's axes show x tick labels
+PASS control K6 legend entry ratio:genie_cv:legend shows its own series' handle
+PASS control K6 legend entry ratio:genie_mec:legend shows its own series' handle
+PASS control K6 legend entry ratio:nuwro:legend shows its own series' handle
+PASS control K6 legend entry ratio:gibuu:legend shows its own series' handle
+PASS control K6 legend entry ratio:mnvtune_v1:legend shows its own series' handle
+PASS control K6 ratio: everything drawn lies inside its axes (nothing clipped)
+FAIL control K6 ratio: every text lies on the page: off the page: ['ratio:genie_cv:legend', 'ratio:genie_mec:legend', 'ratio:nuwro:legend', 'ratio:gibuu:legend']

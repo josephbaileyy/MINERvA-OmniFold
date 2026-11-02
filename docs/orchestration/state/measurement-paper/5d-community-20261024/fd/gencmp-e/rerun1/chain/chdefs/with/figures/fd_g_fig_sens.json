@@ -1,0 +1,1816 @@
+{
+ "schema": "fd-g-figure-sidecar/1",
+ "labels": {
+  "what": "the 5D integration's figures, drawn from committed readouts (FD-G-FIGURES-DECLARATION.md); no new statistic",
+  "not": "no caption, reading, claim or paper text"
+ },
+ "figure": "sens",
+ "file": "fd_g_fig_sens.pdf",
+ "pdf_sha256": "c2739bc4343cdd62c6a873399de5aad4da998be2943a60e90982cd3ee97fdc50",
+ "pdf_bytes": 35401,
+ "controls_passed": [
+  "K0",
+  "K1",
+  "K2",
+  "K3",
+  "K4",
+  "K5",
+  "K6",
+  "K7",
+  "K8"
+ ],
+ "inputs_sha256": {
+  "g_readout": "a19009e0bd83b9bb8f9ad65fb65804e6f62c8953310103fbfe6fce5f84995875",
+  "g_diag_readout": "522bfafa3016fadbd62c72f9f34153e17cd514a3b06acf282030d550f5dc1855",
+  "g_followup_readout": "586cd74105d0837c69290d0370f6327cda75a92ee31f2d437658c626b4ab1e8f",
+  "g_sens2_readout": "4bc21dfda9c49762227fc4c486ee9decc349863aaea095f94347ad4b963d4513",
+  "f0b_readout": "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6",
+  "definition": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+ },
+ "code": {
+  "sha256": {
+   "fd_g_figures.py": "f50de0c66bb1fa5ea18dfbdb04ad865f5f495c1dab28038cdaabe8795ceb818d",
+   "make_figs.py": "4e18c26681fc86dcfef2861c7c0126aa2df4839376d967b18f08a7d77664ee67",
+   "fd_g_compare.py": "0a3c09cdf2e27821c488c8a0d783af1537714144cce5415c6cb226ec8096df1f",
+   "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+   "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71"
+  },
+  "commit": "1d936338d55645a5204c39ff9b02ea3290496003",
+  "clean": true
+ },
+ "versions": {
+  "python": "3.11.14",
+  "numpy": "1.26.4",
+  "matplotlib": "3.10.8"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/deploy/nd-unfolding/fd_g_figures.py",
+  "--g-readout",
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/chain/chdefs/with/readout/fd_g_readout.json",
+  "--g-diag-readout",
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/chain/chdefs/with/readout/fd_g_diag_readout.json",
+  "--g-followup-readout",
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/chain/chdefs/with/readout/fd_g_followup_readout.json",
+  "--g-sens2-readout",
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json",
+  "--f0b-readout",
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json",
+  "--definition",
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "--figures",
+  "ratio",
+  "modes",
+  "sens",
+  "--ratio-form",
+  "data-over-prediction",
+  "--gibuu-axis",
+  "separate",
+  "--reported-block-name",
+  "C_resp + C_PL5D",
+  "--out-dir",
+  "/pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/chain/chdefs/with/figures",
+  "--prediction-set",
+  "gencmp-chdefs"
+ ],
+ "options": {
+  "ratio_form": "data-over-prediction",
+  "gibuu_axis": "separate",
+  "reported_block_name": "C_resp + C_PL5D",
+  "prediction_set": "gencmp-chdefs"
+ },
+ "plotted": {
+  "figure": "sens",
+  "curves": [
+   {
+    "prediction": "genie_cv",
+    "family": "interaction",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     107.18250637480901,
+     93.42259734392886,
+     84.00506669341159,
+     75.61479139477174,
+     68.96127081473882
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "genie_cv",
+    "family": "flux",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     107.18250637480901,
+     82.27421399604751,
+     67.09944057430934,
+     54.97309440933494,
+     45.86241455280373
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "genie_cv",
+    "family": "detector",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     107.18250637480901,
+     96.11521370162633,
+     86.81036800918179,
+     78.39253394853056,
+     70.26848725373037
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "genie_cv",
+    "family": "lateral",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     107.18250637480901,
+     88.06836651006998,
+     77.31198223602479,
+     69.88283679797802,
+     66.18366565180696
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "genie_cv",
+    "family": "c_e_systematic",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     107.18250637480901,
+     69.00004858933163,
+     55.04735470991814,
+     45.65887385474056,
+     41.906223611642055
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "genie_mec",
+    "family": "interaction",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     229.09353865777157,
+     209.0775663645027,
+     190.39399055152995,
+     169.48878162601434,
+     149.11230263747208
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "genie_mec",
+    "family": "flux",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     229.09353865777157,
+     151.92144489126932,
+     109.97724740567361,
+     80.35670421565864,
+     56.69573676812507
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "genie_mec",
+    "family": "detector",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     229.09353865777157,
+     205.47999843694583,
+     181.7785530622052,
+     156.9557561418694,
+     129.90880279672783
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "genie_mec",
+    "family": "lateral",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     229.09353865777157,
+     194.1587098055244,
+     171.43645846195685,
+     152.94792411916853,
+     138.3438825672271
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "genie_mec",
+    "family": "c_e_systematic",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     229.09353865777157,
+     125.92686681365444,
+     86.11515547806789,
+     61.63443552553501,
+     45.39814152880233
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "nuwro",
+    "family": "interaction",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     127.69154751092805,
+     113.76383723475368,
+     104.56140988358574,
+     95.68505893494165,
+     89.53004791990065
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "nuwro",
+    "family": "flux",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     127.69154751092805,
+     90.88127472597415,
+     72.77248087928248,
+     60.85904009766056,
+     57.17448844070347
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "nuwro",
+    "family": "detector",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     127.69154751092805,
+     116.05934909297292,
+     106.44858790988523,
+     97.28934827309135,
+     88.46038523063153
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "nuwro",
+    "family": "lateral",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     127.69154751092805,
+     117.67647323673228,
+     110.09848147932472,
+     102.87960336898036,
+     110.21231022939637
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "nuwro",
+    "family": "c_e_systematic",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     127.69154751092805,
+     82.48446075070648,
+     65.58361287722163,
+     57.35108889230243,
+     65.0575759343609
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "gibuu",
+    "family": "interaction",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     47.77885162309009,
+     47.09897646795474,
+     46.38739389008347,
+     45.550439706010984,
+     44.704198118597056
+    ],
+    "ndf": 8
+   },
+   {
+    "prediction": "gibuu",
+    "family": "flux",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     47.77885162309009,
+     45.68376364178638,
+     45.17228033101668,
+     47.3562508073289,
+     59.62611346359785
+    ],
+    "ndf": 8
+   },
+   {
+    "prediction": "gibuu",
+    "family": "detector",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     47.77885162309009,
+     47.43501371483577,
+     47.25247872849918,
+     47.52847982767509,
+     49.40919341717008
+    ],
+    "ndf": 8
+   },
+   {
+    "prediction": "gibuu",
+    "family": "lateral",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     47.77885162309009,
+     43.643374436288084,
+     40.64523566713075,
+     38.351351839474624,
+     36.815634793636086
+    ],
+    "ndf": 8
+   },
+   {
+    "prediction": "gibuu",
+    "family": "c_e_systematic",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     47.77885162309009,
+     43.22792591943332,
+     43.21051123232469,
+     47.98903437882419,
+     75.66709156575516
+    ],
+    "ndf": 8
+   },
+   {
+    "prediction": "mnvtune_v1",
+    "family": "interaction",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     262.0595433058419,
+     240.56600314308173,
+     217.78170381495602,
+     190.3138391898607,
+     157.90082474715265
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "mnvtune_v1",
+    "family": "flux",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     262.0595433058419,
+     161.75080907861275,
+     114.1228876993822,
+     83.49869320667132,
+     64.24541812007573
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "mnvtune_v1",
+    "family": "detector",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     262.0595433058419,
+     232.4604214079897,
+     204.6318850237014,
+     176.12484781864677,
+     146.19326488631356
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "mnvtune_v1",
+    "family": "lateral",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     262.0595433058419,
+     223.84343497287426,
+     200.25290957982247,
+     179.7794200164437,
+     165.29882761782997
+    ],
+    "ndf": 16
+   },
+   {
+    "prediction": "mnvtune_v1",
+    "family": "c_e_systematic",
+    "alphas": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "chi2": [
+     262.0595433058419,
+     136.6926025118538,
+     91.7893529609357,
+     66.59945481601703,
+     57.5586456529186
+    ],
+    "ndf": 16
+   }
+  ],
+  "figsize": [
+   7.0,
+   6.6
+  ],
+  "axes": [
+   {
+    "xlim": [
+     -0.05,
+     1.05
+    ],
+    "ylim": [
+     34.07306968006202,
+     115.01566030638904
+    ],
+    "xticks": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "yticks": null,
+    "off": false,
+    "rect": [
+     0.08,
+     0.7271698113207548,
+     0.41363636363636364,
+     0.2028301886792453
+    ]
+   },
+   {
+    "xlim": [
+     -0.05,
+     1.05
+    ],
+    "ylim": [
+     23.354693873326017,
+     251.1369863132479
+    ],
+    "xticks": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "yticks": null,
+    "off": false,
+    "rect": [
+     0.5763636363636363,
+     0.7271698113207548,
+     0.41363636363636364,
+     0.2028301886792453
+    ]
+   },
+   {
+    "xlim": [
+     -0.05,
+     1.05
+    ],
+    "ylim": [
+     48.71244135227652,
+     136.153594599355
+    ],
+    "xticks": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "yticks": null,
+    "off": false,
+    "rect": [
+     0.08,
+     0.3985849056603774,
+     0.41363636363636364,
+     0.2028301886792453
+    ]
+   },
+   {
+    "xlim": [
+     -0.05,
+     1.05
+    ],
+    "ylim": [
+     32.1534599809818,
+     80.32926637840944
+    ],
+    "xticks": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "yticks": null,
+    "off": false,
+    "rect": [
+     0.5763636363636363,
+     0.3985849056603774,
+     0.41363636363636364,
+     0.2028301886792453
+    ]
+   },
+   {
+    "xlim": [
+     -0.05,
+     1.05
+    ],
+    "ylim": [
+     33.0185379345678,
+     286.59965102419267
+    ],
+    "xticks": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "yticks": null,
+    "off": false,
+    "rect": [
+     0.08,
+     0.07,
+     0.41363636363636364,
+     0.2028301886792453
+    ]
+   },
+   {
+    "xlim": [
+     0.0,
+     1.0
+    ],
+    "ylim": [
+     0.0,
+     1.0
+    ],
+    "xticks": [],
+    "yticks": [],
+    "off": true,
+    "rect": [
+     0.5763636363636363,
+     0.07,
+     0.41363636363636364,
+     0.2028301886792453
+    ]
+   }
+  ],
+  "legends": [
+   {
+    "id": "sens",
+    "where": 5,
+    "loc": "center",
+    "anchor": null,
+    "ncol": 1,
+    "size": 6.8,
+    "title": "sens:legend:title"
+   }
+  ],
+  "items": [
+   {
+    "gid": "sens:genie_cv:interaction",
+    "kind": "line",
+    "source": [
+     "fd_g_followup_readout.json sens.records[family=interaction,prediction=genie_cv].alpha,chi2"
+    ],
+    "axes": 0,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     107.18250637480901,
+     93.42259734392886,
+     84.00506669341159,
+     75.61479139477174,
+     68.96127081473882
+    ],
+    "style": {
+     "color": "#d62728",
+     "marker": "o",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:genie_cv:flux",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=flux,prediction=genie_cv].alpha,chi2"
+    ],
+    "axes": 0,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     107.18250637480901,
+     82.27421399604751,
+     67.09944057430934,
+     54.97309440933494,
+     45.86241455280373
+    ],
+    "style": {
+     "color": "#1f77b4",
+     "marker": "s",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:genie_cv:detector",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=detector,prediction=genie_cv].alpha,chi2"
+    ],
+    "axes": 0,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     107.18250637480901,
+     96.11521370162633,
+     86.81036800918179,
+     78.39253394853056,
+     70.26848725373037
+    ],
+    "style": {
+     "color": "#2ca02c",
+     "marker": "^",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:genie_cv:lateral",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=lateral,prediction=genie_cv].alpha,chi2"
+    ],
+    "axes": 0,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     107.18250637480901,
+     88.06836651006998,
+     77.31198223602479,
+     69.88283679797802,
+     66.18366565180696
+    ],
+    "style": {
+     "color": "#ff7f0e",
+     "marker": "D",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:genie_cv:c_e_systematic",
+    "kind": "line",
+    "source": [
+     "fd_g_followup_readout.json sens.records[family=c_e_systematic,prediction=genie_cv].alpha,chi2"
+    ],
+    "axes": 0,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     107.18250637480901,
+     69.00004858933163,
+     55.04735470991814,
+     45.65887385474056,
+     41.906223611642055
+    ],
+    "style": {
+     "color": "#000000",
+     "marker": "v",
+     "ls": "--"
+    }
+   },
+   {
+    "gid": "sens:genie_cv:label",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_cv].label"
+    ],
+    "axes": 0,
+    "text": "GENIE 2.12.10 CV, no MEC",
+    "at": {
+     "x": 0.0,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 2.0,
+     "ha": "left",
+     "va": "bottom",
+     "size": 6.8,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "sens:genie_cv:ndf",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_cv].total.ndf"
+    ],
+    "axes": 0,
+    "text": "ndf 16",
+    "at": {
+     "x": 1.0,
+     "y": 0.0,
+     "coords": "axes",
+     "dy": -17.0,
+     "ha": "right",
+     "va": "top",
+     "size": 6.8,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "sens:ticks:0",
+    "kind": "ticks",
+    "source": [],
+    "axes": 0,
+    "labels": [
+     "0",
+     "0.1",
+     "0.25",
+     "0.5",
+     "1"
+    ],
+    "size": 6.5,
+    "rotation": 0
+   },
+   {
+    "gid": "sens:xlabel:0",
+    "kind": "xlabel",
+    "source": [],
+    "axes": 0,
+    "text": "$\\alpha$"
+   },
+   {
+    "gid": "sens:ylabel:0",
+    "kind": "ylabel",
+    "source": [],
+    "axes": 0,
+    "text": "$\\chi^2$"
+   },
+   {
+    "gid": "sens:genie_mec:interaction",
+    "kind": "line",
+    "source": [
+     "fd_g_followup_readout.json sens.records[family=interaction,prediction=genie_mec].alpha,chi2"
+    ],
+    "axes": 1,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     229.09353865777157,
+     209.0775663645027,
+     190.39399055152995,
+     169.48878162601434,
+     149.11230263747208
+    ],
+    "style": {
+     "color": "#d62728",
+     "marker": "o",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:genie_mec:flux",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=flux,prediction=genie_mec].alpha,chi2"
+    ],
+    "axes": 1,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     229.09353865777157,
+     151.92144489126932,
+     109.97724740567361,
+     80.35670421565864,
+     56.69573676812507
+    ],
+    "style": {
+     "color": "#1f77b4",
+     "marker": "s",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:genie_mec:detector",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=detector,prediction=genie_mec].alpha,chi2"
+    ],
+    "axes": 1,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     229.09353865777157,
+     205.47999843694583,
+     181.7785530622052,
+     156.9557561418694,
+     129.90880279672783
+    ],
+    "style": {
+     "color": "#2ca02c",
+     "marker": "^",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:genie_mec:lateral",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=lateral,prediction=genie_mec].alpha,chi2"
+    ],
+    "axes": 1,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     229.09353865777157,
+     194.1587098055244,
+     171.43645846195685,
+     152.94792411916853,
+     138.3438825672271
+    ],
+    "style": {
+     "color": "#ff7f0e",
+     "marker": "D",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:genie_mec:c_e_systematic",
+    "kind": "line",
+    "source": [
+     "fd_g_followup_readout.json sens.records[family=c_e_systematic,prediction=genie_mec].alpha,chi2"
+    ],
+    "axes": 1,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     229.09353865777157,
+     125.92686681365444,
+     86.11515547806789,
+     61.63443552553501,
+     45.39814152880233
+    ],
+    "style": {
+     "color": "#000000",
+     "marker": "v",
+     "ls": "--"
+    }
+   },
+   {
+    "gid": "sens:genie_mec:label",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_mec].label"
+    ],
+    "axes": 1,
+    "text": "GENIE 2.12.10 + Valencia MEC",
+    "at": {
+     "x": 0.0,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 2.0,
+     "ha": "left",
+     "va": "bottom",
+     "size": 6.8,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "sens:genie_mec:ndf",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=genie_mec].total.ndf"
+    ],
+    "axes": 1,
+    "text": "ndf 16",
+    "at": {
+     "x": 1.0,
+     "y": 0.0,
+     "coords": "axes",
+     "dy": -17.0,
+     "ha": "right",
+     "va": "top",
+     "size": 6.8,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "sens:ticks:1",
+    "kind": "ticks",
+    "source": [],
+    "axes": 1,
+    "labels": [
+     "0",
+     "0.1",
+     "0.25",
+     "0.5",
+     "1"
+    ],
+    "size": 6.5,
+    "rotation": 0
+   },
+   {
+    "gid": "sens:xlabel:1",
+    "kind": "xlabel",
+    "source": [],
+    "axes": 1,
+    "text": "$\\alpha$"
+   },
+   {
+    "gid": "sens:ylabel:1",
+    "kind": "ylabel",
+    "source": [],
+    "axes": 1,
+    "text": "$\\chi^2$"
+   },
+   {
+    "gid": "sens:nuwro:interaction",
+    "kind": "line",
+    "source": [
+     "fd_g_followup_readout.json sens.records[family=interaction,prediction=nuwro].alpha,chi2"
+    ],
+    "axes": 2,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     127.69154751092805,
+     113.76383723475368,
+     104.56140988358574,
+     95.68505893494165,
+     89.53004791990065
+    ],
+    "style": {
+     "color": "#d62728",
+     "marker": "o",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:nuwro:flux",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=flux,prediction=nuwro].alpha,chi2"
+    ],
+    "axes": 2,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     127.69154751092805,
+     90.88127472597415,
+     72.77248087928248,
+     60.85904009766056,
+     57.17448844070347
+    ],
+    "style": {
+     "color": "#1f77b4",
+     "marker": "s",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:nuwro:detector",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=detector,prediction=nuwro].alpha,chi2"
+    ],
+    "axes": 2,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     127.69154751092805,
+     116.05934909297292,
+     106.44858790988523,
+     97.28934827309135,
+     88.46038523063153
+    ],
+    "style": {
+     "color": "#2ca02c",
+     "marker": "^",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:nuwro:lateral",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=lateral,prediction=nuwro].alpha,chi2"
+    ],
+    "axes": 2,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     127.69154751092805,
+     117.67647323673228,
+     110.09848147932472,
+     102.87960336898036,
+     110.21231022939637
+    ],
+    "style": {
+     "color": "#ff7f0e",
+     "marker": "D",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:nuwro:c_e_systematic",
+    "kind": "line",
+    "source": [
+     "fd_g_followup_readout.json sens.records[family=c_e_systematic,prediction=nuwro].alpha,chi2"
+    ],
+    "axes": 2,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     127.69154751092805,
+     82.48446075070648,
+     65.58361287722163,
+     57.35108889230243,
+     65.0575759343609
+    ],
+    "style": {
+     "color": "#000000",
+     "marker": "v",
+     "ls": "--"
+    }
+   },
+   {
+    "gid": "sens:nuwro:label",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=nuwro].label"
+    ],
+    "axes": 2,
+    "text": "NuWro 21.09:\nCH; hydrogen: supplement FLAGGED",
+    "at": {
+     "x": 0.0,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 2.0,
+     "ha": "left",
+     "va": "bottom",
+     "size": 6.8,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "sens:nuwro:ndf",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=nuwro].total.ndf"
+    ],
+    "axes": 2,
+    "text": "ndf 16",
+    "at": {
+     "x": 1.0,
+     "y": 0.0,
+     "coords": "axes",
+     "dy": -17.0,
+     "ha": "right",
+     "va": "top",
+     "size": 6.8,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "sens:ticks:2",
+    "kind": "ticks",
+    "source": [],
+    "axes": 2,
+    "labels": [
+     "0",
+     "0.1",
+     "0.25",
+     "0.5",
+     "1"
+    ],
+    "size": 6.5,
+    "rotation": 0
+   },
+   {
+    "gid": "sens:xlabel:2",
+    "kind": "xlabel",
+    "source": [],
+    "axes": 2,
+    "text": "$\\alpha$"
+   },
+   {
+    "gid": "sens:ylabel:2",
+    "kind": "ylabel",
+    "source": [],
+    "axes": 2,
+    "text": "$\\chi^2$"
+   },
+   {
+    "gid": "sens:gibuu:interaction",
+    "kind": "line",
+    "source": [
+     "fd_g_followup_readout.json sens.records[family=interaction,prediction=gibuu].alpha,chi2"
+    ],
+    "axes": 3,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     47.77885162309009,
+     47.09897646795474,
+     46.38739389008347,
+     45.550439706010984,
+     44.704198118597056
+    ],
+    "style": {
+     "color": "#d62728",
+     "marker": "o",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:gibuu:flux",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=flux,prediction=gibuu].alpha,chi2"
+    ],
+    "axes": 3,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     47.77885162309009,
+     45.68376364178638,
+     45.17228033101668,
+     47.3562508073289,
+     59.62611346359785
+    ],
+    "style": {
+     "color": "#1f77b4",
+     "marker": "s",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:gibuu:detector",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=detector,prediction=gibuu].alpha,chi2"
+    ],
+    "axes": 3,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     47.77885162309009,
+     47.43501371483577,
+     47.25247872849918,
+     47.52847982767509,
+     49.40919341717008
+    ],
+    "style": {
+     "color": "#2ca02c",
+     "marker": "^",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:gibuu:lateral",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=lateral,prediction=gibuu].alpha,chi2"
+    ],
+    "axes": 3,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     47.77885162309009,
+     43.643374436288084,
+     40.64523566713075,
+     38.351351839474624,
+     36.815634793636086
+    ],
+    "style": {
+     "color": "#ff7f0e",
+     "marker": "D",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:gibuu:c_e_systematic",
+    "kind": "line",
+    "source": [
+     "fd_g_followup_readout.json sens.records[family=c_e_systematic,prediction=gibuu].alpha,chi2"
+    ],
+    "axes": 3,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     47.77885162309009,
+     43.22792591943332,
+     43.21051123232469,
+     47.98903437882419,
+     75.66709156575516
+    ],
+    "style": {
+     "color": "#000000",
+     "marker": "v",
+     "ls": "--"
+    }
+   },
+   {
+    "gid": "sens:gibuu:label",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=gibuu].label"
+    ],
+    "axes": 3,
+    "text": "GiBUU 2019:\nCH; hydrogen: closure B3 failed; $p_\\parallel$ < 4.5 cells only",
+    "at": {
+     "x": 0.0,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 2.0,
+     "ha": "left",
+     "va": "bottom",
+     "size": 6.8,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "sens:gibuu:ndf",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=gibuu].total.ndf"
+    ],
+    "axes": 3,
+    "text": "ndf 8",
+    "at": {
+     "x": 1.0,
+     "y": 0.0,
+     "coords": "axes",
+     "dy": -17.0,
+     "ha": "right",
+     "va": "top",
+     "size": 6.8,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "sens:ticks:3",
+    "kind": "ticks",
+    "source": [],
+    "axes": 3,
+    "labels": [
+     "0",
+     "0.1",
+     "0.25",
+     "0.5",
+     "1"
+    ],
+    "size": 6.5,
+    "rotation": 0
+   },
+   {
+    "gid": "sens:xlabel:3",
+    "kind": "xlabel",
+    "source": [],
+    "axes": 3,
+    "text": "$\\alpha$"
+   },
+   {
+    "gid": "sens:ylabel:3",
+    "kind": "ylabel",
+    "source": [],
+    "axes": 3,
+    "text": "$\\chi^2$"
+   },
+   {
+    "gid": "sens:mnvtune_v1:interaction",
+    "kind": "line",
+    "source": [
+     "fd_g_followup_readout.json sens.records[family=interaction,prediction=mnvtune_v1].alpha,chi2"
+    ],
+    "axes": 4,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     262.0595433058419,
+     240.56600314308173,
+     217.78170381495602,
+     190.3138391898607,
+     157.90082474715265
+    ],
+    "style": {
+     "color": "#d62728",
+     "marker": "o",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:mnvtune_v1:flux",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=flux,prediction=mnvtune_v1].alpha,chi2"
+    ],
+    "axes": 4,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     262.0595433058419,
+     161.75080907861275,
+     114.1228876993822,
+     83.49869320667132,
+     64.24541812007573
+    ],
+    "style": {
+     "color": "#1f77b4",
+     "marker": "s",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:mnvtune_v1:detector",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=detector,prediction=mnvtune_v1].alpha,chi2"
+    ],
+    "axes": 4,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     262.0595433058419,
+     232.4604214079897,
+     204.6318850237014,
+     176.12484781864677,
+     146.19326488631356
+    ],
+    "style": {
+     "color": "#2ca02c",
+     "marker": "^",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:mnvtune_v1:lateral",
+    "kind": "line",
+    "source": [
+     "fd_g_sens2_readout.json sens.records[family=lateral,prediction=mnvtune_v1].alpha,chi2"
+    ],
+    "axes": 4,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     262.0595433058419,
+     223.84343497287426,
+     200.25290957982247,
+     179.7794200164437,
+     165.29882761782997
+    ],
+    "style": {
+     "color": "#ff7f0e",
+     "marker": "D",
+     "ls": "-"
+    }
+   },
+   {
+    "gid": "sens:mnvtune_v1:c_e_systematic",
+    "kind": "line",
+    "source": [
+     "fd_g_followup_readout.json sens.records[family=c_e_systematic,prediction=mnvtune_v1].alpha,chi2"
+    ],
+    "axes": 4,
+    "x": [
+     0.0,
+     0.1,
+     0.25,
+     0.5,
+     1.0
+    ],
+    "y": [
+     262.0595433058419,
+     136.6926025118538,
+     91.7893529609357,
+     66.59945481601703,
+     57.5586456529186
+    ],
+    "style": {
+     "color": "#000000",
+     "marker": "v",
+     "ls": "--"
+    }
+   },
+   {
+    "gid": "sens:mnvtune_v1:label",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=mnvtune_v1].label"
+    ],
+    "axes": 4,
+    "text": "MINERvA Tune v1:\nprior (not an independent prediction)",
+    "at": {
+     "x": 0.0,
+     "y": 1.0,
+     "coords": "axes",
+     "dy": 2.0,
+     "ha": "left",
+     "va": "bottom",
+     "size": 6.8,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "sens:mnvtune_v1:ndf",
+    "kind": "text",
+    "source": [
+     "fd_g_readout.json predictions[name=mnvtune_v1].total.ndf"
+    ],
+    "axes": 4,
+    "text": "ndf 16",
+    "at": {
+     "x": 1.0,
+     "y": 0.0,
+     "coords": "axes",
+     "dy": -17.0,
+     "ha": "right",
+     "va": "top",
+     "size": 6.8,
+     "rotation": 0
+    }
+   },
+   {
+    "gid": "sens:ticks:4",
+    "kind": "ticks",
+    "source": [],
+    "axes": 4,
+    "labels": [
+     "0",
+     "0.1",
+     "0.25",
+     "0.5",
+     "1"
+    ],
+    "size": 6.5,
+    "rotation": 0
+   },
+   {
+    "gid": "sens:xlabel:4",
+    "kind": "xlabel",
+    "source": [],
+    "axes": 4,
+    "text": "$\\alpha$"
+   },
+   {
+    "gid": "sens:ylabel:4",
+    "kind": "ylabel",
+    "source": [],
+    "axes": 4,
+    "text": "$\\chi^2$"
+   },
+   {
+    "gid": "sens:legend:interaction",
+    "kind": "legend",
+    "source": [
+     "fd_g_followup_readout.json constants.families"
+    ],
+    "axes": null,
+    "text": "interaction alone",
+    "legend": "sens",
+    "series": "sens:genie_cv:interaction"
+   },
+   {
+    "gid": "sens:legend:flux",
+    "kind": "legend",
+    "source": [
+     "fd_g_sens2_readout.json constants.families"
+    ],
+    "axes": null,
+    "text": "flux alone",
+    "legend": "sens",
+    "series": "sens:genie_cv:flux"
+   },
+   {
+    "gid": "sens:legend:detector",
+    "kind": "legend",
+    "source": [
+     "fd_g_sens2_readout.json constants.families"
+    ],
+    "axes": null,
+    "text": "detector alone",
+    "legend": "sens",
+    "series": "sens:genie_cv:detector"
+   },
+   {
+    "gid": "sens:legend:lateral",
+    "kind": "legend",
+    "source": [
+     "fd_g_sens2_readout.json constants.families"
+    ],
+    "axes": null,
+    "text": "lateral alone",
+    "legend": "sens",
+    "series": "sens:genie_cv:lateral"
+   },
+   {
+    "gid": "sens:legend:c_e_systematic",
+    "kind": "legend",
+    "source": [
+     "fd_g_followup_readout.json constants.families"
+    ],
+    "axes": null,
+    "text": "interaction + flux + detector + lateral (joint)",
+    "legend": "sens",
+    "series": "sens:genie_cv:c_e_systematic"
+   },
+   {
+    "gid": "sens:legend:title",
+    "kind": "text",
+    "source": [],
+    "axes": null,
+    "text": "family shrunk"
+   },
+   {
+    "gid": "sens:note",
+    "kind": "text",
+    "source": [
+     "fd_g_followup_readout.json sens.label",
+     "fd_g_sens2_readout.json sens.label"
+    ],
+    "axes": 5,
+    "text": "descriptive sensitivity of the reported \u03c7\u00b2,\nnot an alternative result",
+    "at": {
+     "x": 0.5,
+     "y": 0.02,
+     "coords": "axes",
+     "dy": 0.0,
+     "ha": "center",
+     "va": "bottom",
+     "size": 6.5,
+     "rotation": 0
+    }
+   }
+  ]
+ }
+}

@@ -1,0 +1,12 @@
+env 3.11.14 1.26.4 3.10.8
+login37
+2026-11-02T02:30:25Z
+== stage 2026-11-02T02:30:25Z
+stage rc=0 2026-11-02T02:30:25Z
+== materialize 2026-11-02T02:30:25Z
+materialize rc=0 2026-11-02T02:30:26Z
+== chain 2026-11-02T02:30:26Z
+chain rc=1 2026-11-02T02:31:02Z
+STOP at chain
+porcelain after: empty
+end 2026-11-02T02:31:04Z

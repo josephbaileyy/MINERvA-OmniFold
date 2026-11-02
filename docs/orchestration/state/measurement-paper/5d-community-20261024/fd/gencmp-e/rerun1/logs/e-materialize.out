@@ -1,0 +1,27 @@
+[PASS M] /pscratch/sd/j/josephrb/gencmp-e-20261101/rerun1/pred does not exist (no overwrite)
+[PASS M] defs.json is the pinned readout
+[PASS M] the rebuild directory is the one defs.json read
+PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+[PASS E0] genie_cv: g on its cells is defs.json's to 1e-12 (worst relative 0.00e+00)
+[PASS E0] genie_cv: reported total chi2 is defs.json's
+[PASS E0] genie_cv: reported shape_only chi2 is defs.json's
+[PASS E0] genie_cv: without_C_PL5D total chi2 is defs.json's
+[PASS E0] genie_cv: without_C_PL5D shape_only chi2 is defs.json's
+[PASS E0] genie_mec: g on its cells is defs.json's to 1e-12 (worst relative 0.00e+00)
+[PASS E0] genie_mec: reported total chi2 is defs.json's
+[PASS E0] genie_mec: reported shape_only chi2 is defs.json's
+[PASS E0] genie_mec: without_C_PL5D total chi2 is defs.json's
+[PASS E0] genie_mec: without_C_PL5D shape_only chi2 is defs.json's
+[PASS E0] nuwro: g on its cells is defs.json's to 1e-12 (worst relative 0.00e+00)
+[PASS E0] nuwro: reported total chi2 is defs.json's
+[PASS E0] nuwro: reported shape_only chi2 is defs.json's
+[PASS E0] nuwro: without_C_PL5D total chi2 is defs.json's
+[PASS E0] nuwro: without_C_PL5D shape_only chi2 is defs.json's
+[PASS E0] gibuu: g on its cells is defs.json's to 1e-12 (worst relative 0.00e+00)
+[PASS E0] gibuu: reported total chi2 is defs.json's
+[PASS E0] gibuu: reported shape_only chi2 is defs.json's
+[PASS E0] gibuu: without_C_PL5D total chi2 is defs.json's
+[PASS E0] gibuu: without_C_PL5D shape_only chi2 is defs.json's
+[PASS M] MnvTune v1's staged file is Stage G's
+[M] 5 predictions written; E0 held for 4
