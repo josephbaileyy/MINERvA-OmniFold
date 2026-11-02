@@ -100,6 +100,45 @@ records it.
    reading changes" row (QA).
 3. Everything else in this binding stands.
 
+## Addendum E2 (director, 2026-11-02)
+
+**Binds** [`FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md`](FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md) as merged in PR #670 at
+**M″ = `68d877cdee1757fd03fa1bfd915693bf79588e9f`** (PR head `2cbea6ddee66421c4658866e60902784b2fa4198`). This is ruling 4's code addendum.
+
+**The blobs at M″:**
+  - `nd-unfolding/fd_gencmp_e2.py` `68d877cdee1757fd03fa1bfd915693bf79588e9f:nd-unfolding/fd_gencmp_e2.py`;
+  - `nd-unfolding/tests/test_fd_gencmp_e2.py` `68d877cdee1757fd03fa1bfd915693bf79588e9f:nd-unfolding/tests/test_fd_gencmp_e2.py`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/x_e2_unfold.sh` `68d877cdee1757fd03fa1bfd915693bf79588e9f:docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/x_e2_unfold.sh`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/INPUTS.sha256` `68d877cdee1757fd03fa1bfd915693bf79588e9f:docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/INPUTS.sha256`;
+
+**What the director checked.**
+- **The digests.** The four blobs match the lane's list.
+- **The tests.** At the head, `test_fd_gencmp_e2.py` and `test_fd_gencmp_e.py` gave 62 passed locally.
+- **The review.** The Sonnet audit is verbatim in `FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-REVIEW-{PROMPT,ANSWER}.txt`.
+- **The director's change after the audit.** The director asked for a measured noise floor in place of the
+  "no noise floor estimated" qualifier:
+  - two more unfolds, NuWro carbon and GiBUU carbon at estimator seed 43, in the same job;
+  - Δ_noise,max reported beside Δ_max;
+  - the reading fixed in advance, including "within the estimator's seed variation" when Δ_max ≤ 2 Δ_noise,max.
+  The lane added it in `2cbea6dd`, with six tests and three caught mutants.
+
+**Rulings.**
+1. **E2 runs as the addendum declares.**
+   - The staging and the vertex and ratio steps run on a login node, with controls V and R1.
+   - The unfold is one regular CPU job of five 42-CPU steps, at `-t 00:25:00` and **≤ 0.5 node-h**, with controls R2
+     and B2.
+   - The χ² readout comes after C1–C3.
+2. **Stops.** Any control failure or other stop is final, and no E2 number is used (A2).
+3. **The flag is unchanged:** the with arm's total χ² |Δ| > 2.3 brings Joseph the C_model-on-CH question. No
+   covariance changes without him.
+4. **The report goes to Joseph in every outcome.** It gives every signed Δ and Δ_noise and the `sacct` cost.
+   - The paper lane replaces #651 item 6's caveat with the fixed reading only after Joseph has the report.
+5. **Connects:**
+   - O_NOATIME reads;
+   - writes only under the addendum's `$R`, and nothing to CFS;
+   - a fresh clone at M″;
+   - the HPSS copy at the end.
+
 ## Fixed, unchanged
 
 Every claim and number in the paper until Joseph rules on the report; the reported covariance; Table IV as adopted

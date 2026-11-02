@@ -10,10 +10,12 @@
 # as S1's seed job packed them, run replicas 1-100 with the mapped draws. If B0 fails, no mapped replica is made and the
 # statistical stream falls back to route A.
 # From the deploy at the bound commit with empty porcelain; writes only under $R. No set -u (conda).
+# Addendum X-A1: BOOT reads the amended V0 ($R/v0-a1), so it runs from $R/deploy-a1, the clone at the addendum's
+# merge commit (BOUND); $R/deploy stays at M for V1, whose code the addendum does not change.
 R=/pscratch/sd/j/josephrb/gencmp-x-20261102
 M=${BOUND:?set BOUND to the bound commit}
 mkdir -p "$R/logs" "$R/tmp" || exit 2
-cd "$R/deploy" || exit 9
+cd "$R/deploy-a1" || exit 9
 [ "$(git rev-parse HEAD)" = "$M" ] || { echo "HEAD not the bound commit"; exit 9; }
 [ -z "$(git status --porcelain)" ] || { echo "porcelain not empty"; exit 9; }
 eval "$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook)"
