@@ -33,6 +33,12 @@
 - `run1/`: the first run, which stopped;
 - `rerun1/`: the E2-A1 rerun. It holds `chi2/e2.json`, `unfold/unfold.json`, logs, receipts, inventories, `sacct.txt`,
   `sens/` (§5) and `hpss/`.
+- **Not in git: the four vertex configs** (`vertices/config_carbon.json` and `config_ch.json` of each run). They stay on
+  pscratch and in the HPSS archive (§8).
+  - The shared checker `verify_receipt_artifacts.py` gives a false MISSING for them. Each names RE-1's
+    `k1_p5_rerun.npz` bare in a label, and the same receipt cites it by its full pscratch path.
+  - `classify_bare` tests MISSING before BY-PATH, so the checker refuses the commit.
+  - The director agreed to leave them out of git.
 
 **Run directories:**
 - `$R1` = `/pscratch/sd/j/josephrb/gencmp-e2-20261102/`;
