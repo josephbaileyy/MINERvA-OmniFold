@@ -252,8 +252,9 @@ The draws are the same construction at every truth, so this is the draws' spread
        universe unfolds, which is why S1 ran with these weights.
      - S1-0's pilot holds one toy, G18 3,620,000 (`PILOT_COMMON`). Its draw holds both HighQ2_1 and LowQ2_1. The
        audit found this with `draw_for_seed`, and it is reproduced here: the interaction draw does not depend on
-       the flux probabilities. That toy would have raised, and `main` maps the `ValueError` to rc 4. S1-0's controls
-       would then have failed, and ruling 6 would have held the bulk. **So D2 would have stopped stage 1 at S1-0,**
+       the flux probabilities. That toy would have raised, and `main` maps the `ValueError` to rc 4. The toy is a pilot
+       item, not a §9 control, so its product would be missing and `walls` would read REPRICE
+       (`pilot_walls`: "missing …"). Ruling 6's first condition would then have held the bulk. **So D2 would have stopped stage 1 at S1-0,**
        had N1 passed, at most 1.0 node-h in.
      - No test sends a negative composite through `toy_experiment`.
    - **Its standing.** A defect, reported unrepaired. It does not change the STOP, which comes first. Any redesign must
