@@ -347,8 +347,8 @@ class Order(unittest.TestCase):
             XS.v1_state(self.d)
         (self.d / "v1-probe" / "v1.json").write_text(json.dumps({"within_full_cap": False}))
         self.assertEqual(XS.v1_state(self.d)["bands_pass"], {})            # every band bounded
-        (self.d / "v1").mkdir()
-        (self.d / "v1" / "v1.json").write_text(json.dumps({"bands_pass": {"MaRES": True}}))
+        (self.d / XS.V1_DIR).mkdir()
+        (self.d / XS.V1_DIR / "v1.json").write_text(json.dumps({"bands_pass": {"MaRES": True}}))
         self.assertEqual(XS.v1_state(self.d)["bands_pass"], {"MaRES": True})
 
     def test_the_committed_pins_are_the_committed_bytes(self):
@@ -426,6 +426,61 @@ class BkgLeg(unittest.TestCase):
         rec = X.p1_streams_record((P1 / "p1streams_absent.root").read_bytes())
         self.assertIsNone(rec)
         self.assertEqual(X.bkg_stream_check(rec, 1), ["no p1Streams record"])
+
+
+LOOKUP = ND / "tests/fixtures/xcov_v1_lookup"   # PROVENANCE.tsv there: the detector receipt's digest map, verbatim
+
+
+def digest_maps():
+    sf1 = {p: h for h, p in (ln.split(None, 1) for ln in XS.SF1.read_text().splitlines() if ln.strip())}
+    sf1 = {p.strip(): h for p, h in sf1.items()}
+    d = json.loads((LOOKUP / "detector_files_sha256.json").read_text())
+    return sf1, {str(XS.DET_RECEIPT.parent / Path(p).name): h for p, h in d["files_sha256"].items()}
+
+
+class V1Lookup(unittest.TestCase):
+    """Addendum X-A2: weight_files on the real digest maps (the committed SF1 manifest, the detector receipt)."""
+
+    def test_every_class_resolves_to_its_sorted_first_with_its_count(self):
+        sf1, det = digest_maps()
+        for (b, i, k), n in {("2p2h", 0, "wt"): 1, ("EtaNCEL", 0, "wt"): 22, ("EtaNCEL", 0, "wr"): 8,
+                             ("Rvn1pi", 0, "wt"): 2}.items():
+            with self.subTest(f"{b}:{i}:{k}"):
+                path, h, nm = XS.weight_files(b, i, sf1, det)[k]
+                hits = sorted(p for p, v in {**sf1, **det}.items() if v == h and p.endswith(f"_{k}.npy"))
+                self.assertEqual((nm, str(path)), (n, hits[0]))
+
+    def test_the_full_lookup_resolves_every_universe(self):
+        sf1, det = digest_maps()
+        hist = {}
+        for b, i in XS.universe_list():
+            for k, (_, _, nm) in XS.weight_files(b, i, sf1, det).items():
+                hist[nm] = hist.get(nm, 0) + 1
+        self.assertEqual(hist, {1: 322, 22: 16, 8: 8, 2: 4})
+
+    def test_a_digest_no_pinned_file_carries_stops(self):
+        sf1, det = digest_maps()
+        _, h, _ = XS.weight_files("EtaNCEL", 0, sf1, det)["wt"]
+        sf1 = {p: v for p, v in sf1.items() if v != h}
+        det = {p: v for p, v in det.items() if v != h}
+        with self.assertRaises(gc.Stop):
+            XS.weight_files("EtaNCEL", 0, sf1, det)
+
+    def test_multi_match_classes_name_the_bands_they_span(self):
+        c = XS.multi_match_classes({"EtaNCEL:0:wt": ("h", 22), "MaNCEL:1:wt": ("h", 22), "MaRES:0:wt": ("g", 1),
+                                    "Rvn1pi:0:wr": ("r", 2)})
+        self.assertEqual(c["h"]["bands"], ["EtaNCEL", "MaNCEL"])
+        self.assertEqual(c["h"]["n_files"], 22)
+        self.assertNotIn("g", c)
+        self.assertEqual(c["r"]["lookups"], ["Rvn1pi:0:wr"])
+
+    def test_npy_shape_reads_the_header_only(self):
+        with tempfile.TemporaryDirectory() as td:
+            for ver in ((1, 0), (2, 0)):
+                p = Path(td) / f"a{ver[0]}.npy"
+                with open(p, "wb") as fh:
+                    np.lib.format.write_array(fh, np.zeros(37, np.float32), version=ver)
+                self.assertEqual(XS.npy_shape(p), (37,))
 
 
 if __name__ == "__main__":

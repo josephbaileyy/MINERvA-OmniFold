@@ -26,6 +26,7 @@ import s1_assemble as sa  # noqa: E402
 
 P = Path("/pscratch/sd/j/josephrb")
 RE2 = P / "2d-closeout-re2-20261023"
+V1_DIR = "v1-a2"   # addendum X-A2: the full V1 rerun; the failed run (60679146) wrote no readout
 V0_DIR = "v0-a1"   # addendum X-A1: the amended V0; the first run's v0/v0.json stays as the record
 CV_OMNI = Path("/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root")
 # RE-2's CV omnifile (re2_env.sh:9-10); part B's pscratch stage of it, the same digest, was removed (deletions.tsv:2)
@@ -204,23 +205,46 @@ def universe_list() -> list[tuple[str, int]]:
 
 
 def weight_files(b: str, i: int, sf1: dict, det: dict) -> dict:
-    """The wt and wr files S1's product for b:i read, by the digests its metadata records."""
+    """The wt and wr files S1's product for b:i read, by the digests its metadata records: (path, digest, n_matches).
+    Addendum X-A2: several pinned files can carry one digest (byte-identical weights, e.g. a knob that leaves the CC
+    weights at CV), and any of them is the file S1 read; the sorted-first is taken, and zero matches stop V1."""
     s1meta = json.loads(S1_JSON.read_text())["meta"]["inputs_sha256"]
     committed_sha(S1DIR / f"S1_{b}_{i}.npz", s1meta[f"S1_{b}_{i}.npz"], "S1 product")
     meta = json.loads(str(np.load(S1DIR / f"S1_{b}_{i}.npz", allow_pickle=False)["meta"]))
     want = meta["bank_weight_sha256"]
     out = {}
     for k in ("wt", "wr"):
-        hits = [p for p, h in {**sf1, **det}.items() if h == want[k] and p.endswith(f"_{k}.npy")]
-        if len(hits) != 1:
-            raise X.Stop("V1", f"{b}:{i} {k}: {len(hits)} files carry its digest")
-        out[k] = (Path(hits[0]), want[k])
+        hits = sorted(p for p, h in {**sf1, **det}.items() if h == want[k] and p.endswith(f"_{k}.npy"))
+        if not hits:
+            raise X.Stop("V1", f"{b}:{i} {k}: no pinned file carries its digest")
+        out[k] = (Path(hits[0]), want[k], len(hits))
     return out
 
 
+def npy_shape(path: Path) -> tuple:
+    """The shape in an .npy file's header, read O_NOATIME (the dry V1's array check; no array is read)."""
+    fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOATIME", 0))
+    with os.fdopen(fd, "rb") as fh:
+        version = np.lib.format.read_magic(fh)
+        read = np.lib.format.read_array_header_1_0 if version == (1, 0) else np.lib.format.read_array_header_2_0
+        shape, _, _ = read(fh)
+    return tuple(shape)
+
+
+def multi_match_classes(lookups: dict) -> dict:
+    """For each digest that several pinned files carry, the universes (and so the bands) whose lookups resolve to it."""
+    by = {}
+    for key, (digest, n) in lookups.items():
+        if n > 1:
+            by.setdefault(digest, {"n_files": n, "lookups": []})["lookups"].append(key)
+    for c in by.values():
+        c["bands"] = sorted({k.split(":")[0] for k in c["lookups"]})
+    return by
+
+
 def cmd_v1(a) -> int:
-    out = a.run_dir / ("v1-probe" if a.probe else "v1")
-    if out.exists():
+    out = a.run_dir / ("v1-probe" if a.probe else V1_DIR)
+    if out.exists() and not a.dry:
         raise X.Stop("-", f"refusing to overwrite {out}")
     t0 = time.time()
     inp = X.Inputs()
@@ -241,7 +265,9 @@ def cmd_v1(a) -> int:
     todo = universe_list()
     if a.probe:
         todo = [u for u in todo if u[0] == "MaRES"] + [u for u in todo if u[0] == "Flux" and u[1] < 10]
-    res, scales = {}, []
+    if a.dry:
+        return v1_dry(todo, sf1, det, tree, base, mcgen)
+    res, scales, lookups = {}, [], {}
     for b, i in todo:
         t1 = time.time()
         files = weight_files(b, i, sf1, det)
@@ -250,10 +276,11 @@ def cmd_v1(a) -> int:
         r = {}
         for k, w2u, w2c, w5c in (("wt", br[f"w_truth_{sb}_{i}"], base["w_truth"], w5t),
                                   ("wr", br[f"w_reco_{sb}_{i}"], base["w_reco"], w5r)):
-            path, h = files[k]
+            path, h, nm = files[k]
+            lookups[f"{b}:{i}:{k}"] = (h, nm)
             inp.pins[str(path)] = h                       # pinned by S1's product metadata (and the manifest)
             w5u = np.load(io.BytesIO(inp.bytes(path)), allow_pickle=False).astype(float)
-            r[k] = X.ratio_test(w2u, w2c, w5u, w5c, sent)
+            r[k] = dict(X.ratio_test(w2u, w2c, w5u, w5c, sent), file=str(path), n_matches=nm)
             scales.append(r[k]["scale"])
         r["pass"] = all(r[k]["pass"] for k in ("wt", "wr"))
         r["seconds"] = round(time.time() - t1, 1)
@@ -261,8 +288,9 @@ def cmd_v1(a) -> int:
     bands = {}
     for key, r in res.items():
         bands.setdefault(key.rsplit(":", 1)[0], []).append(r["pass"])
-    rec = {"schema": "fd-xcov-v1/1", "probe": bool(a.probe), "universe_omnifile_positional": v0u,
+    rec = {"schema": "fd-xcov-v1/2", "probe": bool(a.probe), "universe_omnifile_positional": v0u,
            "universes": res, "bands_pass": {b: all(v) for b, v in bands.items()},
+           "multi_match_classes": multi_match_classes(lookups),
            "scale_spread": float(np.max(np.abs(np.array(scales) / np.median(scales) - 1))) if scales else None,
            "seconds_hash": round(t_hash, 1), "seconds_total": round(time.time() - t0, 1),
            "inputs": inp.record, "atime_deviations": inp.atime_deviations()}
@@ -272,6 +300,40 @@ def cmd_v1(a) -> int:
         rec["within_full_cap"] = bool(rec["projected_seconds_175"] <= V1_FULL_CAP_S)
     write_json(out / "v1.json", rec)
     return 0
+
+
+def v1_dry(todo, sf1, det, tree, base, mcgen) -> int:
+    """Addendum X-A2's sweep: every lookup the full V1 makes, with no weight array read and nothing written. Per
+    universe: S1's product against its pin, both weight files by digest (count, the file taken, its .npy shape), and
+    both universe-omnifile branches (present, with the tree's entries); the base arrays' lengths once."""
+    keys, n_tree = set(tree.keys()), int(tree.num_entries)
+    rows, lookups, bad = {}, {}, []
+    for b, i in todo:
+        files = weight_files(b, i, sf1, det)
+        sb = "".join(c if (c.isalnum() or c == "_") else "_" for c in b)
+        row = {}
+        for k, branch in (("wt", f"w_truth_{sb}_{i}"), ("wr", f"w_reco_{sb}_{i}")):
+            path, h, nm = files[k]
+            lookups[f"{b}:{i}:{k}"] = (h, nm)
+            shape = npy_shape(path) if path.exists() else None
+            ok = path.exists() and shape == (X.N_MC,) and branch in keys
+            row[k] = {"n_matches": nm, "file": str(path), "exists": path.exists(), "npy_shape": shape,
+                      "branch": branch, "branch_present": branch in keys, "pass": ok}
+            if not ok:
+                bad.append(f"{b}:{i}:{k}")
+        rows[f"{b}:{i}"] = row
+    n = {k: int(np.asarray(v).shape[0]) for k, v in base.items()}
+    ok_base = n_tree == X.N_MC and all(v == X.N_MC for v in n.values()) and mcgen.shape[0] == X.N_MC
+    hist = {}
+    for _, nm in lookups.values():
+        hist[nm] = hist.get(nm, 0) + 1
+    rec = {"schema": "fd-xcov-v1-dry/1", "universes": len(rows), "lookups": len(lookups),
+           "n_matches_histogram": {str(k): v for k, v in sorted(hist.items())},
+           "zero_match_lookups": 0, "failing_lookups": bad, "tree_entries": n_tree, "base_lengths": n,
+           "base_pass": ok_base, "multi_match_classes": multi_match_classes(lookups), "rows": rows,
+           "pass": not bad and ok_base}
+    print(json.dumps(rec, default=str), flush=True)
+    return 0 if rec["pass"] else 1
 
 
 # ---------------------------------------------------------------- boot
@@ -344,7 +406,7 @@ def boot_state(run_dir: Path, v0_pass: bool) -> dict:
 def v1_state(run_dir: Path) -> dict:
     """Ruling A1: the full V1 readout, or a probe that projected beyond the full run's cap, in which case every band is
     bounded; anything else stops K."""
-    full, probe = run_dir / "v1" / "v1.json", run_dir / "v1-probe" / "v1.json"
+    full, probe = run_dir / V1_DIR / "v1.json", run_dir / "v1-probe" / "v1.json"
     if full.exists():
         return {"source": "full", "bands_pass": json.loads(full.read_text())["bands_pass"]}
     if probe.exists() and not json.loads(probe.read_text()).get("within_full_cap", True):
@@ -353,6 +415,8 @@ def v1_state(run_dir: Path) -> dict:
 
 
 def cmd_k(a) -> int:
+    if a.own_only:
+        return k_own_only(a)
     out = a.run_dir / "k"
     if out.exists():
         raise X.Stop("-", f"refusing to overwrite {out}: K runs once (a stop is final)")
@@ -381,7 +445,61 @@ def cmd_k(a) -> int:
     return rc
 
 
-def k_compute(a, inp, check, v0, bs, v1) -> dict:
+def k_own_only(a) -> int:
+    """Addendum X-A2's dry run of K: K0, K1 and K2 on each side's own matrices, through k_compute itself with every
+    cross block, the statistical cross term, z and chi2 skipped; the small staged files go to a scratch directory and
+    nothing is written under the run directory. Prints the controls."""
+    import tempfile
+    inp, ctrl = X.Inputs(), {}
+
+    def check(name, ok, detail=""):
+        ctrl[name] = bool(ok)
+        X.report(name.split()[0], name, ok, str(detail))
+
+    v0 = json.loads((a.run_dir / V0_DIR / "v0.json").read_text())
+    bs = boot_state(a.run_dir, v0["pass"])
+    rec = {"schema": "fd-xcov-k-own/1", "boot": bs}
+    with tempfile.TemporaryDirectory() as td:
+        try:
+            rec.update(k_compute(a, inp, check, v0, bs, None, stage_root=Path(td)))
+            rc = 0
+        except X.Stop as e:
+            rec["stop"], rc = str(e), 1
+    rec.update(controls=ctrl, n_controls=len(ctrl), all_pass=rc == 0 and all(ctrl.values()),
+               atime_deviations=inp.atime_deviations())
+    print(json.dumps(rec, default=float), flush=True)
+    return rc
+
+
+def k_own_tail(a, check, v0, bs, A, U, C16q, C2q, S16stat, S2stat, vec2) -> dict:
+    """The dry run's end: K2 on each side's own matrices (the joint matrix with a zero cross block, which is PSD iff
+    each side is), and the route-B inputs' format (each paired replica as BOOT recorded it, read as a 16-cell vector;
+    each RE-2 replica as a 2D vector); no cross term is formed."""
+    Z = np.zeros((X.N_Q, X.N_Q))
+    check("K2 each side's own matrix is PSD (C16q and Q_R + C_model,2D)", X.joint_psd(C16q, C2q, Z))
+    check("K2 each side's own statistical matrix is PSD", X.joint_psd(S16stat, S2stat, Z))
+    out = {"replicas": None}
+    if v0["pass"] and bs["b0"]:
+        prods = {}
+        for p in sorted((a.run_dir / "boot" / "xcov").glob("lane_*.json")):
+            prods.update(json.loads(p.read_text())["products"])
+        want = [f"xcov_b{b}_j{100 + b}.npz" for b in X.STAT_REPLICAS]
+        check("B all 100 paired replicas are recorded by BOOT's lanes", all(n in prods for n in want),
+              str(sorted(set(want) - set(prods))[:5]))
+        for n in want:
+            committed_sha(a.run_dir / "boot" / "xcov" / n, prods[n], "paired replica")
+        sh16 = {np.shape(A @ (U @ sa.xs(a.run_dir / "boot" / "xcov" / n))) for n in want}
+        sh2 = {np.shape(vec2(RE2 / f"partb/out/S1_{b:03d}/xsec.root")) for b in X.STAT_REPLICAS}
+        check("B every paired replica reads as a 4-quadrant vector, and every RE-2 replica as a 2D vector",
+              sh16 == {(X.N_Q,)} and len(sh2) == 1, f"{sh16} {sh2}")
+        out["replicas"] = {"n": len(want), "shapes_16": sorted(map(str, sh16)), "shapes_2d": sorted(map(str, sh2))}
+    return out
+
+
+def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None) -> dict:
+    """K (declaration sections 3-5). With stage_root given (the dry run, v1 None): the own-side controls only."""
+    own_only = stage_root is not None
+    sroot = stage_root if own_only else a.run_dir
     defn = json.loads(DEFINITION.read_text())
     U = gc.cell_matrix()
     qz, pl, s5 = inp.npz(Q_R), inp.npz(CPL_R), inp.npz(S5_R)
@@ -431,7 +549,7 @@ def k_compute(a, inp, check, v0, bs, v1) -> dict:
         return hist2d_cells(inp.bytes(path), cells2d)
 
     crosses, bounded = {}, {}
-    w = sa.flux_weights(stage(inp, CONSTRAINT, a.run_dir))
+    w = sa.flux_weights(stage(inp, CONSTRAINT, sroot))
     s1meta = json.loads(read_committed(S1_JSON))["meta"]["inputs_sha256"]
     by_band = {}
     for b, i in universe_list():
@@ -444,12 +562,14 @@ def k_compute(a, inp, check, v0, bs, v1) -> dict:
         ww = w if b == sa.FLUX else None
         check(f"K1 16 band {b}: the products give S1's block (1e-10)", X.same_block(X.cross_cov(X16, X16, ww), own16(f"C_band_{b}")))
         check(f"K1 2D band {b}: the products give S5_R's block (1e-10)", X.same_block(X.cross_cov(X2, X2, ww), own2(f"band_{b}")))
+        if own_only:
+            continue
         if v1["bands_pass"].get(b):
             crosses[f"band:{b}"] = X.cross_cov(X16, X2, ww)
         else:
             bounded[f"band:{b}"] = X.bound_matrix(own16(f"C_band_{b}"), own2(f"band_{b}"))
     flux5 = np.asarray(np.load(io.BytesIO((a.run_dir / "inputs" / X.NPZ_NAME).read_bytes()), allow_pickle=False)["flux"], float)
-    scale = sa.x01_scale(stage(inp, X01, a.run_dir), flux5)
+    scale = sa.x01_scale(stage(inp, X01, sroot), flux5)
     pti, ipt2 = sa.pt_index(), cells2d // (len(e_pz) - 1)
     for b in LATERAL_BANDS:
         X16, X2 = [], []
@@ -462,11 +582,13 @@ def k_compute(a, inp, check, v0, bs, v1) -> dict:
         X16, X2 = np.array(X16), np.array(X2)
         check(f"K1 16 lateral {b} (1e-10)", X.same_block(X.cross_cov(X16, X16), own16(f"C_lat_{b}")))
         check(f"K1 2D lateral {b} (1e-10)", X.same_block(X.cross_cov(X2, X2), own2(f"band_{b}")))
-        crosses[f"lat:{b}"] = X.cross_cov(X16, X2)
+        if not own_only:
+            crosses[f"lat:{b}"] = X.cross_cov(X16, X2)
     n16, n2 = X.NORM * (A @ f), X.NORM * (B @ x)
     check("K1 16 normalization (1e-10)", X.same_block(np.outer(n16, n16), own16("C_normalization")))
     check("K1 2D normalization (1e-10)", X.same_block(np.outer(n2, n2), own2("band___Normalization_flat")))
-    crosses["normalization"] = np.outer(n16, n2)
+    if not own_only:
+        crosses["normalization"] = np.outer(n16, n2)
     per, plj = json.loads(read_committed(PERIODS5)), json.loads(read_committed(PL_JSON))
     k16, k2 = float(per["constants"]["k"]), float(plj["report"]["k_factor"])
     V16p, V2p = [], []
@@ -478,15 +600,18 @@ def k_compute(a, inp, check, v0, bs, v1) -> dict:
                                                         A @ np.asarray(blk["C_PL5D"], float) @ A.T))
     check("K1 C_PL_R from its periods (1e-10)", X.same_block(sum(np.outer(v, v) for v in V2p),
                                                         B @ np.asarray(pl["C_PL"], float) @ B.T))
-    crosses["C_PL (constructed, period-paired)"] = X.outer_pairs(V16p, V2p)
+    if not own_only:
+        crosses["C_PL (constructed, period-paired)"] = X.outer_pairs(V16p, V2p)
     cm5 = json.loads(read_committed(CMODEL5))
     check("K0 the C_model vertices are paired in one order", list(cm5["vertices"]) == list(cm2["vertices"]))
     V16m = [A @ (f * np.asarray(s_, float)) for s_ in cm5["S"]]
     check("K1 C_model_abs from its vertices (1e-10)", X.same_block(sum(np.outer(v, v) for v in V16m),
                                                               A @ np.asarray(dp["matrices"]["C_model_abs"], float) @ A.T))
+    S16stat, S2stat = own16("C_stat"), own2("stat")
+    if own_only:
+        return k_own_tail(a, check, v0, bs, A, U, C16q, C2q, S16stat, S2stat, vec2)
     crosses["C_model (vertex-paired)"] = X.outer_pairs(V16m, V2m)
     # the statistical stream (ruling 1): route B iff V0 and B0 held, every paired replica exists, and K2 holds for it
-    S16stat, S2stat = own16("C_stat"), own2("stat")
     route, stat, why = "A", None, []
     if v0["pass"] and bs["b0"]:
         prods = {}
