@@ -34,7 +34,7 @@
 - `rerun1/`: the E2-A1 rerun. It holds `chi2/e2.json`, `unfold/unfold.json`, logs, receipts, inventories, `sacct.txt`,
   `sens/` (§5) and `hpss/`.
 - **Not in git: the four vertex configs** (`vertices/config_carbon.json` and `config_ch.json` of each run). They stay on
-  pscratch and in the HPSS archive (§8).
+  pscratch and are listed by sha256 in §8's file lists; they go to HPSS with the catch-up archive.
   - The shared checker `verify_receipt_artifacts.py` gives a false MISSING for them. Each names RE-1's
     `k1_p5_rerun.npz` bare in a label, and the same receipt cites it by its full pscratch path.
   - `classify_bare` tests MISSING before BY-PATH, so the checker refuses the commit.
@@ -264,19 +264,35 @@ What the table shows, without a reading:
 
 ## 8. HPSS
 
-**Not yet done: this section is filled before merge.** The archive is declared in addendum E2 §5. Its script is
-`rerun1/receipts/x_e2_hpss.sh`, started on saul at 11:11:39 UTC on 2026-11-02. As of 16:05 UTC its first `hsi` call was
-still waiting on HPSS's maintenance flag, so nothing had been written to HPSS.
+**Deferred: NERSC HPSS maintenance until 2026-11-06 17:00.** This follows the director's ruling in
+[`RECORD-20261102-director-hpss-deferral.md`](../../../RECORD-20261102-director-hpss-deferral.md) (#685). This report's
+merge is not held for the copy.
 
-**What the script does:**
-- archives both run directories, without their deploy clones, to
-  `/home/j/josephrb/mnv-gencmp-e2-20261102/gencmp-e2-20261102.tar`: 133 files from an explicit list, with htar's CRC and
-  verify;
-- runs `hsi hashcreate` and `hashverify`;
-- retrieves five files and compares each one's sha256 with the original;
-- records `hpssquota` before and after. Before, the quota stood at 449.25 of 512 GiB.
+**Each run directory as it stands on pscratch.** Deploy clones and the attempt's `hpss/` are excluded. Each list holds
+every file's sha256, size and path, read O_NOATIME by `fd/gencmp-e2/receipts/x_filelist.py`:
 
-**Disclosed:** htar and the retrieval compare read the run directories' files without O_NOATIME. They are this run's
-own outputs and staged copies, not the pinned originals.
+| run directory | files | bytes | file list | the list's sha256 |
+|---|---|---|---|---|
+| `$R1` = `gencmp-e2-20261102/` | 54 | 1,612,379,527 | `run1/hpss/files.sha256` | `1e20375b702f9caf3d5f5eaa69705a3353f44cb9e180ba3dd58a9be7e3b6e35a` |
+| `$R2` = `gencmp-e2a1-20261102/` | 79 | 1,612,954,994 | `rerun1/hpss/files.sha256` | `f269f967db18108142d81f3d4aceefff079698d10705933bfbafdd7546c778da` |
+
+- No tar was made.
+- The two lists' 133 paths are exactly the archive attempt's explicit list (`rerun1/hpss/htar_files.txt`).
+- `e2.json`'s listed sha256 equals the committed copy's.
+- The four vertex configs kept out of git (see Records) are in these lists, each with its sha256.
+
+**The archive attempt.**
+- `rerun1/receipts/x_e2_hpss.sh` started on saul at 11:11:39 UTC on 2026-11-02 and recorded `hpssquota` first
+  (`rerun1/hpss/quota-before.txt`: 449.25 of 512 GiB).
+- Its first `hsi` call (the `mkdir` of the HPSS directory) waited on the maintenance flag until the script was killed, on
+  the director's instruction, after the deferral ruling. Nothing was written to HPSS.
+- `$R2/hpss/` on pscratch holds only `quota-before.txt` and `htar_files.txt`.
+
+**After maintenance.** One catch-up archive runs for E2, E2-A1 and X with the bound procedure: `hpssquota`, an explicit
+list, `htar` with CRC and verify, `hashcreate` and `hashverify`, and a retrieval compared by sha256. Its result is
+recorded here in a follow-up commit. The pscratch originals stay until the copy is verified.
+- That run gets a fresh receipt directory, because the script refuses an existing `hpss/`.
+- **Disclosed in advance:** htar and the retrieval compare read the run directories without O_NOATIME. They are this
+  campaign's own outputs and staged copies, not the pinned originals.
 
 Nothing is submitted, deposited or tagged.
