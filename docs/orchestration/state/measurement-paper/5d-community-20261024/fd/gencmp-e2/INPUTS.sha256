@@ -1,0 +1,19 @@
+# GENCMP amendment E, step E2 (FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md section 1): every pscratch input, sha256 and path.
+# Family C: the PV ladder's L-5D-PV rung inputs, its reference and its vertices (nd-unfolding/pv-ladder/config.json);
+# family R: the committed prep's ratio files (nd-unfolding/pv-ladder/prep-SHA256SUMS); family V: the vertex products
+# C_model was built from (build_cmodel5d.EXPECT).
+07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955  /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+e36f3b25459e068cec9dba941f7b3aea8f48c6e22c931fde7c9d315e7b1e8de2  /pscratch/sd/j/josephrb/methods-paper/re1-20261022/out/5d/k1_p5_rerun.npz
+cfa42210dfe9cadc8e9460333316a639bd719c9ae52ab1144be900372a9adcc2  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_cv_xsec5d_full.npz
+c179855df6e42a5b8bab1f839aae675c53a5150f132649c855356ad75f26790f  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/genie_mec_xsec5d_full.npz
+475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz
+48917692ee1295902db3bec34d6c80e368f020ae7924dabbda7e996c461cca18  /pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/gibuu_cv_xsec5d_fluxfix.npz
+13bb1eae4ce0db4023bb29a5b98ca8b7e1e22288a1547f6a31a735fa1445435b  /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/tune_v1.json
+8d0e0f42911240f24118c1c731ce6d06a9bd52d0e025202a1ece9da0b54af64f  /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/genie_mec.json
+7fb9ecc3766929eb11487305d67e647a78a713dd883feb0327a39de4e583b85f  /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/genie_mec_sq.json
+38e47eb6b6ac63f6657022ae0cc5a2b5eaffc6a2e503735ce7222275771fea6e  /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json
+dbe9a95e746fba127811182e9a352f6dc243d78ff699e803611b5deedbcb0f4f  /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_tune_v1.npz
+bdff9193b04f17c4aa9d97e7d9c26221b03dc8c9b0d2376cd775e6b195b749c5  /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_genie_mec.npz
+caf6eee726ddb128d26cf74fad2a2b4e69273607a2a0e1e4a48750766bddc66f  /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_nuwro.npz
+bdf331570daeb3dc56d6096e2c39ca3e7a6091339680eb58034ee9a14c82f3c3  /pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_gibuu.npz
