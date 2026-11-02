@@ -34,11 +34,19 @@ rather than dropped. It is tried in this order:
   3. the same basename cited WITH a directory elsewhere in the same receipt.
 Each citation ends in exactly one state:
   TRACKED       resolved to a tracked file (green);
+  BY-PATH       the same receipt also cites the file WITH a directory, and that citation resolves
+                (`resolving_path_citation`): a tracked file, or an absolute path outside the
+                deliverable area (a cluster product, out of scope for the reason above). This is tested
+                BEFORE MISSING (2026-11-02): a run record that names its staged input both ways, e.g.
+                "of_inputs_5d.npz" beside "/pscratch/.../of_inputs_5d.npz", is not the trap, and
+                testing MISSING first refused E2's vertex configs and X's V0 and BOOT records;
   MISSING       a candidate directory in the deliverable area is tracked (it holds tracked files)
-                but does not carry the file. This is the `.gitignore` trap, exit 1;
+                but does not carry the file, and no resolving path citation names it. This is the
+                `.gitignore` trap, exit 1;
   OFF-AREA      resolved to a declared run directory outside the deliverable area (a cluster
                 product, out of scope for the reason above). Counted, not checked;
-  BY-PATH       the same file is also cited with a directory, and that path is what gets checked;
+  BY-PATH       (also, after OFF-AREA) the same file is cited with a directory anywhere in the
+                receipt, and that path is what gets checked;
   UNRESOLVED    none of the above. This is a separate non-green state and is never counted as green.
 
 Exit 0 clean, 1 on MISSING, 2 if it could not run, 3 if the UNRESOLVED set differs from the pinned
@@ -182,6 +190,28 @@ def declared_dirs(text):
     return sorted(set(out))
 
 
+def resolving_path_citation(receipt, name, text, tracked, root=None):
+    """A citation of NAME with a directory, in the same receipt, that resolves; else None.
+
+    An absolute citation resolves when it normalises to a tracked file or lands outside the deliverable
+    area (a cluster product, or a product in a checkout's working tree: out of scope, as the module
+    docstring says). A relative citation resolves only to a tracked file, as written or beside the
+    receipt. A citation that lands in the deliverable area untracked does not resolve: that is the
+    trap itself, and `named_artifacts` reports it too.
+    """
+    here = os.path.dirname(receipt)
+    for m in sorted(PATHLIKE.findall(text)):
+        if "/" not in m or os.path.basename(m) != name:
+            continue
+        if m.startswith("/"):
+            rel = normalise(m, root)
+            if rel in tracked or not rel.startswith(AREA):
+                return m
+        elif os.path.normpath(m) in tracked or os.path.normpath(os.path.join(here, m)) in tracked:
+            return m
+    return None
+
+
 def classify_bare(receipt, name, text, tracked, tracked_dirs, root=None):
     """Resolve ONE bare citation. Returns (state, resolved_to)."""
     here = os.path.dirname(receipt)
@@ -204,6 +234,9 @@ def classify_bare(receipt, name, text, tracked, tracked_dirs, root=None):
             return "TRACKED", cand
     for d, specific in area_candidates:
         if specific and d in tracked_dirs:
+            cited = resolving_path_citation(receipt, name, text, tracked, root)
+            if cited:
+                return "BY-PATH", cited
             return "MISSING", os.path.join(d, name)
     if offarea:
         return "OFF-AREA", os.path.join(offarea[0], name)
