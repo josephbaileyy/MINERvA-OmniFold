@@ -9,10 +9,18 @@
 
 **What this does:**
 - delivers stage 1's code, its tests and a mutation receipt (§1);
-- records five places where the declaration's text could not be built as written, with what the code does instead
+- records six places where the declaration's text could not be built as written, with what the code does instead
   (§2). None of them changes a rule, a threshold, a truth, a draw law, a count or the price;
 - answers N1, N2 and the nit (§3);
 - fixes S1-0's tables and the order (§4).
+
+**Revision 1** follows `coverage-5b-audit`'s D1 on #679 (stage 0's report). It changes four things:
+- §2 (vi), new: stage 1's reads of the staged S1 assembly and of the flux constraint go through O_NOATIME;
+- §1's digests and counts;
+- §1.2's tests and mutants;
+- §4's stat lists.
+
+Nothing else changes.
 
 **MEASURES:** nothing. No job for stage 1 has run. This amendment cannot authorize S1-0. Under binding 1's ruling 2,
 stage 1 waits for four things:
@@ -25,14 +33,15 @@ stage 1 waits for four things:
 
 | file | sha256 | status |
 |---|---|---|
-| `nd-unfolding/fd_1b_mc.py` | `90ae99f2…` | new |
-| `nd-unfolding/tests/test_fd_1b_mc.py` | `8aeec48d…` | new: 36 tests |
+| `nd-unfolding/fd_1b_mc.py` | `66679b27…` | new (revision 0 was `90ae99f2…`) |
+| `nd-unfolding/tests/test_fd_1b_mc.py` | `7be937f1…` | new: 41 tests |
 | `nd-unfolding/fd_1b_null.py` | `ec1402db…` | unchanged from `main` (binding 1 left it unbound) |
-| `fd/receipts-1b/staged/mutation_mc.{py,out}` | — | 30 of 30 killed (§1.2) |
+| `fd/receipts-1b/staged/mutation_mc.{py,out}` | — | 35 of 35 killed (§1.2) |
 | `fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py` | — | the committed generator (§4) |
 
 **The test suites** (`TMPDIR` set): `test_fd_1b_mc.py`, `test_fd_1b_null.py` and `test_fd_1b_moded.py` together pass
-93 (36, 23 and 34). Stage 0's files are untouched.
+98 (41, 23 and 34). Stage 0's files are untouched. `fd_1b_score.py`, `s1_assemble.py`, `fd_1b_toys.py`, `fd_1b_inv.py`
+and `fd_1b_moded.py` are byte-identical to `main`.
 
 ### 1.1 What the module does (by subcommand)
 
@@ -98,9 +107,12 @@ stage 1 waits for four things:
   - narrow errors do not flag (one-sided);
   - wrong correlations flag the joint region only;
   - the cell flag at its boundary count;
-- **walls:** PASS and REPRICE.
+- **walls:** PASS and REPRICE;
+- **the reads (§2 (vi)):** at each of the four call sites, the staged assembly and the flux constraint are opened
+  only with `O_NOATIME`, and the copy gives the bound reader's answer.
 
-**The mutation receipt** (`mutation_mc.py`, with digests; a kill counts only on a test failure): 30 of 30 killed.
+**The mutation receipt** (`mutation_mc.py`, with digests; a kill counts only on a test failure): 35 of 35 killed.
+Revision 1 added §2 (vi)'s five mutants, and all five were killed at their first run.
 - **Disclosed:** at the first run, 4 of 29 survived: the toy without streams, the capture's wrap not removed, the joint
   flag dropped, and a strict cell-flag boundary.
 - Each is now killed by a sharpened or added test, and 1 mutant was added when `compose` was made to stream.
@@ -152,6 +164,36 @@ stage 1 waits for four things:
   remade blocks run. The toys keep the toy path.
 - Set A's replicas are `s5p_numerics`' own construction: jitter at 100 + b, float64 (the declaration's "set A's
   procedure", now explicit).
+
+**(vi) Two bound readers open their files plainly; stage 1 now reads both through O_NOATIME** (revision 1,
+`coverage-5b-audit`'s D1 on #679).
+- **The problem.** Two bound readers open their files without `O_NOATIME`:
+  - `fd_1b_score.load_s1` (`fd_1b_score.py:127–129`) reads the staged S1 assembly with a plain sha256 and a plain
+    `np.load`;
+  - `s1_assemble.flux_weights` (`s1_assemble.py:133–141`) reads the flux constraint file the same way.
+
+  Both break the declaration's §9 read rule. In revision 0, stage 1 called them on inputs this lane did not make:
+  - `load_s1` in `null` and `readout`;
+  - `flux_weights` in `remade`, and through `fd_1b_toys.flux_probabilities` in every toy item.
+
+  Stage 0's readout moved the staged assembly's atime by the same path (stage 0 report, deviation 5).
+- **The fix (`fd_1b_mc.via_noatime`).** It reads the file's bytes once through `fd_1b_inv.open_noatime`, writes them
+  to a private temporary copy, and runs the bound reader on that copy, unchanged.
+  - The digest and the arrays both come from bytes read through `O_NOATIME`.
+  - `fd_1b_score.py`, `s1_assemble.py` and `fd_1b_toys.py` are not edited and stay byte-identical to `main`, so
+    every recorded `code_sha256` of theirs still holds.
+  - It is used at all four call sites.
+- **The tests (`NoAtime`, five).**
+  - `os.open` is wrapped to record which opens carry the flag; `builtins.open` and `io.open` are wrapped to record
+    plain opens.
+  - At each of the four call sites, the source must be opened with the flag and never plainly, and the bound reader
+    must be handed the copy, not the source.
+  - A fifth test shows that the copy gives the bound reader's own answer.
+  - Five mutants, one reverting each site to a plain call and one handing the reader the source, are all killed (§1.2).
+- **Outside stage 1.** I2's `fd_1b_inv` (`:310`, `:652`) and stage 0's `fd_1b_moded` (`:192`, `:447`) keep the plain
+  `load_s1`. They are bound and have run, and this amendment does not change them. `fd_1b_inv` also passes the staged
+  `flux_constraint.txt` to `fs.derivation_blocks`, which reads it through `flux_weights`. That is the same hole, in
+  I2's code.
 
 ## 3. N1, N2 and the §4.5 nit (binding 1, ruling 5)
 
@@ -209,6 +251,19 @@ The bulk table needs the push weights' digest, so it is made after S1-0.
    - the receipt's N1 counts;
    - the atime record.
 3. **The bulk** is submitted only after walls PASS, every control passes and the audit's written acknowledgement.
+
+   **The stat lists** (revision 1, D1). Every connect that submits takes a `stat` (atime, mtime, size) before and
+   after. So do the S1-0 readout, each bulk readout, `null` and `readout`. The lists cover every file that a stage-1
+   job, `stage-flux`, `receipt`, `null`, `readout` or a control comparison reads and this lane did not make:
+   - the 272 stage-0 sources: the inputs npz, background, bank, detector dumps and pins;
+   - the flux constraint file;
+   - the flux-universe ROOT table;
+   - F1's prep ratio files for G18 and AR23;
+   - every file under `fd-1b-inv-20261101/i0/in` and `fd-1b-inv-20261101/i2/unf`;
+   - the S1 and Stage 0 products the four controls are compared with.
+
+   Each list is written by the connect's committed script before the first read. A difference is a deviation,
+   reported and not restored.
 4. **Per truth,** after the bulk:
    - `null`, whose output and digest are committed before `readout` is run;
    - `readout`, with the null's digest;
@@ -216,7 +271,7 @@ The bulk table needs the push weights' digest, so it is made after S1-0.
 
 ## 5. For the director
 
-1. **Bind** `fd_1b_mc.py` `90ae99f2…` and its generator as stage 1's code. The rules, truths, draws, thresholds and
+1. **Bind** `fd_1b_mc.py` `66679b27…` and its generator as stage 1's code. The rules, truths, draws, thresholds and
    price are revision 2's as merged.
 2. **§2 (i)–(v)** are construction findings, not rule changes:
    - (i) changes the composition from per event to per cell for the denominator only;

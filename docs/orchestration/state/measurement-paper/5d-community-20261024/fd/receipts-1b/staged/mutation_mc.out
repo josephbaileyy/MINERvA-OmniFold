@@ -1,5 +1,5 @@
-sha256 90ae99f280bfa73a4723d6394ce63019338d5b394b474a3a0448cf2a1e5ed858  fd_1b_mc.py
-sha256 8aeec48d8aded3c3df548fab0e58275c4fd345f998d5ca1cd38bad8a496414b4  tests/test_fd_1b_mc.py
+sha256 66679b2711d1f3af0760787913e2d47e141ac2a968f4815f403340780c2a4123  fd_1b_mc.py
+sha256 7be937f16a012812eb607affd05a9cc5fca53e295119f20d8edcbf8649957566  tests/test_fd_1b_mc.py
 sha256 ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
 KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
 KILLED   ratio composition inverted
@@ -32,5 +32,10 @@ KILLED   cell flag strict
 KILLED   atime move exits 0
 KILLED   walls limit doubled
 KILLED   seed role at 42
-unmutated: 36 passed in 5.47s
-30 of 30 killed
+KILLED   D1: the reader gets the source
+KILLED   D1: a toy reads the constraint plainly
+KILLED   D1: remade reads the constraint plainly
+KILLED   D1: null reads the assembly plainly
+KILLED   D1: readout reads the assembly plainly
+unmutated: 41 passed in 5.25s
+35 of 35 killed

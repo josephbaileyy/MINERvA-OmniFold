@@ -38,6 +38,7 @@ import math
 import os
 import resource
 import sys
+import tempfile
 import time
 from contextlib import contextmanager
 from pathlib import Path
@@ -79,6 +80,18 @@ PILOT = {True: PILOT_COMMON + (("capture", "data"),), False: PILOT_COMMON + (("t
 
 class Refusal(RuntimeError):
     pass
+
+
+def via_noatime(reader, path: Path):
+    """``reader`` (a bound function that opens a path itself) on a private copy of ``path`` whose bytes were read once
+    through O_NOATIME. The reader runs unchanged, and the source's access time is left alone. This is the audit's D1
+    on #679: ``fd_1b_score.load_s1`` and ``s1_assemble.flux_weights`` read their files plainly."""
+    with inv.open_noatime(path) as fh:
+        data = fh.read()
+    with tempfile.TemporaryDirectory(prefix="fd1b-mc-") as d:
+        copy = Path(d) / Path(path).name
+        copy.write_bytes(data)
+        return reader(copy)
 
 
 # ------------------------------------------------------------------------------------------------- composition
@@ -351,7 +364,7 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
         seed = int(item)
         if seed not in TOY_SEEDS[truth]:
             raise Refusal(f"toy seed {seed} is outside {truth}'s declared range")
-        d = toys.draw_for_seed(seed, toys.flux_probabilities(a.flux_constraint), world["groups"])
+        d = toys.draw_for_seed(seed, via_noatime(toys.flux_probabilities, a.flux_constraint), world["groups"])
         tags = draw_universes(d)
         ui, ub, info = compose(inputs, bkg, world["bank_cv"], tags, lambda t: _weights(world, a, t), world["flux"])
         exp, x_true = toy_experiment(inputs, bkg, ui, ub, truth_weight(truth, inputs, ratio, push), seed)
@@ -526,7 +539,7 @@ def remade(unfolds: Path, tag: str, truth: str, s1: dict, U: np.ndarray, constra
     if not np.array_equal(X_T, seedX):
         raise Refusal("the seed check failed: estimator seed 45 differs from 42 at T")
     blocks, laws = {}, []
-    w = sa.flux_weights(constraint)
+    w = via_noatime(sa.flux_weights, constraint)
     for band, n in sa.EXPECT.items():
         X = _cells(unfolds, tag, truth, "block", [f"{band}_{i}" for i in range(n)], U)
         p = w / w.sum() if band == sa.FLUX else np.full(n, 1.0 / n)
@@ -610,7 +623,7 @@ def cmodel_parts(s1_npz: Path, cmodel_json: Path) -> tuple[np.ndarray, np.ndarra
 
 def null_step(a) -> dict:
     """Section 5.2: the draw-matched nulls at T (C_T and the leave-out-MEC C_T^-) from the remade products only."""
-    s1 = fs.load_s1(a.staged / "s1" / "s1_assembly.npz")
+    s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
     U = sa.functional_matrix(sa.fine_map(a.definition))
     if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
         raise Refusal("the definition's functional is not S1's")
@@ -658,7 +671,7 @@ def readout(a) -> dict:
     nl = json.loads(a.null.read_text())
     if nl["products_sha256"] != products_digest(a.unfolds, a.tag, a.truth, BLOCK_ROLES):
         raise Refusal("the null was not made from these products")
-    s1 = fs.load_s1(a.staged / "s1" / "s1_assembly.npz")
+    s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
     U = sa.functional_matrix(sa.fine_map(a.definition))
     frac, minus = cmodel_parts(a.staged / "s1" / "s1_assembly.npz", a.cmodel_json)
     rm = remade(a.unfolds, a.tag, a.truth, s1, U, a.flux_constraint, frac)

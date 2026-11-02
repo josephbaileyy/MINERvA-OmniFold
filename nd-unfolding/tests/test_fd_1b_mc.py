@@ -19,7 +19,11 @@ No real data are read: every fixture is synthetic. ``stage-flux`` needs ROOT and
 S1-0's Flux_0 procedure control checks its product end to end."""
 from __future__ import annotations
 
+import argparse
+import builtins
+import io
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -365,6 +369,9 @@ def toy_staged(root: Path, rng, n_cells=16):
 class Remade(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp(prefix="fd1b-mc-rm-"))
+        self.na = plain_noatime()
+        self.na.start()
+        self.addCleanup(self.na.stop)
         self.rng = np.random.default_rng(11)
         self.s1 = toy_staged(self.tmp, self.rng)
         self.U = np.eye(16)
@@ -478,6 +485,105 @@ class Grading(unittest.TestCase):
         g = mc.grade(E, self.C, self.null)
         self.assertTrue(g["cell_flag"][3])
         self.assertEqual(g["attribution"]["R03"]["driven_by"], "bias")
+
+
+# --------------------------------------------------------------------------------- D1: reads through O_NOATIME
+
+
+class _Stop(Exception):
+    pass
+
+
+class NoAtime(unittest.TestCase):
+    """The audit's D1 on #679. The staged S1 assembly and the flux constraint are inputs this lane did not make, so at
+    every stage-1 call site they are opened only through O_NOATIME, and never by a plain open."""
+    FLAG = 1 << 29
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="fd1b-mc-na-"))
+        self.addCleanup(shutil.rmtree, self.tmp)
+        self.flagged, self.plain = [], []
+        real_os_open = os.open
+
+        def os_open(path, flags, *a, **k):
+            if flags & self.FLAG:
+                self.flagged.append(os.fspath(path))
+            return real_os_open(path, flags & ~self.FLAG, *a, **k)
+
+        def recording(real):
+            def opener(file, *a, **k):
+                if isinstance(file, (str, os.PathLike)):
+                    self.plain.append(os.fspath(file))
+                return real(file, *a, **k)
+            return opener
+
+        for p in (mock.patch.object(inv, "NOATIME_FLAG", self.FLAG), mock.patch.object(inv.os, "open", os_open),
+                  mock.patch.object(builtins, "open", recording(builtins.open)),
+                  mock.patch.object(io, "open", recording(io.open))):
+            p.start()
+            self.addCleanup(p.stop)
+        (self.tmp / "s1").mkdir()
+        self.s1 = self.tmp / "s1" / "s1_assembly.npz"
+        self.s1.write_bytes(b"the staged assembly")
+        self.constraint = self.tmp / "constraint.txt"
+        self.constraint.write_text("".join(f"Flux {i} {1.0 + i / 100}\n" for i in range(100)))
+        self.plain.clear()
+
+    def spy(self):
+        got = []
+
+        def reader(path, *a, **k):
+            got.append(os.fspath(path))
+            raise _Stop
+        return got, reader
+
+    def assert_noatime_only(self, src: Path, got: list):
+        self.assertIn(str(src), self.flagged, "the source was not opened with O_NOATIME")
+        self.assertNotIn(str(src), self.plain, "the source was opened plainly")
+        self.assertEqual(len(got), 1)
+        self.assertNotEqual(got[0], str(src), "the bound reader was handed the source itself")
+
+    def test_null_reads_the_assembly_through_o_noatime(self):
+        got, reader = self.spy()
+        a = argparse.Namespace(staged=self.tmp)
+        with mock.patch.object(mc.fs, "load_s1", reader), self.assertRaises(_Stop):
+            mc.null_step(a)
+        self.assert_noatime_only(self.s1, got)
+
+    def test_readout_reads_the_assembly_through_o_noatime(self):
+        got, reader = self.spy()
+        null = self.tmp / "null.json"
+        null.write_text(json.dumps({"products_sha256": "p"}))
+        a = argparse.Namespace(staged=self.tmp, null=null, expect_null_sha256=digest(null), unfolds=self.tmp,
+                               tag="t", truth="g18")
+        with mock.patch.object(mc.fs, "load_s1", reader), mock.patch.object(mc, "products_digest", lambda *a: "p"), \
+                self.assertRaises(_Stop):
+            mc.readout(a)
+        self.assert_noatime_only(self.s1, got)
+
+    def test_remade_reads_the_constraint_through_o_noatime(self):
+        for role in ("central", "seed"):
+            np.savez(self.tmp / mc.product_name("t", "g18", role, "T"), xsec_flat=np.ones(16))
+        got, reader = self.spy()
+        with mock.patch.object(mc.sa, "flux_weights", reader), self.assertRaises(_Stop):
+            mc.remade(self.tmp, "t", "g18", {"f": np.ones(16)}, np.eye(16), self.constraint, None)
+        self.assert_noatime_only(self.constraint, got)
+
+    def test_a_toy_reads_the_constraint_through_o_noatime(self):
+        got, reader = self.spy()
+        a = argparse.Namespace(truth="g18", prep=None, push=None, flux_constraint=self.constraint)
+        with mock.patch.object(mc, "truth_ratio", lambda *a: (None, None)), \
+                mock.patch.object(mc.toys, "flux_probabilities", reader), self.assertRaises(_Stop):
+            mc.run_item(a, {"inputs": {}, "bkg": {}}, "toy", "3620000")
+        self.assert_noatime_only(self.constraint, got)
+
+    def test_the_copy_gives_the_bound_readers_answer(self):
+        want = digest(self.constraint)
+        self.plain.clear()
+        with mock.patch.object(sa, "CONSTRAINT_SHA256", want):
+            w = mc.via_noatime(sa.flux_weights, self.constraint)
+            self.assertNotIn(str(self.constraint), self.plain)
+            np.testing.assert_array_equal(w, sa.flux_weights(self.constraint))
 
 
 class Walls(unittest.TestCase):

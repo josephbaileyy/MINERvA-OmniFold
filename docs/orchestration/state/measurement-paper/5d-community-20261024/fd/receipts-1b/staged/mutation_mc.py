@@ -42,6 +42,11 @@ M = [
  ("atime move exits 0", "        return status | 8", "        return status"),
  ("walls limit doubled", "ok = s_max <= UNIT_SECONDS and r_max <= RSS_LIMIT_KIB", "ok = s_max <= 2 * UNIT_SECONDS and r_max <= RSS_LIMIT_KIB"),
  ("seed role at 42", "seed = SEED_CHECK if role == \"seed\" else toys.ESTIMATOR_SEED\n", "seed = toys.ESTIMATOR_SEED\n"),
+ ("D1: the reader gets the source", "        return reader(copy)", "        return reader(Path(path))"),
+ ("D1: a toy reads the constraint plainly", "via_noatime(toys.flux_probabilities, a.flux_constraint)", "toys.flux_probabilities(a.flux_constraint)"),
+ ("D1: remade reads the constraint plainly", "    w = via_noatime(sa.flux_weights, constraint)", "    w = sa.flux_weights(constraint)"),
+ ("D1: null reads the assembly plainly", "def null_step(a) -> dict:\n    \"\"\"Section 5.2: the draw-matched nulls at T (C_T and the leave-out-MEC C_T^-) from the remade products only.\"\"\"\n    s1 = via_noatime(fs.load_s1, ", "def null_step(a) -> dict:\n    \"\"\"Section 5.2: the draw-matched nulls at T (C_T and the leave-out-MEC C_T^-) from the remade products only.\"\"\"\n    s1 = fs.load_s1("),
+ ("D1: readout reads the assembly plainly", "        raise Refusal(\"the null was not made from these products\")\n    s1 = via_noatime(fs.load_s1, ", "        raise Refusal(\"the null was not made from these products\")\n    s1 = fs.load_s1("),
 ]
 rows = []
 try:
