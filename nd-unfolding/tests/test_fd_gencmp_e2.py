@@ -6,6 +6,7 @@ Each control is tested in the direction it acts and in the other: V (the carbon 
 config's repointing, R1's comparison (numbers, not paths), S's arithmetic against build_cmodel5d's own, and the chi2
 rows against fd_g_compare's."""
 import json
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -157,6 +158,82 @@ class Pins(unittest.TestCase):
         want |= {f"{E2.PREP}/{n}.json" for n in E2.RATIO_FILES}
         want |= {f"{E2.PRODUCTS}/L-5D-PV_e_{v}.npz" for v in ("tune_v1",) + BC.VERTICES}
         self.assertTrue(want <= pins, sorted(want - pins))
+
+
+JOB = E2.FD / "fd/gencmp-e2/receipts/x_e2_unfold.sh"
+
+
+class NoiseFloor(unittest.TestCase):
+    """The director's E2 ruling: the seed-43 carbon pair, its check_meta at seed 43, and the reading fixed in advance."""
+
+    def test_the_job_launches_exactly_the_declared_unfolds_with_their_seeds(self):
+        txt = JOB.read_text()
+        tasks = dict(m.groups()[:2] for m in re.finditer(r'"(\w+):(\d+):([^"]+)"', txt))
+        self.assertEqual(set(tasks), set(E2.UNFOLDS))
+        self.assertEqual({k for k, v in tasks.items() if v == str(E2.NOISE_SEED)}, set(E2.NOISE.values()))
+        self.assertEqual({k for k, v in tasks.items() if v == "42"}, set(E2.UNFOLDS) - set(E2.NOISE.values()))
+        self.assertIn(f"NT={len(E2.UNFOLDS)};", txt)
+        self.assertIn("--estimator-seed \"$SEED\"", txt)
+        self.assertIn("#SBATCH -t 00:25:00", txt)
+
+    def test_the_noise_pair_uses_the_committed_prep_ratios(self):
+        txt = JOB.read_text()
+        for v, k in E2.NOISE.items():
+            self.assertIn(f'"{k}:{E2.NOISE_SEED}:$P/{v}.json"', txt)
+        self.assertIn('P="$R/inputs/pv-ladder-20261024/prep/ratios/L-5D-PV"', txt)
+
+    def meta(self, PA, vertex, seed):
+        cfg = json.loads(E2.CONFIG.read_text())["rungs"][E2.RUNG]
+        task = PA.tasks(E2.PVL / "tasks.tsv")[f"L-5D-PV_e_{vertex}"]
+        axes = PA.L.RUNGS[task["rung"]][0]
+        m = {"rung": task["rung"], "arm": "e", "closure": False, "input_npz_sha256": cfg["npz"]["sha256"],
+             "bkg_dump_sha256": cfg["bkg"]["sha256"], "ratio_sha256": "r" * 64, "features": list(axes),
+             "estimator_seed": seed, "iters": 5, "threads": 32,
+             "refinement": {"ran": True, "classifier_params": dict(PA.REFINE, random_state=seed + 3)},
+             "completeness_guard": {"r_spread_in_cell": 0.0, "completeness": 0.0},
+             "code_sha256": {"a.py": "x"}, "estimator_params": [{"random_state": seed, "num_threads": 32}]}
+        return task, cfg, {"vertices": {vertex: {"ratio_sha256": "r" * 64}}}, m
+
+    def test_check_meta_at_seed_43_accepts_a_seed_43_product_and_refuses_a_seed_42_one(self):
+        import pvl_analyze as PA
+        task, cfg, ratios, m43 = self.meta(PA, "gibuu", 43)
+        _, _, _, m42 = self.meta(PA, "gibuu", 42)
+        with E2.declared_seed(PA, 43):
+            PA.check_meta("x43", m43, task, ratios, cfg, None)
+            with self.assertRaises(SystemExit):
+                PA.check_meta("x42", m42, task, ratios, cfg, None)
+            with self.assertRaises(SystemExit):     # the refinement at seed 42's random_state
+                PA.check_meta("x", dict(m43, refinement={"ran": True, "classifier_params": dict(PA.REFINE, random_state=45)}),
+                              task, ratios, cfg, None)
+        PA.check_meta("x42", m42, task, ratios, cfg, None)
+        with self.assertRaises(SystemExit):
+            PA.check_meta("x43", m43, task, ratios, cfg, None)
+
+    def test_declared_seed_restores_the_module_even_on_a_refusal(self):
+        import pvl_analyze as PA
+        before = (dict(PA.DECLARED), dict(PA.REFINE))
+        with self.assertRaises(RuntimeError):
+            with E2.declared_seed(PA, 43):
+                self.assertEqual((PA.DECLARED["estimator_seed"], PA.REFINE["random_state"]), (43, 46))
+                raise RuntimeError
+        self.assertEqual((PA.DECLARED, PA.REFINE), before)
+
+    def test_estimator_parameters_compare_but_for_random_state(self):
+        a = [{"random_state": 42, "n": 1}, {"random_state": 42, "n": 2}]
+        b = [{"random_state": 43, "n": 1}, {"random_state": 43, "n": 2}]
+        self.assertEqual(E2.params_but_seed(b, 43), E2.params_but_seed(a, 42))
+        self.assertNotEqual(E2.params_but_seed([dict(b[0], n=9), b[1]], 43), E2.params_but_seed(a, 42))
+        with self.assertRaises(SystemExit):
+            E2.params_but_seed([b[0], dict(b[1], random_state=42)], 43)
+
+    def test_the_reading_is_fixed_by_twice_the_noise_floor(self):
+        self.assertTrue(E2.reading(1.0, 0.5)["within_seed_variation"])
+        self.assertFalse(E2.reading(1.0 + 1e-12, 0.5)["within_seed_variation"])
+        self.assertFalse(E2.reading(0.1, 0.0)["within_seed_variation"])
+        r = E2.reading(0.4, 0.3)
+        self.assertTrue(r["sentence"].endswith("against a seed-to-seed change of 0.30; within the estimator's seed "
+                                               "variation"))
+        self.assertNotIn("within", E2.reading(3.0, 0.3)["sentence"])
 
 
 if __name__ == "__main__":

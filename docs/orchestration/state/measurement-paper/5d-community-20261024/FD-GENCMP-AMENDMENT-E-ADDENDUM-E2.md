@@ -17,7 +17,8 @@
 V_g.
 
 **MEASURES:** C_model's NuWro and GiBUU vertices rebuilt with CH shape ratios, and the resulting change in Stage G's χ²
-for the four "CH, analysis definitions" predictions.
+for the four "CH, analysis definitions" predictions; and, as its noise floor, the change in the same χ² when the
+carbon NuWro and GiBUU vertices are unfolded again at estimator seed 43 (§3a).
 
 **CANNOT AUTHORIZE:**
 - any change to the reported covariance;
@@ -74,7 +75,7 @@ record:
 | stage | login node | O_NOATIME copies of the 15 inputs to `$R/inputs/` (`fd_gencmp_e.cmd_stage`) | each copy is its pinned bytes; atime is compared and recorded |
 | vertices | login node | the CH vertex files in the gen5d form `pvl_ratios` reads (the carbon file's edges, step A's x_CH and sumw2_CH); `config_carbon.json` (the committed config, every pscratch path at its staged copy); and `config_ch.json` (the same, with the two vertices at the CH files) | **V:** step A's products are their pinned bytes; step A's carbon arrays are the staged carbon files bitwise; x_CH (with its sumw2) is `fd_gencmp.combine` of carbon and hydrogen bitwise. Receipt `V.ok` |
 | ratios | login node (after `V.ok`) | `pvl_ratios` on `config_carbon.json`, then on `config_ch.json`, rung L-5D-PV | **R1:** (i) the carbon run reproduces all seven committed ratio files' numbers (r, k, to 1e-12 relative; only `source` and `reference` differ, naming the staged paths). That checks the whole ratio path, GiBUU's truth-cut path included (B3). (ii) The CH run's `tune_v1` and `genie_mec` files equal the carbon run's. (iii) CH GiBUU's ratio carries the committed p_∥ < 10 truth cut, and CH NuWro's carries none. Receipt `R1.ok` |
-| unfold | one regular CPU job, `-t 00:25:00`, `--exclusive --no-requeue`, output to `$R/logs/` (`fd/gencmp-e2/receipts/x_e2_unfold.sh`; B6); it refuses without `R1.ok` | three `pvl_unfold` runs, launched as the PV ladder launched its own (`sbatch_pvl.sh:58-83`): one `srun` step each, of 42 CPUs and an equal share of 95% of the job's memory, through `mnv_guarded_run.py`, with `--estimator-seed 42 --threads 32 --iters 5`. They are NuWro CH, GiBUU CH and NuWro carbon with the committed prep ratio | **R2:** the NuWro carbon rerun reproduces the committed `L-5D-PV_e_nuwro` product's `xsec_flat` bitwise. **B2:** `pvl_analyze.check_meta` passes on all three products: rung, arm, mode, inputs, ratio digest, features, seed, iterations, threads, the refinement at R's settings, both prior guards. The two CH products match the rerun's code and estimator parameters. The rerun's estimator parameters equal the committed vertex's, and its code differs only in `pvl_lib.py`, where `a307faca..` appended `classify_cells` and changed no existing line. Receipt `U.ok` |
+| unfold | one regular CPU job, `-t 00:25:00`, `--exclusive --no-requeue`, output to `$R/logs/` (`fd/gencmp-e2/receipts/x_e2_unfold.sh`; B6); it refuses without `R1.ok` | five `pvl_unfold` runs, launched as the PV ladder launched its own (`sbatch_pvl.sh:58-83`): one `srun` step each, of 42 CPUs and an equal share of 95% of the job's memory, through `mnv_guarded_run.py`, with `--threads 32 --iters 5`. At `--estimator-seed 42`: NuWro CH, GiBUU CH and NuWro carbon with the committed prep ratio. At `--estimator-seed 43`, the noise-floor pair (§3a): NuWro carbon and GiBUU carbon with the committed prep ratios, everything else identical. The job refuses unless five steps of 42 CPUs fit the node | **R2:** the seed-42 NuWro carbon rerun reproduces the committed `L-5D-PV_e_nuwro` product's `xsec_flat` bitwise. **B2:** `pvl_analyze.check_meta` passes on all five products: rung, arm, mode, inputs, ratio digest, features, seed, iterations, threads, the refinement at R's settings, both prior guards. The seed-43 pair is checked at seed 43, with refinement `random_state` 46 (seed + 3, `s5n_pseudo.py:61`); its code is the rerun's, and so are its estimator parameters but for `random_state`. The two CH products match the rerun's code and estimator parameters. The rerun's estimator parameters equal the committed vertex's, and its code differs only in `pvl_lib.py`, where `a307faca..` appended `classify_cells` and changed no existing line. Receipt `U.ok` |
 | chi2 | login node (after `V.ok`, `R1.ok`, `U.ok`) | S_CH from the CH products, with GENIE+MEC's row and the Tune v1 zero unchanged (`build_cmodel5d`'s own `integrals` and `pv2d_lib.rel_shift`). Then each corner prediction's total and shape-only χ² under C_rest + diag(f) S_CHᵀ S_CH diag(f), in both arms: with, C_rest = C_e + C_resp + C_PL,5D; nopl, C_e + C_resp. g and V_g come from E-1's readout | **C1:** the carbon products give `cmodel_5d.json`'s S bitwise. **C2:** diag(f) Sᵀ S diag(f) from that S is the data product's C_model_abs (to 1e-12 of its largest entry). **C3:** with the carbon S, every χ² equals E-1's (1e-10) |
 
 Any failed control stops E2, and no E2 number is used. A step refuses unless the receipts of every control before it
@@ -92,13 +93,27 @@ exist (B1). The χ² readout, where Δ first appears, is written only after C1�
   largest |Δ| of the with arm's total χ² over the four predictions. Its threshold is 2.3, the GiBUU rise #651 item 1
   disclosed ("+2.3, from 45 to 48"). No other arm, kind or reading triggers it. A4: for GENIE+MEC, whose χ² is near
   229, a shift of about 1% exceeds it, so the flag is not discriminating for large χ²; this is fixed now;
+- **Δ_noise** and **Δ_noise,max** (§3a), beside Δ_max;
+- the reading (§4), computed from the rule fixed there;
 - the unfold record, with R2.
+
+### 3a. The noise floor (the director's E2 ruling)
+
+**Δ_noise = χ²(S_carbon at seed 43) − χ²(S_carbon at seed 42),** for each prediction, arm and kind. S_carbon at seed 43
+takes its NuWro and GiBUU rows from the seed-43 carbon products, with GENIE+MEC's row and the Tune v1 zero unchanged.
+S_carbon at seed 42 is `cmodel_5d.json`'s S (C1).
+
+**Δ_noise,max = max |Δ_noise|** over the four predictions, both arms and both kinds, as for Δ_max.
+
+**What the seed moves.** It changes the unfold classifiers' `random_state` (42 → 43) and the refinement's (45 → 46);
+all inputs stay the same. So Δ_noise measures the estimator's seed-to-seed variation for these vertices, and not their
+statistical uncertainty.
 
 ## 4. Outcomes (fixed before any number is read)
 
 | outcome | what follows |
 |---|---|
-| every control passes | E §8's row "E2 runs" (bound with E, so this addendum adds no paper edit): #651 item 6's caveat is replaced by "Taking C_model's NuWro and GiBUU shape ratios from CH instead of carbon changes the χ² by Δ_max in one realisation (one pair of unfolds; no noise floor estimated)", with every signed Δ in the report (S4). The report goes to Joseph |
+| every control passes | E §8's row "E2 runs" (bound with E, so this addendum adds no paper edit): #651 item 6's caveat is replaced by "Taking C_model's NuWro and GiBUU shape ratios from CH instead of carbon changes the χ² by at most Δ_max, against a seed-to-seed change of Δ_noise,max". If Δ_max ≤ 2 Δ_noise,max, it adds "within the estimator's seed variation". Every signed Δ and Δ_noise goes in the report (S4). The report goes to Joseph |
 | as above, with the flag's operand above 2.3 | the same, and the director also brings Joseph the question of rebuilding the reported C_model on CH. No covariance changes without him |
 | any control fails (V, R1, R2, B2, C1, C2, C3), or any other stop (a pin, a staged digest, a missing receipt, a job failure or timeout, a product missing) | no E2 number is used, and the caveat stays as #651 item 6 words it. The report names the check, and goes to Joseph. **A stop is final: no rerun, re-staging or repair without a new binding (A2)** |
 
@@ -108,8 +123,12 @@ exist (B1). The χ² readout, where Δ first appears, is written only after C1�
   ladder ran in (RE-1's `setup_salloc_env.sh`, Python 3.11), from a fresh clone of the bound commit with empty
   porcelain before and after.
 - **The unfold job: ≤ 0.5 node-h,** the cap binding ruling 4 bound. The measured basis is PV-ladder job J5 (60206336):
-  five such unfolds together on one node in 811 s, for 0.2253 node-h (`pv-ladder/LEDGER.tsv:8`). Three together take
-  about the same wall, and the job asks `-t 00:25:00` (≤ 0.42 node-h).
+  five such unfolds together on one node in 811 s, for 0.2253 node-h
+  (`state/measurement-scoping/pv-ladder/LEDGER.tsv:8`). E2's job runs the same five-step shape, and asks
+  `-t 00:25:00` (≤ 0.42 node-h).
+- **The fit (sacct, 2026-11-02).** J5 ran five steps of 42 CPUs (210 of the node's 256) at 92,682 MB each. All five
+  started at 04:19:33, so none was serialized. The largest step peak RSS was 17.26 GB, and the longest step took
+  13:11.
 - **Writes** go only under `$R`, and nothing to CFS.
 - **Reads:** every pscratch input file is read O_NOATIME by the stage step, and every later step reads the copies.
   The exceptions are not inputs and are stated (B9): the environment's activation script
@@ -123,7 +142,7 @@ exist (B1). The χ² readout, where Δ first appears, is written only after C1�
 | path | what |
 |---|---|
 | `nd-unfolding/fd_gencmp_e2.py` | new: `stage`, `vertices`, `ratios`, `unfold` (the post-run check), `chi2` |
-| `nd-unfolding/tests/test_fd_gencmp_e2.py` | new, 13 tests |
+| `nd-unfolding/tests/test_fd_gencmp_e2.py` | new, 19 tests |
 | `fd/gencmp-e2/INPUTS.sha256` | new (§1) |
 | `fd/gencmp-e2/receipts/x_e2_unfold.sh` | the unfold job |
 
@@ -133,7 +152,7 @@ exist (B1). The χ² readout, where Δ first appears, is written only after C1�
 - `mnv_guarded_run.py`;
 - `fd_g_compare.compare`, `fd_gencmp.combine` and `fd_gencmp_e.cmd_stage`.
 
-**Tests:** run locally, `python3 -B -m pytest tests/test_fd_gencmp_e2.py` gives 13 passed. They cover:
+**Tests:** run locally, `python3 -B -m pytest tests/test_fd_gencmp_e2.py` gives 19 passed. They cover:
 - V both ways (a carbon entry; a CH entry);
 - the config's repointing;
 - R1's comparison (paths ignored, numbers seen);
@@ -141,7 +160,16 @@ exist (B1). The χ² readout, where Δ first appears, is written only after C1�
 - the χ² rows against `fd_g_compare.compare`;
 - every committed pin (step A's included) and the inputs file's path coverage (its digests are copied from the
   records named in §1);
-- the receipt gate both ways, and the four predictions' names.
+- the receipt gate both ways, and the four predictions' names;
+- the noise floor:
+  - the job launches exactly `UNFOLDS`, with seed 43 on the pair only and the committed prep ratios;
+  - `check_meta` at seed 43 accepts a seed-43 product and refuses a seed-42 one, or one with seed 42's refinement;
+  - at seed 42, the reverse;
+  - the module is restored on a refusal;
+  - estimator parameters compare but for `random_state`;
+  - the reading's rule at its boundary.
+
+  Three code mutants (the refinement seed left unset, `<` for `≤`, no restore) were each caught.
 
 The cluster steps' run-time controls (V, R1, R2, C1–C3) are their guard. There is no end-to-end test.
 
@@ -168,7 +196,7 @@ that blocks binding on its own; every finding is fixed or answered:
 | A3, the four predictions unnamed | named, with MnvTune v1's exclusion stated (§3); `CORNER` in code |
 | A4, the flag barely discriminates for large χ² | stated (§3); it is fixed in advance |
 | B1 (near-blocking), the controls did not gate | V, R1 and R2+B2 write receipts; the job and each later step refuse without them; `e2.json` is written only after C1–C3 |
-| B2, the CH products skipped `check_meta` | `pvl_analyze.check_meta` on all three products; the CH products against the rerun's code and parameters; the rerun against the committed vertex, differing only in `pvl_lib.py`'s appended function |
+| B2, the CH products skipped `check_meta` | `pvl_analyze.check_meta` on all three products (now five, §2); the CH products against the rerun's code and parameters; the rerun against the committed vertex, differing only in `pvl_lib.py`'s appended function |
 | B3, GiBUU's domain had no run-time control | R1 now re-derives all seven committed ratio files with the carbon config (GiBUU's truth-cut path included), and checks CH GiBUU's truth cut against the committed one |
 | B4, untested commands | the receipt gate and the pins are tested; the commands' controls run at run time (§6) |
 | B6, job output outside `$R`; missing `--exclusive`, `--no-requeue`, `HOME` | all added, with `-o` under `$R/logs/` |
@@ -176,7 +204,7 @@ that blocks binding on its own; every finding is fixed or answered:
 | S1, step A's products not pinned in code | pinned (`STEP_A_SHA256`) and tested |
 | S2, "every committed pin" overstated | reworded (§6) |
 | S3, R1's "equal" | stated as 1e-12 relative (§2) |
-| S4, Δ_max read as a bound | reworded: one realisation, no noise floor (§3, §4) |
+| S4, Δ_max read as a bound | reworded (§3, §4); then, at the director's review, measured instead of qualified: Δ_noise from a seed-43 carbon pair in the same job (§3a), with the reading fixed in §4 |
 | S5, the paper row and CANNOT AUTHORIZE | the row is marked as E §8's, bound with E (§4) |
 | S6, the date | stated as 2026-11-01 UTC−8 (§1) |
 | S7, the login steps' environment | E2's login steps run in RE-1's environment, as the PV ladder's prep did. The import closure is checked on the cluster before the first step, and a failure is a stop |

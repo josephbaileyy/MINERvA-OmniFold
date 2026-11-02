@@ -20,15 +20,18 @@ pass, and each later step refuses without the receipts before it (B1):
 * ``ratios``     (login node) pvl_ratios on the committed config (staged paths only) and on config_ch.json. Control R1:
                  the carbon run's seven ratio files hold the committed prep's numbers (1e-12 relative); the CH run's
                  unchanged files are the carbon run's; CH GiBUU carries the committed p_par < 10 truth cut.
-* ``unfold``     (in the one CPU job, after its three srun steps of pvl_unfold, launched as the PV ladder launched its
-                 own: NuWro CH, GiBUU CH and, as control R2, NuWro carbon with the committed prep ratio) the products'
-                 digests and R2: the carbon rerun reproduces the committed L-5D-PV_e_nuwro product's xsec_flat bitwise.
+* ``unfold``     (in the one CPU job, after its five srun steps of pvl_unfold, launched as the PV ladder launched its
+                 own: NuWro CH, GiBUU CH and, as control R2, NuWro carbon with the committed prep ratio, all at
+                 estimator seed 42; and the noise-floor pair, NuWro and GiBUU carbon with the committed prep ratios at
+                 seed 43) the products' digests, R2 (the seed-42 carbon rerun reproduces the committed L-5D-PV_e_nuwro
+                 product's xsec_flat bitwise) and B2 (check_meta on all five, the seed-43 pair at seed 43).
 * ``chi2``       (login node) S_CH from the CH vertices (GENIE+MEC's row unchanged); control C1: the carbon products
                  give cmodel_5d.json's S bitwise; control C2: diag(f) S^T S diag(f) is the data product's C_model_abs;
                  control C3: with the carbon S, each prediction's chi2 is E-1's (1e-10). Then each chi2 with S_CH and
-                 Delta = chi2_CH - chi2_carbon, for the four predictions, both arms and both kinds.
+                 Delta = chi2_CH - chi2_carbon, for the four predictions, both arms and both kinds; and the seed-to-seed
+                 change Delta_noise = chi2(S_carbon at seed 43) - chi2(S_carbon at seed 42), each the same way.
 
-MEASURES: arithmetic and three declared unfolds. CANNOT AUTHORIZE: a change to the reported covariance (binding ruling
+MEASURES: arithmetic and five declared unfolds. CANNOT AUTHORIZE: a change to the reported covariance (binding ruling
 4: no covariance changes without Joseph), a reading or paper text.
 """
 from __future__ import annotations
@@ -37,6 +40,7 @@ import argparse
 import hashlib
 import json
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 
 import numpy as np
@@ -184,14 +188,39 @@ def cmd_ratios(a) -> int:
 # ---------------------------------------------------------------- unfold
 
 
-UNFOLDS = ("nuwro_ch", "gibuu_ch", "nuwro_carbon_R2")
+UNFOLDS = ("nuwro_ch", "gibuu_ch", "nuwro_carbon_R2", "nuwro_carbon_s43", "gibuu_carbon_s43")
+NOISE_SEED = 43       # the director's E2 ruling: the noise-floor pair, everything else as the seed-42 unfolds
+NOISE = {"nuwro": "nuwro_carbon_s43", "gibuu": "gibuu_carbon_s43"}
+
+
+@contextmanager
+def declared_seed(PA, seed: int):
+    """check_meta's declared estimator seed and refinement random_state (seed + REFINE_SEED_OFFSET, s5n_pseudo.py:61)
+    set for ``seed``, and restored on exit: pvl_analyze reads DECLARED and REFINE at call time."""
+    import s5n_pseudo
+    old = PA.DECLARED, PA.REFINE
+    PA.DECLARED = dict(PA.DECLARED, estimator_seed=int(seed))
+    PA.REFINE = dict(PA.REFINE, random_state=int(seed) + s5n_pseudo.REFINE_SEED_OFFSET)
+    try:
+        yield
+    finally:
+        PA.DECLARED, PA.REFINE = old
+
+
+def params_but_seed(params: list, seed: int) -> list:
+    """The estimator parameters with random_state removed, after checking every estimator's is ``seed``."""
+    if {p.get("random_state") for p in params} != {int(seed)}:
+        raise SystemExit(f"[FAIL] estimator random_state {sorted({str(p.get('random_state')) for p in params})}, "
+                         f"expected {seed}")
+    return [{k: v for k, v in p.items() if k != "random_state"} for p in params]
 
 
 def provenance(a, rec: dict) -> dict:
-    """B2: pvl_analyze.check_meta on all three products (rung, arm, mode, inputs, ratio, features, seed, iterations,
+    """B2: pvl_analyze.check_meta on all five products (rung, arm, mode, inputs, ratio, features, seed, iterations,
     threads, the refinement at R's settings, both prior guards), the two CH products against the NuWro carbon rerun's
-    code and estimator parameters; and the rerun's record against the committed vertex's: equal but for the code
-    files allowed to differ (CODE_ALLOWED_TO_DIFFER)."""
+    code and estimator parameters; the seed-43 pair at seed 43 (refinement random_state 46), GiBUU's against NuWro's,
+    and against the rerun's code and its estimator parameters but for random_state; and the rerun's record against the
+    committed vertex's: equal but for the code files allowed to differ (CODE_ALLOWED_TO_DIFFER)."""
     import pvl_analyze as PA
     cfg = json.loads(CONFIG.read_text())["rungs"][RUNG]
     T = PA.tasks(PVL / "tasks.tsv")
@@ -204,6 +233,15 @@ def provenance(a, rec: dict) -> dict:
     for v in ("nuwro", "gibuu"):
         ratios = {"vertices": {v: {"ratio_sha256": sha256(prep_ch / f"{v}.json")}}}
         PA.check_meta(f"L-5D-PV_e_{v}_ch.npz", meta[f"{v}_ch"], T[f"L-5D-PV_e_{v}"], ratios, cfg, ref)
+    ref43 = None
+    with declared_seed(PA, NOISE_SEED):
+        for v, k in NOISE.items():
+            ratios = {"vertices": {v: {"ratio_sha256": sha256(staged(a.run_dir, SCRATCH / PREP / f"{v}.json"))}}}
+            PA.check_meta(f"L-5D-PV_e_{k}.npz", meta[k], T[f"L-5D-PV_e_{v}"], ratios, cfg, ref43)
+            ref43 = ref43 or dict(meta[k], _name=f"L-5D-PV_e_{k}.npz")
+    report("B2", "the seed-43 pair's code is the seed-42 rerun's", ref43["code_sha256"] == ref["code_sha256"])
+    report("B2", "the seed-43 pair's estimator parameters are the seed-42 rerun's but for random_state",
+           params_but_seed(ref43["estimator_params"], NOISE_SEED) == params_but_seed(ref["estimator_params"], 42))
     old = json.loads(str(np.load(staged(a.run_dir, SCRATCH / PRODUCTS / "L-5D-PV_e_nuwro.npz"), allow_pickle=True)["meta"]))
     differ = sorted(k for k in set(old["code_sha256"]) | set(ref["code_sha256"])
                     if old["code_sha256"].get(k) != ref["code_sha256"].get(k))
@@ -211,17 +249,18 @@ def provenance(a, rec: dict) -> dict:
            old["estimator_params"] == ref["estimator_params"])
     report("B2", "its code differs from the committed vertex's only in the files allowed to",
            set(differ) <= CODE_ALLOWED_TO_DIFFER, str(differ))
-    return {"check_meta": "passed for all three", "code_files_differing_from_the_committed_vertex": differ}
+    return {"check_meta": "passed for all five (the seed-43 pair at seed 43)",
+            "code_files_differing_from_the_committed_vertex": differ}
 
 
 def cmd_unfold(a) -> int:
-    """After the job's three srun steps (receipts/x_e2_unfold.sh, launched as the PV ladder launched its own,
+    """After the job's five srun steps (receipts/x_e2_unfold.sh, launched as the PV ladder launched its own,
     sbatch_pvl.sh:70-83): the products' digests, control R2, and the products' provenance (B2)."""
     outd = a.run_dir / "unfold"
     gate(a.run_dir / "prep_ch" / "R1.ok", "R1")
     report("U", "unfold.json does not exist (no overwrite)", not (outd / "unfold.json").exists())
     rec = {"products": {k: sha256(outd / f"L-5D-PV_e_{k}.npz") for k in UNFOLDS if (outd / f"L-5D-PV_e_{k}.npz").exists()}}
-    report("U", "all three products exist", len(rec["products"]) == len(UNFOLDS), str(sorted(rec["products"])))
+    report("U", f"all {len(UNFOLDS)} products exist", len(rec["products"]) == len(UNFOLDS), str(sorted(rec["products"])))
     new = np.load(outd / "L-5D-PV_e_nuwro_carbon_R2.npz", allow_pickle=True)["xsec_flat"]
     ref = np.load(staged(a.run_dir, SCRATCH / PRODUCTS / "L-5D-PV_e_nuwro.npz"), allow_pickle=True)["xsec_flat"]
     rec["R2_bitwise"] = bool(np.array_equal(new, ref))
@@ -268,6 +307,16 @@ def chi2_rows(readout: dict, f: np.ndarray, C_rest: np.ndarray, S: np.ndarray) -
     return out
 
 
+def reading(dmax: float, dnoise: float) -> dict:
+    """The caveat's reading, fixed by the director before any number: Delta_max against the seed-to-seed change, and
+    "within the estimator's seed variation" iff Delta_max <= 2 Delta_noise,max."""
+    within = bool(dmax <= 2 * dnoise)
+    text = (f"Taking C_model's NuWro and GiBUU shape ratios from CH instead of carbon changes the χ² by at most "
+            f"{dmax:.2f}, against a seed-to-seed change of {dnoise:.2f}")
+    return {"within_seed_variation": within, "rule": "within iff Delta_max <= 2 Delta_noise,max",
+            "sentence": text + ("; within the estimator's seed variation" if within else "")}
+
+
 def cmd_chi2(a) -> int:
     import build_cmodel5d as BC
     out = a.run_dir / "chi2"
@@ -291,6 +340,12 @@ def cmd_chi2(a) -> int:
         report("C0", f"{v} CH: the product is the one unfold recorded", sha256(p) == rec_u["products"][f"{v}_ch"])
         xs_ch[v] = np.asarray(np.load(p, allow_pickle=True)["xsec_flat"], float)
     S_ch = factor(xs_ch, defn_rmap, n)
+    xs_n = dict(xs_c)                                # the noise floor: the carbon vertices at seed 43
+    for v, k in NOISE.items():
+        p = uf / f"L-5D-PV_e_{k}.npz"
+        report("C0", f"{v} carbon seed 43: the product is the one unfold recorded", sha256(p) == rec_u["products"][k])
+        xs_n[v] = np.asarray(np.load(p, allow_pickle=True)["xsec_flat"], float)
+    S_n = factor(xs_n, defn_rmap, n)
     dp = json.loads(A.pinned(DP, DP_SHA256, "data product", "C0"))
     blk = np.load(BLOCK, allow_pickle=False)
     report("C0", "the with-block npz is its pinned bytes", sha256(BLOCK) == BLOCK_SHA256)
@@ -306,30 +361,34 @@ def cmd_chi2(a) -> int:
         report("C0", f"E-1's {arm} Stage G readout is the committed one",
                sha256(path) == E1_SHA256[arm])
         r1 = json.loads(path.read_text())
-        carbon, chm = chi2_rows(r1, f, C_rest, S_c), chi2_rows(r1, f, C_rest, S_ch)
+        carbon, chm, c43 = chi2_rows(r1, f, C_rest, S_c), chi2_rows(r1, f, C_rest, S_ch), chi2_rows(r1, f, C_rest, S_n)
         for p in r1["predictions"]:
             if p["name"] in carbon:
                 for k in ("total", "shape_only"):
                     report("C3", f"{arm} {p['name']} {k}: the carbon S reproduces E-1's chi2 (1e-10)",
                            abs(carbon[p["name"]][k] - p[k]["chi2"]) <= TOL * abs(p[k]["chi2"]))
-        res[arm] = {name: {k: {"carbon": carbon[name][k], "CH": chm[name][k], "delta": chm[name][k] - carbon[name][k]}
+        res[arm] = {name: {k: {"carbon": carbon[name][k], "CH": chm[name][k], "delta": chm[name][k] - carbon[name][k],
+                               "carbon_seed43": c43[name][k], "delta_noise": c43[name][k] - carbon[name][k]}
                            for k in ("total", "shape_only")} for name in carbon}
-    deltas = [v[k]["delta"] for arm in res.values() for v in arm.values() for k in ("total", "shape_only")]
-    dmax = float(max(abs(x) for x in deltas))
+    cells = [v[k] for arm in res.values() for v in arm.values() for k in ("total", "shape_only")]
+    dmax = float(max(abs(c["delta"]) for c in cells))
+    dnoise = float(max(abs(c["delta_noise"]) for c in cells))
     dflag = float(max(abs(res["with"][p]["total"]["delta"]) for p in CORNER))
-    rec = {"schema": "fd-gencmp-e2/1", "S_carbon": S_c.tolist(), "S_CH": S_ch.tolist(),
+    rec = {"schema": "fd-gencmp-e2/2", "S_carbon": S_c.tolist(), "S_CH": S_ch.tolist(), "S_carbon_seed43": S_n.tolist(),
            "vertices": list(BC.VERTICES), "predictions": list(CORNER), "chi2": res, "delta_max_abs": dmax,
+           "delta_noise_max_abs": dnoise, "reading": reading(dmax, dnoise),
            "delta_flag": {"operand": "max |Delta| of the with arm's total chi2 over the four predictions (the reported "
                                      "covariance)", "value": dflag, "threshold": DELTA_FLAG, "exceeded": dflag > DELTA_FLAG,
                           "rule": "binding ruling 4: above it, the director also brings Joseph the question of "
                                   "rebuilding the reported C_model on CH; no covariance changes without him"},
-           "realisation": "one pair of unfolds (seed 42), the carbon and CH priors; no unfold-to-unfold noise floor is "
-                          "estimated (the closures are not redone)",
+           "realisation": "the carbon and CH priors at estimator seed 42; the carbon priors again at seed 43 for "
+                          "Delta_noise (GENIE+MEC's row and the Tune v1 zero unchanged); the closures are not redone",
            "unfold": rec_u, "label": "C_model with CH shape ratios for NuWro and GiBUU (generator definitions); "
                                      "GENIE+MEC unchanged; a measurement of #651 item 6's caveat, not a new covariance"}
     out.mkdir(parents=True)
     E.write_new(out / "e2.json", (json.dumps(rec, indent=1, default=float) + "\n").encode())
-    print(f"[E2] flag operand {dflag:.3f} (above {DELTA_FLAG}: {dflag > DELTA_FLAG}); max |Delta| {dmax:.3f}", flush=True)
+    print(f"[E2] flag operand {dflag:.3f} (above {DELTA_FLAG}: {dflag > DELTA_FLAG}); max |Delta| {dmax:.3f}; "
+          f"max |Delta_noise| {dnoise:.3f}", flush=True)
     return 0
 
 
