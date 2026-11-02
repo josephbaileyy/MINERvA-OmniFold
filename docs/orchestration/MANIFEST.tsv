@@ -235,6 +235,7 @@ docs/orchestration/DECISION-20261101-joseph-eventloops-copy-to-cfs.md	tracked	LI
 docs/orchestration/DECISION-20261101-joseph-gencmp-paper-adoption.md	tracked	LIVE	document		20261101	open		route-only	no
 docs/orchestration/DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md	tracked	LIVE	document		20261101	open		route-only	no
 docs/orchestration/DECISION-20261102-joseph-cmodel-keep-carbon-state-effect.md	tracked	LIVE	document		20261102	open		route-only	no
+docs/orchestration/DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md	tracked	LIVE	document		20261102	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
@@ -5623,6 +5624,8 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-an
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/inventory-answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/inventory-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/referee-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/sec4-prd-style-gemini-answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/sec4-prd-style-gemini-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/sonnet-referee-answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/sonnet-referee-task.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/INPUTS.SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
