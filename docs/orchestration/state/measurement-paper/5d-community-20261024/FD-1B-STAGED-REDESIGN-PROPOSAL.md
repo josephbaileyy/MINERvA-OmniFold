@@ -3,6 +3,12 @@
 **Revision 1** (after `coverage-5b-audit`'s review, issuecomment-6588836213, and its D2 on #696):
 - **B1 / D2:** a negative expected count gets a declared treatment, recommended from the code's own mean path, and a
   test through `toy_experiment` (§2a). The choice is the director's and Joseph's.
+- **Revision 2** (the audit's R1–R4 on revision 1, issuecomment-6588999851):
+  - the mean test's reference is `build_full(expectation=True)` on the same nature;
+  - λ⁺ is taken on the full product;
+  - each toy records Σλ and Σλ⁻, and the readout reports the clipped fraction;
+  - §2d (ii) is in float64;
+  - a line on S1-0's toy.
 - **B2:** the rule is pinned as a_{u₁} + Σ_{j≥2} (a_{u_j} − a_CV) in the draw's order, so k = 1 is bitwise.
 - **B3:** the narrower claim reaches clause M and CANNOT SUPPORT. The wording is drafted for Joseph (§2c).
 - **B4:** the bound's 0/0 and max_b m_b = 0 conventions are stated, and tested against exhaustive enumeration (§2).
@@ -134,8 +140,11 @@ each toy's record. This proposal does not compute, and does not predict, whether
     max_b m_b = 0 (B4);
   - the negative-composite count;
   - **a toy through `toy_experiment`** with a negative composite in `w_reco` and in `bkg_w` (B1, D2). It must not
-    raise. Its experiment must equal §2a's construction, and its mean must equal d_T bitwise (§9's d_T
-    consistency control);
+    raise, and its experiment must equal §2a's construction.
+    - **The mean.** Its draw at the mean must equal `build_full(expectation=True)` on the **same nature**, bitwise
+      (R1). §9's d_T control, with no draws, stays as declared.
+    - **λ⁺ on the full product (R2).** One case has r < 0 on a positive `w_reco`, and one has r > 0 on a negative
+      `w_reco`. Background rows are tested the same way;
   - §2b's denominator rule, in both directions;
   - every mutant killed in a mutation receipt, including one reverting each of §2a and §2b.
 - A mutation receipt.
@@ -159,7 +168,7 @@ non-positive expected count as no events.
 
 | option | the toy's draw on a row with λ < 0 | consequence |
 |---|---|---|
-| **(a) λ⁺ = max(λ, 0)** (recommended) | Poisson(0) = 0: no event | **Matches the mean path exactly.** At its mean, the toy builds d_T's arrays bitwise, so §9's d_T consistency control holds unchanged. The truth keeps the negative weights, as d_T's does. Row for row, the toy's expected sample is d_T's |
+| **(a) λ⁺ = max(λ, 0)** (recommended), on the full product: λ = w_reco · r · f_s for signal and bkg_w · f_b for background (R2) | Poisson(0) = 0: no event | **Matches the mean path exactly.** At its mean, the toy's draw equals `build_full(expectation=True)` on the same nature bitwise, since that path also keeps only n > 0. §9's d_T control (no draws) holds unchanged. The truth keeps the negative weights, as the mean path's does |
 | (b) sign(λ) · Poisson(\|λ\|) | a negative count | `signed_sample` drops non-positive counts, so this collapses to (a) at the measured side unless the shared estimator code changes, which it must not (it is S1's). It would add a second implementation |
 | (c) the mean on negative rows | λ, negative | dropped at `n > 0`, so it equals (a), less transparently |
 | (d) refuse the toy | — | under the product rule, 684 of 900 toys refuse. Not a design |
@@ -168,8 +177,14 @@ non-positive expected count as no events.
 not any value.
 - **Where.** In stage 1's own code (`fd_1b_mc.toy_experiment` passes λ⁺ to the draw), without changing
   `fd_1b_toys.build_full`, which is bound for the original 1B and for stage 0.
-- **What is counted.** Each toy records, per array, how many rows had λ < 0 and their total λ. `n1`-style, it is
-  read before grading and is descriptive.
+- **What is counted (R3).** Each toy records Σλ, Σλ⁻ (the total of the negative λ) and the number of rows with
+  λ < 0, for signal and for background. So its clipped fraction Σλ⁻ / Σλ can be read directly.
+  - `n1`-style, these are read before grading.
+  - The readout reports the clipped fraction's distribution per truth (min, median, max) beside the grading. It is
+    descriptive only, with no threshold.
+- **S1-0 exercises it before any bulk.** S1-0's one toy, G18 3,620,000, draws both HighQ2_1 and LowQ2_1 (stop report
+  §5, D2). So under (a), S1-0's readout shows λ⁺ acting on the real bank, with its counts, before the bulk is
+  submitted.
 - **It applies whatever the composition rule.** D2 is a defect of binding 2 under the product rule too.
 
 ## 2b. Non-positive denominator cells (the audit's A2)
@@ -201,9 +216,11 @@ just a note line. The wording is Joseph's. A draft follows.
 - **(i) Keep the cap at 250,000** and the bound-selected exact pass. A STOP on the cap is then possible and fails
   closed at 0 node-h.
 - **(ii) Evaluate every row exactly** over the 900 declared draws, with no selection and no cap.
-  - **Cost:** per array, a float32 matrix of rows × 175 universes, streamed one array at a time. That is three more
+  - **Precision (R4): float64.** The rows above sit as low as 10.0–10.9 (stop report §3), so a float32 rounding
+    could move a row across 10. float64 matches `composite_n1`'s existing exact pass.
+  - **Cost:** per array, a float64 matrix of rows × 175 universes, streamed one array at a time. That is three more
     bank passes on the login node at `nice 19`, about 1 to 2 h more wall at the measured rates, and 0 node-h.
-  - **Memory** is rows × 175 × 4 B. The row count is measured at the receipt, before the matrix is allocated. If it
+  - **Memory** is rows × 175 × 8 B. The row count is measured at the receipt, before the matrix is allocated. If it
     does not fit in the login node's limit, the pass runs as ruling 5's one-node fallback.
 
 I make no recommendation: either is defensible, and neither is chosen from a value.
