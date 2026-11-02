@@ -103,13 +103,23 @@ records it.
 ## Addendum E2 (director, 2026-11-02)
 
 **Binds** [`FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md`](FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md) as merged in PR #670 at
-**M″ = `68d877cdee1757fd03fa1bfd915693bf79588e9f`** (PR head `2cbea6ddee66421c4658866e60902784b2fa4198`). This is ruling 4's code addendum.
+**M″ = `885e366ec46059b230352b08be5a47f13160768c`** (PR head `712edcf1d69ebaf83adcffe00690a807b9f47bc2`, a merge of `2cbea6dd` with main; code unchanged
+from `2cbea6dd`). This is ruling 4's code addendum.
+
+**Correction (director, 2026-11-02).** The first version of this section, merged as #674 (`df686ff3`), was defective:
+- **The cause.** #670 had not merged, because it conflicted with main in `CATALOG.md`. The director's script discarded
+  the merge helper's failure status (a piped `ci_merge.sh`).
+- **What it named instead.** M″ = `68d877cd…`, the previous main, which does not contain E2's code. Its blob list was
+  `git rev-parse` error text.
+- **The consequence.** Nothing ran under it: the lane was told to hold E2 before any stage, clone or unfold.
+- **What this section binds now.** It replaces that text and binds the merge commit above.
+- **The fix.** The helper now exits 0 only once the PR reads MERGED.
 
 **The blobs at M″:**
-  - `nd-unfolding/fd_gencmp_e2.py` `68d877cdee1757fd03fa1bfd915693bf79588e9f:nd-unfolding/fd_gencmp_e2.py`;
-  - `nd-unfolding/tests/test_fd_gencmp_e2.py` `68d877cdee1757fd03fa1bfd915693bf79588e9f:nd-unfolding/tests/test_fd_gencmp_e2.py`;
-  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/x_e2_unfold.sh` `68d877cdee1757fd03fa1bfd915693bf79588e9f:docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/x_e2_unfold.sh`;
-  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/INPUTS.sha256` `68d877cdee1757fd03fa1bfd915693bf79588e9f:docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/INPUTS.sha256`;
+  - `nd-unfolding/fd_gencmp_e2.py` `a63e7fe0992d9ef897bd868760ed24c497471f20`;
+  - `nd-unfolding/tests/test_fd_gencmp_e2.py` `db6e0eaa6c9b68435aade80b1f8a746ce3b35065`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/x_e2_unfold.sh` `d4a732846fa9ae0588fd198aafee21ace895e703`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/INPUTS.sha256` `1fe20983ad8b99e823538eaf73932d70ddd444ff`;
 
 **What the director checked.**
 - **The digests.** The four blobs match the lane's list.
