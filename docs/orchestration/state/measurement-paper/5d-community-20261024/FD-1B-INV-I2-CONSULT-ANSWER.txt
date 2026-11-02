@@ -1,0 +1,44 @@
+**Reviewer read: FD-1B-INV I2 and I0 reports, declaration §2/3/6, binding ruling 4, stage-2 report, `paper_body.tex` line 80, and `sec_fived16.tex`.**
+
+**Q1. What O1 means.** O1 is a statement about the test, not about the reported covariance. The toys and mode B agree to 1.5% in σ (F_src 0.986–1.015). So the toys do realize "response moved, truth fixed", and S1's full universe is a different thing. That is a real finding.
+- It neither undermines nor vindicates S1's block. No coverage statement follows, as the report itself says.
+- It does not even show that the toys' object is a missing component of S1's. Additivity fails: the residual A−B−C is about B's own size.
+- The stop is explained only partly. The interaction group carries ≥0.70 of ρ²−1 in nine of the eleven failing cells. In R05 and R00 it carries 0.36 and 0.57, so those two remain unexplained.
+- The paper's wording ("why the ratios depart from one has not been established") can be tightened to "the pseudo-experiments realize a response-only shift, which S1's blocks are not". The coverage qualification stays.
+
+**Q2. What the intervals should carry.** Keep the full-universe block.
+- It is the standard practice as I understand it. In MINERvA-style analyses the MC is reweighted in each universe, so response, efficiency, background and prior all move, and the data are re-unfolded. In MicroBooNE the universes act on the response and the prediction. In T2K, model variations enter as fake-data bias studies, which are a separate check. Please verify these community details against the primary papers before citing them. In none of them is a universe covariance defined as a response-only spread.
+- Switching to var(r) is not supported by this evidence. B is not a physical quantity independent of the construction. It is defined through fine-cell factors k_wr, so it depends on the fine-cell grid. Moving sub-cell truth-weight variation between "response" and "prior" changes B and C.
+- Adopting B would also raise σ by a median of 1.65, up to 6.5 in R08, on the strength of a gate that compared unlike objects.
+- Do not report both in the covariance. That invites a referee to ask which one is the uncertainty. Quote B as a sensitivity in the note: "a response-only reading would give σ larger by 0.4–6.5, median 1.65."
+- The question as posed in binding 4(a) rests on the first-order algebra "S1 ≈ −r + p". I2 did not show that algebra. I would withdraw the question in that form.
+
+**Q3. Why A is not B + C.** My reading is a hypothesis, not a measurement.
+- Event reweights act on the same events at truth and reco. A smooth truth-dependent weight, seen through resolution, looks like a "response change" only if truth is binned into fine cells.
+- In an unbinned OmniFold step the within-cell truth variation is part of the prior reweight. It largely cancels the binned B, as −r partly cancels p.
+- C uses fine-cell means and omits that term (report §4.3 says so). That would make B an overestimate of the genuine response effect, with A ≈ C plus a smaller residual.
+- Also, with data fixed, OmniFold re-pulls the MC to the data. A universe that changes truth and reco coherently is largely self-compensated, and what remains is the prior memory of the few-iteration estimator.
+- Cheap discriminator: rerun B and C for about six universes at a coarser and a finer fine-cell grid. If B moves strongly with the grid, the hypothesis holds. This should cost well under 1 node-h; I have not priced it.
+
+**Q4. Cheapest next step.** Draw the same object as S1 in the toys. Do not change the block.
+1. **Mode D, 67 unfolds plus CV.** Pseudo-data are the MC events with the universe's event-level weights applied to truth, reco and background together (nature is the universe). Unfold with the nominal MC at the nominal truth. Compare D's block with A's block cell by cell, using the same [0.9, 1.1] window on the σ ratio.
+2. **If D ≈ A** (the symmetric linear case), the toys' object is fixed. The earlier unlike-object mismatch is then fully attributed, and the coverage test can be re-declared with full-universe draws.
+3. **Cost.** About 1.5–2 node-h, versus 5.6 for I2 and 5.5 for stage 2's 202 unfolds. The pseudo-data side is closer to the 700 s derivation unfolds than to the 1,300 s mode A.
+4. **Then the coverage ensemble.** Draw Poisson pseudo-experiments at the held-out tunes (G18, AR23), with full-universe weights for interaction, flux and detector. Truth for each is the universe's truth at that tune. Compare x̂ − T with the reported C_total + C_resp. I estimate this at roughly the stage-2b/2c caps (5 + 9 node-h), which is my estimate and not a measurement.
+5. **Evaluate at the data-like truth.** F_truth is below 1 in 15 of 16 cells (median 0.68), so the nominal-truth readout understates the data-truth block.
+- Only that ensemble can remove the qualification. A clean D ≈ A on its own cannot.
+
+**Q5. What I would not accept in I2.**
+- **The name "F_prior" and "prior part".** It measures √(B/A) and involves no prior, and the report concedes additivity fails. "H1 → prior" is a label the data do not support. Say "response-only versus full universe".
+- **"A ≈ C".** A lies 0.59 of its own σ from C, and C/A has median 0.48, range 0.16–1.39. A is not close to C, only closer than to B + C.
+- **"H3 refuted as the account (1 cell)".** F_truth is outside the window in 15 of 16 cells but is never attributed. In 13 cells it sits opposite F_prior, and the dominant-side rule only looks at the larger factor. The truth dependence is large, so drop "refuted".
+- **The 14 of 15 count.** It depends on rule I2's dominance-by-factor construction, which orders the factorization. Read it as qualitative.
+- **Diagonals only.** The comparison is of diagonal entries. It says nothing about whether the correlation structure of S1's block is right, and the χ² uses the full 16×16.
+- **The §5 table √(B/M).** It invites reading S1 as understated by a factor of 1.65. Add a caption saying B is grid-dependent and not a bound.
+
+**Recommendations**
+- Q1: Neither undermined nor vindicated. The stop is explained as "different object" except in R00 and R05, and the qualification stays.
+- Q2: Keep the full-universe block, show B as a sensitivity, and withdraw the "var(r)" framing.
+- Q3: Treat the cancellation by sub-cell prior variation as a hypothesis, and test it with a grid-dependence check of B on about six universes.
+- Q4: Run mode D (about 2 node-h). If D ≈ A, re-declare the held-out-tune coverage ensemble with full-universe draws at the data-like truth.
+- Q5: Rename F_prior, soften "A ≈ C" and "H3 refuted", and caption the §5 table.
