@@ -414,6 +414,30 @@ def same_block(a, b, tol: float = K_TOL) -> bool:
     return bool(np.all(np.abs(a - b) <= tol * scale))
 
 
+def null_ratio(blocks, C_side) -> float:
+    """The largest |entry| of a band's quadrant-level blocks on one side over the largest |entry| of that side's own
+    matrix (C16q or C2q, as in K2)."""
+    floor = float(np.abs(np.asarray(C_side, float)).max())
+    top = max(float(np.abs(np.asarray(b, float)).max()) for b in blocks)
+    return top / floor if floor > 0 else float("inf")
+
+
+def k1_band(p16, c16, p2, c2, C16q, C2q, tol: float = K_TOL, null_tol: float = PD_REL) -> dict:
+    """K1 for one band (addendum X-A2, the director's ruling): the band is null on a side when every entry of both of
+    that side's blocks (from the products and committed) is below ``null_tol`` times the side's largest entry. Null
+    on both sides: K1 asserts that, not equality. Null on one side only: K1 fails on both. Otherwise same_block on
+    each side, its tolerance unchanged."""
+    r16, r2 = null_ratio((p16, c16), C16q), null_ratio((p2, c2), C2q)
+    n16, n2 = r16 < null_tol, r2 < null_tol
+    if n16 and n2:
+        kind, ok16, ok2 = "null", True, True
+    elif n16 or n2:
+        kind, ok16, ok2 = "mixed", False, False
+    else:
+        kind, ok16, ok2 = "equal", same_block(p16, c16, tol), same_block(p2, c2, tol)
+    return {"kind": kind, "ok16": ok16, "ok2": ok2, "ratio16": r16, "ratio2": r2}
+
+
 def ratio_test(w2u, w2c, w5u, w5c, sentinel) -> dict:
     """V1 for one weight of one universe: the quotient of the two sides' universe-to-CV ratios on the rows where both
     CV weights are non-zero (sentinel rows excepted) must be one constant to RATIO_TOL; non-finite quotients fail."""

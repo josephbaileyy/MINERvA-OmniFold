@@ -263,6 +263,35 @@ class AuditFixes(unittest.TestCase):
         self.assertFalse(X.same_block(a, z))
         self.assertFalse(X.same_block(z, np.zeros((4, 5))))
 
+    def test_k1_band_null_rule(self):
+        C16q, C2q = spd(4), spd(4) * 1e-78
+        z = np.zeros((4, 4))
+        m = spd(4)
+        n2 = np.abs(C2q).max() * 1.1e-25 * m / np.abs(m).max()           # 2D NormDISCC: cancellation noise
+        r = X.k1_band(z, z.copy(), n2, n2 * 1.028, C16q, C2q)           # the two 2D blocks differ by 2.8%
+        self.assertEqual((r["kind"], r["ok16"], r["ok2"], r["ratio16"]), ("null", True, True, 0.0))
+        self.assertLess(r["ratio2"], 1e-24)
+        big2 = C2q * 1e-6                                                # 2D not null, 16 null: mixed fails
+        r = X.k1_band(z, z.copy(), big2, big2.copy(), C16q, C2q)
+        self.assertEqual((r["kind"], r["ok16"], r["ok2"]), ("mixed", False, False))
+        r = X.k1_band(C16q * 1e-6, C16q * 1e-6, n2, n2.copy(), C16q, C2q)
+        self.assertEqual((r["kind"], r["ok16"], r["ok2"]), ("mixed", False, False))
+        C2e = np.eye(4) * 2.0 ** -260                                    # exactly at the floor is not below it
+        at = np.full((4, 4), 1e-12 * 2.0 ** -260)                        # (powers of 2: the ratio is 1e-12 exactly)
+        r = X.k1_band(C16q * 1e-6, C16q * 1e-6, at, at * 0.972, C16q, C2e)
+        self.assertEqual(r["ratio2"], 1e-12)
+        self.assertEqual((r["kind"], r["ok2"]), ("equal", False))
+        small = C2q * 1e-11                                              # informative block: tolerance unchanged
+        r = X.k1_band(C16q * 1e-6, C16q * 1e-6, small, small * (1 + 1e-9), C16q, C2q)
+        self.assertEqual((r["kind"], r["ok16"], r["ok2"]), ("equal", True, False))
+        r = X.k1_band(C16q * 1e-6, C16q * 1e-6, small, small * (1 + 1e-12), C16q, C2q)
+        self.assertEqual((r["kind"], r["ok16"], r["ok2"]), ("equal", True, True))
+        r = X.k1_band(z, z.copy(), z, z.copy(), C16q, C2q)               # zero on both: null (and same_block agrees)
+        self.assertEqual(r["kind"], "null")
+        for p16, c16 in ((z, np.full((4, 4), 1e-3)), (np.full((4, 4), 1e-3), z)):   # either 16 block not null
+            r = X.k1_band(p16, c16, n2, n2, C16q, C2q)
+            self.assertEqual((r["kind"], r["ok16"]), ("mixed", False))
+
     def test_ratio_test_passes_a_constant_scale_and_refuses_one_row(self):
         n = 1000
         w2c, w2u = RNG.uniform(0.5, 2, n), RNG.uniform(0.5, 2, n)

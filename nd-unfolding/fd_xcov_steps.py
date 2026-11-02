@@ -549,6 +549,21 @@ def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None) -> dict
     def vec2(path: Path) -> np.ndarray:
         return hist2d_cells(inp.bytes(path), cells2d)
 
+    nulls = []
+
+    def k1(label, p16, c16, p2, c2, name16, name2):
+        """K1 on one band's two sides (X.k1_band); a band null on both sides is listed by name, side and ratio."""
+        r = X.k1_band(p16, c16, p2, c2, C16q, C2q)
+        ratios = f"16 max ratio {r['ratio16']:.3g} of C16q, 2D {r['ratio2']:.3g} of C2q"
+        if r["kind"] == "null":
+            nulls.extend({"band": label, "side": sd, "max_ratio": r[f"ratio{k}"]} for sd, k in (("16", "16"), ("2D", "2")))
+            print(f"[K1 null] {label}: {ratios}", flush=True)
+            name16, name2 = (f"K1 {sd} {label}: null on both sides (below 1e-12 of C16q and of C2q)" for sd in ("16", "2D"))
+        elif r["kind"] == "mixed":
+            name16, name2 = (f"K1 {sd} {label}: null on one side only" for sd in ("16", "2D"))
+        check(name16, r["ok16"], ratios)
+        check(name2, r["ok2"], ratios)
+
     crosses, bounded = {}, {}
     w = sa.flux_weights(stage(inp, CONSTRAINT, sroot))
     s1meta = json.loads(read_committed(S1_JSON))["meta"]["inputs_sha256"]
@@ -561,8 +576,8 @@ def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None) -> dict
         X16 = np.array([A @ (U @ sa.xs(S1DIR / f"S1_{b}_{i}.npz")) for i in sorted(idx)])
         X2 = np.array([B @ vec2(RE2 / f"partb/out/U_{b}_{i}/xsec.root") for i in sorted(idx)])
         ww = w if b == sa.FLUX else None
-        check(f"K1 16 band {b}: the products give S1's block (1e-10)", X.same_block(X.cross_cov(X16, X16, ww), own16(f"C_band_{b}")))
-        check(f"K1 2D band {b}: the products give S5_R's block (1e-10)", X.same_block(X.cross_cov(X2, X2, ww), own2(f"band_{b}")))
+        k1(f"band {b}", X.cross_cov(X16, X16, ww), own16(f"C_band_{b}"), X.cross_cov(X2, X2, ww), own2(f"band_{b}"),
+           f"K1 16 band {b}: the products give S1's block (1e-10)", f"K1 2D band {b}: the products give S5_R's block (1e-10)")
         if own_only:
             continue
         if v1["bands_pass"].get(b):
@@ -581,8 +596,8 @@ def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None) -> dict
             v = vec2(RE2 / f"partb/out/S3_{b.replace('_', '')}{i}/xsec.root")
             X2.append(B @ (v * (scale[i][ipt2] if b == sa.MINOS else 1.0)))
         X16, X2 = np.array(X16), np.array(X2)
-        check(f"K1 16 lateral {b} (1e-10)", X.same_block(X.cross_cov(X16, X16), own16(f"C_lat_{b}")))
-        check(f"K1 2D lateral {b} (1e-10)", X.same_block(X.cross_cov(X2, X2), own2(f"band_{b}")))
+        k1(f"lateral {b}", X.cross_cov(X16, X16), own16(f"C_lat_{b}"), X.cross_cov(X2, X2), own2(f"band_{b}"),
+           f"K1 16 lateral {b} (1e-10)", f"K1 2D lateral {b} (1e-10)")
         if not own_only:
             crosses[f"lat:{b}"] = X.cross_cov(X16, X2)
     n16, n2 = X.NORM * (A @ f), X.NORM * (B @ x)
@@ -610,7 +625,7 @@ def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None) -> dict
                                                               A @ np.asarray(dp["matrices"]["C_model_abs"], float) @ A.T))
     S16stat, S2stat = own16("C_stat"), own2("stat")
     if own_only:
-        return k_own_tail(a, check, v0, bs, A, U, C16q, C2q, S16stat, S2stat, vec2)
+        return {**k_own_tail(a, check, v0, bs, A, U, C16q, C2q, S16stat, S2stat, vec2), "k1_null_bands": nulls}
     crosses["C_model (vertex-paired)"] = X.outer_pairs(V16m, V2m)
     # the statistical stream (ruling 1): route B iff V0 and B0 held, every paired replica exists, and K2 holds for it
     route, stat, why = "A", None, []
@@ -667,7 +682,7 @@ def k_compute(a, inp, check, v0, bs, v1, stage_root: Path | None = None) -> dict
         sh["r1"] = X.shares(blocks16, blocks2, {**crosses, "bounded (r = 1)": M}, X.Vd_of(C16q, C2q, K + M))
     rho = {f"r{r_:g}": {q: float((K + r_ * M)[i, i] / np.sqrt(C16q[i, i] * C2q[i, i])) for i, q in enumerate(X.QNAMES)}
            for r_ in ((0.0, 1.0) if M.any() else (0.0,))}
-    return {"route": route, "route_reasons": why, "d": d.tolist(), "S16": S16.tolist(), "S2D": S2.tolist(),
+    return {"route": route, "route_reasons": why, "k1_null_bands": nulls, "d": d.tolist(), "S16": S16.tolist(), "S2D": S2.tolist(),
             "rho_q": rho, "primary": primary, "Q_R_alone": alone, "C_PL_pair_zero": nopl, "shares": sh,
             "crosses": {k: v.tolist() for k, v in crosses.items()}, "bounded": sorted(bounded),
             "own": {"C16q": C16q.tolist(), "C2q": C2q.tolist(), "Q2q": Q2q.tolist(), "M2q": M2q.tolist()},
