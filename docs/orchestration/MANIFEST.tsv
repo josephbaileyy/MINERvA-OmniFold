@@ -6739,6 +6739,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/re
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/rerun1/unfold/U.ok	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/rerun1/unfold/unfold.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/rerun1/vertices/V.ok	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/rerun1/vertices/config_carbon.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/rerun1/vertices/config_ch.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/run1/hpss/files.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/run1/logs/clone.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/run1/logs/env-deploy.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
@@ -6755,6 +6757,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/ru
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/run1/receipts/x_e2_deploy.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/run1/receipts/x_e2_login.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/run1/vertices/V.ok	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/run1/vertices/config_carbon.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/run1/vertices/config_ch.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/INPUTS.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/figures/fd_g_fig_ratio.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/figures/fd_g_fig_ratio.pdf	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
