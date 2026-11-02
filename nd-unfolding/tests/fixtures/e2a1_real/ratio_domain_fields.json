@@ -1,0 +1,24 @@
+{
+ "files": {
+  "gibuu": {
+   "axes": [
+    "pt",
+    "pz",
+    "eavail",
+    "q3",
+    "W"
+   ],
+   "pz_max_cells": 10.0
+  },
+  "nuwro": {
+   "axes": [
+    "pt",
+    "pz",
+    "eavail",
+    "q3",
+    "W"
+   ]
+  }
+ },
+ "source": "the axes, truth_cut and pz_max_cells keys (present or absent) of the committed pv-ladder-20261024/prep/ratios/L-5D-PV/{gibuu,nuwro}.json, read O_NOATIME from E2's first run's staged pinned copies, 2026-11-02"
+}

@@ -1,0 +1,67 @@
+host=login37 start=2026-11-02T07:09:41Z
+== sacct
+60678921|fd1b_d0|COMPLETED|0:0|00:18:11|1|2026-11-01T22:49:21|2026-11-01T23:07:32|
+60678921.batch|batch|COMPLETED|0:0|00:18:11|1|2026-11-01T22:49:21|2026-11-01T23:07:32|121356K
+60678921.extern|extern|COMPLETED|0:0|00:18:11|1|2026-11-01T22:49:21|2026-11-01T23:07:32|
+60678921.0|line0|COMPLETED|0:0|00:15:59|1|2026-11-01T22:49:27|2026-11-01T23:05:26|21728724K
+60678921.1|line1|COMPLETED|0:0|00:18:05|1|2026-11-01T22:49:27|2026-11-01T23:07:32|22084660K
+60678921.2|line6|COMPLETED|0:0|00:18:00|1|2026-11-01T22:49:27|2026-11-01T23:07:27|21216564K
+60678921.3|line7|COMPLETED|0:0|00:18:02|1|2026-11-01T22:49:27|2026-11-01T23:07:29|21518804K
+60678921.4|line3|COMPLETED|0:0|00:16:53|1|2026-11-01T22:49:27|2026-11-01T23:06:20|22211756K
+60678921.5|line4|COMPLETED|0:0|00:17:53|1|2026-11-01T22:49:27|2026-11-01T23:07:20|21378288K
+60678921.6|line2|COMPLETED|0:0|00:17:24|1|2026-11-01T22:49:27|2026-11-01T23:06:51|22546420K
+60678921.7|line5|COMPLETED|0:0|00:18:02|1|2026-11-01T22:49:27|2026-11-01T23:07:29|21557724K
+== lanes
+[f1-lane] fd1b_d_d0_Dnom_CV rc=0 end=2026-11-02T07:05:19Z
+[f1-lane] fd1b_d_d0_Dnom_MaRES_0 rc=0 end=2026-11-02T07:07:30Z
+[f1-lane] fd1b_d_d0_Dnom_2p2h_0 rc=0 end=2026-11-02T07:06:47Z
+[f1-lane] fd1b_d_d0_Dnom_LowQ2_1 rc=0 end=2026-11-02T07:06:13Z
+[f1-lane] fd1b_d_d0_B_fine_MaRES_0 rc=0 end=2026-11-02T07:07:17Z
+[f1-lane] fd1b_d_d0_C_fine_MaRES_0 rc=0 end=2026-11-02T07:07:27Z
+[f1-lane] fd1b_d_d0_B_coarse_MaRES_0 rc=0 end=2026-11-02T07:07:24Z
+[f1-lane] fd1b_d_d0_C_coarse_MaRES_0 rc=0 end=2026-11-02T07:07:27Z
+== products: 8 of 8; partials: 0
+atime-B-60678921-1110147.json
+atime-B-60678921-1110148.json
+atime-C-60678921-1110141.json
+atime-C-60678921-1110146.json
+atime-Dnom-60678921-1110142.json
+atime-Dnom-60678921-1110143.json
+atime-Dnom-60678921-1110144.json
+atime-Dnom-60678921-1110145.json
+fd1b_d_B_coarse_MaRES_0.npz
+fd1b_d_B_fine_MaRES_0.npz
+fd1b_d_C_coarse_MaRES_0.npz
+fd1b_d_C_fine_MaRES_0.npz
+fd1b_d_Dnom_2p2h_0.npz
+fd1b_d_Dnom_CV.npz
+fd1b_d_Dnom_LowQ2_1.npz
+fd1b_d_Dnom_MaRES_0.npz
+== walls
+{"out": "/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage0/walls-d0.json", "verdict": "PASS", "max_seconds_unfold": 964.464, "max_peak_rss_kib": 21668912}
+walls rc=0
+== the Dnom CV control and per-product meta (staged copy read with O_NOATIME)
+fd1b_d_B_coarse_MaRES_0.npz seconds_unfold 950.8 peak_rss_kib 20996972 finite True equals_derivation_CV False code 420088436948d942
+fd1b_d_B_fine_MaRES_0.npz seconds_unfold 940.3 peak_rss_kib 21030724 finite True equals_derivation_CV False code 420088436948d942
+fd1b_d_C_coarse_MaRES_0.npz seconds_unfold 955.4 peak_rss_kib 21373712 finite True equals_derivation_CV False code 420088436948d942
+fd1b_d_C_fine_MaRES_0.npz seconds_unfold 954.4 peak_rss_kib 21345524 finite True equals_derivation_CV False code 420088436948d942
+fd1b_d_Dnom_2p2h_0.npz seconds_unfold 889.9 peak_rss_kib 21654512 finite True equals_derivation_CV False code 420088436948d942
+fd1b_d_Dnom_CV.npz seconds_unfold 805.6 peak_rss_kib 21187344 finite True equals_derivation_CV True code 420088436948d942
+fd1b_d_Dnom_LowQ2_1.npz seconds_unfold 851.1 peak_rss_kib 21668912 finite True equals_derivation_CV False code 420088436948d942
+fd1b_d_Dnom_MaRES_0.npz seconds_unfold 964.5 peak_rss_kib 21621892 finite True equals_derivation_CV False code 420088436948d942
+atime of the staged CV copy moved: {'files': {'/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in/derivation/fd1b_derivation_CV.npz': {'atime_ns_first': 1793569296000000000, 'atime_ns_now': 1793569296000000000}}, 'moved': []}
+== atime sidecars
+atime-B-60678921-1110147.json files 8 moved []
+atime-B-60678921-1110148.json files 8 moved []
+atime-C-60678921-1110141.json files 8 moved []
+atime-C-60678921-1110146.json files 8 moved []
+atime-Dnom-60678921-1110142.json files 8 moved []
+atime-Dnom-60678921-1110143.json files 8 moved []
+atime-Dnom-60678921-1110144.json files 4 moved []
+atime-Dnom-60678921-1110145.json files 8 moved []
+sources atime/mtime/size: UNCHANGED (272)
+== HPSS
+-rw-rw---- 1 josephrb josephrb 2027520 Nov  1 23:09 /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage0-d0.tar
+a97f366cc15afc553d3f4407ec6406205a04c51b839963b7133129a4f6d5c6b9  /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage0-d0.tar
+| josephrb usage on HPSS charged to m3246 |  446.01GiB |   512.00GiB |          87.1% |          - |           - |              - |
+*** HSI - Waiting for <<HPSS Maintenance>> flag to clear. Check <https://www.nersc.gov/users/status> for status. ***

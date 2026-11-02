@@ -100,6 +100,98 @@ records it.
    reading changes" row (QA).
 3. Everything else in this binding stands.
 
+## Addendum E2 (director, 2026-11-02)
+
+**Binds** [`FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md`](FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md) as merged in PR #670 at
+**M″ = `885e366ec46059b230352b08be5a47f13160768c`** (PR head `712edcf1d69ebaf83adcffe00690a807b9f47bc2`, a merge of `2cbea6dd` with main; code unchanged
+from `2cbea6dd`). This is ruling 4's code addendum.
+
+**Correction (director, 2026-11-02).** The first version of this section, merged as #674 (`df686ff3`), was defective:
+- **The cause.** #670 had not merged, because it conflicted with main in `CATALOG.md`. The director's script discarded
+  the merge helper's failure status (a piped `ci_merge.sh`).
+- **What it named instead.** M″ = `68d877cd…`, the previous main, which does not contain E2's code. Its blob list was
+  `git rev-parse` error text.
+- **The consequence.** Nothing ran under it: the lane was told to hold E2 before any stage, clone or unfold.
+- **What this section binds now.** It replaces that text and binds the merge commit above.
+- **The fix.** The helper now exits 0 only once the PR reads MERGED.
+
+**The blobs at M″:**
+  - `nd-unfolding/fd_gencmp_e2.py` `a63e7fe0992d9ef897bd868760ed24c497471f20`;
+  - `nd-unfolding/tests/test_fd_gencmp_e2.py` `db6e0eaa6c9b68435aade80b1f8a746ce3b35065`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/x_e2_unfold.sh` `d4a732846fa9ae0588fd198aafee21ace895e703`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/INPUTS.sha256` `1fe20983ad8b99e823538eaf73932d70ddd444ff`;
+
+**What the director checked.**
+- **The digests.** The four blobs match the lane's list.
+- **The tests.** At the head, `test_fd_gencmp_e2.py` and `test_fd_gencmp_e.py` gave 62 passed locally.
+- **The review.** The Sonnet audit is verbatim in `FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-REVIEW-{PROMPT,ANSWER}.txt`.
+- **The director's change after the audit.** The director asked for a measured noise floor in place of the
+  "no noise floor estimated" qualifier:
+  - two more unfolds, NuWro carbon and GiBUU carbon at estimator seed 43, in the same job;
+  - Δ_noise,max reported beside Δ_max;
+  - the reading fixed in advance, including "within the estimator's seed variation" when Δ_max ≤ 2 Δ_noise,max.
+  The lane added it in `2cbea6dd`, with six tests and three caught mutants.
+
+**Rulings.**
+1. **E2 runs as the addendum declares.**
+   - The staging and the vertex and ratio steps run on a login node, with controls V and R1.
+   - The unfold is one regular CPU job of five 42-CPU steps, at `-t 00:25:00` and **≤ 0.5 node-h**, with controls R2
+     and B2.
+   - The χ² readout comes after C1–C3.
+2. **Stops.** Any control failure or other stop is final, and no E2 number is used (A2).
+3. **The flag is unchanged:** the with arm's total χ² |Δ| > 2.3 brings Joseph the C_model-on-CH question. No
+   covariance changes without him.
+4. **The report goes to Joseph in every outcome.** It gives every signed Δ and Δ_noise and the `sacct` cost.
+   - The paper lane replaces #651 item 6's caveat with the fixed reading only after Joseph has the report.
+5. **Connects:**
+   - O_NOATIME reads;
+   - writes only under the addendum's `$R`, and nothing to CFS;
+   - a fresh clone at M″;
+   - the HPSS copy at the end.
+
+## Addendum E2-A1 (director, 2026-11-02)
+
+**The stop.** E2's first run (`$P/gencmp-e2-20261102/`, from M″) stopped at R1 leg (iii), after stage, V, R1 (i) and
+R1 (ii) had passed. It spent 0 node-h, and no E2 number exists.
+- **The cause was in the control.** It checked the producer's `truth_cut` branch (`pvl_ratios.py:130-131`).
+- **That branch does not run on L-5D-PV.** There p∥ is a reweight axis, so the domain is recorded as `pz_max_cells`
+  (`:119`, `:124-125`, `:132-133`), and the committed `gibuu.json` carries `pz_max_cells` = 10.0 and no `truth_cut`.
+- **The domain itself was already verified.** R1 (i) re-derived it field by field, and it passed.
+
+**The director's ruling (by message).** This is a repair, as in X-A1. The director also required a sweep of every
+other E2 control against the real committed formats.
+
+**Binds** addendum E2-A1 as merged in PR #676 at **M‴ = `372db7653ca16b34d033d076e609cb07b1fce0d2`** (PR head `fb5a6ebda4d2adad0c112fb9138478baba6226d5`).
+- **Leg (iii) now reads:** CH GiBUU and the committed GiBUU carry `pz_max_cells` = 10.0 and no `truth_cut`, and CH
+  NuWro carries neither.
+- **The controls were refactored into testable functions** (`code_differ`, `c1_ok`, `c2_ok`, `c3_failures`), with C3's
+  TOL unchanged at 1e-10.
+- **The unfold script names the new run directory** `$P/gencmp-e2a1-20261102/`.
+- **The blobs at M‴:**
+  - `nd-unfolding/fd_gencmp_e2.py` `86e6c3971a11d7e81025f9fb6890c70bef8f8813`;
+  - `nd-unfolding/tests/test_fd_gencmp_e2.py` `2738ccd1cfaa13d4e46d10279de64ebbc428b115`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/receipts/x_e2_unfold.sh` `60e1f823b969a3305934ea24052faeb41723d415`;
+  - `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e2/INPUTS.sha256` `1fe20983ad8b99e823538eaf73932d70ddd444ff`;
+
+**What the director checked.**
+- **The diff.** It does only the above.
+- **The tests.** Locally, `test_fd_gencmp_e2.py` and `test_fd_gencmp_e.py` gave 69 passed. On the cluster, the lane
+  reports 26 of 26.
+- **The receipts.**
+  - The mutants: `x_e2a1_mutants.tsv`, 7 field mutants FAIL and 5 code mutants CAUGHT.
+  - The sweep: `x_e2a1_sweep.tsv`, with the probes in `fd/gencmp-e2/receipts/sweep-a1/`. On the real committed formats
+    it shows B2 (seed 42 and seed 43), the B2 code record, C1, C2 and C3 passing in the run environment.
+- **What the sweep cannot test before the run.** R2's rerun side and the job's five steps. Each fails closed with a
+  named, final stop.
+- **The sweep's disclosed finding (b).** C3 is exact on the cluster's numpy 1.26.4, but on macOS BLAS it misses by up
+  to 1.7e-10. The tolerance is not loosened. The run is on the cluster.
+
+**Rulings.**
+1. **The rerun.** It starts from a fresh clone at M‴, from stage onward, into `$P/gencmp-e2a1-20261102/`. The first run
+   directory stays untouched as the record of the stop.
+2. **The cap is unchanged:** ≤ 0.5 node-h for the unfold job. Every other ruling of addendum E2 stands.
+3. **The report goes to Joseph** and gives both runs and the stop.
+
 ## Fixed, unchanged
 
 Every claim and number in the paper until Joseph rules on the report; the reported covariance; Table IV as adopted

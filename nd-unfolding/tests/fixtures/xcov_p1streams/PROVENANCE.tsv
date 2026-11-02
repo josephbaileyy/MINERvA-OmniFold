@@ -1,0 +1,12 @@
+# Fixtures for nd-unfolding/tests/test_fd_xcov.py class BkgLeg (GENCMP X addendum X-A1, 2026-11-02).
+#
+# The record: the p1Streams TNamed title of RE-2's stat replica 1,
+# /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S1_001/xsec.root, read on login37 with uproot 5.6.9
+# (omnifold_py310) from bytes opened O_NOATIME (atime unchanged), after its sha256 matched the pin in
+# fd/xcov/INPUTS.sha256 (2ea9b7d2...). The title was copied verbatim.
+# The files: ROOT 6.28 (root_6_28) wrote each as a TFile under /dev/shm on saul (deleted after base64 transfer), with
+# TNamed objects written the way re2_driver.py:2530-2531 writes its provenance. "present" holds runConfig ("{}") and
+# p1Streams (the title above); "absent" holds runConfig only. Nothing was written to pscratch or CFS.
+file	bytes	sha256	tnamed_keys
+p1streams_present.root	1712	31bf0fea6400efcfb2ab74e2514c129e46f5b384b5c67eb19ebbf588f40d136b	runConfig;p1Streams
+p1streams_absent.root	866	91150dae7fdf7d40f4e3e0b0f18979c673e5bde5466890539b8aa5259229a263	runConfig

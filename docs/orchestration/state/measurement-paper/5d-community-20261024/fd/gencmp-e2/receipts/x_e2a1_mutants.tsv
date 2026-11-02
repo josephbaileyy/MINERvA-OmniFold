@@ -1,0 +1,19 @@
+# Addendum E2-A1: R1 leg (iii) (fd_gencmp_e2.domain_failures) on the committed L-5D-PV GiBUU/NuWro ratio fields
+# (nd-unfolding/tests/fixtures/e2a1_real/ratio_domain_fields.json), and code mutants of the new helpers.
+# Written 2026-11-02 by a one-off script that imports tests/test_fd_gencmp_e2.py (DOMAIN_MUTANTS). 'code mutant'
+# rows: fd_gencmp_e2.py edited by sed, `pytest tests/test_fd_gencmp_e2.py -k RealFormat` run, file restored
+# (cmp-verified).
+kind	mutant	verdict	failures
+control	the committed GiBUU/NuWro fields as CH and committed	PASS	-
+field mutant	CH GiBUU carries the truth_cut form	FAIL	CH GiBUU: carries a truth_cut {'axis': 'pz', 'below': 10.0}
+field mutant	CH GiBUU pz_max_cells 9	FAIL	CH GiBUU: pz_max_cells 9.0 != 10.0
+field mutant	CH GiBUU pz_max_cells absent	FAIL	CH GiBUU: pz_max_cells None != 10.0
+field mutant	committed GiBUU pz_max_cells absent	FAIL	committed GiBUU: pz_max_cells None != 10.0
+field mutant	committed GiBUU carries a truth_cut	FAIL	committed GiBUU: carries a truth_cut {'axis': 'pz', 'below': 10.0}
+field mutant	CH NuWro carries pz_max_cells	FAIL	CH NuWro: carries pz_max_cells
+field mutant	CH NuWro carries a truth_cut	FAIL	CH NuWro: carries truth_cut
+code mutant	leg (iii): pz_max_cells test disabled	CAUGHT	RealFormat: 1 failed, 6 passed, 19 deselected
+code mutant	leg (iii): truth_cut test disabled	CAUGHT	RealFormat: 1 failed, 6 passed, 19 deselected
+code mutant	leg (iii): NuWro test disabled	CAUGHT	RealFormat: 1 failed, 6 passed, 19 deselected
+code mutant	C3: shape_only kind dropped	CAUGHT	RealFormat: 1 failed, 6 passed, 19 deselected
+code mutant	B2 code_differ: intersection of keys instead of union	CAUGHT	RealFormat: 1 failed, 6 passed, 19 deselected
