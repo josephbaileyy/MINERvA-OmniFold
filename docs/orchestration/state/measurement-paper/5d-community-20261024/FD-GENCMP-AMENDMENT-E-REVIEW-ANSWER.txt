@@ -1,0 +1,117 @@
+Findings below. I read the code, ran the four named suites (211 passed, 1 skipped), and ran the new suite with the rebuild suite (78 passed, 2 skipped). I changed nothing. An untracked `FD-GENCMP-AMENDMENT-E-REVIEW-PROMPT.txt` is in the worktree. It is not mine.
+
+## Question A: choices that could be made because they look better
+
+**A1. R0's exclusion list is wrong in a way that will tempt a relaxation after a failure.** (blocks binding)
+- The declaration (§3, lines 167-169) says R0 excludes only `argv`, `code_sha256` and "the extra block's `path`". The code excludes `"/extra_block/path"` (`fd_gencmp_e.py:63`).
+- The committed Stage G readouts have no such key. The key is `/extra_block/file`, holding `/pscratch/.../cresp.npz` (nopl) or `/pscratch/.../with/block/cpl_block.npz` (with). The new run holds the staged or repo path.
+- I checked this by running `compare_numbers`/`compare_strings` with `R0_EXCLUDE` on the committed nopl `fd_g_readout.json`, changing only that path, plus `argv` and `code_sha256`. Output: `['string /extra_block/file']`.
+- So R0 stops at the first check, nopl `g`, on the first real run.
+- Fixing it after that failure means editing the gate after seeing it fail. Fix it before binding (A1/B1 are linked).
+
+**A2. §8 leaves the E2 decision and its wording open.** (should fix)
+- Section 8 has rows for "E2 runs" and "E2 not run", but nothing fixes who decides to run it, or when. Running it after E-1's numbers are seen is a choice that depends on the result.
+- The wording is "changes the χ² by at most Δ", with "the maximum Δ over the four predictions and both arms printed" (declaration lines 286-287). Neither the sign convention (signed or |Δ|) nor absolute versus relative is defined.
+- Pre-fix it: Δ = max |χ²_CH − χ²_carbon|, printed for every prediction, arm and kind.
+
+**A3. Which sentences "change qualitatively" is a judgement call.** (should fix, mild)
+- The declaration (line 283) asks the report to list "each sentence whose qualitative statement changes", with only examples.
+- Replace it with a mechanical rule: every values key whose printed string differs between the old and E-1 readouts.
+
+**A4. Which figures get printed is left to the paper lane.** (minor)
+- The declaration (lines 74-75 and 283) says "whether to print them is the paper lane's call" and "chooses which to print".
+- That is a choice after the figures are seen, so an unfavourable figure could be dropped. Say that the figures now in the paper are replaced one for one.
+
+**A5. The units diagnostic and the "Q does not cover a quadrant" branch have no outcome row.** (should fix)
+- Declaration line 218 says the diagnostic max |CV/`cells_x_EU` − 1| is "printed and expected to be 0". Nothing says what happens if it is not.
+- Code: `fd_gencmp.py` (the `diagnostic_cv_over_Q_x_max_rel` readout field; the non-covered branch is `rec["2D"] = {"label": "Q does not cover..."}`). Neither has a row in §8.
+- See B4.
+
+**A6. NuWro's hydrogen flag is in its label but not on its legend.** (minor)
+- GiBUU gets "hydrogen: closure B3 failed" on its legend. NuWro's legend (`fd_g_figures.py`, `PREDICTION_SETS["gencmp-chdefs"]`) carries only "CH, analysis definitions".
+- NuWro's label still contains "supplement FLAGGED" (`fd_gencmp.LABELS["nuwro_CH"]`). This is a small asymmetry and is not result-dependent.
+
+**A7. The 1e-12 tolerances are fixed, but their failure mode is not named.** (minor)
+- E0, XC and R0 use 1e-12 relative on a login node against compute-node numbers. G-DIAG eigenmode loadings and the ridge/lstsq stability fields are the likeliest to move.
+- §8 says "stop", which is good. Add one line saying the tolerance is not relaxed under this declaration, so a hardware-noise stop is not "fixed" after the fact.
+
+## Question B: controls that cannot fail
+
+**B1. R0 cannot pass as coded, for two further reasons beyond A1.** (blocks binding)
+- (a) In the old set, `run_set` feeds each downstream tool the newly written upstream readout. It pins the new file's sha256: `H[k] = sha256(out[k])`, `up[k] = out[k]`, at `fd_gencmp_e.py:367-369`.
+  - The committed downstream readouts record the committed upstream digests. The committed nopl `fd_g_diag_readout.json` has `inputs_sha256.g_readout = 75a9dd…`, and the committed with-arm one has `b55366b3…`.
+  - The new `g` readout's bytes differ, because `argv` and `extra_block/file` differ. So `/inputs_sha256/g_readout` (and the `g_diag_readout` and `g_followup_readout` fields in the later readouts) differ.
+  - `compare_strings` does not exclude them, so R0 fails on strings.
+  - The precedent, `fd_cpl_addition.without_arm` (lines 771-778), ran every tool on the committed upstream (`up = {**cm, …}`, `pins=None`) for exactly this reason.
+- (b) Figure sidecars have the same problem. `inputs_sha256` is `{k: pins[k]}` (`fd_g_figures.py:864`). The committed sidecars hold the committed readout digests (checked: nopl `75a9ddee19, 680dc5ef9c, cd82517afd, 0f6568aba0`).
+  - The old-set figures are built from `pins={..."g_readout": H["g"], ...}` (`fd_gencmp_e.py:382-383`), which are the new digests.
+  - `FIG_EXCLUDE` is only `/argv /code /versions`, so every sidecar compare fails.
+- Fix: run the old set's downstream steps and figures on the committed upstream files and pins, as the precedent does.
+
+**B2. `check_r0` and the order gate have no test, and the R0 test uses a key that does not exist.** (blocks binding)
+- `test_r0_comparison_ignores_argv_and_block_path_only` (`tests/test_fd_gencmp_e.py`, around line 294) uses a synthetic `"extra_block": {"path": …}`. Real readouts have `file`.
+- `check_r0`, `run_set`, `cmd_chain` and "chdefs only after R0 in both arms" are never called by any test.
+- A single test that compares a committed readout against a copy with `argv`, `code_sha256` and `extra_block/file` changed would have caught A1.
+- By code structure, the chdefs set cannot run before R0 passes in both arms (`cmd_chain`, lines 435-441). That part is sound.
+- R0 does compare new bytes with committed bytes, and it checks the committed bytes against the pinned digests first (`fd_gencmp_e.py:392`). It does not compare a run with itself.
+
+**B3. The figure K1 "labels and digests against the predictions passed in" test does not call the code.** (should fix)
+- `test_check_chain_compares_against_the_passed_set` re-types the K1 expression as a lambda ("through the same expression check_chain uses"). It never calls `check_chain`, so the refusal branch of `fd_g_figures.py:208-209` is untested.
+- The K0 guard has a real refusal test: `test_figures_refuse_the_chdefs_set_without_its_predictions`.
+
+**B4. The units diagnostic is not a control.** (should fix)
+- It is only written to the readout, and nothing compares it with 0 (`fd_gencmp.py`, `diagnostic_cv_over_Q_x_max_rel`).
+- The arm key says only that Q_R is "refined". The other guard, "median sqrt(diag)/x in [0.01, 0.5]", is far too loose to show that `cells_x_EU` is E_R.
+- Enforce `== 0` (to 1e-12), or say in §8 that it is descriptive only.
+
+**B5. The MnvTune "staged file is Stage G's" check has no refusal test.** (minor)
+- The test patches `E.TUNE`'s sha to the staged file's own digest, so the check passes trivially.
+- The check is also redundant with S, which has already verified the copy.
+
+**B6. XC has gaps.** (minor)
+- It loops over the readout's predictions, so a missing or empty prediction list passes silently. It should loop over `CHDEFS` and require each to be present.
+- Tests refuse only on a bumped total χ². The `g` branch and the `shape_only` branch are never refused.
+- No test shows the nopl arm passing against `without_C_PL5D`.
+- XC is independent of E0. It compares the `fd_g_compare` subprocess output against `defs.json`, not numbers derived from the same file.
+
+**B7. P and E0 are partly tested.** (minor)
+- P is tested only for a changed file. The names-and-cells branch has no test.
+- E0's test only shows that a one-entry defect is refused. Whether g or χ² fired is not asserted. The `without_C_PL5D` and `shape_only` χ² branches are not exercised alone.
+- The C3 (both arms), arm-key, C-R3D (S changed; unpinned readout) and two-inputs-files controls are each tested in the refusing direction.
+- Tests that pass for the right reason: S (pin mismatch), E0, the rebuild-directory check, C3 both arms, C-R3D and the two-inputs-files check. C-R3D compares against step C's committed readout, pinned at `82b3528a…`, so it is not self-referential.
+
+## Secondary
+
+**S1. The tool-identity claim is false for the nopl arm.** (should fix)
+- Declaration lines 172-175 say the tools are "byte-identical to those that wrote the committed readouts… each readout's `code_sha256`".
+- The committed nopl readouts record `fd_g_diag.py 7c161280`, `fd_g_followup.py 820b67c2` and `fd_flux_boot.py f82bd4f4`. The files on this branch are `241bfd02`, `ec8cbc68` and `d5b4bb09`.
+- Only the with arm, nopl `g` and `g_sens2` match. R0 passes only numerically, and the 5B chain's R control already showed that at these tool versions.
+- R0 excludes `/code_sha256` wholesale, so tool drift is not detected by the gate.
+- I confirmed the six digests the declaration lists match the files on the branch.
+
+**S2. The declaration cites an "item 8" that is not in the record.** (should fix)
+- "#651 item 8" is cited several times (lines 11-12, 39, 233, 259). `DECISION-20261101-joseph-gencmp-paper-adoption.md` has items 1-6 only, and a grep for "item 8" finds nothing.
+- The caveat is a bullet inside item 6, which §8 line 286 calls "item 6".
+- Make the numbering consistent, or cite the source of "item 8".
+
+**S3. The citation for the `cells_x_EU` key is wrong.** (minor)
+- Declaration line 218 cites `RE2-DECLARATION-C.md:196`. That line says the key `EU` holds E_R in the export npz.
+- `cells_x_EU` is in `s5_plus_playlist.npz` (`re2c_combine.py:253`). Q_R's key `arm` at `re2c_combine.py:252-253` and the other citations check out: `members.sha256:1480` is E_R's digest, and `RE2-PARTC-REPORT.md:132`, `:129` and `:278-279` are as cited.
+
+**S4. A failed E0, P or XC does not mean "no new number is computed".** (minor)
+- §8 line 282 says that. In the code, XC runs after all five tools and the figures for the arm, so the arm's readouts already exist in the run directory.
+- Reword to "no number is used".
+
+**S5. What checked out.**
+- All 42 pins match their sources: `A.PINS`, `fg.PREDICTIONS`, `CONSTRAINT_SHA256`, and the 30 `ana` files plus `rebuild.json` against `rebuild_b.json` `outputs`.
+- The committed digests in `COMMITTED` and `COMMITTED_WITH`, the block digest (`d9aa32fd…`), `defs.json` (`544f4f43…`) and `OVERLAP_C` (`82b3528a…`) all match their files.
+- Figure sidecar `versions` match the declaration (3.11.14 / 1.26.4 / 3.10.8). The test count is 33.
+- No O_NOATIME violation: the originals are read only by `read_noatime` in stage and in C-R's `Inputs`. Every chain read is of a staged or committed file.
+- No write outside the run directory, apart from the unenforced rule that the run directory is not on CFS.
+
+## Verdicts
+
+- **A:** findings A1 (blocks binding), A2, A3, A5 (should fix), and A4, A6, A7 (minor).
+- **B:** findings B1 and B2 (block binding), B3 and B4 (should fix), and B5, B6, B7 (minor).
+
+Both questions have findings. As coded, R0 fails on the first real run, so E would stop at the gate before computing any new number. A1, B1 and B2 should all be fixed before binding.

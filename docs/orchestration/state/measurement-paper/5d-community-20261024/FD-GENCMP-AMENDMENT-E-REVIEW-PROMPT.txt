@@ -1,0 +1,31 @@
+You are an independent, read-only reviewer of a pre-registered analysis amendment and the code that implements it, in a physics repository. You did not write any of it. Do not edit, create or delete any file in the repository, do not run git commands that write (no add, commit, stash, checkout, worktree), do not ssh anywhere, and do not run anything on real data. You may read any file and run the unit tests named below (set TMPDIR to <TMPDIR> when you do).
+
+Repository worktree: <WORKTREE> (branch docs/fd-gencmp-amendment-e-20261101, head <HEAD>)
+
+## What to review
+1. The declaration: docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-DECLARATION.md, with its pinned inputs fd/gencmp-e/INPUTS.sha256 in the same directory.
+2. The code this branch adds or changes (git diff origin/main...HEAD -- nd-unfolding):
+   - nd-unfolding/fd_gencmp_e.py (new: stage, materialize, chain)
+   - nd-unfolding/fd_gencmp.py (overlap --arm refined, --inputs, ARMS_2D, the Q_R arm check, C-R3D)
+   - nd-unfolding/fd_g_figures.py and nd-unfolding/fd_g_figures_check.py (--prediction-set)
+   - nd-unfolding/tests/test_fd_gencmp_e.py
+   You may run: cd nd-unfolding && python3 -B -m pytest -q -p no:cacheprovider tests/test_fd_gencmp_e.py tests/test_fd_gencmp.py tests/test_fd_g_figures.py tests/test_fd_cpl_addition.py
+3. The code it reuses unchanged, which you should read where the new code calls it: nd-unfolding/fd_cpl_addition.py (Chain, Paths, step_argv, extra, compare_numbers, compare_strings, COMMITTED, UPSTREAM, STEP_PINS, TOOLS, TIMEOUT, FIG_NAMES, FIG_EXCLUDE), nd-unfolding/fd_g_compare.py, fd_g_diag.py, fd_g_followup.py, fd_flux_boot.py, s1_assemble.py, fd_gencmp_kin.py.
+4. The governing records, for context:
+   - docs/orchestration/DECISION-20261101-joseph-gencmp-paper-adoption.md (items 1, 2, 5, 6)
+   - docs/orchestration/DECISION-20261024-joseph-adopt-re2-2d-refined.md (item 1: the adopted 2D result is E_R with Q_R)
+   - docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-DECLARATION.md, FD-GENCMP-BINDING.md, FD-GENCMP-REPORT.md and fd/gencmp/readout/defs.json, overlap.json, rebuild_b.json (the step this amends)
+   - docs/analysis-note/make_values_fived16.py (which readouts the paper's numbers come from)
+   - docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md and RE2-DECLARATION-C.md (Q_R, E_R's integral, the key cells_x_EU)
+
+## The two questions you must answer
+A. Is there any step whose decision rule, readout or proposed paper wording could let an outcome be chosen because it looks better? Look for: choices left open until after numbers are seen; tolerances, variants or "primary" designations that could be swapped after the fact; asymmetric treatment of results that improve versus worsen a comparison; anything in section 8 (outcomes and paper text) that depends on the sign of a result in a way not fixed in advance; a gate (R0, E0, XC, C-R3D) that could be relaxed or skipped after a failure.
+B. Is there any control that cannot fail? For each control named in the declaration (S, E0, the rebuild-directory and MnvTune checks, P, R0, XC, the figure set's K0 guard and K1 comparison, C3 in each arm, the Q_R arm check, C-R3D, the two-inputs-files check), say whether it is (i) implemented in the code, (ii) capable of failing on a realistic defect, and (iii) tested in the direction it acts (a test where it refuses). A control that holds by construction, compares a quantity with itself, or whose failure branch is unreachable, is a finding. In particular: does R0 compare a new run with the committed bytes rather than with itself; does XC compare Stage G's numbers with defs.json rather than with numbers derived from the same file; can the chdefs set ever run before R0 has passed in both arms.
+
+## Also report (secondary)
+- Any place where the code does not do what the declaration says, citing file:line for both.
+- Any correctness bug you can demonstrate: a wrong pin, path or argument; a tool given the wrong predictions, pins or extra block; a figure drawn for the wrong set; an O_NOATIME rule broken (any pscratch original opened by a plain read); a write outside the run directory.
+- Anything the declaration claims about the records that the records do not support (digests, line numbers, counts, versions).
+
+## Output format
+Plain text. For each finding: an id (A1, A2, ... for question A; B1, ... for question B; S1, ... for secondary), a one-line statement, the evidence (file:line and a short quote, or the command and its output), and how severe you judge it (blocks binding / should fix before binding / minor). End with a short verdict per question: "A: no finding" or the list; "B: no finding" or the list. Do not soften findings, and do not invent ones you cannot support with a file:line or a command output.

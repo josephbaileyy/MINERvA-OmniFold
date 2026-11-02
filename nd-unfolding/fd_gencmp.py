@@ -565,6 +565,11 @@ def cmd_overlap(a) -> int:
             "label": "unadopted trunk projection, receiving-cells population, not paired with the 3D central value "
                      "(OUTCOME-20260922 sections 4-5); descriptive only, no outcome is read from it"}
         rows[q] = rec
+    if arm == "refined":                    # C-R: Q_R's central value is E_R, and Q_R covers every quadrant
+        dmax = float(np.max(np.abs(flat[cells2d] / np.asarray(qz["cells_x_EU"], float) - 1)))
+        report("C-R", "Q_R's central value (key cells_x_EU) is E_R on its 205 cells (to 1e-12)", dmax <= TOL, f"{dmax!r}")
+        report("C-R", "Q_R covers every quadrant", all("S" in rows[q]["2D"] for q in rows),
+               json.dumps({q: rows[q]["2D"].get("label") for q in rows}))
     if arm == "refined":                    # C-R3D: the 3D rows read the same pinned inputs as step C, so are its own
         raw = OVERLAP_C.read_bytes()
         report("C-R3D", "step C's committed readout is the pinned bytes", hashlib.sha256(raw).hexdigest() == OVERLAP_C_SHA256)

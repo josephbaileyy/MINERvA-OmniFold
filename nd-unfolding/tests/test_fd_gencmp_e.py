@@ -44,6 +44,18 @@ def spd(n, scale):
     return (M @ M.T / n + np.eye(n)) * np.outer(scale, scale)
 
 
+def bump_first_number(o) -> bool:
+    """Change the first non-zero float met in a depth-first walk by 1e-9 relative; True once done."""
+    items = o.items() if isinstance(o, dict) else enumerate(o) if isinstance(o, list) else ()
+    for k, v in items:
+        if isinstance(v, float) and v != 0.0:
+            o[k] = v * (1 + 1e-9)
+            return True
+        if isinstance(v, (dict, list)) and bump_first_number(v):
+            return True
+    return False
+
+
 class Sets(unittest.TestCase):
     """The chdefs set's names, cells and labels, and the figure tool's and the checker's legends for it."""
 
@@ -91,14 +103,21 @@ class Sets(unittest.TestCase):
         self.assertIn("K0", str(e.exception))
 
     def test_check_chain_compares_against_the_passed_set(self):
+        """K1 on the committed nopl readouts (the inputs of the committed nopl figures): it holds against Stage G's set
+        and refuses a set whose one label differs."""
+        rel = {"g_readout": "fd_g_readout.json", "g_diag_readout": "fd_g_diag_readout.json",
+               "g_followup_readout": "fd_g_followup_readout.json", "g_sens2_readout": "fd_g_sens2_readout.json",
+               "f0b_readout": "fd_f0b_readout.json"}
+        paths = {k: REPO / E.FD / "fd/readout" / v for k, v in rel.items()}
+        paths["definition"] = gc.DEFINITION
+        r = {k: json.loads(p.read_text()) for k, p in paths.items()}
+        pins = {k: sha(p) for k, p in paths.items()}
+        FG.check_chain(r, pins, predictions=fg.PREDICTIONS)
         preds = [dict(p) for p in fg.PREDICTIONS]
-        g = {"predictions": [{"name": p["name"], "label": p["label"], "sha256": p["sha256"]} for p in preds]}
-        # the K1 label check alone, through the same expression check_chain uses
-        same = lambda ps: all(p["label"] == s["label"] and p["sha256"] == s["sha256"]  # noqa: E731
-                              for p, s in zip(g["predictions"], ps))
-        self.assertTrue(same(fg.PREDICTIONS))
         preds[2]["label"] = "something else"
-        self.assertFalse(same(preds))
+        with self.assertRaises(fg.Stop) as e:
+            FG.check_chain(r, pins, predictions=preds)
+        self.assertIn("K1", str(e.exception))
 
 
 class Stage(unittest.TestCase):
@@ -256,6 +275,30 @@ class Materialize(unittest.TestCase):
         with self.assertRaises(E.Stop):
             self.materialize()
 
+    def test_e0_names_the_quantity_that_differs(self):
+        self.write_defs(bump=1e-9)                      # only the reported total chi2 moves
+        with self.assertRaises(E.Stop) as e:
+            self.materialize()
+        self.assertIn("reported total chi2", str(e.exception))
+        self.assertNotIn("g on its cells", str(e.exception))
+
+    def test_refuses_a_staged_mnvtune_other_than_stage_gs(self):
+        tune = self.run / "inputs" / "s5p-20260926" / E.TUNE["path"]
+        np.savez(tune, xsec_flat=np.zeros(N))
+        with self.assertRaises(E.Stop) as e:
+            self.materialize()
+        self.assertIn("MnvTune", str(e.exception))
+
+    def test_load_chdefs_refuses_names_out_of_order(self):
+        self.materialize()
+        pj = self.run / "pred" / "predictions.json"
+        rec = json.loads(pj.read_text())
+        rec["predictions"][0], rec["predictions"][1] = rec["predictions"][1], rec["predictions"][0]
+        pj.write_text(json.dumps(rec))
+        with self.assertRaises(E.Stop) as e:
+            E.load_chdefs(self.run / "pred")
+        self.assertIn("names, in order", str(e.exception))
+
 
 class Chain(unittest.TestCase):
     def setUp(self):
@@ -291,13 +334,13 @@ class Chain(unittest.TestCase):
                 self.assertEqual(sha(REPO / rel), pin, (arm, k))
 
     def test_r0_comparison_ignores_argv_and_block_path_only(self):
-        old = {"argv": ["a"], "extra_block": {"path": "/p/a", "sha256": "x"}, "v": [1.0, 2.0], "label": "L"}
-        new = {"argv": ["b"], "extra_block": {"path": "/q/b", "sha256": "x"}, "v": [1.0, 2.0], "label": "L"}
+        old = {"argv": ["a"], "extra_block": {"file": "/p/a", "sha256": "x"}, "v": [1.0, 2.0], "label": "L"}
+        new = {"argv": ["b"], "extra_block": {"file": "/q/b", "sha256": "x"}, "v": [1.0, 2.0], "label": "L"}
         self.assertEqual(A.compare_numbers(old, new, E.R0_EXCLUDE) + A.compare_strings(old, new, E.R0_EXCLUDE), [])
         for k, v in (("v", [1.0, 2.0 * (1 + 1e-9)]), ("label", "M")):
             bad = {**new, k: v}
             self.assertTrue(A.compare_numbers(old, bad, E.R0_EXCLUDE) + A.compare_strings(old, bad, E.R0_EXCLUDE))
-        bad = {**new, "extra_block": {"path": "/q/b", "sha256": "y"}}
+        bad = {**new, "extra_block": {"file": "/q/b", "sha256": "y"}}
         self.assertTrue(A.compare_strings(old, bad, E.R0_EXCLUDE))
 
     def xc_fixture(self, bump=0.0):
@@ -328,6 +371,98 @@ class Chain(unittest.TestCase):
         res, defs = self.xc_fixture()
         with self.assertRaises(A.Stop):                  # the nopl arm is compared with defs' without_C_PL5D chi2
             E.check_xc(self.c, "nopl", res, defs)
+
+    def test_xc_nopl_passes_against_without_c_pl5d(self):
+        res, defs = self.xc_fixture()
+        g = json.loads(res["out"]["g"].read_text())
+        for p in g["predictions"][:4]:
+            c = defs["generators"][p["name"]]["CH"]["analysis_definitions"]["chi2"]["without_C_PL5D"]
+            p["total"]["chi2"], p["shape_only"]["chi2"] = c["total"]["chi2"], c["shape_only"]["chi2"]
+        res["out"]["g"].write_text(json.dumps(g))
+        E.check_xc(self.c, "nopl", res, defs)
+
+    def test_xc_refuses_a_g_or_a_shape_chi2_or_a_missing_prediction(self):
+        for edit in ("g", "shape", "missing"):
+            res, defs = self.xc_fixture()
+            g = json.loads(res["out"]["g"].read_text())
+            if edit == "g":
+                g["predictions"][1]["g"][0] *= 1 + 1e-9
+            elif edit == "shape":
+                g["predictions"][2]["shape_only"]["chi2"] *= 1 + 1e-9
+            else:
+                del g["predictions"][3]
+            res["out"]["g"].write_text(json.dumps(g))
+            with self.assertRaises(A.Stop, msg=edit):
+                E.check_xc(self.c, "with", res, defs)
+
+    def copies(self, arm: str, edit=None) -> dict:
+        """The committed readouts and figures of ``arm`` as a new run would write them: argv, code_sha256 (code and
+        versions for sidecars) and the extra block's file changed; ``edit`` then changes one thing more."""
+        out, fig = {}, self.d / arm / "fig"
+        fig.mkdir(parents=True)
+        for k in E.STEPS:
+            r = json.loads((REPO / E.COMMITTED[arm][k][0]).read_text())
+            r["argv"] = ["/elsewhere/tool.py"]
+            r["code_sha256"] = {"x": "0" * 64}
+            if "file" in (r.get("extra_block") or {}):
+                r["extra_block"]["file"] = "/elsewhere/block.npz"
+            if edit == ("readout", k):
+                bump_first_number(r)
+            out[k] = self.d / arm / f"{k}.json"
+            out[k].write_text(json.dumps(r))
+        for n in A.FIG_NAMES:
+            sc = json.loads((REPO / E.FIGURES[arm] / f"{n}.json").read_text())
+            sc.update(argv=["x"], code={"y": 1}, versions={"z": 2})
+            (fig / f"{n}.json").write_text(json.dumps(sc))
+            pdf = (REPO / E.FIGURES[arm] / f"{n}.pdf").read_bytes()
+            (fig / f"{n}.pdf").write_bytes(pdf + (b"%" if edit == ("pdf", n) else b""))
+        return {"out": out, "fig": fig}
+
+    def test_r0_passes_on_committed_copies_and_refuses_one_change(self):
+        for arm in E.ARMS:
+            E.check_r0(self.c, arm, self.copies(arm), REPO)
+        for arm, edit in (("nopl", ("readout", "g_sens2")), ("with", ("readout", "flux_boot")),
+                          ("with", ("pdf", "fd_g_fig_sens"))):
+            d = self.d / f"{arm}-{edit[1]}"
+            d.mkdir()
+            self.d, old = d, self.d
+            try:
+                with self.assertRaises(A.Stop, msg=(arm, edit)):
+                    E.check_r0(self.c, arm, self.copies(arm, edit), REPO)
+            finally:
+                self.d = old
+
+    def test_r0_compares_strings_in_the_with_arm_only(self):
+        res = self.copies("with")
+        r = json.loads(res["out"]["g"].read_text())
+        r["labels"]["what"] = r["labels"]["what"] + "."
+        res["out"]["g"].write_text(json.dumps(r))
+        with self.assertRaises(A.Stop):
+            E.check_r0(self.c, "with", res, REPO)
+        self.d = self.d / "n"
+        self.d.mkdir()
+        res = self.copies("nopl")
+        r = json.loads(res["out"]["g"].read_text())
+        r["labels"]["what"] = r["labels"]["what"] + "."
+        res["out"]["g"].write_text(json.dumps(r))
+        E.check_r0(self.c, "nopl", res, REPO)
+
+    def test_the_chdefs_set_never_runs_after_an_r0_failure(self):
+        calls = []
+
+        def fake_run_set(c, pset, arm, D):
+            calls.append((pset, arm))
+            return {}
+
+        def fake_r0(c, arm, res, D):
+            if arm == "with":
+                raise A.Stop("R0", "with arm differs")
+
+        a = SimpleNamespace(run_dir=self.d / "run", defs=E.DEFS)
+        with mock.patch.object(E, "load_chdefs", lambda pred: []), mock.patch.object(E, "run_set", fake_run_set), \
+                mock.patch.object(E, "check_r0", fake_r0):
+            self.assertEqual(E.cmd_chain(a), 1)
+        self.assertEqual(calls, [("old", "nopl"), ("old", "with")])
 
     def test_chain_steps_run_only_with_explicit_pins(self):
         c = E.Chain(SimpleNamespace(BA=self.d, nd=ND), self.d / "c.json", None)
@@ -401,6 +536,30 @@ class StepCR(TG.StepC):
         with self.assertRaises(fg.Stop) as e:
             gc.main(self.args(self.d / "x_out.txt"))
         self.assertIn("C3", str(e.exception))
+
+    def test_cr_refuses_a_q_central_value_other_than_the_cv(self):
+        cells = np.flatnonzero(self.cv_r.ravel() > 0)
+        x = self.cv_r.ravel()[cells].copy()
+        x[7] *= 1 + 1e-9
+        np.savez(self.d / "q.npz", total_plus_C_PL=np.diag((0.06 * x) ** 2), area=self.w2.ravel()[cells], cells_x_EU=x,
+                 arm=np.array("refined"))
+        with self.assertRaises(fg.Stop) as e:
+            gc.main([*self.args(self.d / "x_out.txt"), "--arm", "refined"])
+        self.assertIn("cells_x_EU", str(e.exception))
+
+    def test_cr_refuses_a_quadrant_q_r_does_not_cover(self):
+        cells = np.flatnonzero(self.cv_r.ravel() > 0)[:-1]          # drop the last cell, in QD
+        cv = self.cv_r.copy()
+        cv *= gc.ER_2D_INTEGRAL / (cv.ravel()[cells] * self.w2.ravel()[cells]).sum()
+        e_pt, e_pz = np.asarray(gc.sa.s1.FINE["pt"], float), np.asarray(gc.sa.s1.FINE["pz"], float)
+        TG.write_root(self.d / "cv2.root", {"hXSec2D": (cv, e_pt, e_pz)})
+        x = cv.ravel()[cells]
+        np.savez(self.d / "q.npz", total_plus_C_PL=np.diag((0.06 * x) ** 2), area=self.w2.ravel()[cells], cells_x_EU=x,
+                 arm=np.array("refined"))
+        np.savez(self.d / "pl.npz", cells=cells)
+        with self.assertRaises(fg.Stop) as e:
+            gc.main([*self.args(self.d / "x_out.txt"), "--arm", "refined"])
+        self.assertIn("covers every quadrant", str(e.exception))
 
     def test_two_inputs_files_that_disagree_refuse(self):
         pins = self.fx.pins()

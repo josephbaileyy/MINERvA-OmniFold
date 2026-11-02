@@ -6342,6 +6342,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-BIND
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-REVIEW-ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-AMENDMENT-E-REVIEW-PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-BINDING.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no

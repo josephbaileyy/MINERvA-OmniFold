@@ -107,11 +107,11 @@ REQUIRED = (G.C12_LABEL, "prior (not an independent prediction)", "p_parallel < 
 CH_DEFS = "CH, analysis definitions"
 PREDICTION_SETS = {
     "stage-g": (QUALIFIERS, REQUIRED),
-    "gencmp-chdefs": ({"genie_cv": (CH_DEFS,), "genie_mec": (CH_DEFS,), "nuwro": (CH_DEFS,),
+    "gencmp-chdefs": ({"genie_cv": (CH_DEFS,), "genie_mec": (CH_DEFS,), "nuwro": (CH_DEFS, "hydrogen: supplement FLAGGED"),
                        "gibuu": (CH_DEFS, "hydrogen: closure B3 failed", "p_parallel < 4.5 cells only"),
                        "mnvtune_v1": ("prior (not an independent prediction)",)},
-                      (CH_DEFS, "hydrogen: closure B3 failed", "prior (not an independent prediction)",
-                       "p_parallel < 4.5 cells only")),
+                      (CH_DEFS, "hydrogen: supplement FLAGGED", "hydrogen: closure B3 failed",
+                       "prior (not an independent prediction)", "p_parallel < 4.5 cells only")),
 }
 DEFAULT_SET = "stage-g"
 DISPLAY = (("p_parallel", r"$p_\parallel$"), ("C12", r"$^{12}$C"))  # plain readout text -> drawn text, and back (K7)

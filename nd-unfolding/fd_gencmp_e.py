@@ -17,9 +17,10 @@ Subcommands, each refusing to overwrite what it writes:
                    ``with``: C_resp + C_PL5D), Stage G, G-DIAG, G-FOLLOWUP, G-SENS2 and the flux bootstrap, each a
                    subprocess of its bound tool with the upstream readouts' sha256 as its pins
                    (fd_cpl_addition.Chain), then the three figures and their independent check.
-                   R0 (old set): every readout is the committed one in structure, numbers and strings, but argv and
-                   the extra block's path; every figure sidecar is the committed one but argv, code and versions, and
-                   its PDF the same bytes. The chdefs set runs only once R0 has held in both arms.
+                   R0 (old set, each downstream step and the figures on the committed upstream readouts): every
+                   readout is the committed one in structure and numbers (and strings, in the with arm), but argv,
+                   code_sha256 and the extra block's file; every figure sidecar is the committed one but argv, code and
+                   versions, and its PDF the same bytes. The chdefs set runs only once R0 has held in both arms.
                    XC (chdefs set): each prediction's g and its total and shape-only chi2 in Stage G's readout are
                    defs.json's, in both arms.
 
@@ -60,7 +61,7 @@ CH_DEFS = "CH, analysis definitions"
 SETS = ("old", "chdefs")
 ARMS = ("nopl", "with")
 STEPS = ("g", "g_diag", "g_followup", "g_sens2", "flux_boot")
-R0_EXCLUDE = ("/argv", "/code_sha256", "/extra_block/path")
+R0_EXCLUDE = ("/argv", "/code_sha256", "/extra_block/file")    # the extra block's path names where it was read
 TOL = 1e-12
 
 # The corner's four predictions: Stage G's names, cells and order, so every name-keyed rule of the bound tools holds.
@@ -73,7 +74,7 @@ CHDEFS = (
          label=f"GENIE 2.12.10 + Valencia MEC; {CH_DEFS} (rebuilt, GENCMP step B)"),
     dict(name="nuwro", src=("nuwro_C12", "nuwro_H"), cells="all",
          label=f"NuWro 21.09; {CH_DEFS} (rebuilt, GENCMP step B): C12 + free proton, 12:1 per nucleon; "
-               f"hydrogen: {gc.LABELS['nuwro_CH']}"),
+               f"hydrogen: supplement FLAGGED; {gc.LABELS['nuwro_CH']}"),
     dict(name="gibuu", src=("gibuu_C12", "gibuu_H"), cells="gibuu",
          label=f"GiBUU 2019; {CH_DEFS} (rebuilt, GENCMP step B): C12 + free proton, 12:1 per nucleon; "
                f"hydrogen: closure B3 failed; {gc.LABELS['gibuu_CH']}; no events above E_nu = 20 GeV (KNOWN_ISSUES 82), "
@@ -355,7 +356,12 @@ def step_pins(k: str, H: dict, base: dict) -> dict:
 
 
 def run_set(c: Chain, pset: str, arm: str, D: Path) -> dict:
-    """The five readouts and the three figures for one set and arm; returns the readouts' paths and sha256."""
+    """The five readouts and the three figures for one set and arm; returns the readouts' paths and sha256.
+
+    The old set runs each downstream step and the figures on the COMMITTED upstream readouts, pinned by their committed
+    digests, as fd_cpl_addition's without arm does: each readout records its upstream's digest, so R0 can compare it
+    with the committed one only if its upstream is the committed one. The chdefs set chains: each downstream step reads,
+    and is pinned to, the readout the step before wrote."""
     p = c.p
     xb, name = arm_block(p, arm)
     base = {} if pset == "old" else {"s5p_sums": sha256(p.s5p_sums)}
@@ -363,15 +369,21 @@ def run_set(c: Chain, pset: str, arm: str, D: Path) -> dict:
     out = {k: W / "readout" / Path(A.COMMITTED[k][0]).name for k in STEPS}
     (W / "readout").mkdir(parents=True, exist_ok=True)
     up, H = {}, {}
+    if pset == "old":
+        src = {k: D / COMMITTED[arm][k][0] for k in STEPS}
+        hsrc = {k: COMMITTED[arm][k][1] for k in STEPS}
+    else:
+        src, hsrc = up, H
     for k in STEPS:
-        c.run(k, f"{pset}-{arm}", A.TOOLS[k], A.step_argv(p, k, xb, xb, up, out[k], "with"), [out[k]], A.TIMEOUT[k],
-              pins=step_pins(k, H, base))
+        c.run(k, f"{pset}-{arm}", A.TOOLS[k], A.step_argv(p, k, xb, xb, src, out[k], "with"), [out[k]], A.TIMEOUT[k],
+              pins=step_pins(k, hsrc, base))
         H[k], up[k] = sha256(out[k]), out[k]
     f0b_rel, f0b_pin = COMMITTED[arm]["f0b"]
-    up["f0b"] = D / f0b_rel
-    c.check(f"F {pset}-{arm}: the committed F0b readout is the pinned bytes", sha256(up["f0b"]) == f0b_pin, f0b_rel)
+    src = dict(src)
+    src["f0b"] = D / f0b_rel
+    c.check(f"F {pset}-{arm}: the committed F0b readout is the pinned bytes", sha256(src["f0b"]) == f0b_pin, f0b_rel)
     fig = W / "figures"
-    fargv = A.step_argv(p, "figures", xb, xb, up, fig, "with")
+    fargv = A.step_argv(p, "figures", xb, xb, src, fig, "with")
     if arm == "nopl":                                   # the committed nopl figures name C_resp by the tool's default
         i = fargv.index("--reported-block-name")
         del fargv[i:i + 2]
@@ -379,10 +391,10 @@ def run_set(c: Chain, pset: str, arm: str, D: Path) -> dict:
     import fd_g_figures as FG
     c.run("figures", f"{pset}-{arm}", "fd_g_figures", [*fargv, *pset_flag],
           [fig / f"{n}{e}" for n in A.FIG_NAMES for e in (".pdf", ".json")], 75,
-          pins={**FG.PINS, "g_readout": H["g"], "g_diag_readout": H["g_diag"], "g_followup_readout": H["g_followup"],
-                "g_sens2_readout": H["g_sens2"], "f0b_readout": f0b_pin})
+          pins={**FG.PINS, "g_readout": hsrc["g"], "g_diag_readout": hsrc["g_diag"],
+                "g_followup_readout": hsrc["g_followup"], "g_sens2_readout": hsrc["g_sens2"], "f0b_readout": f0b_pin})
     c.run("figures_check", f"{pset}-{arm}", "fd_g_figures_check",
-          [*A.step_argv(p, "figures_check", xb, xb, up, fig, "with"), *pset_flag], [], 75, pins={})
+          [*A.step_argv(p, "figures_check", xb, xb, src, fig, "with"), *pset_flag], [], 75, pins={})
     return {"out": out, "H": H, "fig": fig, "block_name": name}
 
 
@@ -391,8 +403,12 @@ def check_r0(c: Chain, arm: str, res: dict, D: Path) -> None:
         rel, pin = COMMITTED[arm][k]
         c.check(f"R0 {arm} {k}: the committed readout is the pinned bytes", sha256(D / rel) == pin, rel)
         old, new = json.loads((D / rel).read_bytes()), json.loads(res["out"][k].read_bytes())
-        bad = A.compare_numbers(old, new, R0_EXCLUDE) + A.compare_strings(old, new, R0_EXCLUDE)
-        c.check(f"R0 {arm} {k}: structure, numbers and strings are the committed readout's but argv and the block path",
+        # strings in the with arm only: its committed readouts were written by these very tools, while the nopl ones
+        # were written by earlier versions of fd_g_diag, fd_g_followup and fd_flux_boot, which fd_cpl_addition's
+        # control R reproduced in structure and numbers (FD-CT-5B-ADDITION-REPORT.md:119-125)
+        bad = A.compare_numbers(old, new, R0_EXCLUDE) + (A.compare_strings(old, new, R0_EXCLUDE) if arm == "with" else [])
+        what = "structure, numbers and strings" if arm == "with" else "structure and numbers"
+        c.check(f"R0 {arm} {k}: {what} are the committed readout's but argv, code_sha256 and the block's file",
                 not bad, bad[:20])
     cfig = D / FIGURES[arm]
     for n in A.FIG_NAMES:
@@ -408,13 +424,14 @@ def check_xc(c: Chain, arm: str, res: dict, defs: dict) -> None:
     against its matrix without C_PL5D)."""
     key = "reported" if arm == "with" else "without_C_PL5D"
     g = json.loads(res["out"]["g"].read_bytes())
-    for p in g["predictions"]:
-        if p["name"] == TUNE["name"]:
-            continue
-        rec = defs_record(defs, p["name"])
+    have = {p["name"]: p for p in g["predictions"]}
+    c.check(f"XC {arm}: Stage G's readout holds each of the corner's four predictions",
+            all(s["name"] in have for s in CHDEFS), sorted(have))
+    for s in CHDEFS:
+        p, rec = have[s["name"]], defs_record(defs, s["name"])
         ok = A.compare_numbers({"g": rec["g"]}, {"g": p["g"]}, ()) == [] and all(
             A.same_number(p[kind]["chi2"], rec["chi2"][key][kind]["chi2"]) for kind in ("total", "shape_only"))
-        c.check(f"XC {arm} {p['name']}: Stage G's g and chi2 on the chdefs set are defs.json's", ok, p["name"])
+        c.check(f"XC {arm} {s['name']}: Stage G's g and chi2 on the chdefs set are defs.json's", ok, s["name"])
 
 
 def cmd_chain(a) -> int:
