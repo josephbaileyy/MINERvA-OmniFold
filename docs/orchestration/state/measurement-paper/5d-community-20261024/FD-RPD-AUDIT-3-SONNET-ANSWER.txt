@@ -1,0 +1,102 @@
+# Audit 3 of FD-RPD-DECLARATION.md (design part 1, revision 3), revision 3's new parts only
+
+**sha256 audited:** `a1ae3d96ca6d94888dffbf66b19d89ad0dc26ea4c69b7c34a0ad98e93f6ae35c` (699 lines; `shasum -a 256` before reading; matches the expected `a1ae3d96…`).
+Worktree `rpd-wt`, HEAD 5004c7a3, read-only. No git write, no cluster, no job. Scratch beside this file: `ec3.py` (EC toy), `oc.py` (R1 OC), `num3.py` (numbers), `show.py`, `res_id*.jsonl` (raw results; `res_id_BADUNITS.jsonl` is a discarded first run with offsets of order 1, ignore).
+
+**Verdict: 0 BLOCKING, 4 MAJOR, 9 MINOR, 2 NIT.** EC is reachable (toy below), the N0 and C1 mechanics are correct against the code, and every recomputed number reproduces. The defects are in stage D (what its R1 rule can see, what its simulations leave open) and in R1's SUBSET pattern.
+
+## 1. Findings
+
+### MAJOR
+
+| # | Where | What is wrong | Evidence | Requirement |
+|---|---|---|---|---|
+| A1 | §5 R1 patterns, "Operating characteristics" truths; §6.1 SUBSET row | SUBSET is essentially unreachable, and the declared SUBSET truths cannot be built as worded. CARRIES is tested against t̄, the share-weighted mean of 1G/1L/1M. If one of them carries step s and the others are 0, t̄ = s·e_X/E_B (0.445 s for 1G alone), not s. So "only 1G carrying, at t̄ = 3.5%/7%" is self-contradictory, and its carrier is PARTIAL, not CARRIES. SUBSET needs a resolved FREE member of the three, which is essentially 1L (e = 0.0127), the least resolvable. More precision makes it worse. | `oc.py`, exact linear-Gaussian model with σ²(t_X)=σ_u²(1/e_X+1/e_ref): P(SUBSET) = 0.000 (max 0.001) under all 3 "only X carries" truths, at σ₀ = 0.3/0.5/0.69% and t̄ = 3.5/7%. Truth "1G and 1M carry, 1L zero" (t̄ ≈ 0.9·step): P(SUBSET) = 0.12/0.42/0.007 at σ₀ = 0.2/0.3/0.5% (step 7%) and 0/0.16/0.49 at step 10%. Non-monotone in σ₀, since a precise measurement turns the carriers PARTIAL. | State what a SUBSET truth is (carrier step, free playlist, t̄ derived). Add a stage-D rule for SUBSET like the PERIOD-WIDE one (for example, drop the SUBSET sentence if P(SUBSET \| a reachable SUBSET truth) < x), or change CARRIES' reference so a subset truth is classifiable. As written, §6.1's SUBSET row is a licensed sentence the design cannot produce. |
+| A2 | §5 R1 stage-D rule | The rule is evaluated at the wrong operating point and almost never binds. It tests P(PERIOD-WIDE \| PW truth, t̄ = 7%) < 0.5. Stage 0 has already measured s₀ and σ₀, and SEES allows s₀ down to 3.47% with σ₀ up to s₀/5. | `oc.py` P(PW \| PW truth): at t̄ = 7%: 0.69/0.73/0.76 for σ₀ = 0.3/0.5/0.69%, 0.77 at 0.8%, 0.55 at 1.0%, 0.05 at 1.4%. At t̄ = 3.5%: 0.75/0.55/0.056 at σ₀ = 0.3/0.5/0.69%. Ceiling with every playlist resolved is about 0.75 (2σ multiplicity over about 9 resolved playlists). So at the SEES edge (s₀ 3.5%, σ₀ 0.69%) the rule keeps R1 (0.76) while the true chance of the pattern is 0.056. Rule fires only if σ₀ ≳ 1.0%, which SEES at s₀ < 5% already excludes. | Evaluate at t̄ = s₀ (known at stage D), and say what σ the simulation uses (known design σ vs a 30-replica estimate, ±13%). Keep 7% only as a secondary row. |
+| A3 | §5 Operating characteristics and "Reachability" (stage D) | The stage-D simulations leave choices open, so "run without choices" fails. R1 OC: how σ_d,X and σ(t̄) are formed (the t_X share A*, so they correlate; a model with independent t_X differs); whether σ is the design value or a replica estimate; the carrier's step; 1N–1P truth; the A*-minus-X reference share. Reachability: T1's "C_PL,5D's size" is a scalar word for a 16×16 shape (which metric, which scalar, tr M⁻¹C or per-cell σ_rel, and how an offset variance maps to a 3-group block that carries the k₁₂ factor); T3 "half of each" (half amplitude or half variance); "noise scaled … by 1/e" (SD or variance; which period's σ; PA/PB/PC differ; cell correlation; T_X MC variance); stage D's seeds; the number of noise-only datasets behind Σ̂_δ and Q̄_noise. 5B's readout does hold `g_5b` and `g_5b_noise_sigma` per period and cell, so T2 is well defined. | `FD-RPD-DECLARATION.md:413-421, 481-490`; readout keys `g_vs_5A.periods.PX.{g_5b,g_5b_noise_sigma}`. | Fix each choice in the text (a half-page spec), or state that part 2 fixes them and that stage D's rule outcome is then reported with the sensitivity to the open ones. |
+| A4 | §5 R2 Reachability, rule P(EC \| T1) < 0.2, with "200 inner datasets" | The rule's number depends on whether S0's calibration gate (α̂(a) ≤ 0.0646) is applied at 200 inner datasets. 0.0646 is a 3σ bound for 2,000. At 200 the bound is about 1σ, and α̂ for a correctly calibrated test exceeds it half the time. The gate then turns P(EC) into INCONCLUSIVE at random. | Toy, ex τ = 0.011: P(EC) = 0.97 gate off, 0.53 with the declared 0.0646 at 200 inner, 0.97 with 2,000 inner (30 outer). At τ = 0.006: 0.74 vs 0.34. At 200 inner the INCONCLUSIVE share is 0.46–0.65 under T1 at every scale ≥ 0.006. So the rule's 0.2 would flag spuriously for a truth whose true P(EC) is 0.4–0.5. | Say how the gate enters stage D: use the declared threshold with 2,000 inner (cost ×10, bound below), or rescale to the 3σ of the inner n, or compute P(EC) with the gate off and report it separately. |
+
+### MINOR
+
+| # | Where | What / requirement |
+|---|---|---|
+| m1 | §5 R2 EC, Plug-ins | EC's β̂₁ clause is almost vacuous at the real scale. β̂₁ ≥ 0.8 held in 100% of exchangeable datasets once offsets exceed about 0.6% (c 0.76→0.99), and EC then reduces to p_flux ≥ 0.05. It discriminates only in the noise-comparable regime (τ ≈ 0.3%: β̂₁ 0.34, EC 0.03). Remaining circularity is that c and Ĝ_P are the same Q_b(π_flux) that sets p_flux, but the toy shows it does not break the test: P(CLUSTERED \| exchangeable) = 0.01–0.05, and under exchangeable truth β̂₁ and p_flux are not anti-correlated enough to block EC. State that β̂₁'s role is a noise-floor check, not a power statement about the actual alternative. |
+| m2 | §4 N0-P | Not sufficient for its own stated purpose. The construction claims comp_k = comp_ALL in every cell, but N0-P checks only histogram sums. Add: O_k/denom_k = O_ALL/denom_ALL to 1e-12 where O_k > 0; denom_k = 0 ⇒ O_k = 0; `flux`, `n_nucleons`, `edges_*`, `nedges`, `axes` equal ALL's; `measured_weights` present (`s5c_unfold.load_inputs` needs it, `s5c_unfold.py:98-102`). "put back in their original order" needs the stored assignment vector; if regenerated by the same code and seed, say so, since the check is then partly tautological. |
+| m3 | §4 N0 reading | The trigger is not tied to an effect. SIZE-BIAS-g sends R2/R3 to INCONCLUSIVE for a bias seen only in the three playlists that total e = 0.058. A bias of 0.75 σ_single (the 61% power point) in a 1L cell moves Q_tot by e·b² ≈ 0.0127·(1.2%)². Print the induced change in F and p_flux (re-run the null with the measured b̄ added) and say whether it is decisive. The "30 draws" are 3 unequal-variance draws × 10 partitions (σ ∝ 1/√e differs 1.5× among the three), so the t₂₉ reference is approximate; say so. |
+| m4 | §6.3 | No row for SIZE-BIAS-t alone. The table's last data row covers only SIZE-BIAS-g. §4 says t-only makes e < 0.03 playlists UNRESOLVED in R1 and leaves R2 alone. Add that row. Say whether N0's t is computed when stage 0 is ABSENT/OTHER (R1 not computed). |
+| m5 | §4 N0 price | N0's 120 MC-truth runs (one `s5p_mc_truth_pred` per pseudo-npz, load of about 130 MB each), the 120 background dumps and the split writes (15.5 GB) are not in a job's cost. About 0.06–0.1 node-h, inside the 3.0 cap, outside "about 1.55". Name the step and its job. |
+| m6 | §4 C1 `flux` | "equal bin by bin to the staged Φ_X's integrated flux". The npz `flux` is `u2d.load_flux_bins(mcfile, hist, pt_edges)` (`nn_dump_inputs.py:82-89`), per p_T bin of the dump's grid, so the comparison must call the same function on the staged Φ_X at the same edges. Say so. The check does distinguish a default `--mcfile` (ALL's flux differs from each Φ_X), assuming no two playlists share a baseline flux file. |
+| m7 | §5 compute bound, stage D | Plausible but tight on a loaded login node, and truncation is undefined. My code (one process, BLAS 1 thread, node load average about 95): 6.7 ms per 9,240-partition sweep, so readout ≈ 12,000 sweeps ≈ 80 s, stage D ≈ 600,000 sweeps (500 × 5 × 200 + noise-only) ≈ 67 min. At 2,000 inner (A4's fix) ×10 ≈ 11 h, which breaks the 2 h bound, so the bound and A4's remedy interact. State what is reported if the 2 h stop is reached (fewer outer datasets? no verdict?). |
+| m8 | §3 stage-D wording | §4 "Gates" says "pre-job-B decision rules … at stage D, before job A"; §5 says "before job A". Use one name. |
+| m9 | §5 R1 rule vs §4 N0 | "Detectable bias printed in σ and in % of the cell offset" fine, but "the cell offset" for a null with true offsets 0 is undefined (N0 has no real offset). Print against the real g_X's median |g| of 1L, 1B, 1O instead, or drop the phrase. |
+
+### NIT
+- n1: "approximately" e (§5, §4's e < 0.03 for 1O at 0.0280): the 7% margin to 0.03 means the three "smallest" are decided by the real e. Pin e from F1's staged POT and flux.
+- n2: K2′ cost "2 × 140 s": the replica unfold includes the refinement refit and is slightly longer; harmless against job A's 1.0 node-h cap.
+
+## 2. EC reachability toy (scope 1)
+
+**Model.** 12 playlists, the stated shares (normalized), 16 cells, M = identity (also the whitening of any M whose noise is proportional to it). r_X = 1 + δ_X + ε_X, ε sd = s/√e_X per cell, independent, **s = 0.0016** (so playlist noise 0.43% for 1F … 1.42% for 1L; period-mean noise 0.22/0.29/0.38%, matching 5B's committed `g_5b_noise_sigma` medians 0.19/0.33/0.37% at the period shares). All 9,240 (6,3,3) partitions enumerated; π_flux = {1A–1F},{1G,1L,1M},{1N,1O,1P}; p_flux with ties counted. Σ_δ = Σ e g gᵀ/(1−V2) less the noise-only mean, PSD-projected; S0 at a ∈ {0, .5, 1, 2}; S1 = c·Ĝ_P(X) with c = √max(0, 1 − Q̄_noise/Q_b(π_flux)); β̂₁ = share with p_flux < 0.05; EC = calibrated, p_flux ≥ 0.05, β̂₁ ≥ 0.8; CLUSTERED = calibrated, p_flux < 0.05; rest INCONCLUSIVE.
+**Differences from the declaration:** noise Gaussian, not resampled replica deviations; 100 outer datasets, **200 inner** per S0 point, per S1 and for the noise-only reference (declared 2,000 in R2, 200 at stage D); T_X MC variance not added; μ = 1 (shape-only). Monte Carlo error on a share p: ±0.05 at p ≈ 0.5, ±0.02 at p ≈ 0.05.
+**Truths.** (a) exchangeable: δ_X iid N(0, τ²) per cell. (b) clustered: δ_X = G_P(X), G_P iid N(0, κ²) per cell and period. (c) mixed: each of (a) and (b) at variance ½·scale².
+**Reference scale:** 5B's committed period offsets g_X have rms 0.55% (PA), 3.0% (PB), 5.2% (PC); C_PL,5D's per-cell σ_rel is 0.4–2.7%.
+
+Shares of (CLUSTERED / EC / INCONCLUSIVE), **gate off** (calibration assumed passed), 200 inner:
+
+| truth | scale (sd per cell) | CLUSTERED | EC | INCONC. | mean β̂₁ | mean c |
+|---|---|---|---|---|---|---|
+| (a) exchangeable | 0 | 0.01 | 0.00 | 0.99 | 0.10 | 0.17 |
+| (a) | 0.003 | 0.03 | 0.03 | 0.94 | 0.34 | 0.45 |
+| (a) | 0.006 | 0.05 | **0.74** | 0.21 | 0.89 | 0.76 |
+| (a) | 0.011 | 0.02 | **0.98** | 0.00 | 1.00 | 0.91 |
+| (a) | 0.02 | 0.03 | **0.97** | 0.00 | 1.00 | 0.97 |
+| (a) | 0.05 | 0.02 | **0.98** | 0.00 | 1.00 | 0.99 |
+| (b) period clustering | 0.001 | 0.10 | 0.00 | 0.90 | 0.17 | 0.27 |
+| (b) | 0.003 | 0.80 | 0.02 | 0.18 | 0.73 | 0.68 |
+| (b) | 0.01 | 1.00 | 0.00 | 0.00 | 1.00 | 0.96 |
+| (b) | 0.03 | 1.00 | 0.00 | 0.00 | 1.00 | 0.99 |
+| (c) mixed | 0.006 | 0.82 | 0.16 | 0.02 | 0.98 | 0.84 |
+| (c) | 0.011 | 0.97 | 0.03 | 0.00 | 1.00 | 0.95 |
+| (c) | 0.03 | 0.99 | 0.01 | 0.00 | 1.00 | 0.99 |
+| (c) | 0.05 | 0.99 | 0.01 | 0.00 | 1.00 | 1.00 |
+
+**With the declared gate α̂(a) ≤ 0.0646 at 200 inner** (the toy artifact of A4): EC is 0.34 (a, 0.006), 0.53 (0.011), 0.48 (0.02), 0.48 (0.05); CLUSTERED under (b) 0.36 (0.003), 0.46 (0.01), 0.36 (0.03); INCONCLUSIVE 0.46–0.65 throughout. **With 2,000 inner (30 outer datasets):** (a) 0.011: 0.03 / 0.97 / 0.00; (b) 0.003: 0.83 / 0.00 / 0.17. So the gate itself passes at the declared n.
+
+**Reading.**
+- **EC is reachable.** P(EC) is 0.74–0.98 under exchangeable offsets from τ ≈ 0.6% upward, which is below T1's scale (C_PL,5D's size, τ ≈ 1%) and below 5B's observed period offsets. So P(EC | T1) ≈ 0.97 and stage D's 0.2 flag would not fire on a design-time T1.
+- **Where it is not:** noise-dominated offsets (τ ≤ 0.3%: EC ≤ 0.03), under any clustering of non-negligible size (EC ≤ 0.02 for κ ≥ 0.003), and in the mixed truth beyond a small band (EC 0.16 at 0.6%, ≤ 0.03 above).
+- **Calibration and size:** P(CLUSTERED | exchangeable) = 0.01–0.05, the nominal 0.05 at most. The test is conservative, not liberal, in this toy.
+- **Separation:** CLUSTERED and EC are nearly disjoint at every scale ≥ 0.006. At a mixed truth with equal variance, CLUSTERED wins (0.97): a half-clustered truth is not read as EC.
+- **Not run:** a correlated metric M (the whitened statistic is what enters; a non-identity M with noise not proportional to it was not simulated) and the declared replica-resampled noise. Both are stage D's job.
+
+## 3. Recomputed numbers (`num3.py`, `oc.py`)
+
+| item | declared | recomputed |
+|---|---|---|
+| t₂₉ two-sided 0.01/16 | 3.835 | 3.8350 |
+| t₂₉ two-sided 0.01 | 2.756 | 2.7564 |
+| per-cell / step false-fire | | 0.000625 / 0.0100 |
+| family level (16 cells + step) | about 0.02 | 0.01985 (independent cells) |
+| power, cell bias 0.75 / 1.0 σ_single | 0.61 / 0.93 | 0.608 / 0.933 (0.5 σ: 0.171) |
+| power, step bias 0.5 / 0.75 σ | 0.50 / 0.90 | 0.503 / 0.902 (1.0 σ: 0.995) |
+| ν for 5B's three shares / 68% interval | 1.824, 0.73–2.56 | 1.8242, 0.734–2.564 |
+| ν₁₂ and interval | 7.98, 0.82–1.38 | 7.982, 0.823–1.383 (with the approximate shares) |
+| N0 price: 10 rounds | +0.31 node-h | 10 × 900 / 8 = 1,125 s = 0.313 |
+| +20 rounds of replicas | +0.63 | 20 × 900 / 8 = 2,250 s = 0.625 |
+| job B | 41 × 900 / 8 = 4,610 s, 1.28 | 4,612.5 s, 1.281 (492 = 41 × 12) |
+| total | about 1.55; at most 3.0 | 0.25 + 1.281 = 1.53; 1 h + 2 h = 3.0 |
+| F-evaluations, readout / stage D | 1.1 × 10⁸ / 5 × 10⁹ | 1.109 × 10⁸ / 4.6 × 10⁹ (5.5 × 10⁹ with the noise-only reference) |
+
+Power is for one cell biased; with all 16 biased, 0.5 σ already fires at 0.95. The 30 draws are 3 unequal-variance draws per partition, so the powers are approximate.
+
+## 4. Answers by scope item
+
+**1. S1 held fixed.** Well defined (Ĝ_P = Σ e g/E per period; c scalar; Q̄_noise the noise-only mean of Q_b(π_flux)); the noise-only dataset count and seed order are the only gaps (A3). β̂₁ is meaningful only as a noise-floor check (m1). The circularity (Ĝ, c, p_flux from one g) is real but does not defeat the test in the toy (CLUSTERED \| exchangeable ≤ 0.05; EC 0.97). Revision 2's cap is gone: P(EC) reaches 0.98.
+
+**2. Stage D.** No playlist data is used: R1's σ_u comes from stage 0's σ₀ (period data), R2's T2 from 5B's committed period offsets and noise. Not enough to run without choices (A3). The R1 rule is aimed at the wrong point (A2) and the SUBSET pattern is outside any rule (A1). The EC rule is consistent with §6.2/§10 in text, but its value depends on the gate (A4). The "login bound" holds for the readout and for stage D at 200 inner (about 67 min by my measurement under heavy load, inside 2 h) and fails if A4 is fixed by 2,000 inner (m7).
+
+**3. N0.** Ratio-preserving `denom_nd` keeps completeness equal to ALL's in every cell where O_ALL > 0, as algebra and the code say: the unfold forms comp = Σ w_truth(pass_truth rows)/`denom_nd` at `s5c_unfold.py:138-142` (the trace class at `s5e_trace.py:286-290` does the same); T_X is `denom_nd`-proportional, so r_X = X/T is the push-weighted cell mean and carries no completeness noise, as declared. Σ_k `denom_nd`_k = ALL's holds exactly (Σ e = 1). The pseudo-inputs are valid for `s5p_numerics.py` if the npz carries the 13 `load_inputs` keys and the bkg dump's meta names the pseudo-npz (lines 160-172; `bkg_nd` is loaded but unread by `build_data`). A bootstrap would perturb O but not `denom_nd`; N0 has none. N0-P is decidable, not sufficient (m2). Thresholds, family level and powers reproduce; triggers are coherent with R1 and R2 except for §6.3's missing row (m4). Price reproduces (1.53, cap 3.0); N0's truths and split are unpriced (m5).
+
+**4. C1 lines and K2′.** Decidable and correct. mc_pot is read exactly as `unfold_2d…:117-126` (`get_pot_scales`, `mc_par.GetVal()`); weights are float64 `w × pot_scale` (`unfold_nd…:338, 567`) with a `0 ≤ w` filter, so zero weights occur and the exact-zero rule is needed; s_ALL as a sum tests additivity jointly with the weight predicate. Both defaults exist as cited (`nn_dump_inputs.py:33`, `s5p_input_dumps.py:202`); `lateral` also checks its flux against the nn npz (line 166). Gap: m6. K2′ replica b3001: `unf/PC/5b_PC_b3001_j-.npz` is INVENTORY row 41; 3001 is PC's own block; estimator seed 42 default; `--pairs=3001:-` reproduces `product_name`. Correct and decidable. Replica seeds 4000 + 100i + k (4101–5230) overlap neither 5B's 1001–3010 nor one another, and their streams (b, b + 10⁷, b + 2·10⁷) stay disjoint.
+
+**5. §13 dispositions.** M1 holds (EC reachable, toy). M2 holds (thresholds, family level and power reproduce). M3 holds for the construction, not fully for N0-P (m2). M4, M5 hold. M8 does not hold in substance: the rule exists but cannot bind where it matters (A2) and does not cover SUBSET (A1). m4 holds except §6.3 (m4). m9 holds. n2 holds for the readout and the 200-inner stage D (m7).

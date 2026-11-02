@@ -1,13 +1,22 @@
-# DECLARATION RPD, part 1 (design), revision 3: the run-period diagnosis, with its readouts and their reading fixed before any number is read (2026-11-02)
+# DECLARATION RPD, part 1 (design), revision 4: the run-period diagnosis, with its readouts and their reading fixed before any number is read (2026-11-02)
 
 **By** the `limitation-resolver` lane, for the director to bind after a fresh Sonnet audit.
 
-**Revision 3** answers the second audit, `FD-RPD-AUDIT-2-SONNET-ANSWER.txt` (of revision 2, sha256 `9fc61f3e…`). It
+**Revision 4** answers the third audit, `FD-RPD-AUDIT-3-SONNET-ANSWER.txt`. That audit covered revision 3's new parts
+only (sha256 `a1ae3d96…`) and found 0 BLOCKING, 4 MAJOR, 9 MINOR and 2 NIT. Its own toy confirmed that
+EXCHANGEABLE-COMPATIBLE is reachable: P(EC) is 0.74–0.98 under exchangeable offsets of 0.6% and more, and EC and
+CLUSTERED are nearly disjoint. §14 gives each disposition. The main changes:
+- CARRIES is tested against half of t̄, so a single-carrier SUBSET is classifiable;
+- stage D runs at stage 0's s₀, with every simulation choice fixed and the calibration gate off at 200 inner datasets;
+- N0-P checks completeness equality and the stored assignment vectors;
+- N0's preparation is priced.
+
+**Revision 3** answered the second audit, `FD-RPD-AUDIT-2-SONNET-ANSWER.txt` (of revision 2, sha256 `9fc61f3e…`). It
 found 0 BLOCKING, 8 MAJOR, 12 MINOR and 3 NIT, and judged 12 of the first audit's 18 findings resolved and 6 partly
 resolved. §13 gives each disposition. The main changes:
 - R2's power alternative is now the observed period structure, held fixed, not a rank-2 Gaussian draw. That draw made
   EXCHANGEABLE-COMPATIBLE unreachable by construction;
-- pre-job-B decision rules use the design-time simulations of R1 and R2;
+- stage-D decision rules, applied before job A, use the design-time simulations of R1 and R2;
 - N0 has 10 partitions, t thresholds, a ratio-preserving `denom_nd`, a partition control, and stated power. Its two
   triggers act separately;
 - C1 reads mc_pot from the staged loops and checks the npz `flux` key, and no default path is opened;
@@ -105,14 +114,14 @@ which sentence each outcome may move.
 |---|---|---|---|
 | S | login | O_NOATIME staging copies, sha256-checked, of every pre-existing input (§1); the 12 per-playlist flux files built from the copies; F1 (§4) | 0 |
 | 0 | login, after S | the dr_PB/PA p∥ step from 5B's existing period unfolds, with its bootstrap distribution (§3) | 0 |
-| D | login, after 0 | the design-time simulations of R1 and R2 and their pre-job-B rules (§5) | 0 |
-| A | 1 node | the 12 per-playlist inputs; K2′'s two unfolds; N0's 10 pseudo-playlist partitions built (§2, §4) | about 0.25 |
+| D | login, after 0 | the design-time simulations of R1 and R2 and their rules, applied before job A (§5) | 0 |
+| A | 1 node | the 12 per-playlist inputs; K2′'s two unfolds; N0's 10 pseudo-playlist partitions built, with their 120 MC truths (§2, §4) | about 0.35 |
 | C | login | C1, K2′, N0-P (§4); F1 ran at stage S | 0 |
 | B | 1 node | 12 × 31 playlist unfolds, plus N0's 120 unfolds (§2, §4) | about 1.3 |
 | R | login | N0's reading, then R1–R3 with the simulated nulls (§4, §5) | 0 |
 | H | login | the HPSS copy, after maintenance ends 2026-11-06 17:00 (§8) | 0 |
 
-**Price: about 1.55 node-h expected, at most 3.0** (§7). Every job is under 12 h, on CPU, at QOS regular.
+**Price: about 1.65 node-h expected, at most 3.0** (§7). Every job is under 12 h, on CPU, at QOS regular.
 
 ## 1. Inputs, and why the zero loops
 
@@ -280,7 +289,7 @@ with MP-1's `lat_zero.npz` and `lat_zero_bkg.npz`.
 | `denom_nd`, `bkg_nd` (histograms) | **Σ_X (s_ALL / s_X) · H_X equals H_ALL** to 10⁻⁹ relative per non-empty bin. 10⁻⁹ allows the summation order; empty bins equal exactly |
 | `data_pot` | Σ_X data_pot_X = ALL's, to 10⁻¹² relative |
 | `axes`, `edges_*`, `nedges`, `n_nucleons` | **equal** in every file |
-| `flux` | **equal bin by bin to the staged Φ_X's** integrated flux, to 10⁻¹² relative. This catches a dump that took a default `--mcfile` |
+| `flux` | **equal bin by bin to `u2d.load_flux_bins(Φ_X, "pTmu_reweightedflux_integrated", <the dump's p_T edges>)`** on the staged Φ_X (the function the dump calls, `nd-unfolding/nn_dump_inputs.py:82-89`), to 10⁻¹² relative. This catches a dump that took a default `--mcfile`, because each playlist's baseline flux differs from ALL's |
 | `measured_weights` | **differs by construction.** It is a per-bin function of X's own data and background histograms (`unfold_nd_omnifold_unbinned.py:581-602`), and the (e) unfold does not read it (§2). C1 instead recomputes it from X's own arrays and requires equality to 10⁻¹² (self-consistency). Its difference from ALL's is printed, not graded |
 
 A key outside this table stops part 2's review. If C1 passes, the per-playlist inputs are a partition of the inputs
@@ -325,7 +334,13 @@ real shares e_X.
 - Σ_k `data_pot`_k equals ALL's to 10⁻¹² relative;
 - Σ_k `denom_nd`_k and Σ_k `bkg_nd`_k equal ALL's to 10⁻⁹ relative per non-empty bin;
 - each pseudo-playlist's realized data share is within 5 multinomial σ of e_k;
-- each background dump's meta names its pseudo-npz.
+- each background dump's meta names its pseudo-npz;
+- **the completeness is equal:** O_k / `denom_nd`_k = O_ALL / `denom_nd`_ALL to 10⁻¹² relative wherever O_k > 0, and
+  `denom_nd`_k = 0 implies O_k = 0 (O as `nd-unfolding/s5c_unfold.py:139-143` forms it);
+- `flux`, `n_nucleons`, `edges_*`, `nedges` and `axes` equal ALL's, and `measured_weights` is present, since
+  `s5c_unfold.load_inputs` requires it (`nd-unfolding/s5c_unfold.py:98-102`);
+- **the assignment vectors are stored** (one int8 per row and tree, in N0's receipt), and the bitwise check reorders by
+  them. It is not regenerated from the seed, so the check does not merely repeat the split code.
 
 **The reading, fixed here.** Take the three smallest-share pseudo-playlists (the analogues of 1L, 1B and 1O, all with
 e < 0.03) over the 10 partitions: 30 draws.
@@ -334,11 +349,18 @@ e < 0.03) over the 10 partitions: 30 draws.
 - **SIZE-BIAS-g** fires if any cell has |b̄_c| / SE > **3.835**, the t₂₉ two-sided quantile at 0.01/16.
 - **SIZE-BIAS-t** fires if |b̄_t| / SE > **2.756**, the t₂₉ two-sided quantile at 0.01.
 - The family false-fire level is about 0.02 if the cells are independent **(arithmetic)**.
+- **The t₂₉ reference is approximate.** The 30 draws are 3 playlists of unequal variance × 10 partitions, and σ differs
+  by up to 1.5× among the three.
 - **Power:** treating the 30 draws as independent, a cell bias of 0.75 or 1.0 single-draw σ is caught with
   probability about 0.61 or 0.93, and a step bias of 0.5 or 0.75 σ with about 0.50 or 0.90 **(arithmetic, noncentral
   t)**. The single-draw σ of a small playlist's cell offset is printed. The detectable bias is printed in that σ and in
   % of the cell offset.
 - **Not firing is not a clearance.** It means no bias at those sizes was seen.
+- **The detectable bias** is printed in σ, and in % of the real median |g_X| of 1L, 1B and 1O from R2. A null has no
+  offset of its own to compare it with.
+- **The effect is printed with the trigger.** If SIZE-BIAS-g fires, R2's null is re-run with b̄ added to the three
+  small playlists, and the induced change in F and p_flux is printed. The consequence below stands either way; the
+  print shows how decisive it was.
 - The slopes of g and t against e over all 120 pseudo-playlists are printed.
 
 **The consequence, by trigger:**
@@ -351,9 +373,16 @@ e < 0.03) over the 10 partitions: 30 draws.
 **The limit.** Each real playlist has its own MC sample and MC/data ratio, while N0 splits ALL's MC in proportion. So
 N0 measures size-dependence at proportional MC only.
 
+**Where N0's preparation runs.** Job A runs the split (10 partitions × 12 pseudo-npz files and background dumps, about
+15.5 GB of writes) and the 120 MC-truth runs (`s5p_mc_truth_pred.py`, one per pseudo-npz), in its lanes after the
+playlist inputs. It is priced in §7.
+
 **Gates:** job B is submitted only after F1 (stage S), and C1, K2′ and N0-P (stage C), pass on this deploy's records,
-through a gate in the submit stage, as in 5B. The pre-job-B decision rules of §5 are applied and reported to the
-director at stage D, before job A.
+through a gate in the submit stage, as in 5B. Stage D's rules (§5) are applied and reported to the director before
+job A.
+
+**N0's step t** is computed in every stage-0 branch, but only R1 uses it. Under ABSENT or OTHER, a SIZE-BIAS-t fire is
+printed and changes nothing.
 
 **Q3** (readout): every unfold and MC-truth integral is positive and finite on L, on H and on each reporting cell.
 
@@ -368,6 +397,9 @@ director at stage D, before job A.
   depends on it.
   - Approximately, e runs from 0.0127 (1L) to 0.1575 (1F): 5B's period shares split by data POT
     (`2d-closeout/playlist-spread-20261014/outputs/potcheck.json`).
+  - **The e used everywhere,** including N0's "e < 0.03" set and stage D, is computed at stage S from the staged loops'
+    data POT and the staged Φ_X, and recorded with F1. 1O's approximate 0.0280 is within 7% of 0.03, so the real
+    value decides it.
 - Replica k of any combination uses replica k of every member. Every noise σ includes T_X's MC variance (§2).
 
 ### R1, where the step is (fine p∥; computed only under stage-0 SEES)
@@ -383,21 +415,25 @@ their own mean. T's MC variance is added in quadrature: the Σw² of each member
 propagated to first order through the step formula.
 
 **The quantities:**
-- t_X = s_{X/A*_X}, with σ_X from the 30 replicas;
-- **t̄** = the recombined 1G/1L/1M step against A*: s_{PB*/A*}, where PB* is the exposure-weighted combination of
-  1G, 1L and 1M. It is the scale, so 5B's pooled s₀, whose mix effect differs, is not used here;
-- d_X = t_X − t̄, with σ_d,X the SD of d_X over the replicas. That SD carries t̄'s noise and its correlation with
-  t_X.
+- t_X = s_{X/A*_X}, with σ_X;
+- **t̄** = the recombined 1G/1L/1M step against A*, s_{PB*/A*}. It is the scale. 5B's pooled s₀ has a different mix
+  effect, so it is not used here;
+- h_X = t_X − t̄/2, with σ_h,X. Its replica SD carries t̄'s noise and its correlation with t_X.
 
 R1 is computed only if t̄ > 0 and t̄ / σ(t̄) ≥ 3. Otherwise it is **NOT COMPUTED**, and no R1 wording is licensed.
 
-**Classes,** for each X:
-- **UNRESOLVED** if max(σ_X, σ_d,X) ≥ t̄/4, or if N0's SIZE-BIAS-g or SIZE-BIAS-t fired and e_X < 0.03 (§4);
-- **CARRIES** if |d_X| ≤ 2σ_d,X;
-- **FREE** if |t_X| ≤ 2σ_X;
+**Classes,** for each X. Revision 4 redefines CARRIES against half of t̄, not t̄ itself (audit 3, A1). The reason: t̄
+is the group's exposure-weighted mean. If one playlist carries a step and the others carry none, that one sits well
+above t̄ and the others near 0. Testing CARRIES against t̄ would call the single carrier PARTIAL, which makes SUBSET
+unreachable.
+- **UNRESOLVED** if σ_X ≥ t̄/4, or if N0's SIZE-BIAS-g or SIZE-BIAS-t fired and e_X < 0.03 (§4);
+- **FREE** if |t_X| ≤ 2σ_X: consistent with no step;
+- **CARRIES** if h_X ≥ 2σ_h,X: a step significantly larger than half the group's;
 - **PARTIAL** otherwise.
 
-For a resolved X, CARRIES and FREE are disjoint: t_X then lies within 2σ < t̄/2 of both t̄ and 0, which cannot happen.
+FREE and CARRIES are disjoint for any t̄ > 0. FREE needs t_X ≤ 2σ_X, while CARRIES needs t_X ≥ t̄/2 + 2σ_h,X. Those
+regions overlap only if σ_X − σ_h,X ≥ t̄/4, and that is excluded because a resolved X has σ_X < t̄/4. Part 2's tests
+check this numerically, alongside the enumeration below.
 
 **Patterns, a partition evaluated in this order.** The first that holds is the outcome:
 1. **PERIOD-WIDE:** at least two of 1G, 1L and 1M are resolved, and every resolved one of the three CARRIES; and at
@@ -406,23 +442,49 @@ For a resolved X, CARRIES and FREE are disjoint: t_X then lies within 2σ < t̄/
    none is PARTIAL; and at least one 1A–1F playlist is resolved and every resolved one is FREE.
 3. **OTHER:** everything else.
 
-Rules 1 and 2 cannot both hold, because 1 requires all resolved 1G/1L/1M to CARRY and 2 requires one to be FREE.
-Part 2's tests enumerate every class assignment of the nine playlists 1A–1M (UNRESOLVED, CARRIES, FREE and PARTIAL)
-and assert exactly one outcome for each. 1N–1P are printed with their classes and enter no pattern.
+Rules 1 and 2 cannot both hold, because 1 requires every resolved 1G/1L/1M playlist to CARRY and 2 requires one to be
+FREE. Part 2's tests enumerate every class assignment of the nine playlists 1A–1M (UNRESOLVED, CARRIES, FREE and
+PARTIAL) and assert exactly one outcome for each. 1N–1P are printed with their classes and enter no pattern.
 
-**Operating characteristics, and a rule that uses them (stage D, login, after stage 0, before job A).**
-- **The design σ.** σ²(t_X) ≈ σ_u² (1/e_X + 1/e_ref), with σ_u fixed so that the PB/PA period step's σ equals stage 0's
-  σ₀ at the period shares. No playlist number is used.
-- **The table:** the pattern probabilities under four declared truths, PERIOD-WIDE and SUBSET with only 1G, only 1L or
-  only 1M carrying, each at t̄ = 3.5% and 7%, from 20,000 Gaussian draws (seed 20261102).
-- **The rule, fixed here:** if P(PERIOD-WIDE | the PERIOD-WIDE truth at t̄ = 7%) < 0.5, R1 is **DROPPED** before job A.
-  Its classes are still printed at readout, but no R1 wording is licensed. The stage-D report goes to the director
-  before job A is submitted.
-- **At readout,** the table is printed again with the measured replica σ. It is descriptive and changes no outcome.
-- The rough scaling (audit, finding 11) puts 1L and 1B, and probably 1O, as UNRESOLVED at any t̄ below about 6%. If so,
-  PERIOD-WIDE then rests on 1G and 1M, and that is stated here.
-- **Multiplicity.** About 12 playlists × 2 two-sided 2σ tests. The OC table gives the resulting chance of OTHER under
-  each truth.
+**The noise convention, restated:** σ_X, σ_h,X and σ(t̄) are each the replica SD of their own quantity, as defined
+above.
+
+**Operating characteristics, and two rules that use them (stage D, login, after stage 0, before job A).**
+
+**The model, fully specified.** It is linear and Gaussian, and uses no playlist number:
+- each playlist has a step contribution u_X ~ N(μ_X, σ_u²/e_X), independent across playlists;
+- t_X = u_X − ū_{A*_X}, where ū is the exposure-weighted mean over A*_X's members;
+- t̄ = ū_{PB*} − ū_{A*};
+- h_X = t_X − t̄/2;
+- all σ come from this model exactly, so the correlations are carried;
+- σ_u is fixed by σ₀² = σ_u² (1/E_PB + 1/E_PA) with the period shares, so the model reproduces stage 0's σ₀;
+- the e are F1's staged values (§4).
+
+**Declared truths.** Every 1A–1F and 1N–1P playlist has μ = 0, and s₀ is stage 0's measured step:
+- **PW:** μ = s₀ for 1G, 1L and 1M;
+- **S-1G:** μ_1G = s₀ E_PB / e_1G, others 0, so that the group mean is s₀;
+- **S-1M:** μ_1M = s₀ E_PB / e_1M, others 0;
+- **S-1G1M:** μ = s₀ E_PB / (e_1G + e_1M) for 1G and 1M, μ_1L = 0.
+
+A truth in which 1L alone carries would need a step about 23 times s₀, so it is not declared.
+
+**Draws:** 20,000 per truth, NumPy seed 20261102 + 2000. Each draw applies the class and pattern rules above.
+
+**The rules, fixed here:**
+- If P(PERIOD-WIDE | PW) < 0.5, the PERIOD-WIDE sentence is **DROPPED**.
+- If max over S-1G, S-1M and S-1G1M of P(SUBSET | truth) < 0.5, the SUBSET sentence is **DROPPED**.
+- A dropped sentence's classes are still printed at readout. The stage-D report goes to the director before job A is
+  submitted.
+
+**Printed beside the rules,** descriptive: the same table at t̄ = 7%.
+
+**The multiplicity ceiling.** With 2σ FREE tests over about six resolved 1A–1F playlists, P(all FREE) is about 0.75
+even when every truth holds. So a probability near 0.75 is the best attainable, and the rules' 0.5 is set below it.
+
+**At readout,** the table is printed again with the measured replica σ. It is descriptive and changes no outcome.
+
+The rough scaling (audit 1, finding 11) puts 1L and 1B, and probably 1O, as UNRESOLVED at any t̄ below about 6%. If so,
+PERIOD-WIDE rests on 1G and 1M, and that is stated here.
 
 ### R2, do the 16-cell offsets differ between the period groups? (read in every branch)
 
@@ -477,17 +539,31 @@ printed and decides nothing.
 **Plug-ins.** Σ_δ, Ĝ and c come from the same 12 playlists that are tested. If the period structure is
 noise-dominated, c ≈ 0 and β̂₁ ≈ α, and EXCHANGEABLE-COMPATIBLE cannot occur. That is stated, and it is the right
 answer: no clustering would have been detectable.
+- **β̂₁'s role is a noise-floor check.** It is not a power statement about an unknown alternative. In audit 3's toy,
+  β̂₁ ≥ 0.80 held in every exchangeable dataset once offsets exceeded about 0.6%, and it bound only in the
+  noise-comparable regime. At the real scale, EC then reduces to p_flux ≥ 0.05.
+- In that toy, the remaining link between Ĝ, c and p_flux did not bias the test: P(CLUSTERED | exchangeable) was
+  0.01–0.05 (`FD-RPD-AUDIT-3-SONNET-ANSWER.txt` §2).
 
-**Reachability, before job A (stage D).** The design-time simulation runs with the real M and e, and noise scaled from
-5B's committed period noise by 1/e (`fd/readout/fd_ct_5b_periods.json`). It prints P(CLUSTERED), P(EC) and
-P(INCONCLUSIVE) under three declared truths, using 500 outer datasets, each with the full S0/S1 machinery at 200 inner
-datasets:
-- **T1, exchangeable:** iid playlist offsets whose three-group block has C_PL,5D's size;
-- **T2, clustered:** 5B's period offsets g_X (committed in that readout), held by every playlist of the period;
-- **T3:** half of each.
+**Reachability, before job A (stage D), fully specified.** It uses no playlist number.
+- **The metric** is the real M, and e is F1's staged shares.
+- **Noise:** for playlist X in period P, cell c is Gaussian with SD σ_{P,c} √(E_P / e_X). σ_{P,c} is 5B's committed
+  `g_vs_5A.periods.P.g_5b_noise_sigma` (`fd/readout/fd_ct_5b_periods.json`), so the variance scales as 1/e within a
+  period. Cells are independent. No T term is added, since 5B's noise already holds its own.
+- **T1, exchangeable:** δ_X iid N(0, Σ_T1), with Σ_T1 = C_PL,5D,rel / V2₁₂. Then the exposure-weighted mean of the 12
+  offsets has covariance V2₁₂ Σ_T1 = C_PL,5D,rel: the reported block's relative form.
+- **T2, clustered:** every playlist of period P holds 5B's committed `g_vs_5A.periods.P.g_5b`.
+- **T3, mixed:** δ_X = (T2's offset)/√2 + (a T1 draw)/√2, so half of each variance.
+- **Sizes:** 500 outer datasets per truth. Each forms Σ̂_δ and Q̄_noise from 200 noise-only datasets, then runs S1's
+  200 inner datasets. NumPy seed 20261102 + 3000.
+- **The calibration gate is off at stage D,** because S0's 0.0646 bound is a 3σ limit for 2,000 inner datasets.
+  Applied at 200 it would turn EC into INCONCLUSIVE at random (audit 3, A4). P(EC) is computed with calibration
+  assumed. S0's α̂ at 200 inner is printed beside it, descriptive. At the readout the gate is on, at 2,000.
+- **Printed:** P(CLUSTERED), P(EC) and P(INCONCLUSIVE) under T1, T2 and T3.
 
 **The rule, fixed here:** if P(EC | T1) < 0.2, the stage-D report states that the 12-playlist wording (§6.2's EC rows)
-is not expected to be reachable. R3 is still printed: it costs no node-h. The director may then re-scope before job A.
+is not expected to be reachable. R3 is still printed, since it costs no node-h. The director may then re-scope before
+job A.
 
 **Outcomes, a partition evaluated in this order:**
 1. **INCONCLUSIVE:** N0's SIZE-BIAS-g fired; or the test is not calibrated; or neither of the next two holds.
@@ -496,10 +572,12 @@ is not expected to be reachable. R3 is still printed: it costs no node-h. The di
    which would have been detected on its own, is hidden by within-period scatter. It does not show that the offsets
    are exchangeable.
 
-**Compute on the login node.** About 1.1 × 10⁸ evaluations of F at the readout: 2,000 datasets × 9,240 partitions ×
-6 points. Stage D's 500 outer datasets, each with 5 × 200 inner, cost about 5 × 10⁹. Each evaluation is a whitened group sum on 16 cells, so
-the work is vectorized. Each run is bounded at 2 h under `nice -n 19` on one login node; past that it stops and is
-reported **(estimate)**.
+**Compute on the login node.** Audit 3 measured one 9,240-partition sweep at about 6.7 ms on a loaded login node.
+- The readout needs about 12,000 sweeps, so about 2 min.
+- Stage D needs 3 truths × 500 × (200 + 200) sweeps, so about 600,000, or about 67 min **(estimate)**.
+- Each run is bounded at 2 h under `nice -n 19` on one login node.
+- **If stage D reaches 2 h,** it reports the outer datasets it completed and the probabilities from them. If fewer
+  than 200 per truth completed, the rule gives no verdict, and the director decides before job A.
 
 ### R3, the size from twelve playlists (always printed; read only under EXCHANGEABLE-COMPATIBLE)
 
@@ -541,8 +619,8 @@ In line 112 the sentence is appended after "…these data cannot establish which
 
 | R1 pattern | line 112 (2D) | `sec_fived16.tex:125` (5D) |
 |---|---|---|
-| **PERIOD-WIDE** | append: "In the five-dimensional analysis the step appears in each of that group's playlists that the data resolve ([1G/1L/1M list]), which the simulation reweights to the same flux file; no step larger than half of it is seen in the resolved earlier playlists ([1A–1F list]); [list] are not resolved. The cause is not known." | the same sentence, in that section's terms |
-| **SUBSET** | append: "In the five-dimensional analysis, of that group's playlists, which the simulation reweights to the same flux file, the step appears in [CARRIES list] and no step larger than half of it is seen in [FREE list]; nor in the resolved earlier playlists ([1A–1F list]); [list] are not resolved. The cause is not known." | the same |
+| **PERIOD-WIDE** | append: "In the five-dimensional analysis a step larger than half of the group's appears in each of that group's playlists that the data resolve ([1G/1L/1M list]), which the simulation reweights to the same flux file; no step larger than half of the group's is seen in the resolved earlier playlists ([1A–1F list]); [list] are not resolved. The cause is not known." | the same sentence, in that section's terms |
+| **SUBSET** | append: "In the five-dimensional analysis, of that group's playlists, which the simulation reweights to the same flux file, a step larger than half of the group's appears in [CARRIES list], and no step larger than half of the group's is seen in [FREE list] or in the resolved earlier playlists ([1A–1F list]); [list] are not resolved. The cause is not known." | the same |
 | **OTHER** or **NOT COMPUTED** | no change | no change |
 
 "Reweights to the same flux file" is the code's grouping (`2d-closeout/playlist-spread-20261014/REPORT.md:152-160`).
@@ -568,7 +646,8 @@ names its quantity, so the pairs below do not contradict each other.
 | SEES | OTHER or NOT COMPUTED | any | R2's row only |
 | ABSENT or OTHER | not computed | any | R2's row only. Line 112 is unchanged |
 | any | any | INCONCLUSIVE because of SIZE-BIAS-g | R1's sentence (if licensed by the rows above) lists every playlist below e = 0.03 as not resolved. R2's row licenses nothing |
-| any | DROPPED at stage D | any | R2's row only |
+| any | any | SIZE-BIAS-t fired, SIZE-BIAS-g did not | R1's sentence (if licensed by the rows above) lists every playlist below e = 0.03 as not resolved. R2's row is unaffected |
+| any | a sentence DROPPED at stage D | any | the other R1 sentence (if not dropped and licensed), and R2's row |
 
 ### 6.4 What no outcome licenses
 
@@ -587,10 +666,10 @@ From 5B's measured units:
 
 | job | geometry | projected | limit, so at most |
 |---|---|---|---|
-| A: 12 input lanes, K2′'s two unfolds, N0's 10 partitions | one node, 8 lanes | about 15 min, so 0.25 node-h **(estimate: per-step start-up and N0's split unpriced)** | 1:00:00, so 1.0 |
+| A: 12 input lanes, K2′'s two unfolds, N0's 10 partitions with their background dumps and 120 MC truths | one node, 8 lanes | about 21 min, so 0.35 node-h **(estimate: the inputs about 0.25; N0's split and truths 0.06–0.1, audit 3's figure)** | 1:00:00, so 1.0 |
 | B: 372 + 120 unfolds | one node, 8 lanes, longest first | 41 × 900 / 8 ≈ 4,610 s, so about 1.28 node-h **(estimate)** | 2:00:00, so 2.0 |
 
-**About 1.55 node-h expected, at most 3.0.** The login stages charge nothing. The inventory's guess was about 3–4
+**About 1.65 node-h expected, at most 3.0.** The login stages charge nothing. The inventory's guess was about 3–4
 (`inventory-answer.txt:133`).
 
 **Stops:** any refusal, any non-zero exit, a lane without its products, a job past its limit, or a FAIL of F1, C1 or
@@ -697,3 +776,23 @@ authorized.
 | n2 | **Accepted.** Compute bound: under 2 h per run on one login node, at nice 19 |
 | n3 | Noted; no change |
 | §9 note | **Accepted.** The 2D per-playlist price gives the mean figure and the min–max range |
+
+## 14. Audit 3 dispositions (`FD-RPD-AUDIT-3-SONNET-ANSWER.txt`, of revision 3's new parts, `a1ae3d96…`)
+
+| # | disposition |
+|---|---|
+| A1 | **Accepted.** CARRIES is h_X = t_X − t̄/2 ≥ 2σ_h, so a single carrier sits above half the group mean. SUBSET truths are declared with their carrier step derived from s₀ (S-1G, S-1M, S-1G1M), and a 1L-only truth is excluded with its reason. A stage-D rule drops the SUBSET sentence if no SUBSET truth reaches 0.5. FREE and CARRIES are disjoint for resolved X (proof in §5) |
+| A2 | **Accepted.** The rules are evaluated at stage 0's s₀; 7% is printed beside them. The model is a fully specified linear-Gaussian one whose σ_u reproduces σ₀ exactly. The multiplicity ceiling of about 0.75 is stated |
+| A3 | **Accepted.** Every choice is fixed in §5: the model and truths for R1; for R2, T1 (Σ_T1 = C_PL,5D,rel / V2₁₂), T2 (5B's committed `g_5b`), T3 (half of each variance), the noise from `g_5b_noise_sigma` × √(E_P/e_X), the seeds, and the noise-only counts |
+| A4 | **Accepted.** The calibration gate is off at stage D (α̂ at 200 printed beside it) and on at the readout at 2,000 |
+| m1 | **Accepted.** β̂₁'s role is stated as a noise-floor check; the toy's size result is cited |
+| m2 | **Accepted.** N0-P adds completeness equality, the global keys, `measured_weights` present, and stored assignment vectors |
+| m3 | **Accepted in part.** The approximate t₂₉ reference is stated, and the induced change in F and p_flux is printed when SIZE-BIAS-g fires. The consequence (INCONCLUSIVE) is kept, as the conservative choice |
+| m4 | **Accepted.** §6.3 has a SIZE-BIAS-t-only row; N0's t is computed in every branch but used only by R1 |
+| m5 | **Accepted.** N0's split and its 120 truths run in job A; price about 1.65, cap unchanged |
+| m6 | **Accepted.** C1 compares through `u2d.load_flux_bins` on the staged Φ_X at the dump's edges |
+| m7 | **Accepted.** Compute estimates are from audit 3's timing; the 2 h stop reports completed datasets, and below 200 per truth there is no verdict |
+| m8 | **Accepted.** "Stage D's rules … before job A" everywhere |
+| m9 | **Accepted.** The detectable bias is printed against the real median \|g_X\| of 1L, 1B and 1O |
+| n1 | **Accepted.** e is computed at stage S and recorded with F1 |
+| n2 | Noted |
