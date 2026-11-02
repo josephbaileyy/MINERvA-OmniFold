@@ -1,0 +1,19 @@
+# Addendum X-A1 condition 2: the draw check's background leg (fd_xcov.bkg_stream_check) on replica 1's real
+# p1Streams record (nd-unfolding/tests/fixtures/xcov_p1streams/), against the regenerated stream.
+# Written 2026-11-02 by a one-off script that imports tests/test_fd_xcov.py (BKG_MUTANTS). 'code mutant' rows:
+# fd_xcov.py edited by sed, `pytest tests/test_fd_xcov.py -k BkgLeg` run, file restored (cmp-verified).
+kind	mutant	verdict	failures
+control	replica 1's real record, b = 1	PASS	-
+record mutant	seed offset 20,000,001	FAIL	seed_offsets.bkg: record 20000001 != regenerated 20000000
+record mutant	stream size n - 1	FAIL	n.bkg: record 658226 != regenerated 658227
+record mutant	stream size n + 1	FAIL	n.bkg: record 658228 != regenerated 658227
+record mutant	sum + 1	FAIL	sum.bkg: record 659095.0 != regenerated 659094.0
+record mutant	sum - 1	FAIL	sum.bkg: record 659093.0 != regenerated 659094.0
+record mutant	bootstrap seed 2	FAIL	bootstrap_seed: record 2 != regenerated 1
+record mutant	sum.bkg key absent	FAIL	sum.bkg: record None != regenerated 659094.0
+record mutant	real record checked as replica 2	FAIL	bootstrap_seed: record 1 != regenerated 2; sum.bkg: record 659094.0 != regenerated 660917.0
+regeneration mutant	stream regenerated with n - 1	FAIL	n.bkg: record 658227 != regenerated 658226; sum.bkg: record 659094.0 != regenerated 659093.0
+file mutant	xsec-format file without p1Streams	FAIL	no p1Streams record
+code mutant	sum.bkg compared with itself	CAUGHT	BkgLeg: 2 failed, 4 passed
+code mutant	n.bkg comparison dropped	CAUGHT	BkgLeg: 1 failed, 5 passed
+code mutant	absent record treated as empty	CAUGHT	BkgLeg: 1 failed, 5 passed

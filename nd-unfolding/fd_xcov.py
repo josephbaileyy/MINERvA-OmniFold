@@ -225,6 +225,29 @@ def draw_sums_line(b: int, sizes=(N_2D_DATA, N_MC, N_2D_BKG)) -> dict:
             "bkg": f"bkg factor sum={g.sum():.6g} (n={g.size}"}
 
 
+def p1_streams_record(xsec: bytes) -> dict | None:
+    """The p1Streams TNamed RE-2 wrote into a replica's xsec.root (re2_driver.py:2221-2230, :2530-2531), parsed, or None
+    if the file has none. In negweight-refined mode the log never prints the background sum (re2_driver.py:2123 is in
+    the purity branch), so this record is the background leg's only source (addendum X-A1)."""
+    import uproot
+    f = uproot.open(io.BytesIO(xsec))
+    if "p1Streams" not in f:
+        return None
+    return json.loads(f["p1Streams"].member("fTitle"))
+
+
+def bkg_stream_check(rec: dict | None, b: int, n_bkg: int = N_2D_BKG) -> list[str]:
+    """The draw check's background leg (addendum X-A1): replica b's p1Streams record names seed b, the background
+    offset SEED_BKG and n_bkg factors, and its background sum is the regenerated stream's. Returns the failures."""
+    if rec is None:
+        return ["no p1Streams record"]
+    _, _, g = draws_2d(int(b), 0, 0, n_bkg)
+    want = {"bootstrap_seed": int(b), "seed_offsets.bkg": SEED_BKG, "n.bkg": int(n_bkg), "sum.bkg": float(g.sum())}
+    got = {"bootstrap_seed": rec.get("bootstrap_seed"), "seed_offsets.bkg": rec.get("seed_offsets", {}).get("bkg"),
+           "n.bkg": rec.get("n", {}).get("bkg"), "sum.bkg": rec.get("sum", {}).get("bkg")}
+    return [f"{k}: record {got[k]!r} != regenerated {v!r}" for k, v in want.items() if got[k] != v]
+
+
 # ---------------------------------------------------------------- K: the quadrant algebra
 
 
