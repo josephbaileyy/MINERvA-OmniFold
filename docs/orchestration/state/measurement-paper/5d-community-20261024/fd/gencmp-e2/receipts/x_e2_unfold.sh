@@ -8,13 +8,13 @@
 #SBATCH --exclusive
 #SBATCH --no-requeue
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
-#SBATCH -o /pscratch/sd/j/josephrb/gencmp-e2-20261102/logs/e2-unfold-%j.out
+#SBATCH -o /pscratch/sd/j/josephrb/gencmp-e2a1-20261102/logs/e2-unfold-%j.out
 # GENCMP amendment E, step E2's unfold (FD-GENCMP-AMENDMENT-E-ADDENDUM-E2.md section 2): NuWro CH, GiBUU CH and the
 # NuWro carbon control R2 at estimator seed 42, and the noise-floor pair (NuWro and GiBUU carbon, committed prep ratios)
 # at seed 43: five pvl_unfold runs of 32 threads at once on one node, as PV-ladder J5 (60206336) ran five, in the
 # environment the PV ladder ran in (RE-1's setup_salloc_env.sh). From the deploy at the bound commit with empty
 # porcelain; writes only under $R.
-R=/pscratch/sd/j/josephrb/gencmp-e2-20261102
+R=/pscratch/sd/j/josephrb/gencmp-e2a1-20261102
 M=${BOUND:?set BOUND to the bound commit}
 mkdir -p "$R/logs" "$R/tmp" || exit 2
 cd "$R/deploy" || exit 9

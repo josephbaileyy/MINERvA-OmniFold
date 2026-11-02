@@ -19,7 +19,9 @@ pass, and each later step refuses without the receipts before it (B1):
                  x_CH is fd_gencmp.combine of carbon and hydrogen bitwise.
 * ``ratios``     (login node) pvl_ratios on the committed config (staged paths only) and on config_ch.json. Control R1:
                  the carbon run's seven ratio files hold the committed prep's numbers (1e-12 relative); the CH run's
-                 unchanged files are the carbon run's; CH GiBUU carries the committed p_par < 10 truth cut.
+                 unchanged files are the carbon run's; CH GiBUU carries the committed p_par < 10 domain, which on
+                 L-5D-PV (p_par a reweight axis) is the cell restriction pz_max_cells = 10, not a truth cut (addendum
+                 E2-A1).
 * ``unfold``     (in the one CPU job, after its five srun steps of pvl_unfold, launched as the PV ladder launched its
                  own: NuWro CH, GiBUU CH and, as control R2, NuWro carbon with the committed prep ratio, all at
                  estimator seed 42; and the noise-floor pair, NuWro and GiBUU carbon with the committed prep ratios at
@@ -69,7 +71,9 @@ CH_VERTICES = {"nuwro": gc.NUWRO_NPZ, "gibuu": gc.GIBUU_NPZ}       # step A's co
 STEP_A_SHA256 = {"nuwro": "63dbfa4096aa338da078fd74c1d6e477b17f8836764cbd08536b9f005c05fb04",  # fd/gencmp/INPUTS:244
                  "gibuu": "f9244ebc66909abda82de9237f1c3aa86792d20f129ceff72ff53b562d302cd6"}  # fd/gencmp/INPUTS:245
 RATIO_FILES = ("tune_v1", "genie_mec", "genie_mec_sq", "nuwro", "nuwro_sq", "gibuu", "gibuu_sq")
-GIBUU_TRUTH_CUT = {"axis": "pz", "below": 10.0}                      # pvl_ratios.py:129-130 with config pz_max 10
+GIBUU_PZ_MAX_CELLS = 10.0   # addendum E2-A1: p_par is one of L-5D-PV's reweight axes, so pvl_ratios restricts the
+                            # cells (pvl_ratios.py:119, :124-125) and records pz_max_cells (:132-133); its truth_cut
+                            # branch (:130-131) runs only on rungs without p_par
 CODE_ALLOWED_TO_DIFFER = {"pvl_lib.py"}       # a307faca..: classify_cells appended, no existing line changed
 CORNER = ("genie_cv", "genie_mec", "nuwro", "gibuu")                 # the four predictions (E section 8); not mnvtune_v1
 E1 = FD / "fd/gencmp-e/rerun1/chain/chdefs"                          # E-1's readouts (#662)
@@ -158,6 +162,21 @@ def gate(path: Path, what: str) -> None:
     report("G", f"{what} passed before this step ({path.name})", path.exists())
 
 
+def domain_failures(g_ch: dict, n_ch: dict, g_committed: dict) -> list[str]:
+    """R1 leg (iii), addendum E2-A1: CH GiBUU carries pz_max_cells = 10 and no truth_cut, as the committed GiBUU ratio
+    does; CH NuWro carries neither. Returns the failures."""
+    bad = []
+    for tag, d in (("CH GiBUU", g_ch), ("committed GiBUU", g_committed)):
+        if d.get("pz_max_cells") != GIBUU_PZ_MAX_CELLS:
+            bad.append(f"{tag}: pz_max_cells {d.get('pz_max_cells')!r} != {GIBUU_PZ_MAX_CELLS}")
+        if "truth_cut" in d:
+            bad.append(f"{tag}: carries a truth_cut {d['truth_cut']!r}")
+    for k in ("pz_max_cells", "truth_cut"):
+        if k in n_ch:
+            bad.append(f"CH NuWro: carries {k}")
+    return bad
+
+
 def cmd_ratios(a) -> int:
     """R1: pvl_ratios on the committed config (staged paths only) reproduces every committed L-5D-PV ratio file's
     numbers (to 1e-12 relative), so the ratio path is the committed one for all three vertices, GiBUU's p_par < 10
@@ -178,9 +197,9 @@ def cmd_ratios(a) -> int:
         bad = A.compare_numbers(json.loads((car / f"{name}.json").read_text()), json.loads((ch / f"{name}.json").read_text()), ex)
         report("R1", f"CH run's {name}.json is the carbon run's", not bad, str(bad[:5]))
     g_ch, n_ch = (json.loads((ch / f"{v}.json").read_text()) for v in ("gibuu", "nuwro"))
-    report("R1", "CH GiBUU's ratio carries the p_par < 10 truth cut, as the committed one does",
-           g_ch.get("truth_cut") == GIBUU_TRUTH_CUT == json.loads((old / "gibuu.json").read_text()).get("truth_cut"))
-    report("R1", "CH NuWro's ratio carries no truth cut", "truth_cut" not in n_ch)
+    bad = domain_failures(g_ch, n_ch, json.loads((old / "gibuu.json").read_text()))
+    report("R1", "CH GiBUU carries pz_max_cells = 10 and no truth_cut, as the committed GiBUU does; CH NuWro neither",
+           not bad, str(bad))
     E.write_new(a.run_dir / "prep_ch" / "R1.ok", b"R1 passed\n")
     return 0
 
@@ -243,14 +262,18 @@ def provenance(a, rec: dict) -> dict:
     report("B2", "the seed-43 pair's estimator parameters are the seed-42 rerun's but for random_state",
            params_but_seed(ref43["estimator_params"], NOISE_SEED) == params_but_seed(ref["estimator_params"], 42))
     old = json.loads(str(np.load(staged(a.run_dir, SCRATCH / PRODUCTS / "L-5D-PV_e_nuwro.npz"), allow_pickle=True)["meta"]))
-    differ = sorted(k for k in set(old["code_sha256"]) | set(ref["code_sha256"])
-                    if old["code_sha256"].get(k) != ref["code_sha256"].get(k))
+    differ = code_differ(old["code_sha256"], ref["code_sha256"])
     report("B2", "the NuWro carbon rerun's estimator parameters are the committed vertex's",
            old["estimator_params"] == ref["estimator_params"])
     report("B2", "its code differs from the committed vertex's only in the files allowed to",
            set(differ) <= CODE_ALLOWED_TO_DIFFER, str(differ))
     return {"check_meta": "passed for all five (the seed-43 pair at seed 43)",
             "code_files_differing_from_the_committed_vertex": differ}
+
+
+def code_differ(old: dict, new: dict) -> list[str]:
+    """B2: the code-record keys whose values differ between two products' code_sha256 (either side's keys)."""
+    return sorted(k for k in set(old) | set(new) if old.get(k) != new.get(k))
 
 
 def cmd_unfold(a) -> int:
@@ -317,6 +340,39 @@ def reading(dmax: float, dnoise: float) -> dict:
             "sentence": text + ("; within the estimator's seed variation" if within else "")}
 
 
+def c1_ok(S_c: np.ndarray, cm: dict) -> bool:
+    """C1: the carbon products' S is cmodel_5d.json's, bitwise."""
+    return bool(np.array_equal(S_c, np.asarray(cm["S"], float)))
+
+
+def c2_ok(f: np.ndarray, S: np.ndarray, Cma: np.ndarray) -> bool:
+    """C2: diag(f) S^T S diag(f) is the data product's C_model_abs, to 1e-12 of its largest entry."""
+    return bool(np.all(np.abs(model_abs(f, S) - Cma) <= 1e-12 * np.abs(Cma).max()))
+
+
+def c3_failures(readout: dict, carbon: dict) -> list[str]:
+    """C3: each corner prediction's chi2 with the carbon S is the readout's (TOL relative). Returns the failures."""
+    return [f"{p['name']} {k}" for p in readout["predictions"] if p["name"] in carbon for k in ("total", "shape_only")
+            if not abs(carbon[p["name"]][k] - p[k]["chi2"]) <= TOL * abs(p[k]["chi2"])]
+
+
+def rest_matrices():
+    """f, C_model_abs and each arm's C_rest, from the pinned data product and with-block (C0)."""
+    dp = json.loads(A.pinned(DP, DP_SHA256, "data product", "C0"))
+    report("C0", "the with-block npz is its pinned bytes", sha256(BLOCK) == BLOCK_SHA256)
+    blk = np.load(BLOCK, allow_pickle=False)
+    f = np.asarray(blk["f"], float)
+    Ce, Cma = (np.asarray(dp["matrices"][k], float) for k in ("C_e", "C_model_abs"))
+    return f, Cma, {"with": Ce + np.asarray(blk["C_resp"], float) + np.asarray(blk["C_PL5D"], float),
+                    "nopl": Ce + np.asarray(blk["C_resp"], float)}
+
+
+def e1_readout(arm: str) -> dict:
+    path = E1 / arm / "readout" / "fd_g_readout.json"
+    report("C0", f"E-1's {arm} Stage G readout is the committed one", sha256(path) == E1_SHA256[arm])
+    return json.loads(path.read_text())
+
+
 def cmd_chi2(a) -> int:
     import build_cmodel5d as BC
     out = a.run_dir / "chi2"
@@ -331,7 +387,7 @@ def cmd_chi2(a) -> int:
                                            allow_pickle=True)["xsec_flat"], float)
     xs_c = {"tune_v1": prod("L-5D-PV_e_tune_v1"), **{v: prod(f"L-5D-PV_e_{v}") for v in BC.VERTICES}}
     S_c = factor(xs_c, defn_rmap, n)
-    report("C1", "the carbon products give cmodel_5d.json's S bitwise", np.array_equal(S_c, np.asarray(cm["S"], float)))
+    report("C1", "the carbon products give cmodel_5d.json's S bitwise", c1_ok(S_c, cm))
     uf = a.run_dir / "unfold"
     rec_u = json.loads((uf / "unfold.json").read_text())
     xs_ch = dict(xs_c)
@@ -346,27 +402,16 @@ def cmd_chi2(a) -> int:
         report("C0", f"{v} carbon seed 43: the product is the one unfold recorded", sha256(p) == rec_u["products"][k])
         xs_n[v] = np.asarray(np.load(p, allow_pickle=True)["xsec_flat"], float)
     S_n = factor(xs_n, defn_rmap, n)
-    dp = json.loads(A.pinned(DP, DP_SHA256, "data product", "C0"))
-    blk = np.load(BLOCK, allow_pickle=False)
-    report("C0", "the with-block npz is its pinned bytes", sha256(BLOCK) == BLOCK_SHA256)
-    f = np.asarray(blk["f"], float)
-    Ce, Cma = (np.asarray(dp["matrices"][k], float) for k in ("C_e", "C_model_abs"))
+    f, Cma, arms = rest_matrices()
     report("C2", "diag(f) S^T S diag(f) from cmodel_5d.json's S is the data product's C_model_abs (1e-12)",
-           bool(np.all(np.abs(model_abs(f, S_c) - Cma) <= 1e-12 * np.abs(Cma).max())))
-    arms = {"with": Ce + np.asarray(blk["C_resp"], float) + np.asarray(blk["C_PL5D"], float),
-            "nopl": Ce + np.asarray(blk["C_resp"], float)}
+           c2_ok(f, S_c, Cma))
     res = {}
     for arm, C_rest in arms.items():
-        path = E1 / arm / "readout" / "fd_g_readout.json"
-        report("C0", f"E-1's {arm} Stage G readout is the committed one",
-               sha256(path) == E1_SHA256[arm])
-        r1 = json.loads(path.read_text())
+        r1 = e1_readout(arm)
         carbon, chm, c43 = chi2_rows(r1, f, C_rest, S_c), chi2_rows(r1, f, C_rest, S_ch), chi2_rows(r1, f, C_rest, S_n)
-        for p in r1["predictions"]:
-            if p["name"] in carbon:
-                for k in ("total", "shape_only"):
-                    report("C3", f"{arm} {p['name']} {k}: the carbon S reproduces E-1's chi2 (1e-10)",
-                           abs(carbon[p["name"]][k] - p[k]["chi2"]) <= TOL * abs(p[k]["chi2"]))
+        bad = c3_failures(r1, carbon)
+        report("C3", f"{arm}: the carbon S reproduces E-1's chi2 for every corner prediction and kind (1e-10)",
+               not bad, str(bad))
         res[arm] = {name: {k: {"carbon": carbon[name][k], "CH": chm[name][k], "delta": chm[name][k] - carbon[name][k],
                                "carbon_seed43": c43[name][k], "delta_noise": c43[name][k] - carbon[name][k]}
                            for k in ("total", "shape_only")} for name in carbon}
