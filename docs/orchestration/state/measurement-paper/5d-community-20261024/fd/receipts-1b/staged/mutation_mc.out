@@ -1,0 +1,36 @@
+sha256 90ae99f280bfa73a4723d6394ce63019338d5b394b474a3a0448cf2a1e5ed858  fd_1b_mc.py
+sha256 8aeec48d8aded3c3df548fab0e58275c4fd345f998d5ca1cd38bad8a496414b4  tests/test_fd_1b_mc.py
+sha256 ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
+KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
+KILLED   ratio composition inverted
+KILLED   zero-CV rows not added
+KILLED   negatives clipped
+KILLED   denominator not composed
+KILLED   first universe not copied
+KILLED   two flux universes allowed
+KILLED   flux universe keeps CV flux
+KILLED   with_mc leaves the nature's flux
+KILLED   toy unfolds with the nature MC
+KILLED   toy without streams
+KILLED   stat jitter offset 0
+KILLED   stat replica not bootstrapped
+KILLED   plugin r off truth rows
+KILLED   capture keeps a view
+KILLED   capture wrap not removed
+KILLED   ratio digest unchecked
+KILLED   role pairing unchecked
+KILLED   toy range unchecked
+KILLED   stat range unchecked
+KILLED   control list unchecked
+KILLED   seed check skipped
+KILLED   flux block unweighted
+KILLED   lateral not transferred
+KILLED   C_model left out of C_T
+KILLED   joint flag dropped
+KILLED   over-coverage flags
+KILLED   cell flag strict
+KILLED   atime move exits 0
+KILLED   walls limit doubled
+KILLED   seed role at 42
+unmutated: 36 passed in 5.47s
+30 of 30 killed
