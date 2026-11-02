@@ -40,16 +40,15 @@ NAMES = {"genie_cv": "GENIE 2.12.10 CV, no MEC", "genie_mec": "GENIE 2.12.10 + V
          "gibuu": "GiBUU 2019: $^{12}$C target; no correction to CH applied; $p_\\parallel$ < 4.5 cells only",
          "mnvtune_v1": "MINERvA Tune v1: prior (not an independent prediction)"}
 # --prediction-set: each set's declared names and required strings, written out here independently of the figure tool.
-# "gencmp-chdefs" is GENCMP step B's corner "CH, analysis definitions" (FD-GENCMP-AMENDMENT-E-DECLARATION.md section 4).
+# "gencmp-chdefs" is GENCMP step B's corner "CH, analysis definitions" (FD-GENCMP-AMENDMENT-E-DECLARATION.md section 4;
+# its legend names as addendum E-A1 shortened them).
 PREDICTION_SETS = {
     "stage-g": (NAMES, MUST),
-    "gencmp-chdefs": ({"genie_cv": "GENIE 2.12.10 CV, no MEC: CH, analysis definitions",
-                       "genie_mec": "GENIE 2.12.10 + Valencia MEC: CH, analysis definitions",
-                       "nuwro": "NuWro 21.09: CH, analysis definitions; hydrogen: supplement FLAGGED",
-                       "gibuu": "GiBUU 2019: CH, analysis definitions; hydrogen: closure B3 failed; $p_\\parallel$ < 4.5 "
-                                "cells only",
+    "gencmp-chdefs": ({"genie_cv": "GENIE 2.12.10 CV, no MEC", "genie_mec": "GENIE 2.12.10 + Valencia MEC",
+                       "nuwro": "NuWro 21.09: CH; hydrogen: supplement FLAGGED",
+                       "gibuu": "GiBUU 2019: CH; hydrogen: closure B3 failed; $p_\\parallel$ < 4.5 cells only",
                        "mnvtune_v1": "MINERvA Tune v1: prior (not an independent prediction)"},
-                      ("CH, analysis definitions", "hydrogen: supplement FLAGGED", "hydrogen: closure B3 failed",
+                      ("hydrogen: supplement FLAGGED", "hydrogen: closure B3 failed",
                        "prior (not an independent prediction)", "p_parallel < 4.5 cells only")),
 }
 ORDER = ("genie_cv", "genie_mec", "nuwro", "gibuu", "mnvtune_v1")

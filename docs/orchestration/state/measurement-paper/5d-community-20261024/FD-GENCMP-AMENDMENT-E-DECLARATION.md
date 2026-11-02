@@ -216,9 +216,10 @@ too.
 - R0 compares the default set's figures with the committed ones byte for byte.
 
 **`gencmp-chdefs`:**
-- **legend qualifiers:** "CH, analysis definitions" for all four generators. NuWro adds "hydrogen: supplement
-  FLAGGED", and GiBUU adds "hydrogen: closure B3 failed" and "p_parallel < 4.5 cells only". MnvTune v1 keeps "prior (not
-  an independent prediction)". Each stands in its prediction's label, so K7 holds.
+- **legend qualifiers (as addendum E-A1, §12, set them):** none for GENIE CV and GENIE+MEC, as in the stage-g set.
+  NuWro: "CH" and "hydrogen: supplement FLAGGED". GiBUU: "CH", "hydrogen: closure B3 failed" and "p_parallel < 4.5
+  cells only". MnvTune v1 keeps "prior (not an independent prediction)". Each stands in its prediction's label, so K7
+  holds. The labels keep the full "CH, analysis definitions" text, and the sidecar records `prediction_set`.
 - **K1** compares the readouts' labels and digests with the predictions passed in.
 - **K0** refuses the set unless its predictions are passed (`fd_gencmp_e.py chain` passes them).
 - The checker declares the drawn names independently. A test requires them to equal the figure tool's legend text in
@@ -303,7 +304,7 @@ node-h**, one regular CPU job of ≤ 25 min.
 |---|---|
 | R0 fails in either arm | E stops; no new number is computed (the chdefs set never starts: `cmd_chain`). The paper keeps the lane's scoping clause ("carbon, generator definitions") on every Stage G diagnostic. The report names the first failing check |
 | E0, P or XC fails | E stops; no number of the failing set is used, though an arm's readouts may already exist when XC runs. The paper is as for R0 failing. The report names the prediction and the quantity |
-| E-1 completes | The paper lane re-pins `READOUTS` and `NOPL_READOUTS` for `g`, `diag`, `fup`, `sens2` and `fboot` to E-1's readouts and drops the scoping clause. Every regenerated number goes in as it falls. The report lists, mechanically, every values key of the families `g-`, `diag-`, `r04-`, `corr-`, `sens-` and `fb-` whose printed string differs. It does this by running `make_values_fived16.py`'s own formatting on a scratch copy, with `READOUTS` and `NOPL_READOUTS` pointed at E-1's readouts, and diffing the result against the committed `values_fived16.tex`. Every sentence that prints a listed key goes to Joseph through the paper lane, and none is reworded here. The figures the paper and the note print today (ratio, modes) are replaced one for one by E-1's, in the arm they print now. The sens figure is produced for the note. GiBUU's and NuWro's legends carry their hydrogen qualifiers |
+| E-1 completes | The paper lane re-pins `READOUTS` and `NOPL_READOUTS` for `g`, `diag`, `fup`, `sens2` and `fboot` to E-1's readouts and drops the scoping clause. Every regenerated number goes in as it falls. The report lists, mechanically, every values key of the families `g-`, `diag-`, `r04-`, `corr-`, `sens-` and `fb-` whose printed string differs. It does this by running `make_values_fived16.py`'s own formatting on a scratch copy, with `READOUTS` and `NOPL_READOUTS` pointed at E-1's readouts, and diffing the result against the committed `values_fived16.tex`. Every sentence that prints a listed key goes to Joseph through the paper lane, and none is reworded here. The figures the paper and the note print today (ratio, modes) are replaced one for one by E-1's, in the arm they print now. The sens figure is produced for the note. GiBUU's and NuWro's legends carry their hydrogen qualifiers. Each replaced figure's caption states that the predictions are in the analysis definitions; the paper lane carries that caption sentence when it re-pins (addendum E-A1) |
 | C-R, every quadrant reads as step C read it | the numbers replace #648 §2.3's in the records and go to Joseph with X. `:119` is unchanged until X reports (ruling 3) |
 | C-R, a quadrant's reading changes (for example "agree below a correlation" to "differ") | the same, and named in the report as a change. A "differ" is a new problem for the director and Joseph (GENCMP ruling 4) |
 | C-R stops (C3, the arm key, the central value, coverage, or C-R3D) | no C-R number is used; #648 §2.3 stands in the records, labelled as on the superseded 2D result; the report names the check |
@@ -376,5 +377,24 @@ answer are verbatim beside this file: `FD-GENCMP-AMENDMENT-E-REVIEW-PROMPT.txt` 
 | S2, "#651 item 8" is not in the record | the caveat is cited as item 6's "one stated caveat", with the brief's name noted | header, §0, §6 |
 | S3, the `cells_x_EU` citation | corrected to `re2c_combine.py:253` and `RE2-DECLARATION-C.md:196`, `:207-214` | §5 |
 | S4, "no new number is computed" after XC | reworded: no number of the failing set is used | §8 |
+
+## 12. Addendum E-A1 (2026-11-01, after the first run stopped)
+
+**What stopped.** The first run (`$P/gencmp-e-20261101/`, deploy at M = `6cd095d6`) stopped as bound, at E-1's nopl
+figures. Before that point, E-S and E-M passed (E0 held for all four predictions) and R0 passed in both arms (26 checks).
+`fd_g_figures.py` exited 1 on K6: "ratio: every text lies on the page: off the page:
+ratio:{genie_cv,genie_mec,nuwro,gibuu}:legend". The legend qualifiers of §4's first version were too long for the ratio
+figure's legend. XC did not run, and the with arm of E-1 did not start. C-R ran separately and is not affected.
+
+**What changes,** under the director's rulings of 2026-11-01:
+- only `fd_g_figures.PREDICTION_SETS["gencmp-chdefs"]` and `fd_g_figures_check.PREDICTION_SETS["gencmp-chdefs"]`
+  change, to the qualifiers of §4 above, with the tests updated;
+- each label keeps "CH, analysis definitions", and K7 still holds;
+- each replaced figure's caption states "analysis definitions" (§8);
+- the code is reviewed by the director, with no Sonnet audit (ruling 4).
+
+**The rerun.** E-S, E-M and the whole chain run again, from a fresh clone at E-A1's merge commit, in a fresh run
+directory `$P/gencmp-e-20261101/rerun1/`. R0 re-gates everything. The stopped run's directory stays untouched as the
+record. C-R stands as run.
 
 Nothing is submitted, deposited or tagged.
