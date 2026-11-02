@@ -1,0 +1,94 @@
+ok   all 2630 base keys print the base value
+ok   86 added keys: 44 cr- and 42 x-
+ok   86 added keys equal their readout fields as printed
+     86 of the added keys print, at: ['paper_body.tex', 'sec_fived16.tex']
+
+key	value	printed at
+cr-QA-cells	R00--R03	sec_fived16.tex:58
+cr-QA-dpct	+0.141	sec_fived16.tex:45 sec_fived16.tex:58
+cr-QA-nopl-reading	agree below a correlation	sec_fived16.tex:58
+cr-QA-nopl-rhostar	0.9999	sec_fived16.tex:58
+cr-QA-reading	agree	sec_fived16.tex:58
+cr-QA-rhostar	1.0003	sec_fived16.tex:58
+cr-QA-s16	7.9912	sec_fived16.tex:58
+cr-QA-s2	7.9799	sec_fived16.tex:58
+cr-QA-sig16	0.5464	sec_fived16.tex:58
+cr-QA-sig2	0.5319	sec_fived16.tex:58
+cr-QA-z0	+0.015	sec_fived16.tex:58
+cr-QB-cells	R04--R07	sec_fived16.tex:59
+cr-QB-dpct	-0.217	sec_fived16.tex:59
+cr-QB-nopl-reading	agree	sec_fived16.tex:59
+cr-QB-nopl-rhostar	1.0115	sec_fived16.tex:59
+cr-QB-reading	agree below a correlation	sec_fived16.tex:59
+cr-QB-rhostar	0.9997	sec_fived16.tex:47 sec_fived16.tex:59
+cr-QB-s16	6.7751	sec_fived16.tex:59
+cr-QB-s2	6.7899	sec_fived16.tex:59
+cr-QB-sig16	0.3276	sec_fived16.tex:59
+cr-QB-sig2	0.3280	sec_fived16.tex:59
+cr-QB-z0	-0.032	sec_fived16.tex:59
+cr-QC-cells	R08--R11	sec_fived16.tex:60
+cr-QC-dpct	-1.478	sec_fived16.tex:60
+cr-QC-nopl-reading	agree below a correlation	sec_fived16.tex:60
+cr-QC-nopl-rhostar	0.9903	sec_fived16.tex:60
+cr-QC-reading	agree below a correlation	sec_fived16.tex:60
+cr-QC-rhostar	0.9902	sec_fived16.tex:47 sec_fived16.tex:60
+cr-QC-s16	6.6907	sec_fived16.tex:60
+cr-QC-s2	6.7911	sec_fived16.tex:60
+cr-QC-sig16	0.3565	sec_fived16.tex:60
+cr-QC-sig2	0.3473	sec_fived16.tex:60
+cr-QC-z0	-0.202	sec_fived16.tex:60
+cr-QD-cells	R12--R15	sec_fived16.tex:61
+cr-QD-dpct	+0.724	sec_fived16.tex:61
+cr-QD-nopl-reading	agree	sec_fived16.tex:61
+cr-QD-nopl-rhostar	1.0035	sec_fived16.tex:61
+cr-QD-reading	agree below a correlation	sec_fived16.tex:61
+cr-QD-rhostar	0.9982	sec_fived16.tex:61
+cr-QD-s16	9.1925	sec_fived16.tex:61
+cr-QD-s2	9.1265	sec_fived16.tex:61
+cr-QD-sig16	0.5036	sec_fived16.tex:61
+cr-QD-sig2	0.5152	sec_fived16.tex:61
+cr-QD-z0	+0.092	sec_fived16.tex:61
+x-QA-rho0	0.92	sec_fived16.tex:67 sec_fived16.tex:78
+x-QA-rho1	0.99	sec_fived16.tex:67 sec_fived16.tex:78
+x-QA-z0	+0.051	sec_fived16.tex:78
+x-QA-z1	+0.163	sec_fived16.tex:78
+x-QB-rho0	0.91	sec_fived16.tex:79
+x-QB-rho1	0.99	sec_fived16.tex:79
+x-QB-z0	-0.106	sec_fived16.tex:79
+x-QB-z1	-0.312	sec_fived16.tex:79
+x-QC-rho0	0.77	sec_fived16.tex:67 sec_fived16.tex:80
+x-QC-rho1	0.96	sec_fived16.tex:67 sec_fived16.tex:80
+x-QC-z0	-0.415	sec_fived16.tex:80
+x-QC-z1	-0.985	sec_fived16.tex:80
+x-QD-rho0	0.89	sec_fived16.tex:81
+x-QD-rho1	0.98	sec_fived16.tex:81
+x-QD-z0	+0.275	sec_fived16.tex:81
+x-QD-z1	+0.694	sec_fived16.tex:81
+x-bounded	AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency	sec_fived16.tex:67
+x-chi2-hi	1.24	paper_body.tex:121
+x-chi2-lo	1.17	paper_body.tex:121
+x-dpct-max	+0.7	paper_body.tex:121
+x-dpct-min	-1.5	paper_body.tex:121
+x-nbands	38	sec_fived16.tex:67
+x-nbands-paired	34	sec_fived16.tex:67
+x-ncontrols	99	sec_fived16.tex:67
+x-nlat	5	sec_fived16.tex:67
+x-nopair-chi2-r0	0.802	sec_fived16.tex:85
+x-nopair-chi2-r1	1.163	sec_fived16.tex:85
+x-nopair-p-r0	0.938	sec_fived16.tex:85
+x-nopair-p-r1	0.884	sec_fived16.tex:85
+x-nopair-zmax	0.467	sec_fived16.tex:85
+x-p-min	0.87	paper_body.tex:121
+x-prim-chi2-r0	1.170	sec_fived16.tex:67 sec_fived16.tex:83
+x-prim-chi2-r1	1.240	sec_fived16.tex:67 sec_fived16.tex:83
+x-prim-p-r0	0.883	sec_fived16.tex:67 sec_fived16.tex:83
+x-prim-p-r1	0.871	sec_fived16.tex:67 sec_fived16.tex:83
+x-prim-zmax	0.985	sec_fived16.tex:83
+x-qr-chi2-r0	0.782	sec_fived16.tex:84
+x-qr-chi2-r1	0.926	sec_fived16.tex:84
+x-qr-p-r0	0.941	sec_fived16.tex:84
+x-qr-p-r1	0.921	sec_fived16.tex:84
+x-qr-zmax	0.720	sec_fived16.tex:84
+x-zmax	0.985	sec_fived16.tex:67
+
+VALUES-CHECK :: PASS
