@@ -1,0 +1,53 @@
+The proposed wording needs three repairs before adoption. These are in Q3 (the correlation framing), Q5 (the new Table IV sentences) and the GiBUU table note. I did not re-run anything. Judgements below rest on the report, declaration §7 and `paper_body.tex`.
+
+**Q1. CH rows in Table IV.**
+- Switch NuWro and GiBUU to CH. The data are per nucleon of CH. A carbon-only row compares different targets, and the paper already shows an 8.3% target effect in GENIE.
+- Declaration §7 fixed this before any number was read, so the 45→48 rise is not a reason to deviate. Reverting because the total χ² rose would let the outcome pick the presentation.
+- GiBUU's change is small. The χ² moves +2.3 on 8 degrees of freedom and the shape-only χ² moves −2.7, while both stay far above ndf.
+- The sign is not robust. With GENIE's hydrogen in place of GiBUU's, GiBUU CH gives 44.19, which is below carbon's 45.25. State this in a clause, otherwise readers will take "the correction worsens GiBUU" as physics.
+- GiBUU CH is publishable as the primary row if the hydrogen label sits in the table note itself, not only in the note document. It needs three facts: closure B3 failed on hydrogen, the post-hoc bias check passed at ≤0.1σ_c, and 46% of the hydrogen sample is DIS that does not conserve energy. Add that hydrogen enters with weight 1/13.
+- Show CH only in Table IV. Put the carbon values in the text sentence and the note.
+- Reconcile with `sec_joint.tex:301-` and `primer_body.tex:305`, which say the correction "moves both toward the data" on the 109 joint cells. On the 16 reported cells GiBUU's total χ² rises. Say that explicitly or a referee will see a contradiction.
+
+**Q2. Rebuilt predictions in the analysis definitions of W and pT.**
+- Adopt for all four generators and delete the "Unlike the analysis definitions..." sentence.
+- The effect is at most 0.063σ per cell. That is comparable to the five-seed spread of 0.026–0.056σ, so the change is a consistency fix, not a result.
+- Total χ² moves by up to +5.5 (GENIE + MEC, 223.6→229.1), which is irrelevant to any conclusion.
+- Controls B0 and B2 passed.
+- Reword "the neutrino direction drawn from the analysis simulation". It is ambiguous. Say that the beam-direction offset is sampled from the analysis simulation's distribution, because the generators carry no detector-level direction.
+- "No more than 0.07σ" is a true bound (the maximum is 0.063).
+
+**Q3. Quadrant comparison against 2D.**
+- The sentence is accurate but invites a misreading. ρ* is 0.989–0.9999, and both results come from the same data. Their correlation is therefore plausibly very high. "Agree unless correlation exceeds 0.998" then sounds reassuring but is close to uninformative.
+- The test has almost no power. σ₁₆≈σ₂D, so the any-correlation band 2|σ₁₆−σ₂D| is only 3.6e-42 to 1.9e-41, against S≈7–9e-39.
+- I would say so plainly. Suggested wording: "The two results share the same data, so their correlation is high but unknown, and the comparison is a consistency check, not a test. Quadrant sums differ by −1.5% to +0.7% (0.3σ at most); the difference is within 2σ for any correlation below 0.989 (QC) or 0.998 (the others)."
+- QC at −1.54% is the largest difference and has the lowest ρ*. Name it.
+- Say that the 16-cell sum is below the 2D result in three of four quadrants.
+- Include the 3D clause, but change it. All four differences are negative (−0.8% to −0.2%). Say "the quadrant sums lie 0.2–0.8% below the three-observable central value (≤0.17σ₁₆); this is descriptive: that result has no uncertainty here, and the comparison is not a test either way."
+- "Agrees... no 3D covariance is adopted" is opaque to a referee, and "agrees" implies a test, which binding ruling 3 forbids.
+- QA and QB must keep their unreported-box label (QA 1.1e-7 share).
+- `paper_body.tex:119` is followed by "Its area-weighted total agrees with the two-dimensional result to 0.141%". After the replacement, "Its" has no antecedent. Repair it.
+
+**Q4. Native NuWro on CH.**
+- Include one clause, with the numbers: "agrees with the combination within a per-cell tolerance fixed in advance (Σz² = 17.9 for 16 cells, largest |z| = 2.2)".
+- Do not write a bare "agrees". Native χ² is 134.0 against 128.4.
+- The undeclared probe diagnostic shows a +2.1% total rate in the native sample, mostly DIS. That is unexplained, so it belongs in the note.
+- The clause is NuWro only and says nothing about GiBUU.
+
+**Q5. Sentences made false or left stale.**
+- `:42` "The predictions for carbon are NuWro... and GiBUU" is now false.
+- `:42` "All predictions are per nucleon of their target" should become per nucleon of CH.
+- `:42` "The NuWro and GiBUU comparisons contain a target difference of this kind, which the sixteen-cell comparison... does not correct" is now false. The 8.3% GENIE sentence can stay as the motivation for the correction.
+- `:232` "NuWro and GiBUU are on carbon, with no correction to CH" is now false.
+- The caption of Table IV, the Fig. ratio16 caption and the data points need regenerating for the CH rows. The labels (`label-nuwro`, `label-gibuu`) should carry "CH".
+- The note tables in `sec_fived16.tex` (per-cell, sensitivity) must be regenerated, or paper and note will disagree.
+- `:232`: "covariance contributions derived from those generators". C_model (`:80`, `:114`) still uses carbon-generated shape ratios, while the compared prediction is now CH. The effect is probably small, since the CH/C ratio is 0.95–1.0 and the normalization is kept, but say so or check it.
+- `primer_body.tex:305` and `sec_joint` also describe NuWro and GiBUU as carbon-corrected, so they need a consistency pass.
+- The proposed text should state that the correction uses each generator's own free-proton sample. GiBUU's CH/C ratio reaches 1.008, so the correction does not always lower the prediction.
+
+**Recommendations**
+1. Adopt CH rows for both generators. Put the GiBUU hydrogen label in the table note and state that the sign of the GiBUU change depends on the hydrogen sample. Move carbon to the note.
+2. Adopt the rebuilt predictions for all four generators and delete the "Unlike..." sentence. Clarify the neutrino-direction wording.
+3. Reword the quadrant sentence to say the comparison is a consistency check of low power, not an agreement test. Keep a shortened descriptive 3D clause that says it is not a test.
+4. Include the one clause on native NuWro with its numbers, and move the +2.1% diagnostic to the note.
+5. Fix the four stale sentences at `:42` and `:232`, regenerate the dependent captions and figures, and add the C_model target caveat.

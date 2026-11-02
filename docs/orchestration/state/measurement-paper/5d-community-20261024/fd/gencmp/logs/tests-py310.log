@@ -1,0 +1,256 @@
+....PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+FAIL control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance): differs
+........PASS control A1 the A1 readout passed, on these npz files and frozen products (matched by digest, not by path)
+PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control A0 nuwro carbon reported total chi2 reproduces the committed G readout to 1e-09
+FAIL control A0 nuwro carbon reported shape_only chi2 reproduces the committed G readout to 1e-09: 1.5431483255593879 vs 1.5431498687077132
+.FAIL control A1 the A1 readout passed, on these npz files and frozen products (matched by digest, not by path): differs
+..FAIL control R f is cmodel_5d.json's x, P5's integrals (to 1e-12): differs
+.....PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control B0 nuwro: the rebuilt CH combination in the generator definitions equals step A's bitwise
+PASS control B0 gibuu: the rebuilt CH combination in the generator definitions equals step A's bitwise
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmpl02mjppp/defs_out.txt", "sha256": "956b4d6c0eac03874c206e622a3875eff3a07bab73870fac82436d3e746bdb0a"}
+[B] {"genie_cv": {"CH": {"generator_definitions": {"reported": {"total": 2.6354183391315757, "shape_only": 2.6098479656796414}, "without_C_PL5D": {"total": 2.702235774724554, "shape_only": 2.6766560261486614}}, "analysis_definitions": {"reported": {"total": 2.628637428930413, "shape_only": 2.615070208015192}, "without_C_PL5D": {"total": 2.6953928824486546, "shape_only": 2.6820119527752366}}}}, "genie_mec": {}, "nuwro": {"carbon": {"generator_definitions": {"reported": {"total": 2.6326028191819386, "shape_only": 2.166912154744665}, "without_C_PL5D": {"total": 2.694064582558759, "shape_only": 2.2102098390788596}}, "analysis_definitions": {"reported": {"total": 2.699321908331182, "shape_only": 2.171248469392096}, "without_C_PL5D": {"total": 2.763288465939664, "shape_only": 2.2146327924644367}}}, "CH": {"generator_definitions": {"reported": {"total": 2.4365882342975276, "shape_only": 1.9860130785488412}, "without_C_PL5D": {"total": 2.4950614116551275, "shape_only": 2.0260788412589923}}, "analysis_definitions": {"reported": {"total": 2.501940670031791, "shape_only": 1.9899874090161636}, "without_C_PL5D": {"total": 2.5629289911060535, "shape_only": 2.030133343662299}}}}, "gibuu": {"carbon": {"generator_definitions": {"reported": {"total": 1.1022004372869372, "shape_only": 1.0904756507888596}, "without_C_PL5D": {"total": 1.1235524629701055, "shape_only": 1.1108647346737361}}, "analysis_definitions": {"reported": {"total": 1.098636128907909, "shape_only": 1.0926576327925073}, "without_C_PL5D": {"total": 1.1196874699896369, "shape_only": 1.1130875134476128}}}, "CH": {"generator_definitions": {"reported": {"total": 1.0396254970252001, "shape_only": 1.0239240206536624}, "without_C_PL5D": {"total": 1.0599359822153263, "shape_only": 1.0431073799781545}}, "analysis_definitions": {"reported": {"total": 1.0348770535738863, "shape_only": 1.02597282187528}, "without_C_PL5D": {"total": 1.054865809914572, "shape_only": 1.045194565430998}}}}}
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+FAIL control B0 nuwro: the rebuilt CH combination in the generator definitions equals step A's bitwise: differs
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+FAIL control D nuwro_CHnative is complete in the rebuild (B0 alignment passed, every variant written): {"B0": false, "B2": "n/a", "complete": false}
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control D nuwro_CHnative is complete in the rebuild (B0 alignment passed, every variant written)
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmp7m_9h1le/nat_out.txt", "sha256": "6d26e4981caf559aa1cc9d1aea758620639485ee0e4ac4eeaf347fad852dfe2d"}
+[D] agree (generator definitions, primary): True; analysis definitions: True
+......PASS control A1 the A1 readout passed, on these npz files and frozen products (matched by digest, not by path)
+PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+FAIL control A0 nuwro carbon reported total chi2 reproduces the committed G readout to 1e-09: 2.86825912955402 vs 2.8682619978131494
+.{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmpwun_0b1_/a1r_out.txt", "sha256": "7b713b7e42dee4c3f8cf79422da446f58c364704ed6c626ed9c60cf0db3c1da9"}
+PASS control A1 the committed C12 arrays equal the frozen products bitwise
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmpwun_0b1_/a1s_out.txt", "sha256": "3f1013ab01d2a85c7d3133ccfcbf3c267608de9a85d334da90d0dd2a71ce65b1"}
+FAIL control A1 the committed C12 arrays equal the frozen products bitwise: {"nuwro": {"xsec": true, "sumw2": true}, "gibuu": {"xsec": true, "sumw2": false}}
+.FAIL control A1 the A1 readout passed, on these npz files and frozen products (matched by digest, not by path): differs
+.PASS control A1 the A1 readout passed, on these npz files and frozen products (matched by digest, not by path)
+PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control A0 nuwro carbon reported total chi2 reproduces the committed G readout to 1e-09
+PASS control A0 nuwro carbon reported shape_only chi2 reproduces the committed G readout to 1e-09
+PASS control A0 nuwro carbon without_C_PL5D total chi2 reproduces the committed G readout to 1e-09
+PASS control A0 nuwro carbon without_C_PL5D shape_only chi2 reproduces the committed G readout to 1e-09
+FAIL control A nuwro: the CH arrays equal the committed xsec_CH, sumw2_CH bitwise: differs
+.PASS control A1 the A1 readout passed, on these npz files and frozen products (matched by digest, not by path)
+PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control A0 nuwro carbon reported total chi2 reproduces the committed G readout to 1e-09
+PASS control A0 nuwro carbon reported shape_only chi2 reproduces the committed G readout to 1e-09
+PASS control A0 nuwro carbon without_C_PL5D total chi2 reproduces the committed G readout to 1e-09
+PASS control A0 nuwro carbon without_C_PL5D shape_only chi2 reproduces the committed G readout to 1e-09
+PASS control A nuwro: the CH arrays equal the committed xsec_CH, sumw2_CH bitwise
+PASS control A0 gibuu carbon reported total chi2 reproduces the committed G readout to 1e-09
+PASS control A0 gibuu carbon reported shape_only chi2 reproduces the committed G readout to 1e-09
+PASS control A0 gibuu carbon without_C_PL5D total chi2 reproduces the committed G readout to 1e-09
+PASS control A0 gibuu carbon without_C_PL5D shape_only chi2 reproduces the committed G readout to 1e-09
+PASS control A gibuu: the CH arrays equal the committed xsec_CH, sumw2_CH bitwise
+.PASS control A1 the A1 readout passed, on these npz files and frozen products (matched by digest, not by path)
+PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control A0 nuwro carbon reported total chi2 reproduces the committed G readout to 1e-09
+PASS control A0 nuwro carbon reported shape_only chi2 reproduces the committed G readout to 1e-09
+PASS control A0 nuwro carbon without_C_PL5D total chi2 reproduces the committed G readout to 1e-09
+PASS control A0 nuwro carbon without_C_PL5D shape_only chi2 reproduces the committed G readout to 1e-09
+PASS control A nuwro: the CH arrays equal the committed xsec_CH, sumw2_CH bitwise
+PASS control A0 gibuu carbon reported total chi2 reproduces the committed G readout to 1e-09
+PASS control A0 gibuu carbon reported shape_only chi2 reproduces the committed G readout to 1e-09
+PASS control A0 gibuu carbon without_C_PL5D total chi2 reproduces the committed G readout to 1e-09
+PASS control A0 gibuu carbon without_C_PL5D shape_only chi2 reproduces the committed G readout to 1e-09
+PASS control A gibuu: the CH arrays equal the committed xsec_CH, sumw2_CH bitwise
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmp5bcjylo1/ch_out.txt", "sha256": "ce23d1c2a74ce31700a6d328fed6fa37fc3c8eb8168688e161d87d813f9efcad"}
+[A] nuwro  carbon             {"reported": {"total": 2.3031904980769364, "shape_only": 2.2424409466213704}, "without_C_PL5D": {"total": 2.364024837592346, "shape_only": 2.300498289874037}}
+[A] nuwro  CH                 {"reported": {"total": 2.2060552567910534, "shape_only": 2.166094965226497}, "without_C_PL5D": {"total": 2.264224784343355, "shape_only": 2.222408726515611}}
+[A] nuwro  CH_genie_hydrogen  {"reported": {"total": 8.893754205334842, "shape_only": 1.9183387718586098}, "without_C_PL5D": {"total": 9.10074813274999, "shape_only": 1.9678478086671891}}
+[A] gibuu  carbon             {"reported": {"total": 0.5010142979768941, "shape_only": 0.45932423948207546}, "without_C_PL5D": {"total": 0.5128962183337598, "shape_only": 0.4712443151026545}}
+[A] gibuu  CH                 {"reported": {"total": 0.48925262752009785, "shape_only": 0.4310550464763969}, "without_C_PL5D": {"total": 0.5008014052743647, "shape_only": 0.4424663005915727}}
+[A] gibuu  CH_genie_hydrogen  {"reported": {"total": 5.137181849681595, "shape_only": 0.3982692003118647}, "without_C_PL5D": {"total": 5.252004076354946, "shape_only": 0.4085842369231779}}
+[A] gibuu  CH_alt_weight      {"reported": {"total": 2.2533284686560524, "shape_only": 1.797171257055644}, "without_C_PL5D": {"total": 2.302376605158329, "shape_only": 1.8404904573784822}}
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+FAIL control C0 P5's integrals over the sixteen cells equal f (to 1e-12): differs
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+FAIL control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures: 3.0760729999999996e-38
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+PASS control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures
+PASS control C1 the quadrant edges are bin edges of the 3D grid
+PASS control C3 the 3D integral reproduces the 3D status headline 3.079e-38 to four figures
+PASS control C PROJ3D's row index is unique and inside the 14 x 16 x 7 grid
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmp23ezwfia/ov2_out.txt", "sha256": "d9667db956332eb80ff0695bfeae34c0423a2de4fe4376560b54a5dedccb9c2b"}
+[C] QA 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QB 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QC 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QD 2D Q does not cover this quadrant; no 2D comparison is formed; 3D differ at the sigma_16 scale (descriptive)
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+PASS control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures
+PASS control C1 the quadrant edges are bin edges of the 3D grid
+PASS control C3 the 3D integral reproduces the 3D status headline 3.079e-38 to four figures
+PASS control C PROJ3D's row index is unique and inside the 14 x 16 x 7 grid
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmpyelp1c94/ov_out.txt", "sha256": "b0e3379113557e62b56d9d3e8b5c4079d36ed3c16dd21202bb25e8297d420c21"}
+[C] QA 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QB 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QC 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QD 2D differ; 3D differ at the sigma_16 scale (descriptive)
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+FAIL control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared): [{"cells": [0]}]
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+FAIL control C Q's area is the 2D bin area on its 205 cells (to 1e-12): differs
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+FAIL control C0 P5's integrals over the sixteen cells equal f (to 1e-12): differs
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+FAIL control C1 the quadrant edges are bin edges of the 2D grid: differs
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+PASS control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures
+FAIL control C1 the quadrant edges are bin edges of the 3D grid: differs
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+FAIL control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures: 3.0760729999999996e-38
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+PASS control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures
+PASS control C1 the quadrant edges are bin edges of the 3D grid
+FAIL control C3 the 3D integral reproduces the 3D status headline 3.079e-38 to four figures: 3.082079e-38
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+PASS control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures
+PASS control C1 the quadrant edges are bin edges of the 3D grid
+PASS control C3 the 3D integral reproduces the 3D status headline 3.079e-38 to four figures
+FAIL control C PROJ3D's row index is unique and inside the 14 x 16 x 7 grid: differs
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+FAIL control C each quadrant's cells and unreported boxes are the declared ones (section 4 table): {"QA": {"cells": [0, 1, 2, 3], "unreported": [2, 6], "boxes": [0, 1, 2, 3, 4, 5, 6, 7]}, "QB": {"cells": [4, 5, 6, 7], "unreported": [10, 14], "boxes": [8, 9, 10, 11, 12, 13, 14, 15]}, "QC": {"cells": [8, 9, 10, 11], "unreported": [], "boxes": [16, 17, 18, 19, 20, 21, 22, 23]}, "QD": {"cells": [12, 13, 14, 15], "unreported": [], "boxes": [24, 25, 26, 27, 28, 29, 30, 31]}}
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+PASS control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures
+PASS control C1 the quadrant edges are bin edges of the 3D grid
+PASS control C3 the 3D integral reproduces the 3D status headline 3.079e-38 to four figures
+PASS control C PROJ3D's row index is unique and inside the 14 x 16 x 7 grid
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmpz04n_o_p/ov2_out.txt", "sha256": "2d17668d93d7a0c79c1d51cc0236e1c3fb24214a115657c496b98f6332b69f9f"}
+[C] QA 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QB 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QC 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QD 2D Q does not cover this quadrant; no 2D comparison is formed; 3D differ at the sigma_16 scale (descriptive)
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+PASS control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures
+PASS control C1 the quadrant edges are bin edges of the 3D grid
+PASS control C3 the 3D integral reproduces the 3D status headline 3.079e-38 to four figures
+PASS control C PROJ3D's row index is unique and inside the 14 x 16 x 7 grid
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmpww5sp3lw/ov_out.txt", "sha256": "7dbef7c7f5d7794332bf3a03cc6b3ebc91aac33da124396dfdaf2539aff54048"}
+[C] QA 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QB 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QC 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QD 2D differ; 3D differ at the sigma_16 scale (descriptive)
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+FAIL control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]: median 60.0
+.PASS control R f is cmodel_5d.json's x, P5's integrals (to 1e-12)
+PASS control R C_total + C_resp + C_PL5D equals the block's sum (to 1e-12 of the largest variance)
+PASS control C each quadrant's cells and unreported boxes are the declared ones (section 4 table)
+PASS control C no (pT, p_par, E_avail) region with an inner E_avail edge is a union of reported cells (one would need an amendment before it is compared)
+PASS control C0 P5's integrals over the sixteen cells equal f (to 1e-12)
+PASS control C1 the quadrant edges are bin edges of the 2D grid
+PASS control C Q's area is the 2D bin area on its 205 cells (to 1e-12)
+PASS control C Q is in the units of x: median sqrt(diag)/x in [0.01, 0.5]
+PASS control C3 the 2D integral reproduces VL173's 3.0730e-38 to five figures
+PASS control C1 the quadrant edges are bin edges of the 3D grid
+PASS control C3 the 3D integral reproduces the 3D status headline 3.079e-38 to four figures
+PASS control C PROJ3D's row index is unique and inside the 14 x 16 x 7 grid
+{"wrote": "/pscratch/sd/j/josephrb/gencmp-20261101/tmp/tmp6n8epsvg/ov3_out.txt", "sha256": "4fb1cdba8c055cf879def7e983a47d8e9ee8aba43272f26e28e451c1b8ca4b3a"}
+[C] QA 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QB 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QC 2D differ; 3D differ at the sigma_16 scale (descriptive)
+[C] QD 2D differ; 3D differ at the sigma_16 scale (descriptive)
+.
+----------------------------------------------------------------------
+Ran 52 tests in 11.316s
+
+OK

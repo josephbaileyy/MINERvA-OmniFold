@@ -1,0 +1,19 @@
+You are an independent reviewer for a neutrino cross-section paper (MINERvA, OmniFold unfolding, five observables reported on sixteen cells). Work READ-ONLY. Do not edit, create, commit or run anything that writes. Do not run git commands that change state; use `git -C <wt> show <sha>:<path>` or read the files under the worktree below.
+
+Worktree (detached at main 0a13f0522): /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/wt
+
+Read, in this order:
+1. docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-REPORT.md (the report; §5 proposes paper wording)
+2. docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-DECLARATION.md §7 (the wording fixed before any number was read) and FD-GENCMP-BINDING.md
+3. docs/analysis-note/paper_body.tex lines 40-44 (the predictions paragraph), 117-121 (the lower-dimensional comparison sentence), 228-256 (Sec. gen16 and Table IV, tab:gen16)
+4. As needed, the readouts in .../fd/gencmp/readout/ (ch.json, defs.json, overlap.json, native.json).
+
+The project owner (a physicist) must now decide what to adopt. Give your own recommendation on each question, with reasons, in plain physics-paper terms:
+
+Q1. Table IV for NuWro and GiBUU: switch to the CH-corrected rows (x_CH = 12/13 x_C + 1/13 x_H), with carbon rows moved to the note? Note GiBUU's total chi2 rises 45.25 -> 47.55 (8 cells) while its shape-only chi2 falls 24.75 -> 22.01, and the GiBUU hydrogen sample carries a label (sampling closure B3 failed on hydrogen; 46% of its hydrogen sample is DIS that does not conserve energy). Is the GiBUU CH row publishable as the primary row, or should GiBUU stay on carbon with CH in the note, or show both?
+Q2. Adopt the rebuilt predictions in the analysis definitions of W and pT (largest per-cell change 0.063 sigma) for all four generators in Table IV, removing the "Unlike the analysis definitions..." sentence?
+Q3. The quadrant comparison against the 2D result: every quadrant lands in "agree below a correlation" with rho* 0.9892 (QC), 0.9985, 0.9998, 0.9999, differences -1.54% to +0.65%, z at rho=0 at most 0.21. Is the proposed sentence fair and clear to a referee? Would you word it differently? Is the 3D descriptive clause worth including?
+Q4. Step D (native NuWro on CH agrees with the combination; native chi2 134.0 vs combination 128.4): include the one clause or not?
+Q5. Anything in the proposed wording that is wrong, overclaims, or leaves a now-false sentence in place (check every sentence at paper_body.tex:42 and :232 that the CH change would make false, e.g. the 8.3% sentence and "does not correct").
+
+Answer in under 700 words. End with a one-line recommendation per question.

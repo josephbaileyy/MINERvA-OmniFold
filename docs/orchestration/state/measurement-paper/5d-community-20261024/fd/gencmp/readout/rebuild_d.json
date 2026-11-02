@@ -1,0 +1,3199 @@
+{
+ "schema": "fd-gencmp-rebuild/1",
+ "argv": [
+  "nd-unfolding/fd_gencmp_rebuild.py",
+  "--out",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild",
+  "--nproc",
+  "64",
+  "--samples",
+  "nuwro_C12,nuwro_H,nuwro_CHnative",
+  "--inputs",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/INPUTS.sha256",
+  "--inputs",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/native_pins.sha256",
+  "--nuwro-chnative-main",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c001/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c002/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c003/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c004/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c005/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c006/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c007/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c008/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c009/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c010/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c011/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c012/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c013/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c014/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c015/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c016/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c017/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c018/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c019/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c020/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c021/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c022/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c023/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c024/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c025/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c026/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c027/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c028/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c029/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c030/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c031/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c032/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c033/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c034/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c035/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c036/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c037/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c038/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c039/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c040/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c041/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c042/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c043/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c044/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c045/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c046/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c047/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c048/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c049/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c050/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c051/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c052/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c053/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c054/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c055/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c056/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c057/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c058/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c059/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c060/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c061/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c062/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c063/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c064/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c065/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c066/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c067/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c068/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c069/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c070/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c071/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c072/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c073/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c074/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c075/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c076/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c077/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c078/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c079/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c080/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c081/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c082/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c083/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c084/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c085/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c086/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c087/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c088/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c089/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c090/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c091/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c092/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c093/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c094/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c095/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c096/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c097/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c098/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c099/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c100/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c101/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c102/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c103/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c104/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c105/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c106/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c107/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c108/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c109/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c110/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c111/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c112/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c113/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c114/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c115/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c116/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c117/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c118/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c119/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c120/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c121/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c122/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c123/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c124/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c125/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c126/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c127/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c128/a0/flat5d.root",
+  "--nuwro-chnative-supp",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c001/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c002/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c003/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c004/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c005/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c006/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c007/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c008/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c009/a0/flat5d.root",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c010/a0/flat5d.root"
+ ],
+ "pin_files": {
+  "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp/INPUTS.sha256": "0648347d6610ce4fd7d4aef1150579583c475da0fad3a4f938971b9d56d48e41",
+  "/pscratch/sd/j/josephrb/gencmp-20261101/d/native_pins.sha256": "d93b6d61d2559a7d332e1c492ffc8a2850a7ae8a39cdc7f5d37ba86c07802c0a"
+ },
+ "frozen_tree": {
+  "src": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree",
+  "dst": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree",
+  "files": {
+   "2d-unfolding/unfold_2d_omnifold_unbinned.py": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e",
+   "3d-unfolding/unfold_3d_omnifold_unbinned.py": "4ae386204e95f00f8f794effc5cacdc3adb311bf79975e01b0202b53dc66ad0b",
+   "3d-unfolding/xsec_3d.py": "4dfcff5d462dfefcc3fb43b46e44eb656577d72f03021c0b71c1e7fe7ede5969",
+   "3d-unfolding/genie/gen_to_xsec5d.py": "1608acd52ea12e86633de2beb847a50576df9a3e6d59ba82c994dfb8cbb85de1",
+   "3d-unfolding/genie/gen_to_xsec_eavailW.py": "5191ad5bda9dd7d869959cab946d49d544f3b2dac6625d6c217096c83a2357e8",
+   "3d-unfolding/genie/genie_mec_to_xsec3d.py": "687782a256d0f4812b4f03728b286cc301bf707da094e626ab9d7ad94a2ed0e6",
+   "3d-unfolding/genie/genie_to_xsec3d.py": "c7f288dcbf4a8f0297c53984a302dea1aaa31228b1b3ee5caeebb4fe73a306d8",
+   "3d-unfolding/genie/gibuu_to_xsec3d.py": "d792f476a07d37afbb9abe5e1a53460583641f374604147a772bc13f575b6bb7",
+   "3d-unfolding/genie/gibuu_to_xsec_eavailW.py": "ee60eb15c396595684146cd55ae19f9734c361c4b4825024140cac59f97120ff",
+   "3d-unfolding/genie/gst_reader.py": "dd72f87414a695d0abf46245f02453c7e0e88051c51c385a8332407d68803783",
+   "3d-unfolding/genie/nuwro_to_xsec3d.py": "1314be551e2a1ea6cafc21a7dd83e0845be612a88d9d9fb61d48d1a2c39b20fb",
+   "3d-unfolding/genie/nuwro_to_xsec_eavailW.py": "6bd20ba24440d6f9e32c4b5dc1088f0f82e2a5192aeda281f95f2bcd0c4f470b"
+  }
+ },
+ "memroot_installed_in": [
+  "gen_to_xsec5d",
+  "gen_to_xsec_eavailW",
+  "genie_to_xsec3d",
+  "gibuu_to_xsec3d",
+  "gibuu_to_xsec_eavailW",
+  "gst_reader",
+  "unfold_2d_omnifold_unbinned",
+  "unfold_3d_omnifold_unbinned"
+ ],
+ "environment": {
+  "python": "3.11.14",
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python",
+  "numpy": "1.26.4",
+  "host": "nid006387",
+  "PLOTUTILSROOT": null,
+  "cwd": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy",
+  "ROOT": "6.28/12"
+ },
+ "code": {
+  "__main__": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/fd_gencmp_rebuild.py",
+   "sha256": "7239ea92c9768164cb2b784d19e33f102c7134bca55073728602fa15798b0cda"
+  },
+  "__mp_main__": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/fd_gencmp_rebuild.py",
+   "sha256": "7239ea92c9768164cb2b784d19e33f102c7134bca55073728602fa15798b0cda"
+  },
+  "fd_gencmp_kin": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/fd_gencmp_kin.py",
+   "sha256": "1903102eaccccb432d75431fb142eedbc73e35bd1513269067666bf82be096aa"
+  },
+  "gen5d_flux_reweight": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/3d-unfolding/genie/gen5d_flux_reweight.py",
+   "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5"
+  },
+  "gen5d_flux_supplement": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/3d-unfolding/genie/gen5d_flux_supplement.py",
+   "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61"
+  },
+  "gen_to_xsec5d": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/gen_to_xsec5d.py",
+   "sha256": "1608acd52ea12e86633de2beb847a50576df9a3e6d59ba82c994dfb8cbb85de1"
+  },
+  "gen_to_xsec_eavailW": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/gen_to_xsec_eavailW.py",
+   "sha256": "5191ad5bda9dd7d869959cab946d49d544f3b2dac6625d6c217096c83a2357e8"
+  },
+  "genie_to_xsec3d": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/genie_to_xsec3d.py",
+   "sha256": "c7f288dcbf4a8f0297c53984a302dea1aaa31228b1b3ee5caeebb4fe73a306d8"
+  },
+  "gibuu_to_xsec3d": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/gibuu_to_xsec3d.py",
+   "sha256": "d792f476a07d37afbb9abe5e1a53460583641f374604147a772bc13f575b6bb7"
+  },
+  "gibuu_to_xsec_eavailW": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/gibuu_to_xsec_eavailW.py",
+   "sha256": "ee60eb15c396595684146cd55ae19f9734c361c4b4825024140cac59f97120ff"
+  },
+  "gst_reader": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/gst_reader.py",
+   "sha256": "dd72f87414a695d0abf46245f02453c7e0e88051c51c385a8332407d68803783"
+  },
+  "mp3b_build": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp3b/mp3b_build.py",
+   "sha256": "6f742bee604e12969504782e169db1530547b56ddd6b4e38e874b927ad8ac825"
+  },
+  "mp3c_build": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp3c/mp3c_build.py",
+   "sha256": "47c8dbbc5fd6c89f9c02b89a5e326b78a82a507fb8f7d3f8c94a640aacb15414"
+  },
+  "mp3c_card": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp3c/mp3c_card.py",
+   "sha256": "3a6f10256c958552726a146e19ac0c346bfdc9db68803098b1ad42c5598e2526"
+  },
+  "mp3c_probe": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp3c/mp3c_probe.py",
+   "sha256": "41b70447fbd640dba0b3b63159f38b90b73b2f0e4ec1307f155c6320ea43ef42"
+  },
+  "mp5_genie": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp5/mp5_genie.py",
+   "sha256": "371e03b3d6c9020330178ad852ecb7b77cba849c29a826b473881ef6e53cd274"
+  },
+  "s5p_stage1_inspect": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/s5p_stage1_inspect.py",
+   "sha256": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71"
+  },
+  "unfold_2d_omnifold_unbinned": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+   "sha256": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e"
+  },
+  "unfold_3d_omnifold_unbinned": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/unfold_3d_omnifold_unbinned.py",
+   "sha256": "4ae386204e95f00f8f794effc5cacdc3adb311bf79975e01b0202b53dc66ad0b"
+  },
+  "xsec_3d": {
+   "file": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/xsec_3d.py",
+   "sha256": "4dfcff5d462dfefcc3fb43b46e44eb656577d72f03021c0b71c1e7fe7ede5969"
+  }
+ },
+ "code_reads_on_pscratch": [
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/fd_gencmp_rebuild.py",
+   "bytes": 53417,
+   "sha256": "7239ea92c9768164cb2b784d19e33f102c7134bca55073728602fa15798b0cda",
+   "o_noatime": true,
+   "atime_ns_before": 1793566493000000000,
+   "atime_ns_after": 1793566493000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/fd_gencmp_rebuild.py",
+   "bytes": 53417,
+   "sha256": "7239ea92c9768164cb2b784d19e33f102c7134bca55073728602fa15798b0cda",
+   "o_noatime": true,
+   "atime_ns_before": 1793566493000000000,
+   "atime_ns_after": 1793566493000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/fd_gencmp_kin.py",
+   "bytes": 4013,
+   "sha256": "1903102eaccccb432d75431fb142eedbc73e35bd1513269067666bf82be096aa",
+   "o_noatime": true,
+   "atime_ns_before": 1793566494000000000,
+   "atime_ns_after": 1793566494000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/3d-unfolding/genie/gen5d_flux_reweight.py",
+   "bytes": 60248,
+   "sha256": "89863318015d27f0e19513a8156cd04de26f593f00a89dd3c013045ad9106fc5",
+   "o_noatime": true,
+   "atime_ns_before": 1793566494000000000,
+   "atime_ns_after": 1793566494000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/3d-unfolding/genie/gen5d_flux_supplement.py",
+   "bytes": 47781,
+   "sha256": "ff7a2d0e0013533a7fa6b76a7a71f2bc55dabd60b7bb43dc37402e34feceae61",
+   "o_noatime": true,
+   "atime_ns_before": 1793566494000000000,
+   "atime_ns_after": 1793566494000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/gen_to_xsec5d.py",
+   "bytes": 27279,
+   "sha256": "1608acd52ea12e86633de2beb847a50576df9a3e6d59ba82c994dfb8cbb85de1",
+   "o_noatime": true,
+   "atime_ns_before": 1793566506000000000,
+   "atime_ns_after": 1793566506000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/gen_to_xsec_eavailW.py",
+   "bytes": 6064,
+   "sha256": "5191ad5bda9dd7d869959cab946d49d544f3b2dac6625d6c217096c83a2357e8",
+   "o_noatime": true,
+   "atime_ns_before": 1793566506000000000,
+   "atime_ns_after": 1793566506000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/genie_to_xsec3d.py",
+   "bytes": 7778,
+   "sha256": "c7f288dcbf4a8f0297c53984a302dea1aaa31228b1b3ee5caeebb4fe73a306d8",
+   "o_noatime": true,
+   "atime_ns_before": 1793566506000000000,
+   "atime_ns_after": 1793566506000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/gibuu_to_xsec3d.py",
+   "bytes": 7626,
+   "sha256": "d792f476a07d37afbb9abe5e1a53460583641f374604147a772bc13f575b6bb7",
+   "o_noatime": true,
+   "atime_ns_before": 1793566506000000000,
+   "atime_ns_after": 1793566506000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/gibuu_to_xsec_eavailW.py",
+   "bytes": 5707,
+   "sha256": "ee60eb15c396595684146cd55ae19f9734c361c4b4825024140cac59f97120ff",
+   "o_noatime": true,
+   "atime_ns_before": 1793566506000000000,
+   "atime_ns_after": 1793566506000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/genie/gst_reader.py",
+   "bytes": 1903,
+   "sha256": "dd72f87414a695d0abf46245f02453c7e0e88051c51c385a8332407d68803783",
+   "o_noatime": true,
+   "atime_ns_before": 1793566506000000000,
+   "atime_ns_after": 1793566506000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp3b/mp3b_build.py",
+   "bytes": 38537,
+   "sha256": "6f742bee604e12969504782e169db1530547b56ddd6b4e38e874b927ad8ac825",
+   "o_noatime": true,
+   "atime_ns_before": 1793566494000000000,
+   "atime_ns_after": 1793566494000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp3c/mp3c_build.py",
+   "bytes": 17272,
+   "sha256": "47c8dbbc5fd6c89f9c02b89a5e326b78a82a507fb8f7d3f8c94a640aacb15414",
+   "o_noatime": true,
+   "atime_ns_before": 1793566494000000000,
+   "atime_ns_after": 1793566494000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp3c/mp3c_card.py",
+   "bytes": 3113,
+   "sha256": "3a6f10256c958552726a146e19ac0c346bfdc9db68803098b1ad42c5598e2526",
+   "o_noatime": true,
+   "atime_ns_before": 1793566494000000000,
+   "atime_ns_after": 1793566494000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp3c/mp3c_probe.py",
+   "bytes": 5347,
+   "sha256": "41b70447fbd640dba0b3b63159f38b90b73b2f0e4ec1307f155c6320ea43ef42",
+   "o_noatime": true,
+   "atime_ns_before": 1793566494000000000,
+   "atime_ns_after": 1793566494000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/measurement-paper/phase1/mp5/mp5_genie.py",
+   "bytes": 12457,
+   "sha256": "371e03b3d6c9020330178ad852ecb7b77cba849c29a826b473881ef6e53cd274",
+   "o_noatime": true,
+   "atime_ns_before": 1793566494000000000,
+   "atime_ns_after": 1793566494000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/nd-unfolding/s5p_stage1_inspect.py",
+   "bytes": 15071,
+   "sha256": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71",
+   "o_noatime": true,
+   "atime_ns_before": 1793566494000000000,
+   "atime_ns_after": 1793566494000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+   "bytes": 101016,
+   "sha256": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e",
+   "o_noatime": true,
+   "atime_ns_before": 1793566506000000000,
+   "atime_ns_after": 1793566506000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/unfold_3d_omnifold_unbinned.py",
+   "bytes": 38358,
+   "sha256": "4ae386204e95f00f8f794effc5cacdc3adb311bf79975e01b0202b53dc66ad0b",
+   "o_noatime": true,
+   "atime_ns_before": 1793566506000000000,
+   "atime_ns_after": 1793566506000000000,
+   "atime_unchanged": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/frozen_tree/3d-unfolding/xsec_3d.py",
+   "bytes": 6105,
+   "sha256": "4dfcff5d462dfefcc3fb43b46e44eb656577d72f03021c0b71c1e7fe7ede5969",
+   "o_noatime": true,
+   "atime_ns_before": 1793566506000000000,
+   "atime_ns_after": 1793566506000000000,
+   "atime_unchanged": true
+  }
+ ],
+ "status": {
+  "nuwro_C12": {
+   "B0": true,
+   "B2": "pass",
+   "complete": true,
+   "variants_written": [
+    "gen",
+    "wonly",
+    "ana_s202611011",
+    "ana_s202611012",
+    "ana_s202611013",
+    "ana_s202611014",
+    "ana_s202611015",
+    "axisonly"
+   ]
+  },
+  "nuwro_H": {
+   "B0": true,
+   "B2": "n/a",
+   "complete": true,
+   "variants_written": [
+    "gen",
+    "wonly",
+    "ana_s202611011",
+    "ana_s202611012",
+    "ana_s202611013",
+    "ana_s202611014",
+    "ana_s202611015",
+    "axisonly"
+   ]
+  },
+  "nuwro_CHnative": {
+   "B0": true,
+   "B2": "n/a",
+   "complete": true,
+   "variants_written": [
+    "gen",
+    "wonly",
+    "ana_s202611011",
+    "ana_s202611012",
+    "ana_s202611013",
+    "ana_s202611014",
+    "ana_s202611015",
+    "axisonly"
+   ]
+  }
+ },
+ "B0": {
+  "nuwro_C12": {
+   "alignment_with_frozen_extractor": {
+    "main": {
+     "pt": true,
+     "pz": true,
+     "eavail": true,
+     "q3": true,
+     "W": true,
+     "weight_raw": true
+    },
+    "supp": {
+     "pt": true,
+     "pz": true,
+     "eavail": true,
+     "q3": true,
+     "W": true,
+     "weight_raw": true
+    }
+   },
+   "checks": {
+    "main_N_total_equals_extract_nuwro": true,
+    "supp_r_is_constant": true,
+    "supp_r_constant_equals_product_meta": true,
+    "supp_N_total_equals_extract_nuwro": true
+   },
+   "no_zero_flux_event": true,
+   "target": {
+    "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz",
+    "keys": [
+     "xsec_flat",
+     "sumw2_flat"
+    ]
+   },
+   "xsec_bitwise": true,
+   "sumw2_bitwise": true,
+   "xsec": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "sumw2": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "nevt_reported": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "pass": true
+  },
+  "nuwro_H": {
+   "alignment_with_frozen_extractor": {
+    "main": {
+     "pt": true,
+     "pz": true,
+     "eavail": true,
+     "q3": true,
+     "W": true,
+     "weight_raw": true
+    },
+    "supp": {
+     "pt": true,
+     "pz": true,
+     "eavail": true,
+     "q3": true,
+     "W": true,
+     "weight_raw": true
+    }
+   },
+   "checks": {
+    "main_N_total_equals_extract_nuwro": true,
+    "supp_r_is_constant": true,
+    "supp_N_total_equals_extract_nuwro": true
+   },
+   "no_zero_flux_event": true,
+   "target": {
+    "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/docs/orchestration/state/measurement-paper/phase1/mp3b/runA/out_r2/build_k1/mp3b_fine_nuwro.npz",
+    "keys": [
+     "xsec_H",
+     "sumw2_H"
+    ]
+   },
+   "xsec_bitwise": true,
+   "sumw2_bitwise": true,
+   "xsec": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "sumw2": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "nevt_reported": {
+    "bitwise_equal": true,
+    "max_rel_diff_nonzero": 0.0,
+    "n_zero_mismatch": 0
+   },
+   "pass": true
+  },
+  "nuwro_CHnative": {
+   "alignment_with_frozen_extractor": {
+    "main": {
+     "pt": true,
+     "pz": true,
+     "eavail": true,
+     "q3": true,
+     "W": true,
+     "weight_raw": true
+    },
+    "supp": {
+     "pt": true,
+     "pz": true,
+     "eavail": true,
+     "q3": true,
+     "W": true,
+     "weight_raw": true
+    }
+   },
+   "checks": {
+    "main_N_total_equals_extract_nuwro": true,
+    "supp_r_is_constant": true,
+    "supp_N_total_equals_extract_nuwro": true
+   },
+   "no_zero_flux_event": true,
+   "target": null,
+   "note": "no frozen product exists; B0 is the reader's alignment with the frozen extractor only",
+   "pass": true
+  },
+  "nuwro_CH": {
+   "target": {
+    "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/docs/orchestration/state/measurement-paper/phase1/mp3b/runA/out_r2/build_k1/mp3b_fine_nuwro.npz",
+    "keys": [
+     "xsec_CH",
+     "sumw2_CH"
+    ]
+   },
+   "xsec_bitwise": true,
+   "sumw2_bitwise": true,
+   "pass": true
+  }
+ },
+ "B1": {
+  "all_bins": {
+   "n": 49906108,
+   "unweighted": {
+    "median": 1.0400597496789292,
+    "r68": [
+     0.5082259801916842,
+     1.946896818073224
+    ],
+    "max": 6.881306994136858
+   },
+   "w_truth_weighted": {
+    "median": 1.0295883563950212,
+    "r68": [
+     0.5036495101427216,
+     1.9199652487316063
+    ],
+    "max": 6.881306994136858
+   }
+  },
+  "per_bin": [
+   {
+    "bin_GeV": [
+     0.0,
+     3.0
+    ],
+    "n": 2348817,
+    "unweighted": {
+     "median": 0.9819586931425837,
+     "r68": [
+      0.48228624473604537,
+      1.810728507392322
+     ],
+     "max": 6.881306994136858
+    }
+   },
+   {
+    "bin_GeV": [
+     3.0,
+     5.0
+    ],
+    "n": 11175536,
+    "unweighted": {
+     "median": 1.1376502029206441,
+     "r68": [
+      0.5458948062371612,
+      2.2738971792176126
+     ],
+     "max": 6.847650669012529
+    }
+   },
+   {
+    "bin_GeV": [
+     5.0,
+     8.0
+    ],
+    "n": 25752828,
+    "unweighted": {
+     "median": 1.10631912121272,
+     "r68": [
+      0.5419127710135488,
+      2.0277404557495347
+     ],
+     "max": 6.8332792507490066
+    }
+   },
+   {
+    "bin_GeV": [
+     8.0,
+     15.0
+    ],
+    "n": 7669231,
+    "unweighted": {
+     "median": 0.8518252319098115,
+     "r68": [
+      0.4256009980437388,
+      1.4289457678594517
+     ],
+     "max": 6.326443998555306
+    }
+   },
+   {
+    "bin_GeV": [
+     15.0,
+     30.0
+    ],
+    "n": 2068144,
+    "unweighted": {
+     "median": 0.8434346845342354,
+     "r68": [
+      0.42273477852053604,
+      1.3940092402098527
+     ],
+     "max": 6.79241414626876
+    }
+   },
+   {
+    "bin_GeV": [
+     30.0,
+     Infinity
+    ],
+    "n": 891552,
+    "unweighted": {
+     "median": 0.8816993526225702,
+     "r68": [
+      0.43622548344664097,
+      1.5310448575952331
+     ],
+     "max": 6.637622384230751
+    }
+   }
+  ],
+  "mp5_recorded": {
+   "median": 1.03,
+   "r68": [
+    0.5,
+    1.92
+   ],
+   "max": 6.9,
+   "source": "docs/orchestration/state/measurement-paper/phase1/mp5/REPORT.md:26-27"
+  },
+  "note": "printed, not gated: MP-5's pool-level alpha summary (mp5_tune.json direction_pool) is not committed; the recorded values are the measured nu-to-beam angle as REPORT.md section 1 states it"
+ },
+ "B2": {
+  "nuwro_C12": {
+   "main": {
+    "n_W2_negative": 37,
+    "n_in_ps": 1261997,
+    "fraction": 2.9318611692420823e-05
+   },
+   "all_parts": {
+    "main": 2.9318611692420823e-05,
+    "supp": 1.104374427105766e-05
+   },
+   "rule": {
+    "n_W2_negative": 37,
+    "n_in_ps": 1261997,
+    "fraction": 2.9318611692420823e-05,
+    "m4w": [
+     37,
+     1261997
+    ],
+    "m4w_fraction": 2.9318611692420823e-05,
+    "ratio": 1.0,
+    "rule": "0.5 <= fraction / M4-W fraction <= 2",
+    "pass": true
+   },
+   "population_matches_m4w": true,
+   "pass": true
+  },
+  "nuwro_H": {
+   "main": {
+    "n_W2_negative": 0,
+    "n_in_ps": 163653,
+    "fraction": 0.0
+   },
+   "all_parts": {
+    "main": 0.0,
+    "supp": 0.0
+   }
+  },
+  "nuwro_CHnative": {
+   "main": {
+    "n_W2_negative": 24,
+    "n_in_ps": 1263756,
+    "fraction": 1.899100775782667e-05
+   },
+   "all_parts": {
+    "main": 1.899100775782667e-05,
+    "supp": 0.0
+   }
+  }
+ },
+ "samples": {
+  "nuwro_C12": {
+   "status": "done"
+  },
+  "nuwro_H": {
+   "status": "done"
+  },
+  "nuwro_CHnative": {
+   "status": "done"
+  }
+ },
+ "outputs": {
+  "nuwro_C12_gen": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_C12_gen.npz",
+   "sha256": "f99e696e4c5ba29a1b9e05121eada4b08f8920d69bbf3e7baf0e69937232f0cd"
+  },
+  "nuwro_C12_wonly": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_C12_wonly.npz",
+   "sha256": "3b7974651bffe7ff8f88efa318a6254fbfa3f8129e3cc40643959683fadf94b4"
+  },
+  "nuwro_C12_ana_s202611011": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_C12_ana_s202611011.npz",
+   "sha256": "596bfecabcad9a2add10937e2af23bdef5bc4644f3ccda9051bc2129d8a40484"
+  },
+  "nuwro_C12_ana_s202611012": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_C12_ana_s202611012.npz",
+   "sha256": "a4ad0b0a5fa059f7ab831d22e57fd8fd3f9f0f26468edbb36adfcf1df86d62b4"
+  },
+  "nuwro_C12_ana_s202611013": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_C12_ana_s202611013.npz",
+   "sha256": "cc25772b00235ba209be8c41228a3dc667127b15a7fe4c6aee3d6956653ea2c9"
+  },
+  "nuwro_C12_ana_s202611014": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_C12_ana_s202611014.npz",
+   "sha256": "dd8cd9dfc7c7549be92a76b01c01db27a240faa7f33508540ae72c9985c817a1"
+  },
+  "nuwro_C12_ana_s202611015": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_C12_ana_s202611015.npz",
+   "sha256": "8b065863e3c679185f177505a7b08571cb5fcaececd887853173ce011f32492e"
+  },
+  "nuwro_C12_axisonly": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_C12_axisonly.npz",
+   "sha256": "349e6913f6bd4f866ab7c4eacf03bac8fa8ffd5bc167d41895190a57ec50b379"
+  },
+  "nuwro_H_gen": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_H_gen.npz",
+   "sha256": "96d901fe128ac8d463fe771f71ca6e08c24b9f90203e68c52cf6f6048f1c811a"
+  },
+  "nuwro_H_wonly": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_H_wonly.npz",
+   "sha256": "59a625e0b2d337bdd5435dc50cce008e8ab4c02c0bb87706447a538e4f5ba8b9"
+  },
+  "nuwro_H_ana_s202611011": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_H_ana_s202611011.npz",
+   "sha256": "add193f2430984f8a79efac47ca4d64c8c232a6ca7ba40646849fbabec442740"
+  },
+  "nuwro_H_ana_s202611012": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_H_ana_s202611012.npz",
+   "sha256": "d6c8cef05d14b3d5d60057a2c149d2c8da6ba0a93fd84f3f46305bd83e9e988f"
+  },
+  "nuwro_H_ana_s202611013": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_H_ana_s202611013.npz",
+   "sha256": "38594b6081d6de07c4257c9f3c33af3b253ff82980f97716c0d3282a6e776e97"
+  },
+  "nuwro_H_ana_s202611014": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_H_ana_s202611014.npz",
+   "sha256": "b61af0e121a3eecc43ae416ac21cad27ff4809fb1089aaead4cd01b9152efb6b"
+  },
+  "nuwro_H_ana_s202611015": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_H_ana_s202611015.npz",
+   "sha256": "3737f9e11d25d58abc9c258be5a2b33d92d756567e79722ac753ceda1aee8abd"
+  },
+  "nuwro_H_axisonly": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_H_axisonly.npz",
+   "sha256": "048a5798b18f45adc0754c29fa2acb63f449899aac8056c2fe25b6ee053d2fa5"
+  },
+  "nuwro_CHnative_gen": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_CHnative_gen.npz",
+   "sha256": "aed19c93c0314947347ba3f123e9af5bcfd2334958f519c8b013da24d3765a43"
+  },
+  "nuwro_CHnative_wonly": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_CHnative_wonly.npz",
+   "sha256": "f911cbcdb274fe1ef7a37bc49c00e3091b24ae0c14471b4a1f361605b9ac549e"
+  },
+  "nuwro_CHnative_ana_s202611011": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_CHnative_ana_s202611011.npz",
+   "sha256": "3edf05203d87d14dc3a569f0228a5eb24bb637355903734969efe82215d8e228"
+  },
+  "nuwro_CHnative_ana_s202611012": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_CHnative_ana_s202611012.npz",
+   "sha256": "27dfd16f98e013a63169ee2c253d9bd7cc98082b0f146c2c545ca065fb4083ab"
+  },
+  "nuwro_CHnative_ana_s202611013": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_CHnative_ana_s202611013.npz",
+   "sha256": "40c511db36ffc60435a02c7b89314aa28444f8bdd41538e983ee1ab9077bdfa6"
+  },
+  "nuwro_CHnative_ana_s202611014": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_CHnative_ana_s202611014.npz",
+   "sha256": "97a10bb5a66eb2671130eeda82718c7c4f177e90d3cbdd3be14eb72a9be0fd09"
+  },
+  "nuwro_CHnative_ana_s202611015": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_CHnative_ana_s202611015.npz",
+   "sha256": "4ee4640377eda6c6505632c363d3ea708740494dfe1a3c25c2ad0278fbef3013"
+  },
+  "nuwro_CHnative_axisonly": {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/rebuild/nuwro_CHnative_axisonly.npz",
+   "sha256": "dccb5ff592a1683b72df6ee6d41c7b3f1ddde45a17fcaabaa3b4dc9744b6e339"
+  }
+ },
+ "inputs_read": [
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/2d-unfolding/unfold_2d_omnifold_unbinned.py",
+   "bytes": 101016,
+   "sha256": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e",
+   "o_noatime": true,
+   "atime_ns_before": 1792875746000000000,
+   "atime_ns_after": 1792875746000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "8ebe0277ee4c277f6f697712a901b14d6ba24ed5dcadfc3c66b29276acf81b5e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/unfold_3d_omnifold_unbinned.py",
+   "bytes": 38358,
+   "sha256": "4ae386204e95f00f8f794effc5cacdc3adb311bf79975e01b0202b53dc66ad0b",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "4ae386204e95f00f8f794effc5cacdc3adb311bf79975e01b0202b53dc66ad0b",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/xsec_3d.py",
+   "bytes": 6105,
+   "sha256": "4dfcff5d462dfefcc3fb43b46e44eb656577d72f03021c0b71c1e7fe7ede5969",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "4dfcff5d462dfefcc3fb43b46e44eb656577d72f03021c0b71c1e7fe7ede5969",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gen_to_xsec5d.py",
+   "bytes": 27279,
+   "sha256": "1608acd52ea12e86633de2beb847a50576df9a3e6d59ba82c994dfb8cbb85de1",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "1608acd52ea12e86633de2beb847a50576df9a3e6d59ba82c994dfb8cbb85de1",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gen_to_xsec_eavailW.py",
+   "bytes": 6064,
+   "sha256": "5191ad5bda9dd7d869959cab946d49d544f3b2dac6625d6c217096c83a2357e8",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "5191ad5bda9dd7d869959cab946d49d544f3b2dac6625d6c217096c83a2357e8",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/genie_mec_to_xsec3d.py",
+   "bytes": 6115,
+   "sha256": "687782a256d0f4812b4f03728b286cc301bf707da094e626ab9d7ad94a2ed0e6",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "687782a256d0f4812b4f03728b286cc301bf707da094e626ab9d7ad94a2ed0e6",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/genie_to_xsec3d.py",
+   "bytes": 7778,
+   "sha256": "c7f288dcbf4a8f0297c53984a302dea1aaa31228b1b3ee5caeebb4fe73a306d8",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "c7f288dcbf4a8f0297c53984a302dea1aaa31228b1b3ee5caeebb4fe73a306d8",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gibuu_to_xsec3d.py",
+   "bytes": 7626,
+   "sha256": "d792f476a07d37afbb9abe5e1a53460583641f374604147a772bc13f575b6bb7",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "d792f476a07d37afbb9abe5e1a53460583641f374604147a772bc13f575b6bb7",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gibuu_to_xsec_eavailW.py",
+   "bytes": 5707,
+   "sha256": "ee60eb15c396595684146cd55ae19f9734c361c4b4825024140cac59f97120ff",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ee60eb15c396595684146cd55ae19f9734c361c4b4825024140cac59f97120ff",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/gst_reader.py",
+   "bytes": 1903,
+   "sha256": "dd72f87414a695d0abf46245f02453c7e0e88051c51c385a8332407d68803783",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "dd72f87414a695d0abf46245f02453c7e0e88051c51c385a8332407d68803783",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/nuwro_to_xsec3d.py",
+   "bytes": 4049,
+   "sha256": "1314be551e2a1ea6cafc21a7dd83e0845be612a88d9d9fb61d48d1a2c39b20fb",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "1314be551e2a1ea6cafc21a7dd83e0845be612a88d9d9fb61d48d1a2c39b20fb",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/code/tree/3d-unfolding/genie/nuwro_to_xsec_eavailW.py",
+   "bytes": 3683,
+   "sha256": "6bd20ba24440d6f9e32c4b5dc1088f0f82e2a5192aeda281f95f2bcd0c4f470b",
+   "o_noatime": true,
+   "atime_ns_before": 1792791163000000000,
+   "atime_ns_after": 1792791163000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "6bd20ba24440d6f9e32c4b5dc1088f0f82e2a5192aeda281f95f2bcd0c4f470b",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/phi_t.npz",
+   "bytes": 21414,
+   "sha256": "bbcbade310d90e1ae487dde9d982e85cfe16fae35bba09dbde7db2dc99274ec5",
+   "o_noatime": true,
+   "atime_ns_before": 1793183616000000000,
+   "atime_ns_after": 1793183616000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "bbcbade310d90e1ae487dde9d982e85cfe16fae35bba09dbde7db2dc99274ec5",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/nuwro_cv_xsec5d_full.npz",
+   "bytes": 1637412,
+   "sha256": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070",
+   "o_noatime": true,
+   "atime_ns_before": 1793480607000000000,
+   "atime_ns_after": 1793480607000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "475a2871304db23efedbd5ab42a32d91c7f1d295b6dd0c907c46aa6d81c48070",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p1.root",
+   "bytes": 15594645,
+   "sha256": "385d5ba62bca7252988a32c75cecb42a8ab5e710348da0fb440998b65deefc01",
+   "o_noatime": true,
+   "atime_ns_before": 1792875815000000000,
+   "atime_ns_after": 1792875815000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "385d5ba62bca7252988a32c75cecb42a8ab5e710348da0fb440998b65deefc01",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p2.root",
+   "bytes": 15594370,
+   "sha256": "47dbc870330cbc00e53953b69a58b7ec255edc0145fd89a5c7f215daa0af08e0",
+   "o_noatime": true,
+   "atime_ns_before": 1792875815000000000,
+   "atime_ns_after": 1792875815000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "47dbc870330cbc00e53953b69a58b7ec255edc0145fd89a5c7f215daa0af08e0",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p3.root",
+   "bytes": 15595222,
+   "sha256": "4aaa9df3d190450498e4d7d6b06c1bcd0e2ee076d1c554b370457531eddf0232",
+   "o_noatime": true,
+   "atime_ns_before": 1792875815000000000,
+   "atime_ns_after": 1792875815000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "4aaa9df3d190450498e4d7d6b06c1bcd0e2ee076d1c554b370457531eddf0232",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p4.root",
+   "bytes": 15593707,
+   "sha256": "e830e4a7bf48d46c4b3518a2734f7992e4a1c8d4582f3d942abe6882408d0976",
+   "o_noatime": true,
+   "atime_ns_before": 1792875815000000000,
+   "atime_ns_after": 1792875815000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "e830e4a7bf48d46c4b3518a2734f7992e4a1c8d4582f3d942abe6882408d0976",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p5.root",
+   "bytes": 15595332,
+   "sha256": "46c78779432d45f89943c6b18430e2d9bad48908f7880891023e55537cf27bf8",
+   "o_noatime": true,
+   "atime_ns_before": 1792875815000000000,
+   "atime_ns_after": 1792875815000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "46c78779432d45f89943c6b18430e2d9bad48908f7880891023e55537cf27bf8",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p6.root",
+   "bytes": 15593950,
+   "sha256": "bddd3223889c6a2ef0d190ebc0d68690bcd19b8b23dd5cf7792fe8611a92363d",
+   "o_noatime": true,
+   "atime_ns_before": 1792875815000000000,
+   "atime_ns_after": 1792875815000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "bddd3223889c6a2ef0d190ebc0d68690bcd19b8b23dd5cf7792fe8611a92363d",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p7.root",
+   "bytes": 15594419,
+   "sha256": "364959421642748ee91a595a5c7c11bb8ffc75a0462c5591b67a52987876b549",
+   "o_noatime": true,
+   "atime_ns_before": 1792875815000000000,
+   "atime_ns_after": 1792875815000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "364959421642748ee91a595a5c7c11bb8ffc75a0462c5591b67a52987876b549",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d/nuwro_flat5d/nuwro_flat5d_p8.root",
+   "bytes": 15595088,
+   "sha256": "6ba095144165f252e63a1e4f3c78b2abc8df25a3a112981f26326683bc0f095e",
+   "o_noatime": true,
+   "atime_ns_before": 1792875815000000000,
+   "atime_ns_after": 1792875815000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "6ba095144165f252e63a1e4f3c78b2abc8df25a3a112981f26326683bc0f095e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/nuwro/nuwro_supp_flat5d.root",
+   "bytes": 6147377,
+   "sha256": "2a4ad5520c97ffc48095f06f007a8bdf393f19a28e42854e3feccf76ea830f2f",
+   "o_noatime": true,
+   "atime_ns_before": 1792791162000000000,
+   "atime_ns_after": 1792791162000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "2a4ad5520c97ffc48095f06f007a8bdf393f19a28e42854e3feccf76ea830f2f",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu_nuwro.root",
+   "bytes": 5580,
+   "sha256": "1d016921fcaec190aa70f90199059761dd769bb70252534f69d603d054535e4f",
+   "o_noatime": true,
+   "atime_ns_before": 1793565867000000000,
+   "atime_ns_after": 1793565867000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "1d016921fcaec190aa70f90199059761dd769bb70252534f69d603d054535e4f",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.root",
+   "bytes": 4484,
+   "sha256": "6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e",
+   "o_noatime": true,
+   "atime_ns_before": 1793565867000000000,
+   "atime_ns_after": 1793565867000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b0.npy",
+   "bytes": 75162272,
+   "sha256": "587358a997860d61533dac0610c2098ad2e999b861858c8756714cdb440518d3",
+   "o_noatime": true,
+   "atime_ns_before": 1792688448000000000,
+   "atime_ns_after": 1792688448000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "587358a997860d61533dac0610c2098ad2e999b861858c8756714cdb440518d3",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b1.npy",
+   "bytes": 357617280,
+   "sha256": "71545c153416b7da9e89b47321a5d04e9e005f0ad43b8eed60f5eeea27916761",
+   "o_noatime": true,
+   "atime_ns_before": 1792688449000000000,
+   "atime_ns_after": 1792688449000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "71545c153416b7da9e89b47321a5d04e9e005f0ad43b8eed60f5eeea27916761",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b2.npy",
+   "bytes": 824090624,
+   "sha256": "98c57cecc1606fdf5246a833792cf9fbc381b9d1fdf808944f1f02a5c1d5b64b",
+   "o_noatime": true,
+   "atime_ns_before": 1792688449000000000,
+   "atime_ns_after": 1792688449000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "98c57cecc1606fdf5246a833792cf9fbc381b9d1fdf808944f1f02a5c1d5b64b",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b3.npy",
+   "bytes": 245415520,
+   "sha256": "7ac7b6f8af5a65dc4ec46421c0d4c0debd5bd89af8a90f355f1155d7c0dab8fb",
+   "o_noatime": true,
+   "atime_ns_before": 1792688449000000000,
+   "atime_ns_after": 1792688449000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "7ac7b6f8af5a65dc4ec46421c0d4c0debd5bd89af8a90f355f1155d7c0dab8fb",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b4.npy",
+   "bytes": 66180736,
+   "sha256": "f0e1db5e3e4a259c08953c5496c9f599e341fead3d5f2dbe31bf9f8a970e4936",
+   "o_noatime": true,
+   "atime_ns_before": 1792688450000000000,
+   "atime_ns_after": 1792688450000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "f0e1db5e3e4a259c08953c5496c9f599e341fead3d5f2dbe31bf9f8a970e4936",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp5/run/pool/pool_b5.npy",
+   "bytes": 28529792,
+   "sha256": "722dbcc61c1905b830588ece61a48169a26cc380d057387b4cade6a91d72783b",
+   "o_noatime": true,
+   "atime_ns_before": 1792688450000000000,
+   "atime_ns_after": 1792688450000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "722dbcc61c1905b830588ece61a48169a26cc380d057387b4cade6a91d72783b",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/docs/orchestration/state/measurement-paper/phase1/mp3b/runA/out_r2/build_k1/mp3b_fine_nuwro.npz",
+   "bytes": 683368,
+   "sha256": "63dbfa4096aa338da078fd74c1d6e477b17f8836764cbd08536b9f005c05fb04",
+   "o_noatime": true,
+   "atime_ns_before": 1793563155000000000,
+   "atime_ns_after": 1793563155000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "63dbfa4096aa338da078fd74c1d6e477b17f8836764cbd08536b9f005c05fb04",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c01/a0/flat5d.root",
+   "bytes": 625430,
+   "sha256": "9ec33478bb590af1e966cdbca0a7f8f06e18a2a0274bf4e641bb0cabf7f1d3af",
+   "o_noatime": true,
+   "atime_ns_before": 1792668764000000000,
+   "atime_ns_after": 1792668764000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "9ec33478bb590af1e966cdbca0a7f8f06e18a2a0274bf4e641bb0cabf7f1d3af",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c02/a0/flat5d.root",
+   "bytes": 625031,
+   "sha256": "93858b3f993ec647fdf14b258f91ed1b1ad98b62244e108d144114b024988bca",
+   "o_noatime": true,
+   "atime_ns_before": 1792668764000000000,
+   "atime_ns_after": 1792668764000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "93858b3f993ec647fdf14b258f91ed1b1ad98b62244e108d144114b024988bca",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c03/a0/flat5d.root",
+   "bytes": 625180,
+   "sha256": "80b9ba3db3e7a08d67db311ef5807314a5b150f6ab631cc3142e8e8faeb1a7ac",
+   "o_noatime": true,
+   "atime_ns_before": 1792668765000000000,
+   "atime_ns_after": 1792668765000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "80b9ba3db3e7a08d67db311ef5807314a5b150f6ab631cc3142e8e8faeb1a7ac",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c04/a1/flat5d.root",
+   "bytes": 625295,
+   "sha256": "0f35865d1d15ba4536869c72328f1cd005ecdcda6776fdff5fb941275c3c2a88",
+   "o_noatime": true,
+   "atime_ns_before": 1792668765000000000,
+   "atime_ns_after": 1792668765000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "0f35865d1d15ba4536869c72328f1cd005ecdcda6776fdff5fb941275c3c2a88",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c05/a1/flat5d.root",
+   "bytes": 625167,
+   "sha256": "63e7f9929fa6048556ff7b1af54ee90f71abbc0f45983a6acf7ff7d53648d1a5",
+   "o_noatime": true,
+   "atime_ns_before": 1792668765000000000,
+   "atime_ns_after": 1792668765000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "63e7f9929fa6048556ff7b1af54ee90f71abbc0f45983a6acf7ff7d53648d1a5",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c06/a0/flat5d.root",
+   "bytes": 625193,
+   "sha256": "7ee36519927b82fe16e3a644db92713b922bd61ce8a1018dea1eda04189079a8",
+   "o_noatime": true,
+   "atime_ns_before": 1792668765000000000,
+   "atime_ns_after": 1792668765000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "7ee36519927b82fe16e3a644db92713b922bd61ce8a1018dea1eda04189079a8",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c07/a0/flat5d.root",
+   "bytes": 625302,
+   "sha256": "1118c9d72a2ede5d68f401f430012e6c6116d685599a18b8e8ddfd57efcb7a58",
+   "o_noatime": true,
+   "atime_ns_before": 1792668765000000000,
+   "atime_ns_after": 1792668765000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "1118c9d72a2ede5d68f401f430012e6c6116d685599a18b8e8ddfd57efcb7a58",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c08/a0/flat5d.root",
+   "bytes": 625172,
+   "sha256": "eaeef31f86886f759aa161df401d0bc910ef1ab20a691997b6a28e464621acfa",
+   "o_noatime": true,
+   "atime_ns_before": 1792668766000000000,
+   "atime_ns_after": 1792668766000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "eaeef31f86886f759aa161df401d0bc910ef1ab20a691997b6a28e464621acfa",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c09/a0/flat5d.root",
+   "bytes": 625271,
+   "sha256": "0a61476a74384141c6ce792209b2220a9157450db256c22261238d1936228507",
+   "o_noatime": true,
+   "atime_ns_before": 1792668766000000000,
+   "atime_ns_after": 1792668766000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "0a61476a74384141c6ce792209b2220a9157450db256c22261238d1936228507",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c10/a0/flat5d.root",
+   "bytes": 625248,
+   "sha256": "ca496d7fd8c77470e0bff6b6b1895dbf0e74b3031342cb18747ef9f5f3833398",
+   "o_noatime": true,
+   "atime_ns_before": 1792668766000000000,
+   "atime_ns_after": 1792668766000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ca496d7fd8c77470e0bff6b6b1895dbf0e74b3031342cb18747ef9f5f3833398",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c11/a0/flat5d.root",
+   "bytes": 625275,
+   "sha256": "476b5abcbf6790d291ec241a26580a51c5b82ca42460eebcee66c989af7aa738",
+   "o_noatime": true,
+   "atime_ns_before": 1792668766000000000,
+   "atime_ns_after": 1792668766000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "476b5abcbf6790d291ec241a26580a51c5b82ca42460eebcee66c989af7aa738",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c12/a1/flat5d.root",
+   "bytes": 625117,
+   "sha256": "ef86da4f8f0981818d8baaad9a44a5bcf261e208e1028658bf2afa48f934b62e",
+   "o_noatime": true,
+   "atime_ns_before": 1792668766000000000,
+   "atime_ns_after": 1792668766000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ef86da4f8f0981818d8baaad9a44a5bcf261e208e1028658bf2afa48f934b62e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c13/a0/flat5d.root",
+   "bytes": 625366,
+   "sha256": "7b397cbb9dd46081f5755e5d6c9684ebd58479146ff8979ef724746f178612c2",
+   "o_noatime": true,
+   "atime_ns_before": 1792668767000000000,
+   "atime_ns_after": 1792668767000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "7b397cbb9dd46081f5755e5d6c9684ebd58479146ff8979ef724746f178612c2",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c14/a0/flat5d.root",
+   "bytes": 625156,
+   "sha256": "18a2d9236084261bcc330b1f1fcf09612022d375d0aaa06f522656462d5fb425",
+   "o_noatime": true,
+   "atime_ns_before": 1792668767000000000,
+   "atime_ns_after": 1792668767000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "18a2d9236084261bcc330b1f1fcf09612022d375d0aaa06f522656462d5fb425",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c15/a0/flat5d.root",
+   "bytes": 625142,
+   "sha256": "0d1b2d034807cddb09b1dd0f7370c52a47c8dae415778db04ce2c49b92cd1083",
+   "o_noatime": true,
+   "atime_ns_before": 1792668767000000000,
+   "atime_ns_after": 1792668767000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "0d1b2d034807cddb09b1dd0f7370c52a47c8dae415778db04ce2c49b92cd1083",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c16/a0/flat5d.root",
+   "bytes": 625268,
+   "sha256": "b832ddea838cd777ec7321aa2b1c091103c23a7b7ab778df02e6f89940243b41",
+   "o_noatime": true,
+   "atime_ns_before": 1792668767000000000,
+   "atime_ns_after": 1792668767000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "b832ddea838cd777ec7321aa2b1c091103c23a7b7ab778df02e6f89940243b41",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c17/a0/flat5d.root",
+   "bytes": 625246,
+   "sha256": "0c47785107961a09f7bd2e00c54debe5efa70a0b8eacb3d34a46d09d69e51959",
+   "o_noatime": true,
+   "atime_ns_before": 1792668767000000000,
+   "atime_ns_after": 1792668767000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "0c47785107961a09f7bd2e00c54debe5efa70a0b8eacb3d34a46d09d69e51959",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c18/a0/flat5d.root",
+   "bytes": 625126,
+   "sha256": "ee05f4edbf038dc274b9f933b2a518ba5cc3d9a994b9996a1e45f2b33a1638ae",
+   "o_noatime": true,
+   "atime_ns_before": 1792668768000000000,
+   "atime_ns_after": 1792668768000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ee05f4edbf038dc274b9f933b2a518ba5cc3d9a994b9996a1e45f2b33a1638ae",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c19/a0/flat5d.root",
+   "bytes": 625205,
+   "sha256": "b86abc8e6cf0490bf61823bd9dd17981a72d32a73ef53505670bae3ba451b5ef",
+   "o_noatime": true,
+   "atime_ns_before": 1792668768000000000,
+   "atime_ns_after": 1792668768000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "b86abc8e6cf0490bf61823bd9dd17981a72d32a73ef53505670bae3ba451b5ef",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c20/a0/flat5d.root",
+   "bytes": 625162,
+   "sha256": "ba9444fb537f1f1b249a15e86153387c31d825c429529f0e80d1778ec3113bd4",
+   "o_noatime": true,
+   "atime_ns_before": 1792668768000000000,
+   "atime_ns_after": 1792668768000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ba9444fb537f1f1b249a15e86153387c31d825c429529f0e80d1778ec3113bd4",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c21/a0/flat5d.root",
+   "bytes": 625289,
+   "sha256": "b5013427759737f42338b6636449d716e602a5fcbc10427964ee3d51ddcb9b00",
+   "o_noatime": true,
+   "atime_ns_before": 1792668768000000000,
+   "atime_ns_after": 1792668768000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "b5013427759737f42338b6636449d716e602a5fcbc10427964ee3d51ddcb9b00",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c22/a0/flat5d.root",
+   "bytes": 625278,
+   "sha256": "29e8eca6c1ce2f888c0d087f00e733943ee0a1bb41a778bc7e9af785a873d2f5",
+   "o_noatime": true,
+   "atime_ns_before": 1792668768000000000,
+   "atime_ns_after": 1792668768000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "29e8eca6c1ce2f888c0d087f00e733943ee0a1bb41a778bc7e9af785a873d2f5",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c23/a0/flat5d.root",
+   "bytes": 625346,
+   "sha256": "383b68b0a3873dd6c3a0f9a12180c5fc7ed284391158be27522f3d452ab34afe",
+   "o_noatime": true,
+   "atime_ns_before": 1792668769000000000,
+   "atime_ns_after": 1792668769000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "383b68b0a3873dd6c3a0f9a12180c5fc7ed284391158be27522f3d452ab34afe",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c24/a0/flat5d.root",
+   "bytes": 625107,
+   "sha256": "fbc0ac6ef52464d6631cb0669f7ac48860e63e8b6ecdad1fe05b0cddb3172c64",
+   "o_noatime": true,
+   "atime_ns_before": 1792668769000000000,
+   "atime_ns_after": 1792668769000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "fbc0ac6ef52464d6631cb0669f7ac48860e63e8b6ecdad1fe05b0cddb3172c64",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_main/c25/a0/flat5d.root",
+   "bytes": 625139,
+   "sha256": "4bb1c6d83d09be4e92f456a2698f4bd31a3c3ca91065ddb55758e5eea7bb3669",
+   "o_noatime": true,
+   "atime_ns_before": 1792668769000000000,
+   "atime_ns_after": 1792668769000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "4bb1c6d83d09be4e92f456a2698f4bd31a3c3ca91065ddb55758e5eea7bb3669",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c01/a0/flat5d.root",
+   "bytes": 312089,
+   "sha256": "a3eecf8549797a1d4b1a278057befbdcfc681bd56fb8b1c4ca5dbdc3e906c922",
+   "o_noatime": true,
+   "atime_ns_before": 1792668771000000000,
+   "atime_ns_after": 1792668771000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "a3eecf8549797a1d4b1a278057befbdcfc681bd56fb8b1c4ca5dbdc3e906c922",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c02/a0/flat5d.root",
+   "bytes": 311976,
+   "sha256": "9fc2b239e97bd2e4719224e4f85c8c1a9f6fc7f815beb63fd6808be4b203449b",
+   "o_noatime": true,
+   "atime_ns_before": 1792668771000000000,
+   "atime_ns_after": 1792668771000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "9fc2b239e97bd2e4719224e4f85c8c1a9f6fc7f815beb63fd6808be4b203449b",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c03/a1/flat5d.root",
+   "bytes": 312170,
+   "sha256": "15569414171990a8e55ba50a55f7e73a2d093c34283f9beaed8fe97400e86feb",
+   "o_noatime": true,
+   "atime_ns_before": 1792668772000000000,
+   "atime_ns_after": 1792668772000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "15569414171990a8e55ba50a55f7e73a2d093c34283f9beaed8fe97400e86feb",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c04/a0/flat5d.root",
+   "bytes": 312252,
+   "sha256": "07992b90b862c1527cad70905101addfef078b9142d8a5a3feb283c014af7a18",
+   "o_noatime": true,
+   "atime_ns_before": 1792668772000000000,
+   "atime_ns_after": 1792668772000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "07992b90b862c1527cad70905101addfef078b9142d8a5a3feb283c014af7a18",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/measurement-paper/phase1/mp3b/runA/gen/H_supp/c05/a0/flat5d.root",
+   "bytes": 312112,
+   "sha256": "df99a1505ed8ccfd6cc52f0b9e9d557aae0fc31f246328991ac6b01bd5facd33",
+   "o_noatime": true,
+   "atime_ns_before": 1792668772000000000,
+   "atime_ns_after": 1792668772000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "df99a1505ed8ccfd6cc52f0b9e9d557aae0fc31f246328991ac6b01bd5facd33",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu_nuwro.root",
+   "bytes": 5580,
+   "sha256": "1d016921fcaec190aa70f90199059761dd769bb70252534f69d603d054535e4f",
+   "o_noatime": true,
+   "atime_ns_before": 1793565867000000000,
+   "atime_ns_after": 1793565867000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "1d016921fcaec190aa70f90199059761dd769bb70252534f69d603d054535e4f",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.root",
+   "bytes": 4484,
+   "sha256": "6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e",
+   "o_noatime": true,
+   "atime_ns_before": 1793565867000000000,
+   "atime_ns_after": 1793565867000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c001/a0/flat5d.root",
+   "bytes": 980764,
+   "sha256": "cff7230a9262c092b0f1b52aa229e5a3bedac99880327f94ff2a903078b61d30",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "cff7230a9262c092b0f1b52aa229e5a3bedac99880327f94ff2a903078b61d30",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c002/a0/flat5d.root",
+   "bytes": 980752,
+   "sha256": "e8b90daae22c8acc283c42b8c8b8ee696dc72a03b6bb2ce414fd29aba1a5480d",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "e8b90daae22c8acc283c42b8c8b8ee696dc72a03b6bb2ce414fd29aba1a5480d",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c003/a0/flat5d.root",
+   "bytes": 980988,
+   "sha256": "36405087d5310cb7bd37dba8a239ccea5a3f61e386905251db609bc59a534a43",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "36405087d5310cb7bd37dba8a239ccea5a3f61e386905251db609bc59a534a43",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c004/a0/flat5d.root",
+   "bytes": 980842,
+   "sha256": "7b01e5dbbac3cdbcba66deb22b9eeed4a9a4d8fb5f4670ea83d0dc12d1838d5b",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "7b01e5dbbac3cdbcba66deb22b9eeed4a9a4d8fb5f4670ea83d0dc12d1838d5b",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c005/a0/flat5d.root",
+   "bytes": 980803,
+   "sha256": "0d9a22a05c14adb3dfa8dc3f9dbbd2bffbb010044c10ad7d5112359a7e360214",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "0d9a22a05c14adb3dfa8dc3f9dbbd2bffbb010044c10ad7d5112359a7e360214",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c006/a0/flat5d.root",
+   "bytes": 980960,
+   "sha256": "720dbebc839d446c5518b5b30824bb091e438dc820eb74ca67be0c54196e4e33",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "720dbebc839d446c5518b5b30824bb091e438dc820eb74ca67be0c54196e4e33",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c007/a0/flat5d.root",
+   "bytes": 980883,
+   "sha256": "ff2115aafd05b5f762c4262d8b1cc4e3f1463826fb301907dfd755a3e9f0c8cc",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ff2115aafd05b5f762c4262d8b1cc4e3f1463826fb301907dfd755a3e9f0c8cc",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c008/a0/flat5d.root",
+   "bytes": 980909,
+   "sha256": "25c49c7ea36a2e00dafc38fb5159180c0b1804624ffef35e2dd30fc507e99dc8",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "25c49c7ea36a2e00dafc38fb5159180c0b1804624ffef35e2dd30fc507e99dc8",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c009/a0/flat5d.root",
+   "bytes": 981110,
+   "sha256": "3be9a39b0a5824085c4be7b9205087bd8c52074f26df419d2a0ab0d074dea014",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "3be9a39b0a5824085c4be7b9205087bd8c52074f26df419d2a0ab0d074dea014",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c010/a0/flat5d.root",
+   "bytes": 980715,
+   "sha256": "20a271206bcc5ed2c2c3009ac1f29732e73b507b03b6017e67da58b92a392efc",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "20a271206bcc5ed2c2c3009ac1f29732e73b507b03b6017e67da58b92a392efc",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c011/a0/flat5d.root",
+   "bytes": 980926,
+   "sha256": "6a6d8cc916c06f144f9653d6237f78914e4e9ae2da7a85429d4e3b7afa564471",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "6a6d8cc916c06f144f9653d6237f78914e4e9ae2da7a85429d4e3b7afa564471",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c012/a0/flat5d.root",
+   "bytes": 980850,
+   "sha256": "14bc1033e7f3d2c94f647f7e7568747e70304b90ebcc10378261220957e3940e",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "14bc1033e7f3d2c94f647f7e7568747e70304b90ebcc10378261220957e3940e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c013/a0/flat5d.root",
+   "bytes": 980995,
+   "sha256": "96dac9357d325ae83e428e8361602c00a64bd0e69d85e26201cc8294992ed7e5",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "96dac9357d325ae83e428e8361602c00a64bd0e69d85e26201cc8294992ed7e5",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c014/a0/flat5d.root",
+   "bytes": 980915,
+   "sha256": "d8afd47eeeb8d2c423653b9f2116c7c95d5b694a91cdc372751c1261f13525db",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "d8afd47eeeb8d2c423653b9f2116c7c95d5b694a91cdc372751c1261f13525db",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c015/a0/flat5d.root",
+   "bytes": 981132,
+   "sha256": "b2477443984c372ce2dbb145aa6d4418a58508ac1054f11eda989dbc0e8c23a4",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "b2477443984c372ce2dbb145aa6d4418a58508ac1054f11eda989dbc0e8c23a4",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c016/a0/flat5d.root",
+   "bytes": 980779,
+   "sha256": "23c04940dbe383eb7a2b52f9096ddccb86cd6ff41bcdb47886233fd9fe8ef69d",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "23c04940dbe383eb7a2b52f9096ddccb86cd6ff41bcdb47886233fd9fe8ef69d",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c017/a0/flat5d.root",
+   "bytes": 980875,
+   "sha256": "973673c63d585ab355917b81bdb046c4877fb21d294cdf44f1fbf651ea4af9af",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "973673c63d585ab355917b81bdb046c4877fb21d294cdf44f1fbf651ea4af9af",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c018/a0/flat5d.root",
+   "bytes": 980939,
+   "sha256": "c00103036ad3ba9fed958128a3cab320795890a9f7182e1b24ab1fd0aa3c617f",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "c00103036ad3ba9fed958128a3cab320795890a9f7182e1b24ab1fd0aa3c617f",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c019/a0/flat5d.root",
+   "bytes": 980890,
+   "sha256": "917e6098e203de6ecc28a752c4851457f99852e6a3a1532a967b82e993efe0d7",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "917e6098e203de6ecc28a752c4851457f99852e6a3a1532a967b82e993efe0d7",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c020/a0/flat5d.root",
+   "bytes": 980690,
+   "sha256": "c9eb487c7055c95995893053ec84222ec272acc15881589d0b736e5d1125d0e3",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "c9eb487c7055c95995893053ec84222ec272acc15881589d0b736e5d1125d0e3",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c021/a0/flat5d.root",
+   "bytes": 980899,
+   "sha256": "9e1b423c1386a2e2b51b87348ae911a22671f54966f65cb07fa7869a83dc382f",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "9e1b423c1386a2e2b51b87348ae911a22671f54966f65cb07fa7869a83dc382f",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c022/a0/flat5d.root",
+   "bytes": 980616,
+   "sha256": "ad10a1770db536202b68ec961a9cd40e11fa6b2e1ad944f1f86256bb9d89e56a",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ad10a1770db536202b68ec961a9cd40e11fa6b2e1ad944f1f86256bb9d89e56a",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c023/a0/flat5d.root",
+   "bytes": 980700,
+   "sha256": "e90a6290f125b88483b1c0f14ec97c0151ee0e1548efb5fb9f349c958a599d20",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "e90a6290f125b88483b1c0f14ec97c0151ee0e1548efb5fb9f349c958a599d20",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c024/a0/flat5d.root",
+   "bytes": 980654,
+   "sha256": "4d6dae0131a0246babf541f228ec126ae76f0c05e4815cf826aa0dde07fd5101",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "4d6dae0131a0246babf541f228ec126ae76f0c05e4815cf826aa0dde07fd5101",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c025/a0/flat5d.root",
+   "bytes": 981056,
+   "sha256": "6b1909efcdd598e46bd046789f23f9804ab686b3f0bf024f380b61f6dffd20f0",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "6b1909efcdd598e46bd046789f23f9804ab686b3f0bf024f380b61f6dffd20f0",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c026/a0/flat5d.root",
+   "bytes": 980899,
+   "sha256": "dec096af77c9a51410740c0a362b2d5a32c83f4102ce44048ec7d28d009ce910",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "dec096af77c9a51410740c0a362b2d5a32c83f4102ce44048ec7d28d009ce910",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c027/a0/flat5d.root",
+   "bytes": 980958,
+   "sha256": "a45178cb05de3b72b3117e8d53d5d46e5010693fdd5f092b9573302af1f7df57",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "a45178cb05de3b72b3117e8d53d5d46e5010693fdd5f092b9573302af1f7df57",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c028/a0/flat5d.root",
+   "bytes": 980667,
+   "sha256": "6e7784b3eabd24331b470e45f77ce7d430dd9e7d3da771bf51c30a17d6f69f76",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "6e7784b3eabd24331b470e45f77ce7d430dd9e7d3da771bf51c30a17d6f69f76",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c029/a0/flat5d.root",
+   "bytes": 980853,
+   "sha256": "fd580749fd4ccd7c58ab1fc69495018b68b18211d79975b69c709263187cd3ef",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "fd580749fd4ccd7c58ab1fc69495018b68b18211d79975b69c709263187cd3ef",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c030/a0/flat5d.root",
+   "bytes": 980874,
+   "sha256": "73aac8cf8ce0f2dc91df67a6de0c7da891d1dfe0291c4b16e83567a977e2aafd",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "73aac8cf8ce0f2dc91df67a6de0c7da891d1dfe0291c4b16e83567a977e2aafd",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c031/a0/flat5d.root",
+   "bytes": 980823,
+   "sha256": "d49ce804ecbdd80131a2f9585d3d2b0d0444230de8936e135e1d30bba47b72f8",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "d49ce804ecbdd80131a2f9585d3d2b0d0444230de8936e135e1d30bba47b72f8",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c032/a0/flat5d.root",
+   "bytes": 981057,
+   "sha256": "24291ce191e63c43d2e7db66a2139156a2e358d848242baa45eefb6b5f005ec8",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "24291ce191e63c43d2e7db66a2139156a2e358d848242baa45eefb6b5f005ec8",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c033/a0/flat5d.root",
+   "bytes": 980904,
+   "sha256": "e7e09f4b27ae760c9aff3ebe51c8e465f59f838c1573c95671b0ef68f8d95807",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "e7e09f4b27ae760c9aff3ebe51c8e465f59f838c1573c95671b0ef68f8d95807",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c034/a0/flat5d.root",
+   "bytes": 980693,
+   "sha256": "a8db67e736fd7aa2453ef8ccff15c66f60f4c74fd9baf6574260ca9d8fe31960",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "a8db67e736fd7aa2453ef8ccff15c66f60f4c74fd9baf6574260ca9d8fe31960",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c035/a0/flat5d.root",
+   "bytes": 980719,
+   "sha256": "008adb6c23204493aef021d6939784d3c18bfa885929e4df0e13997ccc281dde",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "008adb6c23204493aef021d6939784d3c18bfa885929e4df0e13997ccc281dde",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c036/a0/flat5d.root",
+   "bytes": 980811,
+   "sha256": "726ad473aa7b820c90bfb75f0d454db5d95d958e002f4fb0029f7250cfe92682",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "726ad473aa7b820c90bfb75f0d454db5d95d958e002f4fb0029f7250cfe92682",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c037/a0/flat5d.root",
+   "bytes": 980883,
+   "sha256": "ad572f7595ccdcc332c54d62e99f0b9909c31b6738da84d050704a03ec43d8dc",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ad572f7595ccdcc332c54d62e99f0b9909c31b6738da84d050704a03ec43d8dc",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c038/a0/flat5d.root",
+   "bytes": 980862,
+   "sha256": "5500664d2c263a074f5f95677d89104c4cafd087e3493e6d4f5c7504b6384f9c",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "5500664d2c263a074f5f95677d89104c4cafd087e3493e6d4f5c7504b6384f9c",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c039/a0/flat5d.root",
+   "bytes": 980745,
+   "sha256": "392863212910f227173e316115cdf859bf880c65feef8b40521106bccd0510e3",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "392863212910f227173e316115cdf859bf880c65feef8b40521106bccd0510e3",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c040/a0/flat5d.root",
+   "bytes": 980711,
+   "sha256": "a57cc781127a47b32829f6e1282ee40ef82001ecd9ee0df29b72c9a9a83d7491",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "a57cc781127a47b32829f6e1282ee40ef82001ecd9ee0df29b72c9a9a83d7491",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c041/a0/flat5d.root",
+   "bytes": 980772,
+   "sha256": "cdcfcb38e0afe29854731dd722b1de01f4a28415219caacdac8636db654eee29",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "cdcfcb38e0afe29854731dd722b1de01f4a28415219caacdac8636db654eee29",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c042/a0/flat5d.root",
+   "bytes": 980801,
+   "sha256": "61623ffbffc4953fef141a9ae256ffc328f118432d0dd54c82924a49226929c0",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "61623ffbffc4953fef141a9ae256ffc328f118432d0dd54c82924a49226929c0",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c043/a0/flat5d.root",
+   "bytes": 980713,
+   "sha256": "37e171eb7c91145239eb0a3c07a8fc47edcb93b41d96bc84e41a9570fee2868a",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "37e171eb7c91145239eb0a3c07a8fc47edcb93b41d96bc84e41a9570fee2868a",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c044/a0/flat5d.root",
+   "bytes": 980812,
+   "sha256": "5c762a9f33c2c1b6cffb0599c174043cb445d33a2a9f40dd067af437b0001b21",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "5c762a9f33c2c1b6cffb0599c174043cb445d33a2a9f40dd067af437b0001b21",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c045/a0/flat5d.root",
+   "bytes": 980744,
+   "sha256": "86bd2ea471ab5251639f2b1890079b8f59d37f7974c634f493a42f3b89031c62",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "86bd2ea471ab5251639f2b1890079b8f59d37f7974c634f493a42f3b89031c62",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c046/a0/flat5d.root",
+   "bytes": 980799,
+   "sha256": "21413d2aa78ba622239439ff888564c11371121d81fec3d3f164a27bb77f4c38",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "21413d2aa78ba622239439ff888564c11371121d81fec3d3f164a27bb77f4c38",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c047/a0/flat5d.root",
+   "bytes": 980876,
+   "sha256": "f56cc6e7ff9566df31a31d595fd7ac4e8753936d2e4e30566f753e87a2668006",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "f56cc6e7ff9566df31a31d595fd7ac4e8753936d2e4e30566f753e87a2668006",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c048/a0/flat5d.root",
+   "bytes": 980786,
+   "sha256": "7485acde2ebfeae3203e086884788b8e6ada1dda418a4031889cc0975765128e",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "7485acde2ebfeae3203e086884788b8e6ada1dda418a4031889cc0975765128e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c049/a0/flat5d.root",
+   "bytes": 980828,
+   "sha256": "088a04fa16684a06a3311affd73434780bd97c159173f387ff563e5801e299f9",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "088a04fa16684a06a3311affd73434780bd97c159173f387ff563e5801e299f9",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c050/a0/flat5d.root",
+   "bytes": 980806,
+   "sha256": "dbcb3061adb744d655279b261bb059e328b42c96d9967ba2db46cfd292f9f114",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "dbcb3061adb744d655279b261bb059e328b42c96d9967ba2db46cfd292f9f114",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c051/a0/flat5d.root",
+   "bytes": 980928,
+   "sha256": "eb8567fae38d23f1c0f96b02225e92c6f4278b5a45180d247afb7fc8a7b4310a",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "eb8567fae38d23f1c0f96b02225e92c6f4278b5a45180d247afb7fc8a7b4310a",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c052/a0/flat5d.root",
+   "bytes": 980865,
+   "sha256": "5014ea3205c8e2b44666d39a71104c5d2248adf1b70cac1f1890ff7ec5536e56",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "5014ea3205c8e2b44666d39a71104c5d2248adf1b70cac1f1890ff7ec5536e56",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c053/a0/flat5d.root",
+   "bytes": 980907,
+   "sha256": "5e678d909de879754f288e0a6c39bbb08f75912ecce2a80829376bea8f4191d1",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "5e678d909de879754f288e0a6c39bbb08f75912ecce2a80829376bea8f4191d1",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c054/a0/flat5d.root",
+   "bytes": 980915,
+   "sha256": "1a9f060ebf522f0271407ec9b3ad3fbda565df8f9bc0e0c3d0b796491cd84ec2",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "1a9f060ebf522f0271407ec9b3ad3fbda565df8f9bc0e0c3d0b796491cd84ec2",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c055/a0/flat5d.root",
+   "bytes": 980810,
+   "sha256": "0fc299f3c69cd59661ce7a853bb396222bdc29b84d5902475cee8157909a1b13",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "0fc299f3c69cd59661ce7a853bb396222bdc29b84d5902475cee8157909a1b13",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c056/a0/flat5d.root",
+   "bytes": 980886,
+   "sha256": "56dc00830d196c046a16da43a1b65b0643c967bed31c9678032d048289ad50ab",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "56dc00830d196c046a16da43a1b65b0643c967bed31c9678032d048289ad50ab",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c057/a0/flat5d.root",
+   "bytes": 980590,
+   "sha256": "ca0c7315b484751f630c77a6e987c0021809d973a1872c5cd2469ab8e5cb8fba",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ca0c7315b484751f630c77a6e987c0021809d973a1872c5cd2469ab8e5cb8fba",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c058/a0/flat5d.root",
+   "bytes": 980946,
+   "sha256": "7da5b7fdf2ce73fdfe208e128d29f59dd429e629e08208ac7e4b1bfcf32a4ffa",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "7da5b7fdf2ce73fdfe208e128d29f59dd429e629e08208ac7e4b1bfcf32a4ffa",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c059/a0/flat5d.root",
+   "bytes": 980860,
+   "sha256": "143e29b6055c5c2e6ffd5b86a1b64a43aa1b8fdcdf7cdaa7b95706973e227896",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "143e29b6055c5c2e6ffd5b86a1b64a43aa1b8fdcdf7cdaa7b95706973e227896",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c060/a0/flat5d.root",
+   "bytes": 980650,
+   "sha256": "77fbfed80c368471a0545d76c0d87cac0ad8281a5bc529e8dc7eb9e8dc3222d5",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "77fbfed80c368471a0545d76c0d87cac0ad8281a5bc529e8dc7eb9e8dc3222d5",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c061/a0/flat5d.root",
+   "bytes": 981027,
+   "sha256": "4a0c6c642cf48d5aab49975cd52576909e1b46547b22b591c91cf5546bf37b2a",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "4a0c6c642cf48d5aab49975cd52576909e1b46547b22b591c91cf5546bf37b2a",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c062/a0/flat5d.root",
+   "bytes": 980955,
+   "sha256": "c34b2dbbb50cdeb3d1a2b5131b8985706f6bb6a826132798868779a4d21a3a52",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "c34b2dbbb50cdeb3d1a2b5131b8985706f6bb6a826132798868779a4d21a3a52",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c063/a0/flat5d.root",
+   "bytes": 980861,
+   "sha256": "65eda3abdc5d2000ebf81bf8df984c067fc144248874641ef2b9fb8f92db588f",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "65eda3abdc5d2000ebf81bf8df984c067fc144248874641ef2b9fb8f92db588f",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c064/a0/flat5d.root",
+   "bytes": 980772,
+   "sha256": "386f30bf1ca416e7b7c20721a7cacf30caffea9eaf31eb1fb1d6b820d08d59fe",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "386f30bf1ca416e7b7c20721a7cacf30caffea9eaf31eb1fb1d6b820d08d59fe",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c065/a0/flat5d.root",
+   "bytes": 980838,
+   "sha256": "2b77b2c442c8c4098fd14081d25872ae1750750d80abad74c310383af074d5de",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "2b77b2c442c8c4098fd14081d25872ae1750750d80abad74c310383af074d5de",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c066/a0/flat5d.root",
+   "bytes": 980902,
+   "sha256": "58df5b5ffa2150042781097398ec789ade720bb73f7f0112fd0c116d50161e3b",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "58df5b5ffa2150042781097398ec789ade720bb73f7f0112fd0c116d50161e3b",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c067/a0/flat5d.root",
+   "bytes": 981014,
+   "sha256": "77d2647d45096381bea757234d5737f4ed72b02e9dbceeec61b54f3f54a3638f",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "77d2647d45096381bea757234d5737f4ed72b02e9dbceeec61b54f3f54a3638f",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c068/a0/flat5d.root",
+   "bytes": 980787,
+   "sha256": "427f3fc007418d1cd51c5a4e8d75cb2e4e0d2297a3c90e350266b25b82046091",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "427f3fc007418d1cd51c5a4e8d75cb2e4e0d2297a3c90e350266b25b82046091",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c069/a0/flat5d.root",
+   "bytes": 980914,
+   "sha256": "013e7228e54fef820b2db30840d54a67fb2afc5c9d97422e4d413a837ddc25c5",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "013e7228e54fef820b2db30840d54a67fb2afc5c9d97422e4d413a837ddc25c5",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c070/a0/flat5d.root",
+   "bytes": 980954,
+   "sha256": "eef59df91deef474854501b645d2ffbf8a117ba1cee6b1626fa9264c717d67ef",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "eef59df91deef474854501b645d2ffbf8a117ba1cee6b1626fa9264c717d67ef",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c071/a0/flat5d.root",
+   "bytes": 980825,
+   "sha256": "70659205c07f15b89fb81fd35574eccf266099e45690373c5a68563979cf5099",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "70659205c07f15b89fb81fd35574eccf266099e45690373c5a68563979cf5099",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c072/a0/flat5d.root",
+   "bytes": 980993,
+   "sha256": "08ddedd95035d7c1e11f75f5b6b914dc3a4e97ab1ac8a6abe1d7c0a8f7279a7e",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "08ddedd95035d7c1e11f75f5b6b914dc3a4e97ab1ac8a6abe1d7c0a8f7279a7e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c073/a0/flat5d.root",
+   "bytes": 980647,
+   "sha256": "fb0009a73a2f9e6e2fb4d92a96bf5e21b3798480c24e755e0d12f2736d2d78ba",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "fb0009a73a2f9e6e2fb4d92a96bf5e21b3798480c24e755e0d12f2736d2d78ba",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c074/a0/flat5d.root",
+   "bytes": 980752,
+   "sha256": "b7377aac02556296a1878089e5fedb096ad9d407196e5a13364d7b4f5330bde7",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "b7377aac02556296a1878089e5fedb096ad9d407196e5a13364d7b4f5330bde7",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c075/a0/flat5d.root",
+   "bytes": 980977,
+   "sha256": "3a4a29e78ebb370810285c576b39a7728065934f2a4d9156a3d21881a4c0cc00",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "3a4a29e78ebb370810285c576b39a7728065934f2a4d9156a3d21881a4c0cc00",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c076/a0/flat5d.root",
+   "bytes": 980573,
+   "sha256": "054096a5050087abcdf32bbb5b2f79f5542db3405c03a5412a44d66f5e460e39",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "054096a5050087abcdf32bbb5b2f79f5542db3405c03a5412a44d66f5e460e39",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c077/a0/flat5d.root",
+   "bytes": 980792,
+   "sha256": "551bd4a2f298094119784c404e37d64afc838a9a5c105651149083d50e486c2a",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "551bd4a2f298094119784c404e37d64afc838a9a5c105651149083d50e486c2a",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c078/a0/flat5d.root",
+   "bytes": 980934,
+   "sha256": "582e2b313b36761decdb6be8582b437f5e8ce20cc80e0ec26d06c69e861c3713",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "582e2b313b36761decdb6be8582b437f5e8ce20cc80e0ec26d06c69e861c3713",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c079/a0/flat5d.root",
+   "bytes": 980741,
+   "sha256": "1421a02faed372e54189ba16de48d0da3e1097b49c27aa8eea81e4800d01246a",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "1421a02faed372e54189ba16de48d0da3e1097b49c27aa8eea81e4800d01246a",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c080/a0/flat5d.root",
+   "bytes": 980814,
+   "sha256": "456e908b3fab4e312412597eeeab4afff26b42caf17030796c7cac6d8ff422f6",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "456e908b3fab4e312412597eeeab4afff26b42caf17030796c7cac6d8ff422f6",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c081/a0/flat5d.root",
+   "bytes": 980884,
+   "sha256": "63519d0c01184ed50e90500bafd76b5e9f66e6b026c0f83664e3c8f1d1c8a13e",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "63519d0c01184ed50e90500bafd76b5e9f66e6b026c0f83664e3c8f1d1c8a13e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c082/a0/flat5d.root",
+   "bytes": 980856,
+   "sha256": "d42719d11f91de3fc348892cdec67406e972f811bda7b67ce33b44adf3c33d71",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "d42719d11f91de3fc348892cdec67406e972f811bda7b67ce33b44adf3c33d71",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c083/a0/flat5d.root",
+   "bytes": 980843,
+   "sha256": "c179354470829da95d1df4a4564cbf557f6bd62172817beba29aaccaefb8ac16",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "c179354470829da95d1df4a4564cbf557f6bd62172817beba29aaccaefb8ac16",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c084/a0/flat5d.root",
+   "bytes": 980971,
+   "sha256": "055ecc903de9ed181eefd7e3c89468a184355f145cba7d03a3d686c6f4f0bd82",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "055ecc903de9ed181eefd7e3c89468a184355f145cba7d03a3d686c6f4f0bd82",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c085/a0/flat5d.root",
+   "bytes": 980789,
+   "sha256": "01b10d13017c924c56c1cf92ead38c9a6565853f14d261015c7209f43a87fc08",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "01b10d13017c924c56c1cf92ead38c9a6565853f14d261015c7209f43a87fc08",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c086/a0/flat5d.root",
+   "bytes": 980593,
+   "sha256": "140bb75244702b13e54938d4ffe5e5f562ae4bddbef45e7e766d5550f720f1a5",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "140bb75244702b13e54938d4ffe5e5f562ae4bddbef45e7e766d5550f720f1a5",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c087/a0/flat5d.root",
+   "bytes": 980751,
+   "sha256": "524ad30958f6d69cd279c27e61610fdcf8d417369a19146d737040234526a3cd",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "524ad30958f6d69cd279c27e61610fdcf8d417369a19146d737040234526a3cd",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c088/a0/flat5d.root",
+   "bytes": 981001,
+   "sha256": "4b3301ee5cc4e47e74cfad36f1db5fce3488b339843350fb772daf91e518c92a",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "4b3301ee5cc4e47e74cfad36f1db5fce3488b339843350fb772daf91e518c92a",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c089/a0/flat5d.root",
+   "bytes": 980928,
+   "sha256": "45460694e82bd06b8f638c1e376a1e4849f7484ca644c61bd3d27d76cca7290b",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "45460694e82bd06b8f638c1e376a1e4849f7484ca644c61bd3d27d76cca7290b",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c090/a0/flat5d.root",
+   "bytes": 980701,
+   "sha256": "ae4d152c84f0ffcff372706ffedaa39fcad04c9855bb3fc2216c9dba2f238f39",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ae4d152c84f0ffcff372706ffedaa39fcad04c9855bb3fc2216c9dba2f238f39",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c091/a0/flat5d.root",
+   "bytes": 980875,
+   "sha256": "101f536611080af952c87bc6287e8efcad01cff2440612cb92bfc8ca0f7418ca",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "101f536611080af952c87bc6287e8efcad01cff2440612cb92bfc8ca0f7418ca",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c092/a0/flat5d.root",
+   "bytes": 980876,
+   "sha256": "7bd70b7064298d305536abf80289fece3f18e2b77d9bcb60c9df6da3066c25b9",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "7bd70b7064298d305536abf80289fece3f18e2b77d9bcb60c9df6da3066c25b9",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c093/a0/flat5d.root",
+   "bytes": 980806,
+   "sha256": "5068a4420ac9fe3a5a88a2365fe1b88e5edf1e06e66b1ba556b249c39c049f55",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "5068a4420ac9fe3a5a88a2365fe1b88e5edf1e06e66b1ba556b249c39c049f55",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c094/a0/flat5d.root",
+   "bytes": 980923,
+   "sha256": "436d6365e027ff6044b9a176efe93c38bc0640b52db3dbdaac4292e73967d099",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "436d6365e027ff6044b9a176efe93c38bc0640b52db3dbdaac4292e73967d099",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c095/a0/flat5d.root",
+   "bytes": 980948,
+   "sha256": "8b81b53267e3b1c40001fb1c3025bfde81c699a84e81a5c4c2f7f6295d91c2c8",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "8b81b53267e3b1c40001fb1c3025bfde81c699a84e81a5c4c2f7f6295d91c2c8",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c096/a0/flat5d.root",
+   "bytes": 980844,
+   "sha256": "bf6c9dc6b68d5b1410fc4a561f2a73fd85b7ec16bbf4ecb7a7fe046bb4f9b8ba",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "bf6c9dc6b68d5b1410fc4a561f2a73fd85b7ec16bbf4ecb7a7fe046bb4f9b8ba",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c097/a0/flat5d.root",
+   "bytes": 980998,
+   "sha256": "0a2eb84ca065989cd3365e84d2cbd4c1d90d9cf9b199543a36974ddb8d69ef23",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "0a2eb84ca065989cd3365e84d2cbd4c1d90d9cf9b199543a36974ddb8d69ef23",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c098/a0/flat5d.root",
+   "bytes": 980697,
+   "sha256": "4dd7d90a0a0efb090f6a53ece201f717c133ea1e2f1a64eed70cc317addf6bad",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "4dd7d90a0a0efb090f6a53ece201f717c133ea1e2f1a64eed70cc317addf6bad",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c099/a0/flat5d.root",
+   "bytes": 980799,
+   "sha256": "0ada6971863f902c47737f96e512339ad359f341e571317dbefad7f41d2b4226",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "0ada6971863f902c47737f96e512339ad359f341e571317dbefad7f41d2b4226",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c100/a0/flat5d.root",
+   "bytes": 980971,
+   "sha256": "12817212b8a5df2cf3ab9ce3b3a251e2743c0754081ad992d2f10aaccc319cb6",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "12817212b8a5df2cf3ab9ce3b3a251e2743c0754081ad992d2f10aaccc319cb6",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c101/a0/flat5d.root",
+   "bytes": 980948,
+   "sha256": "f641748c82ccf4daf485ed45ab205ad48789451debee325cfc991e6eb629ede8",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "f641748c82ccf4daf485ed45ab205ad48789451debee325cfc991e6eb629ede8",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c102/a0/flat5d.root",
+   "bytes": 980855,
+   "sha256": "90a5a66d2b8303176a912013147493437d37dcd213b07e0097d338f3e6665555",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "90a5a66d2b8303176a912013147493437d37dcd213b07e0097d338f3e6665555",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c103/a0/flat5d.root",
+   "bytes": 980973,
+   "sha256": "a571a196411b5397313c8e10a221ed09f6b1c126db3014282d2e928fc75f1028",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "a571a196411b5397313c8e10a221ed09f6b1c126db3014282d2e928fc75f1028",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c104/a0/flat5d.root",
+   "bytes": 980853,
+   "sha256": "fbb1ad0410a7e30ae9a41bd551ab390aa04467a779714a786b294ef456f80283",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "fbb1ad0410a7e30ae9a41bd551ab390aa04467a779714a786b294ef456f80283",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c105/a0/flat5d.root",
+   "bytes": 980905,
+   "sha256": "e35edf2f2ff51265f6c4f6796b36e2e1acec35547da1c3df244869c1aa929a86",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "e35edf2f2ff51265f6c4f6796b36e2e1acec35547da1c3df244869c1aa929a86",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c106/a0/flat5d.root",
+   "bytes": 980709,
+   "sha256": "95118613f3f04356272a98cbcb8cc7715db1af25c28a262e0bfa978ed4c21e18",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "95118613f3f04356272a98cbcb8cc7715db1af25c28a262e0bfa978ed4c21e18",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c107/a0/flat5d.root",
+   "bytes": 980803,
+   "sha256": "604fb79601b689f7b5414db710315ca395d7e28218c862243ad3bd6fa8b34cc5",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "604fb79601b689f7b5414db710315ca395d7e28218c862243ad3bd6fa8b34cc5",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c108/a0/flat5d.root",
+   "bytes": 981054,
+   "sha256": "767be894ef109968a92c1bace545417dd51bc1a2df69afe265c7fa49af9f0d88",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "767be894ef109968a92c1bace545417dd51bc1a2df69afe265c7fa49af9f0d88",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c109/a0/flat5d.root",
+   "bytes": 980927,
+   "sha256": "12e8fe1453971077f6f5080da58d7f19c3a8a79c63e2869346619ecc8cfd3442",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "12e8fe1453971077f6f5080da58d7f19c3a8a79c63e2869346619ecc8cfd3442",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c110/a0/flat5d.root",
+   "bytes": 981036,
+   "sha256": "b39bfed0905bae99cccd07d65d6f457f04b8589f915e412a48e78d32b52eb36a",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "b39bfed0905bae99cccd07d65d6f457f04b8589f915e412a48e78d32b52eb36a",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c111/a0/flat5d.root",
+   "bytes": 980691,
+   "sha256": "fc3b689fcd9b7e842b0260c10863f7d13f59ca4f44b8d54fab0b2e47fe3054fb",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "fc3b689fcd9b7e842b0260c10863f7d13f59ca4f44b8d54fab0b2e47fe3054fb",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c112/a0/flat5d.root",
+   "bytes": 980801,
+   "sha256": "5b3d2f95ea79c69a926db83e354eb08700e8e72501ea761d088b3e884145def9",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "5b3d2f95ea79c69a926db83e354eb08700e8e72501ea761d088b3e884145def9",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c113/a0/flat5d.root",
+   "bytes": 980911,
+   "sha256": "bf0f145b82c4f8062c0ba1c27cba2ad97c5a0edf5df254f8b6017225579788dd",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "bf0f145b82c4f8062c0ba1c27cba2ad97c5a0edf5df254f8b6017225579788dd",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c114/a0/flat5d.root",
+   "bytes": 980886,
+   "sha256": "a6b5a5da78596bb691de35887818bfd69a180fde21f8fb63975cc1454a724e17",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "a6b5a5da78596bb691de35887818bfd69a180fde21f8fb63975cc1454a724e17",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c115/a0/flat5d.root",
+   "bytes": 980774,
+   "sha256": "e3c3e4b67f8c0ec4e658cac9f5e5a5d901c24f5b050f15baea12a6bf8391be5f",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "e3c3e4b67f8c0ec4e658cac9f5e5a5d901c24f5b050f15baea12a6bf8391be5f",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c116/a0/flat5d.root",
+   "bytes": 980656,
+   "sha256": "0c5ef1bbc388bbed7b9b7b7ec43c5898c550812c646cec59bfa1c4e67cb78870",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "0c5ef1bbc388bbed7b9b7b7ec43c5898c550812c646cec59bfa1c4e67cb78870",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c117/a0/flat5d.root",
+   "bytes": 980897,
+   "sha256": "40edadaab113e6908cb003cc49423ab8eb7d911477d2983a9f031d006c9263ab",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "40edadaab113e6908cb003cc49423ab8eb7d911477d2983a9f031d006c9263ab",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c118/a0/flat5d.root",
+   "bytes": 980993,
+   "sha256": "d319e352a6e37dde66ec5164b946086c5dba7ab6383bf717c0077da66cd6c02f",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "d319e352a6e37dde66ec5164b946086c5dba7ab6383bf717c0077da66cd6c02f",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c119/a0/flat5d.root",
+   "bytes": 980862,
+   "sha256": "41882e5af1fd011253f58c09c44ac34de991dfee2f119bc6bcb7ad788e583a22",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "41882e5af1fd011253f58c09c44ac34de991dfee2f119bc6bcb7ad788e583a22",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c120/a0/flat5d.root",
+   "bytes": 980725,
+   "sha256": "38cf03dc53613965de26da9fc6422c5377c2854cea6ecd63acfbab0f8c4715b0",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "38cf03dc53613965de26da9fc6422c5377c2854cea6ecd63acfbab0f8c4715b0",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c121/a0/flat5d.root",
+   "bytes": 981035,
+   "sha256": "707a5a543c2202944273258a5f97e3746db01fdb2254c6970d98741677005127",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "707a5a543c2202944273258a5f97e3746db01fdb2254c6970d98741677005127",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c122/a0/flat5d.root",
+   "bytes": 981028,
+   "sha256": "e806ca38dddd1844b71e0db37e0a17223f72857740cd80bbb2c2bcce7cead854",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "e806ca38dddd1844b71e0db37e0a17223f72857740cd80bbb2c2bcce7cead854",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c123/a0/flat5d.root",
+   "bytes": 980596,
+   "sha256": "07f0107b2dcdfb2c0a7c8f97be34550fa3d89c2f43d3261517234a4b73b51f2d",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "07f0107b2dcdfb2c0a7c8f97be34550fa3d89c2f43d3261517234a4b73b51f2d",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c124/a0/flat5d.root",
+   "bytes": 980783,
+   "sha256": "d8637e6a193e52a1802760737689183d8ff832f8396e0b5adf337111898421df",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "d8637e6a193e52a1802760737689183d8ff832f8396e0b5adf337111898421df",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c125/a0/flat5d.root",
+   "bytes": 980718,
+   "sha256": "1fb022e272bfe2947ca2c74a66a5bea07b68f632eb194d71b1918a2070d4098c",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "1fb022e272bfe2947ca2c74a66a5bea07b68f632eb194d71b1918a2070d4098c",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c126/a0/flat5d.root",
+   "bytes": 981040,
+   "sha256": "e3ca6cc7e8f12f3a9e70dbe9686e644f9f6bc09177bdb2d2d80ab1867f2bd149",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "e3ca6cc7e8f12f3a9e70dbe9686e644f9f6bc09177bdb2d2d80ab1867f2bd149",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c127/a0/flat5d.root",
+   "bytes": 980771,
+   "sha256": "ec72967f7fb0de6bc5a49ef17ec3f5f795915288cdeece94eff2bf37c4f1abeb",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "ec72967f7fb0de6bc5a49ef17ec3f5f795915288cdeece94eff2bf37c4f1abeb",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/main/c128/a0/flat5d.root",
+   "bytes": 980757,
+   "sha256": "12ef7207dd0202a31256f0a28eb0fd2c1af2095cb06f49db3278e6aa0096aa6c",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "12ef7207dd0202a31256f0a28eb0fd2c1af2095cb06f49db3278e6aa0096aa6c",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c001/a0/flat5d.root",
+   "bytes": 621161,
+   "sha256": "adaf664a4920526736125d4e9c04691d0d32e23622f80f20514b9628873b8ebc",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "adaf664a4920526736125d4e9c04691d0d32e23622f80f20514b9628873b8ebc",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c002/a0/flat5d.root",
+   "bytes": 620912,
+   "sha256": "65b619c4f71432d2f0ef609e72363d74e521676de802177e47ada027390435f1",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "65b619c4f71432d2f0ef609e72363d74e521676de802177e47ada027390435f1",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c003/a0/flat5d.root",
+   "bytes": 621056,
+   "sha256": "cdf72989b4ad8576aff3a4956896f21e7d2c8e54deefb3c921ca3e4427a1f2fc",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "cdf72989b4ad8576aff3a4956896f21e7d2c8e54deefb3c921ca3e4427a1f2fc",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c004/a0/flat5d.root",
+   "bytes": 621059,
+   "sha256": "7310d00a0f3c126d6a068531266d20a4dd6b47941257afe770f019dcc0c30a60",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "7310d00a0f3c126d6a068531266d20a4dd6b47941257afe770f019dcc0c30a60",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c005/a0/flat5d.root",
+   "bytes": 620976,
+   "sha256": "808dc3065c18d12aced7833d4a8384c63808d751ebf9f5c8611839a1829d4c7e",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "808dc3065c18d12aced7833d4a8384c63808d751ebf9f5c8611839a1829d4c7e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c006/a0/flat5d.root",
+   "bytes": 621011,
+   "sha256": "6e5f8cf80e8363392b19730a7774572a7c28cf7b34b04cbbc68907afdb2ff901",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "6e5f8cf80e8363392b19730a7774572a7c28cf7b34b04cbbc68907afdb2ff901",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c007/a0/flat5d.root",
+   "bytes": 621130,
+   "sha256": "9fdf2c7c93100d57363a4176a27043224479c94789a8bd652ec39eeb38757ae9",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "9fdf2c7c93100d57363a4176a27043224479c94789a8bd652ec39eeb38757ae9",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c008/a0/flat5d.root",
+   "bytes": 620996,
+   "sha256": "62567ead2dd5865413ff7ea596044c2d3fd47307c87f2e613ccf1de6ea5c4587",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "62567ead2dd5865413ff7ea596044c2d3fd47307c87f2e613ccf1de6ea5c4587",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c009/a0/flat5d.root",
+   "bytes": 621052,
+   "sha256": "5d7c14f788cec7b1afbf6e13d7b6c69276d4d810bd0ce201c0a3b2014e062563",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "5d7c14f788cec7b1afbf6e13d7b6c69276d4d810bd0ce201c0a3b2014e062563",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/d/gen/supp/c010/a0/flat5d.root",
+   "bytes": 621040,
+   "sha256": "2d18132b1c1bbf4ada20053cbfc34743001fc2be0f0b7d300c5fdedb84e090a1",
+   "o_noatime": true,
+   "atime_ns_before": 1793565951000000000,
+   "atime_ns_after": 1793565951000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "2d18132b1c1bbf4ada20053cbfc34743001fc2be0f0b7d300c5fdedb84e090a1",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/3d-unfolding/genie/flux_mefhc_numu_nuwro.root",
+   "bytes": 5580,
+   "sha256": "1d016921fcaec190aa70f90199059761dd769bb70252534f69d603d054535e4f",
+   "o_noatime": true,
+   "atime_ns_before": 1793565867000000000,
+   "atime_ns_after": 1793565867000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "1d016921fcaec190aa70f90199059761dd769bb70252534f69d603d054535e4f",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/s5p-20260926/gen5d_fluxfix/supp/flux_phi_t_50_100.root",
+   "bytes": 4484,
+   "sha256": "6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e",
+   "o_noatime": true,
+   "atime_ns_before": 1793565867000000000,
+   "atime_ns_after": 1793565867000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "6fd4a62f9cde4bf3fbd37fd8bc60ca419b12c38237162181d1903bf123c9e03e",
+   "sha256_match": true
+  },
+  {
+   "path": "/pscratch/sd/j/josephrb/gencmp-20261101/deploy/docs/orchestration/state/measurement-paper/phase1/mp3b/runA/out_r2/build_k1/mp3b_fine_nuwro.npz",
+   "bytes": 683368,
+   "sha256": "63dbfa4096aa338da078fd74c1d6e477b17f8836764cbd08536b9f005c05fb04",
+   "o_noatime": true,
+   "atime_ns_before": 1793563155000000000,
+   "atime_ns_after": 1793563155000000000,
+   "atime_unchanged": true,
+   "sha256_pinned": "63dbfa4096aa338da078fd74c1d6e477b17f8836764cbd08536b9f005c05fb04",
+   "sha256_match": true
+  }
+ ],
+ "pins_from_verified_meta": [],
+ "atime_deviations": [],
+ "wall_s": 157.63658833503723,
+ "cpu_s": 467.892569,
+ "maxrss_kb": 6711224,
+ "exit": 0
+}

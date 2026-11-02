@@ -228,6 +228,8 @@ docs/orchestration/DECISION-20261031-joseph-three-covariance-files-and-1b-diagno
 docs/orchestration/DECISION-20261031-joseph-triage-q1-q2-q4-q5.md	LIVE	open	""
 docs/orchestration/DECISION-20261101-joseph-abstracts-approved-and-event-loop-retention.md	LIVE	open	""
 docs/orchestration/DECISION-20261101-joseph-eavail-keep-135.md	LIVE	open	""
+docs/orchestration/DECISION-20261101-joseph-eventloops-copy-to-cfs.md	LIVE	open	""
+docs/orchestration/DECISION-20261101-joseph-gencmp-paper-adoption.md	LIVE	open	""
 docs/orchestration/DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
@@ -1117,6 +1119,9 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-REPORT.md	
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-BINDING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-G-SENS2-REPORT.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-BINDING.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-DECLARATION.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PLAN.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PSCRATCH-RETENTION-PROPOSAL.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-20261028-measurement-session.md	LIVE	open	""
