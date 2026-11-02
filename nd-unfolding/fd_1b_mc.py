@@ -21,9 +21,11 @@ Roles of ``unfold`` (one product per item, one lane):
   product bitwise.
 
 Other subcommands: ``stage-flux`` (the flux-universe table read once through O_NOATIME into an npz), ``receipt``
-(section 4.2's bank counts and N1's ratio bounds, login node), ``walls`` (S1-0's re-price trigger), ``null`` (the
-draw-matched null at T from the remade products, before any toy is opened) and ``readout`` (section 5's grading and
-section 7's readouts at T). Every pscratch input not made by this lane is read through ``fd_1b_inv``'s O_NOATIME
+(section 4.2's bank counts, N1's single ratios, and N1's composite over every possible and every declared draw,
+before the bulk; login node), ``walls`` (S1-0's re-price trigger), ``n1`` (the toys' own N1 record at T, read before
+any grading), ``null`` (the draw-matched null at T from the remade products, before any toy is opened; it records
+what C_T is made from) and ``readout`` (section 5's grading and section 7's readouts at T, refusing inputs the null
+was not made from). Every pscratch input not made by this lane is read through ``fd_1b_inv``'s O_NOATIME
 readers; a moved atime is reported and exits with 8 set.
 
 MEASURES: the declared products and readouts. CANNOT AUTHORIZE: a change to the reported covariance, an interval or a
@@ -70,6 +72,7 @@ SEED_CHECK = 45
 CONTROLS = ("setA_b1", "MaRES_0", "Flux_0", "GEANT_Pion_0")
 ROLES = ("central", "seed", "block", "stat", "toy", "control", "capture")
 N1_BOUND = 10.0                                      # N1: a composite or single ratio above this is counted
+N1_CANDIDATE_CAP = 250_000                           # rows per array the exact pass over the declared draws holds
 UNIT_SECONDS = 1062.0
 RSS_LIMIT_KIB = inv.RSS_LIMIT_KIB
 # S1-0 (declaration section 8): its eight items; the eighth is the capture with the plug-in, AR23's first toy without
@@ -108,22 +111,16 @@ def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.nd
     a_CV != 0, and a_u1 + sum_{j>=2} a_uj where a_CV == 0. The denominator composes the same way per cell, over each
     universe's own histogram (``universe_inputs``' denom_nd). The flux is the one flux universe's. For one universe
     every array is ``universe_inputs``' exactly. N1's record: per array, max over rows of |a_D| / max_j |a_uj|."""
-    cv = {"wt": np.asarray(inputs["w_truth"], float), "wr": np.asarray(inputs["w_reco"], float),
-          "bkgw": np.asarray(bkg["bkg_w"], float), "denom": np.asarray(inputs["denom_nd"], float)}
+    cv = _cv_arrays(inputs, bkg)
     ui, ub = dict(inputs), dict(bkg)
     if not tags:
         return ui, ub, {"universes": []}
     acc, peak, fluxes = {}, {}, []
     nz = {k: v != 0 for k, v in cv.items()}
     for j, tag in enumerate(tags):
-        band, _, idx = tag.rpartition("_")
-        w = load(tag)
-        u_i, u_b, _ = s5p_universe.universe_inputs(inputs, bkg, bank_cv, w, band, idx, None) if band != sa.FLUX \
-            else _flux_universe_inputs(inputs, bkg, bank_cv, w, idx, flux)
-        single = {"wt": np.asarray(u_i["w_truth"], float), "wr": np.asarray(u_i["w_reco"], float),
-                  "bkgw": np.asarray(u_b["bkg_w"], float), "denom": np.asarray(u_i["denom_nd"], float)}
-        if band == sa.FLUX:
-            fluxes.append(u_i["flux"])
+        single, phi = _single(inputs, bkg, bank_cv, tag, load(tag), flux)
+        if phi is not None:
+            fluxes.append(phi)
         for k, a_u in single.items():
             if j == 0:
                 acc[k], peak[k] = a_u.copy(), np.abs(a_u)
@@ -132,7 +129,7 @@ def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.nd
             acc[k][m] = acc[k][m] * (a_u[m] / cv[k][m])
             acc[k][~m] = acc[k][~m] + a_u[~m]
             np.maximum(peak[k], np.abs(a_u), out=peak[k])
-        del w, u_i, u_b, single
+        del single
     if len(fluxes) > 1:
         raise Refusal("a draw holds more than one flux universe")
     stats = {}
@@ -145,6 +142,91 @@ def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.nd
     if fluxes:
         ui["flux"] = fluxes[0]
     return ui, ub, {"universes": list(tags), "n1": stats}
+
+
+def _cv_arrays(inputs: dict, bkg: dict) -> dict:
+    return {"wt": np.asarray(inputs["w_truth"], float), "wr": np.asarray(inputs["w_reco"], float),
+            "bkgw": np.asarray(bkg["bkg_w"], float), "denom": np.asarray(inputs["denom_nd"], float)}
+
+
+def _single(inputs: dict, bkg: dict, bank_cv, tag: str, w: dict, flux) -> tuple[dict, np.ndarray | None]:
+    """One universe's per-row arrays (and per-cell denominator) as ``universe_inputs`` gives them; a Flux universe's
+    with its staged Phi_u, which is returned beside them."""
+    band, _, idx = tag.rpartition("_")
+    u_i, u_b, _ = s5p_universe.universe_inputs(inputs, bkg, bank_cv, w, band, idx, None) if band != sa.FLUX \
+        else _flux_universe_inputs(inputs, bkg, bank_cv, w, idx, flux)
+    single = {"wt": np.asarray(u_i["w_truth"], float), "wr": np.asarray(u_i["w_reco"], float),
+              "bkgw": np.asarray(u_b["bkg_w"], float), "denom": np.asarray(u_i["denom_nd"], float)}
+    return single, (u_i["flux"] if band == sa.FLUX else None)
+
+
+def declared_draws(flux_p: np.ndarray, groups: dict) -> list[list[str]]:
+    """Every declared toy's universes, for all three truths, in each draw's own order."""
+    return [draw_universes(toys.draw_for_seed(s, flux_p, groups)) for t in TRUTHS for s in TOY_SEEDS[t]]
+
+
+def composite_n1(inputs: dict, bkg: dict, bank_cv, load, flux, draws: list[list[str]]) -> dict:
+    """N1 for the composite, before the bulk (the audit's B2 on #673), per array.
+
+    Every draw holds one universe of every band. Where a_CV != 0, |a_D| / max_j |a_uj| = prod_j r_j / max_j r_j
+    with r_j = |a_uj / a_CV|. Its largest value over ALL draws is exactly prod_b R_b / max_b R_b, R_b the largest r
+    over band b's universes. Where a_CV == 0 it is |sum_j a_uj| / max_j |a_uj|, at most the number of bands with a
+    non-zero weight there. Rows whose bound exceeds N1_BOUND are then evaluated exactly over ``draws`` (a second
+    pass), up to N1_CANDIDATE_CAP rows per array. More rows than that are not evaluated, and that stops the bulk as
+    a count above the bound does."""
+    cv = _cv_arrays(inputs, bkg)
+    nz = {k: v != 0 for k, v in cv.items()}
+    scale = {k: np.where(nz[k], np.abs(v), 1.0) for k, v in cv.items()}
+    by_band: dict[str, list[str]] = {}
+    for t in toys.s1_universes():
+        by_band.setdefault(t.rpartition("_")[0], []).append(t)
+    logsum = {k: np.zeros(v.shape) for k, v in cv.items()}
+    top = {k: np.zeros(v.shape) for k, v in cv.items()}
+    nonzero = {k: np.zeros(v.shape) for k, v in cv.items()}
+    for tags in by_band.values():
+        R = {k: np.zeros(v.shape) for k, v in cv.items()}
+        for t in tags:
+            single, _ = _single(inputs, bkg, bank_cv, t, load(t), flux)
+            for k, a in single.items():
+                np.maximum(R[k], np.abs(a) / scale[k], out=R[k])
+        for k in cv:
+            with np.errstate(divide="ignore"):
+                logsum[k] += np.log(R[k])
+            np.maximum(top[k], R[k], out=top[k])
+            nonzero[k] += R[k] > 0
+    arrays, rows = {}, {}
+    for k in cv:
+        with np.errstate(divide="ignore", invalid="ignore"):
+            sup = np.where(nz[k], np.where(top[k] > 0, np.exp(logsum[k] - np.log(np.where(top[k] > 0, top[k], 1.0))),
+                                           0.0), nonzero[k])
+        rows[k] = np.flatnonzero(sup > N1_BOUND)
+        arrays[k] = {"all_draws_max": float(sup.max()), "all_draws_rows_above": int(rows[k].size)}
+    exact = {k: i for k, i in rows.items() if 0 < i.size <= N1_CANDIDATE_CAP}
+    for k, i in rows.items():
+        arrays[k]["declared"] = ({"evaluated": True, "rows": 0, "max": None, "rows_above": 0} if i.size == 0 else
+                                 {"evaluated": False, "rows": int(i.size), "max": None, "rows_above": None})
+    if exact:
+        col = {t: c for c, t in enumerate(toys.s1_universes())}
+        V = {k: np.zeros((i.size, len(col))) for k, i in exact.items()}
+        for t, c in col.items():
+            single, _ = _single(inputs, bkg, bank_cv, t, load(t), flux)
+            for k, i in exact.items():
+                a = single[k][i]
+                V[k][:, c] = np.where(nz[k][i], np.abs(a) / scale[k][i], a)
+        for k, i in exact.items():
+            m, worst = nz[k][i], np.zeros(i.size)
+            for tags in draws:
+                v = V[k][:, [col[t] for t in tags]]
+                peak = np.max(np.abs(v), axis=1)
+                comp = np.where(m, np.prod(np.abs(v), axis=1), np.abs(v.sum(axis=1)))
+                with np.errstate(divide="ignore", invalid="ignore"):
+                    r = np.where(peak > 0, comp / peak, np.where(comp == 0, 1.0, np.inf))
+                np.maximum(worst, r, out=worst)
+            arrays[k]["declared"] = {"evaluated": True, "rows": int(i.size), "max": float(worst.max()),
+                                     "rows_above": int(np.sum(worst > N1_BOUND))}
+    stop = any(not v["declared"]["evaluated"] or v["declared"]["rows_above"] for v in arrays.values())
+    return {"bound": N1_BOUND, "n_draws": len(draws), "candidate_cap": N1_CANDIDATE_CAP, "arrays": arrays,
+            "stop": stop}
 
 
 def _flux_universe_inputs(inputs, bkg, bank_cv, w, idx, flux: np.ndarray | None):
@@ -476,13 +558,15 @@ def stage_flux(root_path: Path, out: Path) -> dict:
 
 
 def receipt(a) -> dict:
-    """Section 4.2's counts and N1's single-universe ratio bound, per universe and array, over the real bank; and
-    whether each detector universe's denominator histogram equals the CV's."""
+    """Section 4.2's counts and N1's single-universe ratios, per universe and array, over the real bank; whether each
+    detector universe's denominator histogram equals the CV's; and N1's composite over every possible and every
+    declared draw (``composite_n1``), whose ``stop`` holds the bulk."""
     inv.OPENED.clear()
-    inputs = inv.load_inputs(a.npz)
-    bz = inv.load_npz(a.bkg, allow_pickle=True)
+    world = _load_world(a)
+    flux_p = via_noatime(toys.flux_probabilities, a.flux_constraint)
+    inputs = world["inputs"]
     cv = {"wt": np.asarray(inputs["w_truth"], float), "wr": np.asarray(inputs["w_reco"], float),
-          "bkgw": np.asarray(bz["bkg_w"], float)}
+          "bkgw": np.asarray(world["bkg"]["bkg_w"], float)}
     rows = {}
     tags = [f"{sa.FLUX}_{i}" for i in range(sa.EXPECT[sa.FLUX])] + toys.s1_universes()
     for tag in dict.fromkeys(tags):
@@ -503,8 +587,10 @@ def receipt(a) -> dict:
                                                             np.asarray(inputs["denom_nd"], float)))
         rows[tag] = rec
     worst = {k: max(r[k]["max_abs_ratio"] for r in rows.values()) for k in ("wt", "wr", "bkgw")}
+    comp = composite_n1(inputs, world["bkg"], world["bank_cv"], lambda t: _weights(world, a, t), world["flux"],
+                        declared_draws(flux_p, world["groups"]))
     return {"schema": SCHEMA, "step": "receipt", "n1_bound": N1_BOUND, "universes": rows, "max_abs_ratio": worst,
-            "atime": inv.atime_check()}
+            "composite": comp, "verdict": "STOP" if comp["stop"] else "PASS", "atime": inv.atime_check()}
 
 
 def pilot_walls(unfolds: Path, tag: str, plugin: bool) -> dict:
@@ -595,8 +681,27 @@ def grade(E: np.ndarray, C: np.ndarray, null: dict) -> dict:
             "verdict": "UNDER-COVERS" if (any(cell_flag) or joint_flag) else "COVERS"}
 
 
+def refuse_partials(unfolds: Path, tag: str, truth: str) -> None:
+    """A killed step leaves ``<product>.partial-<pid>.npz`` (``s5n_pseudo.write_product``), which the products' globs
+    would match."""
+    left = sorted(p.name for p in unfolds.glob(f"{tag}_{truth}_*.partial-*"))
+    if left:
+        raise Refusal(f"partial products are present: {left[:3]}")
+
+
+def toy_paths(unfolds: Path, tag: str, truth: str) -> list[Path]:
+    """A truth's toy products in seed order; exactly the declared seeds, no partials."""
+    refuse_partials(unfolds, tag, truth)
+    seeds = list(TOY_SEEDS[truth])
+    have = sorted(int(p.name.rsplit("_", 1)[1][:-4]) for p in unfolds.glob(f"{tag}_{truth}_toy_*.npz"))
+    if have != seeds:
+        raise Refusal(f"{truth}'s toy products are not exactly the declared seeds ({len(have)} of {len(seeds)})")
+    return [unfolds / product_name(tag, truth, "toy", str(s)) for s in seeds]
+
+
 def products_digest(unfolds: Path, tag: str, truth: str, roles: tuple[str, ...]) -> str:
     """One digest over the named roles' products at T, so the null pins exactly the products it was made from."""
+    refuse_partials(unfolds, tag, truth)
     h = hashlib.sha256()
     for p in sorted(unfolds.glob(f"{tag}_{truth}_*.npz")):
         if p.name.split("_")[len(tag.split("_")) + 1] in roles:
@@ -631,7 +736,7 @@ def null_step(a) -> dict:
     rm = remade(a.unfolds, a.tag, a.truth, s1, U, a.flux_constraint, frac)
     laws = [law for _, law, _ in rm["laws"]]
     out = {"schema": SCHEMA, "step": "null", "truth": a.truth,
-           "products_sha256": products_digest(a.unfolds, a.tag, a.truth, BLOCK_ROLES)}
+           "products_sha256": products_digest(a.unfolds, a.tag, a.truth, BLOCK_ROLES), "made_from": made_from(a, U)}
     for name, C_mabs in (("C_T", rm["C_model_abs"]), ("C_T_minus_mec", sa.model_abs(rm["X_T"], minus))):
         C = rm["C_e"] + C_mabs
         null = fn.null_contents(laws, rm["blocks"]["stat"] + rm["blocks"]["normalization"] + C_mabs, C)
@@ -643,19 +748,27 @@ def null_step(a) -> dict:
     return out
 
 
+def made_from(a, U: np.ndarray) -> dict:
+    """What C_T is built from besides the products and the digest-pinned assembly and constraint: the definition, the
+    cmodel json (which sets C_model^-) and U itself. The null records them and the readout refuses a difference."""
+    return {"definition_sha256": sa.sha256(a.definition), "cmodel_json_sha256": sa.sha256(a.cmodel_json),
+            "U_sha256": hashlib.sha256(np.ascontiguousarray(U, dtype=float).tobytes()).hexdigest()}
+
+
+def model_dominant(C: np.ndarray, C_mabs: np.ndarray) -> list[str]:
+    """N2's cells: where diag C_model_abs is more than half of diag C (clause S)."""
+    return [f"R{c:02d}" for c in range(C.shape[0]) if C_mabs[c, c] > 0.5 * C[c, c]]
+
+
 def _null_dict(d: dict) -> dict:
     return {"p_cell": np.asarray(d["p_cell"], float), "se_cell": np.asarray(d["se_cell"], float),
             "q_joint": float(d["q_joint"]), "se_joint": float(d["se_joint"]), "chi2_cut": float(d["chi2_cut"])}
 
 
 def toy_errors(unfolds: Path, tag: str, truth: str, U: np.ndarray, rm: dict, f: np.ndarray) -> tuple[np.ndarray, list]:
-    seeds = list(TOY_SEEDS[truth])
-    have = sorted(int(p.name.rsplit("_", 1)[1][:-4]) for p in unfolds.glob(f"{tag}_{truth}_toy_*.npz"))
-    if have != seeds:
-        raise Refusal(f"{truth}'s toy products are not exactly the declared seeds ({len(have)} of {len(seeds)})")
     X_raw, X_true, draws = [], [], []
-    for s in seeds:
-        z = np.load(unfolds / product_name(tag, truth, "toy", str(s)), allow_pickle=False)
+    for p in toy_paths(unfolds, tag, truth):
+        z = np.load(p, allow_pickle=False)
         X_raw.append(U @ np.asarray(z["xsec_flat"], float))
         X_true.append(U @ np.asarray(z["xtrue_flat"], float))
         draws.append(json.loads(str(z["meta"]))["draw"])
@@ -673,6 +786,10 @@ def readout(a) -> dict:
         raise Refusal("the null was not made from these products")
     s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
     U = sa.functional_matrix(sa.fine_map(a.definition))
+    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+        raise Refusal("the definition's functional is not S1's")
+    if nl.get("made_from") != made_from(a, U):
+        raise Refusal("the definition, the cmodel json or U is not the one the null was made from")
     frac, minus = cmodel_parts(a.staged / "s1" / "s1_assembly.npz", a.cmodel_json)
     rm = remade(a.unfolds, a.tag, a.truth, s1, U, a.flux_constraint, frac)
     if a.truth == "plugin":   # section 6 (b), a plumbing check that holds by construction
@@ -681,7 +798,8 @@ def readout(a) -> dict:
             raise Refusal("plug-in control (b): U x_T is not U f to 1e-12")
     E, draws = toy_errors(a.unfolds, a.tag, a.truth, U, rm, s1["f"])
     main = grade(E, rm["C_T"], _null_dict(nl["C_T"]))
-    variant = grade(E, rm["C_e"] + sa.model_abs(rm["X_T"], minus), _null_dict(nl["C_T_minus_mec"]))
+    C_mabs_minus = sa.model_abs(rm["X_T"], minus)
+    variant = grade(E, rm["C_e"] + C_mabs_minus, _null_dict(nl["C_T_minus_mec"]))
     if main["verdict"] == "COVERS":
         hit = [c for c, fl in enumerate(variant["cell_flag"]) if fl]
         mec = ("covers without the GENIE + MEC shift" if not hit and not variant["joint_flag"] else
@@ -709,22 +827,29 @@ def readout(a) -> dict:
         groups[gname] = (np.sqrt(T_g) / rm["X_T"] / (np.sqrt(M_g) / s1["f"])).tolist()
     return {"schema": SCHEMA, "step": "readout", "truth": a.truth, "null_sha256": a.expect_null_sha256,
             "cells": [f"R{c:02d}" for c in range(sa.N_CELLS)], "verdict": main["verdict"], "C_T": main,
+            "clause_S_model_dominant_cells": {"C_T": model_dominant(rm["C_T"], rm["C_model_abs"]),
+                                              "C_T_minus_mec": model_dominant(rm["C_e"] + C_mabs_minus, C_mabs_minus)},
             "leave_out_mec": {"grade": variant, "reading": mec},
             "descriptive": {"spread_alone_vs_C_e": spread, "toys_mean_error": E.mean(axis=0).tolist(),
                             "predicted_offset_uncentred_draws": np.asarray(offset, float).tolist(),
-                            "eigen_variance_ratio_vs_C_e": eig_ratio,
-                            "n1_max_composite_over_max_single": _n1_max(a.unfolds, a.tag, a.truth)},
+                            "eigen_variance_ratio_vs_C_e": eig_ratio},
             "truth_dependence": {"A_T_over_A_nom_fractional": (frac_T / frac_nom).tolist(), "group_at_T_over_M": groups},
             "X_T": rm["X_T"].tolist(), "sigma_T": np.sqrt(np.diag(rm["C_T"])).tolist()}
 
 
-def _n1_max(unfolds: Path, tag: str, truth: str) -> dict:
-    worst = {}
-    for p in unfolds.glob(f"{tag}_{truth}_toy_*.npz"):
+def n1_step(a) -> dict:
+    """N1's per-toy record at T, read by a step that grades nothing (the audit's B2 on #673): per array, the largest
+    composite ratio over the toys and the toys with rows above the bound. It opens only the products' meta, and
+    runs before ``null``."""
+    worst, above = {}, {}
+    for p in toy_paths(a.unfolds, a.tag, a.truth):
         n1 = json.loads(str(np.load(p, allow_pickle=False)["meta"]))["universe_info"]["n1"]
         for k, v in n1.items():
             worst[k] = max(worst.get(k, 0.0), v["max_composite_over_max_single"])
-    return worst
+            if v["rows_above_bound"]:
+                above.setdefault(k, []).append(p.name)
+    return {"schema": SCHEMA, "step": "n1", "truth": a.truth, "bound": N1_BOUND, "max_composite_over_max_single": worst,
+            "toys_with_rows_above": above, "verdict": "STOP" if above else "PASS"}
 
 
 # --------------------------------------------------------------------------------------------------------- main
@@ -751,8 +876,15 @@ def main(argv=None) -> int:
     p.add_argument("--root", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("receipt")
-    for k in ("npz", "bkg", "bank", "detector-dir", "out"):
+    for k in ("npz", "bkg", "bank", "detector-dir", "pins", "flux-constraint", "flux-table", "out"):
         p.add_argument(f"--{k}", type=Path, required=True)
+    p.add_argument("--expect-pins-sha256", required=True)
+    p.add_argument("--expect-flux-table-sha256", required=True)
+    p = sub.add_parser("n1")
+    p.add_argument("--truth", choices=tuple(TRUTHS), required=True)
+    p.add_argument("--unfolds", type=Path, required=True)
+    p.add_argument("--tag", default="fd1b_mc")
+    p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("walls")
     p.add_argument("--unfolds", type=Path, required=True)
     p.add_argument("--plugin", choices=("yes", "no"), required=True)
@@ -783,7 +915,7 @@ def main(argv=None) -> int:
             a.out.write_text(json.dumps(res, indent=1) + "\n")
             print(json.dumps({"verdict": res["verdict"], "max_seconds_unfold": res.get("max_seconds_unfold")}))
             return 0 if res["verdict"] == "PASS" else 1
-        res = {"receipt": receipt, "null": null_step, "readout": readout}[a.cmd](a)
+        res = {"receipt": receipt, "n1": n1_step, "null": null_step, "readout": readout}[a.cmd](a)
         res["code_sha256"] = code_digests()
         a.out.write_text(json.dumps(res, indent=1, default=float) + "\n")
         print(json.dumps({"out": str(a.out), "step": res["step"], "verdict": res.get("verdict")}))

@@ -9,7 +9,7 @@ The bulk table needs the push digest when the plug-in runs, so it is made after 
 import math
 import sys
 from pathlib import Path
-co, out, plugin, flux_sha = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3] == "yes", sys.argv[4]
+co, out, plugin, flux_sha = Path(sys.argv[1]), Path(sys.argv[2]).resolve(), sys.argv[3] == "yes", sys.argv[4]
 push_sha = sys.argv[5] if len(sys.argv) > 5 else None
 sys.path.insert(0, str(co / "nd-unfolding"))
 import fd_1b_mc as mc, s1_assemble as sa, fd_1b_toys as toys
@@ -51,7 +51,7 @@ def tables(job, lanes_items):
     for lane, its in enumerate(lanes_items):
         for t, role, it in its:
             steps.append("\t".join([str(lane), f"fd1b_mc_{job}_{t}_{role}_{it}"] + argv(t, role, it)))
-        tasks.append("\t".join([f"fd1b_mc_{job}_lane{lane}", "fd_f1_lane.py", "--steps", f"{W}/tables/{job}-steps.tsv",
+        tasks.append("\t".join([f"fd1b_mc_{job}_lane{lane}", "fd_f1_lane.py", "--steps", str(out / f"{job}-steps.tsv"),
                                 "--lane", str(lane)]))
     (out / f"{job}-steps.tsv").write_text("\n".join(steps) + "\n")
     (out / f"tasks-{job}.tsv").write_text("\n".join(tasks) + "\n")

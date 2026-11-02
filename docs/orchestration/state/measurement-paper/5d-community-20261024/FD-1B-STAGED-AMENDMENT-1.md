@@ -20,7 +20,21 @@
 - §1.2's tests and mutants;
 - §4's stat lists.
 
-Nothing else changes.
+**Revision 2** follows `coverage-5b-audit`'s review of revision 1 (#673, issuecomment-6577687953): B1–B4 and the
+minors.
+- **B1:** the outcome path is now tested end to end. `null` → `readout` runs on a synthetic product set, and every
+  number graded or printed is checked against an independent build. `receipt` runs on the toy bank. The audit's 27
+  mutants are in the receipt (§1.2).
+- **B2:** N1's composite is now computed before the bulk (§3):
+  - `receipt` gives its exact maximum over every possible draw, then an exact pass over the 900 declared draws;
+  - a new step, `n1`, reads the toys' own record before `null`, and grades nothing.
+- **B3:** the null records the definition's, the cmodel json's and U's digests. The readout refuses a difference, and
+  makes `null`'s U check itself.
+- **B4:** the readout emits clause S's model-dominant cells, for C_T and for C_T⁻.
+- **The minors:**
+  - partial products are refused;
+  - the generator's lanes point at the directory it writes;
+  - N1's stop is proposed to rest on the composite (§5).
 
 **MEASURES:** nothing. No job for stage 1 has run. This amendment cannot authorize S1-0. Under binding 1's ruling 2,
 stage 1 waits for four things:
@@ -33,14 +47,14 @@ stage 1 waits for four things:
 
 | file | sha256 | status |
 |---|---|---|
-| `nd-unfolding/fd_1b_mc.py` | `66679b27…` | new (revision 0 was `90ae99f2…`) |
-| `nd-unfolding/tests/test_fd_1b_mc.py` | `7be937f1…` | new: 41 tests |
+| `nd-unfolding/fd_1b_mc.py` | `1a2f825f…` | new (revision 0 `90ae99f2…`, revision 1 `66679b27…`) |
+| `nd-unfolding/tests/test_fd_1b_mc.py` | `3ba6045d…` | new: 59 tests |
 | `nd-unfolding/fd_1b_null.py` | `ec1402db…` | unchanged from `main` (binding 1 left it unbound) |
-| `fd/receipts-1b/staged/mutation_mc.{py,out}` | — | 35 of 35 killed (§1.2) |
+| `fd/receipts-1b/staged/mutation_mc.{py,out}` | — | 74 of 74 killed (§1.2) |
 | `fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py` | — | the committed generator (§4) |
 
 **The test suites** (`TMPDIR` set): `test_fd_1b_mc.py`, `test_fd_1b_null.py` and `test_fd_1b_moded.py` together pass
-98 (41, 23 and 34). Stage 0's files are untouched. `fd_1b_score.py`, `s1_assemble.py`, `fd_1b_toys.py`, `fd_1b_inv.py`
+116 (59, 23 and 34). Stage 0's files are untouched. `fd_1b_score.py`, `s1_assemble.py`, `fd_1b_toys.py`, `fd_1b_inv.py`
 and `fd_1b_moded.py` are byte-identical to `main`.
 
 ### 1.1 What the module does (by subcommand)
@@ -54,16 +68,21 @@ and `fd_1b_moded.py` are byte-identical to `main`.
 - `capture`: the plug-in's weights.
 
 **The other subcommands:**
-- `stage-flux` and `receipt`, both on a login node;
+- `stage-flux` and `receipt`, both on a login node. `receipt` includes N1's composite (§3);
 - `walls`: S1-0's trigger;
-- `null`: the draw-matched nulls for C_T and for the leave-out-MEC C_T⁻, computed from the remade products only and
-  written before any toy is opened;
-- `readout`: §5's grading and §7's readouts.
+- `n1`: the toys' own N1 record at T. It reads only the products' meta, grades nothing, and runs before `null`;
+- `null`: the draw-matched nulls for C_T and for the leave-out-MEC C_T⁻. They are computed from the remade products
+  only and written before any toy is opened. The null records what C_T is made from: the definition's, the cmodel
+  json's and U's digests;
+- `readout`: §5's grading and §7's readouts, with clause S's model-dominant cells (N2).
 
 **What the readout refuses:**
 - a null whose digest differs from the declared one;
-- a null that was not made from the very products it reads, by a digest over the block products;
-- toys that are not exactly the declared seeds.
+- a null that was not made from the very products it reads, by a digest over the block and stat products;
+- a definition, cmodel json or U other than the null's;
+- a U that is not S1's;
+- toys that are not exactly the declared seeds;
+- any partial product (`….partial-<pid>.npz`, left by a killed step).
 
 **What it imports rather than copies:**
 - the draws (`fd_1b_toys.draw_for_seed`);
@@ -108,11 +127,48 @@ and `fd_1b_moded.py` are byte-identical to `main`.
   - wrong correlations flag the joint region only;
   - the cell flag at its boundary count;
 - **walls:** PASS and REPRICE;
-- **the reads (§2 (vi)):** at each of the four call sites, the staged assembly and the flux constraint are opened
-  only with `O_NOATIME`, and the copy gives the bound reader's answer.
+- **the reads (§2 (vi)):** at each of the five call sites (`receipt` added in revision 2), the staged assembly and
+  the flux constraint are opened only with `O_NOATIME`, and the copy gives the bound reader's answer;
+- **the outcome path, end to end (revision 2, B1):** `null` → `readout` over a synthetic product set at T: a
+  16-cell U, every band's universes, the five lateral bands, 50 stat replicas, and 300 toys with their draws. The
+  checks are against an independent build from the fixture's parts by S1's estimators:
+  - σ_T, that is, the flux block constraint-weighted, the stat block at ddof 1, the lateral at T, the normalization
+    and C_model_abs;
+  - the toys' mean error after the surrogates;
+  - the predicted offset of the uncentred draws;
+  - the counts under C_T and under C_T⁻. The fixture is made so that the two differ;
+  - clause S's lists;
+  - the null's record of what it was made from, and its match.
+- **the outcome path's refusals:**
+  - for `readout`: the null's digest; a changed cmodel json; a U that is not S1's; a stat replica changed after the
+    null; a partial product; a missing toy;
+  - for `null`: a foreign U, and a cmodel json that does not rebuild S1's;
+  - plug-in control (b), both ways;
+- **N1 (B2):**
+  - the all-draws bound equals the largest composite over every draw of a small band set, computed by `compose`
+    itself, and the exact pass equals it;
+  - a row beyond the cap stops;
+  - `compose`'s per-row record is checked against the singles;
+  - `n1` names the toys above the bound;
+  - `receipt`'s counts are checked against the raw weights, with CV-zero rows;
+- **the job path:** the input, flux-table, weight-pin and push digests, and a non-finite toy truth, each refused with
+  its own message.
 
-**The mutation receipt** (`mutation_mc.py`, with digests; a kill counts only on a test failure): 35 of 35 killed.
-Revision 1 added §2 (vi)'s five mutants, and all five were killed at their first run.
+**The mutation receipt** (`mutation_mc.py`, with digests; a kill counts only on a test failure): 74 of 74 killed.
+- Revision 1 added §2 (vi)'s five mutants, and all five were killed at their first run.
+- Revision 2 added the audit's 27, two of them re-aimed at lines that revision 2 changed, plus 12 more for B2–B4,
+  the partials and `receipt`'s read.
+  - **Disclosed:** at revision 2's first full run, 71 of 74 were killed. Earlier, against the first tests, 2 of the
+    audit's had survived: the push digest and the flux-table digest.
+  - **What the 3 survivors were:**
+    - the readout's own U check, which was shadowed by the made-from check;
+    - clause S's leave-out list, because the fixture's two lists coincided;
+    - the partial-product refusal, which was shadowed by the products digest.
+  - **Why 5 survived in all:** each test accepted any refusal, so a later refusal fired instead of the one under test.
+  - **The fix:**
+    - each test now asserts its own refusal's message;
+    - the readout's U check is reached through a null that claims the foreign U;
+    - the fixture is made so that the two lists differ, and the test asserts that they do.
 - **Disclosed:** at the first run, 4 of 29 survived: the toy without streams, the capture's wrap not removed, the joint
   flag dropped, and a strict cell-flag boundary.
 - Each is now killed by a sharpened or added test, and 1 mutant was added when `compose` was made to stream.
@@ -206,11 +262,28 @@ Revision 1 added §2 (vi)'s five mutants, and all five were killed at their firs
   - the rows that are non-finite before zeroing;
   - max |a_u / a_CV|, and the count of rows above the bound;
   - whether each detector universe's `denom_nd` equals the CV's.
-- **Each toy's product** records, per array, max over rows of |a_D| / max_j |a_uj| and the count above the bound. The
-  readout prints the maximum over the toys.
-- **The rule:** if `receipt` shows a single-universe ratio above 10 on any row, the S1-0 readout says so. The bulk then
-  waits, and an amendment under §11 follows. The same holds if the toys' composite ratio exceeds 10, which the bulk's
-  readout reports before any grading is read.
+- **The composite, before the bulk (revision 2, the audit's B2).** `receipt` also runs `composite_n1` over the real
+  bank, per array (wt, wr, bkgw, and the per-cell denominator):
+  - **Every possible draw.** Every draw holds one universe of every band. Where a_CV ≠ 0, the composite
+    |a_D| / max_j |a_uj| = Π_j r_j / max_j r_j, with r_j = |a_uj / a_CV|. Its largest value over all draws is exactly
+    Π_b R_b / max_b R_b, where R_b is the largest r over band b's universes on that row. If the draw's largest r is
+    in the band with the largest R, the other factors are each at most their R_b. If it lies in another band h, the
+    top band's factor is at most r_h ≤ R_h. Choosing each band's arg-max attains it.
+  - **Where a_CV = 0,** the composite is |Σ_j a_uj| / max_j |a_uj|. That is at most the number of bands with a
+    non-zero weight on the row.
+  - **The declared draws.** Rows whose all-draws value exceeds 10 are evaluated exactly over the 900 declared draws:
+    300 per truth, the plug-in's included. That is a second pass over the bank, holding at most 250,000 rows per
+    array (`N1_CANDIDATE_CAP`). Rows beyond the cap are not evaluated, and that counts as a stop. <!-- absence-ok: a rule for the code's cap, not a claim that a result does not exist -->
+  - **Expectation (inference).** With about 40 bands per draw, the all-draws value will exceed 10 on many rows, even
+    with every band's R near 1.1 (1.1³⁹ ≈ 41). So the declared-draw pass is what decides.
+- **Each toy's product** records, per array, max over rows of |a_D| / max_j |a_uj| and the count above the bound.
+  `n1` reads that record for a truth's 300 toys before `null` is run. It reads only the meta and grades nothing.
+- **The rule, as proposed in revision 2 (§5.3):**
+  - <!-- absence-ok: the stop rule's condition, not a claim that a result does not exist --> If `receipt`'s declared-draw pass finds a composite above 10 on any row, or leaves rows unevaluated, its verdict
+    is STOP. The bulk then waits, and an amendment under §11 follows.
+  - If `n1` names any toy above the bound at a truth, that truth's `null` and `readout` wait for an amendment.
+  - The single-universe ratios are printed, but they do not stop. k = 1 is S1's own universe, so a large single ratio
+    is not itself a defect (the audit's minor).
 
 **N2, the scope sentence.** It is added to §13 and to clause S, printed when such cells exist:
 - **§13, CANNOT SUPPORT, added:** *in a cell where C_model_abs(T) is more than half of C_T's diagonal, a COVERS says
@@ -248,7 +321,7 @@ The bulk table needs the push weights' digest, so it is made after S1-0.
    - walls (`fd_1b_mc.py walls --plugin`);
    - the four controls, bitwise;
    - the capture's bitwise identity with S1's central product;
-   - the receipt's N1 counts;
+   - the receipt's N1 counts, and its composite verdict;
    - the atime record.
 3. **The bulk** is submitted only after walls PASS, every control passes and the audit's written acknowledgement.
 
@@ -265,15 +338,21 @@ The bulk table needs the push weights' digest, so it is made after S1-0.
    Each list is written by the connect's committed script before the first read. A difference is a deviation,
    reported and not restored.
 4. **Per truth,** after the bulk:
+   - `n1`, the toys' own N1 record, read before anything is graded;
    - `null`, whose output and digest are committed before `readout` is run;
    - `readout`, with the null's digest;
    - the HPSS copy, then the report.
 
 ## 5. For the director
 
-1. **Bind** `fd_1b_mc.py` `66679b27…` and its generator as stage 1's code. The rules, truths, draws, thresholds and
+1. **Bind** `fd_1b_mc.py` `1a2f825f…` and its generator as stage 1's code. The rules, truths, draws, thresholds and
    price are revision 2's as merged.
 2. **§2 (i)–(v)** are construction findings, not rule changes:
    - (i) changes the composition from per event to per cell for the denominator only;
    - (ii) fixes a defect that the declaration's text would have carried into the toys.
-3. **N1's bound of 10** is my choice, and is yours to change before any receipt is read.
+3. **N1's bound of 10** is my choice, and is yours to change before any receipt is read. Revision 2 also proposes
+   that the stop rest on the composite (`receipt`'s declared-draw pass and `n1`), with the single ratios descriptive
+   (§3). That changes which number stops the bulk, so it is yours to rule.
+   - **The receipt runs on a login node.** It makes one or two passes over the 26.6 GB bank, at `nice 19`.
+   - If NERSC's login-node limits stop it, it moves to a one-node job. That is not in the declared price, so it would
+     be yours to price.

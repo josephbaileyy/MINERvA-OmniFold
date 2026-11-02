@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import argparse
 import builtins
+import functools
 import io
 import json
 import os
@@ -40,6 +41,7 @@ sys.path.insert(1, str(Path(__file__).resolve().parent))
 import fd_1b_inv as inv  # noqa: E402
 import fd_1b_mc as mc  # noqa: E402
 import fd_1b_null as fn  # noqa: E402
+import fd_1b_score as fs  # noqa: E402
 import fd_1b_toys as toys  # noqa: E402
 import s1_assemble as sa  # noqa: E402
 import s5c_unfold  # noqa: E402
@@ -577,6 +579,14 @@ class NoAtime(unittest.TestCase):
             mc.run_item(a, {"inputs": {}, "bkg": {}}, "toy", "3620000")
         self.assert_noatime_only(self.constraint, got)
 
+    def test_receipt_reads_the_constraint_through_o_noatime(self):
+        got, reader = self.spy()
+        a = argparse.Namespace(flux_constraint=self.constraint)
+        with mock.patch.object(mc, "_load_world", lambda a: {}), \
+                mock.patch.object(mc.toys, "flux_probabilities", reader), self.assertRaises(_Stop):
+            mc.receipt(a)
+        self.assert_noatime_only(self.constraint, got)
+
     def test_the_copy_gives_the_bound_readers_answer(self):
         want = digest(self.constraint)
         self.plain.clear()
@@ -584,6 +594,348 @@ class NoAtime(unittest.TestCase):
             w = mc.via_noatime(sa.flux_weights, self.constraint)
             self.assertNotIn(str(self.constraint), self.plain)
             np.testing.assert_array_equal(w, sa.flux_weights(self.constraint))
+
+
+# ------------------------------------------------- the outcome path, end to end (the audit's B1 on #673)
+
+
+def write_product(path: Path, x, xtrue=None, meta=None):
+    arrays = {"xsec_flat": np.asarray(x, float)}
+    if xtrue is not None:
+        arrays["xtrue_flat"] = np.asarray(xtrue, float)
+    np.savez(path, meta=json.dumps(meta or {"seconds_unfold": 1.0, "peak_rss_kib": 1}), **arrays)
+
+
+class Pipeline(unittest.TestCase):
+    """``null`` then ``readout`` on a synthetic product set at a truth: every number the readout grades or prints is
+    checked against an independent build from the fixture's own parts, and every refusal fires."""
+    N = 16
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = Path(tempfile.mkdtemp(prefix="fd1b-mc-pl-"))
+        rng = np.random.default_rng(31)
+        n = cls.N
+        cls.f = rng.uniform(1.0, 2.0, n)
+        cls.U = np.eye(n)
+        cls.X_T = cls.f * 1.05
+        cls.Xb = {b: cls.X_T * (1 + rng.normal(0.002, 0.01, (k, n))) for b, k in sa.EXPECT.items()}
+        cls.R = cls.X_T * (1 + rng.normal(0, 0.001, (len(sa.STAT_REPLICAS), n)))
+        cls.delta = {}
+        for b in sa.LATERAL_BANDS:
+            d = rng.normal(0, 0.01, n) * cls.f
+            cls.delta[b] = d if d[np.argmax(np.abs(d))] > 0 else -d
+        cls.s_mec = np.where(np.arange(n) < 4, 0.1, 0.001)
+        cls.s_other = np.where(np.arange(n) < 4, 0.08, 0.002)     # dominant in C_T^- there, not in C_T
+        cls.frac = np.outer(cls.s_mec, cls.s_mec) + np.outer(cls.s_other, cls.s_other)
+        w = rng.uniform(0.5, 4.0, 100)
+        cls.constraint = cls.tmp / "constraint.txt"
+        cls.constraint.write_text("".join(f"Flux {i} {w[i]!r}\n" for i in range(100)))
+        # the staged assembly, in load_s1's layout
+        blocks = {f"band:{b}": sa.mat_cov(rng.normal(0, 0.01, cls.Xb[b].shape) * cls.f)
+                  for b in sa.EXPECT}
+        blocks.update({f"lat:{b}": np.outer(d / 2, d / 2) for b, d in cls.delta.items()})
+        blocks.update(stat=np.diag((0.001 * cls.f) ** 2), normalization=np.outer(0.014 * cls.f, 0.014 * cls.f),
+                      seed=np.zeros((n, n)))
+        cls.s1_blocks = blocks
+        (cls.tmp / "staged" / "s1").mkdir(parents=True)
+        cls.assembly = cls.tmp / "staged" / "s1" / "s1_assembly.npz"
+        np.savez(cls.assembly, meta=json.dumps({"blocks": sorted(blocks)}), f=cls.f, U=cls.U,
+                 C_e=sum(blocks.values()), C_model_frac=cls.frac,
+                 **{"C_" + k.replace(":", "_"): v for k, v in blocks.items()})
+        cls.definition = cls.tmp / "definition.json"
+        cls.definition.write_text(json.dumps({"U": cls.U.tolist()}))
+        cls.cmodel = cls.tmp / "cmodel.json"
+        cls.cmodel.write_text(json.dumps({"vertices": ["genie_mec", "genie_other"],
+                                          "S": [cls.s_mec.tolist(), cls.s_other.tolist()]}))
+        cls.i2 = cls.tmp / "i2.json"
+        cls.i2.write_text(json.dumps({"A": ((0.01 * cls.f) ** 2).tolist()}))
+        cls.groups = {b: [f"{b}_{i}" for i in range(sa.EXPECT[b])] for b in toys.INTERACTION_BANDS}
+        cls.flux_p = w / w.sum()
+        cls.toy_rng = np.random.default_rng(32)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp)
+
+    def setUp(self):
+        self.ps = [plain_noatime(), mock.patch.object(fs, "S1_NPZ_SHA256", digest(self.assembly)),
+                   mock.patch.object(sa, "CONSTRAINT_SHA256", digest(self.constraint)),
+                   mock.patch.object(sa, "fine_map", lambda p: json.loads(Path(p).read_text())["U"]),
+                   mock.patch.object(sa, "functional_matrix", lambda fm: np.asarray(fm, float)),
+                   mock.patch.object(mc.fn, "null_contents", functools.partial(fn.null_contents, n_mc=20_000))]
+        for p in self.ps:
+            p.start()
+            self.addCleanup(p.stop)
+
+    def products(self, name: str, truth: str = "g18", central_true=None) -> Path:
+        """One product set at T under ``<tmp>/<name>``: central, seed, 175 blocks, 50 stat replicas, 300 toys."""
+        d = self.tmp / name
+        d.mkdir()
+        write_product(d / mc.product_name("t", truth, "central", "T"), self.X_T,
+                      self.f if central_true is None else central_true)
+        write_product(d / mc.product_name("t", truth, "seed", "T"), self.X_T)
+        for b, X in self.Xb.items():
+            for i, x in enumerate(X):
+                write_product(d / mc.product_name("t", truth, "block", f"{b}_{i}"), x)
+        for b, x in zip(sa.STAT_REPLICAS, self.R):
+            write_product(d / mc.product_name("t", truth, "stat", str(b)), x)
+        rng = np.random.default_rng(33)
+        sig = np.sqrt(np.diag(self.expected()["C_e"]))
+        self.raw, self.draws = [], []
+        for k, seed in enumerate(mc.TOY_SEEDS[truth]):
+            dr = toys.draw_for_seed(seed, self.flux_p, self.groups)
+            x = self.X_T + rng.normal(0, 1, self.N) * sig
+            n1 = {a: {"max_composite_over_max_single": 2.0 + k / 1000, "rows_above_bound": int(k == 7) * 3}
+                  for a in ("wt", "wr", "bkgw", "denom")}
+            write_product(d / mc.product_name("t", truth, "toy", str(seed)), x, self.X_T,
+                          {"draw": dr, "universe_info": {"n1": n1}, "seconds_unfold": 1.0, "peak_rss_kib": 1})
+            self.raw.append(x)
+            self.draws.append(dr)
+        return d
+
+    def expected(self) -> dict:
+        """C_e, C_T and the leave-out C_T^- built from the fixture's parts by S1's estimators."""
+        w = np.array([float(l.split()[2]) for l in self.constraint.read_text().splitlines()])
+        g = self.X_T / self.f
+        C_e = sum(sa.mat_cov(X, w if b == sa.FLUX else None) for b, X in self.Xb.items())
+        C_e = C_e + np.cov(self.R, rowvar=False, ddof=1)
+        C_e = C_e + sum(np.outer(d * g / 2, d * g / 2) for d in self.delta.values())
+        C_e = C_e + np.outer(sa.NORM_FRACTION * self.X_T, sa.NORM_FRACTION * self.X_T)
+        C_mabs = sa.model_abs(self.X_T, self.frac)
+        C_minus = sa.model_abs(self.X_T, np.outer(self.s_other, self.s_other))
+        p = {b: (w / w.sum() if b == sa.FLUX else np.full(len(X), 1 / len(X))) for b, X in self.Xb.items()}
+        offset = -sum(p[b] @ X - self.X_T for b, X in self.Xb.items())
+        return {"C_e": C_e, "C_mabs": C_mabs, "C_T": C_e + C_mabs, "C_minus": C_minus, "offset": offset}
+
+    def args(self, d: Path, truth="g18", **kw):
+        a = argparse.Namespace(staged=self.tmp / "staged", unfolds=d, definition=self.definition,
+                               cmodel_json=self.cmodel, flux_constraint=self.constraint, tag="t", truth=truth,
+                               i2=self.i2, out=d / "out.json")
+        for k, v in kw.items():
+            setattr(a, k, v)
+        return a
+
+    def null_and_readout(self, d: Path, truth="g18", **kw):
+        nl = mc.null_step(self.args(d, truth, **kw))
+        p = d / "null.json"
+        p.write_text(json.dumps(nl, default=float))
+        return nl, p
+
+    def readout(self, d, p, truth="g18", **kw):
+        return mc.readout(self.args(d, truth, null=p, expect_null_sha256=digest(p), **kw))
+
+    def test_readout_reproduces_every_graded_and_printed_number(self):
+        d = self.products("ok")
+        nl, p = self.null_and_readout(d)
+        self.assertEqual(nl["made_from"], mc.made_from(self.args(d), self.U))
+        self.assertLessEqual(nl["C_T"]["match_rel"], fn.MATCH_TOL)
+        ro = self.readout(d, p)
+        ex = self.expected()
+        np.testing.assert_allclose(ro["sigma_T"], np.sqrt(np.diag(ex["C_T"])), rtol=1e-10)
+        X_hat = fs.surrogate(np.array(self.raw), self.draws, self.delta, self.f, self.X_T)
+        E = X_hat - self.X_T
+        self.assertGreater(np.max(np.abs(X_hat - np.array(self.raw))), 0)   # the surrogate moves the toys
+        np.testing.assert_allclose(ro["descriptive"]["toys_mean_error"], E.mean(axis=0), rtol=1e-10, atol=1e-14)
+        np.testing.assert_allclose(ro["descriptive"]["predicted_offset_uncentred_draws"], ex["offset"], rtol=1e-10)
+        self.assertGreater(np.max(np.abs(ex["offset"])), 0)
+        counts = np.sum(np.abs(E) <= np.sqrt(np.diag(ex["C_T"])), axis=0)
+        counts_minus = np.sum(np.abs(E) <= np.sqrt(np.diag(ex["C_e"] + ex["C_minus"])), axis=0)
+        self.assertNotEqual(counts.tolist(), counts_minus.tolist())                  # the fixture can tell them apart
+        self.assertEqual(ro["C_T"]["counts"], counts.tolist())
+        self.assertEqual(ro["leave_out_mec"]["grade"]["counts"], counts_minus.tolist())
+        dom = lambda C, Cm: [f"R{c:02d}" for c in range(self.N) if Cm[c, c] > 0.5 * C[c, c]]  # noqa: E731
+        want = {"C_T": dom(ex["C_T"], ex["C_mabs"]), "C_T_minus_mec": dom(ex["C_e"] + ex["C_minus"], ex["C_minus"])}
+        self.assertEqual(ro["clause_S_model_dominant_cells"], want)
+        self.assertTrue(want["C_T"])
+        self.assertTrue(want["C_T_minus_mec"])
+        self.assertNotEqual(dom(ex["C_T"], ex["C_minus"]), want["C_T_minus_mec"])   # the leave-out list is its own
+        self.assertNotIn("n1_max_composite_over_max_single", ro["descriptive"])     # N1 is read by its own step
+
+    def test_n1_reads_the_toys_record_without_grading(self):
+        d = self.products("n1")
+        res = mc.n1_step(self.args(d))
+        self.assertEqual(res["verdict"], "STOP")
+        self.assertEqual(res["toys_with_rows_above"]["wt"], [mc.product_name("t", "g18", "toy", "3620007")])
+        self.assertAlmostEqual(res["max_composite_over_max_single"]["wr"], 2.299)
+        self.assertFalse((d / "null.json").exists())
+
+    def test_readout_refuses_what_the_null_was_not_made_from(self):
+        d = self.products("ref")
+        _, p = self.null_and_readout(d)
+        with self.assertRaisesRegex(mc.Refusal, "null's digest"):
+            mc.readout(self.args(d, null=p, expect_null_sha256="0" * 64))
+        other = self.tmp / "cmodel-other.json"
+        other.write_text(self.cmodel.read_text() + " ")
+        with self.assertRaisesRegex(mc.Refusal, "the null was made from"):
+            self.readout(d, p, cmodel_json=other)
+        defn = self.tmp / "definition-other.json"
+        defn.write_text(json.dumps({"U": (self.U * 2).tolist()}))
+        forged = json.loads(p.read_text())                  # a null that claims the foreign U: the readout's own check
+        forged["made_from"] = mc.made_from(self.args(d, definition=defn), self.U * 2)
+        q = d / "null-forged.json"
+        q.write_text(json.dumps(forged))
+        with self.assertRaisesRegex(mc.Refusal, "functional is not S1's"):
+            self.readout(d, q, definition=defn)
+        stat = d / mc.product_name("t", "g18", "stat", "1")
+        keep = stat.read_bytes()
+        write_product(stat, self.R[0] * 1.0001)
+        with self.assertRaisesRegex(mc.Refusal, "not made from these products"):
+            self.readout(d, p)
+        stat.write_bytes(keep)
+        (d / (mc.product_name("t", "g18", "block", "MaRES_0") + ".partial-1.npz")).write_bytes(b"")
+        with self.assertRaisesRegex(mc.Refusal, "partial products"):
+            self.readout(d, p)
+
+    def test_readout_refuses_a_missing_toy(self):
+        d = self.products("miss")
+        _, p = self.null_and_readout(d)
+        (d / mc.product_name("t", "g18", "toy", "3620299")).unlink()
+        with self.assertRaisesRegex(mc.Refusal, "declared seeds"):
+            self.readout(d, p)
+
+    def test_null_refuses_a_foreign_u_and_an_unrebuilt_cmodel(self):
+        d = self.products("nullref")
+        defn = self.tmp / "definition-null.json"
+        defn.write_text(json.dumps({"U": (self.U * 2).tolist()}))
+        with self.assertRaises(mc.Refusal):
+            mc.null_step(self.args(d, definition=defn))
+        bad = self.tmp / "cmodel-bad.json"
+        bad.write_text(json.dumps({"vertices": ["genie_mec", "genie_other"],
+                                   "S": [(self.s_mec * 1.01).tolist(), self.s_other.tolist()]}))
+        with self.assertRaises(mc.Refusal):
+            mc.null_step(self.args(d, cmodel_json=bad))
+
+    def test_plugin_control_b(self):
+        d = self.products("plug", truth="plugin")
+        _, p = self.null_and_readout(d, "plugin")
+        self.assertIn(self.readout(d, p, "plugin")["verdict"], ("COVERS", "UNDER-COVERS"))
+        d = self.products("plugbad", truth="plugin", central_true=self.f * (1 + 1e-9))
+        _, p = self.null_and_readout(d, "plugin")
+        with self.assertRaises(mc.Refusal):
+            self.readout(d, p, "plugin")
+
+
+class N1Composite(Case):
+    """N1 before the bulk (the audit's B2 on #673): the bound over every draw is the exact maximum over draws, the
+    exact pass over declared draws equals compose's own record, and an unevaluated row stops."""
+    SMALL = ["2p2h_0", "2p2h_1", "2p2h_2", "MaRES_0", "MaRES_1", "GEANT_Pion_0", "GEANT_Pion_1"]
+
+    def setUp(self):
+        super().setUp()
+        p = mock.patch.object(toys, "s1_universes", lambda: list(self.SMALL))
+        p.start()
+        self.addCleanup(p.stop)
+        self.draws = [[a, b, c] for a in self.SMALL[:3] for b in self.SMALL[3:5] for c in self.SMALL[5:]]
+
+    def composite(self):
+        return mc.composite_n1(self.inputs, self.bkg, self.bank_cv, self.weights, self.flux, self.draws)
+
+    def compose_max(self):
+        out = {}
+        for tags in self.draws:
+            for k, v in mc.compose(self.inputs, self.bkg, self.bank_cv, tags, self.weights, self.flux)[2]["n1"].items():
+                out[k] = max(out.get(k, 0.0), v["max_composite_over_max_single"])
+        return out
+
+    def test_the_all_draws_bound_is_attained_and_the_exact_pass_is_composes(self):
+        want = self.compose_max()
+        with mock.patch.object(mc, "N1_BOUND", 0.5):
+            res = self.composite()
+        for k, v in res["arrays"].items():
+            self.assertAlmostEqual(v["all_draws_max"], want[k], places=12, msg=k)
+            self.assertTrue(v["declared"]["evaluated"])
+            if v["all_draws_max"] <= 0.5:              # no row above: nothing for the exact pass
+                self.assertEqual((v["declared"]["rows"], v["declared"]["rows_above"]), (0, 0))
+                continue
+            self.assertAlmostEqual(v["declared"]["max"], want[k], places=12, msg=k)
+            self.assertGreater(v["declared"]["rows_above"], 0)
+        self.assertTrue(res["stop"])
+        res = self.composite()
+        self.assertFalse(res["stop"])
+        self.assertEqual({v["declared"]["rows"] for v in res["arrays"].values()}, {0})
+
+    def test_rows_beyond_the_cap_are_not_evaluated_and_stop(self):
+        with mock.patch.object(mc, "N1_BOUND", 1.0), mock.patch.object(mc, "N1_CANDIDATE_CAP", 0):
+            res = self.composite()
+        self.assertTrue(res["stop"])
+        self.assertFalse(res["arrays"]["wt"]["declared"]["evaluated"])
+
+    def test_compose_records_the_composite_per_row(self):
+        tags = ["MaRES_0", "GEANT_Pion_1"]
+        with mock.patch.object(mc, "N1_BOUND", 1.0):
+            ui, ub, info = mc.compose(self.inputs, self.bkg, self.bank_cv, tags, self.weights, self.flux)
+        s = [mc._single(self.inputs, self.bkg, self.bank_cv, t, self.weights(t), self.flux)[0] for t in tags]
+        r = np.abs(ui["w_truth"]) / np.maximum(np.abs(s[0]["wt"]), np.abs(s[1]["wt"]))
+        self.assertAlmostEqual(info["n1"]["wt"]["max_composite_over_max_single"], float(r.max()), places=12)
+        self.assertEqual(info["n1"]["wt"]["rows_above_bound"], int(np.sum(r > 1.0)))
+        self.assertGreater(info["n1"]["wt"]["rows_above_bound"], 0)
+
+
+class Receipt(Case):
+    """``receipt`` over the toy bank: the single-universe counts against the raw weights, and the composite."""
+
+    def test_counts_against_the_raw_weights(self):
+        wt = np.array(self.inputs["w_truth"], float)
+        wt[100:110] = 0.0
+        inputs = dict(self.inputs, w_truth=wt)
+        world = {"inputs": inputs, "bkg": self.bkg, "bank_cv": self.bank_cv, "flux": self.flux,
+                 "groups": toys.interaction_groups(self.w.bank), "pins": json.loads(self.w.pins.read_text())}
+        a = argparse.Namespace(bank=self.w.bank, detector_dir=self.w.det, flux_constraint=self.w.constraint)
+        with mock.patch.object(mc, "_load_world", lambda a: world), mock.patch.object(mc, "N1_BOUND", 1.05), \
+                mock.patch.object(mc, "declared_draws", lambda fp, g: [mc.draw_universes(toys.draw_for_seed(
+                    s, fp, g)) for s in (3620000, 3630001)]):
+            res = mc.receipt(a)
+        raw = inv.universe_weights(self.w.bank, "MaRES_0", "keep")["wt"]
+        ratio = np.where(wt != 0, np.abs(raw / np.where(wt != 0, wt, 1.0)), 0.0)
+        rec = res["universes"]["MaRES_0"]["wt"]
+        self.assertEqual(rec["cv_zero_u_nonzero"], 10)
+        self.assertAlmostEqual(rec["max_abs_ratio"], float(ratio.max()), places=12)
+        self.assertEqual(rec["rows_ratio_above_bound"], int(np.sum(ratio > 1.05)))
+        self.assertGreater(rec["rows_ratio_above_bound"], 0)
+        self.assertTrue(res["composite"]["stop"])          # composites above 1.05 exist in two draws
+        self.assertEqual(res["verdict"], "STOP")
+        self.assertEqual(res["composite"]["n_draws"], 2)
+
+
+class Loaders(Jobs):
+    """The digest and finiteness refusals on the job path."""
+
+    def test_input_and_flux_table_digests(self):
+        out = self.tmp / "ld1"
+        with mock.patch.object(sa, "INPUT_NPZ_SHA256", "0" * 64):
+            self.assertEqual(mc.main(self.argv("g18", "central", "T", out)), 4)
+        table = self.tmp / "flux-table.npz"
+        np.savez(table, hFluxCV=np.ones(2), hFluxUniv=np.ones((100, 2)))
+        a = argparse.Namespace(npz=self.w.inputs, bkg=self.w.bkg, pins=self.w.pins, bank=self.w.bank,
+                               detector_dir=self.w.det, expect_pins_sha256=digest(self.w.pins), flux_table=table,
+                               expect_flux_table_sha256="0" * 64)
+        with self.assertRaisesRegex(mc.Refusal, "flux table's digest"):
+            mc._load_world(a)
+
+    def test_weight_pins_and_push_digest(self):
+        pins = json.loads(self.w.pins.read_text())
+        p = next(k for k in pins["files"] if k.endswith("MaRES_0_wt.npy"))
+        pins["files"][p] = dict(pins["files"][p], sha256="0" * 64)
+        a = argparse.Namespace(bank=self.w.bank, detector_dir=self.w.det)
+        with self.assertRaises(mc.Refusal):
+            mc._weights({"pins": pins}, a, "MaRES_0")
+        push = self.tmp / "push.npz"
+        np.savez(push, push=np.ones(3))
+        a = argparse.Namespace(truth="plugin", prep=None, push=push, expect_push_sha256="0" * 64)
+        with self.assertRaisesRegex(mc.Refusal, "declared digest"):
+            mc.run_item(a, {"inputs": self.inputs, "bkg": self.bkg}, "central", "T")
+
+    def test_a_non_finite_toy_truth(self):
+        a = argparse.Namespace(truth="g18", prep=self.w.prep, push=None, flux_constraint=self.w.constraint,
+                               threads=1)
+        world = {"inputs": self.inputs, "bkg": self.bkg, "bank_cv": self.bank_cv, "flux": self.flux,
+                 "groups": toys.interaction_groups(self.w.bank)}
+        with mock.patch.object(mc, "compose", lambda *x: (self.inputs, self.bkg, {})), \
+                mock.patch.object(mc, "truth_weight", lambda *x: None), \
+                mock.patch.object(mc, "toy_experiment", lambda *x: ({}, np.array([1.0, np.nan]))), \
+                self.assertRaisesRegex(mc.Refusal, "non-finite truth"):
+            mc.run_item(a, world, "toy", "3620000")
 
 
 class Walls(unittest.TestCase):

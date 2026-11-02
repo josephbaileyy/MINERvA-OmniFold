@@ -1,5 +1,5 @@
-sha256 66679b2711d1f3af0760787913e2d47e141ac2a968f4815f403340780c2a4123  fd_1b_mc.py
-sha256 7be937f16a012812eb607affd05a9cc5fca53e295119f20d8edcbf8649957566  tests/test_fd_1b_mc.py
+sha256 1a2f825fe4a7f31e800fab96d12fd97e210ea89f11cb0e395bd2bb99ef379a4a  fd_1b_mc.py
+sha256 3ba6045d795f1297b49ece93ba3ce030027eb0502524888a8a01ebd32f4fb5de  tests/test_fd_1b_mc.py
 sha256 ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
 KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
 KILLED   ratio composition inverted
@@ -34,8 +34,47 @@ KILLED   walls limit doubled
 KILLED   seed role at 42
 KILLED   D1: the reader gets the source
 KILLED   D1: a toy reads the constraint plainly
+KILLED   D1: receipt reads the constraint plainly
 KILLED   D1: remade reads the constraint plainly
 KILLED   D1: null reads the assembly plainly
+KILLED   B1 (audit): N1 composite stat constant
+KILLED   B1 (audit): receipt count off
+KILLED   B1 (audit): receipt max ratio off
+KILLED   B1 (audit): receipt cv_zero count off
+KILLED   B1 (audit): readout null digest unchecked
+KILLED   B1 (audit): readout products unchecked
+KILLED   B1 (audit): products digest drops stat
+KILLED   B1 (audit): toy seed set unchecked
+KILLED   B1 (audit): flux law uniform
+KILLED   B1 (audit): lateral law half width
+KILLED   B1 (audit): surrogate skipped
+KILLED   B1 (audit): offset sign flipped
+KILLED   B1 (audit): variant graded on C_T
+KILLED   B1 (audit): leave-out keeps MEC
+KILLED   B1 (audit): plugin control (b) skipped
+KILLED   B1 (audit): zero mask from acc
+KILLED   B1 (audit): stat block ddof 0
+KILLED   B1 (audit): normalization block dropped
+KILLED   B1 (audit): null gauss drops C_model
+KILLED   B1 (audit): null U check dropped
+KILLED   B1 (audit): cmodel rebuild unchecked
+KILLED   B1 (audit): toy truth nonfinite unchecked
+KILLED   B1 (audit): plugin push size unchecked
+KILLED   B1 (audit): push digest unchecked
+KILLED   B1 (audit): flux table digest unchecked
+KILLED   B1 (audit): weights pins unchecked
+KILLED   B1 (audit): input digests unchecked
+KILLED   B2: the all-draws bound keeps the max
+KILLED   B2: an unevaluated row does not stop
+KILLED   B2: the exact pass takes the first draw only
+KILLED   B2: receipt ignores the composite
+KILLED   B2: n1 ignores the toys above
+KILLED   B3: readout U check dropped
+KILLED   B3: readout ignores what the null was made from
+KILLED   B3: the null does not record the cmodel json
+KILLED   B4: clause S's leave-out list on C_T
+KILLED   B4: clause S's threshold at the whole
+KILLED   minor: partial products not refused
 KILLED   D1: readout reads the assembly plainly
-unmutated: 41 passed in 5.25s
-35 of 35 killed
+unmutated: 59 passed in 15.42s
+74 of 74 killed
