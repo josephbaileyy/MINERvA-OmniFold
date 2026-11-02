@@ -97,6 +97,8 @@ Each still holds against the new table values (review: 23.2–38.3 %, ≤ 17.8 %
 | `check_held.py --fact-held` (`CHECK-HELD.txt`) | 3 flags, all pre-existing (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07) |
 | the rater copy | holddiff's multiset check PASSES. **`make_rater_copy.sh` exits 1** at `fix_da_order.py`: "a reference line precedes the DATA AVAILABILITY heading … no case describes this layout". It is the page-11 move above; at the base it exits 0. The rater text, on which check_held ran, is written before that step. The blinded copy is not produced |
 | `check_dead_containment.py`; `test_build_all.py` containment tests | PASS; 15 passed |
+| `generate_manifest.py --check --at-sha HEAD` | OK after the `[manifest]` commit, which adds the round's seven new files |
+| local CI (`run_ci.py`) | 38 of 38 steps pass |
 | the reading copy | 22 pages: the paper's pages 9–12 and the note's pages 73–79, each changed page followed by its base page |
 
 ## For the director
