@@ -1,0 +1,235 @@
+ok   252 changed keys equal values_diff.tsv without its 64 gs- rows, key by key (diag 28, fb 23, sens 201)
+ok   110 gs- keys equal #656's printed values
+     116 of the changed keys print, all at: ['sec_fived16.tex']
+
+key	before	after	printed at
+diag-gcv-reported-top-share	32.7	31.8	sec_fived16.tex:323
+diag-gibuu-reported-modes99	6	7	sec_fived16.tex:326
+diag-gibuu-reported-top-share	32.5	37.5	sec_fived16.tex:326
+diag-nuwro-reported-top-share	27.6	24.7	sec_fived16.tex:325
+diag-nuwro-reported-top-sigma	2.21	2.19	sec_fived16.tex:325
+fb-gcv-hi	108	110	sec_fived16.tex:262
+fb-gcv-lo	102	104	sec_fived16.tex:262
+fb-gcv-offset	0.25	0.26	sec_fived16.tex:262
+fb-gibuu-hi	46	48	sec_fived16.tex:262
+fb-gibuu-lo	45	47	sec_fived16.tex:262
+fb-gmec-hi	229	235	sec_fived16.tex:262
+fb-gmec-lo	217	222	sec_fived16.tex:262
+fb-gmec-offset	0.30	0.32	sec_fived16.tex:262
+fb-nuwro-hi	133	130	sec_fived16.tex:262
+fb-nuwro-lo	129	126	sec_fived16.tex:262
+fb-nuwro-offset	0.22	0.20	sec_fived16.tex:262
+sens-c_e_systematic-gcv-a0	105.42	107.18	sec_fived16.tex:296
+sens-c_e_systematic-gcv-a0.1	68.42	69.00	sec_fived16.tex:296
+sens-c_e_systematic-gcv-a0.25	54.69	55.05	sec_fived16.tex:296
+sens-c_e_systematic-gcv-a0.5	45.44	45.66	sec_fived16.tex:296
+sens-c_e_systematic-gcv-a1	41.83	41.91	sec_fived16.tex:296
+sens-c_e_systematic-gibuu-a0	45.25	47.78	sec_fived16.tex:299
+sens-c_e_systematic-gibuu-a0.1	40.14	43.23	sec_fived16.tex:299
+sens-c_e_systematic-gibuu-a0.25	39.38	43.21	sec_fived16.tex:299
+sens-c_e_systematic-gibuu-a0.5	42.80	47.99	sec_fived16.tex:299
+sens-c_e_systematic-gibuu-a1	65.35	75.67	sec_fived16.tex:299
+sens-c_e_systematic-gmec-a0	223.55	229.09	sec_fived16.tex:297
+sens-c_e_systematic-gmec-a0.1	122.81	125.93	sec_fived16.tex:297
+sens-c_e_systematic-gmec-a0.25	83.93	86.12	sec_fived16.tex:297
+sens-c_e_systematic-gmec-a0.5	60.09	61.63	sec_fived16.tex:297
+sens-c_e_systematic-gmec-a1	44.36	45.40	sec_fived16.tex:297
+sens-c_e_systematic-nuwro-a0	130.68	127.69	sec_fived16.tex:298
+sens-c_e_systematic-nuwro-a0.1	84.12	82.48	sec_fived16.tex:298
+sens-c_e_systematic-nuwro-a0.25	65.33	65.58	sec_fived16.tex:298
+sens-c_e_systematic-nuwro-a0.5	55.21	57.35	sec_fived16.tex:298
+sens-c_e_systematic-nuwro-a1	58.59	65.06	sec_fived16.tex:298
+sens-detector-gcv-a0	105.42	107.18	sec_fived16.tex:284
+sens-detector-gcv-a0.1	94.87	96.12	sec_fived16.tex:284
+sens-detector-gcv-a0.25	85.90	86.81	sec_fived16.tex:284
+sens-detector-gcv-a0.5	77.71	78.39	sec_fived16.tex:284
+sens-detector-gcv-a1	69.76	70.27	sec_fived16.tex:284
+sens-detector-gibuu-a0	45.25	47.78	sec_fived16.tex:287
+sens-detector-gibuu-a0.1	44.78	47.44	sec_fived16.tex:287
+sens-detector-gibuu-a0.25	44.41	47.25	sec_fived16.tex:287
+sens-detector-gibuu-a0.5	44.37	47.53	sec_fived16.tex:287
+sens-detector-gibuu-a1	45.58	49.41	sec_fived16.tex:287
+sens-detector-gmec-a0	223.55	229.09	sec_fived16.tex:285
+sens-detector-gmec-a0.1	200.56	205.48	sec_fived16.tex:285
+sens-detector-gmec-a0.25	177.44	181.78	sec_fived16.tex:285
+sens-detector-gmec-a0.5	153.20	156.96	sec_fived16.tex:285
+sens-detector-gmec-a1	126.80	129.91	sec_fived16.tex:285
+sens-detector-nuwro-a0	130.68	127.69	sec_fived16.tex:286
+sens-detector-nuwro-a0.1	119.24	116.06	sec_fived16.tex:286
+sens-detector-nuwro-a0.25	109.31	106.45	sec_fived16.tex:286
+sens-detector-nuwro-a0.5	99.44	97.29	sec_fived16.tex:286
+sens-detector-nuwro-a1	89.25	88.46	sec_fived16.tex:286
+sens-flux-gcv-a0	105.42	107.18	sec_fived16.tex:278
+sens-flux-gcv-a0.1	81.32	82.27	sec_fived16.tex:278
+sens-flux-gcv-a0.25	66.46	67.10	sec_fived16.tex:278
+sens-flux-gcv-a0.5	54.54	54.97	sec_fived16.tex:278
+sens-flux-gcv-a1	45.61	45.86	sec_fived16.tex:278
+sens-flux-gibuu-a0	45.25	47.78	sec_fived16.tex:281
+sens-flux-gibuu-a0.1	42.87	45.68	sec_fived16.tex:281
+sens-flux-gibuu-a0.25	41.83	45.17	sec_fived16.tex:281
+sens-flux-gibuu-a0.5	43.01	47.36	sec_fived16.tex:281
+sens-flux-gibuu-a1	52.36	59.63	sec_fived16.tex:281
+sens-flux-gmec-a0	223.55	229.09	sec_fived16.tex:279
+sens-flux-gmec-a0.1	147.98	151.92	sec_fived16.tex:279
+sens-flux-gmec-a0.25	106.99	109.98	sec_fived16.tex:279
+sens-flux-gmec-a0.5	78.11	80.36	sec_fived16.tex:279
+sens-flux-gmec-a1	55.13	56.70	sec_fived16.tex:279
+sens-flux-nuwro-a0	130.68	127.69	sec_fived16.tex:280
+sens-flux-nuwro-a0.1	93.48	90.88	sec_fived16.tex:280
+sens-flux-nuwro-a0.25	74.05	72.77	sec_fived16.tex:280
+sens-flux-nuwro-a0.5	60.32	60.86	sec_fived16.tex:280
+sens-flux-nuwro-a1	52.75	57.17	sec_fived16.tex:280
+sens-interaction-gcv-a0	105.42	107.18	sec_fived16.tex:272
+sens-interaction-gcv-a0.1	92.42	93.42	sec_fived16.tex:272
+sens-interaction-gcv-a0.25	83.21	84.01	sec_fived16.tex:272
+sens-interaction-gcv-a0.5	74.95	75.61	sec_fived16.tex:272
+sens-interaction-gcv-a1	68.30	68.96	sec_fived16.tex:272
+sens-interaction-gibuu-a0	45.25	47.78	sec_fived16.tex:275
+sens-interaction-gibuu-a0.1	44.54	47.10	sec_fived16.tex:275
+sens-interaction-gibuu-a0.25	43.84	46.39	sec_fived16.tex:275
+sens-interaction-gibuu-a0.5	43.11	45.55	sec_fived16.tex:275
+sens-interaction-gibuu-a1	42.68	44.70	sec_fived16.tex:275
+sens-interaction-gmec-a0	223.55	229.09	sec_fived16.tex:273
+sens-interaction-gmec-a0.1	204.31	209.08	sec_fived16.tex:273
+sens-interaction-gmec-a0.25	186.27	190.39	sec_fived16.tex:273
+sens-interaction-gmec-a0.5	166.06	169.49	sec_fived16.tex:273
+sens-interaction-gmec-a1	146.46	149.11	sec_fived16.tex:273
+sens-interaction-nuwro-a0	130.68	127.69	sec_fived16.tex:274
+sens-interaction-nuwro-a0.1	117.77	113.76	sec_fived16.tex:274
+sens-interaction-nuwro-a0.25	108.23	104.56	sec_fived16.tex:274
+sens-interaction-nuwro-a0.5	98.47	95.69	sec_fived16.tex:274
+sens-interaction-nuwro-a1	90.10	89.53	sec_fived16.tex:274
+sens-lateral-gcv-a0	105.42	107.18	sec_fived16.tex:290
+sens-lateral-gcv-a0.1	86.99	88.07	sec_fived16.tex:290
+sens-lateral-gcv-a0.25	76.51	77.31	sec_fived16.tex:290
+sens-lateral-gcv-a0.5	69.22	69.88	sec_fived16.tex:290
+sens-lateral-gcv-a1	65.42	66.18	sec_fived16.tex:290
+sens-lateral-gibuu-a0	45.25	47.78	sec_fived16.tex:293
+sens-lateral-gibuu-a0.1	40.95	43.64	sec_fived16.tex:293
+sens-lateral-gibuu-a0.25	37.78	40.65	sec_fived16.tex:293
+sens-lateral-gibuu-a0.5	35.32	38.35	sec_fived16.tex:293
+sens-lateral-gibuu-a1	33.70	36.82	sec_fived16.tex:293
+sens-lateral-gmec-a0	223.55	229.09	sec_fived16.tex:291
+sens-lateral-gmec-a0.1	189.70	194.16	sec_fived16.tex:291
+sens-lateral-gmec-a0.25	167.63	171.44	sec_fived16.tex:291
+sens-lateral-gmec-a0.5	149.62	152.95	sec_fived16.tex:291
+sens-lateral-gmec-a1	135.41	138.34	sec_fived16.tex:291
+sens-lateral-nuwro-a0	130.68	127.69	sec_fived16.tex:292
+sens-lateral-nuwro-a0.1	120.61	117.68	sec_fived16.tex:292
+sens-lateral-nuwro-a0.25	112.75	110.10	sec_fived16.tex:292
+sens-lateral-nuwro-a0.5	105.16	102.88	sec_fived16.tex:292
+sens-lateral-nuwro-a1	113.28	110.21	sec_fived16.tex:292
+
+gs- key	value (g0)	#656
+gs-gcv-nocresp-chi2	160.62	160.62
+gs-gcv-nocresp-chi2-nopl	160.62	160.62
+gs-gcv-nocresp-chi2int	161	161
+gs-gcv-nocresp-chi2int-nopl	161	161
+gs-gcv-shape_only-chi2	100.57	100.57
+gs-gcv-shape_only-chi2-nopl	108.51	108.51
+gs-gcv-shape_only-chi2int	101	101
+gs-gcv-shape_only-chi2int-nopl	109	109
+gs-gcv-shape_only-ndf	15	15
+gs-gcv-shape_only-ndf-nopl	15	15
+gs-gcv-shape_only-p	1.0\times10^{-14}	1.0\times10^{-14}
+gs-gcv-shape_only-p-nopl	3.1\times10^{-16}	3.1\times10^{-16}
+gs-gcv-total-chi2	105.42	105.42
+gs-gcv-total-chi2-nopl	109.35	109.35
+gs-gcv-total-chi2int	105	105
+gs-gcv-total-chi2int-nopl	109	109
+gs-gcv-total-ndf	16	16
+gs-gcv-total-ndf-nopl	16	16
+gs-gcv-total-p	3.3\times10^{-15}	3.3\times10^{-15}
+gs-gcv-total-p-nopl	5.9\times10^{-16}	5.9\times10^{-16}
+gs-gibuu-nocresp-chi2	68.44	68.44
+gs-gibuu-nocresp-chi2-nopl	68.44	68.44
+gs-gibuu-nocresp-chi2int	68	68
+gs-gibuu-nocresp-chi2int-nopl	68	68
+gs-gibuu-shape_only-chi2	24.75	24.75
+gs-gibuu-shape_only-chi2-nopl	27.69	27.69
+gs-gibuu-shape_only-chi2int	25	25
+gs-gibuu-shape_only-chi2int-nopl	28	28
+gs-gibuu-shape_only-ndf	7	7
+gs-gibuu-shape_only-ndf-nopl	7	7
+gs-gibuu-shape_only-p	8.4\times10^{-4}	8.4\times10^{-4}
+gs-gibuu-shape_only-p-nopl	2.5\times10^{-4}	2.5\times10^{-4}
+gs-gibuu-total-chi2	45.25	45.25
+gs-gibuu-total-chi2-nopl	58.46	58.46
+gs-gibuu-total-chi2int	45	45
+gs-gibuu-total-chi2int-nopl	58	58
+gs-gibuu-total-ndf	8	8
+gs-gibuu-total-ndf-nopl	8	8
+gs-gibuu-total-p	3.3\times10^{-7}	3.3\times10^{-7}
+gs-gibuu-total-p-nopl	9.3\times10^{-10}	9.3\times10^{-10}
+gs-gmec-nocresp-chi2	318.26	318.26
+gs-gmec-nocresp-chi2-nopl	318.26	318.26
+gs-gmec-nocresp-chi2int	318	318
+gs-gmec-nocresp-chi2int-nopl	318	318
+gs-gmec-shape_only-chi2	223.46	223.46
+gs-gmec-shape_only-chi2-nopl	258.07	258.07
+gs-gmec-shape_only-chi2int	223	223
+gs-gmec-shape_only-chi2int-nopl	258	258
+gs-gmec-shape_only-ndf	15	15
+gs-gmec-shape_only-ndf-nopl	15	15
+gs-gmec-shape_only-p	3.5\times10^{-39}	3.5\times10^{-39}
+gs-gmec-shape_only-p-nopl	2.7\times10^{-46}	2.7\times10^{-46}
+gs-gmec-total-chi2	223.55	223.55
+gs-gmec-total-chi2-nopl	272.12	272.12
+gs-gmec-total-chi2int	224	224
+gs-gmec-total-chi2int-nopl	272	272
+gs-gmec-total-ndf	16	16
+gs-gmec-total-ndf-nopl	16	16
+gs-gmec-total-p	1.3\times10^{-38}	1.3\times10^{-38}
+gs-gmec-total-p-nopl	1.5\times10^{-48}	1.5\times10^{-48}
+gs-label-gcv	GENIE~2.12.10 CV	GENIE~2.12.10 CV
+gs-label-gcv-nopl	GENIE~2.12.10 CV	GENIE~2.12.10 CV
+gs-label-gibuu	GiBUU~2019	GiBUU~2019
+gs-label-gibuu-nopl	GiBUU~2019	GiBUU~2019
+gs-label-gmec	GENIE~2.12.10 + Valencia MEC	GENIE~2.12.10 + Valencia MEC
+gs-label-gmec-nopl	GENIE~2.12.10 + Valencia MEC	GENIE~2.12.10 + Valencia MEC
+gs-label-nuwro	NuWro~21.09	NuWro~21.09
+gs-label-nuwro-nopl	NuWro~21.09	NuWro~21.09
+gs-label-tune	MINERvA Tune~v1	MINERvA Tune~v1
+gs-label-tune-nopl	MINERvA Tune~v1	MINERvA Tune~v1
+gs-nuwro-nocresp-chi2	298.69	298.69
+gs-nuwro-nocresp-chi2-nopl	298.69	298.69
+gs-nuwro-nocresp-chi2int	299	299
+gs-nuwro-nocresp-chi2int-nopl	299	299
+gs-nuwro-shape_only-chi2	113.73	113.73
+gs-nuwro-shape_only-chi2-nopl	188.00	188.00
+gs-nuwro-shape_only-chi2int	114	114
+gs-nuwro-shape_only-chi2int-nopl	188	188
+gs-nuwro-shape_only-ndf	15	15
+gs-nuwro-shape_only-ndf-nopl	15	15
+gs-nuwro-shape_only-p	3.1\times10^{-17}	3.1\times10^{-17}
+gs-nuwro-shape_only-p-nopl	5.8\times10^{-32}	5.8\times10^{-32}
+gs-nuwro-total-chi2	130.68	130.68
+gs-nuwro-total-chi2-nopl	188.03	188.03
+gs-nuwro-total-chi2int	131	131
+gs-nuwro-total-chi2int-nopl	188	188
+gs-nuwro-total-ndf	16	16
+gs-nuwro-total-ndf-nopl	16	16
+gs-nuwro-total-p	4.7\times10^{-20}	4.7\times10^{-20}
+gs-nuwro-total-p-nopl	2.1\times10^{-31}	2.1\times10^{-31}
+gs-tune-nocresp-chi2	360.79	360.79
+gs-tune-nocresp-chi2-nopl	360.79	360.79
+gs-tune-nocresp-chi2int	361	361
+gs-tune-nocresp-chi2int-nopl	361	361
+gs-tune-shape_only-chi2	261.88	261.88
+gs-tune-shape_only-chi2-nopl	311.19	311.19
+gs-tune-shape_only-chi2int	262	262
+gs-tune-shape_only-chi2int-nopl	311	311
+gs-tune-shape_only-ndf	15	15
+gs-tune-shape_only-ndf-nopl	15	15
+gs-tune-shape_only-p	4.4\times10^{-47}	4.4\times10^{-47}
+gs-tune-shape_only-p-nopl	2.6\times10^{-57}	2.6\times10^{-57}
+gs-tune-total-chi2	262.06	262.06
+gs-tune-total-chi2-nopl	329.72	329.72
+gs-tune-total-chi2int	262	262
+gs-tune-total-chi2int-nopl	330	330
+gs-tune-total-ndf	16	16
+gs-tune-total-ndf-nopl	16	16
+gs-tune-total-p	1.7\times10^{-46}	1.7\times10^{-46}
+gs-tune-total-p-nopl	1.7\times10^{-60}	1.7\times10^{-60}
+
+VALUES-CHECK :: PASS

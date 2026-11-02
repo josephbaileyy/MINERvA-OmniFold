@@ -1,0 +1,63 @@
+# check_held on the rater copy of 3572ebb56 (the GENCMP amendment E round's first pass), and of d2ec66601 (its second pass)
+
+command: python3 -I r22/tools/check_held.py <methods>/r22 <methods>/rater-calibration/tools/analyze.py <blind.txt> --pair-applied G1:paper-s-09 --fact-held
+
+    FAIL G1:paper-g-08: held quote no longer prints exactly: 'In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBU'
+    FAIL G1:paper-s-08: held quote no longer prints exactly: 'Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths'
+    FAIL G1b:paper-s-07: held quote no longer prints exactly: 'We report a simultaneous measurement of the νµ charged-current inclusive cross section in '
+  held quotes checked exactly 14, exempt by applied pair ['G1b:paper-s-05'], held for facts 8, failures 3
+
+## holddiff (rater copy against the normal build)
+
+raw words: normal=9426 rater=9408
+  replace: normal[8108:8109] [-crosssection-]  rater[8108:8109] {+cross-section+}
+  delete: normal[8143:8145] [-hadronic ob--]  rater[8143:8143] {++}
+  replace: normal[8459:8460] [-servables.-]  rater[8457:8459] {+hadronic observables.+}
+  delete: normal[8486:8491] [-[HOLD: funding and grant acknowledgments]-]  rater[8485:8485] {++}
+  delete: normal[8740:8752] [-[HOLD: deposit identifier and access route, after the separately authorized release decision.]-]  rater[8734:8734] {++}
+  hold span in normal build: [HOLD: funding and grant acknowledgments]
+  hold span in normal build: [HOLD: deposit identifier and access route, after the separately authorized release decision.]
+  NON-HOLD DIFF replace: [-hadronic obGiBUU-] {+GiBUU+}
+  NON-HOLD DIFF replace: [-servables.-] {+hadronic observables.+}
+holds in normal=2; 'HOLD' in rater=False; non-hold diffs after hyphen normalization=2
+VERDICT: FAIL
+multiset: only normal {'ob11': 1, 'servables': 1}; only rater {'observables': 1, '11': 1}
+multiset VERDICT: PASS
+
+## make_rater_copy.sh
+
+  holds found: 2; sharing a sentence: 0
+  normal: main_paper uses \externaldocument; built main_note first (131 pages)
+  normal build: 12 pages
+  rater: main_paper uses \externaldocument; built main_note first (131 pages)
+  rater build: 12 pages
+  holddiff: order differs (layout reflow) but word multisets are equal: PASS (order-insensitive)
+  multiset: only normal {'ob11': 1, 'servables': 1}; only rater {'observables': 1, '11': 1}
+  multiset VERDICT: PASS
+  rater text = normal text minus 2 hold spans
+  FAIL: a reference line precedes the DATA AVAILABILITY heading, which already precedes its text: no case describes this layout
+
+## Dispositions
+
+- G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07: pre-existing flags, the same quotes the #638, #642 and #656 rounds
+  recorded. This round changes none of their source sentences: `git diff a4cd6ffcf 3572ebb56 -- paper_body.tex`
+  changes one source line, the sensitivity paragraph.
+- holddiff: the word multisets are equal (PASS). The ordered diff's two non-hold entries are one hyphenated word,
+  "ob-servables", split across the page-11 number in the normal build and joined in the rater build.
+- make_rater_copy.sh exits 1 at `fix_da_order.py`: "a reference line precedes the DATA AVAILABILITY heading, which
+  already precedes its text: no case describes this layout". The tool fails closed on a layout it does not describe.
+  - **The cause:** the shorter sensitivity paragraph moves the paper's text up. The first reference now starts at
+    the foot of page 11's left column; at the base it started on page 12. The same move gives page 11 an 11.2 pt
+    overfull vbox, which the base does not have.
+  - **What it affects:** the rater text (`blind.txt`) is written before that step, so check_held ran on it. The
+    blinded copy (`blind.blind.txt`) is not produced.
+  - **At the base:** a4cd6ffcf's rater copy builds with rc 0.
+  - **The fix is for the director:** a layout change or a new case in `fix_da_order.py`. No word is changed for it.
+
+## The second pass (d2ec66601, after the director's rulings on #665)
+
+- make_rater_copy.sh: rc 0, the blinded copy written ("data-availability heading in reading order"). The ratio caption's
+  new sentence puts the references back on page 12, so fix_da_order.py meets the base's layout again.
+- check_held: the same 3 pre-existing flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07); held quotes checked
+  exactly 14, held for facts 8.
+- holddiff: multiset VERDICT PASS.
