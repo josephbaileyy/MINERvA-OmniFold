@@ -285,18 +285,19 @@ UNIT_REQUIRED = {"0.564": "%", "1.008": "%", "0.563": "%", "2.26": "%", "3.65": 
 #              removed conservative-variant shift), which prints with its "x 10". Only a bare 1.65 not followed by "x"
 #              is removed, and only in main_note.
 #     6.86  -> the live relative sigma of NuWro's third chi2 mode, printed in the modes figure as "sigma = 6.86%,
-#              distance +4.85 sigma" (fd_g_fig_modes.json plotted.panels, sigma 0.0685863); struck as `6.86\%` (the
+#              distance +4.99 sigma" (GENCMP amendment E's with-arm fd_g_fig_modes.json plotted.panels, sigma
+#              0.0685528; the figure the note prints since the E round, 2026-11-01); struck as `6.86\%` (the
 #              superseded 2D per-bin median relative sigma). Only the figure's "= 6.86%, distance" context is removed.
 CONTEXT_EXEMPT = {
     ("main_note", "1.014"): (r"mean\s+weight\s+1\.014(?!\d|\.\d)", "sec_validation.tex", "(mean weight 1.014)"),
     ("main_note", "0.912"): (r"C\s*2\s*=\s*0\.912(?!\d|\.\d)", "values.tex", r"\newcommand{\covTwoDCTwo}{0.912}"),
     ("main_note", "1.65"): (r"(?<![\d.])1\.65(?![\d.])(?!\s*\u00d7)", "values_fived16.tex", r"\@namedef{fv@g-tune-pull-R15}{1.65}"),
     ("main_note", "6.86"): (r"=\s*6\.86%,\s*distance",
-                            "../orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/figures/fd_g_fig_modes.json",
-                            '"sigma": 0.06858631491192879'),
+                            "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json",
+                            '"sigma": 0.06855283880067227'),
 }
 # How an exempt context renders when its source is not the printed text (a figure's sidecar), for the tests.
-CONTEXT_RENDERED = {("main_note", "6.86"): "\u03c3 = 6.86%, distance +4.85\u03c3"}
+CONTEXT_RENDERED = {("main_note", "6.86"): "\u03c3 = 6.86%, distance +4.99\u03c3"}
 
 
 def exempt_text(driver: str, text: str) -> str:

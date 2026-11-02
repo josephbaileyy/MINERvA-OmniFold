@@ -719,8 +719,8 @@ class ResultLineNamesItsObjectTest(unittest.TestCase):
     EXEMPT_SOURCES = {"sec_validation.tex": "the injected bump (mean weight 1.014)\n",
                       "values.tex": "\\newcommand{\\covTwoDCTwo}{0.912}\n",
                       "values_fived16.tex": "\\@namedef{fv@g-tune-pull-R15}{1.65}\n",
-                      "../orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/figures/fd_g_fig_modes.json":
-                          '{"sigma": 0.06858631491192879}\n'}
+                      "../orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/figures/fd_g_fig_modes.json":
+                          '{"sigma": 0.06855283880067227}\n'}
     BODY_FILES = {"main_records": "app_history", "pet_note": "app_history_pet", "main_note": "body_main_note",
                   "main_paper": "body_main_paper", "main_primer": "body_main_primer"}
     # What each fake PDF "renders": each strike-carrying build shows its own struck literal (its positive control).

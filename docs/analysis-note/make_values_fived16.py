@@ -293,10 +293,16 @@ def gencmp_values(d, arm):
 def values(d, arm="with"):
     A = ARMS[arm]
     v = {}
+    # Stage G's chain: each downstream readout names, by sha256, the upstream readouts this arm pins, so a re-pin of one
+    # readout without the others stops here
+    pins = (READOUTS if arm == "with" else NOPL_READOUTS)
+    for key, field, up in (("diag", "g_readout", "g"), ("fup", "g_readout", "g"), ("fup", "g_diag_readout", "diag"),
+                           ("sens2", "g_readout", "g"), ("sens2", "g_followup_readout", "fup"), ("fboot", "g_readout", "g")):
+        assert d[key]["inputs_sha256"][field].startswith(pins[up][1]), f"{key} was not computed from the pinned {up}"
     # the cells: boxes and central values (f in 10^-40 cm^2/nucleon, three significant figures)
-    g0 = d["g"]["predictions"][0]
-    assert g0["cells"] == CELLS and d["g"]["cells"] == CELLS
-    f = dict(zip(CELLS, g0["f"]))
+    p0 = d["g"]["predictions"][0]
+    assert p0["cells"] == CELLS and d["g"]["cells"] == CELLS
+    f = dict(zip(CELLS, p0["f"]))
     for p in d["g"]["predictions"]:   # GiBUU carries 8 of the 16 cells: compare by cell name
         assert max(abs(x / f[c] - 1) for c, x in zip(p["cells"], p["f"])) < 1e-12, "f differs across predictions"
     boxes = {f"R{c['id']:02d}": c["box"] for c in d["h2"]["reporting_cells"] if c["reported"]}
@@ -897,6 +903,8 @@ def self_test():
                         ("has native NuWro disagree", lambda d: d["gnat"]["generator_definitions"]["rule"].update(agree=False)),
                         ("puts a quadrant sum above the 3D central value",
                          lambda d: d["gover"]["quadrants"]["QA"]["3D"].update(d_pct=0.1)),
+                        ("has a diag readout computed from another Stage G readout",
+                         lambda d: d["diag"]["inputs_sha256"].update(g_readout="0" * 64)),
                         ("ran Stage G's chain on another NuWro",
                          lambda d: next(p for p in d["g"]["predictions"] if p["name"] == "nuwro")["total"].update(chi2=1.0))):
         d = load()
