@@ -69,11 +69,12 @@ class Sets(unittest.TestCase):
         for s in E.CHDEFS:
             short = FG.SHORT[s["name"]]
             self.assertTrue(s["label"].startswith(short) and s["label"][len(short)] == ";", s["name"])
-            for q in quals[s["name"]]:
+            for q in quals.get(s["name"], ()):
                 self.assertIn(q, s["label"])
             for r in required:                    # K7: a required string in the label must be drawn
                 if r in s["label"]:
-                    self.assertIn(r, quals[s["name"]])
+                    self.assertIn(r, quals.get(s["name"], ()))
+            self.assertIn(E.CH_DEFS, s["label"])  # addendum E-A1: the label keeps the corner's full name
         self.assertIn(gc.LABELS["gibuu_CH"], E.CHDEFS[3]["label"])
         self.assertIn(gc.LABELS["nuwro_CH"], E.CHDEFS[2]["label"])
 

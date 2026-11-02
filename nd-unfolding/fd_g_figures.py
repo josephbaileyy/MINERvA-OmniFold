@@ -107,10 +107,12 @@ REQUIRED = (G.C12_LABEL, "prior (not an independent prediction)", "p_parallel < 
 CH_DEFS = "CH, analysis definitions"
 PREDICTION_SETS = {
     "stage-g": (QUALIFIERS, REQUIRED),
-    "gencmp-chdefs": ({"genie_cv": (CH_DEFS,), "genie_mec": (CH_DEFS,), "nuwro": (CH_DEFS, "hydrogen: supplement FLAGGED"),
-                       "gibuu": (CH_DEFS, "hydrogen: closure B3 failed", "p_parallel < 4.5 cells only"),
+    # addendum E-A1: the corner's name is in every label and the sidecar's prediction_set, not on the legend, whose
+    # longer entries ran off the page (K6, the first run's chdefs-nopl figures); the hydrogen flags stay on the legend
+    "gencmp-chdefs": ({"nuwro": ("CH", "hydrogen: supplement FLAGGED"),
+                       "gibuu": ("CH", "hydrogen: closure B3 failed", "p_parallel < 4.5 cells only"),
                        "mnvtune_v1": ("prior (not an independent prediction)",)},
-                      (CH_DEFS, "hydrogen: supplement FLAGGED", "hydrogen: closure B3 failed",
+                      ("hydrogen: supplement FLAGGED", "hydrogen: closure B3 failed",
                        "prior (not an independent prediction)", "p_parallel < 4.5 cells only")),
 }
 DEFAULT_SET = "stage-g"
