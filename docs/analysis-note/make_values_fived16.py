@@ -57,6 +57,14 @@ READOUTS = {
     # Stage 0 (5d-design-20261023/STAGE0-REPORT.md) and the reconstruction-information test R10 (measurement-scoping/r10)
     "stage0": ("docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/stage0-binding.json", "df70af43"),
     "r10": ("docs/orchestration/state/measurement-scoping/r10/outputs/r10_results.json", "dafcc55e"),
+    # GENCMP (FD-GENCMP-REPORT.md; DECISION-20261101-joseph-gencmp-paper-adoption.md items 1-4): step B's 2 x 2 table,
+    # whose corner "CH, analysis definitions" is Table IV's; step A's GENIE-hydrogen sensitivity; step D's native NuWro
+    # on CH, with the probe's diagnostic (a text receipt); and step C's 3D quadrant sums (the note only)
+    "gdefs": (f"{FD}/fd/gencmp/readout/defs.json", "544f4f43"),
+    "gch": (f"{FD}/fd/gencmp/readout/ch.json", "cd111b8e"),
+    "gnat": (f"{FD}/fd/gencmp/readout/native.json", "df48fbeb"),
+    "gprobe": (f"{FD}/fd/gencmp/receipts/d_projection.txt", "2df2a897"),
+    "gover": (f"{FD}/fd/gencmp/readout/overlap.json", "82b3528a"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -75,11 +83,13 @@ ARMS = {"with": {"dp": "C_total_plus_C_resp_plus_C_PL5D", "rep": "C_total + C_re
         "without": {"dp": "C_total_plus_C_resp", "rep": "C_total + C_resp", "x": "C_resp",
                     "f1sig": "relative_sigma_plus_C_resp"}}
 # the key families whose values depend on the reported matrix; any other key must be equal in the two arms
-MATRIX_KEYS = re.compile(r"^(g-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|eav-|sig(med|min|max)?-(reported|C_PL5D)|trig-)")
+MATRIX_KEYS = re.compile(r"^(g-|gs-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|eav-|sig(med|min|max)?-(reported|C_PL5D)|trig-)")
 # the figures the note and the paper print, copied into figures/: each must equal its committed source (with the block)
 # and the digest its sidecar records (FD-G-FIGURES-REPORT.md section 1; FD-CT-5B-ADDITION-REPORT.md section 3)
-FIGURES = {"fd_g_fig_ratio.pdf": "b57cbb2c", "fd_g_fig_modes.pdf": "980351ed"}
-FIGURE_SRC = "fd/with-cpl/figures"
+# The ratio figure is GENCMP's redraw of Table IV's predictions (fd_gencmp_figures.py); the modes figure stays Stage G's
+FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp/figures", "32a7557c"), "fd_g_fig_modes.pdf": ("fd/with-cpl/figures", "980351ed")}
+# the readouts that are text receipts, not JSON
+TEXT_READOUTS = {"gprobe"}
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -128,7 +138,7 @@ def load(readouts=None):
         sha = hashlib.sha256(raw).hexdigest()
         if not sha.startswith(pin):
             sys.exit(f"make_values_fived16: {rel} has sha256 {sha[:12]}, pinned {pin}: refusing")
-        data[key] = json.loads(raw)
+        data[key] = raw.decode() if key in TEXT_READOUTS else json.loads(raw)
     return data
 
 
@@ -143,6 +153,125 @@ def p_tex(p):            # a p-value: two significant figures, scientific below 
         return f"{p:.2g}" if p < 0.1 else f"{p:.2f}"
     m, e = f"{p:.1e}".split("e")
     return rf"{m}\times10^{{{int(e)}}}"
+
+GENCMP4 = ("genie_cv", "genie_mec", "nuwro", "gibuu")      # the four predictions GENCMP rebuilt
+
+
+def table4(d, arm):
+    """Table IV's five predictions in this arm's matrix, each with total, shape_only, cells, pulls and g_over_f_minus_1:
+    for GENIE CV, GENIE + MEC, NuWro and GiBUU, GENCMP's corner "CH, analysis definitions" (defs.json), every sample of
+    which passed B0 and B2 and is complete; for MINERvA Tune v1, Stage G's record. The data side (cells, f, sigma, ndf)
+    must be Stage G's, so only the predictions differ."""
+    mat = "reported" if arm == "with" else "without_C_PL5D"
+    gd = d["gdefs"]
+    assert gd["schema"] == "fd-gencmp-defs/1" and gd["not_read"] == []
+    assert all(st["B0"] is True and st["complete"] is True and st["B2"] in ("pass", "n/a") for st in gd["status"].values())
+    sg = {p["name"]: p for p in d["g"]["predictions"]}
+    out = {}
+    for name in PRED:
+        if name not in GENCMP4:
+            out[name] = sg[name]
+            continue
+        rec = gd["generators"][name]["CH"]["analysis_definitions"]["chi2"][mat]
+        corner = gd["table_2x2"][name]["CH"]["analysis_definitions"][mat]
+        assert all(rec[part]["chi2"] == corner[part] for part in ("total", "shape_only")), f"{name}: not the 2 x 2 corner"
+        s = sg[name]
+        assert rec["cells"] == s["cells"], f"{name}: the cells differ from Stage G's"
+        assert max(abs(a / b - 1) for a, b in zip(rec["f"], s["f"])) < 1e-12, f"{name}: f differs from Stage G's"
+        assert max(abs(a / b - 1) for a, b in zip(rec["sigma_total_over_f"], s["sigma_total_over_f"])) < 1e-10, \
+            f"{name}: the reported sigma differs from Stage G's"
+        assert all(rec[part]["ndf"] == s[part]["ndf"] for part in ("total", "shape_only"))
+        out[name] = rec
+    return out
+
+
+def gencmp_values(d, arm):
+    """The GENCMP numbers the text and the note print beside Table IV (DECISION-20261101-joseph-gencmp-paper-adoption.md
+    items 1-4). Each fact a sentence states about them is asserted, so a changed readout stops the run."""
+    mat = "reported" if arm == "with" else "without_C_PL5D"
+    gd, gc, gn = d["gdefs"], d["gch"], d["gnat"]
+    v = {}
+    # Q10: the largest per-cell change from the generators' to the analysis definitions over Table IV's four rebuilt
+    # predictions, in units of the cell's reported sigma, and the bound the sentence prints (ceiled); the decision fixed
+    # both figures, so a re-pinned readout that moves them stops here
+    dmax = max(abs(x) for n in GENCMP4 for x in gd["generators"][n]["CH"]["delta_over_sigma"])
+    v["gdef-dmax"], v["gdef-dmax-bound"] = f"{dmax:.3f}", f"{math.ceil(100 * dmax) / 100:.2f}"
+    assert (v["gdef-dmax"], v["gdef-dmax-bound"]) == ("0.063", "0.07"), "the method sentence's figures changed"
+    assert not any(gd["generators"][n]["CH"]["seed_spread_flag"] for n in GENCMP4)
+    v["gdef-seedmax"] = f"{max(x for n in GENCMP4 for x in gd['generators'][n]['CH']['seed_spread_over_sigma']):.3f}"
+    # Q08: NuWro and GiBUU on carbon in the analysis definitions (the text and the note), and the change to CH
+    ana = {(n, t): gd["generators"][n][t]["analysis_definitions"]["chi2"][mat] for n in ("nuwro", "gibuu")
+           for t in ("carbon", "CH")}
+    for n in ("nuwro", "gibuu"):
+        for part in ("total", "shape_only"):
+            x = ana[n, "carbon"][part]["chi2"]
+            v[f"g-{PRED[n]}-carbon-{part}-chi2"], v[f"g-{PRED[n]}-carbon-{part}-chi2int"] = f"{x:.2f}", f"{x:.0f}"
+    rise = ana["gibuu", "CH"]["total"]["chi2"] - ana["gibuu", "carbon"]["total"]["chi2"]
+    assert rise > 0 and ana["gibuu", "CH"]["shape_only"]["chi2"] < ana["gibuu", "carbon"]["shape_only"]["chi2"], \
+        "the clause says GiBUU's total chi2 rises with the correction and its shape-only chi2 falls"
+    assert ana["nuwro", "CH"]["total"]["chi2"] < ana["nuwro", "carbon"]["total"]["chi2"], "NuWro's total chi2 falls"
+    v["g-gibuu-chrise"] = f"{rise:.1f}"
+    # step A's GENIE-hydrogen sensitivity, in the generators' own definitions (never the primary): for GiBUU the sign of
+    # the change follows the hydrogen sample, below carbon with GENIE's, above it with its own
+    for n in ("nuwro", "gibuu"):
+        g = gc["generators"][n]
+        assert "never the primary" in g["CH_genie_hydrogen"]["label"]
+        for t, tag in (("carbon", "gen-carbon"), ("CH", "gen-ch"), ("CH_genie_hydrogen", "genieh")):
+            for part in ("total", "shape_only"):
+                x = g[t]["chi2"][mat][part]["chi2"]
+                v[f"g-{PRED[n]}-{tag}-{part}-chi2"], v[f"g-{PRED[n]}-{tag}-{part}-chi2r1"] = f"{x:.2f}", f"{x:.1f}"
+    gg = {t: gc["generators"]["gibuu"][t]["chi2"][mat]["total"]["chi2"] for t in ("carbon", "CH", "CH_genie_hydrogen")}
+    assert gg["CH_genie_hydrogen"] < gg["carbon"] < gg["CH"], "GiBUU's sign no longer depends on the hydrogen sample"
+    # the hydrogen label of GiBUU's table note, parsed from the readout (MP3-C's label and binding addendum 9 sec. 4),
+    # and the hydrogen weight from NuWro's combination label (the same construction for both, declaration sec. 2)
+    lab = gd["generators"]["gibuu"]["CH"]["label"]
+    assert lab == gc["generators"]["gibuu"]["CH"]["label"]
+    m = re.fullmatch(r"B3 \(sampling closure\) failed on hydrogen; a post-hoc bias check of its premise passed at <= "
+                     r"([\d.]+) sigma_c; (\d+)% of the hydrogen sample is DIS that does not conserve energy "
+                     r"\(binding addendum 9 section 4\)", lab)
+    assert m, "GiBUU's hydrogen label changed"
+    v["g-gibuu-hlab-sigc"], v["g-gibuu-hlab-dis"] = m.groups()
+    m = re.search(r"(\d+):(\d+) per nucleon", gd["generators"]["nuwro"]["CH"]["label"])
+    assert m and m.groups() == ("12", "1"), "NuWro's combination is not 12:1 per nucleon"
+    v["g-ch-hweight"] = r"1/13"
+    # Q08, step D: native NuWro on CH against the combination, on both routes, under the rule fixed in advance
+    assert gn["agree"] is True
+    for route, tag in (("generator_definitions", "gen"), ("analysis_definitions", "ana")):
+        r = gn[route]["rule"]
+        assert r["agree"] is True and len(r["z"]) == 16
+        m = re.fullmatch(r"agree: sum z\^2 over the cells < ([\d.]+) \(chi2_16 0\.99 quantile\) and no \|z\| > ([\d.]+)",
+                         r["rule"])
+        assert m and r["sum_z2"] < float(m.group(1)) and r["max_abs_z"] <= float(m.group(2))
+        v["gnat-rule-sumz2"], v["gnat-rule-zmax"] = m.groups()
+        v[f"gnat-{tag}-sumz2"], v[f"gnat-{tag}-zmax"] = f"{r['sum_z2']:.1f}", f"{r['max_abs_z']:.1f}"
+        for part in ("total", "shape_only"):
+            v[f"g-nuwro-native-{tag}-{part}-chi2"] = f"{gn[route]['native_chi2'][mat][part]['chi2']:.2f}"
+    # the primary route's combination is step A's NuWro on CH (the two runs agree to 3e-11, the shape-only fit's tolerance)
+    comb = gn["generator_definitions"]["combination_chi2"][mat]
+    assert all(abs(comb[part]["chi2"] / gc["generators"]["nuwro"]["CH"]["chi2"][mat][part]["chi2"] - 1) < 1e-9
+               for part in ("total", "shape_only")), "step D's combination is not step A's NuWro on CH"
+    # the probe's diagnostic, not a declared test (receipts/d_projection.txt): recomputed from its own three totals
+    m = re.search(r"probe chunk c1's NuWro test-event total ([\d.e+-]+) per nucleon against\s+\(12 x ([\d.e+-]+) "
+                  r"\[production C12 p1\] \+ ([\d.e+-]+) \[MP3-B H c01\]\) / 13 = ([\d.e+-]+), \+([\d.]+)%, mostly DIS",
+                  d["gprobe"])
+    assert m and "diagnostic, not a declared test" in d["gprobe"], "the probe receipt changed"
+    tot, c12, h, comb = (float(x) for x in m.groups()[:4])
+    assert abs((12 * c12 + h) / 13 / comb - 1) < 5e-4 and f"{100 * (tot / comb - 1):.1f}" == m.group(5)
+    v["gnat-probe-pct"] = m.group(5)
+    # Q26, 3D (the note only, descriptive): the quadrant sums against the three-observable central value, at the scale
+    # of the sixteen-cell uncertainty; all four lie below it
+    q = d["gover"]["quadrants"]
+    assert sorted(q) == ["QA", "QB", "QC", "QD"]
+    assert all(x["3D"]["outcome"] == "agree at the sigma_16 scale (descriptive)" for x in q.values())
+    pcts = [x["3D"]["d_pct"] for x in q.values()]
+    zs = [abs(x["3D"]["d_over_sigma16"]) for x in q.values()]
+    assert max(pcts) < 0, "a quadrant sum is not below the 3D central value"
+    v["g3d-pct-lo"], v["g3d-pct-hi"] = f"{min(-x for x in pcts):.1f}", f"{max(-x for x in pcts):.1f}"
+    v["g3d-zmax"] = f"{max(zs):.2f}"                   # the largest, rounded: the note prints it as "the largest"
+    m = re.fullmatch(r"(\d)\.(\d)\d*e-0?(\d+)", f"{q['QA']['unreported_share_P5']:.1e}")
+    v["g3d-qa-unrep"] = rf"{m.group(1)}.{m.group(2)}\times10^{{-{m.group(3)}}}"
+    assert q["QB"]["unreported_share_P5"] == 0 and all(q[x]["label"] == "complete" for x in ("QC", "QD"))
+    return v
 
 
 def values(d, arm="with"):
@@ -251,9 +380,11 @@ def values(d, arm="with"):
             v[f"{k}-n"] = str(t["n_experiments"])
             v[f"{k}-listed"] = "yes" if t["listed"] else "no"
         v[f"{tag}-ncells"], v[f"{tag}-np"], v[f"{tag}-ntruths"] = str(n_cells), str(n_p), str(n_truth)
-    # Stage G: chi2 with ndf, shape-only, p, and the variant without C_resp
+    # Stage G (gs-): chi2 with ndf, shape-only, p, and the variant without C_resp, for the predictions as Stage G
+    # compared them, in the generators' own definitions with NuWro and GiBUU on carbon. G-SENS, G-DIAG and the flux
+    # bootstrap were computed on these, so the note prints them beside those diagnostics
     for p in d["g"]["predictions"]:
-        k = f"g-{PRED[p['name']]}"
+        k = f"gs-{PRED[p['name']]}"
         for part in ("total", "shape_only"):
             q = p[part]
             v[f"{k}-{part}-chi2"] = f"{q['chi2']:.2f}"
@@ -263,10 +394,28 @@ def values(d, arm="with"):
         v[f"{k}-nocresp-chi2"] = f"{p['variant']['total']['chi2']:.2f}"
         v[f"{k}-nocresp-chi2int"] = f"{p['variant']['total']['chi2']:.0f}"
         name = p["label"].split(";")[0].split(",")[0]                    # the readout's own name
-        v[f"label-{PRED[p['name']]}"] = ("MINERvA Tune~v1" if name == "MINERvA Tune v1" else name.replace(" ", "~", 1))
-        v[f"{k}-ncells"] = str(p["n_cells"])
+        v[f"gs-label-{PRED[p['name']]}"] = ("MINERvA Tune~v1" if name == "MINERvA Tune v1" else name.replace(" ", "~", 1))
+    # Table IV (g-): GENCMP's corner "CH, analysis definitions" for GENIE CV, GENIE + MEC, NuWro and GiBUU
+    # (DECISION-20261101-joseph-gencmp-paper-adoption.md items 1-2; FD-GENCMP-REPORT.md sec. 2.2), in this arm's matrix;
+    # MINERvA Tune v1, already in the analysis definitions (MP-5 T3), is Stage G's unchanged
+    for name, p in table4(d, arm).items():
+        k = f"g-{PRED[name]}"
+        for part in ("total", "shape_only"):
+            q = p[part]
+            v[f"{k}-{part}-chi2"] = f"{q['chi2']:.2f}"
+            v[f"{k}-{part}-chi2int"] = f"{q['chi2']:.0f}"
+            v[f"{k}-{part}-ndf"] = str(q["ndf"])
+            v[f"{k}-{part}-p"] = p_tex(q["p"])
+        for c, z, r in zip(p["cells"], p["pulls"], p["g_over_f_minus_1"]):
+            v[f"{k}-pull-{c}"] = f"{z:.2f}"
+            v[f"{k}-gf-{c}"] = f"{100 * r:.1f}"
+        # NuWro and GiBUU carry their target, CH, in the label (the consult's Q5); the GENIE samples are CH as generated
+        base = v[f"gs-label-{PRED[name]}"]
+        v[f"label-{PRED[name]}"] = base + (" (CH)" if name in ("nuwro", "gibuu") else "")
+        v[f"{k}-ncells"] = str(len(p["cells"]))
         WORDS = {7: "seven", 8: "eight", 9: "nine", 16: "sixteen"}   # the abstracts print the count in words
-        v[f"{k}-ncells-word"] = WORDS[p["n_cells"]]
+        v[f"{k}-ncells-word"] = WORDS[len(p["cells"])]
+    v.update(gencmp_values(d, arm))
     # G-SENS: chi2 at each alpha per family, and the sentence's bounds (16-cell predictions only)
     recs = d["sens2"]["sens"]["records"] + d["fup"]["sens"]["records"]
     for r in recs:
@@ -386,11 +535,6 @@ def values(d, arm="with"):
         v[f"{tag}-listed-names"] = (", ".join(names[:-1]) + " and " + names[-1]) if len(names) > 1 else "".join(names) or "none"
         v[f"{tag}-nunlisted"] = str(ag["truths"] - len(d[tag]["triggers"]["listed"]))
         v[f"{tag}-nungraded"] = str(sum(1 for t in d[tag]["truths"] if not t.get("graded")))
-    # Stage G per cell: pulls and g/f - 1 (percent)
-    for p in d["g"]["predictions"]:
-        for c, z, r in zip(p["cells"], p["pulls"], p["g_over_f_minus_1"]):
-            v[f"g-{PRED[p['name']]}-pull-{c}"] = f"{z:.2f}"
-            v[f"g-{PRED[p['name']]}-gf-{c}"] = f"{100 * r:.1f}"
     # G-DIAG: per prediction and comparison, the modes carrying 50/90/99 % and the top mode
     for p in d["diag"]["predictions"]:
         for cmpn in p["comparisons"]:
@@ -432,7 +576,7 @@ def values(d, arm="with"):
     edge, off = [], []
     for name, k in PRED.items():
         b = band[name]; t = b["total"]; hat = b["chi2_stage_g"]
-        assert abs(hat - float(v[f"g-{k}-total-chi2"])) < 0.005, f"3D's chi2 for {name} is not Stage G's"
+        assert abs(hat - float(v[f"gs-{k}-total-chi2"])) < 0.005, f"3D's chi2 for {name} is not Stage G's"
         lo, hi = t["percentiles"]["16"], t["percentiles"]["84"]
         assert lo < hat < hi
         v[f"fb-{k}-lo"], v[f"fb-{k}-hi"] = f"{lo:.0f}", f"{hi:.0f}"
@@ -562,8 +706,8 @@ def all_values(d=None, d_nopl=None):
         ndf16 = {v[f"g-{k}-{part}-ndf"] for k in PRED.values() if k != "gibuu"}
         assert len(ndf16) == 1, f"the 16-cell predictions' {part} ndf differ: {ndf16}"
     # the total and shape-only chi2 falls with the block, over the five predictions (the referee's corrections, #610)
-    gw = {p["name"]: p for p in (load() if d is None else d)["g"]["predictions"]}
-    go = {p["name"]: p for p in (load(NOPL_READOUTS) if d_nopl is None else d_nopl)["g"]["predictions"]}
+    gw = table4(load() if d is None else d, "with")                      # Table IV's predictions, both arms
+    go = table4(load(NOPL_READOUTS) if d_nopl is None else d_nopl, "without")
     for part in ("total", "shape_only"):
         fall = [1 - gw[n][part]["chi2"] / go[n][part]["chi2"] for n in PRED]
         assert min(fall) > 0, f"a {part} chi2 rises with the block"
@@ -588,9 +732,9 @@ def render(v):
 def check_figures():
     """The figures the note and the paper print equal their committed sources and the sidecars' digests."""
     bad = []
-    for name, pin in FIGURES.items():
+    for name, (src_dir, pin) in FIGURES.items():
         got = OUT.parent / "figures" / name
-        src = ROOT / FD / FIGURE_SRC / name
+        src = ROOT / FD / src_dir / name
         side = json.loads(src.with_suffix(".json").read_text())["pdf_sha256"]
         h = [hashlib.sha256(x.read_bytes()).hexdigest() if x.exists() else "missing" for x in (got, src)]
         if not (h[0] == h[1] == side and side.startswith(pin)):
