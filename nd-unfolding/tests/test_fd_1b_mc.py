@@ -577,6 +577,9 @@ class Jobs(Case):
         out2 = self.tmp / "jobs-rule"
         argv2 = self.argv("g18", "central", "T", out2)
         argv2[argv2.index("--clip-rule") + 1] = "nature"
+        gate = self.tmp / "gate-est.json"
+        gate.write_text(json.dumps(mc.CLIP_GATE))
+        argv2 += ["--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]
         with mock.patch.object(mc, "_unfold_s1", lambda exp, threads, seed=42, unfold_fn=None: (np.ones(4), {})):
             self.assertEqual(mc.main(argv2), 0)
         z = np.load(out2 / mc.product_name("fd1b_mc", "g18", "central", "T"))
@@ -603,11 +606,11 @@ class Jobs(Case):
         a = argparse.Namespace(truth="g18", prep=None, push=None, threads=1, clip_rule="nature",
                                flux_constraint=self.w.constraint)
         with mock.patch.object(mc, "truth_ratio", lambda *x: (None, None)), \
-                self.assertRaisesRegex(mc.Refusal, "'data' rule only"):
+                self.assertRaisesRegex(mc.Refusal, "descriptive figure"):
             mc.run_item(a, {"inputs": self.inputs, "bkg": self.bkg}, "clipmean", "3620000")
-        with self.assertRaisesRegex(mc.Refusal, "'data' rule only"):
+        with self.assertRaisesRegex(mc.Refusal, "descriptive figure"):
             mc.clipcheck(argparse.Namespace(clip_rule="nature"))
-        with self.assertRaisesRegex(mc.Refusal, "'data' rule only"):
+        with self.assertRaisesRegex(mc.Refusal, "descriptive figure"):
             mc.clipping_readout(self.tmp, "t", "g18", None, {}, [], "nature")
 
     def test_a_toy_draws_under_the_declared_clip_rule(self):
@@ -629,6 +632,28 @@ class Jobs(Case):
                 _, meta = mc.run_item(a, world, "toy", "3620000", unfold_fn=lambda *x: (np.zeros(3), {}))
             self.assertEqual(meta["clip"]["rule"], rule)
         self.assertEqual(seen, ["data", "nature"])
+
+    def test_the_nature_rule_waits_for_a2_1s_gate(self):
+        """Joseph's ruling (#718): 'nature' runs only on A2.1's gate reading option (1); otherwise it refuses."""
+        out = self.tmp / "jobs-gate"
+        argv = self.argv("g18", "central", "T", out)
+        argv[argv.index("--clip-rule") + 1] = "nature"
+        fake = lambda exp, threads, seed=42, unfold_fn=None: (np.ones(4), {})  # noqa: E731
+        with mock.patch.object(mc, "_unfold_s1", fake):
+            self.assertEqual(mc.main(argv), 4)                                  # no gate
+            gate = self.tmp / "gate.json"
+            for body, want in (({**mc.CLIP_GATE, "verdict": "STOP"}, 4), ({**mc.CLIP_GATE, "reading": "option (2)"}, 4),
+                               (dict(mc.CLIP_GATE), 0)):
+                gate.write_text(json.dumps(body))
+                shutil.rmtree(out, ignore_errors=True)
+                g = argv + ["--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]
+                self.assertEqual(mc.main(g), want, body)
+            g = argv + ["--clip-gate", str(gate), "--expect-clip-gate-sha256", "0" * 64]
+            shutil.rmtree(out, ignore_errors=True)
+            self.assertEqual(mc.main(g), 4)                                     # wrong digest
+        data = self.argv("g18", "central", "T", self.tmp / "jobs-gate-data")
+        with mock.patch.object(mc, "_unfold_s1", fake):
+            self.assertEqual(mc.main(data), 0)                                  # 'data' needs no gate
 
     def test_central_and_seed_products(self):
         out = self.tmp / "jobs2"

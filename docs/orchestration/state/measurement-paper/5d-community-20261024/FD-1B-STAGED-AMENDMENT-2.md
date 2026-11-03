@@ -113,12 +113,21 @@ the product's `clip_rule`.
   w_truth and w_reco alike. Background rows with bkg_w < 0 are zeroed. The draw and the truth then share one
   non-negative nature. The denominator, per cell, stays under §2b's fail-closed rule.
 
-**`nature` is defined for the draws only** (the audit's C4 on #717).
-- Its clipping offset is undefined. It zeroes positive truth on rows with λ < 0, and its completeness then uses the
-  zeroed w_truth against an unzeroed per-cell denominator.
-- So `clipmean`, `clipcheck` and the readout's clipping section refuse `nature` (`NATURE_UNRULED`) until its offset
-  is defined and ruled.
-- Binding 3 binds `data` (the audit's B1).
+**Which rule the bulk runs: Joseph's ruling** (`DECISION-20261103-joseph-coverage-clip-rule.md`, #718, merged at
+`1e74f819`, "Option 1, both tests"). This supersedes the audit's B1.
+- **The gate.** The bulk runs `nature` (consistent clipping) **only if** 1B's own pre-bulk `clipcheck` reads "option
+  (1)" under C2's fixed reading (`c2_reading.txt`, `b5b4fc4b…`, unchanged), with C2's quantities computed by cov2d's
+  code through addendum A2.1.
+- **Any other reading is a hard stop:** nothing launches, and 1B returns to Joseph.
+- **In code** (`check_clip_gate`): `--clip-rule nature` refuses unless it is given A2.1's gate file (`--clip-gate`,
+  `--expect-clip-gate-sha256`), and that file reads `{"step": "c2-clip-gate", "reading": "option (1)", "verdict":
+  "PASS"}`. Nothing in this amendment writes that file, so `nature` cannot run until A2.1.
+- **The "data" rule's offset** (`clipmean`, `clipcheck`'s o_c, the readout's clipping section) stays the descriptive
+  figure, under `data`. These refuse `nature` (`NATURE_UNRULED`).
+- **Grading a `nature` bulk is A2.1's.** That covers the relation of S1-0's pilot toy and stat items, which run under
+  `data` before the gate, to a `nature` bulk, and the readout's clipping section under it.
+- **Why the offset is not defined under `nature`** (the audit's C4 on #717). It zeroes positive truth on rows with
+  λ < 0, and its completeness then uses the zeroed w_truth against an unzeroed per-cell denominator.
 
 **The checks.**
 - `null`, `readout` and `clipcheck` take both names. They refuse any product at a truth whose recorded `config` or
@@ -400,7 +409,7 @@ before merge. Declaration §12's clauses M and S, and §13's line, are supersede
 ## 10. Tests and mutation
 
 **The test file** is `nd-unfolding/tests/test_fd_1b_mc.py`. On this branch: `test_fd_1b_mc`, `test_fd_1b_null` and
-`test_fd_1b_moded` give 162 passed (105 in `test_fd_1b_mc`), under a fixed and under 14 varied hash seeds.
+`test_fd_1b_moded` give 164 passed (107 in `test_fd_1b_mc`), under a fixed and under 14 varied hash seeds.
 
 **New or rewritten tests:**
 - **Compose:** first order in the draw's order, bitwise, for two and three universes. The denominator per cell. §2b in
@@ -429,6 +438,8 @@ before merge. Declaration §12's clauses M and S, and §13's line, are supersede
   below δ\* is not listed) and the refusal of two clipmean products. Also `clipcheck` both ways (`TO_JOSEPH` at
   |o_c| ≥ δ\*, `PROCEED` below), with its own refusal of two clipmean products, and S1-0b's walls (missing product,
   complete, no seed).
+- **The clip gate** (#718): `--clip-rule nature` refuses with no gate file, with a gate file reading STOP or option
+  (2), and with a wrong digest; it passes on the pinned option-(1) file; `data` needs none (amendment 2's interim).
 - **Named inputs:**
   - `unfold` installs and records exactly the named estimator, and refuses an unknown or missing one;
   - the graders refuse a product set with a mixed or missing estimator or clip rule, and grade again once it is
@@ -461,10 +472,12 @@ varies per process.
 - **The harness** pins `PYTHONHASHSEED=0` for every child, so the receipt reproduces.
 
 **The mutation receipt** is `fd/receipts-1b/staged/mutation_mc_a2.py`, with its output in `mutation_mc_a2.out`. It
-carries binding 2's 79 mutants, and prints those whose target code amendment 2 replaced as N/A, by name. It adds 96
+carries binding 2's 79 mutants, and prints those whose target code amendment 2 replaced as N/A, by name. It adds 101
 for amendment 2: 76 of mine (the director's additions included), 11 of `coverage-5b-audit`'s mut717.py
-(carried, two re-anchored), and 9 for the fixes of its review of #717 (C1–C5). **165 of 165 applicable mutants are
-killed**; the 10 named replacements are N/A; 175 in all. The unmutated suite: 105 passed, and 0 `.pyc` after the run.
+(carried, two re-anchored), 9 for the fixes of its review of #717 (C1–C5), and 5 for #718's clip gate
+(`check_clip_gate`: never called, always open, no digest check, any reading, no file). **170 of 170 applicable
+mutants are killed**; the 10 named replacements are N/A; 180 in all. The unmutated suite: 107 passed, and 0 `.pyc`
+after the run. The receipt's digests: `fd_1b_mc.py` `3d22a591…`, the tests `2ae68009…`.
 
 **A defect in the harness, found and fixed here.**
 - **The defect.** Binding 2's harness spawned `python -m pytest` without `-B` or `PYTHONDONTWRITEBYTECODE`. A
@@ -524,11 +537,13 @@ killed**; the 10 named replacements are N/A; 175 in all. The unmutated suite: 10
    N_clip's seed.
 6. **Per truth:** `n1`, then `null`, then `readout` with the clipping section, then the report.
 
-## 12b. What binding 3 binds (the audit's B1 on #717)
+## 12b. What binding 3 binds (Joseph's #718, superseding the audit's B1)
 
-Configuration (e) is bound by name, so a switch is a re-pin with a record (§2c):
-- `--estimator R` in every unfold step;
-- `--clip-rule data`.
+- **`--estimator R`, provisionally.** The B4 gate (#714) still holds: nothing launches before the stabilisation probe
+  reports and the estimator is settled.
+- **No clip rule for the bulk.** Binding 3 binds the gate instead: the pre-bulk `clipcheck` with C2's reading (A2.1)
+  selects `nature` on "option (1)", and stops otherwise (§2c).
+- **The "data" rule** for everything before the gate: the receipt, S1-0, S1-0b and `clipcheck`'s descriptive offset.
 
 ## 13. For the audit and the director
 

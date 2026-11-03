@@ -90,8 +90,10 @@ VALIDATE_FRACTION = 0.005                            # the receipt's no-screen c
 VALIDATE_SEED = 3_659_001                            # not a declared toy, stat or validation seed elsewhere
 CLIP_DELTA_STAR = 0.667                              # |o_c| that lowers +-1 sigma content by 0.10 (section 5.2)
 CLIP_RULES = ("data", "nature")                      # a named input: decision 2a (a), or the nature clipped in truth too
-NATURE_UNRULED = ("the clipping offset (clipmean, clipcheck, the readout's clipping section) is defined for the "
-                  "'data' rule only; 'nature' needs its own definition and a ruling (the audit's C4 on #717)")
+NATURE_UNRULED = ("the clipping offset (clipmean, clipcheck, the readout's clipping section) is the 'data' rule's "
+                  "descriptive figure; a 'nature' bulk is gated by C2's reading (DECISION-20261103-joseph-coverage-"
+                  "clip-rule) and graded under addendum A2.1")
+CLIP_GATE = {"step": "c2-clip-gate", "reading": "option (1)", "verdict": "PASS"}   # what A2.1's gate must say
 UNIT_SECONDS = 1062.0
 RSS_LIMIT_KIB = inv.RSS_LIMIT_KIB
 # S1-0 (declaration section 8): its eight items; the eighth is the capture with the plug-in, AR23's first toy without
@@ -780,8 +782,28 @@ def code_digests() -> dict:
         Path(s5p_numerics.__file__).resolve(), _ND / "s5e_trace.py", _ND / "flux_universe.py")}}
 
 
+def check_clip_gate(a) -> None:
+    """Joseph's ruling on the clip rule (#718): the 'nature' rule runs only after 1B's own pre-bulk clipcheck, on
+    cov2d's C2 code (addendum A2.1), reads "option (1)" under C2's fixed reading. The gate is A2.1's output file,
+    pinned by digest; without it, or with any other reading, 'nature' refuses. Nothing in this amendment writes it.
+
+    INTERIM (amendment 2): the 'data' rule needs no gate here. Addendum A2.1's S2 replaces this: every bulk role then
+    refuses 'data', and runs only under 'nature' with a pinned clipcheck reading option (1)."""
+    if a.clip_rule != "nature":
+        return
+    if a.clip_gate is None or a.expect_clip_gate_sha256 is None:
+        raise Refusal("the 'nature' rule needs A2.1's clip gate (--clip-gate, --expect-clip-gate-sha256)")
+    raw = Path(a.clip_gate).read_bytes()
+    if hashlib.sha256(raw).hexdigest() != a.expect_clip_gate_sha256:
+        raise Refusal("the clip gate's digest differs from the declared one")
+    g = json.loads(raw)
+    if {k: g.get(k) for k in CLIP_GATE} != CLIP_GATE:
+        raise Refusal(f"the clip gate does not read {CLIP_GATE}: nothing launches; 1B returns to Joseph")
+
+
 def run_unfold(a, unfold_fn=None) -> int:
     inv.OPENED.clear()
+    check_clip_gate(a)
     s5e_candidate.install(a.estimator)
     if a.role not in ROLES:
         raise Refusal(f"role {a.role!r}")
@@ -1444,6 +1466,8 @@ def main(argv=None) -> int:
     p.add_argument("--threads", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "32")))
     p.add_argument("--estimator", choices=tuple(s5e_candidate.CANDIDATES), required=True)
     p.add_argument("--clip-rule", choices=CLIP_RULES, required=True)
+    p.add_argument("--clip-gate", type=Path, default=None)
+    p.add_argument("--expect-clip-gate-sha256", default=None)
     p.add_argument("--tag", default="fd1b_mc")
     p = sub.add_parser("stage-flux")
     p.add_argument("--root", type=Path, required=True)

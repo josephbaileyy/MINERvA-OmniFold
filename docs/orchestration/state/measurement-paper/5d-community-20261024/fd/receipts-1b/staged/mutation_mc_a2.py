@@ -200,6 +200,11 @@ M = [
  ("C4: clipcheck under nature", "    if a.clip_rule != \"data\":\n        raise Refusal(NATURE_UNRULED)\n    s1 = via_noatime", "    if False:\n        raise Refusal(NATURE_UNRULED)\n    s1 = via_noatime"),
  ("C4: the clipping readout under nature", "    if clip_rule != \"data\":\n        raise Refusal(NATURE_UNRULED)\n    refuse_partials", "    if False:\n        raise Refusal(NATURE_UNRULED)\n    refuse_partials"),
  ("C5: clipcheck takes another N_clip seed", "        if seed != int(rc[\"n_clip\"][\"seed\"]):", "        if False:"),
+ ("G: the clip gate never checked", "    inv.OPENED.clear()\n    check_clip_gate(a)", "    inv.OPENED.clear()"),
+ ("G: the clip gate always open", "    if a.clip_rule != \"nature\":\n        return\n    if a.clip_gate is None", "    if True:\n        return\n    if a.clip_gate is None"),
+ ("G: the clip gate without its digest", "    if hashlib.sha256(raw).hexdigest() != a.expect_clip_gate_sha256:", "    if False:"),
+ ("G: the clip gate reads anything", "    if {k: g.get(k) for k in CLIP_GATE} != CLIP_GATE:", "    if False:"),
+ ("G: the clip gate without a file", "    if a.clip_gate is None or a.expect_clip_gate_sha256 is None:\n        raise Refusal", "    if False:\n        raise Refusal"),
  ("A2: O5 push_min not recorded", "        meta.update(ev, push_min=float(arrays[\"push\"].min()) if arrays[\"push\"].size else None,", "        meta.update(ev, push_min=None,"),
 
 ]

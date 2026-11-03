@@ -12,8 +12,11 @@ Run from a checkout at the binding's merge:
   python3 make_stage1_tables.py <checkout> <out dir> <plugin yes|no> <flux table sha256> <estimator> <clip rule>
       [<push sha256> <N_clip seed>]
 The estimator is a name in ``s5e_candidate.CANDIDATES`` (configuration (e) is "R") and the clip rule one of
-``fd_1b_mc.CLIP_RULES`` (decision 2a (a) is "data"); both are written into every unfold step. The receipt unfolds
-nothing and takes neither.
+``fd_1b_mc.CLIP_RULES``; both are written into every unfold step. The receipt unfolds nothing and takes neither.
+The s1-0 and s1-0b tables take "data". The bulk's rule is not bound here (Joseph's #718): "nature" only on the
+pre-bulk clipcheck reading option (1) under C2's reading, through addendum A2.1, and a hard stop otherwise.
+INTERIM (amendment 2): this script passes no gate file, so a "nature" bulk table refuses at run_unfold's
+check_clip_gate; A2.1's S2 replaces this with the gate's inputs and a bulk that refuses "data".
 The s1-0b and bulk tables need the push digest when the plug-in runs and the receipt's N_clip seed, so they are made
 after S1-0."""
 import math

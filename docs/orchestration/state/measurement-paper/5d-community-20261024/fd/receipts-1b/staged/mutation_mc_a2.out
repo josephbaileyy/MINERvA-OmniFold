@@ -1,5 +1,5 @@
-sha256 56a25e024195e45e77019f658d8d02a246250ba3f18e8ca5020005ea8baccd6e  fd_1b_mc.py
-sha256 a7acb64583b3a77368eea3cb21bd4a0ef283727d3db380201a3a10cb7b969e05  tests/test_fd_1b_mc.py
+sha256 3d22a5912b93906c3502dce767d38f4e9735ec92fc1289ed4aba6950085295c8  fd_1b_mc.py
+sha256 2ae680097634417b31f80bc76c30448f0843777a0638058a832fa620b544af67  tests/test_fd_1b_mc.py
 sha256 ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
 KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
 N/A      ratio composition inverted  (its target code was replaced by amendment 2)
@@ -176,6 +176,11 @@ KILLED   C4: clipmean under nature
 KILLED   C4: clipcheck under nature
 KILLED   C4: the clipping readout under nature
 KILLED   C5: clipcheck takes another N_clip seed
+KILLED   G: the clip gate never checked
+KILLED   G: the clip gate always open
+KILLED   G: the clip gate without its digest
+KILLED   G: the clip gate reads anything
+KILLED   G: the clip gate without a file
 KILLED   A2: O5 push_min not recorded
-unmutated: 105 passed in 24.43s
-165 of 165 applicable killed; 10 not applicable
+unmutated: 107 passed in 150.77s (0:02:30)
+170 of 170 applicable killed; 10 not applicable
