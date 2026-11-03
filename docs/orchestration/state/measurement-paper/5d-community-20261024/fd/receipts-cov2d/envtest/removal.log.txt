@@ -1,0 +1,7 @@
+login02
+2026-11-03T18:12:31Z
+1.2G	/dev/shm/josephrb-cov2d-e1
+24c9d3cc129b48d284ca5f59bc277f81c9b6419fa7e773143f6bb4fee99f5b7d  /dev/shm/josephrb-cov2d-e1.sh
+removed /dev/shm/josephrb-cov2d-e1 rc=0
+removed /dev/shm/josephrb-cov2d-e1.sh rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-e1*': No such file or directory
