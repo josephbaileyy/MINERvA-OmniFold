@@ -228,22 +228,42 @@ GiBUU truths does not move the verdict.
 
 | item | unfolds | tasks |
 |---|---|---|
-| stability, per candidate: base + 51 jitters, in tasks of 4 pairs (`STAB_CHUNK`) | 52 | 13 |
+| stability, per candidate: jitter 1 alone, then the base and jitters 2–51 in tasks of 4 (`STAB_CHUNK`) | 52 | 14 |
 | closures, per candidate | 18 | 18 |
-| **4 candidates** | **280** | **124** |
+| **4 candidates** | **280** | **128** |
 
 - **Per unfold:** 0.022828 CPU node-h, packed 8 lanes per node (`FD-1B-STAGED-DECLARATION.md:530`, measured on S1),
   so one unfold is 657 s of one lane (`UNIT_S`).
 - **Packing.** One node, **8 lanes**, one task per lane at a time, all fed from one queue (`sbatch_fd_stab.sh`,
   `xargs -P 8`). The queue interleaves the candidates, so B2's cost is measured in the first round. With every task at
-  most 4 unfolds, the lanes stay balanced: about 35 unfolds per lane.
+  most 4 unfolds, the lanes stay balanced: about 35 unfolds per lane. Each stability task passes its pairs as one
+  token, `--pairs=…`: as two tokens, the runner's argparse reads the leading `-:-` as an option and exits 2. A test
+  runs every queue line through the real runners' own parsers (`RealParsers`).
 - **Expected:** 280 × 0.022828 = **6.39 node-h**, a wall of 6.4 h, if B2 costs about one fit, as two half-sample fits
   should.
 - **The price is above the 3.2–6.4 node-h Joseph was shown** (`DECISION-20261102-…`), because the scope priced only
   B2 and one B3 point. The control is required: G0 (§4.4) cannot fail without it. The second B3 point is the grid's
   other end. A cap of 6.4 would mean dropping one of them, or stopping on any B2 overrun.
-- **Cap: 8.0 CPU node-h**, for the dry run and the full run together. It covers B2 at 2× per unfold:
-  210 × 0.022828 + 70 × 2 × 0.022828 = 7.99. **Authority:** Joseph's 2026-11-01 approval of compute that resolves a
+- **Cap: 8.0 CPU node-h**, for the dry run and the full run together. **It covers B2 up to about 1.7× per unfold**,
+  not 2×. The lane sum at 2× is already 7.99, and the dry run's charge and the queue's tail come on top of it. The
+  table below simulates the dry run and the full run through the real gate (the audit's `gatesim.py`, with the dry run
+  on 8 lanes and 120 s of setup per job). α is the dry run's per-unfold time over the full run's, which is not
+  measured.
+  <!-- absence-ok: describes a parameter of this declaration's own cost simulation and gate, not a claim that a result is absent from the repository -->
+
+  | B2 factor | α = 1.0 | α = 0.9 | α = 0.8 | α = 1.1 |
+  |---|---|---|---|---|
+  | 1.5× | complete, 7.46 | complete, 7.44 | complete, 7.41 | — |
+  | 1.6× | complete, 7.63 | complete, 7.60 | — | stop at once, 0.39 |
+  | 1.7× | complete, 7.81 | complete, 7.78 | complete, 7.75 | — |
+  | 1.75× | complete, 7.92 | complete, 7.89 | complete, 7.86 | — |
+  | 1.8× | complete, 7.99 | complete, 7.96 | complete, 7.93 | — |
+  | 1.85× | stop at once, 0.40 | stop at task 89, 6.95 | Slurm limit, 8.00 | — |
+  | 1.9×, 2.0× | stop at once, 0.41–0.43 | — | — | — |
+
+  Up to 1.7× the run completes for every α tried. Above about 1.8× it stops before the full run spends anything,
+  unless the dry run ran faster than the full run. In that case the projection catches up only as full-run tasks
+  finish, so at 1.85× it can stop late or meet Slurm's limit. The charge still cannot pass 8.0. **Authority:** Joseph's 2026-11-01 approval of compute that resolves a
   limitation (`DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md` item 2, #640): each campaign is
   declared, priced and bound, and one priced above half the group balance (2,074.5 node-h last recorded) returns to
   Joseph first. 8.0 is far below that.
@@ -251,17 +271,27 @@ GiBUU truths does not move the verdict.
   1. **Slurm's own limit.** The dry run is submitted with `--time=0:45` (at most 0.75 node-h). The full run is
      submitted with `--time` equal to 8.0 minus the dry run's charged node-hours from `sacct`, so at most 7:15. On one
      node the charge cannot exceed `--time`.
-  2. **The cumulative gate.** No task starts unless the node-hours charged so far plus the projected remainder stay
-     within the cap's remainder (`estimator_stability_probe.py gate`). Per candidate, the projection uses the mean
-     per-unfold time of its finished tasks. Before any finish, B2 is taken at 2× and the others at 1×. Before the
-     first measurement the projection is exactly 7.99. The full run inherits the dry run's timings, so B2's rate is
-     measured before it starts, and the gate skips the dry run's four tasks rather than re-running them, so their
-     measured timings stand. Starts, ends and the job's start come from one clock at sub-second resolution. This stops the audit's mixed case (B2 at 1.9×, the others at 1.1×, 8.31 in all)
+  2. **The cumulative gate.** Before each launch, `estimator_stability_probe.py gate` prices the **whole remaining
+     run, tail included**. The lanes start with what is left of the running tasks, and each unstarted task, in queue
+     order, goes to the lane that frees first, as `xargs -P 8` feeds them. The projected wall is when the last lane
+     finishes.
+     - **Rates.** Each (candidate, kind) uses the mean per-unfold time of its finished tasks, falling back to the
+       candidate's over both kinds, then to an assumption (B2 at 2×, the others at 1×). Unmeasured, B2 at 2× does not
+       fit, so nothing starts on assumptions alone.
+       <!-- absence-ok: describes a parameter of this declaration's own cost simulation and gate, not a claim that a result is absent from the repository -->
+     - **The dry run's timings** are on the 8-lane basis (§11). The full run inherits them, so every candidate's rate
+       is measured before it starts. The gate skips the dry run's eight tasks rather than re-running them, so their
+       measured timings stand. Starts, ends and the job's start all come from one clock at sub-second resolution.
+     - **If the projected total exceeds the cap's remainder, the gate stops before that launch** and the run comes
+       back to the director to be repriced. It does not spend down to the cap. This stops the audit's mixed case (B2 at 1.9×, the others at 1.1×, 8.31 in all)
      before it is spent (`Gate.test_the_audits_mixed_overrun_stops`).
-  3. **The B2 rule.** No task starts once B2's measured per-unfold time exceeds 2× the control's.
+  3. **The B2 rule.** No task starts once B2's measured per-unfold time exceeds 2× the control's, compared like for
+     like: stability with stability, closure with closure.
 
   A stop writes `STOP` with the projection; nothing further starts; the products so far are kept; the run returns
-  to the director with the measured cost.
+  to the director with the measured cost. **Only a run whose every task ended, with no STOP and rc 0, writes a `DONE`
+  receipt.** The full run refuses unless the dry run's receipt exists and every dry-run task ended. A failed task,
+  a STOP and a Slurm time-limit kill each leave no receipt.
 - **Every job under 12 h:** 0:45 and at most 7:15. The longest task is 4 unfolds, 1.5 h at B2's 2×.
 - **Rules:**
   - CPU only, regular QOS, `--no-requeue`, `--exclusive`;
@@ -280,10 +310,10 @@ GiBUU truths does not move the verdict.
 | file | role |
 |---|---|
 | `nd-unfolding/estimator_stability_probe.py` | the candidates; `install` rebinds `s5c_unfold.config_params`, `omnifold_nn_core.make_estimators` and `s5n_pseudo.write_product` for one invocation, and checks the runner's parsed arguments; the stability and closure runners (`s5p_numerics`, `s5p_nullexp`, unchanged); the declared queue and the dry run's four tasks; the budget `gate` |
-| `nd-unfolding/sbatch_fd_stab.sh` | the job: the dry run on 4 lanes or the full queue on 8, every task through the gate |
+| `nd-unfolding/sbatch_fd_stab.sh` | the job: the dry run or the full queue, on 8 lanes, every task through the gate; a DONE receipt only for a complete, clean run |
 | `nd-unfolding/estimator_stability_analyze.py` | §§4–6: the product checks, the criteria, the verdict |
-| `nd-unfolding/tests/test_estimator_stability_probe.py` | 74 tests, with every refusal and criterion tested in the direction it acts and the other; the job script is run locally on a stand-in deploy |
-| `nd-unfolding/tests/estimator_stability_mutation.py` | 42 planted defects, each of which must be killed by its NAMED test; the unmutated suite must run all 74 tests in script mode |
+| `nd-unfolding/tests/test_estimator_stability_probe.py` | 89 tests, with every refusal and criterion tested in the direction it acts and the other; the job script is run locally on a stand-in deploy |
+| `nd-unfolding/tests/estimator_stability_mutation.py` | 60 planted defects in the probe, the analysis and the job script, each of which must be killed by its NAMED test; the unmutated suite must run all 89 tests in script mode |
 | `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/no-ratio.json` | the q3 placeholder |
 
 - **No production module is edited.**
@@ -295,8 +325,8 @@ GiBUU truths does not move the verdict.
 
 **Commands.**
 
-    python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 74 tests
-    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 42 mutations, all killed
+    python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 89 tests
+    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 60 mutations, all killed
     python3 -I nd-unfolding/estimator_stability_probe.py tasks --out <OUT>/queue.tsv --dry-out <OUT>/dry.tsv \
         --npz … --bkg … --bank … --detector-dir … --expect-npz-sha256 … --expect-bkg-sha256 … \
         --closure-ratio-dir <pv-ladder dir> --runs <OUT>/runs
@@ -339,13 +369,13 @@ These are Joseph's separate decision (`DECISION-20261102-joseph-bias-and-stabili
    presence, its digest and its `schema`, which must name a declared truth kind (`SCHEMA_TRUTH`); the probe refuses
    otherwise.
 2. **The dry run: one short single-node regular job** (`sbatch_fd_stab.sh dry`, `--time=0:45`), by a cluster lane,
-   before step two of the binding. A login node's wall at 32 threads alone is not the 8-lane compute-node cost the
-   gate uses; this job's is.
-   - Four tasks on four lanes (`DRY_TASKS`): the control's nominal and A7 MnvTune closures (also the determinism
-     pair), and one B2 and one B3b closure (nominal), to measure their per-unfold cost.
+   before step two of the binding. Its eight one-unfold tasks run on the **full run's 8 lanes**, so its timings are on
+   the basis the gate uses. A login node's wall, or a four-lane job's, would not be.
+   - The tasks (`DRY_TASKS`): each candidate's first stability task (one jittered unfold, through the stability
+     runner); the control's nominal and A7 MnvTune closures (also the determinism pair); one B2 and one B3b closure.
    - The products' `stability_probe` blocks read back; the two control products compared bitwise.
-   - Its products and timings carry into the full run, whose gate skips those four tasks, so its charge is inside
-     the 8.0 cap.
+   - Its products and timings carry into the full run, whose gate skips those eight tasks, so its charge is inside
+     the 8.0 cap. The full run needs its `DONE` receipt.
    - **The environment:** the job sources `setup_salloc_env.sh` and refuses unless `lightgbm` and `scipy` import.
      No committed launcher records which environment the s5p runs used, so the dry run is where that is established.
 3. **Retention** of the inputs (§7).
@@ -368,4 +398,14 @@ and thirteen tests. Each claim was checked against the code before it was change
 | — | found while fixing R1 | the local run of the job script found that a gate could read a half-written timing file, that the job's whole-second end times could precede the gate's sub-second starts, and that the full run would have re-run the dry run's tasks and overwritten their timings. All three fixed and tested (`JobScript`, `Gate`) |
 | nits | nominal ≡ A7 MnvTune; 4.9% should be 4.75%; `functionals_used` not required | **accepted.** The pair is a bitwise determinism control, 17 truths judged; rates recomputed for 34 comparisons; 153 required |
 <!-- absence-ok: describes defects the audit found in this declaration's own code, each now fixed and tested, not a claim that a result is absent from the repository -->
+
+**The audit's second round** (`coverage-5b-audit`, bc0f1941, PR #720 comment 6613024951; the director's rulings):
+
+| item | finding | disposition |
+|---|---|---|
+| F1 | `--pairs -:-,…` as two tokens: the real `s5p_numerics` parser exits 2, so every stability task would fail; in the code since 035ce983 | **fixed:** one token, `--pairs=…`. `RealParsers` runs every queue line through `probe.main` into the real runners' own parsers and fails on any SystemExit; a mutant restores the two-token form |
+| F2 | the gate could spend the cap into an incomplete run: an unpriced tail, a 4-lane dry run, and a §7 claim of 2× | **fixed:** the projection simulates the lanes, tail included; the dry run is eight tasks on 8 lanes; rates are per kind; it stops before a launch and comes back for a reprice; the tolerance is stated as about 1.7×, with the simulation (§7) |
+| F3 | a failed or time-limited dry run was accepted by the full run | **fixed:** a `DONE` receipt only after every task ended with rc 0; the full run requires it and every dry-run task's end, and checks both before writing anything |
+| mutants | `main` without the guard's mode, and five job-script guards, survived | **killed:** `RealParsers` needs the guard on the production path; `JobScript` tests a failed task, a dry run with a missing end, an existing log and a missing `lightgbm`; script mutants run through the harness |
+| load | `test_dry_then_full` failed once under load | the B2 ratio compared a closure with a stability task, so the start-up time skewed it; it is now like for like, and the stand-in runners sleep 0.3 s per unfold |
 

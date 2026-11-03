@@ -119,6 +119,12 @@ def no_worse(b_c, s_c, b_ctrl, s_ctrl) -> dict:
     return {**out, "valid": True, "no_worse": bool(rc - r0 <= d_rms and mc - m0 <= d_max)}
 
 
+def bias_status(per_truth: list) -> bool | None:
+    """A candidate's bias status over the judged truths: None (INVALID) if ANY truth's floor is zero, else whether it
+    is no worse at all of them."""
+    return None if any(v is None for v in per_truth) else all(per_truth)
+
+
 def verdict(stab: dict, bias_ok: dict) -> dict:
     """stab: candidate -> stability_stats; bias_ok: candidate -> True / False (no worse at all 17 distinct truths) or
     None (a zero floor at some truth). Control excluded from winners."""
@@ -255,8 +261,7 @@ def run(a) -> int:
         if c == "control":
             continue
         bias[c] = {t: no_worse(closures[c][t], sds[c], closures["control"][t], sds["control"]) for t in judged}
-        vals = [v["no_worse"] for v in bias[c].values()]
-        bias_ok[c] = None if any(v is None for v in vals) else all(vals)
+        bias_ok[c] = bias_status([v["no_worse"] for v in bias[c].values()])
     v = verdict(stab, bias_ok)
     readout = {c: {t: {"rms": bias_metrics(closures[c][t])[0], "max": bias_metrics(closures[c][t])[1],
                        "per_cell": np.round(closures[c][t], 6).tolist()} for t in GIBUU_READOUT} for c in probe.CANDIDATES}

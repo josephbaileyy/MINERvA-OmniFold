@@ -6,6 +6,7 @@ named test and the unmutated suite passes.
 
     python3 -B nd-unfolding/tests/estimator_stability_mutation.py
 """
+import os
 import re
 import shutil
 import subprocess
@@ -15,8 +16,8 @@ from pathlib import Path
 
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_estimator_stability_probe.py"
-P, A = "estimator_stability_probe.py", "estimator_stability_analyze.py"
-EXPECTED_TESTS = 74  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
+P, A, S = "estimator_stability_probe.py", "estimator_stability_analyze.py", "sbatch_fd_stab.sh"
+EXPECTED_TESTS = 89  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
 MUTATIONS = [
     ("in-fold prediction", P, "rows = self.folds[:m] == f", "rows = self.folds[:m] != f",
      "test_every_evaluated_row_is_predicted_by_a_model_that_did_not_train_on_it"),
@@ -83,23 +84,65 @@ MUTATIONS = [
     ("repeats admitted (R2)", P, "            if name in seen:\n", "            if False:\n",
      "test_the_prescan_refuses_the_five_forms"),
     ("gate ignores the cap (R1)", P, 'if p["projected_node_h"] > cap:', 'if p["projected_node_h"] > cap + 100:',
-     "test_stops_when_the_remainder_of_the_cap_is_too_small"),
+     "test_stops_before_a_launch_past_the_cap"),
     ("gate ignores B2's ratio", P, 'elif p["b2_over_control"] is not None and p["b2_over_control"] > B2_STOP_RATIO:', "elif False:",
      "test_b2_above_twice_the_control_stops_and_below_does_not"),
     ("B2 assumed at 1x before measurement", P, 'ASSUMED_FACTOR = {"B2": 2.0}', 'ASSUMED_FACTOR = {"B2": 1.0}',
-     "test_the_declared_price_before_any_measurement"),
-    ("running tasks counted in full", P, 'left.append(max(0.0, est - (now - r["start"])) if "start" in r else est)',
-     "left.append(est)", "test_running_tasks_count_their_remainder"),
+     "test_unmeasured_b2_at_twice_does_not_fit_the_cap"),
+    ("running tasks counted in full", P, 'free.append(max(0.0, est - (now - r["start"])))', "free.append(est)",
+     "test_running_tasks_count_their_remainder"),
     ("finished task rerun", P, '    if (log / f"{task}.end").exists():\n        return 4\n', "",
      "test_a_finished_task_is_skipped_not_rerun"),
-    ("STOP not sticky", P, "    if stop.exists():\n        return 3\n", "", "test_stops_when_the_remainder_of_the_cap_is_too_small"),
+    # --- the audit's second round (F1-F3) and its surviving mutants
+    ("--pairs as two tokens (F1)", P, '"--pairs=" + ",".join(chunk),', '"--pairs", ",".join(chunk),',
+     "test_every_queue_line_parses_and_passes_under_the_real_runners"),
+    ("main without the guard's mode", P, "    with install(candidate, mode):", "    with install(candidate):",
+     "test_every_queue_line_parses_and_passes_under_the_real_runners"),
+    ("tail unpriced (F2)", P, "    wall_left = max(free) if free else 0.0", "    wall_left = sum(free) / lanes if free else 0.0",
+     "test_the_tail_is_priced"),
+    ("rates pooled over kinds", P, "        if (c, k) in per_ck:\n", "        if False:\n", "test_rates_are_per_kind"),
+    ("B2 ratio pooled over kinds", P,
+     'ratios = [per_ck[("B2", k)][0] / per_ck[("B2", k)][1] / (per_ck[("control", k)][0] / per_ck[("control", k)][1])\n'
+     '              for k in ("stability", "closure") if ("B2", k) in per_ck and ("control", k) in per_ck]',
+     'ratios = ([per_c["B2"][0] / per_c["B2"][1] / (per_c["control"][0] / per_c["control"][1])]\n'
+     '              if "B2" in per_c and "control" in per_c else [])', "test_the_b2_ratio_is_like_for_like"),
+    ("B2 rule at >=", P, 'p["b2_over_control"] > B2_STOP_RATIO:', 'p["b2_over_control"] >= B2_STOP_RATIO:',
+     "test_b2_at_exactly_twice_is_admitted"),
+    ("namespace: closure split unchecked", P, 'if getattr(ns, "mc_fraction", None) != CLOSURE_MC_FRACTION or \\\n',
+     'if False and \\\n', "test_check_namespace_in_both_directions"),
+    ("namespace: config unchecked", P, '    if getattr(ns, "config", None) != "R":', "    if False:",
+     "test_check_namespace_in_both_directions"),
+    ("namespace: closure noise-free unchecked", P,
+     '        if not (getattr(ns, "expectation", False) and getattr(ns, "no_nuisance", False)):', "        if False:",
+     "test_check_namespace_in_both_directions"),
+    ("invalid only if every truth is", A, "return None if any(v is None for v in per_truth) else all(per_truth)",
+     "return None if all(v is None for v in per_truth) else all(v for v in per_truth if v is not None)",
+     "test_one_invalid_truth_makes_the_candidate_invalid"),
+    ("zero floor needs both zero", A, "if not (d_rms > 0 and d_max > 0):", "if not (d_rms > 0 or d_max > 0):",
+     "test_either_zero_floor_is_invalid"),
+    ("split key may be absent", A, ' or m.get("split_key") is None:', ":", "test_the_product_checks_refuse"),
+    ("full run without the DONE receipt (F3)", S, '    [ -s "$OUT/log-dry/DONE" ] && [ ! -e "$OUT/log-dry/STOP" ] ||',
+     '    [ ! -e "$OUT/log-dry/STOP" ] ||', "test_a_failed_task_stops_the_queue_and_the_full_run_refuses"),
+    ("dry-run ends unchecked (F3)", S, '        [ -e "$OUT/log-dry/$id.end" ] ||', "        true ||",
+     "test_a_dry_run_without_every_task_ended_is_refused"),
+    ("a failed task does not stop the queue", S, '        > "$L/tasks/$id.log" 2>&1 || exit 255',
+     '        > "$L/tasks/$id.log" 2>&1 || exit 0', "test_a_failed_task_in_the_full_run_stops_the_queue"),
+    ("dirty deploy admitted", S, '[ "$head_sha" != "$PIN" ] || [ "$dirty" -ne 0 ]', '[ "$head_sha" != "$PIN" ]',
+     "test_a_dirty_deploy_refuses"),
+    ("existing log admitted", S, '[ ! -e "$L" ] || {', "true || {", "test_an_existing_log_refuses"),
+    ("environment check dropped", S, 'python3 -c "import lightgbm, scipy, numpy" >> "$L/env.log" 2>&1 ||', "true ||",
+     "test_an_environment_without_lightgbm_refuses"),
+    ("STOP not sticky", P, "    if stop.exists():\n        return 3\n", "", "test_stops_before_a_launch_past_the_cap"),
 ]
 
 
-def run_suite(first: Path | None) -> tuple[int, str]:
+def run_suite(first: Path | None, script: Path | None = None) -> tuple[int, str]:
     boot = ("import sys, runpy; sys.argv = ['t']; " + (f"sys.path.insert(0, {str(first)!r}); " if first else "")
             + f"runpy.run_path({str(TEST)!r}, run_name='__main__')")
-    p = subprocess.run([sys.executable, "-B", "-c", boot], capture_output=True, text=True, cwd=str(ND.parent))
+    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
+    if script is not None:
+        env["STAB_SBATCH"] = str(script)  # the job-script tests run this mutated copy
+    p = subprocess.run([sys.executable, "-B", "-c", boot], capture_output=True, text=True, cwd=str(ND.parent), env=env)
     return p.returncode, p.stdout + p.stderr
 
 
@@ -121,10 +164,10 @@ def main() -> int:
             ok = False
             continue
         with tempfile.TemporaryDirectory() as d:
-            for f in (P, A):
+            for f in (P, A, S):
                 shutil.copy(ND / f, Path(d) / f)
             (Path(d) / fname).write_text(src.replace(old, new))
-            rc, out = run_suite(Path(d))
+            rc, out = run_suite(Path(d), Path(d) / S if fname == S else None)
         fails = failing(out)
         killed = test in fails
         ok &= killed

@@ -214,7 +214,7 @@ class Tasks(unittest.TestCase):
                                   expect_npz_sha256="a" * 64, expect_bkg_sha256="b" * 64,
                                   closure_ratio_dir=Path("/pvl"), runs=Path("/runs"))
         lines = [l.split("\t") for l in probe.task_lines(a) if not l.startswith("#")]
-        self.assertEqual(len(lines), len(probe.CANDIDATES) * (13 + len(probe.CLOSURES)))
+        self.assertEqual(len(lines), len(probe.CANDIDATES) * (14 + len(probe.CLOSURES)))
         pairs, unfolds = {c: [] for c in probe.CANDIDATES}, {c: 0 for c in probe.CANDIDATES}
         for cols in lines:
             self.assertEqual(cols[2:4], ["estimator_stability_probe.py", "--candidate"])
@@ -222,11 +222,12 @@ class Tasks(unittest.TestCase):
             self.assertIsNone(probe._refuse(rest, mode))
             unfolds[c] += int(cols[1])
             if mode == "stability":
-                got = rest[rest.index("--pairs") + 1].split(",")
+                got = next(t for t in rest if t.startswith("--pairs=")).split("=", 1)[1].split(",")
                 self.assertEqual(int(cols[1]), len(got))
                 pairs[c] += got
         for c in probe.CANDIDATES:  # every candidate: the base and the 51 jitters exactly once, 70 unfolds in all
-            self.assertEqual(pairs[c], ["-:-"] + [f"-:{j}" for j in probe.JITTER_SEEDS])
+            self.assertEqual(sorted(pairs[c]), sorted(["-:-"] + [f"-:{j}" for j in probe.JITTER_SEEDS]))
+            self.assertEqual(len(pairs[c]), 52)
             self.assertEqual(unfolds[c], 52 + 18)
         self.assertEqual([l[4] for l in lines[:4]], list(probe.CANDIDATES))  # interleaved: B2 starts in the first round
         nuwro = [c for c in lines if c[0].endswith("closure_closure_nuwro")]
@@ -239,7 +240,60 @@ class Tasks(unittest.TestCase):
                                   closure_ratio_dir=Path("/pvl"), runs=Path("/runs"))
         ids = {l.split("\t")[0] for l in probe.task_lines(a) if not l.startswith("#")}
         self.assertLessEqual(set(probe.DRY_TASKS), ids)
-        self.assertEqual(len(probe.DRY_TASKS), 4)
+        self.assertEqual(len(probe.DRY_TASKS), probe.LANES)  # one task per lane: the full run's basis
+        unfolds = {l.split("\t")[0]: int(l.split("\t")[1]) for l in probe.task_lines(a) if not l.startswith("#")}
+        self.assertTrue(all(unfolds[t] == 1 for t in probe.DRY_TASKS))
+        self.assertEqual({probe.task_kind(t) for t in probe.DRY_TASKS}, {"stability", "closure"})
+        self.assertEqual({t.split("_")[1] for t in probe.DRY_TASKS if "stability" in t}, set(probe.CANDIDATES))
+
+
+class RealParsers(unittest.TestCase):
+    """Every line the queue generator writes, stability and closure alike, through probe.main into the real runner's
+    own argparse (s5p_numerics, s5p_nullexp), stopped just after the namespace check passes. Any SystemExit fails:
+    a parse error, a refusal, or a guard that never ran."""
+
+    class Parsed(Exception):
+        pass
+
+    def test_every_queue_line_parses_and_passes_under_the_real_runners(self):
+        import contextlib
+        import io
+        import os
+        import types
+        with tempfile.TemporaryDirectory() as d:
+            pvl = Path(d) / "pvl" / "prep" / "ratios" / "L-5D-PV"
+            pvl.mkdir(parents=True)
+            (pvl / "nuwro.json").write_text(json.dumps({"schema": "s5e-shape-ratio/1"}))
+            a = types.SimpleNamespace(npz=Path("/n.npz"), bkg=Path("/b.npz"), bank=Path("/bank"), detector_dir=Path("/det"),
+                                      expect_npz_sha256="a" * 64, expect_bkg_sha256="b" * 64,
+                                      closure_ratio_dir=Path(d) / "pvl", runs=Path(d) / "runs")
+            lines = [l.split("\t") for l in probe.task_lines(a) if not l.startswith("#")]
+            real = probe.check_namespace
+            seen = []
+
+            def stop_after_check(ns, mode):
+                why = real(ns, mode)
+                if why is None:
+                    seen.append(mode)
+                    raise self.Parsed()
+                return why
+
+            probe.check_namespace = stop_after_check
+            cwd = os.getcwd()
+            os.chdir(REPO)
+            try:
+                for cols in lines:
+                    with self.subTest(task=cols[0]):
+                        with contextlib.redirect_stderr(io.StringIO()) as err, self.assertRaises(self.Parsed, msg=cols[0]):
+                            try:
+                                probe.main(cols[3:])
+                            except SystemExit as e:
+                                self.fail(f"{cols[0]}: SystemExit {e.code}: {err.getvalue()[-300:]}")
+            finally:
+                probe.check_namespace = real
+                os.chdir(cwd)
+            self.assertEqual(seen.count("stability"), 14 * len(probe.CANDIDATES))
+            self.assertEqual(seen.count("closure"), len(probe.CLOSURES) * len(probe.CANDIDATES))
 
 
 class TruthTable(unittest.TestCase):
@@ -457,6 +511,8 @@ class EndToEnd(unittest.TestCase):
                     meta["pseudo_seed"] = probe.CLOSURE_SEED + 1
                 if tamper == "split_key" and c == "B2" and name == "P1r":
                     meta["split_key"] = 1
+                if tamper == "split_key_absent" and name == "W1":  # at every candidate, so the pairing check is blind
+                    meta["split_key"] = None
                 if tamper == "determinism" and c == "B3b" and name == "A7_mnvtune":
                     b = 0.0100001
                 self.write(self.root / "runs" / c / "closure" / name / "p.npz", xt * (1 + b), meta, xt)
@@ -490,7 +546,8 @@ class EndToEnd(unittest.TestCase):
 
     def test_the_product_checks_refuse(self):
         for tamper in ("missing_jitter", "hypothesis", "candidate", "expectation", "amplitude", "bootstrap",
-                       "stab_truth", "stab_ratio", "stab_seed", "mc_fraction", "split_seed", "split_key", "determinism"):
+                       "stab_truth", "stab_ratio", "stab_seed", "mc_fraction", "split_seed", "split_key", "split_key_absent",
+                       "determinism"):
             with self.subTest(tamper=tamper):
                 import shutil
                 shutil.rmtree(self.root / "runs", ignore_errors=True)
@@ -576,6 +633,20 @@ class AuditGaps(unittest.TestCase):
         self.assertEqual((r["valid"], r["no_worse"]), (False, None))
         self.assertTrue(an.no_worse(b, s + 0.001, b, s + 0.001)["valid"])
 
+    def test_either_zero_floor_is_invalid(self):
+        b = np.array([0.01, 0.05, 0.01])
+        s = np.array([0.01, 0.0, 0.01])  # Delta_RMS > 0, but the argmax cell has no noise: Delta_MAX = 0
+        r = an.no_worse(b, s, b, s)
+        self.assertGreater(r["delta_rms"], 0)
+        self.assertEqual(r["delta_max"], 0)
+        self.assertEqual((r["valid"], r["no_worse"]), (False, None))
+
+    def test_one_invalid_truth_makes_the_candidate_invalid(self):
+        self.assertIsNone(an.bias_status([True, None, True]))
+        self.assertIsNone(an.bias_status([False, None]))
+        self.assertIs(an.bias_status([True, True]), True)
+        self.assertIs(an.bias_status([True, False]), False)
+
     def test_an_invalid_floor_makes_the_verdict_invalid(self):
         v = an.verdict({"control": stab(False, 2), "B2": stab(True, 0.3), "B3a": stab(True, 0.4)}, {"B2": True, "B3a": None})
         self.assertEqual((v["verdict"], v["invalid_floor"]), ("INVALID", ["B3a"]))
@@ -657,6 +728,21 @@ class ArgvForms(unittest.TestCase):
             self._runner(["--construction", "pseudo", "--pseudo-seed", "990000"])
         self.assertTrue(state["checked"])
 
+    def test_check_namespace_in_both_directions(self):
+        import argparse
+        ok_stab = dict(construction="pseudo", capacity=None, config="R", pseudo_seed=990000, pseudo_seeds=None)
+        ok_clos = dict(capacity=None, config="R", expectation=True, no_nuisance=True, mc_fraction="half",
+                       pseudo_seeds="991000:991000")
+        self.assertIsNone(probe.check_namespace(argparse.Namespace(**ok_stab), "stability"))
+        self.assertIsNone(probe.check_namespace(argparse.Namespace(**ok_clos), "closure"))
+        for mode, base, change in (("stability", ok_stab, {"config": "B0"}), ("closure", ok_clos, {"config": "B0"}),
+                                   ("closure", ok_clos, {"mc_fraction": "quarter"}),
+                                   ("closure", ok_clos, {"pseudo_seeds": "991001:991001"}),
+                                   ("closure", ok_clos, {"expectation": False}), ("closure", ok_clos, {"no_nuisance": False}),
+                                   ("closure", ok_clos, {"capacity": "400,31"})):
+            with self.subTest(mode=mode, change=change):
+                self.assertTrue(probe.check_namespace(argparse.Namespace(**{**base, **change}), mode))
+
     def test_the_guard_reaches_the_real_runners(self):
         import contextlib
         import io
@@ -707,7 +793,8 @@ class DataNeverInAProduct(unittest.TestCase):
 
 
 class Gate(unittest.TestCase):
-    """The budget gate: it admits within the cap, stops past it, stops on B2 above 2x, and stays stopped."""
+    """The budget gate: it prices the whole remaining run, tail included, admits within the cap, stops before a
+    launch past it, stops on B2 above 2x like for like, skips finished tasks, and stays stopped."""
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -729,40 +816,95 @@ class Gate(unittest.TestCase):
         (self.log / f"{tid}.start").write_text(f"{start}\n")
         (self.log / f"{tid}.end").write_text(f"{start + seconds}\n")
 
-    def test_the_declared_price_before_any_measurement(self):
+    def dry(self, factor):
+        """The dry run's eight tasks at 1x, with B2's at `factor`, all started at 0 (one per lane)."""
+        u = probe.UNIT_S
+        for t in probe.DRY_TASKS:
+            self.finish(t, 0, (factor if "_B2_" in t else 1.0) * u)
+
+    def test_unmeasured_b2_at_twice_does_not_fit_the_cap(self):
+        # before any measurement B2 is assumed at 2x: the lane sum alone is 7.99 node-h, and the tail puts it over
         p = probe.project(0.0, 0.0, self.queue, {})
-        self.assertAlmostEqual(p["projected_node_h"], (210 + 2 * 70) * probe.UNIT_S / 8 / 3600, places=6)  # 7.99
-        self.assertLessEqual(p["projected_node_h"], 8.0)
+        self.assertGreater(p["projected_node_h"], (210 + 2 * 70) * probe.UNIT_S / 8 / 3600)
+        self.assertGreater(p["projected_node_h"], 8.0)
+        self.assertEqual(probe.gate("stab_control_stability_01", self.q, self.log, 0.0, 8.0, now=0.0), 3)
 
-    def test_admits_within_the_cap_and_records_the_start(self):
-        self.assertEqual(probe.gate("stab_control_stability_00", self.q, self.log, 0.0, 8.0, now=0.0), 0)
-        self.assertTrue((self.log / "stab_control_stability_00.start").exists())
+    def test_measured_at_one_x_is_the_declared_price_and_admits(self):
+        self.dry(1.0)
+        u = probe.UNIT_S
+        p = probe.project(u, u, self.queue, probe.read_log(self.log))
+        self.assertAlmostEqual(p["projected_node_h"], 272 * u / 8 / 3600, delta=1.5 * 4 * u / 3600)  # 272 left, +tail
+        self.assertEqual(probe.gate("stab_control_stability_01", self.q, self.log, u, 7.6, now=u), 0)
+        self.assertTrue((self.log / "stab_control_stability_01.start").exists())
 
-    def test_stops_when_the_remainder_of_the_cap_is_too_small(self):
-        self.assertEqual(probe.gate("stab_control_stability_00", self.q, self.log, 0.0, 7.0, now=0.0), 3)
-        self.assertIn("exceeds the cap", json.loads((self.log / "STOP").read_text())["reason"])
-        self.assertEqual(probe.gate("stab_B3a_stability_00", self.q, self.log, 0.0, 8.0, now=0.0), 3)  # stays stopped
+    def test_the_tail_is_priced(self):
+        # eight short tasks then one long one, in queue order: the long one starts only when a lane frees, so the run
+        # ends at short + long; the lane sum over 8, or the longest task, both miss that
+        q = [(f"stab_control_closure_s{i}", "control", 1) for i in range(8)] + [("stab_B3a_stability_99", "B3a", 4)]
+        rec = {"stab_control_closure_done": {"start": 0.0, "end": 100.0}, "stab_B3a_stability_done": {"start": 0.0, "end": 400.0}}
+        q2 = q + [("stab_control_closure_done", "control", 1), ("stab_B3a_stability_done", "B3a", 4)]
+        p = probe.project(0.0, 0.0, q2, rec)
+        self.assertAlmostEqual(p["projected_node_h"] * 3600, 100.0 + 400.0)
+        self.assertGreater(p["projected_node_h"] * 3600, max((8 * 100 + 400) / 8, 400))
+
+    def test_stops_before_a_launch_past_the_cap(self):
+        self.dry(1.0)
+        u = probe.UNIT_S
+        self.assertEqual(probe.gate("stab_control_stability_01", self.q, self.log, u, 5.0, now=u), 3)
+        self.assertIn("reprice", json.loads((self.log / "STOP").read_text())["reason"])
+        self.assertFalse((self.log / "stab_control_stability_01.start").exists())
+        self.assertEqual(probe.gate("stab_B3a_stability_01", self.q, self.log, u, 8.0, now=u), 3)  # stays stopped
+
+    def test_the_tolerance_is_below_twice(self):
+        # with the dry run's own charge, B2 at 1.6x fits the cap and at 2x does not (declaration §7: about 1.7x)
+        u = probe.UNIT_S
+        for f, fits in ((1.6, True), (2.0, False)):
+            for x in self.log.iterdir():
+                x.unlink()
+            self.dry(f)
+            dry_charge = f * u / 3600 + 120 / 3600  # its longest lane, B2's unfold, and the setup before T0
+            p = probe.project(0.0, 0.0, self.queue, probe.read_log(self.log))
+            self.assertEqual(dry_charge + p["projected_node_h"] <= 8.0, fits, f)
 
     def test_the_audits_mixed_overrun_stops(self):
         # B2 at 1.9x and the others at 1.1x: 8.31 node-h in all, which the B2-only rule alone would not stop
         u = probe.UNIT_S
-        self.finish("stab_control_closure_nominal", 0, 1.1 * u)
-        self.finish("stab_B3a_closure_nominal", 0, 1.1 * u)
-        self.finish("stab_B3b_closure_nominal", 0, 1.1 * u)
-        self.finish("stab_B2_closure_nominal", 0, 1.9 * u)
-        p = probe.project(1.9 * u, 0.0, self.queue, probe.read_log(self.log))
-        self.assertGreater(p["projected_node_h"], 8.0)
-        self.assertEqual(probe.gate("stab_control_stability_00", self.q, self.log, 0.0, 8.0, now=1.9 * u), 3)
+        for t in probe.DRY_TASKS:
+            self.finish(t, 0, (1.9 if "_B2_" in t else 1.1) * u)
+        self.assertEqual(probe.gate("stab_control_stability_01", self.q, self.log, 1.9 * u, 7.5, now=1.9 * u), 3)
 
     def test_b2_above_twice_the_control_stops_and_below_does_not(self):
         u = probe.UNIT_S
         self.finish("stab_control_closure_nominal", 0, 0.5 * u)
-        self.finish("stab_B2_closure_nominal", 0, 1.1 * u)  # 2.2x the control, though cheap in absolute terms
-        self.assertEqual(probe.gate("stab_B3a_stability_00", self.q, self.log, 0.0, 8.0, now=1.1 * u), 3)
+        self.finish("stab_B2_closure_nominal", 0, 1.1 * u)  # 2.2x the control's closure, though cheap in absolute terms
+        self.assertEqual(probe.gate("stab_B3a_stability_01", self.q, self.log, 0.0, 8.0, now=1.1 * u), 3)
         self.assertIn("B2 costs", json.loads((self.log / "STOP").read_text())["reason"])
         (self.log / "STOP").unlink()
         self.finish("stab_B2_closure_nominal", 0, 0.9 * u)  # 1.8x
-        self.assertEqual(probe.gate("stab_B3a_stability_00", self.q, self.log, 0.0, 8.0, now=0.9 * u), 0)
+        self.assertEqual(probe.gate("stab_B3a_stability_01", self.q, self.log, 0.0, 8.0, now=0.9 * u), 0)
+
+    def test_the_b2_ratio_is_like_for_like(self):
+        # only B2's stability task is measured: like for like it is 1x the control's; against the control's pooled
+        # rate (its cheap closure included) it would read 1.54x
+        u = probe.UNIT_S
+        self.finish("stab_control_stability_00", 0, 1.0 * u)
+        self.finish("stab_control_closure_nominal", 0, 0.3 * u)
+        self.finish("stab_B2_stability_00", 0, 1.0 * u)
+        self.assertAlmostEqual(probe.project(u, 0.0, self.queue, probe.read_log(self.log))["b2_over_control"], 1.0)
+
+    def test_rates_are_per_kind(self):
+        u = probe.UNIT_S
+        self.finish("stab_control_stability_00", 0, 1.0 * u)
+        self.finish("stab_control_closure_nominal", 0, 0.3 * u)
+        r = probe.project(u, 0.0, self.queue, probe.read_log(self.log))["per_unfold_s"]
+        self.assertAlmostEqual(r["control/stability"], 1.0 * u)
+        self.assertAlmostEqual(r["control/closure"], 0.3 * u)
+
+    def test_b2_at_exactly_twice_is_admitted(self):
+        u = probe.UNIT_S
+        self.finish("stab_control_closure_nominal", 0, 0.5 * u)
+        self.finish("stab_B2_closure_nominal", 0, 1.0 * u)  # exactly 2x: the rule stops only above it
+        self.assertEqual(probe.gate("stab_B3a_stability_01", self.q, self.log, 0.0, 8.0, now=u), 0)
 
     def test_a_finished_task_is_skipped_not_rerun(self):
         self.finish("stab_B2_closure_nominal", 0, 600)
@@ -773,14 +915,12 @@ class Gate(unittest.TestCase):
         self.assertEqual(probe.gate("not_a_task", self.q, self.log, 0.0, 8.0, now=0.0), 3)
 
     def test_running_tasks_count_their_remainder(self):
-        u = probe.UNIT_S
-        (self.log / "stab_control_stability_00.start").write_text("0\n")
-        p_early = probe.project(10.0, 0.0, self.queue, probe.read_log(self.log))
-        p_late = probe.project(3 * u, 0.0, self.queue, probe.read_log(self.log))
-        self.assertGreater(p_late["charged_node_h"], p_early["charged_node_h"])
-        # the running task's remainder shrinks as it runs, so the projected remainder falls
+        q = [("stab_control_closure_a", "control", 1), ("stab_control_closure_b", "control", 1)]
+        rec = {"stab_control_closure_b": {"start": 0.0, "end": 600.0}, "stab_control_closure_a": {"start": 0.0}}
+        early, late = probe.project(10.0, 0.0, q, rec), probe.project(300.0, 0.0, q, rec)
         left = lambda p: p["projected_node_h"] - p["charged_node_h"]  # noqa: E731
-        self.assertLess(left(p_late), left(p_early))
+        self.assertAlmostEqual(left(early) * 3600, 590.0)
+        self.assertAlmostEqual(left(late) * 3600, 300.0)
 
 
 class JobScript(unittest.TestCase):
@@ -805,7 +945,9 @@ class JobScript(unittest.TestCase):
             "    sys.exit(p.main(sys.argv[1:]))\n"
             "import time\n"
             "n = len(sys.argv[sys.argv.index('--pairs') + 1].split(',')) if '--pairs' in sys.argv else 1\n"
-            "time.sleep(0.2 * n)  # a lane time in proportion to the unfolds, as on the cluster\n"
+            "import os\n"
+            "if os.environ.get('STAB_FAIL_TASK') and os.environ['STAB_FAIL_TASK'] in ' '.join(sys.argv): sys.exit(1)\n"
+            "time.sleep(0.3 * n)  # a lane time in proportion to the unfolds, as on the cluster\n"
             "print('RAN', ' '.join(sys.argv[1:]))\n")
         (self.D / "setup_salloc_env.sh").write_text(f"export PYTHONPATH={str(r / 'mods')!r}\n")
         for m in ("lightgbm", "scipy"):
@@ -837,7 +979,8 @@ class JobScript(unittest.TestCase):
 
     def job(self, mode, cap, pin=None):
         import subprocess
-        return subprocess.run(["bash", str(ND / "sbatch_fd_stab.sh"), mode, str(self.D), pin or self.pin, str(self.OUT),
+        script = __import__("os").environ.get("STAB_SBATCH", str(ND / "sbatch_fd_stab.sh"))  # the harness's mutant
+        return subprocess.run(["bash", script, mode, str(self.D), pin or self.pin, str(self.OUT),
                                str(cap)], capture_output=True, text=True, env=self.env, timeout=600)
 
     def test_dry_then_full(self):
@@ -846,6 +989,7 @@ class JobScript(unittest.TestCase):
         L = self.OUT / "log-dry"
         self.assertEqual(sorted(x.stem for x in L.glob("*.end")), sorted(probe.DRY_TASKS))
         self.assertIn("RAN --candidate B2 closure --", (L / "tasks" / "stab_B2_closure_nominal.log").read_text())
+        self.assertTrue((L / "DONE").exists())
         dry_end = (L / "stab_B2_closure_nominal.end").read_text()
         p = self.job("full", 7.25)
         self.assertEqual(p.returncode, 0, p.stderr)
@@ -866,6 +1010,51 @@ class JobScript(unittest.TestCase):
 
     def test_full_refuses_without_a_clean_dry_run(self):
         self.assertEqual(self.job("full", 7.25).returncode, 2)
+
+    def test_a_failed_task_stops_the_queue_and_the_full_run_refuses(self):
+        # F3: a dry run with a failed task leaves no DONE receipt, so the full run refuses
+        self.env["STAB_FAIL_TASK"] = "--candidate B2 closure"
+        p = self.job("dry", 8.0)
+        self.assertEqual(p.returncode, 1)
+        L = self.OUT / "log-dry"
+        self.assertFalse((L / "DONE").exists())
+        self.assertTrue((L / "FAILED").exists())
+        self.assertNotIn("stab_B2_closure_nominal", {x.stem for x in L.glob("*.end")})
+        del self.env["STAB_FAIL_TASK"]
+        f = self.job("full", 7.25)
+        self.assertEqual(f.returncode, 2)
+        self.assertIn("DONE", f.stderr)
+        self.assertFalse((self.OUT / "log-full").exists())
+
+    def test_a_dry_run_without_every_task_ended_is_refused(self):
+        # a DONE receipt is not enough if a dry-run task never ended (e.g. the receipt was forged or copied)
+        self.assertEqual(self.job("dry", 8.0).returncode, 0)
+        (self.OUT / "log-dry" / "stab_B2_stability_00.end").unlink()
+        self.assertEqual(self.job("full", 7.25).returncode, 2)
+
+    def test_a_dirty_deploy_refuses(self):
+        (self.D / "setup_salloc_env.sh").write_text("# modified\n")
+        self.assertEqual(self.job("dry", 8.0).returncode, 2)
+
+    def test_a_failed_task_in_the_full_run_stops_the_queue(self):
+        self.assertEqual(self.job("dry", 8.0).returncode, 0)
+        self.env["STAB_FAIL_TASK"] = "--pairs=-:-,"  # the base's task, early in the queue
+        p = self.job("full", 7.25)
+        self.assertEqual(p.returncode, 1)
+        L = self.OUT / "log-full"
+        n = len([l for l in (self.OUT / "queue.tsv").read_text().splitlines() if not l.startswith("#")])
+        self.assertLess(len(list(L.glob("*.start"))), n // 2)  # xargs started nothing after the failure's wave
+        self.assertFalse((L / "DONE").exists())
+
+    def test_an_existing_log_refuses(self):
+        (self.OUT / "log-dry").mkdir()
+        self.assertEqual(self.job("dry", 8.0).returncode, 2)
+
+    def test_an_environment_without_lightgbm_refuses(self):
+        (Path(self.tmp.name) / "mods" / "lightgbm.py").unlink()
+        p = self.job("dry", 8.0)
+        self.assertEqual(p.returncode, 7)
+        self.assertEqual(list((self.OUT / "log-dry" / "tasks").glob("*.log")), [])
 
     def test_a_wrong_pin_refuses(self):
         self.assertEqual(self.job("dry", 8.0, pin="0" * 40).returncode, 2)

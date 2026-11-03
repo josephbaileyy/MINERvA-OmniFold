@@ -38,7 +38,8 @@ unless that check ran.
     estimator_stability_probe.py gate --task ID --queue TSV --log DIR --t0 EPOCH --cap NODE_H
 
 ``gate`` (declaration §7) lets a queued task start only while the node-hours charged so far plus the projected
-remainder stay within the cap, and B2 within 2x the control's per-unfold time.
+remainder of the whole run, tail included, stay within the cap, and B2 within 2x the control's per-unfold time;
+otherwise it stops before that launch, for a reprice.
 
 MEASURES: one candidate's products. CANNOT AUTHORIZE: a stability or bias verdict by itself
 (``estimator_stability_analyze.py`` evaluates the declared criteria), or the adoption of any estimator.
@@ -327,7 +328,9 @@ CLOSURES = (
 )
 CLOSURE_SEED = 991000  # s5p_nullexp's expectation mode draws nothing; the seed only fixes the MC split, as in F4
 CLOSURE_MC_FRACTION = "half"
-STAB_CHUNK = 4  # pairs per stability task: 13 tasks of 4 unfolds per candidate, so the queue balances over the lanes
+STAB_CHUNK = 4  # pairs per stability task after the first: the queue balances over the lanes
+# The first stability task of each candidate is jitter 1 alone, so the dry run measures a jittered unfold (51 of each
+# candidate's 70) at one unfold per lane; then the base and jitters 2-51 in tasks of 4: 14 stability tasks in all.
 # Compute (declaration §7): 8 lanes on one node, one task per lane at a time, from one queue; a task starts only if
 # the projected total stays within the cap (``gate``); the job's --time is the cap's remainder, so Slurm itself
 # bounds the charge.
@@ -336,10 +339,12 @@ LANES = 8
 UNIT_S = 0.022828 * 3600 * LANES  # 657 s of one lane per unfold (FD-1B-STAGED-DECLARATION.md:530, measured on S1)
 ASSUMED_FACTOR = {"B2": 2.0}  # before a candidate has a finished task: B2 at the 2x the cap allows, the others at 1x
 B2_STOP_RATIO = 2.0  # B2 is stopped if its measured per-unfold time exceeds 2x the control's
-# The dry run (§11): one short job, four lanes. The control pair is also the bitwise determinism check (§3.2: nominal
-# and A7_mnvtune are the same closure); B2 and B3b are the candidates whose cost may differ. Their products and
-# timings carry into the full job, which skips existing products.
-DRY_TASKS = ("stab_control_closure_nominal", "stab_control_closure_A7_mnvtune", "stab_B2_closure_nominal",
+# The dry run (§11): one short job of eight one-unfold tasks on the full run's 8 lanes, so its timings are on the
+# full run's basis: each candidate's first stability task (one jitter) and four closures. The control pair is also
+# the bitwise determinism check (§3.2: nominal and A7_mnvtune are the same closure). Their products and timings carry
+# into the full job, whose gate skips them.
+DRY_TASKS = ("stab_control_stability_00", "stab_B2_stability_00", "stab_B3a_stability_00", "stab_B3b_stability_00",
+             "stab_control_closure_nominal", "stab_control_closure_A7_mnvtune", "stab_B2_closure_nominal",
              "stab_B3b_closure_nominal")
 
 
@@ -357,15 +362,16 @@ def candidate_tasks(a, c: str) -> list[tuple[str, int, list[str]]]:
     """One candidate's tasks: (id, unfolds, argv after the script name)."""
     common = ["--npz", str(a.npz), "--bkg", str(a.bkg), "--expect-npz-sha256", a.expect_npz_sha256,
               "--expect-bkg-sha256", a.expect_bkg_sha256, "--config", "R", "--iters", "5", "--threads", "32"]
-    pairs = ["-:-"] + [f"-:{j}" for j in JITTER_SEEDS]
+    rest = ["-:-"] + [f"-:{j}" for j in JITTER_SEEDS[1:]]
+    chunks = [[f"-:{JITTER_SEEDS[0]}"]] + [rest[i:i + STAB_CHUNK] for i in range(0, len(rest), STAB_CHUNK)]
     out = []
-    for i in range(0, len(pairs), STAB_CHUNK):
-        chunk = pairs[i:i + STAB_CHUNK]
-        out.append((f"stab_{c}_stability_{i // STAB_CHUNK:02d}", len(chunk),
+    for i, chunk in enumerate(chunks):
+        # one token, "--pairs=...": as two tokens, argparse reads the leading "-:-" as an option and exits 2
+        out.append((f"stab_{c}_stability_{i:02d}", len(chunk),
                     ["--candidate", c, "stability", "--", *common, "--construction", "pseudo",
                      "--truth", STABILITY_TRUTH["truth"], "--amplitude", str(STABILITY_TRUTH["amplitude"]),
                      "--eavail-ratio", STABILITY_TRUTH["ratio"], "--pseudo-seed", str(STABILITY_PSEUDO_SEED),
-                     "--pairs", ",".join(chunk), "--tag", f"stab_{c}", "--out", f"{a.runs}/{c}/stability"]))
+                     "--pairs=" + ",".join(chunk), "--tag", f"stab_{c}", "--out", f"{a.runs}/{c}/stability"]))
     for name, hyp, alt, kind, amp in CLOSURES:
         argv = [*common, "--bank", str(a.bank), "--detector-dir", str(a.detector_dir), "--hypothesis", hyp,
                 "--pseudo-seeds", f"{CLOSURE_SEED}:{CLOSURE_SEED}", "--no-nuisance", "--expectation",
@@ -443,33 +449,55 @@ def read_log(log: Path) -> dict[str, dict]:
     return rec
 
 
+def task_kind(tid: str) -> str:
+    return "stability" if "_stability_" in tid else "closure"
+
+
 def project(now: float, t0: float, queue, rec: dict, lanes: int = LANES, unit_s: float = UNIT_S) -> dict:
     """The node-hours charged so far plus the projected remainder, for one node.
 
-    Per candidate, the per-unfold lane time is the mean over its finished tasks, or, before any, UNIT_S times its
-    ASSUMED_FACTOR. The remainder is the unstarted tasks plus what is left of the running ones, spread over the lanes,
-    and never less than the longest single remaining task."""
-    per = {}
+    Rates: per (candidate, kind) the mean per-unfold lane time of its finished tasks; else the candidate's over both
+    kinds; else UNIT_S times its ASSUMED_FACTOR. The remainder is priced as the run itself proceeds: the lanes start
+    with what is left of the running tasks, and each unstarted task, in queue order, goes to the lane that frees first
+    (as ``xargs -P`` feeds them). The projected wall is when the last lane finishes, tail included."""
+    import heapq
+    per_ck, per_c = {}, {}
     for tid, c, n in queue:
         r = rec.get(tid, {})
         if "end" in r:
-            t, u = per.get(c, (0.0, 0))
-            per[c] = (t + r["end"] - r["start"], u + n)
-    rate = {c: (per[c][0] / per[c][1] if c in per and per[c][1] else unit_s * ASSUMED_FACTOR.get(c, 1.0))
-            for _, c, _ in queue}
-    left = []
+            d = r["end"] - r["start"]
+            for key, acc in (((c, task_kind(tid)), per_ck), (c, per_c)):
+                t, u = acc.get(key, (0.0, 0))
+                acc[key] = (t + d, u + n)
+
+    def rate(c, k):
+        if (c, k) in per_ck:
+            return per_ck[(c, k)][0] / per_ck[(c, k)][1]
+        if c in per_c:
+            return per_c[c][0] / per_c[c][1]
+        return unit_s * ASSUMED_FACTOR.get(c, 1.0)
+
+    free, waiting = [], []
     for tid, c, n in queue:
         r = rec.get(tid, {})
         if "end" in r:
             continue
-        est = n * rate[c]
-        left.append(max(0.0, est - (now - r["start"])) if "start" in r else est)
-    wall_left = max(sum(left) / lanes, max(left, default=0.0))
+        est = n * rate(c, task_kind(tid))
+        if "start" in r:
+            free.append(max(0.0, est - (now - r["start"])))
+        else:
+            waiting.append(est)
+    free = sorted(free)[:lanes] + [0.0] * max(0, lanes - len(free))
+    heapq.heapify(free)
+    for est in waiting:
+        heapq.heappush(free, heapq.heappop(free) + est)
+    wall_left = max(free) if free else 0.0
     elapsed = max(0.0, now - t0)
-    measured = {c: per[c][0] / per[c][1] for c in per if per[c][1]}
-    b2_ratio = measured["B2"] / measured["control"] if {"B2", "control"} <= set(measured) else None
+    ratios = [per_ck[("B2", k)][0] / per_ck[("B2", k)][1] / (per_ck[("control", k)][0] / per_ck[("control", k)][1])
+              for k in ("stability", "closure") if ("B2", k) in per_ck and ("control", k) in per_ck]
     return {"charged_node_h": elapsed / 3600, "projected_node_h": (elapsed + wall_left) / 3600,
-            "per_unfold_s": rate, "measured": sorted(measured), "b2_over_control": b2_ratio}
+            "per_unfold_s": {f"{c}/{k}": rate(c, k) for c in CANDIDATES for k in ("stability", "closure")},
+            "measured": sorted(f"{c}/{k}" for c, k in per_ck), "b2_over_control": max(ratios) if ratios else None}
 
 
 def gate(task: str, queue_path: Path, log: Path, t0: float, cap: float = CAP_NODE_H, now: float | None = None) -> int:
@@ -489,9 +517,11 @@ def gate(task: str, queue_path: Path, log: Path, t0: float, cap: float = CAP_NOD
     p = project(now, t0, queue, read_log(log))
     why = None
     if p["projected_node_h"] > cap:
-        why = f"projected {p['projected_node_h']:.2f} node-h exceeds the cap {cap}"
+        why = (f"projected {p['projected_node_h']:.2f} node-h exceeds the cap's remainder {cap}: stopped before this "
+               f"launch; reprice to the director")
     elif p["b2_over_control"] is not None and p["b2_over_control"] > B2_STOP_RATIO:
-        why = f"B2 costs {p['b2_over_control']:.2f}x the control per unfold (stop above {B2_STOP_RATIO})"
+        why = (f"B2 costs {p['b2_over_control']:.2f}x the control per unfold, like for like (stop above "
+               f"{B2_STOP_RATIO}); reprice to the director")
     if why:
         stop.write_text(json.dumps({"reason": why, "task": task, **p}, indent=1) + "\n")
         return 3
