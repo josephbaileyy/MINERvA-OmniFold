@@ -67,6 +67,7 @@ import fd_1b_toys as toys  # noqa: E402
 import s1_assemble as sa  # noqa: E402
 import s5c_unfold  # noqa: E402
 import s5e_candidate  # noqa: E402
+import s5e_deform  # noqa: E402
 import s5n_pseudo  # noqa: E402
 import s5p_numerics  # noqa: E402
 import s5p_universe  # noqa: E402
@@ -542,6 +543,7 @@ def truth_weight(truth: str, inputs: dict, ratio: dict | None, push: np.ndarray 
         r = np.ones(m.size)
         r[m] = push
         return r
+    s5e_deform.install_ratio_truth(s5n_pseudo)      # idempotent; the bulk installs it in run_unfold, A2.1's jobs do not
     return np.asarray(s5n_pseudo.truth_weight("ratio_nd", inputs, 1.0, ratio), float)
 
 

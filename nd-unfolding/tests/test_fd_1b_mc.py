@@ -269,6 +269,24 @@ class Functional(unittest.TestCase):
         self.assertFalse(mc.same_functional(U, bad))
 
 
+class TruthWeight(Case):
+    def test_ratio_nd_without_run_unfold(self):
+        """truth_weight installs s5e_deform's ratio_nd itself (the binning run's ValueError, 2026-11-03): a job that never
+        calls run_unfold (A2.1's calibration, c2check, binning) gets F1's ratio weight, unmocked."""
+        import importlib
+        import s5n_pseudo
+        importlib.reload(s5n_pseudo)                                  # undo any earlier install in this process
+        self.assertFalse(getattr(s5n_pseudo.truth_weight, "_s5e_ratio_nd", False))
+        edges = self.inputs["edges"]
+        ratio = {"schema": "s5e-shape-ratio/1", "axes": [2], "edges": [list(map(float, edges[2]))],
+                 "shape_ratio": list(np.linspace(0.8, 1.2, len(edges[2]) - 1))}
+        r = mc.truth_weight("g18", self.inputs, ratio, None)
+        self.assertEqual(r.shape, (self.inputs["w_truth"].shape[0],))
+        self.assertFalse(np.allclose(r, 1.0))
+        self.assertTrue(getattr(s5n_pseudo.truth_weight, "_s5e_ratio_nd", False))
+        mc.s5n_pseudo = s5n_pseudo
+
+
 class Experiments(Case):
     def test_with_mc_sets_the_unfolding_flux(self):
         exp, _ = mc.mean_experiment(self.inputs, self.bkg, np.ones(self.inputs["w_truth"].shape[0]))
