@@ -1,0 +1,16 @@
+host=login23 start=2026-11-03T23:25:20Z pid=2356915 ppid=2356913
+deploy porcelain_lines=0 head=5e1162ffc8479bd157f11079d3ed092e72e0fcd4
+nd-unfolding/fd_1b_cvdenom.py: OK
+numpy 2.2.6 uproot 5.6.9
+cvdenom rc=0
+FD-1B-CVDENOM verdict=PASS {"A_coordinates_equal_row_by_row": true, "B_histogram_equals_denom_nd": false, "B_max_abs_difference": 0.22948679224282387, "B_tolerance": {"a_one_stride": true, "b_attributed": true, "c_none_unattributed": true, "cells_differing": 32, "cells_unattributed": [], "d_total_ok": true, "max_residual_over_bound": 0.00014723567827249525, "passes": true, "rows_moved": 16, "rows_moved_off_one_stride": 0, "total": 1.0516032489249483e-12, "total_bound": 0.08446455040406184}, "C_max_abs_difference": 0.0, "C_npz_writer_reproduced": true, "D_all_equal": true, "bank_rows": 32849103, "bank_rows_not_npz": 2801, "cv_npz_rows": 32849103, "entries": 32849103, "npz_rows": 32846302}
+	Percent of CPU this job got: 108%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:21.92
+	Maximum resident set size (kbytes): 7490836
+	File system inputs: 35194040
+	Exit status: 0
+156b963d9efbe0b54c4602d263b3996fe8a1dbfbef068e4cff17382e54c679be  /pscratch/sd/j/josephrb/fd-1b-a21-cvdenom2-20261103/cvdenom.json
+ad171e15b9fe062e45ef40edb2d98e00a98abbda74635e1259ba82298aa003bf  /pscratch/sd/j/josephrb/fd-1b-a21-cvdenom2-20261103/cvdenom.out
+ce4b4e79639ed5574bc866258e538abf644bd98195c75d45af3f8e3a66b433bf  /pscratch/sd/j/josephrb/fd-1b-a21-cvdenom2-20261103/cvdenom.time
+0bc70d622ed51f7e6ce3b80e095788f315e52937b6a6c79a0bafedeb4545def8  /pscratch/sd/j/josephrb/fd-1b-a21-cvdenom2-20261103/cvdenom.npy
+end=2026-11-03T23:27:32Z
