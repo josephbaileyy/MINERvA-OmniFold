@@ -1,5 +1,5 @@
-sha256 5c133f97be8419be7360a0497295a716b58412449ecfb57199b16a0d1f9502e7  fd_1b_mc.py
-sha256 aee17ec8049760a040a3b0d7777111576306cbf0bd4a85d55006603b2caf0766  tests/test_fd_1b_mc.py
+sha256 56a25e024195e45e77019f658d8d02a246250ba3f18e8ca5020005ea8baccd6e  fd_1b_mc.py
+sha256 a7acb64583b3a77368eea3cb21bd4a0ef283727d3db380201a3a10cb7b969e05  tests/test_fd_1b_mc.py
 sha256 ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
 KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
 N/A      ratio composition inverted  (its target code was replaced by amendment 2)
@@ -135,7 +135,7 @@ KILLED   A2+: pilot_b drops the central values
 KILLED   A2+: walls_of ignores a missing product
 KILLED   A2+: S1-0b walls without a seed allowed
 KILLED   A2+: clipcheck against a sigma of 1
-KILLED   A2+: clipcheck's rule at the strict >
+KILLED   A2+: clipcheck ignores clip_flags
 KILLED   A2+: clipcheck always proceeds
 KILLED   A2+: clipcheck accepts two clipmeans
 KILLED   A2e: the estimator ignored at install
@@ -156,6 +156,26 @@ KILLED   A2c: clipcheck takes any receipt
 KILLED   A2c: clipcheck takes a STOP receipt
 KILLED   A2d: the receipt reads the assembly plainly
 KILLED   A2d: clipcheck reads the assembly plainly
+KILLED   AUD: near-bound recompute dropped
+KILLED   AUD: denominator check < not <=
+KILLED   AUD: compose 2b < not <=
+KILLED   AUD: clip_draw neg ignores reco
+KILLED   AUD: clipmean omits background
+KILLED   AUD: clip_flags > not >=
+KILLED   AUD: N_clip argmin
+KILLED   AUD: push_negative constant
+KILLED   AUD: screen lim at 10.5 L
+KILLED   AUD: stat replica record dropped
+KILLED   AUD: clipped fraction uses positive sum
+KILLED   C1: clip_cells' truth rows without the reco mask
+KILLED   C2: the denominator's N1 not counted
+KILLED   C2: the denominator's N1 does not stop
+KILLED   C2: the denominator's N1 without the peak
+KILLED   C3: the screen without its margin
+KILLED   C4: clipmean under nature
+KILLED   C4: clipcheck under nature
+KILLED   C4: the clipping readout under nature
+KILLED   C5: clipcheck takes another N_clip seed
 KILLED   A2: O5 push_min not recorded
-unmutated: 97 passed in 28.23s
-145 of 145 applicable killed; 10 not applicable
+unmutated: 105 passed in 24.43s
+165 of 165 applicable killed; 10 not applicable

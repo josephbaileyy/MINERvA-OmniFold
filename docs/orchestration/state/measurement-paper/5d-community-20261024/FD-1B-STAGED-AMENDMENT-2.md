@@ -113,6 +113,13 @@ the product's `clip_rule`.
   w_truth and w_reco alike. Background rows with bkg_w < 0 are zeroed. The draw and the truth then share one
   non-negative nature. The denominator, per cell, stays under §2b's fail-closed rule.
 
+**`nature` is defined for the draws only** (the audit's C4 on #717).
+- Its clipping offset is undefined. It zeroes positive truth on rows with λ < 0, and its completeness then uses the
+  zeroed w_truth against an unzeroed per-cell denominator.
+- So `clipmean`, `clipcheck` and the readout's clipping section refuse `nature` (`NATURE_UNRULED`) until its offset
+  is defined and ruled.
+- Binding 3 binds `data` (the audit's B1).
+
 **The checks.**
 - `null`, `readout` and `clipcheck` take both names. They refuse any product at a truth whose recorded `config` or
   `clip_rule` differs from, or lacks, the declared one (`refuse_mixed_estimator`).
@@ -142,7 +149,9 @@ The premise is checked at run time: `draw_columns` raises INVALID on any draw th
 every band.
 
 **How it is used.**
-- Every pair with |a_D| > 10 L gets the exact peak, gathered over the draw's universes, and its exact r.
+- **The margin** (the audit's C3 on #717). The code compares the matmul's |a_D|, which is rounded, so it screens out
+  only pairs with |a_D| ≤ 10 L (1 − 10⁻⁹). A pair the proposition covers can then never be screened out by rounding.
+- Every pair past the screen gets the exact peak, gathered over the draw's universes, and its exact r.
 - Every pair at or below 10 L is proven not above.
 - So every row's N1 outcome is decided exactly. There is no estimate and no cap.
 
@@ -219,6 +228,10 @@ descriptive:
   This is over reco-passing rows for `wr`, and over all rows for `wt` and `bkgw`;
 - `clipped_fraction_signal_plus_background_per_draw`: the same for `wr` and `bkgw` together, as N_clip uses them.
 
+**N1 on the denominator** (the audit's C2 on #717). `compose`'s record and `n1` also stop on the per-cell
+denominator, so the receipt evaluates it exactly, in compose's order, for every cell and every declared draw
+(`denominator_check`'s `n1`). Any cell above 10 is a STOP reason, as for the per-row arrays.
+
 **§2b in compose's pinned order** (the audit's P2). Cells × draws is small, so the denominator check runs exactly in
 compose's order, not by matmul.
 
@@ -277,6 +290,8 @@ a one-signed clipping offset that is not small, and it is read before the bulk, 
   goes to Joseph before any bulk is submitted. Below that, the verdict is `PROCEED`, and the bulk follows under the
   existing conditions.
 - **Reported either way:** o_c at every cell and truth, and N_clip's clipped record.
+- **The seed must match** (the audit's C5 on #717). `clipcheck` refuses a clipmean whose N_clip seed is not the
+  digest-pinned receipt's.
 
 ## 5c. cov2d C1's clipping figures (the director's request)
 
@@ -288,8 +303,9 @@ each is U-mapped to the reporting cells. `clipcheck` carries them by the receipt
   - rows negative in some draw that have none, which are composite-only.
 - **The clipped fraction per draw,** |Σλ⁻| / Σλ, for signal (reco-passing rows) and background: min, median, p90,
   q95 and max.
-- **Per truth cell, the clipped signal rows' truth content.** That is |a_D(w_truth)| of the rows whose w_reco
-  composite is negative, at their truth cells, converted to cross section by `xsec_nd`'s per-cell factor at the CV's
+- **Per truth cell, the clipped signal rows' truth content** (`clipped_rows_truth_xsec_over_sigma_c` and
+  `_over_sigma_stat`). That is |a_D(w_truth)| of the rows `clip_draw` clips (reco-passing, with a negative w_reco
+  composite; the audit's C1 on #717 added the reco mask), and truth-passing, at their truth cells, converted to cross section by `xsec_nd`'s per-cell factor at the CV's
   completeness. It is reported over σ_c (the reported σ) and over σ_stat (S1's stat block), as the median and max
   over draws.
   - **Unverified:** the conversion divides by the completeness ε_c. Whether this equals C2's efficiency-corrected
@@ -328,7 +344,8 @@ descriptive.
 in their 5D cell, under the product rule (binding 2's) and under first order.
 - **The reco-space proxy:** signal w_reco on reco-passing rows at MCreco, plus the background template at bkg_reco.
   It is a reco histogram mapped by U, a truth-cell map, and it is labelled so (the audit's A1).
-- **The truth-side counterpart:** w_truth on truth-passing rows at MCgen, which is what x_true sees.
+- **The truth-side counterpart** (`truth_weight_histogram`): w_truth on truth-passing rows at MCgen, which is what
+  x_true sees. It is a different object from §5c's clipped-rows truth content, and is named apart from it.
 
 **The figure:** z_c = [(H_product − H_first-order) / H_CV]_c ÷ (σ_c / x̂_c).
 - x̂ is S1's data result, the staged assembly's `f`, read through O_NOATIME.
@@ -383,7 +400,7 @@ before merge. Declaration §12's clauses M and S, and §13's line, are supersede
 ## 10. Tests and mutation
 
 **The test file** is `nd-unfolding/tests/test_fd_1b_mc.py`. On this branch: `test_fd_1b_mc`, `test_fd_1b_null` and
-`test_fd_1b_moded` give 154 passed (97 in `test_fd_1b_mc`).
+`test_fd_1b_moded` give 162 passed (105 in `test_fd_1b_mc`), under a fixed and under 14 varied hash seeds.
 
 **New or rewritten tests:**
 - **Compose:** first order in the draw's order, bitwise, for two and three universes. The denominator per cell. §2b in
@@ -431,10 +448,23 @@ before merge. Declaration §12's clauses M and S, and §13's line, are supersede
 The toy world's denominators were unrelated random histograms, which the product rule's ratios hid and first order
 exposes.
 
+**The fixture is also deterministic in its denominators.** The toy world seeds its bank weights by `hash()`, which
+varies per process.
+- **The failure seen.** Under one hash seed (16), first order's sum of about 37 per-universe `tdw` departures, each
+  uniform within ±10 %, drove a sparse cell's composite denominator to ≤ 0. The receipt then STOPped on §2b, and two
+  tests failed.
+- **The fix.** The fixture now maps each bank universe's `tdw` to a factor within ±2 %, and each detector universe's
+  `denom_nd` to the CV's within ±5 %, both seeded by the tag (`zlib.crc32`).
+- **The check.** The suite passes under 14 hash seeds.
+- **What it says about the real bank.** The same mechanism could operate there in sparse cells. §2b then fails
+  closed, and the receipt reports it as a STOP, as designed. That is a property to report, not to test away.
+- **The harness** pins `PYTHONHASHSEED=0` for every child, so the receipt reproduces.
+
 **The mutation receipt** is `fd/receipts-1b/staged/mutation_mc_a2.py`, with its output in `mutation_mc_a2.out`. It
-carries binding 2's 79 mutants, and prints those whose target code amendment 2 replaced as N/A, by name. It adds 76
-for amendment 2, the director's additions included. **145 of 145 applicable mutants are killed**; the 10 named
-replacements are N/A; 155 in all. The unmutated suite: 97 passed, and 0 `.pyc` after the run.
+carries binding 2's 79 mutants, and prints those whose target code amendment 2 replaced as N/A, by name. It adds 96
+for amendment 2: 76 of mine (the director's additions included), 11 of `coverage-5b-audit`'s mut717.py
+(carried, two re-anchored), and 9 for the fixes of its review of #717 (C1–C5). **165 of 165 applicable mutants are
+killed**; the 10 named replacements are N/A; 175 in all. The unmutated suite: 105 passed, and 0 `.pyc` after the run.
 
 **A defect in the harness, found and fixed here.**
 - **The defect.** Binding 2's harness spawned `python -m pytest` without `-B` or `PYTHONDONTWRITEBYTECODE`. A
@@ -493,6 +523,12 @@ replacements are N/A; 155 in all. The unmutated suite: 97 passed, and 0 `.pyc` a
    `PROCEED` (or Joseph rules), and the audit's written acknowledgement. Its table is made with the push digest and
    N_clip's seed.
 6. **Per truth:** `n1`, then `null`, then `readout` with the clipping section, then the report.
+
+## 12b. What binding 3 binds (the audit's B1 on #717)
+
+Configuration (e) is bound by name, so a switch is a re-pin with a record (§2c):
+- `--estimator R` in every unfold step;
+- `--clip-rule data`.
 
 ## 13. For the audit and the director
 

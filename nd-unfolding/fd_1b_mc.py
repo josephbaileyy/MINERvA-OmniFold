@@ -90,6 +90,8 @@ VALIDATE_FRACTION = 0.005                            # the receipt's no-screen c
 VALIDATE_SEED = 3_659_001                            # not a declared toy, stat or validation seed elsewhere
 CLIP_DELTA_STAR = 0.667                              # |o_c| that lowers +-1 sigma content by 0.10 (section 5.2)
 CLIP_RULES = ("data", "nature")                      # a named input: decision 2a (a), or the nature clipped in truth too
+NATURE_UNRULED = ("the clipping offset (clipmean, clipcheck, the readout's clipping section) is defined for the "
+                  "'data' rule only; 'nature' needs its own definition and a ruling (the audit's C4 on #717)")
 UNIT_SECONDS = 1062.0
 RSS_LIMIT_KIB = inv.RSS_LIMIT_KIB
 # S1-0 (declaration section 8): its eight items; the eighth is the capture with the plug-in, AR23's first toy without
@@ -259,7 +261,7 @@ def exact_n1(V: np.ndarray, cv: np.ndarray, dcols: list[np.ndarray], L: np.ndarr
     for d, cs in enumerate(dcols):
         S[d, cs] = 1.0
     k = S.sum(axis=1)
-    lim = N1_BOUND * L
+    lim = N1_BOUND * L * (1.0 - NEAR_BOUND_REL)    # the matmul's |a_D| is rounded: keep the proof's premise strict
     pairs = 0
     for d0 in range(0, len(dcols), block):
         A = S[d0:d0 + block] @ V - (k[d0:d0 + block, None] - 1.0) * cv[None, :]
@@ -338,17 +340,28 @@ def validate_screen(res: dict, ref: np.ndarray, rows: np.ndarray) -> list[str]:
 
 
 def denominator_check(D: np.ndarray, dcv: np.ndarray, dcols: list[np.ndarray]) -> dict:
-    """Section 2b on every declared draw, in compose's order (the audit's P2): the cells with d_CV > 0 and d_D <= 0."""
-    bad = {}
+    """On every declared draw, in compose's order: section 2b (the audit's P2), the cells with d_CV > 0 and d_D <= 0;
+    and N1 on the denominator per cell (the audit's C2 on #717), exactly, as compose's record and ``n1`` read it."""
+    bad, above, max_r = {}, {}, 0.0
     pos = dcv > 0
+    flat_cv = dcv.ravel()
     for d, cs in enumerate(dcols):
         acc = D[cs[0]].copy()
+        peak = np.abs(acc)
         for c in cs[1:]:
             acc += D[c] - dcv
+            np.maximum(peak, np.abs(D[c]), out=peak)
         n = int(np.sum(pos & (acc <= 0)))
         if n:
             bad[d] = n
-    return {"draws_with_nonpositive_cells": sorted(bad), "max_cells": max(bad.values()) if bad else 0}
+        r = n1_ratio(acc, peak).ravel()
+        max_r = max(max_r, float(r.max()))
+        k = int(np.sum(r > N1_BOUND))
+        if k:
+            above[d] = k
+    return {"draws_with_nonpositive_cells": sorted(bad), "max_cells": max(bad.values()) if bad else 0,
+            "n1": {"cells": int(flat_cv.size), "pairs_above": int(sum(above.values())),
+                   "draws_with_cells_above": sorted(above), "max": max_r}}
 
 
 def crossterm(V: np.ndarray, cv: np.ndarray, dcols: list[np.ndarray], flat: np.ndarray, n_bins: int, U: np.ndarray,
@@ -706,6 +719,8 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
                   "clip_reco_flat": clip["clip_reco_flat"], "clip_truth_flat": clip["clip_truth_flat"]}
         meta.update(ev, draw=d, universe_info=info, clip=clip["record"])
     elif role == "clipmean":
+        if a.clip_rule != "data":
+            raise Refusal(NATURE_UNRULED)
         seed = int(item)
         if not any(seed in TOY_SEEDS[t] for t in TOY_SEEDS):
             raise Refusal(f"N_clip seed {seed} is not a declared toy seed")
@@ -834,12 +849,13 @@ def _spread(x: np.ndarray) -> dict:
 
 
 def clip_cells(V: dict, cv: dict, dcols: list[np.ndarray], flat: dict, n_bins: int, U: np.ndarray, k_flat: np.ndarray,
-               truth_rows: np.ndarray, block: int = DRAW_BLOCK) -> dict:
+               truth_rows: np.ndarray, reco: np.ndarray, block: int = DRAW_BLOCK) -> dict:
     """cov2d C1's per-cell clipping figures over the declared draws at r = 1 (the director's request), first order, by
     matmul (descriptive), each U-mapped to the reporting cells, as [draws, cells]:
     * ``reco_clip``: |sum of lambda-| (signal w_reco on reco-passing rows, plus the background), and ``reco_plus``,
       the sum of lambda+, both at the rows' reco cells;
-    * ``truth_clip``: the truth content of the clipped signal rows (those with w_reco's a_D < 0, truth-passing), as
+    * ``truth_clip``: the truth content of the clipped signal rows (reco-passing, as ``clip_draw`` clips them, with
+      w_reco's a_D < 0, and truth-passing), as
       |a_D(w_truth)| at their truth cells, converted to cross section by ``k_flat`` (``xsec_nd``'s per-cell factor
       at the CV's completeness)."""
     S = np.zeros((len(dcols), V["wr"].shape[0]))
@@ -849,7 +865,7 @@ def clip_cells(V: dict, cv: dict, dcols: list[np.ndarray], flat: dict, n_bins: i
     out = {"reco_clip": np.zeros((len(dcols), U.shape[0])), "reco_plus": np.zeros((len(dcols), U.shape[0])),
            "truth_clip": np.zeros((len(dcols), U.shape[0]))}
     fs_, fb, ft = flat["signal"], flat["background"], flat["truth"]
-    ms, mb, mt = fs_ >= 0, fb >= 0, (ft >= 0) & truth_rows
+    ms, mb, mt = fs_ >= 0, fb >= 0, (ft >= 0) & truth_rows & np.asarray(reco, bool)
     for d0 in range(0, len(dcols), block):
         Sb, kb = S[d0:d0 + block], k[d0:d0 + block, None] - 1.0
         A_r = Sb @ V["wr"] - kb * cv["wr"][None, :]
@@ -962,7 +978,8 @@ def receipt(a) -> dict:
             "draws_with_any": int(np.sum(res["negative_composite_rows"] > 0)),
             "rows_max_per_draw": int(res["negative_composite_rows"].max()),
             "clipped_fraction_per_draw": _spread(clipped_fraction(res["negative_composite_sum"], res["composite_sum"])),
-            "over": "reco-passing rows" if k == "wr" else "all rows", "arithmetic": "matmul, descriptive"}
+            "counts_over": "all rows with a_CV > 0", "sums_over": "reco-passing rows" if k == "wr" else "all rows",
+            "arithmetic": "matmul, descriptive"}
         exact[k]["_neg_sum"], exact[k]["_sum"], exact[k]["_any"] = (res["negative_composite_sum"], res["composite_sum"],
                                                                      res["negative_any"])
     nonpos = {k: (np.min(V[k], axis=0) <= 0) & (cv[k] > 0) for k in V}
@@ -992,7 +1009,7 @@ def receipt(a) -> dict:
     k_flat, _ = xsec_nd.extract_cross_section_nd(np.ones_like(comp), comp, inputs["flux"], float(inputs["data_pot"]),
                                                  float(inputs["n_nucleons"]), inputs["edges"])
     cc = clip_cells(V, cv, dcols, {"signal": flat_s, "background": flat_b, "truth": flat_t}, n_bins, U,
-                    np.asarray(k_flat, float).ravel(order="C"), pt)
+                    np.asarray(k_flat, float).ravel(order="C"), pt, reco)
     sig_rep = np.sqrt(np.diag(fs.reported_matrix(s1)))
     sig_stat = np.sqrt(np.diag(s1["blocks"]["stat"]))
     with np.errstate(divide="ignore", invalid="ignore"):
@@ -1000,11 +1017,13 @@ def receipt(a) -> dict:
     c1 = {"source_split": source,
           "clipped_fraction_per_draw": {"signal": exact["wr"]["negative_composite"]["clipped_fraction_per_draw"],
                                         "background": exact["bkgw"]["negative_composite"]["clipped_fraction_per_draw"]},
-          "truth_cell_clipped_over_sigma_c": _per_cell(cc["truth_clip"] / sig_rep[None, :]),
-          "truth_cell_clipped_over_sigma_stat": _per_cell(cc["truth_clip"] / sig_stat[None, :]),
+          "clipped_rows_truth_xsec_over_sigma_c": _per_cell(cc["truth_clip"] / sig_rep[None, :]),
+          "clipped_rows_truth_xsec_over_sigma_stat": _per_cell(cc["truth_clip"] / sig_stat[None, :]),
           "reco_cell_clipped_over_sqrt_plus": _per_cell(reco_z),
           "basis": "first order at r = 1 over the 900 declared draws; matmul, descriptive; U-mapped (reco a proxy)"}
     reasons = [f"N1: {k} {v['rows_above']} rows above" for k, v in exact.items() if v["rows_above"]]
+    if denom["n1"]["pairs_above"]:
+        reasons.append(f"N1: denom {denom['n1']['pairs_above']} (cell, draw) pairs above")
     if denom["draws_with_nonpositive_cells"]:
         reasons.append(f"2b: {len(denom['draws_with_nonpositive_cells'])} draws with a non-positive denominator cell")
     return {"schema": SCHEMA, "step": "receipt", "n1_bound": N1_BOUND, "universes": singles,
@@ -1017,7 +1036,7 @@ def receipt(a) -> dict:
                        "clipped_mass_at_r1": float(neg_total[d_clip]), "arithmetic": "matmul, descriptive",
                        "role": "the reference case of the clipping offset (consult (ii)); not claimed the largest"},
             "crossterm": {"reco_proxy_U_mapped": cross_z(Hp_s + Hp_b, Ha_s + Ha_b, H0_s + H0_b, rel_sigma),
-                          "truth_side": cross_z(Hp_t, Ha_t, H0_t, rel_sigma),
+                          "truth_weight_histogram": cross_z(Hp_t, Ha_t, H0_t, rel_sigma),
                           "units": "[(H_product - H_first_order) / H_CV]_c / (sigma_c / x_c), sigma_c S1's reported"},
             "clipping_c1": c1,
             "verdict": "STOP" if reasons else "PASS", "stop_reasons": reasons, "atime": inv.atime_check()}
@@ -1062,6 +1081,8 @@ def clipcheck(a) -> dict:
     o_c = U (x_clipmean - x_central)_c / sigma_c with sigma_c S1's REPORTED sigma at the data (the committed data
     product's), a proxy for C_T, which only the bulk makes (the final readout recomputes o_c with C_T). If any cell at
     any truth has |o_c| >= CLIP_DELTA_STAR, the verdict is TO_JOSEPH: the case goes to Joseph before any bulk."""
+    if a.clip_rule != "data":
+        raise Refusal(NATURE_UNRULED)
     s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
     U = sa.functional_matrix(sa.fine_map(a.definition))
     if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
@@ -1081,9 +1102,12 @@ def clipcheck(a) -> dict:
         if len(cm) != 1:
             raise Refusal(f"{truth}: {len(cm)} clipmean products, not exactly one")
         zc = np.load(cm[0], allow_pickle=False)
+        seed = int(json.loads(str(zc["meta"]))["n_clip_seed"])
+        if seed != int(rc["n_clip"]["seed"]):
+            raise Refusal(f"{truth}: the clipmean's N_clip seed {seed} is not the receipt's {rc['n_clip']['seed']}")
         xc = U @ np.asarray(np.load(a.unfolds / product_name(a.tag, truth, "central", "T"))["xsec_flat"], float)
         o = (U @ np.asarray(zc["xsec_flat"], float) - xc) / sigma
-        cells = [f"R{c:02d}" for c in range(o.size) if abs(o[c]) >= CLIP_DELTA_STAR]
+        cells = [f"R{c:02d}" for c in clip_flags(o)]
         hit += [f"{truth}:{c}" for c in cells]
         out[truth] = {"n_clip_seed": int(json.loads(str(zc["meta"]))["n_clip_seed"]),
                       "offset_over_reported_sigma": o.tolist(), "cells_at_or_above_delta_star": cells,
@@ -1271,12 +1295,20 @@ def toy_errors(unfolds: Path, tag: str, truth: str, U: np.ndarray, rm: dict, f: 
     return X_hat - np.array(X_true), draws
 
 
-def clipping_readout(unfolds: Path, tag: str, truth: str, U: np.ndarray, rm: dict, cell_flag: list[bool]) -> dict:
+def clip_flags(o: np.ndarray) -> list[int]:
+    """The cells whose clipping offset reaches delta* (section 5's reading, and clipcheck's rule)."""
+    return [c for c in range(o.size) if abs(o[c]) >= CLIP_DELTA_STAR]
+
+
+def clipping_readout(unfolds: Path, tag: str, truth: str, U: np.ndarray, rm: dict, cell_flag: list[bool],
+                     clip_rule: str = "data") -> dict:
     """Consult item (ii) and decision section 2a, descriptive beside the grading: the clipping offset
     o_c = U (x_clipmean - x_central)_c / sigma_c (sigma_c from C_T); the toys' clipped fractions; the toys' clipped
     mass per reporting cell (reco and truth) relative to N_clip's; and the reading fixed before any number was read:
     a cell flagged at T with |o_c| >= ``CLIP_DELTA_STAR`` is read "the flag may be the clipping artefact". The verdict
-    and clause F stand either way."""
+    and clause F stand either way. Defined for the "data" rule only (the audit's C4 on #717)."""
+    if clip_rule != "data":
+        raise Refusal(NATURE_UNRULED)
     refuse_partials(unfolds, tag, truth)
     cm = sorted(unfolds.glob(f"{tag}_{truth}_clipmean_*.npz"))
     if len(cm) != 1:
@@ -1306,8 +1338,7 @@ def clipping_readout(unfolds: Path, tag: str, truth: str, U: np.ndarray, rm: dic
             return {"median": np.nanmedian(q, axis=0).tolist(), "max": np.nanmax(q, axis=0).tolist()}
     return {"n_clip_seed": int(json.loads(str(zc["meta"]))["n_clip_seed"]), "offset_over_sigma": o.tolist(),
             "delta_star": CLIP_DELTA_STAR,
-            "flagged_cells_the_clipping_may_explain": [f"R{c:02d}" for c in range(o.size)
-                                                       if cell_flag[c] and abs(o[c]) >= CLIP_DELTA_STAR],
+            "flagged_cells_the_clipping_may_explain": [f"R{c:02d}" for c in clip_flags(o) if cell_flag[c]],
             "clipped_fraction": {k: {"min": float(min(v)), "median": float(np.median(v)), "max": float(max(v))}
                                  for k, v in frac.items()},
             "toys_clipped_mass_over_n_clip": {"reco": rel(reco, ref_r), "truth": rel(tru, ref_t)},
@@ -1373,7 +1404,7 @@ def readout(a) -> dict:
                             "predicted_offset_uncentred_draws": np.asarray(offset, float).tolist(),
                             "eigen_variance_ratio_vs_C_e": eig_ratio},
             "truth_dependence": {"A_T_over_A_nom_fractional": (frac_T / frac_nom).tolist(), "group_at_T_over_M": groups},
-            "clipping": clipping_readout(a.unfolds, a.tag, a.truth, U, rm, main["cell_flag"]),
+            "clipping": clipping_readout(a.unfolds, a.tag, a.truth, U, rm, main["cell_flag"], a.clip_rule),
             "X_T": rm["X_T"].tolist(), "sigma_T": np.sqrt(np.diag(rm["C_T"])).tolist()}
 
 

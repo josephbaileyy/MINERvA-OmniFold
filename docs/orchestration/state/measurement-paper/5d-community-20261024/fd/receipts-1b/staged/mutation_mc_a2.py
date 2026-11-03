@@ -9,7 +9,8 @@ import hashlib, os, shutil, subprocess, sys
 from pathlib import Path
 # No bytecode anywhere: a mutant written in the same second and at the same size as the file before it would
 # otherwise be imported from a stale __pycache__ entry, in either direction (binding 2's mutation_mc.py had this flaw).
-ENV = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+# A fixed hash seed, so the toy world (seeded by hash()) is the same in every child and the receipt reproduces.
+ENV = dict(os.environ, PYTHONDONTWRITEBYTECODE="1", PYTHONHASHSEED="0")
 PYTEST = [sys.executable, "-B", "-m", "pytest", "-p", "no:cacheprovider", "-q"]
 
 
@@ -143,8 +144,8 @@ M = [
  ("A2: the receipt's STOP ignores N1", "    reasons = [f\"N1: {k} {v['rows_above']} rows above\" for k, v in exact.items() if v[\"rows_above\"]]", "    reasons = []"),
  ("A2: N_clip from the signal alone", "    neg_total = np.abs(exact[\"wr\"][\"_neg_sum\"]) + np.abs(exact[\"bkgw\"][\"_neg_sum\"])", "    neg_total = np.abs(exact[\"wr\"][\"_neg_sum\"]) + 0 * exact[\"bkgw\"][\"_neg_sum\"]"),
  ("A2: the clipping offset unscaled", "    o = (U @ np.asarray(zc[\"xsec_flat\"], float) - rm[\"X_T\"]) / sigma", "    o = U @ np.asarray(zc[\"xsec_flat\"], float) - rm[\"X_T\"]"),
- ("A2: the reading ignores the flag", "                                                       if cell_flag[c] and abs(o[c]) >= CLIP_DELTA_STAR]", "                                                       if abs(o[c]) >= CLIP_DELTA_STAR]"),
- ("A2: the reading at the strict >", "if cell_flag[c] and abs(o[c]) >= CLIP_DELTA_STAR]", "if cell_flag[c] and abs(o[c]) > 0.9]"),
+ ("A2: the reading ignores the flag", "for c in clip_flags(o) if cell_flag[c]],", "for c in clip_flags(o)],"),
+ ("A2: the reading at the strict >", "    return [c for c in range(o.size) if abs(o[c]) >= CLIP_DELTA_STAR]", "    return [c for c in range(o.size) if abs(o[c]) > 0.9]"),
  ("A2: two clipmean products accepted", "    if len(cm) != 1:\n        raise Refusal", "    if len(cm) < 1:\n        raise Refusal"),
  ("A2: clipped fraction over the wrong total", "            frac[comp].append(abs(rec[comp][\"sum_negative\"]) / tot if tot else 0.0)", "            frac[comp].append(abs(rec[comp][\"sum_negative\"]) if tot else 0.0)"),
  ("A2+: negative rows in some draw not accumulated", "            neg_any |= negd", "            neg_any = negd"),
@@ -156,9 +157,9 @@ M = [
  ("A2+: walls_of ignores a missing product", "        if not p.exists():\n            return {\"verdict\": \"REPRICE\"", "        if False:\n            return {\"verdict\": \"REPRICE\""),
  ("A2+: S1-0b walls without a seed allowed", "            if a.stage == \"s1-0b\" and a.clip_seed is None:", "            if False:"),
  ("A2+: clipcheck against a sigma of 1", "    sigma = np.sqrt(np.diag(fs.reported_matrix(s1)))\n    raw = a.receipt.read_bytes()", "    sigma = np.ones(s1[\"f\"].size)\n    raw = a.receipt.read_bytes()"),
- ("A2+: clipcheck's rule at the strict >", "        cells = [f\"R{c:02d}\" for c in range(o.size) if abs(o[c]) >= CLIP_DELTA_STAR]", "        cells = [f\"R{c:02d}\" for c in range(o.size) if abs(o[c]) > 2 * CLIP_DELTA_STAR]"),
+ ("A2+: clipcheck ignores clip_flags", "        cells = [f\"R{c:02d}\" for c in clip_flags(o)]", "        cells = []"),
  ("A2+: clipcheck always proceeds", "            \"verdict\": \"TO_JOSEPH\" if hit else \"PROCEED\", \"cells\": hit}", "            \"verdict\": \"PROCEED\", \"cells\": hit}"),
- ("A2+: clipcheck accepts two clipmeans", "        if len(cm) != 1:\n            raise Refusal(f\"{truth}: {len(cm)} clipmean products, not exactly one\")\n        zc = np.load(cm[0], allow_pickle=False)\n        xc", "        if len(cm) < 1:\n            raise Refusal(f\"{truth}: {len(cm)} clipmean products, not exactly one\")\n        zc = np.load(cm[0], allow_pickle=False)\n        xc"),
+ ("A2+: clipcheck accepts two clipmeans", "        if len(cm) != 1:\n            raise Refusal(f\"{truth}: {len(cm)} clipmean products, not exactly one\")\n        zc = np.load(cm[0], allow_pickle=False)\n        seed", "        if len(cm) < 1:\n            raise Refusal(f\"{truth}: {len(cm)} clipmean products, not exactly one\")\n        zc = np.load(cm[0], allow_pickle=False)\n        seed"),
  ("A2e: the estimator ignored at install", "    s5e_candidate.install(a.estimator)", "    s5e_candidate.install(toys.CONFIG)"),
  ("A2e: the meta records the fixed config", "\"config\": a.estimator,", "\"config\": toys.CONFIG,"),
  ("A2e: a mixed estimator accepted", "        if meta.get(\"config\") != estimator:", "        if False:"),
@@ -176,7 +177,29 @@ M = [
  ("A2c: clipcheck takes any receipt", "    if hashlib.sha256(raw).hexdigest() != a.expect_receipt_sha256:\n        raise Refusal(\"the receipt's digest", "    if False:\n        raise Refusal(\"the receipt's digest"),
  ("A2c: clipcheck takes a STOP receipt", "    if rc.get(\"verdict\") != \"PASS\":", "    if False:"),
  ("A2d: the receipt reads the assembly plainly", "    inputs, bkg = world[\"inputs\"], world[\"bkg\"]\n    s1 = via_noatime(fs.load_s1, ", "    inputs, bkg = world[\"inputs\"], world[\"bkg\"]\n    s1 = fs.load_s1("),
- ("A2d: clipcheck reads the assembly plainly", "goes to Joseph before any bulk.\"\"\"\n    s1 = via_noatime(fs.load_s1, ", "goes to Joseph before any bulk.\"\"\"\n    s1 = fs.load_s1("),
+ ("A2d: clipcheck reads the assembly plainly", "        raise Refusal(NATURE_UNRULED)\n    s1 = via_noatime(fs.load_s1, ", "        raise Refusal(NATURE_UNRULED)\n    s1 = fs.load_s1("),
+ # ---- coverage-5b-audit's mut717.py (review of #717), carried; two anchors moved with C3 and T2
+ ("AUD: near-bound recompute dropped", "            if np.any(close):", "            if False:"),
+ ("AUD: denominator check < not <=", "        n = int(np.sum(pos & (acc <= 0)))", "        n = int(np.sum(pos & (acc < 0)))"),
+ ("AUD: compose 2b < not <=", 'bad = int(np.sum((cv["denom"] > 0) & (acc["denom"] <= 0)))', 'bad = int(np.sum((cv["denom"] > 0) & (acc["denom"] < 0)))'),
+ ("AUD: clip_draw neg ignores reco", "    neg = reco & (lam < 0)\n    bw = np.asarray(ub[\"bkg_w\"], float)\n    negb = bw < 0\n    tneg", "    neg = (lam < 0)\n    bw = np.asarray(ub[\"bkg_w\"], float)\n    negb = bw < 0\n    tneg"),
+ ("AUD: clipmean omits background", "    counts = np.concatenate([-lam[neg], -bw[negb]])", "    counts = np.concatenate([-lam[neg], 0.0 * bw[negb]])"),
+ ("AUD: clip_flags > not >=", "    return [c for c in range(o.size) if abs(o[c]) >= CLIP_DELTA_STAR]", "    return [c for c in range(o.size) if abs(o[c]) > CLIP_DELTA_STAR]"),
+ ("AUD: N_clip argmin", "    d_clip = int(np.argmax(neg_total))", "    d_clip = int(np.argmin(neg_total))"),
+ ("AUD: push_negative constant", 'push_negative=int(np.sum(arrays["push"] < 0)))', 'push_negative=0)'),
+ ("AUD: screen lim at 10.5 L", "    lim = N1_BOUND * L * (1.0 - NEAR_BOUND_REL)", "    lim = 1.05 * N1_BOUND * L"),
+ ("AUD: stat replica record dropped", "jitter_seed=JITTER_OFFSET + b, clip=clip)", "jitter_seed=JITTER_OFFSET + b, clip=None)"),
+ ("AUD: clipped fraction uses positive sum", "        return np.where(total != 0, np.abs(neg_sum) / np.abs(total), 0.0)", "        return np.where(total != 0, np.abs(neg_sum) / (np.abs(total) + np.abs(neg_sum)), 0.0)"),
+ # ---- the fixes of the audit's review of #717
+ ("C1: clip_cells' truth rows without the reco mask", "    ms, mb, mt = fs_ >= 0, fb >= 0, (ft >= 0) & truth_rows & np.asarray(reco, bool)", "    ms, mb, mt = fs_ >= 0, fb >= 0, (ft >= 0) & truth_rows"),
+ ("C2: the denominator's N1 not counted", "        k = int(np.sum(r > N1_BOUND))", "        k = 0"),
+ ("C2: the denominator's N1 does not stop", "    if denom[\"n1\"][\"pairs_above\"]:\n        reasons.append", "    if False:\n        reasons.append"),
+ ("C2: the denominator's N1 without the peak", "            np.maximum(peak, np.abs(D[c]), out=peak)\n        n = int(", "            pass\n        n = int("),
+ ("C3: the screen without its margin", "    lim = N1_BOUND * L * (1.0 - NEAR_BOUND_REL)", "    lim = N1_BOUND * L"),
+ ("C4: clipmean under nature", "    elif role == \"clipmean\":\n        if a.clip_rule != \"data\":", "    elif role == \"clipmean\":\n        if False:"),
+ ("C4: clipcheck under nature", "    if a.clip_rule != \"data\":\n        raise Refusal(NATURE_UNRULED)\n    s1 = via_noatime", "    if False:\n        raise Refusal(NATURE_UNRULED)\n    s1 = via_noatime"),
+ ("C4: the clipping readout under nature", "    if clip_rule != \"data\":\n        raise Refusal(NATURE_UNRULED)\n    refuse_partials", "    if False:\n        raise Refusal(NATURE_UNRULED)\n    refuse_partials"),
+ ("C5: clipcheck takes another N_clip seed", "        if seed != int(rc[\"n_clip\"][\"seed\"]):", "        if False:"),
  ("A2: O5 push_min not recorded", "        meta.update(ev, push_min=float(arrays[\"push\"].min()) if arrays[\"push\"].size else None,", "        meta.update(ev, push_min=None,"),
 
 ]

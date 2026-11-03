@@ -88,10 +88,17 @@ class Case(unittest.TestCase):
             p.stop()
 
     def weights(self, tag):
-        w = inv.universe_weights(mc.universe_dir(tag, self.w.bank, self.w.det), tag, "zero")
-        if "denom_nd" in w:     # a detector universe: the CV's histogram within 5 %, so first order is exercised
-            f = np.random.default_rng(zlib.crc32(tag.encode())).uniform(0.95, 1.05, np.shape(w["denom_nd"]))
-            w = dict(w, denom_nd=np.asarray(self.inputs["denom_nd"], float) * f)
+        return self.consistent(tag, inv.universe_weights(mc.universe_dir(tag, self.w.bank, self.w.det), tag, "zero"))
+
+    def consistent(self, tag, w):
+        """The fixture's denominators as the real bank's behave, deterministically in the tag (the toy world seeds by
+        hash(), which varies per process): a detector universe's denom_nd is the CV's within 5 %; a bank universe's
+        tdw is 1 within 2 %, so first order's sum of about 37 departures cannot cross zero in a sparse cell by chance."""
+        rng = np.random.default_rng(zlib.crc32(tag.encode()))
+        if "denom_nd" in w:
+            w = dict(w, denom_nd=np.asarray(self.inputs["denom_nd"], float) * rng.uniform(0.95, 1.05, np.shape(w["denom_nd"])))
+        if "tdw" in w:
+            w = dict(w, tdw=rng.uniform(0.98, 1.02, np.shape(w["tdw"])))
         return w
 
 
@@ -366,6 +373,17 @@ class Clipping(Case):
             np.testing.assert_array_equal(at_mean[0][k], mean_path[0][k], k)
         np.testing.assert_array_equal(at_mean[1], mean_path[1])
 
+    def test_t1_a_non_reco_row_with_negative_lambda_is_not_clipped(self):
+        ui, ub, reco = self.nature()
+        r = np.ones(self.inputs["w_truth"].shape[0])
+        off = int(np.flatnonzero(~np.asarray(self.inputs["pass_reco"], bool))[0])
+        wr = np.asarray(ui["w_reco"], float).copy()
+        wr[off] = -2.0
+        du, _, clip = mc.clip_draw(dict(ui, w_reco=wr), ub, r)
+        self.assertEqual(du["w_reco"][off], -2.0)
+        self.assertEqual(clip["record"]["signal"]["rows_negative"], 0)
+        self.assertEqual(float(np.sum(clip["clip_reco_flat"])), float(np.sum(mc.clip_draw(ui, ub, r)[2]["clip_reco_flat"])))
+
     def test_r2_the_clip_is_on_the_full_product(self):
         ui, ub, reco = self.nature()
         r = np.ones(self.inputs["w_truth"].shape[0])
@@ -570,6 +588,27 @@ class Jobs(Case):
         argv.remove("Z")
         with self.assertRaises(SystemExit):                     # required
             mc.main(argv)
+
+    def test_t3_a_stat_replica_records_its_clip(self):
+        world = {"inputs": self.inputs, "bkg": self.bkg, "bank_cv": self.bank_cv, "flux": self.flux,
+                 "groups": toys.interaction_groups(self.w.bank), "pins": {}}
+        a = argparse.Namespace(truth="g18", prep=None, push=None, threads=1, clip_rule="data")
+        with mock.patch.object(mc, "truth_ratio", lambda *x: (None, None)), \
+                mock.patch.object(mc, "truth_weight", lambda *x: np.ones(self.inputs["w_truth"].shape[0])):
+            _, meta = mc.run_item(a, world, "stat", "3", unfold_fn=lambda *x: (np.zeros(3), {}))
+        self.assertEqual(meta["clip"]["rule"], "data")
+        self.assertEqual((meta["clip"]["signal"]["rows_negative"], meta["clip"]["background"]["rows_negative"]), (0, 0))
+
+    def test_c4_nature_is_refused_where_the_offset_is_read(self):
+        a = argparse.Namespace(truth="g18", prep=None, push=None, threads=1, clip_rule="nature",
+                               flux_constraint=self.w.constraint)
+        with mock.patch.object(mc, "truth_ratio", lambda *x: (None, None)), \
+                self.assertRaisesRegex(mc.Refusal, "'data' rule only"):
+            mc.run_item(a, {"inputs": self.inputs, "bkg": self.bkg}, "clipmean", "3620000")
+        with self.assertRaisesRegex(mc.Refusal, "'data' rule only"):
+            mc.clipcheck(argparse.Namespace(clip_rule="nature"))
+        with self.assertRaisesRegex(mc.Refusal, "'data' rule only"):
+            mc.clipping_readout(self.tmp, "t", "g18", None, {}, [], "nature")
 
     def test_a_toy_draws_under_the_declared_clip_rule(self):
         world = {"inputs": self.inputs, "bkg": self.bkg, "bank_cv": self.bank_cv, "flux": self.flux,
@@ -845,7 +884,7 @@ class NoAtime(unittest.TestCase):
 
     def test_clipmean_reads_the_constraint_through_o_noatime(self):
         got, reader = self.spy()
-        a = argparse.Namespace(truth="g18", prep=None, push=None, flux_constraint=self.constraint)
+        a = argparse.Namespace(truth="g18", prep=None, push=None, flux_constraint=self.constraint, clip_rule="data")
         with mock.patch.object(mc, "truth_ratio", lambda *a: (None, None)), \
                 mock.patch.object(mc.toys, "flux_probabilities", reader), self.assertRaises(_Stop):
             mc.run_item(a, {"inputs": {}, "bkg": {}}, "clipmean", "3620000")
@@ -870,7 +909,7 @@ class NoAtime(unittest.TestCase):
 
     def test_clipcheck_reads_the_assembly_through_o_noatime(self):
         got, reader = self.spy()
-        a = argparse.Namespace(staged=self.tmp)
+        a = argparse.Namespace(staged=self.tmp, clip_rule="data")
         with mock.patch.object(mc.fs, "load_s1", reader), self.assertRaises(_Stop):
             mc.clipcheck(a)
         self.assert_noatime_only(self.s1, got)
@@ -952,7 +991,8 @@ class Pipeline(unittest.TestCase):
         cls.toy_rng = np.random.default_rng(32)
         cls.clip_offset = np.where(np.arange(n) % 4 == 0, 0.7, 0.1)       # R00, R04, ... above delta*, the rest below
         cls.receipt_file = cls.tmp / "receipt.json"
-        cls.receipt_file.write_text(json.dumps({"verdict": "PASS", "clipping_c1": {"source_split": {"wr": 1}}}))
+        cls.receipt_file.write_text(json.dumps({"verdict": "PASS", "clipping_c1": {"source_split": {"wr": 1}},
+                                                "n_clip": {"seed": 3620011}}))
         cls.clip_ref = np.where(np.arange(n) % 2 == 0, 2.0, 0.0)          # N_clip's clipped mass, zero in odd cells
 
     @classmethod
@@ -1153,8 +1193,14 @@ class Pipeline(unittest.TestCase):
         bad = argparse.Namespace(**{**vars(a), "expect_receipt_sha256": "0" * 64})
         with mock.patch.object(mc.fs, "reported_matrix", lambda s1: rep), self.assertRaisesRegex(mc.Refusal, "digest"):
             mc.clipcheck(bad)
+        other = self.tmp / "receipt-other-seed.json"
+        other.write_text(json.dumps({"verdict": "PASS", "clipping_c1": {}, "n_clip": {"seed": 3620012}}))
+        bad = argparse.Namespace(**{**vars(a), "receipt": other, "expect_receipt_sha256": digest(other)})
+        with mock.patch.object(mc.fs, "reported_matrix", lambda s1: rep), \
+                self.assertRaisesRegex(mc.Refusal, "not the receipt's 3620012"):
+            mc.clipcheck(bad)
         stop = self.tmp / "receipt-stop.json"
-        stop.write_text(json.dumps({"verdict": "STOP", "clipping_c1": {}}))
+        stop.write_text(json.dumps({"verdict": "STOP", "clipping_c1": {}, "n_clip": {"seed": 3620011}}))
         bad = argparse.Namespace(**{**vars(a), "receipt": stop, "expect_receipt_sha256": digest(stop)})
         with mock.patch.object(mc.fs, "reported_matrix", lambda s1: rep), self.assertRaisesRegex(mc.Refusal, "not PASS"):
             mc.clipcheck(bad)
@@ -1308,7 +1354,7 @@ class ExactN1(unittest.TestCase):
         self.assertGreater(ref[:, row].max(), mc.N1_BOUND)
         amax = max(abs(mc.pinned_composite(self.V, self.cv, cs, np.array([row]))[0][0]) for cs in self.dcols)
         bad = L.copy()
-        bad[row] = amax / mc.N1_BOUND                     # every draw of this row now screened out
+        bad[row] = amax / mc.N1_BOUND * (1 + 1e-6)        # every draw of this row now screened out, past the margin
         res = self.run_exact(L=bad)
         self.assertTrue(mc.validate_screen(res, ref, self.all_rows), "a tightened floor went unseen")
         self.assertFalse(mc.screen_floor_check(self.V, self.col, bad))
@@ -1375,7 +1421,8 @@ class ExactN1(unittest.TestCase):
         U = rng.uniform(0, 1, (3, n_bins))
         k_flat = rng.uniform(0.5, 2.0, n_bins)
         truth_rows = rng.random(n) < 0.7
-        got = mc.clip_cells(V, cv, self.dcols, flat, n_bins, U, k_flat, truth_rows, block=5)
+        reco = rng.random(n) < 0.8
+        got = mc.clip_cells(V, cv, self.dcols, flat, n_bins, U, k_flat, truth_rows, reco, block=5)
         for d, cs in enumerate(self.dcols):
             ar, _ = mc.pinned_composite(V["wr"], cv["wr"], cs, np.arange(n))
             at, _ = mc.pinned_composite(V["wt"], cv["wt"], cs, np.arange(n))
@@ -1385,7 +1432,7 @@ class ExactN1(unittest.TestCase):
                 np.bincount(flat["background"][mb], weights=np.maximum(-ab[mb], 0), minlength=n_bins)
             pos = np.bincount(flat["signal"][ms], weights=np.maximum(ar[ms], 0), minlength=n_bins) + \
                 np.bincount(flat["background"][mb], weights=np.maximum(ab[mb], 0), minlength=n_bins)
-            rows = (flat["truth"] >= 0) & truth_rows & (ar < 0)
+            rows = (flat["truth"] >= 0) & truth_rows & reco & (ar < 0)
             tru = np.bincount(flat["truth"][rows], weights=np.abs(at[rows]), minlength=n_bins) * k_flat
             np.testing.assert_allclose(got["reco_clip"][d], U @ neg, rtol=1e-10, atol=1e-12)
             np.testing.assert_allclose(got["reco_plus"][d], U @ pos, rtol=1e-10, atol=1e-12)
@@ -1395,6 +1442,50 @@ class ExactN1(unittest.TestCase):
         pc = mc._per_cell(got["truth_clip"])
         np.testing.assert_array_equal(pc["max"], got["truth_clip"].max(axis=0))
         np.testing.assert_array_equal(pc["median"], np.median(got["truth_clip"], axis=0))
+
+    def test_t2_clip_flags_at_delta_star(self):
+        d = mc.CLIP_DELTA_STAR
+        self.assertEqual(mc.clip_flags(np.array([d, -d, np.nextafter(d, 0), 0.0, 2 * d])), [0, 1, 4])
+
+    def test_c3_the_screen_keeps_a_pair_at_the_rounded_bound(self):
+        """A floor with 10 L equal to the matmul's |a_D| bit for bit, on one row: without the margin the pair would be
+        screened out; with it, it is evaluated."""
+        row, d = 200, 3
+        S = np.zeros(len(self.tags))
+        S[self.dcols[d]] = 1.0
+        A = float(S @ self.V[:, row] - (S.sum() - 1.0) * self.cv[row])
+        L0 = abs(A) / mc.N1_BOUND
+        while mc.N1_BOUND * L0 < abs(A):
+            L0 = np.nextafter(L0, np.inf)
+        while mc.N1_BOUND * L0 > abs(A):
+            L0 = np.nextafter(L0, -np.inf)
+        self.assertEqual(mc.N1_BOUND * L0, abs(A))
+        L = np.full(self.V.shape[1], 1e300)
+        L[row] = L0
+        res = mc.exact_n1(self.V, self.cv, [self.dcols[d]], L, self.all_rows, block=1)
+        self.assertEqual(res["pairs_past_screen"], 1)
+
+    def test_c2_the_denominator_n1(self):
+        rng = np.random.default_rng(17)
+        dcv = rng.uniform(1, 2, 30)
+        D = dcv[None, :] * (1 + rng.normal(0, 0.05, (len(self.tags), 30)))
+        cs = self.dcols[4]
+        D[cs[0], 7] = 30.0 * dcv[7]                       # one draw's cell far above its peak's tenth
+        got = mc.denominator_check(D, dcv, self.dcols)
+        want, worst = 0, 0.0
+        for d, c in enumerate(self.dcols):
+            acc = D[c[0]].copy()
+            peak = np.abs(acc)
+            for j in c[1:]:
+                acc += D[j] - dcv
+                np.maximum(peak, np.abs(D[j]), out=peak)
+            r = mc.n1_ratio(acc, peak)
+            want += int(np.sum(r > mc.N1_BOUND))
+            worst = max(worst, float(r.max()))
+        self.assertEqual(got["n1"]["pairs_above"], want)
+        self.assertAlmostEqual(got["n1"]["max"], worst, places=12)
+        with mock.patch.object(mc, "N1_BOUND", 0.5):
+            self.assertGreater(mc.denominator_check(D, dcv, self.dcols)["n1"]["pairs_above"], 0)
 
     def test_n1_ratio_conventions(self):
         got = mc.n1_ratio(np.array([0.0, 0.0, 3.0, -4.0]), np.array([0.0, 2.0, 0.0, 2.0]))
@@ -1493,9 +1584,7 @@ class Receipt(Case):
         return res, labels
 
     def single_with_consistent_denominators(self, inputs, bkg, bank_cv, tag, w, flux):
-        if "denom_nd" in w:
-            w = dict(w, denom_nd=self.weights(tag)["denom_nd"])
-        return Receipt._real_single(inputs, bkg, bank_cv, tag, w, flux)
+        return Receipt._real_single(inputs, bkg, bank_cv, tag, self.consistent(tag, w), flux)
 
     def test_counts_exact_pass_n_clip_and_verdict(self):
         wt = np.array(self.inputs["w_truth"], float)
@@ -1529,6 +1618,10 @@ class Receipt(Case):
             self.assertEqual(res["exact"][k]["negative_composite"]["pairs"], negs[k], k)
         self.assertGreater(sum(want.values()), 0)
         self.assertEqual(res["verdict"], "STOP")
+        for k, v in want.items():                                # each source of the STOP is named
+            self.assertEqual(any(r.startswith(f"N1: {k} ") for r in res["stop_reasons"]), v > 0, k)
+        self.assertGreater(res["denominator"]["n1"]["pairs_above"], 0)
+        self.assertTrue(any(r.startswith("N1: denom") for r in res["stop_reasons"]))
         self.assertTrue(all(v["agrees"] for v in res["validation"].values()))
         self.assertEqual(res["n_clip"]["draw_index"], int(np.argmax(neg)) if max(neg) > 0 else 0)
         self.assertEqual(res["denominator"]["draws_with_nonpositive_cells"], [])
@@ -1544,7 +1637,8 @@ class Receipt(Case):
         self.assertEqual(sp["rows_with_a_universe_le_0"], int(np.sum((lo <= 0) & (cvr > 0))))
         self.assertEqual(sp["negative_in_some_draw_with_a_universe_le_0"] + sp["negative_in_some_draw_composite_only"],
                          res["exact"]["wr"]["negative_composite"]["rows_in_some_draw"])
-        self.assertEqual(len(res["clipping_c1"]["truth_cell_clipped_over_sigma_c"]["max"]), sa.N_CELLS)
+        self.assertEqual(len(res["clipping_c1"]["clipped_rows_truth_xsec_over_sigma_c"]["max"]), sa.N_CELLS)
+        self.assertIn("n1", res["denominator"])
 
     def test_a_2b_draw_stops_and_n_clip_counts_the_background(self):
         """Section 2b's STOP on a completed receipt, and N_clip's rule over signal plus background: one universe's
