@@ -79,4 +79,18 @@ him. The high-p_T outlier cell and the over-coverage lean are stated in the note
    **The director's ruling, not Joseph's:** cov2d's declaration fixes, before any toy, the consult's reading that a pass
    in a cell whose clipped variance ratio is below 0.9 counts as weakened.
 
+## Director's clarification (2026-11-03, after recording)
+
+Item 1's "a signal row with a negative composite weight is zeroed in both the pseudo-data and the graded truth" is
+ambiguous. The reco and truth composites of a row differ: C2's receipt has 11,358,837 rows negative in some draw for
+w_reco against 12,440,871 for w_truth.
+
+**The rule decided** is the one C2 measured and that Joseph was shown the numbers for: each tree is clipped on its own
+composite, row by row.
+- **Pseudo-data:** λ⁺ on signal and background rows.
+- **Graded truth:** max(composite truth weight, 0).
+
+It is not "zero both of a row's weights when either is negative", which C2 did not compute. For 1B (item 2), `--clip-rule
+nature` must implement this same rule, with an equality test against cov2d's implementation.
+
 Nothing is submitted, deposited or tagged.
