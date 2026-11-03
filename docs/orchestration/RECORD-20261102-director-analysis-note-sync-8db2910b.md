@@ -76,3 +76,34 @@ Each file compares equal to canonical by `cmp`.
 `92c28241`. Joseph pulls it in Overleaf from the GitHub menu.
 
 **Next sync:** after the next paper round. Start from base `58fa0b89`.
+
+## Third sync, 2026-11-03: main 3a012f70
+
+**Why.** Joseph's decision (`DECISION-20261103-joseph-711-merge-and-rp9-reprice.md` item 1) calls for a re-sync after
+#711.
+
+**The standalone before the copy.** At `0674662`. One Overleaf commit since the second sync, `8670899` ("Updates from
+Overleaf"), changed only the mode of `test_build_all.py` (100755 to 100644), not its content. Nothing needed carrying
+back.
+- Every synced file compared equal by `cmp` to canonical `58fa0b89`, apart from the standalone's own `.gitignore`,
+  `AGENTS.md` and `archive/`.
+
+**What was copied.** 7 files changed between `58fa0b89` and `3a012f70`, and none were added or deleted:
+- `paper_body.tex`, `sec_5d.tex` and `sec_fived16.tex`;
+- `figures/fd_g_fig_modes.pdf` and `figures/fd_g_fig_ratio.pdf`;
+- `make_values_fived16.py` and `check_sec4_receipts.py`.
+
+Each compares equal to canonical by `cmp`.
+
+**Builds.**
+- **Canonical,** in a fresh worktree at `3a012f70`: `build_all.sh` gave rc 0, with note 135, paper 12, primer 15,
+  PET note 26 and records 59 pp. `latexmk -pdf -jobname=output main_paper.tex` gave rc 0: 12 pp and 0 undefined
+  references or citations.
+- **Standalone copy:** both commands gave rc 0, with the same page counts.
+- **Text.** `pdftotext` of all six PDFs (the five, plus `output.pdf`) is identical between the canonical and
+  standalone builds.
+
+**Head.** Standalone `main` = `4384f02284da4706dd513c7339fd1d8c423fa159` (from `git ls-remote`), a fast-forward from
+`0674662`. Joseph pulls it in Overleaf from the GitHub menu.
+
+**Next sync:** after the next paper round. Start from base `3a012f70`.
