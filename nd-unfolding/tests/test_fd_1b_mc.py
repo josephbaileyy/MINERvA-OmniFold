@@ -239,6 +239,36 @@ class Compose(Case):
         self.assertEqual(mc.draw_universes(d), ["Flux_4", "2p2h_0", "MaRES_1", "MinosEfficiency_0", "GEANT_Pion_1"])
 
 
+class Functional(unittest.TestCase):
+    """A2.1's fix to the U check (the binning run's refusal, 2026-11-03): S1 stores U as float32, so the check is
+    exact equality in that precision; the old absolute 1e-6 tolerance refused every real assembly."""
+
+    def test_a_float32_stored_u_with_large_entries(self):
+        rng = np.random.default_rng(4)
+        U = rng.uniform(0, 1, (16, 500)) * np.logspace(-3, 7.6, 500)        # volumes up to about 4e7, as the real U
+        stored = U.astype(np.float32)
+        self.assertFalse(np.allclose(U, stored, rtol=0, atol=1e-6))         # the old check refuses S1's own U
+        self.assertTrue(mc.same_functional(U, stored))
+        bad = stored.copy()
+        bad[3, 400] = np.nextafter(bad[3, 400], np.float32(np.inf))         # one float32 ulp off
+        self.assertFalse(mc.same_functional(U, bad))
+        self.assertFalse(np.allclose(U, bad, rtol=0, atol=1e-6))
+        self.assertFalse(mc.same_functional(U[:, :499], stored))           # a different shape
+
+    def test_the_real_definitions_u(self):
+        """The world, not a fixture (the audit): the committed H2 definition's U, as S1 stored it, passes; one entry one
+        float32 ulp off refuses; and the old absolute check refuses S1's own U."""
+        U = sa.functional_matrix(sa.fine_map(ND / "pv-ladder" / "readouts" / "h2_definition.json"))
+        stored = U.astype(np.float32)                                       # s1_assemble.py's write
+        self.assertGreater(float(U.max()), 3e7)
+        self.assertTrue(mc.same_functional(U, stored))
+        self.assertFalse(np.allclose(U, stored, rtol=0, atol=1e-6))
+        i, j = np.unravel_index(int(np.argmax(np.abs(U - stored.astype(np.float64)))), U.shape)
+        bad = stored.copy()
+        bad[i, j] = np.nextafter(bad[i, j], np.float32(np.inf))
+        self.assertFalse(mc.same_functional(U, bad))
+
+
 class Experiments(Case):
     def test_with_mc_sets_the_unfolding_flux(self):
         exp, _ = mc.mean_experiment(self.inputs, self.bkg, np.ones(self.inputs["w_truth"].shape[0]))

@@ -646,7 +646,7 @@ def c2check_main(a) -> dict:
                 raise Refusal(f"{t}: the single-universe U x_T is not the calibration's (a different world or code)")
     inputs, bkg = world["inputs"], world["bkg"]
     s1 = mc.via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
-    if not np.allclose(P["U_full"], s1["U"], rtol=0, atol=1e-6):
+    if not mc.same_functional(P["U_full"], s1["U"]):
         raise Refusal("the definition's functional is not S1's")
     rel = np.sqrt(np.diag(fs.reported_matrix(s1))) / s1["f"]
     fm = sa.fine_map(a.definition)

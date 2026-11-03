@@ -1,0 +1,67 @@
+$ git grep -n "s1\[.U.\]\|allclose(U" b31a2ef9 -- nd-unfolding   # before the fix
+b31a2ef9:nd-unfolding/fd_1b_binning.py:138:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+b31a2ef9:nd-unfolding/fd_1b_c2.py:649:    if not np.allclose(P["U_full"], s1["U"], rtol=0, atol=1e-6):
+b31a2ef9:nd-unfolding/fd_1b_inv.py:660:    U, g, x_cv_d = s1["U"], d["g"], d["x"]["CV"]
+b31a2ef9:nd-unfolding/fd_1b_mc.py:1025:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+b31a2ef9:nd-unfolding/fd_1b_mc.py:1185:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+b31a2ef9:nd-unfolding/fd_1b_mc.py:1349:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+b31a2ef9:nd-unfolding/fd_1b_mc.py:1456:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+b31a2ef9:nd-unfolding/fd_1b_moded.py:448:    U, f = s1["U"], s1["f"]
+b31a2ef9:nd-unfolding/fd_1b_score.py:410:        X_raw, x_t, draws = load_toys(a.toys, a.tag, a.arm, seeds, s1["U"], flux_p)
+b31a2ef9:nd-unfolding/fd_1b_score.py:437:    f, U = s1["f"], s1["U"]
+b31a2ef9:nd-unfolding/fd_1b_score.py:530:    Xf, xt_f, df = load_toys(a.full, a.full_tag, "pilot", seeds, s1["U"], flux_p, "toy")
+b31a2ef9:nd-unfolding/fd_1b_score.py:531:    Xh, xt_h, dh = load_toys(a.half, a.half_tag, "pilot", seeds, s1["U"], flux_p, "half")
+b31a2ef9:nd-unfolding/fd_ct_5b_audit.py:425:              bool(np.allclose(U @ xc, S["f"], rtol=TOL, atol=0)), "differ")
+b31a2ef9:nd-unfolding/fd_ct_readers.py:500:    f0.report("P1", "the central value's cell integrals are S1's f", bool(np.allclose(U @ xc, f, rtol=TOL, atol=0)), "differ")
+b31a2ef9:nd-unfolding/fd_gencmp.py:475:    report("C0", "P5's integrals over the sixteen cells equal f (to 1e-12)", np.allclose(U @ p5, f, rtol=TOL, atol=0))
+b31a2ef9:nd-unfolding/tests/test_build_cresp.py:243:        U = self.fx.s1["U"].copy()
+b31a2ef9:nd-unfolding/tests/test_fd_1b_moded.py:218:        np.testing.assert_allclose(U @ np.ravel(x), r_cell * ux, rtol=1e-12)
+
+$ git grep -n "s1\[.U.\]\|allclose(U" fea7946a -- nd-unfolding   # #717 (amendment 2)
+fea7946a:nd-unfolding/fd_1b_inv.py:660:    U, g, x_cv_d = s1["U"], d["g"], d["x"]["CV"]
+fea7946a:nd-unfolding/fd_1b_mc.py:959:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+fea7946a:nd-unfolding/fd_1b_mc.py:1110:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+fea7946a:nd-unfolding/fd_1b_mc.py:1274:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+fea7946a:nd-unfolding/fd_1b_mc.py:1381:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+fea7946a:nd-unfolding/fd_1b_moded.py:448:    U, f = s1["U"], s1["f"]
+fea7946a:nd-unfolding/fd_1b_score.py:410:        X_raw, x_t, draws = load_toys(a.toys, a.tag, a.arm, seeds, s1["U"], flux_p)
+fea7946a:nd-unfolding/fd_1b_score.py:437:    f, U = s1["f"], s1["U"]
+fea7946a:nd-unfolding/fd_1b_score.py:530:    Xf, xt_f, df = load_toys(a.full, a.full_tag, "pilot", seeds, s1["U"], flux_p, "toy")
+fea7946a:nd-unfolding/fd_1b_score.py:531:    Xh, xt_h, dh = load_toys(a.half, a.half_tag, "pilot", seeds, s1["U"], flux_p, "half")
+fea7946a:nd-unfolding/fd_ct_5b_audit.py:425:              bool(np.allclose(U @ xc, S["f"], rtol=TOL, atol=0)), "differ")
+fea7946a:nd-unfolding/fd_ct_readers.py:500:    f0.report("P1", "the central value's cell integrals are S1's f", bool(np.allclose(U @ xc, f, rtol=TOL, atol=0)), "differ")
+fea7946a:nd-unfolding/fd_gencmp.py:475:    report("C0", "P5's integrals over the sixteen cells equal f (to 1e-12)", np.allclose(U @ p5, f, rtol=TOL, atol=0))
+fea7946a:nd-unfolding/tests/test_build_cresp.py:243:        U = self.fx.s1["U"].copy()
+fea7946a:nd-unfolding/tests/test_fd_1b_moded.py:218:        np.testing.assert_allclose(U @ np.ravel(x), r_cell * ux, rtol=1e-12)
+
+$ git grep -n "s1\[.U.\]\|allclose(U" 24c83ab8 -- nd-unfolding   # binding 2 (M2)
+24c83ab8:nd-unfolding/fd_1b_inv.py:660:    U, g, x_cv_d = s1["U"], d["g"], d["x"]["CV"]
+24c83ab8:nd-unfolding/fd_1b_mc.py:733:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+24c83ab8:nd-unfolding/fd_1b_mc.py:789:    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+24c83ab8:nd-unfolding/fd_1b_moded.py:448:    U, f = s1["U"], s1["f"]
+24c83ab8:nd-unfolding/fd_1b_score.py:410:        X_raw, x_t, draws = load_toys(a.toys, a.tag, a.arm, seeds, s1["U"], flux_p)
+24c83ab8:nd-unfolding/fd_1b_score.py:437:    f, U = s1["f"], s1["U"]
+24c83ab8:nd-unfolding/fd_1b_score.py:530:    Xf, xt_f, df = load_toys(a.full, a.full_tag, "pilot", seeds, s1["U"], flux_p, "toy")
+24c83ab8:nd-unfolding/fd_1b_score.py:531:    Xh, xt_h, dh = load_toys(a.half, a.half_tag, "pilot", seeds, s1["U"], flux_p, "half")
+24c83ab8:nd-unfolding/fd_ct_5b_audit.py:425:              bool(np.allclose(U @ xc, S["f"], rtol=TOL, atol=0)), "differ")
+24c83ab8:nd-unfolding/fd_ct_readers.py:500:    f0.report("P1", "the central value's cell integrals are S1's f", bool(np.allclose(U @ xc, f, rtol=TOL, atol=0)), "differ")
+24c83ab8:nd-unfolding/fd_gencmp.py:475:    report("C0", "P5's integrals over the sixteen cells equal f (to 1e-12)", np.allclose(U @ p5, f, rtol=TOL, atol=0))
+24c83ab8:nd-unfolding/tests/test_build_cresp.py:243:        U = self.fx.s1["U"].copy()
+24c83ab8:nd-unfolding/tests/test_fd_1b_moded.py:218:        np.testing.assert_allclose(U @ np.ravel(x), r_cell * ux, rtol=1e-12)
+
+$ grep -n "s1\[.U.\]\|allclose(U" nd-unfolding/*.py   # the working tree, after the fix
+nd-unfolding/fd_1b_binning.py:138:    if not mc.same_functional(U, s1["U"]):
+nd-unfolding/fd_1b_inv.py:660:    U, g, x_cv_d = s1["U"], d["g"], d["x"]["CV"]
+nd-unfolding/fd_1b_c2.py:649:    if not mc.same_functional(P["U_full"], s1["U"]):
+nd-unfolding/fd_1b_score.py:410:        X_raw, x_t, draws = load_toys(a.toys, a.tag, a.arm, seeds, s1["U"], flux_p)
+nd-unfolding/fd_1b_score.py:437:    f, U = s1["f"], s1["U"]
+nd-unfolding/fd_1b_score.py:530:    Xf, xt_f, df = load_toys(a.full, a.full_tag, "pilot", seeds, s1["U"], flux_p, "toy")
+nd-unfolding/fd_1b_score.py:531:    Xh, xt_h, dh = load_toys(a.half, a.half_tag, "pilot", seeds, s1["U"], flux_p, "half")
+nd-unfolding/fd_1b_moded.py:448:    U, f = s1["U"], s1["f"]
+nd-unfolding/fd_ct_5b_audit.py:425:              bool(np.allclose(U @ xc, S["f"], rtol=TOL, atol=0)), "differ")
+nd-unfolding/fd_1b_mc.py:1033:    if not same_functional(U, s1["U"]):
+nd-unfolding/fd_1b_mc.py:1193:    if not same_functional(U, s1["U"]):
+nd-unfolding/fd_1b_mc.py:1357:    if not same_functional(U, s1["U"]):
+nd-unfolding/fd_1b_mc.py:1464:    if not same_functional(U, s1["U"]):
+nd-unfolding/fd_ct_readers.py:500:    f0.report("P1", "the central value's cell integrals are S1's f", bool(np.allclose(U @ xc, f, rtol=TOL, atol=0)), "differ")
+nd-unfolding/fd_gencmp.py:475:    report("C0", "P5's integrals over the sixteen cells equal f (to 1e-12)", np.allclose(U @ p5, f, rtol=TOL, atol=0))

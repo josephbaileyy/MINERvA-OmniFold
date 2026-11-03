@@ -196,6 +196,14 @@ def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.nd
     return ui, ub, {"universes": list(tags), "n1": stats}
 
 
+def same_functional(U: np.ndarray, stored: np.ndarray) -> bool:
+    """The definition's functional against S1's, in the precision S1 stored it (s1_assemble writes U as float32): exact
+    equality there. An absolute tolerance cannot be met, since U holds fine-bin volumes up to about 3.7e7 and float32
+    rounding moves them by up to 0.05 (A2.1, a fix to amendment 2's receipt and clipcheck and binding 2's null_step
+    and readout, none of which had run on real data)."""
+    return bool(np.array_equal(np.asarray(U).astype(np.float32), np.asarray(stored).astype(np.float32)))
+
+
 def td_cells(bank_cv, edges) -> np.ndarray:
     """The truth-denominator rows' 5D cells (C order, -1 outside), as s5p_universe.denominator bins them."""
     coords = np.column_stack([np.asarray(bank_cv[k], np.float64) for k in ("td_pt", "td_pz", "td_ea", "td_q3", "td_w")])
@@ -1022,7 +1030,7 @@ def receipt(a) -> dict:
     inputs, bkg = world["inputs"], world["bkg"]
     s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
     U = sa.functional_matrix(sa.fine_map(a.definition))
-    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+    if not same_functional(U, s1["U"]):
         raise InvalidReceipt("the definition's functional is not S1's")
     rel_sigma = np.sqrt(np.diag(fs.reported_matrix(s1))) / s1["f"]
     cv = _cv_arrays(inputs, bkg)
@@ -1182,7 +1190,7 @@ def clipcheck(a) -> dict:
         raise Refusal(NATURE_UNRULED)
     s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
     U = sa.functional_matrix(sa.fine_map(a.definition))
-    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+    if not same_functional(U, s1["U"]):
         raise Refusal("the definition's functional is not S1's")
     sigma = np.sqrt(np.diag(fs.reported_matrix(s1)))
     raw = a.receipt.read_bytes()
@@ -1346,7 +1354,7 @@ def null_step(a) -> dict:
     refuse_mixed_estimator(a.unfolds, a.tag, a.truth, a.estimator, a.clip_rule)
     s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
     U = sa.functional_matrix(sa.fine_map(a.definition))
-    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+    if not same_functional(U, s1["U"]):
         raise Refusal("the definition's functional is not S1's")
     frac, minus = cmodel_parts(a.staged / "s1" / "s1_assembly.npz", a.cmodel_json)
     rm = remade(a.unfolds, a.tag, a.truth, s1, U, a.flux_constraint, frac)
@@ -1453,7 +1461,7 @@ def readout(a) -> dict:
     refuse_mixed_estimator(a.unfolds, a.tag, a.truth, a.estimator, a.clip_rule)
     s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
     U = sa.functional_matrix(sa.fine_map(a.definition))
-    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+    if not same_functional(U, s1["U"]):
         raise Refusal("the definition's functional is not S1's")
     if nl.get("made_from") != made_from(a, U):
         raise Refusal("the definition, the cmodel json or U is not the one the null was made from")

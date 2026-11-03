@@ -135,7 +135,7 @@ def main(argv=None) -> int:
     fm = np.asarray(sa.fine_map(a.definition))
     U = sa.functional_matrix(fm)
     s1 = mc.via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
-    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+    if not mc.same_functional(U, s1["U"]):
         raise c2.Refusal("the definition's functional is not S1's")
     sigma = np.sqrt(np.diag(fs.reported_matrix(s1)))
     const = {"n_nucleons": float(inputs["n_nucleons"]), "data_pot": float(inputs["data_pot"]), "shape": shape,
