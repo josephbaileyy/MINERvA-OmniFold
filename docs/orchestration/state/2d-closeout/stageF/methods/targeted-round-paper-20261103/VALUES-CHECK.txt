@@ -1,4 +1,4 @@
-# make_values_fived16.py --check and --self-test at 91f36b7ad (docs/analysis-note unchanged since); check_sec4_receipts.py and its --self-test
+# make_values_fived16.py --check and --self-test, check_sec4_receipts.py and its --self-test, on the sources after the two restorations
 VALUES-FIVED16 :: PASS (2715 values, readouts pinned, 2 figures equal their sources, 9 listed-truth sentences agree)
 VALUES-FIVED16 SELF-TEST :: PASS
 SEC4-RECEIPTS :: PASS (17/17)

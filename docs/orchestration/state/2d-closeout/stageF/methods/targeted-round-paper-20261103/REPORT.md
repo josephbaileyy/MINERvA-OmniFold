@@ -26,8 +26,8 @@ the director. **Done by** the paper rewrite lane, on branch `docs/targeted-round
 | row | what | disposition | where the fact now prints |
 |---|---|---|---|
 | T1 | Sec. II, the E_avail comparison | tightened in place | paper; the examples and "Eq. 4 of" in the note, sec:eavail-definition |
-| T2 | IV A, the run-period block's size | tightened; the 0.73–2.56 interval to the note | paper ("poorly determined"); the note, sec:fived16-pl |
-| T3 | IV A, "No finite-ensemble correction is applied" | to the note; the pointer names the treatment | the note, sec:fived16-cov |
+| T2 | IV A, the run-period block's size | **restored** as at the base after the PRD-referee read and Joseph's answer (below) | paper, with the 0.73–2.56 interval; also the note, sec:fived16-pl |
+| T3 | IV A, "No finite-ensemble correction is applied" | **restored** as at the base after the PRD-referee read and Joseph's answer (below) | paper; also the note, sec:fived16-cov |
 | T4 | the fake-data section, "so the change is not a smaller bias or a validated uncertainty" | the inference to the note | paper (the bias equal, the covariance differing); the note, sec:fived16-fd |
 | T5 | Table III, GiBUU's footnote | B3's name and the premise check to the note | paper (the failed check, the DIS share); the note, sec:joint5d-ch and sec:fived16-gen-target |
 | T6 | V B, the χ² bands' "not the sensitivity … and are not intervals …" | the two negations to the note, with a pointer | the note, sec:fived16-gen |
@@ -35,7 +35,8 @@ the director. **Done by** the paper rewrite lane, on branch `docs/targeted-round
 | T8 | IV D's background closure, with Fig. 2 | moved whole; **note first** | the note, sec:val-negweight, sec:negweight-footing, app:bkg-residual-fig (Fig. 37) |
 | T9 | V C, the 3D/4D descriptive comparisons | moved whole | the note, sec_3d.tex, sec_execsummary.tex, sec:eavailw-map/-band |
 
-Every fact of every row is in `ledger.md`, with a probe that the paper or the note prints it. No fact left both.
+Every fact of every row is in `ledger.md`, with a probe that the paper or the note prints it. No fact left both. After
+the restorations, T2 and T3 change no paper sentence.
 
 **Kept, as the decision orders (item 4):**
 - IV B, the 2D benchmark;
@@ -79,8 +80,8 @@ sentence: the purity column 3.5–4.1 %, the refined column 0.11–0.24 %, the j
 2. **T5, Table III's footnote.** The referee would keep only a pointer. That the hydrogen sample failed its
    sampling-closure check, and that 46 % of it does not conserve energy, stay in the paper: they qualify the GiBUU χ²
    printed in the same row. Only B3's name and its post hoc premise check moved. Joseph may prefer the bare pointer.
-3. **T2, the block's size.** "Poorly determined" stays in the paper and the 68 % interval moves. The decision allows
-   either.
+3. **T2, the block's size.** The round first moved the interval to the note, which the decision allowed. The
+   PRD-referee read asked for it back, and Joseph restored it (below).
 4. **Outside this round's list:** the referee's other items are not acted on. These are condensing IV C, removing the
    earlier estimators from IV E, and rewriting the Limitations' domain-of-validity statement.
 
@@ -100,6 +101,53 @@ sentence: the purity column 3.5–4.1 %, the refined column 0.11–0.24 %, the j
    reference), so the three rows are re-cited at line 55, and `records_estimators.tex` is regenerated. The quoted
    words are unchanged.
 
+## After the PRD-referee read: two restorations
+
+**The read.** The director ran a PRD-referee read of the round at `b98491263`. It is committed verbatim beside this
+REPORT:
+- `PRD-REVIEW-GEMINI-PROMPT.txt`, sha256 `d71c68039db44e45…`: the prompt header, then the word diff of the paper;
+- `PRD-REVIEW-GEMINI-ANSWER.txt`, sha256 `02c30292e3b71f98…`.
+
+**What it asks for.** It finds the three moves appropriate, and T1, T4 and T5 clear. It asks for two edits:
+1. **The run-period block's interval.** Leaving only "poorly determined size" is "deficient": "The numerical interval
+   must remain in the text."
+2. **The finite-ensemble statement.** "An explicit 'without finite-ensemble corrections' in the text is preferable to
+   an external pointer."
+
+The answer numbers the figures "Fig. 5" and "Fig. 6", which no build of the paper does. By their content, they are
+the background-closure figure that moved and the deformation figure's caption (0.09 % at nominal truth).
+
+**Joseph's answer**, as the director relays it, verbatim: "Restore both, then merge (Recommended)". The decision
+record is to follow.
+
+**Done.** Both sentences are restored exactly as at the base `7bdd39f69`, so neither is now a changed sentence. The
+ledger rows T2 and T3 read RESTORED, and their source comments in `paper_body.tex` say why.
+
+### T2 — the run-period block's size
+
+**At `b98491263`:**
+
+> It has rank 2, is not corrected for the bootstrap noise it contains and, estimated from three groups, has a poorly
+> determined size.
+
+**Now (as at the base):**
+
+> It has rank 2 and is not corrected for the bootstrap noise it contains, and with three groups its size is poorly
+> determined: the 68 % interval on the ratio of its true to its estimated size is 0.73–2.56.
+
+### T3 — the finite-ensemble correction
+
+**At `b98491263`:**
+
+> The note gives each block's ensemble, normalization and finite-ensemble treatment, the cells, the central values,
+> the per-group uncertainties and the correlation matrix of the reported covariance (note sec:fived16-cov).
+
+**Now (as at the base):**
+
+> No finite-ensemble correction is applied. The note gives each block's ensemble and normalization, the cells, the
+> central values, the per-group uncertainties and the correlation matrix of the reported covariance (note
+> sec:fived16-cov).
+
 ## Before and after, every changed sentence
 
 From the sources, rendered: values printed, macros expanded, references shown by label, comments removed. The base is `7bdd39f69`. Generated by the round's `pairs.py` (not committed; it reads only the two trees).
@@ -116,29 +164,7 @@ From the sources, rendered: values printed, macros expanded, references shown by
 > No single published definition of E_avail exists. Eq. (1) keeps the species of the closed list of Ref. [ref] except electrons and positrons, omits species such as kaons that the open list of Ref. [ref] includes, and has a charged-pion term 4.57 MeV per pion above the kinetic energy used in Refs. [ref] (note sec:eavail-definition).
 >
 
-### T2 — IV A, the run-period block's size
-
-**Before:**
-
-> It has rank 2 and is not corrected for the bootstrap noise it contains, and with three groups its size is poorly determined: the 68 % interval on the ratio of its true to its estimated size is 0.73–2.56.
->
-
-**After:**
-
-> It has rank 2, is not corrected for the bootstrap noise it contains and, estimated from three groups, has a poorly determined size.
->
-
-### T3 — IV A, the finite-ensemble correction
-
-**Before:**
-
-> No finite-ensemble correction is applied. The note gives each block's ensemble and normalization, the cells, the central values, the per-group uncertainties and the correlation matrix of the reported covariance (note sec:fived16-cov).
->
-
-**After:**
-
-> The note gives each block's ensemble, normalization and finite-ensemble treatment, the cells, the central values, the per-group uncertainties and the correlation matrix of the reported covariance (note sec:fived16-cov).
->
+T2 and T3 are restored as at the base (the section above), so they change no sentence.
 
 ### T4 — the fake-data section
 
@@ -269,8 +295,8 @@ After:
 
 ## The checks
 
-At `91f36b7ad` and later commits on this branch (which change only this directory and the manifest):
-- **Ledger** (`check_ledger.py`): 9 rows, 72 probes, 43 changed base sentences, 0 failures; self-test PASS.
+At the head after the two restorations:
+- **Ledger** (`check_ledger.py`): 9 rows, 71 probes, 40 changed base sentences, 0 failures; self-test PASS.
 - **Build** (`build_all.sh`): PASS. The paper drops from 12 to 11 pages and the note grows from 135 to 136; no
   undefined reference in either.
 - **Receipts:** `check_sec4_receipts.py` 17/17; its self-test rejects 21 perturbations;
@@ -279,7 +305,7 @@ At `91f36b7ad` and later commits on this branch (which change only this director
 - **Held sentences:** `check_held.py --fact-held --pair-applied G1:paper-s-09` gives the three pre-existing flags
   only (`CHECK-HELD.txt`). G1:paper-g-06, III A's envelope sentence, is held for its facts; ledger row T7 probes them
   in the note. G1b:paper-g-07, III's estimator sentence, prints unchanged.
-- **Rater copy** (`make_rater_copy.sh`): PASS, 11 pages.
+- **Rater copy** (`make_rater_copy.sh`): PASS, 11 pages (after the restorations too).
 - **Reflow** (`reflow_tex.py --note --check`): PASS.
 - **Registry and results index:** PASS (finding 3).
 - **Absence claims, the manifest and local CI:** see the director's message for the pushed head; the push runs only

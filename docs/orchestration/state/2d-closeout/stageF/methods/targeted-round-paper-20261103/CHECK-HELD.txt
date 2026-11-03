@@ -1,4 +1,4 @@
-# check_held.py --fact-held on the rater copy of the round's paper sources (docs/analysis-note/paper_body.tex and main_paper.tex as committed in 91f36b7ad), with --pair-applied G1:paper-s-09
+# check_held.py --fact-held on the rater copy of the round's paper sources after the two restorations (docs/analysis-note/paper_body.tex as committed in the restorations commit; main_paper.tex unchanged), with --pair-applied G1:paper-s-09
 # expected: the three pre-existing flags only (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07); G1:paper-g-06 (III A's envelope sentence, moved with III A) is held for its facts, which ledger row T7 probes in the note
   FAIL G1:paper-g-08: held quote no longer prints exactly: 'In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBU'
   FAIL G1:paper-s-08: held quote no longer prints exactly: 'Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths'
