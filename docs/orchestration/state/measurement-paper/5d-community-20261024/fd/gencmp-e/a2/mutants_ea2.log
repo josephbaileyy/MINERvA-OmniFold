@@ -1,0 +1,19 @@
+files ['fd_g_figures.py 5d2916cb79397528', 'fd_g_figures_check.py dd80100d8583c085', 'fd_gencmp_ea2.py 5702722fd452606c']  mutants 16
+KILLED    legend keeps NuWro's flag  (Ran 54 tests in 23.181s; FAILED (failures=4, errors=1))
+KILLED    legend keeps GiBUU's flag  (Ran 54 tests in 21.962s; FAILED (failures=4, errors=1))
+KILLED    GiBUU loses CH  (Ran 54 tests in 22.897s; FAILED (failures=3, errors=1))
+KILLED    K7 still requires a flag  (Ran 54 tests in 12.412s; FAILED (failures=5, errors=1))
+KILLED    K7 drops the p_parallel string  (Ran 54 tests in 20.417s; FAILED (failures=1))
+KILLED    checker keeps NuWro's flag  (Ran 54 tests in 21.234s; FAILED (failures=4, errors=1))
+KILLED    checker keeps GiBUU's flag  (Ran 54 tests in 19.734s; FAILED (failures=4, errors=1))
+KILLED    checker MUST keeps a flag  (Ran 54 tests in 19.677s; FAILED (failures=2, errors=1))
+KILLED    control D: label text unchecked  (Ran 54 tests in 21.376s; FAILED (failures=1))
+KILLED    control D: no change accepted  (Ran 54 tests in 19.837s; FAILED (failures=1))
+KILLED    control D: options free  (Ran 54 tests in 24.739s; FAILED (failures=1))
+KILLED    control D: legends block unchecked  (Ran 54 tests in 24.212s; FAILED (failures=1))
+KILLED    control D: other item fields unchecked  (Ran 54 tests in 23.350s; FAILED (failures=1))
+KILLED    inputs unchecked  (Ran 54 tests in 24.354s; FAILED (failures=1))
+KILLED    out-dir overwrite allowed  (Ran 54 tests in 26.782s; FAILED (failures=1))
+KILLED    figure check skipped  (Ran 54 tests in 19.852s; FAILED (failures=1))
+killed 16 of 16; survived 0; not applied 0; files restored True
+rc=0
