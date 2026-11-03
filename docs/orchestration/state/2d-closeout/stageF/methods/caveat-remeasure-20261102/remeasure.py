@@ -1,6 +1,7 @@
 """remeasure.py -- re-measure the caveat density of the paper and the note with the 10-25 caveat study's own code.
 
-usage: python3 -I remeasure.py --work DIR [--repo DIR] [--inv DIR] [--no-build] [--allow-stale] [--self-test]
+usage: python3 -I remeasure.py --work DIR [--repo DIR] [--inv DIR] [--no-build] [--allow-stale] [--tables-out DIR]
+                                 [--self-test]
 
 One command, four steps:
   1. build main_paper and main_note from REPO/docs/analysis-note in a copy under WORK (latexmk -g; one more pass if
@@ -8,7 +9,9 @@ One command, four steps:
   2. pdftotext, then blind with the study's own tools/blindcount.py (paper) and tools/blind_note.py (note), and split
      the note at "Guide to the appendices" into the two parts the study coded separately;
   3. DENSITY: run the study's tools/tally.py, imported unchanged with its WORDS, SETS, H and T pointed at this run,
-     over the inventories in INV (default: inv/ beside this file). Only ours-paper and ours-note are tallied; the
+     over a copy of the inventories in INV (default: inv/ beside this file) under WORK/run/. Its tables go to
+     WORK/run/tables, and into the repository only through --tables-out: a re-measure never rewrites INV's tracked
+     tables/ (it did, 2026-11-03). Only ours-paper and ours-note are tallied; the
      nine comparators are quoted from the study's committed tables/rates.md, whose blinded texts are not committed;
   4. SURVIVAL (a separate, mechanical measure, NOT density): how many rows of the study's 10-25 inventories and of
      INV still verify against the current text. It sees removals only; a caveat added since coding is invisible to it.
@@ -132,6 +135,52 @@ def restore_displaced_items(blind_lines: list[str], txt_lines: list[str], items:
     return lines, restored
 
 
+def letters(text: str) -> str:
+    """Lowercase letters only; a printed note reference ("Ref. [14], App. G") becomes one marker, as its source does."""
+    text = re.sub(r"Ref\. \[\d+\], (App|Sec)s?\. [A-Z0-9][A-Z0-9.]*", lambda m: " refn" + m.group(1).lower() + " ", text)
+    return re.sub(r"[^a-z]", "", text.lower())
+
+
+def back_matter_letters(main_paper: str) -> str:
+    """The letters of the acknowledgments and the data-availability statement, as the PDF prints them."""
+    m = re.search(r"\\begin\{acknowledgments\}(.*?)(\\bibliography|\\end\{document\})", main_paper, re.S)
+    if not m:
+        return ""
+    text = "\n".join(l for l in m.group(1).split("\n") if not l.lstrip().startswith("%"))
+    text = text.replace("\\pubhold{", "HOLD: {")  # the macro prints "[HOLD: ...]"
+    text = re.sub(r"\\n(app|sec)\{[^}]*\}", lambda m: " refn" + m.group(1) + " ", text)  # "Ref. [14], App. G"
+    text = re.sub(r"\\SI\{([^}]*)\}\{([^}]*)\}", r" \1 \2 ", text)
+    text = re.sub(r"\\(cite|ref|label|section)\*?\{[^}]*\}", " ", text)
+    text = re.sub(r"\\([A-Za-z]+)\*?", r"\1", text)  # any other macro prints its name's letters (\Eavail)
+    return re.sub(r"[^a-z]", "", text.lower())
+
+
+def drop_leaked_back_matter(blind_lines: list[str], back: str) -> tuple[list[str], int]:
+    """blindcount.py cuts the back matter from its ACKNOWLEDGMENTS heading; page layout can print acknowledgments
+    text BEFORE that heading, where it is counted as body. A line matches if it has at least 20 letters and its letters
+    lie in the back matter's (whitespace, punctuation and hyphenation ignored). Leaked back matter comes as whole
+    paragraphs, so only runs of at least 3 matching lines (blank lines between them allowed) are dropped, with the two
+    headings: a lone body line that happens to recur there (a section title) is kept."""
+    match = [bool(back) and len(letters(l)) >= 20 and letters(l) in back for l in blind_lines]
+    drop = [bool(re.match(r"^\s*(ACKNOWLEDGMENTS|DATA AVAILABILITY)\s*$", l)) for l in blind_lines]
+    i = 0
+    while i < len(blind_lines):
+        if not match[i]:
+            i += 1
+            continue
+        run, j = [], i
+        while j < len(blind_lines) and (match[j] or not blind_lines[j].strip()):
+            if match[j]:
+                run.append(j)
+            j += 1
+        if len(run) >= 3:
+            for k in run:
+                drop[k] = True
+        i = j
+    keep = [l for l, d in zip(blind_lines, drop) if not d]
+    return keep, len(blind_lines) - len(keep)
+
+
 def blind_words(lines: list[str]) -> int:
     """blindcount.py's own rule: tokens holding a letter or digit."""
     return sum(1 for w in " ".join(lines).split() if re.search(r"[A-Za-z0-9]", w))
@@ -160,6 +209,17 @@ def blind(work, paper_pdf, note_pdf, repo=None):
             words["ours-paper"] = blind_words(lines)
             print(f"restored displaced Limitations items {restored}; paper words now {words['ours-paper']}")
     words["_restored_limitation_items"] = restored
+    words["_dropped_back_matter_lines"] = 0
+    if repo is not None:
+        back = back_matter_letters((Path(repo) / "docs" / "analysis-note" / "main_paper.tex").read_text(encoding="utf-8"))
+        bp = work / "blind/ours-paper.txt"
+        lines, dropped = drop_leaked_back_matter(bp.read_text(errors="replace").split("\n"), back)
+        if dropped:
+            bp.write_text("\n".join(lines))
+            words["ours-paper"] = blind_words(lines)
+            print(f"dropped {dropped} back-matter lines that layout printed before their heading; paper words now "
+                  f"{words['ours-paper']}")
+        words["_dropped_back_matter_lines"] = dropped
     note = (work / "blind/ours-note.txt").read_text(errors="replace").split("\n")
     g = next(i for i, l in enumerate(note) if re.match(r"Guide to the appendices$", l))
     (work / "blind/ours-note-body.txt").write_text("\n".join(note[:g]))
@@ -226,6 +286,7 @@ def main(a):
         paper_pdf, note_pdf = build(repo, work)
     words = blind(work, paper_pdf, note_pdf, repo)
     restored = words.pop("_restored_limitation_items")
+    dropped_back = words.pop("_dropped_back_matter_lines")
     head = run(["git", "-C", str(repo), "rev-parse", "HEAD"], repo, check=False).stdout.strip() or "unknown"
     now = {p: sha(work / "blind" / f"{p}.txt") for parts in PARTS.values() for p in parts}
     if a.record_coded:  # only the documents named: an uncoded document must never inherit a fresh hash
@@ -237,23 +298,33 @@ def main(a):
 
     if inv.name != "inv":
         sys.exit("--inv must be a directory named inv/ (tally.py reads H/inv)")
+    run_root = work / "run"  # the tally reads a COPY of INV here and writes its tables beside it, never into INV's tree
+    if run_root.exists():
+        shutil.rmtree(run_root)
+    shutil.copytree(inv, run_root / "inv")
     tally = load_tally()
-    tally.H, tally.T = inv.parent, work
+    tally.H, tally.T = run_root, work
     tally.WORDS.update(words)
     tally.SETS = {d: [d] for d in PARTS if all((inv / f"{p}.tsv").exists() for p in PARTS[d])}
     stale = {doc: [p for p in PARTS[doc] if coded.get(p) != now[p]] for doc in tally.SETS}
-    out = inv.parent / "tables"
-    tally.main()  # writes inv.parent/tables/rates.md, placement.md, dropped-*.txt
+    out = run_root / "tables"
+    tally.main()  # writes WORK/run/tables/rates.md, placement.md, dropped-*.txt
 
     density = {}
     for doc in tally.SETS:
         rows, bad = tally.load(doc)
         density[doc] = dict(stats(rows, words[doc]), dropped=len(bad), stale=stale[doc], words=words[doc])
     surv = {"10-25 inventories (caveat-study/inv)": survival(load_tally(), STUDY / "inv", work, words)}
-    summary = {"repo_head": head, "words": words, "restored_limitation_items": restored, "blinded_sha256": now, "density": density, "baseline_10_25": BASELINE,
+    summary = {"repo_head": head, "words": words, "restored_limitation_items": restored, "dropped_back_matter_lines": dropped_back, "blinded_sha256": now, "density": density, "baseline_10_25": BASELINE,
                "survival_mechanical_not_density": surv, "comparators": comparators(),
                "coder_spread": "about +-25% in row count (caveat-study/REPORT.md sec. 2.4)"}
     (out / "summary.json").write_text(json.dumps(summary, indent=1) + "\n")
+    if a.tables_out:  # an explicit request to publish the tables, e.g. into a committed re-measure directory
+        dest = Path(a.tables_out).resolve()
+        if dest.exists():
+            shutil.rmtree(dest)
+        shutil.copytree(out, dest)
+        print(f"copied the tables to {dest}")
 
     print(f"\n== caveat density at {head[:12]} (study code; coder spread about +-25%) ==")
     for doc, d in density.items():
@@ -303,9 +374,27 @@ def self_test():
         ok = False
     except SystemExit:
         pass
+    tex = ("\\begin{acknowledgments}\nThe authors thank the MINERvA Collaboration and the MINERvA-101 cross-section "
+           "framework~\\cite{x}. \\pubhold{funding and grant acknowledgments} AI tools are not authors.\n"
+           "\\end{acknowledgments}\n\\section*{Data availability}\nThe sixteen-cell cross section is provided. Its files "
+           "are identified in \\napp{app:release}. The $(\\Eavail,W)$ map is regenerated by a package of \\SI{16}{MB}.\n"
+           "\\bibliography{refs}\n")
+    back = back_matter_letters(tex)
+    leaked = ["THE SIXTEEN-CELL CROSS SECTION", "The data lie below the prediction in every cell.",
+              "The authors thank the MINERvA Collaboration and",
+              "the MINERvA-101 crosssection framework [12]. [HOLD:", "funding and grant acknowledgments] AI tools are",
+              "DATA AVAILABILITY", "No reported interval has validated coverage.",
+              "is provided. Its files are identified in Ref. [14], App. G. The", "(Eavail , W ) map is regenerated by a package of 16 MB.",
+              "and one more line of body text here."]
+    kept, n = drop_leaked_back_matter(leaked, back)
+    ok &= n == 4 and kept == [leaked[0], leaked[1], leaked[6], leaked[7], leaked[8], leaked[9]]  # run + heading go
+    two = drop_leaked_back_matter(["The authors thank the MINERvA Collaboration and", "is provided. Its files are "
+                                   "identified in Ref. [14], App. G. The", "(Eavail , W ) map is regenerated by a package of 16 MB."], back)
+    ok &= two[1] == 3  # a note reference and a macro print as their source: the three-line run is dropped
+    ok &= drop_leaked_back_matter(blind_ok, back) == (blind_ok, 0)  # silent on a body with no back matter
     print("SELF-TEST ::", "PASS" if ok else "FAIL", "(abstract start found and anchored; tally self-test; issue "
           "counting case-folds labels per kind; a displaced Limitations item is restored, a present one left alone, "
-          "a lost one fails)")
+          "a lost one fails; leaked back matter is dropped and body lines are kept)")
     sys.exit(0 if ok else 1)
 
 
@@ -315,6 +404,7 @@ if __name__ == "__main__":
     ap.add_argument("--repo", default=str(HERE.parents[6]), help="repository checkout (default: this file's)")
     ap.add_argument("--inv", default=str(HERE / "inv"), help="directory named inv/ holding ours-*.tsv")
     ap.add_argument("--no-build", action="store_true", help="reuse WORK/build/main_{paper,note}.pdf")
+    ap.add_argument("--tables-out", help="also copy the tables (WORK/run/tables) here; nothing else is written outside WORK")
     ap.add_argument("--allow-stale", action="store_true", help="exit 0 even if an inventory is stale")
     ap.add_argument("--record-coded", nargs="+", choices=sorted(PARTS), metavar="DOC",
                     help="record the current blinded text of DOC (ours-paper, ours-note) as the text DOC was coded on")
