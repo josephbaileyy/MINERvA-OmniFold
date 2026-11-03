@@ -1,7 +1,13 @@
 # SCOPE: the fake-data bias (A) and the estimator's rounding instability (B), scoped and priced (2026-11-02)
 
-**Asked for by** the director, under Joseph's authority, to scope and price two items that no one is working on. Both
-blind referees of 11-01 rest their verdict mainly on these two items.
+**Asked for by** the director, under Joseph's authority, to scope and price two items that no one is working on. They
+are among the items both blind referees of 11-01 list as disqualifying.
+- *Corrected by the director, 2026-11-02.* This sentence first read "rest their verdict mainly on these two items",
+  which came from the work order and is wrong.
+- Sonnet ranks the run-period item as "potentially the most important physically, and the coverage item … the most
+  important statistically" (`referee-and-qualifications-20261101/sonnet-referee-answer.txt:146`).
+- Both referees list A and B among the items that disqualify the paper together, beside unvalidated coverage and the
+  run-period block.
 
 **Provenance.** Joseph, 2026-11-02, asked whether to scope and price both:
 > yes scope and price both
@@ -357,3 +363,68 @@ re-run costs are ×K for an ensemble.
     would move to the note;
   - the coder reused issue labels across the near-duplicate sets, as it reported, so the sets were not coded blind
     to one another.
+
+## 5. The independent consult (Gemini), and where it differs from this ranking
+
+**What ran.** Run by the director, with agy, gemini-3.8-flash-high and `--sandbox`. Both files are here verbatim and
+listed in `SHA256SUMS`:
+- `CONSULT-GEMINI-PROMPT.txt` (sha256 `993878f0…`);
+- `CONSULT-GEMINI-ANSWER.txt` (`232c516d…`).
+
+**What the consult saw.** The prompt is the director's task text, then both referee reports, then this report as of
+`ed8156c1`. The referees are anonymised: Referee 1 is Sonnet and Referee 2 is Gemini.
+- The prompt file itself has no provenance line and no record of the substitution; it contains neither model name.
+- I checked the substitution by reversing it (Referee 1 → Sonnet, Referee 2 → Gemini) and diffing each section against
+  `referee-and-qualifications-20261101/{sonnet,gemini}-referee-answer.txt` and against this REPORT at `ed8156c1`.
+- They are identical up to whitespace.
+
+**This report's ranking is unchanged.** The consult differs on four points.
+
+1. **A0 and "do neither".**
+   - The consult calls A0 "unacceptable for a PRD measurement paper", and "do neither" "completely indefensible".
+   - It accepts both only under a methods-paper reframing (Referee 1's Route B, Referee 2's fallback).
+   - This report's §2 item 5 called "do neither" defensible in the sense that neither A nor B alone moves the combined
+     verdict. The consult's reading is the stricter one, and Joseph should see both.
+2. **B0.** The consult calls B0 insufficient: the referees would still require stabilization. This report agreed
+   (§1, B0: "P(changes a verdict): low"). It differs on whether B0 is worth doing first anyway.
+3. **Which candidates to probe.**
+   - The consult would test B2 (cross-fitting) and B3 (tree regularization; it would avoid "naive input
+     quantization"), and drop B1 as "a compute-heavy … brute-force band-aid".
+   - **B4 without B1 costs about 3.2–6.4 node-h** (my arithmetic from §1: about 1.6–3.2 each for B2 and B3), against
+     about 16–18 with B1.
+   - The consult agrees with the sequence: probe on simulated pseudo-data, one final estimator, everything re-run
+     once, and the coverage campaign held.
+4. **Its "missed option": merging the low-stability cells (R02, R06, R10, R15).** Its first action is to merge them
+   "to ensure stability ≥ 0.40" and re-test, "because R02 and R06 drive the GiBUU hybrid failure".
+   - **Already ruled.**
+     - "Cell merges or new cuts after the data read stay inadmissible"
+       (`DECISION-20261027-joseph-measurement-framing-and-limitation-scoping.md:45-46`).
+     - The merge outcome left F0's plan: "Joseph may still change R00–R15, since the definition is his. Any such
+       change is labelled post hoc wherever it is reported"
+       (`5dc/FD-DIRECTOR-RULINGS.md:30-33`).
+     - So a merge is Joseph's alone to make, and would be labelled post hoc.
+   - **Its factual premise is partly right, and the inference does not follow.** These are the A7 GiBUU per-cell z
+     from the committed F0b readouts, against C_total without the GiBUU vertex, plus C_resp, plus (second row)
+     C_PL,5D:
+
+     | matrix | R00 | R01 | R02 | R03 | R04 | R05 | R06 | R07 | R08 | R09 | R10 | R11 | R12 | R13 | R14 | R15 | χ²/16 | p |
+     |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+     | + C_resp (`fd/readout/fd_f0b_readout.json`) | −0.40 | +0.11 | **+4.23** | −1.04 | −0.31 | +0.09 | **+5.17** | **−2.02** | −0.87 | −0.20 | +1.57 | −0.41 | −0.17 | −0.67 | −0.14 | +1.60 | 175.13 | 8.0e-29 |
+     | reported, + C_PL,5D (`fd/with-cpl/readout/fd_f0b_readout.json`) | −0.40 | +0.11 | **+4.19** | −1.02 | −0.27 | +0.08 | **+4.53** | −1.89 | −0.87 | −0.18 | +1.55 | −0.40 | −0.16 | −0.64 | −0.13 | +1.50 | 171.01 | 5.3e-28 |
+
+     - Under the reported covariance, R02 and R06 are the only cells with |z| > 2. They are two of the four
+       low-stability cells, so that much of the claim holds.
+     - They do not carry the failure alone. Their z² sum to 38.1, and all sixteen to 49.0, against a full-covariance
+       χ² of 171.0 (my arithmetic). Most of the χ² comes from the correlated structure across cells, not from the two
+       cells' diagonal residuals.
+     - F0b's eight-cell variant (R00–R03, R08–R11) leaves out R06 and R07 and still gives 133.91 for 8 degrees of
+       freedom, p 4.38e-25 (`5dc/FD-F0b-REPORT.md`, §6).
+     - So merging R02 and R06 into neighbours would not be expected to remove the GiBUU-hybrid failure. Whether it
+       would is untested, and testing it is the post hoc change the rulings reserve to Joseph.
+     <!-- absence-ok: "untested" refers to the hypothetical merged grid the consult proposes; no claim that a result is absent from the repository -->
+
+**Also flagged by the consult:**
+- §0's "rest their verdict mainly" sentence, now corrected above.
+- §1's "A1 closes Gemini 1(ii) only in form". The consult says an outer product of the failing residuals does not meet
+  Referee 2's request "even in form". This report's conclusion, that A1 is not recommended, is the same.
+
