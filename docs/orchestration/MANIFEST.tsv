@@ -1656,6 +1656,12 @@ docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/af
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/tables/placement.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/tables/rates.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/tables/summary.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/classes.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/cutlist.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/cutlist.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/distinct_cuts.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/moves.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/inv/CODED-ON.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/inv/ours-note-app.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/inv/ours-note-body.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
