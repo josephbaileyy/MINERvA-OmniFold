@@ -1,0 +1,246 @@
+# Audit of RPD part 2 (code), independent, read-only
+
+**Audited:** worktree `rpd2-wt`, branch `code/rpd-part2-20261102`, HEAD `2e51e300`.
+**Part 2 declaration sha256 measured:** `1555b653aa709c443d8acb7ba9a9e7e6a3ba3cc2edce1ad87d6290fc1211704c` (matches expected `1555b653…`).
+**Part 1 sha256 measured:** `b3413ffc06a9df935df649d22b6cbad505640fdb7df9d6fbae5650f2c29f92f5` (matches BINDING-1).
+**Blob pins:** all 23 blobs in part 2 §7 re-measured at HEAD with `git rev-parse HEAD:<path>`: all equal to the declared digests and to `855febc2`'s. (No code file changed between the code commit and HEAD; the main merge touched only `fd_g_*`, `fd_gencmp_ea2*`.) `combine_flux_MEFHC.py` sha256 equals `COMBINER` (`1fc5c1e9…`).
+**Local test run:** `python3 -B -m unittest discover -s nd-unfolding/tests -p test_fd_rpd.py` -> `Ran 83 tests in 52.9s, OK (skipped=1)`. Matches part 2 §3.
+
+Verdict in one line: no BLOCKING defect found in the rules as coded; 5 MAJOR (two spec departures that are not declared, one missing refusal, a mutation receipt that is not representative, and un-run ROOT paths), 8 MINOR, NITs. I recommend the director not bind 2 until the MAJORs are disposed of or accepted by name.
+
+---
+
+## Findings
+
+### MAJOR
+
+**M1. N0's "effect" print is not what part 1 says, and it is not a declared deviation.** `fd_rpd.py:940-945`.
+- Part 1 §4: "If SIZE-BIAS-g fires, R2's null is re-run with b̄ added to the three small playlists, and the induced change in F and p_flux is printed."
+- Code: `gb = g.copy(); gb[small] -= b_cells; effect = {p_flux, F of gb}`. That re-tests the *observed* offsets with the bias removed. No null is re-run, and no α̂/β̂ with b̄ added is produced. The sign and object differ (observed minus bias, against null plus bias).
+- Part 2 §6 lists two deviations; this is a third. Consequence is small (the INCONCLUSIVE consequence stands either way, per part 1), but it is a stated readout.
+- Requirement: implement as written, or declare it as a deviation for acceptance.
+
+**M2. Several part-1 "printed" items are absent from the readout; none is declared.** `fd_rpd.py:889-990`, `n0_reading` 1014-1050.
+- Not produced: (a) "the detectable bias is printed in σ and in % of the real median |g_X| of 1L, 1B and 1O" (only `single_draw_sigma_cells` and `median_abs_g_small` are written; no detectable-bias value, no %); (b) "N0's 10 values of F are printed beside R2's null" (the null's F distribution is never returned by `R2.run`; only N0's F list is written); (c) "at readout the [stage-D OC] table is printed again with the measured replica σ" (§5, R1) – no code path; (d) ρ_raw and ρ_deb "each printed with ... its replica-noise reference" (R3) – none; (e) the stage-D "same table at t̄ = 7%" is produced (`at_7pct`), good.
+- All are descriptive in part 1, so no outcome moves, but the wording table's licensed R2 sentence quotes ρ_raw and an interval and part 1 says each ρ carries its noise reference.
+- Requirement: produce them, or list them as omitted with the reason.
+
+**M3. The submit stage does not refuse "a path outside $R".** `submit_fd_ct.sh:101-102`.
+- Part 1 §1: the submit stage "refuses any step whose argv lacks [--mcfile], or names a path outside $R, and a test covers that refusal."
+- Code: `m=$(... grep -c -F -- "<TAB>$B" ...)` requires only that each step line contains *a* token that starts with `$B` after a tab. A step that also names `/pscratch/.../MINERvA-OmniFold/...` (or a CFS path) in another argument passes. `$B` as a prefix also matches `$B-old/...`. The `--mcfile` check (line 104-106) is present and tested; the outside-path refusal is neither implemented nor tested (`Submit` class has no such test).
+- Evidence: I read all of `rpd-a-steps.tsv`/`rpd-b-steps.tsv`; as committed every path is under R, so this is a guard gap, not a live breach.
+- Requirement: per-argument check that every absolute path token in a step starts with `$B/` (and a test that a step naming one outside path refuses). Same for job B.
+
+**M4. The mutation receipt is not representative; the "67 of 67" is a statement about its own list.** `mutants_rpd.py`.
+- I ran 37 extra one-line mutants chosen from rules the receipt does not touch (see "Mutants I ran"): 28 of 37 survived the 83-test suite (tables below). Survivors include: T1 not divided by V2₁₂ (stage D), T3 mix at full amplitude, T MC variance dropped from the R2 noise, the √(30/29) factor dropped, T variance dropped from σ_X and σ_h,X in R1, N0's SE with ddof 0, N0's forced-UNRESOLVED applying to SIZE-BIAS-g only (SIZE-BIAS-t then does nothing), stage-D outer 500 -> 50 and inner 200 -> 20.
+- So whole classes of declared constants and conventions are unpinned by any test: every item of part 1 that §2 and §5 call "noise convention". The receipt's 6 first-pass survivors were all fixed individually, which is whack-a-mole; the structure of the list (mostly flips of existing assertions, no T-variance, no seeds, no sample sizes, almost nothing in R3, p_era, N0 reading, leak-guard coverage) is what to fix.
+- Requirement: add tests (listed under "Test gaps") and extend the receipt with at least the survivors named here, then re-run it.
+
+**M5. ROOT-dependent code is never executed by the suite.** `fd_rpd_inputs.py:275-316 (write_flux, read_flux), 342-376 (run_flux), 386-398 (loop_pots)`; test skipped at `test_fd_rpd.py:265`.
+- The one ROOT test is skipped locally, and `loop_pots` is mocked in `Check`. So the per-playlist flux files, F1's read-back, e, and the POT read from the loop have never run in any environment. Part 2 §3 says "on the cluster all must run", but nothing runs `flux` before job A is submitted other than stage S itself, and stage S is itself the first execution.
+- Stage S and F1 are login-only, free, and fail closed, so the cost of a bug is a rerun (the `fresh()` guard makes a partial `flux/` refuse). But `loop_pots` is first executed inside job A's `check` step, after ~15 min of dumps in the same lane.
+- Requirement: either run `fd_rpd_inputs.py flux` and one `check` against a ROOT-readable stub on the cluster login node as part of binding 2's preflight (no job), or state that stage S is the preflight and the first `check` is not.
+
+### MINOR
+
+**m1. C1's measured_weights threshold (deviation 1) is not derived, and a single bin-crossing row cascades.** `fd_rpd.py:619, 696-715`.
+- Deviation 1 says a row on a bin edge can fall in another bin. The effect is not "a few rows": one crossing changes `data_nd` in two bins, hence `target/d` for every row in both bins, so the share lost is (n_A + n_B)/N, not 1/N. 0.999 has no derivation.
+- Toy (my script `t4.py`, 5 axes, ~10⁴ bins, gamma-distributed coordinates, float32 round trip, 20 realizations each): P(share < 0.999) = 0/20 at 5×10⁴ rows, 0/20 at 2.5×10⁵ (min share 0.99924, close), 1/20 at 10⁶ (min 0.99874). Real playlists are ~0.2–2.7×10⁵ rows. So the spurious-FAIL risk per playlist is of order 0–5% and not zero; a FAIL stops the campaign before job B.
+- Not a scientific risk (config R ignores the key). Requirement: either measure the share on `lat_zero` itself at stage S/C before binding (read-only on staged data), or set the threshold from that measurement, or make the predicate "agrees with the rule evaluated on float64-reconstructed coordinates" if the dump can expose them.
+
+**m2. N0's small set is by e<0.03; the thresholds are t₂₉-specific.** `fd_rpd.py:915, 54, 1014-1050`.
+- Part 1 §4 defines the reading on "the three smallest-share pseudo-playlists (all with e<0.03)" -> 30 draws, t₂₉. The code takes `small = {e < 0.03}` and hard-codes 3.835/2.756. Part 1 §5 itself warns that 1O (≈0.0280) is within 7% of 0.03 "so the real value decides it". If 1O's real e is ≥ 0.03, n = 20 and the thresholds are wrong; if a fourth is below, n = 40. No assertion `len(small) == 3`; the quantile is not recomputed from n.
+- Requirement: assert 3, or compute the t_{n-1} quantiles from n (and say so).
+
+**m3. Q3 is only partly implemented.** `fd_rpd.py:905-910`.
+- Part 1: "every unfold and MC-truth integral is positive and finite on L, on H and on each reporting cell." Code: cells all `> 0` (NaN fails, +inf passes: no `isfinite`); regions checked only for the seed-42 playlist unfolds and truths, not for the 360 replicas, not for N0's 120 unfolds and truths (N0's `Dr` regions feed t). `read_truth` has no finiteness test (`read_unfold` has).
+- Requirement: `isfinite` and `>0` on cells and on L,H for every vector read.
+
+**m4. F1 is stricter than declared, and e is not computed from the loops' POT.** `fd_rpd_inputs.py:318-331, 333-340`.
+- F1 also compares `errors` and `edges` of each period flux file to 1e-12; part 1: "bin by bin ... with its POTs" (contents). 5B's committed period files' errors were built by a different script if their provenance differs; a FAIL here is a stop for a reason outside the declared F1. I could not check (no ROOT locally, flux files not in my read scope).
+- Part 1 §5: e "is computed at stage S from the staged loops' data POT and the staged Φ_X". Code uses the baseline `runEventLoopData_X.root` `POTUsed` (`per_pl[pl]["pot_data"]`). `check` later ties the loop's `dataPOTUsed` to the flux file's `DataPOTUsedForFluxWeighting` at 1e-12, so e is equal to 1e-12 if C-stage passes; but e is frozen (F1.json) and used by stage D before job A runs, i.e. before that tie is tested.
+- Requirement: say which; or read the loops' POT at stage S (a 1 s metadata read of the staged copies).
+
+**m5. Gate b, gate a: weaker than "on this deploy's records".** `fd_rpd.py:813-837`.
+- Gate b checks controls.json verdict, `fd_rpd.py` sha and the receipts' digests; it does not re-check F1 (verdict, code sha), the N0 receipts (hashed by controls but not re-hashed at the gate), or that `controls.json` was made *after* the receipts. Gate a checks existence and schema of stage0/stageD only (not their code sha, branch, or that stage D's rules were not run on a different F1). In a fresh `$R` with one deploy these are not exploitable; they are weaker than part 1's wording and than 5B's gate pattern.
+
+**m6. Stage D's time budget is measured from the reachability loop, not the stage; the verdict test uses only T1's n.** `fd_rpd.py:522-571, 592`.
+- The 2 h bound is on "each run"; `t0` starts after Grid, `common`, and both 20,000-draw OC tables. Overshoot ≲ one item. Also if the budget stops the loop, T2 and T3 have fewer outer datasets than T1 (outer-major, truth-minor); `ec_verdict` only checks T1's n ≥ 200 which is the declared rule; the probabilities for T2/T3 are printed with their own n. Fine; noting.
+- My timing: one 9,240-partition sweep is 2.5 ms on this (loaded) laptop; 600,000 sweeps ≈ 25 min + Python overhead, well inside 2 h. Readout: 12,000 sweeps ≈ 30 s.
+
+**m7. Outputs of the inputs driver do not go through the LeakGuard.** `fd_rpd_inputs.py` `write_json` for STAGED.json, F1.json, check receipts, N0 receipts.
+- Part 1: "every output passes F0's LeakGuard". F1.json holds flux contents and POTs only, and the receipts hold digests and POTs; no unfold-derived number is in any of them, so nothing leaks. But the letter is not met and the truth npz (xsec_flat ~1e-39) sits unguarded under `$R`. Same as 5B, and the readers' JSONs are guarded. Declare it or ignore it.
+
+**m8. `controls`' guard and stage D's guard are built with an empty integral list.** `fd_rpd.py:603, 810`.
+- `cp.guarded(S["f"], [])` guards against f only (and f ratios), not against any X. Stage D and the controls write no X-derived numbers, so this is correct, but it means a later edit that adds one would not be refused. Same pattern in 5B? (`ct` readers). Informational.
+
+### NIT
+- n1. Part 2 §2's test command comment names `test_fd_gencmp_e`, which the command does not run.
+- n2. `classify`'s `AssertionError` (FREE ∧ CARRIES) is unreachable for a resolved X (σ_X − σ_h < t̄/4 always); correct and harmless.
+- n3. ν₁₂ for 5B shares prints 1.8250 here; part 1 says 1.824 (rounding in part 1). Interval 0.734–2.564 matches 0.73–2.56. At E_PACK shares ν = 7.984 and 0.823–1.384 (part 1: 7.98, 0.82–1.38).
+- n4. `submit_fd_ct.sh:101`: `$B` as a bare prefix (see M3).
+- n5. Stage S `run_stage` records atime but a Linux `relatime` mount can mask an atime change; the `atime_unchanged` field is therefore weak evidence. It is advisory in the declaration.
+
+---
+
+## Spec-conformance table (part 1 rule -> code -> verdict)
+
+M = match; D = declared deviation; X = mismatch (finding); ? = cannot verify locally.
+
+| Rule (part 1) | Code | Verdict |
+|---|---|---|
+| §1 79 staged files, O_NOATIME, hash vs pin, copy deleted on mismatch | `fd_rpd_inputs.py:156-267` `stage_sources`, `noatime_copy`, `run_stage` | M. Count 79 recomputed (12+24+1+33+3+2+2+1+1). All 12 ZERO_LOOPS shas appear in 5B's committed merge receipts; 24 BASELINE shas equal `verify_c04.json` by path; PROD `d40aea69…` in `periods.py`; check_PC, MP1_ZERO, S1, C_resp pins equal `fd_ct_readers.PINS`. |
+| §1 no pre-existing path opened in place | `flux` (BASE reset), loops/dumps staged; readers use staged | M for code audited. Unaudited: transitive imports of `unfold_*` (no pscratch default opened at import in the files grep'd: s5p_numerics, s5c_unfold, s5e_*, s5n_pseudo, s5p_truths, s1_assemble). Tool defaults: `nn_dump_inputs.py:35` and `s5p_input_dumps.py:202` default `--mcfile` to pscratch; every step passes it (committed tsv). |
+| §1 submit refuses an argv lacking --mcfile **or naming a path outside R** | `submit_fd_ct.sh:101-106` | X (M3): second half missing |
+| §2 per-playlist chain, 12 × (dump, lateral, check) | `make_rpd_tables.py:54-66` | M. `check`/`unfold` re-implemented in `fd_rpd_inputs` rather than calling `fd_ct_period_inputs.py check/unfold` (§1.1 table of part 2 says so; not in §6's list of deviations). Equivalent content verified by reading both (`fd_ct_period_inputs.py:236-294`) except: the per-period "flux constant over p_T" is moved to F1. |
+| §2 seeds 4000+100i+k, i=1..12, k=1..30; seed 42 | `fd_rpd.py:46-47` | M. 1A 4101-4130 … 1P 5201-5230, disjoint from 1001-3010 (5B) and 3001 (K2′). |
+| §2 unfold: config R, 5 iters, data, seed 42 | `fd_rpd_inputs.py:~565` | M |
+| §2 T not resampled; Σw² per cell/region added to every σ and diagonal | `fd_rpd.py:871-886 t_noise`, `925-928 noise` | M by reading; **no test would fail without it** (M4) |
+| §2 s5p_numerics byte-identical to 5B | blob `fa4781ed…` | M |
+| §3 L=[1.5,8), H=[8,15), reporting-cell fine cells only | `fd_rpd.py:90-121 Grid` | M |
+| §3 step s_{Y/Z} | `:124-126 step` | M |
+| §3 σ₀ RMS about s₀ of 10 replica-pair steps, no ddof | `:436-437` | M |
+| §3 SEES s₀ ≥ 3.47% and z ≥ 5; ABSENT |z|<3; OTHER | `:50, 420-426` (0.0694/2 = 0.0347) | M |
+| §4 F1 periods and ALL, 1e-12, POTs | `fd_rpd_inputs.py:318-331, 342-376` | M (+ errors/edges, m4); ? ROOT paths (M5) |
+| §4 C1 per-key predicates (concat bitwise; weights × s_X/s_ALL, exact zeros; histograms Σ(s_ALL/s_X)H; data_pot; globals; flux) | `fd_rpd.py:661-693` | M for each key. `s_X = data_pot/mc_pot` from loop; `s_ALL` as Σ/Σ. Dtype included in "bitwise" via `same_array`. |
+| §4 C1 measured_weights | `:696-715`, share ≥ 0.999 | D (deviation 1); see m1 |
+| §4 K2′ array_equal of seed 42 and replica 3001 | `:718-731` | M |
+| §4 N0 build: 10 partitions, seeds 20261102+p, multinomial at e, per-event weights unchanged, data_pot e×ALL, flux ALL's, ratio-preserving denom_nd, own bkg_nd, 120 unfolds seed 42 | `fd_rpd_inputs.py:483-512, 515-558` | M. Draw order data, signal, background from one generator (deterministic). |
+| §4 N0-P: bitwise reorder via stored int8 assignment, row counts, POT sum, histogram sums 1e-9, 5σ shares, bkg meta, completeness equal 1e-12 and denom=0⇒O=0, globals, measured_weights present | `fd_rpd.py:734-793` | M. Weak spot: per-pseudo `bkg_nd` is only tested through the sum (a mis-split with the right sum passes); no check of the int8 dtype or value range of the assignment (a bad value fails the bitwise reorder anyway). |
+| §4 N0 reading: 30 draws, b̄ with SE = SD(ddof 1)/√30, 3.835, 2.756 | `:1014-1050, 54` | M (ddof tested by no test, m4/M4); m2 for n |
+| §4 N0 consequences by trigger | `:1066-1080`, `:326-337` | M. SIZE-BIAS-g ⇒ R2 INCONCLUSIVE and forced UNRESOLVED; t alone ⇒ forced UNRESOLVED only. **No test for the t-only branch** (M4). |
+| §4 N0 effect re-run; detectable bias in σ and %; F beside null; slopes | `:940-945`, `1014-1050` | X (M1, M2); slopes printed M |
+| §4 Gates (job A after F1 + stage 0 + stage D; B after C1, K2′, N0-P) | `:813-837`, submit | M (m5) |
+| §4 Q3 | `:896-910` | X partial (m3) |
+| §4 Leak guard on every output | `cp.guarded` + `ct.write` | M for the readers; m7 for the driver |
+| §5 e from staged data POT × Φ; asserts p_T-flat | `exposure_shares` + F1 `spread ≤ 1e-14` | M/m4 (POT source). Readout does not itself assert flatness; it requires an F1 PASS, which does. |
+| §5 R1 A*, PB*, t_X, t̄, h_X; leave-one-out | `:129-143` | M |
+| §5 R1 noise: replica SD ddof 1 about own mean ⊕ T variance, first order | `:1052-1080`, `871-886` | M by reading; derivative step 1e-6 declared. `t_noise` has **zero tests** and survived removal (M4) |
+| §5 R1 gate t̄>0 ∧ t̄/σ ≥ 3 | `:1072` | M |
+| §5 classes: UNRESOLVED (σ ≥ t̄/4 or forced by SIZE-BIAS and e<0.03), FREE ≤2σ, CARRIES h ≥ 2σ_h, PARTIAL | `:146-155` | M |
+| §5 patterns, ordered, exactly one outcome | `:158-167` | M. I re-enumerated 4⁹ = 262,144 assignments (1N–1P fixed): PERIOD-WIDE 252, SUBSET 756, OTHER 261,136. |
+| §5 stage D model, truths, σ_u, 20,000 draws, seed +2000, rules 0.5/0.5, 7% table | `:459-514, 573-612` | M. Note the constants are reachable only through `run_staged` args; 20000 and 500/200 survived mutation (M4). |
+| §5 R2 offsets, F, Q_tot, 9,240 partitions, ties counted, π_flux included | `:211-232, 269-290` | M. `F_all` verified algebraically: Q_b = Σ_g 1ᵀG1/E_g, Q_tot = ΣG_XX/e_X. p ties at relative 1e-12 (not bit-exact; harmless). |
+| §5 R2 null/power: μ = observed m (cancels), ε = replica deviation × √(30/29) at random + T var, calibration a∈{0,.5,1,2}, α̂ ≤ 0.0646 (= 0.05+3√(.05·.95/2000) = 0.06462), S1 with c, S2, 2,000 datasets, seed 20261102 | `:298-322, 889-945` | M by reading. Σ_δ, PSD projection, c formula all as written. √(30/29), T var, a-scale list, seeds: survive mutation (M4). |
+| §5 p_era over 83,160 partitions of (5,2,2,3) | `:932-936` (uses sizes 5,3,2,2 in a different group order; same set) | M. 83,160 recomputed, unique. **No test touches p_era.** |
+| §5 outcomes order | `:325-335` | M |
+| §5 plug-ins, β̂₁ ≥ 0.80 | `:325-335` | M |
+| §5 reachability T1/T2/T3, 500 outer × (200+200), seed +3000, gate off, α̂ at 200 printed | `:522-571` | M with D (deviation 2: α̂ on first 25 outer). T1 = C_PL5D_rel/V2 verified; T3 halves each. `T1 not /V2` and `T3 full amplitude` survive. |
+| §5 R3 block, k₁₂, debias, ν₁₂, interval, ρ_raw, ρ_deb, per-cell ratios | `:947-990` | M for formulas; noise reference X (M2). **No test touches R3's numbers.** |
+| §5 compute bounds | measured | OK (m6) |
+| §6 wording needs: per-playlist classes, lists of 1G/1L/1M, 1A–1F, unresolved, forced list, dropped flag, R2 outcome, ρ_raw, interval, p_era | `r1_reading` returns all 12 classes, `forced_unresolved_by_N0`, `sentence_dropped_at_stage_D`; R3 returns ρ and interval | M. Lists must be derived by the paper lane from `classes`; nothing generates the lists (fine, "paper lane drafts"). `sentence_dropped_at_stage_D` is only True when the pattern that occurred is the dropped one: if PERIOD-WIDE is dropped and the readout gives SUBSET, nothing is flagged for PERIOD-WIDE (correct reading of §6.3 last row). |
+| §7 price: A ≤ 1 h, B ≤ 2 h, 3.0 node-h | `submit_fd_ct.sh:84,93`, `packing.json` | M. Fullest lanes 869 s (A) and 4,622 s (B). |
+| §8 R new, clone fresh, no CFS | `$R` in tables, no `/global/cfs` anywhere in the files | M |
+
+---
+
+## Part 2's own claims
+
+**Are the two declared deviations the only departures?** No. Undeclared departures:
+1. M1 (N0 effect).
+2. M2 (five printed items omitted).
+3. M3 (outside-path refusal).
+4. m4 (F1 compares errors/edges; e from baseline Data POT, not the loops').
+5. m3 (Q3 partial).
+6. `check` and `unfold` are re-implemented (declared as code in §1.1, not as a departure from part 1's "5B's tools"); equivalent on reading.
+7. m2: N0's set is "e<0.03", not "the three smallest".
+
+**"Settled within part 1's text" items.**
+- 5B's merge bypassed: within part 1 ("Part 2 settles whether 5B's merge runs ... or is bypassed"). Yes.
+- Per-playlist flux built by `fd_rpd_inputs.flux` with the pinned combiner and `BASE` reset: within (§1 says "Part 2 must therefore point the reader at $R/staged/, without editing the pinned combiner, and test that"). Test exists but is the skipped ROOT one (M5).
+- C1's `flux` key compared with F1's recorded bin contents rather than calling `u2d.load_flux_bins`: part 1 words it as "equal ... to `u2d.load_flux_bins(Φ_X, ..., <the dump's p_T edges>)`". `load_flux_bins` (`unfold_2d_omnifold_unbinned.py:129-145`) returns `GetBinContent` unchanged and raises if the bin count differs from the dump's edges, so the comparison is equivalent **provided** the dump's p_T edges have the flux file's bin count (a mismatch raises in the dump). Acceptable, but "settled within" slightly overstates: part 1 named the function.
+- N0 `measured_weights` carried from ALL: within (config R does not read; confirmed: `s5p_numerics.py:112-116`, `s5e_trace.py:438-442`, `unf_inputs` replaces `measured_weights` by the refinement).
+- T variance by numerical derivative at 1e-6: within ("propagated to first order").
+- N0 step reference: each partition's pseudo-1A–1F with leave-one-out: within ("each against its own partition's pseudo-A*").
+- Stage D's R1 model without N0's UNRESOLVED clause: within (N0 does not exist at stage D). Part 1 §5 says the OC model "uses no playlist number".
+- Run directory named in the tables (`fd-rpd-20261103`): part 1 §8 says `$R = $P/fd-rpd-<date>/`; the date is now frozen in the committed tsv. Within, but a later run date means a table regeneration and new blob pins (§7 lists the tsv blobs).
+
+---
+
+## Correctness checks done (no defect unless listed above)
+
+- **Grid / regions:** `wL`,`wH` are volume-weighted indicator vectors over fine cells that map to a reporting cell with `lo ≥ edge_lo, hi ≤ edge_hi`; fine pz grid has edges at 1.5, 8 and 15 (asserted at construction). Fine shape (14,16,7,7,6) = 65,856 cells; 500 vectors are ~0.3 GB: login memory fine.
+- **Permutations:** `partitions((6,3,3))` = 9,240; `partitions((5,3,2,2))` = 83,160, all unique; observed π is found exactly once (`find`).
+- **Stage 0 / OC:** `σ_u² = σ₀²/(1/E_PB+1/E_PA)` reproduces σ₀ (Var of an exposure-weighted mean of u ~ σ_u²/e is σ_u²/E). Rows of the linear map are right for t_X (leave-one-out), t̄, h_X.
+- **Replica-noise resampling:** `dev = (v/mean − 1) × √(30/29)`, one replica per playlist per dataset at random, plus Gaussian T term from `Σw²`-based relative variance per cell. Relative throughout; no relative/absolute mix found. `g_5b_noise_sigma` (committed 5B readout, sha `a5b17895…`) is relative (values 0.1–0.7%).
+- **N0 denom_nd:** `dn_all·O_k/O_ALL` where O_ALL>0 else `e_k·dn_all`; O is formed as `s5c_unfold.unfold` forms `ofin` (float32 `MCgen[pass_truth]`, `w_truth`, `np.histogramdd`); completeness is preserved per cell by construction and tested.
+- **C1 predicates against what the dumps write:** `nn_dump_inputs.py` and `s5p_input_dumps.py lateral` write the same keys as `NPZ_KEYS`; lateral `measured` is float32, `bkg_reco` float64 (no cast), `bkg_nd` weighted by `bkg_w`, `meta.omnifile` = the staged loop path (matches `str(a.r/...)` if `--r` is given identically: it is, from the tsv). `data_pot` is the loop's `dataPOTUsed`.
+- **K2′:** compares `xsec_flat` with `np.array_equal`; meta (seed, construction, input digests, this deploy's `s5p_numerics.py` sha) checked on this deploy's product via `check_meta`; 5B's reference only by staged digest.
+- **Lane tables:** 48 job-A steps (12×3 + 2 + 10); 492 job-B steps = 12×31 + 120; every unfold appears once (counted: 61/62 steps per lane, names unique); seeds 4101… per playlist as declared; `--mcfile $R/flux/…` on all 24 dump steps. Packing model: B fullest lane 4,622 s vs the 7,200 s limit (36% margin); the model's intercept (10 s) agrees with a 3-point fit of 5B's logged times (slope ≈ 730 s per unit e, intercept ≈ 13 s). A: 869 s vs 3,600 s. 8 lanes × 56 GB = 448 GB on one node, as 5B.
+- **Submit, bash 3.2 and Linux:** `$'\t'` patterns, `set -eo pipefail` (no `-u`; `MAKE=()` is safe), `grep -c … || true`; run in bash 3.2 (macOS) by the tests and nothing here is bash 4-only.
+- **Writes only under R / nothing to CFS:** no `/global/cfs` in any part-2 file; `sbatch --output` under `$B/logs`; all step outputs under `$R`. `__pycache__` goes under the deploy (inside R).
+- **Login memory:** C1 holds `lat_zero` + `lat_zero_bkg` + 12 lat + 12 bkg fully decompressed (≈ 2× ALL); N0-P holds ALL + 12 pseudo + 12 pseudo-bkg per partition, partitions sequential. Order of a few GB each; fine on a login node, but no explicit bound is stated in part 2 (the declaration asks for bounds; none is given for C1/N0-P).
+
+---
+
+## Test gaps (rules no test exercises, or exercises in one direction only)
+
+Confirmed by grep (zero occurrences in `test_fd_rpd.py`): `t_noise`, `p_era`, `SIZE_BIAS_t`, `rho_raw`, `rho_deb`, `beta2`, `k12`, `C_PL12`, `psd_discarded`, `single_draw`, `slope`, `forced_unresolved`, `sentence_dropped`, `at_7pct`, `n0_reading`, `isfinite`.
+
+1. T MC variance in R1 (σ_X, σ_h,X, σ(t̄)): survives removal.
+2. T MC variance in R2's noise and the √(30/29): survive removal.
+3. N0's SE (ddof) and the t-only branch (forced UNRESOLVED on SIZE-BIAS-t).
+4. N0's small-set count (m2), n0 effect, detectable-bias print, slopes.
+5. p_era partitions and p_era value.
+6. R3 (C_PL12 raw/debiased, k₁₂, ρ_raw, ρ_deb, interval at the 12-playlist ν).
+7. Stage D: sample sizes 500/200/20,000, seed offsets, T1 scaling by V2₁₂, T3 amplitude, S0 α̂ outer count, the first-25 rule.
+8. Stage D's use of the real `fd_ct_5b_periods.json` (the test builds a fixture; no test that the committed key paths exist: `g_vs_5A.periods.P.g_5b_noise_sigma`, `C_PL5D.C_PL5D_rel`, `constants.exposure_share`). I read them: they exist.
+9. Q3 finite/positivity on replicas, regions, N0.
+10. The submit stage: outside-path refusal (M3); a step naming `--mcfile` outside `$R/flux/` (only the missing case is tested); rpd-b refusals other than "gate"; the `$B`-prefix collision.
+11. Controls' "bkg_nd per pseudo-playlist" (only the sum).
+12. `loop_pots`, `write_flux`, `read_flux`, `run_flux` end-to-end (M5).
+13. The `unfold` command line is tested against the declared argv but `--threads` (32 by default) is not part of any pinned/tested value.
+14. Direction check: tests that the C1/N0-P/K2′ gates PASS on a correct case and FAIL on a one-entry defect exist (good, both directions). Stage-0 and R2 outcome rules are tested both ways. The calibration gate is tested only at its threshold constant and at one fixture.
+
+### Mutants I ran (extra to the receipt's 67)
+
+Each is a one-line change to a copy of the worktree (the repository was not edited); same test command as the receipt. First batch run on clean copies:
+
+| mutant | result |
+|---|---|
+| N0_SMALL 0.03 -> 0.05 (readers) | killed |
+| N0's forced-UNRESOLVED applies for SIZE-BIAS-g only | SURVIVED |
+| stage D T1 = psd(C_PL5D_rel) without ÷V2₁₂ | SURVIVED |
+| stage D T3 at full amplitude (no ÷√2) | SURVIVED |
+| R2 noise without the √(30/29) | SURVIVED |
+| R2 noise without the T MC variance | SURVIVED |
+| N0 SE with ddof 0 | SURVIVED |
+| R1 σ_X without the T variance | SURVIVED |
+| R1 σ_h,X without the T variance | SURVIVED |
+
+Second batch (28 mutants, clean copies; all copies verified restored): **8 killed, 20 survived.**
+
+Killed: ALPHA_OUTER 25->0, beta 0.80->0.50, gate n 2000->200, K2 seeds drop 3001, PSD projection skipped, R1_RES 4->3, SEES_Z 5->4, unfold estimator seed 42->43.
+
+Survived (the suite is green with these changes): stage-D outer 500->50; stage-D inner 200->20; stage-D OC seed; R2 readout seed; N0 seed offset 20261102->20261103; `k12` = V2 instead of V2/(1-V2); ρ_raw using the debiased 5D denominator; era groups mis-assigned; stage-0 replica pairs reversed (PB replicas paired in reverse order); R2 noise SD not scaled by sqrt(E_P/e_X) in stage D; R1_GATE 3->2; C1 5-sigma share bound 5->50; C1 measured_weights share 0.999->0 (deviation 1 predicate unexercised); Q3 cell positivity check removed; leak guard built with no integrals in the readout; N0 effect sign flipped; SIZE-BIAS-t ignored; forced-UNRESOLVED disabled in classify call; L region lower edge 1.5->1.0 (possibly equivalent if the fine grid has no cells below 1.5 mapped; not checked); submit's "every step names $B" count replaced by a constant.
+
+Total over my 37 extra mutants: 28 survived. Seeds, sample sizes, the R1 gate, the Q3 check, the readout leak-guard coverage, R3's k12 and rho, and the submit step-count guard are unpinned.
+
+---
+
+## Recomputed numbers
+
+- sha256: part 2 `1555b653…` (full above); part 1 `b3413ffc…`; `fd_ct_5b_periods.json` `a5b17895…` (equals `READOUT_5B`).
+- Tests: 83 run, 1 skipped, 52.9 s locally.
+- t₂₉ quantiles: 3.8350 (0.01/16, two-sided) and 2.7564 (0.01): match 3.835 and 2.756.
+- Gate: 0.05 + 3√(0.05·0.95/2000) = 0.06462.
+- N0 power (noncentral t, df 29, 30 draws): cell bias 0.75σ -> 0.608 (part 1: 0.61); step bias 0.5σ -> 0.503, 0.75σ -> 0.902 (part 1: 0.50, 0.90). The 1.0σ cell value (part 1: 0.93) returned NaN in my one-line call (scipy nct at a large noncentrality), not recomputed.
+- N0 family false-fire: 1 − (1 − 0.01/16)^16 = 0.00995; plus the step trigger 0.01 = 0.0200 (part 1: about 0.02).
+- ν (5B shares 0.5334/0.2945/0.1721): 1.825, interval 0.734–2.564; at E_PACK shares: 7.984, 0.823–1.384.
+- P(all six 1A–1F FREE at 2σ): 0.9545⁶ = 0.756 (part 1's "about 0.75").
+- Pattern enumeration over all 4⁹ class assignments of 1A–1M: PERIOD-WIDE 252, SUBSET 756, OTHER 261,136 (sum 262,144).
+- Partitions: 9,240 and 83,160, all unique. One 9,240-partition sweep: 2.47 ms (laptop under load ~35).
+- Stage D budget: 3 × 500 × 400 = 600,000 sweeps ≈ 25 min plus overhead; readout ≈ 12,000 sweeps ≈ 30 s.
+- Packing: job A fullest lane 868.9 s; job B 4,621.6 s; 8 lanes each.
+- Pins: 79 staged; 23 blob pins equal at HEAD; all 24 BASELINE shas equal Stage B's `verify_c04.json` by path.
+
+---
+
+## What the director needs before binding 2
+
+1. Dispose of M1–M5 (each a code change or a named acceptance). M3 and M5 are the ones that can cost compute or break a hard constraint.
+2. Decide the C1 threshold question (m1) by measuring the share on staged `lat_zero` at stage S, or accept the 0–5% risk of a spurious stop.
+3. Decide whether F1's extra `errors`/`edges` comparison stays (m4); if 5B's period files were not built by the same combiner arithmetic, F1 will stop at stage S for a reason the declaration never named.
+4. Fix N0's set definition (m2): the part-1 text defines the reading on three playlists; the code defines it by e<0.03 and the real 1O share is within 7% of the cut.
+5. Disclosed risk, not a defect: calibration receipt shows 2 of 8 realizations above the 0.0646 gate at 30 replicas (mean α̂ ≈ 0.056), so R2 can come out INCONCLUSIVE on calibration alone, as part 1 permits.
+6. Re-pin: any fix changes `fd_rpd*.py`, tests, tables' sha and the declaration's §7 blob list; part 2's sha will change.

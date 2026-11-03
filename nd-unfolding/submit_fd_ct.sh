@@ -8,6 +8,10 @@
 #                                                   dumps, checks, ALL unfold)
 #   submit_fd_ct.sh 5b-periods <deploy> <pin> <B>   only after the pooled control PASSed: one node, eight lanes of
 #                                                   5b-periods-steps.tsv (33 period unfolds)
+#   submit_fd_ct.sh rpd-a <deploy> <pin> <R>        RPD job A, only after stage S, stage 0 and stage D: one node,
+#                                                   eight lanes of rpd-a-steps.tsv (12 playlists' inputs, K2', N0)
+#   submit_fd_ct.sh rpd-b <deploy> <pin> <R>        RPD job B, only after the controls PASSed: one node, eight lanes
+#                                                   of rpd-b-steps.tsv (372 playlist and 120 N0 unfolds)
 #
 # Every job: account m3246, QOS regular (never premium), constraint cpu, one exclusive node, --no-requeue, no GPU.
 set -eo pipefail
@@ -68,6 +72,48 @@ case "$STAGE" in
     sbatch "${COMMON[@]}" --time="$TIME" --job-name="$JOB" \
       "$D/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh" \
       "$D" "$PIN" "$TABLE" "$LANES" "$CPT" "$MEM" 0 "$LAST" none ;;
+  rpd-a|rpd-b)
+    # FD-RPD-DECLARATION.md part 2 section 2 (B is the run directory R). As 5B: every refusal before anything is
+    # created, and no resume. Job A only after stage S (staged/, flux/ with F1's PASS) and the stage 0 and stage D
+    # records; job B only after this deploy's controls PASSed
+    RELR=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd
+    [ "$(git -C "$D" rev-parse HEAD)" = "$PIN" ] || { echo "refusing: $D is not at $PIN" >&2; exit 2; }
+    if [ -n "${FD_CT_PY:-}" ]; then PY=("$FD_CT_PY"); else
+      PY=(env -u PYTHONPATH /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 -I -B); fi
+    if [ "$STAGE" = rpd-a ]; then
+      TABLE="$D/$RELR/tasks-rpd-a.tsv"; STEPS="$D/$RELR/rpd-a-steps.tsv"; N=48; TIME=01:00:00; JOB=fd_rpd_a
+      LANES="$B/lanes-a"; MAKE=(dumps truth inputs n0)
+      for d in dumps truth inputs n0 unf-k2 lanes-a; do
+        [ ! -e "$B/$d" ] || { echo "refusing: $B/$d exists" >&2; exit 2; }
+      done
+      for d in staged flux control; do
+        [ -d "$B/$d" ] || { echo "refusing: $B/$d is missing (stage S, stage 0 and stage D come first)" >&2; exit 2; }
+      done
+    else
+      TABLE="$D/$RELR/tasks-rpd-b.tsv"; STEPS="$D/$RELR/rpd-b-steps.tsv"; N=492; TIME=02:00:00; JOB=fd_rpd_b
+      LANES="$B/lanes-b"; MAKE=()
+      for d in unf unf-n0 lanes-b; do
+        [ ! -e "$B/$d" ] || { echo "refusing: $B/$d exists" >&2; exit 2; }
+      done
+    fi
+    [ -f "$TABLE" ] && [ -f "$STEPS" ] || { echo "refusing: $TABLE or $STEPS is missing" >&2; exit 2; }
+    n=$(grep -v '^#' "$STEPS" | grep -c . || true)
+    m=$(grep -v '^#' "$STEPS" | grep -c -F -- "	$B" || true)
+    [ "$n" -eq "$N" ] && [ "$m" -eq "$N" ] || { echo "refusing: $n steps, $m of them naming $B" >&2; exit 2; }
+    # every absolute path a step names is under R (part 1 section 1)
+    out=$(grep -v '^#' "$STEPS" | tr '\t' '\n' | awk -v b="$B/" -v r="$B" 'substr($0, 1, 1) == "/" && $0 != r && index($0, b) != 1' | head -1 || true)
+    [ -z "$out" ] || { echo "refusing: a step names a path outside $B: $out" >&2; exit 2; }
+    # every dump step passes --mcfile explicitly, under R (part 1 section 1: no default path is ever opened)
+    nd=$(grep -v '^#' "$STEPS" | grep -c -E $'\t(nn_dump_inputs|s5p_input_dumps)\\.py\t' || true)
+    md=$(grep -v '^#' "$STEPS" | grep -E $'\t(nn_dump_inputs|s5p_input_dumps)\\.py\t' | grep -c -F -- "--mcfile	$B/flux/" || true)
+    [ "$nd" -eq "$md" ] || { echo "refusing: $nd dump steps, $md of them with --mcfile under $B/flux/" >&2; exit 2; }
+    "${PY[@]}" "$D/nd-unfolding/fd_rpd.py" gate --stage "${STAGE#rpd-}" --r "$B" > "$B/control/gate-${STAGE}.out" 2>&1 \
+      || { echo "refusing: the gate did not pass (see $B/control/gate-${STAGE}.out)" >&2; exit 2; }
+    mkdir -p "$B/logs"
+    for d in "${MAKE[@]}"; do mkdir "$B/$d"; done
+    sbatch "${COMMON[@]}" --time="$TIME" --job-name="$JOB" \
+      "$D/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh" \
+      "$D" "$PIN" "$TABLE" "$LANES" 32 56G 0 7 none ;;
   *)
     echo "refusing: unknown stage $STAGE" >&2; exit 2 ;;
 esac
