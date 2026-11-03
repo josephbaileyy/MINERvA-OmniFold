@@ -1,0 +1,31 @@
+COV2D clipping probe C2: the reading, fixed before the run (2026-11-03). Implemented by clip_probe2.reading, whose
+constants are R1_*, POS_*, OPT3_*, VAR_* and MISMATCH_BOUND; test_clip_probe2.Reading tests each edge in both
+directions. The reading decides only what the director recommends to Joseph. Joseph decides.
+
+Source: the Sonnet consult's Q3 (consult/ANSWER-2.txt:45-47), verbatim:
+  - "Choose (1) if median |R_c| <= 0.2 sigma_Q in every cell and p90 <= 0.4 sigma_Q in at least 90% of cells."
+  - "Prefer positivity-preserving composition if median |R_c| > 0.3 sigma_Q in more than about 10% of cells, or p90
+     exceeds about 0.5-0.7 sigma_Q. This holds provided its diagonal variance ratio stays within about +-20% of 1."
+  - "Prefer (3) if median |R_c| >= 0.7 sigma_Q in about 20% or more of cells and no composition passes the +-20-25%
+     variance gate. It also applies if the row mismatch cannot be bounded."
+
+Numbers fixed where the consult gives a range or leaves a term open (each is my choice, stated here before the run):
+  - "about 10%" -> more than 10.0% of the 205 cells (21 or more).
+  - "about 0.5-0.7 sigma_Q" -> p90 |R_c| > 0.6 sigma_Q in any one cell.
+  - "about 20% or more" -> 20.0% or more of the 205 cells (41 or more).
+  - "+-20%" and "+-20-25%" -> |ratio - 1| <= 0.20.
+  - "stays within" a variance gate -> in at least 95% of the 205 cells. Reason: with 300 draws the ratio's sampling
+    standard error is about sqrt(2/299) = 0.08, so an every-cell rule would fail about 2-3 cells by chance alone.
+  - "the row mismatch cannot be bounded" -> the unmatched w_truth share is not computable, or exceeds 5% in any of
+    the 205 cells, in either tree.
+  - option (1)'s own variance gate: the consult gates (1) "on R_c and the variance-ratio probe passing", so (1) also
+    needs its clipped-composition ratio to pass the gate.
+  - "every cell" and the shares are over the 205 reported cells; R_c is option (1)'s signed residual
+    m_seen/S - m_all/N, read by its magnitude; units sigma_Q are Q_R's relative per-cell sigma (a labelled proxy for
+    C_T's, which does not exist before the blocks are remade).
+  - The variance ratio's denominator is the truth-level image of C_T's drawn blocks, sum_b Var_b(truth count) under
+    each band's draw law; C_T itself is the unfolded-level matrix and is built only after the remade blocks exist.
+
+Order of evaluation, per tune: option (3) if it applies; else option (1) if it qualifies; else the
+positivity-preserving composition if preferred; else "no rule of the reading fires". If the two tunes read
+differently, both readings are reported.

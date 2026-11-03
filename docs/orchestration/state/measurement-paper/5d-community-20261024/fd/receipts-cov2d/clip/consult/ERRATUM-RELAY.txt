@@ -1,0 +1,10 @@
+An erratum from the analysis lane, to fold into your answer. If you've finished, revise it.
+
+The per-truth-cell offsets in the prompt (largest median 0.26 σ_Q, p90 0.5, max 1.2–1.4) understate option (a)'s offset by about 1/ε_c, where ε_c is the cell's reconstruction efficiency (< 1).
+- They were computed as clipped seen mass over the cell's FULL truth count, m_seen/N_c.
+- The unfolding corrects efficiency with the nominal simulation, so the first-order offset is m_seen/S_c, where S_c is the seen signal in cell c: C1's number × N_c/S_c.
+- The true option (a) offsets are therefore larger, by an amount not yet measured.
+- A new probe will measure (i) option (a)'s corrected offset and (ii) option (1)'s residual, m_seen/S_c − m_all/N_c. Here m_all is the negative truth mass that option (1) would clip.
+- The reco-cell numbers and the clipped mass fractions are unaffected.
+
+Please say whether this changes your ranking. Also say what value of option (1)'s residual, in σ_Q, would make you prefer a positivity-preserving composition or option (3) instead.

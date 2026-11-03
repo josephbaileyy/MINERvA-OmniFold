@@ -1,0 +1,56 @@
+**Erratum first.** The ranking order does not change, but the case for (1) is no longer settled. The lane's cancellation argument holds only if the clipped mass is seen at the nominal efficiency. The remaining error is the residual R_c = m_seen/S_c − m_all/N_c, which has not been measured.
+
+- **Option (a) is worse than stated.** Every offset in the prompt should be divided by ε_c. For the worst cells (pT 0.33–0.47, high p||), efficiency is plausibly low. As an illustration only, ε_c ≈ 0.3–0.5 would turn a 0.26σ median into roughly 0.5–0.9σ, and the 1.2–1.4σ maxima into several σ. These are not measured values.
+- **The "comparable offset" trigger is now clearly met.** The pre-decided rule says the lead decides again, so (a) should be reopened regardless of the other options.
+- **Option (2) is hit hardest.** Its labelling rule would use the uncorrected offsets. That would under-label exactly the low-efficiency cells and call their offset-driven miscoverage method failure. Any (2) reading must be re-derived from m_seen/S_c.
+- **Option (1) now depends on one measurement.** R_c is zero only if negative mass is spread across seen and unseen rows in proportion to the nominal efficiency. I would expect R_c to be much smaller than the (a) offset, but I would not assume it.
+  - Seen rows are a kinematically different subpopulation in low-efficiency cells.
+  - If reco-side bands compound on reco weights but not on truth weights, R_c is structurally nonzero and one-signed.
+
+**Q1. Is option (1) sound, and in which direction does it bias?**
+Two effects act in opposite directions.
+- **Truncation.** Clipping shrinks the downward tail of the nature's systematic shift. The nature's spread is then below what C_T describes, which biases toward over-coverage (a conservative, lower-power test). It is second order in the clipped mass. Clipping also adds a mild cross-band nonlinearity that C_T lacks.
+- **Residual R_c.** This is first order and acts as a bias. A bias of either sign lowers coverage, so it produces false method failures.
+
+For a 68% interval, a bias b gives these coverage drops. The first comes from the 0.10–0.13 coverage resolution, the other three from the normal distribution.
+
+| Bias b (σ_Q) | Coverage drop |
+|---|---|
+| 0.3 | about 0.02 |
+| 0.5 | about 0.06 |
+| 0.7 | about 0.11 (one resolution unit) |
+| 1.0 | about 0.21 |
+
+Option (1) beats (2) if |R_c| is much smaller than the corrected (a) offset. That is likely but unmeasured. The two effects can partly mask each other, so both must be reported separately.
+
+**Q2. Better options?**
+- **Multiplicative or log-space composition** (w = a_CV·∏ a_uj/a_CV). Rows stay nonnegative, and the mean is preserved for independent mean-zero shifts.
+  - It adds cross-band terms, so C_T is no longer the exact target. The row-level variance excess is roughly exp(Σσ_j²) − 1 against Σσ_j².
+  - With ten bands of about 10% shifts the excess is negligible. With 35 bands at 20% it exceeds 2x.
+  - It still needs a floor for the 0.27% of rows with a single-universe weight at or below zero. Log-space cannot handle exact zeros.
+  - A variance excess makes C_T look under-covering, which is a false failure.
+- **Capping band shifts** so the sum cannot pass −100%. This is useless in practice: with 35 bands the cap would be about 3% per band, which destroys the physics. It would also truncate each band, so C_T would have to be rebuilt from the capped universes.
+- **Rejecting draws.** This selects natures with less downward shift, which has the same truncation bias as clipping, now conditional. It is no better than (1).
+- **Whichever option is chosen:** compute the per-cell ratio var_natures(truth_c)/C_T,cc over the 300 draws. This is cheap, needs no new compute, and directly measures how faithful each nature distribution is to C_T.
+- **Do not drop cells by offset size after seeing coverage.** That lets measurability choose the specification.
+
+**Q3. What to quantify before binding, and thresholds**
+Quantify these, per tune, at expected counts:
+1. Corrected (a) offset m_seen/S_c in σ_Q.
+2. Signed residual R_c in σ_Q: median, p90 and max over draws.
+3. The var_natures/C_T diagonal ratio under first-order composition, option (1) and multiplicative composition.
+4. The reco/truth row-matching mismatch.
+
+Thresholds, derived from the coverage table above:
+- **Choose (1)** if median |R_c| ≤ 0.2σ_Q in every cell and p90 ≤ 0.4σ_Q in at least 90% of cells. The predicted shift is then 0.04 or less, well under the resolution. Pre-declare the exceptions.
+- **Prefer positivity-preserving composition** if median |R_c| > 0.3σ_Q in more than about 10% of cells, or p90 exceeds about 0.5–0.7σ_Q. This holds provided its diagonal variance ratio stays within about ±20% of 1. A ±20% variance error costs about 0.04 coverage, and ±50% costs about 0.10.
+- **Prefer (3)** if median |R_c| ≥ 0.7σ_Q in about 20% or more of cells and no composition passes the ±20–25% variance gate. It also applies if the row mismatch cannot be bounded. A bias at one resolution unit makes the test unable to discriminate.
+
+**Q4. Sister 5D test**
+Yes. Run the same probe, including the efficiency-corrected form and R_c, before any bulk run, and make it a hard stop. With 34–38 compounding universes the sum of shifts has a standard deviation of about √K times the per-band size. Negative composites should be far more common than in 2D. Per-cell counts are also lower, so cell-level clipping will bite more. The multiplicative variance excess also grows with K, so check it there too.
+
+**Q5. Ranking**
+1. Option (1), gated on R_c and the variance-ratio probe passing the Q3 thresholds.
+2. Multiplicative composition, gated on the ±20% variance check against C_T.
+3. Option (3), reporting coverage as not tested. This is the honest outcome if neither gate passes.
+4. Option (2), which cannot separate composition artefact from method failure. At most use it as a descriptive supplement.

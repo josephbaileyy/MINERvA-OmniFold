@@ -1,0 +1,13 @@
+COV2D clipping probe C1: erratum (2026-11-03, found by the cov2d session before any number reached Joseph; relayed to
+the director the same day).
+
+C1's truth-cell columns (clip.json: truth_cells_frac_over_sigma_stat, truth_cells_frac_over_sigma_Q and the
+top10/over_cells fields built from them) are m_seen,c / N_c: the clipped seen mass over the cell's FULL composite truth
+count. The unfolding corrects for efficiency with the nominal simulation, so at first order the unfolded result moves
+by the seen fraction m_seen,c / S_c, with S_c the signed lambda over reco-kept rows whose truth lies in c. C1's columns
+therefore understate option (a)'s offset by about 1/eps_c.
+
+C1's clipped fractions, its reco-cell z values and its (a) counts are not affected.
+
+Superseded for the offset by C2 (clip_probe2.py, clip2.json), which reports m_seen/S_c and option (1)'s residual.
+Joseph gets C2's numbers only. C1's files are kept unchanged as the record of what ran.

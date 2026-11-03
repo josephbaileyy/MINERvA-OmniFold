@@ -39,6 +39,7 @@ def build(d: Path, n=4000, nb=900, seed=17):
     sig["MC_eavail"], sig["MC_q3"], sig["MC_W"] = r.uniform(0, 2, n), r.uniform(0, 2.5, n), r.uniform(0.9, 3, n)
     sig["sim"], sig["sim_pz"] = r.uniform(-0.1, 4.6, n), r.uniform(1.2, 62, n)
     sig["sim_pass"] = (r.uniform(size=n) < 0.8).astype(np.uint8)
+    sig["w_truth"] = sig["w_reco"] * r.uniform(0.9, 1.1, n)       # $UNI's signal tree carries w_truth (control 1)
     sig["w_reco_LowQ2_0"][: n // 3] = 0.0                       # both LowQ2 universes zero a third of the rows,
     sig["w_reco_LowQ2_1"][: n // 3] = 0.0                       # so every draw holds a delta of -1 there
     w.trees["mc_signal_reco"] = sig
