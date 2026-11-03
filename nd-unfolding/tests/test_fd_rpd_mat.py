@@ -37,6 +37,7 @@ class Mat(unittest.TestCase):
         self.assertEqual(env["setup_sha256"], ri.MAT_SETUP)
         self.assertEqual(env["mat_sha256"], ri.MAT_FILES)
         self.assertEqual(env["symlink"], {ri.MAT_LINK[0]: ri.MAT_LINK[1]})
+        self.assertEqual(env["mapped_mat_files"], sorted(ri.MAT_MAPPED))
         self.assertTrue(env["plotutils_mnvh1d_dictionary"])
 
     def test_each_staged_flux_histogram_is_an_mnvh1d_the_pinned_combiner_reads(self):

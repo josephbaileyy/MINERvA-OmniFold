@@ -340,12 +340,45 @@ class Stage(Tmp):
         rec_p.write_text(json.dumps(rec))
         self.assertEqual(self.verify(src)[0], 4)                                           # the record's digest moved
 
+    def test_verify_staged_refuses_an_extra_file_a_symlinked_copy_and_a_malformed_record(self):
+        src = self.sources()
+        self.run_stage(src)
+        S = self.tmp / "R/staged"
+        (S / "d0/extra.bin").write_bytes(b"x")
+        self.assertEqual(self.verify(src)[0], 4)
+        (S / "d0/extra.bin").unlink()
+        self.assertEqual(self.verify(src)[0], 0)
+        name = sorted(src)[0]
+        real = self.tmp / "elsewhere.bin"
+        shutil.copy(S / name, real)
+        (S / name).chmod(0o640)
+        (S / name).unlink()
+        (S / name).symlink_to(real)
+        self.assertEqual(self.verify(src)[0], 4)
+        (S / name).unlink()
+        shutil.copy(real, S / name)
+        self.assertEqual(self.verify(src)[0], 0)
+        rec_p = S / "STAGED.json"
+        good = rec_p.read_text()
+        rec_p.chmod(0o640)
+        rec = json.loads(good)
+        rec["files"][name] = "not a row"
+        rec_p.write_text(json.dumps(rec))
+        self.assertEqual(self.verify(src)[0], 4)
+        rec_p.write_text("{not json")
+        self.assertEqual(self.verify(src)[0], 4)
+        rec_p.write_text(good)
+        self.assertEqual(self.verify(src)[0], 0)
+
     def test_verify_staged_writes_nothing(self):
         src = self.sources()
         self.run_stage(src)
-        before = sorted(str(q) for q in (self.tmp / "R").rglob("*"))
+        def state():
+            return sorted((str(q), q.stat().st_size, q.stat().st_mtime_ns, q.stat().st_mode,
+                           q.read_bytes() if q.is_file() else b"") for q in (self.tmp / "R").rglob("*"))
+        before = state()
         self.assertEqual(self.verify(src)[0], 0)
-        self.assertEqual(sorted(str(q) for q in (self.tmp / "R").rglob("*")), before)
+        self.assertEqual(state(), before)
 
     def test_the_copy_opens_with_o_noatime_where_the_platform_has_it(self):
         seen = []
@@ -366,7 +399,7 @@ class Stage(Tmp):
 def mat_good():
     """The pinned environment, as mat_environment would see it."""
     return ({p: v for p, v in ri.MAT_SETUP.items()}, {p: v for p, v in ri.MAT_FILES.items()}, ri.MAT_LINK[1],
-            {f"{ri.MAT_LIB}/libMAT.so", "/usr/lib64/libc.so.6", f"{ri.MAT_LIB}/MAT_rdict.pcm"},
+            {f"{ri.MAT_LIB}/libMAT.so", "/usr/lib64/libc.so.6", "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/libCore.so"},
             {"PLOTUTILSROOT": ri.MAT_LIB, "MINERVA_PREFIX": ri.MAT_PREFIX}, True)
 
 
@@ -403,10 +436,35 @@ class MatEnv(Tmp):
         for what, g in cases:
             self.assertEqual(len(ri.mat_env_problems(*g)), 1, what)
 
-    def test_a_mapped_file_outside_the_mat_library_does_not_count(self):
+    def test_a_mapped_file_outside_minerva101_opt_does_not_count(self):
         g = mat_good()
-        g[3].update({"/global/homes/j/josephrb/.conda/envs/root_6_28/lib/libCore.so", f"{ri.MAT_PREFIX}/libX.so"})
+        g[3].update({f"{ri.MAT_CHECKOUT}/unbinned_unfolding/build/libX.so", f"{ri.MAT_PREFIX}-old/lib/libMAT.so"})
         self.assertEqual(ri.mat_env_problems(*g), [])
+
+    def test_any_other_mapped_file_under_minerva101_opt_is_a_problem_whatever_its_name(self):
+        for extra in (f"{ri.MAT_LIB}/MAT_rdict.pcm", f"{ri.MAT_PREFIX}/lib64/libMAT.so", f"{ri.MAT_LIB}/libMAT.so.1",
+                      f"{ri.MAT_PREFIX}/etc/data.bin"):
+            g = mat_good()
+            g[3].add(extra)
+            self.assertEqual(len(ri.mat_env_problems(*g)), 1, extra)
+
+    def test_an_unreadable_pin_says_so(self):
+        g = mat_good()
+        g[0][next(iter(ri.MAT_SETUP))] = None
+        self.assertIn("unreadable through O_NOATIME", ri.mat_env_problems(*g)[0])
+
+    def check_mat_setup(self, sha):
+        with mock.patch.object(ri, "noatime_sha256", side_effect=lambda q: sha.get(str(q))):
+            return quiet(ri.main, ["check-mat-setup", "--r", str(self.tmp / "R")])
+
+    def test_check_mat_setup_passes_the_pinned_scripts_and_refuses_any_other(self):
+        rc, out, err = self.check_mat_setup(dict(ri.MAT_SETUP))
+        self.assertEqual(rc, 0, err)
+        self.assertEqual(json.loads(out), {"mat_setup_scripts": 6, "mismatches": 0})
+        for p in ri.MAT_SETUP:
+            for v in ("0" * 64, None):
+                self.assertEqual(self.check_mat_setup({**ri.MAT_SETUP, p: v})[0], 7, (p, v))
+        self.assertFalse((self.tmp / "R").exists())
 
     def environment(self, dictionary=True, sha=None, maps=None, environ=None):
         """mat_environment with ROOT, the maps, the digests, the link and os.environ replaced."""
@@ -425,7 +483,7 @@ class MatEnv(Tmp):
         env = self.environment()
         self.assertEqual((env["setup_sha256"], env["mat_sha256"]), (ri.MAT_SETUP, ri.MAT_FILES))
         self.assertEqual(env["symlink"], {ri.MAT_LINK[0]: ri.MAT_LINK[1]})
-        self.assertEqual(env["mapped_mat_libraries"], [f"{ri.MAT_LIB}/MAT_rdict.pcm", f"{ri.MAT_LIB}/libMAT.so"])
+        self.assertEqual(env["mapped_mat_files"], sorted(ri.MAT_MAPPED))
         self.assertTrue(env["plotutils_mnvh1d_dictionary"])
 
     def test_mat_environment_refuses_with_7_on_any_problem(self):
@@ -461,8 +519,10 @@ class MatEnv(Tmp):
     def test_flux_refuses_with_7_before_any_read_outside_the_pinned_environment(self):
         R = self.tmp / "R"
         R.mkdir()
+        early = AssertionError("read before the environment check")
         with mock.patch.object(ri, "mat_environment", side_effect=ri.Refuse(7, "not flux's pinned MAT environment")), \
-                mock.patch.object(ri, "staged", side_effect=AssertionError("read before the environment check")):
+                mock.patch.object(ri, "staged", side_effect=early), mock.patch.object(ri, "load_combiner", side_effect=early), \
+                mock.patch.object(ri, "loop_pots", side_effect=early), mock.patch.object(ri, "read_flux", side_effect=early):
             rc, _, err = quiet(ri.main, ["flux", "--r", str(R)])
         self.assertEqual(rc, 7, err)
         self.assertFalse((R / "flux").exists())

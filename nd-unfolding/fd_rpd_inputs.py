@@ -5,6 +5,7 @@ pseudo-playlist partitions, and the (e) unfolds.
 
     fd_rpd_inputs.py stage    --r <R>                                   (login)  stage S: O_NOATIME copies
     fd_rpd_inputs.py verify-staged --r <R>                              (login)  every later connect: the copies' pins
+    fd_rpd_inputs.py check-mat-setup --r <R>                            (login)  before sourcing MAT: its six scripts
     fd_rpd_inputs.py flux     --r <R>                                   (login)  stage S: 12 flux files, F1, e
     fd_rpd_inputs.py check    --r <R> --playlist X                      (job A)  receipt and MC truth of X
     fd_rpd_inputs.py n0-split --r <R> --partition p                     (job A)  one N0 partition, its truths
@@ -15,6 +16,7 @@ pseudo-playlist partitions, and the (e) unfolds.
   reads only the staged copies or files this campaign made.
 * ``verify-staged`` re-hashes every staged copy against its pin and the staging record, and writes nothing (binding 2
   A1: every connect after stage S's first starts with it).
+* ``check-mat-setup`` digests the six MAT setup scripts before the connect sources them (exit 7 on any difference).
 * ``flux`` runs only in the pinned MAT environment (``mat_environment``; binding 2 A1), then builds X's flux file from the staged baseline files with the pinned production combiner's reader and
   arithmetic (combine_flux_MEFHC.read_playlist, its module global BASE pointed at the staged copies; the pinned file
   is not edited), then decides F1: each period's data-POT-weighted combination of its playlists equals 5B's committed
@@ -131,6 +133,7 @@ MAT_FILES = {
     f"{MAT_LIB}/MAT_rdict.pcm": "9eedbfd94a452f3bb9b267ca890b52d7a5567c0da86059e2b1fb90aac480550a",
 }
 MAT_LINK = (f"{MAT_LIB}/libMATDict.so", f"{MAT_LIB}/libMAT.so")
+MAT_MAPPED = {f"{MAT_LIB}/libMAT.so"}   # every file mapped from MINERvA101/opt once MnvH1D's dictionary loads (measured)
 
 
 class Refuse(Exception):
@@ -155,7 +158,8 @@ def require(path: Path, want: str, what: str) -> str:
 
 
 def noatime_sha256(path: Path) -> str | None:
-    """sha256 through an O_NOATIME descriptor (None if the file cannot be opened), for files outside $R."""
+    """sha256 through an O_NOATIME descriptor, for files outside $R. None if the file cannot be opened, which includes
+    a file the caller does not own: O_NOATIME needs the owner (josephrb), so every connect runs as the owner."""
     h = hashlib.sha256()
     try:
         fd = os.open(path, os.O_RDONLY | getattr(os, "O_NOATIME", 0))
@@ -283,15 +287,22 @@ def run_verify_staged(a) -> int:
     """Every staged copy at its pin and at the digest the staging record gives it, the record naming exactly the
     sources and their paths (binding 2 A1). Reads only under <R>/staged and writes nothing."""
     p = a.r / "staged/STAGED.json"
-    rec = json.loads(p.read_text()) if p.is_file() else {}
+    try:
+        rec = json.loads(p.read_text()) if p.is_file() else {}
+    except ValueError:
+        rec = {}
     sources = stage_sources(a.deploy)
-    if rec.get("schema") != "fd-rpd-staged/1" or set(rec.get("files", {})) != set(sources):
+    files = rec.get("files") if isinstance(rec, dict) else None
+    if not isinstance(files, dict) or rec.get("schema") != "fd-rpd-staged/1" or set(files) != set(sources):
         raise Refuse(4, "the staging record does not name exactly this deploy's sources")
+    present = {q.relative_to(a.r / "staged").as_posix() for q in (a.r / "staged").rglob("*") if not q.is_dir()}
+    if present != set(sources) | {"STAGED.json"}:
+        raise Refuse(4, f"files under staged/ that are not the sources: {sorted(present ^ (set(sources) | {'STAGED.json'}))}")
     bad = []
     for name, (src, pin) in sorted(sources.items()):
         q = a.r / "staged" / name
-        got = sha256(q) if q.is_file() else None
-        row = rec["files"][name]
+        got = sha256(q) if q.is_file() and not q.is_symlink() else None
+        row = files[name] if isinstance(files[name], dict) else {}
         if not (got == pin == row.get("sha256") and row.get("source") == src):
             bad.append(name)
     if bad:
@@ -416,18 +427,24 @@ def flux_decision(per_pl: dict, f1: dict, pots: dict) -> dict:
             "loops_data_pot_equal_flux_data_pot": loops_ok, "flux_rel_spread_over_pt": spread, "exposure_share": e}
 
 
+def digest_problems(sha: dict, pins: dict) -> list[str]:
+    """One problem per pinned file whose digest differs; None (unreadable through O_NOATIME) says so."""
+    return [f"{p}: " + ("unreadable through O_NOATIME (missing, or not the owner's)" if sha.get(p) is None
+                        else f"sha256 {sha.get(p)} != {pin}") for p, pin in pins.items() if sha.get(p) != pin]
+
+
 def mat_env_problems(setup_sha: dict, file_sha: dict, link: str | None, mapped: set, environ: dict,
                      dictionary: bool) -> list[str]:
     """What separates a process's environment from flux's pinned one (binding 2 A1); empty means it is the pinned one.
-    mapped is the set of resolved paths the process has mapped; only the shared libraries under MAT_LIB count."""
-    bad = [f"{p}: sha256 {setup_sha.get(p)} != {pin}" for p, pin in MAT_SETUP.items() if setup_sha.get(p) != pin]
-    bad += [f"{p}: sha256 {file_sha.get(p)} != {pin}" for p, pin in MAT_FILES.items() if file_sha.get(p) != pin]
+    mapped is the set of resolved paths the process has mapped; every one under MINERvA101/opt counts, of any name."""
+    bad = digest_problems(setup_sha, MAT_SETUP)
+    bad += digest_problems(file_sha, MAT_FILES)
     if link != MAT_LINK[1]:
         bad.append(f"{MAT_LINK[0]} resolves to {link}, not {MAT_LINK[1]}")
-    so = {p for p in mapped if p.startswith(MAT_LIB + "/") and ".so" in Path(p).name}
-    want = {p for p in MAT_FILES if p.endswith(".so")}
+    so = {p for p in mapped if p.startswith(MAT_PREFIX + "/")}
+    want = MAT_MAPPED
     if so != want:
-        bad.append(f"mapped MAT libraries {sorted(so)}, not {sorted(want)}")
+        bad.append(f"mapped MAT files {sorted(so)}, not {sorted(want)}")
     for k, v in (("PLOTUTILSROOT", MAT_LIB), ("MINERVA_PREFIX", MAT_PREFIX)):
         if environ.get(k) != v:
             bad.append(f"{k}={environ.get(k)}, not {v}")
@@ -461,8 +478,18 @@ def mat_environment() -> dict:
     if bad:
         raise Refuse(7, "not flux's pinned MAT environment: " + "; ".join(bad))
     return {"setup_sha256": setup_sha, "mat_sha256": file_sha, "symlink": {MAT_LINK[0]: link},
-            "mapped_mat_libraries": sorted(p for p in mapped if p.startswith(MAT_LIB + "/")),
+            "mapped_mat_files": sorted(p for p in mapped if p.startswith(MAT_PREFIX + "/")),
             "plotutils_mnvh1d_dictionary": dictionary}
+
+
+def run_check_mat_setup(a) -> int:
+    """The six MAT setup scripts at their digests, read through O_NOATIME before the connect sources them, so that no
+    other script runs (binding 2 A1). Needs no ROOT and writes nothing; mat_environment checks them again in flux."""
+    bad = digest_problems({p: noatime_sha256(Path(p)) for p in MAT_SETUP}, MAT_SETUP)
+    if bad:
+        raise Refuse(7, "the MAT setup scripts are not the pinned ones: " + "; ".join(bad))
+    print(json.dumps({"mat_setup_scripts": len(MAT_SETUP), "mismatches": 0}), flush=True)
+    return 0
 
 
 def run_flux(a) -> int:
@@ -730,7 +757,7 @@ def run_unfold(a) -> int:
 def build_args(argv):
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("stage", "verify-staged", "flux", "check", "n0-split", "unfold"):
+    for name in ("stage", "verify-staged", "check-mat-setup", "flux", "check", "n0-split", "unfold"):
         s = sub.add_parser(name)
         s.add_argument("--r", type=Path, required=True)
         s.add_argument("--deploy", type=Path, default=DEPLOY)
@@ -759,7 +786,8 @@ def build_args(argv):
 def main(argv=None) -> int:
     a = build_args(argv)
     try:
-        return {"stage": run_stage, "verify-staged": run_verify_staged, "flux": run_flux, "check": run_check, "n0-split": run_n0_split,
+        return {"stage": run_stage, "verify-staged": run_verify_staged, "check-mat-setup": run_check_mat_setup,
+                "flux": run_flux, "check": run_check, "n0-split": run_n0_split,
                 "unfold": run_unfold}[a.cmd](a)
     except Refuse as e:
         print(f"[rpd-inputs] refusing: {e}", file=sys.stderr, flush=True)
