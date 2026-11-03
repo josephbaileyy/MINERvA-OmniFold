@@ -1,0 +1,120 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	b	abstract	pos	yes	yes	run-period block added post hoc	including a run-period contribution estimated after differences between periods were observed
+2	d	abstract	pos	yes	no	GiBUU sample energy-limited, 8 cells	GiBUU gives 48 on the eight cells covered by its sample.
+3	c	abstract	pos	no	no	unexplained shape difference vs published 2D	The unfolding reproduces the published muon-kinematic cross-section integral within about 1%, with a correlated shape difference.
+4	c	abstract	pos	no	no	fake-data bias exceeds thresholds	Fake-data studies find residual bias exceeding predeclared uncertainty-based thresholds at a GiBUU-like truth and a synthetic momentum-transfer tilt.
+5	c	abstract	neg	no	no	interval coverage not validated	The coverage of the reported uncertainty intervals has not been validated.
+6	d	intro	pos	no	no	five observables not independent	Reconstructed W is fixed by the reconstructed (pT , p∥ , q3 ), so the five observables are simultaneous but not independent.
+7	c	intro	neg	no	no	interval coverage not validated	Interval coverage has not been validated. The bias tests,
+8	d	intro	pos	no	no	findings limited to one implementation and dataset	The findings are those of one OmniFold implementation on one data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold in general.
+9	d	inline	pos	no	no	input is earlier open-data production	The input is an earlier production of the MINERvA open-data release
+10	d	inline	neg	no	no	Eavail definition differs from published ones	No single published definition of Eavail exists.
+11	d	inline	pos	yes	no	Eavail definition differs from published ones	omits species such as kaons that the open list of Ref. [19] includes, and has a charged-pion term 4.57 MeV per pion above the kinetic energy used in Refs. [18, 20]
+12	c	inline	pos	yes	no	Eavail definition differs from published ones	To first order in the unfolding, without retraining, replacing the constant alone by the charged-pion mass moves the sixteen-cell result by at most 0.19σ in any cell
+13	d	inline	pos	no	no	five observables not independent	The five reconstructed inputs therefore share information and do not provide five independent constraints.
+14	d	inline	pos	no	no	five observables not independent	W is fixed by (pT , p∥ , q3 ) only up to that event-by-event angle and the choice of M
+15	d	inline	pos	no	no	carbon vs CH target difference	All predictions are per nucleon of their target: CH, or carbon for NuWro and GiBUU outside the sixteen-cell comparison.
+16	d	inline	pos	yes	no	GiBUU sample energy-limited, 8 cells	The GiBUU sample stops at Eν ≈ 20 GeV.
+17	d	inline	pos	no	no	prediction definitions differ outside 16-cell comparison	Elsewhere the predictions compute W with the neutron mass for every event and measure pT about their own neutrino axis.
+18	c	inline	neg	no	no	carbon vs CH target difference	Hydrogen has no quasielastic, 2p2h, or coherent νµ charged-current channel, so normalizing per nucleon does not remove the difference between the targets.
+19	c	inline	pos	yes	no	carbon vs CH target difference	In GENIE’s own CH sample, the carbon-only cross section per nucleon exceeds that of CH by 8.3 % for W < 1.1 GeV.
+20	c	inline	pos	no	no	carbon vs CH target difference	The comparisons of NuWro and GiBUU on carbon contain a target difference of this kind.
+21	d	inline	pos	yes	no	unsupported coarse cells excluded	The others, which hold 0.47 % of the expected signal, stay in the total only.
+22	a	inline	pos	no	no	earlier purity-subtracted 5D estimator	This estimator removes most of the bias of purity-based subtraction at nominal truth in the highest-W cells
+23	d	inline	neg	no	no	two estimators not combined	Results from the two estimators are not combined.
+24	c	inline	pos	no	no	no held-out or cross-fitted training split	Each classifier is trained on the full sample whose weights it then sets, so no held-out or cross-fitted split is used
+25	c	inline	pos	no	no	regularization bias toward prior	keeps five iterations because 10, 15, or 20 iterations did not reduce its model dependence
+26	d	inline	pos	yes	no	low-purity boxes merged, 4 unreported	each supported box with purity below 0.1 is merged into a neighbour, 4 boxes remain unreported
+27	d	inline	pos	no	no	validation uses analysis detector response	which changes their reconstructed and true distributions together and keeps the detector response at fixed truth.
+28	d	inline	pos	no	no	validation uses analysis detector response	Every study uses the analysis simulation’s detector response.
+29	c	inline	pos	no	no	Cmodel derived from compared generators	The comparisons there with GENIE + MEC, NuWro and GiBUU therefore use covariance contributions derived from the same generators.
+30	c	inline	pos	no	partly	Cmodel not a calibrated bound	It is a measure of unscaled generator-shape dependence, not a calibrated bound
+31	c	inline	neg	no	partly	Cresp covers only recoil energy scale	Cresp does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale.
+32	d	inline	pos	no	no	Cresp only in sixteen-cell result	It enters only this result, its fakedata tests and its comparison in Sec. V B.
+33	c	inline	pos	no	yes	run-period inconsistency of unknown cause	The unfolded results of the three run-period groups, each relative to its own simulation, differ by more than their bootstrap scatter.
+34	c	inline	neg	no	yes	run-period inconsistency of unknown cause	The cause is not known, and these data cannot establish which period is correct.
+35	b	inline	pos	no	yes	run-period block added post hoc	It was added after these differences were seen, following an audit whose stopping criterion was fixed in advance.
+36	e	inline	pos	no	yes	predeclared audit stopping criterion	It was added after these differences were seen, following an audit whose stopping criterion was fixed in advance.
+37	c	inline	pos	yes	partly	run-period block size not validated	It has rank 2, is not corrected for the bootstrap noise it contains and, estimated from three groups, has a poorly determined size.
+38	c	inline	pos	no	no	unexplained shape difference vs published 2D	It indicates a correlated shape difference, not a normalization difference, spread over many eigenmodes of the published covariance.
+39	c	inline	neg	no	no	unexplained shape difference vs published 2D	The source of the shape difference has not been identified.
+40	e	inline	pos	no	no	2D benchmark not blind	The comparison is a consistency benchmark, not a blind validation:
+41	b	inline	pos	no	no	learner chosen after comparing to published	the learner was chosen after the LightGBM and exact-split results had been compared with the published result
+42	c	inline	pos	no	no	learner dependence of 2D result	and the distance depends on the estimator (Ref. [14], Sec. 6.4).
+43	c	inline	pos	yes	no	learner dependence of 2D result	The purity-subtracted exact-split result differs from the central value by a median of 1.03 % per bin (maximum 17.6 %
+44	c	inline	pos	yes	partly	training-seed block poorly determined	seed (five seed settings, so that its own size is poorly determined)
+45	c	inline	pos	yes	no	flux uncertainty below published, unexplained	The published flux uncertainty (median 4.01 %) is larger than ours (3.71 %), for a reason the released inputs do not let us determine.
+46	c	inline	neg	no	no	2D covariance omits learner, regularization, approximation	The covariance omits the approximation in the systematic-universe unfoldings for events that fail reconstruction, the learner dependence of Sec. IV B, and the dependence on the regularization
+47	c	inline	neg	yes	yes	run-period inconsistency of unknown cause	data from different run periods are not mutually consistent within the other uncertainties
+48	c	inline	pos	yes	yes	run-period block size not validated	amounts to 2.0 % on the integrated cross section and passes its own consistency check by construction.
+49	d	caption	pos	no	no	2D comparison excludes Cmodel	The band of this analysis is the four-block covariance of Sec. IV C, without Cmodel
+50	d	caption	pos	no	no	correlations not shown by bars	Here the two bands are correlated, so their overlap is not a compatibility test.
+51	c	inline	pos	no	partly	Cmodel not a calibrated bound	It is a measure of generator-shape model dependence, not a calibrated bound on the unfolding bias.
+52	d	inline	pos	no	no	2D comparison excludes Cmodel	The comparison with the published uncertainty uses the covariance without Cmodel , because neither has a component for the residual dependence on the prior’s generator shape.
+53	d	inline	neg	no	no	no statement on published residual	so we make no statement about the size of the published analysis’s residual.
+54	c	inline	pos	yes	no	normalization-check correlations bounded, not evaluated	The statistical correlation, and that of four systematic terms that could not be evaluated directly, are bounded within a one-parameter family of valid covariances, over which the agreement holds.
+55	c	inline	pos	no	no	other results not compared to 2D	only the three-observable marginal has been compared with the two-dimensional result
+56	a	inline	pos	no	no	earlier purity-subtracted 5D estimator	The normalization checks of the earlier purity-subtracted five-observable central value are described in Ref. [14], Sec. 8.1
+57	c	inline	pos	no	no	regularization bias toward prior	Figure 2 shows that the unfolding recovers only part of a change of the Eavail shape as large as the difference between generators.
+58	c	inline	pos	yes	no	regularization bias toward prior	deviate from it by several percent in the largest cells and by up to 74 % at high W
+59	a	inline	pos	no	no	development variant of joint-test estimator	with a development variant of the joint-test estimator using a 100-tree, 8-leaf refinement
+60	c	inline	pos	no	no	regularization bias toward prior	These deviations occur with or without background, so background subtraction alone does not explain the residual.
+61	c	inline	pos	no	no	regularization bias toward prior	We interpret the residual as regularization bias, because it persists over the tested iteration numbers and classifier capacities, although no single cause is established.
+62	c	inline	pos	yes	partly	regularization bias toward prior	it is 16 % to 31 % in the most affected (Eavail , W ) cell and lies within the quoted total uncertainty in about half of those cells.
+63	a	inline	pos	no	no	earlier purity-subtracted 5D estimator	Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria
+64	c	inline	pos	no	no	earlier 5D covariance fails acceptance criteria	Those uncertainties come from an earlier purity-subtracted five-observable covariance that fails its specified acceptance criteria
+65	a	inline	pos	no	no	earlier purity-subtracted 5D estimator	Statistical intervals of an earlier five-observable estimator with purity-based subtraction, corrected for its closure bias at nominal truth, miscover at the tested truths
+66	c	inline	pos	yes	no	coverage failure of earlier estimator	most strongly when the true signal rate is lowered by about 10 %, with coverage as low as 0.06 for 68% intervals
+67	c	inline	pos	yes	partly	instability under input rounding	The joint-test estimator is unstable under floating-point rounding of its inputs: over 20 rounding-level perturbations of the data,
+68	c	inline	pos	no	partly	instability under input rounding	It limits how exactly the central values can be reproduced, and a single perturbation moves the most affected quantity further.
+69	c	inline	pos	yes	partly	instability under input rounding	Rounding-level changes of its inputs move its results by up to 2.6 statistical standard deviations,
+70	c	inline	neg	no	no	fake-data truths not held out	The truths are not held out: they are the simulation’s prior; five hybrid truths,
+71	d	inline	pos	yes	no	some fake-data truths descriptive only	and 6 further truths, given in the note, are descriptive and not judged against these criteria.
+72	c	inline	pos	yes	no	fake-data bias exceeds thresholds	are the GiBUU hybrid truth (p = 5.3 × 10−28 ; cells R02, R06) and the synthetic q3 tilt, by p alone (p = 9.1 × 10−6 ).
+73	c	inline	pos	yes	no	fake-data bias exceeds thresholds	the GiBUU Eavail shape also meets the listing criterion, in cell R06 (z = 2.01, against 1.76 with the block).
+74	c	inline	pos	no	no	fake-data bias exceeds thresholds	Thus the fake-data bias exceeds the stated thresholds at the GiBUU hybrid truth and the q3 tilt under the reported covariance,
+75	c	inline	neg	no	no	validation uses analysis detector response	The simulated detector response is not probed.
+76	c	inline	pos	no	yes	bias covered only with Cmodel	In cell R11 at G18_10a_02_11b, the bias lies below the reported uncertainty only with Cmodel included.
+77	c	inline	pos	no	no	held-out tunes not independent	The tunes share a quasielastic cross-section model, and G18_10a_02_11b and the GENIE + MEC component of
+78	c	inline	pos	no	no	held-out tunes not independent	These tests provide partial evidence and are not independent.
+79	a	caption	pos	no	no	development variant of joint-test estimator	(a) A development variant of the joint-test estimator, whose refinement has 100 trees and 8 leaves,
+80	a	caption	pos	no	no	earlier purity-subtracted 5D estimator	the covariance of an earlier purity-subtracted five-observable central value
+81	d	inline	pos	no	no	correlations not shown by bars	The cells are correlated, so quantitative comparisons need the full covariance,
+82	d	caption	pos	no	no	correlations not shown by bars	Quantitative comparisons need the full covariance (Sec. IV A).
+83	d	inline	pos	yes	no	GiBUU sample energy-limited, 8 cells	GiBUU’s sample stops at Eν = 20 GeV, so GiBUU is compared on the 8 cells with p∥ < 4.5 GeV/c only.
+84	d	inline	pos	no	no	Tune v1 is prior, not independent	MINERvA Tune v1 is the simulation’s prior.
+85	c	inline	pos	yes	no	carbon vs CH target difference	For GiBUU the correction raises the total χ2 by 2.3, from 45 to 48 for 8 degrees of freedom,
+86	c	inline	pos	no	no	carbon vs CH target difference	That rise comes from pairing the CH prediction with Cmodel , whose NuWro and GiBUU shape ratios are from carbon
+87	c	inline	pos	no	no	carbon vs CH target difference	With the reported Cmodel , the sign of the rise also depends on the hydrogen sample
+88	c	inline	pos	yes	partly	Cmodel not a calibrated bound	the size of Cmodel is not calibrated: doubling it changes them by −2.21, −5.21, −0.83 and −2.28,
+89	c	inline	pos	yes	no	generator χ2 depends on run-period block	With the run-period block, each total χ2 is lower by 3.6–29.3 % of its value without it,
+90	c	inline	pos	no	no	generator χ2 not calibrated	The paired columns show how the comparison depends on this block; they calibrate neither set of values and establish no exclusion of a generator.
+91	d	inline	pos	no	no	no generator exclusion claimed	The paired columns show how the comparison depends on this block; they calibrate neither set of values and establish no exclusion of a generator.
+92	c	inline	pos	yes	no	χ2 dependence on flux correlations	Weakening only the flux correlations by 10 % lowers the χ2 of the 16-cell predictions by 23–38 %,
+93	d	inline	pos	no	no	χ2 dependence on flux correlations	The bands describe the scatter of the χ2 from estimating the correlations with these universes
+94	c	caption	neg	no	no	NuWro free-proton supplement aborts	the events lost to generator aborts there were not shown to be negligible
+95	c	caption	pos	yes	no	GiBUU free-proton sample defects	That sample failed its sampling-closure check, and its deep-inelastic events, 46 % of it, do not conserve energy
+96	c	caption	neg	no	no	figure omits prediction finite-sample uncertainty	and the predictions’ finite-sample uncertainties are not drawn.
+97	d	caption	pos	yes	no	GiBUU sample energy-limited, 8 cells	GiBUU (lower panel) is shown on its 8 cells with p∥ < 4.5 GeV/c only.
+98	d	caption	pos	no	no	correlations not shown by bars	The χ2 of Table III uses the full covariance, whose correlations the error bars do not show.
+99	d	caption	pos	no	no	GiBUU sample energy-limited, 8 cells	GiBUU 2019: CH; p ∥ < 4.5 cells only
+100	d	caption	pos	no	no	Tune v1 is prior, not independent	MINERvA Tune v1: prior (not an independent prediction)
+101	c	concl	pos	no	no	regularization bias toward prior	Two validation findings point to the unfolded result retaining part of its prior.
+102	c	concl	pos	no	no	regularization bias toward prior	The first is the residual under a generator-sized change of the truth in Sec. IV E, which we interpret as regularization bias.
+103	c	concl	pos	no	no	regularization bias toward prior	The second is the shift of the data result when the simulation’s prior is reweighted to generator-sized changes of the truth, which tracks the same bias
+104	c	concl	pos	no	no	regularization bias toward prior	The note’s calibrated tests show the same bias toward the prior: it displaces their null distributions for the external predictions upward, and
+105	c	limits	pos	yes	no	low reconstruction stability of four cells	Apart from the validation of the uncertainties and the low stability of four of the sixteen cells (below)
+106	c	limits	neg	no	no	interval coverage not validated	No reported interval has validated coverage.
+107	c	limits	pos	no	no	interval coverage not validated	The fake-data tests of Sec. IV G assess bias, not coverage: only event counts fluctuate, with systematic parameters fixed, so interval widths cannot be tested.
+108	e	limits	pos	no	no	coverage test stopped at gate	declared in advance for the covariance without the run-period block, with pseudo-experiments that also draw the flux, interaction, and detector uncertainties, was stopped at one of its gates before any coverage pseudo-experiment ran
+109	c	limits	pos	no	no	covariance not reproduced by pseudo-experiments	the uncertainties reproduced through its pseudo-experiments disagreed with the covariance blocks they draw, for reasons not established
+110	c	limits	neg	no	partly	Cmodel not a calibrated bound	Neither the coverage of Cmodel at truths held out of its construction nor the size of either run-period block is independently validated
+111	c	limits	neg	no	no	2D covariance not validated	The two-dimensional covariance has not been independently validated and gives no calibrated significance for generator comparisons;
+112	a	limits	pos	no	no	earlier 2D statistical band undercovered	an earlier statistical band of that result undercovered in its tails in a coverage test at fixed truth
+113	d	limits	pos	no	no	coverage pointwise not simultaneous	The coverage tests cited are pointwise, for each reported quantity separately, not the stronger simultaneous coverage of all of them.
+114	d	limits	neg	no	no	coverage pointwise not simultaneous	We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections.
+115	c	limits	pos	yes	no	low reconstruction stability of four cells	Four of the sixteen cells, R02, R06, R10 and R15, have a reconstruction stability of 0.16–0.25:
+116	d	limits	pos	no	no	calibrated tests conditional on simulation	The note’s calibrated tests reject hybrid nulls, conditionally on the simulation’s hadronic response.
+117	c	limits	pos	no	no	sub-fine-grid residual not bounded	where each null takes the simulation’s event composition, is bounded, and no such bound has been shown.
+118	c	limits	pos	no	no	calibrated tests conditional on simulation	Their calibration is valid to the extent that the simulated chain reproduces the analysis of the data
+119	d	limits	neg	no	no	no generator exclusion claimed	They are not physical exclusions of the generators, and they show no evidence of additional discrimination beyond matched coarse projections.

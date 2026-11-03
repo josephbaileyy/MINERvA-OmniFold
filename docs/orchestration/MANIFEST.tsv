@@ -1682,6 +1682,13 @@ docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/af
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/placement.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/rates.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/summary.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-731-b9849126/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-731-b9849126/inv/CODED-ON.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-731-b9849126/inv/ours-paper.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-731-b9849126/tables/dropped-ours-paper.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-731-b9849126/tables/placement.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-731-b9849126/tables/rates.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-731-b9849126/tables/summary.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/PRD-REVIEW-GEMINI-ANSWER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/PRD-REVIEW-GEMINI-PROMPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no

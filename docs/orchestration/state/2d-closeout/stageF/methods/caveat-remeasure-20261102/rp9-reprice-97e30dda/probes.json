@@ -12,7 +12,7 @@
   },
   {
    "fact": "the envelope is a diagnostic, not an interval",
-   "pattern": "envelope.{0,80}(not an interval|diagnostic)",
+   "pattern": "These envelopes are sensitivities: they provide no probabilities",
    "note_prints": true
   }
  ],
