@@ -1,0 +1,1 @@
+/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python: No module named pytest
