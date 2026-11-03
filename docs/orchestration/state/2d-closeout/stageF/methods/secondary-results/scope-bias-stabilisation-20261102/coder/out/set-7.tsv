@@ -1,0 +1,7 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	inline	pos	no	no	no held-out or cross-fitted split	Each classifier is trained on the full sample whose weights it then sets, so no held-out or cross-fitted split is used
+2	c	inline	pos	no	yes	rounding-level instability of estimator	The joint-test estimator is unstable under perturbations of its inputs within floating-point rounding.
+3	c	inline	pos	yes	yes	rounding-level instability of estimator	Rounding-level changes of its inputs move its results by up to 2.6 statistical standard deviations
+4	a	inline	pos	yes	no	lower-capacity development variant also unstable	and those of the lower-capacity development variant by up to 2.5, so the estimator fails a data-stability requirement
+5	c	inline	pos	yes	yes	rounding-level instability of estimator	Every bootstrap replica refits the estimator and carries this spread at the same size (variance ratio 1.02), so it makes up about 37% of the statistical block's variance and less than a tenth of any total uncertainty.
+6	c	inline	pos	no	yes	rounding-level instability of estimator	It limits how exactly the central values can be reproduced.

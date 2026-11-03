@@ -1,0 +1,2 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	inline	pos	yes	no	rounding-level instability of results	Rounding-level changes of the inputs move the results by up to 0.9 statistical standard deviations (median 0.2)

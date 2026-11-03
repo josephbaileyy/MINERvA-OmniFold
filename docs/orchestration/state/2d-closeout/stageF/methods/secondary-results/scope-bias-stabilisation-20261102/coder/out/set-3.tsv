@@ -1,0 +1,3 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	inline	pos	no	no	no held-out or cross-fitted split	Each classifier is trained on the full sample whose weights it then sets, so no held-out or cross-fitted split is used
+2	c	inline	pos	yes	yes	rounding-level instability of single unfolding	A single unfolding moves by up to 2.6 statistical standard deviations under such perturbations
