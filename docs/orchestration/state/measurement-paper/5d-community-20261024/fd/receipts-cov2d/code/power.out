@@ -1,0 +1,5 @@
+7e7d5e358e93f2bcf080ff3f1e88c5e235366adad05985412292e998d0dda1e3  power.py
+ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
+cells=16 alpha_cell=1.563e-03 k_c=180 size_cell_at_P0=1.521e-03 flag_probability_at_true_content={0.62: 0.256, 0.6: 0.522, 0.58: 0.776, 0.56: 0.927, 0.55: 0.964, 0.52: 0.998, 0.5: 1.0}
+cells=205 alpha_cell=1.220e-04 k_c=174 size_cell_at_P0=1.172e-04 flag_probability_at_true_content={0.62: 0.086, 0.6: 0.258, 0.58: 0.522, 0.56: 0.775, 0.55: 0.865, 0.52: 0.984, 0.5: 0.998}
+joint k_J=188 flag_probability_at_true_q={0.64: 0.335, 0.62: 0.615, 0.6: 0.842}

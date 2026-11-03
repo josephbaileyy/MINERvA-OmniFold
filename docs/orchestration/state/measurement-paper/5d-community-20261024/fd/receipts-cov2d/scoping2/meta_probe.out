@@ -1,0 +1,45 @@
+login11
+b2e9b15828c44c17b6efacd776517e1184821c25835d77b2a7f8d4790b1bf4f6  josephrb_meta_probe.py
+host=login11 utc=2026-11-02T22:34:13Z uproot=5.6.9
+STAT /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root size=2144008221 mtime=1779094334 atime=1792770770
+STAT /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root size=171117087867 mtime=1783523295 atime=1792844873
+STAT /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root size=5143 mtime=1777003503 atime=1793330591
+STAT /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root size=6396 mtime=1780107151 atime=1793377438
+STAT /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt size=25403 mtime=1630424966 atime=1793514776
+STAT /pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep/bridged/genie_v3_g18.json size=543301 mtime=1793186532 atime=1793488647
+STAT /pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep/bridged/genie_v3_ar23.json size=541943 mtime=1793186532 atime=1793488647
+STAT /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root size=62196 mtime=1792826582 atime=1793499822
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/SHA256SUMS size=1250 mtime=1791821526 atime=1792858663
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/merge_BeamAngleX_0.log size=3406 mtime=1784361874 atime=1789086926
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/merge_BeamAngleX_1.log size=3406 mtime=1784361872 atime=1789086927
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/merge_BeamAngleY_0.log size=3406 mtime=1784361874 atime=1789086927
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/merge_BeamAngleY_1.log size=3406 mtime=1784361873 atime=1789086927
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/merge_MuonResolution_0.log size=3510 mtime=1784361986 atime=1789086927
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/merge_MuonResolution_1.log size=3510 mtime=1784361990 atime=1789086926
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/merge_Muon_Energy_MINERvA_0.log size=3640 mtime=1784361989 atime=1789086926
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/merge_Muon_Energy_MINERvA_1.log size=3640 mtime=1784361987 atime=1789086926
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/merge_Muon_Energy_MINOS_0.log size=3588 mtime=1784362095 atime=1789086926
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/merge_Muon_Energy_MINOS_1.log size=3588 mtime=1784362095 atime=1789086927
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root size=53845911012 mtime=1784361874 atime=1792799531
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_1.root size=53844600453 mtime=1784361872 atime=1792823403
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_0.root size=53845291390 mtime=1784361874 atime=1792814605
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_1.root size=53845371537 mtime=1784361873 atime=1792814601
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_0.root size=53845199952 mtime=1784361986 atime=1792823557
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_1.root size=53845210317 mtime=1784361990 atime=1792823557
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_0.root size=53845254183 mtime=1784361989 atime=1792823696
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_1.root size=53845155381 mtime=1784361987 atime=1792823696
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_0.root size=53841190691 mtime=1784362095 atime=1792823696
+STAT /global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_1.root size=53845919075 mtime=1784362095 atime=1792823696
+BRANCH runEventLoopOmniFold_MEFHC.root data.measured interp=AsDtype('>f8') title='measured/D' leaf=measured
+BRANCH runEventLoopOmniFold_MEFHC.root data.measured_pz interp=AsDtype('>f8') title='measured_pz/D' leaf=measured_pz
+BRANCH runEventLoopOmniFold_MEFHC.root data.measured_pass interp=AsDtype('uint8') title='measured_pass/b' leaf=measured_pass
+ATIME runEventLoopOmniFold_MEFHC.root before size=2144008221 mtime=1779094334 atime=1792770770 after size=2144008221 mtime=1779094334 atime=1792770770
+BRANCH runEventLoopOmniFold_MEFHC_universes_full.root data.measured interp=AsDtype('>f8') title='measured/D' leaf=measured
+BRANCH runEventLoopOmniFold_MEFHC_universes_full.root data.measured_pz interp=AsDtype('>f8') title='measured_pz/D' leaf=measured_pz
+BRANCH runEventLoopOmniFold_MEFHC_universes_full.root data.measured_eavail interp=AsDtype('>f8') title='measured_eavail/D' leaf=measured_eavail
+BRANCH runEventLoopOmniFold_MEFHC_universes_full.root data.measured_q3 interp=AsDtype('>f8') title='measured_q3/D' leaf=measured_q3
+BRANCH runEventLoopOmniFold_MEFHC_universes_full.root data.measured_W interp=AsDtype('>f8') title='measured_W/D' leaf=measured_W
+BRANCH runEventLoopOmniFold_MEFHC_universes_full.root data.measured_pass interp=AsDtype('uint8') title='measured_pass/b' leaf=measured_pass
+ATIME runEventLoopOmniFold_MEFHC_universes_full.root before size=171117087867 mtime=1783523295 atime=1792844873 after size=171117087867 mtime=1783523295 atime=1792844873
+rc=0
+ls: cannot access 'josephrb_meta_probe.py': No such file or directory

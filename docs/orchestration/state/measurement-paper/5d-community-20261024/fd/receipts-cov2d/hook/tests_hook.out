@@ -1,0 +1,24 @@
+# local, 2026-11-02T22:42:55Z, conda-forge ROOT 6.28/12, Python 3.11.16, numpy 1.26.4, uproot 5.6.9, lightgbm 4.5.0
+938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b  re2_driver.py
+1a7323cdb73438df1c1de5475d467d50c253196f8b24d90fa0311232a2a81f94  test_re2_data_file.py
+db235796f49884ab5200f643d0e03201f22ebe0d435ad319c950e1f50045a982  test_re2_driver.py
+pre-hook blob: 4c7e9d75508fce8ec4bf26c3dd0f037c96af858f (= dbdad2f9's: 4c7e9d75508fce8ec4bf26c3dd0f037c96af858f)
+$ python -B -m unittest 2d-unfolding/re2/tests/test_re2_data_file.py -v
+test_absent_flag_equals_pre_hook ... ok
+test_guards ... ok
+test_other_data_equals_a_swapped_omnifile ... ok
+test_own_data_through_the_hook ... ok
+Ran 4 tests in 116.468s
+OK
+$ python -B -m unittest 2d-unfolding/re2/tests/test_re2_driver.py -v
+test_background_stream_changes_exactly_the_injected_rows ... ok
+test_guards ... ok
+test_purity_cv ... ok
+test_purity_three_stream_and_bkg_only ... ok
+test_purity_universe_selective ... ok
+test_refined_unit_factors_equal_the_refined_cv ... ok
+test_refined_without_size_equals_driver_p1 ... ok
+test_size_reaches_the_classifier_and_moves_the_result ... ok
+test_three_stream_signed_sum ... ok
+Ran 9 tests in 99.063s
+OK
