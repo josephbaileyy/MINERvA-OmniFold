@@ -52,3 +52,27 @@ Nothing is submitted, deposited or tagged.
 - **For Overleaf to show it,** Joseph pulls from GitHub in the Overleaf project's GitHub menu.
 
 **Next sync:** after the Section IV and quadrant round (#690 items 1–2). Start from base `8db2910b`.
+
+## Second sync, 2026-11-02 (later): main 58fa0b89
+
+**Why.** Joseph's decision (`DECISION-20261102-joseph-695-quadrant-wording-and-merge.md` item 4) calls for a re-sync after #695.
+
+**The standalone before the copy.** At `92c28241`, with no Overleaf edit since the first sync.
+
+**What was copied.** 6 files changed between `8db2910b` and `58fa0b89`, and none were added or deleted:
+- `paper_body.tex`, `sec_fived16.tex` and `values_fived16.tex` (the quadrant sentence and Section IV, #695);
+- `make_values_fived16.py`;
+- `check_dead_containment.py` and `test_build_all.py` (the standalone containment fix).
+
+Each file compares equal to canonical by `cmp`.
+
+**Builds.**
+- **Canonical,** in a fresh worktree: `build_all.sh` gave rc 0, and `latexmk -pdf -jobname=output main_paper.tex` gave rc 0.
+- **Standalone copy:** `build_all.sh` gave **rc 0**, with paper 13, note 134, primer 15, PET note 26 and records 59 pp.
+  The containment false STALE is gone. The Overleaf target gave rc 0 at 13 pp.
+- **Text.** `pdftotext` of all six PDFs is identical between the canonical and standalone builds.
+
+**Head.** Standalone `main` = `88f2547bf2a75b6ed2e0cc4d88684e955761e46f` (from `git ls-remote`), a fast-forward from
+`92c28241`. Joseph pulls it in Overleaf from the GitHub menu.
+
+**Next sync:** after the next paper round. Start from base `58fa0b89`.

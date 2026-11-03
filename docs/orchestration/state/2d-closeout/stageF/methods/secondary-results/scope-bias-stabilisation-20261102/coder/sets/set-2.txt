@@ -1,0 +1,5 @@
+Each classifier is trained with two-fold cross-fitting: it sets the weights of the half of the sample it was not trained on. It is trained without early stopping, and the two classes keep their physical weights.
+
+The others are a 2p2h band, two-point shifts, chosen models, the normalization, the run-period block, built from three exposure-weighted periods, and the training-seed block, which is zero.
+
+Rounding-level changes of the inputs move the results by up to 0.9 statistical standard deviations (median 0.2), within the data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations.

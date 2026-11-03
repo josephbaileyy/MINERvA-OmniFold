@@ -9,7 +9,7 @@ Routing: in-session subagents of a session whose `CLAUDE_CONFIG_DIR` is `~/.clau
 
 **Re-coding is the one step `remeasure.py` cannot do.** Coding is a judgment, not a computation. After a paper or note
 round, re-code each document whose blinded text changed (`remeasure.py` exits 3 and names it), and record the new
-text with `--record-coded`.
+text with `--record-coded ours-paper` (or `ours-note`): only the named document's hash is recorded.
 
 ## Paper (`<TEXT>` = `WORK/blind/ours-paper.txt`)
 

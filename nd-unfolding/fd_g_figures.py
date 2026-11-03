@@ -108,12 +108,13 @@ CH_DEFS = "CH, analysis definitions"
 PREDICTION_SETS = {
     "stage-g": (QUALIFIERS, REQUIRED),
     # addendum E-A1: the corner's name is in every label and the sidecar's prediction_set, not on the legend, whose
-    # longer entries ran off the page (K6, the first run's chdefs-nopl figures); the hydrogen flags stay on the legend
-    "gencmp-chdefs": ({"nuwro": ("CH", "hydrogen: supplement FLAGGED"),
-                       "gibuu": ("CH", "hydrogen: closure B3 failed", "p_parallel < 4.5 cells only"),
+    # longer entries ran off the page (K6, the first run's chdefs-nopl figures). Addendum E-A2 (the caveat cut list,
+    # move MV07F): the two hydrogen flags leave the legend and K7's required strings; they stay in every label and
+    # move to Table III's footnote and the note
+    "gencmp-chdefs": ({"nuwro": ("CH",),
+                       "gibuu": ("CH", "p_parallel < 4.5 cells only"),
                        "mnvtune_v1": ("prior (not an independent prediction)",)},
-                      ("hydrogen: supplement FLAGGED", "hydrogen: closure B3 failed",
-                       "prior (not an independent prediction)", "p_parallel < 4.5 cells only")),
+                      ("prior (not an independent prediction)", "p_parallel < 4.5 cells only")),
 }
 DEFAULT_SET = "stage-g"
 DISPLAY = (("p_parallel", r"$p_\parallel$"), ("C12", r"$^{12}$C"))  # plain readout text -> drawn text, and back (K7)

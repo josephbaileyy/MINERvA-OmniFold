@@ -1,0 +1,12 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	abstract	pos	yes	partly	fake-data bias exceeds predeclared thresholds	Fake-data studies find residual bias exceeding predeclared uncertainty-based thresholds at a GiBUU-like truth and a synthetic momentum-transfer tilt; an assigned fake-data bias term raises the median relative uncertainty per cell from 7.86% to about 12%.
+2	c	inline	pos	yes	partly	fake-data bias exceeds predeclared thresholds	the listed truths (p<0.01, or a cell with |z|>2) are the GiBUU hybrid truth (p=5.3e-28; cells R02, R06) and the synthetic q3 tilt, by p alone (p=9.1e-6)
+3	c	inline	pos	yes	no	GiBUU Eavail pass depends on C_PL,5D	Without C_PL,5D, the GiBUU Eavail shape also meets the listing criterion, in cell R06 (z=2.01, against 1.76 with the block).
+4	c	inline	pos	no	partly	fake-data bias exceeds predeclared thresholds	Thus the fake-data bias exceeds the stated thresholds at the GiBUU hybrid truth and the q3 tilt under the reported covariance, and also at the GiBUU Eavail shape without C_PL,5D.
+5	c	inline	pos	no	partly	GiBUU Eavail pass depends on C_PL,5D	The bias is the same in both; only the covariance differs, so the change is not a smaller bias or a validated uncertainty.
+6	b	inline	pos	no	yes	C_FD truth choice not results-driven	chosen by family rather than by which truths fail
+7	d	inline	pos	no	partly	C_FD covers only its chosen truths	C_FD measures the residual bias at these truths; it is not a calibrated bound.
+8	c	inline	pos	no	partly	C_FD not a calibrated bound	C_FD measures the residual bias at these truths; it is not a calibrated bound.
+9	c	inline	pos	yes	no	C_FD untestable by its own truths	Against the second total, every truth used to build C_FD passes by construction, so these fake-data tests cannot test it
+10	c	inline	pos	yes	no	C_FD untestable by its own truths	the two GENIE v3 tunes, which are not in it, are the only test at a truth outside the term.
+11	c	inline	pos	no	no	C_FD and C_model not independent	C_FD and C_model share the generator directions, so the two terms are not independent.

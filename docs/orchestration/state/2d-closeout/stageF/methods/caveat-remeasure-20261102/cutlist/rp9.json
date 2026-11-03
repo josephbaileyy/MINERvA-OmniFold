@@ -1,0 +1,368 @@
+{
+ "base_after_20_moves": {
+  "distinct": 44,
+  "words": 7484,
+  "distinct_per_1k": 5.88
+ },
+ "target": 4.5,
+ "every_candidate": {
+  "distinct": 24,
+  "words": 5662,
+  "distinct_per_1k": 4.24
+ },
+ "best_without_referee_keep": {
+  "candidates": [
+   "IVC",
+   "VC",
+   "IIIA",
+   "C65",
+   "C30C31",
+   "C17"
+  ],
+  "distinct": 33,
+  "words": 6693,
+  "distinct_per_1k": 4.93
+ },
+ "minimum_sets": [
+  {
+   "candidates": [
+    "IVC",
+    "IVB",
+    "VC",
+    "C65",
+    "C30C31",
+    "C17",
+    "C76",
+    "C51"
+   ],
+   "n": 8,
+   "distinct": 29,
+   "words": 6510,
+   "distinct_per_1k": 4.45,
+   "referee_keep_moved": [
+    "IVB",
+    "C76",
+    "C51"
+   ]
+  },
+  {
+   "candidates": [
+    "IVC",
+    "IVB",
+    "VC",
+    "C65",
+    "C30C31",
+    "C17",
+    "C76",
+    "MV07"
+   ],
+   "n": 8,
+   "distinct": 29,
+   "words": 6470,
+   "distinct_per_1k": 4.48,
+   "referee_keep_moved": [
+    "IVB",
+    "C76",
+    "MV07"
+   ]
+  },
+  {
+   "candidates": [
+    "IVC",
+    "IVB",
+    "VC",
+    "C65",
+    "MV10",
+    "C30C31",
+    "C17",
+    "C76"
+   ],
+   "n": 8,
+   "distinct": 29,
+   "words": 6460,
+   "distinct_per_1k": 4.49,
+   "referee_keep_moved": [
+    "IVB",
+    "MV10",
+    "C76"
+   ]
+  },
+  {
+   "candidates": [
+    "IVC",
+    "IVB",
+    "VC",
+    "C65",
+    "C30C31",
+    "C17",
+    "MV07",
+    "C51"
+   ],
+   "n": 8,
+   "distinct": 29,
+   "words": 6450,
+   "distinct_per_1k": 4.5,
+   "referee_keep_moved": [
+    "IVB",
+    "MV07",
+    "C51"
+   ]
+  },
+  {
+   "candidates": [
+    "IVC",
+    "IVB",
+    "VC",
+    "C65",
+    "MV10",
+    "C30C31",
+    "C17",
+    "C51"
+   ],
+   "n": 8,
+   "distinct": 29,
+   "words": 6440,
+   "distinct_per_1k": 4.5,
+   "referee_keep_moved": [
+    "IVB",
+    "MV10",
+    "C51"
+   ]
+  },
+  {
+   "candidates": [
+    "IVC",
+    "IVB",
+    "VC",
+    "C30C31",
+    "C17",
+    "C76",
+    "MV07",
+    "C51"
+   ],
+   "n": 8,
+   "distinct": 29,
+   "words": 6475,
+   "distinct_per_1k": 4.48,
+   "referee_keep_moved": [
+    "IVB",
+    "C76",
+    "MV07",
+    "C51"
+   ]
+  },
+  {
+   "candidates": [
+    "IVC",
+    "IVB",
+    "VC",
+    "MV10",
+    "C30C31",
+    "C17",
+    "C76",
+    "C51"
+   ],
+   "n": 8,
+   "distinct": 29,
+   "words": 6465,
+   "distinct_per_1k": 4.49,
+   "referee_keep_moved": [
+    "IVB",
+    "MV10",
+    "C76",
+    "C51"
+   ]
+  },
+  {
+   "candidates": [
+    "IVC",
+    "IVB",
+    "VC",
+    "C65",
+    "C30C31",
+    "C76",
+    "MV07",
+    "C51"
+   ],
+   "n": 8,
+   "distinct": 29,
+   "words": 6440,
+   "distinct_per_1k": 4.5,
+   "referee_keep_moved": [
+    "IVB",
+    "C76",
+    "MV07",
+    "C51"
+   ]
+  }
+ ],
+ "candidates": {
+  "IVC": {
+   "removes": [
+    "C34",
+    "C35",
+    "C36",
+    "C38"
+   ],
+   "words": 455,
+   "requires": [],
+   "referee_keep": false,
+   "loses": "IV C, the 2D covariance's construction and budget (blocks, the flux block smaller than the published one, the omitted terms); a one-sentence summary and a pointer stay",
+   "cited_by": "VI A's coverage statement names the 2D covariance (it stays, pointing to the note)",
+   "note_holds": "yes: note Sec. 4 (fuller, with its uncertainty and correlation figures)"
+  },
+  "IVB": {
+   "removes": [
+    "C32",
+    "C33",
+    "C69"
+   ],
+   "words": 306,
+   "requires": [
+    "IVC"
+   ],
+   "referee_keep": true,
+   "loses": "IV B, the 2D benchmark against the published result, and Fig. 1",
+   "cited_by": "the abstract (\"reproduces the published muon-kinematic cross-section integral within about 1%\") and Sec. I (\"an end-to-end test of the unfolding\"): both would need editing, and the abstract is protected",
+   "note_holds": "content yes: note Sec. 6, with its own comparison figures; Fig. 1 itself is not in the note"
+  },
+  "VC": {
+   "removes": [
+    "MV03",
+    "C11"
+   ],
+   "words": 108,
+   "requires": [],
+   "referee_keep": false,
+   "loses": "V C, the descriptive comparisons of the three- and four-observable central values, and the scope sentence on prediction definitions outside the sixteen cells (Sec. II)",
+   "cited_by": "Sec. I (\"we also give three- and four-observable central values\")",
+   "note_holds": "yes: note Secs. 7 and 8"
+  },
+  "IIIA": {
+   "removes": [
+    "MV04"
+   ],
+   "words": 163,
+   "requires": [],
+   "referee_keep": false,
+   "loses": "III A, the reporting definitions, the precision target and the envelope",
+   "cited_by": "the conclusions (the envelope as the second validation finding)",
+   "note_holds": "yes: note Sec. 9.4"
+  },
+  "IVE": {
+   "removes": [],
+   "words": 465,
+   "requires": [],
+   "referee_keep": true,
+   "loses": "IV E, the generator-sized truth changes, and Fig. 3 (regularization bias up to 74% at high W)",
+   "cited_by": "the conclusions (the first validation finding, and the lessons paragraph)",
+   "note_holds": "content yes: note Sec. 9, with its own figures; Fig. 3 itself is not in the note"
+  },
+  "IVE+IIIA:C20": {
+   "removes": [
+    "C20"
+   ],
+   "words": 45,
+   "requires": [
+    "IVE",
+    "IIIA"
+   ],
+   "referee_keep": true,
+   "loses": "the conclusions' two sentences on prior retention (C20 then leaves the paper)",
+   "cited_by": "the conclusions themselves",
+   "note_holds": "yes: note Sec. 9"
+  },
+  "IVE+VC:C41": {
+   "removes": [
+    "C41"
+   ],
+   "words": 25,
+   "requires": [
+    "IVE",
+    "VC"
+   ],
+   "referee_keep": false,
+   "loses": "IV D's pointer to the earlier purity-subtracted result's normalization checks (C41 then leaves)",
+   "cited_by": "none",
+   "note_holds": "yes: note Sec. 8.1"
+  },
+  "C65": {
+   "removes": [
+    "C65"
+   ],
+   "words": 35,
+   "requires": [],
+   "referee_keep": false,
+   "loses": "VI A item 2, the four low-stability cells",
+   "cited_by": "none",
+   "note_holds": "yes: note register n58"
+  },
+  "MV10": {
+   "removes": [
+    "MV10"
+   ],
+   "words": 80,
+   "requires": [],
+   "referee_keep": true,
+   "loses": "V B's χ² sensitivity to the assumed correlations",
+   "cited_by": "none; it qualifies the χ² of Table III",
+   "note_holds": "yes: note register n67"
+  },
+  "C30C31": {
+   "removes": [
+    "C30",
+    "C31"
+   ],
+   "words": 30,
+   "requires": [],
+   "referee_keep": false,
+   "loses": "IV A's zero training-seed block and the absent finite-ensemble correction",
+   "cited_by": "none",
+   "note_holds": "C31 yes (note register n61); C30 NOTE FIRST (not confirmed in the note)"
+  },
+  "C17": {
+   "removes": [
+    "C17"
+   ],
+   "words": 0,
+   "requires": [],
+   "referee_keep": false,
+   "loses": "nothing: the iteration choice reworded as a plain choice with its basis (R-P4)",
+   "cited_by": "none",
+   "note_holds": "not a move; a coder may still count it"
+  },
+  "C76": {
+   "removes": [
+    "C76"
+   ],
+   "words": 10,
+   "requires": [],
+   "referee_keep": true,
+   "loses": "Fig. 4's caption: the predictions' finite-sample uncertainties are not drawn",
+   "cited_by": "none; it qualifies the figure of the main comparison",
+   "note_holds": "no"
+  },
+  "MV07": {
+   "removes": [
+    "MV07"
+   ],
+   "words": 70,
+   "requires": [],
+   "referee_keep": true,
+   "loses": "Table III's footnote on the hydrogen samples' defects",
+   "cited_by": "none; it qualifies the compared predictions",
+   "note_holds": "yes: note Sec. 10.5"
+  },
+  "C51": {
+   "removes": [
+    "C51"
+   ],
+   "words": 30,
+   "requires": [],
+   "referee_keep": true,
+   "loses": "IV H: the held-out GENIE v3 tunes are not independent",
+   "cited_by": "none; it qualifies the main result's fake-data validation",
+   "note_holds": "yes: note Sec. 10.4"
+  }
+ }
+}
