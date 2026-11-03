@@ -1,0 +1,78 @@
+cid	kind	issue	cls	q	move	campaign	note	comment
+C01	b	run-period block added post hoc	merge	Q19	MV01	run-period diagnosis (#690 3b) may find the cause	n62	post hoc; abstract statement is protected and stays
+C02	c	unexplained shape difference with published 2d	K	Q21			n34	source not identified; no route
+C03	c	fake-data bias exceeds thresholds	K	Q35			n64	measured fake-data result
+C04	d	gibuu comparison limited to 8 cells	R	Q09		a new GiBUU sample above 20 GeV (KNOWN_ISSUES 82); not declared	n49	
+C05	c	coverage of intervals not validated	merge	Q01	MV02	1B stage-1 redesign (#690 3a)	n22	one coverage statement in VI A (#690 item 2)
+C06	d	five observables not independent	K	Q05			n44	reconstructed W is fixed by (pT, p∥, q3)
+C07	d	findings limited to one implementation and data set	K	Q04			n03	scope of the whole study
+C08	d	input is earlier open-data production	K	Q06			n84	data provenance
+C09	d	eavail definition differs from published	merge	Q07	MV11		n37	join-only
+C10	c	eavail constant effect estimated first order	merge	Q07	MV11		n37	join-only
+C11	d	prediction definitions differ outside 16-cell comparison	K	Q10			n46	scope sentence for comparisons outside the 16 cells (Q10 closed for the 16 cells)
+C12	c	carbon vs ch target difference	K	Q08			n48	explains why per-nucleon normalization leaves a target difference; the CH correction is adopted
+C13	d	unsupported cells excluded from reporting	K	Q13			n59	reporting definition
+C14	c	purity-subtraction bias at high w	merge	Q27	MV08		n10	
+C15	d	two estimators not combined	K	Q11			n09	method design
+C16	c	no held-out or cross-fitted training split	K	Q11			n08	method design
+C17	a	iteration count choice	K				n30	a method choice coded (a); could be worded as a plain choice with its basis (caveat-study R-P4), not counted as a saving
+C18	d	envelope is diagnostic not interval	merge	Q12	MV04		n56	
+C19	c	precision target not met with envelope	merge	Q12	MV04		n56	
+C20	c	regularization bias toward prior	K	Q28			n30	regularization bias toward the prior; binned unfolding shares it
+C21	d	coverage only pointwise not simultaneous	merge	Q14	MV02		n27	the definition of coverage at IV stays, without the pointwise clause
+C22	c	detector response not probed in validation	R	Q38		detector-response mismatch test; not declared (FD-CT-3B-REPORT.md: protocol only)	n13	
+C23	d	validation studies at fixed tune v1 prior	K	Q34			n63	the prior stays at Tune v1 in every validation study
+C24	c	cmodel not a calibrated bound	K	Q15		1B stage-1 redesign would measure C_model's held-out coverage	n52	its statements at IV C (2D term, Q25), V B and VI A stay
+C25	c	recoil response term incomplete	merge	Q16	MV12	a wider C_resp; not declared	n60	join-only
+C26	d	cresp only in sixteen-cell result	merge	Q16	MV12		n60	join-only
+C27	c	run-period inconsistency unexplained	merge	Q17	MV01	run-period diagnosis (#690 3b)	n20	
+C28	c	run-period block size poorly determined	merge	Q18	MV01	run-period diagnosis (#690 3b)	n21	
+C29	e	internal audit with predeclared stopping criterion	merge	Q19	MV01		n62	process vocabulary (caveat-study R-P7)
+C30	c	training-seed uncertainty zero for joint-test estimator	K				n07	the joint-test estimator is deterministic
+C31	c	no finite-ensemble correction to covariance blocks	R	Q20		a finite-ensemble correction: cheap and immaterial; not declared	n61	
+C32	b	learner chosen after comparing to published	K	Q22			n08	stated once at the choice (#695)
+C33	c	learner dependence of 2d result	K	Q23			n18	IV B keeps the 1.03% by #690 item 2
+C34	c	training-seed block size poorly determined	K				n07	five seed settings
+C35	c	flux uncertainty smaller than published unexplained	K	Q24			n33	released inputs
+C36	c	2d covariance omits learner, regularization, reco-failure terms	K	Q23		2D method coverage (#690 3c) does not add these terms	n24	
+C37	c	run-period block self-consistency check vacuous	merge	Q19	MV01		n62	
+C38	d	no statement on published residual	K	Q25			n32	scope of the comparison with the published residual
+C39	c	correlations between 2d and 16-cell results not evaluated	K					the quadrant sentence decided by Joseph (#690 item 1)
+C40	c	four-observable normalization not checked	R	Q26		a four-observable marginal comparison with the 2D result; not declared	n11	what remains of Q26 after #695
+C41	a	earlier purity-subtracted five-observable result	K	Q29			n02	Fig. 3's uncertainties come from that covariance
+C42	c	residual closure bias of joint-test estimator	merge	Q27	MV08		n10	
+C43	c	background treatment dependence	merge	Q27	MV08		n10	
+C44	a	purity-based subtraction superseded	merge	Q27	MV08		n10	
+C45	d	binned diagnostic scope limited	M	Q31	MV14		n53	move the binned diagnostic with its scope
+C46	c	miscoverage under truth changes	M	Q32 Q43	MV13		n51	move IV F (an earlier estimator's coverage test) and its conclusion sentence
+C47	c	instability under input rounding	M	Q33	MV15		n54	move IV G
+C48	c	fake-data truths not held out	merge	Q34	MV05		n63	join-only
+C49	d	descriptive truths not judged	merge		MV05		n63	join-only
+C50	c	r11 bias covered only with cmodel	M		MV17			the note must receive the R11 fact first (not found in the note at 58fa0b89)
+C51	c	held-out tunes not independent	K	Q37				GENIE v3 tunes share a QE model
+C52	d	coverage of intervals not validated	merge	Q01 Q38	MV02		n22	
+C53	e	coverage test stopped at gate	merge	Q39	MV02	1B stage-1 redesign (#690 3a) supersedes it	n22	
+C54	d	comparisons need full covariance	K				n31	a presentation statement: correlated cells need the full covariance
+C55	d	3d/4d central values lack uncertainties	merge	Q03	MV03		n11	
+C56	d	tune v1 comparison not independent	K				n66	Tune v1 is the prior
+C57	c	hydrogen sample dependence	M		MV18			the note must receive the hydrogen-sample sign dependence first (not found in the note)
+C58	c	cmodel derived from compared generators	merge	Q15	MV06		n52	
+C59	d	no generator exclusion claimed	K	Q41			n68	stays in VI A item 3's last sentence, with a pointer, if MV09 is made
+C60	c	χ2 sensitivity to assumed correlations	merge	Q40	MV10		n67	
+C61	d	χ2 sensitivity to assumed correlations	merge	Q40	MV10		n67	
+C62	c	3d/4d central values lack uncertainties	merge	Q03	MV03		n11	
+C63	c	2d covariance not validated	merge	Q02 Q23	MV02	2D method coverage (#690 3c)	n17	
+C64	a	earlier 2d statistical band undercovered	merge	Q02	MV02		n17	required by #690 item 2
+C65	c	low reconstruction stability in four cells	R	Q42		a stability criterion for the cells changes the result: Joseph's decision	n58	
+C66	d	calibrated tests conditional on simulation	M	Q41	MV09		n68	the note's tests' conditions; pointer to the note's Sec. 11
+C67	c	hybrid null residual below fine grid unbounded	M	Q41	MV09		n71	
+C68	c	calibrated tests conditional on simulation	M	Q41	MV09		n68	
+C69	c	cmodel excluded from 2d band	K					a definition: the 2D band excludes C_model
+C70	c	closure pseudo-experiments not paired	M		MV19			figure-internal text (not in the TeX): needs a figure edit, and the note must receive the fact
+C71	c	seeds not held out from development	M	Q30	MV16		n55	a caption sentence; the note states it
+C72	c	gibuu hydrogen sample defects	merge		MV07		n48	
+C73	b	gibuu hydrogen sample defects	merge		MV07		n48	
+C74	e	gibuu hydrogen sample defects	merge		MV07F		n48	figure legend token: needs the figure's legend edited
+C75	e	nuwro hydrogen supplement flagged	merge		MV07F		n48	figure legend token: needs the figure's legend edited
+C76	c	prediction finite-sample uncertainty not drawn	K					a presentation statement
+C77	c	nuwro hydrogen supplement flagged	merge		MV07		n48	
