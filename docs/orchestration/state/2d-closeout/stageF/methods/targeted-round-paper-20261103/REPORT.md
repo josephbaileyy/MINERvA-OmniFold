@@ -117,8 +117,16 @@ REPORT:
 The answer numbers the figures "Fig. 5" and "Fig. 6", which no build of the paper does. By their content, they are
 the background-closure figure that moved and the deformation figure's caption (0.09 % at nominal truth).
 
-**Joseph's answer**, as the director relays it, verbatim: "Restore both, then merge (Recommended)". The decision
-record is to follow.
+**Joseph's answer**, verbatim: "Restore both, then merge (Recommended)". It is recorded in
+`DECISION-20261103-joseph-731-restore-and-merge.md` (#732, `909c14e94`), where the sha256 of the text plus a final
+newline begins `f9f48208d3755d05`. Item 1 has the lane revise #731:
+- the run-period block prints "poorly determined" with its 68 % interval;
+- the paper states that no finite-ensemble correction is applied;
+- every other change of `b9849126` stays;
+- the REPORT records both restorations, before and after.
+
+Item 2 merges #731 through the CI-gated merge once the ledger, the receipts check, the values check and local CI
+pass.
 
 **Done.** Both sentences are restored exactly as at the base `7bdd39f69`, so neither is now a changed sentence. The
 ledger rows T2 and T3 read RESTORED, and their source comments in `paper_body.tex` say why.
