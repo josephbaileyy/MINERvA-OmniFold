@@ -1,0 +1,467 @@
+#!/usr/bin/env python3
+"""1B's pre-bulk C2 gate (FD-1B-STAGED-ADDENDUM-A2-1.md): Joseph's clip rule (#718) read through cov2d's code, with
+Joseph's 16-cell variance gate (#724) and its null calibration.
+
+* ``gate_724``: per truth, C2's clipped-composition variance ratio passes only if (i) at most 2 of the 16 cells have
+  |ratio - 1| > 0.20, (ii) |mean over cells of log ratio| <= 0.07 and (iii) max |ratio - 1| <= 0.35.
+* ``reading_1b``: ``clip_probe2.reading`` with each composition's variance gate a parameter. Under C2's own gate it
+  equals clip_probe2.reading (tested over a grid); 1B calls it with #724 on ``option_1_clipped`` and C2's 95 % rule,
+  descriptive, on the others (the director's ruling). It reads "option (1)" exactly when q1 and the mismatch is
+  bounded, so only the clipped ratio's gate can move it.
+* ``band_reference``: ``clip_probe2.band_reference`` with the band layout a parameter (cov2d's hard-codes its own);
+  1B's is S1's 38 bands, every one drawn, Flux by the constraint's weights and the rest uniform (``toys.draw``).
+* ``xt_flat``: 1B's graded truth (``s5n_pseudo.true_xsec`` through ``xsec_nd.extract_cross_section_nd``) from its
+  fine-cell sums, batched over draws, in the extraction's own operation order.
+* ``calibrate``: the noise-only rates of (i)-(iii) on null natures (unclipped, first order) from streams disjoint from
+  every declared draw, at the director's outputs (a)-(c), the power of (ii) against a uniform 10 % deflation, and the
+  two parts of the D4 control: the draw law on a linear count (exact) and x_T's linearisation.
+
+MEASURES: rates, SDs and controls of a gate. CANNOT AUTHORIZE: a threshold change, a verdict on 1B's coverage.
+"""
+from __future__ import annotations
+
+import json
+import math
+import sys
+from pathlib import Path
+
+import numpy as np
+
+import fd_1b_toys as toys
+import s1_assemble as sa
+
+_REPO = Path(__file__).resolve().parents[1]
+CP2_DIR = _REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip"
+COV2D_DIR = _REPO / "2d-unfolding/cov2d"
+for _p in (CP2_DIR, COV2D_DIR):
+    if str(_p) not in sys.path:
+        sys.path.insert(0, str(_p))
+import clip_probe2 as cp2  # noqa: E402
+import cov2d  # noqa: E402
+
+N_CELLS = sa.N_CELLS
+GATE_K, GATE_DEV, GATE_LOGMEAN, GATE_MAX = 2, 0.20, 0.07, 0.35   # #724 (i), (i)'s deviation, (ii), (iii)
+SD_MULT_LOGMEAN, SD_MULT_CELL = 3.5, 4.3      # the director's (c): the consult's SE multiples (ANSWER.txt:26-27)
+UNION_LIMIT = 0.01                            # the director's: a three-truth noise STOP above this goes to Joseph
+DEFLATION = 0.9                               # the power of (ii) against a uniform 10 % deflation
+CONTROL_Z = 4.0                               # D4: |mean ratio - 1| within this many SEs in every cell
+CAL_SETS = 10_000                             # replicate sets of 300 draws per truth
+CAL_SEED = {"g18": 3_671_000, "ar23": 3_672_000, "plugin": 3_673_000}
+CAL_SALT = 20_261_103_7                       # with (CAL_SEED, set), a stream no declared draw's [seed, DRAW_SALT] is
+CLIPPED = "option_1_clipped"
+
+
+class Refusal(RuntimeError):
+    """A gate input is not what the gate is defined on."""
+
+
+# ------------------------------------------------------------------------------------------------------- the gate
+
+
+def gate_724(ratio) -> dict:
+    """#724 on one truth's 16 per-cell ratios: the three statistics, each rule, and the verdict."""
+    r = np.asarray(ratio, np.float64)
+    if r.shape != (N_CELLS,) or not np.all(np.isfinite(r)) or np.any(r <= 0):
+        raise Refusal(f"#724 needs {N_CELLS} finite positive ratios")
+    dev = np.abs(r - 1.0)
+    out = {"cells_beyond": int(np.sum(dev > GATE_DEV)), "mean_log": float(np.mean(np.log(r))),
+           "max_dev": float(np.max(dev))}
+    out["i"] = out["cells_beyond"] <= GATE_K
+    out["ii"] = abs(out["mean_log"]) <= GATE_LOGMEAN
+    out["iii"] = out["max_dev"] <= GATE_MAX
+    out["passes"] = bool(out["i"] and out["ii"] and out["iii"])
+    return out
+
+
+def c2_gate(v) -> bool:
+    """C2's own variance gate (clip_probe2.reading): |ratio - 1| <= VAR_GATE in at least VAR_SHARE of the cells."""
+    return float(np.mean(np.abs(np.asarray(v) - 1) <= cp2.VAR_GATE)) >= cp2.VAR_SHARE
+
+
+GATES_1B = {CLIPPED: lambda v: gate_724(v)["passes"], "first_order": c2_gate, "multiplicative": c2_gate}
+
+
+def reading_1b(rec: dict, gates: dict | None = None) -> dict:
+    """``clip_probe2.reading`` (c2_reading.txt) with each composition's variance gate taken from ``gates`` (default:
+    C2's own, under which this equals clip_probe2.reading). Every other number is clip_probe2's constant."""
+    gates = gates or {}
+    out = {}
+    worst = rec["vi"]["largest_cell_unmatched_share"]
+    bounded = worst is not None and worst <= cp2.MISMATCH_BOUND
+    for t, b in rec["b"].items():
+        R = b["option_1"]["sigma_Q"]
+        med, p90 = np.array(R["abs_median"]), np.array(R["abs_p90"])
+        vr = {k: np.array(v) for k, v in b["variance_ratio"].items()}
+        gate = {k: bool(gates.get(k, c2_gate)(v)) for k, v in vr.items()}
+        q1 = bool(np.all(med <= cp2.R1_MEDIAN) and np.mean(p90 <= cp2.R1_P90) >= cp2.R1_P90_SHARE
+                  and gate[CLIPPED])
+        pos = bool((np.mean(med > cp2.POS_MEDIAN) > cp2.POS_SHARE or np.any(p90 > cp2.POS_P90))
+                   and gate["multiplicative"])
+        opt3 = bool((np.mean(med >= cp2.OPT3_MEDIAN) >= cp2.OPT3_SHARE
+                     and not (gate[CLIPPED] or gate["multiplicative"])) or not bounded)
+        pick = ("option (3)" if opt3 else "option (1)" if q1 else
+                "positivity-preserving (multiplicative) composition" if pos else "no rule of the reading fires")
+        out[t] = {"option_1_qualifies": q1, "positivity_preferred": pos, "option_3_applies": opt3,
+                  "variance_gate_passes": gate, "mismatch_bounded": bounded, "reads": pick}
+    picks = {v["reads"] for v in out.values()}
+    out["overall"] = picks.pop() if len(picks) == 1 else "the tunes read differently: " + "; ".join(
+        f"{t} {v['reads']}" for t, v in out.items())
+    return out
+
+
+# ------------------------------------------------------------------------------------------- the draw law
+
+
+def band_reference(h_u: np.ndarray, w_flux: np.ndarray, order, bands: dict, flux: str) -> np.ndarray:
+    """sum_b Var_b of per-universe values ``h_u`` (rows: universes, band by band in ``order``), each band under its
+    draw law: ``flux`` by ``w_flux``, every other band uniform. clip_probe2.band_reference with the layout a parameter."""
+    h_u = np.asarray(h_u, np.float64)
+    if h_u.shape[0] != sum(bands[b] for b in order):
+        raise Refusal("one row per universe of the layout is required")
+    ref, k = np.zeros(h_u.shape[1]), 0
+    for b in order:
+        n = bands[b]
+        X = h_u[k:k + n]
+        p = (w_flux / w_flux.sum()) if b == flux else np.full(n, 1.0 / n)
+        mu = p @ X
+        ref += p @ (X - mu) ** 2
+        k += n
+    return ref
+
+
+def layout_1b() -> tuple[tuple[str, ...], dict, list[str]]:
+    """S1's bands in s1_universes' order, their sizes, and the universe tags in the same row order. Every band is
+    drawn once per toy (fd_1b_mc.draw_columns refuses otherwise)."""
+    order = tuple(sorted(sa.EXPECT))
+    tags = toys.s1_universes()
+    if [t.rpartition("_")[0] for t in tags] != [b for b in order for _ in range(sa.EXPECT[b])]:
+        raise Refusal("s1_universes is not band by band in sorted order")
+    return order, dict(sa.EXPECT), tags
+
+
+def selection(draws: list[list[str]], col: dict[str, int], bands: dict) -> np.ndarray:
+    """Draws x universes, 1 where the draw holds the universe; each draw holds one universe of every band."""
+    S = np.zeros((len(draws), len(col)))
+    for d, tags in enumerate(draws):
+        if sorted(t.rpartition("_")[0] for t in tags) != sorted(bands):
+            raise Refusal("a draw does not hold exactly one universe of every band")
+        S[d, [col[t] for t in tags]] = 1.0
+    return S
+
+
+# ------------------------------------------------------------------------------------------- 1B's graded truth
+
+
+def xt_flat(A: np.ndarray, B: np.ndarray, D: np.ndarray, flux: np.ndarray, n_nucleons: float, data_pot: float,
+            shape: tuple, edges) -> np.ndarray:
+    """x_T per fine cell, flattened (C order), for a batch: rows of A = sum w_truth r, B = sum w_truth and D (the
+    denominator) per fine cell, and flux (rows, n_pt). It is true_xsec's (completeness B/D where D > 0, else 0) through
+    extract_cross_section_nd's expression, element for element, so it matches the bulk's x_T bitwise on equal sums."""
+    from xsec_nd import _bin_volume
+    A, B, D = (np.asarray(a, np.float64).reshape((-1,) + tuple(shape)) for a in (A, B, D))
+    comp = np.zeros_like(B)
+    nz = D > 0
+    comp[nz] = B[nz] / D[nz]
+    vol = _bin_volume(tuple(shape), edges)[None]
+    flux_b = np.asarray(flux, float).reshape((-1, shape[0]) + (1,) * (len(shape) - 1))
+    denom = comp * flux_b * float(n_nucleons) * float(data_pot) * vol
+    good = (denom > 0) & np.isfinite(denom)
+    x = np.zeros_like(A)
+    np.divide(A * 1.0e4, denom, out=x, where=good)
+    return x.reshape(x.shape[0], -1)
+
+
+def packing(keep: np.ndarray, shape: tuple, edges) -> dict:
+    """The constants xt_packed needs for the fine cells ``keep`` (flat indices): their bin volumes and pT bins."""
+    from xsec_nd import _bin_volume
+    keep = np.asarray(keep, np.int64)
+    return {"keep": keep, "vol": _bin_volume(tuple(shape), edges).ravel()[keep],
+            "pt": np.unravel_index(keep, tuple(shape))[0]}
+
+
+def xt_packed(A: np.ndarray, B: np.ndarray, D: np.ndarray, flux: np.ndarray, n_nucleons: float, data_pot: float,
+              pack: dict) -> np.ndarray:
+    """xt_flat on the fine cells of ``pack`` only (A, B, D: rows x kept cells), with the same operations in the same
+    order, so it equals xt_flat's columns ``pack["keep"]`` bitwise."""
+    comp = np.zeros_like(B)
+    nz = D > 0
+    comp[nz] = B[nz] / D[nz]
+    denom = comp * np.asarray(flux, float)[:, pack["pt"]] * float(n_nucleons) * float(data_pot) * pack["vol"][None]
+    good = (denom > 0) & np.isfinite(denom)
+    x = np.zeros_like(A)
+    np.divide(A * 1.0e4, denom, out=x, where=good)
+    return x
+
+
+# ----------------------------------------------------------------------------------------------- calibration
+
+
+def calibration_draws(truth: str, s: int, flux_p: np.ndarray, groups: dict, n: int = 300) -> list[list[str]]:
+    """Replicate set ``s`` of ``truth``: n draws by toys.draw's own law from the stream [CAL_SEED, s, CAL_SALT]."""
+    from fd_1b_mc import draw_universes
+    rng = np.random.default_rng([CAL_SEED[truth], s, CAL_SALT])
+    return [draw_universes(toys.draw(rng, flux_p, groups)) for _ in range(n)]
+
+
+def composite_sums(S: np.ndarray, H: dict, cv: dict) -> dict:
+    """First order on the fine sums: H_D = sum_u S_du H_u - (k - 1) H_CV, k the draw's universe count. Each fine sum is
+    linear in the row weights, so this is the histogram of compose's per-row composite up to summation order."""
+    k = S.sum(axis=1, keepdims=True) - 1.0
+    return {q: S @ H[q] - k * cv[q][None, :] for q in ("A", "B", "D")}
+
+
+def draw_flux(S: np.ndarray, flux_cols: np.ndarray, flux_u: np.ndarray) -> np.ndarray:
+    """Each draw's flux (draws x n_pt): its one Flux universe's Phi_u (compose: 'the flux is the one flux universe's')."""
+    F = S[:, flux_cols]
+    if not np.all(F.sum(axis=1) == 1):
+        raise Refusal("a draw does not hold exactly one Flux universe")
+    return flux_u[F.argmax(axis=1)]
+
+
+def set_ratios(S: np.ndarray, H: dict, cv: dict, U: np.ndarray, ref_x: np.ndarray, ref_count: np.ndarray,
+               flux_cols: np.ndarray, flux_u: np.ndarray, const: dict) -> tuple[np.ndarray, np.ndarray]:
+    """One replicate set, first order, unclipped: per-cell variance ratios (ddof 1) of 1B's graded truth U x_T over
+    ``ref_x``, and of the linear count (sum w_truth r over each reporting cell's fine cells) over ``ref_count``; each
+    reference is band_reference of the single-universe values. The second is exact under the law; the first carries
+    x_T's linearisation. H, cv and U are on the packed fine cells of const["pack"]."""
+    comp = composite_sums(S, H, cv)
+    X = xt_packed(comp["A"], comp["B"], comp["D"], draw_flux(S, flux_cols, flux_u), const["n_nucleons"],
+                  const["data_pot"], const["pack"]) @ U.T
+    L = comp["A"] @ (U > 0).astype(np.float64).T
+    return np.var(X, axis=0, ddof=1) / ref_x, np.var(L, axis=0, ddof=1) / ref_count
+
+
+def rates(R: dict, deflation: float = DEFLATION) -> dict:
+    """The director's outputs from replicate ratios R[truth] (sets x 16): (a) null SDs, (b) #724's rates at its fixed
+    numbers, (c) the rates at the SE multiples with (alpha) per cell and (beta), (gamma) beside it, and the power of
+    (ii) against a uniform deflation; each per truth and over the truths, the union both per replicate and as
+    1 - prod(1 - p)."""
+    out, stop_b, stop_c = {}, {}, {}
+    for t, r in R.items():
+        r = np.asarray(r, np.float64)
+        n = r.shape[0]
+        dev = np.abs(r - 1.0)
+        ml = np.mean(np.log(r), axis=1)
+        mx = dev.max(axis=1)
+        sd_ml, sd_mx, sd_c = float(np.std(ml, ddof=1)), float(np.std(mx, ddof=1)), np.std(r, axis=0, ddof=1)
+        b = {"i": np.sum(dev > GATE_DEV, axis=1) > GATE_K, "ii": np.abs(ml) > GATE_LOGMEAN, "iii": mx > GATE_MAX}
+        b["union"] = b["i"] | b["ii"] | b["iii"]
+        thr_ii = SD_MULT_LOGMEAN * sd_ml
+        with np.errstate(divide="ignore", invalid="ignore"):
+            z = np.where(sd_c > 0, dev / sd_c, np.where(dev > 0, np.inf, 0.0))
+        c = {"i": b["i"], "ii": np.abs(ml) > thr_ii, "iii_alpha": np.max(z, axis=1) > SD_MULT_CELL}
+        c["union"] = c["i"] | c["ii"] | c["iii_alpha"]
+        desc = {"iii_beta": mx > SD_MULT_CELL * float(np.sqrt(np.mean(sd_c ** 2))),
+                "iii_gamma": mx > SD_MULT_CELL * sd_mx}
+        ml_def = ml + math.log(deflation)
+        se = lambda p: float(math.sqrt(p * (1 - p) / n))  # noqa: E731
+        out[t] = {"sets": n,
+                  "a": {"sd_mean_log": sd_ml, "sd_max_dev": sd_mx, "sd_per_cell": sd_c.tolist()},
+                  "b": {k: {"rate": float(v.mean()), "se": se(float(v.mean()))} for k, v in b.items()},
+                  "c": {"ii_threshold": thr_ii, **{k: {"rate": float(v.mean()), "se": se(float(v.mean()))}
+                                                     for k, v in c.items()}},
+                  "c_descriptive": {k: float(v.mean()) for k, v in desc.items()},
+                  "power_ii": {"deflation": deflation, "at_fixed": float(np.mean(np.abs(ml_def) > GATE_LOGMEAN)),
+                               "at_sd_multiple": float(np.mean(np.abs(ml_def) > thr_ii))}}
+        stop_b[t], stop_c[t] = b["union"], c["union"]
+    for key, stops in (("b", stop_b), ("c", stop_c)):
+        n = min(v.size for v in stops.values())
+        per_rep = float(np.mean(np.any([v[:n] for v in stops.values()], axis=0)))
+        prod = 1.0 - float(np.prod([1.0 - v.mean() for v in stops.values()]))
+        out[f"over_truths_{key}"] = {"union_per_replicate": per_rep, "union_product": prod,
+                                     "se": float(math.sqrt(per_rep * (1 - per_rep) / n))}
+    out["to_joseph"] = out["over_truths_b"]["union_per_replicate"] > UNION_LIMIT
+    return out
+
+
+def control(R: dict) -> dict:
+    """D4 per truth and cell: |mean ratio - 1| <= CONTROL_Z standard errors (the replicates' SD / sqrt(sets)).
+    Returns the per-cell z and whether every cell holds; a failure stops everything (the director's ruling)."""
+    out = {}
+    for t, r in R.items():
+        r = np.asarray(r, np.float64)
+        z = (r.mean(axis=0) - 1.0) / (r.std(axis=0, ddof=1) / math.sqrt(r.shape[0]))
+        out[t] = {"z": z.tolist(), "holds": bool(np.all(np.abs(z) <= CONTROL_Z))}
+    out["holds"] = all(v["holds"] for v in out.values())
+    return out
+
+
+# ------------------------------------------------------------------------------------------ the calibration job
+
+SCHEMA_CAL = "fd-1b-c2-calibration/1"
+_STATE: dict = {}
+
+
+def fine_sums(world: dict, a, r: dict, tags: list[str], cells: np.ndarray) -> tuple[dict, dict, np.ndarray, list]:
+    """Per universe (rows in ``tags``' order) the fine sums 1B's x_T is made of, each universe's weights read once
+    (fd_1b_mc.verified_weights) and composed as fd_1b_mc._single gives them: A[truth] = sum w_truth r, B = sum w_truth
+    over truth-passing rows at their fine cells, and D its denominator per fine cell. Returns (H, cv, Flux universes'
+    Phi_u rows, the detector universes whose denominator is not the CV's bitwise)."""
+    import fd_1b_mc as mc
+    inputs, bkg = world["inputs"], world["bkg"]
+    n = int(np.prod(tuple(np.asarray(e).size - 1 for e in inputs["edges"])))
+    ok = cells >= 0
+    hist = lambda w: np.bincount(cells[ok], weights=w[ok], minlength=n)  # noqa: E731
+    wt_cv = np.asarray(inputs["w_truth"], float)
+    cv = {"B": hist(wt_cv), "D": np.asarray(inputs["denom_nd"], float).ravel(order="C"),
+          **{f"A_{t}": hist(wt_cv * rt) for t, rt in r.items()}}
+    H = {k: np.empty((len(tags), n)) for k in cv}
+    phi, det_differs = [], []
+    for i, tag in enumerate(tags):
+        _, zero = mc.verified_weights(world, a, tag)
+        single, p = mc._single(inputs, bkg, world["bank_cv"], tag, zero, world["flux"])
+        H["B"][i], H["D"][i] = hist(single["wt"]), single["denom"].ravel(order="C")
+        for t, rt in r.items():
+            H[f"A_{t}"][i] = hist(single["wt"] * rt)
+        if p is not None:
+            phi.append(np.asarray(p, float))
+        if tag.rpartition("_")[0] in sa.DETECTOR_BANDS and not np.array_equal(single["denom"], inputs["denom_nd"]):
+            det_differs.append(tag)
+        del single, zero
+    return H, cv, np.array(phi), det_differs
+
+
+def _worker_init(state: dict) -> None:
+    _STATE.update(state)
+
+
+def _one_set(job: tuple[str, int]) -> tuple[str, int, np.ndarray, np.ndarray]:
+    t, s = job
+    st = _STATE
+    S = selection(calibration_draws(t, s, st["flux_p"], st["groups"]), st["col"], st["bands"])
+    H = {"A": st["H"][f"A_{t}"], "B": st["H"]["B"], "D": st["H"]["D"]}
+    cv = {"A": st["cv"][f"A_{t}"], "B": st["cv"]["B"], "D": st["cv"]["D"]}
+    rx, rl = set_ratios(S, H, cv, st["U"], st["ref_x"][t], st["ref_count"][t], st["flux_cols"], st["phi"],
+                        st["const"])
+    return t, s, rx, rl
+
+
+def calibrate_main(a) -> dict:
+    """The calibration job (FD-1B-STAGED-ADDENDUM-A2-1.md): one read of every universe, the references, a measured
+    single-set time on the real fine-cell count (refusing when the projection passes ``--budget-seconds``), then
+    CAL_SETS replicate sets per truth across worker processes, and the director's outputs and the D4 controls."""
+    import hashlib
+    import multiprocessing
+    import time
+
+    import fd_1b_inv as inv
+    import fd_1b_mc as mc
+    t0 = time.time()
+    inv.OPENED.clear()
+    world = mc._load_world(a)
+    inputs = world["inputs"]
+    flux_p = mc.via_noatime(toys.flux_probabilities, a.flux_constraint)
+    U_full = sa.functional_matrix(sa.fine_map(a.definition))
+    truths = list(a.truths)
+    push = None
+    if "plugin" in truths:
+        if inv.sha256_noatime(a.push) != a.expect_push_sha256:
+            raise Refusal("the plug-in truth needs --push with its declared digest")
+        push = np.asarray(inv.load_npz(a.push)["push"], float)
+    r, r_neg = {}, {}
+    for t in truths:
+        ratio, _ = mc.truth_ratio(t, a.prep)
+        r[t] = mc.truth_weight(t, inputs, ratio, push)
+        neg = np.flatnonzero(np.asarray(inputs["pass_truth"], bool) & (r[t] < 0))
+        r_neg[t] = {"rows": int(neg.size), "first_rows": neg[:20].tolist()}
+    order, bands, tags = layout_1b()
+    col = {u: i for i, u in enumerate(tags)}
+    cells = mc.flat_cells(np.asarray(inputs["MCgen"], float), inputs["edges"])
+    cells = np.where(np.asarray(inputs["pass_truth"], bool), cells, -1)
+    H, cv, phi, det_differs = fine_sums(world, a, r, tags, cells)
+    support = U_full.sum(axis=0) > 0
+    live = np.abs(cv["D"]) + np.abs(H["D"]).sum(axis=0) + np.abs(cv["B"]) + np.abs(H["B"]).sum(axis=0) > 0
+    keep = np.flatnonzero(support & live)
+    shape = tuple(np.asarray(e).size - 1 for e in inputs["edges"])
+    pack = packing(keep, shape, inputs["edges"])
+    H = {k: v[:, keep] for k, v in H.items()}
+    cv = {k: v[keep] for k, v in cv.items()}
+    U = U_full[:, keep]
+    const = {"n_nucleons": float(inputs["n_nucleons"]), "data_pot": float(inputs["data_pot"]), "pack": pack}
+    flux_cols = np.array([col[f"{sa.FLUX}_{i}"] for i in range(bands[sa.FLUX])])
+    phi_single = np.repeat(np.asarray(inputs["flux"], float)[None], len(tags), axis=0)
+    phi_single[flux_cols] = phi
+    w_flux = flux_p * 1.0
+    ref_x, ref_count, single_x = {}, {}, {}
+    for t in truths:
+        X = xt_packed(H[f"A_{t}"], H["B"], H["D"], phi_single, const["n_nucleons"], const["data_pot"], pack) @ U.T
+        single_x[t] = X
+        ref_x[t] = band_reference(X, w_flux, order, bands, sa.FLUX)
+        ref_count[t] = band_reference(H[f"A_{t}"] @ (U > 0).astype(np.float64).T, w_flux, order, bands, sa.FLUX)
+        if not (np.all(ref_x[t] > 0) and np.all(ref_count[t] > 0)):
+            raise Refusal(f"{t}: a reporting cell has no band variance")
+    groups = world["groups"]
+    state = {"H": H, "cv": cv, "U": U, "ref_x": ref_x, "ref_count": ref_count, "flux_cols": flux_cols,
+             "phi": phi, "const": const, "flux_p": flux_p, "groups": groups, "col": col, "bands": bands}
+    _worker_init(state)
+    t1 = time.time()
+    first = _one_set((truths[0], 0))
+    per_set = time.time() - t1
+    total = len(truths) * a.sets
+    projected = (time.time() - t0) + 1.15 * total * per_set / a.workers
+    timing = {"fine_cells_kept": int(keep.size), "set_seconds_measured": per_set, "workers": a.workers,
+              "projected_seconds": projected, "budget_seconds": a.budget_seconds}
+    print(json.dumps({"calibration": "timing", **timing}), flush=True)
+    if projected > a.budget_seconds:
+        raise Refusal(f"projected {projected:.0f} s passes the budget {a.budget_seconds} s (INVALID, rerunnable)")
+    jobs = [(t, s) for t in truths for s in range(a.sets) if (t, s) != (truths[0], 0)]
+    Rx = {t: np.empty((a.sets, N_CELLS)) for t in truths}
+    Rl = {t: np.empty((a.sets, N_CELLS)) for t in truths}
+    Rx[first[0]][0], Rl[first[0]][0] = first[2], first[3]
+    with multiprocessing.get_context("fork").Pool(a.workers) as pool:
+        for t, s, rx, rl in pool.imap_unordered(_one_set, jobs, chunksize=8):
+            Rx[t][s], Rl[t][s] = rx, rl
+    law, lin = control(Rl), control(Rx)
+    out = rates(Rx)
+    digests = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (
+        Path(__file__).resolve(), Path(mc.__file__).resolve(), Path(cp2.__file__).resolve(),
+        Path(cov2d.__file__).resolve(), Path(toys.__file__).resolve())}
+    verdict = "CONTROL_FAILED" if not (law["holds"] and lin["holds"]) else (
+        "TO_JOSEPH" if out["to_joseph"] else "CALIBRATED")
+    rec = {"schema": SCHEMA_CAL, "step": "c2-calibration", "verdict": verdict, "truths": truths, "sets": a.sets,
+           "seeds": {t: CAL_SEED[t] for t in truths}, "salt": CAL_SALT, "constants": {
+               "k": GATE_K, "dev": GATE_DEV, "mean_log": GATE_LOGMEAN, "max_dev": GATE_MAX,
+               "sd_mult_mean_log": SD_MULT_LOGMEAN, "sd_mult_cell": SD_MULT_CELL, "union_limit": UNION_LIMIT,
+               "deflation": DEFLATION, "control_z": CONTROL_Z},
+           "outputs": out, "control_law": law, "control_linearisation": lin,
+           "ratio_mean_per_cell": {t: Rx[t].mean(axis=0).tolist() for t in truths},
+           "checks": {"r_negative": r_neg, "detector_denominator_differs_from_cv": det_differs},
+           "timing": dict(timing, seconds=time.time() - t0), "code_sha256": digests,
+           "inputs": {"npz_sha256": world["npz_sha"], "bkg_sha256": world["bkg_sha"],
+                      "pins_sha256": a.expect_pins_sha256, "flux_table_sha256": a.expect_flux_table_sha256,
+                      "push_sha256": a.expect_push_sha256}, "atime": inv.atime_check()}
+    a.out.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(a.out.with_suffix(".npz"), **{f"ratio_{t}": Rx[t] for t in truths},
+                        **{f"count_ratio_{t}": Rl[t] for t in truths}, **{f"single_x_{t}": single_x[t] for t in truths})
+    a.out.write_text(json.dumps(rec, indent=1, sort_keys=True))
+    return rec
+
+
+def main(argv=None) -> int:
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    p = sub.add_parser("calibrate")
+    for k in ("npz", "bkg", "bank", "detector-dir", "pins", "flux-constraint", "flux-table", "definition", "out"):
+        p.add_argument(f"--{k}", type=Path, required=True)
+    p.add_argument("--expect-pins-sha256", required=True)
+    p.add_argument("--expect-flux-table-sha256", required=True)
+    p.add_argument("--prep", type=Path, required=True)
+    p.add_argument("--push", type=Path, default=None)
+    p.add_argument("--expect-push-sha256", default=None)
+    p.add_argument("--truths", nargs="+", choices=tuple(CAL_SEED), required=True)
+    p.add_argument("--sets", type=int, default=CAL_SETS)
+    p.add_argument("--workers", type=int, required=True)
+    p.add_argument("--budget-seconds", type=float, required=True)
+    a = ap.parse_args(argv)
+    if a.cmd == "calibrate":
+        if a.sets != CAL_SETS:
+            raise Refusal(f"the calibration is declared at {CAL_SETS} sets per truth")
+        rec = calibrate_main(a)
+        print(f"C2-CALIBRATION verdict={rec['verdict']} over_truths_b={rec['outputs']['over_truths_b']}")
+        return 0 if rec["verdict"] == "CALIBRATED" else 3
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())

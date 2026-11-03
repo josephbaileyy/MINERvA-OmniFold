@@ -531,8 +531,9 @@ def clip_draw(ui: dict, ub: dict, r: np.ndarray, rule: str = "data") -> tuple[di
     and bkg_w on background rows (``fd_1b_toys.build_full`` with unit source factors). The draw's weights are zeroed
     where lambda < 0, so build_full's lambda is exactly lambda+. The clipping rule is a named input:
     * ``"data"`` (decision section 2a (a)): the nature's truth and denominator are untouched;
-    * ``"nature"`` (consistent clipping): a signal row with lambda < 0 or w_truth * r < 0 is zeroed in truth and reco
-      alike, so the draw and the truth share one non-negative nature (the denominator, per cell, is section 2b's).
+    * ``"nature"`` (Joseph's #718: C2's option (1), addendum A2.1's S3): the pseudo-data see lambda+ as under "data",
+      and the truth is clipped row by row on its own sign, max(w_truth * r, 0), independently of lambda
+      (``cov2d.lam_plus`` on each). A row with lambda < 0 keeps its truth; a row with w_truth * r < 0 keeps its reco.
     Returns the draw's (ui, ub) and the clipped mass: sums per component, and |lambda-| per 5D reco cell (signal and
     background) and per 5D truth cell (truth-passing signal rows)."""
     if rule not in CLIP_RULES:
@@ -556,9 +557,10 @@ def clip_draw(ui: dict, ub: dict, r: np.ndarray, rule: str = "data") -> tuple[di
     du = dict(ui, w_reco=np.where(neg, 0.0, w))
     if rule == "nature":
         wt = np.asarray(ui["w_truth"], float)
-        row = neg | (np.asarray(ui["pass_truth"], bool) & (wt * r < 0))
-        du = dict(du, w_reco=np.where(row, 0.0, w), w_truth=np.where(row, 0.0, wt))
-        rec["signal"]["rows_zeroed_in_truth_and_reco"] = int(row.sum())
+        tz = np.asarray(ui["pass_truth"], bool) & (wt * r < 0)
+        du = dict(du, w_truth=np.where(tz, 0.0, wt))
+        rec["truth"] = {"sum_truth": float((wt * r)[np.asarray(ui["pass_truth"], bool)].sum()),
+                        "sum_negative": float((wt * r)[tz].sum()), "rows_negative": int(tz.sum())}
     return du, dict(ub, bkg_w=np.where(negb, 0.0, bw)), clip
 
 

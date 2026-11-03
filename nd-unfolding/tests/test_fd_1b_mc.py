@@ -329,29 +329,44 @@ class Clipping(Case):
         for k in ("obs", "obs_counts", "w_truth", "w_reco", "tmpl_w"):
             np.testing.assert_array_equal(exp[k], ref[k], k)
 
-    def test_the_nature_rule_clips_truth_and_draw_together(self):
+    def test_the_nature_rule_is_c2s_option_1(self):
+        """#718 through A2.1's S3: lambda+ for the draw and max(w_truth r, 0) for the truth, each on its own sign, equal
+        to cov2d.lam_plus row by row; including the rows where the two signs differ (the audit's fixture)."""
+        import fd_1b_c2
         ui, ub, reco = self.nature(neg_reco=(0, 3, 7), neg_bkg=(1,))
         r = np.ones(self.inputs["w_truth"].shape[0])
         wt = np.asarray(ui["w_truth"], float).copy()
-        pt = np.flatnonzero(np.asarray(self.inputs["pass_truth"], bool) & ~np.asarray(self.inputs["pass_reco"], bool))
+        ptru, prec = np.asarray(self.inputs["pass_truth"], bool), np.asarray(self.inputs["pass_reco"], bool)
+        pt = np.flatnonzero(ptru & ~prec)
         wt[pt[0]] = -0.3                                      # a negative truth weight on a row not reco-passing
         gen = np.array(ui["MCgen"], float)
         cell = mc.flat_cells(gen, self.inputs["edges"])
-        host = next(i for i in np.flatnonzero(np.asarray(self.inputs["pass_truth"], bool) & (cell >= 0)) if i != pt[0])
+        host = next(i for i in np.flatnonzero(ptru & (cell >= 0)) if i != pt[0])
         gen[pt[0]] = gen[host]                                # into a populated truth cell, so the truth can see it
-        ui = dict(ui, w_truth=wt, MCgen=gen)
+        w = np.asarray(ui["w_reco"], float).copy()
+        both = [i for i in np.flatnonzero(ptru & prec & (w > 0) & (wt > 0)) if i not in reco[[0, 3, 7]]]
+        lam_neg_truth_pos, lam_pos_truth_neg = both[0], both[1]
+        w[lam_neg_truth_pos] = -0.4                           # lambda < 0, w_truth r > 0: the truth keeps it
+        wt[lam_pos_truth_neg] = -0.2                          # lambda > 0, w_truth r < 0: the draw keeps it
+        neg = (np.isin(np.arange(r.size), reco[[0, 3, 7]]) | (np.arange(r.size) == lam_neg_truth_pos)) & prec
+        ui = dict(ui, w_truth=wt, w_reco=w, MCgen=gen)
         dd, bd, cd = mc.clip_draw(ui, ub, r, "data")
         dn, bn, cn = mc.clip_draw(ui, ub, r, "nature")
         np.testing.assert_array_equal(bd["bkg_w"], bn["bkg_w"])
         np.testing.assert_array_equal(dd["w_truth"], wt)                      # "data": the truth keeps its negatives
-        neg = np.isin(np.arange(r.size), reco[[0, 3, 7]]) & np.asarray(self.inputs["pass_reco"], bool)
-        row = neg | (np.asarray(self.inputs["pass_truth"], bool) & (wt < 0))
-        w = np.asarray(ui["w_reco"], float)
-        np.testing.assert_array_equal(dd["w_reco"], np.where(neg, 0.0, w))    # "data": only the draw's negatives
-        np.testing.assert_array_equal(dn["w_reco"], np.where(row, 0.0, w))    # "nature": the row, in reco and truth
-        np.testing.assert_array_equal(dn["w_truth"], np.where(row, 0.0, wt))
-        self.assertGreater(int(row.sum()), int(neg.sum()))
-        self.assertEqual(cn["record"]["signal"]["rows_zeroed_in_truth_and_reco"], int(row.sum()))
+        np.testing.assert_array_equal(dd["w_reco"], np.where(neg, 0.0, w))    # both rules: only the draw's negatives
+        np.testing.assert_array_equal(dn["w_reco"], dd["w_reco"])
+        lam_plus, _ = fd_1b_c2.cov2d.lam_plus(w[prec] * r[prec])
+        np.testing.assert_array_equal(dn["w_reco"][prec] * r[prec], lam_plus)
+        t_plus, rec = fd_1b_c2.cov2d.lam_plus(wt[ptru] * r[ptru])
+        np.testing.assert_array_equal(dn["w_truth"][ptru] * r[ptru], t_plus)
+        self.assertEqual((dn["w_reco"][lam_pos_truth_neg], dn["w_truth"][lam_pos_truth_neg]),
+                         (w[lam_pos_truth_neg], 0.0))
+        self.assertEqual((dn["w_reco"][lam_neg_truth_pos], dn["w_truth"][lam_neg_truth_pos]),
+                         (0.0, wt[lam_neg_truth_pos]))
+        self.assertEqual(dn["w_truth"][pt[0]], 0.0)          # truth-only row: clipped on its own sign
+        self.assertEqual(cn["record"]["truth"]["rows_negative"], rec["rows_neg"])
+        self.assertEqual(cn["record"]["truth"]["sum_negative"], rec["sum_lambda_neg"])
         self.assertEqual((cd["record"]["rule"], cn["record"]["rule"]), ("data", "nature"))
         r = np.random.default_rng(8).uniform(0.8, 1.2, r.size)   # at r = 1 the truth's completeness cancels its weights
         dn, bn, _ = mc.clip_draw(ui, ub, r, "nature")
