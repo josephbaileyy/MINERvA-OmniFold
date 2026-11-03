@@ -1,13 +1,13 @@
 #!/bin/bash
 # 1B A2.1, the CV denominator read (S3 (d1), the director's ruling): fd_1b_cvdenom.py on a login node at nice 19,
 # 0 node-h, in omnifold_py310 (uproot). It reads mc_truth_denom's six branches from the bank's source omnifile through
-# O_NOATIME, checks (A)-(D) (B by the director's (e2) tolerance), and writes the bank rows' CV weight only on PASS.
+# O_NOATIME, checks (A)-(D) (B by the director's (e2) rule, exact attribution), and writes the bank rows' CV weight only on PASS.
 # A fresh clone at M in a new pscratch directory; writes only under $W. No draw is read and nothing of C2's reading is
 # computed. The second run (the first, at 435d8957, was TO_DIRECTOR on B's bitwise rule: a2-1/cvdenom-run/).
 # The director's limits: stopped at 45 min wall or 12 GB RSS (a watcher on /proc), reported, not retried.
 # Run detached: setsid nohup bash connect-cvdenom.sh >/dev/null 2>&1 </dev/null &
 set -o pipefail
-M=eef9195e12419f268cabda17f5b82570ceb5fd25
+M=5e1162ffc8479bd157f11079d3ed092e72e0fcd4
 P=/pscratch/sd/j/josephrb; W=$P/fd-1b-a21-cvdenom2-20261103; DD=$W/deploy
 PY=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
 ND=$P/MINERvA-OmniFold/nd-unfolding
@@ -19,7 +19,7 @@ echo "host=$(hostname) start=$(date -u +%FT%TZ) pid=$$ ppid=$PPID"
 git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$DD" && git -C "$DD" checkout --quiet --detach "$M" || stop clone
 n=$(git -C "$DD" status --porcelain | wc -l); h=$(git -C "$DD" rev-parse HEAD); echo "deploy porcelain_lines=$n head=$h"
 [ "$n" = "0" ] && [ "$h" = "$M" ] || stop "deploy not clean at M"
-echo "9d153517b36591eee3a76b73992920cc219d362ddce751668d617826fdad8159  nd-unfolding/fd_1b_cvdenom.py" > "$W/bound.sha256"
+echo "220a8bd517cd6c6255cd34abc1eec444638cf2b98867cdc0d95d5775e374f32e  nd-unfolding/fd_1b_cvdenom.py" > "$W/bound.sha256"
 (cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blob differs"
 "$PY" -c "import numpy, uproot; print('numpy', numpy.__version__, 'uproot', uproot.__version__)" || stop env
 cd "$W" || stop cd
