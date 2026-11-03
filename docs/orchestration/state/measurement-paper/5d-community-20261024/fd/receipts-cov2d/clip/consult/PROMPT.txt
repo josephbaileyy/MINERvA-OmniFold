@@ -1,0 +1,24 @@
+You are an independent statistician advising a neutrino cross-section analysis (MINERvA, 2D (pT, p||) result, 205 truth cells, unfolded with a LightGBM OmniFold-style estimator). You have no stake in any option. Answer in under 900 words. You may not read any files; everything you need is below.
+
+THE TEST. A method-coverage test of the reported covariance procedure at two held-out generator tunes (G18 and AR23). For each tune, 300 pseudo-experiments ("natures") are drawn. Each nature's event weights are built by FIRST-ORDER composition of systematic universes: for each event row, a_D = a_u1 + sum_{j>=2} (a_uj - a_CV), in draw order, where a_uj is that row's weight in universe u_j drawn for band j and a_CV the central weight. This was chosen because the covariance under test, C_T, is a sum of per-band blocks with no cross-band term. The pseudo-data are Poisson draws from the nature's expected reco counts; the nature's truth (expected truth-cell counts) is what each unfolded pseudo-experiment is graded against. The covariance is rebuilt by the same procedure at each tune.
+
+THE DECIDED RULE, option (a): a negative expected count is clipped, lambda+ = max(lambda, 0), in the pseudo-data, while the truth used for grading keeps the negative weights. It was chosen expecting few negative counts, with a rule that if the clipping offset is comparable to the per-cell uncertainty the lead decides again.
+
+THE MEASUREMENT (descriptive, at expected counts, 300 draws per tune, both tunes nearly identical):
+- Only about 0.27% of truth rows have any single universe weight <= 0 (mostly one pion-production band, universe weight exactly 0; a few low-/high-Q2 rows negative). Yet in an earlier pass about 38% of truth rows were negative in some draw. So nearly all negative composites come from rows where every single-band shift is above -100% but several downward shifts sum past -100%: a property of first-order composition with large single-band shifts.
+- Clipped signal mass, sum(lambda-)/sum(lambda): median 0.6-0.7%, p90 about 1.5%, max about 2.7%. Background about 0.4% median.
+- Per truth cell, the clipped mass relative to the cell's total uncertainty sigma_Q: largest per-cell median 0.26 sigma (16 cells above 0.2, none above 0.5); largest p90 about 0.5; single-draw max 1.2-1.4 sigma; about 50 cells have a max above 0.5 sigma. Relative to the statistical-only sigma it is several sigma (median up to 2.8, 99 cells with median > 0.5).
+- The offset is one-signed: pseudo-data exceed what the graded truth implies. The worst cells are pT 0.33-0.47 GeV/c at high p|| (6-40 GeV/c).
+- The per-cell resolution of the coverage readout is about 0.10-0.13 in coverage fraction.
+
+THE OPTIONS put forward by the analysis lane (its recommendation first):
+(1) Clip the nature consistently: w+ = max(w_D, 0) row by row in BOTH the pseudo-data's reco and background weights and the truth weights used for grading. The error is then measured against the truth of the sample actually drawn; the clipping artefact cancels at first order. C_T unchanged. Caveat: the reco and truth trees are separate trees, so row-wise clipping may not correspond exactly; the lane would quantify the residual mismatch first at no compute cost.
+(2) Keep option (a); a pre-fixed reading labels cells whose miscoverage the measured offset could explain. Flags caused by the composition cannot be told apart from method failure.
+(3) Stop this test and report method coverage as not tested.
+
+QUESTIONS.
+1. Is option (1) statistically sound for a coverage test of C_T? In particular: clipping makes the distribution of natures a truncated version of what C_T describes. Does testing coverage on clipped natures bias the coverage verdict, and in which direction? Is the bias smaller or larger than option (2)'s?
+2. Is there a better standard option the lane did not list (for example a positivity-preserving composition such as multiplicative or log-space composition, rejection of draws, or capping the band shifts), and how would each interact with C_T having no cross-band terms?
+3. What must be quantified before a choice is bound, and what threshold would make you prefer (3)?
+4. The same composition is used in a sister 5D coverage test (with about 34-38 universes compounding on most rows). Should it run the same expected-count probe before its bulk run?
+5. Your ranked recommendation, one line each.

@@ -1,0 +1,27 @@
+/pscratch/sd/j/josephrb/cov2d-clip-20261103/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe.py:72: RuntimeWarning: All-NaN slice encountered
+  return {"median": np.nanmedian(z, axis=1), "p90": np.nanpercentile(z, 90, axis=1), "max": np.nanmax(z, axis=1)}
+/global/homes/j/josephrb/.conda/envs/omnifold_py310/lib/python3.10/site-packages/numpy/lib/_nanfunctions_impl.py:1620: RuntimeWarning: All-NaN slice encountered
+  return fnb._ureduce(a,
+	Command being timed: "nice -n 19 /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python -B /pscratch/sd/j/josephrb/cov2d-clip-20261103/deploy/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe.py --out /pscratch/sd/j/josephrb/cov2d-clip-20261103/clip.json"
+	User time (seconds): 3402.13
+	System time (seconds): 2655.67
+	Percent of CPU this job got: 199%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 50:38.09
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 8882552
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 327879953
+	Voluntary context switches: 2080971
+	Involuntary context switches: 31692365
+	Swaps: 0
+	File system inputs: 283292700
+	File system outputs: 224
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

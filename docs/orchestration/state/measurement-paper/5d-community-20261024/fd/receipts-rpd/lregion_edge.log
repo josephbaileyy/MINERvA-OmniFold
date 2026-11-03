@@ -1,0 +1,5 @@
+L_REGION (1.5, 8.0); fine p_parallel edges [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0]
+reporting fine cells 63168 of 65856; lowest p_parallel edge of a reporting cell 1.5
+reporting fine cells with lower edge in [1.0, 1.5): 0
+wL under 1.0 equals wL under 1.5 bitwise: True; nonzero entries 39480
+rc=0

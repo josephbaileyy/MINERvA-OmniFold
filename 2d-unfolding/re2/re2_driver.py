@@ -1599,6 +1599,11 @@ def main():
                           "The loaders and everything after them are unchanged. "
                           "The selections are recorded in the output as "
                           "'branchSelection'.")
+    ap.add_argument("--data-file", default=None, metavar="ROOT",  # COV2D
+                     help="COV2D: read the 'data' TTree from this file instead of --omnifile. "
+                          "The simulation trees and the POT metadata still come from --omnifile, "
+                          "and the file's dataPOTUsed must equal the omnifile's. Absent, the "
+                          "driver reads --omnifile's own data tree, as before.")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -1743,6 +1748,20 @@ def main():
     t_sig = f_in.Get("mc_signal_reco")
     t_bkg = f_in.Get("mc_background")
     t_data = f_in.Get("data")
+    if args.data_file is not None:  # COV2D
+        if args.closure:
+            raise SystemExit("[FAIL] --data-file and --closure cannot be combined: closure "
+                             "replaces the measured sample with the simulation.")
+        f_data = ROOT.TFile.Open(args.data_file, "READ")
+        if not f_data or f_data.IsZombie():
+            raise RuntimeError(f"Could not open --data-file {args.data_file}")
+        t_data = f_data.Get("data")
+        p_own, p_omni = f_data.Get("dataPOTUsed"), f_in.Get("dataPOTUsed")
+        if not p_own or not p_omni or p_own.GetVal() != p_omni.GetVal():
+            raise SystemExit("[FAIL] --data-file's dataPOTUsed is missing or differs from "
+                             "--omnifile's.")
+        print(f"[INFO] COV2D: data tree from {args.data_file} "
+              f"({t_data.GetEntries() if t_data else 'missing'} entries)")
     t_truth_denom = f_in.Get("mc_truth_denom")
     if not t_sig or not t_bkg or not t_data:
         raise RuntimeError("Missing required TTrees")
@@ -2215,6 +2234,8 @@ def main():
         sys.path.insert(0, _OF_PY)
     from omnifold import OmniFold_helper_functions as ohf
     provenance = run_provenance(args, sys.modules.get("omnifold"), driver_sha256)
+    if args.data_file is not None:  # COV2D
+        provenance.append(("dataFileSha256", file_sha256(args.data_file)))
     if args.bkg_mode == "negweight-refined":  # RE-2
         import json
         provenance.append(("re2Refinement", json.dumps(re2_refinement, sort_keys=True)))

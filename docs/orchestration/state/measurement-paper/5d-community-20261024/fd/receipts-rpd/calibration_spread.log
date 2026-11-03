@@ -1,0 +1,5 @@
+threshold 0.0646 (at 2000 datasets)
+replicas  3: alpha by realization [0.04, 0.05, 0.04, 0.033, 0.033, 0.063, 0.047, 0.027]; min 0.027 max 0.063
+replicas 10: alpha by realization [0.04, 0.053, 0.06, 0.043, 0.07, 0.077, 0.073, 0.047]; min 0.040 max 0.077
+replicas 30: alpha by realization [0.047, 0.06, 0.053, 0.047, 0.043, 0.083, 0.067, 0.047]; min 0.043 max 0.083
+rc=0

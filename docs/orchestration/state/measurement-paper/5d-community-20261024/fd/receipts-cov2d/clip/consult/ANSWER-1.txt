@@ -1,0 +1,60 @@
+**Preliminary note.** The one-signed offset shifts coverage only at second order. For a 68% interval, Δcoverage ≈ 0.24·b², where b is the offset in σ_Q units. That gives about 0.016 at b=0.26, 0.06 at b=0.5 and 0.3 at b=1.3. The offset is therefore invisible at the per-cell resolution of 0.10–0.13 for nearly all draws. It matters in two places: any pooled or aggregate coverage statistic, and any full-covariance χ² readout. A coherent 0.3σ offset across many correlated cells adds up there. The decision should be judged on the pooled statistic, not per cell.
+
+**1. Is option (1) sound, and which way does it bias?**
+
+Mostly yes, with a known direction of bias.
+
+- Row-wise clipping makes each nature a legitimate positive-weight sample, and the error is graded against that sample's own truth. This removes the one-signed pseudo-data offset that option (2) leaves in.
+- The cost is that the nature's systematic-shift distribution is truncated on the downward side. The realized spread of clipped natures is then at most the C_T spread, and the nature mean moves up.
+- So the bias is toward over-coverage in the cells that clipping touches. The test becomes less able to detect under-coverage there, which means a false pass is the risk. A fail remains informative, because it occurs despite a conservative-biased test.
+- Option (2)'s bias runs the other way. Pseudo-data exceed the graded truth, which gives a spurious positive error and under-coverage, so false failures. For a "C_T covers" claim, false failures are the safer error.
+- Judged by size, (1) is smaller than (2). (2) injects the full clipped mass (median ≤0.26σ_Q, single draws up to 1.4σ). (1) injects only the truncation of the shift distribution plus any reco/truth mismatch. Neither number has been measured, so "smaller" is a prediction.
+
+Two residuals option (1) does not cancel:
+- **Reco/truth mismatch.** Reco and truth rows are separate trees. Detector-side universes act on reco-only quantities, and unmatched rows have no counterpart.
+- **Background.** Background rows have no truth counterpart. Clipping them shifts the pseudo-data with no matching change in graded truth. The unfolder reads this as signal, and it is one-signed.
+
+**2. Better options the lane did not list**
+
+- **Multiplicative (or log-space) composition**, w = a_CV·∏(a_uj/a_CV).
+  - It preserves positivity because each factor is ≥0, and it matches how reweights actually compose.
+  - It reproduces the first-order variance, but it adds second-order cross-band variance, roughly Σ_{j<k} σ_j²σ_k². With large shifts that term is not small, so C_T's "no cross-band term" is exactly the thing being stressed.
+  - Natures would then be more dispersed than C_T. Under-coverage would be real, but it would measure linearization rather than the method. This is a different null, and a useful bracket.
+- **Rejecting draws.** It does not work row-wise, because 38% of rows go negative in some draw. At cell level it imposes a one-signed selection like clipping, but less controlled. I would not use it.
+- **Capping band shifts.**
+  - It is coherent only if C_T is rebuilt from the capped universes.
+  - Positivity then needs a cap near −1/N_bands. That is workable for a handful of bands and absurd at 35.
+  - So it is not viable for the 5D test.
+- **Signed-Poisson pseudo-data**, n = Pois(λ+) − Pois(λ−). It is exactly mean-preserving, but it needs an unfolder that accepts negative event weights. A LightGBM classifier probably does not, so I would not count on it.
+
+**3. What to quantify before binding**
+
+All of these are zero-unfolding, at expected counts, with thresholds fixed in advance:
+
+- **(a) Clip-consistency residual.** After row-wise clipping, how far reco and truth disagree per cell, including the background-only piece, in σ_Q units. Require p90 ≲ 0.3σ_Q (Δcoverage ≲ 0.02) and none above 0.5σ_Q.
+- **(b) Truncation ratio.** The per-cell empirical variance of nature truth, clipped over unclipped-linear, and clipped over diag(C_T), across the 300 draws. Also the mean shift of the clipped truth in σ_Q units.
+- **(c) Coherent offset.** The offset vector in χ² terms, bᵀC⁻¹b, for both (1)'s residual and (2)'s offset. Compare against the pooled-readout resolution, not the per-cell one.
+
+Prefer (3) if:
+- (a) or (c) cannot be pushed under the thresholds, or
+- the variance ratio sits outside roughly 0.8–1.0 in a majority of cells (a pass would then be vacuous), or
+- the cells affected beyond resolution are more than about a quarter of the cells, or concentrate in the physics-carrying region.
+
+Current numbers do not point to (3). The median offset is 0.26σ_Q and p90 is 0.5. The worst cells are at low pT and high p||, a corner that likely carries little physics weight.
+
+**4. The 5D sister test**
+
+Yes, run the expected-count probe first, and it is more urgent there.
+- With about 35 compounding shifts, the composite shift scales roughly as √35 times the typical single-band shift. Negative rows will far exceed 38%.
+- The linear regime is likely broken for most rows.
+- The probe costs nothing in compute.
+- Consider multiplicative composition as the primary arm in 5D, since capping is unusable.
+- Fix the thresholds before looking, as in item 3.
+
+**5. Ranked recommendation**
+
+1. Run the probe in item 3, then bind option (1), with a pre-declared reading: a pass in cells with truncation ratio below 0.9 counts as weakened, and a fail counts as real.
+2. Run multiplicative composition as a second arm, or as primary if (1) fails (a). State that its null includes second-order cross terms.
+3. Option (2) restricted to a cell mask with offset below 0.3σ_Q. Build the mask from the descriptive numbers, not from coverage outcomes. This is effectively a partial (3).
+4. Option (3), if the item 3 triggers fire.
+5. Do not use rejection, and do not use capping in 5D.

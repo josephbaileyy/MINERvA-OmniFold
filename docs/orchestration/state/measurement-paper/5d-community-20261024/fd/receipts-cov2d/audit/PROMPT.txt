@@ -1,0 +1,42 @@
+You are a fresh, independent, read-only auditor for a physics-analysis campaign declaration. You have no prior context. Review it adversarially: your job is to find defects before compute is spent, not to approve.
+
+WORKTREE (read-only): /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/wt
+Branch decl/cov2d-20261102, head 2372f800. The changes under review are `git diff origin/main...HEAD` plus any uncommitted changes shown by `git status` (use `GIT_OPTIONAL_LOCKS=0 git status`).
+
+RULES:
+- Do NOT modify, create or delete any file. Do NOT run git commands that write (no add, commit, checkout, stash, reset or fetch).
+- Do NOT contact any remote host. No ssh, scp, curl, or anything touching NERSC/Perlmutter or /pscratch or /global paths. Those paths exist only on the cluster; do not try to read them.
+- You may read any file in the worktree and run read-only commands (grep, sed -n, git show, git log, git diff). You may run the local test suites with /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python (ROOT 6.28/12, uproot 5.6.9, numpy 1.26.4) via `python -B -m pytest -q -p no:cacheprovider <test files>` from the worktree root; never run a mutation_*.py harness (they rewrite source files). Do not install anything.
+
+THE DOCUMENT: docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-DECLARATION.md
+
+ITS GOVERNING AND PARENT RECORDS (read the parts it cites):
+- docs/orchestration/DECISION-20261102-joseph-1b-redesign.md (on origin/main; `git show origin/main:docs/orchestration/DECISION-20261102-joseph-1b-redesign.md`)
+- docs/orchestration/DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md, item 3(c)
+- docs/orchestration/DECISION-20261103-joseph-coverage-clip-rule.md (Joseph's clip rule, which supersedes the redesign decision's item 3 option (a) for this campaign, and the director's weakened-pass ruling in its item 4)
+- docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGED-DECLARATION.md (the design this copies), and FD-1B-STAGED-STAGE1-STOP-REPORT.md
+- the redesign proposal on PR #697: `git show 883c26c4:docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGED-REDESIGN-PROPOSAL.md`
+- the scoping: `git show 5004c7a3:docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-SCOPING.md`
+- docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md
+- RE-2 records under docs/orchestration/state/2d-closeout/stageF/methods/re2/ (RE2-PARTB-REPORT.md, RE2-PARTC-REPORT.md, RE2-J0-REPORT.md, run/partb_runs.tsv)
+
+THE CODE IT BINDS:
+- 2d-unfolding/re2/re2_driver.py (the `--data-file` hook; see `git diff origin/main -- 2d-unfolding/re2/re2_driver.py`) and 2d-unfolding/re2/tests/test_re2_data_file.py
+- 2d-unfolding/cov2d/cov2d.py, cov2d_receipt.py, cov2d_writer.py and 2d-unfolding/cov2d/tests/
+- nd-unfolding/fd_1b_null.py (imported unchanged)
+- the rollup it says it will import: 2d-unfolding/re2/partc/re2c_rollup.py and docs/orchestration/state/2d-closeout/c04-repair/scripts/build_repair.py
+- receipts under docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/ (control1, scoping2, hook, code, receipt, clip). clip/ holds the clipping probes C1 (clip_probe.py, C1-ERRATUM.txt) and C2 (clip_probe2.py, c2_reading.txt, c2-clip2.json, c2-clip2.out), and an earlier independent consult (clip/consult/), all already run; the declaration's §9.2 table and §5.2 cell lists are read from c2-clip2.json.
+
+CHECK, at least:
+1. Every factual claim and every file:line citation in the declaration: open the cited line and confirm it says what the declaration says. List each one that is wrong, stale or unsupported.
+2. Whether each drawn group's draw law matches the formula of the block it is graded against (Flux weights, 2p2h, two-point bands, laterals, normalization, statistical), so that the simulated null's components really sum to C_T, and the grading rule's size claim holds.
+3. Whether first-order composition, the consistent clipping of pseudo-data and truth, the truth construction (r_T on 2D events, its rescale constant, background rows at r = 1) and the error definition are internally consistent and consistent with the redesign decision and the clip-rule decision.
+4. The `--data-file` hook: is the absent-flag path really unchanged? Is anything else in the driver still read from --omnifile that should come from the data file, or vice versa? Do the tests prove what §11 says they prove?
+5. The receipt (cov2d_receipt.py): is its "certified below the bound" step actually a valid upper bound, so no row above 10 can be missed? Are the truth-cell check, the O_NOATIME reads and the atime stop correct? Any way it can PASS on a bank that should STOP?
+6. The writer and control (2a): does it reproduce the data tree's schema and content exactly? Would the control detect the failures it claims?
+7. The remade covariance (§4.4): is the realization approach, C08 carried, C_PL_R excluded and C_model included consistent with what a pass is said to license (§13)? Any claim in §12–§13 broader than the test supports?
+8. The retention plan and schedule (§7, §10) against the 2026-12-19 purge date, and the price (§8): check the arithmetic from the cited units.
+9. The clip rule (§4.2, §5.2, §6 (ii), §9.2, §12, §14 items 5-7): does §4.2 implement what the clip-rule decision decides, and is it the quantity C2 measured (compare clip_probe2.py's definitions of S, m_seen, N, m_all and R)? Are §5.2's weakened-cell lists and the outlier cell exactly what c2-clip2.json gives (recompute them), and is cov2d.weakened_cells / OUTLIER_CELL and its test correct? Is §6 (ii)'s reading fixed before any toy, and could anything in it be chosen after seeing results? Does every number in §9.2's C2 table match c2-clip2.out / c2-clip2.json?
+10. Anything the declaration should have stated or fixed in advance and did not, especially anything that could be chosen after seeing results.
+
+OUTPUT: a verdict line first ("READY FOR BINDING", "READY AFTER MINOR FIXES", or "NOT READY"), then findings numbered and labelled BLOCKING / MAJOR / MINOR, each with the file:line evidence and a one-sentence suggested resolution. Then a short list of what you checked and found correct. Do not soften findings. Under 2,000 words.

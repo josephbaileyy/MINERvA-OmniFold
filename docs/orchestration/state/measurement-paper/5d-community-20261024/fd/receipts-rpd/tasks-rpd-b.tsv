@@ -1,0 +1,9 @@
+# RPD job B (lanes), written by make_rpd_tables.py; FD-RPD-DECLARATION.md part 2 section 2. The steps path is relative to the deploy root, where s5c_array.sh and fd_f1_lane.py run
+rpd_b_lane0	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/rpd-b-steps.tsv	--lane	0
+rpd_b_lane1	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/rpd-b-steps.tsv	--lane	1
+rpd_b_lane2	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/rpd-b-steps.tsv	--lane	2
+rpd_b_lane3	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/rpd-b-steps.tsv	--lane	3
+rpd_b_lane4	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/rpd-b-steps.tsv	--lane	4
+rpd_b_lane5	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/rpd-b-steps.tsv	--lane	5
+rpd_b_lane6	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/rpd-b-steps.tsv	--lane	6
+rpd_b_lane7	fd_f1_lane.py	--steps	docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/rpd-b-steps.tsv	--lane	7

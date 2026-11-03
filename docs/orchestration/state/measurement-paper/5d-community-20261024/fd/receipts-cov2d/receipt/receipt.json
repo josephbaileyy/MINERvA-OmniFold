@@ -1,0 +1,76 @@
+{
+ "atime_moved": [],
+ "bound": 10.0,
+ "chunk": 200000,
+ "host": "login11",
+ "n1": {
+  "bkgw": {
+   "above": [],
+   "bound_above": 389,
+   "exact_rows": 380,
+   "max": 2.2406773362105743,
+   "neg_pairs": 7525869,
+   "neg_rows": 258026,
+   "nonfinite_zeroed": 0,
+   "rows": 658227,
+   "rows_above": 0,
+   "single_max_ratio": 44.766121739520514
+  },
+  "wr": {
+   "above": [],
+   "bound_above": 1994,
+   "exact_rows": 1767,
+   "max": 2.40293888667574,
+   "neg_pairs": 331386043,
+   "neg_rows": 11358837,
+   "nonfinite_zeroed": 36,
+   "rows": 32849103,
+   "rows_above": 0,
+   "single_max_ratio": 429.58948495797915
+  },
+  "wt": {
+   "above": [],
+   "bound_above": 2370,
+   "exact_rows": 2209,
+   "max": 2.4386836573000252,
+   "neg_pairs": 359597299,
+   "neg_rows": 12440871,
+   "nonfinite_zeroed": 0,
+   "rows": 32849103,
+   "rows_above": 0,
+   "single_max_ratio": 429.58948495797915
+  }
+ },
+ "n_draws": 600,
+ "nice": 19,
+ "numpy": "2.2.6",
+ "pins": {
+  "AR23": "committed F1 digest",
+  "G18": "committed F1 digest",
+  "constraint": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+ },
+ "seconds": 2683.7,
+ "stop": [],
+ "truth_cells": {
+  "AR23": {
+   "cv_total": 27209979.015730783,
+   "draws_with_nonpositive_cell": 0,
+   "min_cell_ratio_to_cv": 0.3694687251377867,
+   "r_max": 2.5681826691572582,
+   "r_min": 0.6097596541932192
+  },
+  "G18": {
+   "cv_total": 27209979.015730783,
+   "draws_with_nonpositive_cell": 0,
+   "min_cell_ratio_to_cv": 0.379411466345791,
+   "r_max": 2.5754485107103506,
+   "r_min": 0.6495521516146838
+  },
+  "cv_positive": 205,
+  "n_cells": 224,
+  "rows_in_phase_space": 32849103
+ },
+ "uproot": "5.6.9",
+ "utc": "2026-11-03T02:10:51Z",
+ "verdict": "PASS"
+}

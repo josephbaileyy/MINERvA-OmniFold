@@ -1,0 +1,20 @@
+# local, 2026-11-02T22:07:33Z; a kill counts only on a test failure (pytest rc != 0)
+1b1edc0510f4742fc68a01e0fb3031b6490f0f3f85a4918240aa51b22d8745e0  control1_content_check.py
+5ed60aa84316cac855af3661b6a62cc97fc0f733c3fcf2fa9cf88de409b332b3  test_control1_content_check.py
+b981d575e5082cb6bcd92abf5ac562a3c868b1af2c516e3ada9ba03fcc0e840a  mutation_control1.py
+KILLED  bitwise compare finds nothing
+KILLED  value compare instead of bitwise
+KILLED  last partial chunk skipped
+KILLED  CV-only branch not failed
+KILLED  declared branch not checked
+KILLED  entry counts not checked
+KILLED  interpretation not checked
+KILLED  dtype not checked
+KILLED  atime move not failed
+KILLED  exit code always 0
+KILLED  CV-only tree not failed
+KILLED  only the first shared tree compared
+KILLED  only the first shared branch compared
+KILLED  first-row index drops the chunk start
+KILLED  O_NOATIME dropped
+KILLED  UNI digest fed the CV column
