@@ -1,0 +1,18 @@
+COV2D-CLIP-PROBE done atime_moved=[] seconds=3036.0 pot_scale=0.212405
+(a) wt: 7 universes with rows a_CV>0, a_u<=0; top: AGKYxF1pi_1 rows=68822 cv_w=3.8e+04 u_w=0; AGKYxF1pi_0 rows=18285 cv_w=1.243e+04 u_w=0; LowQ2_1 rows=576 cv_w=47.58 u_w=-62.48; BhtBY_1 rows=179 cv_w=185 u_w=0; HighQ2_1 rows=117 cv_w=1.278 u_w=-1.68; AhtBY_0 rows=37 cv_w=37.2 u_w=0; BhtBY_0 rows=36 cv_w=33.99 u_w=0
+(a) wr: 9 universes with rows a_CV>0, a_u<=0; top: AGKYxF1pi_1 rows=45158 cv_w=2.436e+04 u_w=0; AGKYxF1pi_0 rows=11913 cv_w=7941 u_w=0; LowQ2_1 rows=462 cv_w=37.29 u_w=-49.74; BhtBY_1 rows=121 cv_w=121.8 u_w=0; HighQ2_1 rows=99 cv_w=1.069 u_w=-1.396; AhtBY_0 rows=24 cv_w=23.16 u_w=0; BhtBY_0 rows=18 cv_w=16.19 u_w=0; MinosEfficiency_0 rows=18 cv_w=16.12 u_w=0
+(a) bkgw: 8 universes with rows a_CV>0, a_u<=0; top: AGKYxF1pi_1 rows=896 cv_w=499.1 u_w=0; AGKYxF1pi_0 rows=274 cv_w=186 u_w=0; LowQ2_1 rows=50 cv_w=4.853 u_w=-4.25; BhtBY_1 rows=21 cv_w=20.47 u_w=0; HighQ2_1 rows=5 cv_w=0.03918 u_w=-0.07693; BhtBY_0 rows=3 cv_w=2.604 u_w=0; AhtBY_0 rows=3 cv_w=2.999 u_w=0; Flux_93 rows=1 cv_w=1.03 u_w=-0.0008656
+(b) G18: signal clipped fraction {'median': 0.006630494322173566, 'p90': 0.014798273847170407, 'max': 0.027131317493742806}, background {'median': 0.004427542949694733, 'p90': 0.008486873552777116, 'max': 0.0159951877997914}
+(b) G18: over cells {'reco_z_median_max': 3.021958905745916, 'reco_z_max_max': 9.080279693464052, 'truth_over_sigma_Q_median_max': 0.2579959944280682, 'truth_over_sigma_Q_max_max': 1.1619627022367651, 'truth_over_sigma_stat_median_max': 2.8063862508134427, 'cells_median_over_sigma_Q_above_0.5': 0, 'cells_median_over_sigma_Q_above_0.2': 16}
+(b) G18: truth cell 92 |clipped|/N in sigma_Q median 0.258 p90 0.473 max 0.757; in sigma_stat median 1.763
+(b) G18: truth cell 77 |clipped|/N in sigma_Q median 0.256 p90 0.489 max 0.839; in sigma_stat median 0.883
+(b) G18: truth cell 93 |clipped|/N in sigma_Q median 0.256 p90 0.497 max 0.762; in sigma_stat median 0.914
+(b) G18: truth cell 72 |clipped|/N in sigma_Q median 0.242 p90 0.428 max 0.669; in sigma_stat median 2.806
+(b) G18: truth cell 76 |clipped|/N in sigma_Q median 0.240 p90 0.448 max 0.724; in sigma_stat median 1.589
+(b) AR23: signal clipped fraction {'median': 0.006212033409909581, 'p90': 0.015094313279767867, 'max': 0.026468039966108664}, background {'median': 0.004143844970480036, 'p90': 0.008939388928450047, 'max': 0.01643457607219857}
+(b) AR23: over cells {'reco_z_median_max': 3.006278045010191, 'reco_z_max_max': 9.537228335373026, 'truth_over_sigma_Q_median_max': 0.25422017098700783, 'truth_over_sigma_Q_max_max': 1.3809692421120454, 'truth_over_sigma_stat_median_max': 2.705015805112532, 'cells_median_over_sigma_Q_above_0.5': 0, 'cells_median_over_sigma_Q_above_0.2': 16}
+(b) AR23: truth cell 92 |clipped|/N in sigma_Q median 0.254 p90 0.461 max 0.811; in sigma_stat median 1.738
+(b) AR23: truth cell 77 |clipped|/N in sigma_Q median 0.248 p90 0.508 max 0.854; in sigma_stat median 0.852
+(b) AR23: truth cell 76 |clipped|/N in sigma_Q median 0.239 p90 0.436 max 0.821; in sigma_stat median 1.583
+(b) AR23: truth cell 94 |clipped|/N in sigma_Q median 0.234 p90 0.448 max 0.721; in sigma_stat median 1.024
+(b) AR23: truth cell 93 |clipped|/N in sigma_Q median 0.233 p90 0.438 max 0.759; in sigma_stat median 0.834
