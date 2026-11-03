@@ -108,3 +108,30 @@ The self-tests are `--self-test` on `build_register.py` and on `locate.py`.
   sentence.
 - **Coded on `108040f8`.** A note round moves lines, so rebuild after one. The build fails loudly if a home
   statement is gone.
+
+## The paper rows re-located after #695 (2026-11-02)
+
+`paper-rows.json` holds Q01–Q44 re-located in the paper at main `58fa0b89`. It has the register's shape (id, q, doc,
+loc, section, quote, cls, status, route, line, order), plus `prints`.
+- `loc` lists every line where the row's phrases print, home first.
+- `section` uses the built paper's numbering.
+
+`relocate_paper.py` builds the rows from `paper-rows.tsv`, which gives each row's literal phrases, the wording that
+must no longer print, and the row's class, status, quote and route. The run fails if:
+- a phrase prints nowhere;
+- "gone" wording still prints;
+- a route cites an absent record;
+- a class or status is outside the vocabulary.
+
+**Status changes against the register as loaded:**
+- **Q26: fix decided → closed.** The quadrant sentence (#695) compares the sixteen-cell result with the 2D result.
+  The clause that remains is narrower ("Of the joint-test estimator's other results, only the three-observable
+  marginal has been compared …"), and it is now its own caveat.
+- **Q14, Q19 and Q22: open → inherent.**
+  - Q14: #695 put the one coverage statement in VI A.
+  - Q19: the block is post hoc by construction. The audit clause still prints at :81.
+  - Q22: IV B was rewritten neutrally, with the choice stated once.
+- **Q08 and Q10 stay closed.**
+  - Q08: "no correction to CH" no longer prints; only the explanation of the target difference does.
+  - Q10: what prints is a scope sentence about comparisons outside the sixteen cells.
+- **Q02's route** now records that VI A states the earlier fixed-truth failure.

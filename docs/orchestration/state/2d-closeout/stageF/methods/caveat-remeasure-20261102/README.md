@@ -87,7 +87,7 @@ caveats are invisible to it.
 
 **After a paper round:**
 1. Re-code the paper (one subagent, `CODER-PROMPT.md`) into `inv/ours-paper.tsv`.
-2. Run with `--record-coded`.
+2. Run with `--record-coded ours-paper` (only the re-coded document's hash is recorded).
 
 Coding is a judgment, so it is the one step the command cannot do. `--no-build` reuses `WORK/build/*.pdf`, and
 `--self-test` checks the abstract-start detection, the study's own quote self-test, and the issue counting.
