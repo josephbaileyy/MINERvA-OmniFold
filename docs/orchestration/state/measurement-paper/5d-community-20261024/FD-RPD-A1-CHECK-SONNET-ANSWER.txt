@@ -1,0 +1,53 @@
+Review of the diff `7bdd39f69..4647f5462`: one MAJOR, five MINOR and three NIT. I read the diff, the three code files and the declaration. I did not run the unit tests. I started the `test_fd_rpd` run in the background and did not wait for it, so nothing below depends on it.
+
+**MAJOR**
+
+1. **The second connect's `flux` will probably refuse with exit 3 on its first line after the environment check.**
+   - Location: `nd-unfolding/fd_rpd_inputs.py`, `run_flux` (`fresh(out)`). The declaration commands are around lines 176-185 and §6 describes the stop.
+   - At the base commit, `run_flux` ran `fresh(out)` and then `out.mkdir(parents=True)` before the first `cf.read_playlist`. The recorded stop is "rc 1 at `cf.read_playlist("1A")`", so `$R/flux` was already created, probably empty.
+   - A reused `$R` (R4) therefore contains `$R/flux`. The second connect passes the environment check and then hits `fresh($R/flux)` and refuses with "refusing to overwrite".
+   - Neither the declaration nor the code says to remove, rename or tolerate that empty directory. The declaration also does not say a removal needs approval.
+   - Related: the second-connect command redirects to `$R/logs/flux.out`, the same file the first connect's failed `flux` wrote. The `>` will overwrite the stop's only log. The declaration needs either a new log name or a preservation step.
+
+**MINOR**
+
+2. **The `$R/tmp` directory is never created.** The declaration (line 60, line 181) has MATENV `export TMPDIR=$R/tmp`, but no step does `mkdir`. The only `mkdir` listed is `$R/logs`. If `$R/tmp` is absent, Python's tempfile silently falls back to `/tmp` and ROOT may not. Add `mkdir -p $R/tmp` (a write under `$R`, fine) or have the check assert the directory exists.
+
+3. **The setup scripts run before their digests are checked.** The declaration's `MATENV` sources `setup_salloc_env.sh` and the five it chains, and the digest check happens only afterwards inside `flux`. R1's "refuse before any read of a staged file" is met. A mutated setup script, though, would execute with login-node rights before the refusal. A pre-source `sha256sum` of the six scripts in the wrapper commands would close this. Say so in the declaration if it is accepted as is.
+
+4. **The tests are not run the way `flux` is run.**
+   - `flux` runs as `env -u PYTHONPATH python3 -I -B ...` (`PYM`).
+   - `root_tests_login.sh` runs `python3 -B -m unittest` (no `-I`), and its new version dropped the old `python3 -I -B -c "import ROOT..."` probe.
+   - `-I` changes `sys.path[0]` and ignores `PYTHON*` variables. The claim that each step's tests run in that step's environment is therefore not fully true for flux's actual invocation.
+   - Either add a `-I` import and `mat_environment()` probe in MATENV to the script, or run `test_fd_rpd_mat` under `-I`.
+
+5. **The "none skipped" claims are not enforced in code, and the revision-4 receipt is not in the diff.**
+   - The script never fails on `skipped=`. The declaration says "none skipped" for the ROOT suites and for MATENV `test_fd_rpd`.
+   - `root_tests_login.log` is unchanged by the diff. It is still revision 3's log (HEAD `e36bfd18`, 110 tests). The declaration cites "283 OK / 121 OK / 3 OK" at `45b09d40` and says "the receipt is the same script on the head that carries this text". The diff carries no log supporting those numbers.
+   - I checked the arithmetic and it is consistent: 121+85+77=283 and 110+85+77=272. The numbers are plausible. They are just not receipted yet.
+
+6. **The "mapped MAT files" check covers only `*.so*` names directly under `MINERvA101/opt/lib`.**
+   - R1 asks that the MAT files mapped into the process equal a pinned set. The implementation (`so = {... ".so" in name}`, `want` = `.so` pins only) ignores any other mapped file under that tree. Examples are a `.pcm`, a mapped `libX.so` under `opt/lib64`, or a file whose name has no `.so`.
+   - It also ignores `MATDict.rootmap` and `MAT_rdict.pcm` as mapped items. They are digested but never tied to the process.
+   - The cluster pass shows the right environment is accepted. A wrong environment loaded from the same tree through a non-`.so` name would pass. The variable checks and the `libMAT.so` equality cover this partly. Narrow the declaration's wording, or widen the filter to every mapped file under `MAT_PREFIX`.
+
+   Also, `noatime_sha256` returns `None` on any `OSError`. `O_NOATIME` gives `EPERM` for a non-owner, so a run by anyone but `josephrb` refuses the correct environment with an uninformative "sha256 None". The declaration does not say the run must be by the owner.
+
+**NIT**
+
+7. `run_verify_staged` (`fd_rpd_inputs.py` lines ~282-300): `row.get(...)` assumes each record row is a dict, so a malformed `STAGED.json` raises a traceback instead of exit 4. Invalid JSON does the same. Both refuse, since the exit is nonzero, but not with the declared code 4.
+   - Staged copies that are symlinks to the correct bytes pass, because `is_file()` and `sha256` follow links.
+   - Extra, unrecorded files under `$R/staged` are not detected. "Exactly the pinned 79" holds for the record's names only.
+   - R4's "every connect re-hashes" is procedural only. Nothing in `flux`, the job submit gates or `check` fails if `verify-staged` was not run. `flux` itself re-hashes each file it reads through `staged()`.
+
+8. `test_verify_staged_writes_nothing` compares file name listings only, not contents or mtimes.
+   - `test_flux_refuses_with_7_before_any_read...` patches only `staged`. A direct `TFile.Open` or `loop_pots` ahead of the check would not trip it. Reading `run_flux`, nothing in the diff does that, so this is a coverage nit only.
+
+9. `root_tests_login.sh`: environment A prints `PLOTUTILSROOT=[...]` but does not assert it is empty, so "root_6_28 by prefix has no MAT" is shown by a printed line rather than a failing check. The header comment still says "no pscratch read" in places the script now reads `$R` and `$MATENV` on pscratch. I did not verify the comment is updated everywhere.
+
+**Nothing found at MAJOR for these**
+- **Items 1 and 2 of your priority list** (wrong environment passing, right one refused): the check order in `run_flux` is correct. `mat_environment()` is the first statement and `main` reads nothing staged before it. `import ROOT` and `TClass::GetClass` read no staged file. The maps parser handles paths with spaces and skips pseudo-paths such as `[heap]`. A `(deleted)` suffix makes the path not match, so it refuses, which is the safe direction. The `libMATDict.so` to `libMAT.so` link is compared after `realpath`. The mutants cover subset, superset and inverted, so both directions are exercised. The declaration states the real MATENV run passed (`test_fd_rpd_mat` 3 OK).
+- **R2 and R3**: `ZeroLoops` covers all 12 loops in both environments. The `Mat` test reads real MnvH1D files and checks type and finiteness. Section 3 states that the five ROOT tests use plain TH1D and do not cover MAT. The `RootPaths` docstring says the same.
+- **Counts**: 121 tests, 136 mutants (114+22) and 23 pinned rows all agree with the code. The blobs in §7 match `git rev-parse HEAD:<path>`, and the mutant log's prefix `200bc0ac` matches the current `sha256` of `fd_rpd_inputs.py`.
+
+Summary: 1 MAJOR / 5 MINOR / 3 NIT
