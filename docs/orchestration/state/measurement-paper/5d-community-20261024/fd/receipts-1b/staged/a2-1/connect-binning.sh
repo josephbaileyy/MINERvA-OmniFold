@@ -4,11 +4,12 @@
 # set -u, which aborts the root_6_28 activation). A fresh clone at M in a new pscratch directory; writes only under $W.
 # It reads the (e2) CV read's PASS record, the inputs npz, S1's staged assembly, F1's two prep ratios, the declared
 # draws' law and the bank universes' tdw at the 16 moved rows by seek. No draw is unfolded and nothing of C2's reading
-# is computed. The director's limits: stopped at 45 min wall or 12 GB RSS, reported, not retried.
+# is computed. The director's limits: stopped at 45 min wall or 12 GB RSS, reported, not retried. The second run: the
+# first (e7641a9b) refused at the float32-U check before measuring anything (a2-1/u-check-grep.txt).
 # Run detached: setsid nohup bash connect-binning.sh >/dev/null 2>&1 </dev/null &
 set -o pipefail
-M=e7641a9be380ee5428990ae0ceb4c5b9818f8636
-P=/pscratch/sd/j/josephrb; W=$P/fd-1b-a21-binning-20261103; DD=$W/deploy
+M=663a76091429a8920c36dc013f2f2ecb598e0f0f
+P=/pscratch/sd/j/josephrb; W=$P/fd-1b-a21-binning2-20261103; DD=$W/deploy
 ND=$P/MINERvA-OmniFold/nd-unfolding
 CVD=$P/fd-1b-a21-cvdenom2-20261103/cvdenom.json
 CVD_SHA=156b963d9efbe0b54c4602d263b3996fe8a1dbfbef068e4cff17382e54c679be
@@ -21,11 +22,12 @@ git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$DD" && git
 n=$(git -C "$DD" status --porcelain | wc -l); h=$(git -C "$DD" rev-parse HEAD); echo "deploy porcelain_lines=$n head=$h"
 [ "$n" = "0" ] && [ "$h" = "$M" ] || stop "deploy not clean at M"
 cat > "$W/bound.sha256" <<SUMS
-b5497f52c4165909bed8a4ace53197aaff843b942be44152ed59ae7b3a8d38e5  nd-unfolding/fd_1b_binning.py
-0088b0c3de3942cd9c105156981d1c0930b57c3552b0e9bf0734ed7397903f8c  nd-unfolding/fd_1b_c2.py
-3a1864fd4afc8ee8f43dfdd27effdbc605db63c836fbd3a09748f96b9df65cf2  nd-unfolding/fd_1b_mc.py
+69cd7bd37984db1deb0d103fb81808e88fc990cc679e9a4b0a6dea16d15b208d  nd-unfolding/fd_1b_binning.py
+f7d196bdcbc4365187353624978a3284087dc12501c27ea07b9f4f6169b18f1c  nd-unfolding/fd_1b_c2.py
+8a67f2b8ad62dbd41e7f210f8a4f1496aa8d79c3b3df5e468dd5088fa6627d67  nd-unfolding/fd_1b_mc.py
 SUMS
 (cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blobs differ"
+echo "sourcing $DD/setup_salloc_env.sh sha256 $(sha256sum "$DD/setup_salloc_env.sh" | cut -d' ' -f1)"
 source "$DD/setup_salloc_env.sh" > "$W/env.log" 2>&1
 case "$(python3 -V 2>&1)" in *3.11*) ;; *) stop "environment did not activate ($(python3 -V 2>&1))" ;; esac
 export PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
