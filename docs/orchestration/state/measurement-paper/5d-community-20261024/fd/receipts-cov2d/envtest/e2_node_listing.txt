@@ -1,0 +1,33 @@
+login02
+total 44
+drwxrwx---  4 josephrb josephrb  480 Nov  3 11:38 .
+drwxrwxrwt  3 root     root      120 Nov  3 14:42 ..
+-rw-rw----  1 josephrb josephrb  422 Nov  3 11:37 bound.blobs
+-rw-rw----  1 josephrb josephrb 1041 Nov  3 11:38 connect-e2.log
+drwxrwx--- 18 josephrb josephrb  760 Nov  3 11:37 deploy
+-rw-rw----  1 josephrb josephrb    0 Nov  3 11:32 fail.flags
+-rw-rw----  1 josephrb josephrb    0 Nov  3 11:32 none.skips
+-rw-rw----  1 josephrb josephrb    0 Nov  3 11:37 pre_test_cov2d.log
+-rw-rw----  1 josephrb josephrb    0 Nov  3 11:37 pre_test_cov2d_writer.log
+-rw-rw----  1 josephrb josephrb    0 Nov  3 11:38 pre_test_null205.log
+-rw-rw----  1 josephrb josephrb    0 Nov  3 11:38 pre_test_re2_data_file.log
+-rw-rw----  1 josephrb josephrb    0 Nov  3 11:38 pre_test_re2_driver.log
+-rw-rw----  1 josephrb josephrb  671 Nov  3 11:32 test_cov2d.skips
+-rw-rw----  1 josephrb josephrb  406 Nov  3 11:32 test_cov2d_writer.skips
+drwxrwx---  3 josephrb josephrb   60 Nov  3 11:38 tmp
+-rw-rw----  1 josephrb josephrb 2149 Nov  3 11:38 ut_test_cov2d.log
+-rw-rw----  1 josephrb josephrb 1539 Nov  3 11:38 ut_test_cov2d.log.parsed
+-rw-rw----  1 josephrb josephrb    0 Nov  3 11:38 ut_test_cov2d.log.skipdiff
+-rw-rw----  1 josephrb josephrb  671 Nov  3 11:38 ut_test_cov2d.log.skips
+-rw-rw----  1 josephrb josephrb  959 Nov  3 11:38 ut_test_cov2d_writer.log
+-rw-rw----  1 josephrb josephrb  626 Nov  3 11:38 ut_test_cov2d_writer.log.parsed
+-rw-rw----  1 josephrb josephrb    0 Nov  3 11:38 ut_test_cov2d_writer.log.skipdiff
+-rw-rw----  1 josephrb josephrb  406 Nov  3 11:38 ut_test_cov2d_writer.log.skips
+-rw-rw----  1 josephrb josephrb  104 Nov  3 11:38 ut_test_re2_data_file.log
+1a2ceddeddf94471c86c873722915b2ca5236f66d0e3d9bf1f40e79d6b498127  connect-e2.log
+ba9466325bb606b90a9395812f9792174c61c96bf0050eb71a4341ccf092402b  ut_test_cov2d.log
+85c9d01b7be427d2359baa0dbc27fffc9a3b178c541b45f92d4b7a2d5ca0da68  ut_test_cov2d_writer.log
+c393c6d12b073237ab746ca8c64fc10bfe881db64e0581b44965ef1e5870f328  ut_test_re2_data_file.log
+c0d93ff04cf3e4c79d6fa55eb50cf78bb823ca90a163cd5b7db56a3523d93faf  bound.blobs
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  fail.flags
+5629549239f189993496a62460f24403503e538043855e092c22480e603f86d4  /dev/shm/josephrb-cov2d-e2.sh
