@@ -10,8 +10,9 @@ The phase space is u2d.in_truth_phase_space: the analysis rectangle and atan2(pT
 row by row). Before the weights may be used, BOTH must hold, and either failure goes to the director:
 (A) the bank row set's coordinates, as float32, equal cv.npz's td_* row by row;
 (B) the histogram of cv.npz's td_* coordinates weighted by the CV weight (w x POT scale) against the npz's denom_nd:
-    recorded bitwise, and judged by the director's (e2) tolerance (b_tolerance), since cv.npz stores the coordinates
-    as float32 and rows within rounding of a bin edge change cell (the first run, 2026-11-03).
+    recorded bitwise, and judged by the director's (e2) rule (b_tolerance: every difference attributed exactly to
+    rows that change cell by one stride), since cv.npz stores the coordinates as float32 and rows within rounding of a
+    bin edge change cell (the first run, 2026-11-03).
 (C) the npz row set's float64 histogram equals denom_nd bitwise (its writer reproduced), and (D) every detector
 universe's denom_nd equals the npz's bitwise. Under (e2) the weights are written only if A, C and D hold exactly and
 B within its tolerance.
@@ -112,56 +113,53 @@ def flat_cells(coords: list[np.ndarray], edges) -> np.ndarray:
 
 
 def b_tolerance(h32: np.ndarray, h64: np.ndarray, c32: np.ndarray, c64: np.ndarray, w: np.ndarray) -> dict:
-    """The director's (e2) tolerance on (B), for h32 (the bank rows binned on cv.npz's float32 td_*) against h64 (the
-    npz's denom_nd, float64 binning). It passes only if:
-    (1) every differing cell pairs, mutually, with exactly one differing neighbour one stride apart along a single
-        axis whose difference cancels its own to the summation bound (n_a + n_b + 2) eps (|h_a| + |h_b|), n the cells'
-        row counts (both binnings);
-    (2) each |difference| <= the largest single-row weight in that cell (either binning), to the cell's summation
-        bound, so two rows crossing between the same two cells fail;
-    (3) the total is 0 to (rows + cells) eps sum |h|.
-    Also: every differing cell, and the rows whose cell differs between the two binnings (the exact attribution)."""
+    """The director's (e2) rule for (B), by exact attribution, for h32 (the bank rows binned on cv.npz's float32 td_*)
+    against h64 (the npz's denom_nd, float64 binning), c32 / c64 each row's cell under the two binnings and w its CV
+    weight. A moved row is one with c32 != c64. B passes only if:
+    (a) every moved row moves exactly one stride along one axis (both cells on the grid);
+    (b) every differing cell's difference equals the signed sum of the moved rows' weights into it (c32) minus out of
+        it (c64), to the cell's summation bound (n + 2) eps (|h32| + |h64|), n its rows under both binnings;
+    (c) no cell differs without a moved row into or out of it;
+    (d) the total is unchanged to (rows + cells) eps sum |h|.
+    Recorded: every differing cell (difference, attributed sum) and every moved row (row, cell64, cell32, weight)."""
     shape, n = h64.shape, h64.size
     d = (h32 - h64).ravel()
     bad = np.flatnonzero(d != 0)
     hv32, hv64 = np.abs(h32.ravel()), np.abs(h64.ravel())
     ok32, ok64 = c32 >= 0, c64 >= 0
     rows_in = np.bincount(c64[ok64], minlength=n) + np.bincount(c32[ok32], minlength=n)
-    maxw = np.zeros(n)
-    np.maximum.at(maxw, c64[ok64], np.abs(w[ok64]))
-    np.maximum.at(maxw, c32[ok32], np.abs(w[ok32]))
-    coords = np.array(np.unravel_index(bad, shape)).T if bad.size else np.zeros((0, len(shape)), int)
-    partners = []
-    for k in range(bad.size if bad.size <= ALL_CELLS else 0):      # the neighbours whose difference cancels this one's
-        a = int(bad[k])
-        mates = [j for j in range(bad.size) if j != k and np.sum(np.abs(coords[j] - coords[k])) == 1
-                 and abs(d[a] + d[int(bad[j])]) <= (rows_in[a] + rows_in[int(bad[j])] + 2) * EPS
-                 * (hv64[a] + hv64[int(bad[j])] + hv32[a] + hv32[int(bad[j])])]
-        partners.append(mates)
-    pairs, unpaired, pair_ok = [], [], bad.size <= ALL_CELLS
-    for k, mates in enumerate(partners):
-        if len(mates) != 1 or len(partners[mates[0]]) != 1:
-            unpaired.append(int(bad[k]))
-            pair_ok = False
-            continue
-        j = mates[0]
-        if j < k:
-            continue
-        a, b = int(bad[k]), int(bad[j])
-        axis = int(np.flatnonzero(coords[j] != coords[k])[0])
-        pairs.append({"cells": [a, b], "axis": axis, "delta": [float(d[a]), float(d[b])]})
-    within = bool(np.all(np.abs(d[bad]) <= maxw[bad] + (rows_in[bad] + 1) * EPS * (hv64[bad] + hv32[bad])))
-    total_bound = (int(ok64.sum()) + n) * EPS * float(hv64.sum() + hv32.sum())
-    total_ok = abs(float(d.sum())) <= total_bound
     moved = np.flatnonzero(c32 != c64)
-    return {"passes": bool(pair_ok and within and total_ok), "cells_differing": int(bad.size),
-            "pairs": pairs if bad.size <= ALL_CELLS else None, "unpaired": unpaired[:ALL_CELLS],
-            "pairwise_conserving": bool(pair_ok), "within_one_row": within,
-            "max_delta_over_max_row": float(np.max(np.abs(d[bad]) / np.where(maxw[bad] > 0, maxw[bad], np.inf)))
-            if bad.size else 0.0,
-            "total": float(d.sum()), "total_bound": total_bound, "total_ok": bool(total_ok),
-            "rows_changing_cell": int(moved.size),
-            "rows": [[int(i), int(c64[i]), int(c32[i]), float(w[i])] for i in moved[:ALL_CELLS]]}
+    m32, m64 = c32[moved], c64[moved]
+    on_grid = (m32 >= 0) & (m64 >= 0)
+    one_stride = np.zeros(moved.size, bool)
+    if moved.size:
+        u32 = np.array(np.unravel_index(np.maximum(m32, 0), shape))
+        u64 = np.array(np.unravel_index(np.maximum(m64, 0), shape))
+        one_stride = on_grid & (np.abs(u32 - u64).sum(axis=0) == 1)
+    a_ok = bool(np.all(one_stride))
+    att = np.zeros(n)
+    np.add.at(att, m32[m32 >= 0], w[moved][m32 >= 0])
+    np.subtract.at(att, m64[m64 >= 0], w[moved][m64 >= 0])
+    touched = np.zeros(n, bool)
+    touched[m32[m32 >= 0]] = True
+    touched[m64[m64 >= 0]] = True
+    bound = (rows_in + 2) * EPS * (hv32 + hv64)
+    resid = np.abs(d - att)
+    b_ok = bool(np.all(resid[bad] <= bound[bad]) and np.all(resid[touched] <= bound[touched]))
+    untouched = bad[~touched[bad]]
+    c_ok = untouched.size == 0
+    total_bound = (int(ok64.sum()) + n) * EPS * float(hv64.sum() + hv32.sum())
+    d_ok = abs(float(d.sum())) <= total_bound
+    cells = np.union1d(bad, np.flatnonzero(touched))
+    return {"passes": bool(a_ok and b_ok and c_ok and d_ok), "a_one_stride": a_ok, "b_attributed": b_ok,
+            "c_none_unattributed": bool(c_ok), "d_total_ok": bool(d_ok),
+            "cells_differing": int(bad.size), "rows_moved": int(moved.size),
+            "rows_moved_off_one_stride": int(np.sum(~one_stride)), "cells_unattributed": untouched[:ALL_CELLS].tolist(),
+            "max_residual_over_bound": float(np.max(resid[cells] / np.where(bound[cells] > 0, bound[cells], np.inf)))
+            if cells.size else 0.0,
+            "total": float(d.sum()), "total_bound": total_bound,
+            "cells": [[int(c), float(d[c]), float(att[c])] for c in cells[:ALL_CELLS]],
+            "rows": [[int(r), int(c64[r]), int(c32[r]), float(w[r])] for r in moved[:ALL_CELLS]]}
 
 
 def histogram(cols: list[np.ndarray], w: np.ndarray, edges) -> np.ndarray:
@@ -289,7 +287,7 @@ def main(argv=None) -> int:
     c = rec["checks"]
     brief = {k: v for k, v in c.items() if k not in ("D_detector_denominators", "B_diff", "B_tolerance")}
     if "B_tolerance" in c:
-        brief["B_tolerance"] = {k: v for k, v in c["B_tolerance"].items() if k not in ("pairs", "rows", "unpaired")}
+        brief["B_tolerance"] = {k: v for k, v in c["B_tolerance"].items() if k not in ("cells", "rows")}
     print(f"FD-1B-CVDENOM verdict={rec['verdict']} " + json.dumps(brief, sort_keys=True))
     return 0 if usable else 3
 

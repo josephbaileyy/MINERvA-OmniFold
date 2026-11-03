@@ -363,10 +363,10 @@ import test_fd_1b_mc as tmc  # noqa: E402
 class Job(tmc.Case):
     """calibrate_main over amendment 2's toy world: one read per universe, the checks, the timing guard, the outputs."""
 
-    def run_job(self, det_equal=False, budget=1e6, r_neg=0):
+    def run_job(self, det_equal=True, budget=1e6, r_neg=0, tdw_cv=True):
         world = {"inputs": self.inputs, "bkg": self.bkg, "bank_cv": self.bank_cv, "flux": self.flux,
                  "groups": toys.interaction_groups(self.w.bank), "pins": json.loads(self.w.pins.read_text()),
-                 "npz_sha": "n", "bkg_sha": "b"}
+                 "npz_sha": "n", "bkg_sha": "b", "tdw_cv": np.ones(50) if tdw_cv else None}
         n_bins = int(np.prod([np.asarray(e).size - 1 for e in self.inputs["edges"]]))
         cells = mc.flat_cells(np.asarray(self.inputs["MCgen"], float), self.inputs["edges"])
         live = np.unique(cells[(cells >= 0) & np.asarray(self.inputs["pass_truth"], bool)])
@@ -399,8 +399,7 @@ class Job(tmc.Case):
     def test_a_calibration_over_the_toy_world(self):
         rec = self.run_job()
         self.assertEqual(rec["schema"], c2.SCHEMA_CAL)
-        self.assertEqual(sorted(rec["checks"]["detector_denominator_differs_from_cv"]),
-                         sorted(t for t in toys.s1_universes() if t.rpartition("_")[0] in sa.DETECTOR_BANDS))
+        self.assertEqual(rec["checks"]["detector_denominator_differs_from_cv"], [])
         self.assertEqual(rec["checks"]["r_negative"]["g18"]["rows"], 0)
         for t in ("g18", "ar23"):
             self.assertEqual(rec["outputs"][t]["sets"], 40)
@@ -414,8 +413,12 @@ class Job(tmc.Case):
         self.assertEqual(rec["atime"]["moved"], [])
 
     def test_the_checks_are_silent_when_they_hold_and_name_rows_when_not(self):
-        rec = self.run_job(det_equal=True, r_neg=3)
+        rec = self.run_job(r_neg=3)
         self.assertEqual(rec["checks"]["detector_denominator_differs_from_cv"], [])
+        with self.assertRaisesRegex(c2.Refusal, "detector denominators differ"):
+            self.run_job(det_equal=False)
+        with self.assertRaisesRegex(c2.Refusal, "need --cv-tdw"):
+            self.run_job(tdw_cv=False)
         self.assertEqual(rec["checks"]["r_negative"]["g18"]["rows"], 3)
         self.assertEqual(len(rec["checks"]["r_negative"]["ar23"]["first_rows"]), 3)
 

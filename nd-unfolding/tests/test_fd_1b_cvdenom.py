@@ -182,68 +182,68 @@ def npz_denom(a, pot):
 
 
 class Tolerance(unittest.TestCase):
+    """The director's (e2) rule for B: every difference attributed exactly to rows moving one stride."""
+
+    def run_b(self, a, h=None, pot=0.2):
+        cv, _ = bank_cv(a, pot)
+        return cd.checks(a, pot, cv, npz_denom(a, pot) if h is None else h, EDGES)[0]["B_tolerance"]
+
     def test_edge_rows_pass_and_are_attributed(self):
         a, rows = edge_tree()
-        cv, w = bank_cv(a, 0.2)
-        rec, _ = cd.checks(a, 0.2, cv, npz_denom(a, 0.2), EDGES)
-        self.assertFalse(rec["B_histogram_equals_denom_nd"])
-        t = rec["B_tolerance"]
+        t = self.run_b(a)
         self.assertTrue(t["passes"], t)
-        self.assertEqual(t["rows_changing_cell"], len(rows))
-        self.assertGreaterEqual(len(t["pairs"]), 1)
-        self.assertTrue(all(p["axis"] == 1 for p in t["pairs"]))          # p_par moves
-        self.assertEqual(t["cells_differing"], 2 * len(t["pairs"]))
-        self.assertTrue(rec["C_npz_writer_reproduced"])
+        self.assertEqual(t["rows_moved"], len(rows))
+        self.assertEqual(sorted(r[0] for r in t["rows"]), [30, 31, 32])       # positions in the bank row set
+        self.assertEqual(t["cells_differing"], 2 * len(rows))
+        for c, delta, att in t["cells"]:
+            self.assertAlmostEqual(delta, att, places=12)
 
-    def test_a_weight_change_fails(self):
-        a, _ = edge_tree()
-        cv, _ = bank_cv(a, 0.2)
-        h = npz_denom(a, 0.2)
-        h.flat[np.flatnonzero(h)[-1]] += 0.5
-        t = cd.checks(a, 0.2, cv, h, EDGES)[0]["B_tolerance"]
-        self.assertFalse(t["passes"])
-        self.assertFalse(t["pairwise_conserving"])
-        self.assertEqual(len(t["unpaired"]), 1)
-
-    def test_a_broken_pair_fails(self):
-        a, _ = edge_tree(n_edge=1)
-        cv, _ = bank_cv(a, 0.2)
-        h = npz_denom(a, 0.2)
-        t0 = cd.checks(a, 0.2, cv, h, EDGES)[0]["B_tolerance"]
-        self.assertTrue(t0["passes"])
-        cell = t0["pairs"][0]["cells"][0]
-        h.flat[cell] += 1e-6
-        t = cd.checks(a, 0.2, cv, h, EDGES)[0]["B_tolerance"]
-        self.assertFalse(t["passes"])
-        self.assertEqual(t["pairs"], [])                    # the two cells no longer cancel: neither has a partner
-        self.assertEqual(len(t["unpaired"]), 2)
-
-    def test_two_rows_across_one_edge_in_one_cell_pair_fail_as_ruled(self):
+    def test_two_rows_across_one_edge_pass(self):
         a, rows = edge_tree()
-        a["MC_eavail"][rows], a["MC_q3"][rows] = 0.2, 0.3   # all three rows cross between the same two cells
-        cv, _ = bank_cv(a, 0.2)
-        t = cd.checks(a, 0.2, cv, npz_denom(a, 0.2), EDGES)[0]["B_tolerance"]
-        self.assertTrue(t["pairwise_conserving"])
-        self.assertFalse(t["within_one_row"])
+        a["MC_eavail"][rows], a["MC_q3"][rows] = 0.2, 0.3   # all three cross between the same two cells
+        t = self.run_b(a)
+        self.assertTrue(t["passes"], t)
+        self.assertEqual((t["rows_moved"], t["cells_differing"]), (3, 2))
+
+    def test_b_a_difference_beyond_its_rows_fails(self):
+        a, _ = edge_tree(n_edge=1)
+        t0 = self.run_b(a)
+        self.assertTrue(t0["passes"])
+        h = npz_denom(a, 0.2)
+        h.flat[t0["cells"][0][0]] += 1e-6
+        t = self.run_b(a, h)
+        self.assertFalse(t["b_attributed"])
         self.assertFalse(t["passes"])
 
-    def test_more_than_one_row_and_a_total_fail(self):
-        shape = (2, 2, 1, 1, 1)
+    def test_c_a_difference_with_no_moved_row_fails(self):
+        a, _ = edge_tree()
+        h = npz_denom(a, 0.2)
+        h.flat[np.flatnonzero(h)[-1]] += 0.5                # a weight change, not a coordinate move
+        t = self.run_b(a, h)
+        self.assertFalse(t["c_none_unattributed"])
+        self.assertFalse(t["d_total_ok"])
+        self.assertEqual(len(t["cells_unattributed"]), 1)
+        self.assertFalse(t["passes"])
+        self.assertTrue(self.run_b(a)["c_none_unattributed"])
+
+    def test_a_a_row_moving_two_strides_or_off_the_grid_fails(self):
+        shape = (3, 3, 1, 1, 1)
         h64 = np.full(shape, 10.0)
+        c64 = np.array([0, 4, 8])
+        for c32 in (np.array([2, 4, 8]), np.array([-1, 4, 8]), np.array([4, 4, 8])):   # 2 strides, off grid, diagonal
+            h32 = h64.copy()
+            if c32[0] >= 0:
+                h32.flat[0] -= 1.0
+                h32.flat[c32[0]] += 1.0
+            else:
+                h32.flat[0] -= 1.0
+            t = cd.b_tolerance(h32, h64, c32, c64, np.ones(3))
+            self.assertFalse(t["a_one_stride"], c32)
+            self.assertFalse(t["passes"])
+        c32 = np.array([1, 4, 8])                            # one stride along the last axis of (3, 3): passes
         h32 = h64.copy()
-        h32.flat[0], h32.flat[2] = 15.0, 5.0                # a pair, Delta 5, rows of weight 1
-        c = np.array([0, 0, 2, 2, 1, 3])
-        t = cd.b_tolerance(h32, h64, c, c, np.ones(6))
-        self.assertTrue(t["pairwise_conserving"])
-        self.assertFalse(t["within_one_row"])
-        self.assertFalse(t["passes"])
-        h32 = h64.copy()
-        h32.flat[0], h32.flat[2] = 10.5, 9.5
-        self.assertTrue(cd.b_tolerance(h32, h64, c, c, np.ones(6))["passes"])
-        h32.flat[1] = 10.0 + 1e-3                           # a third cell: unpaired, and the total moves
-        t = cd.b_tolerance(h32, h64, c, c, np.ones(6))
-        self.assertFalse(t["passes"])
-        self.assertFalse(t["total_ok"])
+        h32.flat[0], h32.flat[1] = 9.0, 11.0
+        self.assertTrue(cd.b_tolerance(h32, h64, c32, c64, np.ones(3))["passes"])
 
     def test_flat_cells_is_fd_1b_mcs(self):
         try:

@@ -502,7 +502,16 @@ def prepare(a, rows: bool = False) -> dict:
     cells = mc.flat_cells(np.asarray(inputs["MCgen"], float), inputs["edges"])
     cells = np.where(np.asarray(inputs["pass_truth"], bool), cells, -1)
     R = {} if rows else None
+    if world.get("tdw_cv") is None:
+        raise Refusal("the calibration and c2check need --cv-tdw (fd_1b_cvdenom's PASS output) for (e2)'s d_CV")
     H, cv, phi, det_differs = fine_sums(world, a, r, tags, cells, R)
+    if det_differs:
+        raise Refusal(f"detector denominators differ from the CV's: {det_differs} (S3 (d1)'s check D)")
+    d_cv = cv_denominator_f32(world).ravel()          # (e2) item 1: no composite mixes binnings
+    cv["D"] = d_cv
+    for i, tag in enumerate(tags):
+        if tag.rpartition("_")[0] in sa.DETECTOR_BANDS:
+            H["D"][i] = d_cv                           # a detector universe's denominator is the CV's (check D)
     D_full, D_cv_full = (H["D"].copy(), cv["D"].copy()) if rows else (None, None)
     support = U_full.sum(axis=0) > 0
     live = np.abs(cv["D"]) + np.abs(H["D"]).sum(axis=0) + np.abs(cv["B"]) + np.abs(H["B"]).sum(axis=0) > 0
@@ -595,6 +604,96 @@ def calibrate_main(a) -> dict:
     return rec
 
 
+SCHEMA_GATE = "fd-1b-c2-gate/1"
+
+
+def cv_denominator_f32(world: dict) -> np.ndarray:
+    """The director's (e2) item 1: d_CV := hist_f32(tdw_CV), the CV's per-row weight binned on cv.npz's float32 td_*,
+    as every bank universe's denominator is binned (s5p_universe.denominator), so a composite never mixes binnings."""
+    import s5p_universe
+    return np.asarray(s5p_universe.denominator(world["bank_cv"], world["tdw_cv"], world["inputs"]["edges"]), float)
+
+
+def c2check_main(a) -> dict:
+    """The pre-bulk C2 gate (A2.1's S1 and S2): C2's record on 1B's 16 cells over each truth's 300 declared draws,
+    read by reading_1b under #724, after the calibration it is tied to (CALIBRATED, its digests pinned, its
+    single-universe U x_T equal bitwise to this job's). Its record is the gate file the bulk's check_clip_gate
+    verifies: "option (1)" at every truth is PASS; anything else is the hard stop (STOP), and 1B returns to Joseph."""
+    import hashlib
+    import time
+
+    import fd_1b_inv as inv
+    import fd_1b_mc as mc
+    import fd_1b_score as fs
+    t0 = time.time()
+    if inv.sha256_noatime(a.calibration) != a.expect_calibration_sha256:
+        raise Refusal("the calibration record's digest differs")
+    with inv.open_noatime(a.calibration) as fh:
+        cal = json.loads(fh.read().decode())
+    if cal.get("schema") != SCHEMA_CAL or cal.get("verdict") != "CALIBRATED":
+        raise Refusal(f"the calibration is {cal.get('verdict')!r}, not CALIBRATED: nothing proceeds")
+    cal_npz = a.calibration.with_suffix(".npz")
+    if inv.sha256_noatime(cal_npz) != a.expect_calibration_npz_sha256:
+        raise Refusal("the calibration's ratio file digest differs")
+    P = prepare(a, rows=True)
+    world, truths = P["world"], P["truths"]
+    if sorted(truths) != sorted(cal["truths"]):
+        raise Refusal("c2check's truths are not the calibration's")
+    with inv.open_noatime(cal_npz) as fh:
+        z = np.load(fh, allow_pickle=False)
+        for t in truths:
+            if not np.array_equal(z[f"single_x_{t}"], P["single_x"][t]):
+                raise Refusal(f"{t}: the single-universe U x_T is not the calibration's (a different world or code)")
+    inputs, bkg = world["inputs"], world["bkg"]
+    s1 = mc.via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
+    if not np.allclose(P["U_full"], s1["U"], rtol=0, atol=1e-6):
+        raise Refusal("the definition's functional is not S1's")
+    rel = np.sqrt(np.diag(fs.reported_matrix(s1))) / s1["f"]
+    fm = sa.fine_map(a.definition)
+    edges = inputs["edges"]
+    ptru, prec = np.asarray(inputs["pass_truth"], bool), np.asarray(inputs["pass_reco"], bool)
+    geo = {"gen": P["cells"], "reco": np.where(prec, mc.flat_cells(np.asarray(inputs["MCreco"], float), edges), -1),
+           "bkg": mc.flat_cells(np.asarray(bkg["bkg_reco"], float), edges), "td": mc.td_cells(world["bank_cv"], edges),
+           "fm": np.asarray(fm), "U": P["U"], "shape": P["shape"]}
+    V = dict(P["rows"], D=P["D_full"])
+    cv = {"wt": np.asarray(inputs["w_truth"], float), "wr": np.asarray(inputs["w_reco"], float),
+          "bkgw": np.asarray(bkg["bkg_w"], float), "tdw": world["tdw_cv"], "D": P["D_cv_full"]}
+    rec = {"vi": row_match(np.asarray(inputs["MCgen"], float), cv["wt"], ptru & (P["cells"] >= 0),
+                           np.column_stack([np.asarray(world["bank_cv"][k], np.float64) for k in
+                                            ("td_pt", "td_pz", "td_ea", "td_q3", "td_w")]), world["tdw_cv"],
+                           np.where(P["cells"] >= 0, fm[np.maximum(P["cells"], 0)], -1),
+                           np.where(geo["td"] >= 0, fm[np.maximum(geo["td"], 0)], -1)), "b": {}}
+    seeds = {}
+    for t in truths:
+        draws = [mc.draw_universes(toys.draw_for_seed(sd, P["flux_p"], world["groups"])) for sd in mc.TOY_SEEDS[t]]
+        S = selection(draws, P["col"], P["bands"])
+        phi = draw_flux(S, P["flux_cols"], P["phi"])
+        q = c2_truth(V, cv, S, P["r"][t], geo, phi, P["const"])
+        rec["b"][t] = c2_block(q, P["ref_x"][t], rel)
+        seeds[t] = [int(mc.TOY_SEEDS[t][0]), int(mc.TOY_SEEDS[t][-1])]
+    reading = reading_1b(rec, GATES_1B)
+    reads = {t: reading[t]["reads"] for t in truths}
+    verdict = "PASS" if all(v == "option (1)" for v in reads.values()) else "STOP"
+    digests = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (
+        Path(__file__).resolve(), Path(mc.__file__).resolve(), Path(cp2.__file__).resolve(),
+        Path(cov2d.__file__).resolve(), Path(toys.__file__).resolve())}
+    gate = {"schema": SCHEMA_GATE, "step": "c2-clip-gate", "verdict": verdict,
+            "reading": "option (1)" if verdict == "PASS" else reading["overall"], "reads": reads, "truths": truths,
+            "declared_seeds": seeds, "code_sha256": digests,
+            "calibration_sha256": a.expect_calibration_sha256, "calibration_npz_sha256": a.expect_calibration_npz_sha256,
+            "inputs": {"npz_sha256": world["npz_sha"], "bkg_sha256": world["bkg_sha"],
+                       "pins_sha256": a.expect_pins_sha256, "flux_table_sha256": a.expect_flux_table_sha256,
+                       "push_sha256": a.expect_push_sha256, "cv_tdw_sha256": a.expect_cv_tdw_sha256},
+            "sigma": "S1's reported (fd_data_product C_total_plus_C_resp) relative sigma_c, a proxy for C_T, under "
+                     "clip_probe2's key sigma_Q", "c2_reading_sha256": hashlib.sha256(
+                         (CP2_DIR / "c2_reading.txt").read_bytes()).hexdigest(),
+            "record": rec, "reading_detail": reading, "r_negative": P["r_neg"],
+            "seconds": round(time.time() - t0, 1), "atime": inv.atime_check()}
+    a.out.parent.mkdir(parents=True, exist_ok=True)
+    a.out.write_text(json.dumps(gate, indent=1, sort_keys=True))
+    return gate
+
+
 def main(argv=None) -> int:
     import argparse
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
@@ -607,11 +706,27 @@ def main(argv=None) -> int:
     p.add_argument("--prep", type=Path, required=True)
     p.add_argument("--push", type=Path, default=None)
     p.add_argument("--expect-push-sha256", default=None)
+    p.add_argument("--cv-tdw", type=Path, default=None)
+    p.add_argument("--expect-cv-tdw-sha256", default=None)
     p.add_argument("--truths", nargs="+", choices=tuple(CAL_SEED), required=True)
     p.add_argument("--sets", type=int, default=CAL_SETS)
     p.add_argument("--workers", type=int, required=True)
     p.add_argument("--budget-seconds", type=float, required=True)
+    p = sub.add_parser("c2check")
+    for k in ("npz", "bkg", "bank", "detector-dir", "pins", "flux-constraint", "flux-table", "definition", "staged",
+              "calibration", "cv-tdw", "out"):
+        p.add_argument(f"--{k}", type=Path, required=True)
+    for k in ("pins", "flux-table", "calibration", "calibration-npz", "cv-tdw"):
+        p.add_argument(f"--expect-{k}-sha256", required=True)
+    p.add_argument("--prep", type=Path, required=True)
+    p.add_argument("--push", type=Path, default=None)
+    p.add_argument("--expect-push-sha256", default=None)
+    p.add_argument("--truths", nargs="+", choices=tuple(CAL_SEED), required=True)
     a = ap.parse_args(argv)
+    if a.cmd == "c2check":
+        g = c2check_main(a)
+        print(f"C2-GATE verdict={g['verdict']} reads={json.dumps(g['reads'], sort_keys=True)}")
+        return 0 if g["verdict"] == "PASS" else 3
     if a.cmd == "calibrate":
         if a.sets != CAL_SETS:
             raise Refusal(f"the calibration is declared at {CAL_SETS} sets per truth")
