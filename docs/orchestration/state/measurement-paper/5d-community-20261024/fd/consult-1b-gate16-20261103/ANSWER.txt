@@ -1,0 +1,36 @@
+**Recommendation: (b), with k = 2 as the principled 16-cell equivalent, plus one pooled check. Fix both before any 5D draw is opened.**
+
+**1) Noise-only STOP probabilities.** Here p = 0.0146 per cell, n = 16, independent cells, and STOP means more than k failures.
+
+| k | per truth | over 3 truths |
+|---|---|---|
+| 0 | 0.210 | 0.51 |
+| 1 | 0.022 | 0.066 |
+| 2 | 0.0015 | 0.0046 |
+| 3 | 0.00008 | 0.00024 |
+
+The 2D rule (205 cells, at most 10 failures) has a noise mean of 2.99 failures and a noise-only STOP probability of about 3e-4. The "95%" rule was meant to cut noise STOPs from about 95% (an every-cell rule fails with probability 1 − e^−3) to about 0.03%. At 16 cells, floor(0.05 × 16) = 0, so applying "95%" unchanged is a different rule: zero tolerance with a 51% false-alarm rate. Option (a) is therefore not "unchanged" in intent. The rule to carry over is the false-alarm rate (about 3e-4 to 1e-3 per gate), not the 5% fraction. A fixed fraction fails to transfer because the expected number of noise failures scales with n, but the tail does not scale linearly. k = 2 gives a per-truth rate of 0.15%, a bit looser than the 2D rule. k = 3 matches the 2D rate more closely but tolerates 19% of cells failing. I would choose k = 2.
+
+Cell correlation (shared draws) fattens the tail of the failure count, so the true k = 2 rate is probably higher than 0.15%. Calibrate it by simulating null (unclipped) natures from a separate seed, not from the 5D test draws.
+
+**2) Power.** I assumed uniform variance deflation r in all cells, with per-cell SE 0.082.
+
+| Deflation | Per-cell fail probability | Power, k = 0 | Power, k = 2 |
+|---|---|---|---|
+| 20% | 0.50 | about 100% | 99.8% |
+| 15% | 0.27 | 99% | 85% |
+| 10% | 0.11 | 85% | 26% |
+
+A 10% deflation is inside the gate's own ±20% tolerance, so the per-cell gate was never meant to flag it. The loss is real only for modest, broad distortions. The two checks below recover that power:
+
+- **Pooled mean of log ratios.** Its SE is about 0.082/√16 = 0.02 if cells were independent. Because they are correlated, calibrate the SE by simulation. A bound of |mean log r| ≤ 0.07 (about 3.5 SE) has a noise false-alarm rate of about 5e-4. It catches a uniform 10% deflation with about 95% power (z ≈ 1.7).
+- **Max-deviation bound.** Require max |ratio − 1| ≤ 0.35 (about 4.3 SE). The 16-cell noise rate is about 3e-4, and it catches a single cell that is badly off, which "up to 2 failures" would let through.
+
+The √(2/299) SE assumes Gaussian cells. Clipped or low-count cells have heavier tails (higher kurtosis), so measure the SE from the null simulation rather than trusting the analytic value.
+
+**3) Timing.** Yes, fix the rule before any 5D draw is examined. Choosing k after seeing a STOP would make the gate's behavior depend on its own outcome, which defeats a pre-declared gate. Record the amendment, with its reasoning and the null-simulation calibration, in a commit dated before the first look. Also set the three-truth budget (about 0.5% combined noise STOP) rather than a per-truth one, since you are running three tests.
+
+**Ranked recommendation:**
+1. Use k = 2 failing cells per truth, plus the pooled mean-log-ratio bound (0.07) and the max-deviation bound (0.35). Calibrate on null natures and commit the rule before looking at any 5D draw.
+2. If you want a single rule, use k = 2 alone and state in writing that it has low power below about 15% deflation.
+3. Option (a), the unchanged 95% rule, is last. It gives a 51% noise STOP rate and tests a rule nobody declared.
