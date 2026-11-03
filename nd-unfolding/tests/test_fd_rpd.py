@@ -308,6 +308,45 @@ class Stage(Tmp):
         with self.assertRaises(ri.Refuse):
             ri.staged(self.tmp / "R", name)
 
+    def verify(self, src):
+        with mock.patch.object(ri, "stage_sources", lambda deploy=None: src):
+            return quiet(ri.main, ["verify-staged", "--r", str(self.tmp / "R")])
+
+    def test_verify_staged_passes_the_staged_copies_and_refuses_any_one_defect(self):
+        src = self.sources()
+        self.run_stage(src)
+        rc, out, err = self.verify(src)
+        self.assertEqual(rc, 0, err)
+        self.assertEqual(json.loads(out)["verified"], 3)
+        name = sorted(src)[1]
+        p = self.tmp / "R/staged" / name
+        p.chmod(0o640)
+        good = p.read_bytes()
+        p.write_bytes(good[:-1] + bytes([good[-1] ^ 1]))
+        self.assertEqual(self.verify(src)[0], 4)
+        p.write_bytes(good)
+        self.assertEqual(self.verify(src)[0], 0)
+        p.unlink()
+        self.assertEqual(self.verify(src)[0], 4)
+        p.write_bytes(good)
+        self.assertEqual(self.verify({**src, name: (src[name][0], "0" * 64)})[0], 4)      # the pin moved
+        self.assertEqual(self.verify({**src, name: ("/elsewhere", src[name][1])})[0], 4)  # the source moved
+        self.assertEqual(self.verify({**src, "x/new": src[name]})[0], 4)                  # a source the record lacks
+        self.assertEqual(self.verify({k: v for k, v in src.items() if k != name})[0], 4)  # a record row the deploy lacks
+        rec_p = self.tmp / "R/staged/STAGED.json"
+        rec = json.loads(rec_p.read_text())
+        rec["files"][name]["sha256"] = "1" * 64
+        rec_p.chmod(0o640)
+        rec_p.write_text(json.dumps(rec))
+        self.assertEqual(self.verify(src)[0], 4)                                           # the record's digest moved
+
+    def test_verify_staged_writes_nothing(self):
+        src = self.sources()
+        self.run_stage(src)
+        before = sorted(str(q) for q in (self.tmp / "R").rglob("*"))
+        self.assertEqual(self.verify(src)[0], 0)
+        self.assertEqual(sorted(str(q) for q in (self.tmp / "R").rglob("*")), before)
+
     def test_the_copy_opens_with_o_noatime_where_the_platform_has_it(self):
         seen = []
         real = os.open
@@ -319,6 +358,114 @@ class Stage(Tmp):
         with mock.patch.object(ri.os, "open", spy), mock.patch.object(ri.os, "O_NOATIME", 0o1000000, create=True):
             self.run_stage(src)
         self.assertTrue(seen and all(f & 0o1000000 for f in seen))
+
+
+# ================================================================ fd_rpd_inputs: flux's pinned MAT environment
+
+
+def mat_good():
+    """The pinned environment, as mat_environment would see it."""
+    return ({p: v for p, v in ri.MAT_SETUP.items()}, {p: v for p, v in ri.MAT_FILES.items()}, ri.MAT_LINK[1],
+            {f"{ri.MAT_LIB}/libMAT.so", "/usr/lib64/libc.so.6", f"{ri.MAT_LIB}/MAT_rdict.pcm"},
+            {"PLOTUTILSROOT": ri.MAT_LIB, "MINERVA_PREFIX": ri.MAT_PREFIX}, True)
+
+
+class MatEnv(Tmp):
+    def test_the_pins_name_the_six_setup_scripts_and_the_three_mat_files(self):
+        self.assertEqual(sorted(Path(p).name for p in ri.MAT_SETUP),
+                         sorted(["setup_salloc_env.sh", "setup.sh", "setup.sh", "setup_MAT.sh", "setup_MAT-MINERvA.sh",
+                                 "setup_UnfoldUtils.sh"]))
+        self.assertTrue(all(p.startswith(ri.MAT_CHECKOUT + "/") for p in [*ri.MAT_SETUP, *ri.MAT_FILES]))
+        self.assertEqual(sorted(Path(p).name for p in ri.MAT_FILES), ["MATDict.rootmap", "MAT_rdict.pcm", "libMAT.so"])
+        self.assertIn(ri.MAT_LINK[1], ri.MAT_FILES)
+        self.assertEqual((ri.MAT_PREFIX, ri.MAT_LIB), (ri.MAT_CHECKOUT + "/MINERvA101/opt", ri.MAT_CHECKOUT + "/MINERvA101/opt/lib"))
+        self.assertTrue(all(len(v) == 64 for v in [*ri.MAT_SETUP.values(), *ri.MAT_FILES.values()]))
+
+    def test_the_pinned_environment_has_no_problem(self):
+        self.assertEqual(ri.mat_env_problems(*mat_good()), [])
+
+    def test_each_departure_from_the_pinned_environment_is_a_problem(self):
+        cases = []
+        for p in ri.MAT_SETUP:
+            g = mat_good(); g[0][p] = "0" * 64; cases.append((f"setup {Path(p).name}", g))
+            g = mat_good(); g[0][p] = None; cases.append((f"setup {Path(p).name} missing", g))
+        for p in ri.MAT_FILES:
+            g = mat_good(); g[1][p] = "0" * 64; cases.append((f"file {Path(p).name}", g))
+            g = mat_good(); g[1][p] = None; cases.append((f"file {Path(p).name} missing", g))
+        g = list(mat_good()); g[2] = f"{ri.MAT_LIB}/libMAT-MINERvA.so"; cases.append(("link elsewhere", g))
+        g = list(mat_good()); g[2] = None; cases.append(("no link", g))
+        g = mat_good(); g[3].add(f"{ri.MAT_LIB}/libMAT-MINERvA.so"); cases.append(("an extra MAT library", g))
+        g = mat_good(); g[3].discard(f"{ri.MAT_LIB}/libMAT.so"); cases.append(("libMAT.so not mapped", g))
+        for k in ("PLOTUTILSROOT", "MINERVA_PREFIX"):
+            g = mat_good(); g[4][k] = "/global/homes/j/josephrb/MINERvA101/opt"; cases.append((k, g))
+            g = mat_good(); del g[4][k]; cases.append((f"{k} unset", g))
+        g = list(mat_good()); g[5] = False; cases.append(("no dictionary", g))
+        for what, g in cases:
+            self.assertEqual(len(ri.mat_env_problems(*g)), 1, what)
+
+    def test_a_mapped_file_outside_the_mat_library_does_not_count(self):
+        g = mat_good()
+        g[3].update({"/global/homes/j/josephrb/.conda/envs/root_6_28/lib/libCore.so", f"{ri.MAT_PREFIX}/libX.so"})
+        self.assertEqual(ri.mat_env_problems(*g), [])
+
+    def environment(self, dictionary=True, sha=None, maps=None, environ=None):
+        """mat_environment with ROOT, the maps, the digests, the link and os.environ replaced."""
+        cls = mock.Mock(**{"HasDictionary.return_value": dictionary})
+        fake = mock.Mock(**{"TClass.GetClass.return_value": cls})
+        pins = {**ri.MAT_SETUP, **ri.MAT_FILES, **(sha or {})}
+        g = mat_good()
+        with mock.patch.dict(sys.modules, {"ROOT": fake}), \
+                mock.patch.object(ri, "mapped_files", return_value=g[3] if maps is None else maps), \
+                mock.patch.object(ri, "noatime_sha256", side_effect=lambda q: pins[str(q)]), \
+                mock.patch.object(ri, "link_target", return_value=ri.MAT_LINK[1]), \
+                mock.patch.dict(ri.os.environ, environ or g[4]):
+            return ri.mat_environment()
+
+    def test_mat_environment_passes_the_pinned_one_and_records_it(self):
+        env = self.environment()
+        self.assertEqual((env["setup_sha256"], env["mat_sha256"]), (ri.MAT_SETUP, ri.MAT_FILES))
+        self.assertEqual(env["symlink"], {ri.MAT_LINK[0]: ri.MAT_LINK[1]})
+        self.assertEqual(env["mapped_mat_libraries"], [f"{ri.MAT_LIB}/MAT_rdict.pcm", f"{ri.MAT_LIB}/libMAT.so"])
+        self.assertTrue(env["plotutils_mnvh1d_dictionary"])
+
+    def test_mat_environment_refuses_with_7_on_any_problem(self):
+        for kw in ({"dictionary": False}, {"sha": {next(iter(ri.MAT_SETUP)): "0" * 64}},
+                   {"sha": {ri.MAT_LINK[1]: "0" * 64}}, {"maps": {"/usr/lib64/libc.so.6"}},
+                   {"environ": {"PLOTUTILSROOT": "/elsewhere", "MINERVA_PREFIX": ri.MAT_PREFIX}}):
+            with self.assertRaises(ri.Refuse) as e:
+                self.environment(**kw)
+            self.assertEqual(e.exception.code, 7, kw)
+
+    def test_the_pinned_files_are_hashed_through_o_noatime(self):
+        q = self.tmp / "f.sh"
+        q.write_bytes(b"export X=1\n")
+        seen = []
+        real = os.open
+
+        def spy(path, flags, *a):
+            seen.append(flags)
+            return real(path, flags & ~0o1000000, *a)
+        with mock.patch.object(ri.os, "open", spy), mock.patch.object(ri.os, "O_NOATIME", 0o1000000, create=True):
+            got = ri.noatime_sha256(q)
+        self.assertEqual(got, digest(q))
+        self.assertTrue(seen and all(f & 0o1000000 for f in seen))
+        self.assertIsNone(ri.noatime_sha256(self.tmp / "absent"))
+
+    def test_mapped_files_parses_the_maps_format(self):
+        maps = ("7f00-7f01 r-xp 00000000 08:01 123 /usr/lib/x/libA.so\n7f01-7f02 rw-p 00000000 00:00 0 \n"
+                "7f02-7f03 r--p 00000000 00:00 0 [heap]\n7f03-7f04 r--p 00000000 08:01 9 /a b/c d.so\n")
+        with mock.patch("builtins.open", mock.mock_open(read_data=maps)):
+            got = ri.mapped_files()
+        self.assertEqual(got, {os.path.realpath("/usr/lib/x/libA.so"), os.path.realpath("/a b/c d.so")})
+
+    def test_flux_refuses_with_7_before_any_read_outside_the_pinned_environment(self):
+        R = self.tmp / "R"
+        R.mkdir()
+        with mock.patch.object(ri, "mat_environment", side_effect=ri.Refuse(7, "not flux's pinned MAT environment")), \
+                mock.patch.object(ri, "staged", side_effect=AssertionError("read before the environment check")):
+            rc, _, err = quiet(ri.main, ["flux", "--r", str(R)])
+        self.assertEqual(rc, 7, err)
+        self.assertFalse((R / "flux").exists())
 
 
 # ================================================================ fd_rpd_inputs: flux arithmetic and F1
@@ -431,7 +578,11 @@ class Flux(unittest.TestCase):
 @unittest.skipUnless(HAVE_ROOT, "needs ROOT (runs at the binding-2 deploy in root_6_28)")
 class RootPaths(Tmp):
     """The ROOT paths end to end on tiny synthetic files: write_flux/read_flux, loop_pots, and run_flux (the pinned
-    combiner's reader with BASE at the staged copies, F1, the loops' POT and e)."""
+    combiner's reader with BASE at the staged copies, F1, the loops' POT and e). The fixtures are plain TH1D and
+    TParameter, so these tests do not cover a MAT read: test_fd_rpd_mat reads the real staged MnvH1D files, and here
+    mat_environment is replaced by a stub that the record must carry."""
+
+    ENV = {"stub": "the pinned MAT environment"}
 
     EDGES = list(np.linspace(0.0, 4.5, 15))
 
@@ -501,7 +652,8 @@ class RootPaths(Tmp):
             q = D / pi.FLUX_REL / f"runEventLoopMC_{k}.root"
             ri.write_flux(q, self.EDGES, ri.combine([per[p] for p in pls]), list(pls))
             pins[k] = digest(q)
-        with mock.patch.dict(pi.FLUX, pins), mock.patch.object(ri, "BASELINE", {n: "x" for n in ri.BASELINE}):
+        with mock.patch.dict(pi.FLUX, pins), mock.patch.object(ri, "BASELINE", {n: "x" for n in ri.BASELINE}), \
+                mock.patch.object(ri, "mat_environment", return_value=self.ENV):
             rc, _, err = quiet(ri.main, ["flux", "--r", str(R), "--deploy", str(D)])
         return rc, err, R
 
@@ -513,6 +665,7 @@ class RootPaths(Tmp):
         self.assertTrue(rec["loops_data_pot_equal_flux_data_pot"])
         self.assertAlmostEqual(sum(rec["exposure_share"].values()), 1.0, places=12)
         self.assertEqual(sorted(rec["files"]), sorted(PL))
+        self.assertEqual(rec["environment"], self.ENV)
 
     def test_run_flux_fails_when_a_loops_pot_is_not_its_fluxs(self):
         rc, err, R = self.run_flux_case(break_one=True)
