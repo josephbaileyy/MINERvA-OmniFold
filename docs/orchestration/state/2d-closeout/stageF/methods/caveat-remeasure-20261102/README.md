@@ -92,6 +92,15 @@ caveats are invisible to it.
 Coding is a judgment, so it is the one step the command cannot do. `--no-build` reuses `WORK/build/*.pdf`, and
 `--self-test` checks the abstract-start detection, the study's own quote self-test, and the issue counting.
 
+**The Limitations guard (added 2026-11-03).** A two-column layout can make pdftotext print a Limitations item after
+"ACKNOWLEDGMENTS", where `blindcount.py`'s rule drops it.
+- After blinding, every item of `paper_body.tex`'s Limitations enumerate must appear as a numbered line.
+- A displaced item is restored from the raw text and counted by the same word rule.
+- The run fails if an item is still missing.
+- The summary lists any restored items (`restored_limitation_items`).
+- It first fired at 97e30dda (`after-711-97e30dda/README.md` §0). It restores nothing at 108040f8, 58fa0b89 or
+  16cd55ca.
+
 ## Files
 
 - `remeasure.py`: the command;
