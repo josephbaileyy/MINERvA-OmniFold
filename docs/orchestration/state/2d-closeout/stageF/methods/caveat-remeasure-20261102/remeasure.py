@@ -75,7 +75,69 @@ def abstract_start(lines):
     return "^" + re.escape(first.strip()[:40])
 
 
-def blind(work, paper_pdf, note_pdf):
+TOKS = re.compile(r"[a-z]+")
+STOP = re.compile(r"^\s*(\[\d+\]|\d+\.\s|[A-Z][A-Z ,\-]+$)|^\s*$|\f")
+
+
+def limitation_items(paper_body: str) -> list[list[str]]:
+    """The paper's Limitations list (sec:limitations, its enumerate): each item's first six alphabetic tokens."""
+    code = "\n".join(re.sub(r"(?<!\\)%.*", "", l) for l in paper_body.split("\n"))
+    i = code.find("\\label{sec:limitations}")
+    if i < 0:
+        return []
+    seg = code[i:]
+    b, e = seg.find("\\begin{enumerate}"), seg.find("\\end{enumerate}")
+    if b < 0 or e < b:
+        return []
+    out = []
+    for it in seg[b:e].split("\\item")[1:]:
+        # the anchor stops at the first macro that prints content (a value, a reference): its printed tokens are unknown
+        cut = re.search(r"\\(fvval|ref|nsec|cite|SI|num|eqref)\b", it)
+        t = it[:cut.start()] if cut else it
+        out.append(TOKS.findall(re.sub(r"\\[A-Za-z]+", " ", t).lower())[:6])
+    return out
+
+
+def numbered_start(lines: list[str], n: int, anchor: list[str]) -> int | None:
+    """The line where item n begins: it reads "n. " and its tokens, with the next two lines', start with the anchor.
+    A bare token match is not enough: an item's opening words can recur elsewhere (the list's own introduction)."""
+    a = " ".join(anchor)
+    return next((i for i, l in enumerate(lines) if re.match(rf"^\s*{n}\.\s", l)
+                 and " ".join(TOKS.findall(" ".join(lines[i:i + 3]).lower())).startswith(a)), None)
+
+
+def restore_displaced_items(blind_lines: list[str], txt_lines: list[str], items: list[list[str]]):
+    """pdftotext can place a Limitations item after ACKNOWLEDGMENTS or among the references in a two-column layout,
+    where blindcount.py's rule drops it as acknowledgment or reference text. Each item that does not begin as a
+    numbered line of the blinded text is restored from the raw text: its numbered line and the lines that follow, up to
+    a blank line, a reference entry, an all-capitals heading or the next numbered item. Returns (lines, restored item
+    numbers). An item still absent afterwards is an error: the measured text would be missing a body paragraph."""
+    lines, restored = list(blind_lines), []
+    for n, anchor in enumerate(items, 1):
+        if not anchor or numbered_start(lines, n, anchor) is not None:
+            continue
+        start = numbered_start(txt_lines, n, anchor)
+        if start is None:
+            raise SystemExit(f"FAILED: Limitations item {n} is in neither the blinded nor the raw paper text")
+        block = [txt_lines[start]]
+        for l in txt_lines[start + 1:]:
+            if STOP.search(l):
+                break
+            block.append(l)
+        lines += [""] + block
+        restored.append(n)
+    missing = [n for n, a in enumerate(items, 1) if a and numbered_start(lines, n, a) is None]
+    if missing:
+        raise SystemExit(f"FAILED: Limitations items {missing} still absent after restoration")
+    return lines, restored
+
+
+def blind_words(lines: list[str]) -> int:
+    """blindcount.py's own rule: tokens holding a letter or digit."""
+    return sum(1 for w in " ".join(lines).split() if re.search(r"[A-Za-z0-9]", w))
+
+
+def blind(work, paper_pdf, note_pdf, repo=None):
     for d in ("txt", "blind"):
         (work / d).mkdir(exist_ok=True)
     run(["pdftotext", str(paper_pdf), "txt/ours-paper.txt"], work)
@@ -86,6 +148,18 @@ def blind(work, paper_pdf, note_pdf):
                 work).stdout
     words = {"ours-paper": int(re.search(r"words=(\d+)", out_p).group(1)),
              "ours-note": int(re.search(r"words=(\d+)", out_n).group(1))}
+    restored = []
+    if repo is not None:
+        body = (Path(repo) / "docs" / "analysis-note" / "paper_body.tex").read_text(encoding="utf-8")
+        bp = work / "blind/ours-paper.txt"
+        lines, restored = restore_displaced_items(bp.read_text(errors="replace").split("\n"),
+                                                  (work / "txt/ours-paper.txt").read_text(errors="replace").split("\n"),
+                                                  limitation_items(body))
+        if restored:
+            bp.write_text("\n".join(lines))
+            words["ours-paper"] = blind_words(lines)
+            print(f"restored displaced Limitations items {restored}; paper words now {words['ours-paper']}")
+    words["_restored_limitation_items"] = restored
     note = (work / "blind/ours-note.txt").read_text(errors="replace").split("\n")
     g = next(i for i, l in enumerate(note) if re.match(r"Guide to the appendices$", l))
     (work / "blind/ours-note-body.txt").write_text("\n".join(note[:g]))
@@ -150,7 +224,8 @@ def main(a):
         paper_pdf, note_pdf = work / "build/main_paper.pdf", work / "build/main_note.pdf"
     else:
         paper_pdf, note_pdf = build(repo, work)
-    words = blind(work, paper_pdf, note_pdf)
+    words = blind(work, paper_pdf, note_pdf, repo)
+    restored = words.pop("_restored_limitation_items")
     head = run(["git", "-C", str(repo), "rev-parse", "HEAD"], repo, check=False).stdout.strip() or "unknown"
     now = {p: sha(work / "blind" / f"{p}.txt") for parts in PARTS.values() for p in parts}
     if a.record_coded:  # only the documents named: an uncoded document must never inherit a fresh hash
@@ -175,7 +250,7 @@ def main(a):
         rows, bad = tally.load(doc)
         density[doc] = dict(stats(rows, words[doc]), dropped=len(bad), stale=stale[doc], words=words[doc])
     surv = {"10-25 inventories (caveat-study/inv)": survival(load_tally(), STUDY / "inv", work, words)}
-    summary = {"repo_head": head, "words": words, "blinded_sha256": now, "density": density, "baseline_10_25": BASELINE,
+    summary = {"repo_head": head, "words": words, "restored_limitation_items": restored, "blinded_sha256": now, "density": density, "baseline_10_25": BASELINE,
                "survival_mechanical_not_density": surv, "comparators": comparators(),
                "coder_spread": "about +-25% in row count (caveat-study/REPORT.md sec. 2.4)"}
     (out / "summary.json").write_text(json.dumps(summary, indent=1) + "\n")
@@ -210,8 +285,27 @@ def self_test():
     ok &= stats([{"kind": "c", "issue": "A"}, {"kind": "c", "issue": "a"}, {"kind": "d", "issue": "a"}], 1000) == \
         {"rows": 3, "distinct": 2, "all_per_1k": 3.0, "distinct_per_1k": 2.0, "rows_per_issue": 1.5}
     ok &= hasattr(t, "load") and hasattr(t, "main")
+    body = ("\\subsection{Limitations}\\label{sec:limitations}\n\\begin{enumerate}\n\\item No reported interval has validated coverage.\n"
+            "\\item Four of the sixteen cells, \\fvval{x}, have low stability.\n\\item The note's calibrated tests reject hybrid nulls.\n"
+            "\\end{enumerate}\n")
+    items = limitation_items(body)
+    ok &= [i[:3] for i in items] == [["no", "reported", "interval"], ["four", "of", "the"], ["the", "note", "s"]]
+    blind_ok = ["Limitations", "1. No reported interval has validated coverage.", "2. Four of the sixteen cells, R02, have",
+                "low stability.", "3. The note's calibrated tests reject hybrid nulls."]
+    ok &= restore_displaced_items(blind_ok, [], items) == (blind_ok, [])  # silent when every item is present
+    raw = ["ACKNOWLEDGMENTS", "We thank.", "3. The note's calibrated tests reject", "hybrid nulls.", "",
+           "[1] G. D'Agostini, A method", "2. Four of the sixteen cells, R02, have", "low stability.", "[2] A. Author"]
+    lines, rest = restore_displaced_items(["Apart from the low stability of four of the sixteen cells (below), the",
+                                           "principal ones are these."] + blind_ok[1:2], raw, items)
+    ok &= rest == [2, 3] and "low stability." in lines and "hybrid nulls." in lines and "[2] A. Author" not in lines
+    try:
+        restore_displaced_items(blind_ok[:2], ["ACKNOWLEDGMENTS"], items)
+        ok = False
+    except SystemExit:
+        pass
     print("SELF-TEST ::", "PASS" if ok else "FAIL", "(abstract start found and anchored; tally self-test; issue "
-          "counting case-folds labels per kind)")
+          "counting case-folds labels per kind; a displaced Limitations item is restored, a present one left alone, "
+          "a lost one fails)")
     sys.exit(0 if ok else 1)
 
 

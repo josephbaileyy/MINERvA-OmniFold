@@ -1,0 +1,12 @@
+{
+ "seed": 20261102,
+ "mapping": {
+  "set-1.txt": "A2",
+  "set-2.txt": "B2",
+  "set-3.txt": "B1",
+  "set-4.txt": "A1",
+  "set-5.txt": "before-B",
+  "set-6.txt": "before-A",
+  "set-7.txt": "B0"
+ }
+}

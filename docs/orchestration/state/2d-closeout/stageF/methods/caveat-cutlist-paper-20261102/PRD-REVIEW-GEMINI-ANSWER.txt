@@ -1,0 +1,24 @@
+**1. Overall PRD Tone, Over-Qualification, and Precision**  
+The manuscript is significantly improved, but it still reads more like an internal post-mortem or technical audit than a standard PRD measurement paper. It remains heavily over-qualified in **Sec. IV A** (the forensic audit history of $C_{\mathrm{PL,5D}}$) and **Sec. VI A** (the monolithic wall of negative coverage statements). 
+
+Consolidation introduced several dense, semicolon-spliced run-on sentences (e.g., MV01 in Sec. IV A, MV08 in Sec. IV D, and MV10 in Sec. V B). Specifically, **Sec. IV A** became harder to follow: by interleaving the 5D analysis with the 2D benchmark, the text creates narrative whiplash—jumping from 5D group scatter to a 2D $p_\parallel$ step, to 2D consistency checks, and back to $C_{\mathrm{PL,5D}}$ audit stopping criteria.
+
+**2. Lost or Blurred Facts**  
+* **Sec. IV A (MV01):** The merge blurs whether the 5D block also contains differences by construction: *“...so it contains the differences by construction; the two-dimensional block's own consistency check therefore cannot fail.”* A reader cannot tell if the 5D block was tested, failed, or cannot fail.
+* **Sec. IV E (MV13):** Moving Section IV F to the note blurred the critical quantitative severity of the miscoverage: *“Statistical intervals of an earlier five-observable estimator... miscover at the tested truths...”* suppresses the fact that empirical coverage fell as low as **6%** for nominal 68% intervals. A reader needs this magnitude to understand why that estimator was abandoned.
+
+**3. The Coverage Statement ("under way")**  
+**Unacceptable for PRD.** PRD publishes archival, completed results, not status updates on ongoing computational campaigns. A paper must state only what has and has not been established; in-progress work belongs in preprints or subsequent publications.  
+* **Proposed wording:**  
+  > *“A coverage test at two of their truths, declared in advance for the covariance without the run-period block, was stopped at an intermediate gate before completion [Ref.~[1], Sec.~N-sec:fived16-fd]; interval coverage with a rebuilt covariance has not been demonstrated and is left to future work.”*
+
+**4. Section IV G Tension (2.6$\sigma$ vs. "inside statistical uncertainty")**  
+A referee reads this as an outright contradiction: a perturbation cannot reach $2.6\sigma_{\mathrm{stat}}$ while remaining strictly within the $1\sigma_{\mathrm{stat}}$ uncertainty band.  
+* **Clarification needed:** The authors must explicitly distinguish the global metric from the extreme cell excursion. I would ask: *“Please clarify the metric in Sec. IV G: does 'spread' denote the median shift or total integrated variance across replicas, while 2.6$\sigma$ represents the maximum local excursion in a single cell?”*
+
+**5. Sentences to Cut or Reword Before Submission**  
+1. **Sec. IV A (Reword):** Cut the audit process details and split the 2D/5D mixture:  
+   * *Reword:* “The run-period blocks ($C_{\mathrm{PL,5D}}$ for the five-observable result and $C_{\mathrm{PL}}$ for the two-dimensional result) account for these empirical discrepancies by construction using double ratios among the period groups.”  
+2. **Sec. IV G (Reword):** Resolve the tension identified in item 4:  
+   * *Reword:* “The joint-test estimator is sensitive to floating-point rounding: while median variations across cells remain within the data-bootstrap statistical uncertainty, individual cell values fluctuate by up to 2.6 statistical standard deviations.”  
+3. **Sec. VI A, Item 1 (Cut):** Delete *“A staged coverage test at those two truths, with the covariance rebuilt by the same procedure at each, is under way.”* (replace per item 3 above).

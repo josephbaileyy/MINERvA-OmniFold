@@ -102,9 +102,10 @@ ARMS = {"with": {"dp": "C_total_plus_C_resp_plus_C_PL5D", "rep": "C_total + C_re
 MATRIX_KEYS = re.compile(r"^(g-|gs-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|eav-|sig(med|min|max)?-(reported|C_PL5D)|trig-)")
 # the figures the note and the paper print, copied into figures/: each must equal its committed source (with the block)
 # and the digest its sidecar records (FD-G-FIGURES-REPORT.md section 1; FD-CT-5B-ADDITION-REPORT.md section 3)
-# Both are E-1's, drawn by Stage G's figure tool on Table IV's predictions (GENCMP amendment E, the with arm)
-FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures", "f547bc92"),
-           "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures", "f5f9e530")}
+# Both are E-1's with-arm figures as addendum E-A2 redrew them, from the same readouts, without the hydrogen flags on
+# the legend (FD-GENCMP-AMENDMENT-E-ADDENDUM-EA2-REPORT.md, #712; the caveat cut list's move MV07F)
+FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "6214ed78"),
+           "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
 TEXT_READOUTS = {"gprobe", "e2sens"}
 CELLS = [f"R{i:02d}" for i in range(16)]

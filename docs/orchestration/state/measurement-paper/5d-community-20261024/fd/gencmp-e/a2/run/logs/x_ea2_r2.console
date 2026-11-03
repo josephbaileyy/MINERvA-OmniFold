@@ -1,0 +1,7 @@
+tests rc=0 OK: 498 checks, 0 failed, 3 sidecars OK: 498 checks, 0 failed, 3 sidecars Ran 58 tests in 99.344s OK 
+ea2 rc=0
+OK: 498 checks, 0 failed, 3 sidecars
+[E-A2] control D fd_g_fig_ratio: PASS (2 label texts changed)
+[E-A2] control D fd_g_fig_modes: PASS (1 label texts changed)
+[E-A2] control D fd_g_fig_sens: PASS (2 label texts changed)
+porcelain after: 0
