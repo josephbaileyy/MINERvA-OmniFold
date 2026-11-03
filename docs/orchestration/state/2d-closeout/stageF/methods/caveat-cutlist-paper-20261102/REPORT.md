@@ -297,6 +297,7 @@ Rendered from the sources: `\fvval` values are filled in, and a pointer reads "n
 | `check_held.py --fact-held` | the 3 known flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07) |
 | `generate_manifest.py --check` | see the PR |
 | local CI | see the PR |
+| the reading copy | 31 pages: each changed paper page (1 and 3–12) followed by its base page, then the base's page 13; the note's pages 56, 58, 64 and 74 (the added facts), each followed by the base page where that text stood (56, 58, 64, 73) |
 
 Nothing is submitted, deposited or tagged.
 <!-- absence-ok: the report quotes the paper's caveats, before and after, with their sources; it makes no claim of its own -->

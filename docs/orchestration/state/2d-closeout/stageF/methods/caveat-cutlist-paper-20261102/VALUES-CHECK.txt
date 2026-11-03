@@ -1,0 +1,9 @@
+# values: the round changes no value (base 589eb47d0)
+$ git diff --stat 589eb47d0 HEAD -- docs/analysis-note/values_fived16.tex docs/analysis-note/values.tex docs/analysis-note/values_inference.tex
+(empty: no value file changed)
+$ python3 docs/analysis-note/make_values_fived16.py --check
+VALUES-FIVED16 :: PASS (2715 values, readouts pinned, 2 figures equal their sources, 9 listed-truth sentences agree)
+$ python3 docs/analysis-note/check_sec4_receipts.py
+SEC4-RECEIPTS :: PASS (15/15)
+$ check_ledger.py
+ledger rows 15, probes 77, changed base sentences 61, failures 0
