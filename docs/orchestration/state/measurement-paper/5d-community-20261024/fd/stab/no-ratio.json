@@ -1,0 +1,1 @@
+{"schema": "estimator-stability-probe-no-ratio/1", "note": "Placeholder alternative for the built-in q3_given_eavail_w truth, which reads no ratio (s5n_pseudo.truth_weight -> s5c_pseudo.truth_weight); s5p_nullexp applies an alternative only when a file is given. FD-STAB-DECLARATION.md section 3."}
