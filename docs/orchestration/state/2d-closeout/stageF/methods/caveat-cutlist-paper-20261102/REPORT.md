@@ -20,8 +20,8 @@ and the Gemini PRD review beside it (#707).
 | MV03 3D/4D central values | merged | V C | V's opening and VI A no longer repeat it |
 | MV04 envelope | merged | III A | Three sentences become two, with every number. The conclusions keep "tracks the same bias". The sentence is held for its facts (G1:paper-g-06) |
 | MV06 C_model's sources | moved | IV A, in C_model's definition | V B's "(below)" now points to IV A |
-| MV07 hydrogen samples | merged | the Table III footnotes | GiBUU's row keeps its footnote, and NuWro's row gets its own (review). Fig. 4's caption keeps one pointer until E-A2 redraws the legend |
-| MV07F Fig. 4 legend | **waiting** | — | E-A2 is approved in principle and goes to limitation-resolver (the director's ruling). The modes figure is redrawn from the same set |
+| MV07 hydrogen samples | merged | the Table III footnotes | GiBUU's row keeps its footnote, and NuWro's row gets its own (review). With MV07F, Fig. 4's pointer sentence goes |
+| MV07F Fig. 4 legend | done | the paper's Fig. 4 and the note's modes figure | E-A2's redraws (#712: ratio `6214ed78`, modes `0d6fe57c`, from the same E-1 with-arm readouts, without the hydrogen flags on the legend). make_values' FIGURES is re-pinned, and the installed copies equal their sources. Fig. 4's pointer sentence and the modes caption's definition of "supplement FLAGGED" go; the facts stay in the Table III footnotes and the note's Sec. 11.9 (`sec_joint.tex:327`) |
 | MV08 background subtraction | merged | IV D | Five short sentences (ruling 5). The wording "biased by up to", "reduces it to below", "leaving up to" and "differ by at most" is bound by `check_sec4_receipts.py` (VL149, VL151, VL152), so it is kept |
 | MV10 χ² correlation sensitivity | merged | V B | Short sentences (ruling 5) |
 | MV13 IV F | moved | the note, sec:coverage-5d; a pointer in IV E | The pointer keeps the correction, the strongest case and the magnitude, "coverage as low as 0.06 for 68% intervals" (ruling 3), bound to its receipt in `check_sec4_receipts.py`. The conclusion sentence (Q43) moves too |
@@ -96,8 +96,8 @@ The referee read (Gemini) is committed verbatim beside this report: `PRD-REVIEW-
 1. **IV G** (above, item 4): a clarification from the records for Joseph. No number changes.
 2. **The 0.06** (item 3): bound to its receipt in code, not through a values key, since none existed.
 3. **IV C's 2D run-period facts** are two sentences rather than one (item 2).
-4. **MV07F and the modes caption.** When E-A2 lands, the modes caption's "supplement FLAGGED" sentence goes (the
-   director's ruling 2 on MV07F). Fig. 4's pointer sentence goes too if the redrawn legend no longer says "hydrogen".
+4. **MV07F is done.** The redrawn legends say "NuWro 21.09: CH" and "GiBUU 2019: CH; p∥ < 4.5 cells only", with no
+   "hydrogen". So both caption sentences go: Fig. 4's pointer, and the modes caption's "supplement FLAGGED" definition.
 
 ## Every changed sentence, before and after
 
