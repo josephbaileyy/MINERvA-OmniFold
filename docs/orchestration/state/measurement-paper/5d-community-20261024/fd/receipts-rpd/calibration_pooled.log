@@ -1,0 +1,5 @@
+replicas  3: counts [12, 15, 12, 10, 10, 19, 14, 8]; pooled 100/2400 = 0.0417 +- 0.0041; dispersion chi2 7.01 on 7 dof, p 0.43
+replicas 10: counts [12, 16, 18, 13, 21, 23, 22, 14]; pooled 139/2400 = 0.0579 +- 0.0048; dispersion chi2 7.81 on 7 dof, p 0.35
+replicas 30: counts [14, 18, 16, 14, 13, 25, 20, 14]; pooled 134/2400 = 0.0558 +- 0.0047; dispersion chi2 7.43 on 7 dof, p 0.39
+gate 0.06462; at the 30-replica pooled rate 0.0558: P(one 300-set alpha > gate) = 0.238, P(one 2000-set alpha > gate) = 0.044
+rc=0

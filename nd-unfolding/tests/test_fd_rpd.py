@@ -126,6 +126,128 @@ class Definitions(unittest.TestCase):
     def test_the_calibration_gate(self):
         self.assertAlmostEqual(rp.r2_gate_threshold(), 0.0646, places=4)
 
+    def test_the_declared_sizes_and_seeds(self):
+        self.assertEqual((rp.SEED, ri.N0_SEED0, ri.N_PART), (20261102, 20261102, 10))
+        self.assertEqual((rp.SEED_OC, rp.SEED_REACH, rp.SEED_READOUT, rp.SEED_N0_EFFECT),
+                         (rp.SEED + 2000, rp.SEED + 3000, rp.SEED, rp.SEED + 4000))
+        self.assertEqual((rp.STAGE_D_R1_DRAWS, rp.STAGE_D_OUTER, rp.STAGE_D_INNER), (20000, 500, 200))
+        self.assertEqual((rp.STAGE_D_RULE_PW, rp.STAGE_D_RULE_EC, rp.STAGE_D_MIN_OUTER, rp.STAGE_D_ALPHA_OUTER),
+                         (0.5, 0.2, 200, 25))
+        self.assertEqual((rp.R2_GATE_N, rp.R2_BETA, rp.R2_SCALES, rp.R1_GATE, rp.R1_RES, rp.R1_Z),
+                         (2000, 0.80, (0.0, 0.5, 1.0, 2.0), 3.0, 4.0, 2.0))
+        a = rp.build_args(["staged", "--r", "R", "--definition", "d", "--out-json", "o"])
+        self.assertEqual((a.outer, a.inner, a.budget), (500, 200, 7200.0))
+
+    def test_the_era_grouping_is_the_declared_intensity_eras(self):
+        self.assertEqual(dict(rp.ERA_PI), {"1A-1E": ("1A", "1B", "1C", "1D", "1E"), "1F-1G": ("1F", "1G"),
+                                           "1L-1M": ("1L", "1M"), "1N-1P": ("1N", "1O", "1P")})
+
+
+class Helpers(unittest.TestCase):
+    def test_replica_deviations_are_about_their_own_mean_and_scaled(self):
+        v = np.array([[1.0, 2.0], [1.2, 2.2], [0.8, 1.6]])
+        want = (v / v.mean(axis=0) - 1.0) * math.sqrt(3 / 2)
+        np.testing.assert_allclose(rp.replica_deviations(v), want, rtol=1e-15)
+
+    def test_the_noise_draws_a_replica_and_adds_t_variance(self):
+        dev = [np.full((4, 16), float(i)) for i in range(12)]
+        nz = rp.make_noise(dev, np.zeros((12, 16)))
+        x = nz(np.random.default_rng(0))
+        np.testing.assert_array_equal(x, np.vstack([np.full(16, float(i)) for i in range(12)]))
+        tv = np.full((12, 16), 4e-4)
+        nz = rp.make_noise([np.zeros((4, 16))] * 12, tv)
+        draws = np.array([nz(np.random.default_rng(k)) for k in range(400)])
+        self.assertAlmostEqual(float(draws.var()), 4e-4, delta=4e-5)
+
+    def test_r1s_gate(self):
+        self.assertTrue(rp.r1_gate(0.03, 0.01))
+        self.assertFalse(rp.r1_gate(0.0299, 0.01))
+        self.assertFalse(rp.r1_gate(-0.1, 0.01))
+
+    def test_n0s_triggers_force_the_small_playlists_unresolved(self):
+        for g, t, want in ((False, False, set()), (True, False, {"1B", "1L", "1O"}), (False, True, {"1B", "1L", "1O"})):
+            self.assertEqual(rp.forced_unresolved({"SIZE_BIAS_g": g, "SIZE_BIAS_t": t}, E_APPROX), want)
+        self.assertEqual([PL[i] for i in rp.n0_small_set(E_APPROX)], ["1B", "1L", "1O"])
+
+    def test_n0_ps_share_bound(self):
+        e = np.full(12, 1 / 12)
+        n = 12000
+        sd = math.sqrt(n * e[0] * (1 - e[0]))
+        ok = np.full(12, 1000.0)
+        self.assertTrue(rp.shares_within(ok, n, e))
+        bad = ok.copy()
+        bad[0] += 5.01 * sd
+        self.assertFalse(rp.shares_within(bad, n, e))
+        bad[0] = 1000 + 4.99 * sd
+        self.assertTrue(rp.shares_within(bad, n, e))
+
+    def test_reachability_truths(self):
+        rng = np.random.default_rng(5)
+        A = rng.normal(size=(16, 16))
+        C5 = A @ A.T * 1e-4
+        ro = {"C_PL5D": {"C_PL5D_rel": C5.tolist()},
+              "g_vs_5A": {"periods": {p: {"g_5b": list(rng.normal(0, .02, 16)), "g_5b_noise_sigma": list(rng.uniform(.001, .004, 16))}
+                                      for p in ("PA", "PB", "PC")}}}
+        tr = rp.reach_truths(E_APPROX, ro)
+        V2 = float(np.sum(E_APPROX ** 2))
+        np.testing.assert_allclose(V2 * tr["sigma_T1"], C5, rtol=1e-9, atol=1e-15)
+        np.testing.assert_allclose(tr["LT1"] @ tr["LT1"].T, tr["sigma_T1"], rtol=1e-9, atol=1e-15)
+        E = {p: sum(E_APPROX[PL.index(m)] for m in ms) for p, ms in ri.PERIODS.items()}
+        for i, X in enumerate(PL):
+            P = rp.GROUP[X]
+            np.testing.assert_allclose(tr["noise_sd"][i], np.array(ro["g_vs_5A"]["periods"][P]["g_5b_noise_sigma"])
+                                       * math.sqrt(E[P] / E_APPROX[i]))
+            np.testing.assert_array_equal(tr["T2"][i], np.array(ro["g_vs_5A"]["periods"][P]["g_5b"]))
+        z = rng.standard_normal((12, 16))
+        np.testing.assert_allclose(rp.t3_offsets(tr["T2"], z, tr["LT1"]),
+                                   tr["T2"] / math.sqrt(2) + z @ tr["LT1"].T / math.sqrt(2))
+
+    def test_r3s_numbers(self):
+        rng = np.random.default_rng(6)
+        g = rp.offsets(1 + rng.normal(0, .02, (12, 16)), E_APPROX)
+        Mi = np.eye(16)
+        A = rng.normal(size=(16, 16))
+        c5 = A @ A.T * 1e-4
+        c5n = c5 * 0.3
+        noise_g = [rp.offsets(1 + rng.normal(0, .005, (12, 16)), E_APPROX) for _ in range(50)]
+        out = rp.r3_numbers(g, E_APPROX, Mi, c5, c5n, noise_g)
+        V2 = float(np.sum(E_APPROX ** 2))
+        k = V2 / (1 - V2)
+        self.assertAlmostEqual(out["k12"], k, places=14)
+        C12 = k * sum(E_APPROX[i] * np.outer(g[i], g[i]) for i in range(12))
+        self.assertAlmostEqual(out["rho_raw"], math.sqrt(np.trace(C12) / np.trace(c5)), places=12)
+        C12n = np.mean([k * sum(E_APPROX[i] * np.outer(h[i], h[i]) for i in range(12)) for h in noise_g], axis=0)
+        want = math.sqrt(np.trace(rp.psd(C12 - C12n)[0]) / np.trace(rp.psd(c5 - c5n)[0]))
+        self.assertAlmostEqual(out["rho_deb"], want, places=12)
+        self.assertEqual(len(out["rho_raw_noise_quantiles"]), 3)
+        self.assertAlmostEqual(out["nu12"], rp.nu_eff(E_APPROX), places=14)
+
+    def test_p_era_is_the_era_partitions_between_share(self):
+        rng = np.random.default_rng(7)
+        g = rp.offsets(1 + rng.normal(0, .02, (12, 16)), E_APPROX)
+        A = rp.partitions((5, 3, 2, 2))
+        obs = rp.membership((rp.ERA_PI[0], rp.ERA_PI[3], rp.ERA_PI[1], rp.ERA_PI[2]))
+        i = rp.find(A, obs)
+        F = rp.F_all(rp.gram(g, E_APPROX, np.eye(16)), E_APPROX, A.astype(float))
+        qb = sum(sum(E_APPROX[PL.index(m)] for m in ms)
+                 * float(np.sum((sum(E_APPROX[PL.index(m)] * g[PL.index(m)] for m in ms)
+                                 / sum(E_APPROX[PL.index(m)] for m in ms)) ** 2)) for _, ms in rp.ERA_PI)
+        qt = sum(E_APPROX[j] * float(g[j] @ g[j]) for j in range(12))
+        self.assertAlmostEqual(F[i], qb / qt, places=12)
+
+    def test_n0_effect_reruns_the_null_with_the_bias_added(self):
+        r2 = rp.R2(E_APPROX, np.eye(16))
+        sd = 0.0016 / np.sqrt(E_APPROX)
+
+        def noise(rng):
+            return rng.standard_normal((12, 16)) * sd[:, None]
+        g = r2.g_of(0.0, noise(np.random.default_rng(1)))
+        small = rp.n0_small_set(E_APPROX)
+        out = rp.n0_effect(r2, g, noise, np.random.default_rng(2), small, np.full(16, 0.05), 40)
+        # one small playlist sits in each flux group, so the bias spreads offsets within groups: F at pi_flux moves
+        self.assertGreater(abs(out["null_F_median_with_bias"] - out["null_F_median"]), 0.05)
+        self.assertEqual(out["observed_F_and_p"], list(r2.test(g)))
+
 
 # ================================================================ fd_rpd_inputs: stage
 
@@ -262,10 +384,123 @@ class Flux(unittest.TestCase):
             self.assertAlmostEqual(e[pl], raw[pl] / sum(raw.values()), places=14)
         self.assertLessEqual(spread, 1e-15)
 
+    def test_stage_s_needs_every_loops_pot_and_takes_e_from_the_loops(self):
+        per, periods, prod = self.build(np.random.default_rng(5))
+        f1 = ri.f1_decide(per, periods, prod)
+        pots = {pl: (per[pl]["pot_data"], per[pl]["pot_mc"]) for pl in PL}
+        ok = ri.flux_decision(per, f1, pots)
+        self.assertEqual((ok["verdict"], ok["loops_data_pot_equal_flux_data_pot"]), ("PASS", True))
+        for pl in PL:
+            self.assertEqual(ok["loops"][pl]["mc_pot"], per[pl]["pot_mc"])
+        for rel, verdict in ((5e-13, "PASS"), (1e-11, "FAIL")):
+            bad = {**pots, "1O": (pots["1O"][0] * (1 + rel), pots["1O"][1])}
+            self.assertEqual(ri.flux_decision(per, f1, bad)["verdict"], verdict, rel)
+        # e is built from the loops' data POT, not the flux files'
+        far = {**pots, "1A": (2 * pots["1A"][0], pots["1A"][1])}
+        e = ri.flux_decision(per, f1, far)["exposure_share"]
+        raw = {pl: far[pl][0] * per[pl]["contents"][0] for pl in PL}
+        for pl in PL:
+            self.assertAlmostEqual(e[pl], raw[pl] / sum(raw.values()), places=14)
+        self.assertGreater(e["1A"], ok["exposure_share"]["1A"] * 1.5)
+
     @unittest.skipUnless(HAVE_ROOT, "needs ROOT")
     def test_the_combiner_is_loaded_unchanged_with_its_base_pointed_at_the_staged_copies(self):
         cf = ri.load_combiner(REPO, Path("/staged/baseline"))
         self.assertEqual(cf.BASE, "/staged/baseline")
+
+
+@unittest.skipUnless(HAVE_ROOT, "needs ROOT (runs at the binding-2 deploy in root_6_28)")
+class RootPaths(Tmp):
+    """The ROOT paths end to end on tiny synthetic files: write_flux/read_flux, loop_pots, and run_flux (the pinned
+    combiner's reader with BASE at the staged copies, F1, the loops' POT and e)."""
+
+    EDGES = list(np.linspace(0.0, 4.5, 15))
+
+    def baseline(self, d, pl, phi, pot_d, pot_m):
+        import ROOT
+        from array import array
+        f = ROOT.TFile.Open(str(d / f"runEventLoopMC_{pl}.root"), "RECREATE")
+        h = ROOT.TH1D(ri.HIST, "", 14, array("d", self.EDGES))
+        for i in range(14):
+            h.SetBinContent(i + 1, phi)
+            h.SetBinError(i + 1, phi * 1e-3)
+        h.Write(ri.HIST)
+        ROOT.TParameter("double")("POTUsed", pot_m).Write()
+        f.Close()
+        f = ROOT.TFile.Open(str(d / f"runEventLoopData_{pl}.root"), "RECREATE")
+        ROOT.TParameter("double")("POTUsed", pot_d).Write()
+        f.Close()
+
+    def loop(self, p, pot_d, pot_m):
+        import ROOT
+        f = ROOT.TFile.Open(str(p), "RECREATE")
+        ROOT.TParameter("double")("dataPOTUsed", pot_d).Write()
+        ROOT.TParameter("double")("mcPOTUsed", pot_m).Write()
+        f.Close()
+
+    def test_write_and_read_flux_round_trip(self):
+        comb = {"contents": np.full(14, 6.2e-4), "errors": np.full(14, 6e-7), "pot_data": 1.1e20, "pot_mc": 4.4e20}
+        p = self.tmp / "f.root"
+        ri.write_flux(p, self.EDGES, comb, ["1A"])
+        r = ri.read_flux(p)
+        np.testing.assert_array_equal(r["contents"], comb["contents"])
+        np.testing.assert_array_equal(r["errors"], comb["errors"])
+        self.assertEqual((r["pot_data"], r["pot_mc"]), (1.1e20, 4.4e20))
+        np.testing.assert_allclose(r["edges"], self.EDGES)
+
+    def test_loop_pots_reads_the_loops_parameters(self):
+        p = self.tmp / "loop.root"
+        self.loop(p, 1.3e20, 5.2e20)
+        self.assertEqual(ri.loop_pots(p), (1.3e20, 5.2e20))
+
+    def run_flux_case(self, break_one=False):
+        R, D = self.tmp / "R", self.tmp / "deploy"
+        base = R / "staged/baseline"
+        base.mkdir(parents=True)
+        (R / "staged/zero").mkdir(parents=True)
+        rng = np.random.default_rng(3)
+        per = {}
+        files = {}
+        for pl in PL:
+            phi, pd, pm = rng.uniform(5e-4, 7e-4), rng.uniform(1e19, 2e20), rng.uniform(1e20, 1e21)
+            self.baseline(base, pl, phi, pd, pm)
+            per[pl] = {"contents": np.full(14, phi), "errors": np.full(14, phi * 1e-3), "pot_data": pd, "pot_mc": pm}
+            lp = R / f"staged/zero/runEventLoopOmniFold_5D_{pl}_zero.root"
+            self.loop(lp, pd * (1 + (1e-9 if break_one and pl == "1L" else 0.0)), pm)
+            files[f"zero/runEventLoopOmniFold_5D_{pl}_zero.root"] = lp
+        for pl in PL:
+            for kind in ("MC", "Data"):
+                files[f"baseline/runEventLoop{kind}_{pl}.root"] = base / f"runEventLoop{kind}_{pl}.root"
+        ri.write_flux(base / "runEventLoopMC_MEFHC.root", self.EDGES, ri.combine([per[p] for p in PL]), list(PL))
+        files["baseline/runEventLoopMC_MEFHC.root"] = base / "runEventLoopMC_MEFHC.root"
+        write_staged(R, files)
+        (D / ri.COMBINER[0]).parent.mkdir(parents=True)
+        shutil.copy(REPO / ri.COMBINER[0], D / ri.COMBINER[0])
+        (D / pi.FLUX_REL).mkdir(parents=True)
+        pins = {}
+        for k, pls in ri.PERIODS.items():
+            q = D / pi.FLUX_REL / f"runEventLoopMC_{k}.root"
+            ri.write_flux(q, self.EDGES, ri.combine([per[p] for p in pls]), list(pls))
+            pins[k] = digest(q)
+        with mock.patch.dict(pi.FLUX, pins), mock.patch.object(ri, "BASELINE", {n: "x" for n in ri.BASELINE}):
+            rc, _, err = quiet(ri.main, ["flux", "--r", str(R), "--deploy", str(D)])
+        return rc, err, R
+
+    def test_run_flux_passes_f1_and_records_the_loops_pot_and_e(self):
+        rc, err, R = self.run_flux_case()
+        self.assertEqual(rc, 0, err)
+        rec = json.loads((R / "flux/F1.json").read_text())
+        self.assertEqual(rec["verdict"], "PASS")
+        self.assertTrue(rec["loops_data_pot_equal_flux_data_pot"])
+        self.assertAlmostEqual(sum(rec["exposure_share"].values()), 1.0, places=12)
+        self.assertEqual(sorted(rec["files"]), sorted(PL))
+
+    def test_run_flux_fails_when_a_loops_pot_is_not_its_fluxs(self):
+        rc, err, R = self.run_flux_case(break_one=True)
+        self.assertEqual(rc, 1, err)
+        rec = json.loads((R / "flux/F1.json").read_text())
+        self.assertEqual(rec["verdict"], "FAIL")
+        self.assertFalse(rec["loops_data_pot_equal_flux_data_pot"])
 
 
 # ================================================================ fd_rpd_inputs: check
@@ -818,6 +1053,18 @@ class RTree:
                 "--deploy", str(REPO)]
 
 
+def seeds_drawn(fn):
+    """fn's result and the seed of every numpy generator made while it ran (the readers seed each one by name)."""
+    real, seen = np.random.default_rng, []
+
+    def made(seed=None, *a, **k):
+        seen.append(seed)
+        return real(seed, *a, **k)
+
+    with mock.patch.object(np.random, "default_rng", made):
+        return fn(), seen
+
+
 class ReadersBase(Tmp):
     def run_rp(self, tree, argv, extra=()):
         with contextlib.ExitStack() as st:
@@ -840,6 +1087,13 @@ class Stage0(ReadersBase):
         self.assertEqual(rec["branch"], "SEES")
         self.assertAlmostEqual(rec["s0"], 0.07, places=6)
         self.assertEqual(len(rec["replica_pair_steps"]), 10)
+        D = {}
+        for per in ("PA", "PB"):
+            T = t.grid.regions(sa.xs(t.staged[f"5b/truth/truth_{per}.npz"]))
+            D[per] = {b: t.grid.regions(sa.xs(t.staged[f"5b/unf/{per}/5b_{per}_b{b}_j-.npz"])) / T
+                      for b in rp.cp.BOOT[per]}
+        want = [rp.step(D["PB"][bb], D["PA"][ba]) for ba, bb in zip(rp.cp.BOOT["PA"], rp.cp.BOOT["PB"])]
+        np.testing.assert_allclose(rec["replica_pair_steps"], want, rtol=1e-12)   # replica k of PB with k of PA
         pairs = np.array(rec["replica_pair_steps"])
         self.assertAlmostEqual(rec["sigma0"], math.sqrt(np.mean((pairs - rec["s0"]) ** 2)), places=14)   # about s0
         text = out.read_text()
@@ -869,17 +1123,71 @@ class Stage0(ReadersBase):
         self.assertEqual(self.run_rp(t, t.argv("stage0", out)), 1)
         self.assertIn("staged 5b/truth/truth_PA.npz", self.stderr)
 
-    def test_the_guard_refuses_a_planted_ratio_to_f(self):
+    def test_read_truth_refuses_a_non_finite_truth_or_variance(self):
+        t = RTree(self.tmp)
+        p, x = self.tmp / "truth.npz", np.linspace(1.0, 2.0, 20) * 1e-39
+        t.truth_file(p, x, "abc")
+        got, v = rp.read_truth(p, "Q2", "abc")
+        np.testing.assert_array_equal(got, x)
+        meta = json.dumps({"schema": "s5p-mc-truth-pred/1", "npz_sha256": "abc", "code_sha256": t.code_truth})
+        for key in ("xsec_flat", "sumw2_flat"):        # Q3 never sees the variance: only this refusal does
+            for bad in (np.nan, np.inf):
+                arrays = {"xsec_flat": x.copy(), "sumw2_flat": v.copy()}
+                arrays[key][7] = bad
+                np.savez(p, meta_json=meta, **arrays)
+                with self.subTest(key=key, bad=bad), self.assertRaises(rp.f0.Stop):
+                    rp.read_truth(p, "Q2", "abc")
+
+    def test_the_guard_refuses_a_planted_f(self):
         t = self.tree(0.07)
         out = self.tmp / "stage0.json"
-        real = rp.stage0_branch
-        with mock.patch.object(rp, "stage0_branch", lambda s0, s: real(s0, s) if s0 != 99 else "x"):
-            pass
         leak = float(t.t.f[3])
         with mock.patch.object(rp, "staged_digests", lambda R, p: {"leak": leak}):
             rc = self.run_rp(t, t.argv("stage0", out))
         self.assertNotEqual(rc, 0)
         self.assertFalse(out.exists())
+
+
+class TNoise(ReadersBase):
+    def test_t_noise_is_the_first_order_variance_of_the_quantity(self):
+        t = RTree(self.tmp)
+        rng = np.random.default_rng(51)
+        prod = {}
+        for i, X in enumerate(PL):
+            T = t.t.f * rng.uniform(0.9, 1.1, 16) * E_APPROX[i]
+            tf = t.fine(T)
+            prod[X] = {"x": {None: t.fine(T * 1.05)}, "t": tf, "tv": (tf * 0.01) ** 2}
+        g = t.grid
+        # f = D_1G(H) / D_1G(L): d ln f / d ln T(H) = -1, d ln f / d ln T(L) = +1
+        f = lambda D: D["1G"][1] / D["1G"][0]
+        T = g.regions(prod["1G"]["t"])
+        rv = g.region_var(prod["1G"]["tv"]) / T ** 2
+        D0 = {X: g.regions(prod[X]["x"][None]) / g.regions(prod[X]["t"]) for X in PL}
+        want = f(D0) ** 2 * (rv[0] + rv[1])
+        self.assertAlmostEqual(rp.t_noise(g, prod, dict(zip(PL, E_APPROX)), f) / want, 1.0, places=4)
+
+
+class N0Reading(ReadersBase):
+    def test_the_small_set_mean_and_its_ddof_1_standard_error(self):
+        t = RTree(self.tmp)
+        rng = np.random.default_rng(41)
+        T0 = t.t.f * rng.uniform(0.9, 1.1, 16)
+        n0 = []
+        for _ in range(3):
+            n0.append([{"x": t.fine(T0 * E_APPROX[i] * (1 + rng.normal(0, .01, 16))), "t": t.fine(T0 * E_APPROX[i])}
+                       for i in range(12)])
+        r2 = rp.R2(E_APPROX, np.eye(16))
+        small = rp.n0_small_set(E_APPROX)
+        out = rp.n0_reading(t.grid, n0, E_APPROX, np.eye(16), r2, small)
+        G = []
+        for part in n0:
+            r = np.vstack([t.grid.cells(part[i]["x"]) / t.grid.cells(part[i]["t"]) for i in range(12)])
+            G.append(rp.offsets(r, E_APPROX)[small])
+        G = np.concatenate(G)
+        np.testing.assert_allclose(out["b_cells"], G.mean(axis=0), rtol=1e-12, atol=1e-15)
+        np.testing.assert_allclose(out["se_cells"], G.std(axis=0, ddof=1) / math.sqrt(9), rtol=1e-12)
+        np.testing.assert_allclose(out["detectable_bias_cells"], rp.N0_T_CELL * np.array(out["se_cells"]), rtol=1e-14)
+        self.assertEqual(out["small"], ["1B", "1L", "1O"])
 
 
 class StageD(ReadersBase):
@@ -893,14 +1201,17 @@ class StageD(ReadersBase):
                                       for p, v in (("PA", 0.0), ("PB", -0.03), ("PC", 0.05))}}}
         out = self.tmp / "stageD.json"
         with mock.patch.object(rp, "five_b_readout", lambda d: ro), mock.patch.object(rp, "STAGE_D_R1_DRAWS", 500):
-            rc = self.run_rp(t, t.argv("staged", out) + ["--outer", "3", "--inner", "20"])
+            rc, seeds = seeds_drawn(lambda: self.run_rp(t, t.argv("staged", out) + ["--outer", "3", "--inner", "20"]))
         self.assertEqual(rc, 0, self.stderr)
+        self.assertEqual(set(seeds), {rp.SEED_OC, rp.SEED_REACH})
         rec = json.loads(out.read_text())
         r1 = rec["R1_rules"]
         self.assertEqual(r1["drop_PERIOD_WIDE"], r1["P_PW_given_PW"] < 0.5)
         self.assertEqual(r1["drop_SUBSET"], r1["best_P_SUBSET_given_subset_truth"] < 0.5)
         self.assertEqual(r1["P_PW_given_PW"], rec["R1_operating_characteristics"]["at_s0"]["PW"]["PERIOD-WIDE"])
         self.assertIsNotNone(rec["R2_reachability"]["alpha_at_inner_descriptive"]["T1"])
+        self.assertEqual((rec["R1_operating_characteristics"]["seed"], rec["R2_reachability"]["seed"]),
+                         (rp.SEED_OC, rp.SEED_REACH))
         self.assertIsNone(rec["R2_rule"]["flag_12_playlist_wording_not_expected"])   # fewer than 200 outer
         self.assertEqual(rec["R2_reachability"]["probabilities"]["T2"]["n"], 3)
         # T2 is strongly clustered: every dataset is CLUSTERED
@@ -1030,6 +1341,19 @@ class Controls(ReadersBase):
         np.savez(p, **d)
         self.assertFalse(rp.c1(t.R, recs, fr)["keys"]["bkg_nd"])
 
+    def test_c1s_measured_weights_share_is_printed_and_graded_only_when_switched_on(self):
+        t, recs = self.build()
+        fr = json.loads((t.R / "flux/F1.json").read_text())
+        p = Path(recs["1A"]["files"]["lat_npz"][0])
+        d = rp.load_all(p)
+        d["measured_weights"] = d["measured_weights"] * 1.01
+        np.savez(p, **d)
+        res = rp.c1(t.R, recs, fr)
+        self.assertTrue(res["pass"])
+        self.assertLess(res["measured_weights_share_equal"]["1A"], 0.999)
+        with mock.patch.object(rp, "C1_MW_GRADED", True):
+            self.assertFalse(rp.c1(t.R, recs, fr)["pass"])
+
     def test_c1s_hadd_additivity_is_tested_by_the_weights(self):
         t, recs = self.build()
         fr = json.loads((t.R / "flux/F1.json").read_text())
@@ -1133,33 +1457,56 @@ def argparse_ns(t):
 
 
 class Gate(ReadersBase):
-    def test_job_a_needs_f1_and_the_stage_0_and_d_records(self):
+    def setUp(self):
+        super().setUp()
+        self.me = sa.sha256(Path(rp.__file__).resolve())
+
+    def test_job_a_needs_f1_and_this_deploys_stage_0_and_d_records_on_this_f1(self):
         t = RTree(self.tmp)
         (t.R / "control").mkdir(parents=True)
         g = ["gate", "--r", str(t.R), "--stage", "a"]
         self.assertEqual(self.run_rp(t, g), 1)
         t.write_f1()
-        self.assertEqual(self.run_rp(t, g), 1)
-        (t.R / "control/stage0.json").write_text(json.dumps({"schema": "fd-rpd-stage0/1"}))
-        self.assertEqual(self.run_rp(t, g), 1)
-        (t.R / "control/stageD.json").write_text(json.dumps({"schema": "fd-rpd-stageD/1"}))
+        s0 = t.R / "control/stage0.json"
+        s0.write_text(json.dumps({"schema": "fd-rpd-stage0/1", "code_sha256": {"fd_rpd.py": self.me}}))
+        self.assertEqual(self.run_rp(t, g), 1)                       # no stage D
+        sd = {"schema": "fd-rpd-stageD/1", "code_sha256": {"fd_rpd.py": self.me},
+              "inputs_sha256": {"flux_record": digest(t.R / "flux/F1.json"), "stage0": digest(s0)}}
+        p = t.R / "control/stageD.json"
+        p.write_text(json.dumps(sd))
         self.assertEqual(self.run_rp(t, g), 0, self.stderr)
+        for bad in ({"code_sha256": {"fd_rpd.py": "0"}}, {"inputs_sha256": {**sd["inputs_sha256"], "flux_record": "0"}},
+                    {"inputs_sha256": {**sd["inputs_sha256"], "stage0": "0"}}):
+            p.write_text(json.dumps({**sd, **bad}))
+            self.assertEqual(self.run_rp(t, g), 1, bad)
 
-    def test_job_b_needs_this_deploys_controls_pass_on_the_receipts_now_on_disk(self):
+    def test_job_b_needs_this_deploys_controls_pass_on_the_records_now_on_disk(self):
         t = RTree(self.tmp)
-        (t.R / "control").mkdir(parents=True)
-        (t.R / "inputs").mkdir(parents=True)
+        t.write_f1()
+        for d in ("control", "inputs"):
+            (t.R / d).mkdir(parents=True, exist_ok=True)
         for X in PL:
             (t.R / ri.playlist_paths(X)["receipt"]).write_text(X)
-        rec = {"schema": "fd-rpd-controls/1", "verdict": "PASS",
-               "code_sha256": {"fd_rpd.py": sa.sha256(Path(rp.__file__).resolve())},
-               "inputs_sha256": {"receipts": {X: digest(t.R / ri.playlist_paths(X)["receipt"]) for X in PL}}}
+        for part in (1, 2):
+            q = t.R / ri.n0_paths(part, 0)["receipt"]
+            q.parent.mkdir(parents=True, exist_ok=True)
+            q.write_text(str(part))
+        rec = {"schema": "fd-rpd-controls/1", "verdict": "PASS", "code_sha256": {"fd_rpd.py": self.me},
+               "inputs_sha256": {"receipts": {X: digest(t.R / ri.playlist_paths(X)["receipt"]) for X in PL},
+                                 "n0_receipts": {str(p_): digest(t.R / ri.n0_paths(p_, 0)["receipt"]) for p_ in (1, 2)},
+                                 "flux_record": digest(t.R / "flux/F1.json")}}
         g = ["gate", "--r", str(t.R), "--stage", "b"]
-        for bad in ({"verdict": "FAIL"}, {"code_sha256": {"fd_rpd.py": "0"}}):
+        bads = ({"verdict": "FAIL"}, {"code_sha256": {"fd_rpd.py": "0"}},
+                {"inputs_sha256": {**rec["inputs_sha256"], "flux_record": "0"}},
+                {"inputs_sha256": {**rec["inputs_sha256"], "n0_receipts": {"1": rec["inputs_sha256"]["n0_receipts"]["1"]}}})
+        for bad in bads:
             (t.R / "control/controls.json").write_text(json.dumps({**rec, **bad}))
             self.assertEqual(self.run_rp(t, g), 1, bad)
         (t.R / "control/controls.json").write_text(json.dumps(rec))
         self.assertEqual(self.run_rp(t, g), 0, self.stderr)
+        (t.R / ri.n0_paths(2, 0)["receipt"]).write_text("changed")
+        self.assertEqual(self.run_rp(t, g), 1)
+        (t.R / ri.n0_paths(2, 0)["receipt"]).write_text("2")
         (t.R / ri.playlist_paths("1M")["receipt"]).write_text("changed")
         self.assertEqual(self.run_rp(t, g), 1)
 
@@ -1170,7 +1517,7 @@ class Gate(ReadersBase):
 class Readout(ReadersBase):
     """The readout end to end, on 12 synthetic playlists (3 replicas each), 2 N0 partitions and 400 null datasets."""
 
-    def build(self, branch="SEES", pb_step=0.07, carriers=("1G", "1L", "1M"), size_bias=0.0):
+    def build(self, branch="SEES", pb_step=0.07, carriers=("1G", "1L", "1M"), size_bias=0.0, t_var_rel=1e-6):
         # 10 replicas: with 3, the replica-resampled null is a 3^12-point mixture whose size depends on the draw, and
         # the calibration gate rightly refuses it (alpha(0) = 0.17 at seed 31; part 2 section 4)
         t = RTree(self.tmp, noise=0.002, n_rep=10).write_common()
@@ -1187,7 +1534,7 @@ class Readout(ReadersBase):
             q["flux"].write_bytes(b"f")
             ls, bs = digest(q["lat"]), digest(q["bkg"])
             T = T0 * E_APPROX[i]
-            t.truth_file(q["truth"], t.fine(T), ls)
+            t.truth_file(q["truth"], t.fine(T), ls, var_rel=t_var_rel)
             h = 1.0 + (pb_step * (0.295 / sum(E_APPROX[PL.index(c)] for c in carriers)) if X in carriers else 0.0)
             # an offset uniform in p_parallel (so it moves no step): a normalization per playlist, and a p_T shape
             # shared by 1G/1L/1M, so the 16-cell offsets cluster by flux-file group
@@ -1241,16 +1588,73 @@ class Readout(ReadersBase):
 
     def test_the_readout_end_to_end(self):
         t = self.build()
-        rc, rec = self.run_readout(t)
+        (rc, rec), seeds = seeds_drawn(lambda: self.run_readout(t))
         self.assertEqual(rc, 0, self.stderr)
+        self.assertEqual(set(seeds), {rp.SEED_READOUT, rp.SEED_OC})
         self.assertEqual(rec["R1"]["outcome"], "PERIOD-WIDE", rec["R1"].get("classes"))
         self.assertEqual(rec["R2"]["outcome"], "CLUSTERED", {k: rec["R2"][k] for k in ("p_flux", "alpha", "beta1", "c")})
         self.assertEqual(rec["R2"]["n_partitions"], {"flux": 9240, "era": 83160})
         self.assertFalse(rec["N0"]["SIZE_BIAS_g"])
         self.assertAlmostEqual(rec["R3"]["nu12"], rp.nu_eff(E_APPROX), places=12)
+        self.assertEqual(rec["R2"]["seed"], rp.SEED_READOUT)
+        for k in ("F_null_quantiles", "median_abs_g_small"):
+            self.assertIn(k, rec["R2"])
+        for k in ("detectable_bias_cells", "detectable_bias_pct_of_median_abs_g_small", "F_null_quantiles_beside",
+                  "detectable_step_bias"):
+            self.assertIn(k, rec["N0"])
+        for k in ("rho_raw_noise_quantiles", "rho_deb_noise_quantiles"):
+            self.assertEqual(len(rec["R3"][k]), 3)
+        self.assertIn("PW", rec["R1"]["oc_at_readout_descriptive"])
         text = json.dumps(rec)
         for v in t.t.f:
             self.assertNotIn(repr(float(v)), text)
+
+    def test_q3_refuses_a_non_positive_or_non_finite_replica_or_n0_integral(self):
+        for bad in (0.0, np.inf):
+            with self.subTest(bad=bad):
+                for q in list(self.tmp.iterdir()):
+                    shutil.rmtree(q) if q.is_dir() else q.unlink()
+                t = self.build()
+                p = t.R / ri.playlist_paths("1G")["unf"] / f"rpd_1G_b{t.rep['1G'][1]}_j-.npz"
+                with np.load(p, allow_pickle=True) as z:
+                    x, meta = np.array(z["xsec_flat"]), str(z["meta"])
+                x[t.grid.wH > 0] = bad
+                np.savez(p, xsec_flat=x, meta=meta)
+                rc, rec = self.run_readout(t)
+                self.assertEqual((rc, rec), (1, None))
+                self.assertTrue("Q3" in self.stderr or "non-finite" in self.stderr, self.stderr[:300])
+
+    def test_the_guard_refuses_a_planted_absolute_integral_or_its_ratio_to_f(self):
+        t = self.build()
+        X = t.grid.cells(sa.xs(t.R / ri.playlist_paths("1A")["unf"] / "rpd_1A_b-_j-.npz"))
+        f = np.asarray(t.t.f, float)
+        # the absolute integral is below LEAK_FLOOR, so any guard refuses it; X/f - 1 only a guard built on the
+        # integrals refuses
+        self.assertGreater(abs(X[5] / f[5] - 1.0), 1e-6)
+        real = rp.n0_reading
+        for leak in (float(X[5]), float(X[5] / f[5] - 1.0)):
+            with self.subTest(leak=leak):
+                (self.tmp / "readout.json").unlink(missing_ok=True)
+                with mock.patch.object(rp, "n0_reading", lambda *a, **k: {**real(*a, **k), "leak": leak}):
+                    rc, rec = self.run_readout(t)
+                self.assertNotEqual(rc, 0)
+                self.assertIsNone(rec)
+
+    def test_t_variance_enters_every_r1_sigma_and_r2s_noise(self):
+        out = {}
+        for v in (1e-6, 1e-2):
+            for q in list(self.tmp.iterdir()):
+                shutil.rmtree(q) if q.is_dir() else q.unlink()
+            t = self.build(t_var_rel=v)
+            rc, rec = self.run_readout(t)
+            self.assertEqual(rc, 0, self.stderr)
+            out[v] = rec
+        lo, hi = out[1e-6]["R1"], out[1e-2]["R1"]
+        self.assertGreater(hi["sigma_tbar"], 1.5 * lo["sigma_tbar"])
+        self.assertGreater(hi["sigma"]["1G"], 1.5 * lo["sigma"]["1G"])
+        self.assertGreater(hi["sigma_h"]["1G"], 1.5 * lo["sigma_h"]["1G"])
+        self.assertGreater(out[1e-2]["R2"]["F_null_quantiles"][1], 0)
+        self.assertNotEqual(out[1e-2]["R2"]["F_null_quantiles"], out[1e-6]["R2"]["F_null_quantiles"])
 
     def test_r1_is_not_computed_unless_stage_0_sees(self):
         t = self.build(branch="ABSENT")
@@ -1275,11 +1679,25 @@ class Readout(ReadersBase):
 
     def test_a_planted_size_bias_fires_n0_and_makes_r2_inconclusive(self):
         t = self.build(size_bias=0.05)
-        rc, rec = self.run_readout(t)
+        real, forced = rp.classify, []
+
+        def classify(*a, **k):
+            forced.append(bool(a[5] if len(a) > 5 else k.get("unres_forced", False)))
+            return real(*a, **k)
+
+        with mock.patch.object(rp, "classify", classify):
+            (rc, rec), seeds = seeds_drawn(lambda: self.run_readout(t))
         self.assertEqual(rc, 0, self.stderr)
+        self.assertEqual(set(seeds), {rp.SEED_READOUT, rp.SEED_OC, rp.SEED_N0_EFFECT})
+        # the three small playlists reach classify forced UNRESOLVED, and nothing else is forced (the OC table at
+        # readout calls classify too, never forced)
+        self.assertEqual(rec["R1"]["forced_unresolved_by_N0"], ["1B", "1L", "1O"])
+        self.assertEqual(sum(forced), 3)
+        for X in ("1B", "1L", "1O"):
+            self.assertEqual(rec["R1"]["classes"][X], "UNRESOLVED")
         self.assertTrue(rec["N0"]["SIZE_BIAS_g"])
         self.assertEqual(rec["R2"]["outcome"], "INCONCLUSIVE")
-        self.assertIn("effect", rec["N0"])
+        self.assertIn("null_share_p_below_alpha_with_bias", rec["N0"]["effect"])
 
     def test_refuses_without_the_controls_pass(self):
         t = self.build()
@@ -1426,6 +1844,51 @@ class Submit(Tmp):
         r = self.submit("rpd-a", str(self.D), pin, str(self.B))
         self.assertEqual(r.returncode, 2)
         self.assertIn("dump steps", r.stderr)
+
+    def edit_steps(self, fn):
+        p = self.D / RELR / "rpd-a-steps.tsv"
+        lines = p.read_text().splitlines()
+        p.write_text("\n".join(fn(lines)) + "\n")
+        subprocess.run(["git", "-C", str(self.D), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qam", "m"],
+                       check=True, capture_output=True)
+        return subprocess.run(["git", "-C", str(self.D), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+
+    def test_job_a_refuses_a_step_naming_a_path_outside_r(self):
+        self.ready_a()
+        i0 = None
+
+        def fn(lines):
+            i = next(n for n, ln in enumerate(lines) if "\tcheck\t" in ln)
+            lines[i] += "\t--extra\t/pscratch/sd/j/josephrb/MINERvA-OmniFold/x.root"
+            return lines
+        pin = self.edit_steps(fn)
+        r = self.submit("rpd-a", str(self.D), pin, str(self.B))
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("names a path outside", r.stderr)
+        self.assertFalse((self.tmp / "sbatch.args").exists())
+
+    def test_job_a_refuses_a_prefix_collision_and_a_step_not_naming_r(self):
+        self.ready_a()
+
+        def collide(lines):
+            i = next(n for n, ln in enumerate(lines) if "\tcheck\t" in ln)
+            lines[i] = lines[i].replace(f"--r\t{self.B}", f"--r\t{self.B}-old")
+            return lines
+        pin = self.edit_steps(collide)
+        r = self.submit("rpd-a", str(self.D), pin, str(self.B))
+        self.assertEqual(r.returncode, 2)
+
+    def test_job_a_refuses_a_step_that_names_no_path_under_r(self):
+        self.ready_a()
+
+        def drop(lines):
+            i = next(n for n, ln in enumerate(lines) if "\tcheck\t" in ln)
+            lines[i] = lines[i].replace(f"\t--r\t{self.B}", "")
+            return lines
+        pin = self.edit_steps(drop)
+        r = self.submit("rpd-a", str(self.D), pin, str(self.B))
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("of them naming", r.stderr)
 
     def test_refuses_a_deploy_not_at_the_pin(self):
         self.ready_a()

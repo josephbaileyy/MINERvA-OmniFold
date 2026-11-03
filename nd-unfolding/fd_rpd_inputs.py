@@ -330,13 +330,27 @@ def f1_decide(per_pl: dict, periods: dict, prod: dict) -> dict:
     return out
 
 
-def exposure_shares(per_pl: dict) -> tuple[dict, float]:
-    """e_X = POT_X Phi_X / sum_Y POT_Y Phi_Y, with Phi_X the (p_T-constant) integrated flux; returns e and the largest
+def exposure_shares(per_pl: dict, loop_pot: dict | None = None) -> tuple[dict, float]:
+    """e_X = POT_X Phi_X / sum_Y POT_Y Phi_Y, with Phi_X the (p_T-constant) integrated flux and POT_X the staged loop's
+    dataPOTUsed (part 1 section 5; F1 requires it equal to the flux file's data POT to 1e-12); returns e and the largest
     relative spread of Phi over p_T bins."""
     spread = max(float(np.max(np.abs(np.asarray(v["contents"]) / np.mean(v["contents"]) - 1.0))) for v in per_pl.values())
-    raw = {pl: v["pot_data"] * float(np.mean(v["contents"])) for pl, v in per_pl.items()}
+    pot = loop_pot or {pl: v["pot_data"] for pl, v in per_pl.items()}
+    raw = {pl: pot[pl] * float(np.mean(v["contents"])) for pl, v in per_pl.items()}
     tot = sum(raw.values())
     return {pl: raw[pl] / tot for pl in PLAYLISTS}, spread
+
+
+def flux_decision(per_pl: dict, f1: dict, pots: dict) -> dict:
+    """Stage S's verdict from F1, the flux's flatness and each staged loop's (data, MC) POT: every loop's data POT must
+    equal its flux file's to POT_REL, and e is computed from the loops' data POT (part 1 section 5)."""
+    loops = {pl: {"data_pot": d, "mc_pot": m, "over_flux_data_pot_minus_1": d / per_pl[pl]["pot_data"] - 1.0}
+             for pl, (d, m) in pots.items()}
+    loops_ok = all(abs(v["over_flux_data_pot_minus_1"]) <= POT_REL for v in loops.values())
+    e, spread = exposure_shares(per_pl, {pl: v["data_pot"] for pl, v in loops.items()})
+    ok = all(v["pass"] for v in f1.values()) and spread <= pi.FLUX_FLAT and loops_ok
+    return {"verdict": "PASS" if ok else "FAIL", "F1": f1, "loops": loops,
+            "loops_data_pot_equal_flux_data_pot": loops_ok, "flux_rel_spread_over_pt": spread, "exposure_share": e}
 
 
 def run_flux(a) -> int:
@@ -363,14 +377,13 @@ def run_flux(a) -> int:
         require(p, pi.FLUX[per], f"5B {per} flux file")
         periods[per] = read_flux(p)
     f1 = f1_decide(per_pl, periods, read_flux(prod_path))
-    e, spread = exposure_shares(per_pl)
-    ok = all(v["pass"] for v in f1.values()) and spread <= pi.FLUX_FLAT
-    rec = {"schema": "fd-rpd-flux/1", "verdict": "PASS" if ok else "FAIL", "F1": f1, "tolerance_rel": REL_FLUX,
-           "flux_rel_spread_over_pt": spread, "flux_flat_tolerance": pi.FLUX_FLAT, "exposure_share": e,
-           "files": files, "per_playlist": per_pl, "code_sha256": code_sha()}
+    pots = {pl: loop_pots(staged(a.r, f"zero/runEventLoopOmniFold_5D_{pl}_zero.root")[0]) for pl in PLAYLISTS}
+    rec = {"schema": "fd-rpd-flux/1", **flux_decision(per_pl, f1, pots), "tolerance_rel": REL_FLUX,
+           "flux_flat_tolerance": pi.FLUX_FLAT, "files": files, "per_playlist": per_pl, "code_sha256": code_sha()}
     write_json(out / "F1.json", rec)
+    e = rec["exposure_share"]
     print(json.dumps({"F1": rec["verdict"], "e_min": min(e.values()), "e_max": max(e.values())}), flush=True)
-    return 0 if ok else 1
+    return 0 if rec["verdict"] == "PASS" else 1
 
 
 def flux_record(r: Path) -> dict:

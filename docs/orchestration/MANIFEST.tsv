@@ -6500,6 +6500,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-AUDIT-3-
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-DECLARATION-PART2.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-PART2-AUDIT-SONNET-ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-PART2-AUDIT-SONNET-PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RULINGS-20261102.txt	tracked	MACHINE	state-artifact	measurement-paper	20261102	generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-20261028-measurement-session.md	tracked	LIVE	state-artifact	measurement-paper	20261028	open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-20261029-coverage-session.md	tracked	LIVE	state-artifact	measurement-paper	20261029	open		route-only	no
@@ -8036,6 +8038,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-pre
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/tests-dae47273.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/tests-f0b-885ad0eb.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/tests-g-885ad0eb.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/calibration_pooled.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/calibration_pooled.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/calibration_spread.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/calibration_spread.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/make_rpd_tables.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

@@ -100,6 +100,9 @@ case "$STAGE" in
     n=$(grep -v '^#' "$STEPS" | grep -c . || true)
     m=$(grep -v '^#' "$STEPS" | grep -c -F -- "	$B" || true)
     [ "$n" -eq "$N" ] && [ "$m" -eq "$N" ] || { echo "refusing: $n steps, $m of them naming $B" >&2; exit 2; }
+    # every absolute path a step names is under R (part 1 section 1)
+    out=$(grep -v '^#' "$STEPS" | tr '\t' '\n' | awk -v b="$B/" -v r="$B" 'substr($0, 1, 1) == "/" && $0 != r && index($0, b) != 1' | head -1 || true)
+    [ -z "$out" ] || { echo "refusing: a step names a path outside $B: $out" >&2; exit 2; }
     # every dump step passes --mcfile explicitly, under R (part 1 section 1: no default path is ever opened)
     nd=$(grep -v '^#' "$STEPS" | grep -c -E $'\t(nn_dump_inputs|s5p_input_dumps)\\.py\t' || true)
     md=$(grep -v '^#' "$STEPS" | grep -E $'\t(nn_dump_inputs|s5p_input_dumps)\\.py\t' | grep -c -F -- "--mcfile	$B/flux/" || true)

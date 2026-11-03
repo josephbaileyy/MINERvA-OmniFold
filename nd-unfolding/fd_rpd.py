@@ -58,6 +58,7 @@ R1_Z, R1_RES, R1_GATE = 2.0, 4.0, 3.0      # classes at 2 sigma; UNRESOLVED if s
 R2_ALPHA, R2_GATE_N, R2_BETA = 0.05, 2000, 0.80
 R2_SCALES = (0.0, 0.5, 1.0, 2.0)
 SEED = 20261102
+SEED_OC, SEED_REACH, SEED_READOUT, SEED_N0_EFFECT = SEED + 2000, SEED + 3000, SEED, SEED + 4000
 STAGE_D_R1_DRAWS, STAGE_D_OUTER, STAGE_D_INNER = 20000, 500, 200
 STAGE_D_RULE_PW, STAGE_D_RULE_EC = 0.5, 0.2
 STAGE_D_BUDGET_S, STAGE_D_MIN_OUTER = 7200.0, 200
@@ -302,6 +303,7 @@ class R2:
         sd0 = sigma_delta(g_obs, self.e) - np.mean([sigma_delta(h, self.e) for h in noise_g], axis=0)
         sd, lost = psd(sd0)
         qn = float(np.mean([self.qb_obs(h) for h in noise_g]))
+        f_null = [self.test(h)[0] for h in noise_g]
         qo = self.qb_obs(g_obs)
         c = math.sqrt(max(0.0, 1.0 - qn / qo)) if qo > 0 else 0.0
         G1 = c * self.period_offsets(g_obs)
@@ -319,7 +321,8 @@ class R2:
         beta1 = share(lambda: G1)
         beta2 = share(lambda: G1 / math.sqrt(2.0) + rng.standard_normal((NPL, N_CELLS)) @ Lh.T) if gate else None
         return {"alpha": alpha, "beta1": beta1, "beta2": beta2, "c": c, "q_noise_mean": qn, "q_obs": qo,
-                "sigma_delta": sd, "psd_discarded_trace": lost}
+                "sigma_delta": sd, "psd_discarded_trace": lost, "noise_g": noise_g,
+                "F_null_quantiles": [float(v) for v in np.quantile(f_null, (0.05, 0.5, 0.95))]}
 
 
 def r2_outcome(p: float, cal: dict, beta1: float, size_bias_g: bool, gate: bool = True) -> str:
@@ -337,6 +340,73 @@ def r2_outcome(p: float, cal: dict, beta1: float, size_bias_g: bool, gate: bool 
 
 def r2_gate_threshold() -> float:
     return R2_ALPHA + 3.0 * math.sqrt(R2_ALPHA * (1 - R2_ALPHA) / R2_GATE_N)
+
+
+def replica_deviations(v: np.ndarray) -> np.ndarray:
+    """Replica values (rows) as deviations about their own mean, relative, scaled by sqrt(n/(n-1)) (section 5)."""
+    n = v.shape[0]
+    return (v / v.mean(axis=0) - 1.0) * math.sqrt(n / (n - 1))
+
+
+def make_noise(dev: list, tvar: np.ndarray):
+    """R2's noise: per playlist one of its replica deviations at random, plus an independent Gaussian with T's MC
+    variance on each cell (section 2)."""
+    tsd = np.sqrt(tvar)
+
+    def noise(rng):
+        k = [int(rng.integers(0, d.shape[0])) for d in dev]
+        return np.vstack([d[k[i]] for i, d in enumerate(dev)]) + rng.standard_normal(tsd.shape) * tsd
+    return noise
+
+
+def r1_gate(tbar: float, sig_tbar: float) -> bool:
+    """R1 is computed only if tbar > 0 and tbar / sigma(tbar) >= 3."""
+    return bool(tbar > 0 and sig_tbar > 0 and tbar / sig_tbar >= R1_GATE)
+
+
+def forced_unresolved(n0r: dict, ev: np.ndarray) -> set:
+    """Section 4: if SIZE-BIAS-g or SIZE-BIAS-t fired, every playlist with e < 0.03 is UNRESOLVED in R1."""
+    if not (n0r["SIZE_BIAS_g"] or n0r["SIZE_BIAS_t"]):
+        return set()
+    return {X for i, X in enumerate(PL) if ev[i] < N0_SMALL}
+
+
+def n0_small_set(ev: np.ndarray) -> list:
+    """Section 4: N0 reads the three smallest-share pseudo-playlists (the analogues of 1L, 1B and 1O)."""
+    return sorted(int(i) for i in np.argsort(ev)[:3])
+
+
+def r3_numbers(g: np.ndarray, ev: np.ndarray, Mi: np.ndarray, c5: np.ndarray, c5n: np.ndarray,
+               noise_g: list) -> dict:
+    """R3 (section 5): C_PL,12 raw and debiased, nu12 and its interval, rho_raw (raw to raw) and rho_deb (debiased to
+    debiased), each with its replica-noise reference (the same ratio on noise-only datasets)."""
+    V2 = float(np.sum(ev ** 2))
+    k12 = V2 / (1 - V2)
+
+    def block(h):
+        return k12 * (ev[:, None, None] * np.einsum("xi,xj->xij", h, h)).sum(axis=0)
+    C12 = block(g)
+    nb = [block(h) for h in noise_g]
+    C12n = np.mean(nb, axis=0)
+    C12d, lost12 = psd(C12 - C12n)
+    C5d, lost5 = psd(c5 - c5n)
+    t5, t5d = float(np.trace(Mi @ c5)), float(np.trace(Mi @ C5d))
+    rho_raw = math.sqrt(np.trace(Mi @ C12) / t5)
+    rho_deb = math.sqrt(np.trace(Mi @ C12d) / t5d) if t5d > 0 else None
+    ref_raw = [math.sqrt(max(0.0, float(np.trace(Mi @ c)) / t5)) for c in nb]
+    ref_deb = [math.sqrt(max(0.0, float(np.trace(Mi @ psd(c - C12n)[0])) / t5d)) for c in nb] if t5d > 0 else None
+    nu = nu_eff(ev)
+    q = (0.05, 0.5, 0.95)
+    return {"k12": k12, "C_PL12_rel_raw": C12, "C_PL12_rel_debiased": C12d, "psd_discarded_trace": lost12,
+            "C_PL5D_psd_discarded_trace": lost5, "rho_raw": rho_raw, "rho_deb": rho_deb,
+            "rho_raw_noise_quantiles": [float(v) for v in np.quantile(ref_raw, q)],
+            "rho_deb_noise_quantiles": None if ref_deb is None else [float(v) for v in np.quantile(ref_deb, q)],
+            "nu12": nu, "interval_68": sigma_interval(nu)}
+
+
+def finite_positive(v) -> bool:
+    v = np.asarray(v, float)
+    return bool(np.all(np.isfinite(v)) and np.all(v > 0))
 
 
 # ---------------------------------------------------------------- products
@@ -362,6 +432,8 @@ def read_truth(p: Path, control: str, lat_sha: str) -> tuple[np.ndarray, np.ndar
         raise f0.Stop(control, f"{p.name}: not the MC truth of its npz")
     if m.get("code_sha256") != sa.sha256(_ND / "s5p_mc_truth_pred.py"):
         raise f0.Stop(control, f"{p.name}: not made by this deploy's s5p_mc_truth_pred.py")
+    if not (np.all(np.isfinite(t)) and np.all(np.isfinite(v))):
+        raise f0.Stop(control, f"{p.name}: non-finite truth or variance")
     return t, v
 
 
@@ -519,29 +591,47 @@ def five_b_readout(deploy: Path) -> dict:
     return json.loads(p.read_text())
 
 
-def stage_d_reachability(e: np.ndarray, Mi: np.ndarray, ro5: dict, seed: int, outer: int, inner: int,
-                         budget_s: float, clock=time.monotonic) -> dict:
-    """R2's reachability under T1-T3 (section 5): Gaussian noise from 5B's committed per-period noise scaled by
-    sqrt(E_P / e_X), the real M, the gate off."""
-    r2 = R2(e, Mi)
+def reach_truths(e: np.ndarray, ro5: dict) -> dict:
+    """Section 5's reachability inputs: T1's covariance Sigma_T1 = C_PL,5D,rel / V2_12 (so the exposure-weighted mean
+    of 12 iid offsets has C_PL,5D's covariance), T2's per-playlist offsets (5B's g_5b of the playlist's period), and
+    the noise SD sigma_{P,c} sqrt(E_P / e_X)."""
     V2 = float(np.sum(e ** 2))
     C5 = np.asarray(ro5["C_PL5D"]["C_PL5D_rel"], float)
     sT1, _ = psd(C5 / V2)
-    LT1 = sqrt_psd(sT1)
     E = {per: float(sum(e[PL.index(m)] for m in ms)) for per, ms in ri.PERIODS.items()}
     g5 = {per: np.asarray(ro5["g_vs_5A"]["periods"][per]["g_5b"], float) for per in ri.PERIODS}
     sn = {per: np.asarray(ro5["g_vs_5A"]["periods"][per]["g_5b_noise_sigma"], float) for per in ri.PERIODS}
-    noise_sd = np.vstack([sn[GROUP[X]] * math.sqrt(E[GROUP[X]] / e[i]) for i, X in enumerate(PL)])
-    T2 = np.vstack([g5[GROUP[X]] for X in PL])
+    return {"sigma_T1": sT1, "LT1": sqrt_psd(sT1), "T2": np.vstack([g5[GROUP[X]] for X in PL]),
+            "noise_sd": np.vstack([sn[GROUP[X]] * math.sqrt(E[GROUP[X]] / e[i]) for i, X in enumerate(PL)])}
+
+
+def t3_offsets(T2: np.ndarray, z: np.ndarray, LT1: np.ndarray) -> np.ndarray:
+    """T3: half of each variance, T2's offsets over sqrt(2) plus a T1 draw (z, standard normal) over sqrt(2)."""
+    return T2 / math.sqrt(2.0) + z @ LT1.T / math.sqrt(2.0)
+
+
+def shares_within(counts: np.ndarray, n: int, e: np.ndarray, k: float = 5.0) -> bool:
+    """N0-P: each pseudo-playlist's realized data count within k multinomial sigma of n e."""
+    sd = np.sqrt(n * e * (1 - e))
+    return bool(np.all(np.abs(np.asarray(counts) - n * e) <= k * sd))
+
+
+def stage_d_reachability(e: np.ndarray, Mi: np.ndarray, ro5: dict, seed: int, outer: int, inner: int,
+                         budget_s: float, clock=time.monotonic, t_start=None) -> dict:
+    """R2's reachability under T1-T3 (section 5): Gaussian noise from 5B's committed per-period noise scaled by
+    sqrt(E_P / e_X), the real M, the gate off."""
+    r2 = R2(e, Mi)
+    tr = reach_truths(e, ro5)
+    LT1, T2, noise_sd, sT1 = tr["LT1"], tr["T2"], tr["noise_sd"], tr["sigma_T1"]
 
     def noise(rng):
         return rng.standard_normal((NPL, N_CELLS)) * noise_sd
 
     truths = {"T1": lambda rng: rng.standard_normal((NPL, N_CELLS)) @ LT1.T,
               "T2": lambda rng: T2,
-              "T3": lambda rng: T2 / math.sqrt(2.0) + rng.standard_normal((NPL, N_CELLS)) @ LT1.T / math.sqrt(2.0)}
+              "T3": lambda rng: t3_offsets(T2, rng.standard_normal((NPL, N_CELLS)), LT1)}
     rng = np.random.default_rng(seed)
-    t0 = clock()
+    t0 = clock() if t_start is None else t_start
     res = {k: {"CLUSTERED": 0, "EXCHANGEABLE-COMPATIBLE": 0, "INCONCLUSIVE": 0, "n": 0} for k in truths}
     alphas = {k: [] for k in truths}
     stopped = False
@@ -571,6 +661,7 @@ def stage_d_reachability(e: np.ndarray, Mi: np.ndarray, ro5: dict, seed: int, ou
 
 
 def run_staged(a) -> int:
+    t_start = time.monotonic()
     s0p = a.r / "control/stage0.json"
     s0rec = json.loads(s0p.read_text()) if s0p.is_file() else {}
     if s0rec.get("schema") != "fd-rpd-stage0/1":
@@ -579,24 +670,24 @@ def run_staged(a) -> int:
     S = common(a, grid.U)
     e = shares(a.r, "D")
     s0, sig0 = float(s0rec["s0"]), float(s0rec["sigma0"])
-    oc = oc_table(e, s0, sig0, STAGE_D_R1_DRAWS, SEED + 2000)
-    oc7 = oc_table(e, REF_2D_STEP, sig0, STAGE_D_R1_DRAWS, SEED + 2000)
+    oc = oc_table(e, s0, sig0, STAGE_D_R1_DRAWS, SEED_OC)
+    oc7 = oc_table(e, REF_2D_STEP, sig0, STAGE_D_R1_DRAWS, SEED_OC)
     rule_pw = oc["PW"]["PERIOD-WIDE"] < STAGE_D_RULE_PW
     best_sub = max(oc[k]["SUBSET"] for k in ("S-1G", "S-1M", "S-1G1M"))
     rule_sub = best_sub < STAGE_D_RULE_PW
     ro5 = five_b_readout(a.deploy)
     M = S["M"] / S["ff"]
-    reach = stage_d_reachability(e, np.linalg.inv(M), ro5, SEED + 3000, a.outer, a.inner, a.budget)
+    reach = stage_d_reachability(e, np.linalg.inv(M), ro5, SEED_REACH, a.outer, a.inner, a.budget, t_start=t_start)
     n_t1 = reach["probabilities"]["T1"]["n"]
     p_ec = reach["probabilities"]["T1"]["EXCHANGEABLE-COMPATIBLE"]
     ec_verdict = None if n_t1 < STAGE_D_MIN_OUTER else bool(p_ec < STAGE_D_RULE_EC)
     out = {"schema": "fd-rpd-stageD/1", "labels": {"what": LABELS["staged"]},
            "stage0": {"branch": s0rec["branch"], "s0": s0, "sigma0": sig0},
            "R1_operating_characteristics": {"at_s0": oc, "at_7pct": oc7, "draws": STAGE_D_R1_DRAWS,
-                                            "seed": SEED + 2000, "note": "N0's UNRESOLVED clause is not modelled"},
+                                            "seed": SEED_OC, "note": "N0's UNRESOLVED clause is not modelled"},
            "R1_rules": {"drop_PERIOD_WIDE": rule_pw, "drop_SUBSET": rule_sub, "P_PW_given_PW": oc["PW"]["PERIOD-WIDE"],
                         "best_P_SUBSET_given_subset_truth": best_sub, "threshold": STAGE_D_RULE_PW},
-           "R2_reachability": {**reach, "outer": a.outer, "inner": a.inner, "seed": SEED + 3000, "gate": "off"},
+           "R2_reachability": {**reach, "outer": a.outer, "inner": a.inner, "seed": SEED_REACH, "gate": "off"},
            "R2_rule": {"flag_12_playlist_wording_not_expected": ec_verdict, "P_EC_given_T1": p_ec,
                        "threshold": STAGE_D_RULE_EC, "min_outer_for_a_verdict": STAGE_D_MIN_OUTER},
            "exposure_share": dict(zip(PL, e.tolist())),
@@ -617,6 +708,7 @@ C1_SCALED = ("w_truth", "w_reco")
 C1_EQUAL = ("axes", "edges_0", "edges_1", "edges_2", "edges_3", "edges_4", "nedges", "n_nucleons")
 C1_HIST_REL, C1_W_REL = 1e-9, 1e-12
 C1_MW_SHARE = 0.999            # part 2's deviation 1: measured_weights agreement share (config R does not read it)
+C1_MW_GRADED = False           # part 2 revision 2: printed, not graded, pending the director's ruling (audit m1)
 
 
 def receipt(R: Path, X: str, control: str) -> dict:
@@ -687,7 +779,8 @@ def c1(R: Path, recs: dict, fr: dict) -> dict:
         z = lats[X]
         edges = [np.asarray(z[f"edges_{i}"], float) for i in range(int(z["nedges"]))]
         mw[X] = measured_weights_agreement(z, bkgs[X], edges)
-    res["measured_weights_self_consistent"] = all(v >= C1_MW_SHARE for v in mw.values())
+    if C1_MW_GRADED:
+        res["measured_weights_self_consistent"] = all(v >= C1_MW_SHARE for v in mw.values())
     return {"pass": all(bool(v) for v in res.values()), "keys": {k: bool(v) for k, v in res.items()},
             "measured_weights_share_equal": mw, "measured_weights_share_required": C1_MW_SHARE,
             "s_all": s_all, "s_ratio": {X: s[X] / s_all for X in PL}}
@@ -772,19 +865,16 @@ def n0p(R: Path, fr: dict) -> dict:
         chk["denom_sum"] = hist_equal(sum(np.asarray(x["denom_nd"], float) for x in z), dn_all)
         chk["bkg_nd_sum"] = hist_equal(sum(np.asarray(x["bkg_nd"], float) for x in b), np.asarray(bkg0["bkg_nd"], float))
         n_data = len(lat0["measured"])
-        shares_ok = []
         comp_ok = []
+        counts = np.array([int(np.sum(asg["data"] == k)) for k in range(NPL)])
         for k in range(NPL):
-            nk = int(np.sum(asg["data"] == k))
-            sd = math.sqrt(n_data * e[k] * (1 - e[k]))
-            shares_ok.append(abs(nk - n_data * e[k]) <= 5 * sd)
             o_k = ri.truth_sum(z[k]["MCgen"], z[k]["pass_truth"], z[k]["w_truth"], edges)
             dk = np.asarray(z[k]["denom_nd"], float)
             pos = o_k > 0
             with np.errstate(divide="ignore", invalid="ignore"):
                 same = np.abs((o_k[pos] / dk[pos]) / (o_all[pos] / dn_all[pos]) - 1.0) <= 1e-12
             comp_ok.append(bool(np.all(same) and np.all(o_k[dk == 0] == 0)))
-        chk["shares_within_5_sigma"] = all(shares_ok)
+        chk["shares_within_5_sigma"] = shares_within(counts, n_data, e)
         chk["completeness_equal"] = all(comp_ok)
         chk["globals_equal"] = all(all(ri.pi.same_array(x[k], lat0[k]) for k in ri.GLOBAL_KEYS) for x in z)
         chk["measured_weights_present"] = all("measured_weights" in x for x in z)
@@ -803,6 +893,8 @@ def run_controls(a) -> int:
     out = {"schema": "fd-rpd-controls/1", "labels": {"what": LABELS["controls"]}, "verdict": verdict,
            "C1": c1r, "K2prime": k2r, "N0P": n0r,
            "inputs_sha256": {"receipts": {X: sa.sha256(a.r / ri.playlist_paths(X)["receipt"]) for X in PL},
+                             "n0_receipts": {str(p): sa.sha256(a.r / ri.n0_paths(p, 0)["receipt"])
+                                             for p in range(1, ri.N_PART + 1)},
                              "flux_record": sa.sha256(a.r / "flux/F1.json")},
            "code_sha256": code_sha(), "argv": sys.argv}
     rc = ct.write(a, out, cp.guarded(S["f"], []), [f"[RPD controls] C1 {c1r['pass']} K2' {k2r['pass']} "
@@ -812,12 +904,21 @@ def run_controls(a) -> int:
 
 def run_gate(a) -> int:
     """Job A only after F1's PASS and the stage 0 and stage D records; job B only after this deploy's controls PASS."""
+    me = sa.sha256(Path(__file__).resolve())
+    flux_rec(a.r, "G")
+    f1 = sa.sha256(a.r / "flux/F1.json")
     if a.stage == "a":
-        flux_rec(a.r, "G")
+        recs = {}
         for name, schema in (("stage0.json", "fd-rpd-stage0/1"), ("stageD.json", "fd-rpd-stageD/1")):
             p = a.r / "control" / name
             if not p.is_file() or json.loads(p.read_text()).get("schema") != schema:
                 raise f0.Stop("G", f"no {name}")
+            recs[name] = json.loads(p.read_text())
+            if (recs[name].get("code_sha256") or {}).get("fd_rpd.py") != me:
+                raise f0.Stop("G", f"{name} was not made by this deploy's fd_rpd.py")
+        sd = recs["stageD.json"]["inputs_sha256"]
+        if sd.get("flux_record") != f1 or sd.get("stage0") != sa.sha256(a.r / "control/stage0.json"):
+            raise f0.Stop("G", "stage D did not read this F1 record and this stage 0 record")
     else:
         p = a.r / "control/controls.json"
         if not p.is_file():
@@ -830,6 +931,13 @@ def run_gate(a) -> int:
         for X in PL:
             if r["inputs_sha256"]["receipts"][X] != sa.sha256(a.r / ri.playlist_paths(X)["receipt"]):
                 raise f0.Stop("G", f"{X}'s receipt is not the one the controls read")
+        if r["inputs_sha256"].get("flux_record") != f1:
+            raise f0.Stop("G", "the controls did not read this F1 record")
+        for part, sha in (r["inputs_sha256"].get("n0_receipts") or {}).items():
+            if sha != sa.sha256(a.r / ri.n0_paths(int(part), 0)["receipt"]):
+                raise f0.Stop("G", f"N0 partition {part}'s receipt is not the one the controls read")
+        if len(r["inputs_sha256"].get("n0_receipts") or {}) != ri.N_PART:
+            raise f0.Stop("G", "the controls did not record every N0 receipt")
     print(f"PASS gate {a.stage}", flush=True)
     return 0
 
@@ -902,30 +1010,24 @@ def run_readout(a) -> int:
     n0 = load_n0(a, grid)
     ints = [grid.cells(x) for X in prod for x in prod[X]["x"].values()] + [grid.cells(prod[X]["t"]) for X in prod]
     ints += [grid.cells(k["x"]) for part in n0 for k in part] + [grid.cells(k["t"]) for part in n0 for k in part]
-    for v in ints:
-        if not np.all(v > 0):
-            raise f0.Stop("Q3", "a non-positive unfold or MC-truth cell integral")
-    for X in prod:
-        if not np.all(grid.regions(prod[X]["x"][None]) > 0) or not np.all(grid.regions(prod[X]["t"]) > 0):
-            raise f0.Stop("Q3", f"{X}: a non-positive region integral")
+    vecs = [x for X in prod for x in prod[X]["x"].values()] + [prod[X]["t"] for X in prod]
+    vecs += [k["x"] for part in n0 for k in part] + [k["t"] for part in n0 for k in part]
+    for v in vecs:                                  # Q3: on every vector read, cells and both regions
+        if not (finite_positive(grid.cells(v)) and finite_positive(grid.regions(v))):
+            raise f0.Stop("Q3", "a non-finite or non-positive unfold or MC-truth integral (cell or region)")
     guard = cp.guarded(f, ints)
     M = S["M"] / S["ff"]
     Mi = np.linalg.inv(M)
     r2 = R2(ev, Mi)
-    small = [i for i, X in enumerate(PL) if ev[i] < N0_SMALL]
+    small = n0_small_set(ev)
 
     # ---- the 16-cell double ratios and their replica noise
     Tc = {X: grid.cells(prod[X]["t"]) for X in PL}
     tcv = {X: grid.cell_var(prod[X]["tv"]) / Tc[X] ** 2 for X in PL}
     r = np.vstack([grid.cells(prod[X]["x"][None]) / Tc[X] for X in PL])
     g = offsets(r, ev)
-    dev = {X: np.vstack([grid.cells(prod[X]["x"][b]) / Tc[X] for b in REP[X]]) for X in PL}
-    dev = {X: (v / v.mean(axis=0) - 1.0) * math.sqrt(N_REP / (N_REP - 1)) for X, v in dev.items()}
-
-    def noise(rng):
-        k = rng.integers(0, N_REP, NPL)
-        eps = np.vstack([dev[X][k[i]] for i, X in enumerate(PL)])
-        return eps + rng.standard_normal((NPL, N_CELLS)) * np.sqrt(np.vstack([tcv[X] for X in PL]))
+    dev = [replica_deviations(np.vstack([grid.cells(prod[X]["x"][b]) / Tc[X] for b in REP[X]])) for X in PL]
+    noise = make_noise(dev, np.vstack([tcv[X] for X in PL]))
 
     # ---- N0
     n0r = n0_reading(grid, n0, ev, Mi, r2, small)
@@ -936,27 +1038,23 @@ def run_readout(a) -> int:
     i_era = find(A_era, era)
     F_era = F_all(gram(g, ev, Mi), ev, A_era)
     p_era = p_value(F_era, i_era)
-    rng = np.random.default_rng(SEED)
+    rng = np.random.default_rng(SEED_READOUT)
     sim = r2.run(g, noise, rng, R2_GATE_N)
     outcome = r2_outcome(p_flux, sim["alpha"], sim["beta1"], n0r["SIZE_BIAS_g"])
+    med_g = float(np.median(np.abs(g[small])))
+    n0r["detectable_bias_pct_of_median_abs_g_small"] = [100.0 * v / med_g for v in n0r["detectable_bias_cells"]] \
+        if med_g > 0 else None
+    n0r["F_null_quantiles_beside"] = sim["F_null_quantiles"]
     if n0r["SIZE_BIAS_g"]:
-        gb = g.copy()
-        gb[small] -= np.asarray(n0r["b_cells"])
-        n0r["effect"] = {"p_flux_with_bias_removed": r2.test(gb)[1], "F_with_bias_removed": r2.test(gb)[0]}
+        n0r["effect"] = n0_effect(r2, g, noise, np.random.default_rng(SEED_N0_EFFECT), small,
+                                  np.asarray(n0r["b_cells"]), R2_GATE_N)
     # ---- R3
-    V2 = float(np.sum(ev ** 2))
-    k12 = V2 / (1 - V2)
-    C12 = k12 * (ev[:, None, None] * np.einsum("xi,xj->xij", g, g)).sum(axis=0)
-    noise_g = [r2.g_of(0.0, noise(rng)) for _ in range(R2_GATE_N)]
-    C12n = np.mean([k12 * (ev[:, None, None] * np.einsum("xi,xj->xij", h, h)).sum(axis=0) for h in noise_g], axis=0)
-    C12d, lost12 = psd(C12 - C12n)
     c5, c5n = five_b_block(a, grid)
-    C5d, lost5 = psd(c5 - c5n)
-    nu = nu_eff(ev)
-    rho_raw = math.sqrt(np.trace(Mi @ C12) / np.trace(Mi @ c5))
-    rho_deb = math.sqrt(np.trace(Mi @ C12d) / np.trace(Mi @ C5d)) if np.trace(Mi @ C5d) > 0 else None
+    r3 = r3_numbers(g, ev, Mi, c5, c5n, sim["noise_g"])
+    C12 = r3["C_PL12_rel_raw"]
+    nu, rho_raw = r3["nu12"], r3["rho_raw"]
     # ---- R1 (only under SEES, if not NOT COMPUTED)
-    r1 = r1_reading(grid, prod, e, n0r, small, s0rec, sdrec)
+    r1 = r1_reading(grid, prod, e, n0r, ev, s0rec, sdrec)
     out = {"schema": "fd-rpd-readout/1",
            "labels": {k: LABELS[k] for k in ("r1", "r2", "r3", "not_citable_for")},
            "stage0": {k: s0rec[k] for k in ("branch", "s0", "sigma0")},
@@ -968,15 +1066,13 @@ def run_readout(a) -> int:
                   "n_partitions": {"flux": int(len(r2.A)), "era": int(len(A_era))},
                   "alpha": sim["alpha"], "calibration_threshold": r2_gate_threshold(), "beta1": sim["beta1"],
                   "beta2": sim["beta2"], "c": sim["c"], "psd_discarded_trace_sigma_delta": sim["psd_discarded_trace"],
-                  "g": g.tolist(), "median_abs_g_small": float(np.median(np.abs(g[small]))) if small else None,
-                  "datasets": R2_GATE_N, "seed": SEED},
+                  "g": g.tolist(), "median_abs_g_small": med_g, "F_null_quantiles": sim["F_null_quantiles"],
+                  "datasets": R2_GATE_N, "seed": SEED_READOUT},
            "R3": {"read": outcome == "EXCHANGEABLE-COMPATIBLE", "label": LABELS["r3"],
-                  "C_PL12_rel_raw": C12.tolist(), "C_PL12_rel_debiased": C12d.tolist(),
-                  "psd_discarded_trace": lost12, "sigma_rel_raw": np.sqrt(np.diag(C12)).tolist(),
+                  **{k: (v.tolist() if isinstance(v, np.ndarray) else v) for k, v in r3.items()},
+                  "sigma_rel_raw": np.sqrt(np.diag(C12)).tolist(),
                   "sigma_ratio_raw_to_5d": (np.sqrt(np.diag(C12)) / np.sqrt(np.diag(c5))).tolist(),
-                  "sigma_ratio_raw_to_5d_summary": ct.summary(np.sqrt(np.diag(C12)) / np.sqrt(np.diag(c5))),
-                  "rho_raw": rho_raw, "rho_deb": rho_deb, "C_PL5D_psd_discarded_trace": lost5,
-                  "nu12": nu, "interval_68": sigma_interval(nu), "k12": k12},
+                  "sigma_ratio_raw_to_5d_summary": ct.summary(np.sqrt(np.diag(C12)) / np.sqrt(np.diag(c5)))},
            "inputs_sha256": {"controls": sa.sha256(a.r / "control/controls.json"),
                              "stage0": sa.sha256(a.r / "control/stage0.json"),
                              "stageD": sa.sha256(a.r / "control/stageD.json"),
@@ -1011,6 +1107,20 @@ def five_b_block(a, grid: Grid) -> tuple[np.ndarray, np.ndarray]:
     return C, Cn
 
 
+def n0_effect(r2: R2, g: np.ndarray, noise, rng: np.random.Generator, small: list, b: np.ndarray, n: int) -> dict:
+    """Section 4: when SIZE-BIAS-g fires, R2's null is re-run with b-bar added to the three small playlists; the
+    induced change in F (at pi_flux) and in the share with p_flux < 0.05 is printed. Descriptive."""
+    d = np.zeros((NPL, N_CELLS))
+    d[small] = b
+    plain = [r2.test(r2.g_of(0.0, noise(rng))) for _ in range(n)]
+    biased = [r2.test(r2.g_of(d, noise(rng))) for _ in range(n)]
+    return {"null_F_median": float(np.median([x[0] for x in plain])),
+            "null_F_median_with_bias": float(np.median([x[0] for x in biased])),
+            "null_share_p_below_alpha": float(np.mean([x[1] < R2_ALPHA for x in plain])),
+            "null_share_p_below_alpha_with_bias": float(np.mean([x[1] < R2_ALPHA for x in biased])),
+            "observed_F_and_p": list(r2.test(g)), "datasets": n}
+
+
 def n0_reading(grid: Grid, n0: list, ev: np.ndarray, Mi: np.ndarray, r2: R2, small: list) -> dict:
     """N0's reading (section 4): the small pseudo-playlists' mean 16-cell offset and mean R1 step over the
     partitions, against t_29 thresholds; the slopes against e; N0's F values."""
@@ -1039,7 +1149,11 @@ def n0_reading(grid: Grid, n0: list, ev: np.ndarray, Mi: np.ndarray, r2: R2, sma
     tall = np.concatenate([np.asarray(t) for t in all_t])
     slope_g = [float(np.polyfit(eall, gall[:, c], 1)[0]) for c in range(N_CELLS)]
     slope_t = float(np.polyfit(eall, tall, 1)[0])
-    return {"small": [PL[i] for i in small], "n_draws": n, "b_cells": b.tolist(), "se_cells": se.tolist(),
+    return {"small": [PL[i] for i in small], "small_all_below_0.03": bool(all(ev[i] < N0_SMALL for i in small)),
+            "n_draws": n, "b_cells": b.tolist(), "se_cells": se.tolist(),
+            "detectable_bias_cells": (N0_T_CELL * se).tolist(),
+            "detectable_bias_in_single_draw_sigma": N0_T_CELL / math.sqrt(n),
+            "detectable_step_bias": N0_T_STEP * set_,
             "z_cells": zc.tolist(), "b_step": bt, "se_step": set_, "z_step": zt,
             "single_draw_sigma_cells": G.std(axis=0, ddof=1).tolist(), "single_draw_sigma_step": float(Tt.std(ddof=1)),
             "SIZE_BIAS_g": bool(np.any(np.abs(zc) > N0_T_CELL)), "SIZE_BIAS_t": bool(abs(zt) > N0_T_STEP),
@@ -1049,7 +1163,7 @@ def n0_reading(grid: Grid, n0: list, ev: np.ndarray, Mi: np.ndarray, r2: R2, sma
                     "is not a clearance"}
 
 
-def r1_reading(grid: Grid, prod: dict, e: dict, n0r: dict, small: list, s0rec: dict, sdrec: dict) -> dict:
+def r1_reading(grid: Grid, prod: dict, e: dict, n0r: dict, ev: np.ndarray, s0rec: dict, sdrec: dict) -> dict:
     """R1 (section 5), only under stage 0's SEES; classes, the pattern, and stage D's drops applied."""
     if s0rec["branch"] != "SEES":
         return {"outcome": "NOT COMPUTED", "why": f"stage 0 is {s0rec['branch']}"}
@@ -1067,10 +1181,12 @@ def r1_reading(grid: Grid, prod: dict, e: dict, n0r: dict, small: list, s0rec: d
     sigh = {X: math.sqrt(sd([q["h"][X] for q in reps]) ** 2 + hn[X]) for X in PL}
     sig_tbar = math.sqrt(sd([q["tbar"] for q in reps]) ** 2 + tbn)
     tbar = q0["tbar"]
-    base = {"tbar": tbar, "sigma_tbar": sig_tbar, "t": q0["t"], "sigma": sig, "h": q0["h"], "sigma_h": sigh}
-    if not (tbar > 0 and tbar / sig_tbar >= R1_GATE):
+    base = {"tbar": tbar, "sigma_tbar": sig_tbar, "t": q0["t"], "sigma": sig, "h": q0["h"], "sigma_h": sigh,
+            "oc_at_readout_descriptive": oc_table(ev, tbar, sig_tbar, STAGE_D_R1_DRAWS, SEED_OC)
+            if tbar > 0 and sig_tbar > 0 else None}
+    if not r1_gate(tbar, sig_tbar):
         return {"outcome": "NOT COMPUTED", "why": "tbar <= 0 or tbar/sigma(tbar) < 3", **base}
-    forced = set(PL[i] for i in small) if (n0r["SIZE_BIAS_g"] or n0r["SIZE_BIAS_t"]) else set()
+    forced = forced_unresolved(n0r, ev)
     cls = {X: classify(q0["t"][X], sig[X], q0["h"][X], sigh[X], tbar, X in forced) for X in PL}
     pat = pattern(cls)
     dropped = (pat == "PERIOD-WIDE" and sdrec["R1_rules"]["drop_PERIOD_WIDE"]) or \

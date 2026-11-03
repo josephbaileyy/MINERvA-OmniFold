@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Mutation run for the run-period diagnosis (FD-RPD-DECLARATION.md part 2 section 5): one textual change at a time to
-fd_rpd_inputs.py, fd_rpd.py or submit_fd_ct.sh's rpd stages, applied in place; test_fd_rpd runs against it, and the
-file is restored (every file's sha256 checked after every mutant and at the end). A mutant is killed if the run fails;
+fd_rpd_inputs.py, fd_rpd.py or submit_fd_ct.sh's rpd stages, applied in place; test_fd_rpd runs against it, stopping at
+its first failure, and the file is restored (every file's sha256 checked after every mutant and at the end). A mutant is
+killed if the run fails;
 one whose text is not found exactly once counts as a failure of this receipt.
 
     python3 -I -B mutants_rpd.py <repo> [--dry]
@@ -25,8 +26,8 @@ MUTANTS = [
     (I, "combine: error weights not squared", '.T ** 2) @ (w ** 2)) / tot_d', ".T ** 2) @ w) / tot_d"),
     (I, "F1 tolerance loose", "REL_FLUX = 1e-12", "REL_FLUX = 1e-9"),
     (I, "F1 ignores the data POT", '"pot_data": abs(comb["pot_data"] / ref["pot_data"] - 1.0),', '"pot_data": 0.0,'),
-    (I, "exposure without the flux", 'raw = {pl: v["pot_data"] * float(np.mean(v["contents"])) for pl, v in per_pl.items()}',
-     'raw = {pl: v["pot_data"] for pl, v in per_pl.items()}'),
+    (I, "exposure without the flux", 'raw = {pl: pot[pl] * float(np.mean(v["contents"])) for pl, v in per_pl.items()}',
+     'raw = {pl: pot[pl] for pl, v in per_pl.items()}'),
     (I, "check: loop pin unchecked", "    if loop_sha != pi.ZERO_LOOPS[X]:", "    if False:"),
     (I, "check: flux digest unchecked", '    require(d["flux"], fsha, f"{X} flux file")\n', "    pass\n"),
     (I, "check: nn vs lat unchecked", "    if not all(nn_vs_lat.values()):\n        problems.append(f\"the lateral",
@@ -92,10 +93,61 @@ MUTANTS = [
      '(("stage0.json", "fd-rpd-stage0/1"),)'),
     (P, "N0 at normal quantiles", "N0_T_CELL, N0_T_STEP = 3.835, 2.756", "N0_T_CELL, N0_T_STEP = 3.42, 2.58"),
     (P, "R1 outside SEES", '    if s0rec["branch"] != "SEES":', "    if False:"),
-    (P, "R1 gate on tbar removed", "    if not (tbar > 0 and tbar / sig_tbar >= R1_GATE):", "    if False:"),
+    (P, "R1 gate on tbar removed", "    if not r1_gate(tbar, sig_tbar):", "    if False:"),
     (P, "5B block not checked", "    if not np.allclose(C, ref, rtol=1e-9, atol=1e-9 * np.abs(ref).max()):", "    if False:"),
     (P, "readout without the controls", '    if (cj.get("schema"), cj.get("verdict")) != ("fd-rpd-controls/1", "PASS"):\n        raise f0.Stop("Q0"',
      '    if False:\n        raise f0.Stop("Q0"'),
+    # ---- audit 1 (part 2): the auditor's surviving mutants, and the code added in answer
+    (P, "SIZE-BIAS-t does not force UNRESOLVED", '    if not (n0r["SIZE_BIAS_g"] or n0r["SIZE_BIAS_t"]):', '    if not n0r["SIZE_BIAS_g"]:'),
+    (P, "T1 without the V2 scaling", "    sT1, _ = psd(C5 / V2)", "    sT1, _ = psd(C5)"),
+    (P, "T3 at full amplitude", "    return T2 / math.sqrt(2.0) + z @ LT1.T / math.sqrt(2.0)", "    return T2 + z @ LT1.T"),
+    (P, "deviations without sqrt(n/(n-1))", "    return (v / v.mean(axis=0) - 1.0) * math.sqrt(n / (n - 1))", "    return v / v.mean(axis=0) - 1.0"),
+    (P, "R2 noise without T variance", " + rng.standard_normal(tsd.shape) * tsd", ""),
+    (P, "N0 SE with ddof 0", "    b, se = G.mean(axis=0), G.std(axis=0, ddof=1) / math.sqrt(n)", "    b, se = G.mean(axis=0), G.std(axis=0, ddof=0) / math.sqrt(n)"),
+    (P, "R1 sigma without T variance", '    sig = {X: math.sqrt(sd([q["t"][X] for q in reps]) ** 2 + tn[X]) for X in PL}',
+     '    sig = {X: sd([q["t"][X] for q in reps]) for X in PL}'),
+    (P, "R1 sigma_h without T variance", '    sigh = {X: math.sqrt(sd([q["h"][X] for q in reps]) ** 2 + hn[X]) for X in PL}',
+     '    sigh = {X: sd([q["h"][X] for q in reps]) for X in PL}'),
+    (P, "R1 sigma(tbar) without T variance", '    sig_tbar = math.sqrt(sd([q["tbar"] for q in reps]) ** 2 + tbn)', '    sig_tbar = sd([q["tbar"] for q in reps])'),
+    (P, "stage D outer 50", "STAGE_D_R1_DRAWS, STAGE_D_OUTER, STAGE_D_INNER = 20000, 500, 200", "STAGE_D_R1_DRAWS, STAGE_D_OUTER, STAGE_D_INNER = 20000, 50, 200"),
+    (P, "stage D inner 20", "STAGE_D_R1_DRAWS, STAGE_D_OUTER, STAGE_D_INNER = 20000, 500, 200", "STAGE_D_R1_DRAWS, STAGE_D_OUTER, STAGE_D_INNER = 20000, 500, 20"),
+    (I, "N0 seed offset", "N0_SEED0 = 20261102 ", "N0_SEED0 = 20261103 "),
+    (P, "forced UNRESOLVED not passed to classify", "sigh[X], tbar, X in forced) for X in PL}", "sigh[X], tbar, False) for X in PL}"),
+    (P, "stage D OC seed at the call", "    oc = oc_table(e, s0, sig0, STAGE_D_R1_DRAWS, SEED_OC)",
+     "    oc = oc_table(e, s0, sig0, STAGE_D_R1_DRAWS, SEED_OC + 1)"),
+    (P, "stage D reachability seed at the call", "ro5, SEED_REACH, a.outer", "ro5, SEED_REACH + 1, a.outer"),
+    (P, "readout seed at the call", "    rng = np.random.default_rng(SEED_READOUT)\n    sim = r2.run",
+     "    rng = np.random.default_rng(SEED_READOUT + 1)\n    sim = r2.run"),
+    (P, "N0 effect seed at the call", "np.random.default_rng(SEED_N0_EFFECT), small", "np.random.default_rng(SEED_N0_EFFECT + 1), small"),
+    (P, "the seed offsets", "= SEED + 2000, SEED + 3000, SEED, SEED + 4000", "= SEED + 2001, SEED + 3000, SEED + 1, SEED + 4000"),
+    (P, "k12 = V2", "    k12 = V2 / (1 - V2)\n\n    def block(h):", "    k12 = V2\n\n    def block(h):"),
+    (P, "rho_raw against the debiased 5D block", "    rho_raw = math.sqrt(np.trace(Mi @ C12) / t5)", "    rho_raw = math.sqrt(np.trace(Mi @ C12) / t5d)"),
+    (P, "era groups mis-assigned", '("1F-1G", ("1F", "1G")), ("1L-1M", ("1L", "1M"))', '("1F-1G", ("1F", "1L")), ("1L-1M", ("1G", "1M"))'),
+    (P, "stage 0 pairs reversed", 'zip(cp.BOOT["PA"], cp.BOOT["PB"])]', 'zip(cp.BOOT["PA"], cp.BOOT["PB"][::-1])]'),
+    (P, "stage D noise not scaled by sqrt(E_P/e_X)", '"noise_sd": np.vstack([sn[GROUP[X]] * math.sqrt(E[GROUP[X]] / e[i]) for i, X in enumerate(PL)])',
+     '"noise_sd": np.vstack([sn[GROUP[X]] for i, X in enumerate(PL)])'),
+    (P, "R1 gate at 2", "    return bool(tbar > 0 and sig_tbar > 0 and tbar / sig_tbar >= R1_GATE)", "    return bool(tbar > 0 and sig_tbar > 0 and tbar / sig_tbar >= 2.0)"),
+    (P, "N0-P share bound at 50 sigma", "def shares_within(counts: np.ndarray, n: int, e: np.ndarray, k: float = 5.0) -> bool:",
+     "def shares_within(counts: np.ndarray, n: int, e: np.ndarray, k: float = 50.0) -> bool:"),
+    (P, "C1 measured_weights share 0", "C1_MW_SHARE = 0.999 ", "C1_MW_SHARE = 0.0 "),
+    (P, "Q3 removed", '        if not (finite_positive(grid.cells(v)) and finite_positive(grid.regions(v))):', "        if False:"),
+    (P, "readout guard without the integrals", "    guard = cp.guarded(f, ints)\n    M = S", "    guard = cp.guarded(f, [])\n    M = S"),
+    (P, "N0 small set the three largest", "    return sorted(int(i) for i in np.argsort(ev)[:3])", "    return sorted(int(i) for i in np.argsort(ev)[-3:])"),
+    (P, "N0 effect without the bias", "    d[small] = b\n", ""),
+    (P, "gate a: stage D on another F1", '        if sd.get("flux_record") != f1 or sd.get("stage0") != sa.sha256(a.r / "control/stage0.json"):',
+     "        if False:"),
+    (P, "gate a: stage records of other code", '            if (recs[name].get("code_sha256") or {}).get("fd_rpd.py") != me:', "            if False:"),
+    (P, "gate b: N0 receipts unchecked", '            if sha != sa.sha256(a.r / ri.n0_paths(int(part), 0)["receipt"]):', "            if False:"),
+    (P, "gate b: F1 unchecked", '        if r["inputs_sha256"].get("flux_record") != f1:', "        if False:"),
+    (P, "read_truth: non-finite accepted", "    if not (np.all(np.isfinite(t)) and np.all(np.isfinite(v))):", "    if False:"),
+    (I, "F1: loops' POT unchecked", "    loops_ok = all(abs(v[\"over_flux_data_pot_minus_1\"]) <= POT_REL for v in loops.values())",
+     "    loops_ok = True"),
+    (I, "e from the flux file's POT", '    e, spread = exposure_shares(per_pl, {pl: v["data_pot"] for pl, v in loops.items()})',
+     "    e, spread = exposure_shares(per_pl)"),
+    (S, "submit rpd: outside paths allowed", '[ -z "$out" ] || { echo "refusing: a step names a path outside $B: $out" >&2; exit 2; }',
+     "true"),
+    (S, "submit rpd: step-count check skipped", '    [ "$n" -eq "$N" ] && [ "$m" -eq "$N" ] || { echo "refusing: $n steps, $m of them naming $B" >&2; exit 2; }\n    # every absolute',
+     "    true\n    # every absolute"),
     # ---- the submit stages
     (S, "submit rpd-a: limit", "N=48; TIME=01:00:00", "N=48; TIME=02:00:00"),
     (S, "submit rpd-b: limit", "N=492; TIME=02:00:00", "N=492; TIME=03:00:00"),
@@ -127,7 +179,7 @@ try:
             print(f"NOT APPLIED  {name}: found {text.count(old)} times", flush=True)
             continue
         path.write_text(text.replace(old, new))
-        r = subprocess.run([sys.executable, "-B", "-m", "unittest", "test_fd_rpd"],
+        r = subprocess.run([sys.executable, "-B", "-m", "unittest", "-f", "test_fd_rpd"],
                            cwd=ND / "tests", env=env, capture_output=True, text=True, timeout=3600)
         path.write_text(text)
         if any(sha(p) != digest[p] for p in orig):
