@@ -1649,6 +1649,12 @@ docs/orchestration/state/2d-closeout/stageF/methods/absence-items-3-4/agy/run1.o
 docs/orchestration/state/2d-closeout/stageF/methods/absence-items-3-4/agy/run2-I4.input.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/absence-items-3-4/agy/run2-I4.output.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/abstract-20261026/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-cutlist-paper-20261102/CHECK-HELD.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-cutlist-paper-20261102/REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-cutlist-paper-20261102/VALUES-CHECK.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-cutlist-paper-20261102/check_ledger.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-cutlist-paper-20261102/ledger.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-cutlist-paper-20261102/review.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/CODER-PROMPT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
