@@ -1,0 +1,3 @@
+The band of this analysis is the four-block covariance of Ref. [14], Sec. 6.3, without Cmodel.
+
+The covariance of the two-dimensional result, its comparison with the published uncertainty and its model term are given in Ref. [14], Secs. 6.3 and 5.4.

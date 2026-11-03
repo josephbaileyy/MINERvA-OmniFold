@@ -1,0 +1,313 @@
+[
+ {
+  "keys": [],
+  "words": 7752,
+  "words_as_blinded": 7752,
+  "leaked_back_matter_lines": 0,
+  "distinct": 77,
+  "distinct_per_1k": 9.93,
+  "tally_as_printed": {
+   "distinct": 77,
+   "distinct_per_1k": 9.93
+  },
+  "statements_gone": [],
+  "statements_layout_artifact": [],
+  "caveats_gone": []
+ },
+ {
+  "keys": [
+   "IIIA"
+  ],
+  "words": 7565,
+  "words_as_blinded": 7565,
+  "leaked_back_matter_lines": 0,
+  "distinct": 75,
+  "distinct_per_1k": 9.91,
+  "tally_as_printed": {
+   "distinct": 75,
+   "distinct_per_1k": 9.91
+  },
+  "statements_gone": [
+   "25",
+   "26",
+   "27",
+   "28",
+   "120"
+  ],
+  "statements_layout_artifact": [
+   "119"
+  ],
+  "caveats_gone": [
+   "(c) precision target not met",
+   "(d) envelope is a diagnostic not an interval"
+  ]
+ },
+ {
+  "keys": [
+   "IVBC"
+  ],
+  "words": 6869,
+  "words_as_blinded": 6869,
+  "leaked_back_matter_lines": 0,
+  "distinct": 65,
+  "distinct_per_1k": 9.46,
+  "tally_as_printed": {
+   "distinct": 65,
+   "distinct_per_1k": 9.46
+  },
+  "statements_gone": [
+   "45",
+   "46",
+   "47",
+   "48",
+   "49",
+   "50",
+   "51",
+   "52",
+   "53",
+   "54",
+   "55",
+   "56",
+   "57",
+   "58",
+   "59",
+   "60",
+   "61",
+   "127",
+   "128",
+   "129"
+  ],
+  "statements_layout_artifact": [
+   "69",
+   "119",
+   "124"
+  ],
+  "caveats_gone": [
+   "(a) earlier 2d statistical band undercovered",
+   "(b) learner chosen after comparison with published",
+   "(c) 2d covariance not validated",
+   "(c) 2d covariance omits learner and regularization dependence",
+   "(c) cmodel and run-period block not validated",
+   "(c) flux uncertainty difference unexplained",
+   "(c) learner dependence of 2d result",
+   "(c) run-period consistency check passes by construction",
+   "(c) seed block size poorly determined",
+   "(d) 2d covariance excludes cmodel",
+   "(d) no statement on published residual",
+   "(e) learner chosen after comparison with published"
+  ]
+ },
+ {
+  "keys": [
+   "IVC"
+  ],
+  "words": 7337,
+  "words_as_blinded": 7389,
+  "leaked_back_matter_lines": 5,
+  "distinct": 71,
+  "distinct_per_1k": 9.68,
+  "tally_as_printed": {
+   "distinct": 71,
+   "distinct_per_1k": 9.61
+  },
+  "statements_gone": [
+   "52",
+   "54",
+   "55",
+   "56",
+   "57",
+   "58",
+   "59",
+   "60",
+   "61"
+  ],
+  "statements_layout_artifact": [
+   "119",
+   "124"
+  ],
+  "caveats_gone": [
+   "(c) 2d covariance omits learner and regularization dependence",
+   "(c) flux uncertainty difference unexplained",
+   "(c) run-period consistency check passes by construction",
+   "(c) seed block size poorly determined",
+   "(d) 2d covariance excludes cmodel",
+   "(d) no statement on published residual"
+  ]
+ },
+ {
+  "keys": [
+   "IVDbkg"
+  ],
+  "words": 7452,
+  "words_as_blinded": 7452,
+  "leaked_back_matter_lines": 0,
+  "distinct": 74,
+  "distinct_per_1k": 9.93,
+  "tally_as_printed": {
+   "distinct": 74,
+   "distinct_per_1k": 9.93
+  },
+  "statements_gone": [
+   "65",
+   "66",
+   "67",
+   "68",
+   "77"
+  ],
+  "statements_layout_artifact": [
+   "69",
+   "85",
+   "131"
+  ],
+  "caveats_gone": [
+   "(a) purity-based subtraction closure bias",
+   "(c) background treatment dependence",
+   "(c) closure pseudo-experiments not paired"
+  ]
+ },
+ {
+  "keys": [
+   "IVE"
+  ],
+  "words": 7235,
+  "words_as_blinded": 7235,
+  "leaked_back_matter_lines": 0,
+  "distinct": 74,
+  "distinct_per_1k": 10.23,
+  "tally_as_printed": {
+   "distinct": 74,
+   "distinct_per_1k": 10.23
+  },
+  "statements_gone": [
+   "69",
+   "70",
+   "71",
+   "72",
+   "73",
+   "74",
+   "75",
+   "76",
+   "78",
+   "79",
+   "119"
+  ],
+  "statements_layout_artifact": [
+   "22",
+   "92",
+   "124"
+  ],
+  "caveats_gone": [
+   "(a) earlier covariance fails acceptance criteria",
+   "(a) earlier estimator intervals miscover",
+   "(d) bias test on development variant"
+  ]
+ },
+ {
+  "keys": [
+   "IVF"
+  ],
+  "words": 7653,
+  "words_as_blinded": 7993,
+  "leaked_back_matter_lines": 34,
+  "distinct": 76,
+  "distinct_per_1k": 9.93,
+  "tally_as_printed": {
+   "distinct": 76,
+   "distinct_per_1k": 9.51
+  },
+  "statements_gone": [
+   "80",
+   "81",
+   "82"
+  ],
+  "statements_layout_artifact": [
+   "124"
+  ],
+  "caveats_gone": [
+   "(c) instability under input rounding"
+  ]
+ },
+ {
+  "keys": [
+   "VC"
+  ],
+  "words": 7649,
+  "words_as_blinded": 7989,
+  "leaked_back_matter_lines": 34,
+  "distinct": 75,
+  "distinct_per_1k": 9.81,
+  "tally_as_printed": {
+   "distinct": 75,
+   "distinct_per_1k": 9.39
+  },
+  "statements_gone": [
+   "115",
+   "116",
+   "117"
+  ],
+  "statements_layout_artifact": [],
+  "caveats_gone": [
+   "(c) three- and four-observable values lack uncertainties",
+   "(d) three- and four-observable values lack uncertainties"
+  ]
+ },
+ {
+  "keys": [
+   "IVBC",
+   "ABS2D"
+  ],
+  "words": 6854,
+  "words_as_blinded": 6854,
+  "leaked_back_matter_lines": 0,
+  "distinct": 64,
+  "distinct_per_1k": 9.34,
+  "tally_as_printed": {
+   "distinct": 64,
+   "distinct_per_1k": 9.34
+  },
+  "statements_gone": [
+   "3",
+   "45",
+   "46",
+   "47",
+   "48",
+   "49",
+   "50",
+   "51",
+   "52",
+   "53",
+   "54",
+   "55",
+   "56",
+   "57",
+   "58",
+   "59",
+   "60",
+   "61",
+   "127",
+   "128",
+   "129"
+  ],
+  "statements_layout_artifact": [
+   "6",
+   "69",
+   "119",
+   "124"
+  ],
+  "caveats_gone": [
+   "(a) earlier 2d statistical band undercovered",
+   "(b) learner chosen after comparison with published",
+   "(c) 2d benchmark shape difference unexplained",
+   "(c) 2d covariance not validated",
+   "(c) 2d covariance omits learner and regularization dependence",
+   "(c) cmodel and run-period block not validated",
+   "(c) flux uncertainty difference unexplained",
+   "(c) learner dependence of 2d result",
+   "(c) run-period consistency check passes by construction",
+   "(c) seed block size poorly determined",
+   "(d) 2d covariance excludes cmodel",
+   "(d) no statement on published residual",
+   "(e) learner chosen after comparison with published"
+  ]
+ }
+]

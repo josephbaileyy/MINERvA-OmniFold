@@ -1,0 +1,13 @@
+The two-observable estimator, LightGBM [26] at a fixed seed, gives the two-dimensional central value and its covariance (Ref. [14], Sec. 6.3).
+
+The validation studies assess the result through background-subtraction tests, recovery of generator-sized truth changes, a coverage test, and a fake-data study of estimator bias.
+
+Neither the coverage of Cmodel at truths held out of its construction nor the size of the run-period block is independently validated (Ref. [14], Secs. 10.2, 10.3 and 5.4).
+
+The reproduction of the published two-dimensional measurement [13], an end-to-end test of the unfolding, and its covariance are given in Ref. [14], Secs. 6.1 and 6.3.
+
+The sixteen-cell result can therefore be used for the comparison that follows.
+
+The reproduction of the published double-differential cross section d2σ/(dpT dp∥) [13], an end-to-end test of the unfolding, is given in the companion note, and we also give three- and four-observable central values.
+
+Section IV gives the uncertainties and the validation studies, including the fake-data tests of the sixteen-cell result, and Sec. V gives the result and its comparison with generator predictions.

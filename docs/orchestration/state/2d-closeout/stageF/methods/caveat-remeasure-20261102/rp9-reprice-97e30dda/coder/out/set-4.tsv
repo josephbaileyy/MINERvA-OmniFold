@@ -1,0 +1,3 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	inline	pos	no	yes	residual interpreted as regularization bias	The first is the residual under a generator-sized change of the truth, which we interpret as regularization bias (Ref. [14], Sec. 9.3).
+2	a	inline	pos	no	no	coverage shown for earlier estimator	The recovery of generator-sized changes of the truth, and the interval coverage of an earlier estimator, are given in Ref. [14], Secs. 9.3 and 9.5.

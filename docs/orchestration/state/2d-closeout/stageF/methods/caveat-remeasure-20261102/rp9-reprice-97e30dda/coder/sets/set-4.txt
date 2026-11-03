@@ -1,0 +1,7 @@
+The first is the residual under a generator-sized change of the truth, which we interpret as regularization bias (Ref. [14], Sec. 9.3).
+
+The recovery of generator-sized changes of the truth, and the interval coverage of an earlier estimator, are given in Ref. [14], Secs. 9.3 and 9.5.
+
+The validation studies assess the result through the two-dimensional reproduction, background-subtraction tests, a coverage test, and a fake-data study of estimator bias.
+
+Its seeds are fixed, so its training is reproducible, and it also gives the held-out shape tests of Ref. [14], Sec. 9.3 and the precision study.

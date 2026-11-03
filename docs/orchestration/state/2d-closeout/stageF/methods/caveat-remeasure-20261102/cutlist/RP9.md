@@ -76,3 +76,12 @@ Marked **keep** above; the reasons:
 - **The measured gap is about kind, not repetition.** The comparators carry fewer distinct caveats because they
   report fewer secondary results (caveat-study R-P9). This paper's remaining caveats after the 20 moves are mostly
   inherent (K).
+
+## Superseded starting point (2026-11-03)
+
+This price started from 44 caveats, the cut list's prediction after its 20 moves. The re-measure after #711 found
+that merges do not lower the count (77 at `97e30dda`; `../after-711-97e30dda/README.md` §2), so the 44 was never
+reached. Joseph asked for R-P9 to be re-priced from the measured 77
+(`DECISION-20261103-joseph-711-merge-and-rp9-reprice.md` item 2). That price, built and measured, is
+`../rp9-reprice-97e30dda/README.md`: no combination of whole moves reaches 6 per 1k, and the lowest is 9.25–9.41.
+

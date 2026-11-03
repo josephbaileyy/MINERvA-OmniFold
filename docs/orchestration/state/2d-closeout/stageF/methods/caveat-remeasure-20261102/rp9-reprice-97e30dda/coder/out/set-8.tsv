@@ -1,0 +1,2 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	inline	neg	no	no	Cmodel coverage and run-period block unvalidated	Neither the coverage of Cmodel at truths held out of its construction nor the size of the run-period block is independently validated (Ref. [14], Secs. 10.2, 10.3 and 5.4).

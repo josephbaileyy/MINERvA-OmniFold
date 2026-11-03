@@ -1,0 +1,5 @@
+The validation studies assess the result through the two-dimensional reproduction, recovery of generator-sized truth changes, a coverage test, and a fake-data study of estimator bias.
+
+At nominal truth this variant's largest residual is 0.39 % (Ref. [14], Sec. 8.2).
+
+The closure of these estimators with backgrounds included, under purity-based and unbinned negative-weight subtraction, is given in Ref. [14], Sec. 8.2 and App. C.

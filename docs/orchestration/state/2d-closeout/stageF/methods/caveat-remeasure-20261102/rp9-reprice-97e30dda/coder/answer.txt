@@ -1,0 +1,25 @@
+I coded all eight sets, 9 rows in total, and every quote passed the check. The TSVs are in `/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/f88a76df-32e2-4399-bb46-6531cb3c6507/scratchpad/rp9b/coder/out/`.
+
+| set | rows | distinct issue labels |
+|---|---|---|
+| set-1 | 1 | 1 |
+| set-2 | 1 | 1 |
+| set-3 | 1 | 1 |
+| set-4 | 2 | 2 |
+| set-5 | 0 (header only) | 0 |
+| set-6 | 0 (header only) | 0 |
+| set-7 | 3 | 3 |
+| set-8 | 1 | 1 |
+
+**Check:** a `python3 -I` script collapsed whitespace and found every quote in its own file. It also confirmed the header line and 8 fields per row. No quote needed fixing. All rows use loc "inline".
+
+**Rule break:** the instructions said to write nothing except the eight TSVs. I saved the check script as a temporary file in the scratchpad's `rp9b/` folder and deleted it after it ran. Only the eight TSVs remain.
+
+**Codebook judgement calls:**
+- **No caveat:** I gave no row to sentences that only point to Ref. [14] or the companion note for a result (sets 5 and 6, and those sentences elsewhere). Lists of validation studies got no row either.
+- **set-8:** one sentence says two separate checks were never validated: the coverage of Cmodel and the size of the run-period block. Both are kind c, and the codebook allows two rows only when the kinds differ. So it is one row with a combined label.
+- **set-2:** I coded "result on 16 cells" as scope (d), taken as a positive definition of what the result covers. It is borderline.
+- **set-1:** I coded "at nominal truth" as a scope condition on a quoted residual. It is borderline.
+- **set-4:**
+  - "the interval coverage of an earlier estimator" is coded as history (a). It could also be read as c, because coverage is not shown for the current estimator.
+  - I counted the regularization-bias residual as a caveat that is turned into an assigned uncertainty (assigned = yes).
