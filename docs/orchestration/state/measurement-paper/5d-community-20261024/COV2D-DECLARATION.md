@@ -380,8 +380,24 @@ Any failure reads INVALID and is reported unrepaired.
    - It runs in `omnifold_py310` (uproot 5.6.9), which has no PyROOT. The driver's truth phase space and edges are
      compiled from `re2_driver.py`'s own source without its `import ROOT` (`cov2d_receipt.driver_phase_space`), and a
      test makes them equal the real import.
-   - **Result:** pending. It runs before the audit, as the director's ruling requires, and its receipt and verdict are
-     added here before review. A STOP stops (c) at 0 node-h and is the first STOP under §6 (iii).
+   - **Result: PASS** (connect R1, `R/receipt/`, approved by the director; login11, 2026-11-03T02:10:51Z to 02:55:35Z,
+     nice 19, 0 node-h; deploy clean at `b4fb3c6c`, bound blobs equal; wall 44:45, peak RSS 4.27 GB; `atime_moved: []`;
+     `receipt.json` sha256 `d30e197e…`, the local copies equal the cluster's digests):
+
+     | array | rows | evaluated exactly | above the all-draws bound | max composite | rows above 10 | rows negative in some draw | negative (row, draw) pairs | non-finite zeroed | largest single ratio |
+     |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+     | `w_reco` | 32,849,103 | 1,767 | 1,994 | 2.403 | 0 | 11,358,837 | 331,386,043 | 36 | 429.59 |
+     | `w_truth` | 32,849,103 | 2,209 | 2,370 | 2.439 | 0 | 12,440,871 | 359,597,299 | 0 | 429.59 |
+     | `w_bkg` | 658,227 | 380 | 389 | 2.241 | 0 | 258,026 | 7,525,869 | 0 | 44.77 |
+
+     The truth cells: 205 of 224 cells have a positive CV, and no declared draw makes one non-positive (smallest ratio of
+     a draw's cell to the CV's: 0.379 at G18, 0.369 at AR23). r_T lies in [0.650, 2.575] at G18 and [0.610, 2.568] at
+     AR23.
+   <!-- absence-ok: states that the director-approved clipping probe (section 14 item 5) has not run yet; no result is claimed absent -->
+   - **A flag from the receipt, for the director.** 35–38 % of rows have a negative first-order composite in at least
+     one declared draw (1.7–1.8 % of (row, draw) pairs). Under λ⁺ the pseudo-data clip them while the toy's truth keeps
+     them, so each toy carries a one-signed clipping offset, which addition (ii) (§6) measures. Its size per cell is not
+     yet measured. The source bands are not yet identified; no mechanism is asserted here. §14 item 5.
 3. **Control (2a)**, the writer, and **(2b)**, E_R reproduced (§2).
 4. **The truth computation.** At the CV nature (no universe, r = 1), the toys' truth code gives E_R's own
    `hTruthXSec2D` to 10⁻¹² relative, or INVALID.
@@ -506,6 +522,9 @@ jointly", worded by the paper lane under §12.
 2. **To rule on:** §6 (ii)'s substitute for the mean unfold, which 2D cannot run, and its reading.
 3. **To note:** the toys do not resample the simulation (§4.2), a known difference that can only widen C_T against the
    errors; C08 is carried (§4.4); no plug-in truth (§4.1).
-4. **The receipt** (§9.2) runs before the audit, with your approval of the connect.
+4. **The receipt** (§9.2) ran before the audit, with your approval of the connect: PASS.
+5. **The clipping flag** (§9.2): a proposed 0 node-h probe, before the amendment, counts per universe the rows with
+   a_CV > 0 and a_u ≤ 0, and for each declared draw the clipped fraction and the clipped mass per reco and truth cell in
+   σ units. It waits for your approval.
 
 Nothing is submitted, deposited or tagged.

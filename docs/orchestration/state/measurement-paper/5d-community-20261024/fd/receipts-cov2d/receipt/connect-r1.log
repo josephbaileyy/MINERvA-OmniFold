@@ -1,0 +1,18 @@
+host=login11 start=2026-11-03T02:10:15Z pid=184976 ppid=184569
+deploy porcelain_lines=0 head=b4fb3c6cdd351cf68b04fbc3fea6648ba11d4fb8
+2d-unfolding/cov2d/cov2d.py: OK
+2d-unfolding/cov2d/cov2d_receipt.py: OK
+938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b  2d-unfolding/re2/re2_driver.py
+869a65c3bcce1a3b56ecd197ecdf3b6cf2741e0611f91b582c3064f67967bc08  nd-unfolding/fd_1b_toys.py
+6726ff99c7787d1ee6dff7fa5d08df88f9df76285d98c4c462f964ac6164779f  nd-unfolding/s5e_deform.py
+f8a7d2c2fcd37b025ae3c028088d496b1aea7519d347febb3d63da6511015481  nd-unfolding/pv-ladder/pvl_lib.py
+receipt rc=0
+COV2D-RECEIPT PASS stops=0
+	Percent of CPU this job got: 219%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 44:44.71
+	Maximum resident set size (kbytes): 4269632
+	File system inputs: 328488320
+d30e197e770602bfe511e39485635c5bca792e2c1a6f39e17da90de674cd68fb  /pscratch/sd/j/josephrb/cov2d-receipt-20261102/receipt.json
+20e1e700040482e6fe0c71f4ed0fc8cb34fe4af181a0a4c224ea6a76b0ecce97  /pscratch/sd/j/josephrb/cov2d-receipt-20261102/receipt.out
+ac9508d5c4ea0d96ed881c3c2bf178fc2e4c89bf523881868de438fddff293a4  /pscratch/sd/j/josephrb/cov2d-receipt-20261102/receipt.time
+end=2026-11-03T02:55:35Z
