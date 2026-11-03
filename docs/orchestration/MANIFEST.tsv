@@ -5806,6 +5806,13 @@ docs/orchestration/state/2d-closeout/stageF/methods/stage0-r10-20261101/REPORT.m
 docs/orchestration/state/2d-closeout/stageF/methods/stage0-r10-20261101/check_ledger.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/stage0-r10-20261101/ledger.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/stage0-r10-20261101/review.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/targeted-round-paper-20261103/CHECK-HELD.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/targeted-round-paper-20261103/NOTE-PROBES-728.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/targeted-round-paper-20261103/REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/targeted-round-paper-20261103/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/targeted-round-paper-20261103/VALUES-CHECK.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/targeted-round-paper-20261103/check_ledger.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/targeted-round-paper-20261103/ledger.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/tex-reflow-20261026/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/tex-reflow-20261026/apply_reflow.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/tex-reflow-20261026/grandfathered-absence-claims.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
