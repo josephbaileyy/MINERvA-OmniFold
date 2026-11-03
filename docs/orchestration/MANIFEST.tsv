@@ -1658,6 +1658,14 @@ docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/af
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/tables/placement.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/tables/rates.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/tables/summary.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/inv/CODED-ON.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/inv/ours-paper.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/move-check.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/dropped-ours-paper.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/placement.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/rates.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/summary.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/PRD-REVIEW-GEMINI-ANSWER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/PRD-REVIEW-GEMINI-PROMPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
@@ -1666,6 +1674,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cu
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/cutlist.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/cutlist.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/distinct_cuts.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/move_check.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/moves.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/price_rp9.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/rp9.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
