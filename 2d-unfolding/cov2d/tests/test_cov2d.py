@@ -27,6 +27,12 @@ PARTB_RUNS = REPO / "docs/orchestration/state/2d-closeout/stageF/methods/re2/run
 W_FLUX = np.linspace(0.5, 1.5, 100)
 C2_RECORD = (REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip"
              / "c2-clip2.json")
+C2_WEAKENED = {
+    "G18": [79, 95, 107, 111, 123, 127, 143, 159, 175, 191],
+    "AR23": [9, 10, 11, 12, 25, 26, 27, 28, 29, 32, 33, 41, 42, 43, 44, 45, 48, 49, 51, 57, 58, 59, 60, 61, 64, 65,
+             74, 75, 76, 77, 80, 81, 91, 92, 93, 96, 97, 98, 99, 108, 109, 112, 113, 114, 115, 116, 124, 125, 140,
+             141, 156, 157, 172, 173],
+}
 
 
 def noatime():
@@ -166,8 +172,11 @@ class Compose(unittest.TestCase):
         cells = rec["efficiency"]["cells205"]
         self.assertEqual(len(cells), 205)
         weak = {t: c.weakened_cells(rec["b"][t]["variance_ratio"]["option_1_clipped"], cells) for t in ("G18", "AR23")}
-        self.assertEqual({t: len(v) for t, v in weak.items()}, {"G18": 10, "AR23": 54})
-        self.assertEqual(weak["G18"][:3], [79, 95, 107])
+        self.assertEqual(weak, C2_WEAKENED)                    # the declaration's section 5.2 lists, in full
+        for t, (cell, ratio) in {"G18": (127, 0.865), "AR23": (43, 0.761)}.items():
+            r = rec["b"][t]["variance_ratio"]["option_1_clipped"]
+            self.assertEqual(cells[int(np.argmin(r))], cell)
+            self.assertAlmostEqual(min(r), ratio, places=3)
         for t in ("G18", "AR23"):
             mx = rec["b"][t]["option_1"]["sigma_Q"]["abs_max"]
             self.assertEqual(cells[int(np.argmax(mx))], c.OUTLIER_CELL)
