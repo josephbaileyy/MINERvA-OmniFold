@@ -700,6 +700,8 @@ def _load_world(a) -> dict:
             tdw_cv = np.load(fh, allow_pickle=False).astype(np.float64)
         if tdw_cv.shape != (np.asarray(bank_cv["td_pt"]).size,):
             raise Refusal("the CV per-row denominator weight is not one per truth-denominator row")
+        if not (np.all(np.isfinite(tdw_cv)) and np.all(tdw_cv >= 0)):    # the writer's 0 <= w gate, checked (audit)
+            raise Refusal("the CV per-row denominator weight has a negative or non-finite row")
     return {"npz_sha": npz_sha, "bkg_sha": bkg_sha, "pins": pins, "inputs": inputs, "bkg": bkg, "bank_cv": bank_cv,
             "tdw_cv": tdw_cv,
             "alignment": s5p_universe.check_alignment(bank_cv, inputs, bkg), "flux": flux,

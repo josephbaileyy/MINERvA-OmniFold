@@ -307,17 +307,125 @@ def linearisation(R: dict) -> dict:
     return out
 
 
+# ------------------------------------------------------------------------------------------------ c2check
+
+DRAW_BLOCK = 20
+
+
+def _bins(cells: np.ndarray, w: np.ndarray, n: int) -> np.ndarray:
+    ok = cells >= 0
+    return np.bincount(cells[ok], weights=w[ok], minlength=n)
+
+
+def multiplicative(V: np.ndarray, cv: np.ndarray, S: np.ndarray) -> np.ndarray:
+    """C2's (v) multiplicative composition per row, for draws S (draws x universes): a_CV prod_j (a_uj / a_CV), 0
+    where a_CV <= 0 or a drawn universe's weight is <= 0 (clip_probe2's floor)."""
+    pos = cv > 0
+    with np.errstate(divide="ignore", invalid="ignore"):
+        L = np.where(pos[None] & (V > 0), np.log(np.where(V > 0, V, 1.0)) - np.log(np.where(pos, cv, 1.0))[None], 0.0)
+    Z = (pos[None] & (V <= 0)).astype(np.float64)
+    return np.where(pos[None] & ((S @ Z) == 0), np.exp(np.log(np.where(pos, cv, 1.0))[None] + S @ L), 0.0)
+
+
+def c2_truth(V: dict, cv: dict, S: np.ndarray, r: np.ndarray, geo: dict, phi: np.ndarray, const: dict,
+             block: int = DRAW_BLOCK) -> dict:
+    """C2's per-draw quantities on 1B's 16 cells for one truth over its declared draws S (draws x universes), first
+    order, under D1(b): the truth is 1B's own graded x_T (U xt_packed on the fine sums the bulk's true_xsec forms).
+    V and cv: per-universe and CV rows of "wt", "wr", "bkgw" and the denominator's "tdw" rows, and "D" per fine cell.
+    geo: each row's fine cell (gen for truth-passing signal rows, reco for reco-passing ones, background reco, the
+    denominator rows'), fm (fine -> reporting cell) and U, packed. Returns per draw (cells x draws):
+    S, m_seen (reco-kept signal rows by truth cell, counts); S_reco, m_bkg (by reco cell); N = U x_T unclipped,
+    Nc = U x_T with C2's option (1) (truth and denominator rows clipped on their own sign), m_all = Nc - N (signed:
+    clipping moves both sums of a ratio); Nm, the multiplicative composition's U x_T (descriptive)."""
+    pack, U = const["pack"], geo["U"]
+    nf = int(np.prod(geo["shape"]))
+    keep = pack["keep"]
+    fm = geo["fm"]
+    cells16 = lambda fine: np.where(fine >= 0, fm[np.maximum(fine, 0)], -1)  # noqa: E731
+    t16, r16, b16 = cells16(geo["gen"]), cells16(geo["reco"]), cells16(geo["bkg"])
+    seen = np.where(geo["reco"] >= 0, t16, -1)
+    k_all = S.sum(axis=1) - 1.0
+    out = {q: np.zeros((N_CELLS, S.shape[0])) for q in ("S", "m_seen", "S_reco", "m_bkg", "N", "Nc", "Nm")}
+    for d0 in range(0, S.shape[0], block):
+        Sb, kb = S[d0:d0 + block], k_all[d0:d0 + block, None]
+        comp = {q: Sb @ V[q] - kb * cv[q][None] for q in ("wt", "wr", "bkgw", "tdw", "D")}
+        mult = {q: multiplicative(V[q], cv[q], Sb) for q in ("wt", "tdw")}
+        for i in range(Sb.shape[0]):
+            d = d0 + i
+            lam = comp["wr"][i] * r
+            out["S"][:, d] = _bins(seen, lam, N_CELLS)
+            out["m_seen"][:, d] = _bins(seen, np.maximum(-lam, 0.0), N_CELLS)
+            out["S_reco"][:, d] = _bins(r16, lam, N_CELLS)
+            out["m_bkg"][:, d] = _bins(b16, np.maximum(-comp["bkgw"][i], 0.0), N_CELLS)
+            wt, dr = comp["wt"][i], comp["tdw"][i]
+            wtp = np.where(wt * r < 0, 0.0, wt)
+            m_den = _bins(np.where(dr < 0, geo["td"], -1), -dr, nf)
+            Dc = comp["D"][i]
+            Dp = np.where(m_den > 0, Dc + m_den, Dc)
+            Dm = _bins(geo["td"], mult["tdw"][i], nf) + (Dc - _bins(geo["td"], dr, nf))
+            sums = [(_bins(geo["gen"], wt * r, nf), _bins(geo["gen"], wt, nf), Dc),
+                    (_bins(geo["gen"], wtp * r, nf), _bins(geo["gen"], wtp, nf), Dp),
+                    (_bins(geo["gen"], mult["wt"][i] * r, nf), _bins(geo["gen"], mult["wt"][i], nf), Dm)]
+            for q, (A, B, Dq) in zip(("N", "Nc", "Nm"), sums):
+                out[q][:, d] = xt_packed(A[keep][None], B[keep][None], Dq[keep][None], phi[d][None],
+                                         const["n_nucleons"], const["data_pot"], pack)[0] @ U.T
+    out["m_all"] = out["Nc"] - out["N"]
+    return out
+
+
+def c2_block(q: dict, ref_x: np.ndarray, rel: np.ndarray) -> dict:
+    """One truth's entry of C2's record (clip_probe2's rec["b"][tune] shape) from c2_truth's quantities: the offsets
+    in units of 1B's relative sigma_c (S1's C_total_plus_C_resp, a proxy for C_T, under clip_probe2's key "sigma_Q"),
+    the variance ratios over band_reference of the single-universe U x_T, and the clipped truth's mean shift."""
+    with np.errstate(invalid="ignore", divide="ignore"):
+        o_a = q["m_seen"] / q["S"]
+        o_1 = o_a - q["m_all"] / q["N"]
+        o_b = q["m_bkg"] / q["S_reco"]
+        vr = {"first_order": np.var(q["N"], axis=1, ddof=1) / ref_x,
+              CLIPPED: np.var(q["Nc"], axis=1, ddof=1) / ref_x,
+              "multiplicative": np.var(q["Nm"], axis=1, ddof=1) / ref_x}
+        shift = np.mean(q["m_all"] / q["N"], axis=1) / rel
+    return {"option_a": {"sigma_Q": cp2.stats(o_a, rel)}, "option_1": {"sigma_Q": cp2.stats(o_1, rel)},
+            "background_both_options": {"sigma_Q": cp2.stats(o_b, rel)},
+            "variance_ratio": {k: v.tolist() for k, v in vr.items()},
+            "gate_724": gate_724(vr[CLIPPED]),
+            "weakened_cells": cov2d.weakened_cells(vr[CLIPPED], np.arange(N_CELLS)),
+            "clipped_truth_mean_shift_sigma_c": {"per_cell": shift.tolist(), **cp2.q3(np.abs(shift))},
+            "m_all_note": "signed: U (x_T clipped - x_T unclipped); clipping moves both sums of x_T's ratio"}
+
+
+def row_match(gen: np.ndarray, wt: np.ndarray, in_ps: np.ndarray, td: np.ndarray, tdw: np.ndarray,
+              cell_s: np.ndarray, cell_d: np.ndarray) -> dict:
+    """C2's (vi) on 1B's trees: signal rows with truth in the phase space against the denominator rows, keyed by
+    clip_probe2.row_hash of the five coordinates and the CV weight; each tree's unmatched w_truth share per cell."""
+    hs = cp2.row_hash([np.asarray(gen[in_ps, k], np.float64) for k in range(5)] + [np.asarray(wt[in_ps], np.float64)])
+    hd = cp2.row_hash([np.asarray(td[:, k], np.float64) for k in range(5)] + [np.asarray(tdw, np.float64)])
+    um_s, um_d = cp2.unmatched(hs, hd), cp2.unmatched(hd, hs)
+    cs, cdd = cell_s[in_ps], cell_d
+    share = lambda c, w, um: np.array([w[(c == k) & um].sum() / w[c == k].sum() if w[c == k].sum() > 0 else np.nan  # noqa: E731
+                                       for k in range(N_CELLS)])
+    sh_s, sh_d = share(cs, np.nan_to_num(wt[in_ps]), um_s), share(cdd, np.nan_to_num(tdw), um_d)
+    worst = float(np.nanmax(np.abs(np.concatenate([sh_s, sh_d]))))
+    return {"signal_rows_in_phase_space": int(in_ps.sum()), "signal_rows_unmatched": int(um_s.sum()),
+            "truth_rows": int(td.shape[0]), "truth_rows_unmatched": int(um_d.sum()),
+            "signal_unmatched_share_per_cell": sh_s.tolist(), "truth_unmatched_share_per_cell": sh_d.tolist(),
+            "largest_cell_unmatched_share": worst if np.isfinite(worst) else None}
+
+
 # ------------------------------------------------------------------------------------------ the calibration job
 
 SCHEMA_CAL = "fd-1b-c2-calibration/1"
 _STATE: dict = {}
 
 
-def fine_sums(world: dict, a, r: dict, tags: list[str], cells: np.ndarray) -> tuple[dict, dict, np.ndarray, list]:
+def fine_sums(world: dict, a, r: dict, tags: list[str], cells: np.ndarray,
+              rows: dict | None = None) -> tuple[dict, dict, np.ndarray, list]:
     """Per universe (rows in ``tags``' order) the fine sums 1B's x_T is made of, each universe's weights read once
     (fd_1b_mc.verified_weights) and composed as fd_1b_mc._single gives them: A[truth] = sum w_truth r, B = sum w_truth
     over truth-passing rows at their fine cells, and D its denominator per fine cell. Returns (H, cv, Flux universes'
-    Phi_u rows, the detector universes whose denominator is not the CV's bitwise)."""
+    Phi_u rows, the detector universes whose denominator is not the CV's bitwise). With ``rows`` (a dict), the same
+    read also fills each universe's row arrays there ("wt", "wr", "bkgw" and the denominator's "tdw": a detector
+    universe's is the CV's per-row weight, world["tdw_cv"]), for c2check."""
     import fd_1b_mc as mc
     inputs, bkg = world["inputs"], world["bkg"]
     n = int(np.prod(tuple(np.asarray(e).size - 1 for e in inputs["edges"])))
@@ -327,10 +435,18 @@ def fine_sums(world: dict, a, r: dict, tags: list[str], cells: np.ndarray) -> tu
     cv = {"B": hist(wt_cv), "D": np.asarray(inputs["denom_nd"], float).ravel(order="C"),
           **{f"A_{t}": hist(wt_cv * rt) for t, rt in r.items()}}
     H = {k: np.empty((len(tags), n)) for k in cv}
+    if rows is not None:
+        n_td = np.asarray(world["bank_cv"]["td_pt"]).size
+        rows.update({"wt": np.empty((len(tags), wt_cv.size)), "wr": np.empty((len(tags), wt_cv.size)),
+                     "bkgw": np.empty((len(tags), np.asarray(bkg["bkg_w"]).size)), "tdw": np.empty((len(tags), n_td))})
     phi, det_differs = [], []
     for i, tag in enumerate(tags):
         _, zero = mc.verified_weights(world, a, tag)
         single, p = mc._single(inputs, bkg, world["bank_cv"], tag, zero, world["flux"])
+        if rows is not None:
+            for k in ("wt", "wr", "bkgw"):
+                rows[k][i] = single[k]
+            rows["tdw"][i] = zero["tdw"] if "tdw" in zero else world["tdw_cv"]
         H["B"][i], H["D"][i] = hist(single["wt"]), single["denom"].ravel(order="C")
         for t, rt in r.items():
             H[f"A_{t}"][i] = hist(single["wt"] * rt)
@@ -357,17 +473,13 @@ def _one_set(job: tuple[str, int]) -> tuple[str, int, np.ndarray, np.ndarray]:
     return t, s, rx, rl
 
 
-def calibrate_main(a) -> dict:
-    """The calibration job (FD-1B-STAGED-ADDENDUM-A2-1.md): one read of every universe, the references, a measured
-    single-set time on the real fine-cell count (refusing when the projection passes ``--budget-seconds``), then
-    CAL_SETS replicate sets per truth across worker processes, and the director's outputs and the D4 controls."""
-    import hashlib
-    import multiprocessing
-    import time
-
+def prepare(a, rows: bool = False) -> dict:
+    """What the calibration and c2check share, so neither can drift from the other: the world (fd_1b_mc._load_world),
+    each truth's r (and D8's rows with r < 0), one read of every universe (fine_sums), the kept fine cells (in a
+    reporting cell, and non-zero somewhere), the packing, and each truth's single-universe U x_T with its
+    band_reference (the variance ratio's denominator) and the linear count's."""
     import fd_1b_inv as inv
     import fd_1b_mc as mc
-    t0 = time.time()
     inv.OPENED.clear()
     world = mc._load_world(a)
     inputs = world["inputs"]
@@ -389,7 +501,9 @@ def calibrate_main(a) -> dict:
     col = {u: i for i, u in enumerate(tags)}
     cells = mc.flat_cells(np.asarray(inputs["MCgen"], float), inputs["edges"])
     cells = np.where(np.asarray(inputs["pass_truth"], bool), cells, -1)
-    H, cv, phi, det_differs = fine_sums(world, a, r, tags, cells)
+    R = {} if rows else None
+    H, cv, phi, det_differs = fine_sums(world, a, r, tags, cells, R)
+    D_full, D_cv_full = (H["D"].copy(), cv["D"].copy()) if rows else (None, None)
     support = U_full.sum(axis=0) > 0
     live = np.abs(cv["D"]) + np.abs(H["D"]).sum(axis=0) + np.abs(cv["B"]) + np.abs(H["B"]).sum(axis=0) > 0
     keep = np.flatnonzero(support & live)
@@ -411,6 +525,29 @@ def calibrate_main(a) -> dict:
         ref_count[t] = band_reference(H[f"A_{t}"] @ (U > 0).astype(np.float64).T, w_flux, order, bands, sa.FLUX)
         if not (np.all(ref_x[t] > 0) and np.all(ref_count[t] > 0)):
             raise Refusal(f"{t}: a reporting cell has no band variance")
+    return {"world": world, "flux_p": flux_p, "U_full": U_full, "truths": truths, "push": push, "r": r,
+            "r_neg": r_neg, "order": order, "bands": bands, "tags": tags, "col": col, "cells": cells, "H": H, "cv": cv,
+            "phi": phi, "det_differs": det_differs, "keep": keep, "shape": shape, "pack": pack, "U": U, "const": const,
+            "flux_cols": flux_cols, "phi_single": phi_single, "ref_x": ref_x, "ref_count": ref_count,
+            "single_x": single_x, "rows": R, "D_full": D_full, "D_cv_full": D_cv_full}
+
+
+def calibrate_main(a) -> dict:
+    """The calibration job (FD-1B-STAGED-ADDENDUM-A2-1.md): one read of every universe, the references, a measured
+    single-set time on the real fine-cell count (refusing when the projection passes ``--budget-seconds``), then
+    CAL_SETS replicate sets per truth across worker processes, and the director's outputs and the D4 controls."""
+    import hashlib
+    import multiprocessing
+    import time
+
+    import fd_1b_inv as inv
+    import fd_1b_mc as mc
+    t0 = time.time()
+    P = prepare(a)
+    H, cv, U, ref_x, ref_count, flux_cols, phi, const, flux_p, col, bands, keep, truths, world = (
+        P[k] for k in ("H", "cv", "U", "ref_x", "ref_count", "flux_cols", "phi", "const", "flux_p", "col", "bands",
+                       "keep", "truths", "world"))
+    r_neg, det_differs, single_x = P["r_neg"], P["det_differs"], P["single_x"]
     groups = world["groups"]
     state = {"H": H, "cv": cv, "U": U, "ref_x": ref_x, "ref_count": ref_count, "flux_cols": flux_cols,
              "phi": phi, "const": const, "flux_p": flux_p, "groups": groups, "col": col, "bands": bands}

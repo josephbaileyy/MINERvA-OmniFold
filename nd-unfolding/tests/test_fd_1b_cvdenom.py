@@ -162,6 +162,102 @@ class Detector(unittest.TestCase):
             cd.detector_check(self.tmp, self.pins, self.denom)
 
 
+def edge_tree(seed=0, n_edge=3):
+    """tree() with rows just below the p_par edge 4.0 that float32 stores ON it: they change cell, as the real bank's
+    did (the first run's B failure)."""
+    a = tree(seed=seed)
+    bank, _ = cd.row_sets(a, EDGES)
+    rows = np.flatnonzero(bank)[30:30 + n_edge]
+    a["MC"][rows], a["MC_pz"][rows] = 0.3, 4.0 - 1e-8
+    a["MC_eavail"][rows] = [0.2, 1.0, 0.2][:n_edge]          # each edge row in its own cells, one row per pair
+    a["MC_q3"][rows] = [0.3, 0.3, 1.0][:n_edge]
+    a["MC_W"][rows] = 1.0
+    assert np.float32(4.0 - 1e-8) == np.float32(4.0)
+    return a, rows
+
+
+def npz_denom(a, pot):
+    _, npz = cd.row_sets(a, EDGES)
+    return cd.histogram([a[k][npz] for k in cd.KEYS[:5]], a["w_truth"][npz] * pot, EDGES)
+
+
+class Tolerance(unittest.TestCase):
+    def test_edge_rows_pass_and_are_attributed(self):
+        a, rows = edge_tree()
+        cv, w = bank_cv(a, 0.2)
+        rec, _ = cd.checks(a, 0.2, cv, npz_denom(a, 0.2), EDGES)
+        self.assertFalse(rec["B_histogram_equals_denom_nd"])
+        t = rec["B_tolerance"]
+        self.assertTrue(t["passes"], t)
+        self.assertEqual(t["rows_changing_cell"], len(rows))
+        self.assertGreaterEqual(len(t["pairs"]), 1)
+        self.assertTrue(all(p["axis"] == 1 for p in t["pairs"]))          # p_par moves
+        self.assertEqual(t["cells_differing"], 2 * len(t["pairs"]))
+        self.assertTrue(rec["C_npz_writer_reproduced"])
+
+    def test_a_weight_change_fails(self):
+        a, _ = edge_tree()
+        cv, _ = bank_cv(a, 0.2)
+        h = npz_denom(a, 0.2)
+        h.flat[np.flatnonzero(h)[-1]] += 0.5
+        t = cd.checks(a, 0.2, cv, h, EDGES)[0]["B_tolerance"]
+        self.assertFalse(t["passes"])
+        self.assertFalse(t["pairwise_conserving"])
+        self.assertEqual(len(t["unpaired"]), 1)
+
+    def test_a_broken_pair_fails(self):
+        a, _ = edge_tree(n_edge=1)
+        cv, _ = bank_cv(a, 0.2)
+        h = npz_denom(a, 0.2)
+        t0 = cd.checks(a, 0.2, cv, h, EDGES)[0]["B_tolerance"]
+        self.assertTrue(t0["passes"])
+        cell = t0["pairs"][0]["cells"][0]
+        h.flat[cell] += 1e-6
+        t = cd.checks(a, 0.2, cv, h, EDGES)[0]["B_tolerance"]
+        self.assertFalse(t["passes"])
+        self.assertEqual(t["pairs"], [])                    # the two cells no longer cancel: neither has a partner
+        self.assertEqual(len(t["unpaired"]), 2)
+
+    def test_two_rows_across_one_edge_in_one_cell_pair_fail_as_ruled(self):
+        a, rows = edge_tree()
+        a["MC_eavail"][rows], a["MC_q3"][rows] = 0.2, 0.3   # all three rows cross between the same two cells
+        cv, _ = bank_cv(a, 0.2)
+        t = cd.checks(a, 0.2, cv, npz_denom(a, 0.2), EDGES)[0]["B_tolerance"]
+        self.assertTrue(t["pairwise_conserving"])
+        self.assertFalse(t["within_one_row"])
+        self.assertFalse(t["passes"])
+
+    def test_more_than_one_row_and_a_total_fail(self):
+        shape = (2, 2, 1, 1, 1)
+        h64 = np.full(shape, 10.0)
+        h32 = h64.copy()
+        h32.flat[0], h32.flat[2] = 15.0, 5.0                # a pair, Delta 5, rows of weight 1
+        c = np.array([0, 0, 2, 2, 1, 3])
+        t = cd.b_tolerance(h32, h64, c, c, np.ones(6))
+        self.assertTrue(t["pairwise_conserving"])
+        self.assertFalse(t["within_one_row"])
+        self.assertFalse(t["passes"])
+        h32 = h64.copy()
+        h32.flat[0], h32.flat[2] = 10.5, 9.5
+        self.assertTrue(cd.b_tolerance(h32, h64, c, c, np.ones(6))["passes"])
+        h32.flat[1] = 10.0 + 1e-3                           # a third cell: unpaired, and the total moves
+        t = cd.b_tolerance(h32, h64, c, c, np.ones(6))
+        self.assertFalse(t["passes"])
+        self.assertFalse(t["total_ok"])
+
+    def test_flat_cells_is_fd_1b_mcs(self):
+        try:
+            import fd_1b_mc
+        except Exception as e:                              # noqa: BLE001
+            self.skipTest(f"fd_1b_mc does not import here: {e}")
+        a = tree(5000, seed=7)
+        a["MC_pz"][:10] = EDGES[1][-1]
+        a["MC"][10:20] = EDGES[0][1]
+        cols = [a[k] for k in cd.KEYS[:5]]
+        X = np.column_stack(cols)
+        self.assertTrue(np.array_equal(cd.flat_cells(cols, EDGES), fd_1b_mc.flat_cells(X, EDGES)))
+
+
 class Job(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp())
@@ -214,6 +310,14 @@ class Job(unittest.TestCase):
         self.assertTrue(np.array_equal(w, a["w_truth"][bank] * 0.25))
         self.assertEqual(rec["tdw_cv_file_sha256"], hashlib.sha256((self.tmp / "o.npy").read_bytes()).hexdigest())
         self.assertEqual(rec["atime_moved"], [])
+
+    def test_edge_rows_pass_under_e2_and_write_the_weights(self):
+        a, _ = edge_tree()
+        rc, rec = self.run_main(a, 0.25, denom_override=npz_denom(a, 0.25))
+        self.assertEqual((rc, rec["verdict"]), (0, "PASS"))
+        self.assertFalse(rec["checks"]["B_histogram_equals_denom_nd"])
+        self.assertTrue(rec["checks"]["B_tolerance"]["passes"])
+        self.assertTrue((self.tmp / "o.npy").exists())
 
     def test_a_failed_check_writes_no_weights_and_goes_to_the_director(self):
         a = tree()

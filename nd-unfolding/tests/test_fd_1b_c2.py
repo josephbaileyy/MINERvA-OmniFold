@@ -356,6 +356,7 @@ import argparse  # noqa: E402
 import json  # noqa: E402
 
 import s1_assemble as sa  # noqa: E402
+import s5p_universe  # noqa: E402
 import test_fd_1b_mc as tmc  # noqa: E402
 
 
@@ -421,6 +422,87 @@ class Job(tmc.Case):
     def test_the_budget_guard_refuses_before_the_pool(self):
         with self.assertRaisesRegex(c2.Refusal, "passes the budget"):
             self.run_job(budget=1e-3)
+
+
+class C2Truth(tmc.Case):
+    """D1: c2check's truth is the bulk's. c2_truth's N and Nc for a declared draw equal U x_T of toy_experiment's own
+    truth under "data" and "nature" on fd_1b_mc.compose's composite of the same draw (summation order aside)."""
+
+    def matrices(self):
+        tags = toys.s1_universes()
+        inputs = self.inputs
+        n_bins = int(np.prod([np.asarray(e).size - 1 for e in inputs["edges"]]))
+        V = {k: [] for k in ("wt", "wr", "bkgw", "tdw", "D")}
+        for t in tags:
+            w = self.weights_cv_det(t)
+            single, _ = mc._single(inputs, self.bkg, self.bank_cv, t, w, self.flux)
+            for k in ("wt", "wr", "bkgw"):
+                V[k].append(single[k])
+            V["tdw"].append(np.asarray(w["tdw"], float) if "tdw" in w else np.ones(50))
+            V["D"].append(np.ravel(single["denom"]))
+        V = {k: np.array(v) for k, v in V.items()}
+        cv = {"wt": np.asarray(inputs["w_truth"], float), "wr": np.asarray(inputs["w_reco"], float),
+              "bkgw": np.asarray(self.bkg["bkg_w"], float), "tdw": np.ones(50),
+              "D": np.ravel(np.asarray(inputs["denom_nd"], float))}
+        return tags, V, cv, n_bins
+
+    def test_the_gates_truth_is_the_bulks(self):
+        tags, V, cv, n_bins = self.matrices()
+        inputs = self.inputs
+        col = {t: i for i, t in enumerate(tags)}
+        groups = toys.interaction_groups(self.w.bank)
+        flux_p = np.full(100, 0.01)
+        seeds = [3_620_000, 3_620_001, 3_620_002]
+        draws = [mc.draw_universes(toys.draw_for_seed(sd, flux_p, groups)) for sd in seeds]
+        _, bands, _ = c2.layout_1b()
+        S = c2.selection(draws, col, bands)
+        shape = tuple(np.asarray(e).size - 1 for e in inputs["edges"])
+        fm = np.arange(n_bins) % sa.N_CELLS
+        U = np.vstack([np.where(fm == c, 1.0 + 0.1 * c, 0.0) for c in range(sa.N_CELLS)])
+        keep = np.arange(n_bins)
+        pack = c2.packing(keep, shape, inputs["edges"])
+        ptru, prec = np.asarray(inputs["pass_truth"], bool), np.asarray(inputs["pass_reco"], bool)
+        geo = {"gen": np.where(ptru, mc.flat_cells(np.asarray(inputs["MCgen"], float), inputs["edges"]), -1),
+               "reco": np.where(prec, mc.flat_cells(np.asarray(inputs["MCreco"], float), inputs["edges"]), -1),
+               "bkg": mc.flat_cells(np.asarray(self.bkg["bkg_reco"], float), inputs["edges"]),
+               "td": mc.td_cells(self.bank_cv, inputs["edges"]), "fm": fm, "U": U, "shape": shape}
+        phi = np.array([self.flux[int(d[0].rpartition("_")[2])] for d in draws])
+        r = np.random.default_rng(11).uniform(0.7, 1.3, inputs["w_truth"].shape[0])
+        V["wt"][:, :40] *= -1.0                         # negative truth rows, so the clip acts
+        tdc = geo["td"]
+        counts = np.bincount(tdc[tdc >= 0], minlength=n_bins)
+        busy = np.flatnonzero((tdc >= 0) & (counts[np.maximum(tdc, 0)] >= 4))
+        self.assertGreater(busy.size, 0)
+        V["tdw"][col["MaRES_1"], busy[:1]] = -0.2         # a negative composite row in a cell that stays positive
+        V["tdw"][col["MaRES_0"], busy[:1]] = -0.2
+        for t in ("MaRES_0", "MaRES_1"):                  # the precondition: each universe's D is its rows' histogram
+            V["D"][col[t]] = np.ravel(s5p_universe.denominator(self.bank_cv, V["tdw"][col[t]], inputs["edges"]))
+        const = {"n_nucleons": float(inputs["n_nucleons"]), "data_pot": float(inputs["data_pot"]), "pack": pack}
+        q = c2.c2_truth(V, cv, S, r, geo, phi, const, block=2)
+
+        def load(t):
+            w = dict(self.weights_cv_det(t))
+            i = col[t]
+            w["wt"] = V["wt"][i]
+            if "tdw" in w:
+                w["tdw"] = V["tdw"][i]
+            return w
+        moved = 0
+        for d, tags_d in enumerate(draws):
+            with mock.patch.object(mc, "_single", lambda i_, b_, bc, t, w, f: self._single_real(i_, b_, bc, t, w, f)):
+                ui, ub, _ = mc.compose(inputs, self.bkg, self.bank_cv, tags_d, load, self.flux, np.ones(50))
+            for rule, key in (("data", "N"), ("nature", "Nc")):
+                _, x, _ = mc.toy_experiment(inputs, self.bkg, ui, ub, r, seeds[d], rule)
+                np.testing.assert_allclose(q[key][:, d], U @ np.ravel(x), rtol=1e-10, atol=0, err_msg=f"{rule} {d}")
+            moved += int(np.any(q["Nc"][:, d] != q["N"][:, d]))
+        self.assertGreater(moved, 0)
+        self.assertTrue(np.all(np.isfinite(q["Nm"])))
+
+    def _single_real(self, inputs, bkg, bank_cv, tag, w, flux):
+        return C2Truth._real(inputs, bkg, bank_cv, tag, w, flux)
+
+
+C2Truth._real = staticmethod(mc._single)
 
 
 if __name__ == "__main__":
