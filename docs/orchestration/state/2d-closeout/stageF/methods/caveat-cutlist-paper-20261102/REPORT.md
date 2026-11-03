@@ -327,8 +327,8 @@ Rendered from the sources: `\fvval` values are filled in, and a pointer reads "n
 
 | check | result |
 |---|---|
-| the ledger (`check_ledger.py`, base `589eb47d0`) | 15 rows, 77 probes, 61 changed base sentences, 0 failures; self-test PASS. `sec:coverage` is declared removed from the paper. The note's own label of that name is not counted as a reference to it, and a test shows the check still fires on a paper reference |
-| `make_values_fived16.py --check` | PASS; no value changes |
+| the ledger (`check_ledger.py`, base `589eb47d0`) | 16 rows, 89 probes, 57 changed base sentences, 0 failures; self-test PASS. `sec:coverage` is declared removed from the paper. The note's own label of that name is not counted as a reference to it, and a test shows the check still fires on a paper reference |
+| `make_values_fived16.py --check` and `--self-test` | PASS; no value changes; the two installed figures equal their E-A2 sources |
 | `check_sec4_receipts.py` and its self-test | PASS (16/16, the 0.06 binding added; 19 perturbations rejected) |
 | `build_all.sh` | PASS: paper 12 pp, note 135 pp, primer 15 pp; no "??". The paper's one overfull box is the base's (Table III) |
 | the two-direction review (`review.md`) | nothing false, no lost fact. 4 Medium: all fixed. 8 Low: 6 fixed; the 1B wording and IV G's tension were then settled by the director's rulings (above) |
@@ -337,7 +337,7 @@ Rendered from the sources: `\fvval` values are filled in, and a pointer reads "n
 | `check_held.py --fact-held` | the 3 known flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07) |
 | `generate_manifest.py --check` | see the PR |
 | local CI | see the PR |
-| the reading copy | 31 pages: each changed paper page (1 and 3–12) followed by its base page, then the base's page 13; the note's pages 56, 58, 64 and 74 (the added facts), each followed by the base page where that text stood (56, 58, 64, 73) |
+| the reading copy | 33 pages: each changed paper page (1 and 3–12) followed by its base page, then the base's page 13; the note's pages 56, 58, 64, 74 and 78 (the added facts, and the modes figure with its caption), each followed by the base page where that text stood (56, 57, 64, 73, 78) |
 
 Nothing is submitted, deposited or tagged.
 <!-- absence-ok: the report quotes the paper's caveats, before and after, with their sources; it makes no claim of its own -->
