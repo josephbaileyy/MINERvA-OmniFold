@@ -7,8 +7,8 @@
 - the pointer each move needs, and its note-prints-it probe;
 - which combination reaches ≤ 6 per 1k, if any does, and what the paper would then no longer report.
 
-**Done by** limitations-catalog. **Nothing in the paper moved:** every edit was made to a scratch copy. A PRD-referee
-read (the director's) comes before this reaches Joseph.
+**Done by** limitations-catalog. **Nothing in the paper moved:** every edit was made to a scratch copy. The director's
+PRD-referee read is below ("The referee read").
 
 **CITABLE FOR:** the price of each move, and of the combinations measured, at `97e30dda`.
 
@@ -74,6 +74,25 @@ The labels each move removes are in `singles.json` (`caveats_gone`), and the edi
 
 Each would print only in the note. The single-move numbers add up: the built combinations match their sum within one
 caveat and 15 words.
+
+## The referee read (director, Gemini, 2026-11-03)
+
+The read is committed verbatim beside this file, with `SHA256SUMS`:
+- `PRD-REVIEW-RP9-GEMINI-PROMPT.txt` (`a8e02d0f…`): the director's questions, this README, and pdftotext of the
+  paper's standalone build at `4384f022`, the same paper as `97e30dda`;
+- `PRD-REVIEW-RP9-GEMINI-ANSWER.txt` (`c5eac29d…`).
+
+It agrees that IV B stays and that IV E is condensed rather than moved. It endorses moving III A, IV C's detail,
+IV D's closure, IV F and V C, and it names over-qualified sentences in the main result's sections.
+
+**Two points disagree with earlier reads. They are recorded here, not resolved:**
+1. **IV F (input rounding).** This read endorses moving it: "a numerical/computing sanity check … summarized here in
+   at most one sentence". The 11-02 read of the cut list (`../cutlist/PRD-REVIEW-GEMINI-ANSWER.txt`) objected to
+   moving it (MV15), as a "Strong objection" ("Keep in main paper"), because of the instability of up to 2.6σ. Joseph
+   kept MV15 in the paper, condensed (`DECISION-20261102-joseph-caveat-cut-list.md` item 2).
+2. **The ≤ 6 target.** This read calls it "an arbitrary, counterproductive proxy". The #707 read called "~6 per 1,000
+   words … an appropriate, realistic target" (same file, line 37; the 11-02 decision record paraphrases it as
+   "reasonable").
 
 ## How it was measured
 

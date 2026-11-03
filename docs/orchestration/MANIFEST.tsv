@@ -1697,7 +1697,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/in
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/inv/ours-note-body.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/inv/ours-paper.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/remeasure.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/rp9-reprice-97e30dda/PRD-REVIEW-RP9-GEMINI-ANSWER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/rp9-reprice-97e30dda/PRD-REVIEW-RP9-GEMINI-PROMPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/rp9-reprice-97e30dda/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/rp9-reprice-97e30dda/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/rp9-reprice-97e30dda/adjudication.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/rp9-reprice-97e30dda/coder/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/rp9-reprice-97e30dda/coder/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
