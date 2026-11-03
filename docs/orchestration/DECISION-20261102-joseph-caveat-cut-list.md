@@ -57,4 +57,27 @@ sha256 of the text plus a final newline begins `c62ddf3b4336511c`.
 7. **The process.** Before any merge, the round's REPORT gives every changed sentence before and after, goes through a
    PRD-referee read of the rewritten text, and goes to Joseph.
 
+## The density gate (Joseph, 2026-11-02, latest)
+
+**The pricing.** limitations-catalog priced R-P9, moving whole secondary results to the note (`…/cutlist/RP9.md`, #708):
+- **Reaching ≤ 4.5 per 1,000** needs, in every solution, moving the 2D benchmark against the published result (IV B and
+  Fig. 1, cited by the abstract and Sec. I), plus two or three of the main result's qualifiers. That lands at
+  4.45–4.50, inside the ±25% coder spread.
+- **The best result that keeps what a referee would expect** is about 4.9.
+- **Gemini's PRD read** called about 6 reasonable for this paper.
+
+**The question put to Joseph.** How the gate should read, given that reaching 4.5 means moving evidence a referee would
+look for.
+
+**Joseph's answer, verbatim:**
+
+> Target ~6, keep the benchmark (Recommended)
+
+sha256 of the text plus a final newline begins `8c32e12cf9521b54`.
+
+**Decided:**
+- The readiness gate's density target for this paper is **≤ 6 distinct caveats per 1,000 words**.
+- The 2D benchmark and the bias evidence stay in the paper.
+- R-P9's section moves are not made.
+
 Nothing is submitted, deposited or tagged.
