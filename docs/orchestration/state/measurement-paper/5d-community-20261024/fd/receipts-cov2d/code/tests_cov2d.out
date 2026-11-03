@@ -1,9 +1,9 @@
-# local, 2026-11-03T17:11:42Z, conda-forge ROOT 6.28/12, Python 3.11.16, numpy 1.26.4, uproot 5.6.9, lightgbm 4.5.0
+# local, 2026-11-03T17:50:30Z, conda-forge ROOT 6.28/12, Python 3.11.16, numpy 1.26.4, uproot 5.6.9, lightgbm 4.5.0
 c085b51f46afe3675077756aac982d5a7ebc87a5801dd7cbde79dd0f867bd7de  cov2d_receipt.py
 6a606b3c3af7f27ee520324fe3db3290ac99c65832a844084e40b0c4f99de162  cov2d_writer.py
 0d852a6992398b6b1ba7956b2e8d74accc2b6f1aa7b7909a6ef7d6d7f0dcd756  cov2d.py
 235263557a141b0426407f674c0f35d6b8928a8d2030044c6692f85faf679f4c  test_cov2d_writer.py
-a0e947373e4b3b6bdb80aec351a157e449b17a5d54771092c0e2ce1e6943bbec  test_cov2d.py
+8defb802c7c4b247e819e9915dc5bbef0fff2727ff38a3178ee880e6c0b93e7d  test_cov2d.py
 449b4b929bf004b6ffa256cb947672d1eece7c712f47da602cd4195e96ca1e4f  test_null205.py
 ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
 $ python -B -m pytest -v -p no:cacheprovider 2d-unfolding/cov2d/tests/
@@ -55,4 +55,4 @@ collecting ... collected 40 items
 2d-unfolding/cov2d/tests/test_null205.py::Null205::test_matched_null_runs_and_refuses_a_mismatch PASSED [ 97%]
 2d-unfolding/cov2d/tests/test_null205.py::Null205::test_power_at_205_cells PASSED [100%]
 
-==================== 40 passed, 2 subtests passed in 22.67s ====================
+==================== 40 passed, 2 subtests passed in 26.11s ====================
