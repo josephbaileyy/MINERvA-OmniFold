@@ -1,7 +1,7 @@
 # The caveat cut-list paper round: the independent two-direction review, with dispositions
 
 **The reviewer:** a fresh general-purpose subagent, read-only. It was given:
-- the diff `589eb47d0..681eaa6f6` (rebased onto `20ab8d002` as `06971d57a`), with both builds;
+- the diff `589eb47d0..681eaa6f6` (after the rebases onto `20ab8d002` and `3971bbb47`, `ad83db6af`), with both builds;
 - the director's work order, verbatim;
 - the cut list (#706) and the Gemini PRD review (#707);
 - the held-sentence registry;
