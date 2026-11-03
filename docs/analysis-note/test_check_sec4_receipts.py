@@ -38,12 +38,15 @@ def test_self_test_rejects_every_perturbation():
     # The rebuilt-band 2-sigma rescore (97.7%) binds in the note since r18 moved it there: $C_2=0.977$.
     ("sec_validation.tex", r"$C_2=0.977$", r"$C_2=0.967$",
      "rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note sec:coverage)"),
-    ("paper_body.tex", r"reduces it to below \SI{0.3}{\percent}", r"reduces it to below \SI{0.2}{\percent}",
+    # The background-closure values bind in the note since the targeted round moved the paper's paragraph there
+    ("sec_5d.tex", r"column to \SIrange{0.11}{0.24}{\percent}", r"column to \SIrange{0.11}{0.26}{\percent}",
      "negative-weight residual, highest-W cells (VL151)"),
     ("paper_body.tex", r"\SIrange{16}{31}{\percent}", r"\SIrange{16}{33}{\percent}",
      "other fixed shapes, most affected cell (VL154)"),
-    ("paper_body.tex", r"reduces it to below \SI{0.3}{\percent}", r"reduces it to below \SI{0.9}{\percent}",  # true but loose
-     "negative-weight residual, highest-W cells (VL151)"),
+    ("sec_5d.tex", r"cell to at most \SI{0.39}{\percent}", r"cell to at most \SI{0.49}{\percent}",  # true but loose
+     "negative-weight residual, other (E_avail, W) cells (VL151)"),
+    ("sec_5d.tex", r"\SIrange{3.5}{4.1}{\percent} low", r"\SIrange{3.5}{4.3}{\percent} low",
+     "purity bias, highest-W cells (VL149)"),
 ])
 @needs_receipts
 def test_a_wrong_printed_value_fails(name, old, new, label):
@@ -59,14 +62,15 @@ def test_a_wrong_printed_value_fails(name, old, new, label):
     assert sum(not good for good in rows.values()) == 1, "only the perturbed value's check fails"
 
 
-PHRASE = r"differ\s+by\s+at\s+most"  # the printed phrase, across any line wrap
+NOTE = "sec_5d.tex"  # where the treatments-on-data value prints since the targeted round
+PHRASE = r"and\s+at\s+most"  # the printed phrase before it, across any line wrap
 
 
 @needs_receipts
 def test_a_missing_value_fails():
     src = chk.load()
     # The phrase may wrap across a source line (it does since register round r12), so match any whitespace.
-    src["paper_body.tex"] = re.sub(PHRASE + r"\s+\\SI\{1\.4\}", "differ by a little", src["paper_body.tex"])
+    src[NOTE] = re.sub(PHRASE + r"\s+\\SI\{1\.4\}", "and by a little", src[NOTE])
     rows = dict((label, good) for label, good, _ in chk.evaluate(src))
     assert rows["treatments on data (VL152)"] is False
 
@@ -74,8 +78,9 @@ def test_a_missing_value_fails():
 @needs_receipts
 def test_a_value_kept_only_in_a_latex_comment_is_not_found():
     src = chk.load()
-    assert len(re.findall(PHRASE, src["paper_body.tex"])) == 1
-    src["paper_body.tex"] = re.sub(PHRASE, "\n% differ by at most", src["paper_body.tex"])
+    anchored = PHRASE + r"(?=\s+\\SI\{1\.4\}\{\\percent\}\s+over)"
+    assert len(re.findall(anchored, src[NOTE])) == 1
+    src[NOTE] = re.sub(anchored, "\n% and at most", src[NOTE])
     rows = dict((label, good) for label, good, _ in chk.evaluate(src))
     assert rows["treatments on data (VL152)"] is False
 
@@ -106,7 +111,7 @@ def test_a_standalone_layout_skips():
 def test_the_self_test_fails_cleanly_when_a_printed_value_is_missing(monkeypatch, capsys):
     """Review cycle 2: it crashed (AttributeError) on a missing value; it must report it and fail."""
     original = chk.load()
-    original["paper_body.tex"] = re.sub(PHRASE, "differ by roughly", original["paper_body.tex"])
+    original[NOTE] = re.sub(PHRASE + r"(?=\s+\\SI\{1\.4\}\{\\percent\}\s+over)", "and roughly", original[NOTE])
     monkeypatch.setattr(chk, "load", lambda: dict(original))
     assert chk.self_test() == 1
     assert "NOT FOUND   treatments on data (VL152)" in capsys.readouterr().out
