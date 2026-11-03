@@ -114,6 +114,55 @@ The referee read (Gemini) is committed verbatim beside this report: `PRD-REVIEW-
      which the paper names the joint-test estimator.
    - So both numbers describe one estimator, and the sentence may pair them.
 
+## The second PRD-referee read (the director, on `16cd55caf`): edits E1–E3
+
+The read (Gemini) of the round's printed diff is committed verbatim beside this report:
+- `PRD-REVIEW-2-GEMINI-PROMPT.txt`, which is `head.txt` followed by `diff.txt`, byte for byte;
+- `PRD-REVIEW-2-GEMINI-ANSWER.txt`.
+`SHA256SUMS` covers both reads. Each edit keeps every fact in paper plus note.
+
+**E1. IV C's run-period statement.**
+- The referee objected to the verbatim repeat of the cause sentence and to the jargon "cannot fail its own consistency
+  check". Both facts are now stated once and plainly.
+- **Before** (the follow-up's text): "…by a step of about 7 % near 8 GeV/c. As for the sixteen-cell result, its cause is
+  not known, and these data cannot establish which period is correct. Its run-period block, built in the same way
+  (Sec. IV A), includes this inconsistency, amounts to 2.0 % on the integrated cross section and, being built from the
+  observed differences, cannot fail its own consistency check."
+- **After:** "…by a step of about 7 % near 8 GeV/c, of unknown cause (Sec. IV A). Its run-period block, built from these
+  differences in the same way, includes this inconsistency, amounts to 2.0 % on the integrated cross section and passes
+  its own consistency check by construction."
+- **"Which period is correct"** for the 2D step: the IV A pointer carries it, where the held sentence (G1b:paper-g-19)
+  prints unchanged. The note prints it for the 2D step: "These data cannot establish which period, if any, is correct."
+  (`sec_systematics.tex:165`, probed in ledger row MV01).
+
+**E2. VI A item 1.**
+- "The coverage of the sixteen-cell intervals is therefore untested." is dropped. It restated the item's opening, "No
+  reported interval has validated coverage."
+- The stopped-gate sentence stays: the disclosure is required in every outcome (Q39).
+- The referee's "could not be completed" is not used. 1B is not finished, so it would be false.
+<!-- absence-ok: quotes the paper's printed coverage sentences, before and after; not a claim of this report -->
+
+**E3. IV G.** The first sentence is split in two:
+- the scatter: over 20 perturbations, a median of 0.23 % per joint cell against the 0.37 % median bootstrap σ, which
+  each replica carries at the same size;
+- "It limits how exactly the central values can be reproduced, and a single perturbation moves the most affected
+  quantity further."
+The held 2.6/2.5 sentence follows unchanged. No fact changes.
+
+**Kept by the director's ruling:**
+- **The stopped-gate sentence in VI A.** The referee suggested moving it to the note. It stays: Q39 requires the
+  disclosure in every outcome.
+- **The replica clause in IV G.** The referee suggested moving it to the note. It stays: that is a B0 wording question,
+  which Joseph takes with the B4 outcome (`DECISION-20261102-joseph-bias-and-stabilisation-routes.md` item 5).
+
+**Referee suggestions not adopted, for Joseph:**
+1. **(d) Excising MV13's pointer**, the earlier estimator's 0.06 coverage. `DECISION-20261029-joseph-limitations-may-leave-paper.md`
+   requires a pointer for a limitation that leaves the paper.
+2. **Pruning the Table III footnote on GiBUU's hydrogen sample** (B3, the post-hoc premise check, the DIS energy
+   non-conservation). That would be a new move, outside the approved set.
+3. **The C_PL,5D audit clause** ("following an audit whose stopping criterion was fixed in advance"). It is a base
+   sentence, restored word for word at the director's ruling 2.
+
 **Item 3 of VI A (MV09; limitations-catalog's mechanical check).**
 - The source is byte-identical at `58fa0b89`, `589eb47d0` and this head (the same md5).
 - At `cf595ccac` it also printed every word. In that layout, though, the item broke across the column where the
@@ -148,7 +197,7 @@ Rendered from the sources: `\fvval` values are filled in, and a pointer reads "n
 
 > The unfolded results of the three run-period groups, each relative to its own simulation, differ by more than their bootstrap scatter. The cause is not known, and these data cannot establish which period is correct. The run-period block C_PL,5D includes this inconsistency in the reported covariance. It is built from the double ratios among the groups, each group's unfolded result over its own simulated truth, with no group chosen as the reference, so it contains the differences by construction. It was added after these differences were seen, following an audit whose stopping criterion was fixed in advance. It has rank 2 and is not corrected for the bootstrap noise it contains, and with three groups its size is poorly determined: the 68 % interval on the ratio of its true to its estimated size is 0.73–2.56.
 >
-> In the two-dimensional result, data from different run periods are not mutually consistent within the other uncertainties: one period group's unfolded p∥ distribution, relative to its own simulation, differs from that of the earliest periods by a step of about 7 % near 8 GeV/c. As for the sixteen-cell result, its cause is not known, and these data cannot establish which period is correct. Its run-period block, built in the same way (Sec. sec:cov16), includes this inconsistency, amounts to 2.0 % on the integrated cross section and, being built from the observed differences, cannot fail its own consistency check.
+> In the two-dimensional result, data from different run periods are not mutually consistent within the other uncertainties: one period group's unfolded p∥ distribution, relative to its own simulation, differs from that of the earliest periods by a step of about 7 % near 8 GeV/c, of unknown cause (Sec. sec:cov16). Its run-period block, built from these differences in the same way, includes this inconsistency, amounts to 2.0 % on the integrated cross section and passes its own consistency check by construction.
 >
 > With the run-period block, each total
 >
@@ -163,7 +212,6 @@ Rendered from the sources: `\fvval` values are filled in, and a pointer reads "n
 >
 > The coverage of the sixteen-cell total uncertainties has not been tested: the fake-data tests of Sec. sec:fd16 assess the estimator's bias, and the coverage test declared at two of their truths stopped before any coverage pseudo-experiment ran. Neither the coverage of C_model at truths held out of its construction nor the size of either run-period block is independently validated (note sec:fived16-cov, sec:fived16-pl and sec:uq-combine). The two-dimensional covariance has not been independently validated and gives no calibrated significance for generator comparisons. An earlier statistical band of that result undercovered in its tails in a coverage test at fixed truth (note sec:coverage); the coverage of the current statistical block and of the total covariance has not been tested. We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections. The three- and four-observable central values lack intervals of validated coverage (Sec. sec:central).
 >
-<!-- absence-ok: quotes the paper's printed coverage sentences, before and after; not a claim of this report -->
 
 **After:**
 
@@ -171,7 +219,7 @@ Rendered from the sources: `\fvval` values are filled in, and a pointer reads "n
 >
 > Coverage is discussed in Sec. sec:limitations.
 >
-> No reported interval has validated coverage. The fake-data tests of Sec. sec:fd16 assess bias, not coverage: only event counts fluctuate, with systematic parameters fixed, so interval widths cannot be tested. A coverage test at two of their truths, declared in advance for the covariance without the run-period block, with pseudo-experiments that also draw the flux, interaction, and detector uncertainties, was stopped at one of its gates before any coverage pseudo-experiment ran: the uncertainties reproduced through its pseudo-experiments disagreed with the covariance blocks they draw, for reasons not established (note sec:fived16-fd). The coverage of the sixteen-cell intervals is therefore untested. Neither the coverage of C_model at truths held out of its construction nor the size of either run-period block is independently validated (note sec:fived16-cov, sec:fived16-pl and sec:uq-combine). The two-dimensional covariance has not been independently validated and gives no calibrated significance for generator comparisons; an earlier statistical band of that result undercovered in its tails in a coverage test at fixed truth (note sec:coverage), and the coverage of the current statistical block and of the total covariance has not been tested. The coverage tests cited are pointwise, for each reported quantity separately, not the stronger simultaneous coverage of all of them. We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections.
+> No reported interval has validated coverage. The fake-data tests of Sec. sec:fd16 assess bias, not coverage: only event counts fluctuate, with systematic parameters fixed, so interval widths cannot be tested. A coverage test at two of their truths, declared in advance for the covariance without the run-period block, with pseudo-experiments that also draw the flux, interaction, and detector uncertainties, was stopped at one of its gates before any coverage pseudo-experiment ran: the uncertainties reproduced through its pseudo-experiments disagreed with the covariance blocks they draw, for reasons not established (note sec:fived16-fd). Neither the coverage of C_model at truths held out of its construction nor the size of either run-period block is independently validated (note sec:fived16-cov, sec:fived16-pl and sec:uq-combine). The two-dimensional covariance has not been independently validated and gives no calibrated significance for generator comparisons; an earlier statistical band of that result undercovered in its tails in a coverage test at fixed truth (note sec:coverage), and the coverage of the current statistical block and of the total covariance has not been tested. The coverage tests cited are pointwise, for each reported quantity separately, not the stronger simultaneous coverage of all of them. We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections.
 >
 <!-- absence-ok: quotes the paper's printed coverage sentences, before and after; not a claim of this report -->
 
@@ -298,7 +346,7 @@ Rendered from the sources: `\fvval` values are filled in, and a pointer reads "n
 
 **After:**
 
-> The joint-test estimator is unstable under floating-point rounding of its inputs: over 20 rounding-level perturbations of the data, the reported quantities scatter by a median of 0.23 % per joint cell, against a median data-bootstrap statistical uncertainty of 0.37 %, a scatter that each bootstrap replica carries at the same size and that limits how exactly the central values can be reproduced, while a single perturbation moves the most affected quantity further. Rounding-level changes of its inputs move its results by up to 2.6 statistical standard deviations, and those of the lower-capacity development variant by up to 2.5, so the estimator fails a data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations.
+> The joint-test estimator is unstable under floating-point rounding of its inputs: over 20 rounding-level perturbations of the data, the reported quantities scatter by a median of 0.23 % per joint cell, against a median data-bootstrap statistical uncertainty of 0.37 %, and each bootstrap replica carries this scatter at the same size. It limits how exactly the central values can be reproduced, and a single perturbation moves the most affected quantity further. Rounding-level changes of its inputs move its results by up to 2.6 statistical standard deviations, and those of the lower-capacity development variant by up to 2.5, so the estimator fails a data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations.
 >
 
 ### MV16 — Fig. 3's seed sentence (caption to the note)
@@ -358,7 +406,7 @@ Rendered from the sources: `\fvval` values are filled in, and a pointer reads "n
 
 | check | result |
 |---|---|
-| the ledger (`check_ledger.py`, base `589eb47d0`) | 16 rows, 95 probes, 57 changed base sentences, 0 failures; self-test PASS. `sec:coverage` is declared removed from the paper. The note's own label of that name is not counted as a reference to it, and a test shows the check still fires on a paper reference |
+| the ledger (`check_ledger.py`, base `589eb47d0`) | 16 rows, 97 probes, 57 changed base sentences, 0 failures; self-test PASS. `sec:coverage` is declared removed from the paper. The note's own label of that name is not counted as a reference to it, and a test shows the check still fires on a paper reference |
 | `make_values_fived16.py --check` and `--self-test` | PASS; no value changes; the two installed figures equal their E-A2 sources |
 | `check_sec4_receipts.py` and its self-test | PASS (16/16, the 0.06 binding added; 19 perturbations rejected) |
 | `build_all.sh` | PASS: paper 12 pp, note 135 pp, primer 15 pp; no "??". The paper's one overfull box is the base's (Table III) |
