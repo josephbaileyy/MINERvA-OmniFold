@@ -17,6 +17,15 @@ disposition. §4 records the director's ruling on the calibration risk.
 
 The mutation receipt is re-run on this code (§5).
 
+**Revision 4 (2026-11-03), for binding 2's addendum A1,** answers stage S's stop (§6, "Stage S's stop and A1"):
+- `flux` stopped at its first MnvH1D read, because root_6_28 by prefix has no PlotUtils dictionary;
+- `flux` now runs only in the shared checkout's MAT environment, pinned by digest at run time (`mat_environment`,
+  exit 7 before any read);
+- `verify-staged` re-hashes the 79 staged copies before every later connect reads them, and `$R` is reused;
+- a login-only test module reads the real staged files (`tests/test_fd_rpd_mat.py`), and each step's tests run in
+  that step's environment (§2, §3);
+- the mutation receipt is re-run (§5).
+
 **Under:**
 - [`FD-RPD-BINDING-1.md`](FD-RPD-BINDING-1.md) (#703), which binds part 1's design
   ([`FD-RPD-DECLARATION.md`](FD-RPD-DECLARATION.md), revision 4, sha256 `b3413ffc…`) and requires for part 2 blob
@@ -35,15 +44,21 @@ The mutation receipt is re-run on this code (§5).
 
 **Part 1's rules are unchanged.** Every section number below that is not part 2's own refers to part 1.
 
-**MEASURES:** nothing. The code has run only on synthetic fixtures and the committed H2 definition: locally, and its
-three test suites on a login node (no job, no pscratch or CFS read; §3).
+**MEASURES:** nothing physical. The code has run on synthetic fixtures and the committed H2 definition, locally and
+on a login node (§3); stage S's first connect ran `stage` and stopped at `flux` (§6). Revision 4 also records the MAT
+environment's digests, read through O_NOATIME (§1.4).
 
 **CANNOT AUTHORIZE:** any run before binding 2; anything part 1 cannot authorize.
 
-**Paths** are as in part 1. `$R` = `/pscratch/sd/j/josephrb/fd-rpd-20261103` (the tables' run directory; it must not
-exist beforehand). `$D` = `$R/deploy`, a fresh clone at the bound commit.
+**Paths** are as in part 1. `$R` = `/pscratch/sd/j/josephrb/fd-rpd-20261103` (the tables' run directory). It must not
+exist before stage S's first connect; every later connect requires it, with stage's record (binding 2 A1). `$D` is a
+fresh clone at the bound commit in a new subdirectory of `$R` for each connect (`$R/deploy` for the first, `$R/deploy-2`
+for the second, and so on).
 `PY` = `env -u PYTHONPATH $HOME/.conda/envs/root_6_28/bin/python3 -I -B`, run with root_6_28 activated by prefix and no
 `set -u`, as in 5B (§2.1 there).
+`MATENV` = `source $P/MINERvA-OmniFold/setup_salloc_env.sh` (the shared checkout's, read-only, no `set -u`), then
+`export TMPDIR=$R/tmp`, since that script exports TMPDIR=$SCRATCH/tmp. `PYM` = `env -u PYTHONPATH python3 -I -B` in
+MATENV (§1.4).
 
 ## 1. The code
 
@@ -52,7 +67,8 @@ exist beforehand). `$D` = `$R/deploy`, a fresh clone at the bound commit.
 | subcommand | where | what | part 1 |
 |---|---|---|---|
 | `stage --r $R` | login | copies every input of `stage_sources()` into `$R/staged/` through an O_NOATIME descriptor while hashing. Each copy must equal its pin, or it is deleted and the step refuses. Records each source's atime before and after in `staged/STAGED.json` | §1 |
-| `flux --r $R` | login | builds X's flux file from the staged baseline files with the pinned combiner's `read_playlist`, its module global `BASE` set to the staged copies, and the combiner's own arithmetic (`combine`). Reads each staged loop's POT. Decides **F1** (contents, both POTs and edges; the errors printed) and the loops' POT (`flux_decision`) and computes e. Writes `flux/F1.json` | §1, §4 F1, §5 |
+| `verify-staged --r $R` | login | re-hashes every staged copy; each must equal its pin and the staging record's digest, and the record must name exactly the deploy's sources at their paths. Writes nothing | binding 2 A1 |
+| `flux --r $R` | login, MATENV | first `mat_environment` (§1.4; exit 7 before any read), then builds X's flux file from the staged baseline files with the pinned combiner's `read_playlist`, its module global `BASE` set to the staged copies, and the combiner's own arithmetic (`combine`). Reads each staged loop's POT. Decides **F1** (contents, both POTs and edges; the errors printed) and the loops' POT (`flux_decision`) and computes e. Writes `flux/F1.json` | §1, §4 F1, §5 |
 | `check --r $R --playlist X` | job A | X's receipt and MC truth, after the dump and lateral steps (refusals below) | §2, §4 C1 |
 | `n0-split --r $R --partition p` | job A | one N0 partition, its 12 pseudo-npz files, background dumps, assignment vectors, receipt and MC truths | §4 N0 |
 | `unfold --r $R --what playlist\|n0\|k2 …` | jobs A and B | `s5p_numerics.py` unchanged: config R, 5 iterations, real data, estimator seed 42, with the expected input digests | §2 |
@@ -116,16 +132,55 @@ overwrite.
 **5B's merge step is bypassed.** Each dump reads its playlist's staged zero loop directly. `check` ties the dump to the
 pinned loop, and the background dump's meta must name that loop's staged path.
 
+### 1.4 `flux`'s pinned MAT environment (binding 2 A1)
+
+The per-playlist flux histogram is a `PlotUtils::MnvH1D`, which PyROOT reads only with MAT's dictionary loaded. That
+comes from the shared checkout's `setup_salloc_env.sh`: it activates root_6_28 and then sources the build tree's and
+MINERvA101's setup scripts. These are build artifacts, not tracked in git, so they are absent from a fresh clone.
+
+**The environment is the shared checkout's mutable state, pinned by digest at run time, not by git.**
+`fd_rpd_inputs.mat_environment()` runs first in `flux`. It loads MnvH1D's dictionary (`TClass::GetClass`), then
+reads `/proc/self/maps` and the pinned files' digests through O_NOATIME. It refuses with exit 7, before any staged file
+is read, unless `mat_env_problems` finds nothing:
+- the six setup scripts at their digests (`MAT_SETUP`): `setup_salloc_env.sh` `ea3c6998…`,
+  `unbinned_unfolding/build/setup.sh` `40ff3a3d…`, and `MINERvA101/opt/bin/` `setup.sh` `e22a5b93…`, `setup_MAT.sh`
+  `733e9cd8…`, `setup_MAT-MINERvA.sh` `c2591016…`, `setup_UnfoldUtils.sh` `bd305c17…`;
+- the MAT files (`MAT_FILES`) at their digests: `libMAT.so` `5901f18a…`, `MATDict.rootmap` `bd669308…` (it names
+  libMATDict.so for PlotUtils::MnvH1D) and `MAT_rdict.pcm` `9eedbfd9…`;
+- the symlink `libMATDict.so` resolving to `libMAT.so` (recorded as resolved; its target is digested above);
+- the shared libraries mapped into the process from MINERvA101/opt/lib equal to {libMAT.so};
+- `PLOTUTILSROOT` and `MINERVA_PREFIX` equal to that checkout's `MINERvA101/opt/lib` and `MINERvA101/opt`;
+- MnvH1D's dictionary loaded.
+
+Everything is recorded in `F1.json` under `environment`. The digests were taken on 2026-11-03 through O_NOATIME,
+read-only. Nothing is written into the shared checkout.
+
 ## 2. Exact commands, in order
 
+**Each step's environment (binding 2 A1), and its tests run in it:**
+
+| environment | steps | tests run in it |
+|---|---|---|
+| root_6_28 by prefix (`PY`) | `stage`, `verify-staged`, `stage0`, `staged`, `controls`, `readout` | `test_fd_rpd test_fd_ct_periods test_fd_ct_readers`; `test_fd_rpd_mat.ZeroLoops` |
+| MATENV (`PYM`, §1.4) | `flux`, with its `loop_pots` | `test_fd_rpd`; `test_fd_rpd_mat` whole |
+| `s5c_array.sh`'s (job A, job B) | the dumps, `check`, `n0-split`, `unfold` | `test_fd_rpd_mat.ZeroLoops` (`loop_pots`, `check`'s only ROOT read) |
+
+`s5c_array.sh` sources the deploy's `setup_salloc_env.sh`. In a fresh clone both MAT sources fail ("No such file or
+directory"), so job steps run in root_6_28 alone. 5B's 12 job env logs show exactly this (§6), and nothing 5B read
+needed MAT. Job A is unchanged; its only ROOT read, `loop_pots`, is tested on the 12 staged zero loops in root_6_28.
+
 ```bash
-# deploy and tests (login)
+# deploy and tests (login), root_6_28 by prefix
 git clone -q <repo> $D && git -C $D checkout -q <pin> && git -C $D status --porcelain --ignored | wc -l   # 0
-# tests with root_6_28 activated by prefix (test_fd_rpd's ROOT tests must run here, none skipped)
-cd $D/nd-unfolding/tests && python3 -B -m unittest test_fd_rpd test_fd_ct_periods test_fd_ct_readers
-# stage S (login)
+cd $D/nd-unfolding/tests && python3 -B -m unittest test_fd_rpd test_fd_ct_periods test_fd_ct_readers      # none skipped
+# stage S's first connect (login), root_6_28 by prefix: ran 2026-11-03, stage rc 0, flux stopped (§6)
 $PY $D/nd-unfolding/fd_rpd_inputs.py stage --r $R > $R/logs/stage.out 2>&1      # (mkdir -p $R/logs first)
-$PY $D/nd-unfolding/fd_rpd_inputs.py flux  --r $R > $R/logs/flux.out 2>&1
+# stage S's second connect (binding 2 A1), $D = $R/deploy-2
+$PY $D/nd-unfolding/fd_rpd_inputs.py verify-staged --r $R --deploy $D > $R/logs/verify-staged-2.out 2>&1   # root_6_28
+FD_RPD_R=$R python3 -B -m unittest test_fd_rpd_mat.ZeroLoops                                             # root_6_28
+# then in MATENV: TMPDIR=$R/tmp re-exported
+python3 -B -m unittest test_fd_rpd && FD_RPD_R=$R python3 -B -m unittest test_fd_rpd_mat                  # none skipped
+$PYM $D/nd-unfolding/fd_rpd_inputs.py flux --r $R --deploy $D > $R/logs/flux.out 2>&1
 # stage 0 and stage D (login); both records go to the director before job A
 $PY $D/nd-unfolding/fd_rpd.py stage0 --r $R --definition $D/nd-unfolding/pv-ladder/readouts/h2_definition.json --deploy $D \
     --out-json $R/control/stage0.json > $R/logs/stage0.out 2>&1
@@ -144,12 +199,37 @@ nice -n 19 $PY $D/nd-unfolding/fd_rpd.py readout --r $R --definition … --deplo
 - **After each job:** `sacct -j <job> -X -o JobID,State,ExitCode,Elapsed,NNodes,AllocTRES` and each lane's `[f1-lane]`
   lines are recorded. The job must be COMPLETED 0:0 with every lane `done`; anything else is a stop.
 - **Exit codes:** 0 written and PASS; 1 FAIL (written) or a refusal (nothing written); 2 argparse; 3 the leak guard.
-- **Each run** is from a fresh clone at the bound commit (binding 1 ruling 6).
+- **Each run** is from a fresh clone at the bound commit (binding 1 ruling 6), in a new subdirectory of `$R`; every
+  connect after stage S's first starts with `verify-staged` (binding 2 A1).
+- **`flux` exit 7:** not the pinned MAT environment, nothing read or written.
 
 ## 3. Tests
 
-**`tests/test_fd_rpd.py`, 110 tests.** Five need PyROOT and are skipped locally: the combiner-loading test and
-`RootPaths`' four. On the cluster all must run. Locally the other 105 pass in about 180 s.
+**`tests/test_fd_rpd.py`, 121 tests.** Five need PyROOT and are skipped locally: the combiner-loading test and
+`RootPaths`' four. On the cluster all must run. Locally the other 116 pass in about 100–180 s.
+
+**The five ROOT tests use plain-TH1D and TParameter fixtures that they write themselves. They do not cover a MAT read.**
+Stage S's first connect showed the gap: all five passed in root_6_28, and `flux` then stopped at the first real
+MnvH1D (§6). `RootPaths` now says so, and stubs `mat_environment` with a value the F1 record must carry.
+
+**`tests/test_fd_rpd_mat.py`, 3 tests, login only (revision 4),** the tested-language counterpart. It reads only
+`$R/staged`, re-hashing each copy against the staging record first, and writes nothing. Without `FD_RPD_R` or ROOT,
+every test errors rather than skips:
+- `Mat` (in MATENV): `mat_environment` passes and returns the pinned digests and the resolved symlink; each of the 12
+  staged baseline flux histograms is a `PlotUtils::MnvH1D`; and the pinned combiner reads all 12 to finite, positive
+  contents and POTs, with non-negative errors;
+- `ZeroLoops` (in both environments): `loop_pots` reads all 12 staged zero loops to finite, positive data and MC POTs.
+
+**Added to `test_fd_rpd` in revision 4:**
+- **`MatEnv`:** the pins name the six setup scripts and three MAT files. The pinned environment has no problem, and
+  each single departure is exactly one problem: any setup or MAT digest wrong or missing, the symlink elsewhere or
+  absent, an extra or a missing mapped MAT library, either variable wrong or unset, no dictionary. Mapped files
+  outside MAT's lib do not count. `mat_environment` passes the pinned environment and records it, and refuses each
+  departure with exit 7. The digests are read through O_NOATIME. The maps parser keeps paths with spaces. `flux`
+  outside the environment exits 7 before any staged read, with nothing written;
+- **`verify-staged`:** it passes the staged copies and refuses each one-entry defect: a changed byte, a missing copy,
+  a moved pin, a moved source, a source the record lacks, a record row the deploy lacks, a record digest changed. It
+  writes nothing.
 
 **On a login node (revision 3, the director's permission of 2026-11-03).** `fd/receipts-rpd/root_tests_login.sh` runs
 the three suites of §2 in root_6_28 from a /dev/shm clone. It activates the env by prefix with no `set -u` and puts
@@ -158,6 +238,16 @@ the clone is deleted at the end. root_6_28 has no uproot, and none of the three 
 `c3e235b2` on login02 gave test_fd_rpd 110 OK, none skipped (the five ROOT tests ran); test_fd_ct_periods 85 OK, none
 skipped; test_fd_ct_readers 77 OK. Porcelain and `squeue --me` were empty before and after. The receipt is the same
 script on the head that carries this text, in `root_tests_login.log` (its HEAD and node lines).
+
+**Revision 4:** `root_tests_login.sh` now runs each suite in its step's environment (§2), with `FD_RPD_R=$R`, so
+`test_fd_rpd_mat` reads the staged copies. A precheck at `45b09d40` on login02 (19:37–20:25Z) gave, with nothing
+skipped and no shim called:
+- root_6_28 by prefix: the three suites 283 OK; `test_fd_rpd_mat.ZeroLoops` 1 OK;
+- MATENV (`PLOTUTILSROOT` and `MINERVA_PREFIX` at the shared checkout): `test_fd_rpd` 121 OK; `test_fd_rpd_mat` 3 OK,
+  so `mat_environment` passed in the real environment.
+
+The full environment prints ROOT's rootmap warnings ("class RooUnfold… found in libUnfoldUtilsDict.so is already in
+libRooUnfold.so"), which are known and harmless. The receipt is the same script on the head that carries this text.
 
 **Added in revision 3:**
 - **F1 (ruling 2):** an error defect of 10⁻³ passes and is printed at its size (`errors_max_rel_printed`); the graded keys
@@ -327,9 +417,9 @@ proportional to the data's) and flat (the median replica sd on every playlist). 
 ## 5. Mutation receipt
 
 <!-- absence-ok: describes what tests assert (R1 NOT COMPUTED is a declared outcome), not a claim that a result does not exist -->
-`fd/receipts-rpd/mutants_rpd.py`, 114 mutants across `fd_rpd_inputs.py`, `fd_rpd.py` and the rpd submit stages, run
-against `test_fd_rpd` (each run stops at its first failure): **killed 114 of 114, none survived, none unapplied, files
-restored** (`fd/receipts-rpd/mutants_rpd.log`, on revision 3's code `c3e235b2` in a fresh clone; the log's first line
+`fd/receipts-rpd/mutants_rpd.py`, 136 mutants across `fd_rpd_inputs.py`, `fd_rpd.py` and the rpd submit stages, run
+against `test_fd_rpd` (each run stops at its first failure): **killed 136 of 136, none survived, none unapplied, files
+restored** (`fd/receipts-rpd/mutants_rpd.log`, on revision 4's code `45b09d40` in a fresh clone; the log's first line
 gives the three files' sha256 prefixes).
 
 **Revision 1** had 67 mutants, killed 67 of 67 after a first pass left 7. The survivors were: S1 not shrunk; σ₀
@@ -362,6 +452,21 @@ except the L-region edge (§9), plus mutants on the code added in answer to it.
 **Revision 3** adds 8, on the rulings' code and the director's ask (2): F1 ignoring the MC POT, the edges or the
 contents; F1 grading the errors; the errors not printed; the L-region lower edge 1.0 (the audit's) and 2.0; H's upper
 edge 20 (§9). The 8 were run first as a subset and all killed; the full 114 were then run on the final code.
+
+**Revision 4** adds 22, on A1's code:
+- `flux` without the environment check, or checking it after a staged read;
+- in `mat_env_problems`, each clause removed: the setup digests, the MAT file digests, the symlink, the variables,
+  MINERVA_PREFIX alone, the dictionary. Also the mapped-library comparison weakened to a subset, to a superset, or
+  inverted (so the pinned environment would refuse), and mapped files outside MAT's lib counted;
+- in `mat_environment`, the problems ignored, the exit code changed, and the dictionary assumed;
+- the maps parser dropping paths with spaces, and the digests read without O_NOATIME;
+- in `verify-staged`, each clause removed (the copy, the record's digest, the source path, the record's names) and
+  mismatches passed.
+
+A first subset run was stopped partway by the machine's memory reaper, with the 21st mutant still applied in the
+working tree. That file was restored by hand and checked against the log's sha256 prefix (`200bc0ac…`). One survivor,
+the digests read without O_NOATIME, got a test, and the remaining three were then killed in a scratch copy. The full 136
+ran in a fresh clone.
 
 ## 6. What part 2 settles, and its deviations
 
@@ -428,18 +533,44 @@ not graded.**
   atimes: no unfold-derived number.
 - The MC-truth npz files under `$R` are unguarded, as in 5B.
 
+**Stage S's stop and A1 (revision 4).**
+- **The stop.** Stage S's first connect (script sha256 `3640f113…`, approved under binding 2) ran on login02 from
+  18:57:05 to 19:06:22Z on 2026-11-03:
+  - the deploy at M was clean, with 22 §7 blobs and 0 mismatches, and the three suites passed: "Ran 272 tests … OK";
+  - `stage` returned rc 0: 79 copies at their pins, 6,709,613,302 bytes, `atime_unchanged_all` true;
+  - `flux` returned rc 1 at `cf.read_playlist("1A")` → `fmc.Get("pTmu_reweightedflux_integrated")` on the staged copy,
+    with `TypeError: 'PlotUtils' is not a known C++ class` after "no dictionary for class PlotUtils::MnvH1D". No F1
+    was written, and the stop is final.
+- **The cause** is part 2's. §2 gave `flux` root_6_28 by prefix, "as in 5B". But 5B's login steps imported no ROOT,
+  and the five ROOT tests used TH1D fixtures, so nothing had read a MAT object in that environment.
+- **5B's jobs ran without MAT.** All 12 job env logs under `$P/fd-ct-5b-20261030` (e.g.
+  `lanes-inputs/logs/ct5b_a_lane1.env.log`) show both MAT sources of the deploy's `setup_salloc_env.sh` failing with
+  "No such file or directory". Nothing 5B read needed MAT, so its steps passed in root_6_28 alone. Read 2026-11-03 with
+  `dd iflag=noatime`.
+- **The rulings (binding 2 A1, the director, 2026-11-03):**
+  - `flux`, with its `loop_pots` in the same process, runs in the shared checkout's MAT environment, read-only, with
+    TMPDIR re-exported to `$R/tmp`, under the run-time digest check of §1.4. The director's first reading, that
+    `s5c_array.sh` provides MAT, rested on a false premise and was withdrawn after the measurement above;
+  - **that environment is the shared checkout's mutable state, pinned by digest at run time, not by git**;
+  - job A is unchanged (`s5c_array.sh`, root_6_28 alone);
+  - each step's environment is pinned in §2, and its tests run in it;
+  - `$R` is reused. "Must not exist" applies to stage S's first connect. Every later connect requires `$R` and stage's
+    record, runs `verify-staged` before reading, and refuses on any mismatch. The next connect starts at `flux`, from
+    a fresh clone at the new M in `$R/deploy-2`.
+
 ## 7. Pinned bytes
 
-Git blob digests at commit `c3e235b2` (revision 3's code commit; `fd_rpd_inputs.py` and the tests changed from
-revision 2). The deploy verifies each with `git rev-parse <pin>:<path>`; the ones not written by part 2 are the bound
-tools it calls unchanged.
+Git blob digests at commit `45b09d40` (revision 4's code commit; `fd_rpd_inputs.py` and `test_fd_rpd.py` changed
+from revision 3, and `test_fd_rpd_mat.py` is new, so there are 23 rows). The deploy verifies each with
+`git rev-parse <pin>:<path>`; the ones not written by part 2 are the bound tools it calls unchanged.
 
 | path | blob |
 |---|---|
-| `nd-unfolding/fd_rpd_inputs.py` | `eeec12523ac14292ec7235216b09937fd9210e65` |
+| `nd-unfolding/fd_rpd_inputs.py` | `d33307076d4c1c0025dcd2cbada82aa697946afa` |
 | `nd-unfolding/fd_rpd.py` | `fea4f5e49b06b926847a58c565e20e6b3fe245d4` |
 | `nd-unfolding/submit_fd_ct.sh` | `031b1b62f46dcd4361e8b5a8547b63c9717e63ad` |
-| `nd-unfolding/tests/test_fd_rpd.py` | `ea96b289afd49d3c72bd0992929a0db5888ed6fb` |
+| `nd-unfolding/tests/test_fd_rpd.py` | `c840191b3946c33c9b63d4b0b8e2bfb03934c549` |
+| `nd-unfolding/tests/test_fd_rpd_mat.py` | `a8a2508380835ea9e40f16eaca6759458b730aed` |
 | `nd-unfolding/fd_ct_period_inputs.py` | `81fc77890264e26ce38661a27e11c3da74c22284` |
 | `nd-unfolding/fd_ct_periods.py` | `05c1a9b7f41f04d415306ad36840088c7233bd3f` |
 | `nd-unfolding/fd_ct_readers.py` | `3abde33073a69fc3f11fc48a08497e2c1049a93c` |
