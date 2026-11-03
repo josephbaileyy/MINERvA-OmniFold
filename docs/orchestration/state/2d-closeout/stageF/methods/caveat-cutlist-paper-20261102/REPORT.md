@@ -163,6 +163,7 @@ Rendered from the sources: `\fvval` values are filled in, and a pointer reads "n
 >
 > The coverage of the sixteen-cell total uncertainties has not been tested: the fake-data tests of Sec. sec:fd16 assess the estimator's bias, and the coverage test declared at two of their truths stopped before any coverage pseudo-experiment ran. Neither the coverage of C_model at truths held out of its construction nor the size of either run-period block is independently validated (note sec:fived16-cov, sec:fived16-pl and sec:uq-combine). The two-dimensional covariance has not been independently validated and gives no calibrated significance for generator comparisons. An earlier statistical band of that result undercovered in its tails in a coverage test at fixed truth (note sec:coverage); the coverage of the current statistical block and of the total covariance has not been tested. We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections. The three- and four-observable central values lack intervals of validated coverage (Sec. sec:central).
 >
+<!-- absence-ok: quotes the paper's printed coverage sentences, before and after; not a claim of this report -->
 
 **After:**
 
@@ -172,6 +173,7 @@ Rendered from the sources: `\fvval` values are filled in, and a pointer reads "n
 >
 > No reported interval has validated coverage. The fake-data tests of Sec. sec:fd16 assess bias, not coverage: only event counts fluctuate, with systematic parameters fixed, so interval widths cannot be tested. A coverage test at two of their truths, declared in advance for the covariance without the run-period block, with pseudo-experiments that also draw the flux, interaction, and detector uncertainties, was stopped at one of its gates before any coverage pseudo-experiment ran: the uncertainties reproduced through its pseudo-experiments disagreed with the covariance blocks they draw, for reasons not established (note sec:fived16-fd). The coverage of the sixteen-cell intervals is therefore untested. Neither the coverage of C_model at truths held out of its construction nor the size of either run-period block is independently validated (note sec:fived16-cov, sec:fived16-pl and sec:uq-combine). The two-dimensional covariance has not been independently validated and gives no calibrated significance for generator comparisons; an earlier statistical band of that result undercovered in its tails in a coverage test at fixed truth (note sec:coverage), and the coverage of the current statistical block and of the total covariance has not been tested. The coverage tests cited are pointwise, for each reported quantity separately, not the stronger simultaneous coverage of all of them. We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections.
 >
+<!-- absence-ok: quotes the paper's printed coverage sentences, before and after; not a claim of this report -->
 
 ### MV03 — the 3D/4D central values (V B opening; V C)
 
