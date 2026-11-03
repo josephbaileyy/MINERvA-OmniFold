@@ -6,6 +6,17 @@
 `FD-RPD-PART2-AUDIT-SONNET-PROMPT.txt` and `-ANSWER.txt`; 5 MAJOR, 8 MINOR, 5 NIT). §9 gives each finding's
 disposition. §4 records the director's ruling on the calibration risk.
 
+**Revision 3 (2026-11-03)** applies the director's two rulings and answers its two asks before binding 2:
+- **ruling 1 (a):** C1's `measured_weights` is printed per playlist, not graded, a declared deviation (§6 deviation 1);
+- **ruling 2 (a):** F1 grades contents, both POTs and the edges, and prints the errors' max_rel only, as part 1 says
+  (§6, deviation 3 resolved);
+- **ask (1):** the calibration null rerun with T's MC-variance Gaussian (§4);
+- **ask (2):** the L-region edge mutant, shown equivalent in every computed number and killed on the printed record
+  (§9);
+- **the director's permission:** the three suites of §2 ran on a login node in root_6_28, ROOT tests included (§3).
+
+The mutation receipt is re-run on this code (§5).
+
 **Under:**
 - [`FD-RPD-BINDING-1.md`](FD-RPD-BINDING-1.md) (#703), which binds part 1's design
   ([`FD-RPD-DECLARATION.md`](FD-RPD-DECLARATION.md), revision 4, sha256 `b3413ffc…`) and requires for part 2 blob
@@ -18,14 +29,14 @@ disposition. §4 records the director's ruling on the calibration risk.
 - the tests (`nd-unfolding/tests/test_fd_rpd.py`) and the mutation receipt (`fd/receipts-rpd/mutants_rpd.py` and
   `.log`);
 - the exact commands, in order, and the pins;
-- **§6: what part 2 settles that part 1 left to it, and four deviations from part 1's text.** Each deviation is for the
-  director's acceptance in binding 2.
+- **§6: what part 2 settles that part 1 left to it, and its deviations from part 1's text:** three, deviation 3
+  having been resolved by ruling 2. The director has ruled on 1 and 2; 4 is declared.
 - **§9: the disposition of each finding of part 2's audit.**
 
 **Part 1's rules are unchanged.** Every section number below that is not part 2's own refers to part 1.
 
-**MEASURES:** nothing. The code has run only on synthetic fixtures and the committed H2 definition, locally (no cluster
-contact for part 2).
+**MEASURES:** nothing. The code has run only on synthetic fixtures and the committed H2 definition: locally, and its
+three test suites on a login node (no job, no pscratch or CFS read; §3).
 
 **CANNOT AUTHORIZE:** any run before binding 2; anything part 1 cannot authorize.
 
@@ -41,7 +52,7 @@ exist beforehand). `$D` = `$R/deploy`, a fresh clone at the bound commit.
 | subcommand | where | what | part 1 |
 |---|---|---|---|
 | `stage --r $R` | login | copies every input of `stage_sources()` into `$R/staged/` through an O_NOATIME descriptor while hashing. Each copy must equal its pin, or it is deleted and the step refuses. Records each source's atime before and after in `staged/STAGED.json` | §1 |
-| `flux --r $R` | login | builds X's flux file from the staged baseline files with the pinned combiner's `read_playlist`, its module global `BASE` set to the staged copies, and the combiner's own arithmetic (`combine`). Reads each staged loop's POT. Decides **F1** and the loops' POT (`flux_decision`) and computes e. Writes `flux/F1.json` | §1, §4 F1, §5 |
+| `flux --r $R` | login | builds X's flux file from the staged baseline files with the pinned combiner's `read_playlist`, its module global `BASE` set to the staged copies, and the combiner's own arithmetic (`combine`). Reads each staged loop's POT. Decides **F1** (contents, both POTs and edges; the errors printed) and the loops' POT (`flux_decision`) and computes e. Writes `flux/F1.json` | §1, §4 F1, §5 |
 | `check --r $R --playlist X` | job A | X's receipt and MC truth, after the dump and lateral steps (refusals below) | §2, §4 C1 |
 | `n0-split --r $R --partition p` | job A | one N0 partition, its 12 pseudo-npz files, background dumps, assignment vectors, receipt and MC truths | §4 N0 |
 | `unfold --r $R --what playlist\|n0\|k2 …` | jobs A and B | `s5p_numerics.py` unchanged: config R, 5 iterations, real data, estimator seed 42, with the expected input digests | §2 |
@@ -137,8 +148,23 @@ nice -n 19 $PY $D/nd-unfolding/fd_rpd.py readout --r $R --definition … --deplo
 
 ## 3. Tests
 
-**`tests/test_fd_rpd.py`, 109 tests.** Five need PyROOT and are skipped locally: the combiner-loading test and
-`RootPaths`' four. On the cluster all must run. Locally the other 104 pass in about 110 s.
+**`tests/test_fd_rpd.py`, 110 tests.** Five need PyROOT and are skipped locally: the combiner-loading test and
+`RootPaths`' four. On the cluster all must run. Locally the other 105 pass in about 180 s.
+
+**On a login node (revision 3, the director's permission of 2026-11-03).** `fd/receipts-rpd/root_tests_login.sh` runs
+the three suites of §2 in root_6_28 from a /dev/shm clone. It activates the env by prefix with no `set -u` and puts
+refusing `sbatch`, `srun` and `salloc` shims first on PATH. TMPDIR is in the clone, nothing reads pscratch or CFS, and
+the clone is deleted at the end. root_6_28 has no uproot, and none of the three suites needs it. A precheck at
+`c3e235b2` on login02 gave test_fd_rpd 110 OK, none skipped (the five ROOT tests ran); test_fd_ct_periods 85 OK, none
+skipped; test_fd_ct_readers 77 OK. Porcelain and `squeue --me` were empty before and after. The receipt is the same
+script on the head that carries this text, in `root_tests_login.log` (its HEAD and node lines).
+
+**Added in revision 3:**
+- **F1 (ruling 2):** an error defect of 10⁻³ passes and is printed at its size (`errors_max_rel_printed`); the graded keys
+  are exactly contents, both POTs and edges; a 10⁻¹¹ defect in an edge or in the MC POT fails;
+- **the regions, in both directions:** a fine cell has L (H) weight if and only if it is a reporting cell inside
+  [1.5, 8) ([8, 15)); before, only the "only if" was asserted;
+- **the region edges** are pinned with the declared sizes. The stage-0 record prints them.
 
 **Added in revision 2, for the audit's test gaps:**
 - **definitions:** stage D's and the readout's sizes and seeds; the era grouping;
@@ -187,8 +213,8 @@ nice -n 19 $PY $D/nd-unfolding/fd_rpd.py readout --r $R --definition … --deplo
 - **stage S:** copies at their pins with atime recorded; refuses a wrong digest (no copy kept), an existing staging
   directory or a missing source; a staged copy changed afterwards refuses; the copy opens with O_NOATIME where the
   platform has it;
-- **F1 and the flux:** the combiner's arithmetic; F1 in both directions (a 10⁻¹¹ defect fails in a period, in ALL and
-  in a POT; 5 × 10⁻¹³ passes); e is POT × flux;
+- **F1 and the flux:** the combiner's arithmetic; F1 in both directions (a 10⁻¹¹ defect fails in a period, in ALL,
+  in either POT and in an edge; 5 × 10⁻¹³ passes; an error defect is printed, not graded); e is POT × flux;
 - **check:** a consistent playlist passes and records mc_pot; each refusal on its one-entry defect;
 - **N0:** a partition reassembles bitwise, weights unchanged, POT and histograms sum, completeness equal per cell, the
   draw fixed by the seed; a scaled denominator would break the completeness;
@@ -243,11 +269,10 @@ Carlo error about ±0.013):
 | 10 | 0.040, 0.053, 0.060, 0.043, 0.070, 0.077, 0.073, 0.047 | 0.040–0.077 |
 | 30 | 0.047, 0.060, 0.053, 0.047, 0.043, 0.083, 0.067, 0.047 | 0.043–0.083 |
 
-<!-- absence-ok: scopes this lane's own receipt (the T-variance term's effect on alpha was not computed by it), not a claim that a result does not exist -->
-**Disclosed: the receipt's null is not exactly the readout's.** It resamples replica deviations scaled by
+**Disclosed in revision 2: the receipt's null is not exactly the readout's.** It resamples replica deviations scaled by
 √(n/(n−1)), as the readout does. It does not add the independent Gaussian with T's MC variance that the readout's
 noise adds (`make_noise`). Its docstring's "as fd_rpd.run_readout's noise does" overstates the match. The receipt is
-kept as the director ruled on it, and its effect on α̂ has not been measured.
+kept as the director ruled on it; the term is measured below (the director's ask (1)).
 
 **Pooled** (`fd/receipts-rpd/calibration_pooled.py` and `.log`, arithmetic on the log above):
 
@@ -273,13 +298,39 @@ gate at 0.0646, and the readout at 2,000 datasets × 4 scales. There is no 10× 
 **An R2 INCONCLUSIVE on calibration is a legitimate, reported outcome.** Its risk is stated here, before anything runs:
 about 4% per grid point at the measured pooled rate, as a floor.
 
+**With T's MC-variance term (revision 3, the director's ask (1)).** `fd/receipts-rpd/calibration_tvar.py` and `.log`
+rerun the same null with the Gaussian `make_noise` adds; `calibration_tvar_pooled.log` is `calibration_pooled.py` on it,
+block by block (that script's output on `calibration_spread.log` is unchanged, byte for byte). T's MC sd has no
+committed value, so it is bracketed at κ = 0.5, 1 and 2 times the replica sd, in two shapes: 1/√e (MC exposure
+proportional to the data's) and flat (the median replica sd on every playlist). κ = 0 reproduces
+`calibration_spread.log` exactly (asserted). Everything else is the receipt's: the metric, e, the seeds, 8 × 300.
+
+| T's MC sd | pooled α̂ at 30 replicas | α̂ + 2σ at 3 / 10 / 30 | P(2,000-set α̂ > gate) |
+|---|---|---|---:|
+| none (the ruled receipt) | 134/2400 = 0.0558 ± 0.0047 | 0.0498 / 0.0675 / 0.0652 | 0.044 |
+| 0.5 × 1/√e | 118/2400 = 0.0492 ± 0.0044 | 0.0489 / 0.0684 / 0.0580 | 0.001 |
+| 1 × 1/√e | 125/2400 = 0.0521 ± 0.0045 | 0.0526 / 0.0648 / 0.0612 | 0.007 |
+| 2 × 1/√e | 116/2400 = 0.0483 ± 0.0044 | 0.0539 / 0.0589 / 0.0571 | 0.001 |
+| 0.5 × flat | 118/2400 = 0.0492 ± 0.0044 | 0.0471 / 0.0666 / 0.0580 | 0.001 |
+| 1 × flat | 115/2400 = 0.0479 ± 0.0044 | 0.0462 / 0.0661 / 0.0566 | 0.000 |
+| 2 × flat | 114/2400 = 0.0475 ± 0.0043 | 0.0453 / 0.0557 / 0.0562 | 0.000 |
+
+- **No configuration puts the pooled α̂ + 2σ above 0.07.** The largest is 0.0684, at 10 replicas. At the readout's 30
+  it is at most 0.0612 with the term, against 0.0652 without it.
+- **The term does not raise α̂ in this bracket.** At 30 replicas every κ > 0 lies below the ruled 0.0558, by
+  0.0037–0.0083 (0.8–1.8 of its σ, 0.0047). The rows share their replica sets and seeds, so they are correlated and
+  not six independent confirmations.
+- **So the ruled 4% floor stands as the conservative figure.** The rerun gives no reason to raise it.
+- **Scope:** the synthetic metric and Gaussian replicas, as in the ruled receipt. κ is bracketed, not measured; the
+  real T variance is computed from the npz only in the readout.
+
 ## 5. Mutation receipt
 
 <!-- absence-ok: describes what tests assert (R1 NOT COMPUTED is a declared outcome), not a claim that a result does not exist -->
-`fd/receipts-rpd/mutants_rpd.py`, 106 mutants across `fd_rpd_inputs.py`, `fd_rpd.py` and the rpd submit stages, run
-against `test_fd_rpd` (each run stops at its first failure): **killed 106 of 106, none survived, none unapplied, files
-restored** (`fd/receipts-rpd/mutants_rpd.log`, on the final code; the log's first line gives the three files' sha256
-prefixes).
+`fd/receipts-rpd/mutants_rpd.py`, 114 mutants across `fd_rpd_inputs.py`, `fd_rpd.py` and the rpd submit stages, run
+against `test_fd_rpd` (each run stops at its first failure): **killed 114 of 114, none survived, none unapplied, files
+restored** (`fd/receipts-rpd/mutants_rpd.log`, on revision 3's code `c3e235b2` in a fresh clone; the log's first line
+gives the three files' sha256 prefixes).
 
 **Revision 1** had 67 mutants, killed 67 of 67 after a first pass left 7. The survivors were: S1 not shrunk; σ₀
 centred on the replica mean; both stage D rules inverted; C1's exact-zero weights unchecked; R1's t̄ gate removed; and
@@ -308,6 +359,10 @@ except the L-region edge (§9), plus mutants on the code added in answer to it.
   that exactly the three small playlists reach `classify` forced.
 - With call-site mutants for each seed, that makes 106.
 
+**Revision 3** adds 8, on the rulings' code and the director's ask (2): F1 ignoring the MC POT, the edges or the
+contents; F1 grading the errors; the errors not printed; the L-region lower edge 1.0 (the audit's) and 2.0; H's upper
+edge 20 (§9). The 8 were run first as a subset and all killed; the full 114 were then run on the final code.
+
 ## 6. What part 2 settles, and its deviations
 
 <!-- absence-ok: design scoping (N0 is built in job A, after stage D), not a claim that a result does not exist -->
@@ -335,7 +390,8 @@ except the L-region edge (§9), plus mutants on the code added in answer to it.
   F and its share with p < 0.05, with and without b̄, beside the observed F and p (`n0_effect`, seed offset 4000).
 - **Stage D's 2 h budget** runs from the start of the stage, not from the reachability loop.
 
-**Deviation 1, for the director's re-ruling: C1's `measured_weights` predicate.**
+**Deviation 1, ruled (a) by the director (2026-11-03, into binding 2): C1's `measured_weights` predicate is printed,
+not graded.**
 - Part 1 §4 says C1 "recomputes it from X's own arrays and requires equality to 10⁻¹² (self-consistency)". That is not
   achievable from the npz.
 - The dump bins float64 coordinates (`nd-unfolding/nn_dump_inputs.py:75-82`, before `.astype(np.float32)` at `:84-86`) but stores
@@ -347,6 +403,8 @@ except the L-region edge (§9), plus mutants on the code added in answer to it.
   share on the staged `lat_zero` first is barred: nothing runs before binding 2.
 - **Revision 2** prints the share per playlist and does not grade it (`C1_MW_GRADED = False`). Config R does not read
   this key (part 1 §2), so no readout depends on it.
+- **The ruling** keeps that: a declared deviation from part 1's "requires equality", since grading at 0.999 carries
+  a measured 0–5% spurious-stop risk per playlist and nothing reads the key.
 
 **Deviation 2, accepted by the director for printing: stage D's α̂ at 200 inner datasets.**
 - Part 1 §5 says "S0's α̂ at 200 inner is printed beside it, descriptive". Running S0's four scales for every outer
@@ -357,13 +415,11 @@ except the L-region edge (§9), plus mutants on the code added in answer to it.
 - **The readout's calibration gate uses all 2,000 datasets** (`R2_GATE_N`; `run_readout` calls `r2.run` with the gate
   on). The director's acceptance requires this, and the 25-dataset limit applies only to stage D's print.
 
-**Deviation 3, for the director's ruling: F1 also compares errors and edges.**
+**Deviation 3, resolved by ruling 2 (a) (2026-11-03): F1 conforms to part 1.**
 - Part 1 §4 F1 compares each combination with 5B's period flux and the production flux "bin by bin … with its POTs".
-- The code also requires the bin errors and the bin edges to agree to 10⁻¹² (`f1_decide`).
-- Edges must agree for a bin-by-bin comparison to mean anything. The errors' agreement depends on 5B's period files
-  having been built with the same arithmetic, which cannot be checked locally: the baseline files are on pscratch.
-- If they were not, F1 FAILs at stage S, a free login-node stop that would still be final, for a reason part 1 never
-  named.
+- Revision 2 also graded the bin errors to 10⁻¹². Revision 3's `f1_decide` grades contents, both POTs and the edges
+  to 10⁻¹², and prints the errors' max_rel (`errors_max_rel_printed`) without grading it.
+- Edges must agree for a bin-by-bin comparison to mean anything, and the director's ruling keeps them graded.
 
 **Deviation 4, declared: the inputs driver's records do not pass the LeakGuard.**
 - Part 1 says every output passes F0's `LeakGuard`. The readers' JSONs do. `fd_rpd_inputs.py`'s four records
@@ -374,15 +430,16 @@ except the L-region edge (§9), plus mutants on the code added in answer to it.
 
 ## 7. Pinned bytes
 
-Git blob digests at commit `11820dd7` (revision 2's code commit). The deploy verifies each with `git rev-parse <pin>:<path>`;
-the ones not written by part 2 are the bound tools it calls unchanged.
+Git blob digests at commit `c3e235b2` (revision 3's code commit; `fd_rpd_inputs.py` and the tests changed from
+revision 2). The deploy verifies each with `git rev-parse <pin>:<path>`; the ones not written by part 2 are the bound
+tools it calls unchanged.
 
 | path | blob |
 |---|---|
-| `nd-unfolding/fd_rpd_inputs.py` | `5798cc6a13e2fcb949161bea1dd94c3aee2ac443` |
+| `nd-unfolding/fd_rpd_inputs.py` | `eeec12523ac14292ec7235216b09937fd9210e65` |
 | `nd-unfolding/fd_rpd.py` | `fea4f5e49b06b926847a58c565e20e6b3fe245d4` |
 | `nd-unfolding/submit_fd_ct.sh` | `031b1b62f46dcd4361e8b5a8547b63c9717e63ad` |
-| `nd-unfolding/tests/test_fd_rpd.py` | `5394066b89a1c287e931a519f283fb1613d2b919` |
+| `nd-unfolding/tests/test_fd_rpd.py` | `ea96b289afd49d3c72bd0992929a0db5888ed6fb` |
 | `nd-unfolding/fd_ct_period_inputs.py` | `81fc77890264e26ce38661a27e11c3da74c22284` |
 | `nd-unfolding/fd_ct_periods.py` | `05c1a9b7f41f04d415306ad36840088c7233bd3f` |
 | `nd-unfolding/fd_ct_readers.py` | `3abde33073a69fc3f11fc48a08497e2c1049a93c` |
@@ -418,12 +475,12 @@ revision 1's code.
 | **M1** N0's effect is not part 1's | **Fixed to part 1's text** (§6, `n0_effect`); tested |
 | **M2** five printed items absent | **Fixed.** The readout prints: the detectable bias in σ and in % of the real median \|g\| of the small set (`detectable_bias_pct_of_median_abs_g_small`, and in `n0_reading`); the null's F quantiles beside N0's F values (`F_null_quantiles_beside`; `R2.run` returns them); the OC table again at the readout's t̄ and σ(t̄) (`oc_at_readout_descriptive`); ρ_raw and ρ_deb with their replica-noise reference (`r3_numbers`). Each is asserted in `Readout`'s end-to-end test |
 | **M3** no outside-path refusal | **Fixed.** Every absolute path token in a step must be `$R` or start with `$R/`; tested both ways, with the prefix collision |
-| **M4** the mutation list is not representative | **Fixed.** The list grows from 67 to 106, including every survivor the audit named except the L-region edge (below). The receipt is re-run: 106 of 106 killed (§5) |
-| **M5** ROOT code never executed | **Tests added** (`RootPaths`), cluster-only. `loop_pots` now runs at stage S (§6). Running the suite on a login node before binding 2 is asked of the director |
-| **m1** C1's 0.999 not derived | **Printed, not graded,** for the director's re-ruling (§6 deviation 1) |
+| **M4** the mutation list is not representative | **Fixed.** The list grows from 67 to 106 in revision 2 and to 114 in revision 3, including every survivor the audit named; the L-region edge is added in revision 3 (below). The receipt is re-run on the final code (§5) |
+| **M5** ROOT code never executed | **Tests added** (`RootPaths`), cluster-only. `loop_pots` now runs at stage S (§6). Revision 3: run on a login node in root_6_28 with the director's permission, none skipped (§3) |
+| **m1** C1's 0.999 not derived | **Printed, not graded:** ruled (a) by the director (§6 deviation 1) |
 | **m2** N0's set by e < 0.03 | **Fixed:** the three smallest, with "all below 0.03" printed (§6) |
 | **m3** Q3 partial | **Fixed:** finite and > 0 on cells, L and H for every vector read: the 360 replicas, the seed-42 unfolds, the truths and N0's 120. `read_truth` refuses non-finite values |
-| **m4** F1 stricter; e not from the loops | **e: fixed** (§6). **The errors and edges:** declared as deviation 3, for the director's ruling |
+| **m4** F1 stricter; e not from the loops | **e: fixed** (§6). **The errors:** printed, not graded (ruling 2 (a)); the edges stay graded (§6 deviation 3, resolved) |
 | **m5** gates weaker than "this deploy's records" | **Fixed.** Gate a requires F1's PASS, stage 0's and stage D's code sha equal to this `fd_rpd.py`, and stage D's recorded F1 and stage 0 digests equal to the files on disk. Gate b adds F1's digest and each N0 receipt's digest |
 | **m6** budget from the loop | **Fixed:** from the stage start |
 | **m7** inputs driver unguarded | **Declared** (§6 deviation 4) |
@@ -434,7 +491,15 @@ revision 1's code.
 | **n4** `$B` prefix | **Fixed** with M3 |
 | **n5** `relatime` masks atime | **Noted.** `atime_unchanged` stays advisory; the O_NOATIME open is what part 1 requires |
 
-**The L-region edge mutant** (1.5 → 1.0) is not in the list. The audit marks it possibly equivalent, and the lane has not
-checked whether any reporting cell lies below 1.5.
+**The L-region edge mutant** (1.5 → 1.0), the director's ask (2). `fd/receipts-rpd/lregion_edge.py` and `.log`:
+- the fine p∥ grid's lowest edge is 1.5 (`s1.FINE["pz"]`), so no reporting fine cell has a lower edge in [1.0, 1.5);
+- L's weights under the lower edge 1.0 are bitwise those under 1.5 (39,480 nonzero entries), and the definition and
+  the grid are pinned, so the mutant is **equivalent in every number the readers compute**;
+- it is **not equivalent in output:** the stage-0 record prints `regions`. The pin of `L_REGION` and `H_REGION`
+  (`test_the_declared_sizes_and_seeds`) kills it there, and the region test alone does not (checked by applying it).
+
+Two non-equivalent neighbours are also in the list: the lower edge 2.0 and H's upper edge 20 (the grid has an edge
+at 20). Revision 2's region test asserted only that every weighted cell lies inside the edges, so the narrowed region
+(2.0) passed it. It now asserts both directions, and kills both.
 
 Nothing is submitted, deposited or tagged.
