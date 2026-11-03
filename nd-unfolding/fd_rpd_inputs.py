@@ -317,16 +317,18 @@ def rel_max(a, b) -> float:
 
 def f1_decide(per_pl: dict, periods: dict, prod: dict) -> dict:
     """F1: the data-POT-weighted combination of each period's playlists against 5B's committed period flux, and of
-    all twelve against the production flux, bin by bin (contents and errors) and in both POTs, to REL_FLUX."""
+    all twelve against the production flux: contents, both POTs and edges graded to REL_FLUX; the errors' max_rel is
+    printed, not graded (part 1 section 5; the director's ruling 2 of 2026-11-03)."""
     out = {}
     for name, pls, ref in [*((k, PERIODS[k], v) for k, v in periods.items()), ("ALL", PLAYLISTS, prod)]:
         comb = combine([{**per_pl[pl], "contents": np.asarray(per_pl[pl]["contents"]),
                          "errors": np.asarray(per_pl[pl]["errors"])} for pl in pls])
-        dev = {"contents": rel_max(comb["contents"], ref["contents"]), "errors": rel_max(comb["errors"], ref["errors"]),
+        dev = {"contents": rel_max(comb["contents"], ref["contents"]),
                "pot_data": abs(comb["pot_data"] / ref["pot_data"] - 1.0),
                "pot_mc": abs(comb["pot_mc"] / ref["pot_mc"] - 1.0),
                "edges": rel_max(per_pl[pls[0]]["edges"], ref["edges"])}
-        out[name] = {"max_rel": dev, "pass": all(v <= REL_FLUX for v in dev.values())}
+        errors = rel_max(comb["errors"], ref["errors"])
+        out[name] = {"max_rel": dev, "errors_max_rel_printed": errors, "pass": all(v <= REL_FLUX for v in dev.values())}
     return out
 
 

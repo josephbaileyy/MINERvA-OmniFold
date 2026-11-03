@@ -135,6 +135,7 @@ class Definitions(unittest.TestCase):
                          (0.5, 0.2, 200, 25))
         self.assertEqual((rp.R2_GATE_N, rp.R2_BETA, rp.R2_SCALES, rp.R1_GATE, rp.R1_RES, rp.R1_Z),
                          (2000, 0.80, (0.0, 0.5, 1.0, 2.0), 3.0, 4.0, 2.0))
+        self.assertEqual((rp.L_REGION, rp.H_REGION), ((1.5, 8.0), (8.0, 15.0)))
         a = rp.build_args(["staged", "--r", "R", "--definition", "d", "--out-json", "o"])
         self.assertEqual((a.outer, a.inner, a.budget), (500, 200, 7200.0))
 
@@ -369,6 +370,24 @@ class Flux(unittest.TestCase):
         bad = json.loads(json.dumps(periods))
         bad["PA"]["pot_data"] *= 1 + 1e-11
         self.assertFalse(ri.f1_decide(per, bad, prod)["PA"]["pass"])
+
+    def test_f1_prints_the_errors_and_does_not_grade_them(self):
+        per, periods, prod = self.build(np.random.default_rng(5))
+        clean = ri.f1_decide(per, periods, prod)
+        self.assertTrue(all(v["errors_max_rel_printed"] <= 1e-15 for v in clean.values()))
+        periods["PC"]["errors"][2] *= 1 + 1e-3
+        prod["errors"][7] *= 1 - 2e-3
+        out = ri.f1_decide(per, periods, prod)
+        self.assertTrue(all(v["pass"] for v in out.values()))
+        self.assertAlmostEqual(out["PC"]["errors_max_rel_printed"], 1e-3 / (1 + 1e-3), delta=1e-12)
+        self.assertAlmostEqual(out["ALL"]["errors_max_rel_printed"], 2e-3 / (1 - 2e-3), delta=1e-12)
+        self.assertEqual(set(out["PC"]["max_rel"]), {"contents", "pot_data", "pot_mc", "edges"})
+        bad = json.loads(json.dumps(prod))
+        bad["edges"][4] *= 1 + 1e-11
+        self.assertFalse(ri.f1_decide(per, periods, bad)["ALL"]["pass"])
+        bad = json.loads(json.dumps(periods))
+        bad["PB"]["pot_mc"] *= 1 + 1e-11
+        self.assertFalse(ri.f1_decide(per, bad, prod)["PB"]["pass"])
 
     def test_f1_passes_within_its_tolerance(self):
         per, periods, prod = self.build(np.random.default_rng(3))
@@ -783,8 +802,9 @@ class Arithmetic(unittest.TestCase):
         shape = sa.s1.fine_shape()
         ipz = np.unravel_index(np.arange(g.fm.size), shape)[1]
         e = np.asarray(sa.s1.FINE["pz"])
-        self.assertTrue(np.all(e[ipz][g.wH > 0] >= 8.0) and np.all(e[ipz + 1][g.wH > 0] <= 15.0))
-        self.assertTrue(np.all(e[ipz][g.wL > 0] >= 1.5) and np.all(e[ipz + 1][g.wL > 0] <= 8.0))
+        rep = g.fm >= 0
+        np.testing.assert_array_equal(g.wH > 0, rep & (e[ipz] >= 8.0) & (e[ipz + 1] <= 15.0))
+        np.testing.assert_array_equal(g.wL > 0, rep & (e[ipz] >= 1.5) & (e[ipz + 1] <= 8.0))
         vol = sa.s1.fine_volume()
         np.testing.assert_allclose(g.wL[g.wL > 0], vol[g.wL > 0])
 

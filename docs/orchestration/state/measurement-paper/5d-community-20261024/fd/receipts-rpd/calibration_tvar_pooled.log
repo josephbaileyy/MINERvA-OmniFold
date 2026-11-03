@@ -1,0 +1,43 @@
+== T's MC sd = 0.0 x 1/sqrt(e) replica sd
+replicas  3: counts [12, 15, 12, 10, 10, 19, 14, 8]; pooled 100/2400 = 0.0417 +- 0.0041; dispersion chi2 7.01 on 7 dof, p 0.43
+replicas 10: counts [12, 16, 18, 13, 21, 23, 22, 14]; pooled 139/2400 = 0.0579 +- 0.0048; dispersion chi2 7.81 on 7 dof, p 0.35
+replicas 30: counts [14, 18, 16, 14, 13, 25, 20, 14]; pooled 134/2400 = 0.0558 +- 0.0047; dispersion chi2 7.43 on 7 dof, p 0.39
+gate 0.06462; at the 30-replica pooled rate 0.0558: P(one 300-set alpha > gate) = 0.238, P(one 2000-set alpha > gate) = 0.044
+pooled alpha + 2 se: replicas 3: 0.0498; replicas 10: 0.0675; replicas 30: 0.0652
+== T's MC sd = 0.5 x 1/sqrt(e) replica sd
+replicas  3: counts [17, 8, 9, 15, 13, 16, 12, 8]; pooled 98/2400 = 0.0408 +- 0.0040; dispersion chi2 7.79 on 7 dof, p 0.35
+replicas 10: counts [12, 24, 15, 22, 19, 17, 17, 15]; pooled 141/2400 = 0.0587 +- 0.0048; dispersion chi2 6.50 on 7 dof, p 0.48
+replicas 30: counts [15, 19, 17, 9, 13, 22, 11, 12]; pooled 118/2400 = 0.0492 +- 0.0044; dispersion chi2 9.52 on 7 dof, p 0.22
+gate 0.06462; at the 30-replica pooled rate 0.0492: P(one 300-set alpha > gate) = 0.106, P(one 2000-set alpha > gate) = 0.001
+pooled alpha + 2 se: replicas 3: 0.0489; replicas 10: 0.0684; replicas 30: 0.0580
+== T's MC sd = 1.0 x 1/sqrt(e) replica sd
+replicas  3: counts [15, 13, 9, 13, 17, 15, 12, 12]; pooled 106/2400 = 0.0442 +- 0.0042; dispersion chi2 3.28 on 7 dof, p 0.86
+replicas 10: counts [15, 22, 17, 14, 14, 15, 17, 19]; pooled 133/2400 = 0.0554 +- 0.0047; dispersion chi2 3.43 on 7 dof, p 0.84
+replicas 30: counts [12, 23, 20, 12, 16, 19, 11, 12]; pooled 125/2400 = 0.0521 +- 0.0045; dispersion chi2 9.85 on 7 dof, p 0.20
+gate 0.06462; at the 30-replica pooled rate 0.0521: P(one 300-set alpha > gate) = 0.157, P(one 2000-set alpha > gate) = 0.007
+pooled alpha + 2 se: replicas 3: 0.0526; replicas 10: 0.0648; replicas 30: 0.0612
+== T's MC sd = 2.0 x 1/sqrt(e) replica sd
+replicas  3: counts [15, 11, 13, 13, 14, 19, 12, 12]; pooled 109/2400 = 0.0454 +- 0.0043; dispersion chi2 3.37 on 7 dof, p 0.85
+replicas 10: counts [17, 17, 16, 11, 10, 13, 16, 20]; pooled 120/2400 = 0.0500 +- 0.0044; dispersion chi2 5.61 on 7 dof, p 0.59
+replicas 30: counts [11, 16, 19, 12, 13, 19, 15, 11]; pooled 116/2400 = 0.0483 +- 0.0044; dispersion chi2 5.51 on 7 dof, p 0.60
+gate 0.06462; at the 30-replica pooled rate 0.0483: P(one 300-set alpha > gate) = 0.093, P(one 2000-set alpha > gate) = 0.001
+pooled alpha + 2 se: replicas 3: 0.0539; replicas 10: 0.0589; replicas 30: 0.0571
+== T's MC sd = 0.5 x flat replica sd
+replicas  3: counts [16, 6, 10, 11, 14, 16, 11, 10]; pooled 94/2400 = 0.0392 +- 0.0040; dispersion chi2 7.22 on 7 dof, p 0.41
+replicas 10: counts [12, 26, 15, 22, 16, 17, 16, 13]; pooled 137/2400 = 0.0571 +- 0.0047; dispersion chi2 9.47 on 7 dof, p 0.22
+replicas 30: counts [12, 19, 20, 11, 15, 20, 9, 12]; pooled 118/2400 = 0.0492 +- 0.0044; dispersion chi2 9.66 on 7 dof, p 0.21
+gate 0.06462; at the 30-replica pooled rate 0.0492: P(one 300-set alpha > gate) = 0.106, P(one 2000-set alpha > gate) = 0.001
+pooled alpha + 2 se: replicas 3: 0.0471; replicas 10: 0.0666; replicas 30: 0.0580
+== T's MC sd = 1.0 x flat replica sd
+replicas  3: counts [15, 11, 11, 13, 12, 12, 9, 9]; pooled 92/2400 = 0.0383 +- 0.0039; dispersion chi2 2.53 on 7 dof, p 0.92
+replicas 10: counts [15, 23, 16, 13, 17, 18, 16, 18]; pooled 136/2400 = 0.0567 +- 0.0047; dispersion chi2 3.74 on 7 dof, p 0.81
+replicas 30: counts [11, 19, 17, 15, 14, 18, 9, 12]; pooled 115/2400 = 0.0479 +- 0.0044; dispersion chi2 6.42 on 7 dof, p 0.49
+gate 0.06462; at the 30-replica pooled rate 0.0479: P(one 300-set alpha > gate) = 0.088, P(one 2000-set alpha > gate) = 0.000
+pooled alpha + 2 se: replicas 3: 0.0462; replicas 10: 0.0661; replicas 30: 0.0566
+== T's MC sd = 2.0 x flat replica sd
+replicas  3: counts [14, 15, 9, 12, 16, 6, 7, 11]; pooled 90/2400 = 0.0375 +- 0.0039; dispersion chi2 8.82 on 7 dof, p 0.27
+replicas 10: counts [21, 15, 9, 8, 11, 19, 12, 18]; pooled 113/2400 = 0.0471 +- 0.0043; dispersion chi2 12.25 on 7 dof, p 0.09
+replicas 30: counts [11, 20, 16, 14, 12, 18, 11, 12]; pooled 114/2400 = 0.0475 +- 0.0043; dispersion chi2 6.00 on 7 dof, p 0.54
+gate 0.06462; at the 30-replica pooled rate 0.0475: P(one 300-set alpha > gate) = 0.082, P(one 2000-set alpha > gate) = 0.000
+pooled alpha + 2 se: replicas 3: 0.0453; replicas 10: 0.0557; replicas 30: 0.0562
+rc=0
