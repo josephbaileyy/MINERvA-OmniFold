@@ -1,0 +1,4 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	inline	neg	no	no	shape difference source not identified	The source of the shape difference has not been identified.
+2	c	inline	neg	no	no	no finite-ensemble correction applied	No finite-ensemble correction is applied.
+3	c	inline	neg	no	no	simulated detector response not probed	The simulated detector response is not probed.

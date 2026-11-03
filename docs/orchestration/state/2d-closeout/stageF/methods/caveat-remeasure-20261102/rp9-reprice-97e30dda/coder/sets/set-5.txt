@@ -1,0 +1,1 @@
+The estimator's response to rounding-level changes of its inputs is given in Ref. [14], Sec. 9.3.

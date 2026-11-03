@@ -1,0 +1,7 @@
+Its model term is a covariance built from three generator shifts.
+
+Other reporting definitions of a five-observable measurement, with their precision, are studied in Ref. [14], Sec. 9.4.
+
+The second is the envelope of the note's precision-target study, which tracks the same bias (Ref. [14], Sec. 9.4).
+
+A five-observable cross section with total uncertainties is reported as the joint-test estimator's data result on 16 cells, R00–R15.

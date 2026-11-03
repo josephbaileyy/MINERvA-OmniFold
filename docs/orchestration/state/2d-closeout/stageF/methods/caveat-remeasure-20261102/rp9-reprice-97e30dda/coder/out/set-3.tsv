@@ -1,0 +1,2 @@
+n	kind	loc	polarity	quant	assigned	issue	quote
+1	c	inline	pos	no	no	model covariance omitted from band	The band of this analysis is the four-block covariance of Ref. [14], Sec. 6.3, without Cmodel.

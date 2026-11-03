@@ -1,0 +1,20 @@
+{
+ "rule": "A coded row in an edited sentence whose caveat-bearing words the edit leaves unchanged takes the base inventory's coding of that sentence: a base label is restored (the survival measure dropped it only because the quote's wording changed); a sentence the base coder did not code adds nothing. A row in new pointer text, or in a sentence whose caveat-bearing words changed, is a new distinct caveat; one the coder called borderline counts as 0 to 1.",
+ "control": {"set": "set-7", "caveats_planted": 3, "caveats_coded": 3, "non_caveats_planted": 3, "non_caveats_coded": 0},
+ "rows": [
+  {"move": "IVDbkg", "set": "set-1", "sentence": "Fig. 3 caption: At nominal truth this variant's largest residual is 0.39 % (reference changed only)", "base": "not coded", "decision": "0"},
+  {"move": "IIIA", "set": "set-2", "sentence": "III B's first sentence, reworded (\"reported separately from those reporting definitions\" -> \"reported as\")", "base": "not coded", "decision": "0 to +1 (coder: borderline; wording changed)"},
+  {"move": "IVC", "set": "set-3", "sentence": "Fig. 1 caption: band = four-block covariance, without C_model (reference changed only)", "base": "row 52, (d) 2D covariance excludes Cmodel", "decision": "restore (d) 2d covariance excludes cmodel: +1 against the survival count"},
+  {"move": "IVE", "set": "set-4", "sentence": "conclusions: the first finding, re-pointed", "base": "row 119, (c) regularization bias toward the prior (label held elsewhere)", "decision": "0"},
+  {"move": "IVE", "set": "set-4", "sentence": "IVE's pointer: '... and the interval coverage of an earlier estimator, are given in ...'", "base": "new text", "decision": "+1 (history, in the pointer itself)"},
+  {"move": "IVBC", "set": "set-8", "sentence": "Limitations item 1: '... nor the size of the run-period block ...' ('either' -> 'the')", "base": "row 127, (c) Cmodel and run-period block not validated", "decision": "restore: +1 against the survival count"}
+ ],
+ "adjusted": {
+  "IIIA": [75, 76, 7565], "IVBC": [66, 66, 6869], "IVBC+ABS2D": [65, 65, 6854], "IVC": [72, 72, 7337],
+  "IVDbkg": [74, 74, 7452], "IVE": [75, 75, 7235], "IVF": [76, 76, 7653], "VC": [75, 75, 7649],
+  "IIIA+IVBC+IVDbkg+IVE+IVF+VC+ABS2D": [55, 56, 5649],
+  "IIIA+IVBC+IVDbkg+IVF+VC+ABS2D": [57, 58, 6162],
+  "IIIA+IVC+IVDbkg+VC": [65, 66, 6735]
+ },
+ "adjusted_columns": ["distinct_low", "distinct_high", "words"]
+}

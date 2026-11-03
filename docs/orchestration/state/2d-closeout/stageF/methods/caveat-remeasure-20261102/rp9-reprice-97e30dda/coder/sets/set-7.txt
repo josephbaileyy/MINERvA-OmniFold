@@ -1,0 +1,11 @@
+The source of the shape difference has not been identified.
+
+Each OmniFold iteration has two classification steps.
+
+No finite-ensemble correction is applied.
+
+Figure 1 shows the principal one-dimensional projections.
+
+The result's covariance is given in Sec. IV A.
+
+The simulated detector response is not probed.

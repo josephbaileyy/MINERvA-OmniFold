@@ -1,0 +1,17 @@
+{
+ "seed": 20261103,
+ "map": {
+  "set-1": "IVDbkg",
+  "set-2": "IIIA",
+  "set-3": "IVC",
+  "set-4": "IVE",
+  "set-5": "IVF",
+  "set-6": "VC",
+  "set-7": "CONTROL",
+  "set-8": "IVBC"
+ },
+ "control_expected": {
+  "caveats": 3,
+  "non_caveats": 3
+ }
+}

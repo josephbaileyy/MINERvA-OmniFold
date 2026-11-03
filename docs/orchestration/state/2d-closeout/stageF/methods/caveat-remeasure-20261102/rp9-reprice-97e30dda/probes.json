@@ -1,0 +1,206 @@
+{
+ "IIIA": [
+  {
+   "fact": "a 10% median half-width precision target",
+   "pattern": "precision target",
+   "note_prints": true
+  },
+  {
+   "fact": "envelope median about 10-13% per cell",
+   "pattern": "10–13",
+   "note_prints": true
+  },
+  {
+   "fact": "the envelope is a diagnostic, not an interval",
+   "pattern": "envelope.{0,80}(not an interval|diagnostic)",
+   "note_prints": true
+  }
+ ],
+ "IVBC": [
+  {
+   "fact": "integrated ratio 1.010 to the published result",
+   "pattern": "1\\.010",
+   "note_prints": true
+  },
+  {
+   "fact": "standardized-difference RMS 0.535",
+   "pattern": "0\\.535",
+   "note_prints": true
+  },
+  {
+   "fact": "chi2/ndf 2.27 against the published covariance",
+   "pattern": "2\\.27",
+   "note_prints": true
+  },
+  {
+   "fact": "pseudo-inverse condition number 1.5e12",
+   "pattern": "condition number",
+   "note_prints": true
+  },
+  {
+   "fact": "the shape difference's source not identified",
+   "pattern": "shape difference.{0,60}(not been identified|unknown|not identified)",
+   "note_prints": true
+  },
+  {
+   "fact": "learner chosen after comparison with the published result",
+   "pattern": "learner was chosen|chosen after",
+   "note_prints": true
+  },
+  {
+   "fact": "exact-split differs by a median 1.03% per bin, maximum 17.6%",
+   "pattern": "1\\.03 ?%.{0,200}17\\.6|17\\.6.{0,200}1\\.03",
+   "note_prints": true
+  },
+  {
+   "fact": "187 systematic universes",
+   "pattern": "187",
+   "note_prints": true
+  },
+  {
+   "fact": "published flux uncertainty 4.01% exceeds ours",
+   "pattern": "4\\.01",
+   "note_prints": true
+  },
+  {
+   "fact": "training-seed block from five seed settings",
+   "pattern": "five seed|seed settings",
+   "note_prints": true
+  },
+  {
+   "fact": "run-period step of about 7% near 8 GeV/c",
+   "pattern": "step of \\(\\+6\\.89|6\\.89 ± 0\\.46\\)% at 8 GeV/c",
+   "note_prints": true
+  },
+  {
+   "fact": "run-period block 2.0% on the integrated cross section",
+   "pattern": "1\\.97 ?% on the integrated",
+   "note_prints": true
+  },
+  {
+   "fact": "no statement about the published analysis's residual (iteration counts differ)",
+   "pattern": "no statement about the size|iteration counts differ",
+   "note_prints": false
+  },
+  {
+   "fact": "an earlier statistical band undercovered in its tails",
+   "pattern": "undercover",
+   "note_prints": true
+  }
+ ],
+ "IVC": [
+  {
+   "fact": "187 systematic universes",
+   "pattern": "187",
+   "note_prints": true
+  },
+  {
+   "fact": "published flux uncertainty 4.01% exceeds ours",
+   "pattern": "4\\.01",
+   "note_prints": true
+  },
+  {
+   "fact": "training-seed block from five seed settings",
+   "pattern": "five seed|seed settings",
+   "note_prints": true
+  },
+  {
+   "fact": "run-period block 2.0% on the integrated cross section",
+   "pattern": "1\\.97 ?% on the integrated",
+   "note_prints": true
+  },
+  {
+   "fact": "no statement about the published analysis's residual (iteration counts differ)",
+   "pattern": "no statement about the size|iteration counts differ",
+   "note_prints": false
+  }
+ ],
+ "IVDbkg": [
+  {
+   "fact": "purity-based subtraction biased up to 4% at highest W",
+   "pattern": "up to 4 ?%|4 ?% in simulation",
+   "note_prints": true
+  },
+  {
+   "fact": "2D closure: purity estimate up to 5.9 statistical SD",
+   "pattern": "5\\.9",
+   "note_prints": true
+  },
+  {
+   "fact": "refined estimate within 0.44 in every cell",
+   "pattern": "0\\.44",
+   "note_prints": true
+  },
+  {
+   "fact": "14 of the 205 cells more than one statistical SD apart",
+   "pattern": "14 of the 205",
+   "note_prints": true
+  },
+  {
+   "fact": "the two treatments differ by at most 1.4% on data",
+   "pattern": "at most 1\\.4 ?%|1\\.4 ?% on data",
+   "note_prints": true
+  }
+ ],
+ "IVE": [
+  {
+   "fact": "up to 74% at high W",
+   "pattern": "74 ?%",
+   "note_prints": true
+  },
+  {
+   "fact": "16-31% in the most affected cell",
+   "pattern": "16 ?% to 31 ?%",
+   "note_prints": true
+  },
+  {
+   "fact": "within the total uncertainty in about half of those cells",
+   "pattern": "about half",
+   "note_prints": true
+  },
+  {
+   "fact": "an earlier covariance fails its specified acceptance criteria",
+   "pattern": "acceptance criteria",
+   "note_prints": true
+  },
+  {
+   "fact": "earlier estimator's 68% intervals cover as low as 0.06",
+   "pattern": "0\\.06",
+   "note_prints": true
+  }
+ ],
+ "IVF": [
+  {
+   "fact": "rounding scatter median 0.23% per joint cell",
+   "pattern": "0\\.23 ?%",
+   "note_prints": true
+  },
+  {
+   "fact": "against a median data-bootstrap statistical uncertainty of 0.37%",
+   "pattern": "0\\.37 ?%",
+   "note_prints": false
+  },
+  {
+   "fact": "up to 2.6 (and 2.5 for the development variant) statistical SD",
+   "pattern": "at most 2\\.6.{0,120}2\\.5",
+   "note_prints": true
+  },
+  {
+   "fact": "fails the data-stability requirement (median 0.3, maximum 1.0)",
+   "pattern": "data-stability",
+   "note_prints": true
+  }
+ ],
+ "VC": [
+  {
+   "fact": "3D and 4D central values carry no uncertainties",
+   "pattern": "no 3D or 4D covariance|central values without u",
+   "note_prints": true
+  },
+  {
+   "fact": "generators underpredict at low Eavail, the low-recoil region",
+   "pattern": "low-recoil discrepancy",
+   "note_prints": true
+  }
+ ]
+}

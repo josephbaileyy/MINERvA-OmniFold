@@ -1,0 +1,61 @@
+### 1. Caveat Density vs. Scientific Substance
+
+As a PRD editor and referee, I do not count "caveats per thousand words," and no referee report will ever cite that metric. What referees react to is tone and focus: does the manuscript read like a confident physics measurement, or does it read like a defensive quality-assurance audit? 
+
+A density of 9–10 is not objectionable because of the arithmetic; it is objectionable because it signals an exhausting, defensive posture that obscures the physics. What matters is the **content**:
+* Referees care deeply if coverage is unvalidated, if closure bias exceeds uncertainties at plausible truths, or if run periods disagree. 
+* Referees do not care about internal project-management history, aborted validation scripts, or minor generator quirks.
+
+The target of $\le 6$ is an arbitrary, counterproductive proxy (Goodhart’s Law). As the study demonstrated, moving sections barely shifts the ratio because words and caveats leave together. Chasing $\le 6$ is actively harming the manuscript by encouraging you to cut essential physics benchmarks while preserving defensive disclaimers.
+
+---
+
+### 2. Evaluation of Candidate Moves
+
+* **Sec. IV B (2D Benchmark): STRONGLY OPPOSE MOVING.**  
+  For an unbinned machine-learning unfolding applied to open data, reproducing the canonical published binned result ([PRD 104, 092007](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/consult-rp9)) is your primary credential. Cutting Fig. 1 and relegating this benchmark to an analysis note would severely undermine referee confidence.
+* **Sec. IV C (2D Covariance details): ENDORSE CONDENSING.**  
+  Keep the benchmark central value and total uncertainty comparison in IV B. Move the granular breakdown (the rank-2 run-period construction, bootstrap seed allocations, and p-value diagnostics) to the note.
+* **Sec. IV F (Input Rounding): ENDORSE MOVING.**  
+  Instability under floating-point rounding (0.23% shift vs. 0.37% statistical uncertainty) that fails an arbitrary internal threshold (0.3/1.0$\sigma$) is a numerical/computing sanity check. It belongs in the analysis note, summarized here in at most one sentence.
+* **Sec. III A (Precision Target & Envelope): ENDORSE MOVING.**  
+  Reporting that an internal 10% precision goal was missed is project-management history. State the actual uncertainties in Sec. V; put envelope definitions in the note.
+* **Sec. IV D (Background Closure): ENDORSE MOVING.**  
+  Detailed comparisons between purity subtraction and negative-weight refinement across pseudo-experiments (Fig. 2) belong in the note.
+* **Sec. IV E (Generator-Sized Truth Changes): OPPOSE MOVING wholesale; CONDENSE.**  
+  Regularization bias under generator shifts is a primary scientific concern for ML unfolding. Keep the core finding (Fig. 3b), but remove discussions of earlier discarded estimators.
+* **Sec. V C (3D/4D Descriptive Comparisons): ENDORSE MOVING.**  
+  Central values without uncertainties provide little scientific utility in a PRD paper.
+
+---
+
+### 3. Over-Stated, Repeated, and Note-Level Qualifications
+
+The main text is laden with forensic self-audits and descriptions of superseded work that belong strictly in the note:
+
+1. **Sec. II (Data/Simulation):**
+   * *“Eq. (1) keeps the species of the closed list of Ref. [18] except electrons and positrons, its charged-pion term exceeds the kinetic energy used there and in Eq. 4 of Ref. [19] by 4.57 MeV per charged pion, and it omits further species, such as kaons, antiprotons, and strange baryons, that the open list of Ref. [20] includes.”*  
+     $\rightarrow$ Define your observable cleanly; cross-paper genealogical comparisons of 4.57 MeV belong in the note.
+2. **Sec. IV A (Reported Covariance):**
+   * *“...with three groups its size is poorly determined: the 68 % interval on the ratio of its true to its estimated size is 0.73–2.56.”* and *“...and the training-seed block, which is zero... No finite-ensemble correction is applied.”*  
+     $\rightarrow$ Do not catalog parameters of your uncertainty estimator’s uncertainty, nor announce corrections that were not applied.
+3. **Sec. IV G (Fake-Data Tests):**
+   * *“The bias is the same in both; only the covariance differs, so the change is not a smaller bias or a validated uncertainty.”*  
+     $\rightarrow$ Unnecessary editorializing; state the $\chi^2$ and let the reader/referee draw the obvious conclusion.
+4. **Sec. V B & Table III (Predictions):**
+   * Table III, Footnote b: *“That hydrogen sample failed its sampling-closure check, B3 (a bias check of the check’s premise, added post hoc, passed at $\le 0.1\,\sigma_c$...), and its deep-inelastic events, 46 % of it, do not conserve energy...”*  
+     $\rightarrow$ An extreme example of internal debugging logs leaking into paper footnotes.
+   * *“The bands describe the scatter of the $\chi^2$ from estimating the correlations with these universes, not the sensitivity to incorrect correlations that the weakening probes, and are not intervals for the $\chi^2$ under the true correlations.”*  
+     $\rightarrow$ Preachiness about what a band is not.
+5. **Sec. VI A (Limitations):**
+   * *“...was stopped at one of its gates before any coverage pseudo-experiment ran: the uncertainties reproduced through its pseudo-experiments disagreed with the covariance blocks they draw, for reasons not established...”*  
+     $\rightarrow$ Do not describe aborted validation scripts. State plainly: *“Interval coverage across systematic variations has not been demonstrated.”*
+
+---
+
+### 4. Ranked Recommendations
+
+1. **First step: Immediately abandon the $\le 6$ caveat-density target.** Cease treating editorial revision as a word-level accounting exercise.
+2. **Preserve core physics credibility:** Retain the 2D published benchmark (Sec. IV B) and the 5D generator-shift sensitivity (Sec. IV E in condensed form).
+3. **Relegate technical and pipeline forensics to the note:** Move Sec. III A, Sec. IV C details, Sec. IV D, Sec. IV F, and Table III’s generator autopsy footnotes to Ref. [14].
+4. **Rewrite Sec. VI A (Limitations):** Replace historical narratives of aborted tests or earlier estimator failures with a concise, candid statement of the method's physical domain of validity.
