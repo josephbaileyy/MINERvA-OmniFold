@@ -1,0 +1,161 @@
+sha256 5c133f97be8419be7360a0497295a716b58412449ecfb57199b16a0d1f9502e7  fd_1b_mc.py
+sha256 aee17ec8049760a040a3b0d7777111576306cbf0bd4a85d55006603b2caf0766  tests/test_fd_1b_mc.py
+sha256 ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
+KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
+N/A      ratio composition inverted  (its target code was replaced by amendment 2)
+N/A      zero-CV rows not added  (its target code was replaced by amendment 2)
+KILLED   negatives clipped
+KILLED   denominator not composed
+KILLED   first universe not copied
+KILLED   two flux universes allowed
+KILLED   flux universe keeps CV flux
+KILLED   with_mc leaves the nature's flux
+KILLED   toy unfolds with the nature MC
+KILLED   toy without streams
+KILLED   stat jitter offset 0
+KILLED   stat replica not bootstrapped
+KILLED   plugin r off truth rows
+KILLED   capture keeps a view
+KILLED   capture wrap not removed
+KILLED   ratio digest unchecked
+KILLED   role pairing unchecked
+KILLED   toy range unchecked
+KILLED   stat range unchecked
+KILLED   control list unchecked
+KILLED   seed check skipped
+KILLED   flux block unweighted
+KILLED   lateral not transferred
+KILLED   C_model left out of C_T
+KILLED   joint flag dropped
+KILLED   over-coverage flags
+KILLED   cell flag strict
+KILLED   atime move exits 0
+KILLED   walls limit doubled
+KILLED   seed role at 42
+KILLED   D1: the reader gets the source
+KILLED   D1: a toy reads the constraint plainly
+KILLED   A2: clipmean reads the constraint plainly
+KILLED   D1: receipt reads the constraint plainly
+KILLED   D1: remade reads the constraint plainly
+KILLED   D1: null reads the assembly plainly
+N/A      B1 (audit): N1 composite stat constant  (its target code was replaced by amendment 2)
+KILLED   B1 (audit): receipt count off
+KILLED   B1 (audit): receipt max ratio off
+KILLED   B1 (audit): receipt cv_zero count off
+KILLED   B1 (audit): readout null digest unchecked
+KILLED   B1 (audit): readout products unchecked
+KILLED   B1 (audit): products digest drops stat
+KILLED   B1 (audit): toy seed set unchecked
+KILLED   B1 (audit): flux law uniform
+KILLED   B1 (audit): lateral law half width
+KILLED   B1 (audit): surrogate skipped
+KILLED   B1 (audit): offset sign flipped
+KILLED   B1 (audit): variant graded on C_T
+KILLED   B1 (audit): leave-out keeps MEC
+KILLED   B1 (audit): plugin control (b) skipped
+N/A      B1 (audit): zero mask from acc  (its target code was replaced by amendment 2)
+KILLED   B1 (audit): stat block ddof 0
+KILLED   B1 (audit): normalization block dropped
+KILLED   B1 (audit): null gauss drops C_model
+KILLED   B1 (audit): null U check dropped
+KILLED   B1 (audit): cmodel rebuild unchecked
+KILLED   B1 (audit): toy truth nonfinite unchecked
+KILLED   B1 (audit): plugin push size unchecked
+KILLED   B1 (audit): push digest unchecked
+KILLED   B1 (audit): flux table digest unchecked
+KILLED   B1 (audit): weights pins unchecked
+KILLED   B1 (audit): input digests unchecked
+N/A      B2: the all-draws bound keeps the max  (its target code was replaced by amendment 2)
+N/A      B2: an unevaluated row does not stop  (its target code was replaced by amendment 2)
+N/A      B2: the exact pass takes the first draw only  (its target code was replaced by amendment 2)
+N/A      B2: receipt ignores the composite  (its target code was replaced by amendment 2)
+KILLED   B2: n1 ignores the toys above
+KILLED   B3: readout U check dropped
+KILLED   B3: readout ignores what the null was made from
+KILLED   B3: the null does not record the cmodel json
+KILLED   B4: clause S's leave-out list on C_T
+KILLED   B4: clause S's threshold at the whole
+N/A      C1 (audit): the CV-zero all-draws bound halved  (its target code was replaced by amendment 2)
+N/A      C1 (audit): the exact pass's CV-zero rows as a product  (its target code was replaced by amendment 2)
+KILLED   C1 (audit): declared draws hold one truth
+KILLED   C1 (audit): N2's threshold at 0.25
+KILLED   C1 (audit): N2's C_T^- list is C_T's
+KILLED   minor: partial products not refused
+KILLED   D1: readout reads the assembly plainly
+KILLED   A2: compose back to the product
+KILLED   A2: compose drops the CV subtraction
+KILLED   A2: compose's first term is the CV
+KILLED   A2: 2b not checked
+KILLED   A2: 2b at < 0 only
+KILLED   A2: 2b on k = 1 too
+KILLED   A2: n1_ratio 0/0 as 0
+KILLED   A2: clip on w_reco alone
+KILLED   A2: background not clipped
+KILLED   A2: signal not clipped
+KILLED   A2: clipped mass signed
+KILLED   A2: truth cells over all clipped rows
+KILLED   A2: the toy draws the unclipped nature
+KILLED   A2: the stat replica draws unclipped
+KILLED   A2: clipmean adds nothing
+KILLED   A2: clipmean outside the window
+KILLED   A2: the screen floor tightened
+KILLED   A2: the floor check always passes
+KILLED   A2: the screen at >= 10 L
+KILLED   A2: the matmul's CV correction off by one
+KILLED   A2: exact pass's CV correction off by one
+KILLED   A2: the peak from the first universe only
+KILLED   A2: the pair budget ignored
+KILLED   A2: near-bound pairs not recomputed
+KILLED   A2: the validation ignores pairs
+KILLED   A2: the validation ignores worsts
+KILLED   A2: the sample's pairs not recorded
+KILLED   A2: a draw missing a band allowed
+KILLED   A2: the denominator check at d_D < 0
+KILLED   A2: the denominator check without the CV
+KILLED   A2: crossterm sign parity dropped
+KILLED   A2: crossterm zero factors dropped
+KILLED   A2: flat_cells' closed last edge
+KILLED   A2: cross_z without the relative sigma
+KILLED   A2: the loader hashes nothing
+KILLED   A2: the loader keeps non-finite values in zero
+KILLED   A2: the receipt's STOP ignores 2b
+KILLED   A2: the receipt's STOP ignores N1
+KILLED   A2: N_clip from the signal alone
+KILLED   A2: the clipping offset unscaled
+KILLED   A2: the reading ignores the flag
+KILLED   A2: the reading at the strict >
+KILLED   A2: two clipmean products accepted
+KILLED   A2: clipped fraction over the wrong total
+KILLED   A2+: negative rows in some draw not accumulated
+KILLED   A2+: the composite sum over every row
+KILLED   A2+: the negative sum unsigned
+KILLED   A2+: the clipped fraction not divided
+KILLED   A2+: the spread's q95 at the median
+KILLED   A2+: pilot_b drops the central values
+KILLED   A2+: walls_of ignores a missing product
+KILLED   A2+: S1-0b walls without a seed allowed
+KILLED   A2+: clipcheck against a sigma of 1
+KILLED   A2+: clipcheck's rule at the strict >
+KILLED   A2+: clipcheck always proceeds
+KILLED   A2+: clipcheck accepts two clipmeans
+KILLED   A2e: the estimator ignored at install
+KILLED   A2e: the meta records the fixed config
+KILLED   A2e: a mixed estimator accepted
+KILLED   A2e: a mixed clip rule accepted
+KILLED   A2e: the meta drops the clip rule
+KILLED   A2c: the nature rule keeps the truth
+KILLED   A2c: the nature rule ignores negative truths
+KILLED   A2c: an unknown clip rule accepted
+KILLED   A2c: the toy ignores the clip rule
+KILLED   A2c: the source split at < 0
+KILLED   A2c: the truth clip signed
+KILLED   A2c: the truth clip without the xsec factor
+KILLED   A2c: the truth clip over every truth row
+KILLED   A2c: reco plus from the negatives
+KILLED   A2c: clipcheck takes any receipt
+KILLED   A2c: clipcheck takes a STOP receipt
+KILLED   A2d: the receipt reads the assembly plainly
+KILLED   A2d: clipcheck reads the assembly plainly
+KILLED   A2: O5 push_min not recorded
+unmutated: 97 passed in 28.23s
+145 of 145 applicable killed; 10 not applicable
