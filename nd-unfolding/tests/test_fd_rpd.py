@@ -367,6 +367,10 @@ class Stage(Tmp):
         self.assertEqual(self.verify(src)[0], 4)
         rec_p.write_text("{not json")
         self.assertEqual(self.verify(src)[0], 4)
+        rec = json.loads(good)
+        rec["files"]["d9/phantom.bin"] = dict(rec["files"][name])        # a record row with no source and no file
+        rec_p.write_text(json.dumps(rec))
+        self.assertEqual(self.verify(src)[0], 4)
         rec_p.write_text(good)
         self.assertEqual(self.verify(src)[0], 0)
 
