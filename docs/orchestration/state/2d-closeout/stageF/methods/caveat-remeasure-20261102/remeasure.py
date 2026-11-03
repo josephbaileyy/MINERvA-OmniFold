@@ -16,7 +16,8 @@ One command, four steps:
 The density in step 3 is valid only for the text the inventories were coded on. INV/CODED-ON.sha256 records the
 blinded texts' hashes at coding time. If a current blinded text differs, the density for that document is printed as
 STALE and the run exits 3 (exit 0 with --allow-stale). Re-code it under the study's CODEBOOK.md with the prompt in
-CODER-PROMPT.md, put the TSV in INV, and record the new hash with --record-coded.
+CODER-PROMPT.md, put the TSV in INV, and record the new hash with --record-coded DOC (only that document's hash).
+An INV may hold the paper's inventory alone; only the documents it holds are tallied and checked.
 
 The study gives its coder-to-coder spread as about +-25% in row count (caveat-study/REPORT.md sec. 2.4): a change
 smaller than that is not a measured change.
@@ -152,11 +153,12 @@ def main(a):
     words = blind(work, paper_pdf, note_pdf)
     head = run(["git", "-C", str(repo), "rev-parse", "HEAD"], repo, check=False).stdout.strip() or "unknown"
     now = {p: sha(work / "blind" / f"{p}.txt") for parts in PARTS.values() for p in parts}
-    if a.record_coded:
-        (inv / "CODED-ON.sha256").write_text("".join(f"{now[p]}  {p}\n" for p in sorted(now)))
-        print(f"recorded coded-on hashes for {sorted(now)} at {head}")
+    if a.record_coded:  # only the documents named: an uncoded document must never inherit a fresh hash
+        coded = coded_on(inv)
+        coded.update({p: now[p] for doc in a.record_coded for p in PARTS[doc]})
+        (inv / "CODED-ON.sha256").write_text("".join(f"{coded[p]}  {p}\n" for p in sorted(coded)))
+        print(f"recorded coded-on hashes for {a.record_coded} at {head}")
     coded = coded_on(inv)
-    stale = {doc: [p for p in parts if coded.get(p) != now[p]] for doc, parts in PARTS.items()}
 
     if inv.name != "inv":
         sys.exit("--inv must be a directory named inv/ (tally.py reads H/inv)")
@@ -164,6 +166,7 @@ def main(a):
     tally.H, tally.T = inv.parent, work
     tally.WORDS.update(words)
     tally.SETS = {d: [d] for d in PARTS if all((inv / f"{p}.tsv").exists() for p in PARTS[d])}
+    stale = {doc: [p for p in PARTS[doc] if coded.get(p) != now[p]] for doc in tally.SETS}
     out = inv.parent / "tables"
     tally.main()  # writes inv.parent/tables/rates.md, placement.md, dropped-*.txt
 
@@ -191,7 +194,7 @@ def main(a):
     rng = {s: [c["distinct_per_1k"] for c in summary["comparators"] if c["set"] == s] for s in "PN"}
     print(f"comparators distinct /1k: P {min(rng['P'])}-{max(rng['P'])}, N {min(rng['N'])}-{max(rng['N'])}")
     print(f"wrote {out}/summary.json and the study-format tables beside it")
-    if any(stale.values()) and not a.allow_stale:
+    if any(stale.values()) and not a.allow_stale:  # only the documents this INV holds inventories for
         print("EXIT 3: a density above is STALE; re-code that document (CODER-PROMPT.md), then --record-coded")
         sys.exit(3)
 
@@ -219,7 +222,8 @@ if __name__ == "__main__":
     ap.add_argument("--inv", default=str(HERE / "inv"), help="directory named inv/ holding ours-*.tsv")
     ap.add_argument("--no-build", action="store_true", help="reuse WORK/build/main_{paper,note}.pdf")
     ap.add_argument("--allow-stale", action="store_true", help="exit 0 even if an inventory is stale")
-    ap.add_argument("--record-coded", action="store_true", help="record the current blinded texts as coded")
+    ap.add_argument("--record-coded", nargs="+", choices=sorted(PARTS), metavar="DOC",
+                    help="record the current blinded text of DOC (ours-paper, ours-note) as the text DOC was coded on")
     ap.add_argument("--self-test", action="store_true")
     a = ap.parse_args()
     if a.self_test:
