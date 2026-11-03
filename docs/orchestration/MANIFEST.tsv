@@ -7114,9 +7114,11 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage2/run/score/gate-d.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage2/run/score/pairs.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/connect-cvdenom.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
-docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom-run/bound.sha256	intended	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
-docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom-run/cvdenom.json	intended	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
-docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom-run/cvdenom.time	intended	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom-run/bound.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom-run/connect-cvdenom.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom-run/cvdenom.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom-run/cvdenom.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom-run/cvdenom.time	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/arith.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/arith.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/mutation_mc.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
