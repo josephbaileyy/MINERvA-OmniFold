@@ -13,7 +13,9 @@ The sha256 of the text plus a final newline begins `a830b9c7dd691581`
 1. code first, with mutation tests (§8);
 2. an independent audit, which is not this session and is arranged by the director;
 3. the director's two-step binding;
-4. a dry run on real inputs at binding, by a cluster lane (§11).
+4. a dry run on real inputs at binding: one short single-node regular job, by a cluster lane (§11).
+
+**Revised after the independent audit** (`coverage-5b-audit`, 2026-11-03, PR #720), item by item in §12.
 
 Nothing runs before the binding.
 
@@ -70,8 +72,14 @@ refinement classifier is unchanged in every candidate.
 
 ## 3. Inputs: simulated pseudo-data only
 
-**The data are never read.** The probe's stability runner refuses `--construction data`, and its closure runner
-requires `--expectation --no-nuisance`. "No hyperparameter search was performed on data" therefore stays true.
+**The data never enter a product.** They are loaded by the production loader (`s5c_unfold.load_inputs`), and the
+jitter's grid-membership check reads their coordinates, but the pseudo-experiment's measured side is built from the
+simulation and the background dump alone (`s5n_pseudo.build_pseudo`), and the unfolding takes only that side
+(`s5e_trace.unf_inputs`). A test replaces the data and shows the unfolding's inputs unchanged
+(`DataNeverInAProduct`). The stability runner requires `--construction pseudo` at pseudo-seed 990000, and the closure
+runner `--expectation --no-nuisance` with the declared split. The refusal is decided on the runner's own parsed
+arguments, so a repeated or abbreviated option cannot pass it, and no product is written unless that check ran
+(`check_namespace`, `ArgvForms`). "No hyperparameter search was performed on data" therefore stays true.
 
 **3.1 The stability input: a GiBUU-like truth that is not an F0b truth.**
 - The truth is `eavail_shape` at amplitude 1 with `state/s5n/eavail-ratio-gibuu-over-genie.json` (sha256
@@ -120,7 +128,11 @@ requires `--expectation --no-nuisance`. "No hyperparameter search was performed 
   (`test_q3_truth_never_reads_its_placeholder_ratio`).
 - **These are not F0b's products.** F0b graded pseudo-experiment means; these are noise-free closures at one MC
   split. Only the **paired** difference between a candidate and the control, at the same truth and split, enters a
-  criterion.
+  criterion. The analysis refuses a closure whose pseudo seed is not 991000 or whose MC fraction is not half, and
+  requires each candidate's split key to equal the control's at every truth.
+- **Nominal and A7 MnvTune are the same closure**: one hypothesis, no alternative, one split. The pair is kept as a
+  **bitwise determinism control**: each candidate's two products must be identical, or the analysis stops. So **17
+  distinct truths** are judged, and the familywise counts below are over 17 × 2 = 34 comparisons.
 
 ## 4. The stability measure and criterion
 
@@ -169,16 +181,24 @@ input. If it passes, no candidate can be shown to improve on it, and the verdict
 **5.2 "No worse", with a measured floor.**
 - A candidate is no worse at T if **RMS_T(c) − RMS_T(control) ≤ Δ_RMS and MAX_T(c) − MAX_T(control) ≤ Δ_MAX**.
 - Each Δ = 3 × 1.20 × √(s_c² + s_control²), where s is the metric's rounding-noise SD.
-- s is propagated to first order from **that candidate's own** per-cell jitter SD: 51 jitters of §3.1, mapped to the
-  16 cells. So the floor is measured and varies by candidate and by truth.
+- s is propagated to first order from **that candidate's own** per-cell rounding SD: the base and the 51 jitters of
+  §3.1, mapped to the 16 cells as X / X_base, and the SD **around their mean, with ddof = 1**. The base is one
+  rounding realization like each jitter (KNOWN_ISSUES 80: the response to a rounding-level change is chaotic), so an
+  SD taken around the base would have expectation σ² + n_b², not σ²; in simulation its median is 1.22σ and its p95
+  2.2σ, which the 1.20 factor does not bound. Around the mean the p5–p95 range is 0.84–1.16σ. So the floor is
+  measured and varies by candidate and by truth. The per-cell SD and every Δ are recorded in the readout.
+- **A zero floor is INVALID, not "worse".** If Δ_RMS or Δ_MAX is exactly 0 at a truth, the floor model has failed
+  there (a cell where both estimators are exactly insensitive to rounding). That truth is recorded as INVALID, and the
+  verdict is INVALID if a candidate that meets the stability bound has one (§6).
 - **The factors.** 1.20 is the 95% upper factor of an SD estimated with 50 degrees of freedom, √(50/χ²₀.₀₅,₅₀) =
-  1.199. 3 is the per-metric threshold. Over 18 truths × 2 metrics under Gaussian noise, the familywise rate of a false
-  "worse" is about 0.6% if the SD is estimated correctly (the threshold is then 3.6σ), and about 4.9% if it is
-  underestimated by the full factor (one-sided 3σ, 36 comparisons; my arithmetic).
+  1.199; the SD here has 51, so the factor is slightly conservative. 3 is the per-metric threshold. Over 17 distinct
+  truths × 2 metrics under Gaussian noise, the familywise rate of a false "worse" is about 0.54% if the SD is
+  estimated correctly (the threshold is then 3.6σ), and about 4.49% if it is underestimated by the full factor
+  (one-sided 3σ, 34 comparisons; my arithmetic, 1 − (1 − 0.00135)³⁴).
 - **The seed floor is zero**, because the estimator is seed-invariant (S1's seed block measured 0).
 - **Sizing against the replica-count effect relayed from RPD part 2**, where α̂'s realization spread was driven by
   the replica count, 0.027–0.17 at 3 replicas:
-  - here the SD estimate rests on 51 jitters, about ±10%, and the 1.20 factor bounds that;
+  - here the SD estimate rests on the base and 51 jitters, about ±10%, and the 1.20 factor bounds that;
   - what it does **not** cover is the realization spread of the one stability pseudo-experiment (§9).
 - **The floor transfers from the stability input to every closure.** That is an assumption: the spread grows away
   from the prior, and the GiBUU departure is among the largest. It is stated, not measured.
@@ -190,10 +210,12 @@ GiBUU truths does not move the verdict.
 
 ## 6. Verdict, tie-break and terminal branches
 
-- **PASS:** a candidate passes if it meets §4.3 and is no worse at all 18 truths (§5.2).
+- **PASS:** a candidate passes if it meets §4.3 and is no worse at all 17 distinct truths (§5.2).
 - **UNINFORMATIVE:** G0 failed. **Terminal.** No estimator change proceeds from this probe. IV G stays as stated,
   and 1B stage 1 launches on the current estimator, as decided.
 - **NONE_PASS:** no candidate passes. **Terminal**, with the same consequences.
+- **INVALID:** a candidate that meets §4.3 has a zero floor at some truth (§5.2). **Terminal for this analysis:** the
+  readout goes to the director, and nothing is adopted from it.
 - **WINNER, or CO_WINNERS:**
   - Among passers, the lowest mean maximum ranks first.
   - Every passer within one combined standard error of it, √(SE_c² + SE_best²), is a co-winner. A co-winner is
@@ -204,23 +226,46 @@ GiBUU truths does not move the verdict.
 
 ## 7. Compute
 
-| item | unfolds |
-|---|---|
-| stability, per candidate: base + 51 jitters | 52 |
-| closures, per candidate | 18 |
-| **4 candidates** | **280** |
+| item | unfolds | tasks |
+|---|---|---|
+| stability, per candidate: base + 51 jitters, in tasks of 4 pairs (`STAB_CHUNK`) | 52 | 13 |
+| closures, per candidate | 18 | 18 |
+| **4 candidates** | **280** | **124** |
 
-- **Per unfold:** 0.022828 CPU node-h, packed 8 per node (`FD-1B-STAGED-DECLARATION.md:530`, measured on S1).
-- **Expected:** about **6.4 node-h**, if B2 costs about one fit, as two half-sample fits should.
-  - This is above the scope's 3.2–6.4 because the scope priced only B2 and one B3 point. The control and the second
-    B3 point were not in it.
-- **Cap: 8.0 CPU node-h.** It covers B2 at up to 2× per unfold.
-- **Stop rule:** if B2's first packed job runs over 2× the control's per-unfold wall time, stop and return to the
-  director with the measured cost.
+- **Per unfold:** 0.022828 CPU node-h, packed 8 lanes per node (`FD-1B-STAGED-DECLARATION.md:530`, measured on S1),
+  so one unfold is 657 s of one lane (`UNIT_S`).
+- **Packing.** One node, **8 lanes**, one task per lane at a time, all fed from one queue (`sbatch_fd_stab.sh`,
+  `xargs -P 8`). The queue interleaves the candidates, so B2's cost is measured in the first round. With every task at
+  most 4 unfolds, the lanes stay balanced: about 35 unfolds per lane.
+- **Expected:** 280 × 0.022828 = **6.39 node-h**, a wall of 6.4 h, if B2 costs about one fit, as two half-sample fits
+  should.
+- **The price is above the 3.2–6.4 node-h Joseph was shown** (`DECISION-20261102-…`), because the scope priced only
+  B2 and one B3 point. The control is required: G0 (§4.4) cannot fail without it. The second B3 point is the grid's
+  other end. A cap of 6.4 would mean dropping one of them, or stopping on any B2 overrun.
+- **Cap: 8.0 CPU node-h**, for the dry run and the full run together. It covers B2 at 2× per unfold:
+  210 × 0.022828 + 70 × 2 × 0.022828 = 7.99. **Authority:** Joseph's 2026-11-01 approval of compute that resolves a
+  limitation (`DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md` item 2, #640): each campaign is
+  declared, priced and bound, and one priced above half the group balance (2,074.5 node-h last recorded) returns to
+  Joseph first. 8.0 is far below that.
+- **How the cap binds, three ways:**
+  1. **Slurm's own limit.** The dry run is submitted with `--time=0:45` (at most 0.75 node-h). The full run is
+     submitted with `--time` equal to 8.0 minus the dry run's charged node-hours from `sacct`, so at most 7:15. On one
+     node the charge cannot exceed `--time`.
+  2. **The cumulative gate.** No task starts unless the node-hours charged so far plus the projected remainder stay
+     within the cap's remainder (`estimator_stability_probe.py gate`). Per candidate, the projection uses the mean
+     per-unfold time of its finished tasks. Before any finish, B2 is taken at 2× and the others at 1×. Before the
+     first measurement the projection is exactly 7.99. The full run inherits the dry run's timings, so B2's rate is
+     measured before it starts. This stops the audit's mixed case (B2 at 1.9×, the others at 1.1×, 8.31 in all)
+     before it is spent (`Gate.test_the_audits_mixed_overrun_stops`).
+  3. **The B2 rule.** No task starts once B2's measured per-unfold time exceeds 2× the control's.
+
+  A stop writes `STOP` with the projection; nothing further starts; the products so far are kept; the run returns
+  to the director with the measured cost.
+- **Every job under 12 h:** 0:45 and at most 7:15. The longest task is 4 unfolds, 1.5 h at B2's 2×.
 - **Rules:**
-  - CPU only, regular QOS, `--no-requeue`, every job under 12 h;
+  - CPU only, regular QOS, `--no-requeue`, `--exclusive`;
   - nothing written to CFS from jobs;
-  - charged from `sacct` and stopped past 1.25× the projected wall.
+  - the charge from `sacct`, in the report.
 - **Reads.** The jobs read their inputs through the production loaders, which update atime. That is legitimate use
   (`DECISION-20261101-joseph-eventloops-copy-to-cfs.md` item 4). Any audit or inspection read uses O_NOATIME.
 - **Calendar:**
@@ -233,10 +278,11 @@ GiBUU truths does not move the verdict.
 
 | file | role |
 |---|---|
-| `nd-unfolding/estimator_stability_probe.py` | the candidates; `install` rebinds `s5c_unfold.config_params`, `omnifold_nn_core.make_estimators` and `s5n_pseudo.write_product` for one invocation; the stability and closure runners (`s5p_numerics`, `s5p_nullexp`, unchanged); the declared task list |
+| `nd-unfolding/estimator_stability_probe.py` | the candidates; `install` rebinds `s5c_unfold.config_params`, `omnifold_nn_core.make_estimators` and `s5n_pseudo.write_product` for one invocation, and checks the runner's parsed arguments; the stability and closure runners (`s5p_numerics`, `s5p_nullexp`, unchanged); the declared queue and the dry run's four tasks; the budget `gate` |
+| `nd-unfolding/sbatch_fd_stab.sh` | the job: the dry run on 4 lanes or the full queue on 8, every task through the gate |
 | `nd-unfolding/estimator_stability_analyze.py` | §§4–6: the product checks, the criteria, the verdict |
-| `nd-unfolding/tests/test_estimator_stability_probe.py` | 41 tests, with every refusal and criterion tested in the direction it acts and the other |
-| `nd-unfolding/tests/estimator_stability_mutation.py` | 13 planted defects, each of which must be killed by its NAMED test; the unmutated suite must run all 41 tests in script mode |
+| `nd-unfolding/tests/test_estimator_stability_probe.py` | 73 tests, with every refusal and criterion tested in the direction it acts and the other; the job script is run locally on a stand-in deploy |
+| `nd-unfolding/tests/estimator_stability_mutation.py` | 41 planted defects, each of which must be killed by its NAMED test; the unmutated suite must run all 73 tests in script mode |
 | `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/no-ratio.json` | the q3 placeholder |
 
 - **No production module is edited.**
@@ -248,10 +294,13 @@ GiBUU truths does not move the verdict.
 
 **Commands.**
 
-    python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 41 tests
-    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 13 mutations, all killed
-    python3 -I nd-unfolding/estimator_stability_probe.py tasks --out TSV --npz … --bkg … --bank … --detector-dir … \
-        --expect-npz-sha256 … --expect-bkg-sha256 … --closure-ratio-dir <pv-ladder dir> --runs <run root>
+    python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 73 tests
+    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 41 mutations, all killed
+    python3 -I nd-unfolding/estimator_stability_probe.py tasks --out <OUT>/queue.tsv --dry-out <OUT>/dry.tsv \
+        --npz … --bkg … --bank … --detector-dir … --expect-npz-sha256 … --expect-bkg-sha256 … \
+        --closure-ratio-dir <pv-ladder dir> --runs <OUT>/runs
+    sbatch --time=0:45 nd-unfolding/sbatch_fd_stab.sh dry <deploy> <pin> <OUT> 8.0
+    sbatch --time=<8.0 minus the dry run's charge> nd-unfolding/sbatch_fd_stab.sh full <deploy> <pin> <OUT> <8.0 minus that charge>
     python3 -I nd-unfolding/estimator_stability_analyze.py --runs <run root> --s5c-contract docs/orchestration/state/s5c/contract.json \
         --sigma-receipt docs/orchestration/state/s5e/cand/assess_receipt.json \
         --h2-definition nd-unfolding/pv-ladder/readouts/h2_definition.json --out <readout> --repo .
@@ -288,9 +337,33 @@ These are Joseph's separate decision (`DECISION-20261102-joseph-bias-and-stabili
 1. **The pv-ladder closure ratio** (`prep/ratios/L-5D-PV/nuwro.json`, `38e47eb6…`). The dry run confirms the file's
    presence, its digest and its `schema`, which must name a declared truth kind (`SCHEMA_TRUTH`); the probe refuses
    otherwise.
-2. **The dry run on a login node**, by a cluster lane, before step two of the binding:
-   - one control stability unfold (the base) and one control closure (nominal);
-   - one B2 and one B3b closure, to measure their per-unfold cost against the stop rule;
-   - the products' `stability_probe` blocks read back.
+2. **The dry run: one short single-node regular job** (`sbatch_fd_stab.sh dry`, `--time=0:45`), by a cluster lane,
+   before step two of the binding. A login node's wall at 32 threads alone is not the 8-lane compute-node cost the
+   gate uses; this job's is.
+   - Four tasks on four lanes (`DRY_TASKS`): the control's nominal and A7 MnvTune closures (also the determinism
+     pair), and one B2 and one B3b closure (nominal), to measure their per-unfold cost.
+   - The products' `stability_probe` blocks read back; the two control products compared bitwise.
+   - Its products and timings carry into the full run, which skips existing products, so its charge is inside the
+     8.0 cap.
+   - **The environment:** the job sources `setup_salloc_env.sh` and refuses unless `lightgbm` and `scipy` import.
+     No committed launcher records which environment the s5p runs used, so the dry run is where that is established.
 3. **Retention** of the inputs (§7).
 4. **The B3 grid.** The audit may ask for a depth-limit point (§2), at about 1.6 node-h.
+
+## 12. The audit and its dispositions (`coverage-5b-audit`, 2026-11-03)
+
+The audit (PR #720, comment 6610397251) found the design and the GiBUU separation sound, and asked for six changes
+and thirteen tests. Each claim was checked against the code before it was changed.
+
+| item | finding | disposition |
+|---|---|---|
+| R1 | each stability task was one 52-unfold call, about 9.5 h; the cap and the 12 h rule failed as packed | **accepted.** Tasks of 4 pairs, one 8-lane queue, the cumulative gate, `--time` as the cap's remainder, #640 cited (§7) |
+| R2 | the argv refusal passed repeated, abbreviated and `=` forms | **accepted.** Decided on the runner's own parse; no product without that check; the five forms tested; §3 reworded |
+| R3 | the floor's SD was taken around the base | **accepted.** The base is a rounding realization (KNOWN_ISSUES 80); the SD is around the mean of the 52, ddof = 1 (§5.2). The stability statistic, r_j against the base, is s5e's and is unchanged |
+| R4 | Δ could be exactly zero | **accepted.** A zero floor is INVALID; Δ recorded per truth (§5.2, §6) |
+| R5 | the closures' split was never checked | **accepted.** Pseudo seed, MC fraction and split key checked, and equal to the control's (§3.2) |
+| R6 | a login-node dry run does not measure the gate's cost | **accepted.** One short single-node regular job (§11) |
+| gaps | 13 tests | **added**, each with a mutant killed by it (`estimator_stability_mutation.py`) |
+| nits | nominal ≡ A7 MnvTune; 4.9% should be 4.75%; `functionals_used` not required | **accepted.** The pair is a bitwise determinism control, 17 truths judged; rates recomputed for 34 comparisons; 153 required |
+<!-- absence-ok: describes defects the audit found in this declaration's own code, each now fixed and tested, not a claim that a result is absent from the repository -->
+

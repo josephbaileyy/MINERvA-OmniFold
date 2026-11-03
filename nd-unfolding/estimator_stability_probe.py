@@ -6,8 +6,8 @@ DECISION-20261102-joseph-bias-and-stabilisation-routes.md ("Probe, 1B waits").
 
     estimator_stability_probe.py --candidate C stability -- <s5p_numerics.py arguments>
     estimator_stability_probe.py --candidate C closure   -- <s5p_nullexp.py arguments>
-    estimator_stability_probe.py tasks --out TSV --npz P --bkg P --bank D --detector-dir D --expect-npz-sha256 H
-                                       --expect-bkg-sha256 H --closure-ratio-dir D --runs D
+    estimator_stability_probe.py tasks --out TSV --dry-out TSV --npz P --bkg P --bank D --detector-dir D
+                                       --expect-npz-sha256 H --expect-bkg-sha256 H --closure-ratio-dir D --runs D
 
 Candidates (declaration §2). Each is configuration (e) -- s5e candidate R, the refinement at 400 trees and 31 leaves,
 the three OmniFold estimators at the deterministic F2 parameters -- with one change to the OmniFold estimators only:
@@ -27,8 +27,18 @@ then verifies on every estimator it built), ``omnifold_nn_core.make_estimators``
 ``stability_probe`` block: the candidate, its override, the fold key, the per-fit minimum leaf counts and this file's
 sha256). The control runs through the same wrappers, so a wrapper cannot be what separates a candidate from it.
 
-The data are never read: ``stability`` refuses ``--construction data``, and ``closure`` requires ``--expectation``
-and ``--no-nuisance``. A candidate fixes the estimator, so ``--capacity`` and any ``--config`` other than R are refused.
+The data are loaded by the production loader but never enter a product: the pseudo-experiment's measured side is
+built from the simulation and the background dump (``s5n_pseudo.build_pseudo``), and the unfolding's inputs take only
+that side (``s5e_trace.unf_inputs``). ``stability`` requires ``--construction pseudo`` at the declared pseudo seed, and
+``closure`` requires ``--expectation``, ``--no-nuisance`` and the declared MC split. A candidate fixes the estimator,
+so ``--capacity`` and any ``--config`` other than R are refused. The refusal is decided on the runner's own parsed
+arguments (``check_namespace``), so a repeated or abbreviated option cannot slip past it, and no product is written
+unless that check ran.
+
+    estimator_stability_probe.py gate --task ID --queue TSV --log DIR --t0 EPOCH --cap NODE_H
+
+``gate`` (declaration §7) lets a queued task start only while the node-hours charged so far plus the projected
+remainder stay within the cap, and B2 within 2x the control's per-unfold time.
 
 MEASURES: one candidate's products. CANNOT AUTHORIZE: a stability or bias verdict by itself
 (``estimator_stability_analyze.py`` evaluates the declared criteria), or the adoption of any estimator.
@@ -187,15 +197,62 @@ class CrossFit(Recorded):
         return np.argmax(self.predict_proba(X), axis=1)
 
 
+def check_namespace(ns, mode: str) -> str | None:
+    """The refusal, decided on the runner's own parsed arguments (last value wins, abbreviations resolved)."""
+    if getattr(ns, "capacity", None) is not None:
+        return "a candidate fixes the estimator: --capacity is refused"
+    if getattr(ns, "config", None) != "R":
+        return "a candidate is built on configuration (e): --config must be R"
+    if mode == "stability":
+        if getattr(ns, "construction", None) != "pseudo":
+            return "the probe never puts the data in a product: stability needs --construction pseudo"
+        if getattr(ns, "pseudo_seed", None) != STABILITY_PSEUDO_SEED or getattr(ns, "pseudo_seeds", None) is not None:
+            return f"stability is one pseudo-experiment: --pseudo-seed {STABILITY_PSEUDO_SEED}"
+    elif mode == "closure":
+        if not (getattr(ns, "expectation", False) and getattr(ns, "no_nuisance", False)):
+            return "closures are noise-free: --expectation and --no-nuisance are required"
+        if getattr(ns, "mc_fraction", None) != CLOSURE_MC_FRACTION or \
+                getattr(ns, "pseudo_seeds", None) != f"{CLOSURE_SEED}:{CLOSURE_SEED}":
+            return f"closures use the declared split: --pseudo-seeds {CLOSURE_SEED}:{CLOSURE_SEED} --mc-fraction half"
+    else:
+        return f"unknown mode {mode!r}"
+    return None
+
+
 @contextmanager
-def install(candidate: str):
-    """Rebind the three production names for one invocation; restore them on exit. Yields the fit log."""
+def namespace_guard(mode: str, state: dict):
+    """For one runner invocation: check the namespace its parser returns before it does anything with it."""
+    orig = argparse.ArgumentParser.parse_args
+
+    def parse_args(self, args=None, namespace=None):
+        ns = orig(self, args, namespace)
+        why = check_namespace(ns, mode)
+        if why:
+            print(f"refusing: {why}", file=sys.stderr)
+            raise SystemExit(2)
+        state["checked"] = True
+        return ns
+
+    argparse.ArgumentParser.parse_args = parse_args
+    try:
+        yield
+    finally:
+        argparse.ArgumentParser.parse_args = orig
+
+
+@contextmanager
+def install(candidate: str, mode: str | None = None):
+    """Rebind the three production names for one invocation; restore them on exit. Yields the fit log.
+
+    With ``mode``, the runner's parsed arguments are checked (``namespace_guard``), and no product is written unless
+    that check ran: a runner that stopped calling argparse could not bypass it."""
     if candidate not in CANDIDATES:
         raise ValueError(f"unknown candidate {candidate!r}")
     override = CANDIDATES[candidate]
     est_params = {k: v for k, v in override.items() if k != "crossfit_k"}
     k = override.get("crossfit_k")
     log: list = []
+    state = {"checked": False}
     orig_params, orig_make, orig_write = s5c_unfold.config_params, onc.make_estimators, s5n_pseudo.write_product
     here = sha256_path(Path(__file__).resolve())
 
@@ -213,6 +270,8 @@ def install(candidate: str):
         return Recorded(clf1, "clf1", log), Recorded(clf2, "clf2", log), Recorded(reg, "reg", log)
 
     def write_product(out, arrays, meta):
+        if mode is not None and not state["checked"]:
+            raise RuntimeError("refusing to write: the runner's arguments were never checked")
         meta = {**meta, "stability_probe": {"schema": SCHEMA, "candidate": candidate, "override": override,
                                             "fold_key": FOLD_KEY if k else None, "fits": list(log),
                                             "code_sha256": here}}
@@ -221,7 +280,11 @@ def install(candidate: str):
 
     s5c_unfold.config_params, onc.make_estimators, s5n_pseudo.write_product = config_params, make_estimators, write_product
     try:
-        yield log
+        if mode is None:
+            yield log
+        else:
+            with namespace_guard(mode, state):
+                yield log
     finally:
         s5c_unfold.config_params, onc.make_estimators, s5n_pseudo.write_product = orig_params, orig_make, orig_write
 
@@ -263,6 +326,21 @@ CLOSURES = (
     ("P3g", NULL_F["genie_cv"], f"{STATE}/s5p/ratios/altR/p3r-w2-genie-mec-over-cv-eavailW.json", "ratio_nd", 1.0),
 )
 CLOSURE_SEED = 991000  # s5p_nullexp's expectation mode draws nothing; the seed only fixes the MC split, as in F4
+CLOSURE_MC_FRACTION = "half"
+STAB_CHUNK = 4  # pairs per stability task: 13 tasks of 4 unfolds per candidate, so the queue balances over the lanes
+# Compute (declaration §7): 8 lanes on one node, one task per lane at a time, from one queue; a task starts only if
+# the projected total stays within the cap (``gate``); the job's --time is the cap's remainder, so Slurm itself
+# bounds the charge.
+CAP_NODE_H = 8.0
+LANES = 8
+UNIT_S = 0.022828 * 3600 * LANES  # 657 s of one lane per unfold (FD-1B-STAGED-DECLARATION.md:530, measured on S1)
+ASSUMED_FACTOR = {"B2": 2.0}  # before a candidate has a finished task: B2 at the 2x the cap allows, the others at 1x
+B2_STOP_RATIO = 2.0  # B2 is stopped if its measured per-unfold time exceeds 2x the control's
+# The dry run (§11): one short job, four lanes. The control pair is also the bitwise determinism check (§3.2: nominal
+# and A7_mnvtune are the same closure); B2 and B3b are the candidates whose cost may differ. Their products and
+# timings carry into the full job, which skips existing products.
+DRY_TASKS = ("stab_control_closure_nominal", "stab_control_closure_A7_mnvtune", "stab_B2_closure_nominal",
+             "stab_B3b_closure_nominal")
 
 
 def closure_truth_kind(alt_path: Path, declared: str) -> str:
@@ -275,55 +353,178 @@ def closure_truth_kind(alt_path: Path, declared: str) -> str:
     return SCHEMA_TRUTH[schema]
 
 
-def task_lines(a) -> list[str]:
+def candidate_tasks(a, c: str) -> list[tuple[str, int, list[str]]]:
+    """One candidate's tasks: (id, unfolds, argv after the script name)."""
     common = ["--npz", str(a.npz), "--bkg", str(a.bkg), "--expect-npz-sha256", a.expect_npz_sha256,
               "--expect-bkg-sha256", a.expect_bkg_sha256, "--config", "R", "--iters", "5", "--threads", "32"]
-    lines = ["# FD-STAB tasks: per candidate, 1 base + 51 jittered unfolds of one GiBUU-like pseudo-experiment, and 18"
-             " noise-free closures at the F0b truths"]
-    pairs = ",".join(["-:-"] + [f"-:{j}" for j in JITTER_SEEDS])
-    for c in CANDIDATES:
-        lines.append("\t".join([f"stab_{c}_stability", "estimator_stability_probe.py", "--candidate", c, "stability", "--",
-                                *common, "--construction", "pseudo", "--truth", STABILITY_TRUTH["truth"],
-                                "--amplitude", str(STABILITY_TRUTH["amplitude"]), "--eavail-ratio", STABILITY_TRUTH["ratio"],
-                                "--pseudo-seed", str(STABILITY_PSEUDO_SEED), "--pairs", pairs, "--tag", f"stab_{c}",
-                                "--out", f"{a.runs}/{c}/stability"]))
-        for name, hyp, alt, kind, amp in CLOSURES:
-            argv = [*common, "--bank", str(a.bank), "--detector-dir", str(a.detector_dir), "--hypothesis", hyp,
-                    "--pseudo-seeds", f"{CLOSURE_SEED}:{CLOSURE_SEED}", "--no-nuisance", "--expectation",
-                    "--mc-fraction", "half", "--tag", f"stab_{c}_{name}", "--out", f"{a.runs}/{c}/closure/{name}"]
-            if alt is not None:
-                path = f"{a.closure_ratio_dir}/{alt[len('CLUSTER:'):]}" if alt.startswith("CLUSTER:") else alt
-                argv += ["--alternative", path, "--alternative-truth", kind, "--alternative-amplitude", str(amp)]
-            lines.append("\t".join([f"stab_{c}_closure_{name}", "estimator_stability_probe.py", "--candidate", c,
-                                    "closure", "--", *argv]))
+    pairs = ["-:-"] + [f"-:{j}" for j in JITTER_SEEDS]
+    out = []
+    for i in range(0, len(pairs), STAB_CHUNK):
+        chunk = pairs[i:i + STAB_CHUNK]
+        out.append((f"stab_{c}_stability_{i // STAB_CHUNK:02d}", len(chunk),
+                    ["--candidate", c, "stability", "--", *common, "--construction", "pseudo",
+                     "--truth", STABILITY_TRUTH["truth"], "--amplitude", str(STABILITY_TRUTH["amplitude"]),
+                     "--eavail-ratio", STABILITY_TRUTH["ratio"], "--pseudo-seed", str(STABILITY_PSEUDO_SEED),
+                     "--pairs", ",".join(chunk), "--tag", f"stab_{c}", "--out", f"{a.runs}/{c}/stability"]))
+    for name, hyp, alt, kind, amp in CLOSURES:
+        argv = [*common, "--bank", str(a.bank), "--detector-dir", str(a.detector_dir), "--hypothesis", hyp,
+                "--pseudo-seeds", f"{CLOSURE_SEED}:{CLOSURE_SEED}", "--no-nuisance", "--expectation",
+                "--mc-fraction", CLOSURE_MC_FRACTION, "--tag", f"stab_{c}_{name}", "--out", f"{a.runs}/{c}/closure/{name}"]
+        if alt is not None:
+            path = f"{a.closure_ratio_dir}/{alt[len('CLUSTER:'):]}" if alt.startswith("CLUSTER:") else alt
+            argv += ["--alternative", path, "--alternative-truth", kind, "--alternative-amplitude", str(amp)]
+        out.append((f"stab_{c}_closure_{name}", 1, ["--candidate", c, "closure", "--", *argv]))
+    return out
+
+
+def task_lines(a) -> list[str]:
+    """The queue: tab-separated id, unfolds, script, argv. Candidates interleave, so B2's cost is measured early."""
+    per = {c: candidate_tasks(a, c) for c in CANDIDATES}
+    lines = ["# FD-STAB queue: per candidate, 1 base + 51 jittered unfolds of one GiBUU-like pseudo-experiment in tasks of"
+             f" {STAB_CHUNK}, and 18 noise-free closures at the F0b truths; columns: id, unfolds, script, argv"]
+    for i in range(max(len(v) for v in per.values())):
+        for c in CANDIDATES:
+            if i < len(per[c]):
+                tid, n, argv = per[c][i]
+                lines.append("\t".join([tid, str(n), "estimator_stability_probe.py", *argv]))
     return lines
 
 
+PROTECTED = ("--capacity", "--config", "--construction", "--pseudo-seed", "--pseudo-seeds", "--expectation",
+             "--no-nuisance", "--mc-fraction")
+
+
 def _refuse(rest: list[str], mode: str) -> str | None:
+    """A first check on argv; the decision is ``check_namespace`` on the runner's own parse (``install``). Here a
+    protected option must be spelled in full, once, and without '='."""
+    seen = []
+    for tok in rest:
+        if not tok.startswith("--"):
+            continue
+        name = tok.split("=", 1)[0]
+        if name in PROTECTED:
+            if "=" in tok:
+                return f"{name} must be given as a separate argument, not with '='"
+            if name in seen:
+                return f"{name} is given more than once"
+            seen.append(name)
+        elif any(p.startswith(name) for p in PROTECTED):
+            return f"{name} abbreviates a protected option; spell it in full"
     if "--capacity" in rest:
         return "a candidate fixes the estimator: --capacity is refused"
     if "--config" in rest and rest[rest.index("--config") + 1] != "R":
         return "a candidate is built on configuration (e): --config must be R"
     if mode == "stability":
         if "--construction" not in rest or rest[rest.index("--construction") + 1] != "pseudo":
-            return "the probe never reads the data: stability needs --construction pseudo"
+            return "the probe never puts the data in a product: stability needs --construction pseudo"
     if mode == "closure" and not ({"--expectation", "--no-nuisance"} <= set(rest)):
         return "closures are noise-free: --expectation and --no-nuisance are required"
     return None
 
 
+# ----------------------------------------------------------------------------------------------------- the budget
+def read_queue(path: Path) -> list[tuple[str, str, int]]:
+    """(id, candidate, unfolds) per queue line."""
+    out = []
+    for line in path.read_text().splitlines():
+        if line and not line.startswith("#"):
+            cols = line.split("\t")
+            out.append((cols[0], cols[cols.index("--candidate") + 1], int(cols[1])))
+    return out
+
+
+def read_log(log: Path) -> dict[str, dict]:
+    """Per task id, its start and (if finished) end epoch, as the job script writes them."""
+    rec: dict[str, dict] = {}
+    for p in log.glob("*.start"):
+        rec.setdefault(p.stem, {})["start"] = float(p.read_text().split()[0])
+    for p in log.glob("*.end"):
+        rec.setdefault(p.stem, {})["end"] = float(p.read_text().split()[0])
+    return rec
+
+
+def project(now: float, t0: float, queue, rec: dict, lanes: int = LANES, unit_s: float = UNIT_S) -> dict:
+    """The node-hours charged so far plus the projected remainder, for one node.
+
+    Per candidate, the per-unfold lane time is the mean over its finished tasks, or, before any, UNIT_S times its
+    ASSUMED_FACTOR. The remainder is the unstarted tasks plus what is left of the running ones, spread over the lanes,
+    and never less than the longest single remaining task."""
+    per = {}
+    for tid, c, n in queue:
+        r = rec.get(tid, {})
+        if "end" in r:
+            t, u = per.get(c, (0.0, 0))
+            per[c] = (t + r["end"] - r["start"], u + n)
+    rate = {c: (per[c][0] / per[c][1] if c in per and per[c][1] else unit_s * ASSUMED_FACTOR.get(c, 1.0))
+            for _, c, _ in queue}
+    left = []
+    for tid, c, n in queue:
+        r = rec.get(tid, {})
+        if "end" in r:
+            continue
+        est = n * rate[c]
+        left.append(max(0.0, est - (now - r["start"])) if "start" in r else est)
+    wall_left = max(sum(left) / lanes, max(left, default=0.0))
+    elapsed = max(0.0, now - t0)
+    measured = {c: per[c][0] / per[c][1] for c in per if per[c][1]}
+    b2_ratio = measured["B2"] / measured["control"] if {"B2", "control"} <= set(measured) else None
+    return {"charged_node_h": elapsed / 3600, "projected_node_h": (elapsed + wall_left) / 3600,
+            "per_unfold_s": rate, "measured": sorted(measured), "b2_over_control": b2_ratio}
+
+
+def gate(task: str, queue_path: Path, log: Path, t0: float, cap: float = CAP_NODE_H, now: float | None = None) -> int:
+    """0: start the task (its start is recorded). 3: stop; nothing further starts (log/STOP holds why)."""
+    import time
+    now = time.time() if now is None else now
+    stop = log / "STOP"
+    if stop.exists():
+        return 3
+    queue = read_queue(queue_path)
+    if task not in {t for t, _, _ in queue}:
+        stop.write_text(json.dumps({"reason": f"task {task} is not in the queue"}) + "\n")
+        return 3
+    p = project(now, t0, queue, read_log(log))
+    why = None
+    if p["projected_node_h"] > cap:
+        why = f"projected {p['projected_node_h']:.2f} node-h exceeds the cap {cap}"
+    elif p["b2_over_control"] is not None and p["b2_over_control"] > B2_STOP_RATIO:
+        why = f"B2 costs {p['b2_over_control']:.2f}x the control per unfold (stop above {B2_STOP_RATIO})"
+    if why:
+        stop.write_text(json.dumps({"reason": why, "task": task, **p}, indent=1) + "\n")
+        return 3
+    tmp = log / f"{task}.start.tmp"
+    tmp.write_text(f"{now}\n")
+    tmp.replace(log / f"{task}.start")  # atomic: a concurrent gate never reads a half-written start
+    return 0
+
+
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if argv[:1] == ["tasks"]:
-        ap = argparse.ArgumentParser(prog="estimator_stability_probe.py tasks")
+        ap = argparse.ArgumentParser(prog="estimator_stability_probe.py tasks", allow_abbrev=False)
         for opt in ("--out", "--npz", "--bkg", "--bank", "--detector-dir", "--closure-ratio-dir", "--runs"):
             ap.add_argument(opt, type=Path, required=True)
         ap.add_argument("--expect-npz-sha256", required=True)
         ap.add_argument("--expect-bkg-sha256", required=True)
+        ap.add_argument("--dry-out", type=Path, required=True, help="the dry run's four queue lines")
         a = ap.parse_args(argv[1:])
-        a.out.write_text("\n".join(task_lines(a)) + "\n")
-        print(json.dumps({"tasks": a.out.read_text().count("\n") - 1, "out": str(a.out)}))
+        lines = task_lines(a)
+        a.out.write_text("\n".join(lines) + "\n")
+        dry = [l for l in lines if l.split("\t")[0] in DRY_TASKS]
+        if len(dry) != len(DRY_TASKS):
+            raise SystemExit("a dry-run task is not in the queue")
+        a.dry_out.write_text("\n".join(dry) + "\n")
+        print(json.dumps({"tasks": len(lines) - 1, "out": str(a.out), "dry": str(a.dry_out)}))
         return 0
+    if argv[:1] == ["gate"]:
+        ap = argparse.ArgumentParser(prog="estimator_stability_probe.py gate", allow_abbrev=False)
+        ap.add_argument("--task", required=True)
+        ap.add_argument("--queue", type=Path, required=True)
+        ap.add_argument("--log", type=Path, required=True)
+        ap.add_argument("--t0", type=float, required=True, help="the job's start, epoch seconds")
+        ap.add_argument("--cap", type=float, required=True, help="node-hours left under the declared cap")
+        a = ap.parse_args(argv[1:])
+        return gate(a.task, a.queue, a.log, a.t0, a.cap)
     if len(argv) < 4 or argv[0] != "--candidate" or argv[1] not in CANDIDATES or argv[2] not in ("stability", "closure") \
             or argv[3] != "--":
         print(f"usage: estimator_stability_probe.py --candidate {{{','.join(CANDIDATES)}}} {{stability,closure}} -- <args>",
@@ -341,7 +542,7 @@ def main(argv=None) -> int:
         except (ValueError, OSError) as exc:
             print(f"refusing: {exc}", file=sys.stderr)
             return 2
-    with install(candidate):
+    with install(candidate, mode):
         if mode == "stability":
             import s5p_numerics
             return s5p_numerics.main(rest)

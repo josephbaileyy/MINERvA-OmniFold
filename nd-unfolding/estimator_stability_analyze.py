@@ -21,10 +21,16 @@ BIAS (§5). Per candidate and F0b truth T, the noise-free closure's relative res
 reporting cells (S1's integration rule, s1_assemble.functional_matrix over the pinned H2 definition). Two metrics,
 RMS_T and MAX_T = max |b|. A candidate is NO WORSE at T if RMS_T(c) - RMS_T(control) <= Delta and MAX_T(c) -
 MAX_T(control) <= Delta, each Delta = 3 x 1.20 x sqrt(s_c^2 + s_control^2), where s is the metric's rounding-noise SD
-propagated from that candidate's own per-cell jitter SD (51 jitters, mapped to the 16 cells) and 1.20 is the 95% upper
-factor of an SD estimated with 50 degrees of freedom. The seed floor is zero (the estimator is seed-invariant).
+propagated from that candidate's own per-cell SD (``cell_sd``: the base and the 51 jitters mapped to the 16 cells, the
+SD around their mean with ddof = 1; the base is one rounding realization like each jitter) and 1.20 is the 95% upper
+factor of an SD estimated with about 50 degrees of freedom. The seed floor is zero (the estimator is seed-invariant).
+A Delta of exactly zero means the floor model failed, not that a candidate is worse: that truth is INVALID, and so is
+the verdict if a candidate that meets the stability bound has one. The closures ``nominal`` and ``A7_mnvtune`` are the
+same closure (one hypothesis, no alternative, one split): each candidate's two products must be bitwise equal, a
+determinism control, so 17 distinct truths are judged. Every closure carries the declared MC split (pseudo seed
+991000, ``--mc-fraction half``), the same for each candidate as for the control.
 
-VERDICT (§6). A candidate PASSES if it meets the stability bound and is no worse at all 18 truths. Among passers the
+VERDICT (§6). A candidate PASSES if it meets the stability bound and is no worse at all 17 distinct truths. Among passers the
 lowest mean maximum ranks first; every passer within one combined standard error of it is a co-winner. Nothing here
 reads the GiBUU-truth biases except to print them as a descriptive readout (§5.3).
 
@@ -47,6 +53,8 @@ import estimator_stability_probe as probe  # noqa: E402
 
 BOUND_MEDIAN, BOUND_MAX = 0.3, 1.0
 N_PAIRS = 25
+N_FUNCTIONALS = 153  # s5e's reported functionals; every candidate must use all of them
+DETERMINISM_PAIR = ("nominal", "A7_mnvtune")
 FLOOR_K, SD_UPPER = 3.0, 1.20
 SIGMA_RECEIPT_SHA256 = "84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c"  # state/s5e/cand/assess_receipt.json, as committed
 GIBUU_READOUT = ("A7_gibuu", "stage0c_gibuu")
@@ -66,11 +74,18 @@ def stability_stats(rel: np.ndarray, sigma: np.ndarray) -> dict:
         meds.append(float(np.median(m)))
         maxs.append(float(np.max(m)))
     meds, maxs = np.array(meds), np.array(maxs)
-    sd = np.sqrt(np.mean(rel ** 2, axis=0)) / sigma
+    sd = np.std(np.vstack([np.zeros(rel.shape[1]), rel]), axis=0, ddof=1) / sigma  # descriptive; base included
     return {"mean_median": float(meds.mean()), "mean_max": float(maxs.mean()),
             "se_median": float(meds.std(ddof=1) / math.sqrt(N_PAIRS)), "se_max": float(maxs.std(ddof=1) / math.sqrt(N_PAIRS)),
             "worst_pair_max": float(maxs.max()), "sd51_median": float(np.median(sd)), "sd51_max": float(np.max(sd)),
             "passes": bool(meds.mean() <= BOUND_MEDIAN and maxs.mean() <= BOUND_MAX)}
+
+
+def cell_sd(base_cells: np.ndarray, jitter_cells) -> np.ndarray:
+    """Per-cell rounding SD, relative: the base and every jitter as X / X_base, SD around their mean, ddof = 1."""
+    base_cells = np.asarray(base_cells, float)
+    rel = np.vstack([np.ones_like(base_cells)] + [np.asarray(x, float) / base_cells for x in jitter_cells])
+    return np.std(rel, axis=0, ddof=1)
 
 
 def g0_informative(control: dict) -> bool:
@@ -98,15 +113,21 @@ def no_worse(b_c, s_c, b_ctrl, s_ctrl) -> dict:
     nr0, nm0 = metric_noise(b_ctrl, s_ctrl)
     d_rms = FLOOR_K * SD_UPPER * math.hypot(nrc, nr0)
     d_max = FLOOR_K * SD_UPPER * math.hypot(nmc, nm0)
-    return {"rms": rc, "rms_control": r0, "delta_rms": d_rms, "max": mc, "max_control": m0, "delta_max": d_max,
-            "no_worse": bool(rc - r0 <= d_rms and mc - m0 <= d_max)}
+    out = {"rms": rc, "rms_control": r0, "delta_rms": d_rms, "max": mc, "max_control": m0, "delta_max": d_max}
+    if not (d_rms > 0 and d_max > 0):
+        return {**out, "valid": False, "no_worse": None}
+    return {**out, "valid": True, "no_worse": bool(rc - r0 <= d_rms and mc - m0 <= d_max)}
 
 
 def verdict(stab: dict, bias_ok: dict) -> dict:
-    """stab: candidate -> stability_stats; bias_ok: candidate -> bool (no worse at all 18). Control excluded from winners."""
+    """stab: candidate -> stability_stats; bias_ok: candidate -> True / False (no worse at all 17 distinct truths) or
+    None (a zero floor at some truth). Control excluded from winners."""
     if not g0_informative(stab["control"]):
         return {"verdict": "UNINFORMATIVE", "winners": [], "passers": []}
-    passers = [c for c in stab if c != "control" and stab[c]["passes"] and bias_ok.get(c, False)]
+    invalid = sorted(c for c in stab if c != "control" and stab[c]["passes"] and bias_ok.get(c, False) is None)
+    if invalid:
+        return {"verdict": "INVALID", "winners": [], "passers": [], "invalid_floor": invalid}
+    passers = [c for c in stab if c != "control" and stab[c]["passes"] and bias_ok.get(c, False) is True]
     if not passers:
         return {"verdict": "NONE_PASS", "winners": [], "passers": []}
     best = min(passers, key=lambda c: stab[c]["mean_max"])
@@ -158,7 +179,7 @@ def expected_pin(path: str, repo: Path) -> str:
     return probe.sha256_path(repo / path)
 
 
-def closure_products(d: Path, candidate: str, repo: Path) -> dict[str, tuple[np.ndarray, np.ndarray]]:
+def closure_products(d: Path, candidate: str, repo: Path) -> dict[str, tuple[np.ndarray, np.ndarray, int]]:
     out = {}
     for name, hyp, alt, kind, amp in probe.CLOSURES:
         files = sorted((d / name).glob("*.npz"))
@@ -177,9 +198,13 @@ def closure_products(d: Path, candidate: str, repo: Path) -> dict[str, tuple[np.
         elif got_alt is None or got_alt.get("sha256") != expected_pin(alt, repo) or float(got_alt.get("amplitude")) != amp \
                 or (kind != "SCHEMA" and got_alt.get("truth") != kind):
             raise SystemExit(f"{files[0].name}: alternative is not the declared truth")
+        if m.get("pseudo_seed") != probe.CLOSURE_SEED or (m.get("development") or {}).get("mc_fraction") != \
+                probe.CLOSURE_MC_FRACTION or m.get("split_key") is None:
+            raise SystemExit(f"{files[0].name}: not the declared MC split (pseudo seed {probe.CLOSURE_SEED}, "
+                             f"mc_fraction {probe.CLOSURE_MC_FRACTION})")
         if xt is None:
             raise SystemExit(f"{files[0].name}: no truth array")
-        out[name] = (x, xt)
+        out[name] = (x, xt, m["split_key"])
     return out
 
 
@@ -205,29 +230,40 @@ def run(a) -> int:
         raise SystemExit("the receipt's functionals are not s5c's reported functionals")
     sigma = np.asarray(receipt["sigma_rel_pct"], float) / 100.0
     M16 = cell_matrix(a.h2_definition)
-    stab, cell_sd, closures = {}, {}, {}
+    stab, sds, closures, splits = {}, {}, {}, {}
     for c in probe.CANDIDATES:
         base, jits = stability_products(Path(a.runs) / c / "stability", c)
         Fb = U @ base
         ok = (Fb != 0) & np.isfinite(sigma) & (sigma > 0)
+        if int(ok.sum()) != N_FUNCTIONALS:
+            raise SystemExit(f"{c}: {int(ok.sum())} usable functionals, not s5e's {N_FUNCTIONALS}")
         rel = np.array([(U @ x)[ok] / Fb[ok] - 1.0 for x in jits])
         stab[c] = {**stability_stats(rel, sigma[ok]), "functionals_used": int(ok.sum())}
-        Cb = M16 @ base
-        cell_sd[c] = np.sqrt(np.mean(np.array([(M16 @ x) / Cb - 1.0 for x in jits]) ** 2, axis=0))
-        closures[c] = {name: (M16 @ x) / (M16 @ xt) - 1.0 for name, (x, xt) in
-                       closure_products(Path(a.runs) / c / "closure", c, Path(a.repo)).items()}
+        sds[c] = cell_sd(M16 @ base, [M16 @ x for x in jits])
+        prods = closure_products(Path(a.runs) / c / "closure", c, Path(a.repo))
+        x0, x1 = prods[DETERMINISM_PAIR[0]][0], prods[DETERMINISM_PAIR[1]][0]
+        if not np.array_equal(x0, x1):
+            raise SystemExit(f"{c}: the determinism pair {DETERMINISM_PAIR} differs; the estimator is not deterministic")
+        splits[c] = {name: k for name, (_, _, k) in prods.items()}
+        closures[c] = {name: (M16 @ x) / (M16 @ xt) - 1.0 for name, (x, xt, _) in prods.items()}
+    for c in probe.CANDIDATES:
+        if splits[c] != splits["control"]:
+            raise SystemExit(f"{c}: a closure's MC split differs from the control's at the same truth")
+    judged = [t for t, *_ in probe.CLOSURES if t != DETERMINISM_PAIR[1]]
     bias, bias_ok = {}, {}
     for c in probe.CANDIDATES:
         if c == "control":
             continue
-        bias[c] = {t: no_worse(closures[c][t], cell_sd[c], closures["control"][t], cell_sd["control"]) for t, *_ in probe.CLOSURES}
-        bias_ok[c] = all(v["no_worse"] for v in bias[c].values())
+        bias[c] = {t: no_worse(closures[c][t], sds[c], closures["control"][t], sds["control"]) for t in judged}
+        vals = [v["no_worse"] for v in bias[c].values()]
+        bias_ok[c] = None if any(v is None for v in vals) else all(vals)
     v = verdict(stab, bias_ok)
     readout = {c: {t: {"rms": bias_metrics(closures[c][t])[0], "max": bias_metrics(closures[c][t])[1],
                        "per_cell": np.round(closures[c][t], 6).tolist()} for t in GIBUU_READOUT} for c in probe.CANDIDATES}
     out = {"schema": "estimator-stability-analysis/1",
            "label": "FD-STAB criteria on the probe's products; relative quantities only; no data read",
            "stability": stab, "g0_informative": g0_informative(stab["control"]), "bias": bias, "bias_no_worse_all": bias_ok,
+           "cell_sd": {c: np.round(v, 8).tolist() for c, v in sds.items()}, "truths_judged": judged,
            "verdict": v,
            "gibuu_readout_descriptive": {"note": "never used by a criterion or the tie-break (declaration §5.3)", **readout},
            "data_sigma_equivalent_factor": receipt.get("data", {}).get("data_sigma_over_pseudo_sigma_EW_median")}
