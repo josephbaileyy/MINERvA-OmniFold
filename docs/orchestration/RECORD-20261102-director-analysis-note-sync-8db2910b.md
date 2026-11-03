@@ -107,3 +107,27 @@ Each compares equal to canonical by `cmp`.
 `0674662`. Joseph pulls it in Overleaf from the GitHub menu.
 
 **Next sync:** after the next paper round. Start from base `3a012f70`.
+
+## Fourth sync, 2026-11-03 (later): main 1d94b68a
+
+**Why.** Joseph's decision (`DECISION-20261103-joseph-731-restore-and-merge.md` item 2) calls for a re-sync after #731.
+
+**The standalone before the copy.** At `4384f022`, with no Overleaf commit since the third sync.
+
+**What was copied.** 6 files changed between `3a012f70` and `1d94b68a`, and none were added or deleted:
+- `paper_body.tex`, `sec_5d.tex`, `app_codebase.tex` and `records_estimators.tex`;
+- `check_sec4_receipts.py` and `test_check_sec4_receipts.py`.
+
+Each compares equal to canonical by `cmp`.
+
+**Builds.**
+- **Canonical,** in a fresh worktree at `1d94b68a`: `build_all.sh` gave rc 0, with note 136, paper 11, primer 15,
+  PET note 26 and records 59 pp. `latexmk -pdf -jobname=output main_paper.tex` gave rc 0: 11 pp and 0 undefined
+  references or citations.
+- **Standalone copy:** both commands gave rc 0.
+- **Text.** `pdftotext` of all six PDFs is identical between the canonical and standalone builds.
+
+**Head.** Standalone `main` = `0b29b02cccbf11591ccf1f94d998d0b5321ac970` (from `git ls-remote`), a fast-forward from
+`4384f022`. Joseph pulls it in Overleaf from the GitHub menu.
+
+**Next sync:** after the next paper round. Start from base `1d94b68a`.
