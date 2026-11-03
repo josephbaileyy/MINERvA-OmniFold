@@ -25,6 +25,8 @@ import cov2d as c  # noqa: E402
 
 PARTB_RUNS = REPO / "docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partb_runs.tsv"
 W_FLUX = np.linspace(0.5, 1.5, 100)
+C2_RECORD = (REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip"
+             / "c2-clip2.json")
 
 
 def noatime():
@@ -148,6 +150,33 @@ class Compose(unittest.TestCase):
         lam, rec = c.lam_plus(np.array([1.5, -0.25, 0.0, -1.0, 2.0]))
         np.testing.assert_array_equal(lam, [1.5, 0.0, 0.0, 0.0, 2.0])
         self.assertEqual(rec, {"sum_lambda": 2.25, "sum_lambda_neg": -1.25, "rows_neg": 2})
+
+    def test_weakened_cells(self):
+        got = c.weakened_cells([0.95, 0.9, 0.8999999, 1.2, 0.5], [3, 7, 11, 12, 40])
+        self.assertEqual(got, [11, 40])
+        with self.assertRaises(c.Refusal):
+            c.weakened_cells([0.8, np.nan], [1, 2])
+        with self.assertRaises(c.Refusal):
+            c.weakened_cells([0.8], [1, 2])
+
+    def test_c2_weakened_cells_and_outlier(self):
+        """On C2's committed record: the weakened cells per tune, and OUTLIER_CELL is the cell of the largest |R|."""
+        import cov2d_receipt as rc
+        rec = json.loads(C2_RECORD.read_text())
+        cells = rec["efficiency"]["cells205"]
+        self.assertEqual(len(cells), 205)
+        weak = {t: c.weakened_cells(rec["b"][t]["variance_ratio"]["option_1_clipped"], cells) for t in ("G18", "AR23")}
+        self.assertEqual({t: len(v) for t, v in weak.items()}, {"G18": 10, "AR23": 54})
+        self.assertEqual(weak["G18"][:3], [79, 95, 107])
+        for t in ("G18", "AR23"):
+            mx = rec["b"][t]["option_1"]["sigma_Q"]["abs_max"]
+            self.assertEqual(cells[int(np.argmax(mx))], c.OUTLIER_CELL)
+            self.assertGreater(max(mx), 4.2)
+        drv = rc.driver_phase_space()
+        nz = len(drv["PZ_EDGES"]) - 1
+        i, j = divmod(c.OUTLIER_CELL, nz)
+        self.assertEqual((drv["PT_EDGES"][i], drv["PT_EDGES"][i + 1], drv["PZ_EDGES"][j], drv["PZ_EDGES"][j + 1]),
+                         (2.5, 4.5, 6.0, 7.0))
 
     def test_sha256_through_noatime(self):
         with tempfile.NamedTemporaryFile(delete=False) as fh:

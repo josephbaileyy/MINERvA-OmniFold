@@ -1,10 +1,9 @@
-# local, 2026-11-03T01:58:36Z, conda-forge ROOT 6.28/12, Python 3.11.16, numpy 1.26.4, uproot 5.6.9, lightgbm 4.5.0; a kill counts only on a test failure (pytest rc != 0)
-4b0744d7dc5ee80d68424d3b1ff16c15eab2738a54963e887ed0c03662888e6c  cov2d.py
+# local, 2026-11-03T16:44:21Z, conda-forge ROOT 6.28/12, Python 3.11.16, numpy 1.26.4, uproot 5.6.9, lightgbm 4.5.0; a kill counts only on a test failure (pytest rc != 0)
+0d852a6992398b6b1ba7956b2e8d74accc2b6f1aa7b7909a6ef7d6d7f0dcd756  cov2d.py
 c085b51f46afe3675077756aac982d5a7ebc87a5801dd7cbde79dd0f867bd7de  cov2d_receipt.py
 6a606b3c3af7f27ee520324fe3db3290ac99c65832a844084e40b0c4f99de162  cov2d_writer.py
-55ba5a84db637d2ba4a1125d316bfc41fa25bff69700d89dd4a06de1d8240d76  test_cov2d.py
+3586bf797a15a4984f8a1507a6f3debf80d90c1f2e85091d6954930515032206  test_cov2d.py
 235263557a141b0426407f674c0f35d6b8928a8d2030044c6692f85faf679f4c  test_cov2d_writer.py
-03d8d0bbab1c80dfd11c0eb746c0ccf1e970d482daf0e61ebc1e9cd82d21acb8  mutation_cov2d.py
 KILLED  cov2d.py: flux not first
 KILLED  cov2d.py: 2p2h has 2 universes
 KILLED  cov2d.py: flux drawn uniformly
@@ -18,6 +17,10 @@ KILLED  cov2d.py: bound uses the max |a_u|
 KILLED  cov2d.py: bound drops |a_CV|
 KILLED  cov2d.py: lambda not clipped
 KILLED  cov2d.py: negative mass unrecorded
+KILLED  cov2d.py: weakened at or below
+KILLED  cov2d.py: weakened below 0.8
+KILLED  cov2d.py: outlier cell off by one
+KILLED  cov2d.py: weakened accepts NaN
 KILLED  cov2d.py: flux weights accept negatives
 KILLED  cov2d.py: digest without O_NOATIME
 KILLED  cov2d_receipt.py: certify at 10 x 1.01
@@ -39,4 +42,3 @@ KILLED  cov2d_writer.py: count ignored
 KILLED  cov2d_writer.py: pass leaf as int
 KILLED  cov2d_writer.py: POT not written
 KILLED  cov2d_writer.py: control skips the parameter
-restored: 2d-unfolding/cov2d/cov2d_receipt.py: OK 2d-unfolding/cov2d/cov2d_writer.py: OK 2d-unfolding/cov2d/cov2d.py: OK 

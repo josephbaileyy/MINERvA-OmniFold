@@ -7,9 +7,12 @@
   (#690), item 3(c), at `:81-82`: "A held-out-tune coverage ensemble for the 2D covariance, on 1B's staged design,
   with the covariance remade at each truth. It is priced first."
 - [`DECISION-20261102-joseph-1b-redesign.md`](../../../DECISION-20261102-joseph-1b-redesign.md) (#700, on `main` at
-  `7544822d`): first-order composition, λ⁺ with the clipping bias recorded, the three additions, a second STOP ending
-  the stage, and the paper's neutral wording. The director ruled (2026-11-02, by message) that (c) follows it on the
-  2D bank.
+  `7544822d`): first-order composition, the three additions, a second STOP ending the stage, and the paper's neutral
+  wording. The director ruled (2026-11-02, by message) that (c) follows it on the 2D bank. Its item 3, option (a)
+  (λ⁺ in the pseudo-data only), is superseded for (c) by the next decision.
+- [`DECISION-20261103-joseph-coverage-clip-rule.md`](../../../DECISION-20261103-joseph-coverage-clip-rule.md) (#718):
+  consistent clipping, in the pseudo-data and the graded truth alike (item 1), with the weakened-pass reading, the
+  director's ruling recorded there (item 4). It rests on the clipping probe C2 (§9.2).
 - The scoping [`COV2D-SCOPING.md`](COV2D-SCOPING.md) (#693, head `5004c7a3`), its §8 rulings, and the director's
   rulings of 2026-11-02 to this session, by message (§14 lists each).
 
@@ -144,11 +147,20 @@ One toy is one nature, drawn from `numpy.random.default_rng([seed, DRAW_SALT])` 
   - Non-finite weights are zeroed and counted, as 1B's loader does.
 - **The Poisson mean** on a signal row is λ = w_reco,D × r_T × s, and on a background row λ = w_bkg,D × s, with s the
   POT scale `dataPOTUsed / mcPOTUsed` that the driver itself applies (`re2_driver.py:780-781, 343`).
-- **Negative means** (decision item 3): λ⁺ = max(λ, 0) on the full product. Each toy records Σλ, Σλ⁻ and the rows
-  with λ < 0, for signal and background, and Σλ⁻ per reco cell and per truth cell (§6).
-- **Each toy's truth** is the nature's own: the composite truth weights w_truth,D × r_T × s over `mc_truth_denom`'s
-  rows in the driver's truth phase space (`re2_driver.in_truth_phase_space`), per (p_T, p_∥) cell, normalized by the
-  driver's own `extract_cross_section_2d` with the nature's flux (the drawn Flux universe's integral, as
+- **Negative composites are clipped consistently** (`DECISION-20261103-joseph-coverage-clip-rule.md` item 1, option
+  (1)). Each tree is clipped row by row on its own composite, with `cov2d.lam_plus` for each:
+  - the pseudo-data: λ⁺ = max(λ, 0) on every signal row (λ = w_reco,D × r_T × s) and every background row
+    (λ = w_bkg,D × s);
+  - the graded truth: max(w_truth,D × r_T × s, 0) on every `mc_truth_denom` row. r_T > 0 and s > 0, so this zeroes
+    exactly the rows whose composite w_truth,D is negative.
+  - This is the rule C2 measured: its residual R_c is the pseudo-data's clipped mass over the signed signal, minus the
+    truth's clipped mass over the composite truth count (§9.2). A signal row whose reco composite is negative and whose
+    truth composite is not, or the reverse, is clipped in one tree only. R_c measures the net offset that remains.
+  - Each toy records Σλ, Σλ⁻ and the rows with λ < 0 for signal and background, the same for the truth weights, and
+    per truth cell the four sums behind R_c (§6 (ii)).
+- **Each toy's truth** is the nature's own: the clipped composite truth weights max(w_truth,D × r_T × s, 0) over
+  `mc_truth_denom`'s rows in the driver's truth phase space (`re2_driver.in_truth_phase_space`), per (p_T, p_∥) cell,
+  normalized by the driver's own `extract_cross_section_2d` with the nature's flux (the drawn Flux universe's integral, as
   `--universe Flux:IDX` uses it) and the CV completeness ≡ 1. A control (§9) makes this equal E_R's own `hTruthXSec2D`
   at the CV nature.
 - **The error** is e = x̂ − x_true on E_R's 205 reported cells (`hXSec2D > 0`, `re2c_rollup.py:169`), after the
@@ -256,6 +268,27 @@ in-region fraction q̂ against q(T); pulls; the bias-versus-width attribution of
 | **UNDER-COVERS at T** | otherwise; the report names each cell and whether the joint fraction is under too |
 | **INVALID at T** | any §9 control fails for T; reported unrepaired |
 
+- **A weakened pass** (the director's ruling, `DECISION-20261103-joseph-coverage-clip-rule.md` item 4, the consult's
+  reading at `R/clip/consult/ANSWER-1.txt:56`). Clipping truncates the downward tail of each nature's shift, so in a
+  cell where it narrows the spread the toys' errors are smaller than C_T describes, and a pass there is a weaker test.
+  **A cell that is not flagged, at a tune where its clipped-composition variance ratio from C2 is below 0.9, reads
+  "passes, weakened by clipping".** A flag in such a cell is read as any other flag. The ratio is C2's
+  `variance_ratio.option_1_clipped` in `R/clip/c2-clip2.json` (sha256 `39e333c5…`), and the cells are
+  `cov2d.weakened_cells` of it, fixed now, before any toy:
+  - **G18, 10 cells** (flat index i·16 + j, p_T bin i, p_∥ bin j): 79, 95, 107, 111, 123, 127, 143, 159, 175, 191.
+    Eight are at p_∥ 40–60 GeV/c (j = 15), and two at 9–10 GeV/c (j = 11). Smallest ratio 0.865, in cell 127.
+  - **AR23, 54 cells:** 9, 10, 11, 12, 25, 26, 27, 28, 29, 32, 33, 41, 42, 43, 44, 45, 48, 49, 51, 57, 58, 59, 60,
+    61, 64, 65, 74, 75, 76, 77, 80, 81, 91, 92, 93, 96, 97, 98, 99, 108, 109, 112, 113, 114, 115, 116, 124, 125, 140,
+    141, 156, 157, 172, 173. They lie at p_T below 1.25 GeV/c, in two regions: p_∥ 7–20 GeV/c (j = 9–13) and p_∥
+    1.5–4 GeV/c (j = 0–4). Smallest ratio 0.761, in cell 43.
+  - No cell is in both lists. With 300 draws the ratio's sampling standard error is about 0.08 (`R/clip/c2_reading.txt`),
+    and AR23's first-order ratio, a control that should be 1, has median 0.953. So some listed cells are there by
+    sampling. The list is used as it stands; it is not re-drawn after any toy.
+  - The verdict per tune is unchanged by the label. The report gives the weakened cells beside it.
+- **The outlier cell, named now:** flat cell 216 (`cov2d.OUTLIER_CELL`), p_T 2.5–4.5 GeV/c, p_∥ 6–7 GeV/c. In C2 its
+  residual |R| reached 4.27 σ_Q at G18 and 4.27 σ_Q at AR23 in a few draws, while its median and 90th percentile were
+  0. No other cell's maximum exceeds 0.40 σ_Q (G18) or 0.29 σ_Q (AR23). The report gives its |R_c| maximum over each tune's toys in σ_c (§6 (ii))
+  and its reading, whatever it is.
 - **One-sided.** Over-coverage is reported, not failed.
 - **Size:** at most 0.025 + 0.025 = 0.05 per tune by the union bound, and 0.10 over both. `fd_1b_null.size` prints the
   exact value at each null.
@@ -277,12 +310,22 @@ in-region fraction q̂ against q(T); pulls; the bias-versus-width attribution of
 - **The three additions of the redesign decision, applied to 2D:**
   - **(i) Cross terms.** On a login node at 0 node-h, over the 600 declared draws, each reco cell's histogram under
     product composition against first order, in units of the cell's data-statistical σ (√ of its expected count).
-  - **(ii) The clipping bias.** Σλ⁻ per reco cell and per truth cell for every toy, read before grading. The decision
-    asks for "the unfolded offset in σ_c from one mean unfold per truth". **2D cannot unfold at the mean** (§4.3), so
-    the offset is taken at first order in closure: the truth-cell Σλ⁻ of each toy, converted to cross-section units by
-    the driver's normalization, in σ_c. **The reading, fixed now:** a flagged cell whose median truth-cell clipping
-    offset across its toys exceeds 0.5 σ_c reads "the clipping may explain this cell's flag", and the report says so
-    beside the verdict. The verdict is unchanged. This substitution is for the director to rule on (§14).
+  - **(ii) The clipping residual,** under consistent clipping (§4.2). The redesign decision asks for "the unfolded
+    offset in σ_c from one mean unfold per truth". **2D cannot unfold at the mean** (§4.3), so the offset is taken at
+    first order, as C2 took it, for every toy and read before grading. Per truth cell c, at the toy's nature's expected
+    counts (before the Poisson draw):
+    - S_c, the signed λ over the reco-passing signal rows whose truth lies in c, and m_seen,c, the |Σλ⁻| over them;
+    - N_c, the unclipped composite truth count, and m_all,c, the |Σ| of its negative part;
+    - R_c = m_seen,c / S_c − m_all,c / N_c, signed, in σ_c by R_c × x_true,c / σ_c.
+    - The efficiency correction is in S_c: the unfolded offset of the pseudo-data's added mass is m_seen / S, not
+      m_seen / N (`R/clip/C1-ERRATUM.txt`).
+    - Also per toy: the background's added mass per reco cell over the signed signal λ of that cell, on the same-index
+      cell's σ_c (C2's diagonal-response approximation, the same under either clip rule), and the coherent offset
+      Rᵀ C_T⁻¹ R on C_T's non-null subspace, R = (R_c x_true,c).
+    - **The reading, fixed now:** a flagged cell whose median |R_c| across its toys exceeds 0.5 σ_c reads "the
+      clipping may explain this cell's flag", and the report says so beside the verdict. The verdict is unchanged.
+    - **The outlier cell 216** (§5.2): its |R_c| maximum and median over each tune's toys, in σ_c, are reported by name.
+    - This first-order substitute for the mean unfold is for the director to rule on (§14).
   - **(iii) A second STOP ends (c)** unless Joseph rules otherwise. A STOP is any step this declaration or the
     amendment says stops the campaign.
 
@@ -393,11 +436,40 @@ Any failure reads INVALID and is reported unrepaired.
      The truth cells: 205 of 224 cells have a positive CV, and no declared draw makes one non-positive (smallest ratio of
      a draw's cell to the CV's: 0.379 at G18, 0.369 at AR23). r_T lies in [0.650, 2.575] at G18 and [0.610, 2.568] at
      AR23.
-   <!-- absence-ok: states that the director-approved clipping probe (section 14 item 5) has not run yet; no result is claimed absent -->
-   - **A flag from the receipt, for the director.** 35–38 % of rows have a negative first-order composite in at least
-     one declared draw (1.7–1.8 % of (row, draw) pairs). Under λ⁺ the pseudo-data clip them while the toy's truth keeps
-     them, so each toy carries a one-signed clipping offset, which addition (ii) (§6) measures. Its size per cell is not
-     yet measured. The source bands are not yet identified; no mechanism is asserted here. §14 item 5.
+   - **The receipt's flag, and what answered it.** 35–38 % of rows have a negative first-order composite in at least
+     one declared draw (1.7–1.8 % of (row, draw) pairs). Under option (a), the pseudo-data clipped and the truth kept
+     its negative weights, so each toy would carry a one-signed offset. The director approved two 0 node-h probes
+     (`R/clip/`, both on login11, nice 19, every read through `O_NOATIME`, `atime_moved: []`):
+     - **C1** (`clip_probe.py`, connect C1): descriptive counts. At most 88,052 truth rows (0.27 %; the per-universe
+       counts summed) have some universe weight ≤ 0 where the CV is positive, against 12,440,871 rows negative in some
+       draw. So most negative composites come from several downward shifts summing past −100 % with every universe
+       positive. That is arithmetic; no band is named as a cause. C1's truth-cell offsets were m_seen / N_c,
+       which understates the first-order unfolded offset by about 1/ε_c: my error, recorded in `C1-ERRATUM.txt` and
+       superseded by C2.
+     - **An independent Sonnet consult**, verbatim in `R/clip/consult/` (PROMPT, ANSWER-1, ERRATUM-RELAY, ANSWER-2).
+     - **C2** (`clip_probe2.py`, sha256 `b95c5629…`; its reading `c2_reading.txt`, `b5b4fc4b…`, fixed before the run at
+       `1a07b07c`; receipts at `bc4965c4`; wall 1:13:19, peak 9.52 GB, 0 node-h). In σ_Q, Q_R's relative per-cell σ,
+       a labelled proxy for C_T's:
+
+       | quantity, over 300 draws per tune | G18 | AR23 |
+       |---|---:|---:|
+       | control: first-order variance ratio within 1 ± 0.2 | 100 % of cells | 99.0 % |
+       | unmatched rows, truth / signal tree | 0 / 0 of 32,849,103 | the same |
+       | option (a), m_seen / S: largest per-cell median, largest p90 | 0.30, 0.58 | 0.30, 0.59 |
+       | option (a), coherent bᵀQ_R⁻¹b, median per draw | 42.2 | 42.3 |
+       | option (1), R_c: largest per-cell median, largest p90 | 0.043, 0.097 | 0.042, 0.090 |
+       | option (1), R_c: cells with signed median > 0 | 202 of 205 | 203 of 205 |
+       | option (1), coherent bᵀQ_R⁻¹b, median per draw | 1.45 | 1.33 |
+       | option (1), largest \|R_c\| (cell 216) and the next largest | 4.27, 0.40 | 4.27, 0.29 |
+       | background, either option: largest per-cell median | 0.037 | 0.030 |
+       | clipped variance ratio within 1 ± 0.2; median | 100 %; 1.022 | 97.1 %; 0.922 |
+       | cells with clipped variance ratio below 0.9 | 10 | 54 |
+       | multiplicative composition: variance ratio within 1 ± 0.2 | 80.0 % | 97.6 % |
+       | the fixed reading | option (1) | option (1) |
+
+       The nominal efficiency ε_c over the 205 cells runs from 0.042 to 0.900, median 0.803.
+     - **Joseph's ruling:** "Option 1, both tests (Recommended)" (`DECISION-20261103-joseph-coverage-clip-rule.md`),
+       applied in §4.2, §5.2 and §6 (ii).
 3. **Control (2a)**, the writer, and **(2b)**, E_R reproduced (§2).
 4. **The truth computation.** At the CV nature (no universe, r = 1), the toys' truth code gives E_R's own
    `hTruthXSec2D` to 10⁻¹² relative, or INVALID.
@@ -450,7 +522,7 @@ The director is told before each connect and each submission.
 | file | what | tests | mutation |
 |---|---|---|---|
 | `2d-unfolding/re2/re2_driver.py` | the `--data-file` hook, 21 lines added to blob `4c7e9d75` (part B's, deploy `dbdad2f9`) | `re2/tests/test_re2_data_file.py`: 4 passed; `test_re2_driver.py`: 9 of 9 still pass (`R/hook/tests_hook.out`) | `R/hook/mutation_hook.{py,out}`: 8 of 8 killed |
-| `2d-unfolding/cov2d/cov2d.py` | bank, draws, first-order composition, N1, λ⁺ | `cov2d/tests/test_cov2d.py`; all four test files 38 passed (`R/code/tests_cov2d.out`) | `R/code/mutation_cov2d.{py,out}`: 34 of 34 killed over the three files |
+| `2d-unfolding/cov2d/cov2d.py` | bank, draws, first-order composition, N1, λ⁺, the weakened cells and the outlier cell (§5.2) | `cov2d/tests/test_cov2d.py`; the three test files, 40 passed (`R/code/tests_cov2d.out`) | `R/code/mutation_cov2d.{py,out}`: 38 of 38 killed over the three files |
 | `2d-unfolding/cov2d/cov2d_receipt.py` | the composite-weight receipt (§9.2) | the same file | the same |
 | `2d-unfolding/cov2d/cov2d_writer.py` | the writer and control (2a) | `cov2d/tests/test_cov2d_writer.py` | the same |
 | `nd-unfolding/fd_1b_null.py` | the null and the rule, imported unchanged at 205 cells | its own (1B), plus `cov2d/tests/test_null205.py` | 1B's `mutation_null.out` |
@@ -490,8 +562,16 @@ referee and by Joseph before merge. **What each outcome must say is fixed now:**
 - **INVALID, a STOP, or no result:** the paper is unchanged.
 - **In every outcome** the earlier fixed-truth failure stays in the consolidated Limitations statement (#690 item 2),
   and (c)'s result does not replace it (§13).
-- **To the note** (decision item 4): clipping, the ±1σ endpoint draws, the shared universes, the cross-term readout,
+- **To the note** (redesign decision item 4): the ±1σ endpoint draws, the shared universes, the cross-term readout,
   the single realization behind the remade blocks, the toys' fixed simulation, C08 carried, and the resolution of §5.2.
+- **To the note, from the clip-rule decision (item 4), in every outcome:**
+  - the clipping rule: negative composites zeroed row by row in the pseudo-data, the graded truth and the background
+    (§4.2), with C2's measured residual and the toys' (§6 (ii));
+  - the outlier cell 216, p_T 2.5–4.5 GeV/c, p_∥ 6–7 GeV/c, named, with its |R| maximum from C2 (4.27 σ_Q at each
+    tune) and from the toys;
+  - the expected lean toward over-coverage where clipping narrows the spread, a false-pass risk, with the weakened
+    cells of §5.2 and how each read.
+  - None of these goes to the paper (redesign decision item 4).
 
 ## 13. What (c) can and cannot license (scoping §5–§6)
 
@@ -499,7 +579,8 @@ referee and by Joseph before merge. **What each outcome must say is fixed now:**
 
 **CAN license**, if both tunes COVER: a sentence of the form "at two held-out generator tunes, the analysis procedure's
 covariance, remade at each tune's truth, covered pseudo-data drawn about that truth at the nominal rate, per bin and
-jointly", worded by the paper lane under §12.
+jointly", worded by the paper lane under §12. Where cells pass weakened (§5.2), the report and the note say so beside
+it. The label does not change the verdict.
 
 **CANNOT license:**
 - **Removing the earlier fail.** The fixed-truth test of the earlier statistical band VL162 failed: C2 = 0.9121
@@ -519,12 +600,25 @@ jointly", worded by the paper lane under §12.
    realization with its seed declared and the realization check (§4.4, §6); remade laterals with the I/O priced and
    the fallback fixed by date (§4.4, §8); option (a) for atime (§7); the two-step binding (§10–§11); no projection
    (§4.1).
-2. **To rule on:** §6 (ii)'s substitute for the mean unfold, which 2D cannot run, and its reading.
+2. **To rule on:** §6 (ii)'s substitute for the mean unfold, which 2D cannot run: C2's first-order residual R_c,
+   taken per toy at the nature's expected counts, and its reading.
 3. **To note:** the toys do not resample the simulation (§4.2), a known difference that can only widen C_T against the
    errors; C08 is carried (§4.4); no plug-in truth (§4.1).
 4. **The receipt** (§9.2) ran before the audit, with your approval of the connect: PASS.
-5. **The clipping flag** (§9.2): a proposed 0 node-h probe, before the amendment, counts per universe the rows with
-   a_CV > 0 and a_u ≤ 0, and for each declared draw the clipped fraction and the clipped mass per reco and truth cell in
-   σ units. It waits for your approval.
+5. **The clipping probes and Joseph's ruling** (§9.2): C1 and C2 ran with your approval, C1's offsets carry my
+   erratum, and C2's fixed reading gave option (1) at both tunes. Joseph ruled "Option 1, both tests (Recommended)"
+   (#718). Applied: consistent clipping (§4.2); your weakened-pass reading below 0.9 with the cells fixed from C2
+   (§5.2); the outlier cell named, with its |R| maximum reported (§5.2, §6 (ii)); the clipping, the outlier and the
+   over-coverage lean to the note (§12).
+6. **How "consistent" is read, for you to confirm.** The decision says "a signal row with a negative composite weight
+   is zeroed in both the pseudo-data and the graded truth". The signal and truth trees are separate, row-matched trees
+   (C2: 0 unmatched), and a row's reco composite w_reco,D and truth composite w_truth,D differ (the receipt counts
+   11,358,837 rows negative in some draw for `w_reco` against 12,440,871 for `w_truth`; no cause is asserted). §4.2
+   clips each tree on its own composite, which is what C2 measured as option (1) and what its R_c is the residual of.
+   Zeroing both trees on the reco composite alone would be a different rule, and C2 did not compute it.
+   Search: `git grep -lE "clip.*(reco composite|w_reco.*truth)|zero(ed)? (in )?both trees|clip-rule nature|clipcheck" -- docs nd-unfolding 2d-unfolding` @ bc4965c4 (one hit, 1B's mutation_mc.py, a mutant that clips w_truth; no record computes the reco-only rule)
+7. **The rule in code.** `cov2d.py` now holds `WEAKENED_BELOW`, `OUTLIER_CELL` and `weakened_cells`, with tests on
+   C2's committed record and new mutants (§11). The truth-side clipping itself is the amendment's truth code, through
+   `cov2d.lam_plus`.
 
 Nothing is submitted, deposited or tagged.
