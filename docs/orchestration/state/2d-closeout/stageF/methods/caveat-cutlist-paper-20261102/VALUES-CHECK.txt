@@ -6,4 +6,4 @@ VALUES-FIVED16 :: PASS (2715 values, readouts pinned, 2 figures equal their sour
 $ python3 docs/analysis-note/check_sec4_receipts.py
 SEC4-RECEIPTS :: PASS (16/16)
 $ check_ledger.py
-ledger rows 16, probes 89, changed base sentences 57, failures 0
+ledger rows 16, probes 95, changed base sentences 57, failures 0

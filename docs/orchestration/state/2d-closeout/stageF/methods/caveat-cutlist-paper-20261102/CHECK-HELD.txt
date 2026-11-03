@@ -1,4 +1,4 @@
-# check_held.py --fact-held on the rater copy of e201b9e9e (clean tree), with --pair-applied G1:paper-s-09
+# check_held.py --fact-held on the rater copy of 4a0e84d65 (clean tree), with --pair-applied G1:paper-s-09
 # expected: the three pre-existing flags only (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07)
   FAIL G1:paper-g-08: held quote no longer prints exactly: 'In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBU'
   FAIL G1:paper-s-08: held quote no longer prints exactly: 'Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths'
