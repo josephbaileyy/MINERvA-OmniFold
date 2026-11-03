@@ -255,7 +255,8 @@ GiBUU truths does not move the verdict.
      within the cap's remainder (`estimator_stability_probe.py gate`). Per candidate, the projection uses the mean
      per-unfold time of its finished tasks. Before any finish, B2 is taken at 2× and the others at 1×. Before the
      first measurement the projection is exactly 7.99. The full run inherits the dry run's timings, so B2's rate is
-     measured before it starts. This stops the audit's mixed case (B2 at 1.9×, the others at 1.1×, 8.31 in all)
+     measured before it starts, and the gate skips the dry run's four tasks rather than re-running them, so their
+     measured timings stand. Starts, ends and the job's start come from one clock at sub-second resolution. This stops the audit's mixed case (B2 at 1.9×, the others at 1.1×, 8.31 in all)
      before it is spent (`Gate.test_the_audits_mixed_overrun_stops`).
   3. **The B2 rule.** No task starts once B2's measured per-unfold time exceeds 2× the control's.
 
@@ -281,8 +282,8 @@ GiBUU truths does not move the verdict.
 | `nd-unfolding/estimator_stability_probe.py` | the candidates; `install` rebinds `s5c_unfold.config_params`, `omnifold_nn_core.make_estimators` and `s5n_pseudo.write_product` for one invocation, and checks the runner's parsed arguments; the stability and closure runners (`s5p_numerics`, `s5p_nullexp`, unchanged); the declared queue and the dry run's four tasks; the budget `gate` |
 | `nd-unfolding/sbatch_fd_stab.sh` | the job: the dry run on 4 lanes or the full queue on 8, every task through the gate |
 | `nd-unfolding/estimator_stability_analyze.py` | §§4–6: the product checks, the criteria, the verdict |
-| `nd-unfolding/tests/test_estimator_stability_probe.py` | 73 tests, with every refusal and criterion tested in the direction it acts and the other; the job script is run locally on a stand-in deploy |
-| `nd-unfolding/tests/estimator_stability_mutation.py` | 41 planted defects, each of which must be killed by its NAMED test; the unmutated suite must run all 73 tests in script mode |
+| `nd-unfolding/tests/test_estimator_stability_probe.py` | 74 tests, with every refusal and criterion tested in the direction it acts and the other; the job script is run locally on a stand-in deploy |
+| `nd-unfolding/tests/estimator_stability_mutation.py` | 42 planted defects, each of which must be killed by its NAMED test; the unmutated suite must run all 74 tests in script mode |
 | `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/no-ratio.json` | the q3 placeholder |
 
 - **No production module is edited.**
@@ -294,8 +295,8 @@ GiBUU truths does not move the verdict.
 
 **Commands.**
 
-    python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 73 tests
-    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 41 mutations, all killed
+    python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 74 tests
+    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 42 mutations, all killed
     python3 -I nd-unfolding/estimator_stability_probe.py tasks --out <OUT>/queue.tsv --dry-out <OUT>/dry.tsv \
         --npz … --bkg … --bank … --detector-dir … --expect-npz-sha256 … --expect-bkg-sha256 … \
         --closure-ratio-dir <pv-ladder dir> --runs <OUT>/runs
@@ -343,8 +344,8 @@ These are Joseph's separate decision (`DECISION-20261102-joseph-bias-and-stabili
    - Four tasks on four lanes (`DRY_TASKS`): the control's nominal and A7 MnvTune closures (also the determinism
      pair), and one B2 and one B3b closure (nominal), to measure their per-unfold cost.
    - The products' `stability_probe` blocks read back; the two control products compared bitwise.
-   - Its products and timings carry into the full run, which skips existing products, so its charge is inside the
-     8.0 cap.
+   - Its products and timings carry into the full run, whose gate skips those four tasks, so its charge is inside
+     the 8.0 cap.
    - **The environment:** the job sources `setup_salloc_env.sh` and refuses unless `lightgbm` and `scipy` import.
      No committed launcher records which environment the s5p runs used, so the dry run is where that is established.
 3. **Retention** of the inputs (§7).
@@ -364,6 +365,7 @@ and thirteen tests. Each claim was checked against the code before it was change
 | R5 | the closures' split was never checked | **accepted.** Pseudo seed, MC fraction and split key checked, and equal to the control's (§3.2) |
 | R6 | a login-node dry run does not measure the gate's cost | **accepted.** One short single-node regular job (§11) |
 | gaps | 13 tests | **added**, each with a mutant killed by it (`estimator_stability_mutation.py`) |
+| — | found while fixing R1 | the local run of the job script found that a gate could read a half-written timing file, that the job's whole-second end times could precede the gate's sub-second starts, and that the full run would have re-run the dry run's tasks and overwritten their timings. All three fixed and tested (`JobScript`, `Gate`) |
 | nits | nominal ≡ A7 MnvTune; 4.9% should be 4.75%; `functionals_used` not required | **accepted.** The pair is a bitwise determinism control, 17 truths judged; rates recomputed for 34 comparisons; 153 required |
 <!-- absence-ok: describes defects the audit found in this declaration's own code, each now fixed and tested, not a claim that a result is absent from the repository -->
 

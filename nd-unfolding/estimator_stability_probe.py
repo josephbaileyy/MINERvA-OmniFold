@@ -473,12 +473,15 @@ def project(now: float, t0: float, queue, rec: dict, lanes: int = LANES, unit_s:
 
 
 def gate(task: str, queue_path: Path, log: Path, t0: float, cap: float = CAP_NODE_H, now: float | None = None) -> int:
-    """0: start the task (its start is recorded). 3: stop; nothing further starts (log/STOP holds why)."""
+    """0: start the task (its start is recorded). 4: the task already finished (a dry-run task in the full run): skip
+    it, keeping its measured timing. 3: stop; nothing further starts (log/STOP holds why)."""
     import time
     now = time.time() if now is None else now
     stop = log / "STOP"
     if stop.exists():
         return 3
+    if (log / f"{task}.end").exists():
+        return 4
     queue = read_queue(queue_path)
     if task not in {t for t, _, _ in queue}:
         stop.write_text(json.dumps({"reason": f"task {task} is not in the queue"}) + "\n")

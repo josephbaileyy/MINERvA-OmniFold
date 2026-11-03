@@ -37,20 +37,23 @@ fi
 source "$D/setup_salloc_env.sh" > "$L/env.log" 2>&1
 # The environment is the dry run's to establish (§11): it must import what the production unfold imports.
 python3 -c "import lightgbm, scipy, numpy" >> "$L/env.log" 2>&1 || { echo "[stab] refusing: the environment lacks lightgbm/scipy" >&2; exit 7; }
-T0=$(date +%s)
+T0=$(python3 -c "import time; print(time.time())")  # the same clock and resolution as the gate's starts and ends
 echo "[stab] mode=$MODE job=$SLURM_JOB_ID host=$(hostname) pin=$PIN lanes=$P cap_left=$CAP_LEFT start=$(date -u +%FT%TZ)"
 TIME_BIN="${STAB_TIME_BIN:-/usr/bin/time}"  # GNU time on the cluster; the local smoke test substitutes a stand-in
 export D Q L T0 CAP_LEFT TIME_BIN
 grep -v '^#' "$Q" | cut -f1 | xargs -P "$P" -I{} bash -c '
     id="$1"
     python3 "$D/nd-unfolding/estimator_stability_probe.py" gate --task "$id" --queue "$Q" --log "$L" --t0 "$T0" \
-        --cap "$CAP_LEFT" || exit 255
+        --cap "$CAP_LEFT"
+    g=$?
+    [ "$g" -eq 4 ] && exit 0      # finished in the dry run: its product and timing stand
+    [ "$g" -eq 0 ] || exit 255
     cols=(); while IFS= read -r x; do cols+=("$x"); done < <(awk -F "\t" -v id="$id" \
         '"'"'$1 == id { for (i = 1; i <= NF; i++) print $i }'"'"' "$Q")
     [ "${#cols[@]}" -gt 3 ] || exit 255
     ( cd "$D" && "$TIME_BIN" -v -o "$L/tasks/$id.time" python3 "nd-unfolding/${cols[2]}" "${cols[@]:3}" ) \
         > "$L/tasks/$id.log" 2>&1 || exit 255
-    date +%s > "$L/$id.end.tmp" && mv "$L/$id.end.tmp" "$L/$id.end"' _ {}  # atomic: a gate never reads a half-written end
+    python3 -c "import time; print(time.time())" > "$L/$id.end.tmp" && mv "$L/$id.end.tmp" "$L/$id.end"' _ {}  
 rc=$?
 echo "[stab] queue rc=$rc end=$(date -u +%FT%TZ)"
 [ -e "$L/STOP" ] && { echo "[stab] STOP: $(cat "$L/STOP")" >&2; exit 1; }

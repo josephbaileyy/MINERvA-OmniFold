@@ -16,7 +16,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_estimator_stability_probe.py"
 P, A = "estimator_stability_probe.py", "estimator_stability_analyze.py"
-EXPECTED_TESTS = 73  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
+EXPECTED_TESTS = 74  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
 MUTATIONS = [
     ("in-fold prediction", P, "rows = self.folds[:m] == f", "rows = self.folds[:m] != f",
      "test_every_evaluated_row_is_predicted_by_a_model_that_did_not_train_on_it"),
@@ -90,6 +90,8 @@ MUTATIONS = [
      "test_the_declared_price_before_any_measurement"),
     ("running tasks counted in full", P, 'left.append(max(0.0, est - (now - r["start"])) if "start" in r else est)',
      "left.append(est)", "test_running_tasks_count_their_remainder"),
+    ("finished task rerun", P, '    if (log / f"{task}.end").exists():\n        return 4\n', "",
+     "test_a_finished_task_is_skipped_not_rerun"),
     ("STOP not sticky", P, "    if stop.exists():\n        return 3\n", "", "test_stops_when_the_remainder_of_the_cap_is_too_small"),
 ]
 

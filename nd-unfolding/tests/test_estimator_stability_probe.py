@@ -764,6 +764,11 @@ class Gate(unittest.TestCase):
         self.finish("stab_B2_closure_nominal", 0, 0.9 * u)  # 1.8x
         self.assertEqual(probe.gate("stab_B3a_stability_00", self.q, self.log, 0.0, 8.0, now=0.9 * u), 0)
 
+    def test_a_finished_task_is_skipped_not_rerun(self):
+        self.finish("stab_B2_closure_nominal", 0, 600)
+        self.assertEqual(probe.gate("stab_B2_closure_nominal", self.q, self.log, 0.0, 8.0, now=700.0), 4)
+        self.assertEqual((self.log / "stab_B2_closure_nominal.start").read_text(), "0\n")  # its timing is kept
+
     def test_a_task_outside_the_queue_stops(self):
         self.assertEqual(probe.gate("not_a_task", self.q, self.log, 0.0, 8.0, now=0.0), 3)
 
@@ -798,6 +803,9 @@ class JobScript(unittest.TestCase):
             "import estimator_stability_probe as p\n"
             "if sys.argv[1] == 'gate':\n"
             "    sys.exit(p.main(sys.argv[1:]))\n"
+            "import time\n"
+            "n = len(sys.argv[sys.argv.index('--pairs') + 1].split(',')) if '--pairs' in sys.argv else 1\n"
+            "time.sleep(0.2 * n)  # a lane time in proportion to the unfolds, as on the cluster\n"
             "print('RAN', ' '.join(sys.argv[1:]))\n")
         (self.D / "setup_salloc_env.sh").write_text(f"export PYTHONPATH={str(r / 'mods')!r}\n")
         for m in ("lightgbm", "scipy"):
@@ -838,8 +846,12 @@ class JobScript(unittest.TestCase):
         L = self.OUT / "log-dry"
         self.assertEqual(sorted(x.stem for x in L.glob("*.end")), sorted(probe.DRY_TASKS))
         self.assertIn("RAN --candidate B2 closure --", (L / "tasks" / "stab_B2_closure_nominal.log").read_text())
+        dry_end = (L / "stab_B2_closure_nominal.end").read_text()
         p = self.job("full", 7.25)
         self.assertEqual(p.returncode, 0, p.stderr)
+        # the dry run's tasks are skipped in the full run: their timing is the dry run's, and no runner ran them again
+        self.assertEqual((self.OUT / "log-full" / "stab_B2_closure_nominal.end").read_text(), dry_end)
+        self.assertFalse((self.OUT / "log-full" / "tasks" / "stab_B2_closure_nominal.log").exists())
         n = len([l for l in (self.OUT / "queue.tsv").read_text().splitlines() if not l.startswith("#")])
         self.assertEqual(len(list((self.OUT / "log-full").glob("*.end"))), n)
         self.assertFalse((self.OUT / "log-full" / "STOP").exists())
