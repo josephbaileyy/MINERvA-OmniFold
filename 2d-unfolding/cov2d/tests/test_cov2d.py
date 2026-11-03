@@ -54,7 +54,7 @@ class Bank(unittest.TestCase):
         self.assertEqual(list(c.ORDER[1:]), sorted(c.ORDER[1:]))
 
     def test_flux_weights(self):
-        text = "\n".join(f"Flux {i} {w!r}" for i, w in enumerate(W_FLUX)) + "\nOther 3 1.0\n"
+        text = "\n".join(f"Flux {i} {float(w)!r}" for i, w in enumerate(W_FLUX)) + "\nOther 3 1.0\n"
         np.testing.assert_array_equal(c.flux_weights(text), W_FLUX)
         with self.assertRaises(c.Refusal):
             c.flux_weights("\n".join(f"Flux {i} 1.0" for i in range(99)))
@@ -255,7 +255,7 @@ class World:
         for k, name in enumerate(("genie_v3_g18", "genie_v3_ar23")):
             (prep / "bridged" / f"{name}.json").write_text(json.dumps(ratio_json(11 + k)))
         cons = self.d / "constraint.txt"
-        cons.write_text("\n".join(f"Flux {i} {w!r}" for i, w in enumerate(W_FLUX)) + "\n")
+        cons.write_text("\n".join(f"Flux {i} {float(w)!r}" for i, w in enumerate(W_FLUX)) + "\n")
         future = time.time() + 86400
         for p in [uni, cons] + list((prep / "bridged").glob("*.json")):
             os.utime(p, (future, os.stat(p).st_mtime))

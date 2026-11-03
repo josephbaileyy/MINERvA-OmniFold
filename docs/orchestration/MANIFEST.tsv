@@ -7207,6 +7207,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/code/power.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/code/power.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/code/tests_cov2d.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/code/tests_cov2d_noroot.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/control1_content_check.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/control1_content_check.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/mutation_control1.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
