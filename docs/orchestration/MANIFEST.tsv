@@ -243,6 +243,7 @@ docs/orchestration/DECISION-20261102-joseph-quadrant-sentence-sec4-and-validatio
 docs/orchestration/DECISION-20261103-joseph-1b-variance-gate.md	tracked	LIVE	document		20261103	open		route-only	no
 docs/orchestration/DECISION-20261103-joseph-711-merge-and-rp9-reprice.md	tracked	LIVE	document		20261103	open		route-only	no
 docs/orchestration/DECISION-20261103-joseph-coverage-clip-rule.md	tracked	LIVE	document		20261103	open		route-only	no
+docs/orchestration/DECISION-20261103-joseph-retire-density-gate.md	tracked	LIVE	document		20261103	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
