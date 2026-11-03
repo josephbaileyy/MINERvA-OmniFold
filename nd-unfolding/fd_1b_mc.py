@@ -134,13 +134,23 @@ def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.nd
     bitwise and rows with a_CV = 0 sum as before. The flux is the one flux universe's. A composite (two or more
     universes) refuses a denominator cell with d_CV > 0 and d_D <= 0 (section 2b, fail closed). N1's record: per array,
     max over rows of |a_D| / max_j |a_uj|, and the rows with a_D < 0 where a_CV > 0 (descriptive).
-    With ``tdw_cv`` (the CV's per-row denominator weight, fd_1b_cvdenom's), the denominator rows compose too, for the
-    nature rule's row clip (A2.1, S3 (d1)): a bank universe brings its tdw, a detector universe the CV's, which is
-    exact only when its denom_nd is the CV's bitwise; otherwise compose refuses."""
+    A composite (two or more universes) needs ``tdw_cv`` (the CV's per-row denominator weight, fd_1b_cvdenom's), under
+    either rule (A2.1, the director's (e2)): d_CV is then hist_f32(tdw_CV), the CV's rows binned on cv.npz's float32
+    td_* as every bank universe's denominator is, and a detector universe's denominator, the npz's denom_nd bitwise
+    (check D; otherwise compose refuses), is the same hist_f32, so no composite mixes binnings. The denominator rows
+    compose too, for the nature rule's row clip: a bank universe brings its tdw, a detector universe the CV's."""
     cv = _cv_arrays(inputs, bkg)
     ui, ub = dict(inputs), dict(bkg)
     if not tags:
         return ui, ub, {"universes": []}
+    d32 = None
+    if len(tags) > 1:
+        if tdw_cv is None:
+            raise Refusal("a composite needs the CV's per-row tdw (--cv-tdw), so no composite mixes binnings (A2.1 e2)")
+        d32 = np.asarray(s5p_universe.denominator(bank_cv, tdw_cv, inputs["edges"]), float)
+    npz_denom = cv["denom"]
+    if d32 is not None:
+        cv = dict(cv, denom=d32)
     acc, peak, fluxes = {}, {}, []
     rows = None
     for j, tag in enumerate(tags):
@@ -149,8 +159,10 @@ def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.nd
         if tdw_cv is not None:
             if "tdw" in w:
                 row = np.asarray(w["tdw"], float)
-            elif np.array_equal(single["denom"], cv["denom"]):
+            elif np.array_equal(single["denom"], npz_denom):
                 row = tdw_cv
+                if d32 is not None:
+                    single["denom"] = d32
             else:
                 raise Refusal(f"{tag}: its denominator is not the CV's, so the row clip is undefined (A2.1, S3 (d1))")
             rows = row.copy() if j == 0 else rows + (row - tdw_cv)
@@ -733,11 +745,9 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
             raise Refusal("the plug-in truth needs --push with its declared digest")
         push = np.asarray(inv.load_npz(a.push)["push"], float)
     arrays, meta = {}, {"truth_ratio_sha256": ratio_sha}
-    rows = None
-    if getattr(a, "clip_rule", None) == "nature" and role in ("toy", "stat"):      # clipmean refuses nature itself
-        rows = world.get("tdw_cv")
-        if rows is None:
-            raise Refusal("the nature rule needs --cv-tdw (fd_1b_cvdenom's PASS output) for the denominator's row clip")
+    rows = world.get("tdw_cv")
+    if getattr(a, "clip_rule", None) == "nature" and role in ("toy", "stat") and rows is None:
+        raise Refusal("the nature rule needs --cv-tdw (fd_1b_cvdenom's PASS output) for the denominator's row clip")
     if role in ("central", "seed", "block"):
         exp, x_true = mean_experiment(inputs, bkg, truth_weight(truth, inputs, ratio, push))
         seed = SEED_CHECK if role == "seed" else toys.ESTIMATOR_SEED
@@ -752,8 +762,8 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
         b = int(item)
         if b not in STAT_REPLICAS:
             raise Refusal(f"stat replica {b} is not one of set A's")
-        nominal = inputs if rows is None else dict(inputs, tdw_rows=rows,
-                                                   td_cells=td_cells(world["bank_cv"], inputs["edges"]))
+        nominal = inputs if a.clip_rule != "nature" else dict(inputs, tdw_rows=rows,
+                                                              td_cells=td_cells(world["bank_cv"], inputs["edges"]))
         exp, clip = stat_experiment(nominal, bkg, truth_weight(truth, inputs, ratio, push), STAT_SEED[truth], b,
                                     a.clip_rule)
         xs, ev = (unfold_fn or _unfold_one64)(exp, a.threads)
@@ -1031,6 +1041,15 @@ def receipt(a) -> dict:
         for k in V:
             V[k][c] = single[k]
         D[c] = single["denom"]
+    if world.get("tdw_cv") is None:
+        raise InvalidReceipt("the receipt's composites need --cv-tdw, so no composite mixes binnings (A2.1 e2)")
+    d32 = np.asarray(s5p_universe.denominator(world["bank_cv"], world["tdw_cv"], inputs["edges"]), float)
+    for tag, c in col.items():                         # (e2): a detector universe's denominator is the CV's (check D)
+        if tag.rpartition("_")[0] in sa.DETECTOR_BANDS:
+            if not np.array_equal(D[c], cv["denom"]):
+                raise InvalidReceipt(f"{tag}: its denominator is not the CV's (A2.1 S3 (d1)'s check D)")
+            D[c] = d32
+    cv = dict(cv, denom=d32)
     labels = [(t, sd) for t in TRUTHS for sd in TOY_SEEDS[t]]
     dcols = draw_columns(declared_draws(flux_p, world["groups"]), col)
     reco = np.asarray(inputs["pass_reco"], bool)
@@ -1531,10 +1550,12 @@ def main(argv=None) -> int:
     p.add_argument("--root", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("receipt")
-    for k in ("npz", "bkg", "bank", "detector-dir", "pins", "flux-constraint", "flux-table", "staged", "definition", "out"):
+    for k in ("npz", "bkg", "bank", "detector-dir", "pins", "flux-constraint", "flux-table", "staged", "definition", "out",
+              "cv-tdw"):
         p.add_argument(f"--{k}", type=Path, required=True)
     p.add_argument("--expect-pins-sha256", required=True)
     p.add_argument("--expect-flux-table-sha256", required=True)
+    p.add_argument("--expect-cv-tdw-sha256", required=True)
     p = sub.add_parser("n1")
     p.add_argument("--truth", choices=tuple(TRUTHS), required=True)
     p.add_argument("--unfolds", type=Path, required=True)

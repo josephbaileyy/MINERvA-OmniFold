@@ -101,8 +101,8 @@ class Case(unittest.TestCase):
         hash(), which varies per process): a detector universe's denom_nd is the CV's within 5 %; a bank universe's
         tdw is 1 within 2 %, so first order's sum of about 37 departures cannot cross zero in a sparse cell by chance."""
         rng = np.random.default_rng(zlib.crc32(tag.encode()))
-        if "denom_nd" in w:
-            w = dict(w, denom_nd=np.asarray(self.inputs["denom_nd"], float) * rng.uniform(0.95, 1.05, np.shape(w["denom_nd"])))
+        if "denom_nd" in w:                    # the real detector universes' equal the CV's bitwise (A2.1 (d1), check D)
+            w = dict(w, denom_nd=np.asarray(self.inputs["denom_nd"], float))
         if "tdw" in w:
             w = dict(w, tdw=rng.uniform(0.98, 1.02, np.shape(w["tdw"])))
         return w
@@ -142,7 +142,8 @@ class Compose(Case):
         b = dict(b, wt=b["wt"].copy())
         a["wt"][30], b["wt"][30] = 0.25, 0.5               # CV = 0, universes non-zero: added, as before
         a["wt"][33], b["wt"][33] = -0.2, wt[33] - 0.3      # a negative composite, -0.5: kept, not clipped
-        ui, _, info = mc.compose(inputs, self.bkg, self.bank_cv, ["MaRES_0", "LowQ2_1"], {"MaRES_0": a, "LowQ2_1": b}.get, None)
+        ui, _, info = mc.compose(inputs, self.bkg, self.bank_cv, ["MaRES_0", "LowQ2_1"], {"MaRES_0": a, "LowQ2_1": b}.get, None,
+                                 np.ones(50))
         got = np.asarray(ui["w_truth"], float)
         self.assertEqual(got[30], 0.75)
         self.assertEqual(got[31], a["wt"][31] + b["wt"][31])
@@ -155,7 +156,7 @@ class Compose(Case):
 
     def test_three_universes_sum_in_the_draws_order(self):
         tags = ["Flux_3", "MaRES_0", "GEANT_Pion_1"]
-        ui, ub, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, tags, self.weights, self.flux)
+        ui, ub, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, tags, self.weights, self.flux, np.ones(50))
         s = [mc._single(self.inputs, self.bkg, self.bank_cv, t, self.weights(t), self.flux)[0] for t in tags]
         cv = mc._cv_arrays(self.inputs, self.bkg)
         for k, got in (("wt", ui["w_truth"]), ("wr", ui["w_reco"]), ("bkgw", ub["bkg_w"]), ("denom", ui["denom_nd"])):
@@ -166,26 +167,43 @@ class Compose(Case):
         self.assertFalse(np.array_equal(np.asarray(ui["w_truth"]), s[0]["wt"] * (s[1]["wt"] / cv["wt"]) * (s[2]["wt"] / cv["wt"])))
 
     def test_denominators_compose_per_cell(self):
-        a, b = self.weights("MaRES_0"), self.weights("GEANT_Pion_0")
-        ui, _, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"], {"MaRES_0": a, "GEANT_Pion_0": b}.get, None)
-        da = s5p_universe.universe_inputs(self.inputs, self.bkg, self.bank_cv, a, "MaRES", "0", None)[0]["denom_nd"]
-        db = np.asarray(b["denom_nd"], float)
-        cv = np.asarray(self.inputs["denom_nd"], float)
-        np.testing.assert_array_equal(ui["denom_nd"], da + (db - cv))
+        """Per cell, on one binning (A2.1 (e2)): d_CV = hist_f32(tdw_CV), and a detector universe's denominator, the
+        npz's bitwise, is that hist_f32; a detector denominator that is not the CV's refuses."""
+        a, b = self.weights("MaRES_0"), self.weights("LowQ2_1")
+        ui, _, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "LowQ2_1"], {"MaRES_0": a, "LowQ2_1": b}.get,
+                              None, np.ones(50))
+        uni = lambda w, t: s5p_universe.universe_inputs(self.inputs, self.bkg, self.bank_cv, w, t, "0", None)[0]["denom_nd"]  # noqa: E731
+        d32 = s5p_universe.denominator(self.bank_cv, np.ones(50), self.inputs["edges"])
+        np.testing.assert_array_equal(ui["denom_nd"], uni(a, "MaRES") + (uni(b, "LowQ2") - d32))
+        g = self.weights("GEANT_Pion_0")
+        ui, _, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"],
+                              {"MaRES_0": a, "GEANT_Pion_0": g}.get, None, np.ones(50))
+        np.testing.assert_array_equal(ui["denom_nd"], uni(a, "MaRES") + (d32 - d32))
+        off = dict(g, denom_nd=np.asarray(g["denom_nd"], float) * 1.01)
+        with self.assertRaisesRegex(mc.Refusal, "not the CV's"):
+            mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"],
+                       {"MaRES_0": a, "GEANT_Pion_0": off}.get, None, np.ones(50))
+        with self.assertRaisesRegex(mc.Refusal, "needs the CV's per-row tdw"):
+            mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "LowQ2_1"], {"MaRES_0": a, "LowQ2_1": b}.get, None)
 
     def test_a_nonpositive_composite_denominator_cell_refuses(self):
-        a, b = self.weights("MaRES_0"), dict(self.weights("GEANT_Pion_0"))
-        cv = np.asarray(self.inputs["denom_nd"], float)
-        c = tuple(np.argwhere(cv > 0)[0])
-        db = np.asarray(b["denom_nd"], float).copy()
+        a, b = self.weights("MaRES_0"), dict(self.weights("LowQ2_1"))
+        cv = s5p_universe.denominator(self.bank_cv, np.ones(50), self.inputs["edges"])
         da = s5p_universe.universe_inputs(self.inputs, self.bkg, self.bank_cv, a, "MaRES", "0", None)[0]["denom_nd"]
-        db[c] = cv[c] - da[c]                              # d_D = da + (db - cv) = 0 exactly in cell c
-        b["denom_nd"] = db
+        cells = mc.td_cells(self.bank_cv, self.inputs["edges"])
+        c = int(np.flatnonzero(np.ravel(cv) > 0)[0])
+        rows = np.flatnonzero(cells == c)
+        tdw = np.asarray(b["tdw"], float).copy()
+        tdw[rows] = 0.0
+        tdw[rows[0]] = np.ravel(cv)[c] - np.ravel(da)[c]   # d_D = da + (db - cv) = 0 exactly in cell c
+        tags, load = ["MaRES_0", "LowQ2_1"], {"MaRES_0": a, "LowQ2_1": dict(b, tdw=tdw)}.get
         with self.assertRaisesRegex(mc.Refusal, "section 2b"):
-            mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"], {"MaRES_0": a, "GEANT_Pion_0": b}.get, None)
-        db[c] = cv[c] - da[c] + 1e-6                       # just positive: passes
-        mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"], {"MaRES_0": a, "GEANT_Pion_0": b}.get, None)
-        one = {"GEANT_Pion_0": dict(b, denom_nd=np.where(cv > 0, -1.0, 0.0))}
+            mc.compose(self.inputs, self.bkg, self.bank_cv, tags, load, None, np.ones(50))
+        tdw[rows[0]] += 1e-6                               # just positive: passes
+        mc.compose(self.inputs, self.bkg, self.bank_cv, tags, {"MaRES_0": a, "LowQ2_1": dict(b, tdw=tdw)}.get, None,
+                   np.ones(50))
+        g = self.weights("GEANT_Pion_0")
+        one = {"GEANT_Pion_0": dict(g, denom_nd=np.where(np.asarray(self.inputs["denom_nd"]) > 0, -1.0, 0.0))}
         mc.compose(self.inputs, self.bkg, self.bank_cv, ["GEANT_Pion_0"], one.get, None)   # k = 1 is S1's own
 
     def test_nonfinite_weights_are_zeroed_at_load_as_s1(self):
@@ -205,7 +223,7 @@ class Compose(Case):
 
     def test_two_flux_universes_refuse(self):
         with self.assertRaises(mc.Refusal):
-            mc.compose(self.inputs, self.bkg, self.bank_cv, ["Flux_1", "Flux_2"], self.weights, self.flux)
+            mc.compose(self.inputs, self.bkg, self.bank_cv, ["Flux_1", "Flux_2"], self.weights, self.flux, np.ones(50))
 
     def test_flux_without_a_table_refuses(self):
         with self.assertRaises(mc.Refusal):
@@ -230,7 +248,7 @@ class Experiments(Case):
 
     def test_toy_unfolds_with_the_nominal_mc_and_keeps_natures_truth(self):
         tags = ["Flux_3", "MaRES_0"]
-        ui, ub, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, tags, self.weights, self.flux)
+        ui, ub, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, tags, self.weights, self.flux, np.ones(50))
         r = np.ones(self.inputs["w_truth"].shape[0])
         exp, x_true, _ = mc.toy_experiment(self.inputs, self.bkg, ui, ub, r, 3_620_000)
         np.testing.assert_array_equal(exp["flux"], self.inputs["flux"])
@@ -411,9 +429,10 @@ class Clipping(Case):
         with self.assertRaisesRegex(mc.Refusal, "clips the denominator by row"):
             mc.clip_draw(ui, ub, np.ones(self.inputs["w_truth"].shape[0]), "nature")
         mc.clip_draw(ui, ub, np.ones(self.inputs["w_truth"].shape[0]), "data")
+        off = lambda t: (dict(self.weights(t), denom_nd=np.asarray(self.inputs["denom_nd"], float) * 1.01)  # noqa: E731
+                         if t == "GEANT_Pion_0" else self.weights(t))
         with self.assertRaisesRegex(mc.Refusal, "denominator is not the CV's"):
-            mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"], self.weights, None,
-                       np.ones(50))
+            mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"], off, None, np.ones(50))
         ui, _, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"], self.weights_cv_det,
                               None, np.ones(50))
         self.assertIn("tdw_rows", ui)
@@ -1642,7 +1661,8 @@ class Receipt(Case):
 
     def run_receipt(self, inputs, bound=1.05):
         world = {"inputs": inputs, "bkg": self.bkg, "bank_cv": self.bank_cv, "flux": self.flux,
-                 "groups": toys.interaction_groups(self.w.bank), "pins": json.loads(self.w.pins.read_text())}
+                 "groups": toys.interaction_groups(self.w.bank), "pins": json.loads(self.w.pins.read_text()),
+                 "tdw_cv": np.ones(50)}
         a = argparse.Namespace(bank=self.w.bank, detector_dir=self.w.det, flux_constraint=self.w.constraint,
                                staged=self.tmp, definition=self.tmp / "definition.json")
         s1 = {"f": np.ones(sa.N_CELLS), "U": self.U, "blocks": {"stat": np.eye(sa.N_CELLS) * 1e-4}}
@@ -1686,7 +1706,7 @@ class Receipt(Case):
         with mock.patch.object(mc, "N1_BOUND", 1.05), mock.patch.object(mc, "_single", self.single_with_consistent_denominators):
             for sd in self.seeds:
                 tags = mc.draw_universes(toys.draw_for_seed(sd, flux_p, groups))
-                ui, ub, info = mc.compose(inputs, self.bkg, self.bank_cv, tags, self.weights, self.flux)
+                ui, ub, info = mc.compose(inputs, self.bkg, self.bank_cv, tags, self.weights, self.flux, np.ones(50))
                 for k in want:
                     want[k] += info["n1"][k]["rows_above_bound"]
                     negs[k] += info["n1"][k]["rows_negative_where_cv_positive"]
@@ -1754,7 +1774,7 @@ class Receipt(Case):
         with mock.patch.object(mc, "_single", hooked):
             for d, tg in enumerate(tags):
                 try:
-                    mc.compose(self.inputs, self.bkg, self.bank_cv, tg, self.weights, self.flux)
+                    mc.compose(self.inputs, self.bkg, self.bank_cv, tg, self.weights, self.flux, np.ones(50))
                 except mc.Refusal as e:
                     self.assertIn("section 2b", str(e))
                     want.append(d)

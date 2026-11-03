@@ -377,8 +377,8 @@ class Job(tmc.Case):
 
         def single(inputs, bkg, bank_cv, tag, w, flux):
             w = self.consistent(tag, w)
-            if det_equal and "denom_nd" in w:
-                w = dict(w, denom_nd=np.asarray(self.inputs["denom_nd"], float))
+            if not det_equal and "denom_nd" in w:
+                w = dict(w, denom_nd=np.asarray(self.inputs["denom_nd"], float) * 1.01)
             return real(inputs, bkg, bank_cv, tag, w, flux)
 
         def weight(t, inputs, ratio, push):
