@@ -21,7 +21,7 @@
   - **It quoted specific over-qualified sentences.**
 - **Two points where it differs from earlier reads:**
   - It would move the input-rounding section. The 11-02 cut-list read objected to that, and Joseph kept it (MV15).
-  - It calls the target arbitrary, where the #707 read called about 6 reasonable.
+  - It calls the target "an arbitrary, counterproductive proxy", where the #707 read called about 6 per 1,000 words "an appropriate, realistic target".
 
 ## Joseph's answer, verbatim
 
