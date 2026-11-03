@@ -1,0 +1,13 @@
+# local, 2026-11-02T22:46:36Z, conda-forge ROOT 6.28/12, Python 3.11.16, numpy 1.26.4, uproot 5.6.9, lightgbm 4.5.0; a kill counts only on a test failure (unittest rc != 0); the driver was restored after each mutant (sha256 check below)
+938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b  re2_driver.py
+1a7323cdb73438df1c1de5475d467d50c253196f8b24d90fa0311232a2a81f94  test_re2_data_file.py
+ccfef6d72d329463a0ba9124c8f29e3fbf018a39f87b939615e4b80e443e8253  mutation_hook.py
+KILLED  data tree not replaced
+KILLED  POT guard removed
+KILLED  POT guard skips a missing POT
+KILLED  closure guard removed
+KILLED  data digest not recorded
+KILLED  data digest recorded without the flag
+KILLED  digest of the omnifile instead
+KILLED  simulation read from the data file
+re2_driver.py restored: 2d-unfolding/re2/re2_driver.py: OK

@@ -1,0 +1,58 @@
+# local, 2026-11-03T17:11:42Z, conda-forge ROOT 6.28/12, Python 3.11.16, numpy 1.26.4, uproot 5.6.9, lightgbm 4.5.0
+c085b51f46afe3675077756aac982d5a7ebc87a5801dd7cbde79dd0f867bd7de  cov2d_receipt.py
+6a606b3c3af7f27ee520324fe3db3290ac99c65832a844084e40b0c4f99de162  cov2d_writer.py
+0d852a6992398b6b1ba7956b2e8d74accc2b6f1aa7b7909a6ef7d6d7f0dcd756  cov2d.py
+235263557a141b0426407f674c0f35d6b8928a8d2030044c6692f85faf679f4c  test_cov2d_writer.py
+a0e947373e4b3b6bdb80aec351a157e449b17a5d54771092c0e2ce1e6943bbec  test_cov2d.py
+449b4b929bf004b6ffa256cb947672d1eece7c712f47da602cd4195e96ca1e4f  test_null205.py
+ec1402db5cbb5ca3002d7e45a714319d90a8b93654005d688b304a69caab4d38  fd_1b_null.py
+$ python -B -m pytest -v -p no:cacheprovider 2d-unfolding/cov2d/tests/
+============================= test session starts ==============================
+platform darwin -- Python 3.11.16, pytest-9.2.0, pluggy-1.7.0 -- /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python
+rootdir: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/wt
+plugins: platformdirs-4.14.3, anyio-4.16.0
+collecting ... collected 40 items
+
+2d-unfolding/cov2d/tests/test_cov2d.py::Bank::test_bank_is_part_b_universe_block PASSED [  2%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Bank::test_flux_weights PASSED   [  5%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Bank::test_seeds PASSED          [  7%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Draws::test_deterministic_and_ordered PASSED [ 10%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Draws::test_flux_probability PASSED [ 12%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Draws::test_generator_is_seed_and_salt PASSED [ 15%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Draws::test_pair_bands_uniform PASSED [ 17%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Compose::test_bound_is_never_below_the_exact_maximum PASSED [ 20%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Compose::test_c2_weakened_cells_and_outlier PASSED [ 22%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Compose::test_first_order_in_draw_order PASSED [ 25%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Compose::test_lam_plus PASSED    [ 27%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Compose::test_n1_conventions PASSED [ 30%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Compose::test_one_universe_is_bitwise PASSED [ 32%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Compose::test_refuses_empty PASSED [ 35%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Compose::test_sha256_through_noatime PASSED [ 37%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Compose::test_weakened_cells PASSED [ 40%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_a_nonpositive_truth_cell_stops PASSED [ 42%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_an_unequal_band_is_not_certified_by_its_largest_universe PASSED [ 45%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_atime_move_stops PASSED [ 47%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_compounding_row_stops PASSED [ 50%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_driver_names_without_root_equal_the_import PASSED [ 52%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_mild_bank_passes_and_every_row_is_evaluated PASSED [ 55%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_negative_composites_are_counted PASSED [ 57%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_nonfinite_weights_are_zeroed_and_counted PASSED [ 60%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_the_bound_is_exact_at_the_edge 
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_the_bound_is_exact_at_the_edge PASSED [ 62%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_truth_cell_matches_a_th2d PASSED [ 65%]
+2d-unfolding/cov2d/tests/test_cov2d.py::Receipt::test_truth_cells_are_recomputed_independently PASSED [ 67%]
+2d-unfolding/cov2d/tests/test_cov2d_writer.py::Counts::test_clipped_and_recorded PASSED [ 70%]
+2d-unfolding/cov2d/tests/test_cov2d_writer.py::Counts::test_expand PASSED [ 72%]
+2d-unfolding/cov2d/tests/test_cov2d_writer.py::Counts::test_signal_drawn_before_background PASSED [ 75%]
+2d-unfolding/cov2d/tests/test_cov2d_writer.py::File::test_control_fires_on_a_changed_row PASSED [ 77%]
+2d-unfolding/cov2d/tests/test_cov2d_writer.py::File::test_control_fires_on_a_dropped_row PASSED [ 80%]
+2d-unfolding/cov2d/tests/test_cov2d_writer.py::File::test_control_fires_on_a_leaf_type PASSED [ 82%]
+2d-unfolding/cov2d/tests/test_cov2d_writer.py::File::test_control_fires_on_the_parameter PASSED [ 85%]
+2d-unfolding/cov2d/tests/test_cov2d_writer.py::File::test_control_passes_on_the_writer PASSED [ 87%]
+2d-unfolding/cov2d/tests/test_cov2d_writer.py::File::test_refuses_unequal_columns PASSED [ 90%]
+2d-unfolding/cov2d/tests/test_cov2d_writer.py::File::test_schema_and_parameter PASSED [ 92%]
+2d-unfolding/cov2d/tests/test_null205.py::Null205::test_bonferroni_divisor_is_the_cell_count PASSED [ 95%]
+2d-unfolding/cov2d/tests/test_null205.py::Null205::test_matched_null_runs_and_refuses_a_mismatch PASSED [ 97%]
+2d-unfolding/cov2d/tests/test_null205.py::Null205::test_power_at_205_cells PASSED [100%]
+
+==================== 40 passed, 2 subtests passed in 22.67s ====================

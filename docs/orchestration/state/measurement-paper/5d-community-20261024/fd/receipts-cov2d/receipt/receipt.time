@@ -1,0 +1,23 @@
+	Command being timed: "nice -n 19 /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python -B /pscratch/sd/j/josephrb/cov2d-receipt-20261102/deploy/2d-unfolding/cov2d/cov2d_receipt.py --out /pscratch/sd/j/josephrb/cov2d-receipt-20261102/receipt.json"
+	User time (seconds): 3938.36
+	System time (seconds): 1956.28
+	Percent of CPU this job got: 219%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 44:44.71
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 4269632
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 480482349
+	Voluntary context switches: 1561183
+	Involuntary context switches: 4456808
+	Swaps: 0
+	File system inputs: 328488320
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

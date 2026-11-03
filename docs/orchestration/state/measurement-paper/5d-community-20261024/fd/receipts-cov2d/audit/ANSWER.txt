@@ -1,0 +1,86 @@
+**Verdict: READY AFTER MINOR FIXES.** I found no BLOCKING defect. The MAJOR items below are text fixes or amendment-time controls. Items 1 and 2 need answering in the declaration text before binding 1.
+
+I ran the local tests: 44 passed, 12 subtests (`2d-unfolding/cov2d/tests` plus `test_re2_data_file.py`). I did not run any mutation harness. Line numbers below are the declaration's own (`COV2D-DECLARATION.md`).
+
+## Findings
+
+**1. MAJOR – §13 (line 580) and §12 (line 561) claim more than the test supports.**
+- Line 580 licenses "covered … at the nominal rate". The rule is one-sided (292), so a pass shows coverage at least at the nominal rate.
+- The graded matrix C_T includes C_model_abs (217), but the toys never draw it. Nor do they draw C08 or the simulation-statistics part of C_stat (4.2 "Known difference"). Those components reach the null only as a Gaussian (258).
+- C_model adds roughly 20% to the median per-cell σ. `RE2-PARTC-REPORT.md:254-256` gives 6.41% for Q_R against 7.90% for the total. A per-cell σ understatement of up to about 20% in the drawn blocks (52% flag probability at content 0.58) can therefore be masked.
+- The size bound "at most 0.05 per tune" (293, repeated at 561) is unconditional. It holds only if the toys' error law is at least as spread as the null's. The toys draw Flux and the pair bands un-centred, while the null laws are centred (256). Clipping changes the law again. The un-centred offset is reported at 305 but is not part of the size claim.
+- Suggested resolution: say the licensed sentence concerns the graded matrix, which is the drawn blocks plus the model term and excludes C_PL_R. Say "at least at the nominal rate". Make the size bound conditional, or drop it from the §12 paper text.
+
+**2. MAJOR – the §6 (ii) "clipping may explain" reading (325-327) cannot fire.**
+- The threshold is median |R_c| above 0.5 σ_c. C2's largest per-cell median is 0.043 σ_Q at G18 and 0.042 σ_Q at AR23 (`c2-clip2.json`).
+- The one cell with a real effect, 216, has median 0 and p90 0.
+- 0.5 is a new number. It is not in the consult (`c2_reading.txt` uses 0.2 and 0.4), and it was chosen after C2's numbers were known.
+- Suggested resolution: fix a rule that can bind, such as median above 0.2 σ_c or p90 above 0.4 σ_c to match C2's gates, with a stated reason. Or state that the reading is inert by construction.
+
+**3. MAJOR – no pre-toy control covers the drawn pseudo-data content, or the universe and lateral unfolds run through the new route.**
+- Control (2a) (79-81, `cov2d_writer.writer_control`) writes $CV's own data through `write_data_file`. It never exercises `draw_counts` or `expand`.
+- Control (2b) reproduces only the central E_R.
+- §9.5 reproduces S5_R from part B's products. It does not show that a universe or lateral unfold via `--omnifile $UNI --data-file` matches part B's products.
+- The realization check (309) is descriptive only.
+- Suggested resolution: add INVALID gates. Run the writer path at the CV nature, with a toy total and reco histogram consistent with Σλ⁺. In the pilot, run one universe and one lateral with `--data-file` = $CV's own data and reproduce part B's U_x and lateral products to 1e-8. This costs about 0.3 node-h.
+
+**4. MINOR – the receipt's PASS ran on a different `cov2d.py` blob than the one now bound.**
+- Line 428 says "bound blobs equal". `receipt/SHA256SUMS.cluster` and `bound.sha256` show the receipt ran blob 4b0744d7.
+- The branch head is 0d852a69; the later commit added only `WEAKENED_BELOW`, `OUTLIER_CELL`, `weakened_cells` and docstrings.
+- Suggested resolution: state both digests and that the diff touches nothing the receipt uses.
+
+**5. MINOR – the receipt text and docstring misdescribe the code.**
+- Line 415 and the receipt docstring (`cov2d_receipt.py:11`) say the exact stage uses `cov2d.compose` and `cov2d.peak`. `n1_chunk` (lines 110-115) re-implements both inline.
+- The synthetic-bank tests do exercise it well, including the edge at 10 and the unequal-band case. The wording is still wrong.
+- Suggested resolution: correct the wording, or call `compose` and `peak`.
+
+**6. MINOR – the receipt's `--no-pins` option still yields PASS.**
+- `rec["pins"]["constraint"]` is recorded even when `--no-pins` skips the check (`cov2d_receipt.py:207`, `:281`). The real run did not use the flag (`receipt.time`).
+- NaN in a truth-cell ratio would also pass the `<= 0` test (`:268`).
+- Suggested resolution: make `--no-pins` yield a non-PASS verdict, and refuse a non-finite histogram.
+
+**7. MINOR – wrong or rounded figures in §9.2 and §8.**
+- Lines 439-440 say "35–38 %" of rows negative and "1.7–1.8 %" of pairs. `receipt.json` gives 34.6%, 37.9% and 39.2% for background. Pairs are 1.68%, 1.82% and 1.91%. Background falls outside both ranges.
+- Line 384: 1.25 × 126.2 + 8.0 = 165.8, not 166.0.
+- Suggested resolution: correct these.
+
+**8. MINOR – citation off by about six lines.** Line 191 cites `re2_driver.py:1697-1702` for "closure refuses `--universe`". Those lines are the `--use-weights` guard; the closure refusal is at 1703-1708. Suggested resolution: correct the range.
+
+**9. MINOR – the §5.2 lists are not fully pinned in code.** `test_c2_weakened_cells_and_outlier` checks only the counts (10 and 54), the first three G18 cells and the outlier cell. A wrong cell elsewhere in the lists would pass. Suggested resolution: pin the full lists and the smallest ratios (0.865 in cell 127, 0.761 in cell 43) in the test.
+
+**10. MINOR – the outlier cell 216 looks like a single-row effect.** The option (a) maximum is bit-identical at both tunes (4.23984232307767 in `c2-clip2.json`), so r_T cancels and one heavy row drives it. Line 290 says only "a few draws". Suggested resolution: identify the row and its weight before binding and state it.
+
+**11. MINOR – things left unfixed in advance.**
+- The Poisson RNG construction for the toys is not declared (only the draw seeds are).
+- There is no policy for a failed or non-converged toy, although LightGBM configuration (a) is non-deterministic.
+- "Data size" (137) is Σλ⁺ at the POT scale, not 4,119,797. Record the ratio.
+- R_c is undefined where S_c ≤ 0; no rule is given.
+- Decision item 2(ii) asks for Σλ⁻ per reco cell. §4.2 records signal sums per truth cell only; the background has a per-reco-cell figure.
+- There is no joint-level weakened label, although 54 of 205 AR23 cells are listed.
+- The re-price trigger (389) has no baseline for the toy class.
+- The pseudo-data job's "≤ 6.0 reserved" (381) has no stated basis.
+- Binding 2's latest date (11-27) is only seven days after binding 1's latest (11-20).
+- Suggested resolution: add one line for each.
+
+**12. MINOR – the weakened label rests on a proxy.** The ratio is truth-count variance divided by Σ_b Var_b (`clip_probe2.py:12-16`, `c2_reading.txt`), not the variance of e = x̂ − x_true. The AR23 first-order control already gives 0.793 as a minimum, and the draws are the very ones the toys will use. Line 284 says "sampling", but for these toys the realized value is exactly C2's. Suggested resolution: say it is a truth-level proxy and rephrase the sampling sentence.
+
+## Checked and correct
+
+- **§9.2 C2 table.** Every number matches `c2-clip2.json` and `c2-clip2.out`: the ratios, R_c medians and p90s, the 202/203 positive-median counts, the coherent χ² values, the ε range 0.042–0.900, and wall 1:13:19 with 9.52 GB. The sha256 of the json, probe and reading match, as do the commits.
+- **§5.2 lists.** Recomputed from `option_1_clipped < 0.9`: G18 has 10 cells and AR23 54, exactly as listed, with no overlap and minima 0.865 (cell 127) and 0.761 (cell 43).
+- **Cell geometry.** The region descriptions are right against `PT_EDGES` and `PZ_EDGES`. The outlier is cell 216 = (13, 8), p_T 2.5–4.5 and p_∥ 6–7. Its maxima are 4.273 and 4.268, the next largest are 0.396/0.29, and its median and p90 are 0.
+- **§4.2 clipping rule.** It matches C2's definitions of S, m_seen, N, m_all and R (`clip_probe2.py:105-121`, `:310-330`). The §14.6 caveat about reading "both trees" is honest and well-founded.
+- **Draw laws.**
+  - Flux uses `wcov` with the constraint weights.
+  - 2p2h is the unweighted ÷3 form.
+  - The pair bands give Δ²/4.
+  - The laterals and the normalization match.
+  - The bank is 38 bands and 175 universes, and the 486 and 786 unfold counts hold.
+- **Receipt validity.** The "certified below" step is a valid upper bound. The exact numerator is divided by max_b min_u |a_u|, which cannot exceed any draw's peak, so no row above 10 can be missed. The 1e-9 margin covers rounding. The rows-evaluated, truth-cell and atime stops fire, and `O_NOATIME` fails closed on a platform without it. Receipt numbers match `receipt.json`.
+- **Hook.** The diff is 21 lines. The absent-flag path adds only the argparse default and the `runConfig` key. The tests run the pre-hook blob 4c7e9d75 against the hooked driver. Nothing else in the driver reads a data tree.
+- **Writer leaf types.** `measured_pass` as unsigned 8-bit with leaf `/b` matches probe 2 and the `LEAVES` map.
+- **Control (1).** 17 branches, the row counts, 15 tests, 3 subtests and 16 of 16 mutants all match. The POT parameters are equal, though ungraded.
+- **Price.** The units are 0.0843, 0.1220, 0.1715 and 0.0489 from part B. The totals 52.5–63.1 and 105.0–126.2 are right. The balance half and the quota 87.9% are right.
+- **Retention.** Each exposure date is atime + 56 days.
+- **Power table.** It matches `power.out`.
+- **Other cited lines.** The citations I opened, besides the one in item 8, say what the declaration says (the 1B declaration lines, the decision and outcome lines, `re2c_rollup` and `build_repair`, `fd_1b_null.py:145-154`).

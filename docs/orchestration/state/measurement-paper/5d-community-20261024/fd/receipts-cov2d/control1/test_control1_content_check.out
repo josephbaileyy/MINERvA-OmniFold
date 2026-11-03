@@ -1,0 +1,20 @@
+# local, 2026-11-02T22:07:29Z, uproot 5.6.9, numpy 2.5.4, Python 3.14.6
+1b1edc0510f4742fc68a01e0fb3031b6490f0f3f85a4918240aa51b22d8745e0  control1_content_check.py
+5ed60aa84316cac855af3661b6a62cc97fc0f733c3fcf2fa9cf88de409b332b3  test_control1_content_check.py
+$ python -B -m pytest -v -p no:cacheprovider docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Silent::test_exact_copy_passes PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Silent::test_step_larger_than_tree PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_atime_move_fails PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_bool_flip PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_cv_branch_absent_from_uni PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_declared_branch_absent_from_both PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_dtype_narrowed_with_equal_values PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_each_tree_is_read PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_entry_count_differs PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_nan_against_number PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_negative_zero_is_a_bitwise_difference PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_one_value_in_last_partial_chunk PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_row_swap_is_not_equal PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::Fires::test_tree_absent_from_uni PASSED
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/control1/test_control1_content_check.py::FailClosed::test_no_noatime_flag_raises PASSED
+==================== 15 passed, 3 subtests passed in 2.41s =====================
