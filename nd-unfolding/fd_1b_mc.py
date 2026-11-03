@@ -125,21 +125,36 @@ def universe_dir(tag: str, bank: Path, det_dir: Path) -> Path:
     return det_dir if tag.rpartition("_")[0] in sa.DETECTOR_BANDS else bank
 
 
-def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.ndarray | None) -> tuple[dict, dict, dict]:
+def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.ndarray | None,
+            tdw_cv: np.ndarray | None = None) -> tuple[dict, dict, dict]:
     """Section 4.2's rule as amendment 2 makes it: first order. ``tags`` is the draw's universes in the draw's order and
     ``load(tag)`` their weights as ``fd_1b_inv.universe_weights(..., "zero")`` loads them; the universes are streamed,
     one in memory at a time. Every per-row array a, and the denominator per cell, composes as
     a_D = a_u1 + sum_{j>=2} (a_uj - a_CV), summed in the draw's order, so one universe is ``universe_inputs``' arrays
     bitwise and rows with a_CV = 0 sum as before. The flux is the one flux universe's. A composite (two or more
     universes) refuses a denominator cell with d_CV > 0 and d_D <= 0 (section 2b, fail closed). N1's record: per array,
-    max over rows of |a_D| / max_j |a_uj|, and the rows with a_D < 0 where a_CV > 0 (descriptive)."""
+    max over rows of |a_D| / max_j |a_uj|, and the rows with a_D < 0 where a_CV > 0 (descriptive).
+    With ``tdw_cv`` (the CV's per-row denominator weight, fd_1b_cvdenom's), the denominator rows compose too, for the
+    nature rule's row clip (A2.1, S3 (d1)): a bank universe brings its tdw, a detector universe the CV's, which is
+    exact only when its denom_nd is the CV's bitwise; otherwise compose refuses."""
     cv = _cv_arrays(inputs, bkg)
     ui, ub = dict(inputs), dict(bkg)
     if not tags:
         return ui, ub, {"universes": []}
     acc, peak, fluxes = {}, {}, []
+    rows = None
     for j, tag in enumerate(tags):
-        single, phi = _single(inputs, bkg, bank_cv, tag, load(tag), flux)
+        w = load(tag)
+        single, phi = _single(inputs, bkg, bank_cv, tag, w, flux)
+        if tdw_cv is not None:
+            if "tdw" in w:
+                row = np.asarray(w["tdw"], float)
+            elif np.array_equal(single["denom"], cv["denom"]):
+                row = tdw_cv
+            else:
+                raise Refusal(f"{tag}: its denominator is not the CV's, so the row clip is undefined (A2.1, S3 (d1))")
+            rows = row.copy() if j == 0 else rows + (row - tdw_cv)
+        del w
         if phi is not None:
             fluxes.append(phi)
         for k, a_u in single.items():
@@ -161,10 +176,18 @@ def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.nd
         stats[k] = {"max_composite_over_max_single": float(np.max(r)), "rows_above_bound": int(np.sum(r > N1_BOUND)),
                     "rows_negative_where_cv_positive": int(np.sum((acc[k] < 0) & (cv[k] > 0)))}
     ui["w_truth"], ui["w_reco"], ui["denom_nd"] = acc["wt"], acc["wr"], acc["denom"]
+    if rows is not None:
+        ui["tdw_rows"], ui["td_cells"] = rows, td_cells(bank_cv, inputs["edges"])
     ub["bkg_w"] = acc["bkgw"]
     if fluxes:
         ui["flux"] = fluxes[0]
     return ui, ub, {"universes": list(tags), "n1": stats}
+
+
+def td_cells(bank_cv, edges) -> np.ndarray:
+    """The truth-denominator rows' 5D cells (C order, -1 outside), as s5p_universe.denominator bins them."""
+    coords = np.column_stack([np.asarray(bank_cv[k], np.float64) for k in ("td_pt", "td_pz", "td_ea", "td_q3", "td_w")])
+    return flat_cells(coords, edges)
 
 
 def n1_ratio(a_D: np.ndarray, peak: np.ndarray) -> np.ndarray:
@@ -534,6 +557,7 @@ def clip_draw(ui: dict, ub: dict, r: np.ndarray, rule: str = "data") -> tuple[di
     * ``"nature"`` (Joseph's #718: C2's option (1), addendum A2.1's S3): the pseudo-data see lambda+ as under "data",
       and the truth is clipped row by row on its own sign, max(w_truth * r, 0), independently of lambda
       (``cov2d.lam_plus`` on each). A row with lambda < 0 keeps its truth; a row with w_truth * r < 0 keeps its reco.
+      The denominator's rows (``compose``'s ``tdw_rows``, from the CV's per-row weight) are clipped the same way.
     Returns the draw's (ui, ub) and the clipped mass: sums per component, and |lambda-| per 5D reco cell (signal and
     background) and per 5D truth cell (truth-passing signal rows)."""
     if rule not in CLIP_RULES:
@@ -556,9 +580,20 @@ def clip_draw(ui: dict, ub: dict, r: np.ndarray, rule: str = "data") -> tuple[di
     rec["rule"] = rule
     du = dict(ui, w_reco=np.where(neg, 0.0, w))
     if rule == "nature":
+        if "tdw_rows" not in ui:
+            raise Refusal("the nature rule clips the denominator by row: compose needs the CV's per-row tdw")
+        cells, dr = ui["td_cells"], np.asarray(ui["tdw_rows"], float)
+        ok, dneg = cells >= 0, dr < 0
+        shape = np.shape(ui["denom_nd"])
+        # hist(max(d, 0)) = hist(d) + hist(max(-d, 0)): the composite per cell plus each cell's negative row mass
+        # (C2's N + m_all), so a cell with no negative row keeps compose's value bitwise
+        m_den = np.bincount(cells[ok & dneg], weights=-dr[ok & dneg], minlength=int(np.prod(shape))).reshape(shape)
+        dn = np.where(m_den > 0, np.asarray(ui["denom_nd"], float) + m_den, np.asarray(ui["denom_nd"], float))
+        rec["denominator"] = {"sum_rows": float(dr[ok].sum()), "sum_negative": float(dr[ok & dneg].sum()),
+                              "rows_negative": int(np.sum(ok & dneg))}
         wt = np.asarray(ui["w_truth"], float)
         tz = np.asarray(ui["pass_truth"], bool) & (wt * r < 0)
-        du = dict(du, w_truth=np.where(tz, 0.0, wt))
+        du = dict(du, w_truth=np.where(tz, 0.0, wt), denom_nd=dn)
         rec["truth"] = {"sum_truth": float((wt * r)[np.asarray(ui["pass_truth"], bool)].sum()),
                         "sum_negative": float((wt * r)[tz].sum()), "rows_negative": int(tz.sum())}
     return du, dict(ub, bkg_w=np.where(negb, 0.0, bw)), clip
@@ -657,7 +692,16 @@ def _load_world(a) -> dict:
         if inv.sha256_noatime(a.flux_table) != a.expect_flux_table_sha256:
             raise Refusal("the staged flux table's digest differs")
         flux = flux_on_grid(inv.load_npz(a.flux_table), inputs)
+    tdw_cv = None
+    if getattr(a, "cv_tdw", None) is not None:
+        if inv.sha256_noatime(a.cv_tdw) != a.expect_cv_tdw_sha256:
+            raise Refusal("the CV per-row denominator weight's digest differs (fd_1b_cvdenom's PASS output)")
+        with inv.open_noatime(a.cv_tdw) as fh:
+            tdw_cv = np.load(fh, allow_pickle=False).astype(np.float64)
+        if tdw_cv.shape != (np.asarray(bank_cv["td_pt"]).size,):
+            raise Refusal("the CV per-row denominator weight is not one per truth-denominator row")
     return {"npz_sha": npz_sha, "bkg_sha": bkg_sha, "pins": pins, "inputs": inputs, "bkg": bkg, "bank_cv": bank_cv,
+            "tdw_cv": tdw_cv,
             "alignment": s5p_universe.check_alignment(bank_cv, inputs, bkg), "flux": flux,
             "groups": toys.interaction_groups(a.bank)}
 
@@ -687,6 +731,11 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
             raise Refusal("the plug-in truth needs --push with its declared digest")
         push = np.asarray(inv.load_npz(a.push)["push"], float)
     arrays, meta = {}, {"truth_ratio_sha256": ratio_sha}
+    rows = None
+    if getattr(a, "clip_rule", None) == "nature" and role in ("toy", "stat"):      # clipmean refuses nature itself
+        rows = world.get("tdw_cv")
+        if rows is None:
+            raise Refusal("the nature rule needs --cv-tdw (fd_1b_cvdenom's PASS output) for the denominator's row clip")
     if role in ("central", "seed", "block"):
         exp, x_true = mean_experiment(inputs, bkg, truth_weight(truth, inputs, ratio, push))
         seed = SEED_CHECK if role == "seed" else toys.ESTIMATOR_SEED
@@ -701,7 +750,9 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
         b = int(item)
         if b not in STAT_REPLICAS:
             raise Refusal(f"stat replica {b} is not one of set A's")
-        exp, clip = stat_experiment(inputs, bkg, truth_weight(truth, inputs, ratio, push), STAT_SEED[truth], b,
+        nominal = inputs if rows is None else dict(inputs, tdw_rows=rows,
+                                                   td_cells=td_cells(world["bank_cv"], inputs["edges"]))
+        exp, clip = stat_experiment(nominal, bkg, truth_weight(truth, inputs, ratio, push), STAT_SEED[truth], b,
                                     a.clip_rule)
         xs, ev = (unfold_fn or _unfold_one64)(exp, a.threads)
         arrays = {"xsec_flat": np.asarray(xs, float).ravel(order="C")}
@@ -712,7 +763,8 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
             raise Refusal(f"toy seed {seed} is outside {truth}'s declared range")
         d = toys.draw_for_seed(seed, via_noatime(toys.flux_probabilities, a.flux_constraint), world["groups"])
         tags = draw_universes(d)
-        ui, ub, info = compose(inputs, bkg, world["bank_cv"], tags, lambda t: _weights(world, a, t), world["flux"])
+        ui, ub, info = compose(inputs, bkg, world["bank_cv"], tags, lambda t: _weights(world, a, t), world["flux"],
+                               rows)
         exp, x_true, clip = toy_experiment(inputs, bkg, ui, ub, truth_weight(truth, inputs, ratio, push), seed,
                                            a.clip_rule)
         x_true = np.asarray(x_true, float)
@@ -730,7 +782,7 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
             raise Refusal(f"N_clip seed {seed} is not a declared toy seed")
         d = toys.draw_for_seed(seed, via_noatime(toys.flux_probabilities, a.flux_constraint), world["groups"])
         ui, ub, info = compose(inputs, bkg, world["bank_cv"], draw_universes(d), lambda t: _weights(world, a, t),
-                               world["flux"])
+                               world["flux"], rows)
         exp, x_true, clip = clipmean_experiment(inputs, bkg, ui, ub, truth_weight(truth, inputs, ratio, push),
                                                 a.clip_rule)
         xs, ev = (unfold_fn or _unfold_s1)(exp, a.threads, toys.ESTIMATOR_SEED)
@@ -1468,6 +1520,8 @@ def main(argv=None) -> int:
     p.add_argument("--threads", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "32")))
     p.add_argument("--estimator", choices=tuple(s5e_candidate.CANDIDATES), required=True)
     p.add_argument("--clip-rule", choices=CLIP_RULES, required=True)
+    p.add_argument("--cv-tdw", type=Path, default=None)
+    p.add_argument("--expect-cv-tdw-sha256", default=None)
     p.add_argument("--clip-gate", type=Path, default=None)
     p.add_argument("--expect-clip-gate-sha256", default=None)
     p.add_argument("--tag", default="fd1b_mc")

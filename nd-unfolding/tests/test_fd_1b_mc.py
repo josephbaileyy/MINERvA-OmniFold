@@ -90,6 +90,12 @@ class Case(unittest.TestCase):
     def weights(self, tag):
         return self.consistent(tag, inv.universe_weights(mc.universe_dir(tag, self.w.bank, self.w.det), tag, "zero"))
 
+    def weights_cv_det(self, tag):
+        """self.weights with each detector universe's denom_nd the CV's bitwise, as the nature rule's row clip needs
+        (A2.1 (d1)'s check D)."""
+        w = self.weights(tag)
+        return dict(w, denom_nd=np.asarray(self.inputs["denom_nd"], float)) if "denom_nd" in w else w
+
     def consistent(self, tag, w):
         """The fixture's denominators as the real bank's behave, deterministically in the tag (the toy world seeds by
         hash(), which varies per process): a detector universe's denom_nd is the CV's within 5 %; a bank universe's
@@ -295,7 +301,7 @@ class Clipping(Case):
     Poisson draw, the nature's truth kept, the clipped mass recorded."""
 
     def nature(self, neg_reco=(), neg_bkg=()):
-        ui, ub, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0"], self.weights, None)
+        ui, ub, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0"], self.weights, None, np.ones(50))
         wr = np.asarray(ui["w_reco"], float).copy()
         reco = np.flatnonzero(np.asarray(self.inputs["pass_reco"], bool))
         for i in neg_reco:
@@ -368,6 +374,9 @@ class Clipping(Case):
         self.assertEqual(cn["record"]["truth"]["rows_negative"], rec["rows_neg"])
         self.assertEqual(cn["record"]["truth"]["sum_negative"], rec["sum_lambda_neg"])
         self.assertEqual((cd["record"]["rule"], cn["record"]["rule"]), ("data", "nature"))
+        np.testing.assert_array_equal(dd["denom_nd"], ui["denom_nd"])           # "data": the denominator untouched
+        np.testing.assert_array_equal(dn["denom_nd"], ui["denom_nd"])           # no negative denominator row here
+        self.assertEqual(cn["record"]["denominator"]["rows_negative"], 0)
         r = np.random.default_rng(8).uniform(0.8, 1.2, r.size)   # at r = 1 the truth's completeness cancels its weights
         dn, bn, _ = mc.clip_draw(ui, ub, r, "nature")
         _, x_n, _ = mc.toy_experiment(self.inputs, self.bkg, ui, ub, r, 3_620_000, "nature")
@@ -378,6 +387,36 @@ class Clipping(Case):
         with self.assertRaisesRegex(mc.Refusal, "clip rule"):
             mc.clip_draw(ui, ub, r, "both")
 
+
+    def test_the_nature_rule_clips_the_denominator_by_row(self):
+        """S3 (d1): a negative composite denominator row adds its mass to its own cell only (C2's N + m_all); a cell
+        without one keeps compose's value bitwise; the composite rows histogram to compose's per-cell denominator."""
+        ui, ub, _ = self.nature()
+        cells, rows = ui["td_cells"], np.array(ui["tdw_rows"], float)
+        n = int(np.prod(np.shape(ui["denom_nd"])))
+        np.testing.assert_allclose(np.bincount(cells[cells >= 0], weights=rows[cells >= 0], minlength=n),
+                                   np.ravel(ui["denom_nd"]), rtol=1e-12, atol=1e-12)
+        k = int(np.flatnonzero(cells >= 0)[0])
+        rows[k] = -0.7
+        dn, _, cn = mc.clip_draw(dict(ui, tdw_rows=rows), ub, np.ones(self.inputs["w_truth"].shape[0]), "nature")
+        got, base = np.ravel(dn["denom_nd"]), np.ravel(ui["denom_nd"])
+        self.assertAlmostEqual(got[cells[k]] - base[cells[k]], 0.7, places=12)
+        others = np.arange(n) != cells[k]
+        np.testing.assert_array_equal(got[others], base[others])
+        self.assertEqual((cn["record"]["denominator"]["rows_negative"], cn["record"]["denominator"]["sum_negative"]),
+                         (1, -0.7))
+
+    def test_the_nature_rule_refuses_without_the_row_denominator(self):
+        ui, ub, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0"], self.weights, None)
+        with self.assertRaisesRegex(mc.Refusal, "clips the denominator by row"):
+            mc.clip_draw(ui, ub, np.ones(self.inputs["w_truth"].shape[0]), "nature")
+        mc.clip_draw(ui, ub, np.ones(self.inputs["w_truth"].shape[0]), "data")
+        with self.assertRaisesRegex(mc.Refusal, "denominator is not the CV's"):
+            mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"], self.weights, None,
+                       np.ones(50))
+        ui, _, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"], self.weights_cv_det,
+                              None, np.ones(50))
+        self.assertIn("tdw_rows", ui)
     def test_r1_the_draw_at_its_mean_is_the_mean_path_on_the_same_nature(self):
         ui, ub, _ = self.nature(neg_reco=(0, 3, 7), neg_bkg=(1,))
         r = np.random.default_rng(7).uniform(0.8, 1.2, self.inputs["w_truth"].shape[0])
@@ -630,7 +669,7 @@ class Jobs(Case):
 
     def test_a_toy_draws_under_the_declared_clip_rule(self):
         world = {"inputs": self.inputs, "bkg": self.bkg, "bank_cv": self.bank_cv, "flux": self.flux,
-                 "groups": toys.interaction_groups(self.w.bank), "pins": {}}
+                 "groups": toys.interaction_groups(self.w.bank), "pins": {}, "tdw_cv": np.ones(50)}
         seen = []
         real = mc.toy_experiment
 
@@ -642,7 +681,7 @@ class Jobs(Case):
                                    bank=self.w.bank, detector_dir=self.w.det, clip_rule=rule)
             with mock.patch.object(mc, "truth_ratio", lambda *x: (None, None)), \
                     mock.patch.object(mc, "truth_weight", lambda *x: np.ones(self.inputs["w_truth"].shape[0])), \
-                    mock.patch.object(mc, "_weights", lambda w, a, t: self.weights(t)), \
+                    mock.patch.object(mc, "_weights", lambda w, a, t: self.weights_cv_det(t)), \
                     mock.patch.object(mc, "toy_experiment", spy):
                 _, meta = mc.run_item(a, world, "toy", "3620000", unfold_fn=lambda *x: (np.zeros(3), {}))
             self.assertEqual(meta["clip"]["rule"], rule)

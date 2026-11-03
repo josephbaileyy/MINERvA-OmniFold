@@ -44,10 +44,11 @@ GATE_K, GATE_DEV, GATE_LOGMEAN, GATE_MAX = 2, 0.20, 0.07, 0.35   # #724 (i), (i)
 SD_MULT_LOGMEAN, SD_MULT_CELL = 3.5, 4.3      # the director's (c): the consult's SE multiples (ANSWER.txt:26-27)
 UNION_LIMIT = 0.01                            # the director's: a three-truth noise STOP above this goes to Joseph
 DEFLATION = 0.9                               # the power of (ii) against a uniform 10 % deflation
-CONTROL_Z = 4.0                               # D4: |mean ratio - 1| within this many SEs in every cell
+CONTROL_Z = 4.0                               # D4's law control: |mean - 1| <= 4 SE per cell (48 z: ~0.3 % false)
+LINEARISATION_TOL = 0.02                      # the director's W1: x_T's |mean ratio - 1| per cell, per truth
 CAL_SETS = 10_000                             # replicate sets of 300 draws per truth
 CAL_SEED = {"g18": 3_671_000, "ar23": 3_672_000, "plugin": 3_673_000}
-CAL_SALT = 20_261_103_7                       # with (CAL_SEED, set), a stream no declared draw's [seed, DRAW_SALT] is
+CAL_SALT = 20_261_103_7                       # [CAL_SEED, set, CAL_SALT]: see calibration_draws on why it is disjoint
 CLIPPED = "option_1_clipped"
 
 
@@ -197,7 +198,12 @@ def xt_packed(A: np.ndarray, B: np.ndarray, D: np.ndarray, flux: np.ndarray, n_n
 
 
 def calibration_draws(truth: str, s: int, flux_p: np.ndarray, groups: dict, n: int = 300) -> list[list[str]]:
-    """Replicate set ``s`` of ``truth``: n draws by toys.draw's own law from the stream [CAL_SEED, s, CAL_SALT]."""
+    """Replicate set ``s`` of ``truth``: n draws by toys.draw's own law from the stream [CAL_SEED, s, CAL_SALT].
+    numpy's SeedSequence zero-pads its entropy, so a two-word [seed, salt] (every declared draw's [seed, DRAW_SALT],
+    and the repo's other two-word streams) is the stream [seed, salt, 0]; a three-word stream ending in CAL_SALT != 0
+    therefore equals none of them, and distinct (CAL_SEED, set) pairs give distinct streams."""
+    if CAL_SALT == 0:
+        raise Refusal("CAL_SALT must be non-zero for the streams to be disjoint from every two-word stream")
     from fd_1b_mc import draw_universes
     rng = np.random.default_rng([CAL_SEED[truth], s, CAL_SALT])
     return [draw_universes(toys.draw(rng, flux_p, groups)) for _ in range(n)]
@@ -244,8 +250,9 @@ def rates(R: dict, deflation: float = DEFLATION) -> dict:
         ml = np.mean(np.log(r), axis=1)
         mx = dev.max(axis=1)
         sd_ml, sd_mx, sd_c = float(np.std(ml, ddof=1)), float(np.std(mx, ddof=1)), np.std(r, axis=0, ddof=1)
-        b = {"i": np.sum(dev > GATE_DEV, axis=1) > GATE_K, "ii": np.abs(ml) > GATE_LOGMEAN, "iii": mx > GATE_MAX}
-        b["union"] = b["i"] | b["ii"] | b["iii"]
+        g = [gate_724(row) for row in r]           # the bulk's own rule, so the rate is the gate's (audit W2)
+        b = {k: np.array([not x[k] for x in g]) for k in ("i", "ii", "iii")}
+        b["union"] = np.array([not x["passes"] for x in g])
         thr_ii = SD_MULT_LOGMEAN * sd_ml
         with np.errstate(divide="ignore", invalid="ignore"):
             z = np.where(sd_c > 0, dev / sd_c, np.where(dev > 0, np.inf, 0.0))
@@ -275,13 +282,27 @@ def rates(R: dict, deflation: float = DEFLATION) -> dict:
 
 
 def control(R: dict) -> dict:
-    """D4 per truth and cell: |mean ratio - 1| <= CONTROL_Z standard errors (the replicates' SD / sqrt(sets)).
-    Returns the per-cell z and whether every cell holds; a failure stops everything (the director's ruling)."""
+    """D4's law control, on the linear count, per truth and cell: |mean ratio - 1| <= CONTROL_Z standard errors (the
+    replicates' SD / sqrt(sets)). The law is exact there, so any failure is a bug in band_reference or the draw law,
+    and stops everything (the director's ruling)."""
     out = {}
     for t, r in R.items():
         r = np.asarray(r, np.float64)
         z = (r.mean(axis=0) - 1.0) / (r.std(axis=0, ddof=1) / math.sqrt(r.shape[0]))
         out[t] = {"z": z.tolist(), "holds": bool(np.all(np.abs(z) <= CONTROL_Z))}
+    out["holds"] = all(v["holds"] for v in out.values())
+    return out
+
+
+def linearisation(R: dict) -> dict:
+    """x_T's linearisation, by effect size (the director's W1): per truth and cell, mean ratio - 1, which must lie
+    within LINEARISATION_TOL in every cell; beyond it, a finding about band_reference that goes to the director. The
+    rates already carry the bias, so it cannot miscalibrate the gate; the values are reported either way."""
+    out = {}
+    for t, r in R.items():
+        m = np.asarray(r, np.float64).mean(axis=0) - 1.0
+        out[t] = {"mean_ratio_minus_1": m.tolist(), "max_abs": float(np.max(np.abs(m))),
+                  "holds": bool(np.all(np.abs(m) <= LINEARISATION_TOL))}
     out["holds"] = all(v["holds"] for v in out.values())
     return out
 
@@ -411,18 +432,18 @@ def calibrate_main(a) -> dict:
     with multiprocessing.get_context("fork").Pool(a.workers) as pool:
         for t, s, rx, rl in pool.imap_unordered(_one_set, jobs, chunksize=8):
             Rx[t][s], Rl[t][s] = rx, rl
-    law, lin = control(Rl), control(Rx)
+    law, lin = control(Rl), linearisation(Rx)
     out = rates(Rx)
     digests = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (
         Path(__file__).resolve(), Path(mc.__file__).resolve(), Path(cp2.__file__).resolve(),
         Path(cov2d.__file__).resolve(), Path(toys.__file__).resolve())}
-    verdict = "CONTROL_FAILED" if not (law["holds"] and lin["holds"]) else (
-        "TO_JOSEPH" if out["to_joseph"] else "CALIBRATED")
+    verdict = ("CONTROL_FAILED" if not law["holds"] else "LINEARISATION_TO_DIRECTOR" if not lin["holds"] else
+               "TO_JOSEPH" if out["to_joseph"] else "CALIBRATED")
     rec = {"schema": SCHEMA_CAL, "step": "c2-calibration", "verdict": verdict, "truths": truths, "sets": a.sets,
            "seeds": {t: CAL_SEED[t] for t in truths}, "salt": CAL_SALT, "constants": {
                "k": GATE_K, "dev": GATE_DEV, "mean_log": GATE_LOGMEAN, "max_dev": GATE_MAX,
                "sd_mult_mean_log": SD_MULT_LOGMEAN, "sd_mult_cell": SD_MULT_CELL, "union_limit": UNION_LIMIT,
-               "deflation": DEFLATION, "control_z": CONTROL_Z},
+               "deflation": DEFLATION, "control_z": CONTROL_Z, "linearisation_tol": LINEARISATION_TOL},
            "outputs": out, "control_law": law, "control_linearisation": lin,
            "ratio_mean_per_cell": {t: Rx[t].mean(axis=0).tolist() for t in truths},
            "checks": {"r_negative": r_neg, "detector_denominator_differs_from_cv": det_differs},

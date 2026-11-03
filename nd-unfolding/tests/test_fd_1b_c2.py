@@ -5,6 +5,7 @@ import itertools
 import math
 import sys
 import unittest
+from unittest import mock
 from pathlib import Path
 
 import numpy as np
@@ -178,7 +179,12 @@ class Law(unittest.TestCase):
         self.assertNotEqual(a, declared)
         seeds = [s for t in mc.TOY_SEEDS for s in mc.TOY_SEEDS[t]] + list(mc.STAT_SEED.values())
         self.assertFalse(set(c2.CAL_SEED.values()) & set(seeds))
-        self.assertNotEqual(c2.CAL_SALT, toys.DRAW_SALT)
+        self.assertNotEqual(c2.CAL_SALT, 0)       # SeedSequence zero-pads: [a, b] is [a, b, 0] (audit W4)
+        two = np.random.default_rng([c2.CAL_SEED["g18"], 0]).random(4)
+        self.assertTrue(np.array_equal(two, np.random.default_rng([c2.CAL_SEED["g18"], 0, 0]).random(4)))
+        self.assertFalse(np.array_equal(two, np.random.default_rng([c2.CAL_SEED["g18"], 0, c2.CAL_SALT]).random(4)))
+        with mock.patch.object(c2, "CAL_SALT", 0), self.assertRaises(c2.Refusal):
+            c2.calibration_draws("g18", 0, p, groups, n=1)
 
     def test_the_count_law_check_is_one_on_average(self):
         """D4's law half on a toy layout: the linear count's ratio averages to 1 within CONTROL_Z SEs."""
@@ -201,6 +207,22 @@ class Law(unittest.TestCase):
             out.append(np.var(L, axis=0, ddof=1) / ref)
         self.assertTrue(c2.control({"t": np.array(out)})["holds"])
         self.assertFalse(c2.control({"t": np.array(out) * 1.05})["holds"])
+
+
+class Linearisation(unittest.TestCase):
+    def test_the_tolerance_both_ways_and_the_values_either_way(self):
+        R = np.ones((10, 16))
+        R[:, 3] = 1.02 - 1e-12
+        out = c2.linearisation({"t": R})
+        self.assertTrue(out["holds"])
+        self.assertAlmostEqual(out["t"]["mean_ratio_minus_1"][3], 0.02, places=9)
+        R[:, 3] = 1.0201
+        out = c2.linearisation({"t": R, "u": np.ones((10, 16))})
+        self.assertFalse(out["holds"])
+        self.assertFalse(out["t"]["holds"])
+        self.assertTrue(out["u"]["holds"])
+        self.assertEqual(len(out["u"]["mean_ratio_minus_1"]), 16)
+        self.assertEqual((c2.LINEARISATION_TOL, c2.CONTROL_Z), (0.02, 4.0))
 
 
 class Truth(unittest.TestCase):
@@ -273,6 +295,34 @@ class Rates(unittest.TestCase):
         out = c2.rates({"t": R})["t"]["b"]
         self.assertEqual([out[k]["rate"] for k in ("i", "ii", "iii", "union")], [0.25, 0.25, 0.25, 0.75])
 
+    def test_the_rates_are_gate_724s_at_each_edge(self):
+        """Audit W2: each rule's rate equals gate_724's verdict on the same replicate, at each bound and one ulp past."""
+        at_max = 1.0 + c2.GATE_MAX
+        while at_max - 1.0 > c2.GATE_MAX:
+            at_max = np.nextafter(at_max, 0.0)
+        at_dev = 1.0 + c2.GATE_DEV
+        while at_dev - 1.0 > c2.GATE_DEV:
+            at_dev = np.nextafter(at_dev, 0.0)
+        rows = []
+        for v in (at_max, np.nextafter(at_max, 2.0)):
+            r = np.ones(16)
+            r[0] = v
+            rows.append(r)
+        for k, v in ((2, at_dev), (3, at_dev), (2, np.nextafter(at_dev, 2.0)), (3, np.nextafter(at_dev, 2.0))):
+            r = np.full(16, 0.99)
+            r[:k] = v
+            rows.append(r)
+        ml = math.exp(c2.GATE_LOGMEAN)
+        rows += [np.full(16, ml * (1 - 1e-15)), np.full(16, np.nextafter(ml, 2.0) * (1 + 1e-15))]
+        R = np.array(rows)
+        out = c2.rates({"t": R})["t"]["b"]
+        g = [c2.gate_724(x) for x in R]
+        for k in ("i", "ii", "iii"):
+            self.assertAlmostEqual(out[k]["rate"], np.mean([not x[k] for x in g]))
+        self.assertAlmostEqual(out["union"]["rate"], np.mean([not x["passes"] for x in g]))
+        self.assertGreater(out["union"]["rate"], 0)
+        self.assertLess(out["union"]["rate"], 1)
+
     def test_power_moves_the_mean_log_by_the_deflation(self):
         R = np.full((10, 16), 1.0)
         out = c2.rates({"t": R * np.exp(np.random.default_rng(0).normal(0, 0.01, (10, 1)))})["t"]
@@ -304,7 +354,6 @@ class Rates(unittest.TestCase):
 
 import argparse  # noqa: E402
 import json  # noqa: E402
-from unittest import mock  # noqa: E402
 
 import s1_assemble as sa  # noqa: E402
 import test_fd_1b_mc as tmc  # noqa: E402
@@ -359,7 +408,8 @@ class Job(tmc.Case):
         self.assertEqual(z["ratio_g18"].shape, (40, sa.N_CELLS))
         self.assertTrue(np.all(np.isfinite(z["count_ratio_ar23"])))
         self.assertTrue(rec["control_law"]["holds"])
-        self.assertIn(rec["verdict"], ("CALIBRATED", "TO_JOSEPH", "CONTROL_FAILED"))
+        self.assertIn(rec["verdict"], ("CALIBRATED", "TO_JOSEPH", "CONTROL_FAILED", "LINEARISATION_TO_DIRECTOR"))
+        self.assertEqual(len(rec["control_linearisation"]["g18"]["mean_ratio_minus_1"]), sa.N_CELLS)
         self.assertEqual(rec["atime"]["moved"], [])
 
     def test_the_checks_are_silent_when_they_hold_and_name_rows_when_not(self):
