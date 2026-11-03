@@ -80,6 +80,16 @@ def row_sets(a: dict, edges) -> tuple[np.ndarray, np.ndarray]:
     return base & ps, base & extras & ps
 
 
+FIRST = 20                                           # differing rows or cells listed when a check fails
+
+
+def cell_diff(h: np.ndarray, ref: np.ndarray) -> dict:
+    """The director's diff for a histogram check: how many cells differ, and the first (flat C index, got, want)."""
+    bad = np.flatnonzero(h.ravel() != ref.ravel())
+    return {"cells_differing": int(bad.size),
+            "first": [[int(i), float(h.ravel()[i]), float(ref.ravel()[i])] for i in bad[:FIRST]]}
+
+
 def histogram(cols: list[np.ndarray], w: np.ndarray, edges) -> np.ndarray:
     counts, _ = np.histogramdd(np.column_stack(cols), bins=[np.asarray(e, float) for e in edges], weights=w)
     return counts
@@ -98,16 +108,30 @@ def checks(a: dict, pot_scale: float, cv: dict, denom_nd: np.ndarray, edges) -> 
     rec = {"entries": int(a["w_truth"].size), "bank_rows": int(bank.sum()), "cv_npz_rows": n_cv,
            "npz_rows": int(npz.sum()), "bank_rows_not_npz": int(np.sum(bank & ~npz)),
            "A_coordinates_equal_row_by_row": aligned}
+    if not aligned and int(bank.sum()) == n_cv:
+        rows = {}
+        for k, c, t in zip(TD, coords, td):
+            x, y = np.asarray(c[bank], np.float32), np.asarray(t, np.float32)
+            bad = np.flatnonzero(~((x == y) | (np.isnan(x) & np.isnan(y))))
+            rows[k] = {"rows_differing": int(bad.size),
+                       "first": [[int(i), float(x[i]), float(y[i])] for i in bad[:FIRST]]}
+        rec["A_diff"] = rows
+    elif not aligned:
+        rec["A_diff"] = {"row_counts": [int(bank.sum()), n_cv]}
     if aligned:
         h = histogram([np.asarray(t, np.float64) for t in td], tdw_cv, edges)
         rec["B_histogram_equals_denom_nd"] = bool(np.array_equal(h, denom_nd))
         rec["B_max_abs_difference"] = float(np.max(np.abs(h - denom_nd)))
+        if not rec["B_histogram_equals_denom_nd"]:
+            rec["B_diff"] = cell_diff(h, denom_nd)
     else:
         rec["B_histogram_equals_denom_nd"] = False
         rec["B_max_abs_difference"] = None
     hc = histogram([c[npz] for c in coords], a["w_truth"][npz] * pot_scale, edges)
     rec["C_npz_writer_reproduced"] = bool(np.array_equal(hc, denom_nd))
     rec["C_max_abs_difference"] = float(np.max(np.abs(hc - denom_nd)))
+    if not rec["C_npz_writer_reproduced"]:
+        rec["C_diff"] = cell_diff(hc, denom_nd)
     return rec, tdw_cv
 
 
@@ -123,6 +147,8 @@ def detector_check(det_dir: Path, pins: dict, denom_nd: np.ndarray) -> dict:
             d = np.load(io.BytesIO(raw), allow_pickle=False).astype(np.float64)
             out[f"{b}_{i}"] = {"equal": bool(np.array_equal(d, denom_nd)),
                                "max_abs_difference": float(np.max(np.abs(d - denom_nd)))}
+            if not out[f"{b}_{i}"]["equal"]:
+                out[f"{b}_{i}"]["diff"] = cell_diff(d, denom_nd)
     return out
 
 

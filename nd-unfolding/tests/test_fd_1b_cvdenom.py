@@ -98,7 +98,12 @@ class Checks(unittest.TestCase):
         self.assertFalse(rec["B_histogram_equals_denom_nd"])
         moved = dict(cv, td_pt=cv["td_pt"].copy())
         moved["td_pt"][3] += np.float32(0.01)
-        self.assertFalse(cd.checks(a, pot, moved, denom, EDGES)[0]["A_coordinates_equal_row_by_row"])
+        rec, _ = cd.checks(a, pot, moved, denom, EDGES)
+        self.assertFalse(rec["A_coordinates_equal_row_by_row"])
+        self.assertEqual(rec["A_diff"]["td_pt"]["rows_differing"], 1)
+        self.assertEqual(rec["A_diff"]["td_pt"]["first"][0][0], 3)
+        self.assertEqual(rec["A_diff"]["td_q3"]["rows_differing"], 0)      # NaN rows compare equal
+        self.assertEqual(cd.checks(a, pot, short, denom, EDGES)[0]["A_diff"], {"row_counts": [len(w), len(w) - 1]})
 
     def test_b_fails_on_a_denominator_one_ulp_away(self):
         a, pot = tree(), 0.2
@@ -110,6 +115,9 @@ class Checks(unittest.TestCase):
         rec, _ = cd.checks(a, pot, cv, off, EDGES)
         self.assertTrue(rec["A_coordinates_equal_row_by_row"])
         self.assertFalse(rec["B_histogram_equals_denom_nd"])
+        self.assertEqual(rec["B_diff"]["cells_differing"], 1)
+        self.assertEqual(rec["B_diff"]["first"][0][0], int(i))
+        self.assertNotIn("B_diff", cd.checks(a, pot, cv, denom, EDGES)[0])
 
     def test_c_reproduces_the_npz_writer_only_on_its_own_rows(self):
         a, pot = tree(), 0.2
@@ -147,6 +155,8 @@ class Detector(unittest.TestCase):
         self.pins["files"][str(p)]["sha256"] = hashlib.sha256(p.read_bytes()).hexdigest()
         out = cd.detector_check(self.tmp, self.pins, self.denom)
         self.assertEqual([k for k, v in out.items() if not v["equal"]], ["GEANT_Pion_1"])
+        self.assertEqual(out["GEANT_Pion_1"]["diff"]["cells_differing"], self.denom.size)
+        self.assertNotIn("diff", out["GEANT_Pion_0"])
         self.pins["files"][str(p)]["sha256"] = "0" * 64
         with self.assertRaisesRegex(cd.Refusal, "not the pinned file"):
             cd.detector_check(self.tmp, self.pins, self.denom)
