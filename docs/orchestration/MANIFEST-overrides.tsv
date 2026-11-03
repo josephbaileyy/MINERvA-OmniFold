@@ -240,6 +240,7 @@ docs/orchestration/DECISION-20261102-joseph-caveat-cut-list.md	LIVE	open	""
 docs/orchestration/DECISION-20261102-joseph-cmodel-keep-carbon-state-effect.md	LIVE	open	""
 docs/orchestration/DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md	LIVE	open	""
 docs/orchestration/DECISION-20261103-joseph-711-merge-and-rp9-reprice.md	LIVE	open	""
+docs/orchestration/DECISION-20261103-joseph-coverage-clip-rule.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	ARCHIVAL	terminal	""
@@ -708,6 +709,9 @@ docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/RE
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/README.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/tables/placement.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/tables/rates.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/README.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/placement.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/rates.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/README.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/RP9.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/cutlist.md	LIVE	open	""

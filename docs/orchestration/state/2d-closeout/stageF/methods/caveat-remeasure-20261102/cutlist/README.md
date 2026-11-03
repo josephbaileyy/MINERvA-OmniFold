@@ -104,3 +104,18 @@ The merged statements also carry R routes, though resolving them does not remove
     python3 -I distinct_cuts.py ../after-58fa0b89/inv/ours-paper.tsv <WORK>/blind/ours-paper.txt 8080 <analysis-note at 58fa0b89> cutlist
 
 `<WORK>` comes from `../remeasure.py --work <WORK>` at `58fa0b89`.
+
+## Correction (2026-11-03): merges do not lower the distinct count a fresh coder finds
+
+The re-measure after the round (`../after-711-97e30dda/README.md` §2) tests this list's central assumption: that a
+merged statement is coded as one distinct caveat. **It is false.**
+- A fresh coder still counts MV01's merged paragraph as 5 caveats, MV02's as 6, and MV07's and MV08's as 3 each. The
+  study's distinct unit is (kind, issue label) per sentence, so each fact in a merged paragraph keeps its own label.
+- The moves that hold are those that take facts out of the paper: MV06, MV13, MV14 and MV16, and MV07F's legend
+  tokens.
+- **What this means for the predictions:**
+  - the "all 20 moves → 44 distinct, 5.88 /1k" and "16 moves → 49, 6.48" predictions above overstate what this metric
+    can show;
+  - so does `RP9.md`'s starting point of 44.
+  - Merging still lowers words and statements, which is a reader-facing gain. It does not reach the study's distinct
+    count.

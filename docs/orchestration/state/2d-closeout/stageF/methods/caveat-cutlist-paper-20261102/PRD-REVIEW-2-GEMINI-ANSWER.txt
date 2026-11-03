@@ -1,0 +1,47 @@
+### Referee Report: Physical Review D
+
+This revision successfully reduces narrative clutter while maintaining transparency. However, several passages still bear the scars of internal committee compromises, resulting in defensive hedging, awkward phrasing, and verbatim redundancies. Below is my evaluation under PRD standards.
+
+---
+
+### 1. Paragraph-by-Paragraph Evaluation
+
+* **Sec. IV A (Envelope & Targets):** **Clearer and accurate.** Shortening "this target" to "it" and joining clauses tightens the text into standard PRD register.
+* **Sec. IV B (Closure & Coverage Definitions):** **Improved.** Removing the parenthetical caveat on pointwise vs. simultaneous coverage restores this paragraph to a crisp methodological definition.
+* **Sec. IV A (16-Cell Covariance, $C_{\mathrm{model}}$, $C_{\mathrm{PL,5D}}$):** Moving the provenance of $C_{\mathrm{model}}$ here from Sec. IV F is logical. However, the $C_{\mathrm{PL,5D}}$ discussion remains heavily over-qualified; phrases like *"following an audit whose stopping criterion was fixed in advance"* read as defensive bookkeeping rather than physics reporting.
+* **Sec. IV C (2D Run-Period):** **Unacceptable register.** It repeats verbatim the sentence from Sec. IV A (*"The cause is not known, and these data cannot establish which period is correct"*), and concluding that the block *"cannot fail its own consistency check"* is cynical jargon that does not belong in PRD.
+* **Sec. IV E (Background Subtraction Closure):** **Clearer.** Consolidating the 1D/2D comparison and placing the data discrepancy (1.4%) at the end gives a coherent logical flow.
+* **Sec. IV E / Fig. 13 / Binned Diagnostic Deletion:** Cutting the noise-free binned diagnostic paragraph is acceptable; citing Ref. [\nsec{sec:val-departure}] for the regularization attribution is sufficient. 
+* **Sec. IV F (Coverage of Earlier Estimator):** **Problematic.** Stripping `\subsection{Coverage}` leaves an orphaned sentence describing an abandoned, purity-subtracted estimator with 0.06 coverage. This dangles without context and confuses the reader.
+* **Sec. IV G (Rounding Sensitivity):** **Over-qualified and syntactically strained.** The new first sentence is a 55-word run-on that tries to merge data jitter, bootstrap errors, replica preservation, and reproducibility limits into a single breath.
+* **Sec. IV D & Sec. V (Fake Data & Limitations):** Replacing the gate-failure story in Sec. IV D with a pointer to Sec. V is good, but Sec. V still handles the unvalidated coverage defensively.
+* **Table I Footnote (GiBUU):** **Extreme over-qualification.** Detailing test "B3", a "post hoc bias check of the check's premise," and non-conservation of energy in DIS events in a table footnote is inappropriate for PRD.
+
+---
+
+### 2. Caveat-Density Lens
+
+* **Qualifications to merge or move to note:**
+  1. *Table I Footnote b:* Move the deep-inelastic energy conservation and test-B3 mechanics entirely to \nsec{sec:joint5d-ch}; keep only a single pointer indicating known limitations in the hydrogen supplement.
+  2. *Sec. IV G (Rounding):* The clause *"a scatter that each bootstrap replica carries at the same size and that limits how exactly the central values can be reproduced"* belongs in the note.
+  3. *Sec. V (Gate Failure):* The technical breakdown of the verification harness (*"stopped at one of its gates... uncertainties disagreed... for reasons not established"*) belongs in \nsec{sec:fived16-fd}.
+* **Removals:** No removals compromise scientific integrity. Relegating the binned iterative unfolding diagnostic and seed-set details to the companion note is entirely appropriate.
+
+---
+
+### 3. Specific Focus Issues
+
+* **(a) "is therefore untested":** Illogical and redundant. The bullet opens with *"No reported interval has validated coverage."* Concluding that the 16-cell intervals are *"therefore untested"* because an internal pipeline failed a gate before running conflates an infrastructure failure with statistical inference. State simply that coverage validation could not be completed.
+* **(b) Split Run-Period Statements (Sec. IV A vs. IV C):** Redundant and disjointed. The exact sentence explaining ignorance of the cause is duplicated. Define the empirical double-ratio procedure and its motivation once in Sec. IV A; Sec. IV C should merely cite it and state the resulting 2.0% integrated impact.
+* **(c) Rounding-Sensitivity Paragraph (Sec. IV G):** Presenting both the median scatter across 20 perturbations (0.23% vs. 0.37% stat) and the single-perturbation worst case (2.6$\sigma$) is physically meaningful—it separates baseline numerical noise from tail instability. However, cramming both into a single convoluted sentence obscures the result. Separate typical numerical jitter from the peak acceptance failure.
+* **(d) Pointer Sentence for Earlier Coverage Test:** Dangling and distracting. Reporting that an *earlier*, discarded estimator had 0.06 coverage adds caveat weight to no constructive end. If that estimator is not used, relegate its post-mortem entirely to Ref. [\nsec{sec:coverage-5d}].
+
+---
+
+### 4. Required Edits Before Acceptance
+
+1. **Unify Run-Period Treatment:** State the origin and construction of the run-period covariance block once in Sec. IV A. In Sec. IV C, reference Sec. IV A and quote the 2.0% effect. Strike the verbatim duplicate sentence and the phrase *"cannot fail its own consistency check."*
+2. **Clean Coverage Limitations (Sec. V):** Strike *"is therefore untested"* and the detailed description of the pipeline gate abort. State directly that systematic coverage validation could not be completed for the 16-cell covariance, referencing \nsec{sec:fived16-fd}.
+3. **Restructure Sec. IV G (Rounding):** Split the opening sentence: first state the median numerical jitter relative to the bootstrap uncertainty; second, state that single-perturbation shifts reach 2.6$\sigma$, failing the stability requirement. Relegate replica-scaling commentary to the note.
+4. **Excise Orphaned Coverage Sentence (Sec. IV F):** Remove the dangling sentence regarding the earlier purity estimator's miscoverage (or incorporate it cleanly into the note citation).
+5. **Prune Table I Footnote:** Remove the discussion of test B3 and post-hoc bias checks. Replace with a concise note that generator limitations in the hydrogen supplement are evaluated in \nsec{sec:joint5d-ch}.

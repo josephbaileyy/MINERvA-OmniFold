@@ -1,0 +1,579 @@
+[
+ {
+  "move": "MV01",
+  "type": "merge",
+  "caveats": [
+   "C01",
+   "C27",
+   "C28",
+   "C29",
+   "C37"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [
+   "C01",
+   "C27",
+   "C29"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "b",
+    "issue": "run-period block added after seeing differences",
+    "statements": [
+     "It was added after these differences were seen, following an audit whose stopping criterion was fixed in advance.",
+     "The block raises the median by about 7.8 %, and the uncertainty of the most affected cell, R04, by 14.1 %.",
+     "With the run-period block, each total χ2 is lower by 3.6–29.3 % of its value without it"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "run-period block size poorly determined",
+    "statements": [
+     "It has rank 2 and is not corrected for the bootstrap noise it contains, and with three groups its size is poorly determined"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "run-period consistency check passes by construction",
+    "statements": [
+     "amounts to 2.0 % on the integrated cross section and passes its own consistency check by construction"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "run-period inconsistency of unknown cause",
+    "statements": [
+     "The unfolded results of the three run-period groups, each relative to its own simulation, differ by more than their bootstrap scatter.",
+     "The cause is not known, and these data cannot establish which period is correct.",
+     "In the two-dimensional result, data from different run periods are not mutually consistent within the other uncertainties"
+    ]
+   },
+   {
+    "kind": "e",
+    "issue": "run-period block added after seeing differences",
+    "statements": [
+     "It was added after these differences were seen, following an audit whose stopping criterion was fixed in advance."
+    ]
+   }
+  ],
+  "verdict": "FLAG: a coder counts 5 caveats here (expected at most 1)"
+ },
+ {
+  "move": "MV02",
+  "type": "merge",
+  "caveats": [
+   "C05",
+   "C21",
+   "C52",
+   "C53",
+   "C63",
+   "C64"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [
+   "C05",
+   "C21",
+   "C63"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "a",
+    "issue": "earlier 2d statistical band undercovered",
+    "statements": [
+     "an earlier statistical band of that result undercovered in its tails in a coverage test at fixed truth"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "2d covariance not validated",
+    "statements": [
+     "The two-dimensional covariance has not been independently validated and gives no calibrated significance for generator comparisons"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "coverage test stopped at a gate",
+    "statements": [
+     "the uncertainties reproduced through its pseudo-experiments disagreed with the covariance blocks they draw, for reasons not established"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "interval coverage not validated",
+    "statements": [
+     "Interval coverage has not been validated. The bias tests,",
+     "No reported interval has validated coverage.",
+     "The fake-data tests of Sec. IV G assess bias, not coverage: only event counts fluctuate, with systematic parameters fixed, so interval widths cannot be tested."
+    ]
+   },
+   {
+    "kind": "d",
+    "issue": "coverage claims limited in scope",
+    "statements": [
+     "The coverage tests cited are pointwise, for each reported quantity separately, not the stronger simultaneous coverage of all of them.",
+     "We make no coverage claim on independent simulated samples or simultaneously over all reported bins and projections."
+    ]
+   },
+   {
+    "kind": "e",
+    "issue": "coverage test stopped at a gate",
+    "statements": [
+     "was stopped at one of its gates before any coverage pseudo-experiment ran"
+    ]
+   }
+  ],
+  "verdict": "FLAG: a coder counts 6 caveats here (expected at most 1)"
+ },
+ {
+  "move": "MV03",
+  "type": "merge",
+  "caveats": [
+   "C55",
+   "C62"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "three- and four-observable values lack uncertainties",
+    "statements": [
+     "central values of the joint-test estimator, which have no uncertainties and serve for qualitative comparison only"
+    ]
+   },
+   {
+    "kind": "d",
+    "issue": "three- and four-observable values lack uncertainties",
+    "statements": [
+     "central values of the joint-test estimator, which have no uncertainties and serve for qualitative comparison only"
+    ]
+   }
+  ],
+  "verdict": "FLAG: a coder counts 2 caveats here (expected at most 1)"
+ },
+ {
+  "move": "MV04",
+  "type": "merge",
+  "caveats": [
+   "C18",
+   "C19"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [
+   "C18",
+   "C19"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "precision target not met",
+    "statements": [
+     "With the envelope added, none of the reporting definitions of a five-observable measurement tested in the study meets it.",
+     "the envelope alone exceeds it for the 109 coarse joint cells and the 39 supported (Eavail , W ) cells"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "regularization bias toward the prior",
+    "statements": [
+     "The second is the envelope of Sec. III A, which tracks the same bias."
+    ]
+   },
+   {
+    "kind": "d",
+    "issue": "envelope is a diagnostic not an interval",
+    "statements": [
+     "The envelope is a sensitivity diagnostic that tracks the regularization bias, not an interval."
+    ]
+   }
+  ],
+  "verdict": "FLAG: a coder counts 3 caveats here (expected at most 1)"
+ },
+ {
+  "move": "MV05",
+  "type": "merge",
+  "caveats": [
+   "C48",
+   "C49"
+  ],
+  "made": false,
+  "old_caveats_still_printing_verbatim": [
+   "C48",
+   "C49"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "fake-data truths not held out",
+    "statements": [
+     "The truths are not held out: they are the simulation’s prior; five hybrid truths,"
+    ]
+   },
+   {
+    "kind": "d",
+    "issue": "some fake-data truths descriptive only",
+    "statements": [
+     "and 6 further truths, given in the note, are descriptive and not judged against these criteria"
+    ]
+   }
+  ],
+  "verdict": "not made in this round"
+ },
+ {
+  "move": "MV06",
+  "type": "merge",
+  "caveats": [
+   "C58"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [],
+  "new_caveats_assigned": [],
+  "verdict": "OK"
+ },
+ {
+  "move": "MV07",
+  "type": "merge",
+  "caveats": [
+   "C72",
+   "C73",
+   "C77"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [
+   "C73"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "b",
+    "issue": "post hoc bias check of b3 premise",
+    "statements": [
+     "That hydrogen sample failed its sampling-closure check, B3 (a bias check of the check’s premise, added post hoc, passed at ≤ 0.1 σc"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "gibuu hydrogen sample quality problems",
+    "statements": [
+     "That hydrogen sample failed its sampling-closure check, B3 (a bias check of the check’s premise, added post hoc, passed at ≤ 0.1 σc"
+    ]
+   },
+   {
+    "kind": "e",
+    "issue": "internal check name b3",
+    "statements": [
+     "That hydrogen sample failed its sampling-closure check, B3 (a bias check of the check’s premise, added post hoc, passed at ≤ 0.1 σc"
+    ]
+   }
+  ],
+  "verdict": "FLAG: a coder counts 3 caveats here (expected at most 1)"
+ },
+ {
+  "move": "MV07F",
+  "type": "merge",
+  "caveats": [
+   "C74",
+   "C75"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "low reconstruction stability of four cells",
+    "statements": [
+     "Four of the sixteen cells, R02, R06, R10 and R15, have a reconstruction stability of 0.16–0.25"
+    ]
+   },
+   {
+    "kind": "d",
+    "issue": "tune v1 not an independent prediction",
+    "statements": [
+     "MINERvA Tune v1: prior (not an independent prediction)"
+    ]
+   }
+  ],
+  "verdict": "FLAG: a coder counts 2 caveats here (expected at most 1)"
+ },
+ {
+  "move": "MV08",
+  "type": "merge",
+  "caveats": [
+   "C14",
+   "C42",
+   "C43",
+   "C44"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [
+   "C14",
+   "C42"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "a",
+    "issue": "purity-based subtraction closure bias",
+    "statements": [
+     "end-to-end pseudoexperiments at nominal truth reproduce the input except in the highest-W cells, which are biased by up to 4 % in simulation",
+     "the purity estimate lies up to 5.9 statistical standard deviations from the truth"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "background treatment dependence",
+    "statements": [
+     "On data, the two treatments differ by at most 1.4 %"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "residual closure bias of joint-test estimator",
+    "statements": [
+     "This estimator removes most of the bias of purity-based subtraction at nominal truth in the highest-W cells",
+     "reduces it to below 0.3 % in those cells and at most 0.4 % elsewhere in the projection, leaving up to 1 % in some joint cells"
+    ]
+   }
+  ],
+  "verdict": "FLAG: a coder counts 3 caveats here (expected at most 1)"
+ },
+ {
+  "move": "MV09",
+  "type": "M",
+  "caveats": [
+   "C66",
+   "C67",
+   "C68"
+  ],
+  "made": false,
+  "old_caveats_still_printing_verbatim": [
+   "C66",
+   "C67",
+   "C68"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "calibrated tests conditional on simulation",
+    "statements": [
+     "Their calibration is valid to the extent that the simulated chain reproduces the analysis of the data"
+    ]
+   },
+   {
+    "kind": "c",
+    "issue": "residual below fine grid unbounded",
+    "statements": [
+     "a rejection extends to the generator prediction itself only if the residual below the fine grid, where each null takes the simulation’s event composition, is bounded, and no such bound has been shown"
+    ]
+   },
+   {
+    "kind": "d",
+    "issue": "calibrated tests conditional on simulation",
+    "statements": [
+     "The note’s calibrated tests reject hybrid nulls, conditionally on the simulation’s hadronic response."
+    ]
+   }
+  ],
+  "verdict": "not made in this round"
+ },
+ {
+  "move": "MV10",
+  "type": "merge",
+  "caveats": [
+   "C60",
+   "C61"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "generator chi2 depends on flux correlations",
+    "statements": [
+     "Weakening only the flux correlations by 10 % lowers the χ2 of the 16-cell predictions by 23–38 %"
+    ]
+   },
+   {
+    "kind": "d",
+    "issue": "flux bootstrap bands are not intervals",
+    "statements": [
+     "The bands describe the scatter of the χ2 from estimating the correlations with these universes, not the sensitivity to incorrect correlations"
+    ]
+   }
+  ],
+  "verdict": "FLAG: a coder counts 2 caveats here (expected at most 1)"
+ },
+ {
+  "move": "MV11",
+  "type": "merge",
+  "caveats": [
+   "C09",
+   "C10"
+  ],
+  "made": false,
+  "old_caveats_still_printing_verbatim": [
+   "C09",
+   "C10"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "eavail definition differs from published ones",
+    "statements": [
+     "replacing the constant alone by the charged-pion mass moves the sixteen-cell result by at most 0.19σ in any cell"
+    ]
+   },
+   {
+    "kind": "d",
+    "issue": "eavail definition differs from published ones",
+    "statements": [
+     "No single published definition of Eavail exists: Eq. (1) keeps the species of the closed list of Ref. [18] except electrons and positrons"
+    ]
+   }
+  ],
+  "verdict": "not made in this round"
+ },
+ {
+  "move": "MV12",
+  "type": "merge",
+  "caveats": [
+   "C25",
+   "C26"
+  ],
+  "made": false,
+  "old_caveats_still_printing_verbatim": [
+   "C25"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "recoil response term limited to a scale",
+    "statements": [
+     "Cresp does not cover neutron or muon deposits, nor species, energy-dependence or resolution effects beyond a scale."
+    ]
+   },
+   {
+    "kind": "d",
+    "issue": "recoil response term only in sixteen-cell result",
+    "statements": [
+     "It enters only this result, its fakedata tests and its comparison in Sec. V B."
+    ]
+   }
+  ],
+  "verdict": "not made in this round"
+ },
+ {
+  "move": "MV13",
+  "type": "M",
+  "caveats": [
+   "C46"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [],
+  "new_caveats_assigned": [],
+  "verdict": "OK"
+ },
+ {
+  "move": "MV14",
+  "type": "M",
+  "caveats": [
+   "C45"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [],
+  "new_caveats_assigned": [],
+  "verdict": "OK"
+ },
+ {
+  "move": "MV15",
+  "type": "M",
+  "caveats": [
+   "C47"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "instability under input rounding",
+    "statements": [
+     "The joint-test estimator is unstable under floating-point rounding of its inputs",
+     "Rounding-level changes of its inputs move its results by up to 2.6 statistical standard deviations"
+    ]
+   }
+  ],
+  "verdict": "FLAG: a coder counts 1 caveats here (expected at most 0)"
+ },
+ {
+  "move": "MV16",
+  "type": "M",
+  "caveats": [
+   "C71"
+  ],
+  "made": true,
+  "old_caveats_still_printing_verbatim": [],
+  "new_caveats_assigned": [],
+  "verdict": "OK"
+ },
+ {
+  "move": "MV17",
+  "type": "M",
+  "caveats": [
+   "C50"
+  ],
+  "made": false,
+  "old_caveats_still_printing_verbatim": [
+   "C50"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "held-out tunes not independent tests",
+    "statements": [
+     "In cell R11 at G18_10a_02_11b, the bias lies below the reported uncertainty only with Cmodel included."
+    ]
+   }
+  ],
+  "verdict": "not made in this round"
+ },
+ {
+  "move": "MV18",
+  "type": "M",
+  "caveats": [
+   "C57"
+  ],
+  "made": false,
+  "old_caveats_still_printing_verbatim": [
+   "C57"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "ch correction interacts with carbon cmodel",
+    "statements": [
+     "With the reported Cmodel , the sign of the rise also depends on the hydrogen sample"
+    ]
+   }
+  ],
+  "verdict": "not made in this round"
+ },
+ {
+  "move": "MV19",
+  "type": "M",
+  "caveats": [
+   "C70"
+  ],
+  "made": false,
+  "old_caveats_still_printing_verbatim": [
+   "C70"
+  ],
+  "new_caveats_assigned": [
+   {
+    "kind": "c",
+    "issue": "closure pseudo-experiments not paired",
+    "statements": [
+     "(60 pseudo-experiments). The pseudoexperiments are not paired."
+    ]
+   }
+  ],
+  "verdict": "not made in this round"
+ }
+]

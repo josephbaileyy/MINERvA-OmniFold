@@ -91,6 +91,10 @@ def purity_bias_max():  # VL149: purity-method nominal-truth bias, highest-W cel
     return max(abs(c["mean_rel_pct"]) for c in worst if highest_w(c["name"]))
 
 
+def tilt_coverage68_min():  # s5c tier S (OUTCOME-20260925-s5c-tier-s-futility-fail.md): the E_avail tilt's lowest 68% coverage
+    return next(g for g in receipt("s5c/tier_s/interim_400.json")["grid"] if g["truth"] == "eavail_tilt")["coverage68_min"]
+
+
 def dev():
     return receipt("s5n/stage1/dev_receipt.json")
 
@@ -151,6 +155,8 @@ CHECKS = [
     ("treatments on data (VL152)", "paper_body.tex", r"differ by at most \\SI\{([0-9.]+)\}\{\\percent\}", data_method_diff, "round"),
     ("regularization bias at high W (VL151)", "paper_body.tex", r"by up to \\SI\{([0-9.]+)\}\{\\percent\} at high \$W\$",
      regularization_max, "round"),
+    ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "paper_body.tex",
+     r"with coverage as low as ([0-9.]+) for 68\\% intervals", tilt_coverage68_min, "round"),
     ("other fixed shapes, most affected cell (VL154)", "paper_body.tex", r"it is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the most affected",
      shapes_range, "round"),
 ]
