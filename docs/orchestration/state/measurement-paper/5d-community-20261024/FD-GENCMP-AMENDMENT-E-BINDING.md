@@ -192,6 +192,46 @@ other E2 control against the real committed formats.
 2. **The cap is unchanged:** ≤ 0.5 node-h for the unfold job. Every other ruling of addendum E2 stands.
 3. **The report goes to Joseph** and gives both runs and the stop.
 
+## Addendum E-A2 (director, 2026-11-02, latest)
+
+**Binds** `FD-GENCMP-AMENDMENT-E-ADDENDUM-EA2.md` as merged in PR #709 at **M⁗ = `e1c0af3b0e5367369540e27a25b372f92e49f871`** (PR head `f0f23709`).
+
+**Under** `DECISION-20261102-joseph-caveat-cut-list.md` item 1, move MV07F.
+
+**What it changes.**
+- The gencmp-chdefs legend and K7's required strings drop "hydrogen: supplement FLAGGED" and "hydrogen: closure B3
+  failed".
+- Every label and readout keeps both flags. The facts move to Table III's footnote and the note.
+- It supersedes amendment E §4/§12's legend list and review row A6.
+- All three chdefs figures (ratio, modes, sens) are redrawn into `chdefs/with/figures-a2/`. The redraw goes through the
+  chain's figure entry on E-1's committed with-arm readouts, with every input at its committed digest.
+- **Control D:** each new sidecar equals the committed one, except argv, code, versions, the PDF and the label texts.
+  Each label text equals the committed text minus the flags.
+
+**The blobs at M⁗:**
+  - `nd-unfolding/fd_g_figures.py` `76d1c5b8b41da48d93f60775c63a1411faa334c4`;
+  - `nd-unfolding/fd_g_figures_check.py` `943bb2f2294614569e0efa343bfbc2fe20829ded`;
+  - `nd-unfolding/fd_gencmp_ea2.py` `16e4e20f6cd671f0d3744d02dfeceb543e56e648`;
+  - `nd-unfolding/tests/test_fd_gencmp_ea2.py` `955db2d9db1115b54849f8be9c14312ff58c4af4`;
+
+**What the director checked.**
+- **The diff:** only the qualifier strings change in the two figure files, plus the new redraw module and its tests.
+- **The tests,** run locally at the head: `test_fd_gencmp_ea2.py`, `test_fd_gencmp_e.py` and `test_fd_g_figures.py`
+  gave 101 passed.
+- **The mutation receipt:** 16/16 killed.
+
+**Rulings.**
+1. **The redraw runs** on login37 in `root_6_28` (matplotlib 3.10.8, as the chain ran), at 0 node-h.
+   - It runs from a fresh clone at M⁗ into a new `$R` = `/pscratch/sd/j/josephrb/gencmp-ea2-20261102/`.
+   - It reads only committed files in that clone.
+   - `fd_g_figures_check` and control D must pass.
+2. **The paper lane then:**
+   - re-pins make_values' FIGURES to the new ratio PDF and the note's modes figure;
+   - drops Fig. 4's pointer sentence and the modes-caption definition of "supplement FLAGGED". The fact stays in the
+     note §11.9.
+3. **The inexact CHDEFS comment** in `fd_gencmp_e.py` (lines 68–69) is accepted as recorded, which keeps amendment E's
+   bound blob.
+
 ## Fixed, unchanged
 
 Every claim and number in the paper until Joseph rules on the report; the reported covariance; Table IV as adopted
