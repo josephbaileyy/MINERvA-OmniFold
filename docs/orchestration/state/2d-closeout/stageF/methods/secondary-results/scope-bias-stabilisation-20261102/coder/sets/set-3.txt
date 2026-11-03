@@ -1,0 +1,5 @@
+Each classifier is trained on the full sample whose weights it then sets, so no held-out or cross-fitted split is used; it is trained without early stopping, and the two classes keep their physical weights.
+
+The others are a 2p2h band, two-point shifts, chosen models, the normalization, the run-period block, built from three exposure-weighted periods, and the estimator-ensemble block, the spread of the eight ensemble members.
+
+Every result is the mean of eight unfoldings whose inputs are independently perturbed at the level of floating-point rounding. A single unfolding moves by up to 2.6 statistical standard deviations under such perturbations; the eight-member mean meets the data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations.

@@ -1,0 +1,37 @@
+### 1. Welcomed vs. Objected Moves
+* **Welcome:** **MV01, MV02, MV03, MV04, MV07/07F, MV08, MV10, MV13, MV14, MV16.** Consolidating fragmented disclosures (e.g., run periods in MV01, coverage in MV02, background subtraction in MV08) eliminates repetitive defensive hedging and sharpens the narrative.
+* **Object to:**
+  * **MV15 (Move Sec. IV G):** *Strong objection.* Numerical instability under floating-point rounding shifting results by up to $2.6\sigma$ is a critical methodological caveat for a machine-learning estimator. A PRD reader must see this in the main paper (condensed to 1–2 sentences), not buried in an analysis note.
+  * **MV09 (Move Sec. VI A item 3):** *Objection.* Clear boundaries on generator non-exclusion and the limits of hybrid null tests are essential to prevent misinterpretation of the cross-section comparisons.
+  * **MV18 / MV17:** Object to moving unverified note material ("NOTE FIRST" flags) until the note explicitly includes and substantiates these statements.
+
+---
+
+### 2. Relocation of Whole Subsections (MV13, MV14, MV15)
+* **MV13 (Sec. IV F, coverage of earlier estimator):** **Appropriate for note.** PRD readers care about the validity of the *reported* estimator. Diagnosing an abandoned estimator belongs in the companion note, retained in the paper only as a single-sentence cross-reference in Sec. IV or VI.
+* **MV14 (Sec. IV E, binned diagnostic):** **Appropriate for note.** A diagnostic isolating tree capacity from regularization bias is standard supplementary technical material. A one-sentence summary in Sec. IV E suffices.
+* **MV15 (Sec. IV G, rounding sensitivity):** **Keep in main paper.** Referees expect algorithmic instabilities of this magnitude to be disclosed prominently. Condense it into Sec. IV or VI A rather than dropping the subsection entirely.
+
+---
+
+### 3. Proposed Consolidated Statements for Top Merges
+The strategy is sound, but phrasing must match concise PRD register:
+
+* **MV01 (Run-period inconsistency, Sec. IV A):**  
+  > *"Unfolded cross sections across the three run-period groups disagree beyond their bootstrap uncertainties by an unidentified mechanism. We account for this by including an empirical run-period covariance block ($C_{\mathrm{PL,5D}}$, rank \fvval{pl-rank}) evaluated from group double ratios, which increases the median cell uncertainty by \fvval{pl-medrise}\,\% (\nsec{sec:fived16-pl})."*
+
+* **MV02 (Coverage disclaimer, Sec. VI A):**  
+  > *"Frequentist interval coverage has not been demonstrated: pseudo-data tests under truth deformations exhibit substantial undercoverage driven by residual unfolding bias (Sec.~\ref{sec:departure}), and a full coverage test of the sixteen-cell covariance was halted at a diagnostic gate (\nsec{sec:fived16-fd})."*
+
+* **MV08 (Background closure, Sec. IV D):**  
+  > *"While binned purity-based background subtraction introduces up to \SI{4}{\percent} residual bias at high $W$ in simulation, negative-weight subtraction with classifier refinement reduces closure residuals below \SI{0.4}{\percent} across projections (Fig.~\ref{fig:bkg-residual}), differing by at most \SI{1.4}{\percent} on data."*
+
+---
+
+### 4. Join-Only Moves (MV05, MV11, MV12)
+**Skip them.** Concatenating sentences with semicolons or conjunctions merely games the caveat-counting metric without reducing cognitive load or improving readability. Devote editorial effort to genuine conceptual merges.
+
+---
+
+### 5. Overall Target (~6 caveats / 1,000 words)
+**Yes, ~6 per 1,000 words is an appropriate, realistic target.** While published PRD neutrino measurements average 1.4–4.5, this paper presents a pioneering, high-dimensional machine-learning unfolding with significant known pathologies (regularization bias, run-period tensions, and unvalidated coverage). A higher caveat density than standard analyses is necessary to maintain experimental integrity; ~6/1k strikes the right balance between transparent peer-reviewed reporting and readable physics narrative.

@@ -1,0 +1,2541 @@
+{
+ "population": {
+  "rows": 842,
+  "bcd_labels": 331,
+  "excluded_a_e_labels": [
+   {
+    "kind": "a",
+    "label": "2d background closure used earlier covariance",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "2d central value rebuilt after purity bias",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "2d result switched to refined subtraction",
+    "statements": 2
+   },
+   {
+    "kind": "a",
+    "label": "closure thresholds set against earlier ml floor",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "earlier 2d budget defects",
+    "statements": 7
+   },
+   {
+    "kind": "a",
+    "label": "earlier 5d covariance construction superseded",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "earlier 5d covariance superseded by cz",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "earlier check missed flux constraint weights",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "earlier covariance before flux-band repair",
+    "statements": 2
+   },
+   {
+    "kind": "a",
+    "label": "exact-split was earlier central value",
+    "statements": 2
+   },
+   {
+    "kind": "a",
+    "label": "generator comparison first made on carbon",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "generator flux defect repaired",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "generator predictions flux repair",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "independent replay only of earlier rc1",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "n-d flux universe division bug repaired",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "rc7 assembled for earlier article version",
+    "statements": 2
+   },
+   {
+    "kind": "a",
+    "label": "superseded statistical bands",
+    "statements": 2
+   },
+   {
+    "kind": "a",
+    "label": "superseded unified-throw 5d covariance",
+    "statements": 1
+   },
+   {
+    "kind": "a",
+    "label": "superseded values kept in records document",
+    "statements": 1
+   },
+   {
+    "kind": "e",
+    "label": "closure thresholds set against earlier ml floor",
+    "statements": 1
+   },
+   {
+    "kind": "e",
+    "label": "covariance provenance records",
+    "statements": 1
+   },
+   {
+    "kind": "e",
+    "label": "coverage test predeclared",
+    "statements": 1
+   },
+   {
+    "kind": "e",
+    "label": "detector-mismatch amplitude fixed before results",
+    "statements": 1
+   },
+   {
+    "kind": "e",
+    "label": "iteration rule predeclared",
+    "statements": 1
+   },
+   {
+    "kind": "e",
+    "label": "n-d flux universe division bug repaired",
+    "statements": 1
+   },
+   {
+    "kind": "e",
+    "label": "n-d rank cut fixed in advance",
+    "statements": 1
+   },
+   {
+    "kind": "e",
+    "label": "rounding-study criterion predeclared",
+    "statements": 1
+   },
+   {
+    "kind": "e",
+    "label": "run-period audit",
+    "statements": 1
+   }
+  ]
+ },
+ "items": {
+  "n01": {
+   "statements": 1,
+   "labels": [
+    "2d result not established as publishable measurement"
+   ],
+   "locations": [
+    "sec_execsummary.tex:9"
+   ],
+   "unlocated_or_partial": [],
+   "key": "pub2d"
+  },
+  "n02": {
+   "statements": 23,
+   "labels": [
+    "5d background treatment comparison missing",
+    "binned purity weight in some results",
+    "comparison rows use older purity subtraction",
+    "config (a) 5d results predate refinement",
+    "different background treatments across results",
+    "figures use purity-subtracted configuration (a)",
+    "purity choice for standard chain by record",
+    "purity revisit open for config-(a) 5d"
+   ],
+   "locations": [
+    "sec_intro.tex:26",
+    "sec_method.tex:26",
+    "sec_method.tex:28",
+    "sec_method.tex:103",
+    "sec_3d.tex:98",
+    "sec_3d.tex:223",
+    "sec_5d.tex:51",
+    "sec_fps.tex:26",
+    "sec_fps.tex:58",
+    "app_statmethods.tex:552",
+    "app_negweight.tex:106",
+    "app_negweight.tex:118",
+    "app_negweight.tex:126",
+    "app_negweight.tex:149",
+    "app_negweight.tex:155",
+    "app_negweight.tex:157",
+    "app_negweight.tex:163",
+    "app_negweight.tex:168"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "which gives the 3D and 4D central values and the sixteen-cell result (§10) but not the configuration-(a) 5D central value",
+     "best": "app_negweight.tex:161",
+     "token_share": 0.62
+    }
+   ],
+   "key": "bkgmix"
+  },
+  "n03": {
+   "statements": 1,
+   "labels": [
+    "results limited to one implementation and dataset"
+   ],
+   "locations": [
+    "sec_intro.tex:32"
+   ],
+   "unlocated_or_partial": [],
+   "key": "onedata"
+  },
+  "n04": {
+   "statements": 3,
+   "labels": [
+    "background prediction carries no uncertainty",
+    "background rate evaluated on one playlist",
+    "background-cv choice"
+   ],
+   "locations": [
+    "sec_experiment.tex:26"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "changes the square-root trace of the combined block sum by 0.28 % and CZ by 0.18 %, a numerically negligible bound on the background-CV choice",
+     "best": "sec_systematics.tex:320",
+     "token_share": 0.52
+    }
+   ],
+   "key": "bkgmodel"
+  },
+  "n05": {
+   "statements": 1,
+   "labels": [
+    "playlist flux differences neglected"
+   ],
+   "locations": [
+    "sec_experiment.tex:38"
+   ],
+   "unlocated_or_partial": [],
+   "key": "playlistflux"
+  },
+  "n06": {
+   "statements": 5,
+   "labels": [
+    "pet background subtraction not validated",
+    "pet work not used in note",
+    "point-cloud work in progress"
+   ],
+   "locations": [
+    "selection_features.tex:20",
+    "app_pet_pointer.tex:5"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "the sixteen-cell result (§10.4); and point-cloud work (App. F).",
+     "best": "sec_execsummary.tex:21",
+     "token_share": 0.5
+    },
+    {
+     "quote": "is in progress and documented separately (App. F), and no result in this note depends on it.",
+     "best": "sec_intro.tex:32",
+     "token_share": 0.53
+    },
+    {
+     "quote": "Extended fiducial domain: §12. PET remains diagnostic method development;",
+     "best": "selection_features.tex:20",
+     "token_share": 0.62
+    }
+   ],
+   "key": "pet"
+  },
+  "n07": {
+   "statements": 11,
+   "labels": [
+    "bootstrap block excludes training-seed variation",
+    "bootstrap-seed interaction in training-seed block",
+    "seed 42 chosen on computing cost",
+    "seed dependence of central value",
+    "seed interaction terms reported not added",
+    "seed sensitivity of excess shares",
+    "seed-42 central value over-dispersed",
+    "training-seed block poorly determined"
+   ],
+   "locations": [
+    "sec_method.tex:48",
+    "sec_systematics.tex:99",
+    "sec_systematics.tex:265",
+    "sec_eavailw.tex:118",
+    "sec_5d.tex:312",
+    "app_statmethods.tex:95",
+    "app_statmethods.tex:113"
+   ],
+   "unlocated_or_partial": [],
+   "key": "seed"
+  },
+  "n08": {
+   "statements": 2,
+   "labels": [
+    "lightgbm chosen after seeing publication comparison"
+   ],
+   "locations": [
+    "sec_execsummary.tex:9",
+    "sec_method.tex:79"
+   ],
+   "unlocated_or_partial": [],
+   "key": "lgbm"
+  },
+  "n09": {
+   "statements": 1,
+   "labels": [
+    "configurations not combined"
+   ],
+   "locations": [
+    "sec_method.tex:96"
+   ],
+   "unlocated_or_partial": [],
+   "key": "nocombine"
+  },
+  "n10": {
+   "statements": 16,
+   "labels": [
+    "2d background closure not coverage test",
+    "2d closures omit backgrounds",
+    "no coverage test for refined 5d subtraction",
+    "purity subtraction bias",
+    "purity-subtraction bias",
+    "refined subtraction 5d closure failures",
+    "residual background bias with refinement",
+    "stay-positive underfitting at unfold setting"
+   ],
+   "locations": [
+    "sec_execsummary.tex:21",
+    "sec_method.tex:100",
+    "sec_5d.tex:51",
+    "sec_5d.tex:90",
+    "app_negweight.tex:136",
+    "app_negweight.tex:163",
+    "app_negweight.tex:168"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Highest-W column 3.5 % to 4.1 % low; negative-weight treatment 0.11 % to 0.24 %",
+     "best": "sec_5d.tex:51",
+     "token_share": 0.44
+    },
+    {
+     "quote": "All 2D closures in §5 unfold reweighted simulated signal without background, so they do not test background subtraction.",
+     "best": "sec_5d.tex:13",
+     "token_share": 0.76
+    },
+    {
+     "quote": "The bias comes from the purity-based subtraction (§C), enters no quoted covariance, and has no established size on data.",
+     "best": "sec_5d.tex:51",
+     "token_share": 0.55
+    },
+    {
+     "quote": "the positive-weight probability is underfit, leaving up to 4 % reco-level subtraction error per (Eavail , W ) reco cell.",
+     "best": "app_negweight.tex:179",
+     "token_share": 0.78
+    }
+   ],
+   "key": "purity"
+  },
+  "n11": {
+   "statements": 13,
+   "labels": [
+    "no 3d or 4d covariance"
+   ],
+   "locations": [
+    "sec_execsummary.tex:11",
+    "sec_method.tex:103",
+    "sec_systematics.tex:4",
+    "sec_3d.tex:10",
+    "sec_3d.tex:145",
+    "sec_3d.tex:184",
+    "sec_3d.tex:206",
+    "sec_3d.tex:209",
+    "sec_3d.tex:216",
+    "sec_fived16.tex:43"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "the generator comparisons (§§7–8); the absence of a 3D or 4D covariance (§7);",
+     "best": "sec_execsummary.tex:21",
+     "token_share": 0.73
+    },
+    {
+     "quote": "The 4D and extended-fiducial results have no covariance from this procedure, and CZ is not transferred to them.",
+     "best": "sec_systematics.tex:320",
+     "token_share": 0.68
+    },
+    {
+     "quote": "would supply a 3D covariance; it has been computed but is not quoted (§7) or used for any result in this note.",
+     "best": "sec_3d.tex:149",
+     "token_share": 0.62
+    }
+   ],
+   "key": "cov34"
+  },
+  "n12": {
+   "statements": 3,
+   "labels": [
+    "no non-closure uncertainty assigned",
+    "no profiled nuisance treatment"
+   ],
+   "locations": [
+    "sec_method.tex:207",
+    "sec_validation.tex:37"
+   ],
+   "unlocated_or_partial": [],
+   "key": "noprofile"
+  },
+  "n13": {
+   "statements": 21,
+   "labels": [
+    "detector model dependence not tested",
+    "detector-mismatch test is protocol only",
+    "detector-response mismatch untested",
+    "physically correlated follow-up deferred"
+   ],
+   "locations": [
+    "sec_method.tex:209",
+    "sec_validation.tex:39",
+    "sec_validation.tex:57",
+    "sec_eavailw.tex:118",
+    "sec_fived16.tex:134",
+    "sec_fived16.tex:196",
+    "sec_fived16.tex:198",
+    "app_response_mismatch.tex:4",
+    "app_response_mismatch.tex:13",
+    "app_response_mismatch.tex:20",
+    "app_response_mismatch.tex:22"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Protocol (App. D) implemented, not run",
+     "best": null,
+     "token_share": 0
+    },
+    {
+     "quote": "These statements hold under the nominal detector response, and the regularization bias of Sec. 9 is largest at high Eavail and high W .",
+     "best": "sec_eavailw.tex:118",
+     "token_share": 0.64
+    },
+    {
+     "quote": "No repeat-variance axis; historical truth ratios, fixed detector response",
+     "best": null,
+     "token_share": 0
+    },
+    {
+     "quote": "They do not directly test truth-distribution bias from a mismatch between the pseudodata detector response and OmniFold’s nominal response.",
+     "best": "app_response_mismatch.tex:4",
+     "token_share": 0.62
+    },
+    {
+     "quote": "would support stability of the (Eavail , W ) interpretation only within the tested response envelope.",
+     "best": "app_response_mismatch.tex:22",
+     "token_share": 0.57
+    }
+   ],
+   "key": "detmis"
+  },
+  "n14": {
+   "statements": 13,
+   "labels": [
+    "band independence assumption",
+    "block independence and linearity assumed",
+    "block independence assumption",
+    "covariance shares estimator and seed with central value",
+    "shared simulation events not assessed"
+   ],
+   "locations": [
+    "sec_systematics.tex:4",
+    "sec_systematics.tex:50",
+    "sec_systematics.tex:156",
+    "app_statmethods.tex:146",
+    "app_statmethods.tex:157",
+    "app_statmethods.tex:193",
+    "app_statmethods.tex:235",
+    "app_statmethods.tex:284",
+    "app_statmethods.tex:364",
+    "app_statmethods.tex:500",
+    "app_statmethods.tex:632",
+    "app_statmethods.tex:639"
+   ],
+   "unlocated_or_partial": [],
+   "key": "indepblk"
+  },
+  "n15": {
+   "statements": 7,
+   "labels": [
+    "band centering about universe mean",
+    "biased 1/n normalization of band covariance",
+    "bootstrap mean offset excluded",
+    "cv-centering retains mean shift",
+    "mean-centering scope limited to ±1σ band"
+   ],
+   "locations": [
+    "sec_systematics.tex:12",
+    "sec_systematics.tex:50",
+    "sec_systematics.tex:231",
+    "sec_5d.tex:294",
+    "app_statmethods.tex:223",
+    "app_statmethods.tex:231"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "the per-bin median offset of a band’s center from the central value is 0.10 % to 0.55 % of the central value, or 0.09–2.85 times the band’s σ.",
+     "best": "sec_systematics.tex:231",
+     "token_share": 0.6
+    }
+   ],
+   "key": "centering"
+  },
+  "n16": {
+   "statements": 8,
+   "labels": [
+    "bootstrap smaller than paper stat unexplained",
+    "finite replica count error on sigma",
+    "poisson approximation to multinomial bootstrap",
+    "statistical block smaller than published"
+   ],
+   "locations": [
+    "sec_systematics.tex:50",
+    "sec_systematics.tex:53",
+    "app_statmethods.tex:117",
+    "app_statmethods.tex:126",
+    "app_statmethods.tex:458",
+    "app_statmethods.tex:468"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The fixed-truth test (§5.2, §4.2) does not decide between the explanations above.",
+     "best": "app_statmethods.tex:468",
+     "token_share": 0.64
+    }
+   ],
+   "key": "statsmall"
+  },
+  "n17": {
+   "statements": 38,
+   "labels": [
+    "2d statistical block coverage untested",
+    "attribution analysis added after pilot",
+    "coverage test at different seed",
+    "coverage test blind to regularization bias",
+    "coverage test shares resampling mechanism",
+    "earlier statistical band undercovers",
+    "fixed-truth coverage failure of earlier stat band",
+    "fixed-truth coverage test scope",
+    "post hoc per-bin coverage analysis",
+    "post hoc rescoring of undivided band",
+    "post hoc single-toy diagnostic",
+    "split bootstrap not repeated on quoted block",
+    "statistical block coverage not validated",
+    "undivided band overcovers"
+   ],
+   "locations": [
+    "sec_execsummary.tex:21",
+    "sec_systematics.tex:53",
+    "sec_validation.tex:140",
+    "sec_validation.tex:144",
+    "sec_validation.tex:148",
+    "sec_validation.tex:150",
+    "sec_validation.tex:152",
+    "sec_validation.tex:161",
+    "sec_validation.tex:163",
+    "sec_validation.tex:181",
+    "sec_summary.tex:15",
+    "app_statmethods.tex:458",
+    "app_statmethods.tex:468",
+    "app_statmethods.tex:636"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The statistical block quoted here has had no coverage test: the fixed-truth coverage studies of §5.2 scored two earlier statistical bands, not this block.",
+     "best": "sec_systematics.tex:53",
+     "token_share": 0.67
+    },
+    {
+     "quote": "Predeclared coverage windows; earlier (completenessdivided) band undercovers in its tails (§5.2)",
+     "best": "sec_validation.tex:18",
+     "token_share": 0.5
+    },
+    {
+     "quote": "At the interim analysis (Ntoy = 100, 205 bins) the completeness-divided band undercovers in its tails.",
+     "best": "sec_validation.tex:144",
+     "token_share": 0.64
+    },
+    {
+     "quote": "The attribution is partial: in the replica form, the p∥ 40 GeV/c to 60 GeV/c column still undercovers.",
+     "best": "sec_validation.tex:150",
+     "token_share": 0.5
+    },
+    {
+     "quote": "A split bootstrap of the earlier rebuilt bootstrap (Ref. [37], superseded values: retired material)",
+     "best": "app_statmethods.tex:458",
+     "token_share": 0.69
+    },
+    {
+     "quote": "Earlier statistical band vs. fixed truth, Ntoy = 100: fails",
+     "best": "app_statmethods.tex:620",
+     "token_share": 0.75
+    },
+    {
+     "quote": "Same-ensemble 68.71% (§5.3) checks Gaussianity; it does not certify Cstat at the half-percent level.",
+     "best": "app_statmethods.tex:636",
+     "token_share": 0.43
+    },
+    {
+     "quote": "The fixed-truth test (§5.2) found the diagonal of the first-built Cstat undercovering in its tails (C2 = 0.912, unevenly across bins);",
+     "best": "app_statmethods.tex:636",
+     "token_share": 0.4
+    }
+   ],
+   "key": "stat2d"
+  },
+  "n18": {
+   "statements": 17,
+   "labels": [
+    "gbdt estimator dependence of result",
+    "gbdt training instability in small bands",
+    "learner dependence not in covariance",
+    "ml band misses full estimator stochasticity",
+    "per-band endpoint displacements not stored",
+    "single-seed training noise in universe block",
+    "universe reproduction inferred not verified"
+   ],
+   "locations": [
+    "sec_systematics.tex:102",
+    "sec_systematics.tex:121",
+    "sec_systematics.tex:141",
+    "sec_systematics.tex:143",
+    "sec_systematics.tex:156",
+    "sec_systematics.tex:220",
+    "sec_systematics.tex:265",
+    "sec_systematics.tex:299",
+    "sec_results.tex:131",
+    "app_statmethods.tex:537",
+    "app_statmethods.tex:552",
+    "app_statmethods.tex:557"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Seven universes of the July sweep (§4.1) are reproduced to ≤ 1.4 × 10−11 by the committed driver; the others are accepted by inference, because the same code produced them",
+     "best": "sec_systematics.tex:121",
+     "token_share": 0.76
+    }
+   ],
+   "key": "learner"
+  },
+  "n19": {
+   "statements": 4,
+   "labels": [
+    "covariance omits nonlinear cross-source terms",
+    "nonlinear cross term omitted from band sum"
+   ],
+   "locations": [
+    "sec_execsummary.tex:17",
+    "sec_systematics.tex:156",
+    "app_statmethods.tex:159"
+   ],
+   "unlocated_or_partial": [],
+   "key": "xterm"
+  },
+  "n20": {
+   "statements": 7,
+   "labels": [
+    "run-period inconsistency of unknown cause"
+   ],
+   "locations": [
+    "sec_systematics.tex:165",
+    "sec_fived16.tex:125"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "1G–1M to the earliest periods, 1A–1F, has a p∥ step of (+6.89 ± 0.46)% at 8 GeV/c.",
+     "best": "sec_systematics.tex:165",
+     "token_share": 0.62
+    },
+    {
+     "quote": "and the run-period block (§4.5) raises the per-bin median from 5.98 % to 6.41 %.",
+     "best": "sec_results.tex:88",
+     "token_share": 0.58
+    }
+   ],
+   "key": "rpcause"
+  },
+  "n21": {
+   "statements": 9,
+   "labels": [
+    "no jitter floor subtracted",
+    "run-period block noise not subtracted",
+    "run-period block overlap with other blocks",
+    "run-period block reference choice",
+    "run-period block size poorly determined"
+   ],
+   "locations": [
+    "sec_systematics.tex:156",
+    "sec_systematics.tex:168",
+    "sec_systematics.tex:186",
+    "sec_fived16.tex:125",
+    "sec_fived16.tex:127",
+    "app_statmethods.tex:632"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "and in cells R00, R08 it is dominated by that noise.",
+     "best": "sec_fived16.tex:125",
+     "token_share": 0.55
+    }
+   ],
+   "key": "rpsize"
+  },
+  "n22": {
+   "statements": 23,
+   "labels": [
+    "coverage study stopped at interim",
+    "interval coverage not validated",
+    "sixteen-cell coverage test stopped",
+    "sixteen-cell result fake-data limitation",
+    "validated total uncertainties unobtainable"
+   ],
+   "locations": [
+    "main_note.tex:73",
+    "sec_execsummary.tex:21",
+    "sec_systematics.tex:214",
+    "sec_validation.tex:44",
+    "sec_validation.tex:144",
+    "sec_5d.tex:90",
+    "sec_5d.tex:174",
+    "sec_5d.tex:179",
+    "sec_5d.tex:187",
+    "sec_5d.tex:207",
+    "sec_5d.tex:214",
+    "sec_fived16.tex:198"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "No result’s intervals have validated coverage (two dimensions: §4.6; five dimensions: §9.5; the sixteen cells: §10.4).",
+     "best": "sec_execsummary.tex:21",
+     "token_share": 0.64
+    },
+    {
+     "quote": "the fake-data limitation of the sixteen-cell result (§10.4); and point-cloud work (App. F).",
+     "best": "sec_execsummary.tex:21",
+     "token_share": 0.6
+    },
+    {
+     "quote": "surrogates, and Cmodel and Cresp not at all), was stopped before any coverage pseudo-experiment ran.",
+     "best": "sec_fived16.tex:198",
+     "token_share": 0.69
+    },
+    {
+     "quote": "to that of the drawn covariance lay outside 0.9–1.1 in 11 of the 16 cells, ranging from 0.70 to 2.30.",
+     "best": "sec_fived16.tex:198",
+     "token_share": 0.53
+    }
+   ],
+   "key": "cov16"
+  },
+  "n23": {
+   "statements": 5,
+   "labels": [
+    "2d result not independently validated",
+    "no independent simulation for validation",
+    "reductions cross-checked by analyst only",
+    "reproducibility is not validation",
+    "values not independently recomputed"
+   ],
+   "locations": [
+    "sec_systematics.tex:214",
+    "sec_systematics.tex:265",
+    "sec_validation.tex:4",
+    "app_statmethods_nd.tex:47"
+   ],
+   "unlocated_or_partial": [],
+   "key": "indep2d"
+  },
+  "n24": {
+   "statements": 18,
+   "labels": [
+    "clipped negative band weights",
+    "flux–muon-energy cross block excluded",
+    "frinel_pi dial disabled in standard set",
+    "lateral bands via linear surrogate",
+    "rvp1pi band dropped from band sum",
+    "single-pass lateral bands omit migrations",
+    "universe miss-weighting approximation",
+    "weight-based hadron bands outside replacement"
+   ],
+   "locations": [
+    "sec_systematics.tex:40",
+    "sec_systematics.tex:218",
+    "sec_systematics.tex:237",
+    "sec_systematics.tex:294",
+    "sec_systematics.tex:297",
+    "sec_3d.tex:161",
+    "sec_joint.tex:47",
+    "sec_joint.tex:161",
+    "app_statmethods.tex:130",
+    "app_statmethods.tex:189"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Because the single-pass shifted observables exist only for events selected at the central value, re-selected event loops (§4.7) would be needed to bound migration effects.",
+     "best": "sec_3d.tex:206",
+     "token_share": 0.73
+    },
+    {
+     "quote": "would determine the correlation ρ between the leading flux mode and the muon-energy-scale band (§4) entirely within this analysis.",
+     "best": "sec_summary.tex:20",
+     "token_share": 0.79
+    }
+   ],
+   "key": "lateral"
+  },
+  "n25": {
+   "statements": 7,
+   "labels": [
+    "global exposure ratio bias uncorrected",
+    "global pot ratio approximation",
+    "normalization model dependence untested",
+    "pot counting uncertainty not separate"
+   ],
+   "locations": [
+    "sec_systematics.tex:243"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "On the integrated cross section Cmodel gives 0.03 %, and the total stays at 4.76 %: the reweightings change only the prior’s shape, so Cmodel does not test the model dependence of the normalization.",
+     "best": "sec_systematics.tex:227",
+     "token_share": 0.48
+    },
+    {
+     "quote": "In single cells the combination differs from the pooled result by −1.83 % to 3.78 %, each with |z| at most 0.31.",
+     "best": "sec_systematics.tex:243",
+     "token_share": 0.65
+    },
+    {
+     "quote": "The pipeline uses one global POTdata /POT MC ratio; per-playlist ratios span 0.1707–0.2371.",
+     "best": "app_statmethods.tex:534",
+     "token_share": 0.54
+    }
+   ],
+   "key": "pot"
+  },
+  "n26": {
+   "statements": 1,
+   "labels": [
+    "miss completeness check scope"
+   ],
+   "locations": [
+    "sec_validation.tex:14"
+   ],
+   "unlocated_or_partial": [],
+   "key": "miss"
+  },
+  "n27": {
+   "statements": 5,
+   "labels": [
+    "no simultaneous coverage from projections",
+    "pointwise intervals, no simultaneous claim",
+    "pooled coverage not simultaneous",
+    "projection covariance not calibrated"
+   ],
+   "locations": [
+    "sec_validation.tex:21",
+    "app_statmethods_nd.tex:33",
+    "app_statmethods_nd.tex:60",
+    "app_statmethods_nd.tex:62"
+   ],
+   "unlocated_or_partial": [],
+   "key": "pointwise"
+  },
+  "n28": {
+   "statements": 9,
+   "labels": [
+    "hidden δpt leakage closure failure",
+    "hidden-variable closure fails at large amplitude"
+   ],
+   "locations": [
+    "sec_validation.tex:29",
+    "sec_validation.tex:86",
+    "sec_3d.tex:107",
+    "app_statmethods.tex:580"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The 3.0% acceptance bound is looser than the truth-reweight bound because the weak ∆pT –pT correlation prevents complete removal of the leakage.",
+     "best": "app_statmethods.tex:578",
+     "token_share": 0.59
+    },
+    {
+     "quote": "about 11% of a hidden ∆pT bias leaks into the measured (pT , p∥ ) marginal.",
+     "best": "app_statmethods.tex:580",
+     "token_share": 0.38
+    },
+    {
+     "quote": "bound is satisfied for hidden-∆pT deformations up to roughly A ≃ 0.26 and is violated above it.",
+     "best": "app_statmethods.tex:580",
+     "token_share": 0.62
+    }
+   ],
+   "key": "hidden"
+  },
+  "n29": {
+   "statements": 10,
+   "labels": [
+    "5d w bump narrow pass",
+    "bump closures judged on marginals only",
+    "bump closures signal only",
+    "higher-d bump closures lack predeclared threshold",
+    "w3 residual persistence scope"
+   ],
+   "locations": [
+    "sec_validation.tex:89",
+    "sec_validation.tex:93",
+    "sec_validation.tex:97",
+    "sec_validation.tex:100",
+    "sec_validation.tex:127",
+    "sec_validation.tex:129",
+    "sec_3d.tex:104",
+    "sec_5d.tex:135"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Neighbouring W bins are 3.1 % and 2.7 % high, and joint (Eavail , W ) cells in the peak column 2.2 % to 9.4 % low.",
+     "best": "sec_validation.tex:98",
+     "token_share": 0.47
+    }
+   ],
+   "key": "bump"
+  },
+  "n30": {
+   "statements": 37,
+   "labels": [
+    "estimator does not follow eavail shape changes",
+    "five-dimensional regularization bias",
+    "generator-shape prior dependence reported separately",
+    "held-out generator-shape bias",
+    "hidden q3 deformation bias",
+    "nuwro-shaped closure bias",
+    "omnifold implicit regularization",
+    "prior-sensitivity envelope has no probability model",
+    "prior-shift envelopes are sensitivities only",
+    "regularization dependence not assigned",
+    "reliance on prior shape description",
+    "weakly constrained truth directions"
+   ],
+   "locations": [
+    "sec_experiment.tex:45",
+    "sec_systematics.tex:221",
+    "sec_systematics.tex:222",
+    "sec_systematics.tex:227",
+    "sec_systematics.tex:229",
+    "sec_validation.tex:108",
+    "sec_validation.tex:116",
+    "sec_validation.tex:128",
+    "sec_5d.tex:61",
+    "sec_5d.tex:75",
+    "sec_5d.tex:77",
+    "sec_5d.tex:95",
+    "sec_5d.tex:168",
+    "sec_5d.tex:194",
+    "sec_5d.tex:196",
+    "sec_5d.tex:202",
+    "sec_joint.tex:50",
+    "app_statmethods.tex:552",
+    "app_statmethods_nd.tex:47"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The high-Eavail , high-W region carries the largest regularization bias measured in §9.",
+     "best": "sec_execsummary.tex:13",
+     "token_share": 0.77
+    },
+    {
+     "quote": "the five-dimensional estimator’s regularization bias (§9.3) and the purity-subtraction bias",
+     "best": "sec_execsummary.tex:21",
+     "token_share": 0.58
+    },
+    {
+     "quote": "Median 2 % to 6 %, at most 16 % to 31 % per joint cell; within the configuration-(a) total uncertainty in 20 of 42 (Eavail , W ) cells",
+     "best": "sec_validation.tex:112",
+     "token_share": 0.58
+    },
+    {
+     "quote": "A generator ratio changes correlated structure across Eavail , W and q3 , including directions the reconstructed observables constrain weakly",
+     "best": "sec_validation.tex:126",
+     "token_share": 0.56
+    },
+    {
+     "quote": "The comparison leaves out the generator-shape component Cmodel (§4.6), because the published uncertainty has no such component either;",
+     "best": "sec_results.tex:88",
+     "token_share": 0.5
+    },
+    {
+     "quote": "These statements hold under the nominal detector response, and the regularization bias of Sec. 9 is largest at high Eavail and high W .",
+     "best": "sec_eavailw.tex:118",
+     "token_share": 0.64
+    },
+    {
+     "quote": "none; studies during estimator development recovery requirement; not met",
+     "best": "sec_5d.tex:33",
+     "token_share": 0.56
+    },
+    {
+     "quote": "A q3 deformation preserving the (Eavail , W ) truth shifts these cells by up to 37 %.",
+     "best": "sec_5d.tex:61",
+     "token_share": 0.57
+    },
+    {
+     "quote": "The residuals are therefore a property of the estimator (five iterations, the GBDT configuration of §3), not of the background treatment;",
+     "best": "sec_5d.tex:61",
+     "token_share": 0.75
+    },
+    {
+     "quote": "2 % to 6 % and at most 16 % to 31 %, within the configuration-(a) total uncertainty in 20 of the 42",
+     "best": "sec_5d.tex:95",
+     "token_share": 0.64
+    },
+    {
+     "quote": "Historical W3 at five iterations: correlation is not a per-cell bias bound",
+     "best": "sec_5d.tex:202",
+     "token_share": 0.38
+    },
+    {
+     "quote": "With either treatment, the estimator does not follow generator-sized Eavail shape changes.",
+     "best": "app_negweight.tex:168",
+     "token_share": 0.77
+    }
+   ],
+   "key": "regbias"
+  },
+  "n31": {
+   "statements": 12,
+   "labels": [
+    "c2st descriptive and uncalibrated",
+    "figure error bars not covariance",
+    "figure uncertainties not shown",
+    "pull fractions diagnostic only",
+    "same-ensemble pulls not coverage test"
+   ],
+   "locations": [
+    "sec_validation.tex:187",
+    "sec_validation.tex:191",
+    "sec_validation.tex:199",
+    "sec_results.tex:23",
+    "sec_results.tex:72",
+    "sec_results.tex:160",
+    "app_statmethods_nd.tex:52"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Same-ensemble pull diagnostic (not a coverage test). An earlier ensemble of Ntoy = 200 2D closure unfolds",
+     "best": "sec_validation.tex:191",
+     "token_share": 0.75
+    },
+    {
+     "quote": "The error bars on the unfolded points of Fig. 7 are the bin errors stored with the unfolded histogram and its projections, not the covariance of §4.",
+     "best": "sec_results.tex:5",
+     "token_share": 0.64
+    }
+   ],
+   "key": "figbars"
+  },
+  "n32": {
+   "statements": 41,
+   "labels": [
+    "bootstrap/paper-stat double-count",
+    "chi2 does not address coverage",
+    "combined chi2 relies on paper stat floor",
+    "comparison chi2 is descriptive distance only",
+    "diagonal chi2 omits unfolding covariance",
+    "earlier mat check without normalization band",
+    "eigen-pulls without calibrated significance",
+    "gaussian bin approximation",
+    "goodness-of-fit values indicative only",
+    "log-normal chi2 definition dependence",
+    "missing cross-covariance with paper result",
+    "no calibrated significance for generator comparisons",
+    "no cross-covariance with published result",
+    "no defensible own-covariance chi2",
+    "norm/shape split not c+-orthogonal",
+    "paper-dependent bashyal correlation",
+    "single chi2 realization not uncertainty validation"
+   ],
+   "locations": [
+    "sec_systematics.tex:214",
+    "sec_validation.tex:35",
+    "sec_results.tex:30",
+    "sec_results.tex:35",
+    "sec_results.tex:65",
+    "sec_3d.tex:85",
+    "sec_3d.tex:98",
+    "app_statmethods.tex:231",
+    "app_statmethods.tex:347",
+    "app_statmethods.tex:355",
+    "app_statmethods.tex:360",
+    "app_statmethods.tex:362",
+    "app_statmethods.tex:364",
+    "app_statmethods.tex:371",
+    "app_statmethods.tex:376",
+    "app_statmethods.tex:411",
+    "app_statmethods.tex:494",
+    "app_statmethods.tex:496",
+    "app_statmethods.tex:500",
+    "app_statmethods.tex:505",
+    "app_statmethods.tex:530",
+    "app_statmethods.tex:532",
+    "app_statmethods.tex:596",
+    "app_statmethods.tex:631"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "differences standardized by published uncertainties (Fig. 8) are sub-1σ; the χ2 values are descriptive.",
+     "best": "sec_results.tex:58",
+     "token_share": 0.5
+    },
+    {
+     "quote": "the earlier MAT check without the normalization band (§A.2.6) used the option --add-norm 0",
+     "best": "app_guide.tex:8",
+     "token_share": 0.57
+    },
+    {
+     "quote": "Without Cxy , the summed Cx + Cy double-counts shared systematics and omits their correlation.",
+     "best": "app_statmethods.tex:360",
+     "token_share": 0.57
+    },
+    {
+     "quote": "Without the external floor, our finite-N blocks fill Csyst ’s null space",
+     "best": "app_statmethods.tex:376",
+     "token_share": 0.69
+    },
+    {
+     "quote": "Even at full rank (205) a defensible single χ2ours is out of reach, for a statistical-precision reason.",
+     "best": "app_statmethods.tex:458",
+     "token_share": 0.53
+    },
+    {
+     "quote": "The inverse of Cours remains regularizer-dependent, so pulls and the scan lead the reporting.",
+     "best": "app_statmethods.tex:474",
+     "token_share": 0.73
+    },
+    {
+     "quote": "We therefore report direct per-bin pulls (§A.3.3) and this scan rather than a single unqualified χ2ours",
+     "best": "app_statmethods.tex:494",
+     "token_share": 0.47
+    },
+    {
+     "quote": "The combined distance (§A.3.2) adds Cboot to TotalCov, double-counting the paper’s included statistical block.",
+     "best": "app_statmethods.tex:496",
+     "token_share": 0.62
+    },
+    {
+     "quote": "is the descriptive distance of §A.3.2, not a quoted result or validation statistic",
+     "best": "app_statmethods.tex:505",
+     "token_share": 0.54
+    },
+    {
+     "quote": "the earlier machine-precision check of §A.2.6 covers the unweighted bands",
+     "best": "app_statmethods.tex:505",
+     "token_share": 0.55
+    }
+   ],
+   "key": "chi2pub"
+  },
+  "n33": {
+   "statements": 2,
+   "labels": [
+    "flux band smaller than published unexplained"
+   ],
+   "locations": [
+    "sec_results.tex:88"
+   ],
+   "unlocated_or_partial": [],
+   "key": "fluxsmall"
+  },
+  "n34": {
+   "statements": 3,
+   "labels": [
+    "shape difference from published 2d result"
+   ],
+   "locations": [
+    "sec_results.tex:128",
+    "sec_results.tex:131"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "reproduces the published integrated cross section [3] within about one percent, with a correlated shape difference (§6).",
+     "best": "sec_execsummary.tex:9",
+     "token_share": 0.6
+    }
+   ],
+   "key": "shape2d"
+  },
+  "n35": {
+   "statements": 1,
+   "labels": [
+    "dimensional cost of higher-d unfolding"
+   ],
+   "locations": [
+    "sec_3d.tex:4"
+   ],
+   "unlocated_or_partial": [],
+   "key": "dimcost"
+  },
+  "n36": {
+   "statements": 3,
+   "labels": [
+    "survey inventory scope",
+    "survey nonexhaustive"
+   ],
+   "locations": [
+    "sec_3d.tex:15",
+    "app_landscape.tex:4",
+    "app_landscape.tex:63"
+   ],
+   "unlocated_or_partial": [],
+   "key": "survey"
+  },
+  "n37": {
+   "statements": 5,
+   "labels": [
+    "135 mev pion constant in eavail",
+    "eavail definition inherited and nonunique"
+   ],
+   "locations": [
+    "sec_3d.tex:40",
+    "sec_3d.tex:42"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Relative to the charged-pion mass, it moves 0.65 % of the simulated signal weight into another of the seven true-Eavail bins of the fine grid",
+     "best": "sec_3d.tex:42",
+     "token_share": 0.44
+    }
+   ],
+   "key": "eavail"
+  },
+  "n38": {
+   "statements": 4,
+   "labels": [
+    "3d marginal shape scatter",
+    "cross-configuration marginal comparison",
+    "no published 3d reference"
+   ],
+   "locations": [
+    "sec_execsummary.tex:11",
+    "sec_3d.tex:85"
+   ],
+   "unlocated_or_partial": [],
+   "key": "ref3d"
+  },
+  "n39": {
+   "statements": 16,
+   "labels": [
+    "3d closure single deformation in config (a)",
+    "alt-model closure isolates shape from acceptance",
+    "alternative-model closure limited to ±1σ variations",
+    "classifier calibration assumption",
+    "classifier-family check config (a) only",
+    "closure passes depend on deformation",
+    "closure tests on playlist 1a only",
+    "closure valid only for tested perturbations",
+    "ordinary closure has no power"
+   ],
+   "locations": [
+    "sec_validation.tex:12",
+    "sec_validation.tex:57",
+    "sec_validation.tex:74",
+    "sec_3d.tex:104",
+    "sec_3d.tex:107",
+    "sec_3d.tex:111",
+    "app_statmethods.tex:562",
+    "app_statmethods.tex:591",
+    "app_statmethods.tex:640"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Larger excursions occur only in sparsely populated outermost pT and p∥ bins.",
+     "best": "sec_3d.tex:117",
+     "token_share": 0.67
+    },
+    {
+     "quote": "scaling the CV truth marginal by the alternative-to-CV in-acceptance count ratio to isolate modelshape response from acceptance/efficiency effects.",
+     "best": "app_statmethods.tex:591",
+     "token_share": 0.73
+    }
+   ],
+   "key": "clos3d"
+  },
+  "n40": {
+   "statements": 8,
+   "labels": [
+    "genie cv prediction lacks 2p2h",
+    "genie+mec normalization workaround",
+    "historical deformations built with unrepaired flux",
+    "unrepaired generator samples in three studies"
+   ],
+   "locations": [
+    "sec_3d.tex:125",
+    "sec_3d.tex:170",
+    "sec_5d.tex:131"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The repaired GENIE and NuWro predictions are used in §§7–8, except in three studies, flagged where they appear, that keep the unrepaired samples:",
+     "best": "sec_3d.tex:133",
+     "token_share": 0.59
+    },
+    {
+     "quote": "Both are ratios within the unrepaired GENIE sample (§7.6), in which the flux defect cancels to first order. Neither was recomputed.",
+     "best": "sec_3d.tex:161",
+     "token_share": 0.6
+    },
+    {
+     "quote": "The GENIE prediction behind the ratio uses a mis-sampled flux (§7.6), so the ratio is a valid known-truth deformation of generator size but not a measured GiBUU–GENIE difference.",
+     "best": "sec_5d.tex:61",
+     "token_share": 0.63
+    },
+    {
+     "quote": "The sample’s mis-sampled flux (§7.6) suppresses its high-p∥ shape, and this prior was not rebuilt after the flux repair.",
+     "best": "sec_fps.tex:31",
+     "token_share": 0.52
+    }
+   ],
+   "key": "gensamp"
+  },
+  "n41": {
+   "statements": 1,
+   "labels": [
+    "fsi conclusion limited to tested dials"
+   ],
+   "locations": [
+    "sec_3d.tex:161"
+   ],
+   "unlocated_or_partial": [],
+   "key": "fsi"
+  },
+  "n42": {
+   "statements": 10,
+   "labels": [
+    "comparisons limited to classifier feature space",
+    "external comparisons limited by definitions",
+    "generator comparisons descriptive only"
+   ],
+   "locations": [
+    "sec_execsummary.tex:13",
+    "sec_3d.tex:161",
+    "sec_3d.tex:170",
+    "sec_3d.tex:175",
+    "sec_3d.tex:177",
+    "sec_eavailw.tex:160"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The others are stated with their results: the generator comparisons (§§7–8); the absence of a 3D or 4D covariance",
+     "best": "sec_execsummary.tex:21",
+     "token_share": 0.56
+    },
+    {
+     "quote": "An observable outside that space requires a new unfolding, as in the 3D extension (§7), which adds Eavail as a classifier feature.",
+     "best": "sec_results.tex:155",
+     "token_share": 0.67
+    },
+    {
+     "quote": "The comparisons with generator predictions in this section and in Sec. 8 are descriptive comparisons of central values and do not identify a nuclear or interaction mechanism (§7.7).",
+     "best": "sec_3d.tex:10",
+     "token_share": 0.58
+    },
+    {
+     "quote": "both GENIE predictions lie 9 % to 12 % above the data. These are central-value ratios.",
+     "best": "sec_eavailw.tex:146",
+     "token_share": 0.62
+    }
+   ],
+   "key": "gendesc"
+  },
+  "n43": {
+   "statements": 6,
+   "labels": [
+    "ascencio comparison limitations"
+   ],
+   "locations": [
+    "sec_3d.tex:209",
+    "sec_summary.tex:20"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The pµ and p∥ cuts differ by ≲ 6 % kinematic smearing at the 20 GeV boundary.",
+     "best": "sec_3d.tex:209",
+     "token_share": 0.69
+    }
+   ],
+   "key": "ascencio"
+  },
+  "n44": {
+   "statements": 4,
+   "labels": [
+    "observables not independently constrained"
+   ],
+   "locations": [
+    "scalar_kinematics.tex:11",
+    "sec_eavailw.tex:67"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Reconstructed W is fixed by (pT , p∥ , q3 ), so the five are simultaneous, not independent, observables (§8.2).",
+     "best": "sec_execsummary.tex:11",
+     "token_share": 0.56
+    },
+    {
+     "quote": "reconstructed W is an exact function of (pT , p∥ , q3 ), apart from the clamp at W 2 = 0, which applies to 1.5 % of simulated events.",
+     "best": "sec_eavailw.tex:63",
+     "token_share": 0.59
+    }
+   ],
+   "key": "indepobs"
+  },
+  "n45": {
+   "statements": 6,
+   "labels": [
+    "no bias-variance study across settings"
+   ],
+   "locations": [
+    "sec_eavailw.tex:9",
+    "sec_5d.tex:105",
+    "sec_5d.tex:161",
+    "sec_5d.tex:168",
+    "sec_5d.tex:174"
+   ],
+   "unlocated_or_partial": [],
+   "key": "biasvar"
+  },
+  "n46": {
+   "statements": 4,
+   "labels": [
+    "generator pt axis convention",
+    "generator w convention differs"
+   ],
+   "locations": [
+    "sec_eavailw.tex:14",
+    "sec_eavailw.tex:70"
+   ],
+   "unlocated_or_partial": [],
+   "key": "genconv"
+  },
+  "n47": {
+   "statements": 3,
+   "labels": [
+    "excess region selected using the data",
+    "information added by w not measured",
+    "share of worst cell not recorded"
+   ],
+   "locations": [
+    "sec_eavailw.tex:67",
+    "sec_eavailw.tex:160"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "is in the cell 0.8 ≤ Eavail < 1.5 GeV, W ≥ 3 GeV, whose share of the cross section the deformation study did not record.",
+     "best": "sec_5d.tex:61",
+     "token_share": 0.75
+    }
+   ],
+   "key": "wexcess"
+  },
+  "n48": {
+   "statements": 25,
+   "labels": [
+    "carbon-only nuwro and gibuu predictions",
+    "ch correction hydrogen samples",
+    "gibuu hydrogen sample defects",
+    "nuwro ch combination discrepancy",
+    "nuwro hydrogen supplement aborts"
+   ],
+   "locations": [
+    "sec_execsummary.tex:15",
+    "sec_eavailw.tex:108",
+    "sec_fived16.tex:311",
+    "sec_fived16.tex:339",
+    "sec_fived16.tex:341",
+    "sec_fived16.tex:348",
+    "sec_joint.tex:305",
+    "sec_joint.tex:319",
+    "sec_joint.tex:327"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "NuWro and GiBUU comparisons contain a target difference of this kind, which the tests of §11, as run, do not correct.",
+     "best": "sec_eavailw.tex:108",
+     "token_share": 0.75
+    },
+    {
+     "quote": "the sampling-closure check failed on its hydrogen sample, a bias check of that check’s premise, added post hoc, passed at ≤ 0.1 σc , and deep-inelastic events, 46 % of its hydrogen sample, do not conserve energy.",
+     "best": "sec_fived16.tex:339",
+     "token_share": 0.63
+    }
+   ],
+   "key": "carbon"
+  },
+  "n49": {
+   "statements": 13,
+   "labels": [
+    "gibuu sample covers limited phase space"
+   ],
+   "locations": [
+    "sec_execsummary.tex:13",
+    "sec_eavailw.tex:137",
+    "sec_fived16.tex:311",
+    "sec_joint.tex:29"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "generator predictions give χ2 values of 107–229 for 16 degrees of freedom; GiBUU gives 48 on its eight supported cells.",
+     "best": "main_note.tex:73",
+     "token_share": 0.31
+    },
+    {
+     "quote": "GiBUU, compared only on the 8 cells its sample covers, gives χ2 = 48 on those cells",
+     "best": "sec_execsummary.tex:6",
+     "token_share": 0.77
+    },
+    {
+     "quote": "Its sample stops at Eν ≈ 20 GeV, so it is empty above p∥ ≈ 20 GeV/c.",
+     "best": "sec_3d.tex:133",
+     "token_share": 0.79
+    },
+    {
+     "quote": "with purity-based subtraction (§3.2); its sample stops at Eν ≈ 20 GeV (§8.5).",
+     "best": "sec_3d.tex:133",
+     "token_share": 0.6
+    },
+    {
+     "quote": "The GiBUU reweighting is applied only below p∥ = 10 GeV/c; above it the prior is unchanged.",
+     "best": "sec_fived16.tex:50",
+     "token_share": 0.5
+    },
+    {
+     "quote": "the GiBUU sample lacks the contribution from Eν > 20 GeV, which is at least 4.9–5.3% of the cross section there",
+     "best": "sec_fived16.tex:50",
+     "token_share": 0.44
+    },
+    {
+     "quote": "GiBUU’s sample has no events above Eν = 20 GeV, so it is compared on the 8 cells below p∥ = 4.5 GeV/c only, and no value is formed on the other 8.",
+     "best": "sec_fived16.tex:204",
+     "token_share": 0.38
+    },
+    {
+     "quote": "In the GENIE CV and NuWro samples, at least 11.71% and 12.59%, respectively, of the cross section above p∥ = 4.5 GeV/c comes from Eν > 20 GeV.",
+     "best": "sec_fived16.tex:204",
+     "token_share": 0.39
+    },
+    {
+     "quote": "The GiBUU sample contains no events with Eν > 20 GeV (§8.5), and its truth outside the test domain",
+     "best": "sec_joint.tex:161",
+     "token_share": 0.56
+    }
+   ],
+   "key": "gibuu"
+  },
+  "n50": {
+   "statements": 26,
+   "labels": [
+    "acceptance correction undecided",
+    "estimator-seed sensitivity exceeds limit",
+    "five-axis covariance ill-conditioned",
+    "five-axis covariance of config (a)",
+    "five-axis covariance seed sensitivity",
+    "five-axis covariance selection status",
+    "five-axis covariance use limited by §9.6 measurements"
+   ],
+   "locations": [
+    "sec_execsummary.tex:21",
+    "sec_eavailw.tex:146",
+    "sec_5d.tex:250",
+    "sec_5d.tex:281",
+    "sec_5d.tex:298",
+    "sec_5d.tex:306",
+    "sec_5d.tex:309",
+    "sec_5d.tex:311",
+    "sec_5d.tex:316",
+    "sec_joint.tex:5",
+    "app_negweight.tex:185",
+    "app_release.tex:101"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Their sign carries no information: nnegative = 0 describes this computation and does not show that the source’s negative directions were cured.",
+     "best": "sec_5d.tex:298",
+     "token_share": 0.71
+    },
+    {
+     "quote": "1. Estimator-seed sensitivity exceeds its limit. Companion covariances at seed offsets {0, 1200} give the correlation-sensitive measure sproj = 6.145 %, against the movement limit of 5 %,",
+     "best": "sec_5d.tex:306",
+     "token_share": 0.73
+    },
+    {
+     "quote": "the four measurements of §9.6 that limit what the five-axis covariance of the configuration-(a) central value supports",
+     "best": "app_release.tex:71",
+     "token_share": 0.78
+    },
+    {
+     "quote": "The estimator-seed sensitivity, which exceeds its limit (the first measurement of §9.6), is why no significance is computed from it.",
+     "best": "app_release.tex:98",
+     "token_share": 0.6
+    }
+   ],
+   "key": "cov5axis"
+  },
+  "n51": {
+   "statements": 24,
+   "labels": [
+    "5d coverage failure",
+    "5d coverage failures",
+    "5d coverage study uses purity variant",
+    "5d intervals use nominal bootstrap width",
+    "coverage diagnosis inferred from hit counts",
+    "development interval diagnostic limitations",
+    "development interval width not recomputed",
+    "interval examples include known-failing ew41",
+    "relative-residual spread not fixed-truth variance",
+    "rounding study does not prove coverage",
+    "single-simulation trace has no error band",
+    "third coverage truth omitted"
+   ],
+   "locations": [
+    "sec_5d.tex:39",
+    "sec_5d.tex:179",
+    "sec_5d.tex:187",
+    "sec_5d.tex:214",
+    "sec_5d.tex:227",
+    "app_statmethods_nd.tex:33",
+    "app_statmethods_nd.tex:35",
+    "app_statmethods_nd.tex:43",
+    "app_codebase.tex:37"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "so sf measures relativeresidual spread, not unconditional fixed-truth cross-section variance.",
+     "best": "app_statmethods_nd.tex:33",
+     "token_share": 0.67
+    },
+    {
+     "quote": "upper bound below threshold for 51 (68%) and 42 (95%) of 153",
+     "best": null,
+     "token_share": 0
+    }
+   ],
+   "key": "cov5d"
+  },
+  "n52": {
+   "statements": 20,
+   "labels": [
+    "abandoned calibrated model term",
+    "cmodel built from compared generators",
+    "cmodel shape ratios from carbon",
+    "cmodel target-change uncertainty unmeasured",
+    "normdiscc band identically zero",
+    "reweighting-ratio discontinuities in cmodel",
+    "sixteen-cell model term not calibrated bound"
+   ],
+   "locations": [
+    "sec_systematics.tex:243",
+    "sec_5d.tex:77",
+    "sec_fived16.tex:50",
+    "sec_fived16.tex:53",
+    "sec_fived16.tex:171",
+    "sec_fived16.tex:196",
+    "sec_fived16.tex:204",
+    "sec_fived16.tex:343"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Identified after the measurement, these 52 cells hold 59.4 % of the trace of Cmodel and carry most of its large shifts.",
+     "best": "sec_systematics.tex:229",
+     "token_share": 0.58
+    },
+    {
+     "quote": "In every cell, 77–100% of the prior weight lies next to a discontinuity larger than 0.1 in the reweighting ratio, created by the ratio’s statistical gate or by a cut; the shifts are used unmodified.",
+     "best": "sec_fived16.tex:50",
+     "token_share": 0.59
+    },
+    {
+     "quote": "did not pass its first two tests and was not pursued further, after which Cmodel was adopted unscaled",
+     "best": "sec_fived16.tex:53",
+     "token_share": 0.78
+    },
+    {
+     "quote": "did not pass its first two tests and was not pursued further, after which Cmodel was adopted unscaled",
+     "best": "sec_fived16.tex:53",
+     "token_share": 0.78
+    },
+    {
+     "quote": "in the sixteen-cell comparison GiBUU’s total χ2 , on its eight cells, rises, because the CH prediction is paired with Cmodel ’s NuWro and GiBUU shape ratios from carbon",
+     "best": "sec_fived16.tex:339",
+     "token_share": 0.69
+    },
+    {
+     "quote": "For the scale of Cmodel itself, whose size is not calibrated, the table also gives the χ2 with Cmodel removed and doubled.",
+     "best": "sec_fived16.tex:343",
+     "token_share": 0.57
+    },
+    {
+     "quote": "Removing Cmodel raises GiBUU’s total most, to 166.83 from 47.78.",
+     "best": "sec_fived16.tex:343",
+     "token_share": 0.67
+    }
+   ],
+   "key": "cmodel"
+  },
+  "n53": {
+   "statements": 9,
+   "labels": [
+    "binned comparison limitations",
+    "binned vs unbinned estimands differ within bin"
+   ],
+   "locations": [
+    "sec_5d.tex:83",
+    "sec_5d.tex:161",
+    "app_negweight.tex:36"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "It does not address what unbinned or biased estimators could recover, the coverage failure of §9.5 or the validity of any interval, and it establishes no impossibility.",
+     "best": "sec_5d.tex:83",
+     "token_share": 0.58
+    },
+    {
+     "quote": "The constructions agree exactly on bin masses under the piecewise-constant sieve of §C.2; in general they differ by within-bin shape terms.",
+     "best": "app_negweight.tex:36",
+     "token_share": 0.57
+    }
+   ],
+   "key": "binned"
+  },
+  "n54": {
+   "statements": 7,
+   "labels": [
+    "estimator data-stability failure",
+    "rounding nondeterminism of data unfold",
+    "training-seed block zero by determinism"
+   ],
+   "locations": [
+    "sec_5d.tex:90",
+    "sec_fived16.tex:48",
+    "sec_fived16.tex:61",
+    "sec_joint.tex:144"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The paired perturbation study of §9.4 tests whether the bootstrap contains this variability, for this candidate only.",
+     "best": "sec_5d.tex:90",
+     "token_share": 0.69
+    }
+   ],
+   "key": "stab"
+  },
+  "n55": {
+   "statements": 4,
+   "labels": [
+    "development reuse of validation samples",
+    "no held-out split in training"
+   ],
+   "locations": [
+    "sec_method.tex:15",
+    "sec_5d.tex:107"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "95% pointwise t / normal-model SD intervals; development reuse",
+     "best": null,
+     "token_share": 0
+    },
+    {
+     "quote": "Reused assessment samples; no per-experiment or total-coverage claim",
+     "best": null,
+     "token_share": 0
+    }
+   ],
+   "key": "heldout"
+  },
+  "n56": {
+   "statements": 7,
+   "labels": [
+    "capacity probe limited by computing budget",
+    "coarser cells not a precision gain",
+    "precision targets not met"
+   ],
+   "locations": [
+    "sec_5d.tex:135",
+    "sec_5d.tex:146",
+    "sec_5d.tex:168"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "(a residual proxy of Fig. 26 of at most 0.25, against 0.31–0.63 measured), fail in every definition.",
+     "best": "sec_5d.tex:146",
+     "token_share": 0.64
+    }
+   ],
+   "key": "prec"
+  },
+  "n57": {
+   "statements": 1,
+   "labels": [
+    "sixteen-cell result separate product"
+   ],
+   "locations": [
+    "sec_fived16.tex:5"
+   ],
+   "unlocated_or_partial": [],
+   "key": "sep16"
+  },
+  "n58": {
+   "statements": 2,
+   "labels": [
+    "low reconstruction stability cells"
+   ],
+   "locations": [
+    "sec_fived16.tex:9"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Four of them, R02, R06, R10 and R15, have a reconstruction stability of 0.16–0.25 (the other twelve, 0.26–0.81):",
+     "best": "sec_fived16.tex:9",
+     "token_share": 0.31
+    }
+   ],
+   "key": "lowstab"
+  },
+  "n59": {
+   "statements": 3,
+   "labels": [
+    "unsupported boxes unreported",
+    "unsupported cells excluded from summaries"
+   ],
+   "locations": [
+    "sec_fived16.tex:43",
+    "app_statmethods_nd.tex:25"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The merges absorb 1 unsupported box into cell R09; the other 4 are not reported.",
+     "best": "sec_fived16.tex:9",
+     "token_share": 0.54
+    }
+   ],
+   "key": "boxes"
+  },
+  "n60": {
+   "statements": 7,
+   "labels": [
+    "cresp coverage limited",
+    "detector response family assumed",
+    "hadronic-response model completeness not validated"
+   ],
+   "locations": [
+    "sec_systematics.tex:221",
+    "sec_fived16.tex:57",
+    "sec_joint.tex:295"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "This classification does not independently validate hadronic-response model completeness for the Eavail and W measurement.",
+     "best": "sec_systematics.tex:297",
+     "token_share": 0.75
+    },
+    {
+     "quote": "A cross-talk term, reported beside Cresp and not summed into it, has a median per-cell relative σ of 0.36%.",
+     "best": "sec_fived16.tex:57",
+     "token_share": 0.63
+    },
+    {
+     "quote": "The analysis’s systematic set (App. A) has no recoil-energy-scale band, so the completeness of the hadronic response is not established (§11.8).",
+     "best": "sec_joint.tex:161",
+     "token_share": 0.7
+    }
+   ],
+   "key": "cresp"
+  },
+  "n61": {
+   "statements": 9,
+   "labels": [
+    "effective sample size not computed",
+    "finite-ensemble inverse bias",
+    "no finite-ensemble correction"
+   ],
+   "locations": [
+    "sec_method.tex:15",
+    "sec_fived16.tex:120",
+    "app_statmethods_nd.tex:16",
+    "app_statmethods_nd.tex:19"
+   ],
+   "unlocated_or_partial": [],
+   "key": "finite"
+  },
+  "n62": {
+   "statements": 11,
+   "labels": [
+    "run-period block coverage untestable",
+    "run-period block lowers generator chi2",
+    "run-period block masks fake-data failure",
+    "run-period uncertainty added post hoc"
+   ],
+   "locations": [
+    "sec_systematics.tex:186",
+    "sec_fived16.tex:127",
+    "sec_fived16.tex:163"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "including a runperiod contribution estimated after differences between periods were observed",
+     "best": "main_note.tex:73",
+     "token_share": 0.73
+    },
+    {
+     "quote": "The raw 1G–1M p∥ χ2 is 34.8 against the other blocks alone and 2.59 with the block added; these values indicate sensitivity only.",
+     "best": "sec_systematics.tex:186",
+     "token_share": 0.76
+    },
+    {
+     "quote": "With the block, each prediction’s total χ2 is lower by 3.6–29.3 % of its value without it, and each shape-only χ2 by 7.4–40.4 %",
+     "best": "sec_fived16.tex:129",
+     "token_share": 0.5
+    },
+    {
+     "quote": "We infer from these falls that the predictions’ residuals have components along the directions the rank-2 block adds; the comparison does not test this interpretation.",
+     "best": "sec_fived16.tex:129",
+     "token_share": 0.64
+    },
+    {
+     "quote": "one fake-data truth fewer is listed (§10.4), with the bias unchanged.",
+     "best": "sec_fived16.tex:129",
+     "token_share": 0.64
+    }
+   ],
+   "key": "rpposthoc"
+  },
+  "n63": {
+   "statements": 1,
+   "labels": [
+    "fake-data truths not held out"
+   ],
+   "locations": [
+    "sec_fived16.tex:134"
+   ],
+   "unlocated_or_partial": [],
+   "key": "fdheld"
+  },
+  "n64": {
+   "statements": 8,
+   "labels": [
+    "bias tests pass only at genie truths",
+    "fake-data gaussian references context only",
+    "residual bias at non-genie truths exceeds thresholds"
+   ],
+   "locations": [
+    "main_note.tex:73",
+    "sec_fived16.tex:163",
+    "sec_fived16.tex:165",
+    "sec_fived16.tex:196",
+    "sec_fived16.tex:198",
+    "sec_fived16.tex:260"
+   ],
+   "unlocated_or_partial": [],
+   "key": "fdbias"
+  },
+  "n65": {
+   "statements": 3,
+   "labels": [
+    "fake-data offset control check failed"
+   ],
+   "locations": [
+    "sec_fived16.tex:167",
+    "sec_fived16.tex:171"
+   ],
+   "unlocated_or_partial": [],
+   "key": "fdctrl"
+  },
+  "n66": {
+   "statements": 1,
+   "labels": [
+    "tune v1 is prior not independent"
+   ],
+   "locations": [
+    "sec_fived16.tex:204"
+   ],
+   "unlocated_or_partial": [],
+   "key": "tunev1"
+  },
+  "n67": {
+   "statements": 3,
+   "labels": [
+    "chi2 sensitivity to correlations"
+   ],
+   "locations": [
+    "sec_fived16.tex:262"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Shrinking only the flux correlations by 10 % lowers the χ2 of the 16-cell predictions by 23–38 %.",
+     "best": "sec_fived16.tex:262",
+     "token_share": 0.54
+    }
+   ],
+   "key": "chi2corr"
+  },
+  "n68": {
+   "statements": 25,
+   "labels": [
+    "calibrated size averaged over nuisance priors",
+    "calibration fidelity assumption",
+    "fwer assumption a1 calibration fidelity",
+    "fwer assumption a2 independent losses",
+    "fwer assumptions a1 and a2",
+    "fwer bound limited to 1999 pseudo-experiments",
+    "generator test calibration and nuisance model",
+    "generator tests are illustrative application",
+    "generator tests conditional on stated conditions",
+    "generator tests test hybrid nulls, no uncertainty",
+    "null conditional on data-derived lateral inputs",
+    "nulls conditional on one simulation",
+    "rejections not physical exclusions"
+   ],
+   "locations": [
+    "sec_execsummary.tex:15",
+    "sec_execsummary.tex:21",
+    "sec_joint.tex:5",
+    "sec_joint.tex:14",
+    "sec_joint.tex:19",
+    "sec_joint.tex:53",
+    "sec_joint.tex:109",
+    "sec_joint.tex:118",
+    "sec_joint.tex:131",
+    "sec_joint.tex:144",
+    "app_statmethods_nd.tex:70",
+    "app_statmethods_nd.tex:83"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The generator tests of §11 evaluate hybrid null hypotheses and add no reportable uncertainty.",
+     "best": "sec_intro.tex:32",
+     "token_share": 0.69
+    },
+    {
+     "quote": "It motivates the calibrated joint tests of §11, a separate inference that reports no measured cross section.",
+     "best": "sec_5d.tex:146",
+     "token_share": 0.56
+    },
+    {
+     "quote": "The rejections apply to the generator versions listed in §8.5, and they retain all six conditions of §11.4.",
+     "best": "sec_joint.tex:342",
+     "token_share": 0.56
+    },
+    {
+     "quote": "The bound rests on A1, the calibration’s fidelity, which §11.4 discusses, and on A2.",
+     "best": "app_statmethods_nd.tex:83",
+     "token_share": 0.71
+    }
+   ],
+   "key": "jconds"
+  },
+  "n69": {
+   "statements": 8,
+   "labels": [
+    "decisions near boundary",
+    "half-sample empty cells",
+    "metric shrinkage floors correlation directions",
+    "pilot metric reuses events and omits band",
+    "unfolded event weights correlated for inference"
+   ],
+   "locations": [
+    "sec_joint.tex:37",
+    "sec_joint.tex:53",
+    "sec_joint.tex:144",
+    "app_statmethods_nd.tex:58"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Treating them as independent in a downstream likelihood can underestimate parameter uncertainties [63]; nominal weights do not specify uncertainty.",
+     "best": "app_statmethods_nd.tex:58",
+     "token_share": 0.67
+    }
+   ],
+   "key": "jmetric"
+  },
+  "n70": {
+   "statements": 9,
+   "labels": [
+    "data-informed joint-test design elements",
+    "estimator selected before joint-test design",
+    "post hoc genie projection observation"
+   ],
+   "locations": [
+    "sec_method.tex:100",
+    "sec_joint.tex:118",
+    "sec_joint.tex:237",
+    "sec_summary.tex:10"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The joint-test estimator (§11.2) was chosen before the design was fixed.",
+     "best": "sec_joint.tex:118",
+     "token_share": 0.64
+    },
+    {
+     "quote": "were fixed before any production pseudoexperiment or observed statistic, with two data-informed elements.",
+     "best": "sec_joint.tex:118",
+     "token_share": 0.57
+    },
+    {
+     "quote": "The GENIE 2.12.10 values in the (pT , p∥ ) column are a post hoc observation.",
+     "best": "sec_joint.tex:262",
+     "token_share": 0.46
+    }
+   ],
+   "key": "jdesign"
+  },
+  "n71": {
+   "statements": 12,
+   "labels": [
+    "fine-grid convergence not shown",
+    "neutrino energies above 100 gev omitted",
+    "tune v1 composition below fine grid"
+   ],
+   "locations": [
+    "sec_joint.tex:141",
+    "sec_joint.tex:161",
+    "sec_joint.tex:207",
+    "sec_joint.tex:342"
+   ],
+   "unlocated_or_partial": [],
+   "key": "finegrid"
+  },
+  "n72": {
+   "statements": 5,
+   "labels": [
+    "simulation-size shift (condition iv)"
+   ],
+   "locations": [
+    "sec_joint.tex:144"
+   ],
+   "unlocated_or_partial": [],
+   "key": "simsize"
+  },
+  "n73": {
+   "statements": 15,
+   "labels": [
+    "lost pseudo-experiments rerun for reporting only",
+    "post-decision studies for reporting only",
+    "sequential stopping decided with results visible"
+   ],
+   "locations": [
+    "sec_execsummary.tex:15",
+    "sec_joint.tex:126",
+    "sec_joint.tex:189",
+    "sec_joint.tex:213",
+    "sec_joint.tex:220",
+    "sec_joint.tex:222",
+    "sec_joint.tex:224",
+    "sec_joint.tex:237",
+    "app_statmethods_nd.tex:72"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "A scan of κ along the direction δfine of the claim variants [56] (for reporting only) found,",
+     "best": "sec_joint.tex:207",
+     "token_share": 0.73
+    },
+    {
+     "quote": "The decisions of Table 25 remain those of the evaluation before recovery, at the B at which its rule stopped.",
+     "best": "sec_joint.tex:224",
+     "token_share": 0.79
+    }
+   ],
+   "key": "lost"
+  },
+  "n74": {
+   "statements": 13,
+   "labels": [
+    "joint vs projected power not compared",
+    "low power for some alternatives",
+    "no evidence of added joint discrimination",
+    "power vs reco-level test not compared",
+    "recovery checks narrower",
+    "rejections global, not localized",
+    "tests recover known disagreements"
+   ],
+   "locations": [
+    "sec_joint.tex:14",
+    "sec_joint.tex:213",
+    "sec_joint.tex:224",
+    "sec_joint.tex:237",
+    "sec_joint.tex:342",
+    "sec_summary.tex:10"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "and the third, a MEC-like (Eavail , W ) shape, with 0.231. At the GENIE 2.12.10 null the shape powers at 0.005 are 0.739, 0.02 and 0.00.",
+     "best": "sec_joint.tex:213",
+     "token_share": 0.65
+    },
+    {
+     "quote": "The comparisons recover the generator disagreements already established by the published twodimensional measurement on the same data [3].",
+     "best": "sec_joint.tex:342",
+     "token_share": 0.65
+    }
+   ],
+   "key": "power"
+  },
+  "n75": {
+   "statements": 8,
+   "labels": [
+    "no calorimetric response band in tests",
+    "recoil-scale study exploratory"
+   ],
+   "locations": [
+    "sec_joint.tex:269",
+    "sec_joint.tex:272",
+    "sec_joint.tex:291",
+    "sec_joint.tex:295",
+    "sec_joint.tex:342"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "In an exploratory sensitivity study of the response [60], the data are re-unfolded with the simulation’s reconstructed recoil energy scaled by ±4 %,",
+     "best": "sec_joint.tex:272",
+     "token_share": 0.64
+    }
+   ],
+   "key": "calor"
+  },
+  "n76": {
+   "statements": 15,
+   "labels": [
+    "extended domain not full phase space",
+    "extended-fiducial containment diagnostic limited",
+    "extended-fiducial has no covariance",
+    "extended-fiducial study preliminary",
+    "extended-fiducial value used purity, not designated baseline"
+   ],
+   "locations": [
+    "sec_execsummary.tex:19",
+    "sec_fps.tex:4",
+    "sec_fps.tex:33",
+    "sec_fps.tex:52",
+    "sec_fps.tex:58",
+    "app_negweight.tex:141"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The 4D and extended-fiducial results have no covariance from this procedure, and CZ is not transferred to them.",
+     "best": "sec_systematics.tex:320",
+     "token_share": 0.68
+    },
+    {
+     "quote": "The statistical-band, pull and regional fractions are in App. B.3; none is used to certify a covariance.",
+     "best": "sec_fps.tex:33",
+     "token_share": 0.56
+    },
+    {
+     "quote": "The scalar extended-fiducial study (§12) yields a preliminary central value",
+     "best": "sec_summary.tex:20",
+     "token_share": 0.5
+    },
+    {
+     "quote": "the number quoted in §12 was not produced this way.",
+     "best": "app_negweight.tex:149",
+     "token_share": 0.56
+    }
+   ],
+   "key": "fps"
+  },
+  "n77": {
+   "statements": 9,
+   "labels": [
+    "tier-2 extrapolated from prior"
+   ],
+   "locations": [
+    "sec_execsummary.tex:19",
+    "sec_fps.tex:14",
+    "sec_fps.tex:19",
+    "sec_fps.tex:31",
+    "sec_fps.tex:47",
+    "sec_fps.tex:58",
+    "sec_summary.tex:20"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "tier 2 of the extended-fiducial study (§12); the fake-data limitation",
+     "best": "sec_execsummary.tex:21",
+     "token_share": 0.6
+    }
+   ],
+   "key": "tier2"
+  },
+  "n78": {
+   "statements": 2,
+   "labels": [
+    "neut not compared"
+   ],
+   "locations": [
+    "sec_summary.tex:20"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "with the same flux and phase space. NEUT [43] is not included.",
+     "best": "sec_3d.tex:129",
+     "token_share": 0.64
+    }
+   ],
+   "key": "neut"
+  },
+  "n79": {
+   "statements": 18,
+   "labels": [
+    "n-d covariance rank deficiency",
+    "ndf rank evidence specific to 2d",
+    "projected covariance rank cutoff-dependent",
+    "pseudo-inverse cutoff zeroes small modes",
+    "systematic covariance rank deficiency",
+    "truncated pseudo-inverse chi2",
+    "truncated pseudo-inverse convention unpublished"
+   ],
+   "locations": [
+    "sec_results.tex:35",
+    "app_statmethods.tex:20",
+    "app_statmethods.tex:33",
+    "app_statmethods.tex:331",
+    "app_statmethods.tex:440",
+    "app_statmethods.tex:446",
+    "app_statmethods.tex:500",
+    "app_statmethods_nd.tex:10",
+    "app_statmethods_nd.tex:12",
+    "app_release.tex:96",
+    "app_release.tex:98"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The collaboration uses the same truncated-spectral pseudo-inverse as χ2ours (private communication)",
+     "best": "app_statmethods.tex:500",
+     "token_share": 0.77
+    },
+    {
+     "quote": "The 2D justification in §A.3.2 does not transfer to N-D.",
+     "best": "app_statmethods.tex:331",
+     "token_share": 0.55
+    },
+    {
+     "quote": "a second host reproduces λmin to only five significant digits.",
+     "best": "app_release.tex:96",
+     "token_share": 0.5
+    }
+   ],
+   "key": "rank"
+  },
+  "n80": {
+   "statements": 2,
+   "labels": [
+    "19 diagonal cells unreported",
+    "205-bin selection excludes 19 suppressed cells"
+   ],
+   "locations": [
+    "app_statmethods.tex:304"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The 2D grid has 14 pT × 16 p∥ bins; 205 of 224 are reported.",
+     "best": "sec_method.tex:191",
+     "token_share": 0.4
+    }
+   ],
+   "key": "cells19"
+  },
+  "n81": {
+   "statements": 19,
+   "labels": [
+    "cross-check diagnostics not recomputed for lightgbm cv",
+    "exact-split has no matched covariance",
+    "exact-split seed not fixed",
+    "exact-split seed spread unmeasured",
+    "exact-split studies not recomputed",
+    "iteration insensitivity tested only for exact-split",
+    "raw signed weights destabilize exact-split",
+    "regularization scan on earlier covariance",
+    "tension anatomy computed on exact-split only"
+   ],
+   "locations": [
+    "sec_method.tex:79",
+    "sec_method.tex:103",
+    "sec_method.tex:149",
+    "sec_method.tex:151",
+    "sec_systematics.tex:102",
+    "sec_validation.tex:16",
+    "sec_validation.tex:204",
+    "sec_results.tex:35",
+    "app_statmethods.tex:380",
+    "app_statmethods.tex:435",
+    "app_statmethods.tex:476",
+    "app_statmethods.tex:505",
+    "app_statmethods.tex:511"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Same data, exact-split crosscheck; five versus ten iterations",
+     "best": "sec_validation.tex:16",
+     "token_share": 0.44
+    },
+    {
+     "quote": "numbers for the exact-split cross-check; Figs. 11 and 12 show the LightGBM central value",
+     "best": "app_statmethods.tex:534",
+     "token_share": 0.57
+    },
+    {
+     "quote": "Raw signed weights destabilize an exact-split boosted-tree classifier, inflating a full low-pT cross-section row by up to a factor ∼5 × 104",
+     "best": "app_negweight.tex:40",
+     "token_share": 0.61
+    }
+   ],
+   "key": "exsplit"
+  },
+  "n82": {
+   "statements": 23,
+   "labels": [
+    "background appendix numbers not quoted uncertainties",
+    "binned-limit derivation is consistency check",
+    "covariance equivalence only in aggregate",
+    "endpoint unfolds background mode inferred by elimination",
+    "floor value is a prescription, not a minimizer",
+    "neg-weight vs purity edge-bin departure",
+    "negative-weight behavior estimator dependent",
+    "negative-weight equivalence at 2d only",
+    "negative-weight equivalence on third backend",
+    "negative-weight injection not production path",
+    "stay-positive can retain negative weights"
+   ],
+   "locations": [
+    "app_negweight.tex:8",
+    "app_negweight.tex:38",
+    "app_negweight.tex:40",
+    "app_negweight.tex:59",
+    "app_negweight.tex:61",
+    "app_negweight.tex:102",
+    "app_negweight.tex:106",
+    "app_negweight.tex:122",
+    "app_negweight.tex:155"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "Only one low-pT , high-background edge bin differs by more than a few percent (−12.6 %)",
+     "best": "app_negweight.tex:71",
+     "token_share": 0.73
+    },
+    {
+     "quote": "Departures occur only where the binned max(0, ·) and structural floor of §C.1 govern the result.",
+     "best": "app_negweight.tex:71",
+     "token_share": 0.4
+    },
+    {
+     "quote": "Only the low-pT , high-background edge bin departs by more than a few percent.",
+     "best": "app_negweight.tex:95",
+     "token_share": 0.73
+    },
+    {
+     "quote": "The measured agreement concerns the 2D systematic and statistical covariances of §C.5 at the stated configurations.",
+     "best": "app_negweight.tex:155",
+     "token_share": 0.69
+    }
+   ],
+   "key": "negw"
+  },
+  "n83": {
+   "statements": 4,
+   "labels": [
+    "code snapshot and rc7 not deposited",
+    "release not tagged"
+   ],
+   "locations": [
+    "sec_summary.tex:38",
+    "app_release.tex:9"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "github.com/josephbaileyy/MINERvA-OmniFold, identified at deposit: [snapshot identifier pending deposit].",
+     "best": "main_note.tex:35",
+     "token_share": 0.33
+    }
+   ],
+   "key": "release"
+  },
+  "n84": {
+   "statements": 23,
+   "labels": [
+    "checkpoint outputs lack metadata",
+    "downstream reuse needs own checks",
+    "event-level analysis not reproducible from package",
+    "fixed identity not scientific qualification",
+    "missing run configuration records",
+    "pdf rebuild is not reproduction",
+    "production numbers provenance not pinned",
+    "provenance not recorded for most objects",
+    "rc7 incomplete vs release schema",
+    "rc7 inventory without checksums",
+    "rc7 reproduction scope",
+    "scalar-5d synthesis reuses saved outputs",
+    "simulation anatuples not preserved"
+   ],
+   "locations": [
+    "sec_method.tex:48",
+    "sec_method.tex:79",
+    "sec_summary.tex:38",
+    "app_statmethods_nd.tex:47",
+    "app_negweight.tex:8",
+    "app_release.tex:4",
+    "app_release.tex:9",
+    "app_release.tex:37",
+    "app_release.tex:47",
+    "app_release.tex:50",
+    "app_release.tex:53",
+    "app_release.tex:58",
+    "app_release.tex:69"
+   ],
+   "unlocated_or_partial": [
+    {
+     "quote": "The synthesis in §9.4 reuses saved outputs; it involves no new unfolding, training or pseudoexperiments.",
+     "best": "app_statmethods_nd.tex:25",
+     "token_share": 0.71
+    },
+    {
+     "quote": "with the scan code of Ref. [56], but it is not part of RC7’s own verification.",
+     "best": "app_release.tex:50",
+     "token_share": 0.62
+    }
+   ],
+   "key": "repro"
+  }
+ }
+}

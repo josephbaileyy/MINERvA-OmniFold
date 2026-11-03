@@ -75,6 +75,11 @@ READOUTS = {
     # holds both arms, so both arms read the same files
     "e2": (f"{FD}/fd/gencmp-e2/rerun1/chi2/e2.json", "0aa73ebf"),
     "e2sens": (f"{FD}/fd/gencmp-e2/rerun1/sens/x_e2_sens.out.txt", "223f3f88"),
+    # the quadrant sums against the adopted 2D result (DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md
+    # item 1): step C-R's bound rule (FD-GENCMP-AMENDMENT-E-REPORT.md sec. 3.2) and GENCMP X's cross-covariance test
+    # (FD-GENCMP-X-REPORT.md sec. 1). Each is computed once, from the reported matrix, so both arms read the same files
+    "cr": (f"{FD}/fd/gencmp-e/c-r/overlap_refined.json", "f1f2fb78"),
+    "xk": (f"{FD}/fd/xcov/run/k/k.json", "f3dc2a34"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -372,6 +377,113 @@ def e2_values(d, arm):
     return v
 
 
+def solve(A, b):
+    """x with A x = b, by Gaussian elimination with partial pivoting (the quadrant matrices are 4 x 4)."""
+    n = len(b)
+    M = [list(A[i]) + [b[i]] for i in range(n)]
+    for c in range(n):
+        p = max(range(c, n), key=lambda r: abs(M[r][c]))
+        M[c], M[p] = M[p], M[c]
+        for r in range(c + 1, n):
+            f = M[r][c] / M[c][c]
+            M[r] = [M[r][k] - f * M[c][k] for k in range(n + 1)]
+    x = [0.0] * n
+    for r in reversed(range(n)):
+        x[r] = (M[r][n] - sum(M[r][k] * x[k] for k in range(r + 1, n))) / M[r][r]
+    return x
+
+
+def bound_up(x):
+    """x rounded up to two decimals: an upper bound that prints true."""
+    return f"{math.ceil(100 * x - 1e-9) / 100:.2f}"
+
+
+def bound_down(x):
+    """x rounded down to two decimals: a lower bound that prints true."""
+    return f"{math.floor(100 * x + 1e-9) / 100:.2f}"
+
+
+def quadrant_values(d):
+    """C-R's per-quadrant reading and GENCMP X's joint test, for the paper's quadrant sentence and the note's tables."""
+    v, Q = {}, ["QA", "QB", "QC", "QD"]
+    cr, k = d["cr"], d["xk"]
+    q = cr["quadrants"]
+    assert cr["schema"] == "fd-gencmp-overlap/1" and cr["result_2d"] == "E_R with Q_R" and sorted(q) == Q
+    word = {"agree": "agree", "agree below a correlation": "agree below a correlation"}
+    for n in Q:
+        x, t = q[n], q[n]["2D"]
+        assert x["cells"] == CELLS[4 * Q.index(n):4 * Q.index(n) + 4]
+        assert abs(x["S16"] - t["S"] - t["d"]) <= 1e-12 * x["S16"] and abs(100 * t["d"] / t["S"] - t["d_pct"]) < 1e-9
+        v[f"cr-{n}-cells"] = f"{x['cells'][0]}--{x['cells'][-1]}"
+        v[f"cr-{n}-s16"], v[f"cr-{n}-sig16"] = f"{x['S16'] / 1e-39:.4f}", f"{x['sigma16_reported'] / 1e-39:.4f}"
+        v[f"cr-{n}-s2"], v[f"cr-{n}-sig2"] = f"{t['S'] / 1e-39:.4f}", f"{t['sigma'] / 1e-39:.4f}"
+        v[f"cr-{n}-dpct"], v[f"cr-{n}-z0"] = f"{t['d_pct']:+.3f}", f"{t['z_rho0']:+.3f}"
+        v[f"cr-{n}-reading"], v[f"cr-{n}-rhostar"] = word[t["outcome"]], f"{t['rho_star']:.4f}"
+        o = t["printed_only_without_C_PL5D"]
+        v[f"cr-{n}-nopl-reading"], v[f"cr-{n}-nopl-rhostar"] = word[o["outcome"]], f"{o['rho_star']:.4f}"
+        # "agree" is |d| within the any-correlation band (rho* above 1); "agree below a correlation", rho* at most 1
+        assert (t["outcome"] == "agree") == (t["rho_star"] > 1) and (o["outcome"] == "agree") == (o["rho_star"] > 1)
+    # the paper: "the sums differ by -1.5 to +0.7 per cent"
+    pct = [q[n]["2D"]["d_pct"] for n in Q]
+    assert min(pct) < 0 < max(pct), "the paper prints a signed range of the quadrant differences"
+    v["x-dpct-min"], v["x-dpct-max"] = f"{min(pct):+.1f}".replace("+", ""), f"{max(pct):+.1f}"
+    # GENCMP X: K0 checked that its d is C-R's; asserted again here
+    assert k["schema"] == "fd-xcov-k/1" and k["v1_source"] == "full" and all(k["controls"].values())
+    assert all(abs(k["d"][i] - q[n]["2D"]["d"]) <= 1e-12 * q[n]["S16"] and abs(k["S16"][i] / q[n]["S16"] - 1) < 1e-12
+               and abs(k["S2D"][i] / q[n]["2D"]["S"] - 1) < 1e-12 for i, n in enumerate(Q)), "X's d is not C-R's"
+    v["x-ncontrols"] = str(len(k["controls"]))
+    # "The statistical correlation, and that of four systematic terms that could not be evaluated directly, are bounded"
+    assert k["route"] == "A" and k["route_reasons"] == ["K2 failed for the statistical block: falls back to route A"], \
+        "the paper says the statistical correlation is bounded, not measured"
+    bands = sorted(c for c in k["crosses"] if c.startswith("band:"))
+    assert len(k["bounded"]) == 4 and all(b.startswith("band:") and b not in k["crosses"] for b in k["bounded"]), \
+        "the paper says four systematic terms are bounded"
+    v["x-nbands-paired"], v["x-nbands"] = str(len(bands)), str(len(bands) + len(k["bounded"]))
+    v["x-nlat"] = str(sum(c.startswith("lat:") for c in k["crosses"]))
+    v["x-bounded"] = ", ".join(b[len("band:"):] for b in k["bounded"])
+    # the family: every bounded cross block enters as r * M (fd_xcov.route_a), so V_d(r) = V_d(0) - r (M + M^T).
+    # V_d(0) is rebuilt from the readout's own and paired cross blocks, and must give its chi2 at r = 0
+    own, cross = k["own"], [k["crosses"][c] for c in k["crosses"]]
+    K = [[sum(c[i][j] for c in cross) for j in range(4)] for i in range(4)]
+    V0 = [[own["C16q"][i][j] + own["C2q"][i][j] - K[i][j] - K[j][i] for j in range(4)] for i in range(4)]
+    p = k["primary"]
+    assert abs(sum(a * b for a, b in zip(k["d"], solve(V0, k["d"]))) / p["r0"]["chi2_4"] - 1) < 1e-9, \
+        "V_d(0) rebuilt from the blocks does not give the readout's chi2"
+    # Each |z| is d over the root of a diagonal entry linear in r, so it is monotone in r and its largest value on [0, 1]
+    # is at r = 0 or r = 1. chi2(r) = d^T V_d(r)^-1 d is convex in r (its second derivative is
+    # 2 d^T V^-1 D V^-1 D V^-1 d >= 0 with D = M + M^T and V positive definite), so its largest value, and the smallest p,
+    # are at an end too. The readout records the two ends; it does not record chi2's smallest value inside [0, 1]
+    for name, key in (("primary", "prim"), ("Q_R_alone", "qr"), ("C_PL_pair_zero", "nopair")):
+        R = k[name]
+        assert R["outcome"] == "agree" and R["r_star"] is None and R["changes_at"] == [], \
+            f"{name}: the agreement holds over the family"
+        for r in ("r0", "r1"):
+            v[f"x-{key}-chi2-{r}"], v[f"x-{key}-p-{r}"] = f"{R[r]['chi2_4']:.3f}", f"{R[r]['p']:.3f}"
+        v[f"x-{key}-zmax"] = f"{max(abs(z) for r in ('r0', 'r1') for z in R[r]['z']):.3f}"
+    for i, n in enumerate(Q):
+        z0, z1 = p["r0"]["z"][i], p["r1"]["z"][i]
+        assert z0 * k["d"][i] > 0 and z1 * k["d"][i] > 0 and abs(z1) > abs(z0)
+        assert abs(math.sqrt(V0[i][i]) - k["d"][i] / z0) <= 1e-9 * math.sqrt(V0[i][i])
+        v[f"x-{n}-z0"], v[f"x-{n}-z1"] = f"{z0:+.3f}", f"{z1:+.3f}"
+        v[f"x-{n}-rho0"], v[f"x-{n}-rho1"] = f"{k['rho_q']['r0'][n]:.2f}", f"{k['rho_q']['r1'][n]:.2f}"
+    for r in ("r0", "r1"):                             # the note prints each end's range as QC's to QA's
+        rho = k["rho_q"][r]
+        assert min(rho, key=rho.get) == "QC" and max(rho.values()) == rho["QA"], "the correlations' range changed"
+    # the paper: "chi2 <= 1.24 for four degrees of freedom (p >= 0.87), with no quadrant beyond one standard deviation"
+    # (Joseph's answer on #695). chi2 is convex in r, so its largest value over [0, 1] is at an end: the r = 1 end, here.
+    # Each printed bound must be true: chi2's rounded up, p's rounded down (the director's ruling on rounding, #695)
+    c0, c1 = p["r0"]["chi2_4"], p["r1"]["chi2_4"]
+    assert c1 > c0, "the paper prints the r = 1 chi2 as the family's largest"
+    pmin = min(p["r0"]["p"], p["r1"]["p"])
+    v["x-chi2-hi"], v["x-p-min"] = bound_up(c1), bound_down(pmin)
+    assert float(v["x-chi2-hi"]) >= c1 and float(v["x-p-min"]) <= pmin, \
+        "a printed bound is not a bound: chi2 <= x-chi2-hi and p >= x-p-min must hold"
+    zmax = max(abs(z) for r in ("r0", "r1") for z in p[r]["z"])
+    assert zmax < 1, "the paper says no quadrant lies beyond one standard deviation"
+    v["x-zmax"] = f"{zmax:.3f}"
+    return v
+
+
 def values(d, arm="with"):
     A = ARMS[arm]
     v = {}
@@ -520,6 +632,7 @@ def values(d, arm="with"):
         v[f"{k}-ncells-word"] = WORDS[len(p["cells"])]
     v.update(gencmp_values(d, arm))
     v.update(e2_values(d, arm))
+    v.update(quadrant_values(d))
     # G-SENS: chi2 at each alpha per family, and the sentence's bounds (16-cell predictions only)
     recs = d["sens2"]["sens"]["records"] + d["fup"]["sens"]["records"]
     for r in recs:
@@ -1029,6 +1142,48 @@ def self_test():
                 print(f"  ok   an E2 readout that {what} is refused")
             else:
                 print(f"  FAIL an E2 readout that {what} was refused by another guard: {e}"); ok = False
+    # the quadrant sentence: each fact it states is asserted, so each plant must be refused
+    def xz(d, i, z):                                  # one r = 1 z changed in k.json
+        d["xk"]["primary"]["r1"]["z"][i] = z
+    for what, plant, why in (("puts a quadrant beyond one standard deviation", lambda d: xz(d, 2, -1.01),
+                              "no quadrant lies beyond one standard deviation"),
+                             ("measures the statistical correlation", lambda d: d["xk"].update(route="B"),
+                              "bounded, not measured"),
+                             ("bounds a fifth band", lambda d: d["xk"]["bounded"].append("band:Extra"),
+                              "four systematic terms are bounded"),
+                             ("changes its reading inside the family",
+                              lambda d: d["xk"]["primary"].update(changes_at=[0.5]), "agreement holds over the family"),
+                             ("has a d that is not C-R's", lambda d: d["xk"]["d"].__setitem__(0, 1.01 * d["xk"]["d"][0]),
+                              "X's d is not C-R's"),
+                             ("gives a chi2 at r = 0 that its blocks do not",
+                              lambda d: d["xk"]["primary"]["r0"].update(chi2_4=1.2), "rebuilt from the blocks"),
+                             ("gives a chi2 at r = 1 below that at r = 0",
+                              lambda d: d["xk"]["primary"]["r1"].update(chi2_4=1.0), "the family's largest")):
+        d = load()
+        plant(d)
+        try:
+            values(d)
+            print(f"  FAIL a quadrant readout that {what} was accepted"); ok = False
+        except AssertionError as e:
+            if why in str(e):
+                print(f"  ok   a quadrant readout that {what} is refused")
+            else:
+                print(f"  FAIL a quadrant readout that {what} was refused by another guard: {e}"); ok = False
+    # the printed bounds: rounding chi2 to nearest (1.2402 -> 1.24) or p up (0.8714 -> 0.88) must be refused
+    for name, wrong, what in (("bound_up", lambda x: f"{x:.2f}", "the chi2 bound rounded to nearest"),
+                              ("bound_down", lambda x: f"{math.ceil(100 * x) / 100:.2f}", "the p bound rounded up")):
+        keep = globals()[name]
+        globals()[name] = wrong
+        try:
+            values(load())
+            print(f"  FAIL {what} was accepted"); ok = False
+        except AssertionError as e:
+            if "a printed bound is not a bound" in str(e):
+                print(f"  ok   {what} is refused")
+            else:
+                print(f"  FAIL {what} was refused by another guard: {e}"); ok = False
+        finally:
+            globals()[name] = keep
     # the listed-truth sentences: silent on the committed tree, and each plant must fail at the sentence it changed
     d, dn, texts = load(), load(NOPL_READOUTS), read_claim_texts()
     if check_listed_claims(d["f0b"], texts, dn["f0b"]):

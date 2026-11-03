@@ -168,6 +168,10 @@ checks above take its place:
 - **Still byte-exact.** The other held sentences (G1:paper-g-08, G1:paper-s-08, G1b:paper-g-07, -g-09, -g-14, -g-19,
   -s-02, -s-13, the FROZEN pair G1:paper-g-03 and G1b:paper-g-02, and the abstract G1b:paper-s-07) are acted on by no
   in-scope gap, and stay exact. G1b:paper-s-05 is exempt only through the applied A1 pair.
+- **Released, 2026-11-02: G1b:paper-g-09** (IV B's "The learner was selected after …"). Joseph's later decision
+  `DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md` item 2 (#690) orders IV B's last paragraph
+  rewritten as a consistency benchmark, and the director ruled that #690 stands over this hold (on #695). It is in
+  `check_held.py` RELEASED, with that reason. Its facts are carried by the quadrant-sec4-20261102 ledger, row Q-6.
 - **R-6** was accepted by the director as a cut to the note: the note prints the fallback role (`sec_5d.tex`), and
   ledger P-10 probes it.
 

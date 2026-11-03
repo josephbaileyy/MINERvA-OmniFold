@@ -1,0 +1,37 @@
+{
+ "schema": "fd-gencmp-ea2-control-d/1",
+ "pass": true,
+ "figures": {
+  "fd_g_fig_ratio": {
+   "pass": true,
+   "label_texts_changed": 2,
+   "differences": []
+  },
+  "fd_g_fig_modes": {
+   "pass": true,
+   "label_texts_changed": 1,
+   "differences": []
+  },
+  "fd_g_fig_sens": {
+   "pass": true,
+   "label_texts_changed": 2,
+   "differences": []
+  }
+ },
+ "committed_sidecars": {
+  "fd_g_fig_ratio": "ab4fbcb2cc35a957777a81d25e2a3ffef4c37d06e128e65cb9f1743531f56423",
+  "fd_g_fig_modes": "1d89897dd2a563344fa07a424fc2b1de912cfc31ef16e9a8a4cb886d598edc70",
+  "fd_g_fig_sens": "627e5f4ccfc8941022af4582581e681c8b02ccaa69d2b5e3d90ea91e196c1407"
+ },
+ "new_sidecars": {
+  "fd_g_fig_ratio": "271a68f41d9c2573d58d2810fc6a532d9d4a02898e580fe9ba22abced2295b90",
+  "fd_g_fig_modes": "06e9521e9559bfd931f0867d63300f01fc1559baa4f4e02fa5bda98ec44b6724",
+  "fd_g_fig_sens": "0f30d89b865ee7b110ce2203af08b023dfdef6ca4d6463a59c9273b577d439f7"
+ },
+ "code_sha256": {
+  "fd_gencmp_ea2.py": "5702722fd452606c2f780f1fe4a9b097899ecf3e7148890e1309b7230cc6b6c1",
+  "fd_g_figures.py": "5d2916cb793975282769c6e3d31699deec04401b70c62d6cf50a765b505b9f8a",
+  "fd_g_figures_check.py": "dd80100d8583c085b228e85be12326bc426dd8e5c392732f301a16a789035fef",
+  "fd_gencmp_e.py": "743608fdaa9d339faf216df72c6f53b253afd2ab1bb1a1d97210144ba259bec5"
+ }
+}

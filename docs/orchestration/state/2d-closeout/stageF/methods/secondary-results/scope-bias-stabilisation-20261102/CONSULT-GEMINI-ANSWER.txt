@@ -1,0 +1,56 @@
+# Senior Reviewer Evaluation: MINERvA 5D OmniFold Manuscript
+
+---
+
+### 1. Item A: Fake-Data Bias and Prior Dependence
+
+* **A1 Circularity:** The scoping report is entirely correct. Constructing an assigned covariance term $C_\text{FD} = \sum_T b_T b_T^T$ directly from the test residuals of the failing truths ensures closure on those exact distributions by trivial algebraic construction ($b_T^T C_\text{FD}^{-1} b_T \le 1$). Referees 1 (M2) and 2 (Issue 1) explicitly demanded a *calibrated, validated* bias term that demonstrates coverage across *held-out* physical models. Post-hoc inflation tailored to the failures destroys the diagnostic integrity of the test and will be dismissed immediately by any careful referee.
+* **A2 (Data-Reweighted Prior Term):** Not worth printing as a solution. In ATLAS OmniFold workflows, prior reweighting quantifies sensitivity to the simulation baseline along data-preferred directions. However, the MINERvA failure is driven by an orthogonal, physically motivated nuclear modeling departure (the GiBUU hybrid at $p = 5.3 \times 10^{-28}$, where 87.5% of the bias lies outside existing model variations). A2 targets data, not GiBUU, adds caveats, and leaves the catastrophic failure completely untouched.
+* **A0 (Keeping Failure Stated):** **Unacceptable for a PRD measurement paper.** Both referees categorized this failure as disqualifying (Referee 1 Class (a); Referee 2 Disqualifying Issue #1). Admitting that the estimator fails on plausible generator truths by 27 orders of magnitude proves that the measurement retains memory of the prior and cannot be used for generator testing. A0 is viable only if the authors abandon the measurement claim and adopt **Route B** (a methods/pathology paper).
+* **Minimum Threshold for A:** To demote A from a major rejection point, the authors must either:
+  1. Achieve acceptable closure ($p > 0.01$ and $|z| \le 2$) across all physical benchmark models; or
+  2. Construct a generalized, pre-declared model-space covariance (spanning deformations in all five kinematic variables) demonstrated to achieve closure on *held-out* truths; or
+  3. Restrict the reported phase space to regions where closure holds.
+* **Standard Option Missed by the Report:** **Re-binning / cell merging.** Both Referee 1 (Limitation 6 & M3) and Referee 2 (Major Issue 6) noted that the fake-data failures ($|z| > 2$) are isolated in cells **R02 and R06**, which have abysmal reconstruction stabilities of 0.16–0.25 (75%–84% migration smearing). In experimental cross-section unfolding, the standard remedy for ill-conditioned deconvolution and severe model bias is to **merge low-stability cells into adjacent kinematic bins** until stability reaches $\ge 0.4\text{--}0.5$. The scoping report treated the 16-cell partitioning as immutable, overlooking the simplest experimental fix.
+
+---
+
+### 2. Item B: Estimator Instability and Same-Event Evaluation
+
+* **B0 (Reconciliation Alone):** **Does not satisfy the referees.** B0 clarifies why the training seed block was set to zero (LightGBM is bitwise inert to seeds on CPU) and demonstrates that bootstrap replicas absorb rounding variance. While this resolves Referee 1’s curiosity regarding the zero seed block, it ignores the central defect: an estimator whose central values shift by up to $2.6\sigma_\text{stat}$ under machine-precision rounding fails basic scientific reproducibility. Referees will still mandate physical stabilization.
+* **B4 Probe Sequence:** **The right sequence.** Referee 1 (M6) strongly criticized the paper’s shifting estimators. Running a controlled probe on simulated pseudo-data (where instability is 7× nominal) preserves the blinded principle ("no hyperparameter tuning on data") at minimal cost (~16–18 node-hours). Selecting a single winner and re-running the entire analysis once provides the only clean, defensible foundation.
+* **Which Option to Test (B1, B2, B3):**
+  * **Test B2 (K-fold cross-fitting) and B3 (tree regularization via `min_child_samples` and depth limits).** 
+  * *Why:* B2 eliminates self-prediction and memorization, directly addressing Referee 1 (M5) and Referee 2 (Issue 2). B3 attacks the root cause of numerical instability: unconstrained decision trees splitting on float32 precision noise in sparse phase space. (Avoid naive input quantization, which masks the symptom without fixing tree sensitivity).
+  * *Reject B1 (Jitter Ensemble):* It is a compute-heavy (~400 node-h) brute-force band-aid that averages noisy predictions without curing the underlying tree instability or same-event training flaws.
+* **Holding the Coverage Campaign:** **Yes, hold it.** Coverage is a property of the specific estimator. Running the expensive coverage campaign on an unstable estimator scheduled for replacement wastes compute and directly violates Referee 1 (M6).
+
+---
+
+### 3. Defensibility of "Do Neither"
+
+**"Do neither" is completely indefensible for a PRD experimental cross-section paper.** 
+
+With unvalidated coverage, an unexplained 7% run-period step patched by an ad-hoc rank-2 matrix, a $p = 5.3 \times 10^{-28}$ fake-data failure, and $2.6\sigma_\text{stat}$ numerical volatility, the manuscript exhibits four concurrent fatal flaws. Publishing an experimental measurement with an advertised "7.86% uncertainty" under these conditions violates PRD standards. 
+
+"Do neither" is defensible **only** under Referee 1’s **Route B** / Referee 2’s fallback: stripping all cross-section claims and reframing the manuscript entirely as a cautionary methodology paper documenting the failure modes and diagnostic boundaries of multidimensional OmniFold.
+
+---
+
+### 4. Ranked Recommendations and First Action
+
+#### Ranked Action Plan:
+1. **First Action: Re-bin / merge the 16 reporting cells.** Merge the four low-stability cells (R02, R06, R10, R15) into adjacent bins to ensure stability $\ge 0.40$. Re-test fake-data closure on the coarsened grid. Because R02 and R06 drive the GiBUU hybrid failure, this zero-compute step may resolve Item A immediately without artificial covariance inflation.
+2. **Execute the B4 probe testing B2 (cross-fitting) and B3 (tree constraints: `min_child_samples`).** Identify the configuration that eliminates the $2.6\sigma_\text{stat}$ rounding shift on simulated pseudo-data.
+3. **Freeze the winning estimator as the single final estimator.** Re-run all downstream components once (addressing M6), including the held coverage campaign (1B) and 2D benchmarks.
+4. **Adopt B0 text in the manuscript.** Document that LightGBM is bitwise seed-invariant and that bootstrap replicas capture numerical rounding variance, accompanying the newly stabilized estimator.
+5. **Reject A1 and A2 entirely.** Avoid ad-hoc, post-hoc covariance inflation.
+
+---
+
+### 5. Inconsistencies Between Scoping Report and Referee Reports
+
+1. **Primacy of Items A and B (§0):** The scoping report claims: *"Both blind referees of 11-01 rest their verdict mainly on these two items."* 
+   * **Inconsistent:** Both referees consider unvalidated interval coverage (Ref 1 M1, Ref 2 Issue 5) and the unexplained 7% run-period inconsistency (Ref 1 M4, Ref 2 Issue 3) to be equally or more disqualifying. Referee 1 explicitly states that the run-period inconsistency is *"potentially the most important physically, and the coverage item... the most important statistically."* (The scoping report contradicts itself on this point in §2.5).
+2. **Claim that A1 Closes Referee 2 Item 1(ii) "In Form" (§1):** The scoping report claims A1 closes Referee 2’s request "only in form."
+   * **Inconsistent:** Referee 2 demanded an *"honest, calibrated model-bias systematic covariance... proving that the resulting inflated uncertainties restore closure"* on benchmark models. Constructing an outer-product matrix from the exact failing test residuals ($C_\text{FD} = \sum b_T b_T^T$) guarantees closure trivially by definition; it does not satisfy Referee 2’s requirement for a calibrated systematic even in form.

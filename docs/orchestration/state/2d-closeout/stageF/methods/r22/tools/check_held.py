@@ -10,7 +10,8 @@ a word changed (this script's self-test showed it), and a held sentence must sta
 exempt only when that pair is applied and named with --pair-applied (G1b:paper-s-05 is the Data availability
 sentence of the A1 pair G1:paper-s-09). --fact-held applies STEP2-PAPER.md section 5 (2026-10-30): the held sentences
 that an in-scope gap acts on (FACT_HELD) are held for their facts, which the ledger, check_paper.py and agy check, and
-are exempt here; every other held sentence stays exact. --self-test: every held quote locates in BASE_MANUSCRIPT, and a copy with the
+are exempt here; every other held sentence stays exact. RELEASED names the held sentences a later decision of
+Joseph's rewrites explicitly (each with its reason); they are exempt in every mode. --self-test: every held quote locates in BASE_MANUSCRIPT, and a copy with the
 quote's longest word replaced fails. Exit 1 on any failure."""
 import ast
 import csv
@@ -26,6 +27,15 @@ EXEMPT_BY_PAIR = {"G1:paper-s-09": {"G1b:paper-s-05"}}
 FACT_HELD = {"G1b:paper-g-01", "G1b:paper-g-06", "G1b:paper-g-03", "G1:paper-g-02", "G1b:paper-g-08", "G1:paper-g-06",
              "G1b:paper-g-18", "G1b:paper-s-20"}
 A7_PENDING = {"G1:paper-g-10", "G1b:paper-g-13", "G1b:paper-g-20"}
+# Held sentences a later decision of Joseph's rewrites explicitly: released from the hold, each with its reason. They
+# are exempt in every mode; the round that rewrites one records its facts in its own ledger.
+RELEASED = {
+    # IV B's last paragraph ("The learner was selected after ... a reproduction rather than an independent validation"):
+    # DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md item 2 (#690) orders it rewritten as a
+    # consistency benchmark; the director ruled #690 stands over this hold (2026-11-02, on #695). Its facts: the
+    # quadrant-sec4-20261102 ledger, row Q-6
+    "G1b:paper-g-09": "DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md item 2 (#690)",
+}
 applied = set()
 if "--pair-applied" in args:
     i = args.index("--pair-applied") + 1
@@ -34,14 +44,15 @@ if "--pair-applied" in args:
         i += 1
 exempt = set().union(*(EXEMPT_BY_PAIR.get(p, set()) for p in applied)) if applied else set()
 fact_held = (FACT_HELD | (A7_PENDING if "--a7-released" in args else set())) if "--fact-held" in args else set()
-exempt |= fact_held
+exempt |= fact_held | set(RELEASED)
 ns = {}
 for node in ast.parse(AN.read_text()).body:
     if isinstance(node, ast.FunctionDef) and node.name == "key":
         exec(compile(ast.Module([node], []), str(AN), "exec"), ns)
 exec("import unicodedata, re", ns)
 held = list(csv.DictReader(open(R / "step2p" / "held.tsv"), delimiter="\t"))
-assert FACT_HELD | A7_PENDING <= {g["id"] for g in held}, sorted((FACT_HELD | A7_PENDING) - {g["id"] for g in held})
+assert FACT_HELD | A7_PENDING | set(RELEASED) <= {g["id"] for g in held}, \
+    sorted((FACT_HELD | A7_PENDING | set(RELEASED)) - {g["id"] for g in held})
 
 
 def run(text):
@@ -65,5 +76,6 @@ fails = run(NEW.read_text(encoding="utf-8"))
 for f in fails:
     print("  FAIL", f)
 print(f"held quotes checked exactly {len(held) - len(exempt)}, exempt by applied pair "
-      f"{sorted(exempt - fact_held)}, held for facts {len(fact_held)}, failures {len(fails)}")
+      f"{sorted(exempt - fact_held - set(RELEASED))}, held for facts {len(fact_held)}, released {sorted(RELEASED)}, "
+      f"failures {len(fails)}")
 sys.exit(1 if fails else 0)

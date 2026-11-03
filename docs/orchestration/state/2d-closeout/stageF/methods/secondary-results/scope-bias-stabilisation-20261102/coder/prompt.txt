@@ -1,0 +1,13 @@
+You are a coder in a document-analysis study. Read the codebook at /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/f88a76df-32e2-4399-bb46-6531cb3c6507/scratchpad/scope/sets/CODEBOOK.md and follow it exactly.
+
+The directory /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/f88a76df-32e2-4399-bb46-6531cb3c6507/scratchpad/scope/sets/ holds seven short text excerpts, set-1.txt to set-7.txt. Treat each file as a separate document and code it on its own, as if you had not seen the others. Read every file in full.
+
+For each set-N.txt, write the TSV to /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/f88a76df-32e2-4399-bb46-6531cb3c6507/scratchpad/scope/out/set-N.tsv (create the directory if needed).
+
+Requirements:
+- Header line exactly: n	kind	loc	polarity	quant	assigned	issue	quote (tab-separated). Use loc "inline" unless a sentence is plainly an abstract-style summary, then "abstract".
+- Quotes must be exact substrings of their own file (verified mechanically after whitespace collapse); no tabs inside fields.
+- Within a file, reuse the same issue label each time the same caveat is restated.
+- Read nothing except the codebook and the seven set files, and write nothing except the seven TSVs.
+- Before finishing, check with a short python script (python3 -I) that every quote is found in its own file after collapsing whitespace, and fix any that are not.
+Reply with, for each set, the number of rows and the number of distinct issue labels.

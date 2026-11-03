@@ -308,6 +308,12 @@ def exempt_text(driver: str, text: str) -> str:
     return text
 
 
+def canonical_layout(note_dir: Path) -> bool:
+    """True iff note_dir is <git toplevel>/docs/analysis-note, the only layout with docs/orchestration/ beside it."""
+    top = subprocess.run(["git", "-C", str(note_dir), "rev-parse", "--show-toplevel"], capture_output=True, text=True)
+    return top.returncode == 0 and Path(top.stdout.strip()).resolve() / "docs" / "analysis-note" == note_dir.resolve()
+
+
 def outward_hit(value: str, text: str) -> bool:
     """token_hit, except that a UNIT_REQUIRED literal must be followed by its unit."""
     unit = UNIT_REQUIRED.get(value)
@@ -666,13 +672,21 @@ def main() -> int:
 
     # THE EXEMPTIONS' STALENESS GUARD (review F8). An exemption stays only while its reason does: the context still
     # prints from its declared source, the literal is still struck somewhere, and the build it narrows is outward.
+    # A source outside the note tree (a figure's sidecar under docs/orchestration/) exists only in the canonical layout.
+    # Missing there, it is STALE; missing elsewhere (the standalone note repository, a copy), it cannot be checked, and
+    # the guard reports SKIP with its reason, as the other repository-dependent checks do. The canonical build enforces it.
     all_struck = set().union(*struck_by_note.values())
+    canonical = canonical_layout(note_dir)
     for (build, value), (_pattern, source, printed) in CONTEXT_EXEMPT.items():
         where = f"CONTEXT_EXEMPT[({build!r}, {value!r})]"
         src = note_dir / source
         if build not in BUILDS or build in STRUCK_ALLOWED:
             failures.append(f"{where} names {build}, which is not an outward build; the exemption has no object")
-        if not src.is_file() or printed not in src.read_text(encoding="utf-8", errors="replace"):
+        if not src.is_file() and not canonical and not src.resolve().is_relative_to(note_dir):
+            notes.append(f"{where} SKIP: its source {source} lies outside the note tree, which is not "
+                         f"<repo>/docs/analysis-note here (the standalone note repository or a copy); enforced by the "
+                         f"canonical build")
+        elif not src.is_file() or printed not in src.read_text(encoding="utf-8", errors="replace"):
             failures.append(f"{where} is STALE: {source} no longer contains {printed!r}, so the context it exempts "
                             "no longer prints from it. Delete the entry rather than keep a blind spot.")
         elif value not in all_struck:
