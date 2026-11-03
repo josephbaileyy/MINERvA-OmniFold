@@ -1,0 +1,115 @@
+{
+ "repo_head": "58fa0b895ba85ae4db3cacca5b9686b6a1d56957",
+ "words": {
+  "ours-paper": 8080,
+  "ours-note": 59462
+ },
+ "blinded_sha256": {
+  "ours-paper": "286cd1f61217655f991a18eadcaedceff4cea69ef4ca469379f508871065dfc3",
+  "ours-note-body": "4bc22b0251bde436756e33ace2cdac6dc23cf90c767e05649389cd17631c7ae9",
+  "ours-note-app": "cf51b0a71faf3c802cf0338553c2c18c35a2ee254a642cdc16225b671f730dad"
+ },
+ "density": {
+  "ours-paper": {
+   "rows": 145,
+   "distinct": 77,
+   "all_per_1k": 17.95,
+   "distinct_per_1k": 9.53,
+   "rows_per_issue": 1.88,
+   "dropped": 0,
+   "stale": [],
+   "words": 8080
+  }
+ },
+ "baseline_10_25": {
+  "ours-paper": {
+   "words": 8785,
+   "distinct_per_1k": 10.02,
+   "rows_per_issue": 2.28,
+   "all_per_1k": 22.88
+  },
+  "ours-note": {
+   "words": 53018,
+   "distinct_per_1k": 8.41,
+   "rows_per_issue": 2.17,
+   "all_per_1k": 18.24
+  }
+ },
+ "survival_mechanical_not_density": {
+  "10-25 inventories (caveat-study/inv)": {
+   "ours-paper": {
+    "rows": 28,
+    "distinct": 20,
+    "all_per_1k": 3.47,
+    "distinct_per_1k": 2.48,
+    "rows_per_issue": 1.4,
+    "dropped": 178
+   },
+   "ours-note": {
+    "rows": 413,
+    "distinct": 290,
+    "all_per_1k": 6.95,
+    "distinct_per_1k": 4.88,
+    "rows_per_issue": 1.42,
+    "dropped": 554
+   }
+  }
+ },
+ "comparators": [
+  {
+   "set": "P",
+   "doc": "2504.06857",
+   "distinct_per_1k": 4.54,
+   "rows_per_issue": 1.6
+  },
+  {
+   "set": "P",
+   "doc": "2002.12496",
+   "distinct_per_1k": 1.38,
+   "rows_per_issue": 1.73
+  },
+  {
+   "set": "P",
+   "doc": "2205.05084",
+   "distinct_per_1k": 2.74,
+   "rows_per_issue": 2.0
+  },
+  {
+   "set": "P",
+   "doc": "2301.03700",
+   "distinct_per_1k": 1.61,
+   "rows_per_issue": 2.07
+  },
+  {
+   "set": "P",
+   "doc": "2110.13372",
+   "distinct_per_1k": 3.39,
+   "rows_per_issue": 2.29
+  },
+  {
+   "set": "P",
+   "doc": "2102.03346",
+   "distinct_per_1k": 2.43,
+   "rows_per_issue": 1.97
+  },
+  {
+   "set": "N",
+   "doc": "2101.03779",
+   "distinct_per_1k": 2.51,
+   "rows_per_issue": 1.91
+  },
+  {
+   "set": "N",
+   "doc": "1612.05824",
+   "distinct_per_1k": 1.55,
+   "rows_per_issue": 1.38
+  },
+  {
+   "set": "N",
+   "doc": "2007.06722",
+   "distinct_per_1k": 2.27,
+   "rows_per_issue": 1.4
+  }
+ ],
+ "coder_spread": "about +-25% in row count (caveat-study/REPORT.md sec. 2.4)"
+}

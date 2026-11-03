@@ -1,0 +1,141 @@
+# Audit 2 of FD-RPD-DECLARATION.md (design part 1, revision 2)
+
+**sha256 audited:** `9fc61f3e705daf3cb14bdacab08cd98bb6fbfe212ae67ef306a2e0fdba43ce15` (553 lines; measured with `shasum -a 256` before reading; matches the expected `9fc61f3e…`).
+Repo: worktree `rpd-wt`, branch `decl/rpd-and-cov2d-scoping-20261102`, HEAD 7631f9952, read-only (`git status` clean). No cluster, no job. Scratch: `num.py`, `num2.py`, `r1.py`, `ec.py`, `ec_s1.py`, `ec_s1b.py` in `rpd-audit2/`.
+
+**Verdict: do not bind as written, but nothing is BLOCKING.** 0 BLOCKING, 8 MAJOR, 12 MINOR, 3 NIT. Revision 2 fixes the first audit's three blockers. The new controls (C1, N0) and the R2 outcome EC have defects that a director would want repaired or priced in before binding. Every derived number reproduces. Every citation resolves under the Paths rule, except the uncited sizes in MINOR 9.
+
+## 1. Findings, ranked
+
+### MAJOR
+
+| # | Where | What is wrong | Evidence | Requirement |
+|---|---|---|---|---|
+| M1 | §5 R2 outcome 3 (EC), S1, plug-ins; §6.2; R3 | EC (the only outcome that unlocks R3 and the 12-playlist wording) looks unreachable by construction, not only when Σ_P is small. EC needs p_flux ≥ 0.05 and β̂₁ ≥ 0.80. β̂₁ is the power of S1, a rank-≤2 Gaussian G with Σ̂_P plugged in from the same data. G is therefore a scale mixture (about χ²₂), and its power saturates well below 0.8. And Σ̂_P is a monotone function of the same period offsets that drive F_flux, so a large β̂₁ comes with a small p. §5 states only "if Σ_P is small". | Toy (`ec.py`, `ec_s1.py`, `ec_s1b.py`: identity metric, 16 cells, Gaussian noise sd 0.5/√e, 12 real shares, all 9,240 partitions, 120 outer × 60 inner draws; indicative only). Exchangeable truth at δ-sd 0 / 0.5 / 1 / 2: P(p<.05) = .04 / .08 / .06 / .08, **P(β̂₁≥.8) = 0**, P(EC) = 0, mean β̂₁ .32–.54. Period-clustered truth at period-sd 0.1 / 0.25 / 0.5 / 1 / 2 / 3 / 5: P(p<.05) = .06 / .06 / .10 / .25 / .68 / .90 / .96, mean β̂₁ .34–.65, **P(β̂₁≥.8) ≤ 0.04, P(EC) ≤ 0.008**. Director ruling 3 asks for "the outcome that permits quoting a 12-playlist interval". | Before binding, part 2 (or this part) publishes P(EC) under the exchangeable truths S0 uses and under S1, with the real M, e, and replicas. If it is near 0, either change S1 or the 0.80 rule (for example, a power definition that does not depend on a rank-2 Gaussian draw), or state in §0, §6.2 and §10 that EC and R3 are expected never to occur. The director then knows the 12-playlist wording is a dead letter. |
+| M2 | §4 N0, reading | The size rule is not at its stated levels, and it has little power with 15 draws. The thresholds 3.42 and 2.58 are normal quantiles (Bonferroni 0.01/16 and 0.01) applied to SD/√15 with SD estimated from 15 draws (14 dof). It also fires R2/R3 to INCONCLUSIVE while a non-fire certifies nothing. | `num2.py`: t₁₄ P(\|t\|>3.42) = 0.0041 per cell and P(\|t\|>2.58) = 0.0218. Family false-fire ≈ 0.085 if cells independent (declared level 0.02). Power for a bias of 0.25 / 0.5 / 0.75 / 1.0 / 1.5 σ_single-playlist: 0.01 / 0.07 / 0.30 / 0.67 / 0.99 (normal; t₁₄ similar). The smallest detectable bias is about 0.9 σ of one small playlist's cell offset. | Use t (or permutation) quantiles, or state the true family level. State the detectable bias in σ and in % of the cell offset scale, and say that non-firing is not clearance. Consider more than 5 partitions (N0 costs 0.03 node-h per partition in job B). Say what the 15 draws can detect. |
+| M3 | §4 N0 construction | (a) `denom_nd` is "scaled by e" while MC rows are split multinomially. The unfold forms comp = Σ w_truth(pass_truth rows) / denom_nd per cell (`s5e_trace.py:288-292`). The numerator is then random and the denominator exact, so comp can exceed 1 in sparse cells. A real playlist's denominator contains its own rows. The 2D potcheck shows n_mc_truth_denom = n_mc_signal_reco (`potcheck.json`), so the denominator can be rebuilt from the split rows. (b) N0's 5 partitions and 60 pseudo-inputs have no control: no partition check (row counts, Σ histograms, data_pot, shares) and nothing in the "Gates" sentence. (c) The npz needs a bkg dump whose `meta.npz_sha256` matches (`s5p_numerics.py:170`) and an `--expect-*` digest. Not mentioned. | `unfold_nd…py:338,438,567,581-602`; `s5p_numerics.py:160-172`; `s5e_trace.py:288-292`; Gates paragraph, §4. | Say how `denom_nd`, `flux` (ALL's, so that true offsets are zero) and the receipts of each pseudo-playlist are built. Derive `denom_nd` from the split rows, or show comp ≤ 1 and justify the difference. Add an N0 partition control to the job-B gate. |
+| M4 | §4 C1, rows `w_*`, `bkg_w`, `data_pot` | s_X and s_ALL (`data_pot/mc_pot`) are said to be "read from each file's receipt". No receipt holds `mc_pot`. `check_*.json` and the merge receipts carry `data_pot` only. `nn_dump_inputs.py` stores only `data_pot`. `mcPOTUsed` is in the ROOT files (`unfold_2d…:117-126`). ALL's value lives in the 5B merged ALL ROOT (`check_ALL.json` `files.merged`, sha `d44966d2…`), which is neither pinned nor staged in §1's table. Additivity of `mcPOTUsed` under hadd is evidenced only for a different merged file (`playlist-spread REPORT:60-63`). | `check_PC.json` keys listed (no `mc_pot`); `fd_ct_period_inputs.py:192-198, 255-262`. | State where `mcPOTUsed` is read (staged loops), define s_ALL = Σdata/Σmc from the staged loops or stage/pin the ALL merged file, and say that additivity is assumed or tested. Also define the relative test at w = 0 (exact equality). |
+| M5 | §4 C1, row `flux` | "`flux`: by F1, not here". F1 compares flux files (period combination), not the npz `flux` key. The npz key is whatever `--mcfile` the dump got. Both `nn_dump_inputs.py` and `s5p_input_dumps.py lateral` default `--mcfile` to the production flux path. That is a pre-existing pscratch path, unstaged, and it is the same file for every playlist. A missing flag passes every declared control while giving all playlists ALL's flux (and an in-place read, breaking constraint 9). `check` compares only the flux file's data POT. | `nn_dump_inputs.py:34`; `s5p_input_dumps.py` `lateral` arg `--mcfile` default `/pscratch/.../runEventLoopMC_MEFHC.root`; `fd_ct_period_inputs.py:255-262`. | C1 must compare each npz's `flux` bin by bin to the staged Φ_X (relative 1e-12). Part 2 must test that no default path is ever opened. |
+| M6 | §6.1, SUBSET sentence | "the step appears in playlist(s) [list] and not in [list], although the simulation reweights **all of them** to the same flux file". The second list can hold resolved FREE 1A–1F playlists. Those are reweighted to a different flux file (1D vs 1M, `playlist-spread REPORT:156-160`), so the sentence is false for them. It also implies a flux cause. "Not in" overstates FREE (|t_X| ≤ 2σ_X < t̄/2 only excludes a step larger than half). | §6.1 table; REPORT 3.1 table. | Restrict the flux clause to the 1G/1L/1M playlists and name the 1A–1F ones separately. Replace "not in" by "no step larger than half the group's step is seen in". |
+| M7 | §6.2 EC (ii) sentence vs §5 R3 | The sentence quotes the twelve-playlist 68% interval "which depends only on the exposure shares". R3 says the interval assumes iid homoscedastic offsets and "is printed with that label". The licensed sentence omits the label. 1L (e = 0.0127) has noise ≈ 3× larger than 1G (`num` scaling: 1.6% vs 0.55%), so the assumption is not neutral. EC itself "does not show exchangeability". | §5 R3 bullet "The interval depends on e only"; §6.2 row 2. | The licensed sentence must carry "if the playlists' offsets are exchangeable with equal variance" (or equal). |
+| M8 | §5 R1, Operating characteristics | The OC table is published "before binding" in part 2, but "Part 2 changes none of its rules" and no decision rule uses the table. If it shows P(OTHER) near 1 under every declared truth (likely at t̄ = 3.5%, where only 1A, 1D, 1E, 1F, 1G, 1M, 1N resolve: σ scaling, `num2.py`), nothing happens and R1 still costs its analysis and wording. | §5 "Operating characteristics"; §10. | Declare a rule now: for example, "if P(correct pattern) < x under any declared truth, R1 is dropped / the director decides before job B". Without it the OC table informs no one. |
+
+### MINOR
+
+| # | Where | What / requirement |
+|---|---|---|
+| m1 | §6.2 CLUSTERED sentence | "so the block's size rests on three period-level estimates" is a non sequitur from p_flux < 0.05. One dominant playlist or one group can give a small p (the test does not say all playlists in a group share the offset). Drop the "so" clause or say "does not show that every playlist in a group shares its group's offset". |
+| m2 | §5 R1, σ conventions | σ_X, σ_d,X and σ(t̄) say "from the 30 replicas" / "SD over the replicas". Centre (replica mean vs base) and ddof are not given, unlike stage 0 (RMS about s₀, no ddof) and R2 (replica mean, √(30/29)). The same noise in t and in the R2 draws should use one convention. Also say how T's MC variance enters a step on L/H. |
+| m3 | §5 R1, A* | "exposure-weighted combination of the 1A–1F playlists' D values": D is a ratio of sums, so Σ e_X D_X ≠ (Σ e X)/(Σ e T) (the form that matches R2's m). Specify numerator/denominator recombination. "at least two ... and all CARRY" is ambiguous between all resolved and all three; part 2's enumeration test should pin it. |
+| m4 | §4 N0 vs §3, §5 | N0's b̄_t rule fires SIZE-BIAS, which makes R2/R3 INCONCLUSIVE, in every stage-0 branch. Under ABSENT/OTHER R1 is not computed and t is used nowhere else, so a t-only fire kills R2 for no R1 reason. Say whether a t-only fire affects R2. "N0's size rule applies" (UNRESOLVED) should say "SIZE-BIAS fired and e < 0.03". UNRESOLVED playlists still enter A* and t̄ (1B in A*). |
+| m5 | §3 Stage 0 | Disclosure is incomplete: `FD-CT-5B-REPORT.md:149-150` shows raw_PB/PA p∥ contrast +3.329% (z +9.16) and raw_PC/PA +2.291% (z +7.17), read with the dr_PB/PA +0.023% (z +0.06, :152). The "prior favours ABSENT or OTHER" rests on dr only. Add the raw contrasts. |
+| m6 | §3 Stage 0 | OTHER hides a significant diluted positive step (about 1.2% < s₀ < 3.47%, or 3 ≤ s₀/σ₀ < 5). R1 is then not computed although the 5D chain does see something. State this is accepted (it is a declared choice) and name the band. The SEES row lists only R1's lines; R2/R3 also move line 81 and :125 in SEES (covered only by §6.3). |
+| m7 | §8 HPSS | `RECORD-20261102-director-hpss-deferral.md` names other campaigns only (lines 8-15); item 5 "every other binding rule stands". The declaration says RPD's items "go on the catch-up list". Binding must say it extends the record to RPD. The §8 list "432 unfolds and 12 MC truths" omits N0's 60 truths, 5 partitions' npz and bkg dumps. |
+| m8 | §1, §8 sizes | "159.4 GiB" is uncited (source: `DECISION-20261101-joseph-eventloops-copy-to-cfs.md:8`, the universe loops). "1.55 GB" for `lat_zero*` is uncited; the only 1.55 GB record found is `of_inputs_5d.npz` (`publication/audit-20261008/REPORT…:347`). "4.84 GB" is a login23 measurement, not reproducible here. |
+| m9 | §4 K2′ | K2′ reproduces the seed-42 product only. Of 432 unfolds, 360 are bootstrap replicas and 60 are N0. Add reproduction of one 5B replica (for example PC b3001, +about 2 min) so the replica path is also graded. |
+| m10 | §0 table vs §4 | F1 is "stage S" in §4 and in stage C in §0's table. Say one. |
+| m11 | §1 table | The row "S1, C_resp, the 16-cell definition, 5B's readout | 5B's pins" has no path or digest. `s8_readout.sh` reads `$P/s1-20261024/s1_assembly.npz` and `$P/cresp-20261026/out/cresp.npz` on pscratch, so they are pre-existing pscratch reads and need staging rows with pins. |
+| m12 | Director's message 1 | The director asked "what result would let it drop the run-period block's 'poorly determined' clause". The declaration answers only: none; (i) adoption re-opens it. That is a third departure not listed at the top (alongside the two listed). List it for Joseph. |
+
+### NIT
+- n1: §6.1 "append" does not say where in line 112. The line has more sentences after "The cause is not known, and these data cannot establish which period is correct."
+- n2: R (login) runs about 1e8 partition evaluations (2,000 datasets × 9,240 × ≥6 points); give a time/CPU bound for the login node.
+- n3: the Calibrated gate (≤ 0.0646 at 2,000 datasets) passes a true size of 0.060 with p = 0.815 per grid point (stated in the declaration; recomputed). Four grid points are correlated; no change needed.
+
+## 2. First audit's 18 findings
+
+| # | Sev | Verdict on revision 2 |
+|---|---|---|
+| 1 | BLOCKING (C1 keys) | **Resolved in structure.** Every key has a decidable predicate. `measured_weights` is not read by config R (confirmed: `s5p_numerics.py:112-116` → `s5e_trace.unf_inputs:438-442` replaces `measured` and `measured_weights`; `s5n_pseudo.build_data` uses `obs`, `tmpl`, `tmpl_w`). Histogram sum rule algebra is right. New defects: M4 (mc_pot source), M5 (flux key). |
+| 2 | BLOCKING (K2′) | **Resolved.** `np.array_equal` on `xsec_flat` vs `unf/PC/5b_PC_b-_j-.npz` (INVENTORY.sha256 line 51, `e0594420…`); comparator staged; matches `fd_ct_periods.py:255`. See m9 (scope). |
+| 3 | BLOCKING (R1 partition) | **Resolved.** Enumerated all 4⁹ = 262,144 class assignments: exactly one outcome each (PW 252, SUBSET 756, OTHER 261,136; rules 1 and 2 never both). CARRIES∧FREE impossible for resolved X (proof holds, strict). Residual: m2, m3, M6. |
+| 4 | MAJOR (joint table) | **Largely resolved.** §6.3 added. Residual: m1, M6; row 4 overlaps rows 1-3 (benign). |
+| 5 | MAJOR (exact test) | **Resolved.** "Approximate", null at four scales, replica-resampled noise. |
+| 6 | MAJOR (estimator size) | **Partly resolved.** N0 added, but M2 and M3. |
+| 7 | MAJOR (Σ_X, S0/S1) | **Resolved as specified** (draw r then form g; grid; S2; plug-in disclosure). New: M1 (reachability), n3. |
+| 8 | MAJOR (wording) | **Partly resolved.** "Same flux file", F1 limit, p_era added. New: M6, m1. |
+| 9 | MAJOR (stage 0) | **Resolved** (centre/ddof, sign, dilution, SEES/§6 lines). Residual: m5, m6. |
+| 10 | MAJOR (R3 ρ) | **Resolved** (ρ_raw, ρ_deb, e-only label in R3, "same events", (i) re-opens). Residual: M7. |
+| 11 | MAJOR (R1 OC, t*) | **Partly resolved.** t̄ recombined, σ_d carries correlation, SEES gate, OC promised. Residual: M8, m2, m3. |
+| 12 | MINOR (O_NOATIME) | **Mostly resolved.** S first; flux built from staged copies; production flux staged. Residual: M5 (default paths), m11. |
+| 13 | MINOR (rulings record) | **Resolved.** `FD-RPD-RULINGS-20261102.txt` committed, verbatim. Departures listed; m12 adds one. |
+| 14 | MINOR (paths) | **Resolved.** All citations resolve (§3). |
+| 15 | MINOR (distinct partitions) | **Resolved.** |
+| 16 | MINOR (F1 relative) | **Resolved.** |
+| 17 | MINOR (e cell-independent, T_X) | **Resolved.** |
+| 18 | NIT | **Resolved** (0.63 reproduced). |
+
+## 3. Checks by question (condensed)
+
+- **C1 vs code.** Per-event weights are float64 `w × pot_scale` (`unfold_nd…:338,438,567`; `np.asarray` of Python floats). The per-row filters carry no cross-row state, so concatenation, bitwise and ×(s_X/s_ALL) predicates hold on a correct run. Histogram rule: weights are non-negative (`0 <= w`), so no cancellation and 1e-9 is loose (error about 1e-13); empty bins exact. `measured_weights` recomputation uses the same function (`:581-602`), so it passes trivially and affects nothing (not read). `bkg_nd` is likewise unread by config R. Not vacuous for the unread keys only in that it checks the files. Gaps: M4, M5; w = 0 events need an exact-equality rule.
+- **K2′.** Decidable; deterministic if 32 threads and the pinned code. m9.
+- **N0 validity.** Unfold inputs are valid for `s5p_numerics` if the bkg dump meta, shas and `denom_nd` are fixed (M3). MC weights unchanged with `data_pot` × e is self-consistent (Σ MC weight ∝ e). Power: M2.
+- **R1.** Exactly one outcome (enumerated). t̄/σ_d is not used; the gate is t̄/σ(t̄), defined but with no stated convention (m2). Classes computed only under SEES and t̄ gate (N0's t is computed regardless: m4).
+- **R2.** Outcome order gives exactly one outcome (INCONCLUSIVE clause 3 is the complement). Circularity: the plug-ins and μ come from the tested data (disclosed); the rank-2 S1 ceiling (M1) is the real remaining defect. Σ_δ divisor (1−V2) verified: E[Σ e g gᵀ] = (1−V2)Σ_δ.
+- **Stage 0.** Partition of SEES/ABSENT/OTHER is exact (SEES needs ratio ≥ 5, ABSENT < 3). σ₀ convention matches `fd_ct_periods.py:344-349`. L, H are unions of fine bins (`FINE["pz"]` edges 8, 15). `unreported_boxes` = 4 ✓. m5, m6.
+- **§6 wording.** M6, M7, m1. §6.2 (i) is honest (re-opens the block, says it is Joseph's, no recommendation).
+- **Constraints.** No CFS read in any job ✓. O_NOATIME via staging: complete except m11 and the default-path hazard M5. No covariance or paper change ✓ (§0, §11). HPSS deferral: m7 (record does not name RPD; margin 12-15 vs 11-06 is fine). CPU only, QOS regular, jobs 1 h and 2 h ✓.
+- **Missing before binding:** M1 reachability result; M2/M3 N0 repair; M4/M5 C1 operands; M8 OC decision rule; m12 listing.
+
+## 4. Citations (each checked by opening the target)
+
+| Cited | Verdict |
+|---|---|
+| `paper_body.tex:112`, `:81`, `sec_fived16.tex:125` (quotes) | OK (line 112 continues past the quote: n1) |
+| DECISION `…quadrant-sentence-sec4-and-validations.md` item 3(b) | OK (lines 76-80) |
+| `FD-RPD-RULINGS-20261102.txt` | OK, exists, committed (HEAD ls-files) |
+| `inventory-answer.txt:73-74, 133-134` | OK |
+| `FD-CT-5B-REPORT.md:100-103` | OK (K1, K2) |
+| `FD-CT-5B-REPORT.md:87` | OK (3:00, 7:12, 7:06, 3:14) |
+| `FD-CT-5B-REPORT.md:127`, `:128` | OK (line 127 "seed term is zero by construction", 128 contrast label) |
+| `FD-CT-5B-REPORT.md:147-178` | OK (dr_PB/PA +0.023%, z +0.06 at :152) |
+| `FD-CT-5B-INPUTS.md:32-36, 37-39` | OK |
+| `measurement-paper/phase1/mp1/S0-REPORT.md:58-76` | OK (file exists; scoped to 1A) |
+| `FD-CT-RETENTION.md:63` | OK (zero loops, expiry 2026-12-15, no HPSS, no CFS) |
+| `FD-CT-5B-DECLARATION.md:120-123, 644` | OK |
+| `2d-closeout/period-unfold-20261014/REPORT.md:52, 57, 72` | OK (+6.94 ± 0.41; ±22%) |
+| `…/scripts/periods.py` (PINS d40aea69, `:1-4`) | OK (`:50`) |
+| `2d-closeout/playlist-spread-20261014/REPORT.md:152-160, 186-188` | OK (flux files; intensities 23/28/38-39/36/48.5) |
+| `…/outputs/potcheck.json` | OK (period sums equal `check_P*.json` `data_pot`, ratio 1.0; shares recompute) |
+| `2d-closeout/playlist-term/REPORT.md:20`; `DESIGN.md` §2 | OK (`DESIGN.md:59-62`, k = V2/(1−V2)) |
+| `fd_ct_periods.py:255, 310, 344-349` | OK |
+| `s5p_numerics.py:112-116`; `s5e_trace.py:438-442` | OK |
+| `unfold_nd_omnifold_unbinned.py:338, 438, 567, 581-602` | OK |
+| `nn_dump_inputs.py:62-101` | OK (as quoted in §12) |
+| `fd_ct_5b_audit.py:94` | OK (`:94-95`) |
+| `s5p_stage1_inspect.py` `FINE["pz"]` | OK (edges 1.5…8, 9, 10, 15, …) |
+| `pv-ladder/readouts/h2_definition.json` `unreported_boxes` | OK (4: [2],[6],[10],[14]) |
+| `fd_ct_period_inputs.py` `ZERO_LOOPS`, `FLUX`, `MP1_ZERO`, `FLUX_FLAT` | OK |
+| `5B-run/preserve/INVENTORY.sha256` (51 rows; row 51 `e0594420…` = `unf/PC/5b_PC_b-_j-.npz`) | OK |
+| `5B-run/inputs/check_PC.json` (digests) | OK (no `dumps/lat_P*` rows in INVENTORY; digests only in `check_*.json`) |
+| `5B-run/lanes-periods/line{0..7}-60549044.log` (PA 400 s, PB 231-236, PC 133-142) | OK as step times; logged `seconds_unfold` alone: PA 341-379, PB 206-216, PC 115-122 |
+| `QUESTION-20260920-…md:8` | OK ("PREPARED, NOT SENT") |
+| `RE2-PARTB-REPORT.md:52-64`; `steps.psv` | OK (J8 1.1358; 37 steps; 0.0307 per run) |
+| `COV2D-SCOPING.md` §7-8 | OK (omnifiles exposed 2026-12-10) |
+| `RECORD-20261102-director-hpss-deferral.md` | OK (until 2026-11-06 17:00; RPD not named: m7) |
+| "159.4 GiB", "1.55 GB", "4.84 GB" | uncited (m8) |
+
+## 5. Recomputed numbers
+
+| Quantity | Declared | Recomputed |
+|---|---|---|
+| Exposure shares e (data POT × flux integral) | 1L 0.0127 … 1F 0.1575 | 1A .0847, 1B .0176, 1C .0405, 1D .1359, 1E .0972, 1F .1575, 1G .1311, 1L .0127, 1M .1507, 1N .1001, 1O .0280, 1P .0439; Σ = 1 |
+| Period shares | — | .5334 / .2945 / .1721 |
+| ν, 3 groups | 1.824, 0.73–2.56 | 1.8244, [0.7339, 2.5643] |
+| ν, 12 | 7.98, 0.82–1.38 | 7.9842, [0.8230, 1.3831]; V2 = 0.1146 |
+| Partitions (6,3,3) | 9,240 | 9,240 (12!/(6!3!3!)/2) |
+| Partitions (5,2,2,3) | 83,160 | 83,160 (12!/(5!2!2!3!)/2) |
+| Gate 0.0646 (n = 2,000) | — | count ≤ 129 (0.0645); pass prob. at true 0.050 / .055 / .060 / .065 / .070 / .080 = .998 / .970 / .815 / .487 / .179 / .005 |
+| N0 thresholds | 3.42, 2.58 | z(0.01/16, two-sided) = 3.4205; z(0.01) = 2.5758 ✓. With t₁₄: 4.38 and 2.98 needed for those levels; family false-fire at z thresholds ≈ 0.085 (M2) |
+| Time model 780e + 10 | one round 900 lane-s | 900.0 ✓ (3-point fit 726e + 13 gives 877; LS 720e + 18 gives 936: ±4%) |
+| Job B 36 rounds / 8 lanes | 4,050 s, 1.13 node-h | 4,050 s (1.125); LPT makespan 4,059 s (1.127) ✓ |
+| Extra for 30 vs 10 replicas | +0.63 node-h | 0.625 ✓ |
+| N0 | +0.16 node-h | 0.156 ✓ |
+| Price | about 1.4 expected, at most 3.0 | 0.25 + 1.13 = 1.38; 1.0 + 2.0 = 3.0 ✓ |
+| SEES threshold | 3.47% | 6.94/2 = 3.47 ✓ |
+| §9: per run 0.0307; 372 runs; 132 runs | 0.0307; 7.3–11.4; 3.6–4.1 | 1.1358/37 = 0.03070; 7.29–20.6 at 0.0196–0.0553 min–max (declared 7.3–11.4 uses 0.0196–0.0307, i.e. a mean-based upper end; the max step 0.0553 would give 20.6); 132 runs 2.6–7.3 min–max (declared 3.6–4.1). Not a bound item. |
+| R1 rough σ (σ² = 0.0319(1/e + 1/e_ref), scaled from 2D 0.41%) | 1L, 1B, probably 1O UNRESOLVED below about 6% | 1L 1.6% (needs t̄ > 6.4%), 1B 1.4% (> 5.5%), 1O 1.1% (> 4.4%); 1G 0.55%, 1M 0.52% ✓ |
+| R1 enumeration | exactly one outcome | 262,144 assignments: PW 252, SUBSET 756, OTHER 261,136; 0 overlaps |
+| N0 power (15 draws, z thresholds) | — | bias 0.25 / 0.5 / 0.75 / 1 / 1.5 σ: 0.01 / 0.07 / 0.30 / 0.67 / 0.99 |
+
+The §9 line is a MINOR numeric note: "372 runs 7.3–11.4" mixes the lower per-run bound with the mean-based upper end. It is in a section declared "scoped separately", so it blocks nothing.
