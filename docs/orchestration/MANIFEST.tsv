@@ -6582,6 +6582,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-DECLARAT
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-PART2-AUDIT-SONNET-ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-PART2-AUDIT-SONNET-PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RULINGS-20261102.txt	tracked	MACHINE	state-artifact	measurement-paper	20261102	generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-20261028-measurement-session.md	tracked	LIVE	state-artifact	measurement-paper	20261028	open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-20261029-coverage-session.md	tracked	LIVE	state-artifact	measurement-paper	20261029	open		route-only	no
