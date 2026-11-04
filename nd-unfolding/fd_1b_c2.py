@@ -608,6 +608,17 @@ def calibrate_main(a) -> dict:
 SCHEMA_GATE = "fd-1b-c2-gate/1"
 
 
+def gate_code_digests() -> dict:
+    """The code a gate record binds: sha256 of fd_1b_c2, fd_1b_mc, clip_probe2, cov2d and fd_1b_toys as loaded. One
+    function for c2check (which writes them) and fd_1b_mc.check_clip_gate (which requires the bulk's to equal them)."""
+    import hashlib
+
+    import fd_1b_mc as mc
+    return {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (
+        Path(__file__).resolve(), Path(mc.__file__).resolve(), Path(cp2.__file__).resolve(),
+        Path(cov2d.__file__).resolve(), Path(toys.__file__).resolve())}
+
+
 def cv_denominator_f32(world: dict) -> np.ndarray:
     """The director's (e2) item 1: d_CV := hist_f32(tdw_CV), the CV's per-row weight binned on cv.npz's float32 td_*,
     as every bank universe's denominator is binned (s5p_universe.denominator), so a composite never mixes binnings."""
@@ -675,9 +686,7 @@ def c2check_main(a) -> dict:
     reading = reading_1b(rec, GATES_1B)
     reads = {t: reading[t]["reads"] for t in truths}
     verdict = "PASS" if all(v == "option (1)" for v in reads.values()) else "STOP"
-    digests = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (
-        Path(__file__).resolve(), Path(mc.__file__).resolve(), Path(cp2.__file__).resolve(),
-        Path(cov2d.__file__).resolve(), Path(toys.__file__).resolve())}
+    digests = gate_code_digests()
     gate = {"schema": SCHEMA_GATE, "step": "c2-clip-gate", "verdict": verdict,
             "reading": "option (1)" if verdict == "PASS" else reading["overall"], "reads": reads, "truths": truths,
             "declared_seeds": seeds, "code_sha256": digests,

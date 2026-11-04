@@ -217,8 +217,14 @@ class E2E(unittest.TestCase):
         check_clip_gate. One named stand-in: the estimator (_unfold, the bound negweight-refined OmniFold, which A2.1 does
         not change, whose output no A2.1 check reads, and which needs ROOT)."""
         w = self.x["w"]
-        gate = self.tmp / "gate-file.json"
-        gate.write_text(json.dumps(mc.CLIP_GATE))
+        gate = self.tmp / "gate-file.json"                    # bound to this run's inputs, as c2check writes it
+        with self.patched():
+            gate.write_text(json.dumps({
+                "schema": c2.SCHEMA_GATE, **mc.CLIP_GATE, "reads": {"g18": "option (1)"},
+                "declared_seeds": {"g18": [mc.TOY_SEEDS["g18"][0], mc.TOY_SEEDS["g18"][-1]]},
+                "code_sha256": c2.gate_code_digests(), "calibration_sha256": "c" * 64,
+                "inputs": {"npz_sha256": sa.INPUT_NPZ_SHA256, "bkg_sha256": sa.BKG_SHA256, "pins_sha256": digest(w.pins),
+                           "flux_table_sha256": digest(self.x["table"]), "cv_tdw_sha256": digest(self.x["tdw"])}}))
         common = ["unfold", "--truth", "g18", "--role", "toy", "--items", str(mc.TOY_SEEDS["g18"][0]),
                   "--npz", str(w.inputs), "--bkg", str(w.bkg), "--bank", str(w.bank), "--detector-dir", str(w.det),
                   "--pins", str(w.pins), "--flux-constraint", str(w.constraint), "--expect-pins-sha256", digest(w.pins),

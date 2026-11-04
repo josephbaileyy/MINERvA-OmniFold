@@ -94,7 +94,7 @@ CLIP_RULES = ("data", "nature")                      # a named input: decision 2
 NATURE_UNRULED = ("the clipping offset (clipmean, clipcheck, the readout's clipping section) is the 'data' rule's "
                   "descriptive figure; a 'nature' bulk is gated by C2's reading (DECISION-20261103-joseph-coverage-"
                   "clip-rule) and graded under addendum A2.1")
-CLIP_GATE = {"step": "c2-clip-gate", "reading": "option (1)", "verdict": "PASS"}   # what A2.1's gate must say
+CLIP_GATE = {"step": "c2-clip-gate", "reading": "option (1)", "verdict": "PASS"}   # what c2check's record must say
 UNIT_SECONDS = 1062.0
 RSS_LIMIT_KIB = inv.RSS_LIMIT_KIB
 # S1-0 (declaration section 8): its eight items; the eighth is the capture with the plug-in, AR23's first toy without
@@ -858,23 +858,70 @@ def code_digests() -> dict:
         Path(s5p_numerics.__file__).resolve(), _ND / "s5e_trace.py", _ND / "flux_universe.py")}}
 
 
-def check_clip_gate(a) -> None:
-    """Joseph's ruling on the clip rule (#718): the 'nature' rule runs only after 1B's own pre-bulk clipcheck, on
-    cov2d's C2 code (addendum A2.1), reads "option (1)" under C2's fixed reading. The gate is A2.1's output file,
-    pinned by digest; without it, or with any other reading, 'nature' refuses. Nothing in this amendment writes it.
+BULK_ROLES = ("central", "seed", "block", "stat", "toy")    # the graded items: under 'nature' only (A2.1 S2)
 
-    INTERIM (amendment 2): the 'data' rule needs no gate here. Addendum A2.1's S2 replaces this: every bulk role then
-    refuses 'data', and runs only under 'nature' with a pinned clipcheck reading option (1)."""
-    if a.clip_rule != "nature":
+
+def pre_gate_items() -> set:
+    """What 'data' may run (A2.1 S2): S1-0's pilot items either way the plug-in goes, S1-0b's (each truth's central
+    value and its clipmean at a declared seed: the N_clip seed is the receipt's, checked by S1-0b's walls), the
+    capture and the controls, as (truth, role, item) the way run_unfold sees them."""
+    def as_item(role, item):
+        if role in ("control", "capture"):
+            return ("data", role, item)
+        t, _, it = item.partition(":")
+        return (t, role, "T" if role == "central" else it)
+    out = {as_item(r, i) for plugin in (True, False) for r, i in PILOT[plugin]}
+    out |= {("data", "control", c) for c in CONTROLS} | {("data", "capture", "data")}
+    out |= {(t, "central", "T") for t in TRUTHS}
+    out |= {(t, "clipmean", str(s)) for t in TRUTHS for u in TOY_SEEDS for s in TOY_SEEDS[u]}
+    return out
+
+
+def check_clip_gate(a) -> None:
+    """Joseph's ruling on the clip rule (#718) as A2.1's S2 puts it in code, the hard stop:
+    * under 'data', only the pre-gate items run (pre_gate_items): S1-0, S1-0b, the capture, the controls. A graded
+      bulk item under 'data' refuses;
+    * under 'nature', only the graded roles (BULK_ROLES) run, and only with c2check's gate record, pinned by digest,
+      reading "option (1)" at PASS and bound to this run: its schema and step, this truth's own reading, the declared
+      seeds, the code (fd_1b_c2.gate_code_digests, equal to this process's), the inputs (the npz and background as
+      declared, and the pins, flux table, push and CV per-row tdw digests this run was given) and a calibration
+      digest. Anything else refuses: nothing launches, and 1B returns to Joseph. A hand-written file cannot pass."""
+    items = [x for x in str(a.items).split(",") if x]
+    if a.clip_rule == "data":
+        allowed = pre_gate_items()
+        bad = [it for it in items if (a.truth, a.role, it) not in allowed]
+        if bad:
+            raise Refusal(f"'data' runs only the pre-gate items (S1-0, S1-0b, the capture, the controls); {a.truth} "
+                          f"{a.role} {bad[:3]} is a bulk item: it needs 'nature' and the C2 gate (A2.1 S2)")
         return
+    if a.role not in BULK_ROLES:
+        raise Refusal(f"role {a.role} is not a graded bulk role: it runs under 'data' before the gate, or not at all")
     if a.clip_gate is None or a.expect_clip_gate_sha256 is None:
-        raise Refusal("the 'nature' rule needs A2.1's clip gate (--clip-gate, --expect-clip-gate-sha256)")
+        raise Refusal("the 'nature' rule needs c2check's gate record (--clip-gate, --expect-clip-gate-sha256)")
     raw = Path(a.clip_gate).read_bytes()
     if hashlib.sha256(raw).hexdigest() != a.expect_clip_gate_sha256:
         raise Refusal("the clip gate's digest differs from the declared one")
+    import fd_1b_c2
     g = json.loads(raw)
-    if {k: g.get(k) for k in CLIP_GATE} != CLIP_GATE:
-        raise Refusal(f"the clip gate does not read {CLIP_GATE}: nothing launches; 1B returns to Joseph")
+    want = {"schema": fd_1b_c2.SCHEMA_GATE, **CLIP_GATE}
+    if {k: g.get(k) for k in want} != want:
+        raise Refusal(f"the clip gate does not read {want}: nothing launches; 1B returns to Joseph")
+    if g.get("reads", {}).get(a.truth) != "option (1)":
+        raise Refusal(f"the clip gate's reading at {a.truth} is {g.get('reads', {}).get(a.truth)!r}, not option (1)")
+    if g.get("declared_seeds", {}).get(a.truth) != [int(TOY_SEEDS[a.truth][0]), int(TOY_SEEDS[a.truth][-1])]:
+        raise Refusal(f"the clip gate was not read on {a.truth}'s declared draws")
+    if g.get("code_sha256") != fd_1b_c2.gate_code_digests():
+        raise Refusal("the clip gate was read by other code than this run's (fd_1b_c2.gate_code_digests)")
+    gi = g.get("inputs", {})
+    mine = {"npz_sha256": sa.INPUT_NPZ_SHA256, "bkg_sha256": sa.BKG_SHA256, "pins_sha256": a.expect_pins_sha256,
+            "flux_table_sha256": a.expect_flux_table_sha256, "cv_tdw_sha256": getattr(a, "expect_cv_tdw_sha256", None)}
+    if a.truth == "plugin":
+        mine["push_sha256"] = a.expect_push_sha256
+    diff = sorted(k for k, v in mine.items() if gi.get(k) != v)
+    if diff:
+        raise Refusal(f"the clip gate was read on other inputs than this run's: {diff}")
+    if not g.get("calibration_sha256"):
+        raise Refusal("the clip gate names no calibration")
 
 
 def run_unfold(a, unfold_fn=None) -> int:
