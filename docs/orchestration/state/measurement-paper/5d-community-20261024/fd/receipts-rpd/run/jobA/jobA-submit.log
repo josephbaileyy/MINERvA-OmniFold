@@ -1,0 +1,27 @@
+node login25 nproc=244 loadavg 16.23 18.15 19.44
+2026-11-04T08:06:34Z
+connect script sha256 bd68ee0324bcd07c11047eecf51338678fa9aadff7c6b4effd62cc89891be8c7
+squeue --me before:
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2191.3            10000.0     17966.5      20000.0
+balance_node_h=2033.5 half=1016.8 price=3.0
+HEAD 8727c63e1d32599039ea977d833c5de25a9089d6; porcelain --ignored lines before: 0
+section 7: 23 blobs, 0 mismatches
+verify-staged rc=0
+{"verified": 79, "mismatches": 0}
+2026-11-04T08:07:25Z
+submit_fd_ct.sh rpd-a rc=0
+Submitted batch job 60786801
+PASS gate a
+job A 60786801
+60786801 fd_rpd_a PENDING 0:00 1:00:00 1 regular_1 m3246
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Resources Dependency=(null)
+   RunTime=00:00:00 TimeLimit=01:00:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login25:1673942
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+porcelain --ignored lines after: 0
+job A submit rc=0
+2026-11-04T08:07:35Z

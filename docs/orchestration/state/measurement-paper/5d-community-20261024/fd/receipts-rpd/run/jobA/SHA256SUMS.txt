@@ -1,0 +1,16 @@
+# RPD job A (60786801) records copied from $R=/pscratch/sd/j/josephrb/fd-rpd-20261103 through O_NOATIME (dd iflag=noatime), 2026-11-04; sacct-60786801.txt is sacct -j 60786801 output (times Pacific). sha256, committed name, source.
+184aaa953c3b8084aa75908517babd05584cb9aa96a1bb55f9a25c246b5fdbcf  jobA-submit.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/jobA-submit.log
+055c9f3961222cf5e7908c788ba3ae29c442a298e4254e92981af009f577a12b  submit-a.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/submit-a.out
+7b59cc22f1afe917b27fca382abae88685f91b78538221f22cd0ba1ae112a354  verify-staged-5.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/verify-staged-5.out
+c0a018cf3e977723ea5948abf6a4c9dbce36f2dfe681cb754b3cb35678b3e7e2  gate-rpd-a.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/control/gate-rpd-a.out
+924652f3a227489d242f2ba284840638aa562399829c8839b60224d7b3ff1803  fd_rpd_a_60786801.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/fd_rpd_a_60786801.out
+bd68ee0324bcd07c11047eecf51338678fa9aadff7c6b4effd62cc89891be8c7  rpd_jobA_connect.sh  /pscratch/sd/j/josephrb/fd-rpd-20261103/receipts/rpd_jobA_connect.sh
+42ae1a04ff0936c8c4fa27bb849acaa23cba5ff7f553c7858e67a19b1c7b80cf  line0-60786801.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/line0-60786801.log
+0edbd4c594f4d15358edb02c8c9b10810e6be9f348870c7b16135f6f8f849126  line1-60786801.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/line1-60786801.log
+130937eda7bc97ced04c0a08dc074e802a25e428b441b6db7ff02c4130019f84  line2-60786801.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/line2-60786801.log
+25cdcdc22f30c80384f33ec9fa48dba84dbc9535071f29f4d5b647656643bc43  line3-60786801.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/line3-60786801.log
+c357d9005ad7f5c6bcdb1a3a34943663a48bb9545fee32884ccb86a573189ab4  line4-60786801.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/line4-60786801.log
+b5e94b2884092870da3aa545e940055d9309132c279c8ea89eb5447afb79dcdb  line5-60786801.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/line5-60786801.log
+6a3a0e0ca2384ada5cbbfc219409d7b5551a87d3c50dfc3f623d2098e300d0e3  line6-60786801.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/line6-60786801.log
+4865eccf6a684b4cccd35625c60e8e9b1cd3f8f841368a69eac32a415ea320c0  line7-60786801.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/line7-60786801.log
+887e86ec869b1c3a09f2358cdb93e792619ee2e3a15b717e55bc61a07f69dd11  sacct-60786801.txt  (sacct -j 60786801 -o JobID,JobName,State,ExitCode,Elapsed,NNodes,AllocTRES%70,Start,End)
