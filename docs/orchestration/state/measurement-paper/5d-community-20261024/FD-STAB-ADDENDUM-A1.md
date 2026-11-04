@@ -116,7 +116,7 @@ coded ("nine") and as bound ("eight"): `fd/stab/gatesim/a1_dry_tasks.py`, output
 
 ## 4. Tests and mutants
 
-**112 tests** (94 before):
+**114 tests** (94 before):
 
 - `PvlTruth`, 7 tests, on a `pvl-ratio/1` file written by **`pvl_ratios.write_ratio`, the production writer**, on the
   real 65,856-cell L-5D-PV grid:
@@ -126,15 +126,19 @@ coded ("nine") and as bound ("eight"): `fd/stab/gatesim/a1_dry_tasks.py`, output
   - the MnvTune hypothesis is exactly 1;
   - the refusals (amplitude, edges, axis order, the ratio's axes, schema) and silence on the declared file;
   - the name is restored.
-- `TruthControl`, 8 tests, on a synthetic closure, through the real probe and s5p_nullexp. Only the bank's alignment
+- `TruthControl`, 10 tests, on a synthetic closure, through the real probe and s5p_nullexp. Only the bank's alignment
   check is stubbed, because it needs the full bank and reads nothing the truth uses:
   - it passes and writes nothing;
-  - a one-row change to the weight (2⁻⁴⁰ relative) fails C1;
+  - a one-row change to the weight (2⁻⁴⁰ relative) fails C1 alone, with C2 passing below its tolerance;
+  - the F1-bridge weight fails C1 and C2. It also fails C2 alone: with `pvl_lib.row_weight` itself returning the
+    bridge weight, C1 compares the bridge with itself and passes, and C2 fails by the same relative difference;
   - a product off by 1e-10 fails C2, and one off by 1e-13 passes;
   - a changed zero cell fails C2;
   - an unpinned ratio, an unpinned product and a used scratch are refused;
   - the default pins are F0's;
   - the record carries no absolute value;
+  - every numeric leaf of the record is on a key whitelist (counts, relative differences and the tolerance), and
+    one planted absolute cell, at the top level, in C2, in C3 or as a list, is refused;
   - the command exits 0, 1 or 2 by its verdict.
 - `JobScript`, 3 tests:
   - a failed control (exit 1) stops the dry run before any task, with a STOP, no `DONE`, and the full run refused;
@@ -146,14 +150,18 @@ coded ("nine") and as bound ("eight"): `fd/stab/gatesim/a1_dry_tasks.py`, output
   - `EndToEnd` writes kind `pvl_ratio` and gains the tamper `pvl_kind`;
   - `Tasks` expects nine dry tasks, the ninth being `TRUTH_CONTROL_TASK`.
 
-**90 mutations** (69 before), each of which must be killed by its named test. The 21 new mutants:
+**92 mutations** (69 before), each of which must be killed by its named test. The 23 new mutants:
 
 | area | mutants |
 |---|---|
 | the mapping | maps the schema to `ratio_nd`; rescales the total; takes any amplitude; takes any grid; the closure runs without `pvl_truth`; the name is not restored |
-| the control | C1 not gated; C1 compares the weight with itself; C2's tolerance at 1e-9; C2's zero cells unchecked; C2 against the half-B truth; the verdict ignores C2; the pins unchecked; the product pin is not F0's; a used scratch admitted; the exit ignores the verdict |
+| the control | C1 not gated; C1 compares the weight with itself; C2's tolerance at 1e-9; C2's zero cells unchecked; C2 against the half-B truth; the verdict ignores C2; the pins unchecked; the product pin is not F0's; a used scratch admitted; the exit ignores the verdict; C2 reads the recomputed pvl weight instead of the probe's; the record leaks one absolute cell |
 | the dry run | `closure_nuwro` not in it; the job ignores the control's exit; the job runs without the F0b product |
 | the analysis | the schema-named closure's kind exempt again; the schema-named closure wants `ratio_nd` |
+
+The F1-bridge and whitelist tests and their two mutants close the two test gaps, N1 and N2, from
+coverage-5b-audit's audit of 337fd783 (PR #750, comment 6637775427). The probe, sbatch and analysis are
+unchanged from that head.
 
 ## 5. What A1 amends in the declaration
 
@@ -162,7 +170,7 @@ coded ("nine") and as bound ("eight"): `fd/stab/gatesim/a1_dry_tasks.py`, output
 | §3.2, the closure NuWro row | "truth kind from its `schema`" | schema `pvl-ratio/1`, read as truth `pvl_ratio` = `pvl_lib.row_weight` (§1) |
 | §3.2, the analysis's checks | an alternative's kind is checked, except for the schema-named closure | checked for every closure; `pvl_ratio` for the schema-named one |
 | §7 | the gate skips the dry run's eight tasks | nine; the dry run runs the truth control before T0 |
-| §8 | 94 tests, 69 mutations; `sbatch_fd_stab.sh dry <deploy> <pin> <OUT> 8.0` | 112 tests, 90 mutations; `sbatch_fd_stab.sh dry <deploy> <pin> <OUT> 8.0 <F0b closure product>` |
+| §8 | 94 tests, 69 mutations; `sbatch_fd_stab.sh dry <deploy> <pin> <OUT> 8.0` | 114 tests, 92 mutations; `sbatch_fd_stab.sh dry <deploy> <pin> <OUT> 8.0 <F0b closure product>` |
 | §11.1 | the dry run confirms the ratio's schema names a declared truth kind | measured: `pvl-ratio/1`; resolved here, and checked by C1 and C2 |
 | §11.2 | eight one-unfold tasks | the truth control, then nine one-unfold tasks; `--time=0:45` kept (§3) |
 
@@ -192,7 +200,7 @@ task stops the queue (§7). It would not have produced a wrong number.
         --closure-ratio-dir <dir holding prep/ratios/L-5D-PV/nuwro.json> --runs <OUT>/runs
     sbatch --time=0:45 nd-unfolding/sbatch_fd_stab.sh dry <deploy> <pin> <OUT> 8.0 <F0b L-5D-PV_e_closure_nuwro.npz>
     sbatch --time=<8.0 minus the dry run's charge> nd-unfolding/sbatch_fd_stab.sh full <deploy> <pin> <OUT> <8.0 minus that charge>
-    python3 -B nd-unfolding/tests/estimator_stability_mutation.py      # 90 mutations, all killed
+    python3 -B nd-unfolding/tests/estimator_stability_mutation.py      # 92 mutations, all killed
 
 **Who runs it:** the cluster lane the binding names (limitation-resolver), from a fresh clone at the commit that binds
 A1. This session does not contact the cluster.

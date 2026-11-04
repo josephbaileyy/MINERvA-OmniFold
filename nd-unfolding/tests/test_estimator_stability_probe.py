@@ -409,7 +409,43 @@ class TruthControl(unittest.TestCase):
             probe.pvl_ratio_weight = real
         self.assertFalse(rec["C1"]["pass"])
         self.assertEqual(rec["C1"]["rows_differing"], 1)
+        self.assertTrue(rec["C2"]["pass"], rec["C2"])  # one row at 2^-40 is below C2's tolerance: C1 alone fails
         self.assertFalse(rec["pass"])
+
+    def test_the_f1_bridge_weight_fails_c1_and_c2_each_on_its_own(self):
+        # the rejected mapping (A1 §1): ratio_nd's weights are pvl's times one constant on the truth-passing rows
+        import s5e_deform
+        import fd_f1_prep
+        L, real_pvl, real_rw = self.L, probe.pvl_ratio_weight, self.L.row_weight
+        got = {}
+
+        def bridged(inputs, amplitude, ratio):
+            b = fd_f1_prep.bridge(ratio, self.ratio_path)
+            got["w"] = s5e_deform.ratio_weight(inputs["MCgen"], inputs["edges"], inputs["w_truth"], b, amplitude)
+            return got["w"].copy()
+
+        probe.pvl_ratio_weight = bridged
+        try:
+            rec = self.control()
+        finally:
+            probe.pvl_ratio_weight = real_pvl
+        self.assertFalse(rec["C1"]["pass"])
+        self.assertGreater(rec["C1"]["rows_differing"], 1000)
+        self.assertFalse(rec["C2"]["pass"], rec["C2"])
+        self.assertEqual(rec["C2"]["zero_pattern_differs"], 0)
+        self.assertGreater(rec["C2"]["max_rel"], 1e-6)  # the bridge's constant, not rounding
+        self.assertFalse(rec["pass"])
+        # C2 without C1: pvl_lib.row_weight itself returns the bridge weight, so C1 compares the bridge with itself
+        # and passes; C2 still reads the product made with the real row_weight, and fails by the same constant
+        L.row_weight = lambda gen, names, ratio, pass_truth: got["w"].copy()
+        try:
+            rec2 = self.control()
+        finally:
+            L.row_weight = real_rw
+        self.assertTrue(rec2["C1"]["pass"], rec2["C1"])
+        self.assertFalse(rec2["C2"]["pass"], rec2["C2"])
+        self.assertEqual(rec2["C2"]["max_rel"], rec["C2"]["max_rel"])
+        self.assertFalse(rec2["pass"])
 
     def test_a_product_off_by_more_than_the_tolerance_fails_c2(self):
         x = self.xtrue.copy()
@@ -455,6 +491,34 @@ class TruthControl(unittest.TestCase):
         flat = json.dumps(rec)
         for v in (float(np.max(self.xtrue)), float(np.min(self.xtrue[self.xtrue > 0]))):
             self.assertNotIn(repr(v)[:10], flat)
+
+    # every numeric leaf a truth-control record may carry: counts, relative differences and the tolerance (ruling 6)
+    NUMERIC_KEYS = {"rows", "rows_differing", "rows_reweighted", "cells", "nonzero_cells", "zero_pattern_differs",
+                    "max_rel", "median_rel", "tolerance"}
+
+    def numeric_leaves_off_the_whitelist(self, rec, path=()):
+        off = []
+        for k, v in rec.items():
+            if isinstance(v, dict):
+                off += self.numeric_leaves_off_the_whitelist(v, path + (k,))
+            elif isinstance(v, (int, float)) and not isinstance(v, bool) and k not in self.NUMERIC_KEYS:
+                off.append("/".join(path + (k,)))
+            elif isinstance(v, (list, tuple)):
+                off.append("/".join(path + (k,)))  # no arrays: a list of cells is a leak whatever its key
+        return off
+
+    def test_every_numeric_leaf_is_on_the_whitelist_and_a_planted_cell_is_refused(self):
+        rec = self.control()
+        self.assertEqual(self.numeric_leaves_off_the_whitelist(rec), [])
+        cell = float(self.xtrue[np.flatnonzero(self.xtrue)[5]])  # neither the largest nor the smallest cell
+        for where in ("C2", "C3", None):
+            with self.subTest(where=where):
+                leaked = json.loads(json.dumps(rec))
+                (leaked[where] if where else leaked)["cell"] = cell
+                self.assertEqual(self.numeric_leaves_off_the_whitelist(leaked), [f"{where}/cell" if where else "cell"])
+        leaked = json.loads(json.dumps(rec))
+        leaked["C2"]["xtrue"] = [cell]
+        self.assertEqual(self.numeric_leaves_off_the_whitelist(leaked), ["C2/xtrue"])
 
     def test_the_command_exits_by_the_verdict(self):
         import contextlib

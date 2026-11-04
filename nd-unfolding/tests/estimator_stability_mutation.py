@@ -17,7 +17,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_estimator_stability_probe.py"
 P, A, S = "estimator_stability_probe.py", "estimator_stability_analyze.py", "sbatch_fd_stab.sh"
-EXPECTED_TESTS = 112  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
+EXPECTED_TESTS = 114  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
 MUTATIONS = [
     ("in-fold prediction", P, "rows = self.folds[:m] == f", "rows = self.folds[:m] != f",
      "test_every_evaluated_row_is_predicted_by_a_model_that_did_not_train_on_it"),
@@ -204,6 +204,11 @@ MUTATIONS = [
      '                or (kind != "SCHEMA" and got_alt.get("truth") != want_kind):', "test_the_product_checks_refuse"),
     ("the schema-named closure wants ratio_nd (A1)", A, "want_kind = probe.PVL_TRUTH if", 'want_kind = "ratio_nd" if',
      "test_the_product_checks_stay_silent_without_tampering"),
+    ("C2 on the recomputed pvl weight (A1)", P, "    _, x_full = L.closure_inputs(inputs, r)\n",
+     "    _, x_full = L.closure_inputs(inputs, r_pvl)\n", "test_the_f1_bridge_weight_fails_c1_and_c2_each_on_its_own"),
+    ("the record leaks one cell (A1)", P, '    c2["tolerance"] = TRUTH_CONTROL_TOL\n',
+     '    c2["tolerance"] = TRUTH_CONTROL_TOL\n    c2["cell"] = float(ref[np.flatnonzero(ref)[5]])\n',
+     "test_every_numeric_leaf_is_on_the_whitelist_and_a_planted_cell_is_refused"),
 ]
 
 
