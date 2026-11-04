@@ -1,0 +1,2 @@
+{"calibration": "timing", "fine_cells_kept": 10693, "set_seconds_measured": 0.24115848541259766, "workers": 64, "projected_seconds": 1221.7906605005264, "budget_seconds": 13500.0}
+C2-CALIBRATION verdict=TO_JOSEPH over_truths_b={'union_per_replicate': 0.1891, 'union_product': 0.18838595000000002, 'se': 0.003915880360787341}
