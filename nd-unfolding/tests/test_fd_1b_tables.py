@@ -162,6 +162,24 @@ class Tables(unittest.TestCase):
             names = {r: {p.name for p in ps} for r, ps in by_rule.items()}
             self.assertEqual(len(names["data"] & names["nature"]), 5, plugin)     # ruling (A)'s five re-runs
 
+    def test_the_lane_cap_has_no_effect_on_the_declared_tables(self):
+        """The proof of the harness's EQUIVALENT "tables: 23 per lane": on the declared inputs (1,054 and 1,581 bulk
+        items), the generator's every table is byte-identical at PER_LANE 22 and 23, so the cap is equivalent there.
+        The slack is thin (1,056 and 1,584 slots), and the bulk sizes are pinned in test_the_graded_bulk_is_the_
+        declared_set, which is what keeps this an equivalence."""
+        import hashlib
+        self.commit_pin(self.sha + "\n")
+        got = {}
+        for per in (gen.PER_LANE, gen.PER_LANE + 1):
+            with mock.patch.object(gen, "PER_LANE", per):
+                for plugin in ("no", "yes"):
+                    o = self.run_gen(plugin, out=f"lane-{per}-{plugin}")
+                    got[(per, plugin)] = {f.name: hashlib.sha256(f.read_bytes().replace(str(o).encode(), b"OUT")).hexdigest()
+                                          for f in sorted(o.iterdir())}
+        for plugin in ("no", "yes"):
+            self.assertEqual(len(got[(gen.PER_LANE, plugin)]), 8)
+            self.assertEqual(got[(gen.PER_LANE, plugin)], got[(gen.PER_LANE + 1, plugin)], plugin)
+
     def test_the_bulk_needs_binding_3s_committed_pins_file(self):
         with self.assertRaises(mc.Refusal):                                       # no pins file
             self.run_gen(out="o1")

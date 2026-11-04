@@ -7,7 +7,8 @@ suites that must kill it. Run from nd-unfolding/ with TMPDIR set:
     python3 ../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/mutation_a21.py
 
 KILLED means the suites exit 1 (a test failed); any other non-zero exit is ERROR, not a kill. Bytecode-free, with a
-fixed hash seed, as mutation_mc_a2.py.
+fixed hash seed, as mutation_mc_a2.py. The unmutated suites run first and again last; a red first run stops before
+any mutant (exit 3). The harness exits 1 unless every applicable mutant is killed and the last control passes.
 """
 import ast
 import hashlib
@@ -48,11 +49,16 @@ CM_REANCHOR = {"A2: two clipmean products accepted": '    cm = sorted(unfolds.gl
                "A2: clipped fraction over the wrong total": '            tot = rec[comp]["sum_lambda"]\n',
                "A2e: the meta records the fixed config": '"item": item, '}
 GATE_NEW = "    check_clip_gate(a)                        # after the role checks"
-# Equivalent on every input, with the proof a test (test_fd_1b_c2 Gate.test_i_at_exactly_0_20_is_unreachable): no
-# double r has |r - 1| == 0.20, so (i)'s > and >= agree everywhere. "tables: 23 per lane" is equivalent on the declared
-# inputs: 1,054 and 1,581 items need 6 and 9 nodes at 22 or 23 per lane, and the round-robin then puts at most 22 in
-# a lane either way (the generator's output is byte-identical; the cap matters only for a larger table).
-EQUIVALENT = {"724(i): exactly 0.20 counts as beyond", "tables: 23 per lane"}
+# Each equivalent mutant with its scope and the test that proves it (the audit's W1 at c00e9b4a: one label for both
+# overstated the second). (i)'s > and >= agree on every input, since no double r has |r - 1| == 0.20. The lane cap is
+# equivalent on the declared inputs only: 1,054 and 1,581 items need 6 and 9 nodes at 22 or 23 per lane, and the
+# round-robin then puts at most 22 in a lane either way; the cap matters only for a larger table.
+EQUIVALENT = {
+    "724(i): exactly 0.20 counts as beyond":
+        "on every input; test_fd_1b_c2 Gate.test_i_at_exactly_0_20_is_unreachable",
+    "tables: 23 per lane":
+        "on the declared inputs only; test_fd_1b_tables Tables.test_the_lane_cap_has_no_effect_on_the_declared_tables",
+}
 
 NEW = [
     # ---- fd_1b_mc: the U check, truth_weight's install, S3, (e2), S2
@@ -341,12 +347,20 @@ for f, name, old, new, tests, replaced in plan:                      # every anc
 print(f"plan: {len(plan)} mutants, {sum(r for *_, r in plan)} not applicable; every anchor occurs as required")
 if "--check" in sys.argv:
     sys.exit(0)
+SUITES = list(MC + C2 + CVD + BIN + E2E + TAB)
+purge()                                    # the unmutated control first: a red baseline would read every mutant KILLED
+r = subprocess.run([sys.executable, "-B", "-m", "pytest", "-p", "no:cacheprovider", "-q"] + SUITES,
+                   capture_output=True, text=True, env=ENV)
+print("unmutated:", r.stdout.strip().splitlines()[-1], flush=True)
+if r.returncode != 0:
+    print(f"STOP: the unmutated suites exit {r.returncode}; no mutant is run")
+    sys.exit(3)
 rows = []
 try:
     for f, name, old, new, tests, replaced in plan:
         if name in EQUIVALENT:
             rows.append((name, "EQUIVALENT"))
-            print(f"EQUIV    {name}  (equivalent on every input; its proof is a test)", flush=True)
+            print(f"EQUIV    {name}  (equivalent {EQUIVALENT[name]})", flush=True)
             continue
         if replaced:
             rows.append((name, "N/A"))
@@ -362,10 +376,12 @@ finally:
     for f, text in files.items():
         Path(f).write_text(text)
 purge()
-r = subprocess.run([sys.executable, "-B", "-m", "pytest", "-p", "no:cacheprovider", "-q"] +
-                   list(MC + C2 + CVD + BIN + E2E + TAB), capture_output=True, text=True, env=ENV)
-print("unmutated:", r.stdout.strip().splitlines()[-1])
+r = subprocess.run([sys.executable, "-B", "-m", "pytest", "-p", "no:cacheprovider", "-q"] + SUITES,
+                   capture_output=True, text=True, env=ENV)
+print("unmutated, after:", r.stdout.strip().splitlines()[-1])
 applicable = [k for _, k in rows if k not in ("N/A", "EQUIVALENT")]
-print(f"{sum(1 for k in applicable if k == 'KILLED')} of {len(applicable)} applicable killed; "
+killed = sum(1 for k in applicable if k == "KILLED")
+print(f"{killed} of {len(applicable)} applicable killed; "
       f"{sum(1 for _, k in rows if k == 'N/A')} not applicable; {sum(1 for _, k in rows if k == 'EQUIVALENT')} "
-      f"equivalent (proved by a test); {len(rows)} in all")
+      f"equivalent (each with its scope and proving test); {len(rows)} in all")
+sys.exit(0 if killed == len(applicable) and r.returncode == 0 else 1)   # a survivor, an ERROR or a red control fails

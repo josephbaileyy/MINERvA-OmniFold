@@ -333,7 +333,11 @@ Any other difference is a STOP to the director.
   Mutants whose anchor A2.1 moved or duplicated are re-anchored by name (`REANCHOR`, `CM_REANCHOR`, the gate call).
 - Two are `EQUIVALENT`, each with its proof:
   - "724(i): exactly 0.20 counts as beyond": no double r has |r − 1| == 0.20, and a test shows it;
-  - "tables: 23 per lane": byte-identical output on the declared inputs.
+  - "tables: 23 per lane": equivalent on the declared inputs only. The output is byte-identical at 22 and 23
+    (measured, and asserted since by `test_fd_1b_tables` `test_the_lane_cap_has_no_effect_on_the_declared_tables`).
+    The slack (1,054 items in 1,056 slots, 1,581 in 1,584) is held only by the bulk-size test. The 1871a6e9
+    receipt prints both equivalents as "equivalent on every input; its proof is a test", which overstates this one
+    (the audit's W1). The harness now prints each with its own scope and proving test.
 - KILLED means the suites exit 1. Any other non-zero exit is ERROR.
 - Runs are bytecode-free, at PYTHONHASHSEED=0, each in its own clean detached worktree at the cited head.
 - `--check` verifies every anchor without running anything.
@@ -374,6 +378,12 @@ worktree at PYTHONHASHSEED=0.
 - Every source and test it mutates or runs is listed by sha256 at its head. fd_1b_mc is `5271782c` and fd_1b_c2
   `f19adbda`.
 - The worktree was unchanged afterwards, with 0 `.pyc`.
+- **It stands although the harness has changed since (the director).** Its control passed, so its kills are valid.
+  The audit's H1 found that the control ran only after the mutants and the exit status was always 0, so a red
+  baseline would have read every mutant KILLED. The harness now runs the control first and stops before any mutant
+  if it fails (exit 3). It exits 1 unless every applicable mutant is killed and the closing control passes. Both
+  directions were measured: a planted failing test gives exit 3 with no mutant run, and the green suites give exit 0.
+  The next cited receipt uses it.
 
 ## 10. The stage 1 tables under S2 (the director's ruling (A), 2026-11-04)
 
@@ -532,4 +542,5 @@ The C4 refusal at the readout is replaced by this. The C4 refusal still stands a
   - over the 30 repository modules those suites import: no match;
   - the same pattern at `e880008c` finds both former calls (`test_fd_1b.py:106` and `:114`), so it can see one.
 
-"23 per lane" is equivalent on the declared inputs, and its output is byte-identical.
+"23 per lane" is equivalent on the declared inputs only (byte-identical output at 22 and 23, measured and now
+asserted by a test); the slack is held only by the bulk-size test.
