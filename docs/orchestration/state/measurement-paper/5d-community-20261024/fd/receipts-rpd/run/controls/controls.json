@@ -1,0 +1,278 @@
+{
+ "schema": "fd-rpd-controls/1",
+ "labels": {
+  "what": "C1 (the per-playlist inputs are a partition of MP-1's lat_zero, renormalized per playlist), K2' (this deploy reproduces 5B's PC s42 and b3001 unfolds bitwise) and N0-P (the N0 partitions)"
+ },
+ "verdict": "PASS",
+ "C1": {
+  "pass": true,
+  "keys": {
+   "MCgen": true,
+   "MCreco": true,
+   "measured": true,
+   "pass_reco": true,
+   "pass_truth": true,
+   "bkg_reco": true,
+   "w_truth": true,
+   "w_reco": true,
+   "bkg_w": true,
+   "denom_nd": true,
+   "bkg_nd": true,
+   "data_pot": true,
+   "global_equal": true,
+   "flux": true
+  },
+  "measured_weights_share_equal": {
+   "1A": 0.99782499909142,
+   "1B": 1.0,
+   "1C": 1.0,
+   "1D": 0.9997816476590377,
+   "1E": 1.0,
+   "1F": 1.0,
+   "1G": 1.0,
+   "1L": 1.0,
+   "1M": 0.9963067997832141,
+   "1N": 1.0,
+   "1O": 1.0,
+   "1P": 1.0
+  },
+  "measured_weights_share_required": 0.999,
+  "s_all": 0.21240500334472884,
+  "s_ratio": {
+   "1A": 1.0381157083227905,
+   "1B": 0.8038377228994085,
+   "1C": 0.9685761672668373,
+   "1D": 1.1164912888727667,
+   "1E": 0.9530702305913078,
+   "1F": 1.1109172485568715,
+   "1G": 1.0877481539098066,
+   "1L": 1.0810744847366711,
+   "1M": 0.8291253072190293,
+   "1N": 0.9796866559198,
+   "1O": 0.8865206337207707,
+   "1P": 1.0576570287593312
+  }
+ },
+ "K2prime": {
+  "pass": true,
+  "by_seed": {
+   "None": true,
+   "3001": true
+  }
+ },
+ "N0P": {
+  "pass": true,
+  "partitions": {
+   "1": {
+    "pass": true,
+    "checks": {
+     "data_rows_bitwise_in_order": true,
+     "signal_rows_bitwise_in_order": true,
+     "background_rows_bitwise_in_order": true,
+     "data_pot_sum": true,
+     "denom_sum": true,
+     "bkg_nd_sum": true,
+     "shares_within_5_sigma": true,
+     "completeness_equal": true,
+     "globals_equal": true,
+     "measured_weights_present": true,
+     "bkg_meta": true
+    }
+   },
+   "2": {
+    "pass": true,
+    "checks": {
+     "data_rows_bitwise_in_order": true,
+     "signal_rows_bitwise_in_order": true,
+     "background_rows_bitwise_in_order": true,
+     "data_pot_sum": true,
+     "denom_sum": true,
+     "bkg_nd_sum": true,
+     "shares_within_5_sigma": true,
+     "completeness_equal": true,
+     "globals_equal": true,
+     "measured_weights_present": true,
+     "bkg_meta": true
+    }
+   },
+   "3": {
+    "pass": true,
+    "checks": {
+     "data_rows_bitwise_in_order": true,
+     "signal_rows_bitwise_in_order": true,
+     "background_rows_bitwise_in_order": true,
+     "data_pot_sum": true,
+     "denom_sum": true,
+     "bkg_nd_sum": true,
+     "shares_within_5_sigma": true,
+     "completeness_equal": true,
+     "globals_equal": true,
+     "measured_weights_present": true,
+     "bkg_meta": true
+    }
+   },
+   "4": {
+    "pass": true,
+    "checks": {
+     "data_rows_bitwise_in_order": true,
+     "signal_rows_bitwise_in_order": true,
+     "background_rows_bitwise_in_order": true,
+     "data_pot_sum": true,
+     "denom_sum": true,
+     "bkg_nd_sum": true,
+     "shares_within_5_sigma": true,
+     "completeness_equal": true,
+     "globals_equal": true,
+     "measured_weights_present": true,
+     "bkg_meta": true
+    }
+   },
+   "5": {
+    "pass": true,
+    "checks": {
+     "data_rows_bitwise_in_order": true,
+     "signal_rows_bitwise_in_order": true,
+     "background_rows_bitwise_in_order": true,
+     "data_pot_sum": true,
+     "denom_sum": true,
+     "bkg_nd_sum": true,
+     "shares_within_5_sigma": true,
+     "completeness_equal": true,
+     "globals_equal": true,
+     "measured_weights_present": true,
+     "bkg_meta": true
+    }
+   },
+   "6": {
+    "pass": true,
+    "checks": {
+     "data_rows_bitwise_in_order": true,
+     "signal_rows_bitwise_in_order": true,
+     "background_rows_bitwise_in_order": true,
+     "data_pot_sum": true,
+     "denom_sum": true,
+     "bkg_nd_sum": true,
+     "shares_within_5_sigma": true,
+     "completeness_equal": true,
+     "globals_equal": true,
+     "measured_weights_present": true,
+     "bkg_meta": true
+    }
+   },
+   "7": {
+    "pass": true,
+    "checks": {
+     "data_rows_bitwise_in_order": true,
+     "signal_rows_bitwise_in_order": true,
+     "background_rows_bitwise_in_order": true,
+     "data_pot_sum": true,
+     "denom_sum": true,
+     "bkg_nd_sum": true,
+     "shares_within_5_sigma": true,
+     "completeness_equal": true,
+     "globals_equal": true,
+     "measured_weights_present": true,
+     "bkg_meta": true
+    }
+   },
+   "8": {
+    "pass": true,
+    "checks": {
+     "data_rows_bitwise_in_order": true,
+     "signal_rows_bitwise_in_order": true,
+     "background_rows_bitwise_in_order": true,
+     "data_pot_sum": true,
+     "denom_sum": true,
+     "bkg_nd_sum": true,
+     "shares_within_5_sigma": true,
+     "completeness_equal": true,
+     "globals_equal": true,
+     "measured_weights_present": true,
+     "bkg_meta": true
+    }
+   },
+   "9": {
+    "pass": true,
+    "checks": {
+     "data_rows_bitwise_in_order": true,
+     "signal_rows_bitwise_in_order": true,
+     "background_rows_bitwise_in_order": true,
+     "data_pot_sum": true,
+     "denom_sum": true,
+     "bkg_nd_sum": true,
+     "shares_within_5_sigma": true,
+     "completeness_equal": true,
+     "globals_equal": true,
+     "measured_weights_present": true,
+     "bkg_meta": true
+    }
+   },
+   "10": {
+    "pass": true,
+    "checks": {
+     "data_rows_bitwise_in_order": true,
+     "signal_rows_bitwise_in_order": true,
+     "background_rows_bitwise_in_order": true,
+     "data_pot_sum": true,
+     "denom_sum": true,
+     "bkg_nd_sum": true,
+     "shares_within_5_sigma": true,
+     "completeness_equal": true,
+     "globals_equal": true,
+     "measured_weights_present": true,
+     "bkg_meta": true
+    }
+   }
+  }
+ },
+ "inputs_sha256": {
+  "receipts": {
+   "1A": "dab638934867a642e4f02d081a29ec26c51e92283782b329abc71b383e417a36",
+   "1B": "805235288bcc3d47546ee8753c28f4edbd538d25e3e5c8fe642ff5de7be923c2",
+   "1C": "f953b31295b1d924348c12f9f8d94fbadc43c6684b349f43c06dd4ed0787e167",
+   "1D": "391a69e8951fbdbbd807485b0326165453f93c8f9cadeea28c5b6bef45799056",
+   "1E": "60ac726ee2b16c47fbeebd482571fd27153ac6bed73e38c8f6b4273e9a19707e",
+   "1F": "12e4e458e635dff46b34692af0803083266db5c984669fa10e6f4a766db0d196",
+   "1G": "7350e93535745b49d8d03763e0bfa16102a8da8010b839b32f98d098c5fc1607",
+   "1L": "e2bb757900525b8355c036affdd2d441b9210fe71c9cafbfc02abec4dd2da889",
+   "1M": "be78b52a2bd8a01e7a7f277cd28fa863d18b0874e9a40623032997c1dda7f61b",
+   "1N": "8f77bb3e8cf1d6274d5809858db9e0c707af29e7f8b3bd65b4420590743d624b",
+   "1O": "f802c5a2538a427acd71aa3a70cbb476e8459cf91d80d28b1eaf8f3d654d8365",
+   "1P": "2b9929420d69e13d9a2ae5269e7b9d11147e8951236867a3acdf3f4570d5d512"
+  },
+  "n0_receipts": {
+   "1": "e049fb4cbb25515557a3db9733be226f6aed245cf53c5e3c6349bc4603b21ccc",
+   "2": "1ccc8f08c1b647ca01ce0dd0a94c3b8887550443a00423b1c6d74f0a4d7391a2",
+   "3": "f08a8ae1ad9eccee070d61fb05269b097c929b26703fff3b965dde81893f50e4",
+   "4": "6ce5e6541558695956c9200b42e3720f2ff82948db1e520b64811208e0638873",
+   "5": "06ab3b894e24739820c79ebf7c21a470056703a60a9142fb8d8e5022ce264e0a",
+   "6": "6875fa1c6fc33e27ee3f9019c754c3bd514a9f901e997489cb8241d47a639b7d",
+   "7": "b02771a12fe6bab5c8bed55615dafd64dfc3125449e2816e40c544e18afea953",
+   "8": "6a4b92108e82a882f8fa5df30bbd67f9999f1cfe9eda6ea6d272316800f36c60",
+   "9": "7da947d59c3776607e01fd9a49ae61bafc1a2ebd1fd0ff04d810d9341213f002",
+   "10": "4e6ac5d6b0b5debe67611b63217a42254f987bb621a6d9417f130ec5d605507b"
+  },
+  "flux_record": "649f9d55422016367a69350a742799bb4187c475696bfdb9a800e82723af794f"
+ },
+ "code_sha256": {
+  "fd_ct_readers.py": "f4cc51c8fdba141b4ae3e289ee983d755c0cd5b90a82d40fe71d2e56a4447464",
+  "fd_f0_regrade.py": "0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2",
+  "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71",
+  "fd_rpd.py": "3cbc27111d225fdc6d3b2ce1a6b797ad4372954b96fe5cbd769f641f2911b96c",
+  "fd_rpd_inputs.py": "6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70",
+  "fd_ct_periods.py": "ec6bc7f5b292195c7b3488ad9903c2ad7a5dc22746349e7c3fbb9737e283ed3e"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-6/nd-unfolding/fd_rpd.py",
+  "controls",
+  "--r",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103",
+  "--definition",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-6/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "--deploy",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-6",
+  "--out-json",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/control/controls.json"
+ ]
+}
