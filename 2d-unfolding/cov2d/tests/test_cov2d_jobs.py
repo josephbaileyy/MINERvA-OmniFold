@@ -214,13 +214,16 @@ class DryRun(unittest.TestCase):
 class Pilot(unittest.TestCase):
     def test_eight_runs_three_lanes_and_2a_file(self):
         rows, jobs = cj.pilot()
-        self.assertEqual([r["label"] for r in rows], ["P912_L_BeamAngleX_0", "L_G18_BeamAngleX_0", "P2b_ER", "X_G18",
-                                                       "T_G18_5720000", "B_G18_001", "P912_U_MaRES_0", "U_G18_Flux_0"])
+        self.assertEqual([r["label"] for r in rows], ["P912_L_BeamAngleX_0", "L_G18_BeamAngleX_0", "P912_U_MaRES_0",
+                                                       "P2b_ER", "X_G18", "T_G18_5720000", "B_G18_001", "U_G18_Flux_0"])
+        cpus = {r["label"]: r["cpus"] for r in rows}
+        # each control at its part B reference's CPU count: ER 64 (J1), S3_BeamAngleX0 128 (J3), U_MaRES_0 128 (J2b)
+        self.assertEqual((cpus["P2b_ER"], cpus["P912_L_BeamAngleX_0"], cpus["P912_U_MaRES_0"]), (64, 128, 128))
+        self.assertEqual(jobs[0]["limit"], "01:41:00")
         self.assertLessEqual(cj.hms(jobs[0]["limit"]), 2 * 3600)
         for r in rows:
             df = r["args"][r["args"].index("--data-file") + 1]
             self.assertEqual(df == "$K2A", r["label"].startswith("P"))
-        self.assertEqual(sum(r["cpus"] for r in rows if r["lane"] != rows[0]["lane"]) // 3 + 128, 256)
         p2b = next(r for r in rows if r["label"] == "P2b_ER")["args"]
         self.assertEqual(p2b[:-2], cj.argv("central", "x")[:-2])      # E_R's argv (partb_runs.tsv:2)
 
@@ -249,6 +252,71 @@ class Pilot(unittest.TestCase):
             self.assertEqual(len(lines), 8)
             self.assertEqual(sum("/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root" in ln for ln in lines), 3)
             self.assertEqual(sum(f"{td}/pseudo/G18/b/data_" in ln for ln in lines), 5)
+
+
+class Order(unittest.TestCase):
+    """J1: COV2D-DECLARATION.md:40 and section 10 steps 5-6, enforced at submission."""
+    M = "m" * 40
+
+    def rec(self, ok=True, M=None):
+        return {"verdict": "PASS" if ok else "STOP", "M": M or self.M}
+
+    def committed(self, g18=False, ar23=False, pilot=False):
+        return {cj.PSEUDO_RECORD.format(truth="G18"): self.rec() if g18 else None,
+                cj.PSEUDO_RECORD.format(truth="AR23"): self.rec() if ar23 else None,
+                cj.PILOT_RECORD: self.rec() if pilot else None}
+
+    def test_the_sequence(self):
+        o = cj.order
+        self.assertEqual(o("pseudo", "G18", self.committed(), set(), self.M), [])
+        self.assertTrue(o("pilot", "pilot", self.committed(), set(), self.M))                 # needs G18's PASS
+        self.assertEqual(o("pilot", "pilot", self.committed(g18=True), set(), self.M), [])
+        self.assertTrue(o("pseudo", "AR23", self.committed(g18=True), set(), self.M))         # needs the pilot
+        self.assertEqual(o("pseudo", "AR23", self.committed(g18=True, pilot=True), set(), self.M), [])
+        self.assertTrue(o("G18_Ua", "G18", self.committed(g18=True, pilot=True), set(), self.M))   # needs AR23's too
+        self.assertEqual(o("G18_Ua", "G18", self.committed(True, True, True), set(), self.M), [])
+        self.assertTrue(o("G18_Ta", "G18", self.committed(True, True, True), {"G18_Ua"}, self.M))  # universes first
+        self.assertEqual(o("G18_Ta", "G18", self.committed(True, True, True), set(cj.UNIVERSE_JOBS), self.M), [])
+
+    def test_a_record_for_another_commit_or_not_pass_does_not_count(self):
+        c_ = self.committed(True, True, True)
+        c_[cj.PILOT_RECORD] = self.rec(M="x" * 40)
+        self.assertTrue(cj.order("G18_Ua", "G18", c_, set(), self.M))
+        c_[cj.PILOT_RECORD] = self.rec(ok=False)
+        self.assertTrue(cj.order("G18_Ua", "G18", c_, set(), self.M))
+
+    def test_gate_refuses_an_unknown_cov2d_job(self):
+        with self.assertRaises(c.Refusal):
+            cj.gate("1|cov2d-mystery|COMPLETED|100|1\n", {"G18_L": "03:20:00"}, "G18_L")
+
+    def test_uni_stat(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "u"
+            p.write_bytes(b"x")
+            self.assertIn("part B's DTN record", cj.uni_stat_problem(str(p)))
+
+
+class LaneWalls(unittest.TestCase):
+    """J3: the script's own lane(), with srun stubbed to fail only the first run: each run keeps its own rc."""
+    def test_each_run_records_its_own_rc(self):
+        import subprocess
+        script = (HERE.parent / "jobs" / "cov2d_job.sbatch").read_text()
+        lane = script[script.index("lane() {"):script.index("pids=\"\"")]
+        with tempfile.TemporaryDirectory() as td:
+            runs = Path(td) / "runs.tsv"
+            runs.write_text("job\tlane\tlabel\tcpus\tscript\targs\test_s\n"
+                            + "".join(f"J\tJ.1\tr{i}\t4\tre2\t--x {i}\t1\n" for i in (1, 2, 3)))
+            harness = f"""
+O={td}; JOB=J; RUNS={runs}; C={td}; mkdir -p "$O/logs" "$O/out" "$O/inventory"
+command -v sha256sum > /dev/null || sha256sum() {{ shasum -a 256 "$@"; }}   # macOS lacks sha256sum
+srun() {{ local out; while [ $# -gt 0 ]; do [ "$1" = --out ] && out=$2; [ "$1" = --job-name=r1 ] && return 1; shift; done
+         mkdir -p "$(dirname "$out")"; echo x > "$out"; }}
+{lane}
+lane J.1
+"""
+            subprocess.run(["bash", "-c", harness], capture_output=True, text=True)
+            walls = [ln.split("\t") for ln in (Path(td) / "walls.J.1.tsv").read_text().splitlines()]
+            self.assertEqual([(w[0], w[3]) for w in walls], [("r1", "1"), ("r2", "0"), ("r3", "0")])
 
 
 if __name__ == "__main__":

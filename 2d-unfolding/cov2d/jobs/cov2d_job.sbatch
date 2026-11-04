@@ -23,17 +23,18 @@ if [ "${DRYRUN:-0}" != 1 ]; then
     grep -q "QOS=regular" <<<"$info" || { echo "[cov2d] QOS is not regular"; exit 2; }
     limit=$(awk -F'\t' -v j="$JOB" 'NR > 1 && $1 == j {print $7}' "$JOBS")
     [ -n "$limit" ] && grep -q "TimeLimit=$limit " <<<"$info" || { echo "[cov2d] TimeLimit is not $JOB's $limit"; exit 2; }
-    python -B "$CJ" check --runs "$RUNS" --job "$JOB" --stats "$STATS" --pseudo-b "$D/pseudo_b.json" \
-        > "$O/logs/check-$JOB-$SLURM_JOB_ID.json" || { cat "$O/logs/check-$JOB-$SLURM_JOB_ID.json"; exit 4; }
-    if [ "$JOB" = pilot ]; then   # the director's ruling (b): a timed read in place of a full CFS-read lateral
+    if [ "$JOB" = pilot ]; then   # the director's ruling (b): a timed read in place of a full CFS-read lateral, BEFORE
+        # the check re-hashes the staged lateral, so neither side is a read this job already made (P4)
         lat0=runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root
         python -B "$CJ" dvs-rate --staged "$ACT/$lat0" --cfs "$CFSACT/$lat0" > "$O/logs/dvs-rate-$SLURM_JOB_ID.json" \
             || echo "[cov2d] dvs-rate failed (descriptive; recorded, not a stop)"
     fi
+    python -B "$CJ" check --runs "$RUNS" --job "$JOB" --stats "$STATS" --pseudo-b "$D/pseudo_b.json" \
+        > "$O/logs/check-$JOB-$SLURM_JOB_ID.json" || { cat "$O/logs/check-$JOB-$SLURM_JOB_ID.json"; exit 4; }
 fi
 echo "[cov2d] start $(date -u +%FT%TZ) job=${SLURM_JOB_ID:-dry} JOB=$JOB node=$(hostname)"
 lane() {  # lane <name>: its runs in table order; a failed run is recorded and the lane goes on
-    local want=$1 job ln label cpus script args est rc=0 t0
+    local want=$1 job ln label cpus script args est rc=0 t0 run_rc
     while IFS=$'\t' read -r -u 3 job ln label cpus script args est; do
         [ "$job" = "$JOB" ] && [ "$ln" = "$want" ] || continue
         if [ -e "$O/out/$label" ]; then echo "[cov2d] $label exists; not overwritten"; rc=1; continue; fi
@@ -41,14 +42,14 @@ lane() {  # lane <name>: its runs in table order; a failed run is recorded and t
         eval "set -- $args"
         if [ "${DRYRUN:-0}" = 1 ]; then echo "srun -c $cpus $label: $*"; continue; fi
         mkdir -p "$O/out/$label"
-        t0=$(date +%s)
+        t0=$(date +%s); run_rc=0
         srun -n1 -c "$cpus" --mem="$((cpus * 1905))M" --exact --job-name="$label" \
             python "$C/nd-unfolding/mnv_guarded_run.py" --expect-root "$C" --label "cov2d_$label" \
             --inventory "$O/inventory/$label.jsonl" -- "$C/2d-unfolding/re2/re2_driver.py" "$@" \
             --out "$O/out/$label/xsec.root" < /dev/null > "$O/logs/$label.log" 2>&1 \
             && (cd "$O/out" && sha256sum "$label/xsec.root") >> "$O/SHA256SUMS.$JOB.${want#$JOB.}" \
-            || { echo "[cov2d] $label rc=$?"; rc=1; }
-        printf '%s\t%s\t%s\t%s\n' "$label" "$t0" "$(date +%s)" "$rc" >> "$O/walls.$JOB.${want#$JOB.}.tsv"
+            || { echo "[cov2d] $label rc=$?"; run_rc=1; rc=1; }
+        printf '%s\t%s\t%s\t%s\n' "$label" "$t0" "$(date +%s)" "$run_rc" >> "$O/walls.$JOB.${want#$JOB.}.tsv"   # each run's own rc
     done 3< <(tail -n +2 "$RUNS")
     return $rc
 }

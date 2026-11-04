@@ -41,7 +41,6 @@ UNI_STAT = "171117087867 1783523295 882725391507234642"   # part B's DTN record 
 PINS = {"$MC": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
         "$FLUXU": "5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb",
         "$K2A": "7eb39088a42844b48ec1f8e1b6b586b8d8d4363611d68b726112f9f75c99b9db"}   # (2a)'s kept file (the pilot)
-PILOT_EST = {"universe64": 1150}   # part B's J7: universe-type runs at 64 CPUs, 1,121 s each (estimate 43,714 s / 39)
 
 
 def argv(kind: str, data_file: str, extra: str = "") -> list[str]:
@@ -107,17 +106,20 @@ def pack(runs: list[dict], truth: str) -> tuple[list[dict], list[dict]]:
 
 def pilot() -> tuple[list[dict], list[dict]]:
     """The pilot (section 10): (2b) and section 9.12 on (2a)'s kept file, then x_hat_T, one universe, one replica, one
-    lateral and one toy at G18, on one node in three lanes at part B's CPU counts per class."""
+    lateral and one toy at G18, on one node in three lanes. Each control runs on its part B reference's CPU count (the
+    director's ruling: RE-2 claims equality only like for like): (2b) at 64 as ER, 9.12's lateral and universe at 128 as
+    S3_BeamAngleX0 and U_MaRES_0. The G18 universe runs at 64 as a route test only; it is not a REPRICE measurement
+    (the universe class is measured by 9.12's run at the bulk's 128)."""
     real, toy = f"$D/data_{c.REALIZATION_SEED['G18']}.root", f"$D/data_{c.TOY_SEEDS['G18'][0]}.root"
     lat0 = LATERAL_FILES[0]
     lanes = [
         (128, [("P912_L_BeamAngleX_0", "lateral", argv("lateral", "$K2A", lat0)),
-               ("L_G18_BeamAngleX_0", "lateral", argv("lateral", real, lat0))]),
+               ("L_G18_BeamAngleX_0", "lateral", argv("lateral", real, lat0)),
+               ("P912_U_MaRES_0", "universe", argv("universe", "$K2A", "MaRES:0"))]),
         (64, [("P2b_ER", "central", argv("central", "$K2A")),
               ("X_G18", "central", argv("central", real)),
               (f"T_G18_{c.TOY_SEEDS['G18'][0]}", "toy", argv("toy", toy))]),
         (64, [("B_G18_001", "replica", argv("replica", real, "1")),
-              ("P912_U_MaRES_0", "universe", argv("universe", "$K2A", "MaRES:0")),
               ("U_G18_Flux_0", "universe", argv("universe", real, "Flux:0"))]),
     ]
     rows, lane_s = [], []
@@ -162,12 +164,13 @@ def noatime_sha256(path: str) -> str:
 
 def check(runs_tsv: Path, job: str, stats: Path, pseudo_b: Path, env: dict) -> dict:
     """The inputs of ``job``'s runs. ``env`` maps $CV, $ACT, $UNI, $MC, $FLUXU, $D to paths."""
-    rows = [ln.rstrip("\n").split("\t") for ln in open(runs_tsv)][1:]
+    rows = [ln.split("\t") for ln in Path(runs_tsv).read_text().splitlines()][1:]
     mine = [r for r in rows if r[0] == job]
     if not mine:
         raise c.Refusal(f"{job} has no runs")
     args = " ".join(r[5] for r in mine)
-    record = {ln.split()[-1]: (ln.split()[0], " ".join(ln.split()[1:4])) for ln in open(stats) if ln.strip()}
+    record = {ln.split()[-1]: (ln.split()[0], " ".join(ln.split()[1:4])) for ln in Path(stats).read_text().splitlines()
+              if ln.strip()}
     files = json.loads(Path(pseudo_b).read_text())["files"]
     data_sha = {Path(f["path"]).name: f["sha256"] for f in files}
     bad, done = [], {}
@@ -234,6 +237,8 @@ def gate(sacct_psv: str, limits: dict, want: str) -> dict:
         _, name, state, elapsed, nodes = ln.split("|")[:5]
         if not name.startswith("cov2d-"):
             continue
+        if name[len("cov2d-"):] not in limits:
+            raise c.Refusal(f"sacct lists an unknown COV2D job {name}: the gate cannot price it")
         if state.split()[0] in ("PENDING", "RUNNING", "REQUEUED", "CONFIGURING", "SUSPENDED"):
             held += hms(limits[name[len("cov2d-"):]]) / 3600 * max(int(nodes or 1), 1)
         else:
@@ -270,8 +275,53 @@ def dvs_rate(staged: str, cfs: str, nbytes: int = DVS_BYTES) -> dict:
     """The staged copy's read rate beside the CFS original's (DVS from a compute node), on the same prefix."""
     a, b = read_rate(staged, nbytes), read_rate(cfs, nbytes)
     return {"staged": a, "cfs": b, "prefix_equal": a["sha256_of_prefix"] == b["sha256_of_prefix"],
+            "cache_note": "both read before this job's check, so neither is a read this job made; a page-cache hit "
+                          "left by another process on this node cannot be excluded, so the staged rate may be cached",
             "declared_departure": "replaces the full CFS-read lateral of COV2D-DECLARATION.md section 8 :432-433 and "
                                   "section 10 :549 (the director's ruling (b)): staging is complete"}
+
+
+# ------------------------------------------------------------------------------------------- the order (§10; J1)
+RECEIPTS = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d"
+PSEUDO_RECORD = RECEIPTS + "/pseudo/{truth}/pseudo_b.json"     # step B's record, committed after the pseudo-data job
+PILOT_RECORD = RECEIPTS + "/pilot/pilot_readout.json"           # the pilot readout, committed after the pilot
+UNIVERSE_JOBS = [f"{t}_U{j}" for t in ("G18", "AR23") for j in "abcd"]
+
+
+def order(job: str, truth: str, committed: dict, submitted: set, M: str) -> list[str]:
+    """What blocks submitting ``job`` (COV2D-DECLARATION.md:40 and §10 steps 5-6; the director's rulings (A) and J1):
+    the G18 pseudo-data job first; the pilot after G18's pseudo-data PASS; AR23's pseudo-data job and every unfold job
+    after the pilot readout's PASS; the universe jobs (the $UNI readers) after both pseudo-data PASSes; the rest after
+    all eight universe jobs are submitted. ``committed`` maps a record path on origin/main to its JSON (None if absent);
+    each record must say PASS and name the deploy's commit M."""
+    def ok(path):
+        r = committed.get(path)
+        return bool(r) and r.get("verdict") == "PASS" and r.get("M") == M
+
+    need = []
+    pseudo = {t: PSEUDO_RECORD.format(truth=t) for t in ("G18", "AR23")}
+    if job == "pseudo" and truth == "G18":
+        return []
+    if job == "pilot" or truth == "pilot":
+        return [] if ok(pseudo["G18"]) else [f"the G18 pseudo-data PASS record ({pseudo['G18']}) is not on main for {M}"]
+    if not ok(PILOT_RECORD):
+        need.append(f"the pilot readout's PASS record ({PILOT_RECORD}) is not on main for {M}")
+    if job == "pseudo":
+        return need
+    for t, path in pseudo.items():
+        if not ok(path):
+            need.append(f"the {t} pseudo-data PASS record ({path}) is not on main for {M}")
+    if job not in UNIVERSE_JOBS:
+        missing = [u for u in UNIVERSE_JOBS if u not in submitted]
+        if missing:
+            need.append(f"the universe jobs go first: not yet submitted {missing}")
+    return need
+
+
+def uni_stat_problem(path: str) -> str | None:
+    s = os.stat(path)
+    got = f"{s.st_size} {int(s.st_mtime)} {s.st_ino}"
+    return None if got == UNI_STAT else f"$UNI stat {got} != part B's DTN record {UNI_STAT}"
 
 
 def main(argv_=None) -> int:
@@ -288,6 +338,10 @@ def main(argv_=None) -> int:
     p.add_argument("--staged", required=True)
     p.add_argument("--cfs", required=True)
     p.add_argument("--bytes", type=int, default=DVS_BYTES)
+    p = sub.add_parser("order")
+    for k in ("--job", "--truth", "--M", "--deploy", "--submissions"):
+        p.add_argument(k, required=True)
+    p = sub.add_parser("uni-stat")
     p = sub.add_parser("check")
     for k in ("--runs", "--job", "--stats", "--pseudo-b"):
         p.add_argument(k, required=True)
@@ -295,6 +349,22 @@ def main(argv_=None) -> int:
     if a.cmd == "tables":
         print(json.dumps(tables(a.truth, Path(a.out))))
         return 0
+    if a.cmd == "uni-stat":
+        bad = uni_stat_problem(os.environ["UNI"])
+        print(bad or "UNI-STAT PASS")
+        return 4 if bad else 0
+    if a.cmd == "order":
+        import subprocess
+        committed = {}
+        for path in [PSEUDO_RECORD.format(truth=t) for t in ("G18", "AR23")] + [PILOT_RECORD]:
+            r = subprocess.run(["git", "-C", a.deploy, "show", f"origin/main:{path}"], capture_output=True, text=True)
+            committed[path] = json.loads(r.stdout) if r.returncode == 0 else None
+        subs = Path(a.submissions)
+        submitted = {w.split("=", 1)[1] for ln in (subs.read_text().splitlines() if subs.exists() else [])
+                     for w in ln.split() if w.startswith("job=")}
+        need = order(a.job, a.truth, committed, submitted, a.M)
+        print(json.dumps({"job": a.job, "truth": a.truth, "blocked_by": need}))
+        return 3 if need else 0
     if a.cmd == "dvs-rate":
         print(json.dumps(dvs_rate(a.staged, a.cfs, a.bytes), indent=1))
         return 0

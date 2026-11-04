@@ -12,13 +12,26 @@ BIND=$C/docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-B
 [ -f "$BIND" ] && grep -q "$M" "$BIND" || { echo "binding 2 does not name $M"; exit 2; }
 source "$C/2d-unfolding/cov2d/jobs/cov2d_env.sh"
 mkdir -p "$O/logs" "$O/tables"
-[ -s "$O/tables/runs_$TRUTH.tsv" ] || "$PY310" -B "$CJ" tables --truth "$TRUTH" --out "$O/tables"
+# the tables at this deploy: written once, and every later submission regenerates and compares them (J5)
+chk=$(mktemp -d)
+for t in G18 AR23 pilot; do
+    "$PY310" -B "$CJ" tables --truth "$t" --out "$chk" > /dev/null
+    for f in runs jobs; do
+        if [ -s "$O/tables/${f}_$t.tsv" ]; then cmp -s "$chk/${f}_$t.tsv" "$O/tables/${f}_$t.tsv" \
+            || { echo "$O/tables/${f}_$t.tsv is not this deploy's"; exit 2; }
+        else cp "$chk/${f}_$t.tsv" "$O/tables/"; fi
+    done
+done
+rm -rf "$chk"
+git -C "$C" fetch -q origin main   # the order reads committed PASS records on main (the deploy itself stays at M)
 LOG=$O/submissions.log
 for job in "$@"; do
     psv=$O/logs/gate-$job-$(date -u +%Y%m%dT%H%M%SZ).psv
-    names=$( { awk -F'\t' 'NR > 1 {print "cov2d-" $1}' "$O"/tables/jobs_*.tsv; echo cov2d-pseudo_G18; echo cov2d-pseudo_AR23; } | paste -sd, -)
-    sacct -X -n -P -S 2026-11-04 --name="$names" -o JobID,JobName,State,ElapsedRaw,NNodes > "$psv"
+    # every job of mine since the campaign began; the gate prices each cov2d-* one and refuses any it cannot (J1)
+    sacct -X -n -P -S 2026-11-04 -u "$(id -un)" -o JobID,JobName,State,ElapsedRaw,NNodes > "$psv"
     want=$job; [ "$job" = pseudo ] && want=pseudo_$TRUTH
+    "$PY310" -B "$CJ" order --job "$job" --truth "$TRUTH" --M "$M" --deploy "$C" --submissions "$LOG" \
+        > "$psv.order.json" || { cat "$psv.order.json"; echo "the order refuses $want"; exit 3; }
     "$PY310" -B "$CJ" gate --sacct "$psv" --tables "$O/tables" --want "$want" > "$psv.gate.json" \
         || { cat "$psv.gate.json"; echo "gate refused $want"; exit 3; }
     if [ "$job" = pseudo ]; then

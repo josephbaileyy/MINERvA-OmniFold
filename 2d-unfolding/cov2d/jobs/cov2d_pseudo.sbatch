@@ -17,9 +17,15 @@ P=$O/pseudo/$TRUTH
 [ ! -e "$P" ] || { echo "[cov2d] $P exists: a pseudo-data rerun is a new connect"; exit 3; }
 mkdir -p "$O/pseudo" "$O/logs"
 [ "$(git -C "$C" rev-parse HEAD)" = "$M" ] && [ -z "$(git -C "$C" status --porcelain)" ] || { echo "[cov2d] deploy"; exit 2; }
+info=$(scontrol show job "$SLURM_JOB_ID")
+grep -q "QOS=regular" <<<"$info" && grep -q "TimeLimit=03:00:00 " <<<"$info" || { echo "[cov2d] QOS or TimeLimit"; exit 2; }
+# the E3 resets before step A too (J4): nothing inherited from the submitting shell
+export TMPDIR=$O/tmp/$SLURM_JOB_ID PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+export OMP_NUM_THREADS=64 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+mkdir -p "$TMPDIR"
+"$PY310" -B "$CJ" uni-stat || { echo "[cov2d] \$UNI is not part B's file (J2)"; exit 4; }
 echo "[cov2d] start $(date -u +%FT%TZ) job=$SLURM_JOB_ID TRUTH=$TRUTH node=$(hostname)"
-TMPDIR=$O/tmp/$SLURM_JOB_ID PYTHONDONTWRITEBYTECODE=1 "$PY310" -B "$C/2d-unfolding/cov2d/cov2d_pseudo.py" \
-    --truth "$TRUTH" --out "$P/a" || { echo "[cov2d] step A rc=$?"; exit 5; }
+"$PY310" -B "$C/2d-unfolding/cov2d/cov2d_pseudo.py" --truth "$TRUTH" --out "$P/a" || { echo "[cov2d] step A rc=$?"; exit 5; }
 cov2d_preflight                       # the pinned MAT environment for step B (its flux file is a MINERvA file)
 python -B "$C/2d-unfolding/cov2d/cov2d_pseudo_write.py" --a "$P/a" --out "$P/b" || { echo "[cov2d] step B rc=$?"; exit 6; }
 echo "[cov2d] end $(date -u +%FT%TZ)"

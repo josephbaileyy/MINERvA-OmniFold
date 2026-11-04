@@ -9,9 +9,12 @@ check and the DVS read, from the pilot job's outputs. root_6_28 with MAT (the jo
   (``re2c_rollup.partb_sums``) before it is read, through an O_NOATIME copy; a missing product is INVALID.
 * A failure of (2b) or 9.12 stops (c) (section 2) and, with the STOP count at one, ends it unless Joseph rules
   otherwise (section 6 (iii)); the readout says so and goes to the director.
-* REPRICE (section 8): a run class whose pilot wall per run exceeds 1.25 x part B's wall per run. Part B's is its job's
-  elapsed time (partb_readout/ledger.tsv) x min(lanes, runs) / runs (partb_jobs.tsv), preflight included; a toy's
-  baseline is the central run's.
+* REPRICE (section 8): a run class whose pilot wall per run exceeds 1.25 x part B's wall per run, like for like (the
+  director's ruling): part B's is its job's elapsed time less the job's declared preflight (partb_readout/ledger.tsv,
+  partb_jobs.tsv preflight_s), x min(lanes, runs) / runs, run time only, as the pilot's srun walls are; a toy's
+  baseline is the central run's. Each class is measured at the bulk's CPU count (universe 128, from 9.12's run; the
+  64-CPU G18 universe is a route test, not a measurement).
+* INVALID (section 9.13) unless all eight runs ended rc 0 with a digest and every class has a wall.
 * The DVS read (the director's ruling (b)): the staged copy's and the CFS original's MB/s, as the job recorded them.
 
 MEASURES: the pilot's controls and walls. CANNOT AUTHORIZE: the bulk; the readout goes to the director first.
@@ -39,6 +42,10 @@ RE2RUN = REPO / "docs/orchestration/state/2d-closeout/stageF/methods/re2/run"
 REPRICE = 1.25
 CLASS_OF = {"P912_L": "lateral", "L_": "lateral", "P2b": "central", "X_": "central", "T_": "toy", "B_": "replica",
             "P912_U": "universe", "U_": "universe"}
+PILOT_LABELS = ["P912_L_BeamAngleX_0", "L_G18_BeamAngleX_0", "P912_U_MaRES_0", "P2b_ER", "X_G18", "T_G18_5720000",
+                "B_G18_001", "U_G18_Flux_0"]
+NOT_MEASURED = {"U_G18_Flux_0"}     # 64-CPU universe: a route test, not the bulk's 128-CPU class
+CLASSES = {"lateral", "universe", "central", "toy", "replica"}
 PARTB_CLASS_JOBS = {"central": ["J1"], "universe": ["J2a", "J2b", "J2c", "J2d"], "lateral": ["J3"],
                     "replica": ["J4a", "J4b", "J4c"]}
 COMPARE = {"2b": ("P2b_ER", "ER"), "9.12_universe": ("P912_U_MaRES_0", "U_MaRES_0"),
@@ -53,12 +60,13 @@ def class_of(label: str) -> str:
 
 
 def partb_wall_per_run(ledger_tsv: str, jobs_tsv: str) -> dict:
-    """Part B's wall per run per class: elapsed x min(lanes, runs) / runs, averaged over the class's jobs."""
+    """Part B's run-only wall per run per class: (elapsed - the job's declared preflight) x min(lanes, runs) / runs,
+    averaged over the class's jobs."""
     el = {r[1].replace("re2b-", ""): int(r[6]) for r in (ln.split("\t") for ln in ledger_tsv.splitlines()[1:]) if r}
-    lay = {r[0]: (int(r[3]), int(r[5])) for r in (ln.split("\t") for ln in jobs_tsv.splitlines()[1:]) if r}
+    lay = {r[0]: (int(r[3]), int(r[5]), int(r[7])) for r in (ln.split("\t") for ln in jobs_tsv.splitlines()[1:]) if r}
     out = {}
     for k, jobs in PARTB_CLASS_JOBS.items():
-        per = [el[j] * min(lay[j][0], lay[j][1]) / lay[j][1] for j in jobs]
+        per = [(el[j] - lay[j][2]) * min(lay[j][0], lay[j][1]) / lay[j][1] for j in jobs]
         out[k] = sum(per) / len(per)
     out["toy"] = out["central"]
     return out
@@ -71,7 +79,7 @@ def reprice(walls_tsv: str, baseline: dict) -> dict:
         if not ln.strip():
             continue
         label, t0, t1, rc = ln.split("\t")
-        if int(rc) == 0:
+        if int(rc) == 0 and label not in NOT_MEASURED:
             per.setdefault(class_of(label), []).append(int(t1) - int(t0))
     out = {}
     for k, v in per.items():
@@ -136,6 +144,13 @@ def main(argv=None) -> int:
     base = partb_wall_per_run((RE2RUN / "partb_readout" / "ledger.tsv").read_text(),
                               (RE2RUN / "partb_jobs.tsv").read_text())
     rec["reprice"] = reprice(walls, base)
+    rc_of = {ln.split("\t")[0]: int(ln.split("\t")[3]) for ln in walls.splitlines() if ln.strip()}
+    for lab in PILOT_LABELS:   # section 9.13: every run, control or not
+        if rc_of.get(lab) != 0 or f"{lab}/xsec.root" not in ours:
+            rec["invalid"].append(f"{lab}: rc {rc_of.get(lab)} or no digest (section 9.13)")
+    missing = sorted(CLASSES - set(rec["reprice"]))
+    if missing:
+        rec["invalid"].append(f"no wall for the classes {missing}")
     rec["reprice_classes"] = sorted(k for k, v in rec["reprice"].items() if v["reprice"])
     dvs = sorted((O / "logs").glob("dvs-rate-*.json"))
     rec["dvs_rate"] = json.loads(dvs[-1].read_text()) if dvs else "not recorded"
