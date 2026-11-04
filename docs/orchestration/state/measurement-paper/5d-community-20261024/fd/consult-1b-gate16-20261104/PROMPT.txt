@@ -1,0 +1,17 @@
+You are an independent statistician. Under 500 words, no tool use.
+
+Context. A coverage test of an unfolding procedure draws 300 pseudo-experiment "natures" per truth (three truths). Natures are built by first-order composition of systematic universes and then clipped (negative composite weights set to zero), which can shrink their spread relative to the covariance C_T under test. A pre-declared gate, fixed before any test draw is examined, checks this on 16 reporting cells per truth using the per-cell ratio r_c = var_natures / reference variance: (i) at most 2 cells with |r-1| > 0.20; (ii) |mean over cells of log r| <= 0.07; (iii) max_c |r_c - 1|/SD_c <= 4.3. A failing gate stops the campaign and returns it to the lead. The lead approved these numbers expecting about 0.5% noise-only STOP over three truths; that estimate assumed independent cells.
+
+Measured null calibration (10^4 replicate 300-draw sets per truth, separate seed, unclipped first-order natures; two truths so far). Cells share draws, so (ii)'s statistic has a common-mode null SD of 0.042 (not 0.020). Results, with (i) and (iii) fixed and only (ii)'s threshold varying; noise = noise-only STOP rate over two truths; power = STOP rate over two truths against a uniform variance deflation of 8% / 10%:
+- 0.07 (as approved): noise 18.9%; power 84% / 95%
+- 2.0 SD: noise 9.4%; power 70% / 88%
+- 2.5 SD: noise 2.7%; power 47% / 71%
+- 3.0 SD: noise 0.8%; power 26% / 49%
+- 3.5 SD: noise 0.55%; power 13% / 28%
+At 3.16 SD the projected three-truth noise is about 1%; per-truth power there is about 11% against 8% deflation. A sister 2D test measured a clipped variance-ratio median of 0.922 at one tune, so an ~8% broad deflation is realistic. (i) and (iii) alone give ~0.8% three-truth noise.
+
+The gate works on expected counts (first order, no unfolding), so evaluating it on many more draws from the same clipped law is cheap (the cost is reading the inputs). Under a labelled 1/sqrt(n) assumption, ~900 draws gives ~80% power at 3.5 SD.
+
+Options for the lead: (b) keep 0.07 (about 19-27% chance of a noise stop that returns the campaign to the lead); (c) set (ii) at ~3.16 SD of the 300-draw null (1% noise, little power against broad deflation); (d) evaluate the gate's ratios on a large separate sample of N draws from the same clipped law (say N = 3000), with thresholds re-calibrated at that N to the 1% three-truth budget, so the gate tests the law that generates the natures rather than the 300-draw realization; the realized 300-draw ratios reported descriptively; (e) drop (ii), keep (i) and (iii).
+
+Questions: 1) Which do you recommend and why? 2) Is (d) statistically sound as a test of whether clipping distorts the natures' spread relative to C_T, and what is the cost of it no longer testing the specific 300 draws? 3) Anything the lead must fix before choosing? Ranked one-line recommendation at the end.

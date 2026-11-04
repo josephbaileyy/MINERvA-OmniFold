@@ -1,0 +1,26 @@
+**Recommendation and reasoning**
+
+1) I recommend (d). The gate's job is to detect broad variance deflation from clipping, and an 8% deflation is a realistic size. At 300 draws, an 8% deflation moves the mean log r by about -0.083. That is only about 2 null SDs of 0.042. At the 1% noise budget (3.16 SD), power is about 11%, so (c) is a gate that almost never fires on the effect it was built for. Option (e) gives up that sensitivity entirely. Option (b) gives a 19% noise stop over two truths (about 27% over three), and the lead approved it on a wrong independence assumption. With N = 3000 the null SD of (ii) falls to roughly 0.013 if 1/sqrt(N) scaling holds. That scaling is an assumption until it is measured. The 8% deflation is then about 6 SD, so power is near 1 at the 1% budget.
+
+2) (d) is sound as a test of the law, with three conditions.
+- The N draws must come from the same generating code, config and clip rule, and must be independent of the 300. Better still, make the 300 the first 300 of the N so the match can be checked bit for bit.
+- Thresholds must be re-calibrated by null simulation at N (including the common-mode structure and the noise in the reference variance), not by scaling from the 300-draw numbers.
+- The gate must be a bias test with an explicit tolerance. At large N, any deflation above the threshold is detected with near certainty. Choose the threshold by materiality (the deflation that actually harms coverage), not only by noise rate.
+
+The cost of (d) is that it no longer checks the specific 300 draws. A corrupted file, an indexing or seed mismatch, or a different code path for the draws actually used would pass. Ordinary sampling deviation of those 300 draws is not lost. It is the coverage test's own sampling error and should already be in its tolerance. To limit the cost:
+- Keep the realized 300-draw ratios as a loose backstop, for example (iii) at 4.3 SD, or (i) alone, which has low noise.
+- Log a config hash shared by the gate sample and the coverage draws.
+
+3) The lead should fix these before choosing.
+- **Large-N null.** Check that the unclipped first-order law gives a ratio of exactly 1 at large N. If the first-order composition does not reproduce C_T's diagonal, for example through non-Gaussianity or a reference-variance definition mismatch, (d) will fail for reasons unrelated to clipping. Run the unclipped law at N = 3000 or higher, or derive the ratio analytically.
+- **Third truth and joint noise.** The three-truth noise is projected from two truths. Run the third truth, and measure the union of (i), (ii) and (iii) jointly. Do not add the separate rates or assume independence between them.
+- **Independence assumption.** The same independence assumption may also underlie (i) and (iii). Confirm that the 0.8% figure comes from the measured correlated null, not from an independent-cell formula.
+- **Materiality and power target.** State the deflation size that matters (for example 8%) and the minimum power required, then pick the noise budget. The 1% budget is a choice the lead should state explicitly. The 8% figure rests on one sister-test median at one tune.
+- **Amendment record.** Record the change as a pre-test amendment. The calibration used a separate seed and no test draw has been examined, so the gate's pre-declared status survives. The lead's approval should be re-obtained for the new numbers, since the original estimate was wrong.
+- **Non-uniform deflation.** Power was measured only against a uniform deflation. Check it against a deflation concentrated in a few cells, which (i) and (iii) should catch.
+
+**Ranked recommendation:**
+1. (d), with N re-calibrated by simulation, the large-N unclipped null verified, and a loose 300-draw backstop.
+2. (c) if (d) cannot be built. It has 1% noise but very little power against broad deflation, so report that limitation openly.
+3. (e), which has low noise but no broad-deflation sensitivity.
+4. Reject (b), which has a 19-27% noise stop based on a wrong approval estimate.
