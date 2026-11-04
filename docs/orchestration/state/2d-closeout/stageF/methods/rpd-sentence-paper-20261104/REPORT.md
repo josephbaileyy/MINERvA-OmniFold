@@ -6,8 +6,8 @@ come from the readout record `fd/receipts-rpd/run/readout/fd_rpd.json`, sha256 `
 Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the same digest. The base is cb3e83517.
 
 **What changes.**
-- **The paper (item 1).** §6.2's CLUSTERED sentence goes into Sec. IV A word for word, straight after "…differ by more
-  than their bootstrap scatter.", with the pointer `(\nsec{sec:fived16-pl})` before its full stop. It renders as
+- **The paper (item 1).** §6.2's CLUSTERED sentence goes into Sec. IV A, straight after "…differ by more than their
+  bootstrap scatter.", in the wording of Joseph's ruling on #753 (below: a declared departure from §6.2's literal text), with the pointer `(\nsec{sec:fived16-pl})` before its full stop. It renders as
   "(Ref. [14], Sec. 10.4)". Nothing else in the paragraph changes. "The cause is not known", "which period is
   correct", "poorly determined" and the 0.73–2.56 interval all print as before; `check_licence.py` checks each.
 - **The note (item 2).** The same sentence goes in after its counterpart in `sec:fived16-pl`. Two new paragraphs give:
@@ -31,7 +31,7 @@ Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the s
 
 **After:**
 
-> The unfolded results of the three run-period groups, each relative to its own simulation, differ by more than their bootstrap scatter. The offsets of the twelve playlists differ between the three period groups by more than their playlist-to-playlist scatter would give (note sec:fived16-pl). The cause is not known, and these data cannot establish which period is correct.
+> The unfolded results of the three run-period groups, each relative to its own simulation, differ by more than their bootstrap scatter. The offsets of the twelve playlists differ between the three period groups by more than expected from their playlist-to-playlist scatter (note sec:fived16-pl). The cause is not known, and these data cannot establish which period is correct.
 
 ### Note, sec:fived16-pl, first paragraph (decision item 2, the counterpart)
 
@@ -41,7 +41,7 @@ Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the s
 
 **After:**
 
-> On the sixteen cells, the unfolded results of the three run-period groups (playlists 1A–1F, 1G–1M and 1N–1P), each over its own simulated truth (the double ratio), differ from one another by more than the scatter of their bootstrap replicas. The offsets of the twelve playlists differ between the three period groups by more than their playlist-to-playlist scatter would give. The cause is not known, and these data cannot establish which period, if any, is right.
+> On the sixteen cells, the unfolded results of the three run-period groups (playlists 1A–1F, 1G–1M and 1N–1P), each over its own simulated truth (the double ratio), differ from one another by more than the scatter of their bootstrap replicas. The offsets of the twelve playlists differ between the three period groups by more than expected from their playlist-to-playlist scatter. The cause is not known, and these data cannot establish which period, if any, is right.
 
 ### Note, sec:fived16-pl: the two new paragraphs (decision item 2)
 
@@ -57,8 +57,8 @@ Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the s
 ## For the director: choices made in drafting (each reversible)
 
 1. **Pointer placement.** The paper's pointer sits inside the sentence, before its full stop, as the paper's other
-   pointers do. The words are §6.2's verbatim. `check_licence.py` reads the sentence from the declaration's CLUSTERED
-   row and requires exactly that text, followed by the pointer.
+   pointers do. At 74f0b929 the words were §6.2's verbatim, and `check_licence.py` required exactly that text; since
+   Joseph's ruling (last section) they are the ruled wording, and the check requires that instead.
 2. **α̂ printed as 0.0395–0.0565, not 0.040–0.057.** These are the readout's values exactly (79 and 113 of 2,000).
    The decision's figures are the same values at two significant figures. The gate prints as 0.0646.
 3. **Two facts beyond the director's list, both from the readout:**
@@ -106,7 +106,7 @@ Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the s
 Both equal the director's SHA256SUMS. The director accepted choices 1–6 above, including stage 0's step as the
 classes' referent and the exact α̂, and ruled on the read's four edits.
 
-**Not adopted, for Joseph: edit 1.** The read asks for the paper's sentence to be reworded: "by more than their
+**Not adopted, for Joseph: edit 1** (since adopted by Joseph's ruling; see the next section). The read asks for the paper's sentence to be reworded: "by more than their
 playlist-to-playlist scatter would give" becomes "by more than expected from their playlist-to-playlist scatter", or
 "…would predict". It is not adopted, because Joseph decided the sentence goes in verbatim
 (`DECISION-20261104-joseph-rpd-sentence.md` item 1), and the declaration licenses it word for word (§6.2).
@@ -165,12 +165,48 @@ flux test's 9,240.
 > The study's two patterns are that all three of 1G, 1L and 1M carry the step, or that some carry it and the others are free, each with 1A–1F free.
 
 
+## Joseph's ruling: the reworded sentence
+
+**The ruling.** Joseph read #753 at 6be612c2 and answered "Merge, reword sentence". The sha256 of the text plus a
+final newline begins `555da20e9ef2a1cd`, which this lane recomputed. The answer is recorded in
+`DECISION-20261104-joseph-753-reword-and-merge.md`; it adopts the PRD-referee read's edit 1, which the section above
+had recorded for him.
+
+**The departure, declared.** §6.2 of `FD-RPD-DECLARATION.md` licenses one sentence in its own words. Both files now
+print the ruled wording instead, which departs from that literal text in one phrase:
+
+| | the sentence |
+|---|---|
+| §6.2, literal | The offsets of the twelve playlists differ between the three period groups by more than their playlist-to-playlist scatter would give. |
+| ruled, printed | The offsets of the twelve playlists differ between the three period groups by more than expected from their playlist-to-playlist scatter. |
+
+- **The meaning is the same, and no claim is added.** Both say the between-group differences exceed what the
+  within-group, playlist-to-playlist scatter accounts for; that is R2's CLUSTERED reading (p_flux < 0.05, calibrated).
+  Neither names a cause, sizes the offsets, or says whether every playlist shares its group's offset, which §6.2
+  excludes. "Expected" is used in its statistical sense, an expectation under the playlist-to-playlist scatter; it
+  asserts no prediction from a model.
+- **Unchanged:** the paper's pointer, the sentence's place in both files, and every other clause of the paragraph.
+  "The cause is not known", "which period is correct", "poorly determined" and the 0.73–2.56 interval all still print.
+
+**Enforced in code.** `check_licence.py` no longer requires §6.2's literal text. It now:
+- reads §6.2's sentence from the declaration, applies the one recorded phrase swap (`DEPARTURE`), and requires the
+  result to be the ruled sentence (`RULED`), so a change to either side fails;
+- requires the ruled sentence once in each file, at its place (with the pointer in the paper), and fails if §6.2's
+  literal sentence still prints in either file;
+- requires the decision record to exist and to quote the ruled sentence, and names it in the check's source
+  (`DECISION`);
+- keeps every other check: §6.4's words and "beam-intensity" absent from added sentences, and the kept clauses.
+
+Its self-test plants 10 defects and catches all 10. The 3 new plants are the literal sentence restored in the note, the
+record absent, and a record that does not quote the sentence; "reworded again" replaces the old "reworded".
+
+
 ## Checks
 
 | check | result | record |
 |---|---|---|
-| ledger (`check_ledger.py`, base cb3e83517) | 7 rows, 32 probes, 0 changed base sentences, 0 failures; self-test PASS | `LEDGER-CHECK.txt` |
-| licence (`check_licence.py`): §6.2 verbatim in both files, §6.4's words and "beam-intensity" absent from added sentences, kept clauses | PASS; self-test 7/7 | `LICENCE-CHECK.txt` |
+| ledger (`check_ledger.py`, base cb3e83517) | 7 rows, 34 probes, 0 changed base sentences, 0 failures; self-test PASS | `LEDGER-CHECK.txt` |
+| licence (`check_licence.py`): the ruled sentence (§6.2 with the recorded departure) in both files and §6.2's literal in neither; the decision record quotes it; §6.4's words and "beam-intensity" absent from added sentences; kept clauses | PASS; self-test 10/10 | `LICENCE-CHECK.txt` |
 | `make_values_fived16.py --check`; `check_sec4_receipts.py` | PASS (2,731 values); 17/17 | `VALUES-CHECK.txt` |
 | rater copy (`make_rater_copy.sh`) and `check_held.py` | PASS, with case 6; the 3 known flags | `RATER-COPY.txt`, `CHECK-HELD.txt` |
 | builds | paper 11 pp, note 136 pp, as at the base | build_all.sh |
