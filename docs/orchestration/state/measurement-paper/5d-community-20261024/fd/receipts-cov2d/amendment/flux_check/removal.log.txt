@@ -1,0 +1,29 @@
++ hostname
+login02
++ date -u +%FT%TZ
+2026-11-04T19:08:06Z
++ sha256sum /dev/shm/josephrb-cov2d-flux.sh
+a6cc83e622630902c5a58923828e7eae5273f4f2a9ac890e99e34e1e9bf4b80a  /dev/shm/josephrb-cov2d-flux.sh
++ rm -rf /dev/shm/josephrb-cov2d-flux
++ echo rc_dir=0
+rc_dir=0
++ rm -f /dev/shm/josephrb-cov2d-flux.sh
++ echo rc_script=0
+rc_script=0
++ ls /dev/shm
++ grep -c josephrb
+0
++ ps -u josephrb -o pid,args
++ grep -c '[c]ov2d-flux'
+2
+login02
+    PID COMMAND
+ 952385 /usr/lib/systemd/systemd --user
+ 952439 (sd-pam)
+ 952828 sshd: josephrb@notty
+1056171 ssh -o BatchMode=yes -o LogLevel=QUIET login02 hostname; ps -u josephrb -o pid,args | cut -c
+1058092 sshd: josephrb@notty
+1058161 bash -c hostname; ps -u josephrb -o pid,args | cut -c1-100; ls /dev/shm | grep -c josephrb
+1059976 ps -u josephrb -o pid,args
+1059977 cut -c1-100
+0

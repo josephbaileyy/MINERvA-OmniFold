@@ -1,0 +1,52 @@
+KILLED  cov2d_pseudo.py: r_T not applied to the signal
+KILLED  cov2d_pseudo.py: counts stream without its salt
+KILLED  cov2d_pseudo.py: truth not clipped
+KILLED  cov2d_pseudo.py: section 9.6 skipped
+KILLED  cov2d_pseudo.py: R1 counts w >= 1e5 only
+KILLED  cov2d_pseudo.py: seen sums ignore reco-kept
+KILLED  cov2d_pseudo_write.py: section 9.4 at 1e-6
+KILLED  cov2d_pseudo_write.py: 9.11 membership ignored
+KILLED  cov2d_pseudo_write.py: 9.11 at 50 sigma
+KILLED  cov2d_pseudo_write.py: truth ignores the drawn flux universe
+KILLED  cov2d_blocks.py: norm check removed
+KILLED  cov2d_blocks.py: C08 not carried
+KILLED  cov2d_blocks.py: stat ddof 0
+KILLED  cov2d_blocks.py: open audit off
+KILLED  cov2d_blocks.py: C_model- keeps GENIE + MEC
+KILLED  cov2d_null.py: 1B's null seed
+KILLED  cov2d_null.py: C_T-'s null at 1B's seed
+KILLED  cov2d_null.py: C_T-'s null keeps C_model
+KILLED  cov2d_null.py: MINOS law without X01
+KILLED  cov2d_score.py: surrogates in the other order
+KILLED  cov2d_score.py: flagged cells labelled weakened
+KILLED  cov2d_score.py: INVALID ignored
+KILLED  cov2d_score.py: S1 any toy count graded
+KILLED  cov2d_score.py: S2 outlier absence not refused
+KILLED  cov2d_score.py: S3 outlier read at position 0
+KILLED  cov2d_score.py: S3 weakened share over the unflagged
+KILLED  cov2d_score.py: S4 cross term over diag C_T
+KILLED  cov2d_readouts.py: reading at 5 sigma
+KILLED  cov2d_readouts.py: product composition without its floor
+KILLED  cov2d_readouts.py: predicted offset sign
+KILLED  cov2d_readouts.py: R2 joint flag ignored
+KILLED  cov2d_readouts.py: R2 jointly suffix dropped
+KILLED  cov2d_readouts.py: R2 reading ignores C_T's verdict
+KILLED  cov2d_readouts.py: R5 seed order unchecked
+KILLED  cov2d_readouts.py: R6 outlier absence not refused
+KILLED  cov2d_readouts.py: R4 a missing R_c read as 0
+KILLED  cov2d_readouts.py: R4 outlier max is its median
+KILLED  cov2d_readouts.py: R4 complete toys ignored
+KILLED  cov2d_readouts.py: R7 F <= 0 pairs not counted
+KILLED  cov2d_readouts.py: R1 z over F not sqrt F
+KILLED  jobs/cov2d_jobs.py: limit factor 1.2
+KILLED  jobs/cov2d_jobs.py: staged copy not compared
+KILLED  jobs/cov2d_jobs.py: toys read d_T
+KILLED  jobs/cov2d_jobs.py: J1 bulk without the pilot record
+KILLED  jobs/cov2d_jobs.py: J1 pilot without G18's pseudo PASS
+KILLED  jobs/cov2d_jobs.py: J1 the rest before the universe jobs
+KILLED  jobs/cov2d_jobs.py: gate passes everything
+KILLED  cov2d_pilot.py: pilot compare at 1e-6
+KILLED  cov2d_pilot.py: REPRICE at 2x
+KILLED  cov2d_pilot.py: P2 a failed run is not INVALID
+SURVIVED cov2d_pilot.py: P2 a missing class is not INVALID
+killed 50 of 51

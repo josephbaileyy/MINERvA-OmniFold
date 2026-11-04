@@ -1,0 +1,22 @@
+host=login02 start=2026-11-04T19:06:31Z pid=955826
+head=13927a0ed8f28fbb3149786dbb007e9bd6909b76 porcelain=0
+100755 blob 97f26a1d03be8cf14cdb6e0ce05e794f66f9b571	2d-unfolding/re2/re2_driver.py
+100644 blob 7c2e018f1169a9be0c5642daab991c664acbefcf	nd-unfolding/fd_rpd_inputs.py
+copy: 5143 bytes sha256 d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316 atime unchanged True
+== 1. plain root_6_28
+plain rc=0
+PROBE {"env": "plain_root_6_28", "key_class": "TH1D", "ok": true, "bins": [0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851219, 0.0006243343376851219]}
+== 2. the pinned MAT environment
+mat rc=0
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+MAT {"mapped": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"], "dictionary": true}
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+PROBE {"env": "pinned_mat", "key_class": "TH1D", "ok": true, "bins": [0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851218, 0.0006243343376851219, 0.0006243343376851219]}
+key class: TH1D | plain ok: True | MAT ok: True | bins equal: True
+FLUX-CHECK PASS (step B needs MAT: no )
+removal: host=login02 2026-11-04T19:07:09Z 1.2G
+rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-flux/deploy': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-flux/mc.root': No such file or directory
+end=2026-11-04T19:07:10Z
+DONE
