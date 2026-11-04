@@ -72,7 +72,7 @@ for replica (J4a–c, 691.7 s). Two differences remain, and both make the trigge
 J1's figure is the longest of its three one-per-lane runs, and part B's multi-run lanes include the gaps between srun
 steps. Every trigger lies below the bulk's per-run estimate (866, 1,150, 1,678 and 920 s). |
 | P4: staged rate probably cached | `dvs-rate` runs before `check`, so the staged 4 GiB is read before check's full re-hash; the record's `cache_note` says a page-cache hit left by another process on that node cannot be excluded, so the staged rate may be cached. The CFS figure is cold. |
-| P5: cell sets of the references | proposed to the director as a 0 node-h login check before the pilot (its sha first); not yet run. |
+| P5: cell sets of the references | run with the director's go (`connect-cells.sh` `89078399…`, M `045364a8`, login02, 0 node-h): **CELL-CHECK PASS**. ER, U_MaRES_0 and S3_BeamAngleX0, each read at its pin, all report E_R's 205 cells (`cell_check/CELL-CHECK.md`, commit `c184499a`). |
 | P6 (= J1) | closed by `order()`: the bulk is refused without the committed pilot readout's PASS record. |
 | P7: the pass rule retyped | the amendment states that `cov2d_pilot`'s rule (max relative difference ≤ `re2_k1.TOL` and the same cell set) is `re2_k1.check_row`'s `le` rule for hXSec2D. The pilot's own new products are read without O_NOATIME: they are lane outputs, not §7 inputs, and the amendment says so. |
 

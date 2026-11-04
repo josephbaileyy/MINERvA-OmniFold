@@ -256,7 +256,7 @@ draws equal one call. It refuses if $UNI's signal tree lacks the 5D truth.
 | 9.9 | one code, one input set; declared seeds | tables, runs, records | asserted |
 | 9.10 | truth pins | step A (`committed_ratio_sha256`) | asserted |
 | 9.11 | pseudo-data content | each pseudo-data job, step B | pending |
-| 9.12 | universe and lateral routes | the pilot | pending |
+| 9.12 | universe and lateral routes | the pilot | pending; its references' cell sets equal E_R's 205 (login check, **PASS**, `fd/receipts-cov2d/amendment/cell_check/`) |
 | 9.13 | no run dropped or re-seeded; a failure is INVALID | every job | rule |
 
 ## 7. Statements the declaration asks the amendment to make
