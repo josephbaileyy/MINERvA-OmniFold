@@ -15,7 +15,8 @@
 # or a failed task exits 255, so xargs starts nothing further; Slurm's --time bounds the charge whatever happens.
 # Only a run whose every task ended, with no STOP and rc 0, writes its DONE receipt; the full run refuses without the
 # dry run's (a failed task, a STOP and a Slurm time-limit kill all leave none).
-# Writes only under <OUT>; refuses if this mode's log exists. Runs only from a clean deploy at <pin>.
+# Writes only under <OUT>; refuses if this mode's log exists, so a stopped run is not resumed by re-running it: after a
+# STOP for a reprice, only an addendum the director binds may continue it (declaration §7). Runs only from a clean deploy at <pin>.
 set -o pipefail   # NOT set -u
 MODE="${1:?dry|full}"; D="${2:?deploy}"; PIN="${3:?pin}"; OUT="${4:?out}"; CAP_LEFT="${5:?node-hours left under the cap}"
 head_sha=$(git -C "$D" rev-parse HEAD 2>/dev/null)
@@ -63,11 +64,14 @@ grep -v '^#' "$Q" | cut -f1 | xargs -P "$P" -I{} bash -c '
     python3 -c "import time; print(time.time())" > "$L/$id.end.tmp" && mv "$L/$id.end.tmp" "$L/$id.end"' _ {}  
 rc=$?
 echo "[stab] queue rc=$rc end=$(date -u +%FT%TZ)"
+# Pinned whatever the outcome: a stopped run's products are kept and pinned, though not graded until the probe completes
+( cd "$OUT" && find runs -type f -name '*.npz' -print0 | sort -z | xargs -0 sha256sum ) > "$L/SHA256SUMS"
 [ -e "$L/STOP" ] && { echo "[stab] STOP: $(cat "$L/STOP")" >&2; exit 1; }
 [ "$rc" -eq 0 ] || { echo "rc=$rc" > "$L/FAILED"; echo "[stab] STOP: a task failed (rc=$rc)" >&2; exit 1; }
+# Defensive: with rc 0 and no STOP every task has ended (the gate skips only a task whose end exists). It fires only if
+# an end vanished during the run, which is how its test reaches it.
 n_q=$(grep -vc '^#' "$Q"); n_end=0
 for id in $(grep -v '^#' "$Q" | cut -f1); do [ -e "$L/$id.end" ] && n_end=$((n_end + 1)); done
 [ "$n_end" -eq "$n_q" ] || { echo "ended=$n_end of $n_q" > "$L/FAILED"; echo "[stab] STOP: $n_end of $n_q tasks ended" >&2; exit 1; }
-( cd "$OUT" && find runs -type f -name '*.npz' -print0 | sort -z | xargs -0 sha256sum ) > "$L/SHA256SUMS"
 echo "{\"mode\": \"$MODE\", \"tasks\": $n_q, \"ended\": $n_end, \"rc\": 0, \"job\": \"$SLURM_JOB_ID\"}" > "$L/DONE"
 echo "[stab] done"

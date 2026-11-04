@@ -3,7 +3,13 @@
 
 Declaration: docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-DECLARATION.md (§§4-6).
 
-    estimator_stability_analyze.py --runs D --s5c-contract J --sigma-receipt J --h2-definition J --out J [--repo R]
+    estimator_stability_analyze.py --runs D --receipt <OUT>/log-full/DONE --s5c-contract J --sigma-receipt J
+        --h2-definition J --out J [--repo R]
+
+COMPLETE RUNS ONLY (§6, §7). Nothing is graded unless the full run's DONE receipt says every queued task ended with
+rc 0, and no STOP or FAILED lies beside it. Otherwise the outcome is INCOMPLETE: no product is read, no criterion
+is evaluated, and no estimator is adopted. A run stopped for a reprice resumes only under an addendum the director
+binds.
 
 STABILITY (§4). Per candidate, one GiBUU-like pseudo-experiment unfolded unjittered (the base) and under 51 edge-safe
 float32-ulp jitters. On s5e's 153 reported functionals, r_j = F_j / F_base - 1. s5e's statistic (amendment 3, A3) is,
@@ -58,6 +64,7 @@ DETERMINISM_PAIR = ("nominal", "A7_mnvtune")
 FLOOR_K, SD_UPPER = 3.0, 1.20
 SIGMA_RECEIPT_SHA256 = "84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c"  # state/s5e/cand/assess_receipt.json, as committed
 GIBUU_READOUT = ("A7_gibuu", "stage0c_gibuu")
+INCOMPLETE_RC = 3
 
 
 # --------------------------------------------------------------------------------------------- pure criteria
@@ -226,7 +233,38 @@ def cell_matrix(h2_definition: str) -> np.ndarray:
     return s1_assemble.functional_matrix(s1_assemble.fine_map(Path(h2_definition)))
 
 
+def n_tasks() -> int:
+    """The full queue's task count, from the probe's own task list."""
+    import types
+    a = types.SimpleNamespace(npz="n", bkg="b", bank="k", detector_dir="d", expect_npz_sha256="-", expect_bkg_sha256="-",
+                              closure_ratio_dir="r", runs="o")
+    return sum(len(probe.candidate_tasks(a, c)) for c in probe.CANDIDATES)
+
+
+def incomplete(receipt: Path) -> str | None:
+    """Why the run is not complete, or None: the full run's DONE receipt must exist, say every task ended with rc 0,
+    and have no STOP or FAILED beside it."""
+    if not receipt.is_file():
+        return f"no DONE receipt at {receipt}"
+    for name in ("STOP", "FAILED"):
+        if (receipt.parent / name).exists():
+            return f"the run left {name}"
+    d = json.loads(receipt.read_text())
+    n = n_tasks()
+    if d.get("mode") != "full" or d.get("rc") != 0 or d.get("tasks") != n or d.get("ended") != n:
+        return f"the receipt is not a completed full run of {n} tasks: {d}"
+    return None
+
+
 def run(a) -> int:
+    why = incomplete(Path(a.receipt))
+    if why:
+        out = {"schema": "estimator-stability-analysis/1",
+               "label": "FD-STAB: the run is not complete, so nothing was graded and no estimator is adopted",
+               "verdict": {"verdict": "INCOMPLETE", "winners": [], "passers": [], "why": why}}
+        Path(a.out).write_text(json.dumps(out, indent=1) + "\n")
+        print(json.dumps({"verdict": out["verdict"]}))
+        return INCOMPLETE_RC
     contract = json.loads(Path(a.s5c_contract).read_text())
     U, names = functionals(contract)
     receipt = json.loads(Path(a.sigma_receipt).read_text())
@@ -279,7 +317,7 @@ def run(a) -> int:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    for opt in ("--runs", "--s5c-contract", "--sigma-receipt", "--h2-definition", "--out"):
+    for opt in ("--runs", "--receipt", "--s5c-contract", "--sigma-receipt", "--h2-definition", "--out"):
         ap.add_argument(opt, required=True)
     ap.add_argument("--repo", default=".", help="repository root (the closures' committed truth files)")
     return run(ap.parse_args(argv))

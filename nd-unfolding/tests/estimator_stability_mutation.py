@@ -17,7 +17,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_estimator_stability_probe.py"
 P, A, S = "estimator_stability_probe.py", "estimator_stability_analyze.py", "sbatch_fd_stab.sh"
-EXPECTED_TESTS = 89  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
+EXPECTED_TESTS = 93  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
 MUTATIONS = [
     ("in-fold prediction", P, "rows = self.folds[:m] == f", "rows = self.folds[:m] != f",
      "test_every_evaluated_row_is_predicted_by_a_model_that_did_not_train_on_it"),
@@ -133,6 +133,20 @@ MUTATIONS = [
     ("environment check dropped", S, 'python3 -c "import lightgbm, scipy, numpy" >> "$L/env.log" 2>&1 ||', "true ||",
      "test_an_environment_without_lightgbm_refuses"),
     ("STOP not sticky", P, "    if stop.exists():\n        return 3\n", "", "test_stops_before_a_launch_past_the_cap"),
+    # --- the audit's third round (G2, G3)
+    ("B2 ratio from the cheaper kind (G3)", P, '"b2_over_control": max(ratios) if ratios', '"b2_over_control": min(ratios) if ratios',
+     "test_b2_over_twice_in_one_kind_only_stops"),
+    ("ended count unchecked (G3)", S, '[ "$n_end" -eq "$n_q" ] ||', "true ||",
+     "test_an_end_lost_during_the_run_leaves_no_receipt"),
+    ("a stopped run's products unpinned (G2)", S,
+     "( cd \"$OUT\" && find runs -type f -name '*.npz' -print0 | sort -z | xargs -0 sha256sum ) > \"$L/SHA256SUMS\"\n", "",
+     "test_a_reprice_stop_keeps_and_pins_the_products_and_is_not_resumed"),
+    ("an incomplete run graded (G2)", A, "    why = incomplete(Path(a.receipt))\n", "    why = None\n",
+     "test_an_incomplete_run_is_not_graded"),
+    ("STOP or FAILED beside the receipt ignored (G2)", A, '    for name in ("STOP", "FAILED"):', "    for name in ():",
+     "test_an_incomplete_run_is_not_graded"),
+    ("the receipt's counts unchecked (G2)", A, 'd.get("tasks") != n or d.get("ended") != n', "False",
+     "test_an_incomplete_run_is_not_graded"),
 ]
 
 

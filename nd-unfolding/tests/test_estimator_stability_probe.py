@@ -450,6 +450,9 @@ class EndToEnd(unittest.TestCase):
         (self.root / "receipt.json").write_text(json.dumps({"functional_names": [f"f{i}" for i in range(self.F)],
                                                             "sigma_rel_pct": [1.0] * self.F}))
         (self.root / "contract.json").write_text("{}")
+        self.receipt = self.root / "log-full" / "DONE"
+        self.receipt.parent.mkdir()
+        self.receipt.write_text(json.dumps({"mode": "full", "tasks": 128, "ended": 128, "rc": 0, "job": "1"}) + "\n")
         an.SIGMA_RECEIPT_SHA256 = probe.sha256_path(self.root / "receipt.json")
 
     def tearDown(self):
@@ -519,13 +522,13 @@ class EndToEnd(unittest.TestCase):
 
     def run_analysis(self):
         out = self.root / "out.json"
-        args = ["--runs", str(self.root / "runs"), "--s5c-contract", str(self.root / "contract.json"),
+        args = ["--runs", str(self.root / "runs"), "--receipt", str(self.receipt), "--s5c-contract", str(self.root / "contract.json"),
                 "--sigma-receipt", str(self.root / "receipt.json"), "--h2-definition", "unused", "--out", str(out),
                 "--repo", str(REPO)]
         import contextlib
         import io
         with contextlib.redirect_stdout(io.StringIO()):
-            an.main(args)
+            self.rc = an.main(args)
         return json.loads(out.read_text())
 
     def test_the_verdict_follows_the_plant(self):
@@ -543,6 +546,36 @@ class EndToEnd(unittest.TestCase):
         first = self.run_analysis()["verdict"]
         self.products(plant, {("B3a", "A7_gibuu"): -0.009, ("B3a", "stage0c_gibuu"): -0.009})
         self.assertEqual(self.run_analysis()["verdict"], first)
+
+    def test_an_incomplete_run_is_not_graded(self):
+        # G2: products that would give a WINNER are not graded unless the full run completed
+        import shutil
+        self.products({"control": 0.03, "B2": 0.002, "B3a": 0.002, "B3b": 0.03}, {("B3a", "A7_nuwro"): 0.2})
+        self.assertEqual(self.run_analysis()["verdict"]["verdict"], "WINNER")
+        self.assertEqual(self.rc, 0)
+        good = self.receipt.read_text()
+        bad = {"no receipt": None, "STOP": "STOP", "FAILED": "FAILED",
+               "dry receipt": {"mode": "dry", "tasks": 128, "ended": 128, "rc": 0},
+               "fewer ended": {"mode": "full", "tasks": 128, "ended": 127, "rc": 0},
+               "another queue": {"mode": "full", "tasks": 124, "ended": 124, "rc": 0}}
+        for name, how in bad.items():
+            with self.subTest(name):
+                self.receipt.write_text(good)
+                if how is None:
+                    self.receipt.unlink()
+                elif isinstance(how, str):
+                    (self.receipt.parent / how).write_text("x\n")
+                else:
+                    self.receipt.write_text(json.dumps(how) + "\n")
+                r = self.run_analysis()
+                self.assertEqual((r["verdict"]["verdict"], self.rc), ("INCOMPLETE", an.INCOMPLETE_RC))
+                self.assertNotIn("stability", r)
+                for f in ("STOP", "FAILED"):
+                    (self.receipt.parent / f).unlink(missing_ok=True)
+        # INCOMPLETE without reading a product: the runs may be absent altogether
+        shutil.rmtree(self.root / "runs")
+        self.receipt.unlink()
+        self.assertEqual(self.run_analysis()["verdict"]["verdict"], "INCOMPLETE")
 
     def test_the_product_checks_refuse(self):
         for tamper in ("missing_jitter", "hypothesis", "candidate", "expectation", "amplitude", "bootstrap",
@@ -900,6 +933,22 @@ class Gate(unittest.TestCase):
         self.assertAlmostEqual(r["control/stability"], 1.0 * u)
         self.assertAlmostEqual(r["control/closure"], 0.3 * u)
 
+    def test_b2_over_twice_in_one_kind_only_stops(self):
+        # both kinds measured, B2 above 2x in one and at 1x in the other: the rule reads the worse kind
+        u = probe.UNIT_S
+        for over in ("stability", "closure"):
+            with self.subTest(over=over):
+                for x in self.log.iterdir():
+                    x.unlink()
+                self.finish("stab_control_stability_00", 0, 1.0 * u)
+                self.finish("stab_control_closure_nominal", 0, 0.5 * u)
+                self.finish("stab_B2_stability_00", 0, (2.2 if over == "stability" else 1.0) * u)
+                self.finish("stab_B2_closure_nominal", 0, (1.1 if over == "closure" else 0.5) * u)
+                self.assertAlmostEqual(probe.project(0.0, 0.0, self.queue, probe.read_log(self.log))["b2_over_control"], 2.2)
+                # a cap far above the projection, so only the B2 rule can stop it
+                self.assertEqual(probe.gate("stab_B3a_stability_01", self.q, self.log, 0.0, 1e6, now=0.0), 3)
+                self.assertIn("B2 costs", json.loads((self.log / "STOP").read_text())["reason"])
+
     def test_b2_at_exactly_twice_is_admitted(self):
         u = probe.UNIT_S
         self.finish("stab_control_closure_nominal", 0, 0.5 * u)
@@ -944,10 +993,16 @@ class JobScript(unittest.TestCase):
             "if sys.argv[1] == 'gate':\n"
             "    sys.exit(p.main(sys.argv[1:]))\n"
             "import time\n"
-            "n = len(sys.argv[sys.argv.index('--pairs') + 1].split(',')) if '--pairs' in sys.argv else 1\n"
-            "import os\n"
-            "if os.environ.get('STAB_FAIL_TASK') and os.environ['STAB_FAIL_TASK'] in ' '.join(sys.argv): sys.exit(1)\n"
+            "n = max([len(x.split('=', 1)[1].split(',')) for x in sys.argv if x.startswith('--pairs=')] or [1])\n"
+            "import os, hashlib, pathlib\n"
+            "line = ' '.join(sys.argv)\n"
+            "if os.environ.get('STAB_FAIL_TASK') and os.environ['STAB_FAIL_TASK'] in line: sys.exit(1)\n"
+            "if os.environ.get('STAB_UNLINK_WHEN') and os.environ['STAB_UNLINK_WHEN'] in line:\n"
+            "    pathlib.Path(os.environ['STAB_UNLINK_END']).unlink()\n"
             "time.sleep(0.3 * n)  # a lane time in proportion to the unfolds, as on the cluster\n"
+            "out = pathlib.Path(sys.argv[sys.argv.index('--out') + 1])\n"
+            "out.mkdir(parents=True, exist_ok=True)\n"
+            "(out / (hashlib.sha256(line.encode()).hexdigest()[:12] + '.npz')).write_text(line)\n"
             "print('RAN', ' '.join(sys.argv[1:]))\n")
         (self.D / "setup_salloc_env.sh").write_text(f"export PYTHONPATH={str(r / 'mods')!r}\n")
         for m in ("lightgbm", "scipy"):
@@ -1044,6 +1099,38 @@ class JobScript(unittest.TestCase):
         L = self.OUT / "log-full"
         n = len([l for l in (self.OUT / "queue.tsv").read_text().splitlines() if not l.startswith("#")])
         self.assertLess(len(list(L.glob("*.start"))), n // 2)  # xargs started nothing after the failure's wave
+        self.assertFalse((L / "DONE").exists())
+
+    def test_a_reprice_stop_keeps_and_pins_the_products_and_is_not_resumed(self):
+        # G2: a full run stopped by the gate keeps the dry run's products and pins them; re-running it refuses, so it
+        # is continued only under an addendum the director binds
+        self.assertEqual(self.job("dry", 8.0).returncode, 0)
+        p = self.job("full", 0.001)
+        self.assertEqual(p.returncode, 1)
+        L = self.OUT / "log-full"
+        self.assertIn("reprice", json.loads((L / "STOP").read_text())["reason"])
+        self.assertFalse((L / "DONE").exists())
+        pinned = (L / "SHA256SUMS").read_text().splitlines()
+        self.assertEqual(len(pinned), len(probe.DRY_TASKS))
+        self.assertEqual(sorted(x.split()[1] for x in pinned),
+                         sorted(str(x.relative_to(self.OUT)) for x in (self.OUT / "runs").rglob("*.npz")))
+        again = self.job("full", 7.25)
+        self.assertEqual(again.returncode, 2)
+        self.assertIn("exists", again.stderr)
+
+    def test_an_end_lost_during_the_run_leaves_no_receipt(self):
+        # the defensive count: with rc 0 and no STOP it fires only if an end vanished, so the last task's runner
+        # removes the end of a dry-run task the gate has already skipped
+        self.assertEqual(self.job("dry", 8.0).returncode, 0)
+        last = [l for l in (self.OUT / "queue.tsv").read_text().splitlines() if not l.startswith("#")][-1]
+        self.env["STAB_UNLINK_WHEN"] = " ".join(last.split("\t")[3:])
+        self.env["STAB_UNLINK_END"] = str(self.OUT / "log-full" / "stab_control_closure_nominal.end")
+        p = self.job("full", 7.25)
+        self.assertEqual(p.returncode, 1, p.stderr)
+        L = self.OUT / "log-full"
+        self.assertFalse((L / "STOP").exists())
+        n = len([l for l in (self.OUT / "queue.tsv").read_text().splitlines() if not l.startswith("#")])
+        self.assertEqual((L / "FAILED").read_text().strip(), f"ended={n - 1} of {n}")
         self.assertFalse((L / "DONE").exists())
 
     def test_an_existing_log_refuses(self):

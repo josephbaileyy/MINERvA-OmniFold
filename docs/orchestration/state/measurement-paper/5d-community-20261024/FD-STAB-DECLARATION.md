@@ -214,6 +214,10 @@ GiBUU truths does not move the verdict.
 - **UNINFORMATIVE:** G0 failed. **Terminal.** No estimator change proceeds from this probe. IV G stays as stated,
   and 1B stage 1 launches on the current estimator, as decided.
 - **NONE_PASS:** no candidate passes. **Terminal**, with the same consequences.
+- **INCOMPLETE:** the full run did not complete: a STOP, a failed task, or Slurm's limit (§7). Nothing is graded:
+  the analysis requires the full run's `DONE` receipt, with all 128 tasks ended, rc 0, and no `STOP` or `FAILED` beside
+  it, and otherwise reads no product. The outcome is reported to the director, and no estimator is adopted. Only an
+  addendum the director binds can complete the run (§7).
 - **INVALID:** a candidate that meets §4.3 has a zero floor at some truth (§5.2). **Terminal for this analysis:** the
   readout goes to the director, and nothing is adopted from it.
 - **WINNER, or CO_WINNERS:**
@@ -246,8 +250,9 @@ GiBUU truths does not move the verdict.
   other end. A cap of 6.4 would mean dropping one of them, or stopping on any B2 overrun.
 - **Cap: 8.0 CPU node-h**, for the dry run and the full run together. **It covers B2 up to about 1.7× per unfold**,
   not 2×. The lane sum at 2× is already 7.99, and the dry run's charge and the queue's tail come on top of it. The
-  table below simulates the dry run and the full run through the real gate (the audit's `gatesim.py`, with the dry run
-  on 8 lanes and 120 s of setup per job). α is the dry run's per-unfold time over the full run's, which is not
+  table below simulates the dry run and the full run through the real gate (the audit's simulator, committed as
+  `fd/stab/gatesim/gatesim2.py`, with the dry run on 8 lanes and 120 s of setup per job; run without noise, it
+  reproduces the seven cells re-run at this head). α is the dry run's per-unfold time over the full run's, which is not
   measured.
   <!-- absence-ok: describes a parameter of this declaration's own cost simulation and gate, not a claim that a result is absent from the repository -->
 
@@ -261,9 +266,29 @@ GiBUU truths does not move the verdict.
   | 1.85× | stop at once, 0.40 | stop at task 89, 6.95 | Slurm limit, 8.00 | — |
   | 1.9×, 2.0× | stop at once, 0.41–0.43 | — | — | — |
 
-  Up to 1.7× the run completes for every α tried. Above about 1.8× it stops before the full run spends anything,
-  unless the dry run ran faster than the full run. In that case the projection catches up only as full-run tasks
-  finish, so at 1.85× it can stop late or meet Slurm's limit. The charge still cannot pass 8.0. **Authority:** Joseph's 2026-11-01 approval of compute that resolves a
+  Without timing noise, up to 1.7× the run completes for every α tried, and above about 1.8× it usually stops before
+  the full run spends anything. The exception is a dry run faster than the full run (α < 1): the projection catches up
+  only as full-run tasks finish. At 1.85×, α = 0.9 stops at task 89 after 6.95 node-h, and **α = 0.8 never stops: it
+  meets Slurm's limit at 8.00 node-h, incomplete.**
+
+  **With per-task timing noise** (the same simulator, with log-normal noise on each task's time; 40 seeds per cell,
+  α 0.8–1.1, B2 1.0–2.0×; run by the limitations-catalog session on this probe code: `fd/stab/gatesim/sweep.sh`
+  writes `sweep.txt`, and `summarize.py` prints these counts from it):
+  - "Early" below is a stop within the first 16 queue lines, which spent at most 2.49 node-h in every seed; a later
+    stop is "mid-run".
+  - **At 2%:** every seed completes up to 1.75× for α 0.8–1.0. At α = 1.1 the run stops early from 1.5× (38 of 40
+    seeds). At 1.8× and α = 1.0 the outcomes mix: 11 complete, 17 stop early, 11 stop mid-run, 1 meets Slurm's limit.
+    At 1.85× and α ≤ 0.9, mid-run stops reach 8.00 node-h, and at α = 0.8, 24 of 40 seeds meet Slurm's limit.
+  - **At 10%:** every seed completes up to 1.3× for α 0.8–1.0, and up to 1.5× for α 0.8–0.9. From 1.5× a stop can
+    come mid-run with most of the cap spent, **up to 7.85 node-h** (1.75×, α = 1.0). A few seeds at α = 0.8 meet
+    Slurm's limit (2 of 40 at 1.75× and at 1.8×).
+  - The auditor puts the measured per-task spread at about 2% (MP1); that figure is not re-derived here.
+  - The simulation lets running tasks finish after a stop, so its mid-run spends are upper figures. On the cluster,
+    GNU xargs is expected to exit at once on a 255 without waiting for running tasks (not verified there; the BSD xargs
+    of the local tests waits). The job then ends and Slurm stops them, and a stopped unfold leaves no product, since
+    products are written to a temporary file and renamed (`s5n_pseudo.write_product`).
+
+  **Authority:** Joseph's 2026-11-01 approval of compute that resolves a
   limitation (`DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md` item 2, #640): each campaign is
   declared, priced and bound, and one priced above half the group balance (2,074.5 node-h last recorded) returns to
   Joseph first. 8.0 is far below that.
@@ -283,15 +308,32 @@ GiBUU truths does not move the verdict.
        is measured before it starts. The gate skips the dry run's eight tasks rather than re-running them, so their
        measured timings stand. Starts, ends and the job's start all come from one clock at sub-second resolution.
      - **If the projected total exceeds the cap's remainder, the gate stops before that launch** and the run comes
-       back to the director to be repriced. It does not spend down to the cap. This stops the audit's mixed case (B2 at 1.9×, the others at 1.1×, 8.31 in all)
-     before it is spent (`Gate.test_the_audits_mixed_overrun_stops`).
+       back to the director to be repriced. That is what the gate guarantees: **it stops before any launch whose
+     projected total, tail included, exceeds the cap's remainder.** It does not guarantee a complete run, or a stop
+     that spends little. The projection is made from the tasks measured so far, so a dry run faster than the full run,
+     or timing noise, can leave it low: a run can then stop mid-way with most of the cap spent, or meet Slurm's limit
+     (the tables above). **The hard limit is Slurm's `--time` (item 1): 8.00 node-h.** The gate stops the audit's
+     mixed case (B2 at 1.9×, the others at 1.1×, 8.31 in all) before it is spent
+     (`Gate.test_the_audits_mixed_overrun_stops`).
   3. **The B2 rule.** No task starts once B2's measured per-unfold time exceeds 2× the control's, compared like for
      like: stability with stability, closure with closure.
 
   A stop writes `STOP` with the projection; nothing further starts; the products so far are kept; the run returns
   to the director with the measured cost. **Only a run whose every task ended, with no STOP and rc 0, writes a `DONE`
   receipt.** The full run refuses unless the dry run's receipt exists and every dry-run task ended. A failed task,
-  a STOP and a Slurm time-limit kill each leave no receipt.
+  a STOP and a Slurm time-limit kill each leave no receipt. The receipt's count of ended tasks is defensive: with rc 0
+  and no STOP every task has ended, since the gate skips only a task whose end exists. Its test reaches it by removing
+  an end during the run (`JobScript.test_an_end_lost_during_the_run_leaves_no_receipt`).
+- **After a stop** (the director's ruling, 2026-11-03):
+  - **No resume without an addendum the director binds.** The job refuses to re-run a mode whose log exists, so a
+    stopped full run cannot be restarted by submitting it again. A fresh run beside it would re-launch finished tasks:
+    the runner skips an existing product at once, so the task would record a near-zero time, the round-1 defect. An
+    addendum states the new price, how the spend already made counts against the cap, and how finished tasks are kept.
+  - **The products already made are kept and pinned.** The job writes `SHA256SUMS` of every product whatever the
+    outcome (`JobScript.test_a_reprice_stop_keeps_and_pins_the_products_and_is_not_resumed`). A Slurm time-limit kill
+    ends the job before it can, so the report pins them then.
+  - **They are not graded until the probe completes** (§6, `EndToEnd.test_an_incomplete_run_is_not_graded`).
+  - **If the probe is not completed, the outcome is INCOMPLETE:** reported, and no estimator is adopted.
 - **Every job under 12 h:** 0:45 and at most 7:15. The longest task is 4 unfolds, 1.5 h at B2's 2×.
 - **Rules:**
   - CPU only, regular QOS, `--no-requeue`, `--exclusive`;
@@ -309,11 +351,11 @@ GiBUU truths does not move the verdict.
 
 | file | role |
 |---|---|
-| `nd-unfolding/estimator_stability_probe.py` | the candidates; `install` rebinds `s5c_unfold.config_params`, `omnifold_nn_core.make_estimators` and `s5n_pseudo.write_product` for one invocation, and checks the runner's parsed arguments; the stability and closure runners (`s5p_numerics`, `s5p_nullexp`, unchanged); the declared queue and the dry run's four tasks; the budget `gate` |
+| `nd-unfolding/estimator_stability_probe.py` | the candidates; `install` rebinds `s5c_unfold.config_params`, `omnifold_nn_core.make_estimators` and `s5n_pseudo.write_product` for one invocation, and checks the runner's parsed arguments; the stability and closure runners (`s5p_numerics`, `s5p_nullexp`, unchanged); the declared queue and the dry run's eight tasks; the budget `gate` |
 | `nd-unfolding/sbatch_fd_stab.sh` | the job: the dry run or the full queue, on 8 lanes, every task through the gate; a DONE receipt only for a complete, clean run |
-| `nd-unfolding/estimator_stability_analyze.py` | §§4–6: the product checks, the criteria, the verdict |
-| `nd-unfolding/tests/test_estimator_stability_probe.py` | 89 tests, with every refusal and criterion tested in the direction it acts and the other; the job script is run locally on a stand-in deploy |
-| `nd-unfolding/tests/estimator_stability_mutation.py` | 60 planted defects in the probe, the analysis and the job script, each of which must be killed by its NAMED test; the unmutated suite must run all 89 tests in script mode |
+| `nd-unfolding/estimator_stability_analyze.py` | §§4–6: the completeness check (INCOMPLETE), the product checks, the criteria, the verdict |
+| `nd-unfolding/tests/test_estimator_stability_probe.py` | 93 tests, with every refusal and criterion tested in the direction it acts and the other; the job script is run locally on a stand-in deploy |
+| `nd-unfolding/tests/estimator_stability_mutation.py` | 66 planted defects in the probe, the analysis and the job script, each of which must be killed by its NAMED test; the unmutated suite must run all 93 tests in script mode |
 | `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/no-ratio.json` | the q3 placeholder |
 
 - **No production module is edited.**
@@ -325,14 +367,14 @@ GiBUU truths does not move the verdict.
 
 **Commands.**
 
-    python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 89 tests
-    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 60 mutations, all killed
+    python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 93 tests
+    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 66 mutations, all killed
     python3 -I nd-unfolding/estimator_stability_probe.py tasks --out <OUT>/queue.tsv --dry-out <OUT>/dry.tsv \
         --npz … --bkg … --bank … --detector-dir … --expect-npz-sha256 … --expect-bkg-sha256 … \
         --closure-ratio-dir <pv-ladder dir> --runs <OUT>/runs
     sbatch --time=0:45 nd-unfolding/sbatch_fd_stab.sh dry <deploy> <pin> <OUT> 8.0
     sbatch --time=<8.0 minus the dry run's charge> nd-unfolding/sbatch_fd_stab.sh full <deploy> <pin> <OUT> <8.0 minus that charge>
-    python3 -I nd-unfolding/estimator_stability_analyze.py --runs <run root> --s5c-contract docs/orchestration/state/s5c/contract.json \
+    python3 -I nd-unfolding/estimator_stability_analyze.py --runs <OUT>/runs --receipt <OUT>/log-full/DONE --s5c-contract docs/orchestration/state/s5c/contract.json \
         --sigma-receipt docs/orchestration/state/s5e/cand/assess_receipt.json \
         --h2-definition nd-unfolding/pv-ladder/readouts/h2_definition.json --out <readout> --repo .
 
@@ -408,4 +450,13 @@ and thirteen tests. Each claim was checked against the code before it was change
 | F3 | a failed or time-limited dry run was accepted by the full run | **fixed:** a `DONE` receipt only after every task ended with rc 0; the full run requires it and every dry-run task's end, and checks both before writing anything |
 | mutants | `main` without the guard's mode, and five job-script guards, survived | **killed:** `RealParsers` needs the guard on the production path; `JobScript` tests a failed task, a dry run with a missing end, an existing log and a missing `lightgbm`; script mutants run through the harness |
 | load | `test_dry_then_full` failed once under load | the B2 ratio compared a closure with a stability task, so the start-up time skewed it; it is now like for like, and the stand-in runners sleep 0.3 s per unfold |
+
+**The audit's third round** (`coverage-5b-audit`, 1943db31, PR #720; F1–F3 verified fixed; the director's rulings):
+
+| item | finding | disposition |
+|---|---|---|
+| G1 | §7's "it does not spend down to the cap" was contradicted by §7's own table (1.85× at α = 0.8 meets Slurm's limit at 8.00), and the audit saw a mid-run stop after 6.34 node-h at 10% per-task noise | **fixed:** §7 states what the gate guarantees, a stop before any launch whose projected total exceeds the cap's remainder, and that Slurm's `--time` is the hard limit; the α = 0.8 row is stated as it reads. A 2,880-run noise sweep (`fd/stab/gatesim/`) puts mid-run spends up to 7.85 node-h at 10% noise, above the audit's single run |
+| G2 | what a reprice resumes was not declared, and a fresh full run would re-launch finished tasks and record near-zero times | **fixed, as the director ruled:** no resume without an addendum the director binds; products kept and pinned (`SHA256SUMS` on every outcome), not graded until the probe completes; otherwise INCOMPLETE, reported, and no estimator adopted. The analysis enforces it: without a complete full run's receipt it reads no product (§6, §7) |
+| G3 | two of the audit's 28 mutants survived: B2's ratio from the cheaper kind, and DONE without the count of ended tasks | **killed:** `Gate.test_b2_over_twice_in_one_kind_only_stops` (both kinds); the count is stated as defensive and tested by removing an end mid-run (`JobScript.test_an_end_lost_during_the_run_leaves_no_receipt`) |
+| fixture | the job-script tests' stand-in runner read `--pairs` as two tokens, so every task slept as one unfold | **fixed:** it reads the `=` form, so its lane time is in proportion to the unfolds, and it writes a product per task for the pinning test |
 
