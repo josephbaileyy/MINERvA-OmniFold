@@ -926,12 +926,12 @@ def check_clip_gate(a) -> None:
 
 def run_unfold(a, unfold_fn=None) -> int:
     inv.OPENED.clear()
-    check_clip_gate(a)
-    s5e_candidate.install(a.estimator)
     if a.role not in ROLES:
         raise Refusal(f"role {a.role!r}")
     if (a.role in ("control", "capture")) != (a.truth == "data"):
         raise Refusal("the control and capture roles run on the data (--truth data), and only they")
+    check_clip_gate(a)                        # after the role checks, so each refusal is its own (the receipt's)
+    s5e_candidate.install(a.estimator)
     world = _load_world(a)
     a.out.mkdir(parents=True, exist_ok=True)
     status = 0

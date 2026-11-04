@@ -166,6 +166,25 @@ class Compose(Case):
             np.testing.assert_array_equal(np.asarray(got, float), want, k)
         self.assertFalse(np.array_equal(np.asarray(ui["w_truth"]), s[0]["wt"] * (s[1]["wt"] / cv["wt"]) * (s[2]["wt"] / cv["wt"])))
 
+    def real_files_denominator(self):
+        """inputs whose denom_nd is not hist_f32(tdw_CV), as on the real files (the (d1) read's 16 moved rows): one
+        row's CV weight sits in a neighbouring cell, and the detector universes carry that npz denom_nd (check D)."""
+        d32 = s5p_universe.denominator(self.bank_cv, np.ones(50), self.inputs["edges"])
+        npz = np.array(d32, float)
+        c = np.flatnonzero(np.ravel(npz) > 1)[:2]
+        npz.flat[c[0]] -= 1.0
+        npz.flat[c[1]] += 1.0
+        return dict(self.inputs, denom_nd=npz), d32, npz
+
+    def test_composites_use_the_float32_cv_denominator(self):
+        inputs, d32, npz = self.real_files_denominator()
+        w = lambda t: (dict(self.weights(t), denom_nd=npz) if "denom_nd" in self.weights(t) else self.weights(t))  # noqa: E731
+        uni = lambda t, b: s5p_universe.universe_inputs(inputs, self.bkg, self.bank_cv, w(t), b, "0", None)[0]["denom_nd"]  # noqa: E731
+        ui, _, _ = mc.compose(inputs, self.bkg, self.bank_cv, ["MaRES_0", "LowQ2_1"], w, None, np.ones(50))
+        np.testing.assert_array_equal(ui["denom_nd"], uni("MaRES_0", "MaRES") + (uni("LowQ2_1", "LowQ2") - d32))
+        ui, _, _ = mc.compose(inputs, self.bkg, self.bank_cv, ["MaRES_0", "GEANT_Pion_0"], w, None, np.ones(50))
+        np.testing.assert_array_equal(ui["denom_nd"], uni("MaRES_0", "MaRES") + (d32 - d32))
+
     def test_denominators_compose_per_cell(self):
         """Per cell, on one binning (A2.1 (e2)): d_CV = hist_f32(tdw_CV), and a detector universe's denominator, the
         npz's bitwise, is that hist_f32; a detector denominator that is not the CV's refuses."""
@@ -454,6 +473,19 @@ class Clipping(Case):
             mc.clip_draw(ui, ub, r, "both")
 
 
+    def test_the_truth_clip_is_on_w_truth_r(self):
+        """S3 on w_truth r's sign, not w_truth's: r < 0 on a positive weight clips; on a negative weight it does not
+        (D8 found no r < 0 on the real files, so only a fixture can show the difference)."""
+        ui, ub, _ = self.nature()
+        ptru = np.flatnonzero(np.asarray(self.inputs["pass_truth"], bool))
+        wt = np.asarray(ui["w_truth"], float).copy()
+        a, b = ptru[5], ptru[6]
+        wt[a], wt[b] = 0.4, -0.4
+        r = np.ones(wt.size)
+        r[a] = r[b] = -1.0
+        dn, _, _ = mc.clip_draw(dict(ui, w_truth=wt), ub, r, "nature")
+        self.assertEqual((dn["w_truth"][a], dn["w_truth"][b]), (0.0, -0.4))
+
     def test_the_nature_rule_clips_the_denominator_by_row(self):
         """S3 (d1): a negative composite denominator row adds its mass to its own cell only (C2's N + m_all); a cell
         without one keeps compose's value bitwise; the composite rows histogram to compose's per-cell denominator."""
@@ -668,9 +700,14 @@ class Jobs(Case):
                 "--estimator", "R", "--clip-rule", "data", "--out", str(out)]
 
     def test_control_and_capture_only_on_the_data(self):
+        """The role pairing refuses with its own message, before S2's gate (which would also refuse these argvs)."""
+        import contextlib
         out = self.tmp / "jobs1"
-        self.assertEqual(mc.main(self.argv("g18", "control", "MaRES_0", out)), 4)
-        self.assertEqual(mc.main(self.argv("data", "central", "T", out)), 4)
+        for argv in (self.argv("g18", "control", "MaRES_0", out), self.argv("data", "central", "T", out)):
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(mc.main(argv), 4)
+            self.assertIn("the control and capture roles run on the data", err.getvalue())
 
     def test_declared_ranges(self):
         a = mock.Mock(truth="g18", prep=self.w.prep, push=None, expect_push_sha256=None, threads=1,
@@ -1745,6 +1782,16 @@ class Receipt(Case):
         self.n_bins = int(np.prod([np.asarray(e).size - 1 for e in self.inputs["edges"]]))
         self.U = np.random.default_rng(15).uniform(0, 1, (sa.N_CELLS, self.n_bins))
         self.seeds = (3620000, 3630001, 3640002)
+
+    def test_the_receipt_subtracts_the_float32_cv_denominator(self):
+        """(e2) in the receipt: with the npz's denom_nd far above hist_f32(tdw_CV) in one cell, subtracting the npz's
+        would drive the composites there below zero (section 2b); the float32 d_CV does not."""
+        d32 = s5p_universe.denominator(self.bank_cv, np.ones(50), self.inputs["edges"])
+        npz = np.array(d32, float)
+        npz.flat[int(np.flatnonzero(np.ravel(npz) > 0)[0])] += 50.0
+        with mock.patch.dict(self.inputs, {"denom_nd": npz}):           # the detector universes carry it (check D)
+            res, _ = self.run_receipt(self.inputs)
+        self.assertEqual(res["denominator"]["draws_with_nonpositive_cells"], [])
 
     def run_receipt(self, inputs, bound=1.05):
         world = {"inputs": inputs, "bkg": self.bkg, "bank_cv": self.bank_cv, "flux": self.flux,

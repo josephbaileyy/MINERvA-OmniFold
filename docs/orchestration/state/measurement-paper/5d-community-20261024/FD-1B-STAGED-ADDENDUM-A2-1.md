@@ -47,6 +47,12 @@ change to S1, or a verdict on 1B's coverage.
 - **`fd_1b_cvdenom.py`:** the CV per-row denominator read.
 - **`fd_1b_binning.py`:** the director's items 3 and 4.
 - **`fd_1b_mc.py`:**
+  - S2's bound gate, `check_clip_gate`:
+    - under `data`, only `pre_gate_items()` run;
+    - under `nature`, only `BULK_ROLES` run, on `c2check`'s record pinned by digest and bound to the run (its schema,
+      PASS and "option (1)", this truth's reading, the declared seeds, `gate_code_digests()`, the inputs and a
+      calibration digest);
+    - the stub's three-field file alone refuses;
   - C2's `nature` rule in `clip_draw`;
   - the denominator's row clip;
   - (e2) in `compose` and the receipt;
@@ -103,6 +109,7 @@ All runs used a fresh clone at the bound commit, with its sha verified on the no
 | binning, 1 | `e7641a9b` | login23, 23:44Z | refused at the float32-U check, before measuring anything |
 | binning, 2 | `663a7609` | login23, 23:54Z | `ValueError("ratio_nd")`, before measuring anything |
 | binning, 3 | `917907aa` | login23, 2026-11-04 00:02–00:03Z | items 3 and 4 measured (§4; the director's message of 2026-11-04) |
+| calibration, G18 and AR23 | `02e71a0b` | job 60771025, nid006700, 02:10–02:32Z | TO_JOSEPH: (b)'s two-truth union 18.9 % (§8) |
 
 ## 7. The mock audit (the director's request, 2026-11-04)
 
@@ -142,8 +149,8 @@ Its only stand-ins:
 | `test_fd_1b_cvdenom.py:300` `uproot` (a stand-in module) | the ROOT read | uproot's own reading | no: there is no toy ROOT file, and uproot can't write the TParameter POT objects. The two real runs (§6) are the end-to-end evidence | both: TO_DIRECTOR (run 1), PASS (run 2) |
 | `test_fd_1b_cvdenom.py:143`, `:264`, `test_fd_1b_binning.py:84` `NOATIME` / `NOATIME_FLAG` | the O_NOATIME flag | macOS lacks the flag | the node runs used it; `atime_moved` was [] in every run | n/a |
 | `test_fd_1b_c2.py:186` `CAL_SALT` | a constant | none (a refusal test) | n/a | refuse at 0 |
-| `test_fd_1b_mc.py:1720` (amendment 2's receipt test) `_load_world`, `_single`, `load_s1`, `fine_map`, `functional_matrix` | the receipt's loaders | gave a float64 U, so the U defect was invisible | e2e receipt | pass, and refuse without `--cv-tdw` |
-| `test_fd_1b_mc.py:749–752` (the toy clip-rule test) `truth_ratio`, `truth_weight`, `_weights`, `toy_experiment` (spy) | the toy path | the real truth weight | e2e toy item under both rules through `mc.main` (`test_a_toy_item_under_nature_end_to_end`); one stand-in, the estimator `_unfold` (needs ROOT; A2.1 doesn't change it, and no A2.1 check reads its output) | pass under data and nature; nature without `--cv-tdw` refuses |
+| `test_fd_1b_mc.py:1759–1763` (amendment 2's receipt test) `_load_world`, `_single`, `load_s1`, `fine_map`, `functional_matrix` | the receipt's loaders | gave a float64 U, so the U defect was invisible | e2e receipt | pass, and refuse without `--cv-tdw` |
+| `test_fd_1b_mc.py:747–750` (the toy clip-rule test) `truth_ratio`, `truth_weight` (:747–748), `_weights` (:749), `toy_experiment` (spy, :750) | the toy path | the real truth weight | e2e toy item under both rules through `mc.main` (`test_a_toy_item_under_nature_end_to_end`); one stand-in, the estimator `_unfold` (needs ROOT; A2.1 doesn't change it, and no A2.1 check reads its output) | pass under data and nature; nature without `--cv-tdw` refuses |
 
 **Job functions without an unmocked end-to-end test, with the reason:**
 - `clipcheck`, `null_step` and `readout` need S1-0b or bulk products, which the toy world doesn't produce. Their A2.1
@@ -161,17 +168,57 @@ Its only stand-ins:
   (no `run_unfold`, so no `s5e_candidate.install`) is now covered inside `truth_weight`. They install no estimator,
   since they unfold nothing.
 
-## 8. The calibration (to come in full)
+## 8. The calibration (G18 and AR23; the plug-in after B4 and the capture)
 
-- **The design:** §5 of the design record, as ruled.
-- **The job:** `fd/receipts-1b/staged/a2-1/sbatch-calibrate.sh` and `connect-calibrate.sh`.
-- **The price** (an estimate):
-  - one CPU node, QOS regular, `--time 4:00:00`, which is 2× a 2 h estimate. The basis: stage 1's receipt read the
-    same universe files in 1:26:25 on a login node, and 2 × 10⁴ sets at about 2.1 s each, measured locally on
-    63,168 cells, over 64 workers is about 11 min;
-  - the job measures one set on the real fine-cell count before the pool, and refuses if the projection passes its
-    13,500 s budget;
-  - **the exposure:** at most 4.0 node-h, added to amendment 2's 76.0 with P1's capture (about 1 node-h).
+**The design** is as ruled:
+- null natures, unclipped and first order, from the streams [CAL_SEED, set, CAL_SALT], which no declared draw shares;
+- 10⁴ sets of 300 draws per truth;
+- the ratio is var (ddof 1) over the band_reference of the single-universe U·x_T;
+- the outputs are the director's (a)–(c), and the power of (ii) against a uniform 10 % deflation;
+- the law control (z = 4) and the linearisation (0.02).
+
+**The run.** It was job 60771025: one regular CPU node (nid006700), 2026-11-04 02:10–02:32Z, 21:40, MaxRSS 84.8 GB,
+at `02e71a0b`, about 0.36 node-h of the 4.0 cap.
+- **Records:** `calib-run/calibration.json` `4b6a18b6…` and `calibration.npz` `a5279bc2…`.
+- **Cost guard:** 10,693 fine cells were kept; one set took 0.241 s, projected 1,222 s against 1,287 s actual.
+- **Checks:** no atime moved; D8, 0 rows with r < 0; check D, no detector denominator off the CV's.
+
+**The readout** (rates ± binomial SE):
+
+| | (i) | (ii) | (iii) | union |
+|---|---:|---:|---:|---:|
+| (b) at 2 / 0.07 / 0.35, G18 | 0.26 % | 9.62 % | 0 | 9.65 % |
+| (b), AR23 | 0.27 % | 10.16 % | 0 | 10.17 % |
+| **(b), two-truth union** | | | | **18.91 % ± 0.39** |
+| (c), 3.5 SD and (α), two-truth union | | | | 0.58 % ± 0.08 |
+
+- **(a), the null SDs:**
+  - the mean log ratio: 0.0419 (G18) and 0.0426 (AR23), against the consult's independent-cell 0.020;
+  - max |r − 1|: 0.039;
+  - the per-cell ratio SD: median 0.065, against the analytic 0.082.
+- **(ii)'s power against a 10 % deflation:** 78.7 % and 77.4 % at 0.07; 14.6 % and 13.7 % at 3.5 SD.
+- **Both controls hold:** the law, max |z| = 2.60; the linearisation, max |mean − 1| = 0.0063.
+- **The verdict is TO_JOSEPH.** A three-truth union can't be smaller, so it goes to Joseph without waiting for the
+  plug-in (the director, 2026-11-04).
+- **The mechanism:** the cells share the same 300 draws, so the mean log ratio carries a fluctuation common to all of
+  them. That is cov2d's measured ±0.045 again.
+
+**(ii)'s trade-off curve.** Recorded in `calib-run/tradeoff.json` `415a6f72…` (by `a2-1/tradeoff.py`, 0 compute), with
+(i) and (iii) at #724's fixed numbers:
+
+| (ii) threshold | two-truth noise | two-truth power, 8 % | two-truth power, 10 % |
+|---|---:|---:|---:|
+| 2.0 SD | 9.41 % | 70.4 % | 88.3 % |
+| 2.5 SD | 2.65 % | 47.3 % | 71.4 % |
+| 3.0 SD | 0.80 % | 26.0 % | 48.7 % |
+| 3.5 SD | 0.55 % | 12.6 % | 28.4 % |
+| fixed 0.07 | 18.91 % | 83.9 % | 95.1 % |
+
+- **The projected three-truth 1 % point** is 3.16 SD, about 0.133, with 23–25 % power per truth at 10 % and 11 % at
+  8 %. This assumes the plug-in behaves as the mean of G18 and AR23, independent of them (labelled; the plug-in is
+  not calibrated).
+- **The floor:** (i) or (iii) alone stops 0.26–0.27 % per truth.
+- **The audit's reading** (arithmetic, an input and not a recommendation): this is a power limit of 300 draws.
 
 ## 9. Tests and mutation (to come)
 

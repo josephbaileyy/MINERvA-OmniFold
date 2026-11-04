@@ -319,6 +319,19 @@ class Job(unittest.TestCase):
         self.assertTrue(rec["checks"]["B_tolerance"]["passes"])
         self.assertTrue((self.tmp / "o.npy").exists())
 
+    def test_c_failing_alone_goes_to_the_director(self):
+        """A, B and D hold but C does not: denom_nd is the bank rows' own float32 histogram (B exact), while the npz
+        writer's float64 rows put the edge rows in other cells. Usable needs C too."""
+        a, _ = edge_tree()
+        cv, w = bank_cv(a, 0.25)
+        h32 = cd.histogram([np.asarray(cv[k], np.float64) for k in cd.TD], w, EDGES)
+        rc, rec = self.run_main(a, 0.25, denom_override=h32)
+        self.assertTrue(rec["checks"]["B_histogram_equals_denom_nd"])
+        self.assertTrue(rec["checks"]["D_all_equal"])
+        self.assertFalse(rec["checks"]["C_npz_writer_reproduced"])
+        self.assertEqual((rc, rec["verdict"]), (3, "TO_DIRECTOR"))
+        self.assertFalse((self.tmp / "o.npy").exists())
+
     def test_a_failed_check_writes_no_weights_and_goes_to_the_director(self):
         a = tree()
         rc, rec = self.run_main(a, 0.25, det_scale=1.001)

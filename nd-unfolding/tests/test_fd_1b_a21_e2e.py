@@ -256,6 +256,17 @@ class E2E(unittest.TestCase):
             self.assertNotEqual(mc.main(argv + ["--clip-rule", "nature", "--out", str(self.tmp / "toy-x"),
                                                 "--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]), 0)
 
+    def test_the_cv_tdw_is_checked_at_load(self):
+        """_load_world, unmocked: the CV per-row tdw must be finite and >= 0 (the writer's 0 <= w gate) and one per
+        denominator row; each failure refuses, and the good file loads."""
+        with self.patched():
+            self.assertEqual(mc._load_world(self.args())["tdw_cv"].shape, (N_TD,))
+        for bad in (np.r_[np.ones(N_TD - 1), -1e-9], np.r_[np.ones(N_TD - 1), np.nan], np.ones(N_TD - 1)):
+            p = self.tmp / "bad-tdw.npy"
+            np.save(p, bad)
+            with self.patched(), self.assertRaises(mc.Refusal):
+                mc._load_world(self.args(cv_tdw=p, expect_cv_tdw_sha256=digest(p)))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -65,6 +65,38 @@ class Gate(unittest.TestCase):
         r[0] = 1.0 - c2.GATE_MAX - 1e-9
         self.assertFalse(c2.gate_724(r)["iii"])
 
+    def test_ii_exactly_at_its_bound_passes(self):
+        """A mean log of exactly 0.07 is reachable (15 cells at exp(0.07), the 16th searched): it passes (ii)."""
+        r = np.full(16, math.exp(0.07))
+        x = r[15]
+        for _ in range(2500):
+            x = np.nextafter(x, 0)
+        for _ in range(5000):
+            r[15] = x
+            if np.mean(np.log(r)) == c2.GATE_LOGMEAN:
+                break
+            x = np.nextafter(x, 2)
+        self.assertEqual(np.mean(np.log(r)), c2.GATE_LOGMEAN)
+        self.assertTrue(c2.gate_724(r)["ii"])
+
+    def test_iii_exactly_at_its_bound_passes(self):
+        r = np.ones(16)
+        r[0] = 0.65                                           # 1 - 0.65 is exactly the double 0.35 (Sterbenz)
+        self.assertEqual(abs(r[0] - 1.0), c2.GATE_MAX)
+        self.assertTrue(c2.gate_724(r)["iii"])
+
+    def test_i_at_exactly_0_20_is_unreachable(self):
+        """The receipt's one equivalent mutant ((i) at >= 0.20): no double r has |r - 1| == 0.20 (r - 1 is exact
+        for r in [0.5, 2], and neither 1 + 0.2 nor 1 - 0.2 is representable as such), so > and >= agree on every
+        input. Shown on the doubles within 10,000 ulps of 1.2 and of 0.8."""
+        for c in (1.2, 0.8):
+            r = c
+            for _ in range(10_000):
+                r = np.nextafter(r, 0)
+            for _ in range(20_000):
+                self.assertNotEqual(abs(r - 1.0), c2.GATE_DEV)
+                r = np.nextafter(r, 2)
+
     def test_passes_only_when_all_three_hold(self):
         self.assertTrue(c2.gate_724(np.ones(16))["passes"])
         self.assertTrue(c2.gate_724(ratios(2, 0.3, 0.98))["passes"])
@@ -209,6 +241,23 @@ class Law(unittest.TestCase):
         self.assertFalse(c2.control({"t": np.array(out) * 1.05})["holds"])
 
 
+class Block(unittest.TestCase):
+    def test_c2_block_reads_each_quantity(self):
+        """R = m_seen/S - m_all/N, and the clipped ratio is Nc's variance, first order's N's (the receipt's survivors)."""
+        rng = np.random.default_rng(8)
+        d = 50
+        q = {"S": np.full((16, d), 100.0), "m_seen": np.full((16, d), 2.0), "N": np.full((16, d), 50.0),
+             "m_all": np.full((16, d), 1.0), "S_reco": np.full((16, d), 100.0), "m_bkg": np.zeros((16, d)),
+             "Nm": rng.normal(50, 1, (16, d))}
+        q["Nc"] = rng.normal(51, 2.0, (16, d))
+        q["N"] = q["N"] + rng.normal(0, 1.0, (16, d))
+        b = c2.c2_block(q, np.ones(16), np.ones(16))
+        R = q["m_seen"] / q["S"] - q["m_all"] / q["N"]
+        np.testing.assert_allclose(b["option_1"]["sigma_Q"]["signed_median"], np.median(R, axis=1))
+        np.testing.assert_allclose(b["variance_ratio"][c2.CLIPPED], np.var(q["Nc"], axis=1, ddof=1))
+        np.testing.assert_allclose(b["variance_ratio"]["first_order"], np.var(q["N"], axis=1, ddof=1))
+
+
 class Linearisation(unittest.TestCase):
     def test_the_tolerance_both_ways_and_the_values_either_way(self):
         R = np.ones((10, 16))
@@ -314,6 +363,16 @@ class Rates(unittest.TestCase):
             rows.append(r)
         ml = math.exp(c2.GATE_LOGMEAN)
         rows += [np.full(16, ml * (1 - 1e-15)), np.full(16, np.nextafter(ml, 2.0) * (1 + 1e-15))]
+        exact = np.full(16, ml)                               # a mean log of exactly 0.07 (passes (ii))
+        x = exact[15]
+        for _ in range(2500):
+            x = np.nextafter(x, 0)
+        for _ in range(5000):
+            exact[15] = x
+            if np.mean(np.log(exact)) == c2.GATE_LOGMEAN:
+                break
+            x = np.nextafter(x, 2)
+        rows.append(exact)
         R = np.array(rows)
         out = c2.rates({"t": R})["t"]["b"]
         g = [c2.gate_724(x) for x in R]
@@ -322,6 +381,25 @@ class Rates(unittest.TestCase):
         self.assertAlmostEqual(out["union"]["rate"], np.mean([not x["passes"] for x in g]))
         self.assertGreater(out["union"]["rate"], 0)
         self.assertLess(out["union"]["rate"], 1)
+
+    def test_the_route_to_joseph_is_on_b_not_c(self):
+        """(b)'s union above 1 % and (c)'s below: 2 % of the sets sit at a mean log of 0.08 (past 0.07, inside
+        3.5 x the SD of 0.03)."""
+        rng = np.random.default_rng(3)
+        ml = rng.normal(0, 0.03, 5000)
+        ml[:100] = 0.08
+        R = np.exp(ml)[:, None] * np.ones((1, 16))
+        out = c2.rates({"a": R, "b": np.roll(R, 2500, axis=0)})
+        self.assertGreater(out["over_truths_b"]["union_per_replicate"], c2.UNION_LIMIT)
+        self.assertLess(out["over_truths_c"]["union_per_replicate"], c2.UNION_LIMIT)
+        self.assertTrue(out["to_joseph"])
+
+    def test_the_verdict_in_its_order(self):
+        ok, no = {"holds": True}, {"holds": False}
+        self.assertEqual(c2.calibration_verdict(no, no, {"to_joseph": True}), "CONTROL_FAILED")
+        self.assertEqual(c2.calibration_verdict(ok, no, {"to_joseph": True}), "LINEARISATION_TO_DIRECTOR")
+        self.assertEqual(c2.calibration_verdict(ok, ok, {"to_joseph": True}), "TO_JOSEPH")
+        self.assertEqual(c2.calibration_verdict(ok, ok, {"to_joseph": False}), "CALIBRATED")
 
     def test_power_moves_the_mean_log_by_the_deflation(self):
         R = np.full((10, 16), 1.0)
@@ -363,7 +441,7 @@ import test_fd_1b_mc as tmc  # noqa: E402
 class Job(tmc.Case):
     """calibrate_main over amendment 2's toy world: one read per universe, the checks, the timing guard, the outputs."""
 
-    def run_job(self, det_equal=True, budget=1e6, r_neg=0, tdw_cv=True):
+    def run_job(self, det_equal=True, budget=1e6, r_neg=0, tdw_cv=True, prepare_only=False):
         world = {"inputs": self.inputs, "bkg": self.bkg, "bank_cv": self.bank_cv, "flux": self.flux,
                  "groups": toys.interaction_groups(self.w.bank), "pins": json.loads(self.w.pins.read_text()),
                  "npz_sha": "n", "bkg_sha": "b", "tdw_cv": np.ones(50) if tdw_cv else None}
@@ -395,7 +473,7 @@ class Job(tmc.Case):
                 mock.patch.object(sa, "fine_map", lambda p: fm), mock.patch.object(sa, "functional_matrix", lambda f: U), \
                 mock.patch.object(mc, "truth_ratio", lambda t, p: (None, None)), \
                 mock.patch.object(mc, "truth_weight", weight):
-            return c2.calibrate_main(a)
+            return c2.prepare(a, rows=True) if prepare_only else c2.calibrate_main(a)
 
     def test_a_calibration_over_the_toy_world(self):
         rec = self.run_job()
@@ -422,6 +500,19 @@ class Job(tmc.Case):
             self.run_job(tdw_cv=False)
         self.assertEqual(rec["checks"]["r_negative"]["g18"]["rows"], 3)
         self.assertEqual(len(rec["checks"]["r_negative"]["ar23"]["first_rows"]), 3)
+
+    def test_prepare_uses_the_float32_cv_denominator(self):
+        """(e2) in prepare: d_CV is hist_f32(tdw_CV), not the npz's denom_nd, when the two differ (as on the real files)."""
+        import s5p_universe
+        d32 = s5p_universe.denominator(self.bank_cv, np.ones(50), self.inputs["edges"])
+        npz = np.array(d32, float)
+        c = np.flatnonzero(np.ravel(npz) > 1)[:2]
+        npz.flat[c[0]] -= 1.0
+        npz.flat[c[1]] += 1.0
+        with mock.patch.dict(self.inputs, {"denom_nd": npz}):
+            P = self.run_job(prepare_only=True)
+        np.testing.assert_array_equal(P["D_cv_full"], np.ravel(d32))
+        self.assertFalse(np.array_equal(P["D_cv_full"], np.ravel(npz)))
 
     def test_the_budget_guard_refuses_before_the_pool(self):
         with self.assertRaisesRegex(c2.Refusal, "passes the budget"):

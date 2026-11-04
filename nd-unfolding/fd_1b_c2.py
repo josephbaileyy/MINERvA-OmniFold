@@ -281,6 +281,13 @@ def rates(R: dict, deflation: float = DEFLATION) -> dict:
     return out
 
 
+def calibration_verdict(law: dict, lin: dict, out: dict) -> str:
+    """The calibration's verdict, in order: the law control (a bug: CONTROL_FAILED), the linearisation (a finding for
+    the director), the three-truth union under (b) (to Joseph), else CALIBRATED."""
+    return ("CONTROL_FAILED" if not law["holds"] else "LINEARISATION_TO_DIRECTOR" if not lin["holds"] else
+            "TO_JOSEPH" if out["to_joseph"] else "CALIBRATED")
+
+
 def control(R: dict) -> dict:
     """D4's law control, on the linear count, per truth and cell: |mean ratio - 1| <= CONTROL_Z standard errors (the
     replicates' SD / sqrt(sets)). The law is exact there, so any failure is a bug in band_reference or the draw law,
@@ -583,8 +590,7 @@ def calibrate_main(a) -> dict:
     digests = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (
         Path(__file__).resolve(), Path(mc.__file__).resolve(), Path(cp2.__file__).resolve(),
         Path(cov2d.__file__).resolve(), Path(toys.__file__).resolve())}
-    verdict = ("CONTROL_FAILED" if not law["holds"] else "LINEARISATION_TO_DIRECTOR" if not lin["holds"] else
-               "TO_JOSEPH" if out["to_joseph"] else "CALIBRATED")
+    verdict = calibration_verdict(law, lin, out)
     rec = {"schema": SCHEMA_CAL, "step": "c2-calibration", "verdict": verdict, "truths": truths, "sets": a.sets,
            "seeds": {t: CAL_SEED[t] for t in truths}, "salt": CAL_SALT, "constants": {
                "k": GATE_K, "dev": GATE_DEV, "mean_log": GATE_LOGMEAN, "max_dev": GATE_MAX,
