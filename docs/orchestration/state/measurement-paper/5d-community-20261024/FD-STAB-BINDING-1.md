@@ -60,8 +60,8 @@ No production module is edited (§8).
      the required control and a second B3 point (§7). That is reported to Joseph with this binding. It is well
      below half the balance.
 6. **The auditor's last nit is a follow-up, not a block:** the `./` spelling in the receipt subtest, which pathlib
-   collapses. Its failure mode is fail-closed, a correct receipt refused. limitations-catalog fixes it in the
-   step-two commit.
+   collapses. Its failure mode is fail-closed, a correct receipt refused. limitations-catalog fixes it in a
+   test-only follow-up PR, whose test blob step two binds.
 7. **Unchanged:** adopting a winner as the single final estimator is Joseph's separate decision (#714 item 2), and
    1B's stage 1 waits for it.
 
