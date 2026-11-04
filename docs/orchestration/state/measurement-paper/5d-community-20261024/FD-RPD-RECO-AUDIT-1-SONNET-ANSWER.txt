@@ -1,0 +1,137 @@
+## Audit of FD-RPD-RECO-DECLARATION.md (d1 reco-level data/MC and d2 flux swap)
+
+I audited the declaration read-only at b0de7ef61. It has one BLOCKING defect, nine MAJOR and nine MINOR. "Decl" below means `docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-DECLARATION.md`. The pins, keys and weight-scaling claim are correct; the defects are in the recipe, controls and outcome table.
+
+### BLOCKING
+
+**B1. The d2 outcome table is not a total function (Decl:141-150).**
+- With f ≥ 0.75, |s_swap| ≥ 2σ and |s_mirror| < 2σ, no outcome applies.
+  - TRACKS needs |s_swap| < 2σ.
+  - PARTIAL covers only 0.25 ≤ f < 0.75, or a TRACKS failure "only on the mirror".
+  - DOES-NOT-TRACK needs f < 0.25.
+  - Example: s_obs near 20σ with f = 0.8 gives s_swap = 4σ, which falls in the gap.
+- f is never compared with its own σ (Decl:150), so a point-estimate threshold of 0.75 can license TRACKS (Decl:204) on a noisy f.
+- A bound run can therefore reach an undefined outcome. The code would have to fail or choose after the fact, which breaks "frozen before any comparison is read" (Decl:10).
+
+### MAJOR
+
+**M1. R-d1.0 is one-sided, so NOT-SEEN covers an opposite-sign step (Decl:97, 145, 202).**
+- SEES-RECO requires s_PB ≥ 3σ; "otherwise NOT-SEEN".
+- A step of −10σ is therefore labelled NOT-SEEN, and the licence "not seen at reco level at this sensitivity" would be false for it.
+- d2 then also stops with "nothing to test".
+
+**M2. f's σ ignores the shared MC events (Decl:150).**
+- The text says s_obs and s_swap "share the data". They also share the same MC rows, reweighted, which makes them strongly correlated.
+- The Σw² terms of the swapped sample must also use the swapped weights, and that is not stated.
+
+**M3. C-N cannot test the MC variance term (Decl:84-90).**
+- All 12 pseudo-playlists share the pooled MC and take a pooled prediction scaled to their count. The MC shape therefore cancels exactly between the pseudo-playlist and its leave-one-out reference.
+- The σ includes an MC Σw² term that never fluctuates in the null, so the null χ² is deflated by roughly Var_data / (Var_data + Var_MC).
+- The p-values pile toward 1, so the control passes easily and says nothing about an understated or wrong MC term in the real σ.
+- The KS distance is "reported" (Decl:89) but is not a gate. A σ that is too wide is therefore never flagged, and the real test would be insensitive.
+
+**M4. The C-N tolerance contradicts the reading it protects (Decl:88 against Decl:102-103).**
+- C-N tolerates one false firing at p < 0.001 among 72 tests.
+- R-d1.3 declares HADRONIC-STRUCTURED if any one of the 36 hadronic tests fires at the same threshold. At p < 0.001 that is about a 3.5% false-structure rate under a calibrated null.
+- A single firing can therefore be a false positive that the control itself allows.
+
+**M5. σ built from observed N is biased in sparse bins (Decl:66-67).**
+- "The data Poisson term" does not say whether it uses observed N or the expected count.
+- Sparse cells such as p_∥ 20–60, p_T 2.5–4.5, and the 16-cell axis for 1L (49,514 data rows in `nn_1L.npz`, job A lane log) give biased χ² or a division by zero at N = 0.
+- No minimum-count rule or expectation-based σ is declared.
+
+**M6. Bin-edge handling for the weighted deciles is unspecified (Decl:73-75).**
+- Outer bins are not stated as open or closed.
+- Duplicate decile edges are not handled.
+- Edge inclusivity is not stated.
+- Data outside the MC `pass_reco` range of E_avail, q₃ or W has no assigned bin.
+- Data rows can be silently lost from N while P is complete.
+
+**M7. C-E1, C-E2 and C-E3 are aggregated over all `pass_reco` weight and use a median for C-E3 (Decl:117-121).**
+- The step lives at p_∥ 8–15, which is high Eν. The aggregate is dominated by low-p_∥ events, and a median allows up to half the weight to be wrong.
+- The inversion could therefore be wrong exactly where d2 acts and still pass.
+- I checked with synthetic kinematics, using python arithmetic only.
+  - A 1% Eν error moves median q₃ by about 2.1%, so a 1% median bound tolerates about 0.5% median Eν error.
+  - C-E2 is nearly vacuous. The M_n against M_p difference was at most about 0.26% even at low energy, so it passes whether or not the inversion is right.
+  - Float32 storage of W alone gives a median Eν error of 0.06% and a 99.9th percentile of 0.29%, so 0.5% is close to storage noise.
+- Stratify the controls by p_∥ region, and use a high percentile for C-E3.
+
+**M8. The swap weight rests on an unstated, unverified premise (Decl:125-126, 43-55).**
+- φ_T/φ_own equals the change in the CV flux weight only if the generator-flux denominator of MAT's weight (CV-weighted over unweighted) is identical for the three files.
+- The simulation's CV weight does include the flux reweight, as `MnvTunev1.emplace_back(new ... FluxAndCVReweighter ...)` at MINERvA101/MINERvA-101-Cross-Section/runEventLoopMod.cpp:309 shows.
+- P0 does not record the generator histogram or MAT's normalisation, and `FluxReweighter.cxx` is not in the worktree, so this is not checkable here.
+- "Normalised to unit integral over its range" (Decl:126), with out-of-range rows left at weight 1, mixes two normalisations and has no cap on the out-of-range share.
+
+**M9. The tests do not cover the defects above (Decl:163-170).**
+- There is no test of the TRACKS/PARTIAL/DOES-NOT-TRACK classifier, its boundaries or the gap in B1.
+- There is no test of the leave-one-out offset or σ, of the χ² ndf after the weighted-mean subtraction, or of bin-edge handling.
+- C-E1, C-E2 and C-E3 are never named as refusing controls in the direction they act, although Decl:170 says generally that "each refusing control is exercised".
+- "d1 refuses without a passing C-N record" (Decl:89-90) is declared in prose but is not in the test list, which names only step 1 refusing without step 0.
+- The Eν round-trip test (Decl:167) inverts the same algebra it checks, so it is circular. It cannot catch a θ convention, a mass or a unit slip against the real C++ values, and C-E3 is the only real-data check.
+- A pin test must cover a missing file and a set mismatch, not only a digest mismatch.
+- C-N tested only for a 5% planted offset (Decl:169) does not test σ calibration.
+
+### MINOR
+
+- **m1.** The "shape-only" against "unnormalised" report is vacuous for s (Decl:130, 150). s is a ratio of two bin ratios and is invariant to the overall scale of P. The scope report's request to split shape from normalisation (scope REPORT.md:387-388) is therefore not delivered, and the +0.99% and −0.42% flux integrals are never tested. It is also unclear whether "X's unswapped total" includes background.
+- **m2.** The mirror (Decl:139, 204) is first-order the same information as the swap, because P_PA·g⁻¹ and P_PB·g give nearly the same Δs. The licence "and the mirror removes it too" overstates independent confirmation.
+- **m3.** Unswapped background (Decl:128) has no threshold on its share or on its effect on f. The 2D report estimates its effect on R at about 0.3% (playlist-spread REPORT.md:122, within the 102-125 block).
+- **m4.** Signal rows excluded for non-finite truth support (`excluded_nonfinite_truth_support`, 33 to 511 per playlist in the job A lane logs) are in neither P_X nor the background. This is negligible (about 1e-4) and undisclosed. The recipe also allows rows with `pass_reco` true and `pass_truth` false but never asserts that none exist. In all 12 job A lane logs `dropped_phase=0` and `pass_truth` equals `kept`, so there are none now; assert it.
+- **m5.** The declaration says "same convention" (Decl:119), but stored q₃ is MAT `Getq3True` from the generator `mc_Q2` (CVUniverse.h:207; runEventLoopOmniFold.cpp:589). It is exact and includes m_μ, whereas q₃′ uses the massless experimenter Q². My check gave a median difference of 1.7e-4 and a 99th percentile of 1.4%, so there is no practical effect. The declaration also does not pin M_p and M_n (CVUniverse.h:39-40, in MeV) or m_μ, and does not state the GeV against MeV conversion.
+- **m6.** Disclosure is incomplete (Decl:181-182). RPD's per-playlist 5D results (the CARRIES set {1L, 1M}, used at Decl:101) were read at unfolded level on the hadronic cells. The p_∥ step was also read on unfolded results (period-unfold REPORT.md:54-60). "E_avail, q₃ and W were not [read]" holds only at reco level. HADRONIC-FLAT is a bare verdict word that could be read without its caveat (Decl:102-103).
+- **m7.** The 16-cell mapping (Decl:77-78) names "boxes" as a key, but h2_definition.json has `reporting_cells[].box` and `h2_to_reporting_cell`. Rows in `unreported_boxes` ([2], [6], [10], [14]) are excluded, and edge inclusivity is not stated.
+- **m8.** d2 departs from the commissioned design without saying so. The commission is "using the report's designs and prices" (DECISION-20261104-joseph-referee-analysis-commission.md:35-36). The scope design obtains Eν from an event-loop pass (scope REPORT.md:376-379). The declaration inverts truth W instead, and the departure should be noted for the director.
+- **m9.** The O_NOATIME requirement (Decl:41, 173) does not exist on macOS, so the tests need a guard for local runs. The calendar line (Decl:187) uses 11-03 where the job ran on 11-04 (job A sacct 2026-11-04T00:35 Pacific), which is conservative.
+
+### Checked and correct
+
+**Pins**
+- All 24 pins in `fd/rpd-reco/INPUTS.sha256` match the `npz_sha256` and `bkg_sha256` fields in `fd/receipts-rpd/run/jobA/line*-60786801.log`.
+- The log set is exactly the 24 files, with no extra and no conflicting values.
+- The pin file uses sha256sum two-space format.
+
+**Keys**
+- `MCgen`, `MCreco`, `w_reco`, `pass_reco`, `measured` and `axes` are saved by `s5p_input_dumps.py:171-175`.
+- `bkg_reco` and `bkg_w` are saved by `s5p_input_dumps.py:183`.
+- `nn_dump_inputs.py:92-97` writes the same names; the pinned `lat_*.npz` come from `s5p_input_dumps.py`.
+- `MCreco` columns are [p_T, p_∥, E_avail, q₃, W]. The `-9999` sentinel marks rows that do not pass reco (`unfold_nd_omnifold_unbinned.py:444-446, 478`).
+
+**Weights**
+- The scaling claim is right. FD-RPD-DECLARATION.md:274-288 gives weights equal to `lat_zero`'s × s_X/s_ALL with s_X = data_pot_X/mc_pot_X, so data/MC is absolute per playlist.
+- The predicate passed. `fd/receipts-rpd/run/controls/controls.json` records C1 `pass: True` with `w_reco` True, but the declaration does not cite that receipt.
+
+**Recipe**
+- With `pass_truth` all True in the 12 job A lane logs, P_X, the background and the signal rows are not double-counted.
+- Background enters through `collect_bkg_nd` with the same range cuts as signal.
+- The leave-one-out offset and its relative-form σ are correct.
+- ndf = n_b − 1 after the σ-weighted mean is correct.
+- The p_T and p_∥ edges are subsets of PT_EDGES and PZ_EDGES (`unfold_2d_omnifold_unbinned.py:32-36`).
+
+**Eν algebra**
+- The inversion is exact. Solving Eν(2M − 4Eμ sin²(θ/2)) = W² − M² + 2EμM follows directly from CVUniverse.h:396-409.
+- Units are consistent: p_T and p_∥ are in GeV (CVUniverse.h:73, 78) and W is stored in GeV (runEventLoopOmniFold.cpp:591).
+- θ = atan2(p_T, p_∥) matches the muon angle definition used for p_T and p_∥ there.
+- C-E3 does test against a quantity the inversion did not use, but see M7.
+
+### Citations checked
+
+| Citation | Result |
+|---|---|
+| FD-RPD-DECLARATION.md:288 (weights ×s_X/s_ALL) | supports |
+| FD-RPD-DECLARATION.md:158 (1.55 GB) | supports |
+| FD-DIRECTOR-RULINGS.md:63-68 | supports |
+| DECISION-20261104-joseph-referee-analysis-commission.md, item 1 | supports; sha prefix `1b4d8a744aad9c24` present at :25 |
+| commit 1a87d209a9fc337c49d40ae3114d51312a45e132 | exists |
+| scope REPORT.md d1/d2 designs, §5 (:346-390) | supports; d3 at :391 |
+| CVUniverse.h:396-409 | supports W formula; Q² is at :385-394, not in the cited range (m5) |
+| playlist-spread-20261014/REPORT.md:126-148 | supports "already read in 2D" |
+| playlist-spread-20261014/REPORT.md:140 (p_∥ edges) | partial: edges are at :143-144; :140 has values |
+| playlist-spread-20261014/REPORT.md:154-161 | supports the 1D / 1M / 1N flux-file mapping |
+| FluxReweighter.cxx:1936-1976 | not in worktree; second-hand via REPORT.md:154-161 |
+| period-unfold-20261014/REPORT.md:50-60 | misdescribed: unfolded results, not a reco-level study (m6) |
+| fd_rpd.py:789-810 | supports (:789-812 is `measured_weights_agreement`; :867-877 reads only a row count for the N0-P share check) |
+| h2_definition.json | exists; `boxes` key absent (m7) |
+| nn_dump_inputs.py and s5p_input_dumps.py | key claims supported |
+| unfold_nd_omnifold_unbinned.py:351-470, 497-575 | supported |
+
+**Verdict:** The inputs are sound, but the declaration should not be bound as written, because the d2 outcome table has a gap (B1) and the null control cannot calibrate the σ it feeds (M3, M4, M5).
