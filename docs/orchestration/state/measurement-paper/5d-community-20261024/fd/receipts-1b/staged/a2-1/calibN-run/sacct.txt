@@ -1,0 +1,7 @@
+# sacct -j 60783756 -n -P -o JobID,JobName,State,Elapsed,Start,End,NodeList,NNodes,ExitCode,MaxRSS  (login15, 2026-11-04)
+60783756|fd1b_c2calN|COMPLETED|00:43:15|2026-11-03T22:35:57|2026-11-03T23:19:12|nid004331|1|0:0|
+60783756.batch|batch|COMPLETED|00:43:15|2026-11-03T22:35:57|2026-11-03T23:19:12|nid004331|1|0:0|130983132K
+60783756.extern|extern|COMPLETED|00:43:15|2026-11-03T22:35:57|2026-11-03T23:19:12|nid004331|1|0:0|
+# sacct -j 60783756 -X -n -P -o JobID,ElapsedRaw,NNodes,AllocTRES%80,Partition,QOS  (login25, 2026-11-04T07:53:40Z)
+60783756|2595|1|billing=256,cpu=256,energy=1245570,mem=487802M,node=1|regular_milan_ss11|regular_1
+# iris m3246 (Charged, Allocated): at launch (login23, 05:45:31Z) balance 2036.5; at 07:53:40Z 17964.2 / 20000.0 -> 2035.8

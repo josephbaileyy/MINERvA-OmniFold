@@ -1,0 +1,13 @@
+host=login23 start=2026-11-04T05:45:31Z pid=2212205
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2190.6            10000.0     17963.5      20000.0
+balance_node_h=2036.5 half=1018.2 cap=1.5
+deploy porcelain_lines=0 head=51d67b54f1a4b483244217c80e5a223fb8812bc4
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/sbatch-calibrate.sh: OK
+Submitted batch job 60783756
+60783756 fd1b_c2calN PENDING 0:00 1:30:00 (Priority)
+end=2026-11-04T05:46:14Z
