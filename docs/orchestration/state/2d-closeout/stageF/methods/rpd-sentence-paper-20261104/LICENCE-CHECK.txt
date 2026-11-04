@@ -1,2 +1,2 @@
-check_licence: PASS (licensed sentence from FD-RPD-DECLARATION.md sec. 6.2; 0 failures)
-check_licence self-test: 7/7 planted defects caught
+check_licence: PASS (sec. 6.2 of FD-RPD-DECLARATION.md with the departure of DECISION-20261104-joseph-753-reword-and-merge.md; 0 failures)
+check_licence self-test: 10/10 planted defects caught

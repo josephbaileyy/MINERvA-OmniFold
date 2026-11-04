@@ -32,7 +32,7 @@ AFTER = {"paper_body.tex": "differ by more than their bootstrap scatter.",
 # the paper's sentence carries the note pointer before its full stop (decision item 1)
 POINTER = {"paper_body.tex": r" (\nsec{sec:fived16-pl})", "sec_fived16.tex": ""}
 # Joseph's ruling on #753 ("Merge, reword sentence"; sha256 of the text plus a final newline begins 555da20e9ef2a1cd),
-# recorded in DECISION: the reworded sentence, the same meaning as sec. 6.2's with no claim added, as #753's PRD-referee
+# recorded in DECISION (#754, merged at 7bf86c423): the reworded sentence, the same meaning as sec. 6.2's with no claim added, as #753's PRD-referee
 # read asked (edit 1)
 DECISION = "docs/orchestration/DECISION-20261104-joseph-753-reword-and-merge.md"
 DEPARTURE = ("by more than their playlist-to-playlist scatter would give.",

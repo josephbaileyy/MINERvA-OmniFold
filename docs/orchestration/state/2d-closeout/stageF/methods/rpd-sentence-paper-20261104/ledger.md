@@ -1,4 +1,4 @@
-# The RPD-sentence round: fact ledger (base cb3e83517)
+# The RPD-sentence round: fact ledger (base 7bf86c423)
 
 The round applies `DECISION-20261104-joseph-rpd-sentence.md`:
 - **item 1**, the paper: `FD-RPD-DECLARATION.md` §6.2's CLUSTERED sentence is inserted in Sec. IV A, in the wording of

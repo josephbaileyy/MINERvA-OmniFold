@@ -3,7 +3,8 @@
 **Authority.** `DECISION-20261104-joseph-rpd-sentence.md` (#751, merged at 0469aa858), Joseph's answer "Add verbatim +
 note pointer (Recommended)". The licence is `FD-RPD-DECLARATION.md` §6, fixed before any number was read. The numbers
 come from the readout record `fd/receipts-rpd/run/readout/fd_rpd.json`, sha256 `c0b06cfd2d11d99fc9226d054e68b951231f5d02e81ea3abc80cf7f89b624658`.
-Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the same digest. The base is cb3e83517.
+Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the same digest. The base is 7bf86c423 (main after #754; the note and the paper
+sources are as at cb3e83517, #754 changing neither).
 
 **What changes.**
 - **The paper (item 1).** §6.2's CLUSTERED sentence goes into Sec. IV A, straight after "…differ by more than their
@@ -21,7 +22,7 @@ Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the s
   SEES; R1 OTHER, not dropped, every playlist resolved; R2 CLUSTERED; α̂ ≤ the gate at every scale; N0's flags not
   fired; R3 not read; and p_flux × 9,240 = 1. A changed readout stops the build.
 
-## Before and after (against the base cb3e83517, as the branch now stands)
+## Before and after (against the base, as the branch now stands)
 
 ### Paper, Sec. IV A (decision item 1): the run-period sentences
 
@@ -103,7 +104,8 @@ Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the s
 - `PRD-REVIEW-GEMINI-PROMPT.txt`, sha256 `52b66cfb0d6cb1d57249d1537ace5d85baa67d530baf466b5a2b8027c810e12a`;
 - `PRD-REVIEW-GEMINI-ANSWER.txt`, sha256 `afe86fb488b2bf1afdf67e0fa6e327150a9cd4374bdcc4a99524323bd73f55a5`.
 
-Both equal the director's SHA256SUMS. The director accepted choices 1–6 above, including stage 0's step as the
+Both equal the director's SHA256SUMS. #754 also committed them, byte-identical, as
+`fd/consult-rpd-sentence-20261104/PRD-REVIEW-753-GEMINI-{PROMPT,ANSWER}.txt`, the path its decision record cites. The director accepted choices 1–6 above, including stage 0's step as the
 classes' referent and the exact α̂, and ruled on the read's four edits.
 
 **Not adopted, for Joseph: edit 1** (since adopted by Joseph's ruling; see the next section). The read asks for the paper's sentence to be reworded: "by more than their
@@ -169,7 +171,7 @@ flux test's 9,240.
 
 **The ruling.** Joseph read #753 at 6be612c2 and answered "Merge, reword sentence". The sha256 of the text plus a
 final newline begins `555da20e9ef2a1cd`, which this lane recomputed. The answer is recorded in
-`DECISION-20261104-joseph-753-reword-and-merge.md`; it adopts the PRD-referee read's edit 1, which the section above
+`DECISION-20261104-joseph-753-reword-and-merge.md` (#754, merged at 7bf86c423 and merged into this branch); it adopts the PRD-referee read's edit 1, which the section above
 had recorded for him.
 
 **The departure, declared.** §6.2 of `FD-RPD-DECLARATION.md` licenses one sentence in its own words. Both files now
@@ -205,7 +207,7 @@ record absent, and a record that does not quote the sentence; "reworded again" r
 
 | check | result | record |
 |---|---|---|
-| ledger (`check_ledger.py`, base cb3e83517) | 7 rows, 34 probes, 0 changed base sentences, 0 failures; self-test PASS | `LEDGER-CHECK.txt` |
+| ledger (`check_ledger.py`, base 7bf86c423) | 7 rows, 34 probes, 0 changed base sentences, 0 failures; self-test PASS | `LEDGER-CHECK.txt` |
 | licence (`check_licence.py`): the ruled sentence (§6.2 with the recorded departure) in both files and §6.2's literal in neither; the decision record quotes it; §6.4's words and "beam-intensity" absent from added sentences; kept clauses | PASS; self-test 10/10 | `LICENCE-CHECK.txt` |
 | `make_values_fived16.py --check`; `check_sec4_receipts.py` | PASS (2,731 values); 17/17 | `VALUES-CHECK.txt` |
 | rater copy (`make_rater_copy.sh`) and `check_held.py` | PASS, with case 6; the 3 known flags | `RATER-COPY.txt`, `CHECK-HELD.txt` |

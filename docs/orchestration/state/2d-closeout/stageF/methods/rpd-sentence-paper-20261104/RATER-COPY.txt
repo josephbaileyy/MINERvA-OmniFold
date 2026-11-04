@@ -1,4 +1,4 @@
-source: $S/wt-cut (74f0b9290; dirty files in analysis-note: 1)
+source: $S/wt-cut (6be612c20; dirty files in analysis-note: 2)
 $S/wt-cut/docs/analysis-note/main_paper.tex:54: standalone: \pubhold{funding and grant acknowledgments}
 $S/wt-cut/docs/analysis-note/main_paper.tex:77: standalone: \pubhold{deposit identifier and access route, after the separately authorized release decision.}
 holds found: 2; sharing a sentence: 0
@@ -13,4 +13,4 @@ rater text = normal text minus 2 hold spans
 moved the body's final line after its end, the ACKNOWLEDGMENTS heading before its text, and reference [1]'s first 2 lines to before the rest of [1]
 data-availability heading in reading order
 single-line drops: 2; words in=8621 out=7676
-wrote $S/t3/rpd-rater3/blind.txt and $S/t3/rpd-rater3/blind.{normal,holddiff,blind}.txt
+wrote $S/t3/rpd-rater4/blind.txt and $S/t3/rpd-rater4/blind.{normal,holddiff,blind}.txt
