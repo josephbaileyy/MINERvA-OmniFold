@@ -225,6 +225,10 @@ class PseudoA(unittest.TestCase):
         np.testing.assert_allclose(z["S"][3], np.bincount(tc[ok], lam[ok], minlength=nc), rtol=1e-12, atol=1e-12)
         np.testing.assert_allclose(z["m_seen"][3], np.bincount(tc[ok], np.where(lam[ok] < 0, -lam[ok], 0),
                                                                minlength=nc), rtol=1e-12, atol=1e-15)
+        kept_r, rcell = cp.reco_cell(self.sig["sim"], self.sig["sim_pz"], self.sig["sim_pass"])
+        okr = rcell >= 0
+        np.testing.assert_allclose(z["S_reco"][3], np.bincount(rcell[okr], lam[okr], minlength=nc), rtol=1e-12,
+                                   atol=1e-12)
 
     def test_chunking_changes_nothing(self):
         code, text = self.run_main("out_chunk", 377)

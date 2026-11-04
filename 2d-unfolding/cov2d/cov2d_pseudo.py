@@ -270,6 +270,7 @@ def main(argv=None) -> int:
         S = np.zeros((n_nat, n_cells))
         m_seen = np.zeros((n_nat, n_cells))
         neg_reco = {"signal": np.zeros((n_nat, n_cells)), "background": np.zeros((n_nat, n_cells))}
+        S_reco = np.zeros((n_nat, n_cells))   # section 6 (ii): the signed signal lambda per reco cell
         for name, tree, prefix in rc.ARRAYS:
             t = f[tree]
             cols = [prefix] + rc.universe_columns(prefix)
@@ -293,8 +294,9 @@ def main(argv=None) -> int:
                         Sk, mk = seen_sums(L, kept_s[start:stop], tcell_s[start:stop], n_cells)
                         S[k] += Sk
                         m_seen[k] += mk
-                        neg_reco["signal"][k] += neg_per_reco_cell(L, np.where(kept_s[start:stop],
-                                                                               rcell_s[start:stop], -1), n_cells)
+                        rc_k = np.where(kept_s[start:stop], rcell_s[start:stop], -1)
+                        neg_reco["signal"][k] += neg_per_reco_cell(L, rc_k, n_cells)
+                        S_reco[k] += np.bincount(rc_k[rc_k >= 0], weights=L[rc_k >= 0], minlength=n_cells)
                     else:
                         L = A * s
                         lam["background"][k, start:stop] = L
@@ -324,7 +326,7 @@ def main(argv=None) -> int:
                                 "outlier_neg_rows": outlier_rows[k]})
         np.savez(out / "cells.npz", truth_clipped=truth.clipped, truth_cv_r1=truth_cv_r1, N=truth.N,
                  m_all=truth.m_all, S=S, m_seen=m_seen,
-                 neg_reco_signal=neg_reco["signal"], neg_reco_background=neg_reco["background"],
+                 neg_reco_signal=neg_reco["signal"], neg_reco_background=neg_reco["background"], S_reco=S_reco,
                  seeds=np.array([n["seed"] for n in nat]))
 
     after = {p: os.stat(p).st_atime_ns for p in reads}
