@@ -469,6 +469,12 @@ class Clipping(Case):
         self.assertEqual(dn["w_truth"][pt[0]], 0.0)          # truth-only row: clipped on its own sign
         self.assertEqual(cn["record"]["truth"]["rows_negative"], rec["rows_neg"])
         self.assertEqual(cn["record"]["truth"]["sum_negative"], rec["sum_lambda_neg"])
+        tz = ptru & (wt * r < 0)                               # the readout's (a): the truth clip per truth cell
+        np.testing.assert_allclose(cn["clip_truth_nature_flat"], mc._flat_hist(gen[tz], -(wt * r)[tz], self.inputs["edges"]),
+                                   rtol=0, atol=0)
+        self.assertGreater(cn["clip_truth_nature_flat"][cell[host]], 0)        # the truth-only row's cell sees it
+        self.assertAlmostEqual(cn["clip_truth_nature_flat"].sum(), -rec["sum_lambda_neg"], places=12)   # cov2d's own sum
+        self.assertFalse(set(mc.NATURE_CLIP_ARRAYS) & set(cd))                  # 'data' carries neither
         self.assertEqual((cd["record"]["rule"], cn["record"]["rule"]), ("data", "nature"))
         np.testing.assert_array_equal(dd["denom_nd"], ui["denom_nd"])           # "data": the denominator untouched
         np.testing.assert_array_equal(dn["denom_nd"], ui["denom_nd"])           # no negative denominator row here
@@ -514,6 +520,9 @@ class Clipping(Case):
         np.testing.assert_array_equal(got[others], base[others])
         self.assertEqual((cn["record"]["denominator"]["rows_negative"], cn["record"]["denominator"]["sum_negative"]),
                          (1, -0.7))
+        want = np.zeros(n)                                     # the readout's (a): the row's mass in its own cell only
+        want[cells[k]] = 0.7
+        np.testing.assert_allclose(cn["clip_denom_flat"], want, rtol=1e-12, atol=0)
 
     def test_the_nature_rule_refuses_without_the_row_denominator(self):
         ui, ub, _ = mc.compose(self.inputs, self.bkg, self.bank_cv, ["MaRES_0"], self.weights, None)
@@ -778,7 +787,7 @@ class Jobs(Case):
             mc.run_item(a, {"inputs": self.inputs, "bkg": self.bkg}, "clipmean", "3620000")
         with self.assertRaisesRegex(mc.Refusal, "descriptive figure"):
             mc.clipcheck(argparse.Namespace(clip_rule="nature"))
-        with self.assertRaisesRegex(mc.Refusal, "descriptive figure"):
+        with self.assertRaisesRegex(mc.Refusal, "needs --data-unfolds"):          # nature's section needs its inputs
             mc.clipping_readout(self.tmp, "t", "g18", None, {}, [], "nature")
 
     def test_a_toy_draws_under_the_declared_clip_rule(self):
@@ -935,6 +944,51 @@ class Jobs(Case):
         self.assertTrue(all(name.endswith(".py") for name in hashed))
         self.assertNotEqual(mc.GATE_PIN.resolve(), Path(mc.__file__).resolve())
         self.assertTrue((mc.GATE_PIN.parent / "sbatch-calibrate.sh").is_file(), mc.GATE_PIN)
+
+    def test_a_resume_skips_only_its_own_product(self):
+        """The director's ruling on the audit's finding: an existing product is skipped (a resume) only if it was made
+        under this step's estimator, clip rule, CV tdw and gate config hash; one made otherwise refuses, rather than
+        standing in for the step. Both directions, through mc.main."""
+        import contextlib
+        calls = []
+
+        def fake(exp, threads, seed=42, unfold_fn=None):
+            calls.append(seed)
+            return np.ones(4), {}
+        out = self.tmp / "resume"
+        target = out / mc.product_name("fd1b_mc", "g18", "seed", "T")
+
+        def run(rule="data", estimator="R"):
+            argv = self.argv("g18", "seed", "T", out)
+            argv[argv.index("--clip-rule") + 1] = rule
+            argv[argv.index("--estimator") + 1] = estimator
+            if rule == "nature":
+                argv = self.bound_gate(argv, "g18")
+            err = io.StringIO()
+            with mock.patch.object(mc, "_unfold_s1", fake), pinned(self.tmp, self.bound), \
+                    mock.patch.object(mc.s5e_candidate, "install", lambda c: None), contextlib.redirect_stderr(err):
+                return mc.main(argv), err.getvalue()
+        self.assertEqual(run("nature")[0], 0)                                    # made under 'nature'
+        made = digest(target)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(run("nature")[0], 0)                                    # its own resume: skipped
+        self.assertEqual((len(calls), digest(target)), (1, made))
+        rc, err = run("nature", estimator="B0")                                  # another estimator: refused
+        self.assertEqual(rc, 4)
+        self.assertIn("refusing to skip", err)
+        self.assertIn("'config'", err)
+        meta = json.loads(str(np.load(target)["meta"]))
+        np.savez(target, meta=json.dumps(dict(meta, clip_rule="data")),          # a 'data' product at the path
+                 **{k: v for k, v in np.load(target).items() if k != "meta"})
+        rc, err = run("nature")
+        self.assertEqual(rc, 4)
+        self.assertIn("'clip_rule'", err)
+        np.savez(target, meta=json.dumps(dict(meta, gate_config_hash="0" * 64)),
+                 **{k: v for k, v in np.load(target).items() if k != "meta"})
+        rc, err = run("nature")                                                  # another gate's config hash
+        self.assertEqual(rc, 4)
+        self.assertIn("'gate_config_hash'", err)
+        self.assertEqual(len(calls), 1)                                           # no refused step unfolded
 
     def test_central_and_seed_products(self):
         out = self.tmp / "jobs2"
@@ -1236,13 +1290,13 @@ class NoAtime(unittest.TestCase):
 # ------------------------------------------------- the outcome path, end to end (the audit's B1 on #673)
 
 
-def write_product(path: Path, x, xtrue=None, meta=None, **extra):
+def write_product(path: Path, x, xtrue=None, meta=None, rule="data", **extra):
     arrays = {"xsec_flat": np.asarray(x, float)}
     if xtrue is not None:
         arrays["xtrue_flat"] = np.asarray(xtrue, float)
     meta = dict(meta or {"seconds_unfold": 1.0, "peak_rss_kib": 1})
     meta.setdefault("config", "R")                       # the estimator each product records (amendment 2)
-    meta.setdefault("clip_rule", "data")                 # and the clipping rule
+    meta.setdefault("clip_rule", rule)                   # and the clipping rule
     np.savez(path, meta=json.dumps(meta), **arrays, **extra)
 
 
@@ -1319,18 +1373,19 @@ class Pipeline(unittest.TestCase):
             p.start()
             self.addCleanup(p.stop)
 
-    def products(self, name: str, truth: str = "g18", central_true=None) -> Path:
-        """One product set at T under ``<tmp>/<name>``: central, seed, 175 blocks, 50 stat replicas, 300 toys."""
+    def products(self, name: str, truth: str = "g18", central_true=None, rule: str = "data") -> Path:
+        """One product set at T under ``<tmp>/<name>``: central, seed, 175 blocks, 50 stat replicas, 300 toys, made
+        under ``rule``; under "data" also the clipmean, and under "nature" the toys carry the nature clip facts."""
         d = self.tmp / name
         d.mkdir()
         write_product(d / mc.product_name("t", truth, "central", "T"), self.X_T,
-                      self.f if central_true is None else central_true)
-        write_product(d / mc.product_name("t", truth, "seed", "T"), self.X_T)
+                      self.f if central_true is None else central_true, rule=rule)
+        write_product(d / mc.product_name("t", truth, "seed", "T"), self.X_T, rule=rule)
         for b, X in self.Xb.items():
             for i, x in enumerate(X):
-                write_product(d / mc.product_name("t", truth, "block", f"{b}_{i}"), x)
+                write_product(d / mc.product_name("t", truth, "block", f"{b}_{i}"), x, rule=rule)
         for b, x in zip(sa.STAT_REPLICAS, self.R):
-            write_product(d / mc.product_name("t", truth, "stat", str(b)), x)
+            write_product(d / mc.product_name("t", truth, "stat", str(b)), x, rule=rule)
         rng = np.random.default_rng(33)
         sig = np.sqrt(np.diag(self.expected()["C_e"]))
         self.raw, self.draws = [], []
@@ -1343,12 +1398,20 @@ class Pipeline(unittest.TestCase):
             clip = {"signal": {"sum_lambda": 1000.0, "sum_negative": -(k % 5) * 1.0, "rows_negative": k % 5},
                     "background": {"sum_lambda": 100.0, "sum_negative": -(k % 3) * 0.5, "rows_negative": k % 3}}
             cr = self.clip_ref * (k % 4) / 3.0
+            nat = {}
+            if rule == "nature":
+                clip.update(rule="nature",
+                            denominator={"sum_rows": 500.0, "sum_negative": -(k % 2) * 2.0, "rows_negative": k % 2},
+                            truth={"sum_truth": 900.0, "sum_negative": -(k % 7) * 1.0, "rows_negative": k % 7})
+                nat = {"clip_truth_nature_flat": 0.25 * cr, "clip_denom_flat": 0.1 * cr}
             write_product(d / mc.product_name("t", truth, "toy", str(seed)), x, self.X_T,
                           {"draw": dr, "universe_info": {"n1": n1}, "seconds_unfold": 1.0, "peak_rss_kib": 1,
-                           "clip": clip}, clip_reco_flat=cr, clip_truth_flat=0.5 * cr)
+                           "clip": clip}, rule=rule, clip_reco_flat=cr, clip_truth_flat=0.5 * cr, **nat)
             self.raw.append(x)
             self.draws.append(dr)
             self.clip_toys.append(clip)
+        if rule == "nature":                       # a clipmean is the 'data' rule's alone (C4)
+            return d
         sig_T = np.sqrt(np.diag(self.expected()["C_T"]))
         write_product(d / mc.product_name("t", truth, "clipmean", "3620011"), self.X_T + self.clip_offset * sig_T,
                       self.X_T, {"n_clip_seed": 3620011, "seconds_unfold": 1.0, "peak_rss_kib": 1,
@@ -1423,6 +1486,81 @@ class Pipeline(unittest.TestCase):
         share = np.diag(ex["C_mabs"]) / np.diag(ex["C_T"])
         self.assertTrue(np.all((share[4:8] > 0.25) & (share[4:8] < 0.5)))
         self.assertNotIn("n1_max_composite_over_max_single", ro["descriptive"])     # N1 is read by its own step
+
+    def test_the_clipping_readout_under_nature(self):
+        """The director's ruling (iii), extended: a 'nature' readout over the graded products in their own directory
+        reports (a) the toys' own nature clip facts, (b) c2check's per-cell R and clipped-truth shift from the bound
+        gate record, (c) S1-0b's 'data' offset from --data-unfolds, each labelled; and refuses each missing or wrong
+        input. End to end through null_step and readout on renamed (rule-directory) products."""
+        d = self.products("nature-R", rule="nature")
+        nat_toys = list(self.clip_toys)
+        dd = self.products("data-R")                                           # S1-0b's 'data' products
+        x_cd = self.X_T * 1.01                                                 # S1-0b's own central, not the graded one
+        write_product(dd / mc.product_name("t", "g18", "central", "T"), x_cd, self.f)
+        per_cell = [0.01 * c for c in range(self.N)]
+        sq = {"abs_median": per_cell, "abs_p90": per_cell, "abs_max": per_cell, "signed_median": per_cell}
+        gate = self.tmp / "nature-gate.json"
+        gate.write_text(json.dumps({"record": {"b": {"g18": {"option_1": {"sigma_Q": sq},
+                                                             "clipped_truth_mean_shift_sigma_c": {"per_cell": per_cell}}}}}))
+        sha = digest(gate)
+        nl, p = self.null_and_readout(d, clip_rule="nature")
+        kw = dict(clip_rule="nature", data_unfolds=dd, clip_gate=gate, expect_clip_gate_sha256=sha)
+        with pinned(self.tmp, sha):
+            ro = self.readout(d, p, **kw)
+        cl = ro["clipping"]
+        self.assertEqual(cl["rule"], "nature")
+        for comp, tot in (("signal", 1000.0), ("background", 100.0), ("denominator", 500.0), ("truth", 900.0)):
+            fr = [abs(c[comp]["sum_negative"]) / tot for c in nat_toys]
+            self.assertEqual(cl["a_nature_toys"]["clipped_fraction"][comp],
+                             {"min": min(fr), "median": float(np.median(fr)), "max": max(fr)}, comp)
+        q = np.array([(k % 4) / 3.0 for k in range(300)])
+        for key, scale in (("clip_reco_flat", 1.0), ("clip_truth_nature_flat", 0.25), ("clip_denom_flat", 0.1)):
+            got = cl["a_nature_toys"]["clipped_mass_per_cell"][key]
+            np.testing.assert_allclose(got["median"], scale * self.clip_ref * np.median(q), rtol=1e-12)
+            np.testing.assert_allclose(got["max"], scale * self.clip_ref * q.max(), rtol=1e-12)
+        self.assertEqual(cl["b_c2check_at_n"]["residual_option_1_sigma_Q"], sq)
+        self.assertEqual(cl["b_c2check_at_n"]["clipped_truth_mean_shift_sigma_c"], per_cell)
+        self.assertEqual(cl["b_c2check_at_n"]["gate_sha256"], sha)
+        sig_T = np.sqrt(np.diag(self.expected()["C_T"]))
+        np.testing.assert_allclose(cl["c_data_offset"]["offset_over_sigma"],
+                                   self.clip_offset - (x_cd - self.X_T) / sig_T, rtol=1e-10)
+        self.assertIn("not the graded rule", cl["c_data_offset"]["label"])
+        with pinned(self.tmp, sha):
+            with self.assertRaisesRegex(mc.Refusal, "needs --data-unfolds"):
+                self.readout(d, p, **dict(kw, data_unfolds=None))
+            with self.assertRaisesRegex(mc.Refusal, "is the graded directory"):
+                self.readout(d, p, **dict(kw, data_unfolds=d))
+            with self.assertRaisesRegex(mc.Refusal, "needs c2check's gate record"):
+                self.readout(d, p, **dict(kw, clip_gate=None))
+            with self.assertRaisesRegex(mc.Refusal, "clip rule 'nature'"):    # --data-unfolds holding a nature product
+                bad = self.tmp / "data-R-mixed"
+                shutil.copytree(dd, bad)
+                shutil.copy(d / mc.product_name("t", "g18", "toy", str(mc.TOY_SEEDS["g18"][0])), bad)
+                self.readout(d, p, **dict(kw, data_unfolds=bad))
+            with self.assertRaisesRegex(mc.Refusal, "2 clipmean products in --data-unfolds"):
+                two = self.tmp / "data-R-two"
+                shutil.copytree(dd, two)
+                shutil.copy(two / mc.product_name("t", "g18", "clipmean", "3620011"),
+                            two / mc.product_name("t", "g18", "clipmean", "3620012"))
+                self.readout(d, p, **dict(kw, data_unfolds=two))
+        odd = self.tmp / "nature-R-odd"                                       # one toy whose clip record is 'data'
+        shutil.copytree(d, odd)
+        toy = odd / mc.product_name("t", "g18", "toy", str(mc.TOY_SEEDS["g18"][3]))
+        z = dict(np.load(toy))
+        meta = json.loads(str(z.pop("meta")))
+        meta["clip"]["rule"] = "data"
+        np.savez(toy, meta=json.dumps(meta), **z)
+        ex = self.expected()
+        with self.assertRaisesRegex(mc.Refusal, "clip rule 'data', not 'nature'"):
+            mc.clipping_readout(odd, "t", "g18", self.U, {"C_T": ex["C_T"], "X_T": self.X_T}, [False] * self.N, "nature",
+                                {"data_unfolds": dd, "gate": json.loads(gate.read_text()), "gate_sha256": sha,
+                                 "estimator": "R"})
+        with pinned(self.tmp, "1" * 64), self.assertRaisesRegex(mc.Refusal, "not the record binding 3 declares"):
+            self.readout(d, p, **kw)
+        with pinned(self.tmp, None), self.assertRaisesRegex(mc.Refusal, "no c2check record is bound yet"):
+            self.readout(d, p, **kw)
+        with self.assertRaisesRegex(mc.Refusal, "clip rule 'data'"):              # a 'nature' grading of 'data' products
+            mc.null_step(self.args(dd, clip_rule="nature"))
 
     def test_the_clipping_readout(self):
         """Consult (ii) and the reading fixed before any number is read: o_c from the clipmean product, the toys'

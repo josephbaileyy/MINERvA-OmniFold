@@ -319,9 +319,14 @@ class E2E(unittest.TestCase):
                     pinned(self.tmp, digest(gate)):
                 self.assertEqual(mc.main(argv), 0, rule)
             z = np.load(out / mc.product_name("fd1b_mc", "g18", "toy", str(mc.TOY_SEEDS["g18"][0])), allow_pickle=True)
-            metas[rule] = (json.loads(str(z["meta"])), np.asarray(z["xtrue_flat"], float))
-        mn, xn = metas["nature"]
-        md, xd = metas["data"]
+            metas[rule] = (json.loads(str(z["meta"])), np.asarray(z["xtrue_flat"], float),
+                           {k: np.asarray(z[k], float) for k in mc.NATURE_CLIP_ARRAYS if k in z.files})
+        mn, xn, an = metas["nature"]
+        md, xd, ad = metas["data"]
+        self.assertEqual((sorted(an), ad), (sorted(mc.NATURE_CLIP_ARRAYS), {}))   # the readout's (a), nature only
+        self.assertTrue(all(np.all(v >= 0) for v in an.values()))
+        np.testing.assert_allclose(an["clip_denom_flat"].sum(), -mn["clip"]["denominator"]["sum_negative"], rtol=1e-12)
+        self.assertLessEqual(an["clip_truth_nature_flat"].sum(), -mn["clip"]["truth"]["sum_negative"] * (1 + 1e-12))
         self.assertEqual((md["clip_rule"], mn["clip_rule"]), ("data", "nature"))
         self.assertIn("denominator", mn["clip"])
         self.assertIn("truth", mn["clip"])

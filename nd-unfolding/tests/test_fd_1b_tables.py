@@ -140,6 +140,28 @@ class Tables(unittest.TestCase):
             a = parsed(r)
             self.assertEqual((a.cmd, str(a.cv_tdw), a.expect_cv_tdw_sha256), ("receipt", gen.CV_TDW, gen.CV_TDW_SHA256))
 
+    def test_no_product_path_is_shared_between_rules(self):
+        """The audit's finding on ruling (A): over every generated table (s1-0, s1-0b, the bulk; with and without the
+        plug-in), each step's product paths, as fd_1b_mc's own parser and product_name make them, are grouped by rule;
+        no path appears under two rules, and each rule writes only to its own unfolds directory."""
+        self.commit_pin(self.sha + "\n")
+        for plugin in ("no", "yes"):
+            o = self.run_gen(plugin, out=f"paths-{plugin}")
+            by_rule = {"data": set(), "nature": set()}
+            for job in ("s1-0", "s1-0b", "s1-bulk"):
+                for st in steps(o / f"{job}-steps.tsv"):
+                    a = parsed(st)
+                    self.assertEqual((a.out.name, str(a.out.parent)),               # the ruled form, not the generator's
+                                     (f"{a.clip_rule}-{a.estimator}", f"{gen.W}/stage1/unf"))
+                    for it in a.items.split(","):
+                        p = a.out / mc.product_name(a.tag, a.truth, a.role, it)
+                        self.assertNotIn(p, by_rule[a.clip_rule], (job, p.name))   # one step per product
+                        by_rule[a.clip_rule].add(p)
+            self.assertFalse(by_rule["data"] & by_rule["nature"], plugin)
+            self.assertEqual({p.parent for p in by_rule["data"]} & {p.parent for p in by_rule["nature"]}, set())
+            names = {r: {p.name for p in ps} for r, ps in by_rule.items()}
+            self.assertEqual(len(names["data"] & names["nature"]), 5, plugin)     # ruling (A)'s five re-runs
+
     def test_the_bulk_needs_binding_3s_committed_pins_file(self):
         with self.assertRaises(mc.Refusal):                                       # no pins file
             self.run_gen(out="o1")

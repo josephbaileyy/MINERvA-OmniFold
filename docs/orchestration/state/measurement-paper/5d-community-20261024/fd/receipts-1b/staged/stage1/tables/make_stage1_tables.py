@@ -10,7 +10,9 @@ addendum A2.1's S2 and the director's ruling (A) of 2026-11-04, for binding 3): 
   here under "nature" (ruling (A)): their "data" products stay checks and S1-0b's descriptive figure, never graded
   (fd_1b_mc.refuse_mixed_estimator refuses a truth whose products mix rules). The clipmeans and the procedure
   controls and capture are S1-0's and S1-0b's alone.
-Every unfold and the receipt carry the CV per-row tdw (A2.1 (e2): a composite refuses without it under either rule).
+Each rule's and estimator's products go to their own directory, ``unfolds_dir`` (a 'data' and a 'nature' product of
+one item never share a path; fd_1b_mc.resume_matches refuses one that would). Every unfold and the receipt carry the
+CV per-row tdw (A2.1 (e2): a composite refuses without it under either rule).
 Every bulk step carries c2check's gate record and its digest, which must be the one binding 3 commits in
 ``fd_1b_mc.GATE_PIN``, unmodified in the checkout, or no bulk table is written.
 Run from a checkout at the binding's merge:
@@ -32,6 +34,13 @@ W = f"{P}/fd-1b-staged-20261102"
 CV_TDW = f"{P}/fd-1b-a21-cvdenom2-20261103/cvdenom.npy"      # fd_1b_cvdenom's PASS output (A2.1 §6, run 2)
 CV_TDW_SHA256 = "0bc70d622ed51f7e6ce3b80e095788f315e52937b6a6c79a0bafedeb4545def8"
 LANES, PER_LANE = 8, 22
+
+
+def unfolds_dir(rule: str, estimator: str) -> str:
+    """Each rule's and estimator's products in their own directory (the director's ruling on the audit's finding):
+    product names carry neither, so a 'nature' step and a 'data' step of one item never share a path, and no name
+    parser over an unfolds directory changes."""
+    return f"{W}/stage1/unf/{rule}-{estimator}"
 
 
 def as_item(role, item):
@@ -107,7 +116,7 @@ def main(argv=None) -> int:
               "--flux-constraint", f"{P}/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
               "--flux-table", f"{W}/stage1/in/flux_universes.npz", "--expect-flux-table-sha256", a.flux_table_sha256,
               "--cv-tdw", CV_TDW, "--expect-cv-tdw-sha256", CV_TDW_SHA256,
-              "--threads", "32", "--estimator", a.estimator, "--tag", "fd1b_mc", "--out", f"{W}/stage1/unf"]
+              "--threads", "32", "--estimator", a.estimator, "--tag", "fd1b_mc"]
     prep = ["--prep", f"{P}/fd-f1-20261027/f1b3/prep"]   # the toys' F1 prep (stage 2 tables)
     receipt = ["fd_1b_mc.py", "receipt"] + common[:common.index("--threads")] + [
         "--staged", f"{P}/fd-1b-inv-20261101/i0/in", "--definition", str(co / "nd-unfolding/pv-ladder/readouts/h2_definition.json"),
@@ -124,7 +133,7 @@ def main(argv=None) -> int:
     def argv(t, role, it, rule):
         extra = prep if t in ("g18", "ar23") else (push if t == "plugin" else [])
         return (["fd_1b_mc.py", "unfold", "--truth", t, "--role", role, "--items", it] + common + extra
-                + ["--clip-rule", rule] + (gate if rule == "nature" else []))
+                + ["--clip-rule", rule, "--out", unfolds_dir(rule, a.estimator)] + (gate if rule == "nature" else []))
 
     def tables(job, lanes_items, rule):
         head = f"# 1B staged stage 1 {job} ({{}}); FD-1B-STAGED-DECLARATION.md sections 4 and 8, A2.1 S2, binding 3"

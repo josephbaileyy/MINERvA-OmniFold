@@ -378,13 +378,56 @@ The CV denominator reads and the binning runs ran on login nodes, at 0 node-h. *
 based on 60783756's measured timings, and sets the total with the arithmetic shown. If it lands above 81.0, the
 director sets the new total there and reports it to Joseph (the director, 2026-11-04).
 
-**The test,** `tests/test_fd_1b_tables.py`, has 4 tests:
-- the `nature` bulk's graded set equals the declared set exactly, per truth: the central value, the seed check, 175
-  blocks, 50 stat replicas and 300 toys (527 per truth, from the declaration's constants);
-- every generated step passes `fd_1b_mc`'s own parser with its rule, the CV tdw and, for the bulk, the gate pair;
-- the lane and node packing;
-- the bulk refuses without a pins file, with an uncommitted pins file, with one changed on disk, and with another
-  record's digest. With no gate given, no bulk is written.
+**The path collision (the audit's finding at `1295f7e4`; the director's rulings).** Product names carry neither the
+rule nor the estimator (`product_name`), and `run_unfold` skipped any existing target. So the five re-run items would
+have written onto S1-0's and S1-0b's `data` products, unfolded nothing and exited 0. Only the readout would then have
+refused (`refuse_mixed_estimator`), after the whole bulk had been spent. Two fixes, both ruled:
+1. **Each rule and estimator gets its own directory:** `{W}/stage1/unf/<rule>-<estimator>/` (`unfolds_dir`). The
+   product names are unchanged, so none of their consumers in `fd_1b_mc` changes. Each works within one
+   `--unfolds` directory:
+   - `run_unfold`, `pilot_walls`, `_cells`, `readout`'s plug-in control and the `walls` command build names with
+     `product_name`;
+   - `clipcheck`, `clipping_readout` and `clipping_readout_nature` glob `{tag}_{truth}_clipmean_*`;
+   - `refuse_mixed_estimator` and `refuse_partials` glob `{tag}_{truth}_*`;
+   - `toy_paths` globs `{tag}_{truth}_toy_*` and parses the seed with `rsplit("_", 1)`;
+   - `products_digest` globs `{tag}_{truth}_*` and parses the role with `split("_")`.
+2. **`resume_matches`.** An existing product is skipped (a resume) only if its meta matches the step's estimator,
+   clip rule, CV tdw digest and gate config hash. Any mismatch refuses. The product meta now records
+   `cv_tdw_sha256` and `gate_config_hash`.
 
-Eight hand mutants of the generator are killed. "23 per lane" is equivalent on the declared inputs, and its output is
-byte-identical. All nine are in `mutation_a21.py`.
+**The readout's clipping section under `nature` (the director's ruling (iii), extended).** It is descriptive, for the
+note, and changes no graded quantity. `clipping_readout_nature` reports three parts, each labelled with its rule:
+- (a) the graded toys' own `nature` clip facts:
+  - per component (signal, background, denominator, truth), the clipped fraction over toys;
+  - per reporting cell, the median and max over toys of U applied to the pseudo-data's, the truth's and the
+    denominator's clipped mass. clip_draw now writes `clip_truth_nature_flat` and `clip_denom_flat` under `nature`.
+- (b) c2check's per-cell residual R (option (1), sigma_Q) and clipped-truth mean shift at N, from the gate record
+  that binding 3 pins, read by `read_bound_gate`. That helper is now shared with `check_clip_gate`.
+- (c) S1-0b's `data` offset o_c, from `--data-unfolds`, with σ_c from this grading's C_T, labelled "the data rule's
+  offset, for reference; not the graded rule".
+
+A `nature` readout refuses when:
+- `--data-unfolds` is missing, is the graded directory, or holds a product that is not `data`;
+- the gate record is not the bound one.
+
+The C4 refusal at the readout is replaced by this. The C4 refusal still stands at `clipmean` and `clipcheck`.
+
+**The tests:**
+- `tests/test_fd_1b_tables.py`, 5 tests:
+  - the `nature` bulk's graded set equals the declared set exactly, per truth: the central value, the seed check,
+    175 blocks, 50 stat replicas and 300 toys (527 per truth, from the declaration's constants);
+  - every generated step passes `fd_1b_mc`'s own parser with its rule, the CV tdw and, for the bulk, the gate pair;
+  - the lane and node packing;
+  - over every table, with and without the plug-in, no product path is shared between the rules, and each rule writes
+    only to its own directory. The five re-runs share a name across the rules but not a path;
+  - the bulk refuses without a pins file, with an uncommitted pins file, with one changed on disk, and with another
+    record's digest. With no gate given, no bulk is written.
+- `test_fd_1b_mc` `Jobs.test_a_resume_skips_only_its_own_product`: a matching product is skipped and left bitwise
+  unchanged; another estimator, clip rule or gate config hash refuses; no refused step unfolds.
+- `Pipeline.test_the_clipping_readout_under_nature`: null_step and readout end to end on rule-directory products.
+  Each of (a)–(c) is checked against the fixture's own parts, and each refusal fires.
+- The `nature` arrays are checked in clip_draw's unit tests: the truth clip's array sums to cov2d's own clipped sum,
+  and the denominator's sits in its row's cell. They are also checked in the e2e toy item, where the truth clip is
+  exercised (7 rows). That toy world has no negative denominator row, so the unit test is the denominator's evidence.
+
+"23 per lane" is equivalent on the declared inputs, and its output is byte-identical.

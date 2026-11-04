@@ -91,9 +91,9 @@ VALIDATE_FRACTION = 0.005                            # the receipt's no-screen c
 VALIDATE_SEED = 3_659_001                            # not a declared toy, stat or validation seed elsewhere
 CLIP_DELTA_STAR = 0.667                              # |o_c| that lowers +-1 sigma content by 0.10 (section 5.2)
 CLIP_RULES = ("data", "nature")                      # a named input: decision 2a (a), or the nature clipped in truth too
-NATURE_UNRULED = ("the clipping offset (clipmean, clipcheck, the readout's clipping section) is the 'data' rule's "
-                  "descriptive figure; a 'nature' bulk is gated by C2's reading (DECISION-20261103-joseph-coverage-"
-                  "clip-rule) and graded under addendum A2.1")
+NATURE_UNRULED = ("the clipping offset (clipmean, clipcheck) is the 'data' rule's descriptive figure; a 'nature' "
+                  "bulk is gated by C2's reading (DECISION-20261103-joseph-coverage-clip-rule) and graded under "
+                  "addendum A2.1, whose readout reports the offset from S1-0b's 'data' products")
 CLIP_GATE = {"step": "c2-clip-gate", "reading": "option (1)", "verdict": "PASS"}   # what c2check's record must say
 UNIT_SECONDS = 1062.0
 RSS_LIMIT_KIB = inv.RSS_LIMIT_KIB
@@ -571,6 +571,9 @@ def _flat_hist(coords: np.ndarray, w: np.ndarray, edges) -> np.ndarray:
     return h.ravel(order="C")
 
 
+NATURE_CLIP_ARRAYS = ("clip_truth_nature_flat", "clip_denom_flat")
+
+
 def clip_draw(ui: dict, ub: dict, r: np.ndarray, rule: str = "data") -> tuple[dict, dict, dict]:
     """Every Poisson draw sees lambda+ = max(lambda, 0) on the full product, lambda = w_reco * r on reco-passing rows
     and bkg_w on background rows (``fd_1b_toys.build_full`` with unit source factors). The draw's weights are zeroed
@@ -581,7 +584,8 @@ def clip_draw(ui: dict, ub: dict, r: np.ndarray, rule: str = "data") -> tuple[di
       (``cov2d.lam_plus`` on each). A row with lambda < 0 keeps its truth; a row with w_truth * r < 0 keeps its reco.
       The denominator's rows (``compose``'s ``tdw_rows``, from the CV's per-row weight) are clipped the same way.
     Returns the draw's (ui, ub) and the clipped mass: sums per component, and |lambda-| per 5D reco cell (signal and
-    background) and per 5D truth cell (truth-passing signal rows)."""
+    background) and per 5D truth cell (truth-passing signal rows); under "nature" also the truth's and the
+    denominator's clipped mass per 5D truth cell (the readout's clipping section (a))."""
     if rule not in CLIP_RULES:
         raise Refusal(f"clip rule {rule!r} is not one of {CLIP_RULES}")
     edges = ui["edges"]
@@ -618,6 +622,8 @@ def clip_draw(ui: dict, ub: dict, r: np.ndarray, rule: str = "data") -> tuple[di
         du = dict(du, w_truth=np.where(tz, 0.0, wt), denom_nd=dn)
         rec["truth"] = {"sum_truth": float((wt * r)[np.asarray(ui["pass_truth"], bool)].sum()),
                         "sum_negative": float((wt * r)[tz].sum()), "rows_negative": int(tz.sum())}
+        clip["clip_truth_nature_flat"] = _flat_hist(ui["MCgen"][tz], -(wt * r)[tz], edges)   # per 5D truth cell
+        clip["clip_denom_flat"] = m_den.ravel(order="C")                                     # the readout's (a)
     return du, dict(ub, bkg_w=np.where(negb, 0.0, bw)), clip
 
 
@@ -794,7 +800,8 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
             raise Refusal("a non-finite truth")
         xs, ev = (unfold_fn or _unfold)(exp, a.threads)
         arrays = {"xsec_flat": xs.ravel(order="C"), "xtrue_flat": x_true.ravel(order="C"),
-                  "clip_reco_flat": clip["clip_reco_flat"], "clip_truth_flat": clip["clip_truth_flat"]}
+                  "clip_reco_flat": clip["clip_reco_flat"], "clip_truth_flat": clip["clip_truth_flat"],
+                  **{k: clip[k] for k in NATURE_CLIP_ARRAYS if k in clip}}
         meta.update(ev, draw=d, universe_info=info, clip=clip["record"])
     elif role == "clipmean":
         if a.clip_rule != "data":
@@ -877,6 +884,22 @@ def bound_gate_sha256() -> tuple[str, str]:
     return text, blob
 
 
+def read_bound_gate(a) -> bytes:
+    """c2check's gate record as binding 3 declares it (H1), for the bulk's gate and the 'nature' readout alike: the
+    bytes of --clip-gate, refused unless their sha256 is --expect-clip-gate-sha256 and that is GATE_PIN's digest.
+    Records the pins file's git blob on ``a``."""
+    if a.clip_gate is None or a.expect_clip_gate_sha256 is None:
+        raise Refusal("the 'nature' rule needs c2check's gate record (--clip-gate, --expect-clip-gate-sha256)")
+    bound, blob = bound_gate_sha256()
+    if a.expect_clip_gate_sha256 != bound:
+        raise Refusal("the clip gate is not the record binding 3 declares")
+    a.gate_pin_blob = blob                                  # recorded in each product's meta
+    raw = Path(a.clip_gate).read_bytes()
+    if hashlib.sha256(raw).hexdigest() != a.expect_clip_gate_sha256:
+        raise Refusal("the clip gate's digest differs from the declared one")
+    return raw
+
+
 def pre_gate_items() -> set:
     """What 'data' may run (A2.1 S2): S1-0's pilot items either way the plug-in goes, S1-0b's (each truth's central
     value and its clipmean at a declared seed: the N_clip seed is the receipt's, checked by S1-0b's walls), the
@@ -918,15 +941,7 @@ def check_clip_gate(a) -> None:
         return
     if a.role not in BULK_ROLES:
         raise Refusal(f"role {a.role} is not a graded bulk role: it runs under 'data' before the gate, or not at all")
-    if a.clip_gate is None or a.expect_clip_gate_sha256 is None:
-        raise Refusal("the 'nature' rule needs c2check's gate record (--clip-gate, --expect-clip-gate-sha256)")
-    bound, blob = bound_gate_sha256()
-    if a.expect_clip_gate_sha256 != bound:
-        raise Refusal("the clip gate is not the record binding 3 declares")
-    a.gate_pin_blob = blob                                  # recorded in each product's meta
-    raw = Path(a.clip_gate).read_bytes()
-    if hashlib.sha256(raw).hexdigest() != a.expect_clip_gate_sha256:
-        raise Refusal("the clip gate's digest differs from the declared one")
+    raw = read_bound_gate(a)
     import fd_1b_c2
     g = json.loads(raw)
     want = {"schema": fd_1b_c2.SCHEMA_GATE, **CLIP_GATE}
@@ -961,6 +976,19 @@ def check_clip_gate(a) -> None:
     ins = dict(mine, push_sha256=a.expect_push_sha256 if a.truth == "plugin" else gi.get("push_sha256"))
     if g.get("config_hash") != fd_1b_c2.config_hash(fd_1b_c2.gate_code_digests(), ins, "nature"):
         raise Refusal("the clip gate's config hash is not this run's")
+    a.gate_config_hash = g["config_hash"]                  # recorded in each product's meta, and checked on resume
+
+
+def resume_matches(target: Path, a) -> None:
+    """A product already at the target is skipped (a resume) only if it was made under this step's request: the
+    estimator, the clip rule, the CV per-row tdw and the gate's config hash. Any other refuses, rather than leaving
+    a product of another rule standing in for this one (the audit's finding on ruling (A); the director's ruling)."""
+    meta = json.loads(str(np.load(target, allow_pickle=False)["meta"]))
+    want = {"config": a.estimator, "clip_rule": a.clip_rule, "cv_tdw_sha256": getattr(a, "expect_cv_tdw_sha256", None),
+            "gate_config_hash": getattr(a, "gate_config_hash", None)}
+    diff = sorted(k for k, v in want.items() if meta.get(k) != v)
+    if diff:
+        raise Refusal(f"{target.name} exists, made under another {diff} than this step's: refusing to skip it")
 
 
 def run_unfold(a, unfold_fn=None) -> int:
@@ -977,6 +1005,7 @@ def run_unfold(a, unfold_fn=None) -> int:
     for item in a.items.split(","):
         target = a.out / product_name(a.tag, a.truth, a.role, item)
         if target.exists():
+            resume_matches(target, a)
             continue
         toys.check_pins(world["pins"], a.bank, a.detector_dir)
         t1 = time.time()
@@ -988,6 +1017,8 @@ def run_unfold(a, unfold_fn=None) -> int:
                 "pins_sha256": a.expect_pins_sha256, "flux_table_sha256": a.expect_flux_table_sha256,
                 "push_sha256": a.expect_push_sha256, "alignment": world["alignment"], "code_sha256": code_digests(),
                 "gate_pin_blob": getattr(a, "gate_pin_blob", None),
+                "cv_tdw_sha256": getattr(a, "expect_cv_tdw_sha256", None),
+                "gate_config_hash": getattr(a, "gate_config_hash", None),
                 "slurm_job": os.environ.get("SLURM_JOB_ID"), "seconds_unfold": round(time.time() - t1, 3),
                 "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, "numpy_version": np.__version__}
         status |= s5n_pseudo.write_product(target, arrays, meta)
@@ -1495,14 +1526,17 @@ def clip_flags(o: np.ndarray) -> list[int]:
 
 
 def clipping_readout(unfolds: Path, tag: str, truth: str, U: np.ndarray, rm: dict, cell_flag: list[bool],
-                     clip_rule: str = "data") -> dict:
+                     clip_rule: str = "data", nature: dict | None = None) -> dict:
     """Consult item (ii) and decision section 2a, descriptive beside the grading: the clipping offset
     o_c = U (x_clipmean - x_central)_c / sigma_c (sigma_c from C_T); the toys' clipped fractions; the toys' clipped
     mass per reporting cell (reco and truth) relative to N_clip's; and the reading fixed before any number was read:
     a cell flagged at T with |o_c| >= ``CLIP_DELTA_STAR`` is read "the flag may be the clipping artefact". The verdict
-    and clause F stand either way. Defined for the "data" rule only (the audit's C4 on #717)."""
+    and clause F stand either way. The offset is defined for the "data" rule (the audit's C4 on #717); under
+    "nature" the section is clipping_readout_nature's (the director's ruling (iii), extended)."""
+    if clip_rule == "nature":
+        return clipping_readout_nature(unfolds, tag, truth, U, rm, **(nature or {}))
     if clip_rule != "data":
-        raise Refusal(NATURE_UNRULED)
+        raise Refusal(f"clip rule {clip_rule!r} is not one of {CLIP_RULES}")
     refuse_partials(unfolds, tag, truth)
     cm = sorted(unfolds.glob(f"{tag}_{truth}_clipmean_*.npz"))
     if len(cm) != 1:
@@ -1537,6 +1571,72 @@ def clipping_readout(unfolds: Path, tag: str, truth: str, U: np.ndarray, rm: dic
                                  for k, v in frac.items()},
             "toys_clipped_mass_over_n_clip": {"reco": rel(reco, ref_r), "truth": rel(tru, ref_t)},
             "n_clip_clipped_mass": {"reco": ref_r.tolist(), "truth": ref_t.tolist()}}
+
+
+def clipping_readout_nature(unfolds: Path, tag: str, truth: str, U: np.ndarray, rm: dict, data_unfolds: Path | None = None,
+                            gate: dict | None = None, gate_sha256: str | None = None, estimator: str | None = None) -> dict:
+    """The clipping section under "nature" (the director's ruling (iii), extended, 2026-11-04): descriptive, for the
+    note, and changing no graded quantity. Three parts, each labelled with its rule:
+    (a) the graded toys' own "nature" clip facts: per component the clipped fraction over toys (meta["clip"]), and
+        per reporting cell the median and max over toys of U applied to the pseudo-data's, the truth's and the
+        denominator's clipped mass (clip_draw's arrays);
+    (b) c2check's residual R (option (1)) and clipped-truth mean shift per cell at N, from the bound gate record;
+    (c) S1-0b's "data" offset o_c = U (x_clipmean - x_central)_c / sigma_c, both products from ``data_unfolds``
+        (every product there must be "data", by this estimator), sigma_c from this grading's C_T: the data rule's
+        offset, for reference; not the graded rule."""
+    if data_unfolds is None or gate is None:
+        raise Refusal("under 'nature' the clipping section needs --data-unfolds (S1-0b's 'data' products) and the "
+                      "bound gate record (--clip-gate)")
+    refuse_partials(unfolds, tag, truth)
+    sigma = np.sqrt(np.diag(rm["C_T"]))
+    totals = {"signal": "sum_lambda", "background": "sum_lambda", "denominator": "sum_rows", "truth": "sum_truth"}
+    frac = {k: [] for k in totals}
+    cells = {k: [] for k in ("clip_reco_flat",) + NATURE_CLIP_ARRAYS}
+    for p in toy_paths(unfolds, tag, truth):
+        z = np.load(p, allow_pickle=False)
+        rec = json.loads(str(z["meta"]))["clip"]
+        if rec.get("rule") != "nature":
+            raise Refusal(f"{p.name}: clip rule {rec.get('rule')!r}, not 'nature'")
+        for comp, key in totals.items():
+            tot = rec[comp][key]
+            frac[comp].append(abs(rec[comp]["sum_negative"]) / tot if tot else 0.0)
+        for k in cells:
+            cells[k].append(U @ np.asarray(z[k], float))
+    b = gate["record"]["b"][truth]
+    refuse_partials(data_unfolds, tag, truth)
+    refuse_mixed_estimator(data_unfolds, tag, truth, estimator, "data")
+    cm = sorted(data_unfolds.glob(f"{tag}_{truth}_clipmean_*.npz"))
+    if len(cm) != 1:
+        raise Refusal(f"{truth}: {len(cm)} clipmean products in --data-unfolds, not exactly one")
+    zc = np.load(cm[0], allow_pickle=False)
+    xc = U @ np.asarray(np.load(data_unfolds / product_name(tag, truth, "central", "T"), allow_pickle=False)["xsec_flat"],
+                        float)
+    o = (U @ np.asarray(zc["xsec_flat"], float) - xc) / sigma
+    return {"rule": "nature",
+            "a_nature_toys": {"label": "the graded rule's own clipping, over this truth's toys",
+                              "clipped_fraction": {k: {"min": float(min(v)), "median": float(np.median(v)),
+                                                       "max": float(max(v))} for k, v in frac.items()},
+                              "clipped_mass_per_cell": {k: {"median": np.median(v, axis=0).tolist(),
+                                                            "max": np.max(v, axis=0).tolist()} for k, v in cells.items()}},
+            "b_c2check_at_n": {"label": "c2check's measurement of the 'nature' rule at N (the bound gate record)",
+                               "gate_sha256": gate_sha256, "residual_option_1_sigma_Q": b["option_1"]["sigma_Q"],
+                               "clipped_truth_mean_shift_sigma_c": b["clipped_truth_mean_shift_sigma_c"]["per_cell"]},
+            "c_data_offset": {"label": "the data rule's offset, for reference; not the graded rule",
+                              "n_clip_seed": int(json.loads(str(zc["meta"]))["n_clip_seed"]),
+                              "offset_over_sigma": o.tolist(), "delta_star": CLIP_DELTA_STAR,
+                              "sigma": "this grading's C_T"}}
+
+
+def readout_nature_inputs(a) -> dict | None:
+    """Under 'nature', the clipping section's inputs: S1-0b's 'data' directory, and the gate record binding 3 pins in
+    GATE_PIN, read by its digest. None under 'data'."""
+    if a.clip_rule != "nature":
+        return None
+    raw = read_bound_gate(a)
+    if a.data_unfolds is not None and a.data_unfolds.resolve() == a.unfolds.resolve():
+        raise Refusal("--data-unfolds is the graded directory: S1-0b's 'data' products live apart (ruling (A))")
+    return {"data_unfolds": a.data_unfolds, "gate": json.loads(raw), "gate_sha256": a.expect_clip_gate_sha256,
+            "estimator": a.estimator}
 
 
 def readout(a) -> dict:
@@ -1598,7 +1698,8 @@ def readout(a) -> dict:
                             "predicted_offset_uncentred_draws": np.asarray(offset, float).tolist(),
                             "eigen_variance_ratio_vs_C_e": eig_ratio},
             "truth_dependence": {"A_T_over_A_nom_fractional": (frac_T / frac_nom).tolist(), "group_at_T_over_M": groups},
-            "clipping": clipping_readout(a.unfolds, a.tag, a.truth, U, rm, main["cell_flag"], a.clip_rule),
+            "clipping": clipping_readout(a.unfolds, a.tag, a.truth, U, rm, main["cell_flag"], a.clip_rule,
+                                         readout_nature_inputs(a)),
             "X_T": rm["X_T"].tolist(), "sigma_T": np.sqrt(np.diag(rm["C_T"])).tolist()}
 
 
@@ -1686,6 +1787,9 @@ def main(argv=None) -> int:
             p.add_argument("--null", type=Path, required=True)
             p.add_argument("--expect-null-sha256", required=True)
             p.add_argument("--i2", type=Path, required=True)
+            p.add_argument("--data-unfolds", type=Path, default=None)          # under 'nature': S1-0b's products
+            p.add_argument("--clip-gate", type=Path, default=None)
+            p.add_argument("--expect-clip-gate-sha256", default=None)
     a = ap.parse_args(argv)
     try:
         if a.cmd == "unfold":

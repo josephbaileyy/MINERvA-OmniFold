@@ -36,11 +36,17 @@ def literal(path: Path, name: str):
 CARRIED = literal(HERE / "mutation_mc_a2.py", "M")
 REPLACED_A2 = literal(HERE / "mutation_mc_a2.py", "REPLACED")
 REPLACED_A21 = {"A2c: the nature rule keeps the truth", "A2c: the nature rule ignores negative truths",   # S3
-                "G: the clip gate always open", "G: the clip gate reads anything"}                      # S2
+                "G: the clip gate always open", "G: the clip gate reads anything",                     # S2
+                "C4: the clipping readout under nature"}   # the director's ruling (iii): its converse is below
 U_OLD = '    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):\n        raise Refusal("the definition\'s functional is not S1\'s")\n'
 U_NEW = '    if not same_functional(U, s1["U"]):\n        raise Refusal("the definition\'s functional is not S1\'s")\n'
 REANCHOR = {"B1 (audit): null U check dropped", "B3: readout U check dropped"}
 GATE_OLD = "    inv.OPENED.clear()\n    check_clip_gate(a)"           # A2.1 moved the call after the role checks
+# clipping_readout_nature and resume_matches repeat three lines amendment 2's mutants target, so those mutants are
+# anchored on the 'data' path's or the meta's own preceding text (the nature path's have their own mutants below)
+CM_REANCHOR = {"A2: two clipmean products accepted": '    cm = sorted(unfolds.glob(f"{tag}_{truth}_clipmean_*.npz"))\n',
+               "A2: clipped fraction over the wrong total": '            tot = rec[comp]["sum_lambda"]\n',
+               "A2e: the meta records the fixed config": '"item": item, '}
 GATE_NEW = "    check_clip_gate(a)                        # after the role checks"
 # Equivalent on every input, with the proof a test (test_fd_1b_c2 Gate.test_i_at_exactly_0_20_is_unreachable): no
 # double r has |r - 1| == 0.20, so (i)'s > and >= agree everywhere. "tables: 23 per lane" is equivalent on the declared
@@ -187,6 +193,48 @@ NEW = [
     ("fd_1b_mc.py", "H2: the power not required", '    if not cal.get("power_meets"):', '    if False:', MC),
     ("fd_1b_mc.py", "H2: the backstop not required", '    if a.truth not in back or not all(', '    if False and not all(', MC),
     ("fd_1b_mc.py", "H2: the config hash not checked", '    if g.get("config_hash") != fd_1b_c2.config_hash(', '    if False and fd_1b_c2.config_hash(', MC),
+    # ---- fd_1b_mc: the resume check and the readout's clipping section under 'nature' (the director's rulings on the
+    # audit's finding on ruling (A))
+    ("fd_1b_mc.py", "resume: an existing product skipped unchecked", "            resume_matches(target, a)\n            continue",
+     "            continue", MC),
+    ("fd_1b_mc.py", "resume: the clip rule not compared", '    want = {"config": a.estimator, "clip_rule": a.clip_rule, ',
+     '    want = {"config": a.estimator, ', MC),
+    ("fd_1b_mc.py", "resume: the estimator not compared", '    want = {"config": a.estimator, "clip_rule": a.clip_rule, ',
+     '    want = {"clip_rule": a.clip_rule, ', MC),
+    ("fd_1b_mc.py", "resume: the gate config hash not compared",
+     '            "gate_config_hash": getattr(a, "gate_config_hash", None)}\n    diff = sorted(',
+     '            }\n    diff = sorted(', MC),
+    ("fd_1b_mc.py", "resume: the gate config hash not recorded",
+     '                "gate_config_hash": getattr(a, "gate_config_hash", None),\n                "slurm_job"',
+     '                "slurm_job"', MC),
+    ("fd_1b_mc.py", "clipping: 'nature' refused (C4's refusal restored)",
+     '    if clip_rule == "nature":\n        return clipping_readout_nature(',
+     '    if clip_rule == "nature":\n        raise Refusal(NATURE_UNRULED)\n        return clipping_readout_nature(', MC),
+    ("fd_1b_mc.py", "clipping (c): --data-unfolds not required 'data'",
+     '    refuse_mixed_estimator(data_unfolds, tag, truth, estimator, "data")\n', '', MC),
+    ("fd_1b_mc.py", "clipping (c): --data-unfolds may be the graded directory",
+     '    if a.data_unfolds is not None and a.data_unfolds.resolve() == a.unfolds.resolve():',
+     '    if False:', MC),
+    ("fd_1b_mc.py", "clipping (b): the readout without the bound gate", '        return None\n    raw = read_bound_gate(a)',
+     '        return None\n    raw = Path(a.clip_gate).read_bytes()', MC),
+    ("fd_1b_mc.py", "clipping (c): two clipmean products accepted",
+     '    cm = sorted(data_unfolds.glob(f"{tag}_{truth}_clipmean_*.npz"))\n    if len(cm) != 1:',
+     '    cm = sorted(data_unfolds.glob(f"{tag}_{truth}_clipmean_*.npz"))\n    if len(cm) < 1:', MC),
+    ("fd_1b_mc.py", "clipping (a): the clipped fraction over the wrong total",
+     '            tot = rec[comp][key]\n            frac[comp].append(abs(rec[comp]["sum_negative"]) / tot if tot else 0.0)',
+     '            tot = rec[comp][key]\n            frac[comp].append(abs(rec[comp]["sum_negative"]) if tot else 0.0)', MC),
+    ("fd_1b_mc.py", "clipping (a): the toys' rule not checked", '        if rec.get("rule") != "nature":\n            raise Refusal(f"{p.name}: clip rule',
+     '        if False:\n            raise Refusal(f"{p.name}: clip rule', MC),
+    ("fd_1b_mc.py", "clipping (a): the denominator's fraction over the truth's total",
+     '"denominator": "sum_rows", "truth": "sum_truth"}', '"denominator": "sum_rows", "truth": "sum_rows"}', MC),
+    ("fd_1b_mc.py", "clipping (c): the graded central, not S1-0b's", '    xc = U @ np.asarray(np.load(data_unfolds / product_name(tag, truth, "central", "T"), allow_pickle=False)["xsec_flat"],',
+     '    xc = U @ np.asarray(np.load(unfolds / product_name(tag, truth, "central", "T"), allow_pickle=False)["xsec_flat"],', MC),
+    ("fd_1b_mc.py", "S3 arrays: the truth clip's array not stored", '                  **{k: clip[k] for k in NATURE_CLIP_ARRAYS if k in clip}}',
+     '                  **{k: clip[k] for k in NATURE_CLIP_ARRAYS[1:] if k in clip}}', MC + E2E),
+    ("fd_1b_mc.py", "S3 arrays: the truth clip on lambda's rows", '        clip["clip_truth_nature_flat"] = _flat_hist(ui["MCgen"][tz], -(wt * r)[tz], edges)',
+     '        clip["clip_truth_nature_flat"] = _flat_hist(ui["MCgen"][tneg], -lam[tneg], edges)', MC + E2E),
+    ("fd_1b_mc.py", "S3 arrays: the denominator's mass signed", '        clip["clip_denom_flat"] = m_den.ravel(order="C")',
+     '        clip["clip_denom_flat"] = -m_den.ravel(order="C")', MC + E2E),
     # ---- fd_1b_c2: the large-sample gate (P1, P2, P4, P6)
     ("fd_1b_c2.py", "P1: the gate seeds shifted by one", '    return [int(x) for x in mc.TOY_SEEDS[truth]] + list(range(GATE_SEED_BASE[truth],',
      '    return [int(x) for x in mc.TOY_SEEDS[truth]] + list(range(GATE_SEED_BASE[truth] + 1,', C2),
@@ -222,8 +270,7 @@ NEW = [
      "    bulk = [x for x in items if x[1] in mc.BULK_ROLES and x not in set(pilot) | set(pilot_b)]\n", TAB),
     (GEN, "tables: the bulk keeps clipmean", "    bulk = [x for x in items if x[1] in mc.BULK_ROLES]\n",
      "    bulk = [x for x in items if x[1] in mc.BULK_ROLES + ('clipmean',)]\n", TAB),
-    (GEN, "tables: nature steps without the gate", '+ ["--clip-rule", rule] + (gate if rule == "nature" else []))',
-     '+ ["--clip-rule", rule])', TAB),
+    (GEN, "tables: nature steps without the gate", ' + (gate if rule == "nature" else []))', ')', TAB),
     (GEN, "tables: no CV tdw", '              "--cv-tdw", CV_TDW, "--expect-cv-tdw-sha256", CV_TDW_SHA256,\n', '', TAB),
     (GEN, "tables: the pins file not required committed", "    if head.returncode != 0 or head.stdout.strip() != blob:\n",
      "    if False:\n", TAB),
@@ -231,6 +278,10 @@ NEW = [
      "        if False:\n", TAB),
     (GEN, "tables: the bulk under data", '        tables("s1-bulk", lanes, "nature")', '        tables("s1-bulk", lanes, "data")', TAB),
     (GEN, "tables: S1-0 under nature", '    tables("s1-0", [[x] for x in pilot], "data")', '    tables("s1-0", [[x] for x in pilot], "nature")', TAB),
+    (GEN, "tables: one unfolds directory for both rules", '    return f"{W}/stage1/unf/{rule}-{estimator}"',
+     '    return f"{W}/stage1/unf"', TAB),
+    (GEN, "tables: the directory without the estimator", '    return f"{W}/stage1/unf/{rule}-{estimator}"',
+     '    return f"{W}/stage1/unf/{rule}"', TAB),
     (GEN, "tables: 23 per lane", "LANES, PER_LANE = 8, 22", "LANES, PER_LANE = 8, 23", TAB),
     # ---- fd_1b_cvdenom: the gates and B's attribution rule
     ("fd_1b_cvdenom.py", "cvd: the npz's rows without the extras gate", "    return base & ps, base & extras & ps", "    return base & ps, base & ps", CVD),
@@ -268,6 +319,8 @@ for name, old, new in CARRIED:
     if name in REANCHOR:
         assert old.count(U_OLD) == 1, name
         old, new = old.replace(U_OLD, U_NEW), new.replace(U_OLD, U_NEW)
+    if name in CM_REANCHOR:
+        old, new = CM_REANCHOR[name] + old, CM_REANCHOR[name] + new
     if name == "G: the clip gate never checked":
         assert old == GATE_OLD, name
         old, new = GATE_NEW, "    pass                                      # after the role checks"
@@ -295,7 +348,7 @@ try:
         Path(f).write_text(files[f])
         state = "KILLED" if rc == 1 else "SURVIVED" if rc == 0 else f"ERROR rc={rc}"
         rows.append((name, state))
-        print(f"{state:8s} {name}{'  [re-anchored]' if name in REANCHOR else ''}", flush=True)
+        print(f"{state:8s} {name}{'  [re-anchored]' if name in REANCHOR | set(CM_REANCHOR) else ''}", flush=True)
 finally:
     for f, text in files.items():
         Path(f).write_text(text)
