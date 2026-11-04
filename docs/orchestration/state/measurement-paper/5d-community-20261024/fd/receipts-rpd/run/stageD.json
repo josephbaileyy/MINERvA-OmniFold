@@ -1,0 +1,174 @@
+{
+ "schema": "fd-rpd-stageD/1",
+ "labels": {
+  "what": "design-time simulations (no playlist number): R1's operating characteristics under the declared truths at stage 0's s0, and R2's reachability under T1-T3 with the calibration gate off; their rules are part 1's and are reported to the director before job A"
+ },
+ "stage0": {
+  "branch": "SEES",
+  "s0": 0.06283190579575226,
+  "sigma0": 0.005984234211375657
+ },
+ "R1_operating_characteristics": {
+  "at_s0": {
+   "PW": {
+    "PERIOD-WIDE": 0.8011,
+    "SUBSET": 0.0,
+    "OTHER": 0.1989,
+    "NOT COMPUTED": 0.0
+   },
+   "S-1G": {
+    "PERIOD-WIDE": 0.0,
+    "SUBSET": 0.77095,
+    "OTHER": 0.22905,
+    "NOT COMPUTED": 0.0
+   },
+   "S-1M": {
+    "PERIOD-WIDE": 0.0,
+    "SUBSET": 0.77005,
+    "OTHER": 0.22995,
+    "NOT COMPUTED": 0.0
+   },
+   "S-1G1M": {
+    "PERIOD-WIDE": 0.8071,
+    "SUBSET": 0.0,
+    "OTHER": 0.1929,
+    "NOT COMPUTED": 0.0
+   }
+  },
+  "at_7pct": {
+   "PW": {
+    "PERIOD-WIDE": 0.79825,
+    "SUBSET": 0.0,
+    "OTHER": 0.20175,
+    "NOT COMPUTED": 0.0
+   },
+   "S-1G": {
+    "PERIOD-WIDE": 0.0,
+    "SUBSET": 0.7682,
+    "OTHER": 0.2318,
+    "NOT COMPUTED": 0.0
+   },
+   "S-1M": {
+    "PERIOD-WIDE": 0.0,
+    "SUBSET": 0.76665,
+    "OTHER": 0.23335,
+    "NOT COMPUTED": 0.0
+   },
+   "S-1G1M": {
+    "PERIOD-WIDE": 0.8039,
+    "SUBSET": 0.0,
+    "OTHER": 0.1961,
+    "NOT COMPUTED": 0.0
+   }
+  },
+  "draws": 20000,
+  "seed": 20263102,
+  "note": "N0's UNRESOLVED clause is not modelled"
+ },
+ "R1_rules": {
+  "drop_PERIOD_WIDE": false,
+  "drop_SUBSET": false,
+  "P_PW_given_PW": 0.8011,
+  "best_P_SUBSET_given_subset_truth": 0.77095,
+  "threshold": 0.5
+ },
+ "R2_reachability": {
+  "probabilities": {
+   "T1": {
+    "CLUSTERED": 0.044,
+    "EXCHANGEABLE-COMPATIBLE": 0.824,
+    "INCONCLUSIVE": 0.132,
+    "n": 500
+   },
+   "T2": {
+    "CLUSTERED": 1.0,
+    "EXCHANGEABLE-COMPATIBLE": 0.0,
+    "INCONCLUSIVE": 0.0,
+    "n": 500
+   },
+   "T3": {
+    "CLUSTERED": 0.188,
+    "EXCHANGEABLE-COMPATIBLE": 0.688,
+    "INCONCLUSIVE": 0.124,
+    "n": 500
+   }
+  },
+  "stopped_at_budget": false,
+  "seconds": 2036.1,
+  "alpha_at_inner_descriptive": {
+   "T1": {
+    "0.0": 0.0828,
+    "0.5": 0.051399999999999994,
+    "1.0": 0.054000000000000006,
+    "2.0": 0.0532,
+    "n_outer": 25
+   },
+   "T2": {
+    "0.0": 0.07500000000000001,
+    "0.5": 0.0616,
+    "1.0": 0.0532,
+    "2.0": 0.05500000000000001,
+    "n_outer": 25
+   },
+   "T3": {
+    "0.0": 0.0724,
+    "0.5": 0.0542,
+    "1.0": 0.0484,
+    "2.0": 0.0524,
+    "n_outer": 25
+   }
+  },
+  "noise_sd_rel_median": 0.006089195786862775,
+  "T1_sigma_rel_median": 0.069022728661641,
+  "outer": 500,
+  "inner": 200,
+  "seed": 20264102,
+  "gate": "off"
+ },
+ "R2_rule": {
+  "flag_12_playlist_wording_not_expected": false,
+  "P_EC_given_T1": 0.824,
+  "threshold": 0.2,
+  "min_outer_for_a_verdict": 200
+ },
+ "exposure_share": {
+  "1A": 0.08467483300903829,
+  "1B": 0.017622419550189318,
+  "1C": 0.04052551813405656,
+  "1D": 0.13593311049459122,
+  "1E": 0.09716402464221773,
+  "1F": 0.15745952359723425,
+  "1G": 0.1311038995246216,
+  "1L": 0.012742318530104624,
+  "1M": 0.1506952198838623,
+  "1N": 0.10013997229673434,
+  "1O": 0.028000111731280777,
+  "1P": 0.043939048606068884
+ },
+ "inputs_sha256": {
+  "stage0": "f5ca04b81766024d7235ff4fdf28d6345fd459d02ed82dbf0cc9d2050f143115",
+  "flux_record": "649f9d55422016367a69350a742799bb4187c475696bfdb9a800e82723af794f",
+  "readout_5b": "a5b17895b1189543d773e94717e14cd9b1409535e366c96788f94bf6f40759db"
+ },
+ "code_sha256": {
+  "fd_ct_readers.py": "f4cc51c8fdba141b4ae3e289ee983d755c0cd5b90a82d40fe71d2e56a4447464",
+  "fd_f0_regrade.py": "0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2",
+  "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71",
+  "fd_rpd.py": "3cbc27111d225fdc6d3b2ce1a6b797ad4372954b96fe5cbd769f641f2911b96c",
+  "fd_rpd_inputs.py": "6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70",
+  "fd_ct_periods.py": "ec6bc7f5b292195c7b3488ad9903c2ad7a5dc22746349e7c3fbb9737e283ed3e"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-4/nd-unfolding/fd_rpd.py",
+  "staged",
+  "--r",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103",
+  "--definition",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-4/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "--deploy",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-4",
+  "--out-json",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/control/stageD.json"
+ ]
+}
