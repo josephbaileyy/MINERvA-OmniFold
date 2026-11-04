@@ -22,6 +22,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+import zlib
 from pathlib import Path
 from unittest import mock
 
@@ -103,7 +104,7 @@ class World:
                                                         and not u.startswith("Flux_")]
                      + ["Rvp1pi_0", "Rvp1pi_1"] + [f"GEANT_{b}_{i}" for b in ("Neutron", "Pion", "Proton") for i in (0, 1)])
         for t in tags_bank:
-            r = np.random.default_rng(abs(hash(("bank", t))) % (2 ** 32))
+            r = np.random.default_rng(zlib.crc32(f"bank:{t}".encode()))   # not hash(): one world at every PYTHONHASHSEED
             np.save(self.bank / f"{t}_wt.npy", z["w_truth"] * r.uniform(0.9, 1.1, n))
             np.save(self.bank / f"{t}_wr.npy", z["w_reco"] * r.uniform(0.9, 1.1, n))
             np.save(self.bank / f"{t}_tdw.npy", r.uniform(0.9, 1.1, 50))
@@ -111,7 +112,7 @@ class World:
         for b in sa.DETECTOR_BANDS:
             for i in (0, 1):
                 t = f"{b}_{i}"
-                r = np.random.default_rng(abs(hash(("det", t))) % (2 ** 32))
+                r = np.random.default_rng(zlib.crc32(f"det:{t}".encode()))
                 np.save(self.det / f"{t}_wt.npy", z["w_truth"] * r.uniform(0.9, 1.1, n))
                 np.save(self.det / f"{t}_wr.npy", z["w_reco"] * r.uniform(0.9, 1.1, n))
                 np.save(self.det / f"{t}_denom_nd.npy", r.uniform(50, 80, SHAPE))

@@ -461,4 +461,25 @@ The C4 refusal at the readout is replaced by this. The C4 refusal still stands a
   - At `1295f7e4`, before the fix, it fails: in each setting 5 paths are written twice and a path appears under both
     rules (`tables-clone-check-1295f7e4.out`).
 
+**The toy World made seed-independent (the director's root-cause ruling).**
+- The cause: `test_fd_1b.World` seeded every bank and detector universe's weights with `hash(("bank", tag))` and
+  `hash(("det", tag))` (`test_fd_1b.py:106` and `:114` at `e880008c`). The toy world therefore differed with
+  PYTHONHASHSEED. A test could pass in a bare run and fail in the harness, which runs with PYTHONHASHSEED=0, as the
+  negative-denominator test did at `abf95aed`.
+- The fix: the seeds are now `zlib.crc32(f"bank:{tag}")` and `zlib.crc32(f"det:{tag}")`, test-only. One world
+  results at every seed.
+- **Every test that depended on it** builds a World:
+  - directly or as `ToyWorld`: `test_fd_1b.py`, `test_fd_1b_diag.py`, `test_fd_1b_inv.py`, `test_fd_1b_mc.py` (its
+    `Case`-based classes, `Jobs` and `Loaders`) and `test_fd_1b_moded.py`;
+  - through `consistent_world` and `matched_world`: `test_fd_1b_a21_e2e.py`. Those already rewrote the bank tdw with
+    crc32, but each universe's `wt`, `wr` and `bkgw` stayed hash-seeded.
+- Not dependent, because they build no World: `test_fd_1b_null.py`, `test_fd_1b_c2.py`, `test_fd_1b_cvdenom.py`,
+  `test_fd_1b_binning.py`, `test_fd_1b_tables.py` and `test_s5e_candidate.py`.
+- Two stale descriptions were corrected: `test_fd_1b_mc.Case.consistent`'s docstring, and the negative-denominator
+  test's comment. That test keeps its measured cell choice, so it assumes no one world's layout.
+- Pass counts cited at earlier heads were measured on whichever world each run drew: `FD-1B-STAGE1-REPORT.md`'s 54
+  for `test_fd_1b.py`, `FD-1B-DIAG-BINDING.md`'s and `FD-1B-INV-BINDING.md`'s runs, and `FD-1B-MODED-DECLARATION.md`'s
+  117. They are not re-pinned here. The final mutation receipt runs on the crc32
+  world.
+
 "23 per lane" is equivalent on the declared inputs, and its output is byte-identical.

@@ -327,7 +327,7 @@ class E2E(unittest.TestCase):
             z = np.load(out / mc.product_name("fd1b_mc", "g18", "toy", str(mc.TOY_SEEDS["g18"][0])), allow_pickle=True)
             return json.loads(str(z["meta"])), {k: np.asarray(z[k], float) for k in z.files if k != "meta"}
         # the truth clip does not read the denominator, so the cells it touches are found first, on the world's own
-        # bank: the toy World's weights are hash()-seeded (test_fd_1b.World), so they move with PYTHONHASHSEED
+        # bank, and the lowered row's cell is chosen outside them: measured, so no one world's layout is assumed
         _, base = toy("nature", w.bank, w.pins, self.tmp / "toy-neg-base", self.gate_file("gate-base.json", w.pins))
         touched = set(np.flatnonzero(base["clip_truth_nature_flat"] > 0).tolist())
         bank = self.tmp / "bank-neg"

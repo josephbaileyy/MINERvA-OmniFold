@@ -108,8 +108,8 @@ class Case(unittest.TestCase):
         return dict(w, denom_nd=np.asarray(self.inputs["denom_nd"], float)) if "denom_nd" in w else w
 
     def consistent(self, tag, w):
-        """The fixture's denominators as the real bank's behave, deterministically in the tag (the toy world seeds by
-        hash(), which varies per process): a detector universe's denom_nd is the CV's within 5 %; a bank universe's
+        """The fixture's denominators as the real bank's behave, crc32-seeded in the tag (narrower than the toy world's
+        +-10 %): a detector universe's denom_nd is the CV's within 5 %; a bank universe's
         tdw is 1 within 2 %, so first order's sum of about 37 departures cannot cross zero in a sparse cell by chance."""
         rng = np.random.default_rng(zlib.crc32(tag.encode()))
         if "denom_nd" in w:                    # the real detector universes' equal the CV's bitwise (A2.1 (d1), check D)
