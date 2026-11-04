@@ -19,6 +19,11 @@ references, [1] to part of [n], were emitted after the acknowledgments' first pa
 text, whose last sentence is followed by the rest of [n] and then [n+1]. Blinding cuts at '[1] ', so it dropped the
 data-availability section. Move the fragment to just before the rest of [n]. This runs after case 4; case 2 then
 applies.
+Case 6 (the RPD-sentence round, 2026-11-04): the ACKNOWLEDGMENTS heading was emitted ahead of the body's last
+paragraphs, with the body's final line just before it; the first lines of reference [1] were emitted between the
+body's end and the acknowledgments' first sentence; and the rest of [1] follows the data-availability text. Move the
+final line back after the body's end, the heading to just before the acknowledgments' first sentence, and the fragment
+to just before the rest of [1]. This runs after case 5; the headings are then in reading order.
 Fail if the section's first sentence is not found once, if case 2's tail is not the acknowledgments' end, if case 4's
 fragment or its continuation is not where that layout puts them, or if a reference line precedes the heading in a layout
 no case describes. Every move keeps the word multiset."""
@@ -95,6 +100,59 @@ if len(r) == 1 and len(a) == 1 and h[0] < a[0] < r[0]:  # case 5
         assert sorted(" ".join(L).split()) == words0, "word multiset changed"
         print("moved references [1] to part of [%d] (%d lines) out of the acknowledgments, to before the rest of [%d]"
               % (nums[-1], len(frag), nums[-1]))
+# case 6 is told from case 1 (also ACKNOWLEDGMENTS, [1], heading) by the acknowledgments' text following [1]
+ack = [i for i, l in enumerate(L) if l.startswith("The authors thank the MINERvA Collaboration")]
+if len(r) == 1 and len(a) == 1 and len(ack) == 1 and a[0] < r[0] < ack[0] < h[0]:  # case 6
+    k = r[0]
+    while k < len(L) and L[k].strip():
+        k += 1
+    frag = L[r[0]:k]
+    if frag[-1].rstrip().endswith((".", "]")):
+        sys.exit("FAIL: case 6 layout but the [1] block before the acknowledgments reads as a whole reference")
+    # the body's end: the last non-blank line before the fragment, which must not end a sentence
+    e = r[0] - 1
+    while e > a[0] and not L[e].strip():
+        e -= 1
+    # the final line: the block just before the heading, one line that ends a sentence
+    f1 = a[0]
+    while f1 > 0 and not L[f1 - 1].strip():
+        f1 -= 1
+    f0 = f1
+    while f0 > 0 and L[f0 - 1].strip():
+        f0 -= 1
+    last = L[f0:f1]
+    if L[e].rstrip()[-1:] in ".?!:" or len(last) != 1 or not last[0].rstrip().endswith("."):
+        sys.exit("FAIL: case 6 layout but the body's end and the line before ACKNOWLEDGMENTS do not join")
+    end = [i for i in range(h[0], len(L)) if L[i].rstrip().endswith("does not reproduce.")]
+    if len(end) != 1: sys.exit("FAIL: case 6 layout but the data-availability text's last sentence not found once")
+    c = end[0] + 1
+    while c < len(L) and not L[c].strip():
+        c += 1
+    nxt = [i for i in range(c, len(L)) if L[i].startswith("[")]
+    if c == len(L) or L[c].startswith("[") or not nxt or not L[nxt[0]].startswith("[2] ") or nxt[0] - c > 4:
+        sys.exit("FAIL: case 6 layout but the rest of [1] is not the block between the data-availability text and [2]")
+    # rebuild back to front, so earlier indices stay valid: the fragment, then the heading, then the final line
+    s1 = k
+    while s1 < len(L) and not L[s1].strip():
+        s1 += 1
+    L[c:c] = frag
+    del L[r[0]:s1]
+    ack = [i for i, l in enumerate(L) if l.startswith("The authors thank the MINERvA Collaboration")][0]
+    L[ack:ack] = ["ACKNOWLEDGMENTS", ""]
+    L[e + 1:e + 1] = last + [""]
+    del L[f0:a[0] + 1]
+    while f0 < len(L) and not L[f0].strip() and f0 > 0 and not L[f0 - 1].strip():
+        del L[f0]
+    r = [i for i, l in enumerate(L) if l.startswith("[1] ")]
+    h = [i for i, l in enumerate(L) if l.strip() == "DATA AVAILABILITY"]
+    a = [i for i, l in enumerate(L) if l.strip() == "ACKNOWLEDGMENTS"]
+    b = [i for i, l in enumerate(L) if l.startswith(first)]
+    ack = [i for i, l in enumerate(L) if l.startswith("The authors thank the MINERvA Collaboration")]
+    assert len(r) == len(a) == len(h) == 1 and a[0] < ack[0] < h[0] < b[0] < r[0], (a, ack, h, b, r)
+    assert sorted(" ".join(L).split()) == words0, "word multiset changed"
+    open(p, "w", encoding="utf-8").write("\n".join(L))
+    print("moved the body's final line after its end, the ACKNOWLEDGMENTS heading before its text, and reference "
+          "[1]'s first %d lines to before the rest of [1]" % len(frag))
 if len(a) == 1 and h[0] < a[0]:
     t1 = h[0]
     while t1 > 0 and not L[t1 - 1].strip():  # blank lines between the tail and the heading

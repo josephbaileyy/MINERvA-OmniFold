@@ -1,0 +1,30 @@
+**Report of the Referee (Physical Review D)**
+
+### 1. Paper's Added Sentence
+* **Clarity & Accuracy:** Clear and accurate on its face. It succinctly communicates that the observed run-period variation cannot be explained merely by individual playlist-level statistical or unmodeled fluctuations.
+* **PRD Register:** The colloquial phrasing *“by more than their playlist-to-playlist scatter would give”* falls short of PRD register. A standard formulation such as *“exceeds that expected from playlist-to-playlist scatter”* or *“would predict”* is required.
+* **Pointer:** The pointer `(\nsec{sec:fived16-pl})` is adequate and adheres to the citation style used throughout the manuscript for the companion note.
+
+---
+
+### 2. Note’s Description & Hedging
+* **Clarity & Statistical Hedging:** The statistical framing is commendable. Explicitly identifying the breakdown of exchangeability from unequal exposures and validating the test against simulated pseudo-datasets prevents over-interpretation of the $p$-value. The handling of the step test (pre-declared classes yielding a null conclusion) is appropriately conservative.
+* **Implied Causes:** Introducing a *“division by beam-intensity era”* implicitly names an operational mechanism (beam-intensity-dependent detector or flux response). Even with the disclaimer that *“nothing is concluded from it,”* this breaches the constraint that *“no cause may be named.”*
+* **Defensiveness & Over-Qualification:** Repeating pre-commitment language three times within two short paragraphs (*“fixed before any playlist result was read,”* *“fixed in advance,”* and *“patterns fixed in advance”*) reads as defensive protestation. Similarly, describing the era test as *“descriptive only”* alongside *“nothing is concluded from it”* appears overly apologetic for an exploratory check.
+
+---
+
+### 3. Requested Edits (Ranked by Importance)
+
+1. **Fix colloquialism in the paper:**
+   * *Current:* `...differ between the three period groups by more than their playlist-to-playlist scatter would give...`
+   * *Requested:* `...differ between the three period groups by more than expected from their playlist-to-playlist scatter...` (or `...by more than their playlist-to-playlist scatter would predict...`).
+
+2. **Remove implied cause in the note:**
+   * Replace *“division by beam-intensity era”* with neutral operational language (e.g., *“an alternative chronological partition of five, two, two and three playlists”*), ensuring strict adherence to the prohibition against naming candidate physical or operational causes.
+
+3. **Reduce defensive repetition in the note:**
+   * Retain the initial statement of pre-declaration in the first sentence of the diagnostic paragraph, but streamline subsequent references (e.g., change *“within the bound of \fvval{rpd-alpha-gate} fixed in advance”* to *“within the pre-specified bound of \fvval{rpd-alpha-gate}”* and drop redundant declarations in the step analysis).
+
+4. **Streamline the era-test disclaimer:**
+   * In the note, condense *“Beside it, and descriptive only, the same statistic for a division... gives $p=\fvval{rpd-pera}$...; nothing is concluded from it”* to a neutral report: *“For an alternative partition into groups of five, two, two, and three, the statistic yields $p=\fvval{rpd-pera}$.”*
