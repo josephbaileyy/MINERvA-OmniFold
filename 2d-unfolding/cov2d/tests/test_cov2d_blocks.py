@@ -208,5 +208,61 @@ class NoatimeInputs(unittest.TestCase):
             cbm.noatime_inputs(self.ro, self.d / "copies", {"constraint": (self.ro.PIN["constraint"][0], "0" * 64)})
 
 
+@unittest.skipUnless(HAVE, "needs PyROOT (the rollup imports it)")
+class Section95(unittest.TestCase):
+    """The control's plumbing on arrays: part B's labels, the comparison against production_cov.npz's keys."""
+    def setUp(self):
+        f = fixture(7)
+        sums = {f"U_{b}_{i}/xsec.root": "x" for b in c.ORDER for i in range(c.BANDS[b])}
+        sums.update({"ER/xsec.root": "x"})
+        self.labels = cb.partb_labels(sums)
+        vecs = {}
+        r = np.random.default_rng(11)
+        for b, labs in self.labels["universe"].items():
+            for l in labs:
+                vecs[l] = f["x_R"] + 0.05 * r.standard_normal(N)
+        for l in self.labels["lateral"].values():
+            vecs[l] = f["x_R"] + 0.05 * r.standard_normal(N)
+        for l in self.labels["replica"]:
+            vecs[l] = f["x_R"] + 0.03 * r.standard_normal(N)
+        self.vec, self.f = vecs.__getitem__, f
+        ro = cb.rollup()
+        bands = {b: np.stack([vecs[l] for l in labs]) for b, labs in self.labels["universe"].items()}
+        for b in c.LATERAL_BANDS:
+            bands[b] = np.stack([vecs[self.labels["lateral"][f"{b}_{i}"]] for i in (0, 1)])
+        blocks, tot = ro.universe_block(cb.CellsT(f["rep"], f["x_R"]), bands, f["w"], f["minos_x"])
+        X = np.stack([vecs[l] for l in self.labels["replica"]])
+        self.npz = {"universe": tot, "stat": np.cov(X, rowvar=False), "cells_x_EU": f["x_R"],
+                    **{f"band_{b}": m for b, m in blocks.items()}}
+
+    def run95(self, npz):
+        return cb.section_9_5(self.vec, self.labels, self.f["minos_x"], self.f["w"], self.f["x_R"], self.f["rep"], npz)
+
+    def test_labels_are_part_bs(self):
+        self.assertEqual(sum(len(v) for v in self.labels["universe"].values()), 175)
+        self.assertEqual(self.labels["lateral"]["Muon_Energy_MINOS_1"], "S3_MuonEnergyMINOS1")
+        self.assertEqual(self.labels["replica"][0], "S1_001")
+        self.assertEqual(self.labels["replica"][-1], "S1_300")
+
+    def test_reproduces_and_passes(self):
+        out = self.run95(self.npz)
+        self.assertTrue(out["pass"], out)
+        self.assertEqual(out["worst"], 0.0)
+        self.assertEqual(len(out["bands"]), 44)
+
+    def test_a_changed_band_or_stat_or_cells_fails(self):
+        for key, change in (("band_MaRES", lambda m: m * (1 + 1e-9)), ("stat", lambda m: m * (1 + 1e-9)),
+                            ("cells_x_EU", lambda m: m * (1 + 1e-15))):
+            with self.subTest(key):
+                npz = dict(self.npz, **{key: change(self.npz[key])})
+                self.assertFalse(self.run95(npz)["pass"])
+
+    def test_a_missing_band_key_fails(self):
+        npz = {k: v for k, v in self.npz.items() if k != "band_GEANT_Pion"}
+        out = self.run95(npz)
+        self.assertFalse(out["pass"])
+        self.assertEqual(out["missing_in_npz"], ["band_GEANT_Pion"])
+
+
 if __name__ == "__main__":
     unittest.main()

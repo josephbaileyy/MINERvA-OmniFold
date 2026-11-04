@@ -170,3 +170,136 @@ def noatime_inputs(ro, tmp: Path, files: dict) -> dict:
         ro.PIN[key] = (str(dst), sha)
         rec[key] = sha
     return rec
+
+
+# ---------------------------------------------------------------------------------------------------- section 9.5
+PARTB_NPZ = ("/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/s5/production_cov.npz",
+             "631cf255fff43b5cb35acd9cefdcee99e5ee95b85dc2f30d8e0aca513095eea1")   # RE2-PARTC-REPORT.md:131
+
+
+def partb_labels(sums: dict) -> dict:
+    """Part B's product labels, as the rollup's refined arm reads them (re2c_rollup.production): the 175 universes
+    U_<band>_<idx>, the 10 laterals S3_<Band><idx> (underscores dropped), the 300 replicas S1_001..300."""
+    uni = {}
+    for rel_ in sums:
+        lab = rel_[:-len("/xsec.root")]
+        if lab.startswith("U_"):
+            b, i = lab[2:].rsplit("_", 1)
+            uni.setdefault(b, []).append(int(i))
+    return {"universe": {b: [f"U_{b}_{i}" for i in sorted(v)] for b, v in uni.items()},
+            "lateral": {f"{b}_{i}": f"S3_{b.replace('_', '')}{i}" for b in c.LATERAL_BANDS for i in (0, 1)},
+            "replica": [f"S1_{n:03d}" for n in range(1, 301)]}
+
+
+def section_9_5(vec, labels: dict, minos_x, w_flux, x_R, rep, npz: dict) -> dict:
+    """Section 9.5: the imported block functions on part B's own products reproduce part B's S5_R blocks
+    (production_cov.npz: band_<b>, universe, stat) to 1e-12 relative. ``vec(label)`` reads one product on the cells."""
+    ro = rollup()
+    bands = {b: np.stack([vec(l) for l in labs]) for b, labs in labels["universe"].items()}
+    for b in c.LATERAL_BANDS:
+        bands[b] = np.stack([vec(labels["lateral"][f"{b}_{i}"]) for i in (0, 1)])
+    blocks, tot = ro.universe_block(CellsT(rep, x_R), bands, w_flux, minos_x)
+    X = np.stack([vec(l) for l in labels["replica"]])
+    C_stat = np.cov(X, rowvar=False)
+
+    def rel(a, b):
+        return float(np.max(np.abs(a - b)) / np.max(np.abs(b)))
+    out = {"bands": {}, "missing_in_npz": sorted(f"band_{b}" for b in blocks if f"band_{b}" not in npz)}
+    for b, m in blocks.items():
+        if f"band_{b}" in npz:
+            out["bands"][b] = rel(m, npz[f"band_{b}"])
+    out["universe"] = rel(tot, npz["universe"])
+    out["stat"] = rel(C_stat, npz["stat"])
+    out["x_R_equals_cells_x_EU"] = bool(np.array_equal(np.asarray(x_R, float), np.asarray(npz["cells_x_EU"], float)))
+    worst = max([out["universe"], out["stat"], *out["bands"].values()])
+    out["worst"] = worst
+    out["pass"] = (not out["missing_in_npz"] and len(out["bands"]) == 44 and worst <= TOL
+                   and out["x_R_equals_cells_x_EU"])
+    return out
+
+
+def main(argv=None) -> int:
+    """Section 9.5 on the cluster: python cov2d_blocks.py control95 --out FILE"""
+    import argparse
+    import tempfile
+    import time
+    ap = argparse.ArgumentParser()
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    p = sub.add_parser("control95")
+    p.add_argument("--out", required=True)
+    a = ap.parse_args(argv)
+    import ROOT
+    ROOT.gROOT.SetBatch(True)
+    ro = rollup()
+    t0 = time.time()
+    sums = ro.partb_sums()
+    labels = partb_labels(sums)
+    rec = {"host": os.uname().nodename, "root": ROOT.gROOT.GetVersion(), "stop": [],
+           "n_universe": sum(len(v) for v in labels["universe"].values()), "n_bands": len(labels["universe"])}
+    if rec["n_universe"] != 175 or rec["n_bands"] != 38:
+        rec["stop"].append(f"part B's sums list {rec['n_bands']} bands, {rec['n_universe']} universes")
+    srcs, atimes = {}, {}
+    for k in ("constraint", "vl175_build_json", "vl175_minos_npz", "flux_mefhc"):
+        atimes[ro.PIN[k][0]] = os.stat(ro.PIN[k][0]).st_atime_ns
+    for pl in ro.BR.PLAYLISTS:
+        for kind in ("MC", "Data"):
+            src = f"{ro.BF}/runEventLoop{kind}_{pl}.root"
+            atimes[src] = os.stat(src).st_atime_ns
+    atimes[PARTB_NPZ[0]] = os.stat(PARTB_NPZ[0]).st_atime_ns
+    atimes[str(CMODEL_JSON)] = os.stat(CMODEL_JSON).st_atime_ns
+    with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as td:
+        tdp = Path(td)
+        n_checks = len(ro.CHECKS)
+        rec["inputs"] = noatime_inputs(ro, tdp / "rollup", {k: ro.PIN[k] for k in
+                                                              ("constraint", "vl175_build_json", "vl175_minos_npz",
+                                                               "flux_mefhc")})
+        prod = tdp / "products"
+        prod.mkdir()
+
+        def fetch(label):
+            src = f"{ro.NS_R}/out/{label}/xsec.root"
+            atimes.setdefault(src, os.stat(src).st_atime_ns)
+            data, sha = read_noatime(src)
+            if sha != sums.get(f"{label}/xsec.root"):
+                raise c.Refusal(f"{label}: sha256 {sha} is not part B's committed digest")
+            dst = prod / f"{label}.root"
+            dst.write_bytes(data)
+            srcs[src] = sha
+            return dst
+        er = fetch("ER")
+        cells = ro.Cells(er)
+        rec["cells"] = int(cells.rep.sum())
+        C, _, crec = c_model()
+        rec["cmodel_cells_equal_er_cells"] = crec["cells"] == [int(i) for i in np.flatnonzero(cells.rep)]
+        w, phi_minos = ro.flux_weights()
+        minos_x = ro.x01(cells, [fetch(labels["lateral"]["Muon_Energy_MINOS_0"]),
+                                 fetch(labels["lateral"]["Muon_Energy_MINOS_1"])], phi_minos, "cov2d_9_5")
+        failed = [k for k in list(ro.CHECKS)[n_checks:] if not ro.CHECKS[k]["ok"]]
+        if failed:
+            rec["stop"].append(f"rollup checks failed: {failed}")
+        npz_data, npz_sha = read_noatime(PARTB_NPZ[0])
+        if npz_sha != PARTB_NPZ[1]:
+            raise c.Refusal(f"production_cov.npz sha256 {npz_sha}")
+        (tdp / "production_cov.npz").write_bytes(npz_data)
+        npz = dict(np.load(tdp / "production_cov.npz"))
+        rec["section_9_5"] = section_9_5(lambda l: cells.vec(fetch(l)), labels, minos_x, w, cells.x, cells.rep, npz)
+        if not rec["section_9_5"]["pass"]:
+            rec["stop"].append("section 9.5 did not reproduce part B's blocks")
+        if not rec["cmodel_cells_equal_er_cells"]:
+            rec["stop"].append("cmodel_2d.json's 205 cells are not E_R's reported cells")
+    rec["products_read"] = len(srcs)
+    rec["atime_moved"] = [p for p, t in atimes.items() if os.stat(p).st_atime_ns != t]
+    rec["atime_checked"] = len(atimes)
+    if rec["atime_moved"]:
+        rec["stop"].append(f"atime moved on {len(rec['atime_moved'])} inputs")
+    rec["verdict"] = "STOP" if rec["stop"] else "PASS"
+    rec["seconds"] = round(time.time() - t0, 1)
+    Path(a.out).write_text(json.dumps(rec, indent=1, sort_keys=True))
+    print(f"COV2D-9.5 {rec['verdict']} worst={rec.get('section_9_5', {}).get('worst')} stops={len(rec['stop'])}")
+    for x in rec["stop"]:
+        print(f"STOP {x}")
+    return 0 if rec["verdict"] == "PASS" else 3
+
+
+if __name__ == "__main__":
+    sys.exit(main())
