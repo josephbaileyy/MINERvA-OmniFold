@@ -41,6 +41,13 @@ unless that check ran.
 remainder of the whole run, tail included, stay within the cap, and B2 within 2x the control's per-unfold time;
 otherwise it stops before that launch, for a reprice.
 
+    estimator_stability_probe.py truth-control --queue <OUT>/dry.tsv --f0b-product P --scratch DIR --out JSON
+
+``truth-control`` (ADDENDUM-A1 §2; the dry run runs it before any task) checks that the closure at the NuWro
+pv-ladder ratio has F0b row 3's truth definition: the probe reads the ratio (schema pvl-ratio/1) as truth
+``pvl_ratio``, which is ``pvl_lib.row_weight`` unchanged (``pvl_truth``), and the control compares the per-row weight
+and the full-MC truth it implies with F0b's pinned closure product. Exit 0 pass, 1 fail, 2 refused.
+
 MEASURES: one candidate's products. CANNOT AUTHORIZE: a stability or bias verdict by itself
 (``estimator_stability_analyze.py`` evaluates the declared criteria), or the adoption of any estimator.
 """
@@ -300,8 +307,9 @@ STABILITY_TRUTH = {"truth": "eavail_shape", "amplitude": 1.0,
                    "ratio_sha256": "45cc3e0abfe0dfae985113137e54b1d3f3961e86f4d29c454e08a0aa9f1f08a2"}
 STABILITY_PSEUDO_SEED = 990000
 JITTER_SEEDS = tuple(range(1, 52))  # 51 jitters; s5e's design n = 1 + 1/(2 * 0.1**2)
+PVL_TRUTH = "pvl_ratio"  # ADDENDUM-A1: F0b row 3's truth weight, pvl_lib.row_weight (``pvl_truth``)
 SCHEMA_TRUTH = {"s5e-shape-ratio/1": "ratio_nd", "s5p-cond-ratio/1": "cond_ratio", "s5p-fine-ratio/1": "fine_ratio",
-                "s5n-eavail-ratio/1": "eavail_shape"}
+                "s5n-eavail-ratio/1": "eavail_shape", "pvl-ratio/1": PVL_TRUTH}
 # The 18 F0b truths (fd_f0_regrade.TRUTHS), each as s5p_nullexp's noise-free expectation: (name, hypothesis,
 # alternative ratio or None, alternative truth, amplitude). "CLUSTER:" marks a file read on the cluster by its pin.
 CLOSURES = (
@@ -339,13 +347,15 @@ LANES = 8
 UNIT_S = 0.022828 * 3600 * LANES  # 657 s of one lane per unfold (FD-1B-STAGED-DECLARATION.md:530, measured on S1)
 ASSUMED_FACTOR = {"B2": 2.0}  # before a candidate has a finished task: B2 at the 2x the cap allows, the others at 1x
 B2_STOP_RATIO = 2.0  # B2 is stopped if its measured per-unfold time exceeds 2x the control's
-# The dry run (§11): one short job of eight one-unfold tasks on the full run's 8 lanes, so its timings are on the
-# full run's basis: each candidate's first stability task (one jitter) and four closures. The control pair is also
-# the bitwise determinism check (§3.2: nominal and A7_mnvtune are the same closure). Their products and timings carry
-# into the full job, whose gate skips them.
+# The dry run (§11): one short job of one-unfold tasks on the full run's 8 lanes, so its timings are on the full run's
+# basis: each candidate's first stability task (one jitter) and five closures. The control pair is also the bitwise
+# determinism check (§3.2: nominal and A7_mnvtune are the same closure); the control's closure_nuwro is the one task
+# that reads the cluster-held pv-ladder ratio, so the real-input path runs before the full run (ADDENDUM-A1 §3). Nine
+# tasks on 8 lanes: one lane runs a second. Their products and timings carry into the full job, whose gate skips them.
+TRUTH_CONTROL_TASK = "stab_control_closure_closure_nuwro"
 DRY_TASKS = ("stab_control_stability_00", "stab_B2_stability_00", "stab_B3a_stability_00", "stab_B3b_stability_00",
              "stab_control_closure_nominal", "stab_control_closure_A7_mnvtune", "stab_B2_closure_nominal",
-             "stab_B3b_closure_nominal")
+             "stab_B3b_closure_nominal", TRUTH_CONTROL_TASK)
 
 
 def closure_truth_kind(alt_path: Path, declared: str) -> str:
@@ -356,6 +366,53 @@ def closure_truth_kind(alt_path: Path, declared: str) -> str:
     if schema not in SCHEMA_TRUTH:
         raise ValueError(f"{alt_path}: schema {schema!r} names no declared truth kind")
     return SCHEMA_TRUTH[schema]
+
+
+# ------------------------------------------------------------------------------- the pv-ladder truth (ADDENDUM-A1)
+def _pvl():
+    p = str(_ND / "pv-ladder")
+    if p not in sys.path:
+        sys.path.insert(0, p)
+    import pvl_lib
+    return pvl_lib
+
+
+def pvl_ratio_weight(inputs: dict, amplitude: float, ratio: dict) -> np.ndarray:
+    """F0b row 3's truth weight (pvl_unfold.py --closure): ``pvl_lib.row_weight``, unchanged, on the L-5D-PV grid. The
+    pv-ladder has no amplitude, so only 1 is declared; the grid must be the rung's, its five axes in pvl's order with
+    pvl's fine edges, as pvl_unfold requires of the npz. Not the F1 bridge to ratio_nd: that rescales the in-grid
+    total by one constant, which F0b's truth does not."""
+    L = _pvl()
+    if amplitude != 1.0:
+        raise ValueError(f"the pv-ladder truth has no amplitude: {amplitude} is not 1")
+    names = L.RUNGS["L-5D-PV"][0]
+    if tuple(ratio.get("axes", ())) != L.RUNGS["L-5D-PV"][1]:
+        raise ValueError(f"the ratio's axes {ratio.get('axes')} are not L-5D-PV's")
+    edges = inputs["edges"]
+    if len(edges) != len(names) or not all(np.array_equal(np.asarray(e, float), np.asarray(L.FINE[n], float))
+                                           for e, n in zip(edges, names)):
+        raise ValueError("the grid is not the pv-ladder's 5D fine grid")
+    return L.row_weight(inputs["MCgen"], names, ratio, inputs["pass_truth"])
+
+
+@contextmanager
+def pvl_truth():
+    """Add truth ``pvl_ratio`` to ``s5n_pseudo.truth_weight`` for one invocation (resolved at call time, as s5p_truths
+    and s5e_deform add theirs); every other name passes through. Restored on exit."""
+    orig = s5n_pseudo.truth_weight
+
+    def dispatch(name, inputs, amplitude, r):
+        if name == PVL_TRUTH:
+            if r is None or r.get("schema") != "pvl-ratio/1":
+                raise ValueError(f"{PVL_TRUTH} needs a pvl-ratio/1 file")
+            return pvl_ratio_weight(inputs, amplitude, r)
+        return orig(name, inputs, amplitude, r)
+
+    s5n_pseudo.truth_weight = dispatch
+    try:
+        yield
+    finally:
+        s5n_pseudo.truth_weight = orig
 
 
 def candidate_tasks(a, c: str) -> list[tuple[str, int, list[str]]]:
@@ -531,6 +588,100 @@ def gate(task: str, queue_path: Path, log: Path, t0: float, cap: float = CAP_NOD
     return 0
 
 
+# ------------------------------------------------------------------------------ the truth control (ADDENDUM-A1 §2)
+TRUTH_CONTROL_SCHEMA = "fd-stab-truth-control/1"
+TRUTH_CONTROL_TOL = 1e-12  # C2: relative, per cell
+
+
+class _TruthReached(Exception):
+    pass
+
+
+def _relative(a: np.ndarray, ref: np.ndarray) -> dict:
+    """a against ref per cell, as relative differences and counts only (ruling 6: no absolute cell value)."""
+    a, ref = np.asarray(a, float).ravel(order="C"), np.asarray(ref, float).ravel(order="C")
+    if a.shape != ref.shape:
+        return {"cells": int(ref.size), "shape_matches": False}
+    nz = ref != 0
+    rel = np.abs(a[nz] / ref[nz] - 1.0)
+    return {"cells": int(ref.size), "shape_matches": True, "nonzero_cells": int(nz.sum()),
+            "zero_pattern_differs": int(np.sum((a == 0) != (ref == 0))), "bitwise": bool(np.array_equal(a, ref)),
+            "max_rel": float(rel.max()) if rel.size else 0.0, "median_rel": float(np.median(rel)) if rel.size else 0.0}
+
+
+def truth_control(queue: Path, f0b_product: Path, scratch: Path, ratio_sha256: str | None = None,
+                  product_sha256: str | None = None) -> dict:
+    """Is the probe's closure_nuwro truth F0b row 3's truth DEFINITION (ADDENDUM-A1 §2)?
+
+    The queue's closure_nuwro line runs through ``main`` (``install``, the namespace check, ``pvl_truth``,
+    s5p_nullexp) with --out moved to ``scratch``, and is stopped where the experiment hands its per-row truth weight
+    to ``s5n_pseudo.true_xsec``, before any unfold and before anything is written. Then:
+
+    * C1 (gate): that weight equals ``pvl_lib.row_weight`` on the pinned nuwro.json, with the npz's own axis names
+      read as pvl_unfold reads them, bitwise on every MC row;
+    * C2 (gate): put through F0b row 3's own truth (``pvl_lib.closure_inputs``: the full MC, the nominal
+      completeness), it reproduces the pinned F0b product's ``xtrue_flat`` within TRUTH_CONTROL_TOL relative per
+      cell, with the same zero cells;
+    * C3 (descriptive): the probe's own truth (half B, x2: the declared split, §3.2) against that ``xtrue_flat``.
+
+    The pins default to F0's own (``fd_f0_regrade``); the arguments exist for the tests' synthetic files."""
+    import fd_f0_regrade
+    ratio_sha256 = ratio_sha256 or fd_f0_regrade.RATIO["closure_nuwro"]
+    product_sha256 = product_sha256 or fd_f0_regrade.PINS["closure"]
+    lines = [l.split("\t") for l in queue.read_text().splitlines() if l and not l.startswith("#")]
+    cols = next((c for c in lines if c[0] == TRUTH_CONTROL_TASK), None)
+    if cols is None:
+        raise ValueError(f"{queue} has no {TRUTH_CONTROL_TASK} line")
+    argv = list(cols[3:])
+    ratio_path, npz_path = Path(argv[argv.index("--alternative") + 1]), Path(argv[argv.index("--npz") + 1])
+    for path, want, what in ((ratio_path, ratio_sha256, "the pv-ladder ratio"), (f0b_product, product_sha256,
+                                                                                    "the F0b closure product")):
+        if sha256_path(path) != want:
+            raise ValueError(f"{what} {path} is not the pinned file ({want[:12]}...)")
+    if scratch.exists() and any(scratch.iterdir()):
+        raise ValueError(f"the scratch directory {scratch} is not empty")
+    argv[argv.index("--out") + 1] = str(scratch)
+    seen: dict = {}
+    real = s5n_pseudo.true_xsec
+
+    def reached(inputs, is_b, r):
+        seen.update(inputs=inputs, r=np.array(r, float, copy=True), x_half=real(inputs, is_b, r))
+        raise _TruthReached()
+
+    s5n_pseudo.true_xsec = reached
+    try:
+        rc = main(argv)
+    except _TruthReached:
+        rc = None
+    finally:
+        s5n_pseudo.true_xsec = real
+    if not seen:
+        raise ValueError(f"the closure_nuwro runner never reached its truth (rc {rc})")
+    L = _pvl()
+    names = L.npz_axes(np.load(npz_path, allow_pickle=True))
+    if names != L.RUNGS["L-5D-PV"][0]:
+        raise ValueError(f"the npz's axes {names} are not L-5D-PV's")
+    inputs, r = seen["inputs"], seen["r"]
+    r_pvl = L.row_weight(inputs["MCgen"], names, json.loads(ratio_path.read_text()), inputs["pass_truth"])
+    same_shape = r.shape == r_pvl.shape
+    c1 = {"rows": int(r_pvl.size), "shape_matches": same_shape,
+          "rows_differing": int(np.sum(r != r_pvl)) if same_shape else None,
+          "rows_reweighted": int(np.sum(r_pvl != 1.0))}
+    c1["pass"] = bool(same_shape and c1["rows_differing"] == 0)
+    with np.load(f0b_product, allow_pickle=True) as z:
+        ref = np.asarray(z["xtrue_flat"], float)
+    _, x_full = L.closure_inputs(inputs, r)
+    c2 = _relative(x_full, ref)
+    c2["tolerance"] = TRUTH_CONTROL_TOL
+    c2["pass"] = bool(c2["shape_matches"] and c2["zero_pattern_differs"] == 0 and c2["max_rel"] <= TRUTH_CONTROL_TOL)
+    c3 = {**_relative(seen["x_half"], ref), "descriptive": "the probe's half-B truth (x2) against F0b's full-MC truth"}
+    return {"schema": TRUTH_CONTROL_SCHEMA, "task": TRUTH_CONTROL_TASK,
+            "ratio": {"path": str(ratio_path), "sha256": ratio_sha256},
+            "f0b_product": {"path": str(f0b_product), "sha256": product_sha256},
+            "C1": c1, "C2": c2, "C3": c3, "pass": c1["pass"] and c2["pass"],
+            "code_sha256": sha256_path(Path(__file__).resolve())}
+
+
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if argv[:1] == ["tasks"]:
@@ -549,6 +700,19 @@ def main(argv=None) -> int:
         a.dry_out.write_text("\n".join(dry) + "\n")
         print(json.dumps({"tasks": len(lines) - 1, "out": str(a.out), "dry": str(a.dry_out)}))
         return 0
+    if argv[:1] == ["truth-control"]:
+        ap = argparse.ArgumentParser(prog="estimator_stability_probe.py truth-control", allow_abbrev=False)
+        for opt in ("--queue", "--f0b-product", "--scratch", "--out"):
+            ap.add_argument(opt, type=Path, required=True)
+        a = ap.parse_args(argv[1:])
+        try:
+            rec = truth_control(a.queue, a.f0b_product, a.scratch)
+        except (ValueError, OSError, KeyError) as exc:
+            print(f"refusing: {exc}", file=sys.stderr)
+            return 2
+        a.out.write_text(json.dumps(rec, indent=1) + "\n")
+        print(json.dumps({"pass": rec["pass"], "C1": rec["C1"]["pass"], "C2": rec["C2"]["pass"]}))
+        return 0 if rec["pass"] else 1
     if argv[:1] == ["gate"]:
         ap = argparse.ArgumentParser(prog="estimator_stability_probe.py gate", allow_abbrev=False)
         ap.add_argument("--task", required=True)
@@ -580,7 +744,8 @@ def main(argv=None) -> int:
             import s5p_numerics
             return s5p_numerics.main(rest)
         import s5p_nullexp
-        return s5p_nullexp.main(rest)
+        with pvl_truth():
+            return s5p_nullexp.main(rest)
 
 
 if __name__ == "__main__":

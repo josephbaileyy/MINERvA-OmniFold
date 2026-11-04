@@ -201,6 +201,287 @@ class Refusals(unittest.TestCase):
         self.assertTrue(np.array_equal(a, b))
 
 
+# ------------------------------------------------------------------------------- ADDENDUM-A1: the pv-ladder truth
+def pvl():
+    p = str(ND / "pv-ladder")
+    if p not in sys.path:
+        sys.path.insert(0, p)
+    import pvl_lib
+    import pvl_ratios
+    return pvl_lib, pvl_ratios
+
+
+def write_pvl_ratio(d: Path, seed: int = 3) -> Path:
+    """A pvl-ratio/1 file written by the production writer (pvl_ratios.write_ratio) on the real L-5D-PV grid, with
+    the keys pvl_ratios.main adds: r positive on every one of the 65,856 cells, 1 on some (unassigned) cells."""
+    L, R = pvl()
+    n = int(np.prod([len(L.FINE[a]) - 1 for a in L.AXES5]))
+    rng = np.random.default_rng(seed)
+    r = rng.uniform(0.6, 1.6, n)
+    r[rng.uniform(size=n) < 0.2] = 1.0
+    name, _ = R.write_ratio(d, "nuwro", "NuWro 21.09 over GENIE 2.12 CV (test)", L.AXES5, r,
+                            {"k": 0.987, "stat_max": 0.05, "source": {"path": "nuwro.npz", "sha256": "0" * 64},
+                             "reference": {"path": "genie_cv.npz", "sha256": "1" * 64}})
+    return d / name
+
+
+def fine_inputs(n: int = 6000, seed: int = 0) -> dict:
+    """MC rows on the pv-ladder's 5D fine grid: most inside, some outside on one axis, some -9999 sentinels, some
+    failing the truth selection; the loader's keys (s5c_unfold.load_inputs) and the npz's axis names."""
+    L, _ = pvl()
+    rng = np.random.default_rng(seed)
+    edges = [np.asarray(L.FINE[a], float) for a in L.AXES5]
+    gen = np.column_stack([rng.uniform(e[0], min(e[-1], e[0] + 3 * (e[1] - e[0]) + 2.0), n) for e in edges])
+    gen[:40, 1] = 70.0          # outside p_parallel
+    gen[40:60] = -9999.0         # truth sentinels
+    reco = gen + rng.normal(0, 0.01, gen.shape)
+    reco[40:60] = gen[40:60]
+    pass_truth = np.ones(n, bool)
+    pass_truth[40:60] = False
+    pass_truth[60:90] = False
+    pass_reco = rng.uniform(size=n) < 0.8
+    shape = tuple(len(e) - 1 for e in edges)
+    return {"MCgen": gen, "MCreco": reco, "measured": reco[:500].copy(), "pass_reco": pass_reco,
+            "pass_truth": pass_truth, "w_truth": rng.uniform(0.5, 1.5, n), "w_reco": rng.uniform(0.2, 1.0, n),
+            "measured_weights": np.ones(500), "denom_nd": rng.uniform(50.0, 80.0, shape), "flux": rng.uniform(1, 2, shape[0]),
+            "data_pot": 1.0e20, "n_nucleons": 3.0e30, "nedges": 5, "edges": edges}
+
+
+def write_npz(path: Path, inp: dict) -> None:
+    arrays = {k: v for k, v in inp.items() if k != "edges"}
+    arrays.update({f"edges_{i}": e for i, e in enumerate(inp["edges"])})
+    arrays["axes"] = np.array(["eavail", "q3", "W"], dtype=object)
+    np.savez(path, **arrays)
+
+
+class PvlTruth(unittest.TestCase):
+    """ADDENDUM-A1 §1: the schema pvl-ratio/1 maps to truth pvl_ratio, which is pvl_lib.row_weight unchanged."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.path = write_pvl_ratio(Path(self.tmp.name))
+        self.ratio = json.loads(self.path.read_text())
+        self.inp = fine_inputs()
+        self.L, _ = pvl()
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def weight(self, inp=None, amplitude=1.0, ratio=None):
+        with probe.pvl_truth():
+            return s5n_pseudo.truth_weight(probe.PVL_TRUTH, inp or self.inp, amplitude, ratio or self.ratio)
+
+    def test_the_real_format_file_names_the_pvl_truth(self):
+        self.assertEqual(self.ratio["schema"], "pvl-ratio/1")
+        self.assertEqual(probe.closure_truth_kind(self.path, "SCHEMA"), probe.PVL_TRUTH)
+
+    def test_the_weight_is_pvl_row_weight_bitwise(self):
+        got = self.weight()
+        want = self.L.row_weight(self.inp["MCgen"], self.L.AXES5, self.ratio, self.inp["pass_truth"])
+        self.assertTrue(np.array_equal(got, want))
+        self.assertGreater(int(np.sum(got != 1.0)), 1000)                  # it reweights
+        self.assertTrue(np.all(got[:90] == 1.0))                            # outside, sentinels, truth-failing: 1
+
+    def test_the_f1_bridge_is_not_the_same_truth(self):
+        # the reason for the mapping: ratio_nd rescales the in-grid total by one constant, so its weights are pvl's
+        # times a constant on the truth-passing rows, not pvl's
+        import s5e_deform
+        import fd_f1_prep
+        bridged = fd_f1_prep.bridge(self.ratio, self.path)
+        rb = s5e_deform.ratio_weight(self.inp["MCgen"], self.inp["edges"], self.inp["w_truth"], bridged, 1.0)
+        rp = self.weight()
+        m = self.inp["pass_truth"] & (rp != 1.0)
+        c = rb[m] / rp[m]
+        np.testing.assert_allclose(c, c[0], rtol=1e-12)
+        self.assertGreater(abs(c[0] - 1.0), 1e-6)
+
+    def test_the_mnvtune_hypothesis_is_exactly_one_so_the_product_is_pvls(self):
+        import s5p_truths
+        hyp = json.loads((REPO / probe.NULL_J_MNVTUNE).read_text())
+        r_h = s5p_truths.hypothesis_weight(self.inp["MCgen"], self.inp["edges"], self.inp["w_truth"], hyp, 1.0)
+        self.assertTrue(np.all(r_h == 1.0))
+        base = dict(self.inp, w_truth=self.inp["w_truth"] * r_h)
+        self.assertTrue(np.array_equal(r_h * self.weight(base), self.weight()))
+
+    def test_it_refuses_what_pvl_unfold_would_not_read(self):
+        with self.assertRaises(ValueError):
+            self.weight(amplitude=0.5)
+        bad = dict(self.inp, edges=[e.copy() for e in self.inp["edges"]])
+        bad["edges"][2][3] += 1e-9
+        with self.assertRaises(ValueError):
+            self.weight(bad)
+        with self.assertRaises(ValueError):
+            self.weight(dict(self.inp, edges=self.inp["edges"][::-1]))
+        with self.assertRaises(ValueError):
+            self.weight(ratio={**self.ratio, "axes": ["eavail", "W"]})
+        with self.assertRaises(ValueError):
+            self.weight(ratio={**self.ratio, "schema": "s5e-shape-ratio/1"})
+
+    def test_it_stays_silent_on_the_declared_file_and_grid(self):
+        self.assertEqual(self.weight().shape, (self.inp["MCgen"].shape[0],))
+
+    def test_the_name_is_restored_and_unknown_outside(self):
+        orig = s5n_pseudo.truth_weight
+        self.weight()
+        self.assertIs(s5n_pseudo.truth_weight, orig)
+        with self.assertRaises(Exception):
+            s5n_pseudo.truth_weight(probe.PVL_TRUTH, self.inp, 1.0, self.ratio)
+
+
+class TruthControl(unittest.TestCase):
+    """ADDENDUM-A1 §2 on a synthetic closure: the queue's closure_nuwro line through the real probe and s5p_nullexp,
+    stopped at the truth; C1 and C2 pass against an F0b product made by pvl_lib.closure_inputs, and fail when the
+    weight or the product differs; C3 is descriptive."""
+
+    def setUp(self):
+        import os
+        import types
+        import s5p_universe
+        self.tmp = tempfile.TemporaryDirectory()
+        r = Path(self.tmp.name)
+        self.L, _ = pvl()
+        self.inp = fine_inputs()
+        write_npz(r / "in.npz", self.inp)
+        nb = 800
+        rng = np.random.default_rng(5)
+        np.savez(r / "bkg.npz", bkg_reco=self.inp["MCreco"][rng.integers(0, 6000, nb)], bkg_w=rng.uniform(0.1, 1, nb),
+                 bkg_nd=np.zeros(1))
+        (r / "bank").mkdir()
+        np.savez(r / "bank" / "cv.npz", MCgen=self.inp["MCgen"])
+        ratio_dir = r / "pvl" / "prep" / "ratios" / "L-5D-PV"
+        ratio_dir.mkdir(parents=True)
+        self.ratio_path = write_pvl_ratio(ratio_dir)
+        loaded = s5c_unfold.load_inputs(r / "in.npz")
+        rw = self.L.row_weight(loaded["MCgen"], self.L.AXES5, json.loads(self.ratio_path.read_text()), loaded["pass_truth"])
+        _, xt = self.L.closure_inputs(loaded, rw)
+        self.xtrue = xt.ravel(order="C")
+        self.product = r / "L-5D-PV_e_closure_nuwro.npz"
+        np.savez(self.product, xsec_flat=self.xtrue * 1.01, xtrue_flat=self.xtrue, shape=np.array(xt.shape))
+        a = types.SimpleNamespace(npz=r / "in.npz", bkg=r / "bkg.npz", bank=r / "bank", detector_dir=r / "det",
+                                  expect_npz_sha256=probe.sha256_path(r / "in.npz"),
+                                  expect_bkg_sha256=probe.sha256_path(r / "bkg.npz"),
+                                  closure_ratio_dir=r / "pvl", runs=r / "runs")
+        lines = probe.task_lines(a)
+        self.queue = r / "dry.tsv"
+        self.queue.write_text("\n".join(l for l in lines if l.split("\t")[0] in probe.DRY_TASKS) + "\n")
+        self.scratch = r / "scratch"
+        self.pins = {"ratio_sha256": probe.sha256_path(self.ratio_path), "product_sha256": probe.sha256_path(self.product)}
+        # the bank's alignment check needs the full bank; it reads nothing the truth uses
+        self.align, s5p_universe.check_alignment = s5p_universe.check_alignment, lambda *a, **k: {}
+        self.cwd = os.getcwd()
+        os.chdir(REPO)
+
+    def tearDown(self):
+        import os
+        import s5p_universe
+        s5p_universe.check_alignment = self.align
+        os.chdir(self.cwd)
+        self.tmp.cleanup()
+
+    def control(self, **kw):
+        import contextlib
+        import io
+        with contextlib.redirect_stderr(io.StringIO()):
+            return probe.truth_control(self.queue, self.product, self.scratch, **{**self.pins, **kw})
+
+    def test_the_declared_closure_passes_and_writes_nothing(self):
+        rec = self.control()
+        self.assertTrue(rec["pass"], rec)
+        self.assertEqual(rec["C1"]["rows_differing"], 0)
+        self.assertGreater(rec["C1"]["rows_reweighted"], 1000)
+        self.assertTrue(rec["C2"]["bitwise"])
+        self.assertEqual(rec["C2"]["zero_pattern_differs"], 0)
+        self.assertGreater(rec["C3"]["max_rel"], 1e-3)  # half B is not the full MC: descriptive, never gated
+        self.assertEqual([p for p in self.scratch.rglob("*") if p.is_file()], [])
+
+    def test_a_weight_that_is_not_pvls_fails_c1(self):
+        real = probe.pvl_ratio_weight
+
+        def off(inputs, amplitude, ratio):
+            w = real(inputs, amplitude, ratio)
+            w[np.flatnonzero(w != 1.0)[0]] *= 1 + 2.0 ** -40
+            return w
+
+        probe.pvl_ratio_weight = off
+        try:
+            rec = self.control()
+        finally:
+            probe.pvl_ratio_weight = real
+        self.assertFalse(rec["C1"]["pass"])
+        self.assertEqual(rec["C1"]["rows_differing"], 1)
+        self.assertFalse(rec["pass"])
+
+    def test_a_product_off_by_more_than_the_tolerance_fails_c2(self):
+        x = self.xtrue.copy()
+        i = int(np.flatnonzero(x)[7])
+        for scale, passes in ((1 + 1e-10, False), (1 + 1e-13, True)):
+            with self.subTest(scale=scale):
+                x2 = x.copy()
+                x2[i] *= scale
+                np.savez(self.product, xsec_flat=x2, xtrue_flat=x2, shape=np.array([1]))
+                rec = self.control(product_sha256=probe.sha256_path(self.product))
+                self.assertTrue(rec["C1"]["pass"])
+                self.assertEqual(rec["C2"]["pass"], passes, rec["C2"])
+                self.assertEqual(rec["pass"], passes)
+
+    def test_a_product_with_another_zero_cell_fails_c2(self):
+        x = self.xtrue.copy()
+        x[int(np.flatnonzero(x)[3])] = 0.0
+        np.savez(self.product, xsec_flat=x, xtrue_flat=x, shape=np.array([1]))
+        rec = self.control(product_sha256=probe.sha256_path(self.product))
+        self.assertFalse(rec["C2"]["pass"])
+        self.assertEqual(rec["C2"]["zero_pattern_differs"], 1)
+
+    def test_it_refuses_unpinned_files_and_a_used_scratch(self):
+        with self.assertRaises(ValueError):
+            self.control(ratio_sha256="0" * 64)
+        with self.assertRaises(ValueError):
+            self.control(product_sha256="0" * 64)
+        self.scratch.mkdir()
+        (self.scratch / "x").write_text("")
+        with self.assertRaises(ValueError):
+            self.control()
+
+    def test_the_default_pins_are_f0s(self):
+        import inspect
+        src = inspect.getsource(probe.truth_control)
+        self.assertIn('fd_f0_regrade.RATIO["closure_nuwro"]', src)
+        self.assertIn('fd_f0_regrade.PINS["closure"]', src)
+        with self.assertRaises(ValueError):  # the synthetic files are not F0's
+            probe.truth_control(self.queue, self.product, self.scratch)
+
+    def test_the_record_carries_no_absolute_value(self):
+        rec = self.control()
+        flat = json.dumps(rec)
+        for v in (float(np.max(self.xtrue)), float(np.min(self.xtrue[self.xtrue > 0]))):
+            self.assertNotIn(repr(v)[:10], flat)
+
+    def test_the_command_exits_by_the_verdict(self):
+        import contextlib
+        import io
+        out = Path(self.tmp.name) / "tc.json"
+        argv = ["truth-control", "--queue", str(self.queue), "--f0b-product", str(self.product), "--scratch",
+                str(self.scratch), "--out", str(out)]
+        saved = dict(fd_f0_regrade.RATIO), dict(fd_f0_regrade.PINS)
+        try:
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(probe.main(argv), 2)  # F0's pins: the synthetic files are refused
+                fd_f0_regrade.RATIO["closure_nuwro"] = self.pins["ratio_sha256"]
+                fd_f0_regrade.PINS["closure"] = self.pins["product_sha256"]
+                self.assertEqual(probe.main(argv), 0)
+                self.assertTrue(json.loads(out.read_text())["pass"])
+                x = self.xtrue.copy()
+                x[int(np.flatnonzero(x)[0])] *= 1 + 1e-9
+                np.savez(self.product, xsec_flat=x, xtrue_flat=x, shape=np.array([1]))
+                fd_f0_regrade.PINS["closure"] = probe.sha256_path(self.product)
+                import shutil
+                shutil.rmtree(self.scratch)
+                self.assertEqual(probe.main(argv), 1)
+        finally:
+            fd_f0_regrade.RATIO.clear(); fd_f0_regrade.RATIO.update(saved[0])
+            fd_f0_regrade.PINS.clear(); fd_f0_regrade.PINS.update(saved[1])
+
+
 class SigmaPin(unittest.TestCase):
     def test_the_committed_receipt_carries_the_pin(self):
         self.assertEqual(probe.sha256_path(REPO / "docs/orchestration/state/s5e/cand/assess_receipt.json"),
@@ -240,7 +521,10 @@ class Tasks(unittest.TestCase):
                                   closure_ratio_dir=Path("/pvl"), runs=Path("/runs"))
         ids = {l.split("\t")[0] for l in probe.task_lines(a) if not l.startswith("#")}
         self.assertLessEqual(set(probe.DRY_TASKS), ids)
-        self.assertEqual(len(probe.DRY_TASKS), probe.LANES)  # one task per lane: the full run's basis
+        # the full run's 8 lanes, plus the control's closure_nuwro: the one task reading the pv-ladder ratio (A1 §3)
+        self.assertEqual(len(probe.DRY_TASKS), probe.LANES + 1)
+        self.assertEqual(probe.DRY_TASKS[-1], probe.TRUTH_CONTROL_TASK)
+        self.assertEqual(probe.TRUTH_CONTROL_TASK, "stab_control_closure_closure_nuwro")
         unfolds = {l.split("\t")[0]: int(l.split("\t")[1]) for l in probe.task_lines(a) if not l.startswith("#")}
         self.assertTrue(all(unfolds[t] == 1 for t in probe.DRY_TASKS))
         self.assertEqual({probe.task_kind(t) for t in probe.DRY_TASKS}, {"stability", "closure"})
@@ -263,7 +547,7 @@ class RealParsers(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             pvl = Path(d) / "pvl" / "prep" / "ratios" / "L-5D-PV"
             pvl.mkdir(parents=True)
-            (pvl / "nuwro.json").write_text(json.dumps({"schema": "s5e-shape-ratio/1"}))
+            write_pvl_ratio(pvl)  # the production writer's format (ADDENDUM-A1 §4), not a stand-in
             a = types.SimpleNamespace(npz=Path("/n.npz"), bkg=Path("/b.npz"), bank=Path("/bank"), detector_dir=Path("/det"),
                                       expect_npz_sha256="a" * 64, expect_bkg_sha256="b" * 64,
                                       closure_ratio_dir=Path(d) / "pvl", runs=Path(d) / "runs")
@@ -500,7 +784,7 @@ class EndToEnd(unittest.TestCase):
                         "pseudo_seed": probe.CLOSURE_SEED, "split_key": 2630545839174644,
                         "hypothesis": {"sha256": an.expected_pin(hyp, REPO)},
                         "alternative": None if alt is None else
-                        {"sha256": an.expected_pin(alt, REPO), "amplitude": amp, "truth": kind if kind != "SCHEMA" else "ratio_nd"}}
+                        {"sha256": an.expected_pin(alt, REPO), "amplitude": amp, "truth": kind if kind != "SCHEMA" else probe.PVL_TRUTH}}
                 if tamper == "hypothesis" and c == "B3a" and name == "W2":
                     meta["hypothesis"] = {"sha256": "0" * 64}
                 if tamper == "candidate" and c == "B3b" and name == "q3":
@@ -517,6 +801,8 @@ class EndToEnd(unittest.TestCase):
                     meta["split_key"] = 1
                 if tamper == "split_key_absent" and name == "W1":  # at every candidate, so the pairing check is blind
                     meta["split_key"] = None
+                if tamper == "pvl_kind" and c == "B2" and name == "closure_nuwro":  # the F1 bridge's kind
+                    meta["alternative"] = {**meta["alternative"], "truth": "ratio_nd"}
                 if tamper == "determinism" and c == "B3b" and name == "A7_mnvtune":
                     b = 0.0100001
                 self.write(self.root / "runs" / c / "closure" / name / "p.npz", xt * (1 + b), meta, xt)
@@ -611,7 +897,7 @@ class EndToEnd(unittest.TestCase):
     def test_the_product_checks_refuse(self):
         for tamper in ("missing_jitter", "hypothesis", "candidate", "expectation", "amplitude", "bootstrap",
                        "stab_truth", "stab_ratio", "stab_seed", "mc_fraction", "split_seed", "split_key", "split_key_absent",
-                       "determinism"):
+                       "determinism", "pvl_kind"):
             with self.subTest(tamper=tamper):
                 import shutil
                 shutil.rmtree(self.root / "runs", ignore_errors=True)
@@ -1021,6 +1307,10 @@ class JobScript(unittest.TestCase):
             "import sys\n"
             f"sys.path.insert(0, {str(ND)!r})\n"
             "import estimator_stability_probe as p\n"
+            "if sys.argv[1] == 'truth-control':  # the control's wiring; TruthControl tests the control itself\n"
+            "    import json, os, pathlib\n"
+            "    pathlib.Path(sys.argv[sys.argv.index('--out') + 1]).write_text(json.dumps({'argv': sys.argv[1:]}))\n"
+            "    sys.exit(int(os.environ.get('STAB_TC_RC', '0')))\n"
             "if sys.argv[1] == 'gate':\n"
             "    sys.exit(p.main(sys.argv[1:]))\n"
             "import time\n"
@@ -1054,6 +1344,8 @@ class JobScript(unittest.TestCase):
                                   expect_npz_sha256="a" * 64, expect_bkg_sha256="b" * 64,
                                   closure_ratio_dir=Path("/pvl"), runs=self.OUT / "runs")
         self.OUT.mkdir()
+        self.F0B = r / "f0b-closure.npz"
+        self.F0B.write_text("stand-in")
         lines = probe.task_lines(a)
         (self.OUT / "queue.tsv").write_text("\n".join(lines) + "\n")
         (self.OUT / "dry.tsv").write_text("\n".join(l for l in lines if l.split("\t")[0] in probe.DRY_TASKS) + "\n")
@@ -1063,11 +1355,12 @@ class JobScript(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def job(self, mode, cap, pin=None):
+    def job(self, mode, cap, pin=None, f0b=True):
         import subprocess
         script = __import__("os").environ.get("STAB_SBATCH", str(ND / "sbatch_fd_stab.sh"))  # the harness's mutant
+        extra = [str(self.F0B)] if mode == "dry" and f0b else []
         return subprocess.run(["bash", script, mode, str(self.D), pin or self.pin, str(self.OUT),
-                               str(cap)], capture_output=True, text=True, env=self.env, timeout=600)
+                               str(cap)] + extra, capture_output=True, text=True, env=self.env, timeout=600)
 
     def test_dry_then_full(self):
         p = self.job("dry", 8.0)
@@ -1076,6 +1369,9 @@ class JobScript(unittest.TestCase):
         self.assertEqual(sorted(x.stem for x in L.glob("*.end")), sorted(probe.DRY_TASKS))
         self.assertIn("RAN --candidate B2 closure --", (L / "tasks" / "stab_B2_closure_nominal.log").read_text())
         self.assertTrue((L / "DONE").exists())
+        tc = json.loads((L / "truth-control.json").read_text())["argv"]  # the control ran, on this run's files
+        self.assertEqual(tc[tc.index("--queue") + 1], str(self.OUT / "dry.tsv"))
+        self.assertEqual(tc[tc.index("--f0b-product") + 1], str(self.F0B))
         dry_end = (L / "stab_B2_closure_nominal.end").read_text()
         p = self.job("full", 7.25)
         self.assertEqual(p.returncode, 0, p.stderr)
@@ -1093,6 +1389,27 @@ class JobScript(unittest.TestCase):
         self.assertTrue((L / "STOP").exists())
         self.assertEqual(list(L.glob("*.end")), [])
         self.assertEqual(list((L / "tasks").glob("*.log")), [])
+
+    def test_a_failed_truth_control_stops_the_dry_run_before_any_task(self):
+        self.env["STAB_TC_RC"] = "1"
+        p = self.job("dry", 8.0)
+        self.assertEqual(p.returncode, 1, p.stderr)
+        L = self.OUT / "log-dry"
+        self.assertIn("truth control", (L / "STOP").read_text())
+        self.assertEqual(list(L.glob("*.end")) + list(L.glob("*.start")), [])
+        self.assertEqual(list((L / "tasks").glob("*.log")), [])
+        self.assertFalse((L / "DONE").exists())
+        self.assertEqual(self.job("full", 7.25).returncode, 2)
+
+    def test_a_refused_truth_control_stops_too(self):
+        self.env["STAB_TC_RC"] = "2"
+        self.assertEqual(self.job("dry", 8.0).returncode, 1)
+        self.assertFalse((self.OUT / "log-dry" / "DONE").exists())
+
+    def test_a_dry_run_without_the_f0b_product_refuses(self):
+        p = self.job("dry", 8.0, f0b=False)
+        self.assertEqual(p.returncode, 2)
+        self.assertFalse((self.OUT / "log-dry").exists())
 
     def test_full_refuses_without_a_clean_dry_run(self):
         self.assertEqual(self.job("full", 7.25).returncode, 2)

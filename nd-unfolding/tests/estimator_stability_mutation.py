@@ -17,7 +17,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_estimator_stability_probe.py"
 P, A, S = "estimator_stability_probe.py", "estimator_stability_analyze.py", "sbatch_fd_stab.sh"
-EXPECTED_TESTS = 94  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
+EXPECTED_TESTS = 112  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
 MUTATIONS = [
     ("in-fold prediction", P, "rows = self.folds[:m] == f", "rows = self.folds[:m] != f",
      "test_every_evaluated_row_is_predicted_by_a_model_that_did_not_train_on_it"),
@@ -157,6 +157,53 @@ MUTATIONS = [
      "    if a.receipt is not None and Path(a.receipt).resolve() != derived:\n",
      "    if a.receipt is not None and Path(a.receipt) != derived:\n",
      "test_the_receipt_is_this_runs"),
+    # ADDENDUM-A1: the pv-ladder truth mapping, the truth control, the dry run and the analysis's kind check
+    ("pvl-ratio/1 mapped to the bridge's ratio_nd (A1)", P, '"pvl-ratio/1": PVL_TRUTH}', '"pvl-ratio/1": "ratio_nd"}',
+     "test_the_real_format_file_names_the_pvl_truth"),
+    ("the mapping rescales the total as ratio_nd does (A1)", P,
+     '    return L.row_weight(inputs["MCgen"], names, ratio, inputs["pass_truth"])\n',
+     '    w = L.row_weight(inputs["MCgen"], names, ratio, inputs["pass_truth"])\n'
+     '    return w * (inputs["w_truth"].sum() / (inputs["w_truth"] * w).sum())\n',
+     "test_the_weight_is_pvl_row_weight_bitwise"),
+    ("the mapping takes any amplitude (A1)", P, "    if amplitude != 1.0:\n", "    if False:\n",
+     "test_it_refuses_what_pvl_unfold_would_not_read"),
+    ("the mapping takes any grid (A1)", P, "    if len(edges) != len(names) or not all(", "    if False and not all(",
+     "test_it_refuses_what_pvl_unfold_would_not_read"),
+    ("the closure runs without the pvl truth (A1)", P, "        with pvl_truth():\n            return s5p_nullexp.main(rest)\n",
+     "        return s5p_nullexp.main(rest)\n", "test_the_declared_closure_passes_and_writes_nothing"),
+    ("the truth name not restored (A1)", P, "        s5n_pseudo.truth_weight = orig\n\n\ndef candidate_tasks",
+     "        pass\n\n\ndef candidate_tasks", "test_the_name_is_restored_and_unknown_outside"),
+    ("C1 not gated (A1)", P, '    c1["pass"] = bool(same_shape and c1["rows_differing"] == 0)\n', '    c1["pass"] = True\n',
+     "test_a_weight_that_is_not_pvls_fails_c1"),
+    ("C1 compares the weight with itself (A1)", P,
+     '    r_pvl = L.row_weight(inputs["MCgen"], names, json.loads(ratio_path.read_text()), inputs["pass_truth"])\n',
+     "    r_pvl = r.copy()\n", "test_a_weight_that_is_not_pvls_fails_c1"),
+    ("C2 tolerance loosened (A1)", P, "TRUTH_CONTROL_TOL = 1e-12", "TRUTH_CONTROL_TOL = 1e-9",
+     "test_a_product_off_by_more_than_the_tolerance_fails_c2"),
+    ("C2 zero cells unchecked (A1)", P, 'c2["shape_matches"] and c2["zero_pattern_differs"] == 0 and', 'c2["shape_matches"] and',
+     "test_a_product_with_another_zero_cell_fails_c2"),
+    ("C2 against the half-B truth (A1)", P, "    c2 = _relative(x_full, ref)\n", '    c2 = _relative(seen["x_half"], ref)\n',
+     "test_the_declared_closure_passes_and_writes_nothing"),
+    ("the verdict ignores C2 (A1)", P, '"pass": c1["pass"] and c2["pass"],', '"pass": c1["pass"],',
+     "test_a_product_off_by_more_than_the_tolerance_fails_c2"),
+    ("the control's pins unchecked (A1)", P, "        if sha256_path(path) != want:\n", "        if False:\n",
+     "test_it_refuses_unpinned_files_and_a_used_scratch"),
+    ("the control's product pin not F0's (A1)", P, 'fd_f0_regrade.PINS["closure"]\n', 'fd_f0_regrade.PINS["floor"]\n',
+     "test_the_default_pins_are_f0s"),
+    ("a used scratch admitted (A1)", P, "    if scratch.exists() and any(scratch.iterdir()):\n", "    if False:\n",
+     "test_it_refuses_unpinned_files_and_a_used_scratch"),
+    ("the control's exit ignores its verdict (A1)", P, '        return 0 if rec["pass"] else 1\n', "        return 0\n",
+     "test_the_command_exits_by_the_verdict"),
+    ("closure_nuwro not in the dry run (A1)", P, '"stab_B3b_closure_nominal", TRUTH_CONTROL_TASK)', '"stab_B3b_closure_nominal")',
+     "test_the_dry_run_tasks_are_queue_tasks"),
+    ("the dry run ignores the truth control (A1)", S, "    tc=$?\n", "    tc=0\n",
+     "test_a_failed_truth_control_stops_the_dry_run_before_any_task"),
+    ("the dry run without the F0b product (A1)", S, '          [ -s "$F0B" ] ||', "          true ||",
+     "test_a_dry_run_without_the_f0b_product_refuses"),
+    ("the schema-named closure's kind exempt again (A1)", A, '                or got_alt.get("truth") != want_kind:',
+     '                or (kind != "SCHEMA" and got_alt.get("truth") != want_kind):', "test_the_product_checks_refuse"),
+    ("the schema-named closure wants ratio_nd (A1)", A, "want_kind = probe.PVL_TRUTH if", 'want_kind = "ratio_nd" if',
+     "test_the_product_checks_stay_silent_without_tampering"),
 ]
 
 
