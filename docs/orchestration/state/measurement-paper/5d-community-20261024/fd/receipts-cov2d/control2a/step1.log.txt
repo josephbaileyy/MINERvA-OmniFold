@@ -1,0 +1,8 @@
+read: cv=/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root
+read: atime_ns before=1792770770214610703 after=1792770770214610703
+read: dataPOTUsed {'dtype': '<f8', 'shape': [], 'sha256': '7224b6b63888a04930cdbc2754090406ef10900010f532e13ddc4707c9c9ae6e'}
+read: measured {'dtype': '<f8', 'shape': [4119797], 'sha256': '44d27c02ea156229e5e737c2e9bcead1241d945fe191d28e5108d78803f41d23'}
+read: measured_pass {'dtype': '|u1', 'shape': [4119797], 'sha256': '1beb65683d0e59aa646e89a24e6e844f5a6a84df0af21f9dc933120a2eaa3dc4'}
+read: measured_pz {'dtype': '<f8', 'shape': [4119797], 'sha256': '58c625229dc9a2e57e488a660bcafe0a8322d4be61c8dc10b5013600bcbdc555'}
+read: rows=4119797 dataPOTUsed=1.057394261158926e+21
+READ npz_sha256=6e19e64516fcdf5079a31362a1d3b8334218fa59d3f0654f4ac85a1c42838daf manifest_sha256=578c3e959416efe13daa1a5105dd19df0e9690174274776445e10c5904a201c4

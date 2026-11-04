@@ -1,0 +1,9 @@
++ hostname
+login23
++ sha256sum /dev/shm/josephrb-cov2d-e3.sh
+0f8976b5ad123b14d74334f75732763da081c98bf0a7bc66e2a32d66357b082c  /dev/shm/josephrb-cov2d-e3.sh
++ rm -f /dev/shm/josephrb-cov2d-e3.sh
+rc=0
++ echo rc=0
++ ls -d /dev/shm/josephrb-cov2d-e3.sh
+ls: cannot access '/dev/shm/josephrb-cov2d-e3.sh': No such file or directory

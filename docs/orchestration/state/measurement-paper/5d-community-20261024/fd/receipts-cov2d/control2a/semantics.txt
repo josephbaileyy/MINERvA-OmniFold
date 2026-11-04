@@ -1,0 +1,8 @@
+E1 three plain Writes then one kOverwrite: [('data', 3), ('data', 2), ('data', 1)]
+E2 autosave every 200 entries, plain: [('data', 12), ('data', 11)]
+E2 autosave every 200 entries, overwrite: [('data', 1)]
+E2 autosave every 200 entries, autosave0: [('data', 1)]
+E2 autosave every 200 entries, both: [('data', 1)]
+E3 ROOT.TTree replaced: True
+E3 bound write_data_file under the factory: [('data', 12), ('data', 11), ('dataPOTUsed', 1)]
+E3 restored: True

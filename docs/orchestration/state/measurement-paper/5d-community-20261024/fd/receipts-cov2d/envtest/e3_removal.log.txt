@@ -1,0 +1,33 @@
++ hostname
+login23
++ date -u +%FT%TZ
+2026-11-03T23:51:51Z
++ du -sh /pscratch/sd/j/josephrb/cov2d-e3
+92K	/pscratch/sd/j/josephrb/cov2d-e3
++ rm -rf /pscratch/sd/j/josephrb/cov2d-e3
+rc_pscratch=0
++ echo rc_pscratch=0
++ ls -d /pscratch/sd/j/josephrb/cov2d-e3
+ls: cannot access '/pscratch/sd/j/josephrb/cov2d-e3': No such file or directory
++ ssh -o BatchMode=yes -o LogLevel=QUIET login02 'set -x; hostname; sha256sum /dev/shm/josephrb-cov2d-e3.sh; rm -f /dev/shm/josephrb-cov2d-e3.sh; echo rc_script=$?; ls -la /dev/shm | grep -c josephrb; ps -u josephrb -o pid,args | grep -c cov2d-e3'
++ hostname
+login02
++ sha256sum /dev/shm/josephrb-cov2d-e3.sh
+0f8976b5ad123b14d74334f75732763da081c98bf0a7bc66e2a32d66357b082c  /dev/shm/josephrb-cov2d-e3.sh
++ rm -f /dev/shm/josephrb-cov2d-e3.sh
+rc_script=0
++ echo rc_script=0
++ ls -la /dev/shm
++ grep -c josephrb
+0
++ ps -u josephrb -o pid,args
++ grep -c cov2d-e3
+2
+login02
+    PID    PPID     ELAPSED COMMAND
+1265158       1       00:19 /usr/lib/systemd/systemd --user
+1265178 1265158       00:19 (sd-pam)
+1287864 1286516       00:02 sshd: josephrb@notty
+1287953 1287864       00:02 bash -c hostname; ps -u josephrb -o pid,ppid,etime,args | cut -c1-110
+1290877 1287953       00:00 ps -u josephrb -o pid,ppid,etime,args
+1290880 1287953       00:00 cut -c1-110

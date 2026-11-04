@@ -1,0 +1,15 @@
+test_clipped_and_recorded (test_cov2d_writer.Counts) ... ok
+test_expand (test_cov2d_writer.Counts) ... ok
+test_signal_drawn_before_background (test_cov2d_writer.Counts) ... ok
+test_control_fires_on_a_changed_row (test_cov2d_writer.File) ... skipped 'needs PyROOT and uproot'
+test_control_fires_on_a_dropped_row (test_cov2d_writer.File) ... skipped 'needs PyROOT and uproot'
+test_control_fires_on_a_leaf_type (test_cov2d_writer.File) ... skipped 'needs PyROOT and uproot'
+test_control_fires_on_the_parameter (test_cov2d_writer.File) ... skipped 'needs PyROOT and uproot'
+test_control_passes_on_the_writer (test_cov2d_writer.File) ... skipped 'needs PyROOT and uproot'
+test_refuses_unequal_columns (test_cov2d_writer.File) ... skipped 'needs PyROOT and uproot'
+test_schema_and_parameter (test_cov2d_writer.File) ... skipped 'needs PyROOT and uproot'
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.061s
+
+OK (skipped=7)

@@ -1,0 +1,7 @@
+cov2d_writer blob at M: 2402ed4b656cfc9e0bfcaf32e1870672cfb9074d
+bound write: 6s
+bound keys: [('data', 3, 'TTree', 8901), ('data', 2, 'TTree', 8863), ('dataPOTUsed', 1, 'TParameter<double>', 94)]
+bound tree: entries, fAutoSave, fAutoFlush, zipbytes = (4119797, 1939140, 1939140, 63732880)
+autosave0 keys: [('data', 1, 'TTree', 8883), ('dataPOTUsed', 1, 'TParameter<double>', 94)]
+overwrite keys: [('data', 1, 'TTree', 8882), ('dataPOTUsed', 1, 'TParameter<double>', 94)]
+both keys: [('data', 1, 'TTree', 8880), ('dataPOTUsed', 1, 'TParameter<double>', 94)]

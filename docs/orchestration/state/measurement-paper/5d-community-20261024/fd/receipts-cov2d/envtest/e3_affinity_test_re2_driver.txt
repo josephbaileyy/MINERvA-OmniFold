@@ -1,0 +1,16 @@
+23:46:32 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:46:55 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:47:18 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:47:41 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:48:03 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:48:26 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:48:50 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:49:00 pid=105092 kind=driver threads=4 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -c import sys, runpy; sys.path.insert(0, '/dev/shm/josephrb-cov2d-e3/deploy/unbinn
+23:49:14 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:49:25 pid=112705 kind=driver threads=1 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -c import sys, runpy; sys.path.insert(0, '/dev/shm/josephrb-cov2d-e3/deploy/unbinn
+23:49:37 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:49:48 pid=120279 kind=driver threads=1 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -c import sys, runpy; sys.path.insert(0, '/dev/shm/josephrb-cov2d-e3/deploy/unbinn
+23:50:00 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:50:13 pid=127701 kind=driver threads=1 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -c import sys, runpy; sys.path.insert(0, '/dev/shm/josephrb-cov2d-e3/deploy/unbinn
+23:50:29 pid=53094 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_driver 
+23:50:58 pid=134369 kind=driver threads=1 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -c import sys, runpy; sys.path.insert(0, '/dev/shm/josephrb-cov2d-e3/deploy/unbinn

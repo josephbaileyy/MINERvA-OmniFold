@@ -1,0 +1,26 @@
+test_a_raising_module_global_reaches_the_write (test_control2a_split.Split.test_a_raising_module_global_reaches_the_write) ... ok
+test_check_fails_when_the_file_changes_under_it (test_control2a_split.Split.test_check_fails_when_the_file_changes_under_it) ... ok
+test_check_fails_when_the_stub_is_not_called (test_control2a_split.Split.test_check_fails_when_the_stub_is_not_called) ... ok
+test_check_refuses_a_file_that_is_not_the_write_steps (test_control2a_split.Split.test_check_refuses_a_file_that_is_not_the_write_steps) ... ok
+test_fails_on_a_dropped_row (test_control2a_split.Split.test_fails_on_a_dropped_row) ... ok
+test_fails_on_a_leaf_type (test_control2a_split.Split.test_fails_on_a_leaf_type) ... ok
+test_fails_on_negative_zero_turned_positive (test_control2a_split.Split.test_fails_on_negative_zero_turned_positive) ... ok
+test_fails_on_one_changed_row (test_control2a_split.Split.test_fails_on_one_changed_row) ... ok
+test_fails_on_the_pot (test_control2a_split.Split.test_fails_on_the_pot) ... ok
+test_reach_fails_on_each_other_path (test_control2a_split.Split.test_reach_fails_on_each_other_path) ... ok
+test_reach_passes_on_m (test_control2a_split.Split.test_reach_passes_on_m) ... ok
+test_split_file_equals_the_single_process_file (test_control2a_split.Split.test_split_file_equals_the_single_process_file) ... tree data: entries CV=2345 UNI=2345 branches CV=3 UNI=3 shared=3
+  shared: ['measured', 'measured_pass', 'measured_pz']
+  rows 0..2345 of 2345 done utc=23:44:44Z
+ok
+test_split_passes_with_the_digest_chain (test_control2a_split.Split.test_split_passes_with_the_digest_chain) ... ok
+test_write_refuses_a_wrong_npz_or_manifest_digest (test_control2a_split.Split.test_write_refuses_a_wrong_npz_or_manifest_digest) ... ok
+test_write_refuses_an_array_unequal_to_the_read_steps (test_control2a_split.Split.test_write_refuses_an_array_unequal_to_the_read_steps) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 18.514s
+
+OK
+  EQUAL  data.measured rows=2345 bitwise_diff=0 value_diff=0 sha256 CV=99f6f3d046991121 UNI=99f6f3d046991121
+  EQUAL  data.measured_pass rows=2345 bitwise_diff=0 value_diff=0 sha256 CV=974b5c641c66a385 UNI=974b5c641c66a385
+  EQUAL  data.measured_pz rows=2345 bitwise_diff=0 value_diff=0 sha256 CV=a4d027af2bb09902 UNI=a4d027af2bb09902

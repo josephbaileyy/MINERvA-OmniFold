@@ -1,0 +1,2 @@
+[2026-11-03T23:39:32.249] error: Unable to create TMPDIR [/dev/shm/josephrb-cov2d-e3/tmp]: No such file or directory
+[2026-11-03T23:39:32.249] error: Setting TMPDIR to /tmp
