@@ -2,6 +2,7 @@
 """1B A2.1: the large-sample calibration's rerun at the final H1 code against job 60783756's record (the director's
 ruling of 2026-11-04). Fixed before the rerun, from a walk of d4a4739e's 2,671 leaves (calibN-keys.txt):
 
+* --old must be job 60783756's record: its json, npz and out must hash to OLD_SHA256, or nothing is compared;
 * calibration.npz must be bitwise equal (numpy writes its zip entries at a fixed 1980 timestamp);
 * calibration.json must be equal, as canonical bytes, after deleting exactly the EXCLUDE paths, each of which must
   exist in both records. The new fd_1b_mc.py digest is not merely deleted: it must be the --expect-mc-sha256 given;
@@ -22,6 +23,13 @@ from pathlib import Path
 EXCLUDE = (("atime", "files", "*", "atime_ns_first"), ("atime", "files", "*", "atime_ns_now"),
            ("timing", "seconds"), ("timing", "set_seconds_measured"), ("timing", "projected_seconds"),
            ("code_sha256", "fd_1b_mc.py"))
+
+
+# job 60783756's record (a2-1/calibN-run at 20b5fab6): --old must be these bytes, or nothing is compared (the audit's
+# finding at 48ca04a1: an altered old copy and a matching new one would otherwise PASS)
+OLD_SHA256 = {"calibration.json": "d4a4739e59ffdd6a84f8422b48084ad0e381534d64fea44f126276aad3f92c1e",
+              "calibration.npz": "9047a6f730ca41cda8a0c6d7b60aac19ba10c04f8ab6a6b13a279a5835291a70",
+              "calibration.out": "965062ddb6fcd98a7ba8c7f50e20074005e0334b85ecb5bd9916999b048c3d58"}
 
 
 def leaves(o, path=()):
@@ -62,6 +70,9 @@ def stripped(rec: dict) -> tuple[dict, dict]:
 
 
 def compare(old: Path, new: Path, expect_mc: str) -> list[str]:
+    bad = sorted(n for n, h in OLD_SHA256.items() if hashlib.sha256((old / n).read_bytes()).hexdigest() != h)
+    if bad:
+        return [f"--old is not job 60783756's record: {bad} differ from OLD_SHA256; nothing compared"]
     stops = []
     for name in ("calibration.npz",):
         a, b = (hashlib.sha256((d / name).read_bytes()).hexdigest() for d in (old, new))
@@ -117,8 +128,8 @@ def self_test(old: Path) -> int:
     mc0 = rec0["code_sha256"]["fd_1b_mc.py"]
     first_file = next(iter(rec0["atime"]["files"]))
 
-    def case(edit_json=None, edit_npz=False, edit_out=False, expect=mc0):
-        with tempfile.TemporaryDirectory() as d:
+    def case(edit_json=None, edit_npz=False, edit_out=False, expect=mc0, old_too=False):
+        with tempfile.TemporaryDirectory() as d, tempfile.TemporaryDirectory() as d_old:
             new = Path(d)
             for name in ("calibration.json", "calibration.npz", "calibration.out"):
                 shutil.copyfile(old / name, new / name)
@@ -132,7 +143,12 @@ def self_test(old: Path) -> int:
                 (new / "calibration.npz").write_bytes(bytes(raw))
             if edit_out:
                 (new / "calibration.out").write_bytes((new / "calibration.out").read_bytes().replace(b"s=0.92", b"s=0.93"))
-            return compare(old, new, expect)
+            base = old
+            if old_too:                                  # the same edit to a copy of old: only OLD_SHA256 stops it
+                base = Path(d_old)
+                for name in ("calibration.json", "calibration.npz", "calibration.out"):
+                    shutil.copyfile(new / name, base / name)
+            return compare(base, new, expect)
 
     def put(*path, value):
         def f(rec):
@@ -156,11 +172,15 @@ def self_test(old: Path) -> int:
              "timing.fine_cells_kept": case(put("timing", "fine_cells_kept", value=1)),
              "atime.moved": case(put("atime", "moved", value=[first_file])),
              "an atime file key dropped": case(lambda r: r["atime"]["files"].pop(first_file)),
+             "an atime file key renamed, count kept": case(lambda r: r["atime"]["files"].__setitem__(
+                 first_file + ".renamed", r["atime"]["files"].pop(first_file))),
              "fd_1b_c2.py digest": case(put("code_sha256", "fd_1b_c2.py", value="0" * 64)),
              "an added key": case(put("host", value="nid0")),
              "fd_1b_mc.py digest, not expected": case(put("code_sha256", "fd_1b_mc.py", value="e" * 64)),
              "npz one byte": case(edit_npz=True),
-             "verdict line": case(edit_out=True)}
+             "verdict line": case(edit_out=True),
+             "an altered old copy, matched by the new": case(put("rule", "s", value=0.5), old_too=True),
+             "an altered old npz, matched by the new": case(edit_npz=True, old_too=True)}
     bad = 0
     for name, got in passes.items():
         bad += bool(got)

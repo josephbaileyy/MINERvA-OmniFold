@@ -19,6 +19,32 @@ change to S1, or a verdict on 1B's coverage.
   - (iii) max |r − 1| ≤ 0.35.
 
   The calibration comes first.
+- **Joseph's large-sample gate** (`DECISION-20261104-joseph-1b-large-sample-gate.md`, #740, merged `7d798c3d`).
+  This amends #724 after the 300-draw calibration (§8). Per truth, the gate reads the clipped law on a separate
+  sample of about 3,000 draws, whose first 300 are the declared draws. (ii) and (iii) are recalibrated by null
+  simulation at N to a joint noise-only STOP of at most 1 % over three truths, with (i) fixed. The gate must reach
+  80 % power per truth against a uniform 8 % deflation. The large-N law control and linearisation come first. A
+  loose backstop runs on the 300 declared draws, and a config hash is shared with the coverage draws.
+- **The director's P1–P7 for that decision (2026-11-04, from correspondence):**
+  - P1: GATE_N = 3,000. The gate seeds are the declared toys' 300, then GATE_SEED_BASE (G18 3,680,000, AR23
+    3,690,000, plug-in 3,700,000).
+  - P2: one multiple s on a 0.01 grid from 0.50 to 3.00. (ii) is at s·3.5·SD_ii(N), (iii) by (α) at s·4.3·SD_c(N),
+    and the smallest s with a joint union ≤ 1 % is taken. Until the plug-in is calibrated it is projected as the
+    mean of the other two, labelled.
+  - P3: band_reference is the law's exact variance, so the reference carries no noise.
+  - P4: the power is ≥ 80 % per truth against a uniform 8 %. Otherwise N goes to 6,000, then 12,000, each priced to
+    the director. Concentrated deflations of 1, 2 and 4 cells at 20, 15 and 10 %, in 16 placements, are reported.
+  - P5: the controls at N come first.
+  - P6: the backstop is (i) at k = 2 and (iii) by (α) at 4.3·SD_c from the 300-draw calibration; a failure is a hard
+    STOP. The config hash is shared.
+  - P7: the cap is 1.5 node-h, about 0.7 expected, with a report if the run exceeds 1.0.
+- **The bound gate's H1–H3 (the audit's review at `b9bd3158`; the director's rulings):**
+  - H1: a hand-written record of the right form passes every field check, so the bulk admits only the record whose
+    sha256 binding 3 declares. At `2c882d27` the audit found that a digest held in hashed code would need a sha256
+    fixed point. The director ruled a one-line pins file outside every hashed byte, `a2-1/BOUND_GATE.sha256`, which
+    binding 3 commits.
+  - H2: the calibration, the union, the power, the backstop and the config hash are re-verified at launch.
+  - H3: c2check's own record round-trips through the gate.
 - **The director's rulings of 2026-11-03 and 2026-11-04, from correspondence:**
   - #724 applies to the clipped ratio, and the multiplicative ratio is descriptive.
   - The calibration reports (a)–(c), with (c)(iii) = (α), and (β) and (γ) descriptive.
@@ -43,15 +69,35 @@ change to S1, or a verdict on 1B's coverage.
   - `xt_flat` and `xt_packed`, which equal `true_xsec` bitwise;
   - `prepare`, shared by the calibration and `c2check`;
   - the calibration job;
-  - `c2_truth`, `c2_block`, `row_match` and `c2check_main`.
+  - `c2_truth`, `c2_block`, `row_match` and `c2check_main`;
+  - the large-sample gate:
+    - `gate_seeds` (P1);
+    - `null_stats`, `stops_at` and `threshold_rule`, which select s (P2);
+    - `power_at` (P4);
+    - `calibration_verdict_n`;
+    - `gate_n`, the gate at the calibrated thresholds;
+    - `backstop` (P6);
+    - `config_hash` over `gate_code_digests()`, the inputs, the clip rule, the draw salt and the declared seeds.
+
+    c2check refuses a gate sample whose first 300 differ from the declared draws.
 - **`fd_1b_cvdenom.py`:** the CV per-row denominator read.
 - **`fd_1b_binning.py`:** the director's items 3 and 4.
 - **`fd_1b_mc.py`:**
   - S2's bound gate, `check_clip_gate`:
     - under `data`, only `pre_gate_items()` run;
-    - under `nature`, only `BULK_ROLES` run, on `c2check`'s record pinned by digest and bound to the run (its schema,
-      PASS and "option (1)", this truth's reading, the declared seeds, `gate_code_digests()`, the inputs and a
-      calibration digest);
+    - under `nature`, only `BULK_ROLES` run, on `c2check`'s record pinned by digest and bound to the run. The
+      checks are:
+      - its schema, PASS and "option (1)";
+      - this truth's reading;
+      - the declared seeds;
+      - `gate_code_digests()`;
+      - the inputs;
+      - a calibration digest;
+      - (H2) the calibration CALIBRATED and named, its three-truth union measured and ≤ 1 %, its power met, the
+        backstop passed at every truth, and the config hash equal to this run's;
+    - (H1) the declared digest is read by `bound_gate_sha256()` from `GATE_PIN`. A missing, malformed or different pins
+      file refuses. The file's git blob goes into each product's meta (`gate_pin_blob`). No pins file is committed, so
+      the bulk refuses today;
     - the stub's three-field file alone refuses;
   - C2's `nature` rule in `clip_draw`;
   - the denominator's row clip;
@@ -110,6 +156,7 @@ All runs used a fresh clone at the bound commit, with its sha verified on the no
 | binning, 2 | `663a7609` | login23, 23:54Z | `ValueError("ratio_nd")`, before measuring anything |
 | binning, 3 | `917907aa` | login23, 2026-11-04 00:02–00:03Z | items 3 and 4 measured (§4; the director's message of 2026-11-04) |
 | calibration, G18 and AR23 | `02e71a0b` | job 60771025, nid006700, 02:10–02:32Z | TO_JOSEPH: (b)'s two-truth union 18.9 % (§8) |
+| large-sample calibration, G18 and AR23 | `51d67b54` | job 60783756, nid004331, 06:35:57–07:19:12Z | CALIBRATED (G18 and AR23 measured, the plug-in projected), s = 0.92 (§8b) |
 
 ## 7. The mock audit (the director's request, 2026-11-04)
 
@@ -220,9 +267,124 @@ at `02e71a0b`, about 0.36 node-h of the 4.0 cap.
 - **The floor:** (i) or (iii) alone stops 0.26–0.27 % per truth.
 - **The audit's reading** (arithmetic, an input and not a recommendation): this is a power limit of 300 draws.
 
+## 8b. The large-sample calibration (Joseph's decision of 2026-11-04; P1–P7)
+
+**The design:** the 300-draw calibration's nulls and controls, at GATE_N = 3,000 draws per set, 10⁴ sets per truth,
+then the s rule (P2) and power (P4).
+
+**The run.** It was job 60783756: one regular CPU node (nid004331), 2026-11-04 06:35:57–07:19:12Z, 43:15 (2,595 s),
+at `51d67b54`.
+- **Cost:** 0.721 node-h, against P7's 1.0 report line and 1.5 cap. m3246's uncharged balance went from 2,036.5 to
+  2,035.8 (iris).
+- **Records:** `calibN-run/calibration.json` `d4a4739e…` and `calibration.npz` `9047a6f7…` (committed at `20b5fab6`).
+- **Cost guard:** one set took 2.52 s, projected 2,043 s against 2,565 s actual.
+- **Checks:** no atime moved among 709 files; D8, 0 rows with r < 0; check D, no detector denominator off the CV's.
+- **Peak memory:** the python process peaked at 10.0 GB (`time -v`). The batch step's MaxRSS was 131 GB.
+
+**The readout:**
+
+| | G18 | AR23 |
+|---|---:|---:|
+| law control, max \|z\| (against 4) | 2.11 | 1.85 |
+| linearisation, max \|mean r − 1\| (against 0.02) | 0.0058 | 0.0055 |
+| SD_ii, the mean log ratio's null SD | 0.01329 | 0.01354 |
+| SD_c, per cell, min to max | 0.0161–0.0251 | 0.0160–0.0251 |
+| (ii) threshold at s = 0.92 | 0.04278 | 0.04361 |
+| (iii) by (α), at s·4.3 | 3.956 SD_c | 3.956 SD_c |
+| noise-only STOP at s = 0.92 | 0.34 % (34 / 10⁴) | 0.26 % (26 / 10⁴) |
+| power, uniform 8 % (≥ 80 %) | 99.68 % | 99.70 % |
+| power, 4 cells at 10 %, min / mean over 16 placements | 96.2 % / 98.1 % | 96.0 % / 97.8 % |
+| power, 1 cell at 20 % and 2 cells at 15 % | 100 % | 100 % |
+
+- **s = 0.92** is the first grid point whose projected three-truth union is at most 1 %: 0.897 %, against 1.076 %
+  at 0.91. The projection is labelled: "the plug-in's per-truth rate as the mean of the others', independent".
+- **The measured two-truth union** is 0.59 % ± 0.08, per replicate. The audit's product of the marginals is 0.599 %.
+- **(i) alone** stops none of the 2 × 10⁴ sets at N.
+- **#724's fixed numbers at N:** union 0 at both truths. That is (b) at N, for comparison with §8.
+- **Reproduced:** `threshold_rule` on the npz gives the record's s, grid and thresholds exactly, both locally and by
+  the audit.
+- **Not citable as a bulk admission.** `check_clip_gate` refuses a record whose three-truth union is not measured.
+  The plug-in's calibration after B4 and the P1 capture is required, and s may move then.
+  <!-- absence-ok: states check_clip_gate's refusal rule (fd_1b_mc.py:954 at 48ca04a1) and this record's own field ("three_truths_measured": false, calibN-run/calibration.json:5674 at 20b5fab6); the plug-in's calibration is declared to follow B4 (§1, P2), so no result is claimed absent -->
+- **Sampling sensitivity (the audit, for information).** The margin is about one SE, so another seed set could
+  plausibly pick 0.91 or 0.93. A split-half check shows no systematic in-sample optimism: G18 0.42 → 0.28 %, AR23
+  0.24 → 0.26 %. The rule is a point-estimate rule, as ruled. The director carries this to Joseph as reported, not
+  adjusted.
+
+**The rerun at the final code (the director's ruling).** fd_1b_mc.py changed in the gate path after `51d67b54`
+(H1, at `48ca04a1`). So the calibration reruns at the code binding 3 binds, with the same job script
+(`sbatch-calibrate.sh` `a12799a4`) and the same seeds. `a2-1/compare_calibN.py` holds the rerun to `d4a4739e…`:
+- `--old` must hash to job 60783756's record;
+- the npz must be bitwise equal;
+- the JSON must be canonical-equal after deleting exactly the pre-declared environment paths (listed in
+  `calibN-keys.txt`), with the new fd_1b_mc.py digest checked against its expected value;
+- the verdict line must be equal byte for byte.
+
+Any other difference is a STOP to the director.
+
 ## 9. Tests and mutation (to come)
 
 The owed mutation work, going into A2.1's receipt:
 - the mutant that restores the absolute-tolerance U check;
 - re-anchoring `mutation_mc.py:69/82` and `mutation_mc_a2.py:81/94`;
 - mutants for #724 (i)–(iii), in both directions.
+
+## 10. The stage 1 tables under S2 (the director's ruling (A), 2026-11-04)
+
+**The question,** left to A2.1 by amendment 2: how S1-0's and S1-0b's graded items, which run under `data` before
+the gate, relate to a `nature` bulk. `refuse_mixed_estimator` (`fd_1b_mc.py:1383`) refuses a truth whose products
+mix clip rules, so `data` products cannot enter a `nature` grading.
+
+**The ruling.** The `nature` bulk carries every graded item, so the graded set equals the declared one. That
+includes the 5 graded items S1-0 and S1-0b run under `data`:
+- without the plug-in: G18's central value and toy 3,620,000, AR23's stat replica 1, toy 3,630,000 and central value;
+- with the plug-in: G18's central value and toy 3,620,000, AR23's stat replica 1 and central value, the plug-in's
+  central value.
+
+Their `data` products stay S1-0's checks and S1-0b's descriptive figure, and are never graded. The clipmeans, the
+procedure controls and the capture are S1-0's and S1-0b's alone.
+
+**The generator** (`stage1/tables/make_stage1_tables.py`, now with named arguments):
+- s1-0 and s1-0b run under `data`, and the bulk under `nature`;
+- every unfold and the receipt carry `--cv-tdw` with `0bc70d62…`, under (e2);
+- every bulk step carries `--clip-gate` and `--expect-clip-gate-sha256`;
+- no bulk table is written unless that digest is the record in `fd_1b_mc.GATE_PIN` (read by `bound_gate_sha256`), and
+  the pins file is committed at the checkout's HEAD exactly as it stands on disk.
+
+**The counts:**
+
+| | items | one-node jobs | slots (8 lanes × 22) | most per lane |
+|---|---:|---:|---:|---:|
+| bulk without the plug-in | 1,054 (1,049 + 5) | 6 | 1,056 | 22 |
+| bulk with the plug-in | 1,581 (1,576 + 5) | 9 | 1,584 | 22 |
+
+**The price is unchanged.** The bulk stays at 9 jobs of 8:00:00, 72.0 node-h, because 1,581 ≤ 1,584. Amendment 2's
+exposure stays 76.0 (§11 there: the receipt ≤ 2.0, S1-0 1.0, S1-0b 1.0, the bulk 72.0).
+
+**The exposure against the director's 81.0.** The 81.0 is 76.0, plus P1's capture (about 1), plus the 300-draw
+calibration's 4.0 cap. With the jobs since then at their measured cost, and the one still to run at its cap:
+
+| item | node-h |
+|---|---:|
+| amendment 2 (receipt, S1-0, S1-0b, the bulk with the plug-in) | 76.0 |
+| P1's capture (estimate) | ≈ 1.0 |
+| 300-draw calibration, job 60771025 (21:40) | 0.361 |
+| large-sample calibration, job 60783756 (43:15) | 0.721 |
+| its rerun at the final code (cap) | 1.5 |
+| **total** | **≈ 79.58**, within 81.0 by 1.42 |
+
+The CV denominator reads and the binning runs ran on login nodes, at 0 node-h. **Not yet priced:** c2check at N
+(G18 and AR23, then the plug-in) and the plug-in's large-sample calibration. Binding 3 gives an estimate for each,
+based on 60783756's measured timings, and sets the total with the arithmetic shown. If it lands above 81.0, the
+director sets the new total there and reports it to Joseph (the director, 2026-11-04).
+
+**The test,** `tests/test_fd_1b_tables.py`, has 4 tests:
+- the `nature` bulk's graded set equals the declared set exactly, per truth: the central value, the seed check, 175
+  blocks, 50 stat replicas and 300 toys (527 per truth, from the declaration's constants);
+- every generated step passes `fd_1b_mc`'s own parser with its rule, the CV tdw and, for the bulk, the gate pair;
+- the lane and node packing;
+- the bulk refuses without a pins file, with an uncommitted pins file, with one changed on disk, and with another
+  record's digest. With no gate given, no bulk is written.
+
+Eight hand mutants of the generator are killed. "23 per lane" is equivalent on the declared inputs, and its output is
+byte-identical. All nine are in `mutation_a21.py`.

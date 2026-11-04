@@ -23,6 +23,8 @@ PYTEST = [sys.executable, "-B", "-m", "pytest", "-p", "no:cacheprovider", "-q", 
 HERE = Path(__file__).resolve().parent
 MC, C2, CVD, BIN, E2E = ("tests/test_fd_1b_mc.py",), ("tests/test_fd_1b_c2.py",), ("tests/test_fd_1b_cvdenom.py",), \
     ("tests/test_fd_1b_binning.py",), ("tests/test_fd_1b_a21_e2e.py",)
+TAB = ("tests/test_fd_1b_tables.py",)
+GEN = "../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py"
 
 
 def literal(path: Path, name: str):
@@ -41,8 +43,10 @@ REANCHOR = {"B1 (audit): null U check dropped", "B3: readout U check dropped"}
 GATE_OLD = "    inv.OPENED.clear()\n    check_clip_gate(a)"           # A2.1 moved the call after the role checks
 GATE_NEW = "    check_clip_gate(a)                        # after the role checks"
 # Equivalent on every input, with the proof a test (test_fd_1b_c2 Gate.test_i_at_exactly_0_20_is_unreachable): no
-# double r has |r - 1| == 0.20, so (i)'s > and >= agree everywhere.
-EQUIVALENT = {"724(i): exactly 0.20 counts as beyond"}
+# double r has |r - 1| == 0.20, so (i)'s > and >= agree everywhere. "tables: 23 per lane" is equivalent on the declared
+# inputs: 1,054 and 1,581 items need 6 and 9 nodes at 22 or 23 per lane, and the round-robin then puts at most 22 in
+# a lane either way (the generator's output is byte-identical; the cap matters only for a larger table).
+EQUIVALENT = {"724(i): exactly 0.20 counts as beyond", "tables: 23 per lane"}
 
 NEW = [
     # ---- fd_1b_mc: the U check, truth_weight's install, S3, (e2), S2
@@ -213,6 +217,21 @@ NEW = [
     ("fd_1b_c2.py", "P6: the config hash without the clip rule", '    doc = {"code": code, "inputs": inputs, "clip_rule": clip_rule,', '    doc = {"code": code, "inputs": inputs,', C2 + E2E),
     ("fd_1b_c2.py", "P6: the config hash without the toy seeds", '    return hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest()',
      '    doc.pop("toy_seeds")\n    return hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest()', C2 + E2E),
+    # ---- the stage 1 tables generator: S2's bulk under 'nature' and the director's ruling (A)
+    (GEN, "tables: the bulk without the pilot's graded items", "    bulk = [x for x in items if x[1] in mc.BULK_ROLES]\n",
+     "    bulk = [x for x in items if x[1] in mc.BULK_ROLES and x not in set(pilot) | set(pilot_b)]\n", TAB),
+    (GEN, "tables: the bulk keeps clipmean", "    bulk = [x for x in items if x[1] in mc.BULK_ROLES]\n",
+     "    bulk = [x for x in items if x[1] in mc.BULK_ROLES + ('clipmean',)]\n", TAB),
+    (GEN, "tables: nature steps without the gate", '+ ["--clip-rule", rule] + (gate if rule == "nature" else []))',
+     '+ ["--clip-rule", rule])', TAB),
+    (GEN, "tables: no CV tdw", '              "--cv-tdw", CV_TDW, "--expect-cv-tdw-sha256", CV_TDW_SHA256,\n', '', TAB),
+    (GEN, "tables: the pins file not required committed", "    if head.returncode != 0 or head.stdout.strip() != blob:\n",
+     "    if False:\n", TAB),
+    (GEN, "tables: the gate sha not compared", "        if a.expect_clip_gate_sha256 != committed_gate_sha(mc, co):\n",
+     "        if False:\n", TAB),
+    (GEN, "tables: the bulk under data", '        tables("s1-bulk", lanes, "nature")', '        tables("s1-bulk", lanes, "data")', TAB),
+    (GEN, "tables: S1-0 under nature", '    tables("s1-0", [[x] for x in pilot], "data")', '    tables("s1-0", [[x] for x in pilot], "nature")', TAB),
+    (GEN, "tables: 23 per lane", "LANES, PER_LANE = 8, 22", "LANES, PER_LANE = 8, 23", TAB),
     # ---- fd_1b_cvdenom: the gates and B's attribution rule
     ("fd_1b_cvdenom.py", "cvd: the npz's rows without the extras gate", "    return base & ps, base & extras & ps", "    return base & ps, base & ps", CVD),
     ("fd_1b_cvdenom.py", "cvd: w = 1e4 kept", "(w >= 0) & (w < W_MAX)", "(w >= 0) & (w <= W_MAX)", CVD),
@@ -240,8 +259,8 @@ def run(tests) -> int:
     return subprocess.run(PYTEST + list(tests), capture_output=True, text=True, env=ENV).returncode
 
 
-files = {f: Path(f).read_text() for f in ("fd_1b_mc.py", "fd_1b_c2.py", "fd_1b_cvdenom.py", "fd_1b_binning.py")}
-for p in list(files) + [t for ts in (MC, C2, CVD, BIN, E2E) for t in ts]:
+files = {f: Path(f).read_text() for f in ("fd_1b_mc.py", "fd_1b_c2.py", "fd_1b_cvdenom.py", "fd_1b_binning.py", GEN)}
+for p in list(files) + [t for ts in (MC, C2, CVD, BIN, E2E, TAB) for t in ts]:
     print(f"sha256 {hashlib.sha256(Path(p).read_bytes()).hexdigest()}  {p}")
 print("KILLED means the suites exit 1 (a test failed); any other non-zero exit is ERROR, not a kill")
 plan = []
@@ -282,7 +301,7 @@ finally:
         Path(f).write_text(text)
 purge()
 r = subprocess.run([sys.executable, "-B", "-m", "pytest", "-p", "no:cacheprovider", "-q"] +
-                   list(MC + C2 + CVD + BIN + E2E), capture_output=True, text=True, env=ENV)
+                   list(MC + C2 + CVD + BIN + E2E + TAB), capture_output=True, text=True, env=ENV)
 print("unmutated:", r.stdout.strip().splitlines()[-1])
 applicable = [k for _, k in rows if k not in ("N/A", "EQUIVALENT")]
 print(f"{sum(1 for k in applicable if k == 'KILLED')} of {len(applicable)} applicable killed; "
