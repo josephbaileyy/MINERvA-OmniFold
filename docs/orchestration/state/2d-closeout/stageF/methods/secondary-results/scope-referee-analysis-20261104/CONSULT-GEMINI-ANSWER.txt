@@ -1,0 +1,87 @@
+# Independent Review: Assessment of Scoped Referee Responses (a)–(g)
+
+---
+
+### 1. Item-by-Item Assessment: Designs, Pricing, Admissibility, and Missing Options
+
+#### (a) Data-Driven Prior (Referee 1, Issue 11)
+* **Is the best design right?** **Partially.** Design **a1** (sensitivity test using a frozen reweight, 0.4–1.6 node-h) is procedurally correct as a sensitivity check, but the scope report misjudges its scientific purpose. The report dismisses re-running fake-data bias tests under this prior by arguing that "the listed failures grade truths against Tune v1’s prior." Referee 1 requested this specifically to determine whether OmniFold’s bias is an artifact of starting from an unphysical prior ($\chi^2 = 262$) or an intrinsic failure of the algorithm on this phase space.
+* **Flaws in reasoning/admissibility:** Equating a prior reweight to "continuing the iterations" is an oversimplification. In binned iterative Bayesian unfolding (IBU), reweighting by the unfolded distribution reproduces iteration $n+1$; in unbinned tree-based OmniFold, re-training on a reweighted prior alters the base density landscape and tree splits. Adopting **a2** as the central value is correctly rejected as post hoc.
+* **Better design missed:** Re-run the GiBUU hybrid and $q_3$-tilt fake-data closure tests using pseudo-data generated from the data-driven prior. This directly answers whether prior-retention bias vanishes when the prior is physically proximal to nature.
+
+#### (b) Varied-Response Mock Data (Referee 1, Issue 4)
+* **Is the best design right?** **No.** Design **b0** (re-reporting completed 3b closures) is a semantic fix that does not answer Referee 1, who explicitly asked for variations in neutron content, resolution, and species. 3b tested only a $\pm 1\sigma$ species scale and a global $\pm 4\%$ recoil scale. 
+* **Flaws in reasoning/prices:** Design **b1** is priced at ~2.6 node-h, but the report admits the event-loop code does not exist. Pricing compute while ignoring substantial pipeline development overhead is misleading. Furthermore, the report rightly notes that full-detector simulations of external generators are impossible without MINERvA collaboration action.
+* **Better design missed:** A parameterized, truth-level kinematic smearing applied to outgoing hadrons prior to feature construction in the existing framework. While not a substitute for Geant4, it quantitatively bounds sensitivity to hadronic energy resolution and neutron invisibility without requiring unavailable detector-simulation productions. **b0′** (correcting the count of nontrivial tests) is mandatory editorial hygiene.
+
+#### (c) 2D Benchmark and Shape Difference ($\chi^2/\text{ndf} = 2.27$) (Referee 1, Issue 9; Referee 2, Issue 3)
+* **Is the best design right?** **No.** The report prioritizes **c2** (IBU cross-check, 10–31 node-h) and sidelines **c1** ((e) in 2D, 2.5 node-h) as "low information." This is backwards. Referee 1’s Issue 9 identified an unacceptable methodological defect: the 2D benchmark validated a different estimator (LightGBM CV) than the reported 5D result (joint-test estimator (e)). Running **c1** is mandatory.
+* **Flaws in reasoning:** Running **c2** is valuable to separate data-preparation bugs from unfolding effects, but the report overlooks a critical physical factor: MINERvA’s published 2D result relies on MINOS-matched muons above $p_\parallel \sim 3\text{--}4\text{ GeV}/c$. 
+* **Better design missed:** Execute **c1** first (2.5 node-h) to eliminate estimator ambiguity. In **c2**, project the 205-bin shape residuals into physical $(p_T, p_\parallel)$ phase space (as Referee 2 requested) rather than arbitrary bin indices; this immediately reveals whether the $\chi^2/\text{ndf} = 2.27$ is localized at the MINOS acceptance boundary or distributed uniformly.
+
+#### (d) Run-Period Inconsistency at Reconstruction Level (Referee 1, Issue 6)
+* **Is the best design right?** **Yes.** Design **d1** (reconstruction-level per-playlist data/MC comparisons across all 5 observables, 0 node-h) is the correct starting point and long overdue.
+* **Flaws in reasoning:** The report misses the most obvious experimental hypothesis. The ~7% step at $8\text{ GeV}/c$ in $p_\parallel$ sits directly in the kinematic regime governed by MINOS spectrometer reconstruction. The report analyzes flux files (**d2**) but ignores potential tracking efficiency shifts, toroidal magnetic field calibrations, or reconstruction changes between MINERvA and MINOS across playlists 1G–1M.
+* **Better design missed:** Augment **d1** by partitioning the reconstruction-level checks into MINERvA-contained versus MINOS-matched muon tracks. This immediately isolates whether the defect originates in MINERvA's calorimetry or MINOS tracking.
+
+#### (e) Fake-Data Bias Reduction (Referee 1, Issue 3)
+* **Is the best design right?** **Yes.** The report correctly rejects **e1** (pushing to $K = 50\text{--}100$, costing 450–600 node-h), **e3** (alternative architectures), and **e4** (ad-hoc bias terms). 
+* **Flaws in reasoning:** The report considers **e1** a viable theoretical path to lower bias, citing binned exact study D-ID. In unbinned machine-learning estimators, running dozens of iterations without aggressive regularization causes massive variance explosion on statistical noise, not clean asymptotic convergence.
+* **Better design missed:** Design **e2** (reporting coarse linear functionals / identified subspaces) is the only mathematically sound way to handle directions lacking detector sensitivity. This should not be treated as a discard; it is the correct framing for resolving prior bias.
+
+#### (f) Low-Stability Cells R02, R06, R10, R15 (Referee 1, Issue 7; Referee 2, Issue 6)
+* **Is the best design right?** **No.** Recommending **f0** (keep disclosure) or **f1** (flag rows) while rejecting **f2** (merging cells) hides behind an administrative procedural barrier (`DEC-20261027`).
+* **Flaws in reasoning:** In experimental neutrino physics, quoting cross sections in kinematic cells with 16–25% stability (where 75–84% of events migrate in from elsewhere) with claimed 6–14% precision is indefensible. Both referees consider reporting these cells disqualifying. The report argues that merging does not eliminate the GiBUU failure ($\chi^2$ remains 133.9 for 8 dof). While true, merging eliminates bins dominated by migration modeling.
+* **Better design missed:** Define an objective, simulation-based stability floor ($\ge 40\%$ or $50\%$) globally across the grid. Present the resulting merged cross sections as the primary physical result (labeled post hoc / revised), while documenting the 16-cell failure in the methodology discussion.
+
+#### (g) Binned Head-to-Head Unfolding on 16 Cells (Referee 1, Issue 8)
+* **Is the best design right?** **Yes.** Combining **g1** (binned IBU on the 16 cells, 1–5 node-h) and **g0** (toning down claims in the text) is correct.
+* **Flaws in reasoning:** The report hesitates, worrying that "if IBU looks better... it will be read as a reason to switch." This defensive posture is inappropriate for PRD review. If 5D unbinned OmniFold cannot outperform binned IBU on the exact same coarse cells, the community needs to know that.
+* **Better design missed:** None; execute **g1** and implement **g0**.
+
+---
+
+### 2. Evaluation of Section 6 on Referee 1’s Issue 3
+
+The report agrees with Referee 1 that the paper’s text in `PB:131` ("regularization bias, because it persists over tested iteration numbers") is unsupported, but argues Referee 1 is wrong to claim persistence under iteration proves it is *not* regularization bias.
+
+* **Where the report is correct:**  
+  The report is mathematically sound regarding ill-posed inverse problems. In Fredholm integral equations, early stopping in iterative unfolding (Landweber, D'Agostini) acts as regularization. Singular vectors corresponding to small singular values converge at rates $O(1/K)$. In weakly constrained phase space, moving from $K=5$ to $K=15$ produces negligible shifts. Thus, persistence across small iteration spans is entirely consistent with regularized, slow-converging modes.
+* **Where the report is weak:**  
+  1. *Conflating matrix algebra with neural density estimation:* The report cites D-ID, where exact binned IBU converged as $K \to 10^5$. OmniFold does not do matrix multiplication; it approximates density ratios using finite-capacity decision trees on finite samples. What converges algebraically in IBU can permanently stall in GBDT training due to tree depth limits and split criteria.
+  2. *Contradicting its own data:* The report admits that in D-ID, the residuals for $W3$ and $q_3$ *did not fall* even after $10^5$ iterations. That directly proves that for these observables, the bias is **not** iterative regularization bias, but true null-space under-identification or model mismatch.
+  3. *Ignoring support failure:* The report sidesteps Referee 1’s point regarding support mismatch. If GENIE Tune v1 has near-zero density in phase-space corners where GiBUU places substantial cross section, density ratio estimation fails fundamentally, regardless of iterations.
+
+---
+
+### 3. Alternative Ranking of Recommendations
+
+The ranking in Section 9 prioritizes bureaucratic convenience and low compute cost over resolving editorial showstoppers. The revised ranking below prioritizes closing procedural contradictions, addressing unphysical reporting bins, and establishing diagnostic truth:
+
+1. **c1 (Run Joint Estimator (e) in 2D; 2.5 node-h):** Resolves Referee 1 Issue 9’s procedural critique by validating the actual reported estimator on the benchmark.
+2. **d1 (5D Reconstruction Data/MC per Playlist; 0 node-h):** Mandatory experimental check that isolates whether the 7% discontinuity is detector/calibration physics before unfolding.
+3. **g1 & g0 (16-Cell Binned Head-to-Head & Tone Down Text; 1–5 node-h):** Directly answers Referee 1 Issue 8 and settles whether OmniFold yields any tangible benefit over conventional IBU.
+4. **f2 (Merge Cells to Stability $\ge 40\%$; 0 node-h):** Removes indefensible 16–25% stability cells that both referees identify as individually disqualifying.
+5. **c2 (Binned 2D IBU Cross-Check; ~10 node-h):** Localizes the benchmark $\chi^2/\text{ndf} = 2.27$ to data processing inputs versus unfolding algorithm.
+6. **b0 & b0′ (Report 3b Closures as Bounded & Fix Test Count; 0 node-h):** Corrects inaccurate "not probed" statements and inflation of closure test counts.
+7. **a1 (Data-Driven Prior Stability/Sensitivity; ~1.5 node-h):** Evaluates whether prior-retention bias is driven by Tune v1's extreme initial distance from data.
+8. **d2 (Flux-Swap Test; ~0.33 node-h):** Secondary diagnostic to be run only if d1 shows data/simulation flux divergence.
+9. **b1 & b2 (Varied-Response Mock Data; >3 node-h + dev):** High development overhead without full detector simulation; yields low diagnostic return.
+10. **e1 (High-Iteration OmniFold; 25–40 node-h probe):** Unviable; triggers variance explosion in tree-based density estimation.
+
+---
+
+### 4. Impact on Referees' Verdicts and Publishability
+
+**None of the items (a)–(g), individually or combined, will overturn either referee’s rejection of the manuscript as a physical cross-section measurement.**
+
+Both referees explicit identify four co-occurring, disqualifying conditions:
+1. **Unvalidated interval coverage** (with coverage validation aborted at a gate due to internal mathematical contradictions);
+2. **Fake-data bias exceeding uncertainty** by orders of magnitude at GiBUU truth ($p = 5.3 \times 10^{-28}$);
+3. **Severe numerical instability** failing pre-declared stability requirements under floating-point rounding ($2.6\sigma$ shifts);
+4. **An unexplained 7% run-period step** absorbed via an ad-hoc, post-hoc, rank-2 covariance matrix.
+
+Items (a)–(g) do not touch **interval coverage** (the broken pseudo-experiment pipeline remains unaddressed), nor do they touch **floating-point numerical instability** (which requires ensembling, bagging, or tree regularization). 
+
+**Conclusion:**  
+Executing **c1**, **d1**, **f2**, and **g1** provides the necessary diagnostic transparency to accept the referees' unified recommendation: **a mandatory pivot in scope**. The manuscript cannot publish in PRD as a primary neutrino cross-section measurement. However, executing these items allows the paper to be successfully published as a landmark **methodological and diagnostic study** of high-dimensional machine-learning unfolding on experimental neutrino data.
