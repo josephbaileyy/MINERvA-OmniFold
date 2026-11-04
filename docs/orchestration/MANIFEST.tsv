@@ -5793,6 +5793,10 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/coder/sets/set-6.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/coder/sets/set-7.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/coder/unblinding-map.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-referee-analysis-20261104/CONSULT-GEMINI-ANSWER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-referee-analysis-20261104/CONSULT-GEMINI-PROMPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-referee-analysis-20261104/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-referee-analysis-20261104/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/INPUTS.SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/abstracts-input.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
