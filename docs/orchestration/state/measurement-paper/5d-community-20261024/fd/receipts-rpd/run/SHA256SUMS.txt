@@ -3,3 +3,7 @@ f5ca04b81766024d7235ff4fdf28d6345fd459d02ed82dbf0cc9d2050f143115  stage0.json  /
 e0879e3ed5592f77c6fd8799d66b671249824feaf58a116ace4eae0e19cc3416  stage0.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/stage0.log
 5277b7da78627cf6307db0985122c6b21b880b9c79922ab660c14a835c594f1b  stage0.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/stage0.out
 c37f434d6841ee9d00f9378b5536c3011668406c6a66084b8ed953523d03937a  rpd_stage0_connect.sh  /pscratch/sd/j/josephrb/fd-rpd-20261103/receipts/rpd_stage0_connect.sh
+285f6ca95ed565119325c97d0f13ac1c690673e5db599f57564cf40acf10f34e  stageD.json  /pscratch/sd/j/josephrb/fd-rpd-20261103/control/stageD.json
+ef748e2d94f81497ef4edca0f54efac23b1af6a487a4dd70918410705fa4e4d0  stageD.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/stageD.log
+30d1a3c74d00c72eef64bad69a28fd41f64d9ddfe8e40437ff0d14fe247cd6d9  stageD.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/stageD.out
+37b9885d78a591722f835bc3140454bae955c115493d18fbba6d93a8daf6443d  rpd_stageD_connect.sh  /pscratch/sd/j/josephrb/fd-rpd-20261103/receipts/rpd_stageD_connect.sh

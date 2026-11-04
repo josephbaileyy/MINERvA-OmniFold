@@ -1,0 +1,16 @@
+node login25
+2026-11-04T04:32:57Z
+connect script sha256 37b9885d78a591722f835bc3140454bae955c115493d18fbba6d93a8daf6443d
+HEAD 8727c63e1d32599039ea977d833c5de25a9089d6; porcelain --ignored lines before: 0
+section 7: 23 blobs, 0 mismatches
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1; nice 19
+verify-staged rc=0
+{"verified": 79, "mismatches": 0}
+2026-11-04T04:33:47Z
+staged rc=0
+PASS control S C_total_resp = S1's C_total + C_resp
+[RPD stage D] P(PW|PW) 0.801 drop False; best P(SUBSET) 0.771 drop False; P(EC|T1) 0.824 (n 500) flag False
+{"wrote": "/pscratch/sd/j/josephrb/fd-rpd-20261103/control/stageD.json", "sha256": "285f6ca95ed565119325c97d0f13ac1c690673e5db599f57564cf40acf10f34e"}
+porcelain --ignored lines after: 0
+stageD rc=0
+2026-11-04T05:07:46Z
