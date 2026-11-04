@@ -1,0 +1,26 @@
+login02
+total 40
+drwxrwx--- 3 josephrb josephrb  200 Nov  3 20:07 .
+drwxrwxrwt 3 root     root       80 Nov  3 20:06 ..
+-rw-rw---- 1 josephrb josephrb  422 Nov  3 20:07 bound.blobs.after
+-rw-rw---- 1 josephrb josephrb  422 Nov  3 20:06 bound.blobs.before
+-rw-rw---- 1 josephrb josephrb 6213 Nov  3 20:07 connect-2a.log
+-rw-rw---- 1 josephrb josephrb 8963 Nov  3 20:06 control2a_split.py
+-rw-rw---- 1 josephrb josephrb  914 Nov  3 20:06 step1.log
+-rw-rw---- 1 josephrb josephrb 1083 Nov  3 20:07 step2.log
+-rw-rw---- 1 josephrb josephrb  966 Nov  3 20:07 step3.log
+drwxrwx--- 2 josephrb josephrb   40 Nov  3 20:06 tmp
+3a736cb2fa10761c81b18e9370b5f0f3be8b676f9a4f38882931db429b8e3446  /dev/shm/josephrb-cov2d-2a2/connect-2a.log
+7f0c1295edd96fc900fab3f51816a9eaa6114da3bc8f85f60b08323546e115ec  /dev/shm/josephrb-cov2d-2a2/step1.log
+1e6e5efd59e417f8c32335ca636714ee12d1b07cf76293054eab3c175b9d3c30  /dev/shm/josephrb-cov2d-2a2/step2.log
+523661dcdc9864f6fc2921e8c50431433b8bd7a48f3b9257475183d1b4d9608b  /dev/shm/josephrb-cov2d-2a2/step3.log
+4f6dbde1779ce6cc0ae1125e6f25d6325bfd3735d3c05c9017ddd6b9fafe618d  /dev/shm/josephrb-cov2d-2a2/bound.blobs.after
+4f6dbde1779ce6cc0ae1125e6f25d6325bfd3735d3c05c9017ddd6b9fafe618d  /dev/shm/josephrb-cov2d-2a2/bound.blobs.before
+841ff1f62822bed64a647d2a3e114dade92ce87c85f25a4492f137a4c98e424b  /dev/shm/josephrb-cov2d-2a2/control2a_split.py
+7d8970382a8609b38148dae11c6dfde0975de3006d908da599296194804ee433  /dev/shm/josephrb-cov2d-2a2.sh
+total 61392
+drwxrwx---   2 josephrb josephrb     4096 Nov  3 20:07 .
+drwx------ 349 josephrb josephrb    69632 Nov  3 20:07 ..
+-rw-r-----   1 josephrb josephrb 62784801 Nov  3 20:07 writer_control.root
+7eb39088a42844b48ec1f8e1b6b586b8d8d4363611d68b726112f9f75c99b9db  /pscratch/sd/j/josephrb/cov2d-2a/writer_control.root
+STILL_RUNNING

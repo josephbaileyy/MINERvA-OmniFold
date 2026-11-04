@@ -1,0 +1,12 @@
+check: expects out_sha256=7eb39088a42844b48ec1f8e1b6b586b8d8d4363611d68b726112f9f75c99b9db
+check: stub called with /dev/shm/josephrb-cov2d-2a2/writer_control.root, sha256=7eb39088a42844b48ec1f8e1b6b586b8d8d4363611d68b726112f9f75c99b9db, rows=4119797, dataPOTUsed=1.057394261158926e+21
+tree data: entries CV=4119797 UNI=4119797 branches CV=3 UNI=3 shared=3
+  shared: ['measured', 'measured_pass', 'measured_pz']
+  rows 0..2000000 of 4119797 done utc=04:07:14Z
+  rows 2000000..4000000 of 4119797 done utc=04:07:15Z
+  rows 4000000..4119797 of 4119797 done utc=04:07:15Z
+  EQUAL  data.measured rows=4119797 bitwise_diff=0 value_diff=0 sha256 CV=d66df76a880e71a7 UNI=d66df76a880e71a7
+  EQUAL  data.measured_pass rows=4119797 bitwise_diff=0 value_diff=0 sha256 CV=21fa0375e1026407 UNI=21fa0375e1026407
+  EQUAL  data.measured_pz rows=4119797 bitwise_diff=0 value_diff=0 sha256 CV=f8c5755a6fa2c1ab UNI=f8c5755a6fa2c1ab
+WRITER-CONTROL PASS failures=0
+CHECK rc=0 stub_calls=1
