@@ -1,6 +1,7 @@
 #!/bin/bash
-# 1B A2.1, the calibration job (the director's R2 and Q2): G18 and AR23 on one CPU node, 10,000 replicate sets per
-# truth across 64 single-threaded worker processes, fd_1b_c2.py calibrate. The deploy, the commit and the output
+# 1B A2.1, the large-sample calibration job (Joseph's decision of 2026-11-04; the director's P1-P7): G18 and AR23 on
+# one CPU node, 10,000 replicate sets of GATE_N = 3,000 draws per truth across 64 single-threaded worker processes,
+# fd_1b_c2.py calibrate (schema /2: the s rule, power, and the controls at N). The deploy, the commit and the output
 # directory are arguments (sbatch runs a copy of this file, so it cannot locate itself). Not under set -u, which
 # aborts the root_6_28 activation. Writes only under $W.
 DD=$1; M=$2; W=$3
@@ -26,7 +27,7 @@ cd "$W" || stop cd
   --definition "$DD/nd-unfolding/pv-ladder/readouts/h2_definition.json" --prep "$P/fd-f1-20261027/f1b3/prep" \
   --cv-tdw "$P/fd-1b-a21-cvdenom2-20261103/cvdenom.npy" \
   --expect-cv-tdw-sha256 0bc70d622ed51f7e6ce3b80e095788f315e52937b6a6c79a0bafedeb4545def8 \
-  --truths g18 ar23 --workers 64 --budget-seconds 13500 --out "$W/calibration.json" \
+  --truths g18 ar23 --workers 64 --budget-seconds 5000 --out "$W/calibration.json" \
   > "$W/calibration.out" 2> "$W/calibration.time"
 rc=$?
 echo "calibrate rc=$rc"
