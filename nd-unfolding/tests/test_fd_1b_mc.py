@@ -54,6 +54,17 @@ from test_fd_1b import World as ToyWorld, digest  # noqa: E402
 from test_fd_1b_inv import plain_noatime  # noqa: E402
 
 
+def pinned(tmp: Path, sha):
+    """The pins file as binding 3 writes it (the record's sha256 and a newline), on disk at a fresh path under tmp,
+    with mc.GATE_PIN pointed there: the run reads the digest through mc.bound_gate_sha256 unmocked. Only the path is
+    redirected, so a test never writes into the repository's receipts. None: no pins file (before binding 3)."""
+    pin = tmp / f"pin-{len(list(tmp.glob('pin-*')))}" / mc.GATE_PIN.name
+    pin.parent.mkdir(parents=True)
+    if sha is not None:
+        pin.write_bytes(f"{sha}\n".encode())
+    return mock.patch.object(mc, "GATE_PIN", pin)
+
+
 class Case(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -737,7 +748,7 @@ class Jobs(Case):
         argv2[argv2.index("--clip-rule") + 1] = "nature"
         argv2 = self.bound_gate(argv2, "g18")
         with mock.patch.object(mc, "_unfold_s1", lambda exp, threads, seed=42, unfold_fn=None: (np.ones(4), {})), \
-                mock.patch.object(mc, "BOUND_GATE_SHA256", self.bound):
+                pinned(self.tmp, self.bound):
             self.assertEqual(mc.main(argv2), 0)
         z = np.load(out2 / mc.product_name("fd1b_mc", "g18", "central", "T"))
         self.assertEqual(json.loads(str(z["meta"]))["clip_rule"], "nature")
@@ -831,7 +842,7 @@ class Jobs(Case):
             if gate:
                 argv = self.bound_gate(argv, truth, **over)
             with mock.patch.object(mc, "_unfold_s1", fake), \
-                    mock.patch.object(mc, "BOUND_GATE_SHA256", self.bound if bind else None):
+                    pinned(self.tmp, self.bound if bind else None):
                 return mc.main(argv)
         self.assertEqual(run("g18", "central", "T", "data"), 0)                 # S1-0's pilot item
         self.assertEqual(run("ar23", "central", "T", "data"), 0)                # S1-0b's
@@ -853,7 +864,7 @@ class Jobs(Case):
         other = self.bound
         argv2 = self.bound_gate(self.argv("g18", "seed", "T", self.tmp / "s2-other2"), "g18", **{"calibration.s": 1.01})
         argv2[argv2.index("--clip-rule") + 1] = "nature"
-        with mock.patch.object(mc, "_unfold_s1", fake), mock.patch.object(mc, "BOUND_GATE_SHA256", other):
+        with mock.patch.object(mc, "_unfold_s1", fake), pinned(self.tmp, other):
             self.assertEqual(mc.main(argv2), 4)                               # not the declared one: refused
         gate = self.tmp / "hand-written.json"                                   # D2: the stub's three fields alone
         gate.write_text(json.dumps(mc.CLIP_GATE))
@@ -864,12 +875,66 @@ class Jobs(Case):
         argv = self.bound_gate(self.argv("g18", "seed", "T", self.tmp / "s2-digest"), "g18")
         argv[argv.index("--clip-rule") + 1] = "nature"
         argv[argv.index("--expect-clip-gate-sha256") + 1] = "0" * 64
-        with mock.patch.object(mc, "_unfold_s1", fake), mock.patch.object(mc, "BOUND_GATE_SHA256", "0" * 64):
+        with mock.patch.object(mc, "_unfold_s1", fake), pinned(self.tmp, "0" * 64):
             self.assertEqual(mc.main(argv), 4)                                  # the file is not the digest given
         self.assertEqual(run("data", "control", "MaRES_0", "nature", gate=True), 4)   # not a graded role
         self.assertTrue({("g18", "toy", "3620000"), ("ar23", "stat", "1"), ("data", "capture", "data")}
                         <= mc.pre_gate_items())
         self.assertNotIn(("g18", "toy", "3620001"), mc.pre_gate_items())
+
+    def test_h1_the_pins_file(self):
+        """The director's H1: the declared digest is read from the pins file on disk. A wrong sha, a missing file and
+        each malformed form refuse with their own message; the admitted product records the pins file's git blob,
+        as `git hash-object` computes it."""
+        import contextlib
+        import subprocess
+        fake = lambda exp, threads, seed=42, unfold_fn=None: (np.ones(4), {})  # noqa: E731
+
+        def run(tag, sha=None):
+            argv = self.argv("g18", "seed", "T", self.tmp / f"h1-{tag}")
+            argv[argv.index("--clip-rule") + 1] = "nature"
+            argv = self.bound_gate(argv, "g18")
+            with mock.patch.object(mc, "_unfold_s1", fake), pinned(self.tmp, self.bound if sha is None else sha):
+                err = io.StringIO()
+                with contextlib.redirect_stderr(err):
+                    rc = mc.main(argv)
+                return rc, err.getvalue(), mc.GATE_PIN
+        rc, _, pin = run("ok")
+        self.assertEqual(rc, 0)                                                   # (a) the declared record
+        meta = json.loads(str(np.load(self.tmp / "h1-ok" / mc.product_name("fd1b_mc", "g18", "seed", "T"))["meta"]))
+        blob = subprocess.run(["git", "hash-object", str(pin)], capture_output=True, text=True, check=True).stdout
+        self.assertEqual(meta["gate_pin_blob"], blob.strip())
+        rc, err, _ = run("wrong", sha="1" * 64)                                   # (b) a well-formed other sha
+        self.assertEqual(rc, 4)
+        self.assertIn("not the record binding 3 declares", err)
+        with mock.patch.object(mc, "_unfold_s1", fake), pinned(self.tmp, None):   # (c) no pins file
+            argv = self.bound_gate(self.argv("g18", "seed", "T", self.tmp / "h1-missing"), "g18")
+            argv[argv.index("--clip-rule") + 1] = "nature"
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err):
+                self.assertEqual(mc.main(argv), 4)
+        self.assertIn("no c2check record is bound yet", err.getvalue())
+        for k, bad in enumerate((b"", b"\n", lambda s: s.upper(), lambda s: s[:63], lambda s: s + "0",
+                                 lambda s: s + "\n" + s, lambda s: s + "\n\n", lambda s: "g" + s[1:])):
+            argv = self.bound_gate(self.argv("g18", "seed", "T", self.tmp / f"h1-bad{k}"), "g18")
+            argv[argv.index("--clip-rule") + 1] = "nature"
+            raw = bad if isinstance(bad, bytes) else (bad(self.bound) + "\n").encode()
+            with mock.patch.object(mc, "_unfold_s1", fake), pinned(self.tmp, self.bound):
+                mc.GATE_PIN.write_bytes(raw)
+                err = io.StringIO()
+                with contextlib.redirect_stderr(err):
+                    self.assertEqual(mc.main(argv), 4, raw)
+            self.assertIn("is malformed", err.getvalue(), raw)
+
+    def test_h1_the_pins_file_is_outside_the_hashed_code(self):
+        """(d): the pins file is none of the files gate_code_digests hashes (so config_hash, built on those digests,
+        cannot cover it either), and it lives beside A2.1's committed receipts, where binding 3 commits it."""
+        import fd_1b_c2
+        hashed = fd_1b_c2.gate_code_digests()
+        self.assertNotIn(mc.GATE_PIN.name, hashed)
+        self.assertTrue(all(name.endswith(".py") for name in hashed))
+        self.assertNotEqual(mc.GATE_PIN.resolve(), Path(mc.__file__).resolve())
+        self.assertTrue((mc.GATE_PIN.parent / "sbatch-calibrate.sh").is_file(), mc.GATE_PIN)
 
     def test_central_and_seed_products(self):
         out = self.tmp / "jobs2"
@@ -883,7 +948,7 @@ class Jobs(Case):
             argv = self.argv("g18", "seed", "T", out)                          # a bulk item: 'nature' with the gate
             argv[argv.index("--clip-rule") + 1] = "nature"
             argv = self.bound_gate(argv, "g18")
-            with mock.patch.object(mc, "BOUND_GATE_SHA256", self.bound):
+            with pinned(self.tmp, self.bound):
                 self.assertEqual(mc.main(argv), 0)
         self.assertEqual(calls, [42, mc.SEED_CHECK])
         z = np.load(out / mc.product_name("fd1b_mc", "g18", "seed", "T"))

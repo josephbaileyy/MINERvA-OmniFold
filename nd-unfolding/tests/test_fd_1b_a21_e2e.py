@@ -27,7 +27,7 @@ import fd_1b_toys as toys  # noqa: E402
 import s1_assemble as sa  # noqa: E402
 import s5p_universe  # noqa: E402
 from test_fd_1b import EDGES, SHAPE, World, digest  # noqa: E402
-from test_fd_1b_mc import plain_noatime  # noqa: E402
+from test_fd_1b_mc import pinned, plain_noatime  # noqa: E402
 
 N_TD = 50
 
@@ -316,7 +316,7 @@ class E2E(unittest.TestCase):
             if rule == "nature":
                 argv += ["--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]
             with self.patched(), mock.patch.object(mc, "_unfold", fake), \
-                    mock.patch.object(mc, "BOUND_GATE_SHA256", digest(gate)):
+                    pinned(self.tmp, digest(gate)):
                 self.assertEqual(mc.main(argv), 0, rule)
             z = np.load(out / mc.product_name("fd1b_mc", "g18", "toy", str(mc.TOY_SEEDS["g18"][0])), allow_pickle=True)
             metas[rule] = (json.loads(str(z["meta"])), np.asarray(z["xtrue_flat"], float))
@@ -371,7 +371,7 @@ class RoundTrip(E2E):
     def bulk(self, gate):
         fake = lambda exp, threads, seed=42, unfold_fn=None: (np.zeros(SHAPE), {})  # noqa: E731
         with self.patched(), mock.patch.object(mc, "_unfold", fake), \
-                mock.patch.object(mc, "BOUND_GATE_SHA256", digest(gate)):
+                pinned(self.tmp, digest(gate)):
             return mc.main(self.gate_argv(gate))
 
     def test_c2checks_record_round_trip(self):

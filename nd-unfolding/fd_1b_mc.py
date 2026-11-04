@@ -859,7 +859,22 @@ def code_digests() -> dict:
 
 
 BULK_ROLES = ("central", "seed", "block", "stat", "toy")    # the graded items: under 'nature' only (A2.1 S2)
-BOUND_GATE_SHA256 = None   # binding 3 declares c2check's record by digest (the director's H1); until then, refuse
+# Binding 3 declares c2check's record by its sha256 in this one-line pins file, which it commits; the deploy clone at
+# binding 3's merge reads it, so git fixes its content. It is outside every byte gate_code_digests or config_hash
+# covers (the audit's H1 at 2c882d27: a digest held in hashed code would need a sha256 fixed point).
+GATE_PIN = _ND.parent / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/BOUND_GATE.sha256"
+
+
+def bound_gate_sha256() -> tuple[str, str]:
+    """(the declared record sha256, the pins file's git blob) from GATE_PIN; refuses if it is missing or malformed."""
+    if not GATE_PIN.exists():
+        raise Refusal(f"no c2check record is bound yet: binding 3 commits {GATE_PIN.name} (the director's H1)")
+    raw = GATE_PIN.read_bytes()
+    text = raw.decode().strip()
+    if len(text) != 64 or any(ch not in "0123456789abcdef" for ch in text) or raw.decode().count("\n") > 1:
+        raise Refusal(f"{GATE_PIN.name} is malformed: one line, a lowercase sha256")
+    blob = hashlib.sha1(b"blob %d\0" % len(raw) + raw).hexdigest()
+    return text, blob
 
 
 def pre_gate_items() -> set:
@@ -883,7 +898,7 @@ def check_clip_gate(a) -> None:
     * under 'data', only the pre-gate items run (pre_gate_items): S1-0, S1-0b, the capture, the controls. A graded
       bulk item under 'data' refuses;
     * under 'nature', only the graded roles (BULK_ROLES) run, and only on c2check's gate record whose sha256 is the
-      one binding 3 declares (BOUND_GATE_SHA256; none is declared yet, so the bulk refuses). That digest is the
+      one binding 3 declares in GATE_PIN (none is committed yet, so the bulk refuses). That digest is the
       protection: every field below can be recomputed from the repository and the run's own arguments, so a
       hand-written record of the right form would pass the field checks alone (the audit's H1). Binding 3 records
       which c2check run wrote the file it pins. The fields, re-verified at launch as defence in depth (H2): the
@@ -905,10 +920,10 @@ def check_clip_gate(a) -> None:
         raise Refusal(f"role {a.role} is not a graded bulk role: it runs under 'data' before the gate, or not at all")
     if a.clip_gate is None or a.expect_clip_gate_sha256 is None:
         raise Refusal("the 'nature' rule needs c2check's gate record (--clip-gate, --expect-clip-gate-sha256)")
-    if BOUND_GATE_SHA256 is None:
-        raise Refusal("no c2check record is bound yet: binding 3 declares its digest (the director's H1)")
-    if a.expect_clip_gate_sha256 != BOUND_GATE_SHA256:
+    bound, blob = bound_gate_sha256()
+    if a.expect_clip_gate_sha256 != bound:
         raise Refusal("the clip gate is not the record binding 3 declares")
+    a.gate_pin_blob = blob                                  # recorded in each product's meta
     raw = Path(a.clip_gate).read_bytes()
     if hashlib.sha256(raw).hexdigest() != a.expect_clip_gate_sha256:
         raise Refusal("the clip gate's digest differs from the declared one")
@@ -972,6 +987,7 @@ def run_unfold(a, unfold_fn=None) -> int:
                 "threads": a.threads, **extra, "input_npz_sha256": world["npz_sha"], "bkg_dump_sha256": world["bkg_sha"],
                 "pins_sha256": a.expect_pins_sha256, "flux_table_sha256": a.expect_flux_table_sha256,
                 "push_sha256": a.expect_push_sha256, "alignment": world["alignment"], "code_sha256": code_digests(),
+                "gate_pin_blob": getattr(a, "gate_pin_blob", None),
                 "slurm_job": os.environ.get("SLURM_JOB_ID"), "seconds_unfold": round(time.time() - t1, 3),
                 "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, "numpy_version": np.__version__}
         status |= s5n_pseudo.write_product(target, arrays, meta)

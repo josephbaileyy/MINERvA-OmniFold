@@ -1,0 +1,19 @@
+ok   PASS expected: identical
+ok   PASS expected: every atime value
+ok   PASS expected: timing.seconds
+ok   PASS expected: timing.set_seconds_measured
+ok   PASS expected: timing.projected_seconds
+ok   PASS expected: fd_1b_mc.py digest, as expected
+ok   STOP expected: rule.s -> calibration.json differs at 1 leaves outside the exclusions: ['rule.s']
+ok   STOP expected: rule.grid[100].union -> calibration.json differs at 1 leaves outside the exclusions: ['rule.grid.100.union']
+ok   STOP expected: a power placement -> calibration.json differs at 1 leaves outside the exclusions: ['power.g18.concentrated.4_cells_10pct.placements.0']
+ok   STOP expected: timing.workers -> calibration.json differs at 1 leaves outside the exclusions: ['timing.workers']
+ok   STOP expected: timing.fine_cells_kept -> calibration.json differs at 1 leaves outside the exclusions: ['timing.fine_cells_kept']
+ok   STOP expected: atime.moved -> calibration.json differs at 1 leaves outside the exclusions: ['atime.moved']
+ok   STOP expected: an atime file key dropped -> the exclusions matched different counts: {('atime', 'files', '*', 'atime_ns_first'): 709, ('atime', 'files', '*', 'atime
+ok   STOP expected: fd_1b_c2.py digest -> calibration.json differs at 1 leaves outside the exclusions: ['code_sha256.fd_1b_c2.py']
+ok   STOP expected: an added key -> calibration.json differs at 1 leaves outside the exclusions: ['host']
+ok   STOP expected: fd_1b_mc.py digest, not expected -> the rerun's fd_1b_mc.py digest is eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, not the H1 code's d5
+ok   STOP expected: npz one byte -> calibration.npz differs: 9047a6f730ca41cda8a0c6d7b60aac19ba10c04f8ab6a6b13a279a5835291a70 vs a67f293e7bd32a04144a0b1413b
+ok   STOP expected: verdict line -> the C2-CALIBRATION line differs: [b'C2-CALIBRATION verdict=CALIBRATED s=0.92 i_alone=0.0000 power={"g18": 0.9968, "ar23"
+self-test PASS: 6 pass cases, 12 stop cases
