@@ -6437,6 +6437,7 @@ docs/orchestration/state/laned-cstat-crosscheck/LANED_CSTAT_CROSSCHECK.npz	track
 docs/orchestration/state/live-state-last-known.json	tracked	LIVE	state-artifact			open		route-only	no
 docs/orchestration/state/live-state.json	tracked	LIVE	state-artifact			open		route-only	no
 docs/orchestration/state/live-state.schema.json	tracked	LIVE	state-artifact			open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-1-A1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-SCOPING.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
