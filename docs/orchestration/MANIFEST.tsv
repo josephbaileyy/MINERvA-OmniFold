@@ -5689,6 +5689,16 @@ docs/orchestration/state/2d-closeout/stageF/methods/register-prd-study/tools/str
 docs/orchestration/state/2d-closeout/stageF/methods/register-prd-study/tools/tex2prose.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/register-prd-study/tools/verify_quotes.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/register-retrospective-20261028/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/rpd-sentence-paper-20261104/CHECK-HELD.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/rpd-sentence-paper-20261104/LEDGER-CHECK.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/rpd-sentence-paper-20261104/LICENCE-CHECK.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/rpd-sentence-paper-20261104/RATER-COPY.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/rpd-sentence-paper-20261104/REPORT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/rpd-sentence-paper-20261104/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/rpd-sentence-paper-20261104/VALUES-CHECK.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/rpd-sentence-paper-20261104/check_ledger.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/rpd-sentence-paper-20261104/check_licence.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/rpd-sentence-paper-20261104/ledger.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/CANDIDATES.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/RESULTS-LIST.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-2-20261027/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
