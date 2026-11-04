@@ -1,0 +1,16 @@
+login02
+total 36
+drwxrwx--- 3 josephrb josephrb   160 Nov  4 09:48 .
+drwxrwxrwt 3 root     root        80 Nov  4 09:48 ..
+-rw-rw---- 1 josephrb josephrb   778 Nov  4 09:48 blobs.after
+-rw-rw---- 1 josephrb josephrb   778 Nov  4 09:48 blobs.before
+-rw-rw---- 1 josephrb josephrb  6341 Nov  4 09:48 connect-95.log
+-rw-rw---- 1 josephrb josephrb 10175 Nov  4 09:48 control95.json
+-rw-rw---- 1 josephrb josephrb  4225 Nov  4 09:48 control95.log
+drwxrwx--- 2 josephrb josephrb    60 Nov  4 09:48 tmp
+a7ace72e61c937669bb779c7eafd2750fb652b41809850a536010f69356c0b89  control95.json
+79e5b6a1fa0cde5832b091e98d050d858277990540cedc5b577b03c3e24282c1  connect-95.log
+483d773d9a7ae728ef15872bc1e3648a2c0c233b1ed6090dc53f106fe58f8232  control95.log
+3f81e6009c5b682f461535c642e4fc44d8dfacea0767b62aab6e601303b9c051  blobs.before
+3f81e6009c5b682f461535c642e4fc44d8dfacea0767b62aab6e601303b9c051  blobs.after
+c1872353e6ff0a606fb4513b9e8390f3a50d46139692b78d34217b1eb44c4e95  /dev/shm/josephrb-cov2d-95.sh

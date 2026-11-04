@@ -1,0 +1,19 @@
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+TClass::Init:0: RuntimeWarning: no dictionary for class PlotUtils::MnvH1D is available
+TClass::Init:0: RuntimeWarning: no dictionary for class PlotUtils::MnvVertErrorBand is available
+TClass::Init:0: RuntimeWarning: no dictionary for class pair<string,PlotUtils::MnvVertErrorBand*> is available
+TClass::Init:0: RuntimeWarning: no dictionary for class PlotUtils::MnvH2D is available
+TClass::Init:0: RuntimeWarning: no dictionary for class PlotUtils::MnvVertErrorBand2D is available
+Error in <TBufferFile::CheckByteCount>: object of class map<string,PlotUtils::MnvLatErrorBand*> read too many bytes: 4130 instead of 12
+TBufferFile::CheckByteCount:0: RuntimeWarning: map<string,PlotUtils::MnvLatErrorBand*>::Streamer() not in sync with data on file /dev/shm/josephrb-cov2d-95/tmp/tmp09cs6azg/rollup/baseline_flux/runEventLoopMC_1A.root, fix Streamer()
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-95/deploy/2d-unfolding/cov2d/cov2d_blocks.py", line 409, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/dev/shm/josephrb-cov2d-95/deploy/2d-unfolding/cov2d/cov2d_blocks.py", line 371, in main
+    w, phi_minos = ro.flux_weights()
+                   ^^^^^^^^^^^^^^^^^
+  File "/dev/shm/josephrb-cov2d-95/deploy/2d-unfolding/re2/partc/re2c_rollup.py", line 208, in flux_weights
+    h = f.Get(BR.FLUX_HIST)
+        ^^^^^^^^^^^^^^^^^^^
+TypeError: 'PlotUtils' is not a known C++ class

@@ -1,0 +1,23 @@
++ hostname
+login02
++ date -u +%FT%TZ
+2026-11-04T17:50:31Z
+996K	/dev/shm/josephrb-cov2d-95
+c1872353e6ff0a606fb4513b9e8390f3a50d46139692b78d34217b1eb44c4e95  /dev/shm/josephrb-cov2d-95.sh
++ du -sh /dev/shm/josephrb-cov2d-95
++ sha256sum /dev/shm/josephrb-cov2d-95.sh
++ rm -rf /dev/shm/josephrb-cov2d-95
+rc_dir=0
++ echo rc_dir=0
++ rm -f /dev/shm/josephrb-cov2d-95.sh
+rc_script=0
++ echo rc_script=0
++ ls -la /dev/shm
++ grep -c josephrb
+0
++ ps -u josephrb -o pid,args
++ grep -c cov2d-95.sh
+2
+login02
+0
+0
