@@ -329,5 +329,32 @@ class Audit(unittest.TestCase):
             self.assertEqual(len(real), 5)
 
 
+class MatEnvironment(unittest.TestCase):
+    """The control uses RPD's own mat_environment, imported (not copied), and a refusal propagates."""
+    @classmethod
+    def setUpClass(cls):
+        nd = str(HERE.parents[2] / "nd-unfolding")
+        if nd not in sys.path:
+            sys.path.insert(0, nd)
+    def test_it_is_rpds_function_and_a_refusal_propagates(self):
+        import cov2d_blocks as cbm
+        import fd_rpd_inputs as rpd
+        with mock.patch.object(rpd, "mat_environment", side_effect=rpd.Refuse(7, "not pinned")) as m:
+            with self.assertRaises(rpd.Refuse):
+                cbm.pinned_mat_environment()
+        m.assert_called_once_with()
+        with mock.patch.object(rpd, "mat_environment", return_value={"ok": 1}):
+            self.assertEqual(cbm.pinned_mat_environment(), {"ok": 1})
+
+    def test_rpds_pins_are_the_six_scripts_and_libmat(self):
+        import fd_rpd_inputs as rpd
+        self.assertEqual(len(rpd.MAT_SETUP), 6)
+        self.assertEqual(sorted(Path(p).name for p in rpd.MAT_SETUP),
+                         ["setup.sh", "setup.sh", "setup_MAT-MINERvA.sh", "setup_MAT.sh", "setup_UnfoldUtils.sh",
+                          "setup_salloc_env.sh"])
+        self.assertEqual({Path(p).name for p in rpd.MAT_MAPPED}, {"libMAT.so"})
+        self.assertEqual(Path(rpd.MAT_LINK[0]).name, "libMATDict.so")
+
+
 if __name__ == "__main__":
     unittest.main()

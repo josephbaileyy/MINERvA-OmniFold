@@ -313,6 +313,19 @@ def section_9_5(vec, labels: dict, minos_x, w_flux, x_R, rep, npz: dict) -> dict
     return out
 
 
+def pinned_mat_environment() -> dict:
+    """The shared checkout's MAT environment, checked by RPD's own ``fd_rpd_inputs.mat_environment`` (imported unchanged,
+    blob 7c2e018f at 8727c63e; the director's ruling of 2026-11-04, one standard for both campaigns): the six setup scripts
+    and libMAT.so, MATDict.rootmap, MAT_rdict.pcm at their pinned digests (O_NOATIME), libMATDict.so resolving to
+    libMAT.so, exactly {libMAT.so} mapped from MINERvA101/opt, PLOTUTILSROOT and MINERVA_PREFIX, and MnvH1D's dictionary.
+    Raises fd_rpd_inputs.Refuse otherwise."""
+    nd = str(REPO / "nd-unfolding")
+    if nd not in sys.path:
+        sys.path.insert(0, nd)
+    import fd_rpd_inputs
+    return fd_rpd_inputs.mat_environment()
+
+
 def main(argv=None) -> int:
     """Section 9.5 on the cluster: python cov2d_blocks.py control95 --out FILE"""
     import argparse
@@ -327,11 +340,12 @@ def main(argv=None) -> int:
     ROOT.gROOT.SetBatch(True)
     global AUDIT
     AUDIT = OpenAudit().install(ROOT)
+    mat = pinned_mat_environment()   # before the rollup: RPD's binding-2-A1 standard, or it raises (INVALID)
     ro = rollup()
     t0 = time.time()
     sums = ro.partb_sums()
     labels = partb_labels(sums)
-    rec = {"host": os.uname().nodename, "root": ROOT.gROOT.GetVersion(), "stop": [],
+    rec = {"host": os.uname().nodename, "root": ROOT.gROOT.GetVersion(), "stop": [], "mat_environment": mat,
            "n_universe": sum(len(v) for v in labels["universe"].values()), "n_bands": len(labels["universe"])}
     if rec["n_universe"] != 175 or rec["n_bands"] != 38:
         rec["stop"].append(f"part B's sums list {rec['n_bands']} bands, {rec['n_universe']} universes")
@@ -386,7 +400,9 @@ def main(argv=None) -> int:
             rec["stop"].append("cmodel_2d.json's 205 cells are not E_R's reported cells")
     rec["products_read"] = len(srcs)
     import build_cmodel
-    rec["modules"] = {m.__name__: os.path.realpath(m.__file__) for m in (c, sys.modules[__name__], ro, ro.BR, build_cmodel)}
+    import fd_rpd_inputs
+    rec["modules"] = {m.__name__: os.path.realpath(m.__file__)
+                      for m in (c, sys.modules[__name__], ro, ro.BR, build_cmodel, fd_rpd_inputs)}
     outside = [k for k, f in rec["modules"].items() if not f.startswith(os.path.realpath(REPO) + os.sep)]
     if outside:
         rec["stop"].append(f"modules imported from outside the clone: {outside}")
