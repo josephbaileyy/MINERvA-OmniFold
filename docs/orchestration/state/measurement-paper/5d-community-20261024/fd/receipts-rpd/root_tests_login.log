@@ -1,15 +1,12 @@
-node login02
-2026-11-03T18:21:59Z
-dev/shm free GiB 339
-clone dir /dev/shm/rpd-root-IOgWXc
+node login35
+2026-11-04T02:58:36Z
+clone dir /dev/shm/rpd-root-HejT0m
 squeue --me before:
 squeue rc=0
-HEAD e36bfd1888c894f29e4bb33c36bb5ede15381b4e
+HEAD 9b93972fae6d5a6205fa1631d3effb1da1342e73
 porcelain before: []
-python /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14; sbatch resolves to /dev/shm/rpd-root-IOgWXc/shim/sbatch
-ROOT 6.28/12 numpy 1.26.4 scipy 1.16.3
-ModuleNotFoundError: No module named 'uproot'
-=== test_fd_rpd
+A: python /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14; PLOTUTILSROOT=[]; sbatch resolves to /dev/shm/rpd-root-HejT0m/shim/sbatch
+=== A-suites: python3 -B -m unittest -v test_fd_rpd test_fd_ct_periods test_fd_ct_readers
 test_classes_in_both_directions (test_fd_rpd.Arithmetic.test_classes_in_both_directions) ... ok
 test_f_is_the_between_share_by_explicit_loops (test_fd_rpd.Arithmetic.test_f_is_the_between_share_by_explicit_loops) ... ok
 test_free_and_carries_are_disjoint_for_a_resolved_playlist (test_fd_rpd.Arithmetic.test_free_and_carries_are_disjoint_for_a_resolved_playlist) ... ok
@@ -72,7 +69,19 @@ test_r3s_numbers (test_fd_rpd.Helpers.test_r3s_numbers) ... ok
 test_reachability_truths (test_fd_rpd.Helpers.test_reachability_truths) ... ok
 test_replica_deviations_are_about_their_own_mean_and_scaled (test_fd_rpd.Helpers.test_replica_deviations_are_about_their_own_mean_and_scaled) ... ok
 test_the_noise_draws_a_replica_and_adds_t_variance (test_fd_rpd.Helpers.test_the_noise_draws_a_replica_and_adds_t_variance) ... ok
-test_a_partition_is_a_partition_with_weights_unchanged_and_completeness_kept (test_fd_rpd.N0.test_a_partition_is_a_partition_with_weights_unchanged_and_completeness_kept) ... /dev/shm/rpd-root-IOgWXc/repo/nd-unfolding/tests/test_fd_rpd.py:694: RuntimeWarning: invalid value encountered in divide
+test_a_mapped_file_outside_minerva101_opt_does_not_count (test_fd_rpd.MatEnv.test_a_mapped_file_outside_minerva101_opt_does_not_count) ... ok
+test_an_unreadable_pin_says_so (test_fd_rpd.MatEnv.test_an_unreadable_pin_says_so) ... ok
+test_any_other_mapped_file_under_minerva101_opt_is_a_problem_whatever_its_name (test_fd_rpd.MatEnv.test_any_other_mapped_file_under_minerva101_opt_is_a_problem_whatever_its_name) ... ok
+test_check_mat_setup_passes_the_pinned_scripts_and_refuses_any_other (test_fd_rpd.MatEnv.test_check_mat_setup_passes_the_pinned_scripts_and_refuses_any_other) ... ok
+test_each_departure_from_the_pinned_environment_is_a_problem (test_fd_rpd.MatEnv.test_each_departure_from_the_pinned_environment_is_a_problem) ... ok
+test_flux_refuses_with_7_before_any_read_outside_the_pinned_environment (test_fd_rpd.MatEnv.test_flux_refuses_with_7_before_any_read_outside_the_pinned_environment) ... ok
+test_mapped_files_parses_the_maps_format (test_fd_rpd.MatEnv.test_mapped_files_parses_the_maps_format) ... ok
+test_mat_environment_passes_the_pinned_one_and_records_it (test_fd_rpd.MatEnv.test_mat_environment_passes_the_pinned_one_and_records_it) ... ok
+test_mat_environment_refuses_with_7_on_any_problem (test_fd_rpd.MatEnv.test_mat_environment_refuses_with_7_on_any_problem) ... ok
+test_the_pinned_environment_has_no_problem (test_fd_rpd.MatEnv.test_the_pinned_environment_has_no_problem) ... ok
+test_the_pinned_files_are_hashed_through_o_noatime (test_fd_rpd.MatEnv.test_the_pinned_files_are_hashed_through_o_noatime) ... ok
+test_the_pins_name_the_six_setup_scripts_and_the_three_mat_files (test_fd_rpd.MatEnv.test_the_pins_name_the_six_setup_scripts_and_the_three_mat_files) ... ok
+test_a_partition_is_a_partition_with_weights_unchanged_and_completeness_kept (test_fd_rpd.N0.test_a_partition_is_a_partition_with_weights_unchanged_and_completeness_kept) ... /dev/shm/rpd-root-HejT0m/repo/nd-unfolding/tests/test_fd_rpd.py:911: RuntimeWarning: invalid value encountered in divide
   np.testing.assert_allclose((o_k / npzs[k]["denom_nd"])[pos], (o_all / z["denom_nd"])[pos], rtol=1e-12)
 ok
 test_a_scaled_denominator_would_break_the_completeness_that_the_ratio_keeps (test_fd_rpd.N0.test_a_scaled_denominator_would_break_the_completeness_that_the_ratio_keeps) ... ok
@@ -97,6 +106,9 @@ test_refuses_a_missing_source_before_copying (test_fd_rpd.Stage.test_refuses_a_m
 test_refuses_a_source_at_another_digest_and_keeps_no_copy (test_fd_rpd.Stage.test_refuses_a_source_at_another_digest_and_keeps_no_copy) ... ok
 test_refuses_an_existing_staging_directory (test_fd_rpd.Stage.test_refuses_an_existing_staging_directory) ... ok
 test_the_copy_opens_with_o_noatime_where_the_platform_has_it (test_fd_rpd.Stage.test_the_copy_opens_with_o_noatime_where_the_platform_has_it) ... ok
+test_verify_staged_passes_the_staged_copies_and_refuses_any_one_defect (test_fd_rpd.Stage.test_verify_staged_passes_the_staged_copies_and_refuses_any_one_defect) ... ok
+test_verify_staged_refuses_an_extra_file_a_symlinked_copy_and_a_malformed_record (test_fd_rpd.Stage.test_verify_staged_refuses_an_extra_file_a_symlinked_copy_and_a_malformed_record) ... ok
+test_verify_staged_writes_nothing (test_fd_rpd.Stage.test_verify_staged_writes_nothing) ... ok
 test_a_flat_ratio_is_absent (test_fd_rpd.Stage0.test_a_flat_ratio_is_absent) ... ok
 test_read_truth_refuses_a_non_finite_truth_or_variance (test_fd_rpd.Stage0.test_read_truth_refuses_a_non_finite_truth_or_variance) ... ok
 test_refuses_a_5b_unfold_not_made_from_5bs_dumps (test_fd_rpd.Stage0.test_refuses_a_5b_unfold_not_made_from_5bs_dumps) ... ok
@@ -122,13 +134,6 @@ test_the_lanes_fit_their_limits (test_fd_rpd.Tables.test_the_lanes_fit_their_lim
 test_a_playlist_unfold_runs_s5p_numerics_as_declared (test_fd_rpd.Unfold.test_a_playlist_unfold_runs_s5p_numerics_as_declared) ... ok
 test_refuses_an_existing_product_another_receipt_or_a_missing_product (test_fd_rpd.Unfold.test_refuses_an_existing_product_another_receipt_or_a_missing_product) ... ok
 test_what_takes_exactly_its_own_arguments (test_fd_rpd.Unfold.test_what_takes_exactly_its_own_arguments) ... ok
-
-----------------------------------------------------------------------
-Ran 110 tests in 243.113s
-
-OK
-test_fd_rpd unittest rc=0
-=== test_fd_ct_periods
 test_the_bare_recipes_modules_load_without_root (test_fd_ct_periods.BareInterpreter.test_the_bare_recipes_modules_load_without_root) ... ok
 test_the_bare_recipes_paths_run_without_root (test_fd_ct_periods.BareInterpreter.test_the_bare_recipes_paths_run_without_root) ... ok
 test_the_root_readers_do_need_root (test_fd_ct_periods.BareInterpreter.test_the_root_readers_do_need_root) ... ok
@@ -214,13 +219,6 @@ test_an_exit_0_without_the_product_is_refused (test_fd_ct_periods.Unfold.test_an
 test_refuses_an_existing_product (test_fd_ct_periods.Unfold.test_refuses_an_existing_product) ... ok
 test_refuses_another_periods_receipt_or_a_changed_dump (test_fd_ct_periods.Unfold.test_refuses_another_periods_receipt_or_a_changed_dump) ... ok
 test_runs_s5p_numerics_as_declared (test_fd_ct_periods.Unfold.test_runs_s5p_numerics_as_declared) ... ok
-
-----------------------------------------------------------------------
-Ran 85 tests in 15.820s
-
-OK
-test_fd_ct_periods unittest rc=0
-=== test_fd_ct_readers
 test_end_to_end_recomputed_by_hand (test_fd_ct_readers.Chi2.test_end_to_end_recomputed_by_hand) ... ok
 test_refuses_a_b_eff_that_is_not_f0bs (test_fd_ct_readers.Chi2.test_refuses_a_b_eff_that_is_not_f0bs) ... ok
 test_refuses_a_count_other_than_declared (test_fd_ct_readers.Chi2.test_refuses_a_count_other_than_declared) ... ok
@@ -300,13 +298,198 @@ test_the_guard_refuses_a_planted_absolute_value (test_fd_ct_readers.Recoil.test_
 test_the_guard_refuses_a_planted_product_integral (test_fd_ct_readers.Recoil.test_the_guard_refuses_a_planted_product_integral) ... ok
 
 ----------------------------------------------------------------------
-Ran 77 tests in 36.083s
+Ran 287 tests in 268.117s
 
 OK
-test_fd_ct_readers unittest rc=0
+A-suites unittest rc=0
+=== A-zeroloops: python3 -I -B -m unittest discover -v -s /dev/shm/rpd-root-HejT0m/repo/nd-unfolding/tests -t /dev/shm/rpd-root-HejT0m/repo/nd-unfolding/tests -p test_fd_rpd_mat.py -k ZeroLoops
+test_loop_pots_reads_all_twelve_staged_zero_loops (test_fd_rpd_mat.ZeroLoops.test_loop_pots_reads_all_twelve_staged_zero_loops) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 11.493s
+
+OK
+A-zeroloops unittest rc=0
+{"mat_setup_scripts": 6, "mismatches": 0}
+B: python /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14; PLOTUTILSROOT=[/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib]; MINERVA_PREFIX=[/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt]; sbatch resolves to /dev/shm/rpd-root-HejT0m/shim/sbatch
+B: setup log lines 0
+=== B-test_fd_rpd: python3 -B -m unittest -v test_fd_rpd
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+test_classes_in_both_directions (test_fd_rpd.Arithmetic.test_classes_in_both_directions) ... ok
+test_f_is_the_between_share_by_explicit_loops (test_fd_rpd.Arithmetic.test_f_is_the_between_share_by_explicit_loops) ... ok
+test_free_and_carries_are_disjoint_for_a_resolved_playlist (test_fd_rpd.Arithmetic.test_free_and_carries_are_disjoint_for_a_resolved_playlist) ... ok
+test_r2_reaches_ec_on_exchangeable_offsets_and_clustered_on_clustered_ones (test_fd_rpd.Arithmetic.test_r2_reaches_ec_on_exchangeable_offsets_and_clustered_on_clustered_ones) ... ok
+test_r2s_outcomes_are_an_ordered_partition (test_fd_rpd.Arithmetic.test_r2s_outcomes_are_an_ordered_partition) ... ok
+test_s1_is_the_observed_period_structure_shrunk_by_its_noise_share (test_fd_rpd.Arithmetic.test_s1_is_the_observed_period_structure_shrunk_by_its_noise_share) ... ok
+test_scaled_equal_needs_exact_zeros_where_the_reference_is_zero (test_fd_rpd.Arithmetic.test_scaled_equal_needs_exact_zeros_where_the_reference_is_zero) ... ok
+test_sigma_delta_is_unbiased_for_iid_offsets (test_fd_rpd.Arithmetic.test_sigma_delta_is_unbiased_for_iid_offsets) ... ok
+test_stage_0s_branches (test_fd_rpd.Arithmetic.test_stage_0s_branches) ... ok
+test_the_oc_model_reproduces_sigma0_and_its_truths (test_fd_rpd.Arithmetic.test_the_oc_model_reproduces_sigma0_and_its_truths) ... ok
+test_the_oc_table_finds_each_pattern_at_low_noise (test_fd_rpd.Arithmetic.test_the_oc_table_finds_each_pattern_at_low_noise) ... ok
+test_the_p_value_counts_ties_and_the_observed_partition (test_fd_rpd.Arithmetic.test_the_p_value_counts_ties_and_the_observed_partition) ... ok
+test_the_partitions (test_fd_rpd.Arithmetic.test_the_partitions) ... ok
+test_the_pattern_semantics (test_fd_rpd.Arithmetic.test_the_pattern_semantics) ... ok
+test_the_patterns_give_exactly_one_outcome_for_every_class_assignment (test_fd_rpd.Arithmetic.test_the_patterns_give_exactly_one_outcome_for_every_class_assignment) ... ok
+test_the_reference_leaves_x_out_and_is_the_exposure_weighted_mean (test_fd_rpd.Arithmetic.test_the_reference_leaves_x_out_and_is_the_exposure_weighted_mean) ... ok
+test_the_regions_are_the_reported_fine_cells_between_the_declared_edges (test_fd_rpd.Arithmetic.test_the_regions_are_the_reported_fine_cells_between_the_declared_edges) ... ok
+test_the_step_is_the_2d_tests_form (test_fd_rpd.Arithmetic.test_the_step_is_the_2d_tests_form) ... ok
+test_a_consistent_playlist_passes_records_mc_pot_and_writes_its_truth (test_fd_rpd.Check.test_a_consistent_playlist_passes_records_mc_pot_and_writes_its_truth) ... ok
+test_refuses_a_background_dump_of_another_npz_or_loop (test_fd_rpd.Check.test_refuses_a_background_dump_of_another_npz_or_loop) ... ok
+test_refuses_a_flux_file_that_is_not_f1s (test_fd_rpd.Check.test_refuses_a_flux_file_that_is_not_f1s) ... ok
+test_refuses_a_lateral_npz_that_is_not_the_nn_dump (test_fd_rpd.Check.test_refuses_a_lateral_npz_that_is_not_the_nn_dump) ... ok
+test_refuses_a_loop_that_is_not_the_pinned_one (test_fd_rpd.Check.test_refuses_a_loop_that_is_not_the_pinned_one) ... ok
+test_refuses_an_npz_flux_that_is_not_the_playlists_flux (test_fd_rpd.Check.test_refuses_an_npz_flux_that_is_not_the_playlists_flux) ... ok
+test_refuses_data_pots_that_disagree (test_fd_rpd.Check.test_refuses_data_pots_that_disagree) ... ok
+test_refuses_to_overwrite (test_fd_rpd.Check.test_refuses_to_overwrite) ... ok
+test_refuses_without_f1s_pass (test_fd_rpd.Check.test_refuses_without_f1s_pass) ... ok
+test_c1_passes_a_correct_split_and_fails_each_one_entry_defect (test_fd_rpd.Controls.test_c1_passes_a_correct_split_and_fails_each_one_entry_defect) ... ok
+test_c1s_hadd_additivity_is_tested_by_the_weights (test_fd_rpd.Controls.test_c1s_hadd_additivity_is_tested_by_the_weights) ... ok
+test_c1s_measured_weights_share_is_printed_and_graded_only_when_switched_on (test_fd_rpd.Controls.test_c1s_measured_weights_share_is_printed_and_graded_only_when_switched_on) ... ok
+test_k2_is_bitwise_on_xsec_flat (test_fd_rpd.Controls.test_k2_is_bitwise_on_xsec_flat) ... ok
+test_n0p_passes_a_true_partition_and_fails_each_defect (test_fd_rpd.Controls.test_n0p_passes_a_true_partition_and_fails_each_defect) ... ok
+test_the_vectorized_measured_weights_are_the_dumps_rule (test_fd_rpd.Controls.test_the_vectorized_measured_weights_are_the_dumps_rule) ... ok
+test_baseline_pins_are_stage_bs_records (test_fd_rpd.Definitions.test_baseline_pins_are_stage_bs_records) ... ok
+test_n0_thresholds_are_t29_quantiles (test_fd_rpd.Definitions.test_n0_thresholds_are_t29_quantiles) ... ok
+test_nu_and_interval_reproduce_the_5d_label (test_fd_rpd.Definitions.test_nu_and_interval_reproduce_the_5d_label) ... ok
+test_replica_seeds_are_disjoint_and_not_5bs (test_fd_rpd.Definitions.test_replica_seeds_are_disjoint_and_not_5bs) ... ok
+test_stage_sources_are_part_1s_table (test_fd_rpd.Definitions.test_stage_sources_are_part_1s_table) ... ok
+test_the_calibration_gate (test_fd_rpd.Definitions.test_the_calibration_gate) ... ok
+test_the_declared_sizes_and_seeds (test_fd_rpd.Definitions.test_the_declared_sizes_and_seeds) ... ok
+test_the_era_grouping_is_the_declared_intensity_eras (test_fd_rpd.Definitions.test_the_era_grouping_is_the_declared_intensity_eras) ... ok
+test_the_groupings (test_fd_rpd.Definitions.test_the_groupings) ... ok
+test_the_production_flux_pin_is_the_2d_records (test_fd_rpd.Definitions.test_the_production_flux_pin_is_the_2d_records) ... ok
+test_the_rebuilt_5d_block_must_be_the_committed_one (test_fd_rpd.FiveB.test_the_rebuilt_5d_block_must_be_the_committed_one) ... ok
+test_combine_is_the_combiners_arithmetic (test_fd_rpd.Flux.test_combine_is_the_combiners_arithmetic) ... ok
+test_exposure_shares_are_pot_times_flux (test_fd_rpd.Flux.test_exposure_shares_are_pot_times_flux) ... ok
+test_f1_passes_consistent_files_and_fails_a_one_bin_defect_in_each (test_fd_rpd.Flux.test_f1_passes_consistent_files_and_fails_a_one_bin_defect_in_each) ... ok
+test_f1_passes_within_its_tolerance (test_fd_rpd.Flux.test_f1_passes_within_its_tolerance) ... ok
+test_f1_prints_the_errors_and_does_not_grade_them (test_fd_rpd.Flux.test_f1_prints_the_errors_and_does_not_grade_them) ... ok
+test_stage_s_needs_every_loops_pot_and_takes_e_from_the_loops (test_fd_rpd.Flux.test_stage_s_needs_every_loops_pot_and_takes_e_from_the_loops) ... ok
+test_the_combiner_is_loaded_unchanged_with_its_base_pointed_at_the_staged_copies (test_fd_rpd.Flux.test_the_combiner_is_loaded_unchanged_with_its_base_pointed_at_the_staged_copies) ... ok
+test_job_a_needs_f1_and_this_deploys_stage_0_and_d_records_on_this_f1 (test_fd_rpd.Gate.test_job_a_needs_f1_and_this_deploys_stage_0_and_d_records_on_this_f1) ... ok
+test_job_b_needs_this_deploys_controls_pass_on_the_records_now_on_disk (test_fd_rpd.Gate.test_job_b_needs_this_deploys_controls_pass_on_the_records_now_on_disk) ... ok
+test_n0_effect_reruns_the_null_with_the_bias_added (test_fd_rpd.Helpers.test_n0_effect_reruns_the_null_with_the_bias_added) ... ok
+test_n0_ps_share_bound (test_fd_rpd.Helpers.test_n0_ps_share_bound) ... ok
+test_n0s_triggers_force_the_small_playlists_unresolved (test_fd_rpd.Helpers.test_n0s_triggers_force_the_small_playlists_unresolved) ... ok
+test_p_era_is_the_era_partitions_between_share (test_fd_rpd.Helpers.test_p_era_is_the_era_partitions_between_share) ... ok
+test_r1s_gate (test_fd_rpd.Helpers.test_r1s_gate) ... ok
+test_r3s_numbers (test_fd_rpd.Helpers.test_r3s_numbers) ... ok
+test_reachability_truths (test_fd_rpd.Helpers.test_reachability_truths) ... ok
+test_replica_deviations_are_about_their_own_mean_and_scaled (test_fd_rpd.Helpers.test_replica_deviations_are_about_their_own_mean_and_scaled) ... ok
+test_the_noise_draws_a_replica_and_adds_t_variance (test_fd_rpd.Helpers.test_the_noise_draws_a_replica_and_adds_t_variance) ... ok
+test_a_mapped_file_outside_minerva101_opt_does_not_count (test_fd_rpd.MatEnv.test_a_mapped_file_outside_minerva101_opt_does_not_count) ... ok
+test_an_unreadable_pin_says_so (test_fd_rpd.MatEnv.test_an_unreadable_pin_says_so) ... ok
+test_any_other_mapped_file_under_minerva101_opt_is_a_problem_whatever_its_name (test_fd_rpd.MatEnv.test_any_other_mapped_file_under_minerva101_opt_is_a_problem_whatever_its_name) ... ok
+test_check_mat_setup_passes_the_pinned_scripts_and_refuses_any_other (test_fd_rpd.MatEnv.test_check_mat_setup_passes_the_pinned_scripts_and_refuses_any_other) ... ok
+test_each_departure_from_the_pinned_environment_is_a_problem (test_fd_rpd.MatEnv.test_each_departure_from_the_pinned_environment_is_a_problem) ... ok
+test_flux_refuses_with_7_before_any_read_outside_the_pinned_environment (test_fd_rpd.MatEnv.test_flux_refuses_with_7_before_any_read_outside_the_pinned_environment) ... ok
+test_mapped_files_parses_the_maps_format (test_fd_rpd.MatEnv.test_mapped_files_parses_the_maps_format) ... ok
+test_mat_environment_passes_the_pinned_one_and_records_it (test_fd_rpd.MatEnv.test_mat_environment_passes_the_pinned_one_and_records_it) ... ok
+test_mat_environment_refuses_with_7_on_any_problem (test_fd_rpd.MatEnv.test_mat_environment_refuses_with_7_on_any_problem) ... ok
+test_the_pinned_environment_has_no_problem (test_fd_rpd.MatEnv.test_the_pinned_environment_has_no_problem) ... ok
+test_the_pinned_files_are_hashed_through_o_noatime (test_fd_rpd.MatEnv.test_the_pinned_files_are_hashed_through_o_noatime) ... ok
+test_the_pins_name_the_six_setup_scripts_and_the_three_mat_files (test_fd_rpd.MatEnv.test_the_pins_name_the_six_setup_scripts_and_the_three_mat_files) ... ok
+test_a_partition_is_a_partition_with_weights_unchanged_and_completeness_kept (test_fd_rpd.N0.test_a_partition_is_a_partition_with_weights_unchanged_and_completeness_kept) ... /dev/shm/rpd-root-HejT0m/repo/nd-unfolding/tests/test_fd_rpd.py:911: RuntimeWarning: invalid value encountered in divide
+  np.testing.assert_allclose((o_k / npzs[k]["denom_nd"])[pos], (o_all / z["denom_nd"])[pos], rtol=1e-12)
+ok
+test_a_scaled_denominator_would_break_the_completeness_that_the_ratio_keeps (test_fd_rpd.N0.test_a_scaled_denominator_would_break_the_completeness_that_the_ratio_keeps) ... ok
+test_the_draw_is_fixed_by_the_seed (test_fd_rpd.N0.test_the_draw_is_fixed_by_the_seed) ... ok
+test_the_small_set_mean_and_its_ddof_1_standard_error (test_fd_rpd.N0Reading.test_the_small_set_mean_and_its_ddof_1_standard_error) ... ok
+test_a_planted_size_bias_fires_n0_and_makes_r2_inconclusive (test_fd_rpd.Readout.test_a_planted_size_bias_fires_n0_and_makes_r2_inconclusive) ... ok
+test_a_single_carrier_is_a_subset (test_fd_rpd.Readout.test_a_single_carrier_is_a_subset) ... ok
+test_q3_refuses_a_non_positive_or_non_finite_replica_or_n0_integral (test_fd_rpd.Readout.test_q3_refuses_a_non_positive_or_non_finite_replica_or_n0_integral) ... ok
+test_r1_is_not_computed_unless_stage_0_sees (test_fd_rpd.Readout.test_r1_is_not_computed_unless_stage_0_sees) ... ok
+test_r1_is_not_computed_without_a_step (test_fd_rpd.Readout.test_r1_is_not_computed_without_a_step) ... ok
+test_refuses_without_the_controls_pass (test_fd_rpd.Readout.test_refuses_without_the_controls_pass) ... ok
+test_t_variance_enters_every_r1_sigma_and_r2s_noise (test_fd_rpd.Readout.test_t_variance_enters_every_r1_sigma_and_r2s_noise) ... ok
+test_the_guard_refuses_a_planted_absolute_integral_or_its_ratio_to_f (test_fd_rpd.Readout.test_the_guard_refuses_a_planted_absolute_integral_or_its_ratio_to_f) ... ok
+test_the_readout_end_to_end (test_fd_rpd.Readout.test_the_readout_end_to_end) ... ok
+test_loop_pots_reads_the_loops_parameters (test_fd_rpd.RootPaths.test_loop_pots_reads_the_loops_parameters) ... ok
+test_run_flux_fails_when_a_loops_pot_is_not_its_fluxs (test_fd_rpd.RootPaths.test_run_flux_fails_when_a_loops_pot_is_not_its_fluxs) ... ok
+test_run_flux_passes_f1_and_records_the_loops_pot_and_e (test_fd_rpd.RootPaths.test_run_flux_passes_f1_and_records_the_loops_pot_and_e) ... ok
+test_write_and_read_flux_round_trip (test_fd_rpd.RootPaths.test_write_and_read_flux_round_trip) ... ok
+test_a_staged_copy_changed_afterwards_refuses (test_fd_rpd.Stage.test_a_staged_copy_changed_afterwards_refuses) ... ok
+test_copies_each_file_at_its_pin_and_records_atime (test_fd_rpd.Stage.test_copies_each_file_at_its_pin_and_records_atime) ... ok
+test_refuses_a_missing_source_before_copying (test_fd_rpd.Stage.test_refuses_a_missing_source_before_copying) ... ok
+test_refuses_a_source_at_another_digest_and_keeps_no_copy (test_fd_rpd.Stage.test_refuses_a_source_at_another_digest_and_keeps_no_copy) ... ok
+test_refuses_an_existing_staging_directory (test_fd_rpd.Stage.test_refuses_an_existing_staging_directory) ... ok
+test_the_copy_opens_with_o_noatime_where_the_platform_has_it (test_fd_rpd.Stage.test_the_copy_opens_with_o_noatime_where_the_platform_has_it) ... ok
+test_verify_staged_passes_the_staged_copies_and_refuses_any_one_defect (test_fd_rpd.Stage.test_verify_staged_passes_the_staged_copies_and_refuses_any_one_defect) ... ok
+test_verify_staged_refuses_an_extra_file_a_symlinked_copy_and_a_malformed_record (test_fd_rpd.Stage.test_verify_staged_refuses_an_extra_file_a_symlinked_copy_and_a_malformed_record) ... ok
+test_verify_staged_writes_nothing (test_fd_rpd.Stage.test_verify_staged_writes_nothing) ... ok
+test_a_flat_ratio_is_absent (test_fd_rpd.Stage0.test_a_flat_ratio_is_absent) ... ok
+test_read_truth_refuses_a_non_finite_truth_or_variance (test_fd_rpd.Stage0.test_read_truth_refuses_a_non_finite_truth_or_variance) ... ok
+test_refuses_a_5b_unfold_not_made_from_5bs_dumps (test_fd_rpd.Stage0.test_refuses_a_5b_unfold_not_made_from_5bs_dumps) ... ok
+test_refuses_a_staged_copy_changed_after_staging (test_fd_rpd.Stage0.test_refuses_a_staged_copy_changed_after_staging) ... ok
+test_sees_a_planted_step_and_writes_nothing_absolute (test_fd_rpd.Stage0.test_sees_a_planted_step_and_writes_nothing_absolute) ... ok
+test_the_guard_refuses_a_planted_f (test_fd_rpd.Stage0.test_the_guard_refuses_a_planted_f) ... ok
+test_refuses_without_stage_0 (test_fd_rpd.StageD.test_refuses_without_stage_0) ... ok
+test_writes_both_rules_and_respects_its_budget (test_fd_rpd.StageD.test_writes_both_rules_and_respects_its_budget) ... ok
+test_job_a_refuses_a_dump_step_without_its_mcfile (test_fd_rpd.Submit.test_job_a_refuses_a_dump_step_without_its_mcfile) ... ok
+test_job_a_refuses_a_prefix_collision_and_a_step_not_naming_r (test_fd_rpd.Submit.test_job_a_refuses_a_prefix_collision_and_a_step_not_naming_r) ... ok
+test_job_a_refuses_a_step_naming_a_path_outside_r (test_fd_rpd.Submit.test_job_a_refuses_a_step_naming_a_path_outside_r) ... ok
+test_job_a_refuses_a_step_that_names_no_path_under_r (test_fd_rpd.Submit.test_job_a_refuses_a_step_that_names_no_path_under_r) ... ok
+test_job_a_refuses_an_existing_product_directory (test_fd_rpd.Submit.test_job_a_refuses_an_existing_product_directory) ... ok
+test_job_a_refuses_before_stage_s_or_without_the_gate (test_fd_rpd.Submit.test_job_a_refuses_before_stage_s_or_without_the_gate) ... ok
+test_refuses_a_deploy_not_at_the_pin (test_fd_rpd.Submit.test_refuses_a_deploy_not_at_the_pin) ... ok
+test_the_job_a_submission (test_fd_rpd.Submit.test_the_job_a_submission) ... ok
+test_the_job_b_submission (test_fd_rpd.Submit.test_the_job_b_submission) ... ok
+test_t_noise_is_the_first_order_variance_of_the_quantity (test_fd_rpd.TNoise.test_t_noise_is_the_first_order_variance_of_the_quantity) ... ok
+test_job_a_passes_mcfile_explicitly_to_every_dump (test_fd_rpd.Tables.test_job_a_passes_mcfile_explicitly_to_every_dump) ... ok
+test_job_b_is_every_declared_unfold_once (test_fd_rpd.Tables.test_job_b_is_every_declared_unfold_once) ... ok
+test_the_committed_tables_are_the_generators (test_fd_rpd.Tables.test_the_committed_tables_are_the_generators) ... ok
+test_the_lanes_fit_their_limits (test_fd_rpd.Tables.test_the_lanes_fit_their_limits) ... ok
+test_a_playlist_unfold_runs_s5p_numerics_as_declared (test_fd_rpd.Unfold.test_a_playlist_unfold_runs_s5p_numerics_as_declared) ... ok
+test_refuses_an_existing_product_another_receipt_or_a_missing_product (test_fd_rpd.Unfold.test_refuses_an_existing_product_another_receipt_or_a_missing_product) ... ok
+test_what_takes_exactly_its_own_arguments (test_fd_rpd.Unfold.test_what_takes_exactly_its_own_arguments) ... ok
+
+----------------------------------------------------------------------
+Ran 125 tests in 222.188s
+
+OK
+B-test_fd_rpd unittest rc=0
+=== B-probe: mat_environment in flux's invocation
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+{"mapped_mat_files": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"], "symlink": {"/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMATDict.so": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"}}
+=== B-mat: python3 -I -B -m unittest discover -v -s /dev/shm/rpd-root-HejT0m/repo/nd-unfolding/tests -t /dev/shm/rpd-root-HejT0m/repo/nd-unfolding/tests -p test_fd_rpd_mat.py
+test_each_staged_flux_histogram_is_an_mnvh1d_the_pinned_combiner_reads (test_fd_rpd_mat.Mat.test_each_staged_flux_histogram_is_an_mnvh1d_the_pinned_combiner_reads) ... Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+ok
+test_the_environment_is_flux_s_pinned_one (test_fd_rpd_mat.Mat.test_the_environment_is_flux_s_pinned_one) ... ok
+test_loop_pots_reads_all_twelve_staged_zero_loops (test_fd_rpd_mat.ZeroLoops.test_loop_pots_reads_all_twelve_staged_zero_loops) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 13.998s
+
+OK
+B-mat unittest rc=0
 porcelain after: []
 squeue --me after:
 squeue rc=0
-2026-11-03T18:30:51Z
+2026-11-04T03:07:56Z
+overall rc=0
 clone deleted
 ssh rc=0

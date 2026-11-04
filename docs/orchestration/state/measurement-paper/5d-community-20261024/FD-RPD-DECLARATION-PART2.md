@@ -251,8 +251,8 @@ the three suites of §2 in root_6_28 from a /dev/shm clone. It activates the env
 refusing `sbatch`, `srun` and `salloc` shims first on PATH. TMPDIR is in the clone, nothing reads pscratch or CFS, and
 the clone is deleted at the end. root_6_28 has no uproot, and none of the three suites needs it. A precheck at
 `c3e235b2` on login02 gave test_fd_rpd 110 OK, none skipped (the five ROOT tests ran); test_fd_ct_periods 85 OK, none
-skipped; test_fd_ct_readers 77 OK. Porcelain and `squeue --me` were empty before and after. The receipt is the same
-script on the head that carries this text, in `root_tests_login.log` (its HEAD and node lines).
+skipped; test_fd_ct_readers 77 OK. Porcelain and `squeue --me` were empty before and after. Revision 3's receipt, on
+`e36bfd18`, is `root_tests_login.log` as committed in `7bd0440f`. Revision 4's receipt replaces it (below).
 
 **Revision 4:** `root_tests_login.sh` now runs each suite in its step's environment (§2), with `FD_RPD_R=$R`, so
 `test_fd_rpd_mat` reads the staged copies. A precheck at `45b09d40` on login02 (19:37–20:25Z) gave, with nothing
@@ -262,7 +262,19 @@ skipped and no shim called:
   so `mat_environment` passed in the real environment.
 
 The full environment prints ROOT's rootmap warnings ("class RooUnfold… found in libUnfoldUtilsDict.so is already in
-libRooUnfold.so"), which are known and harmless. The receipt is the same script on the head that carries this text.
+libRooUnfold.so"), which are known and harmless.
+
+**The receipt** is `root_tests_login.log`, from the committed script at `9b93972f`, the head with revision 4's final code
+(`66b2f47e`'s), on login35 from 02:58 to 03:08Z on 2026-11-04. Nothing was skipped (no "skip" line), no shim was
+called (no "REFUSED" line), and every suite ended "OK":
+- root_6_28 by prefix, with `PLOTUTILSROOT` empty: the three suites, 287 OK (125 + 85 + 77); `ZeroLoops` under `-I`,
+  1 OK;
+- `check-mat-setup` before `source`: `{"mat_setup_scripts": 6, "mismatches": 0}`;
+- MATENV, with `PLOTUTILSROOT` and `MINERVA_PREFIX` at the shared checkout: `test_fd_rpd`, 125 OK. The `-I` probe of
+  `mat_environment` in `flux`'s invocation passed, with mapped MAT files exactly `[…/MINERvA101/opt/lib/libMAT.so]` and
+  the symlink `libMATDict.so` → `libMAT.so`. `test_fd_rpd_mat` whole under `-I`, 3 OK.
+
+The clone's porcelain and `squeue --me` were empty before and after, and the clone was deleted.
 
 **Added in revision 3:**
 - **F1 (ruling 2):** an error defect of 10⁻³ passes and is printed at its size (`errors_max_rel_printed`); the graded keys
@@ -507,8 +519,9 @@ staging. The three `__pycache__` directories the repository hooks had left (`doc
 - `git hash-object` of every file that `66b2f47e` tracks under those paths equalled its blob at `66b2f47e`
   (6306 files, 0 differ). `git ls-files --others`, with and without `--ignored`, listed nothing under those paths.
 
-After the commit, `git status --porcelain --ignored` and `git diff --stat HEAD` are both empty (the report to the
-director gives the output).
+After that commit (`9b93972f`), `git diff --stat HEAD` was empty. `git status --porcelain --ignored` listed only four
+`__pycache__` directories, which the commit's hooks and the manifest generator had recreated (`docs/open-items`,
+`docs/orchestration/state`, `lib`, `tools/registry`). Once they were deleted, it was empty.
 
 ## 6. What part 2 settles, and its deviations
 
