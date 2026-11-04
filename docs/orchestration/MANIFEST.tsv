@@ -7159,6 +7159,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom2-run/connect-cvdenom.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom2-run/cvdenom.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cvdenom2-run/cvdenom.time	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/hash-grep.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/mutation_a21-survivor-finder-b9bd3158.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/sbatch-calibrate.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/tables-clone-check-1295f7e4.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

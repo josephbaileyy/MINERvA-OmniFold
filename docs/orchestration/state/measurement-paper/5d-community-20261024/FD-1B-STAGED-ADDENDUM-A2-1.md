@@ -481,5 +481,11 @@ The C4 refusal at the readout is replaced by this. The C4 refusal still stands a
   for `test_fd_1b.py`, `FD-1B-DIAG-BINDING.md`'s and `FD-1B-INV-BINDING.md`'s runs, and `FD-1B-MODED-DECLARATION.md`'s
   117. They are not re-pinned here. The final mutation receipt runs on the crc32
   world.
+- **No 1B test draws on `hash()` after the change** (`a2-1/hash-grep.txt`). The grep was
+  `git grep -nP '(?<![\w.])hash\('` at `b4eefeda`:
+  - over the 12 1B suites: 2 hits, both comments that say "not hash()" (`test_fd_1b.py:107` and
+    `test_fd_1b_a21_e2e.py:78`);
+  - over the 30 repository modules those suites import: no match;
+  - the same pattern at `e880008c` finds both former calls (`test_fd_1b.py:106` and `:114`), so it can see one.
 
 "23 per lane" is equivalent on the declared inputs, and its output is byte-identical.

@@ -1,0 +1,45 @@
+# 1B A2.1: does any 1B test still draw on the builtin hash()? (the director's check, 2026-11-04)
+# pattern: git grep -nP '(?<![\w.])hash\(' (excludes hashlib, x.hash( and foo_hash()
+## at b4eefeda, the 12 1B suites (tests/test_fd_1b*.py, tests/test_s5e_candidate.py):
+b4eefeda:nd-unfolding/tests/test_fd_1b.py:107:            r = np.random.default_rng(zlib.crc32(f"bank:{t}".encode()))   # not hash(): one world at every PYTHONHASHSEED
+b4eefeda:nd-unfolding/tests/test_fd_1b_a21_e2e.py:78:    weights file); each bank universe's tdw is the CV's within 2 % (crc32-seeded, not hash()); each detector
+# rc=0 (both hits are comments that say 'not hash()')
+## at b4eefeda, the 30 repository modules those suites import:
+#   2d-unfolding/cov2d/cov2d.py
+#   2d-unfolding/cov2d/cov2d_receipt.py
+#   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe.py
+#   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py
+#   nd-unfolding/fd_1b_binning.py
+#   nd-unfolding/fd_1b_c2.py
+#   nd-unfolding/fd_1b_cvdenom.py
+#   nd-unfolding/fd_1b_diag.py
+#   nd-unfolding/fd_1b_inv.py
+#   nd-unfolding/fd_1b_mc.py
+#   nd-unfolding/fd_1b_moded.py
+#   nd-unfolding/fd_1b_null.py
+#   nd-unfolding/fd_1b_score.py
+#   nd-unfolding/fd_1b_tasks.py
+#   nd-unfolding/fd_1b_toys.py
+#   nd-unfolding/fd_f1_tasks.py
+#   nd-unfolding/omnifold_nn_core.py
+#   nd-unfolding/s1_assemble.py
+#   nd-unfolding/s5c_pseudo.py
+#   nd-unfolding/s5c_unfold.py
+#   nd-unfolding/s5e_candidate.py
+#   nd-unfolding/s5e_deform.py
+#   nd-unfolding/s5e_trace.py
+#   nd-unfolding/s5n_pseudo.py
+#   nd-unfolding/s5p_nullexp.py
+#   nd-unfolding/s5p_numerics.py
+#   nd-unfolding/s5p_stage1_inspect.py
+#   nd-unfolding/s5p_truths.py
+#   nd-unfolding/s5p_universe.py
+#   nd-unfolding/xsec_nd.py
+# rc=1 (no match)
+## power: the same pattern at e880008c, before the fix:
+e880008c:nd-unfolding/tests/test_fd_1b.py:106:            r = np.random.default_rng(abs(hash(("bank", t))) % (2 ** 32))
+e880008c:nd-unfolding/tests/test_fd_1b.py:114:                r = np.random.default_rng(abs(hash(("det", t))) % (2 ** 32))
+e880008c:nd-unfolding/tests/test_fd_1b_a21_e2e.py:78:    weights file); each bank universe's tdw is the CV's within 2 % (crc32-seeded, not hash()); each detector
+e880008c:nd-unfolding/tests/test_fd_1b_a21_e2e.py:330:        # bank: the toy World's weights are hash()-seeded (test_fd_1b.World), so they move with PYTHONHASHSEED
+e880008c:nd-unfolding/tests/test_fd_1b_mc.py:112:        hash(), which varies per process): a detector universe's denom_nd is the CV's within 5 %; a bank universe's
+# rc=0
