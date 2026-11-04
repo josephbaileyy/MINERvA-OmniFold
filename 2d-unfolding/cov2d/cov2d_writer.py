@@ -5,7 +5,8 @@ schema and $CV's dataPOTUsed, for ``re2_driver.py --data-file``.
   clipped mass is recorded (cov2d.lam_plus).
 * ``expand``: each reco-passing row with k > 0 becomes k identical rows (measured, measured_pz, measured_pass = 1), in
   row order, signal rows before background rows. The data tree carries no weight, so a count is a repeated row.
-* ``write_data_file``: the tree and the parameter, with $CV's leaf types (``LEAVES``).
+* ``write_data_file``: the tree and the parameter, with $CV's leaf types (``LEAVES``), the tree in one cycle: AutoSave
+  is off, because on $CV's 4,119,797 rows it left ``data;2`` and ``data;3`` and failed control (2a) (addendum A1).
 * ``writer_control`` (control (2), its writer half): $CV's own data tree written through ``write_data_file`` must
   equal $CV's bitwise, by control 1's ``compare_tree`` imported unchanged, and the file's dataPOTUsed must equal
   $CV's.
@@ -63,6 +64,7 @@ def write_data_file(path: str | Path, cols: dict, data_pot: float) -> None:
     if not f or f.IsZombie():
         raise c.Refusal(f"could not create {path}")
     t = ROOT.TTree("data", "data")
+    t.SetAutoSave(0)  # no intermediate cycles: the final Write is the tree's only key
     bufs = {}
     for b in BRANCHES:
         code, leaf = LEAVES[b]

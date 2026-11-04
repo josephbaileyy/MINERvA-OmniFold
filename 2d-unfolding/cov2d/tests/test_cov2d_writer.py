@@ -115,6 +115,55 @@ class File(unittest.TestCase):
             self.assertTrue(np.array_equal(a[b].astype(self.cols[b].dtype).view(np.uint8),
                                            self.cols[b].view(np.uint8)), b)
 
+    @contextlib.contextmanager
+    def autosaving(self):
+        # A1: ROOT.TTree replaced by a factory that autosaves every 200 entries, so the 2,345-row fixture reaches the
+        # autosaves that $CV's 4,119,797 rows reached in control (2a). It yields each tree's threshold as built, and as
+        # in force when the tree is written: a threshold above the fixture's size (ROOT's default, 300 MB) would pass
+        # the key check here and fail on $CV. mock.patch.object cannot restore ROOT.TTree: it is a lazy attribute of
+        # ROOT's facade, so the exit's delattr fails. A Python subclass of TTree crashes cppyy, so Write is wrapped on
+        # the instance.
+        import ROOT
+        real, built, at_write = ROOT.TTree, [], []
+
+        def factory(*a):
+            t = real(*a)
+            t.SetAutoSave(200)
+            built.append(t.GetAutoSave())
+            write = t.Write
+
+            def recording_write(*args):
+                at_write.append(t.GetAutoSave())
+                return write(*args)
+            t.Write = recording_write
+            return t
+        ROOT.TTree = factory
+        try:
+            yield built, at_write
+        finally:
+            ROOT.TTree = real
+
+    def test_one_cycle_when_autosave_would_fire(self):
+        import uproot
+        out = Path(self.tmp.name) / "d.root"
+        with self.autosaving() as (built, at_write):
+            w.write_data_file(out, self.cols, 1.5e20)
+        self.assertEqual(built, [200])  # the factory built the tree: the test cannot pass without forcing
+        f = uproot.open(out)
+        self.assertEqual(sorted(f.classnames(recursive=False)), ["data;1", "dataPOTUsed;1"])
+        a = f["data"].arrays(list(w.BRANCHES), library="np")
+        for b in w.BRANCHES:
+            self.assertTrue(np.array_equal(a[b].astype(self.cols[b].dtype).view(np.uint8),
+                                           self.cols[b].view(np.uint8)), b)
+        self.assertEqual(at_write, [0])  # AutoSave is off when the tree is written, whatever the row count
+
+    def test_control_passes_when_autosave_would_fire(self):
+        with self.autosaving() as (built, _):
+            code, text = self.run_control()
+        self.assertEqual(built, [200])
+        self.assertEqual(code, 0, text)
+        self.assertIn("WRITER-CONTROL PASS failures=0", text)
+
     def test_refuses_unequal_columns(self):
         bad = dict(self.cols, measured_pz=self.cols["measured_pz"][:-1])
         with self.assertRaises(w.c.Refusal):

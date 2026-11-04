@@ -1,0 +1,17 @@
+test_clipped_and_recorded (test_cov2d_writer.Counts.test_clipped_and_recorded) ... ok
+test_expand (test_cov2d_writer.Counts.test_expand) ... ok
+test_signal_drawn_before_background (test_cov2d_writer.Counts.test_signal_drawn_before_background) ... ok
+test_control_fires_on_a_changed_row (test_cov2d_writer.File.test_control_fires_on_a_changed_row) ... skipped 'needs PyROOT and uproot'
+test_control_fires_on_a_dropped_row (test_cov2d_writer.File.test_control_fires_on_a_dropped_row) ... skipped 'needs PyROOT and uproot'
+test_control_fires_on_a_leaf_type (test_cov2d_writer.File.test_control_fires_on_a_leaf_type) ... skipped 'needs PyROOT and uproot'
+test_control_fires_on_the_parameter (test_cov2d_writer.File.test_control_fires_on_the_parameter) ... skipped 'needs PyROOT and uproot'
+test_control_passes_on_the_writer (test_cov2d_writer.File.test_control_passes_on_the_writer) ... skipped 'needs PyROOT and uproot'
+test_control_passes_when_autosave_would_fire (test_cov2d_writer.File.test_control_passes_when_autosave_would_fire) ... skipped 'needs PyROOT and uproot'
+test_one_cycle_when_autosave_would_fire (test_cov2d_writer.File.test_one_cycle_when_autosave_would_fire) ... skipped 'needs PyROOT and uproot'
+test_refuses_unequal_columns (test_cov2d_writer.File.test_refuses_unequal_columns) ... skipped 'needs PyROOT and uproot'
+test_schema_and_parameter (test_cov2d_writer.File.test_schema_and_parameter) ... skipped 'needs PyROOT and uproot'
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.048s
+
+OK (skipped=9)

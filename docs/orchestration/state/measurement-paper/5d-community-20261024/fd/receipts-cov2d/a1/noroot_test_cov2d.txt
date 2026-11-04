@@ -1,0 +1,33 @@
+test_bank_is_part_b_universe_block (test_cov2d.Bank.test_bank_is_part_b_universe_block) ... ok
+test_flux_weights (test_cov2d.Bank.test_flux_weights) ... ok
+test_seeds (test_cov2d.Bank.test_seeds) ... ok
+test_bound_is_never_below_the_exact_maximum (test_cov2d.Compose.test_bound_is_never_below_the_exact_maximum) ... ok
+test_c2_weakened_cells_and_outlier (test_cov2d.Compose.test_c2_weakened_cells_and_outlier)
+On C2's committed record: the weakened cells per tune, and OUTLIER_CELL is the cell of the largest |R|. ... ok
+test_first_order_in_draw_order (test_cov2d.Compose.test_first_order_in_draw_order) ... ok
+test_lam_plus (test_cov2d.Compose.test_lam_plus) ... ok
+test_n1_conventions (test_cov2d.Compose.test_n1_conventions) ... ok
+test_one_universe_is_bitwise (test_cov2d.Compose.test_one_universe_is_bitwise) ... ok
+test_refuses_empty (test_cov2d.Compose.test_refuses_empty) ... ok
+test_sha256_through_noatime (test_cov2d.Compose.test_sha256_through_noatime) ... ok
+test_weakened_cells (test_cov2d.Compose.test_weakened_cells) ... ok
+test_deterministic_and_ordered (test_cov2d.Draws.test_deterministic_and_ordered) ... ok
+test_flux_probability (test_cov2d.Draws.test_flux_probability) ... ok
+test_generator_is_seed_and_salt (test_cov2d.Draws.test_generator_is_seed_and_salt) ... ok
+test_pair_bands_uniform (test_cov2d.Draws.test_pair_bands_uniform) ... ok
+test_a_nonpositive_truth_cell_stops (test_cov2d.Receipt.test_a_nonpositive_truth_cell_stops) ... skipped 'needs PyROOT and uproot'
+test_an_unequal_band_is_not_certified_by_its_largest_universe (test_cov2d.Receipt.test_an_unequal_band_is_not_certified_by_its_largest_universe) ... skipped 'needs PyROOT and uproot'
+test_atime_move_stops (test_cov2d.Receipt.test_atime_move_stops) ... skipped 'needs PyROOT and uproot'
+test_compounding_row_stops (test_cov2d.Receipt.test_compounding_row_stops) ... skipped 'needs PyROOT and uproot'
+test_driver_names_without_root_equal_the_import (test_cov2d.Receipt.test_driver_names_without_root_equal_the_import) ... skipped 'needs PyROOT and uproot'
+test_mild_bank_passes_and_every_row_is_evaluated (test_cov2d.Receipt.test_mild_bank_passes_and_every_row_is_evaluated) ... skipped 'needs PyROOT and uproot'
+test_negative_composites_are_counted (test_cov2d.Receipt.test_negative_composites_are_counted) ... skipped 'needs PyROOT and uproot'
+test_nonfinite_weights_are_zeroed_and_counted (test_cov2d.Receipt.test_nonfinite_weights_are_zeroed_and_counted) ... skipped 'needs PyROOT and uproot'
+test_the_bound_is_exact_at_the_edge (test_cov2d.Receipt.test_the_bound_is_exact_at_the_edge) ... skipped 'needs PyROOT and uproot'
+test_truth_cell_matches_a_th2d (test_cov2d.Receipt.test_truth_cell_matches_a_th2d) ... skipped 'needs PyROOT and uproot'
+test_truth_cells_are_recomputed_independently (test_cov2d.Receipt.test_truth_cells_are_recomputed_independently) ... skipped 'needs PyROOT and uproot'
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.556s
+
+OK (skipped=11)
