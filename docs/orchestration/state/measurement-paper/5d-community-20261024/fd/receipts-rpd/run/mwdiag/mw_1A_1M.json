@@ -1,0 +1,128 @@
+{
+ "1A": {
+  "bins": {
+   "(10, 5, 4, 6, 2)": {
+    "B": 5.068134235936677,
+    "D0_from_w0": 549.0000000000038,
+    "D_recomputed": 550.0,
+    "delta": 0.9999999999962483,
+    "delta_int_residual": 3.751665644813329e-12,
+    "explained": true,
+    "n_diff": 550,
+    "n_rows": 550,
+    "near_edge_rows_in_bin": 1,
+    "near_edge_rows_whose_other_side_is_this_bin": 0,
+    "w0": 0.9907684257997511
+   },
+   "(9, 5, 4, 6, 2)": {
+    "B": 2.850131935237236,
+    "D0_from_w0": 228.99999999999844,
+    "D_recomputed": 228.0,
+    "delta": -0.9999999999984368,
+    "delta_int_residual": 1.5631940186722204e-12,
+    "explained": true,
+    "n_diff": 228,
+    "n_rows": 228,
+    "near_edge_rows_in_bin": 0,
+    "near_edge_rows_whose_other_side_is_this_bin": 1,
+    "w0": 0.9875540090164312
+   }
+  },
+  "bins_not_invertible": [],
+  "bins_unexplained": [],
+  "bins_with_differing_rows": 2,
+  "differing_rows_by_category": {
+   "near_edge": 1,
+   "neither": 777,
+   "neither_anomalous": 0,
+   "neither_bin_shift_in_explained_bin": 777,
+   "on_last_edge_only": 0
+  },
+  "differing_rows_not_explained": [],
+  "float32_ulp_rule": "|v - nearest edge| <= np.spacing(float32(|v|)), per coordinate",
+  "n_diff": 778,
+  "n_rows": 357701,
+  "rows_near_edge_total": 3965,
+  "rows_on_last_edge_total": 0,
+  "share_equal": 0.99782499909142
+ },
+ "1M": {
+  "bins": {
+   "(11, 8, 4, 6, 2)": {
+    "B": 4.783564648750884,
+    "D0_from_w0": 365.9999999999991,
+    "D_recomputed": 365.0,
+    "delta": -0.9999999999990905,
+    "delta_int_residual": 9.094947017729282e-13,
+    "explained": true,
+    "n_diff": 365,
+    "n_rows": 365,
+    "near_edge_rows_in_bin": 0,
+    "near_edge_rows_whose_other_side_is_this_bin": 1,
+    "w0": 0.986930151232921
+   },
+   "(12, 8, 4, 6, 2)": {
+    "B": 2.147491807340946,
+    "D0_from_w0": 86.00000000000023,
+    "D_recomputed": 87.0,
+    "delta": 0.9999999999997726,
+    "delta_int_residual": 2.2737367544323206e-13,
+    "explained": true,
+    "n_diff": 87,
+    "n_rows": 87,
+    "near_edge_rows_in_bin": 1,
+    "near_edge_rows_whose_other_side_is_this_bin": 0,
+    "w0": 0.9750291650309193
+   },
+   "(5, 7, 1, 2, 0)": {
+    "B": 7.602744013409989,
+    "D0_from_w0": 831.0000000000059,
+    "D_recomputed": 832.0,
+    "delta": 0.9999999999940883,
+    "delta_int_residual": 5.9117155615240335e-12,
+    "explained": true,
+    "n_diff": 832,
+    "n_rows": 832,
+    "near_edge_rows_in_bin": 1,
+    "near_edge_rows_whose_other_side_is_this_bin": 0,
+    "w0": 0.9908510902365705
+   },
+   "(6, 7, 1, 2, 0)": {
+    "B": 5.108658240944222,
+    "D0_from_w0": 883.9999999999982,
+    "D_recomputed": 883.0,
+    "delta": -0.999999999998181,
+    "delta_int_residual": 1.8189894035458565e-12,
+    "explained": true,
+    "n_diff": 883,
+    "n_rows": 883,
+    "near_edge_rows_in_bin": 0,
+    "near_edge_rows_whose_other_side_is_this_bin": 1,
+    "w0": 0.9942209748405608
+   }
+  },
+  "bins_not_invertible": [],
+  "bins_unexplained": [],
+  "bins_with_differing_rows": 4,
+  "differing_rows_by_category": {
+   "near_edge": 2,
+   "neither": 2165,
+   "neither_anomalous": 0,
+   "neither_bin_shift_in_explained_bin": 2165,
+   "on_last_edge_only": 0
+  },
+  "differing_rows_not_explained": [],
+  "float32_ulp_rule": "|v - nearest edge| <= np.spacing(float32(|v|)), per coordinate",
+  "n_diff": 2167,
+  "n_rows": 586754,
+  "rows_near_edge_total": 7253,
+  "rows_on_last_edge_total": 0,
+  "share_equal": 0.9963067997832141
+ },
+ "code_sha256": {
+  "fd_rpd.py": "3cbc27111d225fdc6d3b2ce1a6b797ad4372954b96fe5cbd769f641f2911b96c",
+  "fd_rpd_inputs.py": "6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70"
+ },
+ "deploy": "/pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-9",
+ "what": "DESCRIPTIVE: C1 measured_weights disagreement (deviation 1); changes no record, enters no rule"
+}

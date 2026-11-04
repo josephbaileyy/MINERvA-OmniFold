@@ -1,0 +1,10 @@
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+[RPD] N0 SIZE-BIAS-g False SIZE-BIAS-t False
+[RPD] R1 OTHER
+[RPD] R2 CLUSTERED: p_flux 0.0001 beta1 1.000 p_era 0.0052
+[RPD] R3 rho_raw 0.5341 nu12 7.984
+{"wrote": "/pscratch/sd/j/josephrb/fd-rpd-20261103/readout/fd_rpd.json", "sha256": "c0b06cfd2d11d99fc9226d054e68b951231f5d02e81ea3abc80cf7f89b624658"}

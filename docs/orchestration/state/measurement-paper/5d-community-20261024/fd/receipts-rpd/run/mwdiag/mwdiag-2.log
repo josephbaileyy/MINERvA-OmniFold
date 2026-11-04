@@ -1,0 +1,18 @@
+node login28 nproc=244 loadavg 18.48 19.90 23.36
+2026-11-04T11:24:52Z
+connect script sha256 b11006b1334c187bf1f3741a2039286544b413ac3ad8f833f7f7e1c9d0b27fa4
+job B 60788016: 60788016|COMPLETED|0:0|01:38:11
+HEAD 8727c63e1d32599039ea977d833c5de25a9089d6; porcelain --ignored lines before: 0
+section 7: 23 blobs, 0 mismatches
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1; nice 19
+verify-staged rc=0
+{"verified": 79, "mismatches": 0}
+mw_diag.py sha256 de916557c576b1c96f5cc240be8d7ae679901264c665f56e426afd575b11bb07
+2026-11-04T11:25:55Z
+mw_diag rc=0
+[mw-diag] 1A: rows 357701 differ 778 share 0.997825; near-edge 1 last-edge-only 0 bin-shift 777 NOT-EXPLAINED 0; bins 2 unexplained 0 not-invertible 0
+[mw-diag] 1M: rows 586754 differ 2167 share 0.996307; near-edge 2 last-edge-only 0 bin-shift 2165 NOT-EXPLAINED 0; bins 4 unexplained 0 not-invertible 0
+{"wrote": "/pscratch/sd/j/josephrb/fd-rpd-20261103/diag-2/mw_1A_1M.json", "sha256": "34b53907bc734f92f8988d2e68304416bb83e4dd66fbe4bad228b9401fcd2907"}
+porcelain --ignored lines after: 0
+mwdiag rc=0
+2026-11-04T11:25:57Z

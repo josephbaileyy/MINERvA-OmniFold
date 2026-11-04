@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/pscratch/sd/j/josephrb/fd-rpd-20261103/diag/mw_diag.py", line 134, in <module>
+    z, b = load_noatime(R / pp["lat"]), load_noatime(R / pp["bkg"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/fd-rpd-20261103/diag/mw_diag.py", line 34, in load_noatime
+    return {k: z[k] for k in z.files}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/pscratch/sd/j/josephrb/fd-rpd-20261103/diag/mw_diag.py", line 34, in <dictcomp>
+    return {k: z[k] for k in z.files}
+               ~^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/npyio.py", line 256, in __getitem__
+    return format.read_array(bytes,
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/format.py", line 795, in read_array
+    raise ValueError("Object arrays cannot be loaded when "
+ValueError: Object arrays cannot be loaded when allow_pickle=False
