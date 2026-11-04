@@ -10,6 +10,8 @@ STATS_SHA=3614ebadf9cb1b95340b80129e6e743e780a7979cf6392d9d64d7b56ffa02adf
 export UNI=$A/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root
 export MC=$A/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
 export FLUXU=$A/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root
+CFSACT=/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged   # the CFS originals
+export K2A=/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root   # (2a)'s kept file, re-checked (7eb39088) by the pilot
 PY310=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
 CJ=$C/2d-unfolding/cov2d/jobs/cov2d_jobs.py
 

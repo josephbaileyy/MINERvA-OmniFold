@@ -90,7 +90,7 @@ class RealParser(unittest.TestCase):
         sys.path.insert(0, str(HERE.parents[1] / "re2"))
         import re2_driver
         env = {"$CV": "/x/cv.root", "$UNI": "/x/uni.root", "$FLUXU": "/x/fu.root", "$MC": "/x/mc.root",
-               "$ACT": "/x/act", "$D": "/x/d"}
+               "$ACT": "/x/act", "$D": "/x/d", "$K2A": "/x/d/data_2a.root"}
 
         class Stop(Exception):
             pass
@@ -101,8 +101,8 @@ class RealParser(unittest.TestCase):
             ns = real(self, args, namespace)
             seen.append(ns)
             raise Stop
-        for truth in ("G18", "AR23"):
-            for r in cj.runs_of(truth):
+        for truth in ("G18", "AR23", "pilot"):
+            for r in (cj.pilot()[0] if truth == "pilot" else cj.runs_of(truth)):
                 line = " ".join(r["args"])
                 for k, v in env.items():
                     line = line.replace(k, v)
@@ -116,7 +116,7 @@ class RealParser(unittest.TestCase):
                 self.assertEqual((ns.seed, ns.iters, ns.estimator), (42, 5, "lgbm"))
                 if r["kind"] == "universe":
                     self.assertEqual(ns.universe, r["args"][r["args"].index("--universe") + 1])
-        self.assertEqual(len(seen), 2 * 786)
+        self.assertEqual(len(seen), 2 * 786 + 8)
 
 
 class Check(unittest.TestCase):
@@ -209,6 +209,46 @@ class DryRun(unittest.TestCase):
             self.assertTrue(all(f"--data-file {td}/pseudo/G18/b/data_5721000.root" in ln for ln in lines))
             self.assertTrue(all("/pscratch/sd/j/josephrb/cov2d-inputs-20261104/" in ln for ln in lines))
             self.assertTrue(all(ln.startswith("srun -c 128 ") for ln in lines))
+
+
+class Pilot(unittest.TestCase):
+    def test_eight_runs_three_lanes_and_2a_file(self):
+        rows, jobs = cj.pilot()
+        self.assertEqual([r["label"] for r in rows], ["P912_L_BeamAngleX_0", "L_G18_BeamAngleX_0", "P2b_ER", "X_G18",
+                                                       "T_G18_5720000", "B_G18_001", "P912_U_MaRES_0", "U_G18_Flux_0"])
+        self.assertLessEqual(cj.hms(jobs[0]["limit"]), 2 * 3600)
+        for r in rows:
+            df = r["args"][r["args"].index("--data-file") + 1]
+            self.assertEqual(df == "$K2A", r["label"].startswith("P"))
+        self.assertEqual(sum(r["cpus"] for r in rows if r["lane"] != rows[0]["lane"]) // 3 + 128, 256)
+        p2b = next(r for r in rows if r["label"] == "P2b_ER")["args"]
+        self.assertEqual(p2b[:-2], cj.argv("central", "x")[:-2])      # E_R's argv (partb_runs.tsv:2)
+
+    def test_dvs_rate_reads_the_same_prefix(self):
+        with tempfile.TemporaryDirectory() as td, \
+                mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True):
+            a, b = Path(td) / "a", Path(td) / "b"
+            a.write_bytes(b"x" * 5000)
+            b.write_bytes(b"x" * 4000 + b"y" * 1000)
+            rec = cj.dvs_rate(str(a), str(b), 4000)
+            self.assertEqual((rec["staged"]["bytes"], rec["cfs"]["bytes"]), (4000, 4000))
+            self.assertTrue(rec["prefix_equal"])
+            self.assertFalse(cj.dvs_rate(str(a), str(b), 4500)["prefix_equal"])
+            self.assertIn("staging is complete", rec["declared_departure"])
+
+    def test_pilot_dry_run_reads_g18_data(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as td:
+            cj.tables("pilot", Path(td) / "tables")
+            env = dict(os.environ, C=str(HERE.parents[2]), M="x", TRUTH="pilot", DATA_TRUTH="G18", JOB="pilot",
+                       DRYRUN="1", COV2D_O=td)
+            r = subprocess.run(["bash", str(HERE.parent / "jobs" / "cov2d_job.sbatch")], env=env, capture_output=True,
+                               text=True)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            lines = [ln for ln in r.stdout.splitlines() if ln.startswith("srun ")]
+            self.assertEqual(len(lines), 8)
+            self.assertEqual(sum("/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root" in ln for ln in lines), 3)
+            self.assertEqual(sum(f"{td}/pseudo/G18/b/data_" in ln for ln in lines), 5)
 
 
 if __name__ == "__main__":

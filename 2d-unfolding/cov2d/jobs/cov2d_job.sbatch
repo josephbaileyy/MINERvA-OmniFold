@@ -16,7 +16,7 @@
 set -eo pipefail
 source "$C/2d-unfolding/cov2d/jobs/cov2d_env.sh"
 RUNS=$O/tables/runs_$TRUTH.tsv JOBS=$O/tables/jobs_$TRUTH.tsv
-export D=$O/pseudo/$TRUTH/b
+export D=$O/pseudo/${DATA_TRUTH:-$TRUTH}/b   # the pilot reads G18's data files (DATA_TRUTH=G18)
 if [ "${DRYRUN:-0}" != 1 ]; then
     cov2d_preflight
     info=$(scontrol show job "$SLURM_JOB_ID")
@@ -25,6 +25,11 @@ if [ "${DRYRUN:-0}" != 1 ]; then
     [ -n "$limit" ] && grep -q "TimeLimit=$limit " <<<"$info" || { echo "[cov2d] TimeLimit is not $JOB's $limit"; exit 2; }
     python -B "$CJ" check --runs "$RUNS" --job "$JOB" --stats "$STATS" --pseudo-b "$D/pseudo_b.json" \
         > "$O/logs/check-$JOB-$SLURM_JOB_ID.json" || { cat "$O/logs/check-$JOB-$SLURM_JOB_ID.json"; exit 4; }
+    if [ "$JOB" = pilot ]; then   # the director's ruling (b): a timed read in place of a full CFS-read lateral
+        lat0=runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root
+        python -B "$CJ" dvs-rate --staged "$ACT/$lat0" --cfs "$CFSACT/$lat0" > "$O/logs/dvs-rate-$SLURM_JOB_ID.json" \
+            || echo "[cov2d] dvs-rate failed (descriptive; recorded, not a stop)"
+    fi
 fi
 echo "[cov2d] start $(date -u +%FT%TZ) job=${SLURM_JOB_ID:-dry} JOB=$JOB node=$(hostname)"
 lane() {  # lane <name>: its runs in table order; a failed run is recorded and the lane goes on

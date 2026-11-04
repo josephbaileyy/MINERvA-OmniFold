@@ -27,7 +27,8 @@ for job in "$@"; do
     else
         lim=$(awk -F'\t' -v j="$job" 'NR > 1 && $1 == j {print $7}' "$O/tables/jobs_$TRUTH.tsv")
         [ -n "$lim" ] || { echo "$job is not a jobs_$TRUTH.tsv row"; exit 2; }
-        id=$(sbatch --parsable --job-name="cov2d-$job" --time="$lim" --export=ALL,C=$C,M=$M,TRUTH=$TRUTH,JOB=$job \
+        dt=$TRUTH; [ "$TRUTH" = pilot ] && dt=G18
+        id=$(sbatch --parsable --job-name="cov2d-$job" --time="$lim" --export=ALL,C=$C,M=$M,TRUTH=$TRUTH,DATA_TRUTH=$dt,JOB=$job \
             "$C/2d-unfolding/cov2d/jobs/cov2d_job.sbatch")
     fi
     echo "$(date -u +%FT%TZ) M=$M job=$want id=$id limit=$lim" | tee -a "$LOG"

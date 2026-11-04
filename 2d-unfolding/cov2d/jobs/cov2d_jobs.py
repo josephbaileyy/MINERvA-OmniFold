@@ -39,7 +39,9 @@ PREFLIGHT_S = 300
 LATERAL_FILES = [f"runEventLoopOmniFold_5D_MEFHC_active_{b}_{i}.root" for b in c.LATERAL_BANDS for i in (0, 1)]
 UNI_STAT = "171117087867 1783523295 882725391507234642"   # part B's DTN record (partb_readout/preflight/inputs.stat)
 PINS = {"$MC": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
-        "$FLUXU": "5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb"}
+        "$FLUXU": "5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb",
+        "$K2A": "7eb39088a42844b48ec1f8e1b6b586b8d8d4363611d68b726112f9f75c99b9db"}   # (2a)'s kept file (the pilot)
+PILOT_EST = {"universe64": 1150}   # part B's J7: universe-type runs at 64 CPUs, 1,121 s each (estimate 43,714 s / 39)
 
 
 def argv(kind: str, data_file: str, extra: str = "") -> list[str]:
@@ -103,8 +105,34 @@ def pack(runs: list[dict], truth: str) -> tuple[list[dict], list[dict]]:
     return rows, jobs
 
 
+def pilot() -> tuple[list[dict], list[dict]]:
+    """The pilot (section 10): (2b) and section 9.12 on (2a)'s kept file, then x_hat_T, one universe, one replica, one
+    lateral and one toy at G18, on one node in three lanes at part B's CPU counts per class."""
+    real, toy = f"$D/data_{c.REALIZATION_SEED['G18']}.root", f"$D/data_{c.TOY_SEEDS['G18'][0]}.root"
+    lat0 = LATERAL_FILES[0]
+    lanes = [
+        (128, [("P912_L_BeamAngleX_0", "lateral", argv("lateral", "$K2A", lat0)),
+               ("L_G18_BeamAngleX_0", "lateral", argv("lateral", real, lat0))]),
+        (64, [("P2b_ER", "central", argv("central", "$K2A")),
+              ("X_G18", "central", argv("central", real)),
+              (f"T_G18_{c.TOY_SEEDS['G18'][0]}", "toy", argv("toy", toy))]),
+        (64, [("B_G18_001", "replica", argv("replica", real, "1")),
+              ("P912_U_MaRES_0", "universe", argv("universe", "$K2A", "MaRES:0")),
+              ("U_G18_Flux_0", "universe", argv("universe", real, "Flux:0"))]),
+    ]
+    rows, lane_s = [], []
+    for k, (cpus, runs) in enumerate(lanes):
+        t = 0
+        for label, kind, a in runs:
+            t += EST[kind]
+            rows.append({"kind": kind, "label": label, "args": a, "job": "pilot", "lane": f"pilot.{k + 1}", "cpus": cpus})
+        lane_s.append(t)
+    return rows, [{"job": "pilot", "lanes": len(lanes), "lane_cpus": 128, "runs": len(rows),
+                   "longest_lane_s": max(lane_s), "wall_s": max(lane_s) + PREFLIGHT_S, "limit": limit_of(max(lane_s))}]
+
+
 def tables(truth: str, out: Path) -> dict:
-    rows, jobs = pack(runs_of(truth), truth)
+    rows, jobs = pilot() if truth == "pilot" else pack(runs_of(truth), truth)
     out.mkdir(parents=True, exist_ok=True)
     with open(out / f"runs_{truth}.tsv", "w") as f:
         f.write("job\tlane\tlabel\tcpus\tscript\targs\test_s\n")
@@ -215,22 +243,60 @@ def gate(sacct_psv: str, limits: dict, want: str) -> dict:
             "cap": CAP_NODE_H, "pass": total <= CAP_NODE_H}
 
 
+DVS_BYTES = 4 << 30   # the director's ruling (b), 2026-11-04: a few GB, timed, in place of a full CFS-read lateral
+
+
+def read_rate(path: str, nbytes: int) -> dict:
+    """The first nbytes of path through O_NOATIME, timed: MB/s, and the digest of what was read."""
+    import time
+    h, done = hashlib.sha256(), 0
+    t0 = time.monotonic()
+    fd = os.open(path, os.O_RDONLY | os.O_NOATIME)
+    try:
+        while done < nbytes:
+            b = os.read(fd, min(1 << 24, nbytes - done))
+            if not b:
+                break
+            h.update(b)
+            done += len(b)
+    finally:
+        os.close(fd)
+    dt = time.monotonic() - t0
+    return {"path": path, "bytes": done, "seconds": dt, "MB_per_s": done / 1e6 / dt if dt > 0 else None,
+            "sha256_of_prefix": h.hexdigest()}
+
+
+def dvs_rate(staged: str, cfs: str, nbytes: int = DVS_BYTES) -> dict:
+    """The staged copy's read rate beside the CFS original's (DVS from a compute node), on the same prefix."""
+    a, b = read_rate(staged, nbytes), read_rate(cfs, nbytes)
+    return {"staged": a, "cfs": b, "prefix_equal": a["sha256_of_prefix"] == b["sha256_of_prefix"],
+            "declared_departure": "replaces the full CFS-read lateral of COV2D-DECLARATION.md section 8 :432-433 and "
+                                  "section 10 :549 (the director's ruling (b)): staging is complete"}
+
+
 def main(argv_=None) -> int:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("tables")
-    p.add_argument("--truth", required=True, choices=sorted(c.TOY_SEEDS))
+    p.add_argument("--truth", required=True, choices=sorted(c.TOY_SEEDS) + ["pilot"])
     p.add_argument("--out", required=True)
     p = sub.add_parser("gate")
     p.add_argument("--sacct", required=True)
     p.add_argument("--tables", required=True)
     p.add_argument("--want", required=True)
+    p = sub.add_parser("dvs-rate")
+    p.add_argument("--staged", required=True)
+    p.add_argument("--cfs", required=True)
+    p.add_argument("--bytes", type=int, default=DVS_BYTES)
     p = sub.add_parser("check")
     for k in ("--runs", "--job", "--stats", "--pseudo-b"):
         p.add_argument(k, required=True)
     a = ap.parse_args(argv_)
     if a.cmd == "tables":
         print(json.dumps(tables(a.truth, Path(a.out))))
+        return 0
+    if a.cmd == "dvs-rate":
+        print(json.dumps(dvs_rate(a.staged, a.cfs, a.bytes), indent=1))
         return 0
     if a.cmd == "gate":
         limits = {f"pseudo_{t}": PSEUDO_LIMIT for t in c.TOY_SEEDS}
@@ -241,7 +307,7 @@ def main(argv_=None) -> int:
         rec = gate(Path(a.sacct).read_text(), limits, a.want)
         print(json.dumps(rec))
         return 0 if rec["pass"] else 3
-    env = {k: os.environ[k[1:]] for k in ("$CV", "$ACT", "$UNI", "$MC", "$FLUXU", "$D")}
+    env = {k: os.environ.get(k[1:], "") for k in ("$CV", "$ACT", "$UNI", "$MC", "$FLUXU", "$D", "$K2A")}
     rec = check(Path(a.runs), a.job, Path(a.stats), Path(a.pseudo_b), env)
     print(json.dumps(rec, indent=1))
     return 0 if not rec["problems"] else 4
