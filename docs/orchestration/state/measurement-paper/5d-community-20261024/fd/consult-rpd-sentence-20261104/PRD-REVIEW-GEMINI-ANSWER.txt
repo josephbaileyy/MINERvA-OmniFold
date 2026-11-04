@@ -1,0 +1,28 @@
+**Referee Report: Physical Review D**
+
+### 1. Inclusion and Impact on the Treatment
+**Yes, add the sentence.** 
+
+It substantially **strengthens** the paper’s treatment of $C_{\mathrm{PL,5D}}$. Without it, a skeptical referee or reader would suspect that the 3-group structure is an arbitrary, post-hoc binning of ordinary run-by-run drift or statistical fluctuations among the 12 playlists. 
+
+Demonstrating that the inter-group variation exceeds the intra-group playlist scatter confirms that the three operational eras represent genuine, discrete systematic shifts. This directly defends the decision to construct an era/group-level covariance block rather than treating the discrepancy as unmodeled playlist noise. Because this directly validates the topology of the reported covariance matrix, it belongs in the main text rather than being relegated solely to a technical note.
+
+---
+
+### 2. Clarity and Placement
+* **Clarity:** The wording is clear, direct, and conveys the conclusion of a variance-ratio/permutation test without dragging the reader into excessive diagnostic jargon.
+* **Placement:** It should be placed immediately after the sentence introducing the group discrepancies:
+  > *"...The unfolded results of the three run-period groups, each relative to its own simulation, differ by more than their bootstrap scatter. **The offsets of the twelve playlists differ between the three period groups by more than their playlist-to-playlist scatter would give.** The cause is not known, and these data cannot establish which period is correct..."*
+
+This keeps the empirical characterization of the anomaly together before stating that the physical origin is unknown.
+
+---
+
+### 3. Accompanying Information
+Under standard PRD standards, an assertion that an effect exceeds scatter invites the obvious question: *at what significance?* 
+
+If strict adherence to the pre-declared rule forbids amending the exact text, the paper must ensure the accompanying technical note (`\nsec{sec:fived16-pl}`) documents the permutation test ($p = 1.1 \times 10^{-4}$ across 9,240 partitions) and the era test ($p = 5 \times 10^{-3}$). If minor editorial flexibility exists, a referee would expect either the $p$-value in parentheses (e.g., *$p \approx 10^{-4}$*) or an explicit pointer to the note's permutation test at the end of that sentence.
+
+---
+
+**Recommendation:** Accept the addition of the sentence, as it provides crucial empirical justification for the three-group covariance block.
