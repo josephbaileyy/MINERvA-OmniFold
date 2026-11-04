@@ -138,9 +138,19 @@ class E2E(unittest.TestCase):
         shutil.copy(self.cal.with_suffix(".npz"), p.with_suffix(".npz"))
         return p
 
+    def cal300(self):
+        """The backstop's 300-draw calibration (schema /1): a named fixture holding the toy calibration's own per-cell
+        SDs, which it measured at 300 draws per set (draws=300)."""
+        p = self.tmp / "cal" / "cal300.json"
+        p.write_text(json.dumps({"schema": "fd-1b-c2-calibration/1", "outputs": {
+            t: {"a": {"sd_per_cell": self.cal_rec["rule"]["thresholds"][t]["sd_per_cell"]}} for t in ("g18", "ar23")}}))
+        return p
+
     def c2args(self, cal, **kw):
+        c3 = self.cal300()
         return self.args(calibration=cal, expect_calibration_sha256=digest(cal),
                          expect_calibration_npz_sha256=digest(cal.with_suffix(".npz")), staged=self.x["staged"],
+                         calibration_300=c3, expect_calibration_300_sha256=digest(c3),
                          out=self.tmp / "gate" / "gate.json", **kw)
 
     def test_c2check_end_to_end(self):
@@ -159,6 +169,11 @@ class E2E(unittest.TestCase):
             self.assertEqual(len(b["variance_ratio"][c2.CLIPPED]), sa.N_CELLS)
             self.assertIn("passes", b["gate_724"])
         self.assertIsNotNone(g["record"]["vi"]["largest_cell_unmatched_share"])
+        self.assertEqual(g["gate_sample"]["n"], c2.GATE_N)
+        self.assertTrue(g["gate_sample"]["first_300_bitwise"])
+        self.assertEqual(set(g["backstop"]), {"g18", "ar23"})
+        self.assertEqual(len(g["config_hash"]), 64)
+        self.assertEqual(g["calibration"]["verdict"], "CALIBRATED")
         self.assertEqual(g["atime"]["moved"], [])
         self.assertEqual(g["verdict"] == "PASS", all(v == "option (1)" for v in g["reads"].values()))
 
@@ -170,6 +185,13 @@ class E2E(unittest.TestCase):
         z["single_x_g18"] = z["single_x_g18"] * 1.001
         np.savez(cal.with_suffix(".npz"), **z)
         with self.patched(), self.assertRaisesRegex(c2.Refusal, "not the calibration's"):
+            c2.c2check_main(self.c2args(cal))
+
+    def test_c2check_refuses_a_sample_whose_first_300_are_not_the_declared(self):
+        cal = self.calibrated()
+        real = c2.gate_seeds
+        with self.patched(), mock.patch.object(c2, "gate_seeds", lambda t: real(t)[1:] + [real(t)[-1] + 1]), \
+                self.assertRaisesRegex(c2.Refusal, "first 300 differ"):
             c2.c2check_main(self.c2args(cal))
 
     def test_the_binning_script_end_to_end(self):

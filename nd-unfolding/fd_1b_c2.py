@@ -751,11 +751,45 @@ def cv_denominator_f32(world: dict) -> np.ndarray:
     return np.asarray(s5p_universe.denominator(world["bank_cv"], world["tdw_cv"], world["inputs"]["edges"]), float)
 
 
+def gate_n(ratio, thr: dict) -> dict:
+    """The large-sample gate on one truth's 16 clipped ratios at N (P2): (i) at #724's fixed numbers (gate_724), (ii)
+    |mean log| <= thr's ii_mean_log, (iii) by (alpha) max_c |r_c - 1| / SD_c <= thr's iii_alpha_multiple."""
+    g = gate_724(ratio)
+    r = np.asarray(ratio, np.float64)
+    sd_c = np.asarray(thr["sd_per_cell"], np.float64)
+    z = float(np.max(np.abs(r - 1.0) / sd_c))
+    out = {"i": g["i"], "cells_beyond": g["cells_beyond"], "mean_log": g["mean_log"], "max_z": z,
+           "ii": abs(g["mean_log"]) <= thr["ii_mean_log"], "iii": z <= thr["iii_alpha_multiple"]}
+    out["passes"] = bool(out["i"] and out["ii"] and out["iii"])
+    return out
+
+
+def backstop(ratio300, sd_c300) -> dict:
+    """P6 on the 300 declared draws: (i) at k = 2 (gate_724) and (iii) by (alpha) at BACKSTOP_SD_MULT x SD_c, with
+    SD_c the 300-draw calibration's. A failure is a hard STOP."""
+    g = gate_724(ratio300)
+    z = float(np.max(np.abs(np.asarray(ratio300, np.float64) - 1.0) / np.asarray(sd_c300, np.float64)))
+    return {"i": g["i"], "cells_beyond": g["cells_beyond"], "max_z": z, "iii": z <= BACKSTOP_SD_MULT,
+            "passes": bool(g["i"] and z <= BACKSTOP_SD_MULT)}
+
+
+def config_hash(code: dict, inputs: dict, clip_rule: str) -> str:
+    """P6's config hash, shared by the gate sample and the coverage draws: the code (gate_code_digests), the inputs'
+    digests, the clip rule, the draw salt and the declared toys' seeds, as canonical JSON."""
+    import hashlib
+    import fd_1b_mc as mc
+    doc = {"code": code, "inputs": inputs, "clip_rule": clip_rule, "draw_salt": toys.DRAW_SALT,
+           "toy_seeds": {t: [int(x) for x in mc.TOY_SEEDS[t]] for t in mc.TOY_SEEDS}}
+    return hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest()
+
+
 def c2check_main(a) -> dict:
-    """The pre-bulk C2 gate (A2.1's S1 and S2): C2's record on 1B's 16 cells over each truth's 300 declared draws,
-    read by reading_1b under #724, after the calibration it is tied to (CALIBRATED, its digests pinned, its
-    single-universe U x_T equal bitwise to this job's). Its record is the gate file the bulk's check_clip_gate
-    verifies: "option (1)" at every truth is PASS; anything else is the hard stop (STOP), and 1B returns to Joseph."""
+    """The pre-bulk C2 gate (A2.1's S1 and S2, on Joseph's large sample): C2's record on 1B's 16 cells over each
+    truth's GATE_N-draw gate sample (gate_seeds), read by reading_1b with the large-sample gate (gate_n) at the
+    calibration's thresholds; the 300 declared draws computed apart and required equal to the sample's first 300
+    bitwise; the backstop (P6) on those 300. Tied to its calibration (CALIBRATED at N, digests pinned, its
+    single-universe U x_T bitwise this job's) and to the 300-draw calibration whose SDs the backstop uses. PASS needs
+    "option (1)" and the backstop at every truth; anything else is the hard stop (STOP), and 1B returns to Joseph."""
     import hashlib
     import time
 
@@ -769,6 +803,12 @@ def c2check_main(a) -> dict:
         cal = json.loads(fh.read().decode())
     if cal.get("schema") != SCHEMA_CAL or cal.get("verdict") != "CALIBRATED":
         raise Refusal(f"the calibration is {cal.get('verdict')!r}, not CALIBRATED: nothing proceeds")
+    if inv.sha256_noatime(a.calibration_300) != a.expect_calibration_300_sha256:
+        raise Refusal("the 300-draw calibration's digest differs")
+    with inv.open_noatime(a.calibration_300) as fh:
+        cal300 = json.loads(fh.read().decode())
+    if cal300.get("schema") != "fd-1b-c2-calibration/1":
+        raise Refusal("the backstop's SDs come from the 300-draw calibration (schema /1)")
     cal_npz = a.calibration.with_suffix(".npz")
     if inv.sha256_noatime(cal_npz) != a.expect_calibration_npz_sha256:
         raise Refusal("the calibration's ratio file digest differs")
@@ -800,25 +840,47 @@ def c2check_main(a) -> dict:
                                             ("td_pt", "td_pz", "td_ea", "td_q3", "td_w")]), world["tdw_cv"],
                            np.where(P["cells"] >= 0, fm[np.maximum(P["cells"], 0)], -1),
                            np.where(geo["td"] >= 0, fm[np.maximum(geo["td"], 0)], -1)), "b": {}}
-    seeds = {}
+    seeds, back, reading = {}, {}, {}
+    n = getattr(a, "draws", GATE_N)
     for t in truths:
-        draws = [mc.draw_universes(toys.draw_for_seed(sd, P["flux_p"], world["groups"])) for sd in mc.TOY_SEEDS[t]]
-        S = selection(draws, P["col"], P["bands"])
-        phi = draw_flux(S, P["flux_cols"], P["phi"])
-        q = c2_truth(V, cv, S, P["r"][t], geo, phi, P["const"])
-        rec["b"][t] = c2_block(q, P["ref_x"][t], rel)
+        def q_of(seed_list):
+            draws = [mc.draw_universes(toys.draw_for_seed(sd, P["flux_p"], world["groups"])) for sd in seed_list]
+            S = selection(draws, P["col"], P["bands"])
+            return c2_truth(V, cv, S, P["r"][t], geo, draw_flux(S, P["flux_cols"], P["phi"]), P["const"])
+        q300 = q_of(mc.TOY_SEEDS[t])
+        qn = q_of(gate_seeds(t)[:n])
+        for k, v in q300.items():                             # P1: the declared 300 are the sample's first 300
+            if not np.array_equal(qn[k][:, :v.shape[1]], v):
+                raise Refusal(f"{t}: the gate sample's first 300 differ from the declared draws in {k}")
+        rec["b"][t] = c2_block(qn, P["ref_x"][t], rel)
+        thr = cal["rule"]["thresholds"][t]
+        rt = reading_1b({"vi": rec["vi"], "b": {t: rec["b"][t]}},
+                        {CLIPPED: lambda v, thr=thr: gate_n(v, thr)["passes"], "first_order": c2_gate,
+                         "multiplicative": c2_gate})
+        reading[t] = dict(rt[t], gate_n=gate_n(rec["b"][t]["variance_ratio"][CLIPPED], thr))
+        r300 = np.var(q300["Nc"], axis=1, ddof=1) / P["ref_x"][t]
+        back[t] = backstop(r300, cal300["outputs"][t]["a"]["sd_per_cell"])
         seeds[t] = [int(mc.TOY_SEEDS[t][0]), int(mc.TOY_SEEDS[t][-1])]
-    reading = reading_1b(rec, GATES_1B)
     reads = {t: reading[t]["reads"] for t in truths}
-    verdict = "PASS" if all(v == "option (1)" for v in reads.values()) else "STOP"
+    verdict = "PASS" if all(v == "option (1)" for v in reads.values()) and all(b["passes"] for b in back.values()) \
+        else "STOP"
     digests = gate_code_digests()
+    ins = {"npz_sha256": world["npz_sha"], "bkg_sha256": world["bkg_sha"], "pins_sha256": a.expect_pins_sha256,
+           "flux_table_sha256": a.expect_flux_table_sha256, "push_sha256": a.expect_push_sha256,
+           "cv_tdw_sha256": a.expect_cv_tdw_sha256}
+    s_row = next((g for g in cal["rule"]["grid"] if g["s"] == cal["rule"]["s"]), None)
     gate = {"schema": SCHEMA_GATE, "step": "c2-clip-gate", "verdict": verdict,
-            "reading": "option (1)" if verdict == "PASS" else reading["overall"], "reads": reads, "truths": truths,
-            "declared_seeds": seeds, "code_sha256": digests,
+            "reading": "option (1)" if verdict == "PASS" else "; ".join(f"{t} {v}" for t, v in reads.items()),
+            "reads": reads, "truths": truths, "declared_seeds": seeds, "code_sha256": digests,
             "calibration_sha256": a.expect_calibration_sha256, "calibration_npz_sha256": a.expect_calibration_npz_sha256,
-            "inputs": {"npz_sha256": world["npz_sha"], "bkg_sha256": world["bkg_sha"],
-                       "pins_sha256": a.expect_pins_sha256, "flux_table_sha256": a.expect_flux_table_sha256,
-                       "push_sha256": a.expect_push_sha256, "cv_tdw_sha256": a.expect_cv_tdw_sha256},
+            "calibration": {"verdict": cal["verdict"], "sha256": a.expect_calibration_sha256, "s": cal["rule"]["s"],
+                            "union": None if s_row is None else s_row["union"],
+                            "three_truths_measured": cal["rule"]["three_truths_measured"],
+                            "power_meets": bool(cal["power"] and cal["power"]["meets"])},
+            "calibration_300_sha256": a.expect_calibration_300_sha256, "backstop": back,
+            "gate_sample": {"n": n, "first_300_bitwise": True, "seeds": {t: [gate_seeds(t)[0], gate_seeds(t)[n - 1]]
+                                                                          for t in truths}},
+            "config_hash": config_hash(digests, ins, "nature"), "inputs": ins,
             "sigma": "S1's reported (fd_data_product C_total_plus_C_resp) relative sigma_c, a proxy for C_T, under "
                      "clip_probe2's key sigma_Q", "c2_reading_sha256": hashlib.sha256(
                          (CP2_DIR / "c2_reading.txt").read_bytes()).hexdigest(),
@@ -851,7 +913,8 @@ def main(argv=None) -> int:
     for k in ("npz", "bkg", "bank", "detector-dir", "pins", "flux-constraint", "flux-table", "definition", "staged",
               "calibration", "cv-tdw", "out"):
         p.add_argument(f"--{k}", type=Path, required=True)
-    for k in ("pins", "flux-table", "calibration", "calibration-npz", "cv-tdw"):
+    p.add_argument("--calibration-300", type=Path, required=True)
+    for k in ("pins", "flux-table", "calibration", "calibration-npz", "calibration-300", "cv-tdw"):
         p.add_argument(f"--expect-{k}-sha256", required=True)
     p.add_argument("--prep", type=Path, required=True)
     p.add_argument("--push", type=Path, default=None)

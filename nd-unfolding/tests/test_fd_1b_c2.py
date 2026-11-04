@@ -329,6 +329,38 @@ class LargeSample(unittest.TestCase):
         self.assertIsNotNone(rule["s"])
         self.assertFalse(c2.power_at(R, rule)["meets"])       # the 300-draw regime's common SD: it is not
 
+    def test_gate_n_both_ways(self):
+        thr = {"ii_mean_log": 0.03, "iii_alpha_multiple": 4.0, "sd_per_cell": [0.02] * 16}
+        self.assertTrue(c2.gate_n(np.ones(16), thr)["passes"])
+        self.assertFalse(c2.gate_n(np.full(16, math.exp(0.031)), thr)["ii"])
+        self.assertTrue(c2.gate_n(np.full(16, math.exp(0.029)), thr)["ii"])
+        r = np.ones(16)
+        r[3] = 1.0 + 4.0 * 0.02 * 1.001
+        self.assertFalse(c2.gate_n(r, thr)["iii"])
+        r[3] = 1.0 + 4.0 * 0.02 * 0.999
+        self.assertTrue(c2.gate_n(r, thr)["iii"])
+        r = np.full(16, 0.999)
+        r[:3] = 1.25
+        self.assertFalse(c2.gate_n(r, dict(thr, iii_alpha_multiple=100.0, ii_mean_log=1.0))["i"])
+
+    def test_the_backstop_both_ways(self):
+        sd = [0.05] * 16
+        self.assertTrue(c2.backstop(np.ones(16), sd)["passes"])
+        r = np.ones(16)
+        r[0] = 1.0 + 4.3 * 0.05 * 1.01
+        self.assertFalse(c2.backstop(r, sd)["passes"])
+        r = np.full(16, 0.99)
+        r[:3] = 1.21
+        self.assertFalse(c2.backstop(r, [1.0] * 16)["passes"])           # (i) at k = 2
+
+    def test_the_config_hash_moves_with_each_input(self):
+        code, ins = {"a.py": "1"}, {"npz_sha256": "x"}
+        h = c2.config_hash(code, ins, "nature")
+        self.assertEqual(h, c2.config_hash(dict(code), dict(ins), "nature"))
+        for other in (c2.config_hash({"a.py": "2"}, ins, "nature"), c2.config_hash(code, {"npz_sha256": "y"}, "nature"),
+                      c2.config_hash(code, ins, "data")):
+            self.assertNotEqual(h, other)
+
     def test_the_large_sample_verdict_in_its_order(self):
         ok, no = {"holds": True}, {"holds": False}
         rule = {"i_alone_exceeds": False, "s": 1.0}
