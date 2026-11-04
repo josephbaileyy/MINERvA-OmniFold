@@ -311,8 +311,10 @@ at `51d67b54`.
   0.24 → 0.26 %. The rule is a point-estimate rule, as ruled. The director carries this to Joseph as reported, not
   adjusted.
 
-**The rerun at the final code (the director's ruling).** fd_1b_mc.py changed in the gate path after `51d67b54`
-(H1, at `48ca04a1`). So the calibration reruns at the code binding 3 binds, with the same job script
+**The rerun at the final code (the director's ruling).** fd_1b_mc.py changed after `51d67b54`: H1 (`48ca04a1`), then
+§10's resume check, the `nature` readout and clip_draw's two `nature` arrays (`8a9b8db9`, sha256 `5271782c…`). An AST
+diff against `51d67b54` finds 12 changed or new definitions, and none is reachable from the calibration's calls into
+fd_1b_mc. fd_1b_c2.py is unchanged (`f19adbda`). So the calibration reruns at the code binding 3 binds, with the same job script
 (`sbatch-calibrate.sh` `a12799a4`) and the same seeds. `a2-1/compare_calibN.py` holds the rerun to `d4a4739e…`:
 - `--old` must hash to job 60783756's record;
 - the npz must be bitwise equal;

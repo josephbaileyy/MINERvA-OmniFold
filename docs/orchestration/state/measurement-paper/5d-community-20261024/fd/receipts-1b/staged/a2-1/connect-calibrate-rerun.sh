@@ -1,13 +1,14 @@
 #!/bin/bash
 # 1B A2.1, the large-sample calibration's rerun at the final H1 code (the director's ruling of 2026-11-04): the same
-# job script (sbatch-calibrate.sh a12799a4) and seeds as job 60783756, at M = 48ca04a1, where only fd_1b_mc.py's gate
-# path differs (1046353e). compare_calibN.py then holds the record to d4a4739e under the pre-declared exclusions.
+# job script (sbatch-calibrate.sh a12799a4) and seeds as job 60783756, at M = 8a9b8db9, where fd_1b_mc.py (5271782c)
+# differs only in the gate path (H1), the resume check, the readout and clip_draw's two nature arrays, none of
+# which the calibration calls; fd_1b_c2.py is unchanged (f19adbda). compare_calibN.py then holds the record to d4a4739e under the pre-declared exclusions.
 # As connect-calibrate.sh otherwise: the m3246 balance against the cap (stop if the cap is above half of what
 # remains), a fresh clone at M in a new pscratch directory, the bound blobs, one CPU node, QOS regular, --time
 # 1:30:00 (cap 1.5 node-h; 0.72 measured). The time limit is evidenced from scontrol at submission (the job script's
 # time_limit_s reads a variable Slurm does not set; left as it is, so the job stays the same).
 # Nothing to CFS; writes only under $W. Not under set -u. Run detached on the login node (setsid nohup).
-M=48ca04a1355abe6e7ec294a91e59da8b809e83da
+M=8a9b8db929367be213241bfdf8e7dddb2ba17b5d
 P=/pscratch/sd/j/josephrb; W=$P/fd-1b-a21-calibN-rerun-20261104; DD=$W/deploy
 S=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1
 CAP_NODE_H=1.5
@@ -27,7 +28,7 @@ n=$(git -C "$DD" status --porcelain | wc -l); h=$(git -C "$DD" rev-parse HEAD); 
 [ "$n" = "0" ] && [ "$h" = "$M" ] || stop "deploy not clean at M"
 cat > "$W/bound.sha256" <<SUMS
 f19adbda6126d79d1f337755de873b530a76ebbcfd412ab60f85ab53cb33fe49  nd-unfolding/fd_1b_c2.py
-1046353eb3e3c014b03c87400adc15b43d5ba9487a999b4b7f5622e4eb011ef2  nd-unfolding/fd_1b_mc.py
+5271782cf8ab78e1a1a56c5d739725a37c17c86c0cd7bb5261e485c5392acf63  nd-unfolding/fd_1b_mc.py
 a12799a450092c5f1d483f09b327bcbfcde84ca468bf44b6372a97f472b17eaa  $S/sbatch-calibrate.sh
 SUMS
 (cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blobs differ"
