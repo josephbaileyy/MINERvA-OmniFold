@@ -1,0 +1,6 @@
+# RPD controls records copied from $R=/pscratch/sd/j/josephrb/fd-rpd-20261103 through O_NOATIME (dd iflag=noatime), 2026-11-04. sha256, committed name, source.
+bfeda477831e676e063553d5e887691f1a3bde7a6d944daa25c5eecf18a9f33d  controls.json  /pscratch/sd/j/josephrb/fd-rpd-20261103/control/controls.json
+64f81586f5311876aee06ee31bc77270271c6d18b4b57db1de011248ae380743  controls.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/controls.log
+f6dc566ce33104de0f837f82d98a3d9ca195849d7b907fc5ad94bcfe3da39a02  controls.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/controls.out
+7b59cc22f1afe917b27fca382abae88685f91b78538221f22cd0ba1ae112a354  verify-staged-6.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/verify-staged-6.out
+4bc8e4ad8c647bfe12ce21449ade1aca130c87808fda0f75855596db94a9c448  rpd_controls_connect.sh  /pscratch/sd/j/josephrb/fd-rpd-20261103/receipts/rpd_controls_connect.sh

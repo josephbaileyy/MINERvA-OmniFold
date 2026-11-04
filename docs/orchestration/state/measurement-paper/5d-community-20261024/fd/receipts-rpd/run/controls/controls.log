@@ -1,0 +1,20 @@
+node login20
+2026-11-04T08:52:14Z
+connect script sha256 4bc8e4ad8c647bfe12ce21449ade1aca130c87808fda0f75855596db94a9c448
+job A 60786801: 60786801|COMPLETED|0:0|00:14:55|1
+HEAD 8727c63e1d32599039ea977d833c5de25a9089d6; porcelain --ignored lines before: 0
+section 7: 23 blobs, 0 mismatches
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1; nice 19
+verify-staged rc=0
+{"verified": 79, "mismatches": 0}
+2026-11-04T08:53:01Z
+controls rc=0
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+[RPD controls] C1 True K2' True N0-P True: PASS
+{"wrote": "/pscratch/sd/j/josephrb/fd-rpd-20261103/control/controls.json", "sha256": "bfeda477831e676e063553d5e887691f1a3bde7a6d944daa25c5eecf18a9f33d"}
+porcelain --ignored lines after: 0
+controls rc=0
+2026-11-04T08:58:52Z
