@@ -367,7 +367,13 @@ Any other difference is a STOP to the director.
 - "cvd: usable without C". The test named "C failing alone" also failed B's tolerance. It is renamed, and a test
   where C alone fails was added: a one-ulp nudge inside B's bound.
 
-**The final receipt** is the full 319-mutant run at the head that carries these tests (recorded when it lands).
+**The final receipt, for binding 3:** `a2-1/mutation_a21-1871a6e9.out`, the full run at `1871a6e9`, in a clean detached
+worktree at PYTHONHASHSEED=0.
+- **302 of 302 applicable killed.** 15 were not applicable and 2 equivalent (proved by a test), of 319 in all.
+- The unmutated control passed: 219 passed, 1 skipped (the mc, c2, cvdenom, binning, a21_e2e and tables suites).
+- Every source and test it mutates or runs is listed by sha256 at its head. fd_1b_mc is `5271782c` and fd_1b_c2
+  `f19adbda`.
+- The worktree was unchanged afterwards, with 0 `.pyc`.
 
 ## 10. The stage 1 tables under S2 (the director's ruling (A), 2026-11-04)
 
