@@ -90,6 +90,34 @@ class Score(unittest.TestCase):
         self.assertEqual(g["verdict"], "INVALID")
         self.assertEqual(g["verdict_graded"], "COVERS")
 
+    def test_the_outlier_cells_values_are_read_at_its_own_position(self):
+        E = self.E.copy()
+        i = list(self.cells).index(c.OUTLIER_CELL)
+        E[:, i] *= 3.0                                           # flagged there, unlike cell 0
+        g = sc.score(E, self.C, self.null, "G18", self.cells, self.ratio)
+        o = g["outlier_cell"]
+        self.assertEqual((o["count"], o["k_cell"], o["flagged"], o["pull_mean"], o["s_c"]),
+                         (g["counts"][i], g["k_cell"][i], True, g["pull_mean"][i], g["s_c"][i]))
+        self.assertNotEqual(o["count"], g["counts"][0])
+
+    def test_weakened_share_counts_every_weakened_cell_when_they_flag(self):
+        E = self.E.copy()
+        E[:, :7] *= 3.0                                          # all seven weakened cells flag
+        g = sc.score(E, self.C, self.null, "G18", self.cells, self.ratio)
+        self.assertEqual(g["verdict"], "UNDER-COVERS")
+        self.assertEqual(g["weakened_pass"], [])
+        self.assertAlmostEqual(g["weakened_share"], 7 / 205)
+
+    def test_refuses_any_toy_count_but_the_declared_300(self):
+        for n in (299, 150):
+            with self.subTest(n), self.assertRaises(c.Refusal):
+                sc.score(self.E[:n], self.C, self.null, "G18", self.cells, self.ratio)
+
+    def test_refuses_cells_without_the_outlier(self):
+        cells = np.array([x for x in range(224) if x != c.OUTLIER_CELL][:N])
+        with self.assertRaises(c.Refusal):
+            sc.score(self.E, self.C, self.null, "G18", cells, self.ratio)
+
     def test_needs_205_cells(self):
         with self.assertRaises(c.Refusal):
             sc.score(self.E[:, :200], self.C[:200, :200], self.null, "G18", self.cells[:200], self.ratio[:200])
@@ -100,13 +128,19 @@ class Score(unittest.TestCase):
                for _ in range(4)] + [{"role": "realization"}]
         xh, xt = r.uniform(1, 2, (4, N)), r.uniform(1, 2, (4, N))
         d = r.normal(0, 0.05, (5, N))
-        E, cross = sc.errors(xh, xt, nat, d, np.full(N, 0.1))
+        C_T = np.diag(r.uniform(0.005, 0.02, N))
+        E, cross = sc.errors(xh, xt, nat, d, C_T)
+        crosses = []
         for k in range(4):
-            want, _ = sc.surrogate(xh[k], nat[k]["lateral_signs"], nat[k]["norm_z"], d)
+            want, ck = sc.surrogate(xh[k], nat[k]["lateral_signs"], nat[k]["norm_z"], d)
             np.testing.assert_allclose(E[k], want - xt[k], rtol=1e-15)
-        self.assertGreater(cross["max_over_sigma"], 0)
+            crosses.append(np.abs(ck) / np.sqrt(np.diag(C_T)))          # sigma_c = sqrt(diag C_T)
+        self.assertAlmostEqual(cross["max_over_sigma"], float(np.max(crosses)), places=15)
+        self.assertAlmostEqual(cross["median_over_sigma"], float(np.median(crosses)), places=15)
         with self.assertRaises(c.Refusal):
-            sc.errors(xh[:3], xt, nat, d, np.full(N, 0.1))
+            sc.errors(xh[:3], xt, nat, d, C_T)
+        with self.assertRaises(c.Refusal):
+            sc.errors(xh, xt, nat, d, C_T[:200, :200])
 
 
 if __name__ == "__main__":

@@ -211,7 +211,7 @@ def main(argv=None) -> int:
         raise c.Refusal(f"step A's verdict is {rec_a.get('verdict')}")
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=False)
-    rec = {"truth": rec_a["truth"], "host": os.uname().nodename, "root": ROOT.gROOT.GetVersion(), "stop": []}
+    rec = {"truth": rec_a["truth"], "host": os.uname().nodename, "root": ROOT.gROOT.GetVersion(), "stop": [], "pins_checked": not a.no_pins}
     srcs = {k: getattr(a, k) for k in PINS}
     before = {p: os.stat(p).st_atime_ns for p in srcs.values()}
     with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as td:

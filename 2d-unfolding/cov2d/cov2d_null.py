@@ -57,4 +57,10 @@ def null_at_T(blocks: dict, bands: dict, minos_x, w_flux, n_mc: int = nl.N_MC, n
     thr = nl.thresholds(null, n=n_toys)
     if len(thr["p_used"]) != N_CELLS or thr["alpha_cell"] != nl.ALPHA_CELLS / N_CELLS:
         raise c.Refusal("the cell rule must divide ALPHA_CELLS by 205")
-    return {"null": null, "thresholds": thr, "size": nl.size(null, thr)}
+    out = {"null": null, "thresholds": thr, "size": nl.size(null, thr)}
+    if "C_T_minus" in blocks:   # the leave-out-MEC variant's null, here beside C_T's, as 1B builds both (fd_1b_mc.py:740)
+        minus_abs = blocks["C_T_minus"] - (C_T - blocks["C_model_abs"])
+        g_minus = blocks["C_stat"] + blocks["C_norm"] + blocks["C08"] + minus_abs
+        out["null_minus"] = nl.null_contents(laws_at_T(bands, minos_x, w_flux), g_minus, blocks["C_T_minus"],
+                                             n_mc=n_mc, seed=c.NULL_SEED)
+    return out

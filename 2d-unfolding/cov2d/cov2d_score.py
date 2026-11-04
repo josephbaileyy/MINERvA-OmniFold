@@ -49,11 +49,14 @@ def surrogate(x_hat: np.ndarray, signs, norm_z: float, deltas: np.ndarray) -> tu
     return x, c.NORM * float(norm_z) * lat
 
 
-def errors(x_hat: np.ndarray, x_true: np.ndarray, natures: list[dict], deltas: np.ndarray, sigma: np.ndarray):
-    """E (toys x 205) after the surrogates, and the cross term's size in sigma_c (descriptive, R4)."""
+def errors(x_hat: np.ndarray, x_true: np.ndarray, natures: list[dict], deltas: np.ndarray, C_T: np.ndarray):
+    """E (toys x 205) after the surrogates, and the cross term's size in sigma_c = sqrt(diag C_T) (descriptive, R4)."""
     toys = [n for n in natures if n["role"] == "toy"]
     if not (len(toys) == x_hat.shape[0] == x_true.shape[0]):
         raise c.Refusal("one unfold and one truth per toy")
+    sigma = np.sqrt(np.diag(np.asarray(C_T, np.float64)))
+    if sigma.shape != (x_hat.shape[1],):
+        raise c.Refusal("C_T must be one row and column per cell")
     E, cross = [], []
     for k, n in enumerate(toys):
         xs, d = surrogate(x_hat[k], n["lateral_signs"], n["norm_z"], deltas)
@@ -71,16 +74,19 @@ def score(E: np.ndarray, C_T: np.ndarray, null: dict, truth: str, cells: np.ndar
     import fd_1b_mc as mc
     if E.shape[1] != 205 or C_T.shape != (205, 205) or len(cells) != 205:
         raise c.Refusal("205 cells are required")
+    if E.shape[0] != len(c.TOY_SEEDS[truth]):     # section 5.2's rule is Bin(300, ...); 1B refuses another seed set
+        raise c.Refusal(f"{E.shape[0]} toys; the declared {truth} set is {len(c.TOY_SEEDS[truth])}")
+    if c.OUTLIER_CELL not in [int(x) for x in cells]:     # section 5.2: its reading "whatever it is"
+        raise c.Refusal(f"the outlier cell {c.OUTLIER_CELL} is not among the cells")
     g = mc.grade(E, C_T, null)
     weak = set(c.weakened_cells(weakened_ratio, cells))
     cells = [int(x) for x in cells]
     g["weakened_pass"] = [cell for i, cell in enumerate(cells) if cell in weak and not g["cell_flag"][i]]
     g["weakened_share"] = len(weak) / 205
     g["flagged_cells"] = [cell for i, cell in enumerate(cells) if g["cell_flag"][i]]
-    if c.OUTLIER_CELL in cells:
-        i = cells.index(c.OUTLIER_CELL)
-        g["outlier_cell"] = {"cell": c.OUTLIER_CELL, "count": g["counts"][i], "k_cell": g["k_cell"][i],
-                             "flagged": g["cell_flag"][i], "pull_mean": g["pull_mean"][i], "s_c": g["s_c"][i]}
+    i = cells.index(c.OUTLIER_CELL)
+    g["outlier_cell"] = {"cell": c.OUTLIER_CELL, "count": g["counts"][i], "k_cell": g["k_cell"][i],
+                         "flagged": g["cell_flag"][i], "pull_mean": g["pull_mean"][i], "s_c": g["s_c"][i]}
     g["truth"] = truth
     g["controls_failed"] = list(controls_failed or [])
     if g["controls_failed"]:

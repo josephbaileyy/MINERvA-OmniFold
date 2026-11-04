@@ -153,6 +153,13 @@ class Readout(unittest.TestCase):
         for p in (self.d / "partb", self.d / "run"):
             shutil.rmtree(p, ignore_errors=True)
 
+    def test_a_class_without_a_measured_wall_is_invalid_even_when_every_run_passed(self):
+        # every run rc 0 with a digest, but the universe class has no priced wall: only the class check can refuse
+        with mock.patch.object(cp, "NOT_MEASURED", cp.NOT_MEASURED | {"P912_U_MaRES_0"}):
+            code, rec = self.run_readout(self.build())
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertEqual(rec["invalid"], ["no wall for the classes ['universe']"])
+
     def test_missing_partb_product_is_invalid(self):
         code, rec = self.run_readout(self.build(drop_partb="U_MaRES_0"))
         self.assertEqual(rec["verdict"], "INVALID")

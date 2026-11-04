@@ -198,7 +198,7 @@ def main(argv=None) -> int:
     reads = [a.uni, a.cv, a.constraint, ratio_path]
     before = {p: os.stat(p).st_atime_ns for p in reads}
     rec = {"truth": a.truth, "host": os.uname().nodename, "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-           "uproot": uproot.__version__, "numpy": np.__version__, "chunk": a.chunk, "stop": []}
+           "uproot": uproot.__version__, "numpy": np.__version__, "chunk": a.chunk, "stop": [], "pins_checked": not a.no_pins}
 
     text, sha = rc.read_noatime(a.constraint)
     if not a.no_pins and sha != c.CONSTRAINT_SHA256:

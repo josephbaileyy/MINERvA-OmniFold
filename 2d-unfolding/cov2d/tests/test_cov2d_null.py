@@ -79,5 +79,26 @@ class Null(unittest.TestCase):
             cn.null_at_T(dict(self.blocks, C_T=np.eye(10)), self.bands, self.minos_x, self.w, n_mc=10)
 
 
+class NullMinus(unittest.TestCase):
+    def test_c_t_minus_null_is_built_in_the_null_step_at_the_declared_seed(self):
+        blocks, bands, minos_x, w = fixture()
+        G = blocks["C_stat"] / 0.4
+        blocks["C_T_minus"] = blocks["C_T"] - blocks["C_model_abs"] + 0.01 * G
+        seen = []
+        real = cn.nl.null_contents
+
+        def spy(laws, gauss, C_T, n_mc, seed):
+            seen.append((seed, C_T is blocks["C_T_minus"], float(np.trace(gauss))))
+            return real(laws, gauss, C_T, n_mc=n_mc, seed=seed)
+        with mock.patch.object(cn.nl, "null_contents", spy):
+            out = cn.null_at_T(blocks, bands, minos_x, w, n_mc=20_000)
+        want_g = float(np.trace(blocks["C_stat"] + blocks["C_norm"] + blocks["C08"] + 0.01 * G))
+        self.assertEqual([x[:2] for x in seen], [(5_742_000, False), (5_742_000, True)])
+        self.assertAlmostEqual(seen[1][2], want_g, places=12)              # C_model- in place of C_model
+        self.assertLessEqual(out["null_minus"]["match_rel"], 1e-12)
+        self.assertNotIn("null_minus", cn.null_at_T({k: v for k, v in blocks.items() if k != "C_T_minus"},
+                                                    bands, minos_x, w, n_mc=2_000))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -34,7 +34,10 @@ import cov2d as c  # noqa: E402
 
 READING_SIGMA = 0.5
 C2_PREDICTION = {"G18": 0.043, "AR23": 0.042}   # C2's largest per-cell median |R|, in sigma_Q (c2_reading.txt)
-GENIE_MEC_READING = "its coverage in cells {cells} rests on the GENIE + MEC shift"
+# 1B's text, exactly (fd_1b_mc.py:803-808); 2D names a cell by its flat index where 1B writes R<cc>
+MEC_COVERS = "covers without the GENIE + MEC shift"
+MEC_RESTS = "its coverage in cells {cells}{jointly} rests on the GENIE + MEC shift"
+MEC_UNDER = "printed; no reading (the tune under-covers under C_T)"
 
 
 def spread_alone(E: np.ndarray, C_T: np.ndarray, C_model_abs: np.ndarray) -> dict:
@@ -61,23 +64,19 @@ def predicted_offset(bands: dict, w_flux: np.ndarray, x_hat_T: np.ndarray) -> np
     return -off
 
 
-def leave_out_mec(E, blocks: dict, bands: dict, minos_x, w_flux, grade_CT: dict, cells, n_mc: int | None = None) -> dict:
-    """C_T- graded against its own null; the GENIE + MEC reading where C_T covers and C_T- flags."""
-    import cov2d_null as cn
+def leave_out_mec(E, blocks: dict, null_minus: dict, grade_CT: dict, cells) -> dict:
+    """C_T- graded against its own null (built in the null step, before any toy error was read: cov2d_null.null_at_T's
+    ``null_minus``), read exactly as 1B §5.4 (fd_1b_mc.py:803-808). It changes no verdict."""
     import fd_1b_mc as mc
-    import fd_1b_null as nl
-    C_minus = blocks["C_T_minus"]
-    model_minus_abs = C_minus - (blocks["C_T"] - blocks["C_model_abs"])
-    gauss = blocks["C_stat"] + blocks["C_norm"] + blocks["C08"] + model_minus_abs
-    null = nl.null_contents(cn.laws_at_T(bands, minos_x, w_flux), gauss, C_minus,
-                            n_mc=n_mc or nl.N_MC, seed=c.NULL_SEED)
-    g = mc.grade(E, C_minus, null)
+    g = mc.grade(E, blocks["C_T_minus"], null_minus)
     cells = [int(x) for x in cells]
-    newly = [cells[i] for i in range(len(cells)) if g["cell_flag"][i] and not grade_CT["cell_flag"][i]]
-    out = {"grade": g, "flagged_under_minus_not_under_C_T": newly, "changes_no_verdict": True}
-    if grade_CT["verdict"] == "COVERS" and g["verdict"] == "UNDER-COVERS":
-        out["reading"] = GENIE_MEC_READING.format(cells=newly)
-    return out
+    hit = [cells[i] for i, fl in enumerate(g["cell_flag"]) if fl]
+    if grade_CT["verdict"] == "COVERS":
+        reading = (MEC_COVERS if not hit and not g["joint_flag"] else
+                   MEC_RESTS.format(cells=hit, jointly=" (and jointly)" if g["joint_flag"] else ""))
+    else:
+        reading = MEC_UNDER
+    return {"grade": g, "flagged_under_minus": hit, "reading": reading, "changes_no_verdict": True}
 
 
 def realization_check(x_hat_T: np.ndarray, x_true_T: np.ndarray, sigma: np.ndarray) -> dict:
@@ -91,6 +90,13 @@ def clipping_residual(cells_npz: dict, toy_index: list, rep: np.ndarray, x_true:
     ``toy_index`` their rows for the toys, in seed order; ``rep`` E_R's 205 flat cells; ``x_true`` (toys x 205)."""
     import fd_1b_null as nl
     rep = np.asarray(rep, int)
+    if c.OUTLIER_CELL not in rep:     # section 5.2: its reading "whatever it is"
+        raise c.Refusal(f"the outlier cell {c.OUTLIER_CELL} is not among the cells")
+    seeds = [int(x) for x in np.asarray(cells_npz["seeds"])[toy_index]]
+    if seeds != list(c.TOY_SEEDS[truth]):     # x_true's rows are the toys in seed order; so must these be
+        raise c.Refusal(f"the rows {toy_index[:3]}... are not {truth}'s toys in seed order")
+    if np.asarray(x_true).shape != (len(seeds), rep.size):
+        raise c.Refusal("x_true must be one row per toy, in seed order, on the cells")
     S, m_seen = cells_npz["S"][toy_index][:, rep], cells_npz["m_seen"][toy_index][:, rep]
     N, m_all = cells_npz["N"][toy_index][:, rep], cells_npz["m_all"][toy_index][:, rep]
     ok = (S > 0) & (N > 0)
@@ -100,6 +106,7 @@ def clipping_residual(cells_npz: dict, toy_index: list, rep: np.ndarray, x_true:
     med = np.array([np.nanmedian(np.abs(Rs[:, i])) if ok[:, i].any() else np.nan for i in range(rep.size)])
     vec = np.where(ok, R * x_true, 0.0)          # R = (R_c x_true,c); a missing R_c enters as 0, counted below
     coherent = nl.chi2_nonnull(vec, C_T)[0]
+    complete = ok.all(axis=1)          # the toys with no missing R_c (a 0 can only shrink the offset)
     added_b = -cells_npz["neg_reco_background"][toy_index][:, rep]
     S_reco = cells_npz["S_reco"][toy_index][:, rep]
     with np.errstate(divide="ignore", invalid="ignore"):
@@ -108,15 +115,19 @@ def clipping_residual(cells_npz: dict, toy_index: list, rep: np.ndarray, x_true:
     fires = [cl for cl in flagged_cells if cl in cells and np.nan_to_num(med[cells.index(cl)]) > READING_SIGMA]
     out = {"median_abs_R_sigma": med.tolist(), "missing_per_cell": (~ok).sum(axis=0).tolist(),
            "missing_total": int((~ok).sum()), "coherent_offset": {"median": float(np.median(coherent)),
-                                                                   "max": float(coherent.max())},
+                                                                   "max": float(coherent.max()),
+                                                                   "complete_toys": int(complete.sum()),
+                                                                   "median_complete": float(np.median(coherent[complete]))
+                                                                   if complete.any() else None},
            "background_offset_sigma": {"median_abs": float(np.nanmedian(np.abs(ob))), "max_abs": float(np.nanmax(np.abs(ob)))},
            "reading_fires_in": fires, "reading": {cl: "the clipping may explain this cell's flag" for cl in fires},
            "c2_prediction_sigma_Q": C2_PREDICTION[truth],
            "c2_prediction": "C2 predicts this reading will not fire"}
-    if c.OUTLIER_CELL in cells:
-        col = np.abs(Rs[:, cells.index(c.OUTLIER_CELL)])
-        out["outlier_cell"] = {"cell": c.OUTLIER_CELL, "max_abs_R_sigma": float(np.nanmax(col)) if np.any(~np.isnan(col)) else None,
-                               "median_abs_R_sigma": float(np.nanmedian(col)) if np.any(~np.isnan(col)) else None}
+    col = np.abs(Rs[:, cells.index(c.OUTLIER_CELL)])
+    have = bool(np.any(~np.isnan(col)))
+    out["outlier_cell"] = {"cell": c.OUTLIER_CELL, "max_abs_R_sigma": float(np.nanmax(col)) if have else None,
+                           "median_abs_R_sigma": float(np.nanmedian(col)) if have else None,
+                           "missing": int(np.isnan(col).sum())}
     return out
 
 
@@ -199,14 +210,25 @@ def main(argv=None) -> int:
                         prod = product_compose(cv, univ) * r * s
                         acc[t]["first"][k] += np.bincount(cell[okc], weights=first[okc], minlength=n_cells)
                         acc[t]["product"][k] += np.bincount(cell[okc], weights=prod[okc], minlength=n_cells)
-    rec = {"utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "host": os.uname().nodename, "draws": {}}
+    rec = {"utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "host": os.uname().nodename, "draws": {},
+           "pins_checked": not a.no_pins,
+           "unit": "sqrt of that draw's first-order expected count in the reco cell; (cell, draw) pairs with F <= 0 "
+                   "are excluded and counted"}
+    arrays = {}
     for t in rc.TUNES:
         F, P = acc[t]["first"], acc[t]["product"]
-        with np.errstate(divide="ignore", invalid="ignore"):
-            z = np.where(F > 0, (P - F) / np.sqrt(np.where(F > 0, F, 1.0)), np.nan)
-        rec["draws"][t] = {"n": int(F.shape[0]), "median_abs": float(np.nanmedian(np.abs(z))),
-                           "p90_abs": float(np.nanpercentile(np.abs(z), 90)), "max_abs": float(np.nanmax(np.abs(z))),
-                           "per_cell_median_abs": np.nanmedian(np.abs(z), axis=0).tolist()}
+        arrays[f"{t}_first"], arrays[f"{t}_product"] = F, P
+        live = F > 0
+        z = np.full_like(F, np.nan)
+        z[live] = (P[live] - F[live]) / np.sqrt(F[live])
+        empty = ~live.any(axis=0)
+        med = np.full(F.shape[1], np.nan)
+        med[~empty] = np.nanmedian(np.abs(z[:, ~empty]), axis=0)
+        rec["draws"][t] = {"n": int(F.shape[0]), "seeds": [d.seed for d in draws[t]][:3] + ["..."],
+                           "median_abs": float(np.nanmedian(np.abs(z))), "p90_abs": float(np.nanpercentile(np.abs(z), 90)),
+                           "max_abs": float(np.nanmax(np.abs(z))), "per_cell_median_abs": med.tolist(),
+                           "excluded_pairs_F_le_0": int((~live).sum()), "cells_with_F_le_0_in_every_draw": int(empty.sum())}
+    np.savez(Path(a.out).with_suffix(".npz"), **arrays)
     after = {q: os.stat(q).st_atime_ns for q in reads}
     rec["atime_moved"] = [q for q in reads if after[q] != before[q]]
     rec["seconds"] = round(time.time() - t0, 1)

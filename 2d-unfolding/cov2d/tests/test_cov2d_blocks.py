@@ -53,6 +53,20 @@ def fixture(seed=3):
                 C_model=C_model, C_minus=C_minus)
 
 
+def drifted_norm(real):
+    """universe_block with its normalization entry off by one part in 1e6 and its total re-summed to match, so only the
+    norm check can refuse."""
+    def fake(*a):
+        blocks, _ = real(*a)
+        blocks = dict(blocks)
+        blocks[cb.NORM_KEY] = blocks[cb.NORM_KEY] * (1 + 1e-6)
+        tot = np.zeros_like(blocks[cb.NORM_KEY])
+        for k in blocks:
+            tot += blocks[k]
+        return blocks, tot
+    return fake
+
+
 def quarter(X):
     d = X[0] - X[1]
     return 0.25 * np.outer(d, d)
@@ -89,6 +103,7 @@ class Assemble(unittest.TestCase):
             "extra key": lambda *a: (dict(real(*a)[0], extra=np.zeros((N, N))), real(*a)[1]),
             "missing band": lambda *a: ({k: v for k, v in real(*a)[0].items() if k != "MaRES"}, real(*a)[1]),
             "total off": lambda *a: (real(*a)[0], real(*a)[1] + 1e-9),
+            "norm drifted, total consistent": drifted_norm(real),
         }
         for name, fake in cases.items():
             with self.subTest(name), mock.patch.object(ro, "universe_block", fake), self.assertRaises(c.Refusal):
@@ -138,6 +153,39 @@ class Assemble(unittest.TestCase):
         self.assertFalse(cb.psd_checks(asym)["pass"])
         low = np.diag([1.0, 1.0, 1e-14, 0.0])
         self.assertEqual(cb.psd_checks(low)["ndf"], 2)
+
+
+@unittest.skipUnless(HAVE, "needs PyROOT (the rollup imports it)")
+class NullOnTheRealPath(unittest.TestCase):
+    """The auditor's Q1, as a test: assemble -> re2c_rollup.universe_block -> build_repair.wcov feeding the real
+    cov2d_null.null_at_T; each law's covariance must be its band's block (check_matched) for C_T and for C_T-."""
+    def regimes(self):
+        r = np.random.default_rng(11)
+        yield "unit", fixture()
+        f = fixture()
+        scale = 1e-39 * 10 ** r.uniform(0, 3, N)            # physical scale, cells spanning three decades
+        for k in ("x_T", "minos_x", "X_rep", "x_R"):
+            f[k] = f[k] * scale
+        f["bands"] = {b: v * scale for b, v in f["bands"].items()}
+        f["C08_R"] = f["C08_R"] * np.outer(scale, scale)
+        yield "physical", f
+        f = fixture()
+        f["w"] = np.exp(2.0 * r.standard_normal(100))        # lognormal Flux weights, sigma 2
+        yield "lognormal flux", f
+        f = fixture()
+        f["bands"] = {b: v * 1.3 for b, v in f["bands"].items()}   # a 30% common offset on every universe
+        f["minos_x"] = f["minos_x"] * 1.3
+        yield "offset", f
+
+    def test_check_matched_on_every_regime(self):
+        import cov2d_null as cn
+        for name, f in self.regimes():
+            with self.subTest(name):
+                out = cb.assemble(f["x_T"], f["rep"], f["bands"], f["minos_x"], f["w"], f["X_rep"], f["x_R"],
+                                  f["C08_R"], f["C_model"], f["C_minus"])
+                res = cn.null_at_T(out, f["bands"], f["minos_x"], f["w"], n_mc=2_000)
+                self.assertLessEqual(res["null"]["match_rel"], 1e-12)
+                self.assertLessEqual(res["null_minus"]["match_rel"], 1e-12)
 
 
 @unittest.skipUnless(HAVE, "needs PyROOT (the rollup imports it)")
