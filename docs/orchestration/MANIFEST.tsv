@@ -246,6 +246,7 @@ docs/orchestration/DECISION-20261103-joseph-731-restore-and-merge.md	tracked	LIV
 docs/orchestration/DECISION-20261103-joseph-coverage-clip-rule.md	tracked	LIVE	document		20261103	open		route-only	no
 docs/orchestration/DECISION-20261103-joseph-retire-density-gate.md	tracked	LIVE	document		20261103	open		route-only	no
 docs/orchestration/DECISION-20261104-joseph-1b-large-sample-gate.md	tracked	LIVE	document		20261104	open		route-only	no
+docs/orchestration/DECISION-20261104-joseph-753-reword-and-merge.md	tracked	LIVE	document		20261104	open		route-only	no
 docs/orchestration/DECISION-20261104-joseph-rpd-sentence.md	tracked	LIVE	document		20261104	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
@@ -6618,6 +6619,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-g
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261104/ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261104/PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261104/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-rpd-sentence-20261104/PRD-REVIEW-753-GEMINI-ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-rpd-sentence-20261104/PRD-REVIEW-753-GEMINI-PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-rpd-sentence-20261104/PRD-REVIEW-GEMINI-ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-rpd-sentence-20261104/PRD-REVIEW-GEMINI-PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-rpd-sentence-20261104/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
