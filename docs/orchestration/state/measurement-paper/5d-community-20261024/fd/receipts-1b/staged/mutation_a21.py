@@ -74,6 +74,15 @@ NEW = [
     ("fd_1b_mc.py", "S3: the denominator not clipped",
      '        dn = np.where(m_den > 0, np.asarray(ui["denom_nd"], float) + m_den, np.asarray(ui["denom_nd"], float))',
      '        dn = np.asarray(ui["denom_nd"], float)', MC + E2E),
+    ("fd_1b_mc.py", "S3: the denominator clipped under 'data' too",
+     '    du = dict(ui, w_reco=np.where(neg, 0.0, w))\n    if rule == "nature":',
+     '    du = dict(ui, w_reco=np.where(neg, 0.0, w))\n'
+     '    if rule == "data" and "tdw_rows" in ui:\n'
+     '        _c, _r = ui["td_cells"], np.asarray(ui["tdw_rows"], float)\n'
+     '        _k = (_c >= 0) & (_r < 0)\n'
+     '        _m = np.bincount(_c[_k], weights=-_r[_k], minlength=int(np.prod(np.shape(ui["denom_nd"]))))\n'
+     '        du = dict(du, denom_nd=np.asarray(ui["denom_nd"], float) + _m.reshape(np.shape(ui["denom_nd"])))\n'
+     '    if rule == "nature":', MC + E2E),
     ("fd_1b_mc.py", "S3: the denominator's negative mass subtracted",
      '        dn = np.where(m_den > 0, np.asarray(ui["denom_nd"], float) + m_den, np.asarray(ui["denom_nd"], float))',
      '        dn = np.where(m_den > 0, np.asarray(ui["denom_nd"], float) - m_den, np.asarray(ui["denom_nd"], float))', MC),

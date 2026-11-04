@@ -440,5 +440,25 @@ The C4 refusal at the readout is replaced by this. The C4 refusal still stands a
   - The toy truth at that cell moves by (D − d_row)/D to 10 places, with D the composite cell, and no other cell
     moves beyond those the truth clip touches.
   - The composite is computed from the files, with detector universes bringing the CV's rows.
+  - The toy World's weights are `hash()`-seeded (`test_fd_1b.py:106`, `:114`), so the fixture moves with
+    PYTHONHASHSEED. The test therefore chooses the clipped cell among those the truth clip leaves alone, measured on
+    the world's own bank first, and asserts the truth clip is unmoved by the tdw edit. It passes at seeds 0–4. The
+    first version picked a fixed cell; it failed at seed 0 (the harness's) and passed without a seed.
+  - Both of the director's mutants are killed by this test alone, at seeds 0 and 1, each because the clipped cell's
+    truth no longer moves between the rules:
+    - "S3: the denominator not clipped";
+    - "S3: the denominator clipped under 'data' too", which is new in `mutation_a21.py` (319 mutants).
+- **The generator on a fresh clone** (`a2-1/tables_clone_check.py`, the audit's Q3 and the director's request; local,
+  0 compute):
+  - It clones the repository at the given revision and commits a stand-in pins file at the clone's own `GATE_PIN`
+    (local only).
+  - It runs `make_stage1_tables.py` through its real CLI as a subprocess, and parses every written step with the
+    clone's own `fd_1b_mc` parser in a second subprocess.
+  - It checks the counts and the packing, that no path is written twice or under two rules, the rule directories,
+    the gate pair on every bulk step and on no other, and the CV tdw pair everywhere.
+  - At `abf95aed` it passes: s1-0 8, s1-0b 3/5, bulk 1,054/1,581 on 48/72 lanes, at most 22 per lane, 5 names in
+    both rules and 0 shared paths (`tables-clone-check-abf95aed.out`).
+  - At `1295f7e4`, before the fix, it fails: in each setting 5 paths are written twice and a path appears under both
+    rules (`tables-clone-check-1295f7e4.out`).
 
 "23 per lane" is equivalent on the declared inputs, and its output is byte-identical.

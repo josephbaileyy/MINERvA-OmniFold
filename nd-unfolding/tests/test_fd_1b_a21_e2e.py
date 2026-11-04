@@ -315,12 +315,29 @@ class E2E(unittest.TestCase):
         'nature' rule end to end through run_unfold: the record, the product's per-cell array the readout's (a)
         aggregates, and the toy truth, each against the row's own contribution computed from the files."""
         w = self.x["w"]
+        fake = lambda exp, threads, seed=42, unfold_fn=None: (np.zeros(SHAPE), {})  # noqa: E731
+
+        def toy(rule, bank, pins, out, gate=None):
+            argv = self.toy_argv(bank, pins) + ["--clip-rule", rule, "--out", str(out)]
+            if gate is not None:
+                argv += ["--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]
+            with self.patched(), mock.patch.object(mc, "_unfold", fake), \
+                    pinned(self.tmp, digest(gate) if gate else None):
+                self.assertEqual(mc.main(argv), 0, rule)
+            z = np.load(out / mc.product_name("fd1b_mc", "g18", "toy", str(mc.TOY_SEEDS["g18"][0])), allow_pickle=True)
+            return json.loads(str(z["meta"])), {k: np.asarray(z[k], float) for k in z.files if k != "meta"}
+        # the truth clip does not read the denominator, so the cells it touches are found first, on the world's own
+        # bank: the toy World's weights are hash()-seeded (test_fd_1b.World), so they move with PYTHONHASHSEED
+        _, base = toy("nature", w.bank, w.pins, self.tmp / "toy-neg-base", self.gate_file("gate-base.json", w.pins))
+        touched = set(np.flatnonzero(base["clip_truth_nature_flat"] > 0).tolist())
         bank = self.tmp / "bank-neg"
         shutil.copytree(w.bank, bank)
         cvz = dict(np.load(bank / "cv.npz", allow_pickle=True))
         cells = mc.td_cells(cvz, EDGES)
         occ = np.bincount(cells[cells >= 0], minlength=int(np.prod(SHAPE)))
-        cell = int(np.argmax(occ))                                             # a cell with other rows to keep it > 0
+        free = [c for c in np.argsort(-occ, kind="stable").tolist() if occ[c] >= 3 and c not in touched]
+        self.assertTrue(free, (touched, occ.tolist()))                         # a cell the truth clip leaves alone
+        cell = free[0]                                                          # with other rows to keep it > 0
         row = int(np.flatnonzero(cells == cell)[0])
         with self.patched():
             d = toys.draw_for_seed(int(mc.TOY_SEEDS["g18"][0]), toys.flux_probabilities(w.constraint),
@@ -345,20 +362,8 @@ class E2E(unittest.TestCase):
         self.assertTrue(all(np.all(own(t) >= 0) for t in tags))                # while no universe's tdw is
         d_cell = rows[cells == cell].sum()                                     # the composite cell, positive (2b)
         self.assertGreater(d_cell, 0)
-        gate = self.gate_file("gate-neg.json", pins)
-        fake = lambda exp, threads, seed=42, unfold_fn=None: (np.zeros(SHAPE), {})  # noqa: E731
-        got = {}
-        for rule in ("data", "nature"):
-            out = self.tmp / f"toy-neg-{rule}"
-            argv = self.toy_argv(bank, pins) + ["--clip-rule", rule, "--out", str(out)]
-            if rule == "nature":
-                argv += ["--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]
-            with self.patched(), mock.patch.object(mc, "_unfold", fake), pinned(self.tmp, digest(gate)):
-                self.assertEqual(mc.main(argv), 0, rule)
-            z = np.load(out / mc.product_name("fd1b_mc", "g18", "toy", str(mc.TOY_SEEDS["g18"][0])), allow_pickle=True)
-            got[rule] = (json.loads(str(z["meta"])), {k: np.asarray(z[k], float) for k in z.files if k != "meta"})
-        mn, an = got["nature"]
-        md, ad = got["data"]
+        md, ad = toy("data", bank, pins, self.tmp / "toy-neg-data")
+        mn, an = toy("nature", bank, pins, self.tmp / "toy-neg-nature", self.gate_file("gate-neg.json", pins))
         rec = mn["clip"]["denominator"]
         self.assertEqual(rec["rows_negative"], 1)
         self.assertAlmostEqual(rec["sum_negative"], comp, places=12)            # the record: the row's own value
@@ -369,8 +374,7 @@ class E2E(unittest.TestCase):
                                    atol=1e-15)                                 # what the readout's (a) aggregates
         self.assertNotIn("clip_denom_flat", ad)
         self.assertNotIn("denominator", md["clip"])
-        touched = set(np.flatnonzero(an["clip_truth_nature_flat"] > 0).tolist())
-        self.assertNotIn(cell, touched)                                        # the truth clip leaves this cell alone
+        np.testing.assert_array_equal(an["clip_truth_nature_flat"], base["clip_truth_nature_flat"])   # unmoved by tdw
         differ = set(np.flatnonzero(an["xtrue_flat"] != ad["xtrue_flat"]).tolist())
         self.assertIn(cell, differ)
         self.assertLessEqual(differ, touched | {cell})                         # nothing else moves the truth
