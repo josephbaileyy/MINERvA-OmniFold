@@ -11,6 +11,7 @@ and NOPL_READOUTS the committed ones without the block. Every key whose value di
 with the suffix "-nopl", and a key outside the matrix-dependent families that differs stops the run. --check fails unless the committed
 values_fived16.tex equals a fresh generation (the build and CI run it, as for records_entry_numbers.tex).
 """
+import ast
 import hashlib
 import json
 import math
@@ -65,6 +66,12 @@ READOUTS = {
     "gch": (f"{FD}/fd/gencmp/readout/ch.json", "cd111b8e"),
     "gnat": (f"{FD}/fd/gencmp/readout/native.json", "df48fbeb"),
     "gprobe": (f"{FD}/fd/gencmp/receipts/d_projection.txt", "2df2a897"),
+    # the code that groups S1's blocks into the per-group columns (referee round 20261104, item 2: the paper's source
+    # list), at fe5d79c61; read as text and parsed, never imported
+    "s1code": ("nd-unfolding/s1_assemble.py", "b157250a"),
+    # 3b's descriptive response-mismatch closures (FD-CT-3B-REPORT.md :79, :96-118; referee round 20261104, Joseph's
+    # addition b0: printed as a bounded statement, descriptive, with no pass threshold)
+    "ct3b": (f"{FD}/fd/readout/fd_ct_mismatch.json", "14399419"),
     "gover": (f"{FD}/fd/gencmp/readout/overlap.json", "82b3528a"),
     # Stage G as first made, on the predictions in their generator definitions with NuWro and GiBUU on carbon (the
     # with arm of FD-CT-5B-ADDITION-REPORT.md section 3), for the note's table of that comparison only
@@ -103,6 +110,30 @@ ARMS = {"with": {"dp": "C_total_plus_C_resp_plus_C_PL5D", "rep": "C_total + C_re
                     "f1sig": "relative_sigma_plus_C_resp"}}
 # the key families whose values depend on the reported matrix; any other key must be equal in the two arms
 MATRIX_KEYS = re.compile(r"^(g-|gs-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|eav-|sig(med|min|max)?-(reported|C_PL5D)|trig-)")
+# the paper's precision (referee round 20261104, item 6): a fake-data chi2 as an integer, as Table IV prints its chi2
+# (DECISION-20261027-joseph-chi2-table-format.md), and a p-value below 1e-3 as the power of ten it lies below; the note
+# keeps the exact values. Keys: <key>int for "-chi2", "-pr" (the value) and "-prel" (with its relation) for "-p"
+PAPER_PREC = re.compile(r"^(f0b?|f1)-.+-(chi2|p)(-nopl)?$")
+
+
+def paper_prec(k, x):
+    """The paper's form(s) of value x of key k: {new key: text}. A chi2 printed at a half (x.50) cannot be rounded from
+    its print and gets no integer key, so a paper that prints one stops the build at the unknown key."""
+    if re.search(r"-chi2(-nopl)?$", k):
+        assert re.fullmatch(r"\d+\.\d\d", x), f"{k}: {x!r}"
+        if x.endswith(".50"):
+            return {}
+        return {re.sub(r"-chi2(?=(-nopl)?$)", "-chi2int", k): f"{float(x):.0f}"}
+    m = re.fullmatch(r"(\d\.\d)\\times10\^\{(-\d+)\}", x)
+    if m:                # p = m x 10^e with 1 <= m < 10 lies below 10^(e+1)
+        assert 1 <= float(m[1]) < 10, f"{k}: {x!r}"
+        pr = rf"<10^{{{int(m[2]) + 1}}}"
+    else:
+        assert x.startswith("<") or float(x) >= 1e-3, f"{k}: {x!r}"
+        pr = x
+    base = re.sub(r"-p(?=(-nopl)?$)", "-pr", k)
+    i = base.rfind("-pr")
+    return {base: pr, base[:i] + "-prel" + base[i + 3:]: pr if pr.startswith("<") else "=" + pr}
 # the figures the note and the paper print, copied into figures/: each must equal its committed source (with the block)
 # and the digest its sidecar records (FD-G-FIGURES-REPORT.md section 1; FD-CT-5B-ADDITION-REPORT.md section 3)
 # Both are E-1's with-arm figures as addendum E-A2 redrew them, from the same readouts, without the hydrogen flags on
@@ -110,7 +141,7 @@ MATRIX_KEYS = re.compile(r"^(g-|gs-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|eav-|sig
 FIGURES = {"fd_g_fig_ratio.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "6214ed78"),
            "fd_g_fig_modes.pdf": ("fd/gencmp-e/rerun1/chain/chdefs/with/figures-a2", "0d6fe57c")}
 # the readouts that are text receipts, not JSON
-TEXT_READOUTS = {"gprobe", "e2sens"}
+TEXT_READOUTS = {"gprobe", "e2sens", "s1code"}
 CELLS = [f"R{i:02d}" for i in range(16)]
 BLOCK = {"stat": "statistical", "interaction": "interaction", "flux": "flux", "detector": "detector",
          "lateral": "lateral", "normalization": "normalization", "seed": "training seed", "C_resp": r"$C_{\mathrm{resp}}$",
@@ -140,8 +171,8 @@ TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
 #   "count": exactly `gibuu` GiBUU truths are listed with the block, and every truth in `also`.
 # The anchor is the sentence's distinguishing clause; a missing anchor fails, so a moved sentence must be re-declared.
 LISTED_CLAIMS = [
-    ("paper_body.tex", "the listed truths ($p<", {"kind": "keys"}),
-    ("paper_body.tex", "also meets the listing criterion", {"kind": "without"}),
+    ("paper_body.tex", "the flagged truths ($p<", {"kind": "keys"}),
+    ("paper_body.tex", "also meets the flagging criterion", {"kind": "without"}),
     ("paper_body.tex", "Thus the fake-data bias exceeds the stated thresholds", {"kind": "both"}),
     ("sec_fived16.tex", "truths meet the listing criterion ($p<", {"kind": "keys"}),
     ("sec_fived16.tex", "truths meet it: the GiBUU", {"kind": "without"}),
@@ -332,6 +363,10 @@ def e2_values(d, arm):
                     v[f"{k}-{tag}"] = f"{x:.2f}"
                 v[f"{k}-dch"], v[f"{k}-dx2"] = sgn(r["CH"] - r["carbon"]), sgn(q["doubled"] - q["carbon"])
                 v[f"{k}-dx0"] = sgn(q["removed"] - q["carbon"])
+                # the paper's precision (PAPER_PREC; referee round 20261104, item 6): one decimal, from the raw values
+                for tag, x in (("dch", r["CH"] - r["carbon"]), ("dx2", q["doubled"] - q["carbon"]),
+                               ("dx0", q["removed"] - q["carbon"])):
+                    v[f"{k}-{tag}r1"] = f"{x:+.1f}"
                 assert r["CH"] != r["carbon"], f"{a} {n} {part}: the note says every prediction's chi2 moves"
     t4 = table4(d, arm)                               # x1 is the reported covariance: Table IV's chi2 in this arm
     a = "with" if arm == "with" else "nopl"
@@ -644,6 +679,7 @@ def values(d, arm="with"):
             n_cells += len(gr["cells_abs_z_gt_2"])
             n_p += bool(gr["p_lt_0.01"])
             v[f"{k}-chi2"] = f"{gr['chi2']:.2f}"
+            v[f"{k}-chi2int"] = f"{gr['chi2']:.0f}"        # the paper's precision (PAPER_PREC), from the raw value
             v[f"{k}-p"] = p_tex(gr["p"])
             v[f"{k}-cells"] = ", ".join(gr["cells_abs_z_gt_2"]) or "---"
             v[f"{k}-zmax"] = f"{max(abs(z) for z in gr['z']):.2f}"
@@ -721,6 +757,43 @@ def values(d, arm="with"):
     meta = d["s1"]["meta"]
     v["s1-stat-replicas"] = str(meta["stat_replicas"])
     v["s1-flux-neff"] = f"{meta['flux_weights']['n_eff']:.0f}"
+    # the paper appendix's source list (referee round 20261104, item 2): S1's blocks counted by s1_assemble.py's own
+    # grouping (group_of), whose constants are read from its pinned source. The appendix names the detector and lateral
+    # bands in words, so their sets are asserted here, and the counts must be those of the readout's blocks
+    con = {}
+    for node in ast.parse(d["s1code"]).body:
+        if isinstance(node, ast.Assign):
+            names = [t.id for t in node.targets if hasattr(t, "id")] or [e.id for e in node.targets[0].elts]
+            if set(names) & {"FLUX", "MINOS", "DROPPED", "LATERAL_BANDS", "DETECTOR_BANDS"}:
+                val = eval(compile(ast.Expression(node.value), "s1_assemble.py", "eval"), {"__builtins__": {}}, dict(con))
+                con.update(zip(names, val) if len(names) > 1 else {names[0]: val})
+    assert set(con["DETECTOR_BANDS"]) == {"GEANT_Neutron", "GEANT_Pion", "GEANT_Proton", "MinosEfficiency"}
+    assert set(con["LATERAL_BANDS"]) == {"BeamAngleX", "BeamAngleY", "MuonResolution", "Muon_Energy_MINERvA",
+                                         "Muon_Energy_MINOS"}
+    assert con["FLUX"] == "Flux" and con["DROPPED"] == "Rvp1pi" and "Rvp1pi" in meta["not_included"]
+    bands = [b[5:] for b in meta["blocks"] if b.startswith("band:")]
+    lats = [b[4:] for b in meta["blocks"] if b.startswith("lat:")]
+    assert set(lats) == set(con["LATERAL_BANDS"]) and con["FLUX"] in bands and set(con["DETECTOR_BANDS"]) <= set(bands)
+    inter = [b for b in bands if b != con["FLUX"] and b not in con["DETECTOR_BANDS"]]
+    assert {"stat", "normalization", "seed"} <= set(meta["blocks"]) and len(meta["blocks"]) == len(bands) + len(lats) + 3
+    v["s1-n-interaction"], v["s1-n-detector"], v["s1-n-lateral"] = (str(len(inter)), str(len(con["DETECTOR_BANDS"])),
+                                                                   str(len(lats)))
+    assert {f"{100 * meta['normalization_fraction']:.2f}"} == {v[f"sig-normalization-{c}"] for c in CELLS}
+    # 3b (b0): the species at their +-1 sigma and the whole recoil at +-4 %, noise-free closures at the nominal truth; |delta|
+    # over the per-cell sigma of C_total + C_resp. The paper prints the bound over the species and W2b's median and
+    # maximum, and says no pass threshold is set, so the readout's labels and design are asserted here
+    ct = d["ct3b"]
+    assert ct["schema"] == "fd-ct-mismatch/1" and ct["cells"] == CELLS and ct["controls_passed"] == ["S", "M0", "M1", "M2"]
+    assert "no pass threshold is set" in ct["labels"]["no_threshold"]
+    assert "nominal truth, noise-free and signal-only" in ct["labels"]["what"] and "whole recoil at +-4%" in ct["labels"]["what"]
+    summ = {k: x["abs_delta_over_sigma_total_resp_summary"] for k, x in ct["variants"].items()}
+    spec = [f"{s}_{m}" for s in ("proton", "meson", "em", "other") for m in ("m1", "p1")]
+    assert set(summ) == set(spec) | {"xtalk_m1", "xtalk_p1", "w2b_rr0", "w2b_rr1"}
+    v["ct3b-species-max"] = f"{max(summ[k]['max'] for k in spec):.2f}"
+    v["ct3b-species-med-lo"] = f"{min(summ[k]['median'] for k in spec):.2f}"
+    v["ct3b-species-med-hi"] = f"{max(summ[k]['median'] for k in spec):.2f}"
+    v["ct3b-w2b-med"] = f"{max(summ[k]['median'] for k in ('w2b_rr0', 'w2b_rr1')):.2f}"
+    v["ct3b-w2b-max"] = f"{max(summ[k]['max'] for k in ('w2b_rr0', 'w2b_rr1')):.2f}"
     for k, x in d["s1"]["trace_share"].items():
         v[f"trace-{k}"] = f"{x:.3f}"
     for k, x in d["cresp"]["trace_share_of_C_total_resp"].items():
@@ -986,6 +1059,10 @@ def all_values(d=None, d_nopl=None):
         fall = [1 - gw[n][part]["chi2"] / go[n][part]["chi2"] for n in PRED]
         assert min(fall) > 0, f"a {part} chi2 rises with the block"
         v[f"pl-chi2fall-{part}-lo"], v[f"pl-chi2fall-{part}-hi"] = f"{100 * min(fall):.1f}", f"{100 * max(fall):.1f}"
+    for k in sorted(k for k in v if PAPER_PREC.match(k)):
+        for nk, x in paper_prec(k, v[k]).items():
+            assert v.get(nk, x) == x, f"{nk}: {v[nk]!r} against the paper form {x!r}"
+            v[nk] = x
     return v
 
 
@@ -1039,8 +1116,8 @@ def check_listed_claims(f0b, texts, f0b_nopl=None):
             bad.append(f"{name}: {anchor!r} occurs {text.count(anchor)} times, not once; re-declare the sentence")
             continue
         sent = _sentence(text, anchor)
-        keyed = set(re.findall(r"\\fvval\{f0b-([A-Za-z0-9_]+)-(?:zmax|p|cells|chi2)\}", sent))
-        keyed_nopl = set(re.findall(r"\\fvval\{f0b-([A-Za-z0-9_]+)-(?:zmax|p|cells|chi2)-nopl\}", sent))
+        keyed = set(re.findall(r"\\fvval\{f0b-([A-Za-z0-9_]+)-(?:zmax|p|pr|prel|cells|chi2|chi2int)\}", sent))
+        keyed_nopl = set(re.findall(r"\\fvval\{f0b-([A-Za-z0-9_]+)-(?:zmax|p|pr|prel|cells|chi2|chi2int)-nopl\}", sent))
         typed = {t for t in graded if TRUTH_LABEL[t][1] in sent}
         unknown = (keyed | keyed_nopl) - graded
         if unknown:
@@ -1256,11 +1333,11 @@ def self_test():
     else:
         print(f"  FAIL the arms' readouts exchanged failed {sorted(swapped)}, not {sorted(want)}"); ok = False
     for what, name, anchor, edit in (
-            ("keys a truth the readout does not list", "paper_body.tex", "the listed truths ($p<",
-             lambda t: t.replace(r"by $p$ alone ($p=\fvval{f0b-q3-p}$)", r"by $p$ alone ($p=\fvval{f0b-q3-p}$, $\fvval{f0b-W3-p}$)", 1)),
-            ("drops a listed truth's keys", "paper_body.tex", "the listed truths ($p<",
-             lambda t: t.replace(r"($p=\fvval{f0b-A7_gibuu-p}$; cells \fvval{f0b-A7_gibuu-cells})", "", 1)),
-            ("names the wrong truth as listed only without the block", "paper_body.tex", "also meets the listing criterion",
+            ("keys a truth the readout does not list", "paper_body.tex", "the flagged truths ($p<",
+             lambda t: t.replace(r"by $p$ alone ($p\fvval{f0b-q3-prel}$)", r"by $p$ alone ($p\fvval{f0b-q3-prel}$, $\fvval{f0b-W3-pr}$)", 1)),
+            ("drops a listed truth's keys", "paper_body.tex", "the flagged truths ($p<",
+             lambda t: t.replace(r"($p\fvval{f0b-A7_gibuu-prel}$; cells \fvval{f0b-A7_gibuu-cells})", "", 1)),
+            ("names the wrong truth as listed only without the block", "paper_body.tex", "also meets the flagging criterion",
              lambda t: t.replace(r"the GiBUU $\Eavail$ shape also meets", r"the NuWro $\Eavail$ shape also meets", 1)),
             ("drops the truth listed only without the block", "sec_fived16.tex",
              "The fake-data bias therefore exceeds the stated thresholds",
