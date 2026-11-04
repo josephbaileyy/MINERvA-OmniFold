@@ -1,0 +1,88 @@
+{
+ "schema": "fd-rpd-stage0/1",
+ "labels": {
+  "what": "the dr_PB/PA step r[8,15)/r[1.5,8) - 1 of 5B's existing period unfolds on the fine cells that map to a reporting cell, sigma the RMS about s0 of the 10 replica-pair steps (no ddof); the 5D analogue of 2D's +6.94 +- 0.41% (period-unfold-20261014 REPORT.md:57), which differs in phase space and estimator"
+ },
+ "branch": "SEES",
+ "s0": 0.06283190579575226,
+ "sigma0": 0.005984234211375657,
+ "z": 10.499573308195846,
+ "replica_pair_steps": [
+  0.06382304785711623,
+  0.058815509264362076,
+  0.059773828782945904,
+  0.07003491106326099,
+  0.07318961061149465,
+  0.07096371941688417,
+  0.05755806397808172,
+  0.06345274067611895,
+  0.0716566939807255,
+  0.06335868429549785
+ ],
+ "rule": {
+  "SEES": "s0 >= 0.0347 and s0/sigma0 >= 5.0",
+  "ABSENT": "|s0|/sigma0 < 3.0",
+  "OTHER": "neither"
+ },
+ "regions": {
+  "L": [
+   1.5,
+   8.0
+  ],
+  "H": [
+   8.0,
+   15.0
+  ]
+ },
+ "reference_2d": 0.0694,
+ "inputs_sha256": {
+  "5b/truth/truth_PA.npz": "c8bb23496fbc3adce34940936e654a1f9b18b406177c0898986cfc5b1cf7f8cf",
+  "5b/truth/truth_PB.npz": "b6462c4a27eba67dbd22b3198b56033fa3a0e689ac4357c14beb61a415d36ce2",
+  "5b/truth/truth_PC.npz": "ebf9a39ce54312157c93dde31cae3cc92446921ce2eb5ac52794b729500d5532",
+  "5b/unf/PA/5b_PA_b-_j-.npz": "98a019d14f3150767f6fc2093ac4a3cb5d84335e2fe37f3e3e22eafde94fb6b1",
+  "5b/unf/PA/5b_PA_b1001_j-.npz": "481a16a943f1ed74c1e49969a964dd22f13d57ad5b0ed1fbe9c4e1b2b4050ebe",
+  "5b/unf/PA/5b_PA_b1002_j-.npz": "00c271e2a343a853032d9cef3688c71dadb4f7806bec2072bb00672256f28935",
+  "5b/unf/PA/5b_PA_b1003_j-.npz": "2dcca63b946a1425aa478032e0f403888c335c4ef0525d3454885d25b077dc90",
+  "5b/unf/PA/5b_PA_b1004_j-.npz": "d3ec8e8c70b8a9dbc31482f983408033ec56aa87bce737b891c2997f883ccef0",
+  "5b/unf/PA/5b_PA_b1005_j-.npz": "2437a3ce766a7e66d3c0196e8ad2706e6b5bfc2988f58c4885394deee9dca7a2",
+  "5b/unf/PA/5b_PA_b1006_j-.npz": "912423272030aa71253082000e998a8a9484e4b3942680d76a3fe1d5c2c6a136",
+  "5b/unf/PA/5b_PA_b1007_j-.npz": "b154618d56fc75bea5013b17df5552ea81881c80ca13342a2aa48fa0124a0584",
+  "5b/unf/PA/5b_PA_b1008_j-.npz": "05602c3e14fb82ddf6a6607067bdd8cebf1f85946ed1961ad48d0bbc99cbaed6",
+  "5b/unf/PA/5b_PA_b1009_j-.npz": "180bc7c275bce6a2d333cf0fb16eacfd40b29243e649f351f1408818edd70fe3",
+  "5b/unf/PA/5b_PA_b1010_j-.npz": "023120eba11010dc4b4b6e55659b5d4d39f862f63f57186591bd252903c49db1",
+  "5b/unf/PB/5b_PB_b-_j-.npz": "0c054f65b1380ea4a0802af8eb5f2560bde3e215e0c3958c05b8e0339ef36d33",
+  "5b/unf/PB/5b_PB_b2001_j-.npz": "a7e4592115d11d9457dee2637e9a89cbdcade0548c877d693efc61c469b8ae0d",
+  "5b/unf/PB/5b_PB_b2002_j-.npz": "9aa6f3b7040488c52a1e6f90e8fdbdf982c0f6b52d4373be05b880bc191e7f73",
+  "5b/unf/PB/5b_PB_b2003_j-.npz": "847ec79df32754532d2910d12bc131fb92f2616ad5d5fac8897dbb2bc49b3d27",
+  "5b/unf/PB/5b_PB_b2004_j-.npz": "f0f5840228b54eaf30625bd1a32ee2c899e5f3275fc55eef05bdc20823386261",
+  "5b/unf/PB/5b_PB_b2005_j-.npz": "a6fedb8ffb3882de9e6454cbf4138840c08595f00dc856fc98252b71a40287f7",
+  "5b/unf/PB/5b_PB_b2006_j-.npz": "c39839f2d642af5c54633c989c9b14dbba7f064b4da2e037c7b5ba409c6ffa65",
+  "5b/unf/PB/5b_PB_b2007_j-.npz": "8176fb9713fe54556d0c5ac42c91d048e5faf5375e5033247632ec2f5ca84e02",
+  "5b/unf/PB/5b_PB_b2008_j-.npz": "a84794b3be2584fccd01970514f349d9b278475046f2c8aa71eb82c636a1ab49",
+  "5b/unf/PB/5b_PB_b2009_j-.npz": "71bedea224698affcaab698e165658baa1679e5c625525dc7abb5c8f8ca314bc",
+  "5b/unf/PB/5b_PB_b2010_j-.npz": "a098523180ebcaeb6304ae8b61b7eee65b25b8ce5197a37c6386140df29b6493",
+  "cresp/cresp.npz": "4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a",
+  "s1/s1_assembly.npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4"
+ },
+ "code_sha256": {
+  "fd_ct_readers.py": "f4cc51c8fdba141b4ae3e289ee983d755c0cd5b90a82d40fe71d2e56a4447464",
+  "fd_f0_regrade.py": "0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2",
+  "s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71",
+  "fd_rpd.py": "3cbc27111d225fdc6d3b2ce1a6b797ad4372954b96fe5cbd769f641f2911b96c",
+  "fd_rpd_inputs.py": "6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70",
+  "fd_ct_periods.py": "ec6bc7f5b292195c7b3488ad9903c2ad7a5dc22746349e7c3fbb9737e283ed3e"
+ },
+ "argv": [
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-3/nd-unfolding/fd_rpd.py",
+  "stage0",
+  "--r",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103",
+  "--definition",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-3/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "--deploy",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-3",
+  "--out-json",
+  "/pscratch/sd/j/josephrb/fd-rpd-20261103/control/stage0.json"
+ ]
+}

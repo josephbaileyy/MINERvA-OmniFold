@@ -16,7 +16,9 @@ from pathlib import Path
 PROBES = {
     "IIIA": [("a 10% median half-width precision target", r"precision target"),
              ("envelope median about 10-13% per cell", r"10–13"),
-             ("the envelope is a diagnostic, not an interval", r"envelope.{0,80}(not an interval|diagnostic)")],
+             # was r"envelope.{0,80}(not an interval|diagnostic)", which matched sec_fps.tex's unrelated "three-prior
+             # dependence envelope, ... containment diagnostic" (found by the paper-rewrite lane, 2026-11-03)
+             ("the envelope is a diagnostic, not an interval", r"These envelopes are sensitivities: they provide no probabilities")],
     "IVBC": [("integrated ratio 1.010 to the published result", r"1\.010"),
              ("standardized-difference RMS 0.535", r"0\.535"),
              ("chi2/ndf 2.27 against the published covariance", r"2\.27"),

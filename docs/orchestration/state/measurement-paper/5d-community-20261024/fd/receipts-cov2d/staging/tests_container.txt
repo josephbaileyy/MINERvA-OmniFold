@@ -1,0 +1,48 @@
+test_atime_moved_fails (__main__.Stager.test_atime_moved_fails) ... ok
+test_o_noatime_is_used_for_every_source_read (__main__.Stager.test_o_noatime_is_used_for_every_source_read) ... ok
+test_pass (__main__.Stager.test_pass) ... ok
+test_refuses_a_bad_manifest (__main__.Stager.test_refuses_a_bad_manifest) ... ok
+test_refuses_existing_destination_and_record (__main__.Stager.test_refuses_existing_destination_and_record) ... ok
+test_size_mismatch_and_changed_while_hashed_are_guards (__main__.Stager.test_size_mismatch_and_changed_while_hashed_are_guards) ... ok
+test_wrong_digest_fails_and_stays_partial (__main__.Stager.test_wrong_digest_fails_and_stays_partial) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 2.117s
+
+OK
+### A: everything agrees, quota 50 %
+rc=0
+used 50.00 %, staging 16601 KiB, projected 50.00 % of the soft quota
+SHA256SUMS sha256=4294bc23b8d29260f730f776da0f28e5bf6aa7beb9fe55ed11bcd72900cab149 (pinned 4294bc23b8d29260f730f776da0f28e5bf6aa7beb9fe55ed1
+manifest: 11 rows; SHA256SUMS agrees with part B's record on all 10 laterals
+STAGE PASS 11 of 11 copies; record /pscratch/sd/j/josephrb/cov2d-inputs-20261104/stage/inputs.stat sha256 da64d3ccfb3e85f1e956c5dff3e822d2b6
+STAGE PASS
+record rows=11 perms=440 laterals_ro=440 
+### B: quota at 89.99 % before staging
+rc=2
+used 90.00 %, staging 16601 KiB, projected 90.00 % of the soft quota
+STOP the projected quota is above 90 % (or unread)
+STAGE FAIL
+### C: SHA256SUMS not the pinned file
+rc=2
+used 50.00 %, staging 16601 KiB, projected 50.00 % of the soft quota
+SHA256SUMS sha256=2d35e693b7bd8047a85ada4cc66e7ea5c35199bd661d0fb2d30d196d47bc80ea (pinned 73775251f377a35b86c5d9433d1db63d65267525b9261f773
+STOP SHA256SUMS is not the pinned file
+STAGE FAIL
+### D: SHA256SUMS disagrees with part B on one lateral
+rc=2
+used 50.00 %, staging 16601 KiB, projected 50.00 % of the soft quota
+SHA256SUMS sha256=8bab781a1b89bea2ede96f594a547f7bc5bb258f80c8734cf158992b8f9f3fb4 (pinned 8bab781a1b89bea2ede96f594a547f7bc5bb258f80c8734cf
+STOP runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_1.root: SHA256SUMS 5a26d3d2813f5bfaf4d16a5a9319962950c8d090fd70bb79416df23bb710550b
+STAGE FAIL
+### F: quota projected 89.99 % (just under)
+rc=0
+used 89.99 %, staging 16601 KiB, projected 89.99 % of the soft quota
+SHA256SUMS sha256=5399c736cd0e0cebd7db905af281ad4c1f4f7fb6193a1abcf43647135888e6ce (pinned 5399c736cd0e0cebd7db905af281ad4c1f4f7fb6193a1abcf
+manifest: 11 rows; SHA256SUMS agrees with part B's record on all 10 laterals
+STAGE PASS 11 of 11 copies; record /pscratch/sd/j/josephrb/cov2d-inputs-20261104/stage/inputs.stat sha256 afb5f3e9ad91d52b0518fb8da26a8bcb6a
+STAGE PASS
+record rows=11 perms=440 laterals_ro=440 
+### E: rerun into an existing directory
+STOP /pscratch/sd/j/josephrb/cov2d-inputs-20261104 exists
+rc=2

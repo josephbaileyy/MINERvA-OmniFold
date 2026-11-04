@@ -1,0 +1,54 @@
+test_clipped_and_recorded (test_cov2d_writer.Counts.test_clipped_and_recorded) ... ok
+test_expand (test_cov2d_writer.Counts.test_expand) ... ok
+test_signal_drawn_before_background (test_cov2d_writer.Counts.test_signal_drawn_before_background) ... ok
+test_control_fires_on_a_changed_row (test_cov2d_writer.File.test_control_fires_on_a_changed_row) ... ok
+test_control_fires_on_a_dropped_row (test_cov2d_writer.File.test_control_fires_on_a_dropped_row) ... ok
+test_control_fires_on_a_leaf_type (test_cov2d_writer.File.test_control_fires_on_a_leaf_type) ... ok
+test_control_fires_on_the_parameter (test_cov2d_writer.File.test_control_fires_on_the_parameter) ... ok
+test_control_passes_on_the_writer (test_cov2d_writer.File.test_control_passes_on_the_writer) ... ok
+test_control_passes_when_autosave_would_fire (test_cov2d_writer.File.test_control_passes_when_autosave_would_fire) ... FAIL
+test_one_cycle_when_autosave_would_fire (test_cov2d_writer.File.test_one_cycle_when_autosave_would_fire) ... FAIL
+test_refuses_unequal_columns (test_cov2d_writer.File.test_refuses_unequal_columns) ... ok
+test_schema_and_parameter (test_cov2d_writer.File.test_schema_and_parameter) ... ok
+
+======================================================================
+FAIL: test_control_passes_when_autosave_would_fire (test_cov2d_writer.File.test_control_passes_when_autosave_would_fire)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/a1/oldblob/cov2d/tests/test_cov2d_writer.py", line 164, in test_control_passes_when_autosave_would_fire
+    self.assertEqual(code, 0, text)
+AssertionError: 3 != 0 : tree data: entries CV=2345 UNI=2345 branches CV=3 UNI=3 shared=3
+  shared: ['measured', 'measured_pass', 'measured_pz']
+  rows 0..2345 of 2345 done utc=00:26:12Z
+  EQUAL  data.measured rows=2345 bitwise_diff=0 value_diff=0 sha256 CV=99f6f3d046991121 UNI=99f6f3d046991121
+  EQUAL  data.measured_pass rows=2345 bitwise_diff=0 value_diff=0 sha256 CV=974b5c641c66a385 UNI=974b5c641c66a385
+  EQUAL  data.measured_pz rows=2345 bitwise_diff=0 value_diff=0 sha256 CV=a4d027af2bb09902 UNI=a4d027af2bb09902
+FAILURE unexpected keys ['data;11', 'data;12']
+WRITER-CONTROL FAIL failures=1
+
+
+======================================================================
+FAIL: test_one_cycle_when_autosave_would_fire (test_cov2d_writer.File.test_one_cycle_when_autosave_would_fire)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/a1/oldblob/cov2d/tests/test_cov2d_writer.py", line 153, in test_one_cycle_when_autosave_would_fire
+    self.assertEqual(sorted(f.classnames(recursive=False)), ["data;1", "dataPOTUsed;1"])
+AssertionError: Lists differ: ['data;11', 'data;12', 'dataPOTUsed;1'] != ['data;1', 'dataPOTUsed;1']
+
+First differing element 0:
+'data;11'
+'data;1'
+
+First list contains 1 additional elements.
+First extra element 2:
+'dataPOTUsed;1'
+
+- ['data;11', 'data;12', 'dataPOTUsed;1']
+?         -  -----------
+
++ ['data;1', 'dataPOTUsed;1']
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.454s
+
+FAILED (failures=2)

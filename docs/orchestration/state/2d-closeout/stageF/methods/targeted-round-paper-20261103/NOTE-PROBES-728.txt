@@ -1,0 +1,12 @@
+# #728's note_probes.py (rp9-reprice-97e30dda/note_probes.py at 4ea94a989), re-run on the note's blinded text at this round's sources (remeasure.py's blind/ours-note.txt, built from the tree committed as 91f36b7ad)
+# the moves of this round: IIIA, IVDbkg, VC. The third IIIA probe, envelope.{0,80}(not an interval|diagnostic), matches sec_fps.tex's "three-prior dependence envelope, ... containment diagnostic", not III A's fact; the fact prints in sec_5d.tex ("These envelopes are sensitivities: ..."), probed in ledger row T7
+IIIA    yes   a 10% median half-width precision target
+IIIA    yes   envelope median about 10-13% per cell
+IIIA    yes   the envelope is a diagnostic, not an interval
+IVDbkg  yes   purity-based subtraction biased up to 4% at highest W
+IVDbkg  yes   2D closure: purity estimate up to 5.9 statistical SD
+IVDbkg  yes   refined estimate within 0.44 in every cell
+IVDbkg  yes   14 of the 205 cells more than one statistical SD apart
+IVDbkg  yes   the two treatments differ by at most 1.4% on data
+VC      yes   3D and 4D central values carry no uncertainties
+VC      yes   generators underpredict at low Eavail, the low-recoil region

@@ -1,0 +1,34 @@
+deploy at c30f9ae216c1273a6c91cdfe3a9d13ddc8925c89: cov2d_writer blob bb3892e5447d37ee524c720c5ab623baa7184f30
+synthetic CV: 4119797 rows, 26s
+read: cv=/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/dry2a2/run/cv.root
+read: atime_ns before=1793851302934612035 after=1793851302934612035
+read: dataPOTUsed {'dtype': '<f8', 'shape': [], 'sha256': '7224b6b63888a04930cdbc2754090406ef10900010f532e13ddc4707c9c9ae6e'}
+read: measured {'dtype': '<f8', 'shape': [4119797], 'sha256': '91344a13e8a24549a93d3bb71293547880951d2b639a2da5b3444a8fe2b63f3d'}
+read: measured_pass {'dtype': '|u1', 'shape': [4119797], 'sha256': 'c20c920d35e55b7f3ec13a35f9518a9674b532a9ffe97270d601eeeb757ab20d'}
+read: measured_pz {'dtype': '<f8', 'shape': [4119797], 'sha256': '66124ee322f885b5814f6270ae5f88ab1b794b33689f1400c0bf86df081d86c4'}
+read: rows=4119797 dataPOTUsed=1.057394261158926e+21
+READ npz_sha256=554b557b6ab280caca573755e79ed648d91cb4d7cf1993e7ba01876dea9e33e6 manifest_sha256=e42cd06dd17db29a81399be04b21e9fe16dc59fe39f7fde4c06971d9c792f834
+STEP1 rc=0
+write: expects npz_sha256=554b557b6ab280caca573755e79ed648d91cb4d7cf1993e7ba01876dea9e33e6 manifest_sha256=e42cd06dd17db29a81399be04b21e9fe16dc59fe39f7fde4c06971d9c792f834
+write: loaded npz_sha256=554b557b6ab280caca573755e79ed648d91cb4d7cf1993e7ba01876dea9e33e6 manifest_sha256=e42cd06dd17db29a81399be04b21e9fe16dc59fe39f7fde4c06971d9c792f834
+write: dataPOTUsed loaded {'dtype': '<f8', 'shape': [], 'sha256': '7224b6b63888a04930cdbc2754090406ef10900010f532e13ddc4707c9c9ae6e'}
+write: measured loaded {'dtype': '<f8', 'shape': [4119797], 'sha256': '91344a13e8a24549a93d3bb71293547880951d2b639a2da5b3444a8fe2b63f3d'}
+write: measured_pass loaded {'dtype': '|u1', 'shape': [4119797], 'sha256': 'c20c920d35e55b7f3ec13a35f9518a9674b532a9ffe97270d601eeeb757ab20d'}
+write: measured_pz loaded {'dtype': '<f8', 'shape': [4119797], 'sha256': '66124ee322f885b5814f6270ae5f88ab1b794b33689f1400c0bf86df081d86c4'}
+write: every array equals the read step's in dtype, shape and bytes
+WRITE out_sha256=892612f5e074141c7332d43375920b84d33f0208a462fa2b3f800f0c606f9244
+STEP2 rc=0
+check: expects out_sha256=892612f5e074141c7332d43375920b84d33f0208a462fa2b3f800f0c606f9244
+check: stub called with /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/dry2a2/run/writer_control.root, sha256=892612f5e074141c7332d43375920b84d33f0208a462fa2b3f800f0c606f9244, rows=4119797, dataPOTUsed=1.057394261158926e+21
+tree data: entries CV=4119797 UNI=4119797 branches CV=3 UNI=3 shared=3
+  shared: ['measured', 'measured_pass', 'measured_pz']
+  rows 0..2000000 of 4119797 done utc=04:01:58Z
+  rows 2000000..4000000 of 4119797 done utc=04:01:58Z
+  rows 4000000..4119797 of 4119797 done utc=04:01:58Z
+  EQUAL  data.measured rows=4119797 bitwise_diff=0 value_diff=0 sha256 CV=127d77926e6e6fc9 UNI=127d77926e6e6fc9
+  EQUAL  data.measured_pass rows=4119797 bitwise_diff=0 value_diff=0 sha256 CV=9a32a1b74982dd3c UNI=9a32a1b74982dd3c
+  EQUAL  data.measured_pz rows=4119797 bitwise_diff=0 value_diff=0 sha256 CV=f093ad06dae7f1a7 UNI=f093ad06dae7f1a7
+WRITER-CONTROL PASS failures=0
+CHECK rc=0 stub_calls=1
+STEP3 rc=0
+DRYRUN PASS

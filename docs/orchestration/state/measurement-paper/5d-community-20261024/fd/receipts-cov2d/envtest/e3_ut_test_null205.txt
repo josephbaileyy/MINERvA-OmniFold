@@ -1,0 +1,8 @@
+test_bonferroni_divisor_is_the_cell_count (test_null205.Null205.test_bonferroni_divisor_is_the_cell_count) ... ok
+test_matched_null_runs_and_refuses_a_mismatch (test_null205.Null205.test_matched_null_runs_and_refuses_a_mismatch) ... ok
+test_power_at_205_cells (test_null205.Null205.test_power_at_205_cells) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 4.653s
+
+OK

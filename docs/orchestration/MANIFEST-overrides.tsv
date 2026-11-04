@@ -244,6 +244,7 @@ docs/orchestration/DECISION-20261103-joseph-711-merge-and-rp9-reprice.md	LIVE	op
 docs/orchestration/DECISION-20261103-joseph-731-restore-and-merge.md	LIVE	open	""
 docs/orchestration/DECISION-20261103-joseph-coverage-clip-rule.md	LIVE	open	""
 docs/orchestration/DECISION-20261103-joseph-retire-density-gate.md	LIVE	open	""
+docs/orchestration/DECISION-20261104-joseph-1b-large-sample-gate.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	ARCHIVAL	terminal	""
@@ -715,6 +716,9 @@ docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/af
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/README.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/placement.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-711-97e30dda/tables/rates.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-731-b9849126/README.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-731-b9849126/tables/placement.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-731-b9849126/tables/rates.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/README.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/RP9.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/cutlist/cutlist.md	LIVE	open	""
@@ -1077,6 +1081,7 @@ docs/orchestration/state/ki98-wbias-test/REPORT.md	LIVE	open	""
 docs/orchestration/state/live-state-last-known.json	LIVE	open	
 docs/orchestration/state/live-state.json	LIVE	open	
 docs/orchestration/state/live-state.schema.json	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-1-A1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-SCOPING.md	LIVE	open	""
@@ -1181,6 +1186,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-XCOV-
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PLAN.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PSCRATCH-RETENTION-PROPOSAL.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-BINDING-1.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-BINDING-2-A1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-BINDING-2.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-DECLARATION-PART2.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-DECLARATION.md	LIVE	open	""

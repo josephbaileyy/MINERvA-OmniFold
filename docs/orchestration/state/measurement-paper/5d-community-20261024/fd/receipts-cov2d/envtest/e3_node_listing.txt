@@ -1,0 +1,78 @@
+login23
+total 136
+drwxrwx---   2 josephrb josephrb  4096 Nov  3 15:51 .
+drwx------ 346 josephrb josephrb 69632 Nov  3 15:44 ..
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:51 affinity_test_null205.log
+-rw-rw----   1 josephrb josephrb  2390 Nov  3 15:45 affinity_test_re2_data_file.log
+-rw-rw----   1 josephrb josephrb  2571 Nov  3 15:50 affinity_test_re2_driver.log
+-rw-rw----   1 josephrb josephrb   422 Nov  3 15:35 bound.blobs.login
+-rw-rw----   1 josephrb josephrb   422 Nov  3 15:39 bound.blobs.root
+-rw-rw----   1 josephrb josephrb  1148 Nov  3 15:35 connect-e3-login.log
+-rw-rw----   1 josephrb josephrb  4488 Nov  3 15:51 connect-e3-root.log
+-rw-rw----   1 josephrb josephrb   173 Nov  3 15:39 e3-60768505.out
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:35 fail.flags
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:35 none.skips
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:35 pre_test_cov2d.log
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:35 pre_test_cov2d_writer.log
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:41 pre_test_null205.log
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:40 pre_test_re2_data_file.log
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:40 pre_test_re2_driver.log
+-rw-rw----   1 josephrb josephrb   671 Nov  3 15:35 test_cov2d.skips
+-rw-rw----   1 josephrb josephrb   406 Nov  3 15:35 test_cov2d_writer.skips
+-rw-rw----   1 josephrb josephrb  2149 Nov  3 15:35 ut_test_cov2d.log
+-rw-rw----   1 josephrb josephrb  1539 Nov  3 15:35 ut_test_cov2d.log.parsed
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:35 ut_test_cov2d.log.skipdiff
+-rw-rw----   1 josephrb josephrb   671 Nov  3 15:35 ut_test_cov2d.log.skips
+-rw-rw----   1 josephrb josephrb   959 Nov  3 15:35 ut_test_cov2d_writer.log
+-rw-rw----   1 josephrb josephrb   626 Nov  3 15:35 ut_test_cov2d_writer.log.parsed
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:35 ut_test_cov2d_writer.log.skipdiff
+-rw-rw----   1 josephrb josephrb   406 Nov  3 15:35 ut_test_cov2d_writer.log.skips
+-rw-rw----   1 josephrb josephrb   412 Nov  3 15:51 ut_test_null205.log
+-rw-rw----   1 josephrb josephrb   190 Nov  3 15:51 ut_test_null205.log.parsed
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:51 ut_test_null205.log.skipdiff
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:51 ut_test_null205.log.skips
+-rw-rw----   1 josephrb josephrb   500 Nov  3 15:45 ut_test_re2_data_file.log
+-rw-rw----   1 josephrb josephrb   266 Nov  3 15:45 ut_test_re2_data_file.log.parsed
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:45 ut_test_re2_data_file.log.skipdiff
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:45 ut_test_re2_data_file.log.skips
+-rw-rw----   1 josephrb josephrb  1067 Nov  3 15:51 ut_test_re2_driver.log
+-rw-rw----   1 josephrb josephrb   605 Nov  3 15:51 ut_test_re2_driver.log.parsed
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:51 ut_test_re2_driver.log.skipdiff
+-rw-rw----   1 josephrb josephrb     0 Nov  3 15:51 ut_test_re2_driver.log.skips
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  affinity_test_null205.log
+01fc557ee0438b6dbcbe70eca757d850de3caf54ca6eb88d507daa425ef5763e  affinity_test_re2_data_file.log
+46a9a39f76a3f2c57845b7dfdea3bd1820b1dd6d9a04be0551e1fcf71de9c07a  affinity_test_re2_driver.log
+c0d93ff04cf3e4c79d6fa55eb50cf78bb823ca90a163cd5b7db56a3523d93faf  bound.blobs.login
+c0d93ff04cf3e4c79d6fa55eb50cf78bb823ca90a163cd5b7db56a3523d93faf  bound.blobs.root
+ca4127cac8d66ef84ee876f26a4cffd638548608abb7a16502b0ec3ce1eae78e  connect-e3-login.log
+f31eead10f55a0328780bed6debb74b8f39900c5d66637150a34570d3682be5f  connect-e3-root.log
+e39b3983509882124458c3042ba69dc30cc3bf412e083c7d37ffe965ceb82220  e3-60768505.out
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  fail.flags
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  none.skips
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  pre_test_cov2d.log
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  pre_test_cov2d_writer.log
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  pre_test_null205.log
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  pre_test_re2_data_file.log
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  pre_test_re2_driver.log
+7a8382ec078f3fe25956f1e07a5f41fa685a1103623871c626495bd3c96917c2  test_cov2d.skips
+9beaa051d3e54b031b35e298f7bb98999dfac738a3a7ec3021ab727a9705511e  test_cov2d_writer.skips
+4aa0473c5d0eea39f1f190911b0cd9e78611f8d53bb81e4b147f4ad4afcf8a5c  ut_test_cov2d.log
+02a9bcbabdeb4aa6cef8706d49e0c1d5c7c34e5f1ff28d96a11221f9ef10ca6a  ut_test_cov2d.log.parsed
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ut_test_cov2d.log.skipdiff
+7a8382ec078f3fe25956f1e07a5f41fa685a1103623871c626495bd3c96917c2  ut_test_cov2d.log.skips
+ddc94a8e3b51bc8681ecd948b36f8d1c58bf420ba3e41b62e8305228edd7deba  ut_test_cov2d_writer.log
+b0114890b1531d2d3d53de0b7b7130e0ca99b3b8d1f6ab68fa53f7a6de7b633a  ut_test_cov2d_writer.log.parsed
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ut_test_cov2d_writer.log.skipdiff
+9beaa051d3e54b031b35e298f7bb98999dfac738a3a7ec3021ab727a9705511e  ut_test_cov2d_writer.log.skips
+24f956e823fcee54b32aa781a9c89b84031b8a238e8807d4e540ef952eda33b5  ut_test_null205.log
+ba21c2668e5c39f6c6295c895bb4cc956840a75d9fca8528a39888ebde1ba359  ut_test_null205.log.parsed
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ut_test_null205.log.skipdiff
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ut_test_null205.log.skips
+3fcff16e4a281e144ffb49a59edaf7b1f7e2327e08b621b340c2cfd96aabc127  ut_test_re2_data_file.log
+6f5635d3960b58cef7279489563adf1ed03848f1dff3b17da638e6e93eab87de  ut_test_re2_data_file.log.parsed
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ut_test_re2_data_file.log.skipdiff
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ut_test_re2_data_file.log.skips
+450803558b9d7b1535fb6b6918dbcadd6086665fe92fd9dfde0b35aa3cb2960e  ut_test_re2_driver.log
+4fa5ce0a68f2c3a464d586444e6e1bcf404a5aa3b12b2dcc5e3be68a91363713  ut_test_re2_driver.log.parsed
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ut_test_re2_driver.log.skipdiff
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  ut_test_re2_driver.log.skips

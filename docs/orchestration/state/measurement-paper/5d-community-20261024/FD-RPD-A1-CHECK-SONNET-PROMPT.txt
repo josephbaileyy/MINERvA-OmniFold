@@ -1,0 +1,52 @@
+You are a fresh, independent reviewer. Review one diff for correctness against the requirements below. READ ONLY:
+do not edit, create or delete any file, do not run git commands that write (no commit, checkout, stash, worktree,
+fetch, push), do not contact any cluster or network service, and do not run the mutation harness. You may read files
+and run the local unit tests (`cd nd-unfolding/tests && python3 -B -m unittest test_fd_rpd`; about 2-3 minutes; 5 tests
+skip without ROOT, and `test_fd_rpd_mat` errors without a cluster run directory by design).
+
+Repository: /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/rpd2-wt
+The diff: `git diff 7bdd39f697d8d978dd8cbe38a535d8eefa9f745b 4647f5462d43d22bd08f7dd59d0339599ef61a8d` (7 files).
+Context documents (read the parts you need): docs/orchestration/state/measurement-paper/5d-community-20261024/
+FD-RPD-DECLARATION-PART2.md (the diff revises it), FD-RPD-BINDING-2.md, and nd-unfolding/s5c_array.sh.
+
+Background. A run-period diagnosis (RPD) campaign's stage S has two login-node steps: `fd_rpd_inputs.py stage` copies
+79 inputs into $R/staged and `flux` builds per-playlist flux files with a pinned combiner (2d-unfolding/
+combine_flux_MEFHC.py) that reads a PlotUtils::MnvH1D histogram via PyROOT. `stage` succeeded; `flux` failed because
+the environment (conda root_6_28 activated by prefix) had no PlotUtils (MAT) dictionary. The diff answers that.
+
+Requirements the diff must meet (the director's addendum A1 rulings):
+R1. `flux`, and its `loop_pots` in the same process, runs in the cluster shared checkout's MAT environment
+    (/pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh sourced read-only, TMPDIR re-exported to $R/tmp). It
+    must refuse BEFORE ANY READ of a staged file unless: the six setup scripts (setup_salloc_env.sh and the five it
+    sources directly or indirectly) are at declared digests; PLOTUTILSROOT and MINERVA_PREFIX equal that checkout's
+    MINERvA101/opt/lib and MINERvA101/opt; MnvH1D's dictionary loads; and the MAT files mapped into the process equal
+    a pinned set at declared digests, with the symlink libMATDict.so -> libMAT.so recorded as resolved and its target
+    digested. Digests of files outside $R are read through O_NOATIME. Nothing is written into the shared checkout.
+R2. Job A is unchanged (s5c_array.sh). A login-only test runs loop_pots on all 12 staged zero loops in both
+    environments (root_6_28 by prefix and the MAT environment).
+R3. A login-only test, in flux's environment, reads one or more real MnvH1D histograms from the staged copies under
+    $R and checks types and finite values. The declaration's section 3 must say that the five pre-existing ROOT tests
+    use plain-TH1D fixtures and do not cover MAT reads. Section 2 must pin which environment each step runs in, and
+    each step's tests must run in that environment.
+R4. $R is reused: every connect after stage S's first must re-hash all 79 staged copies against their pins before
+    reading, and refuse on any mismatch (`verify-staged`).
+R5. Mutants cover the environment-digest refusal in both directions (refuses a wrong environment; passes the right one).
+
+What to look for, in priority order:
+1. Any way the environment check can PASS a wrong environment or REFUSE the right one (including edge cases: file
+   missing, symlink chains, realpath differences, /proc/self/maps parsing, library names such as libMAT.so.1 or
+   versioned names, what counts as "mapped MAT files", the order of ROOT loading vs the check).
+2. Any staged-file read that can happen before the environment check, in `flux` or in what it calls.
+3. `verify-staged`: can it pass a staged set that is not exactly the pinned 79 at their pins? Can it refuse a correct
+   one? Does it write anything?
+4. Tests that cannot fail, or that test a different proposition than they claim; fixtures that disagree with the real
+   files; tests that would skip silently where the declaration says "none skipped".
+5. The declaration text against the code: any claim (counts, digests, commands, environments, exit codes) that the
+   code or the receipts in the diff do not support.
+6. root_tests_login.sh: does it run each suite in the environment it claims, without leaking one environment into the
+   other, and with the documented safety (no job submission, writes only inside its /dev/shm clone)?
+
+Report: a numbered list of findings, each with severity (MAJOR = could make a run pass wrongly or stop spuriously,
+or a requirement unmet; MINOR = a real defect with limited consequence; NIT = wording or style), the file and line,
+what is wrong, and a concrete failure scenario. Say plainly if you find nothing at a level. Do not propose large
+redesigns; keep to this diff. End with a one-line summary count (MAJOR / MINOR / NIT).

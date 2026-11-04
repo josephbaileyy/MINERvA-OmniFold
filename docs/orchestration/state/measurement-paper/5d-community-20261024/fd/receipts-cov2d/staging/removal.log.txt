@@ -1,0 +1,14 @@
++ hostname
+dtn01.nersc.gov
++ date -u +%FT%TZ
+2026-11-04T04:29:25Z
++ sha256sum /pscratch/sd/j/josephrb/cov2d-stage-20261104.sh
+99fb8a66470c5c97d43807de9c6f9d3613d09ed59964cb268b088b6cde6a6e53  /pscratch/sd/j/josephrb/cov2d-stage-20261104.sh
++ rm -f /pscratch/sd/j/josephrb/cov2d-stage-20261104.sh
+rc_script=0
++ echo rc_script=0
++ ls -d /pscratch/sd/j/josephrb/cov2d-stage-20261104.sh
+ls: cannot access '/pscratch/sd/j/josephrb/cov2d-stage-20261104.sh': No such file or directory
++ lfs quota -u josephrb /pscratch
++ sed -n 3p
+      /pscratch 18886371788  21474836480 32212254720       - 2848574  10000000 11000000       -

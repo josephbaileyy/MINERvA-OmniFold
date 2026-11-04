@@ -1,0 +1,34 @@
+### 1. Assessment of Changed Passages
+
+Overall, the edited text is considerably tighter, eliminates defensive over-qualification, and maintains an appropriate PRD register. However, one deletion crosses from concision into unwarranted vagueness:
+
+*   **Run-period block (`$C_{\mathrm{PL,5D}}$`) size indeterminacy:** *Flagged as evasive.* Replacing the explicit 68% confidence interval on the ratio of true to estimated block size with the qualitative statement that it "has a poorly determined size" hides essential quantitative information. Inverting an ad-hoc covariance block constructed from only three run periods carries extreme sampling variance. A PRD reader or global fitter needs to know whether "poorly determined" means a factor of 1.5 or an order of magnitude. The numerical interval must remain in the text.
+*   **$\Eavail$ definition:** *Clear and accurate.* Retaining the explicit \SI{4.57}{MeV}/pion offset relative to prior MINERvA definitions preserves necessary experimental rigor. Streamlining the omitted particle list to "such as kaons" with a note citation removes pedantic cataloging without hiding the definition's boundary.
+*   **Negative-weight background subtraction & Fig. 5 deletion:** *Clear and appropriate.* Moving the methodological horse race between purity and negative-weight subtraction to the note is sound. The main text still quotes the residual performance for the adopted pipeline ($<0.09\%$ at nominal truth in Fig. 6/caption).
+*   **Fake-data bias editorializing:** *Clear and improved.* Deleting ", so the change is not a smaller bias or a validated uncertainty" leaves the factual statement: "The bias is the same in both; only the covariance differs." This is punchy and objective; PRD readers do not need the obvious arithmetic pointed out.
+*   **Finite-ensemble statement:** Replacing "No finite-ensemble correction is applied" with a pointer to the note's "finite-ensemble treatment" is borderline. Given known biases when inverting sample covariance matrices without Hartlap or bootstrap shrinkage corrections, an explicit "without finite-ensemble corrections" in the text is preferable to an external pointer.
+
+---
+
+### 2. Appropriateness of the Three Moves
+
+All three structural moves are appropriate for PRD; I would not object to any of them:
+
+1.  **Reporting definitions and 10% precision target:** Appropriate. The primary paper must define and justify the reported measurement (the 16-cell result with full covariance). An extensive exploration of why alternative, finer binning schemes failed an internal design precision target due to prior sensitivity belongs in a technical companion note. Importantly, the paper does not hide the underlying limitation: Section VI explicitly retains the finding that regularization bias / prior sensitivity is present.
+2.  **Background-subtraction closure study and Fig. 5:** Appropriate. The main text documents the validation of the chosen analysis configuration. Showing how and where an unchosen configuration (purity subtraction) failed at high $W$ is standard supporting material for an analysis note.
+3.  **Descriptive comparison of 3D and 4D central values without uncertainties:** Strongly approved. Physical Review D discourages qualitative physics interpretations ("generators underpredict...") drawn from unfolded central values presented without uncertainties or covariances. Moving these unquantified comparisons to the companion note protects the empirical integrity of the main publication.
+
+---
+
+### 3. Specific Review Points
+
+*   **(a) Run-period block:** Moving the numerical interval to the note while leaving only "poorly determined size" is deficient. In PRD, systematic uncertainty scales must be quantified, particularly when acknowledged to be unstable.
+*   **(b) $\Eavail$ definition:** Keeping the \SI{4.57}{MeV} per pion difference is essential. Because $\Eavail$ is an experiment-defined calorimetric observable, exact bookkeeping of pion mass subtraction conventions is required for meaningful generator comparisons and cross-experiment combinations.
+*   **(c) Table footnote on GiBUU supplementary sample:** Dropping the internal label and post-hoc check ("B3...") while keeping the blunt facts—that the sample failed its sampling closure check and that 46% of its DIS events violate energy conservation—is an excellent edit. The deleted text read like defensive rationalization. The revised text is candid, transparent, and professional.
+
+---
+
+### 4. Requested Edits
+
+1.  **Restore the numerical interval for the run-period block:** In the discussion of $C_{\mathrm{PL,5D}}$, reinstate the numerical 68% interval (e.g., "...has a poorly determined size, with the 68% interval on the ratio of true to estimated size spanning \fvval{pl-sigratio-lo}--\fvval{pl-sigratio-hi} (\nsec{sec:fived16-pl})").
+2.  **Explicitly state the covariance inversion treatment:** In the paragraph detailing matrix inversion by Cholesky decomposition, retain an explicit clause that no finite-ensemble correction was applied to the inverted matrices, rather than delegating the treatment entirely to the note.

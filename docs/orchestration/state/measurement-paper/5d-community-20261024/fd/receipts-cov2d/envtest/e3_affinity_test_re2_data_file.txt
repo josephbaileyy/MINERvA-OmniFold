@@ -1,0 +1,15 @@
+23:41:29 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:41:53 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:42:17 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:42:17 pid=2343465 kind=driver threads=1 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -c import sys, runpy; sys.path.insert(0, '/dev/shm/josephrb-cov2d-e3/deploy/unbinn
+23:42:42 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:43:05 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:43:29 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:43:46 pid=13011 kind=driver threads=1 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -c import sys, runpy; sys.path.insert(0, '/dev/shm/josephrb-cov2d-e3/deploy/unbinn
+23:43:52 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:44:13 pid=19347 kind=driver threads=1 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -c import sys, runpy; sys.path.insert(0, '/dev/shm/josephrb-cov2d-e3/deploy/unbinn
+23:44:15 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:44:38 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:45:01 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:45:25 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 
+23:45:47 pid=2329908 kind=unittest threads=7 cpus=8-11 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Tie the paper's Sec. IV printed values, and three note values, to their committed receipts (PRD release audit
-ea939701, G11).
+"""Tie the paper's Sec. IV printed values, and the note values moved from it, to their committed receipts (PRD release
+audit ea939701, G11).
 
-Each check finds one printed value in paper_body.tex (or values.tex, or the note's sec_validation.tex), recomputes it
+Each check finds one printed value in paper_body.tex (or values.tex, or the note's sec_validation.tex or sec_5d.tex), recomputes it
 from the committed receipt that backs it, and compares at the printed precision: |computed - printed| <= half a unit in
 the printed last digit ("round"), or printed - one unit <= computed < printed ("below", for "below X%": true, and tight
 to one unit). LaTeX comments are removed first, so a sentence kept only in a comment is not found. A value that cannot
@@ -14,6 +14,9 @@ Register round r18 (DECISION-20261025-joseph-r18-history-to-note.md item 1) move
 nominal of the earlier band's test in sec_validation.tex (erf(2/sqrt 2), as a fraction); the post hoc rescoring against
 the rebuilt band in sec_validation.tex (the same receipt, rescore_vl169_toys_vl170.json, as fractions); and the earlier
 band's C2 as \\covTwoDCTwo in values.tex (the macro the note prints; the paper's percent form is no longer printed).
+The targeted round of 2026-11-03 moved the paper's background-closure paragraph (Sec. IV D) to the note, so its four
+bound values (VL149, VL151, VL152) are now found in sec_5d.tex's sec:val-negweight, with the residual of the other
+(E_avail, W) cells that the note now prints too.
 
   python3 check_sec4_receipts.py              # exit 0 only if every check passes
   python3 check_sec4_receipts.py --self-test  # each printed value perturbed by one unit must be rejected
@@ -86,9 +89,11 @@ def interim(key):
     return receipt("coverage-2d-20261005/interim_score.json")["result"][key]
 
 
-def purity_bias_max():  # VL149: purity-method nominal-truth bias, highest-W cells
+def purity_bias_range():  # VL149: purity-method nominal-truth bias, the highest-W column without its corner cell EW41
     worst = receipt("s5c/d1/d1_summary.json")["groups"]["split_F2"]["worst"]
-    return max(abs(c["mean_rel_pct"]) for c in worst if highest_w(c["name"]))
+    v = [abs(c["mean_rel_pct"]) for c in worst if highest_w(c["name"]) and c["name"] != "EW41"]
+    assert len(v) == 6, "the receipt's worst list no longer holds the six other highest-W cells"
+    return min(v), max(v)
 
 
 def tilt_coverage68_min():  # s5c tier S (OUTCOME-20260925-s5c-tier-s-futility-fail.md): the E_avail tilt's lowest 68% coverage
@@ -99,8 +104,15 @@ def dev():
     return receipt("s5n/stage1/dev_receipt.json")
 
 
-def negweight_highw_max():  # VL151: negative-weight treatment, highest-W cells
-    return max(abs(v["mean_rel_pct"]) for v in dev()["grid"]["C3_nominal"]["high_W"].values())
+def negweight_highw_range():  # VL151: negative-weight treatment, the highest-W column (its corner cell included)
+    v = [abs(c["mean_rel_pct"]) for c in dev()["grid"]["C3_nominal"]["high_W"].values()]
+    return min(v), max(v)
+
+
+def negweight_other_ew_max():  # VL151: negative-weight treatment, the other (E_avail, W) cells
+    d = dev()
+    pf, names = d["grid"]["C3_nominal"]["per_functional"]["mean_rel"], d["functional_names"]
+    return max(100.0 * abs(v) for v, n in zip(pf, names) if ev(n) and not highest_w(n))
 
 
 def negweight_joint_max():  # VL151: largest residual over the joint (J) cells; per_functional.mean_rel is a fraction
@@ -146,13 +158,19 @@ CHECKS = [
     ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note sec:coverage)", "sec_validation.tex",
      r"removes the tail undercoverage: \$C_2=([0-9.]+)\$ \$\[[0-9.,]+\]\$ and \$C_1=([0-9.]+)\$",
      lambda: (rescore("C2") / 100.0, rescore("C1") / 100.0), "round"),
-    ("purity bias, highest-W cells (VL149)", "paper_body.tex", r"biased by up to \\SI\{([0-9.]+)\}\{\\percent\} in simulation",
-     purity_bias_max, "round"),
-    ("negative-weight residual, highest-W cells (VL151)", "paper_body.tex", r"reduces it to below \\SI\{([0-9.]+)\}\{\\percent\}",
-     negweight_highw_max, "below"),
-    ("negative-weight residual, joint cells (VL151)", "paper_body.tex",
-     r"leaving up to \\SI\{([0-9.]+)\}\{\\percent\} in some joint cells", negweight_joint_max, "round"),
-    ("treatments on data (VL152)", "paper_body.tex", r"differ by at most \\SI\{([0-9.]+)\}\{\\percent\}", data_method_diff, "round"),
+    # The background-closure values bind in the note since the targeted round (DECISION-20261103-joseph-retire-density-
+    # gate.md item 3b) moved the paper's Sec. IV D closure paragraph there: sec_5d.tex sec:val-negweight prints them
+    ("purity bias, highest-W cells (VL149)", "sec_5d.tex",
+     r"return the highest-\$W\$ column of \$\(\\Eavail,W\)\$ \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} low",
+     purity_bias_range, "round"),
+    ("negative-weight residual, highest-W cells (VL151)", "sec_5d.tex",
+     r"brings the highest-\$W\$ column to \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\}", negweight_highw_range, "round"),
+    ("negative-weight residual, other (E_avail, W) cells (VL151)", "sec_5d.tex",
+     r"every other \$\(\\Eavail,W\)\$ cell to at most \\SI\{([0-9.]+)\}\{\\percent\}", negweight_other_ew_max, "round"),
+    ("negative-weight residual, joint cells (VL151)", "sec_5d.tex",
+     r"Some joint cells remain up to \\SI\{([0-9.]+)\}\{\\percent\} high", negweight_joint_max, "round"),
+    ("treatments on data (VL152)", "sec_5d.tex", r"and at most \\SI\{([0-9.]+)\}\{\\percent\} over the reported functionals",
+     data_method_diff, "round"),
     ("regularization bias at high W (VL151)", "paper_body.tex", r"by up to \\SI\{([0-9.]+)\}\{\\percent\} at high \$W\$",
      regularization_max, "round"),
     ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "paper_body.tex",
@@ -196,7 +214,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def load() -> dict[str, str]:
-    return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex", "sec_validation.tex")}
+    return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex", "sec_validation.tex", "sec_5d.tex")}
 
 
 def gzip_self_test() -> bool:

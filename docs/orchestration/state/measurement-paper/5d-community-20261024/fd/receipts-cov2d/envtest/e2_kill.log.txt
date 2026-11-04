@@ -1,0 +1,41 @@
++ hostname
+login02
++ date -u +%FT%TZ
+2026-11-03T23:25:01Z
++ ps -u josephrb -o pid,pgid,sid,etime,args
++ grep -v 'sshd\|systemd\|sd-pam\|ps -u\|grep'
++ cut -c1-160
+    PID    PGID     SID     ELAPSED COMMAND
+ 541124 1194687 1194687       42:50 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -c import sys, runpy; sys.path.insert(0, '/dev/shm/josephrb-cov2d-
+1194687 1194687 1194687    03:52:30 bash /dev/shm/josephrb-cov2d-e2.sh
+1416756 1194687 1194687    03:46:50 bash /dev/shm/josephrb-cov2d-e2.sh
+1419543 1194687 1194687    03:46:48 bash /dev/shm/josephrb-cov2d-e2.sh
+1419544 1194687 1194687    03:46:48 /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python -B -m unittest -v test_re2_data_file
+2282971 2280944 2280944       00:00 cut -c1-160
++ ps -o pgid= -p 1194687
+1194687
+kill_rc=0
++ kill -TERM -- -1194687
++ echo kill_rc=0
++ sleep 10
++ ps -o pid,pgid,stat,args -g 1194687
++ cut -c1-160
+    PID    PGID STAT COMMAND
+2280944
+killed9_rc=1
++ pgrep -u josephrb -f josephrb-cov2d-e2
++ kill -KILL -- -1194687
+bash: line 0: kill: (-1194687) - No such process
++ echo killed9_rc=1
++ sleep 3
++ date -u +%FT%TZ
+2026-11-03T23:25:22Z
++ ps -u josephrb -o pid,pgid,etime,args
++ cut -c1-160
+    PID    PGID     ELAPSED COMMAND
+2202057 2202057    16:33:03 /usr/lib/systemd/systemd --user
+2202152 2202057    16:33:02 (sd-pam)
+2280941 2280831       00:33 sshd: josephrb@notty
+2280944 2280944       00:32 bash -c set -x; hostname; date -u +%FT%TZ; ps -u josephrb -o pid,pgid,sid,etime,args | grep -v "sshd\|systemd\|sd-pam\|ps -u\|grep" 
+2315717 2280944       00:00 ps -u josephrb -o pid,pgid,etime,args
+2315718 2280944       00:00 cut -c1-160

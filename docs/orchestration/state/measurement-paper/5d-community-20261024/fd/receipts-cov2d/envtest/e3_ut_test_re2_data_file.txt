@@ -1,0 +1,9 @@
+test_absent_flag_equals_pre_hook (test_re2_data_file.DataFileHook.test_absent_flag_equals_pre_hook) ... ok
+test_guards (test_re2_data_file.DataFileHook.test_guards) ... ok
+test_other_data_equals_a_swapped_omnifile (test_re2_data_file.DataFileHook.test_other_data_equals_a_swapped_omnifile) ... ok
+test_own_data_through_the_hook (test_re2_data_file.DataFileHook.test_own_data_through_the_hook) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 263.833s
+
+OK

@@ -131,6 +131,11 @@ IV D's closure, IV F and V C, and it names over-qualified sentences in the main 
 - **The note probes** (`note_probes.py`, `probes.json`): 38 facts the moved text prints, each searched as its value or
   phrase in the note's blinded text at the same commit. 35 are printed. A hit shows the note prints the value, not
   that its sentence matches the paper's.
+  - **Correction (2026-11-03, found by the paper-rewrite lane):** III A's third probe,
+    `envelope.{0,80}(not an interval|diagnostic)`, matched an unrelated sentence of the extended-domain section
+    ("three-prior dependence envelope, … containment diagnostic"). The fact does print in the note, in sec_5d.tex's
+    "These envelopes are sensitivities: they provide no probabilities, …", which the probe now targets. The count is
+    unchanged at 35.
 
 ## Reproduce
 

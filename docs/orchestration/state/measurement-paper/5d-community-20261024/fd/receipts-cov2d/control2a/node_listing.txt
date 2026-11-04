@@ -1,0 +1,21 @@
+login02
+total 40
+drwxrwx--- 3 josephrb josephrb  200 Nov  3 15:50 .
+drwxrwxrwt 3 root     root      100 Nov  3 15:49 ..
+-rw-rw---- 1 josephrb josephrb  422 Nov  3 15:50 bound.blobs.after
+-rw-rw---- 1 josephrb josephrb  422 Nov  3 15:49 bound.blobs.before
+-rw-rw---- 1 josephrb josephrb 6087 Nov  3 15:50 connect-2a.log
+-rw-rw---- 1 josephrb josephrb 8963 Nov  3 15:49 control2a_split.py
+-rw-rw---- 1 josephrb josephrb  914 Nov  3 15:49 step1.log
+-rw-rw---- 1 josephrb josephrb 1083 Nov  3 15:50 step2.log
+-rw-rw---- 1 josephrb josephrb 1010 Nov  3 15:50 step3.log
+drwxrwx--- 2 josephrb josephrb   40 Nov  3 15:49 tmp
+9e1dca8fd221543197a41881a2e23313230ec98b6913b3ccfbb5ffa7435d841d  /dev/shm/josephrb-cov2d-2a/connect-2a.log
+7f0c1295edd96fc900fab3f51816a9eaa6114da3bc8f85f60b08323546e115ec  /dev/shm/josephrb-cov2d-2a/step1.log
+7c71be0e1815ad795ad298f2a8b9f55486a459c641f5baa652e58c101a7479b3  /dev/shm/josephrb-cov2d-2a/step2.log
+bfb174c87e88b14ffebd984917b8af81c3ac7183274a5b80b8fbabf84de827a1  /dev/shm/josephrb-cov2d-2a/step3.log
+c0d93ff04cf3e4c79d6fa55eb50cf78bb823ca90a163cd5b7db56a3523d93faf  /dev/shm/josephrb-cov2d-2a/bound.blobs.after
+c0d93ff04cf3e4c79d6fa55eb50cf78bb823ca90a163cd5b7db56a3523d93faf  /dev/shm/josephrb-cov2d-2a/bound.blobs.before
+841ff1f62822bed64a647d2a3e114dade92ce87c85f25a4492f137a4c98e424b  /dev/shm/josephrb-cov2d-2a/control2a_split.py
+b8c7656fd2ad6dd38587e6dc305377d13fb02cf59cba5fde6f9c9ddce849a765  /dev/shm/josephrb-cov2d-2a.sh
+ls: cannot access '/pscratch/sd/j/josephrb/cov2d-2a': No such file or directory
