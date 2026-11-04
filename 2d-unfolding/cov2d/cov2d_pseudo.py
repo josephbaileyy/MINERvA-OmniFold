@@ -250,11 +250,13 @@ def main(argv=None) -> int:
         ok = tcell_t >= 0   # section 9.4's input: the CV nature at r = 1, clipped as the toys' truth is
         truth_cv_r1 = np.bincount(tcell_t[ok], weights=np.maximum(w_t_cv[ok] * s, 0.0), minlength=n_cells)
         kept_s, rcell_s = cp.reco_cell(np.asarray(gs["sim"], float), np.asarray(gs["sim_pz"], float), gs["sim_pass"])
+        pass_s = np.asarray(gs["sim_pass"]) != 0
         np.savez(out / "reco_signal.npz", **{k: np.asarray(gs[k]) for k in SIG_RECO})
         del gen_t, gen_s, gs
         gb = tb.arrays(list(BKG_RECO), library="np")
         kept_b, rcell_b = cp.reco_cell(np.asarray(gb["sim_background"], float),
                                        np.asarray(gb["sim_background_pz"], float), gb["sim_background_pass"])
+        pass_b = np.asarray(gb["sim_background_pass"]) != 0
         np.savez(out / "reco_background.npz", **{k: np.asarray(gb[k]) for k in BKG_RECO})
         del gb
         rec["r_T"] = {"min": float(min(r_t.min(), r_s.min())), "max": float(max(r_t.max(), r_s.max()))}
@@ -310,12 +312,15 @@ def main(argv=None) -> int:
             ks, kb, lr = cw.draw_counts(lam["signal"][k], lam["background"][k], rng)
             if max(int(ks.max(initial=0)), int(kb.max(initial=0))) > np.iinfo(np.uint16).max:
                 raise c.Refusal(f"seed {n['seed']}: a count exceeds uint16")
-            sum_plus = (float(np.where(lam["signal"][k] > 0, lam["signal"][k], 0.0).sum())
-                        + float(np.where(lam["background"][k] > 0, lam["background"][k], 0.0).sum()))
+            ps_, pb_ = np.maximum(lam["signal"][k], 0.0), np.maximum(lam["background"][k], 0.0)
+            sum_plus = float(ps_.sum()) + float(pb_.sum())
+            # the rows the writer keeps (pass): section 9.11 compares d_T's written total with this
+            sum_plus_passed = float(ps_[pass_s].sum()) + float(pb_[pass_b].sum())
             np.savez(out / f"counts_{n['seed']}.npz", signal=ks.astype(np.uint16), background=kb.astype(np.uint16))
             rec["toys"].append({"role": n["role"], "seed": n["seed"], "lambda": lr, "truth_lambda": truth.rec[k],
                                 "sum_lambda_plus": sum_plus, "ratio_to_data": sum_plus / DATA_EVENTS,
-                                "count_total": int(ks[kept_s].sum() + kb[kept_b].sum()),
+                                "sum_lambda_plus_passed": sum_plus_passed,
+                                "count_passed": int(ks[pass_s].sum() + kb[pass_b].sum()),
                                 "outlier_neg_rows": outlier_rows[k]})
         np.savez(out / "cells.npz", truth_clipped=truth.clipped, truth_cv_r1=truth_cv_r1, N=truth.N,
                  m_all=truth.m_all, S=S, m_seen=m_seen,
