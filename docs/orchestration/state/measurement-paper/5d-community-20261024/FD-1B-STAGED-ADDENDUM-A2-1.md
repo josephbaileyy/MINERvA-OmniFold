@@ -157,6 +157,7 @@ All runs used a fresh clone at the bound commit, with its sha verified on the no
 | binning, 3 | `917907aa` | login23, 2026-11-04 00:02–00:03Z | items 3 and 4 measured (§4; the director's message of 2026-11-04) |
 | calibration, G18 and AR23 | `02e71a0b` | job 60771025, nid006700, 02:10–02:32Z | TO_JOSEPH: (b)'s two-truth union 18.9 % (§8) |
 | large-sample calibration, G18 and AR23 | `51d67b54` | job 60783756, nid004331, 06:35:57–07:19:12Z | CALIBRATED (G18 and AR23 measured, the plug-in projected), s = 0.92 (§8b) |
+| the same, rerun at the final code | `8a9b8db9` | job 60805733, nid005938, 18:08:00–18:53:39Z | compare_calibN PASS against 60783756: the npz bitwise equal (§8b) |
 
 ## 7. The mock audit (the director's request, 2026-11-04)
 
@@ -323,6 +324,25 @@ fd_1b_mc. fd_1b_c2.py is unchanged (`f19adbda`). So the calibration reruns at th
 - the verdict line must be equal byte for byte.
 
 Any other difference is a STOP to the director.
+
+**The rerun's outcome.** It was job 60805733: one regular CPU node (nid005938), 2026-11-04 18:08:00–18:53:39Z, 45:39
+(2,739 s), at `8a9b8db9`. The time limit, 01:30:00, is recorded by scontrol at submission.
+- **Cost:** 0.761 node-h of its 1.5 cap. m3246's balance went from 2,027.5 to 2,026.8.
+- **Records:** `calibN-rerun-run/calibration.json` `70fad162…` and `calibration.npz` `9047a6f7…`.
+- **`compare_calibN.py` (`b20b0b76`): PASS** (`calibN-rerun-run/compare_calibN.out`).
+  - `--old` is job 60783756's committed record.
+  - The npz is bitwise equal.
+  - The JSON is canonical-equal after deleting exactly the declared paths, with the new fd_1b_mc digest the
+    expected `5271782c`.
+  - The verdict line is byte for byte the same.
+- **What the exclusions removed:**
+  - the fd_1b_mc digest, `d55f5966` → `5271782c`;
+  - the wall clock, 2,565 → 2,722 s;
+  - the 709 files' atime values: the same keys, and none moved in either run.
+
+  The other code digests are equal.
+- **So the calibration's numbers are unchanged at the code binding 3 binds:** s = 0.92, CALIBRATED (G18 and AR23
+  measured, the plug-in projected).
 
 ## 9. Tests and mutation
 
