@@ -305,11 +305,13 @@ note. If you want IBU-1 cited, it needs one note sentence (sec:val-departure) an
 
 | check | result | record |
 |---|---|---|
-| ledger (`check_ledger.py`, step2's checks with base c5e42840a) | see LEDGER-CHECK.txt | LEDGER-CHECK.txt |
-| round (`check_round.py`) and its self-test | see ROUND-CHECK.txt | ROUND-CHECK.txt |
-| values (`make_values_fived16.py --self-test`, `--check`) | see VALUES-CHECK.txt | VALUES-CHECK.txt |
+| ledger (`check_ledger.py`, step2's checks with base 0e1dd76a1) | 15 rows, 71 probes, 33 changed base sentences, 0 failures; self-test PASS | LEDGER-CHECK.txt |
+| round (`check_round.py`) and its self-test | PASS (16 removals, 16 additions, 2 abstract edits); 14/14 planted defects caught, each by its intended check | ROUND-CHECK.txt |
+| values (`make_values_fived16.py --self-test`, `--check`) | PASS (3,294 values) | VALUES-CHECK.txt |
 | rater copy (`make_rater_copy.sh`) | PASS | RATER-COPY.txt |
-| held sentences (`check_held.py`) | the 3 known flags | CHECK-HELD.txt |
+| held sentences (`check_held.py`) | the 3 known flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07) | CHECK-HELD.txt |
+| builds (`build_all.sh`) | paper 13 pp, note 136 pp; SEC4 receipts 17/17 | — |
+| registry | the four citations into edited lines re-cited by hand (ALIASES rows 35, 38, 47; ATTRIBUTION row 17), the rest repointed | — |
 
 **The rater copy's reading order.** The first build put the appendix heading in the Limitations page's second column.
 pdftotext then split Limitation 1's last sentence across blocks, and check_held flagged a fourth sentence,
