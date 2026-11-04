@@ -1,0 +1,16 @@
+# RPD measured_weights diagnostic (1A, 1M; descriptive, part 2's deviation 1): the first run (a69faa5c, stopped rc 1) and the second (b11006b1, rc 0). Cluster files copied from $R=/pscratch/sd/j/josephrb/fd-rpd-20261103 through O_NOATIME (dd iflag=noatime), 2026-11-04; each sha256 equals the one taken on the cluster. The two *_check_local.py files are the local tests (renamed from mw_diag_test.py and mw_diag_load_test.py; run beside mw_diag.py and mw_diag.v1.py with the M' nd-unfolding dir as argument). sha256, committed name, source.
+4552f87c0b5b7dd99a6591ddc42f397af9e4a70b28e1b512add1606467be3150  mwdiag.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/mwdiag.log
+4b1367f4c027c6a67dbd982487f5d1fe8176687b80c243519bf4be073eef2c35  mwdiag.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/mwdiag.out
+4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865  mwdiag.done  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/mwdiag.done
+7b59cc22f1afe917b27fca382abae88685f91b78538221f22cd0ba1ae112a354  verify-staged-8.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/verify-staged-8.out
+a69faa5c19b4c10fd97ccdd201f42361855832cc0c423c690ed97590181620f9  rpd_mwdiag_connect.sh  /pscratch/sd/j/josephrb/fd-rpd-20261103/receipts/rpd_mwdiag_connect.sh
+028cf0f2ba9f240e0622dea1cafe2e4cfcb15ca1bbafcac98081e34afa0db266  mwdiag-2.log  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/mwdiag-2.log
+4f7db0246acdcadd391e0eed9cffc71e7f69c426b8c9e5dca67200b6fe4070ee  mwdiag-2.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/mwdiag-2.out
+9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  mwdiag-2.done  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/mwdiag-2.done
+7b59cc22f1afe917b27fca382abae88685f91b78538221f22cd0ba1ae112a354  verify-staged-9.out  /pscratch/sd/j/josephrb/fd-rpd-20261103/logs/verify-staged-9.out
+b11006b1334c187bf1f3741a2039286544b413ac3ad8f833f7f7e1c9d0b27fa4  rpd_mwdiag2_connect.sh  /pscratch/sd/j/josephrb/fd-rpd-20261103/receipts/rpd_mwdiag2_connect.sh
+34b53907bc734f92f8988d2e68304416bb83e4dd66fbe4bad228b9401fcd2907  mw_1A_1M.json  /pscratch/sd/j/josephrb/fd-rpd-20261103/diag-2/mw_1A_1M.json
+d0376c244be11a117c3131d36e92b8cf890ead490db4a1fb5beecfdd5658f318  mw_diag_v1.py  /pscratch/sd/j/josephrb/fd-rpd-20261103/diag/mw_diag.py
+de916557c576b1c96f5cc240be8d7ae679901264c665f56e426afd575b11bb07  mw_diag_v2.py  /pscratch/sd/j/josephrb/fd-rpd-20261103/diag-2/mw_diag.py
+2a15fb62137e8f6da22665afdfe9d86145118263a554eee0d834b6cee1c91c76  mw_diag_check_local.py  local test (10 movers + 1 corrupt; negative; clean): ALL OK
+07215a3005e483ab412ab5bb6ab0bbe3281b8c1f318bfe28cadda0c7b8e1180f  mw_diag_load_check_local.py  local test (real .npz with object arrays; v1 raises, v2 loads): LOAD TEST OK

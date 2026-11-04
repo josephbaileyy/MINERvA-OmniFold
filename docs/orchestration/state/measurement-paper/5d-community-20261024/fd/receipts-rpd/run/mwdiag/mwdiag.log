@@ -1,0 +1,20 @@
+node login05 nproc=244 loadavg 17.30 14.92 14.58
+2026-11-04T11:20:32Z
+connect script sha256 a69faa5c19b4c10fd97ccdd201f42361855832cc0c423c690ed97590181620f9
+job B 60788016: 60788016|COMPLETED|0:0|01:38:11
+HEAD 8727c63e1d32599039ea977d833c5de25a9089d6; porcelain --ignored lines before: 0
+section 7: 23 blobs, 0 mismatches
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1; nice 19
+verify-staged rc=0
+{"verified": 79, "mismatches": 0}
+mw_diag.py sha256 d0376c244be11a117c3131d36e92b8cf890ead490db4a1fb5beecfdd5658f318
+2026-11-04T11:21:33Z
+mw_diag rc=1
+    return format.read_array(bytes,
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/numpy/lib/format.py", line 795, in read_array
+    raise ValueError("Object arrays cannot be loaded when "
+ValueError: Object arrays cannot be loaded when allow_pickle=False
+STOP at mw_diag
+mwdiag rc=1
+2026-11-04T11:21:33Z

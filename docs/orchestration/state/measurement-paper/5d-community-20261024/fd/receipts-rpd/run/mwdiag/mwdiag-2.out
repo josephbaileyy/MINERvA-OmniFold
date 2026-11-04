@@ -1,0 +1,3 @@
+[mw-diag] 1A: rows 357701 differ 778 share 0.997825; near-edge 1 last-edge-only 0 bin-shift 777 NOT-EXPLAINED 0; bins 2 unexplained 0 not-invertible 0
+[mw-diag] 1M: rows 586754 differ 2167 share 0.996307; near-edge 2 last-edge-only 0 bin-shift 2165 NOT-EXPLAINED 0; bins 4 unexplained 0 not-invertible 0
+{"wrote": "/pscratch/sd/j/josephrb/fd-rpd-20261103/diag-2/mw_1A_1M.json", "sha256": "34b53907bc734f92f8988d2e68304416bb83e4dd66fbe4bad228b9401fcd2907"}

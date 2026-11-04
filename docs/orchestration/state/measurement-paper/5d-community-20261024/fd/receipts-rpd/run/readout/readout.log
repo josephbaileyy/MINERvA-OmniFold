@@ -1,0 +1,25 @@
+node login05 nproc=244 loadavg 11.94 13.87 15.14
+2026-11-04T11:37:26Z
+connect script sha256 0abfdbb4f25bf1f55e5264e3fa14ceab6b2eb0894380284310dcdbacada4fd45
+job B 60788016: 60788016|COMPLETED|0:0|01:38:11|1; lanes done: 8 of 8
+HEAD 8727c63e1d32599039ea977d833c5de25a9089d6; porcelain --ignored lines before: 0
+section 7: 23 blobs, 0 mismatches
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1; nice 19
+verify-staged rc=0
+{"verified": 79, "mismatches": 0}
+2026-11-04T11:38:23Z
+readout rc=0
+PASS control S U is S1's float32 functional matrix
+PASS control S f is positive on every cell
+PASS control S C_total = C_e + C_model_abs
+PASS control S C_resp is the sum of its four primary species
+PASS control S C_total_resp = S1's C_total + C_resp
+[RPD] N0 SIZE-BIAS-g False SIZE-BIAS-t False
+[RPD] R1 OTHER
+[RPD] R2 CLUSTERED: p_flux 0.0001 beta1 1.000 p_era 0.0052
+[RPD] R3 rho_raw 0.5341 nu12 7.984
+{"wrote": "/pscratch/sd/j/josephrb/fd-rpd-20261103/readout/fd_rpd.json", "sha256": "c0b06cfd2d11d99fc9226d054e68b951231f5d02e81ea3abc80cf7f89b624658"}
+readout record sha256 c0b06cfd2d11d99fc9226d054e68b951231f5d02e81ea3abc80cf7f89b624658
+porcelain --ignored lines after: 0
+readout rc=0
+2026-11-04T11:39:22Z
