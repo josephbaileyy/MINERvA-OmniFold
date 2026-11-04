@@ -102,7 +102,7 @@ NEW = [
     ("fd_1b_mc.py", "e2: the receipt without the CV's tdw",
      '    if world.get("tdw_cv") is None:\n        raise InvalidReceipt', '    if False:\n        raise InvalidReceipt', MC + E2E),
     ("fd_1b_mc.py", "e2: a negative CV tdw accepted",
-     '        if not (np.all(np.isfinite(tdw_cv)) and np.all(tdw_cv >= 0)):', '        if False:', MC),
+     '        if not (np.all(np.isfinite(tdw_cv)) and np.all(tdw_cv >= 0)):', '        if False:', MC + E2E),   # its test is e2e's
     ("fd_1b_mc.py", "S2: 'data' runs any item",
      "        if bad:\n            raise Refusal(f\"'data' runs only", "        if False:\n            raise Refusal(f\"'data' runs only", MC),
     ("fd_1b_mc.py", "S2: 'nature' runs any role",
@@ -189,7 +189,7 @@ NEW = [
     ("fd_1b_c2.py", "c2check: another truth's thresholds", '        thr = cal["rule"]["thresholds"][t]', '        thr = cal["rule"]["thresholds"][truths[0]]', C2 + E2E),
     ("fd_1b_c2.py", "c2_truth: the truth clip on lambda", '            wtp = np.where(wt * r < 0, 0.0, wt)', '            wtp = np.where(lam < 0, 0.0, wt)', C2),
     ("fd_1b_c2.py", "c2_truth: no denominator clip", '            Dp = np.where(m_den > 0, Dc + m_den, Dc)', '            Dp = Dc', C2),
-    ("fd_1b_c2.py", "c2_block: R adds m_all", '        o_1 = o_a - q["m_all"] / q["N"]', '        o_1 = o_a + q["m_all"] / q["N"]', E2E),
+    ("fd_1b_c2.py", "c2_block: R adds m_all", '        o_1 = o_a - q["m_all"] / q["N"]', '        o_1 = o_a + q["m_all"] / q["N"]', C2 + E2E),   # its test is c2's
     ("fd_1b_c2.py", "c2_block: the clipped ratio is first order's", '              CLIPPED: np.var(q["Nc"], axis=1, ddof=1) / ref_x,',
      '              CLIPPED: np.var(q["N"], axis=1, ddof=1) / ref_x,', C2 + E2E),
     # ---- fd_1b_mc: H2, the bound gate's re-verified calibration, backstop and config hash

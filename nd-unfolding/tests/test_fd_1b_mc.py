@@ -863,6 +863,7 @@ class Jobs(Case):
                      {"reads": {"ar23": "option (1)"}}, {"declared_seeds": {"g18": [1, 2]}},
                      {"code_sha256": {"fd_1b_c2.py": "0" * 64}}, {"inputs.pins_sha256": "0" * 64},
                      {"inputs.npz_sha256": "0" * 64}, {"calibration_sha256": None}, {"schema": "x"},
+                     {"calibration_sha256": None, "calibration.sha256": None},     # unnamed, though H2's match holds
                      {"calibration.verdict": "TO_JOSEPH"}, {"calibration.sha256": "d" * 64},          # H2, each field
                      {"calibration.three_truths_measured": False}, {"calibration.union": 0.0101},
                      {"calibration.power_meets": False}, {"backstop": {"g18": {"passes": False}}},

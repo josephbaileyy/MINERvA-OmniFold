@@ -319,9 +319,10 @@ class Job(unittest.TestCase):
         self.assertTrue(rec["checks"]["B_tolerance"]["passes"])
         self.assertTrue((self.tmp / "o.npy").exists())
 
-    def test_c_failing_alone_goes_to_the_director(self):
-        """A, B and D hold but C does not: denom_nd is the bank rows' own float32 histogram (B exact), while the npz
-        writer's float64 rows put the edge rows in other cells. Usable needs C too."""
+    def test_c_and_bs_tolerance_failing_go_to_the_director(self):
+        """denom_nd the bank rows' own float32 histogram: B is bitwise exact but its attribution fails (no moved row's
+        weight is seen), and C fails (the npz writer's float64 rows put the edge rows in other cells). Not usable.
+        (This test was first named "C failing alone"; it is not: the final receipt's survivor "usable without C".)"""
         a, _ = edge_tree()
         cv, w = bank_cv(a, 0.25)
         h32 = cd.histogram([np.asarray(cv[k], np.float64) for k in cd.TD], w, EDGES)
@@ -329,8 +330,29 @@ class Job(unittest.TestCase):
         self.assertTrue(rec["checks"]["B_histogram_equals_denom_nd"])
         self.assertTrue(rec["checks"]["D_all_equal"])
         self.assertFalse(rec["checks"]["C_npz_writer_reproduced"])
+        self.assertFalse(rec["checks"]["B_tolerance"]["passes"])
         self.assertEqual((rc, rec["verdict"]), (3, "TO_DIRECTOR"))
         self.assertFalse((self.tmp / "o.npy").exists())
+
+    def test_c_failing_alone_goes_to_the_director(self):
+        """A, B's tolerance and D hold and C alone fails: denom_nd is the npz writer's own histogram with one cell a
+        moved row enters nudged by one ulp, inside B's summation bound but not bitwise the writer's. Usable needs C."""
+        a, _ = edge_tree()
+        cv, w = bank_cv(a, 0.25)
+        h64 = npz_denom(a, 0.25)
+        h32 = cd.histogram([np.asarray(cv[k], np.float64) for k in cd.TD], w, EDGES)
+        cell = int(np.flatnonzero((h32 != h64).ravel())[0])          # a cell a moved row enters or leaves
+        nudged = h64.copy()
+        nudged.flat[cell] = np.nextafter(nudged.flat[cell], np.inf)
+        rc, rec = self.run_main(a, 0.25, denom_override=nudged)
+        self.assertTrue(rec["checks"]["A_coordinates_equal_row_by_row"])
+        self.assertTrue(rec["checks"]["B_tolerance"]["passes"])
+        self.assertTrue(rec["checks"]["D_all_equal"])
+        self.assertFalse(rec["checks"]["C_npz_writer_reproduced"])
+        self.assertEqual((rc, rec["verdict"]), (3, "TO_DIRECTOR"))
+        self.assertFalse((self.tmp / "o.npy").exists())
+        rc, rec = self.run_main(a, 0.25, denom_override=h64)               # the control: unnudged, it passes
+        self.assertEqual((rc, rec["verdict"]), (0, "PASS"))
 
     def test_a_failed_check_writes_no_weights_and_goes_to_the_director(self):
         a = tree()

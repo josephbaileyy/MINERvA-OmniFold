@@ -261,6 +261,139 @@ class Block(unittest.TestCase):
 class LargeSample(unittest.TestCase):
     """Joseph's large-sample gate (P1-P7): the gate seeds, the s rule, power, the verdict's order."""
 
+    def test_stops_at_counts_i_alone(self):
+        """P2: a set that only (i) stops (three cells beyond 0.20, its mean log 0, every z far under s 4.3) is a STOP
+        (the final receipt's survivor "stops_at without (i)")."""
+        rng = np.random.default_rng(21)
+        R = 1.0 + rng.normal(0, 0.3, (2000, 16))
+        R = np.clip(R, 0.05, None)
+        R[0] = 1.0
+        R[0, :3], R[0, 3:6] = 1.25, 0.8                      # 3 beyond 0.20; 0.8 is AT 0.20, not beyond
+        st = c2.null_stats(R)
+        self.assertTrue(st["i"][0])
+        self.assertAlmostEqual(st["ml"][0], 0.0, places=12)
+        stops = c2.stops_at(st, 1.0, st["sd_ml"], st["sd_c"])
+        self.assertLess(float(np.max(st["dev"][0] / st["sd_c"])), 4.3)    # (iii) by (alpha) does not fire
+        self.assertTrue(stops[0])
+
+    def test_stops_at_counts_iii_alone(self):
+        """P2: a set that only (iii) stops (one cell 10 SD_c out but inside 0.20, its mean log under s 3.5 SD_ii) is a
+        STOP (the final receipt's survivor "stops_at without (iii)")."""
+        rng = np.random.default_rng(22)
+        R = 1.0 + rng.normal(0, 0.01, (2000, 16))
+        R[0] = 1.0
+        R[0, 5] = 1.10
+        st = c2.null_stats(R)
+        self.assertFalse(st["i"][0])                                       # no cell beyond 0.20
+        self.assertLess(abs(st["ml"][0]), 1.0 * c2.SD_MULT_LOGMEAN * st["sd_ml"])   # (ii) does not fire
+        self.assertGreater(float(np.max(st["dev"][0] / st["sd_c"])), 1.0 * c2.SD_MULT_CELL)
+        self.assertTrue(c2.stops_at(st, 1.0, st["sd_ml"], st["sd_c"])[0])
+
+    def test_stops_at_ii_at_its_own_multiple(self):
+        """P2: (ii) stops at s 3.5 SD_ii, not at (iii)'s 4.3: a uniform shift with |mean log| at 4 SD_ii, every cell
+        inside 0.20 and every z near 1, stops (the final receipt's survivor "(ii) at the cell multiple")."""
+        rng = np.random.default_rng(23)
+        R = 1.0 + rng.normal(0, 0.01, (2000, 16))
+        sd0 = c2.null_stats(R)["sd_ml"]
+        R[0] = np.exp(4.0 * sd0)
+        st = c2.null_stats(R)
+        z_ml = abs(st["ml"][0]) / st["sd_ml"]
+        self.assertTrue(c2.SD_MULT_LOGMEAN < z_ml < c2.SD_MULT_CELL, z_ml)
+        self.assertFalse(st["i"][0])
+        self.assertLess(float(np.max(st["dev"][0] / st["sd_c"])), c2.SD_MULT_CELL)
+        self.assertTrue(c2.stops_at(st, 1.0, st["sd_ml"], st["sd_c"])[0])
+
+    def test_the_two_truth_union_projects_the_plugin(self):
+        """P2 without the plug-in: each grid point's union is the labelled projection, the plug-in's rate taken as the
+        mean of the two measured and independent of them, 1 - (1 - p_g)(1 - p_a)(1 - (p_g + p_a)/2), from the rule's
+        own per-truth rates (the final receipt's survivor "the projection without the plug-in")."""
+        rng = np.random.default_rng(25)
+        R = {t: 1.0 + rng.normal(0, 0.02, (3000, 16)) for t in ("g18", "ar23")}
+        rule = c2.threshold_rule(R)
+        self.assertFalse(rule["three_truths_measured"])
+        self.assertIn("mean of the others", rule["projection"])
+        moved = 0
+        for g in rule["grid"]:
+            pg, pa = g["per_truth"]["g18"], g["per_truth"]["ar23"]
+            self.assertAlmostEqual(g["union"], 1 - (1 - pg) * (1 - pa) * (1 - (pg + pa) / 2), places=12)
+            moved += (pg + pa) > 0
+        self.assertGreater(moved, 10)                       # the plug-in's factor is non-trivial on the grid
+
+    def test_three_truths_measure_the_union_per_replicate(self):
+        """P2 with all three truths: the union is measured per replicate, not projected. Three truths sharing one set
+        of draws stop on the same replicates, so the measured union is each truth's own rate, which a product of
+        independent rates exceeds (the final receipt's survivor "three truths as a product")."""
+        rng = np.random.default_rng(26)
+        X = 1.0 + rng.normal(0, 0.02, (3000, 16))
+        rule = c2.threshold_rule({t: X.copy() for t in ("g18", "ar23", "plugin")})
+        self.assertTrue(rule["three_truths_measured"])
+        self.assertIsNone(rule["projection"])
+        hit = 0
+        for g in rule["grid"]:
+            p = g["per_truth"]["g18"]
+            self.assertEqual((g["per_truth"]["ar23"], g["per_truth"]["plugin"]), (p, p))
+            self.assertAlmostEqual(g["union"], p, places=12)
+            hit += 0 < p < 1
+        self.assertGreater(hit, 10)                         # where a product would differ
+
+    def test_the_null_sds_are_over_every_set(self):
+        """null_stats' SD_ii and SD_c are over every replicate set (ddof 1), built here independently: the first 100
+        sets are ten times tighter than the rest, so an SD over a subset cannot match (the final receipt's survivor
+        "the null SD over too few sets")."""
+        rng = np.random.default_rng(27)
+        R = 1.0 + np.vstack([rng.normal(0, 0.002, (100, 16)), rng.normal(0, 0.02, (1900, 16))])
+        st = c2.null_stats(R)
+        self.assertAlmostEqual(st["sd_ml"], float(np.std(np.log(R).mean(axis=1), ddof=1)), places=14)
+        np.testing.assert_allclose(st["sd_c"], np.std(R, axis=0, ddof=1), rtol=1e-12)
+        self.assertGreater(st["sd_ml"], 2 * float(np.std(np.log(R[:100]).mean(axis=1), ddof=1)))
+
+    def test_power_is_against_a_deflation(self):
+        """P4's uniform case deflates by UNIFORM_DEFLATION. With (ii)'s threshold set between |log 0.92| = 0.0834 and
+        |log 1.08| = 0.0770, and (iii) out of reach, a deflation always stops and an inflation never would (the final
+        receipt's survivor "a uniform inflation")."""
+        rng = np.random.default_rng(28)
+        R = {"g18": 1.0 + rng.normal(0, 1e-4, (500, 16))}
+        thr = 0.080
+        rule = {"s": 1.0, "thresholds": {"g18": {"sd_mean_log": thr / c2.SD_MULT_LOGMEAN, "sd_per_cell": [1.0] * 16}}}
+        self.assertTrue(abs(np.log(1 + c2.UNIFORM_DEFLATION)) < thr < abs(np.log(1 - c2.UNIFORM_DEFLATION)))
+        pw = c2.power_at(R, rule)
+        self.assertEqual(pw["g18"]["uniform"], 1.0)
+        self.assertTrue(pw["g18"]["uniform_meets"] and pw["meets"])
+
+    def test_power_exactly_at_the_minimum_meets(self):
+        """P4: power of exactly POWER_MIN meets the requirement (>=). Eight of ten sets stop once deflated and two,
+        set at 1/(1 - UNIFORM_DEFLATION), land on 1 and do not (the final receipt's survivor "power at the boundary
+        fails")."""
+        R = {"g18": np.vstack([np.ones((8, 16)), np.full((2, 16), 1.0 / (1.0 - c2.UNIFORM_DEFLATION))])}
+        rule = {"s": 1.0, "thresholds": {"g18": {"sd_mean_log": 0.080 / c2.SD_MULT_LOGMEAN, "sd_per_cell": [1.0] * 16}}}
+        pw = c2.power_at(R, rule)
+        self.assertEqual(pw["g18"]["uniform"], c2.POWER_MIN)
+        self.assertTrue(pw["g18"]["uniform_meets"])
+
+    def test_power_must_meet_at_every_truth(self):
+        """P4: the requirement is per truth; one truth short fails it however the other does (the final receipt's
+        survivor "one truth's power suffices")."""
+        thr = {"sd_mean_log": 0.080 / c2.SD_MULT_LOGMEAN, "sd_per_cell": [1.0] * 16}
+        R = {"g18": np.ones((10, 16)), "ar23": np.full((10, 16), 1.0 / (1.0 - c2.UNIFORM_DEFLATION))}
+        pw = c2.power_at(R, {"s": 1.0, "thresholds": {"g18": thr, "ar23": thr}})
+        self.assertEqual((pw["g18"]["uniform"], pw["ar23"]["uniform"]), (1.0, 0.0))
+        self.assertFalse(pw["meets"])
+
+    def test_stops_at_iii_at_its_own_multiple(self):
+        """P2: (iii) by (alpha) stops at s 4.3 SD_c, not at (ii)'s 3.5: one cell at 4 SD_c, inside 0.20, with its mean
+        log far under (ii)'s threshold, does not stop (the converse of the one above)."""
+        rng = np.random.default_rng(24)
+        R = 1.0 + rng.normal(0, 0.01, (2000, 16))
+        sdc = c2.null_stats(R)["sd_c"]
+        R[0] = 1.0
+        R[0, 7] = 1.0 + 4.0 * sdc[7]
+        st = c2.null_stats(R)
+        z = float(np.max(st["dev"][0] / st["sd_c"]))
+        self.assertTrue(c2.SD_MULT_LOGMEAN < z < c2.SD_MULT_CELL, z)
+        self.assertLess(abs(st["ml"][0]), c2.SD_MULT_LOGMEAN * st["sd_ml"])
+        self.assertFalse(st["i"][0])
+        self.assertFalse(c2.stops_at(st, 1.0, st["sd_ml"], st["sd_c"])[0])
+
     def test_the_gate_seeds_extend_the_declared_toys(self):
         for t in ("g18", "ar23", "plugin"):
             g = c2.gate_seeds(t)
@@ -337,6 +470,9 @@ class LargeSample(unittest.TestCase):
         r = np.ones(16)
         r[3] = 1.0 + 4.0 * 0.02 * 1.001
         self.assertFalse(c2.gate_n(r, thr)["iii"])
+        self.assertFalse(c2.gate_n(r, thr)["passes"])        # (iii) alone fails the gate
+        r[3] = 1.0 - 4.0 * 0.02 * 1.001                      # and on either side of 1
+        self.assertFalse(c2.gate_n(r, thr)["iii"])
         r[3] = 1.0 + 4.0 * 0.02 * 0.999
         self.assertTrue(c2.gate_n(r, thr)["iii"])
         r = np.full(16, 0.999)
@@ -360,6 +496,9 @@ class LargeSample(unittest.TestCase):
         for other in (c2.config_hash({"a.py": "2"}, ins, "nature"), c2.config_hash(code, {"npz_sha256": "y"}, "nature"),
                       c2.config_hash(code, ins, "data")):
             self.assertNotEqual(h, other)
+        seeds = dict(mc.TOY_SEEDS, g18=range(mc.TOY_SEEDS["g18"][0] + 1, mc.TOY_SEEDS["g18"][-1] + 2))
+        with mock.patch.object(mc, "TOY_SEEDS", seeds):               # the declared toys' seeds are in it
+            self.assertNotEqual(h, c2.config_hash(code, ins, "nature"))
 
     def test_the_large_sample_verdict_in_its_order(self):
         ok, no = {"holds": True}, {"holds": False}

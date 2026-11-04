@@ -324,12 +324,50 @@ fd_1b_mc. fd_1b_c2.py is unchanged (`f19adbda`). So the calibration reruns at th
 
 Any other difference is a STOP to the director.
 
-## 9. Tests and mutation (to come)
+## 9. Tests and mutation
 
-The owed mutation work, going into A2.1's receipt:
-- the mutant that restores the absolute-tolerance U check;
-- re-anchoring `mutation_mc.py:69/82` and `mutation_mc_a2.py:81/94`;
-- mutants for #724 (i)–(iii), in both directions.
+**The harness,** `fd/receipts-1b/staged/mutation_a21.py`:
+- It carries amendment 2's mutants (`mutation_mc_a2.py`'s `M`, read with `ast.literal_eval`, not retyped) and adds
+  A2.1's own, over `fd_1b_mc`, `fd_1b_c2`, `fd_1b_cvdenom`, `fd_1b_binning` and the stage 1 tables generator.
+- Mutants whose target A2.1 replaced are a named `REPLACED` set, printed N/A. Any other missing anchor stops the run.
+  Mutants whose anchor A2.1 moved or duplicated are re-anchored by name (`REANCHOR`, `CM_REANCHOR`, the gate call).
+- Two are `EQUIVALENT`, each with its proof:
+  - "724(i): exactly 0.20 counts as beyond": no double r has |r − 1| == 0.20, and a test shows it;
+  - "tables: 23 per lane": byte-identical output on the declared inputs.
+- KILLED means the suites exit 1. Any other non-zero exit is ERROR.
+- Runs are bytecode-free, at PYTHONHASHSEED=0, each in its own clean detached worktree at the cited head.
+- `--check` verifies every anchor without running anything.
+
+**The run history** (a run is a receipt only at the head it cites):
+
+| run | at | outcome |
+|---|---|---|
+| survivor finder | `b9bd3158` | 218 of 234 applicable killed. The 16 survivors were closed at `3a6aac55` (15 by tests, 1 a proved equivalent) |
+| — | `94e37fa8` → `48ca04a1` | `--check` failed from `94e37fa8`, because `gate_n` duplicated `gate_724`'s `passes` line and c2check's verdict line was rewritten. Re-anchored at `48ca04a1` |
+| stopped | `48ca04a1`, `1295f7e4`, `7b22347d`, `abf95aed`, `e880008c` | stopped at 103, early, 39, 23 and 17 rows, each with 0 survivors, because tests or the harness changed at the next head |
+| survivor finder | `b4eefeda` | 282 of 302 applicable killed, 20 survivors (`a2-1/mutation_a21-b4eefeda-FINDER.out`) |
+| verification | the closing tree | the 20, alone, against the new tests: 20 of 20 killed, the unmutated control passing (`a2-1/mutation_a21-20-survivors-verified.out`) |
+
+**The 20 survivors at `b4eefeda`, each closed:**
+- Two mutants whose killing test lived in a suite they did not list; the lists were corrected:
+  - "e2: a negative CV tdw accepted", whose test is a21_e2e's `test_the_cv_tdw_is_checked_at_load`;
+  - "c2_block: R adds m_all", whose test is c2's `test_c2_block_reads_each_quantity`.
+- Seventeen large-sample mutants that had been written without a targeted test. Their new tests, in test_fd_1b_c2 and
+  a21_e2e's RoundTrip:
+  - `stops_at`'s (i)-only and (iii)-only sets, and (ii) and (iii) each at its own multiple;
+  - the two-truth projection, and the three-truth per-replicate union;
+  - the null SDs over every set;
+  - power against a deflation, at exactly POWER_MIN, and required at every truth;
+  - `gate_n` failing on (iii) alone and on either side of 1;
+  - the config hash moving with the declared toy seeds;
+  - a backstop-only STOP;
+  - each truth read at its own calibrated thresholds.
+- "S2: no calibration needed", closed by a record with both calibration digests None. H2's own match holds for
+  that record, so only the named-calibration guard refuses it.
+- "cvd: usable without C". The test named "C failing alone" also failed B's tolerance. It is renamed, and a test
+  where C alone fails was added: a one-ulp nudge inside B's bound.
+
+**The final receipt** is the full 319-mutant run at the head that carries these tests (recorded when it lands).
 
 ## 10. The stage 1 tables under S2 (the director's ruling (A), 2026-11-04)
 

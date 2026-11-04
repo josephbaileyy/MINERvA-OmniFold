@@ -1,0 +1,37 @@
+sha256 5271782cf8ab78e1a1a56c5d739725a37c17c86c0cd7bb5261e485c5392acf63  fd_1b_mc.py
+sha256 f19adbda6126d79d1f337755de873b530a76ebbcfd412ab60f85ab53cb33fe49  fd_1b_c2.py
+sha256 220a8bd517cd6c6255cd34abc1eec444638cf2b98867cdc0d95d5775e374f32e  fd_1b_cvdenom.py
+sha256 69cd7bd37984db1deb0d103fb81808e88fc990cc679e9a4b0a6dea16d15b208d  fd_1b_binning.py
+sha256 cd16a6b5685c32ba8cd5f8e6f3504e2b166ac43f5a5b878c444146d653435168  ../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py
+sha256 6a32a971fe9a4a9b9d470f94ad9b975c31722117d2943dd746e809fcb14f9aa3  tests/test_fd_1b_mc.py
+sha256 2f366caf37b5716850ccd88f43d6be7a198168fd86ad1f0ca127079e137d3fda  tests/test_fd_1b_c2.py
+sha256 76f3bbbcc7938db08ac4b06594cb2c92b39baddf9a35658486b1799e99e771b1  tests/test_fd_1b_cvdenom.py
+sha256 94e9d76e0b0907b102891222201968b8bb9ae6c003e9e65a86c5b8fe5c0ef823  tests/test_fd_1b_binning.py
+sha256 d9e5ccf68fcc9d02143701282fc7b2efa4a16310cf583aba54d2b3ed445acba0  tests/test_fd_1b_a21_e2e.py
+sha256 74f1df06c2f900df8b0f621c4b51d6c666515b4d5fac0436e66b95928f24a18c  tests/test_fd_1b_tables.py
+KILLED means the suites exit 1 (a test failed); any other non-zero exit is ERROR, not a kill
+plan: 319 mutants, 15 not applicable; every anchor occurs as required
+ONLY: 20 mutants
+KILLED   e2: a negative CV tdw accepted
+KILLED   S2: no calibration needed
+KILLED   c2check: PASS without the backstop
+KILLED   c2check: the clipped ratio read at #724's fixed gate
+KILLED   c2check: another truth's thresholds
+KILLED   c2_block: R adds m_all
+KILLED   P2: stops_at without (i)
+KILLED   P2: stops_at without (iii)
+KILLED   P2: (ii) at the cell multiple
+KILLED   P2: (iii) at the mean-log multiple
+KILLED   P2: the projection without the plug-in
+KILLED   P2: three truths as a product
+KILLED   P2: the null SD over too few sets
+KILLED   P4: a uniform inflation
+KILLED   P4: power at the boundary fails
+KILLED   P4: one truth's power suffices
+KILLED   gate_n: passes without (iii)
+KILLED   gate_n: (iii) one-sided
+KILLED   P6: the config hash without the toy seeds
+KILLED   cvd: usable without C
+unmutated: 219 passed, 1 skipped in 153.45s (0:02:33)
+20 of 20 applicable killed; 0 not applicable; 0 equivalent (proved by a test); 20 in all
+exit=0

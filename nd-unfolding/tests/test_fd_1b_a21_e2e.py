@@ -495,6 +495,50 @@ class RoundTrip(E2E):
             bad.write_text(json.dumps(dict(g, **{k: v})))
             self.assertEqual(self.bulk(bad), 4, (k, v))
 
+    def test_a_failed_backstop_stops_c2check(self):
+        """P6: with every reading option (1), as this world gives, a backstop failure alone makes the verdict STOP
+        (the final receipt's survivor "c2check: PASS without the backstop"). The 300-draw calibration's per-cell SDs
+        are made a thousandth of the fixture's, so (iii) by (alpha) at 4.3 SD_c fails on the declared draws."""
+        cal = self.calibrated()
+        with self.patched():
+            ok = c2.c2check_main(self.c2args(cal))
+        self.assertEqual((ok["verdict"], all(b["passes"] for b in ok["backstop"].values())), ("PASS", True))
+        tiny = self.tmp / "cal" / "cal300-tiny.json"
+        tiny.write_text(json.dumps({"schema": "fd-1b-c2-calibration/1", "outputs": {
+            t: {"a": {"sd_per_cell": (np.asarray(self.cal_rec["rule"]["thresholds"][t]["sd_per_cell"]) * 1e-3).tolist()}}
+            for t in self.truths}}))
+        a = self.c2args(cal)
+        a.calibration_300, a.expect_calibration_300_sha256 = tiny, digest(tiny)
+        a.out = self.tmp / "gate" / "gate-backstop.json"
+        with self.patched():
+            g = c2.c2check_main(a)
+        self.assertTrue(all(v == "option (1)" for v in g["reads"].values()))
+        self.assertFalse(any(b["passes"] for b in g["backstop"].values()))
+        self.assertEqual(g["verdict"], "STOP")
+
+    def test_each_truth_is_read_at_its_own_calibrated_thresholds(self):
+        """c2check reads the clipped ratio with gate_n at each truth's OWN calibrated thresholds (the final receipt's
+        survivors "the clipped ratio read at #724's fixed gate" and "another truth's thresholds"). With AR23's (ii)
+        threshold alone set to 0, AR23 alone must stop reading option (1): neither #724's fixed 0.07 nor G18's
+        thresholds would stop it."""
+        cal = self.calibrated()
+        rec = json.loads(cal.read_text())
+        rec["rule"]["thresholds"]["ar23"] = dict(rec["rule"]["thresholds"]["ar23"], ii_mean_log=0.0)
+        tight = self.tmp / "cal" / "cal-ar23-tight.json"
+        tight.write_text(json.dumps(rec))
+        shutil.copy(cal.with_suffix(".npz"), tight.with_suffix(".npz"))
+        a = self.c2args(tight)
+        a.out = self.tmp / "gate" / "gate-ar23-tight.json"
+        with self.patched():
+            g = c2.c2check_main(a)
+        self.assertFalse(g["reading_detail"]["ar23"]["gate_n"]["ii"])
+        self.assertTrue(c2.c2_gate(g["record"]["b"]["ar23"]["variance_ratio"][c2.CLIPPED]))   # #724's gate passes it
+        self.assertTrue(c2.gate_n(g["record"]["b"]["ar23"]["variance_ratio"][c2.CLIPPED],
+                                  rec["rule"]["thresholds"]["g18"])["passes"])               # and G18's thresholds
+        self.assertNotEqual(g["reads"]["ar23"], "option (1)")
+        self.assertEqual((g["reads"]["g18"], g["reads"]["plugin"]), ("option (1)", "option (1)"))
+        self.assertEqual(g["verdict"], "STOP")
+
     # the parent's tests run on their own world; here only the round trip
     test_the_calibration_runs_the_production_chain = test_c2check_end_to_end = None
     test_c2check_refuses_an_uncalibrated_or_foreign_calibration = None
