@@ -94,10 +94,15 @@ is built from the three IBU vertices by `build_cmodel5d.py`'s formula, κ = 1. I
   `s5p_universe`'s matched-CV control, carried over.
 - **G-pair:** each (e) replica and universe product is the one S1's inventory lists, by sha256 and meta
   (`s1_assemble.py:316-319, 219-238`).
-- **G-IBU1:** the driver on IBU-1's J grid reproduces IBU-1's committed data unit (IA-11) bitwise. This shows the
-  grid change is the only change.
-- **G-cells:** the 16 cell integrals of (e)'s central product computed by g1's integration equal S1's committed
-  f.
+- **G-IBU1:** the driver on IBU-1's J grid reproduces IBU-1's data unit (IA-11, `D_N.npz`, sha256 `a160dbea…`)
+  bitwise, meaning array equality (`np.array_equal`) of every array. This shows the grid change is the only change.
+  The reference exists only on pscratch, so it is in §7's listing.
+- **G-cells:** the 16 cell integrals of (e)'s central product, computed by g1's integration, equal S1's committed f to
+  1e-12 relative per cell. Summation order may differ.
+- **G-draw:** for each b, g1 rebuilds (e)'s replica construction (`s5n_pseudo.bootstrap_replica` on
+  `build_data(…)`) and checks that the reco-cell counts it histograms equal those from the same draw
+  bitwise. This pins the pairing against a row within ½ ulp of a non-float32 edge crossing it, which would shift
+  every later count.
 
 ### 3.4 Carried, labelled, not remade
 
@@ -107,8 +112,12 @@ is built from the three IBU vertices by `build_cmodel5d.py`'s formula, κ = 1. I
 | C_resp | the MP-1 zero loops are needed; exposed 12-15 with no copy (SCOPE §1) | as lateral |
 | C_PL,5D | a run-period readout of (e) | as lateral |
 
-"Same systematics" therefore holds for the statistical, universe, normalisation and model blocks, and does not hold
-for these three. Any sentence from g1 says so.
+"Same systematics" therefore holds for:
+- the statistical, universe and normalisation blocks in R1;
+- those blocks and the model block in R3.
+
+It does not hold for these three carried blocks, nor for the model block in R1 (§3.1). Any sentence from g1 says
+so.
 
 ## 4. Readings, fixed before any g1 output
 
@@ -118,15 +127,27 @@ by nothing.
 **R1. Central agreement (gated).** T = Δᵀ C_Δ⁻¹ Δ over the 16 cells, ndf = 16.
 - C_Δ must be positive definite with a condition number below 1e10. Otherwise R1 reads "not formed", with the
   eigenvalues reported, and no cutoff is chosen after the fact.
-- C_Δ,stat comes from 50 replicas in 16 dimensions. T is also reported with the Hartlap factor (50 − 16 − 2)/(50 − 1)
-  = 32/49 on the C_Δ,stat part (that is, C_Δ,stat ÷ 32/49) as a sensitivity. **The reading uses the uncorrected T.**
-- Bars (χ²₁₆ quantiles; the auditor recomputes them):
+- **T's null is calibrated at the realized block composition, not taken from χ²₁₆.** C_Δ,stat is estimated from 50
+  replicas in 16 dimensions. In the stat-only limit T's null is Hotelling's, (49·16/34) F(16, 34), and χ²₁₆ bars
+  would read "differ" about 1 time in 7 when the estimators agree (coverage-5b-audit's audit of #763, B1).
+  - The null comes from a parametric bootstrap with M = 20,000 draws, seed 20261104. Each draw:
+    1. draws 50 vectors from N(0, Ĉ_Δ,stat) and takes their sample covariance Ĉ*_stat (ddof 1);
+    2. draws Δ* from N(0, Ĉ_Δ,stat + C_Δ,univ + C_Δ,norm);
+    3. computes T* = Δ*ᵀ (Ĉ*_stat + C_Δ,univ + C_Δ,norm)⁻¹ Δ*.
+  - C_Δ,univ and C_Δ,norm are held at their realized values. That is how R1 uses them.
+  - **Self-check:** with C_Δ,univ = C_Δ,norm = 0, the bootstrap's 0.95 and 0.997 quantiles must match
+    (49·16/34) F(16, 34)'s to within their Monte Carlo error. Otherwise the run stops.
+- **Bars:** q*₀.₉₅ and q*₀.₉₉₇ are T*'s quantiles.
 
   | T | reading |
   |---|---|
-  | T ≤ q(0.95) = 26.30 | **agree**: the two estimators' results are indistinguishable at the reported cells within the paired uncertainty |
-  | 26.30 < T ≤ q(0.997) = 35.89 | **marginal** |
-  | T > 35.89 | **differ** |
+  | T ≤ q*₀.₉₅ | **agree**: the two estimators' results are indistinguishable at the reported cells within the paired uncertainty (statistical, universe and normalisation blocks) |
+  | q*₀.₉₅ < T ≤ q*₀.₉₉₇ | **marginal** |
+  | T > q*₀.₉₉₇ | **differ** |
+
+- **Printed and read by nothing:**
+  - χ²₁₆'s 26.30 and 35.89;
+  - T with the Hartlap factor 32/49 on the C_Δ,stat part, against the F quantiles.
 
 - The per-cell pulls Δ_c / √(C_Δ)_cc are printed for all 16 cells, read by nothing.
 - The data-dependence of (e)'s replicas (refit per replica, jitter) is part of C_Δ,stat by construction.
@@ -135,18 +156,22 @@ by nothing.
 |f̂/f_true − 1| for IBU over that for (e). "Within" if the ratio lies in [0.5, 2], otherwise "IBU better" or "IBU
 worse". This is IBU-1's factor-2 band (`IBU1-SPEC.md:55-60`) carried to the reported cells. There is no noise and no
 interval, so it is a point reading.
+- (e)'s closures carry estimator-seed noise and IBU's carry none. R2 compares a noisy point with a noiseless one,
+  and says so beside the numbers.
 
 **R3. Precision (descriptive).** Per cell, σ_IBU / σ_(e), where each σ comes from the same blocks: stat, universes,
 normalisation and model. The carried blocks are excluded from both. Reported: the 16 ratios and their median. No
 bar. It answers "does OmniFold give smaller uncertainties at the same cells?" by description only.
+- (e)'s C_stat absorbs its estimator noise (refit per replica, jitter; amendment 4 in `s1_assemble.py:11-12`). IBU
+  has none, so σ_(e) includes a numerical part that σ_IBU lacks. This is printed beside the ratios.
 
 ## 5. What each outcome licenses
 
 | outcome | licenses | does not license |
 |---|---|---|
-| R1 agree | "a binned unfolding of the same data, cells and weight-only systematics agrees with the reported result within their paired uncertainty", with §3.4's exceptions stated | any statement that OmniFold is better, or that it adds information; dropping a caveat; tightening the reported uncertainty |
+| R1 agree | "a binned unfolding of the same data, cells and weight-only systematics agrees with the reported result within their paired uncertainty", stating that the model block is not in that uncertainty, plus §3.4's three carried blocks | any statement that OmniFold is better, or that it adds information; dropping a caveat; tightening the reported uncertainty |
 | R1 marginal | reporting T and the pulls as measured, with no direction | a reading of "differ" or "agree" |
-| R1 differ | "the reported cells depend on the unfolding algorithm at the level of T", as a measured estimator dependence | switching to IBU; adding the IBU–(e) difference as a systematic (that is a new block, Joseph's decision); choosing cells, K or a background treatment after the read |
+| R1 differ | "the reported cells depend on the unfolding algorithm at the level of T", as a measured estimator dependence, against T's calibrated null | switching to IBU; adding the IBU–(e) difference as a systematic (that is a new block, Joseph's decision); choosing cells, K or a background treatment after the read |
 | R2 any | the per-truth readings, beside IBU-1's | a coverage statement for either estimator |
 | R3 any | the 16 ratios, descriptively | "OmniFold adds discrimination" (limitation 3 stands unless Joseph decides otherwise on the full record) |
 | any | the motivation-wording question (g0) goes to the paper lane with the result attached | paper text without the PRD read and Joseph |
@@ -172,7 +197,12 @@ bar. It answers "does OmniFold give smaller uncertainties at the same cells?" by
    - the universe products of `EXPECT`;
    - the three ladder (e) unfolds;
    - F0b's closure products.
-   Each must match S1's or F0b's inventory.
+
+   Each must match S1's or F0b's inventory. List IBU's own inputs with them:
+   - `of_inputs_5d.npz`, `07fccc1a…`;
+   - `bkg_dump.npz`, `2addac8f…`;
+   - the ladder's three truth ratios;
+   - G-IBU1's reference `D_N.npz`, `a160dbea…`.
 2. List the bank (701 files, `/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/`) and
    the detector dump (33 files, `/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/`) that `s5p_universe` reads,
    with sha256 and atime (`S1-BINDING.md:77-79`). **If either is missing or differs, stop and report to the
@@ -182,7 +212,9 @@ bar. It answers "does OmniFold give smaller uncertainties at the same cells?" by
    - The 12 per-playlist universe loops the bank was built from are exposed on pscratch from 2026-11-09
      (`FD-CT-RETENTION.md:64`). They have a verified CFS copy made since that record
      (`DECISION-20261101-joseph-eventloops-copy-to-cfs.md`, "The copy, verified").
-   - (e)'s S1 products are on HPSS as `mnv-5d-s1-products-20261024` (`S1-REPORT.md:29`).
+   - (e)'s S1 products are on HPSS as `mnv-5d-s1-products-20261024` (`S1-REPORT.md:495`).
+   - No retention record gives the bank's or the detector dump's atime, so their pscratch exposure date is unknown
+     until this listing gives it. The HPSS copy is the fallback.
 3. Reads use O_NOATIME. Files are never touched to reset exposure.
 
 **Compute:** SCOPE §8 estimates about 1–5 node-h (`:568-570`), from IBU-1's measured 1.0652 node-h
@@ -203,9 +235,12 @@ A mutation harness kills a mutant per reading bar, per control, and per pairing 
 
 **Lane:** ________ (the director assigns).
 
-## 8. Open for the director before binding
+## 8. The director's rulings, and the audit
 
-- **Whether R1's bars suit Joseph's reading.** They are the conventional χ² quantiles. The licences in §5 do not
-  depend on them beyond the three words.
-- **Whether R3 should carry a bar.** I left it descriptive, so it cannot be read as "OmniFold is more precise" by a
-  threshold chosen here.
+- **R3 stays descriptive, with no bar** (director, 2026-11-04).
+- **R1's bars.** The director first accepted χ²₁₆'s 26.30 and 35.89 and said he would take them to Joseph only if the
+  audit disputed them.
+  - coverage-5b-audit disputed them (B1, #763 comment 6645264150). With C_Δ,stat from 50 replicas, "differ" would
+    fire about 1 time in 7 under the null.
+  - §4 R1 now reads T against its own calibrated null.
+  - The director decides whether this goes to Joseph.
