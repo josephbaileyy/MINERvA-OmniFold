@@ -430,6 +430,15 @@ The C4 refusal at the readout is replaced by this. The C4 refusal still stands a
   Each of (a)–(c) is checked against the fixture's own parts, and each refusal fires.
 - The `nature` arrays are checked in clip_draw's unit tests: the truth clip's array sums to cov2d's own clipped sum,
   and the denominator's sits in its row's cell. They are also checked in the e2e toy item, where the truth clip is
-  exercised (7 rows). That toy world has no negative denominator row, so the unit test is the denominator's evidence.
+  exercised (7 rows).
+- `test_a_negative_composite_denominator_row_end_to_end` (the director's request) exercises the denominator clip
+  end to end through `run_unfold`:
+  - On a copied bank, two drawn universes' tdw are lowered on one row. Every universe's tdw stays ≥ 0 and the CV's is
+    untouched, so the composite row is negative (−0.52) and its cell stays positive.
+  - The record shows 1 negative row at the composite's value.
+  - `clip_denom_flat` holds exactly the row's mass, in its cell only; that is what the readout's (a) aggregates.
+  - The toy truth at that cell moves by (D − d_row)/D to 10 places, with D the composite cell, and no other cell
+    moves beyond those the truth clip touches.
+  - The composite is computed from the files, with detector universes bringing the CV's rows.
 
 "23 per lane" is equivalent on the declared inputs, and its output is byte-identical.

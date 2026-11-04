@@ -283,6 +283,99 @@ class E2E(unittest.TestCase):
         U32 = np.load(self.x["s1"])["U"]
         self.assertEqual(U32.dtype, np.float32)
 
+    def gate_file(self, name: str, pins: Path) -> Path:
+        """A gate record bound to this world's inputs with the given pins, as c2check writes one for G18."""
+        gate = self.tmp / name
+        with self.patched():
+            ins = {"npz_sha256": sa.INPUT_NPZ_SHA256, "bkg_sha256": sa.BKG_SHA256, "pins_sha256": digest(pins),
+                   "flux_table_sha256": digest(self.x["table"]), "cv_tdw_sha256": digest(self.x["tdw"]),
+                   "push_sha256": None}
+            code = c2.gate_code_digests()
+            gate.write_text(json.dumps({
+                "schema": c2.SCHEMA_GATE, **mc.CLIP_GATE, "reads": {"g18": "option (1)"}, "truths": ["g18"],
+                "declared_seeds": {"g18": [mc.TOY_SEEDS["g18"][0], mc.TOY_SEEDS["g18"][-1]]},
+                "code_sha256": code, "calibration_sha256": "c" * 64, "inputs": ins,
+                "calibration": {"verdict": "CALIBRATED", "sha256": "c" * 64, "s": 1.0, "union": 0.009,
+                                "three_truths_measured": True, "power_meets": True},
+                "backstop": {"g18": {"passes": True}}, "config_hash": c2.config_hash(code, ins, "nature")}))
+        return gate
+
+    def toy_argv(self, bank: Path, pins: Path) -> list[str]:
+        w = self.x["w"]
+        return ["unfold", "--truth", "g18", "--role", "toy", "--items", str(mc.TOY_SEEDS["g18"][0]),
+                "--npz", str(w.inputs), "--bkg", str(w.bkg), "--bank", str(bank), "--detector-dir", str(w.det),
+                "--pins", str(pins), "--flux-constraint", str(w.constraint), "--expect-pins-sha256", digest(pins),
+                "--prep", str(w.prep), "--threads", "1", "--estimator", "R",
+                "--flux-table", str(self.x["table"]), "--expect-flux-table-sha256", digest(self.x["table"]),
+                "--cv-tdw", str(self.x["tdw"]), "--expect-cv-tdw-sha256", digest(self.x["tdw"])]
+
+    def test_a_negative_composite_denominator_row_end_to_end(self):
+        """The director's request before binding 3: a composite denominator row driven negative (two drawn bank
+        universes' tdw lowered on one row, every universe's tdw still >= 0, the CV's untouched) is clipped by the
+        'nature' rule end to end through run_unfold: the record, the product's per-cell array the readout's (a)
+        aggregates, and the toy truth, each against the row's own contribution computed from the files."""
+        w = self.x["w"]
+        bank = self.tmp / "bank-neg"
+        shutil.copytree(w.bank, bank)
+        cvz = dict(np.load(bank / "cv.npz", allow_pickle=True))
+        cells = mc.td_cells(cvz, EDGES)
+        occ = np.bincount(cells[cells >= 0], minlength=int(np.prod(SHAPE)))
+        cell = int(np.argmax(occ))                                             # a cell with other rows to keep it > 0
+        row = int(np.flatnonzero(cells == cell)[0])
+        with self.patched():
+            d = toys.draw_for_seed(int(mc.TOY_SEEDS["g18"][0]), toys.flux_probabilities(w.constraint),
+                                   toys.interaction_groups(bank))
+        tags = mc.draw_universes(d)
+        lowered = [t for t in tags if (bank / f"{t}_tdw.npy").exists() and not t.startswith("Flux")][:2]
+        for t in lowered:
+            v = np.load(bank / f"{t}_tdw.npy")
+            v[row] = 0.2
+            np.save(bank / f"{t}_tdw.npy", v)
+        manifest, pins = self.tmp / "manifest-neg.txt", self.tmp / "pins-neg.json"
+        manifest.write_text("".join(f"{digest(p)}  {p}\n" for p in sorted(bank.iterdir())) + f"{digest(w.receipt)}  {w.receipt}\n")
+        pins.write_text(json.dumps(toys.make_pins(bank, w.det, manifest, w.receipt)))
+        tdw_cv = np.load(self.x["tdw"])
+
+        def own(t):                            # a detector universe (its denom_nd in the detector dir) brings the CV's
+            return tdw_cv if (w.det / f"{t}_denom_nd.npy").exists() else np.load(bank / f"{t}_tdw.npy")
+        rows = sum(own(t) for t in tags) - (len(tags) - 1) * tdw_cv              # every composite denominator row
+        comp = rows[row]
+        self.assertLess(comp, 0)                                               # the fixture reaches the regime
+        self.assertTrue(np.all(np.delete(rows, row) > 0))                       # and only this row is negative
+        self.assertTrue(all(np.all(own(t) >= 0) for t in tags))                # while no universe's tdw is
+        d_cell = rows[cells == cell].sum()                                     # the composite cell, positive (2b)
+        self.assertGreater(d_cell, 0)
+        gate = self.gate_file("gate-neg.json", pins)
+        fake = lambda exp, threads, seed=42, unfold_fn=None: (np.zeros(SHAPE), {})  # noqa: E731
+        got = {}
+        for rule in ("data", "nature"):
+            out = self.tmp / f"toy-neg-{rule}"
+            argv = self.toy_argv(bank, pins) + ["--clip-rule", rule, "--out", str(out)]
+            if rule == "nature":
+                argv += ["--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]
+            with self.patched(), mock.patch.object(mc, "_unfold", fake), pinned(self.tmp, digest(gate)):
+                self.assertEqual(mc.main(argv), 0, rule)
+            z = np.load(out / mc.product_name("fd1b_mc", "g18", "toy", str(mc.TOY_SEEDS["g18"][0])), allow_pickle=True)
+            got[rule] = (json.loads(str(z["meta"])), {k: np.asarray(z[k], float) for k in z.files if k != "meta"})
+        mn, an = got["nature"]
+        md, ad = got["data"]
+        rec = mn["clip"]["denominator"]
+        self.assertEqual(rec["rows_negative"], 1)
+        self.assertAlmostEqual(rec["sum_negative"], comp, places=12)            # the record: the row's own value
+        want = np.zeros(int(np.prod(SHAPE)))
+        want[cell] = -comp
+        np.testing.assert_allclose(an["clip_denom_flat"], want, rtol=1e-12, atol=1e-15)   # its cell only
+        np.testing.assert_allclose(self.x["U"] @ an["clip_denom_flat"], -comp * self.x["U"][:, cell], rtol=1e-12,
+                                   atol=1e-15)                                 # what the readout's (a) aggregates
+        self.assertNotIn("clip_denom_flat", ad)
+        self.assertNotIn("denominator", md["clip"])
+        touched = set(np.flatnonzero(an["clip_truth_nature_flat"] > 0).tolist())
+        self.assertNotIn(cell, touched)                                        # the truth clip leaves this cell alone
+        differ = set(np.flatnonzero(an["xtrue_flat"] != ad["xtrue_flat"]).tolist())
+        self.assertIn(cell, differ)
+        self.assertLessEqual(differ, touched | {cell})                         # nothing else moves the truth
+        self.assertAlmostEqual(an["xtrue_flat"][cell] / ad["xtrue_flat"][cell], (d_cell - comp) / d_cell, places=10)
+
     def test_a_toy_item_under_nature_end_to_end(self):
         """run_unfold, through mc.main, for a declared G18 toy under each rule: --cv-tdw loaded and checked,
         the composite on one binning (e2), clip_draw's nature (truth and denominator rows), the toy truth, and
@@ -404,6 +497,7 @@ class RoundTrip(E2E):
     test_c2check_refuses_a_sample_whose_first_300_are_not_the_declared = None
     test_the_binning_script_end_to_end = test_the_receipt_end_to_end = None
     test_a_toy_item_under_nature_end_to_end = test_the_cv_tdw_is_checked_at_load = None
+    test_a_negative_composite_denominator_row_end_to_end = None
 
 
 if __name__ == "__main__":
