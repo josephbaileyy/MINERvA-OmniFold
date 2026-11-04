@@ -1,0 +1,60 @@
+host=dtn01.nersc.gov start=2026-11-04T04:18:58Z pid=1681801
+stager sha256=8c21b24d2c46898aac2b3a1a8f361996c0b6fe7a7606f89fb67e18bcef54c34e
+python 3.9.25 O_NOATIME True
+== quota before
+Disk quotas for usr josephrb (uid 112498):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+      /pscratch 18357269556  21474836480 32212254720       - 2828260  10000000 11000000       -
+uid 112498 is using default block quota setting
+uid 112498 is using default file quota setting
+used 85.48 %, staging 527922961 KiB, projected 87.94 % of the soft quota
+== SHA256SUMS
+SHA256SUMS sha256=73775251f377a35b86c5d9433d1db63d65267525b9261f773064a1e9d17764f6 (pinned 73775251f377a35b86c5d9433d1db63d65267525b9261f773064a1e9d17764f6)
+manifest: 11 rows; SHA256SUMS agrees with part B's record on all 10 laterals
+== stage
+runEventLoopOmniFold_MEFHC.root: src_atime_ns 1792770770214610703 -> 1792770770214610703; size src 2144008221 copy 2144008221; sha256 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df; declared 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df; ok
+runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root: src_atime_ns 1792799531749276609 -> 1792799531749276609; size src 53845911012 copy 53845911012; sha256 38b9fc307eabd864cd0fd663679b51fb2e6d064672410af6b3cf8b0a7e161ed5; declared 38b9fc307eabd864cd0fd663679b51fb2e6d064672410af6b3cf8b0a7e161ed5; ok
+runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_1.root: src_atime_ns 1792823403760742516 -> 1792823403760742516; size src 53844600453 copy 53844600453; sha256 0e0491a624c2d64c6fa3fde271940f0cfa9acb2d08b72cdf1e21e1c15903c3f2; declared 0e0491a624c2d64c6fa3fde271940f0cfa9acb2d08b72cdf1e21e1c15903c3f2; ok
+runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_0.root: src_atime_ns 1792814605082555512 -> 1792814605082555512; size src 53845291390 copy 53845291390; sha256 058746fdb29aa2cc0e3db82e7be42648cd7ce43b8603e96e444111546949ecf6; declared 058746fdb29aa2cc0e3db82e7be42648cd7ce43b8603e96e444111546949ecf6; ok
+runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_1.root: src_atime_ns 1792814601584538887 -> 1792814601584538887; size src 53845371537 copy 53845371537; sha256 3bca6a458336c7b4b2250ccbcdc8ca0ac26d416ac4604114f5dfffe0fece2b0e; declared 3bca6a458336c7b4b2250ccbcdc8ca0ac26d416ac4604114f5dfffe0fece2b0e; ok
+runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_0.root: src_atime_ns 1792823557445845276 -> 1792823557445845276; size src 53845199952 copy 53845199952; sha256 839ab9c51bdc69b13e340d5fdc8fd21968bfcc7a62deeb3db529d5f2fc4a6d5d; declared 839ab9c51bdc69b13e340d5fdc8fd21968bfcc7a62deeb3db529d5f2fc4a6d5d; ok
+runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_1.root: src_atime_ns 1792823557439216837 -> 1792823557439216837; size src 53845210317 copy 53845210317; sha256 3330800629d536a94d37d91941089620ca90af228c64f43b4ed633a97550644f; declared 3330800629d536a94d37d91941089620ca90af228c64f43b4ed633a97550644f; ok
+runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_0.root: src_atime_ns 1792823696980006012 -> 1792823696980006012; size src 53845254183 copy 53845254183; sha256 533037d27e0b5e38d778c935b7a44f5e30e0a1afb81870c8b063303859986bfe; declared 533037d27e0b5e38d778c935b7a44f5e30e0a1afb81870c8b063303859986bfe; ok
+runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_1.root: src_atime_ns 1792823696987938663 -> 1792823696987938663; size src 53845155381 copy 53845155381; sha256 90a1d7b78d6deed51499e11ae735f09438dbf3d85c4a463c18fae441b6668ab2; declared 90a1d7b78d6deed51499e11ae735f09438dbf3d85c4a463c18fae441b6668ab2; ok
+runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_0.root: src_atime_ns 1792823696988804866 -> 1792823696988804866; size src 53841190691 copy 53841190691; sha256 f105f68193cc80d125fe272588d3223e9df57cd2e9f720e0853dbd712f52a87a; declared f105f68193cc80d125fe272588d3223e9df57cd2e9f720e0853dbd712f52a87a; ok
+runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_1.root: src_atime_ns 1792823696984970128 -> 1792823696984970128; size src 53845919075 copy 53845919075; sha256 f2e67fd6c986f0a7d45eb894c1640c7d8fb48af83dbce37122d6946ae4aedfa0; declared f2e67fd6c986f0a7d45eb894c1640c7d8fb48af83dbce37122d6946ae4aedfa0; ok
+STAGE PASS 11 of 11 copies; record /pscratch/sd/j/josephrb/cov2d-inputs-20261104/stage/inputs.stat sha256 3614ebadf9cb1b95340b80129e6e743e780a7979cf6392d9d64d7b56ffa02adf
+stager rc=0
+== quota after
+Disk quotas for usr josephrb (uid 112498):
+     Filesystem  kbytes   quota   limit   grace   files   quota   limit   grace
+      /pscratch 18885808636  21474836480 32212254720       - 2848572  10000000 11000000       -
+uid 112498 is using default block quota setting
+uid 112498 is using default file quota setting
+used 87.94 % of the soft quota
+/pscratch/sd/j/josephrb/cov2d-inputs-20261104:
+total 2093848
+drwxr-xr-x   4 josephrb josephrb       4096 Nov  3 20:19 .
+drwx------ 350 josephrb josephrb      69632 Nov  3 20:18 ..
+drwxr-xr-x   2 josephrb josephrb       4096 Nov  3 20:27 laterals
+-r--r-----   1 josephrb josephrb 2144008221 Nov  3 20:19 runEventLoopOmniFold_MEFHC.root
+drwxr-xr-x   2 josephrb josephrb       4096 Nov  3 20:27 stage
+
+/pscratch/sd/j/josephrb/cov2d-inputs-20261104/laterals:
+total 525829432
+drwxr-xr-x 2 josephrb josephrb        4096 Nov  3 20:27 .
+drwxr-xr-x 4 josephrb josephrb        4096 Nov  3 20:19 ..
+-r--r----- 1 josephrb josephrb 53845911012 Nov  3 20:21 runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root
+-r--r----- 1 josephrb josephrb 53844600453 Nov  3 20:21 runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_1.root
+-r--r----- 1 josephrb josephrb 53845291390 Nov  3 20:21 runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_0.root
+-r--r----- 1 josephrb josephrb 53845371537 Nov  3 20:21 runEventLoopOmniFold_5D_MEFHC_active_BeamAngleY_1.root
+-r--r----- 1 josephrb josephrb 53845199952 Nov  3 20:23 runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_0.root
+-r--r----- 1 josephrb josephrb 53845210317 Nov  3 20:23 runEventLoopOmniFold_5D_MEFHC_active_MuonResolution_1.root
+-r--r----- 1 josephrb josephrb 53845254183 Nov  3 20:23 runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_0.root
+-r--r----- 1 josephrb josephrb 53845155381 Nov  3 20:23 runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINERvA_1.root
+-r--r----- 1 josephrb josephrb 53841190691 Nov  3 20:26 runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_0.root
+-r--r----- 1 josephrb josephrb 53845919075 Nov  3 20:27 runEventLoopOmniFold_5D_MEFHC_active_Muon_Energy_MINOS_1.root
+504G	/pscratch/sd/j/josephrb/cov2d-inputs-20261104
+STAGE PASS
+end=2026-11-04T04:27:56Z
+DONE
