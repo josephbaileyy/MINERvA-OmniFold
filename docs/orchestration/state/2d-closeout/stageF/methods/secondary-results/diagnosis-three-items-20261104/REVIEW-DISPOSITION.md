@@ -26,3 +26,17 @@ review. The unresolved questions remain in the report. Inference costs and local
 unavailable; no cluster allocation was used. Repository checks additionally require the diagnostic metrics in the results index, with its
 generated internal records listing synchronised and built in the standalone repository.
 No manuscript wording changes. The final package identities are in `SHA256SUMS`.
+
+## Focused integration follow-up
+
+Main advanced to `9b1f470c27695fb6d25c6eebb3a5456aa37ee0d3` during CI, adding the
+other lane's scope. The report now reuses its designs and conditional forecast prices. A merge
+of main retained both catalogue routes and both manifest entries. The original raw source
+identities and all deliverable source bytes remain unchanged; the completed builds still apply.
+The four added source routes explicitly identify their commits in SOURCES.md.
+
+The same reviewer used the single focused follow-up allowed by the original budget. Its exact
+prompt and answer are `REVIEW-FOLLOWUP-PROMPT.txt` and `REVIEW-FOLLOWUP-ANSWER.txt`. It found no
+material issue, verified the new source hashes, and upheld the refined-input and covariance-label
+reconciliations. This follow-up measured no proposed runtime and provides no new compute authority.
+The review budget is closed; no further review round is needed for this integration.

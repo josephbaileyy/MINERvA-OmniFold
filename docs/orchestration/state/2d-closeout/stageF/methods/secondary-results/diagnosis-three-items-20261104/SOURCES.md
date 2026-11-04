@@ -1,6 +1,7 @@
 # Source identities for the three-item diagnosis
 
-All path/line references in the report are at **`c5e42840a4aadfd17750db17412c8fb2c29efe0b`**.
+Original path/line references are at **`c5e42840a4aadfd17750db17412c8fb2c29efe0b`**.
+The OTHER coordination source below explicitly uses **`9b1f470c27695fb6d25c6eebb3a5456aa37ee0d3`**.
 Line spans are reading routes, not claims that every statement there is independently verified.
 The full byte hash permits checking a source independent of a moving branch.
 `[LOCAL]` means the accompanying `recheck.json`, whose input hashes and controls are inside it.
@@ -42,3 +43,7 @@ not an exhaustive results inventory. Registry limitations were read at
 | COV | `docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-DECLARATION.md:550–570 @ c5e42840a` | `0328c916d2c763c4529d3541fe05f430f7b2e6e4937f7749660cb3da06c6fbb6` |
 | COV-BIND | `docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-1.md:70–77 @ c5e42840a` | `c75fd3164a668d5c1abc61421c5542706ecdef3bfffe3d0bd2e1069ca1ac9dff` |
 | CURRENT | `docs/CURRENT_WORK.md:1–24 @ c5e42840a` | `7f5d23fed17e19fb7847f396956a00ddb579929600f36e05403c56927df8acf5` |
+| OTHER | `docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-referee-analysis-20261104/REPORT.md:87–155, 257–310, 333–412, 548–609 @ 9b1f470c2` | `d22b6e6d735d95b7d425328b621cc021729fbeca7d7c09eeb19f594531decc9b` |
+| UNITS2D | `docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-SCOPING.md:87–101 @ c5e42840a` | `def4119554d824a57e28bdbabf1af8e93157af491df033be08190fc8b02f26f3` |
+| UNITS5D | `docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGED-DECLARATION.md:523–534 @ c5e42840a` | `50d9e883bc99e75ea75d1076a1def3249693a6a3a606d35a9d9ad80deb360a0e` |
+| DUMP-UNITS | `docs/orchestration/state/measurement-paper/5d-community-20261024/LIMITATION-PLAN-ADDENDUM-20261028.md:255–269 @ c5e42840a` | `cefa72a703bea90d4ab58785a1303455a4b101ac493ab48ee1647dceb6889ef9` |
