@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """1B staged method coverage, stage 1 (state/measurement-paper/5d-community-20261024/FD-1B-STAGED-DECLARATION.md
-sections 4-9, revision 2; for binding 2): pseudo-data at a held-out truth T with every uncertainty group drawn, the
-covariance remade at T by S1's procedure, and the grading against a null matched to the draws.
+sections 4-9, revision 2; FD-1B-STAGED-AMENDMENT-2.md for binding 3, under DECISION-20261102-joseph-1b-redesign.md):
+pseudo-data at a held-out truth T with every uncertainty group drawn, the covariance remade at T by S1's procedure,
+and the grading against a null matched to the draws.
+
+Amendment 2: a drawn nature composes to FIRST ORDER (``compose``: a_D = a_u1 + sum_{j>=2} (a_uj - a_CV) in the
+draw's order), as C_T's per-band blocks are built; a composite denominator cell with d_CV > 0 and d_D <= 0 refuses;
+every Poisson draw sees lambda+ = max(lambda, 0) on the full product (``clip_draw``), with the clipped mass recorded.
 
 Roles of ``unfold`` (one product per item, one lane):
 
@@ -18,11 +23,14 @@ Roles of ``unfold`` (one product per item, one lane):
   streams, unfolded by ``s5n_pseudo.unfold_negweight``; the product keeps the nature's own truth;
 * ``control``: a procedure control on the real data, bitwise against S1's or Stage 0's product (section 9);
 * ``capture``: the data's central unfold with the final push weights kept (section 6); it must equal S1's central
-  product bitwise.
+  product bitwise;
+* ``clipmean`` (amendment 2): d_T at its mean plus the clipped mass |lambda-| of the receipt's reference nature N_clip,
+  unfolded by S1's path like ``central``; the readout's clipping offset is U (x_clipmean - x_central) / sigma_c.
 
 Other subcommands: ``stage-flux`` (the flux-universe table read once through O_NOATIME into an npz), ``receipt``
-(section 4.2's bank counts, N1's single ratios, and N1's composite over every possible and every declared draw,
-before the bulk; login node), ``walls`` (S1-0's re-price trigger), ``n1`` (the toys' own N1 record at T, read before
+(section 4.2's bank counts, N1's single ratios, N1's composite on every row over the declared draws, exactly in
+float64 behind a proven screen, the denominator check, N_clip and the cross-term readout; before the bulk, a one-node
+job), ``walls`` (S1-0's re-price trigger), ``n1`` (the toys' own N1 record at T, read before
 any grading), ``null`` (the draw-matched null at T from the remade products, before any toy is opened; it records
 what C_T is made from) and ``readout`` (section 5's grading and section 7's readouts at T, refusing inputs the null
 was not made from). Every pscratch input not made by this lane is read through ``fd_1b_inv``'s O_NOATIME
@@ -35,6 +43,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import math
 import os
@@ -42,6 +51,7 @@ import resource
 import sys
 import tempfile
 import time
+import warnings
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -60,6 +70,7 @@ import s5e_candidate  # noqa: E402
 import s5n_pseudo  # noqa: E402
 import s5p_numerics  # noqa: E402
 import s5p_universe  # noqa: E402
+import xsec_nd  # noqa: E402
 
 SCHEMA = "fd-1b-mc/1"
 TRUTHS = {"g18": "genie_v3_g18", "ar23": "genie_v3_ar23", "plugin": "plugin"}
@@ -70,9 +81,19 @@ STAT_REPLICAS = sa.STAT_REPLICAS                     # 1..50, set A's
 JITTER_OFFSET = 100                                  # set A's products are data_b<b>_j<100+b>
 SEED_CHECK = 45
 CONTROLS = ("setA_b1", "MaRES_0", "Flux_0", "GEANT_Pion_0")
-ROLES = ("central", "seed", "block", "stat", "toy", "control", "capture")
+ROLES = ("central", "seed", "block", "stat", "toy", "control", "capture", "clipmean")
 N1_BOUND = 10.0                                      # N1: a composite or single ratio above this is counted
-N1_CANDIDATE_CAP = 250_000                           # rows per array the exact pass over the declared draws holds
+NEAR_BOUND_REL = 1e-9                                # pairs this close to the bound are recomputed in compose's order
+MAX_PAIRS = 50_000_000                               # (row, draw) pairs past the screen; more refuses (INVALID)
+DRAW_BLOCK = 20                                      # declared draws per matmul block in the receipt
+VALIDATE_FRACTION = 0.005                            # the receipt's no-screen check on a seeded sample of rows
+VALIDATE_SEED = 3_659_001                            # not a declared toy, stat or validation seed elsewhere
+CLIP_DELTA_STAR = 0.667                              # |o_c| that lowers +-1 sigma content by 0.10 (section 5.2)
+CLIP_RULES = ("data", "nature")                      # a named input: decision 2a (a), or the nature clipped in truth too
+NATURE_UNRULED = ("the clipping offset (clipmean, clipcheck, the readout's clipping section) is the 'data' rule's "
+                  "descriptive figure; a 'nature' bulk is gated by C2's reading (DECISION-20261103-joseph-coverage-"
+                  "clip-rule) and graded under addendum A2.1")
+CLIP_GATE = {"step": "c2-clip-gate", "reading": "option (1)", "verdict": "PASS"}   # what A2.1's gate must say
 UNIT_SECONDS = 1062.0
 RSS_LIMIT_KIB = inv.RSS_LIMIT_KIB
 # S1-0 (declaration section 8): its eight items; the eighth is the capture with the plug-in, AR23's first toy without
@@ -105,18 +126,18 @@ def universe_dir(tag: str, bank: Path, det_dir: Path) -> Path:
 
 
 def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.ndarray | None) -> tuple[dict, dict, dict]:
-    """Section 4.2's rule, as amended in binding 2 for the denominator. ``tags`` is the draw's universes in the draw's
-    order and ``load(tag)`` their weights as ``fd_1b_inv.universe_weights(..., "zero")`` loads them; the universes
-    are streamed, one in memory at a time. For each per-row array a: a_D = a_u1 * prod_{j>=2} a_uj / a_CV where
-    a_CV != 0, and a_u1 + sum_{j>=2} a_uj where a_CV == 0. The denominator composes the same way per cell, over each
-    universe's own histogram (``universe_inputs``' denom_nd). The flux is the one flux universe's. For one universe
-    every array is ``universe_inputs``' exactly. N1's record: per array, max over rows of |a_D| / max_j |a_uj|."""
+    """Section 4.2's rule as amendment 2 makes it: first order. ``tags`` is the draw's universes in the draw's order and
+    ``load(tag)`` their weights as ``fd_1b_inv.universe_weights(..., "zero")`` loads them; the universes are streamed,
+    one in memory at a time. Every per-row array a, and the denominator per cell, composes as
+    a_D = a_u1 + sum_{j>=2} (a_uj - a_CV), summed in the draw's order, so one universe is ``universe_inputs``' arrays
+    bitwise and rows with a_CV = 0 sum as before. The flux is the one flux universe's. A composite (two or more
+    universes) refuses a denominator cell with d_CV > 0 and d_D <= 0 (section 2b, fail closed). N1's record: per array,
+    max over rows of |a_D| / max_j |a_uj|, and the rows with a_D < 0 where a_CV > 0 (descriptive)."""
     cv = _cv_arrays(inputs, bkg)
     ui, ub = dict(inputs), dict(bkg)
     if not tags:
         return ui, ub, {"universes": []}
     acc, peak, fluxes = {}, {}, []
-    nz = {k: v != 0 for k, v in cv.items()}
     for j, tag in enumerate(tags):
         single, phi = _single(inputs, bkg, bank_cv, tag, load(tag), flux)
         if phi is not None:
@@ -125,23 +146,32 @@ def compose(inputs: dict, bkg: dict, bank_cv, tags: list[str], load, flux: np.nd
             if j == 0:
                 acc[k], peak[k] = a_u.copy(), np.abs(a_u)
                 continue
-            m = nz[k]
-            acc[k][m] = acc[k][m] * (a_u[m] / cv[k][m])
-            acc[k][~m] = acc[k][~m] + a_u[~m]
+            acc[k] += a_u - cv[k]
             np.maximum(peak[k], np.abs(a_u), out=peak[k])
         del single
     if len(fluxes) > 1:
         raise Refusal("a draw holds more than one flux universe")
+    if len(tags) > 1:
+        bad = int(np.sum((cv["denom"] > 0) & (acc["denom"] <= 0)))
+        if bad:
+            raise Refusal(f"the composite denominator is <= 0 in {bad} cells where the CV's is > 0 (section 2b)")
     stats = {}
     for k in acc:
-        with np.errstate(divide="ignore", invalid="ignore"):
-            r = np.where(peak[k] > 0, np.abs(acc[k]) / peak[k], np.where(acc[k] == 0, 1.0, np.inf))
-        stats[k] = {"max_composite_over_max_single": float(np.max(r)), "rows_above_bound": int(np.sum(r > N1_BOUND))}
+        r = n1_ratio(acc[k], peak[k])
+        stats[k] = {"max_composite_over_max_single": float(np.max(r)), "rows_above_bound": int(np.sum(r > N1_BOUND)),
+                    "rows_negative_where_cv_positive": int(np.sum((acc[k] < 0) & (cv[k] > 0)))}
     ui["w_truth"], ui["w_reco"], ui["denom_nd"] = acc["wt"], acc["wr"], acc["denom"]
     ub["bkg_w"] = acc["bkgw"]
     if fluxes:
         ui["flux"] = fluxes[0]
     return ui, ub, {"universes": list(tags), "n1": stats}
+
+
+def n1_ratio(a_D: np.ndarray, peak: np.ndarray) -> np.ndarray:
+    """N1's statistic per row: |a_D| / peak, with peak = max_j |a_uj| over the draw's universes; 1 where both are 0
+    and +inf where only the peak is."""
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.where(peak > 0, np.abs(a_D) / peak, np.where(a_D == 0, 1.0, np.inf))
 
 
 def _cv_arrays(inputs: dict, bkg: dict) -> dict:
@@ -165,68 +195,229 @@ def declared_draws(flux_p: np.ndarray, groups: dict) -> list[list[str]]:
     return [draw_universes(toys.draw_for_seed(s, flux_p, groups)) for t in TRUTHS for s in TOY_SEEDS[t]]
 
 
-def composite_n1(inputs: dict, bkg: dict, bank_cv, load, flux, draws: list[list[str]]) -> dict:
-    """N1 for the composite, before the bulk (the audit's B2 on #673), per array.
+class InvalidReceipt(Refusal):
+    """The receipt could not decide (a budget, the validation, a missing band): INVALID, never a STOP; it may be rerun."""
 
-    Every draw holds one universe of every band. Where a_CV != 0, |a_D| / max_j |a_uj| = prod_j r_j / max_j r_j
-    with r_j = |a_uj / a_CV|. Its largest value over ALL draws is exactly prod_b R_b / max_b R_b, R_b the largest r
-    over band b's universes. Where a_CV == 0 it is |sum_j a_uj| / max_j |a_uj|, at most the number of bands with a
-    non-zero weight there. Rows whose bound exceeds N1_BOUND are then evaluated exactly over ``draws`` (a second
-    pass), up to N1_CANDIDATE_CAP rows per array. More rows than that are not evaluated, and that stops the bulk as
-    a count above the bound does."""
-    cv = _cv_arrays(inputs, bkg)
-    nz = {k: v != 0 for k, v in cv.items()}
-    scale = {k: np.where(nz[k], np.abs(v), 1.0) for k, v in cv.items()}
-    by_band: dict[str, list[str]] = {}
-    for t in toys.s1_universes():
-        by_band.setdefault(t.rpartition("_")[0], []).append(t)
-    logsum = {k: np.zeros(v.shape) for k, v in cv.items()}
-    top = {k: np.zeros(v.shape) for k, v in cv.items()}
-    nonzero = {k: np.zeros(v.shape) for k, v in cv.items()}
-    for tags in by_band.values():
-        R = {k: np.zeros(v.shape) for k, v in cv.items()}
-        for t in tags:
-            single, _ = _single(inputs, bkg, bank_cv, t, load(t), flux)
-            for k, a in single.items():
-                np.maximum(R[k], np.abs(a) / scale[k], out=R[k])
-        for k in cv:
-            with np.errstate(divide="ignore"):
-                logsum[k] += np.log(R[k])
-            np.maximum(top[k], R[k], out=top[k])
-            nonzero[k] += R[k] > 0
-    arrays, rows = {}, {}
-    for k in cv:
-        with np.errstate(divide="ignore", invalid="ignore"):
-            sup = np.where(nz[k], np.where(top[k] > 0, np.exp(logsum[k] - np.log(np.where(top[k] > 0, top[k], 1.0))),
-                                           0.0), nonzero[k])
-        rows[k] = np.flatnonzero(sup > N1_BOUND)
-        arrays[k] = {"all_draws_max": float(sup.max()), "all_draws_rows_above": int(rows[k].size)}
-    exact = {k: i for k, i in rows.items() if 0 < i.size <= N1_CANDIDATE_CAP}
-    for k, i in rows.items():
-        arrays[k]["declared"] = ({"evaluated": True, "rows": 0, "max": None, "rows_above": 0} if i.size == 0 else
-                                 {"evaluated": False, "rows": int(i.size), "max": None, "rows_above": None})
-    if exact:
-        col = {t: c for c, t in enumerate(toys.s1_universes())}
-        V = {k: np.zeros((i.size, len(col))) for k, i in exact.items()}
-        for t, c in col.items():
-            single, _ = _single(inputs, bkg, bank_cv, t, load(t), flux)
-            for k, i in exact.items():
-                a = single[k][i]
-                V[k][:, c] = np.where(nz[k][i], np.abs(a) / scale[k][i], a)
-        for k, i in exact.items():
-            m, worst = nz[k][i], np.zeros(i.size)
-            for tags in draws:
-                v = V[k][:, [col[t] for t in tags]]
-                peak = np.max(np.abs(v), axis=1)
-                comp = np.where(m, np.prod(np.abs(v), axis=1), np.abs(v.sum(axis=1)))
-                with np.errstate(divide="ignore", invalid="ignore"):
-                    r = np.where(peak > 0, comp / peak, np.where(comp == 0, 1.0, np.inf))
-                np.maximum(worst, r, out=worst)
-            arrays[k]["declared"] = {"evaluated": True, "rows": int(i.size), "max": float(worst.max()),
-                                     "rows_above": int(np.sum(worst > N1_BOUND))}
-    stop = any(not v["declared"]["evaluated"] or v["declared"]["rows_above"] for v in arrays.values())
-    return {"bound": N1_BOUND, "n_draws": len(draws), "candidate_cap": N1_CANDIDATE_CAP, "arrays": arrays,
-            "stop": stop}
+
+def draw_columns(draws: list[list[str]], col: dict[str, int]) -> list[np.ndarray]:
+    """Each draw's universe columns in the draw's order; every draw must hold one universe of every band, which the
+    screen's proof needs."""
+    bands = {t.rpartition("_")[0] for t in col}
+    out = []
+    for tags in draws:
+        if sorted(t.rpartition("_")[0] for t in tags) != sorted(bands):
+            raise InvalidReceipt("a declared draw does not hold exactly one universe of every band")
+        out.append(np.array([col[t] for t in tags]))
+    return out
+
+
+def screen_floor(V: np.ndarray, col: dict[str, int]) -> np.ndarray:
+    """L per row: max over bands b of min over b's universes of |a_u|.
+
+    Proposition (amendment 2, section 3): every declared draw D holds one universe u_b of every band b, so its peak
+    max_j |a_uj| >= |a_{u_b}| >= min_{u in b} |a_u| for every b, hence peak >= L. N1's statistic is |a_D| / peak
+    (``n1_ratio``). If |a_D| <= 10 L: with L > 0, peak >= L > 0 and the ratio is <= |a_D| / L <= 10; with L = 0,
+    a_D = 0 and the ratio is 0 (peak > 0) or 1 (peak = 0). So no (row, draw) with |a_D| <= 10 L exceeds the bound."""
+    by_band: dict[str, list[int]] = {}
+    for t, c in col.items():
+        by_band.setdefault(t.rpartition("_")[0], []).append(c)
+    L = np.zeros(V.shape[1])
+    for cs in by_band.values():
+        np.maximum(L, np.min(np.abs(V[cs]), axis=0), out=L)
+    return L
+
+
+def screen_floor_check(V: np.ndarray, col: dict[str, int], L: np.ndarray) -> bool:
+    """An independent recomputation of the screen's floor on EVERY row (a band at a time, by an explicit loop over
+    its universes), compared exactly with ``screen_floor``'s: the in-job sample may hold no row above the bound, so a
+    wrong floor must also be caught where the sample cannot see it."""
+    ref = np.zeros(V.shape[1])
+    for b in sorted({t.rpartition("_")[0] for t in col}):
+        lo = None
+        for t in sorted(t for t in col if t.rpartition("_")[0] == b):
+            a = np.abs(V[col[t]])
+            lo = a.copy() if lo is None else np.minimum(lo, a)
+        ref = np.maximum(ref, lo)
+    return bool(np.array_equal(ref, L))
+
+
+def pinned_composite(V: np.ndarray, cv: np.ndarray, cols: np.ndarray, rows: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """``compose``'s arithmetic on the given rows, in the draw's order: a_D and the peak."""
+    acc = V[cols[0], rows].copy()
+    peak = np.abs(acc)
+    for c in cols[1:]:
+        acc += V[c, rows] - cv[rows]
+        np.maximum(peak, np.abs(V[c, rows]), out=peak)
+    return acc, peak
+
+
+def exact_n1(V: np.ndarray, cv: np.ndarray, dcols: list[np.ndarray], L: np.ndarray, sample: np.ndarray,
+             block: int = DRAW_BLOCK, max_pairs: int = MAX_PAIRS, reco: np.ndarray | None = None) -> dict:
+    """N1 on every row over every declared draw, exactly (the director's ruling on section 2d, (ii), with the screen
+    he ruled consistent with it). The composite for a block of draws is S V - (k - 1) a_CV (float64 BLAS); pairs past
+    the screen |a_D| > 10 L get the exact peak; pairs within ``NEAR_BOUND_REL`` of the bound are recomputed in
+    compose's order. ``sample`` rows (the validation) keep their per-draw outcome. Returns the counts, the per-draw
+    negative-composite counts and sum of negative a_D over ``reco`` rows (descriptive, matmul arithmetic)."""
+    n_u, n = V.shape
+    S = np.zeros((len(dcols), n_u))
+    for d, cs in enumerate(dcols):
+        S[d, cs] = 1.0
+    k = S.sum(axis=1)
+    lim = N1_BOUND * L * (1.0 - NEAR_BOUND_REL)    # the matmul's |a_D| is rounded: keep the proof's premise strict
+    pairs = 0
+    for d0 in range(0, len(dcols), block):
+        A = S[d0:d0 + block] @ V - (k[d0:d0 + block, None] - 1.0) * cv[None, :]
+        pairs += int(np.count_nonzero(np.abs(A) > lim[None, :]))
+    if pairs > max_pairs:
+        raise InvalidReceipt(f"{pairs} (row, draw) pairs past the screen exceed the budget {max_pairs}")
+    worst = np.zeros(n)
+    above_rows = np.zeros(n, bool)
+    in_sample = np.zeros(n, bool)
+    in_sample[sample] = True
+    sample_above: set[tuple[int, int]] = set()
+    near, pairs_above, max_r = 0, 0, 0.0
+    neg_rows = np.zeros(len(dcols), np.int64)
+    neg_sum = np.zeros(len(dcols))
+    comp_sum = np.zeros(len(dcols))
+    neg_any = np.zeros(n, bool)
+    rmask = np.ones(n, bool) if reco is None else np.asarray(reco, bool)
+    for d0 in range(0, len(dcols), block):
+        A = S[d0:d0 + block] @ V - (k[d0:d0 + block, None] - 1.0) * cv[None, :]
+        for i in range(A.shape[0]):
+            d = d0 + i
+            a = A[i]
+            negd = (a < 0) & (cv > 0)
+            neg_rows[d] = int(np.count_nonzero(negd))
+            neg_any |= negd
+            neg_sum[d] = float(np.sum(np.minimum(a[rmask], 0.0)))
+            comp_sum[d] = float(np.sum(a[rmask]))
+            rows = np.flatnonzero(np.abs(a) > lim)
+            if rows.size == 0:
+                continue
+            cs = dcols[d]
+            peak = np.abs(V[cs[0], rows])
+            for c in cs[1:]:
+                np.maximum(peak, np.abs(V[c, rows]), out=peak)
+            r = n1_ratio(a[rows], peak)
+            close = np.abs(r - N1_BOUND) <= NEAR_BOUND_REL * N1_BOUND
+            if np.any(close):
+                near += int(close.sum())
+                acc, pk = pinned_composite(V, cv, cs, rows[close])
+                r[close] = n1_ratio(acc, pk)
+            hit = r > N1_BOUND
+            worst[rows] = np.maximum(worst[rows], r)
+            above_rows[rows[hit]] = True
+            pairs_above += int(hit.sum())
+            if r.size:
+                max_r = max(max_r, float(r.max()))
+            for row in rows[hit & in_sample[rows]]:
+                sample_above.add((d, int(row)))
+    return {"rows": int(n), "pairs_past_screen": pairs, "near_bound_recomputed": near, "pairs_above": pairs_above,
+            "rows_above": int(above_rows.sum()), "max_evaluated": max_r, "worst": worst, "sample_above": sample_above,
+            "negative_composite_rows": neg_rows, "negative_composite_sum": neg_sum, "composite_sum": comp_sum,
+            "negative_rows_in_some_draw": int(neg_any.sum()), "negative_any": neg_any}
+
+
+def no_screen_n1(V: np.ndarray, cv: np.ndarray, dcols: list[np.ndarray], rows: np.ndarray) -> np.ndarray:
+    """The validation's reference: N1's statistic on ``rows`` for every draw, in compose's order, with no screen."""
+    out = np.zeros((len(dcols), rows.size))
+    for d, cs in enumerate(dcols):
+        acc, peak = pinned_composite(V, cv, cs, rows)
+        out[d] = n1_ratio(acc, peak)
+    return out
+
+
+def validate_screen(res: dict, ref: np.ndarray, rows: np.ndarray) -> list[str]:
+    """The director's in-job check: on the sampled rows, the no-screen outcome equals the screened one, pair by pair
+    (which pairs exceed the bound) and row by row (each row's worst, where it exceeds the bound)."""
+    bad = []
+    want = {(d, int(rows[j])) for d, j in zip(*np.nonzero(ref > N1_BOUND))}
+    if want != res["sample_above"]:
+        bad.append(f"pairs above differ: {len(want ^ res['sample_above'])} pairs")
+    for j, row in enumerate(rows):
+        w_ref = float(ref[:, j].max())
+        if w_ref > N1_BOUND and abs(res["worst"][row] - w_ref) > 1e-12 * w_ref:
+            bad.append(f"row {int(row)}: worst {res['worst'][row]} != {w_ref}")
+    return bad
+
+
+def denominator_check(D: np.ndarray, dcv: np.ndarray, dcols: list[np.ndarray]) -> dict:
+    """On every declared draw, in compose's order: section 2b (the audit's P2), the cells with d_CV > 0 and d_D <= 0;
+    and N1 on the denominator per cell (the audit's C2 on #717), exactly, as compose's record and ``n1`` read it."""
+    bad, above, max_r = {}, {}, 0.0
+    pos = dcv > 0
+    flat_cv = dcv.ravel()
+    for d, cs in enumerate(dcols):
+        acc = D[cs[0]].copy()
+        peak = np.abs(acc)
+        for c in cs[1:]:
+            acc += D[c] - dcv
+            np.maximum(peak, np.abs(D[c]), out=peak)
+        n = int(np.sum(pos & (acc <= 0)))
+        if n:
+            bad[d] = n
+        r = n1_ratio(acc, peak).ravel()
+        max_r = max(max_r, float(r.max()))
+        k = int(np.sum(r > N1_BOUND))
+        if k:
+            above[d] = k
+    return {"draws_with_nonpositive_cells": sorted(bad), "max_cells": max(bad.values()) if bad else 0,
+            "n1": {"cells": int(flat_cv.size), "pairs_above": int(sum(above.values())),
+                   "draws_with_cells_above": sorted(above), "max": max_r}}
+
+
+def crossterm(V: np.ndarray, cv: np.ndarray, dcols: list[np.ndarray], flat: np.ndarray, n_bins: int, U: np.ndarray,
+              block: int = DRAW_BLOCK) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Consult item (i), descriptive: per declared draw, the U-mapped histogram of a_D over the rows with
+    ``flat`` >= 0 (their 5D cell), under the product rule (binding 2's: a_CV prod_j (a_uj / a_CV) where a_CV != 0, the
+    sum where a_CV = 0) and under first order. The product goes by logs and sign parity (BLAS); first order is
+    S V - (k - 1) a_CV. Returns (H_product, H_first_order) as [draws, cells], and H_CV."""
+    m = flat >= 0
+    Vm, cm, fm = V[:, m], cv[m], flat[m]
+    nz = cm != 0
+    with np.errstate(divide="ignore", invalid="ignore"):
+        rho = np.where(nz[None, :], Vm / np.where(nz, cm, 1.0)[None, :], 0.0)
+    zero = (rho == 0) & nz[None, :]
+    logs = np.log(np.where(nz[None, :] & (rho != 0), np.abs(rho), 1.0))      # 0 where a_CV = 0 or rho = 0
+    negs = (rho < 0).astype(float)
+    zf = zero.astype(float)
+    S = np.zeros((len(dcols), V.shape[0]))
+    for d, cs in enumerate(dcols):
+        S[d, cs] = 1.0
+    k = S.sum(axis=1)
+    H_p = np.zeros((len(dcols), U.shape[0]))
+    H_a = np.zeros((len(dcols), U.shape[0]))
+    for d0 in range(0, len(dcols), block):
+        Sb = S[d0:d0 + block]
+        A = Sb @ Vm - (k[d0:d0 + block, None] - 1.0) * cm[None, :]
+        sign = np.where(np.mod(np.rint(Sb @ negs), 2) == 1, -1.0, 1.0)
+        P = np.where(nz[None, :], cm[None, :] * np.exp(Sb @ logs) * sign * ((Sb @ zf) == 0), A)
+        for i in range(A.shape[0]):
+            H_a[d0 + i] = U @ np.bincount(fm, weights=A[i], minlength=n_bins)
+            H_p[d0 + i] = U @ np.bincount(fm, weights=P[i], minlength=n_bins)
+    return H_p, H_a, U @ np.bincount(fm, weights=cm, minlength=n_bins)
+
+
+def flat_cells(coords: np.ndarray, edges) -> np.ndarray:
+    """Each row's 5D cell index in C order on the analysis edges (``np.histogramdd``'s bins), -1 outside."""
+    idx, inside = [], np.ones(coords.shape[0], bool)
+    for dim, e in enumerate(edges):
+        e = np.asarray(e, float)
+        i = np.searchsorted(e, coords[:, dim], side="right") - 1
+        i = np.where(coords[:, dim] == e[-1], e.size - 2, i)        # histogramdd's closed last edge
+        inside &= (i >= 0) & (i < e.size - 1)
+        idx.append(np.clip(i, 0, e.size - 2))
+    shape = tuple(np.asarray(e).size - 1 for e in edges)
+    return np.where(inside, np.ravel_multi_index(idx, shape), -1)
+
+
+def cross_z(H_p: np.ndarray, H_a: np.ndarray, H_cv: np.ndarray, rel_sigma: np.ndarray) -> dict:
+    """z_c = [(H_product - H_first_order) / H_CV]_c / (sigma_c / x_c), per draw; its summary per cell."""
+    with np.errstate(divide="ignore", invalid="ignore"):
+        z = np.where(H_cv > 0, (H_p - H_a) / H_cv, 0.0) / rel_sigma[None, :]
+    az = np.abs(z)
+    return {"median_abs": np.median(az, axis=0).tolist(), "q95_abs": np.quantile(az, 0.95, axis=0).tolist(),
+            "max_abs": az.max(axis=0).tolist(), "median_signed": np.median(z, axis=0).tolist()}
 
 
 def _flux_universe_inputs(inputs, bkg, bank_cv, w, idx, flux: np.ndarray | None):
@@ -329,24 +520,94 @@ def mean_experiment(inputs: dict, bkg: dict, r: np.ndarray) -> tuple[dict, np.nd
     return exp, x_true
 
 
-def toy_experiment(inputs: dict, bkg: dict, ui: dict, ub: dict, r: np.ndarray, seed: int) -> tuple[dict, np.ndarray]:
-    """One toy: Poisson pseudo-data of the nature (ui, ub) at truth r, the nominal MC with set A's streams."""
+def _flat_hist(coords: np.ndarray, w: np.ndarray, edges) -> np.ndarray:
+    """A weighted 5D histogram on the analysis edges, flattened as ``xsec_flat`` is (C order)."""
+    h, _ = np.histogramdd(np.asarray(coords, float), bins=edges, weights=np.asarray(w, float))
+    return h.ravel(order="C")
+
+
+def clip_draw(ui: dict, ub: dict, r: np.ndarray, rule: str = "data") -> tuple[dict, dict, dict]:
+    """Every Poisson draw sees lambda+ = max(lambda, 0) on the full product, lambda = w_reco * r on reco-passing rows
+    and bkg_w on background rows (``fd_1b_toys.build_full`` with unit source factors). The draw's weights are zeroed
+    where lambda < 0, so build_full's lambda is exactly lambda+. The clipping rule is a named input:
+    * ``"data"`` (decision section 2a (a)): the nature's truth and denominator are untouched;
+    * ``"nature"`` (consistent clipping): a signal row with lambda < 0 or w_truth * r < 0 is zeroed in truth and reco
+      alike, so the draw and the truth share one non-negative nature (the denominator, per cell, is section 2b's).
+    Returns the draw's (ui, ub) and the clipped mass: sums per component, and |lambda-| per 5D reco cell (signal and
+    background) and per 5D truth cell (truth-passing signal rows)."""
+    if rule not in CLIP_RULES:
+        raise Refusal(f"clip rule {rule!r} is not one of {CLIP_RULES}")
+    edges = ui["edges"]
+    reco = np.asarray(ui["pass_reco"], bool)
+    w = np.asarray(ui["w_reco"], float)
+    lam = w * r
+    neg = reco & (lam < 0)
+    bw = np.asarray(ub["bkg_w"], float)
+    negb = bw < 0
+    tneg = neg & np.asarray(ui["pass_truth"], bool)
+    rec = {"signal": {"sum_lambda": float(lam[reco].sum()), "sum_negative": float(lam[neg].sum()),
+                      "rows_negative": int(neg.sum())},
+           "background": {"sum_lambda": float(bw.sum()), "sum_negative": float(bw[negb].sum()),
+                          "rows_negative": int(negb.sum())}}
+    clip = {"record": rec,
+            "clip_reco_flat": _flat_hist(ui["MCreco"][neg], -lam[neg], edges) + _flat_hist(ub["bkg_reco"][negb], -bw[negb], edges),
+            "clip_truth_flat": _flat_hist(ui["MCgen"][tneg], -lam[tneg], edges)}
+    rec["rule"] = rule
+    du = dict(ui, w_reco=np.where(neg, 0.0, w))
+    if rule == "nature":
+        wt = np.asarray(ui["w_truth"], float)
+        row = neg | (np.asarray(ui["pass_truth"], bool) & (wt * r < 0))
+        du = dict(du, w_reco=np.where(row, 0.0, w), w_truth=np.where(row, 0.0, wt))
+        rec["signal"]["rows_zeroed_in_truth_and_reco"] = int(row.sum())
+    return du, dict(ub, bkg_w=np.where(negb, 0.0, bw)), clip
+
+
+def toy_experiment(inputs: dict, bkg: dict, ui: dict, ub: dict, r: np.ndarray, seed: int,
+                   rule: str = "data") -> tuple[dict, np.ndarray, dict]:
+    """One toy: Poisson pseudo-data of the nature (ui, ub) at truth r, drawn at lambda+ (``clip_draw``), the nominal MC
+    with set A's streams; the truth is the nature's own (negative weights kept under rule "data", zeroed with the
+    draw's under "nature")."""
+    du, db, clip = clip_draw(ui, ub, r, rule)
     ones_s, ones_b = np.ones(ui["w_reco"].shape[0]), np.ones(ub["bkg_w"].shape[0])
-    exp, x_true, _ = toys.build_full(ui, ub, r, ones_s, ones_b, seed, expectation=False)
+    exp, x_true, _ = toys.build_full(du, db, r, ones_s, ones_b, seed, expectation=False)
     exp = with_mc(exp, inputs, bkg)
-    return toys.mc_template_streams(exp, seed), x_true
+    return toys.mc_template_streams(exp, seed), x_true, clip
 
 
-def stat_experiment(inputs: dict, bkg: dict, r: np.ndarray, seed: int | None, b: int) -> dict:
+def stat_experiment(inputs: dict, bkg: dict, r: np.ndarray, seed: int | None, b: int,
+                    rule: str = "data") -> tuple[dict, dict | None]:
     """Set A's replica b: coordinates jittered at 100 + b, the experiment (one Poisson realization of T at ``seed``,
-    or the real data when ``seed`` is None), then the bootstrap replica b."""
+    drawn at lambda+, or the real data when ``seed`` is None), then the bootstrap replica b. The nature is the
+    nominal one, so lambda+ is lambda wherever r >= 0; the clipped record says whether it was."""
     ji, jb = s5p_numerics.jittered(inputs, bkg, JITTER_OFFSET + b)
     if seed is None:
-        exp = s5n_pseudo.build_data(ji, jb)
-    else:
-        ones_s, ones_b = np.ones(ji["w_reco"].shape[0]), np.ones(jb["bkg_w"].shape[0])
-        exp, _, _ = toys.build_full(ji, jb, r, ones_s, ones_b, seed, expectation=False)
-    return s5n_pseudo.bootstrap_replica(exp, b)
+        return s5n_pseudo.bootstrap_replica(s5n_pseudo.build_data(ji, jb), b), None
+    du, db, clip = clip_draw(ji, jb, r, rule)
+    ones_s, ones_b = np.ones(ji["w_reco"].shape[0]), np.ones(jb["bkg_w"].shape[0])
+    exp, _, _ = toys.build_full(du, db, r, ones_s, ones_b, seed, expectation=False)
+    return s5n_pseudo.bootstrap_replica(exp, b), clip["record"]
+
+
+def clipmean_experiment(inputs: dict, bkg: dict, ui: dict, ub: dict, r: np.ndarray,
+                        rule: str = "data") -> tuple[dict, np.ndarray, dict]:
+    """(ii)'s mean unfold: d_T at its mean (``mean_experiment``, the nominal nature) plus, as observed events at their
+    counts, the clipped mass |lambda-| of the nature (ui, ub) at truth r (signal rows at their reco coordinates,
+    background rows at theirs), inside the analysis window as build_full keeps its events. The clipped data equal the
+    signed data plus |lambda-|, which cannot be unfolded (the estimator drops non-positive counts); this unfolds the
+    response to |lambda-| around d_T instead."""
+    exp, x_true = mean_experiment(inputs, bkg, r)
+    _, _, clip = clip_draw(ui, ub, r, rule)
+    reco = np.asarray(ui["pass_reco"], bool)
+    lam = np.asarray(ui["w_reco"], float) * r
+    neg = reco & (lam < 0)
+    bw = np.asarray(ub["bkg_w"], float)
+    negb = bw < 0
+    coords = np.concatenate([ui["MCreco"][neg], ub["bkg_reco"][negb]])
+    counts = np.concatenate([-lam[neg], -bw[negb]])
+    keep = s5n_pseudo.fid_mask(coords, inputs["edges"])
+    exp = dict(exp, obs=np.concatenate([exp["obs"], coords[keep]]),
+               obs_counts=np.concatenate([exp["obs_counts"], counts[keep]]))
+    return exp, x_true, clip
 
 
 class Capture:
@@ -438,10 +699,11 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
         b = int(item)
         if b not in STAT_REPLICAS:
             raise Refusal(f"stat replica {b} is not one of set A's")
-        exp = stat_experiment(inputs, bkg, truth_weight(truth, inputs, ratio, push), STAT_SEED[truth], b)
+        exp, clip = stat_experiment(inputs, bkg, truth_weight(truth, inputs, ratio, push), STAT_SEED[truth], b,
+                                    a.clip_rule)
         xs, ev = (unfold_fn or _unfold_one64)(exp, a.threads)
         arrays = {"xsec_flat": np.asarray(xs, float).ravel(order="C")}
-        meta.update(ev, stat_seed=STAT_SEED[truth], bootstrap_seed=b, jitter_seed=JITTER_OFFSET + b)
+        meta.update(ev, stat_seed=STAT_SEED[truth], bootstrap_seed=b, jitter_seed=JITTER_OFFSET + b, clip=clip)
     elif role == "toy":
         seed = int(item)
         if seed not in TOY_SEEDS[truth]:
@@ -449,18 +711,35 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
         d = toys.draw_for_seed(seed, via_noatime(toys.flux_probabilities, a.flux_constraint), world["groups"])
         tags = draw_universes(d)
         ui, ub, info = compose(inputs, bkg, world["bank_cv"], tags, lambda t: _weights(world, a, t), world["flux"])
-        exp, x_true = toy_experiment(inputs, bkg, ui, ub, truth_weight(truth, inputs, ratio, push), seed)
+        exp, x_true, clip = toy_experiment(inputs, bkg, ui, ub, truth_weight(truth, inputs, ratio, push), seed,
+                                           a.clip_rule)
         x_true = np.asarray(x_true, float)
         if not np.all(np.isfinite(x_true)):
             raise Refusal("a non-finite truth")
         xs, ev = (unfold_fn or _unfold)(exp, a.threads)
-        arrays = {"xsec_flat": xs.ravel(order="C"), "xtrue_flat": x_true.ravel(order="C")}
-        meta.update(ev, draw=d, universe_info=info)
+        arrays = {"xsec_flat": xs.ravel(order="C"), "xtrue_flat": x_true.ravel(order="C"),
+                  "clip_reco_flat": clip["clip_reco_flat"], "clip_truth_flat": clip["clip_truth_flat"]}
+        meta.update(ev, draw=d, universe_info=info, clip=clip["record"])
+    elif role == "clipmean":
+        if a.clip_rule != "data":
+            raise Refusal(NATURE_UNRULED)
+        seed = int(item)
+        if not any(seed in TOY_SEEDS[t] for t in TOY_SEEDS):
+            raise Refusal(f"N_clip seed {seed} is not a declared toy seed")
+        d = toys.draw_for_seed(seed, via_noatime(toys.flux_probabilities, a.flux_constraint), world["groups"])
+        ui, ub, info = compose(inputs, bkg, world["bank_cv"], draw_universes(d), lambda t: _weights(world, a, t),
+                               world["flux"])
+        exp, x_true, clip = clipmean_experiment(inputs, bkg, ui, ub, truth_weight(truth, inputs, ratio, push),
+                                                a.clip_rule)
+        xs, ev = (unfold_fn or _unfold_s1)(exp, a.threads, toys.ESTIMATOR_SEED)
+        arrays = {"xsec_flat": xs.ravel(order="C"), "xtrue_flat": np.asarray(x_true, float).ravel(order="C"),
+                  "clip_reco_flat": clip["clip_reco_flat"], "clip_truth_flat": clip["clip_truth_flat"]}
+        meta.update(ev, n_clip_seed=seed, draw=d, universe_info=info, clip=clip["record"])
     elif role == "control":
         if item not in CONTROLS:
             raise Refusal(f"{item} is not a declared procedure control")
         if item == "setA_b1":
-            xs, ev = (unfold_fn or _unfold_one64)(stat_experiment(inputs, bkg, None, None, 1), a.threads)
+            xs, ev = (unfold_fn or _unfold_one64)(stat_experiment(inputs, bkg, None, None, 1)[0], a.threads)
         else:
             ui, ub, info = compose(inputs, bkg, world["bank_cv"], [item], lambda t: _weights(world, a, t), world["flux"])
             xs, ev = (unfold_fn or _unfold_one32)(s5n_pseudo.build_data(ui, ub), a.threads)
@@ -473,7 +752,8 @@ def run_item(a, world: dict, role: str, item: str, unfold_fn=None) -> tuple[dict
             raise Refusal("the capture kept no push weights")
         arrays = {"xsec_flat": np.asarray(xs, float).ravel(order="C"),
                   "push": np.asarray(cap.push if cap.push is not None else [], float)}
-        meta.update(ev)
+        meta.update(ev, push_min=float(arrays["push"].min()) if arrays["push"].size else None,
+                    push_negative=int(np.sum(arrays["push"] < 0)))
     else:
         raise Refusal(f"role {role!r}")
     if not np.all(np.isfinite(arrays["xsec_flat"])):
@@ -502,9 +782,29 @@ def code_digests() -> dict:
         Path(s5p_numerics.__file__).resolve(), _ND / "s5e_trace.py", _ND / "flux_universe.py")}}
 
 
+def check_clip_gate(a) -> None:
+    """Joseph's ruling on the clip rule (#718): the 'nature' rule runs only after 1B's own pre-bulk clipcheck, on
+    cov2d's C2 code (addendum A2.1), reads "option (1)" under C2's fixed reading. The gate is A2.1's output file,
+    pinned by digest; without it, or with any other reading, 'nature' refuses. Nothing in this amendment writes it.
+
+    INTERIM (amendment 2): the 'data' rule needs no gate here. Addendum A2.1's S2 replaces this: every bulk role then
+    refuses 'data', and runs only under 'nature' with a pinned clipcheck reading option (1)."""
+    if a.clip_rule != "nature":
+        return
+    if a.clip_gate is None or a.expect_clip_gate_sha256 is None:
+        raise Refusal("the 'nature' rule needs A2.1's clip gate (--clip-gate, --expect-clip-gate-sha256)")
+    raw = Path(a.clip_gate).read_bytes()
+    if hashlib.sha256(raw).hexdigest() != a.expect_clip_gate_sha256:
+        raise Refusal("the clip gate's digest differs from the declared one")
+    g = json.loads(raw)
+    if {k: g.get(k) for k in CLIP_GATE} != CLIP_GATE:
+        raise Refusal(f"the clip gate does not read {CLIP_GATE}: nothing launches; 1B returns to Joseph")
+
+
 def run_unfold(a, unfold_fn=None) -> int:
     inv.OPENED.clear()
-    s5e_candidate.install(toys.CONFIG)
+    check_clip_gate(a)
+    s5e_candidate.install(a.estimator)
     if a.role not in ROLES:
         raise Refusal(f"role {a.role!r}")
     if (a.role in ("control", "capture")) != (a.truth == "data"):
@@ -519,7 +819,8 @@ def run_unfold(a, unfold_fn=None) -> int:
         toys.check_pins(world["pins"], a.bank, a.detector_dir)
         t1 = time.time()
         arrays, extra = run_item(a, world, a.role, item, unfold_fn)
-        meta = {"schema": SCHEMA, "truth": a.truth, "role": a.role, "item": item, "config": toys.CONFIG,
+        meta = {"schema": SCHEMA, "truth": a.truth, "role": a.role, "item": item, "config": a.estimator,
+                "clip_rule": a.clip_rule,
                 "iters": toys.ITERS, "estimator_seed": SEED_CHECK if a.role == "seed" else toys.ESTIMATOR_SEED,
                 "threads": a.threads, **extra, "input_npz_sha256": world["npz_sha"], "bkg_dump_sha256": world["bkg_sha"],
                 "pins_sha256": a.expect_pins_sha256, "flux_table_sha256": a.expect_flux_table_sha256,
@@ -557,48 +858,232 @@ def stage_flux(root_path: Path, out: Path) -> dict:
     return {"out": str(out), "source_sha256": hashlib.sha256(raw).hexdigest(), "n_ref": n_ref, "n_univ": n_univ}
 
 
+def clipped_fraction(neg_sum: np.ndarray, total: np.ndarray) -> np.ndarray:
+    """|sum of the negative a_D| / sum of a_D per draw (the director's request on cov2d's figures); 0 where the
+    total is 0."""
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.where(total != 0, np.abs(neg_sum) / np.abs(total), 0.0)
+
+
+def _spread(x: np.ndarray) -> dict:
+    return {"min": float(np.min(x)), "median": float(np.median(x)), "p90": float(np.quantile(x, 0.90)),
+            "q95": float(np.quantile(x, 0.95)), "max": float(np.max(x))}
+
+
+def clip_cells(V: dict, cv: dict, dcols: list[np.ndarray], flat: dict, n_bins: int, U: np.ndarray, k_flat: np.ndarray,
+               truth_rows: np.ndarray, reco: np.ndarray, block: int = DRAW_BLOCK) -> dict:
+    """cov2d C1's per-cell clipping figures over the declared draws at r = 1 (the director's request), first order, by
+    matmul (descriptive), each U-mapped to the reporting cells, as [draws, cells]:
+    * ``reco_clip``: |sum of lambda-| (signal w_reco on reco-passing rows, plus the background), and ``reco_plus``,
+      the sum of lambda+, both at the rows' reco cells;
+    * ``truth_clip``: the truth content of the clipped signal rows (reco-passing, as ``clip_draw`` clips them, with
+      w_reco's a_D < 0, and truth-passing), as
+      |a_D(w_truth)| at their truth cells, converted to cross section by ``k_flat`` (``xsec_nd``'s per-cell factor
+      at the CV's completeness)."""
+    S = np.zeros((len(dcols), V["wr"].shape[0]))
+    for d, cs in enumerate(dcols):
+        S[d, cs] = 1.0
+    k = S.sum(axis=1)
+    out = {"reco_clip": np.zeros((len(dcols), U.shape[0])), "reco_plus": np.zeros((len(dcols), U.shape[0])),
+           "truth_clip": np.zeros((len(dcols), U.shape[0]))}
+    fs_, fb, ft = flat["signal"], flat["background"], flat["truth"]
+    ms, mb, mt = fs_ >= 0, fb >= 0, (ft >= 0) & truth_rows & np.asarray(reco, bool)
+    for d0 in range(0, len(dcols), block):
+        Sb, kb = S[d0:d0 + block], k[d0:d0 + block, None] - 1.0
+        A_r = Sb @ V["wr"] - kb * cv["wr"][None, :]
+        A_t = Sb @ V["wt"] - kb * cv["wt"][None, :]
+        A_b = Sb @ V["bkgw"] - kb * cv["bkgw"][None, :]
+        for i in range(A_r.shape[0]):
+            d = d0 + i
+            ar, ab = A_r[i], A_b[i]
+            neg = np.bincount(fs_[ms], weights=np.maximum(-ar[ms], 0.0), minlength=n_bins) + \
+                np.bincount(fb[mb], weights=np.maximum(-ab[mb], 0.0), minlength=n_bins)
+            pos = np.bincount(fs_[ms], weights=np.maximum(ar[ms], 0.0), minlength=n_bins) + \
+                np.bincount(fb[mb], weights=np.maximum(ab[mb], 0.0), minlength=n_bins)
+            rows = mt & (ar < 0)
+            tru = np.bincount(ft[rows], weights=np.abs(A_t[i][rows]), minlength=n_bins) * k_flat
+            out["reco_clip"][d], out["reco_plus"][d], out["truth_clip"][d] = U @ neg, U @ pos, U @ tru
+    return out
+
+
+def _per_cell(X: np.ndarray) -> dict:
+    return {"median": np.median(X, axis=0).tolist(), "max": X.max(axis=0).tolist()}
+
+
+def verified_weights(world: dict, a, tag: str) -> tuple[dict, dict]:
+    """A universe's weights read ONCE per file through O_NOATIME, the digest taken over the very bytes loaded (the
+    audit's question on O4), against the pins file: ``"keep"`` (as loaded, float64) and ``"zero"`` (non-finite zeroed,
+    as ``fd_1b_inv.universe_weights(..., "zero")`` gives them)."""
+    wdir = universe_dir(tag, a.bank, a.detector_dir)
+    keep, zero = {}, {}
+    for k in s5p_universe.weight_keys(wdir, tag):
+        p = wdir / f"{tag}_{k}.npy"
+        with inv.open_noatime(p) as fh:
+            raw = fh.read()
+        if hashlib.sha256(raw).hexdigest() != world["pins"]["files"][str(p)]["sha256"]:
+            raise Refusal(f"{p}: the bytes loaded are not the pinned file")
+        keep[k] = np.load(io.BytesIO(raw), allow_pickle=False).astype(np.float64)
+        zero[k] = np.nan_to_num(keep[k].copy(), nan=0.0, posinf=0.0, neginf=0.0)
+    return keep, zero
+
+
+def _singles_record(raw: dict, cv: dict, inputs: dict) -> dict:
+    """Section 4.2's per-universe counts and the single ratios (descriptive), from the weights as loaded."""
+    rec = {}
+    for k in ("wt", "wr", "bkgw"):
+        u, c = raw[k], cv[k]
+        fin = np.isfinite(u)
+        with np.errstate(divide="ignore", invalid="ignore"):
+            ratio = np.where((c != 0) & fin, np.abs(u / np.where(c != 0, c, 1.0)), 0.0)
+        rec[k] = {"cv_zero_u_nonzero": int(np.sum((c == 0) & fin & (u != 0))), "cv_negative": int(np.sum(c < 0)),
+                  "u_negative": int(np.sum(fin & (u < 0))), "u_nonfinite": int(np.sum(~fin)),
+                  "max_abs_ratio": float(ratio.max()), "rows_ratio_above_bound": int(np.sum(ratio > N1_BOUND))}
+    if "denom_nd" in raw:
+        rec["denom_nd_equals_cv"] = bool(np.array_equal(np.asarray(raw["denom_nd"], float),
+                                                        np.asarray(inputs["denom_nd"], float)))
+    return rec
+
+
 def receipt(a) -> dict:
-    """Section 4.2's counts and N1's single-universe ratios, per universe and array, over the real bank; whether each
-    detector universe's denominator histogram equals the CV's; and N1's composite over every possible and every
-    declared draw (``composite_n1``), whose ``stop`` holds the bulk."""
+    """Before the bulk (amendment 2, a one-node job): section 4.2's counts and the single ratios per universe; N1 on
+    every row over the 900 declared draws, exactly in float64 behind the proven screen, with the in-job no-screen
+    validation on a seeded sample of rows; section 2b's denominator check in compose's order; N_clip (the declared draw
+    with the largest clipped mass at r = 1, descriptive arithmetic); and the cross-term readout (consult (i)). Its
+    verdict is STOP on N1 or 2b; anything that stops it from deciding raises (INVALID, rerunnable)."""
     inv.OPENED.clear()
     world = _load_world(a)
     flux_p = via_noatime(toys.flux_probabilities, a.flux_constraint)
-    inputs = world["inputs"]
-    cv = {"wt": np.asarray(inputs["w_truth"], float), "wr": np.asarray(inputs["w_reco"], float),
-          "bkgw": np.asarray(world["bkg"]["bkg_w"], float)}
-    rows = {}
-    tags = [f"{sa.FLUX}_{i}" for i in range(sa.EXPECT[sa.FLUX])] + toys.s1_universes()
-    for tag in dict.fromkeys(tags):
-        wdir = universe_dir(tag, a.bank, a.detector_dir)
-        raw = inv.universe_weights(wdir, tag, "keep")
-        rec = {}
-        for k, key in (("wt", "wt"), ("wr", "wr"), ("bkgw", "bkgw")):
-            u = raw[key]
-            fin = np.isfinite(u)
-            c = cv[k]
-            with np.errstate(divide="ignore", invalid="ignore"):
-                ratio = np.where((c != 0) & fin, np.abs(u / np.where(c != 0, c, 1.0)), 0.0)
-            rec[k] = {"cv_zero_u_nonzero": int(np.sum((c == 0) & fin & (u != 0))), "cv_negative": int(np.sum(c < 0)),
-                      "u_negative": int(np.sum(fin & (u < 0))), "u_nonfinite": int(np.sum(~fin)),
-                      "max_abs_ratio": float(ratio.max()), "rows_ratio_above_bound": int(np.sum(ratio > N1_BOUND))}
-        if "denom_nd" in raw:
-            rec["denom_nd_equals_cv"] = bool(np.array_equal(np.asarray(raw["denom_nd"], float),
-                                                            np.asarray(inputs["denom_nd"], float)))
-        rows[tag] = rec
-    worst = {k: max(r[k]["max_abs_ratio"] for r in rows.values()) for k in ("wt", "wr", "bkgw")}
-    comp = composite_n1(inputs, world["bkg"], world["bank_cv"], lambda t: _weights(world, a, t), world["flux"],
-                        declared_draws(flux_p, world["groups"]))
-    return {"schema": SCHEMA, "step": "receipt", "n1_bound": N1_BOUND, "universes": rows, "max_abs_ratio": worst,
-            "composite": comp, "verdict": "STOP" if comp["stop"] else "PASS", "atime": inv.atime_check()}
+    inputs, bkg = world["inputs"], world["bkg"]
+    s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
+    U = sa.functional_matrix(sa.fine_map(a.definition))
+    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+        raise InvalidReceipt("the definition's functional is not S1's")
+    rel_sigma = np.sqrt(np.diag(fs.reported_matrix(s1))) / s1["f"]
+    cv = _cv_arrays(inputs, bkg)
+    tags = toys.s1_universes()
+    col = {t: c for c, t in enumerate(tags)}
+    n_s, n_b = cv["wt"].size, cv["bkgw"].size
+    print(json.dumps({"receipt": "allocating", "signal_rows": n_s, "background_rows": n_b,
+                      "bytes": 8 * len(tags) * (2 * n_s + n_b)}), flush=True)
+    V = {"wt": np.empty((len(tags), n_s)), "wr": np.empty((len(tags), n_s)), "bkgw": np.empty((len(tags), n_b))}
+    D = np.empty((len(tags),) + cv["denom"].shape)
+    singles = {}
+    for tag, c in col.items():
+        keep, zero = verified_weights(world, a, tag)
+        singles[tag] = _singles_record(keep, cv, inputs)
+        single, _ = _single(inputs, bkg, world["bank_cv"], tag, zero, world["flux"])
+        for k in V:
+            V[k][c] = single[k]
+        D[c] = single["denom"]
+    labels = [(t, sd) for t in TRUTHS for sd in TOY_SEEDS[t]]
+    dcols = draw_columns(declared_draws(flux_p, world["groups"]), col)
+    reco = np.asarray(inputs["pass_reco"], bool)
+    rng = np.random.default_rng(VALIDATE_SEED)
+    exact, validation = {}, {}
+    for k in V:
+        Lk = screen_floor(V[k], col)
+        if not screen_floor_check(V[k], col, Lk):
+            raise InvalidReceipt(f"{k}: the screen's floor differs from its independent recomputation")
+        n = V[k].shape[1]
+        sample = np.sort(rng.choice(n, size=max(1, math.ceil(VALIDATE_FRACTION * n)), replace=False))
+        res = exact_n1(V[k], cv[k], dcols, Lk, sample, reco=reco if k == "wr" else None)
+        bad = validate_screen(res, no_screen_n1(V[k], cv[k], dcols, sample), sample)
+        if bad:
+            raise InvalidReceipt(f"{k}: the screened N1 differs from the no-screen check on the sample: {bad[:3]}")
+        validation[k] = {"sample_rows": int(sample.size), "pairs_above_in_sample": len(res["sample_above"]),
+                         "agrees": True}
+        exact[k] = {key: res[key] for key in ("rows", "pairs_past_screen", "near_bound_recomputed", "pairs_above",
+                                              "rows_above", "max_evaluated")}
+        exact[k]["negative_composite"] = {
+            "rows_in_some_draw": res["negative_rows_in_some_draw"],
+            "pairs": int(res["negative_composite_rows"].sum()),
+            "draws_with_any": int(np.sum(res["negative_composite_rows"] > 0)),
+            "rows_max_per_draw": int(res["negative_composite_rows"].max()),
+            "clipped_fraction_per_draw": _spread(clipped_fraction(res["negative_composite_sum"], res["composite_sum"])),
+            "counts_over": "all rows with a_CV > 0", "sums_over": "reco-passing rows" if k == "wr" else "all rows",
+            "arithmetic": "matmul, descriptive"}
+        exact[k]["_neg_sum"], exact[k]["_sum"], exact[k]["_any"] = (res["negative_composite_sum"], res["composite_sum"],
+                                                                     res["negative_any"])
+    nonpos = {k: (np.min(V[k], axis=0) <= 0) & (cv[k] > 0) for k in V}
+    source = {k: {"rows_with_a_universe_le_0": int(nonpos[k].sum()),
+                  "negative_in_some_draw_with_a_universe_le_0": int(np.sum(exact[k]["_any"] & nonpos[k])),
+                  "negative_in_some_draw_composite_only": int(np.sum(exact[k]["_any"] & ~nonpos[k])),
+                  "rows": int(V[k].shape[1])} for k in V}
+    neg_total = np.abs(exact["wr"]["_neg_sum"]) + np.abs(exact["bkgw"]["_neg_sum"])
+    signal_background = _spread(clipped_fraction(exact["wr"]["_neg_sum"] + exact["bkgw"]["_neg_sum"],
+                                                 exact["wr"]["_sum"] + exact["bkgw"]["_sum"]))
+    for k in exact:
+        exact[k].pop("_neg_sum"), exact[k].pop("_sum"), exact[k].pop("_any")
+    d_clip = int(np.argmax(neg_total))
+    denom = denominator_check(D, cv["denom"], dcols)
+    n_bins = int(np.prod([np.asarray(e).size - 1 for e in inputs["edges"]]))
+    flat_s = np.where(reco, flat_cells(np.asarray(inputs["MCreco"], float), inputs["edges"]), -1)
+    flat_b = flat_cells(np.asarray(bkg["bkg_reco"], float), inputs["edges"])
+    Hp_s, Ha_s, H0_s = crossterm(V["wr"], cv["wr"], dcols, flat_s, n_bins, U)
+    Hp_b, Ha_b, H0_b = crossterm(V["bkgw"], cv["bkgw"], dcols, flat_b, n_bins, U)
+    flat_t = np.where(np.asarray(inputs["pass_truth"], bool), flat_cells(np.asarray(inputs["MCgen"], float),
+                                                                        inputs["edges"]), -1)
+    Hp_t, Ha_t, H0_t = crossterm(V["wt"], cv["wt"], dcols, flat_t, n_bins, U)
+    pt = np.asarray(inputs["pass_truth"], bool)
+    ofin, _ = np.histogramdd(np.asarray(inputs["MCgen"], float)[pt], bins=inputs["edges"], weights=cv["wt"][pt])
+    dn = np.asarray(inputs["denom_nd"], float)
+    comp = np.where(dn > 0, ofin / np.where(dn > 0, dn, 1.0), 0.0)
+    k_flat, _ = xsec_nd.extract_cross_section_nd(np.ones_like(comp), comp, inputs["flux"], float(inputs["data_pot"]),
+                                                 float(inputs["n_nucleons"]), inputs["edges"])
+    cc = clip_cells(V, cv, dcols, {"signal": flat_s, "background": flat_b, "truth": flat_t}, n_bins, U,
+                    np.asarray(k_flat, float).ravel(order="C"), pt, reco)
+    sig_rep = np.sqrt(np.diag(fs.reported_matrix(s1)))
+    sig_stat = np.sqrt(np.diag(s1["blocks"]["stat"]))
+    with np.errstate(divide="ignore", invalid="ignore"):
+        reco_z = np.where(cc["reco_plus"] > 0, cc["reco_clip"] / np.sqrt(cc["reco_plus"]), 0.0)
+    c1 = {"source_split": source,
+          "clipped_fraction_per_draw": {"signal": exact["wr"]["negative_composite"]["clipped_fraction_per_draw"],
+                                        "background": exact["bkgw"]["negative_composite"]["clipped_fraction_per_draw"]},
+          "clipped_rows_truth_xsec_over_sigma_c": _per_cell(cc["truth_clip"] / sig_rep[None, :]),
+          "clipped_rows_truth_xsec_over_sigma_stat": _per_cell(cc["truth_clip"] / sig_stat[None, :]),
+          "reco_cell_clipped_over_sqrt_plus": _per_cell(reco_z),
+          "basis": "first order at r = 1 over the 900 declared draws; matmul, descriptive; U-mapped (reco a proxy)"}
+    reasons = [f"N1: {k} {v['rows_above']} rows above" for k, v in exact.items() if v["rows_above"]]
+    if denom["n1"]["pairs_above"]:
+        reasons.append(f"N1: denom {denom['n1']['pairs_above']} (cell, draw) pairs above")
+    if denom["draws_with_nonpositive_cells"]:
+        reasons.append(f"2b: {len(denom['draws_with_nonpositive_cells'])} draws with a non-positive denominator cell")
+    return {"schema": SCHEMA, "step": "receipt", "n1_bound": N1_BOUND, "universes": singles,
+            "max_abs_ratio": {k: max(r[k]["max_abs_ratio"] for r in singles.values()) for k in ("wt", "wr", "bkgw")},
+            "negative_weight_universes": sorted(t for t, r in singles.items() if any(r[k]["u_negative"] for k in
+                                                                                    ("wt", "wr", "bkgw"))),
+            "exact": exact, "clipped_fraction_signal_plus_background_per_draw": signal_background,
+            "validation": validation, "denominator": denom,
+            "n_clip": {"draw_index": d_clip, "truth": labels[d_clip][0], "seed": labels[d_clip][1],
+                       "clipped_mass_at_r1": float(neg_total[d_clip]), "arithmetic": "matmul, descriptive",
+                       "role": "the reference case of the clipping offset (consult (ii)); not claimed the largest"},
+            "crossterm": {"reco_proxy_U_mapped": cross_z(Hp_s + Hp_b, Ha_s + Ha_b, H0_s + H0_b, rel_sigma),
+                          "truth_weight_histogram": cross_z(Hp_t, Ha_t, H0_t, rel_sigma),
+                          "units": "[(H_product - H_first_order) / H_CV]_c / (sigma_c / x_c), sigma_c S1's reported"},
+            "clipping_c1": c1,
+            "verdict": "STOP" if reasons else "PASS", "stop_reasons": reasons, "atime": inv.atime_check()}
+
+
+def pilot_b(plugin: bool, clip_seed: int) -> list[tuple[str, str, str]]:
+    """S1-0b (the director's ruling on cov2d's figures): after S1-0's readout and before the bulk, the clipmean at every
+    truth and the central values S1-0 lacks (AR23's, and the plug-in's), as (truth, role, item)."""
+    truths = ["g18", "ar23"] + (["plugin"] if plugin else [])
+    return [(t, "clipmean", str(clip_seed)) for t in truths] + [(t, "central", "T") for t in truths if t != "g18"]
 
 
 def pilot_walls(unfolds: Path, tag: str, plugin: bool) -> dict:
-    rows = []
+    names = []
     for role, item in PILOT[plugin]:
         truth = "data" if role in ("control", "capture") else item.split(":")[0]
         it = item.split(":", 1)[1] if ":" in item else ("" if role == "central" else item)
-        name = product_name(tag, truth, role, it if role != "central" else "T")
+        names.append(product_name(tag, truth, role, it if role != "central" else "T"))
+    return walls_of(unfolds, names)
+
+
+def walls_of(unfolds: Path, names: list[str]) -> dict:
+    """The re-price trigger over named products: every one present, each unfold within the unit and the RSS limit."""
+    rows = []
+    for name in names:
         p = unfolds / name
         if not p.exists():
             return {"verdict": "REPRICE", "why": f"missing {name}"}
@@ -611,6 +1096,48 @@ def pilot_walls(unfolds: Path, tag: str, plugin: bool) -> dict:
 
 
 # ------------------------------------------------------------------------------------------- the null and readout
+
+
+def clipcheck(a) -> dict:
+    """The up-front clipping offset (the director's ruling), after S1-0b and before the bulk: per truth,
+    o_c = U (x_clipmean - x_central)_c / sigma_c with sigma_c S1's REPORTED sigma at the data (the committed data
+    product's), a proxy for C_T, which only the bulk makes (the final readout recomputes o_c with C_T). If any cell at
+    any truth has |o_c| >= CLIP_DELTA_STAR, the verdict is TO_JOSEPH: the case goes to Joseph before any bulk."""
+    if a.clip_rule != "data":
+        raise Refusal(NATURE_UNRULED)
+    s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
+    U = sa.functional_matrix(sa.fine_map(a.definition))
+    if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
+        raise Refusal("the definition's functional is not S1's")
+    sigma = np.sqrt(np.diag(fs.reported_matrix(s1)))
+    raw = a.receipt.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != a.expect_receipt_sha256:
+        raise Refusal("the receipt's digest differs from the declared one")
+    rc = json.loads(raw)
+    if rc.get("verdict") != "PASS":
+        raise Refusal(f"the receipt's verdict is {rc.get('verdict')!r}, not PASS")
+    out, hit = {}, []
+    for truth in a.truths.split(","):
+        refuse_partials(a.unfolds, a.tag, truth)
+        refuse_mixed_estimator(a.unfolds, a.tag, truth, a.estimator, a.clip_rule)
+        cm = sorted(a.unfolds.glob(f"{a.tag}_{truth}_clipmean_*.npz"))
+        if len(cm) != 1:
+            raise Refusal(f"{truth}: {len(cm)} clipmean products, not exactly one")
+        zc = np.load(cm[0], allow_pickle=False)
+        seed = int(json.loads(str(zc["meta"]))["n_clip_seed"])
+        if seed != int(rc["n_clip"]["seed"]):
+            raise Refusal(f"{truth}: the clipmean's N_clip seed {seed} is not the receipt's {rc['n_clip']['seed']}")
+        xc = U @ np.asarray(np.load(a.unfolds / product_name(a.tag, truth, "central", "T"))["xsec_flat"], float)
+        o = (U @ np.asarray(zc["xsec_flat"], float) - xc) / sigma
+        cells = [f"R{c:02d}" for c in clip_flags(o)]
+        hit += [f"{truth}:{c}" for c in cells]
+        out[truth] = {"n_clip_seed": int(json.loads(str(zc["meta"]))["n_clip_seed"]),
+                      "offset_over_reported_sigma": o.tolist(), "cells_at_or_above_delta_star": cells,
+                      "n_clip_clip": json.loads(str(zc["meta"]))["clip"]}
+    return {"schema": SCHEMA, "step": "clipcheck", "delta_star": CLIP_DELTA_STAR, "clip_rule": a.clip_rule,
+            "receipt_sha256": a.expect_receipt_sha256, "receipt_clipping_c1": rc["clipping_c1"],
+            "sigma": "S1's reported (fd_data_product C_total_plus_C_resp), a proxy for C_T", "truths": out,
+            "verdict": "TO_JOSEPH" if hit else "PROCEED", "cells": hit}
 
 
 def _cells(unfolds: Path, tag: str, truth: str, role: str, items, U: np.ndarray) -> np.ndarray:
@@ -681,6 +1208,19 @@ def grade(E: np.ndarray, C: np.ndarray, null: dict) -> dict:
             "verdict": "UNDER-COVERS" if (any(cell_flag) or joint_flag) else "COVERS"}
 
 
+def refuse_mixed_estimator(unfolds: Path, tag: str, truth: str, estimator: str, clip_rule: str) -> None:
+    """Every product at T was unfolded by the declared estimator under the declared clipping rule (both named inputs
+    since amendment 2, so a change of either is a re-pin with a record): a product with another, or none, refuses."""
+    for p in sorted(unfolds.glob(f"{tag}_{truth}_*.npz")):
+        if ".partial-" in p.name:
+            continue
+        meta = json.loads(str(np.load(p, allow_pickle=False)["meta"]))
+        if meta.get("config") != estimator:
+            raise Refusal(f"{p.name}: estimator {meta.get('config')!r}, not the declared {estimator!r}")
+        if meta.get("clip_rule") != clip_rule:
+            raise Refusal(f"{p.name}: clip rule {meta.get('clip_rule')!r}, not the declared {clip_rule!r}")
+
+
 def refuse_partials(unfolds: Path, tag: str, truth: str) -> None:
     """A killed step leaves ``<product>.partial-<pid>.npz`` (``s5n_pseudo.write_product``), which the products' globs
     would match."""
@@ -728,6 +1268,7 @@ def cmodel_parts(s1_npz: Path, cmodel_json: Path) -> tuple[np.ndarray, np.ndarra
 
 def null_step(a) -> dict:
     """Section 5.2: the draw-matched nulls at T (C_T and the leave-out-MEC C_T^-) from the remade products only."""
+    refuse_mixed_estimator(a.unfolds, a.tag, a.truth, a.estimator, a.clip_rule)
     s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
     U = sa.functional_matrix(sa.fine_map(a.definition))
     if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
@@ -776,6 +1317,56 @@ def toy_errors(unfolds: Path, tag: str, truth: str, U: np.ndarray, rm: dict, f: 
     return X_hat - np.array(X_true), draws
 
 
+def clip_flags(o: np.ndarray) -> list[int]:
+    """The cells whose clipping offset reaches delta* (section 5's reading, and clipcheck's rule)."""
+    return [c for c in range(o.size) if abs(o[c]) >= CLIP_DELTA_STAR]
+
+
+def clipping_readout(unfolds: Path, tag: str, truth: str, U: np.ndarray, rm: dict, cell_flag: list[bool],
+                     clip_rule: str = "data") -> dict:
+    """Consult item (ii) and decision section 2a, descriptive beside the grading: the clipping offset
+    o_c = U (x_clipmean - x_central)_c / sigma_c (sigma_c from C_T); the toys' clipped fractions; the toys' clipped
+    mass per reporting cell (reco and truth) relative to N_clip's; and the reading fixed before any number was read:
+    a cell flagged at T with |o_c| >= ``CLIP_DELTA_STAR`` is read "the flag may be the clipping artefact". The verdict
+    and clause F stand either way. Defined for the "data" rule only (the audit's C4 on #717)."""
+    if clip_rule != "data":
+        raise Refusal(NATURE_UNRULED)
+    refuse_partials(unfolds, tag, truth)
+    cm = sorted(unfolds.glob(f"{tag}_{truth}_clipmean_*.npz"))
+    if len(cm) != 1:
+        raise Refusal(f"{truth}: {len(cm)} clipmean products, not exactly one")
+    zc = np.load(cm[0], allow_pickle=False)
+    sigma = np.sqrt(np.diag(rm["C_T"]))
+    o = (U @ np.asarray(zc["xsec_flat"], float) - rm["X_T"]) / sigma
+    ref_r, ref_t = U @ np.asarray(zc["clip_reco_flat"], float), U @ np.asarray(zc["clip_truth_flat"], float)
+    frac = {"signal": [], "background": []}
+    reco, tru = [], []
+    for p in toy_paths(unfolds, tag, truth):
+        z = np.load(p, allow_pickle=False)
+        rec = json.loads(str(z["meta"]))["clip"]
+        for comp in frac:
+            tot = rec[comp]["sum_lambda"]
+            frac[comp].append(abs(rec[comp]["sum_negative"]) / tot if tot else 0.0)
+        reco.append(U @ np.asarray(z["clip_reco_flat"], float))
+        tru.append(U @ np.asarray(z["clip_truth_flat"], float))
+    reco, tru = np.array(reco), np.array(tru)
+
+    def rel(X, ref):                       # NaN in the cells N_clip clips nothing in, by design
+        if not np.any(ref > 0):
+            return {"median": None, "max": None}
+        with np.errstate(divide="ignore", invalid="ignore"), warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            q = np.where(ref[None, :] > 0, X / ref[None, :], np.nan)
+            return {"median": np.nanmedian(q, axis=0).tolist(), "max": np.nanmax(q, axis=0).tolist()}
+    return {"n_clip_seed": int(json.loads(str(zc["meta"]))["n_clip_seed"]), "offset_over_sigma": o.tolist(),
+            "delta_star": CLIP_DELTA_STAR,
+            "flagged_cells_the_clipping_may_explain": [f"R{c:02d}" for c in clip_flags(o) if cell_flag[c]],
+            "clipped_fraction": {k: {"min": float(min(v)), "median": float(np.median(v)), "max": float(max(v))}
+                                 for k, v in frac.items()},
+            "toys_clipped_mass_over_n_clip": {"reco": rel(reco, ref_r), "truth": rel(tru, ref_t)},
+            "n_clip_clipped_mass": {"reco": ref_r.tolist(), "truth": ref_t.tolist()}}
+
+
 def readout(a) -> dict:
     """Section 5's grading and section 7's readouts at T. The null is the committed one, pinned by digest; it must
     have been made from these very products."""
@@ -784,6 +1375,7 @@ def readout(a) -> dict:
     nl = json.loads(a.null.read_text())
     if nl["products_sha256"] != products_digest(a.unfolds, a.tag, a.truth, BLOCK_ROLES):
         raise Refusal("the null was not made from these products")
+    refuse_mixed_estimator(a.unfolds, a.tag, a.truth, a.estimator, a.clip_rule)
     s1 = via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
     U = sa.functional_matrix(sa.fine_map(a.definition))
     if not np.allclose(U, s1["U"], rtol=0, atol=1e-6):
@@ -834,6 +1426,7 @@ def readout(a) -> dict:
                             "predicted_offset_uncentred_draws": np.asarray(offset, float).tolist(),
                             "eigen_variance_ratio_vs_C_e": eig_ratio},
             "truth_dependence": {"A_T_over_A_nom_fractional": (frac_T / frac_nom).tolist(), "group_at_T_over_M": groups},
+            "clipping": clipping_readout(a.unfolds, a.tag, a.truth, U, rm, main["cell_flag"], a.clip_rule),
             "X_T": rm["X_T"].tolist(), "sigma_T": np.sqrt(np.diag(rm["C_T"])).tolist()}
 
 
@@ -871,12 +1464,16 @@ def main(argv=None) -> int:
     p.add_argument("--push", type=Path, default=None)
     p.add_argument("--expect-push-sha256", default=None)
     p.add_argument("--threads", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", "32")))
+    p.add_argument("--estimator", choices=tuple(s5e_candidate.CANDIDATES), required=True)
+    p.add_argument("--clip-rule", choices=CLIP_RULES, required=True)
+    p.add_argument("--clip-gate", type=Path, default=None)
+    p.add_argument("--expect-clip-gate-sha256", default=None)
     p.add_argument("--tag", default="fd1b_mc")
     p = sub.add_parser("stage-flux")
     p.add_argument("--root", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("receipt")
-    for k in ("npz", "bkg", "bank", "detector-dir", "pins", "flux-constraint", "flux-table", "out"):
+    for k in ("npz", "bkg", "bank", "detector-dir", "pins", "flux-constraint", "flux-table", "staged", "definition", "out"):
         p.add_argument(f"--{k}", type=Path, required=True)
     p.add_argument("--expect-pins-sha256", required=True)
     p.add_argument("--expect-flux-table-sha256", required=True)
@@ -888,14 +1485,27 @@ def main(argv=None) -> int:
     p = sub.add_parser("walls")
     p.add_argument("--unfolds", type=Path, required=True)
     p.add_argument("--plugin", choices=("yes", "no"), required=True)
+    p.add_argument("--stage", choices=("s1-0", "s1-0b"), default="s1-0")
+    p.add_argument("--clip-seed", type=int, default=None)
     p.add_argument("--tag", default="fd1b_mc")
     p.add_argument("--out", type=Path, required=True)
+    p = sub.add_parser("clipcheck")
+    p.add_argument("--truths", required=True)
+    p.add_argument("--estimator", choices=tuple(s5e_candidate.CANDIDATES), required=True)
+    p.add_argument("--clip-rule", choices=CLIP_RULES, required=True)
+    p.add_argument("--receipt", type=Path, required=True)
+    p.add_argument("--expect-receipt-sha256", required=True)
+    for k in ("unfolds", "staged", "definition", "out"):
+        p.add_argument(f"--{k}", type=Path, required=True)
+    p.add_argument("--tag", default="fd1b_mc")
     for name in ("null", "readout"):
         p = sub.add_parser(name)
         p.add_argument("--truth", choices=tuple(TRUTHS), required=True)
         for k in ("staged", "unfolds", "definition", "cmodel-json", "flux-constraint", "out"):
             p.add_argument(f"--{k}", type=Path, required=True)
         p.add_argument("--tag", default="fd1b_mc")
+        p.add_argument("--estimator", choices=tuple(s5e_candidate.CANDIDATES), required=True)
+        p.add_argument("--clip-rule", choices=CLIP_RULES, required=True)
         if name == "readout":
             p.add_argument("--null", type=Path, required=True)
             p.add_argument("--expect-null-sha256", required=True)
@@ -911,11 +1521,14 @@ def main(argv=None) -> int:
             print(json.dumps(res))
             return 0
         if a.cmd == "walls":
-            res = pilot_walls(a.unfolds, a.tag, a.plugin == "yes")
+            if a.stage == "s1-0b" and a.clip_seed is None:
+                raise Refusal("S1-0b's walls need --clip-seed")
+            res = (pilot_walls(a.unfolds, a.tag, a.plugin == "yes") if a.stage == "s1-0" else
+                   walls_of(a.unfolds, [product_name(a.tag, t, r, i) for t, r, i in pilot_b(a.plugin == "yes", a.clip_seed)]))
             a.out.write_text(json.dumps(res, indent=1) + "\n")
             print(json.dumps({"verdict": res["verdict"], "max_seconds_unfold": res.get("max_seconds_unfold")}))
             return 0 if res["verdict"] == "PASS" else 1
-        res = {"receipt": receipt, "n1": n1_step, "null": null_step, "readout": readout}[a.cmd](a)
+        res = {"receipt": receipt, "n1": n1_step, "null": null_step, "readout": readout, "clipcheck": clipcheck}[a.cmd](a)
         res["code_sha256"] = code_digests()
         a.out.write_text(json.dumps(res, indent=1, default=float) + "\n")
         print(json.dumps({"out": str(a.out), "step": res["step"], "verdict": res.get("verdict")}))
