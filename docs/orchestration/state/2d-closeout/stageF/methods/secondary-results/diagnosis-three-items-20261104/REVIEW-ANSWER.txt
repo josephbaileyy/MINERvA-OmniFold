@@ -1,0 +1,17 @@
+Verdict: **adequate as a bounded diagnosis and scoping package, with one minor correction.** No material scientific or scope defect was found. This is not a publication-readiness verdict or approval to execute the proposals.
+
+One finding:
+
+1. **Low — misnamed statistic.** Target: `docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/REPORT.md:138`. The value 465.4153 is called an “eigenvalue sum.” Source: `docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/figs/tension_report.txt:14`, which identifies it as `sum_k c_k^2/lambda_k`. It is the sum of eigenmode chi-square contributions, not the covariance eigenvalues. The numerical ratio is correct, but the description names a different mathematical quantity. **Correction:** replace “recorded eigenvalue sum” with “recorded sum of eigenmode chi-square contributions.” No numerical rerun is needed.
+
+Verification and limits:
+
+- Confirmed the baseline HEAD is `c5e42840a4aadfd17750db17412c8fb2c29efe0b`. All 31 source identities in `SOURCES.md` match the committed bytes.
+- After checking memory, ran the small recheck with OMP, OpenBLAS and MKL threads capped at one, writing only to a temporary directory. Its output is byte-identical to `recheck.json`.
+- Independently recomputed the fractional-bias projections using QR rather than the producer’s SVD. The outside-span fractions agree within approximately `1e-16`.
+- Checked the cited evidence for the current versus earlier fake-data matrices, D-ID’s restricted inference, IBU-1’s unresolved verdict, R10’s failed null, the refined 2D adoption, the tension anatomy, RPD’s classifications, historical costs and the bound coverage calendar.
+- These checks verify source identity, receipt arithmetic and the small new projection. They do **not** independently reproduce the original ROOT inversion, fake-data ensembles, covariance construction, permutation calibration or event-level comparisons. No cluster connection, production computation, hypothesis test, contact or file edit was performed.
+
+The causal rankings are appropriately presented as investigative priorities. The proposed matched comparisons and upstream accounting can discriminate within stated domains; the report retains their confounds and does not turn clustering, geometric residuals or agreement between methods into a demonstrated cause. Historical costs remain clearly separated from unmeasured proposal prices. Consequently, the package supports prioritising inventories and preparing declarations, but is not yet a priced execution plan.
+
+The dependency inventory preserves estimator identities, adoption authority and the distinction between coverage and explanation. The calendar correctly preserves B4/estimator settlement before 1B and cov2d’s December submission, completion and terminal conditions. The three scientific limitations remain unresolved, as the report states. No further review round is necessary for the minor terminology correction.
