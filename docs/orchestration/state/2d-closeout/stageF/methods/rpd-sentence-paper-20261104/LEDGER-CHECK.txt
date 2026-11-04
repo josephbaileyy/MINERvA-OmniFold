@@ -1,0 +1,2 @@
+ledger rows 7, probes 30, changed base sentences 0, failures 0
+SELF-TEST :: PASS

@@ -80,6 +80,9 @@ READOUTS = {
     # (FD-GENCMP-X-REPORT.md sec. 1). Each is computed once, from the reported matrix, so both arms read the same files
     "cr": (f"{FD}/fd/gencmp-e/c-r/overlap_refined.json", "f1f2fb78"),
     "xk": (f"{FD}/fd/xcov/run/k/k.json", "f3dc2a34"),
+    # the run-period diagnosis's readout (FD-RPD-DECLARATION.md sec. 5; DECISION-20261104-joseph-rpd-sentence.md item 2),
+    # computed once from the per-playlist unfolds, so both arms read the same file
+    "rpd": (f"{FD}/fd/receipts-rpd/run/readout/fd_rpd.json", "c0b06cfd"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -404,6 +407,56 @@ def bound_down(x):
     return f"{math.floor(100 * x + 1e-9) / 100:.2f}"
 
 
+RPD_PL = ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1L", "1M", "1N", "1O", "1P"]
+
+
+def rpd_playlists(names):
+    """Playlists in run order, the six earliest joined as 1A--1F when all are present: "1A--1F and 1O"."""
+    names = [x for x in RPD_PL if x in names]
+    if set(RPD_PL[:6]) <= set(names):
+        names = ["1A--1F"] + [x for x in names if x not in RPD_PL[:6]]
+    return names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]
+
+
+def rpd_values(d):
+    """The run-period diagnosis (FD-RPD-DECLARATION.md sec. 5): R2's permutation test, its era test and its simulated
+    null, and R1's classes. The note states the outcomes the declaration's rules give (SEES, OTHER, CLUSTERED, and the
+    calibration within its bound), so each is asserted and a changed readout stops the run."""
+    r = d["rpd"]
+    assert r["schema"] == "fd-rpd-readout/1" and r["stage0"]["branch"] == "SEES"
+    v = {}
+    s0, sg = r["stage0"]["s0"], r["stage0"]["sigma0"]
+    v["rpd-s0"], v["rpd-s0-sigma"], v["rpd-s0-z"] = f"{100 * s0:.2f}", f"{100 * sg:.2f}", f"{s0 / sg:.1f}"
+    # R2: the flux-file grouping's F is the largest of the (6, 3, 3) partitions, so p_flux is 1/N, the smallest it can be
+    r2, n0 = r["R2"], r["N0"]
+    assert r2["outcome"] == "CLUSTERED" and not n0["SIZE_BIAS_g"] and not n0["SIZE_BIAS_t"] and not r["R3"]["read"]
+    n, ne = r2["n_partitions"]["flux"], r2["n_partitions"]["era"]
+    assert (n, ne) == (9240, 83160) and round(r2["p_flux"] * n) == 1 and abs(r2["p_flux"] * n - 1) < 1e-9
+    v["rpd-npart-flux"], v["rpd-npart-era"] = f"{n:,}", f"{ne:,}"
+    v["rpd-npart-flux-math"] = f"{n:,}".replace(",", "{,}")     # in math mode a bare comma adds a space
+    v["rpd-fflux"] = f"{r2['F_flux']:.2f}"
+
+    def sci(p):          # three significant figures, scientific
+        m, e = f"{p:.2e}".split("e")
+        return rf"{m}\times10^{{{int(e)}}}"
+    v["rpd-pflux"], v["rpd-pera"] = sci(r2["p_flux"]), sci(r2["p_era"])
+    # the simulated null: alpha at each scale of the exchangeable offsets' covariance, all within the gate (calibrated)
+    al, thr = r2["alpha"], r2["calibration_threshold"]
+    assert sorted(map(float, al)) == [0.0, 0.5, 1.0, 2.0] and all(a <= thr for a in al.values())
+    assert r2["datasets"] == 2000 and abs(thr - (0.05 + 3 * math.sqrt(0.05 * 0.95 / 2000))) < 1e-12
+    v["rpd-datasets"] = f"{r2['datasets']:,}"
+    v["rpd-alpha-lo"], v["rpd-alpha-hi"] = f"{min(al.values()):.4f}", f"{max(al.values()):.4f}"
+    v["rpd-alpha-gate"] = f"{thr:.4f}"
+    # R1: every playlist resolved; the pattern is OTHER (neither PERIOD-WIDE nor SUBSET), so no localisation is drawn
+    r1 = r["R1"]
+    cls = r1["classes"]
+    assert r1["outcome"] == "OTHER" and not r1["sentence_dropped_at_stage_D"] and not r1["forced_unresolved_by_N0"]
+    assert sorted(cls) == sorted(RPD_PL) and set(cls.values()) <= {"FREE", "CARRIES", "PARTIAL"}
+    for c in ("FREE", "CARRIES", "PARTIAL"):
+        v[f"rpd-r1-{c.lower()}"] = rpd_playlists([x for x in cls if cls[x] == c])
+    return v
+
+
 def quadrant_values(d):
     """C-R's per-quadrant reading and GENCMP X's joint test, for the paper's quadrant sentence and the note's tables."""
     v, Q = {}, ["QA", "QB", "QC", "QD"]
@@ -634,6 +687,7 @@ def values(d, arm="with"):
     v.update(gencmp_values(d, arm))
     v.update(e2_values(d, arm))
     v.update(quadrant_values(d))
+    v.update(rpd_values(d))
     # G-SENS: chi2 at each alpha per family, and the sentence's bounds (16-cell predictions only)
     recs = d["sens2"]["sens"]["records"] + d["fup"]["sens"]["records"]
     for r in recs:

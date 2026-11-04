@@ -1,0 +1,2 @@
+check_licence: PASS (licensed sentence from FD-RPD-DECLARATION.md sec. 6.2; 0 failures)
+check_licence self-test: 6/6 planted defects caught
