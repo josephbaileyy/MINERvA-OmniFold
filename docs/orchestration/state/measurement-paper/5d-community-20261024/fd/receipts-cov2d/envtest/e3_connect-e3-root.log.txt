@@ -1,0 +1,55 @@
+host=nid006907 start=2026-11-03T23:39:32Z pid=2328014 mode=root job=60768505 nproc=256
+porcelain_before_lines=0 head=c96c97f392f7402791e921ccdac952e74d454cee
+100644 blob 7dafdd3ff827378554931bd1b3d1f19aeeabe11d	2d-unfolding/cov2d/cov2d.py
+100644 blob d5718bf44c2084c20c30a8b8614e9c40e6fbeee3	2d-unfolding/cov2d/cov2d_receipt.py
+100644 blob 2402ed4b656cfc9e0bfcaf32e1870672cfb9074d	2d-unfolding/cov2d/cov2d_writer.py
+100755 blob 97f26a1d03be8cf14cdb6e0ce05e794f66f9b571	2d-unfolding/re2/re2_driver.py
+100644 blob 1810161d53c6b849d0dce7fb506d88d551d89900	nd-unfolding/fd_1b_null.py
+bound blobs: 5 of 5 at M
+== preflight: root_6_28
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python
+3.11.14 numpy 1.26.4 ROOT 6.28/12 lightgbm 4.6.0 sklearn 1.8.0
+ModuleNotFoundError: No module named 'uproot'
+taskset check: Cpus_allowed_list:	8-11
+== root_6_28 suites, each under taskset -c 8-11
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/2348266/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/2355371/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/5898/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/2193738/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/2327750/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/27028/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/627312/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/34059/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/38226/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/2327764/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/45515/cmdline: No such file or directory
+test_re2_data_file: rc=0; Ran 4 tests in 263.833s; OK
+test_re2_data_file sampler: 15 samples, 3 of a driver child, cpus seen:      15 cpus=8-11 driver threads (max): 1
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/59941/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/2336674/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/66719/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/66722/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/73501/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/80230/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/87046/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/93818/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/98190/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/627311/cmdline: No such file or directory
+/var/spool/slurmd/job60768505/slurm_script: line 61: /proc/2282813/cmdline: No such file or directory
+test_re2_driver: rc=0; Ran 9 tests in 304.327s; OK
+test_re2_driver sampler: 16 samples, 5 of a driver child, cpus seen:      16 cpus=8-11 driver threads (max): 4
+test_null205: rc=0; Ran 3 tests in 4.653s; OK
+test_null205 sampler: 0 samples, 0 of a driver child, cpus seen: driver threads (max): 
+porcelain_after_lines=0 head=c96c97f392f7402791e921ccdac952e74d454cee
+4aa0473c5d0eea39f1f190911b0cd9e78611f8d53bb81e4b147f4ad4afcf8a5c  /pscratch/sd/j/josephrb/cov2d-e3/ut_test_cov2d.log
+ddc94a8e3b51bc8681ecd948b36f8d1c58bf420ba3e41b62e8305228edd7deba  /pscratch/sd/j/josephrb/cov2d-e3/ut_test_cov2d_writer.log
+24f956e823fcee54b32aa781a9c89b84031b8a238e8807d4e540ef952eda33b5  /pscratch/sd/j/josephrb/cov2d-e3/ut_test_null205.log
+3fcff16e4a281e144ffb49a59edaf7b1f7e2327e08b621b340c2cfd96aabc127  /pscratch/sd/j/josephrb/cov2d-e3/ut_test_re2_data_file.log
+450803558b9d7b1535fb6b6918dbcadd6086665fe92fd9dfde0b35aa3cb2960e  /pscratch/sd/j/josephrb/cov2d-e3/ut_test_re2_driver.log
+fail flags: 0
+E3 PASS
+end=2026-11-03T23:51:17Z
+DONE
+removal: host=nid006907 2026-11-03T23:51:17Z 1.2G /dev/shm/josephrb-cov2d-e3
+rm -rf /dev/shm/josephrb-cov2d-e3 rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-e3': No such file or directory

@@ -1,0 +1,16 @@
++ hostname
+login02
++ date -u +%FT%TZ
+2026-11-03T23:35:16Z
++ sha256sum /dev/shm/josephrb_connect_c1.sh /dev/shm/josephrb_connect_c2.sh
+a8df2a8f4718b4f48e43d92170c69c5b91f99b4234428e06a91c417445cb3984  /dev/shm/josephrb_connect_c1.sh
+4dbdc3b29fb7682d61a6ab095d6e88cad3c542368ff9d13cd2587e17bc8b2a5f  /dev/shm/josephrb_connect_c2.sh
++ rm -f /dev/shm/josephrb_connect_c1.sh
+rc_c1=0
++ echo rc_c1=0
++ rm -f /dev/shm/josephrb_connect_c2.sh
+rc_c2=0
++ echo rc_c2=0
++ ls -la /dev/shm/
++ grep josephrb
+-rw-rw----  1 josephrb josephrb 11542 Nov  3 15:35 josephrb-cov2d-e3.sh
