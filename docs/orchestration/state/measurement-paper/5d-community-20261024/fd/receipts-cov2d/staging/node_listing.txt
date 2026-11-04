@@ -1,0 +1,16 @@
+dtn01.nersc.gov
+total 36
+drwxr-xr-x 2 josephrb josephrb 4096 Nov  3 20:27 .
+drwxr-xr-x 4 josephrb josephrb 4096 Nov  3 20:19 ..
+-rw-r--r-- 1 josephrb josephrb 1250 Nov  3 20:18 SHA256SUMS.copy
+-rw-r--r-- 1 josephrb josephrb 6549 Nov  3 20:27 connect-stage.log
+-rw-r--r-- 1 josephrb josephrb 4251 Nov  3 20:18 cov2d_stage.py
+-r--r----- 1 josephrb josephrb 2394 Nov  3 20:27 inputs.stat
+-rw-r--r-- 1 josephrb josephrb 3651 Nov  3 20:18 manifest.tsv
+73775251f377a35b86c5d9433d1db63d65267525b9261f773064a1e9d17764f6  SHA256SUMS.copy
+91bdbed3c71be35c2f027fe6cb54827185af10fb8f2f10b76ce2ee47b0c622e0  connect-stage.log
+8c21b24d2c46898aac2b3a1a8f361996c0b6fe7a7606f89fb67e18bcef54c34e  cov2d_stage.py
+3614ebadf9cb1b95340b80129e6e743e780a7979cf6392d9d64d7b56ffa02adf  inputs.stat
+55481aba72cbb82aa1c12357875eee200312ce513b36efc9a2d300e5e6e96933  manifest.tsv
+0
+0
