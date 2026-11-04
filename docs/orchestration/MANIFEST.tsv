@@ -5764,6 +5764,13 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-an
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/sec4-prd-style-gemini-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/sonnet-referee-answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/sonnet-referee-task.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-rerun-20261104/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-rerun-20261104/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-rerun-20261104/gemini-referee-answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-rerun-20261104/manuscript.blind.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-rerun-20261104/referee-prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-rerun-20261104/sonnet-referee-answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-rerun-20261104/sonnet-referee-task.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/CONSULT-GEMINI-ANSWER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/CONSULT-GEMINI-PROMPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no

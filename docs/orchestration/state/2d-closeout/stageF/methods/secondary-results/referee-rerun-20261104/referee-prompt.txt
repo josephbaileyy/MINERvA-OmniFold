@@ -1,0 +1,17 @@
+You are an experienced referee for Physical Review D, expert in neutrino cross-section measurements, unfolding (including machine-learning unfolding such as OmniFold), and systematic-uncertainty treatment. The manuscript below has been submitted to PRD. You see only the manuscript text (title, authors and references removed). It cites a companion analysis note as Ref. [14]; you do not have it.
+
+Write a full referee report, as you would submit it to the editor:
+
+1. Summary of what the paper claims and measures (3-5 sentences).
+2. Recommendation: publish as is / minor revision / major revision / reject, with one paragraph of reasons.
+3. Major issues: numbered. For each, say what is wrong or missing, why it matters physically, and what the authors must do to resolve it.
+4. The paper's stated limitations and qualifications (unvalidated coverage, the run-period uncertainty, fake-data bias exceeding thresholds, the stopped coverage test, low-stability cells, target differences, definitional departures, and any others you find). For EACH one, state which of these applies, and why:
+   (a) a real deficiency of the measurement that the authors should resolve with further analysis before publication; say what analysis would resolve it;
+   (b) an acceptable, honestly stated limitation that a PRD measurement may publish with as is;
+   (c) detail that belongs in the companion note, not the paper.
+5. Would you, as referee, prefer the authors resolve these limitations or move them out of the paper? Is the measurement publishable in PRD with its current set of limitations? Is any limitation disqualifying?
+6. Minor issues and presentation (register, clarity, length, figures and tables), numbered.
+
+Be concrete and quote the manuscript where useful. Do not invent facts about the analysis that the text does not state; where the text is silent, say so.
+
+The manuscript follows.
