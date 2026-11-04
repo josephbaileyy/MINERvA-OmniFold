@@ -17,7 +17,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_estimator_stability_probe.py"
 P, A, S = "estimator_stability_probe.py", "estimator_stability_analyze.py", "sbatch_fd_stab.sh"
-EXPECTED_TESTS = 93  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
+EXPECTED_TESTS = 94  # a script-mode run that stops early (unittest.main mid-file) exits 0 with fewer: refuse it
 MUTATIONS = [
     ("in-fold prediction", P, "rows = self.folds[:m] == f", "rows = self.folds[:m] != f",
      "test_every_evaluated_row_is_predicted_by_a_model_that_did_not_train_on_it"),
@@ -141,12 +141,18 @@ MUTATIONS = [
     ("a stopped run's products unpinned (G2)", S,
      "( cd \"$OUT\" && find runs -type f -name '*.npz' -print0 | sort -z | xargs -0 sha256sum ) > \"$L/SHA256SUMS\"\n", "",
      "test_a_reprice_stop_keeps_and_pins_the_products_and_is_not_resumed"),
-    ("an incomplete run graded (G2)", A, "    why = incomplete(Path(a.receipt))\n", "    why = None\n",
+    ("an incomplete run graded (G2)", A, "    why = incomplete(receipt_path(a))\n", "    why = None\n",
      "test_an_incomplete_run_is_not_graded"),
     ("STOP or FAILED beside the receipt ignored (G2)", A, '    for name in ("STOP", "FAILED"):', "    for name in ():",
      "test_an_incomplete_run_is_not_graded"),
     ("the receipt's counts unchecked (G2)", A, 'd.get("tasks") != n or d.get("ended") != n', "False",
      "test_an_incomplete_run_is_not_graded"),
+    ("an explicit receipt from another run admitted", A,
+     "    if a.receipt is not None and Path(a.receipt).resolve() != derived:\n", "    if False:\n",
+     "test_the_receipt_is_this_runs"),
+    ("the receipt derived from --receipt, not --runs", A, '    derived = Path(a.runs).resolve().parent / "log-full" / "DONE"\n',
+     '    derived = Path(a.receipt).resolve() if a.receipt else Path(a.runs).resolve().parent / "log-full" / "DONE"\n',
+     "test_the_receipt_is_this_runs"),
 ]
 
 

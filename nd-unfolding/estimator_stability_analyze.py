@@ -3,10 +3,12 @@
 
 Declaration: docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-DECLARATION.md (§§4-6).
 
-    estimator_stability_analyze.py --runs D --receipt <OUT>/log-full/DONE --s5c-contract J --sigma-receipt J
-        --h2-definition J --out J [--repo R]
+    estimator_stability_analyze.py --runs <OUT>/runs --s5c-contract J --sigma-receipt J --h2-definition J --out J
+        [--repo R] [--receipt <OUT>/log-full/DONE]
 
-COMPLETE RUNS ONLY (§6, §7). Nothing is graded unless the full run's DONE receipt says every queued task ended with
+COMPLETE RUNS ONLY (§6, §7). The receipt is derived from --runs (<OUT>/runs -> <OUT>/log-full/DONE), so a receipt
+from another run cannot stand in; an explicit --receipt naming another file is refused. Nothing is graded unless
+that DONE receipt says every queued task ended with
 rc 0, and no STOP or FAILED lies beside it. Otherwise the outcome is INCOMPLETE: no product is read, no criterion
 is evaluated, and no estimator is adopted. A run stopped for a reprice resumes only under an addendum the director
 binds.
@@ -256,8 +258,17 @@ def incomplete(receipt: Path) -> str | None:
     return None
 
 
+def receipt_path(a) -> Path:
+    """The full run's DONE receipt, derived from --runs: <OUT>/runs -> <OUT>/log-full/DONE. An explicit --receipt must
+    name that same file."""
+    derived = Path(a.runs).resolve().parent / "log-full" / "DONE"
+    if a.receipt is not None and Path(a.receipt).resolve() != derived:
+        raise SystemExit(f"--receipt {a.receipt} is not this run's receipt {derived}")
+    return derived
+
+
 def run(a) -> int:
-    why = incomplete(Path(a.receipt))
+    why = incomplete(receipt_path(a))
     if why:
         out = {"schema": "estimator-stability-analysis/1",
                "label": "FD-STAB: the run is not complete, so nothing was graded and no estimator is adopted",
@@ -317,8 +328,9 @@ def run(a) -> int:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    for opt in ("--runs", "--receipt", "--s5c-contract", "--sigma-receipt", "--h2-definition", "--out"):
+    for opt in ("--runs", "--s5c-contract", "--sigma-receipt", "--h2-definition", "--out"):
         ap.add_argument(opt, required=True)
+    ap.add_argument("--receipt", help="optional: must be <runs>/../log-full/DONE, the receipt derived from --runs")
     ap.add_argument("--repo", default=".", help="repository root (the closures' committed truth files)")
     return run(ap.parse_args(argv))
 

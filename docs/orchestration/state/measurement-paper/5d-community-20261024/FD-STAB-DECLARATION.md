@@ -216,7 +216,9 @@ GiBUU truths does not move the verdict.
 - **NONE_PASS:** no candidate passes. **Terminal**, with the same consequences.
 - **INCOMPLETE:** the full run did not complete: a STOP, a failed task, or Slurm's limit (§7). Nothing is graded:
   the analysis requires the full run's `DONE` receipt, with all 128 tasks ended, rc 0, and no `STOP` or `FAILED` beside
-  it, and otherwise reads no product. The outcome is reported to the director, and no estimator is adopted. Only an
+  it, and otherwise reads no product. The receipt is derived from `--runs` (`<OUT>/runs` gives `<OUT>/log-full/DONE`),
+  so a receipt from another run cannot stand in, and an explicit `--receipt` naming another file is refused
+  (`EndToEnd.test_the_receipt_is_this_runs`). The outcome is reported to the director, and no estimator is adopted. Only an
   addendum the director binds can complete the run (§7).
 - **INVALID:** a candidate that meets §4.3 has a zero floor at some truth (§5.2). **Terminal for this analysis:** the
   readout goes to the director, and nothing is adopted from it.
@@ -334,6 +336,9 @@ GiBUU truths does not move the verdict.
     ends the job before it can, so the report pins them then.
   - **They are not graded until the probe completes** (§6, `EndToEnd.test_an_incomplete_run_is_not_graded`).
   - **If the probe is not completed, the outcome is INCOMPLETE:** reported, and no estimator is adopted.
+- **Who runs it.** The limitations-catalog session, which wrote the probe, does not contact the cluster. The dry run
+  and the full run are submitted, watched and charged from `sacct` by a cluster lane the director assigns at binding.
+  The same lane pins the products and reports a stop or the completed run to the director.
 - **Every job under 12 h:** 0:45 and at most 7:15. The longest task is 4 unfolds, 1.5 h at B2's 2×.
 - **Rules:**
   - CPU only, regular QOS, `--no-requeue`, `--exclusive`;
@@ -354,8 +359,8 @@ GiBUU truths does not move the verdict.
 | `nd-unfolding/estimator_stability_probe.py` | the candidates; `install` rebinds `s5c_unfold.config_params`, `omnifold_nn_core.make_estimators` and `s5n_pseudo.write_product` for one invocation, and checks the runner's parsed arguments; the stability and closure runners (`s5p_numerics`, `s5p_nullexp`, unchanged); the declared queue and the dry run's eight tasks; the budget `gate` |
 | `nd-unfolding/sbatch_fd_stab.sh` | the job: the dry run or the full queue, on 8 lanes, every task through the gate; a DONE receipt only for a complete, clean run |
 | `nd-unfolding/estimator_stability_analyze.py` | §§4–6: the completeness check (INCOMPLETE), the product checks, the criteria, the verdict |
-| `nd-unfolding/tests/test_estimator_stability_probe.py` | 93 tests, with every refusal and criterion tested in the direction it acts and the other; the job script is run locally on a stand-in deploy |
-| `nd-unfolding/tests/estimator_stability_mutation.py` | 66 planted defects in the probe, the analysis and the job script, each of which must be killed by its NAMED test; the unmutated suite must run all 93 tests in script mode |
+| `nd-unfolding/tests/test_estimator_stability_probe.py` | 94 tests, with every refusal and criterion tested in the direction it acts and the other; the job script is run locally on a stand-in deploy |
+| `nd-unfolding/tests/estimator_stability_mutation.py` | 68 planted defects in the probe, the analysis and the job script, each of which must be killed by its NAMED test; the unmutated suite must run all 94 tests in script mode |
 | `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/no-ratio.json` | the q3 placeholder |
 
 - **No production module is edited.**
@@ -367,14 +372,14 @@ GiBUU truths does not move the verdict.
 
 **Commands.**
 
-    python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 93 tests
-    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 66 mutations, all killed
+    python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 94 tests
+    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 68 mutations, all killed
     python3 -I nd-unfolding/estimator_stability_probe.py tasks --out <OUT>/queue.tsv --dry-out <OUT>/dry.tsv \
         --npz … --bkg … --bank … --detector-dir … --expect-npz-sha256 … --expect-bkg-sha256 … \
         --closure-ratio-dir <pv-ladder dir> --runs <OUT>/runs
     sbatch --time=0:45 nd-unfolding/sbatch_fd_stab.sh dry <deploy> <pin> <OUT> 8.0
     sbatch --time=<8.0 minus the dry run's charge> nd-unfolding/sbatch_fd_stab.sh full <deploy> <pin> <OUT> <8.0 minus that charge>
-    python3 -I nd-unfolding/estimator_stability_analyze.py --runs <OUT>/runs --receipt <OUT>/log-full/DONE --s5c-contract docs/orchestration/state/s5c/contract.json \
+    python3 -I nd-unfolding/estimator_stability_analyze.py --runs <OUT>/runs --s5c-contract docs/orchestration/state/s5c/contract.json \
         --sigma-receipt docs/orchestration/state/s5e/cand/assess_receipt.json \
         --h2-definition nd-unfolding/pv-ladder/readouts/h2_definition.json --out <readout> --repo .
 
@@ -410,8 +415,8 @@ These are Joseph's separate decision (`DECISION-20261102-joseph-bias-and-stabili
 1. **The pv-ladder closure ratio** (`prep/ratios/L-5D-PV/nuwro.json`, `38e47eb6…`). The dry run confirms the file's
    presence, its digest and its `schema`, which must name a declared truth kind (`SCHEMA_TRUTH`); the probe refuses
    otherwise.
-2. **The dry run: one short single-node regular job** (`sbatch_fd_stab.sh dry`, `--time=0:45`), by a cluster lane,
-   before step two of the binding. Its eight one-unfold tasks run on the **full run's 8 lanes**, so its timings are on
+2. **The dry run: one short single-node regular job** (`sbatch_fd_stab.sh dry`, `--time=0:45`), by the cluster lane
+   the director assigns (§7), before step two of the binding. Its eight one-unfold tasks run on the **full run's 8 lanes**, so its timings are on
    the basis the gate uses. A login node's wall, or a four-lane job's, would not be.
    - The tasks (`DRY_TASKS`): each candidate's first stability task (one jittered unfold, through the stability
      runner); the control's nominal and A7 MnvTune closures (also the determinism pair); one B2 and one B3b closure.
@@ -459,4 +464,5 @@ and thirteen tests. Each claim was checked against the code before it was change
 | G2 | what a reprice resumes was not declared, and a fresh full run would re-launch finished tasks and record near-zero times | **fixed, as the director ruled:** no resume without an addendum the director binds; products kept and pinned (`SHA256SUMS` on every outcome), not graded until the probe completes; otherwise INCOMPLETE, reported, and no estimator adopted. The analysis enforces it: without a complete full run's receipt it reads no product (§6, §7) |
 | G3 | two of the audit's 28 mutants survived: B2's ratio from the cheaper kind, and DONE without the count of ended tasks | **killed:** `Gate.test_b2_over_twice_in_one_kind_only_stops` (both kinds); the count is stated as defensive and tested by removing an end mid-run (`JobScript.test_an_end_lost_during_the_run_leaves_no_receipt`) |
 | fixture | the job-script tests' stand-in runner read `--pairs` as two tokens, so every task slept as one unfold | **fixed:** it reads the `=` form, so its lane time is in proportion to the unfolds, and it writes a product per task for the pinning test |
+| receipt | the audit's confirmation at 7f7f59ae noted that `--receipt` was not tied to `--runs`, so a `DONE` from another run would pass; the director ruled it a G2 defect, to be fixed before binding | **fixed:** the receipt is derived from `--runs`, and an explicit `--receipt` naming another file is refused (`EndToEnd.test_the_receipt_is_this_runs`, two mutants). §7 now says who runs the jobs: a cluster lane the director assigns |
 

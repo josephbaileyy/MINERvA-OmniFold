@@ -451,6 +451,7 @@ class EndToEnd(unittest.TestCase):
                                                             "sigma_rel_pct": [1.0] * self.F}))
         (self.root / "contract.json").write_text("{}")
         self.receipt = self.root / "log-full" / "DONE"
+        self.receipt_arg = True
         self.receipt.parent.mkdir()
         self.receipt.write_text(json.dumps({"mode": "full", "tasks": 128, "ended": 128, "rc": 0, "job": "1"}) + "\n")
         an.SIGMA_RECEIPT_SHA256 = probe.sha256_path(self.root / "receipt.json")
@@ -522,9 +523,9 @@ class EndToEnd(unittest.TestCase):
 
     def run_analysis(self):
         out = self.root / "out.json"
-        args = ["--runs", str(self.root / "runs"), "--receipt", str(self.receipt), "--s5c-contract", str(self.root / "contract.json"),
+        args = ["--runs", str(self.root / "runs"), "--s5c-contract", str(self.root / "contract.json"),
                 "--sigma-receipt", str(self.root / "receipt.json"), "--h2-definition", "unused", "--out", str(out),
-                "--repo", str(REPO)]
+                "--repo", str(REPO)] + (["--receipt", str(self.receipt)] if self.receipt_arg else [])
         import contextlib
         import io
         with contextlib.redirect_stdout(io.StringIO()):
@@ -576,6 +577,30 @@ class EndToEnd(unittest.TestCase):
         shutil.rmtree(self.root / "runs")
         self.receipt.unlink()
         self.assertEqual(self.run_analysis()["verdict"]["verdict"], "INCOMPLETE")
+
+    def test_the_receipt_is_this_runs(self):
+        # a complete run's DONE from another OUT does not stand in: derived from --runs, an explicit other is refused
+        import shutil
+        self.products({"control": 0.03, "B2": 0.002, "B3a": 0.002, "B3b": 0.03}, {("B3a", "A7_nuwro"): 0.2})
+        other = self.root / "other" / "log-full" / "DONE"
+        other.parent.mkdir(parents=True)
+        shutil.copy(self.receipt, other)
+        self.receipt.unlink()
+        with self.subTest("explicit receipt from another run"):
+            saved, self.receipt = self.receipt, other
+            with self.assertRaises(SystemExit):
+                self.run_analysis()
+            self.receipt = saved
+        with self.subTest("derived: this run has none"):
+            self.receipt_arg = False
+            self.assertEqual(self.run_analysis()["verdict"]["verdict"], "INCOMPLETE")
+        with self.subTest("derived and explicit, same file by another spelling"):
+            shutil.copy(other, self.receipt)
+            self.assertEqual(self.run_analysis()["verdict"]["verdict"], "WINNER")
+            self.receipt_arg = True
+            saved, self.receipt = self.receipt, self.root / "log-full" / "." / "DONE"
+            self.assertEqual(self.run_analysis()["verdict"]["verdict"], "WINNER")
+            self.receipt = saved
 
     def test_the_product_checks_refuse(self):
         for tamper in ("missing_jitter", "hypothesis", "candidate", "expectation", "amplitude", "bootstrap",
