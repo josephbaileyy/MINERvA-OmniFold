@@ -1,0 +1,29 @@
++ hostname
+login02
++ date -u +%FT%TZ
+2026-11-03T23:51:08Z
++ du -sh /dev/shm/josephrb-cov2d-2a
+40K	/dev/shm/josephrb-cov2d-2a
++ sha256sum /dev/shm/josephrb-cov2d-2a.sh
+b8c7656fd2ad6dd38587e6dc305377d13fb02cf59cba5fde6f9c9ddce849a765  /dev/shm/josephrb-cov2d-2a.sh
++ rm -rf /dev/shm/josephrb-cov2d-2a
+rc_dir=0
++ echo rc_dir=0
++ rm -f /dev/shm/josephrb-cov2d-2a.sh
+rc_script=0
++ echo rc_script=0
++ ls -d /dev/shm/josephrb-cov2d-2a /dev/shm/josephrb-cov2d-2a.sh
+ls: cannot access '/dev/shm/josephrb-cov2d-2a': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-2a.sh': No such file or directory
++ ls -la /dev/shm
++ grep josephrb
+-rw-rw----  1 josephrb josephrb 11542 Nov  3 15:35 josephrb-cov2d-e3.sh
++ ps -u josephrb -o pid,etime,args
++ cut -c1-100
+    PID     ELAPSED COMMAND
+1249641       00:14 /usr/lib/systemd/systemd --user
+1249911       00:14 (sd-pam)
+1260846       00:01 sshd: josephrb@notty
+1260849       00:01 bash -c set -x; hostname; date -u +%FT%TZ; du -sh /dev/shm/josephrb-cov2d-2a; sh
+1261294       00:00 ps -u josephrb -o pid,etime,args
+1261295       00:00 cut -c1-100

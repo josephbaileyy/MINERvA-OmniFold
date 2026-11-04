@@ -1,0 +1,9 @@
+no_patch KILLED FAILED (failures=8)
+stub_skips_sha KILLED FAILED (failures=1)
+no_array_digest KILLED FAILED (failures=3)
+no_file_digest KILLED FAILED (failures=1)
+no_call_count KILLED FAILED (failures=1)
+no_after_sha KILLED FAILED (failures=1)
+reach_ignores_alias KILLED FAILED (failures=3)
+reach_ignores_imports KILLED FAILED (failures=2)
+killed 8/8
