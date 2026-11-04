@@ -50,6 +50,15 @@ CAL_SETS = 10_000                             # replicate sets of 300 draws per 
 CAL_SEED = {"g18": 3_671_000, "ar23": 3_672_000, "plugin": 3_673_000}
 CAL_SALT = 20_261_103_7                       # [CAL_SEED, set, CAL_SALT]: see calibration_draws on why it is disjoint
 CLIPPED = "option_1_clipped"
+# Joseph's large-sample gate (DECISION-20261104-joseph-1b-large-sample-gate.md; the director's P1-P7)
+GATE_N = 3000                                 # draws per truth in the gate sample; the first 300 are the declared toys
+GATE_SEED_BASE = {"g18": 3_680_000, "ar23": 3_690_000, "plugin": 3_700_000}   # the next GATE_N - 300 seeds
+S_GRID = tuple(round(0.50 + 0.01 * k, 2) for k in range(251))              # P2: s on a 0.01 grid, 0.50 to 3.00
+POWER_MIN = 0.80                              # P4: per truth, against a uniform deflation of UNIFORM_DEFLATION
+UNIFORM_DEFLATION = 0.08
+CONCENTRATED = ((1, 0.20), (2, 0.15), (4, 0.10))   # P4: (cells, deflation), reported, not required
+PLACEMENTS = 16
+BACKSTOP_SD_MULT = 4.3                        # P6: (iii) by (alpha) on the 300 declared draws, with (i) at k = 2
 
 
 class Refusal(RuntimeError):
@@ -197,6 +206,14 @@ def xt_packed(A: np.ndarray, B: np.ndarray, D: np.ndarray, flux: np.ndarray, n_n
 # ----------------------------------------------------------------------------------------------- calibration
 
 
+def gate_seeds(truth: str) -> list[int]:
+    """The gate sample's draw seeds (P1): the declared toys' 300 (fd_1b_mc.TOY_SEEDS), then GATE_N - 300 more from
+    GATE_SEED_BASE, drawn by the same toys.draw_for_seed, so the first 300 are the declared draws bit for bit."""
+    import fd_1b_mc as mc
+    return [int(x) for x in mc.TOY_SEEDS[truth]] + list(range(GATE_SEED_BASE[truth],
+                                                              GATE_SEED_BASE[truth] + GATE_N - len(mc.TOY_SEEDS[truth])))
+
+
 def calibration_draws(truth: str, s: int, flux_p: np.ndarray, groups: dict, n: int = 300) -> list[list[str]]:
     """Replicate set ``s`` of ``truth``: n draws by toys.draw's own law from the stream [CAL_SEED, s, CAL_SALT].
     numpy's SeedSequence zero-pads its entropy, so a two-word [seed, salt] (every declared draw's [seed, DRAW_SALT],
@@ -279,6 +296,102 @@ def rates(R: dict, deflation: float = DEFLATION) -> dict:
                                      "se": float(math.sqrt(per_rep * (1 - per_rep) / n))}
     out["to_joseph"] = out["over_truths_b"]["union_per_replicate"] > UNION_LIMIT
     return out
+
+
+def null_stats(R: np.ndarray) -> dict:
+    """Per replicate set (rows of R, sets x 16): (i)'s verdict at #724's fixed numbers (gate_724), the mean log ratio
+    and the per-cell |r - 1|; with the null SDs over sets of the mean log and of each cell's ratio."""
+    R = np.asarray(R, np.float64)
+    g = [gate_724(r) for r in R]
+    return {"i": np.array([not x["i"] for x in g]), "ml": np.array([x["mean_log"] for x in g]),
+            "dev": np.abs(R - 1.0), "sd_ml": float(np.std([x["mean_log"] for x in g], ddof=1)),
+            "sd_c": np.std(R, axis=0, ddof=1)}
+
+
+def stops_at(st: dict, s: float, sd_ml: float, sd_c: np.ndarray) -> np.ndarray:
+    """The large-sample gate's STOP per replicate at multiple s (P2): (i) fixed; (ii) |mean log| > s 3.5 SD_ii;
+    (iii) by (alpha), max_c |r_c - 1| / SD_c > s 4.3; SD_ii and SD_c from the null at N."""
+    with np.errstate(divide="ignore", invalid="ignore"):
+        z = np.where(sd_c > 0, st["dev"] / sd_c, np.where(st["dev"] > 0, np.inf, 0.0))
+    return st["i"] | (np.abs(st["ml"]) > s * SD_MULT_LOGMEAN * sd_ml) | (np.max(z, axis=1) > s * SD_MULT_CELL)
+
+
+def threshold_rule(R: dict) -> dict:
+    """P2: the smallest s on S_GRID whose joint (i)-(iii) noise-only STOP over three truths is at most UNION_LIMIT.
+    With the plug-in absent, its per-truth rate is projected as the mean of the others', independent (labelled);
+    with all three present, the union is measured per replicate. Records the whole grid, the s chosen (None if none
+    reaches the limit), the per-truth thresholds, and whether (i) alone already exceeds the budget."""
+    st = {t: null_stats(r) for t, r in R.items()}
+    sd = {t: (st[t]["sd_ml"], st[t]["sd_c"]) for t in R}
+    three = set(R) == {"g18", "ar23", "plugin"}
+
+    def union(stops):
+        if three:
+            n = min(v.size for v in stops.values())
+            return float(np.mean(np.any([v[:n] for v in stops.values()], axis=0)))
+        p = [float(v.mean()) for v in stops.values()]
+        return 1.0 - float(np.prod([1 - x for x in p])) * (1.0 - float(np.mean(p)))
+    grid, chosen = [], None
+    for s in S_GRID:
+        stops = {t: stops_at(st[t], s, *sd[t]) for t in R}
+        u = union(stops)
+        grid.append({"s": s, "union": u, "per_truth": {t: float(v.mean()) for t, v in stops.items()}})
+        if chosen is None and u <= UNION_LIMIT:
+            chosen = s
+    i_alone = union({t: st[t]["i"] for t in R})
+    return {"three_truths_measured": three, "projection": None if three else
+            "the plug-in's per-truth rate as the mean of the others', independent", "grid": grid, "s": chosen,
+            "thresholds": {t: {"ii_mean_log": None if chosen is None else chosen * SD_MULT_LOGMEAN * sd[t][0],
+                               "iii_alpha_multiple": None if chosen is None else chosen * SD_MULT_CELL,
+                               "sd_mean_log": sd[t][0], "sd_per_cell": sd[t][1].tolist()} for t in R},
+            "i_alone_union": i_alone, "i_alone_exceeds": bool(i_alone > UNION_LIMIT)}
+
+
+def power_at(R: dict, rule: dict) -> dict:
+    """P4 at the rule's s: the gate's STOP rate per truth against a uniform UNIFORM_DEFLATION (required >= POWER_MIN)
+    and against deflations concentrated in k cells (reported): every cell for k = 1, PLACEMENTS seeded sets for k > 1;
+    min and mean over placements. The null SDs stay the undeflated null's."""
+    s = rule["s"]
+    out = {}
+    for t, r in R.items():
+        r = np.asarray(r, np.float64)
+        sd_ml, sd_c = rule["thresholds"][t]["sd_mean_log"], np.asarray(rule["thresholds"][t]["sd_per_cell"])
+        rate = lambda X: float(stops_at(null_stats(X), s, sd_ml, sd_c).mean())  # noqa: E731
+        conc = {}
+        for k, d in CONCENTRATED:
+            if k == 1:
+                sets = [[c] for c in range(N_CELLS)]
+            else:
+                rng = np.random.default_rng([CAL_SALT, k])
+                sets = [sorted(rng.choice(N_CELLS, k, replace=False).tolist()) for _ in range(PLACEMENTS)]
+            vals = []
+            for cells in sets:
+                X = r.copy()
+                X[:, cells] *= (1.0 - d)
+                vals.append(rate(X))
+            conc[f"{k}_cells_{int(round(d * 100))}pct"] = {"min": min(vals), "mean": float(np.mean(vals)),
+                                                            "placements": sets}
+        uni = rate(r * (1.0 - UNIFORM_DEFLATION))
+        out[t] = {"uniform": uni, "uniform_meets": bool(uni >= POWER_MIN), "concentrated": conc}
+    out["meets"] = all(v["uniform_meets"] for k, v in out.items() if k != "meets")
+    return out
+
+
+def calibration_verdict_n(law: dict, lin: dict, rule: dict, power: dict | None) -> str:
+    """The large-sample calibration's verdict, in order: the law control (CONTROL_FAILED), the linearisation, (i)
+    alone over the budget, no s reaching the budget, the power short of POWER_MIN (each to the director: raising N is
+    priced there), else CALIBRATED."""
+    if not law["holds"]:
+        return "CONTROL_FAILED"
+    if not lin["holds"]:
+        return "LINEARISATION_TO_DIRECTOR"
+    if rule["i_alone_exceeds"]:
+        return "I_ALONE_TO_DIRECTOR"
+    if rule["s"] is None:
+        return "NO_THRESHOLD_TO_DIRECTOR"
+    if not power["meets"]:
+        return "POWER_SHORT_TO_DIRECTOR"
+    return "CALIBRATED"
 
 
 def calibration_verdict(law: dict, lin: dict, out: dict) -> str:
@@ -421,7 +534,7 @@ def row_match(gen: np.ndarray, wt: np.ndarray, in_ps: np.ndarray, td: np.ndarray
 
 # ------------------------------------------------------------------------------------------ the calibration job
 
-SCHEMA_CAL = "fd-1b-c2-calibration/1"
+SCHEMA_CAL = "fd-1b-c2-calibration/2"            # /2: at GATE_N draws per set, with the s rule and power (P2, P4)
 _STATE: dict = {}
 
 
@@ -472,7 +585,7 @@ def _worker_init(state: dict) -> None:
 def _one_set(job: tuple[str, int]) -> tuple[str, int, np.ndarray, np.ndarray]:
     t, s = job
     st = _STATE
-    S = selection(calibration_draws(t, s, st["flux_p"], st["groups"]), st["col"], st["bands"])
+    S = selection(calibration_draws(t, s, st["flux_p"], st["groups"], n=st["n"]), st["col"], st["bands"])
     H = {"A": st["H"][f"A_{t}"], "B": st["H"]["B"], "D": st["H"]["D"]}
     cv = {"A": st["cv"][f"A_{t}"], "B": st["cv"]["B"], "D": st["cv"]["D"]}
     rx, rl = set_ratios(S, H, cv, st["U"], st["ref_x"][t], st["ref_count"][t], st["flux_cols"], st["phi"],
@@ -566,7 +679,8 @@ def calibrate_main(a) -> dict:
     r_neg, det_differs, single_x = P["r_neg"], P["det_differs"], P["single_x"]
     groups = world["groups"]
     state = {"H": H, "cv": cv, "U": U, "ref_x": ref_x, "ref_count": ref_count, "flux_cols": flux_cols,
-             "phi": phi, "const": const, "flux_p": flux_p, "groups": groups, "col": col, "bands": bands}
+             "phi": phi, "const": const, "flux_p": flux_p, "groups": groups, "col": col, "bands": bands,
+             "n": getattr(a, "draws", GATE_N)}
     _worker_init(state)
     t1 = time.time()
     first = _one_set((truths[0], 0))
@@ -585,17 +699,22 @@ def calibrate_main(a) -> dict:
     with multiprocessing.get_context("fork").Pool(a.workers) as pool:
         for t, s, rx, rl in pool.imap_unordered(_one_set, jobs, chunksize=8):
             Rx[t][s], Rl[t][s] = rx, rl
-    law, lin = control(Rl), linearisation(Rx)
-    out = rates(Rx)
+    law, lin = control(Rl), linearisation(Rx)                # P5: at N, before any threshold is read
+    out = rates(Rx)                                           # #724's fixed numbers and (c), descriptive at N
+    rule = threshold_rule(Rx)
+    power = power_at(Rx, rule) if rule["s"] is not None else None
     digests = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (
         Path(__file__).resolve(), Path(mc.__file__).resolve(), Path(cp2.__file__).resolve(),
         Path(cov2d.__file__).resolve(), Path(toys.__file__).resolve())}
-    verdict = calibration_verdict(law, lin, out)
+    verdict = calibration_verdict_n(law, lin, rule, power)
     rec = {"schema": SCHEMA_CAL, "step": "c2-calibration", "verdict": verdict, "truths": truths, "sets": a.sets,
+           "draws_per_set": state["n"], "rule": rule, "power": power,
            "seeds": {t: CAL_SEED[t] for t in truths}, "salt": CAL_SALT, "constants": {
                "k": GATE_K, "dev": GATE_DEV, "mean_log": GATE_LOGMEAN, "max_dev": GATE_MAX,
                "sd_mult_mean_log": SD_MULT_LOGMEAN, "sd_mult_cell": SD_MULT_CELL, "union_limit": UNION_LIMIT,
-               "deflation": DEFLATION, "control_z": CONTROL_Z, "linearisation_tol": LINEARISATION_TOL},
+               "deflation": DEFLATION, "control_z": CONTROL_Z, "linearisation_tol": LINEARISATION_TOL,
+               "gate_n": GATE_N, "s_grid": [S_GRID[0], S_GRID[-1], 0.01], "power_min": POWER_MIN,
+               "uniform_deflation": UNIFORM_DEFLATION, "concentrated": CONCENTRATED, "placements": PLACEMENTS},
            "outputs": out, "control_law": law, "control_linearisation": lin,
            "ratio_mean_per_cell": {t: Rx[t].mean(axis=0).tolist() for t in truths},
            "checks": {"r_negative": r_neg, "detector_denominator_differs_from_cv": det_differs},
@@ -747,7 +866,8 @@ def main(argv=None) -> int:
         if a.sets != CAL_SETS:
             raise Refusal(f"the calibration is declared at {CAL_SETS} sets per truth")
         rec = calibrate_main(a)
-        print(f"C2-CALIBRATION verdict={rec['verdict']} over_truths_b={rec['outputs']['over_truths_b']}")
+        print(f"C2-CALIBRATION verdict={rec['verdict']} s={rec['rule']['s']} "
+              f"i_alone={rec['rule']['i_alone_union']:.4f} power={json.dumps(rec['power'] and {t: v['uniform'] for t, v in rec['power'].items() if t != 'meets'})}")
         return 0 if rec["verdict"] == "CALIBRATED" else 3
     return 2
 

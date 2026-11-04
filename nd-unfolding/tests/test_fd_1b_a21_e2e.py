@@ -86,7 +86,8 @@ class E2E(unittest.TestCase):
         cls.x = consistent_world(cls.tmp)
         cls.cal = cls.tmp / "cal" / "cal.json"
         with cls.patched():
-            cls.cal_rec = c2.calibrate_main(cls.args(sets=40, workers=2, budget_seconds=1e6, out=cls.cal))
+            cls.cal_rec = c2.calibrate_main(cls.args(sets=40, workers=2, budget_seconds=1e6, out=cls.cal,
+                                                     draws=300))      # speed: the rule and power are N-free
 
     @classmethod
     def tearDownClass(cls):
@@ -125,7 +126,8 @@ class E2E(unittest.TestCase):
         self.assertEqual(z["ratio_g18"].shape, (40, sa.N_CELLS))
         self.assertFalse(np.array_equal(z["single_x_g18"], z["single_x_ar23"]))     # the toy F1 ratios, unmocked
         self.assertTrue(rec["control_law"]["holds"])
-        self.assertIn(rec["verdict"], ("CALIBRATED", "TO_JOSEPH", "LINEARISATION_TO_DIRECTOR"))
+        self.assertIn(rec["verdict"], ("CALIBRATED", "CONTROL_FAILED", "LINEARISATION_TO_DIRECTOR", "I_ALONE_TO_DIRECTOR", "NO_THRESHOLD_TO_DIRECTOR", "POWER_SHORT_TO_DIRECTOR"))
+        self.assertEqual(len(rec["rule"]["grid"]), len(c2.S_GRID))
 
     def calibrated(self):
         """The calibration's own record with its verdict set to CALIBRATED (a named fixture step: 40 sets cannot

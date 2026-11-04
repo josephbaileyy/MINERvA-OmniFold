@@ -258,6 +258,88 @@ class Block(unittest.TestCase):
         np.testing.assert_allclose(b["variance_ratio"]["first_order"], np.var(q["N"], axis=1, ddof=1))
 
 
+class LargeSample(unittest.TestCase):
+    """Joseph's large-sample gate (P1-P7): the gate seeds, the s rule, power, the verdict's order."""
+
+    def test_the_gate_seeds_extend_the_declared_toys(self):
+        for t in ("g18", "ar23", "plugin"):
+            g = c2.gate_seeds(t)
+            self.assertEqual(len(g), c2.GATE_N)
+            self.assertEqual(g[:300], [int(x) for x in mc.TOY_SEEDS[t]])                 # bit for bit (P1)
+            self.assertEqual(len(set(g)), c2.GATE_N)
+
+    def test_the_new_seeds_are_used_nowhere_else(self):
+        """P1's no-reuse scan, in a test: the gate's new seeds are disjoint from every declared seed set in the code,
+        and no committed task table, script or receipt under docs/orchestration names an integer in their ranges."""
+        import re
+        import fd_f1_tasks
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "2d-unfolding" / "cov2d"))
+        import cov2d as cv2
+        new = {x for t in ("g18", "ar23", "plugin") for x in c2.gate_seeds(t)[300:]}
+        declared = {int(x) for t in mc.TOY_SEEDS for x in mc.TOY_SEEDS[t]} | set(mc.STAT_SEED.values())
+        declared |= {mc.SEED_CHECK, mc.VALIDATE_SEED} | set(c2.CAL_SEED.values())
+        declared |= {s + k for s in fd_f1_tasks.SEEDS.values() for k in range(fd_f1_tasks.N_PE)}
+        declared |= {x for r in cv2.TOY_SEEDS.values() for x in r} | set(cv2.REALIZATION_SEED.values()) | {cv2.NULL_SEED}
+        self.assertFalse(new & declared)
+        lo, hi = min(new), max(new)
+        root = Path(__file__).resolve().parents[2] / "docs" / "orchestration"
+        hits = []
+        for p in [*root.rglob("*.tsv"), *root.rglob("*.sh")]:
+            for m in re.finditer(r"(?<![0-9])([0-9]{7})(?![0-9])", p.read_text(errors="ignore")):
+                if lo <= int(m.group(1)) <= hi and int(m.group(1)) in new:
+                    hits.append(f"{p.name}: {m.group(1)}")
+        self.assertEqual(hits, [])
+
+    def null(self, n=4000, sd=0.03, seed=1):
+        rng = np.random.default_rng(seed)
+        return np.exp(rng.normal(0, sd, (n, 1)) + rng.normal(0, 0.05, (n, 16)))
+
+    def test_the_rule_picks_the_smallest_s_within_the_budget(self):
+        R = {"g18": self.null(seed=1), "ar23": self.null(seed=2)}
+        rule = c2.threshold_rule(R)
+        self.assertFalse(rule["three_truths_measured"])
+        self.assertIsNotNone(rule["projection"])
+        s = rule["s"]
+        u = {g["s"]: g["union"] for g in rule["grid"]}
+        self.assertLessEqual(u[s], c2.UNION_LIMIT)
+        self.assertTrue(all(u[x] > c2.UNION_LIMIT for x in u if x < s))
+        self.assertEqual(len(rule["grid"]), len(c2.S_GRID))
+        t = rule["thresholds"]["g18"]
+        self.assertAlmostEqual(t["ii_mean_log"], s * c2.SD_MULT_LOGMEAN * t["sd_mean_log"])
+        self.assertAlmostEqual(t["iii_alpha_multiple"], s * c2.SD_MULT_CELL)
+        R3 = dict(R, plugin=self.null(seed=3))
+        self.assertTrue(c2.threshold_rule(R3)["three_truths_measured"])
+
+    def test_i_alone_over_the_budget_is_flagged(self):
+        R = self.null()
+        R[:200, :3] = 1.3                                     # (i) fires in 5 % of sets
+        rule = c2.threshold_rule({"g18": R, "ar23": R})
+        self.assertTrue(rule["i_alone_exceeds"])
+        self.assertFalse(c2.threshold_rule({"g18": self.null(), "ar23": self.null(seed=4)})["i_alone_exceeds"])
+
+    def test_power_uniform_and_concentrated(self):
+        R = {"g18": self.null(sd=0.005, seed=5), "ar23": self.null(sd=0.005, seed=6)}
+        rule = c2.threshold_rule(R)
+        pw = c2.power_at(R, rule)
+        self.assertTrue(pw["meets"])                          # a small common SD: an 8 % deflation is caught
+        self.assertEqual(len(pw["g18"]["concentrated"]["1_cells_20pct"]["placements"]), 16)
+        self.assertEqual(len(pw["g18"]["concentrated"]["4_cells_10pct"]["placements"]), c2.PLACEMENTS)
+        R = {"g18": self.null(sd=0.03, seed=7), "ar23": self.null(sd=0.03, seed=8)}
+        rule = c2.threshold_rule(R)
+        self.assertIsNotNone(rule["s"])
+        self.assertFalse(c2.power_at(R, rule)["meets"])       # the 300-draw regime's common SD: it is not
+
+    def test_the_large_sample_verdict_in_its_order(self):
+        ok, no = {"holds": True}, {"holds": False}
+        rule = {"i_alone_exceeds": False, "s": 1.0}
+        self.assertEqual(c2.calibration_verdict_n(no, no, rule, None), "CONTROL_FAILED")
+        self.assertEqual(c2.calibration_verdict_n(ok, no, rule, None), "LINEARISATION_TO_DIRECTOR")
+        self.assertEqual(c2.calibration_verdict_n(ok, ok, dict(rule, i_alone_exceeds=True), None), "I_ALONE_TO_DIRECTOR")
+        self.assertEqual(c2.calibration_verdict_n(ok, ok, dict(rule, s=None), None), "NO_THRESHOLD_TO_DIRECTOR")
+        self.assertEqual(c2.calibration_verdict_n(ok, ok, rule, {"meets": False}), "POWER_SHORT_TO_DIRECTOR")
+        self.assertEqual(c2.calibration_verdict_n(ok, ok, rule, {"meets": True}), "CALIBRATED")
+
+
 class Linearisation(unittest.TestCase):
     def test_the_tolerance_both_ways_and_the_values_either_way(self):
         R = np.ones((10, 16))
@@ -465,7 +547,7 @@ class Job(tmc.Case):
             return rr
 
         a = argparse.Namespace(flux_constraint=self.w.constraint, definition=self.tmp / "d.json", truths=["g18", "ar23"],
-                               prep=self.tmp, push=None, expect_push_sha256=None, sets=40, workers=2,
+                               prep=self.tmp, push=None, expect_push_sha256=None, sets=40, workers=2, draws=300,   # speed: the rule is N-free
                                budget_seconds=budget, bank=self.w.bank, detector_dir=self.w.det,
                                expect_pins_sha256="p", expect_flux_table_sha256="f", expect_cv_tdw_sha256="t",
                                out=self.tmp / "cal" / "cal.json")
@@ -487,7 +569,8 @@ class Job(tmc.Case):
         self.assertEqual(z["ratio_g18"].shape, (40, sa.N_CELLS))
         self.assertTrue(np.all(np.isfinite(z["count_ratio_ar23"])))
         self.assertTrue(rec["control_law"]["holds"])
-        self.assertIn(rec["verdict"], ("CALIBRATED", "TO_JOSEPH", "CONTROL_FAILED", "LINEARISATION_TO_DIRECTOR"))
+        self.assertIn(rec["verdict"], ("CALIBRATED", "CONTROL_FAILED", "LINEARISATION_TO_DIRECTOR", "I_ALONE_TO_DIRECTOR", "NO_THRESHOLD_TO_DIRECTOR", "POWER_SHORT_TO_DIRECTOR"))
+        self.assertEqual(len(rec["rule"]["grid"]), len(c2.S_GRID))
         self.assertEqual(len(rec["control_linearisation"]["g18"]["mean_ratio_minus_1"]), sa.N_CELLS)
         self.assertEqual(rec["atime"]["moved"], [])
 
