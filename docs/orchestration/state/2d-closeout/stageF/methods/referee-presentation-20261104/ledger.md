@@ -1,4 +1,4 @@
-# The referee presentation round: fact ledger (base 0e1dd76a1)
+# The referee presentation round: fact ledger (base ff6ba1885)
 
 The round applies the director's work order of 2026-11-04 from the two-referee read
 (`secondary-results/referee-rerun-20261104/`, #757: `sonnet-referee-answer.txt` §§3 and 6, `gemini-referee-answer.txt`).

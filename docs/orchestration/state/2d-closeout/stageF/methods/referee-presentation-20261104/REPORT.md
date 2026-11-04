@@ -305,7 +305,7 @@ note. If you want IBU-1 cited, it needs one note sentence (sec:val-departure) an
 
 | check | result | record |
 |---|---|---|
-| ledger (`check_ledger.py`, step2's checks with base 0e1dd76a1) | 15 rows, 71 probes, 33 changed base sentences, 0 failures; self-test PASS | LEDGER-CHECK.txt |
+| ledger (`check_ledger.py`, step2's checks with base ff6ba1885) | 15 rows, 71 probes, 33 changed base sentences, 0 failures; self-test PASS | LEDGER-CHECK.txt |
 | round (`check_round.py`) and its self-test | PASS (16 removals, 16 additions, 2 abstract edits); 14/14 planted defects caught, each by its intended check | ROUND-CHECK.txt |
 | values (`make_values_fived16.py --self-test`, `--check`) | PASS (3,294 values) | VALUES-CHECK.txt |
 | rater copy (`make_rater_copy.sh`) | PASS | RATER-COPY.txt |
