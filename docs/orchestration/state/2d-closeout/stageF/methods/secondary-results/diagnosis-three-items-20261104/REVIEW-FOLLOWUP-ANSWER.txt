@@ -1,0 +1,12 @@
+**Focused follow-up verdict: adequate; no material findings in the coordination additions.** This closes the bounded follow-up review, not a scientific validation or execution approval.
+
+The additions reuse the companion designs without treating their forecasts as measured end-to-end prices. They retain the unmeasured prior-reweight build, unchecked replica reuse, packing qualification, dump-cost extrapolation and distinction between zero charged node-hours and permission to connect. The narrower flux swap and reporting-cell IBU comparison are explicitly distinguished from the complete mechanism test and matched-information intervention.
+
+The factual reconciliations are supported:
+
+- The RE-2 tension receipt names the refined `E_R` input at line 4 and reports its eigenmode decomposition at lines 12–14. Reusing that anatomy corrects the companion report’s overly narrow statement that localisation exists only for the exact-split lineage.
+- The earlier eight-cell statistic, 133.907948, uses the matrix without `C_PL5D`; the current addition gives 132.411176. The report preserves those identities and correctly distinguishes diagonal squared pulls from contributions to the full correlated statistic.
+
+The update retains causal qualifications: agreement between methods does not prove an upstream cause, and a response to changed simulation flux does not establish the correct physical flux or period. It grants no new execution authority and keeps proposed scheduling subordinate to the bound coverage calendar.
+
+I checked the four new source hashes against their explicitly cited commits; all match, as do the local source copies. `recheck.py` and `recheck.json` remain unchanged from the pre-update commit. This review covered the additions and their cited support only. It did not measure proposed runtimes, verify current storage or scheduler state, rerun scientific producers, or audit the entire companion report. No files were edited and no cluster contact or production computation occurred.
