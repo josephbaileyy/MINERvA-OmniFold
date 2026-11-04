@@ -264,5 +264,70 @@ class Section95(unittest.TestCase):
         self.assertEqual(out["missing_in_npz"], ["band_GEANT_Pion"])
 
 
+class Audit(unittest.TestCase):
+    """The director's open audit: a read of an unredirected guarded path is refused; sanctioned reads pass."""
+    def setUp(self):
+        self.td = tempfile.TemporaryDirectory()
+        self.addCleanup(self.td.cleanup)
+        self.d = Path(self.td.name).resolve()
+        (self.d / "guarded").mkdir()
+        (self.d / "guarded" / "f.txt").write_text("x")
+        (self.d / "free.txt").write_text("y")
+        import cov2d_blocks as cbm
+        self.cbm = cbm
+        self.audit = cbm.OpenAudit(guarded=(str(self.d / "guarded"),)).install()
+        self.addCleanup(self.audit.uninstall)
+        p = mock.patch.object(cbm, "AUDIT", self.audit)
+        p.start()
+        self.addCleanup(p.stop)
+        q = mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True)
+        q.start()
+        self.addCleanup(q.stop)
+
+    def test_unredirected_guarded_reads_are_refused(self):
+        import io as io_
+        g = self.d / "guarded" / "f.txt"
+        for how, fn in (("open", lambda: open(g)), ("io.open", lambda: io_.open(g)),
+                        ("Path.read_text", lambda: g.read_text()), ("os.open", lambda: os.open(g, os.O_RDONLY)),
+                        ("np.load", lambda: np.load(g))):
+            with self.subTest(how), self.assertRaises(c.Refusal):
+                fn()
+        self.assertGreaterEqual(len(self.audit.refused), 5)
+
+    def test_sanctioned_noatime_reads_and_free_paths_pass_and_are_logged(self):
+        data, _ = self.cbm.read_noatime(self.d / "guarded" / "f.txt")
+        self.assertEqual(data, b"x")
+        self.assertEqual((self.d / "free.txt").read_text(), "y")
+        paths = [p for _, p, _ in self.audit.log]
+        self.assertIn(str(self.d / "free.txt"), paths)
+        self.assertIn(str(self.d / "guarded" / "f.txt"), paths)
+        self.assertEqual(self.audit.refused, [])
+
+    def test_uninstall_restores(self):
+        import builtins
+        self.audit.uninstall()
+        self.assertEqual((self.d / "guarded" / "f.txt").read_text(), "x")   # no audit now
+        self.assertIsNot(builtins.open, None)
+
+    @unittest.skipUnless(HAVE, "needs PyROOT")
+    def test_tfile_open_is_audited(self):
+        import ROOT
+        a2 = self.cbm.OpenAudit(guarded=(str(self.d / "guarded"),)).install(ROOT)
+        self.addCleanup(a2.uninstall)
+        with self.assertRaises(c.Refusal):
+            ROOT.TFile.Open(str(self.d / "guarded" / "x.root"), "RECREATE")
+
+    def test_bypass_scan_fires_on_each_bypass_and_not_on_the_real_modules(self):
+        f = self.d / "bad.py"
+        f.write_text("import subprocess\nimport os\nfrom paths import CV_PATH\nos.system('x')\n"
+                     "import ROOT\nROOT.TFile('a.root')\n")
+        hits = self.cbm.bypass_scan([f])[str(f)]
+        self.assertEqual(len(hits), 4, hits)
+        if HAVE:
+            real = self.cbm.bypass_scan(self.cbm.scan_targets(self.cbm.rollup()))
+            self.assertEqual({k: v for k, v in real.items() if v}, {})
+            self.assertEqual(len(real), 5)
+
+
 if __name__ == "__main__":
     unittest.main()

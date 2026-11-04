@@ -60,6 +60,8 @@ def rollup():
 
 
 def read_noatime(path) -> tuple[bytes, str]:
+    if AUDIT is not None:
+        AUDIT.sanctioned.add(os.path.realpath(str(path)))
     fd = os.open(str(path), os.O_RDONLY | os.O_NOATIME)
     try:
         parts = []
@@ -172,6 +174,99 @@ def noatime_inputs(ro, tmp: Path, files: dict) -> dict:
     return rec
 
 
+# ---------------------------------------------------------------------------------------------------- the open audit
+GUARDED = ("/global/cfs", "/pscratch")
+
+
+class OpenAudit:
+    """The director's open audit (2026-11-04) for the section 9.5 process: every path opened through builtins.open,
+    io.open, os.open or ROOT.TFile.Open is logged, and an open under /global/cfs or /pscratch is refused unless it is a
+    sanctioned O_NOATIME read (``read_noatime``). A redirect by global patch could be bypassed by a copied path
+    constant, a default argument, a path from __file__ or a subprocess; an unchanged atime is no proof (relatime)."""
+    def __init__(self, guarded=GUARDED):
+        self.guarded = tuple(guarded)
+        self.log, self.refused, self.sanctioned = [], [], set()
+        self._undo = []
+
+    def check(self, path, how: str, noatime: bool = False):
+        try:
+            p = os.path.realpath(os.fspath(path))
+        except TypeError:          # a file descriptor or a non-path: nothing to audit
+            return
+        self.log.append((how, p, noatime))
+        if p.startswith(self.guarded) and not (noatime or p in self.sanctioned):
+            self.refused.append((how, p))
+            raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
+
+    def install(self, root=None):
+        import builtins
+        import io
+        real_open, real_os_open = builtins.open, os.open
+        bit = getattr(os, "O_NOATIME", 0)
+
+        def audited_open(file, *a, **k):
+            self.check(file, "open")
+            return real_open(file, *a, **k)
+
+        def audited_os_open(path, flags, *a, **k):
+            self.check(path, "os.open", noatime=bool(bit and flags & bit))
+            return real_os_open(path, flags, *a, **k)
+        builtins.open = io.open = audited_open
+        os.open = audited_os_open
+        self._undo += [lambda: setattr(builtins, "open", real_open), lambda: setattr(io, "open", real_open),
+                       lambda: setattr(os, "open", real_os_open)]
+        if root is not None:
+            real_tf = root.TFile.Open
+
+            def audited_tfile(name, *a, **k):
+                self.check(name, "TFile.Open")
+                return real_tf(name, *a, **k)
+            root.TFile.Open = audited_tfile
+            self._undo.append(lambda: setattr(root.TFile, "Open", real_tf))
+        return self
+
+    def uninstall(self):
+        for f in reversed(self._undo):
+            f()
+        self._undo = []
+
+
+AUDIT = None
+
+
+def scan_targets(ro) -> list:
+    """The rollup, the build_repair it loads, build_cmodel and the two modules build_cmodel imports."""
+    import build_cmodel as B
+    return [PARTC / "re2c_rollup.py", Path(ro.BR.__file__), CMODEL_DIR / "build_cmodel.py", Path(B.L.__file__),
+            Path(B.RT.__file__)]
+
+
+def bypass_scan(paths) -> dict:
+    """What a global-patch redirect cannot reach, by AST: subprocess / os.system / os.popen uses, ROOT.TFile(...)
+    constructor calls (they skip TFile.Open), and from-imports of upper-case names (copied constants)."""
+    import ast
+    out = {}
+    for path in paths:
+        tree = ast.parse(Path(path).read_text())
+        hits = []
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Import) and any(a.name.split(".")[0] == "subprocess" for a in n.names):
+                hits.append(f"{n.lineno}: import subprocess")
+            elif isinstance(n, ast.ImportFrom):
+                if (n.module or "").split(".")[0] == "subprocess":
+                    hits.append(f"{n.lineno}: from subprocess import")
+                up = [a.name for a in n.names if a.name.isupper()]
+                if up:
+                    hits.append(f"{n.lineno}: from {n.module} import {up}")
+            elif isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) and (
+                    (n.value.id == "os" and n.attr in ("system", "popen")) or n.value.id == "subprocess"):
+                hits.append(f"{n.lineno}: {n.value.id}.{n.attr}")
+            elif isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "TFile":
+                hits.append(f"{n.lineno}: TFile(...) constructor")
+        out[str(path)] = hits
+    return out
+
+
 # ---------------------------------------------------------------------------------------------------- section 9.5
 PARTB_NPZ = ("/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partc-r2/s5/production_cov.npz",
              "631cf255fff43b5cb35acd9cefdcee99e5ee95b85dc2f30d8e0aca513095eea1")   # RE2-PARTC-REPORT.md:131
@@ -230,6 +325,8 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     import ROOT
     ROOT.gROOT.SetBatch(True)
+    global AUDIT
+    AUDIT = OpenAudit().install(ROOT)
     ro = rollup()
     t0 = time.time()
     sums = ro.partb_sums()
@@ -288,6 +385,13 @@ def main(argv=None) -> int:
         if not rec["cmodel_cells_equal_er_cells"]:
             rec["stop"].append("cmodel_2d.json's 205 cells are not E_R's reported cells")
     rec["products_read"] = len(srcs)
+    rec["open_audit"] = {"opens": len(AUDIT.log), "refused": AUDIT.refused,
+                         "guarded_opens": sorted({p for how, p, nz in AUDIT.log if p.startswith(GUARDED)})[:20],
+                         "bypass_scan": bypass_scan(scan_targets(ro))}
+    if AUDIT.refused:
+        rec["stop"].append(f"open audit refused {len(AUDIT.refused)} opens")
+    if any(rec["open_audit"]["bypass_scan"].values()):
+        rec["stop"].append("bypass scan: a subprocess, os.system, TFile constructor or copied constant")
     rec["atime_moved"] = [p for p, t in atimes.items() if os.stat(p).st_atime_ns != t]
     rec["atime_checked"] = len(atimes)
     if rec["atime_moved"]:
