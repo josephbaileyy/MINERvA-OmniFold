@@ -1,0 +1,197 @@
+[s5c] task=2 name=rpd_a_lane2 job=60786801 host=nid005414 start=2026-11-04T08:35:57Z
+[f1-lane] lane=2 steps=['rpd_nndump_1D', 'rpd_lateral_1D', 'rpd_check_1D', 'rpd_n0split_p10', 'rpd_nndump_1L', 'rpd_lateral_1L', 'rpd_check_1L'] start=2026-11-04T08:35:59Z
+[f1-lane] rpd_nndump_1D start=2026-11-04T08:35:59Z
+[INFO] signal: kept=4003313 dropped_phase=0 bad_weight=0 excluded_nonfinite_truth_support=319
+[OK] wrote /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/nn_1D.npz: MCgen(4003313, 5) measured(577049, 5) pass_truth=4003313 pass_reco=2583499
+[oi136] inventory: checked=222 repo_origin_count=4 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) _mnv_guarded_run_propagated_1819724, flux_universe, sitecustomize, unfold_2d_omnifold_unbinned, unfold_nd_omnifold_unbinned, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+[f1-lane] rpd_nndump_1D rc=0 end=2026-11-04T08:37:47Z
+[f1-lane] rpd_lateral_1D start=2026-11-04T08:37:47Z
+[INFO] signal: kept=4003313 dropped_phase=0 bad_weight=0 excluded_nonfinite_truth_support=319
+{"npz": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1D.npz", "npz_sha256": "7bc329ef93fce3e9eedf92ed9e4ac084e92e6ee73ffebb2d2055282b7b85c3c6", "bkg_sha256": "79ba1de90d6545b5917b8e12edb219c1df2d1752ad591c0b55b9f9b39f36648d", "mc_rows": 4003313, "bkg_rows": 74310, "seconds": 46.6}
+[oi136] inventory: checked=223 repo_origin_count=4 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 7   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (7) __main__, _mnv_guarded_run_propagated_1820491, flux_universe, sitecustomize, unfold_2d_omnifold_unbinned, unfold_nd_omnifold_unbinned, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+[f1-lane] rpd_lateral_1D rc=0 end=2026-11-04T08:39:13Z
+[f1-lane] rpd_check_1D start=2026-11-04T08:39:13Z
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/truth/truth_1D.npz", "total_in_grid": 2.6890469274198696e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1820698, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"checked": "1D", "receipt": "/pscratch/sd/j/josephrb/fd-rpd-20261103/inputs/check_1D.json"}
+[oi136] inventory: checked=221 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 5   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (5) __main__, _mnv_guarded_run_propagated_1820627, fd_ct_period_inputs, sitecustomize, unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+[f1-lane] rpd_check_1D rc=0 end=2026-11-04T08:40:20Z
+[f1-lane] rpd_n0split_p10 start=2026-11-04T08:40:20Z
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k00.npz", "total_in_grid": 2.704717202433711e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1820816, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k01.npz", "total_in_grid": 2.705336424733729e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1820842, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k02.npz", "total_in_grid": 2.704239601916625e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1820860, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k03.npz", "total_in_grid": 2.706274399364981e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1820869, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k04.npz", "total_in_grid": 2.708184222332086e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1820901, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k05.npz", "total_in_grid": 2.706687519507127e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1820939, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k06.npz", "total_in_grid": 2.7046627732121553e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1820961, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k07.npz", "total_in_grid": 2.703447118583269e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1820983, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k08.npz", "total_in_grid": 2.704791803212647e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1821011, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k09.npz", "total_in_grid": 2.7062999323593136e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1821047, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k10.npz", "total_in_grid": 2.7049550131106496e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1821065, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/truth_p10_k11.npz", "total_in_grid": 2.704288333183078e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1821086, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"n0_partition": 10, "receipt": "/pscratch/sd/j/josephrb/fd-rpd-20261103/n0/p10/N0_p10.json"}
+[oi136] inventory: checked=138 repo_origin_count=1 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 4   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (4) __main__, _mnv_guarded_run_propagated_1820740, fd_ct_period_inputs, sitecustomize
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+[f1-lane] rpd_n0split_p10 rc=0 end=2026-11-04T08:44:51Z
+[f1-lane] rpd_nndump_1L start=2026-11-04T08:44:51Z
+[INFO] signal: kept=383815 dropped_phase=0 bad_weight=0 excluded_nonfinite_truth_support=33
+[OK] wrote /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/nn_1L.npz: MCgen(383815, 5) measured(49514, 5) pass_truth=383815 pass_reco=231003
+[oi136] inventory: checked=222 repo_origin_count=4 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) _mnv_guarded_run_propagated_1821105, flux_universe, sitecustomize, unfold_2d_omnifold_unbinned, unfold_nd_omnifold_unbinned, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+[f1-lane] rpd_nndump_1L rc=0 end=2026-11-04T08:45:33Z
+[f1-lane] rpd_lateral_1L start=2026-11-04T08:45:33Z
+[INFO] signal: kept=383815 dropped_phase=0 bad_weight=0 excluded_nonfinite_truth_support=33
+{"npz": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps/lat_1L.npz", "npz_sha256": "65ab4446b66524a2993fb5542d5a14aeda5584bbfc5cbcfb7ce22d112c584412", "bkg_sha256": "6839edd4c6fe0563e6167a0e4bda83638d88d2afdbf4a620e0c7de55028fe69f", "mc_rows": 383815, "bkg_rows": 7389, "seconds": 11.9}
+[oi136] inventory: checked=223 repo_origin_count=4 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 7   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (7) __main__, _mnv_guarded_run_propagated_1821242, flux_universe, sitecustomize, unfold_2d_omnifold_unbinned, unfold_nd_omnifold_unbinned, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+[f1-lane] rpd_lateral_1L rc=0 end=2026-11-04T08:46:31Z
+[f1-lane] rpd_check_1L start=2026-11-04T08:46:31Z
+{"out": "/pscratch/sd/j/josephrb/fd-rpd-20261103/truth/truth_1L.npz", "total_in_grid": 2.727585909523379e-38}
+[oi136] inventory: checked=140 repo_origin_count=3 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 6   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (6) __main__, _mnv_guarded_run_propagated_1822056, omnifold_nn_core, s5c_unfold, sitecustomize, xsec_nd
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+{"checked": "1L", "receipt": "/pscratch/sd/j/josephrb/fd-rpd-20261103/inputs/check_1L.json"}
+[oi136] inventory: checked=221 repo_origin_count=2 outside_expect_root=0 verdict=REPOSITORY-ORIGINS-INSPECTED -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 5   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (5) __main__, _mnv_guarded_run_propagated_1821957, fd_ct_period_inputs, sitecustomize, unfold_2d_omnifold_unbinned
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+[f1-lane] rpd_check_1L rc=0 end=2026-11-04T08:47:35Z
+[f1-lane] lane=2 done end=2026-11-04T08:47:35Z
+[oi136] inventory: checked=3 repo_origin_count=0 outside_expect_root=0 verdict=EMPTY-REPOSITORY-ORIGIN-SET -- THE GUARD REFUSED NOTHING BECAUSE IT SAW NOTHING -> /pscratch/sd/j/josephrb/fd-rpd-20261103/lanes-a/inventory/rpd_a_lane2.jsonl
+[oi136-inv] LOADED-CHECKOUT INVENTORY -- a RECEIPT, not a gate. It reports and never refuses; the run's verdict is decided above this line.
+[oi136-inv] modules loaded from inside a checkout: 1   distinct checkout roots: 1
+[oi136-inv] MNV_REPO resolution=ABSENT  value=None
+[oi136-inv]   every reader DERIVES its own root from its own __file__, so there is no single value to report and the inventory above is the only evidence of where modules came from
+[oi136-inv]   [expect-root,this-guard] /pscratch/sd/j/josephrb/fd-rpd-20261103/deploy-5  (1) __main__
+[oi136-inv] SCOPE -- THIS INTERPRETER ONLY. Covered Python children write separate records with their own pid and depth; they never appear in this process's module list. Anything imported after this emission is not counted. Read it as 'AT LEAST these trees', never as 'only these trees'.
+[s5c] task=2 name=rpd_a_lane2 rc=0 end=2026-11-04T08:47:38Z
