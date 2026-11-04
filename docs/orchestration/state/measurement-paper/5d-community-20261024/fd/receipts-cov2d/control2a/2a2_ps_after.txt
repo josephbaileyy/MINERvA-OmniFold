@@ -1,0 +1,8 @@
+login02
+    PID    PPID     ELAPSED COMMAND
+ 127049       1       00:13 /usr/lib/systemd/systemd --user
+ 127371  127049       00:13 (sd-pam)
+ 156099  154610       00:01 sshd: josephrb@notty
+ 156200  156099       00:01 bash -c hostname; ps -u josephrb -o pid,ppid,etime,args | cut -c1-120
+ 159046  156200       00:00 ps -u josephrb -o pid,ppid,etime,args
+ 159047  156200       00:00 cut -c1-120

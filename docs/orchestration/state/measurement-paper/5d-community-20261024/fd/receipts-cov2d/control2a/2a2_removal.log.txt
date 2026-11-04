@@ -1,0 +1,22 @@
++ hostname
+login02
++ date -u +%FT%TZ
+2026-11-04T04:10:17Z
++ du -sh /dev/shm/josephrb-cov2d-2a2
+40K	/dev/shm/josephrb-cov2d-2a2
++ sha256sum /dev/shm/josephrb-cov2d-2a2.sh
+7d8970382a8609b38148dae11c6dfde0975de3006d908da599296194804ee433  /dev/shm/josephrb-cov2d-2a2.sh
++ rm -rf /dev/shm/josephrb-cov2d-2a2
+rc_dir=0
++ echo rc_dir=0
++ rm -f /dev/shm/josephrb-cov2d-2a2.sh
+rc_script=0
++ echo rc_script=0
++ ls -d /dev/shm/josephrb-cov2d-2a2 /dev/shm/josephrb-cov2d-2a2.sh
+ls: cannot access '/dev/shm/josephrb-cov2d-2a2': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-2a2.sh': No such file or directory
++ ls -la /dev/shm
++ grep -c josephrb
+0
++ sha256sum /pscratch/sd/j/josephrb/cov2d-2a/writer_control.root
+7eb39088a42844b48ec1f8e1b6b586b8d8d4363611d68b726112f9f75c99b9db  /pscratch/sd/j/josephrb/cov2d-2a/writer_control.root
