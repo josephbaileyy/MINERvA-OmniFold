@@ -66,7 +66,7 @@ chain (DIAG §B3, B-C), so no reading here is a term in a decomposition of 2.270
 | response and prior | filled from E_R's signal-MC rows with E_R's weights; the prior is the MC truth | as E_R's MC |
 | extraction | E_R's own extraction (efficiency, flux, nucleons, POT), applied to IBU's unfolded truth counts | B-I |
 | iteration scan | **K ∈ {1, 2, 3, 4, 5, 10, 15, 20}, frozen here, reported in full** | B-I |
-| primary K | **K = 10**, the published analysis's count as the paper states it ("ten there, five here", `PB:117`, citing `MINERvA:2021owq`) | SCOPE §4: "the published iteration count read from the published paper". The paper lane or the auditor confirms 10 against the publication itself before binding. If it is not 10, the binding states the published value and nothing else changes |
+| primary K | **K = 10**, the published analysis's count as the paper states it ("ten there, five here", `PB:117`, citing `MINERvA:2021owq`) | SCOPE §4: "the published iteration count read from the published paper". **Confirmed against the publication itself** (arXiv:2106.16210v4, PDF sha256 `39b6b8f1e6a59007ce31f4da4ab1af50dd07b491f537a3bbd898d57e2271ef69`, read 2026-11-04): "Based on these studies, the data was unfolded using 10 iterations." The paper chose it on fake-data χ² over generator variations, "no more than 10" in all of them |
 | second fixed K | K = 5, E_R's own count | reported beside K = 10 under the same readings, never chosen between |
 
 **Not chosen by closeness.** No K, binning, background or prior is selected by its distance from the published
@@ -218,7 +218,7 @@ leave-one-out exactly as C2-R1's, and the bars are the same:
 
 **Before binding:**
 1. **B-C has reported.** Any upstream defect it finds is brought into an amendment of this declaration.
-2. **The published K.** It is confirmed against the publication itself, not from `PB:117` alone.
+2. **The published K: done.** It is 10, confirmed against the publication itself (§1.1).
 
 **Before the run (the cluster lane, 0 node-h; this lane does not connect):**
 3. `libRooUnfold.so` is present and loads on the cluster: a listing and an import. Its presence is unverified
