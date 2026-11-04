@@ -1,4 +1,4 @@
-# check_ledger.py at b0c63fb06
+# check_ledger.py at 754d2cbc1
 ledger rows 15, probes 71, changed base sentences 33, failures 0
   missing N: probe: caught
   dropped sentence: caught

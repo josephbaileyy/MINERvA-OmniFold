@@ -1,4 +1,4 @@
-# make_rater_copy.sh at b0c63fb06 ($S = the session scratchpad)
+# make_rater_copy.sh at b0c63fb06 (the typeset text is unchanged at 754d2cbc1: the commits after it change a source comment only) ($S = the session scratchpad)
 source: $S/wt-cut (b0c63fb06; dirty files in analysis-note: 0)
 $S/wt-cut/docs/analysis-note/main_paper.tex:55: standalone: \pubhold{funding and grant acknowledgments}
 $S/wt-cut/docs/analysis-note/main_paper.tex:78: standalone: \pubhold{deposit identifier and access route, after the separately authorized release decision.}

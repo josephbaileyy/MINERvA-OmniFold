@@ -1,4 +1,4 @@
-# check_held.py at b0c63fb06: the 3 known flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07)
+# check_held.py at b0c63fb06 (the typeset text is unchanged at 754d2cbc1: the commits after it change a source comment only): the 3 known flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07)
   FAIL G1:paper-g-08: held quote no longer prints exactly: 'In a fake-data study, the reported uncertainty does not cover the estimator’s bias at GiBU'
   FAIL G1:paper-s-08: held quote no longer prints exactly: 'Thus the reported uncertainty does not cover the fake-data bias at these GiBUU-like truths'
   FAIL G1b:paper-s-07: held quote no longer prints exactly: 'We report a simultaneous measurement of the νµ charged-current inclusive cross section in '
