@@ -596,7 +596,8 @@ def calibrate_main(a) -> dict:
            "timing": dict(timing, seconds=time.time() - t0), "code_sha256": digests,
            "inputs": {"npz_sha256": world["npz_sha"], "bkg_sha256": world["bkg_sha"],
                       "pins_sha256": a.expect_pins_sha256, "flux_table_sha256": a.expect_flux_table_sha256,
-                      "push_sha256": a.expect_push_sha256}, "atime": inv.atime_check()}
+                      "push_sha256": a.expect_push_sha256, "cv_tdw_sha256": a.expect_cv_tdw_sha256},
+           "atime": inv.atime_check()}
     a.out.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(a.out.with_suffix(".npz"), **{f"ratio_{t}": Rx[t] for t in truths},
                         **{f"count_ratio_{t}": Rl[t] for t in truths}, **{f"single_x_{t}": single_x[t] for t in truths})

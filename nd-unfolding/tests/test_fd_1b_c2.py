@@ -389,7 +389,8 @@ class Job(tmc.Case):
         a = argparse.Namespace(flux_constraint=self.w.constraint, definition=self.tmp / "d.json", truths=["g18", "ar23"],
                                prep=self.tmp, push=None, expect_push_sha256=None, sets=40, workers=2,
                                budget_seconds=budget, bank=self.w.bank, detector_dir=self.w.det,
-                               expect_pins_sha256="p", expect_flux_table_sha256="f", out=self.tmp / "cal" / "cal.json")
+                               expect_pins_sha256="p", expect_flux_table_sha256="f", expect_cv_tdw_sha256="t",
+                               out=self.tmp / "cal" / "cal.json")
         with mock.patch.object(mc, "_load_world", lambda a: world), mock.patch.object(mc, "_single", single), \
                 mock.patch.object(sa, "fine_map", lambda p: fm), mock.patch.object(sa, "functional_matrix", lambda f: U), \
                 mock.patch.object(mc, "truth_ratio", lambda t, p: (None, None)), \
@@ -492,8 +493,7 @@ class C2Truth(tmc.Case):
             return w
         moved = 0
         for d, tags_d in enumerate(draws):
-            with mock.patch.object(mc, "_single", lambda i_, b_, bc, t, w, f: self._single_real(i_, b_, bc, t, w, f)):
-                ui, ub, _ = mc.compose(inputs, self.bkg, self.bank_cv, tags_d, load, self.flux, np.ones(50))
+            ui, ub, _ = mc.compose(inputs, self.bkg, self.bank_cv, tags_d, load, self.flux, np.ones(50))
             for rule, key in (("data", "N"), ("nature", "Nc")):
                 _, x, _ = mc.toy_experiment(inputs, self.bkg, ui, ub, r, seeds[d], rule)
                 np.testing.assert_allclose(q[key][:, d], U @ np.ravel(x), rtol=1e-10, atol=0, err_msg=f"{rule} {d}")
@@ -501,11 +501,6 @@ class C2Truth(tmc.Case):
         self.assertGreater(moved, 0)
         self.assertTrue(np.all(np.isfinite(q["Nm"])))
 
-    def _single_real(self, inputs, bkg, bank_cv, tag, w, flux):
-        return C2Truth._real(inputs, bkg, bank_cv, tag, w, flux)
-
-
-C2Truth._real = staticmethod(mc._single)
 
 
 if __name__ == "__main__":
