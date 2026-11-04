@@ -1,0 +1,16 @@
+node login16
+2026-11-04T04:27:03Z
+connect script sha256 c37f434d6841ee9d00f9378b5536c3011668406c6a66084b8ed953523d03937a
+HEAD 8727c63e1d32599039ea977d833c5de25a9089d6; porcelain --ignored lines before: 0
+section 7: 23 blobs, 0 mismatches
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1; nice 19
+verify-staged rc=0
+{"verified": 79, "mismatches": 0}
+2026-11-04T04:27:56Z
+stage0 rc=0
+PASS control S C_total_resp = S1's C_total + C_resp
+[RPD stage 0] s0 +6.283% sigma0 0.598%: SEES
+{"wrote": "/pscratch/sd/j/josephrb/fd-rpd-20261103/control/stage0.json", "sha256": "f5ca04b81766024d7235ff4fdf28d6345fd459d02ed82dbf0cc9d2050f143115"}
+porcelain --ignored lines after: 0
+stage0 rc=0
+2026-11-04T04:27:58Z
