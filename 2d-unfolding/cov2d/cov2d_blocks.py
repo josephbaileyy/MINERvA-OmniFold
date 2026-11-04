@@ -385,6 +385,11 @@ def main(argv=None) -> int:
         if not rec["cmodel_cells_equal_er_cells"]:
             rec["stop"].append("cmodel_2d.json's 205 cells are not E_R's reported cells")
     rec["products_read"] = len(srcs)
+    import build_cmodel
+    rec["modules"] = {m.__name__: os.path.realpath(m.__file__) for m in (c, sys.modules[__name__], ro, ro.BR, build_cmodel)}
+    outside = [k for k, f in rec["modules"].items() if not f.startswith(os.path.realpath(REPO) + os.sep)]
+    if outside:
+        rec["stop"].append(f"modules imported from outside the clone: {outside}")
     rec["open_audit"] = {"opens": len(AUDIT.log), "refused": AUDIT.refused,
                          "guarded_opens": sorted({p for how, p, nz in AUDIT.log if p.startswith(GUARDED)})[:20],
                          "bypass_scan": bypass_scan(scan_targets(ro))}
