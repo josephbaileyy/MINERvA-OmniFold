@@ -34,7 +34,8 @@ ABSTRACT_EDITS = [
     (r"residual bias exceeding predeclared uncertainty-based thresholds",
      r"residual bias exceeding uncertainty-based thresholds fixed in advance"),
 ]
-ABSTRACT_COMMENT = "% Referee round 20261104 (item 4, sonnet minor 2; item 3, minor 1): DRAFT for the PRD read and Joseph"
+# a bullet, so that reflow_tex.py keeps it its own comment line (it would join a plain comment onto the one above)
+ABSTRACT_COMMENT = "% - Referee round 20261104 (item 4, sonnet minor 2; item 3, minor 1): DRAFT for the PRD read and Joseph"
 # numerals the round adds to the printed paper, each with its source
 NEW_NUMERALS = {
     "6.243e-8": "sec_method.tex sec:method-xsec (:186); README-gen5d-fluxfix.md :74, 6.243343e-4 m^-2/POT",
