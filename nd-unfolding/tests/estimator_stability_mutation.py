@@ -153,6 +153,10 @@ MUTATIONS = [
     ("the receipt derived from --receipt, not --runs", A, '    derived = Path(a.runs).resolve().parent / "log-full" / "DONE"\n',
      '    derived = Path(a.receipt).resolve() if a.receipt else Path(a.runs).resolve().parent / "log-full" / "DONE"\n',
      "test_the_receipt_is_this_runs"),
+    ("an explicit receipt compared without resolving it", A,
+     "    if a.receipt is not None and Path(a.receipt).resolve() != derived:\n",
+     "    if a.receipt is not None and Path(a.receipt) != derived:\n",
+     "test_the_receipt_is_this_runs"),
 ]
 
 

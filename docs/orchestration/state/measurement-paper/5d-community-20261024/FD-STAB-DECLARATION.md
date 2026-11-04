@@ -360,7 +360,7 @@ GiBUU truths does not move the verdict.
 | `nd-unfolding/sbatch_fd_stab.sh` | the job: the dry run or the full queue, on 8 lanes, every task through the gate; a DONE receipt only for a complete, clean run |
 | `nd-unfolding/estimator_stability_analyze.py` | §§4–6: the completeness check (INCOMPLETE), the product checks, the criteria, the verdict |
 | `nd-unfolding/tests/test_estimator_stability_probe.py` | 94 tests, with every refusal and criterion tested in the direction it acts and the other; the job script is run locally on a stand-in deploy |
-| `nd-unfolding/tests/estimator_stability_mutation.py` | 68 planted defects in the probe, the analysis and the job script, each of which must be killed by its NAMED test; the unmutated suite must run all 94 tests in script mode |
+| `nd-unfolding/tests/estimator_stability_mutation.py` | 69 planted defects in the probe, the analysis and the job script, each of which must be killed by its NAMED test; the unmutated suite must run all 94 tests in script mode |
 | `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/no-ratio.json` | the q3 placeholder |
 
 - **No production module is edited.**
@@ -373,7 +373,7 @@ GiBUU truths does not move the verdict.
 **Commands.**
 
     python3 -B nd-unfolding/tests/test_estimator_stability_probe.py          # 94 tests
-    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 68 mutations, all killed
+    python3 -B nd-unfolding/tests/estimator_stability_mutation.py            # 69 mutations, all killed
     python3 -I nd-unfolding/estimator_stability_probe.py tasks --out <OUT>/queue.tsv --dry-out <OUT>/dry.tsv \
         --npz … --bkg … --bank … --detector-dir … --expect-npz-sha256 … --expect-bkg-sha256 … \
         --closure-ratio-dir <pv-ladder dir> --runs <OUT>/runs
@@ -465,4 +465,5 @@ and thirteen tests. Each claim was checked against the code before it was change
 | G3 | two of the audit's 28 mutants survived: B2's ratio from the cheaper kind, and DONE without the count of ended tasks | **killed:** `Gate.test_b2_over_twice_in_one_kind_only_stops` (both kinds); the count is stated as defensive and tested by removing an end mid-run (`JobScript.test_an_end_lost_during_the_run_leaves_no_receipt`) |
 | fixture | the job-script tests' stand-in runner read `--pairs` as two tokens, so every task slept as one unfold | **fixed:** it reads the `=` form, so its lane time is in proportion to the unfolds, and it writes a product per task for the pinning test |
 | receipt | the audit's confirmation at 7f7f59ae noted that `--receipt` was not tied to `--runs`, so a `DONE` from another run would pass; the director ruled it a G2 defect, to be fixed before binding | **fixed:** the receipt is derived from `--runs`, and an explicit `--receipt` naming another file is refused (`EndToEnd.test_the_receipt_is_this_runs`, two mutants). §7 now says who runs the jobs: a cluster lane the director assigns |
+| receipt spelling | the audit's re-check at e42cca4c noted that the test's "another spelling", `log-full/./DONE`, is collapsed by pathlib, so the comparison's `resolve()` was exercised only by a symlinked temporary directory (its mutant survived on a resolved one) | **fixed:** the subtest passes `log-full/../log-full/DONE` and a path through a symlink, both of which pathlib keeps, and asserts each differs from the derived path as a string; the audit's mutant is added (69) |
 

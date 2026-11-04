@@ -598,9 +598,15 @@ class EndToEnd(unittest.TestCase):
             shutil.copy(other, self.receipt)
             self.assertEqual(self.run_analysis()["verdict"]["verdict"], "WINNER")
             self.receipt_arg = True
-            saved, self.receipt = self.receipt, self.root / "log-full" / "." / "DONE"
-            self.assertEqual(self.run_analysis()["verdict"]["verdict"], "WINNER")
-            self.receipt = saved
+            # spellings pathlib keeps (it collapses "." but not ".." or a symlink), so only resolve() equates them
+            link = self.root.parent / (self.root.name + "-link")
+            link.symlink_to(self.root)
+            self.addCleanup(link.unlink)
+            for spelling in (self.root / "log-full" / ".." / "log-full" / "DONE", link / "log-full" / "DONE"):
+                self.assertNotEqual(str(spelling), str(self.receipt.resolve()))
+                saved, self.receipt = self.receipt, spelling
+                self.assertEqual(self.run_analysis()["verdict"]["verdict"], "WINNER")
+                self.receipt = saved
 
     def test_the_product_checks_refuse(self):
         for tamper in ("missing_jitter", "hypothesis", "candidate", "expectation", "amplitude", "bootstrap",
