@@ -131,3 +131,29 @@ Each compares equal to canonical by `cmp`.
 `4384f022`. Joseph pulls it in Overleaf from the GitHub menu.
 
 **Next sync:** after the next paper round. Start from base `1d94b68a`.
+
+## Fifth sync, 2026-11-04: main a45173e1
+
+**Why.** Joseph's decision (`DECISION-20261104-joseph-753-reword-and-merge.md` item 3) calls for a re-sync after #753,
+the run-period sentence.
+
+**The standalone before the copy.** At `0b29b02c`, with no Overleaf commit since the fourth sync.
+
+**What was copied.** 5 files changed between `1d94b68a` and `a45173e1`, and none were added or deleted:
+- `paper_body.tex` and `sec_fived16.tex`;
+- `values_fived16.tex` and `make_values_fived16.py`;
+- `records_results_index.tex`.
+
+Each compares equal to canonical by `cmp`.
+
+**Builds.**
+- **Canonical,** in a fresh worktree at `a45173e1`: `build_all.sh` gave rc 0, with note 136, paper 11, primer 15,
+  PET note 26 and records 59 pp. The Overleaf target gave rc 0: 11 pp and 0 undefined references or citations.
+- **Standalone copy:** both commands gave rc 0.
+- **Text.** `pdftotext` of all six PDFs is identical between the canonical and standalone builds. The paper prints
+  the ruled sentence ("…by more than expected from their playlist-to-playlist scatter (Ref. [14], Sec. 10.4).").
+
+**Head.** Standalone `main` = `fb62bb91141fcc30ac88763df619c595288502be` (from `git ls-remote`), a fast-forward from
+`0b29b02c`.
+
+**Next sync:** after the next paper round. Start from base `a45173e1`.
