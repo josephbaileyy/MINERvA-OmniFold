@@ -196,6 +196,21 @@ class E2E(unittest.TestCase):
         self.assertNotEqual(b["nominal_basis_f32_minus_f64_sigma"]["g18"], b["nominal_basis_f32_minus_f64_sigma"]["ar23"])
         self.assertEqual(b["atime"]["moved"], [])
 
+    def test_the_receipt_end_to_end(self):
+        """fd_1b_mc.receipt unmocked except the named stand-ins: its U check against the staged S1 (float32, as
+        s1_assemble writes it; the amendment-2 receipt test gave a float64 U and could not see the defect), (e2)'s
+        d_CV, the 900 declared draws, N1 and section 2b on the real loaders."""
+        with self.patched():
+            rec = mc.receipt(self.args(staged=self.x["staged"]))
+        self.assertEqual(rec["step"], "receipt")
+        self.assertIn(rec["verdict"], ("PASS", "STOP"))
+        self.assertEqual(sum(v["sample_rows"] > 0 for v in rec["validation"].values()), 3)
+        self.assertEqual(rec["atime"]["moved"], [])
+        with self.patched(), self.assertRaisesRegex(mc.InvalidReceipt, "--cv-tdw"):
+            mc.receipt(self.args(staged=self.x["staged"], cv_tdw=None))
+        U32 = np.load(self.x["s1"])["U"]
+        self.assertEqual(U32.dtype, np.float32)
+
 
 if __name__ == "__main__":
     unittest.main()
