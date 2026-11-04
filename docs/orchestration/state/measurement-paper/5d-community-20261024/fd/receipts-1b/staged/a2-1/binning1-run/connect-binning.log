@@ -1,0 +1,15 @@
+host=login23 start=2026-11-03T23:44:38Z pid=303376 ppid=303375
+deploy porcelain_lines=0 head=e7641a9be380ee5428990ae0ceb4c5b9818f8636
+nd-unfolding/fd_1b_binning.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+binning rc=1
+	Percent of CPU this job got: 94%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:13.82
+	Maximum resident set size (kbytes): 1981864
+	File system inputs: 2671168
+	Exit status: 1
+sha256sum: /pscratch/sd/j/josephrb/fd-1b-a21-binning-20261103/binning.json: No such file or directory
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  /pscratch/sd/j/josephrb/fd-1b-a21-binning-20261103/binning.out
+3a16e45dfe820dfb9db5995ee6021e8a0ec84a442de0f118db1e02ecae40ffc1  /pscratch/sd/j/josephrb/fd-1b-a21-binning-20261103/binning.time
+end=2026-11-03T23:45:38Z

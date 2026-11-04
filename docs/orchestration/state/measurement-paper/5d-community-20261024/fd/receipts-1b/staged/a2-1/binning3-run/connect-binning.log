@@ -1,0 +1,17 @@
+host=login23 start=2026-11-04T00:02:17Z pid=438277 ppid=438275
+deploy porcelain_lines=0 head=917907aae6f3db5e299330c1ce78edfda72fb67f
+nd-unfolding/fd_1b_binning.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+sourcing /pscratch/sd/j/josephrb/fd-1b-a21-binning3-20261103/deploy/setup_salloc_env.sh sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+binning rc=0
+FD-1B-BINNING moved=16 same_R=14 flags=[] largest_bound={'g18': 0.0012356767041788726, 'ar23': 0.001296664074102225} largest_e2={'g18': 7.696295229669938e-05, 'ar23': 8.567334997609344e-05} s1={'nominal': 4.9496273298591015e-05, 'g18': 5.266880820222988e-05, 'ar23': 5.504503427190036e-05}
+	Percent of CPU this job got: 91%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:59.65
+	Maximum resident set size (kbytes): 5345172
+	File system inputs: 20121896
+	Exit status: 0
+726a0f4c30b68fd2643f87e4ebdbd9b01b3f1c26ed8d65407119df8785d4433b  /pscratch/sd/j/josephrb/fd-1b-a21-binning3-20261103/binning.json
+df8d59af217f29545b87b2cfb383be00af98dd8dbb6bbf21672c26ef5056fe21  /pscratch/sd/j/josephrb/fd-1b-a21-binning3-20261103/binning.out
+0ddd12833b4d03344dbc278bb9a5bb82deba341bdbe0bc0f97a3e198e133510b  /pscratch/sd/j/josephrb/fd-1b-a21-binning3-20261103/binning.time
+end=2026-11-04T00:03:59Z
