@@ -211,6 +211,45 @@ class E2E(unittest.TestCase):
         U32 = np.load(self.x["s1"])["U"]
         self.assertEqual(U32.dtype, np.float32)
 
+    def test_a_toy_item_under_nature_end_to_end(self):
+        """run_unfold, through mc.main, for a declared G18 toy under each rule: --cv-tdw loaded and checked,
+        the composite on one binning (e2), clip_draw's nature (truth and denominator rows), the toy truth, and
+        check_clip_gate. One named stand-in: the estimator (_unfold, the bound negweight-refined OmniFold, which A2.1 does
+        not change, whose output no A2.1 check reads, and which needs ROOT)."""
+        w = self.x["w"]
+        gate = self.tmp / "gate-file.json"
+        gate.write_text(json.dumps(mc.CLIP_GATE))
+        common = ["unfold", "--truth", "g18", "--role", "toy", "--items", str(mc.TOY_SEEDS["g18"][0]),
+                  "--npz", str(w.inputs), "--bkg", str(w.bkg), "--bank", str(w.bank), "--detector-dir", str(w.det),
+                  "--pins", str(w.pins), "--flux-constraint", str(w.constraint), "--expect-pins-sha256", digest(w.pins),
+                  "--prep", str(w.prep), "--threads", "1", "--estimator", "R",
+                  "--flux-table", str(self.x["table"]), "--expect-flux-table-sha256", digest(self.x["table"]),
+                  "--cv-tdw", str(self.x["tdw"]), "--expect-cv-tdw-sha256", digest(self.x["tdw"])]
+        fake = lambda exp, threads, seed=42, unfold_fn=None: (np.zeros(SHAPE), {})  # noqa: E731
+        metas = {}
+        for rule in ("data", "nature"):
+            out = self.tmp / f"toy-{rule}"
+            argv = common + ["--clip-rule", rule, "--out", str(out)]
+            if rule == "nature":
+                argv += ["--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]
+            with self.patched(), mock.patch.object(mc, "_unfold", fake):
+                self.assertEqual(mc.main(argv), 0, rule)
+            z = np.load(out / mc.product_name("fd1b_mc", "g18", "toy", str(mc.TOY_SEEDS["g18"][0])), allow_pickle=True)
+            metas[rule] = (json.loads(str(z["meta"])), np.asarray(z["xtrue_flat"], float))
+        mn, xn = metas["nature"]
+        md, xd = metas["data"]
+        self.assertEqual((md["clip_rule"], mn["clip_rule"]), ("data", "nature"))
+        self.assertIn("denominator", mn["clip"])
+        self.assertIn("truth", mn["clip"])
+        self.assertNotIn("denominator", md["clip"])
+        self.assertEqual((md["clip"]["rule"], mn["clip"]["rule"]), ("data", "nature"))
+        self.assertTrue(np.all(np.isfinite(xn)) and np.all(np.isfinite(xd)))
+        with self.patched(), mock.patch.object(mc, "_unfold", fake):            # nature without --cv-tdw refuses
+            argv = [x for x in common if x not in (str(self.x["tdw"]), digest(self.x["tdw"]), "--cv-tdw",
+                                                    "--expect-cv-tdw-sha256")]
+            self.assertNotEqual(mc.main(argv + ["--clip-rule", "nature", "--out", str(self.tmp / "toy-x"),
+                                                "--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

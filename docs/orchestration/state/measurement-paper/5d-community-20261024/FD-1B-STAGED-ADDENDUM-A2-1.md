@@ -143,12 +143,13 @@ Its only stand-ins:
 | `test_fd_1b_cvdenom.py:143`, `:264`, `test_fd_1b_binning.py:84` `NOATIME` / `NOATIME_FLAG` | the O_NOATIME flag | macOS lacks the flag | the node runs used it; `atime_moved` was [] in every run | n/a |
 | `test_fd_1b_c2.py:186` `CAL_SALT` | a constant | none (a refusal test) | n/a | refuse at 0 |
 | `test_fd_1b_mc.py:1720` (amendment 2's receipt test) `_load_world`, `_single`, `load_s1`, `fine_map`, `functional_matrix` | the receipt's loaders | gave a float64 U, so the U defect was invisible | e2e receipt | pass, and refuse without `--cv-tdw` |
-| `test_fd_1b_mc.py:749–752` (the toy clip-rule test) `truth_ratio`, `truth_weight`, `_weights`, `toy_experiment` (spy) | the toy path | the real truth weight | partly: `TruthWeight`, and the nature rule's own tests. No unmocked toy-item run yet | to come |
+| `test_fd_1b_mc.py:749–752` (the toy clip-rule test) `truth_ratio`, `truth_weight`, `_weights`, `toy_experiment` (spy) | the toy path | the real truth weight | e2e toy item under both rules through `mc.main` (`test_a_toy_item_under_nature_end_to_end`); one stand-in, the estimator `_unfold` (needs ROOT; A2.1 doesn't change it, and no A2.1 check reads its output) | pass under data and nature; nature without `--cv-tdw` refuses |
 
 **Job functions without an unmocked end-to-end test, with the reason:**
 - `clipcheck`, `null_step` and `readout` need S1-0b or bulk products, which the toy world doesn't produce. Their A2.1
   change is the U check through the one tested helper.
-- `run_unfold`'s toy item, under `nature` with `--cv-tdw`, is to come.
+- `run_unfold`'s toy item, under `nature` with `--cv-tdw`, is now covered end to end (the row above), as the
+  director required before binding 3.
 
 **The one-off scripts' import and install paths:**
 - **`connect-cvdenom.sh`** runs in `omnifold_py310`, with uproot and no ROOT. `fd_1b_cvdenom.py` imports only NumPy
