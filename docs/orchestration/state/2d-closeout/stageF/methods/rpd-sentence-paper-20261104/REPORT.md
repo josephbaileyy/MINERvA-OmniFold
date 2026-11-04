@@ -21,7 +21,7 @@ Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the s
   SEES; R1 OTHER, not dropped, every playlist resolved; R2 CLUSTERED; α̂ ≤ the gate at every scale; N0's flags not
   fired; R3 not read; and p_flux × 9,240 = 1. A changed readout stops the build.
 
-## Before and after
+## Before and after (against the base cb3e83517, as the branch now stands)
 
 ### Paper, Sec. IV A (decision item 1): the run-period sentences
 
@@ -49,9 +49,9 @@ Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the s
 
 **After:**
 
-> Each of the twelve playlists was also unfolded on its own, with its own simulation and bootstrap replicas, in a study whose tests and their readings were fixed before any playlist result was read. A playlist's offset is its double ratio on the sixteen cells relative to the exposure-weighted mean of the twelve. The statistic F of a division of the playlists into groups is the share of the offsets' exposure-weighted squared size, measured with the inverse of the relative C_total+C_resp, that the groups' exposure-weighted mean offsets carry. For the three run-period groups F=0.70, the largest of all 9,240 divisions of the twelve playlists into groups of six, three and three, so the permutation p-value is 1/9,240=1.08 × 10⁻⁴, the smallest the test can give. The permutation is approximate: the playlists differ in exposure and hence in noise, so their labels are not exchangeable, and the test's validity rests on a simulated null. In each of 2,000 simulated datasets the playlists' offsets are drawn independently from one covariance, estimated from the twelve playlists and scaled by 0, 0.5, 1 or 2, with each playlist's own bootstrap and simulation noise added; the share of datasets with p<0.05 is 0.0395–0.0565 over the four scales, within the bound of 0.0646 fixed in advance. Beside it, and descriptive only, the same statistic for a division by beam-intensity era, into 1A–1E, 1F and 1G, 1L and 1M, and 1N–1P, gives p=5.17 × 10⁻³ over the 83,160 divisions into groups of five, two, two and three; nothing is concluded from it.
+> Each of the twelve playlists was also unfolded on its own, with its own simulation and bootstrap replicas, in a study whose tests, bounds and readings were fixed before any playlist result was read. A playlist's offset is its double ratio on the sixteen cells relative to the exposure-weighted mean of the twelve. The statistic F of a division of the playlists into groups is the share of the offsets' exposure-weighted squared size, measured with the inverse of the relative C_total+C_resp, that the groups' exposure-weighted mean offsets carry. For the three run-period groups F=0.70, the largest of all 9,240 divisions of the twelve playlists into groups of six, three and three, so the permutation p-value is 1/9,240=1.08 × 10⁻⁴, the smallest the test can give. The permutation is approximate: the playlists differ in exposure and hence in noise, so their labels are not exchangeable, and the test's validity rests on a simulated null. In each of 2,000 simulated datasets the playlists' offsets are drawn independently from one covariance, estimated from the twelve playlists and scaled by 0, 0.5, 1 or 2, with each playlist's own bootstrap and simulation noise added; the share of datasets with p<0.05 is 0.0395–0.0565 over the four scales, within the bound of 0.0646. For an alternative chronological division into groups of five, two, two and three playlists (1A–1E, 1F and 1G, 1L and 1M, and 1N–1P), the same statistic gives p=5.17 × 10⁻³ over its 83,160 divisions; this comparison is descriptive.
 >
-> In the form of the two-dimensional test (§4.5, sec:uq-combine), the five-observable unfolds of the run-period groups give the double ratio of 1G–1M to 1A–1F a p∥ step of (6.28 ± 0.60) % across 8 GeV/c, 10.5 times its bootstrap scatter. Each playlist's own step, against 1A–1F (leaving the playlist out when it is one of them), was classed as consistent with none within two standard deviations (FREE), larger than half of the 1G–1M group's step, recombined from its three playlists, by two standard deviations (CARRIES), or neither (PARTIAL). The classes are CARRIES for 1L and 1M; PARTIAL for 1G, 1N and 1P; and FREE for 1A–1F and 1O. The patterns fixed in advance were that all three of 1G, 1L and 1M carry the step, or that some carry it and the others are free, each with 1A–1F free. Neither holds, so no statement of where the step lies is drawn from these classes. None of these readings identifies a cause.
+> In the form of the two-dimensional test (§4.5, sec:uq-combine), the five-observable unfolds of the run-period groups give the double ratio of 1G–1M to 1A–1F a p∥ step of (6.28 ± 0.60) % across 8 GeV/c, 10.5 times its bootstrap scatter. Each playlist's own step, against 1A–1F (leaving the playlist out when it is one of them), was classed as consistent with none within two standard deviations (FREE), larger than half of the 1G–1M group's step, recombined from its three playlists, by two standard deviations (CARRIES), or neither (PARTIAL). The classes are CARRIES for 1L and 1M; PARTIAL for 1G, 1N and 1P; and FREE for 1A–1F and 1O. The study's two patterns are that all three of 1G, 1L and 1M carry the step, or that some carry it and the others are free, each with 1A–1F free. Neither holds, so no statement of where the step lies is drawn from these classes. None of these readings identifies a cause.
 >
 
 ## For the director: choices made in drafting (each reversible)
@@ -74,11 +74,12 @@ Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the s
 5. **Words near §6.4's list:**
    - **"the test's validity rests on a simulated null"** is the readout's own label (`labels.r2`: "its validity rests
      on the simulated null"). "Validity" is not on §6.4's list, and the sentence makes no claim about either block.
-   - **"beam-intensity era"** names the declaration's era grouping (§5 R2, by mean `numi_pot`). It is a grouping,
-     not a cause, and the text says nothing is concluded from it.
+   - **"beam-intensity era"** named the declaration's era grouping (§5 R2, by mean `numi_pot`). Superseded: after the
+     PRD-referee read it prints as "an alternative chronological division" (below), and the name is in the source
+     comment only.
 
-   `check_licence.py` rejects §6.4's barred words in every added sentence of both files. Its self-test plants 6
-   defects and catches all 6.
+   `check_licence.py` rejects §6.4's barred words, and since the read also "beam-intensity", in every added
+   sentence of both files. Its self-test plants 7 defects and catches all 7.
 6. **The decision's PRD read is not followed in its framing.** It argues that the sentence "confirms that the three
    operational eras represent genuine, discrete systematic shifts" and "validates the topology" of the covariance.
    Neither reading is licensed (§6.2: nothing is added about whether every playlist shares its group's offset; §6.4
@@ -96,12 +97,80 @@ Its receipts are #752, merged at cb3e83517, and its `SHA256SUMS.txt` lists the s
 8. **Unchanged.** The note's existing "its size and coverage have not been independently validated" (sec:fived16-pl,
    the audit paragraph) predates the round and is untouched.
 
+## After the PRD-referee read of #753 at 74f0b929
+
+**The read.** The director's Gemini read of the diff is in this directory, verbatim:
+- `PRD-REVIEW-GEMINI-PROMPT.txt`, sha256 `52b66cfb0d6cb1d57249d1537ace5d85baa67d530baf466b5a2b8027c810e12a`;
+- `PRD-REVIEW-GEMINI-ANSWER.txt`, sha256 `afe86fb488b2bf1afdf67e0fa6e327150a9cd4374bdcc4a99524323bd73f55a5`.
+
+Both equal the director's SHA256SUMS. The director accepted choices 1–6 above, including stage 0's step as the
+classes' referent and the exact α̂, and ruled on the read's four edits.
+
+**Not adopted, for Joseph: edit 1.** The read asks for the paper's sentence to be reworded: "by more than their
+playlist-to-playlist scatter would give" becomes "by more than expected from their playlist-to-playlist scatter", or
+"…would predict". It is not adopted, because Joseph decided the sentence goes in verbatim
+(`DECISION-20261104-joseph-rpd-sentence.md` item 1), and the declaration licenses it word for word (§6.2).
+`check_licence.py` holds the paper and the note to the declaration's text. A reworded sentence would need Joseph's
+decision and, since §6.2 licenses only its own words, the director's reading of whether a reworded sentence is still
+licensed.
+
+**Adopted (the director's ruling), in the note only:**
+- **Edit 2.** "division by beam-intensity era" becomes "an alternative chronological division into groups of five,
+  two, two and three playlists". The read takes "beam-intensity" to imply a mechanism. The groups are the
+  declaration's, consecutive in run order. The declaration's name for them is in the source comment only, and
+  `check_licence.py` now fails if "beam-intensity" prints in any added sentence; its self-test has a seventh plant
+  for it.
+- **Edit 3.** The pre-declaration is stated once, at the start of the diagnostic paragraph: "a study whose tests,
+  bounds and readings were fixed before any playlist result was read". Naming the bound and the readings there keeps
+  the facts that "fixed in advance" (the calibration bound) and "patterns fixed in advance" (R1's patterns) carried;
+  those two repeats are dropped.
+- **Edit 4.** The era test is reported with the single qualifier "this comparison is descriptive". "Beside it, and
+  descriptive only" and "nothing is concluded from it" are dropped.
+
+"Partition" in the director's example wording is printed as "division", the word the paragraph already uses for the
+flux test's 9,240.
+
+**The changed sentences, before (at 74f0b929) and after.** No number changes; the paper is unchanged.
+
+**Before:**
+
+> Each of the twelve playlists was also unfolded on its own, with its own simulation and bootstrap replicas, in a study whose tests and their readings were fixed before any playlist result was read.
+
+**After:**
+
+> Each of the twelve playlists was also unfolded on its own, with its own simulation and bootstrap replicas, in a study whose tests, bounds and readings were fixed before any playlist result was read.
+
+**Before:**
+
+> In each of 2,000 simulated datasets the playlists' offsets are drawn independently from one covariance, estimated from the twelve playlists and scaled by 0, 0.5, 1 or 2, with each playlist's own bootstrap and simulation noise added; the share of datasets with p<0.05 is 0.0395–0.0565 over the four scales, within the bound of 0.0646 fixed in advance.
+
+**After:**
+
+> In each of 2,000 simulated datasets the playlists' offsets are drawn independently from one covariance, estimated from the twelve playlists and scaled by 0, 0.5, 1 or 2, with each playlist's own bootstrap and simulation noise added; the share of datasets with p<0.05 is 0.0395–0.0565 over the four scales, within the bound of 0.0646.
+
+**Before:**
+
+> Beside it, and descriptive only, the same statistic for a division by beam-intensity era, into 1A–1E, 1F and 1G, 1L and 1M, and 1N–1P, gives p=5.17 × 10⁻³ over the 83,160 divisions into groups of five, two, two and three; nothing is concluded from it.
+
+**After:**
+
+> For an alternative chronological division into groups of five, two, two and three playlists (1A–1E, 1F and 1G, 1L and 1M, and 1N–1P), the same statistic gives p=5.17 × 10⁻³ over its 83,160 divisions; this comparison is descriptive.
+
+**Before:**
+
+> The patterns fixed in advance were that all three of 1G, 1L and 1M carry the step, or that some carry it and the others are free, each with 1A–1F free.
+
+**After:**
+
+> The study's two patterns are that all three of 1G, 1L and 1M carry the step, or that some carry it and the others are free, each with 1A–1F free.
+
+
 ## Checks
 
 | check | result | record |
 |---|---|---|
-| ledger (`check_ledger.py`, base cb3e83517) | 7 rows, 30 probes, 0 changed base sentences, 0 failures; self-test PASS | `LEDGER-CHECK.txt` |
-| licence (`check_licence.py`): §6.2 verbatim in both files, §6.4's words absent from added sentences, kept clauses | PASS; self-test 6/6 | `LICENCE-CHECK.txt` |
+| ledger (`check_ledger.py`, base cb3e83517) | 7 rows, 32 probes, 0 changed base sentences, 0 failures; self-test PASS | `LEDGER-CHECK.txt` |
+| licence (`check_licence.py`): §6.2 verbatim in both files, §6.4's words and "beam-intensity" absent from added sentences, kept clauses | PASS; self-test 7/7 | `LICENCE-CHECK.txt` |
 | `make_values_fived16.py --check`; `check_sec4_receipts.py` | PASS (2,731 values); 17/17 | `VALUES-CHECK.txt` |
 | rater copy (`make_rater_copy.sh`) and `check_held.py` | PASS, with case 6; the 3 known flags | `RATER-COPY.txt`, `CHECK-HELD.txt` |
 | builds | paper 11 pp, note 136 pp, as at the base | build_all.sh |

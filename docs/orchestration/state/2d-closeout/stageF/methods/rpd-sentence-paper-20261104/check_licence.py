@@ -4,7 +4,8 @@
   1. the declaration's sec. 6.2 CLUSTERED sentence, read from the declaration itself, prints verbatim in paper_body.tex
      straight after the bootstrap-scatter sentence, and in sec_fived16.tex straight after its counterpart;
   2. the sentences the round adds (printed, comment-stripped; in the worktree and not at the base) use none of sec. 6.4's
-     barred words: "validated", "covers", "coverage", "which period is correct";
+     barred words: "validated", "covers", "coverage", "which period is correct"; nor "beam-intensity", which #753's
+     PRD-referee read found to imply a mechanism (edit 2, adopted: the era grouping is named in the source comment only);
   3. the clauses decision item 1 keeps still print in the paper: "The cause is not known", "which period is correct",
      "poorly determined" and the interval keys.
 usage: check_licence.py <worktree> [--base SHA]   (exit 1 on any failure)
@@ -21,7 +22,7 @@ spec.loader.exec_module(rl)
 cl = rl.cl
 DECL = "docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-DECLARATION.md"
 NOTE = "docs/analysis-note"
-BARRED = re.compile(r"validated|\bcovers\b|coverage|which period is correct", re.I)
+BARRED = re.compile(r"validated|\bcovers\b|coverage|which period is correct|beam[- ]intensity", re.I)
 AFTER = {"paper_body.tex": "differ by more than their bootstrap scatter.",
          "sec_fived16.tex": "differ from one another by more than the scatter of their bootstrap replicas."}
 # the paper's sentence carries the note pointer before its full stop (decision item 1)
@@ -75,6 +76,8 @@ def self_test(wt, base):
         "note sentence missing": lambda c: {**c, "sec_fived16.tex": c["sec_fived16.tex"].replace(lic + " ", "", 1)},
         "barred word added": lambda c: {**c, "sec_fived16.tex": c["sec_fived16.tex"].replace(
             "None of these readings identifies a cause.", "None of these readings is validated.")},
+        "era named by intensity": lambda c: {**c, "sec_fived16.tex": c["sec_fived16.tex"].replace(
+            "an alternative chronological division", "a beam-intensity division")},
         "coverage added": lambda c: {**c, "paper_body.tex": c["paper_body.tex"] + " The block's coverage holds."},
         "kept clause dropped": lambda c: {**c, "paper_body.tex": c["paper_body.tex"].replace("The cause is not known, and ", "")},
     }
