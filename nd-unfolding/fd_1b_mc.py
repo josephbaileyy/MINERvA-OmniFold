@@ -859,6 +859,7 @@ def code_digests() -> dict:
 
 
 BULK_ROLES = ("central", "seed", "block", "stat", "toy")    # the graded items: under 'nature' only (A2.1 S2)
+BOUND_GATE_SHA256 = None   # binding 3 declares c2check's record by digest (the director's H1); until then, refuse
 
 
 def pre_gate_items() -> set:
@@ -881,11 +882,17 @@ def check_clip_gate(a) -> None:
     """Joseph's ruling on the clip rule (#718) as A2.1's S2 puts it in code, the hard stop:
     * under 'data', only the pre-gate items run (pre_gate_items): S1-0, S1-0b, the capture, the controls. A graded
       bulk item under 'data' refuses;
-    * under 'nature', only the graded roles (BULK_ROLES) run, and only with c2check's gate record, pinned by digest,
-      reading "option (1)" at PASS and bound to this run: its schema and step, this truth's own reading, the declared
-      seeds, the code (fd_1b_c2.gate_code_digests, equal to this process's), the inputs (the npz and background as
-      declared, and the pins, flux table, push and CV per-row tdw digests this run was given) and a calibration
-      digest. Anything else refuses: nothing launches, and 1B returns to Joseph. A hand-written file cannot pass."""
+    * under 'nature', only the graded roles (BULK_ROLES) run, and only on c2check's gate record whose sha256 is the
+      one binding 3 declares (BOUND_GATE_SHA256; none is declared yet, so the bulk refuses). That digest is the
+      protection: every field below can be recomputed from the repository and the run's own arguments, so a
+      hand-written record of the right form would pass the field checks alone (the audit's H1). Binding 3 records
+      which c2check run wrote the file it pins. The fields, re-verified at launch as defence in depth (H2): the
+      schema and step, PASS and "option (1)", this truth's own reading, the declared seeds, the code
+      (fd_1b_c2.gate_code_digests, equal to this process's), the inputs (the npz and background as declared, and the
+      pins, flux table, push and CV per-row tdw digests this run was given); the calibration CALIBRATED, its sha
+      the record's, its three-truth joint union measured (not projected) and at most 1 %, and its power met; the
+      backstop passed at every truth; and the config hash equal to this run's. Anything else refuses: nothing
+      launches, and 1B returns to Joseph."""
     items = [x for x in str(a.items).split(",") if x]
     if a.clip_rule == "data":
         allowed = pre_gate_items()
@@ -898,6 +905,10 @@ def check_clip_gate(a) -> None:
         raise Refusal(f"role {a.role} is not a graded bulk role: it runs under 'data' before the gate, or not at all")
     if a.clip_gate is None or a.expect_clip_gate_sha256 is None:
         raise Refusal("the 'nature' rule needs c2check's gate record (--clip-gate, --expect-clip-gate-sha256)")
+    if BOUND_GATE_SHA256 is None:
+        raise Refusal("no c2check record is bound yet: binding 3 declares its digest (the director's H1)")
+    if a.expect_clip_gate_sha256 != BOUND_GATE_SHA256:
+        raise Refusal("the clip gate is not the record binding 3 declares")
     raw = Path(a.clip_gate).read_bytes()
     if hashlib.sha256(raw).hexdigest() != a.expect_clip_gate_sha256:
         raise Refusal("the clip gate's digest differs from the declared one")
@@ -922,6 +933,19 @@ def check_clip_gate(a) -> None:
         raise Refusal(f"the clip gate was read on other inputs than this run's: {diff}")
     if not g.get("calibration_sha256"):
         raise Refusal("the clip gate names no calibration")
+    cal = g.get("calibration") or {}
+    if cal.get("verdict") != "CALIBRATED" or cal.get("sha256") != g["calibration_sha256"]:
+        raise Refusal("the clip gate's calibration is not CALIBRATED, or not the one it names")
+    if not cal.get("three_truths_measured") or cal.get("union") is None or cal["union"] > fd_1b_c2.UNION_LIMIT:
+        raise Refusal("the clip gate's three-truth noise-only union is not measured, or above 1 %")
+    if not cal.get("power_meets"):
+        raise Refusal("the clip gate's calibration does not meet the power requirement")
+    back = g.get("backstop") or {}
+    if a.truth not in back or not all(back.get(t, {}).get("passes") for t in g.get("truths", [])):
+        raise Refusal("the clip gate's backstop on the 300 declared draws did not pass")
+    ins = dict(mine, push_sha256=a.expect_push_sha256 if a.truth == "plugin" else gi.get("push_sha256"))
+    if g.get("config_hash") != fd_1b_c2.config_hash(fd_1b_c2.gate_code_digests(), ins, "nature"):
+        raise Refusal("the clip gate's config hash is not this run's")
 
 
 def run_unfold(a, unfold_fn=None) -> int:

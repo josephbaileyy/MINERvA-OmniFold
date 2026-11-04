@@ -736,7 +736,8 @@ class Jobs(Case):
         argv2 = self.argv("g18", "central", "T", out2)
         argv2[argv2.index("--clip-rule") + 1] = "nature"
         argv2 = self.bound_gate(argv2, "g18")
-        with mock.patch.object(mc, "_unfold_s1", lambda exp, threads, seed=42, unfold_fn=None: (np.ones(4), {})):
+        with mock.patch.object(mc, "_unfold_s1", lambda exp, threads, seed=42, unfold_fn=None: (np.ones(4), {})), \
+                mock.patch.object(mc, "BOUND_GATE_SHA256", self.bound):
             self.assertEqual(mc.main(argv2), 0)
         z = np.load(out2 / mc.product_name("fd1b_mc", "g18", "central", "T"))
         self.assertEqual(json.loads(str(z["meta"]))["clip_rule"], "nature")
@@ -795,19 +796,25 @@ class Jobs(Case):
         import fd_1b_c2
         def val(flag):
             return argv[argv.index(flag) + 1] if flag in argv else None
-        rec = {"schema": fd_1b_c2.SCHEMA_GATE, **mc.CLIP_GATE, "reads": {truth: "option (1)"},
+        ins = {"npz_sha256": sa.INPUT_NPZ_SHA256, "bkg_sha256": sa.BKG_SHA256,
+               "pins_sha256": val("--expect-pins-sha256"), "flux_table_sha256": val("--expect-flux-table-sha256"),
+               "cv_tdw_sha256": val("--expect-cv-tdw-sha256"), "push_sha256": val("--expect-push-sha256")}
+        code = fd_1b_c2.gate_code_digests()
+        rec = {"schema": fd_1b_c2.SCHEMA_GATE, **mc.CLIP_GATE, "reads": {truth: "option (1)"}, "truths": [truth],
                "declared_seeds": {truth: [mc.TOY_SEEDS[truth][0], mc.TOY_SEEDS[truth][-1]]} if truth in mc.TOY_SEEDS else {},
-               "code_sha256": fd_1b_c2.gate_code_digests(), "calibration_sha256": "c" * 64,
-               "inputs": {"npz_sha256": sa.INPUT_NPZ_SHA256, "bkg_sha256": sa.BKG_SHA256,
-                          "pins_sha256": val("--expect-pins-sha256"), "flux_table_sha256": val("--expect-flux-table-sha256"),
-                          "cv_tdw_sha256": val("--expect-cv-tdw-sha256"), "push_sha256": val("--expect-push-sha256")}}
+               "code_sha256": code, "calibration_sha256": "c" * 64, "inputs": ins,
+               "calibration": {"verdict": "CALIBRATED", "sha256": "c" * 64, "s": 1.0, "union": 0.009,
+                               "three_truths_measured": True, "power_meets": True},
+               "backstop": {truth: {"passes": True}}, "config_hash": fd_1b_c2.config_hash(code, ins, "nature")}
         for k, v in over.items():
-            if k.startswith("inputs."):
-                rec["inputs"][k.split(".", 1)[1]] = v
+            if "." in k:
+                head, key = k.split(".", 1)
+                rec[head] = dict(rec[head], **{key: v})
             else:
                 rec[k] = v
         gate = self.tmp / f"gate-{len(list(self.tmp.glob('gate-*')))}.json"
         gate.write_text(json.dumps(rec))
+        self.bound = digest(gate)                              # binding 3's declaration, for the run that follows
         return argv + ["--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]
 
     def test_s2_the_bound_gate(self):
@@ -816,24 +823,38 @@ class Jobs(Case):
         fake = lambda exp, threads, seed=42, unfold_fn=None: (np.ones(4), {})  # noqa: E731
         k = [0]
 
-        def run(truth, role, item, rule, gate=None, **over):
+        def run(truth, role, item, rule, gate=None, bind=True, **over):
             k[0] += 1
             argv = self.argv(truth, role, item, self.tmp / f"s2-{k[0]}")
             argv[argv.index("--clip-rule") + 1] = rule
+            self.bound = None
             if gate:
                 argv = self.bound_gate(argv, truth, **over)
-            with mock.patch.object(mc, "_unfold_s1", fake):
+            with mock.patch.object(mc, "_unfold_s1", fake), \
+                    mock.patch.object(mc, "BOUND_GATE_SHA256", self.bound if bind else None):
                 return mc.main(argv)
         self.assertEqual(run("g18", "central", "T", "data"), 0)                 # S1-0's pilot item
         self.assertEqual(run("ar23", "central", "T", "data"), 0)                # S1-0b's
         self.assertEqual(run("g18", "seed", "T", "data"), 4)                    # a bulk item under 'data'
         self.assertEqual(run("g18", "seed", "T", "nature"), 4)                  # no gate
         self.assertEqual(run("g18", "seed", "T", "nature", gate=True), 0)       # the bound record
+        self.assertEqual(run("g18", "seed", "T", "nature", gate=True, bind=False), 4)   # H1: nothing bound yet
         for over in ({"verdict": "STOP"}, {"reading": "option (2)"}, {"reads": {"g18": "option (3)"}},
                      {"reads": {"ar23": "option (1)"}}, {"declared_seeds": {"g18": [1, 2]}},
                      {"code_sha256": {"fd_1b_c2.py": "0" * 64}}, {"inputs.pins_sha256": "0" * 64},
-                     {"inputs.npz_sha256": "0" * 64}, {"calibration_sha256": None}, {"schema": "x"}):
+                     {"inputs.npz_sha256": "0" * 64}, {"calibration_sha256": None}, {"schema": "x"},
+                     {"calibration.verdict": "TO_JOSEPH"}, {"calibration.sha256": "d" * 64},          # H2, each field
+                     {"calibration.three_truths_measured": False}, {"calibration.union": 0.0101},
+                     {"calibration.power_meets": False}, {"backstop": {"g18": {"passes": False}}},
+                     {"backstop": {}}, {"config_hash": "0" * 64}):
             self.assertEqual(run("g18", "seed", "T", "nature", gate=True, **over), 4, over)
+        argv = self.bound_gate(self.argv("g18", "seed", "T", self.tmp / "s2-other"), "g18")  # H1: a well-formed record
+        argv[argv.index("--clip-rule") + 1] = "nature"
+        other = self.bound
+        argv2 = self.bound_gate(self.argv("g18", "seed", "T", self.tmp / "s2-other2"), "g18", **{"calibration.s": 1.01})
+        argv2[argv2.index("--clip-rule") + 1] = "nature"
+        with mock.patch.object(mc, "_unfold_s1", fake), mock.patch.object(mc, "BOUND_GATE_SHA256", other):
+            self.assertEqual(mc.main(argv2), 4)                               # not the declared one: refused
         gate = self.tmp / "hand-written.json"                                   # D2: the stub's three fields alone
         gate.write_text(json.dumps(mc.CLIP_GATE))
         argv = self.argv("g18", "seed", "T", self.tmp / "s2-hand")
@@ -843,8 +864,8 @@ class Jobs(Case):
         argv = self.bound_gate(self.argv("g18", "seed", "T", self.tmp / "s2-digest"), "g18")
         argv[argv.index("--clip-rule") + 1] = "nature"
         argv[argv.index("--expect-clip-gate-sha256") + 1] = "0" * 64
-        with mock.patch.object(mc, "_unfold_s1", fake):
-            self.assertEqual(mc.main(argv), 4)                                  # the wrong digest
+        with mock.patch.object(mc, "_unfold_s1", fake), mock.patch.object(mc, "BOUND_GATE_SHA256", "0" * 64):
+            self.assertEqual(mc.main(argv), 4)                                  # the file is not the digest given
         self.assertEqual(run("data", "control", "MaRES_0", "nature", gate=True), 4)   # not a graded role
         self.assertTrue({("g18", "toy", "3620000"), ("ar23", "stat", "1"), ("data", "capture", "data")}
                         <= mc.pre_gate_items())
@@ -861,7 +882,9 @@ class Jobs(Case):
             self.assertEqual(mc.main(self.argv("g18", "central", "T", out)), 0)
             argv = self.argv("g18", "seed", "T", out)                          # a bulk item: 'nature' with the gate
             argv[argv.index("--clip-rule") + 1] = "nature"
-            self.assertEqual(mc.main(self.bound_gate(argv, "g18")), 0)
+            argv = self.bound_gate(argv, "g18")
+            with mock.patch.object(mc, "BOUND_GATE_SHA256", self.bound):
+                self.assertEqual(mc.main(argv), 0)
         self.assertEqual(calls, [42, mc.SEED_CHECK])
         z = np.load(out / mc.product_name("fd1b_mc", "g18", "seed", "T"))
         self.assertEqual(json.loads(str(z["meta"]))["estimator_seed"], mc.SEED_CHECK)

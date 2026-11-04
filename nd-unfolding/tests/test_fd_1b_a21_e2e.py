@@ -32,6 +32,46 @@ from test_fd_1b_mc import plain_noatime  # noqa: E402
 N_TD = 50
 
 
+def matched_world(root: Path) -> dict:
+    """consistent_world with the denominator rows the truth-passing in-grid signal rows themselves (coordinates as
+    float32, as the bank stores them, and the npz's MCgen made float32-exact so row_hash keys agree; tdw_CV their
+    w_truth), so C2's row match (vi) is bounded, and a push file for the plug-in: a world on which c2check can PASS,
+    for the H3 round trip."""
+    x = consistent_world(root)
+    w = x["w"]
+    z = dict(np.load(w.inputs, allow_pickle=True))
+    gen = np.asarray(z["MCgen"], np.float64).astype(np.float32).astype(np.float64)
+    z["MCgen"] = gen
+    cells = mc.flat_cells(gen, EDGES)
+    sel = np.asarray(z["pass_truth"], bool) & (cells >= 0)
+    cv = dict(np.load(w.bank / "cv.npz", allow_pickle=True))
+    bank_gen = gen.copy()
+    bank_gen[~np.isfinite(np.asarray(cv["MCgen"], float)).all(axis=1)] = np.nan
+    cv["MCgen"] = bank_gen
+    for k, j in zip(("td_pt", "td_pz", "td_ea", "td_q3", "td_w"), range(5)):
+        cv[k] = gen[sel, j].astype(np.float32)
+    np.savez(w.bank / "cv.npz", **cv)
+    tdw_cv = np.asarray(z["w_truth"], float)[sel]
+    np.save(x["tdw"], tdw_cv)
+    z["denom_nd"] = s5p_universe.denominator(cv, tdw_cv, EDGES)
+    np.savez(w.inputs, **z)
+    b = dict(np.load(w.bkg, allow_pickle=True))
+    b["meta"] = json.dumps({"npz_sha256": digest(w.inputs)})
+    np.savez(w.bkg, **b)
+    for p in sorted(w.bank.glob("*_tdw.npy")):
+        r = np.random.default_rng(zlib.crc32(p.name.encode()))
+        np.save(p, tdw_cv * r.uniform(0.98, 1.02, tdw_cv.size))
+    for p in sorted(w.det.glob("*_denom_nd.npy")):
+        np.save(p, z["denom_nd"])
+    w.receipt.write_text(json.dumps({"files_sha256": {p.name: digest(p) for p in sorted(w.det.iterdir())}}))
+    w.manifest.write_text("".join(f"{digest(p)}  {p}\n" for p in sorted(w.bank.iterdir()))
+                          + f"{digest(w.receipt)}  {w.receipt}\n")
+    w.pins.write_text(json.dumps(toys.make_pins(w.bank, w.det, w.manifest, w.receipt)))
+    push = root / "push.npz"
+    np.savez(push, push=np.random.default_rng(9).uniform(0.9, 1.1, int(np.asarray(z["pass_truth"], bool).sum())))
+    return dict(x, push=push)
+
+
 def consistent_world(root: Path) -> dict:
     """World, then made to agree with the real files' measured facts on disk: cv.npz carries the denominator rows'
     coordinates; the npz's denom_nd is those rows' histogram at the CV weight (1 per row, written as the (d1) read's
@@ -80,14 +120,20 @@ def consistent_world(root: Path) -> dict:
 
 
 class E2E(unittest.TestCase):
+    truths = ("g18", "ar23")
+
     @classmethod
     def setUpClass(cls):
         cls.tmp = Path(tempfile.mkdtemp(prefix="fd1b-a21-e2e-"))
-        cls.x = consistent_world(cls.tmp)
+        cls.x = cls.world(cls.tmp)
         cls.cal = cls.tmp / "cal" / "cal.json"
         with cls.patched():
             cls.cal_rec = c2.calibrate_main(cls.args(sets=40, workers=2, budget_seconds=1e6, out=cls.cal,
                                                      draws=300))      # speed: the rule and power are N-free
+
+    @classmethod
+    def world(cls, root):
+        return consistent_world(root)
 
     @classmethod
     def tearDownClass(cls):
@@ -110,8 +156,9 @@ class E2E(unittest.TestCase):
         base = dict(npz=w.inputs, bkg=w.bkg, bank=w.bank, detector_dir=w.det, pins=w.pins,
                     expect_pins_sha256=digest(w.pins), flux_constraint=w.constraint, flux_table=cls.x["table"],
                     expect_flux_table_sha256=digest(cls.x["table"]), definition=cls.tmp / "definition.json",
-                    prep=w.prep, push=None, expect_push_sha256=None, cv_tdw=cls.x["tdw"],
-                    expect_cv_tdw_sha256=digest(cls.x["tdw"]), truths=["g18", "ar23"])
+                    prep=w.prep, push=cls.x.get("push"),
+                    expect_push_sha256=digest(cls.x["push"]) if cls.x.get("push") else None, cv_tdw=cls.x["tdw"],
+                    expect_cv_tdw_sha256=digest(cls.x["tdw"]), truths=list(cls.truths))
         base.update(kw)
         return argparse.Namespace(**base)
 
@@ -130,9 +177,10 @@ class E2E(unittest.TestCase):
         self.assertEqual(len(rec["rule"]["grid"]), len(c2.S_GRID))
 
     def calibrated(self):
-        """The calibration's own record with its verdict set to CALIBRATED (a named fixture step: 40 sets cannot
-        reach the declared 10,000), its ratio file unchanged."""
-        rec = dict(self.cal_rec, verdict="CALIBRATED")
+        """The calibration's own record with its verdict set to CALIBRATED and its power met (a named fixture step: 40
+        sets of the toy cannot reach the declared 10,000, and their power is not the real one), its ratio file
+        unchanged."""
+        rec = dict(self.cal_rec, verdict="CALIBRATED", power=dict(self.cal_rec.get("power") or {}, meets=True))
         p = self.tmp / "cal" / "cal-calibrated.json"
         p.write_text(json.dumps(rec))
         shutil.copy(self.cal.with_suffix(".npz"), p.with_suffix(".npz"))
@@ -143,7 +191,7 @@ class E2E(unittest.TestCase):
         SDs, which it measured at 300 draws per set (draws=300)."""
         p = self.tmp / "cal" / "cal300.json"
         p.write_text(json.dumps({"schema": "fd-1b-c2-calibration/1", "outputs": {
-            t: {"a": {"sd_per_cell": self.cal_rec["rule"]["thresholds"][t]["sd_per_cell"]}} for t in ("g18", "ar23")}}))
+            t: {"a": {"sd_per_cell": self.cal_rec["rule"]["thresholds"][t]["sd_per_cell"]}} for t in self.truths}}))
         return p
 
     def c2args(self, cal, **kw):
@@ -243,12 +291,17 @@ class E2E(unittest.TestCase):
         w = self.x["w"]
         gate = self.tmp / "gate-file.json"                    # bound to this run's inputs, as c2check writes it
         with self.patched():
+            ins = {"npz_sha256": sa.INPUT_NPZ_SHA256, "bkg_sha256": sa.BKG_SHA256, "pins_sha256": digest(w.pins),
+                   "flux_table_sha256": digest(self.x["table"]), "cv_tdw_sha256": digest(self.x["tdw"]),
+                   "push_sha256": None}
+            code = c2.gate_code_digests()
             gate.write_text(json.dumps({
-                "schema": c2.SCHEMA_GATE, **mc.CLIP_GATE, "reads": {"g18": "option (1)"},
+                "schema": c2.SCHEMA_GATE, **mc.CLIP_GATE, "reads": {"g18": "option (1)"}, "truths": ["g18"],
                 "declared_seeds": {"g18": [mc.TOY_SEEDS["g18"][0], mc.TOY_SEEDS["g18"][-1]]},
-                "code_sha256": c2.gate_code_digests(), "calibration_sha256": "c" * 64,
-                "inputs": {"npz_sha256": sa.INPUT_NPZ_SHA256, "bkg_sha256": sa.BKG_SHA256, "pins_sha256": digest(w.pins),
-                           "flux_table_sha256": digest(self.x["table"]), "cv_tdw_sha256": digest(self.x["tdw"])}}))
+                "code_sha256": code, "calibration_sha256": "c" * 64, "inputs": ins,
+                "calibration": {"verdict": "CALIBRATED", "sha256": "c" * 64, "s": 1.0, "union": 0.009,
+                                "three_truths_measured": True, "power_meets": True},
+                "backstop": {"g18": {"passes": True}}, "config_hash": c2.config_hash(code, ins, "nature")}))
         common = ["unfold", "--truth", "g18", "--role", "toy", "--items", str(mc.TOY_SEEDS["g18"][0]),
                   "--npz", str(w.inputs), "--bkg", str(w.bkg), "--bank", str(w.bank), "--detector-dir", str(w.det),
                   "--pins", str(w.pins), "--flux-constraint", str(w.constraint), "--expect-pins-sha256", digest(w.pins),
@@ -262,7 +315,8 @@ class E2E(unittest.TestCase):
             argv = common + ["--clip-rule", rule, "--out", str(out)]
             if rule == "nature":
                 argv += ["--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate)]
-            with self.patched(), mock.patch.object(mc, "_unfold", fake):
+            with self.patched(), mock.patch.object(mc, "_unfold", fake), \
+                    mock.patch.object(mc, "BOUND_GATE_SHA256", digest(gate)):
                 self.assertEqual(mc.main(argv), 0, rule)
             z = np.load(out / mc.product_name("fd1b_mc", "g18", "toy", str(mc.TOY_SEEDS["g18"][0])), allow_pickle=True)
             metas[rule] = (json.loads(str(z["meta"])), np.asarray(z["xtrue_flat"], float))
@@ -290,6 +344,61 @@ class E2E(unittest.TestCase):
             np.save(p, bad)
             with self.patched(), self.assertRaises(mc.Refusal):
                 mc._load_world(self.args(cv_tdw=p, expect_cv_tdw_sha256=digest(p)))
+
+
+
+class RoundTrip(E2E):
+    """The director's H3: c2check's own written record, on a world where it can PASS (matched_world, all three
+    truths), goes to check_clip_gate by its digest: it is admitted; each re-verified field (H2) perturbed, and
+    declared by its own digest, is refused. Only this class's test runs here (the parent's run on their own world)."""
+    truths = ("g18", "ar23", "plugin")
+
+    @classmethod
+    def world(cls, root):
+        return matched_world(root)
+
+    def gate_argv(self, gate):
+        w = self.x["w"]
+        return ["unfold", "--truth", "g18", "--role", "toy", "--items", str(mc.TOY_SEEDS["g18"][0]),
+                "--npz", str(w.inputs), "--bkg", str(w.bkg), "--bank", str(w.bank), "--detector-dir", str(w.det),
+                "--pins", str(w.pins), "--flux-constraint", str(w.constraint), "--expect-pins-sha256", digest(w.pins),
+                "--prep", str(w.prep), "--threads", "1", "--estimator", "R", "--clip-rule", "nature",
+                "--flux-table", str(self.x["table"]), "--expect-flux-table-sha256", digest(self.x["table"]),
+                "--cv-tdw", str(self.x["tdw"]), "--expect-cv-tdw-sha256", digest(self.x["tdw"]),
+                "--clip-gate", str(gate), "--expect-clip-gate-sha256", digest(gate),
+                "--out", str(self.tmp / f"rt-{gate.stem}")]
+
+    def bulk(self, gate):
+        fake = lambda exp, threads, seed=42, unfold_fn=None: (np.zeros(SHAPE), {})  # noqa: E731
+        with self.patched(), mock.patch.object(mc, "_unfold", fake), \
+                mock.patch.object(mc, "BOUND_GATE_SHA256", digest(gate)):
+            return mc.main(self.gate_argv(gate))
+
+    def test_c2checks_record_round_trip(self):
+        cal = self.calibrated()
+        with self.patched():
+            g = c2.c2check_main(self.c2args(cal))
+        self.assertEqual(g["verdict"], "PASS", g["reads"])
+        self.assertTrue(g["calibration"]["three_truths_measured"])
+        gate = self.tmp / "gate" / "gate.json"
+        self.assertEqual(self.bulk(gate), 0)                                   # c2check's own record: admitted
+        for k, v in (("calibration", dict(g["calibration"], verdict="TO_JOSEPH")),
+                     ("calibration", dict(g["calibration"], sha256="d" * 64)),
+                     ("calibration", dict(g["calibration"], three_truths_measured=False)),
+                     ("calibration", dict(g["calibration"], union=0.0101)),
+                     ("calibration", dict(g["calibration"], power_meets=False)),
+                     ("backstop", dict(g["backstop"], g18=dict(g["backstop"]["g18"], passes=False))),
+                     ("config_hash", "0" * 64), ("verdict", "STOP"), ("reading", "option (3)")):
+            bad = self.tmp / "gate" / f"bad-{k}-{len(list((self.tmp / 'gate').glob('bad-*')))}.json"
+            bad.write_text(json.dumps(dict(g, **{k: v})))
+            self.assertEqual(self.bulk(bad), 4, (k, v))
+
+    # the parent's tests run on their own world; here only the round trip
+    test_the_calibration_runs_the_production_chain = test_c2check_end_to_end = None
+    test_c2check_refuses_an_uncalibrated_or_foreign_calibration = None
+    test_c2check_refuses_a_sample_whose_first_300_are_not_the_declared = None
+    test_the_binning_script_end_to_end = test_the_receipt_end_to_end = None
+    test_a_toy_item_under_nature_end_to_end = test_the_cv_tdw_is_checked_at_load = None
 
 
 if __name__ == "__main__":
