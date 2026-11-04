@@ -303,6 +303,14 @@ class Audit(unittest.TestCase):
         self.assertIn(str(self.d / "guarded" / "f.txt"), paths)
         self.assertEqual(self.audit.refused, [])
 
+    def test_counts_guarded_opens(self):
+        g = self.d / "guarded" / "f.txt"
+        self.cbm.read_noatime(g)
+        self.cbm.read_noatime(g)
+        (self.d / "free.txt").read_text()
+        n = self.audit.counts()
+        self.assertEqual((n["guarded_opens_total"], n["guarded_opens_distinct"]), (2, 1))
+
     def test_uninstall_restores(self):
         import builtins
         self.audit.uninstall()

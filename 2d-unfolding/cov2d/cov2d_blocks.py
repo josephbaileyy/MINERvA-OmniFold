@@ -198,6 +198,13 @@ class OpenAudit:
             self.refused.append((how, p))
             raise c.Refusal(f"open audit: {how}({p}) is not a pinned O_NOATIME copy")
 
+    def counts(self) -> dict:
+        """The guarded opens: every logged open under the guarded trees (all sanctioned when nothing was refused), as a
+        total and as distinct paths, and how many of them carried the O_NOATIME bit."""
+        g = [(p, nz) for _, p, nz in self.log if p.startswith(self.guarded)]
+        return {"guarded_opens_total": len(g), "guarded_opens_distinct": len({p for p, _ in g}),
+                "guarded_opens_with_noatime_bit": sum(1 for _, nz in g if nz)}
+
     def install(self, root=None):
         import builtins
         import io
@@ -406,7 +413,7 @@ def main(argv=None) -> int:
     outside = [k for k, f in rec["modules"].items() if not f.startswith(os.path.realpath(REPO) + os.sep)]
     if outside:
         rec["stop"].append(f"modules imported from outside the clone: {outside}")
-    rec["open_audit"] = {"opens": len(AUDIT.log), "refused": AUDIT.refused,
+    rec["open_audit"] = {"opens": len(AUDIT.log), "refused": AUDIT.refused, **AUDIT.counts(),
                          "guarded_opens": sorted({p for how, p, nz in AUDIT.log if p.startswith(GUARDED)})[:20],
                          "bypass_scan": bypass_scan(scan_targets(ro))}
     if AUDIT.refused:
