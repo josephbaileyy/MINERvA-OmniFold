@@ -1,0 +1,173 @@
+{
+ "calibration_json_sha256": "4b6a18b60ec70f5a0eb8a57284c85e9d5be6efc5d1574251b336c4ed64c420df",
+ "calibration_npz_sha256": "a5279bc2b25291a8e96abf513b650a5a8c01792cc22a5df42af21f902260638e",
+ "floor_i_or_iii_noise": {
+  "ar23": 0.0027,
+  "g18": 0.0026
+ },
+ "note": "(i) and (iii) at #724's fixed numbers through gate_724; only (ii)'s threshold varies; descriptive",
+ "rows": [
+  {
+   "noise": {
+    "ar23": 0.048,
+    "g18": 0.0484,
+    "two_truth_union": 0.0941
+   },
+   "power_10pct": {
+    "ar23": 0.6523,
+    "g18": 0.6708,
+    "two_truth_union": 0.8827
+   },
+   "power_5pct": {
+    "ar23": 0.1908,
+    "g18": 0.203,
+    "two_truth_union": 0.3551
+   },
+   "power_8pct": {
+    "ar23": 0.4473,
+    "g18": 0.4656,
+    "two_truth_union": 0.7039
+   },
+   "threshold": "2.0 SD",
+   "values": {
+    "ar23": 0.08516698926021181,
+    "g18": 0.0838368726889559
+   }
+  },
+  {
+   "noise": {
+    "ar23": 0.0141,
+    "g18": 0.0125,
+    "two_truth_union": 0.0265
+   },
+   "power_10pct": {
+    "ar23": 0.4554,
+    "g18": 0.4758,
+    "two_truth_union": 0.7142
+   },
+   "power_5pct": {
+    "ar23": 0.0884,
+    "g18": 0.0924,
+    "two_truth_union": 0.1731
+   },
+   "power_8pct": {
+    "ar23": 0.2668,
+    "g18": 0.2821,
+    "two_truth_union": 0.4734
+   },
+   "threshold": "2.5 SD",
+   "values": {
+    "ar23": 0.10645873657526476,
+    "g18": 0.10479609086119487
+   }
+  },
+  {
+   "noise": {
+    "ar23": 0.0038,
+    "g18": 0.0042,
+    "two_truth_union": 0.008
+   },
+   "power_10pct": {
+    "ar23": 0.2743,
+    "g18": 0.2955,
+    "two_truth_union": 0.4874
+   },
+   "power_5pct": {
+    "ar23": 0.0353,
+    "g18": 0.0377,
+    "two_truth_union": 0.072
+   },
+   "power_8pct": {
+    "ar23": 0.1356,
+    "g18": 0.1445,
+    "two_truth_union": 0.2601
+   },
+   "threshold": "3.0 SD",
+   "values": {
+    "ar23": 0.1277504838903177,
+    "g18": 0.12575530903343385
+   }
+  },
+  {
+   "noise": {
+    "ar23": 0.0028,
+    "g18": 0.0027,
+    "two_truth_union": 0.0055
+   },
+   "power_10pct": {
+    "ar23": 0.1482,
+    "g18": 0.1597,
+    "two_truth_union": 0.2838
+   },
+   "power_5pct": {
+    "ar23": 0.0144,
+    "g18": 0.0142,
+    "two_truth_union": 0.0282
+   },
+   "power_8pct": {
+    "ar23": 0.0615,
+    "g18": 0.0684,
+    "two_truth_union": 0.1258
+   },
+   "threshold": "3.5 SD",
+   "values": {
+    "ar23": 0.14904223120537066,
+    "g18": 0.14671452720567282
+   }
+  },
+  {
+   "noise": {
+    "ar23": 0.1017,
+    "g18": 0.0965,
+    "two_truth_union": 0.1891
+   },
+   "power_10pct": {
+    "ar23": 0.7739,
+    "g18": 0.7871,
+    "two_truth_union": 0.9514
+   },
+   "power_5pct": {
+    "ar23": 0.2987,
+    "g18": 0.3066,
+    "two_truth_union": 0.5136
+   },
+   "power_8pct": {
+    "ar23": 0.5922,
+    "g18": 0.6006,
+    "two_truth_union": 0.8389
+   },
+   "threshold": "fixed 0.07",
+   "values": {
+    "ar23": 0.07,
+    "g18": 0.07
+   }
+  }
+ ],
+ "schema": "fd-1b-c2-tradeoff/1",
+ "sd_mean_log": {
+  "ar23": 0.042583494630105904,
+  "g18": 0.04191843634447795
+ },
+ "sets": 10000,
+ "three_truth_1pct": {
+  "assumption": "the plug-in's per-truth STOP rate is the mean of G18's and AR23's, independent",
+  "multiple": 3.16,
+  "per_truth_noise": {
+   "ar23": 0.0031,
+   "g18": 0.0034
+  },
+  "power_10pct": {
+   "ar23": 0.2273,
+   "g18": 0.2449
+  },
+  "power_8pct": {
+   "ar23": 0.1075,
+   "g18": 0.1129
+  },
+  "projected_three_truth_union": 0.009718369254999915,
+  "thresholds": {
+   "ar23": 0.13456384303113467,
+   "g18": 0.1324622588485503
+  }
+ }
+}
