@@ -1,0 +1,47 @@
+host=login02 start=2026-11-04T05:07:01Z pid=841129
+porcelain_before_lines=0 head=6efd7a18939318deb75cbaa603363ede36bd6121
+100644 blob 7dafdd3ff827378554931bd1b3d1f19aeeabe11d	2d-unfolding/cov2d/cov2d.py
+100644 blob 23495e896824a0eaab59584b67a430044cc258d7	2d-unfolding/cov2d/cov2d_blocks.py
+100644 blob d5718bf44c2084c20c30a8b8614e9c40e6fbeee3	2d-unfolding/cov2d/cov2d_receipt.py
+100644 blob bb3892e5447d37ee524c720c5ab623baa7184f30	2d-unfolding/cov2d/cov2d_writer.py
+100644 blob 7a987e25924895803bea756f3e63e3b8b21cd25c	2d-unfolding/pv2d/cmodel/build_cmodel.py
+100644 blob e41940cb3b4af8f273f34723fb4389d4dac86e0a	2d-unfolding/re2/partc/re2c_rollup.py
+100755 blob 97f26a1d03be8cf14cdb6e0ce05e794f66f9b571	2d-unfolding/re2/re2_driver.py
+100644 blob 1810161d53c6b849d0dce7fb506d88d551d89900	nd-unfolding/fd_1b_null.py
+blobs (before): 8 of 8
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+TClass::Init:0: RuntimeWarning: no dictionary for class PlotUtils::MnvH1D is available
+TClass::Init:0: RuntimeWarning: no dictionary for class PlotUtils::MnvVertErrorBand is available
+TClass::Init:0: RuntimeWarning: no dictionary for class pair<string,PlotUtils::MnvVertErrorBand*> is available
+TClass::Init:0: RuntimeWarning: no dictionary for class PlotUtils::MnvH2D is available
+TClass::Init:0: RuntimeWarning: no dictionary for class PlotUtils::MnvVertErrorBand2D is available
+Error in <TBufferFile::CheckByteCount>: object of class map<string,PlotUtils::MnvLatErrorBand*> read too many bytes: 4130 instead of 12
+TBufferFile::CheckByteCount:0: RuntimeWarning: map<string,PlotUtils::MnvLatErrorBand*>::Streamer() not in sync with data on file /dev/shm/josephrb-cov2d-95/tmp/tmp09cs6azg/rollup/baseline_flux/runEventLoopMC_1A.root, fix Streamer()
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-95/deploy/2d-unfolding/cov2d/cov2d_blocks.py", line 409, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/dev/shm/josephrb-cov2d-95/deploy/2d-unfolding/cov2d/cov2d_blocks.py", line 371, in main
+    w, phi_minos = ro.flux_weights()
+                   ^^^^^^^^^^^^^^^^^
+  File "/dev/shm/josephrb-cov2d-95/deploy/2d-unfolding/re2/partc/re2c_rollup.py", line 208, in flux_weights
+    h = f.Get(BR.FLUX_HIST)
+        ^^^^^^^^^^^^^^^^^^^
+TypeError: 'PlotUtils' is not a known C++ class
+porcelain_after_lines=0 head=6efd7a18939318deb75cbaa603363ede36bd6121
+100644 blob 7dafdd3ff827378554931bd1b3d1f19aeeabe11d	2d-unfolding/cov2d/cov2d.py
+100644 blob 23495e896824a0eaab59584b67a430044cc258d7	2d-unfolding/cov2d/cov2d_blocks.py
+100644 blob d5718bf44c2084c20c30a8b8614e9c40e6fbeee3	2d-unfolding/cov2d/cov2d_receipt.py
+100644 blob bb3892e5447d37ee524c720c5ab623baa7184f30	2d-unfolding/cov2d/cov2d_writer.py
+100644 blob 7a987e25924895803bea756f3e63e3b8b21cd25c	2d-unfolding/pv2d/cmodel/build_cmodel.py
+100644 blob e41940cb3b4af8f273f34723fb4389d4dac86e0a	2d-unfolding/re2/partc/re2c_rollup.py
+100755 blob 97f26a1d03be8cf14cdb6e0ce05e794f66f9b571	2d-unfolding/re2/re2_driver.py
+100644 blob 1810161d53c6b849d0dce7fb506d88d551d89900	nd-unfolding/fd_1b_null.py
+blobs (after): 8 of 8
+sha256sum: /dev/shm/josephrb-cov2d-95/control95.json: No such file or directory
+removal: host=login02 2026-11-04T05:07:33Z 1.2G /dev/shm/josephrb-cov2d-95/deploy
+rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-95/deploy': No such file or directory
+CONTROL-95 INVALID
+end=2026-11-04T05:07:34Z
+DONE
