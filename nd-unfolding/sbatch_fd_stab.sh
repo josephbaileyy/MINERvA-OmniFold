@@ -7,7 +7,8 @@
 #SBATCH --no-requeue
 #SBATCH --export=ALL,HOME=/global/homes/j/josephrb
 # FD-STAB (state/measurement-paper/5d-community-20261024/FD-STAB-DECLARATION.md §7 and §11). One node.
-#   dry:  the eight DRY_TASKS on the full run's 8 lanes (submit with --time=0:45).
+#   dry:  the truth control (ADDENDUM-A1 §2), then the nine DRY_TASKS on the full run's 8 lanes (submit with
+#         --time=0:45). A sixth argument names the pinned F0b closure product the control reads.
 #   full: the whole queue on 8 lanes (submit with --time = the cap's remainder after the dry run, at most 7:15). The
 #         dry run's log is copied in first, so its timings seed the projection and its products are skipped.
 # Every task starts only through `estimator_stability_probe.py gate`: the node-hours charged so far plus the projected
@@ -19,13 +20,15 @@
 # STOP for a reprice, only an addendum the director binds may continue it (declaration §7). Runs only from a clean deploy at <pin>.
 set -o pipefail   # NOT set -u
 MODE="${1:?dry|full}"; D="${2:?deploy}"; PIN="${3:?pin}"; OUT="${4:?out}"; CAP_LEFT="${5:?node-hours left under the cap}"
+F0B="$6"
 head_sha=$(git -C "$D" rev-parse HEAD 2>/dev/null)
 dirty=$(git -C "$D" status --porcelain --untracked-files=no 2>/dev/null | wc -l)
 if [ "$head_sha" != "$PIN" ] || [ "$dirty" -ne 0 ]; then
     echo "[stab] refusing: deploy HEAD=$head_sha (pinned $PIN), $dirty modified tracked files" >&2; exit 2
 fi
 case "$MODE" in
-    dry)  Q="$OUT/dry.tsv"; P=8 ;;
+    dry)  Q="$OUT/dry.tsv"; P=8
+          [ -s "$F0B" ] || { echo "[stab] refusing: the dry run needs the F0b closure product as its sixth argument" >&2; exit 2; } ;;
     full) Q="$OUT/queue.tsv"; P=8 ;;
     *)    echo "[stab] refusing: mode $MODE" >&2; exit 2 ;;
 esac
@@ -45,6 +48,17 @@ fi
 source "$D/setup_salloc_env.sh" > "$L/env.log" 2>&1
 # The environment is the dry run's to establish (§11): it must import what the production unfold imports.
 python3 -c "import lightgbm, scipy, numpy" >> "$L/env.log" 2>&1 || { echo "[stab] refusing: the environment lacks lightgbm/scipy" >&2; exit 7; }
+if [ "$MODE" = dry ]; then
+    # ADDENDUM-A1 §2: the closure at the NuWro pv-ladder ratio must have F0b row 3's truth definition (C1, C2) before
+    # any task runs. Before T0, so its time is charged to the dry run (sacct) and not projected by the gate.
+    ( cd "$D" && python3 nd-unfolding/estimator_stability_probe.py truth-control --queue "$Q" --f0b-product "$F0B" \
+        --scratch "$L/truth-control-scratch" --out "$L/truth-control.json" ) > "$L/truth-control.log" 2>&1
+    tc=$?
+    if [ "$tc" -ne 0 ]; then
+        echo "truth control rc=$tc" > "$L/STOP"
+        echo "[stab] STOP: the truth control did not pass (rc=$tc); see $L/truth-control.json and .log" >&2; exit 1
+    fi
+fi
 T0=$(python3 -c "import time; print(time.time())")  # the same clock and resolution as the gate's starts and ends
 echo "[stab] mode=$MODE job=$SLURM_JOB_ID host=$(hostname) pin=$PIN lanes=$P cap_left=$CAP_LEFT start=$(date -u +%FT%TZ)"
 TIME_BIN="${STAB_TIME_BIN:-/usr/bin/time}"  # GNU time on the cluster; the local smoke test substitutes a stand-in
