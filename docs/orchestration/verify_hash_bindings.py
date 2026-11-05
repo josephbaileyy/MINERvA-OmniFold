@@ -484,8 +484,17 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/s1/PRESERVE-INVENTORY.sha256 cde96ca7
 #: Power-tested before the bump: one flipped hex digit in that record's inventory sha256 gives MISMATCH, rc 1.
 #: Delta and controls: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-stab-a1r/binding-delta.txt.
-RECEIPT_BINDING_COUNT = 158
-RECEIPT_BINDING_SHA256 = "e718853bc5b282240e089f56f707f2a7e76fc623aebf6eb6e353ac8ae12cdc37"
+#: 158 -> 161, digest e718853b -> 2ba0b27d (2026-11-05, the REF-G1 code). Its config (nd-unfolding/ref_g1/config.json)
+#: pins the bound declaration, the preconditions listing and the H2 definition. Enumerated before the constant moved
+#: (receipt_inventory() rows with and without that config on the branch): three ADDED, nothing removed or repointed,
+#: all OK:
+#:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/REF-G1-DECLARATION.md 1ea76a3b
+#:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/preconditions/listing.json 3bff2239
+#:   ADDED   nd-unfolding/pv-ladder/readouts/h2_definition.json                                     b6790761
+#: Power-tested before the bump: one flipped hex digit in each of the three pins gives MISMATCH, rc 1.
+#: Delta and controls: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/code/binding-delta.txt.
+RECEIPT_BINDING_COUNT = 161
+RECEIPT_BINDING_SHA256 = "2ba0b27d7c6cfe3cbc313a11bcf13d6b02aaa4ca5ce3919e50ca5dd7ff91b3af"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

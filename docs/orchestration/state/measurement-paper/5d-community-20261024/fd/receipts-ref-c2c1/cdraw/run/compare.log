@@ -1,0 +1,8 @@
+bootstrap_seed: regenerated 1 | recorded 1 | equal
+n: regenerated {"bkg": 658227, "data": 4091707, "mc": 32849103} | recorded {"bkg": 658227, "data": 4091707, "mc": 32849103} | equal
+n_bkg_fill_rows: regenerated 658227 | recorded 658227 | equal
+seed_offsets: regenerated {"bkg": 20000000, "data": 0, "mc": 10000000} | recorded {"bkg": 20000000, "data": 0, "mc": 10000000} | equal
+streams: regenerated "three" | recorded "three" | equal
+sum: regenerated {"bkg": 659094.0, "data": 4091552.0, "mc": 32846004.0} | recorded {"bkg": 659094.0, "data": 4091552.0, "mc": 32846004.0} | equal
+unit_factors: regenerated false | recorded false | equal
+C-DRAW PASS

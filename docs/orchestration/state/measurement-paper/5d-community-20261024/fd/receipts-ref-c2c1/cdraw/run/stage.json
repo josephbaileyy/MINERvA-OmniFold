@@ -1,0 +1,58 @@
+{
+ "checks": {
+  "cv": true,
+  "mc": true,
+  "recorded": true
+ },
+ "cv_copy": {
+  "atime_utc": "2026-11-05T09:56:58Z",
+  "bytes": 2144008221,
+  "path": "/pscratch/sd/j/josephrb/ref-c2c1-20261105/cdraw/inputs/runEventLoopOmniFold_MEFHC.root",
+  "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+ },
+ "cv_source": {
+  "atime_utc": "2026-10-23T15:52:50Z",
+  "bytes": 2144008221,
+  "path": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"
+ },
+ "host": "dtn01.nersc.gov",
+ "mc": {
+  "atime_utc": "2026-10-30T03:23:11Z",
+  "bytes": 5143,
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+ },
+ "mc_cfs_candidates": [
+  {
+   "atime_utc": "2026-07-21T04:16:41Z",
+   "bytes": 5143,
+   "equals_pin": true,
+   "path": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316"
+  }
+ ],
+ "mc_cfs_copy_exists": true,
+ "pins": {
+  "cv": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+  "mc": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+  "rec": "2ea9b7d241363c231ce25715b7bfd0ddd4ec2406c59972ecaaa6fb6e05462377"
+ },
+ "recorded_copy": {
+  "atime_utc": "2026-11-05T09:57:04Z",
+  "bytes": 63226,
+  "path": "/pscratch/sd/j/josephrb/ref-c2c1-20261105/cdraw/recorded/S1_001_xsec.root",
+  "sha256": "2ea9b7d241363c231ce25715b7bfd0ddd4ec2406c59972ecaaa6fb6e05462377"
+ },
+ "recorded_source": {
+  "atime_utc": "2026-10-24T16:17:48Z",
+  "bytes": 63226,
+  "path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S1_001/xsec.root",
+  "sha256": "2ea9b7d241363c231ce25715b7bfd0ddd4ec2406c59972ecaaa6fb6e05462377"
+ },
+ "schema": "ref-c2c1-cdraw-stage/1",
+ "started_utc": "2026-11-05T09:56:58Z",
+ "verdict": "PASS",
+ "written_epoch": 1793872624.1207612,
+ "written_utc": "2026-11-05T09:57:04Z"
+}

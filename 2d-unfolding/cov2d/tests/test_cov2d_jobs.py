@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 import shlex
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -305,6 +306,136 @@ class Order(unittest.TestCase):
             p = Path(td) / "u"
             p.write_bytes(b"x")
             self.assertIn("part B's DTN record", cj.uni_stat_problem(str(p)))
+
+
+class SubmitBinding(unittest.TestCase):
+    """The director's F3: cov2d_submit.sh reads binding 2 from origin/main, after a fetch, and requires it to name M,
+    the deploy's HEAD. Fixture: an "origin" repository whose first commit is the code commit M and whose main carries
+    a later commit adding the binding, and a deploy cloned from it and checked out at M. The deploy's
+    cov2d_env.sh is a stub that prints a marker and exits, so reaching it means every binding check passed."""
+    BIND = "docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-2.md"
+    OLD_BLOB = "03ad296e3a39be50d654e15b8819e6fa6e910ae6"     # the script as audited (the defect)
+    PAST = "PAST-THE-BINDING-CHECKS"
+
+    def setUp(self):
+        self.td = tempfile.TemporaryDirectory()
+        self.addCleanup(self.td.cleanup)
+        self.d = Path(self.td.name)
+
+    def git(self, *args, cwd=None):
+        from deploy_fixture import GIT
+        r = subprocess.run(GIT + (["-C", str(cwd)] if cwd else []) + list(args), capture_output=True, text=True,
+                           check=True)
+        return r.stdout.strip()
+
+    def world(self, names=None, text=None):
+        """origin (main: M, then a binding naming ``names`` unless it is None) and the deploy at M; returns M.
+        ``text``, if given, maps M to the binding's whole text instead."""
+        o = self.d / "origin"
+        o.mkdir()
+        self.git("init", "-q", str(o))
+        self.git("symbolic-ref", "HEAD", "refs/heads/main", cwd=o)
+        env = o / "2d-unfolding/cov2d/jobs/cov2d_env.sh"
+        env.parent.mkdir(parents=True)
+        env.write_text(f"echo {self.PAST}\nexit 0\n")
+        self.git("add", ".", cwd=o)
+        self.git("commit", "-q", "-m", "code", cwd=o)
+        M = self.git("rev-parse", "HEAD", cwd=o)
+        if names is not None or text:
+            b = o / self.BIND
+            b.parent.mkdir(parents=True)
+            b.write_text(text(M) if text else
+                         f"# COV2D binding 2\n\n**M = `{M if names == 'M' else names}`** (PR head `0123abcd`).\n"
+                         + ("" if names == "M" else f"\nThe audited head was `{M}`.\n"))
+            self.git("add", ".", cwd=o)
+            self.git("commit", "-q", "-m", "binding 2", cwd=o)
+        self.git("clone", "-q", str(o), str(self.d / "deploy"))
+        self.git("checkout", "-q", "--detach", M, cwd=self.d / "deploy")
+        return M
+
+    def submit(self, M, script=None):
+        script = script or HERE.parent / "jobs" / "cov2d_submit.sh"
+        r = subprocess.run(["bash", str(script), str(self.d / "deploy"), M, "G18", "pseudo"], capture_output=True,
+                           text=True)
+        return r.returncode, r.stdout + r.stderr
+
+    def test_admits_when_origin_mains_binding_names_M(self):
+        M = self.world("M")
+        self.assertFalse((self.d / "deploy" / self.BIND).exists())    # the deploy at M cannot hold its own binding
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 0, out)
+        self.assertIn(self.PAST, out)
+
+    def test_refuses_a_binding_naming_another_commit(self):
+        M = self.world("f" * 40)
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 2)
+        self.assertIn("does not name", out)
+        self.assertNotIn(self.PAST, out)
+
+    def test_refuses_M_cited_only_off_the_M_line(self):
+        # world() cites the full M on a later line whenever the M line names another commit
+        M = self.world("e" * 40)
+        self.assertIn(f"`{M}`", (self.d / "origin" / self.BIND).read_text())
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 2)
+        self.assertIn("does not name", out)
+        self.assertNotIn(self.PAST, out)
+
+    def test_binding_1s_own_text_binds_its_M_line_only(self):
+        # the format the director's bindings use, from the real COV2D-BINDING-1.md: M on its M line (:5) binds; M
+        # cited in backticks off that line (here in place of the declaration's sha256 at :4) does not
+        real = (HERE.parents[2] / self.BIND.replace("BINDING-2", "BINDING-1")).read_text()
+        m1 = "dec97852f8da840c855777fa3d2179d6548252ee"
+        other = "0328c916d2c763c4529d3541fe05f430f7b2e6e4937f7749660cb3da06c6fbb6"
+        self.assertIn(f"**M = `{m1}`**", real)
+        self.assertIn(other, real)
+        M = self.world(text=lambda M: real.replace(m1, M))
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 0, out)
+        self.td.cleanup()
+        self.td = tempfile.TemporaryDirectory()
+        self.d = Path(self.td.name)
+        M = self.world(text=lambda M: real.replace(other, M))
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 2)
+        self.assertIn("does not name", out)
+
+    def test_refuses_when_origin_main_has_no_binding(self):
+        M = self.world(None)
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 2)
+        self.assertIn("binding 2 is not on origin/main", out)
+
+    def test_refuses_a_failed_fetch_even_with_a_good_binding_already_fetched(self):
+        M = self.world("M")                     # the clone's origin/main already holds a binding naming M
+        self.git("remote", "set-url", "origin", str(self.d / "nowhere"), cwd=self.d / "deploy")
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 2)
+        self.assertIn("the fetch of origin main failed", out)
+        self.assertNotIn(self.PAST, out)
+
+    def test_refuses_a_dirty_deploy_or_a_head_other_than_M(self):
+        M = self.world("M")
+        rc, out = self.submit("f" * 40)
+        self.assertEqual(rc, 2)
+        self.assertIn("is not a clean checkout", out)
+        (self.d / "deploy" / "untracked").write_text("x")
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 2)
+        self.assertIn("is not a clean checkout", out)
+
+    def test_the_audited_script_refuses_even_the_correct_setup(self):
+        # the test reaches the defect: blob 03ad296e grepped the deploy's own tree, which never holds a binding naming
+        # its own HEAD, so it refused every submission
+        old = self.d / "old_submit.sh"
+        old.write_text(subprocess.run(["git", "-C", str(HERE), "cat-file", "-p", self.OLD_BLOB], capture_output=True,
+                                      text=True, check=True).stdout)
+        M = self.world("M")
+        rc, out = self.submit(M, old)
+        self.assertEqual(rc, 2)
+        self.assertIn("binding 2 does not name", out)
+        self.assertNotIn(self.PAST, out)
 
 
 class LaneWalls(unittest.TestCase):

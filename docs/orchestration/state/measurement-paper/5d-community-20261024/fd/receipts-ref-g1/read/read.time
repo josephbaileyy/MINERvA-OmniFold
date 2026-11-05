@@ -1,0 +1,24 @@
+Command exited with non-zero status 1
+	Command being timed: "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 -B nd-unfolding/ref_g1/ref_g1_read.py read --run /pscratch/sd/j/josephrb/ref-g1-20261105/batch/units --bars /pscratch/sd/j/josephrb/ref-g1-20261105/read/bars.json --bars-sha256 de12c6745b4f5353a83ae8573c7cc75d986617f7a21d8b4ea4c5e275d8607780 --out /pscratch/sd/j/josephrb/ref-g1-20261105/read/readout.json"
+	User time (seconds): 4.86
+	System time (seconds): 0.84
+	Percent of CPU this job got: 174%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.27
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 88064
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 48799
+	Voluntary context switches: 8226
+	Involuntary context switches: 3929
+	Swaps: 0
+	File system inputs: 48344
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1

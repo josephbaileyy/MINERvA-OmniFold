@@ -1,0 +1,8 @@
+host=login02 2026-11-05T10:21:02Z
+rm -rf /dev/shm/josephrb-cov2d-tests rc=0
+rm -f /dev/shm/josephrb-cov2d-tests.sh rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-tests': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-tests.sh': No such file or directory
+total 0
+drwxrwxrwt  2 root root   40 Nov  5 02:21 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..

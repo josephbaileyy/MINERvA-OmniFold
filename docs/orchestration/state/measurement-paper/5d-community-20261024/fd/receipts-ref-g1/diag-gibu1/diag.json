@@ -1,0 +1,228 @@
+{
+ "schema": "ref-g1-gibu1-diag/1",
+ "a": {
+  "path": "/pscratch/sd/j/josephrb/ref-g1-20261105/batch/units/gibu1.npz",
+  "sha256": "70bb60d0c928822ee17494343226c35055f54a38d2dfb17bce60f0ad20a78741",
+  "bytes": 18718,
+  "keys": [
+   "F_fold",
+   "F_sub",
+   "ks"
+  ],
+  "meta": {
+   "variants": {
+    "fold": {
+     "n_cells": 134,
+     "acceptance_holes": 1,
+     "negative_y_cells": 0,
+     "b_known_sum": 388.9221419173446
+    },
+    "sub": {
+     "n_cells": 134,
+     "acceptance_holes": 1,
+     "negative_y_cells": 0,
+     "b_known_sum": 388.9221419173446
+    }
+   },
+   "world": "IBU-1's J grid and 153 functionals",
+   "schema": "ref-g1-unit/1",
+   "unit": "gibu1",
+   "ks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    10,
+    20
+   ],
+   "seconds": 2.362,
+   "code_sha256": {
+    "nd-unfolding/ibu1/ibu1.py": "f862a953425c006f6c73f2190bd65172eb9295f0f6c181d3d2247d4de881cf12",
+    "nd-unfolding/ibu1/config.json": "82a24f419d4e738dec025840c92b66a163c34737528ed554fd5017424842e67f",
+    "nd-unfolding/s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+    "nd-unfolding/s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71",
+    "nd-unfolding/s5p_universe.py": "805a00063a6136e25c6f8f57d228ec996c85a9bc997981632643baeee6c13d80",
+    "nd-unfolding/s5p_numerics.py": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+    "nd-unfolding/s5n_pseudo.py": "8981f97b96b418cfe46f1e940cb120f174053d7d3429f3b0b01a229c6c02ee6c",
+    "nd-unfolding/s5e_trace.py": "c47e9dd3feef9eab323e40f4e0da770ad67e86431a1ce95f99a10007decc66c1",
+    "nd-unfolding/xsec_nd.py": "454001f3c9ac3aa6485d184aadb8aba65dd71dba124816962b9c3b6344920fa5",
+    "nd-unfolding/flux_universe.py": "75cb60531ea87f0738d26842183babbe16c3bdab9817548326492e7e675bd28c",
+    "nd-unfolding/pv-ladder/pvl_lib.py": "f8a7d2c2fcd37b025ae3c028088d496b1aea7519d347febb3d63da6511015481",
+    "nd-unfolding/s5c_unfold.py": "510d749a2e82fa448de6172753ae2adc9ebd81a89d4f18bf76beb5faa8bb3968"
+   },
+   "driver_sha256": "32320ead8ed9d84ffa9dd486247d82528751817b5c2f1b454e80debcec6e5d8f",
+   "config_sha256": "3a555d304d3bfa82d67e4965f3ab31030957286aa7d960087ca8e70221afabec",
+   "slurm_job": "60857388",
+   "environment": {
+    "interpreter": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+    "python_version": "3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]",
+    "numpy": "1.26.4",
+    "scipy": "1.16.3"
+   }
+  }
+ },
+ "b": {
+  "path": "/pscratch/sd/j/josephrb/ibu1-20261022/run/products/D_N.npz",
+  "sha256": "a160dbea95006f552f3f724302d30c0da852bf7747907268e712a2251ccf593b",
+  "bytes": 17305,
+  "keys": [
+   "F_fold",
+   "F_sub",
+   "ks"
+  ],
+  "meta": {
+   "schema": "ibu1-data/1",
+   "unit": "D_N",
+   "arm": "N",
+   "variants": {
+    "fold": {
+     "n_cells": 134,
+     "acceptance_holes": 1,
+     "negative_y_cells": 0,
+     "b_known_sum": 388.9221419173446
+    },
+    "sub": {
+     "n_cells": 134,
+     "acceptance_holes": 1,
+     "negative_y_cells": 0,
+     "b_known_sum": 388.9221419173446
+    }
+   }
+  }
+ },
+ "arrays": {
+  "ks": {
+   "a": {
+    "present": true,
+    "shape": [
+     7
+    ],
+    "dtype": "int64"
+   },
+   "b": {
+    "present": true,
+    "shape": [
+     7
+    ],
+    "dtype": "int64"
+   },
+   "array_equal": true,
+   "n_elements": 7,
+   "n_differ": 0,
+   "values_a": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    10,
+    20
+   ],
+   "values_b": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    10,
+    20
+   ]
+  },
+  "F_fold": {
+   "a": {
+    "present": true,
+    "shape": [
+     7,
+     153
+    ],
+    "dtype": "float64"
+   },
+   "b": {
+    "present": true,
+    "shape": [
+     7,
+     153
+    ],
+    "dtype": "float64"
+   },
+   "array_equal": false,
+   "n_elements": 1071,
+   "n_differ": 35,
+   "n_nonfinite_a": 0,
+   "n_nonfinite_b": 0,
+   "max_abs_diff": 5.22024357439882e-54,
+   "max_abs_b": 8.01481035958344e-36,
+   "max_abs_diff_over_max_abs_b": 6.513246527607342e-19,
+   "max_diff_in_b_spacings": 2.0,
+   "note": "max_abs_diff and max_diff_in_b_spacings are over the finite differences; a pair with a non-finite value counts in n_differ and n_nonfinite_*",
+   "max_abs_diff_per_row": [
+    8.156630584998156e-56,
+    5.0978941156238473e-57,
+    8.156630584998156e-56,
+    5.22024357439882e-54,
+    1.6313261169996311e-55,
+    5.22024357439882e-54,
+    2.039157646249539e-56
+   ]
+  },
+  "F_sub": {
+   "a": {
+    "present": true,
+    "shape": [
+     7,
+     153
+    ],
+    "dtype": "float64"
+   },
+   "b": {
+    "present": true,
+    "shape": [
+     7,
+     153
+    ],
+    "dtype": "float64"
+   },
+   "array_equal": false,
+   "n_elements": 1071,
+   "n_differ": 36,
+   "n_nonfinite_a": 0,
+   "n_nonfinite_b": 0,
+   "max_abs_diff": 1.044048714879764e-53,
+   "max_abs_b": 8.014085116561409e-36,
+   "max_abs_diff_over_max_abs_b": 1.3027671901340278e-18,
+   "max_diff_in_b_spacings": 2.0,
+   "note": "max_abs_diff and max_diff_in_b_spacings are over the finite differences; a pair with a non-finite value counts in n_differ and n_nonfinite_*",
+   "max_abs_diff_per_row": [
+    2.61012178719941e-54,
+    4.078315292499078e-56,
+    2.039157646249539e-56,
+    1.6313261169996311e-55,
+    2.61012178719941e-54,
+    1.044048714879764e-53,
+    5.22024357439882e-54
+   ]
+  }
+ },
+ "numpy": {
+  "version": "1.26.4",
+  "show_config": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /global/homes/j/josephrb/.conda/envs/root_6_28/include\n    lib directory: /global/homes/j/josephrb/.conda/envs/root_6_28/lib\n    name: blas\n    openblas configuration: unknown\n    pc file directory: /global/homes/j/josephrb/.conda/envs/root_6_28/lib/pkgconfig\n    version: 3.9.0\n  lapack:\n    detection method: internal\n    found: true\n    include directory: unknown\n    lib directory: unknown\n    name: dep140567732183440\n    openblas configuration: unknown\n    pc file directory: unknown\n    version: 1.26.4\nCompilers:\n  c:\n    args: -march=nocona, -mtune=haswell, -ftree-vectorize, -fPIC, -fstack-protector-strong,\n      -fno-plt, -O2, -ffunction-sections, -pipe, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include,\n      -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/numpy_1707225376651/work=/usr/local/src/conda/numpy-1.26.4,\n      -fdebug-prefix-map=/global/homes/j/josephrb/.conda/envs/root_6_28=/usr/local/src/conda-prefix,\n      -DNDEBUG, -D_FORTIFY_SOURCE=2, -O2, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include\n    commands: /home/conda/feedstock_root/build_artifacts/numpy_1707225376651/_build_env/bin/x86_64-conda-linux-gnu-cc\n    linker: ld.bfd\n    linker args: -Wl,-O2, -Wl,--sort-common, -Wl,--as-needed, -Wl,-z,relro, -Wl,-z,now,\n      -Wl,--disable-new-dtags, -Wl,--gc-sections, -Wl,--allow-shlib-undefined, -Wl,-rpath,/global/homes/j/josephrb/.conda/envs/root_6_28/lib,\n      -Wl,-rpath-link,/global/homes/j/josephrb/.conda/envs/root_6_28/lib, -L/global/homes/j/josephrb/.conda/envs/root_6_28/lib,\n      -march=nocona, -mtune=haswell, -ftree-vectorize, -fPIC, -fstack-protector-strong,\n      -fno-plt, -O2, -ffunction-sections, -pipe, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include,\n      -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/numpy_1707225376651/work=/usr/local/src/conda/numpy-1.26.4,\n      -fdebug-prefix-map=/global/homes/j/josephrb/.conda/envs/root_6_28=/usr/local/src/conda-prefix,\n      -DNDEBUG, -D_FORTIFY_SOURCE=2, -O2, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include\n    name: gcc\n    version: 12.3.0\n  c++:\n    args: -fvisibility-inlines-hidden, -fmessage-length=0, -march=nocona, -mtune=haswell,\n      -ftree-vectorize, -fPIC, -fstack-protector-strong, -fno-plt, -O2, -ffunction-sections,\n      -pipe, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include, -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/numpy_1707225376651/work=/usr/local/src/conda/numpy-1.26.4,\n      -fdebug-prefix-map=/global/homes/j/josephrb/.conda/envs/root_6_28=/usr/local/src/conda-prefix,\n      -DNDEBUG, -D_FORTIFY_SOURCE=2, -O2, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include\n    commands: /home/conda/feedstock_root/build_artifacts/numpy_1707225376651/_build_env/bin/x86_64-conda-linux-gnu-c++\n    linker: ld.bfd\n    linker args: -Wl,-O2, -Wl,--sort-common, -Wl,--as-needed, -Wl,-z,relro, -Wl,-z,now,\n      -Wl,--disable-new-dtags, -Wl,--gc-sections, -Wl,--allow-shlib-undefined, -Wl,-rpath,/global/homes/j/josephrb/.conda/envs/root_6_28/lib,\n      -Wl,-rpath-link,/global/homes/j/josephrb/.conda/envs/root_6_28/lib, -L/global/homes/j/josephrb/.conda/envs/root_6_28/lib,\n      -fvisibility-inlines-hidden, -fmessage-length=0, -march=nocona, -mtune=haswell,\n      -ftree-vectorize, -fPIC, -fstack-protector-strong, -fno-plt, -O2, -ffunction-sections,\n      -pipe, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include, -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/numpy_1707225376651/work=/usr/local/src/conda/numpy-1.26.4,\n      -fdebug-prefix-map=/global/homes/j/josephrb/.conda/envs/root_6_28=/usr/local/src/conda-prefix,\n      -DNDEBUG, -D_FORTIFY_SOURCE=2, -O2, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include\n    name: gcc\n    version: 12.3.0\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.0.8\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python\n  version: '3.11'\nSIMD Extensions:\n  baseline:\n  - SSE\n  - SSE2\n  - SSE3\n  found:\n  - SSSE3\n  - SSE41\n  - POPCNT\n  - SSE42\n  - AVX\n  - F16C\n  - FMA3\n  - AVX2\n  not found:\n  - AVX512F\n  - AVX512CD\n  - AVX512_KNL\n  - AVX512_KNM\n  - AVX512_SKX\n  - AVX512_CLX\n  - AVX512_CNL\n  - AVX512_ICL\n  - AVX512_SPR\n\n"
+ },
+ "threadpoolctl": [
+  {
+   "user_api": "blas",
+   "internal_api": "openblas",
+   "num_threads": 1,
+   "prefix": "libopenblas",
+   "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libopenblasp-r0.3.30.so",
+   "version": "0.3.30",
+   "threading_layer": "pthreads",
+   "architecture": "Zen"
+  }
+ ],
+ "interpreter": {
+  "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+  "version": "3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]"
+ },
+ "written_utc": "2026-11-05T15:40:54Z"
+}

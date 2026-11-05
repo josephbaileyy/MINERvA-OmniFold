@@ -1,0 +1,11 @@
+test_a_mismatched_null_refuses (test_cov2d_null.Null) ... ok
+test_laws_reproduce_the_blocks_and_the_null_runs_at_the_declared_seed (test_cov2d_null.Null) ... ok
+test_minos_law_uses_x01 (test_cov2d_null.Null) ... ok
+test_wrong_universe_counts_refuse (test_cov2d_null.Null) ... ok
+test_c_t_minus_null_is_built_in_the_null_step_at_the_declared_seed (test_cov2d_null.NullMinus) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 53.838s
+
+OK
+SUITE env=P module=test_cov2d_null ran=5 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True

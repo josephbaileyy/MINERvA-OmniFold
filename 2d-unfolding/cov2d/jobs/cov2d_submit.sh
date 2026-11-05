@@ -1,5 +1,6 @@
 #!/bin/bash
-# COV2D: submit named jobs once each, only after binding 2 names the deploy's commit. The director is told first.
+# COV2D: submit named jobs once each, only after binding 2, on origin/main, names the deploy's commit M. The director
+# is told first.
 #     bash cov2d_submit.sh <deploy> <M> <truth> <job> [<job> ...]     (jobs as in jobs_<truth>.tsv, or pseudo)
 # Each submission passes the charge gate (cov2d_jobs.py gate): every ended cov2d-* attempt's charge, plus every
 # unfinished attempt's limit, plus this job's limit, at most the cap of 165.8 node-h (COV2D-BINDING-1.md ruling 3).
@@ -8,8 +9,14 @@ C=$(cd "$1" && pwd); M=$2; TRUTH=$3; shift 3
 [ $# -gt 0 ] || { echo "name at least one job"; exit 2; }
 [ "$(git -C "$C" rev-parse HEAD)" = "$M" ] && [ -z "$(git -C "$C" status --porcelain)" ] \
     || { echo "deploy $C is not a clean checkout at $M"; exit 2; }
-BIND=$C/docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-2.md
-[ -f "$BIND" ] && grep -q "$M" "$BIND" || { echo "binding 2 does not name $M"; exit 2; }
+# Binding 2 and the PASS records are commits on main after M, so both are read from origin/main, never from the
+# deploy's own tree: a commit cannot hold a file that names its own hash (the director's F3). The deploy stays at M.
+git -C "$C" fetch -q origin main || { echo "the fetch of origin main failed: binding 2 and the records are unread"; exit 2; }
+BIND=docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-2.md
+bind=$(git -C "$C" show "origin/main:$BIND") || { echo "binding 2 is not on origin/main"; exit 2; }
+# the bound commit is binding 2's M line, **M = `<40-hex>`**, as on COV2D-BINDING-1.md:5: a sha cited anywhere
+# else in the binding, an earlier audited head say, does not bind (the auditor's tightening of F3)
+grep -qE "^\*\*M = \`$M\`\*\*" <<<"$bind" || { echo "binding 2 on origin/main does not name $M on its M line"; exit 2; }
 source "$C/2d-unfolding/cov2d/jobs/cov2d_env.sh"
 mkdir -p "$O/logs" "$O/tables"
 # the tables at this deploy: written once, and every later submission regenerates and compares them (J5)
@@ -23,7 +30,6 @@ for t in G18 AR23 pilot; do
     done
 done
 rm -rf "$chk"
-git -C "$C" fetch -q origin main   # the order reads committed PASS records on main (the deploy itself stays at M)
 LOG=$O/submissions.log
 for job in "$@"; do
     psv=$O/logs/gate-$job-$(date -u +%Y%m%dT%H%M%SZ).psv

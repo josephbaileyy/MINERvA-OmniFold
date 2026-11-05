@@ -1,0 +1,64 @@
+host=login02 start=2026-11-05T10:12:52Z pid=924621
+head=cb31611ca8b96ed2d1eeb809fda7236e56645863
+porcelain-before plain=0 ignored=0
+ENV P /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python 3.10.19 numpy 2.2.6 uproot 5.6.9 ROOT absent (ModuleNotFoundError)
+rc env=P module=test_cov2d_pseudo rc=0
+SUITE env=P module=test_cov2d_pseudo ran=16 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=P module=test_cov2d_readouts rc=0
+SUITE env=P module=test_cov2d_readouts ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=P module=test_cov2d_null rc=0
+SUITE env=P module=test_cov2d_null ran=5 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=P module=test_cov2d_score rc=0
+SUITE env=P module=test_cov2d_score ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=P module=test_cov2d_jobs rc=0
+SUITE env=P module=test_cov2d_jobs ran=31 failures=0 errors=0 skipped=1 guarded_reads=0 ok=True
+rc env=P module=test_cov2d rc=0
+SUITE env=P module=test_cov2d ran=28 failures=0 errors=0 skipped=11 guarded_reads=0 ok=True
+ENV R /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python 3.11.14 numpy 1.26.4 uproot absent (ModuleNotFoundError) ROOT 6.28/12
+rc env=R module=test_cov2d_blocks rc=0
+SUITE env=R module=test_cov2d_blocks ran=25 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R module=test_cov2d_null rc=0
+SUITE env=R module=test_cov2d_null ran=5 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R module=test_cov2d_score rc=0
+SUITE env=R module=test_cov2d_score ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+R rc=0
+{"mat_setup_scripts": 6, "mismatches": 0}
+RM python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+MAT {"mapped": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"], "dictionary": true}
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+ENV RM /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python 3.11.14 numpy 1.26.4 uproot absent (ModuleNotFoundError) ROOT 6.28/12
+rc env=RM module=test_cov2d_pseudo_write rc=0
+SUITE env=RM module=test_cov2d_pseudo_write ran=13 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d_pilot rc=0
+SUITE env=RM module=test_cov2d_pilot ran=13 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d_jobs rc=0
+SUITE env=RM module=test_cov2d_jobs ran=31 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d rc=0
+SUITE env=RM module=test_cov2d ran=28 failures=0 errors=0 skipped=11 guarded_reads=0 ok=True
+RM rc=0
+porcelain-after plain=0 ignored=0
+TESTS-SUMMARY 13 ok of 13 suite runs
+removal: host=login02 2026-11-05T10:19:41Z 1.2G
+rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-tests/deploy': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-tests/tmp': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-tests/runsuite.py': No such file or directory
+end=2026-11-05T10:19:42Z
+DONE

@@ -1,0 +1,15 @@
+You are an experienced Physical Review D referee. Judge only the wording below, and do not read or write any file. A previous referee read asked the authors for four precision fixes, and these are the resulting sentences. For each, say: accurate as written (given the stated facts)? clear? overclaims or underclaims? Does it add an unnecessary caveat? If you'd change it, give exact replacement wording. Under 400 words.
+
+FACTS:
+- Three learner implementations were each compared with the published result before the choice: LightGBM, scikit-learn exact-split, and scikit-learn histogram (χ²/ndf 2.70).
+- The choice was between LightGBM and exact-split.
+- The 5.9 and the 0.44 are each arm's 20-seed mean residual against truth, in units of the data result's per-bin statistical uncertainty: 5.9 is the maximum over the 205 cells for the purity-based arm, and 0.44 the maximum for the refined arm.
+- The 14 counts cells where the two arms' estimates differ by more than 1σ_stat.
+
+SENTENCE A (Sec. IV B): "LightGBM, rather than the scikit-learn exact-split estimator at the same settings, was chosen after both had been compared with the published result, as had a third implementation, the scikit-learn histogram estimator; the choice lowered χ²/ndf, with ndf the 205 reported bins, from 3.66 to 2.65."
+
+SENTENCE B (Sec. IV B): "The refined negative-weight background treatment was chosen on a closure test in simulation: over 20 pseudo-experiments at the simulation's own truth, the mean residual of the purity-based estimate reached 5.9 statistical standard deviations, the data result's per-bin statistical uncertainties, in its most affected bin, against at most 0.44 for the refined estimate over all bins, and the two estimates differed by more than one statistical standard deviation in 14 of the 205 bins."
+
+SENTENCE C, which follows B: "That choice was made on the closure test, before the refined result's comparison with the published result was computed. It was formally adopted after its distance from the published result was known, and the change lowered χ²/ndf from 2.65 to 2.27. The χ²/ndf values quoted for the two-dimensional comparison are therefore conditional on both choices, and the comparison should be read as a consistency check, not a blind validation."
+
+Then give one line: "MERGE AS IS" or "CHANGE:" followed by the minimal changes.

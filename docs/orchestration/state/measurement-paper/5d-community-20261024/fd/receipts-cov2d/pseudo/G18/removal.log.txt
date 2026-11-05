@@ -1,0 +1,10 @@
+host=login02 2026-11-05T10:31:38Z
+rm -f /dev/shm/josephrb-cov2d-g18.log rc=0
+rm -f /dev/shm/josephrb-cov2d-g18.sh rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-g18.log': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-g18.sh': No such file or directory
+total 0
+drwxrwxrwt  2 root root   40 Nov  5 02:31 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..
+JOBID NAME STATE REASON START_TIME
+60848251 cov2d-pseudo_G18 PENDING Resources N/A

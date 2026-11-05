@@ -1,0 +1,57 @@
+{
+ "field_equal": {
+  "bootstrap_seed": true,
+  "n": true,
+  "n_bkg_fill_rows": true,
+  "seed_offsets": true,
+  "streams": true,
+  "sum": true,
+  "unit_factors": true
+ },
+ "recorded": {
+  "bootstrap_seed": 1,
+  "n": {
+   "bkg": 658227,
+   "data": 4091707,
+   "mc": 32849103
+  },
+  "n_bkg_fill_rows": 658227,
+  "seed_offsets": {
+   "bkg": 20000000,
+   "data": 0,
+   "mc": 10000000
+  },
+  "streams": "three",
+  "sum": {
+   "bkg": 659094.0,
+   "data": 4091552.0,
+   "mc": 32846004.0
+  },
+  "unit_factors": false
+ },
+ "regenerated": {
+  "bootstrap_seed": 1,
+  "n": {
+   "bkg": 658227,
+   "data": 4091707,
+   "mc": 32849103
+  },
+  "n_bkg_fill_rows": 658227,
+  "seed_offsets": {
+   "bkg": 20000000,
+   "data": 0,
+   "mc": 10000000
+  },
+  "streams": "three",
+  "sum": {
+   "bkg": 659094.0,
+   "data": 4091552.0,
+   "mc": 32846004.0
+  },
+  "unit_factors": false
+ },
+ "replica": "S1_001",
+ "rule": "the regenerated p1Streams record equals the recorded one exactly (== on every field)",
+ "schema": "ref-c2c1-cdraw/1",
+ "verdict": "PASS"
+}

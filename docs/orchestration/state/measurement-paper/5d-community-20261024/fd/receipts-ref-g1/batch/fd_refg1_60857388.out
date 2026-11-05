@@ -1,0 +1,16 @@
+[refg1b] porcelain --ignored lines before: 0
+[refg1b] start 2026-11-05T14:42:06Z job=60857388 node=nid005892 nproc=256
+[refg1b] interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+[refg1b] lanes done 2026-11-05T14:49:47Z
+[refg1b] lane 0 rc=0 units=30  Elapsed (wall clock) time (h:mm:ss or m:ss): 7:26.06  Maximum resident set size (kbytes): 13470616 
+[refg1b] lane 1 rc=0 units=29  Elapsed (wall clock) time (h:mm:ss or m:ss): 6:59.01  Maximum resident set size (kbytes): 13418948 
+[refg1b] lane 2 rc=0 units=29  Elapsed (wall clock) time (h:mm:ss or m:ss): 6:56.28  Maximum resident set size (kbytes): 13413404 
+[refg1b] lane 3 rc=0 units=29  Elapsed (wall clock) time (h:mm:ss or m:ss): 7:35.37  Maximum resident set size (kbytes): 13417660 
+[refg1b] lane 4 rc=0 units=29  Elapsed (wall clock) time (h:mm:ss or m:ss): 7:24.46  Maximum resident set size (kbytes): 13408428 
+[refg1b] lane 5 rc=0 units=29  Elapsed (wall clock) time (h:mm:ss or m:ss): 7:30.22  Maximum resident set size (kbytes): 13414008 
+[refg1b] lane 6 rc=0 units=29  Elapsed (wall clock) time (h:mm:ss or m:ss): 7:16.06  Maximum resident set size (kbytes): 13403332 
+[refg1b] lane 7 rc=0 units=29  Elapsed (wall clock) time (h:mm:ss or m:ss): 7:03.55  Maximum resident set size (kbytes): 13407964 
+[refg1b] done-markers: 233, PASS: 233, of 233
+[refg1b] products listed: 233
+[refg1b] porcelain --ignored lines after: 0
+[refg1b] done

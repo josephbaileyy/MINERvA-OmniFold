@@ -1,0 +1,43 @@
+total 17412
+drwxrwx---  4 josephrb josephrb     4096 Apr 26  2026 .
+drwxrwx--- 12 josephrb josephrb     4096 Apr 26  2026 ..
+-rw-rw----  1 josephrb josephrb    28105 Apr 26  2026 CMakeCache.txt
+-rw-rw----  1 josephrb josephrb    13792 Apr 26  2026 CMakeDoxyfile.in
+-rw-rw----  1 josephrb josephrb    19118 Apr 26  2026 CMakeDoxygenDefaults.cmake
+drwxrwx---  8 josephrb josephrb     4096 Apr 26  2026 CMakeFiles
+-rw-rw----  1 josephrb josephrb     6210 Apr 26  2026 cmake_install.cmake
+-rw-rw----  1 josephrb josephrb      528 Apr 26  2026 Doxyfile
+-rw-rw----  1 josephrb josephrb   223370 Apr 26  2026 G__RooUnfold.cxx
+-rw-r-----  1 josephrb josephrb    32863 Apr 26  2026 libRooUnfold_rdict.pcm
+-rw-rw----  1 josephrb josephrb     3019 Apr 26  2026 libRooUnfold.rootmap
+-rwxrwx---  1 josephrb josephrb 17319792 Apr 26  2026 libRooUnfold.so
+-rw-rw----  1 josephrb josephrb    25168 Apr 26  2026 Makefile
+lrwxrwxrwx  1 josephrb josephrb       78 Apr 26  2026 RooFitUnfold.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooFitUnfold.h
+drwxrwx---  2 josephrb josephrb     4096 Apr 26  2026 RooUnfold
+lrwxrwxrwx  1 josephrb josephrb       80 Apr 26  2026 RooUnfoldBayes.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldBayes.h
+lrwxrwxrwx  1 josephrb josephrb       83 Apr 26  2026 RooUnfoldBinByBin.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldBinByBin.h
+-rw-rw----  1 josephrb josephrb      383 Apr 26  2026 RooUnfoldConfig.cmake
+lrwxrwxrwx  1 josephrb josephrb       81 Apr 26  2026 RooUnfoldErrors.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldErrors.h
+lrwxrwxrwx  1 josephrb josephrb       85 Apr 26  2026 RooUnfoldFitHelpers.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldFitHelpers.h
+lrwxrwxrwx  1 josephrb josephrb       77 Apr 26  2026 RooUnfoldGP.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldGP.h
+lrwxrwxrwx  1 josephrb josephrb       75 Apr 26  2026 RooUnfold.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold.h
+lrwxrwxrwx  1 josephrb josephrb       82 Apr 26  2026 RooUnfoldHelpers.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldHelpers.h
+lrwxrwxrwx  1 josephrb josephrb       84 Apr 26  2026 RooUnfoldHelpers.tpp -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldHelpers.tpp
+lrwxrwxrwx  1 josephrb josephrb       78 Apr 26  2026 RooUnfoldIds.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldIds.h
+lrwxrwxrwx  1 josephrb josephrb       81 Apr 26  2026 RooUnfoldInvert.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldInvert.h
+lrwxrwxrwx  1 josephrb josephrb       83 Apr 26  2026 RooUnfold_LinkDef.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold_LinkDef.h
+lrwxrwxrwx  1 josephrb josephrb       83 Apr 26  2026 RooUnfoldOmnifold.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldOmnifold.h
+lrwxrwxrwx  1 josephrb josephrb       80 Apr 26  2026 RooUnfoldParms.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldParms.h
+lrwxrwxrwx  1 josephrb josephrb       82 Apr 26  2026 RooUnfoldPoisson.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldPoisson.h
+lrwxrwxrwx  1 josephrb josephrb       83 Apr 26  2026 RooUnfoldResponse.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldResponse.h
+lrwxrwxrwx  1 josephrb josephrb       78 Apr 26  2026 RooUnfoldSvd.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldSvd.h
+-rw-rw----  1 josephrb josephrb     4167 Apr 26  2026 RooUnfoldTargets.cmake
+lrwxrwxrwx  1 josephrb josephrb       85 Apr 26  2026 RooUnfoldTH1Helpers.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldTH1Helpers.h
+lrwxrwxrwx  1 josephrb josephrb       82 Apr 26  2026 RooUnfoldTUnfold.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldTUnfold.h
+-rw-rw----  1 josephrb josephrb      345 Apr 26  2026 setup.sh
+lrwxrwxrwx  1 josephrb josephrb       98 Apr 26  2026 TUnfoldBinning.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold/TUnfold/TUnfoldBinning.h
+lrwxrwxrwx  1 josephrb josephrb      101 Apr 26  2026 TUnfoldBinningXML.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold/TUnfold/TUnfoldBinningXML.h
+lrwxrwxrwx  1 josephrb josephrb       98 Apr 26  2026 TUnfoldDensity.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold/TUnfold/TUnfoldDensity.h
+lrwxrwxrwx  1 josephrb josephrb       91 Apr 26  2026 TUnfold.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold/TUnfold/TUnfold.h
+lrwxrwxrwx  1 josephrb josephrb      102 Apr 26  2026 TUnfoldIterativeEM.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold/TUnfold/TUnfoldIterativeEM.h
+lrwxrwxrwx  1 josephrb josephrb       94 Apr 26  2026 TUnfoldSys.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold/TUnfold/TUnfoldSys.h

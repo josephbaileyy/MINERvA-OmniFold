@@ -1,0 +1,23 @@
+node login31 nproc=244 loadavg 2.71 3.66 4.30
+2026-11-05T09:59:29Z
+connect script sha256 b6b587e971f7fc68aff66c91ea680cd096deef382738bf422b0b178cd38ac7a0
+stage.json sha256 611742905f6a1a30d2c96561b9d1cd7dfebcb727acbc5088a407fa681aa556a0 (expected 611742905f6a1a30d2c96561b9d1cd7dfebcb727acbc5088a407fa681aa556a0)
+stage record: {'verdict PASS': True, 'checks': True} written 2026-11-05T09:57:04Z
+staged CV copy sha256 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df; recorded S1_001 copy sha256 2ea9b7d241363c231ce25715b7bfd0ddd4ec2406c59972ecaaa6fb6e05462377
+== iris
+m3246               2198.3            10000.0     17988.5      20000.0
+balance_node_h=2011.5 half=1005.8 price=0.75
+HEAD dbdad2f93a255f1bd4bf357951aaa5689aaac512; porcelain --ignored lines before: 0
+deploy blobs: 3 checked, 0 mismatches
+cdraw_compare.py sha256 4a1cf83436872b864ae7c86a80b57a732c4617c8c558b27a77f6291f62477504; cdraw_job.sbatch sha256 3c1d6c2ee0d0e51350e9235642623ca9ca02d06b45f9a7e761c80b6fc0616bbf
+squeue --me before:
+60837713 fd_stab_full RUNNING
+2026-11-05T10:00:51Z
+sbatch rc=0
+Submitted batch job 60847127
+cdraw job 60847127
+scontrol TimeLimit=00:45:00 (declared 00:45:00)
+60847127 fd_cdraw PENDING 0:00 45:00 1 regular_1 m3246
+porcelain --ignored lines after: 0
+cdraw submit rc=0
+2026-11-05T10:00:56Z
