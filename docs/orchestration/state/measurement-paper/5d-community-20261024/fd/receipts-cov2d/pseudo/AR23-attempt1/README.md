@@ -1,7 +1,7 @@
 # COV2D: AR23's first pseudo-data job (60860645) STOPPED on step A's atime guard. This is STOP #2, ruled externally caused
 
 **By** the `cov2d` session, 2026-11-05. This is the failed run's receipt, committed as is. Joseph's ruling is in
-[`DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md`](../../../../../../DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md)
+[`DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md`](../../../../../../../DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md)
 (#798), with the independent read in `../../../consult-cov2d-ar23-stop-20261105/`.
 
 **MEASURES:** the run's record. **CANNOT AUTHORIZE:** a rerun. The rerun goes under COV2D addendum A2, once the director
