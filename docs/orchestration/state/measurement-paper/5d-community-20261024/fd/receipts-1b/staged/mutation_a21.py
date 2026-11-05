@@ -26,6 +26,10 @@ MC, C2, CVD, BIN, E2E = ("tests/test_fd_1b_mc.py",), ("tests/test_fd_1b_c2.py",)
     ("tests/test_fd_1b_binning.py",), ("tests/test_fd_1b_a21_e2e.py",)
 TAB = ("tests/test_fd_1b_tables.py",)
 GEN = "../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py"
+GRD = ("tests/test_fd_1b_guard.py",)                         # the guarded launcher and the scan (the director, 2026-11-05)
+GUARDF = "fd_1b_noatime_guard.py"
+B3C2 = "../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/sbatch-c2check.sh"
+SCAN = "../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/guard_scan.py"
 
 
 def literal(path: Path, name: str):
@@ -392,6 +396,24 @@ NEW = [
      '    if False:\n        raise Refusal("the probe times one truth")', E2E),
     ("fd_1b_mc.py", "H2: any gate sample", '    if gs.get("n") != fd_1b_c2.GATE_N or gs.get("first_300_bitwise") is not True:', '    if False:', MC),
     ("fd_1b_mc.py", "H2: the gate sample's first 300 not required", ' or gs.get("first_300_bitwise") is not True:', ':', MC),
+    # ---- the guarded launcher, its scan, and the rows and job scripts that must use it (the director, 2026-11-05)
+    (GUARDF, "guard: the hook not installed", '    sys.addaudithook(hook)', '    pass', GRD),
+    (GUARDF, "guard: any flag accepted", '    return under and not (flags & noatime)', '    return under and not flags', GRD),
+    (GUARDF, "guard: the root check widened", 'under = any(p == r or p.startswith(r.rstrip(os.sep) + os.sep) for r in roots)',
+     'under = any(p.startswith(r) for r in roots)', GRD),
+    (GUARDF, "guard: symlinks not resolved", '    p = os.path.realpath(os.fsdecode(path))', '    p = os.path.abspath(os.fsdecode(path))', GRD),
+    (GUARDF, "guard: installs without the flag", '    if not flag:\n        raise SystemExit', '    if False:\n        raise SystemExit', GRD),
+    (GUARDF, "guard: the launcher runs the entry without install", '    install(roots)\n    print(f"{MARK}: installed',
+     '    print(f"{MARK}: installed', GRD),
+    (B3C2, "b3: c2check's job line calls fd_1b_c2.py directly",
+     'python3 -B "$DD/nd-unfolding/fd_1b_noatime_guard.py" --declared -- "$DD/nd-unfolding/fd_1b_c2.py" c2check',
+     'python3 -B "$DD/nd-unfolding/fd_1b_c2.py" c2check', GRD),
+    (GEN, "tables: every row calls fd_1b_mc.py directly", 'GUARD = ["fd_1b_noatime_guard.py", "--declared", "--"]',
+     'GUARD = []', TAB),
+    (SCAN, "scan: option values not modelled", '            i += 2 if toks[i] in _VALUE_OPTS else 1', '            i += 1', GRD),
+    (SCAN, "scan: continuations not joined", '        if raw.rstrip().endswith("\\\\"):', '        if False:', GRD),
+    (SCAN, "scan: a malformed guard line accepted", '            return "unguarded"                                # a malformed',
+     '            return "guarded"                                  # a malformed', GRD),
     # ---- fd_1b_cvdenom: the gates and B's attribution rule
     ("fd_1b_cvdenom.py", "cvd: the npz's rows without the extras gate", "    return base & ps, base & extras & ps", "    return base & ps, base & ps", CVD),
     ("fd_1b_cvdenom.py", "cvd: w = 1e4 kept", "(w >= 0) & (w < W_MAX)", "(w >= 0) & (w <= W_MAX)", CVD),
@@ -410,7 +432,9 @@ NEW = [
 
 REQUIRED = {"c2check: a calibration at other code accepted", "H2: a calibration at other code accepted",   # ruling (A)
             "c2check: the 300-draw calibration's code not checked",                                 # the director,
-            "cal300: the exemption widened to any definition"}                                      # 2026-11-05
+            "cal300: the exemption widened to any definition",                                      # 2026-11-05
+            "guard: the hook not installed", "b3: c2check's job line calls fd_1b_c2.py directly",
+            "tables: every row calls fd_1b_mc.py directly"}
 
 
 def purge():
@@ -423,8 +447,9 @@ def run(tests) -> int:
     return subprocess.run(PYTEST + list(tests), capture_output=True, text=True, env=ENV).returncode
 
 
-files = {f: Path(f).read_text() for f in ("fd_1b_mc.py", "fd_1b_c2.py", "fd_1b_cvdenom.py", "fd_1b_binning.py", GEN)}
-for p in list(files) + [t for ts in (MC, C2, CVD, BIN, E2E, TAB) for t in ts]:
+files = {f: Path(f).read_text() for f in ("fd_1b_mc.py", "fd_1b_c2.py", "fd_1b_cvdenom.py", "fd_1b_binning.py", GEN,
+                                          GUARDF, B3C2, SCAN)}
+for p in list(files) + [t for ts in (MC, C2, CVD, BIN, E2E, TAB, GRD) for t in ts]:
     print(f"sha256 {hashlib.sha256(Path(p).read_bytes()).hexdigest()}  {p}")
 print("KILLED means the suites exit 1 (a test failed); any other non-zero exit is ERROR, not a kill")
 plan = []
@@ -448,7 +473,7 @@ assert REQUIRED <= runnable, f"a REQUIRED mutant is missing, not applicable or d
 print(f"required: {len(REQUIRED)} mutants, each in the plan and run")
 if "--check" in sys.argv:
     sys.exit(0)
-SUITES = list(MC + C2 + CVD + BIN + E2E + TAB)
+SUITES = list(MC + C2 + CVD + BIN + E2E + TAB + GRD)
 purge()                                    # the unmutated control first: a red baseline would read every mutant KILLED
 r = subprocess.run([sys.executable, "-B", "-m", "pytest", "-p", "no:cacheprovider", "-q"] + SUITES,
                    capture_output=True, text=True, env=ENV)

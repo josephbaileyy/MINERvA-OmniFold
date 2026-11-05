@@ -26,6 +26,13 @@ class _Parsed(Exception):
     pass
 
 
+def entry_argv(step_argv: list[str]) -> list[str]:
+    """A generated step's guarded entry: the row must be the guard's (gen.GUARD) then fd_1b_mc; returns the latter."""
+    assert step_argv[:len(gen.GUARD)] == gen.GUARD, step_argv[:4]
+    assert step_argv[len(gen.GUARD)] == gen.ENTRY, step_argv[:5]
+    return step_argv[len(gen.GUARD):]
+
+
 def parsed(step_argv: list[str]):
     """The namespace fd_1b_mc's own parser makes of a generated step (the subcommand's function is stopped there)."""
     got = []
@@ -35,7 +42,7 @@ def parsed(step_argv: list[str]):
         raise _Parsed
     with mock.patch.object(mc, "run_unfold", grab), mock.patch.object(mc, "receipt", grab):
         try:
-            mc.main(step_argv[1:])
+            mc.main(entry_argv(step_argv)[1:])
         except _Parsed:
             pass
     assert len(got) == 1, step_argv[:8]
@@ -112,6 +119,22 @@ class Tables(unittest.TestCase):
         with mock.patch.object(mc, "GATE_PIN", self.pin):
             gen.main(argv)
         return o
+
+    def test_every_emitted_row_runs_through_the_guard(self):
+        """The director's ruling of 2026-11-05: every row the generator emits is the guarded launcher's
+        (b3/guard_scan.py's row judgement), counted per table so an empty table cannot pass vacuously."""
+        sys.path.insert(0, str(GEN_PATH.parents[2] / "b3"))
+        import guard_scan
+        self.commit_pin(self.sha + "\n")
+        for plugin, want in (("no", {"s1-0": 8, "s1-0b": 3, "s1-bulk": 1054, "receipt": 1}),
+                             ("yes", {"s1-0": 8, "s1-0b": 5, "s1-bulk": 1581, "receipt": 1})):
+            o = self.run_gen(plugin, out=f"guard-{plugin}")
+            got = {}
+            for t in sorted(o.glob("*-steps.tsv")):
+                r = guard_scan.scan_rows(t.read_text())
+                self.assertEqual(r["unguarded"], [], t.name)
+                got[t.name[:-len("-steps.tsv")]] = r["guarded"]
+            self.assertEqual(got, want, plugin)
 
     def test_every_step_passes_the_real_parser_with_its_rule(self):
         self.commit_pin(self.sha + "\n")

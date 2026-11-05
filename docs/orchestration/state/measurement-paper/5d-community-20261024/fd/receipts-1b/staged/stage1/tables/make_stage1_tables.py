@@ -15,6 +15,10 @@ one item never share a path; fd_1b_mc.resume_matches refuses one that would). Ev
 CV per-row tdw (A2.1 (e2): a composite refuses without it under either rule).
 Every bulk step carries c2check's gate record and its digest, which must be the one binding 3 commits in
 ``fd_1b_mc.GATE_PIN``, unmodified in the checkout, or no bulk table is written.
+Every step runs under 1B's guarded launcher (the director's ruling of 2026-11-05): its row is
+``fd_1b_noatime_guard.py --declared -- nd-unfolding/fd_1b_mc.py ...``, so fd_f1_lane.py runs the guard, which refuses
+any plain open under the declared input roots before running fd_1b_mc (GUARD below; tests/test_fd_1b_guard.py scans
+every emitted row).
 Run from a checkout at the binding's merge:
   python3 make_stage1_tables.py <checkout> <out dir> --plugin yes|no --flux-table-sha256 SHA --estimator NAME
       [--push-sha256 SHA --clip-seed SEED --clip-gate PATH --expect-clip-gate-sha256 SHA]
@@ -34,6 +38,8 @@ W = f"{P}/fd-1b-staged-20261102"
 CV_TDW = f"{P}/fd-1b-a21-cvdenom2-20261103/cvdenom.npy"      # fd_1b_cvdenom's PASS output (A2.1 §6, run 2)
 CV_TDW_SHA256 = "0bc70d622ed51f7e6ce3b80e095788f315e52937b6a6c79a0bafedeb4545def8"
 LANES, PER_LANE = 8, 22
+GUARD = ["fd_1b_noatime_guard.py", "--declared", "--"]      # the lane runner's entry, then the guarded entry script
+ENTRY = "nd-unfolding/fd_1b_mc.py"                          # relative to the deploy, fd_f1_lane.py's cwd
 
 
 def unfolds_dir(rule: str, estimator: str) -> str:
@@ -118,7 +124,7 @@ def main(argv=None) -> int:
               "--cv-tdw", CV_TDW, "--expect-cv-tdw-sha256", CV_TDW_SHA256,
               "--threads", "32", "--estimator", a.estimator, "--tag", "fd1b_mc"]
     prep = ["--prep", f"{P}/fd-f1-20261027/f1b3/prep"]   # the toys' F1 prep (stage 2 tables)
-    receipt = ["fd_1b_mc.py", "receipt"] + common[:common.index("--threads")] + [
+    receipt = GUARD + [ENTRY, "receipt"] + common[:common.index("--threads")] + [
         "--staged", f"{P}/fd-1b-inv-20261101/i0/in", "--definition", str(co / "nd-unfolding/pv-ladder/readouts/h2_definition.json"),
         "--out", f"{W}/stage1/a2/receipt.json"]
     push = ["--push", f"{W}/stage1/in/push.npz", "--expect-push-sha256", str(a.push_sha256)]
@@ -132,7 +138,7 @@ def main(argv=None) -> int:
 
     def argv(t, role, it, rule):
         extra = prep if t in ("g18", "ar23") else (push if t == "plugin" else [])
-        return (["fd_1b_mc.py", "unfold", "--truth", t, "--role", role, "--items", it] + common + extra
+        return (GUARD + [ENTRY, "unfold", "--truth", t, "--role", role, "--items", it] + common + extra
                 + ["--clip-rule", rule, "--out", unfolds_dir(rule, a.estimator)] + (gate if rule == "nature" else []))
 
     def tables(job, lanes_items, rule):

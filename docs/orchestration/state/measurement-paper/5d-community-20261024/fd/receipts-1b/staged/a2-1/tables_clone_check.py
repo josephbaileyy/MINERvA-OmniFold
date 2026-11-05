@@ -41,9 +41,11 @@ def parse(argv):
     def grab(a):
         got.append(a)
         raise Stop
+    guard = ["fd_1b_noatime_guard.py", "--declared", "--", "nd-unfolding/fd_1b_mc.py"]   # every row is guarded
+    assert argv[:len(guard)] == guard, argv[:5]
     with mock.patch.object(mc, "run_unfold", grab), mock.patch.object(mc, "receipt", grab):
         try:
-            mc.main(argv[1:])
+            mc.main(argv[len(guard):])
         except Stop:
             pass
     assert len(got) == 1, argv[:8]
