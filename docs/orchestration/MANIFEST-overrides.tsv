@@ -246,6 +246,7 @@ docs/orchestration/DECISION-20261103-joseph-coverage-clip-rule.md	LIVE	open	""
 docs/orchestration/DECISION-20261103-joseph-retire-density-gate.md	LIVE	open	""
 docs/orchestration/DECISION-20261104-joseph-1b-large-sample-gate.md	LIVE	open	""
 docs/orchestration/DECISION-20261104-joseph-753-reword-and-merge.md	LIVE	open	""
+docs/orchestration/DECISION-20261104-joseph-g1-r1-calibrated-bars.md	LIVE	open	""
 docs/orchestration/DECISION-20261104-joseph-referee-analysis-commission.md	LIVE	open	""
 docs/orchestration/DECISION-20261104-joseph-rpd-sentence.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
@@ -464,6 +465,7 @@ docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	LIVE	open
 docs/orchestration/PUBLICATION-READINESS-20260822.md	LIVE	open	
 docs/orchestration/QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md	LIVE	open	
 docs/orchestration/QUESTION-20261028-trunk-stat-ml-replica-provenance.md	ARCHIVAL	terminal	""
+docs/orchestration/QUESTION-20261104-published-2d-extraction-intermediates.md	LIVE	open	""
 docs/orchestration/R5-METER.md	LIVE	open	
 docs/orchestration/RANK-AND-INVERSION-20260810.md	LIVE	open	
 docs/orchestration/READING-ORDER-20260824-k0-package-annotations.md	LIVE	open	
@@ -1031,9 +1033,12 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-cons
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-coverage-20261028/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-protections-20261031/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-table-20261028/REPORT.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/REPORT.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/REVIEW-DISPOSITION.md	ARCHIVAL	terminal	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/REVIEW-DISPOSITION.md	ARCHIVAL	terminal	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/SOURCES.md	ARCHIVAL	terminal	""
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-referee-analysis-20261104/REPORT.md	LIVE	open	""
@@ -1197,6 +1202,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-BINDING-
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-BINDING-2.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-DECLARATION-PART2.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-DECLARATION.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-BINDING-1.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-ADDENDUM-A1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-BINDING-1-A1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-STAB-BINDING-1.md	LIVE	open	""

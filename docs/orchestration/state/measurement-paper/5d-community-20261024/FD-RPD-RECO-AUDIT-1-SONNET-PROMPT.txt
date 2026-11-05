@@ -1,0 +1,17 @@
+You are an independent, read-only auditor of a physics-analysis declaration. Work only in the git worktree at
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/7e3f49f7-e8e4-452d-b380-399d4f6c529e/scratchpad/audit-wt
+(detached at b0de7ef61). Do not write, edit, commit, run jobs, contact any cluster or network, or message anyone. Read files and run read-only shell commands (cat, sed, grep, git show/log, python3 for arithmetic only) inside that worktree.
+
+The file under audit: docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-DECLARATION.md, with its pin file fd/rpd-reco/INPUTS.sha256 beside it. It declares two read-only checks on a MINERvA neutrino analysis (d1: reconstruction-level data/MC per playlist; d2: a flux-swap test that reweights simulated playlists from one flux file to another via a true neutrino energy recovered by inverting the simulation's truth W). It must be frozen before any comparison is read.
+
+Audit it for defects that would make a bound run wrong, uninformative, inadmissible, or able to license a statement its evidence does not support. In particular:
+1. Every cited path:line: open it, and say whether it supports the sentence citing it. List each you checked.
+2. Inputs: do the 24 pins in INPUTS.sha256 match docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/line*-60786801.log? Are the declared keys the ones the dump writers save (nd-unfolding/nn_dump_inputs.py, nd-unfolding/s5p_input_dumps.py)? Is the weight-scaling claim right (FD-RPD-DECLARATION.md)?
+3. The recipe: is the prediction P_X correct given how the dumps define w_reco, pass_reco and the background dump? Is anything double-counted or missing (e.g. signal rows reconstructed outside the phase space, fakes)? Is the leave-one-out offset and its analytic sigma right? Is the shape chi-square's ndf right given the weighted-mean subtraction?
+4. The null control C-N: does it test what it claims? Can it pass vacuously or fail by construction (e.g. because the pseudo-playlists share the pooled MC, so the MC terms in sigma do not fluctuate)? Is "at most 1 of 72 with p < 0.001" a sensible bar?
+5. The E_nu inversion: check the algebra against MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h:396-409 (and how p_T, p_parallel are defined there). Is the inversion exact? Are units consistent (the dumps store GeV; the C++ uses MeV)? Is C-E3 a genuine independent test, or can it pass when the inversion is wrong? Are C-E1 and C-E2 thresholds sensible?
+6. The flux swap: is the weight phi_T/phi_own the right object given how the simulation's CV weight already includes a flux reweight? Is leaving background unswapped acceptable? Are TRACKS / PARTIAL / DOES-NOT-TRACK conditions coherent and exhaustive (what if s_obs is negative, or f is undefined, or the mirror goes the wrong way)?
+7. Admissibility and licences: does any licence state more than its outcome supports? Is any cause named beyond the TRACKS coincidence? Is the "not blind on muon kinematics" disclosure sufficient?
+8. Tests (section 5): would they catch the defects above? Is each refusing control tested in the direction it acts?
+
+Report: a list of findings, each classed BLOCKING (must be fixed before binding), MAJOR (should be fixed) or MINOR, with file:line evidence, then a one-line verdict. Be concrete. Do not propose wording for any paper.

@@ -1,0 +1,8 @@
+Director's answers to #760's three questions, and your next assignment:
+1. Next deliverable: B-C, the 2D component accounting, from existing committed products only (0 node-h). Common phase space, bin areas and cell order, flux convention and POT, selected reco signal and background, efficiency/completeness and unfolded yield, compared stage by stage against what the published result's release provides. Record which publication intermediates are missing instead of assuming equality. limitations-catalog is writing the c2/c1 declaration (binned IBU on the 2D inputs, and the joint-test estimator in 2D), but those runs wait for your B-C result, because an upstream defect would change what they should test.
+2. Then C-N, the per-playlist flux and POT provenance inventory, also from existing records (RPD's F1/C1 controls and the original playlist accounting), separating a uniform normalisation from an energy-dependent flux ratio. limitation-resolver owns C-R (its d1: reco-level per-playlist data/MC from RPD's dumps) and the flux-swap test (d2). Don't duplicate them, and coordinate through your PR descriptions.
+3. Declarations stay separate, one per campaign, each cross-referencing the others. Scoping reports and inventories don't need a declaration; anything that runs does.
+4. External inputs: if publication intermediates or muon calibration metadata turn out to be needed, write them up as a factual QUESTION document for Joseph. Never send it yourself.
+5. A: no new campaign for now. The stabilisation probe reports the GiBUU bias, and the sparsity diagnostic (A-S) can be scoped later if Joseph wants it.
+
+Same rules as the handoff: read-only, no cluster without a go on a checksum and price, records PRs, and the director merges.
