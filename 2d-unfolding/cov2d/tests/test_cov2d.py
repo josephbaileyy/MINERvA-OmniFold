@@ -236,6 +236,60 @@ def ratio_json(seed: int) -> dict:
             "k": 1.0}
 
 
+class StageAndGuard(unittest.TestCase):
+    """COV2D addendum A2: staging a shared input (an O_NOATIME copy hashed against its pin, the shared atime recorded),
+    the guards' recorded values, and the quota headroom check before $UNI is staged."""
+    QUOTA = (REPO / "docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partb_readout/quota_before_cleanup.txt")
+
+    def setUp(self):
+        p = mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True)
+        p.start()
+        self.addCleanup(p.stop)
+        self.td = tempfile.TemporaryDirectory()
+        self.addCleanup(self.td.cleanup)
+        self.d = Path(self.td.name)
+        (self.d / "stage").mkdir()
+        self.src = self.d / "shared.bin"
+        self.src.write_bytes(b"cov2d" * 1000)
+        import hashlib
+        self.sha = hashlib.sha256(self.src.read_bytes()).hexdigest()
+
+    def test_copies_hashes_and_records(self):
+        r = c.stage_copy(self.src, self.d / "stage", self.sha, "x_shared.bin")
+        dst = self.d / "stage" / "x_shared.bin"
+        self.assertEqual(dst.read_bytes(), self.src.read_bytes())
+        self.assertEqual((r["path"], r["src"], r["sha256"], r["pinned"], r["bytes"]),
+                         (str(dst), str(self.src), self.sha, self.sha, 5000))
+        self.assertEqual(set(r["src_atime_ns"]), {"before", "after"})
+        self.assertIsInstance(r["src_atime_ns"]["before"], int)
+        self.assertEqual(r["src_atime_moved"], r["src_atime_ns"]["before"] != r["src_atime_ns"]["after"])
+        self.assertEqual(os.stat(dst).st_mode & 0o777, 0o440)
+        st = os.stat(dst)
+        self.assertEqual(r["stat"], {"size": st.st_size, "mtime": int(st.st_mtime), "inode": st.st_ino})
+
+    def test_a_wrong_pin_refuses_and_leaves_no_copy(self):
+        with self.assertRaises(c.Refusal):
+            c.stage_copy(self.src, self.d / "stage", "0" * 64, "x_shared.bin")
+        self.assertFalse((self.d / "stage" / "x_shared.bin").exists())
+
+    def test_a_copy_is_made_once(self):
+        c.stage_copy(self.src, self.d / "stage", self.sha, "x_shared.bin")
+        with self.assertRaises(c.Refusal):
+            c.stage_copy(self.src, self.d / "stage", self.sha, "x_shared.bin")
+
+    def test_the_guard_records_both_values(self):
+        moved, vals = c.atime_guard({"a": 1, "b": 2}, {"a": 1, "b": 5})
+        self.assertEqual((moved, vals), (["b"], {"a": {"before": 1, "after": 1}, "b": {"before": 2, "after": 5}}))
+
+    def test_headroom_against_re2s_showquota_row(self):
+        text = self.QUOTA.read_text()             # |    pscratch |   17.47TiB |    20.00TiB | ... (RE-2's record)
+        room = (20.00 - 17.47) * 2 ** 40
+        self.assertIsNone(c.headroom_problem(171117087867, text))
+        self.assertIsNone(c.headroom_problem(int(room / 2) - 1, text))
+        self.assertIn("headroom", c.headroom_problem(int(room / 2) + 2 ** 30, text))      # under 2x: refused
+        self.assertIn("unreadable", c.headroom_problem(1, "showquota: command not found"))
+
+
 class World:
     """A synthetic universe omnifile: each tree's CV weight and 175 universe columns, mc_truth_denom's five truth
     variables. ``factor`` maps (tree, band, idx) to a per-row multiplier of the CV, applied after a mild default."""

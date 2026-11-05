@@ -25,6 +25,10 @@ sys.path.insert(0, str(HERE.parent))
 import cov2d as c  # noqa: E402
 import cov2d_pseudo as ps  # noqa: E402
 import cov2d_receipt as rc  # noqa: E402
+import noatime_emu  # noqa: E402
+
+ROOMY = "|    pscratch |    1.00TiB |    20.00TiB |   5.0% |"      # showquota's pscratch row (RE-2's record's form)
+FULL = "|    pscratch |   20.00TiB |    20.00TiB | 100.0% |"
 
 try:
     import uproot  # noqa: F401
@@ -92,13 +96,16 @@ class PseudoA(unittest.TestCase):
         cls.d = Path(cls.td.name)
         cls.truth, cls.sig, cls.bkg = build(cls.d)
         cls.patches = [mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True),
-                       mock.patch.object(ps, "read_pot", lambda f: POT)]
+                       mock.patch.object(ps, "read_pot", lambda f: POT), mock.patch.object(c, "read_quota", lambda: ROOMY)]
         for p in cls.patches:
             p.start()
+        cls.emu = contextlib.ExitStack()
+        cls.emu.enter_context(noatime_emu.emulated(c, rc))
         cls.rc_main, cls.text = cls.run_main("out", 200_000)
 
     @classmethod
     def tearDownClass(cls):
+        cls.emu.close()
         for p in cls.patches:
             p.stop()
         cls.td.cleanup()
@@ -244,6 +251,42 @@ class PseudoA(unittest.TestCase):
         with self.assertRaises(FileExistsError):
             self.run_main("out", 200_000)
 
+    # -------------------------------------------------------------- A2: staging and the guard
+    def test_inputs_are_staged_and_the_guard_records_its_values(self):
+        import hashlib
+        rec, stage = self.rec(), self.d / "out" / "stage"
+        src = {"uni": "uni.root", "cv": "cv.root", "constraint": "constraint.txt", "ratio": "prep/bridged/genie_v3_g18.json"}
+        self.assertEqual(set(rec["staged"]), set(src))
+        for k, rel in src.items():
+            v = rec["staged"][k]
+            self.assertEqual((v["src"], Path(v["path"]).parent), (str(self.d / rel), stage))
+            self.assertEqual(v["sha256"], hashlib.sha256((self.d / rel).read_bytes()).hexdigest())
+            self.assertEqual(set(v["src_atime_ns"]), {"before", "after"})
+        self.assertEqual(set(rec["atime_ns"]), {v["path"] for v in rec["staged"].values()})   # the copies, only
+        self.assertTrue(all(isinstance(x["before"], int) and x["before"] == x["after"] for x in rec["atime_ns"].values()))
+        self.assertEqual((rec["atime_moved"], rec["verdict"]), ([], "PASS"))
+
+    def test_a_plain_read_of_a_staged_copy_stops(self):
+        copy = self.d / "fire" / "stage" / "constraint_constraint.txt"
+        real = ps.natures
+
+        def natures(*a):        # mid-step, after the guard's first reading: a plain read of the private copy
+            with open(copy) as fh:
+                fh.read()
+            return real(*a)
+        with mock.patch.object(ps, "natures", natures):
+            code, text = self.run_main("fire", 200_000)
+        rec = self.rec("fire")
+        self.assertEqual((code, rec["verdict"], rec["atime_moved"]), (3, "STOP", [str(copy)]))
+        self.assertGreater(rec["atime_ns"][str(copy)]["after"], rec["atime_ns"][str(copy)]["before"])
+        self.assertIn("atime moved", text)
+
+    def test_staging_is_refused_without_twice_the_headroom(self):
+        with mock.patch.object(c, "read_quota", lambda: FULL), self.assertRaises(c.Refusal) as e:
+            self.run_main("noroom", 200_000)
+        self.assertIn("before staging", str(e.exception))
+        self.assertFalse((self.d / "noroom" / "stage").exists())
+
 
 @unittest.skipUnless(HAVE, "needs uproot")
 class Guards(unittest.TestCase):
@@ -252,9 +295,12 @@ class Guards(unittest.TestCase):
         self.addCleanup(self.td.cleanup)
         self.d = Path(self.td.name)
         for p in (mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True),
-                  mock.patch.object(ps, "read_pot", lambda f: POT)):
+                  mock.patch.object(ps, "read_pot", lambda f: POT), mock.patch.object(c, "read_quota", lambda: ROOMY)):
             p.start()
             self.addCleanup(p.stop)
+        emu = contextlib.ExitStack()
+        emu.enter_context(noatime_emu.emulated(c, rc))
+        self.addCleanup(emu.close)
 
     def run_main(self):
         return PseudoA.run_main("out", 200_000, d=self.d)

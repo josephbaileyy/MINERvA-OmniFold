@@ -23,7 +23,12 @@ truth and the records of every nature of one truth, from one read of $UNI. omnif
 * Section 9.6, before anything is written: ``cov2d.compose`` with one universe gives that universe's column bitwise,
   for MaRES_0, Flux_0 and GEANT_Pion_0, on every chunk of every tree.
 
-Every input is read through O_NOATIME and its atime is checked unchanged.
+Inputs (COV2D addendum A2, Joseph's ruling of 2026-11-05 on AR23's STOP #2): the four shared inputs ($UNI, the CFS CV,
+the truth's F1 ratio and the flux constraint) are first staged into ``<out>/stage`` by ``cov2d.stage_copy``, each an
+O_NOATIME copy hashed against its pin, with the shared file's atime recorded before and after (a record, not a stop).
+Before $UNI is staged, pscratch's quota headroom must be at least twice what is staged, or the job is refused. The
+job reads only the copies, always through O_NOATIME, and the guard watches only the copies: their atime at the start
+and at the end, both values recorded (``atime_ns``); any move STOPs.
 
   python cov2d_pseudo.py --truth G18 --out DIR [--uni PATH] [--cv PATH] [--prep DIR] [--constraint PATH] [--chunk N]
 
@@ -194,19 +199,26 @@ def main(argv=None) -> int:
     t0 = time.time()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=False)
-    ratio_path = str(Path(a.prep) / fd_1b_toys.TRUTHS[rc.TUNES[a.truth]])
-    reads = [a.uni, a.cv, a.constraint, ratio_path]
-    before = {p: os.stat(p).st_atime_ns for p in reads}
+    ratio_src = str(Path(a.prep) / fd_1b_toys.TRUTHS[rc.TUNES[a.truth]])
     rec = {"truth": a.truth, "host": os.uname().nodename, "utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
            "uproot": uproot.__version__, "numpy": np.__version__, "chunk": a.chunk, "stop": [], "pins_checked": not a.no_pins}
+    shared = {"uni": (a.uni, c.UNI_SHA256), "cv": (a.cv, c.CV_SHA256), "constraint": (a.constraint, c.CONSTRAINT_SHA256),
+              "ratio": (ratio_src, fd_1b_toys.committed_ratio_sha256(rc.TUNES[a.truth]))}
+    need = sum(os.stat(src).st_size for src, _ in shared.values())
+    bad = c.headroom_problem(need, c.read_quota())
+    if bad:
+        raise c.Refusal(f"before staging: {bad}")
+    stage = out / "stage"
+    stage.mkdir()
+    rec["staged"] = {k: c.stage_copy(src, stage, None if a.no_pins else pin, f"{k}_{Path(src).name}")
+                     for k, (src, pin) in shared.items()}
+    rec["shared_atime_moved"] = [v["src"] for v in rec["staged"].values() if v["src_atime_moved"]]   # a record only
+    copy = {k: v["path"] for k, v in rec["staged"].items()}
+    before = c.atime_ns(copy.values())     # the guard watches the private copies only
 
-    text, sha = rc.read_noatime(a.constraint)
-    if not a.no_pins and sha != c.CONSTRAINT_SHA256:
-        raise c.Refusal(f"constraint file sha256 {sha}")
+    text, sha = rc.read_noatime(copy["constraint"])
     w_flux = c.flux_weights(text.decode())
-    data, sha = rc.read_noatime(ratio_path)
-    if not a.no_pins and sha != fd_1b_toys.committed_ratio_sha256(rc.TUNES[a.truth]):
-        raise c.Refusal(f"{a.truth} ratio sha256 {sha} is not F1's committed digest")
+    data, sha = rc.read_noatime(copy["ratio"])
     rec["ratio_sha256"] = sha
     ratio = json.loads(data)
     nat = natures(a.truth, w_flux)
@@ -218,9 +230,9 @@ def main(argv=None) -> int:
     drv = rc.driver_phase_space()
     n_cells = (len(drv["PT_EDGES"]) - 1) * (len(drv["PZ_EDGES"]) - 1)
 
-    with rc.open_noatime(a.cv) as fh:
+    with rc.open_noatime(copy["cv"]) as fh:
         pot_cv = read_pot(uproot.open(fh))
-    with rc.open_noatime(a.uni) as fh:
+    with rc.open_noatime(copy["uni"]) as fh:
         f = uproot.open(fh)
         pot = read_pot(f)
         if pot != pot_cv:
@@ -329,14 +341,15 @@ def main(argv=None) -> int:
                  neg_reco_signal=neg_reco["signal"], neg_reco_background=neg_reco["background"], S_reco=S_reco,
                  seeds=np.array([n["seed"] for n in nat]))
 
-    after = {p: os.stat(p).st_atime_ns for p in reads}
-    rec["atime_moved"] = [p for p in reads if after[p] != before[p]]
+    rec["atime_moved"], rec["atime_ns"] = c.atime_guard(before, c.atime_ns(copy.values()))
     if rec["atime_moved"]:
         rec["stop"].append(f"atime moved on {rec['atime_moved']}")
     rec["verdict"] = "STOP" if rec["stop"] else "PASS"
     rec["seconds"] = round(time.time() - t0, 1)
     (out / "pseudo_a.json").write_text(json.dumps(rec, indent=1, sort_keys=True))
     print(f"COV2D-PSEUDO-A {a.truth} {rec['verdict']} natures={len(nat)} stops={len(rec['stop'])}")
+    if rec["shared_atime_moved"]:
+        print(f"SHARED-ATIME (a record, not a stop) moved during staging on {rec['shared_atime_moved']}")
     for x in rec["stop"]:
         print(f"STOP {x}")
     return 0 if rec["verdict"] == "PASS" else 3

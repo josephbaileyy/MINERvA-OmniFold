@@ -53,6 +53,9 @@ OUTLIER_CELL = 216      # flat (p_T, p_par) cell (13, 8): p_T 2.5-4.5, p_par 6-7
 CONSTRAINT = ("/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/"
               "sorted_NuEConstraint_FHC_RHC_IMD.txt")
 CONSTRAINT_SHA256 = "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+UNI_SHA256 = "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418"   # partb_readout/preflight/inputs.stat:2
+CV_SHA256 = "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"    # the CFS CV, RE2-DECLARATION.md:145
+STAGE_HEADROOM = 2.0    # A2 (the director's ruling): stop before staging unless quota headroom >= 2x what is staged
 
 
 class Refusal(RuntimeError):
@@ -152,6 +155,83 @@ def weakened_cells(ratio, cells) -> list[int]:
     if ratio.shape != cells.shape or not np.all(np.isfinite(ratio)):
         raise Refusal("one finite variance ratio per cell is required")
     return [int(x) for x in cells[ratio < WEAKENED_BELOW]]
+
+
+def stage_copy(src: str | Path, stage_dir: str | Path, want: str | None, name: str) -> dict:
+    """COV2D addendum A2 item 2: copy a shared input into the run's own directory through O_NOATIME, hashing as it
+    goes, and refuse (deleting the copy) unless the hash is the pin. The shared file's atime is stat-recorded before and
+    after: a record, not a stop (the director's ruling: our read cannot move it, os.open raises rather than drop the
+    flag, and a lazily propagated earlier read by another process must not end (c)). The copy is made read-only; its
+    size, mtime and inode are kept for the B9-form deletion."""
+    import hashlib
+    import os
+    dst = Path(stage_dir) / name
+    if dst.exists():
+        raise Refusal(f"{dst} exists: a staged copy is made once")
+    before = os.stat(src).st_atime_ns
+    h, n = hashlib.sha256(), 0
+    fd = os.open(str(src), os.O_RDONLY | os.O_NOATIME)
+    try:
+        with open(dst, "xb") as out:
+            while True:
+                b = os.read(fd, 1 << 24)
+                if not b:
+                    break
+                h.update(b)
+                out.write(b)
+                n += len(b)
+    finally:
+        os.close(fd)
+    after = os.stat(src).st_atime_ns
+    got = h.hexdigest()
+    if want is not None and got != want:
+        dst.unlink()
+        raise Refusal(f"{src} sha256 {got} != pinned {want}")
+    os.chmod(dst, 0o440)
+    st = os.stat(dst)
+    return {"src": str(src), "path": str(dst), "sha256": got, "pinned": want, "bytes": n,
+            "src_atime_ns": {"before": before, "after": after}, "src_atime_moved": after != before,
+            "stat": {"size": st.st_size, "mtime": int(st.st_mtime), "inode": st.st_ino}}
+
+
+def atime_ns(paths) -> dict:
+    """{path: st_atime_ns}, the guards' reading (A2 item 3: both values are recorded)."""
+    import os
+    return {str(p): os.stat(p).st_atime_ns for p in paths}
+
+
+def atime_guard(before: dict, after: dict) -> tuple[list, dict]:
+    """The paths whose atime moved, and every path's before and after values in epoch ns (A2 item 3)."""
+    return ([p for p in before if after[p] != before[p]],
+            {p: {"before": before[p], "after": after[p]} for p in before})
+
+
+_UNITS = {"B": 1, "KiB": 1 << 10, "MiB": 1 << 20, "GiB": 1 << 30, "TiB": 1 << 40, "PiB": 1 << 50}
+
+
+def read_quota() -> str:
+    """NERSC's showquota, whose pscratch row reads used and limit (as in RE-2's partb_readout/quota_*.txt)."""
+    import subprocess
+    r = subprocess.run(["showquota"], capture_output=True, text=True, timeout=120)
+    return r.stdout + r.stderr
+
+
+def headroom_problem(need_bytes: int, quota_text: str) -> str | None:
+    """None if pscratch's quota headroom (limit - used, from showquota's pscratch row) is at least STAGE_HEADROOM x
+    need_bytes; otherwise why not, an unreadable quota included (the director's ruling: stop with a report)."""
+    import re
+    for line in quota_text.splitlines():
+        cells = [x.strip() for x in line.strip().strip("|").split("|")]
+        if len(cells) >= 3 and cells[0] == "pscratch":
+            vals = [re.fullmatch(r"([0-9.]+)\s*([KMGTP]iB|B)", x) for x in cells[1:3]]
+            if all(vals):
+                used, limit = (float(m[1]) * _UNITS[m[2]] for m in vals)
+                room = limit - used
+                if room < STAGE_HEADROOM * need_bytes:
+                    return (f"pscratch headroom {room / 2**30:.1f} GiB < {STAGE_HEADROOM:g} x the {need_bytes / 2**30:.1f}"
+                            f" GiB to be staged")
+                return None
+    return f"pscratch quota unreadable from showquota: {quota_text.strip()[:300]!r}"
 
 
 def deploy_head(root: str | Path) -> str:

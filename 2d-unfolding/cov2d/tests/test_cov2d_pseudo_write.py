@@ -25,6 +25,7 @@ sys.path.insert(0, str(HERE.parent / "jobs"))
 import cov2d as c  # noqa: E402
 import cov2d_jobs as cj  # noqa: E402
 from deploy_fixture import clean_checkout  # noqa: E402
+import noatime_emu  # noqa: E402
 
 try:
     import ROOT
@@ -115,6 +116,9 @@ class StepB(unittest.TestCase):
         p = mock.patch.object(pw, "DEPLOY", self.deploy)
         p.start()
         self.addCleanup(p.stop)
+        emu = contextlib.ExitStack()
+        emu.enter_context(noatime_emu.emulated(c, pw))
+        self.addCleanup(emu.close)
 
     def run_b(self, extra=()):
         buf = io.StringIO()
@@ -251,6 +255,38 @@ class StepB(unittest.TestCase):
             code, _ = self.run_b()
         self.assertEqual((code, self.rec()["verdict"]), (3, "STOP"))
         self.assertTrue(any("moved off" in x for x in self.rec()["stop"]))
+
+    def test_inputs_are_staged_root_reads_working_copies_and_the_guard_records(self):
+        import hashlib
+        write_fixture(self.d, self.drv)
+        code, text = self.run_b()
+        self.assertEqual(code, 0, text)
+        rec, stage = self.rec(), self.d / "out" / "stage"
+        src = {"er": "xsec.root", "mcfile": "mc.root", "flux_universe_file": "fluxu.root"}
+        self.assertEqual(set(rec["staged"]), set(src))
+        for k, rel in src.items():
+            v = rec["staged"][k]
+            self.assertEqual((v["src"], Path(v["path"]).parent), (str(self.d / rel), stage))
+            self.assertEqual(v["sha256"], hashlib.sha256((self.d / rel).read_bytes()).hexdigest())
+            self.assertEqual(rec["inputs"][k]["staged"], v["path"])
+        self.assertEqual(set(rec["atime_ns"]), {v["path"] for v in rec["staged"].values()})    # the staged copies only
+        self.assertTrue(all(isinstance(x["before"], int) and x["before"] == x["after"] for x in rec["atime_ns"].values()))
+        self.assertEqual((rec["atime_moved"], rec["verdict"]), ([], "PASS"))
+
+    def test_a_plain_read_of_a_staged_copy_stops(self):
+        write_fixture(self.d, self.drv)
+        copy = self.d / "out" / "stage" / "er_xsec.root"
+        real = pw.section_9_4
+
+        def section_9_4(*a):      # mid-step, after the guard's first reading: a plain read of the private copy
+            with open(copy, "rb") as fh:
+                fh.read()
+            return real(*a)
+        with mock.patch.object(pw, "section_9_4", section_9_4):
+            code, _ = self.run_b()
+        rec = self.rec()
+        self.assertEqual((code, rec["verdict"], rec["atime_moved"]), (3, "STOP", [str(copy)]))
+        self.assertGreater(rec["atime_ns"][str(copy)]["after"], rec["atime_ns"][str(copy)]["before"])
 
     def test_refuses_a_stopped_step_a(self):
         write_fixture(self.d, self.drv)

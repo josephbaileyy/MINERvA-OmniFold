@@ -5,7 +5,9 @@ argv through re2_driver's REAL parser (PyROOT env), and the job-side input check
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
+import io
 import json
 import os
 import shlex
@@ -196,6 +198,19 @@ class Gate(unittest.TestCase):
 
 class DryRun(unittest.TestCase):
     """The real job script with DRYRUN=1: its lanes print every run of the job, with $vars expanded."""
+    def test_ar23s_jobs_read_the_rerun_directory(self):
+        # A2: AR23's pseudo-data rerun writes a new directory; every AR23 unfold reads its data files from there
+        import subprocess
+        with tempfile.TemporaryDirectory() as td:
+            cj.tables("AR23", Path(td) / "tables")
+            env = dict(os.environ, C=str(HERE.parents[2]), M="x", TRUTH="AR23", JOB="AR23_L", DRYRUN="1", COV2D_O=td)
+            r = subprocess.run(["bash", str(HERE.parent / "jobs" / "cov2d_job.sbatch")], env=env, capture_output=True,
+                               text=True)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            lines = [ln for ln in r.stdout.splitlines() if ln.startswith("srun ")]
+            self.assertEqual(len(lines), 11)
+            self.assertTrue(all(f"--data-file {td}/pseudo/AR23-a2/b/data_5731000.root" in ln for ln in lines))
+
     def test_the_lateral_job_prints_its_11_runs_in_2_lanes(self):
         import subprocess
         with tempfile.TemporaryDirectory() as td:
@@ -253,6 +268,51 @@ class Pilot(unittest.TestCase):
             self.assertEqual(len(lines), 8)
             self.assertEqual(sum("/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root" in ln for ln in lines), 3)
             self.assertEqual(sum(f"{td}/pseudo/G18/b/data_" in ln for ln in lines), 5)
+
+
+class A2Pseudo(unittest.TestCase):
+    """COV2D addendum A2: the pseudo-data limits, the directory map both job scripts use, and the B9-form deletion."""
+    def test_limits(self):
+        self.assertEqual(cj.PSEUDO_LIMITS, {"G18": "03:00:00", "AR23": "04:00:00"})
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(cj.main(["pseudo-limit", "--truth", "AR23"]), 0)
+        self.assertEqual(out.getvalue().strip(), "04:00:00")
+
+    def test_pseudo_dir_through_the_real_env_script(self):
+        import subprocess
+        env = dict(os.environ, C=str(HERE.parents[2]), COV2D_O="/o")
+        r = subprocess.run(["bash", "-c", f"source {HERE.parent / 'jobs' / 'cov2d_env.sh'}; pseudo_dir G18; pseudo_dir AR23"],
+                           env=env, capture_output=True, text=True)
+        self.assertEqual(r.stdout.split(), ["/o/pseudo/G18", "/o/pseudo/AR23-a2"])
+
+    def test_staged_copies_are_deleted_with_b9_rows_unless_their_stat_moved(self):
+        with tempfile.TemporaryDirectory() as td:
+            d = Path(td)
+            recs = []
+            for step, names in (("a", ["uni_u.root", "cv_c.root"]), ("b", ["er_x.root"])):
+                staged = {}
+                for n in names:
+                    f = d / step / "stage" / n
+                    f.parent.mkdir(parents=True, exist_ok=True)
+                    f.write_bytes(n.encode())
+                    st = os.stat(f)
+                    staged[n] = {"path": str(f), "sha256": n * 2, "stat": {"size": st.st_size, "mtime": int(st.st_mtime),
+                                                                            "inode": st.st_ino}}
+                (d / step / "rec.json").write_text(json.dumps({"staged": staged}))
+                recs.append(d / step / "rec.json")
+            moved = d / "a" / "stage" / "cv_c.root"
+            os.utime(moved, (1, 1))                       # its mtime no longer what staging recorded
+            kept = cj.delete_staged(recs, d / "deletions.tsv", "step B PASS")
+            rows = (d / "deletions.tsv").read_text().splitlines()
+            self.assertEqual(rows[0], cj.DELETIONS_HEADER)
+            self.assertEqual(kept, 1)
+            self.assertTrue(moved.exists())
+            self.assertFalse((d / "a" / "stage" / "uni_u.root").exists() or (d / "b" / "stage" / "er_x.root").exists())
+            got = {Path(r.split("\t")[1]).name: r.split("\t") for r in rows[1:]}
+            self.assertEqual({k: v[6] for k, v in got.items()}, {"uni_u.root": "yes", "cv_c.root": "no", "er_x.root": "yes"})
+            self.assertEqual(got["er_x.root"][2], "er_x.rooter_x.root")
+            self.assertEqual(got["er_x.root"][7], "step B PASS")
 
 
 class Order(unittest.TestCase):

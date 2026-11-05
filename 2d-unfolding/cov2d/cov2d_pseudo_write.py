@@ -16,8 +16,12 @@ uproot).
   1, with the nature's flux: the drawn Flux universe's integral (``load_flux_universe_bins``, as ``--universe
   Flux:IDX`` uses it), or the CV flux for the realization.
 
-Every input is copied through O_NOATIME and checked against its pinned sha256 before ROOT opens the copy, so no input's
-atime moves (section 7: only unfolds read without O_NOATIME).
+Inputs (COV2D addendum A2, Joseph's ruling of 2026-11-05): the three shared inputs (E_R, the MC file, the flux-universe
+file) are first staged into ``<out>/stage`` by ``cov2d.stage_copy``, each an O_NOATIME copy hashed against its pin,
+with the shared file's atime recorded before and after (a record, not a stop). ROOT opens files plainly, so it gets a
+second, working copy in $TMPDIR, made from the staged copy through O_NOATIME; the staged copies are never opened
+plainly. The guard watches only the staged copies: their atime at the start and at the end, both values recorded
+(``atime_ns``); any move STOPs.
 
   python cov2d_pseudo_write.py --a DIR --out DIR [--er PATH] [--mcfile PATH] [--flux-universe-file PATH]
 
@@ -216,10 +220,16 @@ def main(argv=None) -> int:
     rec = {"truth": rec_a["truth"], "host": os.uname().nodename, "root": ROOT.gROOT.GetVersion(), "stop": [], "pins_checked": not a.no_pins,
            "M": M}
     srcs = {k: getattr(a, k) for k in PINS}
-    before = {p: os.stat(p).st_atime_ns for p in srcs.values()}
+    stage = out / "stage"
+    stage.mkdir()
+    rec["staged"] = {k: c.stage_copy(src, stage, None if a.no_pins else PINS[k][1], f"{k}_{Path(src).name}")
+                     for k, src in srcs.items()}
+    rec["shared_atime_moved"] = [v["src"] for v in rec["staged"].values() if v["src_atime_moved"]]   # a record only
+    staged = {k: v["path"] for k, v in rec["staged"].items()}
+    before = c.atime_ns(staged.values())     # the guard watches the staged copies only
     with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as td:
-        copies = {k: copy_noatime(p, Path(td), None if a.no_pins else PINS[k][1]) for k, p in srcs.items()}
-        rec["inputs"] = {k: {"path": srcs[k], "sha256": v[1]} for k, v in copies.items()}
+        copies = {k: copy_noatime(p, Path(td), None if a.no_pins else PINS[k][1]) for k, p in staged.items()}   # ROOT's
+        rec["inputs"] = {k: {"path": srcs[k], "staged": staged[k], "sha256": v[1]} for k, v in copies.items()}
         flux_cv = drv.load_flux_bins(str(copies["mcfile"][0]), FLUX_HIST, drv.PT_EDGES)[0]
         cells = np.load(A / "cells.npz")
         data_pot = float(rec_a["pot"]["data"])
@@ -254,8 +264,7 @@ def main(argv=None) -> int:
                                     drv.TRACKER_FIDUCIAL_N_NUCLEONS))
             rec["files"] = files
             np.savez(out / "truth_xsec.npz", xsec=np.stack(truth_x), seeds=np.array([n["seed"] for n in rec_a["natures"]]))
-    after = {p: os.stat(p).st_atime_ns for p in srcs.values()}
-    rec["atime_moved"] = [p for p in srcs.values() if after[p] != before[p]]
+    rec["atime_moved"], rec["atime_ns"] = c.atime_guard(before, c.atime_ns(staged.values()))
     if rec["atime_moved"]:
         rec["stop"].append(f"atime moved on {rec['atime_moved']}")
     if c.deploy_head(DEPLOY) != rec["M"]:
@@ -264,6 +273,8 @@ def main(argv=None) -> int:
     rec["seconds"] = round(time.time() - t0, 1)
     (out / "pseudo_b.json").write_text(json.dumps(rec, indent=1, sort_keys=True))
     print(f"COV2D-PSEUDO-B {rec['truth']} {rec['verdict']} files={len(rec.get('files', []))} stops={len(rec['stop'])}")
+    if rec["shared_atime_moved"]:
+        print(f"SHARED-ATIME (a record, not a stop) moved during staging on {rec['shared_atime_moved']}")
     for x in rec["stop"][:20]:
         print(f"STOP {x}")
     return 0 if rec["verdict"] == "PASS" else 3

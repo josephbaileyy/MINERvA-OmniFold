@@ -217,7 +217,7 @@ def check(runs_tsv: Path, job: str, stats: Path, pseudo_b: Path, env: dict) -> d
 
 
 CAP_NODE_H = 165.8          # COV2D-BINDING-1.md ruling 3
-PSEUDO_LIMIT = "03:00:00"   # cov2d_pseudo.sbatch
+PSEUDO_LIMITS = {"G18": "03:00:00", "AR23": "04:00:00"}   # cov2d_pseudo.sbatch; AR23's rerun stages $UNI first (A2)
 
 
 def hms(t: str) -> int:
@@ -323,6 +323,34 @@ def order(job: str, truth: str, committed: dict, submitted: set, M: str) -> list
     return need
 
 
+DELETIONS_HEADER = "utc\tpath\tsha256\tsize\tmtime\tinode\tstat_match\tcondition"   # RE-2's B9 form (deletions.tsv)
+
+
+def delete_staged(records: list, ledger: Path, condition: str) -> int:
+    """A2 (the director's ruling): delete each staged copy a step's record lists, after checking its size, mtime and
+    inode against what staging recorded, with a B9-form ledger row per file. A copy whose stat differs is kept and
+    ledgered "no". Returns the number kept."""
+    import time
+    rows, kept = [], 0
+    for r in records:
+        for entry in json.loads(Path(r).read_text()).get("staged", {}).values():
+            p = entry["path"]
+            st = os.stat(p)
+            match = (st.st_size, int(st.st_mtime), st.st_ino) == (entry["stat"]["size"], entry["stat"]["mtime"],
+                                                                     entry["stat"]["inode"])
+            if match:
+                os.remove(p)
+            else:
+                kept += 1
+            rows.append("\t".join([time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), p, entry["sha256"],
+                                   str(st.st_size), str(int(st.st_mtime)), str(st.st_ino), "yes" if match else "no",
+                                   condition]))
+    new = not ledger.exists()
+    with open(ledger, "a") as fh:
+        fh.write((DELETIONS_HEADER + "\n" if new else "") + "".join(x + "\n" for x in rows))
+    return kept
+
+
 def uni_stat_problem(path: str) -> str | None:
     s = os.stat(path)
     got = f"{s.st_size} {int(s.st_mtime)} {s.st_ino}"
@@ -347,6 +375,12 @@ def main(argv_=None) -> int:
     for k in ("--job", "--truth", "--M", "--deploy", "--submissions"):
         p.add_argument(k, required=True)
     p = sub.add_parser("uni-stat")
+    p = sub.add_parser("pseudo-limit")
+    p.add_argument("--truth", required=True, choices=sorted(PSEUDO_LIMITS))
+    p = sub.add_parser("delete-staged")
+    p.add_argument("--records", nargs="+", required=True)
+    p.add_argument("--ledger", required=True)
+    p.add_argument("--condition", required=True)
     p = sub.add_parser("check")
     for k in ("--runs", "--job", "--stats", "--pseudo-b"):
         p.add_argument(k, required=True)
@@ -354,6 +388,13 @@ def main(argv_=None) -> int:
     if a.cmd == "tables":
         print(json.dumps(tables(a.truth, Path(a.out))))
         return 0
+    if a.cmd == "pseudo-limit":
+        print(PSEUDO_LIMITS[a.truth])
+        return 0
+    if a.cmd == "delete-staged":
+        kept = delete_staged(a.records, Path(a.ledger), a.condition)
+        print(f"deleted staged copies; kept {kept} whose stat differed")
+        return 4 if kept else 0
     if a.cmd == "uni-stat":
         bad = uni_stat_problem(os.environ["UNI"])
         print(bad or "UNI-STAT PASS")
@@ -374,7 +415,7 @@ def main(argv_=None) -> int:
         print(json.dumps(dvs_rate(a.staged, a.cfs, a.bytes), indent=1))
         return 0
     if a.cmd == "gate":
-        limits = {f"pseudo_{t}": PSEUDO_LIMIT for t in c.TOY_SEEDS}
+        limits = {f"pseudo_{t}": PSEUDO_LIMITS[t] for t in c.TOY_SEEDS}
         for f in Path(a.tables).glob("jobs_*.tsv"):
             for ln in f.read_text().splitlines()[1:]:
                 row = ln.split("\t")
