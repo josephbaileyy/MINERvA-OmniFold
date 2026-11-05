@@ -177,6 +177,45 @@ class Launcher(unittest.TestCase):
         self.assertNotIn("ARGV", r.stdout)
 
 
+@unittest.skipUnless(hasattr(os, "O_NOATIME"), "O_NOATIME exists only on Linux: run on a login node (binding 3's receipt)")
+class RealFlag(unittest.TestCase):
+    """The production launcher with the real os.O_NOATIME, on a file this user owns (O_NOATIME needs ownership)."""
+
+    def test_the_real_launcher_refuses_a_plain_read_and_passes_an_o_noatime_one(self):
+        tmp = Path(tempfile.mkdtemp(prefix="fd1b-real-")).resolve()
+        root = tmp / "inputs"
+        root.mkdir()
+        (root / "x.txt").write_text("x")
+        entry = tmp / "entry.py"
+        entry.write_text(textwrap.dedent(f"""
+            import os, sys
+            sys.path.insert(0, {str(ND)!r})
+            import fd_1b_inv as inv
+            print("NOATIME", inv.open_noatime({str(root / "x.txt")!r}).read(), flush=True)
+            open({str(root / "x.txt")!r}).read()
+            """))
+        r = subprocess.run([sys.executable, "-B", str(ND / "fd_1b_noatime_guard.py"), "--root", str(root), "--",
+                            str(entry)], capture_output=True, text=True)
+        print(f"python {sys.version.split()[0]} O_NOATIME={os.O_NOATIME:#o}: rc={r.returncode}")
+        self.assertIn("NOATIME b'x'", r.stdout)                                    # the O_NOATIME read passed
+        self.assertNotEqual(r.returncode, 0)                                         # the plain one refused
+        self.assertIn("a plain open of a declared input refused", r.stderr)
+
+
+class Fork(unittest.TestCase):
+    def test_the_1b_pools_fork(self):
+        """The audit's note: a worker inherits the hook only by fork; a spawn or forkserver pool (3.14's Linux default)
+        starts without it. Every pool in the 1B entry modules names "fork" explicitly."""
+        import re
+        for f in ("fd_1b_c2.py", "fd_1b_mc.py", "fd_1b_binning.py", "fd_1b_inv.py", "fd_1b_toys.py"):
+            src = (ND / f).read_text()
+            for m in re.finditer(r"get_context\(([^)]*)\)", src):
+                self.assertEqual(m.group(1), '"fork"', f)
+            self.assertNotRegex(src, r"(?<!get_context\(\"fork\"\)\.)\bmultiprocessing\.Pool\(", f)
+            self.assertNotIn("ProcessPoolExecutor", src, f)
+            self.assertNotIn("set_start_method", src, f)
+
+
 class Scan(unittest.TestCase):
     """b3/guard_scan.py over the binding-3 job scripts and the generator's rows, with each population's count."""
 
@@ -195,8 +234,35 @@ class Scan(unittest.TestCase):
             self.assertEqual(guard_scan.scan_line(line), want, line)
         joined = guard_scan.scan_script('python3 -B \\\n  "$D/fd_1b_mc.py" \\\n  unfold\n')
         self.assertEqual(len(joined["unguarded"]), 1)                                   # a continued line
-        self.assertEqual(guard_scan.scan_script(
-            "python3 -B - <<'PYL'\nimport fd_1b_mc\nprint('fd_1b_mc.py')\nPYL\n")["unguarded"], [])
+        heredoc = guard_scan.scan_script("python3 -B - <<'PYL'\nimport fd_1b_mc\nprint('fd_1b_mc.py')\nPYL\n")
+        self.assertEqual(len(heredoc["unguarded"]), 2)          # by name: a heredoc naming a 1B entry is refused too
+
+    def test_what_an_invocation_parser_cannot_see(self):
+        """The auditor's review and the director's ruling (2026-11-05): a line naming a 1B entry must be wholly a
+        guarded invocation; eval, a shell's -c and sourcing a non-deploy file are refused outright."""
+        flagged = {'"$PY310" -B "$DD/nd-unfolding/fd_1b_c2.py" c2check': "an unguarded invocation",
+                   'bash -c "python3 $DD/nd-unfolding/fd_1b_c2.py c2check"': "bash -c",
+                   'sh -c "echo hi"': "sh -c",
+                   'cmd="python3 $DD/nd-unfolding/fd_1b_mc.py unfold"; eval "$cmd"': "eval",
+                   'python3.11.14 nd-unfolding/fd_1b_mc.py receipt': "an unguarded invocation",
+                   '$(which python3) nd-unfolding/fd_1b_mc.py receipt': "names a 1B entry",
+                   'python3 -m fd_1b_mc unfold': "names a 1B entry",
+                   'sha256sum "$DD/nd-unfolding/fd_1b_c2.py"': "names a 1B entry",
+                   'source "$W/generated.sh"': "source",
+                   '. ./gen.sh': ". ./gen.sh"}
+        for line, why in flagged.items():
+            r = guard_scan.scan_script(line + "\n")
+            self.assertEqual(len(r["unguarded"]), 1, line)
+            self.assertTrue(r["unguarded"][0].startswith(why), (line, r["unguarded"]))
+        clean = ['source "$DD/setup_salloc_env.sh" > "$W/logs/env-job.log" 2>&1',
+                 "f19adbda6126d79d1f337755de873b530a76ebbcfd412ab60f85ab53cb33fe49  nd-unfolding/fd_1b_c2.py",
+                 '"$PY" -B "$DD/nd-unfolding/fd_1b_noatime_guard.py" --declared -- "$DD/nd-unfolding/fd_1b_c2.py" c2check',
+                 'echo "-J fd1b_c2probe fd_1b_c2calN"']
+        for line in clean:
+            self.assertEqual(guard_scan.scan_script(line + "\n")["unguarded"], [], line)
+        rows = "0\tx\t" + "\t".join(["fd_1b_noatime_guard.py", "--declared", "--", "nd-unfolding/fd_1b_mc.py", "unfold"]) + "\n"
+        self.assertEqual(guard_scan.scan_rows(rows)["guarded"], 1)
+        self.assertEqual(len(guard_scan.scan_rows(rows.replace("unfold", "unfold\teval"))["unguarded"]), 1)
 
     def test_every_binding_3_script_is_guarded_and_counted(self):
         found = {p.name for p in B3.glob("*.sh")}
@@ -218,12 +284,29 @@ class Scan(unittest.TestCase):
                     if tok == "--cmodel-json":
                         self.assertEqual(toks[i + 1], "$DD/nd-unfolding/pv-ladder/readouts/cmodel_5d.json", p.name)
 
+    def test_c2checks_blas_threads_are_the_calibrations_one(self):
+        """The director's ruling (a), 2026-11-05: c2check's bitwise single-universe U x_T check needs the calibration's
+        BLAS thread count (1, sbatch-calibrate.sh). The job script sets THREADS to 1 and asserts it, and every thread
+        variable it exports takes $THREADS; any other value fails here, before the bitwise check would at run time."""
+        import re
+        src = (B3 / "sbatch-c2check.sh").read_text()
+        cal = (B3.parent / "a2-1/sbatch-calibrate.sh").read_text()
+        self.assertEqual(re.findall(r"(?m)^THREADS=(\S+)", src), ["1"])
+        self.assertIn('[ "$THREADS" = "1" ] || stop', src)
+        for var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+            self.assertEqual(re.findall(rf"{var}=(\S+)", src), ["$THREADS"], var)
+        for var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
+            self.assertEqual(re.findall(rf"{var}=(\S+)", cal), ["1"], var)        # what the calibration ran at
+
     def test_the_pre_guard_scripts_are_seen_unguarded(self):
         """The scan sees a real direct call: the A2.1 and S1-0 scripts that ran before the guard (excluded from the
         population by name, for that reason) read as unguarded."""
         S = B3.parent
-        for f, n in (("a2-1/sbatch-calibrate.sh", 1), ("a2-1/sbatch-c2probe.sh", 1), ("stage1/connect32-s1-0.sh", 2)):
-            self.assertEqual(len(guard_scan.scan_script((S / f).read_text())["unguarded"]), n, f)
+        for f, n in (("a2-1/sbatch-calibrate.sh", 1), ("stage1/connect32-s1-0.sh", 2)):
+            got = guard_scan.scan_script((S / f).read_text())["unguarded"]
+            self.assertEqual(sum(u.startswith("an unguarded invocation") for u in got), n, (f, got))
+        probe = guard_scan.scan_script((S / "a2-1/sbatch-c2probe.sh").read_text())    # guarded since the 1-thread re-probe
+        self.assertEqual((probe["guarded"], probe["unguarded"]), (1, []))
 
 
 if __name__ == "__main__":

@@ -136,6 +136,37 @@ class Tables(unittest.TestCase):
                 got[t.name[:-len("-steps.tsv")]] = r["guarded"]
             self.assertEqual(got, want, plugin)
 
+    def test_every_input_path_in_a_row_is_under_a_declared_root_or_the_deploy(self):
+        """The auditor's test (the director, 2026-11-05): a declared input outside the guard's ROOTS would be read
+        unguarded, so every absolute path an emitted row passes follows a classified flag: an input under
+        fd_1b_noatime_guard.ROOTS or the deploy, or a product. An unclassified path-valued flag fails."""
+        import os
+        sys.path.insert(0, str(mc._ND))
+        import fd_1b_noatime_guard as guard
+        inputs = {"--npz", "--bkg", "--bank", "--detector-dir", "--pins", "--flux-constraint", "--flux-table", "--cv-tdw",
+                  "--staged", "--prep", "--push", "--definition"}
+        products = {"--out", "--clip-gate"}
+        roots = tuple(os.path.realpath(r) for r in guard.ROOTS)
+        deploy = os.path.realpath(self.co)
+        self.commit_pin(self.sha + "\n")
+        n = 0
+        for plugin in ("no", "yes"):
+            o = self.run_gen(plugin, out=f"paths-{plugin}")
+            for t in sorted(o.glob("*-steps.tsv")):
+                for row in steps(t):
+                    argv = entry_argv(row)
+                    for k, tok in enumerate(argv):
+                        if not tok.startswith("/"):
+                            continue
+                        flag = argv[k - 1]
+                        self.assertIn(flag, inputs | products, (t.name, tok))
+                        if flag in inputs:
+                            p = os.path.realpath(tok)
+                            self.assertTrue(p.startswith(deploy + os.sep) or any(p == r or p.startswith(r + os.sep)
+                                                                                 for r in roots), (t.name, flag, tok))
+                        n += 1
+        self.assertGreater(n, 10000)                          # every row carries its paths: the population is not empty
+
     def test_every_step_passes_the_real_parser_with_its_rule(self):
         self.commit_pin(self.sha + "\n")
         for plugin, n, nodes in (("no", 1054, 6), ("yes", 1581, 9)):

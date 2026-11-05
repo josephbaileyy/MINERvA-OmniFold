@@ -1,6 +1,7 @@
 #!/bin/bash
 # 1B binding 3, c2check at N for one truth (A2.1 §8c, the director's ruling (a): one truth per job, merged after) on
-# one exclusive CPU node with BLAS and OMP threads set explicitly and printed. c2check runs under 1B's guarded
+# one exclusive CPU node with BLAS and OMP threads set to 1, the calibration's (its bitwise single-universe U x_T check
+# needs the same BLAS reduction order; the director's ruling (a), 2026-11-05), and printed. c2check runs under 1B's guarded
 # launcher (fd_1b_noatime_guard.py --declared, the director's ruling of 2026-11-05), which refuses any plain open under
 # the declared input roots. Its calibration is rerun2's (job 60857361, at the same code: c2check refuses any other)
 # and its backstop's the 300-draw calibration (job 60771025, admitted by cal300_code_check).
@@ -9,10 +10,11 @@
 DD=$1; M=$2; W=$3; T=$4
 P=/pscratch/sd/j/josephrb; ND=$P/MINERvA-OmniFold/nd-unfolding
 CAL=$P/fd-1b-a21-calibN-rerun2-20261105; CAL300=$P/fd-1b-a21-calib-20261104
-THREADS=64
+THREADS=1                                  # the calibration's (sbatch-calibrate.sh), so single_x is bitwise
 stop() { echo "STOP $*"; echo "end=$(date -u +%FT%TZ)"; exit 2; }
 echo "host=$(hostname) job=$SLURM_JOB_ID truth=$T start=$(date -u +%FT%TZ)"
 case "$T" in g18|ar23) ;; *) stop "truth $T is not g18 or ar23 (the plug-in's part follows B4 and the capture)" ;; esac
+[ "$THREADS" = "1" ] || stop "BLAS threads $THREADS, not the calibration's 1 (the director's ruling (a), 2026-11-05)"
 h=$(git -C "$DD" rev-parse HEAD); n=$(git -C "$DD" status --porcelain | wc -l); echo "deploy head=$h porcelain_lines=$n"
 [ "$h" = "$M" ] && [ "$n" = "0" ] || stop "deploy not clean at M"
 (cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blobs differ"

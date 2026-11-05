@@ -22,12 +22,29 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fd_1b_c2 as c2  # noqa: E402
+import fd_1b_inv as inv  # noqa: E402
 import fd_1b_mc as mc  # noqa: E402
 import fd_1b_score as fs  # noqa: E402
 import fd_1b_toys as toys  # noqa: E402
 import s1_assemble as sa  # noqa: E402
 import s5p_universe  # noqa: E402
 from test_fd_1b import EDGES, SHAPE, World, digest  # noqa: E402
+import fd_1b_noatime_guard as guard  # noqa: E402
+
+# A test-scoped guard: the production decision (guard.refuses) over a mutable root list, so a test can run 1B's real
+# entry paths under it and then switch it off (a production hook is permanent for its process). The stand-in bit is
+# os.O_NOFOLLOW, which fd_1b_inv.open_noatime is given here in place of O_NOATIME (macOS has none).
+_GUARD_ROOTS: list = []
+_REFUSED: list = []
+_HOOKED: list = []
+
+
+def _guard_hook(event, args):
+    if event == "open" and _GUARD_ROOTS:
+        flags = args[2] if len(args) > 2 and args[2] is not None else 0
+        if guard.refuses(args[0], flags, tuple(_GUARD_ROOTS), os.O_NOFOLLOW):
+            _REFUSED.append(os.fsdecode(args[0]))
+            raise PermissionError(f"(test guard) a plain open of a declared input refused: {os.fsdecode(args[0])}")
 from test_fd_1b_mc import pinned, plain_noatime  # noqa: E402
 
 N_TD = 50
@@ -535,6 +552,59 @@ class RoundTrip(E2E):
         with self.patched(), mock.patch.object(mc, "_unfold", fake), \
                 pinned(self.tmp, digest(gate)):
             return mc.main(self.gate_argv(gate))
+
+    def test_the_1b_entries_read_every_declared_input_through_o_noatime(self):
+        """The director's ruling of 2026-11-05, exercised rather than walked: the calibration, c2check, the probe and a
+        bulk unfold, run on this world under the guard's own decision over the world's input roots (the npz,
+        background, bank, detector dump, pins, flux constraint, flux table, prep, S1 staged and CV tdw), open none of
+        them plainly. A plain read would refuse here as it would under fd_1b_noatime_guard on the cluster."""
+        w = self.x["w"]
+        roots = [w.inputs, w.bkg, w.bank, w.det, w.pins, w.constraint, w.prep, self.x["table"], self.x["staged"],
+                 self.x["tdw"]]
+        if not _HOOKED:
+            sys.addaudithook(_guard_hook)
+            _HOOKED.append(True)
+        cal = self.calibrated()
+        a = self.c2args(cal)
+        a.out = self.tmp / "gate" / "gate-guarded.json"
+        out = self.tmp / "probe" / "probe-guarded.json"
+        argv = ["c2probe", "--npz", str(w.inputs), "--bkg", str(w.bkg), "--bank", str(w.bank), "--detector-dir", str(w.det),
+                "--pins", str(w.pins), "--expect-pins-sha256", digest(w.pins), "--flux-constraint", str(w.constraint),
+                "--flux-table", str(self.x["table"]), "--expect-flux-table-sha256", digest(self.x["table"]),
+                "--definition", str(self.tmp / "definition.json"), "--staged", str(self.x["staged"]),
+                "--cv-tdw", str(self.x["tdw"]), "--expect-cv-tdw-sha256", digest(self.x["tdw"]), "--prep", str(w.prep),
+                "--truths", "g18", "--blocks", "2", "--out", str(out)]
+        cal_args = self.args(sets=4, workers=2, budget_seconds=1e6, out=self.tmp / "cal" / "cal-guarded.json", draws=300)
+        _REFUSED.clear()                                      # every argument digest above is the test's, made unguarded
+        with self.patched(), mock.patch.object(inv, "NOATIME_FLAG", os.O_NOFOLLOW):
+            _GUARD_ROOTS[:] = [os.path.realpath(r) for r in roots]
+            try:
+                c2.calibrate_main(cal_args)
+                g = c2.c2check_main(a)
+                self.assertEqual(c2.main(argv), 0)
+            finally:
+                _GUARD_ROOTS.clear()
+        self.assertEqual(_REFUSED, [])
+        self.assertEqual(g["verdict"], "PASS")
+        _REFUSED.clear()
+        fake = lambda exp, threads, seed=42, unfold_fn=None: (np.zeros(SHAPE), {})  # noqa: E731   (as bulk())
+        bulk_argv = self.gate_argv(a.out)                     # its digests are the test's reads, made before the guard
+        with self.patched(), mock.patch.object(inv, "NOATIME_FLAG", os.O_NOFOLLOW), mock.patch.object(mc, "_unfold", fake), \
+                pinned(self.tmp, digest(a.out)):
+            _GUARD_ROOTS[:] = [os.path.realpath(r) for r in roots]
+            try:
+                self.assertEqual(mc.main(bulk_argv), 0)                     # a bulk unfold on c2check's record
+            finally:
+                _GUARD_ROOTS.clear()
+        self.assertEqual(_REFUSED, [])
+        with self.patched(), mock.patch.object(inv, "NOATIME_FLAG", 0):      # the guard sees a plain read: it fires
+            _GUARD_ROOTS[:] = [os.path.realpath(r) for r in roots]
+            try:
+                with self.assertRaises(PermissionError):
+                    inv.open_noatime(w.pins).read()
+            finally:
+                _GUARD_ROOTS.clear()
+        self.assertEqual(_REFUSED, [os.fsdecode(w.pins)])
 
     def test_c2checks_record_round_trip(self):
         cal = self.calibrated()

@@ -4,11 +4,18 @@
 - every step row the stage 1 generator emits (fd_f1_lane.py runs each row's entry with the deploy as cwd).
 
 A script line is parsed as a shell would split it (continuations joined, then shlex), not by a regex. Any token that
-is a Python interpreter (python, python3, python3.11, a path to one, or "$PY") starts an invocation; the
-interpreter's own options are skipped with their values (-X, -W, -c and -m take one; -c and -m end it, as does "-",
-the stdin script). The next token is the script. An invocation whose script is a 1B entry module is UNGUARDED; one
+is a Python interpreter (python, python3, python3.11.14, a path to one, or a $PY... / $PYTHON... variable) starts an
+invocation; the interpreter's own options are skipped with their values (-X, -W take one; -c, -m and "-", the stdin
+script, end it). The next token is the script. An invocation whose script is a 1B entry module is UNGUARDED; one
 whose script is the guard is GUARDED only if the guard's options (--declared, --root VALUE) are followed by "--"
 and then a 1B entry module. A step row is GUARDED only if its entry is the guard, with the same shape.
+
+Two rules close what an invocation parser cannot see (the auditor's review; the director's ruling, 2026-11-05):
+- BY NAME: a line that names a 1B entry module anywhere (fd_1b_mc, fd_1b_c2 or fd_1b_binning, as .py, -m or a
+  path, quoted or not) must be judged guarded and nothing else. The one exempt form is a sha256 manifest line
+  ("<64 hex>  <path>"), which is data (a bound-blob list), not a command.
+- INDIRECT FORMS are refused outright: `eval`, `bash|sh|zsh|dash -c`, and `source` or `.` of anything but a file
+  of the deploy ("$DD/...").
 
     python3 -B guard_scan.py [TABLES_DIR ...]      (prints the counts; exit 0 only with none unguarded)
 """
@@ -22,7 +29,10 @@ from pathlib import Path
 
 ENTRIES = ("fd_1b_mc.py", "fd_1b_c2.py", "fd_1b_binning.py")
 GUARD = "fd_1b_noatime_guard.py"
-_INTERP = re.compile(r"^(\$\{?PY\}?|python(\d(\.\d+)?)?)$")
+_INTERP = re.compile(r"^(\$\{?PY(THON)?\w*\}?|python(\d+(\.\d+)*)?)$")
+_NAMED = re.compile(r"\bfd_1b_(mc|c2|binning)\b")
+_MANIFEST = re.compile(r"^\s*[0-9a-f]{64}\s+\S+\s*$")
+_SHELLS = {"bash", "sh", "zsh", "dash"}
 _VALUE_OPTS = {"-X", "-W", "-Q"}
 _ENDING_OPTS = {"-c", "-m", "-"}
 
@@ -71,10 +81,7 @@ def judge(tokens: list[str]) -> str | None:
 
 def scan_line(line: str) -> list[str]:
     """The verdict of every Python invocation on one logical shell line that runs a 1B entry module."""
-    try:
-        toks = shlex.split(line, comments=True, posix=True)
-    except ValueError:
-        toks = line.split()                                    # an unbalanced quote: split plainly, still judged
+    toks = split(line)
     verdicts = []
     for k, t in enumerate(toks):
         if not is_interpreter(t):
@@ -91,14 +98,42 @@ def scan_line(line: str) -> list[str]:
     return verdicts
 
 
+def indirect(tokens: list[str]) -> str | None:
+    """The first indirect form on a line, or None: eval, a shell's -c, or sourcing a file outside the deploy."""
+    for k, t in enumerate(tokens):
+        nxt = tokens[k + 1] if k + 1 < len(tokens) else ""
+        if t == "eval":
+            return "eval"
+        if os.path.basename(t) in _SHELLS and nxt == "-c":
+            return f"{os.path.basename(t)} -c"
+        if t in ("source", ".") and nxt and not nxt.startswith(('$DD/', '"$DD/', '${DD}/')):
+            return f"{t} {nxt}"
+    return None
+
+
+def split(line: str) -> list[str]:
+    try:
+        return shlex.split(line, comments=True, posix=True)
+    except ValueError:
+        return line.split()                                    # an unbalanced quote: split plainly, still judged
+
+
 def scan_script(text: str) -> dict:
+    """Every logical line judged: an indirect form, a line naming a 1B entry that is not wholly a guarded
+    invocation, or an unguarded invocation is UNGUARDED (with its reason)."""
     out = {"guarded": 0, "unguarded": []}
     for line in logical_lines(text):
-        for v in scan_line(line):
-            if v == "guarded":
-                out["guarded"] += 1
-            else:
-                out["unguarded"].append(line.strip()[:160])
+        why = indirect(split(line))
+        v = scan_line(line)
+        if not why:
+            if "unguarded" in v:
+                why = "an unguarded invocation"
+            elif _NAMED.search(line) and not _MANIFEST.match(line) and not (v and set(v) == {"guarded"}):
+                why = "names a 1B entry but is not a guarded invocation"
+        if why:
+            out["unguarded"].append(f"{why}: {line.strip()[:140]}")
+        else:
+            out["guarded"] += v.count("guarded")
     return out
 
 
@@ -110,9 +145,9 @@ def scan_rows(text: str) -> dict:
             continue
         f = line.split("\t")
         v = judge(f[2:])
-        if v == "guarded":
+        if v == "guarded" and not indirect(f[2:]):
             out["guarded"] += 1
-        elif v == "unguarded" or os.path.basename(f[2]) not in (GUARD,):
+        else:
             out["unguarded"].append("\t".join(f[:4])[:160])
     return out
 
