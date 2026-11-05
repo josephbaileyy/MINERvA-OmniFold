@@ -106,9 +106,9 @@ is built from the three IBU vertices by `build_cmodel5d.py`'s formula, κ = 1. I
   3. `s5n_pseudo.bootstrap_replica(exp, b)`.
 
   It compares the per-row arrays bitwise with those g1's own replica builder hands IBU: the keep mask,
-  `obs_counts`, the MC Poisson factors and `tmpl_w`. This pins the pairing, including a row within ½ ulp of a
-  non-float32 edge, which the jitter step could move across it and so shift every later count. A rebuild without
-  the jitter step would compare IBU's construction with itself (coverage-5b-audit, #763 delta check).
+  `obs_counts`, the MC Poisson factors and `tmpl_w`. This pins the pairing to (e)'s construction. A jitter that
+  would move a row across a fine-grid edge is refused, rc 5, by (e)'s loop and by g1's builder alike, before any
+  replica is formed (`s5p_numerics.py:174, 186-191`; the refusal test in §7).
 
 ### 3.4 Carried, labelled, not remade
 
@@ -273,9 +273,20 @@ A mutation harness kills a mutant per reading bar, per control, and per pairing 
 - the flux block held fixed instead of resampled;
 - the self-check skipped;
 - the order guard removed, so the central Δ is formed before `bars.json` is committed;
-- G-draw's rebuild with the jitter step skipped (build_data → bootstrap_replica on the unjittered inputs). G-draw
-  must fail on a fixture where a row lies within ½ ulp of a non-float32 edge, so that the jitter moves it across,
-  and must stay silent on the unmutated path.
+- G-draw's membership refusal removed from g1's builder. On a crossing fixture, a row within ½ ulp of a fine-grid
+  edge that the jitter moves across, (e)'s path refuses with rc 5 before forming any replica, because
+  `cell_membership` is checked against `base_cells` (`s5p_numerics.py:174, 186-191`). A test requires g1's
+  builder to refuse there too, and to stay silent on an admitted input. The mutant must be killed by that test.
+
+**Recorded as equivalent, with its proof** (coverage-5b-audit's check of 0fca1c70): **skipping the jitter step.**
+- (e)'s loop refuses any jitter that changes fine-grid membership. `cell_membership` is `flat_index`, which
+  returns −1 outside the grid, so a crossing into or out of the window is refused too.
+- On every admitted input, then, the jitter changes no reco-cell assignment. Skipping it changes nothing G-draw
+  compares: the keep mask, the Poisson shapes and `tmpl_w`.
+- On a crossing fixture, both paths stop at the refusal before any comparison.
+- The only residue is measure-zero: `fid_mask` excludes the last edge and `flat_index` includes it.
+- So that mutant is equivalent and is not required. The refusal test above covers the edge-crossing case
+  instead.
 
 **Lane:** ________ (the director assigns).
 
