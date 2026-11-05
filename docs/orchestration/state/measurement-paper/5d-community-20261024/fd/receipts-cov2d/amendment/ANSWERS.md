@@ -1,4 +1,4 @@
-# COV2D amendment: answers to the rolling audit (parts 1–4) and the final delta audit
+# COV2D amendment: answers to the rolling audit (parts 1–4), the final delta audit and the director's F3
 
 **By** the `cov2d` session, 2026-11-04. The audit is by the `coverage-5b-audit` session; each part is copied verbatim
 in `AUDIT-PART{1,2,3,4}-*.md` (this directory), and the final delta audit in `AUDIT-DELTA.md`. The director ruled: fix every finding as stated, J1 first. These answers
@@ -7,10 +7,11 @@ are not evidence: each fix's evidence is its commit, its tests and its mutant in
 **Commits:**
 - `9731d0c8`: J1–J7 and P1–P4.
 - `0d43c9a3`: S1–S4, R1–R8, the norm-check survivor, the real-path null test, and the new mutants.
-- `fd8d68bb`: the final delta audit's F1 and F2.
+- `fd8d68bb`: the final delta audit's F1 and F2 (merged in #773 at `e9cadf47`).
+- `3d6cae57`: the director's F3, the submit script's binding check.
 
-The mutation receipt has **60 mutants, 60 killed** at `fd8d68bb` (`mutation_amendment.txt`). Before the final delta
-audit it had 51, all killed at `0d43c9a3` (in that file's history); the first run of the 51 is `mutation_amendment.run1.txt`. The run of 2026-11-04,
+The mutation receipt has **63 mutants, 63 killed** at `3d6cae57` (`mutation_amendment.txt`). Earlier it had 60, all
+killed at `fd8d68bb`, and before the final delta audit 51, all killed at `0d43c9a3` (both in that file's history); the first run of the 51 is `mutation_amendment.run1.txt`. The run of 2026-11-04,
 before these fixes, had 29 mutants with 28 killed; the survivor was "norm check removed" (see Blocks below).
 
 ## Part 1: the null and the scorer
@@ -101,3 +102,36 @@ The auditor's report, its follow-up and the director's ruling, which upheld F1 a
 **Required mutants.** The harness now has a `REQUIRED` set: the two F2 mutants and four of the F1 mutants. It exits 1 if
 any mutant survives or fails to match its text, and names any required mutant that was not killed. **Run:**
 60 mutants, **60 killed**, harness exit 0, every required mutant killed (`mutation_amendment.txt`). **Suites:** at `fd8d68bb`, **147 tests, 0 skipped, all pass** (`suites_fd8d68bb.txt`; a local run in the one environment of the amendment's §8).
+
+## The director's F3: the submit script's binding check (fixed in `3d6cae57`)
+
+The director found F3 while drafting binding 2. It is copied verbatim at the end of `AUDIT-DELTA.md`.
+
+**The defect.** The audited `cov2d_submit.sh` (blob `03ad296e`) required the deploy's HEAD to equal M, then grepped
+the deploy's own `COV2D-BINDING-2.md` for M. A commit cannot hold a file naming its own hash, so that check refused
+every submission. No test reached it.
+
+**The fix.** After the clean-deploy check, the script runs `git -C "$C" fetch -q origin main` and refuses if it fails.
+It reads the binding with `git -C "$C" show origin/main:<path>` and refuses if the file is absent there. It requires the
+text to contain M (`grep -qF`, the full 40-hex HEAD). The deploy stays at M. `cov2d_env.sh`'s header comment now says
+"the commit binding 2 names".
+
+**`order()`, the same shape.** It reads the PASS records with `git show origin/main:<path>`, and an absent or
+unreadable record counts as None, which is refused. The script's single fetch now comes before both the binding check
+and every `order()` call, with an explicit refusal. Before, a separate fetch ran after the tables, and `set -e` stopped
+on a failure without a message. A failed fetch stops the submission before any record is read.
+
+| test (`test_cov2d_jobs.SubmitBinding`) | what it shows |
+|---|---|
+| `test_admits_when_origin_mains_binding_names_M` | the deploy at M has no binding file; origin/main's names M; the script passes every check (it reaches the stubbed `cov2d_env.sh`) |
+| `test_refuses_a_binding_naming_another_commit` | refused: "does not name" |
+| `test_refuses_when_origin_main_has_no_binding` | refused: "binding 2 is not on origin/main" |
+| `test_refuses_a_failed_fetch_even_with_a_good_binding_already_fetched` | the clone's origin/main already holds a good binding, and origin's URL then points nowhere: refused on the fetch |
+| `test_refuses_a_dirty_deploy_or_a_head_other_than_M` | both refused, as before |
+| `test_the_audited_script_refuses_even_the_correct_setup` | blob `03ad296e`, read from the repository's history, refuses the setup the fixed script admits. This shows the test reaches the defect |
+
+The fixture is real-shaped: an "origin" repository whose main is the code commit M followed by a commit adding the
+binding, and a deploy made by `git clone` and checked out at M.
+
+**Mutants, all REQUIRED:** "F3 the deploy's own binding read", "F3 the binding's name check skipped", and "F3 a failed
+fetch admitted". All three were killed when run alone. **Run:** 63 mutants, **63 killed**, harness exit 0, all nine required mutants killed (`mutation_amendment.txt`). **Suites:** at `3d6cae57`, **153 tests, 0 skipped, all pass** (`suites_3d6cae57.txt`; a local run in the one environment of the amendment's §8).

@@ -1,8 +1,8 @@
-# COV2D amendment, final delta audit (045364a8; code at 0d43c9a3), and the director's ruling on it
+# COV2D amendment, final delta audit (045364a8; code at 0d43c9a3), the director's ruling on it, and the director's F3
 
-**Auditor:** the `coverage-5b-audit` session, 2026-11-04, read-only. Its two reports and its verdict on the fixes (last), received by SendMessage, are
-copied verbatim below, followed by the director's ruling, also received by SendMessage and copied verbatim. The answers
-and fixes are in `ANSWERS.md` (this directory), under "Final delta audit".
+**Auditor:** the `coverage-5b-audit` session, 2026-11-04, read-only. Its two reports and its verdict on the F1/F2 fixes, received by SendMessage, are
+copied verbatim below, with the director's ruling and the director's F3, also received by SendMessage and copied verbatim. The answers
+and fixes are in `ANSWERS.md` (this directory), under "Final delta audit" and "The director's F3".
 
 ---
 
@@ -159,3 +159,30 @@ Your questions:
 Not re-run by me: the two writer-M mutants, which need PyROOT. I rely on your 60/60 receipt for those.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---
+
+## The director's F3 (found while drafting binding 2)
+
+director: I'm holding binding 2. I found a blocking defect in cov2d_submit.sh (blob 03ad296e) while drafting it. I'm merging #773 (your amendment branch) in the meantime, since code on main runs nothing.
+
+**F3 (blocking): the binding check is a fixed point.**
+- Lines 9–12 require the deploy checkout's HEAD to equal M, and then grep the deploy's own COV2D-BINDING-2.md for M.
+- A commit cannot contain a file naming its own hash. If the deploy is at the code commit, binding 2 doesn't exist in it yet. If it's at the binding commit or later, the binding names an earlier commit, not HEAD.
+- So every submission refuses, and no test reaches it: no test in 2d-unfolding/cov2d/tests mentions BINDING-2. It fails safe, but it would block the G18 job at the first connect.
+
+**The fix: read the binding from origin/main, as order() reads records.**
+- In the submit script, fetch origin, then `git -C "$C" show origin/main:<path to COV2D-BINDING-2.md>`, and require that it names M, the deploy's HEAD.
+- The deploy stays at M, the code commit. The binding lives on main after it.
+- Fail closed if the fetch fails or the file is absent on origin/main.
+- **Tests on a real-shaped fixture** (a one-commit deploy plus an "origin" repo whose main carries a binding):
+  - the fixed script admits when origin/main's binding names M;
+  - it refuses when the binding names another sha, when it is absent, and when the fetch fails;
+  - it refuses a dirty deploy or a HEAD ≠ M, as now;
+  - the old blob 03ad296e refuses even the correct setup. Assert that, to show the test reaches the defect.
+- **Mutants, REQUIRED:** one that reads the deploy's own copy, and one that skips the name check.
+- **Amendment §5:** update the sentence "refuses unless COV2D-BINDING-2.md names the deploy's commit" to say where the binding is read from.
+
+**Also check order()** for the same shape. It reads PASS records from origin/main naming M, which is fine, but confirm that it fetches before reading and refuses a failed fetch.
+
+**Next:** push on a new branch from main after #773, then a delta to coverage-5b-audit (just this), then I bind 2 at the fix commit. The schedule has room: the bulk deadline is 12-01.
