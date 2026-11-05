@@ -103,7 +103,10 @@ M = [
      'rec = {"stop": [], "invalid": []}'),
     ("jobs/cov2d_submit.sh", "F3 the deploy's own binding read", 'bind=$(git -C "$C" show "origin/main:$BIND")',
      'bind=$(cat "$C/$BIND")'),
-    ("jobs/cov2d_submit.sh", "F3 the binding's name check skipped", 'grep -qF "$M" <<<"$bind" ||', "true ||"),
+    ("jobs/cov2d_submit.sh", "F3 the binding's name check skipped", r'grep -qE "^\*\*M = \`$M\`\*\*" <<<"$bind" ||',
+     "true ||"),
+    ("jobs/cov2d_submit.sh", "F3 M matched anywhere in the binding", r'grep -qE "^\*\*M = \`$M\`\*\*" <<<"$bind"',
+     'grep -qF "$M" <<<"$bind"'),
     ("jobs/cov2d_submit.sh", "F3 a failed fetch admitted", 'git -C "$C" fetch -q origin main ||',
      'git -C "$C" fetch -q origin main || true ||'),
     (J, "gate passes everything", '"cap": CAP_NODE_H, "pass": total <= CAP_NODE_H}', '"cap": CAP_NODE_H, "pass": True}'),
@@ -117,7 +120,8 @@ M = [
 ]
 REQUIRED = {"F2 bulk despite REPRICE", "F2 no REPRICE list read as none", "F1 order ignores M",
             "F1 a dirty deploy admitted", "F1 the pseudo record without M", "F1 the pilot record without M",
-            "F3 the deploy's own binding read", "F3 the binding's name check skipped", "F3 a failed fetch admitted"}
+            "F3 the deploy's own binding read", "F3 the binding's name check skipped", "F3 a failed fetch admitted",
+            "F3 M matched anywhere in the binding"}
 if sys.argv[2:]:
     unknown = set(sys.argv[2:]) - {m[1] for m in M}
     assert not unknown, f"no such mutant: {sorted(unknown)}"

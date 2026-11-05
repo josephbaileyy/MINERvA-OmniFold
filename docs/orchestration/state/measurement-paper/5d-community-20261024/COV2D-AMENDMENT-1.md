@@ -222,7 +222,10 @@ draws equal one call. It refuses if $UNI's signal tree lacks the 5D truth.
   and wall for REPRICE), `cov2d_pseudo.sbatch` (QOS and TimeLimit checked, threads and TMPDIR reset, $UNI stat-checked,
   then step A, then step B), `cov2d_env.sh`, `cov2d_submit.sh`. The submit script requires a clean deploy at M, then
   fetches origin's main and refuses if the fetch fails. It then reads COV2D-BINDING-2.md **from origin/main** (`git
-  show origin/main:<path>`), never from the deploy's own tree, and refuses unless that file exists and names M in full.
+  show origin/main:<path>`), never from the deploy's own tree, and refuses unless that file exists and has a line beginning
+  `` **M = `<M in full>`** ``, the M line of COV2D-BINDING-1.md:5. Of the 88 files under `docs/` on main (`e9cadf47`)
+  whose name contains "binding" in any case and ends in `.md`, six have that line, all in this directory; binding 2 must have it too. M cited elsewhere in the binding does
+  not bind (the auditor's tightening of F3).
   A commit cannot hold a file naming its own hash, so the binding is a later commit on main, while the deploy stays at
   M, the commit binding 2 names (the director's F3, found while drafting binding 2: the audited script, blob `03ad296e`, grepped
   the deploy's own copy and so refused every submission). `order()` reads the PASS records from the same fetched
@@ -292,9 +295,9 @@ draws equal one call. It refuses if $UNI's signal tree lacks the 5D truth.
 
 ## 8. Tests and mutants
 
-At `3d6cae57`, in one environment holding PyROOT, uproot and numpy (ROOT 6.28/12, uproot 5.6.9): **153 tests, 0
-skipped, all pass** (`fd/receipts-cov2d/amendment/suites_3d6cae57.txt`). The earlier runs are `suites_fd8d68bb.txt`
-(147) and `suites_0d43c9a3.txt` (112, without `test_cov2d`). This was a local run. The table names the
+At `5c0e02a2`, in one environment holding PyROOT, uproot and numpy (ROOT 6.28/12, uproot 5.6.9): **155 tests, 0
+skipped, all pass** (`fd/receipts-cov2d/amendment/suites_5c0e02a2.txt`). The earlier runs are `suites_3d6cae57.txt`
+(153), `suites_fd8d68bb.txt` (147) and `suites_0d43c9a3.txt` (112, without `test_cov2d`). This was a local run. The table names the
 environment each module runs in on the cluster, which is not the environment of this test run.
 
 | module | tests | runs in |
@@ -306,22 +309,22 @@ environment each module runs in on the cluster, which is not the environment of 
 | null | 5 | numpy |
 | scorer | 12 | numpy |
 | readouts | 12 | numpy + uproot (the cross-terms CLI) |
-| jobs | 29 | the submit script's binding checks on a real-shaped origin and deploy (6); every generated line through `re2_driver`'s real parser (needs PyROOT): 786 per truth and 8 for the pilot |
+| jobs | 31 | the submit script's binding checks on a real-shaped origin and deploy (8); every generated line through `re2_driver`'s real parser (needs PyROOT): 786 per truth and 8 for the pilot |
 | pilot | 13 | PyROOT |
 
-**Mutants:** `fd/receipts-cov2d/amendment/mutation_amendment.py`, 63 mutants over ten files, one guard or
-declared rule each; **63 killed** (`mutation_amendment.txt`, at `3d6cae57`). Nine came with the final delta audit:
+**Mutants:** `fd/receipts-cov2d/amendment/mutation_amendment.py`, 64 mutants over ten files, one guard or
+declared rule each; **64 killed** (`mutation_amendment.txt`, at `5c0e02a2`). Nine came with the final delta audit:
 five for F1, two for F2, and the auditor's two coherent-offset mutants. Three came with the director's F3: the
-deploy's own binding read, the name check skipped, and a failed fetch admitted. Nine are `REQUIRED`: the three F3
-mutants, both F2 mutants, "F1 order ignores M", "F1 a dirty deploy admitted", and both writer-without-M mutants. The harness exits 1 if any mutant
+deploy's own binding read, the name check skipped, and a failed fetch admitted. One came with the auditor's tightening
+of F3: M matched anywhere in the binding. Ten are `REQUIRED`: the four F3 mutants, both F2 mutants, "F1 order ignores M", "F1 a dirty deploy admitted", and both writer-without-M mutants. The harness exits 1 if any mutant
 survives or fails to match its text, and names any required mutant not killed. The earlier receipts (51 of 51 at
-`0d43c9a3`, 60 of 60 at `fd8d68bb`) are in this file's history. Its first run left one survivor ("a missing class is not INVALID",
+`0d43c9a3`, 60 of 60 at `fd8d68bb`, 63 of 63 at `3d6cae57`) are in this file's history. Its first run left one survivor ("a missing class is not INVALID",
 `mutation_amendment.run1.txt`); the test that reaches that check alone was added before that commit. The rolling audit's findings and the answers are in `fd/receipts-cov2d/amendment/` (`AUDIT-PART*.md`,
 `ANSWERS.md`), with the flux check in `flux_check/`.
 
 ## 9. The code's blobs at the binding commit
 
-The code commit is `3d6cae57b9614ec926fc57fa9201789b771e5471` (the director's F3, on `e9cadf47`, the merge of the final delta audit's F1 and F2). Binding 2 names the commit that carries this amendment.
+The code commit is `5c0e02a26bc25de242dde306dfdab53358201a3c` (the auditor's tightening of F3, on `8a258b38`, the merge of F3 in #776). Binding 2 names the commit that carries this amendment.
 These blobs are unchanged there, since it changes no code. The imported modules are in §1.
 
 | file | blob |
@@ -340,7 +343,7 @@ These blobs are unchanged there, since it changes no code. The imported modules 
 | `2d-unfolding/cov2d/jobs/cov2d_job.sbatch` | `0e64f14a2c15728b0274bda30ad2cd1fe83a562a` |
 | `2d-unfolding/cov2d/jobs/cov2d_jobs.py` | `d7e02a89cb3b8e2067ea4913a4026913d0ad44d0` |
 | `2d-unfolding/cov2d/jobs/cov2d_pseudo.sbatch` | `0299633fed74300f9efb66add7b05bf77b00c424` |
-| `2d-unfolding/cov2d/jobs/cov2d_submit.sh` | `b8e3d21ed47e16a5666126889fe2d19610a22baf` |
+| `2d-unfolding/cov2d/jobs/cov2d_submit.sh` | `d064753d8e2c623eca9b41bee75b08c9c5c84447` |
 
 Their tests:
 
@@ -349,7 +352,7 @@ Their tests:
 | `2d-unfolding/cov2d/tests/deploy_fixture.py` | `75033297ae8e2617bca6c0d7aae5ddb75c110500` |
 | `2d-unfolding/cov2d/tests/test_cov2d.py` | `7efa74b0e0d968c6ed75465aa36b038cd1cff034` |
 | `2d-unfolding/cov2d/tests/test_cov2d_blocks.py` | `7e8da5b37ac170d0f7eb2803afd17036523b0da6` |
-| `2d-unfolding/cov2d/tests/test_cov2d_jobs.py` | `8410e43cdd525714c393214ae5c4ab9294bb919a` |
+| `2d-unfolding/cov2d/tests/test_cov2d_jobs.py` | `248a31029de657bf700f913ab78d2d8793f65370` |
 | `2d-unfolding/cov2d/tests/test_cov2d_null.py` | `3002455578509d6d4be06a08e4fa17105f06492d` |
 | `2d-unfolding/cov2d/tests/test_cov2d_pilot.py` | `4f65bdf5f34a9ae72441e797ff57be04fee0c0c6` |
 | `2d-unfolding/cov2d/tests/test_cov2d_pseudo.py` | `452f4f7e738108c664d7b8b9d13dc82cd7d3bb41` |

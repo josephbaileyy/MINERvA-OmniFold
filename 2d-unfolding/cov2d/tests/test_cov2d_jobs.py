@@ -328,8 +328,9 @@ class SubmitBinding(unittest.TestCase):
                            check=True)
         return r.stdout.strip()
 
-    def world(self, names=None):
-        """origin (main: M, then a binding naming ``names`` unless it is None) and the deploy at M; returns M."""
+    def world(self, names=None, text=None):
+        """origin (main: M, then a binding naming ``names`` unless it is None) and the deploy at M; returns M.
+        ``text``, if given, maps M to the binding's whole text instead."""
         o = self.d / "origin"
         o.mkdir()
         self.git("init", "-q", str(o))
@@ -340,10 +341,12 @@ class SubmitBinding(unittest.TestCase):
         self.git("add", ".", cwd=o)
         self.git("commit", "-q", "-m", "code", cwd=o)
         M = self.git("rev-parse", "HEAD", cwd=o)
-        if names is not None:
+        if names is not None or text:
             b = o / self.BIND
             b.parent.mkdir(parents=True)
-            b.write_text(f"# COV2D binding 2\n\nThe code commit is `{M if names == 'M' else names}`.\n")
+            b.write_text(text(M) if text else
+                         f"# COV2D binding 2\n\n**M = `{M if names == 'M' else names}`** (PR head `0123abcd`).\n"
+                         + ("" if names == "M" else f"\nThe audited head was `{M}`.\n"))
             self.git("add", ".", cwd=o)
             self.git("commit", "-q", "-m", "binding 2", cwd=o)
         self.git("clone", "-q", str(o), str(self.d / "deploy"))
@@ -369,6 +372,34 @@ class SubmitBinding(unittest.TestCase):
         self.assertEqual(rc, 2)
         self.assertIn("does not name", out)
         self.assertNotIn(self.PAST, out)
+
+    def test_refuses_M_cited_only_off_the_M_line(self):
+        # world() cites the full M on a later line whenever the M line names another commit
+        M = self.world("e" * 40)
+        self.assertIn(f"`{M}`", (self.d / "origin" / self.BIND).read_text())
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 2)
+        self.assertIn("does not name", out)
+        self.assertNotIn(self.PAST, out)
+
+    def test_binding_1s_own_text_binds_its_M_line_only(self):
+        # the format the director's bindings use, from the real COV2D-BINDING-1.md: M on its M line (:5) binds; M
+        # cited in backticks off that line (here in place of the declaration's sha256 at :4) does not
+        real = (HERE.parents[2] / self.BIND.replace("BINDING-2", "BINDING-1")).read_text()
+        m1 = "dec97852f8da840c855777fa3d2179d6548252ee"
+        other = "0328c916d2c763c4529d3541fe05f430f7b2e6e4937f7749660cb3da06c6fbb6"
+        self.assertIn(f"**M = `{m1}`**", real)
+        self.assertIn(other, real)
+        M = self.world(text=lambda M: real.replace(m1, M))
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 0, out)
+        self.td.cleanup()
+        self.td = tempfile.TemporaryDirectory()
+        self.d = Path(self.td.name)
+        M = self.world(text=lambda M: real.replace(other, M))
+        rc, out = self.submit(M)
+        self.assertEqual(rc, 2)
+        self.assertIn("does not name", out)
 
     def test_refuses_when_origin_main_has_no_binding(self):
         M = self.world(None)

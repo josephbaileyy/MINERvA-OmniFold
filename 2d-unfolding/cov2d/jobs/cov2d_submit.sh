@@ -14,7 +14,9 @@ C=$(cd "$1" && pwd); M=$2; TRUTH=$3; shift 3
 git -C "$C" fetch -q origin main || { echo "the fetch of origin main failed: binding 2 and the records are unread"; exit 2; }
 BIND=docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-2.md
 bind=$(git -C "$C" show "origin/main:$BIND") || { echo "binding 2 is not on origin/main"; exit 2; }
-grep -qF "$M" <<<"$bind" || { echo "binding 2 on origin/main does not name $M"; exit 2; }
+# the bound commit is binding 2's M line, **M = `<40-hex>`**, as on COV2D-BINDING-1.md:5: a sha cited anywhere
+# else in the binding, an earlier audited head say, does not bind (the auditor's tightening of F3)
+grep -qE "^\*\*M = \`$M\`\*\*" <<<"$bind" || { echo "binding 2 on origin/main does not name $M on its M line"; exit 2; }
 source "$C/2d-unfolding/cov2d/jobs/cov2d_env.sh"
 mkdir -p "$O/logs" "$O/tables"
 # the tables at this deploy: written once, and every later submission regenerates and compares them (J5)
