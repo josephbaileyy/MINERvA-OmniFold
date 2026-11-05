@@ -61,4 +61,32 @@ probe's `SCHEMA_TRUTH` lacked. So every candidate's `closure_nuwro` task would h
    The cluster lane stays `limitation-resolver`. The step-one record `031e6d55…` is not reused.
 5. **Step two** (the full run) is bound after the dry run's record, as before.
 
+## Director's correction (2026-11-04, after the dry run's TIMEOUT): Slurm time limits
+
+**What happened.** The bound texts write the dry run's limit as `--time=0:45`. They are FD-STAB-DECLARATION.md
+§7 and §11.2, FD-STAB-ADDENDUM-A1.md §3, §5 and the commands, FD-STAB-BINDING-1.md ruling 3, ruling 3 above, and the
+comment in `sbatch_fd_stab.sh:11`. Slurm parses `0:45` as minutes:seconds and rounds 45 s up to 1 minute.
+- Job 60826464 got TimeLimit 00:01:00 and ended in TIMEOUT after 1:13, at about 0.02 node-h.
+- It was killed inside the truth control, before C1 or C2 reported.
+- No task ran, and there is no STOP record and no DONE.
+
+The intent of every text is 45 minutes. The director wrote "`--time=0:45`" into both bindings without checking
+Slurm's format, so the error is the director's.
+
+The full run's limit has the same defect. `sbatch_fd_stab.sh:12`'s "at most 7:15" would be read as 7 min 15 s.
+
+**Corrections, binding from here:**
+1. **The dry run's limit is `--time=00:45:00`,** 45 minutes and at most 0.75 node-h, as every text intended.
+2. **The full run's limit is written as `HH:MM:SS`:** the cap's remainder after the dry run's measured charge, at most
+   `07:15:00`.
+3. **Every connect prints the job's `scontrol` TimeLimit after submission,** and cancels the job at once if it
+   differs from the declared value.
+4. **Job 60826464 is INVALID by the director's error.** It is not a probe outcome and not a STOP of the probe.
+   - The rerun is a new dry-run connect with a NEW `$OUT`.
+   - The rerun runs a fresh DTN pins check into that `$OUT`. Record `ad7f21d3…` is not reused, so the new run's
+     inputs are verified at the time it runs.
+   - The 0.02 node-h is counted against the 8.0 cap.
+5. **The code's comment at `sbatch_fd_stab.sh:11-12`** is left as it is, to keep the bound blob. Ruling 2 above
+   governs.
+
 Nothing is submitted, deposited or tagged.
