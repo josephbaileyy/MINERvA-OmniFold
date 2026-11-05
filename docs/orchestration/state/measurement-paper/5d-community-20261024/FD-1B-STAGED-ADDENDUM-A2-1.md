@@ -419,8 +419,38 @@ Any other difference is a STOP to the director.
   - Tests: `E2E.test_c2check_refuses_a_calibration_from_other_code` (fd_1b_c2 changed, fd_1b_mc changed, none
     recorded; on its own code's record it reaches the next check); three S2 overrides in `test_fd_1b_mc`.
   - Both refusals are REQUIRED mutants: the harness exits 1 unless each is in the plan, run and KILLED.
-  - Not covered: the backstop's 300-draw calibration (schema /1, job 60771025), which is at earlier code by design.
-    The backstop reads only its per-cell SDs.
+  - The backstop's 300-draw calibration (schema /1, job 60771025, at 02e71a0b) is at earlier code by design. The
+    director's ruling of 2026-11-05 admits it only while the code behind its per-cell SDs is unchanged:
+    - **The comparison** (`a2-1/cal300_code_check.py`, its output `a2-1/cal300-code-check.out`). It starts from the
+      four functions the SDs come from in 02e71a0b's calibrate_main (prepare, _worker_init, _one_set, rates). It walks
+      every module-level definition they reach, across the repository's own modules through `import X as Y` and
+      `from X import f`, in-function imports included: 107 definitions in 14 modules. Each is compared by
+      `ast_digest` (its AST, line numbers and docstrings set aside), and its source text is reported too.
+    - **106 are identical in AST and source text. `_one_set` is not:** it passes `n=st["n"]` to `calibration_draws`,
+      whose `n` defaults to 300, the value 60771025 used. The director admitted that one change by name on
+      2026-11-05, on a bitwise test: `E2E.test_one_set_is_02e71a0bs_at_300_draws` runs 02e71a0b's fd_1b_c2 bytes
+      (`tests/data/fd_1b_c2_at_02e71a0b.py.txt`, sha256 c3c34645, 60771025's own digest) as a reference. Its
+      `_one_set` and the current one at `st["n"] = 300` give bitwise-equal ratios for two sets of each truth; at 299
+      they differ.
+    - Not seen by the walk: names reached only through getattr or strings, library code, and calibrate_main's glue
+      between the four (printed in the output for reading).
+    - **The check in code** (`cal300_code_check`, called by c2check):
+      - the pins file `nd-unfolding/fd_1b_cal300_pins.json`, written by the tool, must be the one fd_1b_c2 names
+        (`CAL300_PINS_SHA256`);
+      - the record's fd_1b_c2 digest must be the pins' (c3c34645);
+      - every pinned definition's AST digest, recomputed from its file in this tree (the very file of any module
+        already loaded), must equal its 02e71a0b pin. Only a name in `CAL300_EXEMPT` (`fd_1b_c2._one_set`) may
+        instead equal its exempt digest.
+    - **Not a fixed point.** The pins live in the file, and fd_1b_c2 names the file's digest. No pinned definition
+      reads a `CAL300_*` constant (asserted by `Cal300Code.test_the_pins_are_not_a_fixed_point`), so editing those
+      constants cannot move a pin.
+    - Tests (`test_fd_1b_c2` `Cal300Code`):
+      - silence on the real tree and record;
+      - refusals on a changed pin, another record, a missing record digest, another pins file, a module loaded from
+        another file, an exemption c2 does not name, and the named one at another digest or absent;
+      - the committed pins equal the tool's own walk.
+      In the e2e, c2check refuses a 300-draw record at other code.
+    - Two more REQUIRED mutants: the check dropped from c2check, and the exemption widened to any definition.
 - **The terms are tied to their arrays** (the audit's item 1). Nm's variance ratio is gated: `reading_1b`'s
   "multiplicative" gate enters both the positivity-preserving pick and option (3). So `c2_terms` keeps the arrays
   it was built from, and c2_truth refuses terms whose arrays are not, by identity, its own V and cv (or that are
@@ -470,6 +500,7 @@ Any other difference is a STOP to the director.
 | stopped | `cb59f85b` | stopped before its control finished: the probe's terms defect (§8c) was found at that head |
 | verification | `a2560cc3` | the five terms mutants and the re-anchored probe projection, alone: 6 of 6 killed, the control passing before and after (`a2-1/mutation_a21-terms6-a2560cc3.out`) |
 | stopped | `a2560cc3` | the full run (plan 345), stopped at 62 rows with 0 survivors by the director's ruling (A): the code moved again |
+| stopped | `d6410cff` | the full run (plan 354), stopped in its control by the director's ruling of 2026-11-05 on the backstop's calibration: the code moved again |
 
 **The 20 survivors at `b4eefeda`, each closed:**
 - Two mutants whose killing test lived in a suite they did not list; the lists were corrected:
@@ -561,8 +592,10 @@ The CV denominator reads and the binning runs ran on login nodes, at 0 node-h. *
 (G18 and AR23, then the plug-in) and the plug-in's large-sample calibration. At one-thread local rates for the
 committed code, c2check comes to about 3.2–3.9 h per truth plus an unmeasured prepare (§8c): about 6.5–7.9 node-h
 for G18 and AR23 before prepare. The total lands above 81.0 at any probe result near that estimate. Binding 3 gives
-an estimate for each, based on the probe's measured timings, and sets the total with the arithmetic shown. If it
-lands above the ceiling, the director sets the new total there and reports it to Joseph (the director, 2026-11-04).
+an estimate for each,
+based on 60783756's measured timings, and sets the total with the arithmetic shown. If it lands above 81.0, the
+director sets the new total there and reports it to Joseph (the director, 2026-11-04).
+Director, 2026-11-05: superseded by the probe's measured timings; the ceiling is 83.0 (ruling of 2026-11-05).
 Search: `fd_1b_c2.py <command>` in every `.time` under `fd/receipts-1b` (3 Perlmutter runs, all `calibrate`, which calls `prepare(a)` with rows=False, fd_1b_c2.py:712) @ 0f858bce
 
 **The path collision (the audit's finding at `1295f7e4`; the director's rulings).** Product names carry neither the

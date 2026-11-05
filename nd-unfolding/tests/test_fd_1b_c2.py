@@ -261,18 +261,112 @@ class Block(unittest.TestCase):
 REF_SHA256 = "f19adbda6126d79d1f337755de873b530a76ebbcfd412ab60f85ab53cb33fe49"
 
 
-def reference_c2():
-    """fd_1b_c2 as bound at f19adbda (tests/data/fd_1b_c2_at_f19adbda.py.txt, its exact bytes), executed as a module
-    with the real module's __file__ so its paths resolve: the reference the director's ruling (a) requires the
-    hoisted code to equal bitwise."""
+CAL300_REF_SHA256 = "c3c346454928290038585cf1f682209808258b7e06869848d750ee284c821d1d"   # 02e71a0b, job 60771025's
+CAL300_RECORD = (Path(__file__).resolve().parents[2] / "docs/orchestration/state/measurement-paper/5d-community-20261024"
+                 / "fd/receipts-1b/staged/a2-1/calib-run/calibration.json")
+
+
+def reference_module(rev: str, sha: str):
+    """fd_1b_c2 at ``rev`` (tests/data/fd_1b_c2_at_<rev>.py.txt, its exact bytes, checked against ``sha``), executed as
+    a module with the real module's __file__ so its paths resolve."""
     import hashlib
     import types
-    raw = (Path(__file__).resolve().parent / "data" / "fd_1b_c2_at_f19adbda.py.txt").read_bytes()
-    assert hashlib.sha256(raw).hexdigest() == REF_SHA256
-    m = types.ModuleType("fd_1b_c2_at_f19adbda")
+    raw = (Path(__file__).resolve().parent / "data" / f"fd_1b_c2_at_{rev}.py.txt").read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == sha
+    m = types.ModuleType(f"fd_1b_c2_at_{rev}")
     m.__file__ = c2.__file__
-    exec(compile(raw, "fd_1b_c2@f19adbda", "exec"), m.__dict__)
+    exec(compile(raw, f"fd_1b_c2@{rev}", "exec"), m.__dict__)
     return m
+
+
+def reference_c2():
+    """fd_1b_c2 as bound at f19adbda: the reference the director's ruling (a) requires the hoisted code to equal
+    bitwise."""
+    return reference_module("f19adbda", REF_SHA256)
+
+
+class Cal300Code(unittest.TestCase):
+    """The director's ruling of 2026-11-05: the backstop's 300-draw calibration (job 60771025, at 02e71a0b) is admitted
+    only while the code behind its SDs is unchanged, with _one_set's one-argument change the one named exemption."""
+
+    def setUp(self):
+        import json
+        import tempfile
+        self.rec = json.loads(CAL300_RECORD.read_text())
+        self.pins = json.loads((Path(c2.__file__).resolve().parent / c2.CAL300_PINS).read_text())
+        self.tmp = Path(tempfile.mkdtemp())
+
+    def check_with(self, pins: dict, rec=None):
+        """cal300_code_check against a pins file written here and named by its own digest."""
+        import hashlib
+        import json
+        f = self.tmp / f"pins-{len(list(self.tmp.iterdir()))}.json"
+        f.write_text(json.dumps(pins))
+        with mock.patch.object(c2, "CAL300_PINS", str(f)), \
+                mock.patch.object(c2, "CAL300_PINS_SHA256", hashlib.sha256(f.read_bytes()).hexdigest()):
+            return c2.cal300_code_check(rec or self.rec)
+
+    def test_silent_on_the_real_tree_and_record(self):
+        self.assertIsNone(c2.cal300_code_check(self.rec))                       # the committed pins, unpatched
+        self.assertEqual(self.rec["code_sha256"]["fd_1b_c2.py"], CAL300_REF_SHA256)
+        self.assertEqual(self.pins["record_fd_1b_c2_sha256"], CAL300_REF_SHA256)
+        self.assertEqual(len(self.pins["pins"]), 107)
+        self.assertEqual(set(self.pins["exempt"]), set(c2.CAL300_EXEMPT))
+
+    def test_refuses_a_changed_pinned_definition(self):
+        for key in ("fd_1b_c2.rates", "fd_1b_mc.draw_universes", "s1_assemble.functional_matrix"):
+            pins = dict(self.pins, pins=dict(self.pins["pins"], **{key: "0" * 64}))
+            with self.assertRaisesRegex(c2.Refusal, "changed since 02e71a0b"):
+                self.check_with(pins)
+
+    def test_refuses_another_record_or_pins_file(self):
+        with self.assertRaisesRegex(c2.Refusal, "not the record its pins describe"):
+            c2.cal300_code_check(dict(self.rec, code_sha256=dict(self.rec["code_sha256"], **{"fd_1b_c2.py": "0" * 64})))
+        with self.assertRaisesRegex(c2.Refusal, "not the record its pins describe"):
+            c2.cal300_code_check({k: v for k, v in self.rec.items() if k != "code_sha256"})
+        with mock.patch.object(c2, "CAL300_PINS_SHA256", "0" * 64), \
+                self.assertRaisesRegex(c2.Refusal, "pins file is not the one this code names"):
+            c2.cal300_code_check(self.rec)
+
+    def test_refuses_a_module_loaded_from_another_file(self):
+        pins = dict(self.pins, paths=dict(self.pins["paths"], **{"fd_1b_c2.rates": "nd-unfolding/fd_1b_mc.py"}))
+        with self.assertRaisesRegex(c2.Refusal, "is loaded from"):
+            self.check_with(pins)
+
+    def test_the_exemption_is_by_name_only(self):
+        cur = c2.ast_digest(Path(c2.__file__).read_text(), "prepare")
+        pins = dict(self.pins, pins=dict(self.pins["pins"], **{"fd_1b_c2.prepare": "0" * 64}),
+                    exempt=dict(self.pins["exempt"], **{"fd_1b_c2.prepare": {"ast_sha256": cur}}))
+        with self.assertRaisesRegex(c2.Refusal, "fd_1b_c2.prepare"):           # an exemption c2 does not name
+            self.check_with(pins)
+        pins = dict(self.pins, exempt={"fd_1b_c2._one_set": {"ast_sha256": "0" * 64}})
+        with self.assertRaisesRegex(c2.Refusal, "fd_1b_c2._one_set"):           # the named one, at another digest
+            self.check_with(pins)
+        pins = dict(self.pins, exempt={})
+        with self.assertRaisesRegex(c2.Refusal, "fd_1b_c2._one_set"):           # without it, 02e71a0b's pin refuses
+            self.check_with(pins)
+
+    def test_the_pins_are_not_a_fixed_point(self):
+        """The pins live in a file c2check reads, named here by digest; no pinned definition reads the constants that
+        name the file, so editing them cannot move a pin."""
+        import ast
+        for key, path in self.pins["paths"].items():
+            name = key.rsplit(".", 1)[1]
+            src = (Path(c2.__file__).resolve().parents[1] / path).read_text()
+            self.assertNotIn("CAL300", ast.get_source_segment(src, c2.top_level(src, name)), key)
+
+    def test_the_pins_file_is_the_tools_walk(self):
+        """cal300_code_check.py, run here from 02e71a0b, writes the committed pins (every field but the exempt
+        entry's rev, which names the commit it read)."""
+        import json
+        import subprocess
+        root = Path(c2.__file__).resolve().parents[1]
+        tool = root / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cal300_code_check.py"
+        out = self.tmp / "pins-tool.json"
+        r = subprocess.run([sys.executable, "-B", str(tool), self.pins["rev"], self.pins["exempt"]["fd_1b_c2._one_set"]["rev"],
+                            "--write-pins", str(out)], cwd=root, capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout[-800:] + r.stderr[-800:])
+        self.assertEqual(json.loads(out.read_text()), self.pins)
 
 
 class Multiplicative(unittest.TestCase):

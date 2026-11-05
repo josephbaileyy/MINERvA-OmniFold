@@ -189,10 +189,13 @@ class E2E(unittest.TestCase):
 
     def cal300(self):
         """The backstop's 300-draw calibration (schema /1): a named fixture holding the toy calibration's own per-cell
-        SDs, which it measured at 300 draws per set (draws=300)."""
+        SDs, which it measured at 300 draws per set (draws=300), and job 60771025's fd_1b_c2 digest, so c2check's
+        check of the code behind those SDs (cal300_code_check) runs on this tree's own files."""
+        from test_fd_1b_c2 import CAL300_REF_SHA256
         p = self.tmp / "cal" / "cal300.json"
-        p.write_text(json.dumps({"schema": "fd-1b-c2-calibration/1", "outputs": {
-            t: {"a": {"sd_per_cell": self.cal_rec["rule"]["thresholds"][t]["sd_per_cell"]}} for t in self.truths}}))
+        p.write_text(json.dumps({"schema": "fd-1b-c2-calibration/1", "code_sha256": {"fd_1b_c2.py": CAL300_REF_SHA256},
+                                 "outputs": {t: {"a": {"sd_per_cell": self.cal_rec["rule"]["thresholds"][t]["sd_per_cell"]}}
+                                             for t in self.truths}}))
         return p
 
     def c2args(self, cal, **kw):
@@ -254,6 +257,41 @@ class E2E(unittest.TestCase):
         a.expect_calibration_300_sha256 = "0" * 64
         with self.patched(), self.assertRaisesRegex(c2.Refusal, "300-draw calibration's digest differs"):
             c2.c2check_main(a)
+        a = self.c2args(cal)                                          # and a 300-draw record at other code
+        c3 = json.loads(a.calibration_300.read_text())
+        c3["code_sha256"] = {"fd_1b_c2.py": "0" * 64}
+        a.calibration_300.write_text(json.dumps(c3))
+        a.expect_calibration_300_sha256 = digest(a.calibration_300)
+        with self.patched(), self.assertRaisesRegex(c2.Refusal, "not the record its pins describe"):
+            c2.c2check_main(a)
+
+    def test_one_set_is_02e71a0bs_at_300_draws(self):
+        """The director's named exemption (2026-11-05): the current _one_set, which passes n=st["n"] to
+        calibration_draws, is 02e71a0b's _one_set (tests/data/fd_1b_c2_at_02e71a0b.py.txt, job 60771025's code) when
+        st["n"] = 300. Both, on this world's prepared state, give bitwise-equal ratios for two sets of each truth; at 299
+        they differ, so the test sees the argument."""
+        from test_fd_1b_c2 import CAL300_REF_SHA256, reference_module
+        old = reference_module("02e71a0b", CAL300_REF_SHA256)
+        with self.patched():
+            P = c2.prepare(self.args())
+            state = {k: P[k] for k in ("H", "cv", "U", "ref_x", "ref_count", "flux_cols", "phi", "const", "flux_p",
+                                       "col", "bands")}
+            state["groups"] = P["world"]["groups"]
+            jobs = [(t, s) for t in self.truths for s in (0, 7)]
+            saved = dict(c2._STATE)
+            try:
+                old._worker_init(dict(state))
+                want = [old._one_set(j) for j in jobs]
+                for n, same in ((300, True), (299, False)):
+                    c2._STATE.clear()
+                    c2._worker_init(dict(state, n=n))
+                    got = [c2._one_set(j) for j in jobs]
+                    eq = [g[:2] == w[:2] and np.array_equal(g[2], w[2]) and np.array_equal(g[3], w[3])
+                          for g, w in zip(got, want)]
+                    self.assertEqual(eq, [same] * len(jobs), n)
+            finally:
+                c2._STATE.clear()
+                c2._STATE.update(saved)
 
     def test_c2check_refuses_a_sample_whose_first_300_are_not_the_declared(self):
         cal = self.calibrated()
@@ -526,7 +564,9 @@ class RoundTrip(E2E):
             ok = c2.c2check_main(self.c2args(cal))
         self.assertEqual((ok["verdict"], all(b["passes"] for b in ok["backstop"].values())), ("PASS", True))
         tiny = self.tmp / "cal" / "cal300-tiny.json"
-        tiny.write_text(json.dumps({"schema": "fd-1b-c2-calibration/1", "outputs": {
+        from test_fd_1b_c2 import CAL300_REF_SHA256
+        tiny.write_text(json.dumps({"schema": "fd-1b-c2-calibration/1", "code_sha256": {"fd_1b_c2.py": CAL300_REF_SHA256},
+                                    "outputs": {
             t: {"a": {"sd_per_cell": (np.asarray(self.cal_rec["rule"]["thresholds"][t]["sd_per_cell"]) * 1e-3).tolist()}}
             for t in self.truths}}))
         a = self.c2args(cal)
@@ -735,6 +775,7 @@ class RoundTrip(E2E):
     test_the_calibration_runs_the_production_chain = test_c2check_end_to_end = None
     test_c2check_refuses_an_uncalibrated_or_foreign_calibration = None
     test_c2check_refuses_a_calibration_from_other_code = None
+    test_one_set_is_02e71a0bs_at_300_draws = None
     test_c2check_refuses_a_sample_whose_first_300_are_not_the_declared = None
     test_the_binning_script_end_to_end = test_the_receipt_end_to_end = None
     test_a_toy_item_under_nature_end_to_end = test_the_cv_tdw_is_checked_at_load = None

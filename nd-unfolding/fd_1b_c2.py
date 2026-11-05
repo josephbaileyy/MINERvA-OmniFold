@@ -702,12 +702,10 @@ def calibrate_main(a) -> dict:
     """The calibration job (FD-1B-STAGED-ADDENDUM-A2-1.md): one read of every universe, the references, a measured
     single-set time on the real fine-cell count (refusing when the projection passes ``--budget-seconds``), then
     CAL_SETS replicate sets per truth across worker processes, and the director's outputs and the D4 controls."""
-    import hashlib
     import multiprocessing
     import time
 
     import fd_1b_inv as inv
-    import fd_1b_mc as mc
     t0 = time.time()
     P = prepare(a)
     H, cv, U, ref_x, ref_count, flux_cols, phi, const, flux_p, col, bands, keep, truths, world = (
@@ -740,9 +738,7 @@ def calibrate_main(a) -> dict:
     out = rates(Rx)                                           # #724's fixed numbers and (c), descriptive at N
     rule = threshold_rule(Rx)
     power = power_at(Rx, rule) if rule["s"] is not None else None
-    digests = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (
-        Path(__file__).resolve(), Path(mc.__file__).resolve(), Path(cp2.__file__).resolve(),
-        Path(cov2d.__file__).resolve(), Path(toys.__file__).resolve())}
+    digests = gate_code_digests()
     verdict = calibration_verdict_n(law, lin, rule, power)
     rec = {"schema": SCHEMA_CAL, "step": "c2-calibration", "verdict": verdict, "truths": truths, "sets": a.sets,
            "draws_per_set": state["n"], "rule": rule, "power": power,
@@ -768,6 +764,75 @@ def calibrate_main(a) -> dict:
 
 
 SCHEMA_GATE = "fd-1b-c2-gate/1"
+
+
+def top_level(source: str, name: str):
+    """The module-level definition (function, class or assignment) named ``name`` in ``source``, or None."""
+    import ast
+    for n in ast.parse(source).body:
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and n.name == name:
+            return n
+        if isinstance(n, (ast.Assign, ast.AnnAssign)):
+            targets = n.targets if isinstance(n, ast.Assign) else [n.target]
+            if any(isinstance(t, ast.Name) and t.id == name for t in targets):
+                return n
+    return None
+
+
+def ast_digest(source: str, name: str) -> str | None:
+    """sha256 of the module-level definition ``name`` in ``source`` as its AST, with line numbers and docstrings set
+    aside (a reflowed comment or docstring is not a change of code), or None when ``source`` has no such definition.
+    One function for cal300_code_check.py, which pins the 300-draw calibration's SD code, and c2check, which
+    re-checks the pins on the code it runs."""
+    import ast
+    import copy
+    import hashlib
+    n = top_level(source, name)
+    if n is None:
+        return None
+    n = copy.deepcopy(n)
+    for d in ast.walk(n):
+        body = getattr(d, "body", None)
+        if (isinstance(d, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and body
+                and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant)
+                and isinstance(body[0].value.value, str)):
+            d.body = body[1:] or [ast.Pass()]
+    return hashlib.sha256(ast.dump(n, include_attributes=False).encode()).hexdigest()
+
+
+CAL300_PINS = "fd_1b_cal300_pins.json"    # beside this file; written by a2-1/cal300_code_check.py --write-pins
+CAL300_PINS_SHA256 = "228ae1b6c5e0b0a1cf06ef909f713b1c0fb7e0326796d5991921a5ef40a2b32a"
+CAL300_EXEMPT = ("fd_1b_c2._one_set",)    # the director's ruling of 2026-11-05: n=st["n"], equal to 02e71a0b at 300
+
+
+def cal300_code_check(cal300: dict) -> None:
+    """The backstop's 300-draw calibration (schema /1, job 60771025) is admitted only while the code that produced
+    its per-cell SDs is unchanged (the director's ruling of 2026-11-05). The pins file, pinned here by digest, holds
+    the AST digest (ast_digest) at 02e71a0b of every definition reached from prepare, _worker_init, _one_set and
+    rates, with each one's path; each is recomputed from that file in this tree (the very file of any module already
+    loaded) and must equal its pin. Only a name in CAL300_EXEMPT may instead equal the pins file's exempt digest. The
+    record itself must be the one those pins describe: its fd_1b_c2 digest is the pins file's."""
+    import hashlib
+    raw = (Path(__file__).resolve().parent / CAL300_PINS).read_bytes()
+    if hashlib.sha256(raw).hexdigest() != CAL300_PINS_SHA256:
+        raise Refusal("the 300-draw calibration's pins file is not the one this code names")
+    pins = json.loads(raw)
+    if (cal300.get("code_sha256") or {}).get("fd_1b_c2.py") != pins["record_fd_1b_c2_sha256"]:
+        raise Refusal("the 300-draw calibration is not the record its pins describe (fd_1b_c2 digest)")
+    root = Path(__file__).resolve().parents[1]
+    changed = []
+    for key, want in sorted(pins["pins"].items()):
+        mod, name = key.rsplit(".", 1)
+        path = (root / pins["paths"][key]).resolve()
+        loaded = sys.modules.get(mod)
+        if loaded is not None and Path(loaded.__file__).resolve() != path:
+            raise Refusal(f"{mod} is loaded from {loaded.__file__}, not {path}")
+        if key in CAL300_EXEMPT and key in pins["exempt"]:
+            want = pins["exempt"][key]["ast_sha256"]
+        if ast_digest(path.read_text(), name) != want:
+            changed.append(key)
+    if changed:
+        raise Refusal(f"the code behind the 300-draw calibration's SDs changed since {pins['rev']}: {changed[:4]}")
 
 
 def gate_code_digests() -> dict:
@@ -980,6 +1045,7 @@ def c2check_main(a) -> dict:
         cal300 = json.loads(fh.read().decode())
     if cal300.get("schema") != "fd-1b-c2-calibration/1":
         raise Refusal("the backstop's SDs come from the 300-draw calibration (schema /1)")
+    cal300_code_check(cal300)                                 # its SD code unchanged (the director, 2026-11-05)
     cal_npz = a.calibration.with_suffix(".npz")
     if inv.sha256_noatime(cal_npz) != a.expect_calibration_npz_sha256:
         raise Refusal("the calibration's ratio file digest differs")

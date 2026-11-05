@@ -354,6 +354,21 @@ NEW = [
      '\n                            "code_sha256": cal["code_sha256"],', '', E2E),
     ("fd_1b_mc.py", "H2: a calibration at other code accepted", '    if cal.get("code_sha256") != fd_1b_c2.gate_code_digests():',
      '    if False:', MC),
+    # ---- the director's ruling of 2026-11-05: the backstop's 300-draw calibration at unchanged SD code (REQUIRED below)
+    ("fd_1b_c2.py", "c2check: the 300-draw calibration's code not checked", '    cal300_code_check(cal300)                                 # its SD',
+     '    pass                                                      # its SD', E2E),
+    ("fd_1b_c2.py", "cal300: the exemption widened to any definition", '        if key in CAL300_EXEMPT and key in pins["exempt"]:',
+     '        if key in pins["exempt"]:', C2),
+    ("fd_1b_c2.py", "cal300: a changed definition accepted", '    if changed:\n        raise Refusal(f"the code behind',
+     '    if False:\n        raise Refusal(f"the code behind', C2),
+    ("fd_1b_c2.py", "cal300: the record's fd_1b_c2 digest not checked",
+     '    if (cal300.get("code_sha256") or {}).get("fd_1b_c2.py") != pins["record_fd_1b_c2_sha256"]:', '    if False:', C2),
+    ("fd_1b_c2.py", "cal300: the pins file's digest not checked", '    if hashlib.sha256(raw).hexdigest() != CAL300_PINS_SHA256:',
+     '    if False:', C2),
+    ("fd_1b_c2.py", "cal300: the loaded module's file not compared",
+     '        if loaded is not None and Path(loaded.__file__).resolve() != path:', '        if False:', C2),
+    ("fd_1b_c2.py", "ast_digest: docstrings kept", '            d.body = body[1:] or [ast.Pass()]', '            pass', C2),
+    ("fd_1b_c2.py", "ast_digest: line numbers kept", 'ast.dump(n, include_attributes=False)', 'ast.dump(n, include_attributes=True)', C2),
     ("fd_1b_c2.py", "probe: the first block's one-off costs kept", '    mean = float(np.mean(per_block[1:] if len(per_block) > 1 else per_block))',
      '    mean = float(np.mean(per_block))', E2E),
     ("fd_1b_c2.py", "probe: two truths timed as one", '    if len(a.truths) != 1:\n        raise Refusal("the probe times one truth")',
@@ -376,7 +391,9 @@ NEW = [
     ("fd_1b_binning.py", "bin: Delta_CV sign", "        d[c32] += w\n        d[c64] -= w\n    return d", "        d[c32] -= w\n        d[c64] += w\n    return d", BIN),
 ]
 
-REQUIRED = {"c2check: a calibration at other code accepted", "H2: a calibration at other code accepted"}  # ruling (A)
+REQUIRED = {"c2check: a calibration at other code accepted", "H2: a calibration at other code accepted",   # ruling (A)
+            "c2check: the 300-draw calibration's code not checked",                                 # the director,
+            "cal300: the exemption widened to any definition"}                                      # 2026-11-05
 
 
 def purge():
