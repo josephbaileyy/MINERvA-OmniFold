@@ -1,0 +1,28 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+test_2b_failure_is_the_second_stop (test_cov2d_pilot.Readout.test_2b_failure_is_the_second_stop) ... ok
+test_a_class_without_a_measured_wall_is_invalid_even_when_every_run_passed (test_cov2d_pilot.Readout.test_a_class_without_a_measured_wall_is_invalid_even_when_every_run_passed) ... ok
+test_a_dirty_deploy_is_refused (test_cov2d_pilot.Readout.test_a_dirty_deploy_is_refused) ... ok
+test_a_failed_run_of_any_class_is_invalid (test_cov2d_pilot.Readout.test_a_failed_run_of_any_class_is_invalid) ... ok
+test_a_pass_that_needs_repricing_does_not_open_the_bulk (test_cov2d_pilot.Readout.test_a_pass_that_needs_repricing_does_not_open_the_bulk) ... ok
+test_missing_partb_product_is_invalid (test_cov2d_pilot.Readout.test_missing_partb_product_is_invalid) ... ok
+test_pass (test_cov2d_pilot.Readout.test_pass) ... ok
+test_the_readouts_record_is_what_order_admits (test_cov2d_pilot.Readout.test_the_readouts_record_is_what_order_admits) ... ok
+test_within_1e_8_passes (test_cov2d_pilot.Readout.test_within_1e_8_passes) ... ok
+test_classes (test_cov2d_pilot.Walls.test_classes) ... ok
+test_partb_wall_per_run_from_the_committed_ledger (test_cov2d_pilot.Walls.test_partb_wall_per_run_from_the_committed_ledger) ... ok
+test_reprice (test_cov2d_pilot.Walls.test_reprice) ... ok
+test_the_64_cpu_universe_is_not_a_measurement (test_cov2d_pilot.Walls.test_the_64_cpu_universe_is_not_a_measurement) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.189s
+
+OK
+SUITE env=RM module=test_cov2d_pilot ran=13 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True

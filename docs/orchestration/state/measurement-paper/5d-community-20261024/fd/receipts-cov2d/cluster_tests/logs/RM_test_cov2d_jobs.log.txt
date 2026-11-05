@@ -1,0 +1,48 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+test_a_changed_data_file_stops (test_cov2d_jobs.Check.test_a_changed_data_file_stops) ... ok
+test_a_changed_staged_copy_stops (test_cov2d_jobs.Check.test_a_changed_staged_copy_stops) ... ok
+test_a_clean_lateral_job_and_toy_job_pass (test_cov2d_jobs.Check.test_a_clean_lateral_job_and_toy_job_pass) ... ok
+test_a_purged_staged_copy_stops_with_no_restage (test_cov2d_jobs.Check.test_a_purged_staged_copy_stops_with_no_restage) ... ok
+test_uni_stat_and_pins (test_cov2d_jobs.Check.test_uni_stat_and_pins) ... ok
+test_the_lateral_job_prints_its_11_runs_in_2_lanes (test_cov2d_jobs.DryRun.test_the_lateral_job_prints_its_11_runs_in_2_lanes) ... ok
+test_spent_held_and_the_cap (test_cov2d_jobs.Gate.test_spent_held_and_the_cap) ... ok
+test_each_run_records_its_own_rc (test_cov2d_jobs.LaneWalls.test_each_run_records_its_own_rc) ... ok
+test_a_pilot_needing_repricing_opens_nothing_after_it (test_cov2d_jobs.Order.test_a_pilot_needing_repricing_opens_nothing_after_it) ... ok
+test_a_record_for_another_commit_or_not_pass_does_not_count (test_cov2d_jobs.Order.test_a_record_for_another_commit_or_not_pass_does_not_count) ... ok
+test_gate_refuses_an_unknown_cov2d_job (test_cov2d_jobs.Order.test_gate_refuses_an_unknown_cov2d_job) ... ok
+test_the_sequence (test_cov2d_jobs.Order.test_the_sequence) ... ok
+test_uni_stat (test_cov2d_jobs.Order.test_uni_stat) ... ok
+test_dvs_rate_reads_the_same_prefix (test_cov2d_jobs.Pilot.test_dvs_rate_reads_the_same_prefix) ... ok
+test_eight_runs_three_lanes_and_2a_file (test_cov2d_jobs.Pilot.test_eight_runs_three_lanes_and_2a_file) ... ok
+test_pilot_dry_run_reads_g18_data (test_cov2d_jobs.Pilot.test_pilot_dry_run_reads_g18_data) ... ok
+test_every_line_parses (test_cov2d_jobs.RealParser.test_every_line_parses) ... ok
+test_admits_when_origin_mains_binding_names_M (test_cov2d_jobs.SubmitBinding.test_admits_when_origin_mains_binding_names_M) ... ok
+test_binding_1s_own_text_binds_its_M_line_only (test_cov2d_jobs.SubmitBinding.test_binding_1s_own_text_binds_its_M_line_only) ... ok
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/tempfile.py:934: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/dev/shm/josephrb-cov2d-tests/tmp/tmpfu3r4wws'>
+  _warnings.warn(warn_message, ResourceWarning)
+test_refuses_M_cited_only_off_the_M_line (test_cov2d_jobs.SubmitBinding.test_refuses_M_cited_only_off_the_M_line) ... ok
+test_refuses_a_binding_naming_another_commit (test_cov2d_jobs.SubmitBinding.test_refuses_a_binding_naming_another_commit) ... ok
+test_refuses_a_dirty_deploy_or_a_head_other_than_M (test_cov2d_jobs.SubmitBinding.test_refuses_a_dirty_deploy_or_a_head_other_than_M) ... ok
+test_refuses_a_failed_fetch_even_with_a_good_binding_already_fetched (test_cov2d_jobs.SubmitBinding.test_refuses_a_failed_fetch_even_with_a_good_binding_already_fetched) ... ok
+test_refuses_when_origin_main_has_no_binding (test_cov2d_jobs.SubmitBinding.test_refuses_when_origin_main_has_no_binding) ... ok
+test_the_audited_script_refuses_even_the_correct_setup (test_cov2d_jobs.SubmitBinding.test_the_audited_script_refuses_even_the_correct_setup) ... ok
+test_counts_and_labels (test_cov2d_jobs.Tables.test_counts_and_labels) ... ok
+test_limit_rule_reproduces_part_bs_limits (test_cov2d_jobs.Tables.test_limit_rule_reproduces_part_bs_limits) ... ok
+test_packing_is_part_bs (test_cov2d_jobs.Tables.test_packing_is_part_bs) ... ok
+test_toys_read_their_own_file_and_everything_else_reads_d_T (test_cov2d_jobs.Tables.test_toys_read_their_own_file_and_everything_else_reads_d_T) ... ok
+test_universes_are_the_bank_and_replicas_seeds_1_to_300 (test_cov2d_jobs.Tables.test_universes_are_the_bank_and_replicas_seeds_1_to_300) ... ok
+test_written_tables (test_cov2d_jobs.Tables.test_written_tables) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 6.451s
+
+OK
+SUITE env=RM module=test_cov2d_jobs ran=31 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True

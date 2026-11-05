@@ -1,0 +1,28 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+test_a_deploy_that_moves_during_step_b_stops (test_cov2d_pseudo_write.StepB.test_a_deploy_that_moves_during_step_b_stops) ... ok
+test_a_dirty_deploy_is_refused_before_any_output (test_cov2d_pseudo_write.StepB.test_a_dirty_deploy_is_refused_before_any_output) ... ok
+test_pass_files_read_back_and_truth (test_cov2d_pseudo_write.StepB.test_pass_files_read_back_and_truth) ... ok
+test_pins_are_checked (test_cov2d_pseudo_write.StepB.test_pins_are_checked) ... ok
+test_refuses_a_stopped_step_a (test_cov2d_pseudo_write.StepB.test_refuses_a_stopped_step_a) ... ok
+test_section_9_11_catches_a_moved_row (test_cov2d_pseudo_write.StepB.test_section_9_11_catches_a_moved_row) ... ok
+test_section_9_11_catches_a_wrong_file (test_cov2d_pseudo_write.StepB.test_section_9_11_catches_a_wrong_file) ... ok
+test_section_9_11_realization_more_than_5_sigma_stops (test_cov2d_pseudo_write.StepB.test_section_9_11_realization_more_than_5_sigma_stops) ... ok
+test_section_9_4_cross_check_on_hTruth2D (test_cov2d_pseudo_write.StepB.test_section_9_4_cross_check_on_hTruth2D) ... ok
+test_section_9_4_needs_205_cells (test_cov2d_pseudo_write.StepB.test_section_9_4_needs_205_cells) ... ok
+test_section_9_4_stops_before_any_data_file (test_cov2d_pseudo_write.StepB.test_section_9_4_stops_before_any_data_file) ... ok
+test_the_writers_record_is_what_order_admits (test_cov2d_pseudo_write.StepB.test_the_writers_record_is_what_order_admits) ... ok
+test_truth_uses_the_drawn_flux_universe (test_cov2d_pseudo_write.StepB.test_truth_uses_the_drawn_flux_universe) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 13.473s
+
+OK
+SUITE env=RM module=test_cov2d_pseudo_write ran=13 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
