@@ -1,0 +1,17 @@
+host=nid004541 job=60859504 start=2026-11-05T15:41:05Z
+deploy head=bf36901f957c36f37b4cb5fe6c7b6cd33f190ca7 porcelain_lines=0
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/sbatch-c2probe.sh: OK
+sourcing /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-20261105/deploy/setup_salloc_env.sh sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+threads OMP=64 OPENBLAS=64 MKL=64 NUMEXPR=64
+c2probe rc=0
+C2-PROBE truth=g18 prepare=1141s inputs=9s terms=135s vi=27s draws_300=0s draws_gate=1s block=62.6s projected_per_truth=11641s z_pairs={'wt': 57795, 'tdw': 88052} peak_rss_kib=282155564
+	Percent of CPU this job got: 164%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 26:08.86
+	Maximum resident set size (kbytes): 282155564
+	Exit status: 0
+7367eed98fb2f508b9c1116f251fec5b8ca772878a422492b5cf43e1a8f241c1  /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-20261105/probe.json
+667d267700f4fa74b0d54554f2a168b1dd31d9329231a71307890dc282a1985b  /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-20261105/probe.out
+5ae106a5b6afe525bf5e9e94b9ae6d53e982284b9972f29b08669abc55c842ef  /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-20261105/probe.time
+end=2026-11-05T16:07:19Z

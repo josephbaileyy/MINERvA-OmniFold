@@ -1,0 +1,1 @@
+C2-PROBE truth=g18 prepare=1141s inputs=9s terms=135s vi=27s draws_300=0s draws_gate=1s block=62.6s projected_per_truth=11641s z_pairs={'wt': 57795, 'tdw': 88052} peak_rss_kib=282155564

@@ -1,0 +1,23 @@
+	Command being timed: "python3 -B /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-20261105/deploy/nd-unfolding/fd_1b_c2.py c2probe --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz --bank /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware --detector-dir /pscratch/sd/j/josephrb/s5p-20260926/bank_detector --pins /pscratch/sd/j/josephrb/fd-1b-20261030/pins.json --expect-pins-sha256 5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248 --flux-constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt --flux-table /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz --expect-flux-table-sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5 --definition /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-20261105/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json --staged /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in --prep /pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep --cv-tdw /pscratch/sd/j/josephrb/fd-1b-a21-cvdenom2-20261103/cvdenom.npy --expect-cv-tdw-sha256 0bc70d622ed51f7e6ce3b80e095788f315e52937b6a6c79a0bafedeb4545def8 --truths g18 --blocks 4 --out /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-20261105/probe.json"
+	User time (seconds): 2144.71
+	System time (seconds): 436.54
+	Percent of CPU this job got: 164%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 26:08.86
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 282155564
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 92
+	Minor (reclaiming a frame) page faults: 21292349
+	Voluntary context switches: 11607
+	Involuntary context switches: 17396
+	Swaps: 0
+	File system inputs: 138309144
+	File system outputs: 320
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

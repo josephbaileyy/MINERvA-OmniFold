@@ -164,6 +164,7 @@ All runs used a fresh clone at the bound commit, with its sha verified on the no
 | large-sample calibration, G18 and AR23 | `51d67b54` | job 60783756, nid004331, 06:35:57–07:19:12Z | CALIBRATED (G18 and AR23 measured, the plug-in projected), s = 0.92 (§8b) |
 | the same, rerun at the final code | `8a9b8db9` | job 60805733, nid005938, 18:08:00–18:53:39Z | compare_calibN PASS against 60783756: the npz bitwise equal (§8b) |
 | the same, rerun at c2check's code | `bf36901f` | job 60857361, nid007069, 2026-11-05 14:39:03–15:22:06Z | compare_calibN PASS against 60783756: the npz bitwise equal (§8b) |
+| c2check's timing probe, G18 | `bf36901f` | job 60859504, nid004541, 2026-11-05 15:41:02–16:07:20Z | projected 11,641 s (3.23 h) per truth; peak RSS 269 GiB (§8c) |
 
 ## 7. The mock audit (the director's request, 2026-11-04)
 
@@ -422,6 +423,22 @@ that can feed it. The time limit, 01:30:00, was checked from scontrol after subm
   Search: `fd_1b_c2.py <command>` in every `.time` under `fd/receipts-1b` (3 Perlmutter runs, all `calibrate`, which calls `prepare(a)` with rows=False, fd_1b_c2.py:712) @ 0f858bce
   An earlier prototype of the hoist, with a dense Z and the CV's log taken twice, measured 10.33 s once and 3.07 s
   per block. That gave the "about 10.5 h per truth" quoted before this measurement. It was not the committed code.
+- **Measured on Perlmutter: the timing probe** (job 60859504, at bf36901f; nid004541, one exclusive node, 64 BLAS/OMP
+  threads; 2026-11-05 15:41:02–16:07:20Z, 26:18, 0.438 node-h of its 1.5 cap; `a2-1/c2probe-run/`, probe.json
+  `7367eed9…`):
+  - one-off steps, each through c2check's own functions: prepare(rows=True) 1,141.5 s, c2_inputs 9.3 s, c2_terms
+    135.4 s, c2_vi 26.8 s, the 300 draws 0.1 s, the 3,000-draw gate sample 1.1 s, a sum of 1,314.2 s;
+  - four 20-draw blocks of G18's gate sample: 64.7, 63.2, 62.4 and 62.2 s, so 62.59 s per block with the first set
+    aside;
+  - **projected one-truth c2check: 1,314.2 + 165 × 62.59 = 11,641 s, 3.23 h**, under the director's 8 h line, so
+    option (b) (blocks over a fork pool) is not needed;
+  - peak RSS 282,155,564 KiB (269 GiB) of the node's 476 GiB; |Z| 57,795 (wt) and 88,052 (tdw) pairs;
+  - the job used 164 % CPU: the block is mostly single-threaded numpy, as expected.
+  - **Row counts, corrected by the record.** V's rows as the probe measured them: wt, wr and tdw 32,849,103 each,
+    bkgw 621,547, D 65,856, over 175 universes. The figures above (16,424,551 signal and 310,773 background rows) are
+    not the arrays c2_truth runs on; the local per-block estimate built on them is superseded by the measurement.
+  - **Atimes:** every declared input's atime by stat, on the login node before submission and after the job: 1,147
+    files, 0 moved (`atime-pre.tsv`, `atime-post.tsv`).
 - **The terms once per job.** They depend on neither the draws nor the truth. `c2_terms` builds them for wt and tdw,
   and c2check builds them once, before its truth loop, and passes them to every c2_truth call (the declared 300 and
   the gate sample, at each truth). At cb59f85b they were still built inside c2_truth, so twice per truth. That
@@ -655,8 +672,8 @@ calibration's 4.0 cap. With the jobs since then at their measured cost, and the 
 | **spent or committed** | **≈ 78.84** |
 | its second rerun at c2check's code, job 60857361 (43:03, 2,583 s) | 0.718 |
 | **spent or committed, with the second rerun** | **≈ 79.56** |
-| c2check's timing probe (cap; prepare(rows=True), §8c, + about 0.12 h) | 1.5 |
-| **total with the probe at its cap** | **≈ 81.06**, within 83.0 by ≈ 1.94 |
+| c2check's timing probe, job 60859504 (26:18, 1,578 s) | 0.438 |
+| **spent or committed, with the probe** | **≈ 80.00**, within 83.0 by ≈ 3.0 |
 
 **The ceiling raised to 83.0 node-h (the director's ruling of 2026-11-05).** It is an operational go-ahead within the
 standing grant, far below half the balance, and it covers the two runs above at their caps (81.84). Binding 3 resets

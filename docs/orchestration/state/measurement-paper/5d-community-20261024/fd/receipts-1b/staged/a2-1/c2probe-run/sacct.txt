@@ -1,0 +1,10 @@
+# sacct -j 60859504 -n -P -o JobID,JobName,State,Elapsed,Start,End,NodeList,NNodes,ExitCode,MaxRSS  (2026-11-05T19:3xZ; times local PST)
+60859504|fd1b_c2probe|COMPLETED|00:26:18|2026-11-05T07:41:02|2026-11-05T08:07:20|nid004541|1|0:0|
+60859504.batch|batch|COMPLETED|00:26:18|2026-11-05T07:41:02|2026-11-05T08:07:20|nid004541|1|0:0|290783056K
+60859504.extern|extern|COMPLETED|00:26:18|2026-11-05T07:41:02|2026-11-05T08:07:20|nid004541|1|0:0|
+# sacct -j 60859504 -X -n -P -o JobID,ElapsedRaw,TimelimitRaw,AllocTRES%80,Partition,QOS
+60859504|1578|90|billing=256,cpu=256,energy=516542,mem=487802M,node=1|regular_milan_ss11|regular_1
+# scontrol at submission (connect-c2probe.log): TimeLimit=01:30:00 QOS=regular_1 Partition=regular_milan_ss11 OverSubscribe=NO
+# iris m3246: at launch (login24, 15:33:38Z) balance 2005.3; after, 17997.6 / 20000.0 -> 2002.4
+# atime-pre.tsv / atime-post.tsv: every declared input file's atime by `find -printf %A@` (stat; moves no atime), on the
+#   login node at 15:33:38Z (before submission) and 16:08:53Z (after the job): 1147 files, 0 moved between them.
