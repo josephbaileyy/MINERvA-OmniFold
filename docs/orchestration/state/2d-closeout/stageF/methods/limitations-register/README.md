@@ -135,3 +135,73 @@ must no longer print, and the row's class, status, quote and route. The run fail
   - Q08: "no correction to CH" no longer prints; only the explanation of the target difference does.
   - Q10: what prints is a scope sentence about comparisons outside the sixteen cells.
 - **Q02's route** now records that VI A states the earlier fixed-truth failure.
+
+## Refresh for 2026-11-05's outcomes
+
+**Asked for by** the director: the register's rows for the day's outcomes, as a PR the director updates the page from. The live page was not edited in this round. One earlier edit to it is disclosed at the end.
+
+**The outcomes:**
+- **B4, the stabilisation probe: NONE_PASS.** None of its three estimator changes brought the rounding-scale spread under its predeclared bar without worsening bias. The verdict is terminal: no estimator change, and 1B stage 1 launches on configuration (e) (`OUTCOME-20261105-fd-stab-none-pass.md`, #785).
+- **COV2D binding 2:** the 2D coverage amendment's code, job scripts and pilot are bound (`COV2D-BINDING-2.md`).
+- **REF-G1 bindings 1 and 2:** the sixteen-cell binned head-to-head is bound. Its preconditions passed (#775), its batch passed all 233 units (#790), and its bars were committed before the central difference (#791).
+- **REF-C2C1 binding 1:** the binned cross-check of the 2D shape difference is bound. Its preconditions are listed (#779; the FAIL verdict there is a listing-design error and does not block), C-DRAW passed (#784), and its code (#787) is audited, awaiting a cluster test receipt.
+
+**Rebuilt:** `limitations.json` and `limitations-detail.json`, by `build_register.py` from the note at main `9d69945e` (its route-record check passed). `paper-rows.json` is NOT rebuilt (see below).
+
+### Rows whose status or route changed
+
+Every status change is this lane's proposal for the director and Joseph.
+
+- **n22** (items.tsv `cov16`; paper q01). Status: in progress (unchanged). New route:
+  > The 1B stage-1 redesign (DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md item 3a), reopened as an investigation of gate D (DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md item 1; gate D FAIL, FD-1B-STAGE2-REPORT.md; NOT LOCALIZED, FD-1B-DIAG-REPORT.md). A coverage result that lands replaces this statement (DECISION-20261102 item 2). The stabilisation probe B4 tested three estimator changes (2-fold cross-fitting and two tree-regularisation settings); none brought the rounding-scale spread under its predeclared bar without worsening bias, so its verdict is NONE_PASS, which is terminal (OUTCOME-20261105-fd-stab-none-pass.md, under DECISION-20261102-joseph-bias-and-stabilisation-routes.md). No estimator change follows from B4, so 1B stage 1 launches on configuration (e) as planned, after its binding 3.
+- **n17** (items.tsv `stat2d`; paper q02). Status: fix decided → **in progress**. New route:
+  > The 2D method-coverage campaign: a held-out-tune ensemble with the covariance remade at each truth, priced first (DECISION-20261102-joseph-quadrant-sentence-sec4-and-validations.md item 3c; KNOWN_ISSUES 85). The earlier band's fixed-truth failure (OUTCOME-20261005-2d-fixed-truth-coverage-fail.md, VL169) is permanent and stays disclosed. Bound and under way: COV2D binding 2 (2026-11-05) binds the amendment's code, job scripts and pilot; the order is the G18 pseudo-data job, then the pilot and its readout, then the bulk, within a 165.8 CPU node-h cap.
+- **n54** (items.tsv `stab`; paper q33). Status: open → **inherent**. New route:
+  > Rounding instability of the data unfold, which the bootstrap already carries (KNOWN_ISSUES 80, absorption measured). The stabilisation probe B4 tested three estimator changes (2-fold cross-fitting and two tree-regularisation settings); none brought the rounding-scale spread under its predeclared bar without worsening bias, so its verdict is NONE_PASS, which is terminal (OUTCOME-20261105-fd-stab-none-pass.md, under DECISION-20261102-joseph-bias-and-stabilisation-routes.md). The paper's rounding-instability statement stays as stated. Can be stated once (paper q33, M).
+- **n34** (items.tsv `shape2d`; paper q21). Status: inherent (unchanged). New route:
+  > The source of the correlated shape difference is not identified. A route is now declared and bound (REF-C2C1 step one, 2026-11-05): a binned IBU unfolding of this analysis's own 2D inputs, paired with E_R, reads by rules fixed in advance whether the difference sits on the input side or the algorithm side, or stays unresolved. It can locate the difference by one level, not name its cause, and it says nothing about equality with the publication's intermediate stages, which the B-C component accounting found missing from the release (component-accounting REPORT.md). Its inputs are listed, the replica check C-DRAW passed (Q_R's 300 existing replicas are reused), and its code (PR #787) is audited, awaiting a cluster test receipt and step two. (paper q21).
+- **n74** (items.tsv `power`; paper —). Status: inherent (unchanged). New route:
+  > Power statements of the terminal joint tests (RECORD-20261005-s5p-joint-5d-inference-result.md). A binned head-to-head at the sixteen reporting cells (REF-G1) is bound and run: binned IBU beside configuration (e) on the same data, cells and weight-only systematics, with paired replicas and readings fixed in advance. Its batch passed all 233 units, and its agree/differ thresholds were committed before the central difference was formed. Whatever it reads, it does not license a claim that the five-observable method adds discrimination.
+- **Q01** (paper-rows.tsv `Q01`; paper Q01). Status: in progress (unchanged). New route:
+  > 1B staged method coverage: stage 0 PASS (#679); stage 1 stopped at its weight guard 11-02 (0 node-h); redesign approved (#690 item 3a). Still printed in the abstract, Sec. I and VI A after #695. The stabilisation probe B4 tested three estimator changes (2-fold cross-fitting and two tree-regularisation settings); none brought the rounding-scale spread under its predeclared bar without worsening bias, so its verdict is NONE_PASS, which is terminal (OUTCOME-20261105-fd-stab-none-pass.md, under DECISION-20261102-joseph-bias-and-stabilisation-routes.md). No estimator change follows from B4, so 1B stage 1 launches on configuration (e) as planned, after its binding 3.
+- **Q02** (paper-rows.tsv `Q02`; paper Q02). Status: in progress (unchanged). New route:
+  > 2D method-coverage ensemble approved (#690 item 3c). Since #695, VI A also states the earlier fixed-truth failure (OUTCOME-20261005-2d-fixed-truth-coverage-fail.md), as #690 item 2 required. Bound and under way: COV2D binding 2 (2026-11-05) binds the amendment's code, job scripts and pilot; the order is the G18 pseudo-data job, then the pilot and its readout, then the bulk, within a 165.8 CPU node-h cap.
+- **Q15** (paper-rows.tsv `Q15`; paper Q15). Status: in progress (unchanged). New route:
+  > Same campaign as Q01 (1B stage-1 redesign). The stabilisation probe B4 tested three estimator changes (2-fold cross-fitting and two tree-regularisation settings); none brought the rounding-scale spread under its predeclared bar without worsening bias, so its verdict is NONE_PASS, which is terminal (OUTCOME-20261105-fd-stab-none-pass.md, under DECISION-20261102-joseph-bias-and-stabilisation-routes.md). No estimator change follows from B4, so 1B stage 1 launches on configuration (e) as planned, after its binding 3.
+- **Q21** (paper-rows.tsv `Q21`; paper Q21). Status: inherent (unchanged). New route:
+  > 2D shape difference vs the published result; source not identified. A route is now declared and bound (REF-C2C1 step one, 2026-11-05): a binned IBU unfolding of this analysis's own 2D inputs, paired with E_R, reads by rules fixed in advance whether the difference sits on the input side or the algorithm side, or stays unresolved. It can locate the difference by one level, not name its cause, and it says nothing about equality with the publication's intermediate stages, which the B-C component accounting found missing from the release (component-accounting REPORT.md). Its inputs are listed, the replica check C-DRAW passed (Q_R's 300 existing replicas are reused), and its code (PR #787) is audited, awaiting a cluster test receipt and step two.
+- **Q23** (paper-rows.tsv `Q23`; paper Q23). Status: in progress (unchanged). New route:
+  > 2D method coverage (#690 item 3c); wording consolidated by #695. Bound and under way: COV2D binding 2 (2026-11-05) binds the amendment's code, job scripts and pilot; the order is the G18 pseudo-data job, then the pilot and its readout, then the bulk, within a 165.8 CPU node-h cap.
+- **Q33** (paper-rows.tsv `Q33`; paper Q33). Status: open → **inherent**. New route:
+  > Rounding instability of the data unfold. The stabilisation probe B4 tested three estimator changes (2-fold cross-fitting and two tree-regularisation settings); none brought the rounding-scale spread under its predeclared bar without worsening bias, so its verdict is NONE_PASS, which is terminal (OUTCOME-20261105-fd-stab-none-pass.md, under DECISION-20261102-joseph-bias-and-stabilisation-routes.md). The paper's rounding-instability statement stays as stated.
+- **Q39** (paper-rows.tsv `Q39`; paper Q39). Status: in progress (unchanged). New route:
+  > 1B stop disclosure: superseded when the staged campaign reports The stabilisation probe B4 tested three estimator changes (2-fold cross-fitting and two tree-regularisation settings); none brought the rounding-scale spread under its predeclared bar without worsening bias, so its verdict is NONE_PASS, which is terminal (OUTCOME-20261105-fd-stab-none-pass.md, under DECISION-20261102-joseph-bias-and-stabilisation-routes.md). No estimator change follows from B4, so 1B stage 1 launches on configuration (e) as planned, after its binding 3.
+
+**Why the status changes are proposed:**
+- **Rounding instability (n54, Q33): open → inherent.** B4's terminal NONE_PASS leaves no declared route to remove it from the kept estimator. The statement stays, can still be stated once (class M), and the bootstrap already carries it.
+- **2D method coverage (n17): fix decided → in progress.** The campaign is bound, with its code, job scripts and pilot sequence (COV2D binding 2).
+- **The 2D shape difference (n34, Q21) stays inherent.** REF-C2C1 can locate the difference by one level, not name its cause, so it narrows the statement rather than closing it. The old route's "no route is recorded" is no longer true, and is replaced.
+
+### Rows whose location only changed (the note moved since `108040f8`)
+
+- n53: `sec_5d.tex:83` → `sec_5d.tex:84`
+- n55: `sec_5d.tex:107` → `sec_5d.tex:108`
+- n56: `sec_5d.tex:146` → `sec_5d.tex:147`
+- n59: `sec_fived16.tex:43` → `sec_fived16.tex:91`; section §10 The sixteen-cell five-observable measurement > §10.1 Cells and result → §10 The sixteen-cell five-observable measurement > §10.2 Quadrant sums against the lower-dimensional results
+- n60: `sec_fived16.tex:57` → `sec_fived16.tex:105`; section §10 The sixteen-cell five-observable measurement > §10.2 The reported covariance → §10 The sixteen-cell five-observable measurement > §10.3 The reported covariance
+- n61: `sec_fived16.tex:120` → `sec_fived16.tex:168`; section §10 The sixteen-cell five-observable measurement > §10.2 The reported covariance → §10 The sixteen-cell five-observable measurement > §10.3 The reported covariance
+- n62: `sec_fived16.tex:127` → `sec_fived16.tex:180`; section §10 The sixteen-cell five-observable measurement > §10.3 The run-period block → §10 The sixteen-cell five-observable measurement > §10.4 The run-period block
+- n63: `sec_fived16.tex:134` → `sec_fived16.tex:187`; section §10 The sixteen-cell five-observable measurement > §10.4 Fake-data tests of the estimator's bias → §10 The sixteen-cell five-observable measurement > §10.5 Fake-data tests of the estimator's bias
+- n64: `sec_fived16.tex:163` → `sec_fived16.tex:216`; section §10 The sixteen-cell five-observable measurement > §10.4 Fake-data tests of the estimator's bias → §10 The sixteen-cell five-observable measurement > §10.5 Fake-data tests of the estimator's bias
+- n65: `sec_fived16.tex:167` → `sec_fived16.tex:220`; section §10 The sixteen-cell five-observable measurement > §10.4 Fake-data tests of the estimator's bias → §10 The sixteen-cell five-observable measurement > §10.5 Fake-data tests of the estimator's bias
+- n66: `sec_fived16.tex:204` → `sec_fived16.tex:258`; section §10 The sixteen-cell five-observable measurement > §10.5 Comparison with generator predictions → §10 The sixteen-cell five-observable measurement > §10.6 Comparison with generator predictions
+- n67: `sec_fived16.tex:262` → `sec_fived16.tex:316`; section §10 The sixteen-cell five-observable measurement > §10.5 Comparison with generator predictions → §10 The sixteen-cell five-observable measurement > §10.6 Comparison with generator predictions
+- n54 (also changed above): `sec_5d.tex:90` → `sec_5d.tex:91`
+
+### The paper rows: routes and statuses only
+
+`relocate_paper.py` fails at main `9d69945e`: five rows' phrases no longer print after the later paper rounds (Q31, Q32, Q39, Q40, Q43). So `paper-rows.json` keeps its 11-02 locations, and only `paper-rows.tsv`'s routes and statuses change here. The page's paper locations stand as the director's 11-04 re-anchor set them. Re-anchoring Q01–Q44 to the current paper is a separate task.
+
+### Disclosure: one live-page edit earlier today
+
+Before the director's instruction not to edit the page, this lane changed row q21's route on the page (version 6 → 7), replacing "Code next (after REF-G1)." with "Code written (PR #787, 11-05): binned IBU in E_R's own driver, 17 tests, 22 mutants; code audit pending, then step two." That text is now superseded by the Q21 route above.
