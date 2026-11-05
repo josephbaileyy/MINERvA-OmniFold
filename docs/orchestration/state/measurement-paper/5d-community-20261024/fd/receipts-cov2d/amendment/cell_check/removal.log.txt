@@ -1,0 +1,31 @@
++ hostname
+login02
++ date -u +%FT%TZ
+2026-11-04T23:17:56Z
++ ls -la /dev/shm/josephrb-cov2d-cells
+total 16
+drwxrwx--- 2 josephrb josephrb  100 Nov  4 15:16 .
+drwxrwxrwt 3 root     root       80 Nov  4 15:16 ..
+-rw-rw---- 1 josephrb josephrb  435 Nov  4 15:16 blobs
+-rw-rw---- 1 josephrb josephrb 6078 Nov  4 15:16 cells.log
+-rw-rw---- 1 josephrb josephrb 1242 Nov  4 15:16 connect-cells.log
++ sha256sum /dev/shm/josephrb-cov2d-cells.sh
+8907839942b26ed33896c97ad416701de4186f1932eae2144f86e253ce128284  /dev/shm/josephrb-cov2d-cells.sh
++ rm -rf /dev/shm/josephrb-cov2d-cells
+rc_dir=0
++ echo rc_dir=0
++ rm -f /dev/shm/josephrb-cov2d-cells.sh
+rc_script=0
++ echo rc_script=0
++ ls /dev/shm
++ grep -c josephrb
+0
++ ps -u josephrb -o pid,args
++ cut -c1-100
+    PID COMMAND
+ 609154 /usr/lib/systemd/systemd --user
+ 609294 (sd-pam)
+ 631858 sshd: josephrb@notty
+ 631915 bash -c set -x; hostname; date -u +%FT%TZ; ls -la /dev/shm/josephrb-cov2d-cells; sha256sum /
+ 633748 ps -u josephrb -o pid,args
+ 633749 cut -c1-100

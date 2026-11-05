@@ -1,0 +1,96 @@
+Baseline: 97f1ff8deddddecfad07352ebb5df16377dd8e3c
+
+These are bounded source-inventory queries, not evidence about all public releases or current remote storage. No cluster query was made. Empty output is retained explicitly.
+
+$ git ls-files -- 2d-unfolding/minerva_paper_anc/
+2d-unfolding/minerva_paper_anc/README
+2d-unfolding/minerva_paper_anc/bin_mapping.txt
+2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV_energyscale.txt
+2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV_flux.txt
+2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV_stat.txt
+2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV_total.txt
+2d-unfolding/minerva_paper_anc/data_result_ptpl_2D_minerva_inclusive_6GeV.txt
+2d-unfolding/minerva_paper_anc/model_ptpl_minerva_inclusive_6GeV_MINERvA_Tune_v1.txt
+
+$ git ls-files -- 2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+(no tracked path matched)
+
+$ git ls-files -- docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/SHA256SUMS.txt
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/controls/SHA256SUMS.txt
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/controls/controls.json
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/controls/controls.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/controls/controls.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/controls/rpd_controls_connect.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/controls/verify-staged-6.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/SHA256SUMS.txt
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/fd_rpd_a_60786801.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/gate-rpd-a.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/jobA-submit.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/line0-60786801.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/line1-60786801.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/line2-60786801.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/line3-60786801.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/line4-60786801.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/line5-60786801.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/line6-60786801.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/line7-60786801.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/rpd_jobA_connect.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/sacct-60786801.txt
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/submit-a.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobA/verify-staged-5.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/SHA256SUMS.txt
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/fd_rpd_b_60788016.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/gate-rpd-b.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/jobB-submit.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/line0-60788016.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/line1-60788016.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/line2-60788016.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/line3-60788016.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/line4-60788016.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/line5-60788016.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/line6-60788016.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/line7-60788016.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/rpd_jobB_connect.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/sacct-60788016.txt
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/submit-b.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/jobB/verify-staged-7.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/SHA256SUMS.txt
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mw_1A_1M.json
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mw_diag_check_local.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mw_diag_load_check_local.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mw_diag_v1.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mw_diag_v2.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mwdiag-2.done
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mwdiag-2.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mwdiag-2.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mwdiag.done
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mwdiag.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/mwdiag.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/rpd_mwdiag2_connect.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/rpd_mwdiag_connect.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/verify-staged-8.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/mwdiag/verify-staged-9.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/readout/SHA256SUMS.txt
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/readout/fd_rpd.json
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/readout/readout.done
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/readout/readout.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/readout/readout.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/readout/rpd_readout_connect.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/readout/verify-staged-10.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/rpd_stage0_connect.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/rpd_stageD_connect.sh
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/stage0.json
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/stage0.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/stage0.out
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/stageD.json
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/stageD.log
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/run/stageD.out
+
+$ git ls-files -- docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-rpd/**/F1.json
+(no tracked path matched)
+
+$ git ls-files -- *GetFluxIntegral* *CCInclusiveSignal* *FluxAndCVReweighter*
+(no tracked path matched)
+
+Other source reads: Stage-A operands/analysis.json and inputs.json; RE-2 declared argv, preflight, checks, product digests and agreement receipt; RPD controls/readout and F1 consumer code; original playlist/flux accounting; the archival ANATUPLE-SHA256.tsv and destination DATA-SHA256SUMS; RPD-RECO declaration and design binding. Source identities and reading lines are in SOURCE-INVENTORY.tsv.

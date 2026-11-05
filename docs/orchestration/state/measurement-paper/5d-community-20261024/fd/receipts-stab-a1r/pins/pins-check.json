@@ -1,0 +1,76 @@
+{
+ "M": "cc54d86f7ac66c1346fa69e5894b2d2f000fb09c",
+ "addendum": "A1",
+ "bank": {
+  "bytes_read": 71581937610,
+  "digest_mismatches": [],
+  "dir": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "extra": [],
+  "missing": [],
+  "ok": true,
+  "pinned": 701,
+  "present": 701
+ },
+ "detector": {
+  "bytes_read": 2126455110,
+  "digest_mismatches": [],
+  "dir": "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector",
+  "extra": [],
+  "missing": [],
+  "ok": true,
+  "pinned": 33,
+  "present": 33
+ },
+ "files": {
+  "bkg": {
+   "bytes": 16017201,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+   "pin": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955",
+   "pin_source": "s1_assemble.BKG_SHA256",
+   "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"
+  },
+  "closure_ratio": {
+   "bytes": 547429,
+   "declared_kind": "SCHEMA",
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json",
+   "pin": "38e47eb6b6ac63f6657022ae0cc5a2b5eaffc6a2e503735ce7222275771fea6e",
+   "pin_source": "fd_f0_regrade.RATIO['closure_nuwro']",
+   "schema": "pvl-ratio/1",
+   "sha256": "38e47eb6b6ac63f6657022ae0cc5a2b5eaffc6a2e503735ce7222275771fea6e",
+   "truth_kind": "pvl_ratio",
+   "truth_kind_required": "pvl_ratio"
+  },
+  "f0b_product": {
+   "bytes": 188455,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_nuwro.npz",
+   "pin": "fff9030e7fd63c538b27c58f2a35417b5d28c3d2f6de2880219b181812215182",
+   "pin_source": "fd_f0_regrade.PINS['closure']",
+   "sha256": "fff9030e7fd63c538b27c58f2a35417b5d28c3d2f6de2880219b181812215182"
+  },
+  "npz": {
+   "bytes": 1548438020,
+   "ok": true,
+   "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+   "pin": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+   "pin_source": "s1_assemble.INPUT_NPZ_SHA256",
+   "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f"
+  }
+ },
+ "host": "dtn01.nersc.gov",
+ "inventory": {
+  "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/s1/PRESERVE-INVENTORY.sha256",
+  "rows": 734,
+  "sha256": "cde96ca78f732c0aa42bcde5b437fbd8ff331568668623a02bedd23695e4861f"
+ },
+ "pinned_dir_files": 734,
+ "rule": "every read O_NOATIME; files against committed pins; each directory exactly its pinned set",
+ "schema": "fd-stab-pins-check/2",
+ "seconds": 121.7,
+ "started_utc": "2026-11-04T23:49:46Z",
+ "verdict": "PASS",
+ "written_epoch": 1793836308.5957067,
+ "written_utc": "2026-11-04T23:51:48Z"
+}

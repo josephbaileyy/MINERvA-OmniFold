@@ -1,0 +1,17 @@
+node dtn01.nersc.gov nproc=48 loadavg 7.33 6.80 7.16
+2026-11-04T23:49:12Z
+check script sha256 33d3d782ccf196c012e5f4d1eeb5b1b6a54c4e854f4a19082c5044e0d2b17ac8
+HEAD cc54d86f7ac66c1346fa69e5894b2d2f000fb09c; porcelain --ignored lines: 0
+bound blobs: 7 checked, 0 mismatches; declaration sha256 6c91c0ccbb8061c0dfe755f2283ecbf0f12ba001737876df09f8882eca4ca2b4; addendum A1 sha256 277f6c799aca808315ce519f427007b7dec5da0c514dc5d0c229841ec01e23b2
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1; nice 19; ionice idle
+npz: == pin (1548438020 bytes)
+bkg: == pin (16017201 bytes)
+closure ratio: == pin; schema 'pvl-ratio/1' -> pvl_ratio (required pvl_ratio)
+F0b closure product: == pin (188455 bytes)
+bank: 701 pinned, 701 present, extra 0, missing 0, mismatches 0, 71581937610 bytes
+detector: 33 pinned, 33 present, extra 0, missing 0, mismatches 0, 2126455110 bytes
+{"verdict": "PASS", "wrote": "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/pins/pins-check.json", "sha256": "2e0a0b2100ac72a9b733e4cf3b4f2b5f76ff5e43bc94a4c1a8ef91ce451410f9"}
+pins check python rc=0
+porcelain --ignored lines after: 0
+pins check rc=0
+2026-11-04T23:51:50Z
