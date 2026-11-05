@@ -58,10 +58,22 @@ KILLED  jobs/cov2d_submit.sh: F3 the deploy's own binding read
 KILLED  jobs/cov2d_submit.sh: F3 the binding's name check skipped
 KILLED  jobs/cov2d_submit.sh: F3 M matched anywhere in the binding
 KILLED  jobs/cov2d_submit.sh: F3 a failed fetch admitted
+KILLED  cov2d_pseudo.py: A2 step A reads and guards the shared originals
+KILLED  cov2d_pseudo_write.py: A2 step B guards the shared originals
+KILLED  cov2d_pseudo.py: A2 step A guard values not recorded
+KILLED  cov2d_pseudo_write.py: A2 step B guard values not recorded
+KILLED  cov2d.py: A2 staging pin unchecked
+KILLED  cov2d_pseudo.py: A2 quota check skipped
+KILLED  cov2d.py: A2 headroom at 1x
+KILLED  cov2d_pseudo_write.py: A2 ROOT reads the staged copies
+KILLED  jobs/cov2d_env.sh: A2 AR23 reruns into its old directory
+KILLED  jobs/cov2d_jobs.py: A2 AR23's limit 03:00:00
+KILLED  jobs/cov2d_jobs.py: A2 deletion without the stat match
+KILLED  cov2d.py: A2 shared atime not recorded
 KILLED  jobs/cov2d_jobs.py: gate passes everything
 KILLED  cov2d_pilot.py: pilot compare at 1e-6
 KILLED  cov2d_pilot.py: REPRICE at 2x
 KILLED  cov2d_pilot.py: P2 a failed run is not INVALID
 KILLED  cov2d_pilot.py: P2 a missing class is not INVALID
-killed 65 of 65
+killed 77 of 77
 harness rc=0

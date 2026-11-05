@@ -4,8 +4,8 @@ scratchpad with an interpreter that has PyROOT, uproot and numpy:
 Each mutant rewrites one line of one file, runs that file's test modules (python -m unittest, from the tests
 directory), and restores it. A kill counts only on a test failure (rc != 0). Each mutant's text must occur once; a
 mutant whose text does not match counts as not killed. The run exits 1 unless every mutant run is killed, and names any
-REQUIRED mutant (the director's rulings on the final audit's F1 and F2, on F3, and of 2026-11-05 on the blocks' reads
-through O_NOATIME) that was not."""
+REQUIRED mutant (the director's rulings on the final audit's F1 and F2, on F3, of 2026-11-05 on the blocks' reads
+through O_NOATIME, and addendum A2's) that was not."""
 import os
 import shutil
 import subprocess
@@ -16,7 +16,7 @@ WT = Path(sys.argv[1])
 D = WT / "2d-unfolding/cov2d"
 T = D / "tests"
 J = "jobs/cov2d_jobs.py"
-TESTS = {"cov2d.py": ["test_cov2d"], "jobs/cov2d_submit.sh": ["test_cov2d_jobs"], "cov2d_pseudo.py": ["test_cov2d_pseudo"], "cov2d_pseudo_write.py": ["test_cov2d_pseudo_write"],
+TESTS = {"cov2d.py": ["test_cov2d"], "jobs/cov2d_submit.sh": ["test_cov2d_jobs"], "jobs/cov2d_env.sh": ["test_cov2d_jobs"], "cov2d_pseudo.py": ["test_cov2d_pseudo"], "cov2d_pseudo_write.py": ["test_cov2d_pseudo_write"],
          "cov2d_blocks.py": ["test_cov2d_blocks"], "cov2d_null.py": ["test_cov2d_null"],
          "cov2d_score.py": ["test_cov2d_score"], "cov2d_readouts.py": ["test_cov2d_readouts"],
          J: ["test_cov2d_jobs"], "cov2d_pilot.py": ["test_cov2d_pilot"]}
@@ -112,6 +112,31 @@ M = [
      'grep -qF "$M" <<<"$bind"'),
     ("jobs/cov2d_submit.sh", "F3 a failed fetch admitted", 'git -C "$C" fetch -q origin main ||',
      'git -C "$C" fetch -q origin main || true ||'),
+    ("cov2d_pseudo.py", "A2 step A reads and guards the shared originals",
+     'copy = {k: v["path"] for k, v in rec["staged"].items()}', 'copy = {k: v["src"] for k, v in rec["staged"].items()}'),
+    ("cov2d_pseudo_write.py", "A2 step B guards the shared originals",
+     'staged = {k: v["path"] for k, v in rec["staged"].items()}', 'staged = {k: v["src"] for k, v in rec["staged"].items()}'),
+    ("cov2d_pseudo.py", "A2 step A guard values not recorded",
+     'rec["atime_moved"], rec["atime_ns"] = c.atime_guard(before, c.atime_ns(copy.values()))',
+     'rec["atime_moved"] = c.atime_guard(before, c.atime_ns(copy.values()))[0]'),
+    ("cov2d_pseudo_write.py", "A2 step B guard values not recorded",
+     'rec["atime_moved"], rec["atime_ns"] = c.atime_guard(before, c.atime_ns(staged.values()))',
+     'rec["atime_moved"] = c.atime_guard(before, c.atime_ns(staged.values()))[0]'),
+    ("cov2d.py", "A2 staging pin unchecked", "    if want is not None and got != want:\n        dst.unlink()",
+     "    if False:\n        dst.unlink()"),
+    ("cov2d_pseudo.py", "A2 quota check skipped", '    if bad:\n        raise c.Refusal(f"before staging',
+     '    if False:\n        raise c.Refusal(f"before staging'),
+    ("cov2d.py", "A2 headroom at 1x", "STAGE_HEADROOM = 2.0", "STAGE_HEADROOM = 1.0"),
+    ("cov2d_pseudo_write.py", "A2 ROOT reads the staged copies",
+     'copies = {k: copy_noatime(p, Path(td), None if a.no_pins else PINS[k][1]) for k, p in staged.items()}',
+     'copies = {k: (Path(p), rec["staged"][k]["sha256"]) for k, p in staged.items()}'),
+    ("jobs/cov2d_env.sh", "A2 AR23 reruns into its old directory", 'AR23) echo "$O/pseudo/AR23-a2"',
+     'AR23) echo "$O/pseudo/AR23"'),
+    (J, "A2 AR23's limit 03:00:00", 'PSEUDO_LIMITS = {"G18": "03:00:00", "AR23": "04:00:00"}',
+     'PSEUDO_LIMITS = {"G18": "03:00:00", "AR23": "03:00:00"}'),
+    (J, "A2 deletion without the stat match", "            if match:\n                os.remove(p)",
+     "            if True:\n                os.remove(p)"),
+    ("cov2d.py", "A2 shared atime not recorded", '"src_atime_ns": {"before": before, "after": after}', '"src_atime_ns": {}'),
     (J, "gate passes everything", '"cap": CAP_NODE_H, "pass": total <= CAP_NODE_H}', '"cap": CAP_NODE_H, "pass": True}'),
     ("cov2d_pilot.py", "pilot compare at 1e-6", 'cmp_["pass"] = cmp_["max_rel"] <= k1.TOL and cmp_["same_cell_set"]',
      'cmp_["pass"] = cmp_["max_rel"] <= 1e-6 and cmp_["same_cell_set"]'),
@@ -125,7 +150,12 @@ REQUIRED = {"F2 bulk despite REPRICE", "F2 no REPRICE list read as none", "F1 or
             "F1 a dirty deploy admitted", "F1 the pseudo record without M", "F1 the pilot record without M",
             "F3 the deploy's own binding read", "F3 the binding's name check skipped", "F3 a failed fetch admitted",
             "F3 M matched anywhere in the binding",
-            "open audit off", "blocks without noatime_inputs before the rollup"}
+            "open audit off", "blocks without noatime_inputs before the rollup",
+            "A2 step A reads and guards the shared originals", "A2 step B guards the shared originals",
+            "A2 step A guard values not recorded", "A2 step B guard values not recorded", "A2 staging pin unchecked",
+            "A2 quota check skipped", "A2 headroom at 1x", "A2 ROOT reads the staged copies",
+            "A2 AR23 reruns into its old directory", "A2 AR23's limit 03:00:00", "A2 deletion without the stat match",
+            "A2 shared atime not recorded"}
 if sys.argv[2:]:
     unknown = set(sys.argv[2:]) - {m[1] for m in M}
     assert not unknown, f"no such mutant: {sorted(unknown)}"
