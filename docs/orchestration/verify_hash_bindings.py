@@ -477,8 +477,15 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   nd-unfolding/pet/event_identity.py                                                  b921abf0
 #: Power-tested before the bump: one flipped hex digit in that config's did.py sha256 gives MISMATCH, rc 1.
 #: Delta and controls: docs/orchestration/state/measurement-scoping/r10/binding-delta.txt.
-RECEIPT_BINDING_COUNT = 157
-RECEIPT_BINDING_SHA256 = "9abec558ae75063890fe50ed98c44787c597761719d8d09e87802c64cfe98d9d"
+#: 157 -> 158, digest 9abec558 -> e718853b (2026-11-05, the B4 dry-run receipts under FD-STAB A1). The DTN pins record
+#: (state/measurement-paper/5d-community-20261024/fd/receipts-stab-a1r/pins/pins-check.json) pins the inventory it read.
+#: Enumerated before the constant moved (receipt_inventory() rows with and without that receipts directory on the
+#: branch): one ADDED, nothing removed or repointed, OK:
+#:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/s1/PRESERVE-INVENTORY.sha256 cde96ca7
+#: Power-tested before the bump: one flipped hex digit in that record's inventory sha256 gives MISMATCH, rc 1.
+#: Delta and controls: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-stab-a1r/binding-delta.txt.
+RECEIPT_BINDING_COUNT = 158
+RECEIPT_BINDING_SHA256 = "e718853bc5b282240e089f56f707f2a7e76fc623aebf6eb6e353ac8ae12cdc37"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

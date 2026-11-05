@@ -1,0 +1,42 @@
+{
+ "schema": "fd-stab-truth-control/1",
+ "task": "stab_control_closure_closure_nuwro",
+ "ratio": {
+  "path": "/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json",
+  "sha256": "38e47eb6b6ac63f6657022ae0cc5a2b5eaffc6a2e503735ce7222275771fea6e"
+ },
+ "f0b_product": {
+  "path": "/pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_closure_nuwro.npz",
+  "sha256": "fff9030e7fd63c538b27c58f2a35417b5d28c3d2f6de2880219b181812215182"
+ },
+ "C1": {
+  "rows": 32849103,
+  "shape_matches": true,
+  "rows_differing": 0,
+  "rows_reweighted": 31545149,
+  "pass": true
+ },
+ "C2": {
+  "cells": 65856,
+  "shape_matches": true,
+  "nonzero_cells": 10694,
+  "zero_pattern_differs": 0,
+  "bitwise": true,
+  "max_rel": 0.0,
+  "median_rel": 0.0,
+  "tolerance": 1e-12,
+  "pass": true
+ },
+ "C3": {
+  "cells": 65856,
+  "shape_matches": true,
+  "nonzero_cells": 10694,
+  "zero_pattern_differs": 295,
+  "bitwise": false,
+  "max_rel": 1.0,
+  "median_rel": 2.220446049250313e-16,
+  "descriptive": "the probe's half-B truth (x2) against F0b's full-MC truth"
+ },
+ "pass": true,
+ "code_sha256": "37ff9d028e53685db1c5adc606061235b21e5cb8a86752f5f0f987e6851dd9b0"
+}
