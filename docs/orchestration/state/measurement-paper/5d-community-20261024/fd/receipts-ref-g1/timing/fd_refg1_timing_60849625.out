@@ -1,0 +1,9 @@
+[refg1t] porcelain --ignored lines before: 0
+[refg1t] start 2026-11-05T11:11:03Z job=60849625 node=nid006293 nproc=256
+[refg1t] interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+[refg1t] unit rc=0 wall_s=64.6 end=2026-11-05T11:12:14Z
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:04.58
+	Maximum resident set size (kbytes): 7325848
+	Exit status: 0
+{"unit": "universe_Flux_0", "seconds": 27.151}
+[refg1t] porcelain --ignored lines after: 0

@@ -1,0 +1,20 @@
+node login04 nproc=244 loadavg 3.64 2.82 2.79
+2026-11-05T11:04:24Z
+connect script sha256 d332662e7f5806f7381ad82d99b5bd12b20d6ec84eb1e215cf71ec71e4c6d977
+== iris
+m3246               2199.0            10000.0     17990.0      20000.0
+balance_node_h=2010.0 half=1005.0 price=0.75
+HEAD 609d8f24ea2229fa4b3540627aa8c31acfcc0a54; porcelain --ignored lines before: 0
+bound blobs: 5 checked, 0 mismatches
+refg1_timing_job.sbatch sha256 3bd7a60a446ccd0dc6bec0c408b98b0675cede02a12abda5177744b592052945
+squeue --me before:
+60848251 cov2d-pseudo_G18 RUNNING
+2026-11-05T11:04:59Z
+sbatch rc=0
+Submitted batch job 60849625
+timing job 60849625
+scontrol TimeLimit=00:45:00 (declared 00:45:00)
+60849625 fd_refg1_timing PENDING 0:00 45:00 1 regular_1 m3246
+porcelain --ignored lines after submission: 0
+refg1 timing submit rc=0
+2026-11-05T11:05:07Z
