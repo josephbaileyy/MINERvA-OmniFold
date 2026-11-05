@@ -159,6 +159,40 @@ class Replicas(unittest.TestCase):
 
 
 class Units(unittest.TestCase):
+    def test_gibu1_runs_only_in_ibu1s_environment(self):
+        env = G.environment()
+        for version, rc in ((env["python_version"], 0), (env["python_version"] + " (another build)", G.RC_GATE)):
+            tmp = Path(tempfile.mkdtemp())
+            try:
+                run = copy.copy(RUN)
+                run.cfg = cfg_with(gibu1_environment={**CFG["gibu1_environment"], "interpreter": env["interpreter"],
+                                                      "python_version": version})
+                with self.subTest(rc=rc):
+                    self.assertEqual(G.run_unit(run, ("gibu1",), tmp), rc)
+                    self.assertEqual((tmp / "gibu1.npz").exists(), rc == 0)
+                    if rc == 0:
+                        _, meta = R.load(tmp / "gibu1.npz")
+                        self.assertEqual(meta["environment"], env)
+            finally:
+                shutil.rmtree(tmp)
+        self.assertEqual(CFG["gibu1_environment"]["python_version"][:7], "3.11.14")
+
+    def test_a_unit_that_failed_g_draw_is_never_done(self):
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            failed = {"checks": {"keep_observed": False}, "pass": False}
+            with mock.patch.object(G, "g_draw", lambda *a, **k: failed):
+                self.assertEqual(G.run_unit(RUN, ("replica", 4), tmp), G.RC_DRAW)
+            self.assertEqual(json.loads((tmp / "replica_b4.done").read_text())["verdict"], "FAIL")
+            before = G.sha256(tmp / "replica_b4.npz")
+            self.assertEqual(G.run_unit(RUN, ("replica", 4), tmp), G.RC_DRAW)  # refused, not skipped with rc 0
+            self.assertEqual(G.sha256(tmp / "replica_b4.npz"), before)
+            self.assertEqual(G.run_unit(RUN, ("replica", 5), tmp), 0)
+            self.assertEqual(json.loads((tmp / "replica_b5.done").read_text())["verdict"], "PASS")
+            self.assertEqual(G.run_unit(RUN, ("replica", 5), tmp), 0)  # a PASS unit is skipped
+        finally:
+            shutil.rmtree(tmp)
+
     def test_the_cv_universe_is_the_central_bitwise(self):
         a, _ = RUN.central()
         b, meta = RUN.universe("CV", "-")
@@ -417,6 +451,31 @@ class Readings(unittest.TestCase):
         finally:
             fx.close()
 
+    def test_bars_from_another_reader_or_config_are_refused(self):
+        fx = Fixture()
+        try:
+            fx.bars()
+            p = fx.out / "bars.json"
+            good = json.loads(p.read_text())
+            for key in ("reader_sha256", "config_sha256"):
+                with self.subTest(key=key):
+                    p.write_text(json.dumps({**good, key: "0" * 64}))
+                    with self.assertRaises(R.Refused):
+                        fx.read(sha=G.sha256(p))
+                    self.assertFalse((fx.out / "readout.json").exists())
+            p.write_text(json.dumps(good))
+            self.assertIn("R1", fx.read(sha=G.sha256(p)))  # silent on a match
+        finally:
+            fx.close()
+
+    def test_the_batch_weighted_covariance_is_s1s_mat_cov(self):
+        rng = np.random.default_rng(9)
+        Y = rng.standard_normal((5, 100, 16))
+        w = rng.uniform(0.5, 1.5, 100)
+        got = R.weighted_cov_batch(Y, w)
+        for m in range(5):
+            np.testing.assert_allclose(got[m], LIB.s1a.mat_cov(Y[m], w), rtol=1e-12, atol=1e-15)
+
     def test_r1_reads_agree_on_no_difference_and_differ_on_a_large_one(self):
         for shift, want in ((0.0, "agree"), (0.2, "differ")):
             fx = Fixture(shift=shift)
@@ -479,7 +538,33 @@ class Controls(unittest.TestCase):
     def control(self, fx, name):
         fx.bars()
         rec = fx.read()
+        if not rec["controls"][name]["pass"]:  # §3.3: a failed control stops the run, with no reading written
+            self.assertTrue(rec.get("stopped"))
+            self.assertIn(name, rec["stopped_by"])
+            self.assertFalse((fx.out / "readout.json").exists())
+            self.assertTrue((fx.out / "STOP.json").exists())
         return rec["controls"][name]
+
+    def test_a_failed_control_stops_the_run_with_no_readings(self):
+        fx = Fixture()
+        try:
+            arrays, meta = R.load(fx.run / "replica_b2.npz")
+            (fx.run / "replica_b2.npz").unlink()
+            G.ibu1.write(fx.run / "replica_b2.npz", arrays, {**meta, "g_draw": {"pass": False}})
+            fx.bars()
+            rec = fx.read()
+            self.assertEqual(rec["stopped_by"], ["G-draw"])
+            self.assertNotIn("R1", rec)
+            self.assertFalse((fx.out / "readout.json").exists())
+            stop = json.loads((fx.out / "STOP.json").read_text())
+            self.assertEqual(stop["stopped_by"], ["G-draw"])
+            argv = ["read", "--run", str(fx.run), "--bars", str(fx.out / "bars.json"), "--bars-sha256",
+                    G.sha256(fx.out / "bars.json"), "--out", str(fx.out / "readout.json")]
+            with mock.patch.object(R, "read", lambda *a, **k: rec), mock.patch.object(G, "Lib", lambda cfg: LIB), \
+                    mock.patch.object(LIB.s1a, "flux_weights", lambda path: fx.wflux):
+                self.assertEqual(R.main(argv), 1)
+        finally:
+            fx.close()
 
     def test_g_cv_fires_on_either_variant(self):
         for key in ("F_fold", "F_sub"):

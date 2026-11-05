@@ -268,6 +268,21 @@ class Run:
         return arrays, {"variants": diag, "closure": name, "ratio_sha256": self.cfg["ratios"]["sha256"][name]}
 
 
+def environment() -> dict:
+    import scipy
+    return {"interpreter": sys.executable, "python_version": sys.version, "numpy": np.__version__,
+            "scipy": scipy.__version__}
+
+
+def gibu1_environment(cfg: dict) -> tuple[bool, dict]:
+    """G-IBU1 is bitwise, so the gibu1 unit runs only in IBU-1's recorded environment: the interpreter and Python
+    version of IBU-1's D_N unit (config.json gibu1_environment, cited to IBU-1's guard inventory). IBU-1 recorded no
+    numpy or scipy version; this unit records its own."""
+    env = environment()
+    want = cfg["gibu1_environment"]
+    return (env["interpreter"], env["python_version"]) == (want["interpreter"], want["python_version"]), env
+
+
 def parse_units(cfg: dict, specs: list[str]) -> list[tuple]:
     """central | gibu1 | replica:B | replicas:A-B | universe:BAND:IDX | universe:CV | universes:all | vertex:NAME |
     closure:NAME; refuses anything the configuration does not declare."""
@@ -309,9 +324,22 @@ def unit_name(u: tuple) -> str:
 
 
 def run_unit(run: Run, u: tuple, out: Path) -> int:
+    """One unit. Its done-marker carries its control verdict; a unit is skipped only when that verdict is PASS, so a
+    product that failed G-draw is never taken as done on a rerun (it is refused, rc 6)."""
     target = out / f"{unit_name(u)}.npz"
+    marker = out / f"{unit_name(u)}.done"
     if target.exists():
-        return 0
+        verdict = json.loads(marker.read_text()).get("verdict") if marker.exists() else None
+        if verdict == "PASS":
+            return 0
+        print(f"refusing: {target.name} exists without a PASS done-marker (verdict {verdict})", file=sys.stderr)
+        return RC_DRAW
+    env = None
+    if u[0] == "gibu1":
+        ok, env = gibu1_environment(run.cfg)
+        if not ok:
+            print(f"refusing: gibu1 runs only in IBU-1's environment, not {env}", file=sys.stderr)
+            return RC_GATE
     t0 = time.time()
     try:
         arrays, meta = getattr(run, u[0])(*u[1:])
@@ -320,11 +348,15 @@ def run_unit(run: Run, u: tuple, out: Path) -> int:
         return RC_MOVED
     meta.update(schema="ref-g1-unit/1", unit=unit_name(u), ks=run.ks, seconds=round(time.time() - t0, 3),
                 code_sha256=run.cfg["code_sha256"], driver_sha256=sha256(Path(__file__).resolve()),
-                config_sha256=sha256(CONFIG), slurm_job=os.environ.get("SLURM_JOB_ID"))
+                config_sha256=sha256(CONFIG), slurm_job=os.environ.get("SLURM_JOB_ID"),
+                environment=env or environment())
+    passed = "g_draw" not in meta or meta["g_draw"]["pass"]
     ibu1.write(target, arrays, meta)
+    marker.write_text(json.dumps({"unit": meta["unit"], "verdict": "PASS" if passed else "FAIL",
+                                  "sha256": sha256(target)}) + "\n")
     print(json.dumps({"unit": meta["unit"], "seconds": meta["seconds"],
                       **({"g_draw": meta["g_draw"]["pass"]} if "g_draw" in meta else {})}), flush=True)
-    return RC_DRAW if "g_draw" in meta and not meta["g_draw"]["pass"] else 0
+    return 0 if passed else RC_DRAW
 
 
 def main(argv=None) -> int:

@@ -17,9 +17,14 @@ KILLED    G-draw passes anything                           by Replicas.test_g_dr
 KILLED    the reader ignores G-draw                        by Controls.test_g_draw_fires_on_one_failed_replica
 KILLED    the bars' sha256 unchecked                       by Readings.test_the_order_guard_and_the_bars_identity
 KILLED    the bars' products unchecked                     by Readings.test_the_order_guard_and_the_bars_identity
+KILLED    a failed control flagged and the run continued   by Controls.test_a_failed_control_stops_the_run_with_no_readings
+KILLED    the bars' reader and config unchecked            by Readings.test_bars_from_another_reader_or_config_are_refused
+KILLED    a unit skipped whatever its verdict              by Units.test_a_unit_that_failed_g_draw_is_never_done
+KILLED    the batch covariance centred unweighted          by Readings.test_the_batch_weighted_covariance_is_s1s_mat_cov
+KILLED    gibu1 run outside IBU-1's environment            by Units.test_gibu1_runs_only_in_ibu1s_environment
 KILLED    replica b paired with (e)'s b+1                  by Readings.test_r1_reads_agree_on_no_difference_and_differ_on_a_large_one
 KILLED    a universe paired with another index             by Readings.test_r1_reads_agree_on_no_difference_and_differ_on_a_large_one
 SURVIVED (expected; equivalent)           the jitter step skipped in g1's builder
 SURVIVED (expected; equivalent)           the IBU replica's jitter seed not (e)'s
-MUTATION CHECK :: PASS (21 mutations, 2 expected survivors)
+MUTATION CHECK :: PASS (26 mutations, 2 expected survivors)
 exit=0

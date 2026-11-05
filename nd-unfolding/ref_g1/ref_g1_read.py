@@ -147,6 +147,13 @@ def psd_root(C: np.ndarray) -> np.ndarray:
     return V * np.sqrt(np.clip(lam, 0, None))
 
 
+def weighted_cov_batch(Y: np.ndarray, w: np.ndarray) -> np.ndarray:
+    """S1's mat_cov (MAT CalcCovMx: weighted-mean-centred, over the weight sum) on a batch of draws, Y[m, n, p];
+    tested equal to ``s1_assemble.mat_cov`` draw by draw."""
+    Z = Y - (w[None, :, None] * Y).sum(axis=1, keepdims=True) / w.sum()
+    return np.einsum("mni,n,mnj->mij", Z, w, Z) / w.sum()
+
+
 def null_t(c_stat: np.ndarray, c_flux: np.ndarray, w_flux: np.ndarray, c_fixed: np.ndarray, n_rep: int, draws: int,
            seed: int, batch: int, norm: float, resample_flux: bool = True) -> np.ndarray:
     """T* under 'no difference' at the realized blocks (decision item 2). Delta* ~ N(0, C_stat + C_flux + C_fixed);
@@ -166,8 +173,7 @@ def null_t(c_stat: np.ndarray, c_flux: np.ndarray, w_flux: np.ndarray, c_fixed: 
         C = np.einsum("mni,mnj->mij", Z, Z) / (n_rep - 1)
         if resample_flux:
             Y = rng.standard_normal((m, w.size, p)) @ r_flux.T
-            Y -= (w[None, :, None] * Y).sum(axis=1, keepdims=True) / w.sum()
-            C += np.einsum("mni,n,mnj->mij", Y, w, Y) / w.sum()
+            C += weighted_cov_batch(Y, w)
         else:
             C += c_flux
         C += c_fixed
@@ -269,6 +275,9 @@ def read(lib, cfg: dict, run: Path, bars_path: Path, bars_sha: str, out: Path, U
     if G.sha256(bars_path) != bars_sha:
         raise Refused("the bars file is not the committed one (sha256 differs)")
     bars_rec = json.loads(bars_path.read_text())
+    if (bars_rec.get("reader_sha256"), bars_rec.get("config_sha256")) != (G.sha256(Path(__file__).resolve()),
+                                                                          G.sha256(G.CONFIG)):
+        raise Refused("the bars were made by another reader or configuration")
     rd = cfg["readings"]
     paired = Paired(lib, cfg, run, U)
     if paired.digest() != bars_rec["products_digest"]:
@@ -285,7 +294,14 @@ def read(lib, cfg: dict, run: Path, bars_path: Path, bars_sha: str, out: Path, U
     controls["G-CV"] = g_cv(run)
     controls["G-IBU1"] = g_ibu1(cfg, run)
     controls["G-cells"] = g_cells(cfg, x_e)
-    # Delta is formed only here, after the bars' sha256 and provenance were checked
+    failed = [name for name, c in controls.items() if not c["pass"]]
+    if failed:  # §3.3: a failed control stops the run; no Delta is formed and no reading is written
+        stop = {"schema": "ref-g1-stop/1", "stopped": True, "stopped_by": failed, "controls": controls,
+                "bars_sha256": bars_sha, "reader_sha256": G.sha256(Path(__file__).resolve()),
+                "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+        (out.parent / "STOP.json").write_text(json.dumps(stop, indent=1) + "\n")
+        return stop
+    # Delta is formed only here, after the bars' sha256 and provenance and every control were checked
     delta = x_ibu - x_e
     n_rep = dR.shape[0]
     c_stat = np.cov(dR, rowvar=False, ddof=1)
@@ -470,8 +486,11 @@ def main(argv=None) -> int:
     except (Refused, G.GateFailure) as e:
         print(f"refusing: {e}", file=sys.stderr)
         return 4
+    if rec.get("stopped"):
+        print(f"STOP: failed controls {rec['stopped_by']}; no reading was formed", file=sys.stderr)
+        return 1
     print(json.dumps({"R1": rec["R1"].get("reading"), "controls_pass": rec["controls_pass"]}))
-    return 0 if rec["controls_pass"] else 1
+    return 0
 
 
 if __name__ == "__main__":

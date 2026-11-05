@@ -61,6 +61,12 @@
   "path": "/pscratch/sd/j/josephrb/ibu1-20261022/run/products/D_N.npz",
   "sha256": "a160dbea95006f552f3f724302d30c0da852bf7747907268e712a2251ccf593b"
  },
+ "gibu1_environment": {
+  "interpreter": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+  "python_version": "3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]",
+  "source": "docs/orchestration/state/2d-closeout/stageF/methods/ibu1/receipts/inventory/D_N.jsonl:1 @ ddbc43e42, interpreter.executable and interpreter.version",
+  "not_recorded": "IBU-1's receipts record no numpy or scipy version (searched: ibu1/ for version strings; the files naming numpy are scripts that import it). The gibu1 unit records its own and does not require them"
+ },
  "iterations": {"primary": 5, "reported": [1, 2, 3, 4, 5, 10, 20]},
  "background": {"primary": "fold", "secondary": "sub"},
  "replicas": {"first": 1, "last": 50, "jitter_offset": 100},

@@ -1,15 +1,19 @@
+test_a_failed_control_stops_the_run_with_no_readings (__main__.Controls.test_a_failed_control_stops_the_run_with_no_readings) ... STOP: failed controls ['G-draw']; no reading was formed
+ok
 test_g_cells_holds_at_its_tolerance (__main__.Controls.test_g_cells_holds_at_its_tolerance) ... ok
 test_g_cv_fires_on_either_variant (__main__.Controls.test_g_cv_fires_on_either_variant) ... ok
 test_g_draw_fires_on_one_failed_replica (__main__.Controls.test_g_draw_fires_on_one_failed_replica) ... ok
 test_g_ibu1_fires_on_either_variant_and_on_the_pin (__main__.Controls.test_g_ibu1_fires_on_either_variant_and_on_the_pin) ... ok
 test_g_pair_fires_on_a_pin_a_swapped_replica_and_a_universe_from_other_weights (__main__.Controls.test_g_pair_fires_on_a_pin_a_swapped_replica_and_a_universe_from_other_weights) ... ok
 test_a_failed_self_check_writes_no_bars (__main__.Readings.test_a_failed_self_check_writes_no_bars) ... ok
+test_bars_from_another_reader_or_config_are_refused (__main__.Readings.test_bars_from_another_reader_or_config_are_refused) ... ok
 test_r1_is_not_formed_on_a_singular_covariance (__main__.Readings.test_r1_is_not_formed_on_a_singular_covariance) ... ok
 test_r1_reads_agree_on_no_difference_and_differ_on_a_large_one (__main__.Readings.test_r1_reads_agree_on_no_difference_and_differ_on_a_large_one) ... ok
 test_r2_and_r3_on_hand_set_products (__main__.Readings.test_r2_and_r3_on_hand_set_products) ... ok
 test_the_bars_are_ts_simulated_null_not_chi2 (__main__.Readings.test_the_bars_are_ts_simulated_null_not_chi2)
 Stat-dominated: T's null is Hotelling's, (49*16/34) F(16, 34), whose 0.95 point is about 45, far above ... ok
 test_the_bars_never_read_the_central_difference (__main__.Readings.test_the_bars_never_read_the_central_difference) ... ok
+test_the_batch_weighted_covariance_is_s1s_mat_cov (__main__.Readings.test_the_batch_weighted_covariance_is_s1s_mat_cov) ... ok
 test_the_flux_block_is_resampled (__main__.Readings.test_the_flux_block_is_resampled) ... ok
 test_the_order_guard_and_the_bars_identity (__main__.Readings.test_the_order_guard_and_the_bars_identity) ... ok
 test_the_reading_words_at_their_bars (__main__.Readings.test_the_reading_words_at_their_bars) ... ok
@@ -19,6 +23,13 @@ ok
 test_g_draw_fires_on_a_replica_that_is_not_es (__main__.Replicas.test_g_draw_fires_on_a_replica_that_is_not_es) ... ok
 test_the_replica_is_es_construction_and_g_draw_is_silent (__main__.Replicas.test_the_replica_is_es_construction_and_g_draw_is_silent) ... ok
 test_a_detector_universe_through_the_bank_parsers (__main__.Units.test_a_detector_universe_through_the_bank_parsers) ... ok
+test_a_unit_that_failed_g_draw_is_never_done (__main__.Units.test_a_unit_that_failed_g_draw_is_never_done) ... {"unit": "replica_b4", "seconds": 0.062, "g_draw": false}
+refusing: replica_b4.npz exists without a PASS done-marker (verdict FAIL)
+{"unit": "replica_b5", "seconds": 0.074, "g_draw": true}
+ok
+test_gibu1_runs_only_in_ibu1s_environment (__main__.Units.test_gibu1_runs_only_in_ibu1s_environment) ... {"unit": "gibu1", "seconds": 0.086}
+refusing: gibu1 runs only in IBU-1's environment, not {'interpreter': '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/f88a76df-32e2-4399-bb46-6531cb3c6507/scratchpad/venv-g1/bin/python', 'python_version': '3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]', 'numpy': '2.4.4', 'scipy': '1.18.1'}
+ok
 test_the_cv_universe_is_the_central_bitwise (__main__.Units.test_the_cv_universe_is_the_central_bitwise) ... ok
 test_the_real_format_inputs_load_to_the_same_central (__main__.Units.test_the_real_format_inputs_load_to_the_same_central) ... ok
 test_units_outside_the_declaration_are_refused (__main__.Units.test_units_outside_the_declaration_are_refused) ... ok
@@ -29,7 +40,7 @@ test_the_g1_world_is_ibu1s_with_the_h2_cells_and_s1s_rows (__main__.World.test_t
 test_the_noise_free_closure_is_a_fixed_point_at_every_k (__main__.World.test_the_noise_free_closure_is_a_fixed_point_at_every_k) ... ok
 
 ----------------------------------------------------------------------
-Ran 25 tests in 111.836s
+Ran 30 tests in 70.629s
 
 OK
 exit=0

@@ -21,7 +21,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TEST = HERE / "test_ref_g1.py"
 D, R = "ref_g1.py", "ref_g1_read.py"
-EXPECTED_TESTS = 25  # a run that stops early exits 0 with fewer: refuse it
+EXPECTED_TESTS = 30  # a run that stops early exits 0 with fewer: refuse it
 NULL_CALL = 't = null_t(c_stat, c_flux, wflux, c_fixed, n_rep, b["draws"], b["seed"], b["batch"], rd["norm_fraction"])'
 MUTATIONS = [
     # §7's required mutants
@@ -72,6 +72,20 @@ MUTATIONS = [
      "Readings.test_the_order_guard_and_the_bars_identity"),
     ("the bars' products unchecked", R, '    if paired.digest() != bars_rec["products_digest"]:\n', "    if False:\n",
      "Readings.test_the_order_guard_and_the_bars_identity"),
+    # the audit's C1-C3 (the director, 2026-11-05)
+    ("a failed control flagged and the run continued", R, "    if failed:  # §3.3", "    if False:  # §3.3",
+     "Controls.test_a_failed_control_stops_the_run_with_no_readings"),
+    ("the bars' reader and config unchecked", R,
+     '    if (bars_rec.get("reader_sha256"), bars_rec.get("config_sha256")) != (G.sha256(Path(__file__).resolve()),',
+     '    if False and (bars_rec.get("reader_sha256"), bars_rec.get("config_sha256")) != (G.sha256(Path(__file__).resolve()),',
+     "Readings.test_bars_from_another_reader_or_config_are_refused"),
+    ("a unit skipped whatever its verdict", D, '        if verdict == "PASS":\n            return 0',
+     "        if True:\n            return 0", "Units.test_a_unit_that_failed_g_draw_is_never_done"),
+    ("the batch covariance centred unweighted", R,
+     "    Z = Y - (w[None, :, None] * Y).sum(axis=1, keepdims=True) / w.sum()",
+     "    Z = Y - Y.mean(axis=1, keepdims=True)", "Readings.test_the_batch_weighted_covariance_is_s1s_mat_cov"),
+    ("gibu1 run outside IBU-1's environment", D, "        if not ok:\n            print(f\"refusing: gibu1",
+     "        if False:\n            print(f\"refusing: gibu1", "Units.test_gibu1_runs_only_in_ibu1s_environment"),
     # per pairing key
     ("replica b paired with (e)'s b+1", R, 'Path(ep["replica"].format(b=b, j=self.offset + b))',
      'Path(ep["replica"].format(b=b % 50 + 1, j=self.offset + b % 50 + 1))',
