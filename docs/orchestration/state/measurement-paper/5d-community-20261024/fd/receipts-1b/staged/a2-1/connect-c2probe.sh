@@ -1,14 +1,16 @@
 #!/bin/bash
-# 1B A2.1, c2check's timing probe (the director's ruling (a), item 3, 2026-11-04), after the calibration's second
-# rerun: sbatch-c2probe.sh (3424680a) at M = a2560cc3 on one exclusive CPU node with 64 BLAS/OMP threads. It times
-# prepare, the multiplicative terms and 4 blocks of G18's gate sample through the real c2_truth, and projects a
-# one-truth c2check job as prepare + terms + 165 x the mean block (the first block set aside). A timing record only;
+# 1B A2.1, c2check's timing probe (the director's ruling (a), item 3, and ruling (A), 2026-11-05), after the
+# calibration's second rerun COMPLETES and its compare_calibN passes: sbatch-c2probe.sh (40b68ef9) at M = d6410cff on
+# one exclusive CPU node with 64 BLAS/OMP threads. It times each of c2check's one-off steps (prepare(rows=True),
+# c2_inputs, the terms, the (vi) row match, the draws for the 300 and the 3,000-draw gate sample) and 4 blocks of
+# G18's gate sample through the real c2_truth, records |Z| per array and the peak RSS, and projects a one-truth
+# c2check job as the one-off steps + 165 x the mean block (the first block set aside). A timing record only;
 # nothing in it is a gate. As connect-calibrate-rerun2.sh otherwise: the m3246 balance against the cap (stop if the
 # cap is above half of what remains), a fresh clone at M in a new pscratch directory, the bound blobs, one CPU node,
 # QOS regular, --time 1:30:00 (cap 1.5 node-h). Nothing to CFS; writes only under $W. Not under set -u. Run detached
 # on the login node (setsid nohup).
-M=a2560cc3ed78efc632307057ffbb58cdfd752875
-P=/pscratch/sd/j/josephrb; W=$P/fd-1b-a21-c2probe-20261104; DD=$W/deploy
+M=d6410cffd836dab0e1d00cae9259e760d0217aca
+P=/pscratch/sd/j/josephrb; W=$P/fd-1b-a21-c2probe-20261105; DD=$W/deploy
 S=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1
 CAP_NODE_H=1.5
 stop() { echo "STOP $*"; echo "end=$(date -u +%FT%TZ)"; exit 2; }
@@ -26,14 +28,16 @@ git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$DD" && git
 n=$(git -C "$DD" status --porcelain | wc -l); h=$(git -C "$DD" rev-parse HEAD); echo "deploy porcelain_lines=$n head=$h"
 [ "$n" = "0" ] && [ "$h" = "$M" ] || stop "deploy not clean at M"
 cat > "$W/bound.sha256" <<SUMS
-af69f632610e23b6e25c7ceea7f8e95e58049acb18e53ed061ced025a9061675  nd-unfolding/fd_1b_c2.py
-0b4c61de5e8ad0c809e385679c7e287b192339962ae55a069253b6e665e51d98  nd-unfolding/fd_1b_mc.py
-3424680aea866b93625647895930ce58e51dca48abd913f5f9218c5b6d7229f1  $S/sbatch-c2probe.sh
+61ddbff183281c5110bfc084fe24ce7c6c40291f9b39e1770bf1689979984489  nd-unfolding/fd_1b_c2.py
+062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67  nd-unfolding/fd_1b_mc.py
+40b68ef937a43dd248f15df1b4efc8be532451fc9e022fdee3341bbbebb54158  $S/sbatch-c2probe.sh
 SUMS
 (cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blobs differ"
 jid=$(sbatch --parsable -A m3246 -q regular -C cpu -N 1 --exclusive -t 01:30:00 -J fd1b_c2probe -o "$W/logs/%x_%j.out" \
   "$DD/$S/sbatch-c2probe.sh" "$DD" "$M" "$W") || stop sbatch
 jid=${jid%%;*}; echo "Submitted batch job $jid"
+tl=$(scontrol show job "$jid" | grep -oE "TimeLimit=[^ ]*"); echo "$tl"
+[ "$tl" = "TimeLimit=01:30:00" ] || { scancel "$jid"; stop "the time limit parsed as ${tl#TimeLimit=}, not 01:30:00: cancelled $jid"; }
 scontrol show job "$jid" | grep -oE "(JobName|JobState|TimeLimit|Partition|QOS|NumNodes|Account|OverSubscribe)=[^ ]*" | tr '\n' ' '; echo
 squeue --me -o "%i %j %T %M %l %R" | grep fd1b_c2 || true
 echo "end=$(date -u +%FT%TZ)"
