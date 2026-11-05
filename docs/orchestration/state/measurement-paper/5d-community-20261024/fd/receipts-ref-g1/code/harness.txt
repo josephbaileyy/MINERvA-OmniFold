@@ -1,0 +1,25 @@
+KILLED    chi2_16 quantiles in place of the bootstrap's    by Readings.test_the_bars_are_ts_simulated_null_not_chi2
+KILLED    C*_norm from the realized Delta                  by Readings.test_the_bars_never_read_the_central_difference
+KILLED    the flux block held fixed                        by Readings.test_the_flux_block_is_resampled
+KILLED    the self-check skipped                           by Readings.test_a_failed_self_check_writes_no_bars
+KILLED    the order guard removed                          by Readings.test_the_order_guard_and_the_bars_identity
+KILLED    the membership refusal removed from g1's builder by Replicas.test_a_jitter_that_moves_membership_is_refused_before_any_replica
+KILLED    R1's agree bar strict                            by Readings.test_the_reading_words_at_their_bars
+KILLED    R1's differ bar strict                           by Readings.test_the_reading_words_at_their_bars
+KILLED    R2's band open                                   by Readings.test_the_reading_words_at_their_bars
+KILLED    R1 formed on a singular covariance               by Readings.test_r1_is_not_formed_on_a_singular_covariance
+KILLED    G-CV reads one variant                           by Controls.test_g_cv_fires_on_either_variant
+KILLED    G-IBU1 reads one variant                         by Controls.test_g_ibu1_fires_on_either_variant_and_on_the_pin
+KILLED    G-IBU1's pin unchecked                           by Controls.test_g_ibu1_fires_on_either_variant_and_on_the_pin
+KILLED    G-cells' tolerance loosened                      by Controls.test_g_cells_holds_at_its_tolerance
+KILLED    G-pair's pins unchecked                          by Controls.test_g_pair_fires_on_a_pin_a_swapped_replica_and_a_universe_from_other_weights
+KILLED    G-draw passes anything                           by Replicas.test_g_draw_fires_on_a_replica_that_is_not_es
+KILLED    the reader ignores G-draw                        by Controls.test_g_draw_fires_on_one_failed_replica
+KILLED    the bars' sha256 unchecked                       by Readings.test_the_order_guard_and_the_bars_identity
+KILLED    the bars' products unchecked                     by Readings.test_the_order_guard_and_the_bars_identity
+KILLED    replica b paired with (e)'s b+1                  by Readings.test_r1_reads_agree_on_no_difference_and_differ_on_a_large_one
+KILLED    a universe paired with another index             by Readings.test_r1_reads_agree_on_no_difference_and_differ_on_a_large_one
+SURVIVED (expected; equivalent)           the jitter step skipped in g1's builder
+SURVIVED (expected; equivalent)           the IBU replica's jitter seed not (e)'s
+MUTATION CHECK :: PASS (21 mutations, 2 expected survivors)
+exit=0

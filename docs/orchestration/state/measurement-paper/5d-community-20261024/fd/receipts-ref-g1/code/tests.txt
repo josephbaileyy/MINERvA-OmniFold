@@ -1,0 +1,35 @@
+test_g_cells_holds_at_its_tolerance (__main__.Controls.test_g_cells_holds_at_its_tolerance) ... ok
+test_g_cv_fires_on_either_variant (__main__.Controls.test_g_cv_fires_on_either_variant) ... ok
+test_g_draw_fires_on_one_failed_replica (__main__.Controls.test_g_draw_fires_on_one_failed_replica) ... ok
+test_g_ibu1_fires_on_either_variant_and_on_the_pin (__main__.Controls.test_g_ibu1_fires_on_either_variant_and_on_the_pin) ... ok
+test_g_pair_fires_on_a_pin_a_swapped_replica_and_a_universe_from_other_weights (__main__.Controls.test_g_pair_fires_on_a_pin_a_swapped_replica_and_a_universe_from_other_weights) ... ok
+test_a_failed_self_check_writes_no_bars (__main__.Readings.test_a_failed_self_check_writes_no_bars) ... ok
+test_r1_is_not_formed_on_a_singular_covariance (__main__.Readings.test_r1_is_not_formed_on_a_singular_covariance) ... ok
+test_r1_reads_agree_on_no_difference_and_differ_on_a_large_one (__main__.Readings.test_r1_reads_agree_on_no_difference_and_differ_on_a_large_one) ... ok
+test_r2_and_r3_on_hand_set_products (__main__.Readings.test_r2_and_r3_on_hand_set_products) ... ok
+test_the_bars_are_ts_simulated_null_not_chi2 (__main__.Readings.test_the_bars_are_ts_simulated_null_not_chi2)
+Stat-dominated: T's null is Hotelling's, (49*16/34) F(16, 34), whose 0.95 point is about 45, far above ... ok
+test_the_bars_never_read_the_central_difference (__main__.Readings.test_the_bars_never_read_the_central_difference) ... ok
+test_the_flux_block_is_resampled (__main__.Readings.test_the_flux_block_is_resampled) ... ok
+test_the_order_guard_and_the_bars_identity (__main__.Readings.test_the_order_guard_and_the_bars_identity) ... ok
+test_the_reading_words_at_their_bars (__main__.Readings.test_the_reading_words_at_their_bars) ... ok
+test_a_jitter_that_moves_membership_is_refused_before_any_replica (__main__.Replicas.test_a_jitter_that_moves_membership_is_refused_before_any_replica)
+The refusal (e)'s loop applies (s5p_numerics.py:188-191). Edge-safe jitter cannot move a row across an ... refusing: jitter 101 changed grid membership {'MCgen': 0, 'MCreco': 1, 'measured': 0, 'bkg_reco': 0}
+ok
+test_g_draw_fires_on_a_replica_that_is_not_es (__main__.Replicas.test_g_draw_fires_on_a_replica_that_is_not_es) ... ok
+test_the_replica_is_es_construction_and_g_draw_is_silent (__main__.Replicas.test_the_replica_is_es_construction_and_g_draw_is_silent) ... ok
+test_a_detector_universe_through_the_bank_parsers (__main__.Units.test_a_detector_universe_through_the_bank_parsers) ... ok
+test_the_cv_universe_is_the_central_bitwise (__main__.Units.test_the_cv_universe_is_the_central_bitwise) ... ok
+test_the_real_format_inputs_load_to_the_same_central (__main__.Units.test_the_real_format_inputs_load_to_the_same_central) ... ok
+test_units_outside_the_declaration_are_refused (__main__.Units.test_units_outside_the_declaration_are_refused) ... ok
+test_vertex_and_closure_read_the_pinned_ratio (__main__.Units.test_vertex_and_closure_read_the_pinned_ratio) ... ok
+test_gibu1_is_ibu1s_data_unit_bitwise (__main__.World.test_gibu1_is_ibu1s_data_unit_bitwise)
+G-IBU1's mechanism: this driver on IBU-1's J world returns what ibu1.run_data writes. ... ok
+test_the_g1_world_is_ibu1s_with_the_h2_cells_and_s1s_rows (__main__.World.test_the_g1_world_is_ibu1s_with_the_h2_cells_and_s1s_rows) ... ok
+test_the_noise_free_closure_is_a_fixed_point_at_every_k (__main__.World.test_the_noise_free_closure_is_a_fixed_point_at_every_k) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 111.836s
+
+OK
+exit=0
