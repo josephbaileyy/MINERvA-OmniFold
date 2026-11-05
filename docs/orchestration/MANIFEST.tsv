@@ -468,6 +468,7 @@ docs/orchestration/PROVENANCE-DEBT-20260810-standard-p4.md	tracked	LIVE	document
 docs/orchestration/PUBLICATION-READINESS-20260822.md	tracked	LIVE	document		20260822	open		route-only	no
 docs/orchestration/QUESTION-20260920-hadronic-response-coverage-for-eavail-w.md	tracked	LIVE	document		20260920	open		route-only	no
 docs/orchestration/QUESTION-20261028-trunk-stat-ml-replica-provenance.md	tracked	ARCHIVAL	document		20261028	terminal		exact-path-only	yes
+docs/orchestration/QUESTION-20261104-published-2d-extraction-intermediates.md	tracked	LIVE	document		20261104	open		route-only	no
 docs/orchestration/QUIET-PERIODS.tsv	tracked	MACHINE	tabular-data			generated		exact-path-only	no
 docs/orchestration/R5-METER.md	tracked	LIVE	document			open		route-only	no
 docs/orchestration/RANK-AND-INVERSION-20260810.md	tracked	LIVE	document		20260810	open		route-only	no
@@ -5754,6 +5755,17 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-cons
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-table-20261028/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-table-20261028/inputs/PROMPT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/astra-consult-table-20261028/inputs/note-table.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/ASSIGNMENT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/RELEASE-INVENTORY.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/REVIEW-ANSWER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/REVIEW-DISPOSITION.md	tracked	ARCHIVAL	state-artifact	2d-closeout		terminal		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/REVIEW-PROMPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/REVIEW-REPAIR-PROMPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/REVIEW-TARGET.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/SEARCHES.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/SOURCE-INVENTORY.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/REVIEW-ANSWER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/REVIEW-DISPOSITION.md	tracked	ARCHIVAL	state-artifact	2d-closeout		terminal		exact-path-only	yes
@@ -5765,6 +5777,9 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/SOURCES.md	tracked	ARCHIVAL	state-artifact	2d-closeout		terminal		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/recheck.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/recheck.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/playlist-integrals.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/r18-paper-inventory.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/INPUTS.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
