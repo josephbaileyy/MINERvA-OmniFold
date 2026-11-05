@@ -470,8 +470,9 @@ def multiplicative(V: np.ndarray, cv: np.ndarray, S: np.ndarray) -> np.ndarray:
 
 def c2_terms(V: dict, cv: dict) -> dict:
     """multiplicative_terms for the two arrays C2's (v) composes, "wt" and "tdw". They depend on neither the draws nor
-    the truth, so c2check builds them once per job and passes them to every c2_truth call."""
-    return {q: multiplicative_terms(V[q], cv[q]) for q in ("wt", "tdw")}
+    the truth, so c2check builds them once per job and passes them to every c2_truth call. Each keeps the arrays it
+    was built from ("src"), by reference, so c2_truth can refuse terms of another V or cv."""
+    return {q: dict(multiplicative_terms(V[q], cv[q]), src=(V[q], cv[q])) for q in ("wt", "tdw")}
 
 
 def c2_truth(V: dict, cv: dict, S: np.ndarray, r: np.ndarray, geo: dict, phi: np.ndarray, const: dict,
@@ -483,8 +484,9 @@ def c2_truth(V: dict, cv: dict, S: np.ndarray, r: np.ndarray, geo: dict, phi: np
     denominator rows'), fm (fine -> reporting cell) and U, packed. Returns per draw (cells x draws):
     S, m_seen (reco-kept signal rows by truth cell, counts); S_reco, m_bkg (by reco cell); N = U x_T unclipped,
     Nc = U x_T with C2's option (1) (truth and denominator rows clipped on their own sign), m_all = Nc - N (signed:
-    clipping moves both sums of a ratio); Nm, the multiplicative composition's U x_T (descriptive). terms: c2_terms(V,
-    cv), built here when not given."""
+    clipping moves both sums of a ratio); Nm, the multiplicative composition's U x_T, whose variance ratio
+    reading_1b's "multiplicative" gate reads. terms: c2_terms(V, cv), built here when not given; terms not built from
+    this very V and cv refuse."""
     pack, U = const["pack"], geo["U"]
     nf = int(np.prod(geo["shape"]))
     keep = pack["keep"]
@@ -497,6 +499,9 @@ def c2_truth(V: dict, cv: dict, S: np.ndarray, r: np.ndarray, geo: dict, phi: np
         raise Refusal("a selection matrix has a negative entry")
     if terms is None:
         terms = c2_terms(V, cv)                                               # once, not per block
+    elif not all(q in terms and len(terms[q].get("src", ())) == 2 and terms[q]["src"][0] is V[q]
+                 and terms[q]["src"][1] is cv[q] for q in ("wt", "tdw")):
+        raise Refusal("the multiplicative terms were not built from this V and cv")
     out = {q: np.zeros((N_CELLS, S.shape[0])) for q in ("S", "m_seen", "S_reco", "m_bkg", "N", "Nc", "Nm")}
     for d0 in range(0, S.shape[0], block):
         Sb, kb = S[d0:d0 + block], k_all[d0:d0 + block, None]
@@ -882,31 +887,53 @@ def c2_inputs(a, P: dict) -> tuple:
     return rel, fm, geo, V, cv
 
 
+def c2_vi(P: dict, cv: dict, fm: np.ndarray, geo: dict) -> dict:
+    """C2's (vi) row match as c2check reads it, once per job: the truth-passing signal rows in a cell against the
+    denominator rows, each keyed by its five coordinates and CV weight."""
+    world = P["world"]
+    inputs, ptru = world["inputs"], np.asarray(world["inputs"]["pass_truth"], bool)
+    return row_match(np.asarray(inputs["MCgen"], float), cv["wt"], ptru & (P["cells"] >= 0),
+                     np.column_stack([np.asarray(world["bank_cv"][k], np.float64) for k in
+                                      ("td_pt", "td_pz", "td_ea", "td_q3", "td_w")]), world["tdw_cv"],
+                     np.where(P["cells"] >= 0, fm[np.maximum(P["cells"], 0)], -1),
+                     np.where(geo["td"] >= 0, fm[np.maximum(geo["td"], 0)], -1))
+
+
+def c2_draws(P: dict, seed_list) -> tuple:
+    """The selection matrix S (draws x universes) and each draw's flux for the given seeds, as c2check builds them."""
+    import fd_1b_mc as mc
+    draws = [mc.draw_universes(toys.draw_for_seed(sd, P["flux_p"], P["world"]["groups"])) for sd in seed_list]
+    S = selection(draws, P["col"], P["bands"])
+    return S, draw_flux(S, P["flux_cols"], P["phi"])
+
+
 def c2probe_main(a) -> dict:
-    """The timing probe before c2check at N (the director's ruling (a), item 3): prepare(rows=True) timed, c2_terms
-    timed, then c2_truth on the first --blocks blocks of one truth's gate sample with those terms, each block timed,
-    through c2_inputs as c2check takes them. Projects a one-truth c2check job as c2check spends it: prepare + the terms
-    once + (300 + GATE_N) / DRAW_BLOCK blocks at the mean block time. Writes a timing record only; nothing in it is a
-    gate."""
+    """The timing probe before c2check at N (the director's ruling (a), item 3, and its ruling (A) of 2026-11-05). Each
+    of c2check's one-off steps is timed on its own, through the functions c2check calls: prepare(rows=True), c2_inputs,
+    c2_terms, c2_vi, and c2_draws for the declared 300 and the GATE_N-draw gate sample. Then c2_truth runs on the
+    first --blocks blocks of the gate sample with those terms, each block timed. Projects a one-truth c2check job as
+    c2check spends it: the one-off steps + (300 + GATE_N) / DRAW_BLOCK blocks at the mean block time (the first block
+    set aside). Records |Z| per array and the peak RSS. Writes a timing record only; nothing in it is a gate."""
     import resource
     import time
 
     import fd_1b_mc as mc
     if len(a.truths) != 1:
         raise Refusal("the probe times one truth")
-    t0 = time.time()
-    P = prepare(a, rows=True)
-    _, _, geo, V, cv = c2_inputs(a, P)
-    t_prep = time.time() - t0
-    t0 = time.time()
-    terms = c2_terms(V, cv)
-    t_terms = time.time() - t0
     t = a.truths[0]
-    world = P["world"]
-    seeds = gate_seeds(t)[:a.blocks * DRAW_BLOCK]
-    draws = [mc.draw_universes(toys.draw_for_seed(sd, P["flux_p"], world["groups"])) for sd in seeds]
-    S = selection(draws, P["col"], P["bands"])
-    phi = draw_flux(S, P["flux_cols"], P["phi"])
+    once = {}
+
+    def timed(name, f):
+        t0 = time.time()
+        out = f()
+        once[name] = time.time() - t0
+        return out
+    P = timed("prepare", lambda: prepare(a, rows=True))
+    _, fm, geo, V, cv = timed("inputs", lambda: c2_inputs(a, P))
+    terms = timed("terms", lambda: c2_terms(V, cv))
+    timed("vi", lambda: c2_vi(P, cv, fm, geo))
+    timed("draws_300", lambda: c2_draws(P, mc.TOY_SEEDS[t]))
+    S, phi = timed("draws_gate", lambda: c2_draws(P, gate_seeds(t)[:GATE_N]))
     per_block = []
     for b in range(a.blocks):
         sl = slice(b * DRAW_BLOCK, (b + 1) * DRAW_BLOCK)
@@ -915,10 +942,11 @@ def c2probe_main(a) -> dict:
         per_block.append(time.time() - t1)
     blocks_per_truth = (len(mc.TOY_SEEDS[t]) + GATE_N) // DRAW_BLOCK
     mean = float(np.mean(per_block[1:] if len(per_block) > 1 else per_block))
-    return {"schema": "fd-1b-c2-probe/1", "step": "c2-probe", "truth": t, "blocks": a.blocks, "draw_block": DRAW_BLOCK,
-            "prepare_seconds": t_prep, "terms_seconds": t_terms, "block_seconds": per_block, "block_seconds_used": mean,
+    return {"schema": "fd-1b-c2-probe/2", "step": "c2-probe", "truth": t, "blocks": a.blocks, "draw_block": DRAW_BLOCK,
+            "once_seconds": once, "block_seconds": per_block, "block_seconds_used": mean,
             "blocks_per_truth": blocks_per_truth,
-            "projected_seconds_per_truth": t_prep + t_terms + blocks_per_truth * mean,
+            "projected_seconds_per_truth": sum(once.values()) + blocks_per_truth * mean,
+            "z_pairs": {q: int(terms[q]["zu"].size) for q in ("wt", "tdw")},
             "rows": {k: int(np.shape(v)[-1]) for k, v in V.items()}, "universes": int(np.shape(V["wt"])[0]),
             "threads": {k: os.environ.get(k) for k in THREAD_VARS},
             "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, "code_sha256": gate_code_digests()}
@@ -928,9 +956,10 @@ def c2check_main(a) -> dict:
     """The pre-bulk C2 gate (A2.1's S1 and S2, on Joseph's large sample): C2's record on 1B's 16 cells over each
     truth's GATE_N-draw gate sample (gate_seeds), read by reading_1b with the large-sample gate (gate_n) at the
     calibration's thresholds; the 300 declared draws computed apart and required equal to the sample's first 300
-    bitwise; the backstop (P6) on those 300. Tied to its calibration (CALIBRATED at N, digests pinned, its
-    single-universe U x_T bitwise this job's) and to the 300-draw calibration whose SDs the backstop uses. PASS needs
-    "option (1)" and the backstop at every truth; anything else is the hard stop (STOP), and 1B returns to Joseph."""
+    bitwise; the backstop (P6) on those 300. Tied to its calibration (CALIBRATED at N, digests pinned, computed by
+    this very code (gate_code_digests), its single-universe U x_T bitwise this job's) and to the 300-draw calibration
+    whose SDs the backstop uses. PASS needs "option (1)" and the backstop at every truth; anything else is the hard
+    stop (STOP), and 1B returns to Joseph."""
     import hashlib
     import time
 
@@ -943,6 +972,8 @@ def c2check_main(a) -> dict:
         cal = json.loads(fh.read().decode())
     if cal.get("schema") != SCHEMA_CAL or cal.get("verdict") != "CALIBRATED":
         raise Refusal(f"the calibration is {cal.get('verdict')!r}, not CALIBRATED: nothing proceeds")
+    if cal.get("code_sha256") != gate_code_digests():         # no calibration at other code (ruling (a), item 4)
+        raise Refusal("the calibration was computed by other code than this c2check's (gate_code_digests)")
     if inv.sha256_noatime(a.calibration_300) != a.expect_calibration_300_sha256:
         raise Refusal("the 300-draw calibration's digest differs")
     with inv.open_noatime(a.calibration_300) as fh:
@@ -963,19 +994,13 @@ def c2check_main(a) -> dict:
                 raise Refusal(f"{t}: the single-universe U x_T is not the calibration's (a different world or code)")
     rel, fm, geo, V, cv = c2_inputs(a, P)
     terms = c2_terms(V, cv)                                   # once per job, for every truth and both samples
-    inputs, ptru = world["inputs"], np.asarray(world["inputs"]["pass_truth"], bool)
-    rec = {"vi": row_match(np.asarray(inputs["MCgen"], float), cv["wt"], ptru & (P["cells"] >= 0),
-                           np.column_stack([np.asarray(world["bank_cv"][k], np.float64) for k in
-                                            ("td_pt", "td_pz", "td_ea", "td_q3", "td_w")]), world["tdw_cv"],
-                           np.where(P["cells"] >= 0, fm[np.maximum(P["cells"], 0)], -1),
-                           np.where(geo["td"] >= 0, fm[np.maximum(geo["td"], 0)], -1)), "b": {}}
+    rec = {"vi": c2_vi(P, cv, fm, geo), "b": {}}
     seeds, back, reading = {}, {}, {}
     n = getattr(a, "draws", GATE_N)
     for t in truths:
         def q_of(seed_list):
-            draws = [mc.draw_universes(toys.draw_for_seed(sd, P["flux_p"], world["groups"])) for sd in seed_list]
-            S = selection(draws, P["col"], P["bands"])
-            return c2_truth(V, cv, S, P["r"][t], geo, draw_flux(S, P["flux_cols"], P["phi"]), P["const"], terms=terms)
+            S, phi = c2_draws(P, seed_list)
+            return c2_truth(V, cv, S, P["r"][t], geo, phi, P["const"], terms=terms)
         q300 = q_of(mc.TOY_SEEDS[t])
         qn = q_of(gate_seeds(t)[:n])
         for k, v in q300.items():                             # P1: the declared 300 are the sample's first 300
@@ -1003,6 +1028,7 @@ def c2check_main(a) -> dict:
             "reads": reads, "truths": truths, "declared_seeds": seeds, "code_sha256": digests,
             "calibration_sha256": a.expect_calibration_sha256, "calibration_npz_sha256": a.expect_calibration_npz_sha256,
             "calibration": {"verdict": cal["verdict"], "sha256": a.expect_calibration_sha256, "s": cal["rule"]["s"],
+                            "code_sha256": cal["code_sha256"],
                             "union": None if s_row is None else s_row["union"],
                             "three_truths_measured": cal["rule"]["three_truths_measured"],
                             "power_meets": bool(cal["power"] and cal["power"]["meets"])},
@@ -1072,8 +1098,10 @@ def main(argv=None) -> int:
         rec = c2probe_main(a)
         a.out.parent.mkdir(parents=True, exist_ok=True)
         a.out.write_text(json.dumps(rec, indent=1, sort_keys=True))
-        print(f"C2-PROBE truth={rec['truth']} prepare={rec['prepare_seconds']:.0f}s block={rec['block_seconds_used']:.1f}s "
-              f"projected_per_truth={rec['projected_seconds_per_truth']:.0f}s")
+        once = " ".join(f"{k}={v:.0f}s" for k, v in rec["once_seconds"].items())
+        print(f"C2-PROBE truth={rec['truth']} {once} block={rec['block_seconds_used']:.1f}s "
+              f"projected_per_truth={rec['projected_seconds_per_truth']:.0f}s z_pairs={rec['z_pairs']} "
+              f"peak_rss_kib={rec['peak_rss_kib']}")
         return 0
     if a.cmd == "c2check-merge":
         import hashlib

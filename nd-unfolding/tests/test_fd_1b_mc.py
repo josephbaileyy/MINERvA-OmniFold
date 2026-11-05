@@ -824,7 +824,7 @@ class Jobs(Case):
                "declared_seeds": {truth: [mc.TOY_SEEDS[truth][0], mc.TOY_SEEDS[truth][-1]]} if truth in mc.TOY_SEEDS else {},
                "code_sha256": code, "calibration_sha256": "c" * 64, "inputs": ins,
                "calibration": {"verdict": "CALIBRATED", "sha256": "c" * 64, "s": 1.0, "union": 0.009,
-                               "three_truths_measured": True, "power_meets": True},
+                               "three_truths_measured": True, "power_meets": True, "code_sha256": code},
                "backstop": {truth: {"passes": True}}, "config_hash": fd_1b_c2.config_hash(code, ins, "nature"),
                "gate_sample": {"n": fd_1b_c2.GATE_N, "first_300_bitwise": True}}
         for k, v in over.items():
@@ -841,6 +841,7 @@ class Jobs(Case):
     def test_s2_the_bound_gate(self):
         """A2.1's S2: 'data' runs only the pre-gate items; 'nature' runs the graded roles only, and only on c2check's
         record bound to this run (D2: a hand-written file cannot pass). Each binding both ways."""
+        import fd_1b_c2
         fake = lambda exp, threads, seed=42, unfold_fn=None: (np.ones(4), {})  # noqa: E731
         k = [0]
 
@@ -869,7 +870,10 @@ class Jobs(Case):
                      {"calibration.three_truths_measured": False}, {"calibration.union": 0.0101},
                      {"calibration.power_meets": False}, {"backstop": {"g18": {"passes": False}}},
                      {"backstop": {}}, {"config_hash": "0" * 64},
-                     {"gate_sample.n": 60}, {"gate_sample.first_300_bitwise": False}, {"gate_sample": None}):
+                     {"gate_sample.n": 60}, {"gate_sample.first_300_bitwise": False}, {"gate_sample": None},
+                     {"calibration.code_sha256": dict(fd_1b_c2.gate_code_digests(), **{"fd_1b_c2.py": "0" * 64})},
+                     {"calibration.code_sha256": dict(fd_1b_c2.gate_code_digests(), **{"fd_1b_mc.py": "0" * 64})},
+                     {"calibration.code_sha256": None}):     # the calibration at other code (ruling (A), 2026-11-05)
             self.assertEqual(run("g18", "seed", "T", "nature", gate=True, **over), 4, over)
         argv = self.bound_gate(self.argv("g18", "seed", "T", self.tmp / "s2-other"), "g18")  # H1: a well-formed record
         argv[argv.index("--clip-rule") + 1] = "nature"

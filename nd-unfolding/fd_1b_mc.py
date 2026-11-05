@@ -928,7 +928,8 @@ def check_clip_gate(a) -> None:
       schema and step, PASS and "option (1)", this truth's own reading, the declared seeds, the code
       (fd_1b_c2.gate_code_digests, equal to this process's), the inputs (the npz and background as declared, and the
       pins, flux table, push and CV per-row tdw digests this run was given); the calibration CALIBRATED, its sha
-      the record's, its three-truth joint union measured (not projected) and at most 1 %, and its power met; the
+      the record's, its code this process's (gate_code_digests), its three-truth joint union measured (not
+      projected) and at most 1 %, and its power met; the gate sample the full GATE_N with its first 300 bitwise; the
       backstop passed at every truth; and the config hash equal to this run's. Anything else refuses: nothing
       launches, and 1B returns to Joseph."""
     items = [x for x in str(a.items).split(",") if x]
@@ -966,6 +967,8 @@ def check_clip_gate(a) -> None:
     cal = g.get("calibration") or {}
     if cal.get("verdict") != "CALIBRATED" or cal.get("sha256") != g["calibration_sha256"]:
         raise Refusal("the clip gate's calibration is not CALIBRATED, or not the one it names")
+    if cal.get("code_sha256") != fd_1b_c2.gate_code_digests():  # calibration, gate and bulk at one code
+        raise Refusal("the clip gate's calibration was computed by other code than this run's (gate_code_digests)")
     if not cal.get("three_truths_measured") or cal.get("union") is None or cal["union"] > fd_1b_c2.UNION_LIMIT:
         raise Refusal("the clip gate's three-truth noise-only union is not measured, or above 1 %")
     if not cal.get("power_meets"):

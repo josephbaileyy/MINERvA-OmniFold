@@ -236,6 +236,25 @@ class E2E(unittest.TestCase):
         with self.patched(), self.assertRaisesRegex(c2.Refusal, "not the calibration's"):
             c2.c2check_main(self.c2args(cal))
 
+    def test_c2check_refuses_a_calibration_from_other_code(self):
+        """The director's ruling (A), 2026-11-05: c2check refuses a calibration whose code_sha256 is not its own
+        gate_code_digests (fd_1b_c2 and fd_1b_mc each changed, or none recorded), and on its own code's record goes on
+        to the next check (here a wrong 300-draw digest, which it reaches only past this one)."""
+        cal = self.calibrated()
+        rec = json.loads(cal.read_text())
+        self.assertEqual(rec["code_sha256"], c2.gate_code_digests())             # the fixture's own run, this code
+        for i, code in enumerate((dict(rec["code_sha256"], **{"fd_1b_c2.py": "0" * 64}),
+                                  dict(rec["code_sha256"], **{"fd_1b_mc.py": "0" * 64}), None)):
+            other = self.tmp / "cal" / f"cal-other-{i}.json"
+            other.write_text(json.dumps(dict(rec, code_sha256=code)))
+            shutil.copy(cal.with_suffix(".npz"), other.with_suffix(".npz"))
+            with self.patched(), self.assertRaisesRegex(c2.Refusal, "computed by other code"):
+                c2.c2check_main(self.c2args(other))
+        a = self.c2args(cal)
+        a.expect_calibration_300_sha256 = "0" * 64
+        with self.patched(), self.assertRaisesRegex(c2.Refusal, "300-draw calibration's digest differs"):
+            c2.c2check_main(a)
+
     def test_c2check_refuses_a_sample_whose_first_300_are_not_the_declared(self):
         cal = self.calibrated()
         real = c2.gate_seeds
@@ -297,7 +316,7 @@ class E2E(unittest.TestCase):
                 "declared_seeds": {"g18": [mc.TOY_SEEDS["g18"][0], mc.TOY_SEEDS["g18"][-1]]},
                 "code_sha256": code, "calibration_sha256": "c" * 64, "inputs": ins,
                 "calibration": {"verdict": "CALIBRATED", "sha256": "c" * 64, "s": 1.0, "union": 0.009,
-                                "three_truths_measured": True, "power_meets": True},
+                                "three_truths_measured": True, "power_meets": True, "code_sha256": code},
                 "backstop": {"g18": {"passes": True}}, "config_hash": c2.config_hash(code, ins, "nature"),
                 "gate_sample": {"n": c2.GATE_N, "first_300_bitwise": True}}))
         return gate
@@ -399,7 +418,7 @@ class E2E(unittest.TestCase):
                 "declared_seeds": {"g18": [mc.TOY_SEEDS["g18"][0], mc.TOY_SEEDS["g18"][-1]]},
                 "code_sha256": code, "calibration_sha256": "c" * 64, "inputs": ins,
                 "calibration": {"verdict": "CALIBRATED", "sha256": "c" * 64, "s": 1.0, "union": 0.009,
-                                "three_truths_measured": True, "power_meets": True},
+                                "three_truths_measured": True, "power_meets": True, "code_sha256": code},
                 "backstop": {"g18": {"passes": True}}, "config_hash": c2.config_hash(code, ins, "nature"),
                 "gate_sample": {"n": c2.GATE_N, "first_300_bitwise": True}}))
         common = ["unfold", "--truth", "g18", "--role", "toy", "--items", str(mc.TOY_SEEDS["g18"][0]),
@@ -583,6 +602,13 @@ class RoundTrip(E2E):
             self.assertGreater(T["zu"].size, 0, q)
             self.assertGreater(int((~T["pos"]).sum()), 0, q)
             self.assertTrue(np.any(S[:, T["zu"]] > 0), q)            # some drawn universe floors a row
+        foreign = (c2.c2_terms({q: np.array(v, copy=True) for q, v in V.items()}, cv),   # another V, equal values
+                   c2.c2_terms(V, {q: np.array(v, copy=True) for q, v in cv.items()}),   # another cv
+                   {q: c2.multiplicative_terms(V[q], cv[q]) for q in ("wt", "tdw")},      # no source recorded
+                   {"wt": c2.c2_terms(V, cv)["wt"]})                                    # one array's only
+        for bad in foreign:
+            with self.assertRaisesRegex(c2.Refusal, "not built from this V and cv"):
+                c2.c2_truth(V, cv, S, r, geo, phi, const, terms=bad)
         for args in ((V, cv, S, r, geo, phi, const), (V2, cv2, S, r, geo, phi, const)):
             want = ref.c2_truth(*args)
             for got in (c2.c2_truth(*args), c2.c2_truth(*args, terms=c2.c2_terms(args[0], args[1]))):
@@ -648,10 +674,11 @@ class RoundTrip(E2E):
         self.assertEqual(c2.c2check_merge([recs[0], recs[1], bad])["verdict"], "STOP")    # and one backstop
 
     def test_the_timing_probe(self):
-        """c2probe (the director's ruling (a), item 3) through the CLI: one truth, --blocks blocks of its gate sample
-        through c2_inputs and c2_truth as c2check takes them, the multiplicative terms built once and timed apart; its
-        projection is prepare + the terms + (300 + GATE_N)/DRAW_BLOCK blocks at the mean block time (the first block,
-        which pays one-off costs, set aside); it refuses two truths and an existing output."""
+        """c2probe (the director's ruling (a), item 3, and ruling (A)) through the CLI: c2check's one-off steps each timed
+        through c2check's own functions (prepare, c2_inputs, c2_terms once, c2_vi, c2_draws for the 300 and the GATE_N
+        gate sample), then --blocks blocks of the gate sample through c2_truth; its projection is the one-off steps +
+        (300 + GATE_N)/DRAW_BLOCK blocks at the mean block time (the first block, which pays one-off costs, set aside);
+        |Z| per array as c2_terms builds it; it refuses two truths and an existing output."""
         w = self.x["w"]
         out = self.tmp / "probe" / "probe.json"
         argv = ["c2probe", "--npz", str(w.inputs), "--bkg", str(w.bkg), "--bank", str(w.bank), "--detector-dir", str(w.det),
@@ -660,18 +687,41 @@ class RoundTrip(E2E):
                 "--definition", str(self.tmp / "definition.json"), "--staged", str(self.x["staged"]),
                 "--cv-tdw", str(self.x["tdw"]), "--expect-cv-tdw-sha256", digest(self.x["tdw"]), "--prep", str(w.prep),
                 "--truths", "g18", "--blocks", "3", "--out", str(out)]
+        built, drawn, vi = [], [], []
+        real_terms, real_draws, real_vi = c2.c2_terms, c2.c2_draws, c2.c2_vi
+
+        def spy_terms(V, cv):
+            built.append(real_terms(V, cv))
+            return built[-1]
+
+        def spy_draws(P, seed_list):
+            drawn.append(list(seed_list))
+            return real_draws(P, seed_list)
+
+        def spy_vi(*args):
+            vi.append(real_vi(*args))
+            return vi[-1]
         with self.patched():
-            with mock.patch.object(c2, "multiplicative_terms", wraps=c2.multiplicative_terms) as mt:
+            with mock.patch.object(c2, "multiplicative_terms", wraps=c2.multiplicative_terms) as mt, \
+                    mock.patch.object(c2, "c2_terms", spy_terms), mock.patch.object(c2, "c2_draws", spy_draws), \
+                    mock.patch.object(c2, "c2_vi", spy_vi):
                 self.assertEqual(c2.main(argv), 0)
             self.assertEqual(mt.call_count, 2)                          # wt and tdw, once, not per block
+            self.assertEqual(len(built), 1)
+            self.assertEqual(drawn, [list(mc.TOY_SEEDS["g18"]), list(c2.gate_seeds("g18")[:c2.GATE_N])])  # as c2check
+            self.assertEqual(len(vi), 1)
+            self.assertIsNotNone(vi[0]["largest_cell_unmatched_share"])
             rec = json.loads(out.read_text())
+            self.assertEqual(rec["schema"], "fd-1b-c2-probe/2")
+            self.assertEqual(set(rec["once_seconds"]), {"prepare", "inputs", "terms", "vi", "draws_300", "draws_gate"})
+            self.assertTrue(all(v >= 0 for v in rec["once_seconds"].values()))
+            self.assertEqual(rec["z_pairs"], {q: int(built[0][q]["zu"].size) for q in ("wt", "tdw")})
+            self.assertGreater(rec["peak_rss_kib"], 0)
             self.assertEqual((rec["truth"], rec["blocks"], len(rec["block_seconds"])), ("g18", 3, 3))
             self.assertEqual(rec["blocks_per_truth"], (len(mc.TOY_SEEDS["g18"]) + c2.GATE_N) // c2.DRAW_BLOCK)
             self.assertAlmostEqual(rec["block_seconds_used"], float(np.mean(rec["block_seconds"][1:])), places=12)
-            self.assertAlmostEqual(rec["projected_seconds_per_truth"],
-                                   rec["prepare_seconds"] + rec["terms_seconds"]
+            self.assertAlmostEqual(rec["projected_seconds_per_truth"], sum(rec["once_seconds"].values())
                                    + rec["blocks_per_truth"] * rec["block_seconds_used"], places=6)
-            self.assertGreater(rec["terms_seconds"], 0.0)
             self.assertEqual(rec["code_sha256"], c2.gate_code_digests())
             self.assertEqual(set(rec["rows"]), {"wt", "wr", "bkgw", "tdw", "D"})
             with self.assertRaisesRegex(c2.Refusal, "refusing to overwrite"):   # it will not overwrite
@@ -684,6 +734,7 @@ class RoundTrip(E2E):
     # the parent's tests run on their own world; here only the round trip
     test_the_calibration_runs_the_production_chain = test_c2check_end_to_end = None
     test_c2check_refuses_an_uncalibrated_or_foreign_calibration = None
+    test_c2check_refuses_a_calibration_from_other_code = None
     test_c2check_refuses_a_sample_whose_first_300_are_not_the_declared = None
     test_the_binning_script_end_to_end = test_the_receipt_end_to_end = None
     test_a_toy_item_under_nature_end_to_end = test_the_cv_tdw_is_checked_at_load = None

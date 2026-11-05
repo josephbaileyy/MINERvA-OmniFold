@@ -326,18 +326,34 @@ NEW = [
     ("fd_1b_c2.py", "merge: truths in part order", '    truths = [t for t in mc.TRUTHS if t in named]', '    truths = list(named)', E2E),
     ("fd_1b_c2.py", "merge: a part's digest not checked", '            if hashlib.sha256(raw).hexdigest() != sha:\n                raise Refusal(f"{path}: its digest',
      '            if False:\n                raise Refusal(f"{path}: its digest', E2E),
-    ("fd_1b_c2.py", "probe: the projection without prepare", '"projected_seconds_per_truth": t_prep + t_terms + blocks_per_truth * mean,',
-     '"projected_seconds_per_truth": t_terms + blocks_per_truth * mean,', E2E),
-    ("fd_1b_c2.py", "probe: the projection without the terms", '"projected_seconds_per_truth": t_prep + t_terms + blocks_per_truth * mean,',
-     '"projected_seconds_per_truth": t_prep + blocks_per_truth * mean,', E2E),
+    ("fd_1b_c2.py", "probe: the projection without the one-off steps", '"projected_seconds_per_truth": sum(once.values()) + blocks_per_truth * mean,',
+     '"projected_seconds_per_truth": blocks_per_truth * mean,', E2E),
+    ("fd_1b_c2.py", "probe: prepare not timed", '    P = timed("prepare", lambda: prepare(a, rows=True))', '    P = prepare(a, rows=True)', E2E),
+    ("fd_1b_c2.py", "probe: (vi) not timed", '    timed("vi", lambda: c2_vi(P, cv, fm, geo))\n', '', E2E),
+    ("fd_1b_c2.py", "probe: the 300's draws not timed", '    timed("draws_300", lambda: c2_draws(P, mc.TOY_SEEDS[t]))\n', '', E2E),
+    ("fd_1b_c2.py", "probe: only the timed blocks' draws", 'lambda: c2_draws(P, gate_seeds(t)[:GATE_N]))',
+     'lambda: c2_draws(P, gate_seeds(t)[:a.blocks * DRAW_BLOCK]))', E2E),
     ("fd_1b_c2.py", "probe: the terms built per block", '        c2_truth(V, cv, S[sl], P["r"][t], geo, phi[sl], P["const"], terms=terms)',
      '        c2_truth(V, cv, S[sl], P["r"][t], geo, phi[sl], P["const"])', E2E),
     ("fd_1b_c2.py", "c2check: the terms built per c2_truth call", ' P["const"], terms=terms)\n        q300 = q_of(',
      ' P["const"])\n        q300 = q_of(', E2E),
     ("fd_1b_c2.py", "c2_truth: the terms given ignored", '    if terms is None:\n        terms = c2_terms(V, cv)',
      '    if True:\n        terms = c2_terms(V, cv)', E2E),
-    ("fd_1b_c2.py", "c2_terms: tdw's terms from wt", '    return {q: multiplicative_terms(V[q], cv[q]) for q in ("wt", "tdw")}',
-     '    return {q: multiplicative_terms(V["wt"], cv["wt"]) for q in ("wt", "tdw")}', E2E),
+    ("fd_1b_c2.py", "c2_terms: tdw's terms from wt", '    return {q: dict(multiplicative_terms(V[q], cv[q]), src=',
+     '    return {q: dict(multiplicative_terms(V["wt"], cv["wt"]), src=', E2E),
+    ("fd_1b_c2.py", "c2_terms: no source kept", 'dict(multiplicative_terms(V[q], cv[q]), src=(V[q], cv[q]))',
+     'multiplicative_terms(V[q], cv[q])', E2E),
+    ("fd_1b_c2.py", "c2_truth: foreign terms accepted", '    elif not all(q in terms', '    elif False and not all(q in terms', E2E),
+    ("fd_1b_c2.py", "c2_truth: only V's identity checked",
+     'and terms[q]["src"][0] is V[q]\n                 and terms[q]["src"][1] is cv[q] for q in ("wt", "tdw")):',
+     'and terms[q]["src"][0] is V[q] for q in ("wt", "tdw")):', E2E),
+    # ---- the director's ruling (A), 2026-11-05: calibration, gate and bulk at one code (REQUIRED below)
+    ("fd_1b_c2.py", "c2check: a calibration at other code accepted", '    if cal.get("code_sha256") != gate_code_digests():',
+     '    if False:', E2E),
+    ("fd_1b_c2.py", "c2check: the calibration's code not carried to the gate record",
+     '\n                            "code_sha256": cal["code_sha256"],', '', E2E),
+    ("fd_1b_mc.py", "H2: a calibration at other code accepted", '    if cal.get("code_sha256") != fd_1b_c2.gate_code_digests():',
+     '    if False:', MC),
     ("fd_1b_c2.py", "probe: the first block's one-off costs kept", '    mean = float(np.mean(per_block[1:] if len(per_block) > 1 else per_block))',
      '    mean = float(np.mean(per_block))', E2E),
     ("fd_1b_c2.py", "probe: two truths timed as one", '    if len(a.truths) != 1:\n        raise Refusal("the probe times one truth")',
@@ -359,6 +375,8 @@ NEW = [
      "        vals = [rows_u[t][j] if t in rows_u else 0.0 for t in tags]", BIN),
     ("fd_1b_binning.py", "bin: Delta_CV sign", "        d[c32] += w\n        d[c64] -= w\n    return d", "        d[c32] -= w\n        d[c64] += w\n    return d", BIN),
 ]
+
+REQUIRED = {"c2check: a calibration at other code accepted", "H2: a calibration at other code accepted"}  # ruling (A)
 
 
 def purge():
@@ -391,6 +409,9 @@ for f, name, old, new, tests, replaced in plan:                      # every anc
     c = files[f].count(old)
     assert (c == 0) if replaced else (c == 1), f"{name}: its target occurs {c} times in {f}"
 print(f"plan: {len(plan)} mutants, {sum(r for *_, r in plan)} not applicable; every anchor occurs as required")
+runnable = {n for _, n, *_, r in plan if not r and n not in EQUIVALENT}
+assert REQUIRED <= runnable, f"a REQUIRED mutant is missing, not applicable or declared equivalent: {REQUIRED - runnable}"
+print(f"required: {len(REQUIRED)} mutants, each in the plan and run")
 if "--check" in sys.argv:
     sys.exit(0)
 SUITES = list(MC + C2 + CVD + BIN + E2E + TAB)
@@ -430,4 +451,8 @@ killed = sum(1 for k in applicable if k == "KILLED")
 print(f"{killed} of {len(applicable)} applicable killed; "
       f"{sum(1 for _, k in rows if k == 'N/A')} not applicable; {sum(1 for _, k in rows if k == 'EQUIVALENT')} "
       f"equivalent (each with its scope and proving test); {len(rows)} in all")
-sys.exit(0 if killed == len(applicable) and r.returncode == 0 else 1)   # a survivor, an ERROR or a red control fails
+required_killed = all(k == "KILLED" for n, k in rows if n in REQUIRED) and REQUIRED <= {n for n, _ in rows}
+print(f"required: {'every one KILLED' if required_killed else 'NOT every one KILLED'}")
+sys.exit(0 if killed == len(applicable) and r.returncode == 0 and required_killed else 1)   # a survivor, an ERROR,
+                                                                                            # a red control or a
+                                                                                            # REQUIRED not killed fails

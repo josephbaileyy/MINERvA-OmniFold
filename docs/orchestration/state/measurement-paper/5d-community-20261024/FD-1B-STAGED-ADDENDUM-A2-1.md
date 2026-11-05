@@ -360,6 +360,21 @@ Any other difference is a STOP to the director.
 **The ruling and its implementation:**
 - **The hoist.** `multiplicative_terms` builds the CV's log, L and Z once per array; Z is sparse, as the (universe,
   row) pairs. `multiplicative_apply` applies them to a block. `multiplicative` is their composition.
+- **Its cost, measured locally** (M1 Pro, one thread, the committed functions at af69f632, 175 universes × 10⁶
+  synthetic rows with 10⁻⁴ of universe weights and 100 CV weights non-positive; best of 2–3; 2026-11-05 05:29Z,
+  load average about 8):
+  - `multiplicative_terms` 2.38 s, once;
+  - `multiplicative_apply` 0.491 s per 20-draw block, bitwise equal to `multiplicative`;
+  - the block's composite matmul 0.293 s;
+  - one `_bins` 5.7 ms.
+  Scaled by rows, that is about 24 s (apply, 49.3 M rows) + 19 s (matmul, about 66.1 M rows) + about 28 s (`_bins`,
+  about 246 M row-visits per draw × 20) ≈ 70–85 s per block. With 165 blocks and the terms (about 120 s), that is
+  **about 3.2–3.9 h per truth, plus `prepare(rows=True)`.** prepare is unmeasured with rows: the calibration's
+  prepare loads none, and its whole job (60783756) took 2,564.5 s. This is not a Perlmutter figure; the probe
+  measures it.
+  Search: `fd_1b_c2.py <command>` in every `.time` under `fd/receipts-1b` (3 Perlmutter runs, all `calibrate`, which calls `prepare(a)` with rows=False, fd_1b_c2.py:712) @ 0f858bce
+  An earlier prototype of the hoist, with a dense Z and the CV's log taken twice, measured 10.33 s once and 3.07 s
+  per block. That gave the "about 10.5 h per truth" quoted before this measurement. It was not the committed code.
 - **The terms once per job.** They depend on neither the draws nor the truth. `c2_terms` builds them for wt and tdw,
   and c2check builds them once, before its truth loop, and passes them to every c2_truth call (the declared 300 and
   the gate sample, at each truth). At cb59f85b they were still built inside c2_truth, so twice per truth. That
@@ -392,6 +407,29 @@ Any other difference is a STOP to the director.
   at the mean block time, with the first block set aside. Its sha and price
   go to the director first. If it projects more than about 8 h per truth, option (b) (blocks over a fork pool) comes
   back to the director.
+- **The director's ruling (A), 2026-11-05: one code for the calibration, c2check and the bulk.** At a2560cc3 the
+  rule that a calibration at earlier code is not carried into c2check at later code was held only by memory. c2check
+  pinned the calibration's record, npz and single-universe U x_T, never its `code_sha256`. Two changes the director
+  and the audit asked for (below) would have moved fd_1b_c2 after the calibration's rerun. Now:
+  - c2check refuses a calibration whose `code_sha256` is not its own `gate_code_digests()`: all five files the
+    calibration binds, fd_1b_c2, fd_1b_mc, clip_probe2, cov2d and fd_1b_toys. The director named the first two; the
+    other three are the same record's.
+  - The gate record carries the calibration's `code_sha256`, and `check_clip_gate` refuses one that is not the
+    bulk's own.
+  - Tests: `E2E.test_c2check_refuses_a_calibration_from_other_code` (fd_1b_c2 changed, fd_1b_mc changed, none
+    recorded; on its own code's record it reaches the next check); three S2 overrides in `test_fd_1b_mc`.
+  - Both refusals are REQUIRED mutants: the harness exits 1 unless each is in the plan, run and KILLED.
+  - Not covered: the backstop's 300-draw calibration (schema /1, job 60771025), which is at earlier code by design.
+    The backstop reads only its per-cell SDs.
+- **The terms are tied to their arrays** (the audit's item 1). Nm's variance ratio is gated: `reading_1b`'s
+  "multiplicative" gate enters both the positivity-preserving pick and option (3). So `c2_terms` keeps the arrays
+  it was built from, and c2_truth refuses terms whose arrays are not, by identity, its own V and cv (or that are
+  missing either array). Its test: four foreign sets refuse (another V with equal values, another cv, no source, one
+  array only).
+- **The probe times every one-off step of c2check** (the audit's item 2): prepare(rows=True) on its own,
+  c2_inputs, c2_terms, (vi) through `c2_vi`, and the draws through `c2_draws` for the declared 300 and the
+  3,000-draw gate sample. `c2_vi` and `c2_draws` are factored out of c2check, so the probe calls what c2check calls.
+  It records |Z| per array (`z_pairs`) and the peak RSS. Schema `fd-1b-c2-probe/2`.
 - **The calibration is rerun bitwise at the final fd_1b_c2.** It is cheap, and it keeps the rule that a calibration at
   earlier code is not carried into c2check at later code.
 - **The comparator, amended before that rerun.** `--expect-code-sha256` names fd_1b_mc.py and fd_1b_c2.py, and each
@@ -414,6 +452,9 @@ Any other difference is a STOP to the director.
     receipt prints both equivalents as "equivalent on every input; its proof is a test", which overstates this one
     (the audit's W1). The harness now prints each with its own scope and proving test.
 - KILLED means the suites exit 1. Any other non-zero exit is ERROR.
+- `REQUIRED` names the mutants that must be in the plan, run and KILLED, or the harness exits 1, whatever else
+  passes. Today these are the two that drop the calibration's code check, in c2check and in `check_clip_gate` (the
+  director's ruling (A), 2026-11-05).
 - Runs are bytecode-free, at PYTHONHASHSEED=0, each in its own clean detached worktree at the cited head.
 - `--check` verifies every anchor without running anything.
 
@@ -426,6 +467,9 @@ Any other difference is a STOP to the director.
 | stopped | `48ca04a1`, `1295f7e4`, `7b22347d`, `abf95aed`, `e880008c` | stopped at 103, early, 39, 23 and 17 rows, each with 0 survivors, because tests or the harness changed at the next head |
 | survivor finder | `b4eefeda` | 282 of 302 applicable killed, 20 survivors (`a2-1/mutation_a21-b4eefeda-FINDER.out`) |
 | verification | the closing tree | the 20, alone, against the new tests: 20 of 20 killed, the unmutated control passing (`a2-1/mutation_a21-20-survivors-verified.out`) |
+| stopped | `cb59f85b` | stopped before its control finished: the probe's terms defect (§8c) was found at that head |
+| verification | `a2560cc3` | the five terms mutants and the re-anchored probe projection, alone: 6 of 6 killed, the control passing before and after (`a2-1/mutation_a21-terms6-a2560cc3.out`) |
+| stopped | `a2560cc3` | the full run (plan 345), stopped at 62 rows with 0 survivors by the director's ruling (A): the code moved again |
 
 **The 20 survivors at `b4eefeda`, each closed:**
 - Two mutants whose killing test lived in a suite they did not list; the lists were corrected:
@@ -501,13 +545,25 @@ calibration's 4.0 cap. With the jobs since then at their measured cost, and the 
 | P1's capture (estimate) | ≈ 1.0 |
 | 300-draw calibration, job 60771025 (21:40) | 0.361 |
 | large-sample calibration, job 60783756 (43:15) | 0.721 |
-| its rerun at the final code (cap) | 1.5 |
-| **total** | **≈ 79.58**, within 81.0 by 1.42 |
+| its rerun at the H1 code, job 60805733 (45:39, 2,739 s) | 0.761 |
+| **spent or committed** | **≈ 78.84** |
+| its second rerun at the ruling-(a) code (cap; 0.72 and 0.76 measured) | 1.5 |
+| c2check's timing probe (cap; prepare(rows=True), §8c, + about 0.12 h) | 1.5 |
+| **total with both at their caps** | **≈ 81.84**, above 81.0 by 0.84 |
+| **total with the rerun at its measured 0.76 and the probe at its cap** | **≈ 81.1**, above 81.0 by ≈ 0.1 |
+
+**The ceiling raised to 83.0 node-h (the director's ruling of 2026-11-05).** It is an operational go-ahead within the
+standing grant, far below half the balance, and it covers the two runs above at their caps (81.84). Binding 3 resets
+the ceiling properly, with c2check's measured price, and reports it to Joseph. No connect may take the spend above
+83.0 before binding 3.
 
 The CV denominator reads and the binning runs ran on login nodes, at 0 node-h. **Not yet priced:** c2check at N
-(G18 and AR23, then the plug-in) and the plug-in's large-sample calibration. Binding 3 gives an estimate for each,
-based on 60783756's measured timings, and sets the total with the arithmetic shown. If it lands above 81.0, the
-director sets the new total there and reports it to Joseph (the director, 2026-11-04).
+(G18 and AR23, then the plug-in) and the plug-in's large-sample calibration. At one-thread local rates for the
+committed code, c2check comes to about 3.2–3.9 h per truth plus an unmeasured prepare (§8c): about 6.5–7.9 node-h
+for G18 and AR23 before prepare. The total lands above 81.0 at any probe result near that estimate. Binding 3 gives
+an estimate for each, based on the probe's measured timings, and sets the total with the arithmetic shown. If it
+lands above the ceiling, the director sets the new total there and reports it to Joseph (the director, 2026-11-04).
+Search: `fd_1b_c2.py <command>` in every `.time` under `fd/receipts-1b` (3 Perlmutter runs, all `calibrate`, which calls `prepare(a)` with rows=False, fd_1b_c2.py:712) @ 0f858bce
 
 **The path collision (the audit's finding at `1295f7e4`; the director's rulings).** Product names carry neither the
 rule nor the estimator (`product_name`), and `run_unfold` skipped any existing target. So the five re-run items would
