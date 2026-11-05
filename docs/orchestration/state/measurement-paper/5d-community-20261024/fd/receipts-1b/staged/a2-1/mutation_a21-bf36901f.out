@@ -1,0 +1,387 @@
+sha256 062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67  fd_1b_mc.py
+sha256 522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f  fd_1b_c2.py
+sha256 220a8bd517cd6c6255cd34abc1eec444638cf2b98867cdc0d95d5775e374f32e  fd_1b_cvdenom.py
+sha256 69cd7bd37984db1deb0d103fb81808e88fc990cc679e9a4b0a6dea16d15b208d  fd_1b_binning.py
+sha256 cd16a6b5685c32ba8cd5f8e6f3504e2b166ac43f5a5b878c444146d653435168  ../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py
+sha256 64331f5fd5d0c569fb540c6ab976f990fc2b33d81c8b7c1ac6dc19ce472c5d60  tests/test_fd_1b_mc.py
+sha256 b090005983d1d88ab8c57ae1474a8cf156295bb131ec2414cfcab12ecba5fb1f  tests/test_fd_1b_c2.py
+sha256 76f3bbbcc7938db08ac4b06594cb2c92b39baddf9a35658486b1799e99e771b1  tests/test_fd_1b_cvdenom.py
+sha256 94e9d76e0b0907b102891222201968b8bb9ae6c003e9e65a86c5b8fe5c0ef823  tests/test_fd_1b_binning.py
+sha256 db84efa25dd8ad0d8ba933e7420551f1da5b36f84e2257787b90fe0f2192739b  tests/test_fd_1b_a21_e2e.py
+sha256 1dd47a350eb0781ee203c8c5f5bc12995128c6a6d28b4f5bebb5184d1fce2da9  tests/test_fd_1b_tables.py
+KILLED means the suites exit 1 (a test failed); any other non-zero exit is ERROR, not a kill
+plan: 368 mutants, 15 not applicable; every anchor occurs as required
+required: 4 mutants, each in the plan and run
+unmutated: 240 passed, 1 skipped in 181.56s (0:03:01)
+N/A      ratio composition inverted  (its target code was replaced: amendment 2 or A2.1)
+N/A      zero-CV rows not added  (its target code was replaced: amendment 2 or A2.1)
+KILLED   negatives clipped
+KILLED   denominator not composed
+KILLED   first universe not copied
+KILLED   two flux universes allowed
+KILLED   flux universe keeps CV flux
+KILLED   with_mc leaves the nature's flux
+KILLED   toy unfolds with the nature MC
+KILLED   toy without streams
+KILLED   stat jitter offset 0
+KILLED   stat replica not bootstrapped
+KILLED   plugin r off truth rows
+KILLED   capture keeps a view
+KILLED   capture wrap not removed
+KILLED   ratio digest unchecked
+KILLED   role pairing unchecked
+KILLED   toy range unchecked
+KILLED   stat range unchecked
+KILLED   control list unchecked
+KILLED   seed check skipped
+KILLED   flux block unweighted
+KILLED   lateral not transferred
+KILLED   C_model left out of C_T
+KILLED   joint flag dropped
+KILLED   over-coverage flags
+KILLED   cell flag strict
+KILLED   atime move exits 0
+KILLED   walls limit doubled
+KILLED   seed role at 42
+KILLED   D1: the reader gets the source
+KILLED   D1: a toy reads the constraint plainly
+KILLED   A2: clipmean reads the constraint plainly
+KILLED   D1: receipt reads the constraint plainly
+KILLED   D1: remade reads the constraint plainly
+KILLED   D1: null reads the assembly plainly
+N/A      B1 (audit): N1 composite stat constant  (its target code was replaced: amendment 2 or A2.1)
+KILLED   B1 (audit): receipt count off
+KILLED   B1 (audit): receipt max ratio off
+KILLED   B1 (audit): receipt cv_zero count off
+KILLED   B1 (audit): readout null digest unchecked
+KILLED   B1 (audit): readout products unchecked
+KILLED   B1 (audit): products digest drops stat
+KILLED   B1 (audit): toy seed set unchecked
+KILLED   B1 (audit): flux law uniform
+KILLED   B1 (audit): lateral law half width
+KILLED   B1 (audit): surrogate skipped
+KILLED   B1 (audit): offset sign flipped
+KILLED   B1 (audit): variant graded on C_T
+KILLED   B1 (audit): leave-out keeps MEC
+KILLED   B1 (audit): plugin control (b) skipped
+N/A      B1 (audit): zero mask from acc  (its target code was replaced: amendment 2 or A2.1)
+KILLED   B1 (audit): stat block ddof 0
+KILLED   B1 (audit): normalization block dropped
+KILLED   B1 (audit): null gauss drops C_model
+KILLED   B1 (audit): null U check dropped  [re-anchored]
+KILLED   B1 (audit): cmodel rebuild unchecked
+KILLED   B1 (audit): toy truth nonfinite unchecked
+KILLED   B1 (audit): plugin push size unchecked
+KILLED   B1 (audit): push digest unchecked
+KILLED   B1 (audit): flux table digest unchecked
+KILLED   B1 (audit): weights pins unchecked
+KILLED   B1 (audit): input digests unchecked
+N/A      B2: the all-draws bound keeps the max  (its target code was replaced: amendment 2 or A2.1)
+N/A      B2: an unevaluated row does not stop  (its target code was replaced: amendment 2 or A2.1)
+N/A      B2: the exact pass takes the first draw only  (its target code was replaced: amendment 2 or A2.1)
+N/A      B2: receipt ignores the composite  (its target code was replaced: amendment 2 or A2.1)
+KILLED   B2: n1 ignores the toys above
+KILLED   B3: readout U check dropped  [re-anchored]
+KILLED   B3: readout ignores what the null was made from
+KILLED   B3: the null does not record the cmodel json
+KILLED   B4: clause S's leave-out list on C_T
+KILLED   B4: clause S's threshold at the whole
+N/A      C1 (audit): the CV-zero all-draws bound halved  (its target code was replaced: amendment 2 or A2.1)
+N/A      C1 (audit): the exact pass's CV-zero rows as a product  (its target code was replaced: amendment 2 or A2.1)
+KILLED   C1 (audit): declared draws hold one truth
+KILLED   C1 (audit): N2's threshold at 0.25
+KILLED   C1 (audit): N2's C_T^- list is C_T's
+KILLED   minor: partial products not refused
+KILLED   D1: readout reads the assembly plainly
+KILLED   A2: compose back to the product
+KILLED   A2: compose drops the CV subtraction
+KILLED   A2: compose's first term is the CV
+KILLED   A2: 2b not checked
+KILLED   A2: 2b at < 0 only
+KILLED   A2: 2b on k = 1 too
+KILLED   A2: n1_ratio 0/0 as 0
+KILLED   A2: clip on w_reco alone
+KILLED   A2: background not clipped
+KILLED   A2: signal not clipped
+KILLED   A2: clipped mass signed
+KILLED   A2: truth cells over all clipped rows
+KILLED   A2: the toy draws the unclipped nature
+KILLED   A2: the stat replica draws unclipped
+KILLED   A2: clipmean adds nothing
+KILLED   A2: clipmean outside the window
+KILLED   A2: the screen floor tightened
+KILLED   A2: the floor check always passes
+KILLED   A2: the screen at >= 10 L
+KILLED   A2: the matmul's CV correction off by one
+KILLED   A2: exact pass's CV correction off by one
+KILLED   A2: the peak from the first universe only
+KILLED   A2: the pair budget ignored
+KILLED   A2: near-bound pairs not recomputed
+KILLED   A2: the validation ignores pairs
+KILLED   A2: the validation ignores worsts
+KILLED   A2: the sample's pairs not recorded
+KILLED   A2: a draw missing a band allowed
+KILLED   A2: the denominator check at d_D < 0
+KILLED   A2: the denominator check without the CV
+KILLED   A2: crossterm sign parity dropped
+KILLED   A2: crossterm zero factors dropped
+KILLED   A2: flat_cells' closed last edge
+KILLED   A2: cross_z without the relative sigma
+KILLED   A2: the loader hashes nothing
+KILLED   A2: the loader keeps non-finite values in zero
+KILLED   A2: the receipt's STOP ignores 2b
+KILLED   A2: the receipt's STOP ignores N1
+KILLED   A2: N_clip from the signal alone
+KILLED   A2: the clipping offset unscaled
+KILLED   A2: the reading ignores the flag
+KILLED   A2: the reading at the strict >
+KILLED   A2: two clipmean products accepted  [re-anchored]
+KILLED   A2: clipped fraction over the wrong total  [re-anchored]
+KILLED   A2+: negative rows in some draw not accumulated
+KILLED   A2+: the composite sum over every row
+KILLED   A2+: the negative sum unsigned
+KILLED   A2+: the clipped fraction not divided
+KILLED   A2+: the spread's q95 at the median
+KILLED   A2+: pilot_b drops the central values
+KILLED   A2+: walls_of ignores a missing product
+KILLED   A2+: S1-0b walls without a seed allowed
+KILLED   A2+: clipcheck against a sigma of 1
+KILLED   A2+: clipcheck ignores clip_flags
+KILLED   A2+: clipcheck always proceeds
+KILLED   A2+: clipcheck accepts two clipmeans
+KILLED   A2e: the estimator ignored at install
+KILLED   A2e: the meta records the fixed config  [re-anchored]
+KILLED   A2e: a mixed estimator accepted
+KILLED   A2e: a mixed clip rule accepted
+KILLED   A2e: the meta drops the clip rule
+N/A      A2c: the nature rule keeps the truth  (its target code was replaced: amendment 2 or A2.1)
+N/A      A2c: the nature rule ignores negative truths  (its target code was replaced: amendment 2 or A2.1)
+KILLED   A2c: an unknown clip rule accepted
+KILLED   A2c: the toy ignores the clip rule
+KILLED   A2c: the source split at < 0
+KILLED   A2c: the truth clip signed
+KILLED   A2c: the truth clip without the xsec factor
+KILLED   A2c: the truth clip over every truth row
+KILLED   A2c: reco plus from the negatives
+KILLED   A2c: clipcheck takes any receipt
+KILLED   A2c: clipcheck takes a STOP receipt
+KILLED   A2d: the receipt reads the assembly plainly
+KILLED   A2d: clipcheck reads the assembly plainly
+KILLED   AUD: near-bound recompute dropped
+KILLED   AUD: denominator check < not <=
+KILLED   AUD: compose 2b < not <=
+KILLED   AUD: clip_draw neg ignores reco
+KILLED   AUD: clipmean omits background
+KILLED   AUD: clip_flags > not >=
+KILLED   AUD: N_clip argmin
+KILLED   AUD: push_negative constant
+KILLED   AUD: screen lim at 10.5 L
+KILLED   AUD: stat replica record dropped
+KILLED   AUD: clipped fraction uses positive sum
+KILLED   C1: clip_cells' truth rows without the reco mask
+KILLED   C2: the denominator's N1 not counted
+KILLED   C2: the denominator's N1 does not stop
+KILLED   C2: the denominator's N1 without the peak
+KILLED   C3: the screen without its margin
+KILLED   C4: clipmean under nature
+KILLED   C4: clipcheck under nature
+N/A      C4: the clipping readout under nature  (its target code was replaced: amendment 2 or A2.1)
+KILLED   C5: clipcheck takes another N_clip seed
+KILLED   G: the clip gate never checked
+N/A      G: the clip gate always open  (its target code was replaced: amendment 2 or A2.1)
+KILLED   G: the clip gate without its digest
+N/A      G: the clip gate reads anything  (its target code was replaced: amendment 2 or A2.1)
+KILLED   G: the clip gate without a file
+KILLED   A2: O5 push_min not recorded
+KILLED   U1: the U check back to an absolute tolerance
+KILLED   U2: the U check compares in float64
+KILLED   TW: truth_weight without s5e_deform's install
+KILLED   S3: the nature truth not clipped
+KILLED   S3: the nature truth clipped on lambda too (the old rule)
+KILLED   S3: the truth clip on w_truth's sign, not w_truth r's
+KILLED   S3: the denominator not clipped
+KILLED   S3: the denominator clipped under 'data' too
+KILLED   S3: the denominator's negative mass subtracted
+KILLED   S3: nature without the row denominator
+KILLED   e2: a composite subtracts the float64 d_CV
+KILLED   e2: a detector universe keeps its float64 denominator
+KILLED   e2: a composite without the CV's tdw
+KILLED   e2: a detector denominator off the CV's accepted
+KILLED   e2: the receipt keeps the float64 d_CV
+KILLED   e2: the receipt without the CV's tdw
+KILLED   e2: a negative CV tdw accepted
+KILLED   S2: 'data' runs any item
+KILLED   S2: 'nature' runs any role
+KILLED   S2: the gate without its schema
+KILLED   S2: another truth's reading accepted
+KILLED   S2: the declared seeds not checked
+KILLED   S2: the code digests not checked
+KILLED   S2: the inputs not checked
+KILLED   S2: no calibration needed
+KILLED   S2: the pre-gate set takes every toy
+KILLED   H1: the digest read from a hashed file
+KILLED   H1: the pins file never compared
+KILLED   H1: a missing pins file not refused
+KILLED   H1: a pins file of any length
+KILLED   H1: a pins file of any characters
+KILLED   H1: a pins file of several lines
+KILLED   H1: the pins blob not recorded
+KILLED   H1: the pins blob over the stripped text
+KILLED   724(i): two cells already stop
+EQUIV    724(i): exactly 0.20 counts as beyond  (equivalent on every input; test_fd_1b_c2 Gate.test_i_at_exactly_0_20_is_unreachable)
+KILLED   724(ii): at the bound stops
+KILLED   724(ii): one-sided
+KILLED   724(iii): at the bound stops
+KILLED   724: passes without (iii)
+KILLED   724: passes without (ii)
+KILLED   724: k = 3
+KILLED   724: a non-finite ratio accepted
+KILLED   reading: q1 without the clipped gate
+KILLED   reading: 1B's gate on the clipped ratio is C2's
+KILLED   law: the flux band uniform
+KILLED   truth: the completeness inverted (packed)
+KILLED   law: first order subtracts k CVs
+KILLED   law: two flux universes accepted
+KILLED   streams: CAL_SALT 0 accepted
+KILLED   rates: (b) not from gate_724
+KILLED   rates: to Joseph on (c)
+KILLED   rates: (c)(ii) at the fixed threshold
+KILLED   control: z bound 40
+KILLED   linearisation: no tolerance
+KILLED   calibration: the linearisation verdict dropped
+KILLED   prepare: a detector denominator off the CV's accepted
+KILLED   prepare: without the CV's tdw
+KILLED   prepare: (e2)'s d_CV not applied
+KILLED   c2check: an uncalibrated calibration accepted
+KILLED   c2check: another calibration's single_x accepted
+KILLED   c2check: PASS on any reading
+KILLED   c2check: PASS without the backstop
+KILLED   c2check: the first 300 not compared
+KILLED   c2check: the clipped ratio read at #724's fixed gate
+KILLED   c2check: another truth's thresholds
+KILLED   c2_truth: the truth clip on lambda
+KILLED   c2_truth: no denominator clip
+KILLED   c2_block: R adds m_all
+KILLED   c2_block: the clipped ratio is first order's
+KILLED   H2: any calibration verdict
+KILLED   H2: the calibration not the one named
+KILLED   H2: a projected union accepted
+KILLED   H2: the union not bounded
+KILLED   H2: the power not required
+KILLED   H2: the backstop not required
+KILLED   H2: the config hash not checked
+KILLED   resume: an existing product skipped unchecked
+KILLED   resume: the clip rule not compared
+KILLED   resume: the estimator not compared
+KILLED   resume: the gate config hash not compared
+KILLED   resume: the gate config hash not recorded
+KILLED   clipping: 'nature' refused (C4's refusal restored)
+KILLED   clipping (c): --data-unfolds not required 'data'
+KILLED   clipping (c): --data-unfolds may be the graded directory
+KILLED   clipping (b): the readout without the bound gate
+KILLED   clipping (c): two clipmean products accepted
+KILLED   clipping (a): the clipped fraction over the wrong total
+KILLED   clipping (a): the toys' rule not checked
+KILLED   clipping (a): the denominator's fraction over the truth's total
+KILLED   clipping (c): the graded central, not S1-0b's
+KILLED   S3 arrays: the truth clip's array not stored
+KILLED   S3 arrays: the truth clip on lambda's rows
+KILLED   S3 arrays: the denominator's mass signed
+KILLED   P1: the gate seeds shifted by one
+KILLED   P1: the declared 300 not first
+KILLED   P2: stops_at without (i)
+KILLED   P2: stops_at without (iii)
+KILLED   P2: (ii) at the cell multiple
+KILLED   P2: (iii) at the mean-log multiple
+KILLED   P2: the last s, not the first
+KILLED   P2: the projection without the plug-in
+KILLED   P2: three truths as a product
+KILLED   P2: the null SD over too few sets
+KILLED   P4: a uniform inflation
+KILLED   P4: power at the boundary fails
+KILLED   P4: one truth's power suffices
+KILLED   P4: the verdict without power
+KILLED   P2: the verdict without a threshold
+KILLED   P2: the verdict without (i) alone
+KILLED   gate_n: passes without (iii)
+KILLED   gate_n: (ii) at the null SD, not the threshold
+KILLED   gate_n: (iii) one-sided
+KILLED   P6: the backstop without (i)
+KILLED   P6: the backstop without (iii)
+KILLED   P6: the config hash without the clip rule
+KILLED   P6: the config hash without the toy seeds
+KILLED   tables: the bulk without the pilot's graded items
+KILLED   tables: the bulk keeps clipmean
+KILLED   tables: nature steps without the gate
+KILLED   tables: no CV tdw
+KILLED   tables: the pins file not required committed
+KILLED   tables: the gate sha not compared
+KILLED   tables: the bulk under data
+KILLED   tables: S1-0 under nature
+KILLED   tables: one unfolds directory for both rules
+KILLED   tables: the directory without the estimator
+EQUIV    tables: 23 per lane  (equivalent on the declared inputs only; test_fd_1b_tables Tables.test_the_lane_cap_has_no_effect_on_the_declared_tables)
+KILLED   mult: every Z pair floors
+KILLED   mult: no sparse floor
+KILLED   mult: the floor on the universe, not the row
+KILLED   mult: L without the CV's log
+KILLED   mult: Z without the CV's sign
+KILLED   c2_truth: a negative selection accepted
+KILLED   c2check: truths outside the calibration's
+KILLED   c2check: threads not recorded
+KILLED   merge: one part accepted
+KILLED   merge: the shared fields not compared
+KILLED   merge: (vi) not compared
+KILLED   merge: a truth in two parts
+KILLED   merge: the verdict without the backstop
+KILLED   merge: the verdict without the readings
+KILLED   merge: truths in part order
+KILLED   merge: a part's digest not checked
+KILLED   probe: the projection without the one-off steps
+KILLED   probe: prepare not timed
+KILLED   probe: (vi) not timed
+KILLED   probe: the 300's draws not timed
+KILLED   probe: only the timed blocks' draws
+KILLED   probe: the terms built per block
+KILLED   c2check: the terms built per c2_truth call
+KILLED   c2_truth: the terms given ignored
+KILLED   c2_terms: tdw's terms from wt
+KILLED   c2_terms: no source kept
+KILLED   c2_truth: foreign terms accepted
+KILLED   c2_truth: only V's identity checked
+KILLED   c2check: a calibration at other code accepted
+KILLED   c2check: the calibration's code not carried to the gate record
+KILLED   H2: a calibration at other code accepted
+KILLED   c2check: the 300-draw calibration's code not checked
+KILLED   cal300: the exemption widened to any definition
+KILLED   cal300: a changed or missing statement accepted
+KILLED   cal300: an added statement accepted
+KILLED   cal300: the record's fd_1b_c2 digest not checked
+KILLED   cal300: the pins file's digest not checked
+KILLED   cal300: a pinned module not imported before the guard (G3)
+KILLED   closure: tuple targets bind nothing (G2)
+KILLED   closure: a bare method call binds nothing (G2)
+KILLED   closure: comprehension variables bind at module level
+KILLED   closure: from-imports not followed
+KILLED   closure: docstrings kept
+KILLED   closure: decorators cut
+KILLED   closure: a last-line comment cut
+KILLED   probe: the first block's one-off costs kept
+KILLED   probe: two truths timed as one
+KILLED   H2: any gate sample
+KILLED   H2: the gate sample's first 300 not required
+KILLED   cvd: the npz's rows without the extras gate
+KILLED   cvd: w = 1e4 kept
+KILLED   cvd: A without NaN equality
+KILLED   cvd: (a) any move accepted
+KILLED   cvd: (b) not checked
+KILLED   cvd: (c) not checked
+KILLED   cvd: usable without C
+KILLED   cvd: usable without D
+KILLED   bin: bound - e2 without the detectors
+KILLED   bin: e2 - f64 lets a detector bring a universe row
+KILLED   bin: Delta_CV sign
+unmutated, after: 240 passed, 1 skipped in 177.72s (0:02:57)
+351 of 351 applicable killed; 15 not applicable; 2 equivalent (each with its scope and proving test); 368 in all
+required: every one KILLED
+exit=0
