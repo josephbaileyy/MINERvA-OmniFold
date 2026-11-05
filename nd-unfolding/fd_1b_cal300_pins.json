@@ -1,228 +1,954 @@
 {
+ "closure": [
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "CAL_SALT",
+   "module": "fd_1b_c2",
+   "text_sha256": "326cf281f471fb5fb183572183c450095147a63f657e15407104cd2b9ae2cb31"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "CAL_SEED",
+   "module": "fd_1b_c2",
+   "text_sha256": "f675074fdfb509308709123222533a337823ce22539006a57bf49d7d42ddb027"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "DEFLATION",
+   "module": "fd_1b_c2",
+   "text_sha256": "c8f14593636602238f068125330d1064c2e4506b03c36550cbbc8a8933ef2e7e"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "GATE_DEV,GATE_K,GATE_LOGMEAN,GATE_MAX",
+   "module": "fd_1b_c2",
+   "text_sha256": "7c554372180e6f041ffc82ed0d72200c735f85fac1255b2fae8647c639fca8a4"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "N_CELLS",
+   "module": "fd_1b_c2",
+   "text_sha256": "981202a44427cba3b06e1860daaf1ab4a2ff848da4bae72f5bb1ffaca4e89582"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "Refusal",
+   "module": "fd_1b_c2",
+   "text_sha256": "a754313534632bd6c8a9e74540c215bfaf544474b6e4484ff24a5847ed46ade9"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "SD_MULT_CELL,SD_MULT_LOGMEAN",
+   "module": "fd_1b_c2",
+   "text_sha256": "4181a954a72615d2101d20c6ff30db968639807fc332a45cdd390fd7665caeb1"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "UNION_LIMIT",
+   "module": "fd_1b_c2",
+   "text_sha256": "f9a418da11fc0bc33c3dbe5bda96e97df02976440ff8d49f5165a7248e855c7c"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "_STATE",
+   "module": "fd_1b_c2",
+   "text_sha256": "0d52db623e0150025e359d5fd3545d4e43147e8d0e67c581964cbaf3cf797325"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "_one_set",
+   "module": "fd_1b_c2",
+   "text_sha256": "f267d4682fbf278300b19dc7c1079d23a1fe1bdd0e24905980612144f0cc9963"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "_worker_init",
+   "module": "fd_1b_c2",
+   "text_sha256": "44584595fecda47bf69e79529f3484c94ac55faab1b11b0efe83f2b3ef040ba9"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "band_reference",
+   "module": "fd_1b_c2",
+   "text_sha256": "bea18fbc57f8d33cd92f3109504f0e43646079637d0eeea21d38ac4a2e636229"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "calibration_draws",
+   "module": "fd_1b_c2",
+   "text_sha256": "53447c9c60f5140b0be8ea959014e5e178bf53d874b59446f2bae9befe30cdfc"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "composite_sums",
+   "module": "fd_1b_c2",
+   "text_sha256": "582e51f8f671e1945ff3eaf5024a14168a92c76753324a3c10ff686360e0ca2a"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "cv_denominator_f32",
+   "module": "fd_1b_c2",
+   "text_sha256": "e0b663b2ae126f593848ac215da7cf456b3c860eae3fd8b20f354f583be4d826"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "draw_flux",
+   "module": "fd_1b_c2",
+   "text_sha256": "4de0388b9e47f85578fdd2d5675ea18e317d2c44969a6bb9fd164e44e73e2184"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "fine_sums",
+   "module": "fd_1b_c2",
+   "text_sha256": "f4d602b4a523ef2c227405a58eab34468639a5361b6ccee6ee5a66163fe35af6"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "gate_724",
+   "module": "fd_1b_c2",
+   "text_sha256": "254e0ad5396df7fb1c558eea4eca0b809832e6476fa09356160eeb35d63787d7"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "layout_1b",
+   "module": "fd_1b_c2",
+   "text_sha256": "50a986dc3b2d1972b55fbaa061ce72c4f50e2ed311a50f5f65c8f48c98e24e70"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "math",
+   "module": "fd_1b_c2",
+   "text_sha256": "b67c9ddef3e0c3715a3708ecfa296cc461a164bde94c8ba3fd112789b5bed926"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "np",
+   "module": "fd_1b_c2",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "packing",
+   "module": "fd_1b_c2",
+   "text_sha256": "858cd94b5b3c48b32d1eca413c0cb8e280327eb5bf22a2ed1f974f13fa2c486d"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "prepare",
+   "module": "fd_1b_c2",
+   "text_sha256": "d3ada7a35e8e23e99fd894876670522feb5c4efa926580a885b70b0bdcf8d8c2"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "rates",
+   "module": "fd_1b_c2",
+   "text_sha256": "922b7f0221439e20697f9620a2c42b97378792aaa2937cc229775e428771b2c9"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "sa",
+   "module": "fd_1b_c2",
+   "text_sha256": "1a7b4110aa3dbba771c4d0b40db048451f991fc2277d1772b0a62f9cb71981f1"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "selection",
+   "module": "fd_1b_c2",
+   "text_sha256": "aabc9eb425b8bce9a11b63016e5668be03409b47896bcc216902f1f3bfd11783"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "set_ratios",
+   "module": "fd_1b_c2",
+   "text_sha256": "6def60f73d338d5d608692ecb7c8cb6cc7a851253d9a438c03541fbf251f12f8"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "toys",
+   "module": "fd_1b_c2",
+   "text_sha256": "c4b0919195218c31af1adad6d8cb432c6e38140d063871ff2bdc62e2081a06dd"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_c2.py",
+   "label": "xt_packed",
+   "module": "fd_1b_c2",
+   "text_sha256": "e3ec21ac41e5cf7d341ba565e5296e08fa2fbef7e540601ca65c37b84e6b30d7"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "NOATIME_FLAG",
+   "module": "fd_1b_inv",
+   "text_sha256": "bf1c00f510a499a23f2481004429c0a2b96f036647611163916f9380227d808f"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "OPENED",
+   "module": "fd_1b_inv",
+   "text_sha256": "adb343a87914267e533222f75fd757d111ecf4b2a9f9866dbb617da8ac921fd9"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "Path",
+   "module": "fd_1b_inv",
+   "text_sha256": "6d69f2ac09017b8a49d050ab336e953b8fa02ae08c24396916ea7ea42418e627"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "Refusal",
+   "module": "fd_1b_inv",
+   "text_sha256": "a754313534632bd6c8a9e74540c215bfaf544474b6e4484ff24a5847ed46ade9"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "hashlib",
+   "module": "fd_1b_inv",
+   "text_sha256": "ada1d9e0a360cda0fd1c8757d297aa74a4fc8d7193a69d3c28b43afc6950e9f9"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "load_inputs",
+   "module": "fd_1b_inv",
+   "text_sha256": "7d6487a8c90bf605c1234becaf768c2feba0c8106a018632354c2d2bbc0fda98"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "load_npz",
+   "module": "fd_1b_inv",
+   "text_sha256": "74dd712c5356931e6d346fa48bc2e84de4e204c59d31fba0d47d11b1be927d77"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "np",
+   "module": "fd_1b_inv",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "open_noatime",
+   "module": "fd_1b_inv",
+   "text_sha256": "aee4d05b6029f130c7c462608a1d5f66d453df1ef91cbd5d455bdace87dd3148"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "os",
+   "module": "fd_1b_inv",
+   "text_sha256": "de2abade832c8e350a1bdc98cfcdb1e202ac4749c5fc51a4a970d41736b6df5c"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "s5c_unfold",
+   "module": "fd_1b_inv",
+   "text_sha256": "e7cf95d5e5b5ae8764c9ffbf9b093e8cd9ab74c03a8cb4d038ec0176a80b12c9"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_inv.py",
+   "label": "sha256_noatime",
+   "module": "fd_1b_inv",
+   "text_sha256": "2600f546043a51f22c5fd1ce8bdb96008db1c627f6a39bf2c9a89c330cfff67a"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "Path",
+   "module": "fd_1b_mc",
+   "text_sha256": "6d69f2ac09017b8a49d050ab336e953b8fa02ae08c24396916ea7ea42418e627"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "Refusal",
+   "module": "fd_1b_mc",
+   "text_sha256": "fbf0f5298d889b4573c2d6d1597543cf8c432ed17ea85a4dc6b6a200e1f80f5d"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "TRUTHS",
+   "module": "fd_1b_mc",
+   "text_sha256": "d158cc7325aff2f17fcc58f49a03a3efd30ee5951d5ce61ea6f3f797dd656002"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "_flux_universe_inputs",
+   "module": "fd_1b_mc",
+   "text_sha256": "127edcf60a0d0e4793b5fe3d574ac193e92fadc53837d4b2d2084e88fbd52a53"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "_load_world",
+   "module": "fd_1b_mc",
+   "text_sha256": "b2ae051dd7f1dafecd01ecc920d694fc4df2aca2f17ef79c5361dd8bc3b2a2d2"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "_single",
+   "module": "fd_1b_mc",
+   "text_sha256": "234e98ddf0d8a3f5f9ef1e4e10414e0e50e190f28357d4969df91d3c866ff173"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "_staged_table",
+   "module": "fd_1b_mc",
+   "text_sha256": "afa5d13ca9cde36acdcfd374027c6f24693da4ff536080f86e13ed1293648d6c"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "contextmanager",
+   "module": "fd_1b_mc",
+   "text_sha256": "016e3498fc697063e429feb2c6b2cdc896c1f8ae199399a95139047372af6885"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "draw_universes",
+   "module": "fd_1b_mc",
+   "text_sha256": "82aeaf469cd3ad2f89303997983957d0d101e0eb37f7eb3634ab2bdda71fdac9"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "flat_cells",
+   "module": "fd_1b_mc",
+   "text_sha256": "ab41035adf49f40a841726869aaa7dfba3ee5389f853c5e26de8bf0c0d79982e"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "flux_on_grid",
+   "module": "fd_1b_mc",
+   "text_sha256": "7d2a1d1df3656103d33b5c53d2acdd06bb78d6f02a89b8eb2b048eb66ddba9a3"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "hashlib",
+   "module": "fd_1b_mc",
+   "text_sha256": "ada1d9e0a360cda0fd1c8757d297aa74a4fc8d7193a69d3c28b43afc6950e9f9"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "inv",
+   "module": "fd_1b_mc",
+   "text_sha256": "d62e2d67b5a9e593f9e932796f6f971c468d9965bdd4062a51791c8ef2b9fbff"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "io",
+   "module": "fd_1b_mc",
+   "text_sha256": "b000f4590d6af9cfe633ffe0faae301a05dde8e4ca7757d7566f899d61f240b8"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "json",
+   "module": "fd_1b_mc",
+   "text_sha256": "ff3e4d4dcf7250cae8d622d77c9a6d69aefcf4ab04ef9920218fafe93c0f1991"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "np",
+   "module": "fd_1b_mc",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "s5e_deform",
+   "module": "fd_1b_mc",
+   "text_sha256": "c144024fc462235a51ae2777d299d4c43e0abe1ee74264abb5bcaf72f4f5c3e1"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "s5n_pseudo",
+   "module": "fd_1b_mc",
+   "text_sha256": "c9e3d511e287852a1bdaad55d5c91d8fc51c61da02bf025f022c54380ab6ce89"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "s5p_universe",
+   "module": "fd_1b_mc",
+   "text_sha256": "c2b7a02af0d92236f9fa9d61123e575db7d2563c68c00b330fa4178aa9ac6e7a"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "sa",
+   "module": "fd_1b_mc",
+   "text_sha256": "f89923ada3a872ac00f56944469b08ced0ec29dd6d099ebad7ebf7b7a0ec1eef"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "tempfile",
+   "module": "fd_1b_mc",
+   "text_sha256": "09d25239ae3d62e91c70b74fa5baa1d52a22c5c2397a785935889e61f91a8557"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "toys",
+   "module": "fd_1b_mc",
+   "text_sha256": "0d7cb1bb8fb5702cba9595f90a204f7df1cb9f8d71d1537acba2c108e90560ba"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "truth_ratio",
+   "module": "fd_1b_mc",
+   "text_sha256": "91e3de48040ae34b1b45631153a28cd5225b9da338dd700a518d0eeebd13e6b7"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "truth_weight",
+   "module": "fd_1b_mc",
+   "text_sha256": "45b0d465fdbd40855149637ca7b327564a5050eb15ec3f2a6be43b656cdf1298"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "universe_dir",
+   "module": "fd_1b_mc",
+   "text_sha256": "f281ac0bd7ba65edf1277ee290d92585f8156a19a01632a01fab4f75c375424e"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "verified_weights",
+   "module": "fd_1b_mc",
+   "text_sha256": "7e6811dc357f61cdb53789f49c51c2c39a9afa4c13788efb1400b426468c2de5"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_mc.py",
+   "label": "via_noatime",
+   "module": "fd_1b_mc",
+   "text_sha256": "15f836c5275f41d2e332c9657a559c200c3fc664741c403684e26464621cbef3"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "DETECTOR_DRAW_ORDER",
+   "module": "fd_1b_toys",
+   "text_sha256": "7a89cbccb76cdc1e2c74e116044201744e9f3c0b8619b669f966b3492dd3c373"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "F1_SUMS",
+   "module": "fd_1b_toys",
+   "text_sha256": "9353b835d687111ca7d19cbd1f57bb13aceab0fd7d92d27ecb49d23b114979eb"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "INTERACTION_BANDS",
+   "module": "fd_1b_toys",
+   "text_sha256": "557647915a55772162b989ad7a85f7753b04d4ef96d33ed260d4b9e9f9452ec3"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "LATERAL_DRAW_ORDER",
+   "module": "fd_1b_toys",
+   "text_sha256": "a5e735df2b7bae7eccdbbee9cda72dc6b8c139a63637366d2b7d7d0245b352ae"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "Path",
+   "module": "fd_1b_toys",
+   "text_sha256": "6d69f2ac09017b8a49d050ab336e953b8fa02ae08c24396916ea7ea42418e627"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "REPO",
+   "module": "fd_1b_toys",
+   "text_sha256": "87cc688f88fc9e8b6ed490fdec0047b85d342dc5bd61a5963db240eb4a691bca"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "Refusal",
+   "module": "fd_1b_toys",
+   "text_sha256": "a754313534632bd6c8a9e74540c215bfaf544474b6e4484ff24a5847ed46ade9"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "TRUTHS",
+   "module": "fd_1b_toys",
+   "text_sha256": "74cdc4f24a15c370e6f961d44522e580667d0c6bb310785b567bc8eb7217e36c"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "_ND",
+   "module": "fd_1b_toys",
+   "text_sha256": "eb72a5f00c9a034fda10d843e58e78fb11a296d94e85356d402ff21e8454a701"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "check_pins",
+   "module": "fd_1b_toys",
+   "text_sha256": "39bfc9c5bb01946b99b8da35afef2cae5291fc0fa1cbb49a3c29a4f327635aab"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "committed_ratio_sha256",
+   "module": "fd_1b_toys",
+   "text_sha256": "598d38b7d6990b7e14dc706d213ee547820fd518c229f494a4c64ebb778a5579"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "draw",
+   "module": "fd_1b_toys",
+   "text_sha256": "0cff06a629b16d8661cc0bd1092e90e8ba6c78d0c1c82dfd4084aede7121f046"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "flux_probabilities",
+   "module": "fd_1b_toys",
+   "text_sha256": "54cd7d22c41a6891d69b124807bf35e2541cb9759fcd7f11240b00a0bf9a8b3c"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "interaction_groups",
+   "module": "fd_1b_toys",
+   "text_sha256": "f025232e6e11a41f1c8d04d79c67a82594fcc374ab5d1f42f837fba13048ba2a"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "ne",
+   "module": "fd_1b_toys",
+   "text_sha256": "bcd91d5e1250844729634174b45e6952aefab17575c33ef91af10719d81836da"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "np",
+   "module": "fd_1b_toys",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "s1_assemble",
+   "module": "fd_1b_toys",
+   "text_sha256": "9c6a1603f7d4966a2aee25b895adb2313c9077b1aea6dfe5807f500c8b17cb3b"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "s1_universes",
+   "module": "fd_1b_toys",
+   "text_sha256": "55ef10ef4664cbbcb6ef7251eed9be1be2b77658bd86631938628aa999c12a81"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "s5p_universe",
+   "module": "fd_1b_toys",
+   "text_sha256": "c2b7a02af0d92236f9fa9d61123e575db7d2563c68c00b330fa4178aa9ac6e7a"
+  },
+  {
+   "file": "nd-unfolding/fd_1b_toys.py",
+   "label": "weight_files",
+   "module": "fd_1b_toys",
+   "text_sha256": "2fe48a733478894853faddb5dd3565be9daf8fa1df2d0c81dbc6f97a0cf99ad6"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "CV_MATCH_RTOL",
+   "module": "flux_universe",
+   "text_sha256": "b29f43ad9cbf6c659a4c370327cce4cac4bf9533213d67bc205b4e2d8d965478"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "FLUX_CV_KEY",
+   "module": "flux_universe",
+   "text_sha256": "0aee5defa7d6748ae54a48c8e367ea396e1d196af737a75d3ea86221bafbdee5"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "FLUX_UNIV_KEY",
+   "module": "flux_universe",
+   "text_sha256": "084a5816c9296839e9460cbcfd7d1f5540b347e87951bbf0e1335aaf00f290f8"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "_check_cv_match",
+   "module": "flux_universe",
+   "text_sha256": "aaf67efa4f7dbf21057affce4e2b26166b8b2c227f6f5a384db014aea9914285"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "_check_positive",
+   "module": "flux_universe",
+   "text_sha256": "ad3d2758bd730fa6168f081a549c4827f1bb19a538e4d6d64bfca12c2c695045"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "flux_on_target_grid",
+   "module": "flux_universe",
+   "text_sha256": "2c83d63e20d078e26046a8d1818fe4faa47260ed10246419ecefd4c3d1279b2c"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "flux_ref_index",
+   "module": "flux_universe",
+   "text_sha256": "08505079de7d33a107916483e899e77966f480d0a2872dc0dd095e3fe8abb342"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "flux_universe_bins",
+   "module": "flux_universe",
+   "text_sha256": "11f940e78452daab535c85529b68b827761fc0ea5a3d0c1a52b88e8f6e6d13a7"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "np",
+   "module": "flux_universe",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "os",
+   "module": "flux_universe",
+   "text_sha256": "de2abade832c8e350a1bdc98cfcdb1e202ac4749c5fc51a4a970d41736b6df5c"
+  },
+  {
+   "file": "nd-unfolding/flux_universe.py",
+   "label": "read_flux_universe_table",
+   "module": "flux_universe",
+   "text_sha256": "1bff8938221da47efe33e5f0dec40c390352c7436cd2465ec437a3bcdd178f94"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "BKG_SHA256",
+   "module": "s1_assemble",
+   "text_sha256": "1210efd4485042e44dc7fdba1ce4bbb7d3bc761b6737678bf54b31729c5a5a77"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "CONSTRAINT_SHA256",
+   "module": "s1_assemble",
+   "text_sha256": "eff8296d81cf79c7311700f17d9d46211bc05aea4792adc326fa0d60a4ca7460"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "DEFINITION_SHA256",
+   "module": "s1_assemble",
+   "text_sha256": "f4457367c604bd36a7158ec76cd5f072fe5ccaf64b796352b80fe075c1dd6677"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "DETECTOR_BANDS",
+   "module": "s1_assemble",
+   "text_sha256": "435c58786f64298eaa64a173d332d70271695752eda74424df943b9ae975e9e1"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "DROPPED,FLUX,MINOS",
+   "module": "s1_assemble",
+   "text_sha256": "4b9c8816214ec4d6211f8d8c3738f44cbd10b51c46815467abebc858d570ecf3"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "EXPECT",
+   "module": "s1_assemble",
+   "text_sha256": "c7bb33c810a6a0ca5e36f599504e9f3a54e1e1ad3bb414be1b74141953da8df6"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "EXPECT",
+   "module": "s1_assemble",
+   "text_sha256": "f5c227b250817cfcb343e0a63df6c804f07be4f37ddfe1a2941c609be2174bec"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "FINE_MAP_SHA256",
+   "module": "s1_assemble",
+   "text_sha256": "461aac5e0bdc6a5d95cc40e72b3772c126dcbe251597ff60d326f4c76b9b70cb"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "INPUT_NPZ_SHA256",
+   "module": "s1_assemble",
+   "text_sha256": "bfea8f3128bb7cd5d4360d42e8b4c05579226a4415a3a1035c8606b6b02464b0"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "LATERAL_BANDS",
+   "module": "s1_assemble",
+   "text_sha256": "8cb62fda20ad5ccbc3fe7e7fcfa5b9bd48df84de55ce8534a899a3ef96949c68"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "MODEL_BANDS_2",
+   "module": "s1_assemble",
+   "text_sha256": "b7db385d1de3bd8de59011feac40e80f42ae41dc283f5f4a630e58e014975aed"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "N_CELLS",
+   "module": "s1_assemble",
+   "text_sha256": "95666181c1aafa6abcb1a31657365dcad07df6cb83da701b78fd3f7c10935069"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "Path",
+   "module": "s1_assemble",
+   "text_sha256": "6d69f2ac09017b8a49d050ab336e953b8fa02ae08c24396916ea7ea42418e627"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "fine_map",
+   "module": "s1_assemble",
+   "text_sha256": "7fb5f4819fa94d0d7e71f6147a66b35b7bca2012c74d441fc8d50ab2cf3d6ddc"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "flux_weights",
+   "module": "s1_assemble",
+   "text_sha256": "ffc4f22505390992223681bcd969d34985772a1cf79d558cdd2836689c68a343"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "functional_matrix",
+   "module": "s1_assemble",
+   "text_sha256": "9d48d51a92d1ed624fd9a5fbd00771e9425a9939815d593884f6089e56b9b59b"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "hashlib",
+   "module": "s1_assemble",
+   "text_sha256": "ada1d9e0a360cda0fd1c8757d297aa74a4fc8d7193a69d3c28b43afc6950e9f9"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "json",
+   "module": "s1_assemble",
+   "text_sha256": "ff3e4d4dcf7250cae8d622d77c9a6d69aefcf4ab04ef9920218fafe93c0f1991"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "np",
+   "module": "s1_assemble",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "require_sha",
+   "module": "s1_assemble",
+   "text_sha256": "e41509cc36de0ad6ded8ac576930eed4ad0a2faf689f33b0118765ea480d6da9"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "s1",
+   "module": "s1_assemble",
+   "text_sha256": "e701b0a87f2b58136f6a04b85e7b8f82da259ff2f80a46aaed4c4a2c942a5a8b"
+  },
+  {
+   "file": "nd-unfolding/s1_assemble.py",
+   "label": "sha256",
+   "module": "s1_assemble",
+   "text_sha256": "2d59c9c2088618d07a889b1d6885637343c91ae1d571ab6b6b0821403a00f181"
+  },
+  {
+   "file": "nd-unfolding/s5c_pseudo.py",
+   "label": "AXIS",
+   "module": "s5c_pseudo",
+   "text_sha256": "81194ffb06d63ed19218d6cebdb88182a9c48f01a6773e21c59b9eca6ae697e5"
+  },
+  {
+   "file": "nd-unfolding/s5c_pseudo.py",
+   "label": "np",
+   "module": "s5c_pseudo",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/s5c_pseudo.py",
+   "label": "truth_weight",
+   "module": "s5c_pseudo",
+   "text_sha256": "1951442dd8d831b4a836df524f557696c79f83a83447dba3102349f36e585550"
+  },
+  {
+   "file": "nd-unfolding/s5c_unfold.py",
+   "label": "Path",
+   "module": "s5c_unfold",
+   "text_sha256": "6d69f2ac09017b8a49d050ab336e953b8fa02ae08c24396916ea7ea42418e627"
+  },
+  {
+   "file": "nd-unfolding/s5c_unfold.py",
+   "label": "load_inputs",
+   "module": "s5c_unfold",
+   "text_sha256": "655de551a0eacd82db2ffc08f49772293a0820d1b37c9f219424cbec4562a8bb"
+  },
+  {
+   "file": "nd-unfolding/s5c_unfold.py",
+   "label": "np",
+   "module": "s5c_unfold",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/s5e_deform.py",
+   "label": "AXIS_NAMES",
+   "module": "s5e_deform",
+   "text_sha256": "0021526322d1093984adc36e1fcefceb098867857e3afa13be5e08f6217920d1"
+  },
+  {
+   "file": "nd-unfolding/s5e_deform.py",
+   "label": "install_ratio_truth",
+   "module": "s5e_deform",
+   "text_sha256": "edfc3f0c6e5845ed27ff5b6165be88dcf510760b45f61df420ca9c15548a44ae"
+  },
+  {
+   "file": "nd-unfolding/s5e_deform.py",
+   "label": "np",
+   "module": "s5e_deform",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/s5e_deform.py",
+   "label": "ratio_weight",
+   "module": "s5e_deform",
+   "text_sha256": "b875b1e241dfb7abe015c306886e3169a3525319efabab869188960f26a4e603"
+  },
+  {
+   "file": "nd-unfolding/s5n_pseudo.py",
+   "label": "AXIS",
+   "module": "s5n_pseudo",
+   "text_sha256": "40d9427572f281106ac6015c9492a6d73ab6dea4868f153c6bb7e7d1e4b56c7e"
+  },
+  {
+   "file": "nd-unfolding/s5n_pseudo.py",
+   "label": "eavail_ratio_weight",
+   "module": "s5n_pseudo",
+   "text_sha256": "daff8189e37473cceb7125d67ce178f171698483547cc3a99b5ad8cc5e073eee"
+  },
+  {
+   "file": "nd-unfolding/s5n_pseudo.py",
+   "label": "np",
+   "module": "s5n_pseudo",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/s5n_pseudo.py",
+   "label": "s5c_pseudo",
+   "module": "s5n_pseudo",
+   "text_sha256": "996a0014d10aad2ecd4cc9f33e173eb22a078b043302e23807ab1287f6b8a25d"
+  },
+  {
+   "file": "nd-unfolding/s5n_pseudo.py",
+   "label": "truth_weight",
+   "module": "s5n_pseudo",
+   "text_sha256": "19cc04b2bac7e60ac9d8bf91200280b41cdc7b64cf548cd1c4b07dec79b5d58e"
+  },
+  {
+   "file": "nd-unfolding/s5p_nullexp.py",
+   "label": "DETECTOR_BANDS",
+   "module": "s5p_nullexp",
+   "text_sha256": "063b15d4baafee5abc57a26eea82e142b1b61cf2782f395a51c04ed96a2d268d"
+  },
+  {
+   "file": "nd-unfolding/s5p_nullexp.py",
+   "label": "Path",
+   "module": "s5p_nullexp",
+   "text_sha256": "6d69f2ac09017b8a49d050ab336e953b8fa02ae08c24396916ea7ea42418e627"
+  },
+  {
+   "file": "nd-unfolding/s5p_nullexp.py",
+   "label": "model_bands",
+   "module": "s5p_nullexp",
+   "text_sha256": "4bb4a8fc1b8c9e7285ae0cad7abf676f50dcab864a3e44cd873bd0727248ab09"
+  },
+  {
+   "file": "nd-unfolding/s5p_nullexp.py",
+   "label": "model_groups",
+   "module": "s5p_nullexp",
+   "text_sha256": "08eb771030388239765ac355138ad17c75ead2004ac58eed1b762b76611b3b62"
+  },
+  {
+   "file": "nd-unfolding/s5p_stage1_inspect.py",
+   "label": "AXES",
+   "module": "s5p_stage1_inspect",
+   "text_sha256": "bda1c1611e6f6ba7cce2dfc9710789be6c360466b2db37ebc69527ae26d9a31b"
+  },
+  {
+   "file": "nd-unfolding/s5p_stage1_inspect.py",
+   "label": "FINE",
+   "module": "s5p_stage1_inspect",
+   "text_sha256": "ddb795055acade32c7b9fa5452ff7f2a7067000d6a71c727ef69e3f0c3656ac7"
+  },
+  {
+   "file": "nd-unfolding/s5p_stage1_inspect.py",
+   "label": "H2_EDGES",
+   "module": "s5p_stage1_inspect",
+   "text_sha256": "6b748c772af3a3fa211eb1c661b6154ef2fc3cae4ca10a1b7452994c1c28c288"
+  },
+  {
+   "file": "nd-unfolding/s5p_stage1_inspect.py",
+   "label": "coarse_map",
+   "module": "s5p_stage1_inspect",
+   "text_sha256": "d947cb6e2d83943c2e1f6c4d8cf5f2df276ce2a11530629746641986a247d852"
+  },
+  {
+   "file": "nd-unfolding/s5p_stage1_inspect.py",
+   "label": "fine_shape",
+   "module": "s5p_stage1_inspect",
+   "text_sha256": "c33cb102cc0fbd274536f62a073ce3e6dda797598b98dc4046ce4a269120ad2f"
+  },
+  {
+   "file": "nd-unfolding/s5p_stage1_inspect.py",
+   "label": "fine_volume",
+   "module": "s5p_stage1_inspect",
+   "text_sha256": "d68e4d3d3fdcca1ab6dccfb81aa5114d31371446cc4600c0fde7a4a7f7069509"
+  },
+  {
+   "file": "nd-unfolding/s5p_stage1_inspect.py",
+   "label": "np",
+   "module": "s5p_stage1_inspect",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/s5p_universe.py",
+   "label": "Path",
+   "module": "s5p_universe",
+   "text_sha256": "6d69f2ac09017b8a49d050ab336e953b8fa02ae08c24396916ea7ea42418e627"
+  },
+  {
+   "file": "nd-unfolding/s5p_universe.py",
+   "label": "SENTINEL_ROWS",
+   "module": "s5p_universe",
+   "text_sha256": "fe91082878411091b2225d925809acb2308f09213306772c457308adeeb28243"
+  },
+  {
+   "file": "nd-unfolding/s5p_universe.py",
+   "label": "check_alignment",
+   "module": "s5p_universe",
+   "text_sha256": "13e85292ae381277349861d8ea3e3fd832ac5e9516fb466a663f931dd4b72318"
+  },
+  {
+   "file": "nd-unfolding/s5p_universe.py",
+   "label": "denominator",
+   "module": "s5p_universe",
+   "text_sha256": "0918e320e2cdf073fbf9f1b091f9c004b8f31b65825c690adc9060a7b1f0306f"
+  },
+  {
+   "file": "nd-unfolding/s5p_universe.py",
+   "label": "np",
+   "module": "s5p_universe",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  },
+  {
+   "file": "nd-unfolding/s5p_universe.py",
+   "label": "universe_inputs",
+   "module": "s5p_universe",
+   "text_sha256": "077dbd1ad41291204a0bc7e342ab5513b381bc6f20a432a892080ad8b9c21a27"
+  },
+  {
+   "file": "nd-unfolding/s5p_universe.py",
+   "label": "weight_keys",
+   "module": "s5p_universe",
+   "text_sha256": "66182dffe5c669b1a551db158d52654abddc7f2aa08cc886f908e1e849676c24"
+  },
+  {
+   "file": "nd-unfolding/xsec_nd.py",
+   "label": "_bin_volume",
+   "module": "xsec_nd",
+   "text_sha256": "9c0667ff1b0db2b300a53046b046af059e5c4ac17fa6472dc2cf56983786e3a0"
+  },
+  {
+   "file": "nd-unfolding/xsec_nd.py",
+   "label": "_broadcast_along",
+   "module": "xsec_nd",
+   "text_sha256": "da00d40a4f15529730b5bf60064d7b2cf452fbf5d707d893dc2c320c18cfc430"
+  },
+  {
+   "file": "nd-unfolding/xsec_nd.py",
+   "label": "np",
+   "module": "xsec_nd",
+   "text_sha256": "6f11581db2b4487aaaf6eb8704a9acbe89cddd1ccde4652211c1a838bc70efde"
+  }
+ ],
  "exempt": {
   "fd_1b_c2._one_set": {
-   "ast_sha256": "007c90bfc8a2d496597ff54068475d4b97337c0a307434df168fa69ae35a086a",
-   "rev": "d6410cffd836dab0e1d00cae9259e760d0217aca",
-   "ruling": "the director, 2026-11-05: n=st['n'] equals 02e71a0b's call at st['n'] = 300 (bitwise test in test_fd_1b_a21_e2e)"
+   "rev": "22eda9f424918e96e28984fa3152e42a803a5635",
+   "ruling": "the director, 2026-11-05: n=st['n'] equals 02e71a0b's call at st['n'] = 300 (bitwise test in test_fd_1b_a21_e2e)",
+   "text_sha256": "c17c2fbdf973d20ecbd158a51beb6a1a781c88a32835a3f81e65700120f38d56"
   }
- },
- "paths": {
-  "fd_1b_c2.CAL_SALT": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.CAL_SEED": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.DEFLATION": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.N_CELLS": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.Refusal": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.UNION_LIMIT": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2._STATE": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2._one_set": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2._worker_init": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.band_reference": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.calibration_draws": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.composite_sums": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.cv_denominator_f32": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.draw_flux": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.fine_sums": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.gate_724": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.layout_1b": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.packing": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.prepare": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.rates": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.selection": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.set_ratios": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_c2.xt_packed": "nd-unfolding/fd_1b_c2.py",
-  "fd_1b_inv.NOATIME_FLAG": "nd-unfolding/fd_1b_inv.py",
-  "fd_1b_inv.OPENED": "nd-unfolding/fd_1b_inv.py",
-  "fd_1b_inv.Refusal": "nd-unfolding/fd_1b_inv.py",
-  "fd_1b_inv.load_inputs": "nd-unfolding/fd_1b_inv.py",
-  "fd_1b_inv.load_npz": "nd-unfolding/fd_1b_inv.py",
-  "fd_1b_inv.open_noatime": "nd-unfolding/fd_1b_inv.py",
-  "fd_1b_inv.sha256_noatime": "nd-unfolding/fd_1b_inv.py",
-  "fd_1b_mc.Refusal": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc.TRUTHS": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc._flux_universe_inputs": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc._load_world": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc._single": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc._staged_table": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc.draw_universes": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc.flat_cells": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc.flux_on_grid": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc.truth_ratio": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc.truth_weight": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc.universe_dir": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc.verified_weights": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_mc.via_noatime": "nd-unfolding/fd_1b_mc.py",
-  "fd_1b_toys.DETECTOR_DRAW_ORDER": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.F1_SUMS": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.INTERACTION_BANDS": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.LATERAL_DRAW_ORDER": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.REPO": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.Refusal": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.TRUTHS": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys._ND": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.check_pins": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.committed_ratio_sha256": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.draw": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.flux_probabilities": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.interaction_groups": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.s1_universes": "nd-unfolding/fd_1b_toys.py",
-  "fd_1b_toys.weight_files": "nd-unfolding/fd_1b_toys.py",
-  "flux_universe.CV_MATCH_RTOL": "nd-unfolding/flux_universe.py",
-  "flux_universe.FLUX_CV_KEY": "nd-unfolding/flux_universe.py",
-  "flux_universe.FLUX_UNIV_KEY": "nd-unfolding/flux_universe.py",
-  "flux_universe._check_cv_match": "nd-unfolding/flux_universe.py",
-  "flux_universe._check_positive": "nd-unfolding/flux_universe.py",
-  "flux_universe.flux_on_target_grid": "nd-unfolding/flux_universe.py",
-  "flux_universe.flux_ref_index": "nd-unfolding/flux_universe.py",
-  "flux_universe.flux_universe_bins": "nd-unfolding/flux_universe.py",
-  "flux_universe.read_flux_universe_table": "nd-unfolding/flux_universe.py",
-  "s1_assemble.BKG_SHA256": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.CONSTRAINT_SHA256": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.DEFINITION_SHA256": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.DETECTOR_BANDS": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.EXPECT": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.FINE_MAP_SHA256": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.INPUT_NPZ_SHA256": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.LATERAL_BANDS": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.N_CELLS": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.fine_map": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.flux_weights": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.functional_matrix": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.require_sha": "nd-unfolding/s1_assemble.py",
-  "s1_assemble.sha256": "nd-unfolding/s1_assemble.py",
-  "s5c_pseudo.AXIS": "nd-unfolding/s5c_pseudo.py",
-  "s5c_pseudo.truth_weight": "nd-unfolding/s5c_pseudo.py",
-  "s5c_unfold.load_inputs": "nd-unfolding/s5c_unfold.py",
-  "s5e_deform.AXIS_NAMES": "nd-unfolding/s5e_deform.py",
-  "s5e_deform.install_ratio_truth": "nd-unfolding/s5e_deform.py",
-  "s5e_deform.ratio_weight": "nd-unfolding/s5e_deform.py",
-  "s5n_pseudo.AXIS": "nd-unfolding/s5n_pseudo.py",
-  "s5n_pseudo.eavail_ratio_weight": "nd-unfolding/s5n_pseudo.py",
-  "s5n_pseudo.truth_weight": "nd-unfolding/s5n_pseudo.py",
-  "s5p_nullexp.DETECTOR_BANDS": "nd-unfolding/s5p_nullexp.py",
-  "s5p_nullexp.model_bands": "nd-unfolding/s5p_nullexp.py",
-  "s5p_nullexp.model_groups": "nd-unfolding/s5p_nullexp.py",
-  "s5p_stage1_inspect.AXES": "nd-unfolding/s5p_stage1_inspect.py",
-  "s5p_stage1_inspect.FINE": "nd-unfolding/s5p_stage1_inspect.py",
-  "s5p_stage1_inspect.H2_EDGES": "nd-unfolding/s5p_stage1_inspect.py",
-  "s5p_stage1_inspect.coarse_map": "nd-unfolding/s5p_stage1_inspect.py",
-  "s5p_stage1_inspect.fine_shape": "nd-unfolding/s5p_stage1_inspect.py",
-  "s5p_stage1_inspect.fine_volume": "nd-unfolding/s5p_stage1_inspect.py",
-  "s5p_universe.SENTINEL_ROWS": "nd-unfolding/s5p_universe.py",
-  "s5p_universe.check_alignment": "nd-unfolding/s5p_universe.py",
-  "s5p_universe.denominator": "nd-unfolding/s5p_universe.py",
-  "s5p_universe.universe_inputs": "nd-unfolding/s5p_universe.py",
-  "s5p_universe.weight_keys": "nd-unfolding/s5p_universe.py",
-  "xsec_nd._bin_volume": "nd-unfolding/xsec_nd.py",
-  "xsec_nd._broadcast_along": "nd-unfolding/xsec_nd.py"
- },
- "pins": {
-  "fd_1b_c2.CAL_SALT": "d0a92521c1aaff6048f385964173a9178452386f115f9d7fdb4f9376a129d529",
-  "fd_1b_c2.CAL_SEED": "98a5fbba23d5ecc1943d3073e39d6eae62611853ab60eda6aeafa90469480b8d",
-  "fd_1b_c2.DEFLATION": "5c2751f9966940345071a1e78205b980d8315669a4e6845b5bd3daca9ff80f74",
-  "fd_1b_c2.N_CELLS": "dc4add090c65363f869ce5cd231cfc44a49f03507ba29619abcd1c2b43a81aba",
-  "fd_1b_c2.Refusal": "e1bedfda9b38c6772570c2d4bc2f887e52dee20b64bd2fc9992fa056cc7a4fe5",
-  "fd_1b_c2.UNION_LIMIT": "559c8459e51ce7b14bf97b95e3f3198472fb0cfa179aa2d9d7c664db9a09878f",
-  "fd_1b_c2._STATE": "3284d30bdfc4f87cc86b9889a31faad627406af1812e7d515dd73c698666e9db",
-  "fd_1b_c2._one_set": "5a26b969c6516864da3e7243710526f31e4d6535dc1056e4a2af21af1ba1fea5",
-  "fd_1b_c2._worker_init": "e95d99bb833d1e2694753105a4373f859061b5c730016c242c926a312dfdb5ee",
-  "fd_1b_c2.band_reference": "b2d5351b25e8ffd6a889a87d7f2c053ce1f1ed714d53fab2a16025885c21b2de",
-  "fd_1b_c2.calibration_draws": "b5719c6c660be17d586bb4be8e2e5ce43576eddc48c5c5d1ac8c07c23e2efc77",
-  "fd_1b_c2.composite_sums": "aa84187dd8307c87b019fe9782e9f7eda6b1eb609386d07090d2ae7b81d5c641",
-  "fd_1b_c2.cv_denominator_f32": "4c4349a22f559222196255b0e4700e56f3535b8b5cda789ee35083bf27ee255e",
-  "fd_1b_c2.draw_flux": "afba7494aab4f284594576bc76b92a6c771f96e784b819da481273ffbc7dd8c9",
-  "fd_1b_c2.fine_sums": "9bbf8705c68a67ed28a83888b21ef85708aa9f7816f0f3c1fd2690d47db1c778",
-  "fd_1b_c2.gate_724": "881ec4e2ba16d30ea75d84b03d3518ac6eabeffd52d7f4d8f08f1b8b072c20ad",
-  "fd_1b_c2.layout_1b": "9bb2c5521c186f531785c2f9c72e327c511a68cb3e09a90a36b30e46c3624fa4",
-  "fd_1b_c2.packing": "fa0bb4d9552da428ebd45018d8d0b902a13387b93d1020cfb8ccf8cb08489d23",
-  "fd_1b_c2.prepare": "7028d959e55490f7340c4e3cdca45d4a887d9332095df43051cb5dd3ddb796bc",
-  "fd_1b_c2.rates": "82b4e7faaaa139f936fd2d0d2ca19003877eae7fa1f6ec15db6340e0cc956f80",
-  "fd_1b_c2.selection": "59ae42a2a22393ebce0f81c67727bed9011ad62b22fb051d3286cb025026efb9",
-  "fd_1b_c2.set_ratios": "fc88ddbf322dd487ac943556bfd28eef4ccdbae9c8aecfe75352e371c6c2c075",
-  "fd_1b_c2.xt_packed": "235a3b208af1f20016a21341853a7105483e9bc465b192beee74bcca86dd7dd2",
-  "fd_1b_inv.NOATIME_FLAG": "52d665a7d37e9ff3438a63de399b16463a0d76108d12664808ecebe45e1ea762",
-  "fd_1b_inv.OPENED": "70fb91f09f17099e8a2816203ee6f7ae81ddd0b6bc7d623805ce5470050bd65b",
-  "fd_1b_inv.Refusal": "e1bedfda9b38c6772570c2d4bc2f887e52dee20b64bd2fc9992fa056cc7a4fe5",
-  "fd_1b_inv.load_inputs": "272b2752d2b8bb6c50263c249cd7e4667e909af11dc25fed79b62cffc9eda9a9",
-  "fd_1b_inv.load_npz": "564c71c3e236889fb23292249711ee1cc649c8794f6e97a8558e2f76c8df3a3d",
-  "fd_1b_inv.open_noatime": "4114930ad1ca488913e1f4e0d11a938a6728c27fcead306dee9aa49c6d7445fe",
-  "fd_1b_inv.sha256_noatime": "60b6df3ca17e3fe8595567b89eb24b9e228c8aea2ef4b3f424b7997c36eb5ad1",
-  "fd_1b_mc.Refusal": "e1bedfda9b38c6772570c2d4bc2f887e52dee20b64bd2fc9992fa056cc7a4fe5",
-  "fd_1b_mc.TRUTHS": "299ec0fd29965aadbf3f551281582982836b7e6697f9a311f96674b8e60ab1e8",
-  "fd_1b_mc._flux_universe_inputs": "64e3f57fd31ef8ca2412dd84abe97381ba08d689e502975c5b05481d2710fa3f",
-  "fd_1b_mc._load_world": "941aa9da586205fa09b0980099df18e29e1bee60a234430acf5633b6e29c3c7a",
-  "fd_1b_mc._single": "5a77d41b60c849beef8b6937aeb35e97d68a0af8bbe601f6ce9ee06aa6b4970f",
-  "fd_1b_mc._staged_table": "a4066e53c23bb296c176961457da86eac21803dbc38a9fcd2e9e948650f3980e",
-  "fd_1b_mc.draw_universes": "a74ef274f667004f209bb0fcb367647217505d1c7243a509c60120c1ef084f82",
-  "fd_1b_mc.flat_cells": "384c9dbefb7b9f4a761f2c25e620bdeba9bb88e29b8d5000bd953f52e23cfb8f",
-  "fd_1b_mc.flux_on_grid": "45dd11d4386f98f9a8dff3b2b7e928203f26637ad6fb2edda02c2b3099c52097",
-  "fd_1b_mc.truth_ratio": "1ae05567e374cce898d669592fee18dad47f9ba9ebfa144089a498552dfc3110",
-  "fd_1b_mc.truth_weight": "9346dac0cbb0abd06c6ddc2c53b39353245b5b02cb89db49d0ce86f6f49d46c3",
-  "fd_1b_mc.universe_dir": "afebd0d0f3a9f63533f261615c79192d794a0a7971f3b25167e663507f145f24",
-  "fd_1b_mc.verified_weights": "e28b9bdf1637db9336eb066359cfb0825fb8430e3f229b6ecf0023b535a8a486",
-  "fd_1b_mc.via_noatime": "bb2728181770aad2e28001f2989b44972eb73a3cfa94bdbd3a7878d5ed9c8a64",
-  "fd_1b_toys.DETECTOR_DRAW_ORDER": "0d841c5aa4d18450a148fedea863a1ebf4d93760fa30b9703be928d7c246eac2",
-  "fd_1b_toys.F1_SUMS": "52b0d0207f9fe9d2a83cbed1cc9b4796cf1b3e0c697123af7fba057bf48a44df",
-  "fd_1b_toys.INTERACTION_BANDS": "a617b9f95ae5d2707b519634db12288cdcd848c1be450c3b15bd44fc2c100ab0",
-  "fd_1b_toys.LATERAL_DRAW_ORDER": "04e44a0d2434825431024017d9789af80186fb10f139906bb91411bbc38c4f3f",
-  "fd_1b_toys.REPO": "14989d90d72eee3c5f114abab6d1fa542e3ec4b3685f15ebc57f481709ec55a6",
-  "fd_1b_toys.Refusal": "e1bedfda9b38c6772570c2d4bc2f887e52dee20b64bd2fc9992fa056cc7a4fe5",
-  "fd_1b_toys.TRUTHS": "218f1ab0bc518e432859f3bfa4a35bf3d8cd68f90be5f95d7014cd83f5ed1d80",
-  "fd_1b_toys._ND": "37bc5ff8ab958b1fd655790edbdb0c8f9c573c31305c28304719afd17b5e64e2",
-  "fd_1b_toys.check_pins": "074086bfefe9806c6a6e6480e0a964271326e09d0ee59421dd8622aaf2819886",
-  "fd_1b_toys.committed_ratio_sha256": "5d937055e3eb7f4b9553b3211a41380890c45377664791e38d56af51a4ac8878",
-  "fd_1b_toys.draw": "633ac398139ba53cac201531072461070502e3629a532d94e60018db6eed2524",
-  "fd_1b_toys.flux_probabilities": "0cf44635cc718abf377bb3b2a4a828e8982b4d6a50929eea3064ffb685674bb0",
-  "fd_1b_toys.interaction_groups": "b045d368944262fa6736182ccdfef2ab3272c17a33fbba0c4a456d1ba2767806",
-  "fd_1b_toys.s1_universes": "e68ee7c6b12b8718db610386bc7919cfd2ed78e5aa01f1ea2c022bf0059e387e",
-  "fd_1b_toys.weight_files": "71e22ee7fcee20e687f2859b362866469b28ed968d0ea9e24a6bc63d09ab535a",
-  "flux_universe.CV_MATCH_RTOL": "6a23015dcdebbc762c1848c5274b274bb06ccd07cab13d4a691dc5e6c827157e",
-  "flux_universe.FLUX_CV_KEY": "361c4d57e024f61e1f89f79af1438d25d63a67194b64112c3076a5d41ef6c3f1",
-  "flux_universe.FLUX_UNIV_KEY": "51392aad9f5044cfbe612378b53f9a0784f8ac22a8d5d7e4aa85e7e356c1c267",
-  "flux_universe._check_cv_match": "6534af7aa49d24f2f5f009fa28e463c650a7b5571531c022e5a8299c3bdc57c4",
-  "flux_universe._check_positive": "913510349e38452a91bac3b67267970bb670943f29acf53c9491eeeebd21cd36",
-  "flux_universe.flux_on_target_grid": "75798f35861899bcdb0db5cc97a342d2696cf6cb86dc34faad7df80d676ec5e6",
-  "flux_universe.flux_ref_index": "6f6a30ded0edc78bba09ea13878e15e28744ccf148583bcc11a350872568373b",
-  "flux_universe.flux_universe_bins": "671dc2b13413018a0341970f8fc7189616980174927c020c1ad4aae012bdb772",
-  "flux_universe.read_flux_universe_table": "3b28f6caad8a127212a2debaa3a37a08568e42d21c3b6b35c2d00d6945599951",
-  "s1_assemble.BKG_SHA256": "42b003040cdfff52cb317c25aec6f1e6b58ba2e751447077a019888fbb3a083c",
-  "s1_assemble.CONSTRAINT_SHA256": "ea18b0d2bb333c1ce8f8898a6c65b3b0c613bb6932cbb7b7aef00fe3ebb7a1cd",
-  "s1_assemble.DEFINITION_SHA256": "daac372e53fbc5735a5239070539e63e6f75f6a2b7eb421ac35898240d7dc58c",
-  "s1_assemble.DETECTOR_BANDS": "f872d2b6b854e81b89461dc8d98e6e0616f9a5284ae239214d1352d883b18961",
-  "s1_assemble.EXPECT": "5960b6a512e8bb7b42924762ed0a698164986da832f50606e9f4c624c379e52e",
-  "s1_assemble.FINE_MAP_SHA256": "74b9beba9794513ee9e41abfb559ac3445af0975c8681d2ee20a6d8d959f0afc",
-  "s1_assemble.INPUT_NPZ_SHA256": "8716ad76e5a90ae76a5d20583fed9698cf36bb3534426e11cf34464ab31a06bd",
-  "s1_assemble.LATERAL_BANDS": "ba0888d897974331e625d9bf182e1979d18d32ae70138b6b664f9e0cd9034f04",
-  "s1_assemble.N_CELLS": "b6c085b4341c5f2d9757a309580fd78b8bbaa189e46ef8341b35a110bf3ced47",
-  "s1_assemble.fine_map": "502782f5fd7455fd4ab5e3298c831dc4c768292b6ad1cae8548de47d6b257219",
-  "s1_assemble.flux_weights": "1681ead8b79e22c0832f572f309d222d4a216afc217301716468874b69b92d65",
-  "s1_assemble.functional_matrix": "8a41fe3a0715e9440fe02fe5e96d10108bda60eb327d0e92c9b737bec6b08020",
-  "s1_assemble.require_sha": "1194f6f7b3078008855864e5c53e2fbd75660d85206379b177acf27d39c892ce",
-  "s1_assemble.sha256": "2797648f661894e3da90a6e71f31f3596b4bdcb722f2764575196d1a2a3e205c",
-  "s5c_pseudo.AXIS": "afe216edcacb4e878d6343492d6002f18146fe729ed0e2aaba9ff5bde5617ec6",
-  "s5c_pseudo.truth_weight": "abc7df69b32db1387bfb907828d8698af37087ee64f552572b63d2af0ae82838",
-  "s5c_unfold.load_inputs": "24057db07655643e97246b329f4715d85cb942973071b45f7487b9e7d0359a99",
-  "s5e_deform.AXIS_NAMES": "3cefea4f927dfd5f066e4dd53b53f3166799f0ec138c565f99d92b00515b93a3",
-  "s5e_deform.install_ratio_truth": "9560563caa49003115569f7422e0e81e3ec85087670fdeade2a82c30c0a1d3b4",
-  "s5e_deform.ratio_weight": "d9f75f5b44c0a72b0b7663c9af85b4e69c862c868c44f517bcfad4c8f8fa64c6",
-  "s5n_pseudo.AXIS": "0286cca7f8f320f213032fed7ba36e0e8eb984f3d2e73696c8921819992deae9",
-  "s5n_pseudo.eavail_ratio_weight": "dca38348ef4a08cc9651dba96bb928d376fbd32b698689d6a5787d872f8e860b",
-  "s5n_pseudo.truth_weight": "5de898735d0ce9470cc4f8b031ffef6c04fd5def89dd9b4251cf33283858c990",
-  "s5p_nullexp.DETECTOR_BANDS": "bb56c96c18da02504b06d66716f2c6594aad2e4bddbd770a236ba08c14349f99",
-  "s5p_nullexp.model_bands": "b853daf927c467426540d860e98c53c3e79eb9151452e3bb4535804825ccc18a",
-  "s5p_nullexp.model_groups": "82104d685754741d7313705629f48bc67290fb6b0b73220ff493958aed06ec7a",
-  "s5p_stage1_inspect.AXES": "71969ea9c7b03c232717245002cdfd00be27392967d3ba7803509e40b9a21249",
-  "s5p_stage1_inspect.FINE": "79ab2d5da0403491dd93ffc673245a309faef631dc8311481783f4927109336b",
-  "s5p_stage1_inspect.H2_EDGES": "04f543e74afde4ffd7d3313ed2534e41c88baff6cf995499993bad3ed81b7a22",
-  "s5p_stage1_inspect.coarse_map": "024c6ae3e008d0f37c65839bfbc62929ff94d5d635be56798982b2587d8fb372",
-  "s5p_stage1_inspect.fine_shape": "e0c422bb5e8902acd0b00c9816aff1883e85721b37f4dfb888d7b9256a41217f",
-  "s5p_stage1_inspect.fine_volume": "fecb89d89e5adb86f372e01c67b1cc6c59b06375900f94884a7523b372d8530c",
-  "s5p_universe.SENTINEL_ROWS": "a5932b90870d23b79a387448d1ee1f12147c58f1871431a79291e322f5488ccd",
-  "s5p_universe.check_alignment": "2918437254e8a038cab3b71b6d5f02bed715fae64f9c27dc67c43ee2ec2d6da2",
-  "s5p_universe.denominator": "e2c343ed1b6ccda9220d4b81a4d4e3caea82b527aa28266fe1d15080f24c1d07",
-  "s5p_universe.universe_inputs": "8310b1bdb107ba19bb71da568339e460ff858ca392423d002c0f2be9bdf2dda3",
-  "s5p_universe.weight_keys": "893677116c9a7b685d2265f59cd8f516c18dae6cdf4b0ca1367edd039a668d76",
-  "xsec_nd._bin_volume": "43fe4d7a715bc749b1c41894367f3f8a712d2cc005a9668cb11d9761e81545d3",
-  "xsec_nd._broadcast_along": "5c930644a525aa52c966ddbeb6d7838044491a74e507bad27957e89b0654186f"
  },
  "record": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/calib-run/calibration.json",
  "record_fd_1b_c2_sha256": "c3c346454928290038585cf1f682209808258b7e06869848d750ee284c821d1d",
@@ -233,5 +959,5 @@
   "fd_1b_c2._one_set",
   "fd_1b_c2.rates"
  ],
- "schema": "fd-1b-cal300-pins/1"
+ "schema": "fd-1b-cal300-pins/2"
 }

@@ -421,36 +421,64 @@ Any other difference is a STOP to the director.
   - Both refusals are REQUIRED mutants: the harness exits 1 unless each is in the plan, run and KILLED.
   - The backstop's 300-draw calibration (schema /1, job 60771025, at 02e71a0b) is at earlier code by design. The
     director's ruling of 2026-11-05 admits it only while the code behind its per-cell SDs is unchanged:
-    - **The comparison** (`a2-1/cal300_code_check.py`, its output `a2-1/cal300-code-check.out`). It starts from the
-      four functions the SDs come from in 02e71a0b's calibrate_main (prepare, _worker_init, _one_set, rates). It walks
-      every module-level definition they reach, across the repository's own modules through `import X as Y` and
-      `from X import f`, in-function imports included: 107 definitions in 14 modules. Each is compared by
-      `ast_digest` (its AST, line numbers and docstrings set aside), and its source text is reported too.
-    - **106 are identical in AST and source text. `_one_set` is not:** it passes `n=st["n"]` to `calibration_draws`,
-      whose `n` defaults to 300, the value 60771025 used. The director admitted that one change by name on
-      2026-11-05, on a bitwise test: `E2E.test_one_set_is_02e71a0bs_at_300_draws` runs 02e71a0b's fd_1b_c2 bytes
+    - **The first version, at 22eda9f4, was wrong in three ways (the audit's G1–G3; the director's HOLD):**
+      - **G1.** Its pins were `sha256(ast.dump(...))`, which depends on the Python version: 3.12 added `type_params`
+        to every def and class. The cluster runs 3.11, so it would have refused unchanged code. Measured here: under
+        3.13 and 3.14, 77 of its 107 pins mismatch; the audit measured 71 under 3.11's node shape.
+      - **G2.** It pinned only `Name = ...` definitions, so it missed module glue such as `FLUX, MINOS, DROPPED = ...`
+        and `EXPECT.update(...)` in s1_assemble, and the GATE_* tuple in fd_1b_c2. Its claim to cover "every
+        definition reached" was false.
+      - **G3.** Its loaded-file guard skipped modules not yet imported.
+    - **The walk now** (`fd_1b_c2.code_closure`, from `CAL300_ROOTS`: prepare, _worker_init, _one_set and rates,
+      the four the SDs come from in 02e71a0b's calibrate_main) reaches **module-level statements**, not only
+      definitions. A statement is reached when it binds or mutates a reached name of its module: a def or class; an
+      assignment of any target shape (tuples included); an augmented or annotated assignment; a for-target, import
+      or del; a subscript or attribute store on the name; or a bare method-call statement on it (`EXPECT.update(...)`,
+      `sys.path.insert(...)`). Its loaded names are then reached in turn, in its own module or through
+      `import X as Y` and `from X import f`, in-function imports included. At 02e71a0b that is **157 statements in 14
+      modules**: 71 definitions and 86 other statements (glue, imports, constants).
+    - **Each statement's text** is the module's bytes over its whole lines (a decorator's `@` and a last-line comment
+      included), with each def's and class's docstring cut out by its own span, trailing whitespace dropped and blank
+      lines removed. It uses no `ast.unparse` and no `tokenize`, which change across Python minors, f-strings
+      included (the audit's requirement). Only statement and plain-string docstring positions are used. The pin is
+      the text's sha256.
+    - **Measured under real interpreters** (`cal300_code_check.py --verify-tree`, which runs c2check's own
+      `code_closure` and `cal300_closure_diff`, executed from fd_1b_c2's text with the standard library only):
+      the 157 pins match under **Python 3.11.15** (uv's CPython), 3.12.2, 3.13.7 and 3.14.6. The output is
+      `a2-1/cal300-pins-verify.out`, each run with its `sys.version`. `Cal300Code.test_the_pins_recompute_identically_under_python_3_11`
+      repeats the 3.11 run in every suite run where a 3.11 exists. It skips, saying so, where none does.
+    - **156 are identical. `_one_set` is not:** it passes `n=st["n"]` to `calibration_draws`, whose `n` defaults to
+      300, the value 60771025 used. The director admitted that one change by name on 2026-11-05, on a bitwise test:
+      `E2E.test_one_set_is_02e71a0bs_at_300_draws` runs 02e71a0b's fd_1b_c2 bytes
       (`tests/data/fd_1b_c2_at_02e71a0b.py.txt`, sha256 c3c34645, 60771025's own digest) as a reference. Its
       `_one_set` and the current one at `st["n"] = 300` give bitwise-equal ratios for two sets of each truth; at 299
       they differ.
-    - Not seen by the walk: names reached only through getattr or strings, library code, and calibrate_main's glue
-      between the four (printed in the output for reading).
+    - Not seen by the walk: names reached only through getattr or strings, library code, and calibrate_main's lines
+      between the four roots (printed in `a2-1/cal300-code-check.out` for reading).
     - **The check in code** (`cal300_code_check`, called by c2check):
       - the pins file `nd-unfolding/fd_1b_cal300_pins.json`, written by the tool, must be the one fd_1b_c2 names
         (`CAL300_PINS_SHA256`);
       - the record's fd_1b_c2 digest must be the pins' (c3c34645);
-      - every pinned definition's AST digest, recomputed from its file in this tree (the very file of any module
-        already loaded), must equal its 02e71a0b pin. Only a name in `CAL300_EXEMPT` (`fd_1b_c2._one_set`) may
-        instead equal its exempt digest.
-    - **Not a fixed point.** The pins live in the file, and fd_1b_c2 names the file's digest. No pinned definition
-      reads a `CAL300_*` constant (asserted by `Cal300Code.test_the_pins_are_not_a_fixed_point`), so editing those
-      constants cannot move a pin.
-    - Tests (`test_fd_1b_c2` `Cal300Code`):
+      - each pinned module is imported first (G3), and must be loaded from its pinned path in this tree;
+      - the closure recomputed from this tree must equal the pinned one, statement for statement, with none changed,
+        missing or added. Only a label in `CAL300_EXEMPT` (`fd_1b_c2._one_set`) may carry its exempt digest instead.
+    - **Not a fixed point.** The pins live in the file, and fd_1b_c2 names the file's digest. No pinned statement
+      mentions `CAL300_*`, `CODE_DIRS`, `code_closure` or `cal300_closure_diff` (asserted by
+      `Cal300Code.test_the_pins_are_not_a_fixed_point`), so editing those cannot move a pin.
+    - Tests (`test_fd_1b_c2` `Cal300Code`, 12):
       - silence on the real tree and record;
-      - refusals on a changed pin, another record, a missing record digest, another pins file, a module loaded from
-        another file, an exemption c2 does not name, and the named one at another digest or absent;
-      - the committed pins equal the tool's own walk.
+      - the text rules on a toy module (decorator, docstring span, last-line comment, tuple target, bare method call,
+        comprehension variable);
+      - G2's statements reached;
+      - refusals on a changed statement (a def, a fd_1b_mc def, glue), an added or a missing one, another record, a
+        missing record digest, another pins file, a module loaded from another file, a not-yet-imported module
+        shadowed on sys.path (G3), an exemption c2 does not name, and the named one at another digest or absent;
+      - the pins are not a fixed point;
+      - the committed pins equal the tool's own walk;
+      - the 3.11 run.
       In the e2e, c2check refuses a 300-draw record at other code.
-    - Two more REQUIRED mutants: the check dropped from c2check, and the exemption widened to any definition.
+    - Two more REQUIRED mutants: the check dropped from c2check, and the exemption widened to any label. There are
+      eleven ordinary ones on the check and the walk, among them G2's tuple and method-call bindings and G3's import.
 - **The terms are tied to their arrays** (the audit's item 1). Nm's variance ratio is gated: `reading_1b`'s
   "multiplicative" gate enters both the positivity-preserving pick and option (3). So `c2_terms` keeps the arrays
   it was built from, and c2_truth refuses terms whose arrays are not, by identity, its own V and cv (or that are

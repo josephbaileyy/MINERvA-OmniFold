@@ -766,53 +766,184 @@ def calibrate_main(a) -> dict:
 SCHEMA_GATE = "fd-1b-c2-gate/1"
 
 
-def top_level(source: str, name: str):
-    """The module-level definition (function, class or assignment) named ``name`` in ``source``, or None."""
-    import ast
-    for n in ast.parse(source).body:
-        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and n.name == name:
-            return n
-        if isinstance(n, (ast.Assign, ast.AnnAssign)):
-            targets = n.targets if isinstance(n, ast.Assign) else [n.target]
-            if any(isinstance(t, ast.Name) and t.id == name for t in targets):
-                return n
-    return None
+CODE_DIRS = ("nd-unfolding", "2d-unfolding/cov2d",
+             "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip")
+CAL300_ROOTS = (("fd_1b_c2", "prepare"), ("fd_1b_c2", "_worker_init"), ("fd_1b_c2", "_one_set"), ("fd_1b_c2", "rates"))
 
 
-def ast_digest(source: str, name: str) -> str | None:
-    """sha256 of the module-level definition ``name`` in ``source`` as its AST, with line numbers and docstrings set
-    aside (a reflowed comment or docstring is not a change of code), or None when ``source`` has no such definition.
-    One function for cal300_code_check.py, which pins the 300-draw calibration's SD code, and c2check, which
-    re-checks the pins on the code it runs."""
+def code_closure(load, roots) -> list:
+    """Every module-level statement the given roots reach, each as its normalized source text and that text's sha256
+    (the director's ruling of 2026-11-05, with the audit's G1 and G2). ``load(module)`` gives (path, source) for a
+    module of the repository, or None for any other (a library, a builtin, a name that is no module).
+
+    A statement is reached when it binds or mutates a reached name of its module: a def or class of that name; an
+    assignment, augmented or annotated assignment, for-target, import or del with the name anywhere in its targets
+    (tuples included); a subscript or attribute store on it; or a bare method-call statement on it
+    (``EXPECT.update(...)``, ``sys.path.insert(...)``). Its
+    names are then reached in turn: a Name it loads, in its own module, or in another through ``import X as Y``
+    (``Y.f``) or ``from X import f``, at module level or inside it. Nested scopes (defs, lambdas, comprehensions) bind
+    nothing at module level.
+
+    The text is the module's bytes over the statement's whole lines (from its first decorator's line to its last line,
+    so a decorator's "@" and a comment on its last line are in it), with each def's and class's docstring cut out by
+    its own span, trailing whitespace dropped and blank lines removed. It uses neither
+    ast.unparse nor tokenize, whose output changes across Python minors, and node positions of statements and of
+    plain-string docstrings, which do not. Stdlib only, so it runs as itself under any interpreter (the 3.11 test).
+    Returns a list of {module, file, label, text_sha256 (the text's, not the file's), text}, sorted."""
     import ast
-    import copy
     import hashlib
-    n = top_level(source, name)
-    if n is None:
-        return None
-    n = copy.deepcopy(n)
-    for d in ast.walk(n):
-        body = getattr(d, "body", None)
-        if (isinstance(d, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and body
-                and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant)
-                and isinstance(body[0].value.value, str)):
-            d.body = body[1:] or [ast.Pass()]
-    return hashlib.sha256(ast.dump(n, include_attributes=False).encode()).hexdigest()
+    mods = {}
+    scopes = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda, ast.ListComp, ast.SetComp,
+              ast.DictComp, ast.GeneratorExp)
+
+    def doc(n):
+        b = getattr(n, "body", None)
+        return (isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)) and b
+                and isinstance(b[0], ast.Expr) and isinstance(b[0].value, ast.Constant) and isinstance(b[0].value.value, str))
+
+    def base(e):
+        while isinstance(e, (ast.Attribute, ast.Subscript)):
+            e = e.value
+        return e.id if isinstance(e, ast.Name) else None
+
+    def binds(st):
+        if isinstance(st, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            return {st.name}
+        if isinstance(st, (ast.Import, ast.ImportFrom)):
+            return {a.asname or a.name.split(".")[0] for a in st.names}
+        out, todo = set(), [ast.Module(body=[st], type_ignores=[])]
+        while todo:
+            d = todo.pop()
+            for c in ast.iter_child_nodes(d):
+                if isinstance(c, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    out.add(c.name)
+                    continue
+                if isinstance(c, scopes):
+                    continue
+                if isinstance(c, ast.Name) and isinstance(c.ctx, (ast.Store, ast.Del)):
+                    out.add(c.id)
+                elif isinstance(c, (ast.Attribute, ast.Subscript)) and isinstance(c.ctx, (ast.Store, ast.Del)):
+                    out.add(base(c))
+                elif isinstance(c, ast.Expr) and isinstance(c.value, ast.Call) and isinstance(c.value.func, ast.Attribute):
+                    out.add(base(c.value.func))                  # a bare method call: EXPECT.update(...)
+                elif isinstance(c, (ast.Import, ast.ImportFrom)):
+                    out |= {a.asname or a.name.split(".")[0] for a in c.names}
+                todo.append(c)
+        return out - {None}
+
+    def aliases(nodes):
+        out = {}
+        for n in nodes:
+            for d in ast.walk(n):
+                if isinstance(d, ast.Import):
+                    for a in d.names:
+                        out[a.asname or a.name] = ("mod", a.name)
+                elif isinstance(d, ast.ImportFrom) and d.module and d.level == 0:
+                    for a in d.names:
+                        out[a.asname or a.name] = ("from", d.module, a.name)
+        return out
+
+    def module(m):
+        if m not in mods:
+            got = load(m)
+            if got is None:
+                mods[m] = None
+            else:
+                path, src = got
+                raw = src.encode()
+                starts = [0]
+                for line in raw.split(b"\n")[:-1]:
+                    starts.append(starts[-1] + len(line) + 1)
+                tree = ast.parse(src)
+                body = tree.body[1:] if doc(tree) else tree.body
+                top = [n for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))]
+                mods[m] = {"path": path, "raw": raw, "starts": starts, "stmts": [(st, binds(st)) for st in body],
+                           "alias": aliases(top)}
+        return mods[m]
+
+    def text(M, st):
+        off = lambda line, col: M["starts"][line - 1] + col  # noqa: E731
+        first = min([st.lineno] + [d.lineno for d in getattr(st, "decorator_list", [])])
+        lo = off(first, 0)                                       # whole lines: a decorator's "@", a last-line comment
+        hi = M["starts"][st.end_lineno] - 1 if st.end_lineno < len(M["starts"]) else len(M["raw"])
+        cuts = sorted((off(d.body[0].lineno, d.body[0].col_offset), off(d.body[0].end_lineno, d.body[0].end_col_offset))
+                      for d in ast.walk(st) if doc(d))
+        parts, pos = [], lo
+        for a, z in cuts:
+            parts.append(M["raw"][pos:a])
+            pos = z
+        parts.append(M["raw"][pos:hi])
+        lines = b"".join(parts).decode().split("\n")
+        return "\n".join(line.rstrip() for line in lines if line.strip())
+
+    def refs(m, M, st):
+        alias = dict(M["alias"])
+        alias.update(aliases([st]))
+        out = []
+        for d in ast.walk(st):
+            if isinstance(d, ast.Name) and isinstance(d.ctx, ast.Load):
+                out.append((m, d.id))
+                a = alias.get(d.id)
+                if a and a[0] == "from" and module(a[1]) is not None:
+                    out.append((a[1], a[2]))
+            elif isinstance(d, ast.Attribute) and isinstance(d.value, ast.Name):
+                a = alias.get(d.value.id)
+                if a and a[0] == "mod" and module(a[1]) is not None:
+                    out.append((a[1], d.attr))
+        return out
+
+    reached, done, todo = {}, set(), list(roots)
+    while todo:
+        m, name = todo.pop()
+        if (m, name) in done:
+            continue
+        done.add((m, name))
+        M = module(m)
+        if M is None:
+            continue
+        for i, (st, b) in enumerate(M["stmts"]):
+            if name in b and (m, i) not in reached:
+                reached[m, i] = st
+                todo += refs(m, M, st)
+    out = []
+    for (m, i), st in reached.items():
+        M = mods[m]
+        t = text(M, st)
+        out.append({"module": m, "file": M["path"], "label": ",".join(sorted(M["stmts"][i][1])),
+                    "text_sha256": hashlib.sha256(t.encode()).hexdigest(), "text": t})
+    return sorted(out, key=lambda e: (e["module"], e["label"], e["text_sha256"]))
 
 
 CAL300_PINS = "fd_1b_cal300_pins.json"    # beside this file; written by a2-1/cal300_code_check.py --write-pins
-CAL300_PINS_SHA256 = "228ae1b6c5e0b0a1cf06ef909f713b1c0fb7e0326796d5991921a5ef40a2b32a"
+CAL300_PINS_SHA256 = "f6edf4b0116d2ef0058bb790ddc94c1d678ce8d5b798825069f7b343c03bab31"
 CAL300_EXEMPT = ("fd_1b_c2._one_set",)    # the director's ruling of 2026-11-05: n=st["n"], equal to 02e71a0b at 300
+
+
+def cal300_closure_diff(pins: dict, load) -> tuple:
+    """The pinned closure against code_closure(load, CAL300_ROOTS), as multisets of (module, file, label, text_sha256),
+    with each label CAL300_EXEMPT names (and only those) carrying the pins file's exempt digest instead. Returns
+    (missing or changed, added), each sorted. Stdlib only: cal300_code_check and cal300_code_check.py --verify-tree
+    (under any interpreter) run this one function."""
+    from collections import Counter
+    want = Counter()
+    for e in pins["closure"]:
+        k = f"{e['module']}.{e['label']}"
+        sha = pins["exempt"][k]["text_sha256"] if k in CAL300_EXEMPT and k in pins["exempt"] else e["text_sha256"]
+        want[e["module"], e["file"], e["label"], sha] += 1
+    got = Counter((e["module"], e["file"], e["label"], e["text_sha256"]) for e in code_closure(load, CAL300_ROOTS))
+    return sorted((want - got).elements()), sorted((got - want).elements())
 
 
 def cal300_code_check(cal300: dict) -> None:
     """The backstop's 300-draw calibration (schema /1, job 60771025) is admitted only while the code that produced
     its per-cell SDs is unchanged (the director's ruling of 2026-11-05). The pins file, pinned here by digest, holds
-    the AST digest (ast_digest) at 02e71a0b of every definition reached from prepare, _worker_init, _one_set and
-    rates, with each one's path; each is recomputed from that file in this tree (the very file of any module already
-    loaded) and must equal its pin. Only a name in CAL300_EXEMPT may instead equal the pins file's exempt digest. The
-    record itself must be the one those pins describe: its fd_1b_c2 digest is the pins file's."""
+    code_closure(CAL300_ROOTS) at 02e71a0b: every statement reached, with its path, label and normalized-text sha256.
+    Here each pinned module is imported first, and must be loaded from the pinned path in this tree; then the closure
+    is recomputed from this tree's files and must equal the pinned one, statement for statement (none changed, none
+    missing, none added). Only a label in CAL300_EXEMPT may instead carry the pins file's exempt digest. The record
+    itself must be the one the pins describe: its fd_1b_c2 digest is the pins file's."""
     import hashlib
+    import importlib
     raw = (Path(__file__).resolve().parent / CAL300_PINS).read_bytes()
     if hashlib.sha256(raw).hexdigest() != CAL300_PINS_SHA256:
         raise Refusal("the 300-draw calibration's pins file is not the one this code names")
@@ -820,19 +951,23 @@ def cal300_code_check(cal300: dict) -> None:
     if (cal300.get("code_sha256") or {}).get("fd_1b_c2.py") != pins["record_fd_1b_c2_sha256"]:
         raise Refusal("the 300-draw calibration is not the record its pins describe (fd_1b_c2 digest)")
     root = Path(__file__).resolve().parents[1]
-    changed = []
-    for key, want in sorted(pins["pins"].items()):
-        mod, name = key.rsplit(".", 1)
-        path = (root / pins["paths"][key]).resolve()
-        loaded = sys.modules.get(mod)
-        if loaded is not None and Path(loaded.__file__).resolve() != path:
-            raise Refusal(f"{mod} is loaded from {loaded.__file__}, not {path}")
-        if key in CAL300_EXEMPT and key in pins["exempt"]:
-            want = pins["exempt"][key]["ast_sha256"]
-        if ast_digest(path.read_text(), name) != want:
-            changed.append(key)
-    if changed:
-        raise Refusal(f"the code behind the 300-draw calibration's SDs changed since {pins['rev']}: {changed[:4]}")
+    paths = {e["module"]: e["file"] for e in pins["closure"]}
+    for m, rel in sorted(paths.items()):
+        loaded = importlib.import_module(m)                   # the file that will run (the audit's G3)
+        if Path(loaded.__file__).resolve() != (root / rel).resolve():
+            raise Refusal(f"{m} is loaded from {loaded.__file__}, not {root / rel}")
+
+    def load(m):
+        for d in CODE_DIRS:
+            f = root / d / f"{m}.py"
+            if f.is_file():
+                return f"{d}/{m}.py", f.read_text()
+        return None
+    missing, added = cal300_closure_diff(pins, load)
+    if missing or added:
+        raise Refusal(f"the code behind the 300-draw calibration's SDs changed since {pins['rev']}: "
+                      f"{[f'{x[0]}.{x[2]}' for x in missing][:4]} changed or missing, "
+                      f"{[f'{x[0]}.{x[2]}' for x in added][:4]} added")
 
 
 def gate_code_digests() -> dict:

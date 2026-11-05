@@ -286,8 +286,12 @@ def reference_c2():
 
 
 class Cal300Code(unittest.TestCase):
-    """The director's ruling of 2026-11-05: the backstop's 300-draw calibration (job 60771025, at 02e71a0b) is admitted
-    only while the code behind its SDs is unchanged, with _one_set's one-argument change the one named exemption."""
+    """The director's rulings of 2026-11-05: the backstop's 300-draw calibration (job 60771025, at 02e71a0b) is admitted
+    only while the code behind its SDs is unchanged, statement for statement (fd_1b_c2.code_closure, version-stable
+    source text), with _one_set's one-argument change the one named exemption."""
+
+    TOOL = (Path(__file__).resolve().parents[2] / "docs/orchestration/state/measurement-paper/5d-community-20261024"
+            / "fd/receipts-1b/staged/a2-1/cal300_code_check.py")
 
     def setUp(self):
         import json
@@ -306,18 +310,50 @@ class Cal300Code(unittest.TestCase):
                 mock.patch.object(c2, "CAL300_PINS_SHA256", hashlib.sha256(f.read_bytes()).hexdigest()):
             return c2.cal300_code_check(rec or self.rec)
 
+    def with_entry(self, label: str, **change) -> dict:
+        es = [dict(e, **change) if f"{e['module']}.{e['label']}" == label else e for e in self.pins["closure"]]
+        self.assertNotEqual(es, self.pins["closure"], label)
+        return dict(self.pins, closure=es)
+
     def test_silent_on_the_real_tree_and_record(self):
         self.assertIsNone(c2.cal300_code_check(self.rec))                       # the committed pins, unpatched
         self.assertEqual(self.rec["code_sha256"]["fd_1b_c2.py"], CAL300_REF_SHA256)
         self.assertEqual(self.pins["record_fd_1b_c2_sha256"], CAL300_REF_SHA256)
-        self.assertEqual(len(self.pins["pins"]), 107)
+        self.assertEqual(len(self.pins["closure"]), 157)
         self.assertEqual(set(self.pins["exempt"]), set(c2.CAL300_EXEMPT))
 
-    def test_refuses_a_changed_pinned_definition(self):
-        for key in ("fd_1b_c2.rates", "fd_1b_mc.draw_universes", "s1_assemble.functional_matrix"):
-            pins = dict(self.pins, pins=dict(self.pins["pins"], **{key: "0" * 64}))
+    def test_the_text_rules_on_a_toy_module(self):
+        """A decorator is part of its def; a docstring is cut by its span, a comment kept; a tuple assignment binds
+        each name; a bare method call binds its base; a comprehension's variable binds nothing at module level."""
+        src = ('@dec\ndef f(x):\n    """a docstring,\n    two lines"""\n    return g(x)  # kept\n\n\ndef g(y):\n    return y\n'
+               'A, B = 1, 2\nEXP = {}\nEXP.update({k: 1 for k in KS})\nKS = (A,)\nOTHER = 3\n')
+        es = c2.code_closure(lambda m: ("toy.py", src) if m == "toy" else None, [("toy", "f"), ("toy", "EXP")])
+        self.assertEqual([e["label"] for e in es], ["A,B", "EXP", "EXP", "KS", "f", "g"])   # OTHER and dec unreached
+        got = {e["label"]: e["text"] for e in es}
+        self.assertEqual(got["f"], "@dec\ndef f(x):\n    return g(x)  # kept")
+        self.assertEqual(got["g"], "def g(y):\n    return y")
+        self.assertEqual(sorted(e["text"] for e in es if e["label"] == "EXP"),
+                         ["EXP = {}", "EXP.update({k: 1 for k in KS})"])
+
+    def test_the_glue_is_reached(self):
+        """The audit's G2: module-level statements that are not `Name = ...` are walked and pinned."""
+        labels = [f"{e['module']}.{e['label']}" for e in self.pins["closure"]]
+        for want in ("s1_assemble.DROPPED,FLUX,MINOS", "s1_assemble.MODEL_BANDS_2",
+                     "fd_1b_c2.GATE_DEV,GATE_K,GATE_LOGMEAN,GATE_MAX", "fd_1b_c2.SD_MULT_CELL,SD_MULT_LOGMEAN"):
+            self.assertIn(want, labels)
+        self.assertEqual(labels.count("s1_assemble.EXPECT"), 2)                 # the dict and its .update(...)
+
+    def test_refuses_a_changed_pinned_statement(self):
+        for label in ("fd_1b_c2.rates", "fd_1b_mc.draw_universes", "s1_assemble.MODEL_BANDS_2"):
             with self.assertRaisesRegex(c2.Refusal, "changed since 02e71a0b"):
-                self.check_with(pins)
+                self.check_with(self.with_entry(label, text_sha256="0" * 64))
+
+    def test_refuses_an_added_or_a_missing_statement(self):
+        es = self.pins["closure"]
+        with self.assertRaisesRegex(c2.Refusal, r"\[\] changed or missing, \['s1_assemble.MODEL_BANDS_2'\] added"):
+            self.check_with(dict(self.pins, closure=[e for e in es if e["label"] != "MODEL_BANDS_2"]))
+        with self.assertRaisesRegex(c2.Refusal, r"\['s1_assemble.MODEL_BANDS_2'\] changed or missing, \[\] added"):
+            self.check_with(dict(self.pins, closure=es + [e for e in es if e["label"] == "MODEL_BANDS_2"]))
 
     def test_refuses_another_record_or_pins_file(self):
         with self.assertRaisesRegex(c2.Refusal, "not the record its pins describe"):
@@ -329,44 +365,81 @@ class Cal300Code(unittest.TestCase):
             c2.cal300_code_check(self.rec)
 
     def test_refuses_a_module_loaded_from_another_file(self):
-        pins = dict(self.pins, paths=dict(self.pins["paths"], **{"fd_1b_c2.rates": "nd-unfolding/fd_1b_mc.py"}))
-        with self.assertRaisesRegex(c2.Refusal, "is loaded from"):
+        pins = dict(self.pins, closure=[dict(e, file="nd-unfolding/fd_1b_mc.py") if e["module"] == "xsec_nd" else e
+                                        for e in self.pins["closure"]])
+        with self.assertRaisesRegex(c2.Refusal, "xsec_nd is loaded from"):
             self.check_with(pins)
+
+    def test_a_pinned_module_is_imported_before_the_guard(self):
+        """The audit's G3: a pinned module not yet imported is imported first, so the guard sees the file that will
+        run. Here a shadow flux_universe ahead on sys.path is what an import would load; the check must refuse it."""
+        shadow = self.tmp / "shadow"
+        shadow.mkdir()
+        (shadow / "flux_universe.py").write_text("X = 1\n")
+        saved = sys.modules.pop("flux_universe", None)
+        sys.path.insert(0, str(shadow))
+        try:
+            with self.assertRaisesRegex(c2.Refusal, "flux_universe is loaded from .*shadow"):
+                c2.cal300_code_check(self.rec)
+        finally:
+            sys.path.remove(str(shadow))
+            sys.modules.pop("flux_universe", None)
+            if saved is not None:
+                sys.modules["flux_universe"] = saved
 
     def test_the_exemption_is_by_name_only(self):
-        cur = c2.ast_digest(Path(c2.__file__).read_text(), "prepare")
-        pins = dict(self.pins, pins=dict(self.pins["pins"], **{"fd_1b_c2.prepare": "0" * 64}),
-                    exempt=dict(self.pins["exempt"], **{"fd_1b_c2.prepare": {"ast_sha256": cur}}))
+        cur = next(e["text_sha256"] for e in c2.code_closure(lambda m: next(
+            ((f"{d}/{m}.py", (Path(c2.__file__).resolve().parents[1] / d / f"{m}.py").read_text()) for d in c2.CODE_DIRS
+             if (Path(c2.__file__).resolve().parents[1] / d / f"{m}.py").is_file()), None), c2.CAL300_ROOTS)
+            if e["module"] == "fd_1b_c2" and e["label"] == "prepare")
+        pins = self.with_entry("fd_1b_c2.prepare", text_sha256="0" * 64)
+        pins["exempt"] = dict(self.pins["exempt"], **{"fd_1b_c2.prepare": {"text_sha256": cur}})
         with self.assertRaisesRegex(c2.Refusal, "fd_1b_c2.prepare"):           # an exemption c2 does not name
             self.check_with(pins)
-        pins = dict(self.pins, exempt={"fd_1b_c2._one_set": {"ast_sha256": "0" * 64}})
         with self.assertRaisesRegex(c2.Refusal, "fd_1b_c2._one_set"):           # the named one, at another digest
-            self.check_with(pins)
-        pins = dict(self.pins, exempt={})
+            self.check_with(dict(self.pins, exempt={"fd_1b_c2._one_set": {"text_sha256": "0" * 64}}))
         with self.assertRaisesRegex(c2.Refusal, "fd_1b_c2._one_set"):           # without it, 02e71a0b's pin refuses
-            self.check_with(pins)
+            self.check_with(dict(self.pins, exempt={}))
 
     def test_the_pins_are_not_a_fixed_point(self):
-        """The pins live in a file c2check reads, named here by digest; no pinned definition reads the constants that
-        name the file, so editing them cannot move a pin."""
-        import ast
-        for key, path in self.pins["paths"].items():
-            name = key.rsplit(".", 1)[1]
-            src = (Path(c2.__file__).resolve().parents[1] / path).read_text()
-            self.assertNotIn("CAL300", ast.get_source_segment(src, c2.top_level(src, name)), key)
+        """The pins live in a file c2check reads, named here by digest; no pinned statement mentions the constants
+        that name the file or the functions that check it, so editing them cannot move a pin."""
+        root = Path(c2.__file__).resolve().parents[1]
+        tree = c2.code_closure(lambda m: next(((f"{d}/{m}.py", (root / d / f"{m}.py").read_text()) for d in c2.CODE_DIRS
+                                               if (root / d / f"{m}.py").is_file()), None), c2.CAL300_ROOTS)
+        self.assertEqual(len(tree), len(self.pins["closure"]))
+        for e in tree:
+            for name in ("CAL300", "code_closure", "cal300_closure_diff", "CODE_DIRS"):
+                self.assertNotIn(name, e["text"], f"{e['module']}.{e['label']}")
+
+    def tool(self, python: str, *args) -> str:
+        import subprocess
+        r = subprocess.run([python, "-I", "-B", str(self.TOOL), *args], cwd=Path(c2.__file__).resolve().parents[1],
+                           capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stdout[-1200:] + r.stderr[-1200:])
+        return r.stdout
 
     def test_the_pins_file_is_the_tools_walk(self):
-        """cal300_code_check.py, run here from 02e71a0b, writes the committed pins (every field but the exempt
-        entry's rev, which names the commit it read)."""
+        """cal300_code_check.py, run here from 02e71a0b, writes the committed pins."""
         import json
-        import subprocess
-        root = Path(c2.__file__).resolve().parents[1]
-        tool = root / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cal300_code_check.py"
         out = self.tmp / "pins-tool.json"
-        r = subprocess.run([sys.executable, "-B", str(tool), self.pins["rev"], self.pins["exempt"]["fd_1b_c2._one_set"]["rev"],
-                            "--write-pins", str(out)], cwd=root, capture_output=True, text=True)
-        self.assertEqual(r.returncode, 0, r.stdout[-800:] + r.stderr[-800:])
+        self.tool(sys.executable, self.pins["rev"], self.pins["exempt"]["fd_1b_c2._one_set"]["rev"], "--write-pins", str(out))
         self.assertEqual(json.loads(out.read_text()), self.pins)
+
+    def test_the_pins_recompute_identically_under_python_3_11(self):
+        """The audit's G1: the cluster runs Python 3.11 (root_6_28). The pins, recomputed from this tree by c2check's
+        own functions under a real 3.11 interpreter (PY311, else uv's), match, as they do under this one."""
+        import os
+        import shutil
+        import subprocess
+        py311 = os.environ.get("PY311") or (subprocess.run(["uv", "python", "find", "3.11"], capture_output=True,
+                                                            text=True).stdout.strip() if shutil.which("uv") else "")
+        if not py311:
+            self.skipTest("no Python 3.11 here (set PY311): the pins are not verified under 3.11 by this run")
+        out = self.tool(py311, "--verify-tree")
+        self.assertRegex(out, r"(?m)^python 3\.11\.")
+        self.assertIn("CAL300-PINS-VERIFY :: MATCH :: python 3.11.", out)
+        self.assertIn(f"CAL300-PINS-VERIFY :: MATCH :: python {sys.version.split()[0]}", self.tool(sys.executable, "--verify-tree"))
 
 
 class Multiplicative(unittest.TestCase):
