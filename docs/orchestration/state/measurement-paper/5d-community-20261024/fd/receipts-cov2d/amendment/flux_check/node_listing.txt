@@ -1,0 +1,14 @@
+login02
+total 16
+drwxrwx--- 3 josephrb josephrb  140 Nov  4 11:07 .
+drwxrwxrwt 3 root     root       80 Nov  4 11:06 ..
+-rw-rw---- 1 josephrb josephrb  167 Nov  4 11:06 blobs
+-rw-rw---- 1 josephrb josephrb 1979 Nov  4 11:07 connect-flux.log
+-rw-rw---- 1 josephrb josephrb 2873 Nov  4 11:07 mat.log
+-rw-rw---- 1 josephrb josephrb  398 Nov  4 11:07 plain.log
+drwxrwx--- 2 josephrb josephrb   40 Nov  4 11:07 tmp
+49ffbeadd164eae617d48825ba9e04cf7c2a3f1c7edff5ce0f19a6849937f7a3  connect-flux.log
+4f80af0bc091d80047c162d3da06a599ad2b93b0ae7d8b96524e9c5f3bf3d863  plain.log
+50597d0b3820478b9b75707d6c8b4cad6a776bdf42a1d1c605d3efcff91e9583  mat.log
+699a204da55893413fc9c874ccd371d6297c7668cd6695341e957e53ea4ea97e  blobs
+a6cc83e622630902c5a58923828e7eae5273f4f2a9ac890e99e34e1e9bf4b80a  /dev/shm/josephrb-cov2d-flux.sh

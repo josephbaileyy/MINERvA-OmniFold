@@ -187,6 +187,19 @@ class Compose(unittest.TestCase):
         self.assertEqual((drv["PT_EDGES"][i], drv["PT_EDGES"][i + 1], drv["PZ_EDGES"][j], drv["PZ_EDGES"][j + 1]),
                          (2.5, 4.5, 6.0, 7.0))
 
+    def test_deploy_head_is_the_clean_checkouts_head(self):
+        from deploy_fixture import clean_checkout
+        with tempfile.TemporaryDirectory() as td:
+            d, head = clean_checkout(Path(td) / "deploy")
+            self.assertEqual(c.deploy_head(d), head)
+            (d / "untracked").write_text("x")
+            with self.assertRaises(c.Refusal):
+                c.deploy_head(d)
+            (d / "untracked").unlink()
+            (d / "f").write_text("edited\n")
+            with self.assertRaises(c.Refusal):
+                c.deploy_head(d)
+
     def test_sha256_through_noatime(self):
         with tempfile.NamedTemporaryFile(delete=False) as fh:
             fh.write(b"cov2d")

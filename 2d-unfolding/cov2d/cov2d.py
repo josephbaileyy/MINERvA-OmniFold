@@ -154,6 +154,19 @@ def weakened_cells(ratio, cells) -> list[int]:
     return [int(x) for x in cells[ratio < WEAKENED_BELOW]]
 
 
+def deploy_head(root: str | Path) -> str:
+    """The deployed checkout's HEAD, which the job has already verified equals M; refused if the checkout is not clean.
+    Each record that order() reads carries it as "M" (the director's ruling on the final audit's F1), so a record is
+    admitted only for the commit that wrote it."""
+    import subprocess
+
+    def git(*args):
+        return subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True, check=True).stdout
+    if git("status", "--porcelain").strip():
+        raise Refusal(f"the deploy {root} is not a clean checkout: its HEAD cannot name the record's commit")
+    return git("rev-parse", "HEAD").strip()
+
+
 def sha256_file(path: str | Path) -> str:
     """sha256 through an O_NOATIME descriptor, so the read moves no purge clock."""
     import hashlib

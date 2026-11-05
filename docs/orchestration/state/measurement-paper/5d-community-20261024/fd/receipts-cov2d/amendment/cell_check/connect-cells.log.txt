@@ -1,0 +1,18 @@
+host=login02 start=2026-11-04T23:16:21Z pid=553180
+head=045364a835bfb8702b7301e3a71bbbb701cab091 porcelain=0
+100644 blob cfbe69a787ffcd2aa8ba7c787ccd956249592c26	2d-unfolding/cov2d/cov2d_pilot.py
+100644 blob e6124ab0819fcd0803a5e3269f610d8c592321c0	2d-unfolding/cov2d/cov2d_pseudo_write.py
+100644 blob e41940cb3b4af8f273f34723fb4389d4dac86e0a	2d-unfolding/re2/partc/re2c_rollup.py
+100755 blob 62a1dc33bb78b324485c01d9139f2264f0cc62b1	2d-unfolding/re2/re2_k1.py
+100644 blob 7c2e018f1169a9be0c5642daab991c664acbefcf	nd-unfolding/fd_rpd_inputs.py
+cells rc=0
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+MAT {"mapped": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"], "dictionary": true}
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+CELL-CHECK PASS {'ER': 205, 'U_MaRES_0': 205, 'S3_BeamAngleX0': 205}
+removal: host=login02 2026-11-04T23:16:53Z 1.2G
+rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-cells/deploy': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-cells/tmp': No such file or directory
+end=2026-11-04T23:16:54Z
+DONE
