@@ -1,7 +1,7 @@
 #!/bin/bash
 # 1B A2.1, c2check's timing probe (the director's ruling (a), item 3): on one exclusive CPU node, fd_1b_c2.py c2probe
-# times prepare(rows=True) and the first BLOCKS 20-draw blocks of G18's gate sample through the real c2_truth, and
-# projects a one-truth c2check job. BLAS and OMP threads are set explicitly and printed (they can move the last bits).
+# times prepare(rows=True), the multiplicative terms (built once, as c2check builds them) and the first BLOCKS
+# 20-draw blocks of G18's gate sample through the real c2_truth, and projects a one-truth c2check job. BLAS and OMP threads are set explicitly and printed (they can move the last bits).
 # The deploy, the commit and the output directory are arguments (sbatch runs a copy of this file, so it cannot locate
 # itself). Not under set -u, which aborts the root_6_28 activation. Writes only under $W.
 DD=$1; M=$2; W=$3

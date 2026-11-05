@@ -544,8 +544,9 @@ class RoundTrip(E2E):
 
     def test_c2_truth_is_bitwise_f19adbdas_end_to_end(self):
         """The director's ruling (a): c2check with the hoisted c2_truth writes the same gate record as with f19adbda's
-        c2_truth (every field but seconds and atime); and on c2check's own c2_truth arguments, with non-positive universe
-        and CV weights injected so every floor branch is reached, the two agree bitwise in every quantity."""
+        c2_truth (every field but seconds and atime), building the multiplicative terms once for the job (two arrays, not
+        two per c2_truth call); and on c2check's own c2_truth arguments, with non-positive universe and CV weights
+        injected so every floor branch is reached, the two agree bitwise in every quantity, the terms given or not."""
         from test_fd_1b_c2 import reference_c2
         ref = reference_c2()
         cal = self.calibrated()
@@ -553,13 +554,16 @@ class RoundTrip(E2E):
 
         def spy(*args, **kw):
             calls.append(args)
+            kw.pop("terms")                                             # f19adbda builds its own
             return ref.c2_truth(*args, **kw)
         a_new = self.c2args(cal)
         a_new.out = self.tmp / "gate" / "gate-new.json"
         a_ref = self.c2args(cal)
         a_ref.out = self.tmp / "gate" / "gate-ref.json"
         with self.patched():
-            g_new = c2.c2check_main(a_new)
+            with mock.patch.object(c2, "multiplicative_terms", wraps=c2.multiplicative_terms) as mt:
+                g_new = c2.c2check_main(a_new)
+            self.assertEqual(mt.call_count, 2)                          # wt and tdw, once for the job
             with mock.patch.object(c2, "c2_truth", spy):
                 g_ref = c2.c2check_main(a_ref)
         drop = lambda g: {k: v for k, v in json.loads(json.dumps(g)).items() if k not in ("seconds", "atime")}  # noqa: E731
@@ -580,10 +584,11 @@ class RoundTrip(E2E):
             self.assertGreater(int((~T["pos"]).sum()), 0, q)
             self.assertTrue(np.any(S[:, T["zu"]] > 0), q)            # some drawn universe floors a row
         for args in ((V, cv, S, r, geo, phi, const), (V2, cv2, S, r, geo, phi, const)):
-            got, want = c2.c2_truth(*args), ref.c2_truth(*args)
-            self.assertEqual(sorted(got), sorted(want))
-            for k in want:
-                self.assertTrue(np.array_equal(got[k], want[k], equal_nan=True), k)
+            want = ref.c2_truth(*args)
+            for got in (c2.c2_truth(*args), c2.c2_truth(*args, terms=c2.c2_terms(args[0], args[1]))):
+                self.assertEqual(sorted(got), sorted(want))
+                for k in want:
+                    self.assertTrue(np.array_equal(got[k], want[k], equal_nan=True), k)
 
     def test_the_merge_of_per_truth_records_is_the_all_truth_record(self):
         """The director's ruling (a), one truth per job: c2check run once per truth and merged (c2check-merge, through
@@ -644,9 +649,9 @@ class RoundTrip(E2E):
 
     def test_the_timing_probe(self):
         """c2probe (the director's ruling (a), item 3) through the CLI: one truth, --blocks blocks of its gate sample
-        through c2_inputs and c2_truth as c2check takes them; its projection is prepare + (300 + GATE_N)/DRAW_BLOCK
-        blocks at the mean block time (the first block, which pays one-off costs, set aside); it refuses two truths and
-        an existing output."""
+        through c2_inputs and c2_truth as c2check takes them, the multiplicative terms built once and timed apart; its
+        projection is prepare + the terms + (300 + GATE_N)/DRAW_BLOCK blocks at the mean block time (the first block,
+        which pays one-off costs, set aside); it refuses two truths and an existing output."""
         w = self.x["w"]
         out = self.tmp / "probe" / "probe.json"
         argv = ["c2probe", "--npz", str(w.inputs), "--bkg", str(w.bkg), "--bank", str(w.bank), "--detector-dir", str(w.det),
@@ -656,13 +661,17 @@ class RoundTrip(E2E):
                 "--cv-tdw", str(self.x["tdw"]), "--expect-cv-tdw-sha256", digest(self.x["tdw"]), "--prep", str(w.prep),
                 "--truths", "g18", "--blocks", "3", "--out", str(out)]
         with self.patched():
-            self.assertEqual(c2.main(argv), 0)
+            with mock.patch.object(c2, "multiplicative_terms", wraps=c2.multiplicative_terms) as mt:
+                self.assertEqual(c2.main(argv), 0)
+            self.assertEqual(mt.call_count, 2)                          # wt and tdw, once, not per block
             rec = json.loads(out.read_text())
             self.assertEqual((rec["truth"], rec["blocks"], len(rec["block_seconds"])), ("g18", 3, 3))
             self.assertEqual(rec["blocks_per_truth"], (len(mc.TOY_SEEDS["g18"]) + c2.GATE_N) // c2.DRAW_BLOCK)
             self.assertAlmostEqual(rec["block_seconds_used"], float(np.mean(rec["block_seconds"][1:])), places=12)
             self.assertAlmostEqual(rec["projected_seconds_per_truth"],
-                                   rec["prepare_seconds"] + rec["blocks_per_truth"] * rec["block_seconds_used"], places=6)
+                                   rec["prepare_seconds"] + rec["terms_seconds"]
+                                   + rec["blocks_per_truth"] * rec["block_seconds_used"], places=6)
+            self.assertGreater(rec["terms_seconds"], 0.0)
             self.assertEqual(rec["code_sha256"], c2.gate_code_digests())
             self.assertEqual(set(rec["rows"]), {"wt", "wr", "bkgw", "tdw", "D"})
             with self.assertRaisesRegex(c2.Refusal, "refusing to overwrite"):   # it will not overwrite

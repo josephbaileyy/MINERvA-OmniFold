@@ -360,6 +360,12 @@ Any other difference is a STOP to the director.
 **The ruling and its implementation:**
 - **The hoist.** `multiplicative_terms` builds the CV's log, L and Z once per array; Z is sparse, as the (universe,
   row) pairs. `multiplicative_apply` applies them to a block. `multiplicative` is their composition.
+- **The terms once per job.** They depend on neither the draws nor the truth. `c2_terms` builds them for wt and tdw,
+  and c2check builds them once, before its truth loop, and passes them to every c2_truth call (the declared 300 and
+  the gate sample, at each truth). At cb59f85b they were still built inside c2_truth, so twice per truth. That
+  was found before the probe ran, from the probe's own arithmetic. Two tests pin it, by counting
+  `multiplicative_terms` calls (two, one per array): one in c2check across three truths, one in the probe across
+  three blocks.
 - **Bitwise equal to f19adbda.** The reference is `tests/data/fd_1b_c2_at_f19adbda.py.txt`, the bound bytes,
   sha256 f19adbda, executed as a module. It is checked:
   - on a fixture that reaches every floor branch (`test_fd_1b_c2` `Multiplicative`);
@@ -380,9 +386,10 @@ Any other difference is a STOP to the director.
   record records them (`threads`).
 - **The gate sample's size.** `check_clip_gate` now also requires `gate_sample.n == GATE_N` and
   `first_300_bitwise`. Before, a record read on a shorter sample could have been bound.
-- **The timing probe** (`c2probe`) is required before c2check is submitted. On a real node it times `prepare` and a
-  few blocks of one truth's gate sample, through `c2_inputs` (shared with c2check) and the real c2_truth. It projects
-  a one-truth job as prepare + 165 blocks at the mean block time, with the first block set aside. Its sha and price
+- **The timing probe** (`c2probe`) is required before c2check is submitted. On a real node it times `prepare`, the
+  terms, and a few blocks of one truth's gate sample, through `c2_inputs` (shared with c2check) and the real
+  c2_truth with those terms. It projects a one-truth job as c2check spends it: prepare + the terms once + 165 blocks
+  at the mean block time, with the first block set aside. Its sha and price
   go to the director first. If it projects more than about 8 h per truth, option (b) (blocks over a fork pool) comes
   back to the director.
 - **The calibration is rerun bitwise at the final fd_1b_c2.** It is cheap, and it keeps the rule that a calibration at
