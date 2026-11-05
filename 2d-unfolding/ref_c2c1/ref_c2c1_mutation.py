@@ -19,7 +19,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TEST = HERE / "test_ref_c2c1.py"
 D, R = "ref_c2c1.py", "ref_c2c1_read.py"
-EXPECTED_TESTS = 28  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
+EXPECTED_TESTS = 29  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
 MUTATIONS = [
     # the IBU seam and the driver
     ("IBU's per-event factor not unfolded/prior", D, "    factor = np.divide(u, T, out=np.ones_like(u), where=T > 0)",
@@ -65,16 +65,23 @@ MUTATIONS = [
      "Units.test_the_replica_set_is_bound_at_step_two"),
     # the staging ruling (the director, 2026-11-05): REQUIRED
     ("the driver's reads outside the staging root admitted", D,
-     '        if str(mode).upper() in ("", "READ") and not any(under(path, r) for r in roots):', "        if False:",
+     '        if m not in ROOT_WRITE_ONLY and not any(under(path, r) for r in r_roots):', "        if False:",
      "Driver.test_reads_outside_the_staging_root_are_refused"),
     ("a staged input outside the root admitted", D, "        if not under(path, root):", "        if False:",
      "Driver.test_reads_outside_the_staging_root_are_refused"),
     # #787's R1 and R2 (the director, 2026-11-05): REQUIRED
+    ("the TFile guard reading only READ", D,
+     '        if m not in ROOT_WRITE_ONLY and not any(under(path, r) for r in r_roots):',
+     '        if m in ("", "READ") and not any(under(path, r) for r in r_roots):',
+     "Reads.test_the_tfile_guard_confines_reads_and_writes_by_mode"),
+    ("the TFile guard's write check dropped", D,
+     '        if m not in ROOT_READ_ONLY and not any(under(path, r) for r in w_roots):', "        if False:",
+     "Reads.test_the_tfile_guard_confines_reads_and_writes_by_mode"),
     ("a plain read where O_NOATIME is absent", D, '    flag = getattr(os, "O_NOATIME", None)',
      '    flag = getattr(os, "O_NOATIME", 0)', "Reads.test_o_noatime_absent_is_refused"),
     ("the audit hook on Python opens disabled", D, '    if event != "open" or not _READS["active"]:', "    if True:",
      "Reads.test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise"),
-    ("the reader's TFile guard not installed", D, '        with tfile_guard(allowed, "the reader"):',
+    ("the reader's TFile guard not installed", D, '        with tfile_guard(allowed, writable, "the reader"):',
      "        with contextlib.nullcontext():", "Reads.test_the_reader_opens_root_files_only_under_its_roots"),
     ("the read opens E_R's original, not its copy", R, "    x_er = th2(e_r_copy)", "    x_er = th2(e_r)",
      "Readings.test_the_readings_on_known_products"),

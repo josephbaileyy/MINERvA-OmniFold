@@ -548,6 +548,28 @@ class Reads(unittest.TestCase):
             ROOT.TFile.Open(str(run / "x.root")).Close()
         ROOT.TFile.Open(str(other / "y.root")).Close()
 
+    def test_the_tfile_guard_confines_reads_and_writes_by_mode(self):
+        """Any mode that reads is refused outside the readable roots (UPDATE and READ_WITHOUT_GLOBALREGISTRATION too),
+        any mode that writes outside the writable ones (coverage-5b-audit's note; the director's ruling)."""
+        import ROOT
+        r, w, both, other = (self.tmp / d for d in ("r", "w", "both", "other"))
+        for d in (r, w, both, other):
+            d.mkdir()
+        for d in (r, w, both, other):
+            write_th2(d / "x.root", np.ones(224))
+        with C.tfile_guard((r, both), (w, both), "the test"):
+            for d, mode in ((other, "READ"), (other, "READ_WITHOUT_GLOBALREGISTRATION"), (w, "READ"), (r, "UPDATE"),
+                            (w, "UPDATE"), (other, "RECREATE"), (r, "RECREATE"), (other, "NEW")):
+                with self.subTest(root=d.name, mode=mode):
+                    with self.assertRaises(C.GateFailure):
+                        ROOT.TFile.Open(str(d / ("x.root" if mode != "NEW" else "n.root")), mode)
+            ROOT.TFile.Open(str(r / "x.root"), "READ").Close()
+            ROOT.TFile.Open(str(r / "x.root"), "READ_WITHOUT_GLOBALREGISTRATION").Close()
+            ROOT.TFile.Open(str(w / "y.root"), "RECREATE").Close()
+            ROOT.TFile.Open(str(both / "x.root"), "UPDATE").Close()
+        self.assertTrue((w / "y.root").exists())
+        self.assertFalse((other / "n.root").exists())
+
     def test_the_read_stages_every_protected_file(self):
         fx = Fixture()
         try:

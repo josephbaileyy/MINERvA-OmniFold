@@ -219,7 +219,7 @@ def write_cells(cfg: dict, out: Path, protected=C.PROTECTED) -> dict:
 def read(cfg: dict, run: Path, cells: Path, cells_sha: str, out: Path, protected=C.PROTECTED) -> dict:
     """The read, under read_guards: the run's own products, the cells file and the repository are read in place; every
     other file (E_R's, the publication) only as a staged O_NOATIME copy beside the readout."""
-    with C.read_guards(protected, (run, out.parent, cells, C.REPO)):
+    with C.read_guards(protected, (run, out.parent, cells, C.REPO), (out.parent,)):
         return guarded_read(cfg, run, cells, cells_sha, out)
 
 

@@ -129,3 +129,26 @@ test connect):
 - test_run_suite.txt  5 tests OK.
 - run_tests-dummy-lib.txt  run_tests.sh (EXPECT 28) with a dummy library: 28 ran, C-ROO "error", RUN FAIL.
 - files.sha256      identical before and after.
+
+Revision 7 (coverage-5b-audit's note on #787's delta and the director's ruling of 2026-11-05: the TFile guard
+hardened before step two binds; limitation-resolver's attempt 2 PASSed at 0e001f3c, and attempt 3 re-runs the
+cluster suite at this head):
+- tfile_guard(readable, writable, what): a TFile::Open mode that reads (any but RECREATE, NEW, CREATE; UPDATE
+  included) is refused outside the readable roots, and a mode that writes (any but READ and
+  READ_WITHOUT_GLOBALREGISTRATION; an unknown mode counts as both) outside the writable roots. Before, only "READ" and
+  "" were checked, and writes were not.
+  - the driver: reads only under the staging root, writes only in its --out's directory (the run directory);
+  - the reader: reads under the run directory, the read directory, the cells file and the checkout; writes only in
+    the read directory.
+- Test: Reads.test_the_tfile_guard_confines_reads_and_writes_by_mode, with real ROOT files, both ways: READ and
+  READ_WITHOUT_GLOBALREGISTRATION outside the readable roots, READ in a write-only root, UPDATE in a read-only and in
+  a write-only root, RECREATE and NEW outside the writable roots are each refused (and NEW creates nothing); READ,
+  READ_WITHOUT_GLOBALREGISTRATION, RECREATE and UPDATE each in their allowed roots succeed.
+- REQUIRED mutants (2 new): reads gated only on "READ", and the write check dropped; both killed by that test. The
+  driver's staging mutant and the reader's TFile-guard mutant follow their lines' new text.
+- tests.txt         29 tests, OK (skipped=1: C-ROO), exit 0.
+- harness.txt       MUTATION CHECK :: PASS (43 mutations), exit 0.
+- test_run_suite.txt  5 tests OK.
+- run_tests-dummy-lib.txt  run_tests.sh (EXPECT 29) with a dummy library: 29 ran, C-ROO "error", RUN FAIL.
+- files.sha256      identical before and after.
+- closure-reads.tsv   regenerated at this revision (42 hits: ref_c2c1.py gains the mode constant; its line numbers moved; the guard's row states the new rule).

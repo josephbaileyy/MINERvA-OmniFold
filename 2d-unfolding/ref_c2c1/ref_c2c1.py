@@ -128,31 +128,41 @@ def _audit(event, args):
                       "through O_NOATIME")
 
 
-def tfile_guard(allowed, what: str):
-    """A patch of ROOT.TFile.Open refusing any open for reading of a path outside the ``allowed`` roots (ROOT cannot
-    take O_NOATIME, so it may open only staged copies or the run's own products)."""
+ROOT_READ_ONLY = ("", "READ", "READ_WITHOUT_GLOBALREGISTRATION")  # TFile::Open modes that never write
+ROOT_WRITE_ONLY = ("RECREATE", "NEW", "CREATE")  # modes that never read an existing file
+
+
+def tfile_guard(readable, writable, what: str):
+    """A patch of ROOT.TFile.Open: a mode that reads (any but RECREATE, NEW, CREATE; UPDATE included) is refused outside
+    the ``readable`` roots, and a mode that writes (any but READ and READ_WITHOUT_GLOBALREGISTRATION; an unknown mode
+    counts as both) outside the ``writable`` ones (ROOT cannot take O_NOATIME, so it reads only staged copies or the
+    run's own products; coverage-5b-audit's note and the director's ruling, 2026-11-05)."""
     import ROOT
     real_open = ROOT.TFile.Open
-    roots = tuple(Path(r).resolve() for r in allowed)
+    r_roots = tuple(Path(r).resolve() for r in readable)
+    w_roots = tuple(Path(r).resolve() for r in writable)
 
     def guarded(path, mode="READ", *a, **k):
-        if str(mode).upper() in ("", "READ") and not any(under(path, r) for r in roots):
-            raise GateFailure(f"{what} opened {path} for reading outside {[str(r) for r in roots]}")
+        m = str(mode).upper()
+        if m not in ROOT_WRITE_ONLY and not any(under(path, r) for r in r_roots):
+            raise GateFailure(f"{what} opened {path} ({mode}) for reading outside {[str(r) for r in r_roots]}")
+        if m not in ROOT_READ_ONLY and not any(under(path, r) for r in w_roots):
+            raise GateFailure(f"{what} opened {path} ({mode}) for writing outside {[str(r) for r in w_roots]}")
         return real_open(path, mode, *a, **k)
     return mock.patch.object(ROOT.TFile, "Open", staticmethod(guarded))
 
 
 @contextlib.contextmanager
-def read_guards(protected, allowed):
+def read_guards(protected, allowed, writable=()):
     """For the block's whole run: Python reads under ``protected`` need O_NOATIME unless under ``allowed`` (the audit
-    hook), and ROOT.TFile.Open reads only under ``allowed`` (tfile_guard)."""
+    hook), and ROOT.TFile.Open reads only under ``allowed`` and writes only under ``writable`` (tfile_guard)."""
     if not _AUDIT_INSTALLED:
         sys.addaudithook(_audit)
         _AUDIT_INSTALLED.append(True)
     _READS.update(active=True, protected=tuple(Path(r).resolve() for r in protected),
                   allowed=tuple(Path(r).resolve() for r in allowed))
     try:
-        with tfile_guard(allowed, "the reader"):
+        with tfile_guard(allowed, writable, "the reader"):
             yield
     finally:
         _READS.update(active=False, protected=(), allowed=())
@@ -395,7 +405,7 @@ def run_driver(driver, ohf, argv: list[str], out_root: Path, *, ibu: dict | None
         patches.append(mock.patch.object(ohf, "omnifold", staticmethod(observed)))
     patches += recording_lightgbm(capture, extra)
     if staging is not None:  # every file the driver opens for reading is a staged copy under the root
-        patches.append(tfile_guard((staging,), "the driver (outside the staging root)"))
+        patches.append(tfile_guard((staging,), (Path(out_root).resolve().parent,), "the driver (outside the staging root)"))
     saved = sys.argv
     with contextlib.ExitStack() as stack:
         for p in patches:
