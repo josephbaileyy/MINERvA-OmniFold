@@ -1,0 +1,16 @@
+host=login12 start=2026-11-05T19:55:04Z pid=768992
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2204.7            10000.0     17997.6      20000.0
+balance_node_h=2002.4 half=1001.2 cap=1.5
+deploy porcelain_lines=0 head=a47cfb4b9410cbf0cc8e34bee98e73c3e110f171
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_noatime_guard.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/sbatch-c2probe.sh: OK
+Submitted batch job 60870880
+TimeLimit=01:30:00
+JobName=fd1b_c2probe Account=m3246 QOS=regular_1 JobState=PENDING TimeLimit=01:30:00 Partition=regular_milan_ss11 NumNodes=1-1 OverSubscribe=NO 
+60870880 fd1b_c2probe PENDING 0:00 1:30:00 (Priority)
+end=2026-11-05T19:55:48Z

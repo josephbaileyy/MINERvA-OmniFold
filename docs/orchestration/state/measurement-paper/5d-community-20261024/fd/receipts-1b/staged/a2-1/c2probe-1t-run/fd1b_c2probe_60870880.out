@@ -1,0 +1,20 @@
+host=nid004473 job=60870880 start=2026-11-05T20:05:11Z threads=1
+deploy head=a47cfb4b9410cbf0cc8e34bee98e73c3e110f171 porcelain_lines=0
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_noatime_guard.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/sbatch-c2probe.sh: OK
+sourcing /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-1t-20261105/deploy/setup_salloc_env.sh sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+threads OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1
+c2probe rc=0
+C2-PROBE truth=g18 prepare=1155s inputs=9s terms=141s vi=27s draws_300=0s draws_gate=1s block=99.2s projected_per_truth=17708s z_pairs={'wt': 57795, 'tdw': 88052} peak_rss_kib=282099996
+fd_1b_noatime_guard: installed over 10 roots; running /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-1t-20261105/deploy/nd-unfolding/fd_1b_c2.py
+	Command being timed: "python3 -B /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-1t-20261105/deploy/nd-unfolding/fd_1b_noatime_guard.py --declared -- /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-1t-20261105/deploy/nd-unfolding/fd_1b_c2.py c2probe --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz --bank /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware --detector-dir /pscratch/sd/j/josephrb/s5p-20260926/bank_detector --pins /pscratch/sd/j/josephrb/fd-1b-20261030/pins.json --expect-pins-sha256 5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248 --flux-constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt --flux-table /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz --expect-flux-table-sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5 --definition /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-1t-20261105/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json --staged /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in --prep /pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep --cv-tdw /pscratch/sd/j/josephrb/fd-1b-a21-cvdenom2-20261103/cvdenom.npy --expect-cv-tdw-sha256 0bc70d622ed51f7e6ce3b80e095788f315e52937b6a6c79a0bafedeb4545def8 --truths g18 --blocks 4 --out /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-1t-20261105/probe.json"
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 28:56.12
+	Maximum resident set size (kbytes): 282099996
+	Exit status: 0
+c87d162d9292175623e08591388b72e1e3b3aea278b8c5f72f50fce2990da819  /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-1t-20261105/probe.json
+f12975e8aa2b41135db4ecfc24455f254556e2ff58f493948e3cb102950965cf  /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-1t-20261105/probe.out
+01db5c6062176b2f2918bbc384ea4d4ef9bfc654168d72fded7a875f3a8af174  /pscratch/sd/j/josephrb/fd-1b-a21-c2probe-1t-20261105/probe.time
+end=2026-11-05T20:34:13Z

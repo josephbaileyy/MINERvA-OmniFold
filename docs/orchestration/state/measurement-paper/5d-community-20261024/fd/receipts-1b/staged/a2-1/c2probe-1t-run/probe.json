@@ -1,0 +1,51 @@
+{
+ "block_seconds": [
+  100.31025314331055,
+  99.91311454772949,
+  98.90898132324219,
+  98.88124656677246
+ ],
+ "block_seconds_used": 99.23444747924805,
+ "blocks": 4,
+ "blocks_per_truth": 165,
+ "code_sha256": {
+  "clip_probe2.py": "b95c562916091b910a5ca8d874d83296035690cb8784db3d318b2f07fed28182",
+  "cov2d.py": "0d852a6992398b6b1ba7956b2e8d74accc2b6f1aa7b7909a6ef7d6d7f0dcd756",
+  "fd_1b_c2.py": "522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f",
+  "fd_1b_mc.py": "062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67",
+  "fd_1b_toys.py": "869a65c3bcce1a3b56ecd197ecdf3b6cf2741e0611f91b582c3064f67967bc08"
+ },
+ "draw_block": 20,
+ "once_seconds": {
+  "draws_300": 0.11135196685791016,
+  "draws_gate": 1.097156047821045,
+  "inputs": 9.485726833343506,
+  "prepare": 1154.8705649375916,
+  "terms": 141.48946404457092,
+  "vi": 26.803272008895874
+ },
+ "peak_rss_kib": 282099996,
+ "projected_seconds_per_truth": 17707.54136991501,
+ "rows": {
+  "D": 65856,
+  "bkgw": 621547,
+  "tdw": 32849103,
+  "wr": 32849103,
+  "wt": 32849103
+ },
+ "schema": "fd-1b-c2-probe/2",
+ "step": "c2-probe",
+ "threads": {
+  "MKL_NUM_THREADS": "1",
+  "NUMEXPR_NUM_THREADS": "1",
+  "OMP_NUM_THREADS": "1",
+  "OPENBLAS_NUM_THREADS": "1",
+  "VECLIB_MAXIMUM_THREADS": null
+ },
+ "truth": "g18",
+ "universes": 175,
+ "z_pairs": {
+  "tdw": 88052,
+  "wt": 57795
+ }
+}

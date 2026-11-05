@@ -164,7 +164,8 @@ All runs used a fresh clone at the bound commit, with its sha verified on the no
 | large-sample calibration, G18 and AR23 | `51d67b54` | job 60783756, nid004331, 06:35:57–07:19:12Z | CALIBRATED (G18 and AR23 measured, the plug-in projected), s = 0.92 (§8b) |
 | the same, rerun at the final code | `8a9b8db9` | job 60805733, nid005938, 18:08:00–18:53:39Z | compare_calibN PASS against 60783756: the npz bitwise equal (§8b) |
 | the same, rerun at c2check's code | `bf36901f` | job 60857361, nid007069, 2026-11-05 14:39:03–15:22:06Z | compare_calibN PASS against 60783756: the npz bitwise equal (§8b) |
-| c2check's timing probe, G18 | `bf36901f` | job 60859504, nid004541, 2026-11-05 15:41:02–16:07:20Z | projected 11,641 s (3.23 h) per truth; peak RSS 269 GiB (§8c) |
+| c2check's timing probe, G18 | `bf36901f` | job 60859504, nid004541, 2026-11-05 15:41:02–16:07:20Z | projected 11,641 s (3.23 h) per truth at 64 threads; peak RSS 269 GiB (§8c) |
+| the same at 1 BLAS thread, under the guard | `a47cfb4b` | job 60870880, nid004473, 2026-11-05 20:05:07–20:34:13Z | projected 17,708 s (4.92 h) per truth; the guard's first live run, no refusal (§8c) |
 
 ## 7. The mock audit (the director's request, 2026-11-04)
 
@@ -439,6 +440,18 @@ that can feed it. The time limit, 01:30:00, was checked from scontrol after subm
     not the arrays c2_truth runs on; the local per-block estimate built on them is superseded by the measurement.
   - **Atimes:** every declared input's atime by stat, on the login node before submission and after the job: 1,147
     files, 0 moved (`atime-pre.tsv`, `atime-post.tsv`).
+- **At 1 BLAS thread, c2check's configuration** (the director's ruling (a), 2026-11-05). The calibration ran at 1
+  thread, and c2check's check that its single-universe U x_T is bitwise the calibration's needs the same BLAS
+  reduction order; the auditor measured the same-shape product's bits changing between 1 and 8 or 64 threads. So
+  c2check runs at THREADS=1, asserted in b3/sbatch-c2check.sh, and is priced from a 1-thread probe: job 60870880 at
+  a47cfb4b (fd_1b_c2 and fd_1b_mc bf36901f's), nid004473, 2026-11-05 20:05:07–20:34:13Z, 29:06 (0.485 node-h of its
+  1.5 cap), under fd_1b_noatime_guard.py (its first live run with the real O_NOATIME: installed over 10 roots, no
+  refusal); `a2-1/c2probe-1t-run/`, probe.json `c87d162d…`:
+  - one-off steps: prepare(rows=True) 1,154.9 s, c2_inputs 9.5, c2_terms 141.5, c2_vi 26.8, draws 1.2; sum 1,333.9 s;
+  - blocks 100.3, 99.9, 98.9, 98.9 s; 99.23 s per block with the first set aside;
+  - **projected one-truth c2check at 1 thread: 1,333.9 + 165 × 99.23 = 17,708 s, 4.92 h**, under the 8 h line;
+  - peak RSS 269 GiB; the job used 99 % CPU; every declared input's atime by stat before submission and after the job:
+    1,147 files, 0 moved.
 - **The terms once per job.** They depend on neither the draws nor the truth. `c2_terms` builds them for wt and tdw,
   and c2check builds them once, before its truth loop, and passes them to every c2_truth call (the declared 300 and
   the gate sample, at each truth). At cb59f85b they were still built inside c2_truth, so twice per truth. That
@@ -674,6 +687,8 @@ calibration's 4.0 cap. With the jobs since then at their measured cost, and the 
 | **spent or committed, with the second rerun** | **≈ 79.56** |
 | c2check's timing probe, job 60859504 (26:18, 1,578 s) | 0.438 |
 | **spent or committed, with the probe** | **≈ 80.00**, within 83.0 by ≈ 3.0 |
+| c2check's 1-thread probe, job 60870880 (29:06, 1,746 s) | 0.485 |
+| **spent or committed, with both probes** | **≈ 80.49**, within 83.0 by ≈ 2.5 |
 
 **The ceiling raised to 83.0 node-h (the director's ruling of 2026-11-05).** It is an operational go-ahead within the
 standing grant, far below half the balance, and it covers the two runs above at their caps (81.84). Binding 3 resets
