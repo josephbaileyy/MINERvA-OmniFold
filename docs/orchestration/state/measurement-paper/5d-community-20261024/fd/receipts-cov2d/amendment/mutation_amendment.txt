@@ -9,6 +9,7 @@ KILLED  cov2d_pseudo_write.py: 9.11 membership ignored
 KILLED  cov2d_pseudo_write.py: 9.11 at 50 sigma
 KILLED  cov2d_pseudo_write.py: truth ignores the drawn flux universe
 KILLED  cov2d_blocks.py: norm check removed
+KILLED  cov2d_blocks.py: blocks without noatime_inputs before the rollup
 KILLED  cov2d_blocks.py: C08 not carried
 KILLED  cov2d_blocks.py: stat ddof 0
 KILLED  cov2d_blocks.py: open audit off
@@ -62,5 +63,5 @@ KILLED  cov2d_pilot.py: pilot compare at 1e-6
 KILLED  cov2d_pilot.py: REPRICE at 2x
 KILLED  cov2d_pilot.py: P2 a failed run is not INVALID
 KILLED  cov2d_pilot.py: P2 a missing class is not INVALID
-killed 64 of 64
+killed 65 of 65
 harness rc=0

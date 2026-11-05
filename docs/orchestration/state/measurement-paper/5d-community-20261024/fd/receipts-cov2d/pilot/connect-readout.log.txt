@@ -1,0 +1,184 @@
+host=login02 start=2026-11-05T15:45:10Z pid=2223205
+deploy head=cb31611ca8b96ed2d1eeb809fda7236e56645863 plain=0 ignored=0
+sacct:
+JobID|JobName|State|ExitCode|Elapsed|ElapsedRaw|NNodes|Start|End
+60857636|cov2d-pilot|COMPLETED|0:0|00:45:02|2702|1|2026-11-05T06:53:20|2026-11-05T07:38:22
+60857636.batch|batch|COMPLETED|0:0|00:45:02|2702|1|2026-11-05T06:53:20|2026-11-05T07:38:22
+60857636.extern|extern|COMPLETED|0:0|00:45:04|2704|1|2026-11-05T06:53:20|2026-11-05T07:38:24
+60857636.0|P912_L_BeamAngleX_0|COMPLETED|0:0|00:15:20|920|1|2026-11-05T06:54:49|2026-11-05T07:10:09
+60857636.1|B_G18_001|COMPLETED|0:0|00:09:29|569|1|2026-11-05T06:54:49|2026-11-05T07:04:18
+60857636.2|P2b_ER|COMPLETED|0:0|00:09:41|581|1|2026-11-05T06:54:49|2026-11-05T07:04:30
+60857636.3|U_G18_Flux_0|COMPLETED|0:0|00:11:25|685|1|2026-11-05T07:04:18|2026-11-05T07:15:43
+60857636.4|X_G18|COMPLETED|0:0|00:09:49|589|1|2026-11-05T07:04:30|2026-11-05T07:14:19
+60857636.5|L_G18_BeamAngleX_0|COMPLETED|0:0|00:15:40|940|1|2026-11-05T07:10:09|2026-11-05T07:25:49
+60857636.6|T_G18_5720000|COMPLETED|0:0|00:09:45|585|1|2026-11-05T07:14:19|2026-11-05T07:24:04
+60857636.7|P912_U_MaRES_0|COMPLETED|0:0|00:12:31|751|1|2026-11-05T07:25:49|2026-11-05T07:38:20
+/pscratch/sd/j/josephrb/cov2d-run-20261104:
+total 128
+drwxrwx---   8 josephrb josephrb  4096 Nov  5 07:10 .
+drwx------ 361 josephrb josephrb 69632 Nov  5 07:33 ..
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 07:38 inventory
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 07:25 logs
+drwxrwx---  10 josephrb josephrb  4096 Nov  5 07:25 out
+drwxrwx---   3 josephrb josephrb  4096 Nov  5 02:42 pseudo
+-rw-rw----   1 josephrb josephrb   282 Nov  5 07:38 SHA256SUMS.pilot.1
+-rw-rw----   1 josephrb josephrb   255 Nov  5 07:24 SHA256SUMS.pilot.2
+-rw-rw----   1 josephrb josephrb   175 Nov  5 07:15 SHA256SUMS.pilot.3
+-rw-rw----   1 josephrb josephrb   207 Nov  5 06:44 submissions.log
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 02:30 tables
+drwxrwx---   4 josephrb josephrb  4096 Nov  5 06:53 tmp
+-rw-rw----   1 josephrb josephrb   126 Nov  5 07:38 walls.pilot.1.tsv
+-rw-rw----   1 josephrb josephrb    99 Nov  5 07:24 walls.pilot.2.tsv
+-rw-rw----   1 josephrb josephrb    71 Nov  5 07:15 walls.pilot.3.tsv
+
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs:
+total 152
+drwxrwx--- 2 josephrb josephrb  4096 Nov  5 07:25 .
+drwxrwx--- 8 josephrb josephrb  4096 Nov  5 07:10 ..
+-rw-rw---- 1 josephrb josephrb  9440 Nov  5 07:04 B_G18_001.log
+-rw-rw---- 1 josephrb josephrb  1315 Nov  5 06:54 check-pilot-60857636.json
+-rw-rw---- 1 josephrb josephrb  1317 Nov  5 07:38 cov2d-pilot-60857636.out
+-rw-rw---- 1 josephrb josephrb  2576 Nov  5 05:06 cov2d-pseudo_G18-60848251.out
+-rw-rw---- 1 josephrb josephrb  1073 Nov  5 06:54 dvs-rate-60857636.json
+-rw-rw---- 1 josephrb josephrb   402 Nov  5 06:44 gate-pilot-20261105T144403Z.psv
+-rw-rw---- 1 josephrb josephrb   151 Nov  5 06:44 gate-pilot-20261105T144403Z.psv.gate.json
+-rw-rw---- 1 josephrb josephrb    53 Nov  5 06:44 gate-pilot-20261105T144403Z.psv.order.json
+-rw-rw---- 1 josephrb josephrb   252 Nov  5 02:30 gate-pseudo-20261105T103033Z.psv
+-rw-rw---- 1 josephrb josephrb   112 Nov  5 02:30 gate-pseudo-20261105T103033Z.psv.gate.json
+-rw-rw---- 1 josephrb josephrb    52 Nov  5 02:30 gate-pseudo-20261105T103033Z.psv.order.json
+-rw-rw---- 1 josephrb josephrb  9186 Nov  5 07:25 L_G18_BeamAngleX_0.log
+-rw-rw---- 1 josephrb josephrb  1629 Nov  5 03:52 mat-60848251.json
+-rw-rw---- 1 josephrb josephrb  1629 Nov  5 06:53 mat-60857636.json
+-rw-rw---- 1 josephrb josephrb  9141 Nov  5 07:04 P2b_ER.log
+-rw-rw---- 1 josephrb josephrb  9168 Nov  5 07:10 P912_L_BeamAngleX_0.log
+-rw-rw---- 1 josephrb josephrb 10312 Nov  5 07:38 P912_U_MaRES_0.log
+-rw-rw---- 1 josephrb josephrb  9177 Nov  5 07:24 T_G18_5720000.log
+-rw-rw---- 1 josephrb josephrb 10282 Nov  5 07:15 U_G18_Flux_0.log
+-rw-rw---- 1 josephrb josephrb  9160 Nov  5 07:14 X_G18.log
+
+/pscratch/sd/j/josephrb/cov2d-run-20261104/out:
+total 40
+drwxrwx--- 10 josephrb josephrb 4096 Nov  5 07:25 .
+drwxrwx---  8 josephrb josephrb 4096 Nov  5 07:10 ..
+drwxrwx---  2 josephrb josephrb 4096 Nov  5 07:04 B_G18_001
+drwxrwx---  2 josephrb josephrb 4096 Nov  5 07:25 L_G18_BeamAngleX_0
+drwxrwx---  2 josephrb josephrb 4096 Nov  5 07:04 P2b_ER
+drwxrwx---  2 josephrb josephrb 4096 Nov  5 07:09 P912_L_BeamAngleX_0
+drwxrwx---  2 josephrb josephrb 4096 Nov  5 07:38 P912_U_MaRES_0
+drwxrwx---  2 josephrb josephrb 4096 Nov  5 07:23 T_G18_5720000
+drwxrwx---  2 josephrb josephrb 4096 Nov  5 07:15 U_G18_Flux_0
+drwxrwx---  2 josephrb josephrb 4096 Nov  5 07:13 X_G18
+P912_L_BeamAngleX_0	1793890489	1793891409	0
+L_G18_BeamAngleX_0	1793891409	1793892349	0
+P912_U_MaRES_0	1793892349	1793893100	0
+P2b_ER	1793890489	1793891070	0
+X_G18	1793891070	1793891659	0
+T_G18_5720000	1793891659	1793892244	0
+B_G18_001	1793890489	1793891058	0
+U_G18_Flux_0	1793891058	1793891743	0
+9a1628e080d60c54904b7261e1816ebcc9cabe845936f4c49cd0d3b2c7a69137  P912_L_BeamAngleX_0/xsec.root
+f04eafde46077e0515e445022d4df14dd756a1975cc8d84cdf4f45305c54e0db  L_G18_BeamAngleX_0/xsec.root
+3041d086c1cc910fe274d960dd28f4481ffdac46b046c75a112783e1cfb22ab9  P912_U_MaRES_0/xsec.root
+9da020bc0b194ac5737a9c3a99cc2ed9f9c118a0e3f926863d43ef66685db764  P2b_ER/xsec.root
+7575b7ce966ac0121e039e3e6a840e83e2856b495d8438bd3a2671822b5cd62c  X_G18/xsec.root
+1980449271a084bd99fc19e9496023b56bd969a9f5b4a41e18120780a33a6097  T_G18_5720000/xsec.root
+d6efdbdab5320a920ee640a9719d4712218e15b8c6f0eee1f96f247c81259816  B_G18_001/xsec.root
+db669e81d15f66d0c406bedd493e5887fd46d88776c0a492db6d4420a5f4a5b2  U_G18_Flux_0/xsec.root
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+COV2D-PILOT PASS reprice=[] invalid=0
+readout rc=0
+deploy after: plain=0 ignored=0
+b59ffa2d7363b7de1c702d037868d9794491e9433907cafe743784133b6bf99d  /pscratch/sd/j/josephrb/cov2d-run-20261104/logs/pilot_readout.json
+{
+ "M": "cb31611ca8b96ed2d1eeb809fda7236e56645863",
+ "controls": {
+  "2b": {
+   "bitwise_224": false,
+   "max_rel": 4.551914400963142e-15,
+   "median_rel": 1.1102230246251565e-15,
+   "pass": true,
+   "same_cell_set": true
+  },
+  "9.12_lateral": {
+   "bitwise_224": false,
+   "max_rel": 1.0377254611171338e-11,
+   "median_rel": 3.7281289166912757e-13,
+   "pass": true,
+   "same_cell_set": true
+  },
+  "9.12_universe": {
+   "bitwise_224": false,
+   "max_rel": 2.8814728381121313e-12,
+   "median_rel": 5.928590951498336e-14,
+   "pass": true,
+   "same_cell_set": true
+  }
+ },
+ "dvs_rate": {
+  "cache_note": "both read before this job's check, so neither is a read this job made; a page-cache hit left by another process on this node cannot be excluded, so the staged rate may be cached",
+  "cfs": {
+   "MB_per_s": 588.423486001132,
+   "bytes": 4294967296,
+   "path": "/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root",
+   "seconds": 7.299109226907603,
+   "sha256_of_prefix": "4150542ac0ef79b73f2975ac6fef55d6f35c8928d71fef97be66a5f37dc8c0ae"
+  },
+  "declared_departure": "replaces the full CFS-read lateral of COV2D-DECLARATION.md section 8 :432-433 and section 10 :549 (the director's ruling (b)): staging is complete",
+  "prefix_equal": true,
+  "staged": {
+   "MB_per_s": 919.7048563135103,
+   "bytes": 4294967296,
+   "path": "/pscratch/sd/j/josephrb/cov2d-inputs-20261104/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root",
+   "seconds": 4.669940869091079,
+   "sha256_of_prefix": "4150542ac0ef79b73f2975ac6fef55d6f35c8928d71fef97be66a5f37dc8c0ae"
+  }
+ },
+ "invalid": [],
+ "reprice": {
+  "central": {
+   "partb_s": 610.0,
+   "pilot_s": 585.0,
+   "ratio": 0.9590163934426229,
+   "reprice": false
+  },
+  "lateral": {
+   "partb_s": 1174.8,
+   "pilot_s": 930.0,
+   "ratio": 0.7916241062308478,
+   "reprice": false
+  },
+  "replica": {
+   "partb_s": 691.7199999999999,
+   "pilot_s": 569.0,
+   "ratio": 0.822587174001041,
+   "reprice": false
+  },
+  "toy": {
+   "partb_s": 610.0,
+   "pilot_s": 585.0,
+   "ratio": 0.9590163934426229,
+   "reprice": false
+  },
+  "universe": {
+   "partb_s": 864.9051268498944,
+   "pilot_s": 751.0,
+   "ratio": 0.8683033279444732,
+   "reprice": false
+  }
+ },
+ "reprice_classes": [],
+ "stop": [],
+ "verdict": "PASS"
+}rm -rf /dev/shm/josephrb-cov2d-readout/tmp rc=0
+end=2026-11-05T15:45:33Z
+DONE

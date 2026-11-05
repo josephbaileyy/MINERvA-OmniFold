@@ -1,0 +1,23 @@
+932865e7588d714236b58cd0418374c36ab22bfe1136321849f5ea7a4dbee5b7  /dev/shm/josephrb-cov2d-pilot.log
+host=login02 2026-11-05T14:44:42Z
+rm -f /dev/shm/josephrb-cov2d-pilot.log rc=0
+rm -f /dev/shm/josephrb-cov2d-pilot.sh rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-pilot.log': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-pilot.sh': No such file or directory
+total 0
+drwxrwxrwt  2 root root   40 Nov  5 06:44 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..
+0f9a67b0f0b3f99617ccaa74819f35f94f0ab01edc8bc88565a6532aa7ce019d  /dev/shm/josephrb-cov2d-readout/connect-readout.log
+b59ffa2d7363b7de1c702d037868d9794491e9433907cafe743784133b6bf99d  /pscratch/sd/j/josephrb/cov2d-run-20261104/logs/pilot_readout.json
+total 12
+drwxrwx--- 2 josephrb josephrb   60 Nov  5 07:45 .
+drwxrwxrwt 3 root     root       80 Nov  5 07:45 ..
+-rw-rw---- 1 josephrb josephrb 9493 Nov  5 07:45 connect-readout.log
+host=login02 2026-11-05T15:46:24Z
+rm -rf /dev/shm/josephrb-cov2d-readout rc=0
+rm -f /dev/shm/josephrb-cov2d-readout.sh rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-readout': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-readout.sh': No such file or directory
+total 0
+drwxrwxrwt  2 root root   40 Nov  5 07:46 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..

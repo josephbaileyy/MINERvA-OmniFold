@@ -1,0 +1,20 @@
+host=login02 start=2026-11-05T14:43:52Z pid=1287589 user=josephrb
+deploy=/pscratch/sd/j/josephrb/cov2d-deploy-cb31611c head=cb31611ca8b96ed2d1eeb809fda7236e56645863 plain=0 ignored=0
+origin/main=f7a63b8e63d2fac0253b79f5d9348e72740f152e G18 record: 230f6918f65d5bcf7d766bdb47eb7ac0513d998017b877777b5fd49089a54296
+sacct (as the gate reads it):
+60848251|cov2d-pseudo_G18|COMPLETED|8674|1
+2026-11-05T14:44:04Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pilot id=60857636 limit=01:41:00
+submit rc=0
+plain-after=0 ignored-after=0
+2026-11-05T10:30:34Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pseudo_G18 id=60848251 limit=03:00:00
+2026-11-05T14:44:04Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pilot id=60857636 limit=01:41:00
+{"spent": 2.4094444444444445, "held": 0.0, "want": "pilot", "want_node_h": 1.6833333333333333, "total": 4.092777777777778, "cap": 165.8, "pass": true}
+{"job": "pilot", "truth": "pilot", "blocked_by": []}
+JobId=60857636 JobName=cov2d-pilot
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=01:41:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login02:1287589
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+end=2026-11-05T14:44:07Z
+DONE

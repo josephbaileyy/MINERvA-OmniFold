@@ -1,0 +1,15 @@
+{
+ "job": "pilot",
+ "runs": 8,
+ "checked": {
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104/runEventLoopOmniFold_MEFHC.root": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+  "/pscratch/sd/j/josephrb/cov2d-inputs-20261104/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root": "38b9fc307eabd864cd0fd663679b51fb2e6d064672410af6b3cf8b0a7e161ed5",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root": "171117087867 1783523295 882725391507234642",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root": "5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb",
+  "/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root": "7eb39088a42844b48ec1f8e1b6b586b8d8d4363611d68b726112f9f75c99b9db",
+  "/pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b/data_5720000.root": "79e12d7d8beede65b6e33ad6804cded3fc8595f78f50d77c233b6501442654d2",
+  "/pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/b/data_5721000.root": "82c33320ceb9ce96967850148f97cbf873654609f0f8e1ac31b1491d5dd72eee"
+ },
+ "problems": []
+}
