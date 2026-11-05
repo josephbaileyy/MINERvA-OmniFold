@@ -251,6 +251,7 @@ docs/orchestration/DECISION-20261104-joseph-g1-r1-calibrated-bars.md	tracked	LIV
 docs/orchestration/DECISION-20261104-joseph-referee-analysis-commission.md	tracked	LIVE	document		20261104	open		route-only	no
 docs/orchestration/DECISION-20261104-joseph-rpd-sentence.md	tracked	LIVE	document		20261104	open		route-only	no
 docs/orchestration/DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md	tracked	LIVE	document		20261105	open		route-only	no
+docs/orchestration/DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md	tracked	LIVE	document		20261105	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
@@ -5652,6 +5653,9 @@ docs/orchestration/state/2d-closeout/stageF/methods/records-redit-20261026/agy/r
 docs/orchestration/state/2d-closeout/stageF/methods/records-redit-20261026/agy/redit1.output.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/records-redit-20261026/tracker_pointer_check.out.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/records-redit-20261026/tracker_pointer_check.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/consult-wording-2-20261105/PRD-WORDING-2-SONNET-ANSWER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/consult-wording-2-20261105/PRD-WORDING-2-SONNET-PROMPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/consult-wording-2-20261105/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/consult-wording-20261105/PRD-WORDING-SONNET-ANSWER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/consult-wording-20261105/PRD-WORDING-SONNET-PROMPT.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/consult-wording-20261105/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -6677,6 +6681,9 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-g
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261104/ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261104/PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261104/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-cov2d-ar23-stop-20261105/CONSULT-SONNET-ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-cov2d-ar23-stop-20261105/CONSULT-SONNET-PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-cov2d-ar23-stop-20261105/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-g1-r1-bars-20261104/CONSULT-SONNET-ANSWER.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-g1-r1-bars-20261104/CONSULT-SONNET-PROMPT.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-g1-r1-bars-20261104/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
