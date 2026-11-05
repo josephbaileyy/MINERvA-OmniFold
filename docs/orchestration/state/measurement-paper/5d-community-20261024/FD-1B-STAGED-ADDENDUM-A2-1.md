@@ -366,9 +366,28 @@ that can feed it. The time limit, 01:30:00, was checked from scontrol after subm
 - **What the exclusions removed:**
   - fd_1b_c2's digest, `f19adbda` → `522d7edd`, and fd_1b_mc's, `d55f5966` → `062628b6`;
   - the wall clock, 2,564.5 → 2,567.5 s;
-  - the 709 files' atime values: the same keys, and none moved in either run.
+  - the 709 files' atime values: the same keys.
 
   The other three code digests are equal.
+- **The atimes, corrected (the audit, 2026-11-05).** The first version of this report said none moved. That is true
+  only of what `atime_check` measures: it records each file's atime at the job's first O_NOATIME open of it
+  (`fd_1b_inv.open_noatime`), so it sees a move after that open, never a plain read before it, by the job or by
+  another process. Within the job, no file moved after its first open (`moved` is empty).
+
+  Across runs the record shows more. 419 of the 709 files carry 2026-11-05 atimes in this run, where 60783756 and
+  60805733 recorded 2026-10-31 to 2026-11-01 ones:
+  - 385 in bank_sweep_5d_bkgaware, 32 of the 33 in s5p-20260926/bank_detector, and 2 others;
+  - 7 at 11:11:20Z, inside REF-G1's timing job 60849625 (11:10:59–11:12:15Z);
+  - 412 at 14:47–14:49Z, inside REF-G1's batch 60857388 (14:41:59–14:49:49Z), which overlapped this job.
+
+  REF-G1's driver reads the bank with a plain `np.load` (`nd-unfolding/ref_g1/ref_g1.py:204` at main). So the
+  windows and the code both attribute the moves to REF-G1's jobs, not this one; the auditor is confirming. The
+  calibration path at bf36901f is the one 60783756 and 60805733 ran, and those runs moved nothing. The files'
+  exposure dates are stale from 2026-11-05 whatever the reader.
+- **The blind spot, closing.** The probe (job 60859504) carries an out-of-band snapshot: every declared input's
+  atime by `find -printf %A@` (stat, which moves no atime), taken on the login node just before submission and to
+  be taken again after the job. c2check's snapshot is proposed for its job script, which is outside
+  `gate_code_digests()`. In fd_1b_c2 it would change the code that rerun2's calibration is bound to (ruling (A)).
 - **So the calibration's numbers are unchanged at c2check's code:** s = 0.92, CALIBRATED (G18 and AR23 measured, the
   plug-in projected).
 
