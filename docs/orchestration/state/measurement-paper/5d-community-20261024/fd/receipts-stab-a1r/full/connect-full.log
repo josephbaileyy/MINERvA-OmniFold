@@ -1,0 +1,36 @@
+node login31 nproc=244 loadavg 4.29 6.04 98.58
+2026-11-05T05:11:09Z
+connect script sha256 64166c6b01d9c44bd95136c2631245c1a4581aca7ba4b15d91d9eabd0c23adfb
+log-dry/DONE sha256 ed98090ecfb32c6977256c57b5266183bcd77acf5dbdd5170d02422c4a61e504 == receipt
+log-dry/SHA256SUMS sha256 fb379aa50b03cfeb46b2eb178918d57fe73c0a05538d1b7f54358d33f96722a4 == receipt
+queue.tsv sha256 d391858c1f5f2655f9fbc9d38beff29d9a4ae830ea7b3cf9365a2d2f4958bfeb == receipt
+dry.tsv sha256 afc36dc309afb494ae33c99d06467c63ce850a79e4a1dbfc7e326c24110f10b4 == receipt
+pins/pins-check.json sha256 2e0a0b2100ac72a9b733e4cf3b4f2b5f76ff5e43bc94a4c1a8ef91ce451410f9 == receipt
+dry products: 9 listed, checked by sha256
+dry tasks ended: 9 of 9
+pins record: {'verdict PASS': True, 'at M_A1': True, 'schema': True, 'at most 48 h old': True} written 2026-11-04T23:51:48Z age_h 5.3
+invalid 60826464: TIMEOUT|73|1; dry 60827080: COMPLETED|992|1
+charged_node_h=0.2958 remainder_node_h=7.7042 gate_cap=7.2500 time_limit=07:15:00
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2194.3            10000.0     17979.3      20000.0
+balance_node_h=2020.7 half=1010.4 price=8.0
+HEAD cc54d86f7ac66c1346fa69e5894b2d2f000fb09c; porcelain --ignored lines before: 0
+binding blobs: 7 checked, 0 mismatches; declaration sha256 6c91c0ccbb8061c0dfe755f2283ecbf0f12ba001737876df09f8882eca4ca2b4; addendum A1 sha256 277f6c799aca808315ce519f427007b7dec5da0c514dc5d0c229841ec01e23b2
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+squeue --me before:
+2026-11-05T05:11:48Z
+sbatch rc=0
+Submitted batch job 60837713
+full run job 60837713
+scontrol TimeLimit=07:15:00 (declared 07:15:00)
+60837713 fd_stab_full PENDING 0:00 7:15:00 1 regular_1 m3246
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=07:15:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login31:220483
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+porcelain --ignored lines after: 0
+stab full submit rc=0
+2026-11-05T05:11:53Z

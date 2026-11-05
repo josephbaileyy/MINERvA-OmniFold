@@ -1,0 +1,25 @@
+# git -C /pscratch/sd/j/josephrb/fd-stab-a1r-20261104/deploy-full status --porcelain --ignored (read 2026-11-05T10:20:46Z on dtn01.nersc.gov), then each entry listed
+!! 2d-unfolding/__pycache__/
+!! nd-unfolding/__pycache__/
+!! nd-unfolding/pv-ladder/__pycache__/
+# git status --porcelain --untracked-files=no lines: 0
+drwxrwx---  2 josephrb josephrb   4096 2026-11-04 21:35:52.000000000 -0800 .
+drwxrwx--- 18 josephrb josephrb  12288 2026-11-04 21:35:52.000000000 -0800 ..
+-rw-rw----  1 josephrb josephrb 131929 2026-11-04 21:35:52.000000000 -0800 unfold_2d_omnifold_unbinned.cpython-311.pyc
+drwxrwx---  2 josephrb josephrb  4096 2026-11-05 00:24:55.000000000 -0800 .
+drwxrwx--- 19 josephrb josephrb 36864 2026-11-04 21:35:23.000000000 -0800 ..
+-rw-rw----  1 josephrb josephrb 17764 2026-11-04 21:35:23.000000000 -0800 omnifold_nn_core.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb 29073 2026-11-04 21:35:23.000000000 -0800 s5c_pseudo.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb 15581 2026-11-04 21:35:23.000000000 -0800 s5c_unfold.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb  4377 2026-11-04 21:35:25.000000000 -0800 s5e_candidate.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb 15990 2026-11-04 21:35:25.000000000 -0800 s5e_deform.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb 48808 2026-11-04 21:35:25.000000000 -0800 s5e_trace.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb 40281 2026-11-04 21:35:23.000000000 -0800 s5n_pseudo.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb 38075 2026-11-05 00:24:55.000000000 -0800 s5p_nullexp.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb 19097 2026-11-04 21:35:25.000000000 -0800 s5p_numerics.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb 40545 2026-11-04 21:35:25.000000000 -0800 s5p_truths.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb 25148 2026-11-05 00:24:55.000000000 -0800 s5p_universe.cpython-311.pyc
+-rw-rw----  1 josephrb josephrb 14924 2026-11-04 21:35:23.000000000 -0800 xsec_nd.cpython-311.pyc
+drwxrwx--- 2 josephrb josephrb  4096 2026-11-05 00:56:06.000000000 -0800 .
+drwxrwx--- 5 josephrb josephrb  4096 2026-11-05 00:56:06.000000000 -0800 ..
+-rw-rw---- 1 josephrb josephrb 35630 2026-11-05 00:56:06.000000000 -0800 pvl_lib.cpython-311.pyc
