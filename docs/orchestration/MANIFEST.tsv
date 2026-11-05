@@ -5658,6 +5658,14 @@ docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-2026110
 docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/check_ledger.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/check_round.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/ledger.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/prd-read-1/R2-CHECK.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/prd-read-1/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/prd-read-1/REFEREE-PRESENTATION-reading-copy.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/prd-read-1/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/prd-read-1/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/prd-read-1/prompt.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/prd-read-1/r2_check.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/referee-presentation-20261104/prd-read-1/tex.diff	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/register-method/HANDOFF.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/register-method/tools/build_copy.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/register-method/tools/note-pieces/analyze.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
