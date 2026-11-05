@@ -1,0 +1,241 @@
+test_each_control_stops_the_read (__main__.Controls.test_each_control_stops_the_read) ... ok
+test_the_cells_are_bound_index_by_index (__main__.Controls.test_the_cells_are_bound_index_by_index) ... ok
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpbjvmi48w/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.75e+04, mean=2.9159, min=0.4683, max=7.8510
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4379.45
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon
+[INFO] driverFile: /Users/josephbailey/local-research/wt-limcat-c2code/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpbjvmi48w/units/er.root
+{"unit": "er", "seconds": 3.729, "controls": {}}
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpbjvmi48w/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+[INFO] OmniFold complete. step1 weights: 4239, step2 weights: 6000
+[INFO] step2 sum=1.887e+04, mean=3.1451, min=0.0272, max=16.4743
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4735.35
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.438e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.438e-41 cm^2/nucleon
+[INFO] driverFile: /Users/josephbailey/local-research/wt-limcat-c2code/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpbjvmi48w/units/c2_central.root
+{"unit": "c2_central", "seconds": 2.136, "controls": {"C-SIM": true}}
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpbjvmi48w/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.75e+04, mean=2.9159, min=0.4683, max=7.8510
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4379.45
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon
+[INFO] driverFile: /Users/josephbailey/local-research/wt-limcat-c2code/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpbjvmi48w/units/c1_central.root
+{"unit": "c1_central", "seconds": 0.819, "controls": {}}
+test_a_unit_without_a_pass_marker_is_never_done (__main__.Driver.test_a_unit_without_a_pass_marker_is_never_done) ... refusing: c2_central exists without a PASS done-marker (verdict FAIL)
+refusing: c2_central exists without a PASS done-marker (verdict None)
+ok
+test_c1_differs_from_e_r_by_exactly_the_four_keys (__main__.Driver.test_c1_differs_from_e_r_by_exactly_the_four_keys) ... ok
+test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam (__main__.Driver.test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam) ... ok
+test_er_is_the_driver_unchanged (__main__.Driver.test_er_is_the_driver_unchanged) ... ok
+test_the_background_stream_guard_both_ways (__main__.Driver.test_the_background_stream_guard_both_ways) ... [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpbjvmi48w/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Poisson bootstrap: seed=3, streams=three, data factor sum=3967 (n=4000, APPLIED), mc factor sum=5972 (n=6000, APPLIED)
+[INFO] Stay-Positive refine: 2503 pos / 3700 neg events; g in [0.000,1.000]; clipped(2g-1<0) 659 events; sum(w_refined)=3528.5 (signed sum 3400.51).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.1062; effective measured sum=3528.5 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3528.5
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+[INFO] OmniFold complete. step1 weights: 4239, step2 weights: 6000
+[INFO] step2 sum=1.96e+04, mean=3.2664, min=0.0000, max=34.1737
+[CHECK] hTruth2D integral: 1508.24
+[CHECK] hUnfold2D integral: 4764.2
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1072.14
+[CHECK] hEffDen integral: 1501.3
+[INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.503e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.503e-41 cm^2/nucleon
+[INFO] driverFile: /Users/josephbailey/local-research/wt-limcat-c2code/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpbjvmi48w/bkgstream/c2_replica_b3.root
+{"unit": "c2_replica_b3", "seconds": 2.188, "controls": {}}
+ok
+test_c_sim_fires_on_a_chain_defect (__main__.Ibu.test_c_sim_fires_on_a_chain_defect) ... ok
+test_dagostini_by_hand (__main__.Ibu.test_dagostini_by_hand) ... ok
+test_roounfold_bayes_is_the_same_update (__main__.Ibu.test_roounfold_bayes_is_the_same_update) ... skipped 'C-ROO needs libRooUnfold.so (REF_C2C1_ROOUNFOLD)'
+test_c_pub_reads_the_comparisons_own_chi2 (__main__.Readings.test_c_pub_reads_the_comparisons_own_chi2) ... ok
+test_the_leave_one_out_null_on_a_known_answer (__main__.Readings.test_the_leave_one_out_null_on_a_known_answer)
+No difference: T falls above the null's maximum about 1 / (N + 1) of the time; a large difference ... ok
+test_the_rank_rule (__main__.Readings.test_the_rank_rule) ... ok
+test_the_readings_on_known_products (__main__.Readings.test_the_readings_on_known_products) ... ok
+test_the_rho_classes_at_their_bars (__main__.Readings.test_the_rho_classes_at_their_bars) ... ok
+test_the_argv_is_e_rs_and_a_replica_adds_its_streams (__main__.Units.test_the_argv_is_e_rs_and_a_replica_adds_its_streams) ... ok
+test_the_replica_set_is_bound_at_step_two (__main__.Units.test_the_replica_set_is_bound_at_step_two) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 20.983s
+
+OK (skipped=1)
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpbjvmi48w/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+exit=0

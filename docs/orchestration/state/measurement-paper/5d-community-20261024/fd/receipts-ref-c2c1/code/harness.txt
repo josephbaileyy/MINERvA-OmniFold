@@ -1,0 +1,24 @@
+KILLED    IBU's per-event factor not unfolded/prior        by Driver.test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam
+KILLED    the measured histogram not E_R's refined weights by Driver.test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam
+KILLED    C-SIM's tolerance loosened                       by Ibu.test_c_sim_fires_on_a_chain_defect
+KILLED    c1's keys not merged                             by Driver.test_c1_differs_from_e_r_by_exactly_the_four_keys
+KILLED    a unit skipped whatever its verdict              by Driver.test_a_unit_without_a_pass_marker_is_never_done
+KILLED    the replica set not bound                        by Units.test_the_replica_set_is_bound_at_step_two
+KILLED    a replica's bootstrap seed not E_R's             by Units.test_the_argv_is_e_rs_and_a_replica_adds_its_streams
+KILLED    the rank rule not N / 4                          by Readings.test_the_rank_rule
+KILLED    the null in-sample, not leave-one-out            by Readings.test_the_leave_one_out_null_on_a_known_answer
+KILLED    C2-R2's input side one-sided                     by Readings.test_the_rho_classes_at_their_bars
+KILLED    C2-R2's algorithm side without C2-R1 differ      by Readings.test_the_rho_classes_at_their_bars
+KILLED    C2-R2's interval read as a point                 by Readings.test_the_readings_on_known_products
+KILLED    a failed control flagged and the read continued  by Controls.test_each_control_stops_the_read
+KILLED    C-CV's tolerance loosened                        by Controls.test_each_control_stops_the_read
+KILLED    C-PUB's tolerance loosened                       by Controls.test_each_control_stops_the_read
+KILLED    C-SET passes anything                            by Controls.test_each_control_stops_the_read
+KILLED    C-REF's deterministic part dropped               by Controls.test_each_control_stops_the_read
+KILLED    C-SIM not carried into the read                  by Controls.test_each_control_stops_the_read
+KILLED    a unit without a PASS marker read                by Controls.test_each_control_stops_the_read
+KILLED    C-IN unchecked                                   by Controls.test_each_control_stops_the_read
+KILLED    C-CELLS passes a different set                   by Controls.test_the_cells_are_bound_index_by_index
+KILLED    the cells' sha256 unchecked                      by Controls.test_the_cells_are_bound_index_by_index
+MUTATION CHECK :: PASS (22 mutations)
+exit=0
