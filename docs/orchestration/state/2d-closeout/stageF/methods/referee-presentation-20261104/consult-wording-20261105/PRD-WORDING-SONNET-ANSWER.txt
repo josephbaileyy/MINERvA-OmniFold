@@ -1,0 +1,39 @@
+**Point 1**
+
+I recommend (b), with one change. In (a), "fixed in advance at a GiBUU-like truth" can be read as the thresholds being fixed at that truth. (c) removes a real strength. The body now supports the claim, and the claim is what makes the result a test rather than a post-hoc flag.
+
+"In advance" is also vaguer than the fact. In advance of what? The record predates grading, not necessarily the running of the tests. I'd tie the abstract to the body's wording:
+
+> "Fake-data studies at a GiBUU-like truth and at a synthetic momentum-transfer tilt find residual bias exceeding uncertainty-based criteria (p < 0.01, or any cell with |z| > 2) that were fixed before the tests were graded. The coverage of the reported uncertainty intervals has not been validated."
+
+A referee may still ask how a reader can check "before." If the internal record sits in a dated, archived public repository, cite it in Sec. IV G. Otherwise the claim rests on the authors' word, so say that plainly.
+
+**Point 2**
+
+*Chronology.* A bare chronology is not enough on its own. Referees care about the consequence: whether the comparison is an independent test. "After X was known" leaves the reader to infer that, and it invites the question "so was it tuned?" I advise stating the chronology, because it is the evidence, and then stating the consequence explicitly.
+
+Two further problems with the current draft:
+- "Are not learner settings" reads as a definitional carve-out. Choosing an implementation by its χ² against the published result is selection on the outcome, whatever it is called.
+- "Tuned on data" is ambiguous. The relevant thing is the published result, not the data.
+
+*Same framing for (i) and (ii)?* Same section and same stated consequence, but different mechanisms:
+- (i) was selected between two alternatives by the comparison itself.
+- (ii) was motivated by an independent simulation criterion, but its formal adoption followed the comparison.
+
+Say that difference. Do not claim the closure test came first unless it did, because the facts you gave don't say. A referee will ask whether it was run before or after the comparison was seen.
+
+*Note-only?* No. The paper makes a positive claim ("No learner setting … was tuned on data"). Leaving out a choice that lowered the headline χ²/ndf from 2.65 to 2.27 looks like selective reporting. It would also be inconsistent, since (i) is already in the paper. The closure details can live in the note with a pointer. The existence, direction and size of the effect must be in the paper.
+
+*Proposed Sec. III:*
+> "No learner setting, whether capacity, learning rate, refinement capacity or iteration count, was tuned on data. Two other choices for the two-dimensional result were made with the comparison to the published result in view: the learner implementation and the background-subtraction treatment (Sec. IV B). That comparison is therefore not an independent test of the method."
+
+*Proposed Sec. IV B, keeping your (i) sentence and adding:*
+> "The refined negative-weight background treatment was chosen on a closure test in simulation, in which the purity-based estimate lay up to 5.9 statistical σ from truth and the refined estimate within 0.44σ, and in which the two differed by more than 1σ in 14 of 205 bins. It was formally adopted after its distance from the published result was known, and the change lowered χ²/ndf from 2.65 to 2.27. The χ²/ndf values quoted for the two-dimensional comparison are therefore conditional on both choices, and the comparison should be read as a consistency check, not a blind validation."
+
+**Remaining challenges**
+1. "Both had been compared" implies exactly two implementations. Say "only these two were compared" if true. A referee will ask how many alternatives were examined.
+2. "Chosen on" and "adopted after" sit awkwardly together. The closure-test timing relative to the comparison must be stated.
+3. "Up to 5.9σ" and "within 0.44σ" must be the same statistic, such as the maximum over the same bins. Say so.
+4. Give the full sequence 3.66, 2.65, 2.27 in one place, with ndf. A reader should see that 2.27 is still not near 1, so the text must not suggest agreement.
+5. The thresholds are criteria, not tests of the thresholds themselves. A referee may ask why 0.01 and 2, or whether they were set before the first fake-data run. State that only if true.
+6. "Statistical σ" needs a definition, such as the bin's statistical uncertainty only, with no systematic component.
