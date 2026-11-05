@@ -1,0 +1,18 @@
+node login27 nproc=244 loadavg 5.08 3.89 3.51
+2026-11-05T15:17:34Z
+read script sha256 25e44b6d10862f01c81efd5c9cf979ce9244c8c3a958ea84fff2c0e8c50a01f9
+batch DONE: {"units": 233, "pass": 233, "job": "60857388", "porcelain_after": 0}; SHA256SUMS sha256 6a4c192980bfa337a312381d5862d9598efa4df7ace00d80d587aa2858f47882
+local bars.json sha256 de12c6745b4f5353a83ae8573c7cc75d986617f7a21d8b4ea4c5e275d8607780 (expected de12c6745b4f5353a83ae8573c7cc75d986617f7a21d8b4ea4c5e275d8607780)
+origin/main 9d69945e625419c2b88cdf1c9cbd169e34a1e5d7: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/bars/bars.json sha256 de12c6745b4f5353a83ae8573c7cc75d986617f7a21d8b4ea4c5e275d8607780
+HEAD 609d8f24ea2229fa4b3540627aa8c31acfcc0a54; porcelain --ignored lines before: 0
+bound blobs: 5 checked, 0 mismatches
+interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]; threads 4; nice 19; ionice idle
+STOP: failed controls ['G-IBU1']; no reading was formed
+read rc=1
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:03.27
+	Maximum resident set size (kbytes): 88064
+STOP.json written: sha256 12762cf743885c3d77ac531571ce2dc06ad372aa110c5c9213b0988971ad2f09
+reader stdout (the reading; not echoed here) is /pscratch/sd/j/josephrb/ref-g1-20261105/read/read.stdout
+porcelain --ignored lines after: 0
+refg1 read rc=1
+2026-11-05T15:18:17Z
