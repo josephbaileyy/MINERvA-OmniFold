@@ -1,0 +1,15 @@
+node login04 nproc=244 loadavg 1.94 2.75 3.74
+2026-11-05T10:18:05Z
+readout script sha256 c9086a33167828fe878efbfb69d50a0ce6df8ecae50f4bd3e68c01f49dc6036e
+full run 60837713: 60837713|COMPLETED|0:0|04:34:07|16447|1
+log-full/DONE: {"mode": "full", "tasks": 128, "ended": 128, "rc": 0, "job": "60837713"} sha256 457657458ad52dc78ddafb548177d142f0fe440fd57aa7d5a4b26628187152bb
+log-full/SHA256SUMS sha256 e2c35e55402b809f522c86f597df20b058fc0c49596b9595448c4a944be333ee, 280 products
+deploy-readout HEAD cc54d86f7ac66c1346fa69e5894b2d2f000fb09c; porcelain --ignored lines before: 0
+bound blobs: 7 checked, 0 mismatches
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1; nice 19; ionice idle
+{"verdict": {"verdict": "NONE_PASS", "winners": [], "passers": []}, "g0_informative": true}
+analyze rc=0
+record sha256 653356ae56087ea74621e61a60c829d63be9a9f15b0b35941e641b22f0be8ea3
+porcelain --ignored lines after: 0
+readout rc=0
+2026-11-05T10:18:44Z

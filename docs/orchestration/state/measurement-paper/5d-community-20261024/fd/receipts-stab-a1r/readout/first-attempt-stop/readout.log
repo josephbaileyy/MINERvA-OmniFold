@@ -1,0 +1,10 @@
+node login31 nproc=244 loadavg 3.02 3.38 3.98
+2026-11-05T10:14:51Z
+readout script sha256 e8c0530d769bc87dbcd7a8e4b637c7f6ce7c5119c00aa0fb60bd58d45e7c23b1
+full run 60837713: 60837713|COMPLETED|0:0|04:34:07|16447|1
+log-full/DONE: {"mode": "full", "tasks": 128, "ended": 128, "rc": 0, "job": "60837713"} sha256 457657458ad52dc78ddafb548177d142f0fe440fd57aa7d5a4b26628187152bb
+log-full/SHA256SUMS sha256 e2c35e55402b809f522c86f597df20b058fc0c49596b9595448c4a944be333ee, 280 products
+deploy-full HEAD cc54d86f7ac66c1346fa69e5894b2d2f000fb09c; porcelain --ignored lines before: 3
+STOP: deploy-full is not clean
+readout rc=9
+2026-11-05T10:14:52Z

@@ -1,0 +1,23 @@
+	Command being timed: "python3 nd-unfolding/estimator_stability_probe.py --candidate B3b closure -- --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz --expect-npz-sha256 07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f --expect-bkg-sha256 2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955 --config R --iters 5 --threads 32 --bank /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware --detector-dir /pscratch/sd/j/josephrb/s5p-20260926/bank_detector --hypothesis docs/orchestration/state/s5p/ratios/nullsF/null-genie_cv-F.json --pseudo-seeds 991000:991000 --no-nuisance --expectation --mc-fraction half --tag stab_B3b_A7_genie_cv --out /pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/B3b/closure/A7_genie_cv"
+	User time (seconds): 12826.24
+	System time (seconds): 41.24
+	Percent of CPU this job got: 1777%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 12:03.86
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 11645516
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 75
+	Minor (reclaiming a frame) page faults: 1272073
+	Voluntary context switches: 322642
+	Involuntary context switches: 71166
+	Swaps: 0
+	File system inputs: 128
+	File system outputs: 472
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
