@@ -1,0 +1,15 @@
+stat taken 2026-11-05T15:42:45Z
+bank: 701 files, 669 moved (2026-11-05T14:45:41Z..2026-11-05T14:49:40Z); exposed from 2026-12-20T00:47:00Z at the listing, 2026-12-20T00:47:00Z now
+detector: 33 files, 32 moved (2026-11-05T14:48:29Z..2026-11-05T14:49:20Z); exposed from 2026-12-26T19:01:19Z at the listing, 2026-12-26T19:01:19Z now
+e_central: 1 files, 1 moved (2026-11-05T15:18:15Z..2026-11-05T15:18:15Z); exposed from 2026-12-25T21:14:00Z at the listing, 2026-12-31T15:18:15Z now
+e_f0b_closures: 2 files, 2 moved (2026-11-05T15:18:15Z..2026-11-05T15:18:15Z); exposed from 2026-12-26T21:03:22Z at the listing, 2026-12-31T15:18:15Z now
+e_ladder_unfolds: 3 files, 3 moved (2026-11-05T15:18:15Z..2026-11-05T15:18:15Z); exposed from 2026-12-22T08:19:34Z at the listing, 2026-12-31T15:18:15Z now
+e_replicas: 50 files, 50 moved (2026-11-05T15:18:14Z..2026-11-05T15:18:14Z); exposed from 2026-12-20T05:45:42Z at the listing, 2026-12-31T15:18:14Z now
+e_universes: 175 files, 175 moved (2026-11-05T15:18:14Z..2026-11-05T15:18:15Z); exposed from 2026-12-20T06:02:08Z at the listing, 2026-12-31T15:18:14Z now
+ibu_inputs: 6 files, 6 moved (2026-11-05T14:42:21Z..2026-11-05T15:18:16Z); exposed from 2026-12-18T15:04:43Z at the listing, 2026-12-31T14:42:21Z now
+  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz: 2026-11-05T06:02:02Z -> 2026-11-05T14:42:21Z
+  /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz: 2026-11-05T05:35:27Z -> 2026-11-05T14:42:21Z
+  /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/genie_mec.json: 2026-10-27T08:19:53Z -> 2026-11-05T14:45:41Z
+  /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json: 2026-11-05T00:30:43Z -> 2026-11-05T14:45:22Z
+  /pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/gibuu.json: 2026-10-27T08:20:43Z -> 2026-11-05T14:45:36Z
+  /pscratch/sd/j/josephrb/ibu1-20261022/run/products/D_N.npz: 2026-10-23T15:04:43Z -> 2026-11-05T15:18:16Z

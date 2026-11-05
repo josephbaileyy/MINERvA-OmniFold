@@ -1,0 +1,9 @@
+stat taken 2026-11-05T15:34:02Z
+bank: 701 files, 669 moved since the listing; per minute {'2026-11-05T14:45': 20, '2026-11-05T14:46': 165, '2026-11-05T14:47': 207, '2026-11-05T14:48': 198, '2026-11-05T14:49': 79}
+  unmoved: ['GEANT_Neutron_0_bkgw.npy', 'GEANT_Neutron_0_tdw.npy', 'GEANT_Neutron_0_wr.npy', 'GEANT_Neutron_0_wt.npy', 'GEANT_Neutron_1_bkgw.npy', 'GEANT_Neutron_1_tdw.npy', 'GEANT_Neutron_1_wr.npy', 'GEANT_Neutron_1_wt.npy', 'GEANT_Pion_0_bkgw.npy', 'GEANT_Pion_0_tdw.npy', 'GEANT_Pion_0_wr.npy', 'GEANT_Pion_0_wt.npy', 'GEANT_Pion_1_bkgw.npy', 'GEANT_Pion_1_tdw.npy', 'GEANT_Pion_1_wr.npy', 'GEANT_Pion_1_wt.npy', 'GEANT_Proton_0_bkgw.npy', 'GEANT_Proton_0_tdw.npy', 'GEANT_Proton_0_wr.npy', 'GEANT_Proton_0_wt.npy', 'GEANT_Proton_1_bkgw.npy', 'GEANT_Proton_1_tdw.npy', 'GEANT_Proton_1_wr.npy', 'GEANT_Proton_1_wt.npy', 'Rvp1pi_0_bkgw.npy', 'Rvp1pi_0_tdw.npy', 'Rvp1pi_0_wr.npy', 'Rvp1pi_0_wt.npy', 'Rvp1pi_1_bkgw.npy', 'Rvp1pi_1_tdw.npy', 'Rvp1pi_1_wr.npy', 'Rvp1pi_1_wt.npy']
+  oldest atime now 2026-10-25T00:47:00Z; exposed from (+56 days) 2026-12-20T00:47:00Z; oldest moved file exposed from 2026-12-31T14:45:41Z
+detector: 33 files, 32 moved since the listing; per minute {'2026-11-05T14:48': 16, '2026-11-05T14:49': 16}
+  unmoved: ['detector-dump.json']
+  oldest atime now 2026-10-31T19:01:19Z; exposed from (+56 days) 2026-12-26T19:01:19Z; oldest moved file exposed from 2026-12-31T14:48:29Z
+universe units (not CV): 175; weight files outside their unit's predicted window (+-60 s): []
+moved weight tags: 175; other moved files: ['cv.npz']
