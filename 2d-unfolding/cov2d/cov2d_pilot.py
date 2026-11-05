@@ -16,6 +16,8 @@ check and the DVS read, from the pilot job's outputs. root_6_28 with MAT (the jo
   64-CPU G18 universe is a route test, not a measurement).
 * INVALID (section 9.13) unless all eight runs ended rc 0 with a digest and every class has a wall.
 * The DVS read (the director's ruling (b)): the staged copy's and the CFS original's MB/s, as the job recorded them.
+* "M": the deploy's HEAD (``cov2d.deploy_head``, refused on a dirty checkout), which order() requires. A PASS with any
+  REPRICE class does not open the bulk (order(); section 8 makes REPRICE an amendment).
 
 MEASURES: the pilot's controls and walls. CANNOT AUTHORIZE: the bulk; the readout goes to the director first.
 """
@@ -38,6 +40,7 @@ for p in (HERE, REPO / "2d-unfolding" / "re2", REPO / "2d-unfolding" / "re2" / "
         sys.path.insert(0, str(p))
 import cov2d as c  # noqa: E402
 
+DEPLOY = REPO     # the checkout this readout runs from: the deploy at M
 RE2RUN = REPO / "docs/orchestration/state/2d-closeout/stageF/methods/re2/run"
 REPRICE = 1.25
 CLASS_OF = {"P912_L": "lateral", "L_": "lateral", "P2b": "central", "X_": "central", "T_": "toy", "B_": "replica",
@@ -97,7 +100,7 @@ def main(argv=None) -> int:
     import re2c_rollup as ro
     import cov2d_pseudo_write as pw
     O = Path(a.o)
-    rec = {"stop": [], "invalid": []}
+    rec = {"stop": [], "invalid": [], "M": c.deploy_head(DEPLOY)}
     ours = {}
     for f in sorted(O.glob("SHA256SUMS.pilot.*")):
         for ln in f.read_text().splitlines():

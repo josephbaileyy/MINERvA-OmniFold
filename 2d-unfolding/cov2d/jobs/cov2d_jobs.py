@@ -293,7 +293,9 @@ def order(job: str, truth: str, committed: dict, submitted: set, M: str) -> list
     the G18 pseudo-data job first; the pilot after G18's pseudo-data PASS; AR23's pseudo-data job and every unfold job
     after the pilot readout's PASS; the universe jobs (the $UNI readers) after both pseudo-data PASSes; the rest after
     all eight universe jobs are submitted. ``committed`` maps a record path on origin/main to its JSON (None if absent);
-    each record must say PASS and name the deploy's commit M."""
+    each record must say PASS and carry "M" equal to the deploy's commit, as the writers record it
+    (``cov2d.deploy_head``). The pilot's must also list no REPRICE class: section 8 makes REPRICE an amendment, decided
+    before any bulk job (the director's ruling on the final audit's F2)."""
     def ok(path):
         r = committed.get(path)
         return bool(r) and r.get("verdict") == "PASS" and r.get("M") == M
@@ -306,6 +308,9 @@ def order(job: str, truth: str, committed: dict, submitted: set, M: str) -> list
         return [] if ok(pseudo["G18"]) else [f"the G18 pseudo-data PASS record ({pseudo['G18']}) is not on main for {M}"]
     if not ok(PILOT_RECORD):
         need.append(f"the pilot readout's PASS record ({PILOT_RECORD}) is not on main for {M}")
+    elif committed[PILOT_RECORD].get("reprice_classes") != []:
+        need.append(f"the pilot readout's REPRICE classes are {committed[PILOT_RECORD].get('reprice_classes')!r}, "
+                    "not []: section 8 makes them an amendment before any bulk job")
     if job == "pseudo":
         return need
     for t, path in pseudo.items():

@@ -21,7 +21,10 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE.parent / "jobs"))
 import cov2d as c  # noqa: E402
+import cov2d_jobs as cj  # noqa: E402
+from deploy_fixture import clean_checkout  # noqa: E402
 
 try:
     import ROOT
@@ -108,6 +111,10 @@ class StepB(unittest.TestCase):
         p.start()
         self.addCleanup(p.stop)
         self.drv = pw.driver()
+        self.deploy, self.head = clean_checkout(self.d / "deploy")
+        p = mock.patch.object(pw, "DEPLOY", self.deploy)
+        p.start()
+        self.addCleanup(p.stop)
 
     def run_b(self, extra=()):
         buf = io.StringIO()
@@ -218,6 +225,32 @@ class StepB(unittest.TestCase):
             code, text = self.run_b()
         self.assertEqual(code, 3, text)
         self.assertEqual(self.rec()["files"][0]["section_9_11"]["rows_not_a_passing_row"], 1)
+
+    def test_the_writers_record_is_what_order_admits(self):
+        # F1: the record step B itself writes, not a hand-written one, opens the pilot only for the deploy's commit
+        write_fixture(self.d, self.drv)
+        code, text = self.run_b()
+        self.assertEqual(code, 0, text)
+        rec = self.rec()
+        self.assertEqual(rec["M"], self.head)
+        path = cj.PSEUDO_RECORD.format(truth="G18")
+        self.assertEqual(cj.order("pilot", "pilot", {path: rec}, set(), self.head), [])
+        self.assertTrue(cj.order("pilot", "pilot", {path: {k: v for k, v in rec.items() if k != "M"}}, set(), self.head))
+        self.assertTrue(cj.order("pilot", "pilot", {path: dict(rec, M="f" * 40)}, set(), self.head))
+
+    def test_a_dirty_deploy_is_refused_before_any_output(self):
+        write_fixture(self.d, self.drv)
+        (self.deploy / "untracked").write_text("x")
+        with self.assertRaises(c.Refusal):
+            self.run_b()
+        self.assertFalse((self.d / "out").exists())
+
+    def test_a_deploy_that_moves_during_step_b_stops(self):
+        write_fixture(self.d, self.drv)
+        with mock.patch.object(pw.c, "deploy_head", side_effect=[self.head, "f" * 40]):
+            code, _ = self.run_b()
+        self.assertEqual((code, self.rec()["verdict"]), (3, "STOP"))
+        self.assertTrue(any("moved off" in x for x in self.rec()["stop"]))
 
     def test_refuses_a_stopped_step_a(self):
         write_fixture(self.d, self.drv)

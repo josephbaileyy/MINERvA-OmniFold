@@ -38,6 +38,7 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
+DEPLOY = REPO     # the checkout this code runs from: the job's deploy at M
 CLIP = REPO / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip"
 for p in (HERE, CLIP, REPO / "2d-unfolding" / "re2"):
     if str(p) not in sys.path:
@@ -209,9 +210,11 @@ def main(argv=None) -> int:
     rec_a = json.loads((A / "pseudo_a.json").read_text())
     if rec_a.get("verdict") != "PASS":
         raise c.Refusal(f"step A's verdict is {rec_a.get('verdict')}")
+    M = c.deploy_head(DEPLOY)     # before any work: a dirty deploy is refused here
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=False)
-    rec = {"truth": rec_a["truth"], "host": os.uname().nodename, "root": ROOT.gROOT.GetVersion(), "stop": [], "pins_checked": not a.no_pins}
+    rec = {"truth": rec_a["truth"], "host": os.uname().nodename, "root": ROOT.gROOT.GetVersion(), "stop": [], "pins_checked": not a.no_pins,
+           "M": M}
     srcs = {k: getattr(a, k) for k in PINS}
     before = {p: os.stat(p).st_atime_ns for p in srcs.values()}
     with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as td:
@@ -255,6 +258,8 @@ def main(argv=None) -> int:
     rec["atime_moved"] = [p for p in srcs.values() if after[p] != before[p]]
     if rec["atime_moved"]:
         rec["stop"].append(f"atime moved on {rec['atime_moved']}")
+    if c.deploy_head(DEPLOY) != rec["M"]:
+        rec["stop"].append(f"the deploy moved off {rec['M']} during step B")
     rec["verdict"] = "STOP" if rec["stop"] else "PASS"
     rec["seconds"] = round(time.time() - t0, 1)
     (out / "pseudo_b.json").write_text(json.dumps(rec, indent=1, sort_keys=True))

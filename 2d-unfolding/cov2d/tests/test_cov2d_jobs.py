@@ -255,16 +255,18 @@ class Pilot(unittest.TestCase):
 
 
 class Order(unittest.TestCase):
-    """J1: COV2D-DECLARATION.md:40 and section 10 steps 5-6, enforced at submission."""
-    M = "m" * 40
+    """J1: COV2D-DECLARATION.md:40 and section 10 steps 5-6, enforced at submission. These records are hand-written
+    and test the sequence only, with an M that is not a commit: that each writer emits what order() reads is tested on
+    the writer's own record (test_cov2d_pseudo_write, test_cov2d_pilot: the final audit's F1)."""
+    M = "sequence-test-not-a-commit"
 
-    def rec(self, ok=True, M=None):
-        return {"verdict": "PASS" if ok else "STOP", "M": M or self.M}
+    def rec(self, ok=True, M=None, **kw):
+        return {"verdict": "PASS" if ok else "STOP", "M": M or self.M, **kw}
 
     def committed(self, g18=False, ar23=False, pilot=False):
         return {cj.PSEUDO_RECORD.format(truth="G18"): self.rec() if g18 else None,
                 cj.PSEUDO_RECORD.format(truth="AR23"): self.rec() if ar23 else None,
-                cj.PILOT_RECORD: self.rec() if pilot else None}
+                cj.PILOT_RECORD: self.rec(reprice_classes=[]) if pilot else None}
 
     def test_the_sequence(self):
         o = cj.order
@@ -280,10 +282,19 @@ class Order(unittest.TestCase):
 
     def test_a_record_for_another_commit_or_not_pass_does_not_count(self):
         c_ = self.committed(True, True, True)
-        c_[cj.PILOT_RECORD] = self.rec(M="x" * 40)
+        c_[cj.PILOT_RECORD] = self.rec(M="x" * 40, reprice_classes=[])
         self.assertTrue(cj.order("G18_Ua", "G18", c_, set(), self.M))
-        c_[cj.PILOT_RECORD] = self.rec(ok=False)
+        c_[cj.PILOT_RECORD] = self.rec(ok=False, reprice_classes=[])
         self.assertTrue(cj.order("G18_Ua", "G18", c_, set(), self.M))
+
+    def test_a_pilot_needing_repricing_opens_nothing_after_it(self):
+        # F2: a PASS with a REPRICE class, or with none recorded, admits no job after the pilot
+        for rp in (["universe"], None):
+            c_ = self.committed(True, True, True)
+            c_[cj.PILOT_RECORD] = self.rec(reprice_classes=rp) if rp else self.rec()
+            for job, truth in (("pseudo", "AR23"), ("G18_Ua", "G18"), ("AR23_Ta", "AR23")):
+                with self.subTest(rp=rp, job=job):
+                    self.assertTrue(any("REPRICE" in x for x in cj.order(job, truth, c_, set(cj.UNIVERSE_JOBS), self.M)))
 
     def test_gate_refuses_an_unknown_cov2d_job(self):
         with self.assertRaises(c.Refusal):

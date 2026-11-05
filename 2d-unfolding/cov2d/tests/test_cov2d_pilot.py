@@ -19,7 +19,10 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE.parent / "jobs"))
 import cov2d_pilot as cp  # noqa: E402
+import cov2d_jobs as cj  # noqa: E402
+from deploy_fixture import clean_checkout  # noqa: E402
 
 try:
     import ROOT
@@ -76,6 +79,10 @@ class Readout(unittest.TestCase):
         x = r.uniform(1, 2, (14, 16))
         x.ravel()[r.choice(224, 19, replace=False)] = 0.0
         self.x = x
+        self.deploy, self.head = clean_checkout(self.d / "deploy")
+        p = mock.patch.object(cp, "DEPLOY", self.deploy)
+        p.start()
+        self.addCleanup(p.stop)
 
     def th2(self, path: Path, a: np.ndarray):
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -87,7 +94,7 @@ class Readout(unittest.TestCase):
         h.Write("hXSec2D")
         f.Close()
 
-    def build(self, mine_off=0.0, drop_partb=None, drop_run=None):
+    def build(self, mine_off=0.0, drop_partb=None, drop_run=None, lateral_wall=9000):
         ns = self.d / "partb"
         sums = {}
         for lab in ("ER", "U_MaRES_0", "S3_BeamAngleX0"):
@@ -101,7 +108,7 @@ class Readout(unittest.TestCase):
             self.th2(O / "out" / lab / "xsec.root", self.x * (1 + (mine_off if lab == "P2b_ER" else 0.0)))
             if lab != drop_run:
                 lines.append(f"{hashlib.sha256((O / 'out' / lab / 'xsec.root').read_bytes()).hexdigest()}  {lab}/xsec.root")
-            w = 9000 if lab == "L_G18_BeamAngleX_0" else 500
+            w = lateral_wall if lab == "L_G18_BeamAngleX_0" else 500
             walls.append(f"{lab}\t0\t{w}\t{1 if lab == drop_run else 0}")
         (O / "SHA256SUMS.pilot.1").write_text("\n".join(lines) + "\n")
         (O / "walls.pilot.1.tsv").write_text("\n".join(walls) + "\n")
@@ -128,6 +135,29 @@ class Readout(unittest.TestCase):
         self.assertTrue(all(v["pass"] and v["bitwise_224"] for v in rec["controls"].values()))
         self.assertEqual(rec["reprice_classes"], ["lateral"])    # 9000 s against part B's J3 wall per run
         self.assertEqual(rec["dvs_rate"]["cfs"]["MB_per_s"], 9.5)
+
+    def test_the_readouts_record_is_what_order_admits(self):
+        # F1: the record the readout itself writes, not a hand-written one, opens the bulk only for the deploy's commit
+        code, rec = self.run_readout(self.build(lateral_wall=500))
+        self.assertEqual((code, rec["verdict"], rec["reprice_classes"], rec["M"]), (0, "PASS", [], self.head))
+        o = lambda r: cj.order("pseudo", "AR23", {cj.PILOT_RECORD: r}, set(), self.head)  # noqa: E731
+        self.assertEqual(o(rec), [])
+        self.assertTrue(o({k: v for k, v in rec.items() if k != "M"}))
+        self.assertTrue(o(dict(rec, M="f" * 40)))
+
+    def test_a_pass_that_needs_repricing_does_not_open_the_bulk(self):
+        # F2: section 8 makes REPRICE an amendment; the readout's PASS with a REPRICE class is refused by order()
+        code, rec = self.run_readout(self.build())
+        self.assertEqual((rec["verdict"], rec["reprice_classes"]), ("PASS", ["lateral"]))
+        need = cj.order("pseudo", "AR23", {cj.PILOT_RECORD: rec}, set(), self.head)
+        self.assertEqual(len(need), 1)
+        self.assertIn("REPRICE classes are ['lateral']", need[0])
+
+    def test_a_dirty_deploy_is_refused(self):
+        O = self.build()
+        (self.deploy / "f").write_text("edited\n")
+        with self.assertRaises(cp.c.Refusal):
+            self.run_readout(O)
 
     def test_2b_failure_is_the_second_stop(self):
         code, rec = self.run_readout(self.build(mine_off=1e-7))
