@@ -1,0 +1,22 @@
+node dtn01.nersc.gov nproc=48 loadavg 4.62 4.75 5.63
+2026-11-05T06:07:03Z
+check script sha256 41ed5c05852c98626d811cf14bbadc4158b324cd07584f96ec1e668cc489ddbf
+HEAD ddbc43e42f7b1ae4687f024d62baadda99a2aedf; porcelain --ignored lines: 0
+inventory blobs: 10 checked, 0 mismatches
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1; nice 19; ionice idle
+e_central: 1 files, 1 present, 1 equal to pin, oldest atime 2026-10-30T21:14:00Z
+e_replicas: 50 files, 50 present, 50 equal to pin, oldest atime 2026-10-25T05:45:42Z
+e_universes: 175 files, 175 present, 175 equal to pin, oldest atime 2026-10-25T06:02:08Z
+e_ladder_unfolds: 3 files, 3 present, 3 equal to pin, oldest atime 2026-10-27T08:19:34Z
+e_f0b_closures: 2 files, 2 present, 2 equal to pin, oldest atime 2026-10-31T21:03:22Z
+ibu_inputs: 6 files, 6 present, 6 equal to pin, oldest atime 2026-10-23T15:04:43Z
+bank: 701 files, 701 present, 701 equal to pin, oldest atime 2026-10-25T00:47:00Z
+detector: 33 files, 33 present, 33 equal to pin, oldest atime 2026-10-31T19:01:19Z
+bank: 701 pinned, 701 present, extra 0; atime 2026-10-25T00:47:00Z .. 2026-11-05T00:30:02Z; exposed from 2026-12-20T00:47:00Z
+detector: 33 pinned, 33 present, extra 0; atime 2026-10-31T19:01:19Z .. 2026-11-01T00:01:29Z; exposed from 2026-12-26T19:01:19Z
+EXPECT bands equal: True
+{"verdict": "PASS", "wrote": "/pscratch/sd/j/josephrb/ref-g1-20261105/preconditions/listing.json", "sha256": "3bff2239e2851250ba26ca3273c32dda31fbcacfd7d1983374a6242aafbbc79f"}
+listing python rc=0
+porcelain --ignored lines after: 0
+ref-g1 preconditions rc=0
+2026-11-05T06:09:39Z
