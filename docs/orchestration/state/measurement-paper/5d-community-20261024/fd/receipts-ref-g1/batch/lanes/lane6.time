@@ -1,0 +1,23 @@
+	Command being timed: "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 -B /pscratch/sd/j/josephrb/ref-g1-20261105/batch/deploy-M/nd-unfolding/ref_g1/ref_g1.py --unit replica:5 --unit replica:13 --unit replica:21 --unit replica:29 --unit replica:37 --unit replica:45 --unit vertex:gibuu --unit universe:AGKYxF1pi:1 --unit universe:CV1uBY:1 --unit universe:Flux:11 --unit universe:Flux:19 --unit universe:Flux:26 --unit universe:Flux:33 --unit universe:Flux:40 --unit universe:Flux:48 --unit universe:Flux:55 --unit universe:Flux:62 --unit universe:Flux:7 --unit universe:Flux:77 --unit universe:Flux:84 --unit universe:Flux:91 --unit universe:Flux:99 --unit universe:FrCEx_pi:1 --unit universe:FrPiProd_N:1 --unit universe:GEANT_Proton:1 --unit universe:MFP_pi:1 --unit universe:MinosEfficiency:1 --unit universe:RDecBR1gamma:1 --unit universe:Theta_Delta2Npi:1 --out /pscratch/sd/j/josephrb/ref-g1-20261105/batch/units --threads 32"
+	User time (seconds): 374.89
+	System time (seconds): 77.98
+	Percent of CPU this job got: 103%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 7:16.06
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 13403332
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 595417
+	Minor (reclaiming a frame) page faults: 3741316
+	Voluntary context switches: 58067
+	Involuntary context switches: 40051
+	Swaps: 0
+	File system inputs: 16567920
+	File system outputs: 752
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
