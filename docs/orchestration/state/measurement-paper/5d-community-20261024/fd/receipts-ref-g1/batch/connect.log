@@ -1,0 +1,22 @@
+node login27 nproc=244 loadavg 2.90 4.07 4.38
+2026-11-05T14:34:04Z
+connect script sha256 f00f39146399940f430998ac0b38acbc21f270bdfe3029a51c0ac1d4f39a0589
+timing unit: seconds=27.151 wall=64.58
+projected_node_h=0.2367 (setup 37.4 s + 30 units x 27.151 s, 1 node, 8 lanes) cap_left=4.9789 limit_node_h=2.0
+== iris
+m3246               2201.4            10000.0     17994.3      20000.0
+balance_node_h=2005.7 half=1002.9 price=2.0
+HEAD 609d8f24ea2229fa4b3540627aa8c31acfcc0a54; porcelain --ignored lines before: 0
+bound blobs: 5 checked, 0 mismatches
+lanes.tsv sha256 ed3abdcf5048bae3c9786f2e43359779577ba5c26590a024f506e5f064148f51; refg1_batch_job.sbatch sha256 f4651380a896ea29af47f15de8b59dac5c8092810cdd9a0788c142463ee3c687
+squeue --me before:
+60857361 fd1b_c2calN PENDING
+2026-11-05T14:34:39Z
+sbatch rc=0
+Submitted batch job 60857388
+batch job 60857388
+scontrol TimeLimit=02:00:00 (declared 02:00:00)
+60857388 fd_refg1 PENDING 0:00 2:00:00 1 regular_1 m3246
+porcelain --ignored lines after submission: 0
+refg1 batch submit rc=0
+2026-11-05T14:34:45Z

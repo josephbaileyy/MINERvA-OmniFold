@@ -1,0 +1,82 @@
+{
+ "schema": "ref-g1-config/1",
+ "declaration": "docs/orchestration/state/measurement-paper/5d-community-20261024/REF-G1-DECLARATION.md",
+ "declaration_sha256": "1ea76a3b263b13319ff9910ab4165fb094953812be7d27c2e45aad98c06e7497",
+ "ibu1_config": "nd-unfolding/ibu1/config.json",
+ "code_sha256": {
+  "nd-unfolding/ibu1/ibu1.py": "f862a953425c006f6c73f2190bd65172eb9295f0f6c181d3d2247d4de881cf12",
+  "nd-unfolding/ibu1/config.json": "82a24f419d4e738dec025840c92b66a163c34737528ed554fd5017424842e67f",
+  "nd-unfolding/s1_assemble.py": "b157250af21a2ef74e4164db6009a40ac596e225f33ac655475798ef49f613f7",
+  "nd-unfolding/s5p_stage1_inspect.py": "26569afc0da46f21167e0908014712cd800c1e14ac63a4b245a0b493c76d3d71",
+  "nd-unfolding/s5p_universe.py": "805a00063a6136e25c6f8f57d228ec996c85a9bc997981632643baeee6c13d80",
+  "nd-unfolding/s5p_numerics.py": "7ad8ca0f73989128b783b59d55670687c293d186b2643ea799a3e67c047bf185",
+  "nd-unfolding/s5n_pseudo.py": "8981f97b96b418cfe46f1e940cb120f174053d7d3429f3b0b01a229c6c02ee6c",
+  "nd-unfolding/s5e_trace.py": "c47e9dd3feef9eab323e40f4e0da770ad67e86431a1ce95f99a10007decc66c1",
+  "nd-unfolding/xsec_nd.py": "454001f3c9ac3aa6485d184aadb8aba65dd71dba124816962b9c3b6344920fa5",
+  "nd-unfolding/flux_universe.py": "75cb60531ea87f0738d26842183babbe16c3bdab9817548326492e7e675bd28c",
+  "nd-unfolding/pv-ladder/pvl_lib.py": "f8a7d2c2fcd37b025ae3c028088d496b1aea7519d347febb3d63da6511015481",
+  "nd-unfolding/s5c_unfold.py": "510d749a2e82fa448de6172753ae2adc9ebd81a89d4f18bf76beb5faa8bb3968"
+ },
+ "definition": {
+  "path": "nd-unfolding/pv-ladder/readouts/h2_definition.json",
+  "sha256": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+ },
+ "listing": {
+  "path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/preconditions/listing.json",
+  "sha256": "3bff2239e2851250ba26ca3273c32dda31fbcacfd7d1983374a6242aafbbc79f",
+  "note": "REF-G1 preconditions 1-3 (#775): every (e) product, IBU input, bank and detector file with its pin; the e-side pins and the universe set are read from here, never retyped"
+ },
+ "inputs": {
+  "of_inputs_5d": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "bkg_dump": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "bank": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware",
+  "detector_dir": "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector",
+  "flux_universe_file": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/flux_integral_universes_MEFHC.root",
+  "flux_universe_file_sha256": "5eecae84509ba8ededbe8fdee63508d8e36cd057cc0547a940383f80248580eb",
+  "flux_constraint": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+  "flux_constraint_sha256": "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
+ },
+ "ratios": {
+  "dir": "/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV",
+  "sha256": {
+   "tune_v1": "13bb1eae4ce0db4023bb29a5b98ca8b7e1e22288a1547f6a31a735fa1445435b",
+   "genie_mec": "8d0e0f42911240f24118c1c731ce6d06a9bd52d0e025202a1ece9da0b54af64f",
+   "nuwro": "38e47eb6b6ac63f6657022ae0cc5a2b5eaffc6a2e503735ce7222275771fea6e",
+   "gibuu": "52438000ab8746a09b8118f3c4cf718fece7f77312cb3c3d62348f7073744e35"
+  },
+  "note": "nd-unfolding/pv-ladder/prep-SHA256SUMS; tune_v1 is not in the preconditions listing and is listed before the run"
+ },
+ "vertices": ["genie_mec", "nuwro", "gibuu"],
+ "closures": {"nuwro": "L-5D-PV_e_closure_nuwro", "tune_v1": "L-5D-PV_e_closure_tune_v1"},
+ "e_products": {
+  "central": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b-_j-.npz",
+  "replica": "/pscratch/sd/j/josephrb/s5p-20260926/runs/s2/num/data/data_b{b}_j{j}.npz",
+  "universe": "/pscratch/sd/j/josephrb/s1-20261024/runs/uni/S1_{tag}.npz",
+  "ladder": "/pscratch/sd/j/josephrb/pv-ladder-20261024/products/L-5D-PV_e_{name}.npz",
+  "closure": "/pscratch/sd/j/josephrb/pv-ladder-20261024/products/{product}.npz",
+  "s1_assembly": "/pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz",
+  "s1_assembly_sha256": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4"
+ },
+ "gibu1_reference": {
+  "path": "/pscratch/sd/j/josephrb/ibu1-20261022/run/products/D_N.npz",
+  "sha256": "a160dbea95006f552f3f724302d30c0da852bf7747907268e712a2251ccf593b"
+ },
+ "gibu1_environment": {
+  "interpreter": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+  "python_version": "3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]",
+  "source": "docs/orchestration/state/2d-closeout/stageF/methods/ibu1/receipts/inventory/D_N.jsonl:1 @ ddbc43e42, interpreter.executable and interpreter.version",
+  "not_recorded": "IBU-1's receipts record no numpy or scipy version (searched: ibu1/ for version strings; the files naming numpy are scripts that import it). The gibu1 unit records its own and does not require them"
+ },
+ "iterations": {"primary": 5, "reported": [1, 2, 3, 4, 5, 10, 20]},
+ "background": {"primary": "fold", "secondary": "sub"},
+ "replicas": {"first": 1, "last": 50, "jitter_offset": 100},
+ "readings": {
+  "norm_fraction": 0.014,
+  "condition_max": 1e10,
+  "bars": {"draws": 1000000, "seed": 20261104, "quantiles": [0.95, 0.997], "batch": 4000, "flux_universes": 100},
+  "self_check": {"seed": 20261105, "z": 4.0},
+  "r2_band": [0.5, 2.0],
+  "gcells_rtol": 1e-12
+ },
+ "resources": {"max_threads_per_task": 32}
+}

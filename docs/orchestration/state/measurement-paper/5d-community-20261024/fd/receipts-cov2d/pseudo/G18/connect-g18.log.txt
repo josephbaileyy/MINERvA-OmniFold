@@ -1,0 +1,23 @@
+host=login02 start=2026-11-05T10:29:33Z pid=1834663 user=josephrb
+deploy=/pscratch/sd/j/josephrb/cov2d-deploy-cb31611c head=cb31611ca8b96ed2d1eeb809fda7236e56645863 porcelain=0
+100644 blob 47ecfd8c26b35ed1f476d7568467d3b472402523	2d-unfolding/cov2d/cov2d_pseudo.py
+100644 blob 6acbd032fa9fc5b7bee690eca9e9600992ac376f	2d-unfolding/cov2d/cov2d_pseudo_write.py
+100644 blob e9daf4b9f8820007c257636bb6716cd083e5fa9d	2d-unfolding/cov2d/jobs/cov2d_env.sh
+100644 blob d7e02a89cb3b8e2067ea4913a4026913d0ad44d0	2d-unfolding/cov2d/jobs/cov2d_jobs.py
+100644 blob 0299633fed74300f9efb66add7b05bf77b00c424	2d-unfolding/cov2d/jobs/cov2d_pseudo.sbatch
+100644 blob d064753d8e2c623eca9b41bee75b08c9c5c84447	2d-unfolding/cov2d/jobs/cov2d_submit.sh
+O: ls: cannot access '/pscratch/sd/j/josephrb/cov2d-run-20261104': No such file or directory ls: cannot access '/pscratch/sd/j/josephrb/cov2d-run-20261104': No such file or directory 
+sacct (as the gate reads it):
+(no cov2d-* jobs)
+2026-11-05T10:30:34Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pseudo_G18 id=60848251 limit=03:00:00
+submit rc=0
+porcelain-after=0
+2026-11-05T10:30:34Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pseudo_G18 id=60848251 limit=03:00:00
+JobId=60848251 JobName=cov2d-pseudo_G18
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Resources Dependency=(null)
+   RunTime=00:00:00 TimeLimit=03:00:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login02:1834663
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+end=2026-11-05T10:30:36Z
+DONE

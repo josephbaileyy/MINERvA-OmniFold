@@ -1,0 +1,36 @@
+{
+ "schema": "ref-g1-stop/1",
+ "stopped": true,
+ "stopped_by": [
+  "G-IBU1"
+ ],
+ "controls": {
+  "G-draw": {
+   "pass": true,
+   "replicas": 50
+  },
+  "G-pair": {
+   "pass": true,
+   "problems": [],
+   "n_problems": 0
+  },
+  "G-CV": {
+   "pass": true
+  },
+  "G-IBU1": {
+   "pass": false,
+   "arrays": {
+    "ks": true,
+    "F_fold": false,
+    "F_sub": false
+   }
+  },
+  "G-cells": {
+   "pass": true,
+   "max_rel": 0.0
+  }
+ },
+ "bars_sha256": "de12c6745b4f5353a83ae8573c7cc75d986617f7a21d8b4ea4c5e275d8607780",
+ "reader_sha256": "c46aae9e47af8f258e763ad92238d89e7bd9a4e90fd4652568c9f7fb9a46e394",
+ "written_utc": "2026-11-05T15:18:16Z"
+}

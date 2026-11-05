@@ -1,0 +1,75 @@
+== sacct
+JobID|JobName|State|ExitCode|Elapsed|ElapsedRaw|NNodes|QOS|Account|Start|End|MaxRSS
+60848251|cov2d-pseudo_G18|COMPLETED|0:0|02:24:34|8674|1|regular_1|m3246|2026-11-05T02:42:18|2026-11-05T05:06:52|
+60848251.batch|batch|COMPLETED|0:0|02:24:34|8674|1||m3246|2026-11-05T02:42:18|2026-11-05T05:06:52|207659228K
+60848251.extern|extern|COMPLETED|0:0|02:24:38|8678|1||m3246|2026-11-05T02:42:18|2026-11-05T05:06:56|
+== deploy
+cb31611ca8b96ed2d1eeb809fda7236e56645863
+plain=0 ignored=0
+== O
+/pscratch/sd/j/josephrb/cov2d-run-20261104:
+total 104
+drwxrwx---   8 josephrb josephrb  4096 Nov  5 03:52 .
+drwx------ 359 josephrb josephrb 69632 Nov  5 02:30 ..
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 03:52 inventory
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 03:52 logs
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 03:52 out
+drwxrwx---   3 josephrb josephrb  4096 Nov  5 02:42 pseudo
+-rw-rw----   1 josephrb josephrb   106 Nov  5 02:30 submissions.log
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 02:30 tables
+drwxrwx---   3 josephrb josephrb  4096 Nov  5 02:42 tmp
+
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs:
+total 28
+drwxrwx--- 2 josephrb josephrb 4096 Nov  5 03:52 .
+drwxrwx--- 8 josephrb josephrb 4096 Nov  5 03:52 ..
+-rw-rw---- 1 josephrb josephrb 2576 Nov  5 05:06 cov2d-pseudo_G18-60848251.out
+-rw-rw---- 1 josephrb josephrb  252 Nov  5 02:30 gate-pseudo-20261105T103033Z.psv
+-rw-rw---- 1 josephrb josephrb  112 Nov  5 02:30 gate-pseudo-20261105T103033Z.psv.gate.json
+-rw-rw---- 1 josephrb josephrb   52 Nov  5 02:30 gate-pseudo-20261105T103033Z.psv.order.json
+-rw-rw---- 1 josephrb josephrb 1629 Nov  5 03:52 mat-60848251.json
+
+/pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18:
+total 48
+drwxrwx--- 4 josephrb josephrb  4096 Nov  5 03:52 .
+drwxrwx--- 3 josephrb josephrb  4096 Nov  5 02:42 ..
+drwxrwx--- 2 josephrb josephrb 20480 Nov  5 03:52 a
+drwxrwx--- 2 josephrb josephrb 20480 Nov  5 05:06 b
+
+/pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18/a:
+total 20261028
+drwxrwx--- 2 josephrb josephrb     20480 Nov  5 03:52 .
+drwxrwx--- 4 josephrb josephrb      4096 Nov  5 03:52 ..
+-rw-rw---- 1 josephrb josephrb   4321842 Nov  5 03:52 cells.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720000.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720001.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720002.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720003.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720004.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720005.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720006.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720007.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720008.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720009.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720010.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720011.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720012.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:46 counts_5720013.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720014.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720015.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720016.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720017.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720018.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720019.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720020.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720021.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720022.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720023.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720024.npz
+-rw-rw---- 1 josephrb josephrb  67015178 Nov  5 03:47 counts_5720025.npz
+data_5720000.root
+data_5720001.root
+data_5720002.root
+data_5720003.root
+data_5720004.root
+303
