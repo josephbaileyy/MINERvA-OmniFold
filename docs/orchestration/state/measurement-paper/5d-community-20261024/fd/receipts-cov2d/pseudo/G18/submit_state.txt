@@ -1,0 +1,48 @@
+/pscratch/sd/j/josephrb/cov2d-run-20261104:
+total 85
+drwxrwx---   4 josephrb josephrb  4096 Nov  5 02:30 .
+drwx------ 359 josephrb josephrb 69632 Nov  5 02:30 ..
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 02:30 logs
+-rw-rw----   1 josephrb josephrb   106 Nov  5 02:30 submissions.log
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 02:30 tables
+
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs:
+total 10
+drwxrwx--- 2 josephrb josephrb 4096 Nov  5 02:30 .
+drwxrwx--- 4 josephrb josephrb 4096 Nov  5 02:30 ..
+-rw-rw---- 1 josephrb josephrb  252 Nov  5 02:30 gate-pseudo-20261105T103033Z.psv
+-rw-rw---- 1 josephrb josephrb  112 Nov  5 02:30 gate-pseudo-20261105T103033Z.psv.gate.json
+-rw-rw---- 1 josephrb josephrb   52 Nov  5 02:30 gate-pseudo-20261105T103033Z.psv.order.json
+
+/pscratch/sd/j/josephrb/cov2d-run-20261104/tables:
+total 11
+drwxrwx--- 2 josephrb josephrb   4096 Nov  5 02:30 .
+drwxrwx--- 4 josephrb josephrb   4096 Nov  5 02:30 ..
+-rw-rw---- 1 josephrb josephrb    468 Nov  5 02:30 jobs_AR23.tsv
+-rw-rw---- 1 josephrb josephrb    457 Nov  5 02:30 jobs_G18.tsv
+-rw-rw---- 1 josephrb josephrb     86 Nov  5 02:30 jobs_pilot.tsv
+-rw-rw---- 1 josephrb josephrb 218817 Nov  5 02:30 runs_AR23.tsv
+-rw-rw---- 1 josephrb josephrb 216459 Nov  5 02:30 runs_G18.tsv
+-rw-rw---- 1 josephrb josephrb   2241 Nov  5 02:30 runs_pilot.tsv
+== /pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-pseudo-20261105T103033Z.psv
+60786801|fd_rpd_a|COMPLETED|895|1
+60788016|fd_rpd_b|COMPLETED|5891|1
+60805733|fd1b_c2calN|COMPLETED|2739|1
+60826464|fd_stab_dry|TIMEOUT|73|1
+60827080|fd_stab_dry|COMPLETED|992|1
+60837713|fd_stab_full|COMPLETED|16447|1
+60847127|fd_cdraw|COMPLETED|644|1
+
+== /pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-pseudo-20261105T103033Z.psv.gate.json
+{"spent": 0.0, "held": 0.0, "want": "pseudo_G18", "want_node_h": 3.0, "total": 3.0, "cap": 165.8, "pass": true}
+
+== /pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-pseudo-20261105T103033Z.psv.order.json
+{"job": "pseudo", "truth": "G18", "blocked_by": []}
+
+== submissions.log
+2026-11-05T10:30:34Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pseudo_G18 id=60848251 limit=03:00:00
+91dafe443af5c4a07e1c063a23ea0824f5c620d1793606a23de4c7be31fa693d  /dev/shm/josephrb-cov2d-g18.log
+db6f62c1d7b713ad1840d4ba1dfdb0ac9a0f19e525c2c173d3eca41f4e823186  /dev/shm/josephrb-cov2d-g18.sh
+job	lanes	lane_cpus	runs	longest_lane_s	wall_s	limit
+G18_Ua	2	128	44	25300	25600	08:54:00
+G18_Ub	2	128	44	25300	25600	08:54:00
