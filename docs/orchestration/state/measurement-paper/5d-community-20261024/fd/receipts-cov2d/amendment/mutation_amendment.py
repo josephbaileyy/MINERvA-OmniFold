@@ -1,8 +1,10 @@
-"""COV2D amendment mutants: one guard or declared rule per mutant, over the amendment's eight modules. Run from a
+"""COV2D amendment mutants: one guard or declared rule per mutant, over the amendment's nine modules. Run from a
 scratchpad with an interpreter that has PyROOT, uproot and numpy:
-    TMPDIR=<dir> PYTHONDONTWRITEBYTECODE=1 python -B mutation_amendment.py <worktree>
+    TMPDIR=<dir> PYTHONDONTWRITEBYTECODE=1 python -B mutation_amendment.py <worktree> [<mutant name> ...]
 Each mutant rewrites one line of one file, runs that file's test modules (python -m unittest, from the tests
-directory), and restores it. A kill counts only on a test failure (rc != 0). Each mutant's text must occur once."""
+directory), and restores it. A kill counts only on a test failure (rc != 0). Each mutant's text must occur once; a
+mutant whose text does not match counts as not killed. The run exits 1 unless every mutant run is killed, and names any
+REQUIRED mutant (the director's rulings on the final audit's F1 and F2) that was not."""
 import os
 import shutil
 import subprocess
@@ -13,7 +15,7 @@ WT = Path(sys.argv[1])
 D = WT / "2d-unfolding/cov2d"
 T = D / "tests"
 J = "jobs/cov2d_jobs.py"
-TESTS = {"cov2d_pseudo.py": ["test_cov2d_pseudo"], "cov2d_pseudo_write.py": ["test_cov2d_pseudo_write"],
+TESTS = {"cov2d.py": ["test_cov2d"], "cov2d_pseudo.py": ["test_cov2d_pseudo"], "cov2d_pseudo_write.py": ["test_cov2d_pseudo_write"],
          "cov2d_blocks.py": ["test_cov2d_blocks"], "cov2d_null.py": ["test_cov2d_null"],
          "cov2d_score.py": ["test_cov2d_score"], "cov2d_readouts.py": ["test_cov2d_readouts"],
          J: ["test_cov2d_jobs"], "cov2d_pilot.py": ["test_cov2d_pilot"]}
@@ -73,6 +75,10 @@ M = [
     ("cov2d_readouts.py", "R4 outlier max is its median", '"max_abs_R_sigma": float(np.nanmax(col)) if have else None',
      '"max_abs_R_sigma": float(np.nanmedian(col)) if have else None'),
     ("cov2d_readouts.py", "R4 complete toys ignored", "    complete = ok.all(axis=1)", "    complete = ok.any(axis=1)"),
+    ("cov2d_readouts.py", "R4 coherent offset on the identity", "coherent = nl.chi2_nonnull(vec, C_T)[0]",
+     "coherent = nl.chi2_nonnull(vec, np.eye(rep.size))[0]"),
+    ("cov2d_readouts.py", "R4 coherent offset without x_true", "vec = np.where(ok, R * x_true, 0.0)",
+     "vec = np.where(ok, R, 0.0)"),
     ("cov2d_readouts.py", "R7 F <= 0 pairs not counted", '"excluded_pairs_F_le_0": int((~live).sum())',
      '"excluded_pairs_F_le_0": 0'),
     ("cov2d_readouts.py", "R1 z over F not sqrt F", "z[live] = (P[live] - F[live]) / np.sqrt(F[live])",
@@ -85,6 +91,16 @@ M = [
     (J, "J1 pilot without G18's pseudo PASS", "return [] if ok(pseudo[\"G18\"]) else", "return [] if True else"),
     (J, "J1 the rest before the universe jobs", "        if missing:\n            need.append(f\"the universe jobs go first",
      "        if False:\n            need.append(f\"the universe jobs go first"),
+    (J, "F1 order ignores M", 'r.get("verdict") == "PASS" and r.get("M") == M', 'r.get("verdict") == "PASS"'),
+    (J, "F2 bulk despite REPRICE", '    elif committed[PILOT_RECORD].get("reprice_classes") != []:', "    elif False:"),
+    (J, "F2 no REPRICE list read as none", '.get("reprice_classes") != []:', '.get("reprice_classes", []) != []:'),
+    ("cov2d.py", "F1 a dirty deploy admitted", '    if git("status", "--porcelain").strip():', "    if False:"),
+    ("cov2d_pseudo_write.py", "F1 the pseudo record without M", '"pins_checked": not a.no_pins,\n           "M": M}',
+     '"pins_checked": not a.no_pins}'),
+    ("cov2d_pseudo_write.py", "F1 a deploy moving during step B unchecked", '    if c.deploy_head(DEPLOY) != rec["M"]:',
+     "    if False:"),
+    ("cov2d_pilot.py", "F1 the pilot record without M", 'rec = {"stop": [], "invalid": [], "M": c.deploy_head(DEPLOY)}',
+     'rec = {"stop": [], "invalid": []}'),
     (J, "gate passes everything", '"cap": CAP_NODE_H, "pass": total <= CAP_NODE_H}', '"cap": CAP_NODE_H, "pass": True}'),
     ("cov2d_pilot.py", "pilot compare at 1e-6", 'cmp_["pass"] = cmp_["max_rel"] <= k1.TOL and cmp_["same_cell_set"]',
      'cmp_["pass"] = cmp_["max_rel"] <= 1e-6 and cmp_["same_cell_set"]'),
@@ -94,25 +110,37 @@ M = [
     ("cov2d_pilot.py", "P2 a missing class is not INVALID", "    if missing:\n        rec[\"invalid\"].append(f\"no wall",
      "    if False:\n        rec[\"invalid\"].append(f\"no wall"),
 ]
+REQUIRED = {"F2 bulk despite REPRICE", "F2 no REPRICE list read as none", "F1 order ignores M",
+            "F1 a dirty deploy admitted", "F1 the pseudo record without M", "F1 the pilot record without M"}
+if sys.argv[2:]:
+    unknown = set(sys.argv[2:]) - {m[1] for m in M}
+    assert not unknown, f"no such mutant: {sorted(unknown)}"
+    M = [m for m in M if m[1] in sys.argv[2:]]
 bak = Path(os.environ["TMPDIR"])
 files = sorted({m[0] for m in M})
 for f in files:
     (bak / f).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(D / f, bak / f)
-killed = 0
+killed, alive = 0, []
 try:
     for f, name, a, b in M:
         src = (bak / f).read_text()
         if src.count(a) != 1:
             print(f"NOMATCH {f}: {name}", flush=True)
+            alive.append(name)
             continue
         (D / f).write_text(src.replace(a, b))
         r = subprocess.run([sys.executable, "-B", "-m", "unittest", *TESTS[f]], cwd=T, capture_output=True, text=True,
                            env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
         killed += bool(r.returncode)
+        if not r.returncode:
+            alive.append(name)
         print(f"{'KILLED ' if r.returncode else 'SURVIVED'} {f}: {name}", flush=True)
         shutil.copy(bak / f, D / f)
 finally:
     for f in files:
         shutil.copy(bak / f, D / f)
 print(f"killed {killed} of {len(M)}")
+if REQUIRED & set(alive):
+    print(f"REQUIRED NOT KILLED: {sorted(REQUIRED & set(alive))}")
+sys.exit(1 if alive else 0)

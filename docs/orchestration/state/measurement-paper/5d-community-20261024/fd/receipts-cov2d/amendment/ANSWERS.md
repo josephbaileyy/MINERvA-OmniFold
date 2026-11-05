@@ -1,14 +1,16 @@
-# COV2D amendment: answers to the rolling audit (parts 1–4)
+# COV2D amendment: answers to the rolling audit (parts 1–4) and the final delta audit
 
 **By** the `cov2d` session, 2026-11-04. The audit is by the `coverage-5b-audit` session; each part is copied verbatim
-in `AUDIT-PART{1,2,3,4}-*.md` (this directory). The director ruled: fix every finding as stated, J1 first. These answers
+in `AUDIT-PART{1,2,3,4}-*.md` (this directory), and the final delta audit in `AUDIT-DELTA.md`. The director ruled: fix every finding as stated, J1 first. These answers
 are not evidence: each fix's evidence is its commit, its tests and its mutant in `mutation_amendment.{py,txt}`.
 
 **Commits:**
 - `9731d0c8`: J1–J7 and P1–P4.
 - `0d43c9a3`: S1–S4, R1–R8, the norm-check survivor, the real-path null test, and the new mutants.
+- `fd8d68bb`: the final delta audit's F1 and F2.
 
-The mutation receipt has **51 mutants, 51 killed** (`mutation_amendment.txt`; the first run of the 51 is `mutation_amendment.run1.txt`). The run of 2026-11-04,
+The mutation receipt has **60 mutants, 60 killed** at `fd8d68bb` (`mutation_amendment.txt`). Before the final delta
+audit it had 51, all killed at `0d43c9a3` (in that file's history); the first run of the 51 is `mutation_amendment.run1.txt`. The run of 2026-11-04,
 before these fixes, had 29 mutants with 28 killed; the survivor was "norm check removed" (see Blocks below).
 
 ## Part 1: the null and the scorer
@@ -57,8 +59,9 @@ that is the auditor's 178.27, and with the pilot (01:41) **179.95**, above the 1
 limits and the remaining 14 jobs 101.07, so some of the 14 wait while steps 1–4 are unfinished. A refusal there is a
 wait, not a STOP. The gate requires (elapsed of ended attempts) + (limit of unfinished ones) + (the new limit) ≤ 165.8
 at each submission. That sum only falls afterwards, as each limit is replaced by an elapsed time no larger, and every
-attempt goes through the gate. So the final charge is at most 165.8, provided no job runs past its limit, which Slurm
-enforces. The amendment states this in §5.
+attempt goes through the gate. So the final charge is at most 165.8, provided no job runs past its limit. The final
+delta audit adds that Slurm enforces a limit only up to its kill grace; see "Final delta audit" below. The amendment
+states this in §5.
 
 ## Part 4: the pilot (fixed in `9731d0c8`, except where noted)
 
@@ -81,3 +84,20 @@ steps. Every trigger lies below the bulk's per-run estimate (866, 1,150, 1,678 a
 The 29-mutant run's one survivor, "norm check removed", is closed: `test_refuses_a_drifted_dict_layout` gains a case
 whose `universe_block` returns the normalization entry off by one part in 10⁶, with the total re-summed to match, so
 the key-set and sum checks pass and only the norm check can refuse.
+
+## Final delta audit (`AUDIT-DELTA.md`; fixed in `fd8d68bb`)
+
+The auditor's report, its follow-up and the director's ruling, which upheld F1 and F2, are copied verbatim in
+`AUDIT-DELTA.md`.
+
+<!-- absence-ok: "not measured" scopes this session's own work (Slurm's kill grace on Perlmutter was not read); it claims nothing about whether a value exists -->
+| finding | fix | tests | mutants |
+|---|---|---|---|
+| F1: `order()` requires "M", which no writer emitted | `cov2d.deploy_head(root)`: the checkout's `git rev-parse HEAD`, refused (`Refusal`) if `git status --porcelain` is not empty. Step B records it as `"M"` before its output directory exists, and stops if the HEAD differs at write time. The pilot readout records it before it reads anything. Each writer reads its own checkout (`DEPLOY`, the repository holding the code), which in a job is the deploy at M. | `test_the_writers_record_is_what_order_admits` (step B) and `test_the_readouts_record_is_what_order_admits` (the pilot): each calls the real writer, on a clean one-commit checkout (`tests/deploy_fixture.py`) standing in for the deploy, and checks three things. `order()` admits the record; it refuses the same record with M deleted; and it refuses the record with M set to another sha. Also `test_a_dirty_deploy_is_refused_before_any_output`, `test_a_dirty_deploy_is_refused` (the readout), `test_a_deploy_that_moves_during_step_b_stops` and `test_deploy_head_is_the_clean_checkouts_head` (an untracked file and an edited file are each refused). `test_cov2d_jobs.Order`'s hand-written records now carry M = "sequence-test-not-a-commit", and its docstring limits them to the sequence. They cannot stand in for the writer tests, because the mutants that drop M from a writer run only that writer's suite. | "F1 the pseudo record without M", "F1 the pilot record without M", "F1 a dirty deploy admitted", "F1 a deploy moving during step B unchecked", "F1 order ignores M" |
+| F2: a pilot needing REPRICE still opened the bulk | `order()` admits AR23's pseudo-data job and every unfold only on the pilot's PASS with `reprice_classes == []`. A list naming a class, or no list at all, is refused with the classes named. §8 makes REPRICE an amendment. | `test_a_pass_that_needs_repricing_does_not_open_the_bulk` (the readout's own PASS record with REPRICE `['lateral']` is refused); `test_the_readouts_record_is_what_order_admits` (with no REPRICE class it is admitted); `test_a_pilot_needing_repricing_opens_nothing_after_it` (`["universe"]` or no list, for AR23's pseudo-data job, a universe job and a later job) | "F2 bulk despite REPRICE", "F2 no REPRICE list read as none" |
+| The KillWait caveat (question 4) | §5 now says the gate's bound holds only up to Slurm's kill grace. An overrun by a job that has already ended is in the elapsed sum the gate reads. Only jobs unfinished at the last submission can pass the cap, each by at most the grace: for example, 22 bulk jobs at 60 s come to 0.37 node-h. The grace was not measured. | — | — |
+| The two coherent-offset mutants | the auditor's follow-up reports both killed by `test_clipping_residual_on_varying_inputs_against_a_hand_computation`. Both are now in this directory's harness too. | `test_clipping_residual_on_varying_inputs_against_a_hand_computation` | "R4 coherent offset on the identity", "R4 coherent offset without x_true" |
+
+**Required mutants.** The harness now has a `REQUIRED` set: the two F2 mutants and four of the F1 mutants. It exits 1 if
+any mutant survives or fails to match its text, and names any required mutant that was not killed. **Run:**
+60 mutants, **60 killed**, harness exit 0, every required mutant killed (`mutation_amendment.txt`). **Suites:** at `fd8d68bb`, **147 tests, 0 skipped, all pass** (`suites_fd8d68bb.txt`; a local run in the one environment of the amendment's §8).

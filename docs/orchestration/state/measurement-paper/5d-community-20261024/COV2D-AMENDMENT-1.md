@@ -7,7 +7,7 @@
 - the director's rulings of 2026-11-03 and 2026-11-04, restated below where each applies.
 
 **MEASURES:** nothing; it states code and rules. **CANNOT AUTHORIZE:** any job before binding 2. Then the G18 pseudo-data
-job (sha first), then the pilot (sha first, after that job's PASS), then the bulk (after the pilot's readout).
+job (sha first), then the pilot (sha first, after that job's PASS), then the bulk (after the pilot's readout PASS with no REPRICE class).
 
 **The STOP count is one**: CONTROL-2A FAIL, 2026-11-03, under COV2D-DECLARATION.md:358-359 via §2 :89. A second STOP
 ends (c) unless Joseph rules otherwise.
@@ -187,10 +187,19 @@ draws equal one call. It refuses if $UNI's signal tree lacks the 5D truth.
     `cov2d_submit.sh` before the gate, reads PASS records committed on origin/main that name the deploy's commit M:
     1. the G18 pseudo-data job first;
     2. the pilot after G18's pseudo-data PASS (`fd/receipts-cov2d/pseudo/G18/pseudo_b.json`);
-    3. AR23's pseudo-data job and every unfold job after the pilot readout's PASS
-       (`fd/receipts-cov2d/pilot/pilot_readout.json`);
+    3. AR23's pseudo-data job and every unfold job after the pilot readout's PASS with **no REPRICE class**
+       (`fd/receipts-cov2d/pilot/pilot_readout.json`). A PASS that lists a REPRICE class, or lists none at all, opens
+       nothing after the pilot: §8 makes REPRICE an amendment, decided first (the director's ruling on the final
+       audit's F2);
     4. the eight universe jobs (the $UNI readers) after both pseudo-data PASSes;
     5. the rest after all eight universe jobs are submitted.
+
+    **"M" in a record** (the director's ruling on the final audit's F1). Step B (`pseudo_b.json`) and the pilot readout
+    each record `"M"`, the deployed checkout's `git rev-parse HEAD` (`cov2d.deploy_head`), which the job has already
+    checked equals M. Each refuses a dirty checkout: step B before its output directory exists, the readout before it
+    reads anything. Step B also stops if the HEAD differs at write time. The tests feed `order()` the record each
+    writer actually writes: it is admitted, and refused with M deleted or set to another commit. **M is never
+    hand-edited into a committed record.** A record without M is rewritten by the fixed writer, or its step is rerun.
   - **Waves under the gate** (audit J6). The limits: 8 universe jobs at 08:54:00, 6 replica jobs at 08:06:00, 6 toy
     jobs at 07:38:00, 2 lateral-and-central jobs at 03:20:00, 2 pseudo-data jobs at 03:00:00 and the pilot at
     01:41:00. They sum to **179.95 node-h**, above the 165.8 cap; the projected wall is **144.95 node-h** (the 24 unfold
@@ -203,8 +212,12 @@ draws equal one call. It refuses if $UNI's signal tree lacks the 5D truth.
       (elapsed of ended attempts) + (limit of unfinished ones) + (the new job's limit) ≤ 165.8. After a submission, the
       sum can only fall: an unfinished job ends at or before its limit, so its limit is replaced by an elapsed time no
       larger. Every attempt, a failed one or a retry included, goes through the gate. So the final charge is at most
-      the sum at the last submission, which is at most 165.8. This holds provided no job runs past its limit, which
-      Slurm enforces.
+      the sum at the last submission, which is at most 165.8. This holds provided no job runs past its limit. Slurm
+      enforces a limit only up to its kill grace (KillWait, plus OverTimeLimit if set; neither is measured here), and
+      a job killed at its limit is charged its elapsed time, slightly past the limit. An overrun by a job that ended
+      before a submission is in that submission's elapsed sum, so the gate prices it. Only jobs still unfinished at
+      the last submission can carry the total past 165.8: each by at most the grace, one node each. For example, all 22
+      bulk jobs at a 60 s grace would add 0.37 node-h.
 - **The scripts:** `cov2d_job.sbatch` (part B's lanes and OI-136 guard, a digest per finished run, each run's own rc
   and wall for REPRICE), `cov2d_pseudo.sbatch` (QOS and TimeLimit checked, threads and TMPDIR reset, $UNI stat-checked,
   then step A, then step B), `cov2d_env.sh`, `cov2d_submit.sh`. The submit script refuses unless COV2D-BINDING-2.md
@@ -267,52 +280,58 @@ draws equal one call. It refuses if $UNI's signal tree lacks the 5D truth.
   - §9.4's reference (rule 7): E_R carries no `hTruthXSec2D`;
   - §9.11's population (rule 13).
 - **Declared departure:** rule 15.
-- **REPRICE:** decided after the pilot, at the effective triggers in §5.
+- **REPRICE:** decided after the pilot, at the effective triggers in §5. A pilot with any REPRICE class opens no
+  later job (`order()`, §5) until an amendment decides it.
 - **The waves:** §5.
 
 ## 8. Tests and mutants
 
-At `0d43c9a3`, in one environment holding PyROOT, uproot and numpy (ROOT 6.28/12, uproot 5.6.9): **112 tests, 0
-skipped, all pass** (`fd/receipts-cov2d/amendment/suites_0d43c9a3.txt`). This was a local run. The table names the
+At `fd8d68bb`, in one environment holding PyROOT, uproot and numpy (ROOT 6.28/12, uproot 5.6.9): **147 tests, 0
+skipped, all pass** (`fd/receipts-cov2d/amendment/suites_fd8d68bb.txt`; the run at `0d43c9a3`, 112 tests without
+`test_cov2d`, is `suites_0d43c9a3.txt`). This was a local run. The table names the
 environment each module runs in on the cluster, which is not the environment of this test run.
 
 | module | tests | runs in |
 |---|---:|---|
+| the bank, draws, composition and `deploy_head` | 28 | numpy + uproot + PyROOT |
 | step A | 16 | omnifold_py310 (no ROOT) |
-| step B | 10 | root_6_28 + the pinned MAT environment |
+| step B | 13 | root_6_28 + the pinned MAT environment |
 | blocks | 25 | root_6_28 (the real-path null test included) |
 | null | 5 | numpy |
 | scorer | 12 | numpy |
 | readouts | 12 | numpy + uproot (the cross-terms CLI) |
-| jobs | 22 | every generated line through `re2_driver`'s real parser (needs PyROOT): 786 per truth and 8 for the pilot |
-| pilot | 10 | PyROOT |
+| jobs | 23 | every generated line through `re2_driver`'s real parser (needs PyROOT): 786 per truth and 8 for the pilot |
+| pilot | 13 | PyROOT |
 
-**Mutants:** `fd/receipts-cov2d/amendment/mutation_amendment.py`, 51 mutants over the eight modules, one guard or
-declared rule each; **51 killed** (`mutation_amendment.txt`). The first run of the 51 left one survivor ("a missing
-class is not INVALID", `mutation_amendment.run1.txt`); the test that reaches that check alone was added before the
-commit. The rolling audit's findings and the answers are in `fd/receipts-cov2d/amendment/` (`AUDIT-PART*.md`,
+**Mutants:** `fd/receipts-cov2d/amendment/mutation_amendment.py`, 60 mutants over nine modules, one guard or
+declared rule each; **60 killed** (`mutation_amendment.txt`, at `fd8d68bb`). Nine are new with the final delta audit:
+five for F1, two for F2, and the auditor's two coherent-offset mutants. Six are `REQUIRED`: both F2 mutants, "F1
+order ignores M", "F1 a dirty deploy admitted", and both writer-without-M mutants. The harness exits 1 if any mutant
+survives or fails to match its text, and names any required mutant not killed. The earlier receipt (51 of 51, at
+`0d43c9a3`) is in this file's history. Its first run left one survivor ("a missing class is not INVALID",
+`mutation_amendment.run1.txt`); the test that reaches that check alone was added before that commit. The rolling audit's findings and the answers are in `fd/receipts-cov2d/amendment/` (`AUDIT-PART*.md`,
 `ANSWERS.md`), with the flux check in `flux_check/`.
 
 ## 9. The code's blobs at the binding commit
 
-The code commit is `0d43c9a300fa02cea8e25557f431e65ce33c8ebc`. Binding 2 names the commit that carries this amendment.
+The code commit is `fd8d68bb6e813df815cb07fbe1339ec449e6436b` (the final delta audit's F1 and F2, on `0d43c9a3`). Binding 2 names the commit that carries this amendment.
 These blobs are unchanged there, since it changes no code. The imported modules are in §1.
 
 | file | blob |
 |---|---|
-| `2d-unfolding/cov2d/cov2d.py` | `7dafdd3ff827378554931bd1b3d1f19aeeabe11d` |
+| `2d-unfolding/cov2d/cov2d.py` | `a5f1065fa985d15d1dd33b37a9c89a09238255f4` |
 | `2d-unfolding/cov2d/cov2d_blocks.py` | `b9e63a3827e44c31a529f8d92482b7d7969d8223` |
 | `2d-unfolding/cov2d/cov2d_null.py` | `59d9721cefbcd1276348e7ee183007160954e49d` |
-| `2d-unfolding/cov2d/cov2d_pilot.py` | `cfbe69a787ffcd2aa8ba7c787ccd956249592c26` |
+| `2d-unfolding/cov2d/cov2d_pilot.py` | `ae9764676876857efa66ecc5c245a6936961f469` |
 | `2d-unfolding/cov2d/cov2d_pseudo.py` | `47ecfd8c26b35ed1f476d7568467d3b472402523` |
-| `2d-unfolding/cov2d/cov2d_pseudo_write.py` | `e6124ab0819fcd0803a5e3269f610d8c592321c0` |
+| `2d-unfolding/cov2d/cov2d_pseudo_write.py` | `6acbd032fa9fc5b7bee690eca9e9600992ac376f` |
 | `2d-unfolding/cov2d/cov2d_readouts.py` | `7e6407c4308500e1f622dfe870b8f8f314e1a7fc` |
 | `2d-unfolding/cov2d/cov2d_receipt.py` | `d5718bf44c2084c20c30a8b8614e9c40e6fbeee3` |
 | `2d-unfolding/cov2d/cov2d_score.py` | `282fd27ec07c84b4f9a0f287004eca0133858c15` |
 | `2d-unfolding/cov2d/cov2d_writer.py` | `bb3892e5447d37ee524c720c5ab623baa7184f30` |
 | `2d-unfolding/cov2d/jobs/cov2d_env.sh` | `822696007afa8816e982984cc8ca0b39951ef2a3` |
 | `2d-unfolding/cov2d/jobs/cov2d_job.sbatch` | `0e64f14a2c15728b0274bda30ad2cd1fe83a562a` |
-| `2d-unfolding/cov2d/jobs/cov2d_jobs.py` | `7cc8ec846f48ff278d4ad0774876701cc0164855` |
+| `2d-unfolding/cov2d/jobs/cov2d_jobs.py` | `d7e02a89cb3b8e2067ea4913a4026913d0ad44d0` |
 | `2d-unfolding/cov2d/jobs/cov2d_pseudo.sbatch` | `0299633fed74300f9efb66add7b05bf77b00c424` |
 | `2d-unfolding/cov2d/jobs/cov2d_submit.sh` | `03ad296e3a39be50d654e15b8819e6fa6e910ae6` |
 
@@ -320,11 +339,13 @@ Their tests:
 
 | file | blob |
 |---|---|
+| `2d-unfolding/cov2d/tests/deploy_fixture.py` | `75033297ae8e2617bca6c0d7aae5ddb75c110500` |
+| `2d-unfolding/cov2d/tests/test_cov2d.py` | `7efa74b0e0d968c6ed75465aa36b038cd1cff034` |
 | `2d-unfolding/cov2d/tests/test_cov2d_blocks.py` | `7e8da5b37ac170d0f7eb2803afd17036523b0da6` |
-| `2d-unfolding/cov2d/tests/test_cov2d_jobs.py` | `ca030e6d6d0ed5f00dd817609e78db2f1a03316c` |
+| `2d-unfolding/cov2d/tests/test_cov2d_jobs.py` | `39b2c6da3aeb747e17f96f894fa3720fa034e1e3` |
 | `2d-unfolding/cov2d/tests/test_cov2d_null.py` | `3002455578509d6d4be06a08e4fa17105f06492d` |
-| `2d-unfolding/cov2d/tests/test_cov2d_pilot.py` | `2424ff270509f18580f265705241928c55944493` |
+| `2d-unfolding/cov2d/tests/test_cov2d_pilot.py` | `4f65bdf5f34a9ae72441e797ff57be04fee0c0c6` |
 | `2d-unfolding/cov2d/tests/test_cov2d_pseudo.py` | `452f4f7e738108c664d7b8b9d13dc82cd7d3bb41` |
-| `2d-unfolding/cov2d/tests/test_cov2d_pseudo_write.py` | `eccb43a4c7235942b0fe110312438c64d29d2973` |
+| `2d-unfolding/cov2d/tests/test_cov2d_pseudo_write.py` | `b2bc4ab388cd38b1aa53dc665050d6ea0d64ffdc` |
 | `2d-unfolding/cov2d/tests/test_cov2d_readouts.py` | `1b2be505bb839e889eb968c07e4708a9a2bcd5b9` |
 | `2d-unfolding/cov2d/tests/test_cov2d_score.py` | `25aa147442296ef4b22ed0ac43c712f604a73ec4` |
