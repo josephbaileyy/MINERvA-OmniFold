@@ -1,4 +1,4 @@
-"""COV2D amendment mutants: one guard or declared rule per mutant, over the amendment's nine modules. Run from a
+"""COV2D amendment mutants: one guard or declared rule per mutant, over the amendment's ten files. Run from a
 scratchpad with an interpreter that has PyROOT, uproot and numpy:
     TMPDIR=<dir> PYTHONDONTWRITEBYTECODE=1 python -B mutation_amendment.py <worktree> [<mutant name> ...]
 Each mutant rewrites one line of one file, runs that file's test modules (python -m unittest, from the tests
@@ -15,7 +15,7 @@ WT = Path(sys.argv[1])
 D = WT / "2d-unfolding/cov2d"
 T = D / "tests"
 J = "jobs/cov2d_jobs.py"
-TESTS = {"cov2d.py": ["test_cov2d"], "cov2d_pseudo.py": ["test_cov2d_pseudo"], "cov2d_pseudo_write.py": ["test_cov2d_pseudo_write"],
+TESTS = {"cov2d.py": ["test_cov2d"], "jobs/cov2d_submit.sh": ["test_cov2d_jobs"], "cov2d_pseudo.py": ["test_cov2d_pseudo"], "cov2d_pseudo_write.py": ["test_cov2d_pseudo_write"],
          "cov2d_blocks.py": ["test_cov2d_blocks"], "cov2d_null.py": ["test_cov2d_null"],
          "cov2d_score.py": ["test_cov2d_score"], "cov2d_readouts.py": ["test_cov2d_readouts"],
          J: ["test_cov2d_jobs"], "cov2d_pilot.py": ["test_cov2d_pilot"]}
@@ -101,6 +101,11 @@ M = [
      "    if False:"),
     ("cov2d_pilot.py", "F1 the pilot record without M", 'rec = {"stop": [], "invalid": [], "M": c.deploy_head(DEPLOY)}',
      'rec = {"stop": [], "invalid": []}'),
+    ("jobs/cov2d_submit.sh", "F3 the deploy's own binding read", 'bind=$(git -C "$C" show "origin/main:$BIND")',
+     'bind=$(cat "$C/$BIND")'),
+    ("jobs/cov2d_submit.sh", "F3 the binding's name check skipped", 'grep -qF "$M" <<<"$bind" ||', "true ||"),
+    ("jobs/cov2d_submit.sh", "F3 a failed fetch admitted", 'git -C "$C" fetch -q origin main ||',
+     'git -C "$C" fetch -q origin main || true ||'),
     (J, "gate passes everything", '"cap": CAP_NODE_H, "pass": total <= CAP_NODE_H}', '"cap": CAP_NODE_H, "pass": True}'),
     ("cov2d_pilot.py", "pilot compare at 1e-6", 'cmp_["pass"] = cmp_["max_rel"] <= k1.TOL and cmp_["same_cell_set"]',
      'cmp_["pass"] = cmp_["max_rel"] <= 1e-6 and cmp_["same_cell_set"]'),
@@ -111,7 +116,8 @@ M = [
      "    if False:\n        rec[\"invalid\"].append(f\"no wall"),
 ]
 REQUIRED = {"F2 bulk despite REPRICE", "F2 no REPRICE list read as none", "F1 order ignores M",
-            "F1 a dirty deploy admitted", "F1 the pseudo record without M", "F1 the pilot record without M"}
+            "F1 a dirty deploy admitted", "F1 the pseudo record without M", "F1 the pilot record without M",
+            "F3 the deploy's own binding read", "F3 the binding's name check skipped", "F3 a failed fetch admitted"}
 if sys.argv[2:]:
     unknown = set(sys.argv[2:]) - {m[1] for m in M}
     assert not unknown, f"no such mutant: {sorted(unknown)}"
