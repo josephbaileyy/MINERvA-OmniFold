@@ -8,10 +8,11 @@ are not evidence: each fix's evidence is its commit, its tests and its mutant in
 - `9731d0c8`: J1–J7 and P1–P4.
 - `0d43c9a3`: S1–S4, R1–R8, the norm-check survivor, the real-path null test, and the new mutants.
 - `fd8d68bb`: the final delta audit's F1 and F2 (merged in #773 at `e9cadf47`).
-- `3d6cae57`: the director's F3, the submit script's binding check.
+- `3d6cae57`: the director's F3, the submit script's binding check (merged in #776 at `8a258b38`).
+- `5c0e02a2`: the auditor's tightening of F3, binding 2's M line.
 
-The mutation receipt has **63 mutants, 63 killed** at `3d6cae57` (`mutation_amendment.txt`). Earlier it had 60, all
-killed at `fd8d68bb`, and before the final delta audit 51, all killed at `0d43c9a3` (both in that file's history); the first run of the 51 is `mutation_amendment.run1.txt`. The run of 2026-11-04,
+The mutation receipt has **64 mutants, 64 killed** at `5c0e02a2` (`mutation_amendment.txt`). Earlier it had 63, all
+killed at `3d6cae57`, then 60, all killed at `fd8d68bb`, and before the final delta audit 51, all killed at `0d43c9a3` (all three in that file's history); the first run of the 51 is `mutation_amendment.run1.txt`. The run of 2026-11-04,
 before these fixes, had 29 mutants with 28 killed; the survivor was "norm check removed" (see Blocks below).
 
 ## Part 1: the null and the scorer
@@ -135,3 +136,18 @@ binding, and a deploy made by `git clone` and checked out at M.
 
 **Mutants, all REQUIRED:** "F3 the deploy's own binding read", "F3 the binding's name check skipped", and "F3 a failed
 fetch admitted". All three were killed when run alone. **Run:** 63 mutants, **63 killed**, harness exit 0, all nine required mutants killed (`mutation_amendment.txt`). **Suites:** at `3d6cae57`, **153 tests, 0 skipped, all pass** (`suites_3d6cae57.txt`; a local run in the one environment of the amendment's §8).
+
+**The auditor's tightening of F3** (its verdict closed F3; copied verbatim at the end of `AUDIT-DELTA.md`; fixed in
+`5c0e02a2`). `grep -qF "$M"` admitted M anywhere in binding 2, so a binding citing an earlier audited head in full
+would have admitted a deploy at that head. COV2D-BINDING-1.md already cites a full 64-hex hash on its line 4. The match
+is now anchored: ``grep -qE "^\*\*M = `$M`\*\*"``, the M-line format of COV2D-BINDING-1.md:5. Of the 88 files under
+`docs/` on main at `e9cadf47` whose name contains "binding" in any case and ends in `.md`, six have that line, all in
+this directory. Binding 2 must have it, and the director has been told. New tests:
+- `test_refuses_M_cited_only_off_the_M_line`: the M line names another commit, and M appears in full on a later line.
+  Refused.
+- `test_binding_1s_own_text_binds_its_M_line_only`: the real COV2D-BINDING-1.md text with M put on its M line is
+  admitted. With M put in place of line 4's hash instead, it is refused.
+- The fixture's binding now uses the M-line format.
+
+New mutant, REQUIRED: "F3 M matched anywhere in the binding" (it reverts to `grep -qF`). **Run:** 64 mutants, **64 killed**, harness exit 0, all ten required mutants killed (`mutation_amendment.txt`).
+**Suites:** at `5c0e02a2`, **155 tests, 0 skipped, all pass** (`suites_5c0e02a2.txt`; a local run in the one environment of the amendment's §8).

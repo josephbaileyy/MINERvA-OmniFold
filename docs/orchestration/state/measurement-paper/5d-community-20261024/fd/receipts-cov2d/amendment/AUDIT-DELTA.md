@@ -186,3 +186,36 @@ director: I'm holding binding 2. I found a blocking defect in cov2d_submit.sh (b
 **Also check order()** for the same shape. It reads PASS records from origin/main naming M, which is fine, but confirm that it fetches before reading and refuses a failed fetch.
 
 **Next:** push on a new branch from main after #773, then a delta to coverage-5b-audit (just this), then I bind 2 at the fix commit. The schedule has room: the bulk deadline is 12-01.
+
+---
+
+## The auditor's verdict on the F3 delta (e9cadf47..22824340; code 3d6cae57)
+
+COV2D F3 delta (e9cadf47..22824340; code 3d6cae57) is checked: F3 is closed, nothing blocks, and I suggest one low tightening.
+
+First, an admission: I missed F3. In part 3 and in the final audit I read submit's "binding 2 names M" check and didn't see that a deploy at M can never contain a file naming M, so it was a fixed point. The director caught it.
+
+**The fix is right:**
+- one fetch of origin main that must succeed, with a message on failure, before the binding check and every order() call;
+- binding 2 read from origin/main, never from the deploy;
+- the deploy stays at M, and the fetch changes refs only, so the clean-checkout check is unaffected.
+
+**Run here (git and bash only):**
+- SubmitBinding: 6/6 OK, including that the audited blob 03ad296e refuses the correct setup, and that a failed fetch is refused even with a good stale origin/main.
+- The three REQUIRED F3 mutants, applied by hand, each fail by assertion in a named test:
+
+| mutant | killing test(s) |
+|---|---|
+| the deploy's own binding read | test_admits_when_origin_mains_binding_names_M and test_refuses_a_binding_naming_another_commit |
+| the name check skipped | test_refuses_a_binding_naming_another_commit |
+| a failed fetch admitted | test_refuses_a_failed_fetch_even_with_a_good_binding_already_fetched |
+
+- Your harness run of the same three: 3/3 killed.
+- Afterwards there were 0 .pyc and a clean status.
+
+**Low, a tightening:**
+- `grep -qF "$M"` admits M if the full sha appears anywhere in binding 2. A binding that cited an earlier audited head by its full 40-hex sha would admit a deploy at that head.
+- The existing bindings name the bound commit on one line, `**M = \`<40-hex>\`**` (COV2D-BINDING-1.md:5, S1-BINDING.md), and abbreviate every other commit. So this works today by convention.
+- What would close it: anchor the match on that line, e.g. `grep -qE "^\*\*M = \`$M\`\*\*"`, plus a test where the sha appears elsewhere in the binding but not on the M line.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
