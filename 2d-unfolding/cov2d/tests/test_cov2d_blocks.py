@@ -256,6 +256,114 @@ class NoatimeInputs(unittest.TestCase):
             cbm.noatime_inputs(self.ro, self.d / "copies", {"constraint": (self.ro.PIN["constraint"][0], "0" * 64)})
 
 
+@unittest.skipUnless(HAVE, "needs PyROOT (main imports it)")
+class Control95Main(unittest.TestCase):
+    """The director's ruling (i), 2026-11-05: control95's main end to end on a fixture, through the real rollup's
+    flux_weights, its plain open() of the constraint (re2c_rollup.py:221) included, with the open audit guarding a tmp
+    tree that holds every input. Stubbed: the MAT environment, ROOT.TFile.Open (the flux MnvH1D's error bands) and part
+    B's arithmetic (Cells, x01, section_9_5, c_model). Only noatime_inputs keeps the rollup's reads off that tree."""
+    def setUp(self):
+        import collections
+        import hashlib
+        import ROOT
+        import cov2d_blocks as cbm
+        self.cbm, ro = cbm, cbm.rollup()
+        self.noatime = bool(getattr(os, "O_NOATIME", 0))     # Linux; macOS has none, so its reads move atime
+        self.td = tempfile.TemporaryDirectory()
+        self.addCleanup(self.td.cleanup)
+        self.d = Path(self.td.name).resolve()
+        g = self.g = self.d / "guarded"
+        (g / "bf").mkdir(parents=True)
+        (self.d / "tmp").mkdir()
+        w = np.linspace(0.5, 1.5, 100)
+
+        def put(rel, data):
+            path = g / rel
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+            return str(path), hashlib.sha256(data).hexdigest()
+        self.pins = {
+            "constraint": put("constraint.txt", "".join(f"Flux {i} {x!r}\n" for i, x in enumerate(w)).encode()),
+            "vl175_build_json": put("build.json", json.dumps({"numbers": {"weights": {
+                "sum": float(w.sum()), "n_eff": float(w.sum() ** 2 / (w ** 2).sum())}}}).encode()),
+            "vl175_minos_npz": put("minos.npz", b"minos"),
+            "flux_mefhc": put("bf_mefhc.root", b"mefhc")}
+        for pl in ro.BR.PLAYLISTS:
+            for kind in ("MC", "Data"):
+                put(f"bf/runEventLoop{kind}_{pl}.root", f"{kind}{pl}".encode())
+        sums = {f"U_{b}_{i}/xsec.root": "x" for b in c.ORDER for i in range(c.BANDS[b])}
+        for lab in ("ER", "S3_MuonEnergyMINOS0", "S3_MuonEnergyMINOS1"):
+            sums[f"{lab}/xsec.root"] = put(f"ns/out/{lab}/xsec.root", lab.encode())[1]
+        f = fixture(5)
+        npz_path = g / "production_cov.npz"
+        np.savez(npz_path, universe=np.eye(N))
+        cm = put("cmodel_2d.json", b"{}")[0]
+        cells = [int(i) for i in np.flatnonzero(f["rep"])]
+
+        class FakeCells:
+            def __init__(self, er):
+                self.rep, self.x = f["rep"], f["x_R"]
+
+            def vec(self, path):
+                return f["x_R"]
+
+        class Hist:        # the flux MnvH1D: three pT bins, a Flux band with the constraint's weights, MINOS hists
+            def GetNbinsX(self):
+                return 3
+
+            def GetBinContent(self, i):
+                return 1.0 + i
+
+            def GetVertErrorBand(self, band):
+                return types.SimpleNamespace(GetUnivWgts=lambda: list(w), GetHist=lambda u: Hist())
+        self.opened = []
+
+        def fake_open(name, *a, **k):
+            self.opened.append(os.path.realpath(str(name)))
+            return types.SimpleNamespace(
+                Get=lambda key: types.SimpleNamespace(GetVal=lambda: 1e20) if key == "POTUsed" else Hist(),
+                Close=lambda: None)
+        for target, attr, value in (
+                (os, "O_NOATIME", getattr(os, "O_NOATIME", 0)), (cbm, "AUDIT", None), (ROOT.TFile, "Open", fake_open),
+                (cbm.OpenAudit.__init__, "__defaults__", ((str(g),),)), (cbm, "GUARDED", (str(g),)),
+                (cbm, "pinned_mat_environment", lambda: {"stub": "the pinned MAT environment"}),
+                (cbm, "PARTB_NPZ", (str(npz_path), hashlib.sha256(npz_path.read_bytes()).hexdigest())),
+                (cbm, "CMODEL_JSON", Path(cm)), (cbm, "c_model", lambda: (np.eye(N), None, {"cells": cells})),
+                (cbm, "section_9_5", lambda *a: {"pass": True, "worst": 0.0}),
+                (ro, "BF", str(g / "bf")), (ro, "NS_R", str(g / "ns")), (ro, "partb_sums", lambda: sums),
+                (ro, "Cells", FakeCells), (ro, "x01", lambda cells_, paths, phi, tag: np.zeros(N)),
+                (ro, "CHECKS", collections.OrderedDict())):
+            p = mock.patch.object(target, attr, value, create=(attr == "O_NOATIME"))
+            p.start()
+            self.addCleanup(p.stop)
+        p = mock.patch.dict(ro.PIN, self.pins)
+        p.start()
+        self.addCleanup(p.stop)
+        p = mock.patch.object(sys, "path", [str(HERE.parents[2] / "nd-unfolding")] + sys.path)   # the stubbed MAT step's
+        p.start()
+        self.addCleanup(p.stop)
+        p = mock.patch.dict(os.environ, {"TMPDIR": str(self.d / "tmp")})
+        p.start()
+        self.addCleanup(p.stop)
+        self.addCleanup(lambda: cbm.AUDIT is not None and cbm.AUDIT.uninstall())   # main never uninstalls it
+
+    def test_main_reads_every_rollup_input_through_noatime_copies(self):
+        out = self.d / "c95.json"
+        with mock.patch("sys.stdout", new=types.SimpleNamespace(write=lambda s: None, flush=lambda: None)):
+            code = self.cbm.main(["control95", "--out", str(out)])
+        rec = json.loads(out.read_text())
+        self.assertEqual(rec["open_audit"]["refused"], [])
+        self.assertEqual({k: rec["inputs"][k] for k in self.pins}, {k: v[1] for k, v in self.pins.items()})
+        self.assertEqual(len([k for k in rec["inputs"] if k.startswith(str(self.g / "bf"))]),
+                         2 * len(self.cbm.rollup().BR.PLAYLISTS))
+        self.assertTrue(self.opened)
+        self.assertFalse([n for n in self.opened if n.startswith(str(self.g))])    # the rollup read only the copies
+        if self.noatime:
+            self.assertEqual((code, rec["verdict"], rec["stop"]), (0, "PASS", []))
+        else:
+            self.assertEqual([x for x in rec["stop"] if not x.startswith("atime moved")], [])
+
+
 @unittest.skipUnless(HAVE, "needs PyROOT (the rollup imports it)")
 class Section95(unittest.TestCase):
     """The control's plumbing on arrays: part B's labels, the comparison against production_cov.npz's keys."""
