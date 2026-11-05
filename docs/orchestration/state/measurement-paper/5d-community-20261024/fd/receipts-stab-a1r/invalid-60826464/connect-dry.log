@@ -1,0 +1,32 @@
+node login27 nproc=244 loadavg 1.87 1.83 2.11
+2026-11-04T23:32:22Z
+connect script sha256 e2fbf89a542ee19d2c45aca92ea3618a3e3780963a6535c4fdabcceee8570015
+RPD job B 60788016: 60788016|COMPLETED|0:0|01:38:11|2026-11-04T03:11:19
+pins record sha256 ad7f21d3f636107c480579cac0a28ecd0a026ec3e828dd8494924e0c6f9a46c7 (expected ad7f21d3f636107c480579cac0a28ecd0a026ec3e828dd8494924e0c6f9a46c7)
+pins record: {'schema': True, 'verdict PASS': True, 'at M_A1': True, '734 files': True, 'npz bkg ratio product': True, 'ratio kind pvl_ratio': True, 'product path': True, 'written after job B ended': True} host dtn01.nersc.gov written 2026-11-04T23:24:59Z
+squeue --me before:
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2194.0            10000.0     17975.3      20000.0
+balance_node_h=2024.7 half=1012.4 price=8.0
+HEAD cc54d86f7ac66c1346fa69e5894b2d2f000fb09c; porcelain --ignored lines before: 0
+binding blobs: 7 checked, 0 mismatches; declaration sha256 6c91c0ccbb8061c0dfe755f2283ecbf0f12ba001737876df09f8882eca4ca2b4; addendum A1 sha256 277f6c799aca808315ce519f427007b7dec5da0c514dc5d0c229841ec01e23b2
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+{"tasks": 128, "out": "/pscratch/sd/j/josephrb/fd-stab-a1-20261104/queue.tsv", "dry": "/pscratch/sd/j/josephrb/fd-stab-a1-20261104/dry.tsv"}
+queue: 128 tasks; dry: 9 tasks: stab_control_stability_00 stab_B2_stability_00 stab_B3a_stability_00 stab_B3b_stability_00 stab_control_closure_nominal stab_B2_closure_nominal stab_B3b_closure_nominal stab_control_closure_closure_nuwro stab_control_closure_A7_mnvtune 
+c6cf05ec4bb4267a5e4be3292f7dfbe49473a2fe57aaafe418530d1f35f1f263  /pscratch/sd/j/josephrb/fd-stab-a1-20261104/queue.tsv
+9ab649b5ed03c196e57f97d09ac1c9df6f65b95428bc9f7b0daec69868d78125  /pscratch/sd/j/josephrb/fd-stab-a1-20261104/dry.tsv
+2026-11-04T23:33:04Z
+sbatch rc=0
+Submitted batch job 60826464
+dry run job 60826464
+60826464 fd_stab_dry PENDING 0:00 1:00 1 regular_1 m3246
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=00:01:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login27:1525716
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+porcelain --ignored lines after: 0
+stab dry submit rc=0
+2026-11-04T23:33:11Z

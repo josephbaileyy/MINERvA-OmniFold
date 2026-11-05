@@ -1,0 +1,11 @@
+**Terminal verdict: B-C and C-N are adequate for their bounded records-inventory purpose after the single focused repair round. No material finding remains.**
+
+I verified all 41 source-inventory identities against baseline `97f1ff8deddddecfad07352ebb5df16377dd8e3c`, all eight tracked ancillary text files and their sizes, 48 playlist metadata transcriptions, 24 baseline-file pins, and all eight archived spectrum candidates against both preservation records.
+
+B-C distinguishes adopted E_R from historical E_U, preserves the axes/cell-order and bin-area conventions, and accounts for POT, flux, background, efficiency/completeness and unfolded yield without asserting unavailable publication-intermediate equality. Its refinement-target distinction is correct. The repair correctly confines the no-signal-fakes refusal to the background-bootstrap stream; E_R’s successful central run does not exercise that guard.
+
+C-N correctly limits F1/C1 to their declared consistency predicates, distinguishes integrated flux from energy spectra and generated from target flux, and leaves runtime spectrum selection and P-F **NEEDS P0**. The repaired F1-consumer citation now points to the actual refusal.
+
+Limits remain explicit: the publication intermediates, full committed F1 JSON and some E_R ingredient readouts are unavailable within the inspected scope. Archived identities do not establish current storage or runtime use. The QUESTION remains prepared and unsent.
+
+This review used local source and metadata reads only: no edits, cluster connection, ROOT open, scientific producer, or repetition of C-R/d1/d2. The new packet was uncommitted during review; this verdict does not make it live evidence, authorize campaigns, establish coverage, or support new publication claims.

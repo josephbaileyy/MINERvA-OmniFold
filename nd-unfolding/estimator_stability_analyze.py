@@ -207,11 +207,13 @@ def closure_products(d: Path, candidate: str, repo: Path) -> dict[str, tuple[np.
         if (m.get("hypothesis") or {}).get("sha256") != expected_pin(hyp, repo):
             raise SystemExit(f"{files[0].name}: hypothesis is not the declared file")
         got_alt = m.get("alternative")
+        # the schema-named closure's file is pvl-ratio/1, read as truth pvl_ratio (ADDENDUM-A1 §1)
+        want_kind = probe.PVL_TRUTH if kind == "SCHEMA" else kind
         if alt is None:
             if got_alt is not None:
                 raise SystemExit(f"{files[0].name}: an alternative the declaration does not name")
         elif got_alt is None or got_alt.get("sha256") != expected_pin(alt, repo) or float(got_alt.get("amplitude")) != amp \
-                or (kind != "SCHEMA" and got_alt.get("truth") != kind):
+                or got_alt.get("truth") != want_kind:
             raise SystemExit(f"{files[0].name}: alternative is not the declared truth")
         if m.get("pseudo_seed") != probe.CLOSURE_SEED or (m.get("development") or {}).get("mc_fraction") != \
                 probe.CLOSURE_MC_FRACTION or m.get("split_key") is None:

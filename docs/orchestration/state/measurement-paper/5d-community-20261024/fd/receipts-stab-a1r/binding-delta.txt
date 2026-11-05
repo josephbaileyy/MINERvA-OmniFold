@@ -1,0 +1,11 @@
+# B4 A1 rerun receipts: receipt-binding inventory delta and power test (2026-11-05, limitation-resolver)
+# delta: receipt_inventory() via verify_hash_bindings' own collect(), with and without docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-stab-a1r
+with 158 e718853bc5b282240e089f56f707f2a7e76fc623aebf6eb6e353ac8ae12cdc37
+without 157 9abec558ae75063890fe50ed98c44787c597761719d8d09e87802c64cfe98d9d
+expected 157 9abec558ae75063890fe50ed98c44787c597761719d8d09e87802c64cfe98d9d
+ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/s1/PRESERVE-INVENTORY.sha256 cde96ca7
+# the added pair comes from pins/pins-check.json's "inventory" {path, sha256}: the pins check's own record of the inventory it read
+# power test, in a throwaway worktree of origin/main with these receipts copied in: one hex digit of that sha256 flipped (cde96ca7 -> ede96ca7):
+flipped rc=1 (verifier exit)
+MISMATCH docs/orchestration/state/measurement-paper/5d-community-20261024/s1/PRESERVE-INVENTORY.sha256
+# intact (unflipped) in the same worktree: no MISMATCH; only the inventory constant differs (observed 158 / e718853b), which this change moves
