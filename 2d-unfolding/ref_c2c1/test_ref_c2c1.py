@@ -64,13 +64,6 @@ class Ibu(unittest.TestCase):
         for k in (1, 5, 20):
             np.testing.assert_allclose(fixed[k], T, rtol=1e-14)
 
-    def test_c_sim_fires_on_a_chain_defect(self):
-        M = np.array([[8.0, 1.0], [2.0, 6.0]])
-        cap = C.Capture(T=np.array([10.0, 10.0]), M=M)
-        self.assertTrue(C.c_sim(cap, C.dagostini, KS, 1e-9)["pass"])
-        broken = lambda M, T, y, ks: {k: v * (1 + 1e-6) for k, v in C.dagostini(M, T, y, ks).items()}  # noqa: E731
-        self.assertFalse(C.c_sim(cap, broken, KS, 1e-9)["pass"])
-
     @unittest.skipUnless(ROOUNFOLD, "C-ROO needs libRooUnfold.so (REF_C2C1_ROOUNFOLD)")
     def test_roounfold_bayes_is_the_same_update(self):
         rng = np.random.default_rng(3)
@@ -85,11 +78,11 @@ class Ibu(unittest.TestCase):
 class Driver(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.out = TD / "units"
-        for u in (("er", None), ("c2_central", None), ("c1_central", None)):
-            assert run(u, cls.out) == 0
+        cls.out = TD / "units"  # each test asserts what it needs, so a defect fails the named test, not the class
+        cls.rc = {u[0]: run(u, cls.out) for u in (("er", None), ("c2_central", None), ("c1_central", None))}
 
     def test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam(self):
+        self.assertEqual(self.rc, {"er": 0, "c2_central": 0, "c1_central": 0})
         z = np.load(self.out / "c2_central.npz")
         m = json.loads(str(z["meta"]))
         self.assertTrue(m["controls"]["C-SIM"]["pass"])
@@ -97,10 +90,63 @@ class Driver(unittest.TestCase):
         x = z["xsec"][list(z["ks"]).index(CFG["c2"]["iterations"]["primary"])]
         self.assertLess(R.rel(x, h), 1e-12)
         self.assertAlmostEqual(float(z["y"].sum()), m["measured_weights_sum"], places=9)  # y is the driver's own w~
+        y_er = np.load(self.out / "er.npz")["y"]  # E_R's own OmniFold call received the same refined histogram
+        self.assertLess(R.rel(z["y"], y_er), 1e-8)
         self.assertEqual(len(z["ks"]), len(KS))
         self.assertFalse(np.array_equal(z["xsec"][0], z["xsec"][-1]))  # K moves the result
 
+    def test_c_sim_goes_through_the_full_chain_to_the_full_truth(self):
+        cap = C.run_driver(DRIVER, OHF, C.resolve_argv(CFG, None), TD / "csim.root",
+                           ibu={"unfolder": C.dagostini, "ks": KS, "primary": 10})
+        good = C.c_sim(DRIVER, cap, C.dagostini, KS, 1e-9)
+        self.assertTrue(good["pass"], good)
+        self.assertGreater(good["cells_covered"], 50)
+        eff = lambda M, T, y, ks: {k: v / np.where(M.sum(0) > 0, M.sum(0) / np.where(T > 0, T, 1), 1)  # noqa: E731
+                                   for k, v in C.dagostini(M, T, y, ks).items()}  # the efficiency applied twice
+        self.assertFalse(C.c_sim(DRIVER, cap, eff, KS, 1e-9)["pass"])
+        tiny = lambda M, T, y, ks: {k: v * (1 + 1e-6) for k, v in C.dagostini(M, T, y, ks).items()}  # noqa: E731
+        self.assertFalse(C.c_sim(DRIVER, cap, tiny, KS, 1e-9)["pass"])  # the tolerance, not only gross defects
+        # at C-SIM's fixed point every factor is exactly 1, so a mis-indexed factor is invisible there by construction:
+        self.assertEqual(C.c_sim(DRIVER, cap, C.dagostini, KS, 1e-9)["pass"], True)
+
+    def test_c_fill_catches_a_factor_from_the_neighbouring_bin(self):
+        out = TD / "cfill"
+        self.assertEqual(run(("c2_central", None), out), 0)
+        self.assertTrue(json.loads(str(np.load(out / "c2_central.npz")["meta"]))["controls"]["C-FILL"]["pass"])
+        real = C.event_factors
+        shifted = lambda u, T, tin: real(u, T, np.where(tin >= 0, np.minimum(tin + 1, T.size - 1), tin))  # noqa: E731
+        for tag, bad in (("shifted", shifted), ("tiny", lambda u, T, tin: real(u, T, tin) * (1 + 1e-9))):
+            with self.subTest(defect=tag), mock.patch.object(C, "event_factors", bad):
+                d = TD / f"cfill_{tag}"
+                self.assertEqual(run(("c2_central", None), d), C.RC_CONTROL)
+                self.assertFalse(json.loads(str(np.load(d / "c2_central.npz")["meta"]))["controls"]["C-FILL"]["pass"])
+                self.assertEqual(json.loads((d / "c2_central.done").read_text())["verdict"], "FAIL")
+
+    def test_c_in_reads_the_input_digests_at_open_time(self):
+        cfg = copy.deepcopy(CFG)
+        cfg["inputs"].update(CV_sha256=C.sha256(OMNI), MC_sha256=C.sha256(FLUX))
+        self.assertEqual(C.check_inputs(cfg), {"CV": C.sha256(OMNI), "MC": C.sha256(FLUX)})
+        for key in ("CV_sha256", "MC_sha256"):
+            bad = copy.deepcopy(cfg)
+            bad["inputs"][key] = "0" * 64
+            with self.subTest(key=key), self.assertRaises(C.GateFailure):
+                C.check_inputs(bad)
+        tmp = TD / "cin"
+        tmp.mkdir(exist_ok=True)
+        conf = tmp / "config.json"
+        bad = copy.deepcopy(cfg)
+        bad["inputs"]["CV_sha256"] = "0" * 64
+        conf.write_text(json.dumps(bad))
+        with mock.patch.object(C, "CONFIG", conf), mock.patch.object(C, "check_code", lambda c: None):
+            self.assertEqual(C.main(["--unit", "er", "--out", str(tmp / "out")]), C.RC_GATE)
+            self.assertFalse((tmp / "out").exists())
+            conf.write_text(json.dumps(cfg))
+            self.assertEqual(C.main(["--unit", "er", "--out", str(tmp / "out")]), 0)
+        self.assertEqual(json.loads(str(np.load(tmp / "out" / "er.npz")["meta"]))["inputs_sha256"],
+                         {"CV": C.sha256(OMNI), "MC": C.sha256(FLUX)})
+
     def test_er_is_the_driver_unchanged(self):
+        self.assertEqual(self.rc["er"], 0)
         out = TD / "plain.root"
         argv = ["re2_driver.py", *C.resolve_argv(CFG, None), "--out", str(out)]
         code = (f"import sys, runpy; sys.path.insert(0, {str(C.HELPER)!r}); import omnifold; sys.argv = {argv!r}; "
@@ -109,6 +155,7 @@ class Driver(unittest.TestCase):
         self.assertLess(R.rel(R.th2(self.out / "er.root"), R.th2(out)), 1e-8)
 
     def test_c1_differs_from_e_r_by_exactly_the_four_keys(self):
+        self.assertEqual(self.rc["er"], 0)
         er, c1 = R.lgbm(self.out, "er"), R.lgbm(self.out, "c1_central")
         res = R.c_set(er, c1, CFG["c1"]["deterministic_keys"])
         self.assertTrue(res["pass"], res)
@@ -139,6 +186,7 @@ class Driver(unittest.TestCase):
         self.assertIn("fakes", str(cm.exception))  # the driver's own guard (re2_driver.py:1920-1922), not another error
 
     def test_a_unit_without_a_pass_marker_is_never_done(self):
+        self.assertEqual(self.rc["c2_central"], 0)
         out = TD / "done"
         shutil.copytree(self.out, out, dirs_exist_ok=True)
         self.assertEqual(run(("c2_central", None), out), 0)  # PASS: skipped
@@ -221,9 +269,11 @@ class Fixture:
         write_th2(e / "ER.root", self.x_er, refinement=ref)
         shutil.copy(e / "ER.root", run / "er.root")
         target = paper if toward_paper else self.x_er * (1 + ibu_shift)
-        np.savez(run / "c2_central.npz", ks=np.array(KS), xsec=np.tile(target, (len(KS), 1)),
-                 meta=json.dumps({"measured_weights_sum": 99.0, "controls": {"C-SIM": {"pass": True},
-                                                                           "C-ROO": {"pass": True}}}))
+        self.inputs = {k: CFG["inputs"][f"{k}_sha256"] for k in ("CV", "MC")}
+        self.y = rng.uniform(1, 2, 224)
+        np.savez(run / "c2_central.npz", ks=np.array(KS), xsec=np.tile(target, (len(KS), 1)), y=self.y,
+                 meta=json.dumps({"measured_weights_sum": 99.0, "inputs_sha256": self.inputs,
+                                  "controls": {"C-SIM": {"pass": True}, "C-ROO": {"pass": True}}}))
         write_th2(run / "c2_central.root", target, refinement=ref)
         noise = lambda: 0.005 * paper * rng.standard_normal(224)  # noqa: E731
         for b in range(1, n_c2 + 1):
@@ -233,9 +283,11 @@ class Fixture:
             np.savez(run / f"c2_replica_b{b}.npz", ks=np.array(KS), xsec=np.tile(cb, (len(KS), 1)), meta="{}")
         lg = [{"kind": "classifier", "params": {"n_estimators": 100, "random_state": 42}}]
         keys = {k: True for k in CFG["c1"]["deterministic_keys"]}
-        np.savez(run / "er.npz", lgbm_params=np.array(json.dumps(lg)), meta="{}")
+        im = json.dumps({"inputs_sha256": self.inputs})
+        np.savez(run / "er.npz", lgbm_params=np.array(json.dumps(lg)), y=self.y, meta=im)
         np.savez(run / "c1_central.npz", lgbm_params=np.array(json.dumps([{**lg[0], "params": {**lg[0]["params"],
-                                                                                                **keys}}])), meta="{}")
+                                                                                                **keys}}])),
+                 y=self.y, meta=im)
         write_th2(run / "c1_central.root", self.x_er)
         for b in range(1, n_c1 + 1):
             write_th2(run / f"c1_replica_b{b}.root", R.th2(e / f"S1_{b:03d}.root") + 0.3 * noise())
@@ -343,12 +395,19 @@ class Controls(unittest.TestCase):
             "C-PUB": lambda fx: fx.cfg["publication"]["c_pub"].update(chi2=fx.cfg["publication"]["c_pub"]["chi2"] * 1.001),
             "C-SET": lambda fx: np.savez(fx.run / "c1_central.npz", lgbm_params=np.array(json.dumps(
                 [{"kind": "classifier", "params": {"n_estimators": 100, "random_state": 42, "deterministic": True}}])),
-                meta="{}"),
+                y=fx.y, meta=json.dumps({"inputs_sha256": fx.inputs})),
             "C-REF": lambda fx: write_th2(fx.run / "c2_central.root", fx.x_er, refinement={
                 "params": {"n_estimators": 400}, "signed_sum": 100.5, "refined_sum": 99.0, "clipped_fraction": 0.01}),
             "C-SIM": lambda fx: np.savez(fx.run / "c2_central.npz", ks=np.array(KS), xsec=np.tile(fx.x_er, (len(KS), 1)),
-                                         meta=json.dumps({"measured_weights_sum": 99.0, "controls": {
-                                             "C-SIM": {"pass": False}, "C-ROO": {"pass": True}}})),
+                                         y=fx.y, meta=json.dumps({"measured_weights_sum": 99.0, "inputs_sha256": fx.inputs,
+                                                                  "controls": {"C-SIM": {"pass": False},
+                                                                               "C-ROO": {"pass": True}}})),
+            "C-REF per bin": lambda fx: np.savez(fx.run / "er.npz", lgbm_params=np.array(json.dumps(
+                [{"kind": "classifier", "params": {"n_estimators": 100, "random_state": 42}}])), y=fx.y * (1 + 1e-6),
+                meta=json.dumps({"inputs_sha256": fx.inputs})),
+            "C-IN units": lambda fx: np.savez(fx.run / "er.npz", lgbm_params=np.array(json.dumps(
+                [{"kind": "classifier", "params": {"n_estimators": 100, "random_state": 42}}])), y=fx.y,
+                meta=json.dumps({"inputs_sha256": {**fx.inputs, "CV": "0" * 64}})),
             "done": lambda fx: (fx.run / "c2_replica_b7.done").write_text(json.dumps({"verdict": "FAIL"})),
             "C-IN": lambda fx: fx.cfg["e_r"].update(central_sha256="0" * 64),
         }
@@ -357,7 +416,7 @@ class Controls(unittest.TestCase):
             try:
                 tamper(fx)
                 with self.subTest(control=name):
-                    self.stopped(fx, name)
+                    self.stopped(fx, name.split(" ")[0])
             finally:
                 fx.close()
 

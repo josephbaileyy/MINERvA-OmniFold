@@ -213,7 +213,11 @@ def read(cfg: dict, run: Path, cells: Path, cells_sha: str, out: Path) -> dict:
     except (rc.CellIdentityError, TypeError, ValueError) as e:
         controls["C-CELLS"] = {"pass": False, "why": str(e)[:300]}
     e_r = Path(cfg["e_r"]["central"])
-    controls["C-IN"] = {"pass": C.sha256(e_r) == cfg["e_r"]["central_sha256"]}
+    want_in = {k: cfg["inputs"][f"{k}_sha256"] for k in ("CV", "MC")}
+    unit_in = {u: meta(run, u).get("inputs_sha256") for u in ("er", "c2_central", "c1_central")}
+    controls["C-IN"] = {"pass": bool(C.sha256(e_r) == cfg["e_r"]["central_sha256"]
+                                     and all(v == want_in for v in unit_in.values())),
+                        "units_inputs_ok": {u: v == want_in for u, v in unit_in.items()}}
     x_er = th2(e_r)
     d_er, ndf = pub.distance(x_er)
     c_pub = cfg["publication"]["c_pub"]
@@ -227,10 +231,14 @@ def read(cfg: dict, run: Path, cells: Path, cells_sha: str, out: Path) -> dict:
     fit = all(abs(r.get(k, np.inf) / ref_e.get(k, np.nan) - 1) <= rd["e_r_rtol"] for r in (ref_r, ref_c2)
               for k in ("refined_sum", "clipped_fraction") if ref_e.get(k))
     w_sum = meta(run, "c2_central").get("measured_weights_sum", np.nan)
+    y_c2 = np.asarray(np.load(run / "c2_central.npz", allow_pickle=False)["y"], float)
+    y_er = np.asarray(np.load(run / "er.npz", allow_pickle=False)["y"], float)
+    d_bin = rel(y_c2, y_er)
     controls["C-REF"] = {"a_deterministic_exact": bool(det), "b_fitted_1e-8": bool(fit),
                          "c_e_r_reproduced": controls["C-CV"]["pass"],
                          "d_measured_weights_vs_refined_sum": abs(w_sum / ref_e.get("refined_sum", np.nan) - 1),
-                         "pass": bool(det and fit and controls["C-CV"]["pass"]
+                         "d_measured_histogram_vs_e_r_per_bin": d_bin,
+                         "pass": bool(det and fit and controls["C-CV"]["pass"] and d_bin <= rd["e_r_rtol"]
                                       and abs(w_sum / ref_e.get("refined_sum", np.nan) - 1) <= rd["e_r_rtol"])}
     controls["C-SET"] = c_set(lgbm(run, "er"), lgbm(run, "c1_central"), cfg["c1"]["deterministic_keys"])
     c2m = meta(run, "c2_central").get("controls", {})

@@ -40,7 +40,8 @@
   "iterations": {"scan": [1, 2, 3, 4, 5, 10, 15, 20], "primary": 10, "second": 5},
   "unfolder": "roounfold",
   "c_sim_rtol": 1e-9,
-  "c_roo_rtol": 1e-9
+  "c_roo_rtol": 1e-9,
+  "c_fill_rtol": 1e-12
  },
  "c1": {
   "deterministic_keys": ["bin_construct_sample_cnt", "deterministic", "force_row_wise", "num_threads"],

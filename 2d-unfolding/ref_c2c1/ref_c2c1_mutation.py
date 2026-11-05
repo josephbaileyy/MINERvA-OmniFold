@@ -19,7 +19,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TEST = HERE / "test_ref_c2c1.py"
 D, R = "ref_c2c1.py", "ref_c2c1_read.py"
-EXPECTED_TESTS = 17  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
+EXPECTED_TESTS = 19  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
 MUTATIONS = [
     # the IBU seam and the driver
     ("IBU's per-event factor not unfolded/prior", D, "    factor = np.divide(u, T, out=np.ones_like(u), where=T > 0)",
@@ -28,8 +28,25 @@ MUTATIONS = [
      "y = np.bincount(rm[rm >= 0], weights=np.asarray(w_meas, float)[rm >= 0], minlength=n)",
      "y = np.bincount(rm[rm >= 0], minlength=n).astype(float)",
      "Driver.test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam"),
-    ("C-SIM's tolerance loosened", D, "    return {\"max_rel\": worst, \"pass\": bool(worst <= rtol and",
-     "    return {\"max_rel\": worst, \"pass\": bool(worst <= 1.0 and", "Ibu.test_c_sim_fires_on_a_chain_defect"),
+    ("C-SIM's tolerance loosened", D, '"pass": bool(worst <= rtol and covered.any())}',
+     '"pass": bool(worst <= 1e-3 and covered.any())}', "Driver.test_c_sim_goes_through_the_full_chain_to_the_full_truth"),
+    # the audit's K1-K3 (the director, 2026-11-05)
+    ("the efficiency applied twice", D,
+     "        u = np.divide(u * (R.T @ ratio), eff, out=np.zeros_like(u), where=eff > 0)",
+     "        u = np.divide(u * (R.T @ ratio), eff * eff, out=np.zeros_like(u), where=eff > 0)",
+     "Driver.test_c_sim_goes_through_the_full_chain_to_the_full_truth"),
+    ("a per-event factor from the neighbouring bin", D,
+     "    return np.where(tin >= 0, factor[np.clip(tin, 0, None)], 1.0)",
+     "    return np.where(tin >= 0, factor[np.clip(tin + 1, 0, factor.size - 1)], 1.0)",
+     "Driver.test_c_fill_catches_a_factor_from_the_neighbouring_bin"),
+    ("C-FILL's tolerance loosened", D, 'fill_rel <= c2["c_fill_rtol"]', "fill_rel <= 1e-6",
+     "Driver.test_c_fill_catches_a_factor_from_the_neighbouring_bin"),
+    ("C-IN's input digests unchecked", D, '        if got != cfg["inputs"][f"{key}_sha256"]:', "        if False:",
+     "Driver.test_c_in_reads_the_input_digests_at_open_time"),
+    ("the units' verified inputs not read", R, "                                     and all(v == want_in for v in unit_in.values())),",
+     "                                     and True),", "Controls.test_each_control_stops_the_read"),
+    ("C-REF's per-bin tie dropped", R, 'and controls["C-CV"]["pass"] and d_bin <= rd["e_r_rtol"]', 'and controls["C-CV"]["pass"]',
+     "Controls.test_each_control_stops_the_read"),
     ("c1's keys not merged", D, "                params = {**params, **(extra or {})}", "                params = dict(params)",
      "Driver.test_c1_differs_from_e_r_by_exactly_the_four_keys"),
     ("a unit skipped whatever its verdict", D, '        if verdict == "PASS":\n            return 0',
@@ -68,8 +85,8 @@ MUTATIONS = [
      "Controls.test_each_control_stops_the_read"),
     ("a unit without a PASS marker read", R, '    controls["done"] = {"pass": not not_done,',
      '    controls["done"] = {"pass": True,', "Controls.test_each_control_stops_the_read"),
-    ("C-IN unchecked", R, '    controls["C-IN"] = {"pass": C.sha256(e_r) == cfg["e_r"]["central_sha256"]}',
-     '    controls["C-IN"] = {"pass": True}', "Controls.test_each_control_stops_the_read"),
+    ("C-IN's E_R digest unchecked", R, '    controls["C-IN"] = {"pass": bool(C.sha256(e_r) == cfg["e_r"]["central_sha256"]',
+     '    controls["C-IN"] = {"pass": bool(True', "Controls.test_each_control_stops_the_read"),
     ("C-CELLS passes a different set", R, '        controls["C-CELLS"] = {"pass": False, "why": str(e)[:300]}',
      '        controls["C-CELLS"] = {"pass": True, "why": str(e)[:300]}',
      "Controls.test_the_cells_are_bound_index_by_index"),

@@ -67,6 +67,28 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def sha256_noatime(path: Path) -> str:
+    """sha256 read through O_NOATIME where the platform has it (Linux; the inputs' purge clocks are not touched)."""
+    fd = os.open(str(path), os.O_RDONLY | getattr(os, "O_NOATIME", 0))
+    h = hashlib.sha256()
+    with os.fdopen(fd, "rb") as fh:
+        while block := fh.read(1 << 24):
+            h.update(block)
+    return h.hexdigest()
+
+
+def check_inputs(cfg: dict) -> dict:
+    """C-IN at open time: the CV omnifile and the flux file equal their pins (config.json inputs) before the driver
+    opens them; returns what was verified, which every unit records."""
+    verified = {}
+    for key in ("CV", "MC"):
+        got = sha256_noatime(Path(cfg["inputs"][key]))
+        if got != cfg["inputs"][f"{key}_sha256"]:
+            raise GateFailure(f"input {key} digest {got[:12]} differs from config.json")
+        verified[key] = got
+    return verified
+
+
 def check_code(cfg: dict) -> None:
     for rel, digest in cfg["code_sha256"].items():
         if sha256(REPO / rel) != digest:
@@ -160,6 +182,24 @@ def roounfold_bayes(M: np.ndarray, T: np.ndarray, y: np.ndarray, ks, lib: str) -
     return out
 
 
+def event_factors(u: np.ndarray, T: np.ndarray, tin: np.ndarray) -> np.ndarray:
+    """IBU's per-event step-2 factor: unfolded / prior in each truth-passing event's truth bin (1 outside the grid)."""
+    factor = np.divide(u, T, out=np.ones_like(u), where=T > 0)
+    return np.where(tin >= 0, factor[np.clip(tin, 0, None)], 1.0)
+
+
+def filled(driver, tin: np.ndarray, w_in: np.ndarray, step2: np.ndarray, name: str):
+    """The driver's hUnfold2D fill (ratio x w_truth per truth-passing event, re2_driver.py:2398-2400) as a TH2D."""
+    import ROOT
+    nx, ny = len(driver.PT_EDGES) - 1, len(driver.PZ_EDGES) - 1
+    ok = tin >= 0
+    v = np.bincount(tin[ok], weights=(step2 * w_in)[ok], minlength=nx * ny)
+    h = ROOT.TH2D(name, "", nx, np.asarray(driver.PT_EDGES, float), ny, np.asarray(driver.PZ_EDGES, float))
+    for g in range(nx * ny):
+        h.SetBinContent(g // ny + 1, g % ny + 1, v[g])
+    return h
+
+
 def th2_vector(h, nx: int, ny: int) -> np.ndarray:
     return np.array([h.GetBinContent(ix, iy) for ix in range(1, nx + 1) for iy in range(1, ny + 1)])
 
@@ -200,7 +240,15 @@ def run_driver(driver, ohf, argv: list[str], out_root: Path, *, ibu: dict | None
         capture.setdefault("extract", (a, k))  # the first call is hXSec2D's (re2_driver.py:2479)
         return real_extract(hUnfold, *a, **k)
 
-    patches = [mock.patch.object(driver, "extract_cross_section_2d", extract)]
+    real_completeness = driver.compute_omnifold_completeness_2d
+
+    def completeness(*a, **k):
+        out = real_completeness(*a, **k)
+        capture.setdefault("completeness", out)  # (hCompleteness, hOFInputTruth, hOFTruthDenom)
+        return out
+
+    patches = [mock.patch.object(driver, "extract_cross_section_2d", extract),
+               mock.patch.object(driver, "compute_omnifold_completeness_2d", completeness)]
     if ibu is not None:
         def omnifold(MCgen, MCreco, measured, MC_pass_reco_mask, MC_pass_truth_mask, measured_pass_reco_mask,
                      num_iterations, MCgen_weights=None, MCreco_weights=None, measured_weights=None, **_):
@@ -208,13 +256,25 @@ def run_driver(driver, ohf, argv: list[str], out_root: Path, *, ibu: dict | None
                                         MC_pass_reco_mask, MC_pass_truth_mask, MCgen_weights, MCreco_weights,
                                         measured_weights, driver.PT_EDGES, driver.PZ_EDGES)
             traj = ibu["unfolder"](M, T, y, ibu["ks"])
-            capture.update(T=T, M=M, y=y, traj=traj, measured_weights=np.asarray(measured_weights, float).copy())
-            u = traj[ibu["primary"]]
-            factor = np.divide(u, T, out=np.ones_like(u), where=T > 0)
-            tin = t[np.asarray(MC_pass_truth_mask, bool)]
-            step2 = np.where(tin >= 0, factor[np.clip(tin, 0, None)], 1.0)
+            pt_mask = np.asarray(MC_pass_truth_mask, bool)
+            tin = t[pt_mask]
+            capture.update(T=T, M=M, y=y, traj=traj, tin=tin, w_in=np.asarray(MCgen_weights, float)[pt_mask],
+                           measured_weights=np.asarray(measured_weights, float).copy())
+            step2 = event_factors(traj[ibu["primary"]], T, tin)
             return np.ones(int(np.asarray(MC_pass_reco_mask, bool).sum())), step2
         patches.append(mock.patch.object(ohf, "omnifold", staticmethod(omnifold)))
+    else:
+        real_omnifold = ohf.omnifold
+
+        def observed(MCgen, MCreco, measured, MC_pass_reco_mask, MC_pass_truth_mask, *a, **k):
+            """er and c1: the driver's own OmniFold call, unchanged; its refined measured weights are binned on the
+            way in, so C-REF (d) can compare c2's measured histogram with E_R's bin by bin."""
+            _, _, y, _ = binned_problem(np.asarray(MCgen), np.asarray(MCreco), np.asarray(measured), MC_pass_reco_mask,
+                                        MC_pass_truth_mask, k.get("MCgen_weights"), k.get("MCreco_weights"),
+                                        k.get("measured_weights"), driver.PT_EDGES, driver.PZ_EDGES)
+            capture["y"] = y
+            return real_omnifold(MCgen, MCreco, measured, MC_pass_reco_mask, MC_pass_truth_mask, *a, **k)
+        patches.append(mock.patch.object(ohf, "omnifold", staticmethod(observed)))
     patches += recording_lightgbm(capture, extra)
     saved = sys.argv
     with contextlib.ExitStack() as stack:
@@ -246,14 +306,34 @@ def xsec_at_every_k(driver, capture: Capture, ks) -> dict:
     return out
 
 
-def c_sim(capture: Capture, unfolder, ks, rtol: float) -> dict:
-    """C-SIM: IBU on the MC's own reco expectation (M summed over truth) returns the MC truth at every K; with
-    prior = truth and measured = R T exactly, the truth is IBU's fixed point."""
-    T, M = capture["T"], capture["M"]
+def c_sim(driver, capture: Capture, unfolder, ks, rtol: float) -> dict:
+    """C-SIM through the full chain (the declaration's "through the full chain"; the audit's K1): IBU on the MC's own
+    reco expectation (M summed over truth), the seam's per-event factors (``event_factors``), the driver's fill and
+    the driver's recorded extraction (completeness, flux, target, POT, area), against the MC's FULL-truth cross
+    section, the driver's own truth denominator (hOFTruthDenom2D) through the same normalisation with unit
+    completeness. With prior = truth and measured = R T exactly, IBU's efficiency and the extraction's completeness
+    must return the full truth at every K, to ``rtol``, on every cell the extraction covers (completeness > 0). A
+    double efficiency correction or a mis-indexed factor moves it."""
+    T, M, tin, w_in = capture["T"], capture["M"], capture["tin"], capture["w_in"]
+    a, k = capture["extract"]
+    h_comp, _, h_den = capture["completeness"]
+    nx, ny = len(driver.PT_EDGES) - 1, len(driver.PZ_EDGES) - 1
+    unit = h_comp.Clone("ref_csim_unit")
+    for ix in range(1, nx + 1):
+        for iy in range(1, ny + 1):
+            unit.SetBinContent(ix, iy, 1.0)
+    ref = th2_vector(capture["real_extract"](h_den, unit, *a[1:], **k), nx, ny)
+    covered = th2_vector(h_comp, nx, ny) > 0
     traj = unfolder(M, T, M.sum(axis=1), ks)
-    nz = T > 0
-    worst = max(float(np.max(np.abs(traj[K][nz] / T[nz] - 1))) for K in ks)
-    return {"max_rel": worst, "pass": bool(worst <= rtol and all(np.all(traj[K][~nz] == 0) for K in ks))}
+    worst = 0.0
+    for K in ks:
+        h = filled(driver, tin, w_in, event_factors(traj[K], T, tin), f"ref_csim_K{K}")
+        x = th2_vector(capture["real_extract"](h, *a, **k), nx, ny)
+        nz = covered & (ref != 0)
+        if np.any(x[covered & (ref == 0)] != 0):
+            return {"max_rel": float("inf"), "pass": False}
+        worst = max(worst, float(np.max(np.abs(x[nz] / ref[nz] - 1))) if nz.any() else 0.0)
+    return {"max_rel": worst, "cells_covered": int(covered.sum()), "pass": bool(worst <= rtol and covered.any())}
 
 
 # ------------------------------------------------------------------------------------------- units
@@ -311,7 +391,7 @@ def deterministic_keys(cfg: dict) -> dict:
     return extra
 
 
-def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None) -> int:
+def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None, inputs_verified: dict | None = None) -> int:
     """One unit; its done-marker carries its control verdict, and only a PASS unit is skipped on a rerun."""
     name = unit_name(u)
     root, npz, marker = out / f"{name}.root", out / f"{name}.npz", out / f"{name}.done"
@@ -326,7 +406,8 @@ def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None) -> int:
     argv = resolve_argv(cfg, u[1])
     meta = {"schema": "ref-c2c1-unit/1", "unit": name, "argv": argv, "bootstrap_seed": u[1],
             "runner_sha256": sha256(Path(__file__).resolve()), "config_sha256": sha256(CONFIG),
-            "code_sha256": cfg["code_sha256"], "slurm_job": os.environ.get("SLURM_JOB_ID")}
+            "code_sha256": cfg["code_sha256"], "slurm_job": os.environ.get("SLURM_JOB_ID"),
+            "inputs_sha256": inputs_verified}
     controls = {}
     if u[0].startswith("c2"):
         c2 = cfg["c2"]
@@ -337,10 +418,23 @@ def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None) -> int:
         xs = xsec_at_every_k(driver, cap, ks)
         arrays = {"ks": np.array(ks), "xsec": np.array([xs[K] for K in ks]), "unfolded": np.array([cap["traj"][K] for K in ks]),
                   "T": cap["T"], "y": cap["y"]}
+        # C-FILL: the driver's own per-event fill and extraction (hXSec2D, written at the primary K) against the
+        # recorded extraction of IBU's unfolded vector, on the data, where the factors are not 1; a mis-indexed or
+        # mis-scaled per-event factor moves it. (C-SIM's fixed point has every factor exactly 1, so it cannot.)
+        import ROOT
+        f = ROOT.TFile.Open(str(root))
+        nx, ny = len(driver.PT_EDGES) - 1, len(driver.PZ_EDGES) - 1
+        own = th2_vector(f.Get("hXSec2D"), nx, ny)
+        f.Close()
+        prim = xs[c2["iterations"]["primary"]]
+        nz = prim != 0
+        fill_rel = float(np.max(np.abs(own[nz] / prim[nz] - 1))) if nz.any() else 0.0
+        controls["C-FILL"] = {"max_rel": fill_rel,
+                              "pass": bool(fill_rel <= c2["c_fill_rtol"] and np.all(own[~nz] == 0))}
         meta["measured_weights_sha256"] = hashlib.sha256(cap["measured_weights"].tobytes()).hexdigest()
         meta["measured_weights_sum"] = float(cap["measured_weights"].sum())
         if u[0] == "c2_central":
-            controls["C-SIM"] = c_sim(cap, dagostini, ks, c2["c_sim_rtol"])
+            controls["C-SIM"] = c_sim(driver, cap, dagostini, ks, c2["c_sim_rtol"])
             if unfolder is None:  # C-ROO: RooUnfoldBayes against the same update in numpy, on the data
                 ref = dagostini(cap["M"], cap["T"], cap["y"], ks)
                 worst = max(float(np.max(np.abs(cap["traj"][K] - ref[K]) / np.maximum(np.abs(ref[K]), 1e-300)))
@@ -349,7 +443,7 @@ def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None) -> int:
     else:
         extra = deterministic_keys(cfg) if u[0].startswith("c1") else None
         cap = run_driver(driver, ohf, argv, root, extra=extra)
-        arrays = {"lgbm_params": np.array(json.dumps(cap.get("lgbm", [])))}
+        arrays = {"lgbm_params": np.array(json.dumps(cap.get("lgbm", []))), "y": cap["y"]}
         meta["extra_keys"] = extra
     meta["controls"] = controls
     meta["seconds"] = round(time.time() - t0, 3)
@@ -375,16 +469,14 @@ def main(argv=None) -> int:
         return 2
     try:
         check_code(cfg)
-        for key in ("CV", "MC"):
-            if sha256(Path(cfg["inputs"][key])) != cfg["inputs"][f"{key}_sha256"]:
-                raise GateFailure(f"input {key} digest differs from config.json")
+        verified = check_inputs(cfg)
         driver, ohf = load_driver()
-    except GateFailure as e:
+    except (GateFailure, OSError) as e:
         print(f"refusing: {e}", file=sys.stderr)
         return RC_GATE
     rc = 0
     for u in units:
-        rc = rc or run_unit(driver, ohf, cfg, u, a.out)
+        rc = rc or run_unit(driver, ohf, cfg, u, a.out, inputs_verified=verified)
     return rc
 
 
