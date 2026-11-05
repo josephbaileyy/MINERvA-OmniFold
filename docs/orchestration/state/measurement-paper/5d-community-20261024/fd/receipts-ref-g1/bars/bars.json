@@ -1,0 +1,85 @@
+{
+ "schema": "ref-g1-bars/1",
+ "quantile_levels": [
+  0.95,
+  0.997
+ ],
+ "bars": [
+  28.12141330368751,
+  39.04213817820935
+ ],
+ "sensitivity_stat_only_null": [
+  44.583581151886946,
+  69.40843228794509
+ ],
+ "draws": 1000000,
+ "seed": 20261104,
+ "n_replicas": 50,
+ "flux_universes": 100,
+ "fixed_bands": [
+  "2p2h",
+  "AGKYxF1pi",
+  "AhtBY",
+  "BhtBY",
+  "CCQEPauliSupViaKF",
+  "CV1uBY",
+  "CV2uBY",
+  "EtaNCEL",
+  "FrAbs_N",
+  "FrAbs_pi",
+  "FrCEx_N",
+  "FrCEx_pi",
+  "FrElas_N",
+  "FrElas_pi",
+  "FrInel_N",
+  "FrPiProd_N",
+  "FrPiProd_pi",
+  "GEANT_Neutron",
+  "GEANT_Pion",
+  "GEANT_Proton",
+  "HighQ2",
+  "LowQ2",
+  "MFP_N",
+  "MFP_pi",
+  "MaCCQE",
+  "MaNCEL",
+  "MaRES",
+  "MinosEfficiency",
+  "MvRES",
+  "NormDISCC",
+  "NormNCRES",
+  "RDecBR1gamma",
+  "Rvn1pi",
+  "Rvn2pi",
+  "Rvp2pi",
+  "Theta_Delta2Npi",
+  "VecFFCCQEshape"
+ ],
+ "norm_fraction": 0.014,
+ "self_check": {
+  "law": "(50-1)*16/(50-16) F(16, 34)",
+  "draws": 1000000,
+  "seed": 20261105,
+  "rows": [
+   {
+    "level": 0.95,
+    "law_quantile": 45.00081176792292,
+    "empirical_cdf_at_law_quantile": 0.949755,
+    "tolerance": 0.0008717797887081351,
+    "pass": true
+   },
+   {
+    "level": 0.997,
+    "law_quantile": 70.57556451125463,
+    "empirical_cdf_at_law_quantile": 0.996993,
+    "tolerance": 0.00021876014262200516,
+    "pass": true
+   }
+  ],
+  "pass": true
+ },
+ "products_digest": "574fecea3d13d24e376c28429fe94cb083afcc7d802e4e981dbbc453893fb80f",
+ "reader_sha256": "c46aae9e47af8f258e763ad92238d89e7bd9a4e90fd4652568c9f7fb9a46e394",
+ "config_sha256": "3a555d304d3bfa82d67e4965f3ab31030957286aa7d960087ca8e70221afabec",
+ "written_utc": "2026-11-05T15:05:36Z"
+}
