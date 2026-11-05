@@ -1,0 +1,20 @@
+**Sentence A: change (minor).**
+- **Accuracy:** It is accurate given the facts. It is honest that the choice came after the comparison with the published result.
+- **Clarity:** "The choice lowered χ²/ndf" can be read as causal or as the reason for choosing. It also leaves out the 2.70 for the histogram estimator, so a reader can't see why that estimator was excluded or how large the selection effect was. LightGBM beats it by only 0.05.
+- **Over/underclaim:** Neither. It adds no unnecessary caveat.
+- **Replacement:** "LightGBM, rather than the scikit-learn exact-split estimator at the same settings, was chosen after both, and a third implementation (scikit-learn histogram), had been compared with the published result. The χ²/ndf values, with ndf the 205 reported bins, were 3.66 for exact-split, 2.65 for LightGBM and 2.70 for histogram."
+- This assumes 3.66 is the exact-split value. Check that against the source.
+
+**Sentence B: change.**
+- **Accuracy:** The content is accurate but the grammar misleads. "5.9 statistical standard deviations, the data result's per-bin statistical uncertainties" is an appositive that reads as an identity.
+- **Terminology:** The sentence mixes "pseudo-experiments", "bins" and "cells". The facts say "20-seed mean", "205 cells" and "14 counts cells". The sentence doesn't say that 5.9 and 0.44 are maxima of the 20-seed mean residual, or that the "differed" comparison is between the arms' estimates in the data result.
+- **Replacement:** "The refined negative-weight background treatment was chosen on a closure test in simulation. With the simulation's own truth as the target, the 20-seed mean residual of the purity-based estimate reached 5.9 in its most affected bin, in units of the data result's per-bin statistical uncertainty. The corresponding maximum over all 205 bins for the refined estimate was 0.44. In the data result the two estimates differ by more than one statistical standard deviation in 14 of the 205 bins."
+- Confirm that the 14 counts cells are all among the 205 bins and that the two terms mean the same thing.
+
+**Sentence C: change.**
+- **Accuracy:** The logic is right. The conditionality on both choices is correct, since 3.66→2.65 and 2.65→2.27 are the two steps.
+- **Clarity:** "Formally adopted" is vague. It also sits against the claim that the choice came earlier. The reader can't verify the earlier claim from the text, so it is the weakest wording of the three. Say what happened, and say what the earlier claim rests on if a dated record exists.
+- **Overclaim:** "Consistency check" may overclaim. A χ²/ndf of 2.27 over 205 bins is not obviously consistent, and the sentence doesn't say how it should be read.
+- **Replacement:** "The refined treatment was selected on the closure test before its comparison with the published result was computed. It was adopted in the analysis only after that comparison was known, and the adoption lowered χ²/ndf from 2.65 to 2.27. The χ²/ndf values quoted for the two-dimensional comparison are therefore conditional on both choices. The comparison should be read as a descriptive comparison, not a blind validation."
+
+CHANGE: A, add the 2.70 and the three-way χ²/ndf list. B, fix the appositive, use the 20-seed mean, state "maximum over bins" and use "bins" throughout. C, replace "formally adopted" with "adopted in the analysis only after that comparison was known", and replace "consistency check" with "descriptive comparison".
