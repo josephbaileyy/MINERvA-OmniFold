@@ -130,15 +130,16 @@ by nothing.
 - **T's null is calibrated at the realized block composition, not taken from χ²₁₆.** C_Δ,stat is estimated from 50
   replicas in 16 dimensions. In the stat-only limit T's null is Hotelling's, (49·16/34) F(16, 34), and χ²₁₆ bars
   would read "differ" about 1 time in 7 when the estimators agree (coverage-5b-audit's audit of #763, B1).
-  - The null comes from a parametric bootstrap with M = 20,000 draws, seed 20261104. **No step reads the realized
-    Δ.** Write C_Δ,univ = C_Δ,flux + C_Δ,fixed. Each draw:
+  - The null comes from a parametric bootstrap with **M = 10⁶ draws, seed 20261104** (decision item 2's floor).
+    **No step reads the realized Δ.** Write C_Δ,univ = C_Δ,flux + C_Δ,fixed. Each draw:
     1. draws 50 vectors from N(0, Ĉ_Δ,stat) and takes their sample covariance Ĉ*_stat (ddof 1);
     2. draws 100 vectors from N(0, Ĉ_Δ,flux) and forms Ĉ*_flux by S1's Flux estimator: the same 100 constraint
        weights in universe order, weighted-mean-centred (`s1_assemble.py:13-14, 134`);
     3. draws Δ* from N(0, Ĉ_Δ,stat + C_Δ,univ). Under the null the true difference is 0, so the normalisation block
        adds nothing to the draw;
     4. computes T* = Δ*ᵀ (Ĉ*_stat + Ĉ*_flux + C_Δ,fixed + C*_norm)⁻¹ Δ*, with C*_norm = (0.014 Δ*)(0.014 Δ*)ᵀ
-       recomputed from the draw's own Δ*, as R1 computes C_Δ,norm from the data's Δ.
+       recomputed from the draw's own Δ*, as R1 computes C_Δ,norm from the data's Δ. T* is uncorrected, by the
+       production formula.
   - **Which universe bands are sampled** (`s1_assemble.py:58-65`):
     - Flux has 100 PPFX universes, a random sample, so its sampling noise is resampled in step 2.
     - Every other band is held fixed as C_Δ,fixed:
@@ -149,7 +150,21 @@ by nothing.
       model: choice 2, the mean-centred pair estimator, and choice 7, the detector bands, as
       `FD-1B-DECLARATION.md:97-98` cites them. A resampling would invent a distribution S1 does not assume.
   - **Self-check:** with Ĉ_Δ,flux = C_Δ,fixed = 0 and C*_norm dropped, the bootstrap's 0.95 and 0.997 quantiles
-    must match (49·16/34) F(16, 34)'s to within their Monte Carlo error. Otherwise the run stops.
+    must match (16·49/34) F(16, 34) = 23.06 F(16, 34) within their Monte Carlo error. Otherwise the run stops.
+    - Equivalently, the Hartlap T's quantiles must match 29.39 and 46.09.
+    - The Monte Carlo error is the binomial order-statistic interval at M = 10⁶.
+  - **Order** (decision item 3):
+    1. The bars are computed from Ĉ_Δ,stat and Ĉ_Δ,univ alone: replica and universe differences, mean-centred,
+       never the central Δ.
+    2. They are written to `bars.json`, which the cluster lane commits and pushes, recording the commit and the
+       file's sha256.
+    3. Only then does the code form the central Δ, and it refuses unless it is given that sha and the file matches
+       it.
+    4. The bars step refuses if a central-Δ product already exists in the run directory. A Δ formed first stops the
+       run.
+  - **The stated direction** (decision item 6): the null treats the paired universe differences as scatter in Δ. If
+    the two estimators respond to systematics alike, the true systematic scatter in Δ is smaller than the null
+    assumes, and the reading leans toward "agree".
 - **Bars:** q*₀.₉₅ and q*₀.₉₉₇ are T*'s quantiles.
 
   | T | reading |
@@ -158,9 +173,11 @@ by nothing.
   | q*₀.₉₅ < T ≤ q*₀.₉₉₇ | **marginal** |
   | T > q*₀.₉₉₇ | **differ** |
 
-- **Printed and read by nothing:**
+- **Printed and read by nothing** (decision item 5):
   - χ²₁₆'s 26.30 and 35.89;
-  - T with the Hartlap factor 32/49 on the C_Δ,stat part, against the F quantiles.
+  - T with the Hartlap factor 32/49 on the C_Δ,stat part, against the F quantiles 29.39 and 46.09;
+  - the bars under a stat-only null for Δ (the same bootstrap with Ĉ_Δ,univ = 0 in steps 2–4), labelled
+    "sensitivity: stat-only null".
 
 - The per-cell pulls Δ_c / √(C_Δ)_cc are printed for all 16 cells, read by nothing.
 - The data-dependence of (e)'s replicas (refit per replica, jitter) is part of C_Δ,stat by construction.
@@ -248,7 +265,8 @@ A mutation harness kills a mutant per reading bar, per control, and per pairing 
 - the bootstrap's quantiles swapped for χ²₁₆'s (26.30, 35.89);
 - C*_norm computed from the realized Δ instead of Δ*;
 - the flux block held fixed instead of resampled;
-- the self-check skipped.
+- the self-check skipped;
+- the order guard removed, so the central Δ is formed before `bars.json` is committed.
 
 **Lane:** ________ (the director assigns).
 
@@ -260,8 +278,14 @@ A mutation harness kills a mutant per reading bar, per control, and per pairing 
   - coverage-5b-audit disputed them (B1, #763 comment 6645264150). With C_Δ,stat from 50 replicas, "differ" would
     fire about 1 time in 7 under the null.
   - §4 R1 now reads T against its own calibrated null.
-  - The director accepted the direction and is taking R1's bars to Joseph, with an independent read. Joseph's answer
-    is recorded in a DECISION before binding, and §4 R1 is not bound until then.
+  - **Joseph decided:** "Calibrated by simulation (Recommended)" (sha256 of the text begins `a7ac558c5449d451`).
+    This is recorded in `DECISION-20261104-joseph-g1-r1-calibrated-bars.md` (#768, merged at `b6a8c5c3`), with the
+    independent consult in `fd/consult-g1-r1-bars-20261104/`. §4 R1 implements its items 2–6:
+    - the draws, with M = 10⁶;
+    - the order;
+    - the self-check and the χ²-swap mutant;
+    - the prints;
+    - the stated direction.
   - The director's three conditions are met in §4 R1 and §7:
     - C_norm is recomputed from each draw's Δ*;
     - the sampled flux block is resampled, and the deterministic bands are named;
