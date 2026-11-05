@@ -5,7 +5,8 @@ ruling of 2026-11-04). Fixed before the rerun, from a walk of d4a4739e's 2,671 l
 * --old must be job 60783756's record: its json, npz and out must hash to OLD_SHA256, or nothing is compared;
 * calibration.npz must be bitwise equal (numpy writes its zip entries at a fixed 1980 timestamp);
 * calibration.json must be equal, as canonical bytes, after deleting exactly the EXCLUDE paths, each of which must
-  exist in both records. The new fd_1b_mc.py digest is not merely deleted: it must be the --expect-mc-sha256 given;
+  exist in both records. The changed code digests (CHANGED: fd_1b_mc.py, and fd_1b_c2.py since the director's ruling
+  (a)) are not merely deleted: each must be the --expect-code-sha256 given for it;
 * calibration.out's C2-CALIBRATION line must be equal byte for byte.
 
 The walk found no deploy head, commit, path, job id, hostname, timestamp or argv field, so none is excluded. Any
@@ -18,11 +19,13 @@ import json
 import sys
 from pathlib import Path
 
-# environment, not result: the file atimes at read time, the wall clock, and the one digest the H1 edit changes.
+# environment, not result: the file atimes at read time, the wall clock, and the code digests the final code changes
+# (fd_1b_mc.py by H1 and the collision fix; fd_1b_c2.py by ruling (a)'s hoist, amended before its rerun, the director).
 # Each is a path of segments ("*" matches one key: the atime keys are file paths, which hold dots and slashes).
+CHANGED = ("fd_1b_mc.py", "fd_1b_c2.py")
 EXCLUDE = (("atime", "files", "*", "atime_ns_first"), ("atime", "files", "*", "atime_ns_now"),
            ("timing", "seconds"), ("timing", "set_seconds_measured"), ("timing", "projected_seconds"),
-           ("code_sha256", "fd_1b_mc.py"))
+           *(("code_sha256", f) for f in CHANGED))
 
 
 # job 60783756's record (a2-1/calibN-run at 20b5fab6): --old must be these bytes, or nothing is compared (the audit's
@@ -69,7 +72,7 @@ def stripped(rec: dict) -> tuple[dict, dict]:
     return rec, hits
 
 
-def compare(old: Path, new: Path, expect_mc: str) -> list[str]:
+def compare(old: Path, new: Path, expect_code: dict) -> list[str]:
     bad = sorted(n for n, h in OLD_SHA256.items() if hashlib.sha256((old / n).read_bytes()).hexdigest() != h)
     if bad:
         return [f"--old is not job 60783756's record: {bad} differ from OLD_SHA256; nothing compared"]
@@ -79,9 +82,12 @@ def compare(old: Path, new: Path, expect_mc: str) -> list[str]:
         if a != b:
             stops.append(f"{name} differs: {a} vs {b}")
     ro, rn = (json.loads((d / "calibration.json").read_text()) for d in (old, new))
-    if rn.get("code_sha256", {}).get("fd_1b_mc.py") != expect_mc:
-        stops.append(f"the rerun's fd_1b_mc.py digest is {rn.get('code_sha256', {}).get('fd_1b_mc.py')}, "
-                     f"not the H1 code's {expect_mc}")
+    if sorted(expect_code) != sorted(CHANGED):
+        stops.append(f"--expect-code-sha256 names {sorted(expect_code)}, not exactly {sorted(CHANGED)}")
+    for f in CHANGED:
+        if rn.get("code_sha256", {}).get(f) != expect_code.get(f):
+            stops.append(f"the rerun's {f} digest is {rn.get('code_sha256', {}).get(f)}, not the expected "
+                         f"{expect_code.get(f)}")
     (so, ho), (sn, hn) = stripped(ro), stripped(rn)
     for pat in EXCLUDE:
         if not ho[pat] or not hn[pat]:
@@ -125,10 +131,11 @@ def self_test(old: Path) -> int:
     import shutil
     import tempfile
     rec0 = json.loads((old / "calibration.json").read_text())
-    mc0 = rec0["code_sha256"]["fd_1b_mc.py"]
+    code0 = {f: rec0["code_sha256"][f] for f in CHANGED}
     first_file = next(iter(rec0["atime"]["files"]))
 
-    def case(edit_json=None, edit_npz=False, edit_out=False, expect=mc0, old_too=False):
+    def case(edit_json=None, edit_npz=False, edit_out=False, expect=None, old_too=False):
+        expect = dict(code0, **(expect or {}))
         with tempfile.TemporaryDirectory() as d, tempfile.TemporaryDirectory() as d_old:
             new = Path(d)
             for name in ("calibration.json", "calibration.npz", "calibration.out"):
@@ -163,7 +170,13 @@ def self_test(old: Path) -> int:
               "timing.seconds": case(put("timing", "seconds", value=1.0)),
               "timing.set_seconds_measured": case(put("timing", "set_seconds_measured", value=1.0)),
               "timing.projected_seconds": case(put("timing", "projected_seconds", value=1.0)),
-              "fd_1b_mc.py digest, as expected": case(put("code_sha256", "fd_1b_mc.py", value="e" * 64), expect="e" * 64)}
+              "fd_1b_mc.py digest, as expected": case(put("code_sha256", "fd_1b_mc.py", value="e" * 64),
+                                                      expect={"fd_1b_mc.py": "e" * 64}),
+              "fd_1b_c2.py digest, as expected": case(put("code_sha256", "fd_1b_c2.py", value="f" * 64),
+                                                      expect={"fd_1b_c2.py": "f" * 64}),
+              "both digests, as expected": case(lambda r: r["code_sha256"].update({"fd_1b_mc.py": "e" * 64,
+                                                                                    "fd_1b_c2.py": "f" * 64}),
+                                                expect={"fd_1b_mc.py": "e" * 64, "fd_1b_c2.py": "f" * 64})}
     stops = {"rule.s": case(put("rule", "s", value=0.93)),
              "rule.grid[100].union": case(lambda r: r["rule"]["grid"][100].update(union=0.5)),
              "a power placement": case(lambda r: r["power"]["g18"]["concentrated"]["4_cells_10pct"]["placements"][0]
@@ -174,7 +187,9 @@ def self_test(old: Path) -> int:
              "an atime file key dropped": case(lambda r: r["atime"]["files"].pop(first_file)),
              "an atime file key renamed, count kept": case(lambda r: r["atime"]["files"].__setitem__(
                  first_file + ".renamed", r["atime"]["files"].pop(first_file))),
-             "fd_1b_c2.py digest": case(put("code_sha256", "fd_1b_c2.py", value="0" * 64)),
+             "fd_1b_c2.py digest, not expected": case(put("code_sha256", "fd_1b_c2.py", value="0" * 64)),
+             "fd_1b_c2.py expected, the record unchanged": case(expect={"fd_1b_c2.py": "f" * 64}),
+             "another code digest (cov2d.py)": case(put("code_sha256", "cov2d.py", value="0" * 64)),
              "an added key": case(put("host", value="nid0")),
              "fd_1b_mc.py digest, not expected": case(put("code_sha256", "fd_1b_mc.py", value="e" * 64)),
              "npz one byte": case(edit_npz=True),
@@ -196,7 +211,8 @@ def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("--old", type=Path, required=True, help="job 60783756's run copy")
     p.add_argument("--new", type=Path, help="the rerun's copy")
-    p.add_argument("--expect-mc-sha256", help="fd_1b_mc.py's sha256 at the H1 commit")
+    p.add_argument("--expect-code-sha256", nargs="+", metavar="FILE=SHA256",
+                   help="each CHANGED file's sha256 at the code rerun (both fd_1b_mc.py and fd_1b_c2.py)")
     p.add_argument("--self-test", action="store_true", help="both directions on copies of --old")
     p.add_argument("--walk", action="store_true", help="print every leaf path of --old (calibN-keys.txt)")
     a = p.parse_args(argv)
@@ -204,9 +220,10 @@ def main(argv=None) -> int:
         return walk(a.old)
     if a.self_test:
         return self_test(a.old)
-    if a.new is None or a.expect_mc_sha256 is None:
-        p.error("--new and --expect-mc-sha256 are required unless --self-test or --walk")
-    stops = compare(a.old, a.new, a.expect_mc_sha256)
+    if a.new is None or a.expect_code_sha256 is None:
+        p.error("--new and --expect-code-sha256 are required unless --self-test or --walk")
+    expect = dict(x.split("=", 1) for x in a.expect_code_sha256)
+    stops = compare(a.old, a.new, expect)
     for s in stops:
         print(f"STOP {s}")
     print("PASS" if not stops else f"STOP ({len(stops)})")

@@ -970,6 +970,9 @@ def check_clip_gate(a) -> None:
         raise Refusal("the clip gate's three-truth noise-only union is not measured, or above 1 %")
     if not cal.get("power_meets"):
         raise Refusal("the clip gate's calibration does not meet the power requirement")
+    gs = g.get("gate_sample") or {}
+    if gs.get("n") != fd_1b_c2.GATE_N or gs.get("first_300_bitwise") is not True:
+        raise Refusal(f"the clip gate was not read on the full gate sample (n = {gs.get('n')}, not {fd_1b_c2.GATE_N})")
     back = g.get("backstop") or {}
     if a.truth not in back or not all(back.get(t, {}).get("passes") for t in g.get("truths", [])):
         raise Refusal("the clip gate's backstop on the 300 declared draws did not pass")

@@ -825,7 +825,8 @@ class Jobs(Case):
                "code_sha256": code, "calibration_sha256": "c" * 64, "inputs": ins,
                "calibration": {"verdict": "CALIBRATED", "sha256": "c" * 64, "s": 1.0, "union": 0.009,
                                "three_truths_measured": True, "power_meets": True},
-               "backstop": {truth: {"passes": True}}, "config_hash": fd_1b_c2.config_hash(code, ins, "nature")}
+               "backstop": {truth: {"passes": True}}, "config_hash": fd_1b_c2.config_hash(code, ins, "nature"),
+               "gate_sample": {"n": fd_1b_c2.GATE_N, "first_300_bitwise": True}}
         for k, v in over.items():
             if "." in k:
                 head, key = k.split(".", 1)
@@ -867,7 +868,8 @@ class Jobs(Case):
                      {"calibration.verdict": "TO_JOSEPH"}, {"calibration.sha256": "d" * 64},          # H2, each field
                      {"calibration.three_truths_measured": False}, {"calibration.union": 0.0101},
                      {"calibration.power_meets": False}, {"backstop": {"g18": {"passes": False}}},
-                     {"backstop": {}}, {"config_hash": "0" * 64}):
+                     {"backstop": {}}, {"config_hash": "0" * 64},
+                     {"gate_sample.n": 60}, {"gate_sample.first_300_bitwise": False}, {"gate_sample": None}):
             self.assertEqual(run("g18", "seed", "T", "nature", gate=True, **over), 4, over)
         argv = self.bound_gate(self.argv("g18", "seed", "T", self.tmp / "s2-other"), "g18")  # H1: a well-formed record
         argv[argv.index("--clip-rule") + 1] = "nature"

@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import sys
 from pathlib import Path
 
@@ -437,14 +438,34 @@ def _bins(cells: np.ndarray, w: np.ndarray, n: int) -> np.ndarray:
     return np.bincount(cells[ok], weights=w[ok], minlength=n)
 
 
+def multiplicative_terms(V: np.ndarray, cv: np.ndarray) -> dict:
+    """The draw-independent part of C2's (v) multiplicative composition, built once per array (the director's ruling
+    (a): rebuilding it for every 20-draw block cost about 24 h per truth at the real 49 M rows): the CV's log, the
+    per-universe log ratios L (0 where either weight is <= 0), and Z sparsely, as the (universe, row) pairs with a
+    universe weight <= 0 where the CV's is > 0."""
+    pos = cv > 0
+    lcv = np.log(np.where(pos, cv, 1.0))
+    with np.errstate(divide="ignore", invalid="ignore"):
+        L = np.where(pos[None] & (V > 0), np.log(np.where(V > 0, V, 1.0)) - lcv[None], 0.0)
+    zu, zrow = np.nonzero(pos[None] & (V <= 0))
+    return {"pos": pos, "lcv": lcv, "L": L, "zu": zu, "zrow": zrow}
+
+
+def multiplicative_apply(T: dict, S: np.ndarray) -> np.ndarray:
+    """C2's (v) for draws S (draws x universes, entries >= 0) from multiplicative_terms: a_CV prod_j (a_uj / a_CV),
+    0 where a_CV <= 0 or a drawn universe's weight is <= 0 (clip_probe2's floor). A row is floored for a draw exactly
+    when S's weight on a (universe, row) pair of Z is > 0, which is (S @ Z) != 0 for S >= 0."""
+    floored = np.zeros((S.shape[0], T["pos"].size), bool)
+    if T["zu"].size:
+        d, k = np.nonzero(S[:, T["zu"]] > 0)
+        floored[d, T["zrow"][k]] = True
+    return np.where(T["pos"][None] & ~floored, np.exp(T["lcv"][None] + S @ T["L"]), 0.0)
+
+
 def multiplicative(V: np.ndarray, cv: np.ndarray, S: np.ndarray) -> np.ndarray:
     """C2's (v) multiplicative composition per row, for draws S (draws x universes): a_CV prod_j (a_uj / a_CV), 0
     where a_CV <= 0 or a drawn universe's weight is <= 0 (clip_probe2's floor)."""
-    pos = cv > 0
-    with np.errstate(divide="ignore", invalid="ignore"):
-        L = np.where(pos[None] & (V > 0), np.log(np.where(V > 0, V, 1.0)) - np.log(np.where(pos, cv, 1.0))[None], 0.0)
-    Z = (pos[None] & (V <= 0)).astype(np.float64)
-    return np.where(pos[None] & ((S @ Z) == 0), np.exp(np.log(np.where(pos, cv, 1.0))[None] + S @ L), 0.0)
+    return multiplicative_apply(multiplicative_terms(V, cv), S)
 
 
 def c2_truth(V: dict, cv: dict, S: np.ndarray, r: np.ndarray, geo: dict, phi: np.ndarray, const: dict,
@@ -465,11 +486,14 @@ def c2_truth(V: dict, cv: dict, S: np.ndarray, r: np.ndarray, geo: dict, phi: np
     t16, r16, b16 = cells16(geo["gen"]), cells16(geo["reco"]), cells16(geo["bkg"])
     seen = np.where(geo["reco"] >= 0, t16, -1)
     k_all = S.sum(axis=1) - 1.0
+    if np.any(S < 0):
+        raise Refusal("a selection matrix has a negative entry")
+    terms = {q: multiplicative_terms(V[q], cv[q]) for q in ("wt", "tdw")}     # once, not per block
     out = {q: np.zeros((N_CELLS, S.shape[0])) for q in ("S", "m_seen", "S_reco", "m_bkg", "N", "Nc", "Nm")}
     for d0 in range(0, S.shape[0], block):
         Sb, kb = S[d0:d0 + block], k_all[d0:d0 + block, None]
         comp = {q: Sb @ V[q] - kb * cv[q][None] for q in ("wt", "wr", "bkgw", "tdw", "D")}
-        mult = {q: multiplicative(V[q], cv[q], Sb) for q in ("wt", "tdw")}
+        mult = {q: multiplicative_apply(terms[q], Sb) for q in ("wt", "tdw")}
         for i in range(Sb.shape[0]):
             d = d0 + i
             lam = comp["wr"][i] * r
@@ -783,6 +807,110 @@ def config_hash(code: dict, inputs: dict, clip_rule: str) -> str:
     return hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest()
 
 
+THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "VECLIB_MAXIMUM_THREADS",
+               "NUMEXPR_NUM_THREADS")                       # recorded: BLAS's thread count can move the last bits
+MERGE_SAME = ("schema", "step", "code_sha256", "inputs", "calibration_sha256", "calibration_npz_sha256", "calibration",
+              "calibration_300_sha256", "config_hash", "sigma", "c2_reading_sha256", "threads")
+MERGE_PER_TRUTH = ("reads", "declared_seeds", "backstop", "reading_detail", "r_negative")
+
+
+def c2check_merge(parts: list[dict]) -> dict:
+    """The one gate record binding 3 pins, from c2check's per-truth records (one truth per job, the director's ruling
+    (a)): every shared field identical across the parts (MERGE_SAME, C2's (vi) row match and the gate sample's size),
+    no truth in two parts; the per-truth fields joined in fd_1b_mc.TRUTHS order; the verdict and reading as
+    c2check_main forms them, from every truth's reading and backstop. seconds is the parts' sum, atime the union of
+    what moved with each part's record kept, and merged_from each part's truths and seconds."""
+    import fd_1b_mc as mc
+    if len(parts) < 2:
+        raise Refusal("a merge needs at least two per-truth records")
+    first = parts[0]
+    for k in MERGE_SAME:
+        if any(p.get(k) != first.get(k) for p in parts):
+            raise Refusal(f"the per-truth records differ in {k}")
+    if any(p["record"]["vi"] != first["record"]["vi"] for p in parts):
+        raise Refusal("the per-truth records differ in C2's (vi) row match")
+    if any(p["gate_sample"]["n"] != first["gate_sample"]["n"] or not p["gate_sample"]["first_300_bitwise"] for p in parts):
+        raise Refusal("the per-truth records differ in the gate sample")
+    named = [t for p in parts for t in p["truths"]]
+    if len(named) != len(set(named)):
+        raise Refusal("a truth is in two per-truth records")
+    truths = [t for t in mc.TRUTHS if t in named]
+    by = {t: p for p in parts for t in p["truths"]}
+    g = {k: first[k] for k in MERGE_SAME}
+    g.update({k: {t: by[t][k][t] for t in truths} for k in MERGE_PER_TRUTH})
+    g["truths"] = truths
+    g["record"] = {"vi": first["record"]["vi"], "b": {t: by[t]["record"]["b"][t] for t in truths}}
+    g["gate_sample"] = dict(first["gate_sample"], seeds={t: by[t]["gate_sample"]["seeds"][t] for t in truths})
+    reads, back = g["reads"], g["backstop"]
+    g["verdict"] = "PASS" if all(v == "option (1)" for v in reads.values()) and all(b["passes"] for b in back.values()) \
+        else "STOP"
+    g["reading"] = "option (1)" if g["verdict"] == "PASS" else "; ".join(f"{t} {v}" for t, v in reads.items())
+    g["seconds"] = round(sum(p["seconds"] for p in parts), 1)
+    g["atime"] = {"moved": sorted({m for p in parts for m in p["atime"]["moved"]}), "parts": [p["atime"] for p in parts]}
+    g["merged_from"] = [{"truths": p["truths"], "seconds": p["seconds"]} for p in parts]
+    return g
+
+
+def c2_inputs(a, P: dict) -> tuple:
+    """c2_truth's inputs from prepare(rows=True), as c2check and its timing probe both take them: (rel, fm, geo, V,
+    cv), with S1's functional required to be the definition's."""
+    import fd_1b_mc as mc
+    import fd_1b_score as fs
+    world = P["world"]
+    inputs, bkg = world["inputs"], world["bkg"]
+    s1 = mc.via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
+    if not mc.same_functional(P["U_full"], s1["U"]):
+        raise Refusal("the definition's functional is not S1's")
+    rel = np.sqrt(np.diag(fs.reported_matrix(s1))) / s1["f"]
+    fm = sa.fine_map(a.definition)
+    edges = inputs["edges"]
+    prec = np.asarray(inputs["pass_reco"], bool)
+    geo = {"gen": P["cells"], "reco": np.where(prec, mc.flat_cells(np.asarray(inputs["MCreco"], float), edges), -1),
+           "bkg": mc.flat_cells(np.asarray(bkg["bkg_reco"], float), edges), "td": mc.td_cells(world["bank_cv"], edges),
+           "fm": np.asarray(fm), "U": P["U"], "shape": P["shape"]}
+    V = dict(P["rows"], D=P["D_full"])
+    cv = {"wt": np.asarray(inputs["w_truth"], float), "wr": np.asarray(inputs["w_reco"], float),
+          "bkgw": np.asarray(bkg["bkg_w"], float), "tdw": world["tdw_cv"], "D": P["D_cv_full"]}
+    return rel, fm, geo, V, cv
+
+
+def c2probe_main(a) -> dict:
+    """The timing probe before c2check at N (the director's ruling (a), item 3): prepare(rows=True) timed, then
+    c2_truth on the first --blocks blocks of one truth's gate sample, each block timed, through c2_inputs as c2check
+    takes them. Projects a one-truth c2check job: prepare + (300 + GATE_N) / DRAW_BLOCK blocks at the mean block time.
+    Writes a timing record only; nothing in it is a gate."""
+    import resource
+    import time
+
+    import fd_1b_mc as mc
+    if len(a.truths) != 1:
+        raise Refusal("the probe times one truth")
+    t0 = time.time()
+    P = prepare(a, rows=True)
+    _, _, geo, V, cv = c2_inputs(a, P)
+    t_prep = time.time() - t0
+    t = a.truths[0]
+    world = P["world"]
+    seeds = gate_seeds(t)[:a.blocks * DRAW_BLOCK]
+    draws = [mc.draw_universes(toys.draw_for_seed(sd, P["flux_p"], world["groups"])) for sd in seeds]
+    S = selection(draws, P["col"], P["bands"])
+    phi = draw_flux(S, P["flux_cols"], P["phi"])
+    per_block = []
+    for b in range(a.blocks):
+        sl = slice(b * DRAW_BLOCK, (b + 1) * DRAW_BLOCK)
+        t1 = time.time()
+        c2_truth(V, cv, S[sl], P["r"][t], geo, phi[sl], P["const"])
+        per_block.append(time.time() - t1)
+    blocks_per_truth = (len(mc.TOY_SEEDS[t]) + GATE_N) // DRAW_BLOCK
+    mean = float(np.mean(per_block[1:] if len(per_block) > 1 else per_block))
+    return {"schema": "fd-1b-c2-probe/1", "step": "c2-probe", "truth": t, "blocks": a.blocks, "draw_block": DRAW_BLOCK,
+            "prepare_seconds": t_prep, "block_seconds": per_block, "block_seconds_used": mean,
+            "blocks_per_truth": blocks_per_truth, "projected_seconds_per_truth": t_prep + blocks_per_truth * mean,
+            "rows": {k: int(np.shape(v)[-1]) for k, v in V.items()}, "universes": int(np.shape(V["wt"])[0]),
+            "threads": {k: os.environ.get(k) for k in THREAD_VARS},
+            "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, "code_sha256": gate_code_digests()}
+
+
 def c2check_main(a) -> dict:
     """The pre-bulk C2 gate (A2.1's S1 and S2, on Joseph's large sample): C2's record on 1B's 16 cells over each
     truth's GATE_N-draw gate sample (gate_seeds), read by reading_1b with the large-sample gate (gate_n) at the
@@ -795,7 +923,6 @@ def c2check_main(a) -> dict:
 
     import fd_1b_inv as inv
     import fd_1b_mc as mc
-    import fd_1b_score as fs
     t0 = time.time()
     if inv.sha256_noatime(a.calibration) != a.expect_calibration_sha256:
         raise Refusal("the calibration record's digest differs")
@@ -814,27 +941,15 @@ def c2check_main(a) -> dict:
         raise Refusal("the calibration's ratio file digest differs")
     P = prepare(a, rows=True)
     world, truths = P["world"], P["truths"]
-    if sorted(truths) != sorted(cal["truths"]):
-        raise Refusal("c2check's truths are not the calibration's")
+    if not truths or not set(truths) <= set(cal["truths"]):         # one truth per job (the director's ruling (a))
+        raise Refusal("c2check's truths are not among the calibration's")
     with inv.open_noatime(cal_npz) as fh:
         z = np.load(fh, allow_pickle=False)
         for t in truths:
             if not np.array_equal(z[f"single_x_{t}"], P["single_x"][t]):
                 raise Refusal(f"{t}: the single-universe U x_T is not the calibration's (a different world or code)")
-    inputs, bkg = world["inputs"], world["bkg"]
-    s1 = mc.via_noatime(fs.load_s1, a.staged / "s1" / "s1_assembly.npz")
-    if not mc.same_functional(P["U_full"], s1["U"]):
-        raise Refusal("the definition's functional is not S1's")
-    rel = np.sqrt(np.diag(fs.reported_matrix(s1))) / s1["f"]
-    fm = sa.fine_map(a.definition)
-    edges = inputs["edges"]
-    ptru, prec = np.asarray(inputs["pass_truth"], bool), np.asarray(inputs["pass_reco"], bool)
-    geo = {"gen": P["cells"], "reco": np.where(prec, mc.flat_cells(np.asarray(inputs["MCreco"], float), edges), -1),
-           "bkg": mc.flat_cells(np.asarray(bkg["bkg_reco"], float), edges), "td": mc.td_cells(world["bank_cv"], edges),
-           "fm": np.asarray(fm), "U": P["U"], "shape": P["shape"]}
-    V = dict(P["rows"], D=P["D_full"])
-    cv = {"wt": np.asarray(inputs["w_truth"], float), "wr": np.asarray(inputs["w_reco"], float),
-          "bkgw": np.asarray(bkg["bkg_w"], float), "tdw": world["tdw_cv"], "D": P["D_cv_full"]}
+    rel, fm, geo, V, cv = c2_inputs(a, P)
+    inputs, ptru = world["inputs"], np.asarray(world["inputs"]["pass_truth"], bool)
     rec = {"vi": row_match(np.asarray(inputs["MCgen"], float), cv["wt"], ptru & (P["cells"] >= 0),
                            np.column_stack([np.asarray(world["bank_cv"][k], np.float64) for k in
                                             ("td_pt", "td_pz", "td_ea", "td_q3", "td_w")]), world["tdw_cv"],
@@ -885,6 +1000,7 @@ def c2check_main(a) -> dict:
                      "clip_probe2's key sigma_Q", "c2_reading_sha256": hashlib.sha256(
                          (CP2_DIR / "c2_reading.txt").read_bytes()).hexdigest(),
             "record": rec, "reading_detail": reading, "r_negative": P["r_neg"],
+            "threads": {k: os.environ.get(k) for k in THREAD_VARS},
             "seconds": round(time.time() - t0, 1), "atime": inv.atime_check()}
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(gate, indent=1, sort_keys=True))
@@ -920,7 +1036,49 @@ def main(argv=None) -> int:
     p.add_argument("--push", type=Path, default=None)
     p.add_argument("--expect-push-sha256", default=None)
     p.add_argument("--truths", nargs="+", choices=tuple(CAL_SEED), required=True)
+    p = sub.add_parser("c2probe")
+    for k in ("npz", "bkg", "bank", "detector-dir", "pins", "flux-constraint", "flux-table", "definition", "staged",
+              "cv-tdw", "out"):
+        p.add_argument(f"--{k}", type=Path, required=True)
+    for k in ("pins", "flux-table", "cv-tdw"):
+        p.add_argument(f"--expect-{k}-sha256", required=True)
+    p.add_argument("--prep", type=Path, required=True)
+    p.add_argument("--push", type=Path, default=None)
+    p.add_argument("--expect-push-sha256", default=None)
+    p.add_argument("--truths", nargs=1, choices=tuple(CAL_SEED), required=True)
+    p.add_argument("--blocks", type=int, required=True)
+    p = sub.add_parser("c2check-merge")
+    p.add_argument("--part", type=Path, action="append", required=True)
+    p.add_argument("--expect-part-sha256", action="append", required=True)
+    p.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
+    if a.cmd == "c2probe":
+        if a.out.exists():
+            raise Refusal(f"refusing to overwrite {a.out}")
+        rec = c2probe_main(a)
+        a.out.parent.mkdir(parents=True, exist_ok=True)
+        a.out.write_text(json.dumps(rec, indent=1, sort_keys=True))
+        print(f"C2-PROBE truth={rec['truth']} prepare={rec['prepare_seconds']:.0f}s block={rec['block_seconds_used']:.1f}s "
+              f"projected_per_truth={rec['projected_seconds_per_truth']:.0f}s")
+        return 0
+    if a.cmd == "c2check-merge":
+        import hashlib
+        if len(a.part) != len(a.expect_part_sha256):
+            raise Refusal("one --expect-part-sha256 per --part")
+        parts = []
+        for path, sha in zip(a.part, a.expect_part_sha256):
+            raw = path.read_bytes()
+            if hashlib.sha256(raw).hexdigest() != sha:
+                raise Refusal(f"{path}: its digest is not the one given")
+            parts.append(json.loads(raw))
+        if a.out.exists():
+            raise Refusal(f"refusing to overwrite {a.out}")
+        g = c2check_merge(parts)
+        g["merged_from"] = [dict(m, sha256=sha) for m, sha in zip(g["merged_from"], a.expect_part_sha256)]
+        a.out.parent.mkdir(parents=True, exist_ok=True)
+        a.out.write_text(json.dumps(g, indent=1, sort_keys=True))
+        print(f"C2-GATE-MERGED verdict={g['verdict']} reads={json.dumps(g['reads'], sort_keys=True)}")
+        return 0 if g["verdict"] == "PASS" else 3
     if a.cmd == "c2check":
         g = c2check_main(a)
         print(f"C2-GATE verdict={g['verdict']} reads={json.dumps(g['reads'], sort_keys=True)}")

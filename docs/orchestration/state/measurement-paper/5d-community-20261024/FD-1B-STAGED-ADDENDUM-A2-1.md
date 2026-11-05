@@ -344,6 +344,54 @@ Any other difference is a STOP to the director.
 - **So the calibration's numbers are unchanged at the code binding 3 binds:** s = 0.92, CALIBRATED (G18 and AR23
   measured, the plug-in projected).
 
+## 8c. c2check at N: its cost, and the director's ruling (a), 2026-11-04
+
+**The finding,** made while pricing binding 3, before any real run:
+- c2_truth works row by row over 175 universes: 16,424,551 signal rows (amendment 2), 310,773 background rows, and
+  32,849,103 denominator rows (`cvdenom-run`). V holds about 92 GB in float64.
+- For every 20-draw block, f19adbda's `multiplicative` rebuilt L = log V − log cv and Z = 1[V ≤ 0] over every
+  universe × row, although neither depends on the draws.
+- Measured on one core (M1 Pro, the real functions, 175 × 10⁶ rows, per block): `multiplicative` 8.9 s, the block
+  matmul 0.28 s, one `_bins` 5.2 ms.
+- Scaled by rows, that is about 515 s per block. At (300 + 3,000)/20 = 165 blocks per truth, it comes to about 24 h
+  per truth: past the 12 h job limit, and about 50 node-h for G18 and AR23.
+- The e2e world has about 3,000 rows, so no test could see this, and the calibration does not call c2_truth.
+
+**The ruling and its implementation:**
+- **The hoist.** `multiplicative_terms` builds the CV's log, L and Z once per array; Z is sparse, as the (universe,
+  row) pairs. `multiplicative_apply` applies them to a block. `multiplicative` is their composition.
+- **Bitwise equal to f19adbda.** The reference is `tests/data/fd_1b_c2_at_f19adbda.py.txt`, the bound bytes,
+  sha256 f19adbda, executed as a module. It is checked:
+  - on a fixture that reaches every floor branch (`test_fd_1b_c2` `Multiplicative`);
+  - end to end: c2check with f19adbda's c2_truth writes the same gate record. On c2check's own c2_truth arguments,
+    with non-positive universe and CV weights injected, every quantity agrees bitwise
+    (`RoundTrip.test_c2_truth_is_bitwise_f19adbdas_end_to_end`).
+- A selection matrix with a negative entry refuses, since the sparse Z is exact only for S ≥ 0.
+- **One truth per job.** c2check accepts truths that are a subset of its calibration's. `c2check-merge` builds the
+  one gate record from the per-truth records, each named by its digest:
+  - every shared field must be identical, including C2's (vi) row match and the threads;
+  - no truth may be in two parts;
+  - the per-truth fields are joined in `fd_1b_mc.TRUTHS` order;
+  - the verdict comes from every reading and every backstop.
+  Its test: the merge of three per-truth runs equals the all-truth run on every field but `seconds`, `atime` and
+  `merged_from`, and is admitted by the bulk's gate (`RoundTrip.test_the_merge_of_per_truth_records_is_the_all_truth_record`).
+  The plug-in's part merges in after B4. Binding 3 pins the merged record's sha.
+- **Threads.** Each c2check job runs on one exclusive node with its BLAS and OMP threads set explicitly, and the gate
+  record records them (`threads`).
+- **The gate sample's size.** `check_clip_gate` now also requires `gate_sample.n == GATE_N` and
+  `first_300_bitwise`. Before, a record read on a shorter sample could have been bound.
+- **The timing probe** (`c2probe`) is required before c2check is submitted. On a real node it times `prepare` and a
+  few blocks of one truth's gate sample, through `c2_inputs` (shared with c2check) and the real c2_truth. It projects
+  a one-truth job as prepare + 165 blocks at the mean block time, with the first block set aside. Its sha and price
+  go to the director first. If it projects more than about 8 h per truth, option (b) (blocks over a fork pool) comes
+  back to the director.
+- **The calibration is rerun bitwise at the final fd_1b_c2.** It is cheap, and it keeps the rule that a calibration at
+  earlier code is not carried into c2check at later code.
+- **The comparator, amended before that rerun.** `--expect-code-sha256` names fd_1b_mc.py and fd_1b_c2.py, and each
+  is deleted only if it equals its expected digest. Everything else is as declared. The self-test is
+  `calibN-compare-selftest.txt`: 8 PASS and 17 STOP cases. The amended comparator also passes the committed 60805733
+  rerun, with fd_1b_c2 expected at f19adbda.
+
 ## 9. Tests and mutation
 
 **The harness,** `fd/receipts-1b/staged/mutation_a21.py`:

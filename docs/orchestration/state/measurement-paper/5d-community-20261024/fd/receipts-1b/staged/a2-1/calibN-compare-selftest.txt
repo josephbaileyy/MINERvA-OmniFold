@@ -4,6 +4,8 @@ ok   PASS expected: timing.seconds
 ok   PASS expected: timing.set_seconds_measured
 ok   PASS expected: timing.projected_seconds
 ok   PASS expected: fd_1b_mc.py digest, as expected
+ok   PASS expected: fd_1b_c2.py digest, as expected
+ok   PASS expected: both digests, as expected
 ok   STOP expected: rule.s -> calibration.json differs at 1 leaves outside the exclusions: ['rule.s']
 ok   STOP expected: rule.grid[100].union -> calibration.json differs at 1 leaves outside the exclusions: ['rule.grid.100.union']
 ok   STOP expected: a power placement -> calibration.json differs at 1 leaves outside the exclusions: ['power.g18.concentrated.4_cells_10pct.placements.0']
@@ -12,11 +14,13 @@ ok   STOP expected: timing.fine_cells_kept -> calibration.json differs at 1 leav
 ok   STOP expected: atime.moved -> calibration.json differs at 1 leaves outside the exclusions: ['atime.moved']
 ok   STOP expected: an atime file key dropped -> the exclusions matched different counts: {('atime', 'files', '*', 'atime_ns_first'): 709, ('atime', 'files', '*', 'atime
 ok   STOP expected: an atime file key renamed, count kept -> calibration.json differs at 2 leaves outside the exclusions: ['atime.files./pscratch/sd/j/josephrb/MINERvA-OmniFold/MINE
-ok   STOP expected: fd_1b_c2.py digest -> calibration.json differs at 1 leaves outside the exclusions: ['code_sha256.fd_1b_c2.py']
+ok   STOP expected: fd_1b_c2.py digest, not expected -> the rerun's fd_1b_c2.py digest is 0000000000000000000000000000000000000000000000000000000000000000, not the expected f19
+ok   STOP expected: fd_1b_c2.py expected, the record unchanged -> the rerun's fd_1b_c2.py digest is f19adbda6126d79d1f337755de873b530a76ebbcfd412ab60f85ab53cb33fe49, not the expected fff
+ok   STOP expected: another code digest (cov2d.py) -> calibration.json differs at 1 leaves outside the exclusions: ['code_sha256.cov2d.py']
 ok   STOP expected: an added key -> calibration.json differs at 1 leaves outside the exclusions: ['host']
-ok   STOP expected: fd_1b_mc.py digest, not expected -> the rerun's fd_1b_mc.py digest is eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, not the H1 code's d5
+ok   STOP expected: fd_1b_mc.py digest, not expected -> the rerun's fd_1b_mc.py digest is eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee, not the expected d55
 ok   STOP expected: npz one byte -> calibration.npz differs: 9047a6f730ca41cda8a0c6d7b60aac19ba10c04f8ab6a6b13a279a5835291a70 vs a67f293e7bd32a04144a0b1413b
 ok   STOP expected: verdict line -> the C2-CALIBRATION line differs: [b'C2-CALIBRATION verdict=CALIBRATED s=0.92 i_alone=0.0000 power={"g18": 0.9968, "ar23"
 ok   STOP expected: an altered old copy, matched by the new -> --old is not job 60783756's record: ['calibration.json'] differ from OLD_SHA256; nothing compared
 ok   STOP expected: an altered old npz, matched by the new -> --old is not job 60783756's record: ['calibration.npz'] differ from OLD_SHA256; nothing compared
-self-test PASS: 6 pass cases, 15 stop cases
+self-test PASS: 8 pass cases, 17 stop cases

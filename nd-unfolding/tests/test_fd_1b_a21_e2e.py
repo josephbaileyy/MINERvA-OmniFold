@@ -8,6 +8,7 @@ assembly's digest is re-pinned the same way; and the H2 fine map and functional 
 because the committed definition is built on the real 65,856-cell grid and cannot map the toy's 48 cells."""
 import argparse
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -297,7 +298,8 @@ class E2E(unittest.TestCase):
                 "code_sha256": code, "calibration_sha256": "c" * 64, "inputs": ins,
                 "calibration": {"verdict": "CALIBRATED", "sha256": "c" * 64, "s": 1.0, "union": 0.009,
                                 "three_truths_measured": True, "power_meets": True},
-                "backstop": {"g18": {"passes": True}}, "config_hash": c2.config_hash(code, ins, "nature")}))
+                "backstop": {"g18": {"passes": True}}, "config_hash": c2.config_hash(code, ins, "nature"),
+                "gate_sample": {"n": c2.GATE_N, "first_300_bitwise": True}}))
         return gate
 
     def toy_argv(self, bank: Path, pins: Path) -> list[str]:
@@ -398,7 +400,8 @@ class E2E(unittest.TestCase):
                 "code_sha256": code, "calibration_sha256": "c" * 64, "inputs": ins,
                 "calibration": {"verdict": "CALIBRATED", "sha256": "c" * 64, "s": 1.0, "union": 0.009,
                                 "three_truths_measured": True, "power_meets": True},
-                "backstop": {"g18": {"passes": True}}, "config_hash": c2.config_hash(code, ins, "nature")}))
+                "backstop": {"g18": {"passes": True}}, "config_hash": c2.config_hash(code, ins, "nature"),
+                "gate_sample": {"n": c2.GATE_N, "first_300_bitwise": True}}))
         common = ["unfold", "--truth", "g18", "--role", "toy", "--items", str(mc.TOY_SEEDS["g18"][0]),
                   "--npz", str(w.inputs), "--bkg", str(w.bkg), "--bank", str(w.bank), "--detector-dir", str(w.det),
                   "--pins", str(w.pins), "--flux-constraint", str(w.constraint), "--expect-pins-sha256", digest(w.pins),
@@ -538,6 +541,136 @@ class RoundTrip(E2E):
         self.assertNotEqual(g["reads"]["ar23"], "option (1)")
         self.assertEqual((g["reads"]["g18"], g["reads"]["plugin"]), ("option (1)", "option (1)"))
         self.assertEqual(g["verdict"], "STOP")
+
+    def test_c2_truth_is_bitwise_f19adbdas_end_to_end(self):
+        """The director's ruling (a): c2check with the hoisted c2_truth writes the same gate record as with f19adbda's
+        c2_truth (every field but seconds and atime); and on c2check's own c2_truth arguments, with non-positive universe
+        and CV weights injected so every floor branch is reached, the two agree bitwise in every quantity."""
+        from test_fd_1b_c2 import reference_c2
+        ref = reference_c2()
+        cal = self.calibrated()
+        calls = []
+
+        def spy(*args, **kw):
+            calls.append(args)
+            return ref.c2_truth(*args, **kw)
+        a_new = self.c2args(cal)
+        a_new.out = self.tmp / "gate" / "gate-new.json"
+        a_ref = self.c2args(cal)
+        a_ref.out = self.tmp / "gate" / "gate-ref.json"
+        with self.patched():
+            g_new = c2.c2check_main(a_new)
+            with mock.patch.object(c2, "c2_truth", spy):
+                g_ref = c2.c2check_main(a_ref)
+        drop = lambda g: {k: v for k, v in json.loads(json.dumps(g)).items() if k not in ("seconds", "atime")}  # noqa: E731
+        self.assertEqual(drop(g_new), drop(g_ref))
+        self.assertEqual(len(calls), 2 * len(self.truths))           # the 300 and the N per truth
+        V, cv, S, r, geo, phi, const = calls[1]                     # the first truth's gate sample
+        rng = np.random.default_rng(41)
+        V2 = {k: np.array(v, copy=True) for k, v in V.items()}
+        cv2 = {k: np.array(v, copy=True) for k, v in cv.items()}
+        for q in ("wt", "tdw"):
+            u, w = V2[q].shape
+            V2[q][rng.random((u, w)) < 0.02] = 0.0
+            V2[q][rng.random((u, w)) < 0.02] *= -0.5
+            cv2[q][rng.random(w) < 0.03] = 0.0
+            cv2[q][rng.random(w) < 0.03] *= -0.5
+            T = c2.multiplicative_terms(V2[q], cv2[q])
+            self.assertGreater(T["zu"].size, 0, q)
+            self.assertGreater(int((~T["pos"]).sum()), 0, q)
+            self.assertTrue(np.any(S[:, T["zu"]] > 0), q)            # some drawn universe floors a row
+        for args in ((V, cv, S, r, geo, phi, const), (V2, cv2, S, r, geo, phi, const)):
+            got, want = c2.c2_truth(*args), ref.c2_truth(*args)
+            self.assertEqual(sorted(got), sorted(want))
+            for k in want:
+                self.assertTrue(np.array_equal(got[k], want[k], equal_nan=True), k)
+
+    def test_the_merge_of_per_truth_records_is_the_all_truth_record(self):
+        """The director's ruling (a), one truth per job: c2check run once per truth and merged (c2check-merge, through
+        the CLI with each part's digest) equals c2check run over all three truths on every field but seconds, atime and
+        merged_from; the merged record is admitted by the bulk's gate as the single run's is."""
+        cal = self.calibrated()
+        a_all = self.c2args(cal)
+        a_all.out = self.tmp / "gate" / "gate-all.json"
+        with self.patched():
+            g_all = c2.c2check_main(a_all)
+        parts = []
+        for t in self.truths:
+            a = self.c2args(cal)
+            a.truths, a.out = [t], self.tmp / "gate" / f"gate-part-{t}.json"
+            with self.patched():
+                c2.c2check_main(a)
+            parts.append(a.out)
+        merged = self.tmp / "gate" / "gate-merged.json"
+        argv = ["c2check-merge", "--out", str(merged)]
+        for p in reversed(parts):                                   # any part order
+            argv += ["--part", str(p), "--expect-part-sha256", digest(p)]
+        self.assertEqual(c2.main(argv), 0)
+        g_m = json.loads(merged.read_text())
+        drop = lambda g: {k: v for k, v in json.loads(json.dumps(g)).items()  # noqa: E731
+                          if k not in ("seconds", "atime", "merged_from")}
+        self.assertEqual(drop(g_m), drop(g_all))
+        self.assertEqual(g_all["threads"], {k: os.environ.get(k) for k in c2.THREAD_VARS})   # recorded as set
+        self.assertEqual(g_m["verdict"], "PASS")
+        self.assertEqual([m["truths"] for m in g_m["merged_from"]], [[t] for t in reversed(self.truths)])
+        self.assertEqual(self.bulk(merged), 0)                       # the merged record admits, as the single does
+        with self.assertRaisesRegex(c2.Refusal, "digest is not the one given"):
+            c2.main(["c2check-merge", "--out", str(self.tmp / "gate" / "x.json"), "--part", str(parts[0]),
+                     "--expect-part-sha256", "0" * 64, "--part", str(parts[1]), "--expect-part-sha256", digest(parts[1])])
+        recs = [json.loads(p.read_text()) for p in parts]
+        with self.assertRaisesRegex(c2.Refusal, "in two per-truth records"):
+            c2.c2check_merge([recs[0], recs[0]])
+        with self.assertRaisesRegex(c2.Refusal, "at least two"):
+            c2.c2check_merge([recs[0]])
+        for k, v in (("config_hash", "0" * 64), ("threads", {"OMP_NUM_THREADS": "7"}), ("calibration_sha256", "d" * 64),
+                     ("code_sha256", {"x.py": "0"})):
+            with self.assertRaisesRegex(c2.Refusal, f"differ in {k}"):
+                c2.c2check_merge([recs[0], dict(recs[1], **{k: v}), recs[2]])
+        with self.assertRaisesRegex(c2.Refusal, r"differ in C2's \(vi\)"):
+            c2.c2check_merge([recs[0], dict(recs[1], record=dict(recs[1]["record"], vi={})), recs[2]])
+        two = json.loads(cal.read_text())                           # a calibration without the plug-in
+        two["truths"] = [t for t in two["truths"] if t != "plugin"]
+        cal2 = self.tmp / "cal" / "cal-two.json"
+        cal2.write_text(json.dumps(two))
+        shutil.copy(cal.with_suffix(".npz"), cal2.with_suffix(".npz"))
+        a = self.c2args(cal2)
+        a.truths, a.out = ["plugin"], self.tmp / "gate" / "gate-plugin-uncal.json"
+        with self.patched(), self.assertRaisesRegex(c2.Refusal, "not among the calibration's"):
+            c2.c2check_main(a)
+        stop = dict(recs[1], reads={self.truths[1]: "option (2)"})
+        self.assertEqual(c2.c2check_merge([recs[0], stop, recs[2]])["verdict"], "STOP")   # one truth's reading stops it
+        bad = dict(recs[2], backstop={self.truths[2]: dict(recs[2]["backstop"][self.truths[2]], passes=False)})
+        self.assertEqual(c2.c2check_merge([recs[0], recs[1], bad])["verdict"], "STOP")    # and one backstop
+
+    def test_the_timing_probe(self):
+        """c2probe (the director's ruling (a), item 3) through the CLI: one truth, --blocks blocks of its gate sample
+        through c2_inputs and c2_truth as c2check takes them; its projection is prepare + (300 + GATE_N)/DRAW_BLOCK
+        blocks at the mean block time (the first block, which pays one-off costs, set aside); it refuses two truths and
+        an existing output."""
+        w = self.x["w"]
+        out = self.tmp / "probe" / "probe.json"
+        argv = ["c2probe", "--npz", str(w.inputs), "--bkg", str(w.bkg), "--bank", str(w.bank), "--detector-dir", str(w.det),
+                "--pins", str(w.pins), "--expect-pins-sha256", digest(w.pins), "--flux-constraint", str(w.constraint),
+                "--flux-table", str(self.x["table"]), "--expect-flux-table-sha256", digest(self.x["table"]),
+                "--definition", str(self.tmp / "definition.json"), "--staged", str(self.x["staged"]),
+                "--cv-tdw", str(self.x["tdw"]), "--expect-cv-tdw-sha256", digest(self.x["tdw"]), "--prep", str(w.prep),
+                "--truths", "g18", "--blocks", "3", "--out", str(out)]
+        with self.patched():
+            self.assertEqual(c2.main(argv), 0)
+            rec = json.loads(out.read_text())
+            self.assertEqual((rec["truth"], rec["blocks"], len(rec["block_seconds"])), ("g18", 3, 3))
+            self.assertEqual(rec["blocks_per_truth"], (len(mc.TOY_SEEDS["g18"]) + c2.GATE_N) // c2.DRAW_BLOCK)
+            self.assertAlmostEqual(rec["block_seconds_used"], float(np.mean(rec["block_seconds"][1:])), places=12)
+            self.assertAlmostEqual(rec["projected_seconds_per_truth"],
+                                   rec["prepare_seconds"] + rec["blocks_per_truth"] * rec["block_seconds_used"], places=6)
+            self.assertEqual(rec["code_sha256"], c2.gate_code_digests())
+            self.assertEqual(set(rec["rows"]), {"wt", "wr", "bkgw", "tdw", "D"})
+            with self.assertRaisesRegex(c2.Refusal, "refusing to overwrite"):   # it will not overwrite
+                c2.main(argv)
+            with self.assertRaises(SystemExit):                             # one truth only
+                c2.main(argv[:-5] + ["--truths", "g18", "ar23", "--blocks", "3", "--out", str(out) + "2"])
+            with self.assertRaisesRegex(c2.Refusal, "times one truth"):     # and the function's own guard
+                c2.c2probe_main(argparse.Namespace(truths=["g18", "ar23"], blocks=3))
 
     # the parent's tests run on their own world; here only the round trip
     test_the_calibration_runs_the_production_chain = test_c2check_end_to_end = None

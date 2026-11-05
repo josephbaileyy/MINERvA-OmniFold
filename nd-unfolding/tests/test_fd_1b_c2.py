@@ -258,6 +258,73 @@ class Block(unittest.TestCase):
         np.testing.assert_allclose(b["variance_ratio"]["first_order"], np.var(q["N"], axis=1, ddof=1))
 
 
+REF_SHA256 = "f19adbda6126d79d1f337755de873b530a76ebbcfd412ab60f85ab53cb33fe49"
+
+
+def reference_c2():
+    """fd_1b_c2 as bound at f19adbda (tests/data/fd_1b_c2_at_f19adbda.py.txt, its exact bytes), executed as a module
+    with the real module's __file__ so its paths resolve: the reference the director's ruling (a) requires the
+    hoisted code to equal bitwise."""
+    import hashlib
+    import types
+    raw = (Path(__file__).resolve().parent / "data" / "fd_1b_c2_at_f19adbda.py.txt").read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == REF_SHA256
+    m = types.ModuleType("fd_1b_c2_at_f19adbda")
+    m.__file__ = c2.__file__
+    exec(compile(raw, "fd_1b_c2@f19adbda", "exec"), m.__dict__)
+    return m
+
+
+class Multiplicative(unittest.TestCase):
+    """The director's ruling (a): C2's (v) with its draw-independent terms built once and Z sparse, bitwise equal to
+    the f19adbda implementation, on a fixture that reaches every branch."""
+
+    def fixture(self, seed=31):
+        rng = np.random.default_rng(seed)
+        U, R, D = 24, 4000, 60
+        V = rng.uniform(0.5, 1.5, (U, R))
+        V[rng.random((U, R)) < 0.03] = 0.0
+        V[rng.random((U, R)) < 0.03] = -0.2
+        cv = rng.uniform(0.5, 1.5, R)
+        cv[rng.random(R) < 0.05] = 0.0
+        cv[rng.random(R) < 0.05] = -0.3
+        S = np.zeros((D, U))
+        S[np.arange(D)[:, None], rng.integers(0, U, (D, 6))] = 1.0
+        S[0, 3] = 2.0                                      # a universe drawn twice
+        return V, cv, S
+
+    def test_bitwise_equal_to_f19adbda(self):
+        ref = reference_c2()
+        V, cv, S = self.fixture()
+        T = c2.multiplicative_terms(V, cv)
+        self.assertGreater(T["zu"].size, 0)                        # the sparse floor is reached
+        self.assertGreater(int((~T["pos"]).sum()), 0)              # and rows with a_CV <= 0
+        got = c2.multiplicative(V, cv, S)
+        want = ref.multiplicative(V, cv, S)
+        self.assertTrue(np.array_equal(got, want))
+        floored = (S @ (T["pos"][None] & (V <= 0)).astype(float)) != 0
+        self.assertTrue(np.any(floored & T["pos"][None]))         # some draw floors a positive-CV row
+        for d0 in range(0, S.shape[0], c2.DRAW_BLOCK):            # by blocks, from one set of terms
+            self.assertTrue(np.array_equal(c2.multiplicative_apply(T, S[d0:d0 + c2.DRAW_BLOCK]),
+                                           ref.multiplicative(V, cv, S[d0:d0 + c2.DRAW_BLOCK])))
+
+    def test_no_floor_at_all(self):
+        ref = reference_c2()
+        V, cv, S = self.fixture(32)
+        V, cv = np.abs(V) + 0.1, np.abs(cv) + 0.1
+        T = c2.multiplicative_terms(V, cv)
+        self.assertEqual(T["zu"].size, 0)
+        self.assertTrue(np.array_equal(c2.multiplicative_apply(T, S), ref.multiplicative(V, cv, S)))
+
+    def test_c2_truth_refuses_a_negative_selection(self):
+        n = 3
+        geo = {"U": np.ones((16, 4)), "shape": (4,), "fm": np.zeros(4, int), "gen": np.zeros(n, int),
+               "reco": np.zeros(n, int), "bkg": np.zeros(1, int), "td": np.zeros(n, int)}
+        with self.assertRaisesRegex(c2.Refusal, "negative entry"):
+            c2.c2_truth({}, {}, np.array([[1.0, -1.0]]), np.ones(n), geo, np.ones((1, 4)),
+                        {"pack": {"keep": np.ones(4, bool)}})
+
+
 class LargeSample(unittest.TestCase):
     """Joseph's large-sample gate (P1-P7): the gate seeds, the s rule, power, the verdict's order."""
 
