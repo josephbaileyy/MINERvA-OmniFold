@@ -1,0 +1,10 @@
+node dtn01.nersc.gov nproc=48 loadavg 9.80 9.98 11.74
+2026-11-05T09:56:21Z
+stage script sha256 4a8e9220442f18d78aa0b6f2f61978d965968ee3c3832905e035db47fb6c69a0
+== CFS name search for runEventLoopMC_MEFHC.root (read-only)
+/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
+{"checks": {"cv": true, "mc": true, "recorded": true}, "mc_cfs_copy_exists": true, "candidates": 1}
+{"verdict": "PASS", "sha256": "611742905f6a1a30d2c96561b9d1cd7dfebcb727acbc5088a407fa681aa556a0"}
+stage python rc=0
+cdraw stage rc=0
+2026-11-05T09:57:04Z
