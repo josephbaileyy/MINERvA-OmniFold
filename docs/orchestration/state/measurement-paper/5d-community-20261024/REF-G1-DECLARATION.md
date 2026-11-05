@@ -272,7 +272,10 @@ A mutation harness kills a mutant per reading bar, per control, and per pairing 
 - C*_norm computed from the realized Δ instead of Δ*;
 - the flux block held fixed instead of resampled;
 - the self-check skipped;
-- the order guard removed, so the central Δ is formed before `bars.json` is committed.
+- the order guard removed, so the central Δ is formed before `bars.json` is committed;
+- G-draw's rebuild with the jitter step skipped (build_data → bootstrap_replica on the unjittered inputs). G-draw
+  must fail on a fixture where a row lies within ½ ulp of a non-float32 edge, so that the jitter moves it across,
+  and must stay silent on the unmutated path.
 
 **Lane:** ________ (the director assigns).
 
