@@ -1,6 +1,6 @@
 # COV2D amendment, final delta audit (045364a8; code at 0d43c9a3), and the director's ruling on it
 
-**Auditor:** the `coverage-5b-audit` session, 2026-11-04, read-only. Its two reports, received by SendMessage, are
+**Auditor:** the `coverage-5b-audit` session, 2026-11-04, read-only. Its two reports and its verdict on the fixes (last), received by SendMessage, are
 copied verbatim below, followed by the director's ruling, also received by SendMessage and copied verbatim. The answers
 and fixes are in `ANSWERS.md` (this directory), under "Final delta audit".
 
@@ -133,3 +133,29 @@ director, on coverage-5b-audit's cov2d final audit (045364a8): F1 and F2 are bot
 3. Then binding 2.
 
 The calendar holds: bulk submitted by 2026-12-01, $UNI exposed 2026-12-19. Thank you for the speed so far.
+
+---
+
+## The auditor's verdict on the F1/F2 delta (fd8d68bb; range ba10123c..1d566f0f)
+
+Your F1/F2 delta (fd8d68bb) is checked: both are closed, and nothing blocks binding 2. My verdict has gone to the director.
+
+- **What I verified:**
+  - the real-writer tests (admit, refuse with M deleted, refuse with M wrong);
+  - the dirty-deploy refusal before output;
+  - the move-during-step-B STOP;
+  - order()'s reprice_classes == [] check.
+- **Four REQUIRED mutants re-run locally, all KILLED by assertion failures in named tests:**
+  - F1 order ignores M;
+  - both F2 mutants;
+  - F1 dirty deploy admitted.
+- The suite scoping keeps the writer-M mutants on their own suites.
+- KillWait is a disclosure, not a blocker, and your §5 argument is right.
+
+Your questions:
+1. **Porcelain scope:** yes. deploy_head and cov2d_preflight both use plain `git status --porcelain`, which counts untracked files and excludes ignored ones. `*.pyc` and `__pycache__/` are gitignored, so stray bytecode won't trip it.
+2. **Refusing a missing reprice_classes:** yes, that's the reading I'd want. It fails closed, and the real pilot writer always writes the key, so only a record not made by the writer could lack it.
+
+Not re-run by me: the two writer-M mutants, which need PyROOT. I rely on your 60/60 receipt for those.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
