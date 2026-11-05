@@ -507,7 +507,7 @@ The note's text does not change in this step.
 
 | check | result | record |
 |---|---|---|
-| ledger (`check_ledger.py`, step2's checks with base f1a335555) | 16 rows, 85 probes, 39 changed base sentences, 0 failures; self-test PASS | LEDGER-CHECK.txt |
+| ledger (`check_ledger.py`, step2's checks with base fa0718e8f) | 16 rows, 85 probes, 39 changed base sentences, 0 failures; self-test PASS | LEDGER-CHECK.txt |
 | round (`check_round.py`) and its self-test | PASS (19 removals, 25 additions, 3 abstract edits); 16/16 planted defects caught, each by its intended check | ROUND-CHECK.txt |
 | values (`make_values_fived16.py --self-test`, `--check`) | PASS (3,617 values; 10 listed-truth sentences, including R1's "ctotal") | VALUES-CHECK.txt |
 | rater copy (`make_rater_copy.sh`) | PASS | RATER-COPY.txt |
