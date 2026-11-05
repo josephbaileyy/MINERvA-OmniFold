@@ -219,3 +219,24 @@ First, an admission: I missed F3. In part 3 and in the final audit I read submit
 - What would close it: anchor the match on that line, e.g. `grep -qE "^\*\*M = \`$M\`\*\*"`, plus a test where the sha appears elsewhere in the binding but not on the M line.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---
+
+## The auditor's verdict on the M-line tightening (8a258b38..48e60350; code 5c0e02a2)
+
+The M-line tightening (5c0e02a2) is checked and closed. Nothing blocks.
+
+- **The change:** `grep -qE "^\*\*M = \`$M\`\*\*"` is anchored at line start on the M line. M is HEAD's 40 hex, so it's regex-safe.
+- **SubmitBinding:** 8/8 OK here, including test_refuses_M_cited_only_off_the_M_line and test_binding_1s_own_text_binds_its_M_line_only. The latter is the good one: it uses the real COV2D-BINDING-1.md text and refuses M placed in line 4's 64-hex declaration digest.
+- **The mutants, applied by hand:** "M matched anywhere" (grep -qF) and "name check skipped" each fail by assertion in three named tests:
+  - test_binding_1s_own_text_binds_its_M_line_only;
+  - test_refuses_M_cited_only_off_the_M_line;
+  - test_refuses_a_binding_naming_another_commit.
+- Afterwards there were 0 .pyc and a clean status.
+
+**Your scope correction is right, and it corrects me.**
+- I called the M line "the existing bindings' convention" after checking two files. I reproduced your count: 6 of 88 binding .md files on main at 8a258b38 carry `**M = \`<40-hex>\`**`, all in 5d-community-20261024.
+- I also cited S1-BINDING.md as an example, and it isn't one: it states a "deploy pin", not an M line.
+- The amendment's "as on COV2D-BINDING-1.md:5", plus the director's confirmation that binding 2 uses the format, is the right scope.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
