@@ -16,6 +16,13 @@ KILLED    a unit skipped whatever its verdict              by Driver.test_a_unit
 KILLED    the replica set not bound                        by Units.test_the_replica_set_is_bound_at_step_two
 KILLED    the driver's reads outside the staging root admitted by Driver.test_reads_outside_the_staging_root_are_refused
 KILLED    a staged input outside the root admitted         by Driver.test_reads_outside_the_staging_root_are_refused
+KILLED    a plain read where O_NOATIME is absent           by Reads.test_o_noatime_absent_is_refused
+KILLED    the audit hook on Python opens disabled          by Reads.test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise
+KILLED    the reader's TFile guard not installed           by Reads.test_the_reader_opens_root_files_only_under_its_roots
+KILLED    the read opens E_R's original, not its copy      by Readings.test_the_readings_on_known_products
+KILLED    the publication's digest unchecked on the copy   by Reads.test_the_publication_digest_is_checked_on_the_copy
+KILLED    a re-run reusing the staged inputs directory     by Reads.test_the_read_stages_every_protected_file
+KILLED    C-FILL opening a path outside the run and staging roots by Reads.test_c_fill_opens_only_the_run_or_staging_roots
 KILLED    a replica's bootstrap seed not E_R's             by Units.test_the_argv_is_e_rs_and_a_replica_adds_its_streams
 KILLED    the rank rule not N / 4                          by Readings.test_the_rank_rule
 KILLED    the null in-sample, not leave-one-out            by Readings.test_the_leave_one_out_null_on_a_known_answer
@@ -32,5 +39,5 @@ KILLED    a unit without a PASS marker read                by Controls.test_each
 KILLED    C-IN's E_R digest unchecked                      by Controls.test_each_control_stops_the_read
 KILLED    C-CELLS passes a different set                   by Controls.test_the_cells_are_bound_index_by_index
 KILLED    the cells' sha256 unchecked                      by Controls.test_the_cells_are_bound_index_by_index
-MUTATION CHECK :: PASS (34 mutations)
+MUTATION CHECK :: PASS (41 mutations)
 exit=0

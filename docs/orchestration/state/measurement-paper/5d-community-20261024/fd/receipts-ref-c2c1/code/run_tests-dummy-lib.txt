@@ -35,7 +35,7 @@ test_the_cells_are_bound_index_by_index (test_ref_c2c1.Controls.test_the_cells_a
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -74,14 +74,14 @@ Starting iteration 1
 [INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
 [INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/units/er.root
-{"unit": "er", "seconds": 3.402, "controls": {}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/units/er.root
+{"unit": "er", "seconds": 5.195, "controls": {}}
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -118,14 +118,14 @@ Starting iteration 1
 [INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
 [INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/units/c2_central.root
-{"unit": "c2_central", "seconds": 2.401, "controls": {"C-FILL": true, "C-SIM": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/units/c2_central.root
+{"unit": "c2_central", "seconds": 3.523, "controls": {"C-FILL": true, "C-SIM": true}}
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -164,8 +164,8 @@ Starting iteration 1
 [INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
 [INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/units/c1_central.root
-{"unit": "c1_central", "seconds": 0.93, "controls": {}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/units/c1_central.root
+{"unit": "c1_central", "seconds": 1.579, "controls": {}}
 test_a_unit_refuses_at_another_cpu_count (test_ref_c2c1.Driver.test_a_unit_refuses_at_another_cpu_count) ... refusing: er needs E_R's 11 CPUs, this process has 10
 ok
 test_a_unit_refuses_in_another_thread_environment (test_ref_c2c1.Driver.test_a_unit_refuses_in_another_thread_environment) ... refusing: er needs E_R's thread environment {'OMP_NUM_THREADS': '999', 'MKL_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None}, not {'OMP_NUM_THREADS': '1', 'MKL_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None}
@@ -180,7 +180,7 @@ test_c_fill_catches_a_factor_from_the_neighbouring_bin (test_ref_c2c1.Driver.tes
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -217,14 +217,14 @@ test_c_fill_catches_a_factor_from_the_neighbouring_bin (test_ref_c2c1.Driver.tes
 [INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
 [INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/cfill/c2_central.root
-{"unit": "c2_central", "seconds": 2.366, "controls": {"C-FILL": true, "C-SIM": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/cfill/c2_central.root
+{"unit": "c2_central", "seconds": 3.504, "controls": {"C-FILL": true, "C-SIM": true}}
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -261,14 +261,14 @@ test_c_fill_catches_a_factor_from_the_neighbouring_bin (test_ref_c2c1.Driver.tes
 [INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
 [INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/cfill_shifted/c2_central.root
-{"unit": "c2_central", "seconds": 2.408, "controls": {"C-FILL": false, "C-SIM": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/cfill_shifted/c2_central.root
+{"unit": "c2_central", "seconds": 3.284, "controls": {"C-FILL": false, "C-SIM": true}}
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -305,16 +305,16 @@ test_c_fill_catches_a_factor_from_the_neighbouring_bin (test_ref_c2c1.Driver.tes
 [INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
 [INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/cfill_tiny/c2_central.root
-{"unit": "c2_central", "seconds": 2.365, "controls": {"C-FILL": false, "C-SIM": false}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/cfill_tiny/c2_central.root
+{"unit": "c2_central", "seconds": 2.767, "controls": {"C-FILL": false, "C-SIM": false}}
 ok
-test_c_in_reads_the_input_digests_at_open_time (test_ref_c2c1.Driver.test_c_in_reads_the_input_digests_at_open_time) ... refusing: input CV digest ce5cf52678e1 differs from config.json
+test_c_in_reads_the_input_digests_at_open_time (test_ref_c2c1.Driver.test_c_in_reads_the_input_digests_at_open_time) ... refusing: input CV digest c720b2df6f95 differs from config.json
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -353,8 +353,8 @@ Starting iteration 1
 [INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
 [INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/cin/out/er.root
-{"unit": "er", "seconds": 3.238, "controls": {}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/cin/out/er.root
+{"unit": "er", "seconds": 4.41, "controls": {}}
 ok
 test_c_sim_goes_through_the_full_chain_to_the_full_truth (test_ref_c2c1.Driver.test_c_sim_goes_through_the_full_chain_to_the_full_truth) ... ok
 test_er_is_the_driver_unchanged (test_ref_c2c1.Driver.test_er_is_the_driver_unchanged) ... ok
@@ -364,7 +364,7 @@ test_the_background_stream_guard_both_ways (test_ref_c2c1.Driver.test_the_backgr
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -401,7 +401,7 @@ test_the_background_stream_guard_both_ways (test_ref_c2c1.Driver.test_the_backgr
 [INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
 [INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/csim.root
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/csim.root
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
@@ -412,7 +412,7 @@ test_the_background_stream_guard_both_ways (test_ref_c2c1.Driver.test_the_backgr
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/stage/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -451,13 +451,13 @@ Starting iteration 1
 [INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
 [INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/guard_ok.root
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/guard_ok.root
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
 [INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -496,8 +496,8 @@ Starting iteration 1
 [INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
 [INFO] omnifoldHelperFile: /Users/josephbailey/local-research/wt-limcat-c2code/unbinned_unfolding/python/omnifold.py
 [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
-[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/bkgstream/c2_replica_b3.root
-{"unit": "c2_replica_b3", "seconds": 2.321, "controls": {"C-FILL": true}}
+[OK] Wrote /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/bkgstream/c2_replica_b3.root
+{"unit": "c2_replica_b3", "seconds": 2.273, "controls": {"C-FILL": true}}
 ok
 test_dagostini_by_hand (test_ref_c2c1.Ibu.test_dagostini_by_hand) ... ok
 test_roounfold_bayes_is_the_same_update (test_ref_c2c1.Ibu.test_roounfold_bayes_is_the_same_update) ... ERROR
@@ -507,6 +507,12 @@ No difference: T falls above the null's maximum about 1 / (N + 1) of the time; a
 test_the_rank_rule (test_ref_c2c1.Readings.test_the_rank_rule) ... ok
 test_the_readings_on_known_products (test_ref_c2c1.Readings.test_the_readings_on_known_products) ... ok
 test_the_rho_classes_at_their_bars (test_ref_c2c1.Readings.test_the_rho_classes_at_their_bars) ... ok
+test_c_fill_opens_only_the_run_or_staging_roots (test_ref_c2c1.Reads.test_c_fill_opens_only_the_run_or_staging_roots) ... ok
+test_o_noatime_absent_is_refused (test_ref_c2c1.Reads.test_o_noatime_absent_is_refused) ... ok
+test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise (test_ref_c2c1.Reads.test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise) ... ok
+test_the_publication_digest_is_checked_on_the_copy (test_ref_c2c1.Reads.test_the_publication_digest_is_checked_on_the_copy) ... ok
+test_the_read_stages_every_protected_file (test_ref_c2c1.Reads.test_the_read_stages_every_protected_file) ... ok
+test_the_reader_opens_root_files_only_under_its_roots (test_ref_c2c1.Reads.test_the_reader_opens_root_files_only_under_its_roots) ... ok
 test_the_argv_is_e_rs_and_a_replica_adds_its_streams (test_ref_c2c1.Units.test_the_argv_is_e_rs_and_a_replica_adds_its_streams) ... ok
 test_the_replica_set_is_bound_at_step_two (test_ref_c2c1.Units.test_the_replica_set_is_bound_at_step_two) ... ok
 
@@ -514,15 +520,15 @@ test_the_replica_set_is_bound_at_step_two (test_ref_c2c1.Units.test_the_replica_
 ERROR: test_roounfold_bayes_is_the_same_update (test_ref_c2c1.Ibu.test_roounfold_bayes_is_the_same_update)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "/Users/josephbailey/local-research/wt-limcat-c2code/2d-unfolding/ref_c2c1/test_ref_c2c1.py", line 75, in test_roounfold_bayes_is_the_same_update
+  File "/Users/josephbailey/local-research/wt-limcat-c2code/2d-unfolding/ref_c2c1/test_ref_c2c1.py", line 80, in test_roounfold_bayes_is_the_same_update
     a, b = C.roounfold_bayes(M, T, y, KS, ROOUNFOLD), C.dagostini(M, T, y, KS)
            ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/josephbailey/local-research/wt-limcat-c2code/2d-unfolding/ref_c2c1/ref_c2c1.py", line 191, in roounfold_bayes
+  File "/Users/josephbailey/local-research/wt-limcat-c2code/2d-unfolding/ref_c2c1/ref_c2c1.py", line 272, in roounfold_bayes
     raise GateFailure(f"libRooUnfold did not load from {lib}")
 ref_c2c1.GateFailure: libRooUnfold did not load from <scratch>/fake_libRooUnfold.so
 
 ----------------------------------------------------------------------
-Ran 22 tests in 38.448s
+Ran 28 tests in 51.818s
 
 FAILED (errors=1)
 [INFO] p_T range: [0, 4.5] GeV/c (14 bins)
@@ -530,7 +536,7 @@ FAILED (errors=1)
 [INFO] POT: data=1e+20, mc=4e+20, scale=0.25
 [INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
 [INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
-[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmp20arz_zw/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux source: /private/var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpyhpk72mv/flux.root:pTmu_reweightedflux_integrated
 [INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
  0.013 0.014]
 [INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
@@ -542,11 +548,14 @@ FAILED (errors=1)
 [paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
 [paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
 [paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
 == outcomes (unittest's result object)
 {
  "schema": "ref-c2c1-suite-run/1",
  "testfile": "ref_c2c1/test_ref_c2c1.py",
- "ran": 22,
+ "ran": 28,
  "outcomes": {
   "Controls.test_each_control_stops_the_read": "ok",
   "Controls.test_the_cells_are_bound_index_by_index": "ok",
@@ -568,6 +577,12 @@ FAILED (errors=1)
   "Readings.test_the_rank_rule": "ok",
   "Readings.test_the_readings_on_known_products": "ok",
   "Readings.test_the_rho_classes_at_their_bars": "ok",
+  "Reads.test_c_fill_opens_only_the_run_or_staging_roots": "ok",
+  "Reads.test_o_noatime_absent_is_refused": "ok",
+  "Reads.test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise": "ok",
+  "Reads.test_the_publication_digest_is_checked_on_the_copy": "ok",
+  "Reads.test_the_read_stages_every_protected_file": "ok",
+  "Reads.test_the_reader_opens_root_files_only_under_its_roots": "ok",
   "Units.test_the_argv_is_e_rs_and_a_replica_adds_its_streams": "ok",
   "Units.test_the_replica_set_is_bound_at_step_two": "ok"
  },

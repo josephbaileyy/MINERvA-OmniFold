@@ -1,5 +1,5 @@
 #!/bin/bash
-# REF-C2C1's test run with RooUnfold (the director's ruling of 2026-11-05 on #787): all 22 tests of
+# REF-C2C1's test run with RooUnfold (the director's ruling of 2026-11-05 on #787): all 28 tests of
 # test_ref_c2c1.py in the named environment, with REF_C2C1_ROOUNFOLD set to the libRooUnfold.so given, failing unless
 # every test ran, none failed, and the C-ROO test (RooUnfoldBayes against the numpy update) ran rather than skipped,
 # all read from unittest's result object by run_suite.py (not from the verbose text, which RooUnfold's stdout interleaves).
@@ -12,7 +12,7 @@
 set -u
 LIB=${1:?usage: run_tests.sh LIBROOUNFOLD [PYTHON]}
 PY=${2:-/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3}
-EXPECT=22
+EXPECT=28
 HERE=$(cd "$(dirname "$0")" && pwd)
 [ -s "$LIB" ] || { echo "refusing: $LIB is missing or empty" >&2; exit 2; }
 [ -x "$PY" ] || { echo "refusing: $PY is not an executable interpreter" >&2; exit 2; }

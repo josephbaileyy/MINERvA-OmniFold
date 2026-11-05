@@ -67,14 +67,95 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def noatime_flag() -> int:
+    """O_NOATIME, read at each open so a test's explicit substitution takes effect. Refuses where the platform has
+    none: a plain read would move the file's purge clock (the director's ruling on #787's R2)."""
+    flag = getattr(os, "O_NOATIME", None)
+    if flag is None:
+        raise GateFailure("O_NOATIME is not available on this platform: refusing a plain read")
+    return flag
+
+
+def open_noatime(path: Path):
+    """A binary file object on ``path`` opened with O_NOATIME; an EPERM is raised, never retried as a plain read."""
+    return os.fdopen(os.open(str(path), os.O_RDONLY | noatime_flag()), "rb")
+
+
 def sha256_noatime(path: Path) -> str:
-    """sha256 read through O_NOATIME where the platform has it (Linux; the inputs' purge clocks are not touched)."""
-    fd = os.open(str(path), os.O_RDONLY | getattr(os, "O_NOATIME", 0))
+    """sha256 read through O_NOATIME (the inputs' purge clocks are not touched)."""
     h = hashlib.sha256()
-    with os.fdopen(fd, "rb") as fh:
+    with open_noatime(path) as fh:
         while block := fh.read(1 << 24):
             h.update(block)
     return h.hexdigest()
+
+
+def copy_noatime(src: Path, dest: Path) -> str:
+    """Copy ``src`` once through O_NOATIME to ``dest`` (which must not exist); returns the sha256 taken in the same pass
+    and refuses unless the copy's own digest equals it."""
+    h = hashlib.sha256()
+    with open_noatime(src) as fh, open(dest, "xb") as fo:
+        while block := fh.read(1 << 24):
+            h.update(block)
+            fo.write(block)
+    got = h.hexdigest()
+    if sha256(dest) != got:
+        raise GateFailure(f"the copy {dest} differs from {src}")
+    return got
+
+
+# Python reads of these trees must carry O_NOATIME while read_guards is active (pscratch's purge clock is the atime)
+PROTECTED = (Path("/pscratch"), Path("/global/cfs"))
+_READS = {"active": False, "protected": (), "allowed": ()}
+_AUDIT_INSTALLED = []
+
+
+def _audit(event, args):
+    """The runtime guard on Python opens: a read of a protected path outside the allowed roots without O_NOATIME
+    raises. An audit hook cannot be removed, so it acts only while read_guards is active. It sees no C-level open
+    (ROOT's), which tfile_guard covers."""
+    if event != "open" or not _READS["active"]:
+        return
+    path, _mode, flags = args
+    if not isinstance(path, (str, bytes, os.PathLike)) or (flags & os.O_ACCMODE) == os.O_WRONLY:
+        return
+    p = os.path.abspath(os.fsdecode(path))
+    if not any(under(p, r) for r in _READS["protected"]) or any(under(p, r) for r in _READS["allowed"]):
+        return
+    if flags & noatime_flag():
+        return
+    raise GateFailure(f"a plain read of {p}: files under {[str(r) for r in _READS['protected']]} are read only "
+                      "through O_NOATIME")
+
+
+def tfile_guard(allowed, what: str):
+    """A patch of ROOT.TFile.Open refusing any open for reading of a path outside the ``allowed`` roots (ROOT cannot
+    take O_NOATIME, so it may open only staged copies or the run's own products)."""
+    import ROOT
+    real_open = ROOT.TFile.Open
+    roots = tuple(Path(r).resolve() for r in allowed)
+
+    def guarded(path, mode="READ", *a, **k):
+        if str(mode).upper() in ("", "READ") and not any(under(path, r) for r in roots):
+            raise GateFailure(f"{what} opened {path} for reading outside {[str(r) for r in roots]}")
+        return real_open(path, mode, *a, **k)
+    return mock.patch.object(ROOT.TFile, "Open", staticmethod(guarded))
+
+
+@contextlib.contextmanager
+def read_guards(protected, allowed):
+    """For the block's whole run: Python reads under ``protected`` need O_NOATIME unless under ``allowed`` (the audit
+    hook), and ROOT.TFile.Open reads only under ``allowed`` (tfile_guard)."""
+    if not _AUDIT_INSTALLED:
+        sys.addaudithook(_audit)
+        _AUDIT_INSTALLED.append(True)
+    _READS.update(active=True, protected=tuple(Path(r).resolve() for r in protected),
+                  allowed=tuple(Path(r).resolve() for r in allowed))
+    try:
+        with tfile_guard(allowed, "the reader"):
+            yield
+    finally:
+        _READS.update(active=False, protected=(), allowed=())
 
 
 def staging_root(cfg: dict) -> Path:
@@ -229,6 +310,18 @@ def th2_vector(h, nx: int, ny: int) -> np.ndarray:
     return np.array([h.GetBinContent(ix, iy) for ix in range(1, nx + 1) for iy in range(1, ny + 1)])
 
 
+def own_hxsec(driver, root: Path, allowed) -> np.ndarray:
+    """C-FILL's read of the unit's own hXSec2D; refuses a path outside the run or staging root (the director's
+    ruling on #787's R1: ROOT opens only the run's products or staged copies)."""
+    if not any(under(root, Path(r).resolve()) for r in allowed):
+        raise GateFailure(f"C-FILL would open {root} outside {[str(r) for r in allowed]}")
+    import ROOT
+    f = ROOT.TFile.Open(str(root))
+    own = th2_vector(f.Get("hXSec2D"), len(driver.PT_EDGES) - 1, len(driver.PZ_EDGES) - 1)
+    f.Close()
+    return own
+
+
 # ------------------------------------------------------------------------------------------- the runner
 
 
@@ -301,16 +394,8 @@ def run_driver(driver, ohf, argv: list[str], out_root: Path, *, ibu: dict | None
             return real_omnifold(MCgen, MCreco, measured, MC_pass_reco_mask, MC_pass_truth_mask, *a, **k)
         patches.append(mock.patch.object(ohf, "omnifold", staticmethod(observed)))
     patches += recording_lightgbm(capture, extra)
-    if staging is not None:
-        import ROOT
-        real_open = ROOT.TFile.Open
-
-        def guarded(path, mode="READ", *a, **k):
-            """Every file the driver opens for reading must be a staged copy under the root (the director's ruling)."""
-            if str(mode).upper() in ("", "READ") and not under(path, staging):
-                raise GateFailure(f"the driver opened {path} for reading outside the staging root {staging}")
-            return real_open(path, mode, *a, **k)
-        patches.append(mock.patch.object(ROOT.TFile, "Open", staticmethod(guarded)))
+    if staging is not None:  # every file the driver opens for reading is a staged copy under the root
+        patches.append(tfile_guard((staging,), "the driver (outside the staging root)"))
     saved = sys.argv
     with contextlib.ExitStack() as stack:
         for p in patches:
@@ -475,11 +560,7 @@ def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None, inputs_
         # extraction of IBU's unfolded vector, on the data, where the factors are not 1; a mis-indexed or mis-scaled
         # factor moves cells by O(1). (C-SIM's fixed point has every factor exactly 1, so it cannot.) 1e-9, not tighter:
         # the driver sums w f event by event and u = f sum w, so their rounding grows with a truth bin's event count.
-        import ROOT
-        f = ROOT.TFile.Open(str(root))
-        nx, ny = len(driver.PT_EDGES) - 1, len(driver.PZ_EDGES) - 1
-        own = th2_vector(f.Get("hXSec2D"), nx, ny)
-        f.Close()
+        own = own_hxsec(driver, root, (out, staging_root(cfg)))
         prim = xs[c2["iterations"]["primary"]]
         nz = prim != 0
         fill_rel = float(np.max(np.abs(own[nz] / prim[nz] - 1))) if nz.any() else 0.0

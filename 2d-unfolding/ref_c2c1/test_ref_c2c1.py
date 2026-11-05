@@ -31,6 +31,11 @@ import ref_c2c1_read as R  # noqa: E402
 import test_re2_driver as T2  # noqa: E402  (RE-2's own fixture writer, not retyped)
 
 ROOUNFOLD = os.environ.get("REF_C2C1_ROOUNFOLD")
+# O_NOATIME, substituted explicitly (the director's ruling on #787's R2: the code refuses a plain read where the platform
+# has no O_NOATIME, as macOS has none). O_NONBLOCK is inert on a regular file's open, so a guarded open reads as a plain
+# one here; the substitution is the same on every platform, so the suite behaves the same on the cluster.
+NOATIME_SUB = mock.patch.object(os, "O_NOATIME", os.O_NONBLOCK, create=True)
+NOATIME_SUB.start()
 TD = Path(tempfile.mkdtemp())
 OMNI, FLUX = TD / "fx.root", TD / "flux.root"
 T2.write_fixture(OMNI, FLUX)
@@ -491,7 +496,99 @@ class Controls(unittest.TestCase):
             fx.close()
 
 
+class Reads(unittest.TestCase):
+    """#787's R1 and R2 (the director's ruling of 2026-11-05): O_NOATIME or a refusal; the reader opens E_R's products
+    and the publication only as staged O_NOATIME copies; the audit hook and the TFile guard fire on a plain read and
+    stay silent on the allowed ones; C-FILL opens only the run's or the staging root's files."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+
+    def test_o_noatime_absent_is_refused(self):
+        f = self.tmp / "a.bin"
+        f.write_bytes(b"x")
+        with mock.patch.object(os, "O_NOATIME", 0, create=True):
+            del os.O_NOATIME  # the platform has none
+            with self.assertRaises(C.GateFailure):
+                C.sha256_noatime(f)
+            with self.assertRaises(C.GateFailure):
+                C.copy_noatime(f, self.tmp / "copy.bin")
+        self.assertFalse((self.tmp / "copy.bin").exists())
+        self.assertEqual(C.copy_noatime(f, self.tmp / "copy.bin"), C.sha256(f))  # with the flag: copied, same digest
+
+    def test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise(self):
+        prot, ok = self.tmp / "protected", self.tmp / "allowed"
+        prot.mkdir()
+        ok.mkdir()
+        np.save(prot / "a.npy", np.arange(3))
+        np.save(ok / "b.npy", np.arange(3))
+        np.save(self.tmp / "c.npy", np.arange(3))
+        with C.read_guards((prot,), (ok,)):
+            for plain in (lambda: np.load(prot / "a.npy"), lambda: open(prot / "a.npy", "rb").close(),
+                          lambda: C.sha256(prot / "a.npy"), lambda: (prot / "a.npy").read_bytes()):
+                with self.assertRaises(C.GateFailure):
+                    plain()
+            self.assertEqual(C.sha256_noatime(prot / "a.npy"), C.sha256_noatime(prot / "a.npy"))
+            (prot / "new.txt").write_text("written")  # a write is not a read
+            np.load(ok / "b.npy")  # an allowed root, read in place
+            np.load(self.tmp / "c.npy")  # outside the protected trees
+        np.load(prot / "a.npy")  # inactive outside the block
+
+    def test_the_reader_opens_root_files_only_under_its_roots(self):
+        import ROOT
+        run, other = self.tmp / "run", self.tmp / "other"
+        run.mkdir()
+        other.mkdir()
+        write_th2(run / "x.root", np.ones(224))
+        write_th2(other / "y.root", np.ones(224))
+        with C.read_guards((), (run,)):
+            with self.assertRaises(C.GateFailure):
+                ROOT.TFile.Open(str(other / "y.root"))
+            ROOT.TFile.Open(str(run / "x.root")).Close()
+        ROOT.TFile.Open(str(other / "y.root")).Close()
+
+    def test_the_read_stages_every_protected_file(self):
+        fx = Fixture()
+        try:
+            e = Path(fx.cfg["e_r"]["central"]).parent
+            pub = Path(fx.cfg["publication"]["path"])
+            rec = R.read(fx.cfg, fx.run, fx.cells, C.sha256(fx.cells), fx.out / "readout.json", protected=(e, pub))
+            self.assertNotIn("stopped", rec, rec.get("controls"))
+            want = {str(p): C.sha256(p) for p in [pub, *e.glob("*.root")]}
+            self.assertEqual(rec["staged_sha256"], want)  # every E_R file and the publication, each by its digest
+            self.assertEqual(len(list((fx.out / "inputs").glob("*.root"))), len(want))  # one copy per file
+            with self.assertRaises(R.Refused):  # a re-run reads into a new directory
+                R.read(fx.cfg, fx.run, fx.cells, C.sha256(fx.cells), fx.out / "readout.json", protected=(e, pub))
+        finally:
+            fx.close()
+
+    def test_the_publication_digest_is_checked_on_the_copy(self):
+        fx = Fixture()
+        try:
+            fx.cfg["publication"]["sha256"] = "0" * 64
+            with self.assertRaises(R.Refused):
+                fx.read()
+        finally:
+            fx.close()
+
+    def test_c_fill_opens_only_the_run_or_staging_roots(self):
+        run, stage, other = self.tmp / "run", self.tmp / "stage", self.tmp / "other"
+        for d in (run, stage, other):
+            d.mkdir()
+        v = np.arange(224, dtype=float)
+        write_th2(run / "u.root", v)
+        write_th2(other / "u.root", v)
+        np.testing.assert_array_equal(C.own_hxsec(DRIVER, run / "u.root", (run, stage)), v)
+        with self.assertRaises(C.GateFailure):
+            C.own_hxsec(DRIVER, other / "u.root", (run, stage))
+        (run / "link.root").symlink_to(other / "u.root")  # a path that resolves outside
+        with self.assertRaises(C.GateFailure):
+            C.own_hxsec(DRIVER, run / "link.root", (run, stage))
+
+
 def tearDownModule():
+    NOATIME_SUB.stop()
     shutil.rmtree(TD, ignore_errors=True)
 
 

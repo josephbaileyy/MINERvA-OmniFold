@@ -19,7 +19,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TEST = HERE / "test_ref_c2c1.py"
 D, R = "ref_c2c1.py", "ref_c2c1_read.py"
-EXPECTED_TESTS = 22  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
+EXPECTED_TESTS = 28  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
 MUTATIONS = [
     # the IBU seam and the driver
     ("IBU's per-event factor not unfolded/prior", D, "    factor = np.divide(u, T, out=np.ones_like(u), where=T > 0)",
@@ -65,10 +65,26 @@ MUTATIONS = [
      "Units.test_the_replica_set_is_bound_at_step_two"),
     # the staging ruling (the director, 2026-11-05): REQUIRED
     ("the driver's reads outside the staging root admitted", D,
-     '            if str(mode).upper() in ("", "READ") and not under(path, staging):', "            if False:",
+     '        if str(mode).upper() in ("", "READ") and not any(under(path, r) for r in roots):', "        if False:",
      "Driver.test_reads_outside_the_staging_root_are_refused"),
     ("a staged input outside the root admitted", D, "        if not under(path, root):", "        if False:",
      "Driver.test_reads_outside_the_staging_root_are_refused"),
+    # #787's R1 and R2 (the director, 2026-11-05): REQUIRED
+    ("a plain read where O_NOATIME is absent", D, '    flag = getattr(os, "O_NOATIME", None)',
+     '    flag = getattr(os, "O_NOATIME", 0)', "Reads.test_o_noatime_absent_is_refused"),
+    ("the audit hook on Python opens disabled", D, '    if event != "open" or not _READS["active"]:', "    if True:",
+     "Reads.test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise"),
+    ("the reader's TFile guard not installed", D, '        with tfile_guard(allowed, "the reader"):',
+     "        with contextlib.nullcontext():", "Reads.test_the_reader_opens_root_files_only_under_its_roots"),
+    ("the read opens E_R's original, not its copy", R, "    x_er = th2(e_r_copy)", "    x_er = th2(e_r)",
+     "Readings.test_the_readings_on_known_products"),
+    ("the publication's digest unchecked on the copy", R, '        if staged.sha[pub["path"]] != pub["sha256"]:',
+     "        if False:", "Reads.test_the_publication_digest_is_checked_on_the_copy"),
+    ("a re-run reusing the staged inputs directory", R, "                    self.root.mkdir(parents=True)",
+     "                    self.root.mkdir(parents=True, exist_ok=True)", "Reads.test_the_read_stages_every_protected_file"),
+    ("C-FILL opening a path outside the run and staging roots", D,
+     "    if not any(under(root, Path(r).resolve()) for r in allowed):", "    if False:",
+     "Reads.test_c_fill_opens_only_the_run_or_staging_roots"),
     # pairing keys
     ("a replica's bootstrap seed not E_R's", D, '        argv += [x.format(b=b) for x in e["replica_argv_extra"]]',
      '        argv += [x.format(b=b + 1) for x in e["replica_argv_extra"]]',
@@ -101,7 +117,7 @@ MUTATIONS = [
      "Controls.test_each_control_stops_the_read"),
     ("a unit without a PASS marker read", R, '    controls["done"] = {"pass": not not_done,',
      '    controls["done"] = {"pass": True,', "Controls.test_each_control_stops_the_read"),
-    ("C-IN's E_R digest unchecked", R, '    controls["C-IN"] = {"pass": bool(C.sha256(e_r) == cfg["e_r"]["central_sha256"]',
+    ("C-IN's E_R digest unchecked", R, '    controls["C-IN"] = {"pass": bool(staged.sha[str(e_r)] == cfg["e_r"]["central_sha256"]',
      '    controls["C-IN"] = {"pass": bool(True', "Controls.test_each_control_stops_the_read"),
     ("C-CELLS passes a different set", R, '        controls["C-CELLS"] = {"pass": False, "why": str(e)[:300]}',
      '        controls["C-CELLS"] = {"pass": True, "why": str(e)[:300]}',

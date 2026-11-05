@@ -90,3 +90,42 @@ under a staging root by an O_NOATIME DTN step:
 - files.sha256      the files the runs used, identical before and after.
 - Not covered here: the guard sees only ROOT.TFile.Open. A read by another route (uproot, or C++ that opens a file
   without TFile::Open) would not be refused; the #787 closure grep records every read route of the driver's closure.
+
+Revision 6 (the director's ruling of 2026-11-05 on the #787 closure grep's two findings, before limitation-resolver's
+test connect):
+- R1, the reader's plain reads. ref_c2c1_read.read now runs under ref_c2c1.read_guards for its whole run:
+  - every file outside the run directory, the read directory, the cells file and the checkout (E_R's central xsec.root,
+    its replica xsec.roots, the publication's ROOT file) is copied once through O_NOATIME into <read dir>/inputs/
+    (Staged; the directory must not exist, so a re-run reads into a new one), its sha256 taken in the same pass;
+    C-IN and the publication's pin are checked on those digests; every ROOT open reads the copy. The readout and
+    STOP.json record staged_sha256. write_cells stages the publication the same way into <cells>-inputs/;
+  - an audit hook on Python opens (event "open", which carries the open's flags) refuses a read of a path under
+    /pscratch or /global/cfs outside the allowed roots without O_NOATIME;
+  - the TFile guard (now one function, tfile_guard, shared with the driver's staging guard) refuses a ROOT read
+    outside the allowed roots;
+  - C-FILL reads the unit's own hXSec2D through own_hxsec, which refuses a path outside the run or staging root
+    (a symlink resolving outside included).
+  The run's own products are read in place (the director's ruling).
+- R2: noatime_flag() refuses where the platform has no O_NOATIME (the getattr(os, "O_NOATIME", 0) fallback is gone).
+  The tests substitute the flag explicitly (O_NONBLOCK, inert on a regular file's open), the same on every platform.
+- Tests (6 new, class Reads): O_NOATIME absent is refused and no copy is made; the audit hook fires on np.load, open,
+  sha256 and read_bytes of a protected path and is silent on an O_NOATIME read, a write, an allowed root, an
+  unprotected path and outside the block; the reader's TFile guard fires outside its roots and is silent inside; a
+  full read with E_R's files and the publication as the protected set passes, stages each of them once with its
+  digest, and a re-run into the same directory is refused; a wrong publication pin is refused on the copy; C-FILL
+  refuses a path outside the run and staging roots.
+- REQUIRED mutants (7 new): the O_NOATIME fallback restored, the audit hook disabled, the reader's TFile guard not
+  installed, the read opening E_R's original, the publication's pin unchecked on the copy, a re-run reusing the
+  staged directory, and C-FILL's path check disabled; each killed by its named test. The staging-guard and C-IN
+  mutants follow their lines' new text.
+- closure-reads.tsv   the #787 closure grep at this revision: 41 hits in the 11 files of closure-files.txt (patterns:
+                      open(, np.load, read_text, read_bytes, mmap, TFile, uproot.open, TChain, RDataFrame,
+                      pickle.load, loadtxt, genfromtxt, fromfile, .Open(), each with its function and disposition.
+                      The grep at cab13dbe8 had 39 hits and the two findings above. The 41 here differ by the fix's
+                      own lines (open_noatime, copy_noatime, the shared tfile_guard and two docstrings that name
+                      TFile.Open, own_hxsec) and by moved line numbers; the other nine files are unchanged.
+- tests.txt         28 tests, OK (skipped=1: C-ROO), exit 0.
+- harness.txt       MUTATION CHECK :: PASS (41 mutations), exit 0.
+- test_run_suite.txt  5 tests OK.
+- run_tests-dummy-lib.txt  run_tests.sh (EXPECT 28) with a dummy library: 28 ran, C-ROO "error", RUN FAIL.
+- files.sha256      identical before and after.
