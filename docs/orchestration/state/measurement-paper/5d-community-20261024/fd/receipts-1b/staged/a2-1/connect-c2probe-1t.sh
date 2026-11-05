@@ -6,12 +6,12 @@
 # (fd_1b_noatime_guard.py ee20534c, --declared), as c2check will: the guard's first live run with the real O_NOATIME.
 # As connect-c2probe.sh otherwise, with an out-of-band stat snapshot of every declared input taken at launch by the
 # caller: the m3246 balance against the cap (stop if the cap is above half of what remains), a fresh clone at M in a new
-# pscratch directory, the bound blobs, one exclusive CPU node, QOS regular, --time 1:00:00 (cap 1.0 node-h). Nothing to
+# pscratch directory, the bound blobs, one exclusive CPU node, QOS regular, --time 1:30:00 (cap 1.5 node-h; the director: a timeout would lose the record). Nothing to
 # CFS; writes only under $W. Not under set -u. Run detached on the login node (setsid nohup).
 M=a47cfb4b9410cbf0cc8e34bee98e73c3e110f171
 P=/pscratch/sd/j/josephrb; W=$P/fd-1b-a21-c2probe-1t-20261105; DD=$W/deploy
 S=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1
-CAP_NODE_H=1.0
+CAP_NODE_H=1.5
 stop() { echo "STOP $*"; echo "end=$(date -u +%FT%TZ)"; exit 2; }
 [ -e "$W" ] && { echo "STOP $W exists"; exit 2; }
 mkdir -p "$W/logs" || exit 2
@@ -33,11 +33,11 @@ ee20534c20504aa1335bad4e75be067c0465c7faaa60d2a14a47abb81e22f60c  nd-unfolding/f
 2d6fa71ad91826cd0224ed6417b313e2829e4724eb6a958aaf09c6b5a570d5e3  $S/sbatch-c2probe.sh
 SUMS
 (cd "$DD" && sha256sum -c "$W/bound.sha256") || stop "bound blobs differ"
-jid=$(sbatch --parsable -A m3246 -q regular -C cpu -N 1 --exclusive -t 01:00:00 -J fd1b_c2probe -o "$W/logs/%x_%j.out" \
+jid=$(sbatch --parsable -A m3246 -q regular -C cpu -N 1 --exclusive -t 01:30:00 -J fd1b_c2probe -o "$W/logs/%x_%j.out" \
   "$DD/$S/sbatch-c2probe.sh" "$DD" "$M" "$W" 1) || stop sbatch
 jid=${jid%%;*}; echo "Submitted batch job $jid"
 tl=$(scontrol show job "$jid" | grep -oE "TimeLimit=[^ ]*"); echo "$tl"
-[ "$tl" = "TimeLimit=01:00:00" ] || { scancel "$jid"; stop "the time limit parsed as ${tl#TimeLimit=}, not 01:00:00: cancelled $jid"; }
+[ "$tl" = "TimeLimit=01:30:00" ] || { scancel "$jid"; stop "the time limit parsed as ${tl#TimeLimit=}, not 01:30:00: cancelled $jid"; }
 scontrol show job "$jid" | grep -oE "(JobName|JobState|TimeLimit|Partition|QOS|NumNodes|Account|OverSubscribe)=[^ ]*" | tr '\n' ' '; echo
 squeue --me -o "%i %j %T %M %l %R" | grep fd1b_c2 || true
 echo "end=$(date -u +%FT%TZ)"
