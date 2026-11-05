@@ -24,9 +24,10 @@ sys.path.insert(0, str(B3))
 import guard_scan  # noqa: E402
 
 STAND_IN = os.O_NOFOLLOW
-# every binding-3 script in b3/ and the number of guarded 1B lines it must hold: a script not listed fails, so a new
-# one cannot go uncounted, and a count of 0 fails, so an emptied script cannot pass vacuously
-EXPECTED_B3 = {"sbatch-c2check.sh": 1}
+# every binding-3 script in b3/ and the exact number of guarded 1B lines it must hold: a script not listed fails, so a
+# new one cannot go uncounted; a connect script that runs no 1B module itself holds 0; the population's total must be
+# positive, so an emptied b3/ cannot pass vacuously
+EXPECTED_B3 = {"sbatch-c2check.sh": 1, "connect-c2check.sh": 0}
 
 
 def run_py(code: str, *args, cwd=None) -> subprocess.CompletedProcess:
@@ -267,11 +268,13 @@ class Scan(unittest.TestCase):
     def test_every_binding_3_script_is_guarded_and_counted(self):
         found = {p.name for p in B3.glob("*.sh")}
         self.assertEqual(found, set(EXPECTED_B3), "every b3 script must be listed with its expected count")
+        total = 0
         for name, n in EXPECTED_B3.items():
             r = guard_scan.scan_script((B3 / name).read_text())
             self.assertEqual(r["unguarded"], [], name)
             self.assertEqual(r["guarded"], n, name)
-            self.assertGreater(n, 0, name)
+            total += r["guarded"]
+        self.assertGreater(total, 0)
 
     def test_a_cmodel_json_in_a_binding_3_script_is_the_deploy_file(self):
         """The cmodel json is a deploy file (nd-unfolding/pv-ladder/readouts/cmodel_5d.json), not a guard root: any
