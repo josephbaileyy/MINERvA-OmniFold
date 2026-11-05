@@ -1,4 +1,4 @@
-# make_values_fived16.py --self-test, --check at ac70a2b3f
+# make_values_fived16.py --self-test, --check at c97fab2d9
   ok   a wrong sha256 pin is refused
   ok   --check fails on a file with R06's z printed as 1.8
   ok   --check passes a fresh file
