@@ -52,6 +52,7 @@ NEW_NUMERALS = {
     "200": "addition 3: the iteration count of that 3.3 (sec_5d.tex :84; d-id/REPORT.md :442-445)",
     "5.9": "PRD read 1, R4: sec_summary.tex:9 (the purity estimate up to 5.9 sigma_stat from the truth in the 14 cells)",
     "0.44": "PRD read 1, R4: sec_summary.tex:9, app_negweight.tex:136 (the refined estimate within +-0.44 sigma_stat)",
+    "2.70": "DECISION #798's clarity fix A: HistGBT's ten-seed mean, sec_results.tex sec:results-tension, app_statmethods.tex",
 }
 GONE = [
     ("paper_body.tex", "No hyperparameter search was performed on data."),                       # item 1
@@ -76,6 +77,10 @@ GONE = [
     ("paper_body.tex", "are not learner settings"),                                                 # DECISION-20261105 item 2
     ("paper_body.tex", "The comparison is a consistency benchmark, not a blind validation"),       # item 3: said once
     ("paper_body.tex", "a change that lowered"),                                                    # item 3
+    ("paper_body.tex", "formally adopted"),                                                         # DECISION #798
+    ("paper_body.tex", "should be read as a consistency check"),                                   # DECISION #798
+    ("paper_body.tex", "the choice lowered"),                                                       # clarity fix A
+    ("paper_body.tex", "in the data result"),                                                       # the 14 is closure
 ]
 ONCE = [
     ("paper_body.tex", "No learner setting, whether capacity, learning rate, refinement capacity or iteration count, "
@@ -83,7 +88,7 @@ ONCE = [
     ("paper_body.tex", "this choice was checked on data, against ten iterations with purity-based subtraction and "
                        "against the published result, without a search over the iteration count"),
     ("paper_body.tex", r"LightGBM, rather than the scikit-learn exact-split estimator at the same settings, was chosen "
-                       r"after both had been compared with the published result, as had a third implementation"),
+                       r"after both"),
     ("paper_body.tex", "and the distance depends on the estimator"),
     ("paper_body.tex", "and ndf is the number of reported bins. The value is descriptive, and no $p$-value is quoted for it."),
     ("paper_body.tex", "Neither panel shows the sixteen-cell result or its reported covariance."),
@@ -111,16 +116,20 @@ ONCE = [
     ("paper_body.tex", "Two other choices for the two-dimensional result were made with the comparison to the published "
                        "result in view: the learner implementation and the background-subtraction treatment "
                        r"(Sec.~\ref{sec:repro2d-pub}). That comparison is therefore not an independent test of the method."),
-    ("paper_body.tex", "It was formally adopted after its distance from the published result was known, and the change "
+    # DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md sec. 2: the two phrases and the clarity fixes
+    ("paper_body.tex", "It was adopted in the analysis only after that comparison was known, and the change "
                        r"lowered $\chi^{2}/\mathrm{ndf}$ from $\chiPaperPurity$ to $\chiPaper$."),
     ("paper_body.tex", r"The $\chi^{2}/\mathrm{ndf}$ values quoted for the two-dimensional comparison are therefore "
-                       "conditional on both choices, and the comparison should be read as a consistency check, not a "
-                       "blind validation."),
-    ("paper_body.tex", "as had a third implementation, the scikit-learn histogram estimator"),     # item 4: not two
-    ("paper_body.tex", "with ndf the 205 reported bins, from $\\chiPaperExact$ to $\\chiPaperPurity$"),  # item 4
-    ("paper_body.tex", "the mean residual of the purity-based estimate reached 5.9 statistical standard deviations, the "
-                       "data result's per-bin statistical uncertainties, in its most affected bin, against at most 0.44 "
-                       "for the refined estimate over all bins"),                                   # item 4
+                       "conditional on both choices, and the comparison should be read as a descriptive comparison, not "
+                       "a blind validation."),
+    ("paper_body.tex", "was chosen after both, and a third implementation, the scikit-learn histogram estimator, had been "
+                       "compared with the published result."),
+    ("paper_body.tex", r"their $\chi^{2}/\mathrm{ndf}$ values were $\chiPaperExact$ for exact-split, $\chiPaperPurity$ "
+                       "for LightGBM and 2.70 for the histogram estimator (a mean over ten seeds)"),
+    ("paper_body.tex", "the 20-seed mean residual of the purity-based estimate reached a maximum over the 205 bins of 5.9, "
+                       "in units of the data result's per-bin statistical uncertainty; the corresponding maximum for the "
+                       "refined estimate was 0.44. In the closure, the two estimates differed by more than one such unit "
+                       "in 14 of the 205 bins."),
     ("paper_body.tex", "That choice was made on the closure test, before the refined result's comparison with the "
                        "published result was computed."),                                            # item 3
     ("paper_body.tex", "NuWro shape, noise-free closure &"),                                        # R5

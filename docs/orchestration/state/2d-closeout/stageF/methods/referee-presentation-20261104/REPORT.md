@@ -503,6 +503,40 @@ once.
 
 The note's text does not change in this step.
 
+## The second reviewer read's phrases (DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md §2, #798)
+
+The second PRD-referee read of the item-4 sentences is in `consult-wording-2-20261105/` (answer sha256 a403c251…).
+Joseph accepted both of its phrase changes ("Accept both changes"). Its clarity fixes go in under the earlier approval,
+each re-checked against its producer.
+
+*IV B, as it now prints:*
+> LightGBM, rather than the scikit-learn exact-split estimator at the same settings, was chosen after both, and a
+> third implementation, the scikit-learn histogram estimator, had been compared with the published result. With
+> purity-based subtraction and with ndf the 205 reported bins, their χ²/ndf values were 3.66 for exact-split, 2.65 for
+> LightGBM and 2.70 for the histogram estimator (a mean over ten seeds), and the distance depends on the estimator.
+> The refined negative-weight background treatment was chosen on a closure test in simulation. With the simulation's
+> own truth as the target, the 20-seed mean residual of the purity-based estimate reached a maximum over the 205 bins of
+> 5.9, in units of the data result's per-bin statistical uncertainty; the corresponding maximum for the refined
+> estimate was 0.44. In the closure, the two estimates differed by more than one such unit in 14 of the 205 bins. That
+> choice was made on the closure test, before the refined result's comparison with the published result was computed.
+> It was adopted in the analysis only after that comparison was known, and the change lowered χ²/ndf from 2.65 to
+> 2.27. The χ²/ndf values quoted for the two-dimensional comparison are therefore conditional on both choices, and the
+> comparison should be read as a descriptive comparison, not a blind validation.
+
+**The checks behind each change:**
+- **3.66 is exact-split's.** values.tex:48 `\chiPaperExact`, VL172, whose control reproduces 3.661.
+- **2.65 is LightGBM seed 42's.** values.tex:81 `\chiPaperPurity`.
+- **2.70 is HistGBT's ten-seed mean** (±0.04, range 2.63–2.74), from sec_results.tex sec:results-tension and the
+  configuration table in app_statmethods.tex. All three are with purity-based subtraction, against the published
+  covariance over its 205 reported bins.
+- **5.9 and 0.44 are the maxima over the 205 cells of each arm's 20-seed mean residual,** in σ_stat (RE1-REPORT-2.md
+  §2 table, both at gid 128).
+- **The 14 is the closure's FLAG count:** cells where the mean arm difference exceeds 1 σ_stat. It is stated "In the
+  closure"; the reviewer's "in the data result" would be wrong and is not used.
+- **"The choice lowered" is dropped,** because it reads as causal. The three values are listed instead.
+- **The note is unchanged.** It already gives the three values (sec:results-tension; app_statmethods.tex) and the
+  closure numbers (app_negweight.tex :136; sec_summary.tex :9).
+
 ## Checks
 
 | check | result | record |
