@@ -1,0 +1,5 @@
+# sacct -j 60827080 -o JobID,JobName,State,ExitCode,QOS,Account,Partition,Timelimit,Submit,Start,End,Elapsed,ElapsedRaw,NNodes,AllocCPUS,MaxRSS -P (read 2026-11-05T04:45:29Z on login22)
+JobID|JobName|State|ExitCode|QOS|Account|Partition|Timelimit|Submit|Start|End|Elapsed|ElapsedRaw|NNodes|AllocCPUS|MaxRSS
+60827080|fd_stab_dry|COMPLETED|0:0|regular_1|m3246|regular_milan_ss11|00:45:00|2026-11-04T15:55:09|2026-11-04T16:21:11|2026-11-04T16:37:43|00:16:32|992|1|256|
+60827080.batch|batch|COMPLETED|0:0||m3246|||2026-11-04T16:21:11|2026-11-04T16:21:11|2026-11-04T16:37:43|00:16:32|992|1|256|108638928K
+60827080.extern|extern|COMPLETED|0:0||m3246|||2026-11-04T16:21:11|2026-11-04T16:21:11|2026-11-04T16:37:43|00:16:32|992|1|256|

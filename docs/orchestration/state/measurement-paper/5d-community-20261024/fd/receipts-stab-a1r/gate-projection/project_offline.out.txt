@@ -1,0 +1,54 @@
+# command: python3 -B docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-stab-a1r/gate-projection/project_offline.py <worktree at M_A1 cc54d86f> docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-stab-a1r
+# run: 2026-11-05T04:45:14Z, deploy HEAD cc54d86f7ac66c1346fa69e5894b2d2f000fb09c, python 3.12.2
+{
+ "B2_STOP_RATIO": 2.0,
+ "CAP_NODE_H": 8.0,
+ "LANES": 8,
+ "b2_over_control": 0.9899534855231604,
+ "charged_node_h": 0.0,
+ "dry_tasks_ended": 9,
+ "measured": [
+  "B2/closure",
+  "B2/stability",
+  "B3a/stability",
+  "B3b/closure",
+  "B3b/stability",
+  "control/closure",
+  "control/stability"
+ ],
+ "now_equals_t0": 1793839063.7954328,
+ "per_unfold_s": {
+  "B2/closure": 461.23638105392456,
+  "B2/stability": 451.8793933391571,
+  "B3a/closure": 429.62527656555176,
+  "B3a/stability": 429.62527656555176,
+  "B3b/closure": 583.6115665435791,
+  "B3b/stability": 622.9269289970398,
+  "control/closure": 465.9172252019246,
+  "control/stability": 522.2967221736908
+ },
+ "probe_sha256": "37ff9d028e53685db1c5adc606061235b21e5cb8a86752f5f0f987e6851dd9b0",
+ "projected_node_h": 4.804347127852616,
+ "queue_sha256": "d391858c1f5f2655f9fbc9d38beff29d9a4ae830ea7b3cf9365a2d2f4958bfeb",
+ "queue_tasks": 128,
+ "records": {
+  "stab_B2_closure_nominal.end": "3c592e3bb27c91a49bb650f7aa3468ac7a0694c783efc77098182875ed22386c",
+  "stab_B2_closure_nominal.start": "373196f94f95e067f6e6e54834bd4b768c8efacc03420b1a580d94db3eb1d8c3",
+  "stab_B2_stability_00.end": "f71a0b9be926ab211fbb90561c092cc225707d359e460218aa03352e7b3c2bc6",
+  "stab_B2_stability_00.start": "ec72241064bbcfaf4057de775ae0357101720a99205865e7a791e490d2c24ae2",
+  "stab_B3a_stability_00.end": "ecfe2f33aace585fb0452aa663493753c1007ce4c1802633d5cdf9a0a490d3c5",
+  "stab_B3a_stability_00.start": "5f4d2348155d6f5f63c503b7df0563cac035649f1636191e1572582516dd6a0b",
+  "stab_B3b_closure_nominal.end": "d3f4db4a3a772a1e516819709ff9f21d3a2babc45f396614607cf67fbbd632f0",
+  "stab_B3b_closure_nominal.start": "0a141f68fcadf403f298f2424af2ccd78e3da170c1b810076b44b0c23e7fcf27",
+  "stab_B3b_stability_00.end": "fa310498bfd51edfb5b1544f33f8b774fc8980e49e45400481c778699cf8b9ad",
+  "stab_B3b_stability_00.start": "45b734a07b9544fbd97d8803539804419bf0d1c47fc382edd92b02744c50a6fd",
+  "stab_control_closure_A7_mnvtune.end": "f1109f35cb2ec14b026801a9cb86622e11a9209c7f10d8ae8c5ae9c24e3fe27f",
+  "stab_control_closure_A7_mnvtune.start": "843563896c5a256ebda3352be3ffc449e5c67c5ef0d7b87f85524d7225a5984d",
+  "stab_control_closure_closure_nuwro.end": "ef04ba9cdcd2f5f360d9746ffc072d6fbc7f609f89a64a978071a3c734e7712d",
+  "stab_control_closure_closure_nuwro.start": "ae588c682d2b2095eda53f8bb601f9e2497197bfb6dda137467f6c83d2feb4de",
+  "stab_control_closure_nominal.end": "fb452ba35ee6e95b7fc2675ef24976084ff79e899f5d040ff70496504caf632a",
+  "stab_control_closure_nominal.start": "ca48d66d4375c55259b3481fc4cfc002cd1998382ddc2ff9c7bd7269f8accb21",
+  "stab_control_stability_00.end": "22c8d6dd579b045f8bd383ba23fffeae41e30e48a485559c48ef2b300370fe31",
+  "stab_control_stability_00.start": "21c1e210f9a9c374d2f1e834b4f2880a523ebda3c95919de13bcc1cce1a5ad9e"
+ }
+}
