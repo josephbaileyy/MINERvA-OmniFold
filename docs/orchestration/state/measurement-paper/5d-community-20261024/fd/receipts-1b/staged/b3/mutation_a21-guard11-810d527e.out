@@ -1,0 +1,34 @@
+sha256 062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67  fd_1b_mc.py
+sha256 522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f  fd_1b_c2.py
+sha256 220a8bd517cd6c6255cd34abc1eec444638cf2b98867cdc0d95d5775e374f32e  fd_1b_cvdenom.py
+sha256 69cd7bd37984db1deb0d103fb81808e88fc990cc679e9a4b0a6dea16d15b208d  fd_1b_binning.py
+sha256 9c7f1541777bd8bb5a62bd96f747b5431e295ff18e732a1b4cb9f09cd6c850a8  ../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py
+sha256 ee20534c20504aa1335bad4e75be067c0465c7faaa60d2a14a47abb81e22f60c  fd_1b_noatime_guard.py
+sha256 1a904961df398201477734effb9f09a85c71bbafb1b806fef1a244a5bdebdb61  ../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/sbatch-c2check.sh
+sha256 ccb2ba063fff8dbe0e0ab39f9d817db86112af3b8ab479b7ca369ef96015fd02  ../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/guard_scan.py
+sha256 64331f5fd5d0c569fb540c6ab976f990fc2b33d81c8b7c1ac6dc19ce472c5d60  tests/test_fd_1b_mc.py
+sha256 b090005983d1d88ab8c57ae1474a8cf156295bb131ec2414cfcab12ecba5fb1f  tests/test_fd_1b_c2.py
+sha256 76f3bbbcc7938db08ac4b06594cb2c92b39baddf9a35658486b1799e99e771b1  tests/test_fd_1b_cvdenom.py
+sha256 94e9d76e0b0907b102891222201968b8bb9ae6c003e9e65a86c5b8fe5c0ef823  tests/test_fd_1b_binning.py
+sha256 db84efa25dd8ad0d8ba933e7420551f1da5b36f84e2257787b90fe0f2192739b  tests/test_fd_1b_a21_e2e.py
+sha256 5cba46f7f7f80cb1301ed42745c32b05f941300d58a6651e48ab063d251e772c  tests/test_fd_1b_tables.py
+sha256 df92646b6cbb4f429f6b8e60c21541df7cdbc8367cff6b4abbc0a6eb8dd14471  tests/test_fd_1b_guard.py
+KILLED means the suites exit 1 (a test failed); any other non-zero exit is ERROR, not a kill
+plan: 11 mutants, 0 not applicable; every anchor occurs as required
+required: 3 mutants, each in the plan and run
+unmutated: 254 passed, 1 skipped in 188.46s (0:03:08)
+KILLED   guard: the hook not installed
+KILLED   guard: any flag accepted
+KILLED   guard: the root check widened
+KILLED   guard: symlinks not resolved
+KILLED   guard: installs without the flag
+KILLED   guard: the launcher runs the entry without install
+KILLED   b3: c2check's job line calls fd_1b_c2.py directly
+KILLED   tables: every row calls fd_1b_mc.py directly
+KILLED   scan: option values not modelled
+KILLED   scan: continuations not joined
+KILLED   scan: a malformed guard line accepted
+unmutated, after: 254 passed, 1 skipped in 182.05s (0:03:02)
+11 of 11 applicable killed; 0 not applicable; 0 equivalent (each with its scope and proving test); 11 in all
+required: every one KILLED
+exit=0
