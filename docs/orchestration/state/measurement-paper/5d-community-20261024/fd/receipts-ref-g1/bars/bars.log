@@ -1,0 +1,15 @@
+node login27 nproc=244 loadavg 2.14 2.38 2.85
+2026-11-05T15:01:14Z
+bars script sha256 f2962b1089341c5cfde079405d8c08921a04cadaa596ef3339c3ad9eb3fd2371
+batch DONE: {"units": 233, "pass": 233, "job": "60857388", "porcelain_after": 0}; SHA256SUMS sha256 6a4c192980bfa337a312381d5862d9598efa4df7ace00d80d587aa2858f47882
+HEAD 609d8f24ea2229fa4b3540627aa8c31acfcc0a54; porcelain --ignored lines before: 0
+bound blobs: 5 checked, 0 mismatches
+interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]; threads 4; nice 19; ionice idle
+{"bars": [28.12141330368751, 39.04213817820935], "sha256": "de12c6745b4f5353a83ae8573c7cc75d986617f7a21d8b4ea4c5e275d8607780", "self_check": true}
+bars rc=0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:45.53
+	Maximum resident set size (kbytes): 340420
+bars.json sha256 de12c6745b4f5353a83ae8573c7cc75d986617f7a21d8b4ea4c5e275d8607780
+porcelain --ignored lines after: 0
+refg1 bars rc=0
+2026-11-05T15:05:38Z
