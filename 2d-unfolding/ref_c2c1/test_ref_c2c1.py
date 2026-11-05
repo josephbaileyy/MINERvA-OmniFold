@@ -36,7 +36,7 @@ OMNI, FLUX = TD / "fx.root", TD / "flux.root"
 T2.write_fixture(OMNI, FLUX)
 DRIVER, OHF = C.load_driver()
 CFG = json.loads(C.CONFIG.read_text())
-CFG["inputs"].update(CV=str(OMNI), MC=str(FLUX))
+CFG["inputs"]["staging"].update(root=str(TD), CV=OMNI.name, MC=FLUX.name)  # the fixture files are the staged copies
 CFG["e_r"]["argv"] = ["--omnifile", "$CV", "--mcfile", "$MC", "--iters", "2", "--use-weights", "--estimator", "lgbm",
                       "--seed", "42", "--branch-select", "all", "--bkg-mode", "negweight-refined",
                       "--refine-n-estimators", "400", "--refine-num-leaves", "31"]
@@ -164,6 +164,31 @@ class Driver(unittest.TestCase):
         self.assertEqual(json.loads(str(np.load(self.out / "er.npz")["meta"]))["thread_env"], CFG["e_r"]["thread_env"])
         real = json.loads(C.CONFIG.read_text())["e_r"]["thread_env"]
         self.assertEqual(real, {"OMP_NUM_THREADS": "64", "MKL_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1"})
+
+    def test_reads_outside_the_staging_root_are_refused(self):
+        unbound = copy.deepcopy(CFG)
+        unbound["inputs"]["staging"]["root"] = None
+        with self.assertRaises(C.GateFailure):
+            C.resolve_argv(unbound, None)
+        outside = copy.deepcopy(CFG)
+        outside["inputs"].update(CV_sha256=C.sha256(OMNI), MC_sha256=C.sha256(FLUX))
+        outside["inputs"]["staging"]["MC"] = "../" + TD.name + "_elsewhere/" + FLUX.name
+        with self.assertRaises(C.GateFailure):
+            C.check_inputs(outside)  # a staged name that resolves outside the root
+        elsewhere = TD.parent / (TD.name + "_out")
+        elsewhere.mkdir(exist_ok=True)
+        shutil.copy(FLUX, elsewhere / FLUX.name)
+        stage = TD / "stage"
+        stage.mkdir(exist_ok=True)
+        shutil.copy(OMNI, stage / OMNI.name)
+        argv = ["--omnifile", str(stage / OMNI.name), "--mcfile", str(elsewhere / FLUX.name)] + C.resolve_argv(CFG, None)[4:]
+        with self.assertRaises(C.GateFailure) as cm:  # the runtime guard: the driver opens --mcfile outside the root
+            C.run_driver(DRIVER, OHF, argv, TD / "guard.root", extra=None, staging=stage.resolve())
+        self.assertIn("outside the staging root", str(cm.exception))
+        shutil.copy(FLUX, stage / FLUX.name)  # silent when every read is under the root
+        argv[3] = str(stage / FLUX.name)
+        C.run_driver(DRIVER, OHF, argv, TD / "guard_ok.root", extra=None, staging=stage.resolve())
+        shutil.rmtree(elsewhere)
 
     def test_er_is_the_driver_unchanged(self):
         self.assertEqual(self.rc["er"], 0)

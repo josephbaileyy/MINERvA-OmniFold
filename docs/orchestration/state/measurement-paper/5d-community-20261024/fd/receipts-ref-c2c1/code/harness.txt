@@ -14,6 +14,8 @@ KILLED    C-REF's per-bin tie dropped                      by Controls.test_each
 KILLED    c1's keys not merged                             by Driver.test_c1_differs_from_e_r_by_exactly_the_four_keys
 KILLED    a unit skipped whatever its verdict              by Driver.test_a_unit_without_a_pass_marker_is_never_done
 KILLED    the replica set not bound                        by Units.test_the_replica_set_is_bound_at_step_two
+KILLED    the driver's reads outside the staging root admitted by Driver.test_reads_outside_the_staging_root_are_refused
+KILLED    a staged input outside the root admitted         by Driver.test_reads_outside_the_staging_root_are_refused
 KILLED    a replica's bootstrap seed not E_R's             by Units.test_the_argv_is_e_rs_and_a_replica_adds_its_streams
 KILLED    the rank rule not N / 4                          by Readings.test_the_rank_rule
 KILLED    the null in-sample, not leave-one-out            by Readings.test_the_leave_one_out_null_on_a_known_answer
@@ -30,5 +32,5 @@ KILLED    a unit without a PASS marker read                by Controls.test_each
 KILLED    C-IN's E_R digest unchecked                      by Controls.test_each_control_stops_the_read
 KILLED    C-CELLS passes a different set                   by Controls.test_the_cells_are_bound_index_by_index
 KILLED    the cells' sha256 unchecked                      by Controls.test_the_cells_are_bound_index_by_index
-MUTATION CHECK :: PASS (32 mutations)
+MUTATION CHECK :: PASS (34 mutations)
 exit=0

@@ -77,12 +77,37 @@ def sha256_noatime(path: Path) -> str:
     return h.hexdigest()
 
 
+def staging_root(cfg: dict) -> Path:
+    root = (cfg["inputs"].get("staging") or {}).get("root")
+    if not root:
+        raise GateFailure("the staging root is bound at step two; config.json has none")
+    return Path(root).resolve()
+
+
+def staged(cfg: dict) -> dict:
+    """The staged copies the units read: CV and MC under the staging root, never the originals (the director's
+    ruling: the driver opens them with ROOT.TFile.Open, which cannot take O_NOATIME)."""
+    root = staging_root(cfg)
+    return {k: str(root / cfg["inputs"]["staging"][k]) for k in ("CV", "MC")}
+
+
+def under(path, root: Path) -> bool:
+    try:
+        Path(path).resolve().relative_to(root)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+
 def check_inputs(cfg: dict) -> dict:
-    """C-IN at open time: the CV omnifile and the flux file equal their pins (config.json inputs) before the driver
-    opens them; returns what was verified, which every unit records."""
+    """C-IN at open time: the staged CV omnifile and flux file lie under the staging root and equal their pins before
+    the driver opens them; returns what was verified, which every unit records."""
     verified = {}
-    for key in ("CV", "MC"):
-        got = sha256_noatime(Path(cfg["inputs"][key]))
+    root = staging_root(cfg)
+    for key, path in staged(cfg).items():
+        if not under(path, root):
+            raise GateFailure(f"input {key} {path} is not under the staging root {root}")
+        got = sha256_noatime(Path(path))
         if got != cfg["inputs"][f"{key}_sha256"]:
             raise GateFailure(f"input {key} digest {got[:12]} differs from config.json")
         verified[key] = got
@@ -230,7 +255,7 @@ def recording_lightgbm(capture: Capture, extra: dict | None):
 
 
 def run_driver(driver, ohf, argv: list[str], out_root: Path, *, ibu: dict | None = None,
-               extra: dict | None = None) -> Capture:
+               extra: dict | None = None, staging: Path | None = None) -> Capture:
     """One in-process run of E_R's driver main() with its argv and output. ``ibu`` (c2) replaces the OmniFold call;
     ``extra`` (c1) merges keys into every LightGBM; neither (er) leaves the driver as it is."""
     capture = Capture()
@@ -276,6 +301,16 @@ def run_driver(driver, ohf, argv: list[str], out_root: Path, *, ibu: dict | None
             return real_omnifold(MCgen, MCreco, measured, MC_pass_reco_mask, MC_pass_truth_mask, *a, **k)
         patches.append(mock.patch.object(ohf, "omnifold", staticmethod(observed)))
     patches += recording_lightgbm(capture, extra)
+    if staging is not None:
+        import ROOT
+        real_open = ROOT.TFile.Open
+
+        def guarded(path, mode="READ", *a, **k):
+            """Every file the driver opens for reading must be a staged copy under the root (the director's ruling)."""
+            if str(mode).upper() in ("", "READ") and not under(path, staging):
+                raise GateFailure(f"the driver opened {path} for reading outside the staging root {staging}")
+            return real_open(path, mode, *a, **k)
+        patches.append(mock.patch.object(ROOT.TFile, "Open", staticmethod(guarded)))
     saved = sys.argv
     with contextlib.ExitStack() as stack:
         for p in patches:
@@ -349,7 +384,7 @@ def cpu_count() -> int:
 
 def resolve_argv(cfg: dict, b: int | None) -> list[str]:
     e = cfg["e_r"]
-    subs = {"$CV": cfg["inputs"]["CV"], "$MC": cfg["inputs"]["MC"]}
+    subs = {"$CV": staged(cfg)["CV"], "$MC": staged(cfg)["MC"]}
     argv = [subs.get(x, x) for x in e["argv"]]
     if b is not None:
         argv += [x.format(b=b) for x in e["replica_argv_extra"]]
@@ -431,7 +466,8 @@ def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None, inputs_
         ks = list(c2["iterations"]["scan"])
         lib = cfg["inputs"]["roounfold_lib"]
         prod = unfolder or (lambda M, T, y, k: roounfold_bayes(M, T, y, k, lib))
-        cap = run_driver(driver, ohf, argv, root, ibu={"unfolder": prod, "ks": ks, "primary": c2["iterations"]["primary"]})
+        cap = run_driver(driver, ohf, argv, root, ibu={"unfolder": prod, "ks": ks, "primary": c2["iterations"]["primary"]},
+                         staging=staging_root(cfg))
         xs = xsec_at_every_k(driver, cap, ks)
         arrays = {"ks": np.array(ks), "xsec": np.array([xs[K] for K in ks]), "unfolded": np.array([cap["traj"][K] for K in ks]),
                   "T": cap["T"], "y": cap["y"]}
@@ -460,7 +496,7 @@ def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None, inputs_
                 controls["C-ROO"] = {"max_rel": worst, "pass": bool(worst <= c2["c_roo_rtol"])}
     else:
         extra = deterministic_keys(cfg) if u[0].startswith("c1") else None
-        cap = run_driver(driver, ohf, argv, root, extra=extra)
+        cap = run_driver(driver, ohf, argv, root, extra=extra, staging=staging_root(cfg))
         arrays = {"lgbm_params": np.array(json.dumps(cap.get("lgbm", []))), "y": cap["y"]}
         meta["extra_keys"] = extra
     meta["controls"] = controls

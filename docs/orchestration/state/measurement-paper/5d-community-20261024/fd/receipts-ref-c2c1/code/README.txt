@@ -68,3 +68,25 @@ How the code meets the declaration, for the audit and step two:
 - The pinned driver equals E_R's deploy blob dbdad2f9 but for the COV2D --data-file option, inert without that flag.
 - verify_hash_bindings.py globs docs/ and nd-unfolding/ JSON only, so config.json's pins (2d-unfolding/) are not in
   its inventory; the code checks them itself before any run.
+
+Revision 5 (the director's ruling of 2026-11-05: the staging root, #787's last code item before step two). E_R's
+driver opens $CV and $MC with ROOT.TFile.Open, which cannot take O_NOATIME, so the driver reads only copies staged
+under a staging root by an O_NOATIME DTN step:
+- config.json: inputs.CV_source and MC_source name the CFS copies (the pscratch $MC is no longer read);
+  inputs.staging gives the root (null until step two binds it) and the two staged names. staging_root() refuses
+  while the root is null; check_inputs() refuses any input path not under the root, then reads it through O_NOATIME
+  against CV_sha256 / MC_sha256; resolve_argv() substitutes $CV and $MC with the staged paths.
+- run_driver() wraps ROOT.TFile.Open for the driver's whole run: any open for reading of a path outside the staging
+  root raises GateFailure, so a unit stops (writes are not refused: the output is RECREATEd elsewhere).
+- Test: Driver.test_reads_outside_the_staging_root_are_refused, on RE-2's fixture files: an unbound root is refused;
+  a staged name resolving outside the root is refused by check_inputs; the driver opening --mcfile outside the root
+  is refused by the guard; and the same driver run is silent once every file it opens is under the root.
+- Two REQUIRED mutants: the guard disabled ("the driver's reads outside the staging root admitted") and the root
+  check disabled ("a staged input outside the root admitted"); both killed by that test.
+- tests.txt         22 tests, OK (skipped=1: C-ROO, no libRooUnfold.so here), exit 0.
+- harness.txt       MUTATION CHECK :: PASS (34 mutations), exit 0; every mutant killed by its named test.
+- test_run_suite.txt  5 tests OK (run_suite.py and test_run_suite.py unchanged since revision 4).
+- run_tests-dummy-lib.txt  run_tests.sh (EXPECT now 22) with a dummy library: 22 ran, C-ROO "error", RUN FAIL.
+- files.sha256      the files the runs used, identical before and after.
+- Not covered here: the guard sees only ROOT.TFile.Open. A read by another route (uproot, or C++ that opens a file
+  without TFile::Open) would not be refused; the #787 closure grep records every read route of the driver's closure.

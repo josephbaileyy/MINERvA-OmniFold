@@ -19,7 +19,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TEST = HERE / "test_ref_c2c1.py"
 D, R = "ref_c2c1.py", "ref_c2c1_read.py"
-EXPECTED_TESTS = 21  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
+EXPECTED_TESTS = 22  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
 MUTATIONS = [
     # the IBU seam and the driver
     ("IBU's per-event factor not unfolded/prior", D, "    factor = np.divide(u, T, out=np.ones_like(u), where=T > 0)",
@@ -63,6 +63,12 @@ MUTATIONS = [
      "        if True:\n            return 0", "Driver.test_a_unit_without_a_pass_marker_is_never_done"),
     ("the replica set not bound", D, '    if rs["choice"] not in rs["options"]:', "    if False:",
      "Units.test_the_replica_set_is_bound_at_step_two"),
+    # the staging ruling (the director, 2026-11-05): REQUIRED
+    ("the driver's reads outside the staging root admitted", D,
+     '            if str(mode).upper() in ("", "READ") and not under(path, staging):', "            if False:",
+     "Driver.test_reads_outside_the_staging_root_are_refused"),
+    ("a staged input outside the root admitted", D, "        if not under(path, root):", "        if False:",
+     "Driver.test_reads_outside_the_staging_root_are_refused"),
     # pairing keys
     ("a replica's bootstrap seed not E_R's", D, '        argv += [x.format(b=b) for x in e["replica_argv_extra"]]',
      '        argv += [x.format(b=b + 1) for x in e["replica_argv_extra"]]',
