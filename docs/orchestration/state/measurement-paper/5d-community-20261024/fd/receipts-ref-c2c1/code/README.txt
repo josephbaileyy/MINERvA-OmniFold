@@ -2,7 +2,7 @@ REF-C2C1 code receipt (REF-C2C1-BINDING-1.md ruling 3: the code lane writes the 
 mutation harness, for coverage-5b-audit and step two). limitations-catalog, 2026-11-05, on a detached worktree of
 origin/main 2e17de39f (#784). Nothing ran on the cluster; no analysis input was read.
 
-files.sha256    sha256 of the six files the runs below used, taken before and after both runs (identical).
+files.sha256    sha256 of the eight files the runs below used, taken before and after both runs (identical).
 tests.txt       test_ref_c2c1.py -v  ->  Ran 21 tests, OK (skipped=1), exit 0. The skip is the C-ROO test, which needs
                 libRooUnfold.so (REF_C2C1_ROOUNFOLD); RooUnfold is on the cluster only (preconditions, #779).
 harness.txt     ref_c2c1_mutation.py  ->  MUTATION CHECK :: PASS (32 mutations), exit 0: a mutant per control, per
@@ -38,6 +38,19 @@ Revision 3 (the audit's check of revision 2 and the director's rulings, 2026-11-
   like as RE2-DECLARATION.md:42 and :166 require; the read's C-CPUS requires it of er, c2_central and c1_central.
 - Every driver unit records OMP_NUM_THREADS, MKL_NUM_THREADS and OPENBLAS_NUM_THREADS and refuses unless they are
   E_R's 64, 1, 1 (re2/run/launch/re2_env.sh:31; RE2-DECLARATION.md:166); C-CPUS requires them too.
+
+Revision 4 (the cluster test run of 2026-11-05 read RUN FAIL with all 21 tests OK, 0 skipped: RooUnfoldBayes printed
+to stdout between the C-ROO test's name and its "ok", so run_tests.sh's one-line grep counted C-ROO as not run; the
+director's ruling): run_tests.sh now decides from unittest's result object. run_suite.py runs the suite with a
+recording TextTestResult and writes per-test outcomes to JSON; its `check` requires 21 run, no skip, fail or error, and
+C-ROO "ok". RooUnfold's stdout stays in the log.
+- test_run_suite.txt   test_run_suite.py -v -> 5 tests OK: on a fixture whose C-ROO-named test writes to fd 1 mid-run,
+                       the runner counts it, the OLD grep misses it on the same output (the fixture reaches the
+                       defect), and the verdict fails on any skip, failure, error, class-level error or short count.
+- run_tests-dummy-lib.txt   run_tests.sh end to end here with a dummy libRooUnfold.so: 21 ran, C-ROO "error",
+                       RUN FAIL, decided from the outcomes JSON.
+- ref_c2c1.py, ref_c2c1_read.py, test_ref_c2c1.py and ref_c2c1_mutation.py are unchanged from 5666f58c8 (their
+  sha256 in files.sha256 equal the earlier receipt's), so tests.txt and harness.txt stand.
 
 How the code meets the declaration, for the audit and step two:
 - c2 and c1 run E_R's own driver (re2_driver.py, pinned) in-process with E_R's recorded argv; only one seam differs.

@@ -1,0 +1,14 @@
+test_the_old_grep_misses_it_on_the_same_fixture (__main__.Runner.test_the_old_grep_misses_it_on_the_same_fixture)
+The fixture reaches the defect: the interleaved stdout breaks the old one-line pattern. ... ok
+test_the_runner_counts_a_test_that_prints_mid_run (__main__.Runner.test_the_runner_counts_a_test_that_prints_mid_run) ... ok
+test_a_class_level_error_is_not_ok (__main__.Verdict.test_a_class_level_error_is_not_ok) ... ok
+test_it_passes_only_a_complete_clean_run (__main__.Verdict.test_it_passes_only_a_complete_clean_run) ... ok
+test_the_check_command_exits_by_the_verdict (__main__.Verdict.test_the_check_command_exits_by_the_verdict) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.053s
+
+OK
+RUN PASS: 2 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok
+RUN FAIL: not ok: {'Ibu.test_roounfold_bayes_is_the_same_update': 'skip'}
+exit=0

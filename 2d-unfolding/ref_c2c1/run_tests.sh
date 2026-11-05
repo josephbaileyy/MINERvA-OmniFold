@@ -1,7 +1,8 @@
 #!/bin/bash
 # REF-C2C1's test run with RooUnfold (the director's ruling of 2026-11-05 on #787): all 21 tests of
 # test_ref_c2c1.py in the named environment, with REF_C2C1_ROOUNFOLD set to the libRooUnfold.so given, failing unless
-# every test ran, none failed, and the C-ROO test (RooUnfoldBayes against the numpy update) ran rather than skipped.
+# every test ran, none failed, and the C-ROO test (RooUnfoldBayes against the numpy update) ran rather than skipped,
+# all read from unittest's result object by run_suite.py (not from the verbose text, which RooUnfold's stdout interleaves).
 #
 #   bash 2d-unfolding/ref_c2c1/run_tests.sh /path/to/libRooUnfold.so [PYTHON]
 #
@@ -21,16 +22,16 @@ echo "interpreter: $PY"
   || { echo "RUN FAIL: the environment lacks a required module" >&2; exit 1; }
 echo "libRooUnfold: $LIB sha256 $(sha256sum "$LIB" 2>/dev/null | cut -d' ' -f1)"
 echo "== tests"
-log=$(mktemp)
-(cd "$HERE/.." && REF_C2C1_ROOUNFOLD="$LIB" PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 "$PY" -B ref_c2c1/test_ref_c2c1.py -v) > "$log" 2>&1
+out=$(mktemp -d)
+# outcomes come from unittest's result object (run_suite.py), never from the text: RooUnfoldBayes prints to stdout
+# between a test's name and its "ok", and that stdout stays in this log
+(cd "$HERE/.." && REF_C2C1_ROOUNFOLD="$LIB" PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 \
+  "$PY" -B ref_c2c1/run_suite.py run ref_c2c1/test_ref_c2c1.py "$out/outcomes.json") 2>&1
 rc=$?
-cat "$log"
-ran=$(grep -E "^Ran [0-9]+ tests?" "$log" | awk '{print $2}')
-roo=$(grep -cE "^test_roounfold_bayes_is_the_same_update .*\.\.\. ok$" "$log")
-skipped=$(grep -cE "\.\.\. skipped" "$log")
-rm -f "$log"
+echo "== outcomes (unittest's result object)"
+cat "$out/outcomes.json" 2>/dev/null || { echo "RUN FAIL: the suite wrote no outcomes (rc $rc)"; exit 1; }
+"$PY" -B "$HERE/run_suite.py" check "$out/outcomes.json" "$EXPECT" Ibu.test_roounfold_bayes_is_the_same_update
+v=$?
+rm -rf "$out"
 [ "$rc" -eq 0 ] || { echo "RUN FAIL: the suite exited $rc"; exit 1; }
-[ "$ran" = "$EXPECT" ] || { echo "RUN FAIL: ran ${ran:-?} of $EXPECT tests"; exit 1; }
-[ "$roo" = 1 ] || { echo "RUN FAIL: the C-ROO test did not run and pass"; exit 1; }
-[ "$skipped" = 0 ] || { echo "RUN FAIL: $skipped test(s) skipped"; exit 1; }
-echo "RUN PASS: $EXPECT tests, none skipped, C-ROO ran"
+exit $v
