@@ -16,8 +16,9 @@ data read. Every path:line below is at that sha unless another is named.
   - never choose the iteration by closeness to the publication;
   - reconcile c1's settings explicitly.
 
-**The run waits** until DIAG §B's B-C component accounting reports (the director's ordering). An upstream defect
-found there would change what c2 and c1 should test. B-C may therefore amend this declaration before binding.
+**B-C has reported** (`secondary-results/component-accounting-20261104/REPORT.md` (B-C, #769, main `f1a335555`)). It found no new upstream numerical defect requiring a correction to E_R, and the
+director released the hold. Its frozen operands, its guard and its scope limits are folded in (§1.0, §1.2, §1.5,
+§2.4). The run still waits for this declaration's delta audit and the director's binding.
 
 **CITABLE FOR:** the designs, the readings fixed before any c2 or c1 output, the licences, admissibility, and the
 preconditions.
@@ -55,18 +56,33 @@ chain (DIAG §B3, B-C), so no reading here is a term in a decomposition of 2.270
 
 ## 1. c2: a binned IBU on E_R's own 2D inputs
 
+### 1.0 The operands, bound by digest (B-C §1 and §5; the director's instruction after B-C)
+
+B-C is `secondary-results/component-accounting-20261104/REPORT.md` (B-C, #769, main `f1a335555`). It found no new upstream numerical defect requiring a correction to E_R, so the design stands. Its
+frozen operands are bound here:
+
+| operand | identity | refused if |
+|---|---|---|
+| E_R, the adopted central value | object `hXSec2D` of the product with sha256 `a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef` | the digest differs; E_U, the exact-split cross-check, a 1D-projection input or a universe-only CV is substituted |
+| E_R's input | CV omnifile `43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df` and baseline flux `d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316` | either digest differs |
+| the publication's precision reference | `cov_ptpl_minerva_inclusive_6GeV.root` `6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3`, object `pt_pl_cross_section`, with `StatOnlyCovariance` defining the mask | the digest differs, or the rounded text release is used in its place |
+| the reported cells | the 205 indices selected by the receipt's rule, "positive diagonal of StatOnlyCovariance on the paper's 224-bin global grid" (`RECEIPT-agreement-windows.json`, `mask`; the receipt records the rule and the count, not the list). The list is materialised from the bound precision ROOT as a sorted index array and stored as `reported_cells.IDENTITY_HIST` (`2d-unfolding/uq/reported_cells.py:1-19`). It is committed with its sha256 before the run and bound **index by index**: GlobalID = (pT bin − 1)·16 + (p∥ bin − 1) on `hXSec2D`'s [pT, p∥] axes. The precision ROOT has the opposite axis order and is mapped explicitly, as `compare_to_paper_fullcov.py:47` onward does | the index set differs. **Equal counts are not enough.** A publication histogram flattened as if it had our axes is refused, and zero-valued unreported cells are never read as physical zeros |
+| the refined target | E_R's signed/refined event sample, the actual refined training target. `hMeasTrain2D` is a purity diagnostic (B-C §2) | C-REF fails (§1.2) |
+
+**Control C-IN:** every digest above is checked, and the index binding is asserted, before any unfold.
+
 ### 1.1 The estimator (frozen)
 
 | choice | value | source or reason |
 |---|---|---|
 | algorithm | D'Agostini IBU, `RooUnfoldBayes`, from `unbinned_unfolding/build/libRooUnfold.so` | the library `2d-unfolding/ibu_omnifold_paired_cdelta.py` uses (its docstring, `:10-12`) |
-| binning, truth and reco | the published 14 × 16 (p_T, p_∥) grid, `PT_EDGES` and `PZ_EDGES` of `ibu_omnifold_paired_cdelta.py:26-29` | `compare_to_paper_fullcov.py:47-48` (14 × 16), so the output reads through the same comparison code |
+| binning, truth and reco | **E_R's own grid**: `PT_EDGES` and `PZ_EDGES` of `2d-unfolding/re2/re2_driver.py:44-48` (14 × 16), which equal the paper's `minerva_paper_anc/bin_mapping.txt`. The code asserts this against the bound E_R product's axes | `compare_to_paper_fullcov.py:47-48` (14 × 16), so the output reads through the same comparison code. **Not** `ibu_omnifold_paired_cdelta.py:26-29`, whose p_T edges (0.075, 0.325, 0.475) differ from E_R's and the paper's (0.07, 0.33, 0.47). Its unrun design is not reused for the grid |
 | inputs | **E_R's**, unchanged: the same 2D event file, the same signal-MC rows and weights, the same truth denominator, flux, POT and nucleon count, and the same truth definition and phase space | B-I: "the same 2D reco input, background, response, truth definition and corrections as E_R" |
-| background | **E_R's refined signed sample:** data at +1 ∪ template at −w_bkg, with the Stay-Positive refinement at E_R's settings (400 trees, 31 leaves, `PB:55`) and E_R's seed, as `2d-unfolding/re2/re2_driver.py --bkg-mode negweight-refined` builds it. It is histogrammed on the reco grid as IBU's measured input | B-I's "same background". IBU-1's template-fold treatment is not used here, because it would change the background, not only the algorithm |
-| response and prior | filled from E_R's signal-MC rows with E_R's weights; the prior is the MC truth | as E_R's MC |
-| extraction | E_R's own extraction (efficiency, flux, nucleons, POT), applied to IBU's unfolded truth counts | B-I |
+| background | **E_R's refined sample:** E_R's signed sample (data at +1, template at −w_bkg) is refined by the driver's own `refine_stay_positive`, in-process, at E_R's settings (400 trees, 31 leaves, `PB:55`; `random_state` = seed + 3; `re2_driver.py:2198-2209`). That gives every event, data and template, the weight w̃ = \|w\|·max(2g − 1, 0) ≥ 0 (`re2_driver.py:476-519`). IBU's measured input is **Σ w̃ per reco bin**, the refined weights E_R's step 1 consumes | B-I's "same background". IBU-1's template-fold treatment is not used here, because it would change the background, not only the algorithm |
+| response and prior | filled from E_R's signal-MC rows with E_R's weights. The response's truth denominator is **E_R's input truth**, the population `hUnfold2D` is defined on (B-C §2, unfolded-yield row). The prior is that MC truth | as E_R's MC |
+| extraction | E_R's own extraction, applied to IBU's unfolded truth counts: division by the input completeness `hOFCompleteness2D` (input truth over full truth), flux Φ_i, target count and POT, and the **explicit area Jacobian** ΔpT·Δp∥, then m² → cm² (B-C §2, bin-area and efficiency rows). It never divides by the selection efficiency `hEff2D`, which is diagnostic. Every integral is area-weighted, Σ x·ΔpT·Δp∥, and never a bare sum of bin contents (B-C §1: E_R's area-weighted integral is 3.0687381668997114e-38 cm²/nucleon) | B-I; B-C §5 items 2 and 4 |
 | iteration scan | **K ∈ {1, 2, 3, 4, 5, 10, 15, 20}, frozen here, reported in full** | B-I |
-| primary K | **K = 10**, the published analysis's count as the paper states it ("ten there, five here", `PB:117`, citing `MINERvA:2021owq`) | SCOPE §4: "the published iteration count read from the published paper". **Confirmed against the publication itself** (arXiv:2106.16210v4, PDF sha256 `39b6b8f1e6a59007ce31f4da4ab1af50dd07b491f537a3bbd898d57e2271ef69`, read 2026-11-04): "Based on these studies, the data was unfolded using 10 iterations." The paper chose it on fake-data χ² over generator variations, "no more than 10" in all of them |
+| primary K | **K = 10**, the published analysis's count as the paper states it ("ten there, five here", `PB:117`, citing `MINERvA:2021owq`) | SCOPE §4: "the published iteration count read from the published paper". **Confirmed against the publication itself** (arXiv:2106.16210v4, PDF sha256 `39b6b8f1e6a59007ce31f4da4ab1af50dd07b491f537a3bbd898d57e2271ef69`, read 2026-11-04), **page 5**, at the end of the paragraph on the unfolding's fake-data studies: "Based on these studies, the data was unfolded using 10 iterations." The paper chose it on fake-data χ² over generator variations, "no more than 10" in all of them |
 | second fixed K | K = 5, E_R's own count | reported beside K = 10 under the same readings, never chosen between |
 
 **Not chosen by closeness.** No K, binning, background or prior is selected by its distance from the published
@@ -79,10 +95,34 @@ published data").
   through the full chain, returns the MC truth cross section to 1e-9 relative in every bin at every K in the scan.
   With prior = truth and measured = R·truth exactly, IBU's fixed point is the truth, so any larger deviation is a
   chain defect.
-- **C-REF:** the refined signed sample the c2 code builds reproduces E_R's recorded refinement evidence (the driver's
-  `re2Refinement` output, `re2_driver.py:25, 2241`) exactly, so the background is E_R's.
+- **C-REF** (coverage-5b-audit, #767 M1). `re2Refinement` records only aggregates (`re2_driver.py:2207-2209, 2241`),
+  so it cannot check the per-bin input. Instead:
+  - (a) the deterministic aggregates (the signed sum, and the positive and negative event counts) equal E_R's
+    exactly;
+  - (b) the fitted aggregates (the refined sum and the clipped fraction) agree within RE-2's ≤ 1e-8 relative rule (`re2/RE2-DECLARATION.md:42, 213` @ `5c538db6a`; 1e-8 is the XR frozen-repeat criterion), at E_R's CPU count. E_R's
+    LightGBM is not in deterministic mode;
+  - (c) the same in-process refinement, passed on through the driver's own OmniFold step, reproduces E_R's `hXSec2D`
+    to ≤ 1e-8 relative in every bin, by the same rule. This ties the w̃ that IBU histograms to the w̃ that E_R
+    unfolded. It costs one E_R central run (about 0.08 node-h).
+  - (d) **per event** (director's ruling on M1): the w̃ that IBU's measured histogram is filled from equals, event by
+    event, the w̃ that the driver's own refinement path assigns. The check runs on the real 2D event file, not a
+    stand-in.
+    - E_R's per-event w̃ are not stored, so the reference is the driver's path (`re2_driver.py:2198-2209`) run
+      in-process on the same signed sample; (c) ties that path to E_R.
+    - The tolerance is |w̃_c2 − w̃_driver| ≤ 1e-8 × |w| per event, RE-2's rule scaled per event by |w|, because
+      w̃ = |w|·max(2g − 1, 0). The clipped (w̃ = 0) sets must be identical.
+    - If both sides are run in one process from one fitted classifier, equality is required bitwise.
 - **C-PUB:** the comparison code, given E_R itself, reproduces 465.4153 over 205 bins to 1e-8 relative
   (`tension_report.txt:14`).
+- **C-BKGSTREAM: the background-bootstrap guard** (B-C §5 item 3; the director's instruction).
+  - c2's replicas use E_R's three-stream bootstrap, which includes the background stream (`p1_on`). Only that
+    stream refuses signal fakes: `re2_driver.py:1920-1922` for the background histogram and `:2189-2192` for the
+    refined injected rows, at `f1a335555`. The central run never exercises it, because E_R's health record has
+    `background_stream=false` (B-C §2).
+  - A test on the real-format input therefore runs that stream twice:
+    - on the input as it is (post-Phase-18, n_fakes = 0), where the guard must stay silent;
+    - with one planted signal fake (a `pass_reco & ~pass_truth` row inside the binning), where it must refuse.
+  - A mutant removing the guard must be killed.
 
 ### 1.3 The paired difference
 
@@ -91,7 +131,7 @@ published data").
   MC, background stream; `re2_driver.py:21-23`), with the refinement refitted per replica as E_R's is.
   - **Replica set:**
     - The existing Q_R replicas are used if C-DRAW shows their draws regenerate bit for bit from their recorded
-      seeds. C-DRAW: one regenerated replica's refined-sample sums equal the recorded ones.
+      seeds. C-DRAW: one regenerated replica's deterministic `p1Streams` sums (`re2_driver.py:2244`) equal the recorded ones exactly. The refined sums are fitted, so they are not used.
     - Otherwise, 200 new E_R replicas are run (SCOPE §4: 200 × 0.0489 = 9.8 node-h).
   - **Ensemble:** N replicas give δ_r and C_δ = the sample covariance (ddof 1) of δ_r.
 - **Universe pairing (optional second pass):** IBU on each universe of `$UNI`, paired with Q_R's E_R universe
@@ -113,6 +153,13 @@ All at K = 10; K = 5 is reported identically. Every other K is printed and read 
   - **The null for T_δ is empirical, not χ²:** leave-one-out over the N replicas. For each r, T computed on
     δ_r − δ̄₋ᵣ with C_δ⁺ from the other N − 1 replicas, at the same rank.
   - **Bars:** q̂₉₅ is that null's 95th percentile, and max̂ is its maximum.
+  - **The null is calibrated by simulation** (coverage-5b-audit, #767 Q1: p = 224, replicas centred on δ_data,
+    truncated pinv at ⌊N/4⌋).
+    - Rates for "differ": at N = 50, 0.017–0.022 against 1/(N + 1) = 0.020; at N = 200, 0.003 against 0.005.
+    - It is exchangeable up to the (1 + 1/(N − 1)) factor on δ_r − δ̄₋ᵣ, which makes it conservative.
+    - **So max̂ is about a 2 % bar for c1 (N = 50) and about 0.5 % for c2 (N = 200).**
+  - **The null is exact agreement.** "differ" therefore measures whether a difference is detectable at this noise,
+    not whether it is large.
   - The Hartlap factor (N − r − 2)/(N − 1) is reported as a sensitivity and read by nothing.
 
 **C2-R1, IBU against E_R (gated):**
@@ -123,16 +170,22 @@ All at K = 10; K = 5 is reported identically. Every other K is printed and read 
 | q̂₉₅ < T_δ ≤ max̂ | **marginal** |
 | T_δ > max̂ | **differ** |
 
-**C2-R2, localisation (the commissioned reading):**
+**C2-R2, localisation (the commissioned reading; the director's ruling of 2026-11-04 on #767).**
+- **ρ on each replica:** ρ_r = D_IBU,r / D_E_R,r on each paired replica r, the same draws on both sides, all N of
+  them. The ruling names "the 50"; c2's N is 200, or the reused Q_R set, and all are used.
+- **The interval:** the central 90 % interval [ρ₀.₀₅, ρ₀.₉₅].
+- **The reading:** a class is read only if the whole interval lies inside it; otherwise the reading is
+  "unresolved". The point ρ is printed beside it.
 
-| condition | reading |
+| interval lies within | reading |
 |---|---|
-| ρ ≥ 0.75 | **input side**: a binned unfolding of the same inputs sits about as far from the published result as E_R does |
-| ρ ≤ 0.50 and C2-R1 = differ | **algorithm side**: on the same inputs, the binned unfolding is materially closer to the published result |
-| otherwise | **unresolved** |
+| [0.75, 1/0.75 = 1.33] | **input side**: a binned unfolding of the same inputs sits about as far from the published result as E_R does |
+| ρ ≤ 0.50, and C2-R1 = differ | **algorithm side**: on the same inputs, the binned unfolding is materially closer to the published result |
+| ρ > 1.33 | **IBU farther: no attribution**, reported descriptively |
+| (0.50, 0.75), or straddling a boundary | **unresolved** |
 
-The bars 0.75 and 0.50 are declared, not calibrated. ρ is a ratio of two descriptive distances that share every
-input.
+The bars are declared, not calibrated. The reading is descriptive and licenses no cause (§1.5, §5). ρ is a ratio of
+two descriptive distances that share every input.
 
 **Printed beside the readings, read by nothing:**
 - per-bin δ in units of √(C_δ)_bb;
@@ -144,10 +197,11 @@ input.
 
 | outcome | licenses | does not license |
 |---|---|---|
-| input side | narrowing "the source of the shape difference has not been identified" (`PB:94`, as SCOPE §4 quotes it) to "a binned unfolding of the same inputs shows a similar distance". The next step is B-C's per-ingredient accounting | naming an input as the cause; changing a correction, the flux or E_R |
+| input side | narrowing "the source of the shape difference has not been identified" (`PB:94`, as SCOPE §4 quotes it) to "a binned unfolding of the same inputs shows a similar distance". The next step is a per-ingredient comparison, which needs the publication intermediates B-C found missing (B-C §4) | naming an input as the cause; changing a correction, the flux or E_R; **any statement that this analysis's inputs or intermediate stages equal the publication's** |
 | algorithm side | "on the same inputs, a binned unfolding at the published iteration count is closer to the published result", sized by ρ | calling OmniFold wrong, or switching the 2D estimator; the iteration count or regularisation being "the cause" |
-| unresolved | reporting ρ and T_δ as measured | either sentence above |
-| any | the result to Joseph, then the paper lane through the PRD read | paper text before that |
+| IBU farther: no attribution | reporting ρ, its interval and T_δ, descriptively | any attribution to inputs or algorithm |
+| unresolved | reporting ρ, its interval and T_δ as measured | any sentence above |
+| any | the result to Joseph, then the paper lane through the PRD read | paper text before that. **c2 and c1 compare estimators on this analysis's inputs. Agreement between methods does not show that the upstream ingredients or intermediate stages equal MINERvA's, and a difference does not show that either method is correct** (B-C §5 item 5) |
 
 Either localising outcome "localises the difference by one level. Neither identifies the cause" (SCOPE §4).
 
@@ -165,12 +219,24 @@ determinism is `s5c_unfold`'s configuration `deterministic` (`nd-unfolding/s5c_u
 `bin_construct_sample_cnt` above any row count, `deterministic=True`, `force_row_wise=True`, and a fixed
 `num_threads`.
 
-**c1 is E_R's pipeline with exactly those four parameters added** to every LightGBM the OmniFold loop builds.
-- Inputs, background, refinement, seed, iterations and extraction stay E_R's.
-- The code records every estimator's parameters, as `s5c_unfold.estimator_config` does, and refuses to write
-  unless the only difference from E_R's parameter set is those four keys.
-- **C-SET:** that recorded diff, printed.
-- **C-CV:** with the four keys removed, the c1 code reproduces E_R bitwise.
+**c1 is E_R's pipeline with exactly those four parameters added to every LightGBM it builds:**
+- both OmniFold steps' classifiers and the regressor, through the helper's parameter merge (`omnifold.py:209-220`,
+  as coverage-5b-audit traced it);
+- **and the refinement classifier.** That one is built separately, by `_make_bkg_classifier` with `refine_params`.
+  (e)'s refinement is deterministic: `s5n_pseudo.refine_params` = {`random_state`: seed + 3} plus the same four
+  keys (`nd-unfolding/s5n_pseudo.py:61, 234-236`). c1's `refine_params` is therefore E_R's
+  ({`random_state`: seed + 3} plus RE-2's 400/31; `re2_driver.py:2201-2204`) plus the four keys.
+
+The rest stays E_R's: inputs, background, seed, iterations and extraction.
+
+**Controls:**
+- **C-SET:** the code records every estimator's parameters, as `s5c_unfold.estimator_config` does, including the
+  refinement's. It refuses to write unless, in each of the two sets (the OmniFold estimators and `refine_params`),
+  the only difference from E_R's is those four keys. The diff is printed.
+- **C-CV:** with the four keys removed from both sets, the c1 code reproduces E_R's `hXSec2D` to ≤ 1e-8 relative,
+  RE-2's ≤ 1e-8 relative rule (`re2/RE2-DECLARATION.md:42, 213` @ `5c538db6a`; 1e-8 is the XR frozen-repeat criterion), at E_R's CPU count. E_R's LightGBM is not deterministic, so bitwise equality is not required. Wherever both
+  sides are deterministic (C-SIM, C-PUB's arithmetic, C-DRAW's `p1Streams` sums, C-SET's parameter diff), equality
+  stays bitwise or as stated.
 
 ### 2.2 Products
 
@@ -194,7 +260,7 @@ leave-one-out exactly as C2-R1's, and the bars are the same:
 
 | outcome | licenses | does not license |
 |---|---|---|
-| equivalent | "the joint-test estimator, run on the 2D inputs, reproduces the 2D central value within its paired noise". This is Sonnet 9's literal request; `PB:55`'s "not combined" could become a measured statement (SCOPE §4, c1) | combining the estimators' results, or any change to E_R or Q_R |
+| equivalent | "the joint-test estimator, run on the 2D inputs, reproduces the 2D central value within its paired noise". This is Sonnet 9's literal request; `PB:55`'s "not combined" could become a measured statement (SCOPE §4, c1) | combining the estimators' results, or any change to E_R or Q_R; equality with the publication's intermediate stages (B-C §5 item 5) |
 | setting-dependent | "the 2D central value moves with the determinism settings by T_ef", a setting dependence | which setting is right (B-J); replacing E_R ("an adopted 2D replacement is F", DIAG §B3) |
 | marginal | T_ef as measured | either sentence |
 
@@ -217,7 +283,7 @@ leave-one-out exactly as C2-R1's, and the bars are the same:
 ## 4. Preconditions, compute, calendar
 
 **Before binding:**
-1. **B-C has reported.** Any upstream defect it finds is brought into an amendment of this declaration.
+1. **B-C: done.** No new upstream defect was found. Its operands, guard and scope are folded in.
 2. **The published K: done.** It is 10, confirmed against the publication itself (§1.1).
 
 **Before the run (the cluster lane, 0 node-h; this lane does not connect):**
@@ -258,7 +324,16 @@ it with this declaration (the director's ruling).
 
 ## 5. Open for the director before binding
 
-- **C2-R2's bars, 0.75 and 0.50.** They are declared, not calibrated.
+- **C2-R2's bars: ruled by the director on 2026-11-04.**
+  - Two-sided: input side is [0.75, 1.33]; a class for ρ > 1.33, "IBU farther: no attribution"; algorithm side is
+    ρ ≤ 0.50.
+  - Read only if the replicas' 90 % interval lies inside the class.
+  - Declared, not calibrated: the reading is descriptive and licenses no cause, and the licences are unchanged.
+- **The audit (coverage-5b-audit, #767):** the leave-one-out null was found calibrated (Q1). M1, M2 and M3 were
+  upheld by the director and are answered:
+  - M1: C-REF (a)–(d), with a per-event w̃ control on the real input;
+  - M2: c1's deterministic `refine_params`, enforced by C-SET and C-CV;
+  - M3: RE-2's 1e-8 rule, cited, wherever E_R's non-deterministic LightGBM is the reference.
 - **The rank rule ⌊N/4⌋ with a leave-one-out null.** It replaces #758's "rank cut declared in advance" plus a
   finite-N correction, because the correction is not exact for a truncated pseudo-inverse and the leave-one-out
   null needs no correction.
