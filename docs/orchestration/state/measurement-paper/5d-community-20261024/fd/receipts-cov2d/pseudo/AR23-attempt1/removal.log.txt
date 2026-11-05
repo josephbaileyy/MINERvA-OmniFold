@@ -1,0 +1,9 @@
+8b7ef57b37592417b08b77b63fb1233e1cc62b058cfbfa6a81a9c40357a10590  /dev/shm/josephrb-cov2d-ar23.log
+host=login02 2026-11-05T16:03:22Z
+rm -f /dev/shm/josephrb-cov2d-ar23.log rc=0
+rm -f /dev/shm/josephrb-cov2d-ar23.sh rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-ar23.log': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-ar23.sh': No such file or directory
+total 0
+drwxrwxrwt  2 root root   40 Nov  5 08:03 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..

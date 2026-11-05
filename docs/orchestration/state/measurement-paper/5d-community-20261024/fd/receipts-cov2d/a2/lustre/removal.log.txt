@@ -1,0 +1,18 @@
+d212cc496eaebbe8f995ffe1777a01ba6125a7c78ef6b5259b850e2666feb7c1  /dev/shm/josephrb-cov2d-lustre.log
+2a426b1cd634b55ad9772a1fe43d333dde9e47a29016386882ca1ed84b203f88  /dev/shm/josephrb-cov2d-lustre.sh
+ls: cannot access '/sbin/lctl': No such file or directory
+-rwxr-xr-x 1 root root 148120 Feb 24  2026 /usr/sbin/lctl
+host=login02 2026-11-05T19:52:17Z
+rm -f /dev/shm/josephrb-cov2d-lustre.log rc=0
+rm -f /dev/shm/josephrb-cov2d-lustre.sh rc=0
+total 0
+drwxrwxrwt  2 root root   40 Nov  5 11:52 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..
+2b07a617a15ddd26143d1433eb91cf133615c59c2f85723f0a95519f16e1dc0e  /dev/shm/josephrb-cov2d-lustre2.log
+67fcff34cbdea649553b06a225169c3a83431ad43c08c21914213296662546cf  /dev/shm/josephrb-cov2d-lustre2.sh
+host=login02 2026-11-05T19:53:48Z
+rm -f /dev/shm/josephrb-cov2d-lustre2.log rc=0
+rm -f /dev/shm/josephrb-cov2d-lustre2.sh rc=0
+total 0
+drwxrwxrwt  2 root root   40 Nov  5 11:53 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..
