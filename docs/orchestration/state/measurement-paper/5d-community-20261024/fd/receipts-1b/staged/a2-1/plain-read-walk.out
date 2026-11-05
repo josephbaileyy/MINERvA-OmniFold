@@ -1,0 +1,43 @@
+# python3 -B docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/plain_read_walk.py at b820f4500 (worktree clean but this script), 2026-11-05T15:40:13Z
+== bulk unfold (run_unfold): 395 statements; reaches the plain bank readers: none
+   statements with a path read (28): fd_1b_c2.gate_code_digests, fd_1b_inv.load_npy, fd_1b_inv.load_npz, fd_1b_mc._cells, fd_1b_mc._load_world, fd_1b_mc.bound_gate_sha256, fd_1b_mc.clipcheck, fd_1b_mc.clipping_readout, fd_1b_mc.clipping_readout_nature, fd_1b_mc.cmodel_parts, fd_1b_mc.n1_step, fd_1b_mc.read_bound_gate, fd_1b_mc.readout, fd_1b_mc.refuse_mixed_estimator, fd_1b_mc.resume_matches, fd_1b_mc.toy_errors, fd_1b_mc.verified_weights, fd_1b_mc.walls_of, fd_1b_score.load_s1, fd_1b_score.reported_matrix, fd_1b_toys.committed_ratio_sha256, flux_universe.read_flux_universe_table, s1_assemble.fine_map, s1_assemble.flux_weights, s1_assemble.sha256, s5c_unfold.load_inputs, s5c_unfold.sha256_path, s5n_pseudo.main
+== receipt: 155 statements; reaches the plain bank readers: none
+   statements with a path read (10): fd_1b_inv.load_npz, fd_1b_mc._load_world, fd_1b_mc.verified_weights, fd_1b_score.load_s1, fd_1b_score.reported_matrix, flux_universe.read_flux_universe_table, s1_assemble.fine_map, s1_assemble.flux_weights, s1_assemble.sha256, s5c_unfold.load_inputs
+== n1: 11 statements; reaches the plain bank readers: none
+   statements with a path read (1): fd_1b_mc.n1_step
+== null: 104 statements; reaches the plain bank readers: none
+   statements with a path read (9): fd_1b_inv.load_npz, fd_1b_mc._cells, fd_1b_mc.cmodel_parts, fd_1b_mc.refuse_mixed_estimator, fd_1b_score.load_s1, s1_assemble.fine_map, s1_assemble.flux_weights, s1_assemble.sha256, s5c_unfold.sha256_path
+== readout: 395 statements; reaches the plain bank readers: none
+   statements with a path read (28): fd_1b_c2.gate_code_digests, fd_1b_inv.load_npy, fd_1b_inv.load_npz, fd_1b_mc._cells, fd_1b_mc._load_world, fd_1b_mc.bound_gate_sha256, fd_1b_mc.clipcheck, fd_1b_mc.clipping_readout, fd_1b_mc.clipping_readout_nature, fd_1b_mc.cmodel_parts, fd_1b_mc.n1_step, fd_1b_mc.read_bound_gate, fd_1b_mc.readout, fd_1b_mc.refuse_mixed_estimator, fd_1b_mc.resume_matches, fd_1b_mc.toy_errors, fd_1b_mc.verified_weights, fd_1b_mc.walls_of, fd_1b_score.load_s1, fd_1b_score.reported_matrix, fd_1b_toys.committed_ratio_sha256, flux_universe.read_flux_universe_table, s1_assemble.fine_map, s1_assemble.flux_weights, s1_assemble.sha256, s5c_unfold.load_inputs, s5c_unfold.sha256_path, s5n_pseudo.main
+== clipcheck: 62 statements; reaches the plain bank readers: none
+   statements with a path read (6): fd_1b_mc.clipcheck, fd_1b_mc.refuse_mixed_estimator, fd_1b_score.load_s1, fd_1b_score.reported_matrix, s1_assemble.fine_map, s1_assemble.sha256
+== walls: 14 statements; reaches the plain bank readers: none
+   statements with a path read (1): fd_1b_mc.walls_of
+== stage-flux: 12 statements; reaches the plain bank readers: none
+   statements with a path read (0): 
+== binning: 136 statements; reaches the plain bank readers: none
+   statements with a path read (8): fd_1b_binning.main, fd_1b_score.load_s1, fd_1b_score.reported_matrix, fd_1b_toys.committed_ratio_sha256, s1_assemble.fine_map, s1_assemble.flux_weights, s1_assemble.sha256, s5c_unfold.load_inputs
+== c2check: 217 statements; reaches the plain bank readers: none
+   statements with a path read (14): fd_1b_c2.c2check_main, fd_1b_c2.cal300_code_check, fd_1b_c2.gate_code_digests, fd_1b_inv.load_npz, fd_1b_mc._load_world, fd_1b_mc.verified_weights, fd_1b_score.load_s1, fd_1b_score.reported_matrix, fd_1b_toys.committed_ratio_sha256, flux_universe.read_flux_universe_table, s1_assemble.fine_map, s1_assemble.flux_weights, s1_assemble.sha256, s5c_unfold.load_inputs
+== c2probe: 182 statements; reaches the plain bank readers: none
+   statements with a path read (12): fd_1b_c2.gate_code_digests, fd_1b_inv.load_npz, fd_1b_mc._load_world, fd_1b_mc.verified_weights, fd_1b_score.load_s1, fd_1b_score.reported_matrix, fd_1b_toys.committed_ratio_sha256, flux_universe.read_flux_universe_table, s1_assemble.fine_map, s1_assemble.flux_weights, s1_assemble.sha256, s5c_unfold.load_inputs
+== calibrate: 180 statements; reaches the plain bank readers: none
+   statements with a path read (10): fd_1b_c2.gate_code_digests, fd_1b_inv.load_npz, fd_1b_mc._load_world, fd_1b_mc.verified_weights, fd_1b_toys.committed_ratio_sha256, flux_universe.read_flux_universe_table, s1_assemble.fine_map, s1_assemble.flux_weights, s1_assemble.sha256, s5c_unfold.load_inputs
+PLAIN-READ-WALK :: NO ENTRY REACHES A PLAIN BANK READER
+exit=0
+# The path-taking reads above, by call site in the 1B modules (grep at the same head):
+# - O_NOATIME already: fd_1b_inv.load_npz/load_npy/load_inputs (open_noatime handles); fd_1b_mc._load_world and
+#   verified_weights (open_noatime, then np.load of the bytes); fd_1b_score.load_s1 and s1_assemble.flux_weights,
+#   called through fd_1b_mc.via_noatime (fd_1b_mc.py:1155, 1157, 1317, 1364, 1481, 1657; fd_1b_c2.py:643);
+#   flux_universe.read_flux_universe_table, replaced in fd_1b_mc by the staged arrays (fd_1b_mc.py:494-500).
+# - Repository files in the deploy, not declared inputs: gate_code_digests / code_digests / sha256_path of code,
+#   the h2 definition (s1_assemble.fine_map, sa.sha256(a.definition) at fd_1b_mc.py:1504), F1_SUMS
+#   (fd_1b_toys.committed_ratio_sha256), fd_1b_score.reported_matrix's DATA_PRODUCT, clip_probe2's c2_reading.txt.
+# - 1B's own products and records, not declared inputs (each function's reads opened and checked): the unfold
+#   products (products_digest :1458, _cells, walls_of, toy_errors, clipcheck, clipping_readout(_nature),
+#   refuse_mixed_estimator, resume_matches, n1_step); the receipt record (clipcheck); c2check's gate record
+#   (read_bound_gate); and the committed GATE_PIN file in the deploy (bound_gate_sha256).
+# - OPEN: the cmodel json, read plainly by fd_1b_mc.cmodel_parts (read_text, :1469) and made_from (sa.sha256,
+#   :1504) in the null and readout steps. No staged command names its path yet (make_stage1_tables.py writes only
+#   unfold steps). If it is a pscratch input rather than a deploy file, both need via_noatime before those steps.
+# - s5n_pseudo.main is in the bulk's closure by reference only; nothing in fd_1b_mc calls it.
