@@ -413,13 +413,18 @@ def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None, inputs_
     if cpus != int(cfg["e_r"]["cpus"]):  # like for like with E_R: the refit's noise depends on the CPU count
         print(f"refusing: {name} needs E_R's {cfg['e_r']['cpus']} CPUs, this process has {cpus}", file=sys.stderr)
         return RC_GATE
+    threads = {k: os.environ.get(k) for k in cfg["e_r"]["thread_env"]}
+    if threads != cfg["e_r"]["thread_env"]:  # and its thread environment: LightGBM's pool follows OMP_NUM_THREADS
+        print(f"refusing: {name} needs E_R's thread environment {cfg['e_r']['thread_env']}, not {threads}",
+              file=sys.stderr)
+        return RC_GATE
     out.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     argv = resolve_argv(cfg, u[1])
     meta = {"schema": "ref-c2c1-unit/1", "unit": name, "argv": argv, "bootstrap_seed": u[1],
             "runner_sha256": sha256(Path(__file__).resolve()), "config_sha256": sha256(CONFIG),
             "code_sha256": cfg["code_sha256"], "slurm_job": os.environ.get("SLURM_JOB_ID"),
-            "inputs_sha256": inputs_verified, "cpus": cpus}
+            "inputs_sha256": inputs_verified, "cpus": cpus, "thread_env": threads}
     controls = {}
     if u[0].startswith("c2"):
         c2 = cfg["c2"]

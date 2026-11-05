@@ -242,8 +242,10 @@ def read(cfg: dict, run: Path, cells: Path, cells_sha: str, out: Path) -> dict:
                                       and abs(w_sum / ref_e.get("refined_sum", np.nan) - 1) <= rd["e_r_rtol"])}
     want_cpus = int(cfg["e_r"]["cpus"])
     unit_cpus = {u: meta(run, u).get("cpus") for u in ("er", "c2_central", "c1_central")}
-    controls["C-CPUS"] = {"pass": all(v == want_cpus for v in unit_cpus.values()), "units": unit_cpus,
-                          "e_r": want_cpus}
+    unit_threads = {u: meta(run, u).get("thread_env") for u in ("er", "c2_central", "c1_central")}
+    controls["C-CPUS"] = {"pass": all(v == want_cpus for v in unit_cpus.values())
+                          and all(v == cfg["e_r"]["thread_env"] for v in unit_threads.values()),
+                          "units": unit_cpus, "threads": unit_threads, "e_r": want_cpus}
     controls["C-SET"] = c_set(lgbm(run, "er"), lgbm(run, "c1_central"), cfg["c1"]["deterministic_keys"])
     c2m = meta(run, "c2_central").get("controls", {})
     for name in ("C-SIM", "C-ROO"):

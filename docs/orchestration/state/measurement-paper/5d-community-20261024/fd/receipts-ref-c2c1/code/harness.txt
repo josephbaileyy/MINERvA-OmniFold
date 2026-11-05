@@ -7,6 +7,8 @@ KILLED    C-FILL's tolerance loosened                      by Driver.test_c_fill
 KILLED    C-IN's input digests unchecked                   by Driver.test_c_in_reads_the_input_digests_at_open_time
 KILLED    the units' verified inputs not read              by Controls.test_each_control_stops_the_read
 KILLED    a unit run at another CPU count                  by Driver.test_a_unit_refuses_at_another_cpu_count
+KILLED    a unit run in another thread environment         by Driver.test_a_unit_refuses_in_another_thread_environment
+KILLED    the units' thread environments not read          by Controls.test_each_control_stops_the_read
 KILLED    the units' CPU counts not read                   by Controls.test_each_control_stops_the_read
 KILLED    C-REF's per-bin tie dropped                      by Controls.test_each_control_stops_the_read
 KILLED    c1's keys not merged                             by Driver.test_c1_differs_from_e_r_by_exactly_the_four_keys
@@ -28,5 +30,5 @@ KILLED    a unit without a PASS marker read                by Controls.test_each
 KILLED    C-IN's E_R digest unchecked                      by Controls.test_each_control_stops_the_read
 KILLED    C-CELLS passes a different set                   by Controls.test_the_cells_are_bound_index_by_index
 KILLED    the cells' sha256 unchecked                      by Controls.test_the_cells_are_bound_index_by_index
-MUTATION CHECK :: PASS (30 mutations)
+MUTATION CHECK :: PASS (32 mutations)
 exit=0

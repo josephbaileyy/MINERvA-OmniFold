@@ -3,9 +3,9 @@ mutation harness, for coverage-5b-audit and step two). limitations-catalog, 2026
 origin/main 2e17de39f (#784). Nothing ran on the cluster; no analysis input was read.
 
 files.sha256    sha256 of the six files the runs below used, taken before and after both runs (identical).
-tests.txt       test_ref_c2c1.py -v  ->  Ran 20 tests, OK (skipped=1), exit 0. The skip is the C-ROO test, which needs
+tests.txt       test_ref_c2c1.py -v  ->  Ran 21 tests, OK (skipped=1), exit 0. The skip is the C-ROO test, which needs
                 libRooUnfold.so (REF_C2C1_ROOUNFOLD); RooUnfold is on the cluster only (preconditions, #779).
-harness.txt     ref_c2c1_mutation.py  ->  MUTATION CHECK :: PASS (30 mutations), exit 0: a mutant per control, per
+harness.txt     ref_c2c1_mutation.py  ->  MUTATION CHECK :: PASS (32 mutations), exit 0: a mutant per control, per
                 reading bar, per pairing key and the rank rule, each killed by its named test.
 
 Environment: Python 3.13.7, numpy 2.4.4, scipy 1.18.1, LightGBM 4.7.0, scikit-learn 1.9.1,
@@ -25,7 +25,7 @@ Revision 2 (the code audit, #787: K1-K3 upheld by the director, 2026-11-05):
   reader requires them.
 - K3: er and c1 bin the driver's refined weights on the way into its own OmniFold call; the read requires c2's
   measured histogram to equal er's per bin at 1e-8 (per event is not available across processes).
-- run_tests.sh: the RooUnfold test run (all 20, C-ROO must run, none skipped), for limitation-resolver's 0-node-h
+- run_tests.sh: the RooUnfold test run (all 21, C-ROO must run, none skipped), for limitation-resolver's 0-node-h
   login-node connect with the cluster's libRooUnfold.so (the director's ruling); its failure path was checked here
   with a dummy library (RUN FAIL, C-ROO errors).
 Each change has a test and a mutant.
@@ -36,6 +36,8 @@ Revision 3 (the audit's check of revision 2 and the director's rulings, 2026-11-
   loosens to 1e-6 and is killed by a 1e-7 perturbation.
 - Every driver unit records its CPU count and refuses unless it is E_R's 64 (re2/run/partb_runs.tsv row ER), like for
   like as RE2-DECLARATION.md:42 and :166 require; the read's C-CPUS requires it of er, c2_central and c1_central.
+- Every driver unit records OMP_NUM_THREADS, MKL_NUM_THREADS and OPENBLAS_NUM_THREADS and refuses unless they are
+  E_R's 64, 1, 1 (re2/run/launch/re2_env.sh:31; RE2-DECLARATION.md:166); C-CPUS requires them too.
 
 How the code meets the declaration, for the audit and step two:
 - c2 and c1 run E_R's own driver (re2_driver.py, pinned) in-process with E_R's recorded argv; only one seam differs.

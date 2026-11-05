@@ -42,6 +42,7 @@ CFG["e_r"]["argv"] = ["--omnifile", "$CV", "--mcfile", "$MC", "--iters", "2", "-
                       "--refine-n-estimators", "400", "--refine-num-leaves", "31"]
 CFG["c1"]["threads"] = 2
 CFG["e_r"]["cpus"] = C.cpu_count()  # the fixture runs at this machine's count; the unit asserts it equals config
+CFG["e_r"]["thread_env"] = {k: os.environ.get(k) for k in CFG["e_r"]["thread_env"]}  # likewise its thread environment
 KS = CFG["c2"]["iterations"]["scan"]
 
 
@@ -153,6 +154,16 @@ class Driver(unittest.TestCase):
         self.assertEqual(C.run_unit(DRIVER, OHF, cfg, ("er", None), d, unfolder=C.dagostini), C.RC_GATE)
         self.assertFalse(d.exists())
         self.assertEqual(json.loads(str(np.load(self.out / "er.npz")["meta"]))["cpus"], C.cpu_count())
+
+    def test_a_unit_refuses_in_another_thread_environment(self):
+        cfg = copy.deepcopy(CFG)
+        cfg["e_r"]["thread_env"] = {**CFG["e_r"]["thread_env"], "OMP_NUM_THREADS": "999"}
+        d = TD / "threads"
+        self.assertEqual(C.run_unit(DRIVER, OHF, cfg, ("er", None), d, unfolder=C.dagostini), C.RC_GATE)
+        self.assertFalse(d.exists())
+        self.assertEqual(json.loads(str(np.load(self.out / "er.npz")["meta"]))["thread_env"], CFG["e_r"]["thread_env"])
+        real = json.loads(C.CONFIG.read_text())["e_r"]["thread_env"]
+        self.assertEqual(real, {"OMP_NUM_THREADS": "64", "MKL_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1"})
 
     def test_er_is_the_driver_unchanged(self):
         self.assertEqual(self.rc["er"], 0)
@@ -280,9 +291,10 @@ class Fixture:
         target = paper if toward_paper else self.x_er * (1 + ibu_shift)
         self.inputs = {k: CFG["inputs"][f"{k}_sha256"] for k in ("CV", "MC")}
         self.cpus = CFG["e_r"]["cpus"]
+        self.threads = CFG["e_r"]["thread_env"]
         self.y = rng.uniform(1, 2, 224)
         np.savez(run / "c2_central.npz", ks=np.array(KS), xsec=np.tile(target, (len(KS), 1)), y=self.y,
-                 meta=json.dumps({"measured_weights_sum": 99.0, "inputs_sha256": self.inputs, "cpus": self.cpus,
+                 meta=json.dumps({"measured_weights_sum": 99.0, "inputs_sha256": self.inputs, "cpus": self.cpus, "thread_env": self.threads,
                                   "controls": {"C-SIM": {"pass": True}, "C-ROO": {"pass": True}}}))
         write_th2(run / "c2_central.root", target, refinement=ref)
         noise = lambda: 0.005 * paper * rng.standard_normal(224)  # noqa: E731
@@ -293,7 +305,7 @@ class Fixture:
             np.savez(run / f"c2_replica_b{b}.npz", ks=np.array(KS), xsec=np.tile(cb, (len(KS), 1)), meta="{}")
         lg = [{"kind": "classifier", "params": {"n_estimators": 100, "random_state": 42}}]
         keys = {k: True for k in CFG["c1"]["deterministic_keys"]}
-        im = json.dumps({"inputs_sha256": self.inputs, "cpus": self.cpus})
+        im = json.dumps({"inputs_sha256": self.inputs, "cpus": self.cpus, "thread_env": self.threads})
         np.savez(run / "er.npz", lgbm_params=np.array(json.dumps(lg)), y=self.y, meta=im)
         np.savez(run / "c1_central.npz", lgbm_params=np.array(json.dumps([{**lg[0], "params": {**lg[0]["params"],
                                                                                                 **keys}}])),
@@ -405,22 +417,26 @@ class Controls(unittest.TestCase):
             "C-PUB": lambda fx: fx.cfg["publication"]["c_pub"].update(chi2=fx.cfg["publication"]["c_pub"]["chi2"] * 1.001),
             "C-SET": lambda fx: np.savez(fx.run / "c1_central.npz", lgbm_params=np.array(json.dumps(
                 [{"kind": "classifier", "params": {"n_estimators": 100, "random_state": 42, "deterministic": True}}])),
-                y=fx.y, meta=json.dumps({"inputs_sha256": fx.inputs, "cpus": fx.cpus, "cpus": fx.cpus})),
+                y=fx.y, meta=json.dumps({"inputs_sha256": fx.inputs, "cpus": fx.cpus, "thread_env": fx.threads, "cpus": fx.cpus, "thread_env": fx.threads, "thread_env": fx.threads})),
             "C-REF": lambda fx: write_th2(fx.run / "c2_central.root", fx.x_er, refinement={
                 "params": {"n_estimators": 400}, "signed_sum": 100.5, "refined_sum": 99.0, "clipped_fraction": 0.01}),
             "C-SIM": lambda fx: np.savez(fx.run / "c2_central.npz", ks=np.array(KS), xsec=np.tile(fx.x_er, (len(KS), 1)),
-                                         y=fx.y, meta=json.dumps({"measured_weights_sum": 99.0, "inputs_sha256": fx.inputs, "cpus": fx.cpus,
+                                         y=fx.y, meta=json.dumps({"measured_weights_sum": 99.0, "inputs_sha256": fx.inputs, "cpus": fx.cpus, "thread_env": fx.threads,
                                                                   "controls": {"C-SIM": {"pass": False},
                                                                                "C-ROO": {"pass": True}}})),
             "C-REF per bin": lambda fx: np.savez(fx.run / "er.npz", lgbm_params=np.array(json.dumps(
                 [{"kind": "classifier", "params": {"n_estimators": 100, "random_state": 42}}])), y=fx.y * (1 + 1e-6),
-                meta=json.dumps({"inputs_sha256": fx.inputs, "cpus": fx.cpus, "cpus": fx.cpus})),
+                meta=json.dumps({"inputs_sha256": fx.inputs, "cpus": fx.cpus, "thread_env": fx.threads, "cpus": fx.cpus, "thread_env": fx.threads, "thread_env": fx.threads})),
             "C-CPUS": lambda fx: np.savez(fx.run / "er.npz", lgbm_params=np.array(json.dumps(
                 [{"kind": "classifier", "params": {"n_estimators": 100, "random_state": 42}}])), y=fx.y,
-                meta=json.dumps({"inputs_sha256": fx.inputs, "cpus": fx.cpus + 1})),
+                meta=json.dumps({"inputs_sha256": fx.inputs, "cpus": fx.cpus + 1, "thread_env": fx.threads})),
+            "C-CPUS threads": lambda fx: np.savez(fx.run / "er.npz", lgbm_params=np.array(json.dumps(
+                [{"kind": "classifier", "params": {"n_estimators": 100, "random_state": 42}}])), y=fx.y,
+                meta=json.dumps({"inputs_sha256": fx.inputs, "cpus": fx.cpus,
+                                 "thread_env": {**fx.threads, "OMP_NUM_THREADS": "999"}})),
             "C-IN units": lambda fx: np.savez(fx.run / "er.npz", lgbm_params=np.array(json.dumps(
                 [{"kind": "classifier", "params": {"n_estimators": 100, "random_state": 42}}])), y=fx.y,
-                meta=json.dumps({"inputs_sha256": {**fx.inputs, "CV": "0" * 64}, "cpus": fx.cpus})),
+                meta=json.dumps({"inputs_sha256": {**fx.inputs, "CV": "0" * 64}, "cpus": fx.cpus, "thread_env": fx.threads, "thread_env": fx.threads})),
             "done": lambda fx: (fx.run / "c2_replica_b7.done").write_text(json.dumps({"verdict": "FAIL"})),
             "C-IN": lambda fx: fx.cfg["e_r"].update(central_sha256="0" * 64),
         }
