@@ -1,0 +1,37 @@
+You are an experienced Physical Review D referee for neutrino cross-section measurements. Answer from your own judgment and the text below. Do not read, search or write any file. Do not propose changes to the physics.
+
+The paper unfolds MINERvA open data with OmniFold, an ML unfolding method. A previous referee read raised two wording points. The authors need your recommendation on each.
+
+POINT 1 — the abstract. The current draft:
+"Fake-data studies find residual bias exceeding uncertainty-based thresholds fixed in advance at a GiBUU-like truth and a synthetic momentum-transfer tilt. The coverage of the reported uncertainty intervals has not been validated."
+
+Facts:
+- The thresholds (a truth is flagged if p < 0.01, or if any cell has |z| > 2) were written into an internal record before any fake-data test was graded against them.
+- The body (Sec. IV G) now says: "A truth is flagged when p < 0.01 or when a cell has |z| > 2, where z is the cell's bias divided by its uncertainty under the same covariance; these criteria were fixed before any of the tests was graded against them".
+- The previous referee had flagged that the abstract's "fixed in advance" had no support in the body.
+
+Options considered:
+- (a) keep it as drafted;
+- (b) keep it, reordered: "…find residual bias, at a GiBUU-like truth and a synthetic momentum-transfer tilt, that exceeds uncertainty-based thresholds fixed in advance.";
+- (c) drop "fixed in advance": "…residual bias exceeding uncertainty-based thresholds at a GiBUU-like truth and a synthetic momentum-transfer tilt."
+
+POINT 2 — disclosure of choices made with the comparison result in view. The paper states: "No learner setting, whether capacity, learning rate, refinement capacity or iteration count, was tuned on data." But two choices for a 2D benchmark result (pT, p∥), which is compared with MINERvA's published measurement on the same data, were made after that comparison was available:
+- (i) the learner implementation. LightGBM was preferred over an exact-split estimator after both were compared with the published result, which lowered χ²/ndf from 3.66 to 2.65. The paper already discloses this in Sec. IV B as: "LightGBM, rather than the scikit-learn exact-split estimator at the same settings, was chosen after both had been compared with the published result, a choice that lowered χ²/ndf from 3.66 to 2.65."
+- (ii) the background-subtraction treatment. A refined negative-weight treatment was chosen on a simulation closure test: the purity-based estimate lay up to 5.9 statistical σ from truth, the refined one within 0.44σ, and they differed by more than 1σ in 14 of 205 bins. But it was formally adopted after its distance to the published result was known, and the change lowered χ²/ndf from 2.65 to 2.27. Only the companion note says so at present.
+
+The draft adds:
+- to Sec. III: "Two choices for the two-dimensional result are not learner settings: its learner implementation was chosen, and its background treatment adopted, after the comparison with the published result was known (Sec. IV B).";
+- to Sec. IV B: "The refined negative-weight background treatment of the quoted result was chosen on a closure test in simulation, in which [the closure numbers]; it was adopted after its distance from the published result was known, a change that lowered χ²/ndf from 2.65 to 2.27."
+
+The PI's concern: is this CHRONOLOGICAL framing ("after X was known", "was chosen after…") advisable in a PRD paper, or do referees and editors prefer a different framing? For example, stating that the comparison with the published result is not independent of these choices, or labelling them as made with the benchmark in view. Must the disclosure be in the paper at all, or can it live in the companion note with a pointer?
+
+QUESTIONS
+1. Point 1: which option do you recommend, and why? If none is ideal, give your own wording, keeping the facts exact.
+2. Point 2:
+   - Is chronological framing advised or not advised in PRD papers? Give the reason.
+   - What wording do you recommend for Sec. III and Sec. IV B? Give exact sentences that keep every fact true and do not overclaim or underclaim.
+   - Should (i) and (ii) be framed the same way?
+   - Is note-only with a pointer acceptable to a referee, given the paper's "No learner setting … was tuned on data"?
+3. Anything in these sentences a referee would still challenge.
+
+Keep the answer under 600 words. Give exact proposed sentences.
