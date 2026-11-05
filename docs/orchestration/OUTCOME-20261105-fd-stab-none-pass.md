@@ -32,7 +32,8 @@ probe could discriminate.
   control 0.48 / 4.35, B2 0.34 / 2.69, B3a 0.54 / 4.04 and B3b 0.55 / 4.25. Every candidate still exceeds both bars, so
   the verdict does not depend on that factor.
 - **The GiBUU readout is descriptive and is used by no criterion** (§5.3). At A7_gibuu the control's RMS fractional
-  bias over the 16 cells is 0.130 and its maximum 0.365. The candidates move these by at most 0.01.
+  bias (b = X / X_true − 1, §5.1) over the 16 cells is 0.130 and its maximum |b| is 0.365. Across the three candidates
+  the RMS is 0.128–0.130 and the maximum 0.353–0.362, a change of at most 0.012.
 
 ## What follows, as already decided
 
