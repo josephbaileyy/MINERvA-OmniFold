@@ -1,0 +1,68 @@
+**Blind PRD referee report (caveat lens)**
+
+**(A) Status of the requested items**
+
+1. **Contradiction on tuning: partly resolved.**
+   - p.3 now separates the two choices. "No learner setting, whether capacity, learning rate, refinement capacity or iteration count, was tuned on data." It then says "this choice was checked on data, against ten iterations with purity-based subtraction and against the published result, without a search over the iteration count."
+   - It adds "Which learner implementation gives the two-dimensional central value, at these settings, was chosen after the implementations had been compared with the published result (Sec. IV B)."
+   - p.4 adds "a choice that lowered χ²/ndf from 3.66 to 2.65 (both with purity-based subtraction)."
+   - What remains: the blanket "No learner setting … was tuned on data" sits beside a learner choice and an iteration-count check made against the published result.
+   - The reported 2.27 uses the refined background treatment. Only the note page (p.14) says "the rebuilt result was adopted after that distance was known". The paper does not say this.
+   - The p.14 note still reads "no hyperparameter search was performed on data, which avoids tuning on the result."
+2. **Uncertainty tables: mostly resolved.** Appendix A and Tables IV and V (pp.11–12) give per-group uncertainties and the 16×16 correlation matrix. The quadrature sums I checked for R02, R04 and R15 reproduce the "reported" column. Not found: a background composition table and the size of the flux constraint. The 2D result has medians only (p.4–5).
+3. **Jargon: partly resolved.**
+   - "Gate" is replaced by "stopped by one of its preliminary checks" (p.9). "Lateral", hybrid truth, joint cells and playlists are defined.
+   - Still undefined in the paper: "z" in "|z| > 2" (p.7); "purity" and "supported box" (p.3, "each supported box with purity below 0.1"); "null distributions" and "hybrid nulls" (p.9); "audit" (p.4); "offsets of the twelve playlists" (p.4); "one-parameter family of valid covariances" (p.6).
+4. **Descriptive χ² in the abstract: resolved.** See (C).
+5. **Closure tests marked in Table I: partly resolved.** The prior and Tune v1 rows carry an asterisk, with the caption "Closure test: the truth is the simulation's own." The row "NuWro, closure" (χ² = 11) is also a closure but is unmarked. p.7 says "Two of the truths … are closure tests", so the labeling is inconsistent.
+6. **Precision: partly resolved.**
+   - Table I χ² values are integers and p-values are given as "< 10⁻²⁷".
+   - Table IV still prints uncertainties to 0.01%. p.6 reports rounding-level scatter of 0.23% per joint cell.
+   - p.8 prints "3.6–29.3%" and "7.4–40.4%".
+7. **Fig. 2 caption: resolved in the caption, not in the text.**
+   - The caption now says "Neither panel shows the sixteen-cell result or its reported covariance."
+   - IV E (p.6) still reports the development variant's 74% residual. The note says moving this is only "proposed".
+   - The Sec. IV E paragraph on the GiBUU-to-GENIE change relies on a non-reported estimator. Fig. 2b has no GiBUU curve.
+8. **χ²/ndf convention: resolved.**
+   - p.4: "ndf is the number of reported bins. The value is descriptive, and no p-value is quoted for it."
+   - Not stated: whether the published covariance's printed precision supports a pseudo-inverse at condition number 1.5×10¹².
+
+**Additions**
+- **Table II daggers: resolved.** R02, R06, R10 and R15 carry †. Limitation 2 defines stability as "only that fraction is reconstructed in the same cell". Not found: what this means for those cells' interpretation. The merge threshold in Sec. II is "purity below 0.1", and stabilities of 0.16–0.25 sit just above it.
+- **Detector-response closures, IV G: partly resolved.**
+  - The sentence is p.7: "move the sixteen cells by at most 0.40σ … and by a median of 0.50σ (at most 0.97σ) when the whole recoil energy is scaled by ±4 %". It continues "These closures are descriptive: no pass threshold is set."
+  - Not found: why 4%, and why this differs from C_resp itself, since σ includes C_resp.
+  - A shift of 0.97σ is reported with no verdict on it.
+- **Fake-data residual attribution, IV E: resolved in hedging, still open in substance.**
+  - p.6 reads "consistent with finite-iteration regularization for the GiBUU-like change, but not for every change tested, and no single cause is established."
+  - The comparison is noise-free and uses the development variant.
+
+**(B) New or challengeable sentences**
+
+- p.1 abstract and p.7: the abstract says "thresholds fixed in advance", but the paper's IV G only says "A truth is flagged when p < 0.01 or when a cell has |z| > 2". "Fixed in advance" appears in the paper only for the audit's stopping condition (p.4) and the generator tolerance (p.8). The abstract claim has no body support.
+- p.7: "Without C_PL,5D, the GiBUU E_avail shape also meets the flagging criterion". Table I (p.8) shows the NuWro (p_T, p_∥, E_avail) shape at p = 0.0027 under C_total, which also meets it. The text omits it. The text's own R06 value, "z = 2.01", is knife-edge against 2.
+- p.7: "In cell R11 at G18_10a_02_11b, the bias lies below the reported uncertainty only with C_model included." The z value without C_model is not given, so the flagging status is unclear.
+- p.6: "so the estimator fails a data-stability requirement of at most 0.3 (median) and 1.0 (max) statistical standard deviations." This reads ambiguously. It sits beside p.4's "the training-seed block, which is zero". The rounding instability, up to 2.6 σ_stat, is in no covariance block.
+- p.9, Limitation 1: the coverage test was "stopped by one of its preliminary checks … the uncertainties reproduced through its pseudo-experiments disagreed with the covariance blocks they draw, for reasons not established". This says the covariance failed a consistency check. The abstract reduces it to "has not been validated".
+- p.5: the run-period block "passes its own consistency check by construction". That check is vacuous.
+- p.6: "reduction … 8.3% at five iterations to 3.3% at 200". The figure 8.3% also appears in Sec. II (p.2) as the carbon-versus-CH difference, which invites confusion.
+- p.9: the discussion says "tracks the same bias". The link between the C_model shifts and the residual bias is asserted, not shown.
+- p.1: "we first reproduce the published double-differential cross section" sits against χ²/ndf = 2.27 and "The source of the shape difference has not been identified."
+- p.9, Table III: GENIE + Valencia MEC (229/229) and Tune v1 (262/262) have identical total and shape-only χ² under the reported covariance, although Fig. 3 shows offsets of about 15–20% for Tune v1. A referee would ask about this.
+
+**(C) Abstract**
+
+> "As a descriptive comparison, three external generator predictions give χ² values of 107–229 for 16 degrees of freedom; GiBUU gives 48 on the eight cells covered by its sample."
+
+Yes, this reads as descriptive. Two caveats:
+- The GiBUU line gives no ndf (8).
+- "Fake-data studies find residual bias exceeding uncertainty-based thresholds fixed in advance" overstates the paper's own support, as above.
+
+**(D) Recommendation**
+
+**Major revision.** The presentation round did not change the recommendation. It improved readability and disclosure, but the unvalidated coverage, the failed covariance consistency check, and the prior dependence remain.
+
+Top three remaining issues:
+1. The covariance is unvalidated and failed its own pseudo-experiment consistency check. The training-seed block is zero while rounding-level input changes move results by up to 2.6 σ_stat.
+2. Evidence for prior retention and regularization (IV E) comes from a non-reported development variant in a noise-free setting. The fake-data failures (GiBUU hybrid, q₃ tilt) are shown for the reported estimator, with no link between the two.
+3. The methodological choices were made with the published result in view: learner, 2D background treatment and iteration count. The paper discloses part of this. It also contains a "fixed in advance" claim unsupported in the body, and a Table I flagging statement inconsistent with its own table.

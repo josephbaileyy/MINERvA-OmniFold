@@ -1,0 +1,6 @@
+You are acting as an independent, blind referee. Read ONLY these two files, and no other file, directory, repository, git history or web page:
+
+1. /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/4834bf2d-a370-41b8-ae11-7b9d48874031/scratchpad/rr5/referee/prompt.txt (your instructions)
+2. /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/4834bf2d-a370-41b8-ae11-7b9d48874031/scratchpad/rr5/referee/paper.txt (the manuscript, about 9,300 words; read all of it, in chunks if needed)
+
+Follow the instructions in prompt.txt exactly and write the full referee report. Do not run any commands, write any files, or look anywhere else: the point is to judge the paper as a PRD referee would, from its text alone. Your final message must be the complete referee report and nothing else.
