@@ -1,112 +1,166 @@
-# python3 -B docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cal300_code_check.py 02e71a0bf68f6a232df70fa7b9182097ad54c22d 22eda9f424918e96e28984fa3152e42a803a5635  (repo root, worktree at 22eda9f4, 2026-11-05T09:34:21Z)
-SAME     text-same fd_1b_c2.CAL_SALT
-SAME     text-same fd_1b_c2.CAL_SEED
-SAME     text-same fd_1b_c2.DEFLATION
-SAME     text-same fd_1b_c2.N_CELLS
-SAME     text-same fd_1b_c2.Refusal
-SAME     text-same fd_1b_c2.UNION_LIMIT
-SAME     text-same fd_1b_c2._STATE
-CHANGED  text-diff fd_1b_c2._one_set
-SAME     text-same fd_1b_c2._worker_init
-SAME     text-same fd_1b_c2.band_reference
-SAME     text-same fd_1b_c2.calibration_draws
-SAME     text-same fd_1b_c2.composite_sums
-SAME     text-same fd_1b_c2.cv_denominator_f32
-SAME     text-same fd_1b_c2.draw_flux
-SAME     text-same fd_1b_c2.fine_sums
-SAME     text-same fd_1b_c2.gate_724
-SAME     text-same fd_1b_c2.layout_1b
-SAME     text-same fd_1b_c2.packing
-SAME     text-same fd_1b_c2.prepare
-SAME     text-same fd_1b_c2.rates
-SAME     text-same fd_1b_c2.selection
-SAME     text-same fd_1b_c2.set_ratios
-SAME     text-same fd_1b_c2.xt_packed
-SAME     text-same fd_1b_inv.NOATIME_FLAG
-SAME     text-same fd_1b_inv.OPENED
-SAME     text-same fd_1b_inv.Refusal
-SAME     text-same fd_1b_inv.load_inputs
-SAME     text-same fd_1b_inv.load_npz
-SAME     text-same fd_1b_inv.open_noatime
-SAME     text-same fd_1b_inv.sha256_noatime
-SAME     text-same fd_1b_mc.Refusal
-SAME     text-same fd_1b_mc.TRUTHS
-SAME     text-same fd_1b_mc._flux_universe_inputs
-SAME     text-same fd_1b_mc._load_world
-SAME     text-same fd_1b_mc._single
-SAME     text-same fd_1b_mc._staged_table
-SAME     text-same fd_1b_mc.draw_universes
-SAME     text-same fd_1b_mc.flat_cells
-SAME     text-same fd_1b_mc.flux_on_grid
-SAME     text-same fd_1b_mc.truth_ratio
-SAME     text-same fd_1b_mc.truth_weight
-SAME     text-same fd_1b_mc.universe_dir
-SAME     text-same fd_1b_mc.verified_weights
-SAME     text-same fd_1b_mc.via_noatime
-SAME     text-same fd_1b_toys.DETECTOR_DRAW_ORDER
-SAME     text-same fd_1b_toys.F1_SUMS
-SAME     text-same fd_1b_toys.INTERACTION_BANDS
-SAME     text-same fd_1b_toys.LATERAL_DRAW_ORDER
-SAME     text-same fd_1b_toys.REPO
-SAME     text-same fd_1b_toys.Refusal
-SAME     text-same fd_1b_toys.TRUTHS
-SAME     text-same fd_1b_toys._ND
-SAME     text-same fd_1b_toys.check_pins
-SAME     text-same fd_1b_toys.committed_ratio_sha256
-SAME     text-same fd_1b_toys.draw
-SAME     text-same fd_1b_toys.flux_probabilities
-SAME     text-same fd_1b_toys.interaction_groups
-SAME     text-same fd_1b_toys.s1_universes
-SAME     text-same fd_1b_toys.weight_files
-SAME     text-same flux_universe.CV_MATCH_RTOL
-SAME     text-same flux_universe.FLUX_CV_KEY
-SAME     text-same flux_universe.FLUX_UNIV_KEY
-SAME     text-same flux_universe._check_cv_match
-SAME     text-same flux_universe._check_positive
-SAME     text-same flux_universe.flux_on_target_grid
-SAME     text-same flux_universe.flux_ref_index
-SAME     text-same flux_universe.flux_universe_bins
-SAME     text-same flux_universe.read_flux_universe_table
-SAME     text-same s1_assemble.BKG_SHA256
-SAME     text-same s1_assemble.CONSTRAINT_SHA256
-SAME     text-same s1_assemble.DEFINITION_SHA256
-SAME     text-same s1_assemble.DETECTOR_BANDS
-SAME     text-same s1_assemble.EXPECT
-SAME     text-same s1_assemble.FINE_MAP_SHA256
-SAME     text-same s1_assemble.INPUT_NPZ_SHA256
-SAME     text-same s1_assemble.LATERAL_BANDS
-SAME     text-same s1_assemble.N_CELLS
-SAME     text-same s1_assemble.fine_map
-SAME     text-same s1_assemble.flux_weights
-SAME     text-same s1_assemble.functional_matrix
-SAME     text-same s1_assemble.require_sha
-SAME     text-same s1_assemble.sha256
-SAME     text-same s5c_pseudo.AXIS
-SAME     text-same s5c_pseudo.truth_weight
-SAME     text-same s5c_unfold.load_inputs
-SAME     text-same s5e_deform.AXIS_NAMES
-SAME     text-same s5e_deform.install_ratio_truth
-SAME     text-same s5e_deform.ratio_weight
-SAME     text-same s5n_pseudo.AXIS
-SAME     text-same s5n_pseudo.eavail_ratio_weight
-SAME     text-same s5n_pseudo.truth_weight
-SAME     text-same s5p_nullexp.DETECTOR_BANDS
-SAME     text-same s5p_nullexp.model_bands
-SAME     text-same s5p_nullexp.model_groups
-SAME     text-same s5p_stage1_inspect.AXES
-SAME     text-same s5p_stage1_inspect.FINE
-SAME     text-same s5p_stage1_inspect.H2_EDGES
-SAME     text-same s5p_stage1_inspect.coarse_map
-SAME     text-same s5p_stage1_inspect.fine_shape
-SAME     text-same s5p_stage1_inspect.fine_volume
-SAME     text-same s5p_universe.SENTINEL_ROWS
-SAME     text-same s5p_universe.check_alignment
-SAME     text-same s5p_universe.denominator
-SAME     text-same s5p_universe.universe_inputs
-SAME     text-same s5p_universe.weight_keys
-SAME     text-same xsec_nd._bin_volume
-SAME     text-same xsec_nd._broadcast_along
-calibrate_main's glue at OLD (for reading):
+# python3 -B docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cal300_code_check.py 02e71a0bf68f6a232df70fa7b9182097ad54c22d bf36901f957c36f37b4cb5fe6c7b6cd33f190ca7  (repo root, worktree at bf36901f, 2026-11-05T10:01:00Z)
+python 3.12.2 | packaged by conda-forge | (main, Feb 16 2024, 20:54:21) [Clang 16.0.6 ]
+code_closure from nd-unfolding/fd_1b_c2.py sha256 522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f
+SAME     fd_1b_c2.CAL_SALT
+SAME     fd_1b_c2.CAL_SEED
+SAME     fd_1b_c2.DEFLATION
+SAME     fd_1b_c2.GATE_DEV,GATE_K,GATE_LOGMEAN,GATE_MAX
+SAME     fd_1b_c2.N_CELLS
+SAME     fd_1b_c2.Refusal
+SAME     fd_1b_c2.SD_MULT_CELL,SD_MULT_LOGMEAN
+SAME     fd_1b_c2.UNION_LIMIT
+SAME     fd_1b_c2._STATE
+EXEMPT   fd_1b_c2._one_set
+SAME     fd_1b_c2._worker_init
+SAME     fd_1b_c2.band_reference
+SAME     fd_1b_c2.calibration_draws
+SAME     fd_1b_c2.composite_sums
+SAME     fd_1b_c2.cv_denominator_f32
+SAME     fd_1b_c2.draw_flux
+SAME     fd_1b_c2.fine_sums
+SAME     fd_1b_c2.gate_724
+SAME     fd_1b_c2.layout_1b
+SAME     fd_1b_c2.math
+SAME     fd_1b_c2.np
+SAME     fd_1b_c2.packing
+SAME     fd_1b_c2.prepare
+SAME     fd_1b_c2.rates
+SAME     fd_1b_c2.sa
+SAME     fd_1b_c2.selection
+SAME     fd_1b_c2.set_ratios
+SAME     fd_1b_c2.toys
+SAME     fd_1b_c2.xt_packed
+SAME     fd_1b_inv.NOATIME_FLAG
+SAME     fd_1b_inv.OPENED
+SAME     fd_1b_inv.Path
+SAME     fd_1b_inv.Refusal
+SAME     fd_1b_inv.hashlib
+SAME     fd_1b_inv.load_inputs
+SAME     fd_1b_inv.load_npz
+SAME     fd_1b_inv.np
+SAME     fd_1b_inv.open_noatime
+SAME     fd_1b_inv.os
+SAME     fd_1b_inv.s5c_unfold
+SAME     fd_1b_inv.sha256_noatime
+SAME     fd_1b_mc.Path
+SAME     fd_1b_mc.Refusal
+SAME     fd_1b_mc.TRUTHS
+SAME     fd_1b_mc._flux_universe_inputs
+SAME     fd_1b_mc._load_world
+SAME     fd_1b_mc._single
+SAME     fd_1b_mc._staged_table
+SAME     fd_1b_mc.contextmanager
+SAME     fd_1b_mc.draw_universes
+SAME     fd_1b_mc.flat_cells
+SAME     fd_1b_mc.flux_on_grid
+SAME     fd_1b_mc.hashlib
+SAME     fd_1b_mc.inv
+SAME     fd_1b_mc.io
+SAME     fd_1b_mc.json
+SAME     fd_1b_mc.np
+SAME     fd_1b_mc.s5e_deform
+SAME     fd_1b_mc.s5n_pseudo
+SAME     fd_1b_mc.s5p_universe
+SAME     fd_1b_mc.sa
+SAME     fd_1b_mc.tempfile
+SAME     fd_1b_mc.toys
+SAME     fd_1b_mc.truth_ratio
+SAME     fd_1b_mc.truth_weight
+SAME     fd_1b_mc.universe_dir
+SAME     fd_1b_mc.verified_weights
+SAME     fd_1b_mc.via_noatime
+SAME     fd_1b_toys.DETECTOR_DRAW_ORDER
+SAME     fd_1b_toys.F1_SUMS
+SAME     fd_1b_toys.INTERACTION_BANDS
+SAME     fd_1b_toys.LATERAL_DRAW_ORDER
+SAME     fd_1b_toys.Path
+SAME     fd_1b_toys.REPO
+SAME     fd_1b_toys.Refusal
+SAME     fd_1b_toys.TRUTHS
+SAME     fd_1b_toys._ND
+SAME     fd_1b_toys.check_pins
+SAME     fd_1b_toys.committed_ratio_sha256
+SAME     fd_1b_toys.draw
+SAME     fd_1b_toys.flux_probabilities
+SAME     fd_1b_toys.interaction_groups
+SAME     fd_1b_toys.ne
+SAME     fd_1b_toys.np
+SAME     fd_1b_toys.s1_assemble
+SAME     fd_1b_toys.s1_universes
+SAME     fd_1b_toys.s5p_universe
+SAME     fd_1b_toys.weight_files
+SAME     flux_universe.CV_MATCH_RTOL
+SAME     flux_universe.FLUX_CV_KEY
+SAME     flux_universe.FLUX_UNIV_KEY
+SAME     flux_universe._check_cv_match
+SAME     flux_universe._check_positive
+SAME     flux_universe.flux_on_target_grid
+SAME     flux_universe.flux_ref_index
+SAME     flux_universe.flux_universe_bins
+SAME     flux_universe.np
+SAME     flux_universe.os
+SAME     flux_universe.read_flux_universe_table
+SAME     s1_assemble.BKG_SHA256
+SAME     s1_assemble.CONSTRAINT_SHA256
+SAME     s1_assemble.DEFINITION_SHA256
+SAME     s1_assemble.DETECTOR_BANDS
+SAME     s1_assemble.DROPPED,FLUX,MINOS
+SAME     s1_assemble.EXPECT
+SAME     s1_assemble.EXPECT
+SAME     s1_assemble.FINE_MAP_SHA256
+SAME     s1_assemble.INPUT_NPZ_SHA256
+SAME     s1_assemble.LATERAL_BANDS
+SAME     s1_assemble.MODEL_BANDS_2
+SAME     s1_assemble.N_CELLS
+SAME     s1_assemble.Path
+SAME     s1_assemble.fine_map
+SAME     s1_assemble.flux_weights
+SAME     s1_assemble.functional_matrix
+SAME     s1_assemble.hashlib
+SAME     s1_assemble.json
+SAME     s1_assemble.np
+SAME     s1_assemble.require_sha
+SAME     s1_assemble.s1
+SAME     s1_assemble.sha256
+SAME     s5c_pseudo.AXIS
+SAME     s5c_pseudo.np
+SAME     s5c_pseudo.truth_weight
+SAME     s5c_unfold.Path
+SAME     s5c_unfold.load_inputs
+SAME     s5c_unfold.np
+SAME     s5e_deform.AXIS_NAMES
+SAME     s5e_deform.install_ratio_truth
+SAME     s5e_deform.np
+SAME     s5e_deform.ratio_weight
+SAME     s5n_pseudo.AXIS
+SAME     s5n_pseudo.eavail_ratio_weight
+SAME     s5n_pseudo.np
+SAME     s5n_pseudo.s5c_pseudo
+SAME     s5n_pseudo.truth_weight
+SAME     s5p_nullexp.DETECTOR_BANDS
+SAME     s5p_nullexp.Path
+SAME     s5p_nullexp.model_bands
+SAME     s5p_nullexp.model_groups
+SAME     s5p_stage1_inspect.AXES
+SAME     s5p_stage1_inspect.FINE
+SAME     s5p_stage1_inspect.H2_EDGES
+SAME     s5p_stage1_inspect.coarse_map
+SAME     s5p_stage1_inspect.fine_shape
+SAME     s5p_stage1_inspect.fine_volume
+SAME     s5p_stage1_inspect.np
+SAME     s5p_universe.Path
+SAME     s5p_universe.SENTINEL_ROWS
+SAME     s5p_universe.check_alignment
+SAME     s5p_universe.denominator
+SAME     s5p_universe.np
+SAME     s5p_universe.universe_inputs
+SAME     s5p_universe.weight_keys
+SAME     xsec_nd._bin_volume
+SAME     xsec_nd._broadcast_along
+SAME     xsec_nd.np
+reached at OLD: 157 statements in 14 modules: fd_1b_c2 fd_1b_inv fd_1b_mc fd_1b_toys flux_universe s1_assemble s5c_pseudo s5c_unfold s5e_deform s5n_pseudo s5p_nullexp s5p_stage1_inspect s5p_universe xsec_nd
+definitions (def/class): 71; other statements (glue, imports, constants): 86
+calibrate_main's lines between the roots at OLD (for reading):
     P = prepare(a)
     state = {"H": H, "cv": cv, "U": U, "ref_x": ref_x, "ref_count": ref_count, "flux_cols": flux_cols,
     _worker_init(state)
@@ -122,20 +176,5 @@ calibrate_main's glue at OLD (for reading):
     rec = {"schema": SCHEMA_CAL, "step": "c2-calibration", "verdict": verdict, "truths": truths, "sets": a.sets,
     "ratio_mean_per_cell": {t: Rx[t].mean(axis=0).tolist() for t in truths},
     np.savez_compressed(a.out.with_suffix(".npz"), **{f"ratio_{t}": Rx[t] for t in truths},
-{
- "old": "02e71a0bf68f6a232df70fa7b9182097ad54c22d",
- "new": "22eda9f424918e96e28984fa3152e42a803a5635",
- "roots": [
-  "fd_1b_c2.prepare",
-  "fd_1b_c2._worker_init",
-  "fd_1b_c2._one_set",
-  "fd_1b_c2.rates"
- ],
- "reached": 107,
- "changed": [
-  "fd_1b_c2._one_set"
- ],
- "text_differs_ast_same": []
-}
-CAL300-CODE-CHECK :: IDENTICAL BUT THE EXEMPT :: 107 definitions reached from 4 roots :: exempt ['fd_1b_c2._one_set'] :: old=02e71a0bf68f6a232df70fa7b9182097ad54c22d new=22eda9f424918e96e28984fa3152e42a803a5635
+CAL300-CODE-CHECK :: IDENTICAL BUT THE EXEMPT :: 157 statements reached from 4 roots :: exempt ['fd_1b_c2._one_set'] :: old=02e71a0bf68f6a232df70fa7b9182097ad54c22d new=bf36901f957c36f37b4cb5fe6c7b6cd33f190ca7 :: python 3.12.2
 exit=0
