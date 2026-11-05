@@ -66,7 +66,7 @@ noise. IBU is a declared cross-check. It never becomes the reported estimator (�
 | product | IBU side (new, binned) | (e) side (committed, read only) | pairing |
 |---|---|---|---|
 | data central value | IBU at K ∈ the set, both background variants | the committed central product, sha256 `fb5cc679…` (`s1_assemble.py:49`, `= data_R = P5`) | same data |
-| statistical replicas | IBU on `s5n_pseudo.bootstrap_replica(build_data(…), b)`, b = 1…50 | S1's `data_b{b}_j{100+b}.npz`, b = 1…50 (`s1_assemble.py:54, 316-319`) | same bootstrap seed b: the same Poisson draws of data, MC and template |
+| statistical replicas | IBU on (e)'s replica construction, step for step (`s5p_numerics.py:183-200`): `jittered(inputs, bkg, 100+b)` (`:79-87`), then `s5n_pseudo.build_data`, then `s5n_pseudo.bootstrap_replica(exp, b)`, b = 1…50 | S1's `data_b{b}_j{100+b}.npz`, b = 1…50 (`s1_assemble.py:54, 316-319`) | same bootstrap seed b: the same Poisson draws of data, MC and template |
 | weight-only universes | IBU with every CV weight replaced by universe u's, as `s5p_universe` does for (e): signal truth and reco weights, truth denominator, template weights; a Flux universe divided by its own flux (`s5p_universe.py:1-23`) | S1's universe products, the declared set of `s1_assemble.EXPECT` (`s1_assemble.py:58-65`) | same universe u, same bank |
 | model vertices | IBU on the data with the MC reweighted to GENIE+MEC, NuWro and GiBUU by the ladder's truth ratios, as `build_cmodel5d.py`'s X_k (`pv-ladder/build_cmodel5d.py:4-8`) | the ladder's three (e) unfolds that C_model,5D was built from | same generator truth |
 | closure truths (descriptive) | IBU, noise-free, at F0b's truths | F0b's (e) closure products | same truth |
@@ -99,10 +99,16 @@ is built from the three IBU vertices by `build_cmodel5d.py`'s formula, κ = 1. I
   The reference exists only on pscratch, so it is in §7's listing.
 - **G-cells:** the 16 cell integrals of (e)'s central product, computed by g1's integration, equal S1's committed f to
   1e-12 relative per cell. Summation order may differ.
-- **G-draw:** for each b, g1 rebuilds (e)'s replica construction (`s5n_pseudo.bootstrap_replica` on
-  `build_data(…)`) and checks that the reco-cell counts it histograms equal those from the same draw
-  bitwise. This pins the pairing against a row within ½ ulp of a non-float32 edge crossing it, which would shift
-  every later count.
+- **G-draw:** for each b, g1 calls (e)'s construction path:
+  1. `s5p_numerics.jittered(inputs, bkg, 100+b)`, the edge-safe ±½ float32-ulp jitter (`s5p_numerics.py:186`),
+     with the loop's refusal if grid membership moves (`:188-191`) applied as there;
+  2. `s5n_pseudo.build_data`;
+  3. `s5n_pseudo.bootstrap_replica(exp, b)`.
+
+  It compares the per-row arrays bitwise with those g1's own replica builder hands IBU: the keep mask,
+  `obs_counts`, the MC Poisson factors and `tmpl_w`. This pins the pairing, including a row within ½ ulp of a
+  non-float32 edge, which the jitter step could move across it and so shift every later count. A rebuild without
+  the jitter step would compare IBU's construction with itself (coverage-5b-audit, #763 delta check).
 
 ### 3.4 Carried, labelled, not remade
 
