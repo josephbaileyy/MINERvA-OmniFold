@@ -4,6 +4,11 @@
 `fea7946a`. Sections marked **(to come)** are not written yet. Nothing in it is bound, and binding 3 waits on B4
 (#714) for everything that depends on the estimator.
 
+**B4 resolved, 2026-11-05:** NONE_PASS, which FD-STAB §6 makes terminal (`OUTCOME-20261105-fd-stab-none-pass.md`, #785;
+record `fd_stab.json` sha256 653356ae56087ea74621e61a60c829d63be9a9f15b0b35941e641b22f0be8ea3). There is no estimator
+change: 1B stage 1 runs on configuration (e) (DECISION-20261102 item 3), after the calibration rerun, the probe and
+c2check at N, through binding 3. Binding 3 names configuration (e) and cites this outcome (the director, 2026-11-05).
+
 **MEASURES:** the code, the runs and the measurements listed in §6. **CANNOT AUTHORIZE:** a launch, a threshold, a
 change to S1, or a verdict on 1B's coverage.
 
