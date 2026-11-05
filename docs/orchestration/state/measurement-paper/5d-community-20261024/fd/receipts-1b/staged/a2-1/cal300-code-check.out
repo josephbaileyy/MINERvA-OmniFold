@@ -1,0 +1,141 @@
+# python3 -B docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/cal300_code_check.py 02e71a0bf68f6a232df70fa7b9182097ad54c22d 22eda9f424918e96e28984fa3152e42a803a5635  (repo root, worktree at 22eda9f4, 2026-11-05T09:34:21Z)
+SAME     text-same fd_1b_c2.CAL_SALT
+SAME     text-same fd_1b_c2.CAL_SEED
+SAME     text-same fd_1b_c2.DEFLATION
+SAME     text-same fd_1b_c2.N_CELLS
+SAME     text-same fd_1b_c2.Refusal
+SAME     text-same fd_1b_c2.UNION_LIMIT
+SAME     text-same fd_1b_c2._STATE
+CHANGED  text-diff fd_1b_c2._one_set
+SAME     text-same fd_1b_c2._worker_init
+SAME     text-same fd_1b_c2.band_reference
+SAME     text-same fd_1b_c2.calibration_draws
+SAME     text-same fd_1b_c2.composite_sums
+SAME     text-same fd_1b_c2.cv_denominator_f32
+SAME     text-same fd_1b_c2.draw_flux
+SAME     text-same fd_1b_c2.fine_sums
+SAME     text-same fd_1b_c2.gate_724
+SAME     text-same fd_1b_c2.layout_1b
+SAME     text-same fd_1b_c2.packing
+SAME     text-same fd_1b_c2.prepare
+SAME     text-same fd_1b_c2.rates
+SAME     text-same fd_1b_c2.selection
+SAME     text-same fd_1b_c2.set_ratios
+SAME     text-same fd_1b_c2.xt_packed
+SAME     text-same fd_1b_inv.NOATIME_FLAG
+SAME     text-same fd_1b_inv.OPENED
+SAME     text-same fd_1b_inv.Refusal
+SAME     text-same fd_1b_inv.load_inputs
+SAME     text-same fd_1b_inv.load_npz
+SAME     text-same fd_1b_inv.open_noatime
+SAME     text-same fd_1b_inv.sha256_noatime
+SAME     text-same fd_1b_mc.Refusal
+SAME     text-same fd_1b_mc.TRUTHS
+SAME     text-same fd_1b_mc._flux_universe_inputs
+SAME     text-same fd_1b_mc._load_world
+SAME     text-same fd_1b_mc._single
+SAME     text-same fd_1b_mc._staged_table
+SAME     text-same fd_1b_mc.draw_universes
+SAME     text-same fd_1b_mc.flat_cells
+SAME     text-same fd_1b_mc.flux_on_grid
+SAME     text-same fd_1b_mc.truth_ratio
+SAME     text-same fd_1b_mc.truth_weight
+SAME     text-same fd_1b_mc.universe_dir
+SAME     text-same fd_1b_mc.verified_weights
+SAME     text-same fd_1b_mc.via_noatime
+SAME     text-same fd_1b_toys.DETECTOR_DRAW_ORDER
+SAME     text-same fd_1b_toys.F1_SUMS
+SAME     text-same fd_1b_toys.INTERACTION_BANDS
+SAME     text-same fd_1b_toys.LATERAL_DRAW_ORDER
+SAME     text-same fd_1b_toys.REPO
+SAME     text-same fd_1b_toys.Refusal
+SAME     text-same fd_1b_toys.TRUTHS
+SAME     text-same fd_1b_toys._ND
+SAME     text-same fd_1b_toys.check_pins
+SAME     text-same fd_1b_toys.committed_ratio_sha256
+SAME     text-same fd_1b_toys.draw
+SAME     text-same fd_1b_toys.flux_probabilities
+SAME     text-same fd_1b_toys.interaction_groups
+SAME     text-same fd_1b_toys.s1_universes
+SAME     text-same fd_1b_toys.weight_files
+SAME     text-same flux_universe.CV_MATCH_RTOL
+SAME     text-same flux_universe.FLUX_CV_KEY
+SAME     text-same flux_universe.FLUX_UNIV_KEY
+SAME     text-same flux_universe._check_cv_match
+SAME     text-same flux_universe._check_positive
+SAME     text-same flux_universe.flux_on_target_grid
+SAME     text-same flux_universe.flux_ref_index
+SAME     text-same flux_universe.flux_universe_bins
+SAME     text-same flux_universe.read_flux_universe_table
+SAME     text-same s1_assemble.BKG_SHA256
+SAME     text-same s1_assemble.CONSTRAINT_SHA256
+SAME     text-same s1_assemble.DEFINITION_SHA256
+SAME     text-same s1_assemble.DETECTOR_BANDS
+SAME     text-same s1_assemble.EXPECT
+SAME     text-same s1_assemble.FINE_MAP_SHA256
+SAME     text-same s1_assemble.INPUT_NPZ_SHA256
+SAME     text-same s1_assemble.LATERAL_BANDS
+SAME     text-same s1_assemble.N_CELLS
+SAME     text-same s1_assemble.fine_map
+SAME     text-same s1_assemble.flux_weights
+SAME     text-same s1_assemble.functional_matrix
+SAME     text-same s1_assemble.require_sha
+SAME     text-same s1_assemble.sha256
+SAME     text-same s5c_pseudo.AXIS
+SAME     text-same s5c_pseudo.truth_weight
+SAME     text-same s5c_unfold.load_inputs
+SAME     text-same s5e_deform.AXIS_NAMES
+SAME     text-same s5e_deform.install_ratio_truth
+SAME     text-same s5e_deform.ratio_weight
+SAME     text-same s5n_pseudo.AXIS
+SAME     text-same s5n_pseudo.eavail_ratio_weight
+SAME     text-same s5n_pseudo.truth_weight
+SAME     text-same s5p_nullexp.DETECTOR_BANDS
+SAME     text-same s5p_nullexp.model_bands
+SAME     text-same s5p_nullexp.model_groups
+SAME     text-same s5p_stage1_inspect.AXES
+SAME     text-same s5p_stage1_inspect.FINE
+SAME     text-same s5p_stage1_inspect.H2_EDGES
+SAME     text-same s5p_stage1_inspect.coarse_map
+SAME     text-same s5p_stage1_inspect.fine_shape
+SAME     text-same s5p_stage1_inspect.fine_volume
+SAME     text-same s5p_universe.SENTINEL_ROWS
+SAME     text-same s5p_universe.check_alignment
+SAME     text-same s5p_universe.denominator
+SAME     text-same s5p_universe.universe_inputs
+SAME     text-same s5p_universe.weight_keys
+SAME     text-same xsec_nd._bin_volume
+SAME     text-same xsec_nd._broadcast_along
+calibrate_main's glue at OLD (for reading):
+    P = prepare(a)
+    state = {"H": H, "cv": cv, "U": U, "ref_x": ref_x, "ref_count": ref_count, "flux_cols": flux_cols,
+    _worker_init(state)
+    first = _one_set((truths[0], 0))
+    total = len(truths) * a.sets
+    jobs = [(t, s) for t in truths for s in range(a.sets) if (t, s) != (truths[0], 0)]
+    Rx = {t: np.empty((a.sets, N_CELLS)) for t in truths}
+    Rl = {t: np.empty((a.sets, N_CELLS)) for t in truths}
+    Rx[first[0]][0], Rl[first[0]][0] = first[2], first[3]
+    for t, s, rx, rl in pool.imap_unordered(_one_set, jobs, chunksize=8):
+    Rx[t][s], Rl[t][s] = rx, rl
+    out = rates(Rx)
+    rec = {"schema": SCHEMA_CAL, "step": "c2-calibration", "verdict": verdict, "truths": truths, "sets": a.sets,
+    "ratio_mean_per_cell": {t: Rx[t].mean(axis=0).tolist() for t in truths},
+    np.savez_compressed(a.out.with_suffix(".npz"), **{f"ratio_{t}": Rx[t] for t in truths},
+{
+ "old": "02e71a0bf68f6a232df70fa7b9182097ad54c22d",
+ "new": "22eda9f424918e96e28984fa3152e42a803a5635",
+ "roots": [
+  "fd_1b_c2.prepare",
+  "fd_1b_c2._worker_init",
+  "fd_1b_c2._one_set",
+  "fd_1b_c2.rates"
+ ],
+ "reached": 107,
+ "changed": [
+  "fd_1b_c2._one_set"
+ ],
+ "text_differs_ast_same": []
+}
+CAL300-CODE-CHECK :: IDENTICAL BUT THE EXEMPT :: 107 definitions reached from 4 roots :: exempt ['fd_1b_c2._one_set'] :: old=02e71a0bf68f6a232df70fa7b9182097ad54c22d new=22eda9f424918e96e28984fa3152e42a803a5635
+exit=0

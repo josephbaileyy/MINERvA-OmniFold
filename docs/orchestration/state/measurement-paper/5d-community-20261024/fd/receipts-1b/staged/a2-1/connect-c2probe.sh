@@ -1,6 +1,6 @@
 #!/bin/bash
 # 1B A2.1, c2check's timing probe (the director's ruling (a), item 3, and ruling (A), 2026-11-05), after the
-# calibration's second rerun COMPLETES and its compare_calibN passes: sbatch-c2probe.sh (40b68ef9) at M = d6410cff on
+# calibration's second rerun COMPLETES and its compare_calibN passes: sbatch-c2probe.sh (40b68ef9) at M = 22eda9f4 on
 # one exclusive CPU node with 64 BLAS/OMP threads. It times each of c2check's one-off steps (prepare(rows=True),
 # c2_inputs, the terms, the (vi) row match, the draws for the 300 and the 3,000-draw gate sample) and 4 blocks of
 # G18's gate sample through the real c2_truth, records |Z| per array and the peak RSS, and projects a one-truth
@@ -9,7 +9,7 @@
 # cap is above half of what remains), a fresh clone at M in a new pscratch directory, the bound blobs, one CPU node,
 # QOS regular, --time 1:30:00 (cap 1.5 node-h). Nothing to CFS; writes only under $W. Not under set -u. Run detached
 # on the login node (setsid nohup).
-M=d6410cffd836dab0e1d00cae9259e760d0217aca
+M=22eda9f424918e96e28984fa3152e42a803a5635
 P=/pscratch/sd/j/josephrb; W=$P/fd-1b-a21-c2probe-20261105; DD=$W/deploy
 S=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1
 CAP_NODE_H=1.5
@@ -28,7 +28,7 @@ git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$DD" && git
 n=$(git -C "$DD" status --porcelain | wc -l); h=$(git -C "$DD" rev-parse HEAD); echo "deploy porcelain_lines=$n head=$h"
 [ "$n" = "0" ] && [ "$h" = "$M" ] || stop "deploy not clean at M"
 cat > "$W/bound.sha256" <<SUMS
-61ddbff183281c5110bfc084fe24ce7c6c40291f9b39e1770bf1689979984489  nd-unfolding/fd_1b_c2.py
+f23696ffd89bae28d0aee12d5b21129bcb807e14a93f2f64e0fa8ca19061c6d5  nd-unfolding/fd_1b_c2.py
 062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67  nd-unfolding/fd_1b_mc.py
 40b68ef937a43dd248f15df1b4efc8be532451fc9e022fdee3341bbbebb54158  $S/sbatch-c2probe.sh
 SUMS
