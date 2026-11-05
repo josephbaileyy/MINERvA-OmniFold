@@ -1,0 +1,61 @@
+node login04 nproc=244 loadavg 1.85 2.79 3.28
+2026-11-05T09:46:56Z
+check script sha256 f5f2c3f94f16b1cd42838e6cf567babd7aa6007a48a8fc1d5cc3c2f73ced3b74
+HEAD d00a3b668b0606eba578bb18397019a798efcdc7; porcelain --ignored lines: 0
+committed pins: 8 checked, 0 mismatches
+== libRooUnfold build directory
+total 17412
+drwxrwx---  4 josephrb josephrb     4096 Apr 26  2026 .
+drwxrwx--- 12 josephrb josephrb     4096 Apr 26  2026 ..
+-rw-rw----  1 josephrb josephrb    28105 Apr 26  2026 CMakeCache.txt
+-rw-rw----  1 josephrb josephrb    13792 Apr 26  2026 CMakeDoxyfile.in
+-rw-rw----  1 josephrb josephrb    19118 Apr 26  2026 CMakeDoxygenDefaults.cmake
+drwxrwx---  8 josephrb josephrb     4096 Apr 26  2026 CMakeFiles
+-rw-rw----  1 josephrb josephrb     6210 Apr 26  2026 cmake_install.cmake
+-rw-rw----  1 josephrb josephrb      528 Apr 26  2026 Doxyfile
+-rw-rw----  1 josephrb josephrb   223370 Apr 26  2026 G__RooUnfold.cxx
+-rw-r-----  1 josephrb josephrb    32863 Apr 26  2026 libRooUnfold_rdict.pcm
+-rw-rw----  1 josephrb josephrb     3019 Apr 26  2026 libRooUnfold.rootmap
+-rwxrwx---  1 josephrb josephrb 17319792 Apr 26  2026 libRooUnfold.so
+-rw-rw----  1 josephrb josephrb    25168 Apr 26  2026 Makefile
+lrwxrwxrwx  1 josephrb josephrb       78 Apr 26  2026 RooFitUnfold.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooFitUnfold.h
+drwxrwx---  2 josephrb josephrb     4096 Apr 26  2026 RooUnfold
+lrwxrwxrwx  1 josephrb josephrb       80 Apr 26  2026 RooUnfoldBayes.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldBayes.h
+lrwxrwxrwx  1 josephrb josephrb       83 Apr 26  2026 RooUnfoldBinByBin.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldBinByBin.h
+-rw-rw----  1 josephrb josephrb      383 Apr 26  2026 RooUnfoldConfig.cmake
+lrwxrwxrwx  1 josephrb josephrb       81 Apr 26  2026 RooUnfoldErrors.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldErrors.h
+lrwxrwxrwx  1 josephrb josephrb       85 Apr 26  2026 RooUnfoldFitHelpers.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldFitHelpers.h
+lrwxrwxrwx  1 josephrb josephrb       77 Apr 26  2026 RooUnfoldGP.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldGP.h
+lrwxrwxrwx  1 josephrb josephrb       75 Apr 26  2026 RooUnfold.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold.h
+lrwxrwxrwx  1 josephrb josephrb       82 Apr 26  2026 RooUnfoldHelpers.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldHelpers.h
+lrwxrwxrwx  1 josephrb josephrb       84 Apr 26  2026 RooUnfoldHelpers.tpp -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldHelpers.tpp
+lrwxrwxrwx  1 josephrb josephrb       78 Apr 26  2026 RooUnfoldIds.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldIds.h
+lrwxrwxrwx  1 josephrb josephrb       81 Apr 26  2026 RooUnfoldInvert.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldInvert.h
+lrwxrwxrwx  1 josephrb josephrb       83 Apr 26  2026 RooUnfold_LinkDef.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold_LinkDef.h
+lrwxrwxrwx  1 josephrb josephrb       83 Apr 26  2026 RooUnfoldOmnifold.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldOmnifold.h
+lrwxrwxrwx  1 josephrb josephrb       80 Apr 26  2026 RooUnfoldParms.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldParms.h
+lrwxrwxrwx  1 josephrb josephrb       82 Apr 26  2026 RooUnfoldPoisson.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldPoisson.h
+lrwxrwxrwx  1 josephrb josephrb       83 Apr 26  2026 RooUnfoldResponse.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldResponse.h
+lrwxrwxrwx  1 josephrb josephrb       78 Apr 26  2026 RooUnfoldSvd.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldSvd.h
+-rw-rw----  1 josephrb josephrb     4167 Apr 26  2026 RooUnfoldTargets.cmake
+lrwxrwxrwx  1 josephrb josephrb       85 Apr 26  2026 RooUnfoldTH1Helpers.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldTH1Helpers.h
+lrwxrwxrwx  1 josephrb josephrb       82 Apr 26  2026 RooUnfoldTUnfold.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfoldTUnfold.h
+-rw-rw----  1 josephrb josephrb      345 Apr 26  2026 setup.sh
+lrwxrwxrwx  1 josephrb josephrb       98 Apr 26  2026 TUnfoldBinning.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold/TUnfold/TUnfoldBinning.h
+lrwxrwxrwx  1 josephrb josephrb      101 Apr 26  2026 TUnfoldBinningXML.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold/TUnfold/TUnfoldBinningXML.h
+lrwxrwxrwx  1 josephrb josephrb       98 Apr 26  2026 TUnfoldDensity.h -> /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/src/RooUnfold/TUnfold/TUnfoldDensity.h
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1; nice 19; ionice idle
+library: present True, loads True, Load rc 0, RooUnfoldBayes True, ROOT 6.28/12; files [('libRooUnfold.rootmap', 'fa15007e'), ('libRooUnfold.so', '0b34e1e3'), ('libRooUnfold_rdict.pcm', 'c0c995d7')]
+E_R_central: 1 files, 1 present, 1 equal to pin, oldest atime 2026-11-01T02:23:42Z, exposed from 2026-12-27T02:23:42Z
+E_R_inputs: 3 files, 2 present, 2 equal to pin, oldest atime 2026-10-23T15:52:50Z, exposed from 2026-12-18T15:52:50Z
+E_R_refinement_evidence: 1 files, 1 present, 1 equal to pin, oldest atime 2026-10-24T12:54:17Z, exposed from 2026-12-19T12:54:17Z
+Q_R_replicas: 300 files, 300 present, 300 equal to pin, oldest atime 2026-10-24T16:17:48Z, exposed from 2026-12-19T16:17:48Z
+ref_g1_followup: 4 files, 4 present, 4 equal to pin, oldest atime 2026-10-24T18:15:37Z, exposed from 2026-12-19T18:15:37Z
+seeds 1..300: True
+  MISSING E_R_inputs /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/inputs/runEventLoopOmniFold_MEFHC.root
+{"verdict": "FAIL", "wrote": "/pscratch/sd/j/josephrb/ref-c2c1-20261105/preconditions/listing.json", "sha256": "8790cce53910a9026426b8ae009c9e2a50a74e3e9e88df6eb4aad7f51f3a900b"}
+listing python rc=1
+porcelain --ignored lines after: 0
+STOP: a file is missing or differs, or the library does not load (final; to the director)
+ref-c2c1 preconditions rc=4
+2026-11-05T09:47:48Z

@@ -1,8 +1,8 @@
-# COV2D amendment, final delta audit (045364a8; code at 0d43c9a3), and the director's ruling on it
+# COV2D amendment, final delta audit (045364a8; code at 0d43c9a3), the director's ruling on it, and the director's F3
 
-**Auditor:** the `coverage-5b-audit` session, 2026-11-04, read-only. Its two reports and its verdict on the fixes (last), received by SendMessage, are
-copied verbatim below, followed by the director's ruling, also received by SendMessage and copied verbatim. The answers
-and fixes are in `ANSWERS.md` (this directory), under "Final delta audit".
+**Auditor:** the `coverage-5b-audit` session, 2026-11-04, read-only. Its two reports and its verdict on the F1/F2 fixes, received by SendMessage, are
+copied verbatim below, with the director's ruling and the director's F3, also received by SendMessage and copied verbatim. The answers
+and fixes are in `ANSWERS.md` (this directory), under "Final delta audit" and "The director's F3".
 
 ---
 
@@ -157,5 +157,86 @@ Your questions:
 2. **Refusing a missing reprice_classes:** yes, that's the reading I'd want. It fails closed, and the real pilot writer always writes the key, so only a record not made by the writer could lack it.
 
 Not re-run by me: the two writer-M mutants, which need PyROOT. I rely on your 60/60 receipt for those.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---
+
+## The director's F3 (found while drafting binding 2)
+
+director: I'm holding binding 2. I found a blocking defect in cov2d_submit.sh (blob 03ad296e) while drafting it. I'm merging #773 (your amendment branch) in the meantime, since code on main runs nothing.
+
+**F3 (blocking): the binding check is a fixed point.**
+- Lines 9–12 require the deploy checkout's HEAD to equal M, and then grep the deploy's own COV2D-BINDING-2.md for M.
+- A commit cannot contain a file naming its own hash. If the deploy is at the code commit, binding 2 doesn't exist in it yet. If it's at the binding commit or later, the binding names an earlier commit, not HEAD.
+- So every submission refuses, and no test reaches it: no test in 2d-unfolding/cov2d/tests mentions BINDING-2. It fails safe, but it would block the G18 job at the first connect.
+
+**The fix: read the binding from origin/main, as order() reads records.**
+- In the submit script, fetch origin, then `git -C "$C" show origin/main:<path to COV2D-BINDING-2.md>`, and require that it names M, the deploy's HEAD.
+- The deploy stays at M, the code commit. The binding lives on main after it.
+- Fail closed if the fetch fails or the file is absent on origin/main.
+- **Tests on a real-shaped fixture** (a one-commit deploy plus an "origin" repo whose main carries a binding):
+  - the fixed script admits when origin/main's binding names M;
+  - it refuses when the binding names another sha, when it is absent, and when the fetch fails;
+  - it refuses a dirty deploy or a HEAD ≠ M, as now;
+  - the old blob 03ad296e refuses even the correct setup. Assert that, to show the test reaches the defect.
+- **Mutants, REQUIRED:** one that reads the deploy's own copy, and one that skips the name check.
+- **Amendment §5:** update the sentence "refuses unless COV2D-BINDING-2.md names the deploy's commit" to say where the binding is read from.
+
+**Also check order()** for the same shape. It reads PASS records from origin/main naming M, which is fine, but confirm that it fetches before reading and refuses a failed fetch.
+
+**Next:** push on a new branch from main after #773, then a delta to coverage-5b-audit (just this), then I bind 2 at the fix commit. The schedule has room: the bulk deadline is 12-01.
+
+---
+
+## The auditor's verdict on the F3 delta (e9cadf47..22824340; code 3d6cae57)
+
+COV2D F3 delta (e9cadf47..22824340; code 3d6cae57) is checked: F3 is closed, nothing blocks, and I suggest one low tightening.
+
+First, an admission: I missed F3. In part 3 and in the final audit I read submit's "binding 2 names M" check and didn't see that a deploy at M can never contain a file naming M, so it was a fixed point. The director caught it.
+
+**The fix is right:**
+- one fetch of origin main that must succeed, with a message on failure, before the binding check and every order() call;
+- binding 2 read from origin/main, never from the deploy;
+- the deploy stays at M, and the fetch changes refs only, so the clean-checkout check is unaffected.
+
+**Run here (git and bash only):**
+- SubmitBinding: 6/6 OK, including that the audited blob 03ad296e refuses the correct setup, and that a failed fetch is refused even with a good stale origin/main.
+- The three REQUIRED F3 mutants, applied by hand, each fail by assertion in a named test:
+
+| mutant | killing test(s) |
+|---|---|
+| the deploy's own binding read | test_admits_when_origin_mains_binding_names_M and test_refuses_a_binding_naming_another_commit |
+| the name check skipped | test_refuses_a_binding_naming_another_commit |
+| a failed fetch admitted | test_refuses_a_failed_fetch_even_with_a_good_binding_already_fetched |
+
+- Your harness run of the same three: 3/3 killed.
+- Afterwards there were 0 .pyc and a clean status.
+
+**Low, a tightening:**
+- `grep -qF "$M"` admits M if the full sha appears anywhere in binding 2. A binding that cited an earlier audited head by its full 40-hex sha would admit a deploy at that head.
+- The existing bindings name the bound commit on one line, `**M = \`<40-hex>\`**` (COV2D-BINDING-1.md:5, S1-BINDING.md), and abbreviate every other commit. So this works today by convention.
+- What would close it: anchor the match on that line, e.g. `grep -qE "^\*\*M = \`$M\`\*\*"`, plus a test where the sha appears elsewhere in the binding but not on the M line.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+---
+
+## The auditor's verdict on the M-line tightening (8a258b38..48e60350; code 5c0e02a2)
+
+The M-line tightening (5c0e02a2) is checked and closed. Nothing blocks.
+
+- **The change:** `grep -qE "^\*\*M = \`$M\`\*\*"` is anchored at line start on the M line. M is HEAD's 40 hex, so it's regex-safe.
+- **SubmitBinding:** 8/8 OK here, including test_refuses_M_cited_only_off_the_M_line and test_binding_1s_own_text_binds_its_M_line_only. The latter is the good one: it uses the real COV2D-BINDING-1.md text and refuses M placed in line 4's 64-hex declaration digest.
+- **The mutants, applied by hand:** "M matched anywhere" (grep -qF) and "name check skipped" each fail by assertion in three named tests:
+  - test_binding_1s_own_text_binds_its_M_line_only;
+  - test_refuses_M_cited_only_off_the_M_line;
+  - test_refuses_a_binding_naming_another_commit.
+- Afterwards there were 0 .pyc and a clean status.
+
+**Your scope correction is right, and it corrects me.**
+- I called the M line "the existing bindings' convention" after checking two files. I reproduced your count: 6 of 88 binding .md files on main at 8a258b38 carry `**M = \`<40-hex>\`**`, all in 5d-community-20261024.
+- I also cited S1-BINDING.md as an example, and it isn't one: it states a "deploy pin", not an M line.
+- The amendment's "as on COV2D-BINDING-1.md:5", plus the director's confirmation that binding 2 uses the format, is the right scope.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

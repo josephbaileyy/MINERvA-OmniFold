@@ -1,4 +1,5 @@
-# COV2D jobs: shared settings, sourced by each job with the deploy in $C (a clean checkout at $M, binding 2's commit).
+# COV2D jobs: shared settings, sourced by each job with the deploy in $C (a clean checkout at $M, the commit binding 2
+# names).
 # The staged $CV and laterals (staging record inputs.stat, sha256 3614ebad...; the director's re-hash rule) and the
 # pseudo-data files are checked by cov2d_jobs.py check before any run; $UNI is stat-checked against part B's record.
 A=/pscratch/sd/j/josephrb/MINERvA-OmniFold                # the shared checkout: $UNI, flux files, the MAT build
