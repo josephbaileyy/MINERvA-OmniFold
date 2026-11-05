@@ -147,8 +147,8 @@ All at K = 10; K = 5 is reported identically. Every other K is printed and read 
 - **D_X:** χ²/ndf of result X against the published result under the published covariance, by
   `compare_to_paper_fullcov.chi2_with_cov` (ndf = `n_keep`, `:102-109`). D_E_R is 2.270 by C-PUB.
 - **ρ = D_IBU / D_E_R.**
-- **T_δ:** δᵀ C_δ⁺ δ, with C_δ⁺ the pseudo-inverse truncated to rank r = ⌊N/4⌋ leading eigenmodes (r = 50 at
-  N = 200). N replicas cannot support the full 224 bins: the rank is at most N − 1, and the finite-N factor at
+- **T_δ:** δᵀ C_δ⁺ δ, with C_δ⁺ the pseudo-inverse truncated to rank r = ⌊N/4⌋ leading eigenmodes (r = 75 at
+  N = 300, the Q_R set; r = 50 at N = 200, new replicas). N replicas cannot support the full 224 bins: the rank is at most N − 1, and the finite-N factor at
   rank 100 is 0.4925 (`BRIEF-20260822-oi137-finite-N-precision-bias-exposure.md:235, 344-350`).
   - **The null for T_δ is empirical, not χ²:** leave-one-out over the N replicas. For each r, T computed on
     δ_r − δ̄₋ᵣ with C_δ⁺ from the other N − 1 replicas, at the same rank.
@@ -171,8 +171,13 @@ All at K = 10; K = 5 is reported identically. Every other K is printed and read 
 | T_δ > max̂ | **differ** |
 
 **C2-R2, localisation (the commissioned reading; the director's ruling of 2026-11-04 on #767).**
-- **ρ on each replica:** ρ_r = D_IBU,r / D_E_R,r on each paired replica r, the same draws on both sides, all N of
-  them. The ruling names "the 50"; c2's N is 200, or the reused Q_R set, and all are used.
+- **ρ on each replica:** ρ_r = D_IBU,r / D_E_R,r on each paired replica r, the same draws on both sides, **all N of
+  them** (director, 2026-11-04). The set and N are fixed by C-DRAW (§1.3):
+  - if C-DRAW passes: the existing Q_R replica set, N = 300 three-stream replicas (`re2/RE2-PLAN.md:80`, P4), rank
+    r = 75;
+  - otherwise: 200 new E_R replicas, N = 200, rank r = 50.
+
+  The binding records which set ran and its N. The same N serves C2-R1.
 - **The interval:** the central 90 % interval [ρ₀.₀₅, ρ₀.₉₅].
 - **The reading:** a class is read only if the whole interval lies inside it; otherwise the reading is
   "unresolved". The point ρ is printed beside it.
