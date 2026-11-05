@@ -1,4 +1,4 @@
-# make_values_fived16.py --self-test, --check at 4d5dc1de8
+# make_values_fived16.py --self-test, --check at ac70a2b3f
   ok   a wrong sha256 pin is refused
   ok   --check fails on a file with R06's z printed as 1.8
   ok   --check passes a fresh file
@@ -33,17 +33,18 @@
   ok   a quadrant readout that gives a chi2 at r = 1 below that at r = 0 is refused
   ok   the chi2 bound rounded to nearest is refused
   ok   the p bound rounded up is refused
-  ok   the 9 committed listed-truth sentences agree with the pinned F0b readouts
+  ok   the 10 committed listed-truth sentences agree with the pinned F0b readouts
   ok   the arms' readouts exchanged fail exactly the 6 sentences that tell them apart
   ok   a paper_body.tex sentence that keys a truth the readout does not list fails
   ok   a paper_body.tex sentence that drops a listed truth's keys fails
   ok   a paper_body.tex sentence that names the wrong truth as listed only without the block fails
   ok   a sec_fived16.tex sentence that drops the truth listed only without the block fails
   ok   a sec_fived16.tex sentence that drops a GiBUU truth of its family fails
+  ok   a paper_body.tex sentence that omits a truth F0 lists fails
   ok   a main_paper.tex sentence that loses its anchor fails
   ok   a readout that lists one more truth fails both enumerating sentences
   ok   f0b-listed-names name the listed truths with and without the block, in the readouts' order
   ok   a without-block value outside the matrix-dependent families that differs is refused
   ok   an installed figure that differs from its committed source fails --check
 VALUES-FIVED16 SELF-TEST :: PASS
-VALUES-FIVED16 :: PASS (3294 values, readouts pinned, 2 figures equal their sources, 9 listed-truth sentences agree)
+VALUES-FIVED16 :: PASS (3617 values, readouts pinned, 2 figures equal their sources, 10 listed-truth sentences agree)

@@ -438,11 +438,11 @@ against CH) is unchanged.
 
 | check | result | record |
 |---|---|---|
-| ledger (`check_ledger.py`, step2's checks with base ff6ba1885) | 15 rows, 71 probes, 33 changed base sentences, 0 failures; self-test PASS | LEDGER-CHECK.txt |
-| round (`check_round.py`) and its self-test | PASS (16 removals, 16 additions, 2 abstract edits); 14/14 planted defects caught, each by its intended check | ROUND-CHECK.txt |
-| values (`make_values_fived16.py --self-test`, `--check`) | PASS (3,294 values) | VALUES-CHECK.txt |
+| ledger (`check_ledger.py`, step2's checks with base ff6ba1885) | 16 rows, 85 probes, 39 changed base sentences, 0 failures; self-test PASS | LEDGER-CHECK.txt |
+| round (`check_round.py`) and its self-test | PASS (19 removals, 25 additions, 3 abstract edits); 16/16 planted defects caught, each by its intended check | ROUND-CHECK.txt |
+| values (`make_values_fived16.py --self-test`, `--check`) | PASS (3,617 values; 10 listed-truth sentences, including R1's "ctotal") | VALUES-CHECK.txt |
 | rater copy (`make_rater_copy.sh`) | PASS | RATER-COPY.txt |
-| held sentences (`check_held.py`) | the 3 known flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07) | CHECK-HELD.txt |
+| held sentences (`check_held.py`, on the blinded copy) | the 3 known flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07) | CHECK-HELD.txt |
 | builds (`build_all.sh`) | paper 13 pp, note 136 pp; SEC4 receipts 17/17 | — |
 | registry | the four citations into edited lines re-cited by hand (ALIASES rows 35, 38, 47; ATTRIBUTION row 17), the rest repointed | — |
 

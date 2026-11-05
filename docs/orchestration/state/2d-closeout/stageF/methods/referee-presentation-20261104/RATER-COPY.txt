@@ -1,5 +1,5 @@
-# make_rater_copy.sh at b0c63fb06 (the typeset text is unchanged at 754d2cbc1: the commits after it change a source comment only) ($S = the session scratchpad)
-source: $S/wt-cut (b0c63fb06; dirty files in analysis-note: 0)
+# make_rater_copy.sh at ac70a2b3f ($S = the session scratchpad)
+source: $S/wt-cut (ac70a2b3f; dirty files in analysis-note: 0)
 $S/wt-cut/docs/analysis-note/main_paper.tex:55: standalone: \pubhold{funding and grant acknowledgments}
 $S/wt-cut/docs/analysis-note/main_paper.tex:78: standalone: \pubhold{deposit identifier and access route, after the separately authorized release decision.}
 holds found: 2; sharing a sentence: 0
@@ -11,7 +11,6 @@ holddiff: order differs (layout reflow) but word multisets are equal: PASS (orde
 multiset: only normal {}; only rater {}
 multiset VERDICT: PASS
 rater text = normal text minus 2 hold spans
-moved the ACKNOWLEDGMENTS heading out of the reference list, to before the acknowledgments' first sentence
-moved the acknowledgments' tail (15 lines) and the DATA AVAILABILITY heading back into reading order
-single-line drops: 2; words in=9763 out=8372
-wrote $S/t4/rater4/blind.txt and $S/t4/rater4/blind.{normal,holddiff,blind}.txt
+data-availability heading in reading order
+single-line drops: 2; words in=10112 out=9167
+wrote $S/t5/rater7/blind.txt and $S/t5/rater7/blind.{normal,holddiff,blind}.txt
