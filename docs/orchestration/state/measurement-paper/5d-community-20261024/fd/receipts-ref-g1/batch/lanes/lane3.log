@@ -1,0 +1,29 @@
+{"unit": "replica_b2", "seconds": 29.934, "g_draw": true}
+{"unit": "replica_b10", "seconds": 29.911, "g_draw": true}
+{"unit": "replica_b18", "seconds": 29.907, "g_draw": true}
+{"unit": "replica_b26", "seconds": 29.711, "g_draw": true}
+{"unit": "replica_b34", "seconds": 29.68, "g_draw": true}
+{"unit": "replica_b42", "seconds": 30.005, "g_draw": true}
+{"unit": "replica_b50", "seconds": 27.776, "g_draw": true}
+{"unit": "universe_2p2h_1", "seconds": 12.211}
+{"unit": "universe_CCQEPauliSupViaKF_0", "seconds": 9.798}
+{"unit": "universe_Flux_0", "seconds": 13.135}
+{"unit": "universe_Flux_16", "seconds": 9.635}
+{"unit": "universe_Flux_23", "seconds": 9.6}
+{"unit": "universe_Flux_30", "seconds": 9.644}
+{"unit": "universe_Flux_38", "seconds": 9.576}
+{"unit": "universe_Flux_45", "seconds": 9.52}
+{"unit": "universe_Flux_52", "seconds": 9.503}
+{"unit": "universe_Flux_6", "seconds": 9.861}
+{"unit": "universe_Flux_67", "seconds": 9.722}
+{"unit": "universe_Flux_74", "seconds": 9.634}
+{"unit": "universe_Flux_81", "seconds": 9.489}
+{"unit": "universe_Flux_89", "seconds": 9.631}
+{"unit": "universe_Flux_96", "seconds": 9.858}
+{"unit": "universe_FrCEx_N_0", "seconds": 9.789}
+{"unit": "universe_FrInel_N_0", "seconds": 9.61}
+{"unit": "universe_GEANT_Pion_0", "seconds": 3.997}
+{"unit": "universe_MFP_N_0", "seconds": 9.618}
+{"unit": "universe_MaRES_0", "seconds": 9.357}
+{"unit": "universe_NormNCRES_0", "seconds": 9.249}
+{"unit": "universe_Rvp2pi_0", "seconds": 8.913}
