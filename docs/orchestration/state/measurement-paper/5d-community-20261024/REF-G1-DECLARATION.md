@@ -130,13 +130,26 @@ by nothing.
 - **T's null is calibrated at the realized block composition, not taken from χ²₁₆.** C_Δ,stat is estimated from 50
   replicas in 16 dimensions. In the stat-only limit T's null is Hotelling's, (49·16/34) F(16, 34), and χ²₁₆ bars
   would read "differ" about 1 time in 7 when the estimators agree (coverage-5b-audit's audit of #763, B1).
-  - The null comes from a parametric bootstrap with M = 20,000 draws, seed 20261104. Each draw:
+  - The null comes from a parametric bootstrap with M = 20,000 draws, seed 20261104. **No step reads the realized
+    Δ.** Write C_Δ,univ = C_Δ,flux + C_Δ,fixed. Each draw:
     1. draws 50 vectors from N(0, Ĉ_Δ,stat) and takes their sample covariance Ĉ*_stat (ddof 1);
-    2. draws Δ* from N(0, Ĉ_Δ,stat + C_Δ,univ + C_Δ,norm);
-    3. computes T* = Δ*ᵀ (Ĉ*_stat + C_Δ,univ + C_Δ,norm)⁻¹ Δ*.
-  - C_Δ,univ and C_Δ,norm are held at their realized values. That is how R1 uses them.
-  - **Self-check:** with C_Δ,univ = C_Δ,norm = 0, the bootstrap's 0.95 and 0.997 quantiles must match
-    (49·16/34) F(16, 34)'s to within their Monte Carlo error. Otherwise the run stops.
+    2. draws 100 vectors from N(0, Ĉ_Δ,flux) and forms Ĉ*_flux by S1's Flux estimator: the same 100 constraint
+       weights in universe order, weighted-mean-centred (`s1_assemble.py:13-14, 134`);
+    3. draws Δ* from N(0, Ĉ_Δ,stat + C_Δ,univ). Under the null the true difference is 0, so the normalisation block
+       adds nothing to the draw;
+    4. computes T* = Δ*ᵀ (Ĉ*_stat + Ĉ*_flux + C_Δ,fixed + C*_norm)⁻¹ Δ*, with C*_norm = (0.014 Δ*)(0.014 Δ*)ᵀ
+       recomputed from the draw's own Δ*, as R1 computes C_Δ,norm from the data's Δ.
+  - **Which universe bands are sampled** (`s1_assemble.py:58-65`):
+    - Flux has 100 PPFX universes, a random sample, so its sampling noise is resampled in step 2.
+    - Every other band is held fixed as C_Δ,fixed:
+      - 2p2h's 3 universes;
+      - each model band's 2 universes, its ±1σ pair;
+      - each of the 4 weight-only detector bands' 2 universes.
+      These are named, deterministic variations, not draws. S1's estimators use them as given, with no sampling
+      model: choice 2, the mean-centred pair estimator, and choice 7, the detector bands, as
+      `FD-1B-DECLARATION.md:97-98` cites them. A resampling would invent a distribution S1 does not assume.
+  - **Self-check:** with Ĉ_Δ,flux = C_Δ,fixed = 0 and C*_norm dropped, the bootstrap's 0.95 and 0.997 quantiles
+    must match (49·16/34) F(16, 34)'s to within their Monte Carlo error. Otherwise the run stops.
 - **Bars:** q*₀.₉₅ and q*₀.₉₉₇ are T*'s quantiles.
 
   | T | reading |
@@ -231,7 +244,11 @@ include:
 - each control's failure and silence;
 - the readings on hand-checkable vectors.
 
-A mutation harness kills a mutant per reading bar, per control, and per pairing key.
+A mutation harness kills a mutant per reading bar, per control, and per pairing key. It must include:
+- the bootstrap's quantiles swapped for χ²₁₆'s (26.30, 35.89);
+- C*_norm computed from the realized Δ instead of Δ*;
+- the flux block held fixed instead of resampled;
+- the self-check skipped.
 
 **Lane:** ________ (the director assigns).
 
@@ -243,4 +260,9 @@ A mutation harness kills a mutant per reading bar, per control, and per pairing 
   - coverage-5b-audit disputed them (B1, #763 comment 6645264150). With C_Δ,stat from 50 replicas, "differ" would
     fire about 1 time in 7 under the null.
   - §4 R1 now reads T against its own calibrated null.
-  - The director decides whether this goes to Joseph.
+  - The director accepted the direction and is taking R1's bars to Joseph, with an independent read. Joseph's answer
+    is recorded in a DECISION before binding, and §4 R1 is not bound until then.
+  - The director's three conditions are met in §4 R1 and §7:
+    - C_norm is recomputed from each draw's Δ*;
+    - the sampled flux block is resampled, and the deterministic bands are named;
+    - the χ²-quantile swap is a required mutant.
