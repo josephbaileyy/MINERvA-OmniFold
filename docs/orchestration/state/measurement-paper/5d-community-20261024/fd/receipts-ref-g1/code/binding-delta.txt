@@ -1,0 +1,18 @@
+Receipt-binding inventory delta from nd-unfolding/ref_g1/config.json (REF-G1 code, limitations-catalog, 2026-11-05).
+
+receipt_inventory() rows on the branch, with and without that config (docs/orchestration/verify_hash_bindings.py's own
+collect() and receipt_inventory(), over docs/**/*.json and nd-unfolding/**/*.json, fixtures excluded):
+  without: 158 rows, sha256 e718853bc5b282240e089f56f707f2a7e76fc623aebf6eb6e353ac8ae12cdc37 (= the constant on main)
+  with:    161 rows, sha256 2ba0b27d7c6cfe3cbc313a11bcf13d6b02aaa4ca5ce3919e50ca5dd7ff91b3af
+Three ADDED, nothing removed or repointed, all OK:
+  ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/REF-G1-DECLARATION.md                     1ea76a3b
+  ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/preconditions/listing.json 3bff2239
+  ADDED   nd-unfolding/pv-ladder/readouts/h2_definition.json                                                          b6790761
+They are the config's {path, sha256} pairs for the bound declaration, the preconditions listing the e-side pins and the
+universe set are read from, and the H2 definition s1_assemble.fine_map checks.
+
+Power test before the bump: one flipped final hex digit in each of the three pins in config.json (restored after
+each, cmp-verified) gave MISMATCH on exactly that path, rc 1:
+  1ea76a3b rc=1 MISMATCH .../REF-G1-DECLARATION.md
+  3bff2239 rc=1 MISMATCH .../fd/receipts-ref-g1/preconditions/listing.json
+  b6790761 rc=1 MISMATCH nd-unfolding/pv-ladder/readouts/h2_definition.json
