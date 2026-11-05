@@ -19,7 +19,7 @@ HERE = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location("check_ledger2", HERE.parent / "r22" / "step2" / "check_ledger.py")
 cl = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(cl)
-BASE = "fa0718e8f"
+BASE = "a548d44c5"
 cl.PREFIX["paper_body.tex"] = "PB"
 cl.PREFIX["primer_body.tex"] = "PM"
 # the id pattern is compiled from PREFIX at import, so it is rebuilt here with PB and PM in it
