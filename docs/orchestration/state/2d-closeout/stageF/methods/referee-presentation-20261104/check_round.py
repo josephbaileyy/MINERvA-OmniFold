@@ -32,14 +32,18 @@ GROUPS = ["stat", "flux", "interaction", "detector", "lateral", "normalization",
 ABSTRACT_EDITS = [
     (r"Three external generator predictions give $\chi^{2}$ values of",
      r"As a descriptive comparison, three external generator predictions give $\chi^{2}$ values of"),
-    (r"residual bias exceeding predeclared uncertainty-based thresholds",
-     r"residual bias exceeding uncertainty-based thresholds fixed in advance"),
+    # DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md item 1: the reviewer's sentence, with the criteria
+    (r"Fake-data studies find residual bias exceeding predeclared uncertainty-based thresholds at a GiBUU-like truth and a "
+     r"synthetic momentum-transfer tilt.",
+     r"Fake-data studies at a GiBUU-like truth and at a synthetic momentum-transfer tilt find residual bias exceeding "
+     r"uncertainty-based criteria ($p<\fvval{trig-p}$, or any cell with $|z|>\fvval{trig-z}$) that were fixed before the "
+     r"tests were graded."),
     # PRD read 1, R6: GiBUU's ndf
     (r"GiBUU gives \fvval{g-gibuu-total-chi2int} on the",
      r"GiBUU gives \fvval{g-gibuu-total-chi2int} for \fvval{g-gibuu-total-ndf} degrees of freedom on the"),
 ]
 # a bullet, so that reflow_tex.py keeps it its own comment line (it would join a plain comment onto the one above)
-ABSTRACT_COMMENT = "% - Referee round 20261104 (item 4, sonnet minor 2; item 3, minor 1): DRAFT for the PRD read and Joseph"
+ABSTRACT_COMMENT = "% - Referee round 20261104 (item 4, sonnet minor 2; item 3, minor 1; DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md"
 # numerals the round adds to the printed paper, each with its source
 NEW_NUMERALS = {
     "6.243e-8": "sec_method.tex sec:method-xsec (:186); README-gen5d-fluxfix.md :74, 6.243343e-4 m^-2/POT",
@@ -69,6 +73,9 @@ GONE = [
     ("paper_body.tex", r"Without $C_{\mathrm{PL,5D}}$, the GiBUU $\Eavail$ shape also meets"),     # R1
     ("paper_body.tex", "NuWro, closure &"),                                                         # R5
     ("paper_body.tex", "Which learner implementation gives the two-dimensional central value"),   # R4
+    ("paper_body.tex", "are not learner settings"),                                                 # DECISION-20261105 item 2
+    ("paper_body.tex", "The comparison is a consistency benchmark, not a blind validation"),       # item 3: said once
+    ("paper_body.tex", "a change that lowered"),                                                    # item 3
 ]
 ONCE = [
     ("paper_body.tex", "No learner setting, whether capacity, learning rate, refinement capacity or iteration count, "
@@ -76,8 +83,7 @@ ONCE = [
     ("paper_body.tex", "this choice was checked on data, against ten iterations with purity-based subtraction and "
                        "against the published result, without a search over the iteration count"),
     ("paper_body.tex", r"LightGBM, rather than the scikit-learn exact-split estimator at the same settings, was chosen "
-                       r"after both had been compared with the published result, a choice that lowered "
-                       r"$\chi^{2}/\mathrm{ndf}$ from $\chiPaperExact$ to $\chiPaperPurity$"),
+                       r"after both had been compared with the published result, as had a third implementation"),
     ("paper_body.tex", "and the distance depends on the estimator"),
     ("paper_body.tex", "and ndf is the number of reported bins. The value is descriptive, and no $p$-value is quoted for it."),
     ("paper_body.tex", "Neither panel shows the sixteen-cell result or its reported covariance."),
@@ -101,10 +107,22 @@ ONCE = [
     ("paper_body.tex", "For GENIE + MEC and the Tune~v1, the shape-only $\\chi^2$ is within one unit of the total"),  # R2
     ("paper_body.tex", "these criteria were fixed before any of the tests was graded against them"),  # R3 (a)
     ("sec_fived16.tex", "these criteria were fixed before any of the tests was graded against them"),  # R3 (a)
-    ("paper_body.tex", "its learner implementation was chosen, and its background treatment adopted, after the "
-                       "comparison with the published result was known"),                          # R4
-    ("paper_body.tex", "it was adopted after its distance from the published result was known, a change that "
-                       r"lowered $\chi^{2}/\mathrm{ndf}$ from $\chiPaperPurity$ to $\chiPaper$"),     # R4
+    # DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md items 2-4
+    ("paper_body.tex", "Two other choices for the two-dimensional result were made with the comparison to the published "
+                       "result in view: the learner implementation and the background-subtraction treatment "
+                       r"(Sec.~\ref{sec:repro2d-pub}). That comparison is therefore not an independent test of the method."),
+    ("paper_body.tex", "It was formally adopted after its distance from the published result was known, and the change "
+                       r"lowered $\chi^{2}/\mathrm{ndf}$ from $\chiPaperPurity$ to $\chiPaper$."),
+    ("paper_body.tex", r"The $\chi^{2}/\mathrm{ndf}$ values quoted for the two-dimensional comparison are therefore "
+                       "conditional on both choices, and the comparison should be read as a consistency check, not a "
+                       "blind validation."),
+    ("paper_body.tex", "as had a third implementation, the scikit-learn histogram estimator"),     # item 4: not two
+    ("paper_body.tex", "with ndf the 205 reported bins, from $\\chiPaperExact$ to $\\chiPaperPurity$"),  # item 4
+    ("paper_body.tex", "the mean residual of the purity-based estimate reached 5.9 statistical standard deviations, the "
+                       "data result's per-bin statistical uncertainties, in its most affected bin, against at most 0.44 "
+                       "for the refined estimate over all bins"),                                   # item 4
+    ("paper_body.tex", "That choice was made on the closure test, before the refined result's comparison with the "
+                       "published result was computed."),                                            # item 3
     ("paper_body.tex", "NuWro shape, noise-free closure &"),                                        # R5
     ("paper_body.tex", "where $z$ is the cell's bias divided by its uncertainty under the same covariance"),  # R7
 ]
@@ -197,6 +215,9 @@ def self_test(wt, base):
             "reported in sixteen cells", "reported in 16 cells", 1)}, v), "more than the declared abstract draft"),
         "abstract draft reverted": (lambda c, v: ({**c, "main_paper.tex": c["main_paper.tex"].replace(
             "As a descriptive comparison, three", "Three", 1)}, v), "more than the declared abstract draft"),
+        "the ruled abstract sentence altered": (lambda c, v: ({**c, "main_paper.tex": c["main_paper.tex"].replace(
+            "that were fixed before the tests were graded", "that were fixed in advance", 1)}, v),
+            "more than the declared abstract draft"),
         "a new printed number": (lambda c, v: ({**c, pb: c[pb].replace(
             "Each classifier is trained", "Each classifier, on 9973 events, is trained", 1)}, v), "['9973']"),
         "an undefined key": (lambda c, v: ({**c, pb: c[pb].replace(r"\fvval{f0b-q3-prel}", r"\fvval{f0b-q3-pX}", 1)},

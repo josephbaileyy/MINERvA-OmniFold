@@ -434,6 +434,75 @@ against CH) is unchanged.
     the time.
   - #753's build is not kept, so its record is not rerun.
 
+## Joseph's wording decision (DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md, #772 at fa0718e8f)
+
+Joseph decided after a PRD-referee read of the exact sentences: `consult-wording-20261105/`, answer sha256 aa9fe2fd….
+He has approved merging after the director's check.
+
+**Item 1, the abstract.**
+> Fake-data studies at a GiBUU-like truth and at a synthetic momentum-transfer tilt find residual bias exceeding
+> uncertainty-based criteria (p < 0.01, or any cell with |z| > 2) that were fixed before the tests were graded.
+
+The criteria print through `\fvval{trig-p}` and `\fvval{trig-z}`. IV G's clause stays as it was at 36b903c46.
+check_round.py's second abstract edit is repinned to this sentence. The generator's LISTED_CLAIMS anchor for the
+abstract follows ("at a GiBUU-like truth and at a synthetic momentum-transfer tilt find"), and so does its self-test
+plant.
+
+**Item 2, Sec. III.** "No learner setting … was tuned on data" is kept. Then:
+> Two other choices for the two-dimensional result were made with the comparison to the published result in view: the
+> learner implementation and the background-subtraction treatment (Sec. IV B). That comparison is therefore not an
+> independent test of the method.
+
+**Item 3, IV B.** The LightGBM sentence is kept, with item 4's precision (below). Then the reviewer's framing:
+> The refined negative-weight background treatment was chosen on a closure test in simulation: over 20
+> pseudo-experiments at the simulation's own truth, the mean residual of the purity-based estimate reached 5.9
+> statistical standard deviations, the data result's per-bin statistical uncertainties, in its most affected bin,
+> against at most 0.44 for the refined estimate over all bins, and the two estimates differed by more than one
+> statistical standard deviation in 14 of the 205 bins. That choice was made on the closure test, before the refined
+> result's comparison with the published result was computed. It was formally adopted after its distance from the
+> published result was known, and the change lowered χ²/ndf from 2.65 to 2.27. The χ²/ndf values quoted for the
+> two-dimensional comparison are therefore conditional on both choices, and the comparison should be read as a
+> consistency check, not a blind validation.
+
+IV B's earlier "The comparison is a consistency benchmark, not a blind validation:" is removed, so the point is made
+once.
+
+**Item 4, the reviewer's precision points, each checked against its producer.**
+- **"Both had been compared" implied exactly two implementations, and that is not so.** The scikit-learn histogram
+  estimator's χ²/ndf against the published covariance (2.70 ± 0.04) was already in the note on 2026-10-03 (0e62b5cfb,
+  sec:results-tension), before the 10-11 choice. The choice itself was between LightGBM and exact-split
+  (DECISION-20261011 :3-4). The sentence now reads "… was chosen after both had been compared with the published
+  result, as had a third implementation, the scikit-learn histogram estimator".
+- **5.9 and 0.44 are the same statistic: each arm's 20-seed mean residual against the truth, in σ_stat.** Both are
+  maxima over all 205 cells, in the same cell, gid 128 (RE1-REPORT-2.md §2 table: purity 5.89, refined 0.44, with 13
+  and 0 cells above 1).
+  - The 14 is a different count, the FLAG clause: cells where the mean refined − purity difference exceeds 1 σ_stat.
+  - DECISION-20261023's "+5.89 σ_stat in 14 of 205 cells" compresses the two.
+  - The text now gives each statistic separately and says which is a maximum over which bins.
+- **The 3.66 → 2.65 → 2.27 sequence is in one paragraph,** with "ndf the 205 reported bins" stated at its first
+  χ²/ndf (compare_to_paper_fullcov.py:99).
+- **"Statistical standard deviations" is defined** as "the data result's per-bin statistical uncertainties", which is
+  RE1-REPORT-2's σ_stat: sqrt(diag(stat)) of the production covariance.
+- **The order of the closure and the comparison** is now stated: "That choice was made on the closure test, before
+  the refined result's comparison with the published result was computed."
+  - The choice was DECISION-20261023 item 1 (10-23).
+  - The refined result's published-covariance χ² first appears in RE2-PARTC-REPORT.md :190 (10-24).
+  - RE1-REPORT-2 computed only the refined − purity data shift (D2) and no published-covariance χ².
+- **Not changed, and the reason for each:**
+  - The reviewer's "why 0.01 and 2": the record (FD-DIRECTOR-RULINGS.md §2) bound them as proposed by FD-PLAN.md §7,
+    and the paper gives no reason for those values.
+  - A public citation for "before": FD-DIRECTOR-RULINGS.md is an internal record. The analysis note cites the
+    records, and the release decision for them is Joseph's.
+
+**Keeping the note in step.** The note already carries each fact:
+- sec_method.tex sec:method-config: the background choice on the closure, before the distance was computed, and the
+  adoption after;
+- sec:results-tension: the HistGBT and exact-split values and the 3.66, 2.65 and 2.27;
+- app_negweight.tex :136 and sec_summary.tex :9: the closure numbers;
+- sec:fived16-fd: the criteria fixed before grading.
+
+The note's text does not change in this step.
+
 ## Checks
 
 | check | result | record |
