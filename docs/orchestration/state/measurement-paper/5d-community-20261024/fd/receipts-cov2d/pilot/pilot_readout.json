@@ -1,0 +1,81 @@
+{
+ "M": "cb31611ca8b96ed2d1eeb809fda7236e56645863",
+ "controls": {
+  "2b": {
+   "bitwise_224": false,
+   "max_rel": 4.551914400963142e-15,
+   "median_rel": 1.1102230246251565e-15,
+   "pass": true,
+   "same_cell_set": true
+  },
+  "9.12_lateral": {
+   "bitwise_224": false,
+   "max_rel": 1.0377254611171338e-11,
+   "median_rel": 3.7281289166912757e-13,
+   "pass": true,
+   "same_cell_set": true
+  },
+  "9.12_universe": {
+   "bitwise_224": false,
+   "max_rel": 2.8814728381121313e-12,
+   "median_rel": 5.928590951498336e-14,
+   "pass": true,
+   "same_cell_set": true
+  }
+ },
+ "dvs_rate": {
+  "cache_note": "both read before this job's check, so neither is a read this job made; a page-cache hit left by another process on this node cannot be excluded, so the staged rate may be cached",
+  "cfs": {
+   "MB_per_s": 588.423486001132,
+   "bytes": 4294967296,
+   "path": "/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root",
+   "seconds": 7.299109226907603,
+   "sha256_of_prefix": "4150542ac0ef79b73f2975ac6fef55d6f35c8928d71fef97be66a5f37dc8c0ae"
+  },
+  "declared_departure": "replaces the full CFS-read lateral of COV2D-DECLARATION.md section 8 :432-433 and section 10 :549 (the director's ruling (b)): staging is complete",
+  "prefix_equal": true,
+  "staged": {
+   "MB_per_s": 919.7048563135103,
+   "bytes": 4294967296,
+   "path": "/pscratch/sd/j/josephrb/cov2d-inputs-20261104/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root",
+   "seconds": 4.669940869091079,
+   "sha256_of_prefix": "4150542ac0ef79b73f2975ac6fef55d6f35c8928d71fef97be66a5f37dc8c0ae"
+  }
+ },
+ "invalid": [],
+ "reprice": {
+  "central": {
+   "partb_s": 610.0,
+   "pilot_s": 585.0,
+   "ratio": 0.9590163934426229,
+   "reprice": false
+  },
+  "lateral": {
+   "partb_s": 1174.8,
+   "pilot_s": 930.0,
+   "ratio": 0.7916241062308478,
+   "reprice": false
+  },
+  "replica": {
+   "partb_s": 691.7199999999999,
+   "pilot_s": 569.0,
+   "ratio": 0.822587174001041,
+   "reprice": false
+  },
+  "toy": {
+   "partb_s": 610.0,
+   "pilot_s": 585.0,
+   "ratio": 0.9590163934426229,
+   "reprice": false
+  },
+  "universe": {
+   "partb_s": 864.9051268498944,
+   "pilot_s": 751.0,
+   "ratio": 0.8683033279444732,
+   "reprice": false
+  }
+ },
+ "reprice_classes": [],
+ "stop": [],
+ "verdict": "PASS"
+}

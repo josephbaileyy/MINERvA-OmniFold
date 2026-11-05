@@ -1,0 +1,19 @@
+{
+ "staged": {
+  "path": "/pscratch/sd/j/josephrb/cov2d-inputs-20261104/laterals/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root",
+  "bytes": 4294967296,
+  "seconds": 4.669940869091079,
+  "MB_per_s": 919.7048563135103,
+  "sha256_of_prefix": "4150542ac0ef79b73f2975ac6fef55d6f35c8928d71fef97be66a5f37dc8c0ae"
+ },
+ "cfs": {
+  "path": "/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/active_universe_5d_standard_merged/runEventLoopOmniFold_5D_MEFHC_active_BeamAngleX_0.root",
+  "bytes": 4294967296,
+  "seconds": 7.299109226907603,
+  "MB_per_s": 588.423486001132,
+  "sha256_of_prefix": "4150542ac0ef79b73f2975ac6fef55d6f35c8928d71fef97be66a5f37dc8c0ae"
+ },
+ "prefix_equal": true,
+ "cache_note": "both read before this job's check, so neither is a read this job made; a page-cache hit left by another process on this node cannot be excluded, so the staged rate may be cached",
+ "declared_departure": "replaces the full CFS-read lateral of COV2D-DECLARATION.md section 8 :432-433 and section 10 :549 (the director's ruling (b)): staging is complete"
+}
