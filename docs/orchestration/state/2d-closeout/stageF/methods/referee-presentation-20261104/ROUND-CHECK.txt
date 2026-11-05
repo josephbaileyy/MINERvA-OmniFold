@@ -1,3 +1,3 @@
-# check_round.py at cc9d82b0e
-check_round: PASS (base fa0718e8f; 22 removals, 30 additions, 3 abstract edits; 0 failures)
+# check_round.py at f74c89a58
+check_round: PASS (base a548d44c5; 26 removals, 30 additions, 3 abstract edits; 0 failures)
 check_round self-test: 17/17 planted defects caught

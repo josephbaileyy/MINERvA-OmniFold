@@ -541,8 +541,8 @@ each re-checked against its producer.
 
 | check | result | record |
 |---|---|---|
-| ledger (`check_ledger.py`, step2's checks with base a548d44c5) | 17 rows, 0 failures; self-test PASS (LEDGER-CHECK.txt gives the probe and sentence counts) | LEDGER-CHECK.txt |
-| round (`check_round.py`) and its self-test | PASS (22 removals, 30 additions, 3 abstract edits); 17/17 planted defects caught, each by its intended check | ROUND-CHECK.txt |
+| ledger (`check_ledger.py`, step2's checks with base a548d44c5) | 18 rows, 99 probes, 39 changed base sentences, 0 failures; self-test PASS | LEDGER-CHECK.txt |
+| round (`check_round.py`) and its self-test | PASS (26 removals, 30 additions, 3 abstract edits); 17/17 planted defects caught, each by its intended check | ROUND-CHECK.txt |
 | values (`make_values_fived16.py --self-test`, `--check`) | PASS (3,617 values; 10 listed-truth sentences, including R1's "ctotal") | VALUES-CHECK.txt |
 | rater copy (`make_rater_copy.sh`) | PASS | RATER-COPY.txt |
 | held sentences (`check_held.py`, on the blinded copy) | the 3 known flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07) | CHECK-HELD.txt |

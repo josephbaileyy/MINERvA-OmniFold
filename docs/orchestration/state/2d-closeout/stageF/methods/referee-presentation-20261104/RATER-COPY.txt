@@ -1,5 +1,5 @@
-# make_rater_copy.sh at 3871823b6's sources ($S = the session scratchpad)
-source: $S/wt-cut (1cc03ebff; dirty files in analysis-note: 3)
+# make_rater_copy.sh at a293075f2's sources ($S = the session scratchpad)
+source: $S/wt-cut (b86c7e355; dirty files in analysis-note: 1)
 $S/wt-cut/docs/analysis-note/main_paper.tex:55: standalone: \pubhold{funding and grant acknowledgments}
 $S/wt-cut/docs/analysis-note/main_paper.tex:78: standalone: \pubhold{deposit identifier and access route, after the separately authorized release decision.}
 holds found: 2; sharing a sentence: 0
@@ -12,5 +12,5 @@ multiset: only normal {}; only rater {}
 multiset VERDICT: PASS
 rater text = normal text minus 2 hold spans
 data-availability heading in reading order
-single-line drops: 2; words in=10205 out=9260
-wrote $S/t6/rater/blind.txt and $S/t6/rater/blind.{normal,holddiff,blind}.txt
+single-line drops: 2; words in=10216 out=9271
+wrote $S/t7/rater/blind.txt and $S/t7/rater/blind.{normal,holddiff,blind}.txt
