@@ -1,0 +1,11 @@
+# sacct -j 60857361 -n -P -o JobID,JobName,State,Elapsed,Start,End,NodeList,NNodes,ExitCode,MaxRSS  (login26, 2026-11-05T15:26Z; times local PST)
+60857361|fd1b_c2calN|COMPLETED|00:43:03|2026-11-05T06:39:03|2026-11-05T07:22:06|nid007069|1|0:0|
+60857361.batch|batch|COMPLETED|00:43:03|2026-11-05T06:39:03|2026-11-05T07:22:06|nid007069|1|0:0|101085924K
+60857361.extern|extern|COMPLETED|00:43:05|2026-11-05T06:39:03|2026-11-05T07:22:08|nid007069|1|0:0|
+# sacct -j 60857361 -X -n -P -o JobID,ElapsedRaw,TimelimitRaw,AllocTRES%80,Partition,QOS
+60857361|2583|90|billing=256,cpu=256,energy=1196595,mem=487802M,node=1|regular_milan_ss11|regular_1
+# scontrol at submission (connect-calibrate.log): TimeLimit=01:30:00 QOS=regular_1 Partition=regular_milan_ss11 NumNodes=1-1
+# iris m3246: at launch (login15, 14:32:20Z) balance 2005.7; at 15:26:32Z 17994.7 / 20000.0 -> 2005.3
+# compare_calibN.py (7439f510, at 81f6b84f): --old calibN-run (job 60783756) --new this run
+#   --expect-code-sha256 fd_1b_mc.py=062628b6... fd_1b_c2.py=522d7edd... -> PASS (compare_calibN.out); its --self-test
+#   reproduces calibN-compare-selftest.txt line for line (8 PASS, 17 STOP)

@@ -1,0 +1,18 @@
+host=nid007069 job=60857361 start=2026-11-05T14:39:04Z time_limit_s=
+deploy head=bf36901f957c36f37b4cb5fe6c7b6cd33f190ca7 porcelain_lines=0
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/sbatch-calibrate.sh: OK
+sourcing /pscratch/sd/j/josephrb/fd-1b-a21-calibN-rerun2-20261105/deploy/setup_salloc_env.sh sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+calibrate rc=0
+{"calibration": "timing", "fine_cells_kept": 10693, "set_seconds_measured": 2.5077686309814453, "workers": 64, "projected_seconds": 2036.7536289691925, "budget_seconds": 5000.0}
+C2-CALIBRATION verdict=CALIBRATED s=0.92 i_alone=0.0000 power={"g18": 0.9968, "ar23": 0.997}
+	Percent of CPU this job got: 3526%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 42:51.35
+	Maximum resident set size (kbytes): 10055320
+	Exit status: 0
+66f2ae4443099baec677f07d76aae6103763816f89e3767d774ae43b8f22ef10  /pscratch/sd/j/josephrb/fd-1b-a21-calibN-rerun2-20261105/calibration.json
+9047a6f730ca41cda8a0c6d7b60aac19ba10c04f8ab6a6b13a279a5835291a70  /pscratch/sd/j/josephrb/fd-1b-a21-calibN-rerun2-20261105/calibration.npz
+4c18c59073ec8b747623eeef38936582e209a02db7c5469df2e581660c3c69da  /pscratch/sd/j/josephrb/fd-1b-a21-calibN-rerun2-20261105/calibration.out
+f2d4b7f61ff7fad535429b88ac7a5ba2dc036aed19a476c7e76847904279bbf6  /pscratch/sd/j/josephrb/fd-1b-a21-calibN-rerun2-20261105/calibration.time
+end=2026-11-05T15:22:05Z

@@ -163,6 +163,7 @@ All runs used a fresh clone at the bound commit, with its sha verified on the no
 | calibration, G18 and AR23 | `02e71a0b` | job 60771025, nid006700, 02:10–02:32Z | TO_JOSEPH: (b)'s two-truth union 18.9 % (§8) |
 | large-sample calibration, G18 and AR23 | `51d67b54` | job 60783756, nid004331, 06:35:57–07:19:12Z | CALIBRATED (G18 and AR23 measured, the plug-in projected), s = 0.92 (§8b) |
 | the same, rerun at the final code | `8a9b8db9` | job 60805733, nid005938, 18:08:00–18:53:39Z | compare_calibN PASS against 60783756: the npz bitwise equal (§8b) |
+| the same, rerun at c2check's code | `bf36901f` | job 60857361, nid007069, 2026-11-05 14:39:03–15:22:06Z | compare_calibN PASS against 60783756: the npz bitwise equal (§8b) |
 
 ## 7. The mock audit (the director's request, 2026-11-04)
 
@@ -348,6 +349,28 @@ Any other difference is a STOP to the director.
   The other code digests are equal.
 - **So the calibration's numbers are unchanged at the code binding 3 binds:** s = 0.92, CALIBRATED (G18 and AR23
   measured, the plug-in projected).
+
+**The second rerun, at c2check's code (the director's ruling (a), item 4, and ruling (A)).** It was job 60857361: one
+regular CPU node (nid007069), 2026-11-05 14:39:03–15:22:06Z, 43:03 (2,583 s), at `bf36901f`, the code c2check at N
+runs. Since ruling (A), c2check refuses a calibration whose code_sha256 is not its own, so this record is the only one
+that can feed it. The time limit, 01:30:00, was checked from scontrol after submission.
+- **Cost:** 0.718 node-h of its 1.5 cap. m3246's balance went from 2,005.7 at launch to 2,005.3.
+- **Records:** `calibN-rerun2-run/calibration.json` `66f2ae44…` and `calibration.npz` `9047a6f7…`.
+- **`compare_calibN.py` (`7439f510`): PASS** (`calibN-rerun2-run/compare_calibN.out`). Its `--self-test` reproduces
+  `calibN-compare-selftest.txt` line for line.
+  - `--old` is job 60783756's committed record (d4a4739e).
+  - The npz is bitwise equal.
+  - The JSON is canonical-equal after deleting exactly the declared paths, with the new code digests the expected
+    ones (`--expect-code-sha256 fd_1b_mc.py=062628b6… fd_1b_c2.py=522d7edd…`).
+  - The verdict line is byte for byte the same.
+- **What the exclusions removed:**
+  - fd_1b_c2's digest, `f19adbda` → `522d7edd`, and fd_1b_mc's, `d55f5966` → `062628b6`;
+  - the wall clock, 2,564.5 → 2,567.5 s;
+  - the 709 files' atime values: the same keys, and none moved in either run.
+
+  The other three code digests are equal.
+- **So the calibration's numbers are unchanged at c2check's code:** s = 0.92, CALIBRATED (G18 and AR23 measured, the
+  plug-in projected).
 
 ## 8c. c2check at N: its cost, and the director's ruling (a), 2026-11-04
 
@@ -611,10 +634,10 @@ calibration's 4.0 cap. With the jobs since then at their measured cost, and the 
 | large-sample calibration, job 60783756 (43:15) | 0.721 |
 | its rerun at the H1 code, job 60805733 (45:39, 2,739 s) | 0.761 |
 | **spent or committed** | **≈ 78.84** |
-| its second rerun at the ruling-(a) code (cap; 0.72 and 0.76 measured) | 1.5 |
+| its second rerun at c2check's code, job 60857361 (43:03, 2,583 s) | 0.718 |
+| **spent or committed, with the second rerun** | **≈ 79.56** |
 | c2check's timing probe (cap; prepare(rows=True), §8c, + about 0.12 h) | 1.5 |
-| **total with both at their caps** | **≈ 81.84**, above 81.0 by 0.84 |
-| **total with the rerun at its measured 0.76 and the probe at its cap** | **≈ 81.1**, above 81.0 by ≈ 0.1 |
+| **total with the probe at its cap** | **≈ 81.06**, within 83.0 by ≈ 1.94 |
 
 **The ceiling raised to 83.0 node-h (the director's ruling of 2026-11-05).** It is an operational go-ahead within the
 standing grant, far below half the balance, and it covers the two runs above at their caps (81.84). Binding 3 resets

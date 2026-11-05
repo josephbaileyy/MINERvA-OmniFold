@@ -1,0 +1,2 @@
+{"calibration": "timing", "fine_cells_kept": 10693, "set_seconds_measured": 2.5077686309814453, "workers": 64, "projected_seconds": 2036.7536289691925, "budget_seconds": 5000.0}
+C2-CALIBRATION verdict=CALIBRATED s=0.92 i_alone=0.0000 power={"g18": 0.9968, "ar23": 0.997}
