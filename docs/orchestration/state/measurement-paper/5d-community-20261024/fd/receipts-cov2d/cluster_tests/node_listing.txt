@@ -1,0 +1,29 @@
+login02
+/dev/shm/josephrb-cov2d-tests:
+total 8
+drwxrwx--- 3 josephrb josephrb   80 Nov  5 02:19 .
+drwxrwxrwt 3 root     root       80 Nov  5 02:12 ..
+-rw-rw---- 1 josephrb josephrb 5263 Nov  5 02:19 connect-tests.log
+drwxrwx--- 2 josephrb josephrb  340 Nov  5 02:19 logs
+
+/dev/shm/josephrb-cov2d-tests/logs:
+total 68
+drwxrwx--- 2 josephrb josephrb  340 Nov  5 02:19 .
+drwxrwx--- 3 josephrb josephrb   80 Nov  5 02:19 ..
+-rw-rw---- 1 josephrb josephrb 2518 Nov  5 02:13 blobs.txt
+-rw-rw---- 1 josephrb josephrb 2834 Nov  5 02:17 P_test_cov2d_jobs.log
+-rw-rw---- 1 josephrb josephrb 3293 Nov  5 02:17 P_test_cov2d.log
+-rw-rw---- 1 josephrb josephrb  575 Nov  5 02:15 P_test_cov2d_null.log
+-rw-rw---- 1 josephrb josephrb 1745 Nov  5 02:13 P_test_cov2d_pseudo.log
+-rw-rw---- 1 josephrb josephrb 1549 Nov  5 02:14 P_test_cov2d_readouts.log
+-rw-rw---- 1 josephrb josephrb 1139 Nov  5 02:17 P_test_cov2d_score.log
+-rw-rw---- 1 josephrb josephrb 5098 Nov  5 02:19 RM_test_cov2d_jobs.log
+-rw-rw---- 1 josephrb josephrb 5356 Nov  5 02:19 RM_test_cov2d.log
+-rw-rw---- 1 josephrb josephrb 2753 Nov  5 02:19 RM_test_cov2d_pilot.log
+-rw-rw---- 1 josephrb josephrb 2908 Nov  5 02:19 RM_test_cov2d_pseudo_write.log
+-rw-rw---- 1 josephrb josephrb 3021 Nov  5 02:18 R_test_cov2d_blocks.log
+-rw-rw---- 1 josephrb josephrb  801 Nov  5 02:18 R_test_cov2d_null.log
+-rw-rw---- 1 josephrb josephrb 1683 Nov  5 02:19 R_test_cov2d_score.log
+-rw-rw---- 1 josephrb josephrb 1233 Nov  5 02:19 SHA256SUMS
+9895515aea1332d0bc124a9c6b41455ad6a151424ba8988365a6eca2c800f9a8  /dev/shm/josephrb-cov2d-tests.sh
+593ae0a72a01ff4af6a7acfd81641347e357e35d5bd5564aa10fe834a546b8fd  /dev/shm/josephrb-cov2d-tests/connect-tests.log
