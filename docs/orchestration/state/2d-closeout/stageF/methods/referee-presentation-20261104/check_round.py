@@ -14,6 +14,7 @@
 usage: check_round.py <worktree> [--base SHA]   (exit 1 on any failure)
        check_round.py <worktree> --self-test    (each planted defect must be caught)"""
 import importlib.util
+import json
 import re
 import sys
 from pathlib import Path
@@ -33,6 +34,9 @@ ABSTRACT_EDITS = [
      r"As a descriptive comparison, three external generator predictions give $\chi^{2}$ values of"),
     (r"residual bias exceeding predeclared uncertainty-based thresholds",
      r"residual bias exceeding uncertainty-based thresholds fixed in advance"),
+    # PRD read 1, R6: GiBUU's ndf
+    (r"GiBUU gives \fvval{g-gibuu-total-chi2int} on the",
+     r"GiBUU gives \fvval{g-gibuu-total-chi2int} for \fvval{g-gibuu-total-ndf} degrees of freedom on the"),
 ]
 # a bullet, so that reflow_tex.py keeps it its own comment line (it would join a plain comment onto the one above)
 ABSTRACT_COMMENT = "% - Referee round 20261104 (item 4, sonnet minor 2; item 3, minor 1): DRAFT for the PRD read and Joseph"
@@ -42,6 +46,8 @@ NEW_NUMERALS = {
     "8.3": "addition 3: sec_5d.tex sec:val-departure :84; d-id/REPORT.md :436 (exact T2 IBU, GiBUU, K = 5)",
     "3.3": "addition 3: sec_5d.tex sec:val-departure :84; d-id/REPORT.md :445 (K = 200, GiBUU)",
     "200": "addition 3: the iteration count of that 3.3 (sec_5d.tex :84; d-id/REPORT.md :442-445)",
+    "5.9": "PRD read 1, R4: sec_summary.tex:9 (the purity estimate up to 5.9 sigma_stat from the truth in the 14 cells)",
+    "0.44": "PRD read 1, R4: sec_summary.tex:9, app_negweight.tex:136 (the refined estimate within +-0.44 sigma_stat)",
 }
 GONE = [
     ("paper_body.tex", "No hyperparameter search was performed on data."),                       # item 1
@@ -60,6 +66,9 @@ GONE = [
     ("paper_body.tex", "because it persists over the tested iteration numbers and classifier capacities"),  # addition 3
     ("paper_body.tex", "which we interpret as regularization bias"),                               # addition 3
     ("paper_body.tex", "The simulated detector response is not probed."),                          # addition 2
+    ("paper_body.tex", r"Without $C_{\mathrm{PL,5D}}$, the GiBUU $\Eavail$ shape also meets"),     # R1
+    ("paper_body.tex", "NuWro, closure &"),                                                         # R5
+    ("paper_body.tex", "Which learner implementation gives the two-dimensional central value"),   # R4
 ]
 ONCE = [
     ("paper_body.tex", "No learner setting, whether capacity, learning rate, refinement capacity or iteration count, "
@@ -86,6 +95,18 @@ ONCE = [
                        "under the true detector response"),
     ("paper_body.tex", r"$^{\dagger}$Reconstruction stability \fvval{h2-lowstab-min}--\fvval{h2-lowstab-max}"),
     ("app_response_mismatch.tex", "The closures are descriptive and carry no noise estimate: no pass threshold is set"),
+    ("paper_body.tex", r"Under $C_{\mathrm{total}}+C_{\mathrm{resp}}$, the covariance without $C_{\mathrm{PL,5D}}$, which "
+                       r"Table~\ref{tab:fd16} does not show"),                                          # R1
+    ("paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns of Table~\ref{tab:fd16}"),  # R1
+    ("paper_body.tex", "For GENIE + MEC and the Tune~v1, the shape-only $\\chi^2$ is within one unit of the total"),  # R2
+    ("paper_body.tex", "these criteria were fixed before any of the tests was graded against them"),  # R3 (a)
+    ("sec_fived16.tex", "these criteria were fixed before any of the tests was graded against them"),  # R3 (a)
+    ("paper_body.tex", "its learner implementation was chosen, and its background treatment adopted, after the "
+                       "comparison with the published result was known"),                          # R4
+    ("paper_body.tex", "it was adopted after its distance from the published result was known, a change that "
+                       r"lowered $\chi^{2}/\mathrm{ndf}$ from $\chiPaperPurity$ to $\chiPaper$"),     # R4
+    ("paper_body.tex", "NuWro shape, noise-free closure &"),                                        # R5
+    ("paper_body.tex", "where $z$ is the cell's bias divided by its uncertainty under the same covariance"),  # R7
 ]
 
 
@@ -99,7 +120,7 @@ def values(text):
     return dict(re.findall(r"\\@namedef\{fv@([^}]*)\}\{(.*)\}$", text, re.M))
 
 
-def check(cur, old, vals):
+def check(cur, old, vals, gread=None):
     """cur and old: {file: source}; vals: the values_fived16.tex keys."""
     fails = []
     mp, mp0 = cur["main_paper.tex"], old["main_paper.tex"]
@@ -123,9 +144,10 @@ def check(cur, old, vals):
     if used - set(vals):
         fails.append(f"the paper prints undefined keys: {sorted(used - set(vals))}")
     app = pr["paper_body.tex"].split(r"\section{Uncertainty tables}")[-1]
-    want_keys = {f"sig-{g}-{c}" for g in GROUPS for c in CELLS} | {f"sigmed-{g}" for g in GROUPS} | \
+    # Table IV at the paper's 0.1 % (PRD read 1, R8): the sig1-/sigmed1- keys, one decimal of the note's raw values
+    want_keys = {f"sig1-{g}-{c}" for g in GROUPS for c in CELLS} | {f"sigmed1-{g}" for g in GROUPS} | \
         {f"corr-{CELLS[i]}-{CELLS[j]}" for i in range(16) for j in range(i)}
-    have = set(re.findall(r"\\fvval\{((?:sig|sigmed|corr)-[^}]*)\}", app))
+    have = set(re.findall(r"\\fvval\{((?:sig1|sigmed1|corr)-[^}]*)\}", app))
     if have != want_keys:
         fails.append(f"the appendix tables' keys differ from the note's: missing {sorted(want_keys - have)[:4]}, "
                      f"extra {sorted(have - want_keys)[:4]}")
@@ -137,6 +159,15 @@ def check(cur, old, vals):
     want_f = re.split(r", | and ", vals["h2-lowstab-cells"])
     if flagged != want_f:
         fails.append(f"Table II flags {flagged}, not the low-stability cells {want_f}")
+    # R2: for GENIE + MEC and the Tune v1 the shape-only chi2 is within one unit of the total, and Fig. 3 shows each
+    # prediction below the data (g < f) in most cells, read from the Stage G readout
+    for k, name in (("gmec", "genie_mec"), ("tune", "mnvtune_v1")):
+        if not 0 <= float(vals[f"g-{k}-total-chi2"]) - float(vals[f"g-{k}-shape_only-chi2"]) < 1:
+            fails.append(f"Sec. V B: {k}'s shape-only chi2 is not within one unit of its total")
+        if gread is not None:
+            p = [x for x in gread["predictions"] if x["name"] == name][0]
+            if not sum(x < 0 for x in p["g_over_f_minus_1"]) > len(p["g_over_f_minus_1"]) / 2:
+                fails.append(f"Sec. V B: {name} is not below the data in most cells of the Stage G readout")
     for f, s in GONE:
         if s in pr[f]:
             fails.append(f"{f}: still prints {s!r}")
@@ -146,18 +177,19 @@ def check(cur, old, vals):
     return fails
 
 
-FILES = ["paper_body.tex", "main_paper.tex", "sec_method.tex", "app_response_mismatch.tex"]
+FILES = ["paper_body.tex", "main_paper.tex", "sec_method.tex", "app_response_mismatch.tex", "sec_fived16.tex"]
 
 
 def load(wt, base):
     cur = {f: (Path(wt) / NOTE / f).read_text() for f in FILES}
     old = {f: cl.git_show(wt, base, f"{NOTE}/{f}") for f in FILES}
-    return cur, old, values((Path(wt) / NOTE / "values_fived16.tex").read_text())
+    g = Path(wt) / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json"
+    return cur, old, values((Path(wt) / NOTE / "values_fived16.tex").read_text()), json.loads(g.read_text())
 
 
 def self_test(wt, base):
-    cur, old, vals = load(wt, base)
-    assert not check(cur, old, vals), "the worktree must pass before planting"
+    cur, old, vals, gread = load(wt, base)
+    assert not check(cur, old, vals, gread), "the worktree must pass before planting"
     pb = "paper_body.tex"
     # each plant: (edit, the failure message it must produce), so a plant caught by another check does not count
     plants = {
@@ -189,13 +221,17 @@ def self_test(wt, base):
             "The residual is therefore consistent", "We interpret the residual as regularization bias, because it "
             "persists over the tested iteration numbers and classifier capacities. The residual is therefore consistent",
             1)}, v), "still prints 'because it persists"),
+        "R2's claim false": (lambda c, v: (c, {**v, "g-tune-shape_only-chi2": "250.00"}), "within one unit"),
+        "R1's C_total list back": (lambda c, v: ({**c, pb: c[pb].replace(
+            r"Under $C_{\mathrm{total}}+C_{\mathrm{resp}}$, the covariance without $C_{\mathrm{PL,5D}}$, which Table~\ref{tab:fd16} does not show, the",
+            r"Without $C_{\mathrm{PL,5D}}$, the", 1)}, v), "still prints 'Without"),
         "note sentence dropped": (lambda c, v: ({**c, "sec_method.tex": c["sec_method.tex"].replace(
             "The change was decided on that closure test, ", "", 1)}, v), "sec_method.tex: prints"),
     }
     missed = []
     for k, (f, msg) in plants.items():
         c, v = f(dict(cur), dict(vals))
-        if not any(msg in x for x in check(c, old, v)):
+        if not any(msg in x for x in check(c, old, v, gread)):
             missed.append(k)
     n = len(plants)
     print(f"check_round self-test: {n - len(missed)}/{n} planted defects caught" + (f"; MISSED {missed}" if missed else ""))

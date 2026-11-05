@@ -23,8 +23,8 @@ abstract are Joseph's to approve. The abstract is a **draft**.
 | 7 | Sonnet minor 13, Gemini | Fig. 2's caption says that neither panel is the reported result or covariance; the moves are proposed below, none made | paper Fig. 2 |
 | 8 | Sonnet minor 14 | The 2D χ²/ndf with the pseudo-inverse at condition number 1.5×10¹² is said to be descriptive, with no p-value | paper IV B |
 
-The paper grows from 11 to 13 pages (see Checks for the page counts as built). The appendix adds about a page. A `\clearpage` before it keeps the rater copy's
-reading order, so the second column of the Limitations page ends early (see Checks).
+The paper grows from 11 to 13 pages, the appendix adding about a page. After PRD read 1, Figs. 1 and 2 are defined
+before Sec. IV B and the appendix has no page break of its own; see "After PRD read 1" and Checks.
 
 ## Item 1: the contradiction, from the records
 
@@ -301,6 +301,139 @@ phrase, is not used.
 median residual is 0.77–1.31 × OmniFold's). The note does not carry IBU-1, and the round keeps every printed fact in the
 note. If you want IBU-1 cited, it needs one note sentence (sec:val-departure) and one paper clause, and I can add both.
 
+## After PRD read 1 (prd-read-1/; the director's rulings R1–R10)
+
+The read is committed verbatim in `prd-read-1/`: prompt.md, answer.md (as answer.txt; prd-read-1/README.md), tex.diff, the reading copy and its SHA256SUMS,
+with answer sha256 69374629…. tex.diff is `git diff ff6ba1885 e24ad2cc1 -- 'docs/analysis-note/*.tex'` (checked by
+regenerating it). The verdict is still major revision, and the director expected that: the top three issues are
+substance. Every number below was checked against its producer before the text changed.
+
+**R1. Table I against IV G.** The base already had this defect before the round.
+- z = 2.01 and 1.76 are F0b's R06 without and with the run-period block: fd/readout/fd_f0b_readout.json (b9db935a)
+  and fd/with-cpl/readout/fd_f0b_readout.json (5f542830). F0b's matrix is C_total + C_resp.
+- Table I's right-hand columns are F0 (fd/readout/fd_f0_readout.json, 6e7d718b), under C_total alone. Its
+  triggers.listed is W3, q3, stage0c_gibuu and A7_gibuu.
+- The base text named the without-block list ("Without C_PL,5D, …") beside a table whose second column is C_total, and
+  it never named W3, which C_total flags (p = 0.0027).
+
+*Before:*
+> Without C_PL,5D, the GiBUU E_avail shape also meets the flagging criterion, in cell R06 (z = 2.01, against 1.76 with
+> the block).
+
+*After:*
+> Under C_total + C_resp, the covariance without C_PL,5D, which Table I does not show, the GiBUU E_avail shape also
+> meets the flagging criterion, in cell R06 (z = 2.01, against 1.76 with the block). … Under C_total alone, the
+> right-hand columns of Table I, the flagged truths are the GiBUU hybrid truth, the GiBUU E_avail shape (cell R06,
+> p = 0.0031), the synthetic q3 tilt and the NuWro (p_T, p_∥, E_avail) shape, the last by p alone (p = 0.0027).
+
+`make_values_fived16.py`'s LISTED_CLAIMS gains a kind, "ctotal": the sentence's typed truths must equal F0's listed
+set. Its self-test plants an omission, and the check catches it.
+
+The note's sec:fived16-fd was already right: its table prints all three covariances, and its text names only the
+reported and without-block lists. It is unchanged.
+
+**R2. Table III's 229/229 and 262/262 are real, not a transcription error.**
+- The Stage G readout fd_g_readout.json (a19009e0) gives GENIE + MEC 229.09 total against 229.00 shape-only, and
+  Tune v1 262.06 against 261.88.
+- `prd-read-1/r2_check.py` (output R2-CHECK.txt) reproduces all four 16-cell predictions' χ² from the committed matrix
+  and vectors.
+- The drop from freeing the normalization is, by construction, the residual's squared component along f in C⁻¹'s
+  metric. Here it is 0.09 and 0.18. The GLS scales of f − g along f are −0.013 and −0.018 (±0.04), although g < f in
+  13 and 14 of the 16 cells.
+
+*Added (V B):*
+> For GENIE + MEC and the Tune v1, the shape-only χ² is within one unit of the total, although Fig. 3 shows both
+> predictions below the data in most cells: freeing the normalization lowers χ² only by the residual's component along
+> the result's own cell values in the metric of the reported covariance, and for these two predictions that component
+> is small.
+
+check_round.py asserts both halves, from the values and the readout. No number is added to the paper.
+
+**R3. "Fixed in advance" (for Joseph: pick one).**
+- *(a), now in the source.* IV G adds "these criteria were fixed before any of the tests was graded against them",
+  and the note's sec:fived16-fd adds the same clause.
+  - The record is `state/measurement-paper/5d-community-20261024/FD-DIRECTOR-RULINGS.md` §2 ("|z| > 2 per cell; or
+    a χ² with P(χ²_16 > χ²_T) < 0.01 per truth"). It was committed at 092702292 (2026-10-25 10:32 −0700), and the
+    file's sha256 begins 2bfba459806310a3; it is unchanged since.
+  - That precedes F0's declaration (7d7dac1d3, 13:43) and F0's report (28c4870f4, 15:04). F0b and F1 reuse the
+    criteria unchanged.
+  - The abstract keeps "uncertainty-based thresholds fixed in advance".
+- *(b).* Drop the clause from IV G and the note, and the abstract reads "Fake-data studies find residual bias exceeding
+  uncertainty-based thresholds at a GiBUU-like truth and a synthetic momentum-transfer tilt."
+
+**R4. The learner and background choices (a draft for Joseph).**
+
+*Sec. III, before:*
+> Which learner implementation gives the two-dimensional central value, at these settings, was chosen after the
+> implementations had been compared with the published result (Sec. IV B).
+
+*Sec. III, after:*
+> Two choices for the two-dimensional result are not learner settings: its learner implementation was chosen, and its
+> background treatment adopted, after the comparison with the published result was known (Sec. IV B).
+
+*IV B, added after the LightGBM clause:*
+> The refined negative-weight background treatment of the quoted result was chosen on a closure test in simulation, in
+> which the purity-based and refined estimates differed by more than one statistical standard deviation in 14 of the
+> 205 bins, where the purity-based estimate lay up to 5.9 statistical standard deviations from the truth and the
+> refined one within 0.44; it was adopted after its distance from the published result was known, a change that
+> lowered χ²/ndf from 2.65 to 2.27.
+
+The sources:
+- DECISION-20261023 :5-7 and item 1, for the choice on the C2 closure;
+- DECISION-20261024, for the adoption with 2.27 against 2.65;
+- the note's sec_summary.tex:9 and app_negweight.tex:136, for the numbers as printed;
+- `\chiPaperPurity` and `\chiPaper`.
+
+The new numerals 5.9 and 0.44 are declared in check_round.py's NEW_NUMERALS. 14 and 205 were already printed.
+
+**R5.** The "NuWro, closure" row becomes "NuWro shape, noise-free closure", the text's own term.
+
+**R6.** The abstract now reads "GiBUU gives 48 for 8 degrees of freedom on the eight cells covered by its sample". It is
+pinned as check_round.py's third abstract edit.
+
+**R7. Definitions at first use.**
+- *z*: "where z is the cell's bias divided by its uncertainty under the same covariance" (FD-F0-DECLARATION.md: S-1,
+  the per-cell pulls).
+- *Purity and supported box*: "each supported box (one that meets the support rule) with purity, the fraction of the
+  simulated signal reconstructed in it that was generated in it, below 0.1". The source is h2_definition.py:72, where
+  purity = same / reco_all.
+- *Audit*: "an audit of its overlap with the other blocks and of its noise treatment" (sec_fived16.tex:180).
+- *Null distribution and hybrid null*: defined at their first use in Sec. VI, as sec_joint.tex defines them.
+- *One-parameter family*: "each such cross term taken as a common fraction, from zero to one, of its fully
+  correlated value" (sec:fived16-quadrants, r S16^{1/2} S2D^{1/2} for r in [0, 1]).
+
+**R8.** Table IV prints new keys, sig1- and sigmed1-. Each is one decimal of the raw value the note's two-decimal key is
+rounded from, so nothing in the note forces 0.01. The generator's MATRIX_KEYS pattern covers the new keys of the
+with/without-block families. Table II and the note keep two decimals.
+
+**R9.** IV E now reads "(its median falls from 8.3 % at five iterations to 3.3 % at 200)". Sec. II's 8.3 % (carbon
+against CH) is unchanged.
+
+**R10.** Left as ruled.
+
+**Listed for Joseph, not ruled now:**
+- the moves of Fig. 2a, and with it the 74 % and the 0.06 (item 7);
+- the 3b closures' 0.97σ, which carries no verdict;
+- the read's top three substance issues.
+
+**The figure moves, and the check_held input.**
+- After these edits, the rater copy's text extraction split two held sentences:
+  - G1b:paper-g-13, "Those uncertainties come from …", split by Fig. 1 floating to the top of the next page;
+  - then, with Fig. 1 moved, G1b:paper-g-14, "Rounding-level changes …", split by Fig. 2.
+- Both figure environments are now defined, verbatim, just before Sec. IV B. They float onto pp. 5 and 6, and no held
+  sentence crosses a page with a float at its top. Fig. 2 is first cited in Sec. III, so its earlier place is
+  consistent.
+- The appendix's `\clearpage` is dropped. At this layout the blinded copy keeps Limitation 1 in order without it, and
+  the paper is back to 13 pages.
+- **A correction to my earlier records.** check_held's documented input is the *blinded* copy, make_rater_copy.sh's
+  `.blind.txt` (check_held.py docstring). The CHECK-HELD records before this section, and the RPD-sentence round's
+  (#753), ran it on the unblinded `blind.txt`.
+  - Rerun on the blinded copies kept from this round: the e24ad2cc1 layout gives the 3 known flags, and so does the
+    final layout.
+  - The first appendix layout did split G1b:paper-g-20 in the blinded copy too, so that page break was a real fix at
+    the time.
+  - #753's build is not kept, so its record is not rerun.
+
 ## Checks
 
 | check | result | record |
@@ -313,10 +446,7 @@ note. If you want IBU-1 cited, it needs one note sentence (sec:val-departure) an
 | builds (`build_all.sh`) | paper 13 pp, note 136 pp; SEC4 receipts 17/17 | — |
 | registry | the four citations into edited lines re-cited by hand (ALIASES rows 35, 38, 47; ATTRIBUTION row 17), the rest repointed | — |
 
-**The rater copy's reading order.** The first build put the appendix heading in the Limitations page's second column.
-pdftotext then split Limitation 1's last sentence across blocks, and check_held flagged a fourth sentence,
-G1b:paper-g-20 ("We make no coverage claim …"). A `\clearpage` before `\appendix` restores the order, and check_held
-gives its three known flags. The rater copy's word multiset is unchanged by the page break, apart from one page number.
+**The rater copy's reading order.** See "After PRD read 1", which also corrects which file check_held reads.
 
 **A pre-existing warning.** The one overfull box in main_paper.log (9.7 pt, Table III) is at lines this round does not
 change.

@@ -109,7 +109,7 @@ ARMS = {"with": {"dp": "C_total_plus_C_resp_plus_C_PL5D", "rep": "C_total + C_re
         "without": {"dp": "C_total_plus_C_resp", "rep": "C_total + C_resp", "x": "C_resp",
                     "f1sig": "relative_sigma_plus_C_resp"}}
 # the key families whose values depend on the reported matrix; any other key must be equal in the two arms
-MATRIX_KEYS = re.compile(r"^(g-|gs-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|eav-|sig(med|min|max)?-(reported|C_PL5D)|trig-)")
+MATRIX_KEYS = re.compile(r"^(g-|gs-|f0b-|f1-|fb-|sens-|diag-|r04-|corr-|eav-|sig(med|min|max)?1?-(reported|C_PL5D)|trig-)")
 # the paper's precision (referee round 20261104, item 6): a fake-data chi2 as an integer, as Table IV prints its chi2
 # (DECISION-20261027-joseph-chi2-table-format.md), and a p-value below 1e-3 as the power of ten it lies below; the note
 # keeps the exact values. Keys: <key>int for "-chi2", "-pr" (the value) and "-prel" (with its relation) for "-p"
@@ -169,11 +169,13 @@ TRUTH_LABEL = {"nominal": ("the simulation prior", "simulation prior"),
 #              without the block;
 #   "both": the truths it types (of the family, if given) equal the truths listed with or without the block;
 #   "count": exactly `gibuu` GiBUU truths are listed with the block, and every truth in `also`.
+#   "ctotal": the truths it types equal F0's listed set, under C_total alone (Table I's right-hand columns).
 # The anchor is the sentence's distinguishing clause; a missing anchor fails, so a moved sentence must be re-declared.
 LISTED_CLAIMS = [
     ("paper_body.tex", "the flagged truths ($p<", {"kind": "keys"}),
     ("paper_body.tex", "also meets the flagging criterion", {"kind": "without"}),
     ("paper_body.tex", "Thus the fake-data bias exceeds the stated thresholds", {"kind": "both"}),
+    ("paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns", {"kind": "ctotal"}),
     ("sec_fived16.tex", "truths meet the listing criterion ($p<", {"kind": "keys"}),
     ("sec_fived16.tex", "truths meet it: the GiBUU", {"kind": "without"}),
     ("sec_fived16.tex", "The fake-data bias therefore exceeds the stated thresholds", {"kind": "both"}),
@@ -196,6 +198,10 @@ def load(readouts=None):
 
 def pct(x):              # a relative sigma (fraction) as a percent, two decimals
     return f"{100 * x:.2f}"
+
+
+def pct1(x):             # the paper's precision (Appendix A tables; referee round 20261104, PRD read 1 R8): one decimal
+    return f"{100 * x:.1f}"
 
 
 def p_tex(p):            # a p-value: two significant figures, scientific below 1e-3
@@ -607,8 +613,10 @@ def values(d, arm="with"):
         assert len(vals) == 16
         for c, x in zip(CELLS, vals):
             v[f"sig-{grp}-{c}"] = pct(x)
+            v[f"sig1-{grp}-{c}"] = pct1(x)
         srt = sorted(vals)
         v[f"sigmed-{grp}"], v[f"sigmin-{grp}"], v[f"sigmax-{grp}"] = pct((srt[7] + srt[8]) / 2), pct(srt[0]), pct(srt[-1])
+        v[f"sigmed1-{grp}"] = pct1((srt[7] + srt[8]) / 2)
     if arm == "with":                                     # the block's effect on the reported sigma (proposal section 1)
         wo, wi = dp["relative_sigma"]["C_total_plus_C_resp"], dp["relative_sigma"][A["dp"]]
         sw, so = sorted(wi), sorted(wo)
@@ -657,8 +665,10 @@ def values(d, arm="with"):
         assert len(vals) == 16
         for c, x in zip(CELLS, vals):
             v[f"sig-{grp}-{c}"] = pct(x)
+            v[f"sig1-{grp}-{c}"] = pct1(x)
         srt = sorted(vals)
         v[f"sigmed-{grp}"] = pct((srt[7] + srt[8]) / 2)
+        v[f"sigmed1-{grp}"] = pct1((srt[7] + srt[8]) / 2)
         v[f"sigmin-{grp}"] = pct(srt[0])
         v[f"sigmax-{grp}"] = pct(srt[-1])
     # the fake-data grades: each graded truth under C_total (F0) and C_total + C_resp (F0b)
@@ -745,8 +755,10 @@ def values(d, arm="with"):
         vals = [cr[sp][c] for c in CELLS] if isinstance(cr[sp], dict) else cr[sp]
         for c, x in zip(CELLS, vals):
             v[f"sig-{sp}-{c}"] = pct(x)
+            v[f"sig1-{sp}-{c}"] = pct1(x)
         srt = sorted(vals)
         v[f"sigmed-{sp}"] = pct((srt[7] + srt[8]) / 2)
+        v[f"sigmed1-{sp}"] = pct1((srt[7] + srt[8]) / 2)
     tot = [cr["C_total"][c] for c in CELLS] if isinstance(cr["C_total"], dict) else cr["C_total"]
     tr = [cr["C_total_resp"][c] for c in CELLS] if isinstance(cr["C_total_resp"], dict) else cr["C_total_resp"]
     rat = sorted(b / a for a, b in zip(tot, tr))
@@ -1103,9 +1115,12 @@ def _sentence(text, anchor):
     return text[start:i + (m.start() + 1 if m else len(text) - i)]
 
 
-def check_listed_claims(f0b, texts, f0b_nopl=None):
-    """Each LISTED_CLAIMS sentence agrees with these F0b readouts' listed truths; returns the failures."""
+def check_listed_claims(f0b, texts, f0b_nopl=None, f0=None):
+    """Each LISTED_CLAIMS sentence agrees with these F0b readouts' listed truths (and a "ctotal" sentence with F0's);
+    returns the failures."""
     f0b_nopl = load(NOPL_READOUTS)["f0b"] if f0b_nopl is None else f0b_nopl
+    f0 = load()["f0"] if f0 is None else f0
+    listed_f0 = {x["truth"] for x in f0["triggers"]["listed"]}
     listed = {x["truth"] for x in f0b["triggers"]["listed"]}
     without = {x["truth"] for x in f0b_nopl["triggers"]["listed"]}
     graded = {t["name"] for t in f0b["truths"] if t.get("graded")}
@@ -1129,6 +1144,8 @@ def check_listed_claims(f0b, texts, f0b_nopl=None):
             ok = keyed == listed and typed == listed and not keyed_nopl
         elif kind == "without":
             ok = (without - listed) <= typed and (typed | keyed | keyed_nopl) <= without
+        elif kind == "ctotal":
+            ok = typed == listed_f0
         elif kind == "both":
             fam = (lambda t: rule["family"] in t.lower()) if "family" in rule else (lambda t: True)
             ok = typed == {t for t in listed | without if fam(t)}
@@ -1327,7 +1344,7 @@ def self_test():
     # sentences that name the union cannot tell the arms apart and must stay silent
     fails = check_listed_claims(dn["f0b"], texts, d["f0b"])
     swapped = {f"{n}: {a!r}" for n, a, r in LISTED_CLAIMS if any(b.startswith(f"{n}: {a!r}") for b in fails)}
-    want = {f"{n}: {a!r}" for n, a, r in LISTED_CLAIMS if r["kind"] != "both"}
+    want = {f"{n}: {a!r}" for n, a, r in LISTED_CLAIMS if r["kind"] not in ("both", "ctotal")}  # ctotal reads F0
     if swapped == want:
         print(f"  ok   the arms' readouts exchanged fail exactly the {len(want)} sentences that tell them apart")
     else:
@@ -1345,6 +1362,9 @@ def self_test():
             ("drops a GiBUU truth of its family", "sec_fived16.tex", "so the GiBUU comparison carries that limitation",
              lambda t: t.replace(r"thresholds at the GiBUU hybrid truth under the reported covariance, and also",
                                  r"thresholds under the reported covariance, and also", 1)),
+            ("omits a truth F0 lists", "paper_body.tex", r"Under $C_{\mathrm{total}}$ alone, the right-hand columns",
+             lambda t: t.replace(r"the synthetic $q_3$ tilt and the NuWro $(\pT,\pPar,\Eavail)$ shape, the last by $p$ alone",
+                                 r"and the synthetic $q_3$ tilt, the last by $p$ alone", 1)),
             ("loses its anchor", "main_paper.tex", "at a GiBUU-like truth and a synthetic momentum-transfer tilt",
              lambda t: t.replace("at a GiBUU-like truth and a synthetic", "at GiBUU-like truths and a synthetic", 1))):
         planted = dict(texts, **{name: edit(texts[name])})
