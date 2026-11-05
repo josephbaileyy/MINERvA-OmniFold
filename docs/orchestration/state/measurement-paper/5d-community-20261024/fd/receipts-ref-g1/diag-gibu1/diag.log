@@ -1,0 +1,113 @@
+node login27 nproc=244 loadavg 3.36 5.00 5.96
+2026-11-05T15:40:52Z
+diag script sha256 41f10bde0eceab45014efb6eec6c356aeead5b3243b8aacedb8a2ec6faea541a
+atime before (stat): 1793891896 /pscratch/sd/j/josephrb/ref-g1-20261105/batch/units/gibu1.npz 1793891896 /pscratch/sd/j/josephrb/ibu1-20261022/run/products/D_N.npz 
+ks {"a": {"present": true, "shape": [7], "dtype": "int64"}, "b": {"present": true, "shape": [7], "dtype": "int64"}, "array_equal": true, "n_elements": 7, "n_differ": 0}
+F_fold {"a": {"present": true, "shape": [7, 153], "dtype": "float64"}, "b": {"present": true, "shape": [7, 153], "dtype": "float64"}, "array_equal": false, "n_elements": 1071, "n_differ": 35, "n_nonfinite_a": 0, "n_nonfinite_b": 0, "max_abs_diff": 5.22024357439882e-54, "max_abs_b": 8.01481035958344e-36, "max_abs_diff_over_max_abs_b": 6.513246527607342e-19, "max_diff_in_b_spacings": 2.0, "note": "max_abs_diff and max_diff_in_b_spacings are over the finite differences; a pair with a non-finite value counts in n_differ and n_nonfinite_*"}
+F_sub {"a": {"present": true, "shape": [7, 153], "dtype": "float64"}, "b": {"present": true, "shape": [7, 153], "dtype": "float64"}, "array_equal": false, "n_elements": 1071, "n_differ": 36, "n_nonfinite_a": 0, "n_nonfinite_b": 0, "max_abs_diff": 1.044048714879764e-53, "max_abs_b": 8.014085116561409e-36, "max_abs_diff_over_max_abs_b": 1.3027671901340278e-18, "max_diff_in_b_spacings": 2.0, "note": "max_abs_diff and max_diff_in_b_spacings are over the finite differences; a pair with a non-finite value counts in n_differ and n_nonfinite_*"}
+Build Dependencies:
+  blas:
+    detection method: pkgconfig
+    found: true
+    include directory: /global/homes/j/josephrb/.conda/envs/root_6_28/include
+    lib directory: /global/homes/j/josephrb/.conda/envs/root_6_28/lib
+    name: blas
+    openblas configuration: unknown
+    pc file directory: /global/homes/j/josephrb/.conda/envs/root_6_28/lib/pkgconfig
+    version: 3.9.0
+  lapack:
+    detection method: internal
+    found: true
+    include directory: unknown
+    lib directory: unknown
+    name: dep140567732183440
+    openblas configuration: unknown
+    pc file directory: unknown
+    version: 1.26.4
+Compilers:
+  c:
+    args: -march=nocona, -mtune=haswell, -ftree-vectorize, -fPIC, -fstack-protector-strong,
+      -fno-plt, -O2, -ffunction-sections, -pipe, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include,
+      -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/numpy_1707225376651/work=/usr/local/src/conda/numpy-1.26.4,
+      -fdebug-prefix-map=/global/homes/j/josephrb/.conda/envs/root_6_28=/usr/local/src/conda-prefix,
+      -DNDEBUG, -D_FORTIFY_SOURCE=2, -O2, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include
+    commands: /home/conda/feedstock_root/build_artifacts/numpy_1707225376651/_build_env/bin/x86_64-conda-linux-gnu-cc
+    linker: ld.bfd
+    linker args: -Wl,-O2, -Wl,--sort-common, -Wl,--as-needed, -Wl,-z,relro, -Wl,-z,now,
+      -Wl,--disable-new-dtags, -Wl,--gc-sections, -Wl,--allow-shlib-undefined, -Wl,-rpath,/global/homes/j/josephrb/.conda/envs/root_6_28/lib,
+      -Wl,-rpath-link,/global/homes/j/josephrb/.conda/envs/root_6_28/lib, -L/global/homes/j/josephrb/.conda/envs/root_6_28/lib,
+      -march=nocona, -mtune=haswell, -ftree-vectorize, -fPIC, -fstack-protector-strong,
+      -fno-plt, -O2, -ffunction-sections, -pipe, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include,
+      -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/numpy_1707225376651/work=/usr/local/src/conda/numpy-1.26.4,
+      -fdebug-prefix-map=/global/homes/j/josephrb/.conda/envs/root_6_28=/usr/local/src/conda-prefix,
+      -DNDEBUG, -D_FORTIFY_SOURCE=2, -O2, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include
+    name: gcc
+    version: 12.3.0
+  c++:
+    args: -fvisibility-inlines-hidden, -fmessage-length=0, -march=nocona, -mtune=haswell,
+      -ftree-vectorize, -fPIC, -fstack-protector-strong, -fno-plt, -O2, -ffunction-sections,
+      -pipe, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include, -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/numpy_1707225376651/work=/usr/local/src/conda/numpy-1.26.4,
+      -fdebug-prefix-map=/global/homes/j/josephrb/.conda/envs/root_6_28=/usr/local/src/conda-prefix,
+      -DNDEBUG, -D_FORTIFY_SOURCE=2, -O2, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include
+    commands: /home/conda/feedstock_root/build_artifacts/numpy_1707225376651/_build_env/bin/x86_64-conda-linux-gnu-c++
+    linker: ld.bfd
+    linker args: -Wl,-O2, -Wl,--sort-common, -Wl,--as-needed, -Wl,-z,relro, -Wl,-z,now,
+      -Wl,--disable-new-dtags, -Wl,--gc-sections, -Wl,--allow-shlib-undefined, -Wl,-rpath,/global/homes/j/josephrb/.conda/envs/root_6_28/lib,
+      -Wl,-rpath-link,/global/homes/j/josephrb/.conda/envs/root_6_28/lib, -L/global/homes/j/josephrb/.conda/envs/root_6_28/lib,
+      -fvisibility-inlines-hidden, -fmessage-length=0, -march=nocona, -mtune=haswell,
+      -ftree-vectorize, -fPIC, -fstack-protector-strong, -fno-plt, -O2, -ffunction-sections,
+      -pipe, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include, -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/numpy_1707225376651/work=/usr/local/src/conda/numpy-1.26.4,
+      -fdebug-prefix-map=/global/homes/j/josephrb/.conda/envs/root_6_28=/usr/local/src/conda-prefix,
+      -DNDEBUG, -D_FORTIFY_SOURCE=2, -O2, -isystem, /global/homes/j/josephrb/.conda/envs/root_6_28/include
+    name: gcc
+    version: 12.3.0
+  cython:
+    commands: cython
+    linker: cython
+    name: cython
+    version: 3.0.8
+Machine Information:
+  build:
+    cpu: x86_64
+    endian: little
+    family: x86_64
+    system: linux
+  host:
+    cpu: x86_64
+    endian: little
+    family: x86_64
+    system: linux
+Python Information:
+  path: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python
+  version: '3.11'
+SIMD Extensions:
+  baseline:
+  - SSE
+  - SSE2
+  - SSE3
+  found:
+  - SSSE3
+  - SSE41
+  - POPCNT
+  - SSE42
+  - AVX
+  - F16C
+  - FMA3
+  - AVX2
+  not found:
+  - AVX512F
+  - AVX512CD
+  - AVX512_KNL
+  - AVX512_KNM
+  - AVX512_SKX
+  - AVX512_CLX
+  - AVX512_CNL
+  - AVX512_ICL
+  - AVX512_SPR
+
+
+diag rc=0
+atime after (stat): 1793891896 /pscratch/sd/j/josephrb/ref-g1-20261105/batch/units/gibu1.npz 1793891896 /pscratch/sd/j/josephrb/ibu1-20261022/run/products/D_N.npz 
+diag.json sha256 4e34f80998809bb768f4f4cdb00d27c3cab9bb333e61d722f10f8504b26d545c
+gibu1 diag rc=0
+2026-11-05T15:40:54Z
