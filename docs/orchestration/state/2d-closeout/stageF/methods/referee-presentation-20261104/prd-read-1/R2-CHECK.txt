@@ -1,0 +1,6 @@
+dp: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl.json sha256 d6752d2c
+g: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json sha256 a19009e0
+genie_cv    total  107.18 (readout 107.18)  shape-only  102.11 (readout 102.11)  drop   5.07  GLS scale +0.098 +- 0.043  g < f in 13 of 16 cells
+genie_mec   total  229.09 (readout 229.09)  shape-only  229.00 (readout 229.00)  drop   0.09  GLS scale -0.013 +- 0.043  g < f in 13 of 16 cells
+nuwro       total  127.69 (readout 127.69)  shape-only  107.52 (readout 107.52)  drop  20.17  GLS scale +0.193 +- 0.043  g < f in 13 of 16 cells
+mnvtune_v1  total  262.06 (readout 262.06)  shape-only  261.88 (readout 261.88)  drop   0.18  GLS scale -0.018 +- 0.041  g < f in 14 of 16 cells
