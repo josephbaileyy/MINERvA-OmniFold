@@ -285,8 +285,11 @@ A mutation harness kills a mutant per reading bar, per control, and per pairing 
   compares: the keep mask, the Poisson shapes and `tmpl_w`.
 - On a crossing fixture, both paths stop at the refusal before any comparison.
 - The only residue is measure-zero: `fid_mask` excludes the last edge and `flat_index` includes it.
-- So that mutant is equivalent and is not required. The refusal test above covers the edge-crossing case
-  instead.
+- So that mutant is equivalent and is not required to be killed. The refusal test above covers the
+  edge-crossing case instead.
+- **It is still run once, and its survival is recorded** (director, 2026-11-04), so that "equivalent" is measured
+  rather than only declared. The harness lists it as an expected survivor. It fails if the mutant is killed, which
+  would refute the proof, or if it is missing from the harness's mutant list.
 
 **Lane:** ________ (the director assigns).
 
