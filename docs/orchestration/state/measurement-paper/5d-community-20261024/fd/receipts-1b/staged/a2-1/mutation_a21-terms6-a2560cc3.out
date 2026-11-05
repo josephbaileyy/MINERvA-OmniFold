@@ -1,0 +1,23 @@
+sha256 0b4c61de5e8ad0c809e385679c7e287b192339962ae55a069253b6e665e51d98  fd_1b_mc.py
+sha256 af69f632610e23b6e25c7ceea7f8e95e58049acb18e53ed061ced025a9061675  fd_1b_c2.py
+sha256 220a8bd517cd6c6255cd34abc1eec444638cf2b98867cdc0d95d5775e374f32e  fd_1b_cvdenom.py
+sha256 69cd7bd37984db1deb0d103fb81808e88fc990cc679e9a4b0a6dea16d15b208d  fd_1b_binning.py
+sha256 cd16a6b5685c32ba8cd5f8e6f3504e2b166ac43f5a5b878c444146d653435168  ../docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py
+sha256 dce2fcce9d9b2ab40980ad06804155ff805eccf9e25644e7b3fcd7e3bc6e34b2  tests/test_fd_1b_mc.py
+sha256 ea4052abe1dab87486663f7a393d27b477a6e68f64bd87a25b3e4a2bdab4ea2a  tests/test_fd_1b_c2.py
+sha256 76f3bbbcc7938db08ac4b06594cb2c92b39baddf9a35658486b1799e99e771b1  tests/test_fd_1b_cvdenom.py
+sha256 94e9d76e0b0907b102891222201968b8bb9ae6c003e9e65a86c5b8fe5c0ef823  tests/test_fd_1b_binning.py
+sha256 4fd819bcdfa878d15886925c98f4379b7991e3c8bf0bd30e8855052793e1742b  tests/test_fd_1b_a21_e2e.py
+sha256 1dd47a350eb0781ee203c8c5f5bc12995128c6a6d28b4f5bebb5184d1fce2da9  tests/test_fd_1b_tables.py
+KILLED means the suites exit 1 (a test failed); any other non-zero exit is ERROR, not a kill
+plan: 6 mutants, 0 not applicable; every anchor occurs as required
+unmutated: 226 passed, 1 skipped in 214.39s (0:03:34)
+KILLED   probe: the projection without prepare
+KILLED   probe: the projection without the terms
+KILLED   probe: the terms built per block
+KILLED   c2check: the terms built per c2_truth call
+KILLED   c2_truth: the terms given ignored
+KILLED   c2_terms: tdw's terms from wt
+unmutated, after: 226 passed, 1 skipped in 215.37s (0:03:35)
+6 of 6 applicable killed; 0 not applicable; 0 equivalent (each with its scope and proving test); 6 in all
+exit=0
