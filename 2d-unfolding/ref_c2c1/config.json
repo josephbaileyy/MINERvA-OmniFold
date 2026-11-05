@@ -25,6 +25,8 @@
            "--seed", "42", "--branch-select", "all", "--bkg-mode", "negweight-refined",
            "--refine-n-estimators", "400", "--refine-num-leaves", "31"],
   "replica_argv_extra": ["--bootstrap-seed", "{b}", "--bootstrap-streams", "three"],
+  "cpus": 64,
+  "cpus_source": "re2/run/partb_runs.tsv row ER (cpus 64); like for like, as RE2-DECLARATION.md:42 (the same thread count) and :166 (the same CPUs) require",
   "note": "E_R's and Q_R's argv: re2/run/partb_runs.tsv rows ER and S1_001..S1_300"
  },
  "publication": {
@@ -41,7 +43,7 @@
   "unfolder": "roounfold",
   "c_sim_rtol": 1e-9,
   "c_roo_rtol": 1e-9,
-  "c_fill_rtol": 1e-12
+  "c_fill_rtol": 1e-9
  },
  "c1": {
   "deterministic_keys": ["bin_construct_sample_cnt", "deterministic", "force_row_wise", "num_threads"],

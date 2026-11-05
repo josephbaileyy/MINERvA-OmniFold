@@ -19,7 +19,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TEST = HERE / "test_ref_c2c1.py"
 D, R = "ref_c2c1.py", "ref_c2c1_read.py"
-EXPECTED_TESTS = 19  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
+EXPECTED_TESTS = 20  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
 MUTATIONS = [
     # the IBU seam and the driver
     ("IBU's per-event factor not unfolded/prior", D, "    factor = np.divide(u, T, out=np.ones_like(u), where=T > 0)",
@@ -45,6 +45,11 @@ MUTATIONS = [
      "Driver.test_c_in_reads_the_input_digests_at_open_time"),
     ("the units' verified inputs not read", R, "                                     and all(v == want_in for v in unit_in.values())),",
      "                                     and True),", "Controls.test_each_control_stops_the_read"),
+    ("a unit run at another CPU count", D, "    if cpus != int(cfg[\"e_r\"][\"cpus\"]):", "    if False:",
+     "Driver.test_a_unit_refuses_at_another_cpu_count"),
+    ("the units' CPU counts not read", R,
+     '    controls["C-CPUS"] = {"pass": all(v == want_cpus for v in unit_cpus.values()), "units": unit_cpus,',
+     '    controls["C-CPUS"] = {"pass": True, "units": unit_cpus,', "Controls.test_each_control_stops_the_read"),
     ("C-REF's per-bin tie dropped", R, 'and controls["C-CV"]["pass"] and d_bin <= rd["e_r_rtol"]', 'and controls["C-CV"]["pass"]',
      "Controls.test_each_control_stops_the_read"),
     ("c1's keys not merged", D, "                params = {**params, **(extra or {})}", "                params = dict(params)",

@@ -339,6 +339,14 @@ def c_sim(driver, capture: Capture, unfolder, ks, rtol: float) -> dict:
 # ------------------------------------------------------------------------------------------- units
 
 
+def cpu_count() -> int:
+    """The CPUs this process may use (its affinity on Linux), which sets LightGBM's pool and the refit's noise."""
+    try:
+        return len(os.sched_getaffinity(0))
+    except AttributeError:  # pragma: no cover - macOS has no affinity call
+        return os.cpu_count() or 0
+
+
 def resolve_argv(cfg: dict, b: int | None) -> list[str]:
     e = cfg["e_r"]
     subs = {"$CV": cfg["inputs"]["CV"], "$MC": cfg["inputs"]["MC"]}
@@ -401,13 +409,17 @@ def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None, inputs_
             return 0
         print(f"refusing: {name} exists without a PASS done-marker (verdict {verdict})", file=sys.stderr)
         return RC_CONTROL
+    cpus = cpu_count()
+    if cpus != int(cfg["e_r"]["cpus"]):  # like for like with E_R: the refit's noise depends on the CPU count
+        print(f"refusing: {name} needs E_R's {cfg['e_r']['cpus']} CPUs, this process has {cpus}", file=sys.stderr)
+        return RC_GATE
     out.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     argv = resolve_argv(cfg, u[1])
     meta = {"schema": "ref-c2c1-unit/1", "unit": name, "argv": argv, "bootstrap_seed": u[1],
             "runner_sha256": sha256(Path(__file__).resolve()), "config_sha256": sha256(CONFIG),
             "code_sha256": cfg["code_sha256"], "slurm_job": os.environ.get("SLURM_JOB_ID"),
-            "inputs_sha256": inputs_verified}
+            "inputs_sha256": inputs_verified, "cpus": cpus}
     controls = {}
     if u[0].startswith("c2"):
         c2 = cfg["c2"]
@@ -418,9 +430,10 @@ def run_unit(driver, ohf, cfg: dict, u: tuple, out: Path, unfolder=None, inputs_
         xs = xsec_at_every_k(driver, cap, ks)
         arrays = {"ks": np.array(ks), "xsec": np.array([xs[K] for K in ks]), "unfolded": np.array([cap["traj"][K] for K in ks]),
                   "T": cap["T"], "y": cap["y"]}
-        # C-FILL: the driver's own per-event fill and extraction (hXSec2D, written at the primary K) against the
-        # recorded extraction of IBU's unfolded vector, on the data, where the factors are not 1; a mis-indexed or
-        # mis-scaled per-event factor moves it. (C-SIM's fixed point has every factor exactly 1, so it cannot.)
+        # C-FILL: the driver's own per-event fill and extraction (hXSec2D, written at the primary K) against the recorded
+        # extraction of IBU's unfolded vector, on the data, where the factors are not 1; a mis-indexed or mis-scaled
+        # factor moves cells by O(1). (C-SIM's fixed point has every factor exactly 1, so it cannot.) 1e-9, not tighter:
+        # the driver sums w f event by event and u = f sum w, so their rounding grows with a truth bin's event count.
         import ROOT
         f = ROOT.TFile.Open(str(root))
         nx, ny = len(driver.PT_EDGES) - 1, len(driver.PZ_EDGES) - 1
