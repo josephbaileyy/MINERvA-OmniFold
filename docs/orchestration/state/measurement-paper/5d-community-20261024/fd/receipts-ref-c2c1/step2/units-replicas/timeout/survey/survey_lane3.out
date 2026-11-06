@@ -1,0 +1,155 @@
+== j0 batch out: /pscratch/sd/j/josephrb/ref-c2c1-20261106/logs-replicas/fd_c2c1r_60890529.out
+[c2c1r0] porcelain --ignored lines before: 0
+[c2c1r0] start 2026-11-06T06:53:09Z job=60890529 node=nid005159 nproc=256
+[c2c1r0] fence, recorded (the director's ruling: guarded readers record, not refuse): squeue -u josephrb:
+[c2c1r0] COV2D inputs stat'd before: 303
+[c2c1r0] interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+[c2c1r0] lane 0: 20 units
+[c2c1r0] lane 1: 20 units
+[c2c1r0] lane 2: 23 units
+[c2c1r0] lane 3: 23 units
+[2026-11-06T09:23:32.404] error: *** JOB 60890529 ON nid005159 CANCELLED AT 2026-11-06T09:23:32 DUE TO TIME LIMIT ***
+-- j0 lane 0: first lines / srun msgs / time file
+{"unit": "c1_replica_b1", "seconds": 691.163
+{"unit": "c1_replica_b17", "seconds": 701.852
+{"unit": "c2_replica_b281", "seconds": 177.563
+{"unit": "c2_replica_b297", "seconds": 178.693
+ Percent of CPU this job got: 1541%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:34:39; Exit status: 0;
+-- j0 lane 1: first lines / srun msgs / time file
+{"unit": "c1_replica_b2", "seconds": 697.579
+{"unit": "c1_replica_b18", "seconds": 698.983
+{"unit": "c2_replica_b282", "seconds": 178.108
+{"unit": "c2_replica_b298", "seconds": 178.424
+ Percent of CPU this job got: 1536%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:34:25; Exit status: 0;
+-- j0 lane 2: first lines / srun msgs / time file
+{"unit": "c1_replica_b3", "seconds": 690.242
+{"unit": "c1_replica_b19", "seconds": 685.521
+{"unit": "c2_replica_b283", "seconds": 177.468
+{"unit": "c2_replica_b299", "seconds": 178.608
+ Percent of CPU this job got: 1247%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:34:06; Exit status: 0;
+-- j0 lane 3: first lines / srun msgs / time file
+1:srun: Job 60890529 step creation temporarily disabled, retrying (Requested nodes are busy)
+2:srun: Job 60890529 step creation still disabled, retrying (Requested nodes are busy)
+3:srun: Job 60890529 step creation still disabled, retrying (Requested nodes are busy)
+4:srun: Job 60890529 step creation still disabled, retrying (Requested nodes are busy)
+5:srun: Job 60890529 step creation still disabled, retrying (Requested nodes are busy)
+{"unit": "c1_replica_b4", "seconds": 681.784
+{"unit": "c1_replica_b20", "seconds": 694.987
+{"unit": "c2_replica_b76", "seconds": 177.047
+{"unit": "c2_replica_b92", "seconds": 176.725
+
+== j1 batch out: /pscratch/sd/j/josephrb/ref-c2c1-20261106/logs-replicas/fd_c2c1r_60890530.out
+[c2c1r1] porcelain --ignored lines before: 0
+[c2c1r1] start 2026-11-06T06:53:09Z job=60890530 node=nid006942 nproc=256
+[c2c1r1] fence, recorded (the director's ruling: guarded readers record, not refuse): squeue -u josephrb:
+[c2c1r1] COV2D inputs stat'd before: 303
+[c2c1r1] interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+[c2c1r1] lane 0: 22 units
+[c2c1r1] lane 1: 22 units
+[c2c1r1] lane 2: 22 units
+[c2c1r1] lane 3: 22 units
+[2026-11-06T09:23:32.407] error: *** JOB 60890530 ON nid006942 CANCELLED AT 2026-11-06T09:23:32 DUE TO TIME LIMIT ***
+-- j1 lane 0: first lines / srun msgs / time file
+{"unit": "c1_replica_b5", "seconds": 700.395
+{"unit": "c1_replica_b21", "seconds": 708.59
+{"unit": "c2_replica_b269", "seconds": 177.939
+{"unit": "c2_replica_b285", "seconds": 179.753
+ Percent of CPU this job got: 1272%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:32:34; Exit status: 0;
+-- j1 lane 1: first lines / srun msgs / time file
+{"unit": "c1_replica_b6", "seconds": 693.8
+{"unit": "c1_replica_b22", "seconds": 705.705
+{"unit": "c2_replica_b270", "seconds": 177.36
+{"unit": "c2_replica_b286", "seconds": 179.487
+ Percent of CPU this job got: 1280%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:31:55; Exit status: 0;
+-- j1 lane 2: first lines / srun msgs / time file
+{"unit": "c1_replica_b7", "seconds": 679.328
+{"unit": "c1_replica_b23", "seconds": 688.978
+{"unit": "c2_replica_b271", "seconds": 176.129
+{"unit": "c2_replica_b287", "seconds": 176.599
+ Percent of CPU this job got: 1275%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:30:41; Exit status: 0;
+-- j1 lane 3: first lines / srun msgs / time file
+1:srun: Job 60890530 step creation temporarily disabled, retrying (Requested nodes are busy)
+2:srun: Job 60890530 step creation still disabled, retrying (Requested nodes are busy)
+3:srun: Job 60890530 step creation still disabled, retrying (Requested nodes are busy)
+4:srun: Job 60890530 step creation still disabled, retrying (Requested nodes are busy)
+5:srun: Job 60890530 step creation still disabled, retrying (Requested nodes are busy)
+{"unit": "c1_replica_b8", "seconds": 692.472
+{"unit": "c1_replica_b24", "seconds": 698.561
+{"unit": "c2_replica_b96", "seconds": 177.009
+{"unit": "c2_replica_b112", "seconds": 177.145
+
+== j2 batch out: /pscratch/sd/j/josephrb/ref-c2c1-20261106/logs-replicas/fd_c2c1r_60890531.out
+[c2c1r2] porcelain --ignored lines before: 0
+[c2c1r2] start 2026-11-06T07:07:13Z job=60890531 node=nid006663 nproc=256
+[c2c1r2] fence, recorded (the director's ruling: guarded readers record, not refuse): squeue -u josephrb:
+[c2c1r2] COV2D inputs stat'd before: 303
+[c2c1r2] interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+[c2c1r2] lane 0: 22 units
+[c2c1r2] lane 1: 22 units
+[c2c1r2] lane 2: 22 units
+[c2c1r2] lane 3: 22 units
+[2026-11-06T09:37:39.200] error: *** JOB 60890531 ON nid006663 CANCELLED AT 2026-11-06T09:37:39 DUE TO TIME LIMIT ***
+-- j2 lane 0: first lines / srun msgs / time file
+{"unit": "c1_replica_b9", "seconds": 693.857
+{"unit": "c1_replica_b25", "seconds": 701.349
+{"unit": "c2_replica_b273", "seconds": 176.974
+{"unit": "c2_replica_b289", "seconds": 179.445
+ Percent of CPU this job got: 1271%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:31:56; Exit status: 0;
+-- j2 lane 1: first lines / srun msgs / time file
+{"unit": "c1_replica_b10", "seconds": 682.895
+{"unit": "c1_replica_b26", "seconds": 704.303
+{"unit": "c2_replica_b274", "seconds": 176.386
+{"unit": "c2_replica_b290", "seconds": 177.154
+ Percent of CPU this job got: 1272%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:31:21; Exit status: 0;
+-- j2 lane 2: first lines / srun msgs / time file
+{"unit": "c1_replica_b11", "seconds": 697.333
+{"unit": "c1_replica_b27", "seconds": 691.868
+{"unit": "c2_replica_b275", "seconds": 175.809
+{"unit": "c2_replica_b291", "seconds": 176.296
+ Percent of CPU this job got: 1297%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:30:52; Exit status: 0;
+-- j2 lane 3: first lines / srun msgs / time file
+1:srun: Job 60890531 step creation temporarily disabled, retrying (Requested nodes are busy)
+2:srun: Job 60890531 step creation still disabled, retrying (Requested nodes are busy)
+3:srun: Job 60890531 step creation still disabled, retrying (Requested nodes are busy)
+4:srun: Job 60890531 step creation still disabled, retrying (Requested nodes are busy)
+5:srun: Job 60890531 step creation still disabled, retrying (Requested nodes are busy)
+{"unit": "c1_replica_b12", "seconds": 679.687
+{"unit": "c1_replica_b28", "seconds": 693.721
+{"unit": "c2_replica_b100", "seconds": 176.017
+{"unit": "c2_replica_b116", "seconds": 176.596
+
+== j3 batch out: /pscratch/sd/j/josephrb/ref-c2c1-20261106/logs-replicas/fd_c2c1r_60890532.out
+[c2c1r3] porcelain --ignored lines before: 0
+[c2c1r3] start 2026-11-06T07:07:13Z job=60890532 node=nid007128 nproc=256
+[c2c1r3] fence, recorded (the director's ruling: guarded readers record, not refuse): squeue -u josephrb:
+[c2c1r3] COV2D inputs stat'd before: 303
+[c2c1r3] interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+[c2c1r3] lane 0: 22 units
+[c2c1r3] lane 1: 22 units
+[c2c1r3] lane 2: 22 units
+[c2c1r3] lane 3: 22 units
+[2026-11-06T09:37:39.203] error: *** JOB 60890532 ON nid007128 CANCELLED AT 2026-11-06T09:37:39 DUE TO TIME LIMIT ***
+-- j3 lane 0: first lines / srun msgs / time file
+{"unit": "c1_replica_b13", "seconds": 703.776
+{"unit": "c1_replica_b29", "seconds": 710.216
+{"unit": "c2_replica_b277", "seconds": 179.154
+{"unit": "c2_replica_b293", "seconds": 178.31
+ Percent of CPU this job got: 1282%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:32:02; Exit status: 0;
+-- j3 lane 1: first lines / srun msgs / time file
+{"unit": "c1_replica_b14", "seconds": 690.122
+{"unit": "c1_replica_b30", "seconds": 715.237
+{"unit": "c2_replica_b278", "seconds": 178.719
+{"unit": "c2_replica_b294", "seconds": 179.839
+ Percent of CPU this job got: 1293%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:32:11; Exit status: 0;
+-- j3 lane 2: first lines / srun msgs / time file
+{"unit": "c1_replica_b15", "seconds": 679.525
+{"unit": "c1_replica_b31", "seconds": 691.779
+{"unit": "c2_replica_b279", "seconds": 177.128
+{"unit": "c2_replica_b295", "seconds": 177.894
+ Percent of CPU this job got: 1287%; Elapsed (wall clock) time (h:mm:ss or m:ss): 1:30:56; Exit status: 0;
+-- j3 lane 3: first lines / srun msgs / time file
+1:srun: Job 60890532 step creation temporarily disabled, retrying (Requested nodes are busy)
+2:srun: Job 60890532 step creation still disabled, retrying (Requested nodes are busy)
+3:srun: Job 60890532 step creation still disabled, retrying (Requested nodes are busy)
+4:srun: Job 60890532 step creation still disabled, retrying (Requested nodes are busy)
+5:srun: Job 60890532 step creation still disabled, retrying (Requested nodes are busy)

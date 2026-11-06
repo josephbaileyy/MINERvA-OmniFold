@@ -1,0 +1,16 @@
+[c2c1r3] porcelain --ignored lines before: 0
+[c2c1r3] start 2026-11-06T07:07:13Z job=60890532 node=nid007128 nproc=256
+[c2c1r3] fence, recorded (the director's ruling: guarded readers record, not refuse): squeue -u josephrb:
+[c2c1r3]   60890531|fd_c2c1r|RUNNING|0:04|2:30:00
+[c2c1r3]   60890532|fd_c2c1r|RUNNING|0:04|2:30:00
+[c2c1r3]   60890529|fd_c2c1r|RUNNING|14:11|2:30:00
+[c2c1r3]   60890530|fd_c2c1r|RUNNING|14:11|2:30:00
+[c2c1r3]   60889690|cov2d-pseudo_AR23|RUNNING|48:04|4:00:00
+[c2c1r3]   60889950|fd1b_mc_receipt_a2|RUNNING|41:25|2:00:00
+[c2c1r3] COV2D inputs stat'd before: 303
+[c2c1r3] interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+[c2c1r3] lane 0: 22 units
+[c2c1r3] lane 1: 22 units
+[c2c1r3] lane 2: 22 units
+[c2c1r3] lane 3: 22 units
+[2026-11-06T09:37:39.203] error: *** JOB 60890532 ON nid007128 CANCELLED AT 2026-11-06T09:37:39 DUE TO TIME LIMIT ***

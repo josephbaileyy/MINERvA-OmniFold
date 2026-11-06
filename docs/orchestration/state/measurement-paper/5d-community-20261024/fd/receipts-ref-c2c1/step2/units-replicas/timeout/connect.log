@@ -1,0 +1,35 @@
+node login03 nproc=244 loadavg 35.66 18.55 25.09
+2026-11-06T06:38:09Z
+connect script sha256 b9642fcf843399fbdd7e3eedc3d7d51580831e70ba1eff4f8c602a37acd01f83
+fence, recorded (the director's ruling of 2026-11-06): squeue -u josephrb at 2026-11-06T06:38:09Z:
+  60889690|cov2d-pseudo_AR23|RUNNING|19:00|4:00:00
+  60889950|fd1b_mc_receipt_a2|RUNNING|12:21|2:00:00
+gate: CENTRALS-DONE {"job": "60889566", "rcs": "0 0 0", "pass_markers": 3, "porcelain_after": 0}
+HEAD 77d76cfc2d621f8faa010b75006811868494652a; porcelain --ignored lines before: 0
+bound blobs: 8 checked, 0 mismatches
+libRooUnfold.so: source sha256 (O_NOATIME read) 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd; copy 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd; config.json 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd
+COV2D inputs listed for the jobs' stat: 303
+== price: 4 x 02:30:00 on 1 node = at most 10.0 node-h; spent 0.3839; cap 12.5
+== iris
+m3246               2215.1            10000.0     18024.6      20000.0
+balance_node_h=1975.4 half=987.7 price=10.0
+lanes.tsv sha256 7b737d0c4bb5e547adae0376f9c50da00cc1ec9a08d7dc2c892804e0b968524c; units 350
+refc2c1_replicas_job.sbatch sha256 4f38fc64436448746c3b026ca34b201d4ee9e244ac93e0d981a3420225ac4b2d
+squeue --me before:
+60889690 cov2d-pseudo_AR23 RUNNING
+60889950 fd1b_mc_receipt_a2 RUNNING
+sbatch j0 rc=0: Submitted batch job 60890529
+j0 job 60890529 scontrol TimeLimit=02:30:00 (declared 02:30:00)
+sbatch j1 rc=0: Submitted batch job 60890530
+j1 job 60890530 scontrol TimeLimit=02:30:00 (declared 02:30:00)
+sbatch j2 rc=0: Submitted batch job 60890531
+j2 job 60890531 scontrol TimeLimit=02:30:00 (declared 02:30:00)
+sbatch j3 rc=0: Submitted batch job 60890532
+j3 job 60890532 scontrol TimeLimit=02:30:00 (declared 02:30:00)
+60890532 fd_c2c1r PENDING 0:00 2:30:00 1 regular_1 m3246
+60890531 fd_c2c1r PENDING 0:00 2:30:00 1 regular_1 m3246
+60890530 fd_c2c1r PENDING 0:00 2:30:00 1 regular_1 m3246
+60890529 fd_c2c1r PENDING 0:00 2:30:00 1 regular_1 m3246
+porcelain --ignored lines after submission: 0
+ref-c2c1 replicas connect rc=0
+2026-11-06T06:39:04Z
