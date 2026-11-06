@@ -1,0 +1,85 @@
+2,5c2,5
+< # REF-C2C1's test run with RooUnfold, attempt 2 (the director's ruling of 2026-11-05 on #787; attempt 1's RUN FAIL is
+< # fd/receipts-ref-c2c1/code-cluster/attempt-1/, #793), on a login node, 0 node-h: a fresh
+< # clean clone at #787's head H, with the eight files of 2d-unfolding/ref_c2c1/ verified by blob
+< # (run_tests.sh is a7dd2373... by sha256, EXPECT=29); libRooUnfold.so (0b34e1e3...)
+---
+> # REF-C2C1's test run with RooUnfold, attempt 5: the C-PUB operand PR's head H (the director's ruling of 2026-11-06 on
+> # the 3b control STOP; attempts 1-4 are fd/receipts-ref-c2c1/code-cluster/attempt-1..4/), on a login node, 0 node-h: a
+> # fresh clean clone at H, with the eight files of 2d-unfolding/ref_c2c1/ verified by blob
+> # (run_tests.sh is a8fbffd7... by sha256, EXPECT=33); libRooUnfold.so (0b34e1e3...)
+9,11c9,15
+< # run_suite.py check from unittest's result object) "RUN PASS: 29 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok".
+< # COV2D fence (#798): refuses before writing anything if any cov2d-* job is queued or running (or squeue fails); stats
+< # (no read) the flux constraint, E_R's products and the publication before and after, and STOPs if any atime moved.
+---
+> # run_suite.py check from unittest's result object) "RUN PASS: 33 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok".
+> # Then, after the suite and never beside it, the mutation harness (ref_c2c1_mutation.py) in the same environment and
+> # pinning; PASS also needs its rc 0 and "MUTATION CHECK :: PASS (45 mutations)", unittest's own summary "Ran 33
+> # tests in" (once) and "OK" (no skips), and porcelain 0. Each run prints its child's env (PYTHONDONTWRITEBYTECODE=1).
+> # COV2D fence: a recorded line (the director's ruling of 2026-11-06 for guarded readers: the tests read only their own
+> # temporary fixtures and the repository), the full squeue at launch; stats (no read) the flux constraint, E_R's products
+> # and the publication before and after, and STOPs if any atime moved.
+17,18c21,22
+< H=9f593aa5abc5760e6ca96f22e0fc912ce93164a3
+< P=/pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-9f593aa5
+---
+> H=5938a1679e25f64e63ea1bbd4826008f43de4360
+> P=/pscratch/sd/j/josephrb/ref-c2c1-20261106/tests-5938a167
+24,25c28
+< fence=$(squeue -u josephrb -h -o '%i|%j|%T') || bail                  # the COV2D fence (#798)
+< printf '%s\n' "$fence" | awk -F'|' '$2 ~ /^cov2d-/ {f=1} END {exit f}' || bail
+---
+> fence=$(squeue -u josephrb -h -o '%i|%j|%T|%M|%l') || bail           # the COV2D fence, recorded below
+38c41,42
+< echo "COV2D fence: no cov2d-* job in squeue at $(date -u +%FT%TZ)"
+---
+> echo "COV2D fence, recorded (the director's ruling of 2026-11-06): squeue -u josephrb at $(date -u +%FT%TZ):"
+> printf '%s\n' "$fence" | sed 's/^/  /'
+57c61
+< 96dbbaa223a3dec4ceba80686f07721e87ec9045 2d-unfolding/ref_c2c1/config.json
+---
+> f27545e9ca70382a318eb284a0c9ea01cc0e5891 2d-unfolding/ref_c2c1/config.json
+59,60c63,64
+< 0e80efd2d927390e4360cf10134e5b74e7554deb 2d-unfolding/ref_c2c1/ref_c2c1_mutation.py
+< e51367aa3d9d68b8c89f76cd7f556c70bd4a226f 2d-unfolding/ref_c2c1/ref_c2c1_read.py
+---
+> a2ce6e48a0d3b65b3d7467bd7b72dfd0cf436817 2d-unfolding/ref_c2c1/ref_c2c1_mutation.py
+> 1baf74b5163ff36e22fb66c4b13dc17c6a92d400 2d-unfolding/ref_c2c1/ref_c2c1_read.py
+62,63c66,67
+< f4dbaf1fe57bcf4ab0f128d70c1725aa64ae8d29 2d-unfolding/ref_c2c1/run_tests.sh
+< 0d2f1a2445fe22130be94635cabb280837be4edb 2d-unfolding/ref_c2c1/test_ref_c2c1.py
+---
+> 1d3f971f2b2a3a0cc9cf477b6f11061d8f35f07e 2d-unfolding/ref_c2c1/run_tests.sh
+> 4633f384392cbb7d18e159d72bffbe81aca19a8d 2d-unfolding/ref_c2c1/test_ref_c2c1.py
+67,68c71,72
+< [ "$rt" = a7dd23736278bc4201dfdc2251b3398ea354493196b2ed9066ec9ea750f1b5af ] || bad=$((bad + 1))
+< grep -qx 'EXPECT=29' "$D/2d-unfolding/ref_c2c1/run_tests.sh" || { echo "EXPECT is not 29"; bad=$((bad + 1)); }
+---
+> [ "$rt" = a8fbffd781b45e9cbead9d6f940603165662d21cd50c52b5c736c17a649f8c12 ] || bad=$((bad + 1))
+> grep -qx 'EXPECT=33' "$D/2d-unfolding/ref_c2c1/run_tests.sh" || { echo "EXPECT is not 33"; bad=$((bad + 1)); }
+78c82
+<   export LD_LIBRARY_PATH="$P/libcopy:${LD_LIBRARY_PATH:-}" TMPDIR="$P/tmp"; mkdir -p "$TMPDIR"
+---
+>   export LD_LIBRARY_PATH="$P/libcopy:${LD_LIBRARY_PATH:-}" TMPDIR="$P/tmp" PYTHONDONTWRITEBYTECODE=1; mkdir -p "$TMPDIR"
+79a84
+>   taskset -c 0-7 nice -n 19 "$PY" -c 'import os; print("child env: PYTHONDONTWRITEBYTECODE=%s OMP_NUM_THREADS=%s affinity=%s nice=%d" % (os.environ.get("PYTHONDONTWRITEBYTECODE"), os.environ.get("OMP_NUM_THREADS"), sorted(os.sched_getaffinity(0)), os.nice(0)))'
+83a89,100
+> n=$(git -C "$D" status --porcelain --ignored | wc -l); echo "porcelain --ignored lines after the suite: $n"
+> [ "$n" -eq 0 ] || { echo "STOP: the deploy changed"; finish 9; }
+> (
+>   eval "$(/global/common/software/nersc/pe/conda/24.10.0/Miniforge3-24.7.1-0/bin/conda shell.bash hook)"
+>   conda activate "$HOME/.conda/envs/root_6_28" || { echo "STOP: activation failed"; exit 2; }
+>   export LD_LIBRARY_PATH="$P/libcopy:${LD_LIBRARY_PATH:-}" TMPDIR="$P/tmp" REF_C2C1_ROOUNFOLD="$P/libcopy/libRooUnfold.so" PYTHONDONTWRITEBYTECODE=1
+>   echo "== the mutation harness: taskset -c 0-7, nice 19, $(date -u +%FT%TZ)"
+>   taskset -c 0-7 nice -n 19 "$PY" -c 'import os; print("child env: PYTHONDONTWRITEBYTECODE=%s OMP_NUM_THREADS=%s affinity=%s nice=%d" % (os.environ.get("PYTHONDONTWRITEBYTECODE"), os.environ.get("OMP_NUM_THREADS"), sorted(os.sched_getaffinity(0)), os.nice(0)))'
+>   cd "$D" && taskset -c 0-7 nice -n 19 "$PY" -B 2d-unfolding/ref_c2c1/ref_c2c1_mutation.py
+> )
+> mrc=$?
+> echo "ref_c2c1_mutation.py rc=$mrc $(date -u +%FT%TZ)"
+89c106,108
+< grep -qxF 'RUN PASS: 29 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok' "$P/test.log" && [ $rc = 0 ] || { echo "RUN FAIL (to the director, unrepaired)"; finish 1; }
+---
+> grep -qxF 'RUN PASS: 33 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok' "$P/test.log" && [ $rc = 0 ] || { echo "RUN FAIL (to the director, unrepaired)"; finish 1; }
+> [ "$(grep -c '^Ran 33 tests in ' "$P/test.log")" = 1 ] && grep -qx 'OK' "$P/test.log" || { echo "RUN FAIL: unittest's own summary is not 'Ran 33 tests' and 'OK' (to the director, unrepaired)"; finish 1; }
+> grep -qxF 'MUTATION CHECK :: PASS (45 mutations)' "$P/test.log" && [ $mrc = 0 ] || { echo "MUTATION FAIL (to the director, unrepaired)"; finish 1; }
