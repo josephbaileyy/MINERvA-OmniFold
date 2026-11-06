@@ -9948,6 +9948,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/cod
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/AGY-PROMPT-SIBLINGS.txt	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/AGY-PROMPT.txt	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/DIRECTOR-SIBLINGS-RULING.txt	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/HEAD-VERIFICATION.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/IMPORT-CLOSURE.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/LOCAL-DRY-RUN.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/MUTATIONS.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no

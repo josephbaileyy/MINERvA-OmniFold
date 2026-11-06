@@ -22,6 +22,6 @@
   "style": "ruff check passed",
   "typing": "mypy --strict --ignore-missing-imports: producer and mutation harness passed",
   "run_scope": "local fixtures only; no cluster contact",
-  "head_rerun": "repeat suite and harness at final PR HEAD; final head is recorded in PR description to avoid a self-referential receipt commit",
+  "head_rerun": "Completed at 98a1fea4e4fe550420f0fa3c01fe2f1346484d59; exact outputs and source blob identities are bound in HEAD-VERIFICATION.json. The subsequent receipt commit changes no executable code.",
   "focused_sibling_review": "8549c3db-406b-43cf-8bb6-a8596f30d715"
 }

@@ -107,6 +107,11 @@ which remains the publication owner's separate decision.
 
 ## Local evidence and limits
 
+`HEAD-VERIFICATION.json` binds the completed suite and full mutation rerun at
+PR head `98a1fea4e4fe550420f0fa3c01fe2f1346484d59`, including exact executable
+blob identities and output digests. Its record-checks CI passed. The subsequent
+receipt-only commit records these outputs and changes no executable bytes.
+
 - `SUITE.txt`: 71 passed. `MUTATIONS.txt` and `MUTATIONS.json`: all 87 REQUIRED
   mutants killed, complete. Mutants run in isolated module copies. Import and
   collection failures do not count as kills; actual failing test assertions do.
