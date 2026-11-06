@@ -126,3 +126,39 @@ private staged copy, ends (c).**
    (11-05).
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 2, addendum A2, revision 2: the quota check at submission and the fire tests' timing (director, 2026-11-06)
+
+**Binds** `COV2D-ADDENDUM-A2.md`, sha256 `79de07edfacb8aa6972307910d4581484e47319d7336c5a19f5e4e2361e7d762`, and its code, as
+merged in #817 at:
+
+**M = `a60547692df5f963e428cdfe4661fc51ab785b7b`**
+
+(code commit `94544e0b`; `git diff 94544e0b a6054769 -- 2d-unfolding/cov2d/` is empty.) It **supersedes A2's M line
+above** (`cf533377`) for every stage from here.
+
+**What led to it.** Stage 1 at `cf533377` FAILED (receipt #812). It wasn't a STOP: no production guard fired and nothing
+was graded. There were two causes:
+- step A's fire test didn't fire on Linux, a test-timing artefact of coarse atime ticks;
+- showquota crashes on compute nodes, since `mmlsquota` is absent there, so step A's in-job quota check would have refused
+  every run.
+
+**What changed, exactly the director's unfreeze:**
+- both fire tests sleep 0.25 s before the plain read;
+- the quota check moves to the pseudo-data job's gate at submission, on the login node. It stats the seven staged inputs
+  and requires showquota headroom of at least 2× their bytes, and it fails closed if showquota can't be read. Step A's
+  in-job call is removed;
+- TMPDIR is reset in the job scripts.
+
+The audit (coverage-5b-audit) found no blocker: its own runs gave 87 tests passed and 12 skipped, and 3 of 3 new mutants
+killed. The receipts at `94544e0b` show 184 tests, 0 skipped, and 92 of 92 mutants killed, 39 of them REQUIRED.
+
+**Rulings.**
+1. **A2 revision 2 is bound at M.** The code is frozen unless a run STOPs.
+2. **The fixed conditional sequence of A2's ruling 3 restarts at stage 1 at this M,** with a fresh deploy,
+   `cov2d-deploy-a6054769`. The `cf533377` deploy stays as left. Stage 1's compute-node `a2quota` job is dropped, and the
+   login-node quota check takes its place.
+3. **Everything else in A2's binding stands:** §6's classification, the STOP count of two, the third-STOP rule, and the
+   price.
+
+Nothing is submitted, deposited or tagged.
