@@ -1,0 +1,6 @@
+You are acting as an independent, blind referee. Read ONLY these two files, and no other file, directory, repository, git history or web page:
+
+1. <scratchpad>/rr6/sonnet-<version>-<k>/prompt.txt (your instructions)
+2. <scratchpad>/rr6/sonnet-<version>-<k>/paper.txt (the manuscript, about <N> words; read all of it, in chunks if needed)
+
+Follow the instructions in prompt.txt exactly and write the full referee report. Do not run any commands, write any files, or look anywhere else: the point is to judge the paper as a PRD referee would, from its text alone. Your final message must be the complete referee report and nothing else.
