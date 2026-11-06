@@ -144,3 +144,53 @@ read.stdout is one line of axis labels. The director read both.
    11.0587 of 12.5 node-h, and the re-read adds 0.
 
 Nothing is submitted, deposited or tagged.
+
+## Director's binding (2026-11-06): the C-PUB fix at M'
+
+**M' = `af70e9c4685acdf2d64e30d812942bea1e7ccb0c`** (the merge of #840; code head `5938a167`)
+
+**What the director checked:**
+- **coverage-5b-audit's GO** on #840 and its test receipt #841, with no blockers:
+  - the operand equals `receipt_model_chi2.json:190` @ `3c2c3c0c`, and the source's E_R and covariance shas equal
+    the config's pins;
+  - the source check refuses before any distance, both ways;
+  - the precision test flags only `c_pub`;
+  - 45 of 45 mutants are killed, both REQUIRED ones among them;
+  - `ref_c2c1.py` is unchanged and does not read `c_pub`;
+  - the auditor found no other control comparing against a rounded printed number.
+- **Test receipt #841:** test connect ec6ba93f on login04, at 0 node-h, ran at #840's head. Its output:
+  - unittest's own "Ran 33 tests" and "OK";
+  - "MUTATION CHECK :: PASS (45 mutations)";
+  - porcelain 0 throughout, and the 303-path COV2D watch unchanged.
+- **The blobs at M',** read from `git rev-parse M':<path>`:
+
+| file | blob at M' |
+|---|---|
+| `2d-unfolding/ref_c2c1/ref_c2c1.py` | `128b4e00505f82153d1d400a482b7b1a5a3d56be` |
+| `2d-unfolding/ref_c2c1/ref_c2c1_read.py` | `1baf74b5163ff36e22fb66c4b13dc17c6a92d400` |
+| `2d-unfolding/ref_c2c1/config.json` | `f27545e9ca70382a318eb284a0c9ea01cc0e5891` |
+| `2d-unfolding/ref_c2c1/test_ref_c2c1.py` | `4633f384392cbb7d18e159d72bffbe81aca19a8d` |
+| `2d-unfolding/ref_c2c1/ref_c2c1_mutation.py` | `a2ce6e48a0d3b65b3d7467bd7b72dfd0cf436817` |
+| `2d-unfolding/ref_c2c1/run_suite.py` | `f2711d4ea81141205f6ef8a450707051713faf20` |
+| `2d-unfolding/ref_c2c1/run_tests.sh` | `1d3f971f2b2a3a0cc9cf477b6f11061d8f35f07e` |
+| `2d-unfolding/ref_c2c1/test_run_suite.py` | `990ec7894a982709298ce3550ffa3fa1e73fe1b9` |
+
+**Rulings.**
+1. **Step two's read is bound at M'.**
+   - The units (the centrals, the 350 replicas and the cells) stand on their records at `77d76cfc`. `ref_c2c1.py` is
+     byte-identical at M', and the units' `config_sha256` names `77d76cfc`'s config, which differs only in `c_pub`. The
+     read never compares that field.
+   - The 3b receipt states both points.
+2. **The read connect** is re-pinned to M' and its eight blobs, with a fresh read directory, `$O/read-2` and
+   `$O/deploy-read-2`. The stopped read's `$O/read` is left as it is.
+   - `cells.root` is copied from `$O/read` by O_NOATIME, required to hash to `f06e4a26`, and gated against main as
+     before.
+   - Everything else is unchanged: the five-record gate, the watch, porcelain, and launch from main's bytes with the
+     login re-hash, at 0 node-h.
+3. **coverage-5b-audit checks the re-pinned connect's delta** before 3b. On its GO, 3b runs without the director.
+   - A PASS: the readout goes as a receipt PR, unopened by the lane, and the director reads it from main.
+   - A STOP: it comes to the director unrepaired.
+4. **The staged copies stay** until the read's receipt is merged. Stage 4's deletion then follows under its ledger
+   row.
+
+Nothing is submitted, deposited or tagged.
