@@ -827,8 +827,13 @@ as A2.1's priced prerequisite. Stages 1 and 2 have PASSed, and the director acce
   00:32:24Z. Both C2-GATE PASS, "option (1)". 17,563 s and 17,905 s elapsed, 9.853 node-h. 0 of 1147 declared-input
   atimes moved for each.
 - **Stage 2** (db61cd92, `b3/merge-run/`): C2-GATE-MERGED PASS at both truths. gate.json `6a832bf0…`.
+- **Stage 3, first attempt** (7565035e, `b3/receipt-run-60889950/`): INVALID, accepted by the director as recorded
+  (2026-11-06), not a STOP: nothing ran. connect-receipt `16968494` at M3 `8dd16e04` passed every pre-launch check.
+  Its step argument `--mem=480G` (491520M) exceeded the job's allocation (487802M), so the step never started. The
+  job was cancelled after 01:40:53, 1.681 node-h, which counts against the ceiling. The readout gave INVALID (no
+  receipt.json), with all 20135 source stats unchanged.
 
-Nothing after stage 2 has run. **Binding 3's code is frozen at `9b87a85c`** (the director, 2026-11-06): nothing in it
+Nothing else after stage 2 has run. **Binding 3's code is frozen at `9b87a85c`** (the director, 2026-11-06): nothing in it
 changes unless a stage STOPs. The freeze covers all five gate files (below), not only the fd_1b ones.
 
 **Scope: the no-plug-in path** (the director's ruling on the auditor's B1, option (a), 2026-11-06):
@@ -872,6 +877,18 @@ changes unless a stage STOPs. The freeze covers all five gate files (below), not
   2026-11-06): the COV2D fence covers plain readers of COV2D inputs, and every 1B read is O_NOATIME under the guard.
   It replaced `f2b5b2cb`, which refused on any queued cov2d-* job. The connect requires that it be M3's own copy, so
   M3 is the commit that carries it, after the pin's.
+- **Stage 3's v2** (the director, 2026-11-06, on the INVALID job 60889950): b3/connect-receipt.sh `c457d5dd`, run at
+  M4, the branch commit that carries it (M3 plus this script and this note; the readout `322216ef` is unchanged).
+  It changes three things:
+  - the step memory is 448G;
+  - before the submission, every srun step's CPUs and memory must fit the partition's node: `sinfo` CPUs and
+    `MaxMemPerNode`, summed over the table lines run at once. After the submission, the job's Partition and its
+    ReqTRES memory are checked, and the job is cancelled on a miss;
+  - the generator fixes W = a2, so the INVALID a2 is first moved to `a2-invalid-60889950`. The move happens only if a2
+    holds no receipt.json, its readout.log records INVALID for 60889950, and sacct has that job ended.
+
+  **Every later b3 connect** (S1-0, S1-0b, the smoke run, the bulk waves) carries the same check before it submits,
+  and the same check after (the director, 2026-11-06).
 - **The estimator:** configuration (e) (`R`). B4 resolved NONE_PASS, terminal (#785; fd_stab.json `653356ae…`).
 - **The records:**
   - the large-sample calibration, rerun2 (job 60857361; calibration.json `66f2ae44…`, npz `9047a6f7…`);
@@ -891,7 +908,7 @@ checked by `b3/guard_scan.py`, which fails on an empty population.
 |---|---|---|---|
 | 1 | c2check at N, G18 and AR23, one job each (`b3/connect-c2check.sh <truth>`, `-t 07:30:00`, 1 BLAS thread), which may run alongside | each part's gate record with verdict PASS | 7.5 + 7.5 (4.92 h each projected) |
 | 2 | `c2check-merge` of the two parts, by digest, on a login node under the guard (`b3/connect-merge.sh`) | the merged gate record: verdict PASS, "option (1)" at both truths, both backstops passing | 0 |
-| 3 | the gate pin committed (binding 3 step 2) on the branch, which is M3; then one connect (`b3/connect-receipt.sh M3`): a fresh deploy at M3, every bound blob, the guard's tests on the login node (RealFlag among them), the balance gate, the stat-before and the tables at `--plugin no`, then the receipt job, `-t 02:00:00` (amendment 2 §12 items 1–2); after the job, `b3/connect-receipt-readout.sh JOB` | the receipt's readout PASS, with no atime moved and the stat-after unchanged | ≤ 2.0 |
+| 3 | the gate pin committed (binding 3 step 2) on the branch, which is M3; then one connect (`b3/connect-receipt.sh M4`, v2, at M4 = M3 + v2): a fresh deploy at M4, every bound blob, the guard's tests on the login node (RealFlag among them), the balance gate, the stat-before and the tables at `--plugin no`, then the receipt job, `-t 02:00:00` (amendment 2 §12 items 1–2); after the job, `b3/connect-receipt-readout.sh JOB` | the receipt's readout PASS, with no atime moved and the stat-after unchanged | ≤ 2.0 |
 | 4 | S1-0 (8 items, no capture), its walls and controls; then S1-0b, its walls, then `clipcheck` (amendment 2 §12 items 3–4) | S1-0's walls PASS with every control passing; S1-0b's walls PASS; `clipcheck` PROCEED | 1.0 + 1.0 |
 | 5 | the smoke run, below | every check below PASS | 1.5 |
 | 6 | the bulk: 6 one-node jobs, in waves of at most 3 | **two records, both required** (the director, 2026-11-05): the smoke run's PASS, and the auditor's committed written acknowledgement (amendment 2 §12 item 5), a separate wait. Then each wave's `walls` PASS (no REPRICE) before the next | 48.0 |
@@ -945,12 +962,16 @@ run fd_1b_mc unguarded) are not reused.
 | item | node-h |
 |---|---:|
 | spent: jobs 60771025 (0.361), 60783756 (0.721), 60805733 (0.761), 60857361 (0.718), 60859504 (0.438), 60870880 (0.485) | 3.484 |
-| c2check, G18 and AR23 (projected 9.84) | 15.0 |
-| the receipt | 2.0 |
+| c2check, G18 and AR23: spent, jobs 60880987 and 60880988 (cap 15.0, projected 9.84) | 9.853 |
+| the receipt's first attempt: spent, job 60889950, INVALID | 1.681 |
+| the receipt (v2) | 2.0 |
 | S1-0 and S1-0b | 2.0 |
 | the smoke run | 1.5 |
 | the bulk, 6 jobs × 8:00:00 | 48.0 |
-| **total** | **71.98** |
+| **total** | **68.518** |
+
+At binding, with c2check at its cap, the total was 71.98. The rows above replace each spent cap with its measured cost
+(2026-11-06).
 
 **The ceiling is 72.0 node-h at caps** (the director, 2026-11-06, replacing 97.0, which mixed the plug-in's bulk and
 capture into a gate that excludes the plug-in; the auditor's B2). The director reports it to Joseph with this population
