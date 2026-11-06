@@ -55,7 +55,7 @@ CONSTRAINT = ("/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MPara
 CONSTRAINT_SHA256 = "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172fc0c2"
 UNI_SHA256 = "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418"   # partb_readout/preflight/inputs.stat:2
 CV_SHA256 = "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"    # the CFS CV, RE2-DECLARATION.md:145
-STAGE_HEADROOM = 2.0    # A2 (the director's ruling): stop before staging unless quota headroom >= 2x what is staged
+STAGE_HEADROOM = 2.0    # A2: a pseudo-data job's submission is refused unless quota headroom >= 2x what it stages
 SETTLE_WAIT, SETTLE_TRIES = 5.0, 6    # A2 (D2): the copies' atime must read the same twice, >= 5 s apart, before guarding
 
 
@@ -258,7 +258,8 @@ _UNITS = {"B": 1, "KiB": 1 << 10, "MiB": 1 << 20, "GiB": 1 << 30, "TiB": 1 << 40
 
 
 def read_quota() -> str:
-    """NERSC's showquota, whose pscratch row reads used and limit (as in RE-2's partb_readout/quota_*.txt)."""
+    """NERSC's showquota, whose pscratch row reads used and limit (as in RE-2's partb_readout/quota_*.txt). On a login
+    node: on a compute node showquota fails (it calls GPFS's mmlsquota, absent there; A2 stage 1, attempt 1)."""
     import subprocess
     r = subprocess.run(["showquota"], capture_output=True, text=True, timeout=120)
     return r.stdout + r.stderr

@@ -15,6 +15,7 @@
 # run, for section 8's REPRICE trigger). DRYRUN=1 prints each srun line instead (tests).
 set -eo pipefail
 source "$C/2d-unfolding/cov2d/jobs/cov2d_env.sh"
+export TMPDIR=$O/tmp/${SLURM_JOB_ID:-dry}; mkdir -p "$TMPDIR"   # nothing inherited from the submitting shell
 RUNS=$O/tables/runs_$TRUTH.tsv JOBS=$O/tables/jobs_$TRUTH.tsv
 export D=$(pseudo_dir "${DATA_TRUTH:-$TRUTH}")/b   # the pilot reads G18's data files (DATA_TRUTH=G18)
 if [ "${DRYRUN:-0}" != 1 ]; then

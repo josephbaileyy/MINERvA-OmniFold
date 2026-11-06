@@ -27,9 +27,6 @@ import cov2d_pseudo as ps  # noqa: E402
 import cov2d_receipt as rc  # noqa: E402
 import noatime_emu  # noqa: E402
 
-ROOMY = "|    pscratch |    1.00TiB |    20.00TiB |   5.0% |"      # showquota's pscratch row (RE-2's record's form)
-FULL = "|    pscratch |   20.00TiB |    20.00TiB | 100.0% |"
-
 try:
     import uproot  # noqa: F401
     HAVE = True
@@ -96,7 +93,7 @@ class PseudoA(unittest.TestCase):
         cls.d = Path(cls.td.name)
         cls.truth, cls.sig, cls.bkg = build(cls.d)
         cls.patches = [mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True),
-                       mock.patch.object(ps, "read_pot", lambda f: POT), mock.patch.object(c, "read_quota", lambda: ROOMY),
+                       mock.patch.object(ps, "read_pot", lambda f: POT),
                        mock.patch.object(c, "SETTLE_WAIT", 0.0)]
         for p in cls.patches:
             p.start()
@@ -272,6 +269,7 @@ class PseudoA(unittest.TestCase):
         real = ps.natures
 
         def natures(*a):        # mid-step, after the guard's first reading: a plain read of the private copy
+            time.sleep(0.25)    # in a later clock tick than the copy's creation (A2 stage 1, attempt 1)
             with open(copy) as fh:
                 fh.read()
             return real(*a)
@@ -314,12 +312,6 @@ class PseudoA(unittest.TestCase):
         self.assertEqual(sorted(p.name for p in (self.d / "nosettle").glob("counts_*.npz")), [])
         self.assertIn("REFUSED", text)
 
-    def test_staging_is_refused_without_twice_the_headroom(self):
-        with mock.patch.object(c, "read_quota", lambda: FULL), self.assertRaises(c.Refusal) as e:
-            self.run_main("noroom", 200_000)
-        self.assertIn("before staging", str(e.exception))
-        self.assertFalse((self.d / "noroom" / "stage").exists())
-
 
 @unittest.skipUnless(HAVE, "needs uproot")
 class Guards(unittest.TestCase):
@@ -328,7 +320,7 @@ class Guards(unittest.TestCase):
         self.addCleanup(self.td.cleanup)
         self.d = Path(self.td.name)
         for p in (mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True),
-                  mock.patch.object(ps, "read_pot", lambda f: POT), mock.patch.object(c, "read_quota", lambda: ROOMY),
+                  mock.patch.object(ps, "read_pot", lambda f: POT),
                   mock.patch.object(c, "SETTLE_WAIT", 0.0)):
             p.start()
             self.addCleanup(p.stop)

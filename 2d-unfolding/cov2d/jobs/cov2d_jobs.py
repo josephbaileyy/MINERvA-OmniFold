@@ -334,6 +334,16 @@ def order(job: str, truth: str, committed: dict, submitted: set, M: str, digests
     return need
 
 
+def staged_inputs(truth: str) -> list:
+    """The shared files a pseudo-data job for ``truth`` stages (A2 section 3): step A's four, then step B's three."""
+    import cov2d_pseudo_write as pw
+    import cov2d_receipt as rc
+    import cov2d_writer as cw
+    import fd_1b_toys
+    return ([rc.UNI, cw.CV, c.CONSTRAINT, str(Path(rc.PREP) / fd_1b_toys.TRUTHS[rc.TUNES[truth]])]
+            + [path for path, _ in pw.PINS.values()])
+
+
 DELETIONS_HEADER = "utc\tpath\tsha256\tsize\tmtime\tinode\tstat_match\tcondition"   # RE-2's B9 form (deletions.tsv)
 
 
@@ -433,6 +443,10 @@ def main(argv_=None) -> int:
                 row = ln.split("\t")
                 limits[row[0]] = row[6]
         rec = gate(Path(a.sacct).read_text(), limits, a.want)
+        if a.want.startswith("pseudo_"):   # A2, the director's option (c): the quota at submission, on the login node
+            need = sum(os.stat(p).st_size for p in staged_inputs(a.want[len("pseudo_"):]))    # stat only: no read
+            rec["staged_bytes"], rec["quota_problem"] = need, c.headroom_problem(need, c.read_quota())
+            rec["pass"] = rec["pass"] and rec["quota_problem"] is None
         print(json.dumps(rec))
         return 0 if rec["pass"] else 3
     env = {k: os.environ.get(k[1:], "") for k in ("$CV", "$ACT", "$UNI", "$MC", "$FLUXU", "$D", "$K2A")}
