@@ -27,7 +27,7 @@ STAND_IN = os.O_NOFOLLOW
 # every binding-3 script in b3/ and the exact number of guarded 1B lines it must hold: a script not listed fails, so a
 # new one cannot go uncounted; a connect script that runs no 1B module itself holds 0; the population's total must be
 # positive, so an emptied b3/ cannot pass vacuously
-EXPECTED_B3 = {"sbatch-c2check.sh": 1, "connect-c2check.sh": 0}
+EXPECTED_B3 = {"sbatch-c2check.sh": 1, "connect-c2check.sh": 0, "connect-merge.sh": 1}
 
 
 def run_py(code: str, *args, cwd=None) -> subprocess.CompletedProcess:
