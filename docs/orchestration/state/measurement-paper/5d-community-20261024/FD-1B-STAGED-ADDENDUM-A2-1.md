@@ -473,7 +473,10 @@ that can feed it. The time limit, 01:30:00, was checked from scontrol after subm
   - the verdict comes from every reading and every backstop.
   Its test: the merge of three per-truth runs equals the all-truth run on every field but `seconds`, `atime` and
   `merged_from`, and is admitted by the bulk's gate (`RoundTrip.test_the_merge_of_per_truth_records_is_the_all_truth_record`).
-  The plug-in's part merges in after B4. Binding 3 pins the merged record's sha.
+  Binding 3 pins the merged record's sha. **Corrected (the auditor's B1, 2026-11-06):** an earlier version said "the
+  plug-in's part merges in after B4". It cannot. `push_sha256` is in each part's inputs and config hash, both of which
+  the merge requires identical, and the G18 and AR23 parts carry none. A plug-in part must carry the push, so the real
+  merge refuses it ("differ in inputs"). The plug-in needs its own later binding (§11).
 - **Threads.** Each c2check job runs on one exclusive node with its BLAS and OMP threads set explicitly, and the gate
   record records them (`threads`).
 - **The gate sample's size.** `check_clip_gate` now also requires `gate_sample.n == GATE_N` and
@@ -818,75 +821,118 @@ asserted by a test); the slack is held only by the bulk-size test.
 
 ## 11. Binding 3: the declaration (a fixed conditional sequence)
 
-**Status: declared for the director's binding; nothing in it has run.** The director's rulings of 2026-11-05 shape it:
-one code for the calibration, c2check and the bulk; the 300-draw calibration admitted at unchanged SD code; the guarded
-launcher; c2check at 1 BLAS thread; a production-path smoke run before the bulk; and a fixed conditional sequence.
+**Status.** Declared for the director's binding. Stage 1 runs ahead of the binding on the director's go (2026-11-05),
+as A2.1's priced prerequisite: c2check G18 is job 60880987, AR23 job 60880988, launched 2026-11-06 00:32:24Z. Nothing
+after stage 1 has run. **Binding 3's code is frozen at `9b87a85c`** (the director, 2026-11-06): nothing in it changes
+unless a stage STOPs.
 
-**What it binds:**
-- **The code:** fd_1b_c2 `522d7edd`, fd_1b_mc `062628b6` (both bf36901f's, the code rerun2's calibration was made by),
-  fd_1b_noatime_guard `ee20534c`, the 300-draw pins file `f6edf4b0`, and the job and connect scripts by blob.
+**Scope: the no-plug-in path** (the director's ruling on the auditor's B1, option (a), 2026-11-06):
+- **Truths:** G18 and AR23 only. S1-0 and S1-0b run without the capture row (`fd_1b_mc.PILOT[False]`), the stage 1
+  generator runs at `--plugin no`, and the bulk is 6 one-node jobs.
+- **Why not the plug-in here.** `push_sha256` is in each gate part's inputs and config hash, both of which
+  c2check-merge requires identical (`MERGE_SAME`). Stage 1's parts carry none, and a plug-in part must carry the push,
+  so the real merge refuses it (the auditor measured "differ in inputs"). `check_clip_gate` also refuses a truth
+  missing from the gate's backstop, so binding 3 cannot run plug-in rows.
+- **The plug-in is deferred, not decided.** It needs its own later binding: S1-0 with the capture, then c2check of
+  all three truths with the push, a new merge and a new pin. That is at least about 120 node-h at caps. Binding 3's
+  bulk products would not resume under that pin: each product's meta carries the gate's config hash, which
+  `resume_matches` compares. Whether the plug-in is in 1B's scope goes into Joseph's batched scope decision at the
+  coverage endpoint.
+
+**What it binds** (frozen at `9b87a85c`):
+- **Code:**
+  - fd_1b_c2 `522d7edd`, fd_1b_mc `062628b6` (bf36901f's, the code rerun2's calibration was made by);
+  - fd_1b_noatime_guard `ee20534c`, b3/guard_scan.py `84a6750b`;
+  - stage1/tables/make_stage1_tables.py `9c7f1541`, fd_f1_lane.py `fbcb7869`;
+  - the 300-draw pins file `f6edf4b0`.
+- **Stage 1–2 scripts:** b3/sbatch-c2check.sh `2335ab4d`, b3/connect-c2check.sh `f5dfe6a0`, b3/connect-merge.sh
+  `abe32817`.
 - **The estimator:** configuration (e) (`R`). B4 resolved NONE_PASS, terminal (#785; fd_stab.json `653356ae…`).
-- **The records:** the large-sample calibration, rerun2 (job 60857361; calibration.json `66f2ae44…`, npz
-  `9047a6f7…`); the backstop's 300-draw calibration (job 60771025; `4b6a18b6…`); the 1-thread probe that prices
-  c2check (job 60870880; probe.json `c87d162d…`).
-- **The gate pin,** in step 2: `fd_1b_mc.GATE_PIN` holds the merged c2check record's sha256, committed by the director's
+- **The records:**
+  - the large-sample calibration, rerun2 (job 60857361; calibration.json `66f2ae44…`, npz `9047a6f7…`);
+  - the backstop's 300-draw calibration (job 60771025; `4b6a18b6…`);
+  - the 1-thread probe that prices c2check (job 60870880; probe.json `c87d162d…`).
+- **The gate pin,** in step 2: `fd_1b_mc.GATE_PIN` holds the merged gate record's sha256, committed by the director's
   merge. The bulk refuses without it (`bound_gate_sha256`).
 
-**The sequence.** Each stage proceeds automatically when the previous stage's declared PASS record is on main. Any
-other outcome stops the sequence and goes to the director: a STOP, an INVALID, a REPRICE, a refusal, or a missing
-record. Each connect's script sha256 is sent in the stage's report; a stage waits for a go only if it changed. Every
-job line runs under the guard (`fd_1b_noatime_guard.py --declared`), checked by `b3/guard_scan.py`.
+**The sequence.** Each stage proceeds automatically when its predecessor's PASS record (as identified below) is on main.
+Any other outcome stops the sequence and goes to the director: a STOP, an INVALID, a REPRICE, a refusal, or a missing
+or unidentifiable record. Each connect's sha256 is sent in the stage's report. Every job line runs under the guard,
+checked by `b3/guard_scan.py`, which fails on an empty population.
 
-| stage | what runs | PASS record | price (node-h) |
+| stage | what runs | PASS record | price at caps (node-h) |
 |---|---|---|---|
-| 1 | c2check at N, G18 and AR23, one job each (`b3/connect-c2check.sh <truth>`, `-t 07:30:00`, 1 thread), which may run alongside | each part's gate record with verdict PASS, committed with its job receipt | cap 7.5 each; 4.92 h each projected (job 60870880) |
-| 2 | `c2check-merge` of the two parts, by digest, on a login node through the guard | the merged gate record, verdict PASS, "option (1)" at both truths and both backstops | 0 |
-| 3 | the gate pin committed (binding 3 step 2), then one connect: a fresh deploy at that merge, the balance gate, the stat-before and the tables, then the receipt job (amendment 2 §12 items 1–2) | the receipt's readout PASS | ≤ 2.0 (amendment 2) |
-| 4 | S1-0, its walls and controls; then S1-0b, its walls, then `clipcheck` (amendment 2 §12 items 3–4) | S1-0's walls PASS and every control passing; S1-0b's walls PASS; `clipcheck` PROCEED | 1.0 + 1.0 (amendment 2) |
-| 5 | **the smoke run** (the director's addition), below | every check below PASS | cap 1.5 |
-| 6 | the bulk, in waves of at most 3 concurrent one-node jobs (6 jobs, or 9 with the plug-in) | each wave's `walls` PASS (no REPRICE) before the next | 72.0 (amendment 2) |
+| 1 | c2check at N, G18 and AR23, one job each (`b3/connect-c2check.sh <truth>`, `-t 07:30:00`, 1 BLAS thread), which may run alongside | each part's gate record with verdict PASS | 7.5 + 7.5 (4.92 h each projected) |
+| 2 | `c2check-merge` of the two parts, by digest, on a login node under the guard (`b3/connect-merge.sh`) | the merged gate record: verdict PASS, "option (1)" at both truths, both backstops passing | 0 |
+| 3 | the gate pin committed (binding 3 step 2); then one connect: a fresh deploy at that merge, the balance gate, the stat-before and the tables at `--plugin no`, then the receipt job (amendment 2 §12 items 1–2) | the receipt's readout PASS | ≤ 2.0 |
+| 4 | S1-0 (8 items, no capture), its walls and controls; then S1-0b, its walls, then `clipcheck` (amendment 2 §12 items 3–4) | S1-0's walls PASS with every control passing; S1-0b's walls PASS; `clipcheck` PROCEED | 1.0 + 1.0 |
+| 5 | the smoke run, below | every check below PASS | 1.5 |
+| 6 | the bulk: 6 one-node jobs, in waves of at most 3 | **two records, both required** (the director, 2026-11-05): the smoke run's PASS, and the auditor's committed written acknowledgement (amendment 2 §12 item 5), a separate wait. Then each wave's `walls` PASS (no REPRICE) before the next | 48.0 |
 | 7 | per truth: `n1`, `null`, `readout` with the clipping section, the report (amendment 2 §12 item 6) | the readout's record | login node |
 
 A `TO_JOSEPH` at `clipcheck`, or a STOP at the receipt or at c2check, ends the sequence and goes to Joseph, as already
-ruled. Amendment 2 §12 item 5 also asks for the audit's written acknowledgement before the bulk. This declaration
-counts it as part of stage 5's PASS record: the director rules on whether to keep it as a separate wait.
+ruled.
 
-**The smoke run (stage 5).** It is a production-path check, not a replacement for any required one:
-- **Items:** two per execution mode: central (G18 and AR23), seed (G18 and AR23), two universe blocks, two stat
-  replicas and two toys (G18). That is 10 rows under `nature`, with the bound gate pair, the CV tdw and configuration
-  (e), each from the stage 1 generator's own row form. One row is repeated later in its lane, so a resume must skip it
+**A PASS record's identity** (the auditor's B3). A record advances the sequence only if all of these hold:
+- it is at the stage's committed path (`b3/<stage>-run/…`);
+- it names the stage's job id, which sacct confirms;
+- its deploy head is the stage's declared M;
+- at stages 5–6, the `nature` rows, its gate config hash and the pin it was read under are the committed
+  `GATE_PIN`'s (the receipt, S1-0 and S1-0b run under `data`, before the gate);
+- the sha256 the job log printed for it equals the committed file's;
+- it was written by a producer that refuses an existing output directory (each stage's W is new).
+
+Records already in the repository from other runs cannot satisfy this: they have the wrong path, job id and deploy head.
+Examples are stage 2's walls-2a, inv/i2's walls, and the STOP receipt of the earlier S1-0 attempt.
+
+**Scripts not yet written** (the auditor's B4). Stages 1–2's scripts are declared by blob above. Stages 3–7's are
+written in b3/ and listed in the guard scan's counts. Each is an undeclared blob until then, so each waits for the
+director's go and an audit read before its first run. The stage 1 connects of binding 2 (stage1/connect32-*.sh, which
+run fd_1b_mc unguarded) are not reused.
+
+**The smoke run** (stage 5). It is a production-path check, not a replacement for any required check.
+- **Rows:** lines selected from the real generated bulk table (`s1-bulk-steps.tsv` at `--plugin no`, with the bound
+  gate pair), byte-identical except the output root, which is the smoke's own directory, so none can resume into the
+  graded set. Two per execution mode, across both truths: central, seed, one universe block, one stat replica and one
+  toy at each of G18 and AR23, which makes 10 rows. One of them is repeated later in its lane, and must resume
   (`resume_matches`).
-- **Environment:** one exclusive node, 8 lanes through `fd_f1_lane.py` and `sbatch_timing_packed.sh` with the bulk's
-  32 threads per lane, the real root_6_28 environment, and the guard on every row.
-- **Readback and scoring,** through bound fd_1b_mc functions in a driver outside the hashed code (`b3/smoke_readback.py`,
-  run under the guard):
-  - `walls_of` over the 10 names: the re-price trigger, with every product present and within its unit and RSS limit;
+- **Environment:** one exclusive node, 8 lanes through `fd_f1_lane.py` and `sbatch_timing_packed.sh` with the bulk's 32
+  threads per lane, the real root_6_28 environment, and the guard on every row. `-t 01:30:00`. Its directory is
+  refused if it exists.
+- **Readback and scoring,** through bound fd_1b_mc functions in a driver outside the hashed code, run under the guard:
+  - `walls_of` over the 10 names: the re-price trigger;
   - `refuse_mixed_estimator` per truth, under `nature` and `R`;
-  - `_cells` per role: U applied to each product's `xsec_flat`, all finite;
-  - each product at the path `product_name` gives under `unfolds_dir("nature", "R")`;
-  - the repeated row's skip in its lane log.
-- **Not covered,** and stated: the readout's grading, the null and the coverage need the declared full sets (`toy_paths`
-  requires exactly the declared seeds; the null pins the products by digest). A subset readout would need a change to
-  hashed code. Those paths are exercised by the e2e tests and by S1-0's readout.
-- **Its products** go to their own directory, not the bulk's, so none is resumed into the graded set.
+  - `_cells` per role, U applied to each product's `xsec_flat`, all finite;
+  - each product at the path `product_name` gives;
+  - the repeated row's resume in its lane log.
+- **Not covered,** and stated:
+  - the readout's grading, the null and the coverage, which need the declared full sets (`toy_paths` requires exactly
+    the declared seeds; the null pins its products by digest). The director accepts this as a residual
+    (2026-11-05); the e2e tests and S1-0's readout cover those paths;
+  - the bulk's per-lane depth of 22 and its 3-job waves: the smoke runs at most 2 rows per lane, in one job.
 
-**The price, against the ceiling.**
+**The price: the no-plug-in path, at caps.**
 
-| | node-h |
+| item | node-h |
 |---|---:|
-| spent or committed (§10, with both probes) | 80.49 |
-| c2check, G18 and AR23, at their caps (projected 9.84) | 15.0 |
-| the smoke run, at its cap | 1.5 |
-| **total at the caps** (projected about 91.1) | **96.99** |
+| spent: jobs 60771025 (0.361), 60783756 (0.721), 60805733 (0.761), 60857361 (0.718), 60859504 (0.438), 60870880 (0.485) | 3.484 |
+| c2check, G18 and AR23 (projected 9.84) | 15.0 |
+| the receipt | 2.0 |
+| S1-0 and S1-0b | 2.0 |
+| the smoke run | 1.5 |
+| the bulk, 6 jobs × 8:00:00 | 48.0 |
+| **total** | **71.98** |
 
-The director resets the ceiling here to this measured price and reports it to Joseph (the director, 2026-11-05).
-**Not yet priced:** the plug-in's c2check (cap 7.5, as one truth) and the plug-in's large-sample calibration, both
-after B4 and P1's capture.
+**The ceiling is 72.0 node-h at caps** (the director, 2026-11-06, replacing 97.0, which mixed the plug-in's bulk and
+capture into a gate that excludes the plug-in; the auditor's B2). The director reports it to Joseph with this population
+named.
 
 **Residuals, stated:**
-- **The 1B entry modules do not refuse when unguarded.** That would change hashed code and cost a calibration and
-  c2check rerun, so the director ruled it out for now (2026-11-05). The guard is enforced by the scan over b3's scripts
-  and the generated rows, and by the refusal of indirect forms. A hand-typed launch outside them is not caught.
-- **The guard's flag test with the real O_NOATIME** (`RealFlag`) runs only on Linux. Its first live run was the
-  1-thread probe (no refusal). Binding 3's login-node receipt includes the test.
-- **The smoke run cannot run the full readout on a subset** (above).
+- **The 1B entry modules do not refuse when unguarded** (the director, 2026-11-05: it would change hashed code and cost
+  a calibration and c2check rerun). The guard is enforced by the scan over b3's scripts and the generated rows and by
+  the refusal of indirect forms. A hand-typed launch outside them is not caught.
+- **The guard's real-O_NOATIME test** (`RealFlag`) runs only on Linux. Its first live run was the 1-thread probe (no
+  refusal); stage 3's login-node receipt includes the test.
+- **The readout does not compare a product's gate config hash with the current pin** (the auditor's note). A resume
+  does compare it (`resume_matches`).
+- **The smoke run's coverage gaps** above.
