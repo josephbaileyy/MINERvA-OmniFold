@@ -1,0 +1,29 @@
+60884877|fd_refg1a1|COMPLETED|0:0|00:30:00|2026-11-05T19:07:47|2026-11-05T19:12:11|00:04:24|256|
+60884877.batch|batch|COMPLETED|0:0||2026-11-05T19:07:47|2026-11-05T19:12:11|00:04:24|256|571636K
+60884877.extern|extern|COMPLETED|0:0||2026-11-05T19:07:47|2026-11-05T19:12:11|00:04:24|256|
+60884877.0|gibu1|COMPLETED|0:0||2026-11-05T19:07:56|2026-11-05T19:08:45|00:00:49|2|5463072K
+/pscratch/sd/j/josephrb/ref-g1-20261106:
+total 108
+drwxrwx---   7 josephrb josephrb  4096 Nov  5 19:12 .
+drwx------ 367 josephrb josephrb 69632 Nov  5 18:59 ..
+drwxrwx---  18 josephrb josephrb  4096 Nov  5 18:57 deploy
+-rw-rw----   1 josephrb josephrb    89 Nov  5 19:12 DONE
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 19:08 gibu1
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 19:12 logs
+drwxrwx---   3 josephrb josephrb  4096 Nov  5 19:12 read
+-rw-rw----   1 josephrb josephrb  4854 Nov  5 18:57 refg1a1_c1_job.sbatch
+drwxrwx---   2 josephrb josephrb  4096 Nov  5 19:08 tmp
+
+/pscratch/sd/j/josephrb/ref-g1-20261106/gibu1:
+total 32
+drwxrwx--- 2 josephrb josephrb  4096 Nov  5 19:08 .
+drwxrwx--- 7 josephrb josephrb  4096 Nov  5 19:12 ..
+-rw-rw---- 1 josephrb josephrb   115 Nov  5 19:08 gibu1.done
+-rw-rw---- 1 josephrb josephrb 19055 Nov  5 19:08 gibu1.npz
+
+/pscratch/sd/j/josephrb/ref-g1-20261106/read:
+total 60
+drwxrwx--- 3 josephrb josephrb  4096 Nov  5 19:12 .
+drwxrwx--- 7 josephrb josephrb  4096 Nov  5 19:12 ..
+-rw-rw---- 1 josephrb josephrb 32616 Nov  5 19:12 bars.json
+drwxrwx--- 2 josephrb josephrb 20480 Nov  5 19:08 inputs-bars

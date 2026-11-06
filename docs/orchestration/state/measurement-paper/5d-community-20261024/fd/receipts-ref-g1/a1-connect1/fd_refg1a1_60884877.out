@@ -1,0 +1,20 @@
+[a1c1] porcelain --ignored lines before: 0
+[a1c1] start 2026-11-06T03:07:51Z job=60884877 node=nid004327 nproc=256
+[a1c1] squeue cov2d-* at start (recorded; every read here is O_NOATIME): 
+[a1c1] interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+[a1c1] gibu1 rc=0 end=2026-11-06T03:08:45Z
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:47.98
+	Maximum resident set size (kbytes): 6432596
+	Exit status: 0
+{"unit": "gibu1", "seconds": 2.103}
+[a1c1] gibu1.done: {"unit": "gibu1", "verdict": "PASS", "sha256": "683b493652d4a1e651e8af1684de4e170f79a636761454dd219d0ffc140dace6"}
+[a1c1] gibu1.npz sha256 683b493652d4a1e651e8af1684de4e170f79a636761454dd219d0ffc140dace6 bytes 19055
+[a1c1] bars rc=0 end=2026-11-06T03:12:06Z
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:21.91
+	Maximum resident set size (kbytes): 364884
+	Exit status: 0
+{"bars": [28.12141330368751, 39.04213817820935], "sha256": "ba4b698500d6fd3b897d172a003936f6b89c9c3add63bfd79a84b231e3745497", "self_check": true}
+[a1c1] bars.json sha256 ba4b698500d6fd3b897d172a003936f6b89c9c3add63bfd79a84b231e3745497
+[a1c1] stat set: no atime moved (236 files)
+[a1c1] porcelain --ignored lines after: 0
+{"job": "60884877", "gibu1_rc": 0, "bars_rc": 0, "atime_moved": 0, "porcelain_after": 0}
