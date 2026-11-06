@@ -1,0 +1,14 @@
+17,18c17,18
+< H=0d992845aabb00163723fdf37edcb69549b384b6
+< P=/pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845
+---
+> H=9f593aa5abc5760e6ca96f22e0fc912ce93164a3
+> P=/pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-9f593aa5
+57c57
+< 808a4135e9e60c0eb6148ff9c4b057114c9f0396 2d-unfolding/ref_c2c1/config.json
+---
+> 96dbbaa223a3dec4ceba80686f07721e87ec9045 2d-unfolding/ref_c2c1/config.json
+63c63
+< bd13922e2b6535e265e7a42a5e9dbf1210f3c132 2d-unfolding/ref_c2c1/test_ref_c2c1.py
+---
+> 0d2f1a2445fe22130be94635cabb280837be4edb 2d-unfolding/ref_c2c1/test_ref_c2c1.py
