@@ -285,22 +285,30 @@ def dvs_rate(staged: str, cfs: str, nbytes: int = DVS_BYTES) -> dict:
 RECEIPTS = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d"
 PSEUDO_RECORD = RECEIPTS + "/pseudo/{truth}/pseudo_b.json"     # step B's record, committed after the pseudo-data job
 PILOT_RECORD = RECEIPTS + "/pilot/pilot_readout.json"           # the pilot readout, committed after the pilot
+# A2's N1 (the director's rule R1): records committed under binding 2, at its M, admitted at A2's deploy by their M
+# and the sha256 of their exact committed bytes; every other record must carry the deploy's own M
+PRIOR_RECORDS = {PSEUDO_RECORD.format(truth="G18"): ("cb31611ca8b96ed2d1eeb809fda7236e56645863",
+                                                     "230f6918f65d5bcf7d766bdb47eb7ac0513d998017b877777b5fd49089a54296"),
+                 PILOT_RECORD: ("cb31611ca8b96ed2d1eeb809fda7236e56645863",
+                                "b59ffa2d7363b7de1c702d037868d9794491e9433907cafe743784133b6bf99d")}
 UNIVERSE_JOBS = [f"{t}_U{j}" for t in ("G18", "AR23") for j in "abcd"]
 
 
-def order(job: str, truth: str, committed: dict, submitted: set, M: str) -> list[str]:
+def order(job: str, truth: str, committed: dict, submitted: set, M: str, digests: dict | None = None) -> list[str]:
     """What blocks submitting ``job`` (COV2D-DECLARATION.md:40 and §10 steps 5-6; the director's rulings (A) and J1):
     the G18 pseudo-data job first; the pilot after G18's pseudo-data PASS; AR23's pseudo-data job and every unfold job
     after the pilot readout's PASS; the universe jobs (the $UNI readers) after both pseudo-data PASSes; the rest after
     all eight universe jobs are submitted. ``committed`` maps a record path on origin/main to its JSON (None if absent);
     each record must say PASS and carry "M" equal to the deploy's commit, as the writers record it
     (``cov2d.deploy_head``), and a pseudo-data record must say ``pins_checked: true`` (A2's L1; the pilot readout has
-    no unpinned mode and records no such field). The pilot's must also list no REPRICE class: section 8 makes REPRICE an amendment, decided
+    no unpinned mode and records no such field). A record of PRIOR_RECORDS is admitted instead by its M and the
+    sha256 of its committed bytes (``digests``: {path: sha256}; A2's N1, rule R1). The pilot's must also list no REPRICE class: section 8 makes REPRICE an amendment, decided
     before any bulk job (the director's ruling on the final audit's F2)."""
     def ok(path, pins=False):
         r = committed.get(path)
-        return (bool(r) and r.get("verdict") == "PASS" and r.get("M") == M
-                and (not pins or r.get("pins_checked") is True))   # a pseudo-data run with its pins unchecked opens nothing
+        if not r or r.get("verdict") != "PASS" or (pins and r.get("pins_checked") is not True):
+            return False                       # a pseudo-data run with its pins unchecked opens nothing
+        return r.get("M") == M or PRIOR_RECORDS.get(path) == (r.get("M"), (digests or {}).get(path))
 
     need = []
     pseudo = {t: PSEUDO_RECORD.format(truth=t) for t in ("G18", "AR23")}
@@ -404,14 +412,15 @@ def main(argv_=None) -> int:
         return 4 if bad else 0
     if a.cmd == "order":
         import subprocess
-        committed = {}
+        committed, digests = {}, {}
         for path in [PSEUDO_RECORD.format(truth=t) for t in ("G18", "AR23")] + [PILOT_RECORD]:
-            r = subprocess.run(["git", "-C", a.deploy, "show", f"origin/main:{path}"], capture_output=True, text=True)
+            r = subprocess.run(["git", "-C", a.deploy, "show", f"origin/main:{path}"], capture_output=True)
             committed[path] = json.loads(r.stdout) if r.returncode == 0 else None
+            digests[path] = hashlib.sha256(r.stdout).hexdigest() if r.returncode == 0 else None
         subs = Path(a.submissions)
         submitted = {w.split("=", 1)[1] for ln in (subs.read_text().splitlines() if subs.exists() else [])
                      for w in ln.split() if w.startswith("job=")}
-        need = order(a.job, a.truth, committed, submitted, a.M)
+        need = order(a.job, a.truth, committed, submitted, a.M, digests)
         print(json.dumps({"job": a.job, "truth": a.truth, "blocked_by": need}))
         return 3 if need else 0
     if a.cmd == "dvs-rate":

@@ -74,7 +74,8 @@ def write_fixture(d: Path, drv, perturb=None):
         perturb(fix, toys)
     clipped = r.uniform(10, 400, (3, nx * ny))
     np.savez(a / "cells.npz", truth_clipped=clipped, truth_cv_r1=fix["truth_cv_r1"], seeds=np.array(seeds))
-    (a / "pseudo_a.json").write_text(json.dumps({"truth": "G18", "verdict": "PASS", "pot": {"data": POT_DATA},
+    (a / "pseudo_a.json").write_text(json.dumps({"truth": "G18", "verdict": "PASS", "pins_checked": True,
+                                                 "pot": {"data": POT_DATA},
                                                  "natures": nats, "toys": toys}))
     f = ROOT.TFile.Open(str(d / "xsec.root"), "RECREATE")
     for name, arr in (("hTruth2D", fix["T"]), ("hOFInputTruth2D", fix["I"]), ("hOFTruthDenom2D", fix["D"]),
@@ -250,6 +251,17 @@ class StepB(unittest.TestCase):
         path = cj.PSEUDO_RECORD.format(truth="G18")
         self.assertEqual(cj.order("pilot", "pilot", {path: rec}, set(), self.head), [])
         self.assertTrue(cj.order("pilot", "pilot", {path: dict(rec, pins_checked=False)}, set(), self.head))
+        # A2's N1, the real sequence: binding 2's committed G18 and pilot records (by M and bytes) and this writer's
+        # record as AR23's, at this deploy's M, open the universe jobs
+        repo = HERE.parents[2]
+        committed = {cj.PSEUDO_RECORD.format(truth="AR23"): rec}
+        digests = {cj.PSEUDO_RECORD.format(truth="AR23"):
+                   hashlib.sha256((self.d / "out" / "pseudo_b.json").read_bytes()).hexdigest()}
+        for p in (cj.PSEUDO_RECORD.format(truth="G18"), cj.PILOT_RECORD):
+            committed[p] = json.loads((repo / p).read_bytes())
+            digests[p] = hashlib.sha256((repo / p).read_bytes()).hexdigest()
+        self.assertEqual(cj.order("G18_Ua", "G18", committed, set(), self.head, digests), [])
+        self.assertEqual(cj.order("AR23_Ua", "AR23", committed, set(), self.head, digests), [])
         self.assertTrue(cj.order("pilot", "pilot", {path: {k: v for k, v in rec.items() if k != "M"}}, set(), self.head))
         self.assertTrue(cj.order("pilot", "pilot", {path: dict(rec, M="f" * 40)}, set(), self.head))
 
@@ -314,6 +326,18 @@ class StepB(unittest.TestCase):
         self.assertEqual(len(rec["settle_atime_ns"]), c.SETTLE_TRIES + 1)     # every reading is recorded
         self.assertEqual(sorted(p.name for p in (self.d / "out").glob("data_*.root")), [])
         self.assertIn("REFUSED", text)
+
+    def test_a_pinned_step_b_refuses_an_unpinned_step_a(self):
+        # A2's L1: otherwise a pinned step B after an unpinned step A would record pins_checked: true
+        write_fixture(self.d, self.drv)
+        p = self.d / "a" / "pseudo_a.json"
+        p.write_text(json.dumps(dict(json.loads(p.read_text()), pins_checked=False)))
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf), self.assertRaises(c.Refusal) as e:
+            pw.main(["--a", str(self.d / "a"), "--out", str(self.d / "out"), "--er", str(self.d / "xsec.root"),
+                     "--mcfile", str(self.d / "mc.root"), "--flux-universe-file", str(self.d / "fluxu.root")])
+        self.assertIn("pins unchecked", str(e.exception))
+        self.assertFalse((self.d / "out").exists())
 
     def test_refuses_a_stopped_step_a(self):
         write_fixture(self.d, self.drv)

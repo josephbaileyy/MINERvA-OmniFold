@@ -270,6 +270,70 @@ class Pilot(unittest.TestCase):
             self.assertEqual(sum(f"{td}/pseudo/G18/b/data_" in ln for ln in lines), 5)
 
 
+class PriorRecords(unittest.TestCase):
+    """A2's N1, the director's rule R1: binding 2's committed G18 and pilot records are admitted at A2's deploy by their
+    M and the sha256 of their committed bytes; AR23's must carry the deploy's own M; anything else is refused."""
+    NEW = "a2" * 20
+
+    def load(self, path):
+        b = (HERE.parents[2] / path).read_bytes()
+        return json.loads(b), hashlib.sha256(b).hexdigest()
+
+    def setUp(self):
+        self.g18, self.pil, self.ar23 = (cj.PSEUDO_RECORD.format(truth="G18"), cj.PILOT_RECORD,
+                                         cj.PSEUDO_RECORD.format(truth="AR23"))
+        (g, gd), (p, pd) = self.load(self.g18), self.load(self.pil)
+        self.c = {self.g18: g, self.pil: p, self.ar23: None}
+        self.d = {self.g18: gd, self.pil: pd, self.ar23: None}
+        self.assertEqual({k: v for k, v in self.d.items() if v}, {k: v[1] for k, v in cj.PRIOR_RECORDS.items()})
+
+    def with_ar23(self, M):
+        c_, d = dict(self.c), dict(self.d)
+        c_[self.ar23], d[self.ar23] = {"verdict": "PASS", "M": M, "pins_checked": True}, "e" * 64
+        return c_, d
+
+    def test_the_sequence_at_a2s_deploy(self):
+        self.assertEqual(cj.order("pseudo", "AR23", self.c, set(), self.NEW, self.d), [])
+        self.assertTrue(cj.order("G18_Ua", "G18", self.c, set(), self.NEW, self.d))          # AR23's PASS first
+        c_, d = self.with_ar23(self.NEW)
+        self.assertEqual(cj.order("G18_Ua", "G18", c_, set(), self.NEW, d), [])
+
+    def test_a_prior_record_off_its_bytes_or_without_digests_is_refused(self):
+        c_, d = self.with_ar23(self.NEW)
+        d[self.g18] = "0" * 64
+        self.assertTrue(any("G18" in x for x in cj.order("G18_Ua", "G18", c_, set(), self.NEW, d)))
+        self.assertTrue(cj.order("pseudo", "AR23", self.c, set(), self.NEW, None))
+
+    def test_ar23_at_binding_2s_M_is_refused(self):
+        c_, d = self.with_ar23(cj.PRIOR_RECORDS[self.g18][0])
+        self.assertTrue(any("AR23" in x for x in cj.order("G18_Ua", "G18", c_, set(), self.NEW, d)))
+
+    def test_another_records_bytes_under_ar23s_path_are_refused(self):
+        c_, d = dict(self.c), dict(self.d)
+        c_[self.ar23], d[self.ar23] = self.c[self.g18], self.d[self.g18]
+        self.assertTrue(any("AR23" in x for x in cj.order("G18_Ua", "G18", c_, set(), self.NEW, d)))
+
+    def test_the_order_cli_hashes_the_committed_bytes(self):
+        # the CLI on a real origin whose main carries binding 2's two records, and a deploy cloned from it
+        from deploy_fixture import GIT
+        with tempfile.TemporaryDirectory() as td:
+            o = Path(td) / "origin"
+            o.mkdir()
+            subprocess.run(GIT + ["init", "-q", str(o)], check=True)
+            subprocess.run(GIT + ["-C", str(o), "symbolic-ref", "HEAD", "refs/heads/main"], check=True)
+            for path in (self.g18, self.pil):
+                (o / path).parent.mkdir(parents=True, exist_ok=True)
+                (o / path).write_bytes((HERE.parents[2] / path).read_bytes())
+            subprocess.run(GIT + ["-C", str(o), "add", "."], check=True)
+            subprocess.run(GIT + ["-C", str(o), "commit", "-q", "-m", "records"], check=True)
+            subprocess.run(GIT + ["clone", "-q", str(o), str(Path(td) / "deploy")], check=True)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                rc = cj.main(["order", "--job", "pseudo", "--truth", "AR23", "--M", self.NEW, "--deploy",
+                              str(Path(td) / "deploy"), "--submissions", str(Path(td) / "submissions.log")])
+            self.assertEqual((rc, json.loads(out.getvalue())["blocked_by"]), (0, []))
+
+
 class A2Pseudo(unittest.TestCase):
     """COV2D addendum A2: the pseudo-data limits, the directory map both job scripts use, and the B9-form deletion."""
     def test_limits(self):

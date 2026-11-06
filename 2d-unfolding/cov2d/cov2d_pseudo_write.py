@@ -214,6 +214,8 @@ def main(argv=None) -> int:
     rec_a = json.loads((A / "pseudo_a.json").read_text())
     if rec_a.get("verdict") != "PASS":
         raise c.Refusal(f"step A's verdict is {rec_a.get('verdict')}")
+    if not a.no_pins and rec_a.get("pins_checked") is not True:     # A2's L1: a pinned B needs a pinned A
+        raise c.Refusal("step A ran with its pins unchecked: step B's record could not say pins_checked")
     M = c.deploy_head(DEPLOY)     # before any work: a dirty deploy is refused here
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=False)
