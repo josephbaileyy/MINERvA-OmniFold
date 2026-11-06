@@ -1,0 +1,19 @@
+[c2c1u] porcelain --ignored lines before: 0
+[c2c1u] start 2026-11-06T06:18:59Z job=60889566 node=nid005933 nproc=256
+[c2c1u] squeue cov2d-* at start: 60889690|cov2d-pseudo_AR23|PENDING 
+[c2c1u] interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+[c2c1u] units done 2026-11-06T06:31:08Z; rcs: 0 0 0
+[c2c1u] er:  Elapsed (wall clock) time (h:mm:ss or m:ss): 9:55.42; Maximum resident set size (kbytes): 14130980; Exit status: 0;
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/er.root
+{"unit": "er", "seconds": 565.083, "controls": {}}
+[c2c1u] er.done: {"unit": "er", "verdict": "PASS", "sha256": "355a57cd82b0bc2fb200f244af1471042e6de72f4dcc1742920f9e1f9d14f610", "root_sha256": "3136efedae1833cebb33b320c8ad4fe0cd737de05df6cfe066b0c2171ab1f61c"}
+[c2c1u] c2_central:  Elapsed (wall clock) time (h:mm:ss or m:ss): 3:36.74; Maximum resident set size (kbytes): 9771172; Exit status: 0;
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_central.root
+{"unit": "c2_central", "seconds": 186.275, "controls": {"C-FILL": true, "C-SIM": true, "C-ROO": true}}
+[c2c1u] c2_central.done: {"unit": "c2_central", "verdict": "PASS", "sha256": "929d0e78011ead72e9677a05bad06eec80e914e181c8d02f94bbdea1c43b76f4", "root_sha256": "595ce19fd9513576a7a870533b6693bb4000c5227836824f3be3dbea1fc9d339"}
+[c2c1u] c1_central:  Elapsed (wall clock) time (h:mm:ss or m:ss): 12:01.78; Maximum resident set size (kbytes): 14812496; Exit status: 0;
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c1_central.root
+{"unit": "c1_central", "seconds": 691.478, "controls": {}}
+[c2c1u] c1_central.done: {"unit": "c1_central", "verdict": "PASS", "sha256": "62e29ff392bbf41177b63357bb56dc8c7bcc7462bd37cd059aceabf3a8055b92", "root_sha256": "fd120d1d0b3a8bd434c50715b754d95b258b55ad1905bb23f2e1e3ee2b1f90d0"}
+[c2c1u] porcelain --ignored lines after: 0
+{"job": "60889566", "rcs": "0 0 0", "pass_markers": 3, "porcelain_after": 0}

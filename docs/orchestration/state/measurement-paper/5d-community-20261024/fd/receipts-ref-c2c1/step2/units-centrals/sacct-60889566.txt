@@ -1,0 +1,18 @@
+60889566|fd_c2c1u|COMPLETED|0:0|01:00:00|2026-11-05T22:18:54|2026-11-05T22:31:12|00:12:18|256|
+60889566.batch|batch|COMPLETED|0:0||2026-11-05T22:18:54|2026-11-05T22:31:12|00:12:18|256|217972K
+60889566.extern|extern|COMPLETED|0:0||2026-11-05T22:18:54|2026-11-05T22:31:12|00:12:18|256|
+60889566.0|c2_central|COMPLETED|0:0||2026-11-05T22:19:06|2026-11-05T22:22:43|00:03:37|64|10016016K
+60889566.1|c1_central|COMPLETED|0:0||2026-11-05T22:19:06|2026-11-05T22:31:08|00:12:02|64|15620604K
+60889566.2|er|COMPLETED|0:0||2026-11-05T22:19:06|2026-11-05T22:29:02|00:09:56|64|14918028K
+total 252
+drwxrwx--- 2 josephrb josephrb  4096 Nov  5 22:31 .
+drwxr-xr-x 9 josephrb josephrb  4096 Nov  5 22:31 ..
+-rw-rw---- 1 josephrb josephrb   203 Nov  5 22:31 c1_central.done
+-rw-rw---- 1 josephrb josephrb  3811 Nov  5 22:31 c1_central.npz
+-rw-r----- 1 josephrb josephrb 61697 Nov  5 22:31 c1_central.root
+-rw-rw---- 1 josephrb josephrb   203 Nov  5 22:22 c2_central.done
+-rw-rw---- 1 josephrb josephrb 30975 Nov  5 22:22 c2_central.npz
+-rw-r----- 1 josephrb josephrb 61658 Nov  5 22:22 c2_central.root
+-rw-rw---- 1 josephrb josephrb   195 Nov  5 22:29 er.done
+-rw-rw---- 1 josephrb josephrb  3618 Nov  5 22:29 er.npz
+-rw-r----- 1 josephrb josephrb 61607 Nov  5 22:29 er.root
