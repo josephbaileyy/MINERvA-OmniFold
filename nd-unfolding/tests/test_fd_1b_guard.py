@@ -287,6 +287,41 @@ class Scan(unittest.TestCase):
                     if tok == "--cmodel-json":
                         self.assertEqual(toks[i + 1], "$DD/nd-unfolding/pv-ladder/readouts/cmodel_5d.json", p.name)
 
+    def test_the_cli_fails_on_an_empty_population(self):
+        """The auditor's B5: guard_scan's CLI exits 1, never "NONE UNGUARDED", when a population is empty: no
+        TABLES_DIR, a missing one, one with no *-steps.tsv, a table with no rows, or no *.sh beside the scanner. A
+        table with one guarded row passes, so the test sees both directions."""
+        import shutil
+        tmp = Path(tempfile.mkdtemp(prefix="fd1b-scan-")).resolve()
+        row = "0\tx\t" + "\t".join(["fd_1b_noatime_guard.py", "--declared", "--", "nd-unfolding/fd_1b_mc.py", "unfold"]) + "\n"
+        good = tmp / "good"
+        good.mkdir()
+        (good / "s1-bulk-steps.tsv").write_text("# head\n" + row)
+        empty = tmp / "empty"
+        empty.mkdir()
+        norows = tmp / "norows"
+        norows.mkdir()
+        (norows / "s1-0-steps.tsv").write_text("# head only\n")
+
+        def cli(scanner, *dirs):
+            r = subprocess.run([sys.executable, "-B", str(scanner), *map(str, dirs)], capture_output=True, text=True)
+            return r.returncode, r.stdout
+        scanner = B3 / "guard_scan.py"
+        rc, out = cli(scanner, good)
+        self.assertEqual(rc, 0, out)
+        self.assertIn("GUARD-SCAN :: NONE UNGUARDED", out)
+        for dirs in ((), (tmp / "missing",), (empty,), (norows,), (good, empty)):
+            rc, out = cli(scanner, *dirs)
+            self.assertEqual(rc, 1, (dirs, out))
+            self.assertIn("EMPTY POPULATION", out, dirs)
+            self.assertNotIn("NONE UNGUARDED", out, dirs)
+        lone = tmp / "lone"
+        lone.mkdir()
+        shutil.copy(scanner, lone / "guard_scan.py")                                   # no *.sh beside it
+        rc, out = cli(lone / "guard_scan.py", good)
+        self.assertEqual(rc, 1, out)
+        self.assertIn("no *.sh in", out)
+
     def test_c2checks_blas_threads_are_the_calibrations_one(self):
         """The director's ruling (a), 2026-11-05: c2check's bitwise single-universe U x_T check needs the calibration's
         BLAS thread count (1, sbatch-calibrate.sh). The job script sets THREADS to 1 and asserts it, and every thread

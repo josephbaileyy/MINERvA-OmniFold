@@ -422,6 +422,7 @@ NEW = [
      '            elif False and _NAMED.search(line) and not _MANIFEST.match(line)', GRD),
     (SCAN, "scan: sourcing a non-deploy file accepted", '        if t in ("source", ".") and nxt', '        if False and nxt', GRD),
     (SCAN, "scan: the manifest exemption widened", '_MANIFEST = re.compile(r"^\\s*[0-9a-f]{64}\\s+\\S+\\s*$")', '_MANIFEST = re.compile(r".*")', GRD),
+    (SCAN, "scan: an empty population passes (B5)", '    ok = not bad and not empty', '    ok = not bad', GRD),
     # ---- fd_1b_cvdenom: the gates and B's attribution rule
     ("fd_1b_cvdenom.py", "cvd: the npz's rows without the extras gate", "    return base & ps, base & extras & ps", "    return base & ps, base & ps", CVD),
     ("fd_1b_cvdenom.py", "cvd: w = 1e4 kept", "(w >= 0) & (w < W_MAX)", "(w >= 0) & (w <= W_MAX)", CVD),

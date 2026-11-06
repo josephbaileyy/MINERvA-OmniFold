@@ -17,7 +17,8 @@ Two rules close what an invocation parser cannot see (the auditor's review; the 
 - INDIRECT FORMS are refused outright: `eval`, `bash|sh|zsh|dash -c`, and `source` or `.` of anything but a file
   of the deploy ("$DD/...").
 
-    python3 -B guard_scan.py [TABLES_DIR ...]      (prints the counts; exit 0 only with none unguarded)
+    python3 -B guard_scan.py TABLES_DIR [...]      (prints the counts; exit 0 only with none unguarded and no
+                                                   population empty)
 """
 from __future__ import annotations
 
@@ -153,19 +154,40 @@ def scan_rows(text: str) -> dict:
 
 
 def main(argv) -> int:
+    """Both populations must be non-empty, or the run fails (the auditor's B5): at least one *.sh in this directory with
+    a positive total of guarded lines, and at least one TABLES_DIR, each existing and holding at least one *-steps.tsv
+    with at least one row. An empty population prints its reason and exits 1, never "NONE UNGUARDED"."""
     here = Path(__file__).resolve().parent
-    bad = 0
-    for sh in sorted(here.glob("*.sh")):
+    bad, empty = 0, []
+    scripts = sorted(here.glob("*.sh"))
+    if not scripts:
+        empty.append(f"no *.sh in {here}")
+    total = 0
+    for sh in scripts:
         r = scan_script(sh.read_text())
         bad += len(r["unguarded"])
+        total += r["guarded"]
         print(f"script {sh.name}: {r['guarded']} guarded, {len(r['unguarded'])} unguarded {r['unguarded'][:2]}")
+    if scripts and total == 0:
+        empty.append("the scripts hold no guarded 1B line")
+    if not argv:
+        empty.append("no TABLES_DIR given")
     for d in argv:
-        for t in sorted(Path(d).glob("*-steps.tsv")):
+        tables = sorted(Path(d).glob("*-steps.tsv")) if Path(d).is_dir() else []
+        if not tables:
+            empty.append(f"no *-steps.tsv in {d}")
+        for t in tables:
             r = scan_rows(t.read_text())
             bad += len(r["unguarded"])
+            if r["guarded"] + len(r["unguarded"]) == 0:
+                empty.append(f"{t.name} has no rows")
             print(f"rows {t.name}: {r['guarded']} guarded, {len(r['unguarded'])} unguarded {r['unguarded'][:2]}")
-    print(f"GUARD-SCAN :: {'NONE UNGUARDED' if not bad else f'{bad} UNGUARDED'}")
-    return 0 if not bad else 1
+    for e in empty:
+        print(f"EMPTY POPULATION: {e}")
+    ok = not bad and not empty
+    print(f"GUARD-SCAN :: {'NONE UNGUARDED' if ok else (f'{bad} UNGUARDED' if bad else 'AN EMPTY POPULATION')}"
+          f"{f'; {len(empty)} empty' if empty and bad else ''}")
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":
