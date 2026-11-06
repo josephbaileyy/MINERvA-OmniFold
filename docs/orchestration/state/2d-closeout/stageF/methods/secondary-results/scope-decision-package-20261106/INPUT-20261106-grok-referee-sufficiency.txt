@@ -1,0 +1,32 @@
+# Input to the scope-decision package: Grok's referee-sufficiency assessment (2026-11-06)
+
+Relayed verbatim by the interpreter session from Grok (client-grok-shell-open-agent-bridge-c4a99362fc6f). This is advice,
+not a decision. Its citations (gate.json 6a832bf0, branch tip 8dd16e04) agree with the director's records. Stage 3 of 1B
+had not reported a PASS at the time.
+
+---
+
+What suffices for the 5 November referees, as input to the scope package, not a decision:
+
+Their disqualifying set was coverage and the stopped test, prior dependence at generator-sized truths, rounding
+instability, and the run-period block. A presentation pass does not move that verdict.
+
+The coverage sentence changes only when both readouts are committed on main.
+- 2D: COV2D through the blocks and the readout. The next stage is the AR23 rerun. A third STOP ends campaign (c).
+- 5D: binding 3 is real. G18 and AR23 c2checks passed (stage 2 merge PASS, gate.json 6a832bf0). Stages 3-7 are the bound
+  sequence. I do not see a stage 3 PASS. The branch tip, 8dd16e047, changes the stage 3 connect so it records a cov2d job
+  instead of refusing, and the earlier commit says the connect and readout were not run. Starting stage 3 does not
+  change the sentence.
+
+I accept the fence correction. REF-C2C1-BINDING-2 still forbids a plain read of a COV2D input during a cov2d job.
+O_NOATIME staged copies are the bound way to run beside it. REF-C2C1's read still follows its replica PASS records. It is
+not a coverage readout.
+
+REF-G1 differ does not suffice. It is a measured algorithm dependence. It licenses neither a switch to IBU nor a new
+systematic. Leaving it out of the paper would be a new referee item. Stating it does not remove the coverage item.
+
+Rounding, the run-period block, and generator-sized prior dependence are not discharged by either coverage readout. If
+the scope stays a measurement, those three remain. If the scope becomes a methods study, the referees already named that
+alternative, and it does not require these campaigns to finish first.
+
+OI-205 stays Joseph's after both readouts are on main.

@@ -29,6 +29,22 @@ Required reading via `AGENTS.md`; recommendations do not replace the governing a
 
 ## Current work
 
+### Publication-scope decision package (draft, 2026-11-06)
+
+| document | route |
+|---|---|
+| Evidence ledger, declared outcome licences, conditional framing options and reserved decisions; recommendation reserved for the director | [Draft scope package](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REPORT.md) |
+| Pinned source paths, reading lines, commits and source-blob digests | [Source inventory](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/SOURCES.tsv) |
+| Grok referee-sufficiency advice as relayed, verbatim; status observations are historical | [Grok advice](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/INPUT-20261106-grok-referee-sufficiency.txt) |
+| Independent second-read task, verbatim | [Review prompt](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-PROMPT.txt) |
+| File-read-only retry after a headless command-permission denial, verbatim | [Read-only review prompt](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-READONLY-PROMPT.txt) |
+| Independent second-read response, verbatim | [Review answer](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-ANSWER.txt) |
+| Focused check of the final scope clarifications, verbatim inputs | [Follow-up prompt](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-FOLLOWUP-PROMPT.txt) |
+| Focused final-draft check, verbatim response | [Follow-up answer](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-FOLLOWUP-ANSWER.txt) |
+| Check of the measurement-first ruling and terminal 1B update, verbatim inputs | [Update review prompt](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-UPDATE-PROMPT.txt) |
+| Additional advisory attempt timed out without an answer; verbatim execution output | [Update review execution](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-UPDATE-EXECUTION.txt) |
+| Review target, execution boundary and findings disposition | [Review disposition](state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-DISPOSITION.md) |
+
 Article (PRD-class), assembled and not submitted: [`../publication/submission/PACKAGE-MANIFEST-20261006.md`](../publication/submission/PACKAGE-MANIFEST-20261006.md)
 and the `docs/publication/` records it names. Submission, deposit and tagging are Joseph's acts.
 
