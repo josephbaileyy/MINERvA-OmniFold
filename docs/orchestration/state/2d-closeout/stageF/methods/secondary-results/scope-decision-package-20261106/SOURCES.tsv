@@ -3,6 +3,7 @@ QUEUE	docs/OPEN_ITEMS.md	1–234	1aa805b59eb037c5fcd978037ae282189aa33634	f37e51
 FRAME	docs/orchestration/DECISION-20261027-joseph-measurement-framing-and-limitation-scoping.md	1–54	1aa805b59eb037c5fcd978037ae282189aa33634	d02e6dacc18fc58d433d366562bacf567b9acf5d5cca956ae9ba537cd68ca62a
 BIAS	docs/orchestration/DECISION-20261102-joseph-bias-and-stabilisation-routes.md	1–94	1aa805b59eb037c5fcd978037ae282189aa33634	bbde43ed8a56e37e3e45f1b919bcf4f02470eb3848f95eaae9eb75408ff39095
 FRAME06:26–41	docs/orchestration/DECISION-20261106-joseph-measurement-target-and-delta.md	26–41	2968b58ac9c9031a13dd5acb98e661f28964423d	1f688599bb68e482ef27461b474564c26f11ab7df93e8371c5e6013cddb85dc7
+C2-OUT:48–77,86–93	docs/orchestration/OUTCOME-20261106-ref-c2c1-read.md	48–77,86–93	4ed08bbee167ec45bd9779a8eeac1a90c9470103	1f25274fc7432c9d16785e3dc1f4d4b98801ec9bde6c79cd1c3ba2a80e5f49e0
 1B-B3	docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGED-BINDING-3.md	1–87	1aa805b59eb037c5fcd978037ae282189aa33634	0fa2a446cd0fdbe99097b5aa5bd65d1d90e0972ec1199c30c1f72a1d8a7d3c67
 REVIEW-RULE	docs/orchestration/CAMPAIGN-REVIEW-20260929.md	1–246	1aa805b59eb037c5fcd978037ae282189aa33634	a2ad85dc9a2aecd811dd93cf3b9e00807e82b818abca8dabbdf1755437f15f8f
 READ04	docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-rerun-20261104/README.md	1–42	1aa805b59eb037c5fcd978037ae282189aa33634	130a485d57416407d7413a9dc94f999e15ddd79f8bbfa00480a604a4c0e6c715
@@ -66,10 +67,10 @@ RECO:203–229,310–334	docs/orchestration/state/measurement-paper/5d-community
 BC:1–27,29–66,89–126	docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/REPORT.md	1–27,29–66,89–126	1aa805b59eb037c5fcd978037ae282189aa33634	1178731c7478bf3f26f8e0dc6741089f9e789dbfb2966e316dc47246a901f60e
 BC:89–126	docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/REPORT.md	89–126	1aa805b59eb037c5fcd978037ae282189aa33634	1178731c7478bf3f26f8e0dc6741089f9e789dbfb2966e316dc47246a901f60e
 C2:201–211	docs/orchestration/state/measurement-paper/5d-community-20261024/REF-C2C1-DECLARATION.md	201–211	1aa805b59eb037c5fcd978037ae282189aa33634	63a1efa33fa4e1e3d3e15997b47232b7092dde21096c26f3e629729d14183c3b
-C2-B2:39–85	docs/orchestration/state/measurement-paper/5d-community-20261024/REF-C2C1-BINDING-2.md	39–85	1aa805b59eb037c5fcd978037ae282189aa33634	2539a151304c5115699582f07c3d212d88de4e7aca922724f4ff2f7926826b14
-C2:142–211	docs/orchestration/state/measurement-paper/5d-community-20261024/REF-C2C1-DECLARATION.md	142–211	1aa805b59eb037c5fcd978037ae282189aa33634	63a1efa33fa4e1e3d3e15997b47232b7092dde21096c26f3e629729d14183c3b
-C2:92–125,142–211	docs/orchestration/state/measurement-paper/5d-community-20261024/REF-C2C1-DECLARATION.md	92–125,142–211	1aa805b59eb037c5fcd978037ae282189aa33634	63a1efa33fa4e1e3d3e15997b47232b7092dde21096c26f3e629729d14183c3b
-C2:251–287	docs/orchestration/state/measurement-paper/5d-community-20261024/REF-C2C1-DECLARATION.md	251–287	1aa805b59eb037c5fcd978037ae282189aa33634	63a1efa33fa4e1e3d3e15997b47232b7092dde21096c26f3e629729d14183c3b
+C2-OUT:86–90	docs/orchestration/OUTCOME-20261106-ref-c2c1-read.md	86–90	4ed08bbee167ec45bd9779a8eeac1a90c9470103	1f25274fc7432c9d16785e3dc1f4d4b98801ec9bde6c79cd1c3ba2a80e5f49e0
+C2-OUT:48–77	docs/orchestration/OUTCOME-20261106-ref-c2c1-read.md	48–77	4ed08bbee167ec45bd9779a8eeac1a90c9470103	1f25274fc7432c9d16785e3dc1f4d4b98801ec9bde6c79cd1c3ba2a80e5f49e0
+C2-OUT:43–45,86–90	docs/orchestration/OUTCOME-20261106-ref-c2c1-read.md	43–45,86–90	4ed08bbee167ec45bd9779a8eeac1a90c9470103	1f25274fc7432c9d16785e3dc1f4d4b98801ec9bde6c79cd1c3ba2a80e5f49e0
+C2-OUT:58–77	docs/orchestration/OUTCOME-20261106-ref-c2c1-read.md	58–77	4ed08bbee167ec45bd9779a8eeac1a90c9470103	1f25274fc7432c9d16785e3dc1f4d4b98801ec9bde6c79cd1c3ba2a80e5f49e0
 G1-OUT:10–47	docs/orchestration/OUTCOME-20261106-ref-g1-r1-differ.md	10–47	1aa805b59eb037c5fcd978037ae282189aa33634	74b580f8b68d52ae51d5f83ca82a8fa63ef18b7af7b19c97ea08d9d2a0d67260
 G1-OUT:49–54	docs/orchestration/OUTCOME-20261106-ref-g1-r1-differ.md	49–54	1aa805b59eb037c5fcd978037ae282189aa33634	74b580f8b68d52ae51d5f83ca82a8fa63ef18b7af7b19c97ea08d9d2a0d67260
 COMMISSION:47–52	docs/orchestration/DECISION-20261104-joseph-referee-analysis-commission.md	47–52	1aa805b59eb037c5fcd978037ae282189aa33634	6143110981d5b95041834a0e1aba78f93efda14620470db82d3cb2a1d2aa1fa3
@@ -113,9 +114,6 @@ FRAME:51–54	docs/orchestration/DECISION-20261027-joseph-measurement-framing-an
 FRAME06:34–41	docs/orchestration/DECISION-20261106-joseph-measurement-target-and-delta.md	34–41	2968b58ac9c9031a13dd5acb98e661f28964423d	1f688599bb68e482ef27461b474564c26f11ab7df93e8371c5e6013cddb85dc7
 COV-B2	docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-2.md	1–164	1aa805b59eb037c5fcd978037ae282189aa33634	aeedd25109c1e7d4ab475b8cdc15d9678a55d4d07ed00b260bc5b9b403b06e17
 1B-K	docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGED-STAGE0-REPORT.md	1–283	1aa805b59eb037c5fcd978037ae282189aa33634	945095c4413163086239327e77feb28ce1db946fe7a8ad71a19b1453370ddc5f
-C2-NEW:99–196	docs/orchestration/state/measurement-paper/5d-community-20261024/REF-C2C1-BINDING-2.md	99–196	2968b58ac9c9031a13dd5acb98e661f28964423d	52ab87d3c067d0953164acc85008922068c925c5991b6a160bd0f3f74bf8de12
-C2:288–318	docs/orchestration/state/measurement-paper/5d-community-20261024/REF-C2C1-DECLARATION.md	288–318	1aa805b59eb037c5fcd978037ae282189aa33634	63a1efa33fa4e1e3d3e15997b47232b7092dde21096c26f3e629729d14183c3b
-C2-B2:61–65	docs/orchestration/state/measurement-paper/5d-community-20261024/REF-C2C1-BINDING-2.md	61–65	1aa805b59eb037c5fcd978037ae282189aa33634	2539a151304c5115699582f07c3d212d88de4e7aca922724f4ff2f7926826b14
 COMMISSION:41–46	docs/orchestration/DECISION-20261104-joseph-referee-analysis-commission.md	41–46	1aa805b59eb037c5fcd978037ae282189aa33634	6143110981d5b95041834a0e1aba78f93efda14620470db82d3cb2a1d2aa1fa3
 RECO:165–177,230–257	docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-DECLARATION.md	165–177,230–257	1aa805b59eb037c5fcd978037ae282189aa33634	b0eee33c95ccb037c681df8d33dccdf1b3d3af60098bba6545c725f706ebe5d8
 RECO-B1:38–43	docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-BINDING-1.md	38–43	1aa805b59eb037c5fcd978037ae282189aa33634	6fe0007ae6e1d6e5ae999f1a3481929f06dcdde5636def27c7cd94543dc4d47b

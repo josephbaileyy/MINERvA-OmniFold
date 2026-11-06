@@ -147,3 +147,20 @@ bounded attempt ends here; the updated draft is for the director's review.
 The update changes neither manuscript text nor scientific code/products. Incorporating
 the current main branch brings its already committed campaign records into the worktree;
 those are not new runs or new scientific measurements by this package owner.
+
+## Final c2/c1 outcome insertion
+
+The director requested replacing the pending entries with the committed outcome record
+`OUTCOME-20261106-ref-c2c1-read.md` at
+`4ed08bbee167ec45bd9779a8eeac1a90c9470103`. The inserted statements use its licence
+lines only: c2 unresolved with C2-R1 differ leaves the shape-difference limitation unchanged;
+c1 equivalent licenses the quoted paired-noise reproduction, without combination, estimator
+replacement or equality of publication intermediates. Its recorded small margin is carried
+with the classification. No numerical result was recomputed and no cause inferred. The
+owner checked the quoted licence strings against the committed record after normalizing
+source line breaks. This literal insertion has no new advisory verdict; the earlier
+update-attempt timeout remains recorded above.
+
+Final source inventory: 119 citation entries, 38 unique source blobs.
+Final REPORT.md SHA256: `dcf4553ed08d12e28b64deaba2902f35f65b195610e028b36dc3afa3695f131e`.
+Final SOURCES.tsv SHA256: `8efe844bce642346c51a610989fda2adb21f3f574defaa1e460cc610779ce85f`.
