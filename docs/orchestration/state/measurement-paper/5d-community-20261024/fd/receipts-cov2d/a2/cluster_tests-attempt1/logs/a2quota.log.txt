@@ -1,0 +1,30 @@
+[2026-11-06T02:19:57.911] error: Unable to create TMPDIR [/dev/shm/josephrb-cov2d-a2tests/tmp]: No such file or directory
+[2026-11-06T02:19:57.911] error: Setting TMPDIR to /tmp
+node=nid006001
+Traceback (most recent call last):
+  File "/global/common/software/nersc/bin/showquota", line 855, in <module>
+    full_path=args.full_path)
+  File "/global/common/software/nersc/bin/showquota", line 747, in report
+    stats = [p.stat for p in paths]
+  File "/global/common/software/nersc/bin/showquota", line 747, in <listcomp>
+    stats = [p.stat for p in paths]
+  File "/global/common/software/nersc/bin/showquota", line 660, in stat
+    self._stat = self._extract_fnc(**self._kwargs)
+  File "/global/common/software/nersc/bin/showquota", line 411, in extract_gpfs_data
+    cmd_output = run(("/usr/lpp/mmfs/bin/mmlsquota", "-Y", "-u", user, fs))
+  File "/global/common/software/nersc/bin/showquota", line 319, in run
+    proc = sp.run(cmd_list, stdout=sp.PIPE, stderr=sp.PIPE, check=True, encoding="utf-8")
+  File "/usr/lib64/python3.6/subprocess.py", line 423, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/usr/lib64/python3.6/subprocess.py", line 729, in __init__
+    restore_signals, start_new_session)
+  File "/usr/lib64/python3.6/subprocess.py", line 1364, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/lpp/mmfs/bin/mmlsquota': '/usr/lpp/mmfs/bin/mmlsquota'
+
+HEADROOM-PROBLEM pscratch quota unreadable from showquota: 'Traceback (most recent call last):\n  File "/global/common/software/nersc/bin/showquota", line 855, in <module>\n    full_path=args.full_path)\n  File "/global/common/software/nersc/bin/showquota", line 747, in report\n    stats = [p.stat for p in paths]\n  File "/global/common/software/nersc/bin/showquo'
+JobID|JobName|State|ExitCode|Elapsed|NNodes|QOS|NodeList
+60883869|a2quota|COMPLETED|0:0|00:00:04|1|debug|nid006001
+60883869.batch|batch|COMPLETED|0:0|00:00:04|1||nid006001
+60883869.extern|extern|COMPLETED|0:0|00:00:04|1||nid006001
+60883869.0|python|COMPLETED|0:0|00:00:03|1||nid006001

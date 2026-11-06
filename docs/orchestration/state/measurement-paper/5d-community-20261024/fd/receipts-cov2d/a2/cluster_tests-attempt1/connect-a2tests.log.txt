@@ -1,0 +1,73 @@
+host=login02 start=2026-11-06T02:12:05Z pid=491882
+head=cf533377c7f9e1638940c677b9af5242f3ba66f4
+porcelain-before plain=0 ignored=0
+ENV P /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python 3.10.19 numpy 2.2.6 uproot 5.6.9 ROOT absent (ModuleNotFoundError)
+rc env=P module=test_cov2d_pseudo rc=1
+SUITE env=P module=test_cov2d_pseudo ran=21 failures=1 errors=0 skipped=0 guarded_reads=0 ok=False
+rc env=P module=test_cov2d_readouts rc=0
+SUITE env=P module=test_cov2d_readouts ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=P module=test_cov2d_null rc=0
+SUITE env=P module=test_cov2d_null ran=5 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=P module=test_cov2d_score rc=0
+SUITE env=P module=test_cov2d_score ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=P module=test_cov2d_jobs rc=0
+SUITE env=P module=test_cov2d_jobs ran=41 failures=0 errors=0 skipped=1 guarded_reads=0 ok=True
+rc env=P module=test_cov2d rc=0
+SUITE env=P module=test_cov2d ran=35 failures=0 errors=0 skipped=11 guarded_reads=0 ok=True
+ENV R /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python 3.11.14 numpy 1.26.4 uproot absent (ModuleNotFoundError) ROOT 6.28/12
+rc env=R module=test_cov2d_blocks rc=0
+SUITE env=R module=test_cov2d_blocks ran=26 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R module=test_cov2d_null rc=0
+SUITE env=R module=test_cov2d_null ran=5 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R module=test_cov2d_score rc=0
+SUITE env=R module=test_cov2d_score ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+R rc=0
+{"mat_setup_scripts": 6, "mismatches": 0}
+RM python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+MAT {"mapped": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"], "dictionary": true}
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+ENV RM /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python 3.11.14 numpy 1.26.4 uproot absent (ModuleNotFoundError) ROOT 6.28/12
+rc env=RM module=test_cov2d_pseudo_write rc=0
+SUITE env=RM module=test_cov2d_pseudo_write ran=17 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d_pilot rc=0
+SUITE env=RM module=test_cov2d_pilot ran=13 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d_jobs rc=0
+SUITE env=RM module=test_cov2d_jobs ran=41 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d rc=0
+SUITE env=RM module=test_cov2d ran=35 failures=0 errors=0 skipped=11 guarded_reads=0 ok=True
+RM rc=0
+porcelain-after plain=0 ignored=0
+GUARD-TEST RAN-OK P_test_cov2d_pseudo test_inputs_are_staged_and_the_guard_records_its_values
+GUARD-TEST NOT-OK P_test_cov2d_pseudo test_a_plain_read_of_a_staged_copy_stops
+GUARD-TEST RAN-OK RM_test_cov2d_pseudo_write test_inputs_are_staged_root_reads_working_copies_and_the_guard_records
+GUARD-TEST RAN-OK RM_test_cov2d_pseudo_write test_a_plain_read_of_a_staged_copy_stops
+deploy=/pscratch/sd/j/josephrb/cov2d-deploy-cf533377 head=cf533377c7f9e1638940c677b9af5242f3ba66f4 plain=0 ignored=0
+a2quota sbatch rc=0 id=60883869
+node=nid006001
+HEADROOM-PROBLEM pscratch quota unreadable from showquota: 'Traceback (most recent call last):\n  File "/global/common/software/nersc/bin/showquota", line 855, in <module>\n    full_path=args.full_path)\n  File "/global/common/software/nersc/bin/showquota", line 747, in report\n    stats = [p.stat for p in paths]\n  File "/global/common/software/nersc/bin/showquo'
+deploy after: plain=0 ignored=0
+TESTS-SUMMARY 12 ok of 13 suite runs
+removal: host=login02 2026-11-06T02:20:37Z 1.2G
+rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-a2tests/deploy': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-a2tests/tmp': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-a2tests/runsuite.py': No such file or directory
+end=2026-11-06T02:20:37Z
+DONE

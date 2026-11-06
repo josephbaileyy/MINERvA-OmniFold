@@ -1,0 +1,53 @@
+test_bank_is_part_b_universe_block (test_cov2d.Bank) ... ok
+test_flux_weights (test_cov2d.Bank) ... ok
+test_seeds (test_cov2d.Bank) ... ok
+test_bound_is_never_below_the_exact_maximum (test_cov2d.Compose) ... ok
+test_c2_weakened_cells_and_outlier (test_cov2d.Compose)
+On C2's committed record: the weakened cells per tune, and OUTLIER_CELL is the cell of the largest |R|. ... ok
+test_deploy_head_is_the_clean_checkouts_head (test_cov2d.Compose) ... ok
+test_first_order_in_draw_order (test_cov2d.Compose) ... ok
+test_lam_plus (test_cov2d.Compose) ... ok
+test_n1_conventions (test_cov2d.Compose) ... ok
+test_one_universe_is_bitwise (test_cov2d.Compose) ... ok
+test_refuses_empty (test_cov2d.Compose) ... ok
+test_sha256_through_noatime (test_cov2d.Compose) ... ok
+test_weakened_cells (test_cov2d.Compose) ... ok
+test_deterministic_and_ordered (test_cov2d.Draws) ... ok
+test_flux_probability (test_cov2d.Draws) ... ok
+test_generator_is_seed_and_salt (test_cov2d.Draws) ... ok
+test_pair_bands_uniform (test_cov2d.Draws) ... ok
+test_a_nonpositive_truth_cell_stops (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_an_unequal_band_is_not_certified_by_its_largest_universe (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_atime_move_stops (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_compounding_row_stops (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_driver_names_without_root_equal_the_import (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_mild_bank_passes_and_every_row_is_evaluated (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_negative_composites_are_counted (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_nonfinite_weights_are_zeroed_and_counted (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_the_bound_is_exact_at_the_edge (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_truth_cell_matches_a_th2d (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_truth_cells_are_recomputed_independently (test_cov2d.Receipt) ... skipped 'needs PyROOT and uproot'
+test_a_copy_is_made_once (test_cov2d.StageAndGuard) ... ok
+test_a_wrong_pin_refuses_and_leaves_no_copy (test_cov2d.StageAndGuard) ... ok
+test_copies_hashes_and_records (test_cov2d.StageAndGuard) ... ok
+test_headroom_against_re2s_showquota_row (test_cov2d.StageAndGuard) ... ok
+test_settling (test_cov2d.StageAndGuard) ... ok
+test_stage_all_stops_at_the_first_copy_off_its_pin (test_cov2d.StageAndGuard) ... ok
+test_the_guard_records_both_values (test_cov2d.StageAndGuard) ... ok
+
+----------------------------------------------------------------------
+Ran 35 tests in 1.370s
+
+OK (skipped=11)
+SUITE env=P module=test_cov2d ran=35 failures=0 errors=0 skipped=11 guarded_reads=0 ok=True
+SKIP test_cov2d.Receipt.test_a_nonpositive_truth_cell_stops: needs PyROOT and uproot
+SKIP test_cov2d.Receipt.test_an_unequal_band_is_not_certified_by_its_largest_universe: needs PyROOT and uproot
+SKIP test_cov2d.Receipt.test_atime_move_stops: needs PyROOT and uproot
+SKIP test_cov2d.Receipt.test_compounding_row_stops: needs PyROOT and uproot
+SKIP test_cov2d.Receipt.test_driver_names_without_root_equal_the_import: needs PyROOT and uproot
+SKIP test_cov2d.Receipt.test_mild_bank_passes_and_every_row_is_evaluated: needs PyROOT and uproot
+SKIP test_cov2d.Receipt.test_negative_composites_are_counted: needs PyROOT and uproot
+SKIP test_cov2d.Receipt.test_nonfinite_weights_are_zeroed_and_counted: needs PyROOT and uproot
+SKIP test_cov2d.Receipt.test_the_bound_is_exact_at_the_edge: needs PyROOT and uproot
+SKIP test_cov2d.Receipt.test_truth_cell_matches_a_th2d: needs PyROOT and uproot
+SKIP test_cov2d.Receipt.test_truth_cells_are_recomputed_independently: needs PyROOT and uproot
