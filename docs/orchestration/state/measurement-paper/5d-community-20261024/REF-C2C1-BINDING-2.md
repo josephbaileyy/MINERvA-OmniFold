@@ -85,3 +85,62 @@ the runs can reach them. Committing them with their sha before the read fixes th
 "before the run" protects. This is recorded as the director's reading of `:69`.
 
 Nothing is submitted, deposited or tagged.
+
+## Director's ruling (2026-11-06): C-PUB's operand, after the 3b control STOP
+
+**The STOP.** The read (3b) ran b162ba9a from main `fd4c572c` on login27 at 0 node-h and stopped on its own control:
+- read.log says "STOP: failed controls ['C-PUB']; no reading was formed";
+- the rc was 1, and no readout.json exists;
+- STOP.json has sha256 `968e0f2a…` (receipt PR #838).
+
+STOP.json holds controls only. Every other control passes: C-CELLS, C-IN, C-CV, C-REF, C-CPUS, C-SET, C-SIM and C-ROO.
+read.stdout is one line of axis labels. The director read both.
+
+**Why C-PUB failed.** The cause is the control's operand, not the code it checks.
+- **What the control requires** (`REF-C2C1-DECLARATION.md:115`): "the comparison code, given E_R itself, reproduces
+  465.4153 over 205 bins to 1e-8 relative (`tension_report.txt:14`)".
+- **What the bound config holds:** `2d-unfolding/ref_c2c1/config.json` (blob `96dbbaa2`) has `"chi2": 465.4153,
+  "rtol": 1e-8`, a number printed to four decimals. Rounding to four decimals alone allows an error of up to
+  5×10⁻⁵, which is 1.07×10⁻⁷ relative. So the control could pass only by chance.
+- **What the read computed:** χ² = 465.4152721915331 over ndf 205. That is 6.0×10⁻⁸ from the rounded constant.
+- **The same quantity at full precision** is committed in
+  `state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/receipts/receipt_model_chi2.json:190` @ `3c2c3c0c`
+  (`results.ours_vs_data.chi2` = 465.41527219152636, ndf 205). It is for the same E_R (sha256 `a5c13fc3…`) and the same
+  published covariance (`6c6dce72…`) that the read staged. Its own `tension_report.txt:14` prints that value as 465.4153.
+- The read agrees with it to **1.4×10⁻¹⁴ relative**.
+- **The declaration's citation is ambiguous.** `tension_report.txt:14` names no path. The file
+  `2d-unfolding/tension_report.txt:14` prints 750.4928, which belongs to a different result. The intended file is
+  the part C r2 receipt's copy.
+
+**Rulings.**
+1. **The classification: a defect in a control's operand.** The checked code is not at fault.
+   - It isn't a reading. No reading was formed, and nobody has seen one.
+     <!-- absence-ok: the read's own STOP record states no reading was formed; this scopes the ruling, not a result -->
+   - Binding 2 ruling 1 ("frozen unless a control STOPs") permits this change.
+2. **The fix is the full-precision operand at the unchanged tolerance.** The tolerance is not loosened.
+   - `config.json`'s `c_pub.chi2` becomes 465.41527219152636, with `rtol` staying 1e-8.
+   - It gains a `source` field: the receipt path, `:190`, commit `3c2c3c0c`, the E_R sha and the covariance sha.
+   - The read also checks that the staged E_R and covariance shas equal that source's. On a mismatch it refuses.
+3. **The precision rule goes into code.** A test fails if any control's reference constant carries a rounding
+   uncertainty larger than its rtol/10. Run it over every constant in `config.json`, not only C-PUB's, and report
+   any other constant it flags before the audit.
+4. **Scope of the change.** The code PR changes only `config.json` and the read's source check, plus the new test and
+   the harness:
+   - the harness's REQUIRED mutant "C-PUB's tolerance loosened" must still be killed;
+   - add a mutant that restores the rounded constant, which must also be killed.
+
+   The lane shows that no unit code path reads `c_pub`, so the 350 replica units and the three centrals stand on
+   their DONE records at `77d76cfc`.
+5. **The order of steps:**
+   1. the lane's code PR;
+   2. coverage-5b-audit's audit of that delta;
+   3. the director binds the new M in a section of this file;
+   4. 3b re-runs at 0 node-h, from main's bytes, re-hashed on login, with the read connect re-hashed for the new M
+      if it embeds M;
+   5. the receipt.
+
+   The staged copies stay until the read PASSes: stage 4's deletion waits.
+6. **Unchanged:** the readings, bars and licences (§§1.5, 2.4 and 5), the cap and the spend. The spend stays at
+   11.0587 of 12.5 node-h, and the re-read adds 0.
+
+Nothing is submitted, deposited or tagged.
