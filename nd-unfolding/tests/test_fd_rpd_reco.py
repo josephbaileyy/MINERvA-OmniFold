@@ -1146,3 +1146,53 @@ def test_output_location_before_any_write(
         == 4
     )
     assert "STOP OUTPUT_LOCATION" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("seed", [17, 43])
+@pytest.mark.parametrize("extra", ["extra.npz", "nn_2A.npz"])
+def test_known_siblings_are_stat_only(
+    tmp_path: Path, standin_noatime: None, seed: int, extra: str
+) -> None:
+    fixture = Fixture(tmp_path, seed=seed)
+    siblings = {}
+    for playlist in R.PLAYLISTS:
+        path = fixture.dump / f"nn_{playlist}.npz"
+        path.write_bytes(f"not an NPZ; never open {playlist}".encode())
+        info = path.stat()
+        siblings[path.name] = {
+            "name": path.name,
+            "bytes": info.st_size,
+            "mtime_ns": info.st_mtime_ns,
+        }
+    active = [True]
+
+    def forbid_sibling_open(event: str, arguments: tuple[Any, ...]) -> None:
+        if (
+            active[0]
+            and event == "open"
+            and isinstance(arguments[0], (str, bytes, os.PathLike))
+        ):
+            path = Path(os.fsdecode(arguments[0]))
+            assert not (
+                path.parent == fixture.dump and path.name in siblings
+            ), "known sibling was opened"
+
+    sys.addaudithook(forbid_sibling_open)
+    try:
+        result = fixture.execute("pins")["result"]
+        assert result["n_files"] == 24
+        assert result["known_siblings_stat_only"] == [
+            siblings[name] for name in sorted(siblings)
+        ]
+        inputs = fixture.inputs()
+        assert set(inputs.pins) == {
+            f"lat_{playlist}{suffix}.npz"
+            for playlist in R.PLAYLISTS
+            for suffix in ("", "_bkg")
+        }
+        (fixture.dump / extra).write_bytes(b"unknown sibling")
+        fixture.run = fixture.root / "refused-extra"
+        with pytest.raises(R.Refused, match="PIN_SET"):
+            fixture.execute("pins")
+    finally:
+        active[0] = False

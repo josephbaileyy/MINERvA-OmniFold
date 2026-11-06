@@ -284,6 +284,7 @@ class Inputs:
         self.prediction_checks = 0
         self.prediction_prefix = f"prediction-{time.time_ns()}"
         self.pins: dict[str, tuple[Path, str]] = {}
+        self.known_siblings: list[Json] = []
         self.copies: dict[tuple[Path, str], Path] = {}
 
     def copy(self, source: Path, expected: str) -> Path:
@@ -336,11 +337,24 @@ class Inputs:
             for path in Path(self.config["dump_root"]).iterdir()
             if path.is_file()
         }
+        known_sibling_names = {f"nn_{playlist}.npz" for playlist in PLAYLISTS}
         require(
-            actual == expected,
+            expected <= actual and actual <= expected | known_sibling_names,
             "PIN_SET",
-            f"missing {sorted(expected - actual)}, extra {sorted(actual - expected)}",
+            f"missing {sorted(expected - actual)}, "
+            f"extra {sorted(actual - expected - known_sibling_names)}",
         )
+        self.known_siblings = []
+        for sibling_name in sorted(actual & known_sibling_names):
+            sibling_path = Path(self.config["dump_root"]) / sibling_name
+            info = sibling_path.stat()
+            self.known_siblings.append(
+                {
+                    "name": sibling_name,
+                    "bytes": info.st_size,
+                    "mtime_ns": info.st_mtime_ns,
+                }
+            )
         self.pins = entries
 
     def key(self, name: str, key: str) -> NDArray[Any]:
@@ -1765,6 +1779,7 @@ def run_stage(
                 for name, (source, expected) in inputs.pins.items()
             },
             "n_files": len(inputs.pins),
+            "known_siblings_stat_only": inputs.known_siblings,
         }
     elif step == "p0":
         result = p0(inputs)

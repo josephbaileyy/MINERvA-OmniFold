@@ -118,6 +118,26 @@ class Mutation:
 
 REQUIRED = tuple(
     [
+        Mutation(
+            "REQUIRED_KNOWN_SIBLING_ALLOWED",
+            "sibling_empty",
+            "known_sibling_names",
+            "test_known_siblings_are_stat_only",
+        ),
+        Mutation(
+            "REQUIRED_UNKNOWN_SIBLING_REFUSED",
+            "sibling_extra",
+            "known_sibling_names",
+            "test_known_siblings_are_stat_only",
+        ),
+        Mutation(
+            "REQUIRED_SIBLING_NEVER_OPENED",
+            "sibling_open",
+            "load_pins",
+            "test_known_siblings_are_stat_only",
+        ),
+    ]
+    + [
         Mutation(f"REQUIRED_GUARD_{name}", "guard", name, selector)
         for name, selector in GUARD_TESTS.items()
     ]
@@ -202,6 +222,20 @@ class Mutator(ast.NodeTransformer):
 
     def visit_Assign(self, node: ast.Assign) -> ast.AST:
         mutation = self.mutation
+        if mutation.kind in {"sibling_empty", "sibling_extra"} and any(
+            isinstance(target, ast.Name) and target.id == mutation.target
+            for target in node.targets
+        ):
+            node.value = (
+                ast.Call(func=ast.Name(id="set", ctx=ast.Load()), args=[], keywords=[])
+                if mutation.kind == "sibling_empty"
+                else ast.BinOp(
+                    left=node.value,
+                    op=ast.BitOr(),
+                    right=ast.Set(elts=[ast.Constant(value="nn_2A.npz")]),
+                )
+            )
+            self.changed += 1
         if mutation.kind == "constant" and any(
             isinstance(target, ast.Name) and target.id == mutation.target
             for target in node.targets
@@ -230,6 +264,26 @@ class Mutator(ast.NodeTransformer):
                 func=ast.Name(id="_sigma", ctx=ast.Load()),
                 args=[ast.Name(id="by_playlist", ctx=ast.Load())],
                 keywords=[],
+            )
+            self.changed += 1
+        return self.generic_visit(node)
+
+    def visit_For(self, node: ast.For) -> ast.AST:
+        if (
+            self.mutation.kind == "sibling_open"
+            and self.function == self.mutation.target
+            and isinstance(node.target, ast.Name)
+            and node.target.id == "sibling_name"
+        ):
+            node.body.insert(
+                1,
+                ast.Expr(
+                    value=ast.Call(
+                        func=ast.Name(id="digest", ctx=ast.Load()),
+                        args=[ast.Name(id="sibling_path", ctx=ast.Load())],
+                        keywords=[],
+                    )
+                ),
             )
             self.changed += 1
         return self.generic_visit(node)
