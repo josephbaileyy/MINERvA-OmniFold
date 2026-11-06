@@ -1,0 +1,63 @@
+{
+ "O_NOATIME": 262144,
+ "files": {
+  "CV": {
+   "atime_moved": false,
+   "bytes": 2144008221,
+   "copy": "/pscratch/sd/j/josephrb/ref-c2c1-20261106/stage/runEventLoopOmniFold_MEFHC.root",
+   "copy_reread_sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "digest_through_noatime_open": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "pass": true,
+   "pin": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+   "source": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+   "source_after": {
+    "atime": 1792770770.2146108,
+    "atime_utc": "2026-10-23T15:52:50Z",
+    "bytes": 2144008221,
+    "mode": "0o440",
+    "owner": "josephrb"
+   },
+   "source_before": {
+    "atime": 1792770770.2146108,
+    "atime_utc": "2026-10-23T15:52:50Z",
+    "bytes": 2144008221,
+    "mode": "0o440",
+    "owner": "josephrb"
+   }
+  },
+  "MC": {
+   "atime_moved": false,
+   "bytes": 5143,
+   "copy": "/pscratch/sd/j/josephrb/ref-c2c1-20261106/stage/runEventLoopMC_MEFHC.root",
+   "copy_reread_sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "digest_through_noatime_open": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "pass": true,
+   "pin": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+   "source": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+   "source_after": {
+    "atime": 1784607401.467913,
+    "atime_utc": "2026-07-21T04:16:41Z",
+    "bytes": 5143,
+    "mode": "0o640",
+    "owner": "josephrb"
+   },
+   "source_before": {
+    "atime": 1784607401.467913,
+    "atime_utc": "2026-07-21T04:16:41Z",
+    "bytes": 5143,
+    "mode": "0o640",
+    "owner": "josephrb"
+   }
+  }
+ },
+ "host": "dtn01.nersc.gov",
+ "platform": "Linux-5.14.0-687.60.1.el9_8.x86_64-x86_64-with-glibc2.34",
+ "python": "3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]",
+ "root": "/pscratch/sd/j/josephrb/ref-c2c1-20261106/stage",
+ "schema": "ref-c2c1-stage/1",
+ "started_utc": "2026-11-06T02:59:55Z",
+ "uid": 112498,
+ "user": "josephrb",
+ "verdict": "PASS",
+ "written_utc": "2026-11-06T03:00:00Z"
+}

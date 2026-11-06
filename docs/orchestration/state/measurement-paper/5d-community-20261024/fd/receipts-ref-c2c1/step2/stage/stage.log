@@ -1,0 +1,13 @@
+node dtn01.nersc.gov nproc=48 loadavg 3.35 3.72 3.97
+2026-11-06T02:59:55Z
+stage script sha256 020c5a491901f72d282120a8622fe2293e7061eb1d532c6ab5e9a2bc40fa7ac8
+O_NOATIME = 262144 (0o1000000) on Linux-5.14.0-687.60.1.el9_8.x86_64-x86_64-with-glibc2.34; running as josephrb uid 112498
+CV: owner josephrb mode 0o440 bytes 2144008221; atime before 2026-10-23T15:52:50Z after 2026-10-23T15:52:50Z (moved: False); sha256 through the noatime open 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df; copy re-read 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df; pin 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df; pass True
+MC: owner josephrb mode 0o640 bytes 5143; atime before 2026-07-21T04:16:41Z after 2026-07-21T04:16:41Z (moved: False); sha256 through the noatime open d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316; copy re-read d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316; pin d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316; pass True
+{"verdict": "PASS", "stage_json_sha256": "559da9e806ccf4a24c70279bd70564ff96074fe6aec2d2df0e9b62370426479d"}
+stage python rc=0
+total 2093061
+-rw-r--r-- 1 josephrb josephrb       5143 Nov  5 19:00 runEventLoopMC_MEFHC.root
+-rw-r--r-- 1 josephrb josephrb 2144008221 Nov  5 18:59 runEventLoopOmniFold_MEFHC.root
+ref-c2c1 stage rc=0
+2026-11-06T03:00:00Z
