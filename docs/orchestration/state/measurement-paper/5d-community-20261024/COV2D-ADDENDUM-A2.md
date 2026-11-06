@@ -19,7 +19,7 @@ reclassification.
 
 ## 1. What A2 binds
 
-The code commit `928204b019c1619f0e1d86b79c0f7e2c1732054f` (on `a2005b54`, A2's first code commit, on main's `a548d44c`, which carries the merged #797). Its blobs are in §10. Against M
+The code commit `038f28e870bb690a11b2433ab0b4c41c04d41a27`, A2's third code commit. It sits on `928204b0` (the first audit's fixes), which sits on `a2005b54` (A2's first), on main's `a548d44c`, which carries the merged #797. Its blobs are in §10. Against M
 (`cb31611c`), it changes:
 - `cov2d.py`;
 - `cov2d_pseudo.py` (step A);
@@ -55,6 +55,16 @@ at the commit binding A2 names.
   `test_the_writers_record_is_what_order_admits` now runs the real writer with its pins checked, against the fixture's
   own digests: `order()` admits the record, and refuses it with `pins_checked: false`. A record without the field is
   refused too.
+- **A pinned step B refuses an unpinned step A** (the audit's re-check, L1's gap, ruled in). Otherwise B's record could
+  say `pins_checked: true` over an unpinned A. The refusal comes before B's work.
+- **Binding 2's records are admitted at A2's deploy by a declared table** (the audit's N1, the director's rule R1).
+  - `cov2d_jobs.PRIOR_RECORDS` holds exactly two entries, both from binding 2: G18's pseudo-data record (`cb31611c`,
+    `230f6918…`) and the pilot record (`cb31611c`, `b59ffa2d…`).
+  - `order()` admits a record whose M is the deploy's M. Otherwise it admits a record only if its path, its M and the
+    sha256 of its exact bytes on origin/main all match that path's entry. The order CLI hashes what `git show` returns.
+  - Everything else is refused, including AR23 at `cb31611c`: its rerun's record must carry A2's M.
+  - **Without this,** no single M passed the sequence: A2's deploy refused binding 2's records, and a deploy at
+    `cb31611c` ran the code without staging.
 
 ## 3. Item 2: every shared input the guards watch is staged first
 
@@ -194,9 +204,9 @@ So lazy propagation is consistent with what can be measured, but it was not meas
 - a README stating STOP #2, the ruling and its scope, the guard and what it did not record, the inferred cause with its
   stat-only evidence, and what would falsify it.
 
-## 9. The audit (coverage-5b-audit on #803, 1b1ed6b5) and what changed
+## 9. The audit (coverage-5b-audit on #803, at 1b1ed6b5 and at 9575dd1d) and what changed
 
-The auditor's report and the director's ruling on it are copied verbatim in `fd/receipts-cov2d/a2/AUDIT-A2.md`.
+The auditor's report, its re-check and the director's rulings are copied verbatim in `fd/receipts-cov2d/a2/AUDIT-A2.md`.
 
 | finding | change | tests | mutants (all REQUIRED) |
 |---|---|---|---|
@@ -204,24 +214,26 @@ The auditor's report and the director's ruling on it are copied verbatim in `fd/
 | D2: settle before guarding | fsync of each copy and its directory; `settle_atime` (5 s, 6 pairs); `REFUSED` with the readings | `test_a_copy_whose_atime_will_not_settle_is_refused_before_the_work` (steps A and B); `test_settling` | "A2 D2 step A settle skipped"; "A2 D2 step B settle skipped"; "A2 D2 settle wait under 5 s"; "A2 D2 an unsettled reading accepted" |
 | L1: `order()` requires `pins_checked: true` | pseudo-data records; the pilot record is exempt (§2) | `test_a_pseudo_record_without_its_pins_checked_opens_nothing`; the writer test with pins checked | "A2 L1 order ignores pins_checked" |
 | L2: showquota on a compute node | the cluster test run's 1-minute allocation (§6) | — | — |
+| N1 (re-check, blocking): no single M passes the sequence | `PRIOR_RECORDS` (rule R1, §2); the order CLI hashes the committed bytes | `PriorRecords` (the sequence at A2's deploy on the real committed files; a record off its bytes or without digests; AR23 at binding 2's M; another record's bytes under AR23's path; the CLI on a real origin); the writer test's real sequence (binding 2's records plus this writer's record open the universes) | "N1 the prior records ignored"; "N1 a prior record admitted on its M alone"; "N1 a prior record admitted under any path"; "N1 the order CLI hashes nothing" |
+| L1's gap (re-check): an unpinned A under a pinned B | step B refuses unless A's record says `pins_checked: true` | `test_a_pinned_step_b_refuses_an_unpinned_step_a` | "L1 step B ignores step A's pins" |
 
 The fsync itself is not mutated, because no test can observe it.
 
 ## 10. Tests, mutants and blobs
 
-At `928204b0`, in one local environment holding PyROOT, uproot and numpy (ROOT 6.28/12, uproot 5.6.9): **176 tests, 0 skipped, all pass** (`fd/receipts-cov2d/amendment/suites_928204b0.txt`):
-- step A 21, step B 16, blocks 26, null 5, scorer 12, readouts 12, jobs 36, pilot 13, cov2d 35.
+At `038f28e8`, in one local environment holding PyROOT, uproot and numpy (ROOT 6.28/12, uproot 5.6.9): **182 tests, 0 skipped, all pass** (`fd/receipts-cov2d/amendment/suites_038f28e8.txt`):
+- step A 21, step B 17, blocks 26, null 5, scorer 12, readouts 12, jobs 41, pilot 13, cov2d 35.
 - This local run used the macOS emulation of O_NOATIME (§4). The cluster run must show both directions on Linux.
 
-**Mutants:** `fd/receipts-cov2d/amendment/mutation_amendment.py`, 86, **all killed**, harness exit 0 (`mutation_amendment.txt`). **33 are REQUIRED:**
+**Mutants:** `fd/receipts-cov2d/amendment/mutation_amendment.py`, 91, **all killed**, harness exit 0 (`mutation_amendment.txt`). **38 are REQUIRED:**
 - binding 2's 10;
 - rulings (a) and (i)'s 2;
 - A2's first 12: the guards on the shared originals (A, B), the guard values not recorded (A, B), the staging pin unchecked, the quota check skipped, the headroom at 1x, ROOT reading the staged copies, AR23 into its old directory, AR23's limit at 03:00:00, the deletion without the stat match, the shared atime not recorded;
-- the §6 ruling's 3 and the audit's 6 (§9).
+- the §6 ruling's 3, the first audit's 6, and the re-check's 5 (§9).
 
-Each new mutant was also run alone first, all killed. "J1 pilot without G18's pseudo PASS" was re-anchored on `order()`'s new line (L1).
+Each new mutant was also run alone first, all killed. Three older mutants were re-anchored, each on the line `order()`'s rewrites changed, and each still dies: "J1 pilot without G18's pseudo PASS", "F1 order ignores M" and "A2 L1 order ignores pins_checked".
 
-**Blobs at `928204b019c1619f0e1d86b79c0f7e2c1732054f`**, every file under `2d-unfolding/cov2d`. The 14 files that differ from M (`cb31611c`) are marked: A2's 13, plus #797's `test_cov2d_blocks.py` (ruling (i)).
+**Blobs at `038f28e870bb690a11b2433ab0b4c41c04d41a27`**, every file under `2d-unfolding/cov2d`. The 14 files that differ from M (`cb31611c`) are marked: A2's 13, plus #797's `test_cov2d_blocks.py` (ruling (i)).
 
 | file | blob | |
 |---|---|---|
@@ -230,25 +242,25 @@ Each new mutant was also run alone first, all killed. "J1 pilot without G18's ps
 | `2d-unfolding/cov2d/cov2d_null.py` | `59d9721cefbcd1276348e7ee183007160954e49d` |  |
 | `2d-unfolding/cov2d/cov2d_pilot.py` | `ae9764676876857efa66ecc5c245a6936961f469` |  |
 | `2d-unfolding/cov2d/cov2d_pseudo.py` | `7bfa0bb252e8ac29caa47410bd463a59ff96675a` | changed since M |
-| `2d-unfolding/cov2d/cov2d_pseudo_write.py` | `4f903511f4496048a5f632e2def7dac12d01905b` | changed since M |
+| `2d-unfolding/cov2d/cov2d_pseudo_write.py` | `5234deb290dc00449203b9c1070e2a6a6a9afdcc` | changed since M |
 | `2d-unfolding/cov2d/cov2d_readouts.py` | `7e6407c4308500e1f622dfe870b8f8f314e1a7fc` |  |
 | `2d-unfolding/cov2d/cov2d_receipt.py` | `d5718bf44c2084c20c30a8b8614e9c40e6fbeee3` |  |
 | `2d-unfolding/cov2d/cov2d_score.py` | `282fd27ec07c84b4f9a0f287004eca0133858c15` |  |
 | `2d-unfolding/cov2d/cov2d_writer.py` | `bb3892e5447d37ee524c720c5ab623baa7184f30` |  |
 | `2d-unfolding/cov2d/jobs/cov2d_env.sh` | `2eb123666e9a56b60c8d4b762c12ac93ce258272` | changed since M |
 | `2d-unfolding/cov2d/jobs/cov2d_job.sbatch` | `5585e13eef98772e0ececaba88fd2480160e7ae2` | changed since M |
-| `2d-unfolding/cov2d/jobs/cov2d_jobs.py` | `4be6d12e7482cf550c2285ba99a417c4b634075b` | changed since M |
+| `2d-unfolding/cov2d/jobs/cov2d_jobs.py` | `305fe42ebfa28da79b289f429346966f20f2a3e5` | changed since M |
 | `2d-unfolding/cov2d/jobs/cov2d_pseudo.sbatch` | `a0c63e0fa94383c2e73d6e6eb66d4958b43fcd88` | changed since M |
 | `2d-unfolding/cov2d/jobs/cov2d_submit.sh` | `0b07131c00353dbae713f00cb1897d6e2238ff55` | changed since M |
 | `2d-unfolding/cov2d/tests/deploy_fixture.py` | `75033297ae8e2617bca6c0d7aae5ddb75c110500` |  |
 | `2d-unfolding/cov2d/tests/noatime_emu.py` | `d18c85116b480ca7b05c8e411f0e56e82c8ea662` | changed since M |
 | `2d-unfolding/cov2d/tests/test_cov2d.py` | `3914524b9ccd17ab809711ac11f0d2d3f61ad215` | changed since M |
 | `2d-unfolding/cov2d/tests/test_cov2d_blocks.py` | `e3682f8d5da47cbcf39a513850c781a1a7a20cd0` | changed since M |
-| `2d-unfolding/cov2d/tests/test_cov2d_jobs.py` | `ac9ec81d3df8dffc98fa6e5ec537e986bf467978` | changed since M |
+| `2d-unfolding/cov2d/tests/test_cov2d_jobs.py` | `8a7ca6203a02a58c6e5f86a9223dcce5550b6368` | changed since M |
 | `2d-unfolding/cov2d/tests/test_cov2d_null.py` | `3002455578509d6d4be06a08e4fa17105f06492d` |  |
 | `2d-unfolding/cov2d/tests/test_cov2d_pilot.py` | `4f65bdf5f34a9ae72441e797ff57be04fee0c0c6` |  |
 | `2d-unfolding/cov2d/tests/test_cov2d_pseudo.py` | `69a611bce4bfe33e907f0bb6352ace0548a6a2ae` | changed since M |
-| `2d-unfolding/cov2d/tests/test_cov2d_pseudo_write.py` | `9bc50f4efdb8659318dfd6034c9acb1e2f35f490` | changed since M |
+| `2d-unfolding/cov2d/tests/test_cov2d_pseudo_write.py` | `c4b553f3ee39ed8aa6aaa3d592db0da01d0ecc15` | changed since M |
 | `2d-unfolding/cov2d/tests/test_cov2d_readouts.py` | `1b2be505bb839e889eb968c07e4708a9a2bcd5b9` |  |
 | `2d-unfolding/cov2d/tests/test_cov2d_score.py` | `25aa147442296ef4b22ed0ac43c712f604a73ec4` |  |
 | `2d-unfolding/cov2d/tests/test_cov2d_writer.py` | `c08e13844292746a113d9ea545b04f54459b54f9` |  |

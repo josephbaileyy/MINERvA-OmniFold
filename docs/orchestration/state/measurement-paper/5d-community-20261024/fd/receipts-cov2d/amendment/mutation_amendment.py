@@ -94,7 +94,7 @@ M = [
     (J, "J1 pilot without G18's pseudo PASS", 'return [] if ok(pseudo["G18"], pins=True) else', "return [] if True else"),
     (J, "J1 the rest before the universe jobs", "        if missing:\n            need.append(f\"the universe jobs go first",
      "        if False:\n            need.append(f\"the universe jobs go first"),
-    (J, "F1 order ignores M", 'r.get("verdict") == "PASS" and r.get("M") == M', 'r.get("verdict") == "PASS"'),
+    (J, "F1 order ignores M", 'return r.get("M") == M or', "return True or"),
     (J, "F2 bulk despite REPRICE", '    elif committed[PILOT_RECORD].get("reprice_classes") != []:', "    elif False:"),
     (J, "F2 no REPRICE list read as none", '.get("reprice_classes") != []:', '.get("reprice_classes", []) != []:'),
     ("cov2d.py", "F1 a dirty deploy admitted", '    if git("status", "--porcelain").strip():', "    if False:"),
@@ -149,7 +149,17 @@ M = [
     ("cov2d.py", "A2 D2 settle wait under 5 s", "SETTLE_WAIT, SETTLE_TRIES = 5.0, 6", "SETTLE_WAIT, SETTLE_TRIES = 1.0, 6"),
     ("cov2d.py", "A2 D2 an unsettled reading accepted", "        if readings[-1] == readings[-2]:\n            return readings[-1]",
      "        if True:\n            return readings[-1]"),
-    (J, "A2 L1 order ignores pins_checked", 'and (not pins or r.get("pins_checked") is True))', "and True)"),
+    (J, "N1 the prior records ignored",
+     'return r.get("M") == M or PRIOR_RECORDS.get(path) == (r.get("M"), (digests or {}).get(path))', 'return r.get("M") == M'),
+    (J, "N1 a prior record admitted on its M alone", 'PRIOR_RECORDS.get(path) == (r.get("M"), (digests or {}).get(path))',
+     'PRIOR_RECORDS.get(path, ("",))[0] == r.get("M")'),
+    (J, "N1 a prior record admitted under any path", 'PRIOR_RECORDS.get(path) == (r.get("M"), (digests or {}).get(path))',
+     '(r.get("M"), (digests or {}).get(path)) in PRIOR_RECORDS.values()'),
+    (J, "N1 the order CLI hashes nothing",
+     "digests[path] = hashlib.sha256(r.stdout).hexdigest() if r.returncode == 0 else None", "digests[path] = None"),
+    ("cov2d_pseudo_write.py", "L1 step B ignores step A's pins",
+     '    if not a.no_pins and rec_a.get("pins_checked") is not True:', "    if False:"),
+    (J, "A2 L1 order ignores pins_checked", 'or (pins and r.get("pins_checked") is not True):', "or False:"),
     ("cov2d_pseudo.py", "A2 step A off-pin STOP skipped", "    if off_pin:                            # a STOP",
      "    if False:                            # a STOP"),
     ("cov2d_pseudo_write.py", "A2 step B off-pin STOP skipped", "    if off_pin:                            # a STOP",
@@ -176,7 +186,10 @@ REQUIRED = {"F2 bulk despite REPRICE", "F2 no REPRICE list read as none", "F1 or
             "A2 shared atime not recorded", "A2 a staged pin mismatch is a refusal, not a STOP",
             "A2 step A off-pin STOP skipped", "A2 step B off-pin STOP skipped",
             "A2 D1 the off-pin STOP without its digests", "A2 D2 step A settle skipped", "A2 D2 step B settle skipped",
-            "A2 D2 settle wait under 5 s", "A2 D2 an unsettled reading accepted", "A2 L1 order ignores pins_checked"}
+            "A2 D2 settle wait under 5 s", "A2 D2 an unsettled reading accepted", "A2 L1 order ignores pins_checked",
+            "N1 the prior records ignored", "N1 a prior record admitted on its M alone",
+            "N1 a prior record admitted under any path", "N1 the order CLI hashes nothing",
+            "L1 step B ignores step A's pins"}
 if sys.argv[2:]:
     unknown = set(sys.argv[2:]) - {m[1] for m in M}
     assert not unknown, f"no such mutant: {sorted(unknown)}"

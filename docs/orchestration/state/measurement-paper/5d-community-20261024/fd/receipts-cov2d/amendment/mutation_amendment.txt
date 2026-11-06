@@ -75,6 +75,11 @@ KILLED  cov2d_pseudo.py: A2 D2 step A settle skipped
 KILLED  cov2d_pseudo_write.py: A2 D2 step B settle skipped
 KILLED  cov2d.py: A2 D2 settle wait under 5 s
 KILLED  cov2d.py: A2 D2 an unsettled reading accepted
+KILLED  jobs/cov2d_jobs.py: N1 the prior records ignored
+KILLED  jobs/cov2d_jobs.py: N1 a prior record admitted on its M alone
+KILLED  jobs/cov2d_jobs.py: N1 a prior record admitted under any path
+KILLED  jobs/cov2d_jobs.py: N1 the order CLI hashes nothing
+KILLED  cov2d_pseudo_write.py: L1 step B ignores step A's pins
 KILLED  jobs/cov2d_jobs.py: A2 L1 order ignores pins_checked
 KILLED  cov2d_pseudo.py: A2 step A off-pin STOP skipped
 KILLED  cov2d_pseudo_write.py: A2 step B off-pin STOP skipped
@@ -84,5 +89,5 @@ KILLED  cov2d_pilot.py: pilot compare at 1e-6
 KILLED  cov2d_pilot.py: REPRICE at 2x
 KILLED  cov2d_pilot.py: P2 a failed run is not INVALID
 KILLED  cov2d_pilot.py: P2 a missing class is not INVALID
-killed 86 of 86
+killed 91 of 91
 harness rc=0

@@ -65,3 +65,46 @@ director: the auditor's A2 review is on #803. The mechanism holds. Fix these bef
 - **showquota on a compute node:** in the A2 cluster test run, add a 1-minute compute allocation (`srun -N1 -t 00:01:00` inside a tiny sbatch, with the TimeLimit check) that runs your quota parser on live output. That's about 0.02 node-h.
 
 Then the delta goes to the auditor, and I bind A2 with a fixed conditional sequence: the cluster test run, then the AR23 rerun, then the universes, then the rest. Each proceeds on the previous PASS record and stops and reports on anything else.
+
+---
+
+## The auditor's re-check (#803 at 9575dd1d, code 928204b0)
+
+COV2D A2 delta (#803 at 9575dd1d, code 928204b0): D1, D2 and L2 close, and L1 closes with one low gap. There is one new blocking finding, which I also missed at 1b1ed6b5. Posted: https://github.com/josephbaileyy/MINERvA-OmniFold/pull/803#issuecomment-6673747406
+
+**N1 (blocking, measured): no single M lets A2's sequence pass step 2.**
+- cov2d_submit.sh:10 requires the deploy HEAD == M. :39 runs order --M for every job, and ok() requires each record's "M" == M (cov2d_jobs.py:300-303).
+- The committed G18 record (230f6918) and pilot record (b59ffa2d) carry M = cb31611c. A2's deploy is a different commit.
+- I ran the real order() at 928204b0 on those records:
+  - deploy M = 928204b0: the AR23 rerun is blocked by the pilot record. The first universe job is blocked by both the pilot and G18 records, even with an AR23 PASS at 928204b0.
+  - deploy M = cb31611c: the AR23 rerun opens, but that deploy runs the old code without A2's staging. The universe jobs then refuse the new AR23 record.
+- The tests use other-commit records only to assert refusal (jobs:346, pseudo_write:254). None tests the cross-commit admission this sequence needs.
+- Requirement: a declared rule for which (record, M) pairs order() admits. G18 and pilot at cb31611c and AR23 at A2's commit are admitted; anything else is refused. One real-sequence test, plus a mutant. The director chooses the rule.
+
+**D1, closed:**
+- PinMismatch deletes the copy. stage_all returns the STOP, and both steps write verdict STOP with off_pin before any product, exiting 3.
+- §6 states the ruling as ruled.
+
+**D2, closed:**
+- fsync of the copy, then its directory.
+- settle_atime is stat-only: two equal readings 5 s apart, at most 6 pairs, all of them recorded.
+- If it never settles, the step writes REFUSED before its work and exits 2.
+
+**L1, closed; the pilot exemption is justified.** cov2d_pilot has no unpinned mode. Low gap: order() reads only pseudo_b.json, and step B checks step A's record for verdict PASS only (cov2d_pseudo_write.py:214-216), not pins_checked. An unpinned A with a pinned B still yields pins_checked: true. It's latent, since production passes no --no-pins.
+
+**L2:** in §6 step 1, as ruled. It closes with that receipt.
+
+**Run here:** test_cov2d_jobs and test_cov2d gave 59 passed and 12 skipped (the skips need the cluster environment). I didn't re-run the harness, and N1 doesn't depend on it.
+
+---
+
+## The director's ruling on N1
+
+director: N1, rule R1. Add a declared PRIOR_RECORDS table in cov2d_jobs, with exactly the two entries: G18's pseudo-data record (cb31611c, 230f6918…) and the pilot record (cb31611c, b59ffa2d…), both from binding 2.
+- **What order() admits:** a record whose M equals the deploy's M, or whose path, M and the sha256 of the exact bytes on origin/main all match its table entry. Everything else is refused, including AR23 at cb31611c.
+- **The tests:** the ones you listed, on the real committed files.
+- **The mutants:** the three REQUIRED ones you listed.
+- **The L1 fix** goes in the same delta: step B refuses unless step A recorded `pins_checked: true` whenever B's own pins are checked. Add a test and a mutant.
+- **The pilot exemption** is accepted as documented.
+
+Then the harness, the auditor's delta check, and my binding of A2 with the fixed conditional sequence. **After that, freeze A2's code** unless a run STOPs. Keep messages to stage transitions and blockers.
