@@ -82,8 +82,8 @@ def band_order(tags: list[str]) -> dict[str, list[str]]:
 class Paired:
     """The IBU products of one run directory and the (e) products they pair with, as R00-R15 cell integrals."""
 
-    def __init__(self, lib, cfg: dict, run: Path, U: np.ndarray):
-        self.lib, self.cfg, self.run, self.U = lib, cfg, run, U
+    def __init__(self, lib, cfg: dict, run: Path, U: np.ndarray, staged: G.Staged):
+        self.lib, self.cfg, self.run, self.U, self.staged = lib, cfg, run, U, staged
         ep = cfg["e_products"]
         r = cfg["replicas"]
         self.bs = list(range(r["first"], r["last"] + 1))
@@ -96,7 +96,7 @@ class Paired:
         rows, metas = [], []
         for b in self.bs:
             x, m = ibu_cells(self.run, f"replica_b{b}", self.cfg)
-            rows.append(x - e_cells(self.replica_paths[b], self.U))
+            rows.append(x - e_cells(self.staged(self.replica_paths[b]), self.U))
             metas.append(m)
         return np.array(rows), metas
 
@@ -107,22 +107,27 @@ class Paired:
             for t in tags:
                 b, i = t.split(":")
                 x, m = ibu_cells(self.run, f"universe_{b}_{i}", self.cfg)
-                rows.append(x - e_cells(self.universe_paths[t], self.U))
+                rows.append(x - e_cells(self.staged(self.universe_paths[t]), self.U))
                 metas.append(m)
             out[band] = np.array(rows)
         return out, metas
 
     def digest(self) -> str:
-        """sha256 over every IBU and (e) file the bars read, in a fixed order: the read refuses other products."""
+        """sha256 over every IBU and (e) file the bars read, in a fixed order: the read refuses other products. The (e)
+        files' digests are their staged copies' same-pass digests (A1 §2.2): the same bytes, so the same digest."""
         h = hashlib.sha256()
         for b in self.bs:
-            for p in (self.run / f"replica_b{b}.npz", self.replica_paths[b]):
-                h.update(G.sha256(p).encode())
+            h.update(G.sha256(self.run / f"replica_b{b}.npz").encode())
+            h.update(self.e_sha(self.replica_paths[b]).encode())
         for t in self.tags:
             b, i = t.split(":")
-            for p in (self.run / f"universe_{b}_{i}.npz", self.universe_paths[t]):
-                h.update(G.sha256(p).encode())
+            h.update(G.sha256(self.run / f"universe_{b}_{i}.npz").encode())
+            h.update(self.e_sha(self.universe_paths[t]).encode())
         return h.hexdigest()
+
+    def e_sha(self, path: Path) -> str:
+        self.staged(path)
+        return self.staged.sha[str(path)]
 
 
 # ------------------------------------------------------------------------------------------- covariance blocks
@@ -205,12 +210,12 @@ def self_check(c_stat: np.ndarray, n_rep: int, draws: int, seed: int, batch: int
             "pass": all(r["pass"] for r in rows)}
 
 
-def bars(lib, cfg: dict, run: Path, out: Path, U: np.ndarray, wflux: np.ndarray) -> dict:
+def bars(lib, cfg: dict, run: Path, out: Path, U: np.ndarray, wflux: np.ndarray, staged: G.Staged) -> dict:
     if (out.parent / "readout.json").exists():
         raise Refused("the central difference has already been read beside these bars: the bars come first")
     rd = cfg["readings"]
     b = rd["bars"]
-    paired = Paired(lib, cfg, run, U)
+    paired = Paired(lib, cfg, run, U, staged)
     dR, _ = paired.replica_deltas()
     dU, _ = paired.universe_deltas()
     n_rep = dR.shape[0]
@@ -229,7 +234,7 @@ def bars(lib, cfg: dict, run: Path, out: Path, U: np.ndarray, wflux: np.ndarray)
            "draws": b["draws"], "seed": b["seed"], "n_replicas": n_rep, "flux_universes": int(wflux.size),
            "fixed_bands": sorted(k for k in dU if k != lib.s1a.FLUX), "norm_fraction": rd["norm_fraction"],
            "self_check": sc, "products_digest": paired.digest(), "reader_sha256": G.sha256(Path(__file__).resolve()),
-           "config_sha256": G.sha256(G.CONFIG), "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+           "config_sha256": G.sha256(G.CONFIG), "staged_sha256": staged.sha, "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(rec, indent=1) + "\n")
     return rec
@@ -271,7 +276,9 @@ def block_sigma(lib, central: np.ndarray, reps: np.ndarray, univ: dict[str, np.n
 
 
 def read(lib, cfg: dict, run: Path, bars_path: Path, bars_sha: str, out: Path, U: np.ndarray,
-         wflux: np.ndarray) -> dict:
+         wflux: np.ndarray, staged: G.Staged, gibu1: dict) -> dict:
+    """``gibu1`` = {"path", "sha256"}: the gibu1 re-run's product, from the command line (A1 §1, option (a)): it is not
+    in config.json, so the configuration the bars recorded is the one the read checks."""
     if G.sha256(bars_path) != bars_sha:
         raise Refused("the bars file is not the committed one (sha256 differs)")
     bars_rec = json.loads(bars_path.read_text())
@@ -279,7 +286,7 @@ def read(lib, cfg: dict, run: Path, bars_path: Path, bars_sha: str, out: Path, U
                                                                           G.sha256(G.CONFIG)):
         raise Refused("the bars were made by another reader or configuration")
     rd = cfg["readings"]
-    paired = Paired(lib, cfg, run, U)
+    paired = Paired(lib, cfg, run, U, staged)
     if paired.digest() != bars_rec["products_digest"]:
         raise Refused("the bars were computed from other products")
     controls = {}
@@ -290,15 +297,16 @@ def read(lib, cfg: dict, run: Path, bars_path: Path, bars_sha: str, out: Path, U
     controls["G-pair"] = g_pair(lib, cfg, paired, rep_meta, uni_meta)
     ep = cfg["e_products"]
     x_ibu, _ = ibu_cells(run, "central", cfg)
-    x_e = e_cells(Path(ep["central"]), U)
+    x_e = e_cells(staged(ep["central"]), U)
     controls["G-CV"] = g_cv(run)
-    controls["G-IBU1"] = g_ibu1(cfg, run)
-    controls["G-cells"] = g_cells(cfg, x_e)
+    controls["G-IBU1"] = g_ibu1(cfg, staged, gibu1)
+    controls["G-cells"] = g_cells(cfg, x_e, staged)
     failed = [name for name, c in controls.items() if not c["pass"]]
     if failed:  # §3.3: a failed control stops the run; no Delta is formed and no reading is written
         stop = {"schema": "ref-g1-stop/1", "stopped": True, "stopped_by": failed, "controls": controls,
+                "gibu1_product": gibu1,
                 "bars_sha256": bars_sha, "reader_sha256": G.sha256(Path(__file__).resolve()),
-                "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+                "staged_sha256": staged.sha, "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
         (out.parent / "STOP.json").write_text(json.dumps(stop, indent=1) + "\n")
         return stop
     # Delta is formed only here, after the bars' sha256 and provenance and every control were checked
@@ -334,26 +342,27 @@ def read(lib, cfg: dict, run: Path, bars_path: Path, bars_sha: str, out: Path, U
     vertices_ibu, vertices_e = [], []
     for v in cfg["vertices"]:
         vi, _ = ibu_cells(run, f"vertex_{v}", cfg)
-        ve = e_cells(Path(ep["ladder"].format(name=v)), U)
+        ve = e_cells(staged(ep["ladder"].format(name=v)), U)
         vertices_ibu.append(vi)
         vertices_e.append(ve)
     beside["vertex_delta_over_e"] = {v: ((vi - ve) / ve).tolist() for v, vi, ve in zip(cfg["vertices"], vertices_ibu, vertices_e)}
-    r2 = reading_r2(cfg, run, U)
+    r2 = reading_r2(cfg, run, U, staged)
     reps_ibu = np.array([ibu_cells(run, f"replica_b{b}", cfg)[0] for b in paired.bs])
-    reps_e = np.array([e_cells(paired.replica_paths[b], U) for b in paired.bs])
+    reps_e = np.array([e_cells(staged(paired.replica_paths[b]), U) for b in paired.bs])
     univ_ibu, univ_e = {}, {}
     for band, tags in band_order(paired.tags).items():
         univ_ibu[band] = np.array([ibu_cells(run, "universe_" + t.replace(":", "_"), cfg)[0] for t in tags])
-        univ_e[band] = np.array([e_cells(paired.universe_paths[t], U) for t in tags])
+        univ_e[band] = np.array([e_cells(staged(paired.universe_paths[t]), U) for t in tags])
     s_ibu = block_sigma(lib, x_ibu, reps_ibu, univ_ibu, wflux, np.array(vertices_ibu), rd["norm_fraction"])
     s_e = block_sigma(lib, x_e, reps_e, univ_e, wflux, np.array(vertices_e), rd["norm_fraction"])
     ratio = s_ibu / s_e
     r3 = {"sigma_ibu_over_e": ratio.tolist(), "median": float(np.median(ratio)),
           "note": "(e)'s C_stat absorbs its estimator noise (refit per replica, jitter); IBU has none"}
-    rec = {"schema": "ref-g1-readout/1", "bars_sha256": bars_sha, "R1": r1, "printed_beside_R1": beside, "R2": r2,
+    rec = {"schema": "ref-g1-readout/1", "bars_sha256": bars_sha, "gibu1_product": gibu1,
+           "R1": r1, "printed_beside_R1": beside, "R2": r2,
            "R3": r3, "controls": controls, "controls_pass": all(c["pass"] for c in controls.values()),
            "reader_sha256": G.sha256(Path(__file__).resolve()), "config_sha256": G.sha256(G.CONFIG),
-           "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+           "staged_sha256": staged.sha, "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     out.write_text(json.dumps(rec, indent=1) + "\n")
     return rec
 
@@ -367,7 +376,7 @@ def every_k(cfg: dict, run: Path, x_e: np.ndarray) -> dict:
     return out
 
 
-def reading_r2(cfg: dict, run: Path, U: np.ndarray) -> dict:
+def reading_r2(cfg: dict, run: Path, U: np.ndarray, staged: G.Staged) -> dict:
     """At each of F0b's noise-free closure truths: median |f/f_true - 1| over R00-R15, IBU over (e), in IBU-1's
     factor-2 band. (e)'s closures carry estimator-seed noise and IBU's none; a point reading."""
     out = {}
@@ -375,7 +384,7 @@ def reading_r2(cfg: dict, run: Path, U: np.ndarray) -> dict:
         arrays, _ = load(run / f"closure_{name}.npz")
         x_ibu = at_k(arrays, cfg["iterations"]["primary"], cfg["background"]["primary"])
         t_ibu = np.asarray(arrays["X_true"], float)
-        with np.load(Path(cfg["e_products"]["closure"].format(product=product)), allow_pickle=False) as z:
+        with np.load(staged(cfg["e_products"]["closure"].format(product=product)), allow_pickle=False) as z:
             x_e, t_e = U @ np.asarray(z["xsec_flat"], float), U @ np.asarray(z["xtrue_flat"], float)
         m_ibu = float(np.median(np.abs(x_ibu / t_ibu - 1)))
         m_e = float(np.median(np.abs(x_e / t_e - 1)))
@@ -396,21 +405,26 @@ def g_cv(run: Path) -> dict:
     return {"pass": bool(same)}
 
 
-def g_ibu1(cfg: dict, run: Path) -> dict:
-    ref = Path(cfg["gibu1_reference"]["path"])
-    if G.sha256(ref) != cfg["gibu1_reference"]["sha256"]:
+def g_ibu1(cfg: dict, staged: G.Staged, own: dict) -> dict:
+    """The re-run's gibu1 product (A1 §1: ``own``, its path and the sha256 of its done-marker, given to ``read``)
+    against IBU-1's D_N, both read as staged O_NOATIME copies."""
+    ref = cfg["gibu1_reference"]
+    b_path, a_path = staged(ref["path"]), staged(own["path"])
+    if staged.sha[ref["path"]] != ref["sha256"]:
         return {"pass": False, "why": "IBU-1's D_N.npz digest differs"}
-    a, _ = load(run / "gibu1.npz")
-    b, _ = load(ref)
+    if staged.sha[own["path"]] != own["sha256"]:
+        return {"pass": False, "why": "the gibu1 product's digest differs from its pin"}
+    a, _ = load(a_path)
+    b, _ = load(b_path)
     keys = ("ks", "F_fold", "F_sub")
     same = {k: bool(k in b and np.array_equal(a[k], b[k])) for k in keys}
     return {"pass": all(same.values()), "arrays": same}
 
 
-def g_cells(cfg: dict, x_e: np.ndarray) -> dict:
+def g_cells(cfg: dict, x_e: np.ndarray, staged: G.Staged) -> dict:
     ep = cfg["e_products"]
-    p = Path(ep["s1_assembly"])
-    if G.sha256(p) != ep["s1_assembly_sha256"]:
+    p = staged(ep["s1_assembly"])
+    if staged.sha[ep["s1_assembly"]] != ep["s1_assembly_sha256"]:
         return {"pass": False, "why": "s1_assembly.npz digest differs"}
     with np.load(p, allow_pickle=False) as z:
         f = np.asarray(z["f"], float)
@@ -430,11 +444,11 @@ def g_pair(lib, cfg: dict, paired: Paired, rep_meta: list[dict], uni_meta: list[
              *(Path(cfg["e_products"]["ladder"].format(name=v)) for v in cfg["vertices"]),
              *(Path(cfg["e_products"]["closure"].format(product=p)) for p in cfg["closures"].values())]
     for p in files:
-        if pins.get(str(p)) is None or G.sha256(p) != pins[str(p)]:
+        if pins.get(str(p)) is None or paired.e_sha(p) != pins[str(p)]:
             bad.append(f"pin {p.name}")
     for b, m in zip(paired.bs, rep_meta):
         try:
-            lib.s1a.check_meta(paired.replica_paths[b], "s5p-numerics/1",
+            lib.s1a.check_meta(paired.staged(paired.replica_paths[b]), "s5p-numerics/1",
                                expect={"bootstrap_seed": b, "jitter_seed": paired.offset + b, "coords": "float64"})
         except SystemExit as e:
             bad.append(str(e))
@@ -443,7 +457,7 @@ def g_pair(lib, cfg: dict, paired: Paired, rep_meta: list[dict], uni_meta: list[
     by_tag = {m.get("universe"): m for m in uni_meta}
     for t in paired.tags:
         try:
-            em = lib.s1a.check_universe(paired.universe_paths[t], t.split(":")[0])
+            em = lib.s1a.check_universe(paired.staged(paired.universe_paths[t]), t.split(":")[0])
         except SystemExit as e:
             bad.append(str(e))
             continue
@@ -467,22 +481,27 @@ def main(argv=None) -> int:
     r.add_argument("--bars", type=Path, required=True)
     r.add_argument("--bars-sha256", required=True)
     r.add_argument("--out", type=Path, required=True)
+    r.add_argument("--gibu1-product", help="the gibu1 re-run's gibu1.npz (A1 section 1)")
+    r.add_argument("--gibu1-sha256", help="its sha256, from its done-marker, as committed with bars.json")
+    sub.add_parser("reads")
     a = ap.parse_args(argv)
     cfg = json.loads(G.CONFIG.read_text())
     try:
         if G.sha256(G.REPO / cfg["listing"]["path"]) != cfg["listing"]["sha256"]:
             raise Refused("the preconditions listing digest differs from config.json")
         lib = G.Lib(cfg)
-        U = lib.s1a.functional_matrix(lib.s1a.fine_map(G.REPO / cfg["definition"]["path"]))
-        fc = Path(cfg["inputs"]["flux_constraint"])
-        wflux = lib.s1a.flux_weights(fc)
+        if a.cmd == "reads":  # A1 §4: the set the first connect stats, by the code that stages it
+            for role, path in G.unit_reads(lib, cfg, [("gibu1",)]) + reader_reads(cfg):
+                print(f"{role}\t{path}")
+            return 0
+        if a.cmd == "read" and a.out.parent.resolve() != a.bars.parent.resolve():
+            raise Refused("the readout goes beside its bars, so the bars step can see it")
+        a.out.parent.mkdir(parents=True, exist_ok=True)
+        with G.read_guards(G.PROTECTED, (G.REPO, a.run, a.out.parent), root=False):  # the reader opens no ROOT file
+            rec = command(lib, cfg, a, G.Staged(a.out.parent / f"inputs-{a.cmd}"))
         if a.cmd == "bars":
-            rec = bars(lib, cfg, a.run, a.out, U, wflux)
             print(json.dumps({"bars": rec["bars"], "sha256": G.sha256(a.out), "self_check": rec["self_check"]["pass"]}))
             return 0
-        if a.out.parent.resolve() != a.bars.parent.resolve():
-            raise Refused("the readout goes beside its bars, so the bars step can see it")
-        rec = read(lib, cfg, a.run, a.bars, a.bars_sha256, a.out, U, wflux)
     except (Refused, G.GateFailure) as e:
         print(f"refusing: {e}", file=sys.stderr)
         return 4
@@ -491,6 +510,33 @@ def main(argv=None) -> int:
         return 1
     print(json.dumps({"R1": rec["R1"].get("reading"), "controls_pass": rec["controls_pass"]}))
     return 0
+
+
+def command(lib, cfg: dict, a, staged: G.Staged) -> dict:
+    """bars or read, every declared input read as a staged O_NOATIME copy (A1 §2.2)."""
+    U = lib.s1a.functional_matrix(lib.s1a.fine_map(G.REPO / cfg["definition"]["path"]))
+    wflux = lib.s1a.flux_weights(staged(cfg["inputs"]["flux_constraint"]))  # its pin is checked on the copy
+    if a.cmd == "bars":
+        return bars(lib, cfg, a.run, a.out, U, wflux, staged)
+    if not (a.gibu1_product and a.gibu1_sha256):
+        raise Refused("the read needs --gibu1-product and --gibu1-sha256, the gibu1 re-run's product (A1 §1)")
+    return read(lib, cfg, a.run, a.bars, a.bars_sha256, a.out, U, wflux, staged,
+                {"path": str(a.gibu1_product), "sha256": a.gibu1_sha256})
+
+
+def reader_reads(cfg: dict, gibu1_product: str | None = None) -> list[tuple[str, str]]:
+    """(role, path) of every non-repository file the reader stages, in Paired's and the controls' terms (A1 §4)."""
+    ep, r = cfg["e_products"], cfg["replicas"]
+    out = [("flux_constraint", cfg["inputs"]["flux_constraint"]), ("e_central", ep["central"])]
+    out += [("e_replica", ep["replica"].format(b=b, j=int(r["jitter_offset"]) + b))
+            for b in range(r["first"], r["last"] + 1)]
+    out += [("e_universe", ep["universe"].format(tag=t.replace(":", "_"))) for t in G.universes(cfg)]
+    out += [("e_ladder", ep["ladder"].format(name=v)) for v in cfg["vertices"]]
+    out += [("e_closure", ep["closure"].format(product=p)) for p in cfg["closures"].values()]
+    out += [("s1_assembly", ep["s1_assembly"]), ("gibu1_reference", cfg["gibu1_reference"]["path"])]
+    if gibu1_product:  # known after the gibu1 re-run (A1 §1)
+        out.append(("gibu1_product", str(gibu1_product)))
+    return out
 
 
 if __name__ == "__main__":
