@@ -1,0 +1,23 @@
+node login27 nproc=244 loadavg 5.38 7.02 11.14
+2026-11-06T06:50:20Z
+cells script sha256 bf04faeaf44b35ba8a3d49f4b7145e7e2a6df083b518f1af822eb8ab8bbdaa8a
+fence, recorded: squeue -u josephrb at 2026-11-06T06:50:20Z:
+  60890529|fd_c2c1r|PENDING|0:00|2:30:00
+  60890530|fd_c2c1r|PENDING|0:00|2:30:00
+  60890531|fd_c2c1r|PENDING|0:00|2:30:00
+  60890532|fd_c2c1r|PENDING|0:00|2:30:00
+  60889690|cov2d-pseudo_AR23|RUNNING|31:11|4:00:00
+  60889950|fd1b_mc_receipt_a2|RUNNING|24:32|2:00:00
+publication before (stat): josephrb 660 1793499822 1272641 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+HEAD 77d76cfc2d621f8faa010b75006811868494652a; porcelain --ignored lines before: 0
+bound blobs: 8 checked, 0 mismatches
+interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+cells rc=0; stdout: [paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+{"cells": 205, "sha256": "f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743"}
+cells.root sha256 f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743 bytes 5041
+staged: 000_cov_ptpl_minerva_inclusive_6GeV.root 
+publication after (stat): josephrb 660 1793499822 1272641 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+publication: atime not moved
+porcelain --ignored lines after: 0
+ref-c2c1 cells rc=0
+2026-11-06T06:51:09Z
