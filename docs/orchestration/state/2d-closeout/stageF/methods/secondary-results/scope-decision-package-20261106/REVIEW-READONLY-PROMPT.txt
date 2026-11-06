@@ -1,0 +1,8 @@
+This is the same independent second-read request as REVIEW-PROMPT.txt in the package directory below. The initial invocation returned no answer because headless mode denied a terminal-command permission. It did not complete a review.
+
+Use file-reading/search tools only. DO NOT invoke any terminal/command tool, git, hashing tool, or network/peer tool. DO NOT write or edit any file. The owner verifies source hashes and working-tree status outside this review. Read AGENTS.md and docs/orchestration/CAMPAIGN-REVIEW-20260929.md using a file read, then read the complete original REVIEW-PROMPT.txt and its frozen REPORT.md and SOURCES.tsv under:
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/
+
+Review all the material acceptance points in REVIEW-PROMPT.txt. Follow this one substitution for that prompt's git-show direction: the exact bound branch versions of FD-1B-STAGED-AMENDMENT-2.md and FD-1B-STAGED-ADDENDUM-A2-1.md have been materialized as read-only review inputs beside REPORT.md in the package directory. Read those two files there. Their bytes come from 6d93dd4284c1d378836ba275923d490f0f6c62f3 and match the SHA256 values in SOURCES.tsv. Read all other source files at their ordinary repository-relative paths in this baseline worktree.
+
+Return the substantive review in your final response only. Assess source fidelity, missing material evidence, outcome licences, dates, reserved decisions and unranked options. Do not supply a measurement-versus-methods recommendation. If a source cannot be read with the available file tools, explicitly mark the unverified point; do not substitute an invented quote or a terminal command.

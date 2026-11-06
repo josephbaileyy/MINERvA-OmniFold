@@ -1,0 +1,24 @@
+Independently review the publication-scope decision package, read-only, in this isolated review worktree. Do not modify any file, index, branch, configuration or remote; do not launch scientific compute or contact another session. Return your review in your final response only. Do not include machine paths or private session metadata in that response.
+
+Read AGENTS.md and docs/orchestration/CAMPAIGN-REVIEW-20260929.md first. The review baseline is commit 1aa805b59eb037c5fcd978037ae282189aa33634. The draft and source inventory are untracked copies under:
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/
+
+Frozen targets:
+REPORT.md SHA256 4c344a589eda401a89ba3c207712d612775c386096e74847519ca6fce4d33b9f
+SOURCES.tsv SHA256 e6f0d5ba898315a7bd9f3d177451e2ab801b815f46d068e8c20c5dc169be5866
+
+Read the actual cited records rather than trusting the report. Sources.tsv provides file:line and exact commits. In particular, read the bound 1B amendments using git show 6d93dd4284c1d378836ba275923d490f0f6c62f3:<path>; they are intentionally not inferred from the older declaration on main. All other sources use the baseline above.
+
+The authorized deliverable is a DRAFT evidence inventory for the pending publication-scope decision, not an adoption or scientific campaign. The director writes the recommendation. The owner must not draft manuscript wording, select an estimator/cell subset, change a covariance or claim, or authorize any compute. One second read and at most one focused repair/recheck are budgeted. This is advisory model review, not journal peer review or independent numerical verification of the scientific products.
+
+Check these material acceptance points:
+1. Faithful treatment of all four model-referee reports (Sonnet/Gemini on 2026-11-04 and 2026-11-05): measurement conditions, methods alternative, differences between reports, disqualifying combination versus individually fatal items. Verify the exact quoted snippets against their actual source lines. Do not adopt referee interpretations as measured science.
+2. Evidence ledger covers each major/disqualifying item, including COV2D and staged 1B, bias/prior dependence, B4 NONE_PASS, RPD and d1/d2, B-C and REF-C2C1, REF-G1 R1 differ, low-stability cells, response mismatch, comparator/covariance issues and self-containment. Distinguish reported from not yet reported, and the source snapshot from scheduler state.
+3. Each possible declared outcome is summarized faithfully with its licence and prohibition, especially coverage of the procedure's covariance remade at each truth versus intervals made at the data; not drawing run-period/model terms; truth-specific outcomes versus independent-response validation; d2 TRACKS not identifying a cause; c2/c1 not identifying the correct pipeline; REF-G1 not authorizing an uncertainty block.
+4. The current COV2D binding is A2 revision 2 at a6054769, not cf533377; December 1 is a submission cutoff, not a promised result date. Check the other dates and distinguish older proposed calendars from the operative bindings.
+5. 1B binding 3 excludes the plug-in and binds the branch at 6d93dd42. Its prerequisite gate-check operational stages are not the method-coverage stage. Check which clauses amendment 2 supersedes and whether the report handles the distinction accurately. Inclusion of plug-in requires its own later binding and new gate, about 120 node-h or more as the binding records, not merely the older incremental price.
+6. All options are supported, conditional and unranked: existing measurement framing, narrower scope/2D headline, methods paper, and waiting. No cell restriction is silently allowed after the data read; no favourable outcome is treated as automatic publication admission.
+7. The reserved items include estimator dependence as uncertainty/limitation/both, plug-in truth, fake-data bias, B0 reconciliation, product/claim changes, comparator interpretation and publication/release acts. No recommendation is supplied.
+8. Every scientific quantity and deadline can be traced to the cited file lines at the pinned SHA or a receipt digest. Flag source ranges that do not support the associated claim. Identify any material item missing from the inventory, unsupported inference or misleading certainty.
+
+Return: (a) verdict on whether the package is a faithful draft for the director; (b) findings with severity, exact REPORT.md location, source evidence and a concrete correction; (c) important residual limits of your review. Do not write a recommendation on measurement versus methods. Do not spend review effort on stylistic preferences or invent extra approval processes. If no material finding, say so explicitly. Do not edit the draft to repair it yourself.

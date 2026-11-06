@@ -1,0 +1,79 @@
+### Independent Second-Read Review: Publication-Scope Decision Package (OI-205)
+
+**Target Artifacts Reviewed:**
+- Draft Report: `docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REPORT.md` (SHA256: `4c344a589eda401a89ba3c207712d612775c386096e74847519ca6fce4d33b9f`)
+- Source Inventory: `docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/SOURCES.tsv` (SHA256: `e6f0d5ba898315a7bd9f3d177451e2ab801b815f46d068e8c20c5dc169be5866`)
+- Materialized Bound 1B Branch Inputs: `FD-1B-STAGED-AMENDMENT-2.md` and `FD-1B-STAGED-ADDENDUM-A2-1.md` (both verified against SHA256 values in `SOURCES.tsv` from branch commit `6d93dd4284c1d378836ba275923d490f0f6c62f3`)
+- Baseline Commit: `1aa805b59eb037c5fcd978037ae282189aa33634` (all other cited source records inspected at their repository-relative paths)
+- Orientation Surfaces: `AGENTS.md` and `docs/orchestration/CAMPAIGN-REVIEW-20260929.md`
+
+---
+
+### (a) Verdict on Whether the Package is a Faithful Draft for the Director
+
+**VERDICT: PASS / FAITHFUL DRAFT.**
+
+The draft report and its source inventory constitute a faithful, rigorous, and fully traceable evidence inventory for the publication-scope decision (`OI-205`). Every cited numerical quantity, calendar date, source line range, governing binding, outcome licence, and prohibition was verified against the underlying committed artifacts. The report maintains strict discipline: it does not forecast unrun campaigns, does not conflate preliminary operational checks with method coverage, treats model-referee advice as external opinions rather than measured physics, keeps all candidate scope options conditional and unranked, and leaves the recommendation section empty for the director.
+
+---
+
+### (b) Substantive Assessment of Material Acceptance Points
+
+#### 1. Treatment of Model-Referee Reports
+The report faithfully captures the four advisory referee runs (Sonnet and Gemini on 2026-11-04 and 2026-11-05):
+- **Verbatim fidelity:** Quoted snippets match their source lines exactly, including Sonnet's 2026-11-04 conditional for a revised result with *"validated or conservatively inflated uncertainties, a stable estimator, and a diagnosed run-period issue"* (`sonnet-referee-answer.txt:160`), Gemini's 2026-11-04 statement that fake-data bias, aborted coverage, and floating-point instability are *"completely disqualifying for a primary experimental cross section"* (`gemini-referee-answer.txt:144`), Sonnet's 2026-11-05 methods alternative of *"a methodology and validation study"* with the table *"a demonstration with explicitly unvalidated uncertainties"* (`sonnet-referee-answer.txt:144`), and Gemini's 2026-11-05 characterization of those issues as *"individually and collectively disqualifying"* while outlining an *"experimental/methodological techniques paper"* that *"would not claim to report a new benchmark cross section"* (`gemini-referee-answer.txt:141, 146`).
+- **Severity & differences:** The report accurately distinguishes the referees' tolerances: Sonnet 2026-11-05 allows a disclosed period block if the physical cause remains unknown after reco-level playlist investigation (`sonnet-referee-answer.txt:93`) and treats $R10$/$R15$ as acceptable if flagged (`:102`), whereas Gemini continues to demand a physical/regularized treatment for run periods (`gemini-referee-answer.txt:88`) and cell merging/re-binning to achieve stability $\ge 0.40$–$0.50$ (`:100`).
+- **Non-adoption of referee interpretations:** Section 1.1 explicitly rejects treating Gemini's distance-to-$p$-value conversion as a calibrated compatibility test on shared data (`REF-C2C1-DECLARATION.md:38`), corrects Gemini's stability-as-purity conflation (`paper_body.tex:301`), separates the zero seed block from input-rounding spread while noting the jitter refit in $C_\text{stat}$ (`REF-G1-DECLARATION.md:201`), and maintains that a stopped variance gate is not a measured undercoverage of data-point intervals (`FD-1B-STAGED-STAGE1-STOP-REPORT.md:57`).
+
+#### 2. Evidence Ledger Coverage and State Distinction
+- **Item completeness:** The 15 ledger rows comprehensively cover every major and disqualifying topic raised across both referee rounds: `COV2D` (c), staged 1B method coverage, fake-data bias and prior dependence, B4 numerical stability, RPD and follow-up reco diagnostics d1/d2, upstream accounting B-C, REF-C2C1 binned cross-checks (c2/c1), REF-G1 head-to-head algorithm comparison, low-stability cells, detector-response mismatch, comparator/covariance issues, and manuscript self-containment/reproducibility.
+- **Reporting vs. scheduler state:** Every item is rigorously distinguished as either *Reported* (e.g., B4 terminal `NONE_PASS`, RPD stage-0 `SEES`/R1 `OTHER`/R2 `CLUSTERED`, REF-G1 R1 `differ`, B-C partial component accounting) or *Not yet reported* in committed records (`COV2D` campaign c, redesigned 1B stage 1, d1, d2, c2, c1). The report explicitly defines status as committed repository evidence at baseline snapshot `1aa805b5`, disclaiming live scheduler polling.
+
+#### 3. Outcome Licences, Boundaries, and Prohibitions
+Every outcome summary respects the precise boundaries defined in the governing declarations:
+- **Coverage scope:** Bounded strictly to the procedure's remade covariance at the tested generator tunes; explicitly prohibited from licensing coverage of data-point intervals, untested detector response, lateral blocks, $C_\text{resp}$, or $C_\text{PL}$ (`COV2D-DECLARATION.md:645–654`, `FD-1B-STAGED-DECLARATION.md:719–728`).
+- **Run-period diagnostics:** For d2, even a `TRACKS` outcome licenses only naming coincidence with assigned flux files, explicitly prohibiting claiming the step is "explained", "corrected", removing the "cause is not known" clause, or modifying $C_\text{PL}$ (`FD-RPD-RECO-DECLARATION.md:326, 332–334`).
+- **Binned cross-checks:** c2/c1 can localize sensitivity to inputs vs. algorithm by one level, but cannot identify the "correct" pipeline, prove upstream equality with MINERvA's published extraction, or switch the adopted 2D estimator (`REF-C2C1-DECLARATION.md:205–211, 268–270`).
+- **Algorithm dependence:** REF-G1's R1 `differ` licenses measured estimator dependence against a calibrated null; it does not license replacing the estimator with IBU, choosing cells post hoc, or adding an uncertainty block without Joseph's explicit adoption decision (`REF-G1-DECLARATION.md:210`, `OUTCOME-20261106-ref-g1-r1-differ.md:40–45`).
+
+#### 4. COV2D Binding and Calendar Precision
+- **Operative binding:** The report correctly identifies that `COV2D` is governed by Addendum A2 revision 2 at commit `a6054769` (`COV2D-BINDING-2.md:130–137`), which superseded `cf533377` and restarted the environmental sequence, and correctly notes that the reference to `cf533377` in `docs/OPEN_ITEMS.md:87` is older queue history.
+- **Calendar constraints:** The report accurately identifies 2026-12-01 as the latest submission cutoff for universe-reading jobs (after which bulk does not start and no partial ensemble is graded), rather than a result completion promise. Latest completion (2026-12-12), readout (2026-12-18), and exposure of `$UNI` (2026-12-19) are faithfully distinguished (`COV2D-DECLARATION.md:553–566`).
+
+#### 5. Staged 1B Binding 3 and Redesign Architecture
+- **Binding scope:** Binding 3 binds branch commit `6d93dd42` and deliberately excludes the plug-in truth, binding only G18 and AR23 (`FD-1B-STAGED-BINDING-3.md:1–10, 52–55`).
+- **Operational vs. method stages:** The report accurately separates operational prerequisites (stages 1 and 2: c2check G18/AR23 and gate merge, which passed at 9.85 node-h) from method-coverage stage 1 (operational stages 3–7, with stage 6 bulk waiting on smoke PASS and auditor signoff).
+- **Superseded clauses:** The report correctly notes that Amendment 2 (§9, lines 406–407) supersedes Declaration §12 clauses M and S and §13's line with a narrower wording basis.
+- **Plug-in pricing:** The report correctly records that adding the plug-in requires a separate binding, re-capture, all truth gate checks with the push, and a new pin, costing about 120 CPU node-h or more (`FD-1B-STAGED-BINDING-3.md:52–55`), rather than the obsolete +24 node-h incremental estimate from the original declaration.
+
+#### 6. Unranked Options and Policy Constraints
+- **Unranked, conditional options:** Options A (measurement as currently framed), B1 (narrower scope with 2D headline), B2 (narrowed cell grid/phase space), C (methods and validation study), and D (waiting/decision pending) are presented neutrally with their specific evidential prerequisites, text consequences, and residual limitations.
+- **No post hoc cell selection:** Option B2 is explicitly flagged as a referee-suggested path that is inadmissible under the existing contract, requiring a new decision by Joseph superseding fixed-cell/no-merge rules, and notes that excising a failing cell does not validate the retained region (`FD-DIRECTOR-RULINGS.md:21–33`, `DECISION-20261102-joseph-bias-and-stabilisation-routes.md:85–89`).
+- **No automatic admission:** Favourable outcomes in pending campaigns are explicitly barred from being treated as automatic measurement admission without separate rulings on known limitations.
+
+#### 7. Reserved Items and Role Discipline
+- **Reserved decisions:** Section 4 faithfully catalogs the matters reserved exclusively for Joseph and the director: estimator dependence uncertainty disposition (`G1-OUT:49–54`), plug-in truth inclusion (`1B-B3:50–59`), fake-data bias consequence (`BIAS:79–92`), B0 reconciliation wording (`B4:46–48`), cell/product changes and calibration claims (`FD-RULE:21–33`, `FRAME:51–54`), comparator prominence (`COMMISSION:47`), and publication/release acts (`FRAME:47–54`).
+- **No recommendation:** Section 6 is intentionally left blank for the director, and the report strictly avoids offering a recommendation on measurement versus methods framing.
+
+#### 8. Traceability and Inventory Integrity
+Every numeric quantity, matrix dimension, pull, $p$-value, test statistic, and date in `REPORT.md` traces exactly to the pinned lines in `SOURCES.tsv` and committed source files (e.g., $T = 194.4$ vs. bars $28.12/39.04$ in REF-G1; control $0.759/6.83$ vs. cross-fitting $0.528/4.22$ in B4; 68% interval $0.73$–$2.56$ on $C_\text{PL,5D}$; stability $0.16$–$0.25$ on $R02, R06, R10, R15$).
+
+---
+
+### (c) Findings
+
+**Severity: NONE (No material or disqualifying findings).**
+
+The report and source inventory contain no unsupported assertions, no misattributed quotes, no broken source mappings, and no conflation of exploratory ideas with binding decisions.
+
+**Informational / Non-Material Observational Notes:**
+1. *Front-Door Queue Lag:* The front-door table in `docs/OPEN_ITEMS.md` (lines 87–90) records older intermediate states for `OI-200` (referencing M `cf533377`), `OI-201` (stating it awaits amendment/audit), and `OI-202` (listing REF-G1 as active). The draft report (`REPORT.md:81, 82, 137–140`) explicitly identifies that the queue reflects routing history and correctly draws its operative facts from the governing bindings and terminal outcome records committed on `main` (`COV2D-BINDING-2.md`, `FD-1B-STAGED-BINDING-3.md`, and `OUTCOME-20261106-ref-g1-r1-differ.md`).
+2. *Disjoint Line Link Presentation:* In `SOURCES.tsv` and `REPORT.md:169, 173, 175, 221`, citations covering multiple discontinuous ranges (e.g., `S04:26–80,150–160`) resolve in markdown URLs to contiguous spanning fragments (e.g., `#L26-L160`) due to GitHub anchor syntax constraints. The exact line boundaries given in the report text and in column 3 of `SOURCES.tsv` accurately specify the true relevant lines.
+
+---
+
+### (d) Important Residual Limits of This Review
+
+1. **Advisory Model Scope:** This review is an independent second-read audit of document fidelity, structural consistency, and evidential traceability. It does not constitute academic journal peer review, nor does it perform independent numerical recomputation of physics products or rerun cluster pipelines.
+2. **External Verification of Hashes & Worktree State:** In accordance with task constraints, file hashes, git commit trees, and sandbox boundaries were not re-measured via terminal commands, git commands, or hashing tools within this review session; they are verified by the workspace owner outside this review.
+3. **Reservation of Policy and Framing:** In compliance with instructions and project governance, this review makes no recommendation regarding whether Joseph should adopt a measurement-led framing, a 2D-narrowed measurement, or a methods-study framing for the publication. That evaluation remains strictly reserved for the director and Joseph.

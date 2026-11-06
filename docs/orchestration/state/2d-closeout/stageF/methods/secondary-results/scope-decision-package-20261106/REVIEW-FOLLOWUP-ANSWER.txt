@@ -1,0 +1,45 @@
+### Focused Final-Draft Check
+
+**Verdict:** **No material findings.** The final target (`REPORT.md` SHA256 `29ab6dfd3bfcd49acd59a722b0a6263dc5169e18aed47a2dbd1b723c1086ae68` with `SOURCES.tsv` SHA256 `5f988c8025f0102cdf1bb9e1de67651498a31fc638926ea5ffe9ce4204fc3cdb`) remains a faithful, conservative draft.
+
+---
+
+### Detailed Review of Changed Text
+
+#### 1. Absence-Check Scoping Annotations
+* **Evaluation:** The added `<!-- absence-ok: ... -->` comments (in the header scoping pending campaign status, in the 5D coverage row, in Option C, in 1B method coverage calendar notes, and in REF-C2C1 execution notes) strictly clarify that statements regarding pending status, unperformed steps, or omitted gates apply solely to the cited bindings and declared sequences rather than asserting unprovable global absence.
+* **Fidelity:** All qualifiers and conditional gates from the governing declarations are preserved. No new factual assertion or relaxed condition is introduced.
+
+#### 2. Synthesis Paragraphs Preceding Section 3
+* **Passage 1 (Truth overlap, training sample identity, COV2D one-sidedness, masking, and clipping):**
+  > *"The truth provenance also travels with a favourable result: G18 shares the model term’s 2p2h family, and AR23 shares G18’s quasielastic model. Changing truth does not create a new training sample. COV2D’s test is one-sided; its report must identify weakened cells and give the spread-alone readout beside the verdict, because the undrawn model term can mask a shortfall in drawn blocks. Clipping’s false-pass risk and the linear composition/endpoint approximation remain report/note facts; a pass does not establish multiplicative composition. [1B:660–673] [COV:613–654] [1B-AM2:388–407]"*
+  * **Fidelity & Restrictions:**
+    - Correctly cites the model overlap of G18_10a_02_11b (Valencia 2p2h family sharing with $C_{\mathrm{model}}$) and AR23_20i_00_000 (Nieves QE sharing with G18) directly from [`FD-1B-STAGED-DECLARATION.md:660-664`](file:///Users/josephbailey/local-research/MINERvA-OmniFold-scope-review-20261106/docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGED-DECLARATION.md#L660-L664) and [`COV2D-DECLARATION.md:610`](file:///Users/josephbailey/local-research/MINERvA-OmniFold-scope-review-20261106/docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-DECLARATION.md#L610).
+    - Preserves verbatim the director's binding principle ("A held-out tune moves the truth, not the sample" from [`COV2D-DECLARATION.md:653-654`](file:///Users/josephbailey/local-research/MINERvA-OmniFold-scope-review-20261106/docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-DECLARATION.md#L653-L654)).
+    - Accurately captures the one-sided nature of COV2D, the necessity of the spread-alone readout due to undrawn $C_{\mathrm{model}}$ masking shortfalls in drawn blocks, and the requirement to report weakened cells ([`COV2D-DECLARATION.md:638-643`](file:///Users/josephbailey/local-research/MINERvA-OmniFold-scope-review-20261106/docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-DECLARATION.md#L638-L643)).
+    - Correctly restricts clipping to a note/report disclosure carrying a false-pass risk without establishing multiplicative composition ([`FD-1B-STAGED-AMENDMENT-2.md:399-405`](file:///Users/josephbailey/local-research/MINERvA-OmniFold-scope-review-20261106/docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGED-AMENDMENT-2.md#L399-L405); [`COV2D-DECLARATION.md:621-628`](file:///Users/josephbailey/local-research/MINERvA-OmniFold-scope-review-20261106/docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-DECLARATION.md#L621-L628)).
+
+* **Passage 2 (REF-G1 carried-block exclusions and algorithm comparison scope):**
+  > *"REF-G1’s central-difference reading uses paired statistical, universe and normalization blocks. It excludes the model block and the carried lateral, C_resp and C_PL blocks. Its precision comparison includes the model block but still excludes those carried blocks. The measured algorithm dependence is scoped to that comparison; it is not a test with a fully remade publication covariance for both estimators. [G1:113–126]"*
+  * **Fidelity & Restrictions:**
+    - Accurately tracks the block decomposition in [`REF-G1-DECLARATION.md:113-126`](file:///Users/josephbailey/local-research/MINERvA-OmniFold-scope-review-20261106/docs/orchestration/state/measurement-paper/5d-community-20261024/REF-G1-DECLARATION.md#L113-L126), specifically that R1 pairs statistical, universe, and normalization blocks while excluding $C_{\mathrm{model}}$ and the three carried blocks (lateral, $C_{\mathrm{resp}}$, $C_{\mathrm{PL}}$), and R3 includes $C_{\mathrm{model}}$ while continuing to exclude the carried blocks.
+    - Explicitly avoids equating covariance constructions or inferring a general publication-covariance comparison.
+
+* **Covariance Construction Distinction:**
+  The text maintains strict structural separation between campaigns:
+  - **COV2D:** Rebuilt procedure covariance testing 2D $C_T$, where C08 is carried, and $C_{\mathrm{model}}$ and $C_{\mathrm{PL}}$ are undrawn.
+  - **1B:** 5D staged sequence testing remade covariance at each tune, where the lateral block is carried, and $C_{\mathrm{resp}}$ and $C_{\mathrm{PL,5D}}$ are undrawn.
+  - **REF-G1:** Estimator comparison where lateral, $C_{\mathrm{resp}}$, and $C_{\mathrm{PL,5D}}$ are carried from configuration (e).
+  None of these constructions are equated or blurred.
+
+#### 3. Source Links and Inventory
+* The regenerated references (`[1B:660–673]`, `[COV:613–654]`, `[1B-AM2:388–407]`, `[G1:113–126]`) and the added review-disposition link in Section 7 resolve cleanly to their exact targets and hashes without altering existing references.
+* Section 6 remains intentionally empty for the director; no recommendation is made or implied.
+
+---
+
+### Limits of this Focused Text Check
+
+1. **Input Scoping:** This check evaluated only the verbatim supplied text, the owner-measured SHA256 hashes of `REPORT.md` and `SOURCES.tsv`, and the explicit source excerpts provided.
+2. **Tool and Sandbox Boundary:** In accordance with the prompt instructions, no shell tools, git operations, file system reads, or live repository commands were executed.
+3. **Evidence Verification:** The check verified semantic consistency, absence of unsupported inferences, and accurate propagation of qualifiers relative to the quoted records; it did not re-derive numerical outputs, verify raw data files, or independently inspect the Slurm scheduler/active compute environment.
