@@ -1,0 +1,26 @@
+host=login02 start=2026-11-06T06:09:52Z pid=1991915 user=josephrb
+deploy=/pscratch/sd/j/josephrb/cov2d-deploy-a6054769 head=a60547692df5f963e428cdfe4661fc51ab785b7b plain=0 ignored=0
+origin/main=822fe16d8173a2fc7c36963521ba5fc4138b3a27
+record pseudo/G18/pseudo_b.json: 230f6918f65d5bcf7d766bdb47eb7ac0513d998017b877777b5fd49089a54296
+record pilot/pilot_readout.json: b59ffa2d7363b7de1c702d037868d9794491e9433907cafe743784133b6bf99d
+record a2/cluster_tests/CLUSTER-TESTS.md: 88d56927317305ac6ecd922ec5599d39a04481cf0d413351874e6bca3452114c
+sacct (as the gate reads it):
+60848251|cov2d-pseudo_G18|COMPLETED|8674|1
+60857636|cov2d-pilot|COMPLETED|2702|1
+60860645|cov2d-pseudo_AR23|FAILED|4323|1
+2026-11-06T06:10:11Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=pseudo_AR23 id=60889690 limit=04:00:00
+submit rc=0
+plain-after=0 ignored-after=0
+2026-11-05T14:44:04Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pilot id=60857636 limit=01:41:00
+2026-11-05T16:02:44Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pseudo_AR23 id=60860645 limit=03:00:00
+2026-11-06T06:10:11Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=pseudo_AR23 id=60889690 limit=04:00:00
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-pseudo-20261106T061009Z.psv.gate.json: {"spent": 4.360833333333334, "held": 0.0, "want": "pseudo_AR23", "want_node_h": 4.0, "total": 8.360833333333334, "cap": 165.8, "pass": true, "staged_bytes": 173261737169, "quota_problem": null}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-pseudo-20261106T061009Z.psv.order.json: {"job": "pseudo", "truth": "AR23", "blocked_by": []}
+JobId=60889690 JobName=cov2d-pseudo_AR23
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=04:00:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login02:1991915
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+end=2026-11-06T06:10:17Z
+DONE
