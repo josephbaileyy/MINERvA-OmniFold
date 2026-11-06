@@ -21,7 +21,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TEST = HERE / "test_ref_g1.py"
 D, R = "ref_g1.py", "ref_g1_read.py"
-EXPECTED_TESTS = 30  # a run that stops early exits 0 with fewer: refuse it
+EXPECTED_TESTS = 38  # a run that stops early exits 0 with fewer: refuse it
 NULL_CALL = 't = null_t(c_stat, c_flux, wflux, c_fixed, n_rep, b["draws"], b["seed"], b["batch"], rd["norm_fraction"])'
 MUTATIONS = [
     # §7's required mutants
@@ -31,7 +31,7 @@ MUTATIONS = [
      "Readings.test_the_bars_are_ts_simulated_null_not_chi2"),
     ("C*_norm from the realized Delta", R, NULL_CALL,
      'x_c, _ = ibu_cells(run, "central", cfg)\n'
-     '    d_real = rd["norm_fraction"] * (x_c - e_cells(Path(cfg["e_products"]["central"]), U))\n'
+     '    d_real = rd["norm_fraction"] * (x_c - e_cells(staged(cfg["e_products"]["central"]), U))\n'
      '    t = null_t(c_stat, c_flux, wflux, c_fixed + np.outer(d_real, d_real), n_rep, b["draws"], b["seed"], '
      'b["batch"], 0.0)',
      "Readings.test_the_bars_never_read_the_central_difference"),
@@ -57,11 +57,11 @@ MUTATIONS = [
      'same = all(np.array_equal(a[k], b[k]) for k in ("ks", "F_fold"))', "Controls.test_g_cv_fires_on_either_variant"),
     ("G-IBU1 reads one variant", R, '    keys = ("ks", "F_fold", "F_sub")\n', '    keys = ("ks", "F_fold")\n',
      "Controls.test_g_ibu1_fires_on_either_variant_and_on_the_pin"),
-    ("G-IBU1's pin unchecked", R, '    if G.sha256(ref) != cfg["gibu1_reference"]["sha256"]:\n', "    if False:\n",
+    ("G-IBU1's pin unchecked", R, '    if staged.sha[ref["path"]] != ref["sha256"]:\n', "    if False:\n",
      "Controls.test_g_ibu1_fires_on_either_variant_and_on_the_pin"),
     ("G-cells' tolerance loosened", R, 'rel <= cfg["readings"]["gcells_rtol"]', "rel <= 1e-6",
      "Controls.test_g_cells_holds_at_its_tolerance"),
-    ("G-pair's pins unchecked", R, "        if pins.get(str(p)) is None or G.sha256(p) != pins[str(p)]:\n",
+    ("G-pair's pins unchecked", R, "        if pins.get(str(p)) is None or paired.e_sha(p) != pins[str(p)]:\n",
      "        if False:\n", "Controls.test_g_pair_fires_on_a_pin_a_swapped_replica_and_a_universe_from_other_weights"),
     ("G-draw passes anything", D, '"pass": bool(all(checks.values()))}', '"pass": True}',
      "Replicas.test_g_draw_fires_on_a_replica_that_is_not_es"),
@@ -93,6 +93,43 @@ MUTATIONS = [
     ("a universe paired with another index", R, 'Path(ep["universe"].format(tag=t.replace(":", "_")))',
      'Path(ep["universe"].format(tag=t.replace(":", "_").replace("_1", "_0")))',
      "Readings.test_r1_reads_agree_on_no_difference_and_differ_on_a_large_one"),
+    # REF-G1-ADDENDUM-A1 (the director, 2026-11-05): REQUIRED
+    ("gibu1 run in another thread environment", D, '    same = same and env["thread_env"] == want["thread_env"]',
+     "    same = same", "Units.test_gibu1_runs_only_in_ibu1s_environment"),
+    ("gibu1 run at another CPU count", D, '    same = same and env["cpus"] == int(want["cpus"])', "    same = same",
+     "Units.test_gibu1_runs_only_in_ibu1s_environment"),
+    ("a plain read where O_NOATIME is absent", D, '    flag = getattr(os, "O_NOATIME", None)',
+     '    flag = getattr(os, "O_NOATIME", 0)', "Reads.test_o_noatime_absent_is_refused"),
+    ("the audit hook on Python opens disabled", D, '    if event != "open" or not _READS["active"]:', "    if True:",
+     "Reads.test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise"),
+    ("the TFile guard admitting opens outside its roots", D, "        if not any(under(path, r) for r in roots):",
+     "        if False:", "Reads.test_the_tfile_guard_refuses_root_reads_outside_the_roots"),
+    ("a staging directory reused", D, "            self.root.mkdir(parents=True)",
+     "            self.root.mkdir(parents=True, exist_ok=True)", "Reads.test_a_staging_directory_is_new"),
+    ("D1: the bank's cv.npz read in place", D,
+     'np.load(self.staged(Path(self.cfg["inputs"]["bank"]) / "cv.npz"), allow_pickle=True)',
+     'np.load(Path(self.cfg["inputs"]["bank"]) / "cv.npz", allow_pickle=True)',
+     "Units.test_a_detector_universe_through_the_bank_parsers"),
+    ("D2: a universe's weights read in place", D, "            w = self.lib.uni.weights(sdir, tag)",
+     "            w = self.lib.uni.weights(wdir, tag)", "Units.test_a_detector_universe_through_the_bank_parsers"),
+    ("D3: the flux constraint read in place", R,
+     '    wflux = lib.s1a.flux_weights(staged(cfg["inputs"]["flux_constraint"]))',
+     '    wflux = lib.s1a.flux_weights(Path(cfg["inputs"]["flux_constraint"]))', "Reads.test_the_constraint_is_read_as_a_copy"),
+    ("D5: the units load the original inputs", D,
+     '        npz, bkg_path = staged(cfg["inputs"]["of_inputs_5d"]), staged(cfg["inputs"]["bkg_dump"])',
+     '        npz, bkg_path = Path(cfg["inputs"]["of_inputs_5d"]), Path(cfg["inputs"]["bkg_dump"])',
+     "Reads.test_the_units_load_the_staged_inputs"),
+    ("D6: a ratio read in place", D, "    ratio = json.loads(p.read_text())", "    ratio = json.loads(src.read_text())",
+     "Units.test_vertex_and_closure_read_the_pinned_ratio"),
+    ("D8: the (e) central read in place", R, '    x_e = e_cells(staged(ep["central"]), U)',
+     '    x_e = e_cells(Path(ep["central"]), U)', "Reads.test_the_reader_stages_its_declared_set_and_the_digest_is_unchanged"),
+    ("D8: IBU-1's D_N read in place", R, "    b, _ = load(b_path)", '    b, _ = load(Path(ref["path"]))',
+     "Reads.test_the_reader_stages_its_declared_set_and_the_digest_is_unchanged"),
+    ("the gibu1 product's pin unchecked", R, '    if staged.sha[own["path"]] != own["sha256"]:', "    if False:",
+     "Controls.test_g_ibu1_fires_on_either_variant_and_on_the_pin"),
+    ("the read without the gibu1 product pinned", R,
+     '    if not (cfg["gibu1_product"]["path"] and cfg["gibu1_product"]["sha256"]):', "    if False:",
+     "Reads.test_the_read_refuses_until_the_gibu1_product_is_pinned"),
 ]
 # Equivalent mutants: each runs once against the whole suite and must survive, so the label is measured, not only
 # declared (REF-G1 §7; the director, 2026-11-05). A kill refutes its proof.

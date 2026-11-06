@@ -1,0 +1,90 @@
+file	line	function	code	disposition
+docs/orchestration/state/next-preparation-20261009/d-id/did.py	68	sha256	with open(path, "rb") as fh:	not reached from ref_g1's run path (in sha256) -> no change
+docs/orchestration/state/next-preparation-20261009/d-id/did.py	513	load_events	z = np.load(path, allow_pickle=True)  # the committed loader's setting, after the digest check	not reached from ref_g1's run path (in load_events) -> no change
+docs/orchestration/state/next-preparation-20261009/d-id/did.py	567	build_rows	U, names = com.s5c_coverage.reported_functionals(json.loads((REPO / self.cfg["s5c_contract"]).read_text()))	not reached from ref_g1's run path (in build_rows) -> no change
+docs/orchestration/state/next-preparation-20261009/d-id/did.py	568	build_rows	op = np.load(REPO / self.cfg["operands"]["path"], allow_pickle=False)	not reached from ref_g1's run path (in build_rows) -> no change
+docs/orchestration/state/next-preparation-20261009/d-id/did.py	587	weights	ratio = json.loads(p.read_text())	not reached from ref_g1's run path (in weights) -> no change
+docs/orchestration/state/next-preparation-20261009/d-id/did.py	668	load_comparators	receipt = json.loads((REPO / cfg["records"]["stage2_receipt"]["path"]).read_text())["study_K"]	not reached from ref_g1's run path (in load_comparators) -> no change
+docs/orchestration/state/next-preparation-20261009/d-id/did.py	673	load_comparators	z = np.load(p, allow_pickle=False)	not reached from ref_g1's run path (in load_comparators) -> no change
+docs/orchestration/state/next-preparation-20261009/d-id/did.py	701	load_comparators	z = np.load(p, allow_pickle=False)	not reached from ref_g1's run path (in load_comparators) -> no change
+docs/orchestration/state/next-preparation-20261009/d-id/did.py	714	load_comparators	z = np.load(p, allow_pickle=False)	not reached from ref_g1's run path (in load_comparators) -> no change
+docs/orchestration/state/next-preparation-20261009/d-id/did.py	1285	main	cfg = json.loads(a.config.read_text())	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/ibu1/ibu1.py	55	sha256	with open(path, "rb") as fh:	DECLARED: ref_g1 hashes of_inputs_5d.npz, bkg_dump.npz, the ratio JSONs, bank and detector weight files and the flux-universe file with it (and the reader the (e) products, D_N.npz, s1_assembly.npz) -> O_NOATIME
+nd-unfolding/ibu1/ibu1.py	335	comparator_gate	z = np.load(path, allow_pickle=True)	not reached from ref_g1's run path (in comparator_gate) -> no change
+nd-unfolding/ibu1/ibu1.py	536	write	with open(tmp, "wb") as fh:	run output (write)
+nd-unfolding/ibu1/ibu1.py	551	load_inputs	bz = np.load(bkg_path, allow_pickle=True)	DECLARED: bkg_dump.npz -> O_NOATIME (staged copy)
+nd-unfolding/ibu1/ibu1.py	563	load_ratios	out[name] = json.loads(p.read_text())	not reached from ref_g1's run path (in load_ratios) -> no change
+nd-unfolding/ibu1/ibu1.py	576	main	cfg = json.loads(CONFIG.read_text())	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/ibu1/ibu1.py	594	main	contract = json.loads((REPO / cfg["contract"]["path"]).read_text())	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/project_cov_nd.py	84	_sha256_file	with open(path, "rb") as fh:	not reached from ref_g1's run path (in _sha256_file) -> no change
+nd-unfolding/project_cov_nd.py	142	_load_npz	z = np.load(path, allow_pickle=False)	not reached from ref_g1's run path (in _load_npz) -> no change
+nd-unfolding/project_cov_nd.py	157	_read_vector	f = ROOT.TFile.Open(str(path))	not reached from ref_g1's run path (in _read_vector) -> no change
+nd-unfolding/project_cov_nd.py	179	_read_matrix	f = ROOT.TFile.Open(str(path))	not reached from ref_g1's run path (in _read_matrix) -> no change
+nd-unfolding/project_cov_nd.py	225	_source_metadata	f = ROOT.TFile.Open(str(path))	not reached from ref_g1's run path (in _source_metadata) -> no change
+nd-unfolding/project_cov_nd.py	425	main	_exc_text = open(args.adoption_exception, "r", errors="replace").read()	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/project_cov_nd.py	534	main	fo = ROOT.TFile.Open(args.out, "RECREATE")	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/project_cov_nd.py	574	main	fchk = ROOT.TFile.Open(args.out)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/project_cov_nd.py	620	main	with open(args.out + ".receipt.json", "w") as fh:	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/pv-ladder/pvl_lib.py	45	sha256_path	with open(path, "rb") as f:	not reached from ref_g1's run path (in sha256_path) -> no change
+nd-unfolding/pv-ladder/pvl_lib.py	52	load_json	with open(path) as f:	not reached from ref_g1's run path (in load_json) -> no change
+nd-unfolding/ref_g1/ref_g1_read.py	47	load	with np.load(path, allow_pickle=False) as z:	DECLARED when it reads D_N.npz; run outputs otherwise -> O_NOATIME for declared paths
+nd-unfolding/ref_g1/ref_g1_read.py	69	e_cells	with np.load(path, allow_pickle=False) as z:	DECLARED: (e) products -> O_NOATIME (staged copy)
+nd-unfolding/ref_g1/ref_g1_read.py	277	read	bars_rec = json.loads(bars_path.read_text())	run output: bars.json
+nd-unfolding/ref_g1/ref_g1_read.py	378	reading_r2	with np.load(Path(cfg["e_products"]["closure"].format(product=product)), allow_pickle=False) as z:	DECLARED: F0b closure products -> O_NOATIME (staged copy)
+nd-unfolding/ref_g1/ref_g1_read.py	415	g_cells	with np.load(p, allow_pickle=False) as z:	DECLARED: s1_assembly.npz -> O_NOATIME (staged copy)
+nd-unfolding/ref_g1/ref_g1_read.py	425	g_pair	listing = json.loads((G.REPO / cfg["listing"]["path"]).read_text())	repo: the committed preconditions listing
+nd-unfolding/ref_g1/ref_g1_read.py	471	main	cfg = json.loads(G.CONFIG.read_text())	repo: config.json
+nd-unfolding/ref_g1/ref_g1.py	76	__init__	self.ibu1_cfg = json.loads((REPO / cfg["ibu1_config"]).read_text())	repo: IBU-1's config
+nd-unfolding/ref_g1/ref_g1.py	167	load_ratio	ratio = json.loads(p.read_text())	DECLARED: the ratio JSONs on pscratch -> O_NOATIME (staged copy)
+nd-unfolding/ref_g1/ref_g1.py	182	universes	listing = json.loads((REPO / cfg["listing"]["path"]).read_text())	repo: the committed preconditions listing
+nd-unfolding/ref_g1/ref_g1.py	204	bank_cv	self._bank_cv = np.load(Path(self.cfg["inputs"]["bank"]) / "cv.npz", allow_pickle=True)	DECLARED: cv.npz -> O_NOATIME (staged copy)
+nd-unfolding/ref_g1/ref_g1.py	332	run_unit	verdict = json.loads(marker.read_text()).get("verdict") if marker.exists() else None	run output: the unit's done-marker
+nd-unfolding/ref_g1/ref_g1.py	368	main	cfg = json.loads(CONFIG.read_text())	repo: config.json and IBU-1's contract
+nd-unfolding/ref_g1/ref_g1.py	382	main	contract = json.loads((REPO / icfg["contract"]["path"]).read_text())	repo: config.json and IBU-1's contract
+nd-unfolding/s1_assemble.py	70	sha256	with open(path, "rb") as fh:	DECLARED via require_sha/flux_weights (the flux constraint) and the reader's pins -> O_NOATIME
+nd-unfolding/s1_assemble.py	85	load_manifest	for line in path.read_text().splitlines():	not reached from ref_g1's run path (in load_manifest) -> no change
+nd-unfolding/s1_assemble.py	100	xs	return np.asarray(np.load(path, allow_pickle=False)["xsec_flat"], float)	not reached from ref_g1's run path (in xs) -> no change
+nd-unfolding/s1_assemble.py	107	fine_map	d = json.loads(definition.read_text())	repo: the H2 definition
+nd-unfolding/s1_assemble.py	137	flux_weights	for line in path.read_text().splitlines():	DECLARED: the flux constraint file -> O_NOATIME (staged copy)
+nd-unfolding/s1_assemble.py	155	x01_scale	z = np.load(path, allow_pickle=False)	not reached from ref_g1's run path (in x01_scale) -> no change
+nd-unfolding/s1_assemble.py	197	check_meta	m = json.loads(str(np.load(path, allow_pickle=False)["meta"]))	DECLARED: the (e) replica and universe products' meta (G-pair) -> O_NOATIME (staged copy)
+nd-unfolding/s1_assemble.py	306	main	flux = np.asarray(np.load(a.inputs_npz, allow_pickle=False)["flux"], float)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s1_assemble.py	309	main	det = json.loads(a.detector_receipt.read_text())["files_sha256"]	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s1_assemble.py	357	main	zc = np.load(a.cmodel, allow_pickle=False)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5c_coverage.py	71	stat_covariance	reps.append(U @ np.load(f, allow_pickle=False)["xsec_flat"])	not reached from ref_g1's run path (in stat_covariance) -> no change
+nd-unfolding/s5c_coverage.py	92	evaluate	z = np.load(f, allow_pickle=False)	not reached from ref_g1's run path (in evaluate) -> no change
+nd-unfolding/s5c_coverage.py	126	main	contract = json.loads(a.contract.read_text())	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5c_coverage.py	136	main	bc = json.loads(a.bias_correction.read_text())	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5c_coverage.py	141	main	ba = json.loads(a.bias_allowance.read_text())	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5c_pseudo.py	219	main	bz = np.load(a.bkg, allow_pickle=True)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5c_samplesize.py	136	main	with open(a.out, "w") as fh:	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5c_unfold.py	89	sha256_path	with open(path, "rb") as fh:	not reached from ref_g1's run path (in sha256_path) -> no change
+nd-unfolding/s5c_unfold.py	98	load_inputs	d = np.load(npz_path, allow_pickle=True)	DECLARED: of_inputs_5d.npz (via ibu1.load_inputs) -> O_NOATIME (staged copy)
+nd-unfolding/s5e_deform.py	98	read_hist	f = ROOT.TFile.Open(str(path), "READ")	not reached from ref_g1's run path (in read_hist) -> no change
+nd-unfolding/s5e_deform.py	126	main	z = np.load(a.grid_npz, allow_pickle=True)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5e_deform.py	136	main	digest = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()  # noqa: E731	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5e_trace.py	509	main	U, names = s5c_coverage.reported_functionals(json.loads(a.s5c_contract.read_text()))	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5e_trace.py	511	main	bz = np.load(a.bkg, allow_pickle=True)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5e_trace.py	518	main	ratio, ratio_sha = json.loads(a.eavail_ratio.read_text()), s5n_pseudo.sha256_path(a.eavail_ratio)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5n_pseudo.py	405	main	bz = np.load(a.bkg, allow_pickle=True)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5n_pseudo.py	412	main	ratio, ratio_sha = json.loads(a.eavail_ratio.read_text()), sha256_path(a.eavail_ratio)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5p_numerics.py	166	main	bz = np.load(a.bkg, allow_pickle=True)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5p_numerics.py	173	main	ratio, ratio_sha = json.loads(a.eavail_ratio.read_text()), s5n_pseudo.sha256_path(a.eavail_ratio)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5p_stage1_inspect.py	167	residual_summary	z = np.load(f, allow_pickle=False)	not reached from ref_g1's run path (in residual_summary) -> no change
+nd-unfolding/s5p_stage1_inspect.py	215	sigma_rel	xs = np.load(f, allow_pickle=False)["xsec_flat"]	not reached from ref_g1's run path (in sigma_rel) -> no change
+nd-unfolding/s5p_stage1_inspect.py	228	sha256	with open(path, "rb") as fh:	not reached from ref_g1's run path (in sha256) -> no change
+nd-unfolding/s5p_stage1_inspect.py	248	main	z = np.load(a.npz, allow_pickle=True)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5p_stage1_inspect.py	258	main	bz = np.load(a.bkg, allow_pickle=True)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5p_stage1_inspect.py	260	main	supported = json.loads(a.s5c_contract.read_text())["measurement"]["partition_J"]["supported_cells"]	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5p_truths.py	49	sha256	return hashlib.sha256(Path(path).read_bytes()).hexdigest()	not reached from ref_g1's run path (in sha256) -> no change
+nd-unfolding/s5p_truths.py	53	load_pred	z = np.load(path, allow_pickle=True)	not reached from ref_g1's run path (in load_pred) -> no change
+nd-unfolding/s5p_truths.py	155	load_counts	return np.asarray(np.load(path, allow_pickle=True)["nevt_flat"], float)	not reached from ref_g1's run path (in load_counts) -> no change
+nd-unfolding/s5p_truths.py	242	load_fine_rho	return np.asarray(np.load(path, allow_pickle=False)["rho"], float)	not reached from ref_g1's run path (in load_fine_rho) -> no change
+nd-unfolding/s5p_universe.py	58	file_sha	with open(path, "rb") as fh:	not reached from ref_g1's run path (in file_sha) -> no change
+nd-unfolding/s5p_universe.py	94	weights	w = np.load(bank / f"{tag}_{key}.npy", mmap_mode="r").astype(np.float64)	DECLARED: bank and detector-dump weight files (mmap) -> O_NOATIME (staged copy)
+nd-unfolding/s5p_universe.py	182	main	bz = np.load(a.bkg, allow_pickle=True)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5p_universe.py	184	main	bank_cv = np.load(a.bank / "cv.npz", allow_pickle=True)	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/s5p_universe.py	195	main	ratio, ratio_sha = (json.loads(Path(rf[0]).read_text()), s5n_pseudo.sha256_path(Path(rf[0]))) if rf else (None	not reached from ref_g1's run path (in main) -> no change
+nd-unfolding/flux_universe.py	115	read_flux_universe_table	with np.load(path) as z:	DECLARED: the flux-universe file (Flux universes) -> O_NOATIME (staged copy; ROOT cannot take the flag)
+nd-unfolding/flux_universe.py	133	read_flux_universe_table	f = ROOT.TFile.Open(path, "READ")	DECLARED: the flux-universe file (Flux universes) -> O_NOATIME (staged copy; ROOT cannot take the flag)
+nd-unfolding/flux_universe.py	261	load_banked_flux_ratio_table	return _validate_ratio_table(np.load(path), n_pt, n_flux, path)	not reached from ref_g1's run path (in load_banked_flux_ratio_table) -> no change

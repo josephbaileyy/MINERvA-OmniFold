@@ -39,12 +39,17 @@ applies the declared ones), a reported estimator, or any claim.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import copy
+import hashlib
 import json
 import os
+import shutil
 import sys
+import tempfile
 import time
 from pathlib import Path
+from unittest import mock
 
 import numpy as np
 
@@ -60,6 +65,126 @@ import ibu1  # noqa: E402
 GateFailure = ibu1.GateFailure
 sha256 = ibu1.sha256
 RC_GATE, RC_MOVED, RC_DRAW = 4, 5, 6
+
+
+# ------------------------------------------------------------------------------------------- read discipline (A1 §2)
+
+
+def noatime_flag() -> int:
+    """O_NOATIME, read at each open so a test's explicit substitution takes effect. Refuses where the platform has
+    none: a plain read would move the file's pscratch purge clock (REF-G1-DECLARATION.md:254; A1 §2.2)."""
+    flag = getattr(os, "O_NOATIME", None)
+    if flag is None:
+        raise GateFailure("O_NOATIME is not available on this platform: refusing a plain read")
+    return flag
+
+
+def open_noatime(path: Path):
+    """A binary file object on ``path`` opened with O_NOATIME; an EPERM is raised, never retried as a plain read."""
+    return os.fdopen(os.open(str(path), os.O_RDONLY | noatime_flag()), "rb")
+
+
+def copy_noatime(src: Path, dest: Path) -> str:
+    """Copy ``src`` once through O_NOATIME to ``dest`` (which must not exist); returns the sha256 taken in the same pass
+    and refuses unless the copy's own digest equals it."""
+    h = hashlib.sha256()
+    with open_noatime(src) as fh, open(dest, "xb") as fo:
+        while block := fh.read(1 << 24):
+            h.update(block)
+            fo.write(block)
+    got = h.hexdigest()
+    if sha256(dest) != got:
+        raise GateFailure(f"the copy {dest} differs from {src}")
+    return got
+
+
+class Staged:
+    """Declared inputs read once through O_NOATIME into copies under ``root``, each digest taken in the same pass and
+    compared with its pin where one is given; every later read uses the copy (A1 §2.2). ``root`` must not exist."""
+
+    def __init__(self, root: Path):
+        self.root, self.sha, self.copies = Path(root), {}, {}
+        try:
+            self.root.mkdir(parents=True)
+        except FileExistsError:
+            raise GateFailure(f"{self.root} exists: inputs are staged into a new directory") from None
+
+    def __call__(self, src, pin: str | None = None, name: str | None = None) -> Path:
+        src = str(src)
+        if src not in self.copies:
+            dest = self.root / (name or f"{len(self.copies):04d}_{Path(src).name}")
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            self.sha[src] = copy_noatime(Path(src), dest)
+            self.copies[src] = dest
+        if pin is not None and self.sha[src] != pin:
+            raise GateFailure(f"{Path(src).name} digest differs from its pin")
+        return self.copies[src]
+
+
+def under(path, root: Path) -> bool:
+    try:
+        Path(path).resolve().relative_to(root)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+
+# Python reads of these trees must carry O_NOATIME while read_guards is active (pscratch's purge clock is the atime)
+PROTECTED = (Path("/pscratch"), Path("/global/cfs"))
+_READS = {"active": False, "protected": (), "allowed": ()}
+_AUDIT_INSTALLED = []
+
+
+def _audit(event, args):
+    """The runtime guard on Python opens: a read of a protected path outside the allowed roots without O_NOATIME
+    raises. An audit hook cannot be removed, so it acts only while read_guards is active. It sees no C-level open
+    (ROOT's), which tfile_guard covers."""
+    if event != "open" or not _READS["active"]:
+        return
+    path, _mode, flags = args
+    if not isinstance(path, (str, bytes, os.PathLike)) or (flags & os.O_ACCMODE) == os.O_WRONLY:
+        return
+    p = os.path.abspath(os.fsdecode(path))
+    if not any(under(p, r) for r in _READS["protected"]) or any(under(p, r) for r in _READS["allowed"]):
+        return
+    if flags & noatime_flag():
+        return
+    raise GateFailure(f"a plain read of {p}: files under {[str(r) for r in _READS['protected']]} are read only "
+                      "through O_NOATIME")
+
+
+def tfile_guard(allowed):
+    """A patch of ROOT.TFile.Open refusing an open in any mode outside the ``allowed`` roots (ROOT cannot take
+    O_NOATIME, so it opens only staged copies; REF-G1 writes no ROOT file, and UPDATE or READ_WITHOUT_GLOBALREGISTRATION
+    also read). Where ROOT cannot be imported no TFile open can happen, and there is nothing to patch."""
+    try:
+        import ROOT
+    except ImportError:
+        return contextlib.nullcontext()
+    real_open = ROOT.TFile.Open
+    roots = tuple(Path(r).resolve() for r in allowed)
+
+    def guarded(path, mode="READ", *a, **k):
+        if not any(under(path, r) for r in roots):
+            raise GateFailure(f"ROOT opened {path} ({mode}) outside {[str(r) for r in roots]}")
+        return real_open(path, mode, *a, **k)
+    return mock.patch.object(ROOT.TFile, "Open", staticmethod(guarded))
+
+
+@contextlib.contextmanager
+def read_guards(protected, allowed):
+    """For the block's whole run: Python reads under ``protected`` need O_NOATIME unless under ``allowed`` (the audit
+    hook), and ROOT.TFile.Open reads only under ``allowed`` (tfile_guard)."""
+    if not _AUDIT_INSTALLED:
+        sys.addaudithook(_audit)
+        _AUDIT_INSTALLED.append(True)
+    _READS.update(active=True, protected=tuple(Path(r).resolve() for r in protected),
+                  allowed=tuple(Path(r).resolve() for r in allowed))
+    try:
+        with tfile_guard(allowed):
+            yield
+    finally:
+        _READS.update(active=False, protected=(), allowed=())
 
 
 class MembershipMoved(RuntimeError):
@@ -160,9 +285,10 @@ def g_draw(lib: Lib, inputs: dict, bkg: dict, b: int, offset: int, rep: dict) ->
 # ------------------------------------------------------------------------------------------- the ratios
 
 
-def load_ratio(lib: Lib, cfg: dict, name: str) -> dict:
-    p = Path(cfg["ratios"]["dir"]) / f"{name}.json"
-    if sha256(p) != cfg["ratios"]["sha256"][name]:
+def load_ratio(lib: Lib, cfg: dict, name: str, staged: Staged) -> dict:
+    src = Path(cfg["ratios"]["dir"]) / f"{name}.json"
+    p = staged(src)
+    if staged.sha[str(src)] != cfg["ratios"]["sha256"][name]:
         raise GateFailure(f"ratio {name} digest differs from config.json")
     ratio = json.loads(p.read_text())
     if tuple(ratio["axes"]) != lib.pvl.RUNGS["L-5D-PV"][1]:
@@ -191,8 +317,10 @@ def universes(cfg: dict) -> list[str]:
 class Run:
     """The loaded inputs and worlds, shared by every unit of one invocation."""
 
-    def __init__(self, lib: Lib, cfg: dict, inputs: dict, bkg: dict, contract: dict, chunk: int = 2_000_000):
+    def __init__(self, lib: Lib, cfg: dict, inputs: dict, bkg: dict, contract: dict, chunk: int = 2_000_000,
+                 staged: Staged | None = None):
         self.lib, self.cfg, self.inputs, self.bkg = lib, cfg, inputs, bkg
+        self.staged = staged or Staged(Path(tempfile.mkdtemp(prefix="ref-g1-stage-")) / "in")
         self.jw, self.gw = worlds(lib, cfg, inputs, contract, chunk)
         self.ks = list(cfg["iterations"]["reported"])
         self.n = inputs["MCgen"].shape[0]
@@ -201,7 +329,7 @@ class Run:
 
     def bank_cv(self):
         if self._bank_cv is None:
-            self._bank_cv = np.load(Path(self.cfg["inputs"]["bank"]) / "cv.npz", allow_pickle=True)
+            self._bank_cv = np.load(self.staged(Path(self.cfg["inputs"]["bank"]) / "cv.npz"), allow_pickle=True)
             self.lib.uni.check_alignment(self._bank_cv, self.inputs, self.bkg)
         return self._bank_cv
 
@@ -234,12 +362,20 @@ class Run:
         else:
             wdir = Path(cfg["detector_dir"] if band in self.lib.s1a.DETECTOR_BANDS else cfg["bank"])
             tag = f"{band}_{idx}"
-            w = self.lib.uni.weights(wdir, tag)
-            digests = {k: sha256(wdir / f"{tag}_{k}.npy") for k in self.lib.uni.weight_keys(wdir, tag)}
+            keys = self.lib.uni.weight_keys(wdir, tag)  # Path.exists: a stat, which moves no atime
+            files = [f"{tag}_{k}.npy" for k in keys]
+            for f in files:  # staged under the tag's own directory, so s5p_universe.weights reads them unchanged
+                self.staged(wdir / f, name=f"{tag}/{f}")
+            sdir = self.staged.root / tag
+            w = self.lib.uni.weights(sdir, tag)
+            digests = {k: self.staged.sha[str(wdir / f)] for k, f in zip(keys, files)}
+            for f in files:  # a universe's weights are read by its unit only
+                self.staged.copies.pop(str(wdir / f)).unlink()
         flux_file = None
         if band == "Flux":
-            flux_file = Path(cfg["flux_universe_file"])
-            if sha256(flux_file) != cfg["flux_universe_file_sha256"]:
+            src = Path(cfg["flux_universe_file"])
+            flux_file = self.staged(src)
+            if self.staged.sha[str(src)] != cfg["flux_universe_file_sha256"]:
                 raise GateFailure("the flux universe file digest differs from config.json")
         ui, ub, info = self.lib.uni.universe_inputs(self.inputs, self.bkg, None if band == "CV" else self.bank_cv(),
                                                     w, band, idx, flux_file)
@@ -249,7 +385,7 @@ class Run:
         return arrays, {"variants": diag, "universe": f"{band}:{idx}", "universe_info": info, "weight_sha256": digests}
 
     def vertex(self, name: str) -> tuple[dict, dict]:
-        ratio = load_ratio(self.lib, self.cfg, name)
+        ratio = load_ratio(self.lib, self.cfg, name, self.staged)
         r = row_weight(self.lib, self.inputs, ratio)
         ui, guard = self.lib.pvl.prior_inputs(self.inputs, r)
         exp = self.lib.s5n.build_data(ui, self.bkg)
@@ -259,7 +395,7 @@ class Run:
                         "prior_guard": guard}
 
     def closure(self, name: str) -> tuple[dict, dict]:
-        ratio = load_ratio(self.lib, self.cfg, name)
+        ratio = load_ratio(self.lib, self.cfg, name, self.staged)
         r = row_weight(self.lib, self.inputs, ratio)
         exp, x_true = self.lib.pvl.closure_inputs(self.inputs, r)
         half = full_half(self.n, self.inputs["w_truth"], self.inputs["w_reco"])
@@ -268,19 +404,34 @@ class Run:
         return arrays, {"variants": diag, "closure": name, "ratio_sha256": self.cfg["ratios"]["sha256"][name]}
 
 
+THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS")
+
+
+def cpu_count() -> int:
+    """The CPUs this process may use (its affinity on Linux)."""
+    try:
+        return len(os.sched_getaffinity(0))
+    except AttributeError:  # pragma: no cover - macOS has no affinity call
+        return os.cpu_count() or 0
+
+
 def environment() -> dict:
     import scipy
     return {"interpreter": sys.executable, "python_version": sys.version, "numpy": np.__version__,
-            "scipy": scipy.__version__}
+            "scipy": scipy.__version__, "thread_env": {k: os.environ.get(k) for k in THREAD_VARS}, "cpus": cpu_count()}
 
 
 def gibu1_environment(cfg: dict) -> tuple[bool, dict]:
     """G-IBU1 is bitwise, so the gibu1 unit runs only in IBU-1's recorded environment: the interpreter and Python
-    version of IBU-1's D_N unit (config.json gibu1_environment, cited to IBU-1's guard inventory). IBU-1 recorded no
-    numpy or scipy version; this unit records its own."""
+    version of IBU-1's D_N unit (config.json gibu1_environment, cited to IBU-1's guard inventory), and its thread
+    environment and CPU count (A1 §1: OMP/OPENBLAS/MKL = 1, sbatch_ibu1.sh:25; 2 CPUs, sacct 60130813.0). IBU-1
+    recorded no numpy or scipy version; this unit records its own."""
     env = environment()
     want = cfg["gibu1_environment"]
-    return (env["interpreter"], env["python_version"]) == (want["interpreter"], want["python_version"]), env
+    same = (env["interpreter"], env["python_version"]) == (want["interpreter"], want["python_version"])
+    same = same and env["thread_env"] == want["thread_env"]
+    same = same and env["cpus"] == int(want["cpus"])
+    return same, env
 
 
 def parse_units(cfg: dict, specs: list[str]) -> list[tuple]:
@@ -374,6 +525,34 @@ def main(argv=None) -> int:
     except ValueError as e:
         print(f"refusing: {e}", file=sys.stderr)
         return 2
+    a.out.mkdir(parents=True, exist_ok=True)
+    tmp = Path(tempfile.mkdtemp(prefix="ref-g1-stage-"))  # under $TMPDIR; removed at exit
+    try:
+        with read_guards(PROTECTED, (REPO, a.out, tmp)):
+            return run_units(cfg, units, a.out, Staged(tmp / "in"))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def unit_reads(lib: Lib, cfg: dict, units: list[tuple]) -> list[tuple[str, str]]:
+    """(role, path) of every non-repository file these units read, by the calls Run makes; each is staged through
+    O_NOATIME (A1 §4)."""
+    i = cfg["inputs"]
+    out = [("of_inputs_5d", i["of_inputs_5d"]), ("bkg_dump", i["bkg_dump"])]
+    for u in units:
+        if u[0] == "universe" and u[1] != "CV":
+            out.append(("bank_cv", str(Path(i["bank"]) / "cv.npz")))
+            wdir = Path(i["detector_dir"] if u[1] in lib.s1a.DETECTOR_BANDS else i["bank"])
+            tag = f"{u[1]}_{u[2]}"
+            out += [("weights", str(wdir / f"{tag}_{k}.npy")) for k in lib.uni.weight_keys(wdir, tag)]
+            if u[1] == "Flux":
+                out.append(("flux_universe_file", i["flux_universe_file"]))
+        elif u[0] in ("vertex", "closure"):
+            out.append(("ratio", str(Path(cfg["ratios"]["dir"]) / f"{u[1]}.json")))
+    return list(dict.fromkeys(out))
+
+
+def run_units(cfg: dict, units: list[tuple], out: Path, staged: Staged) -> int:
     try:
         if sha256(REPO / cfg["listing"]["path"]) != cfg["listing"]["sha256"]:
             raise GateFailure("the preconditions listing digest differs from config.json")
@@ -382,15 +561,15 @@ def main(argv=None) -> int:
         contract = json.loads((REPO / icfg["contract"]["path"]).read_text())
         if sha256(REPO / icfg["contract"]["path"]) != icfg["contract"]["expect_sha256"]:
             raise GateFailure("contract digest differs from IBU-1's config")
-        inputs, bkg = ibu1.load_inputs(lib.prod, icfg, Path(cfg["inputs"]["of_inputs_5d"]), Path(cfg["inputs"]["bkg_dump"]))
-        run = Run(lib, cfg, inputs, bkg, contract)
+        npz, bkg_path = staged(cfg["inputs"]["of_inputs_5d"]), staged(cfg["inputs"]["bkg_dump"])
+        inputs, bkg = ibu1.load_inputs(lib.prod, icfg, npz, bkg_path)  # pins checked on the copies
+        run = Run(lib, cfg, inputs, bkg, contract, staged=staged)
     except GateFailure as e:
         print(f"refusing: {e}", file=sys.stderr)
         return RC_GATE
-    a.out.mkdir(parents=True, exist_ok=True)
     rc = 0
     for u in units:
-        r = run_unit(run, u, a.out)
+        r = run_unit(run, u, out)
         if r == RC_MOVED:
             return r
         rc = rc or r
