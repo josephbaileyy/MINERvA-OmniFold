@@ -1,0 +1,35 @@
+host=login02 start=2026-11-05T19:51:55Z kernel=6.4.0-150600.23.135_15.0.45-cray_shasta_c
+$ grep -E  /pscratch | lustre  /proc/mounts
+2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch /pscratch lustre rw,nosuid,nodev,checksum,rchecksum_force,flock,user_xattr,lruresize,lazystatfs,nouser_fid2path,verbose,encrypt,statfs_project 0 0
+2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch /lus lustre rw,nosuid,nodev,checksum,rchecksum_force,flock,user_xattr,lruresize,lazystatfs,nouser_fid2path,verbose,encrypt,statfs_project 0 0
+rc=0
+
+$ findmnt -T /pscratch -o TARGET,SOURCE,FSTYPE,OPTIONS
+TARGET    SOURCE                                       FSTYPE OPTIONS
+/pscratch 2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch lustre rw,nosuid,nodev,checksum,rchecksum_force,flock,user_xattr,lruresize,lazystatfs,nouser_fid2path,verbose,encrypt,statfs_project
+rc=0
+
+$ lctl --version
+/dev/shm/josephrb-cov2d-lustre.sh: line 8: lctl: command not found
+rc=127
+
+$ lctl list_param llite.*
+/dev/shm/josephrb-cov2d-lustre.sh: line 8: lctl: command not found
+rc=127
+
+$ sh -c lctl list_param -R 'llite.*' 2>&1 | grep -i -E 'atime|lazy|stat' | head -40
+rc=0
+
+$ lctl get_param llite.*.lazystatfs llite.*.statahead_max llite.*.xattr_cache
+/dev/shm/josephrb-cov2d-lustre.sh: line 8: lctl: command not found
+rc=127
+
+$ sh -c lctl get_param 'mdc.*.atime*' 'llite.*.*atime*' 2>&1 | head -20
+sh: lctl: command not found
+rc=0
+
+$ sh -c lctl list_param -R 'mdc.*' 2>&1 | grep -i atime | head -20
+rc=0
+
+end=2026-11-05T19:51:55Z
+DONE

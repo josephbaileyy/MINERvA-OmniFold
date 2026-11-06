@@ -1,0 +1,918 @@
+node login27 nproc=244 loadavg 11.15 7.73 5.96
+2026-11-06T00:34:19Z
+connect script sha256 af332432c1881278a2a804d5e06328d3a074f89d988667478a80422ed9e1e5f3
+COV2D fence: no cov2d-* job in squeue at 2026-11-06T00:34:19Z
+staging source: josephrb 440 1792770770 /global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root
+staging source: josephrb 640 1784607401 /global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root
+watched COV2D inputs (stat only): 303 files
+HEAD 0d992845aabb00163723fdf37edcb69549b384b6; porcelain --ignored lines before: 0
+run_tests.sh sha256 a7dd23736278bc4201dfdc2251b3398ea354493196b2ed9066ec9ea750f1b5af
+pinned blobs: 0 mismatches
+libRooUnfold.so copied: sha256 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd
+libRooUnfold_rdict.pcm copied: sha256 c0c995d7fd55aa8b34756baf9830f1512c11ff58e408e6632712d2f0be93978f
+libRooUnfold.rootmap copied: sha256 fa15007eb266435e317f0a48a23bfd29d72bc6d43236fb6e422050d138938101
+== taskset -c 0-7, nice 19
+== environment
+interpreter: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+python 3.11.14
+numpy 1.26.4 | ROOT 6.28/12 | lightgbm 4.6.0 | scikit-learn 1.8.0 | matplotlib 3.10.8
+libRooUnfold: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/libcopy/libRooUnfold.so sha256 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd
+== tests
+test_each_control_stops_the_read (test_ref_c2c1.Controls.test_each_control_stops_the_read) ... ok
+test_the_cells_are_bound_index_by_index (test_ref_c2c1.Controls.test_the_cells_are_bound_index_by_index) ... ok
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.75e+04, mean=2.9159, min=0.4683, max=7.8510
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4379.45
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/units/er.root
+{"unit": "er", "seconds": 0.603, "controls": {}}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+[INFO] OmniFold complete. step1 weights: 4239, step2 weights: 6000
+[INFO] step2 sum=1.887e+04, mean=3.1451, min=0.0272, max=16.4743
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4735.35
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.438e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.438e-41 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/units/c2_central.root
+{"unit": "c2_central", "seconds": 0.307, "controls": {"C-FILL": true, "C-SIM": true}}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.75e+04, mean=2.9159, min=0.4683, max=7.8510
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4379.45
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/units/c1_central.root
+{"unit": "c1_central", "seconds": 0.489, "controls": {}}
+test_a_unit_refuses_at_another_cpu_count (test_ref_c2c1.Driver.test_a_unit_refuses_at_another_cpu_count) ... refusing: er needs E_R's 3 CPUs, this process has 2
+ok
+test_a_unit_refuses_in_another_thread_environment (test_ref_c2c1.Driver.test_a_unit_refuses_in_another_thread_environment) ... refusing: er needs E_R's thread environment {'OMP_NUM_THREADS': '999', 'MKL_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None}, not {'OMP_NUM_THREADS': '1', 'MKL_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None}
+ok
+test_a_unit_without_a_pass_marker_is_never_done (test_ref_c2c1.Driver.test_a_unit_without_a_pass_marker_is_never_done) ... refusing: c2_central exists without a PASS done-marker (verdict FAIL)
+refusing: c2_central exists without a PASS done-marker (verdict None)
+ok
+test_c1_differs_from_e_r_by_exactly_the_four_keys (test_ref_c2c1.Driver.test_c1_differs_from_e_r_by_exactly_the_four_keys) ... ok
+test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam (test_ref_c2c1.Driver.test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam) ... ok
+test_c_fill_catches_a_factor_from_the_neighbouring_bin (test_ref_c2c1.Driver.test_c_fill_catches_a_factor_from_the_neighbouring_bin) ... /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+[INFO] OmniFold complete. step1 weights: 4239, step2 weights: 6000
+[INFO] step2 sum=1.887e+04, mean=3.1451, min=0.0272, max=16.4743
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4735.35
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.438e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.438e-41 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/cfill/c2_central.root
+{"unit": "c2_central", "seconds": 0.32, "controls": {"C-FILL": true, "C-SIM": true}}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+[INFO] OmniFold complete. step1 weights: 4239, step2 weights: 6000
+[INFO] step2 sum=1.699e+04, mean=2.8309, min=0.0272, max=16.4743
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4247.98
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.202e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.202e-41 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/cfill_shifted/c2_central.root
+{"unit": "c2_central", "seconds": 0.304, "controls": {"C-FILL": false, "C-SIM": true}}
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+[INFO] OmniFold complete. step1 weights: 4239, step2 weights: 6000
+[INFO] step2 sum=1.887e+04, mean=3.1451, min=0.0272, max=16.4743
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4735.35
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.438e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.438e-41 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/cfill_tiny/c2_central.root
+{"unit": "c2_central", "seconds": 0.3, "controls": {"C-FILL": false, "C-SIM": false}}
+ok
+test_c_in_reads_the_input_digests_at_open_time (test_ref_c2c1.Driver.test_c_in_reads_the_input_digests_at_open_time) ... refusing: input CV digest 8e96d0a7663a differs from config.json
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.75e+04, mean=2.9159, min=0.4683, max=7.8510
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4379.45
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/cin/out/er.root
+{"unit": "er", "seconds": 0.447, "controls": {}}
+ok
+test_c_sim_goes_through_the_full_chain_to_the_full_truth (test_ref_c2c1.Driver.test_c_sim_goes_through_the_full_chain_to_the_full_truth) ... /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+ok
+test_er_is_the_driver_unchanged (test_ref_c2c1.Driver.test_er_is_the_driver_unchanged) ... ok
+test_reads_outside_the_staging_root_are_refused (test_ref_c2c1.Driver.test_reads_outside_the_staging_root_are_refused) ... /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMRegressor was fitted with feature names
+  warnings.warn(
+/global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+ok
+test_the_background_stream_guard_both_ways (test_ref_c2c1.Driver.test_the_background_stream_guard_both_ways) ... /global/homes/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+[INFO] OmniFold complete. step1 weights: 4239, step2 weights: 6000
+[INFO] step2 sum=1.887e+04, mean=3.1451, min=0.0272, max=16.4743
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4735.35
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.438e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.438e-41 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/csim.root
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/stage/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Stay-Positive refine: 4000 pos / 2203 neg events; g in [0.000,0.999]; clipped(2g-1<0) 400 events; sum(w_refined)=3517.56 (signed sum 3453.42).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.0645; effective measured sum=3517.56 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3517.56
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+Starting iteration 0
+Starting iteration 1
+[INFO] OmniFold complete. step1 weights: 6000, step2 weights: 6000
+[INFO] step2 sum=1.75e+04, mean=2.9159, min=0.4683, max=7.8510
+[CHECK] hTruth2D integral: 1501.3
+[CHECK] hUnfold2D integral: 4379.45
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1066.12
+[CHECK] hEffDen integral: 1501.3
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.23e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.23e-41 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/guard_ok.root
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[INFO] Data reco entries: 4000
+[INFO] hDataReco2D integral: 4000
+[INFO] hBkgReco2D integral (incl. fakes): 546.585
+[INFO] hMeasSub2D integral: 3453.42
+[INFO] hMeasTrain2D integral: 3453.42
+[INFO] bkg-mode=negweight-refined: prepared 2203 injected background reco events (bkg-MC 2203 + fakes 0); data side weight +1 (injection deferred to after closure/bootstrap).
+[INFO] Poisson bootstrap: seed=3, streams=three, data factor sum=3967 (n=4000, APPLIED), mc factor sum=5972 (n=6000, APPLIED)
+[INFO] Stay-Positive refine: 2503 pos / 3700 neg events; g in [0.000,1.000]; clipped(2g-1<0) 659 events; sum(w_refined)=3528.5 (signed sum 3400.51).
+[INFO] bkg-mode=negweight-refined (Stay Positive, arXiv:2505.03724): refined 6203 signed events (4000 data + 2203 bkg) to NON-NEGATIVE weights; clipped frac=0.1062; effective measured sum=3528.5 (cf hMeasSub2D integral 3453.42).
+[INFO] Running 2D OmniFold with 2 iterations...
+[INFO] MC events: 6000, pass_truth: 6000, pass_reco: 4239
+[INFO] Measured events: 6203, effective training sum=3528.5
+[INFO] Pinned GBDT seeds: step1=42, step2=43, regressor=44
+[INFO] GBDT estimator: lgbm (device=cpu)
+[INFO] OmniFold complete. step1 weights: 4239, step2 weights: 6000
+[INFO] step2 sum=1.96e+04, mean=3.2664, min=0.0000, max=34.1737
+[CHECK] hTruth2D integral: 1508.24
+[CHECK] hUnfold2D integral: 4764.2
+[CHECK] hMeasSub2D integral: 3453.42
+[CHECK] hMeasTrain2D integral: 3453.42
+[INFO] hEffDen source: mc_truth_denom (canonical Truth-tree denominator)
+[CHECK] hEffNum integral: 1072.14
+[CHECK] hEffDen integral: 1501.3
+[INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).
+[CHECK] hOFInputTruth2D integral: 1501.3
+[CHECK] hOFTruthDenom2D integral: 1501.3
+[CHECK] global completeness c = 1.0000 (expected ≈ N(mc_signal_reco truth-pass) / N(mc_truth_denom))
+[CHECK] Total xsec from p_T projection: 2.503e-41 cm^2/nucleon
+[CHECK] Total xsec from p_|| projection: 2.503e-41 cm^2/nucleon
+[INFO] driverFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/2d-unfolding/re2/re2_driver.py
+[INFO] driverSha256: 938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b
+[INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/deploy/unbinned_unfolding/python/omnifold.py
+[INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+[OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/bkgstream/c2_replica_b3.root
+{"unit": "c2_replica_b3", "seconds": 0.309, "controls": {"C-FILL": true}}
+ok
+test_dagostini_by_hand (test_ref_c2c1.Ibu.test_dagostini_by_hand) ... ok
+test_roounfold_bayes_is_the_same_update (test_ref_c2c1.Ibu.test_roounfold_bayes_is_the_same_update) ... Using response matrix priors
+Priors:
+
+Vector (6)  is as follows
+
+     |        1  |
+------------------
+   0 |0.160984 
+   1 |0.164801 
+   2 |0.174665 
+   3 |0.190985 
+   4 |0.156902 
+   5 |0.151663 
+
+Now unfolding...
+Iteration : 0
+Chi^2 of change 0.209605
+Calculating covariances due to number of measured events
+Using response matrix priors
+Priors:
+
+Vector (6)  is as follows
+
+     |        1  |
+------------------
+   0 |0.160984 
+   1 |0.164801 
+   2 |0.174665 
+   3 |0.190985 
+   4 |0.156902 
+   5 |0.151663 
+
+Now unfolding...
+Iteration : 0
+Chi^2 of change 0.209605
+Iteration : 1
+Chi^2 of change 0.080034
+Calculating covariances due to number of measured events
+Using response matrix priors
+Priors:
+
+Vector (6)  is as follows
+
+     |        1  |
+------------------
+   0 |0.160984 
+   1 |0.164801 
+   2 |0.174665 
+   3 |0.190985 
+   4 |0.156902 
+   5 |0.151663 
+
+Now unfolding...
+Iteration : 0
+Chi^2 of change 0.209605
+Iteration : 1
+Chi^2 of change 0.080034
+Iteration : 2
+Chi^2 of change 0.0311659
+Calculating covariances due to number of measured events
+Using response matrix priors
+Priors:
+
+Vector (6)  is as follows
+
+     |        1  |
+------------------
+   0 |0.160984 
+   1 |0.164801 
+   2 |0.174665 
+   3 |0.190985 
+   4 |0.156902 
+   5 |0.151663 
+
+Now unfolding...
+Iteration : 0
+Chi^2 of change 0.209605
+Iteration : 1
+Chi^2 of change 0.080034
+Iteration : 2
+Chi^2 of change 0.0311659
+Iteration : 3
+Chi^2 of change 0.0123865
+Calculating covariances due to number of measured events
+Using response matrix priors
+Priors:
+
+Vector (6)  is as follows
+
+     |        1  |
+------------------
+   0 |0.160984 
+   1 |0.164801 
+   2 |0.174665 
+   3 |0.190985 
+   4 |0.156902 
+   5 |0.151663 
+
+Now unfolding...
+Iteration : 0
+Chi^2 of change 0.209605
+Iteration : 1
+Chi^2 of change 0.080034
+Iteration : 2
+Chi^2 of change 0.0311659
+Iteration : 3
+Chi^2 of change 0.0123865
+Iteration : 4
+Chi^2 of change 0.00501438
+Calculating covariances due to number of measured events
+Using response matrix priors
+Priors:
+
+Vector (6)  is as follows
+
+     |        1  |
+------------------
+   0 |0.160984 
+   1 |0.164801 
+   2 |0.174665 
+   3 |0.190985 
+   4 |0.156902 
+   5 |0.151663 
+
+Now unfolding...
+Iteration : 0
+Chi^2 of change 0.209605
+Iteration : 1
+Chi^2 of change 0.080034
+Iteration : 2
+Chi^2 of change 0.0311659
+Iteration : 3
+Chi^2 of change 0.0123865
+Iteration : 4
+Chi^2 of change 0.00501438
+Iteration : 5
+Chi^2 of change 0.00206197
+Iteration : 6
+Chi^2 of change 0.00085892
+Iteration : 7
+Chi^2 of change 0.000361577
+Iteration : 8
+Chi^2 of change 0.000153525
+Iteration : 9
+Chi^2 of change 6.56476e-05
+Calculating covariances due to number of measured events
+Using response matrix priors
+Priors:
+
+Vector (6)  is as follows
+
+     |        1  |
+------------------
+   0 |0.160984 
+   1 |0.164801 
+   2 |0.174665 
+   3 |0.190985 
+   4 |0.156902 
+   5 |0.151663 
+
+Now unfolding...
+Iteration : 0
+Chi^2 of change 0.209605
+Iteration : 1
+Chi^2 of change 0.080034
+Iteration : 2
+Chi^2 of change 0.0311659
+Iteration : 3
+Chi^2 of change 0.0123865
+Iteration : 4
+Chi^2 of change 0.00501438
+Iteration : 5
+Chi^2 of change 0.00206197
+Iteration : 6
+Chi^2 of change 0.00085892
+Iteration : 7
+Chi^2 of change 0.000361577
+Iteration : 8
+Chi^2 of change 0.000153525
+Iteration : 9
+Chi^2 of change 6.56476e-05
+Iteration : 10
+Chi^2 of change 2.8235e-05
+Iteration : 11
+Chi^2 of change 1.22031e-05
+Iteration : 12
+Chi^2 of change 5.2959e-06
+Iteration : 13
+Chi^2 of change 2.30637e-06
+Iteration : 14
+Chi^2 of change 1.00746e-06
+Calculating covariances due to number of measured events
+Using response matrix priors
+Priors:
+
+Vector (6)  is as follows
+
+     |        1  |
+------------------
+   0 |0.160984 
+   1 |0.164801 
+   2 |0.174665 
+   3 |0.190985 
+   4 |0.156902 
+   5 |0.151663 
+
+Now unfolding...
+Iteration : 0
+Chi^2 of change 0.209605
+Iteration : 1
+Chi^2 of change 0.080034
+Iteration : 2
+Chi^2 of change 0.0311659
+Iteration : 3
+Chi^2 of change 0.0123865
+Iteration : 4
+Chi^2 of change 0.00501438
+Iteration : 5
+Chi^2 of change 0.00206197
+Iteration : 6
+Chi^2 of change 0.00085892
+Iteration : 7
+Chi^2 of change 0.000361577
+Iteration : 8
+Chi^2 of change 0.000153525
+Iteration : 9
+Chi^2 of change 6.56476e-05
+Iteration : 10
+Chi^2 of change 2.8235e-05
+Iteration : 11
+Chi^2 of change 1.22031e-05
+Iteration : 12
+Chi^2 of change 5.2959e-06
+Iteration : 13
+Chi^2 of change 2.30637e-06
+Iteration : 14
+Chi^2 of change 1.00746e-06
+Iteration : 15
+Chi^2 of change 4.41221e-07
+Iteration : 16
+Chi^2 of change 1.93674e-07
+Iteration : 17
+Chi^2 of change 8.51822e-08
+Iteration : 18
+Chi^2 of change 3.75303e-08
+Iteration : 19
+Chi^2 of change 1.65608e-08
+Calculating covariances due to number of measured events
+ok
+test_c_pub_reads_the_comparisons_own_chi2 (test_ref_c2c1.Readings.test_c_pub_reads_the_comparisons_own_chi2) ... ok
+test_the_leave_one_out_null_on_a_known_answer (test_ref_c2c1.Readings.test_the_leave_one_out_null_on_a_known_answer)
+No difference: T falls above the null's maximum about 1 / (N + 1) of the time; a large difference ... ok
+test_the_rank_rule (test_ref_c2c1.Readings.test_the_rank_rule) ... ok
+test_the_readings_on_known_products (test_ref_c2c1.Readings.test_the_readings_on_known_products) ... ok
+test_the_rho_classes_at_their_bars (test_ref_c2c1.Readings.test_the_rho_classes_at_their_bars) ... ok
+test_c_fill_opens_only_the_run_or_staging_roots (test_ref_c2c1.Reads.test_c_fill_opens_only_the_run_or_staging_roots) ... ok
+test_o_noatime_absent_is_refused (test_ref_c2c1.Reads.test_o_noatime_absent_is_refused) ... ok
+test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise (test_ref_c2c1.Reads.test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise) ... ok
+test_the_publication_digest_is_checked_on_the_copy (test_ref_c2c1.Reads.test_the_publication_digest_is_checked_on_the_copy) ... ok
+test_the_read_stages_every_protected_file (test_ref_c2c1.Reads.test_the_read_stages_every_protected_file) ... ok
+test_the_reader_opens_root_files_only_under_its_roots (test_ref_c2c1.Reads.test_the_reader_opens_root_files_only_under_its_roots) ... ok
+test_the_tfile_guard_confines_reads_and_writes_by_mode (test_ref_c2c1.Reads.test_the_tfile_guard_confines_reads_and_writes_by_mode)
+Any mode that reads is refused outside the readable roots (UPDATE and READ_WITHOUT_GLOBALREGISTRATION too), ... ok
+test_the_argv_is_e_rs_and_a_replica_adds_its_streams (test_ref_c2c1.Units.test_the_argv_is_e_rs_and_a_replica_adds_its_streams) ... ok
+test_the_replica_set_is_bound_at_step_two (test_ref_c2c1.Units.test_the_replica_set_is_bound_at_step_two) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 25.606s
+
+OK
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1e+20, mc=4e+20, scale=0.25
+[INFO] Phase-17 mode: mc_signal_reco contains 0 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845/tmp/tmpyygjp36v/flux.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.001 0.002 0.003 0.004 0.005 0.006 0.007 0.008 0.009 0.01  0.011 0.012
+ 0.013 0.014]
+[INFO] Flux sum = 0.105 m^-2/POT = 1.05e-05 cm^-2/POT
+[INFO] truth_denom events kept (in binning): 6000
+[INFO]   sum(w_truth) = 1501.3
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+[paper TH2D] xaxis='' (nbinsX=14)  yaxis='' (nbinsY=16)
+== outcomes (unittest's result object)
+{
+ "schema": "ref-c2c1-suite-run/1",
+ "testfile": "ref_c2c1/test_ref_c2c1.py",
+ "ran": 29,
+ "outcomes": {
+  "Controls.test_each_control_stops_the_read": "ok",
+  "Controls.test_the_cells_are_bound_index_by_index": "ok",
+  "Driver.test_a_unit_refuses_at_another_cpu_count": "ok",
+  "Driver.test_a_unit_refuses_in_another_thread_environment": "ok",
+  "Driver.test_a_unit_without_a_pass_marker_is_never_done": "ok",
+  "Driver.test_c1_differs_from_e_r_by_exactly_the_four_keys": "ok",
+  "Driver.test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam": "ok",
+  "Driver.test_c_fill_catches_a_factor_from_the_neighbouring_bin": "ok",
+  "Driver.test_c_in_reads_the_input_digests_at_open_time": "ok",
+  "Driver.test_c_sim_goes_through_the_full_chain_to_the_full_truth": "ok",
+  "Driver.test_er_is_the_driver_unchanged": "ok",
+  "Driver.test_reads_outside_the_staging_root_are_refused": "ok",
+  "Driver.test_the_background_stream_guard_both_ways": "ok",
+  "Ibu.test_dagostini_by_hand": "ok",
+  "Ibu.test_roounfold_bayes_is_the_same_update": "ok",
+  "Readings.test_c_pub_reads_the_comparisons_own_chi2": "ok",
+  "Readings.test_the_leave_one_out_null_on_a_known_answer": "ok",
+  "Readings.test_the_rank_rule": "ok",
+  "Readings.test_the_readings_on_known_products": "ok",
+  "Readings.test_the_rho_classes_at_their_bars": "ok",
+  "Reads.test_c_fill_opens_only_the_run_or_staging_roots": "ok",
+  "Reads.test_o_noatime_absent_is_refused": "ok",
+  "Reads.test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise": "ok",
+  "Reads.test_the_publication_digest_is_checked_on_the_copy": "ok",
+  "Reads.test_the_read_stages_every_protected_file": "ok",
+  "Reads.test_the_reader_opens_root_files_only_under_its_roots": "ok",
+  "Reads.test_the_tfile_guard_confines_reads_and_writes_by_mode": "ok",
+  "Units.test_the_argv_is_e_rs_and_a_replica_adds_its_streams": "ok",
+  "Units.test_the_replica_set_is_bound_at_step_two": "ok"
+ },
+ "was_successful": true
+}
+RUN PASS: 29 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok
+run_tests.sh rc=0
+porcelain --ignored lines after: 0
+watched COV2D inputs: no atime moved
+ref-c2c1 test run rc=0
+2026-11-06T00:35:40Z

@@ -1,0 +1,48 @@
+host=login02 start=2026-11-05T19:53:24Z kernel=6.4.0-150600.23.135_15.0.45-cray_shasta_c
+$ grep -E  /pscratch | lustre  /proc/mounts
+2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch /pscratch lustre rw,nosuid,nodev,checksum,rchecksum_force,flock,user_xattr,lruresize,lazystatfs,nouser_fid2path,verbose,encrypt,statfs_project 0 0
+2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch /lus lustre rw,nosuid,nodev,checksum,rchecksum_force,flock,user_xattr,lruresize,lazystatfs,nouser_fid2path,verbose,encrypt,statfs_project 0 0
+rc=0
+
+$ findmnt -T /pscratch -o TARGET,SOURCE,FSTYPE,OPTIONS
+TARGET    SOURCE                                       FSTYPE OPTIONS
+/pscratch 2158@kfi,2091@kfi:2283@kfi,2219@kfi:/scratch lustre rw,nosuid,nodev,checksum,rchecksum_force,flock,user_xattr,lruresize,lazystatfs,nouser_fid2path,verbose,encrypt,statfs_project
+rc=0
+
+$ /usr/sbin/lctl --version
+lctl 2.15.7.1_cray_20_ga54ba87
+rc=0
+
+$ /usr/sbin/lctl list_param llite.*
+llite.scratch-ffff88a542593800
+rc=0
+
+$ sh -c /usr/sbin/lctl list_param -R 'llite.*' 2>&1 | grep -i -E 'atime|lazy|stat' | head -40
+llite.scratch-ffff88a542593800.lazystatfs
+llite.scratch-ffff88a542593800.stat_blocksize
+llite.scratch-ffff88a542593800.statahead_agl
+llite.scratch-ffff88a542593800.statahead_max
+llite.scratch-ffff88a542593800.statahead_running_max
+llite.scratch-ffff88a542593800.statfs_max_age
+llite.scratch-ffff88a542593800.statfs_project
+llite.scratch-ffff88a542593800.stats_track_gid
+llite.scratch-ffff88a542593800.stats_track_pid
+llite.scratch-ffff88a542593800.stats_track_ppid
+rc=0
+
+$ /usr/sbin/lctl get_param llite.*.lazystatfs llite.*.statahead_max llite.*.xattr_cache
+llite.scratch-ffff88a542593800.lazystatfs=1
+llite.scratch-ffff88a542593800.statahead_max=32
+llite.scratch-ffff88a542593800.xattr_cache=1
+rc=0
+
+$ sh -c /usr/sbin/lctl get_param 'mdc.*.atime*' 'llite.*.*atime*' 2>&1 | head -20
+error: get_param: param_path 'mdc/*/atime*': No such file or directory
+error: get_param: param_path 'llite/*/*atime*': No such file or directory
+rc=0
+
+$ sh -c /usr/sbin/lctl list_param -R 'mdc.*' 2>&1 | grep -i atime | head -20
+rc=0
+
+end=2026-11-05T19:53:24Z
+DONE

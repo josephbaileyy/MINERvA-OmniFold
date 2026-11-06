@@ -1,0 +1,45 @@
+KILLED    IBU's per-event factor not unfolded/prior        by Driver.test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam
+KILLED    the measured histogram not E_R's refined weights by Driver.test_c2_is_e_rs_pipeline_with_ibu_in_the_omnifold_seam
+KILLED    C-SIM's tolerance loosened                       by Driver.test_c_sim_goes_through_the_full_chain_to_the_full_truth
+KILLED    the efficiency applied twice                     by Driver.test_c_sim_goes_through_the_full_chain_to_the_full_truth
+KILLED    a per-event factor from the neighbouring bin     by Driver.test_c_fill_catches_a_factor_from_the_neighbouring_bin
+KILLED    C-FILL's tolerance loosened                      by Driver.test_c_fill_catches_a_factor_from_the_neighbouring_bin
+KILLED    C-IN's input digests unchecked                   by Driver.test_c_in_reads_the_input_digests_at_open_time
+KILLED    the units' verified inputs not read              by Controls.test_each_control_stops_the_read
+KILLED    a unit run at another CPU count                  by Driver.test_a_unit_refuses_at_another_cpu_count
+KILLED    a unit run in another thread environment         by Driver.test_a_unit_refuses_in_another_thread_environment
+KILLED    the units' thread environments not read          by Controls.test_each_control_stops_the_read
+KILLED    the units' CPU counts not read                   by Controls.test_each_control_stops_the_read
+KILLED    C-REF's per-bin tie dropped                      by Controls.test_each_control_stops_the_read
+KILLED    c1's keys not merged                             by Driver.test_c1_differs_from_e_r_by_exactly_the_four_keys
+KILLED    a unit skipped whatever its verdict              by Driver.test_a_unit_without_a_pass_marker_is_never_done
+KILLED    the replica set not bound                        by Units.test_the_replica_set_is_bound_at_step_two
+KILLED    the driver's reads outside the staging root admitted by Driver.test_reads_outside_the_staging_root_are_refused
+KILLED    a staged input outside the root admitted         by Driver.test_reads_outside_the_staging_root_are_refused
+KILLED    the TFile guard reading only READ                by Reads.test_the_tfile_guard_confines_reads_and_writes_by_mode
+KILLED    the TFile guard's write check dropped            by Reads.test_the_tfile_guard_confines_reads_and_writes_by_mode
+KILLED    a plain read where O_NOATIME is absent           by Reads.test_o_noatime_absent_is_refused
+KILLED    the audit hook on Python opens disabled          by Reads.test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise
+KILLED    the reader's TFile guard not installed           by Reads.test_the_reader_opens_root_files_only_under_its_roots
+KILLED    the read opens E_R's original, not its copy      by Readings.test_the_readings_on_known_products
+KILLED    the publication's digest unchecked on the copy   by Reads.test_the_publication_digest_is_checked_on_the_copy
+KILLED    a re-run reusing the staged inputs directory     by Reads.test_the_read_stages_every_protected_file
+KILLED    C-FILL opening a path outside the run and staging roots by Reads.test_c_fill_opens_only_the_run_or_staging_roots
+KILLED    a replica's bootstrap seed not E_R's             by Units.test_the_argv_is_e_rs_and_a_replica_adds_its_streams
+KILLED    the rank rule not N / 4                          by Readings.test_the_rank_rule
+KILLED    the null in-sample, not leave-one-out            by Readings.test_the_leave_one_out_null_on_a_known_answer
+KILLED    C2-R2's input side one-sided                     by Readings.test_the_rho_classes_at_their_bars
+KILLED    C2-R2's algorithm side without C2-R1 differ      by Readings.test_the_rho_classes_at_their_bars
+KILLED    C2-R2's interval read as a point                 by Readings.test_the_readings_on_known_products
+KILLED    a failed control flagged and the read continued  by Controls.test_each_control_stops_the_read
+KILLED    C-CV's tolerance loosened                        by Controls.test_each_control_stops_the_read
+KILLED    C-PUB's tolerance loosened                       by Controls.test_each_control_stops_the_read
+KILLED    C-SET passes anything                            by Controls.test_each_control_stops_the_read
+KILLED    C-REF's deterministic part dropped               by Controls.test_each_control_stops_the_read
+KILLED    C-SIM not carried into the read                  by Controls.test_each_control_stops_the_read
+KILLED    a unit without a PASS marker read                by Controls.test_each_control_stops_the_read
+KILLED    C-IN's E_R digest unchecked                      by Controls.test_each_control_stops_the_read
+KILLED    C-CELLS passes a different set                   by Controls.test_the_cells_are_bound_index_by_index
+KILLED    the cells' sha256 unchecked                      by Controls.test_the_cells_are_bound_index_by_index
+MUTATION CHECK :: PASS (43 mutations)
+exit=0
