@@ -1,0 +1,43 @@
+file	line	function	code	disposition
+2d-unfolding/ref_c2c1/ref_c2c1.py	64	sha256	with open(path, "rb") as fh:	plain read, reached for: repo files (check_code :210; the runner and config.json :555); the unit's own outputs (marker digests :597-598); the staged copy's re-hash in copy_noatime (:102); in the reader, the committed cells file (ref_c2c1_read.py:228) and its own cells output (:216). Under read_guards the audit hook refuses it on a protected path outside the allowed roots
+2d-unfolding/ref_c2c1/ref_c2c1.py	81	open_noatime	return os.fdopen(os.open(str(path), os.O_RDONLY | noatime_flag()), "rb")	O_NOATIME; refuses where the platform has none (R2, fixed); EPERM raised, never retried plain
+2d-unfolding/ref_c2c1/ref_c2c1.py	97	copy_noatime	with open_noatime(src) as fh, open(dest, "xb") as fo:	the O_NOATIME source read and the copy's write ('xb', never over an existing file); digest taken in the same pass and compared with the copy's
+2d-unfolding/ref_c2c1/ref_c2c1.py	131	<module>	ROOT_READ_ONLY = ("", "READ", "READ_WITHOUT_GLOBALREGISTRATION")  # TFile::Open modes that never wri	constant naming TFile::Open's read-only modes, no read
+2d-unfolding/ref_c2c1/ref_c2c1.py	136	tfile_guard	"""A patch of ROOT.TFile.Open: a mode that reads (any but RECREATE, NEW, CREATE; UPDATE included) is	docstring, no read
+2d-unfolding/ref_c2c1/ref_c2c1.py	141	tfile_guard	real_open = ROOT.TFile.Open	the guard keeps ROOT's real Open
+2d-unfolding/ref_c2c1/ref_c2c1.py	151	guarded	return real_open(path, mode, *a, **k)	the guard: a mode that reads only under the readable roots, a mode that writes only under the writable ones (revision 7)
+2d-unfolding/ref_c2c1/ref_c2c1.py	152	tfile_guard	return mock.patch.object(ROOT.TFile, "Open", staticmethod(guarded))	the guard's patch
+2d-unfolding/ref_c2c1/ref_c2c1.py	158	read_guards	hook), and ROOT.TFile.Open reads only under ``allowed`` and writes only under ``writable`` (tfile_gu	docstring, no read
+2d-unfolding/ref_c2c1/ref_c2c1.py	180	staged	ruling: the driver opens them with ROOT.TFile.Open, which cannot take O_NOATIME)."""	docstring, no read
+2d-unfolding/ref_c2c1/ref_c2c1.py	329	own_hxsec	f = ROOT.TFile.Open(str(root))	C-FILL: the unit's own ROOT output; refuses unless under the run or staging root (R1, fixed)
+2d-unfolding/ref_c2c1/ref_c2c1.py	537	run_unit	verdict = json.loads(marker.read_text()).get("verdict") if marker.exists() else None	run output: the unit's own done-marker (the run's own products may be read plain, the director's ruling)
+2d-unfolding/ref_c2c1/ref_c2c1.py	609	main	cfg = json.loads(CONFIG.read_text())	repo: config.json
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	48	th2	f = ROOT.TFile.Open(str(path))	ROOT read under the reader's TFile guard: E_R's central and replicas only as staged copies (R1, fixed), and the run's own ROOT outputs in place
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	58	named	f = ROOT.TFile.Open(str(path))	as th2: E_R's central as its staged copy, the run's outputs in place
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	98	Publication	f = ROOT.TFile.Open(str(p))	ROOT read of the publication's staged copy; its pin is checked on the copy's same-pass digest (R1, fixed)
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	165	c2_xsec	z = np.load(run / f"{unit}.npz", allow_pickle=False)	run output npz, plain (allowed: the run's own products)
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	171	meta	return json.loads(str(np.load(run / f"{unit}.npz", allow_pickle=False)["meta"]))	run output npz, plain (allowed)
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	176	done_pass	return p.exists() and json.loads(p.read_text()).get("verdict") == "PASS"	run output done-marker, plain (allowed)
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	180	lgbm	return json.loads(str(np.load(run / f"{unit}.npz", allow_pickle=False)["lgbm_params"]))	run output npz, plain (allowed)
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	211	write_cells	f = ROOT.TFile.Open(str(out), "RECREATE")	write (RECREATE)
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	235	guarded_read	f = ROOT.TFile.Open(str(cells))	the committed cells file, digest-checked first (an allowed root of the read)
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	266	guarded_read	y_c2 = np.asarray(np.load(run / "c2_central.npz", allow_pickle=False)["y"], float)	run output npz (c2_central), plain (allowed)
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	267	guarded_read	y_er = np.asarray(np.load(run / "er.npz", allow_pickle=False)["y"], float)	run output npz (er), plain (allowed)
+2d-unfolding/ref_c2c1/ref_c2c1_read.py	342	main	cfg = json.loads(C.CONFIG.read_text())	repo: config.json
+2d-unfolding/re2/re2_driver.py	142	load_flux_bins	f_mc = ROOT.TFile.Open(mc_path, "READ")	TFile on args.mcfile (:1819) = the staged $MC; under run_driver's guard
+2d-unfolding/re2/re2_driver.py	175	load_flux_universe_bins	f = ROOT.TFile.Open(path, "READ")	only with --flux-universe-file (:1826), absent from E_R's argv -> not reached
+2d-unfolding/re2/re2_driver.py	1381	file_sha256	with open(path, "rb") as fh:	plain: the helper module and the driver itself (:1409, :1417, repo files) and args.data_file only with --data-file (:2238, absent from E_R's argv) -> no change
+2d-unfolding/re2/re2_driver.py	1744	main	f_in = ROOT.TFile.Open(args.omnifile, "READ")	TFile on args.omnifile = the staged $CV; under the guard
+2d-unfolding/re2/re2_driver.py	1755	main	f_data = ROOT.TFile.Open(args.data_file, "READ")	--data-file only (absent from E_R's argv) -> not reached; would be refused by the guard if outside the root
+2d-unfolding/re2/re2_driver.py	2225	main	# handling is unreliable for multi-column RDataFrames, which produced a	comment, no read
+2d-unfolding/re2/re2_driver.py	2537	main	f_out = ROOT.TFile.Open(args.out, "RECREATE")	write (RECREATE) of the unit's output
+unbinned_unfolding/python/omnifold.py	290	omnifold	with open(file_path, "wb") as outfile:	write, only if model_save_dict (default None at :97, :347; the driver never passes it) -> not reached
+unbinned_unfolding/python/omnifold.py	393	get_step1_predictions	with open(file, "rb") as infile:	pickle of saved models; never called by the driver -> not reached
+unbinned_unfolding/python/omnifold.py	394	get_step1_predictions	loaded_models = pickle.load(infile)	pickle of saved models; never called by the driver -> not reached
+unbinned_unfolding/python/omnifold.py	415	get_step2_predictions	with open(file, "rb") as infile:	as :393
+unbinned_unfolding/python/omnifold.py	416	get_step2_predictions	loaded_models = pickle.load(infile)	as :393
+2d-unfolding/compare_to_paper_fullcov.py	146	load_omnifold_cov	f = ROOT.TFile.Open(path)	the reader uses only flatten_ours/flatten_th2d/tmatrix_to_numpy/chi2_with_cov -> not reached
+2d-unfolding/compare_to_paper_fullcov.py	214	main	fp = ROOT.TFile.Open(f"{ANC_DIR}/cov_ptpl_minerva_inclusive_6GeV.root")	CLI main; not reached from the reader
+2d-unfolding/compare_to_paper_fullcov.py	228	main	fo = ROOT.TFile.Open(OURS)	CLI main; not reached
+nd-unfolding/s5c_unfold.py	89	sha256_path	with open(path, "rb") as fh:	ref_c2c1 calls only config_params (:430-431) -> not reached
+nd-unfolding/s5c_unfold.py	98	load_inputs	d = np.load(npz_path, allow_pickle=True)	not reached (as :89)

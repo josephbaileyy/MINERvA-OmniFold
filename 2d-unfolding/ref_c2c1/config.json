@@ -1,0 +1,72 @@
+{
+ "schema": "ref-c2c1-config/1",
+ "declaration": "docs/orchestration/state/measurement-paper/5d-community-20261024/REF-C2C1-DECLARATION.md",
+ "declaration_sha256": "63a1efa33fa4e1e3d3e15997b47232b7092dde21096c26f3e629729d14183c3b",
+ "code_sha256": {
+  "2d-unfolding/re2/re2_driver.py": "938c53c5a018d20f5b148f6bdc2949e987a60085c5d0b7913ccdd5bb438b5a3b",
+  "unbinned_unfolding/python/omnifold.py": "e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a",
+  "2d-unfolding/compare_to_paper_fullcov.py": "1dd5ff52d0c140921a3bcc411bd4108337dbe756c43bffc2c707eb2a8f633314",
+  "nd-unfolding/s5c_unfold.py": "510d749a2e82fa448de6172753ae2adc9ebd81a89d4f18bf76beb5faa8bb3968"
+ },
+ "inputs": {
+  "CV_source": "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root",
+  "CV_sha256": "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df",
+  "MC_source": "/global/cfs/cdirs/m3246/josephrb/minerva-shutdown-stage/fig_products/2d-unfolding/baseline_flux/runEventLoopMC_MEFHC.root",
+  "MC_sha256": "d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316",
+  "staging": {"root": null, "CV": "runEventLoopOmniFold_MEFHC.root", "MC": "runEventLoopMC_MEFHC.root"},
+  "staging_note": "the director's ruling (2026-11-05): a DTN step copies CV_source and MC_source (the CFS copies; the pscratch $MC is not read) by O_NOATIME read into the run's staging root and re-reads each against its digest; the units read only those copies, and every file the driver opens for reading must lie under the root; the root is bound at step two; the copies are deleted after the run with a B9-form ledger row",
+  "roounfold_lib": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libRooUnfold.so",
+  "roounfold_lib_sha256": "0b34e1e3",
+  "note": "REF-C2C1 preconditions 3-4 (fd/receipts-ref-c2c1/preconditions/, #779); the library's full digest is pinned at step two from that record's SHA256SUMS"
+ },
+ "e_r": {
+  "central": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "central_sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+  "replica": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/S1_{b:03d}/xsec.root",
+  "argv": ["--omnifile", "$CV", "--mcfile", "$MC", "--iters", "5", "--use-weights", "--estimator", "lgbm",
+           "--seed", "42", "--branch-select", "all", "--bkg-mode", "negweight-refined",
+           "--refine-n-estimators", "400", "--refine-num-leaves", "31"],
+  "replica_argv_extra": ["--bootstrap-seed", "{b}", "--bootstrap-streams", "three"],
+  "cpus": 64,
+  "thread_env": {"OMP_NUM_THREADS": "64", "MKL_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1"},
+  "thread_env_source": "re2/run/launch/re2_env.sh:31 (part B's lanes, as Stage C's sbatch_prod.sh:66-68); RE2-DECLARATION.md:166",
+  "cpus_source": "re2/run/partb_runs.tsv row ER (cpus 64); like for like, as RE2-DECLARATION.md:42 (the same thread count) and :166 (the same CPUs) require",
+  "note": "E_R's and Q_R's argv: re2/run/partb_runs.tsv rows ER and S1_001..S1_300"
+ },
+ "publication": {
+  "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "sha256": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+  "histogram": "pt_pl_cross_section",
+  "covariance": "TotalCovariance",
+  "mask_covariance": "StatOnlyCovariance",
+  "pdf_sha256": "39b6b8f1e6a59007ce31f4da4ab1af50dd07b491f537a3bbd898d57e2271ef69",
+  "c_pub": {"chi2": 465.4153, "ndf": 205, "rtol": 1e-8}
+ },
+ "c2": {
+  "iterations": {"scan": [1, 2, 3, 4, 5, 10, 15, 20], "primary": 10, "second": 5},
+  "unfolder": "roounfold",
+  "c_sim_rtol": 1e-9,
+  "c_roo_rtol": 1e-9,
+  "c_fill_rtol": 1e-9
+ },
+ "c1": {
+  "deterministic_keys": ["bin_construct_sample_cnt", "deterministic", "force_row_wise", "num_threads"],
+  "threads": 64,
+  "replicas": {"first": 1, "last": 50}
+ },
+ "replica_set": {
+  "choice": null,
+  "options": {
+   "reuse": {"first": 1, "last": 300, "rank": 75},
+   "new": {"first": 301, "last": 500, "rank": 50}
+  },
+  "note": "bound at step two from C-DRAW's verdict (job 60847127): 'reuse' pairs IBU with Q_R's S1_001..S1_300; 'new' runs 200 new E_R replicas at bootstrap seeds 301-500 beside IBU's"
+ },
+ "readings": {
+  "rank_divisor": 4,
+  "rho_input_side": [0.75, 1.3333333333333333],
+  "rho_algorithm_side": 0.5,
+  "rho_interval": 0.9,
+  "e_r_rtol": 1e-8
+ }
+}
