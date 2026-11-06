@@ -65,3 +65,23 @@
    §5's "does not license".
 
 Nothing is submitted, deposited or tagged.
+
+## Director's ruling (2026-11-06): the cells step inserted before the read
+
+limitation-resolver found that the read needs a committed cells file. `ref_c2c1_read.py read --cells F --cells-sha256 S`
+refuses unless sha256(F) = S, but ruling 2's sequence had no step that makes F. The declaration (`:69`) wants the 205
+reported cells "committed with its sha256 before the run and bound index by index".
+
+**The sequence's stage 3 becomes two stages:**
+- **3a, cells:** on a login node, at 0 node-h, from a fresh clean clone at M, run `ref_c2c1_read.py cells --out <new read
+  dir>/cells.root`. It reads only the publication's precision ROOT file (a staged O_NOATIME copy) and no unit product. The
+  receipt commits `cells.root` and its sha256, and the director merges it.
+- **3b, the read:** gated on that cells file being on main, with `--cells-sha256` taken from it, in the same read
+  directory.
+
+**Why this satisfies the declaration's intent.** The cells are a deterministic rule applied to the publication alone:
+the positive diagonal of `StatOnlyCovariance` on the 224-bin grid. write_cells reads no unit product, so no outcome of
+the runs can reach them. Committing them with their sha before the read fixes them before any reading, which is what
+"before the run" protects. This is recorded as the director's reading of `:69`.
+
+Nothing is submitted, deposited or tagged.
