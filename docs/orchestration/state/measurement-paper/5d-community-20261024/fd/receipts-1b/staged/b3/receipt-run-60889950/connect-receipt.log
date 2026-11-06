@@ -1,0 +1,56 @@
+host=login30 start=2026-11-06T06:19:57Z pid=892900 M3=8dd16e04714f0a4d350aa0ffbca243b66dec2532
+squeue at launch: [60889566 fd_c2c1u RUNNING;60889690 cov2d-pseudo_AR23 RUNNING;]
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2215.1            10000.0     18024.6      20000.0
+balance_node_h=1975.4 half=987.7 cap=53.5
+deploy porcelain_lines=0 head=8dd16e04714f0a4d350aa0ffbca243b66dec2532
+M3 on origin/decl/1b-staged-a2-1-20261103 (tip 8dd16e04714f0a4d350aa0ffbca243b66dec2532)
+gate pin: 6a832bf0692864aefb5f7e97e22f3c8025d87679561463358550dc12b090b062
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_noatime_guard.py: OK
+nd-unfolding/fd_1b_cal300_pins.json: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/guard_scan.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage1/tables/make_stage1_tables.py: OK
+nd-unfolding/fd_f1_lane.py: OK
+nd-unfolding/s5c_array.sh: OK
+nd-unfolding/mnv_guarded_run.py: OK
+docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh: OK
+setup_salloc_env.sh: OK
+Ran 18 tests in 3.461s
+
+OK (skipped=1)
+test_the_real_launcher_refuses_a_plain_read_and_passes_an_o_noatime_one (test_fd_1b_guard.RealFlag.test_the_real_launcher_refuses_a_plain_read_and_passes_an_o_noatime_one) ... python 3.11.14 O_NOATIME=0o1000000: rc=1
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.597s
+
+OK
+roots=10 sources=20135 i2_unf=408
+stat-before lines=20135 at 2026-11-06T06:21:23Z
+pilot [('data', 'control', 'setA_b1'), ('data', 'control', 'MaRES_0'), ('data', 'control', 'Flux_0'), ('data', 'control', 'GEANT_Pion_0'), ('g18', 'central', 'T'), ('g18', 'toy', '3620000'), ('ar23', 'stat', '1'), ('ar23', 'toy', '3630000')]
+ed20f86776f57f59ae15cda2d4dc7eb62678f4fa40c55b9452a342782a4a704b  receipt-steps.tsv
+4caa03b8c2f9d64fabe11d99c5ad4c0b6b845580fc60c72bbd594927d108baf4  s1-0-steps.tsv
+efa57cc1f818c4bf580d80c9b886f65b9051a8fb3aac715d29ecdf0b51476ad0  tasks-receipt.tsv
+964b6e0e6cbe3afdedebb849cdd930545123335a8742f2a748b120c086f4b08e  tasks-s1-0.tsv
+script connect-c2check.sh: 0 guarded, 0 unguarded []
+script connect-merge.sh: 1 guarded, 0 unguarded []
+script connect-receipt-readout.sh: 0 guarded, 0 unguarded []
+script connect-receipt.sh: 0 guarded, 0 unguarded []
+script sbatch-c2check.sh: 1 guarded, 0 unguarded []
+rows receipt-steps.tsv: 1 guarded, 0 unguarded []
+rows s1-0-steps.tsv: 8 guarded, 0 unguarded []
+GUARD-SCAN :: NONE UNGUARDED
+# 1B staged stage 1 receipt (steps); FD-1B-STAGED-AMENDMENT-2.md, binding 3
+0	fd1b_mc_receipt_a2	fd_1b_noatime_guard.py	--declared	--	nd-unfolding/fd_1b_mc.py
+Submitted batch job 60889950
+TimeLimit=02:00:00
+JobName=fd1b_mc_receipt_a2 Account=m3246 QOS=regular_1 JobState=PENDING TimeLimit=02:00:00 Partition=regular_milan_ss11 NumNodes=1-1 OverSubscribe=NO 
+60889950 fd1b_mc_receipt_a2 PENDING 0:00 2:00:00 (Priority)
+end=2026-11-06T06:21:28Z

@@ -1,0 +1,9 @@
+[timing] 2026-11-06T06:25:52.196Z job=60889950 host=nid004785 deploy=/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/a2/deploy pin=8dd16e04714f0a4d350aa0ffbca243b66dec2532 lines=0..0 cpt=256 mem=480G gres=inherit
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-11-06T06:25:52.328Z launch line 0
+[2026-11-06T08:06:41.107] error: *** JOB 60889950 ON nid004785 CANCELLED AT 2026-11-06T08:06:41 DUE to SIGNAL Terminated ***

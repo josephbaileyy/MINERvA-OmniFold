@@ -1,0 +1,8 @@
+script connect-c2check.sh: 0 guarded, 0 unguarded []
+script connect-merge.sh: 1 guarded, 0 unguarded []
+script connect-receipt-readout.sh: 0 guarded, 0 unguarded []
+script connect-receipt.sh: 0 guarded, 0 unguarded []
+script sbatch-c2check.sh: 1 guarded, 0 unguarded []
+rows receipt-steps.tsv: 1 guarded, 0 unguarded []
+rows s1-0-steps.tsv: 8 guarded, 0 unguarded []
+GUARD-SCAN :: NONE UNGUARDED

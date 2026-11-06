@@ -1,0 +1,39 @@
+2026-11-06T08:06:40Z
+JobId=60889950 JobName=fd1b_mc_receipt_a2
+   UserId=josephrb(112498) GroupId=josephrb(112498) MCS_label=N/A
+   Priority=67680 Nice=0 Account=m3246 QOS=regular_1
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=01:40:52 TimeLimit=02:00:00 TimeMin=N/A
+   SubmitTime=2026-11-05T22:21:25 EligibleTime=2026-11-05T22:21:25
+   AccrueTime=2026-11-05T22:21:25
+   StartTime=2026-11-05T22:25:48 EndTime=2026-11-06T00:25:48 Deadline=N/A
+   PreemptEligibleTime=2026-11-05T22:25:48 PreemptTime=None
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-05T22:25:48 Scheduler=Backfill
+   Partition=regular_milan_ss11 AllocNode:Sid=login30:892900
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=nid004785
+   BatchHost=nid004785
+   StepMgrEnabled=Yes
+   NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=1,mem=487802M,node=1,billing=1
+   AllocTRES=cpu=256,mem=487802M,node=1,billing=256
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=0 MinTmpDiskNode=0
+   Features=cpu DelayBoot=00:00:00
+   OverSubscribe=NO Contiguous=0 Licenses=scratch:1,u2:1 LicensesAlloc=scratch:1;u2:1 Network=(null)
+   Command=/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/a2/deploy/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh
+   SubmitLine=sbatch --parsable -A m3246 -q regular -C cpu -t 02:00:00 -J fd1b_mc_receipt_a2 -o /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/a2/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/a2/deploy/docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/a2/deploy 8dd16e04714f0a4d350aa0ffbca243b66dec2532 /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/a2/tables/tasks-receipt.tsv /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/a2/lanes 256 480G 0 0 inherit
+   WorkDir=/global/u2/j/josephrb
+   StdErr=
+   StdIn=/dev/null
+   StdOut=/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/a2/logs/fd1b_mc_receipt_a2_60889950.out
+   ResvPorts=63001-64000
+
+60889950|fd1b_mc_receipt_a2|RUNNING|01:40:52|2026-11-05T22:25:48|nid004785|256|487802M|billing=256,cpu=256,mem=487802M,node=1
+60889950.batch|batch|RUNNING|01:40:52|2026-11-05T22:25:48|nid004785|256||cpu=256,mem=487802M,node=1
+60889950.extern|extern|RUNNING|01:40:52|2026-11-05T22:25:48|nid004785|256||billing=256,cpu=256,mem=487802M,node=1
+515100
+60889950|CANCELLED by 112498|01:40:53|2026-11-06T00:06:41
+60889950.batch|CANCELLED|01:40:54|2026-11-06T00:06:42
+60889950.extern|COMPLETED|01:40:54|2026-11-06T00:06:42

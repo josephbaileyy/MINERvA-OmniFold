@@ -1,0 +1,7 @@
+test_the_real_launcher_refuses_a_plain_read_and_passes_an_o_noatime_one (test_fd_1b_guard.RealFlag.test_the_real_launcher_refuses_a_plain_read_and_passes_an_o_noatime_one) ... python 3.11.14 O_NOATIME=0o1000000: rc=1
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.597s
+
+OK

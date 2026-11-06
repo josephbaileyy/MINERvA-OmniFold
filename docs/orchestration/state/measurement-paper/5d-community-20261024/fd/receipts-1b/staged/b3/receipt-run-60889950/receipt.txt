@@ -1,0 +1,13 @@
+1B binding 3, stage 3: the receipt job 60889950. Verdict INVALID (amendment 2 §4: no receipt.json).
+connect-receipt.sh 1696849414a755c115c13fc7186f3b795a655b5c4c25976d3648992f720ee56e, M3 8dd16e04714f0a4d350aa0ffbca243b66dec2532,
+login30, 2026-11-06T06:19:57Z..06:21:28Z: every pre-launch check passed (connect-receipt.log).
+Cause: connect-receipt.sh passes 480G as the step memory. sbatch_timing_packed.sh runs `srun --exact -n1 -c 256
+--mem=480G`; 480G = 491520M exceeds the job's allocation mem=487802M (pre-cancel.txt AllocTRES), so step creation
+retried "Requested nodes are busy" from 06:25:52Z and fd_1b_mc.py never started (line0-60889950.log, 46 lines, no other
+output). The defect is the connect script's argument, not the bound code.
+Cancelled by this session at 2026-11-06T08:06:41Z, elapsed 01:40:53 (ElapsedRaw 6053 s): 1.681 node-h charged.
+connect-receipt-readout.sh 322216efc8547359663612b0e8956f4b026e17f096bfd2c0f3b158bece86773a (sha compared before run),
+login34: RECEIPT-READOUT verdict=INVALID why=no receipt.json (job state CANCELLED by 112498), rc=3; sources
+atime/mtime/size UNCHANGED (20135); stat-before and readout.stat-after byte-identical (STAT-SHA256SUMS).
+Records fetched through O_NOATIME reads. sources.txt and stat-before.txt are committed gzip -n; the stat-after is
+byte-identical to the stat-before and is recorded by its sha256 only.

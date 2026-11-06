@@ -1,0 +1,1 @@
+pilot [('data', 'control', 'setA_b1'), ('data', 'control', 'MaRES_0'), ('data', 'control', 'Flux_0'), ('data', 'control', 'GEANT_Pion_0'), ('g18', 'central', 'T'), ('g18', 'toy', '3620000'), ('ar23', 'stat', '1'), ('ar23', 'toy', '3630000')]
