@@ -1196,3 +1196,386 @@ def test_known_siblings_are_stat_only(
             fixture.execute("pins")
     finally:
         active[0] = False
+
+
+def _intercept_cfs_writes(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    writes: list[str] = []
+    real_mkdir, real_open = Path.mkdir, Path.open
+
+    def on_cfs(path: Path) -> bool:
+        return path == Path("/global/cfs") or Path("/global/cfs") in path.parents
+
+    def checked_mkdir(path: Path, *args: Any, **kwargs: Any) -> None:
+        if on_cfs(path):
+            writes.append("mkdir")
+            raise AssertionError("CFS mkdir attempted")
+        real_mkdir(path, *args, **kwargs)
+
+    def checked_open(path: Path, *args: Any, **kwargs: Any) -> Any:
+        if on_cfs(path):
+            writes.append("open")
+            raise AssertionError("CFS file open attempted")
+        return real_open(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "mkdir", checked_mkdir)
+    monkeypatch.setattr(Path, "open", checked_open)
+    return writes
+
+
+@pytest.mark.parametrize("failure", ["threads", "nice", "dry-run", "output-exists"])
+def test_cfs_precedes_other_refusals(
+    fixture: Fixture,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    failure: str,
+) -> None:
+    writes = _intercept_cfs_writes(monkeypatch)
+    guards: list[str] = []
+    original_require = R.require
+
+    def track_require(condition: bool, guard: str, message: str) -> None:
+        guards.append(guard)
+        original_require(condition, guard, message)
+
+    monkeypatch.setattr(R, "require", track_require)
+    for key in R.THREAD_KEYS:
+        monkeypatch.setenv(key, "1")
+    if failure == "threads":
+        monkeypatch.setenv("OMP_NUM_THREADS", "4")
+    if failure == "nice":
+        monkeypatch.setattr(os, "getpriority", lambda *_args: 0)
+        monkeypatch.setattr(os, "nice", lambda *_args: 0)
+    forbidden = Path("/global/cfs/cdirs/fixture/rpd-output")
+    arguments = [
+        "d1" if failure == "dry-run" else "pins",
+        "--config",
+        str(fixture.config_path),
+        "--config-sha256",
+        fixture.config_sha,
+        "--run",
+        str(forbidden),
+    ]
+    if failure == "dry-run":
+        arguments += ["--dry-run"]
+    if failure == "output-exists":
+        original_exists = Path.exists
+        monkeypatch.setattr(
+            Path,
+            "exists",
+            lambda path: path == forbidden / "pins.json" or original_exists(path),
+        )
+    assert R.main(arguments) == 4
+    assert guards[0] == "OUTPUT_LOCATION"
+    assert "STOP OUTPUT_LOCATION" in capsys.readouterr().err
+    assert writes == []
+    with pytest.raises(R.Refused, match="OUTPUT_LOCATION"):
+        R.run_stage(
+            fixture.config_path, fixture.config_sha, forbidden, "d1", dry_run=True
+        )
+    assert writes == []
+
+
+def test_cfs_handler_rechecks_before_stop_write(
+    fixture: Fixture,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    writes = _intercept_cfs_writes(monkeypatch)
+    original_guard = R.require_output_root
+    calls = []
+
+    def entry_then_handler(path: Path) -> None:
+        calls.append(path)
+        if len(calls) > 1:
+            original_guard(path)
+
+    monkeypatch.setattr(R, "require_output_root", entry_then_handler)
+    monkeypatch.setenv("OMP_NUM_THREADS", "4")
+    forbidden = Path("/global/cfs/cdirs/fixture/changed-output")
+    assert (
+        R.main(
+            [
+                "pins",
+                "--config",
+                str(fixture.config_path),
+                "--config-sha256",
+                fixture.config_sha,
+                "--run",
+                str(forbidden),
+            ]
+        )
+        == 4
+    )
+    assert len(calls) == 2
+    assert writes == []
+    assert "STOP OUTPUT_LOCATION" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("invalid", [-1, 0, 39601])
+def test_priced_wall_budget_limits(
+    fixture: Fixture,
+    monkeypatch: pytest.MonkeyPatch,
+    invalid: int,
+) -> None:
+    assert R.wall_budget_seconds(None) == 7200
+    assert R.wall_budget_seconds(1, 0.026) == 1
+    assert R.wall_budget_seconds(39600, 0.026) == 39600
+    with pytest.raises(R.Refused, match="WALL_BUDGET"):
+        R.wall_budget_seconds(invalid, 0.026)
+    destination = fixture.root / f"invalid-budget-{invalid}"
+    assert (
+        R.main(
+            [
+                "pins",
+                "--config",
+                str(fixture.config_path),
+                "--config-sha256",
+                fixture.config_sha,
+                "--run",
+                str(destination),
+                "--priced-wall-seconds",
+                str(invalid),
+                "--measured-seconds-per-draw",
+                "0.026",
+            ]
+        )
+        == 4
+    )
+    stop = json.loads((destination / "pins.STOP.json").read_text())
+    assert stop["guard"] == "WALL_BUDGET"
+    assert stop["priced_wall_seconds"] == invalid
+    assert stop["wall_budget_seconds"] == invalid
+    assert stop["readings"] is None
+
+
+def test_priced_wall_budget_admission_and_elapsed(
+    fixture: Fixture,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fixture.execute("pins")
+    clock = iter((0.0, 1000.0))
+    monkeypatch.setattr(R.time, "perf_counter", lambda: next(clock))
+    p0 = fixture.execute("p0")
+    price = p0["result"]["runtime_estimate"]
+    assert price["needs_director_price"]
+    own_price = price["steps"]["d2-predict"]["planning_seconds_with_factor_10"]
+    assert 7200 < own_price < 8000
+    assert price["steps"]["c0"]["planning_seconds_with_factor_10"] > 39600
+    with pytest.raises(R.Refused, match="PRICE_REVIEW"):
+        fixture.execute("d2-predict")
+    with pytest.raises(R.Refused, match="PRICE_REVIEW"):
+        fixture.execute(
+            "d2-predict", priced_wall_seconds=7000, **_timing_options(fixture, 0.026)
+        )
+    prediction = fixture.execute(
+        "d2-predict", priced_wall_seconds=8000, **_timing_options(fixture, 0.026)
+    )
+    assert prediction["wall_budget_seconds"] == 8000
+    assert prediction["priced_wall_seconds"] == 8000
+    assert p0["wall_budget_seconds"] == 7200 and p0["priced_wall_seconds"] is None
+    assert (
+        sum(step["poisson_draws"] for step in price["steps"].values())
+        == price["poisson_draws"]
+    )
+    inputs = R.Inputs(
+        fixture.config_path,
+        fixture.config_sha,
+        fixture.run,
+        priced_wall_seconds=8000,
+        **_timing_options(fixture, 0.026),
+    )
+    inputs.started -= 7201
+    inputs.check_wall_clock()
+    inputs.started -= 800
+    with pytest.raises(R.Refused, match="WALL_CLOCK"):
+        inputs.check_wall_clock()
+
+
+@pytest.mark.parametrize("seed", [17, 43])
+def test_p0_records_actual_environment(
+    tmp_path: Path,
+    standin_noatime: None,
+    seed: int,
+) -> None:
+    import scipy
+
+    fixture = Fixture(tmp_path, seed=seed)
+    pins = fixture.execute("pins")
+    p0 = fixture.execute(
+        "p0", priced_wall_seconds=8000, **_timing_options(fixture, 0.026)
+    )
+    environment = p0["result"]["environment"]
+    assert environment["interpreter"] == sys.executable
+    assert environment["resolved_interpreter"] == str(Path(sys.executable).resolve())
+    assert environment["python"] == sys.version.split()[0]
+    assert environment["numpy"] == np.__version__
+    assert environment["scipy"] == scipy.__version__
+    assert environment["uproot"] == uproot.__version__
+    assert pins["wall_budget_seconds"] == 7200
+    assert p0["wall_budget_seconds"] == 8000
+    assert p0["priced_wall_seconds"] == 8000
+
+
+def _timing_options(fixture: Fixture, rate: float) -> dict[str, Any]:
+    record = {
+        "seconds_per_draw": rate,
+        "chunk_shape": {
+            "rows": R.CHUNK_ROWS,
+            "bootstrap_replicas": R.BOOTSTRAPS,
+            "weight_variants": 5,
+            "axes": list(R.TIMING_AXES),
+            "pass": "real-signal",
+        },
+        "environment": R.runtime_environment(),
+        "scope": "synthetic timing provenance for local guard tests only",
+    }
+    path = fixture.root / "timing-record.json"
+    path.write_text(json.dumps(record))
+    return {
+        "measured_seconds_per_draw": rate,
+        "timing_record": path,
+        "timing_record_sha256": R.digest(path),
+    }
+
+
+@pytest.mark.parametrize("priced,measured", [(8000, None), (None, 0.026)])
+def test_priced_timing_pair_refuses(
+    fixture: Fixture,
+    capsys: pytest.CaptureFixture[str],
+    priced: int | None,
+    measured: float | None,
+) -> None:
+    with pytest.raises(R.Refused, match="PRICED_TIMING_PAIR"):
+        R.wall_budget_seconds(priced, measured)
+    destination = fixture.root / "pair-stop"
+    arguments = [
+        "pins",
+        "--config",
+        str(fixture.config_path),
+        "--config-sha256",
+        fixture.config_sha,
+        "--run",
+        str(destination),
+    ]
+    if priced is not None:
+        arguments += ["--priced-wall-seconds", str(priced)]
+    if measured is not None:
+        arguments += ["--measured-seconds-per-draw", str(measured)]
+    assert R.main(arguments) == 4
+    stop = json.loads((destination / "pins.STOP.json").read_text())
+    assert stop["guard"] == "PRICED_TIMING_PAIR"
+    assert stop["priced_wall_seconds"] == priced
+    assert stop["measured_seconds_per_draw"] == measured
+    assert stop["planned_seconds"] is None
+    assert stop["estimate_status"] == "unavailable_before_input_metadata"
+    assert stop["readings"] is None
+
+
+@pytest.mark.parametrize("invalid", [0.0, -0.1, float("nan"), float("inf")])
+def test_measured_rate_refuses(invalid: float) -> None:
+    assert R.wall_budget_seconds(8000, 0.026) == 8000
+    with pytest.raises(R.Refused, match="MEASURED_RATE"):
+        R.wall_budget_seconds(8000, invalid)
+
+
+@pytest.mark.parametrize(
+    "defect,guard",
+    [
+        ("missing", "TIMING_SOURCE"),
+        ("sha", "INPUT_DIGEST"),
+        ("rate", "TIMING_SHAPE"),
+        ("shape", "TIMING_SHAPE"),
+        ("environment", "TIMING_ENVIRONMENT"),
+    ],
+)
+def test_timing_record_guards(fixture: Fixture, defect: str, guard: str) -> None:
+    options = _timing_options(fixture, 0.026)
+    inputs = R.Inputs(
+        fixture.config_path,
+        fixture.config_sha,
+        fixture.run,
+        priced_wall_seconds=8000,
+        **options,
+    )
+    assert inputs.timing_source["sha256"] == options["timing_record_sha256"]
+    assert inputs.timing_source["record"]["chunk_shape"]["weight_variants"] == 5
+    assert str(options["timing_record"]) in inputs.hashes
+    fixture.run = fixture.root / "bad-timing-run"
+    if defect == "missing":
+        options.pop("timing_record")
+    elif defect == "sha":
+        options["timing_record_sha256"] = "a" * 64
+    else:
+        record = json.loads(options["timing_record"].read_text())
+        if defect == "rate":
+            record["seconds_per_draw"] *= 2
+        elif defect == "shape":
+            record["chunk_shape"]["weight_variants"] = 1
+        else:
+            record["environment"]["numpy"] = "wrong-version"
+        options["timing_record"].write_text(json.dumps(record))
+        options["timing_record_sha256"] = R.digest(options["timing_record"])
+    with pytest.raises(R.Refused, match=guard):
+        R.Inputs(
+            fixture.config_path,
+            fixture.config_sha,
+            fixture.run,
+            priced_wall_seconds=8000,
+            **options,
+        )
+
+
+def test_measured_plan_and_price_stop_receipt(fixture: Fixture) -> None:
+    fixture.execute("pins")
+    p0 = fixture.execute("p0")
+    options = _timing_options(fixture, 0.026)
+    inputs = R.Inputs(
+        fixture.config_path,
+        fixture.config_sha,
+        fixture.run,
+        priced_wall_seconds=8000,
+        **options,
+    )
+    estimate = p0["result"]["runtime_estimate"]
+    inputs.plan_step("d2-predict", estimate)
+    draws = estimate["steps"]["d2-predict"]["poisson_draws"]
+    assert inputs.step_estimate["planned_seconds"] == draws * 0.026 * 1.5
+    assert inputs.execution()["planning_factor"] == 1.5
+    assert inputs.execution()["timing_chunk_shape"]["axes"] == list(R.TIMING_AXES)
+    inputs.plan_step("c0", estimate)
+    assert inputs.step_estimate["planned_seconds"] > 39600
+    arguments = [
+        "d2-predict",
+        "--config",
+        str(fixture.config_path),
+        "--config-sha256",
+        fixture.config_sha,
+        "--run",
+        str(fixture.run),
+        "--priced-wall-seconds",
+        "7000",
+        "--measured-seconds-per-draw",
+        "0.026",
+        "--timing-record",
+        str(options["timing_record"]),
+        "--timing-record-sha256",
+        options["timing_record_sha256"],
+    ]
+    assert R.main(arguments) == 4
+    stop = json.loads((fixture.run / "d2-predict.STOP.json").read_text())
+    assert stop["guard"] == "PRICE_REVIEW"
+    assert stop["planned_seconds"] == draws * 0.026 * 1.5
+    assert stop["planning_factor"] == 1.5
+    assert stop["priced_wall_seconds"] == 7000
+    assert stop["measured_seconds_per_draw"] == 0.026
+    assert stop["timing_source"]["sha256"] == options["timing_record_sha256"]
+    assert stop["readings"] is None
+
+
+def test_draft_configuration_refuses(fixture: Fixture) -> None:
+    assert fixture.execute("pins")["result"]["n_files"] == 24
+    fixture.config["configuration_status"] = "DRAFT_UNRESOLVED_RUNTIME"
+    fixture.save_config()
+    fixture.run = fixture.root / "draft-config"
+    with pytest.raises(R.Refused, match="CONFIG_READY"):
+        fixture.execute("pins")

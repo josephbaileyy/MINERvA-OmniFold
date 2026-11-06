@@ -24,6 +24,13 @@ PRODUCER = ROOT / "nd-unfolding/fd_rpd_reco.py"
 TESTS = ROOT / "nd-unfolding/tests/test_fd_rpd_reco.py"
 
 GUARD_TESTS = {
+    "CONFIG_READY": "test_draft_configuration_refuses",
+    "WALL_BUDGET": "test_priced_wall_budget_limits",
+    "PRICED_TIMING_PAIR": "test_priced_timing_pair_refuses",
+    "MEASURED_RATE": "test_measured_rate_refuses",
+    "TIMING_SOURCE": "test_timing_record_guards",
+    "TIMING_SHAPE": "test_timing_record_guards",
+    "TIMING_ENVIRONMENT": "test_timing_record_guards",
     "ARRAY_SHAPE": "test_signal_guards",
     "BOOTSTRAP_VARIANCE": "test_leave_one_out_and_bootstrap_sigma_hand_calculation",
     "C0_CALIBRATION": "test_c0_calibration_both_sigma_directions_and_offset",
@@ -85,6 +92,10 @@ GUARD_TESTS = {
     "WEIGHTS": "test_signal_guards",
 }
 BAR_MUTANTS = {
+    "DEFAULT_WALL_SECONDS": (3600, "test_priced_wall_budget_limits"),
+    "MAX_PRICED_WALL_SECONDS": (86400, "test_priced_wall_budget_limits"),
+    "MEASURED_MARGIN": (1.0, "test_measured_plan_and_price_stop_receipt"),
+    "DEFAULT_PLANNING_FACTOR": (1.0, "test_priced_wall_budget_admission_and_elapsed"),
     "MIN_PREDICTION": (0.0, "test_leave_one_out_and_bootstrap_sigma_hand_calculation"),
     "STEP_SIGMA": (0.0, "test_d2_negative_zero_and_bracket"),
     "FAMILY_ALPHA": (0.0, "test_hadronic_firing_bars"),
@@ -118,6 +129,36 @@ class Mutation:
 
 REQUIRED = tuple(
     [
+        Mutation(
+            "REQUIRED_CFS_ENTRY_ORDER",
+            "output_order",
+            "main",
+            "test_cfs_precedes_other_refusals",
+        ),
+        Mutation(
+            "REQUIRED_CFS_HANDLER_RECHECK",
+            "handler_guard",
+            "main",
+            "test_cfs_handler_rechecks_before_stop_write",
+        ),
+        Mutation(
+            "REQUIRED_PRICED_WALL_ROUTE",
+            "priced_default",
+            "wall_budget_seconds",
+            "test_priced_wall_budget_admission_and_elapsed",
+        ),
+        Mutation(
+            "REQUIRED_PRICED_WALL_ELAPSED",
+            "clock_default",
+            "check_wall_clock",
+            "test_priced_wall_budget_admission_and_elapsed",
+        ),
+        Mutation(
+            "REQUIRED_P0_ENVIRONMENT",
+            "drop_environment",
+            "p0",
+            "test_p0_records_actual_environment",
+        ),
         Mutation(
             "REQUIRED_KNOWN_SIBLING_ALLOWED",
             "sibling_empty",
@@ -217,8 +258,79 @@ class Mutator(ast.NodeTransformer):
             self.changed += 1
         else:
             self.generic_visit(node)
+        if self.mutation.kind == "output_order" and node.name == self.mutation.target:
+            for statement in node.body:
+                if (
+                    isinstance(statement, ast.Try)
+                    and statement.body
+                    and self._output_check(statement.body[0])
+                ):
+                    check = statement.body.pop(0)
+                    statement.body.append(check)
+                    self.changed += 1
+                    break
+        if self.mutation.kind == "priced_default" and node.name == self.mutation.target:
+            for statement in node.body:
+                if isinstance(statement, ast.Return):
+                    statement.value = ast.Name(
+                        id="DEFAULT_WALL_SECONDS", ctx=ast.Load()
+                    )
+                    self.changed += 1
         self.function = previous
         return node
+
+    @staticmethod
+    def _output_check(node: ast.AST) -> bool:
+        return (
+            isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Name)
+            and node.value.func.id == "require_output_root"
+        )
+
+    def visit_ExceptHandler(self, node: ast.ExceptHandler) -> ast.AST:
+        if (
+            self.mutation.kind == "handler_guard"
+            and self.function == self.mutation.target
+        ):
+            for statement in node.body:
+                if (
+                    isinstance(statement, ast.Try)
+                    and statement.body
+                    and self._output_check(statement.body[0])
+                ):
+                    statement.body[0] = ast.Pass()
+                    self.changed += 1
+        return self.generic_visit(node)
+
+    def visit_Compare(self, node: ast.Compare) -> ast.AST:
+        if (
+            self.mutation.kind == "clock_default"
+            and self.function == self.mutation.target
+        ):
+            for index, comparator in enumerate(node.comparators):
+                if (
+                    isinstance(comparator, ast.Attribute)
+                    and comparator.attr == "wall_seconds"
+                ):
+                    node.comparators[index] = ast.Name(
+                        id="DEFAULT_WALL_SECONDS", ctx=ast.Load()
+                    )
+                    self.changed += 1
+        return self.generic_visit(node)
+
+    def visit_Dict(self, node: ast.Dict) -> ast.AST:
+        if (
+            self.mutation.kind == "drop_environment"
+            and self.function == self.mutation.target
+        ):
+            for index, key in enumerate(node.keys):
+                if isinstance(key, ast.Constant) and key.value == "environment":
+                    del node.keys[index]
+                    del node.values[index]
+                    self.changed += 1
+                    break
+        return self.generic_visit(node)
 
     def visit_Assign(self, node: ast.Assign) -> ast.AST:
         mutation = self.mutation

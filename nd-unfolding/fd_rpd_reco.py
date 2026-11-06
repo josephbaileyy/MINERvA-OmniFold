@@ -56,6 +56,20 @@ BKG_KEYS = frozenset({"bkg_reco", "bkg_w"})
 BOOTSTRAPS = 200
 PARTITIONS = 20
 CHUNK_ROWS = 65_536
+DEFAULT_WALL_SECONDS = 7_200
+MAX_PRICED_WALL_SECONDS = 39_600
+MEASURED_MARGIN = 1.5
+DEFAULT_PLANNING_FACTOR = 10.0
+TIMING_AXES = tuple(
+    sorted(
+        ["step", "pz", "pmu", "theta", "pt", "eavail", "q3", "W", "cells"]
+        + [
+            f"{axis}@{stratum}"
+            for axis in ("eavail", "q3", "W")
+            for stratum in range(4)
+        ]
+    )
+)
 PZ_EDGES = np.array([1.5, 2, 3, 4, 5, 6, 8, 10, 15, 20, 60], dtype=float)
 PT_EDGES = np.array(
     [0, 0.15, 0.25, 0.4, 0.55, 0.7, 0.85, 1, 1.25, 1.5, 2.5, 4.5], dtype=float
@@ -106,6 +120,85 @@ def require_output_root(run: Path) -> None:
         "OUTPUT_LOCATION",
         "outputs must not be written to CFS",
     )
+
+
+def wall_budget_seconds(
+    priced_wall_seconds: int | None, measured_seconds_per_draw: float | None = None
+) -> int:
+    """Validate a director-priced step budget, or retain the login default."""
+    require(
+        (priced_wall_seconds is None) == (measured_seconds_per_draw is None),
+        "PRICED_TIMING_PAIR",
+        "priced wall seconds and measured seconds per draw must be supplied together",
+    )
+    require(
+        measured_seconds_per_draw is None
+        or (
+            bool(np.isfinite(measured_seconds_per_draw))
+            and measured_seconds_per_draw > 0
+        ),
+        "MEASURED_RATE",
+        "measured seconds per draw must be finite and positive",
+    )
+    budget = (
+        DEFAULT_WALL_SECONDS if priced_wall_seconds is None else priced_wall_seconds
+    )
+    require(
+        isinstance(budget, int)
+        and not isinstance(budget, bool)
+        and 0 < budget <= MAX_PRICED_WALL_SECONDS,
+        "WALL_BUDGET",
+        "priced wall seconds must be positive and at most 39600",
+    )
+    return budget
+
+
+def execution_fields(
+    priced_wall_seconds: int | None,
+    measured_seconds_per_draw: float | None,
+    *,
+    timing_source: Json | None = None,
+    estimate: Json | None = None,
+) -> Json:
+    """Retain requested price, timing provenance and available step estimate."""
+    return {
+        "priced_wall_seconds": priced_wall_seconds,
+        "wall_budget_seconds": (
+            DEFAULT_WALL_SECONDS if priced_wall_seconds is None else priced_wall_seconds
+        ),
+        "measured_seconds_per_draw": measured_seconds_per_draw,
+        "planning_factor": (
+            DEFAULT_PLANNING_FACTOR
+            if measured_seconds_per_draw is None
+            else MEASURED_MARGIN
+        ),
+        "planned_seconds": None if estimate is None else estimate["planned_seconds"],
+        "step_estimate": estimate,
+        "estimate_status": (
+            "unavailable_before_input_metadata" if estimate is None else "available"
+        ),
+        "timing_source": timing_source,
+        "timing_chunk_shape": (
+            None
+            if timing_source is None
+            else timing_source.get("record", {}).get("chunk_shape")
+        ),
+    }
+
+
+def runtime_environment() -> Json:
+    """Identify the actual interpreter and numerical readers used by P0."""
+    import scipy
+    import uproot
+
+    return {
+        "interpreter": sys.executable,
+        "resolved_interpreter": str(Path(sys.executable).resolve()),
+        "python": sys.version.split()[0],
+        "numpy": np.__version__,
+        "scipy": scipy.__version__,
+        "uproot": uproot.__version__,
+    }
 
 
 def digest(path: Path) -> str:
@@ -257,8 +350,25 @@ class Inputs:
         Exclusive output directory, separate from declared source roots.
     """
 
-    def __init__(self, config_path: Path, config_sha: str, run: Path):
+    def __init__(
+        self,
+        config_path: Path,
+        config_sha: str,
+        run: Path,
+        *,
+        priced_wall_seconds: int | None = None,
+        measured_seconds_per_draw: float | None = None,
+        timing_record: Path | None = None,
+        timing_record_sha256: str | None = None,
+    ):
         require_output_root(run)
+        self.wall_seconds = wall_budget_seconds(
+            priced_wall_seconds, measured_seconds_per_draw
+        )
+        self.priced_wall_seconds = priced_wall_seconds
+        self.measured_seconds_per_draw = measured_seconds_per_draw
+        self.timing_source: Json | None = None
+        self.step_estimate: Json | None = None
         self.run = run.resolve()
         self.started = time.monotonic()
         self.run.mkdir(parents=True, exist_ok=True)
@@ -266,6 +376,11 @@ class Inputs:
         with read_guards([config_path]):
             copy = stage_copy(config_path, self.staged / "config.json", config_sha)
         self.config: Json = json.loads(copy.read_text())
+        require(
+            self.config.get("configuration_status", "READY") == "READY",
+            "CONFIG_READY",
+            "draft configuration has unresolved runtime fields",
+        )
         self.hashes: dict[str, str] = {str(config_path.resolve()): config_sha}
         self.roots = [config_path.resolve(), Path(self.config["dump_root"]).resolve()]
         for key in ("pins", "h2", "inventory", "constants", "flux_source"):
@@ -286,6 +401,98 @@ class Inputs:
         self.pins: dict[str, tuple[Path, str]] = {}
         self.known_siblings: list[Json] = []
         self.copies: dict[tuple[Path, str], Path] = {}
+        require(
+            (
+                measured_seconds_per_draw is None
+                and timing_record is None
+                and timing_record_sha256 is None
+            )
+            or (
+                measured_seconds_per_draw is not None
+                and timing_record is not None
+                and timing_record_sha256 is not None
+            ),
+            "TIMING_SOURCE",
+            "measured pricing requires a pinned timing record, and unpriced runs cannot carry one",
+        )
+        if timing_record is not None and timing_record_sha256 is not None:
+            self.roots.append(timing_record.resolve())
+            copied = self.copy(timing_record, timing_record_sha256)
+            record = json.loads(copied.read_text())
+            require(
+                isinstance(record, dict),
+                "TIMING_SHAPE",
+                "timing record must be an object",
+            )
+            shape = record.get("chunk_shape", {})
+            require(
+                isinstance(shape, dict)
+                and isinstance(shape.get("axes"), list)
+                and record.get("seconds_per_draw") == measured_seconds_per_draw
+                and shape.get("rows") == CHUNK_ROWS
+                and shape.get("bootstrap_replicas") == BOOTSTRAPS
+                and shape.get("weight_variants") == 5
+                and shape.get("pass") == "real-signal"
+                and sorted(shape.get("axes", [])) == list(TIMING_AXES),
+                "TIMING_SHAPE",
+                "timing record must match S and a full real-pass signal chunk",
+            )
+            require(
+                record.get("environment") == runtime_environment(),
+                "TIMING_ENVIRONMENT",
+                "timing environment differs from the current interpreter/readers",
+            )
+            self.timing_source = {
+                "path": str(timing_record.resolve()),
+                "sha256": timing_record_sha256,
+                "record": record,
+            }
+
+    def execution(self) -> Json:
+        """Return price and timing metadata for this invocation's record."""
+        return execution_fields(
+            self.priced_wall_seconds,
+            self.measured_seconds_per_draw,
+            timing_source=self.timing_source,
+            estimate=self.step_estimate,
+        )
+
+    def plan_step(self, step: str, estimate: Json | None) -> None:
+        """Apply this invocation's measured rate or P0's Poisson-only fallback."""
+        draws = 0 if estimate is None else int(estimate["steps"][step]["poisson_draws"])
+        rate = self.measured_seconds_per_draw
+        if rate is None:
+            rate = (
+                0.0
+                if estimate is None
+                else float(estimate["timing_seconds"])
+                / int(estimate["timing_sample_draws"])
+            )
+        factor = (
+            DEFAULT_PLANNING_FACTOR
+            if self.measured_seconds_per_draw is None
+            else MEASURED_MARGIN
+        )
+        self.step_estimate = {
+            "step": step,
+            "poisson_draws": draws,
+            "seconds_per_draw": rate,
+            "factor": factor,
+            "planned_seconds": draws * rate * factor,
+            "unmeasured_costs": [
+                "input staging and decompression",
+                "weighted-quantile sorting",
+                "output writing",
+            ],
+        }
+
+    def check_wall_clock(self) -> None:
+        """Refuse elapsed time beyond this invocation's recorded budget."""
+        require(
+            time.monotonic() - self.started <= self.wall_seconds,
+            "WALL_CLOCK",
+            f"step wall budget of {self.wall_seconds} seconds exhausted",
+        )
 
     def copy(self, source: Path, expected: str) -> Path:
         """Stage one declared source and retain its actual identity."""
@@ -908,6 +1115,7 @@ def p0(inputs: Inputs) -> Json:
     )
     return {
         "spectra": spectra,
+        "environment": runtime_environment(),
         "P-F": {
             "pass": True,
             "source_sha256": inputs.config["flux_source"]["sha256"],
@@ -1085,11 +1293,7 @@ def aggregate(
     replicas 1..200 use the frozen SeedSequence words. C-0 independently assigns
     data, signal and background rows before running precisely the same scorer.
     """
-    require(
-        time.monotonic() - inputs.started <= 7200,
-        "WALL_CLOCK",
-        "two-hour local step budget exhausted; director pricing required",
-    )
+    inputs.check_wall_clock()
     generators = [
         np.random.default_rng(np.random.SeedSequence([20261104, 11, replica + 1]))
         for replica in range(BOOTSTRAPS)
@@ -1176,11 +1380,7 @@ def aggregate(
                     "P": np.zeros((BOOTSTRAPS + 1, 5, 12, size)),
                 }
         for start in range(0, count, CHUNK_ROWS):
-            require(
-                time.monotonic() - inputs.started <= 7200,
-                "WALL_CLOCK",
-                "two-hour local step budget exhausted; director pricing required",
-            )
+            inputs.check_wall_clock()
             stop = min(start + CHUNK_ROWS, count)
             for replica in range(BOOTSTRAPS + 1):
                 draw = (
@@ -1437,7 +1637,27 @@ def runtime_estimate(inputs: Inputs) -> Json:
     draws = BOOTSTRAPS * (mc_rows + (PARTITIONS + 1) * (mc_rows + data_estimate))
     poisson_seconds = elapsed * draws / 262_144
     # Binning, five weight variants and repeated I/O are not timed by this probe.
-    conservative_seconds = poisson_seconds * 10
+    conservative_seconds = poisson_seconds * DEFAULT_PLANNING_FACTOR
+    step_draws = {
+        "pins": 0,
+        "p0": 0,
+        "d2-predict": BOOTSTRAPS * mc_rows,
+        "step0": 0,
+        "c0": BOOTSTRAPS * (PARTITIONS + 1) * (mc_rows + data_estimate),
+        "d1": 0,
+        "d2": 0,
+    }
+    steps = {
+        step: {
+            "poisson_draws": count,
+            "poisson_only_seconds": elapsed * count / 262_144,
+            "planning_seconds_with_factor_10": elapsed
+            * count
+            / 262_144
+            * DEFAULT_PLANNING_FACTOR,
+        }
+        for step, count in step_draws.items()
+    }
     return {
         "mc_background_rows": mc_rows,
         "data_rows_estimate_not_read": data_estimate,
@@ -1446,8 +1666,11 @@ def runtime_estimate(inputs: Inputs) -> Json:
         "timing_seconds": elapsed,
         "poisson_only_seconds": poisson_seconds,
         "planning_seconds_with_factor_10": conservative_seconds,
-        "exceeds_two_hours": conservative_seconds > 7200,
-        "needs_director_price": conservative_seconds > 7200,
+        "exceeds_two_hours": conservative_seconds > DEFAULT_WALL_SECONDS,
+        "needs_director_price": conservative_seconds > inputs.wall_seconds,
+        "summary_only": "campaign total; admission compares each step's own estimate",
+        "steps": steps,
+        "wall_budget_seconds": inputs.wall_seconds,
         "unmeasured_costs": [
             "NPZ decompression",
             "histogramming",
@@ -1741,6 +1964,10 @@ def run_stage(
     prediction: Path | None = None,
     prediction_sha: str | None = None,
     dry_run: bool = False,
+    priced_wall_seconds: int | None = None,
+    measured_seconds_per_draw: float | None = None,
+    timing_record: Path | None = None,
+    timing_record_sha256: str | None = None,
     argv: Sequence[str] = (),
 ) -> Json:
     """Execute one bound step, retaining its input identities and predecessor digest.
@@ -1748,6 +1975,7 @@ def run_stage(
     Data-bearing steps require a committed pre-data prediction. No step is a
     publication adoption or permission for a subsequent cluster run.
     """
+    require_output_root(run)
     require(step in STEPS, "STEP_NAME", f"unknown step {step}")
     require(
         not (run / f"{step}.json").exists(),
@@ -1759,93 +1987,115 @@ def run_stage(
         "DRY_RUN_SCOPE",
         "dry runs are limited to pins and p0",
     )
-    inputs = Inputs(config_path, config_sha, run)
-    if prediction is not None and prediction_sha is not None:
-        inputs.prediction = prediction, prediction_sha
-    records = require_predecessors(inputs, step, dry_run=dry_run)
-    if step in {"d2-predict", "c0"}:
-        require(
-            not records["p0"]["result"]["runtime_estimate"]["needs_director_price"],
-            "PRICE_REVIEW",
-            "dry-run estimate exceeds two hours; director pricing required before bootstrap",
+    inputs = Inputs(
+        config_path,
+        config_sha,
+        run,
+        priced_wall_seconds=priced_wall_seconds,
+        measured_seconds_per_draw=measured_seconds_per_draw,
+        timing_record=timing_record,
+        timing_record_sha256=timing_record_sha256,
+    )
+    try:
+        if prediction is not None and prediction_sha is not None:
+            inputs.prediction = prediction, prediction_sha
+        records = require_predecessors(inputs, step, dry_run=dry_run)
+        inputs.plan_step(
+            step,
+            records["p0"]["result"]["runtime_estimate"] if "p0" in records else None,
         )
-    inputs.load_pins()
-    previous = STEPS[STEPS.index(step) - 1] if step != "pins" else None
-    result: Json
-    if step == "pins":
-        result = {
-            "files": {
-                name: {"sha256": expected, "staged": str(inputs.copy(source, expected))}
-                for name, (source, expected) in inputs.pins.items()
-            },
-            "n_files": len(inputs.pins),
-            "known_siblings_stat_only": inputs.known_siblings,
-        }
-    elif step == "p0":
-        result = p0(inputs)
-        result["runtime_estimate"] = runtime_estimate(inputs)
-    elif step == "d2-predict":
-        histograms, controls = aggregate(
-            inputs, records["p0"]["result"], None, data=False
-        )
-        checked = prediction_controls(controls)
-        predicted = predicted_steps(histograms["step"]["P"])
-        groups = {}
-        for group, members in GROUPS.items():
-            indices = [PLAYLISTS.index(playlist) for playlist in members]
-            group_prediction = (
-                _double_step(
-                    histograms["step"]["P"][:, 1, indices].sum(axis=1),
-                    histograms["step"]["P"][:, 0, indices].sum(axis=1),
-                )
-                - 1
+        if step in {"d2-predict", "c0"}:
+            assert inputs.step_estimate is not None
+            require(
+                inputs.step_estimate["planned_seconds"] <= inputs.wall_seconds,
+                "PRICE_REVIEW",
+                "step estimate exceeds its wall budget; director pricing required before bootstrap",
             )
-            groups[group] = {
-                "s_pred": group_prediction[0],
-                "sigma": _sigma(group_prediction),
+        inputs.load_pins()
+        previous = STEPS[STEPS.index(step) - 1] if step != "pins" else None
+        result: Json
+        if step == "pins":
+            result = {
+                "files": {
+                    name: {
+                        "sha256": expected,
+                        "staged": str(inputs.copy(source, expected)),
+                    }
+                    for name, (source, expected) in inputs.pins.items()
+                },
+                "n_files": len(inputs.pins),
+                "known_siblings_stat_only": inputs.known_siblings,
             }
-        result = {
-            "controls": checked,
-            "playlist_s_pred": predicted[0],
-            "playlist_sigma_pred": _sigma(predicted),
-            "groups": groups,
-            "product": _save_histograms(inputs.run, step, histograms),
-            "simulation_only": True,
+        elif step == "p0":
+            result = p0(inputs)
+            result["runtime_estimate"] = runtime_estimate(inputs)
+        elif step == "d2-predict":
+            histograms, controls = aggregate(
+                inputs, records["p0"]["result"], None, data=False
+            )
+            checked = prediction_controls(controls)
+            predicted = predicted_steps(histograms["step"]["P"])
+            groups = {}
+            for group, members in GROUPS.items():
+                indices = [PLAYLISTS.index(playlist) for playlist in members]
+                group_prediction = (
+                    _double_step(
+                        histograms["step"]["P"][:, 1, indices].sum(axis=1),
+                        histograms["step"]["P"][:, 0, indices].sum(axis=1),
+                    )
+                    - 1
+                )
+                groups[group] = {
+                    "s_pred": group_prediction[0],
+                    "sigma": _sigma(group_prediction),
+                }
+            result = {
+                "controls": checked,
+                "playlist_s_pred": predicted[0],
+                "playlist_sigma_pred": _sigma(predicted),
+                "groups": groups,
+                "product": _save_histograms(inputs.run, step, histograms),
+                "simulation_only": True,
+            }
+        elif step == "step0":
+            result = step0(inputs)
+        elif step == "c0":
+            result = _c0(inputs, records)
+        elif step == "d1":
+            result = _d1(inputs, records)
+        else:
+            result = _d2(inputs, records)
+        inputs.check_wall_clock()
+        record = {
+            "schema": "fd-rpd-reco-step/1",
+            "step": step,
+            "status": "PASS",
+            "dry_run": dry_run,
+            "run_class": inputs.config.get("run_class", "diagnostic"),
+            **inputs.execution(),
+            "code_sha256": digest(Path(__file__)),
+            "config_sha256": config_sha,
+            "input_sha256": inputs.hashes,
+            "keys_read": inputs.keys_read,
+            "predecessor_sha256": (
+                digest(inputs.run / f"{previous}.json") if previous else None
+            ),
+            "argv": list(argv),
+            "result": result,
+            "does_not_license": [
+                "which period or flux is correct",
+                "correction or exclusion",
+                "change to estimator or covariance",
+                "validation or coverage",
+                "removing the unknown-cause clause",
+                "paper use without Joseph's decision",
+            ],
         }
-    elif step == "step0":
-        result = step0(inputs)
-    elif step == "c0":
-        result = _c0(inputs, records)
-    elif step == "d1":
-        result = _d1(inputs, records)
-    else:
-        result = _d2(inputs, records)
-    record = {
-        "schema": "fd-rpd-reco-step/1",
-        "step": step,
-        "status": "PASS",
-        "dry_run": dry_run,
-        "run_class": inputs.config.get("run_class", "diagnostic"),
-        "code_sha256": digest(Path(__file__)),
-        "config_sha256": config_sha,
-        "input_sha256": inputs.hashes,
-        "keys_read": inputs.keys_read,
-        "predecessor_sha256": (
-            digest(inputs.run / f"{previous}.json") if previous else None
-        ),
-        "argv": list(argv),
-        "result": result,
-        "does_not_license": [
-            "which period or flux is correct",
-            "correction or exclusion",
-            "change to estimator or covariance",
-            "validation or coverage",
-            "removing the unknown-cause clause",
-            "paper use without Joseph's decision",
-        ],
-    }
-    write_json(inputs.run / f"{step}.json", record)
-    return record
+        write_json(inputs.run / f"{step}.json", record)
+        return record
+    except Refused as error:
+        error.details = {**(error.details or {}), "execution": inputs.execution()}
+        raise
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -1858,9 +2108,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--prediction", type=Path)
     parser.add_argument("--prediction-sha256")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--priced-wall-seconds", type=int)
+    parser.add_argument("--measured-seconds-per-draw", type=float)
+    parser.add_argument("--timing-record", type=Path)
+    parser.add_argument("--timing-record-sha256")
     arguments = parser.parse_args(argv)
     command = list(argv) if argv is not None else sys.argv[1:]
     try:
+        require_output_root(arguments.run)
+        wall_budget_seconds(
+            arguments.priced_wall_seconds, arguments.measured_seconds_per_draw
+        )
         for key in THREAD_KEYS:
             os.environ.setdefault(key, "1")
         require(
@@ -1882,12 +2140,18 @@ def main(argv: Sequence[str] | None = None) -> int:
             prediction=arguments.prediction,
             prediction_sha=arguments.prediction_sha256,
             dry_run=arguments.dry_run,
+            priced_wall_seconds=arguments.priced_wall_seconds,
+            measured_seconds_per_draw=arguments.measured_seconds_per_draw,
+            timing_record=arguments.timing_record,
+            timing_record_sha256=arguments.timing_record_sha256,
             argv=command,
         )
     except (Refused, OSError, ValueError, KeyError, ImportError) as error:
         guard = error.guard if isinstance(error, Refused) else type(error).__name__
-        if guard == "OUTPUT_LOCATION":
-            print(f"STOP {guard}: {error}", file=sys.stderr)
+        try:
+            require_output_root(arguments.run)
+        except (Refused, OSError, ValueError) as output_error:
+            print(f"STOP OUTPUT_LOCATION: {output_error}", file=sys.stderr)
             return 4
         arguments.run.mkdir(parents=True, exist_ok=True)
         stop = arguments.run / f"{arguments.step}.STOP.json"
@@ -1904,6 +2168,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "argv": command,
                     "code_sha256": digest(Path(__file__)),
                     "config_sha256": arguments.config_sha256,
+                    **execution_fields(
+                        arguments.priced_wall_seconds,
+                        arguments.measured_seconds_per_draw,
+                        timing_source=(
+                            None
+                            if arguments.timing_record is None
+                            else {
+                                "path": str(arguments.timing_record),
+                                "sha256": arguments.timing_record_sha256,
+                            }
+                        ),
+                    ),
+                    **(details.get("execution", {}) if details else {}),
                     "input_sha256": details.get("input_sha256", {}) if details else {},
                     "details": details,
                     "readings": None,
