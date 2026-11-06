@@ -1,0 +1,15 @@
+[INFO] p_T range: [0, 4.5] GeV/c (14 bins)
+[INFO] p_|| range: [1.5, 60.0] GeV/c (16 bins)
+[INFO] POT: data=1.057e+21, mc=4.978e+21, scale=0.212405
+[INFO] Phase-17 mode: mc_signal_reco contains 8999007 truth-only miss entries — c correction expected ≈ 1.
+[INFO] Fiducial nucleons (geometry)      = 3.2352943296224835e+30
+[INFO] Flux source: /pscratch/sd/j/josephrb/ref-c2c1-20261106/stage/runEventLoopMC_MEFHC.root:pTmu_reweightedflux_integrated
+[INFO] Flux bins (m^-2/POT): [0.00062433 0.00062433 0.00062433 0.00062433 0.00062433 0.00062433
+ 0.00062433 0.00062433 0.00062433 0.00062433 0.00062433 0.00062433
+ 0.00062433 0.00062433]
+[INFO] Flux sum = 0.008741 m^-2/POT = 8.741e-07 cm^-2/POT
+srun: forcing job termination
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+[2026-11-06T12:20:33.827] error: *** STEP 60897523.3 ON nid004354 CANCELLED AT 2026-11-06T12:20:33 DUE to SIGNAL Killed ***
+srun: error: nid004354: task 0: Killed
+srun: Terminating StepId=60897523.3

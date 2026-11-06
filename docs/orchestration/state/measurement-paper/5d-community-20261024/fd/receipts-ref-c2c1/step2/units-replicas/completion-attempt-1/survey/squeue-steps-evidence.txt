@@ -1,0 +1,26 @@
+# Read-only check on login (saul), 2026-11-06T12:23:04Z, on the lane's own RUNNING job cov2d-AR23_L (60895983):
+# which instruments list a running srun step. Verbatim output.
+== sacct
+60895983|cov2d-AR23_L|RUNNING
+60895983.0|L_AR23_BeamAngleX_0|COMPLETED
+60895983.1|X_AR23|COMPLETED
+60895983.2|L_AR23_BeamAngleX_1|RUNNING
+60895983.3|L_AR23_BeamAngleY_0|RUNNING
+== squeue -s -j
+60895983.batch batch
+60895983.extern extern
+== squeue --steps=60895983.2
+== squeue -s -u josephrb | grep 60895983
+60895983.batch batch
+60895983.extern extern
+== scontrol show step 60895983
+StepId=60895983.extern	State=RUNNING	Name=extern
+StepId=60895983.batch	State=RUNNING	Name=batch
+StepId=60895983.2	State=RUNNING	Name=L_AR23_BeamAngleX_1
+StepId=60895983.3	State=RUNNING	Name=L_AR23_BeamAngleY_0
+== sstat
+60895983.extern
+60895983.batch
+60895983.2
+60895983.3
+squeue is hashed (/usr/bin/squeue)
