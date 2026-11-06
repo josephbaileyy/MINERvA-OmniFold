@@ -108,3 +108,20 @@ director: N1, rule R1. Add a declared PRIOR_RECORDS table in cov2d_jobs, with ex
 - **The pilot exemption** is accepted as documented.
 
 Then the harness, the auditor's delta check, and my binding of A2 with the fixed conditional sequence. **After that, freeze A2's code** unless a run STOPs. Keep messages to stage transitions and blockers.
+
+---
+
+## The auditor's verdict on the R1 delta (#803 at a35bf3bf, code 038f28e8)
+
+COV2D A2's R1 delta (#803 at a35bf3bf, code 038f28e8): N1 and L1's gap are closed, with no blocker. Posted: https://github.com/josephbaileyy/MINERvA-OmniFold/pull/803#issuecomment-6674524471
+
+- **PRIOR_RECORDS** holds exactly the two records, and each digest equals the file's own (230f6918…, b59ffa2d…).
+- **The real order() on the committed records at a new deploy M:**
+  - the AR23 rerun opens;
+  - the universes are refused before AR23's PASS and open after it;
+  - AR23 at cb31611c is refused;
+  - missing digests are refused.
+- **Mutants:** I re-ran the 4 N1 mutants plus "F1 order ignores M" and "A2 L1 order ignores pins_checked" on my worktree: 6 of 6 killed.
+- **Cross-commit:** $O is fixed, and the J5 tables at 038f28e8 are byte-identical to cb31611c's. So the submit script's tables comparison won't block the new deploy.
+- **L1's gap:** a pinned B refuses an unpinned A (cov2d_pseudo_write.py:217-218). Its test needs ROOT, so I'm relying on your 0-skip receipt for that.
+- **Run here:** jobs and pseudo_write gave 40 passed, 18 skipped (the skips need the cluster environment).
