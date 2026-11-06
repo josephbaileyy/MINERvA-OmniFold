@@ -1,0 +1,68 @@
+node login04 2026-11-06T15:23:49Z
+stage-4 script sha256 2cc0415421a72a1b69a599b95201f38d0480219e19105bd9f2fa6d69bcd73c2b
+== the root's contents (stat only), 2026-11-06T15:23:49Z
+f 2144008221 1793933999.0000000000 josephrb 644 runEventLoopOmniFold_MEFHC.root
+f 5143 1793934000.0000000000 josephrb 644 runEventLoopMC_MEFHC.root
+== BEFORE 2026-11-06T15:23:49Z
+total 2093780
+drwxr-xr-x  2 josephrb josephrb       4096 2026-11-05 19:00:00.000000000 -0800 .
+drwxr-xr-x 32 josephrb josephrb       4096 2026-11-06 07:23:49.000000000 -0800 ..
+-rw-r--r--  1 josephrb josephrb       5143 2026-11-05 19:00:00.000000000 -0800 runEventLoopMC_MEFHC.root
+-rw-r--r--  1 josephrb josephrb 2144008221 2026-11-05 18:59:59.000000000 -0800 runEventLoopOmniFold_MEFHC.root
+sha256 (O_NOATIME read) runEventLoopOmniFold_MEFHC.root 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df (stage.json pin 43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df)
+sha256 (O_NOATIME read) runEventLoopMC_MEFHC.root d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316 (stage.json pin d40aea69235cdc98644e1bb3e622e579d6b81904c004c83fe50465079989f316)
+== DELETION
+2026-11-06T15:23:58.465Z rm -v -- /pscratch/sd/j/josephrb/ref-c2c1-20261106/stage/runEventLoopOmniFold_MEFHC.root
+removed '/pscratch/sd/j/josephrb/ref-c2c1-20261106/stage/runEventLoopOmniFold_MEFHC.root'
+2026-11-06T15:23:58.982Z rm -v -- /pscratch/sd/j/josephrb/ref-c2c1-20261106/stage/runEventLoopMC_MEFHC.root
+removed '/pscratch/sd/j/josephrb/ref-c2c1-20261106/stage/runEventLoopMC_MEFHC.root'
+2026-11-06T15:23:58.989Z rmdir -v -- /pscratch/sd/j/josephrb/ref-c2c1-20261106/stage
+rmdir: removing directory, '/pscratch/sd/j/josephrb/ref-c2c1-20261106/stage'
+== AFTER 2026-11-06T15:23:58Z
+total 304
+drwxr-xr-x  31 josephrb josephrb  4096 2026-11-06 07:23:58.000000000 -0800 .
+drwx------ 370 josephrb josephrb 69632 2026-11-06 00:15:11.000000000 -0800 ..
+-rw-rw----   1 josephrb josephrb    77 2026-11-05 22:31:10.000000000 -0800 CENTRALS-DONE
+drwxrwx---  18 josephrb josephrb  4096 2026-11-05 22:50:56.000000000 -0800 deploy-cells
+drwxrwx---  18 josephrb josephrb  4096 2026-11-06 04:49:48.000000000 -0800 deploy-completion
+drwxrwx---  18 josephrb josephrb  4096 2026-11-06 02:01:13.000000000 -0800 deploy-completion.attempt-1-60897523
+drwxrwx---  18 josephrb josephrb  4096 2026-11-06 05:44:26.000000000 -0800 deploy-read
+drwxrwx---  18 josephrb josephrb  4096 2026-11-06 07:03:55.000000000 -0800 deploy-read-2
+drwxrwx---  18 josephrb josephrb  4096 2026-11-05 22:38:48.000000000 -0800 deploy-replicas
+drwxrwx---  18 josephrb josephrb  4096 2026-11-05 22:05:29.000000000 -0800 deploy-units
+drwxrwx---   2 josephrb josephrb  4096 2026-11-05 22:05:31.000000000 -0800 libcheck
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 04:49:51.000000000 -0800 libcheck-completion
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 02:01:15.000000000 -0800 libcheck-completion.attempt-1-60897523
+drwxrwx---   2 josephrb josephrb  4096 2026-11-05 22:38:50.000000000 -0800 libcheck-replicas
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 05:31:28.000000000 -0800 logs-completion
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 04:20:35.000000000 -0800 logs-completion.attempt-1-60897523
+drwxrwx---   3 josephrb josephrb  4096 2026-11-06 01:44:51.000000000 -0800 logs-replicas
+drwxr-xr-x   2 josephrb josephrb  4096 2026-11-05 19:00:00.000000000 -0800 logs-stage
+drwxrwx---   2 josephrb josephrb  4096 2026-11-05 22:19:06.000000000 -0800 logs-units
+drwxrwx---   5 josephrb josephrb  4096 2026-11-06 05:44:43.000000000 -0800 read
+drwxrwx---   4 josephrb josephrb  4096 2026-11-06 07:04:20.000000000 -0800 read-2
+-rw-rw----   1 josephrb josephrb  3521 2026-11-05 22:05:35.000000000 -0800 refc2c1_centrals_job.sbatch
+-rw-rw----   1 josephrb josephrb  8015 2026-11-06 04:49:55.000000000 -0800 refc2c1_completion_job.sbatch
+-rw-rw----   1 josephrb josephrb  4995 2026-11-05 22:38:55.000000000 -0800 refc2c1_replicas_job.sbatch
+drwxrwx---   3 josephrb josephrb  4096 2026-11-06 04:37:02.000000000 -0800 rename-attempt-1-60897523
+-rw-rw----   1 josephrb josephrb  1048 2026-11-06 05:31:30.000000000 -0800 REPLICAS-DONE-j4
+-rw-rw----   1 josephrb josephrb  1055 2026-11-06 04:20:37.000000000 -0800 REPLICAS-DONE-j4.attempt-1-60897523
+-rw-rw----   1 josephrb josephrb  1898 2026-11-06 01:44:54.000000000 -0800 REPLICAS-TIMEOUT-j0
+-rw-rw----   1 josephrb josephrb  1928 2026-11-06 01:44:54.000000000 -0800 REPLICAS-TIMEOUT-j1
+-rw-rw----   1 josephrb josephrb  1933 2026-11-06 01:44:54.000000000 -0800 REPLICAS-TIMEOUT-j2
+-rw-rw----   1 josephrb josephrb  1940 2026-11-06 01:44:54.000000000 -0800 REPLICAS-TIMEOUT-j3
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 07:23:49.000000000 -0800 stage4-ledger
+drwxrwx---   5 josephrb josephrb  4096 2026-11-06 06:19:21.000000000 -0800 tests-5938a167
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 00:27:35.000000000 -0800 tmp-replicas-j0
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 00:24:18.000000000 -0800 tmp-replicas-j1
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 00:38:55.000000000 -0800 tmp-replicas-j2
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 00:39:34.000000000 -0800 tmp-replicas-j3
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 04:55:25.000000000 -0800 tmp-replicas-j4
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 04:19:31.000000000 -0800 tmp-replicas-j4.attempt-1-60897523
+drwxrwx---   2 josephrb josephrb  4096 2026-11-05 22:19:38.000000000 -0800 tmp-units
+drwxrwx---   2 josephrb josephrb 69632 2026-11-06 05:31:26.000000000 -0800 units
+absent: /pscratch/sd/j/josephrb/ref-c2c1-20261106/stage/runEventLoopOmniFold_MEFHC.root
+absent: /pscratch/sd/j/josephrb/ref-c2c1-20261106/stage/runEventLoopMC_MEFHC.root
+absent: /pscratch/sd/j/josephrb/ref-c2c1-20261106/stage
+ref-c2c1 stage 4 rc=0
+2026-11-06T15:23:59Z
