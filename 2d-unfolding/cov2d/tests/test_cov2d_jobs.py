@@ -5,7 +5,9 @@ argv through re2_driver's REAL parser (PyROOT env), and the job-side input check
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
+import io
 import json
 import os
 import shlex
@@ -196,6 +198,19 @@ class Gate(unittest.TestCase):
 
 class DryRun(unittest.TestCase):
     """The real job script with DRYRUN=1: its lanes print every run of the job, with $vars expanded."""
+    def test_ar23s_jobs_read_the_rerun_directory(self):
+        # A2: AR23's pseudo-data rerun writes a new directory; every AR23 unfold reads its data files from there
+        import subprocess
+        with tempfile.TemporaryDirectory() as td:
+            cj.tables("AR23", Path(td) / "tables")
+            env = dict(os.environ, C=str(HERE.parents[2]), M="x", TRUTH="AR23", JOB="AR23_L", DRYRUN="1", COV2D_O=td)
+            r = subprocess.run(["bash", str(HERE.parent / "jobs" / "cov2d_job.sbatch")], env=env, capture_output=True,
+                               text=True)
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            lines = [ln for ln in r.stdout.splitlines() if ln.startswith("srun ")]
+            self.assertEqual(len(lines), 11)
+            self.assertTrue(all(f"--data-file {td}/pseudo/AR23-a2/b/data_5731000.root" in ln for ln in lines))
+
     def test_the_lateral_job_prints_its_11_runs_in_2_lanes(self):
         import subprocess
         with tempfile.TemporaryDirectory() as td:
@@ -255,6 +270,115 @@ class Pilot(unittest.TestCase):
             self.assertEqual(sum(f"{td}/pseudo/G18/b/data_" in ln for ln in lines), 5)
 
 
+class PriorRecords(unittest.TestCase):
+    """A2's N1, the director's rule R1: binding 2's committed G18 and pilot records are admitted at A2's deploy by their
+    M and the sha256 of their committed bytes; AR23's must carry the deploy's own M; anything else is refused."""
+    NEW = "a2" * 20
+
+    def load(self, path):
+        b = (HERE.parents[2] / path).read_bytes()
+        return json.loads(b), hashlib.sha256(b).hexdigest()
+
+    def setUp(self):
+        self.g18, self.pil, self.ar23 = (cj.PSEUDO_RECORD.format(truth="G18"), cj.PILOT_RECORD,
+                                         cj.PSEUDO_RECORD.format(truth="AR23"))
+        (g, gd), (p, pd) = self.load(self.g18), self.load(self.pil)
+        self.c = {self.g18: g, self.pil: p, self.ar23: None}
+        self.d = {self.g18: gd, self.pil: pd, self.ar23: None}
+        self.assertEqual({k: v for k, v in self.d.items() if v}, {k: v[1] for k, v in cj.PRIOR_RECORDS.items()})
+
+    def with_ar23(self, M):
+        c_, d = dict(self.c), dict(self.d)
+        c_[self.ar23], d[self.ar23] = {"verdict": "PASS", "M": M, "pins_checked": True}, "e" * 64
+        return c_, d
+
+    def test_the_sequence_at_a2s_deploy(self):
+        self.assertEqual(cj.order("pseudo", "AR23", self.c, set(), self.NEW, self.d), [])
+        self.assertTrue(cj.order("G18_Ua", "G18", self.c, set(), self.NEW, self.d))          # AR23's PASS first
+        c_, d = self.with_ar23(self.NEW)
+        self.assertEqual(cj.order("G18_Ua", "G18", c_, set(), self.NEW, d), [])
+
+    def test_a_prior_record_off_its_bytes_or_without_digests_is_refused(self):
+        c_, d = self.with_ar23(self.NEW)
+        d[self.g18] = "0" * 64
+        self.assertTrue(any("G18" in x for x in cj.order("G18_Ua", "G18", c_, set(), self.NEW, d)))
+        self.assertTrue(cj.order("pseudo", "AR23", self.c, set(), self.NEW, None))
+
+    def test_ar23_at_binding_2s_M_is_refused(self):
+        c_, d = self.with_ar23(cj.PRIOR_RECORDS[self.g18][0])
+        self.assertTrue(any("AR23" in x for x in cj.order("G18_Ua", "G18", c_, set(), self.NEW, d)))
+
+    def test_another_records_bytes_under_ar23s_path_are_refused(self):
+        c_, d = dict(self.c), dict(self.d)
+        c_[self.ar23], d[self.ar23] = self.c[self.g18], self.d[self.g18]
+        self.assertTrue(any("AR23" in x for x in cj.order("G18_Ua", "G18", c_, set(), self.NEW, d)))
+
+    def test_the_order_cli_hashes_the_committed_bytes(self):
+        # the CLI on a real origin whose main carries binding 2's two records, and a deploy cloned from it
+        from deploy_fixture import GIT
+        with tempfile.TemporaryDirectory() as td:
+            o = Path(td) / "origin"
+            o.mkdir()
+            subprocess.run(GIT + ["init", "-q", str(o)], check=True)
+            subprocess.run(GIT + ["-C", str(o), "symbolic-ref", "HEAD", "refs/heads/main"], check=True)
+            for path in (self.g18, self.pil):
+                (o / path).parent.mkdir(parents=True, exist_ok=True)
+                (o / path).write_bytes((HERE.parents[2] / path).read_bytes())
+            subprocess.run(GIT + ["-C", str(o), "add", "."], check=True)
+            subprocess.run(GIT + ["-C", str(o), "commit", "-q", "-m", "records"], check=True)
+            subprocess.run(GIT + ["clone", "-q", str(o), str(Path(td) / "deploy")], check=True)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                rc = cj.main(["order", "--job", "pseudo", "--truth", "AR23", "--M", self.NEW, "--deploy",
+                              str(Path(td) / "deploy"), "--submissions", str(Path(td) / "submissions.log")])
+            self.assertEqual((rc, json.loads(out.getvalue())["blocked_by"]), (0, []))
+
+
+class A2Pseudo(unittest.TestCase):
+    """COV2D addendum A2: the pseudo-data limits, the directory map both job scripts use, and the B9-form deletion."""
+    def test_limits(self):
+        self.assertEqual(cj.PSEUDO_LIMITS, {"G18": "03:00:00", "AR23": "04:00:00"})
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(cj.main(["pseudo-limit", "--truth", "AR23"]), 0)
+        self.assertEqual(out.getvalue().strip(), "04:00:00")
+
+    def test_pseudo_dir_through_the_real_env_script(self):
+        import subprocess
+        env = dict(os.environ, C=str(HERE.parents[2]), COV2D_O="/o")
+        r = subprocess.run(["bash", "-c", f"source {HERE.parent / 'jobs' / 'cov2d_env.sh'}; pseudo_dir G18; pseudo_dir AR23"],
+                           env=env, capture_output=True, text=True)
+        self.assertEqual(r.stdout.split(), ["/o/pseudo/G18", "/o/pseudo/AR23-a2"])
+
+    def test_staged_copies_are_deleted_with_b9_rows_unless_their_stat_moved(self):
+        with tempfile.TemporaryDirectory() as td:
+            d = Path(td)
+            recs = []
+            for step, names in (("a", ["uni_u.root", "cv_c.root"]), ("b", ["er_x.root"])):
+                staged = {}
+                for n in names:
+                    f = d / step / "stage" / n
+                    f.parent.mkdir(parents=True, exist_ok=True)
+                    f.write_bytes(n.encode())
+                    st = os.stat(f)
+                    staged[n] = {"path": str(f), "sha256": n * 2, "stat": {"size": st.st_size, "mtime": int(st.st_mtime),
+                                                                            "inode": st.st_ino}}
+                (d / step / "rec.json").write_text(json.dumps({"staged": staged}))
+                recs.append(d / step / "rec.json")
+            moved = d / "a" / "stage" / "cv_c.root"
+            os.utime(moved, (1, 1))                       # its mtime no longer what staging recorded
+            kept = cj.delete_staged(recs, d / "deletions.tsv", "step B PASS")
+            rows = (d / "deletions.tsv").read_text().splitlines()
+            self.assertEqual(rows[0], cj.DELETIONS_HEADER)
+            self.assertEqual(kept, 1)
+            self.assertTrue(moved.exists())
+            self.assertFalse((d / "a" / "stage" / "uni_u.root").exists() or (d / "b" / "stage" / "er_x.root").exists())
+            got = {Path(r.split("\t")[1]).name: r.split("\t") for r in rows[1:]}
+            self.assertEqual({k: v[6] for k, v in got.items()}, {"uni_u.root": "yes", "cv_c.root": "no", "er_x.root": "yes"})
+            self.assertEqual(got["er_x.root"][2], "er_x.rooter_x.root")
+            self.assertEqual(got["er_x.root"][7], "step B PASS")
+
+
 class Order(unittest.TestCase):
     """J1: COV2D-DECLARATION.md:40 and section 10 steps 5-6, enforced at submission. These records are hand-written
     and test the sequence only, with an M that is not a commit: that each writer emits what order() reads is tested on
@@ -262,7 +386,7 @@ class Order(unittest.TestCase):
     M = "sequence-test-not-a-commit"
 
     def rec(self, ok=True, M=None, **kw):
-        return {"verdict": "PASS" if ok else "STOP", "M": M or self.M, **kw}
+        return {"verdict": "PASS" if ok else "STOP", "M": M or self.M, "pins_checked": True, **kw}
 
     def committed(self, g18=False, ar23=False, pilot=False):
         return {cj.PSEUDO_RECORD.format(truth="G18"): self.rec() if g18 else None,
@@ -296,6 +420,17 @@ class Order(unittest.TestCase):
             for job, truth in (("pseudo", "AR23"), ("G18_Ua", "G18"), ("AR23_Ta", "AR23")):
                 with self.subTest(rp=rp, job=job):
                     self.assertTrue(any("REPRICE" in x for x in cj.order(job, truth, c_, set(cj.UNIVERSE_JOBS), self.M)))
+
+    def test_a_pseudo_record_without_its_pins_checked_opens_nothing(self):
+        # A2's L1
+        for bad in (False, None):
+            c_ = self.committed(True, True, True)
+            g18 = cj.PSEUDO_RECORD.format(truth="G18")
+            c_[g18] = {k: v for k, v in self.rec().items() if k != "pins_checked"} if bad is None else \
+                self.rec(pins_checked=False)
+            with self.subTest(bad=bad):
+                self.assertTrue(cj.order("pilot", "pilot", c_, set(), self.M))
+                self.assertTrue(cj.order("G18_Ua", "G18", c_, set(), self.M))
 
     def test_gate_refuses_an_unknown_cov2d_job(self):
         with self.assertRaises(c.Refusal):

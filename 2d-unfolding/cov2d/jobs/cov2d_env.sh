@@ -15,6 +15,9 @@ CFSACT=/global/cfs/cdirs/m3246/josephrb/2d-closeout-stageC-inputs-20261012/activ
 export K2A=/pscratch/sd/j/josephrb/cov2d-2a/writer_control.root   # (2a)'s kept file, re-checked (7eb39088) by the pilot
 PY310=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
 CJ=$C/2d-unfolding/cov2d/jobs/cov2d_jobs.py
+pseudo_dir() {  # a truth's pseudo-data directory. AR23 reruns into a new one (A2): its first run, STOP #2, stays in pseudo/AR23
+    case "$1" in AR23) echo "$O/pseudo/AR23-a2" ;; *) echo "$O/pseudo/$1" ;; esac
+}
 
 cov2d_preflight() {  # a clean deploy at $M; the pinned MAT environment (RPD's binding 2 A1 standard); in-job resets
     [ -n "${C:-}" ] && [ -n "${M:-}" ] || { echo "[cov2d] C and M must be exported"; exit 2; }
