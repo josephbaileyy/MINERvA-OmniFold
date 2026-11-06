@@ -1,0 +1,38 @@
+5c5
+< # (run_tests.sh is e5919d91... by sha256, EXPECT=28); libRooUnfold.so (0b34e1e3...)
+---
+> # (run_tests.sh is a7dd2373... by sha256, EXPECT=29); libRooUnfold.so (0b34e1e3...)
+9c9
+< # run_suite.py check from unittest's result object) "RUN PASS: 28 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok".
+---
+> # run_suite.py check from unittest's result object) "RUN PASS: 29 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok".
+17,18c17,18
+< H=0e001f3cc025305653006452e5182ccad4553b8d
+< P=/pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0e001f3c
+---
+> H=0d992845aabb00163723fdf37edcb69549b384b6
+> P=/pscratch/sd/j/josephrb/ref-c2c1-20261105/tests-0d992845
+58,60c58,60
+< cdc501ce259377b6ba22263b77d3872ac24e3c9c 2d-unfolding/ref_c2c1/ref_c2c1.py
+< 85253d48170a67de7971133c38a6c3ce867e4366 2d-unfolding/ref_c2c1/ref_c2c1_mutation.py
+< bcfd1778b8689d4c7be9a1af2d73e2eeb4e0a931 2d-unfolding/ref_c2c1/ref_c2c1_read.py
+---
+> 128b4e00505f82153d1d400a482b7b1a5a3d56be 2d-unfolding/ref_c2c1/ref_c2c1.py
+> 0e80efd2d927390e4360cf10134e5b74e7554deb 2d-unfolding/ref_c2c1/ref_c2c1_mutation.py
+> e51367aa3d9d68b8c89f76cd7f556c70bd4a226f 2d-unfolding/ref_c2c1/ref_c2c1_read.py
+62,63c62,63
+< de7a52b448cf92b27d944a6b017c696f5f3bc53c 2d-unfolding/ref_c2c1/run_tests.sh
+< 46a32d598a96526a81b97828c0e2bc44ef6b966f 2d-unfolding/ref_c2c1/test_ref_c2c1.py
+---
+> f4dbaf1fe57bcf4ab0f128d70c1725aa64ae8d29 2d-unfolding/ref_c2c1/run_tests.sh
+> bd13922e2b6535e265e7a42a5e9dbf1210f3c132 2d-unfolding/ref_c2c1/test_ref_c2c1.py
+67,68c67,68
+< [ "$rt" = e5919d91527f761967ed68950d335363c90b2724f4d9bbf39abf9e4a9b757977 ] || bad=$((bad + 1))
+< grep -qx 'EXPECT=28' "$D/2d-unfolding/ref_c2c1/run_tests.sh" || { echo "EXPECT is not 28"; bad=$((bad + 1)); }
+---
+> [ "$rt" = a7dd23736278bc4201dfdc2251b3398ea354493196b2ed9066ec9ea750f1b5af ] || bad=$((bad + 1))
+> grep -qx 'EXPECT=29' "$D/2d-unfolding/ref_c2c1/run_tests.sh" || { echo "EXPECT is not 29"; bad=$((bad + 1)); }
+89c89
+< grep -qxF 'RUN PASS: 28 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok' "$P/test.log" && [ $rc = 0 ] || { echo "RUN FAIL (to the director, unrepaired)"; finish 1; }
+---
+> grep -qxF 'RUN PASS: 29 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok' "$P/test.log" && [ $rc = 0 ] || { echo "RUN FAIL (to the director, unrepaired)"; finish 1; }

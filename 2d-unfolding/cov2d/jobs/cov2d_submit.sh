@@ -41,8 +41,9 @@ for job in "$@"; do
     "$PY310" -B "$CJ" gate --sacct "$psv" --tables "$O/tables" --want "$want" > "$psv.gate.json" \
         || { cat "$psv.gate.json"; echo "gate refused $want"; exit 3; }
     if [ "$job" = pseudo ]; then
-        id=$(sbatch --parsable --job-name="cov2d-pseudo_$TRUTH" --export=ALL,C=$C,M=$M,TRUTH=$TRUTH \
-            "$C/2d-unfolding/cov2d/jobs/cov2d_pseudo.sbatch"); lim=03:00:00
+        lim=$("$PY310" -B "$CJ" pseudo-limit --truth "$TRUTH")
+        id=$(sbatch --parsable --job-name="cov2d-pseudo_$TRUTH" --time="$lim" --export=ALL,C=$C,M=$M,TRUTH=$TRUTH \
+            "$C/2d-unfolding/cov2d/jobs/cov2d_pseudo.sbatch")
     else
         lim=$(awk -F'\t' -v j="$job" 'NR > 1 && $1 == j {print $7}' "$O/tables/jobs_$TRUTH.tsv")
         [ -n "$lim" ] || { echo "$job is not a jobs_$TRUTH.tsv row"; exit 2; }
