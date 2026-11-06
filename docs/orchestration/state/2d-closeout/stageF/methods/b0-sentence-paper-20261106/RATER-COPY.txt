@@ -1,0 +1,16 @@
+# make_rater_copy.sh at 90730c010's typeset sources (the commit after the build changes a source comment only; $S = the session scratchpad)
+source: $S/wt-cut (0700cd7e3; dirty files in analysis-note: 3)
+$S/wt-cut/docs/analysis-note/main_paper.tex:55: standalone: \pubhold{funding and grant acknowledgments}
+$S/wt-cut/docs/analysis-note/main_paper.tex:78: standalone: \pubhold{deposit identifier and access route, after the separately authorized release decision.}
+holds found: 2; sharing a sentence: 0
+normal: main_paper uses \externaldocument; built main_note first (136 pages)
+normal build: 13 pages
+rater: main_paper uses \externaldocument; built main_note first (136 pages)
+rater build: 13 pages
+holddiff: order differs (layout reflow) but word multisets are equal: PASS (order-insensitive)
+multiset: only normal {'DeconvoluDATA': 1, 'tion': 1}; only rater {'DATA': 1, 'Deconvolution': 1}
+multiset VERDICT: PASS
+rater text = normal text minus 2 hold spans
+moved DATA AVAILABILITY heading back before its text
+single-line drops: 2; words in=10386 out=8802
+wrote $S/b0b/rater3/blind.txt and $S/b0b/rater3/blind.{normal,holddiff,blind}.txt

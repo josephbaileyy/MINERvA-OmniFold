@@ -1,0 +1,3 @@
+# check_round.py at 90730c010
+check_round: PASS (base 0700cd7e3; the approved B0 sentences against b0-reconciliation-20261105/DRAFT.md; 0 failures)
+check_round self-test: 6/6 planted defects caught

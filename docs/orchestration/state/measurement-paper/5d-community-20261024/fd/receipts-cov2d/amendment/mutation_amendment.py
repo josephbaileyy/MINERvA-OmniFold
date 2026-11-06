@@ -4,8 +4,8 @@ scratchpad with an interpreter that has PyROOT, uproot and numpy:
 Each mutant rewrites one line of one file, runs that file's test modules (python -m unittest, from the tests
 directory), and restores it. A kill counts only on a test failure (rc != 0). Each mutant's text must occur once; a
 mutant whose text does not match counts as not killed. The run exits 1 unless every mutant run is killed, and names any
-REQUIRED mutant (the director's rulings on the final audit's F1 and F2, on F3, and of 2026-11-05 on the blocks' reads
-through O_NOATIME) that was not."""
+REQUIRED mutant (the director's rulings on the final audit's F1 and F2, on F3, of 2026-11-05 on the blocks' reads
+through O_NOATIME, and addendum A2's) that was not."""
 import os
 import shutil
 import subprocess
@@ -16,7 +16,7 @@ WT = Path(sys.argv[1])
 D = WT / "2d-unfolding/cov2d"
 T = D / "tests"
 J = "jobs/cov2d_jobs.py"
-TESTS = {"cov2d.py": ["test_cov2d"], "jobs/cov2d_submit.sh": ["test_cov2d_jobs"], "cov2d_pseudo.py": ["test_cov2d_pseudo"], "cov2d_pseudo_write.py": ["test_cov2d_pseudo_write"],
+TESTS = {"cov2d.py": ["test_cov2d"], "jobs/cov2d_submit.sh": ["test_cov2d_jobs"], "jobs/cov2d_env.sh": ["test_cov2d_jobs"], "cov2d_pseudo.py": ["test_cov2d_pseudo"], "cov2d_pseudo_write.py": ["test_cov2d_pseudo_write"],
          "cov2d_blocks.py": ["test_cov2d_blocks"], "cov2d_null.py": ["test_cov2d_null"],
          "cov2d_score.py": ["test_cov2d_score"], "cov2d_readouts.py": ["test_cov2d_readouts"],
          J: ["test_cov2d_jobs"], "cov2d_pilot.py": ["test_cov2d_pilot"]}
@@ -91,10 +91,10 @@ M = [
     (J, "toys read d_T", 'out.append({"kind": "toy", "label": f"T_{truth}_{s}", "args": argv("toy", f"$D/data_{s}.root")})',
      'out.append({"kind": "toy", "label": f"T_{truth}_{s}", "args": argv("toy", real)})'),
     (J, "J1 bulk without the pilot record", "    if not ok(PILOT_RECORD):\n", "    if False:\n"),
-    (J, "J1 pilot without G18's pseudo PASS", "return [] if ok(pseudo[\"G18\"]) else", "return [] if True else"),
+    (J, "J1 pilot without G18's pseudo PASS", 'return [] if ok(pseudo["G18"], pins=True) else', "return [] if True else"),
     (J, "J1 the rest before the universe jobs", "        if missing:\n            need.append(f\"the universe jobs go first",
      "        if False:\n            need.append(f\"the universe jobs go first"),
-    (J, "F1 order ignores M", 'r.get("verdict") == "PASS" and r.get("M") == M', 'r.get("verdict") == "PASS"'),
+    (J, "F1 order ignores M", 'return r.get("M") == M or', "return True or"),
     (J, "F2 bulk despite REPRICE", '    elif committed[PILOT_RECORD].get("reprice_classes") != []:', "    elif False:"),
     (J, "F2 no REPRICE list read as none", '.get("reprice_classes") != []:', '.get("reprice_classes", []) != []:'),
     ("cov2d.py", "F1 a dirty deploy admitted", '    if git("status", "--porcelain").strip():', "    if False:"),
@@ -112,6 +112,59 @@ M = [
      'grep -qF "$M" <<<"$bind"'),
     ("jobs/cov2d_submit.sh", "F3 a failed fetch admitted", 'git -C "$C" fetch -q origin main ||',
      'git -C "$C" fetch -q origin main || true ||'),
+    ("cov2d_pseudo.py", "A2 step A reads and guards the shared originals",
+     'copy = {k: v["path"] for k, v in rec["staged"].items()}', 'copy = {k: v["src"] for k, v in rec["staged"].items()}'),
+    ("cov2d_pseudo_write.py", "A2 step B guards the shared originals",
+     'staged = {k: v["path"] for k, v in rec["staged"].items()}', 'staged = {k: v["src"] for k, v in rec["staged"].items()}'),
+    ("cov2d_pseudo.py", "A2 step A guard values not recorded",
+     'rec["atime_moved"], rec["atime_ns"] = c.atime_guard(before, c.atime_ns(copy.values()))',
+     'rec["atime_moved"] = c.atime_guard(before, c.atime_ns(copy.values()))[0]'),
+    ("cov2d_pseudo_write.py", "A2 step B guard values not recorded",
+     'rec["atime_moved"], rec["atime_ns"] = c.atime_guard(before, c.atime_ns(staged.values()))',
+     'rec["atime_moved"] = c.atime_guard(before, c.atime_ns(staged.values()))[0]'),
+    ("cov2d.py", "A2 staging pin unchecked", "    if want is not None and got != want:\n        dst.unlink()",
+     "    if False:\n        dst.unlink()"),
+    ("cov2d_pseudo.py", "A2 quota check skipped", '    if bad:\n        raise c.Refusal(f"before staging',
+     '    if False:\n        raise c.Refusal(f"before staging'),
+    ("cov2d.py", "A2 headroom at 1x", "STAGE_HEADROOM = 2.0", "STAGE_HEADROOM = 1.0"),
+    ("cov2d_pseudo_write.py", "A2 ROOT reads the staged copies",
+     'copies = {k: copy_noatime(p, Path(td), None if a.no_pins else PINS[k][1]) for k, p in staged.items()}',
+     'copies = {k: (Path(p), rec["staged"][k]["sha256"]) for k, p in staged.items()}'),
+    ("jobs/cov2d_env.sh", "A2 AR23 reruns into its old directory", 'AR23) echo "$O/pseudo/AR23-a2"',
+     'AR23) echo "$O/pseudo/AR23"'),
+    (J, "A2 AR23's limit 03:00:00", 'PSEUDO_LIMITS = {"G18": "03:00:00", "AR23": "04:00:00"}',
+     'PSEUDO_LIMITS = {"G18": "03:00:00", "AR23": "03:00:00"}'),
+    (J, "A2 deletion without the stat match", "            if match:\n                os.remove(p)",
+     "            if True:\n                os.remove(p)"),
+    ("cov2d.py", "A2 a staged pin mismatch is a refusal, not a STOP", "raise PinMismatch(src, got, want)",
+     'raise Refusal(f"{src} sha256 {got} != pinned {want}")'),
+    ("cov2d.py", "A2 D1 the off-pin STOP without its digests",
+     'return staged, {"step": step, "input": k, "src": e.src, "sha256": e.got, "pinned": e.want,',
+     'return staged, {"step": step, "input": k, "src": e.src,'),
+    ("cov2d_pseudo.py", "A2 D2 step A settle skipped", 'before, rec["settle_atime_ns"] = c.settle_atime(copy.values())',
+     'before, rec["settle_atime_ns"] = c.atime_ns(copy.values()), []'),
+    ("cov2d_pseudo_write.py", "A2 D2 step B settle skipped",
+     'before, rec["settle_atime_ns"] = c.settle_atime(staged.values())',
+     'before, rec["settle_atime_ns"] = c.atime_ns(staged.values()), []'),
+    ("cov2d.py", "A2 D2 settle wait under 5 s", "SETTLE_WAIT, SETTLE_TRIES = 5.0, 6", "SETTLE_WAIT, SETTLE_TRIES = 1.0, 6"),
+    ("cov2d.py", "A2 D2 an unsettled reading accepted", "        if readings[-1] == readings[-2]:\n            return readings[-1]",
+     "        if True:\n            return readings[-1]"),
+    (J, "N1 the prior records ignored",
+     'return r.get("M") == M or PRIOR_RECORDS.get(path) == (r.get("M"), (digests or {}).get(path))', 'return r.get("M") == M'),
+    (J, "N1 a prior record admitted on its M alone", 'PRIOR_RECORDS.get(path) == (r.get("M"), (digests or {}).get(path))',
+     'PRIOR_RECORDS.get(path, ("",))[0] == r.get("M")'),
+    (J, "N1 a prior record admitted under any path", 'PRIOR_RECORDS.get(path) == (r.get("M"), (digests or {}).get(path))',
+     '(r.get("M"), (digests or {}).get(path)) in PRIOR_RECORDS.values()'),
+    (J, "N1 the order CLI hashes nothing",
+     "digests[path] = hashlib.sha256(r.stdout).hexdigest() if r.returncode == 0 else None", "digests[path] = None"),
+    ("cov2d_pseudo_write.py", "L1 step B ignores step A's pins",
+     '    if not a.no_pins and rec_a.get("pins_checked") is not True:', "    if False:"),
+    (J, "A2 L1 order ignores pins_checked", 'or (pins and r.get("pins_checked") is not True):', "or False:"),
+    ("cov2d_pseudo.py", "A2 step A off-pin STOP skipped", "    if off_pin:                            # a STOP",
+     "    if False:                            # a STOP"),
+    ("cov2d_pseudo_write.py", "A2 step B off-pin STOP skipped", "    if off_pin:                            # a STOP",
+     "    if False:                            # a STOP"),
+    ("cov2d.py", "A2 shared atime not recorded", '"src_atime_ns": {"before": before, "after": after}', '"src_atime_ns": {}'),
     (J, "gate passes everything", '"cap": CAP_NODE_H, "pass": total <= CAP_NODE_H}', '"cap": CAP_NODE_H, "pass": True}'),
     ("cov2d_pilot.py", "pilot compare at 1e-6", 'cmp_["pass"] = cmp_["max_rel"] <= k1.TOL and cmp_["same_cell_set"]',
      'cmp_["pass"] = cmp_["max_rel"] <= 1e-6 and cmp_["same_cell_set"]'),
@@ -125,7 +178,18 @@ REQUIRED = {"F2 bulk despite REPRICE", "F2 no REPRICE list read as none", "F1 or
             "F1 a dirty deploy admitted", "F1 the pseudo record without M", "F1 the pilot record without M",
             "F3 the deploy's own binding read", "F3 the binding's name check skipped", "F3 a failed fetch admitted",
             "F3 M matched anywhere in the binding",
-            "open audit off", "blocks without noatime_inputs before the rollup"}
+            "open audit off", "blocks without noatime_inputs before the rollup",
+            "A2 step A reads and guards the shared originals", "A2 step B guards the shared originals",
+            "A2 step A guard values not recorded", "A2 step B guard values not recorded", "A2 staging pin unchecked",
+            "A2 quota check skipped", "A2 headroom at 1x", "A2 ROOT reads the staged copies",
+            "A2 AR23 reruns into its old directory", "A2 AR23's limit 03:00:00", "A2 deletion without the stat match",
+            "A2 shared atime not recorded", "A2 a staged pin mismatch is a refusal, not a STOP",
+            "A2 step A off-pin STOP skipped", "A2 step B off-pin STOP skipped",
+            "A2 D1 the off-pin STOP without its digests", "A2 D2 step A settle skipped", "A2 D2 step B settle skipped",
+            "A2 D2 settle wait under 5 s", "A2 D2 an unsettled reading accepted", "A2 L1 order ignores pins_checked",
+            "N1 the prior records ignored", "N1 a prior record admitted on its M alone",
+            "N1 a prior record admitted under any path", "N1 the order CLI hashes nothing",
+            "L1 step B ignores step A's pins"}
 if sys.argv[2:]:
     unknown = set(sys.argv[2:]) - {m[1] for m in M}
     assert not unknown, f"no such mutant: {sorted(unknown)}"

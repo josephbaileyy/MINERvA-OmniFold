@@ -217,7 +217,7 @@ def check(runs_tsv: Path, job: str, stats: Path, pseudo_b: Path, env: dict) -> d
 
 
 CAP_NODE_H = 165.8          # COV2D-BINDING-1.md ruling 3
-PSEUDO_LIMIT = "03:00:00"   # cov2d_pseudo.sbatch
+PSEUDO_LIMITS = {"G18": "03:00:00", "AR23": "04:00:00"}   # cov2d_pseudo.sbatch; AR23's rerun stages $UNI first (A2)
 
 
 def hms(t: str) -> int:
@@ -285,27 +285,38 @@ def dvs_rate(staged: str, cfs: str, nbytes: int = DVS_BYTES) -> dict:
 RECEIPTS = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d"
 PSEUDO_RECORD = RECEIPTS + "/pseudo/{truth}/pseudo_b.json"     # step B's record, committed after the pseudo-data job
 PILOT_RECORD = RECEIPTS + "/pilot/pilot_readout.json"           # the pilot readout, committed after the pilot
+# A2's N1 (the director's rule R1): records committed under binding 2, at its M, admitted at A2's deploy by their M
+# and the sha256 of their exact committed bytes; every other record must carry the deploy's own M
+PRIOR_RECORDS = {PSEUDO_RECORD.format(truth="G18"): ("cb31611ca8b96ed2d1eeb809fda7236e56645863",
+                                                     "230f6918f65d5bcf7d766bdb47eb7ac0513d998017b877777b5fd49089a54296"),
+                 PILOT_RECORD: ("cb31611ca8b96ed2d1eeb809fda7236e56645863",
+                                "b59ffa2d7363b7de1c702d037868d9794491e9433907cafe743784133b6bf99d")}
 UNIVERSE_JOBS = [f"{t}_U{j}" for t in ("G18", "AR23") for j in "abcd"]
 
 
-def order(job: str, truth: str, committed: dict, submitted: set, M: str) -> list[str]:
+def order(job: str, truth: str, committed: dict, submitted: set, M: str, digests: dict | None = None) -> list[str]:
     """What blocks submitting ``job`` (COV2D-DECLARATION.md:40 and §10 steps 5-6; the director's rulings (A) and J1):
     the G18 pseudo-data job first; the pilot after G18's pseudo-data PASS; AR23's pseudo-data job and every unfold job
     after the pilot readout's PASS; the universe jobs (the $UNI readers) after both pseudo-data PASSes; the rest after
     all eight universe jobs are submitted. ``committed`` maps a record path on origin/main to its JSON (None if absent);
     each record must say PASS and carry "M" equal to the deploy's commit, as the writers record it
-    (``cov2d.deploy_head``). The pilot's must also list no REPRICE class: section 8 makes REPRICE an amendment, decided
+    (``cov2d.deploy_head``), and a pseudo-data record must say ``pins_checked: true`` (A2's L1; the pilot readout has
+    no unpinned mode and records no such field). A record of PRIOR_RECORDS is admitted instead by its M and the
+    sha256 of its committed bytes (``digests``: {path: sha256}; A2's N1, rule R1). The pilot's must also list no REPRICE class: section 8 makes REPRICE an amendment, decided
     before any bulk job (the director's ruling on the final audit's F2)."""
-    def ok(path):
+    def ok(path, pins=False):
         r = committed.get(path)
-        return bool(r) and r.get("verdict") == "PASS" and r.get("M") == M
+        if not r or r.get("verdict") != "PASS" or (pins and r.get("pins_checked") is not True):
+            return False                       # a pseudo-data run with its pins unchecked opens nothing
+        return r.get("M") == M or PRIOR_RECORDS.get(path) == (r.get("M"), (digests or {}).get(path))
 
     need = []
     pseudo = {t: PSEUDO_RECORD.format(truth=t) for t in ("G18", "AR23")}
     if job == "pseudo" and truth == "G18":
         return []
     if job == "pilot" or truth == "pilot":
-        return [] if ok(pseudo["G18"]) else [f"the G18 pseudo-data PASS record ({pseudo['G18']}) is not on main for {M}"]
+        return [] if ok(pseudo["G18"], pins=True) else [
+            f"the G18 pseudo-data PASS record ({pseudo['G18']}) with its pins checked is not on main for {M}"]
     if not ok(PILOT_RECORD):
         need.append(f"the pilot readout's PASS record ({PILOT_RECORD}) is not on main for {M}")
     elif committed[PILOT_RECORD].get("reprice_classes") != []:
@@ -314,13 +325,41 @@ def order(job: str, truth: str, committed: dict, submitted: set, M: str) -> list
     if job == "pseudo":
         return need
     for t, path in pseudo.items():
-        if not ok(path):
-            need.append(f"the {t} pseudo-data PASS record ({path}) is not on main for {M}")
+        if not ok(path, pins=True):
+            need.append(f"the {t} pseudo-data PASS record ({path}) with its pins checked is not on main for {M}")
     if job not in UNIVERSE_JOBS:
         missing = [u for u in UNIVERSE_JOBS if u not in submitted]
         if missing:
             need.append(f"the universe jobs go first: not yet submitted {missing}")
     return need
+
+
+DELETIONS_HEADER = "utc\tpath\tsha256\tsize\tmtime\tinode\tstat_match\tcondition"   # RE-2's B9 form (deletions.tsv)
+
+
+def delete_staged(records: list, ledger: Path, condition: str) -> int:
+    """A2 (the director's ruling): delete each staged copy a step's record lists, after checking its size, mtime and
+    inode against what staging recorded, with a B9-form ledger row per file. A copy whose stat differs is kept and
+    ledgered "no". Returns the number kept."""
+    import time
+    rows, kept = [], 0
+    for r in records:
+        for entry in json.loads(Path(r).read_text()).get("staged", {}).values():
+            p = entry["path"]
+            st = os.stat(p)
+            match = (st.st_size, int(st.st_mtime), st.st_ino) == (entry["stat"]["size"], entry["stat"]["mtime"],
+                                                                     entry["stat"]["inode"])
+            if match:
+                os.remove(p)
+            else:
+                kept += 1
+            rows.append("\t".join([time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), p, entry["sha256"],
+                                   str(st.st_size), str(int(st.st_mtime)), str(st.st_ino), "yes" if match else "no",
+                                   condition]))
+    new = not ledger.exists()
+    with open(ledger, "a") as fh:
+        fh.write((DELETIONS_HEADER + "\n" if new else "") + "".join(x + "\n" for x in rows))
+    return kept
 
 
 def uni_stat_problem(path: str) -> str | None:
@@ -347,6 +386,12 @@ def main(argv_=None) -> int:
     for k in ("--job", "--truth", "--M", "--deploy", "--submissions"):
         p.add_argument(k, required=True)
     p = sub.add_parser("uni-stat")
+    p = sub.add_parser("pseudo-limit")
+    p.add_argument("--truth", required=True, choices=sorted(PSEUDO_LIMITS))
+    p = sub.add_parser("delete-staged")
+    p.add_argument("--records", nargs="+", required=True)
+    p.add_argument("--ledger", required=True)
+    p.add_argument("--condition", required=True)
     p = sub.add_parser("check")
     for k in ("--runs", "--job", "--stats", "--pseudo-b"):
         p.add_argument(k, required=True)
@@ -354,27 +399,35 @@ def main(argv_=None) -> int:
     if a.cmd == "tables":
         print(json.dumps(tables(a.truth, Path(a.out))))
         return 0
+    if a.cmd == "pseudo-limit":
+        print(PSEUDO_LIMITS[a.truth])
+        return 0
+    if a.cmd == "delete-staged":
+        kept = delete_staged(a.records, Path(a.ledger), a.condition)
+        print(f"deleted staged copies; kept {kept} whose stat differed")
+        return 4 if kept else 0
     if a.cmd == "uni-stat":
         bad = uni_stat_problem(os.environ["UNI"])
         print(bad or "UNI-STAT PASS")
         return 4 if bad else 0
     if a.cmd == "order":
         import subprocess
-        committed = {}
+        committed, digests = {}, {}
         for path in [PSEUDO_RECORD.format(truth=t) for t in ("G18", "AR23")] + [PILOT_RECORD]:
-            r = subprocess.run(["git", "-C", a.deploy, "show", f"origin/main:{path}"], capture_output=True, text=True)
+            r = subprocess.run(["git", "-C", a.deploy, "show", f"origin/main:{path}"], capture_output=True)
             committed[path] = json.loads(r.stdout) if r.returncode == 0 else None
+            digests[path] = hashlib.sha256(r.stdout).hexdigest() if r.returncode == 0 else None
         subs = Path(a.submissions)
         submitted = {w.split("=", 1)[1] for ln in (subs.read_text().splitlines() if subs.exists() else [])
                      for w in ln.split() if w.startswith("job=")}
-        need = order(a.job, a.truth, committed, submitted, a.M)
+        need = order(a.job, a.truth, committed, submitted, a.M, digests)
         print(json.dumps({"job": a.job, "truth": a.truth, "blocked_by": need}))
         return 3 if need else 0
     if a.cmd == "dvs-rate":
         print(json.dumps(dvs_rate(a.staged, a.cfs, a.bytes), indent=1))
         return 0
     if a.cmd == "gate":
-        limits = {f"pseudo_{t}": PSEUDO_LIMIT for t in c.TOY_SEEDS}
+        limits = {f"pseudo_{t}": PSEUDO_LIMITS[t] for t in c.TOY_SEEDS}
         for f in Path(a.tables).glob("jobs_*.tsv"):
             for ln in f.read_text().splitlines()[1:]:
                 row = ln.split("\t")

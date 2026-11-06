@@ -16,7 +16,7 @@
 set -eo pipefail
 source "$C/2d-unfolding/cov2d/jobs/cov2d_env.sh"
 RUNS=$O/tables/runs_$TRUTH.tsv JOBS=$O/tables/jobs_$TRUTH.tsv
-export D=$O/pseudo/${DATA_TRUTH:-$TRUTH}/b   # the pilot reads G18's data files (DATA_TRUTH=G18)
+export D=$(pseudo_dir "${DATA_TRUTH:-$TRUTH}")/b   # the pilot reads G18's data files (DATA_TRUTH=G18)
 if [ "${DRYRUN:-0}" != 1 ]; then
     cov2d_preflight
     info=$(scontrol show job "$SLURM_JOB_ID")
