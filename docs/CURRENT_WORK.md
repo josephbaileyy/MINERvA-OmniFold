@@ -11,9 +11,15 @@ never derived from OI state prose; terminal and deferred records never enter thi
 
 | item | queue | accountable owner | basis | next action | evidence route |
 |---|---|---|---|---|---|
+| OI-205 | WAITING-JOSEPH | Joseph | publication/P1 | Joseph rules the framing, measurement or methods-study, once the 2D and 5D coverage campaigns (OI-200, OI-201) and the run-period follow-ups (OI-204) report. Next gate: those reports. | docs/OPEN_ITEMS.md (`OI-205`) |
+| OI-200 | NOW | cov2d lane (2D method coverage, campaign (c)) | publication/P1 | cov2d: A2's sequence at M cf533377 (COV2D-BINDING-2.md, A2 ruling 3): the cluster-environment test run, then the AR23 pseudo-data rerun into pseudo/AR23-a2; each connect to the director. Next gate: the test run's result. | docs/OPEN_ITEMS.md (`OI-200`) |
+| OI-201 | NOW | coverage-5b lane (5D 1B staged method coverage) | publication/P1 | coverage-5b: amendment 2 (#717, head fea7946a) takes the 2026-11-04 large-sample gate (items 1-7), then coverage-5b-audit's audit and the director's binding 3. Next gate: the audit of the revised amendment. | docs/OPEN_ITEMS.md (`OI-201`) |
+| OI-202 | NOW | limitations-catalog lane (REF-G1 and REF-C2C1 code) | publication/P1 | The director binds A1 revision 2 (merged #806, main 0bb9a1bf); then limitation-resolver's connect 1 (stat, gibu1 re-run, bars), the bars merge, connect 2 (the read). Next gate: the binding of A1. | docs/OPEN_ITEMS.md (`OI-202`) |
+| OI-203 | NOW | limitation-resolver lane (cluster connects; RPD-RECO) | publication/P1 | The director binds step two at #810's merge (main 77d76cfc; attempt 4 RUN PASS, #811); then the step-two runs under the binding, limitation-resolver's lane. Next gate: the step-two binding. | docs/OPEN_ITEMS.md (`OI-203`) |
 | OI-6 | NOW | paper rewrite lane | publication/P2 | Narrowed to the configuration-(a) 5D central value, where the note says the revisit is open (app_negweight.tex:126); moot once (a) stops being reported in the note. | docs/OPEN_ITEMS.md (`OI-6`) |
 | OI-130 | NOW | paper rewrite lane | publication/P2 | After the paper lane's n4 and r21 work: enumerate every quoted value to its artifact and preservation state, report the counts, then remediate by class. | docs/OPEN_ITEMS.md (`OI-130`) |
 | OI-172 | NOW | paper rewrite lane | publication/P2 | After n4 and r21: draft the cause-1 statement the 2026-09-01 ruling requires. A grep did not find it in the note; that is not proven absent. | docs/OPEN_ITEMS.md (`OI-172`) |
+| OI-204 | NOW | limitation-resolver lane (cluster connects; RPD-RECO) | publication/P2 | limitation-resolver: write nd-unfolding/fd_rpd_reco.py with its tests and a mutation receipt, then the code audit and binding 2 (binding 1 ruling 2; design at 5c538db6), after the B4 probe's cluster work. Next gate: the code audit. | docs/OPEN_ITEMS.md (`OI-204`) |
 
 ## Machine-enforced contract
 
