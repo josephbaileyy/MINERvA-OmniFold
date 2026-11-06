@@ -254,6 +254,7 @@ docs/orchestration/DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md	tr
 docs/orchestration/DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md	tracked	LIVE	document		20261105	open		route-only	no
 docs/orchestration/DECISION-20261106-joseph-b0-reconciliation-sentence.md	tracked	LIVE	document		20261106	open		route-only	no
 docs/orchestration/DECISION-20261106-joseph-measurement-target-and-delta.md	tracked	LIVE	document		20261106	open		route-only	no
+docs/orchestration/DECISION-20261106-joseph-methods-study-and-archive.md	tracked	LIVE	document		20261106	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
@@ -1668,6 +1669,12 @@ docs/orchestration/state/2d-closeout/stageF/methods/absence-items-3-4/agy/run1.o
 docs/orchestration/state/2d-closeout/stageF/methods/absence-items-3-4/agy/run2-I4.input.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/absence-items-3-4/agy/run2-I4.output.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/abstract-20261026/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/archive-measurement-framed-20261106/README.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/archive-measurement-framed-20261106/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/archive-measurement-framed-20261106/SOURCE-MANIFEST.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/archive-measurement-framed-20261106/build-log.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/archive-measurement-framed-20261106/main_note.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/archive-measurement-framed-20261106/main_paper.pdf	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/b0-reconciliation-20261105/DRAFT.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/b0-reconciliation-20261105/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/b0-reconciliation-20261105/prd-read/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
