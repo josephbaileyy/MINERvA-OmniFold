@@ -189,3 +189,26 @@ After the copy, every file in canonical's `docs/analysis-note/` tree compares eq
 `c831497`. Joseph pulls it in Overleaf from the GitHub menu.
 
 **Next sync:** after the next paper round. Start from base `c6784fa8`.
+
+## Seventh sync, 2026-11-06: main 92da8f46
+
+**Why.** `DECISION-20261106-joseph-b0-reconciliation-sentence.md` item 3 calls for a re-sync after #808, the B0 sentence.
+
+**The standalone before the copy.** At `8dcb9f50`, with no commit since the sixth sync.
+
+**What was copied.** 4 files changed between `c6784fa8` and `92da8f46`, and none were added or deleted:
+- `paper_body.tex`, `sec_5d.tex` and `sec_fived16.tex`;
+- `records_estimators.tex`.
+
+After the copy, every file in canonical's `docs/analysis-note/` compares equal by `cmp`.
+
+**Builds** (with a fresh `PAR_GLOBAL_TEMP`):
+- canonical at `92da8f46`: `build_all.sh` and the Overleaf target both gave rc 0, with note 136, paper 13, primer 15, PET
+  note 26 and records 59 pp, and 0 undefined references or citations;
+- the standalone copy: both gave rc 0;
+- `pdftotext` of all six PDFs is identical between the two.
+
+**Head.** Standalone `main` = `fe234504fcda511058cb5bbdd69016c396832e30` (from `git ls-remote`), a fast-forward from
+`8dcb9f50`. Joseph pulls it in Overleaf from the GitHub menu.
+
+**Next sync:** after the next paper round. Start from base `92da8f46`.
