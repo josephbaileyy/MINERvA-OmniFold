@@ -50,16 +50,27 @@ source finding made before any declared input was read.
 **What led to it.** Codex2's source review for R1 fetched MAT at `35097b65ab1680db8058f9ede18fecffdc3a1ea3` from
 MinervaExpt/MAT. The director re-fetched it, and `PlotUtils/FluxReweighter.cxx` has sha256 `4576346d…`, as in receipt
 #849.
-1. **The weight.** `GetFluxCVWeight` (`:977-993`) returns `newFlux->Interpolate(Enu) / genFlux->Interpolate(Enu)`:
+1. **The weight.** `GetFluxCVWeight` (`:977-992`) returns `newFlux->Interpolate(Enu) / genFlux->Interpolate(Enu)`:
    - below 75 GeV, from interpolated values;
    - above 75 GeV, from bin contents (`:984-987`);
    - 1 when either is zero (`:988-990`).
-2. **The numerator** is `m_fluxReweightNu` (`:331`). When the ν-e constraint is applied, it is replaced by
-   `Constrainer().ConstrainHisto(...)` of the file histogram (`:335-340`). The other constructors do the same at
-   `:396-405` and `:450-460`, and P0 cites the one the analysis uses.
+2. **The numerator** is the reweight flux, which is replaced by `Constrainer().ConstrainHisto(...)` of the file
+   histogram when the ν-e constraint is applied. The analysis uses the string constructor (`:372`), reached through
+   `flux_reweighter` (`:2187-2196`) and `_flux_reweighter` (`:42`), with gen2thin and g4numiv6 for every ME playlist
+   (for example `:87-93`). In that constructor:
+   - the numerator is at `:396`;
+   - the constraint is at `:399-406`;
+   - the generated flux is at `:425`;
+   - the playlist is mapped by `GetPlaylistEnum` (`:388`, `:2110-2126`).
+
+   The enum constructor (`:311`; `:331`, `:335-340`) does the same. coverage-5b-audit's check located these lines.
 3. **The constraint in the analysis.** The analysis's event loop applies it: `PlotUtils::MinervaUniverse::SetNuEConstraint(true)`
    at `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp:1698` @ `f4cd8f8b`.
-4. **The denominator** is the playlist's generated flux, `flux_E_unweighted` (`:358`, `:940`).
+4. **The denominator** is the playlist's generated flux, `flux_E_unweighted` (`:425`, `:940`).
+5. **The files MAT opens** (`:913-940`):
+   - the numerator from `flux-gen2thin-pdg14-minervame{1D,1M,1N}_rearrangedUniverses.root`, `flux_E_cvweighted`, then
+     `ConstrainHisto`;
+   - the generated flux from `flux-g4numiv6-pdg14-…_rearrangedUniverses.root`, `flux_E_unweighted`.
 
 §4 says that "the factor is applied as a step function in the files' Eν bins". That is not how MAT evaluates its
 weight. So the swap would not be "exactly φ_T(E)/φ_own(E)" in MAT's sense.
@@ -70,12 +81,18 @@ weight. So the swap would not be "exactly φ_T(E)/φ_own(E)" in MAT's sense.
    - It uses the analysis event loop's own FluxReweighter arguments, cited `file:line @ sha` in P0's record. The
      ν-e constraint is included, so the histogram is the constrained one.
    - The constraint is not re-derived, and no `flux_E_cvweighted` file histogram is used in its place.
-2. **The swap factor at a row's Eν** is φ_T(Eν) / φ_own(Eν), evaluated as `GetFluxCVWeight` evaluates its numerator:
-   - ROOT's own `TH1::Interpolate` below 75 GeV;
-   - the bin content above it.
+2. **The swap factor at a row's Eν** is w(φ_T, g) / w(φ_own, g), where:
+   - g is the generated flux of the row's own MC sample, which the swap does not change;
+   - w(n, d) is `GetFluxCVWeight`'s value: n/d, or 1 if n or d is 0.
 
-   **The zero rule:** where either value is 0, the factor is 1, and P0 records the count and the weight share of such
-   rows.
+   Each of n and d is evaluated as MAT does:
+   - with ROOT's own `TH1::Interpolate` for Eν ≤ 75 GeV, since MAT's test is strictly `Enu > 75.`;
+   - with the bin content above 75 GeV.
+
+   With every value non-zero, this is φ_T/φ_own.
+
+   **P0 counts each zero pattern separately, with its count and its `pass_reco` weight share:** φ_own = 0, φ_T = 0, and
+   g = 0.
 
    **Evaluation:** the factor is evaluated by ROOT in the MAT-environment extract step, which writes per-row factors or
    an equivalent pinned table. A reimplementation in the numerical steps is allowed only with a test, on the real
@@ -95,8 +112,8 @@ weight. So the swap would not be "exactly φ_T(E)/φ_own(E)" in MAT's sense.
    The sentence "applied as a step function in the files' Eν bins" is replaced by rulings 1–2.
 5. **Tests:**
    - a fixture where interpolation and step differ, which must give ROOT's interpolated value;
-   - the 75 GeV boundary from both sides;
-   - the zero rule;
+   - the 75 GeV boundary from both sides, including exactly 75.0;
+   - each zero pattern;
    - a REQUIRED mutant for each.
 
    The real-MnvH1D test runs in limitation-resolver's lane, in the MAT environment (#848's ruling of 2026-11-06).
