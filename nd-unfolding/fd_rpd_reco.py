@@ -97,6 +97,17 @@ def require(condition: bool, guard: str, message: str) -> None:
         raise Refused(guard, message)
 
 
+def require_output_root(run: Path) -> None:
+    """Refuse CFS output before creating any file or directory."""
+    resolved = run.resolve()
+    forbidden = Path("/global/cfs")
+    require(
+        resolved != forbidden and forbidden not in resolved.parents,
+        "OUTPUT_LOCATION",
+        "outputs must not be written to CFS",
+    )
+
+
 def digest(path: Path) -> str:
     """Return the SHA256 of a local copy or a generated product."""
     checksum = hashlib.sha256()
@@ -247,6 +258,7 @@ class Inputs:
     """
 
     def __init__(self, config_path: Path, config_sha: str, run: Path):
+        require_output_root(run)
         self.run = run.resolve()
         self.started = time.monotonic()
         self.run.mkdir(parents=True, exist_ok=True)
@@ -1859,6 +1871,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
     except (Refused, OSError, ValueError, KeyError, ImportError) as error:
         guard = error.guard if isinstance(error, Refused) else type(error).__name__
+        if guard == "OUTPUT_LOCATION":
+            print(f"STOP {guard}: {error}", file=sys.stderr)
+            return 4
         arguments.run.mkdir(parents=True, exist_ok=True)
         stop = arguments.run / f"{arguments.step}.STOP.json"
         if not stop.exists():

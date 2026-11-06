@@ -55,6 +55,7 @@ GUARD_TESTS = {
     "MC_SUPPORT": "test_empty_support_flux_layout_and_cells",
     "NICE": "test_runtime_estimate_and_resource_guards",
     "NOATIME": "test_native_noatime_absence_refuses",
+    "OUTPUT_LOCATION": "test_output_location_before_any_write",
     "OUTPUT_EXISTS": "test_step_output_and_dry_run_guards",
     "OUTSIDE_RANGE": "test_flux_range_step_function_and_gate",
     "PASS_TRUTH": "test_signal_guards",
@@ -231,6 +232,22 @@ class Mutator(ast.NodeTransformer):
                 keywords=[],
             )
             self.changed += 1
+        return self.generic_visit(node)
+
+    def visit_Raise(self, node: ast.Raise) -> ast.AST:
+        """Disable an explicit refusal as well as predicate-based guards."""
+        exception = node.exc
+        if (
+            self.mutation.kind == "guard"
+            and isinstance(exception, ast.Call)
+            and isinstance(exception.func, ast.Name)
+            and exception.func.id == "Refused"
+            and exception.args
+            and isinstance(exception.args[0], ast.Constant)
+            and exception.args[0].value == self.mutation.target
+        ):
+            self.changed += 1
+            return ast.copy_location(ast.Pass(), node)
         return self.generic_visit(node)
 
     def visit_Call(self, node: ast.Call) -> ast.AST:

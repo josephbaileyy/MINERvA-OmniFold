@@ -307,7 +307,16 @@ def test_prediction_required_committed_and_exact(fixture: Fixture) -> None:
     inputs = fixture.inputs()
     with pytest.raises(R.Refused, match="PREDICTION_COMMITTED"):
         inputs.key("lat_1A.npz", "measured")
+    inputs.prediction = fixture.prediction_repo / "missing.json", sha
+    with pytest.raises(R.Refused, match="PREDICTION_SHA"):
+        inputs.key("lat_1A.npz", "measured")
     inputs.prediction = prediction, sha
+    local = fixture.run / "d2-predict.json"
+    original_local = local.read_bytes()
+    local.write_bytes(original_local + b" ")
+    with pytest.raises(R.Refused, match="PREDICTION_SHA"):
+        inputs.key("lat_1A.npz", "measured")
+    local.write_bytes(original_local)
     assert inputs.key("lat_1A.npz", "measured").shape[1] == 5
     prediction.write_text(prediction.read_text() + " ")
     with pytest.raises(R.Refused, match="PREDICTION_SHA"):
@@ -1104,3 +1113,36 @@ def test_wall_clock_and_price_guards(
     fixture.execute("p0")
     with pytest.raises(R.Refused, match="PRICE_REVIEW"):
         fixture.execute("d2-predict")
+
+
+def test_output_location_before_any_write(
+    fixture: Fixture,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    forbidden = Path("/global/cfs/cdirs/fixture/rpd-output")
+    real_mkdir = Path.mkdir
+
+    def checked_mkdir(path: Path, *args: Any, **kwargs: Any) -> None:
+        assert Path("/global/cfs") not in path.resolve().parents
+        real_mkdir(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "mkdir", checked_mkdir)
+    R.require_output_root(fixture.run)
+    with pytest.raises(R.Refused, match="OUTPUT_LOCATION"):
+        R.Inputs(fixture.config_path, fixture.config_sha, forbidden)
+    assert (
+        R.main(
+            [
+                "pins",
+                "--config",
+                str(fixture.config_path),
+                "--config-sha256",
+                fixture.config_sha,
+                "--run",
+                str(forbidden),
+            ]
+        )
+        == 4
+    )
+    assert "STOP OUTPUT_LOCATION" in capsys.readouterr().err
