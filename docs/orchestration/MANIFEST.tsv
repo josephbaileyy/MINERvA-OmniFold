@@ -5873,6 +5873,8 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/coder/sets/set-6.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/coder/sets/set-7.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/coder/unblinding-map.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/DIRECTOR-REC-AGY-ANSWER.txt	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/DIRECTOR-REC-AGY-PROMPT.txt	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/INPUT-20261106-grok-referee-sufficiency.txt	tracked	LIVE	state-artifact	2d-closeout	20261106	open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-ANSWER.txt	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no

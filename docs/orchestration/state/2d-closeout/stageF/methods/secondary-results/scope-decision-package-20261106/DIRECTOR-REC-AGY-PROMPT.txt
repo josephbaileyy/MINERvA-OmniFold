@@ -1,0 +1,23 @@
+You are an independent reviewer from a different model family, reading as a Physical Review D referee would. In under 450 words, critique the following draft recommendation. Say whether you would recommend it, what is wrong or missing, and the single biggest credibility risk.
+
+**The situation.** An OmniFold unfolding analysis of MINERvA open data has three tiers of results:
+- **A 2D (pT, p∥) result, E_R.** It reproduces a published MINERvA measurement (arXiv:2106.16210) with a different unfolding method. Its χ²/ndf against the published result, under the published covariance, is 2.27 over 205 bins, with a correlated shape difference. A pre-registered binned cross-check could not localise its source to the inputs or the algorithm ('unresolved'). A separate estimator reproduces the 2D central value within its noise.
+- **A 5D multi-observable result,** with these problems:
+  - its pre-registered coverage test ended at a declared stop rule without a coverage reading, and cannot resume without a new post-hoc design;
+  - a stabilisation probe found no fix for rounding-level instability (up to 2.6 σ_stat shifts);
+  - fake-data tests show generator-sized bias in two low-stability cells;
+  - a measured algorithm dependence;
+  - an unexplained run-period step.
+- **A 2D coverage campaign** is running, with results due by mid-December. It tests the procedure's remade covariance at two held-out tunes. A pass would not validate the reported data-point intervals.
+
+Four model referee reports call the 5D problems disqualifying for a primary measurement, and accept a methods and validation study instead. The PI wants a measurement paper if possible, with the methods study as the fallback.
+
+**The draft recommendation:**
+1. **Retire the 5D-headline option now.** No pending campaign can answer its disqualifying items. In every branch, the 5D results become diagnostics with their failures visible.
+2. **Decide the rest now, as a fixed conditional:**
+   - 2D coverage passes at both tunes → the paper leads with the 2D result as the measurement, with 5D as diagnostics.
+   - It under-covers, or stops, or doesn't report by its declared dates → a methods and validation study.
+   - Both texts are prepared in parallel now, through a referee read, and nothing enters the paper before the readout.
+3. **Don't narrow to a post-hoc subset of cells.**
+4. **Make the algorithm dependence a stated limitation,** not a new covariance block. Keep the fake-data bias as a stated limitation. Keep the low-stability cells flagged and unmerged. Keep the generator comparisons descriptive.
+5. **The named risk:** the 2D headline is a re-analysis of an already-published measurement that disagrees in shape with the original, with the source unlocalised. The framing must make that prominent. If a referee reading finds a 2D-led paper is not a new measurement, the methods study is the honest target.

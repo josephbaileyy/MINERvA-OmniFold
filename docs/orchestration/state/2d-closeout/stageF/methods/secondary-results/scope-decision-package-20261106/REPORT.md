@@ -191,7 +191,7 @@ stated fallback; this package grants no waiver or automatic restart. [FRAME06:26
 | **Estimator-dependence uncertainty** | REF-G1's measured difference enters as an uncertainty, a stated limitation, or both. A new block needs Joseph's adoption and construction/validation choices; the readout neither defines nor authorizes it. Do not silently add the outer product or replace the estimator. [G1-OUT:38–54] [G1:204–225] |
 | **Plug-in truth in 1B — moot unless (iii) is overridden** | The terminal STOP makes this item moot under the current sequence. Only after Joseph overrides (iii) would inclusion be reconsidered. Binding 3’s separate-binding/capture/new-gate requirements and recorded estimate of about 120 CPU node-h or more are historical scope/price information, not a live request or authority to restart. [STOP06:91–121] [1B-B3:50–59] |
 | **Known fake-data bias/prior dependence** | Decide its consequence for framing. The operative decision builds neither A1 nor A2, keeps measured failures stated and makes no cell merge. A different uncertainty/correction route would require a new decision. [BIAS:79–92] |
-| **B0 reconciliation** | The seeds-inert/bootstrap-jitter explanation is still Joseph's exact-wording decision, through the paper lane and PRD read. It is not settled by B4, REF-G1 or this package, and is not permission for another variance block. [B4:40–54] [G1:198–202] |
+| **B0 reconciliation — decided** | Joseph approved the sentences "as written" on 2026-11-06 (`DECISION-20261106-joseph-b0-reconciliation-sentence.md`, #807), after a PRD-referee read; they are in paper IV F and bound by `check_round.py`. Not permission for another variance block. [B4:40–54] [G1:198–202] (corrected by the director: this row said it was still open) |
 | **Cells, estimator, period block and calibration claims** | Whether a narrowed scope changes any adopted product; any such change must identify what is superseded, how the dependent covariance/tests/release change and the post hoc history. Current d1/d2 licences keep the period block and unknown cause. Claims/KI-85 are Joseph's. [FD-RULE:21–33] [RECO:310–334] [FRAME:51–54] |
 | **Comparators and added-information claims** | Decide how prominently descriptive generator distances and algorithm precision ratios belong under the chosen framing. REF-G1 adds no extra-discrimination or coverage claim; comparator/sample repair and physical exclusion remain separate questions. [G1:204–213] [S05:63–72] [G05:53–64] |
 | **Compute availability** | Delta’s availability is a separate operational ruling. It does not move the bound COV2D/1B sequences off Perlmutter or authorize this package to launch compute. Any new use needs its own price, environment/access and binding. [FRAME06:34–41] |
@@ -214,9 +214,74 @@ outcome; the entries below use the governing artifacts. No scheduler was queried
 | d1/d2 | **Not yet reported**; design bound, code audit and binding 2 required before run. [RECO-B1:29–43] | Design binding **2026-11-04**. The commissioning decision gives **before 2026-12-15 if d2 reads the zero loops**; the later design instead uses the inverse reco relation, not that new loop pass. Its dumps' recorded exposure is **about 2026-12-30** and retention is rechecked at P0. Neither date is a completion commitment. [COMMISSION:41–46] [RECO:165–177,230–257] [RECO-B1:38–43] |
 | B4 / REF-G1 / RPD / B-C | **Reported**, respectively terminal NONE_PASS, R1 differ, R1 OTHER/R2 CLUSTERED and partial component accounting. They are inputs to the decision, not pending campaigns to rerun. [B4] [G1-OUT] [RPD-READ] [BC] | Dated outcomes and source snapshot are in the cited records. Their unresolved interpretation is not missing execution. |
 
-## 6. Recommendation — reserved for the director
+## 6. Recommendation (director, 2026-11-06)
 
-<!-- Intentionally empty: the director writes the recommendation. -->
+**Ground.** This section rests on the ledger above and on the outcomes merged today: 1B terminal (#832), REF-C2C1 (#845),
+B4 NONE_PASS, and REF-G1 differ. It also draws on one independent read of the director's first draft: agy, a different
+model family, reading as a PRD referee (`DIRECTOR-REC-AGY-PROMPT.txt` and `DIRECTOR-REC-AGY-ANSWER.txt`, verbatim). The
+interpreter session checked that read against the brief, and its corrections are taken here. Advice is advice; the
+decision is Joseph's.
+
+**1. Retire option A now.** Its coverage condition can't be met: the 1B route is terminal. No pending campaign answers
+the other items every referee report calls disqualifying for a primary 5D measurement: B4 NONE_PASS, the generator-sized
+fake-data bias in R02 and R06, and the measured algorithm dependence. In every remaining branch, the 5D results are
+diagnostics, with their failures visible. The director does not recommend overriding (iii).
+
+**2. Between B1 and C, the director now recommends C: a methods and benchmark study, as the target, decided now.**
+The director's first draft recommended B1, conditional on COV2D. The read found two defects in that draft, and both
+rest on the package's own record:
+- **A COV2D pass is necessary for a 2D measurement claim, but not sufficient.** By its declaration, a pass supports a
+  bounded method-coverage statement at two tested truths. It doesn't validate the reported data-point intervals
+  ([COV:600–654]). It can't, by itself, turn the 2D result into a measurement headline.
+- **No pending campaign can answer the obvious referee question about a 2D headline.** E_R sits at χ²/ndf = 2.270 from
+  the published result, with a correlated shape difference ([C2:29–55]). c2's localisation reads unresolved, and the
+  limitation sentence stands ([C2-OUT:86–90]). A 2D-led measurement paper is a re-analysis of a published measurement that
+  differs from it in shape, for reasons it can't localise. The record doesn't settle whether the difference is in the
+  inputs or the algorithm, and no running campaign is designed to.
+
+**What C would contain, from results already on record.** No new campaign is needed:
+- the 2D benchmark against the published result;
+- binned D'Agostini (IBU) on the same inputs: c2, plus REF-G1 at 5D;
+- c1's paired-noise reproduction of the 2D central value;
+- COV2D's procedure-coverage result when it reports, whichever way it reads;
+- the 5D table as a demonstration with explicitly unvalidated intervals;
+- the documented failure modes: the terminal 1B STOP, B4 NONE_PASS, the fake-data bias, the run-period step, and
+  d1/d2 when they report.
+
+This is the alternative all four referee reports describe ([S04:160], [G04:146–147], [S05:131–144], [G05:146]). It also
+lets text work start now, on one framing rather than two.
+
+**3. The alternative, if Joseph keeps the measurement aim: B1, conditional, with its conditions stated in full.**
+1. COV2D reads both COVER.
+2. Joseph accepts, as a stated limitation of a measurement, an unlocalised 2D shape difference from the published
+   result.
+3. A PRD-referee read of the B1 framing, done before any wording, does not find it disqualifying. No referee read so
+   far has assessed a 2D-led measurement: all four read the 5D-headline paper.
+
+Under B1, nothing enters the paper before COV2D's readout, which is due by 2026-12-18 ([COV:553–566]).
+
+**4. Decline B2.** A post-hoc subset of cells would need its own decision and evidence, and removing a failing cell is
+not evidence for the cells retained ([FD-RULE:21–33]).
+
+**5. The reserved items, under either C or B1:**
+- **REF-G1's algorithm dependence:** a stated, measured limitation. It doesn't become a covariance block, because no
+  record supports constructing or validating one ([G1-OUT:49–54]). Under C, the measured dependence is itself a
+  result.
+- **The plug-in truth:** moot. The director doesn't recommend an override.
+- **The fake-data bias and prior dependence:** keep them as measured, stated findings, with neither A1 nor A2.
+- **The low-stability cells:** keep the flags, with no merge.
+- **The generator comparisons:** descriptive only.
+- **B0:** already decided (#807).
+- **Publication and release acts:** unchanged. They remain Joseph's.
+
+**Corrections to the critique, taken from the interpreter's check.**
+- **The p-value.** agy's "p ~ 10⁻¹⁴" is wrong by about eight orders of magnitude under its own assumptions. More
+  importantly, the declared comparison shares data and systematics, so no p-value is quoted ([C2:29–55]).
+- **"Identical open data".** The record doesn't support it. Whether the inputs match the publication's is among the
+  open questions ([BC]).
+- **"Referees will reject".** That is a prediction, not a record. It is the reason for condition 3 of B1.
+- **"Methods as primary"** reverses the recorded target (#828). That is why it is offered as a recommendation for
+  Joseph to adopt or decline, not as a change to the package.
 
 ## 7. Review and refresh handoff
 

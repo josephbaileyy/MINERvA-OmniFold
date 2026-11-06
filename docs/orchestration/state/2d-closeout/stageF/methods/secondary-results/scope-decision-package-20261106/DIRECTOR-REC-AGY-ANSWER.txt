@@ -1,0 +1,22 @@
+### Critique of Draft Recommendation (PRD Referee Perspective)
+
+**Verdict:** I recommend this draft with one vital pivot: establish the **methods and validation study as the primary target**, rather than a grudging fallback. Retiring the 5D headline immediately (Item 1) is mandatory; persisting with 5D as a physical measurement would ensure summary rejection.
+
+---
+
+### What is Wrong or Missing
+
+1. **The 2D Coverage Gate is Structurally Inadequate:** The recommendation conditions the 2D measurement headline on the pending coverage campaign. However, the premise notes that *"a pass would not validate the reported data-point intervals."* If passing coverage does not validate the intervals quoted to the community, it cannot logically substantiate a primary measurement claim.
+2. **"Stated Limitations" Cannot Replace Covariance in a Measurement (Item 4):** Omitting known algorithmic dependence and generator-sized fake-data biases from the covariance and relegating them to prose limitations is standard and acceptable in a *methods* paper. In a *measurement* paper, PRD referees will reject quoting central values whose recognized, localized biases are deliberately excluded from the systematic error band.
+3. **The Unresolved 2D Shape Tension ($\chi^2/\text{ndf} = 2.27$):** Across 205 bins, $\chi^2/\text{ndf} = 2.27$ ($p \sim 10^{-14}$) represents a massive, correlated disagreement against the official published MINERvA measurement on the *identical open data*. Because the pre-registered binned check failed to isolate whether the source is inputs or the ML algorithm ("unresolved"), the authors cannot establish whether their central value is a superior measurement or an algorithmic distortion.
+4. **Parallel Text Drafting is Counterproductive:** Preparing two full manuscripts divides focus while awaiting a mid-December result that, even if clean, cannot cure the unlocalized $\chi^2 = 2.27$ tension.
+
+---
+
+### Single Biggest Credibility Risk
+
+**The "Algorithmic Artifact" Perception.**
+Publishing a primary measurement on open data that sharply contradicts the published collaboration result, while acknowledging unlocalized origin, algorithm dependence, and unbudgeted fake-data biases, exposes the work to a fatal referee challenge:  
+*"Is OmniFold uncovering genuine cross-section features that MINERvA missed, or is it introducing an uncontrolled ML regularization bias?"*
+
+If the authors cannot definitively answer that question, claiming a physical measurement looks like overreach. In contrast, publishing this as an ambitious, rigorous **methods and benchmark study**—benchmarking unbinned ML unfolding against classical D'Agostini regularisation, documenting where 2D diverges, and exposing the fundamental breakdown of 5D coverage, rounding instability, and run-period steps—is scientifically bulletproof, transparent, and far more valuable to the neutrino community.
