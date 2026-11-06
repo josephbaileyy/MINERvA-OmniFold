@@ -2,10 +2,10 @@
 """Mutation check of REF-C2C1's tests (REF-C2C1-DECLARATION.md §4: "a mutation harness with a mutant per control, bar
 and pairing key"; REF-C2C1-BINDING-1.md ruling 3).
 
-Each mutation plants one defect in ``ref_c2c1.py`` or ``ref_c2c1_read.py`` and must make its NAMED test fail or
-error. The modules locate the repository from their own path, so a mutation is written in place and the original
-restored after it; the harness refuses to finish unless every file's sha256 is back to what it was. Run it in the
-tests' environment (PyROOT, LightGBM, scikit-learn, scipy, matplotlib), pinned as RE-2's suite says.
+Each mutation plants one defect in ``ref_c2c1.py``, ``ref_c2c1_read.py`` or ``config.json`` and must make its NAMED
+test fail or error. The modules locate the repository from their own path, so a mutation is written in place and the
+original restored after it; the harness refuses to finish unless every file's sha256 is back to what it was. Run it in
+the tests' environment (PyROOT, LightGBM, scikit-learn, scipy, matplotlib), pinned as RE-2's suite says.
 
     python3 -B 2d-unfolding/ref_c2c1/ref_c2c1_mutation.py
 """
@@ -18,8 +18,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 TEST = HERE / "test_ref_c2c1.py"
-D, R = "ref_c2c1.py", "ref_c2c1_read.py"
-EXPECTED_TESTS = 29  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
+D, R, CF = "ref_c2c1.py", "ref_c2c1_read.py", "config.json"
+EXPECTED_TESTS = 33  # a run that stops early exits 0 with fewer: refuse it (one C-ROO test skips without RooUnfold)
 MUTATIONS = [
     # the IBU seam and the driver
     ("IBU's per-event factor not unfolded/prior", D, "    factor = np.divide(u, T, out=np.ones_like(u), where=T > 0)",
@@ -131,6 +131,12 @@ MUTATIONS = [
      "Controls.test_the_cells_are_bound_index_by_index"),
     ("the cells' sha256 unchecked", R, "    if C.sha256(cells) != cells_sha:", "    if False:",
      "Controls.test_the_cells_are_bound_index_by_index"),
+    # C-PUB's operand (the director's ruling of 2026-11-06): REQUIRED
+    ("C-PUB's reference restored to its rounded value", CF, '"chi2": 465.41527219152636,', '"chi2": 465.4153,',
+     "Config.test_reference_constants_are_finer_than_their_tolerance"),
+    ("C-PUB's source digests unchecked", R,
+     '    if (staged.sha[str(e_r)], staged.sha[cfg["publication"]["path"]]) != (src["e_r_sha256"], src["covariance_sha256"]):',
+     "    if False:", "Reads.test_c_pub_refuses_a_reference_from_other_inputs"),
 ]
 
 
@@ -162,7 +168,7 @@ def mutate(fname: str, old: str, new: str, tests: list[str]) -> tuple[int, str] 
 
 
 def main() -> int:
-    before = {f: digest(f) for f in (D, R)}
+    before = {f: digest(f) for f in (D, R, CF)}
     rc, out = run([])
     ran = re.search(r"^Ran (\d+) tests?", out, re.M)
     if rc != 0 or not ran or int(ran.group(1)) != EXPECTED_TESTS:
@@ -178,7 +184,7 @@ def main() -> int:
         killed = test in failing(res[1])
         ok &= killed
         print(f"{'KILLED' if killed else 'SURVIVED':8s}  {label:48s} by {test}")
-    after = {f: digest(f) for f in (D, R)}
+    after = {f: digest(f) for f in (D, R, CF)}
     if after != before:
         print("MODULES NOT RESTORED:", {f for f in before if before[f] != after[f]})
         return 1

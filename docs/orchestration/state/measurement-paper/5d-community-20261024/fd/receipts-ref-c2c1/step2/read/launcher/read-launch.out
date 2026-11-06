@@ -1,0 +1,7 @@
+48217abe0597c69b8e2bea48ea01632948a2cdcf3cc3675fb0c0fd3c9e53be39  launch_read_from_main.sh
+origin/main fd4c572c4d535d836d8bc5dfa1b0bba468c4419d
+main: read connect b162ba9ac8b12887e02ab3130dae4a9185f6fbdcfa2a0db684021e5e06c63f79 (audited b162ba9ac8b12887e02ab3130dae4a9185f6fbdcfa2a0db684021e5e06c63f79); completion/REPLICAS-DONE-j4 5680f1f9d0e37602e5627fbb6eefd014ce18a9b5e96806d8e3ecf352e4b918e5 (recorded 5680f1f9d0e37602e5627fbb6eefd014ce18a9b5e96806d8e3ecf352e4b918e5)
+remote login27 file /dev/shm/refc2c1-read.0mDcU0 sha256 b162ba9ac8b12887e02ab3130dae4a9185f6fbdcfa2a0db684021e5e06c63f79
+launched pid 1735607
+ssh rc=0 13:43:50
+launcher rc=0

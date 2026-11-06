@@ -5,14 +5,14 @@ of the final clarifications also found no material findings. These are advisory 
 reviews, not independent numerical verification or a publication decision. The framing
 recommendation remains reserved for the director in REPORT.md section 6.
 
-## Targets and verbatim evidence
+## Original delivery targets and verbatim evidence
 
 | artifact | SHA256 |
 |---|---|
 | Initial REPORT.md, independently read | `4c344a589eda401a89ba3c207712d612775c386096e74847519ca6fce4d33b9f` |
 | Initial SOURCES.tsv | `e6f0d5ba898315a7bd9f3d177451e2ab801b815f46d068e8c20c5dc169be5866` |
-| Final REPORT.md, supplied verbatim for the focused check | `29ab6dfd3bfcd49acd59a722b0a6263dc5169e18aed47a2dbd1b723c1086ae68` |
-| Final SOURCES.tsv | `5f988c8025f0102cdf1bb9e1de67651498a31fc638926ea5ffe9ce4204fc3cdb` |
+| Original delivery final REPORT.md, supplied for the focused check | `29ab6dfd3bfcd49acd59a722b0a6263dc5169e18aed47a2dbd1b723c1086ae68` |
+| Original delivery final SOURCES.tsv | `5f988c8025f0102cdf1bb9e1de67651498a31fc638926ea5ffe9ce4204fc3cdb` |
 
 - [Initial review task](REVIEW-PROMPT.txt), verbatim.
 - [Read-only invocation prompt](REVIEW-READONLY-PROMPT.txt), verbatim.
@@ -23,7 +23,7 @@ recommendation remains reserved for the director in REPORT.md section 6.
 
 The baseline is `1aa805b59eb037c5fcd978037ae282189aa33634`. The bound 1B inputs are
 read at `6d93dd4284c1d378836ba275923d490f0f6c62f3`, the commit named by binding 3.
-The final source inventory retains every pinned source identity; its reading-range entries
+The original delivery source inventory retains every pinned source identity; its reading-range entries
 change only to accommodate the added scope clarifications.
 
 ## Execution and read-only boundary
@@ -80,7 +80,7 @@ adopted. The focused answer identifies the final target by its digest and report
 excerpts, as its residual-limits section states. No further review cycle is commissioned
 by this package.
 
-## Owner verification and limits
+## Original delivery owner verification and limits
 
 The owner checked the final inventory's **114 citation entries** against **35 unique source
 blobs** using `git show <commit>:<path>` and SHA256; each matched. Working-tree copies of
@@ -100,3 +100,50 @@ repository's commit checks still apply to the staged documentation and routing c
 No cluster contact, scheduler query, new scientific computation, collaborator contact or
 publication act was made. Model inference billing is unavailable; it is not charged here
 as measured scientific compute.
+
+## Director's update: measurement target and terminal 1B
+
+The new authoritative records at `2968b58ac9c9031a13dd5acb98e661f28964423d` change the
+decision inventory after the original delivery. REPORT.md now carries:
+
+- `DECISION-20261106-joseph-measurement-target-and-delta.md`: measurement options primary,
+  methods study as the stated fallback, and no change to the existing compute bindings.
+- `OUTCOME-20261106-1b-stage1-receipt-stop.md`: stage 1 ended on the §2b STOP under (iii),
+  with no coverage reading or further redesign absent Joseph's override; the plug-in item
+  is moot unless that rule is overridden.
+- COV2D binding 2 addendum A3, retaining its bound M and STOP count while defining the
+  pilot-label completion record, and the later REF-C2C1 binding after the C-PUB control
+  operand correction. The latter's scientific outcome remains pending at this snapshot.
+- The [Grok advice](INPUT-20261106-grok-referee-sufficiency.txt), preserved byte-for-byte
+  from the relayed input, SHA256
+  `fb6491252f21d933c102e2bb04f9bac843acf20d967c36b67149826673cefc80`. Its older status
+  observations are explicitly historical, not current measurements or a decision.
+
+The owner rechecked **121 citation entries** identifying **39 unique source blobs**, including
+the packaged advice by digest. All matched their pinned committed bytes or the packaged
+artifact; the packaged advice also matched the original input byte-for-byte. The original
+referee quotations and the original reviews were retained rather than restated as new
+review findings. The measurement options now carry the required outcome/disposition map;
+the terminal STOP neither satisfies a missing coverage-readout condition nor selects a
+new framing automatically. The director's recommendation remains unwritten.
+
+**Additional advisory attempt: no completed answer.**
+[REVIEW-UPDATE-PROMPT.txt](REVIEW-UPDATE-PROMPT.txt) contains the entire then-current report
+and exact new source excerpts. Antigravity was invoked once, sandboxed, with no tools
+requested. The CLI returned exit 3 after its five-minute deadline, with zero stdout while
+the remote turn was still in progress. Its [verbatim execution output](REVIEW-UPDATE-EXECUTION.txt)
+is retained. No partial or eventual uncaptured response is counted as a review, and no
+additional advisory verdict is claimed for this update. The original completed reads
+apply to their original target hashes, not automatically to the new decision text. The
+bounded attempt ends here; the updated draft is for the director's review.
+<!-- absence-ok: this states the measured output and time limit of this single invocation, not a claim that advisory work is globally absent -->
+
+| update artifact | SHA256 |
+|---|---|
+| Report supplied to the timed-out attempt | `eb80100834f60eca6cc584d182196dfd28ffa491b1d7d61ef2542d8a70e065c7` |
+| Final REPORT.md, after accurately recording the timeout in its provenance paragraph | `8746c3235a807a1bc0c8706a91d2af3beec030163dfcfdc84f48364d47d16edc` |
+| Updated SOURCES.tsv | `e2c950895276f897648c7d347b486154ce6771a8e5192ca455dbbe2bff485e9e` |
+
+The update changes neither manuscript text nor scientific code/products. Incorporating
+the current main branch brings its already committed campaign records into the worktree;
+those are not new runs or new scientific measurements by this package owner.

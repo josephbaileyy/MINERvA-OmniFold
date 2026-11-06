@@ -250,9 +250,12 @@ def guarded_read(cfg: dict, run: Path, cells: Path, cells_sha: str, out: Path) -
     controls["C-IN"] = {"pass": bool(staged.sha[str(e_r)] == cfg["e_r"]["central_sha256"]
                                      and all(v == want_in for v in unit_in.values())),
                         "units_inputs_ok": {u: v == want_in for u, v in unit_in.items()}}
+    c_pub = cfg["publication"]["c_pub"]
+    src = c_pub["source"]  # C-PUB's reference holds only for the inputs it was computed on
+    if (staged.sha[str(e_r)], staged.sha[cfg["publication"]["path"]]) != (src["e_r_sha256"], src["covariance_sha256"]):
+        raise Refused("C-PUB's reference chi2 was computed on another E_R or covariance (config.json c_pub.source)")
     x_er = th2(e_r_copy)
     d_er, ndf = pub.distance(x_er)
-    c_pub = cfg["publication"]["c_pub"]
     controls["C-PUB"] = {"chi2": d_er * ndf, "ndf": ndf,
                          "pass": bool(ndf == c_pub["ndf"] and abs(d_er * ndf / c_pub["chi2"] - 1) <= c_pub["rtol"])}
     x_er_run = th2(run / "er.root")

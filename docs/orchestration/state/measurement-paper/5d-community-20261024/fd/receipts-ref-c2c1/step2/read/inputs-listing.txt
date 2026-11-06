@@ -1,0 +1,2 @@
+1272641 /pscratch/sd/j/josephrb/ref-c2c1-20261106/read/inputs/000_cov_ptpl_minerva_inclusive_6GeV.root
+62196 /pscratch/sd/j/josephrb/ref-c2c1-20261106/read/inputs/001_xsec.root

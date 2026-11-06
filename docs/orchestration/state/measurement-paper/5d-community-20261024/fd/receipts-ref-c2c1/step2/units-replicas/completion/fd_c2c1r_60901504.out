@@ -1,0 +1,47 @@
+[c2c1r4] porcelain --ignored lines before: 0
+[c2c1r4] start 2026-11-06T12:54:47Z job=60901504 node=nid004930 nproc=256
+[c2c1r4] fit: 4 steps x 114688 MB = 458752 MB within SLURM_MEM_PER_NODE= and AllocTRES mem=487802; 4 x 64 CPUs = 256 within SLURM_CPUS_ON_NODE=256 and AllocTRES cpu=256
+[c2c1r4] fence, recorded (the director's ruling: guarded readers record, not refuse): squeue -u josephrb:
+[c2c1r4]   60895578|cov2d-G18_Uc|RUNNING|2:21:46|8:54:00
+[c2c1r4]   60895585|cov2d-G18_Ud|RUNNING|2:21:46|8:54:00
+[c2c1r4]   60895562|cov2d-G18_Ua|RUNNING|3:10:38|8:54:00
+[c2c1r4]   60895566|cov2d-G18_Ub|RUNNING|3:10:38|8:54:00
+[c2c1r4]   60895985|cov2d-AR23_Ba|RUNNING|56:10|8:06:00
+[c2c1r4]   60895990|cov2d-AR23_Bb|RUNNING|56:10|8:06:00
+[c2c1r4]   60895956|cov2d-G18_Ta|RUNNING|1:23:12|7:38:00
+[c2c1r4]   60895973|cov2d-G18_Tb|RUNNING|1:23:12|7:38:00
+[c2c1r4]   60895983|cov2d-AR23_L|RUNNING|1:09:18|3:20:00
+[c2c1r4]   60895982|cov2d-G18_Tc|RUNNING|1:09:19|7:38:00
+[c2c1r4]   60895597|cov2d-AR23_Ud|RUNNING|1:55:23|8:54:00
+[c2c1r4]   60896048|cov2d-AR23_Ta|RUNNING|45:05|7:38:00
+[c2c1r4]   60895992|cov2d-AR23_Bc|RUNNING|46:07|8:06:00
+[c2c1r4]   60895594|cov2d-AR23_Ua|RUNNING|2:06:56|8:54:00
+[c2c1r4]   60895595|cov2d-AR23_Ub|RUNNING|2:06:56|8:54:00
+[c2c1r4]   60895951|cov2d-G18_Bb|RUNNING|1:38:53|8:06:00
+[c2c1r4]   60895953|cov2d-G18_Bc|RUNNING|1:38:53|8:06:00
+[c2c1r4]   60895596|cov2d-AR23_Uc|RUNNING|1:57:01|8:54:00
+[c2c1r4]   60901504|fd_c2c1r|RUNNING|0:04|1:30:00
+[c2c1r4]   60895949|cov2d-G18_Ba|RUNNING|1:47:15|8:06:00
+[c2c1r4] COV2D inputs stat'd before: 303
+[c2c1r4] interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+[c2c1r4] lane 0: 12 units
+[c2c1r4] lane 1: 12 units
+[c2c1r4] lane 2: 12 units
+[c2c1r4] lane 3: 11 units
+[c2c1r4] concurrency: 4 of 4 lane steps RUNNING at +90 s (2026-11-06T12:56:27Z), from scontrol show step:
+[c2c1r4]   StepId=60901504.extern State=RUNNING Name=extern 
+[c2c1r4]   StepId=60901504.batch State=RUNNING Name=batch 
+[c2c1r4]   StepId=60901504.0 State=RUNNING Name=r4-l0 
+[c2c1r4]   StepId=60901504.1 State=RUNNING Name=r4-l1 
+[c2c1r4]   StepId=60901504.2 State=RUNNING Name=r4-l3 
+[c2c1r4]   StepId=60901504.3 State=RUNNING Name=r4-l2 
+[c2c1r4] cross-check (recorded, not gating): sstat -a lists 4 numbered steps
+[c2c1r4] lanes done 2026-11-06T13:31:27Z; rcs: 0 0 0 0
+[c2c1r4] lane 0:  Elapsed (wall clock) time (h:mm:ss or m:ss): 36:11.13; Maximum resident set size (kbytes): 10305460; Exit status: 0;
+[c2c1r4] lane 1:  Elapsed (wall clock) time (h:mm:ss or m:ss): 36:29.90; Maximum resident set size (kbytes): 10034240; Exit status: 0;
+[c2c1r4] lane 2:  Elapsed (wall clock) time (h:mm:ss or m:ss): 35:54.47; Maximum resident set size (kbytes): 10071256; Exit status: 0;
+[c2c1r4] lane 3:  Elapsed (wall clock) time (h:mm:ss or m:ss): 32:56.36; Maximum resident set size (kbytes): 10215512; Exit status: 0;
+[c2c1r4] PASS markers: 47 of 47
+[c2c1r4] COV2D inputs: no atime moved
+[c2c1r4] porcelain --ignored lines after: 0
+{"job": "60901504", "index": 4, "units": 47, "pass_markers": 47, "rcs": "0 0 0 0", "watch_moved": 0, "porcelain_after": 0, "concurrent": 1, "unit_list": ["c2_replica_b108", "c2_replica_b120", "c2_replica_b124", "c2_replica_b128", "c2_replica_b132", "c2_replica_b136", "c2_replica_b140", "c2_replica_b144", "c2_replica_b148", "c2_replica_b152", "c2_replica_b156", "c2_replica_b160", "c2_replica_b164", "c2_replica_b168", "c2_replica_b172", "c2_replica_b176", "c2_replica_b180", "c2_replica_b184", "c2_replica_b188", "c2_replica_b192", "c2_replica_b196", "c2_replica_b200", "c2_replica_b204", "c2_replica_b208", "c2_replica_b212", "c2_replica_b216", "c2_replica_b220", "c2_replica_b224", "c2_replica_b228", "c2_replica_b232", "c2_replica_b236", "c2_replica_b240", "c2_replica_b244", "c2_replica_b248", "c2_replica_b252", "c2_replica_b256", "c2_replica_b260", "c2_replica_b264", "c2_replica_b268", "c2_replica_b272", "c2_replica_b276", "c2_replica_b280", "c2_replica_b284", "c2_replica_b288", "c2_replica_b292", "c2_replica_b296", "c2_replica_b300"]}

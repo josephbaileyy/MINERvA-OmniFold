@@ -162,3 +162,66 @@ killed. The receipts at `94544e0b` show 184 tests, 0 skipped, and 92 of 92 mutan
    price.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 2, addendum A3: the pilot-label collision (director, 2026-11-06)
+
+**No new M.** The bound code, the job scripts and the tables at `a6054769` are unchanged. This addendum rules on a
+planning defect and sets stage 4's PASS record.
+
+**What led to it** (cov2d's reports, unrepaired):
+- **The job.** G18_L (60895948) ended FAILED 1:0 after 1.81 node-h.
+  - Its nine runs are each rc 0 with a digest, and its check reports `problems: []`.
+  - It refused two runs at `cov2d_job.sbatch:41` ("exists; not overwritten"), and that skip sets the job's rc to 1.
+- **The cause.** The pilot (60857636, at `cb31611c`) had written five labels into the same `$O/out` that the bulk
+  tables reuse:
+  - X_G18 and L_G18_BeamAngleX_0, in G18_L;
+  - U_G18_Flux_0, in G18_Ua;
+  - B_G18_001, in G18_Ba;
+  - T_G18_5720000, in G18_Ta.
+- **The other three jobs** each log one such skip.
+- **cov2d's stat-only listing** at 13:04Z covered all 1,572 bulk labels of both truths: no other bulk label predates its
+  job.
+- **What reads the pilot's products.** No code in the sequence reads `$O/out/<label>` for a bulk label. The pilot
+  readout opens only its three COMPARE labels, and it sees the five only through `SHA256SUMS.pilot.*` and
+  `walls.pilot.*`. order() reads only committed records and the submissions log. gate() reads sacct only to price.
+
+**Rulings.**
+1. **The classification: INVALID for the five labels only, not a STOP.**
+   - A STOP is "any step this declaration or the amendment says stops the campaign" (COV2D-DECLARATION §6 (iii)), and
+     nothing declares a skipped existing output to be one. The STOP count stays at two.
+   - The other runs in the four jobs stand on their own rc 0 and digests, but only where the job's exit 1 is shown to
+     come solely from its expected skips. cov2d's `watch2.sh` match is that evidence: exit 1:0, every step COMPLETED 0:0,
+     every walls rc 0, the skip set equal to the job's expected labels, no run-failure line, and walls rows plus skips
+     equal to the table's rows.
+   - Any other cause in any of the four jobs is a new report.
+2. **The pilot's products do not count for the bulk.**
+   - `cov2d_jobs.py`'s pilot() ran X_G18 and U_G18_Flux_0 at 64 CPUs, where the bulk runs them at 128. The pilot's own
+     rule is that RE-2 claims equality only like for like.
+   - All five are rerun in the bulk's configuration, so every bulk label has one provenance.
+3. **The completion job, G18_C,** for exactly the five labels, with each row taken verbatim from `runs_G18.tsv` and the
+   CPU counts of the bulk plan.
+   - It goes through the bound `cov2d_submit.sh` and `cov2d_job.sbatch`.
+   - Its connect-level pieces need coverage-5b-audit's GO before launch:
+     - the G18C tables;
+     - the pseudo-data route, which must resolve to G18's bytes under `pseudo_b.json`;
+     - every use of `$TRUTH` and `DATA_TRUTH` on the G18C path, including the submission's table regeneration and
+       compare;
+     - the concurrent steps' memory sum against 487,802M;
+     - the label listing.
+   - On that GO it launches without the director. It is priced under the 165.8 cap like any other job.
+4. **The rename.** Before G18_C's submission, its connect renames each of the pilot's five `$O/out/<label>` to
+   `<label>.pilot-60857636`.
+   - It uses `mv -n` and deletes nothing.
+   - It records a B9-form ledger whose shas before and after equal the `SHA256SUMS.pilot.*` lines.
+   - The ledger maps each of those lines to its new path. After G18_C, the old paths hold the bulk's bytes.
+   - The pilot readout is not rerun.
+5. **Every further submission's connect** stat-lists its job's labels against `$O/out` and refuses on any hit
+   (`connect-wave.sh` v2, on the auditor's GO).
+6. **Stage 4's PASS record** (A2 ruling 3, item 4) is a per-label completeness table over all 1,572 bulk labels:
+   - each label has exactly one rc-0 walls row and one digest from a job at M, with its job id and job name;
+   - for the five labels, that job is G18_C, with this addendum and the rename ledger cited;
+   - beside the table, each FAILED job's match evidence under ruling 1.
+
+   sacct's FAILED state for those four jobs does not block stage 5 when this record is committed on main.
+
+Nothing is submitted, deposited or tagged.

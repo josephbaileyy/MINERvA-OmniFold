@@ -1,0 +1,124 @@
+{
+ "schema": "ref-c2c1-stop/1",
+ "stopped": true,
+ "stopped_by": [
+  "C-PUB"
+ ],
+ "controls": {
+  "C-CELLS": {
+   "pass": true,
+   "cells": 205
+  },
+  "C-IN": {
+   "pass": true,
+   "units_inputs_ok": {
+    "er": true,
+    "c2_central": true,
+    "c1_central": true
+   }
+  },
+  "C-PUB": {
+   "chi2": 465.4152721915331,
+   "ndf": 205,
+   "pass": false
+  },
+  "C-CV": {
+   "max_rel": 9.227729691474451e-12,
+   "pass": true
+  },
+  "C-REF": {
+   "a_deterministic_exact": true,
+   "b_fitted_1e-8": true,
+   "c_e_r_reproduced": true,
+   "d_measured_weights_vs_refined_sum": 9.71445146547012e-14,
+   "d_measured_histogram_vs_e_r_per_bin": 6.039613253960852e-14,
+   "pass": true
+  },
+  "C-CPUS": {
+   "pass": true,
+   "units": {
+    "er": 64,
+    "c2_central": 64,
+    "c1_central": 64
+   },
+   "threads": {
+    "er": {
+     "OMP_NUM_THREADS": "64",
+     "MKL_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1"
+    },
+    "c2_central": {
+     "OMP_NUM_THREADS": "64",
+     "MKL_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1"
+    },
+    "c1_central": {
+     "OMP_NUM_THREADS": "64",
+     "MKL_NUM_THREADS": "1",
+     "OPENBLAS_NUM_THREADS": "1"
+    }
+   },
+   "e_r": 64
+  },
+  "C-SET": {
+   "pass": true,
+   "constructions": [
+    {
+     "kind": "classifier",
+     "differ": [
+      "bin_construct_sample_cnt",
+      "deterministic",
+      "force_row_wise",
+      "num_threads"
+     ]
+    },
+    {
+     "kind": "classifier",
+     "differ": [
+      "bin_construct_sample_cnt",
+      "deterministic",
+      "force_row_wise",
+      "num_threads"
+     ]
+    },
+    {
+     "kind": "classifier",
+     "differ": [
+      "bin_construct_sample_cnt",
+      "deterministic",
+      "force_row_wise",
+      "num_threads"
+     ]
+    },
+    {
+     "kind": "regressor",
+     "differ": [
+      "bin_construct_sample_cnt",
+      "deterministic",
+      "force_row_wise",
+      "num_threads"
+     ]
+    }
+   ]
+  },
+  "C-SIM": {
+   "max_rel": 1.509903313490213e-14,
+   "cells_covered": 205,
+   "pass": true
+  },
+  "C-ROO": {
+   "max_rel": 3.999096698269908e-15,
+   "pass": true
+  },
+  "done": {
+   "pass": true,
+   "not_pass": [],
+   "n_not_pass": 0
+  }
+ },
+ "staged_sha256": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef"
+ },
+ "written_utc": "2026-11-06T13:44:40Z"
+}

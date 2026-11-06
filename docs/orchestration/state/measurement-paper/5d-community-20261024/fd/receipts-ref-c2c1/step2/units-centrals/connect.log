@@ -1,0 +1,24 @@
+node login27 nproc=244 loadavg 6.90 6.08 6.56
+2026-11-06T06:04:54Z
+connect script sha256 5b75dd037e2b1ec1c981b4198d73f0703906857b716b11da3935fd5ebfa8d6fd
+COV2D fence: no cov2d-* job in squeue at 2026-11-06T06:04:54Z
+gate: origin/main 99b32adafbaeb6571b051fe78a0111b2ceb819cd stage.json sha256 559da9e806ccf4a24c70279bd70564ff96074fe6aec2d2df0e9b62370426479d; pscratch record 559da9e806ccf4a24c70279bd70564ff96074fe6aec2d2df0e9b62370426479d; expected 559da9e806ccf4a24c70279bd70564ff96074fe6aec2d2df0e9b62370426479d
+staged copies present: runEventLoopMC_MEFHC.root runEventLoopOmniFold_MEFHC.root 
+HEAD 77d76cfc2d621f8faa010b75006811868494652a; porcelain --ignored lines before: 0
+bound blobs: 8 checked, 0 mismatches
+config.json roounfold_lib: /pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libRooUnfold.so 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd
+libRooUnfold.so: source sha256 (O_NOATIME read) 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd; copy 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd; config.json 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd; atime 1789844824
+== price: limit 01:00:00 on 1 node = at most 1.0 node-h; spent 0.1789; cap 12.5
+== iris
+m3246               2215.1            10000.0     18024.6      20000.0
+balance_node_h=1975.4 half=987.7 price=1.0
+refc2c1_centrals_job.sbatch sha256 de0b6321b6cc36ac2069eaa66d2ecf4d58871b1b13d19fb86c228c15ad259294
+squeue --me before:
+sbatch rc=0
+Submitted batch job 60889566
+job 60889566
+scontrol TimeLimit=01:00:00 (declared 01:00:00)
+60889566 fd_c2c1u PENDING 0:00 1:00:00 1 regular_1 m3246
+porcelain --ignored lines after submission: 0
+ref-c2c1 centrals connect rc=0
+2026-11-06T06:05:43Z

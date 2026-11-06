@@ -1,0 +1,20 @@
+You are an independent methods reviewer from a different model family. Give a recommendation in under 400 words.
+
+**Context.** A pre-registered 5D coverage study (1B) tests whether an OmniFold unfolding's reported uncertainties cover the truth. It does this by drawing 'natures': each composes several systematic universes to first order (a_D = a_u1 + Σ_j (a_uj − a_CV)), and the estimator is unfolded on each.
+
+**The rule.** Its declaration says a composite denominator cell with d_CV > 0 and d_D ≤ 0 is a STOP in the receipt. That is 'a property to report, not to test away'. A STOP at the receipt ends the campaign and goes to the PI.
+
+**The result.** The receipt found 892 of 900 draws have at least one non-positive composite denominator cell, with up to 62 cells in a draw. Everything else was clean: no excess rows, no atime moved.
+
+**What else holds.**
+- A separate 2D coverage campaign (COV2D) is running well, and its bulk jobs are queued.
+- The PI wants the measurement paper if possible, with a methods-study paper as the fallback.
+- The referees' disqualifying items are coverage, rounding instability, prior dependence and the run-period step.
+- A stabilisation probe found no fix for the rounding instability.
+
+**The PI's options:**
+1. Accept the STOP as 1B's terminal outcome. The 5D result keeps 'coverage not validated', and the measurement path rests on 2D coverage: a narrowed measurement with a 2D headline and the 5D result descriptive.
+2. Redesign 1B's composition under a new declaration, labelled post hoc after the STOP. Examples: a product form with clipping, fewer universes per draw, coarser cells, or excluding sparse cells. That would cost weeks.
+3. Something else.
+
+Recommend one, give the main risk to credibility, and say what the paper and the record must say.

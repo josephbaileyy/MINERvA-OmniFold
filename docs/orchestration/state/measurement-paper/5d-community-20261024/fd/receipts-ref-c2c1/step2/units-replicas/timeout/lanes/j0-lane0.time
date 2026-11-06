@@ -1,0 +1,23 @@
+	Command being timed: "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 -B 2d-unfolding/ref_c2c1/ref_c2c1.py --unit c1_replica:1 --unit c1_replica:17 --unit c1_replica:33 --unit c1_replica:49 --unit c2_replica:57 --unit c2_replica:73 --unit c2_replica:89 --unit c2_replica:105 --unit c2_replica:121 --unit c2_replica:137 --unit c2_replica:153 --unit c2_replica:169 --unit c2_replica:185 --unit c2_replica:201 --unit c2_replica:217 --unit c2_replica:233 --unit c2_replica:249 --unit c2_replica:265 --unit c2_replica:281 --unit c2_replica:297 --out /pscratch/sd/j/josephrb/ref-c2c1-20261106/units"
+	User time (seconds): 87285.48
+	System time (seconds): 255.04
+	Percent of CPU this job got: 1541%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:34:39
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 16342420
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1491
+	Minor (reclaiming a frame) page faults: 51372660
+	Voluntary context switches: 1279171
+	Involuntary context switches: 109695
+	Swaps: 0
+	File system inputs: 385772
+	File system outputs: 3952
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

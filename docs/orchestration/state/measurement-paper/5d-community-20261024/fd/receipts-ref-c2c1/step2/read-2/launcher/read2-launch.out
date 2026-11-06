@@ -1,0 +1,14 @@
+48ed4a9415f75926b37706b522c9e8bc888e70935150c3dc8c686fbb09ccc7e8  launch_read2_from_main.sh
+origin/main 2968b58ac9c9031a13dd5acb98e661f28964423d
+main: read connect d37f6682d8124ba292efd6a17906e53ed0a87f332e60a42f171b42c92ec42b95 (audited d37f6682d8124ba292efd6a17906e53ed0a87f332e60a42f171b42c92ec42b95); completion/REPLICAS-DONE-j4 5680f1f9d0e37602e5627fbb6eefd014ce18a9b5e96806d8e3ecf352e4b918e5 (recorded 5680f1f9d0e37602e5627fbb6eefd014ce18a9b5e96806d8e3ecf352e4b918e5)
+ssh rc=255 14:56:16
+REFUSED or failed on the login side (rc 255): not launched
+launcher rc=255
+== retry after ssh rc 255 (nothing launched: read-2 absent, no /dev/shm copy on login04)
+48ed4a9415f75926b37706b522c9e8bc888e70935150c3dc8c686fbb09ccc7e8  launch_read2_from_main.sh
+origin/main 2968b58ac9c9031a13dd5acb98e661f28964423d
+main: read connect d37f6682d8124ba292efd6a17906e53ed0a87f332e60a42f171b42c92ec42b95 (audited d37f6682d8124ba292efd6a17906e53ed0a87f332e60a42f171b42c92ec42b95); completion/REPLICAS-DONE-j4 5680f1f9d0e37602e5627fbb6eefd014ce18a9b5e96806d8e3ecf352e4b918e5 (recorded 5680f1f9d0e37602e5627fbb6eefd014ce18a9b5e96806d8e3ecf352e4b918e5)
+remote login04 file /dev/shm/refc2c1-read2.alrTGF sha256 d37f6682d8124ba292efd6a17906e53ed0a87f332e60a42f171b42c92ec42b95
+launched pid 205862
+ssh rc=0 15:03:17
+launcher rc=0

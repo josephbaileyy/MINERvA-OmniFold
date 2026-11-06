@@ -352,10 +352,11 @@ class Fixture:
             (run / f"c1_replica_b{b}.done").write_text(json.dumps({"verdict": "PASS"}))
         self.cfg = copy.deepcopy(CFG)
         chi2 = float(np.sum(((self.x_er - paper)[rep]) ** 2 / sig[rep] ** 2))
-        self.cfg["publication"].update(path=str(self.tmp / "pub.root"), sha256=C.sha256(self.tmp / "pub.root"),
-                                       c_pub={"chi2": chi2, "ndf": 205, "rtol": 1e-8})
-        self.cfg["e_r"].update(central=str(e / "ER.root"), central_sha256=C.sha256(e / "ER.root"),
-                               replica=str(e / "S1_{b:03d}.root"))
+        pub_sha, er_sha = C.sha256(self.tmp / "pub.root"), C.sha256(e / "ER.root")
+        self.cfg["publication"].update(path=str(self.tmp / "pub.root"), sha256=pub_sha,
+                                       c_pub={"chi2": chi2, "ndf": 205, "rtol": 1e-8,
+                                              "source": {"e_r_sha256": er_sha, "covariance_sha256": pub_sha}})
+        self.cfg["e_r"].update(central=str(e / "ER.root"), central_sha256=er_sha, replica=str(e / "S1_{b:03d}.root"))
         self.cfg["replica_set"]["choice"] = "reuse"
         self.cfg["replica_set"]["options"]["reuse"].update(first=1, last=n_c2)
         self.cfg["c1"]["replicas"].update(first=1, last=n_c1)
@@ -595,6 +596,23 @@ class Reads(unittest.TestCase):
         finally:
             fx.close()
 
+    def test_c_pub_refuses_a_reference_from_other_inputs(self):
+        """C-PUB's chi2 is E_R's against this covariance: a staged E_R or covariance other than its source's refuses the
+        read before any distance, whatever the chi2."""
+        for key in ("e_r_sha256", "covariance_sha256", None):
+            fx = Fixture()  # each case stages into a fresh directory, so the refusal is C-PUB's, not "exists"
+            try:
+                if key:
+                    fx.cfg["publication"]["c_pub"]["source"][key] = "0" * 64
+                    with self.assertRaisesRegex(R.Refused, "C-PUB's reference"):
+                        fx.read()
+                    self.assertFalse((fx.out / "STOP.json").exists())
+                    self.assertFalse((fx.out / "readout.json").exists())
+                else:
+                    self.assertTrue(fx.read()["controls"]["C-PUB"]["pass"])
+            finally:
+                fx.close()
+
     def test_c_fill_opens_only_the_run_or_staging_roots(self):
         run, stage, other = self.tmp / "run", self.tmp / "stage", self.tmp / "other"
         for d in (run, stage, other):
@@ -608,6 +626,94 @@ class Reads(unittest.TestCase):
         (run / "link.root").symlink_to(other / "u.root")  # a path that resolves outside
         with self.assertRaises(C.GateFailure):
             C.own_hxsec(DRIVER, run / "link.root", (run, stage))
+
+
+# Every number in config.json, classed (the director's ruling of 2026-11-06 on C-PUB's operand). A reference is a
+# measured value transcribed into the file and compared under an rtol, so its written precision must be finer than that
+# rtol; a declared number is exact as written (a bar, a tolerance, a count, a line).
+REFERENCES = {"publication.c_pub.chi2": "publication.c_pub.rtol"}
+DECLARED = ({"e_r.cpus", "publication.c_pub.ndf", "publication.c_pub.rtol", "publication.c_pub.source.line",
+             "c2.iterations.primary", "c2.iterations.second", "c2.c_sim_rtol", "c2.c_roo_rtol", "c2.c_fill_rtol",
+             "c1.threads", "c1.replicas.first", "c1.replicas.last", "readings.rank_divisor",
+             "readings.rho_input_side[0]", "readings.rho_input_side[1]", "readings.rho_algorithm_side",
+             "readings.rho_interval", "readings.e_r_rtol"}
+            | {f"c2.iterations.scan[{i}]" for i in range(8)}
+            | {f"replica_set.options.{o}.{k}" for o in ("reuse", "new") for k in ("first", "last", "rank")})
+
+
+def numeric_leaves(text: str) -> dict[str, str]:
+    """Every number in a JSON text by its path, as written: the text, not the parsed float, carries its precision."""
+    out = {}
+
+    def walk(o, p):
+        if isinstance(o, tuple):
+            out[p] = o[1]
+        elif isinstance(o, dict):
+            for k, v in o.items():
+                walk(v, f"{p}.{k}" if p else k)
+        elif isinstance(o, list):
+            for i, v in enumerate(o):
+                walk(v, f"{p}[{i}]")
+
+    walk(json.loads(text, parse_float=lambda s: ("float", s), parse_int=lambda s: ("int", s)), "")
+    return out
+
+
+def rounding(written: str) -> float:
+    """Half a unit in the last written digit, relative to the value: the error the transcription alone allows."""
+    from decimal import Decimal
+    d = Decimal(written)
+    return float(Decimal(5) * Decimal(10) ** (d.as_tuple().exponent - 1) / abs(d))
+
+
+class Config(unittest.TestCase):
+    def test_reference_constants_are_finer_than_their_tolerance(self):
+        """A control's reference constant carries a rounding uncertainty no larger than its rtol / 10. Every number in
+        config.json is classed, so a new one fails here until it is."""
+        leaves = numeric_leaves(C.CONFIG.read_text())
+        self.assertEqual(set(REFERENCES) | DECLARED, set(leaves), "config.json's numbers and their classes differ")
+        for ref, tol in REFERENCES.items():
+            with self.subTest(ref=ref):
+                self.assertLessEqual(rounding(leaves[ref]), float(leaves[tol]) / 10, f"{ref} is written {leaves[ref]}")
+        self.assertGreater(rounding("465.4153"), 1e-8 / 10)  # the rule fires on the rounded constant C-PUB stopped on
+
+    def test_c_pub_is_its_sources_full_precision_value(self):
+        """C-PUB's chi2 is the cited receipt's own number at the cited commit and line, and that receipt was computed on
+        the E_R and published covariance the read stages."""
+        cfg = json.loads(C.CONFIG.read_text())
+        c_pub = cfg["publication"]["c_pub"]
+        src = c_pub["source"]
+        text = subprocess.run(["git", "-C", str(C.REPO), "show", f"{src['commit']}:{src['path']}"], capture_output=True,
+                              text=True, check=True).stdout
+        rec = value = json.loads(text)
+        for k in src["key"].split("."):
+            value = value[k]
+        self.assertEqual(value, c_pub["chi2"])
+        self.assertIn(f'"chi2": {c_pub["chi2"]!r},', text.splitlines()[src["line"] - 1])
+        ing = rec["ingredients"]["sha256"]
+        self.assertEqual(src["e_r_sha256"], ing["our_unfolded_2d_result_root"])
+        self.assertEqual(src["covariance_sha256"], ing["paper_covariance_and_data_root"])
+        self.assertEqual((src["e_r_sha256"], src["covariance_sha256"]),
+                         (cfg["e_r"]["central_sha256"], cfg["publication"]["sha256"]))
+
+    def test_no_unit_code_path_reads_c_pub(self):
+        """The units never read C-PUB's operand or the publication, so changing it leaves their products and DONE
+        records as they were: in the reader only guarded_read names c_pub."""
+        import ast
+
+        def names(path: Path, key: str) -> set[str]:
+            tree = ast.parse(path.read_text())
+            return {f.name for f in ast.walk(tree) if isinstance(f, ast.FunctionDef)
+                    and any(isinstance(n, ast.Constant) and n.value == key for n in ast.walk(f))}
+
+        unit = ast.parse((HERE / "ref_c2c1.py").read_text())
+        self.assertFalse([n for n in ast.walk(unit)
+                          if isinstance(n, ast.Constant) and n.value in ("c_pub", "publication")])
+        self.assertFalse([n for n in ast.walk(unit) if isinstance(n, (ast.Import, ast.ImportFrom))
+                          and "ref_c2c1_read" in ast.dump(n)])
+        for rel in json.loads(C.CONFIG.read_text())["code_sha256"]:  # the units' pinned code closure
+            self.assertNotIn("c_pub", (C.REPO / rel).read_text(), rel)
+        self.assertEqual(names(HERE / "ref_c2c1_read.py", "c_pub"), {"guarded_read"})
 
 
 def tearDownModule():
