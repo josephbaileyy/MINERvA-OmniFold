@@ -1,0 +1,302 @@
+test_pot_mismatch_refuses (test_cov2d_pseudo.Guards.test_pot_mismatch_refuses) ... /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/wt/2d-unfolding/cov2d/tests/test_cov2d_pseudo.py:74: FutureWarning: Starting in version 5.7.0, Uproot will default to writing RNTuples instead of TTrees. You will need to use `mktree` to explicitly create a TTree. This can be done by changing `file['tree_name'] = data` to `file.mktree('tree_name', data)`. Please update your code accordingly.
+  f["mc_truth_denom"] = truth
+ok
+test_r1_counts_are_zero_on_a_clean_fixture (test_cov2d_pseudo.Guards.test_r1_counts_are_zero_on_a_clean_fixture) ... ok
+test_r1_in_box_outside_the_phase_space_stops (test_cov2d_pseudo.Guards.test_r1_in_box_outside_the_phase_space_stops) ... ok
+test_r1_nonfinite_stops (test_cov2d_pseudo.Guards.test_r1_nonfinite_stops) ... ok
+test_r1_weight_at_or_above_1e4_stops (test_cov2d_pseudo.Guards.test_r1_weight_at_or_above_1e4_stops) ... ok
+test_section_9_6_stops_when_compose_is_not_bitwise (test_cov2d_pseudo.Guards.test_section_9_6_stops_when_compose_is_not_bitwise) ... ok
+test_signal_tree_without_5d_truth_refuses (test_cov2d_pseudo.Guards.test_signal_tree_without_5d_truth_refuses) ... ok
+test_a_copy_whose_atime_will_not_settle_is_refused_before_the_work (test_cov2d_pseudo.PseudoA.test_a_copy_whose_atime_will_not_settle_is_refused_before_the_work) ... ok
+test_a_plain_read_of_a_staged_copy_stops (test_cov2d_pseudo.PseudoA.test_a_plain_read_of_a_staged_copy_stops) ... ok
+test_a_staged_input_off_its_pin_is_a_stop (test_cov2d_pseudo.PseudoA.test_a_staged_input_off_its_pin_is_a_stop) ... ok
+test_chunking_changes_nothing (test_cov2d_pseudo.PseudoA.test_chunking_changes_nothing) ... ok
+test_counts_equal_an_independent_draw (test_cov2d_pseudo.PseudoA.test_counts_equal_an_independent_draw) ... ok
+test_inputs_are_staged_and_the_guard_records_its_values (test_cov2d_pseudo.PseudoA.test_inputs_are_staged_and_the_guard_records_its_values) ... ok
+test_pass_and_products (test_cov2d_pseudo.PseudoA.test_pass_and_products) ... ok
+test_r_T_is_one_call_shared_by_both_trees (test_cov2d_pseudo.PseudoA.test_r_T_is_one_call_shared_by_both_trees) ... ok
+test_refuses_an_existing_output (test_cov2d_pseudo.PseudoA.test_refuses_an_existing_output) ... ok
+test_seeds_are_the_declared_ranges (test_cov2d_pseudo.PseudoA.test_seeds_are_the_declared_ranges) ... ok
+test_seen_sums_use_the_reco_kept_rows (test_cov2d_pseudo.PseudoA.test_seen_sums_use_the_reco_kept_rows) ... ok
+test_staging_is_refused_without_twice_the_headroom (test_cov2d_pseudo.PseudoA.test_staging_is_refused_without_twice_the_headroom) ... ok
+test_truth_is_clipped_row_by_row_in_the_phase_space (test_cov2d_pseudo.PseudoA.test_truth_is_clipped_row_by_row_in_the_phase_space) ... ok
+test_reads_both_tparameters (test_cov2d_pseudo.ReadPot.test_reads_both_tparameters) ... ok
+test_a_copy_whose_atime_will_not_settle_is_refused_before_the_work (test_cov2d_pseudo_write.StepB.test_a_copy_whose_atime_will_not_settle_is_refused_before_the_work) ...  *** Break *** segmentation violation
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy_backend3_11.6.28.12.so] (anonymous namespace)::TExceptionHandlerImp::HandleException(int) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libCore.6.28.12.so] TUnixSystem::DispatchSignals(ESignals) (no debug info)
+[/usr/lib/system/libsystem_platform.dylib] _sigtramp (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy_backend3_11.6.28.12.so] WrapperCall(long, unsigned long, void*, void*, void*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy_backend3_11.6.28.12.so] WrapperCall(long, unsigned long, void*, void*, void*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy_backend3_11.6.28.12.so] Cppyy::CallI(long, void*, unsigned long, void*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy3_11.6.28.12.so] CPyCppyy::(anonymous namespace)::IntExecutor::Execute(long, void*, CPyCppyy::CallContext*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy3_11.6.28.12.so] CPyCppyy::CPPMethod::ExecuteFast(void*, long, CPyCppyy::CallContext*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy3_11.6.28.12.so] CPyCppyy::CPPMethod::ExecuteProtected(void*, long, CPyCppyy::CallContext*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy3_11.6.28.12.so] CPyCppyy::CPPMethod::Call(CPyCppyy::CPPInstance*&, _object*, _object*, CPyCppyy::CallContext*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy3_11.6.28.12.so] CPyCppyy::(anonymous namespace)::mp_call(CPyCppyy::CPPOverload*, _object*, _object*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] method_vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyObject_Call_Prepend (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] slot_tp_call (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] method_vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyObject_Call_Prepend (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] slot_tp_call (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] method_vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyObject_Call_Prepend (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] slot_tp_call (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] method_vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyObject_Call_Prepend (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] slot_tp_call (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyObject_Call_Prepend (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] slot_tp_init (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] type_call (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_Vector (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] PyEval_EvalCode (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] builtin_exec (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] cfunction_vectorcall_FASTCALL_KEYWORDS (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] pymain_run_module (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] Py_RunMain (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] main (no debug info)
+[/usr/lib/dyld] start (no debug info)
+ *** Break *** segmentation violation
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy_backend3_11.6.28.12.so] (anonymous namespace)::TExceptionHandlerImp::HandleException(int) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libCore.6.28.12.so] TUnixSystem::DispatchSignals(ESignals) (no debug info)
+[/usr/lib/system/libsystem_platform.dylib] _sigtramp (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy_backend3_11.6.28.12.so] WrapperCall(long, unsigned long, void*, void*, void*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy_backend3_11.6.28.12.so] WrapperCall(long, unsigned long, void*, void*, void*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy_backend3_11.6.28.12.so] Cppyy::CallI(long, void*, unsigned long, void*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy3_11.6.28.12.so] CPyCppyy::(anonymous namespace)::IntExecutor::Execute(long, void*, CPyCppyy::CallContext*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy3_11.6.28.12.so] CPyCppyy::CPPMethod::ExecuteFast(void*, long, CPyCppyy::CallContext*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy3_11.6.28.12.so] CPyCppyy::CPPMethod::ExecuteProtected(void*, long, CPyCppyy::CallContext*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy3_11.6.28.12.so] CPyCppyy::CPPMethod::Call(CPyCppyy::CPPInstance*&, _object*, _object*, CPyCppyy::CallContext*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/libcppyy3_11.6.28.12.so] CPyCppyy::(anonymous namespace)::mp_call(CPyCppyy::CPPOverload*, _object*, _object*) (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] method_vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyObject_Call_Prepend (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] slot_tp_call (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] method_vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyObject_Call_Prepend (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] slot_tp_call (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] method_vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyObject_Call_Prepend (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] slot_tp_call (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] method_vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyObject_Call_Prepend (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] slot_tp_call (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbaiok
+test_a_deploy_that_moves_during_step_b_stops (test_cov2d_pseudo_write.StepB.test_a_deploy_that_moves_during_step_b_stops) ... ley-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyObject_Call_Prepend (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] slot_tp_init (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] type_call (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_Vector (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] PyEval_EvalCode (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] builtin_exec (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] cfunction_vectorcall_FASTCALL_KEYWORDS (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyEval_EvalFrameDefault (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] _PyFunction_Vectorcall (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] pymain_run_module (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] Py_RunMain (no debug info)
+[/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/bin/python3.11] main (no debug info)
+[/usr/lib/dyld] start (no debug info)
+ok
+test_a_dirty_deploy_is_refused_before_any_output (test_cov2d_pseudo_write.StepB.test_a_dirty_deploy_is_refused_before_any_output) ... ok
+test_a_plain_read_of_a_staged_copy_stops (test_cov2d_pseudo_write.StepB.test_a_plain_read_of_a_staged_copy_stops) ... ok
+test_a_staged_input_off_its_pin_is_a_stop (test_cov2d_pseudo_write.StepB.test_a_staged_input_off_its_pin_is_a_stop) ... ok
+test_inputs_are_staged_root_reads_working_copies_and_the_guard_records (test_cov2d_pseudo_write.StepB.test_inputs_are_staged_root_reads_working_copies_and_the_guard_records) ... ok
+test_pass_files_read_back_and_truth (test_cov2d_pseudo_write.StepB.test_pass_files_read_back_and_truth) ... ok
+test_refuses_a_stopped_step_a (test_cov2d_pseudo_write.StepB.test_refuses_a_stopped_step_a) ... ok
+test_section_9_11_catches_a_moved_row (test_cov2d_pseudo_write.StepB.test_section_9_11_catches_a_moved_row) ... ok
+test_section_9_11_catches_a_wrong_file (test_cov2d_pseudo_write.StepB.test_section_9_11_catches_a_wrong_file) ... ok
+test_section_9_11_realization_more_than_5_sigma_stops (test_cov2d_pseudo_write.StepB.test_section_9_11_realization_more_than_5_sigma_stops) ... ok
+test_section_9_4_cross_check_on_hTruth2D (test_cov2d_pseudo_write.StepB.test_section_9_4_cross_check_on_hTruth2D) ... ok
+test_section_9_4_needs_205_cells (test_cov2d_pseudo_write.StepB.test_section_9_4_needs_205_cells) ... ok
+test_section_9_4_stops_before_any_data_file (test_cov2d_pseudo_write.StepB.test_section_9_4_stops_before_any_data_file) ... ok
+test_the_writers_record_is_what_order_admits (test_cov2d_pseudo_write.StepB.test_the_writers_record_is_what_order_admits) ... ok
+test_truth_uses_the_drawn_flux_universe (test_cov2d_pseudo_write.StepB.test_truth_uses_the_drawn_flux_universe) ... ok
+test_flux_band_is_weighted (test_cov2d_blocks.Assemble.test_flux_band_is_weighted) ... ok
+test_norm_is_built_from_x_hat_T_once (test_cov2d_blocks.Assemble.test_norm_is_built_from_x_hat_T_once) ... ok
+test_pair_band_and_minos_x01 (test_cov2d_blocks.Assemble.test_pair_band_and_minos_x01) ... ok
+test_r6_blocks_sum_to_the_functions_total (test_cov2d_blocks.Assemble.test_r6_blocks_sum_to_the_functions_total) ... ok
+test_r6_key_set_is_38_universe_5_lateral_and_the_norm (test_cov2d_blocks.Assemble.test_r6_key_set_is_38_universe_5_lateral_and_the_norm) ... ok
+test_refuses_a_drifted_dict_layout (test_cov2d_blocks.Assemble.test_refuses_a_drifted_dict_layout) ... ok
+test_section_9_8 (test_cov2d_blocks.Assemble.test_section_9_8) ... ok
+test_stat_c08_and_model_forms (test_cov2d_blocks.Assemble.test_stat_c08_and_model_forms) ... ok
+test_bypass_scan_fires_on_each_bypass_and_not_on_the_real_modules (test_cov2d_blocks.Audit.test_bypass_scan_fires_on_each_bypass_and_not_on_the_real_modules) ... ok
+test_counts_guarded_opens (test_cov2d_blocks.Audit.test_counts_guarded_opens) ... ok
+test_sanctioned_noatime_reads_and_free_paths_pass_and_are_logged (test_cov2d_blocks.Audit.test_sanctioned_noatime_reads_and_free_paths_pass_and_are_logged) ... ok
+test_tfile_open_is_audited (test_cov2d_blocks.Audit.test_tfile_open_is_audited) ... ok
+test_uninstall_restores (test_cov2d_blocks.Audit.test_uninstall_restores) ... ok
+test_unredirected_guarded_reads_are_refused (test_cov2d_blocks.Audit.test_unredirected_guarded_reads_are_refused) ... ok
+test_a_changed_file_or_matrix_refuses (test_cov2d_blocks.CModel.test_a_changed_file_or_matrix_refuses) ... ok
+test_full_construction_reproduces_the_pinned_sha_and_minus_takes_two_vertices (test_cov2d_blocks.CModel.test_full_construction_reproduces_the_pinned_sha_and_minus_takes_two_vertices) ... ok
+test_main_reads_every_rollup_input_through_noatime_copies (test_cov2d_blocks.Control95Main.test_main_reads_every_rollup_input_through_noatime_copies) ... /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/wt/2d-unfolding/re2/partc/re2c_rollup.py:221: ResourceWarning: unclosed file <_io.TextIOWrapper name='/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/tmpq/tmp4xm_s32d/tmp/tmpjwi4q5d5/rollup/constraint.txt' mode='r' encoding='UTF-8'>
+  for line in open(PIN["constraint"][0]):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_it_is_rpds_function_and_a_refusal_propagates (test_cov2d_blocks.MatEnvironment.test_it_is_rpds_function_and_a_refusal_propagates) ... ok
+test_rpds_pins_are_the_six_scripts_and_libmat (test_cov2d_blocks.MatEnvironment.test_rpds_pins_are_the_six_scripts_and_libmat) ... ok
+test_a_wrong_pin_refuses (test_cov2d_blocks.NoatimeInputs.test_a_wrong_pin_refuses) ... ok
+test_copies_and_repoints_every_read (test_cov2d_blocks.NoatimeInputs.test_copies_and_repoints_every_read) ... ok
+test_check_matched_on_every_regime (test_cov2d_blocks.NullOnTheRealPath.test_check_matched_on_every_regime) ... ok
+test_a_changed_band_or_stat_or_cells_fails (test_cov2d_blocks.Section95.test_a_changed_band_or_stat_or_cells_fails) ... ok
+test_a_missing_band_key_fails (test_cov2d_blocks.Section95.test_a_missing_band_key_fails) ... ok
+test_labels_are_part_bs (test_cov2d_blocks.Section95.test_labels_are_part_bs) ... ok
+test_reproduces_and_passes (test_cov2d_blocks.Section95.test_reproduces_and_passes) ... ok
+test_a_mismatched_null_refuses (test_cov2d_null.Null.test_a_mismatched_null_refuses) ... ok
+test_laws_reproduce_the_blocks_and_the_null_runs_at_the_declared_seed (test_cov2d_null.Null.test_laws_reproduce_the_blocks_and_the_null_runs_at_the_declared_seed) ... ok
+test_minos_law_uses_x01 (test_cov2d_null.Null.test_minos_law_uses_x01) ... ok
+test_wrong_universe_counts_refuse (test_cov2d_null.Null.test_wrong_universe_counts_refuse) ... ok
+test_c_t_minus_null_is_built_in_the_null_step_at_the_declared_seed (test_cov2d_null.NullMinus.test_c_t_minus_null_is_built_in_the_null_step_at_the_declared_seed) ... ok
+test_a_failed_control_is_invalid_and_keeps_the_grade (test_cov2d_score.Score.test_a_failed_control_is_invalid_and_keeps_the_grade) ... ok
+test_errors_apply_the_surrogates_per_toy (test_cov2d_score.Score.test_errors_apply_the_surrogates_per_toy) ... ok
+test_grade_is_1bs_and_gaussian_errors_cover (test_cov2d_score.Score.test_grade_is_1bs_and_gaussian_errors_cover) ... ok
+test_needs_205_cells (test_cov2d_score.Score.test_needs_205_cells) ... ok
+test_refuses_any_toy_count_but_the_declared_300 (test_cov2d_score.Score.test_refuses_any_toy_count_but_the_declared_300) ... ok
+test_refuses_cells_without_the_outlier (test_cov2d_score.Score.test_refuses_cells_without_the_outlier) ... ok
+test_the_outlier_cells_values_are_read_at_its_own_position (test_cov2d_score.Score.test_the_outlier_cells_values_are_read_at_its_own_position) ... ok
+test_too_narrow_c_t_under_covers_and_a_weakened_cell_that_flags_is_not_labelled (test_cov2d_score.Score.test_too_narrow_c_t_under_covers_and_a_weakened_cell_that_flags_is_not_labelled) ... ok
+test_weakened_share_counts_every_weakened_cell_when_they_flag (test_cov2d_score.Score.test_weakened_share_counts_every_weakened_cell_when_they_flag) ... ok
+test_deltas_use_minos_x01 (test_cov2d_score.Surrogate.test_deltas_use_minos_x01) ... ok
+test_lateral_then_normalization (test_cov2d_score.Surrogate.test_lateral_then_normalization) ... ok
+test_signs_must_be_one_per_lateral_band (test_cov2d_score.Surrogate.test_signs_must_be_one_per_lateral_band) ... ok
+test_runs_over_600_draws_and_matches_a_hand_first_order_histogram (test_cov2d_readouts.CrossTermsCLI.test_runs_over_600_draws_and_matches_a_hand_first_order_histogram) ... ok
+test_a_joint_flag_alone_is_a_shift_reading (test_cov2d_readouts.LeaveOutMEC.test_a_joint_flag_alone_is_a_shift_reading) ... ok
+test_c_t_covers_and_c_t_minus_flags (test_cov2d_readouts.LeaveOutMEC.test_c_t_covers_and_c_t_minus_flags) ... ok
+test_c_t_minus_also_covers (test_cov2d_readouts.LeaveOutMEC.test_c_t_minus_also_covers) ... ok
+test_no_reading_when_c_t_under_covers (test_cov2d_readouts.LeaveOutMEC.test_no_reading_when_c_t_under_covers) ... ok
+test_clipping_residual_and_its_reading (test_cov2d_readouts.Pure.test_clipping_residual_and_its_reading) ... ok
+test_clipping_residual_on_varying_inputs_against_a_hand_computation (test_cov2d_readouts.Pure.test_clipping_residual_on_varying_inputs_against_a_hand_computation) ... ok
+test_predicted_offset (test_cov2d_readouts.Pure.test_predicted_offset) ... ok
+test_product_compose_is_c2s (test_cov2d_readouts.Pure.test_product_compose_is_c2s) ... ok
+test_refuses_cells_without_the_outlier (test_cov2d_readouts.Pure.test_refuses_cells_without_the_outlier) ... ok
+test_refuses_rows_that_are_not_the_truths_toys_in_seed_order (test_cov2d_readouts.Pure.test_refuses_rows_that_are_not_the_truths_toys_in_seed_order) ... ok
+test_spread_bias_realization (test_cov2d_readouts.Pure.test_spread_bias_realization) ... ok
+test_limits (test_cov2d_jobs.A2Pseudo.test_limits) ... ok
+test_pseudo_dir_through_the_real_env_script (test_cov2d_jobs.A2Pseudo.test_pseudo_dir_through_the_real_env_script) ... ok
+test_staged_copies_are_deleted_with_b9_rows_unless_their_stat_moved (test_cov2d_jobs.A2Pseudo.test_staged_copies_are_deleted_with_b9_rows_unless_their_stat_moved) ... ok
+test_a_changed_data_file_stops (test_cov2d_jobs.Check.test_a_changed_data_file_stops) ... ok
+test_a_changed_staged_copy_stops (test_cov2d_jobs.Check.test_a_changed_staged_copy_stops) ... ok
+test_a_clean_lateral_job_and_toy_job_pass (test_cov2d_jobs.Check.test_a_clean_lateral_job_and_toy_job_pass) ... ok
+test_a_purged_staged_copy_stops_with_no_restage (test_cov2d_jobs.Check.test_a_purged_staged_copy_stops_with_no_restage) ... ok
+test_uni_stat_and_pins (test_cov2d_jobs.Check.test_uni_stat_and_pins) ... ok
+test_ar23s_jobs_read_the_rerun_directory (test_cov2d_jobs.DryRun.test_ar23s_jobs_read_the_rerun_directory) ... ok
+test_the_lateral_job_prints_its_11_runs_in_2_lanes (test_cov2d_jobs.DryRun.test_the_lateral_job_prints_its_11_runs_in_2_lanes) ... ok
+test_spent_held_and_the_cap (test_cov2d_jobs.Gate.test_spent_held_and_the_cap) ... ok
+test_each_run_records_its_own_rc (test_cov2d_jobs.LaneWalls.test_each_run_records_its_own_rc) ... ok
+test_a_pilot_needing_repricing_opens_nothing_after_it (test_cov2d_jobs.Order.test_a_pilot_needing_repricing_opens_nothing_after_it) ... ok
+test_a_pseudo_record_without_its_pins_checked_opens_nothing (test_cov2d_jobs.Order.test_a_pseudo_record_without_its_pins_checked_opens_nothing) ... ok
+test_a_record_for_another_commit_or_not_pass_does_not_count (test_cov2d_jobs.Order.test_a_record_for_another_commit_or_not_pass_does_not_count) ... ok
+test_gate_refuses_an_unknown_cov2d_job (test_cov2d_jobs.Order.test_gate_refuses_an_unknown_cov2d_job) ... ok
+test_the_sequence (test_cov2d_jobs.Order.test_the_sequence) ... ok
+test_uni_stat (test_cov2d_jobs.Order.test_uni_stat) ... ok
+test_dvs_rate_reads_the_same_prefix (test_cov2d_jobs.Pilot.test_dvs_rate_reads_the_same_prefix) ... ok
+test_eight_runs_three_lanes_and_2a_file (test_cov2d_jobs.Pilot.test_eight_runs_three_lanes_and_2a_file) ... ok
+test_pilot_dry_run_reads_g18_data (test_cov2d_jobs.Pilot.test_pilot_dry_run_reads_g18_data) ... ok
+test_every_line_parses (test_cov2d_jobs.RealParser.test_every_line_parses) ... ok
+test_admits_when_origin_mains_binding_names_M (test_cov2d_jobs.SubmitBinding.test_admits_when_origin_mains_binding_names_M) ... ok
+test_binding_1s_own_text_binds_its_M_line_only (test_cov2d_jobs.SubmitBinding.test_binding_1s_own_text_binds_its_M_line_only) ... ok
+/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/rootenv/lib/python3.11/tempfile.py:934: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/tmpq/tmpn02c4wnv'>
+  _warnings.warn(warn_message, ResourceWarning)
+test_refuses_M_cited_only_off_the_M_line (test_cov2d_jobs.SubmitBinding.test_refuses_M_cited_only_off_the_M_line) ... ok
+test_refuses_a_binding_naming_another_commit (test_cov2d_jobs.SubmitBinding.test_refuses_a_binding_naming_another_commit) ... ok
+test_refuses_a_dirty_deploy_or_a_head_other_than_M (test_cov2d_jobs.SubmitBinding.test_refuses_a_dirty_deploy_or_a_head_other_than_M) ... ok
+test_refuses_a_failed_fetch_even_with_a_good_binding_already_fetched (test_cov2d_jobs.SubmitBinding.test_refuses_a_failed_fetch_even_with_a_good_binding_already_fetched) ... ok
+test_refuses_when_origin_main_has_no_binding (test_cov2d_jobs.SubmitBinding.test_refuses_when_origin_main_has_no_binding) ... ok
+test_the_audited_script_refuses_even_the_correct_setup (test_cov2d_jobs.SubmitBinding.test_the_audited_script_refuses_even_the_correct_setup) ... ok
+test_counts_and_labels (test_cov2d_jobs.Tables.test_counts_and_labels) ... ok
+test_limit_rule_reproduces_part_bs_limits (test_cov2d_jobs.Tables.test_limit_rule_reproduces_part_bs_limits) ... ok
+test_packing_is_part_bs (test_cov2d_jobs.Tables.test_packing_is_part_bs) ... ok
+test_toys_read_their_own_file_and_everything_else_reads_d_T (test_cov2d_jobs.Tables.test_toys_read_their_own_file_and_everything_else_reads_d_T) ... ok
+test_universes_are_the_bank_and_replicas_seeds_1_to_300 (test_cov2d_jobs.Tables.test_universes_are_the_bank_and_replicas_seeds_1_to_300) ... ok
+test_written_tables (test_cov2d_jobs.Tables.test_written_tables) ... ok
+test_2b_failure_is_the_second_stop (test_cov2d_pilot.Readout.test_2b_failure_is_the_second_stop) ... ok
+test_a_class_without_a_measured_wall_is_invalid_even_when_every_run_passed (test_cov2d_pilot.Readout.test_a_class_without_a_measured_wall_is_invalid_even_when_every_run_passed) ... ok
+test_a_dirty_deploy_is_refused (test_cov2d_pilot.Readout.test_a_dirty_deploy_is_refused) ... ok
+test_a_failed_run_of_any_class_is_invalid (test_cov2d_pilot.Readout.test_a_failed_run_of_any_class_is_invalid) ... ok
+test_a_pass_that_needs_repricing_does_not_open_the_bulk (test_cov2d_pilot.Readout.test_a_pass_that_needs_repricing_does_not_open_the_bulk) ... ok
+test_missing_partb_product_is_invalid (test_cov2d_pilot.Readout.test_missing_partb_product_is_invalid) ... ok
+test_pass (test_cov2d_pilot.Readout.test_pass) ... ok
+test_the_readouts_record_is_what_order_admits (test_cov2d_pilot.Readout.test_the_readouts_record_is_what_order_admits) ... ok
+test_within_1e_8_passes (test_cov2d_pilot.Readout.test_within_1e_8_passes) ... ok
+test_classes (test_cov2d_pilot.Walls.test_classes) ... ok
+test_partb_wall_per_run_from_the_committed_ledger (test_cov2d_pilot.Walls.test_partb_wall_per_run_from_the_committed_ledger) ... ok
+test_reprice (test_cov2d_pilot.Walls.test_reprice) ... ok
+test_the_64_cpu_universe_is_not_a_measurement (test_cov2d_pilot.Walls.test_the_64_cpu_universe_is_not_a_measurement) ... ok
+test_bank_is_part_b_universe_block (test_cov2d.Bank.test_bank_is_part_b_universe_block) ... ok
+test_flux_weights (test_cov2d.Bank.test_flux_weights) ... ok
+test_seeds (test_cov2d.Bank.test_seeds) ... ok
+test_bound_is_never_below_the_exact_maximum (test_cov2d.Compose.test_bound_is_never_below_the_exact_maximum) ... ok
+test_c2_weakened_cells_and_outlier (test_cov2d.Compose.test_c2_weakened_cells_and_outlier)
+On C2's committed record: the weakened cells per tune, and OUTLIER_CELL is the cell of the largest |R|. ... ok
+test_deploy_head_is_the_clean_checkouts_head (test_cov2d.Compose.test_deploy_head_is_the_clean_checkouts_head) ... ok
+test_first_order_in_draw_order (test_cov2d.Compose.test_first_order_in_draw_order) ... ok
+test_lam_plus (test_cov2d.Compose.test_lam_plus) ... ok
+test_n1_conventions (test_cov2d.Compose.test_n1_conventions) ... ok
+test_one_universe_is_bitwise (test_cov2d.Compose.test_one_universe_is_bitwise) ... ok
+test_refuses_empty (test_cov2d.Compose.test_refuses_empty) ... ok
+test_sha256_through_noatime (test_cov2d.Compose.test_sha256_through_noatime) ... ok
+test_weakened_cells (test_cov2d.Compose.test_weakened_cells) ... ok
+test_deterministic_and_ordered (test_cov2d.Draws.test_deterministic_and_ordered) ... ok
+test_flux_probability (test_cov2d.Draws.test_flux_probability) ... ok
+test_generator_is_seed_and_salt (test_cov2d.Draws.test_generator_is_seed_and_salt) ... ok
+test_pair_bands_uniform (test_cov2d.Draws.test_pair_bands_uniform) ... ok
+test_a_nonpositive_truth_cell_stops (test_cov2d.Receipt.test_a_nonpositive_truth_cell_stops) ... ok
+test_an_unequal_band_is_not_certified_by_its_largest_universe (test_cov2d.Receipt.test_an_unequal_band_is_not_certified_by_its_largest_universe) ... ok
+test_atime_move_stops (test_cov2d.Receipt.test_atime_move_stops) ... ok
+test_compounding_row_stops (test_cov2d.Receipt.test_compounding_row_stops) ... ok
+test_driver_names_without_root_equal_the_import (test_cov2d.Receipt.test_driver_names_without_root_equal_the_import) ... ok
+test_mild_bank_passes_and_every_row_is_evaluated (test_cov2d.Receipt.test_mild_bank_passes_and_every_row_is_evaluated) ... ok
+test_negative_composites_are_counted (test_cov2d.Receipt.test_negative_composites_are_counted) ... ok
+test_nonfinite_weights_are_zeroed_and_counted (test_cov2d.Receipt.test_nonfinite_weights_are_zeroed_and_counted) ... ok
+test_the_bound_is_exact_at_the_edge (test_cov2d.Receipt.test_the_bound_is_exact_at_the_edge) ... ok
+test_truth_cell_matches_a_th2d (test_cov2d.Receipt.test_truth_cell_matches_a_th2d) ... ok
+test_truth_cells_are_recomputed_independently (test_cov2d.Receipt.test_truth_cells_are_recomputed_independently) ... ok
+test_a_copy_is_made_once (test_cov2d.StageAndGuard.test_a_copy_is_made_once) ... ok
+test_a_wrong_pin_refuses_and_leaves_no_copy (test_cov2d.StageAndGuard.test_a_wrong_pin_refuses_and_leaves_no_copy) ... ok
+test_copies_hashes_and_records (test_cov2d.StageAndGuard.test_copies_hashes_and_records) ... ok
+test_headroom_against_re2s_showquota_row (test_cov2d.StageAndGuard.test_headroom_against_re2s_showquota_row) ... ok
+test_settling (test_cov2d.StageAndGuard.test_settling) ... ok
+test_stage_all_stops_at_the_first_copy_off_its_pin (test_cov2d.StageAndGuard.test_stage_all_stops_at_the_first_copy_off_its_pin) ... ok
+test_the_guard_records_both_values (test_cov2d.StageAndGuard.test_the_guard_records_both_values) ... ok
+
+----------------------------------------------------------------------
+Ran 176 tests in 111.208s
+
+OK
+suites rc=0

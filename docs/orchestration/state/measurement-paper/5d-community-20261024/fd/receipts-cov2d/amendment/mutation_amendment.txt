@@ -69,11 +69,20 @@ KILLED  cov2d_pseudo_write.py: A2 ROOT reads the staged copies
 KILLED  jobs/cov2d_env.sh: A2 AR23 reruns into its old directory
 KILLED  jobs/cov2d_jobs.py: A2 AR23's limit 03:00:00
 KILLED  jobs/cov2d_jobs.py: A2 deletion without the stat match
+KILLED  cov2d.py: A2 a staged pin mismatch is a refusal, not a STOP
+KILLED  cov2d.py: A2 D1 the off-pin STOP without its digests
+KILLED  cov2d_pseudo.py: A2 D2 step A settle skipped
+KILLED  cov2d_pseudo_write.py: A2 D2 step B settle skipped
+KILLED  cov2d.py: A2 D2 settle wait under 5 s
+KILLED  cov2d.py: A2 D2 an unsettled reading accepted
+KILLED  jobs/cov2d_jobs.py: A2 L1 order ignores pins_checked
+KILLED  cov2d_pseudo.py: A2 step A off-pin STOP skipped
+KILLED  cov2d_pseudo_write.py: A2 step B off-pin STOP skipped
 KILLED  cov2d.py: A2 shared atime not recorded
 KILLED  jobs/cov2d_jobs.py: gate passes everything
 KILLED  cov2d_pilot.py: pilot compare at 1e-6
 KILLED  cov2d_pilot.py: REPRICE at 2x
 KILLED  cov2d_pilot.py: P2 a failed run is not INVALID
 KILLED  cov2d_pilot.py: P2 a missing class is not INVALID
-killed 77 of 77
+killed 86 of 86
 harness rc=0
