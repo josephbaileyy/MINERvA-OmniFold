@@ -42,4 +42,64 @@ Codex diagnosis lane's #760 §C (C-R, C-H).
 5. **The Codex diagnosis lane's C-N** (the per-playlist flux and POT provenance inventory) supplies d2's flux-file
    identities. That lane works from existing records and is not duplicated here.
 
+## Binding 1, addendum A1: d2's swap factor follows MAT's own CV flux weight (director, 2026-11-06)
+
+**No new M.** d2's design and readings are unchanged. This addendum corrects one implementation sentence of §4, from a
+source finding made before any declared input was read.
+
+**What led to it.** Codex2's source review for R1 fetched MAT at `35097b65ab1680db8058f9ede18fecffdc3a1ea3` from
+MinervaExpt/MAT. The director re-fetched it, and `PlotUtils/FluxReweighter.cxx` has sha256 `4576346d…`, as in receipt
+#849.
+1. **The weight.** `GetFluxCVWeight` (`:977-993`) returns `newFlux->Interpolate(Enu) / genFlux->Interpolate(Enu)`:
+   - below 75 GeV, from interpolated values;
+   - above 75 GeV, from bin contents (`:984-987`);
+   - 1 when either is zero (`:988-990`).
+2. **The numerator** is `m_fluxReweightNu` (`:331`). When the ν-e constraint is applied, it is replaced by
+   `Constrainer().ConstrainHisto(...)` of the file histogram (`:335-340`). The other constructors do the same at
+   `:396-405` and `:450-460`, and P0 cites the one the analysis uses.
+3. **The constraint in the analysis.** The analysis's event loop applies it: `PlotUtils::MinervaUniverse::SetNuEConstraint(true)`
+   at `MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp:1698` @ `f4cd8f8b`.
+4. **The denominator** is the playlist's generated flux, `flux_E_unweighted` (`:358`, `:940`).
+
+§4 says that "the factor is applied as a step function in the files' Eν bins". That is not how MAT evaluates its
+weight. So the swap would not be "exactly φ_T(E)/φ_own(E)" in MAT's sense.
+
+**Rulings.**
+1. **φ is the CV reweight flux as MAT's FluxReweighter holds it.**
+   - It is obtained by calling MAT in the pinned MAT environment (`fd_rpd_inputs.mat_environment()`, `check-mat-setup`).
+   - It uses the analysis event loop's own FluxReweighter arguments, cited `file:line @ sha` in P0's record. The
+     ν-e constraint is included, so the histogram is the constrained one.
+   - The constraint is not re-derived, and no `flux_E_cvweighted` file histogram is used in its place.
+2. **The swap factor at a row's Eν** is φ_T(Eν) / φ_own(Eν), evaluated as `GetFluxCVWeight` evaluates its numerator:
+   - ROOT's own `TH1::Interpolate` below 75 GeV;
+   - the bin content above it.
+
+   **The zero rule:** where either value is 0, the factor is 1, and P0 records the count and the weight share of such
+   rows.
+
+   **Evaluation:** the factor is evaluated by ROOT in the MAT-environment extract step, which writes per-row factors or
+   an equivalent pinned table. A reimplementation in the numerical steps is allowed only with a test, on the real
+   staged histograms, equal to ROOT's values to 1e-12 relative at every evaluated Eν.
+3. **P-F's premise check at P0 stands as declared.** P0 records, from the pinned source and the analysis's arguments:
+   - which generated flux each playlist's MC uses;
+   - that the swap leaves it unchanged.
+
+   If the source shows the weight is not of the form φ_reweight(E) / φ_gen(E) with φ_gen fixed by the MC sample, d2
+   STOPs before any swap.
+4. **Unchanged:**
+   - the 0.1 % out-of-range STOP;
+   - the swaps;
+   - the background bracket;
+   - every reading and licence.
+
+   The sentence "applied as a step function in the files' Eν bins" is replaced by rulings 1–2.
+5. **Tests:**
+   - a fixture where interpolation and step differ, which must give ROOT's interpolated value;
+   - the 75 GeV boundary from both sides;
+   - the zero rule;
+   - a REQUIRED mutant for each.
+
+   The real-MnvH1D test runs in limitation-resolver's lane, in the MAT environment (#848's ruling of 2026-11-06).
+6. **coverage-5b-audit** reads this addendum together with #848's next head.
+
 Nothing is submitted, deposited or tagged.
