@@ -132,8 +132,9 @@ unrepaired, and any follow-up needs its own declaration.
 ### 4.3 Rule F, the attribution (HF1)
 
 For each band and group, take the cells where ρ is outside the window and that are resolved for all three factors.
-- **Attribution:** in each such cell, the dominant factor on the same side of 1 as ρ, among those outside the window.
-  "Dominant" means the largest |ln F|, as in I2's rule.
+- **Attribution:** in each such cell, the factor with the largest |ln F| on the same side of 1 as ρ. It is attributed
+  if it lies outside the window and carries at least half of |ln ρ|; otherwise the cell is unresolved. This is I2's
+  rule (`fd_1b_inv.attribute`), without its S1-resolved F_truth clause, which the noise class replaces here.
 - **The level**, with n such cells:
   - a factor is **the account** if it is attributed in more than n/2 cells;
   - it is **refuted as the account** if it is attributed in at most n/4;
@@ -185,16 +186,27 @@ Any failed control makes the run **INVALID**, and it is reported unrepaired.
 
 ## 6. Inputs, reads and the fence
 
-**Read once each, with O_NOATIME, into a stage under a new `$V = /pscratch/sd/j/josephrb/fd-1b-precheck-fd-<date>`,
-with sha256 recorded:**
-- gate D's derivation products for CV, Flux_0–99 and the 8 detector universes (109 of the 176):
-  `$P/fd-1b-20261030/runs/derivation/`;
-- S1's universe unfolds for the same 109: `$P/s1-20261024/runs/uni/`; and S1's assembly (`db000707…`);
-- the inputs npz (S1's digest), the background dump, the bank's `cv.npz`, the 100 Flux weight sets and the 8
-  detector-dump weight sets, against the pins file;
+**Staged: read once each, with O_NOATIME, into a stage under a new
+`$V = /pscratch/sd/j/josephrb/fd-1b-precheck-fd-<date>`, with sha256 recorded (`fd_1b_inv.stage`):**
+- all 176 of gate D's derivation products, `$P/fd-1b-20261030/runs/derivation/`. Gate D's builder
+  (`fd_1b_score.derivation_blocks`) needs the full set for control E;
+- all 176 of S1's universe unfolds, `$P/s1-20261024/runs/uni/`, and S1's assembly (`db000707…`);
 - S1's flux-integral file, as its Flux products record it (`5eecae84…` by `S1-DECLARATION.md:261`);
-- the flux constraint `sorted_NuEConstraint_FHC_RHC_IMD.txt` (`e38ad7d2…`), a COV2D input;
-- `i0.json`, for the floors, which is committed.
+- the flux constraint `sorted_NuEConstraint_FHC_RHC_IMD.txt` (`e38ad7d2…`), a COV2D input.
+
+The readout reads only these copies and three committed files (`gate-d.json`, `diag.json`, `i0.json`, the last for
+its measured floors).
+
+**Read in place by the jobs, as I2's were:** the inputs npz (S1's digest), the background dump, the bank's `cv.npz`,
+the 100 Flux weight sets and the 8 detector-dump weight sets. Each is opened only through `fd_1b_inv.open_noatime`.
+The weights are digest-checked against the pins file before every item, and each job records the atime of every file
+it opened, exiting 8 on a move. A test drives all three modes through an instrumented `os.open` and finds no plain
+read of any of them.
+
+**The jobs' flux file is the staged copy.** `flux_universe` (ROOT in production) reads it plainly. Its digest is
+therefore read plainly too, and it is not an atime-tracked source. The test suite caught the alternative: an
+O_NOATIME digest followed by ROOT's plain read made every job report a false atime move. The readout refuses unless
+every product's `flux_file_sha256` is the staged copy's.
 
 **The fence.**
 - `cov2d_fence.sh` runs before every connect.
@@ -248,17 +260,33 @@ atime. A missing source is a STOP to the director, with HPSS fallback paths name
 - `walls`;
 - `readout`.
 
-**Its tests:**
-- each mode at CV equals the CV control bitwise;
-- §2.1's flux key in each of the three modes: a test that fails on `fd_1b_inv.with_mc`'s behaviour;
-- the weighted Flux estimator and its noise factor;
-- the identity;
-- rules S, F and K in both directions on fixtures;
-- the refusal of an interaction universe;
-- O_NOATIME over the call graph.
+**Its tests** (`nd-unfolding/tests/test_fd_1b_precheck_fd.py`, 30 tests, synthetic fixtures only):
+- **B's factors** equal `fd_1b_toys.source_factors`' bitwise;
+- **each mode at CV** equals the derivation CV experiment bitwise;
+- **§2.1's flux key** in each mode, with the inherited `with_mc` shown to give the wrong flux. The job refuses a
+  product unfolded with another mode's flux;
+- **Dnom's truth** carries Φ_u;
+- **HD1's flags** are recorded;
+- **rules S, F and K** at their edges, with unresolved cells ignored, and the levels at n/2 and n/4;
+- **the readout end to end:**
+  - B = E reads REPRODUCED and 1.2 E DEPARTS;
+  - the attribution lands on the factor the fixture sets;
+  - κ = 1.2 fails;
+  - κ's floor is uncarried;
+  - A_Φ = A for pure-normalization universes;
+- **each of nine controls** refuses with its own message;
+- **an atime move** exits 8;
+- **O_NOATIME over the call graph.**
 
-**The mutation receipt** covers each rule's threshold, the flux key in each mode, the weights, the identity's
-operands, and a dropped control.
+**The mutation receipt** (`fd/receipts-1b/precheck-fd/code/mutation.{py,out}`) kills 37 of 37 mutants:
+- the flux key in each mode, and the job's flux refusal;
+- B's factors, and Dnom's nature and unfolding MC;
+- every threshold and every rule edge;
+- the weights, the carry and Dnom's object;
+- κ's floor and A_Φ;
+- each control.
+
+The suite passes at PYTHONHASHSEED 0, 1 and 12345.
 
 ## 9. Routing
 

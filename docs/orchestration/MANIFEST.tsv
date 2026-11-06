@@ -7296,6 +7296,9 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-attribution/attribution.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-attribution/attribution.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-attribution/binding-delta.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-fd/code/SHA256SUMS.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-fd/code/mutation.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-fd/code/mutation.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage1/arith.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage1/arith.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage1/cluster-reads-2.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

@@ -1,0 +1,47 @@
+sha256 7c3ffe86b721f79ba9ee3d426b4c711ca96eeec7b2a4071eba5cf62bf102ef0f  fd_1b_precheck_fd.py
+sha256 05ed491bde0c7072e825d9dd7154c5731f7bff607bf599a03e3729bef46b0f9a  tests/test_fd_1b_precheck_fd.py
+sha256 71b3903aa1329807af7e48b29b4ffd3336ad637d4b8c7e43ae0a6cbe28bcdf1f  fd_1b_inv.py
+sha256 420088436948d9422dd82f7663ae4f6c6728329f6462cf6353f6ad7737f2b992  fd_1b_moded.py
+sha256 869a65c3bcce1a3b56ecd197ecdf3b6cf2741e0611f91b582c3064f67967bc08  fd_1b_toys.py
+KILLED means the suite exits 1 (a test failed); any other non-zero exit is ERROR, not a kill
+KILLED   2.1: the flux key dropped
+KILLED   2.1: A expected to unfold Flux with Phi_CV
+KILLED   2.1: the job's flux refusal skipped
+KILLED   Dnom unfolds with the universe MC
+KILLED   Dnom's nature is the nominal MC
+KILLED   B's signal factor dropped
+KILLED   B's background factor dropped
+KILLED   B's factors truth-preserved
+KILLED   A takes no flux file
+KILLED   HD1's flag fixed True
+KILLED   an interaction universe accepted
+KILLED   a moved atime exits 0
+KILLED   window edges exclusive
+KILLED   rule S reads unresolved cells
+KILLED   rule K reads unresolved cells
+KILLED   attribution without the half
+KILLED   the account at n/2
+KILLED   refuted below n/4
+KILLED   F_side inverted
+KILLED   Flux blocks unweighted
+KILLED   Dnom's block carried
+KILLED   Dnom's object is the raw result
+KILLED   kappa against carried A
+KILLED   kappa's floor carried
+KILLED   A_Phi's ratio inverted
+KILLED   gate D's sha not checked
+KILLED   control E (gate D) skipped
+KILLED   control E (diagnosis) skipped
+KILLED   control M skipped
+KILLED   CV control skipped
+KILLED   per-mode flux control skipped
+KILLED   flux array control skipped
+KILLED   one-code check skipped
+KILLED   flux-file control skipped
+KILLED   walls limit doubled
+KILLED   walls RSS ignored
+KILLED   a missing pilot product passes
+unmutated, PYTHONHASHSEED=0: rc 0: 30 passed, 1 warning in 12.69s
+unmutated, PYTHONHASHSEED=1: rc 0: 30 passed, 1 warning in 13.89s
+unmutated, PYTHONHASHSEED=12345: rc 0: 30 passed, 1 warning in 12.47s
+37 of 37 killed
