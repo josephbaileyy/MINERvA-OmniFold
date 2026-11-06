@@ -1,0 +1,44 @@
+{
+ "seconds_per_draw": 3.879375621784753e-07,
+ "chunk_shape": {
+  "rows": 65536,
+  "bootstrap_replicas": 200,
+  "weight_variants": 5,
+  "axes": [
+   "step",
+   "pz",
+   "pmu",
+   "theta",
+   "pt",
+   "eavail",
+   "q3",
+   "W",
+   "cells",
+   "eavail@0",
+   "eavail@1",
+   "eavail@2",
+   "eavail@3",
+   "q3@0",
+   "q3@1",
+   "q3@2",
+   "q3@3",
+   "W@0",
+   "W@1",
+   "W@2",
+   "W@3",
+   "rate@0",
+   "rate@1"
+  ],
+  "pass": "real-signal"
+ },
+ "environment": {
+  "interpreter": "/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python3",
+  "resolved_interpreter": "/global/u2/j/josephrb/.conda/envs/omnifold_py310/bin/python3.10",
+  "python": "3.10.19",
+  "numpy": "2.2.6",
+  "scipy": "1.15.3",
+  "uproot": "5.6.9"
+ },
+ "method": "min of 5 repetitions; OMP=1; nice 19; login04",
+ "script_sha256": "4cdda6359dd3b998c57b13e6cb64fc31a2872ece8eb4883cb2271c343850bccb"
+}
