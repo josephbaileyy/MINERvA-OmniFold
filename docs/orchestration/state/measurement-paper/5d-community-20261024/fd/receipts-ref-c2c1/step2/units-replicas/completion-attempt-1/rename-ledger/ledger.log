@@ -1,0 +1,52 @@
+node login27 2026-11-06T12:36:20Z
+rename script sha256 0216f736ae2397031b8ebfc6b76a9a4dec6ae4439bdecc65e14c803afc02c0c2
+gate: main d293b13d3876f3609b6bdcdee56fcb978b3e23bb: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/units-replicas/completion-attempt-1/REPLICAS-DONE-j4 7016fdef7b4810b55b3c9dc2d70d05934dc64526d47add3fac661b4d8ac54ab1; pscratch 7016fdef7b4810b55b3c9dc2d70d05934dc64526d47add3fac661b4d8ac54ab1; expected 7016fdef7b4810b55b3c9dc2d70d05934dc64526d47add3fac661b4d8ac54ab1
+== the four TIMEOUT jobs' records (unchanged by this; REPLICAS-DONE-j0..3 must be absent)
+REPLICAS-DONE-j0 absent; REPLICAS-TIMEOUT-j0 sha256 33e194d4a5a1cc65327de83c5e3e57f1f0a72acd6a4b2da67f119b160f6bfcbb
+REPLICAS-DONE-j1 absent; REPLICAS-TIMEOUT-j1 sha256 d953475831e657c34d507e1ba894f512ef5aef0c199bd8e73cdb036fc7a99fec
+REPLICAS-DONE-j2 absent; REPLICAS-TIMEOUT-j2 sha256 3e5c2557f5d6824cbd3dcfe466528a13fc30485c4531d07d3efc868a8eb7b8b6
+REPLICAS-DONE-j3 absent; REPLICAS-TIMEOUT-j3 sha256 809fc7715ecb22ea366b2555c14ec9ac61609a3735082ff315fe1c4c0f119424
+== BEFORE 2026-11-06T12:36:52Z
+drwxrwx---  18 josephrb josephrb  4096 2026-11-06 02:01:13.000000000 -0800 deploy-completion
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 02:01:15.000000000 -0800 libcheck-completion
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 04:20:35.000000000 -0800 logs-completion
+-rw-rw----   1 josephrb josephrb  1055 2026-11-06 04:20:37.000000000 -0800 REPLICAS-DONE-j4
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 04:19:31.000000000 -0800 tmp-replicas-j4
+== REPLICAS-DONE-j4: regular file 1055 josephrb 660 2026-11-06 04:20:37.000000000 -0800
+sha256 7016fdef7b4810b55b3c9dc2d70d05934dc64526d47add3fac661b4d8ac54ab1
+== deploy-completion: directory 4096 josephrb 770 2026-11-06 02:01:13.000000000 -0800
+entries 21723
+  HEAD 77d76cfc2d621f8faa010b75006811868494652a
+== libcheck-completion: directory 4096 josephrb 770 2026-11-06 02:01:15.000000000 -0800
+entries 1
+== logs-completion: directory 4096 josephrb 770 2026-11-06 04:20:35.000000000 -0800
+entries 19
+== tmp-replicas-j4: directory 4096 josephrb 770 2026-11-06 04:19:31.000000000 -0800
+entries 0
+== MOVES
+2026-11-06T12:36:59.400Z mv -n -- /pscratch/sd/j/josephrb/ref-c2c1-20261106/REPLICAS-DONE-j4 /pscratch/sd/j/josephrb/ref-c2c1-20261106/REPLICAS-DONE-j4.attempt-1-60897523
+2026-11-06T12:36:59.407Z mv -n -- /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-completion /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-completion.attempt-1-60897523
+2026-11-06T12:36:59.414Z mv -n -- /pscratch/sd/j/josephrb/ref-c2c1-20261106/libcheck-completion /pscratch/sd/j/josephrb/ref-c2c1-20261106/libcheck-completion.attempt-1-60897523
+2026-11-06T12:36:59.420Z mv -n -- /pscratch/sd/j/josephrb/ref-c2c1-20261106/logs-completion /pscratch/sd/j/josephrb/ref-c2c1-20261106/logs-completion.attempt-1-60897523
+2026-11-06T12:36:59.426Z mv -n -- /pscratch/sd/j/josephrb/ref-c2c1-20261106/tmp-replicas-j4 /pscratch/sd/j/josephrb/ref-c2c1-20261106/tmp-replicas-j4.attempt-1-60897523
+== AFTER 2026-11-06T12:36:59Z
+drwxrwx---  18 josephrb josephrb  4096 2026-11-06 02:01:13.000000000 -0800 deploy-completion.attempt-1-60897523
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 02:01:15.000000000 -0800 libcheck-completion.attempt-1-60897523
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 04:20:35.000000000 -0800 logs-completion.attempt-1-60897523
+-rw-rw----   1 josephrb josephrb  1055 2026-11-06 04:20:37.000000000 -0800 REPLICAS-DONE-j4.attempt-1-60897523
+drwxrwx---   2 josephrb josephrb  4096 2026-11-06 04:19:31.000000000 -0800 tmp-replicas-j4.attempt-1-60897523
+== REPLICAS-DONE-j4: regular file 1055 josephrb 660 2026-11-06 04:20:37.000000000 -0800
+sha256 7016fdef7b4810b55b3c9dc2d70d05934dc64526d47add3fac661b4d8ac54ab1
+== deploy-completion: directory 4096 josephrb 770 2026-11-06 02:01:13.000000000 -0800
+entries 21723
+  HEAD 77d76cfc2d621f8faa010b75006811868494652a
+== libcheck-completion: directory 4096 josephrb 770 2026-11-06 02:01:15.000000000 -0800
+entries 1
+== logs-completion: directory 4096 josephrb 770 2026-11-06 04:20:35.000000000 -0800
+entries 19
+== tmp-replicas-j4: directory 4096 josephrb 770 2026-11-06 04:19:31.000000000 -0800
+entries 0
+REPLICAS-DONE-j0..3 absent after: yes
+contents before and after: identical (sha256, stat manifests, HEAD)
+ref-c2c1 attempt-1 rename rc=0
+2026-11-06T12:37:02Z
