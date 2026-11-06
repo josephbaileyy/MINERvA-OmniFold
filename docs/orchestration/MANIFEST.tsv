@@ -7220,6 +7220,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/a2-1/u-check-grep.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/arith.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/arith.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/HANDOFF.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/c2check-ar23-run/atime-post.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/c2check-ar23-run/atime-pre.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/c2check-ar23-run/bound.sha256	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
