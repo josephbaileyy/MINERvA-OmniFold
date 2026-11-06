@@ -1,0 +1,21 @@
+# The job's exact +90 s lines (the guard block, then "scontrol -o show step" through the sstat cross-check, extracted from
+# refc2c1_completion_job.sbatch c82055f6, with $(seq 0 $((NL - 1))) replaced by the indices shown), run read-only on
+# Perlmutter against the lane's running job 60895578 with SLURM_JOB_ID set to it. Verbatim output.
+== job 60895578 indices [0 1 2 3] NL=4
+[c2c1r4] concurrency: 0 of 4 lane steps RUNNING at +90 s (2026-11-06T12:28:36Z), from scontrol show step:
+[c2c1r4]   StepId=60895578.extern State=RUNNING Name=extern 
+[c2c1r4]   StepId=60895578.batch State=RUNNING Name=batch 
+[c2c1r4]   StepId=60895578.14 State=RUNNING Name=U_G18_AGKYxF1pi_0 
+[c2c1r4]   StepId=60895578.15 State=RUNNING Name=U_G18_2p2h_2 
+[c2c1r4] cross-check (recorded, not gating): sstat -a lists 2 numbered steps
+running=0 NL=4
+WOULD-FIRE
+== job 60895578 indices [14 15 ] NL=2
+[c2c1r4] concurrency: 2 of 2 lane steps RUNNING at +90 s (2026-11-06T12:28:36Z), from scontrol show step:
+[c2c1r4]   StepId=60895578.extern State=RUNNING Name=extern 
+[c2c1r4]   StepId=60895578.batch State=RUNNING Name=batch 
+[c2c1r4]   StepId=60895578.14 State=RUNNING Name=U_G18_AGKYxF1pi_0 
+[c2c1r4]   StepId=60895578.15 State=RUNNING Name=U_G18_2p2h_2 
+[c2c1r4] cross-check (recorded, not gating): sstat -a lists 2 numbered steps
+running=2 NL=2
+SILENT

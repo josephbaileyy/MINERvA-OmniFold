@@ -1,0 +1,15 @@
+11c11,12
+< # pinning; PASS also needs its rc 0 and "MUTATION CHECK :: PASS (45 mutations)".
+---
+> # pinning; PASS also needs its rc 0 and "MUTATION CHECK :: PASS (45 mutations)", unittest's own summary "Ran 33
+> # tests in" (once) and "OK" (no skips), and porcelain 0. Each run prints its child's env (PYTHONDONTWRITEBYTECODE=1).
+81c82
+<   export LD_LIBRARY_PATH="$P/libcopy:${LD_LIBRARY_PATH:-}" TMPDIR="$P/tmp"; mkdir -p "$TMPDIR"
+---
+>   export LD_LIBRARY_PATH="$P/libcopy:${LD_LIBRARY_PATH:-}" TMPDIR="$P/tmp" PYTHONDONTWRITEBYTECODE=1; mkdir -p "$TMPDIR"
+82a84
+>   taskset -c 0-7 nice -n 19 "$PY" -c 'import os; print("child env: PYTHONDONTWRITEBYTECODE=%s OMP_NUM_THREADS=%s affinity=%s nice=%d" % (os.environ.get("PYTHONDONTWRITEBYTECODE"), os.environ.get("OMP_NUM_THREADS"), sorted(os.sched_getaffinity(0)), os.nice(0)))'
+93a96
+>   taskset -c 0-7 nice -n 19 "$PY" -c 'import os; print("child env: PYTHONDONTWRITEBYTECODE=%s OMP_NUM_THREADS=%s affinity=%s nice=%d" % (os.environ.get("PYTHONDONTWRITEBYTECODE"), os.environ.get("OMP_NUM_THREADS"), sorted(os.sched_getaffinity(0)), os.nice(0)))'
+103a107
+> [ "$(grep -c '^Ran 33 tests in ' "$P/test.log")" = 1 ] && grep -qx 'OK' "$P/test.log" || { echo "RUN FAIL: unittest's own summary is not 'Ran 33 tests' and 'OK' (to the director, unrepaired)"; finish 1; }

@@ -252,6 +252,7 @@ docs/orchestration/DECISION-20261104-joseph-rpd-sentence.md	LIVE	open	""
 docs/orchestration/DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md	LIVE	open	""
 docs/orchestration/DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md	LIVE	open	""
 docs/orchestration/DECISION-20261106-joseph-b0-reconciliation-sentence.md	LIVE	open	""
+docs/orchestration/DECISION-20261106-joseph-measurement-target-and-delta.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	ARCHIVAL	terminal	""
@@ -387,6 +388,7 @@ docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md	LIVE	op
 docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md	LIVE	open	
 docs/orchestration/OUTCOME-20261013-5d-injected-w-closure-pass.md	LIVE	open	
 docs/orchestration/OUTCOME-20261105-fd-stab-none-pass.md	LIVE	open	""
+docs/orchestration/OUTCOME-20261106-1b-stage1-receipt-stop.md	LIVE	open	""
 docs/orchestration/OUTCOME-20261106-ref-g1-r1-differ.md	LIVE	open	""
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	LIVE	open	
@@ -1238,6 +1240,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/S1-DIRECTOR-RUL
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-PLAN.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-PRESERVE-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/S1-REPORT.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-receipt-stop-20261106/AGY-ANSWER.txt	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-receipt-stop-20261106/AGY-PROMPT.txt	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_followup_readout/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/deposit-candidate/SUPPLEMENT-COVARIANCES.md	LIVE	open	""

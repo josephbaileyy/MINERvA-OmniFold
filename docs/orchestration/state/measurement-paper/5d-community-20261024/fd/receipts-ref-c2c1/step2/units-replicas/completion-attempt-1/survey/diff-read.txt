@@ -1,0 +1,92 @@
+--- read_prev_6894615.sh	2026-11-06 01:53:13
++++ ../refc2c1rd/refc2c1_read_login.sh	2026-11-06 01:53:26
+@@ -1,9 +1,14 @@
+ #!/bin/bash
+ # REF-C2C1 step two, stage 3b: the READ (REF-C2C1-BINDING-2.md ruling 2.3 and the director's ruling of 2026-11-06,
+ # #825; code at M = 77d76cfc), on a login node, 0 node-h, under the binding's fixed conditional sequence. It refuses
+-# unless (a) stage 2 passed: CENTRALS-DONE is the accepted record and each REPLICAS-DONE-j0..3 has every unit PASS,
+-# rcs 0, watch_moved 0, porcelain 0; and (b) 3a's cells file is on main: in a fresh clone, `git fetch origin main`, the
+-# committed fd/receipts-ref-c2c1/step2/cells/cells.root hashes to f06e4a26..., equal to the read directory's. Then,
++# unless (a) stage 2 passed: CENTRALS-DONE is the accepted record, and (the director's ruling of 2026-11-06 on the four
++# TIMEOUT jobs) in a fresh clone, `git fetch origin main`, the committed REPLICAS-TIMEOUT-j0..3 (units-replicas/timeout/)
++# and REPLICAS-DONE-j4 (units-replicas/completion/) each hash equal to the pscratch record; each TIMEOUT record has
++# watch_moved 0 and porcelain 0, and DONE-j4 has every unit PASS, rcs 0, watch_moved 0, porcelain 0, concurrent 1;
++# the five records' unit sets (the TIMEOUT pass_units, DONE-j4's unit_list) are disjoint, their union is the 350 of
++# lanes.tsv (7b737d0c), and every unit in it has a PASS done-marker (O_NOATIME reads); and (b) 3a's cells file is on
++# main: the committed fd/receipts-ref-c2c1/step2/cells/cells.root hashes to f06e4a26..., equal to the read directory's.
++# Then,
+ # from that clone checked out at M (porcelain --ignored 0, the binding's 8 blobs):
+ #   ref_c2c1_read.py read --run $O/units --cells $R/cells.root --cells-sha256 f06e4a26... --out $R/readout.json
+ # in root_6_28, nice 19, idle I/O, 4 threads. The read stages E_R's central and replicas and the publication through
+@@ -19,9 +24,11 @@
+ CELLS_SHA=f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743
+ CELLS_PATH=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/cells/cells.root
+ PY=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
++LANES_SHA=7b737d0c4bb5e547adae0376f9c50da00cc1ec9a08d7dc2c892804e0b968524c
++UP=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/units-replicas
+ bail() { rm -f -- "$SELF"; exit 9; }                             # a precondition failed: nothing written
+ case "$(hostname)" in login*) ;; *) bail ;; esac
+-[ -s "$R/cells.root" ] && [ -d "$O/units" ] && [ -x "$PY" ] && [ -s "$O/logs-replicas/cov2d-watch-paths.txt" ] || bail
++[ -s "$R/cells.root" ] && [ -d "$O/units" ] && [ -x "$PY" ] && [ -s "$O/logs-replicas/cov2d-watch-paths.txt" ] && [ -s "$O/logs-replicas/lanes.tsv" ] || bail
+ for x in readout.json STOP.json inputs read.log read.stdout read.done read.time logs-read; do [ ! -e "$R/$x" ] || bail; done
+ [ ! -e "$D" ] || bail
+ LR=$R/logs-read
+@@ -35,22 +42,45 @@
+ echo "fence, recorded: squeue -u josephrb at $(date -u +%FT%TZ):"; squeue -u josephrb -h -o '%i|%j|%T|%M|%l' | sed 's/^/  /'
+ cd_rec=$(cat "$O/CENTRALS-DONE"); echo "gate: CENTRALS-DONE $cd_rec"
+ [ "$cd_rec" = '{"job": "60889566", "rcs": "0 0 0", "pass_markers": 3, "porcelain_after": 0}' ] || { echo "STOP: CENTRALS-DONE is not the accepted record"; finish 4; }
+-total=0
+-for J in 0 1 2 3; do
+-  rec=$(cat "$O/REPLICAS-DONE-j$J" 2>/dev/null); echo "gate: REPLICAS-DONE-j$J $rec"
+-  ok=$(printf '%s' "$rec" | "$PY" -I -c 'import json,sys
+-try: r=json.load(sys.stdin)
+-except Exception: print("bad"); sys.exit()
+-good = r["units"] == r["pass_markers"] and r["watch_moved"] == 0 and r["porcelain_after"] == 0 and set(r["rcs"].split()) == {"0"}
+-print(r["units"] if good else "bad")')
+-  [ "$ok" != bad ] && [ -n "$ok" ] || { echo "STOP: replica job j$J did not pass"; finish 4; }
+-  total=$((total + ok))
+-done
+-echo "gate: replica units PASS across the 4 jobs: $total"
+-[ "$total" -eq 350 ] || { echo "STOP: not 350 replica units"; finish 4; }
+ lc=$(dd if="$R/cells.root" iflag=noatime status=none | sha256sum | cut -d' ' -f1)
+ git clone -q https://github.com/josephbaileyy/MINERvA-OmniFold.git "$D" > "$LR/clone.log" 2>&1 || { echo "STOP: clone"; finish 3; }
+ git -C "$D" fetch -q origin main >> "$LR/clone.log" 2>&1 || { echo "STOP: fetch origin main"; finish 3; }
++echo "origin/main $(git -C "$D" rev-parse origin/main)"
++for rec in timeout/REPLICAS-TIMEOUT-j0 timeout/REPLICAS-TIMEOUT-j1 timeout/REPLICAS-TIMEOUT-j2 timeout/REPLICAS-TIMEOUT-j3 completion/REPLICAS-DONE-j4; do
++  ms=$(git -C "$D" show "origin/main:$UP/$rec" 2>/dev/null | sha256sum | cut -d' ' -f1)
++  ps=$(dd if="$O/${rec#*/}" iflag=noatime status=none | sha256sum | cut -d' ' -f1)
++  echo "gate: ${rec#*/} origin/main $ms; pscratch $ps"
++  [ "$ms" = "$ps" ] && [ "$ms" != e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 ] || { echo "STOP: ${rec#*/} is not on main (the read waits for the merge)"; finish 4; }
++done
++"$PY" -B -I - "$O" "$LANES_SHA" <<'PYEOF'
++import hashlib, json, os, sys
++O, lanes_sha = sys.argv[1:3]
++def rd(p):
++    fd = os.open(p, os.O_RDONLY | os.O_NOATIME)
++    with os.fdopen(fd, "rb") as f: return f.read()
++lanes = rd(os.path.join(O, "logs-replicas", "lanes.tsv"))
++if hashlib.sha256(lanes).hexdigest() != lanes_sha: print("STOP: lanes.tsv is not the reviewed one"); sys.exit(4)
++declared = [ln.split("\t")[2].replace(":", "_b") for ln in lanes.decode().splitlines() if ln.strip() and not ln.startswith("#")]
++bad, sets = [], []
++for j in range(4):
++    r = json.loads(rd(os.path.join(O, f"REPLICAS-TIMEOUT-j{j}")))
++    if not (r["state"] == "TIMEOUT" and r["watch_moved"] == 0 and r["porcelain_after"] == 0 and r["pass_markers"] == len(r["pass_units"])):
++        bad.append(f"REPLICAS-TIMEOUT-j{j}")
++    sets.append(r["pass_units"])
++r = json.loads(rd(os.path.join(O, "REPLICAS-DONE-j4")))
++if not (r["index"] == 4 and r["units"] == r["pass_markers"] == len(r["unit_list"]) and r["watch_moved"] == 0
++        and r["porcelain_after"] == 0 and r["concurrent"] == 1 and set(r["rcs"].split()) == {"0"}):
++    bad.append("REPLICAS-DONE-j4")
++sets.append(r["unit_list"])
++union = set().union(*sets)
++disjoint = sum(map(len, sets)) == len(union)
++notpass = [u for u in sorted(union) if json.loads(rd(os.path.join(O, "units", u + ".done"))).get("verdict") != "PASS"]
++print(f"gate: records failing their fields {bad}; unit sets {[len(x) for x in sets]}, disjoint {disjoint}, union {len(union)}, "
++      f"equal to the {len(set(declared))} of lanes.tsv {union == set(declared)}; without a PASS marker {notpass}")
++ok = not bad and disjoint and len(declared) == len(set(declared)) == 350 and union == set(declared) and not notpass
++sys.exit(0 if ok else 4)
++PYEOF
++[ $? -eq 0 ] || { echo "STOP: stage 2 did not pass (the five records' unit sets are not the 350, each PASS)"; finish 4; }
+ mc=$(git -C "$D" show "origin/main:$CELLS_PATH" 2>/dev/null | sha256sum | cut -d' ' -f1)
+ echo "cells: origin/main $(git -C "$D" rev-parse origin/main) $mc; read directory $lc; expected $CELLS_SHA"
+ [ "$mc" = "$CELLS_SHA" ] && [ "$lc" = "$CELLS_SHA" ] || { echo "STOP: 3a's cells file is not on main (the read waits for the merge)"; finish 4; }

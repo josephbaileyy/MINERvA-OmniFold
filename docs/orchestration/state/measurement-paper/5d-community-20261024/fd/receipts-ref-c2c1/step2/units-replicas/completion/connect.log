@@ -1,0 +1,69 @@
+node login27 nproc=244 loadavg 3.87 4.20 4.28
+2026-11-06T12:49:15Z
+connect script sha256 c41ffb614a72864dff4d9fd0e44cb4ac54d07bf256fa3d6ab4f27321d229d503
+fence, recorded (the director's ruling of 2026-11-06): squeue -u josephrb at 2026-11-06T12:49:15Z:
+  60895578|cov2d-G18_Uc|RUNNING|2:16:14|8:54:00
+  60895585|cov2d-G18_Ud|RUNNING|2:16:14|8:54:00
+  60895562|cov2d-G18_Ua|RUNNING|3:05:06|8:54:00
+  60895566|cov2d-G18_Ub|RUNNING|3:05:06|8:54:00
+  60895985|cov2d-AR23_Ba|RUNNING|50:38|8:06:00
+  60895990|cov2d-AR23_Bb|RUNNING|50:38|8:06:00
+  60895956|cov2d-G18_Ta|RUNNING|1:17:40|7:38:00
+  60895973|cov2d-G18_Tb|RUNNING|1:17:40|7:38:00
+  60895983|cov2d-AR23_L|RUNNING|1:03:46|3:20:00
+  60895982|cov2d-G18_Tc|RUNNING|1:03:47|7:38:00
+  60895597|cov2d-AR23_Ud|RUNNING|1:49:51|8:54:00
+  60896048|cov2d-AR23_Ta|RUNNING|39:33|7:38:00
+  60895992|cov2d-AR23_Bc|RUNNING|40:35|8:06:00
+  60895594|cov2d-AR23_Ua|RUNNING|2:01:24|8:54:00
+  60895595|cov2d-AR23_Ub|RUNNING|2:01:24|8:54:00
+  60895951|cov2d-G18_Bb|RUNNING|1:33:21|8:06:00
+  60895953|cov2d-G18_Bc|RUNNING|1:33:21|8:06:00
+  60895948|cov2d-G18_L|RUNNING|1:43:17|3:20:00
+  60895596|cov2d-AR23_Uc|RUNNING|1:51:29|8:54:00
+  60895949|cov2d-G18_Ba|RUNNING|1:41:43|8:06:00
+gate: CENTRALS-DONE {"job": "60889566", "rcs": "0 0 0", "pass_markers": 3, "porcelain_after": 0}
+origin/main 0a42b5763ad537f8fe0bf30d53b3dd260f42f96c
+gate: REPLICAS-TIMEOUT-j0 origin/main 33e194d4a5a1cc65327de83c5e3e57f1f0a72acd6a4b2da67f119b160f6bfcbb; pscratch 33e194d4a5a1cc65327de83c5e3e57f1f0a72acd6a4b2da67f119b160f6bfcbb
+gate: REPLICAS-TIMEOUT-j1 origin/main d953475831e657c34d507e1ba894f512ef5aef0c199bd8e73cdb036fc7a99fec; pscratch d953475831e657c34d507e1ba894f512ef5aef0c199bd8e73cdb036fc7a99fec
+gate: REPLICAS-TIMEOUT-j2 origin/main 3e5c2557f5d6824cbd3dcfe466528a13fc30485c4531d07d3efc868a8eb7b8b6; pscratch 3e5c2557f5d6824cbd3dcfe466528a13fc30485c4531d07d3efc868a8eb7b8b6
+gate: REPLICAS-TIMEOUT-j3 origin/main 809fc7715ecb22ea366b2555c14ec9ac61609a3735082ff315fe1c4c0f119424; pscratch 809fc7715ecb22ea366b2555c14ec9ac61609a3735082ff315fe1c4c0f119424
+HEAD 77d76cfc2d621f8faa010b75006811868494652a; porcelain --ignored lines before: 0
+bound blobs: 8 checked, 0 mismatches
+libRooUnfold.so: source sha256 (O_NOATIME read) 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd; copy 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd; config.json 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd
+COV2D inputs listed for the job's stat: 303
+lanes-j4.tsv sha256 b6d66658d2cdd438e202f2194c8c93a36ae7ee9af7cb0c51c452657c7069cae3; units 47
+gate: declared 350 (350 distinct); TIMEOUT PASS sets [73, 77, 77, 76], disjoint True, union 303, not PASS []; lanes-j4 47 (47 distinct), equal to declared minus union True, with files under units/ []
+fit: 4 steps x 114688 MB = 458752 MB vs regular_milan_ss11 MaxMemPerNode=487802; 4 x 64 CPUs = 256 vs CPUs per node 256
+== price: 1 x 01:30:00 on 1 node = at most 1.5 node-h; spent 10.4156; cap 12.5
+== iris
+m3246               2244.8            10000.0     18055.9      20000.0
+balance_node_h=1944.1 half=972.0 price=1.5
+refc2c1_completion_job.sbatch sha256 c82055f6f8dea72a2e16fb4722d1613610576e929209b4a7c5eea0123b24589f
+squeue --me before:
+60895578 cov2d-G18_Uc RUNNING
+60895585 cov2d-G18_Ud RUNNING
+60895562 cov2d-G18_Ua RUNNING
+60895566 cov2d-G18_Ub RUNNING
+60895985 cov2d-AR23_Ba RUNNING
+60895990 cov2d-AR23_Bb RUNNING
+60895956 cov2d-G18_Ta RUNNING
+60895973 cov2d-G18_Tb RUNNING
+60895983 cov2d-AR23_L RUNNING
+60895982 cov2d-G18_Tc RUNNING
+60895597 cov2d-AR23_Ud RUNNING
+60896048 cov2d-AR23_Ta RUNNING
+60895992 cov2d-AR23_Bc RUNNING
+60895594 cov2d-AR23_Ua RUNNING
+60895595 cov2d-AR23_Ub RUNNING
+60895951 cov2d-G18_Bb RUNNING
+60895953 cov2d-G18_Bc RUNNING
+60895948 cov2d-G18_L RUNNING
+60895596 cov2d-AR23_Uc RUNNING
+60895949 cov2d-G18_Ba RUNNING
+sbatch j4 rc=0: Submitted batch job 60901504
+j4 job 60901504 scontrol TimeLimit=01:30:00 (declared 01:30:00); Partition=regular_milan_ss11 (fit checked against regular_milan_ss11)
+60901504 fd_c2c1r PENDING 0:00 1:30:00 1 regular_1 m3246 regular_milan_ss11
+porcelain --ignored lines after submission: 0
+ref-c2c1 completion connect rc=0
+2026-11-06T12:50:02Z

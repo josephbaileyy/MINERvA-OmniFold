@@ -1,0 +1,98 @@
+now 2026-11-06T09:38:32Z host login02
+j0: units 86, PASS markers 73, with any output 73
+  lane 0: 20 of 20 PASS; log 653718 bytes, mtime 2026-11-06 00:27:55.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b297.root
+  lane 1: 20 of 20 PASS; log 653465 bytes, mtime 2026-11-06 00:27:41.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b298.root
+  lane 2: 23 of 23 PASS; log 802507 bytes, mtime 2026-11-06 00:27:22.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b299.root
+  lane 3: 10 of 23 PASS; log 299189 bytes, mtime 2026-11-06 01:23:32.000000000 -0800; time file: present
+    |  0.00062433 0.00062433]
+    | [INFO] Flux sum = 0.008741 m^-2/POT = 8.741e-07 cm^-2/POT
+    | [2026-11-06T09:23:32.404] error: *** STEP 60890529.3 ON nid005159 CANCELLED AT 2026-11-06T09:23:32 DUE TO TIME LIMIT ***
+j1: units 88, PASS markers 77, with any output 77
+  lane 0: 22 of 22 PASS; log 763279 bytes, mtime 2026-11-06 00:25:49.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b285.root
+  lane 1: 22 of 22 PASS; log 763499 bytes, mtime 2026-11-06 00:25:10.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b286.root
+  lane 2: 22 of 22 PASS; log 763755 bytes, mtime 2026-11-06 00:23:56.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b287.root
+  lane 3: 11 of 22 PASS; log 338159 bytes, mtime 2026-11-06 01:23:32.000000000 -0800; time file: present
+    |  0.00062433 0.00062433]
+    | [INFO] Flux sum = 0.008741 m^-2/POT = 8.741e-07 cm^-2/POT
+    | [2026-11-06T09:23:32.407] error: *** STEP 60890530.3 ON nid006942 CANCELLED AT 2026-11-06T09:23:32 DUE TO TIME LIMIT ***
+j2: units 88, PASS markers 77, with any output 77
+  lane 0: 22 of 22 PASS; log 763615 bytes, mtime 2026-11-06 00:39:15.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b289.root
+  lane 1: 22 of 22 PASS; log 763861 bytes, mtime 2026-11-06 00:38:40.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b290.root
+  lane 2: 22 of 22 PASS; log 763526 bytes, mtime 2026-11-06 00:38:11.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b291.root
+  lane 3: 11 of 22 PASS; log 338455 bytes, mtime 2026-11-06 01:37:39.000000000 -0800; time file: present
+    |  0.00062433 0.00062433]
+    | [INFO] Flux sum = 0.008741 m^-2/POT = 8.741e-07 cm^-2/POT
+    | [2026-11-06T09:37:39.199] error: *** STEP 60890531.3 ON nid006663 CANCELLED AT 2026-11-06T09:37:39 DUE TO TIME LIMIT ***
+j3: units 88, PASS markers 76, with any output 76
+  lane 0: 22 of 22 PASS; log 763608 bytes, mtime 2026-11-06 00:39:21.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b293.root
+  lane 1: 22 of 22 PASS; log 763776 bytes, mtime 2026-11-06 00:39:30.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b294.root
+  lane 2: 22 of 22 PASS; log 763811 bytes, mtime 2026-11-06 00:38:15.000000000 -0800; time file: present
+    | [INFO] omnifoldHelperFile: /pscratch/sd/j/josephrb/ref-c2c1-20261106/deploy-replicas/unbinned_unfolding/python/omnifold.py
+    | [INFO] omnifoldHelperSha256: e96234124a31edd7a8dd61fdb16cb48a5b28cbd1b90202f59b0095868378227a
+    | [OK] Wrote /pscratch/sd/j/josephrb/ref-c2c1-20261106/units/c2_replica_b295.root
+  lane 3: 10 of 22 PASS; log 336581 bytes, mtime 2026-11-06 01:37:39.000000000 -0800; time file: present
+    | [CHECK] hEffDen integral: 5.77954e+06
+    | [INFO] Phase-17 MC bootstrap: completeness uses the un-resampled MC truth weights, as the central value does (KNOWN_ISSUES 84).
+    | [2026-11-06T09:37:39.203] error: *** STEP 60890532.3 ON nid007128 CANCELLED AT 2026-11-06T09:37:39 DUE TO TIME LIMIT ***
+unit seconds (from .done-adjacent log lines), by kind:
+  c2_replica n=253 mean=177 min=175 max=183
+  c1_replica n=50 mean=698 min=679 max=717
+watch: now vs each job's before (stat only)
+  j0 before lines 303; now vs before: identical
+  j1 before lines 303; now vs before: identical
+  j2 before lines 303; now vs before: identical
+  j3 before lines 303; now vs before: identical
+squeue josephrb:
+60895562|cov2d-G18_Ua|PENDING|0:00|8:54:00
+60895566|cov2d-G18_Ub|PENDING|0:00|8:54:00
+60896048|cov2d-AR23_Ta|PENDING|0:00|7:38:00
+60895992|cov2d-AR23_Bc|PENDING|0:00|8:06:00
+60895990|cov2d-AR23_Bb|PENDING|0:00|8:06:00
+60895985|cov2d-AR23_Ba|PENDING|0:00|8:06:00
+60895983|cov2d-AR23_L|PENDING|0:00|3:20:00
+60895982|cov2d-G18_Tc|PENDING|0:00|7:38:00
+60895973|cov2d-G18_Tb|PENDING|0:00|7:38:00
+60895956|cov2d-G18_Ta|PENDING|0:00|7:38:00
+60895953|cov2d-G18_Bc|PENDING|0:00|8:06:00
+60895951|cov2d-G18_Bb|PENDING|0:00|8:06:00
+60895949|cov2d-G18_Ba|PENDING|0:00|8:06:00
+60895948|cov2d-G18_L|PENDING|0:00|3:20:00
+60895597|cov2d-AR23_Ud|PENDING|0:00|8:54:00
+60895596|cov2d-AR23_Uc|PENDING|0:00|8:54:00
+60895595|cov2d-AR23_Ub|PENDING|0:00|8:54:00
+60895594|cov2d-AR23_Ua|PENDING|0:00|8:54:00
+60895585|cov2d-G18_Ud|PENDING|0:00|8:54:00
+60895578|cov2d-G18_Uc|PENDING|0:00|8:54:00
