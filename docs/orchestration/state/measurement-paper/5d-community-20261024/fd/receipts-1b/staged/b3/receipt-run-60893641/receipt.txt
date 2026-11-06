@@ -1,0 +1,19 @@
+1B binding 3, stage 3 (v2): the receipt job 60893641. Verdict STOP on §2b (amendment 2 §4: STOP is N1 or §2b, on a
+completed receipt that wrote receipt.json). Under A2.1 §11, a STOP at the receipt ends the sequence and goes to Joseph.
+connect-receipt.sh c457d5dd0e7083167255748db4294449deaf3dfadd7265630d4d346fbf4d15aa, M4 5771ce2043f6d8a8338220b099edde31deedff54,
+login03, 2026-11-06T08:15:11Z..08:16:02Z: every check passed (connect-receipt.log), the move of the INVALID a2 to
+stage1/a2-invalid-60889950 among them; fit: steps=1, cpus 256 of 256, mem 458752M of 487802M.
+Job: COMPLETED 01:18:42 (ElapsedRaw 4722 s, 1.312 node-h), step line0 COMPLETED, MaxRSS 382909276K (365.2 GiB of the
+448G step).
+connect-receipt-readout.sh 322216efc8547359663612b0e8956f4b026e17f096bfd2c0f3b158bece86773a (sha compared before run),
+login03: receipt.json sha256 9995f55adb7846e230c2e982221d20e7c5c1136daf5cb4576e355544bb54fa3d bytes 253512 (from its
+O_NOATIME read; the committed receipt.json has the same sha256).
+- N1: exact wt/wr/bkgw rows_above 0 (pairs past the screen 383517, 431528, 15604); validation agrees for all three;
+  denominator n1 pairs_above 0 over 65856 cells, max 2.146.
+- §2b: denominator.draws_with_nonpositive_cells holds 892 of the 900 draws 0..899 (not flagged: 84, 98, 260, 460,
+  550, 690, 787, 835); max_cells 62.
+- stop_reasons ['2b: 892 draws with a non-positive denominator cell'].
+- atime: 708 opened, 0 moved. Sources atime/mtime/size UNCHANGED (20135); the stat-before and stat-after are
+  byte-identical, and identical to the first attempt's (STAT-SHA256SUMS; the file is b3/receipt-run-60889950/stat-before.txt.gz).
+- Tables byte-identical to the first attempt's.
+Records fetched through O_NOATIME reads.

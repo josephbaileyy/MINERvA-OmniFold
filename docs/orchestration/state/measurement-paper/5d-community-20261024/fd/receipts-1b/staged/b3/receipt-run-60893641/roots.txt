@@ -1,0 +1,10 @@
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware
+/pscratch/sd/j/josephrb/s5p-20260926/bank_detector
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints
+/pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in
+/pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in
+/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep
+/pscratch/sd/j/josephrb/fd-1b-a21-cvdenom2-20261103

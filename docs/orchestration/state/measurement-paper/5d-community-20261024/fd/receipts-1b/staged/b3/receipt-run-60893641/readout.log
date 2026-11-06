@@ -1,0 +1,26 @@
+host=login03 start=2026-11-06T09:42:32Z job=60893641
+60893641|fd1b_mc_receipt_a2|COMPLETED|01:18:42|2026-11-06T00:19:49|2026-11-06T01:38:31|nid004765|1|0:0|
+60893641.batch|batch|COMPLETED|01:18:42|2026-11-06T00:19:49|2026-11-06T01:38:31|nid004765|1|0:0|30392K
+60893641.extern|extern|COMPLETED|01:18:42|2026-11-06T00:19:49|2026-11-06T01:38:31|nid004765|1|0:0|
+60893641.0|line0|COMPLETED|01:18:33|2026-11-06T00:19:57|2026-11-06T01:38:30|nid004765|1|0:0|382909276K
+60893641|4722|120|billing=256,cpu=256,energy=1527807,mem=487802M,node=1|regular_milan_ss11|regular_1
+state=COMPLETED
+receipt.json sha256 9995f55adb7846e230c2e982221d20e7c5c1136daf5cb4576e355544bb54fa3d bytes 253512
+step receipt schema fd-1b-mc/1 n1_bound 10.0 max_abs_ratio {"wt": 429.5894769478108, "wr": 429.5894718232873, "bkgw": 44.766123118569446}
+exact wt {"rows": 32849103, "pairs_past_screen": 383517, "rows_above": 0}
+exact wr {"rows": 32849103, "pairs_past_screen": 431528, "rows_above": 0}
+exact bkgw {"rows": 621547, "pairs_past_screen": 15604, "rows_above": 0}
+validation wt {"sample_rows": 164246, "pairs_above_in_sample": 0, "agrees": true}
+validation wr {"sample_rows": 164246, "pairs_above_in_sample": 0, "agrees": true}
+validation bkgw {"sample_rows": 3108, "pairs_above_in_sample": 0, "agrees": true}
+denominator draws_with_nonpositive_cells 892 n1 {"cells": 65856, "pairs_above": 0, "draws_with_cells_above": [], "max": 2.14635154523993}
+n_clip {"draw_index": 648, "truth": "plugin", "seed": 3640048, "clipped_mass_at_r1": 104127.59142776084, "arithmetic": "matmul, descriptive", "role": "the reference case of the clipping offset (consult (ii)); not claimed the largest"}
+crossterm {"reco_proxy_U_mapped": {"median_abs": [0.19750962050272916, 0.09575582700871813, 0.11039235620580472, 0.07271587671810589, 0.3432888625863023, 0.10960162380049038, 0.22769801336278342, 0.11850098866458872, 0.7579585100867678, 0.10236745964848099, 0.41603007086861354, 0.25829180590885986, 0.44960089087862454, 0.050263219975883774, 0.12520206679195262, 0.435972044310811], "q95_abs": [0.7038504481431347, 0.235180241330481, 0.31502881384788733, 0.23865584520879266, 1.193797602132864, 0.25187428065554235, 0.7374026159174025, 0.3967191456938384, 1.5876467135039738, 0.23884084464160543, 0.8350148298
+negative_weight_universes 2
+atime opened 708 moved 0 []
+stop_reasons ['2b: 892 draws with a non-positive denominator cell']
+RECEIPT-READOUT verdict=STOP atime_moved=0 state=COMPLETED -> NOT PASS
+readout rc=1
+sources atime/mtime/size: UNCHANGED (20135)
+STOP the receipt is not PASS (rc=1)
+end=2026-11-06T09:42:41Z
