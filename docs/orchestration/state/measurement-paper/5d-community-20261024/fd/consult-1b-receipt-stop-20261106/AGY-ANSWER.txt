@@ -1,0 +1,16 @@
+**Recommendation: Option 1** (Accept the STOP as 1B's terminal outcome; 2D headline measurement, 5D descriptive).
+
+Pre-registration integrity is decisive. Study 1B explicitly declared that non-positive composite density is "a property to report, not to test away." With 892/900 draws failing (up to 62 cells/draw), this is a structural limitation of first-order linear nuisance superposition ($a_D = a_{u1} + \sum_j (a_{uj} - a_{CV})$) in high-dimensional sparse phase space, not a statistical artifact. Attempting Option 2 (post hoc clipping, rebinning, or universe pruning) directly contradicts the pre-declared rule, incurs weeks of compute, and cannot resolve the unfixable rounding instability. Anchoring the measurement paper on 2D—where COV2D is sound—while presenting 5D as an exploratory methodological demonstration preserves the measurement paper while respecting empirical evidence.
+
+**Main Risk to Credibility:**
+Equivocation between the two dimensional tiers. If the paper quotes 5D cross sections with physical authority comparable to 2D while harboring unvalidated coverage, unmitigated rounding instability, and composition failure, referees will reject the entire manuscript. Credibility survives only if the demarcation is absolute: 2D is the validated cross-section measurement; 5D is an unvalidated, descriptive multi-differential method demonstration illustrating OmniFold's capabilities and practical boundary limits.
+
+**What the Paper Must Say:**
+- The headline physical cross-section measurement is 2D $(p_T, p_\parallel)$, supported by empirical coverage validation (COV2D).
+- 5D results are explicitly designated as descriptive and exploratory method demonstrations; retain the exact qualifier: *"Coverage has not been validated in 5D."*
+- Disclose frankly that first-order additive systematic compositions become non-physical in sparse multi-differential regimes, identifying high-dimensional coverage validation as an open methodology challenge in neutrino physics.
+
+**What the Record Must Say:**
+- Record 1B as **TERMINAL** under its pre-registered stopping rule (892/900 draws with non-positive denominator cells).
+- Formally reject post hoc patching; record the outcome as an empirical finding on the domain limits of linear nuisance expansion in sparse bins, not a flaw in test execution.
+- Log the executive transition: physical measurement scope narrowed to 2D, with 5D categorized under method-study status.

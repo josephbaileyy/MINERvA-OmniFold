@@ -391,6 +391,7 @@ docs/orchestration/OUTCOME-20260926-s5e-oi192-diagnosis-and-candidate.md	tracked
 docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md	tracked	LIVE	document		20261005	open		route-only	no
 docs/orchestration/OUTCOME-20261013-5d-injected-w-closure-pass.md	tracked	LIVE	document		20261013	open		route-only	no
 docs/orchestration/OUTCOME-20261105-fd-stab-none-pass.md	tracked	LIVE	document		20261105	open		route-only	no
+docs/orchestration/OUTCOME-20261106-1b-stage1-receipt-stop.md	tracked	LIVE	document		20261106	open		route-only	no
 docs/orchestration/OUTCOME-20261106-ref-g1-r1-differ.md	tracked	LIVE	document		20261106	open		route-only	no
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	tracked	LIVE	document		20260822	open		route-only	no
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	tracked	LIVE	document		20260823	open		route-only	no
@@ -6728,6 +6729,8 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-g
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261104/ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261104/PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-gate16-20261104/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-receipt-stop-20261106/AGY-ANSWER.txt	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-receipt-stop-20261106/AGY-PROMPT.txt	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-cov2d-ar23-stop-20261105/CONSULT-SONNET-ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-cov2d-ar23-stop-20261105/CONSULT-SONNET-PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-cov2d-ar23-stop-20261105/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
