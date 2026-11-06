@@ -1,0 +1,44 @@
+2026-11-06T08:56:45Z
+== sacct
+60889690|cov2d-pseudo_AR23|COMPLETED|0:0|02:31:44|2026-11-05T22:19:09|2026-11-06T00:50:53|nid006885|04:00:00|regular_1
+== stage dirs
+/pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/a/stage:
+total 24
+drwxrwx--- 2 josephrb josephrb  4096 Nov  6 00:50 .
+drwxrwx--- 3 josephrb josephrb 20480 Nov  5 23:35 ..
+
+/pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/AR23-a2/b/stage:
+total 24
+drwxrwx--- 2 josephrb josephrb  4096 Nov  6 00:50 .
+drwxrwx--- 3 josephrb josephrb 20480 Nov  6 00:50 ..
+== tmp
+total 8
+drwxrwx--- 2 josephrb josephrb 4096 Nov  6 00:50 .
+drwxrwx--- 6 josephrb josephrb 4096 Nov  5 22:19 ..
+== a count
+306
+cells.npz
+counts_5730000.npz
+counts_5730001.npz
+counts_5730002.npz
+counts_5730003.npz
+counts_5730004.npz
+counts_5730005.npz
+counts_5730006.npz
+counts_5730007.npz
+counts_5730008.npz
+== b count
+304
+== deploy
+a60547692df5f963e428cdfe4661fc51ab785b7b
+0
+0
+== pseudo
+total 20
+drwxrwx--- 5 josephrb josephrb 4096 Nov  5 22:19 .
+drwxrwx--- 8 josephrb josephrb 4096 Nov  5 07:10 ..
+drwxrwx--- 3 josephrb josephrb 4096 Nov  5 08:14 AR23
+drwxrwx--- 4 josephrb josephrb 4096 Nov  6 00:50 AR23-a2
+drwxrwx--- 4 josephrb josephrb 4096 Nov  5 03:52 G18
+== shm
+0
