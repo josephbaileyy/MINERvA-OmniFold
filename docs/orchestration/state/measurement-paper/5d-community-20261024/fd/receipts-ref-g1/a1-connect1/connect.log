@@ -1,0 +1,26 @@
+node login27 nproc=244 loadavg 21.62 21.97 24.34
+2026-11-06T02:56:55Z
+connect script sha256 f832d6321f1eee94bcb3280af137075b69a990999c4f7cc5ba81db362685bdc4
+COV2D fence: no cov2d-* job in squeue at 2026-11-06T02:56:55Z
+== price: limit 00:30:00 on 1 node = at most 0.5 node-h; spent 0.1517; cap 5.0
+== iris
+m3246               2209.5            10000.0     18016.4      20000.0
+balance_node_h=1983.6 half=991.8 price=0.5
+HEAD 0bb9a1bfcb462ebd171d337ae1c8b2e2d0905e93; porcelain --ignored lines before: 0
+bound blobs: 5 checked, 0 mismatches
+reads rc=0; 236 paths; roles:  1 bkg_dump; 1 e_central; 2 e_closure; 3 e_ladder; 50 e_replica; 175 e_universe; 1 flux_constraint; 1 gibu1_reference; 1 of_inputs_5d; 1 s1_assembly;
+paths not owned by josephrb: 0
+earliest atime: 2026-11-05T14:42:21Z (/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz)
+DEADLINE (earliest atime + 56 days): 2026-12-31T14:42:21Z
+porcelain --ignored lines after reads: 0
+refg1a1_c1_job.sbatch sha256 f9017bf9d257f56016aa642a5d115beb5dd5f0abfaed859a6cee9c50215b2a1d
+squeue --me before:
+60880987 fd1b_c2chk_g18 RUNNING
+60880988 fd1b_c2chk_ar23 RUNNING
+sbatch rc=0
+Submitted batch job 60884877
+job 60884877
+scontrol TimeLimit=00:30:00 (declared 00:30:00)
+60884877 fd_refg1a1 PENDING 0:00 30:00 1 regular_1 m3246
+refg1 a1 connect 1 rc=0
+2026-11-06T02:57:45Z

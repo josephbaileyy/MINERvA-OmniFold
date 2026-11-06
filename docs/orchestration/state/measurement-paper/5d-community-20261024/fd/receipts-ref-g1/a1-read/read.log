@@ -1,0 +1,20 @@
+node login27 nproc=244 loadavg 4.41 5.05 6.70
+2026-11-06T05:41:30Z
+read script sha256 ce6e616690e04949c074c627851dcf645134c37a3dbd01d48922bf752840bf50
+COV2D fence: no cov2d-* job in squeue at 2026-11-06T05:41:30Z
+batch DONE: {"units": 233, "pass": 233, "job": "60857388", "porcelain_after": 0}; SHA256SUMS sha256 6a4c192980bfa337a312381d5862d9598efa4df7ace00d80d587aa2858f47882
+pscratch: bars.json ba4b698500d6fd3b897d172a003936f6b89c9c3add63bfd79a84b231e3745497 (expected ba4b698500d6fd3b897d172a003936f6b89c9c3add63bfd79a84b231e3745497); gibu1.npz 683b493652d4a1e651e8af1684de4e170f79a636761454dd219d0ffc140dace6 (expected 683b493652d4a1e651e8af1684de4e170f79a636761454dd219d0ffc140dace6)
+origin/main a60547692df5f963e428cdfe4661fc51ab785b7b: bars.json ba4b698500d6fd3b897d172a003936f6b89c9c3add63bfd79a84b231e3745497; gibu1-product.tsv: /pscratch/sd/j/josephrb/ref-g1-20261106/gibu1/gibu1.npz	683b493652d4a1e651e8af1684de4e170f79a636761454dd219d0ffc140dace6
+HEAD 0bb9a1bfcb462ebd171d337ae1c8b2e2d0905e93; porcelain --ignored lines before: 0
+bound blobs: 5 checked, 0 mismatches
+stat set: 237 paths (reads' 236 and the gibu1 product); not owned by josephrb: 0
+interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]; threads 4; nice 19; ionice idle
+read rc=0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:04.27
+	Maximum resident set size (kbytes): 96256
+readout.json sha256 4db170d36cffa0be2aeb53926e94158ef4e5e2e1d88fa50dd29baeace8ed6fd7
+reader stdout (the reading; not echoed here) is /pscratch/sd/j/josephrb/ref-g1-20261106/read/read.stdout
+stat set: no atime moved
+porcelain --ignored lines after: 0
+refg1 a1 read rc=0
+2026-11-06T05:42:19Z

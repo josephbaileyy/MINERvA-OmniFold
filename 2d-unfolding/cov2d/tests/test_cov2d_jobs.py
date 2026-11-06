@@ -335,7 +335,50 @@ class PriorRecords(unittest.TestCase):
 
 
 class A2Pseudo(unittest.TestCase):
-    """COV2D addendum A2: the pseudo-data limits, the directory map both job scripts use, and the B9-form deletion."""
+    """COV2D addendum A2: the pseudo-data limits, the directory map both job scripts use, the B9-form deletion, and the
+    quota headroom checked at a pseudo-data job's submission (the director's option (c))."""
+    ROOMY = "|    pscratch |    1.00TiB |    20.00TiB |   5.0% |"     # showquota's pscratch row (RE-2's record's form)
+    FULL = "|    pscratch |   20.00TiB |    20.00TiB | 100.0% |"
+
+    def gate_cli(self, want, quota, tables_rows=()):
+        with tempfile.TemporaryDirectory() as td:
+            d = Path(td)
+            files = []
+            for k, n in (("uni", 3000), ("cv", 200), ("small", 5)):
+                (d / k).write_bytes(b"x" * n)
+                files.append(str(d / k))
+            (d / "sacct.psv").write_text("")
+            (d / "tables").mkdir()
+            (d / "tables" / "jobs_G18.tsv").write_text("job\tlanes\tlane_cpus\truns\tlongest\twall\tlimit\n"
+                                                       + "".join(r + "\n" for r in tables_rows))
+            out = io.StringIO()
+            with mock.patch.object(cj, "staged_inputs", lambda truth: files), \
+                    mock.patch.object(c, "read_quota", quota), contextlib.redirect_stdout(out):
+                rc = cj.main(["gate", "--sacct", str(d / "sacct.psv"), "--tables", str(d / "tables"), "--want", want])
+            return rc, json.loads(out.getvalue())
+
+    def test_a_pseudo_submission_needs_twice_the_headroom(self):
+        rc, rec = self.gate_cli("pseudo_AR23", lambda: self.ROOMY)
+        self.assertEqual((rc, rec["pass"], rec["quota_problem"], rec["staged_bytes"]), (0, True, None, 3205))
+        rc, rec = self.gate_cli("pseudo_AR23", lambda: self.FULL)
+        self.assertEqual((rc, rec["pass"]), (3, False))
+        self.assertIn("headroom", rec["quota_problem"])
+
+    def test_an_unfold_submission_reads_no_quota(self):
+        def boom():
+            raise AssertionError("showquota read for an unfold job")
+        rc, rec = self.gate_cli("G18_Ua", boom, ["G18_Ua\t2\t128\t44\t25300\t25600\t08:54:00"])
+        self.assertEqual((rc, rec["pass"]), (0, True))
+        self.assertNotIn("quota_problem", rec)
+
+    def test_staged_inputs_are_the_seven_shared_files(self):
+        import cov2d_pseudo_write as pw
+        import cov2d_receipt as rc
+        import cov2d_writer as cw
+        got = cj.staged_inputs("AR23")
+        self.assertEqual(got[:3], [rc.UNI, cw.CV, c.CONSTRAINT])
+        self.assertEqual(got[3], str(Path(rc.PREP) / "bridged/genie_v3_ar23.json"))
+        self.assertEqual(got[4:], [p for p, _ in pw.PINS.values()])
     def test_limits(self):
         self.assertEqual(cj.PSEUDO_LIMITS, {"G18": "03:00:00", "AR23": "04:00:00"})
         out = io.StringIO()

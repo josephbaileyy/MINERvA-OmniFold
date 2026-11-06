@@ -1,8 +1,8 @@
 source_record	lifecycle	queue	classification_rule	source_row_sha256	state_prefix
 OI-200	active	NOW	declared	47422eb803029d25e992843ddd3f5fb92e65a55556c46b92736537fd8e832a86	ACTIVE — COV2D campaign (c), 2D method coverage: the AR23 pseudo-data rerun under addendum A2, bound 2026-11-06
 OI-201	active	NOW	declared	032a6afe297e4ab4fad780a4b84a688c711dfc34951eed3bf4cf28c0907f96dc	ACTIVE — 1B staged method coverage, stage 1: the redesign's gate, decided 2026-11-04, awaits its amendment
-OI-202	active	NOW	declared	a3a6c2a9bdf87bb79e710f16b5b68f5a3370a1b93faec537984ea53052fcbfff	ACTIVE — REF-G1, the 16-cell binned head-to-head: the read STOPped on G-IBU1 (#792); addendum A1 revision 2 is merged (#
-OI-203	active	NOW	declared	e2a6de756f9cad6ea2382b1cf99f8b1c837f0fb1294ae9141eb778beae339f97	ACTIVE — REF-C2C1, the 2D binned cross-check (c2) and the joint-test estimator (c1): step two's config is merged and its
+OI-202	active	NOW	declared	db628e17dfa7c421ecd1a0da1694ddadc2f6b626a4eda3b9afb21e92461661cc	ACTIVE — REF-G1, the 16-cell binned head-to-head: addendum A1 BOUND at M' 0bb9a1bf (#814); its run sequence is under lim
+OI-203	active	NOW	declared	8d23bf77e6a6a88702a6f2a3ebd5d33ad987a079c08e6d1c55d2422d21d79008	ACTIVE — REF-C2C1, the 2D binned cross-check (c2) and the joint-test estimator (c1): step two BOUND at M 77d76cfc (#814)
 OI-204	active	NOW	declared	d60a31bc037ac57f9a3f74a538d0f38d5a6f1122a06822cad8122088dbff29c2	ACTIVE — RPD-RECO, the run-period follow-ups d1 and d2: design bound 2026-11-04; code next
 OI-205	active	WAITING-JOSEPH	declared	d6352eae580858d1cff44bd6a9f47d681be50d027877a58c91521a9fa9d31c54	WAITING-JOSEPH — the publication-scope decision: measurement or methods-study framing
 OI-190	retired	-	declared	e214d52d14a140d0d82a31fd62930d02d508e67ba26293a2f7556450d2ed730b	CLOSED 2026-09-25

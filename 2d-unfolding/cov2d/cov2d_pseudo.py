@@ -26,7 +26,7 @@ truth and the records of every nature of one truth, from one read of $UNI. omnif
 Inputs (COV2D addendum A2, Joseph's ruling of 2026-11-05 on AR23's STOP #2): the four shared inputs ($UNI, the CFS CV,
 the truth's F1 ratio and the flux constraint) are first staged into ``<out>/stage`` by ``cov2d.stage_copy``, each an
 O_NOATIME copy hashed against its pin, with the shared file's atime recorded before and after (a record, not a stop).
-Before $UNI is staged, pscratch's quota headroom must be at least twice what is staged, or the job is refused. The
+pscratch's quota headroom (at least twice what is staged) is checked at submission, by the gate (``cov2d_jobs``). The
 job reads only the copies, always through O_NOATIME, and the guard watches only the copies: their atime at the start
 and at the end, both values recorded (``atime_ns``); any move STOPs.
 
@@ -204,10 +204,6 @@ def main(argv=None) -> int:
            "uproot": uproot.__version__, "numpy": np.__version__, "chunk": a.chunk, "stop": [], "pins_checked": not a.no_pins}
     shared = {"uni": (a.uni, c.UNI_SHA256), "cv": (a.cv, c.CV_SHA256), "constraint": (a.constraint, c.CONSTRAINT_SHA256),
               "ratio": (ratio_src, fd_1b_toys.committed_ratio_sha256(rc.TUNES[a.truth]))}
-    need = sum(os.stat(src).st_size for src, _ in shared.values())
-    bad = c.headroom_problem(need, c.read_quota())
-    if bad:
-        raise c.Refusal(f"before staging: {bad}")
     stage = out / "stage"
     stage.mkdir()
     rec["staged"], off_pin = c.stage_all(shared, stage, not a.no_pins, "step A")

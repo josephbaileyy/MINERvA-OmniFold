@@ -14,6 +14,7 @@
 # stage/ first (A2); after step B's PASS the staged copies are deleted, a B9-form ledger row each ($P/deletions.tsv).
 set -eo pipefail
 source "$C/2d-unfolding/cov2d/jobs/cov2d_env.sh"
+export TMPDIR=$O/tmp/${SLURM_JOB_ID:-local}; mkdir -p "$TMPDIR"   # nothing inherited from the submitting shell
 P=$(pseudo_dir "$TRUTH")
 [ ! -e "$P" ] || { echo "[cov2d] $P exists: a pseudo-data rerun is a new connect"; exit 3; }
 mkdir -p "$O/pseudo" "$O/logs"

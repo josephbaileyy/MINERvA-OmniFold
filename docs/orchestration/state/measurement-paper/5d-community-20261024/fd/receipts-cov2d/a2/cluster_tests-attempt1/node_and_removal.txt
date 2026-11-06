@@ -1,0 +1,36 @@
+/dev/shm/josephrb-cov2d-a2tests:
+total 8
+drwxrwx--- 3 josephrb josephrb   80 Nov  5 18:20 .
+drwxrwxrwt 3 root     root       80 Nov  5 18:12 ..
+-rw-rw---- 1 josephrb josephrb 6208 Nov  5 18:20 connect-a2tests.log
+drwxrwx--- 2 josephrb josephrb  360 Nov  5 18:20 logs
+
+/dev/shm/josephrb-cov2d-a2tests/logs:
+total 72
+drwxrwx--- 2 josephrb josephrb  360 Nov  5 18:20 .
+drwxrwx--- 3 josephrb josephrb   80 Nov  5 18:20 ..
+-rw-rw---- 1 josephrb josephrb 2130 Nov  5 18:20 a2quota.log
+-rw-rw---- 1 josephrb josephrb 2611 Nov  5 18:12 blobs.txt
+-rw-rw---- 1 josephrb josephrb 3651 Nov  5 18:16 P_test_cov2d_jobs.log
+-rw-rw---- 1 josephrb josephrb 3772 Nov  5 18:17 P_test_cov2d.log
+-rw-rw---- 1 josephrb josephrb  575 Nov  5 18:14 P_test_cov2d_null.log
+-rw-rw---- 1 josephrb josephrb 2961 Nov  5 18:12 P_test_cov2d_pseudo.log
+-rw-rw---- 1 josephrb josephrb 1551 Nov  5 18:14 P_test_cov2d_readouts.log
+-rw-rw---- 1 josephrb josephrb 1139 Nov  5 18:16 P_test_cov2d_score.log
+-rw-rw---- 1 josephrb josephrb 6375 Nov  5 18:18 RM_test_cov2d_jobs.log
+-rw-rw---- 1 josephrb josephrb 6076 Nov  5 18:18 RM_test_cov2d.log
+-rw-rw---- 1 josephrb josephrb 2753 Nov  5 18:18 RM_test_cov2d_pilot.log
+-rw-rw---- 1 josephrb josephrb 3558 Nov  5 18:18 RM_test_cov2d_pseudo_write.log
+-rw-rw---- 1 josephrb josephrb 3547 Nov  5 18:17 R_test_cov2d_blocks.log
+-rw-rw---- 1 josephrb josephrb  801 Nov  5 18:17 R_test_cov2d_null.log
+-rw-rw---- 1 josephrb josephrb 1683 Nov  5 18:18 R_test_cov2d_score.log
+-rw-rw---- 1 josephrb josephrb 1311 Nov  5 18:20 SHA256SUMS
+47402933aae20bd3c9a3ff81956aa2187610781b9fdc3460fc83f00b86be1179  /dev/shm/josephrb-cov2d-a2tests.sh
+bf5cb0cfcefcca17c81d868dd9a402fb938c74e4606e60e80146e2c8ce0f0c74  /dev/shm/josephrb-cov2d-a2tests/connect-a2tests.log
+host=login02 2026-11-06T02:22:21Z
+rm -rf /dev/shm/josephrb-cov2d-a2tests rc=0
+rm -f /dev/shm/josephrb-cov2d-a2tests.sh rc=0
+total 0
+drwxrwxrwt  2 root root   40 Nov  5 18:22 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..
+deploy head=cf533377c7f9e1638940c677b9af5242f3ba66f4 plain=0 ignored=0
