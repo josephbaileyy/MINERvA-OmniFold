@@ -56,10 +56,19 @@ CONSTRAINT_SHA256 = "e38ad7d28354d071577113a18c8c569f88b6239f7fb193d20285273f172
 UNI_SHA256 = "220c479efa9751116fd396ea32398de5631f8b755e6b16a94ce090975f011418"   # partb_readout/preflight/inputs.stat:2
 CV_SHA256 = "43f8cc16ab2688200d3e2e0ebb48012b23ada6d7882b8c68ecfc51c609aeb8df"    # the CFS CV, RE2-DECLARATION.md:145
 STAGE_HEADROOM = 2.0    # A2 (the director's ruling): stop before staging unless quota headroom >= 2x what is staged
+SETTLE_WAIT, SETTLE_TRIES = 5.0, 6    # A2 (D2): the copies' atime must read the same twice, >= 5 s apart, before guarding
 
 
 class Refusal(RuntimeError):
     pass
+
+
+class PinMismatch(Refusal):
+    """A staged copy's hash is not its pin: the declared input is not the pinned one. A STOP, not a refusal (the
+    director's ruling on A2 section 6)."""
+    def __init__(self, src, got, want):
+        super().__init__(f"{src} sha256 {got} != pinned {want}")
+        self.src, self.got, self.want = str(src), got, want
 
 
 def column(prefix: str, band: str, idx: int) -> str:
@@ -180,18 +189,57 @@ def stage_copy(src: str | Path, stage_dir: str | Path, want: str | None, name: s
                 h.update(b)
                 out.write(b)
                 n += len(b)
+            out.flush()
+            os.fsync(out.fileno())     # D2: the copy, then its directory, on disk before any reading of its atime
     finally:
         os.close(fd)
+    dfd = os.open(str(stage_dir), os.O_RDONLY)
+    try:
+        os.fsync(dfd)
+    finally:
+        os.close(dfd)
     after = os.stat(src).st_atime_ns
     got = h.hexdigest()
     if want is not None and got != want:
         dst.unlink()
-        raise Refusal(f"{src} sha256 {got} != pinned {want}")
+        raise PinMismatch(src, got, want)
     os.chmod(dst, 0o440)
     st = os.stat(dst)
     return {"src": str(src), "path": str(dst), "sha256": got, "pinned": want, "bytes": n,
             "src_atime_ns": {"before": before, "after": after}, "src_atime_moved": after != before,
             "stat": {"size": st.st_size, "mtime": int(st.st_mtime), "inode": st.st_ino}}
+
+
+def stage_all(shared: dict, stage_dir: str | Path, check_pins: bool, step: str) -> tuple[dict, dict | None]:
+    """Stage each {key: (shared path, pin)} in order (``stage_copy``, named key_basename). Returns the staged records
+    and None, or, at the first copy off its pin, the records staged so far and the STOP: the step, the input, its
+    path and both digests (the director's ruling on A2 section 6: a STOP written into the step's record)."""
+    staged = {}
+    for k, (src, pin) in shared.items():
+        try:
+            staged[k] = stage_copy(src, stage_dir, pin if check_pins else None, f"{k}_{Path(src).name}")
+        except PinMismatch as e:
+            return staged, {"step": step, "input": k, "src": e.src, "sha256": e.got, "pinned": e.want,
+                            "text": f"{step}: staged input {k} ({e.src}) is off its pin: sha256 {e.got} != pinned "
+                                    f"{e.want} (the declared input is not the pinned one)"}
+    return staged, None
+
+
+def settle_atime(paths, wait: float | None = None, tries: int | None = None, sleep=None) -> tuple[dict | None, list]:
+    """D2 (the director's ruling): read the paths' atimes twice, ``wait`` s apart (SETTLE_WAIT), until two readings
+    agree, at most ``tries`` times (SETTLE_TRIES). Returns (the agreed reading, every reading), or (None, every
+    reading) if they never settle, which the step refuses on, before any of its work."""
+    import time
+    wait = SETTLE_WAIT if wait is None else wait
+    tries = SETTLE_TRIES if tries is None else tries
+    sleep = time.sleep if sleep is None else sleep
+    readings = [atime_ns(paths)]
+    for _ in range(tries):
+        sleep(wait)
+        readings.append(atime_ns(paths))
+        if readings[-1] == readings[-2]:
+            return readings[-1], readings
+    return None, readings
 
 
 def atime_ns(paths) -> dict:

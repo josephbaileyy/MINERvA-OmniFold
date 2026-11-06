@@ -268,9 +268,40 @@ class StageAndGuard(unittest.TestCase):
         self.assertEqual(r["stat"], {"size": st.st_size, "mtime": int(st.st_mtime), "inode": st.st_ino})
 
     def test_a_wrong_pin_refuses_and_leaves_no_copy(self):
-        with self.assertRaises(c.Refusal):
+        with self.assertRaises(c.PinMismatch):
             c.stage_copy(self.src, self.d / "stage", "0" * 64, "x_shared.bin")
         self.assertFalse((self.d / "stage" / "x_shared.bin").exists())
+
+    def test_stage_all_stops_at_the_first_copy_off_its_pin(self):
+        other = self.d / "other.bin"
+        other.write_bytes(b"x")
+        staged, stop = c.stage_all({"a": (self.src, self.sha), "b": (other, "0" * 64), "c": (self.src, self.sha)},
+                                   self.d / "stage", True, "step A")
+        self.assertEqual(list(staged), ["a"])
+        import hashlib
+        self.assertEqual({k: stop[k] for k in ("step", "input", "src", "sha256", "pinned")},
+                         {"step": "step A", "input": "b", "src": str(other), "sha256": hashlib.sha256(b"x").hexdigest(),
+                          "pinned": "0" * 64})
+        self.assertIn("step A: staged input b (", stop["text"])
+        staged, stop = c.stage_all({"b": (other, "0" * 64)}, self.d / "stage", False, "step A")    # pins unchecked
+        self.assertEqual((list(staged), stop), (["b"], None))
+
+    def test_settling(self):
+        f = self.d / "f"
+        f.write_bytes(b"x")
+        self.assertGreaterEqual(c.SETTLE_WAIT, 5.0)
+        moves = iter([1, None])                               # one move, then still: settles on the second pair
+
+        def once(_):
+            m = next(moves)
+            if m:
+                os.utime(f, ns=(m * 10 ** 9, os.stat(f).st_mtime_ns))
+        reading, readings = c.settle_atime([f], wait=0, tries=3, sleep=once)
+        self.assertEqual((reading, len(readings)), ({str(f): 10 ** 9}, 3))
+        tick = iter(range(2, 100))
+        reading, readings = c.settle_atime([f], wait=0, tries=3,
+                                           sleep=lambda _: os.utime(f, ns=(next(tick) * 10 ** 9, 0)))
+        self.assertEqual((reading, len(readings)), (None, 4))
 
     def test_a_copy_is_made_once(self):
         c.stage_copy(self.src, self.d / "stage", self.sha, "x_shared.bin")

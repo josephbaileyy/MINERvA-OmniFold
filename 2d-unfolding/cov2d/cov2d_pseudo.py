@@ -210,11 +210,24 @@ def main(argv=None) -> int:
         raise c.Refusal(f"before staging: {bad}")
     stage = out / "stage"
     stage.mkdir()
-    rec["staged"] = {k: c.stage_copy(src, stage, None if a.no_pins else pin, f"{k}_{Path(src).name}")
-                     for k, (src, pin) in shared.items()}
+    rec["staged"], off_pin = c.stage_all(shared, stage, not a.no_pins, "step A")
+    if off_pin:                            # a STOP (the director's ruling on A2 section 6), before any product
+        rec["off_pin"] = off_pin
+        rec["stop"].append(off_pin["text"])
+        rec["verdict"], rec["seconds"] = "STOP", round(time.time() - t0, 1)
+        (out / "pseudo_a.json").write_text(json.dumps(rec, indent=1, sort_keys=True))
+        print(f"COV2D-PSEUDO-A {a.truth} STOP natures=0 stops=1\nSTOP {off_pin['text']}")
+        return 3
     rec["shared_atime_moved"] = [v["src"] for v in rec["staged"].values() if v["src_atime_moved"]]   # a record only
     copy = {k: v["path"] for k, v in rec["staged"].items()}
-    before = c.atime_ns(copy.values())     # the guard watches the private copies only
+    before, rec["settle_atime_ns"] = c.settle_atime(copy.values())     # D2: the guard's first reading, settled
+    if before is None:                     # a refusal before any of the step's work (the director's ruling), not a STOP
+        rec["refused"] = (f"the staged copies' atime did not read the same twice {c.SETTLE_WAIT:g} s apart in "
+                          f"{c.SETTLE_TRIES} tries")
+        rec["verdict"], rec["seconds"] = "REFUSED", round(time.time() - t0, 1)
+        (out / "pseudo_a.json").write_text(json.dumps(rec, indent=1, sort_keys=True))
+        print(f"COV2D-PSEUDO-A {a.truth} REFUSED {rec['refused']}")
+        return 2
 
     text, sha = rc.read_noatime(copy["constraint"])
     w_flux = c.flux_weights(text.decode())

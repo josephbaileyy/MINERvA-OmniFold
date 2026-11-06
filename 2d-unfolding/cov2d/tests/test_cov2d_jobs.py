@@ -322,7 +322,7 @@ class Order(unittest.TestCase):
     M = "sequence-test-not-a-commit"
 
     def rec(self, ok=True, M=None, **kw):
-        return {"verdict": "PASS" if ok else "STOP", "M": M or self.M, **kw}
+        return {"verdict": "PASS" if ok else "STOP", "M": M or self.M, "pins_checked": True, **kw}
 
     def committed(self, g18=False, ar23=False, pilot=False):
         return {cj.PSEUDO_RECORD.format(truth="G18"): self.rec() if g18 else None,
@@ -356,6 +356,17 @@ class Order(unittest.TestCase):
             for job, truth in (("pseudo", "AR23"), ("G18_Ua", "G18"), ("AR23_Ta", "AR23")):
                 with self.subTest(rp=rp, job=job):
                     self.assertTrue(any("REPRICE" in x for x in cj.order(job, truth, c_, set(cj.UNIVERSE_JOBS), self.M)))
+
+    def test_a_pseudo_record_without_its_pins_checked_opens_nothing(self):
+        # A2's L1
+        for bad in (False, None):
+            c_ = self.committed(True, True, True)
+            g18 = cj.PSEUDO_RECORD.format(truth="G18")
+            c_[g18] = {k: v for k, v in self.rec().items() if k != "pins_checked"} if bad is None else \
+                self.rec(pins_checked=False)
+            with self.subTest(bad=bad):
+                self.assertTrue(cj.order("pilot", "pilot", c_, set(), self.M))
+                self.assertTrue(cj.order("G18_Ua", "G18", c_, set(), self.M))
 
     def test_gate_refuses_an_unknown_cov2d_job(self):
         with self.assertRaises(c.Refusal):

@@ -96,7 +96,8 @@ class PseudoA(unittest.TestCase):
         cls.d = Path(cls.td.name)
         cls.truth, cls.sig, cls.bkg = build(cls.d)
         cls.patches = [mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True),
-                       mock.patch.object(ps, "read_pot", lambda f: POT), mock.patch.object(c, "read_quota", lambda: ROOMY)]
+                       mock.patch.object(ps, "read_pot", lambda f: POT), mock.patch.object(c, "read_quota", lambda: ROOMY),
+                       mock.patch.object(c, "SETTLE_WAIT", 0.0)]
         for p in cls.patches:
             p.start()
         cls.emu = contextlib.ExitStack()
@@ -281,6 +282,38 @@ class PseudoA(unittest.TestCase):
         self.assertGreater(rec["atime_ns"][str(copy)]["after"], rec["atime_ns"][str(copy)]["before"])
         self.assertIn("atime moved", text)
 
+    def test_a_staged_input_off_its_pin_is_a_stop(self):
+        # the director's ruling on A2 section 6: pins checked, the fixture's $UNI is not part B's file
+        buf = io.StringIO()
+        d = self.d
+        with contextlib.redirect_stdout(buf):
+            code = ps.main(["--truth", "G18", "--out", str(d / "offpin"), "--uni", str(d / "uni.root"),
+                            "--cv", str(d / "cv.root"), "--prep", str(d / "prep"),
+                            "--constraint", str(d / "constraint.txt")])
+        rec = self.rec("offpin")
+        self.assertEqual((code, rec["verdict"], len(rec["stop"])), (3, "STOP", 1))
+        self.assertEqual({k: rec["off_pin"][k] for k in ("step", "input", "src", "pinned")},
+                         {"step": "step A", "input": "uni", "src": str(d / "uni.root"), "pinned": c.UNI_SHA256})
+        self.assertEqual(len(rec["off_pin"]["sha256"]), 64)
+        self.assertIn("step A: staged input uni (", rec["stop"][0])
+        self.assertEqual(sorted(p.name for p in (d / "offpin").glob("counts_*.npz")), [])
+        self.assertFalse((d / "offpin" / "stage" / "uni_uni.root").exists())    # the copy off its pin is deleted
+
+    def test_a_copy_whose_atime_will_not_settle_is_refused_before_the_work(self):
+        # D2: a stand-in moves the staged copies' atime between every pair of readings
+        tick = iter(range(1, 10 ** 6))
+
+        def sleep(_):
+            for f in (self.d / "nosettle" / "stage").iterdir():
+                os.utime(f, ns=(next(tick) * 10 ** 9, os.stat(f).st_mtime_ns))
+        with mock.patch("time.sleep", sleep):
+            code, text = self.run_main("nosettle", 200_000)
+        rec = self.rec("nosettle")
+        self.assertEqual((code, rec["verdict"], rec["stop"]), (2, "REFUSED", []))
+        self.assertEqual(len(rec["settle_atime_ns"]), c.SETTLE_TRIES + 1)
+        self.assertEqual(sorted(p.name for p in (self.d / "nosettle").glob("counts_*.npz")), [])
+        self.assertIn("REFUSED", text)
+
     def test_staging_is_refused_without_twice_the_headroom(self):
         with mock.patch.object(c, "read_quota", lambda: FULL), self.assertRaises(c.Refusal) as e:
             self.run_main("noroom", 200_000)
@@ -295,7 +328,8 @@ class Guards(unittest.TestCase):
         self.addCleanup(self.td.cleanup)
         self.d = Path(self.td.name)
         for p in (mock.patch.object(os, "O_NOATIME", getattr(os, "O_NOATIME", 0), create=True),
-                  mock.patch.object(ps, "read_pot", lambda f: POT), mock.patch.object(c, "read_quota", lambda: ROOMY)):
+                  mock.patch.object(ps, "read_pot", lambda f: POT), mock.patch.object(c, "read_quota", lambda: ROOMY),
+                  mock.patch.object(c, "SETTLE_WAIT", 0.0)):
             p.start()
             self.addCleanup(p.stop)
         emu = contextlib.ExitStack()

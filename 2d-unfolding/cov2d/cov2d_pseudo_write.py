@@ -222,11 +222,25 @@ def main(argv=None) -> int:
     srcs = {k: getattr(a, k) for k in PINS}
     stage = out / "stage"
     stage.mkdir()
-    rec["staged"] = {k: c.stage_copy(src, stage, None if a.no_pins else PINS[k][1], f"{k}_{Path(src).name}")
-                     for k, src in srcs.items()}
+    rec["staged"], off_pin = c.stage_all({k: (src, PINS[k][1]) for k, src in srcs.items()}, stage, not a.no_pins,
+                                         "step B")
+    if off_pin:                            # a STOP (the director's ruling on A2 section 6), before any product
+        rec["off_pin"] = off_pin
+        rec["stop"].append(off_pin["text"])
+        rec["verdict"], rec["seconds"] = "STOP", round(time.time() - t0, 1)
+        (out / "pseudo_b.json").write_text(json.dumps(rec, indent=1, sort_keys=True))
+        print(f"COV2D-PSEUDO-B {rec['truth']} STOP files=0 stops=1\nSTOP {off_pin['text']}")
+        return 3
     rec["shared_atime_moved"] = [v["src"] for v in rec["staged"].values() if v["src_atime_moved"]]   # a record only
     staged = {k: v["path"] for k, v in rec["staged"].items()}
-    before = c.atime_ns(staged.values())     # the guard watches the staged copies only
+    before, rec["settle_atime_ns"] = c.settle_atime(staged.values())     # D2: the guard's first reading, settled
+    if before is None:                     # a refusal before any of the step's work (the director's ruling), not a STOP
+        rec["refused"] = (f"the staged copies' atime did not read the same twice {c.SETTLE_WAIT:g} s apart in "
+                          f"{c.SETTLE_TRIES} tries")
+        rec["verdict"], rec["seconds"] = "REFUSED", round(time.time() - t0, 1)
+        (out / "pseudo_b.json").write_text(json.dumps(rec, indent=1, sort_keys=True))
+        print(f"COV2D-PSEUDO-B {rec['truth']} REFUSED {rec['refused']}")
+        return 2
     with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as td:
         copies = {k: copy_noatime(p, Path(td), None if a.no_pins else PINS[k][1]) for k, p in staged.items()}   # ROOT's
         rec["inputs"] = {k: {"path": srcs[k], "staged": staged[k], "sha256": v[1]} for k, v in copies.items()}

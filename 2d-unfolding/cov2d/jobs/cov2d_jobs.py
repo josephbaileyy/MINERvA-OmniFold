@@ -294,18 +294,21 @@ def order(job: str, truth: str, committed: dict, submitted: set, M: str) -> list
     after the pilot readout's PASS; the universe jobs (the $UNI readers) after both pseudo-data PASSes; the rest after
     all eight universe jobs are submitted. ``committed`` maps a record path on origin/main to its JSON (None if absent);
     each record must say PASS and carry "M" equal to the deploy's commit, as the writers record it
-    (``cov2d.deploy_head``). The pilot's must also list no REPRICE class: section 8 makes REPRICE an amendment, decided
+    (``cov2d.deploy_head``), and a pseudo-data record must say ``pins_checked: true`` (A2's L1; the pilot readout has
+    no unpinned mode and records no such field). The pilot's must also list no REPRICE class: section 8 makes REPRICE an amendment, decided
     before any bulk job (the director's ruling on the final audit's F2)."""
-    def ok(path):
+    def ok(path, pins=False):
         r = committed.get(path)
-        return bool(r) and r.get("verdict") == "PASS" and r.get("M") == M
+        return (bool(r) and r.get("verdict") == "PASS" and r.get("M") == M
+                and (not pins or r.get("pins_checked") is True))   # a pseudo-data run with its pins unchecked opens nothing
 
     need = []
     pseudo = {t: PSEUDO_RECORD.format(truth=t) for t in ("G18", "AR23")}
     if job == "pseudo" and truth == "G18":
         return []
     if job == "pilot" or truth == "pilot":
-        return [] if ok(pseudo["G18"]) else [f"the G18 pseudo-data PASS record ({pseudo['G18']}) is not on main for {M}"]
+        return [] if ok(pseudo["G18"], pins=True) else [
+            f"the G18 pseudo-data PASS record ({pseudo['G18']}) with its pins checked is not on main for {M}"]
     if not ok(PILOT_RECORD):
         need.append(f"the pilot readout's PASS record ({PILOT_RECORD}) is not on main for {M}")
     elif committed[PILOT_RECORD].get("reprice_classes") != []:
@@ -314,8 +317,8 @@ def order(job: str, truth: str, committed: dict, submitted: set, M: str) -> list
     if job == "pseudo":
         return need
     for t, path in pseudo.items():
-        if not ok(path):
-            need.append(f"the {t} pseudo-data PASS record ({path}) is not on main for {M}")
+        if not ok(path, pins=True):
+            need.append(f"the {t} pseudo-data PASS record ({path}) with its pins checked is not on main for {M}")
     if job not in UNIVERSE_JOBS:
         missing = [u for u in UNIVERSE_JOBS if u not in submitted]
         if missing:

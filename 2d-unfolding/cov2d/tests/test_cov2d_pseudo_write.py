@@ -119,6 +119,9 @@ class StepB(unittest.TestCase):
         emu = contextlib.ExitStack()
         emu.enter_context(noatime_emu.emulated(c, pw))
         self.addCleanup(emu.close)
+        p = mock.patch.object(c, "SETTLE_WAIT", 0.0)
+        p.start()
+        self.addCleanup(p.stop)
 
     def run_b(self, extra=()):
         buf = io.StringIO()
@@ -232,13 +235,21 @@ class StepB(unittest.TestCase):
 
     def test_the_writers_record_is_what_order_admits(self):
         # F1: the record step B itself writes, not a hand-written one, opens the pilot only for the deploy's commit
+        # (A2's L1: with its pins checked, here against the fixture's own digests)
+        import hashlib
         write_fixture(self.d, self.drv)
-        code, text = self.run_b()
-        self.assertEqual(code, 0, text)
+        fixture_pins = {k: (pw.PINS[k][0], hashlib.sha256((self.d / f).read_bytes()).hexdigest())
+                        for k, f in (("er", "xsec.root"), ("mcfile", "mc.root"), ("flux_universe_file", "fluxu.root"))}
+        buf = io.StringIO()
+        with mock.patch.dict(pw.PINS, fixture_pins), contextlib.redirect_stdout(buf):
+            code = pw.main(["--a", str(self.d / "a"), "--out", str(self.d / "out"), "--er", str(self.d / "xsec.root"),
+                            "--mcfile", str(self.d / "mc.root"), "--flux-universe-file", str(self.d / "fluxu.root")])
+        self.assertEqual(code, 0, buf.getvalue())
         rec = self.rec()
-        self.assertEqual(rec["M"], self.head)
+        self.assertEqual((rec["M"], rec["pins_checked"]), (self.head, True))
         path = cj.PSEUDO_RECORD.format(truth="G18")
         self.assertEqual(cj.order("pilot", "pilot", {path: rec}, set(), self.head), [])
+        self.assertTrue(cj.order("pilot", "pilot", {path: dict(rec, pins_checked=False)}, set(), self.head))
         self.assertTrue(cj.order("pilot", "pilot", {path: {k: v for k, v in rec.items() if k != "M"}}, set(), self.head))
         self.assertTrue(cj.order("pilot", "pilot", {path: dict(rec, M="f" * 40)}, set(), self.head))
 
@@ -288,6 +299,22 @@ class StepB(unittest.TestCase):
         self.assertEqual((code, rec["verdict"], rec["atime_moved"]), (3, "STOP", [str(copy)]))
         self.assertGreater(rec["atime_ns"][str(copy)]["after"], rec["atime_ns"][str(copy)]["before"])
 
+    def test_a_copy_whose_atime_will_not_settle_is_refused_before_the_work(self):
+        # D2: a stand-in moves the staged copies' atime between every pair of readings
+        write_fixture(self.d, self.drv)
+        tick = iter(range(1, 10 ** 6))
+
+        def sleep(_):
+            for f in (self.d / "out" / "stage").iterdir():
+                os.utime(f, ns=(next(tick) * 10 ** 9, os.stat(f).st_mtime_ns))
+        with mock.patch("time.sleep", sleep):
+            code, text = self.run_b()
+        rec = self.rec()
+        self.assertEqual((code, rec["verdict"], rec["stop"]), (2, "REFUSED", []))
+        self.assertEqual(len(rec["settle_atime_ns"]), c.SETTLE_TRIES + 1)     # every reading is recorded
+        self.assertEqual(sorted(p.name for p in (self.d / "out").glob("data_*.root")), [])
+        self.assertIn("REFUSED", text)
+
     def test_refuses_a_stopped_step_a(self):
         write_fixture(self.d, self.drv)
         p = self.d / "a" / "pseudo_a.json"
@@ -295,12 +322,23 @@ class StepB(unittest.TestCase):
         with self.assertRaises(c.Refusal):
             self.run_b()
 
-    def test_pins_are_checked(self):
+    def test_a_staged_input_off_its_pin_is_a_stop(self):
+        # the director's ruling on A2 section 6: the declared input is not the pinned one
         write_fixture(self.d, self.drv)
         buf = io.StringIO()
-        with contextlib.redirect_stdout(buf), self.assertRaises(c.Refusal):
-            pw.main(["--a", str(self.d / "a"), "--out", str(self.d / "out"), "--er", str(self.d / "xsec.root"),
-                     "--mcfile", str(self.d / "mc.root"), "--flux-universe-file", str(self.d / "fluxu.root")])
+        with contextlib.redirect_stdout(buf):
+            code = pw.main(["--a", str(self.d / "a"), "--out", str(self.d / "out"), "--er", str(self.d / "xsec.root"),
+                            "--mcfile", str(self.d / "mc.root"), "--flux-universe-file", str(self.d / "fluxu.root")])
+        rec = self.rec()
+        self.assertEqual((code, rec["verdict"], len(rec["stop"])), (3, "STOP", 1))
+        import hashlib
+        self.assertEqual(rec["off_pin"], {"step": "step B", "input": "er", "src": str(self.d / "xsec.root"),
+                                          "sha256": hashlib.sha256((self.d / "xsec.root").read_bytes()).hexdigest(),
+                                          "pinned": pw.PINS["er"][1], "text": rec["stop"][0]})
+        self.assertIn("step B: staged input er (", rec["stop"][0])
+        self.assertEqual(rec["staged"], {})                       # the first input, E_R, is off its pin
+        self.assertEqual(sorted(p.name for p in (self.d / "out").glob("data_*.root")), [])
+        self.assertIn("COV2D-PSEUDO-B G18 STOP", buf.getvalue())
 
 
 if __name__ == "__main__":
