@@ -1,0 +1,40 @@
+{
+ "unit": "gibu1",
+ "slurm_job": "60884877",
+ "environment": {
+  "interpreter": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+  "python_version": "3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]",
+  "numpy": "1.26.4",
+  "scipy": "1.16.3",
+  "thread_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  },
+  "cpus": 2,
+  "threadpools": [
+   {
+    "user_api": "blas",
+    "internal_api": "openblas",
+    "num_threads": 1,
+    "prefix": "libopenblas",
+    "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libopenblasp-r0.3.30.so",
+    "version": "0.3.30",
+    "threading_layer": "pthreads",
+    "architecture": "Zen"
+   },
+   {
+    "user_api": "blas",
+    "internal_api": "openblas",
+    "num_threads": 1,
+    "prefix": "libscipy_openblas",
+    "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy.libs/libscipy_openblas-b75cc656.so",
+    "version": "0.3.29.dev",
+    "threading_layer": "pthreads",
+    "architecture": "Haswell"
+   }
+  ],
+  "root_loaded": false
+ },
+ "seconds": 2.103
+}
