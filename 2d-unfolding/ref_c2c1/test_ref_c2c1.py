@@ -249,6 +249,7 @@ class Driver(unittest.TestCase):
 class Units(unittest.TestCase):
     def test_the_replica_set_is_bound_at_step_two(self):
         cfg = copy.deepcopy(CFG)
+        cfg["replica_set"]["choice"] = None  # unbound, as before step two
         with self.assertRaises(C.GateFailure):
             C.parse_units(cfg, ["c2_replica:3"])
         cfg["replica_set"]["choice"] = "reuse"
