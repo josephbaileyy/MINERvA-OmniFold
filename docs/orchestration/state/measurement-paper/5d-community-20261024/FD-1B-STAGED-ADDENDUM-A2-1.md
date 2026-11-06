@@ -821,10 +821,15 @@ asserted by a test); the slack is held only by the bulk-size test.
 
 ## 11. Binding 3: the declaration (a fixed conditional sequence)
 
-**Status.** Declared for the director's binding. Stage 1 runs ahead of the binding on the director's go (2026-11-05),
-as A2.1's priced prerequisite: c2check G18 is job 60880987, AR23 job 60880988, launched 2026-11-06 00:32:24Z. Nothing
-after stage 1 has run. **Binding 3's code is frozen at `9b87a85c`** (the director, 2026-11-06): nothing in it changes
-unless a stage STOPs.
+**Status.** Declared for the director's binding. Stage 1 ran ahead of the binding on the director's go (2026-11-05),
+as A2.1's priced prerequisite. Stages 1 and 2 have PASSed, and the director accepted both records (2026-11-06):
+- **Stage 1** (73c60075, `b3/c2check-{g18,ar23}-run/`): G18 job 60880987, AR23 job 60880988, launched 2026-11-06
+  00:32:24Z. Both C2-GATE PASS, "option (1)". 17,563 s and 17,905 s elapsed, 9.853 node-h. 0 of 1147 declared-input
+  atimes moved for each.
+- **Stage 2** (db61cd92, `b3/merge-run/`): C2-GATE-MERGED PASS at both truths. gate.json `6a832bf0…`.
+
+Nothing after stage 2 has run. **Binding 3's code is frozen at `9b87a85c`** (the director, 2026-11-06): nothing in it
+changes unless a stage STOPs. The freeze covers all five gate files (below), not only the fd_1b ones.
 
 **Scope: the no-plug-in path** (the director's ruling on the auditor's B1, option (a), 2026-11-06):
 - **Truths:** G18 and AR23 only. S1-0 and S1-0b run without the capture row (`fd_1b_mc.PILOT[False]`), the stage 1
@@ -840,22 +845,40 @@ unless a stage STOPs.
   coverage endpoint.
 
 **What it binds** (frozen at `9b87a85c`):
-- **Code:**
+- **The five gate files,** the files `fd_1b_c2.gate_code_digests()` hashes. `check_clip_gate` refuses unless they
+  equal the calibration's `code_sha256`, so these are the gate's blobs at every stage:
   - fd_1b_c2 `522d7edd`, fd_1b_mc `062628b6` (bf36901f's, the code rerun2's calibration was made by);
+  - 2d-unfolding/cov2d/cov2d.py `0d852a69`;
+  - receipts-cov2d/clip/clip_probe2.py `b95c5629`;
+  - fd_1b_toys `869a65c3`.
+- **The deploy** (the director's ruling on the auditor's P1, 2026-11-06). Stages 3–7 deploy M3, a commit on the
+  binding-3 branch (`decl/1b-staged-a2-1-20261103`) carrying the gate pin. They never deploy a merge with main: main
+  has cov2d.py `76cbceba` (COV2D's fd8d68bb, a2005b54, 928204b0 and 94544e0b), so a merged deploy refuses every
+  `nature` row. Every stage's connect checks all five gate blobs before launch, with the guard and the pins file, and
+  refuses on any difference. The branch merges into main only after the campaign ends, as a records merge with no
+  further runs.
+- **Other code:**
   - fd_1b_noatime_guard `ee20534c`, b3/guard_scan.py `84a6750b`;
   - stage1/tables/make_stage1_tables.py `9c7f1541`, fd_f1_lane.py `fbcb7869`;
   - the 300-draw pins file `f6edf4b0`.
 - **Stage 1–2 scripts:** b3/sbatch-c2check.sh `2335ab4d`, b3/connect-c2check.sh `f5dfe6a0`, b3/connect-merge.sh
-  `abe32817`.
+  `abe32817`. connect-c2check's `bound.sha256` checked two of the five gate files (fd_1b_c2 and fd_1b_mc), with the
+  guard and sbatch-c2check.sh. It is recorded as passed: c2check's in-run calibration check compared all five, through
+  `gate_code_digests()`, and the merged record's `code_sha256` holds the five blobs above.
+- **Stage 3's scripts:** b3/connect-receipt.sh `f2b5b2cb`, b3/connect-receipt-readout.sh
+  `322216ef`. connect-receipt also checks the job path's blobs: fd_f1_lane `fbcb7869`, s5c_array.sh
+  `dd95db5d`, mnv_guarded_run `30162f57`, sbatch_timing_packed.sh `b72aaa62` and setup_salloc_env.sh `ea3c6998`.
 - **The estimator:** configuration (e) (`R`). B4 resolved NONE_PASS, terminal (#785; fd_stab.json `653356ae…`).
 - **The records:**
   - the large-sample calibration, rerun2 (job 60857361; calibration.json `66f2ae44…`, npz `9047a6f7…`);
   - the backstop's 300-draw calibration (job 60771025; `4b6a18b6…`);
   - the 1-thread probe that prices c2check (job 60870880; probe.json `c87d162d…`).
-- **The gate pin,** in step 2: `fd_1b_mc.GATE_PIN` holds the merged gate record's sha256, committed by the director's
-  merge. The bulk refuses without it (`bound_gate_sha256`).
+- **The gate pin,** in step 2: `fd_1b_mc.GATE_PIN` (a2-1/BOUND_GATE.sha256, outside every hashed byte) holds the merged
+  gate record's sha256, `6a832bf0692864aefb5f7e97e22f3c8025d87679561463358550dc12b090b062`. It is committed on the
+  binding-3 branch after the binding, and that commit is M3. The bulk refuses without it (`bound_gate_sha256`).
 
-**The sequence.** Each stage proceeds automatically when its predecessor's PASS record (as identified below) is on main.
+**The sequence.** Each stage proceeds automatically when its predecessor's PASS record (as identified below) is committed
+on the binding-3 branch.
 Any other outcome stops the sequence and goes to the director: a STOP, an INVALID, a REPRICE, a refusal, or a missing
 or unidentifiable record. Each connect's sha256 is sent in the stage's report. Every job line runs under the guard,
 checked by `b3/guard_scan.py`, which fails on an empty population.
@@ -864,7 +887,7 @@ checked by `b3/guard_scan.py`, which fails on an empty population.
 |---|---|---|---|
 | 1 | c2check at N, G18 and AR23, one job each (`b3/connect-c2check.sh <truth>`, `-t 07:30:00`, 1 BLAS thread), which may run alongside | each part's gate record with verdict PASS | 7.5 + 7.5 (4.92 h each projected) |
 | 2 | `c2check-merge` of the two parts, by digest, on a login node under the guard (`b3/connect-merge.sh`) | the merged gate record: verdict PASS, "option (1)" at both truths, both backstops passing | 0 |
-| 3 | the gate pin committed (binding 3 step 2); then one connect: a fresh deploy at that merge, the balance gate, the stat-before and the tables at `--plugin no`, then the receipt job (amendment 2 §12 items 1–2) | the receipt's readout PASS | ≤ 2.0 |
+| 3 | the gate pin committed (binding 3 step 2) on the branch, which is M3; then one connect (`b3/connect-receipt.sh M3`): a fresh deploy at M3, every bound blob, the guard's tests on the login node (RealFlag among them), the balance gate, the stat-before and the tables at `--plugin no`, then the receipt job, `-t 02:00:00` (amendment 2 §12 items 1–2); after the job, `b3/connect-receipt-readout.sh JOB` | the receipt's readout PASS, with no atime moved and the stat-after unchanged | ≤ 2.0 |
 | 4 | S1-0 (8 items, no capture), its walls and controls; then S1-0b, its walls, then `clipcheck` (amendment 2 §12 items 3–4) | S1-0's walls PASS with every control passing; S1-0b's walls PASS; `clipcheck` PROCEED | 1.0 + 1.0 |
 | 5 | the smoke run, below | every check below PASS | 1.5 |
 | 6 | the bulk: 6 one-node jobs, in waves of at most 3 | **two records, both required** (the director, 2026-11-05): the smoke run's PASS, and the auditor's committed written acknowledgement (amendment 2 §12 item 5), a separate wait. Then each wave's `walls` PASS (no REPRICE) before the next | 48.0 |
@@ -879,15 +902,17 @@ ruled.
 - its deploy head is the stage's declared M;
 - at stages 5–6, the `nature` rows, its gate config hash and the pin it was read under are the committed
   `GATE_PIN`'s (the receipt, S1-0 and S1-0b run under `data`, before the gate);
-- the sha256 the job log printed for it equals the committed file's;
+- the sha256 the job log printed for it equals the committed file's. At stage 3 that is the readout's log: the receipt
+  prints no digest, so the readout prints the sha256 of the bytes it read through O_NOATIME;
 - it was written by a producer that refuses an existing output directory (each stage's W is new).
 
 Records already in the repository from other runs cannot satisfy this: they have the wrong path, job id and deploy head.
 Examples are stage 2's walls-2a, inv/i2's walls, and the STOP receipt of the earlier S1-0 attempt.
 
-**Scripts not yet written** (the auditor's B4). Stages 1–2's scripts are declared by blob above. Stages 3–7's are
-written in b3/ and listed in the guard scan's counts. Each is an undeclared blob until then, so each waits for the
-director's go and an audit read before its first run. The stage 1 connects of binding 2 (stage1/connect32-*.sh, which
+**Scripts not yet written** (the auditor's B4). Stages 1–3's scripts are declared by blob above. Stages 4–7's are
+written in b3/ and listed in the guard scan's counts (`EXPECTED_B3` in tests/test_fd_1b_guard.py, a test-only change
+outside the five gate files). Each is an undeclared blob until then, so each waits for the director's go and an audit
+read before its first run. The stage 1 connects of binding 2 (stage1/connect32-*.sh, which
 run fd_1b_mc unguarded) are not reused.
 
 **The smoke run** (stage 5). It is a production-path check, not a replacement for any required check.
@@ -932,7 +957,7 @@ named.
   a calibration and c2check rerun). The guard is enforced by the scan over b3's scripts and the generated rows and by
   the refusal of indirect forms. A hand-typed launch outside them is not caught.
 - **The guard's real-O_NOATIME test** (`RealFlag`) runs only on Linux. Its first live run was the 1-thread probe (no
-  refusal); stage 3's login-node receipt includes the test.
+  refusal). Stage 3's connect runs the guard suite on the login node at M3 and stops unless RealFlag ran and passed.
 - **The readout does not compare a product's gate config hash with the current pin** (the auditor's note). A resume
   does compare it (`resume_matches`).
 - **The smoke run's coverage gaps** above.
