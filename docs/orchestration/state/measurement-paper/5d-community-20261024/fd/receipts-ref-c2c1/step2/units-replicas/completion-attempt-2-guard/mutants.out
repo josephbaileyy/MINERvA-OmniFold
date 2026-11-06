@@ -1,0 +1,5 @@
+# mutants of running_lane_steps, each run through test_lane_step_guard.sh's fixture cases (BSD awk, 2026-11-06T12:29:29Z)
+mutant [s/ \&\& st == "RUNNING"//]: 10 passed, 1 failed
+mutant [s/c++; delete W\[sid\]/c++/]: 10 passed, 1 failed
+mutant [s/END { print c + 0 }/END { print n }/]: 3 passed, 8 failed
+mutant [s/if ((sid in W)/if ((index(sid, job) == 1)/]: 8 passed, 3 failed

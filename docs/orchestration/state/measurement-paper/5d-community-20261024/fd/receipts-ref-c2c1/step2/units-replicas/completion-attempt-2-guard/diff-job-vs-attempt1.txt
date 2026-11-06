@@ -1,0 +1,34 @@
+15,16c15,17
+< # launches, every lane's step must be listed by `squeue -s` (only created steps are listed; a step whose
+< # creation is pending is not), else it records a STOP, cancels its steps and fails; and
+---
+> # launches, every lane step <job>.0..NL-1 must read State=RUNNING in `scontrol -o show step <job>` (attempt 2: attempt
+> # 1's `squeue -s` lists no srun steps on Perlmutter and fired on a correct run; `sstat -a` is recorded as a cross-check
+> # only), else it records a STOP, cancels its steps and fails; and
+49a51,62
+> # >>> lane-step guard
+> # Reads `scontrol -o show step <job>` on stdin; prints how many of the steps <job>.<i>, for the indices given, read
+> # State=RUNNING. Each step is counted once; batch, extern and other indices are ignored.
+> running_lane_steps() {
+>   awk -v job="$1" -v want="${*:2}" '
+>     BEGIN { n = split(want, w, " "); for (i = 1; i <= n; i++) W[job "." w[i]] = 1 }
+>     { sid = ""; st = ""
+>       for (i = 1; i <= NF; i++) { if ($i ~ /^StepId=/) sid = substr($i, 8); else if ($i ~ /^State=/) st = substr($i, 7) }
+>       if ((sid in W) && st == "RUNNING") { c++; delete W[sid] } }
+>     END { print c + 0 }'
+> }
+> # <<< lane-step guard
+62,64c75,79
+< running=$(squeue -s -j "$SLURM_JOB_ID" -h -o '%j' | grep -c "^r$J-l[0-9]*$")
+< echo "[c2c1r$J] concurrency: $running of $NL lane steps created at +90 s ($(date -u +%FT%TZ)):"
+< squeue -s -j "$SLURM_JOB_ID" -h -o '%i %j %M' | sed "s/^/[c2c1r$J]   /"
+---
+> scontrol -o show step "$SLURM_JOB_ID" > "$L/j$J-steps-at-90s.txt" 2>&1
+> running=$(running_lane_steps "$SLURM_JOB_ID" $(seq 0 $((NL - 1))) < "$L/j$J-steps-at-90s.txt")
+> echo "[c2c1r$J] concurrency: $running of $NL lane steps RUNNING at +90 s ($(date -u +%FT%TZ)), from scontrol show step:"
+> awk '{ for (i = 1; i <= NF; i++) if ($i ~ /^(StepId|State|Name)=/) printf "%s ", $i; print "" }' "$L/j$J-steps-at-90s.txt" | sed "s/^/[c2c1r$J]   /"
+> echo "[c2c1r$J] cross-check (recorded, not gating): sstat -a lists $(sstat -n -P -a -j "$SLURM_JOB_ID" -o JobID 2>/dev/null | grep -cE "^$SLURM_JOB_ID\.[0-9]+$") numbered steps"
+67c82
+<   conc=0; echo "[c2c1r$J] STOP: not every lane step was created; cancelling the steps"
+---
+>   conc=0; echo "[c2c1r$J] STOP: not every lane step is RUNNING; cancelling the steps"
