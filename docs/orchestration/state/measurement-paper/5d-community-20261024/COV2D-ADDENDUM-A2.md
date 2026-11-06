@@ -19,7 +19,7 @@ reclassification.
 
 ## 1. What A2 binds
 
-The code commit `038f28e870bb690a11b2433ab0b4c41c04d41a27`, A2's third code commit. It sits on `928204b0` (the first audit's fixes), which sits on `a2005b54` (A2's first), on main's `a548d44c`, which carries the merged #797. Its blobs are in §10. Against M
+The code commit `94544e0b7a29f31d82ddd7c3c92485e703518117`, the unfreeze after stage 1's first attempt (§9), on main's `77d76cfc`. It carries A2 as bound at `cf533377` (code `038f28e8`, on `928204b0` and `a2005b54`, on main's `a548d44c` with the merged #797), plus exactly the two unfrozen changes and the TMPDIR reset. Its blobs are in §10. Against M
 (`cb31611c`), it changes:
 - `cov2d.py`;
 - `cov2d_pseudo.py` (step A);
@@ -97,14 +97,19 @@ first reading:
   during staging with no read of ours. Under the third-STOP rule, a guard there would end (c) on someone else's read.
 - It is printed (`SHARED-ATIME (a record, not a stop) …`) and reported.
 
-**The quota check before `$UNI`** (the director's ruling).
-- Before anything is staged, step A reads NERSC's `showquota`. It requires pscratch's headroom (limit − used) to be at
-  least 2 × the bytes to be staged (`cov2d.STAGE_HEADROOM`).
-- Otherwise, or if the quota can't be read, it refuses before any input is read, with the reason.
+**The quota check, at submission** (the director's option (c), after stage 1's first attempt).
+- **Where it runs:** `cov2d_submit.sh`'s gate (`cov2d_jobs.py gate`), on the login node, just before a pseudo-data
+  job's `sbatch`.
+- **What it checks:** it stats the seven shared inputs of §3 (`cov2d_jobs.staged_inputs`). It does not read them, so no
+  atime moves. It then requires pscratch's headroom (limit − used, from NERSC's `showquota`) to be at least
+  2 × their bytes (`cov2d.STAGE_HEADROOM`).
+- **On failure:** if the headroom is short, or the quota can't be read, the gate refuses. Its JSON records
+  `staged_bytes` and `quota_problem`, the connect stops, and the refusal is reported to the director.
+- An unfold job's gate does not read the quota.
+- **Why not in the job:** stage 1, attempt 1 measured `showquota` failing on a compute node. It calls GPFS's
+  `mmlsquota`, which compute nodes lack (`fd/receipts-cov2d/a2/cluster_tests-attempt1/`). So step A no longer reads the
+  quota at all, and it has no refusal path for it.
 - The parser is tested on RE-2's own committed `showquota` row (`partb_readout/quota_before_cleanup.txt`).
-- **Assumption, not yet verified:** that `showquota` runs on a compute node. The cluster test run (§6) will run it on a
-  login node. If it can't be read inside the job, the job refuses at its start, before staging, and that comes to the
-  director.
 
 **What reads what.**
 - The jobs read only the copies, always through O_NOATIME.
@@ -158,8 +163,9 @@ first reading:
 
 1. **A cluster-environment test run at the A2 commit,** as binding 2's ruling 5. It must show `test_cov2d_pseudo`'s and
    `test_cov2d_pseudo_write`'s silent-on-clean and fire tests running, not skipped, in their environments.
-   - **On a compute node** (the audit's L2, ruled in): a tiny sbatch, with its own TimeLimit check, runs `srun -N1 -t
-     00:01:00` of `cov2d.headroom_problem` on live `showquota` output. That's about 0.02 node-h.
+   - It runs `cov2d.headroom_problem` on live `showquota` output on the login node, where the submission's check now
+     runs. The audit's L2 compute-node check ran in attempt 1 and measured `showquota` failing there, which is why the
+     check moved to submission.
    - Its connect sha goes to the director first.
 2. **AR23's pseudo-data rerun** (`cov2d_submit.sh <deploy> M AR23 pseudo`, 04:00:00), its connect sha first.
    - On PASS, its record is committed at `order()`'s path after the director reads it.
@@ -172,8 +178,8 @@ fixed conditional sequence).
 
 **How outcomes classify** (the director's ruling on this section, 2026-11-05). It is binding because the declaration's
 §6 (iii) makes the amendment's definitions binding, with a third STOP ending (c).
-- **Refusals before any read or product are not STOPs:** an existing output directory, a quota short of 2× before
-  staging, a dirty deploy. So is the settle refusal (§4), which comes before any of the step's work. Each is reported
+- **Refusals before any read or product are not STOPs:** an existing output directory, a quota short of 2× at
+  submission (a refused gate, so no job is submitted), a dirty deploy. So is the settle refusal (§4), which comes before any of the step's work. Each is reported
   to the director.
 - **A staged copy whose hash differs from its pin IS a STOP:** the declared input is not the pinned one.
   - `cov2d.stage_copy` raises `PinMismatch` and deletes the copy.
@@ -213,54 +219,63 @@ The auditor's report, its re-check and the director's rulings are copied verbati
 | D1: §6 as the ruling; a hash off its pin is a STOP, written mechanically | §6; `PinMismatch` and `stage_all`; both steps write the STOP record with `off_pin` | `test_a_staged_input_off_its_pin_is_a_stop` (steps A and B); `test_stage_all_stops_at_the_first_copy_off_its_pin` | "A2 a staged pin mismatch is a refusal, not a STOP"; "A2 step A off-pin STOP skipped"; "A2 step B off-pin STOP skipped"; "A2 D1 the off-pin STOP without its digests" |
 | D2: settle before guarding | fsync of each copy and its directory; `settle_atime` (5 s, 6 pairs); `REFUSED` with the readings | `test_a_copy_whose_atime_will_not_settle_is_refused_before_the_work` (steps A and B); `test_settling` | "A2 D2 step A settle skipped"; "A2 D2 step B settle skipped"; "A2 D2 settle wait under 5 s"; "A2 D2 an unsettled reading accepted" |
 | L1: `order()` requires `pins_checked: true` | pseudo-data records; the pilot record is exempt (§2) | `test_a_pseudo_record_without_its_pins_checked_opens_nothing`; the writer test with pins checked | "A2 L1 order ignores pins_checked" |
-| L2: showquota on a compute node | the cluster test run's 1-minute allocation (§6) | — | — |
+| L2: showquota on a compute node | the cluster test run's 1-minute allocation (§6), run in stage 1's attempt 1: `showquota` fails on a compute node, so the check moved to submission (below) | — | — |
 | N1 (re-check, blocking): no single M passes the sequence | `PRIOR_RECORDS` (rule R1, §2); the order CLI hashes the committed bytes | `PriorRecords` (the sequence at A2's deploy on the real committed files; a record off its bytes or without digests; AR23 at binding 2's M; another record's bytes under AR23's path; the CLI on a real origin); the writer test's real sequence (binding 2's records plus this writer's record open the universes) | "N1 the prior records ignored"; "N1 a prior record admitted on its M alone"; "N1 a prior record admitted under any path"; "N1 the order CLI hashes nothing" |
 | L1's gap (re-check): an unpinned A under a pinned B | step B refuses unless A's record says `pins_checked: true` | `test_a_pinned_step_b_refuses_an_unpinned_step_a` | "L1 step B ignores step A's pins" |
 
 The fsync itself is not mutated, because no test can observe it.
 
+**Stage 1, attempt 1 (FAILED, not a STOP; `fd/receipts-cov2d/a2/cluster_tests-attempt1/`), and the director's
+unfreezing of exactly two things:**
+
+| failure | change | tests | mutants (REQUIRED) |
+|---|---|---|---|
+| step A's fire test on Linux: the plain read fell in the copy's creation tick (inferred) | both fire tests sleep 0.25 s before the plain read; tests only, and the 5 s settle is unchanged | the two fire tests | — |
+| `showquota` fails on a compute node | option (c): the quota check moves to the submission's gate on the login node; step A's call and its refusal are removed | `test_a_pseudo_submission_needs_twice_the_headroom`; `test_an_unfold_submission_reads_no_quota`; `test_staged_inputs_are_the_seven_shared_files` | "A2 the submission's quota check skipped"; "A2 the submission's quota verdict ignored" (replacing "A2 quota check skipped") |
+| the a2quota job inherited a removed TMPDIR | both job scripts reset `TMPDIR` under `$O/tmp` right after sourcing the environment | — | — |
+
 ## 10. Tests, mutants and blobs
 
-At `038f28e8`, in one local environment holding PyROOT, uproot and numpy (ROOT 6.28/12, uproot 5.6.9): **182 tests, 0 skipped, all pass** (`fd/receipts-cov2d/amendment/suites_038f28e8.txt`):
-- step A 21, step B 17, blocks 26, null 5, scorer 12, readouts 12, jobs 41, pilot 13, cov2d 35.
+At `94544e0b`, in one local environment holding PyROOT, uproot and numpy (ROOT 6.28/12, uproot 5.6.9): **184 tests, 0 skipped, all pass** (`fd/receipts-cov2d/amendment/suites_94544e0b.txt`):
+- step A 20, step B 17, blocks 26, null 5, scorer 12, readouts 12, jobs 44, pilot 13, cov2d 35.
 - This local run used the macOS emulation of O_NOATIME (§4). The cluster run must show both directions on Linux.
 
-**Mutants:** `fd/receipts-cov2d/amendment/mutation_amendment.py`, 91, **all killed**, harness exit 0 (`mutation_amendment.txt`). **38 are REQUIRED:**
+**Mutants:** `fd/receipts-cov2d/amendment/mutation_amendment.py`, 92, **all killed**, harness exit 0 (`mutation_amendment.txt`). **39 are REQUIRED:**
 - binding 2's 10;
 - rulings (a) and (i)'s 2;
-- A2's first 12: the guards on the shared originals (A, B), the guard values not recorded (A, B), the staging pin unchecked, the quota check skipped, the headroom at 1x, ROOT reading the staged copies, AR23 into its old directory, AR23's limit at 03:00:00, the deletion without the stat match, the shared atime not recorded;
+- A2's first 12, with "A2 quota check skipped" replaced by the submission's two quota mutants;
 - the §6 ruling's 3, the first audit's 6, and the re-check's 5 (§9).
 
-Each new mutant was also run alone first, all killed. Three older mutants were re-anchored, each on the line `order()`'s rewrites changed, and each still dies: "J1 pilot without G18's pseudo PASS", "F1 order ignores M" and "A2 L1 order ignores pins_checked".
+Each new mutant was also run alone first, all killed.
 
-**Blobs at `038f28e870bb690a11b2433ab0b4c41c04d41a27`**, every file under `2d-unfolding/cov2d`. The 14 files that differ from M (`cb31611c`) are marked: A2's 13, plus #797's `test_cov2d_blocks.py` (ruling (i)).
+**Blobs at `94544e0b7a29f31d82ddd7c3c92485e703518117`**, every file under `2d-unfolding/cov2d`. The 14 files that differ from M (`cb31611c`) are marked: A2's 13, plus #797's `test_cov2d_blocks.py` (ruling (i)).
 
 | file | blob | |
 |---|---|---|
-| `2d-unfolding/cov2d/cov2d.py` | `be2ed953a26c143a9deaa9a6aa653f3c07613608` | changed since M |
+| `2d-unfolding/cov2d/cov2d.py` | `9e510e89e1b731ab5899fb1e4e85089b7442f303` | changed since M |
 | `2d-unfolding/cov2d/cov2d_blocks.py` | `b9e63a3827e44c31a529f8d92482b7d7969d8223` |  |
 | `2d-unfolding/cov2d/cov2d_null.py` | `59d9721cefbcd1276348e7ee183007160954e49d` |  |
 | `2d-unfolding/cov2d/cov2d_pilot.py` | `ae9764676876857efa66ecc5c245a6936961f469` |  |
-| `2d-unfolding/cov2d/cov2d_pseudo.py` | `7bfa0bb252e8ac29caa47410bd463a59ff96675a` | changed since M |
+| `2d-unfolding/cov2d/cov2d_pseudo.py` | `4b23971e0f79f4a20e75b9ecb2ee013fdf638c68` | changed since M |
 | `2d-unfolding/cov2d/cov2d_pseudo_write.py` | `5234deb290dc00449203b9c1070e2a6a6a9afdcc` | changed since M |
 | `2d-unfolding/cov2d/cov2d_readouts.py` | `7e6407c4308500e1f622dfe870b8f8f314e1a7fc` |  |
 | `2d-unfolding/cov2d/cov2d_receipt.py` | `d5718bf44c2084c20c30a8b8614e9c40e6fbeee3` |  |
 | `2d-unfolding/cov2d/cov2d_score.py` | `282fd27ec07c84b4f9a0f287004eca0133858c15` |  |
 | `2d-unfolding/cov2d/cov2d_writer.py` | `bb3892e5447d37ee524c720c5ab623baa7184f30` |  |
 | `2d-unfolding/cov2d/jobs/cov2d_env.sh` | `2eb123666e9a56b60c8d4b762c12ac93ce258272` | changed since M |
-| `2d-unfolding/cov2d/jobs/cov2d_job.sbatch` | `5585e13eef98772e0ececaba88fd2480160e7ae2` | changed since M |
-| `2d-unfolding/cov2d/jobs/cov2d_jobs.py` | `305fe42ebfa28da79b289f429346966f20f2a3e5` | changed since M |
-| `2d-unfolding/cov2d/jobs/cov2d_pseudo.sbatch` | `a0c63e0fa94383c2e73d6e6eb66d4958b43fcd88` | changed since M |
+| `2d-unfolding/cov2d/jobs/cov2d_job.sbatch` | `ddfee60929cd6b06a2eefe66b3f1c95513468649` | changed since M |
+| `2d-unfolding/cov2d/jobs/cov2d_jobs.py` | `a74d6b0069e58a7b90480fcff4fe0ee4070e7f05` | changed since M |
+| `2d-unfolding/cov2d/jobs/cov2d_pseudo.sbatch` | `a4746da9cf9cda568c18b5d65cbd8cbe004c1345` | changed since M |
 | `2d-unfolding/cov2d/jobs/cov2d_submit.sh` | `0b07131c00353dbae713f00cb1897d6e2238ff55` | changed since M |
 | `2d-unfolding/cov2d/tests/deploy_fixture.py` | `75033297ae8e2617bca6c0d7aae5ddb75c110500` |  |
 | `2d-unfolding/cov2d/tests/noatime_emu.py` | `d18c85116b480ca7b05c8e411f0e56e82c8ea662` | changed since M |
 | `2d-unfolding/cov2d/tests/test_cov2d.py` | `3914524b9ccd17ab809711ac11f0d2d3f61ad215` | changed since M |
 | `2d-unfolding/cov2d/tests/test_cov2d_blocks.py` | `e3682f8d5da47cbcf39a513850c781a1a7a20cd0` | changed since M |
-| `2d-unfolding/cov2d/tests/test_cov2d_jobs.py` | `8a7ca6203a02a58c6e5f86a9223dcce5550b6368` | changed since M |
+| `2d-unfolding/cov2d/tests/test_cov2d_jobs.py` | `b60283e8111dfe7a0ceaabf1b625506958bf1238` | changed since M |
 | `2d-unfolding/cov2d/tests/test_cov2d_null.py` | `3002455578509d6d4be06a08e4fa17105f06492d` |  |
 | `2d-unfolding/cov2d/tests/test_cov2d_pilot.py` | `4f65bdf5f34a9ae72441e797ff57be04fee0c0c6` |  |
-| `2d-unfolding/cov2d/tests/test_cov2d_pseudo.py` | `69a611bce4bfe33e907f0bb6352ace0548a6a2ae` | changed since M |
-| `2d-unfolding/cov2d/tests/test_cov2d_pseudo_write.py` | `c4b553f3ee39ed8aa6aaa3d592db0da01d0ecc15` | changed since M |
+| `2d-unfolding/cov2d/tests/test_cov2d_pseudo.py` | `c415afc06d994608e97334f1ceedcb5d572c3ee6` | changed since M |
+| `2d-unfolding/cov2d/tests/test_cov2d_pseudo_write.py` | `d37930c5094699c8b597db26ad34a08bd831aada` | changed since M |
 | `2d-unfolding/cov2d/tests/test_cov2d_readouts.py` | `1b2be505bb839e889eb968c07e4708a9a2bcd5b9` |  |
 | `2d-unfolding/cov2d/tests/test_cov2d_score.py` | `25aa147442296ef4b22ed0ac43c712f604a73ec4` |  |
 | `2d-unfolding/cov2d/tests/test_cov2d_writer.py` | `c08e13844292746a113d9ea545b04f54459b54f9` |  |

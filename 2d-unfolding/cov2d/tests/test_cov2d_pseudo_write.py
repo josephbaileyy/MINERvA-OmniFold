@@ -302,6 +302,7 @@ class StepB(unittest.TestCase):
         real = pw.section_9_4
 
         def section_9_4(*a):      # mid-step, after the guard's first reading: a plain read of the private copy
+            time.sleep(0.25)      # in a later clock tick than the copy's creation (A2 stage 1, attempt 1)
             with open(copy, "rb") as fh:
                 fh.read()
             return real(*a)
