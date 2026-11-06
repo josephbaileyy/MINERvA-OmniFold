@@ -1,0 +1,20 @@
+# check_ledger.py at f74c89a58
+ledger rows 18, probes 99, changed base sentences 39, failures 0
+  missing N: probe: caught
+  dropped sentence: caught
+  removed label: caught
+  false R: probe: caught
+  R: probe naming a note file: caught
+  false L: probe: caught
+  L: probe naming a note source: caught
+  undeclared abstract edit: caught
+  declared but unpinned abstract pair: caught
+  protected values file edited: caught
+  SEC4 phrase reworded: caught
+  n4 frozen sentence edited: caught
+  ledger row holding ' | ': caught
+  declared removed label still referenced: caught
+  declared removed label, unreferenced: silent
+  pinned abstract pair: silent
+  true L: probe: silent
+SELF-TEST :: PASS

@@ -1,0 +1,20 @@
+You are an experienced Physical Review D referee for neutrino cross-section measurements, reading with a caveat lens. Judge only the wording below, and do not read or write any file. Under 500 words.
+
+CONTEXT. In an OmniFold (ML unfolding) cross-section paper, Sec. IV F currently reads: "…[the estimator] fails a data-stability requirement of at most 0.3 (median) and 1.0 (maximum) statistical standard deviations." Rounding-level input changes move results by up to 2.6 σ_stat. Referees asked how this squares with a training-seed covariance block of zero, and whether the rounding scatter is in the covariance. Sec. IV A lists a training-seed block.
+
+FACTS, each from the authors' records:
+- (1) Unfolds at other seeds, and with permuted row order, are bitwise equal to the central one, so the measured seed block is zero.
+- (2) The statistical block of the 16 reported cells is built from 50 bootstrap replicas. Each refits the whole unfolding with its own rounding-level perturbation ("jitter") of the inputs.
+- (3) On a finer set of "joint cells" (not the 16), the rounding spread (median 0.23%) is inside the bootstrap's scatter (0.37%), with a consistency ratio of 1.02. It is about 37% of the statistical variance there, and below a tenth of any total uncertainty (totals ≥ 6%). The ratio was not measured separately on the 16 cells.
+- (4) A pre-declared probe on simulated pseudo-data tested two-fold cross-fitting and two tree regularisations. None met the stability requirement without worsening bias at some truth, so no estimator change was made. The best variant reduced the spread but still failed, and must not be presented as an improvement.
+
+DRAFT (three sentences after the IV F sentence above):
+"The training-seed block of Sec. IV A is zero because the estimator's output does not depend on its seed or on the order of its inputs: unfolds at other seeds are bitwise equal to the central one. The rounding scatter is nonetheless in the reported covariance: the statistical block is built from 50 bootstrap replicas, each of which refits the whole unfolding with its own rounding-level perturbation of the inputs, and on the joint cells such replicas carry the scatter at its measured size, as about 37% of the statistical variance and below a tenth of any total uncertainty (Ref. [14]). A declared probe on simulated pseudo-data of two-fold cross-fitting and of two tree regularisations found no variant that met the data-stability requirement, so the estimator is unchanged (Ref. [14])."
+
+QUESTIONS
+1. Is each sentence accurate to the facts? Flag any overclaim. In particular:
+   - "the rounding scatter is nonetheless in the reported covariance": is it supported for the 16 cells, given that the ratio was measured on joint cells only?
+   - Is "found no variant that met the data-stability requirement" complete, given that fact 4 says none met it without worsening bias?
+2. Would a referee require this text, and does it resolve the "seed block zero vs 2.6σ" objection?
+3. Does it add caveats? Is there a leaner wording with the same scope?
+4. Give exact revised sentences if needed, then one line: "USE AS IS" or "USE REVISED".

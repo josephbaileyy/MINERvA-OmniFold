@@ -1,0 +1,5 @@
+UNI-STAT PASS
+[cov2d] start 2026-11-05T16:14:05Z job=60860645 TRUTH=AR23 node=nid005007
+COV2D-PSEUDO-A AR23 STOP natures=301 stops=1
+STOP atime moved on ['/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt']
+[cov2d] step A rc=3

@@ -4,7 +4,8 @@ scratchpad with an interpreter that has PyROOT, uproot and numpy:
 Each mutant rewrites one line of one file, runs that file's test modules (python -m unittest, from the tests
 directory), and restores it. A kill counts only on a test failure (rc != 0). Each mutant's text must occur once; a
 mutant whose text does not match counts as not killed. The run exits 1 unless every mutant run is killed, and names any
-REQUIRED mutant (the director's rulings on the final audit's F1 and F2) that was not."""
+REQUIRED mutant (the director's rulings on the final audit's F1 and F2, on F3, and of 2026-11-05 on the blocks' reads
+through O_NOATIME) that was not."""
 import os
 import shutil
 import subprocess
@@ -36,6 +37,8 @@ M = [
      "drv.PT_EDGES, flux_cv) if False else flux_cv)"),
     ("cov2d_blocks.py", "norm check removed", "    if not np.array_equal(ublocks[NORM_KEY], np.outer(v, v)):\n",
      "    if False:\n"),
+    ("cov2d_blocks.py", "blocks without noatime_inputs before the rollup",
+     'rec["inputs"] = noatime_inputs(ro, tdp / "rollup",', 'rec["inputs"] = {} if True else noatime_inputs(ro, tdp / "rollup",'),
     ("cov2d_blocks.py", "C08 not carried", "C08 = r[:, None] * np.asarray(C08_R, np.float64) * r[None, :]",
      "C08 = np.asarray(C08_R, np.float64)"),
     ("cov2d_blocks.py", "stat ddof 0", "C_stat = np.cov(np.asarray(X_rep, np.float64), rowvar=False)",
@@ -121,7 +124,8 @@ M = [
 REQUIRED = {"F2 bulk despite REPRICE", "F2 no REPRICE list read as none", "F1 order ignores M",
             "F1 a dirty deploy admitted", "F1 the pseudo record without M", "F1 the pilot record without M",
             "F3 the deploy's own binding read", "F3 the binding's name check skipped", "F3 a failed fetch admitted",
-            "F3 M matched anywhere in the binding"}
+            "F3 M matched anywhere in the binding",
+            "open audit off", "blocks without noatime_inputs before the rollup"}
 if sys.argv[2:]:
     unknown = set(sys.argv[2:]) - {m[1] for m in M}
     assert not unknown, f"no such mutant: {sorted(unknown)}"

@@ -1,0 +1,36 @@
+**Verdict: the draft needs revision. Its main flaws are an unscoped claim about the 16 cells and an overstated probe result.**
+
+**1. Accuracy, sentence by sentence**
+
+- **Sentence 1 is accurate.** It reports bitwise equality at the seeds and orderings tried. "Does not depend" is a universal claim, so I'd scope it to "in the unfolds run". It also never says that seed independence is different from input stability. That distinction is the point of the referees' question.
+- **Sentence 2 overclaims.**
+  - "The rounding scatter is nonetheless in the reported covariance" is supported for the 16 cells by construction (fact 2). Each replica refits with its own jitter.
+  - The size of that contribution was measured only on the joint cells (fact 3). "Carry the scatter at its measured size" implies a measurement on the reported block that doesn't exist.
+  - "Measured size" is also vague. The measured fact is that the rounding spread is about 37% of the statistical variance, and the 1.02 ratio is not what supports this.
+  - Fact 3 does not say the jitter is the same perturbation that produced the 2.6 σ_stat shifts. The draft implies it is.
+  - The draft doesn't reconcile 2.6 σ_stat with a contribution of about 0.6 σ_stat (√0.37). A referee will see this at once. The text should say 2.6 is the maximum, over which population, if the authors can confirm that.
+- **Sentence 3 is incomplete and overstated.**
+  - "Found no variant that met the requirement" is stronger than fact 4. The fact says none met it without worsening bias at some truth. If any variant met stability at the cost of bias, the draft is false. Use the fact's wording.
+  - Do not add the best variant's reduced spread. That invites an "improvement" reading, and the best variant still failed.
+
+**2. Would a referee require it?**
+
+Yes. The seed-zero versus 2.6σ objection is a direct question, and each sentence answers one part of it:
+
+- Why the seed block is zero.
+- Whether the scatter is in the covariance.
+- Whether the estimator was fixed.
+
+The draft resolves the objection only partly. It still doesn't say how 2.6σ squares with a rounding contribution of about 37% of the statistical variance. It also doesn't state that the 16-cell ratio was not measured.
+
+**3. Caveats and length**
+
+The draft is not caveat-heavy. It under-caveats the two places above (the 16 cells and the probe). The fixes add one parenthetical and one clause, and sentence 1 can be shortened.
+
+**4. Revised sentences**
+
+"The training-seed block of Sec. IV A is zero because, in the unfolds we ran, the result is bitwise independent of the training seed and of input row order; this is distinct from the sensitivity to rounding-level input changes quoted above. That sensitivity enters the reported statistical block by construction: each of its 50 bootstrap replicas refits the whole unfolding with its own rounding-level perturbation of the inputs. On the finer joint cells (the ratio was not measured separately on the 16 reported cells) the rounding spread is about 37% of the statistical variance and below a tenth of any total uncertainty (Ref. [14]); the quoted 2.6 σ_stat is the largest shift [authors to state over which cells/inputs], not the typical one. A pre-declared probe on simulated pseudo-data of two-fold cross-fitting and two tree regularisations found no variant that met the requirement without worsening bias at some truth, so the estimator is unchanged (Ref. [14])."
+
+The bracketed population must be confirmed from the authors' records. I have not checked it, and the 2.6 σ_stat figure is quoted from your facts.
+
+**USE REVISED**

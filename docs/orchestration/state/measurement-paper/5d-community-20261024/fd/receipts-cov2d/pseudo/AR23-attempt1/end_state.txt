@@ -1,0 +1,23 @@
+== sacct
+JobID|JobName|State|ExitCode|DerivedExitCode|Elapsed|ElapsedRaw|NNodes|QOS|Account|Start|End|MaxRSS|NodeList
+60860645|cov2d-pseudo_AR23|FAILED|5:0|0:0|01:12:03|4323|1|regular_1|m3246|2026-11-05T08:13:57|2026-11-05T09:26:00||nid005007
+60860645.batch|batch|FAILED|5:0||01:12:03|4323|1||m3246|2026-11-05T08:13:57|2026-11-05T09:26:00|120687700K|nid005007
+60860645.extern|extern|COMPLETED|0:0||01:12:03|4323|1||m3246|2026-11-05T08:13:57|2026-11-05T09:26:00||nid005007
+== deploy
+cb31611ca8b96ed2d1eeb809fda7236e56645863
+plain=0 ignored=0
+== pseudo/AR23
+total 28
+drwxrwx--- 3 josephrb josephrb  4096 Nov  5 08:14 .
+drwxrwx--- 4 josephrb josephrb  4096 Nov  5 08:14 ..
+drwxrwx--- 2 josephrb josephrb 20480 Nov  5 09:26 a
+305
+cells.npz
+pseudo_a.json
+reco_background.npz
+reco_signal.npz
+== gate
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-pseudo-2026110516*: 
+2026-11-05T10:30:34Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pseudo_G18 id=60848251 limit=03:00:00
+2026-11-05T14:44:04Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pilot id=60857636 limit=01:41:00
+2026-11-05T16:02:44Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pseudo_AR23 id=60860645 limit=03:00:00

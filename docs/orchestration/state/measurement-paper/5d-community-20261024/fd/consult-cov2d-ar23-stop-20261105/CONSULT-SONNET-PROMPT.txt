@@ -1,0 +1,28 @@
+You are an independent methods reviewer for a physics analysis's pre-registered coverage campaign. Give a recommendation; do not read or write files. Under 450 words.
+
+RULE (bound in advance): "A second STOP ends (c) [the 2D coverage campaign] unless Joseph [the PI] rules otherwise." STOP #1 (2026-11-03) was a real defect: a writer bug, fixed.
+
+EVENT: pseudo-data job AR23 (one of two required pseudo-data jobs; the G18 one passed this morning) ended with its step A guard verdict STOP. The guard stats the atime of 4 input files at step start (16:14:09Z) and at step end (~17:26Z) on the compute node, and stops if any differs. It recorded only the list of moved files, not the values. One file moved: a shared flux-constraint text file. The job's own read of that file was through O_NOATIME. All other outputs were clean. The data are unaffected.
+
+EVIDENCE about the file's atime, all stat-only:
+- Another lane's (REF-G1's) code read this file with a plain read twice before AR23 started: at about 15:01:52Z and 15:18:14Z. That is a known read-discipline defect in REF-G1, now being fixed.
+- Login-node snapshots at 15:33:38Z and 16:08:53Z both show atime 15:01:52Z.
+- A login-node stat at 19:34:06Z shows atime 15:18:14Z, exactly REF-G1's second read time.
+- Every lane's records show no access to the file in 16:14–17:26Z. A read in the window would have stamped a later atime, not 15:18:14.
+- Interpretation: REF-G1's 15:18:14 read became visible to stat only after 16:08, which is lazy atime propagation on Lustre. So the change the guard saw was an earlier external read becoming visible mid-job. This is inferred, not proven: Lustre's settings were not measured, and the guard did not record its values.
+
+COST: rerunning AR23 costs about 3 node-h, and the campaign cap is 165.8. The deadline is comfortable.
+
+OPTIONS for the PI:
+(1) Treat this firing as an externally caused event, not the second STOP of (c). Continue under an addendum:
+  - AR23 reruns into a new output directory;
+  - the guard records its before/after epoch values;
+  - the shared file is staged by an O_NOATIME copy before the job, so the guard watches a private copy;
+  - the record states this firing and its classification.
+(2) Apply the rule literally: (c) ends, and the paper keeps "coverage not validated".
+(3) Something else.
+
+QUESTIONS:
+1. Recommend one option, with reasons.
+2. Name the main risk of your option to the campaign's credibility, and what the record must say to manage it.
+3. Is there anything else you would require before the rerun?

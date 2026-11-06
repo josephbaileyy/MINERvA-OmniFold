@@ -1,0 +1,22 @@
+host=login02 start=2026-11-05T16:02:34Z pid=759425 user=josephrb
+deploy=/pscratch/sd/j/josephrb/cov2d-deploy-cb31611c head=cb31611ca8b96ed2d1eeb809fda7236e56645863 plain=0 ignored=0
+origin/main=e3f76a9cfffe308c58ffd153838da8e141f3b912 pilot record: b59ffa2d7363b7de1c702d037868d9794491e9433907cafe743784133b6bf99d
+sacct (as the gate reads it):
+60848251|cov2d-pseudo_G18|COMPLETED|8674|1
+60857636|cov2d-pilot|COMPLETED|2702|1
+2026-11-05T16:02:44Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pseudo_AR23 id=60860645 limit=03:00:00
+submit rc=0
+plain-after=0 ignored-after=0
+2026-11-05T10:30:34Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pseudo_G18 id=60848251 limit=03:00:00
+2026-11-05T14:44:04Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pilot id=60857636 limit=01:41:00
+2026-11-05T16:02:44Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pseudo_AR23 id=60860645 limit=03:00:00
+{"spent": 3.16, "held": 0.0, "want": "pseudo_AR23", "want_node_h": 3.0, "total": 6.16, "cap": 165.8, "pass": true}
+{"job": "pseudo", "truth": "AR23", "blocked_by": []}
+JobId=60860645 JobName=cov2d-pseudo_AR23
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=03:00:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login02:759425
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+end=2026-11-05T16:02:48Z
+DONE

@@ -1,0 +1,31 @@
+**Recommendation: Option 1, with changes below.**
+
+**1. Why Option 1**
+
+The rule was written to stop a campaign that keeps failing for reasons nobody has explained. STOP #1 was a real defect. This firing has a different cause: the guard flagged an input change that the data did not depend on. The "data are unaffected" claim holds on three grounds. The job read the file with O_NOATIME. All other outputs are clean. The shared file's content did not change, only its atime.
+
+The rule says "unless Joseph rules otherwise", so the PI has authority to rule here. What matters is that he does so as an explicit ruling, with the classification argued in the record.
+
+I would not recommend Option 2. The rerun costs about 3 node-h of a 165.8 cap, and the G18 job already passed. Ending (c) would leave the paper at "coverage not validated" because of a guard that reacted to someone else's read, not because coverage failed. That outcome also gets worse as the guard improves, because a stricter guard would fire more often.
+
+The classification is not proven, though. It rests on inference: the timestamps fit lazy atime propagation on Lustre, but Lustre's settings were not measured and the guard did not store its values. Call it the best-supported explanation, not a finding.
+
+**2. Main credibility risk and what the record must say**
+
+The risk is that this reads as moving the goalposts. A pre-registered STOP fired, and the response reclassifies it and continues. The PI would be the one judging a firing that favors continuing.
+
+The record must therefore:
+- Count the firing. It is "guard STOP #2, ruled externally caused by the PI on date X", not "not a STOP". It stays in the tally.
+- State that the classification is inferred, and list the evidence: the stat-only timestamps, the 19:34:06Z atime matching REF-G1's second read, and the absence of any other access in the window.
+- State what would falsify it: any non-REF-G1 access in the window, or a Lustre atime setting that rules out lazy propagation.
+- State the ruling's scope. It covers this event only. A third firing, or any firing on a private file, goes back to the original rule with no further reclassification.
+- Report the paper wording the PI would have used under Option 2, so a reader can see what the ruling changed.
+
+**3. Requirements before the rerun**
+
+- **Test the guard on both sides.** The stage must show the guard still FIRES on a real input read (a plain read of the private copy) and stays SILENT on a clean run. Otherwise the new guard is unverified.
+- **Stage the copy before the guard's start stat**, and record that copy's content hash against the shared file's hash. The guard watching a private copy is only valid if the copy is byte-identical.
+- **Check the staging copy itself.** O_NOATIME needs file ownership or CAP_FOWNER. If the copy silently falls back to a plain read, the shared file's atime moves again. Record the shared file's atime before and after staging.
+- **Fix or fence REF-G1 first, or pin its schedule.** Do not rerun while its plain reads could land in the window. This also matters for the other three guarded files, which may have the same exposure.
+- **Measure the Lustre settings.** Stat-only checks are cheap. Add the lazy-atime parameters (lazytime, atime_diff) to the record if you can read them, so the inference becomes a measurement.
+- **Record the guard's epoch values** in the record, as the option already proposes.

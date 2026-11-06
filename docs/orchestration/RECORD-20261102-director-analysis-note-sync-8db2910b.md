@@ -157,3 +157,35 @@ Each compares equal to canonical by `cmp`.
 `0b29b02c`.
 
 **Next sync:** after the next paper round. Start from base `a45173e1`.
+
+## Sixth sync, 2026-11-05: main c6784fa8
+
+**Why.** Joseph's decisions (`DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md` item 5, and
+`DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md` §2 item 4) call for a re-sync after #765, the referee
+presentation round.
+
+**The standalone before the copy.** At `c831497`. Three commits since the fifth sync (`fb62bb91`):
+- `80b6d05` and its merge `7bd7831`, the codex lane's diagnostic index (PR #3);
+- `c831497`, "Update result index from MINERvA-OmniFold e3f76a9c".
+
+All three touched only `records_results_index.tex`, a generated file that canonical also updates. Canonical's version at
+`c6784fa8` supersedes it, so nothing needed carrying back.
+
+**What was copied.** 9 files changed between `a45173e1` and `c6784fa8`, and none were added or deleted:
+- `paper_body.tex`, `main_paper.tex`, `sec_method.tex`, `sec_fived16.tex` and `app_response_mismatch.tex`;
+- `values_fived16.tex` and `make_values_fived16.py`;
+- `records_estimators.tex` and `records_results_index.tex`.
+
+After the copy, every file in canonical's `docs/analysis-note/` tree compares equal by `cmp`.
+
+**Builds** (`PAR_GLOBAL_TEMP` set to a fresh directory, because of a damaged biber cache on this machine):
+- **Canonical,** in a fresh worktree at `c6784fa8`: `build_all.sh` gave rc 0, with note 136, paper 13, primer 15, PET note
+  26 and records 59 pp. `latexmk -pdf -jobname=output main_paper.tex` gave rc 0: 13 pp and 0 undefined references or
+  citations in `output.log`.
+- **Standalone copy:** both commands gave rc 0.
+- **Text.** `pdftotext` of all six PDFs is identical between the canonical and standalone builds.
+
+**Head.** Standalone `main` = `8dcb9f501ec67b729281acb5e344e4bf6d6d2b5c` (from `git ls-remote`), a fast-forward from
+`c831497`. Joseph pulls it in Overleaf from the GitHub menu.
+
+**Next sync:** after the next paper round. Start from base `c6784fa8`.
