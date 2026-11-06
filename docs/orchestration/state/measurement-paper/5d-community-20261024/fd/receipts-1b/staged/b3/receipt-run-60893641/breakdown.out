@@ -1,0 +1,33 @@
+inputs: receipt.json 9995f55adb7846e230c2e982221d20e7c5c1136daf5cb4576e355544bb54fa3d; fd_1b_mc 062628b6, fd_1b_toys 869a65c3 (constants only); python 3.12.2
+
+== 1. the flagged cells (distinct cells, each one's frequency, 5D bin, reporting cell R00-R15, d_CV)
+  not in the record: denominator_check keeps no cell identities. The record has 65856 denominator cells, and its N1 on them: 0 (cell, draw) pairs above 10.0, max 2.146
+
+== 2. per truth (the truth labels the seed range only; the composite denominator is the universes')
+  g18     draws 0..299: flagged 297 of 300, clean 3
+  ar23    draws 300..599: flagged 298 of 300, clean 2
+  plugin  draws 600..899: flagged 297 of 300, clean 3
+  binding 3 runs g18 and ar23 only (the no-plug-in path); the receipt checks all 900 declared draws
+
+== 3. per draw, the number of non-positive cells
+  flagged draws 892 of 900; max 62; median and the rest of the distribution: not in the record (only max(bad.values()) is kept)
+
+== 4. mechanism
+  whether the flagged cells are the sparse low-d_CV cells of amendment 2 section 5: not in the record
+  universes per draw, by construction (toys.draw, draw_universes): 1 flux + 33 interaction + 4 detector = 38, in every draw. The detector universes' denominators are the CV's (receipt(): A2.1 (e2), check D), so the composite denominator's departures are the flux universe's and the 33 interaction universes': 34 terms
+  the per-row record beside it (matmul, descriptive; rows with a_D < 0 where a_CV > 0):
+    wt    rows 32849103: in some draw 9541524, draws with any 900, max per draw 1723168; clipped fraction per draw median 0.0035, max 0.0208
+    wr    rows 32849103: in some draw 11783280, draws with any 900, max per draw 2030165; clipped fraction per draw median 0.0064, max 0.0393
+    bkgw  rows 621547: in some draw 250232, draws with any 900, max per draw 33947; clipped fraction per draw median 0.0042, max 0.0223
+  negative-weight universes: ['HighQ2_1', 'LowQ2_1']
+
+== 5. the 8 clean draws
+  draw  84: g18    seed 3620084
+  draw  98: g18    seed 3620098
+  draw 260: g18    seed 3620260
+  draw 460: ar23   seed 3630160
+  draw 550: ar23   seed 3630250
+  draw 690: plugin seed 3640090
+  draw 787: plugin seed 3640187
+  draw 835: plugin seed 3640235
+  their universes, and anything else distinctive about them: not in the record (the draws' universes are rebuilt only from the flux constraint, a declared input)
