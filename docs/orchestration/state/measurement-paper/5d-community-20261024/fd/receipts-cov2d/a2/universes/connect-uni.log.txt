@@ -1,0 +1,57 @@
+host=login02 start=2026-11-06T09:07:57Z pid=382271 user=josephrb
+deploy=/pscratch/sd/j/josephrb/cov2d-deploy-a6054769 head=a60547692df5f963e428cdfe4661fc51ab785b7b plain=0 ignored=0
+origin/main=9f657e2e4e60a69d5274168a92e3e77075f14c4c
+record pseudo/G18/pseudo_b.json: 230f6918f65d5bcf7d766bdb47eb7ac0513d998017b877777b5fd49089a54296
+record pseudo/AR23/pseudo_b.json: d50ef13af16adf26e25794ebdda41b23d6cfd7ecec2332173c237a340e682bb5
+record pilot/pilot_readout.json: b59ffa2d7363b7de1c702d037868d9794491e9433907cafe743784133b6bf99d
+sacct (as the gate reads it):
+60848251|cov2d-pseudo_G18|COMPLETED|8674|1
+60857636|cov2d-pilot|COMPLETED|2702|1
+60860645|cov2d-pseudo_AR23|FAILED|4323|1
+60889690|cov2d-pseudo_AR23|COMPLETED|9104|1
+2026-11-06T09:08:10Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Ua id=60895562 limit=08:54:00
+2026-11-06T09:08:12Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Ub id=60895566 limit=08:54:00
+2026-11-06T09:08:15Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Uc id=60895578 limit=08:54:00
+2026-11-06T09:08:18Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Ud id=60895585 limit=08:54:00
+submit G18 rc=0
+2026-11-06T09:08:22Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Ua id=60895594 limit=08:54:00
+2026-11-06T09:08:23Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Ub id=60895595 limit=08:54:00
+2026-11-06T09:08:24Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Uc id=60895596 limit=08:54:00
+2026-11-06T09:08:25Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Ud id=60895597 limit=08:54:00
+submit AR23 rc=0
+plain-after=0 ignored-after=0
+2026-11-06T06:10:11Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=pseudo_AR23 id=60889690 limit=04:00:00
+2026-11-06T09:08:10Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Ua id=60895562 limit=08:54:00
+2026-11-06T09:08:12Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Ub id=60895566 limit=08:54:00
+2026-11-06T09:08:15Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Uc id=60895578 limit=08:54:00
+2026-11-06T09:08:18Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Ud id=60895585 limit=08:54:00
+2026-11-06T09:08:22Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Ua id=60895594 limit=08:54:00
+2026-11-06T09:08:23Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Ub id=60895595 limit=08:54:00
+2026-11-06T09:08:24Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Uc id=60895596 limit=08:54:00
+2026-11-06T09:08:25Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Ud id=60895597 limit=08:54:00
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-G18_Ua-20261106T090807Z.psv.order.json: {"job": "G18_Ua", "truth": "G18", "blocked_by": []}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-G18_Ua-20261106T090807Z.psv.gate.json: {"spent": 6.889722222222223, "held": 0.0, "want": "G18_Ua", "want_node_h": 8.9, "total": 15.789722222222224, "cap": 165.8, "pass": true}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-G18_Ub-20261106T090810Z.psv.order.json: {"job": "G18_Ub", "truth": "G18", "blocked_by": []}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-G18_Ub-20261106T090810Z.psv.gate.json: {"spent": 6.889722222222223, "held": 0.0, "want": "G18_Ub", "want_node_h": 8.9, "total": 15.789722222222224, "cap": 165.8, "pass": true}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-G18_Uc-20261106T090812Z.psv.order.json: {"job": "G18_Uc", "truth": "G18", "blocked_by": []}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-G18_Uc-20261106T090812Z.psv.gate.json: {"spent": 6.889722222222223, "held": 8.9, "want": "G18_Uc", "want_node_h": 8.9, "total": 24.689722222222223, "cap": 165.8, "pass": true}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-G18_Ud-20261106T090815Z.psv.order.json: {"job": "G18_Ud", "truth": "G18", "blocked_by": []}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-G18_Ud-20261106T090815Z.psv.gate.json: {"spent": 6.889722222222223, "held": 17.8, "want": "G18_Ud", "want_node_h": 8.9, "total": 33.58972222222222, "cap": 165.8, "pass": true}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-AR23_Ua-20261106T090821Z.psv.order.json: {"job": "AR23_Ua", "truth": "AR23", "blocked_by": []}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-AR23_Ub-20261106T090822Z.psv.order.json: {"job": "AR23_Ub", "truth": "AR23", "blocked_by": []}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-AR23_Ua-20261106T090821Z.psv.gate.json: {"spent": 6.889722222222223, "held": 35.6, "want": "AR23_Ua", "want_node_h": 8.9, "total": 51.389722222222225, "cap": 165.8, "pass": true}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-AR23_Uc-20261106T090823Z.psv.order.json: {"job": "AR23_Uc", "truth": "AR23", "blocked_by": []}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-AR23_Uc-20261106T090823Z.psv.gate.json: {"spent": 6.889722222222223, "held": 35.6, "want": "AR23_Uc", "want_node_h": 8.9, "total": 51.389722222222225, "cap": 165.8, "pass": true}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-AR23_Ub-20261106T090822Z.psv.gate.json: {"spent": 6.889722222222223, "held": 35.6, "want": "AR23_Ub", "want_node_h": 8.9, "total": 51.389722222222225, "cap": 165.8, "pass": true}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-AR23_Ud-20261106T090824Z.psv.order.json: {"job": "AR23_Ud", "truth": "AR23", "blocked_by": []}
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/gate-AR23_Ud-20261106T090824Z.psv.gate.json: {"spent": 6.889722222222223, "held": 53.4, "want": "AR23_Ud", "want_node_h": 8.9, "total": 69.18972222222223, "cap": 165.8, "pass": true}
+JobId=60895562 JobName=cov2d-G18_Ua Priority=67679 Nice=0 Account=m3246 QOS=regular_1 JobState=PENDING Reason=Priority Dependency=(null) RunTime=00:00:00 TimeLimit=08:54:00 TimeMin=N/A NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895566 JobName=cov2d-G18_Ub Priority=67679 Nice=0 Account=m3246 QOS=regular_1 JobState=PENDING Reason=Priority Dependency=(null) RunTime=00:00:00 TimeLimit=08:54:00 TimeMin=N/A NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895578 JobName=cov2d-G18_Uc Priority=67679 Nice=0 Account=m3246 QOS=regular_1 JobState=PENDING Reason=Priority Dependency=(null) RunTime=00:00:00 TimeLimit=08:54:00 TimeMin=N/A NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895585 JobName=cov2d-G18_Ud Priority=67679 Nice=0 Account=m3246 QOS=regular_1 JobState=PENDING Reason=Priority Dependency=(null) RunTime=00:00:00 TimeLimit=08:54:00 TimeMin=N/A NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895594 JobName=cov2d-AR23_Ua Priority=67679 Nice=0 Account=m3246 QOS=regular_1 JobState=PENDING Reason=Priority Dependency=(null) RunTime=00:00:00 TimeLimit=08:54:00 TimeMin=N/A NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895595 JobName=cov2d-AR23_Ub Priority=67679 Nice=0 Account=m3246 QOS=regular_1 JobState=PENDING Reason=Priority Dependency=(null) RunTime=00:00:00 TimeLimit=08:54:00 TimeMin=N/A NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895596 JobName=cov2d-AR23_Uc Priority=67679 Nice=0 Account=m3246 QOS=regular_1 JobState=PENDING Reason=Priority Dependency=(null) RunTime=00:00:00 TimeLimit=08:54:00 TimeMin=N/A NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895597 JobName=cov2d-AR23_Ud Priority=67679 Nice=0 Account=m3246 QOS=regular_1 JobState=PENDING Reason=Priority Dependency=(null) RunTime=00:00:00 TimeLimit=08:54:00 TimeMin=N/A NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+end=2026-11-06T09:08:28Z
+DONE

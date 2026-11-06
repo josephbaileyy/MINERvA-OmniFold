@@ -7427,6 +7427,11 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/a2/lustre/lustre-atime-v1.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/a2/lustre/lustre-atime-v2.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/a2/lustre/removal.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/a2/universes/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/a2/universes/connect-uni.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/a2/universes/connect-universes-a2.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/a2/universes/removal.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/a2/universes/state_after.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/amendment/ANSWERS.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/amendment/AUDIT-DELTA.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/amendment/AUDIT-PART1-NULL-SCORER.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
