@@ -52,5 +52,5 @@ to its 3 known flags (ledger row F1).
 | ledger (`check_ledger.py`, step2's checks with base 0700cd7e3) | 6 rows, 13 probes, 3 changed base sentences (FV42, PB249, PB253), 0 failures | LEDGER-CHECK.txt |
 | round (`check_round.py`) and its self-test | PASS; 6/6 planted defects caught, each by its intended check | ROUND-CHECK.txt |
 | values (`make_values_fived16.py --check`) | PASS | — |
-| rater copy, and `check_held.py` on the blinded copy | see RATER-COPY.txt and CHECK-HELD.txt | RATER-COPY.txt, CHECK-HELD.txt |
-| builds (`build_all.sh`) | see RATER-COPY.txt's build | — |
+| rater copy, and `check_held.py` on the blinded copy | PASS; the 3 known flags (G1:paper-g-08, G1:paper-s-08, G1b:paper-s-07), after the Table III move | RATER-COPY.txt, CHECK-HELD.txt |
+| builds (`build_all.sh`) | paper 13 pp, note 136 pp; SEC4 17/17 | — |
