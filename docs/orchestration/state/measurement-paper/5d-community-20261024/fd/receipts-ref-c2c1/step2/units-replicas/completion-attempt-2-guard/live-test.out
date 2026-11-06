@@ -1,0 +1,36 @@
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.provenance'
+c82055f6f8dea72a2e16fb4722d1613610576e929209b4a7c5eea0123b24589f  refc2c1_completion_job.sbatch
+ae81a5b3a2f9de54c6642f598f90debb680f4eb4f71402ceb9032a0bf04a9999  test_lane_step_guard.sh
+GNU Awk 4.2.1, API: 2.0
+ok  4 running, expect 4: counted 4 of 4 expected -> silent (want silent)
+ok  4 running, expect 5 (one more): counted 4 of 5 expected -> fires (want fires)
+ok  2 running, expect 2: counted 2 of 2 expected -> silent (want silent)
+ok  2 running, expect 3 (a COMPLETED step): counted 2 of 3 expected -> fires (want fires)
+ok  batch/extern only, expect 4: counted 0 of 4 expected -> fires (want fires)
+ok  lanes 0-3 of a job running .8-.11: counted 0 of 4 expected -> fires (want fires)
+ok  index 1 does not match .10/.11: counted 0 of 1 expected -> fires (want fires)
+ok  job-id prefix 6089598 matches nothing: counted 0 of 4 expected -> fires (want fires)
+ok  each step counted once (duplicated): counted 4 of 4 expected -> silent (want silent)
+ok  State=COMPLETING is not RUNNING: counted 0 of 4 expected -> fires (want fires)
+ok  empty scontrol output: counted 0 of 4 expected -> fires (want fires)
+live, 2026-11-06T12:28:15Z, login09:
+ok  live 60895578, sacct RUNNING [14 15 ]: counted 2 of 2 expected -> silent (want silent)
+ok  live 60895578, one more (index 999): counted 2 of 3 expected -> fires (want fires)
+ok  live 60895578, its COMPLETED [0 1 2 3 4 5 6 7 8 9 10 11 12 13 ]: counted 0 of 14 expected -> fires (want fires)
+ok  live 60895585, sacct RUNNING [14 15 ]: counted 2 of 2 expected -> silent (want silent)
+ok  live 60895585, one more (index 999): counted 2 of 3 expected -> fires (want fires)
+ok  live 60895585, its COMPLETED [0 1 2 3 4 5 6 7 8 9 10 11 12 13 ]: counted 0 of 14 expected -> fires (want fires)
+ok  live 60895562, sacct RUNNING [21 22 ]: counted 2 of 2 expected -> silent (want silent)
+ok  live 60895562, one more (index 999): counted 2 of 3 expected -> fires (want fires)
+ok  live 60895562, its COMPLETED [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 ]: counted 0 of 21 expected -> fires (want fires)
+ok  live 60895566, sacct RUNNING [21 22 ]: counted 2 of 2 expected -> silent (want silent)
+ok  live 60895566, one more (index 999): counted 2 of 3 expected -> fires (want fires)
+ok  live 60895566, its COMPLETED [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 ]: counted 0 of 21 expected -> fires (want fires)
+23 passed, 0 failed
+rc=0
