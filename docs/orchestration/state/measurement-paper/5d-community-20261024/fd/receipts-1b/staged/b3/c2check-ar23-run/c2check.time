@@ -1,0 +1,24 @@
+fd_1b_noatime_guard: installed over 10 roots; running /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/deploy/nd-unfolding/fd_1b_c2.py
+	Command being timed: "python3 -B /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/deploy/nd-unfolding/fd_1b_noatime_guard.py --declared -- /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/deploy/nd-unfolding/fd_1b_c2.py c2check --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz --bank /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware --detector-dir /pscratch/sd/j/josephrb/s5p-20260926/bank_detector --pins /pscratch/sd/j/josephrb/fd-1b-20261030/pins.json --expect-pins-sha256 5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248 --flux-constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt --flux-table /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz --expect-flux-table-sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5 --definition /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json --staged /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in --prep /pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep --cv-tdw /pscratch/sd/j/josephrb/fd-1b-a21-cvdenom2-20261103/cvdenom.npy --expect-cv-tdw-sha256 0bc70d622ed51f7e6ce3b80e095788f315e52937b6a6c79a0bafedeb4545def8 --calibration /pscratch/sd/j/josephrb/fd-1b-a21-calibN-rerun2-20261105/calibration.json --expect-calibration-sha256 66f2ae4443099baec677f07d76aae6103763816f89e3767d774ae43b8f22ef10 --expect-calibration-npz-sha256 9047a6f730ca41cda8a0c6d7b60aac19ba10c04f8ab6a6b13a279a5835291a70 --calibration-300 /pscratch/sd/j/josephrb/fd-1b-a21-calib-20261104/calibration.json --expect-calibration-300-sha256 4b6a18b60ec70f5a0eb8a57284c85e9d5be6efc5d1574251b336c4ed64c420df --truths ar23 --out /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/gate-ar23.json"
+	User time (seconds): 14135.48
+	System time (seconds): 3745.92
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:58:09
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 285252852
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 66
+	Minor (reclaiming a frame) page faults: 166142417
+	Voluntary context switches: 14595
+	Involuntary context switches: 74023
+	Swaps: 0
+	File system inputs: 138332576
+	File system outputs: 616
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

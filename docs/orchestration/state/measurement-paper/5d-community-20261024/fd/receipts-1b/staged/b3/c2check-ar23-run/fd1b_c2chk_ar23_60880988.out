@@ -1,0 +1,20 @@
+host=nid006185 job=60880988 truth=ar23 start=2026-11-06T00:39:09Z
+deploy head=a47cfb4b9410cbf0cc8e34bee98e73c3e110f171 porcelain_lines=0
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_noatime_guard.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/b3/sbatch-c2check.sh: OK
+sourcing /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/deploy/setup_salloc_env.sh sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+threads OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1
+c2check rc=0
+C2-GATE verdict=PASS reads={"ar23": "option (1)"}
+fd_1b_noatime_guard: installed over 10 roots; running /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/deploy/nd-unfolding/fd_1b_c2.py
+	Command being timed: "python3 -B /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/deploy/nd-unfolding/fd_1b_noatime_guard.py --declared -- /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/deploy/nd-unfolding/fd_1b_c2.py c2check --npz /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz --bank /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware --detector-dir /pscratch/sd/j/josephrb/s5p-20260926/bank_detector --pins /pscratch/sd/j/josephrb/fd-1b-20261030/pins.json --expect-pins-sha256 5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248 --flux-constraint /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt --flux-table /pscratch/sd/j/josephrb/fd-1b-staged-20261102/stage1/in/flux_universes.npz --expect-flux-table-sha256 cdc3da788c385da72826b2a74b1987320bbe399af212722826914df4d2fe15a5 --definition /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/deploy/nd-unfolding/pv-ladder/readouts/h2_definition.json --staged /pscratch/sd/j/josephrb/fd-1b-inv-20261101/i0/in --prep /pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep --cv-tdw /pscratch/sd/j/josephrb/fd-1b-a21-cvdenom2-20261103/cvdenom.npy --expect-cv-tdw-sha256 0bc70d622ed51f7e6ce3b80e095788f315e52937b6a6c79a0bafedeb4545def8 --calibration /pscratch/sd/j/josephrb/fd-1b-a21-calibN-rerun2-20261105/calibration.json --expect-calibration-sha256 66f2ae4443099baec677f07d76aae6103763816f89e3767d774ae43b8f22ef10 --expect-calibration-npz-sha256 9047a6f730ca41cda8a0c6d7b60aac19ba10c04f8ab6a6b13a279a5835291a70 --calibration-300 /pscratch/sd/j/josephrb/fd-1b-a21-calib-20261104/calibration.json --expect-calibration-300-sha256 4b6a18b60ec70f5a0eb8a57284c85e9d5be6efc5d1574251b336c4ed64c420df --truths ar23 --out /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/gate-ar23.json"
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:58:09
+	Maximum resident set size (kbytes): 285252852
+	Exit status: 0
+7fe0edfdc9937452e6400939c7bd0a2ecba6dddc280e632e035d02ce977fa243  /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/gate-ar23.json
+89d2dbe9eeb75b14dba774e807c968621dfba0e4bb131d3c98f36607cab7d7e6  /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/c2check.out
+3ddb9523ef186c6bb425ef1aca9085139a3637f221a3fc3de3d4d84dfd3d5b3e  /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/c2check.time
+end=2026-11-06T05:37:26Z

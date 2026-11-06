@@ -1,0 +1,13 @@
+# sacct -j 60880987 -n -P -o JobID,JobName,State,Elapsed,Start,End,NodeList,NNodes,ExitCode,MaxRSS  (2026-11-06T05:4xZ; times local PST)
+60880987|fd1b_c2chk_g18|COMPLETED|04:52:43|2026-11-05T16:39:01|2026-11-05T21:31:44|nid005733|1|0:0|
+60880987.batch|batch|COMPLETED|04:52:43|2026-11-05T16:39:01|2026-11-05T21:31:44|nid005733|1|0:0|336974724K
+60880987.extern|extern|COMPLETED|04:52:48|2026-11-05T16:39:01|2026-11-05T21:31:49|nid005733|1|0:0|
+# sacct -j 60880987 -X -n -P -o JobID,ElapsedRaw,TimelimitRaw,AllocTRES%80,Partition,QOS
+60880987|17563|450|billing=256,cpu=256,energy=5293396,mem=487802M,node=1|regular_milan_ss11|regular_1
+# scontrol at submission (connect-c2check.log): TimeLimit=07:30:00 QOS=regular_1 Partition=regular_milan_ss11 OverSubscribe=NO
+# iris m3246 at launch (login18, 00:32Z): balance 1989.9 node-h; cap 7.5. After both jobs (05:4xZ): Charged(user) 2213.6
+# squeue --me at launch: no cov2d-* job (the COV2D fence; connect-c2check.log "cov2d jobs at launch: []")
+# atime-pre.tsv / atime-post.tsv: every declared input file's atime by `find -printf %A@` (stat), on the login node
+#   before submission (connect-c2check.log) and at 2026-11-06T05:33:42Z after the job: 1147 files, the same keys, 0 moved.
+# the guard: "fd_1b_noatime_guard: installed over 10 roots" (c2check.time); no refusal; rc 0.
+# fetched through O_NOATIME; gate-g18.json and c2check.out sha256 equal the job's own sha256sum lines (fd1b_c2chk_g18_60880987.out).
