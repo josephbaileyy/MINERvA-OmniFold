@@ -253,6 +253,8 @@ docs/orchestration/DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md	LI
 docs/orchestration/DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md	LIVE	open	""
 docs/orchestration/DECISION-20261106-joseph-b0-reconciliation-sentence.md	LIVE	open	""
 docs/orchestration/DECISION-20261106-joseph-measurement-target-and-delta.md	LIVE	open	""
+docs/orchestration/DECISION-20261106-joseph-methods-study-and-archive.md	LIVE	open	""
+docs/orchestration/DECISION-20261106-joseph-relax-12h-job-limit.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	ARCHIVAL	terminal	""
@@ -389,6 +391,7 @@ docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md	LIVE	open
 docs/orchestration/OUTCOME-20261013-5d-injected-w-closure-pass.md	LIVE	open	
 docs/orchestration/OUTCOME-20261105-fd-stab-none-pass.md	LIVE	open	""
 docs/orchestration/OUTCOME-20261106-1b-stage1-receipt-stop.md	LIVE	open	""
+docs/orchestration/OUTCOME-20261106-ref-c2c1-read.md	LIVE	open	""
 docs/orchestration/OUTCOME-20261106-ref-g1-r1-differ.md	LIVE	open	""
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	LIVE	open	
@@ -720,6 +723,7 @@ docs/orchestration/state/2d-closeout/stageF/methods/absence-audit-20261027/REPOR
 docs/orchestration/state/2d-closeout/stageF/methods/absence-audit-20261027/ledger.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/absence-items-3-4/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/abstract-20261026/REPORT.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/archive-measurement-framed-20261106/README.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/CODER-PROMPT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/README.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/caveat-remeasure-20261102/after-58fa0b89/README.md	LIVE	open	""
@@ -1048,6 +1052,19 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-and-qualifications-20261101/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-bias-stabilisation-20261102/REPORT.md	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/DIRECTOR-REC-AGY-ANSWER.txt	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/DIRECTOR-REC-AGY-PROMPT.txt	LIVE	open	""
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/INPUT-20261106-grok-referee-sufficiency.txt	LIVE	open	
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REPORT.md	LIVE	open	
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-ANSWER.txt	LIVE	open	
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-DISPOSITION.md	LIVE	open	
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-FOLLOWUP-ANSWER.txt	LIVE	open	
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-FOLLOWUP-PROMPT.txt	LIVE	open	
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-PROMPT.txt	LIVE	open	
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-READONLY-PROMPT.txt	LIVE	open	
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-UPDATE-EXECUTION.txt	LIVE	open	
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/REVIEW-UPDATE-PROMPT.txt	LIVE	open	
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-decision-package-20261106/SOURCES.tsv	LIVE	open	
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/scope-referee-analysis-20261104/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-abstracts-1b-20261031/REPORT.md	LIVE	open	""
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/sonnet-consult-eavail-pricing-20261031/REPORT.md	LIVE	open	""

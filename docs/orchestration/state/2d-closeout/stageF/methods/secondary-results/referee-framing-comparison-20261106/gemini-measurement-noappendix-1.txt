@@ -1,0 +1,173 @@
+# Referee Report on PRD Submission
+
+**Manuscript Title:** *[Title Removed]*  
+**Journal:** Physical Review D  
+**Reviewer Focus:** Neutrino cross-section measurements, unbinned/machine-learning unfolding (OmniFold), and systematic uncertainty quantification.
+
+---
+
+### 1. Summary of What the Paper Claims and Does
+
+The manuscript presents an extraction of the inclusive muon-neutrino charged-current ($\nu_\mu$ CC) cross section on a hydrocarbon target using the MINERvA medium-energy open-data release ($1.057 \times 10^{21}$ protons on target). The authors apply the unbinned, machine-learning-based OmniFold technique across five kinematic variables ($p_T, p_\parallel, E_{\text{avail}}, q_3, W$) and report the result as cell-integrated cross sections across 16 coarse kinematic cells with a full covariance matrix. As an end-to-end benchmark, the method reproduces the published MINERvA double-differential cross section $d^2\sigma/(dp_T dp_\parallel)$ within $\approx 1\%$ in normalization, though with an unexplained correlated shape difference ($\chi^2/\text{ndf} = 2.27$ across 205 bins). Systematic uncertainties are evaluated—including a post-hoc rank-2 covariance term to encompass an unexplained $\approx 7\%$ discrepancy between run periods—yielding a median per-cell relative uncertainty of 7.86%. Finally, the 16-cell result is compared against five generator predictions (GENIE CV, GENIE+MEC, NuWro, GiBUU, and MINERvA Tune v1), while the authors transparently report that the estimator fails predefined bias criteria under GiBUU-like and synthetic truth variations, exhibits floating-point rounding instability, and has unvalidated coverage.
+
+---
+
+### 2. Recommendation
+
+**Recommendation: Major Revision**
+
+This manuscript represents a pioneering and technically sophisticated attempt to apply multidimensional, unbinned machine-learning unfolding (OmniFold) to experimental neutrino scattering data. The authors deserve substantial praise for their extraordinary intellectual honesty and rigor; rather than burying anomalies, they meticulously document every failure mode, algorithmic limitation, and qualification. However, the paper is currently caught in a fundamental contradiction regarding its scientific scope. It presents itself as a primary physics measurement of a five-observable neutrino cross section intended for model comparison, yet simultaneously demonstrates that the extracted cross sections suffer from statistically significant residual prior bias that fails predefined acceptance criteria ($p < 10^{-27}$ on GiBUU-like pseudo-data), have completely unvalidated frequentist coverage, exhibit numerical instability under floating-point rounding (up to $2.6\sigma_{\text{stat}}$), rely on an unphysical theoretical prediction where 46% of events violate energy conservation, and patch an unexplained $7\%$ detector/beam run-period drift with an ad-hoc, rank-deficient covariance matrix. As an experimental measurement to be deposited into the world neutrino data for generator tuning, the results cannot be reliably used in their current state. The paper can only become publishable in Physical Review D if the authors execute a **Major Revision** that either resolves the critical analytical and stability deficiencies through substantial further work, or, more realistically and valuably, explicitly reframes the manuscript from a primary cross-section measurement into a landmark methodological and diagnostic study on the challenges, failure modes, and validation prerequisites of high-dimensional ML unfolding in neutrino physics.
+
+---
+
+### 3. Major Issues
+
+#### 1. Unvalidated Coverage and Aborted Frequentist Validation
+* **What is wrong or missing:** The authors state plainly that *"The coverage of the reported uncertainty intervals has not been validated"* (Abstract, Sec. I, Sec. VI A.1). A planned coverage test drawing flux, interaction, and detector variations was aborted prior to execution because preliminary checks revealed that *"the uncertainties reproduced through its pseudo-experiments disagreed with the covariance blocks they draw, for reasons not established"* (Sec. VI A.1). Furthermore, an earlier statistical covariance undercovered severely in the tails (coverage as low as 0.06 for 68% intervals under a 10% rate shift).
+* **Why it matters physically:** In neutrino physics, cross-section measurements serve as the ground truth for constraining nuclear effects (RPA, 2p2h, FSI) and reducing systematic uncertainties in neutrino oscillation experiments (such as DUNE and Hyper-Kamiokande). If an experimental result's reported uncertainties do not possess verified frequentist coverage, the quoted error bars are uncalibrated. Consequently, the goodness-of-fit metrics reported in Table II ($\chi^2$ values from 107 to 229 for 16 ndf) are statistically uninterpretable; one cannot determine whether external models are excluded by physical discrepancies or by miscalibrated, undercovering uncertainty intervals.
+* **What the authors must do to resolve it:** The authors must diagnose and fix the internal inconsistency in the pseudo-experiment generation pipeline that caused reproduced uncertainties to disagree with the covariance blocks. They must then run full coverage tests across representative truth deformations (testing both pointwise and simultaneous coverage) and demonstrate that the reported covariance achieves nominal coverage, or adjust the covariance construction accordingly.
+
+#### 2. Estimator Bias Exceeding Predefined Acceptance Criteria (Prior Retention)
+* **What is wrong or missing:** In the fake-data validation studies (Sec. IV G, Table I), the unfolding estimator was evaluated against 12 truth distributions using predefined acceptance thresholds ($p \ge 0.01$ and no cell with $|z| > 2$). Under the reported covariance, the estimator catastrophically fails these criteria for the GiBUU hybrid truth ($\chi^2 = 171$, $p < 10^{-27}$, with cells R02 and R06 exceeding $2\sigma$) and the synthetic $q_3$ tilt ($\chi^2 = 52$, $p < 10^{-5}$). Without the ad-hoc run-period block, the GiBUU $E_{\text{avail}}$ shape test also fails ($z = 2.01$). In Sec. IV E, truth recovery residuals reach up to 74% at high $W$. As the authors acknowledge, the estimator retains a significant memory of the simulation prior (Tune v1).
+* **Why it matters physically:** The core motivation of unbinned unfolding is to produce model-independent data. If the estimator inherently regularizes toward the initial simulation prior such that it cannot recover an alternative, physically plausible generator truth (GiBUU) within quoted uncertainties, the extracted cross sections are model-dependent. The massive $\chi^2$ discrepancies observed when comparing the data to external generators in Table II could simply be an artifact of the algorithm's inability to step away from the GENIE Tune v1 training prior, rather than genuine physical rejection of those models.
+* **What the authors must do to resolve it:** The authors must either: (i) optimize the ML architecture and regularization (e.g., investigating iteration counts beyond 5, tree depth, learning rate, or alternative unbinned loss regularizations) to reduce prior-retention bias below their declared tolerances; or (ii) construct an explicit, calibrated model-bias systematic covariance block ($C_{\text{bias}}$) that inflates the uncertainties sufficiently to ensure valid coverage across all plausible generator deformations. If the bias cannot be eliminated or bounded within a reasonable uncertainty, the paper cannot claim to report an unbiased, model-independent measurement.
+
+#### 3. Correlated Shape Discrepancy with the Published 2D Benchmark
+* **What is wrong or missing:** As an end-to-end benchmark on the exact same dataset, the authors unfold the double-differential cross section $d^2\sigma/(dp_T dp_\parallel)$ and compare it to the official MINERvA published result [13]. While the integrated cross section matches within 1%, the bin-by-bin comparison against the full published covariance yields $\chi^2/\text{ndf} = 2.27$ across 205 bins (Sec. IV B). The text admits: *"The source of the shape difference has not been identified."* Moreover, the specific ML implementation (LightGBM) and background treatment were selected post-hoc with the published comparison in view (lowering $\chi^2/\text{ndf}$ from 3.66/2.65 to 2.27), rendering the benchmark descriptive rather than a blind validation.
+* **Why it matters physically:** A benchmark against an established, conventional measurement using identical raw data is the primary validation of any new unfolding technique. A correlated shape discrepancy corresponding to $\chi^2/\text{ndf} = 2.27$ across 205 degrees of freedom is statistically enormous (p-value $\ll 10^{-10}$). If the authors cannot explain whether this shape discrepancy originates from differences in efficiency corrections, background subtraction, phase-space definitions, or ML edge-effect biases, there is no physical foundation to trust the 5D result, which relies on the exact same data and underlying ML machinery.
+* **What the authors must do to resolve it:** The authors must isolate the mechanism driving this shape discrepancy. They should perform differential diagnostic comparisons: test whether the discrepancy is localized in specific kinematic regions (e.g., low $p_T$, high $p_\parallel$), compare intermediate quantities (reconstructed event selections, background templates, efficiency curves), and test an unbinned unfolding directly on a 2D projection of the simulation to confirm whether the ML architecture itself induces shape distortions relative to matrix inversion.
+
+#### 4. Ad-Hoc Run-Period Discrepancy and Rank-Deficient Covariance ($C_{\text{PL,5D}}$)
+* **What is wrong or missing:** The authors discovered that unfolded cross sections across the three run-period groups differ significantly beyond statistical fluctuations, notably displaying an unexplained $\approx 7\%$ step in $p_\parallel$ near 8 GeV/c (Sec. IV A, IV C). To absorb this, they introduced a post-hoc covariance block, $C_{\text{PL,5D}}$, constructed from double ratios of the period groups. This block has rank 2, contains uncorrected bootstrap noise, has a poorly determined overall magnitude (the 68% interval on the ratio of true to estimated size spans 0.73–2.56), and shifts the generator $\chi^2$ values by up to 40%.
+* **Why it matters physically:** A 7% shift in reconstructed muon momentum between run periods points to an unmodeled time-dependent instrumental or beam effect—such as MINOS tracking efficiency variations, detector optical degradation, or horn current/beam alignment drifts. Patching an unresolved physical or detector defect by adding a rank-2 covariance term artificially inflates uncertainties in an arbitrary 2D subspace of the 16-dimensional reporting space. Inverting this covariance matrix during $\chi^2$ evaluation distorts the metric across the 16 cells, potentially suppressing genuine physical tension with generators.
+* **What the authors must do to resolve it:** The authors must investigate the detector and beam calibration logs (to the extent available in the open data) to identify the physical origin of the 7% step. If the drift cannot be corrected, the authors should either: (i) treat the run periods as nuisance parameters in a formal profile likelihood; or (ii) evaluate whether excluding the anomalous run period alters the central values, demonstrating stability. Furthermore, they must assess the mathematical stability of inverting a covariance matrix that incorporates a rank-2 component over 16 bins.
+
+#### 5. Numerical Instability Under Floating-Point Rounding
+* **What is wrong or missing:** In Sec. IV F, the authors document that the joint-test estimator is unstable under floating-point rounding of its inputs. Rounding-level perturbations cause shifts of up to 2.6 statistical standard deviations, violating the authors' own data-stability requirement (median $\le 0.3\sigma_{\text{stat}}$, maximum $\le 1.0\sigma_{\text{stat}}$). Exploratory tests of two-fold cross-fitting and tree regularizations failed to resolve the instability.
+* **Why it matters physically:** A physical measurement whose central values can shift by more than $2.5\sigma_{\text{stat}}$ simply due to machine-precision rounding of input kinematic variables is fundamentally non-robust. It indicates that the gradient-boosted decision trees are splitting on numerical noise in sparse multidimensional phase space, leading to erratic decision boundaries that do not reflect underlying physical densities.
+* **What the authors must do to resolve it:** The authors must regularize the machine-learning pipeline to restore numerical stability. Standard approaches include: standardizing/scaling feature distributions, constraining maximum tree depth and leaf count, enforcing a substantial minimum sample weight per leaf, stochastic subsampling of events and features, bagging across multiple training seeds/perturbations, or transitioning to neural network architectures (such as standard MLP-based OmniFold), which generally yield smoother, numerically stable decision boundaries compared to deep decision trees.
+
+#### 6. Flawed Theoretical Predictions in Generator Comparisons
+* **What is wrong or missing:** In Sec. V B and Table II, the theoretical predictions compared against the data suffer from severe flaws:
+  - GiBUU and NuWro were generated on pure Carbon and converted to CH by adding free-proton predictions with a weight of 1/13 per nucleon.
+  - Footnote b of Table II reveals: *"GiBUU's own free-proton sample... failed its sampling-closure check, and its deep-inelastic events, 46 % of it, do not conserve energy."*
+  - Footnote a of Table II notes that in NuWro's free-proton sample, high-energy generator aborts were not shown to be negligible.
+  - The model covariance $C_{\text{model}}$ was constructed using Carbon predictions, introducing an uncorrected 8.3% target mismatch in the low-$W$ region ($W < 1.1$ GeV).
+* **Why it matters physically:** Physical Review D cannot publish quantitative model comparisons—and implied model rejections—based on theoretical simulations known to violate fundamental conservation laws (energy conservation violated in nearly half of the sample!). Normalizing per nucleon fails because hydrogen lacks quasielastic, 2p2h, and coherent channels. Reporting a $\chi^2$ of 48 (or 61) for GiBUU when the underlying theoretical sample is corrupt and target-mismatched is physically invalid.
+* **What the authors must do to resolve it:** The authors must discard the flawed GiBUU proton sample. They must generate native CH samples for all compared generators (GENIE, NuWro, GiBUU) using validated, energy-conserving configurations, recalculate $C_{\text{model}}$ on CH, and recompute Table II and Figure 3.
+
+#### 7. Functional Redundancy in the 5-Observable Feature Space
+* **What is wrong or missing:** The paper claims to measure a simultaneous cross section in five observables: $(p_T, p_\parallel, E_{\text{avail}}, q_3, W)$. However, Sec. II explicitly states: *"Reconstructed $W$ is an exact function of the reconstructed $(p_T, p_\parallel, q_3)$... because $W_{\text{reco}}^2 = (\bar{M} + q_0)^2 - q_{3,\text{reco}}^2$."* Only $E_{\text{avail}}$ represents an independent calorimetric recoil measurement.
+* **Why it matters physically:** Presenting the measurement as "five-dimensional" is formally misleading when the reconstructed feature space possesses only four independent degrees of freedom. In machine-learning density estimation, feeding deterministic functions of existing features into decision trees creates degenerate manifolds in feature space, which can distort classifier splits, induce numerical instability, and artificially constrain covariance rank.
+* **What the authors must do to resolve it:** The authors must clarify in the Abstract, Introduction, and Conclusions that the measurement comprises four independent kinematic observables with an auxiliary redundant projection ($W$). Alternatively, they should conduct the OmniFold reweighting strictly in the 4D space of independent observables $(p_T, p_\parallel, q_0, q_3)$ and project the resulting event weights onto $W$ at truth level.
+
+---
+
+### 4. Categorization of Stated Limitations and Qualifications
+
+The manuscript contains an extensive list of self-declared limitations. Below, each limitation is categorized into:
+* **(a) Real deficiency:** Must be resolved with further analysis prior to publication.
+* **(b) Acceptable limitation:** An honestly stated limitation that a PRD paper of this kind may publish with as is.
+* **(c) Detail for companion note:** Belongs properly in the companion analysis note rather than the main text.
+
+---
+
+#### 1. Unvalidated Coverage of Uncertainty Intervals
+* **Classification:** **(a) Real deficiency**
+* **Reason & Required Analysis:** Quoting uncertainty intervals without validated coverage undermines the primary function of an experimental measurement. The authors must debug the pseudo-experiment framework, run the planned coverage tests across synthetic truths, and demonstrate that the quoted uncertainties provide appropriate nominal coverage (or calibrate them accordingly).
+
+#### 2. Run-Period Inconsistency and Ad-Hoc Uncertainty ($C_{\text{PL,5D}}$)
+* **Classification:** **(a) Real deficiency**
+* **Reason & Required Analysis:** An unexplained 7% step in $p_\parallel$ points to an unmodeled detector or beam systematic. Absorbing this via an empirical rank-2 covariance matrix with an undetermined scale (spanning 0.73–2.56) without understanding its physical origin is a major deficiency. The authors must inspect run-dependent detector/beam metrics to isolate the physical cause or perform a formal profiling/marginalization analysis.
+
+#### 3. Fake-Data Bias Exceeding Predefined Thresholds
+* **Classification:** **(a) Real deficiency**
+* **Reason & Required Analysis:** The authors established objective criteria for bias ($p \ge 0.01$, $|z| \le 2$) and failed them catastrophically on GiBUU ($p < 10^{-27}$). Publishing a result that fails its own pre-registered validation criteria means the measurement has uncontrolled model bias. The authors must adjust the unfolding regularization or introduce a validated bias systematic covariance that restores compatibility.
+
+#### 4. The Aborted Coverage Test
+* **Classification:** **(a) Real deficiency**
+* **Reason & Required Analysis:** Halting the test because reproduced uncertainties disagreed with the input covariance blocks signals an unresolved mathematical or software bug in the systematic propagation pipeline. The authors must identify the discrepancy, resolve the bug, and execute the test to completion.
+
+#### 5. Low-Stability Cells (R02, R06, R10, R15: 0.16–0.25)
+* **Classification:** **(b) Acceptable, honestly stated limitation**
+* **Reason:** In high-dimensional neutrino cross-section measurements, low stability (large bin migration) is an inevitable consequence of detector resolution in kinematically suppressed corners of phase space. The authors clearly flag these cells with daggers ($\dagger$) in Table III and document their stability in Sec. VI A. As long as the full covariance matrix accounts for bin-to-bin migration, this is an acceptable, standard limitation for publication.
+
+#### 6. Target Differences (Carbon vs. CH in Predictions and $C_{\text{model}}$)
+* **Classification:** **(a) Real deficiency**
+* **Reason & Required Analysis:** Evaluating data on CH against Carbon predictions, where Hydrogen differences contribute an 8.3% cross-section shift at low $W$, introduces an artificial target mismatch into Table II and $C_{\text{model}}$. The authors must generate consistent CH predictions for all external generators and recompute the comparisons.
+
+#### 7. Definitional Departures ($E_{\text{avail}}$ 135 MeV Subtraction, $W$ Nucleon Mass, Muon Angle Axis)
+* **Classification:** **(b) Acceptable, honestly stated limitation**
+* **Reason:** Operational definitions of complex pseudo-observables frequently differ across experiments. The authors provide an exact mathematical definition in Eq. (1), verify that the shift is minor (at most $0.19\sigma$ locally and $0.42\sigma$ coherently), apply identical definitions across data and simulation, and project generators onto the same definitions. This is standard and fully acceptable.
+
+#### 8. Sensitivity to Input Rounding (Up to 2.6$\sigma_{\text{stat}}$)
+* **Classification:** **(a) Real deficiency**
+* **Reason & Required Analysis:** Failing a pre-set numerical stability criterion by shifting $2.6\sigma_{\text{stat}}$ under machine-precision rounding indicates severe tree overfitting. The authors must stabilize the algorithm using feature normalization, tree-depth regularization, or ensembling.
+
+#### 9. Broken Theoretical Sample for GiBUU (Energy Conservation Failure)
+* **Classification:** **(a) Real deficiency**
+* **Reason & Required Analysis:** Publishing a $\chi^2$ comparison against a simulation where 46% of events violate energy conservation is physically untenable. The authors must replace the GiBUU sample with a physically sound, energy-conserving prediction.
+
+#### 10. Functional Redundancy of Reconstructed $W$ with $(p_T, p_\parallel, q_3)$
+* **Classification:** **(b) Acceptable, honestly stated limitation**
+* **Reason:** The authors explicitly disclose in Sec. II that reconstructed $W$ is fixed by $(p_T, p_\parallel, q_3)$ via $q_0$. While it makes claiming a "five-dimensional" cross section slightly misleading, keeping this statement in the main text is essential for transparency.
+
+#### 11. Post-Hoc Selection of Estimator Settings for the 2D Benchmark
+* **Classification:** **(b) Acceptable, honestly stated limitation**
+* **Reason:** The authors openly concede in Sec. IV B that the choice of LightGBM and refined negative-weight background subtraction was adopted with the published result in view, explicitly warning the reader that the benchmark is descriptive rather than blind. This intellectual honesty is acceptable, provided the 2D shape discrepancy itself is investigated.
+
+#### 12. Audit Details and Stopping Rules of the Run-Period Covariance
+* **Classification:** **(c) Detail for companion note**
+* **Reason:** The specific operational procedures regarding the stopping condition for the audit of $C_{\text{PL,5D}}$ before reading numbers (Sec. IV A) represent procedural laboratory history that belongs in the companion analysis note [14], keeping the PRD text focused on the mathematical definition, magnitude, and rank of the uncertainty.
+
+---
+
+### 5. Referee's Perspective on Limitations and Publishability
+
+#### Should the authors resolve these limitations or move them out of the paper?
+**The authors must emphatically NOT move these limitations out of the paper.**  
+Sweeping these limitations into the companion note to present a "clean" cross-section measurement would be a profound disservice to scientific integrity. Suppressing the unvalidated coverage, failed fake-data tests, rounding instability, and run-period anomalies would transform what is currently an exceptionally honest, highly instructive technical study into a deeply flawed and misleading experimental paper. The limitations must either be resolved by further analysis or remain prominently featured in the text.
+
+#### Is the paper publishable in PRD as it presents itself?
+**No.** As the paper currently presents itself—namely, as an authoritative, primary physics measurement of a five-differential $\nu_\mu$ CC cross section providing rigorous quantitative tests and exclusions of nuclear models—it is **not publishable in PRD**. A cross-section measurement whose uncertainty coverage has not been demonstrated, which fails pre-registered bias tests ($p < 10^{-27}$), and whose input stability fails numerical requirements cannot be incorporated into world data for nuclear model tuning.
+
+However, the manuscript has extraordinary merit if **reframed**. If the authors recast the paper as a **methodological investigation / cautionary case study** evaluating the readiness of high-dimensional unbinned ML unfolding in neutrino physics—highlighting the diagnostic framework, the reality of prior retention under generator-sized shifts, and the essential validation checks required before unbinned ML results can be trusted—the paper would be of paramount interest to the PRD readership and would likely become a highly cited landmark.
+
+#### Is any limitation disqualifying?
+For a **primary cross-section measurement**, three limitations are individually disqualifying:
+1. **Unvalidated coverage coupled with catastrophic fake-data bias failure ($p < 10^{-27}$ on GiBUU):** Quoting cross-section values and $\chi^2$ exclusions without validated coverage and with demonstrated failure to recover an external generator invalidates physical model testing.
+2. **Comparing data against an unphysical theoretical prediction:** Footnote b of Table II admits that GiBUU's free-proton sample fails sampling closure and that 46% of its DIS events violate energy conservation. PRD cannot publish quantitative tests against a simulation that does not conserve energy.
+3. **Severe numerical instability ($2.6\sigma_{\text{stat}}$ under rounding):** A measurement whose results swing by multiple statistical standard deviations under floating-point perturbations lacks scientific reproducibility.
+
+---
+
+### 6. Minor Issues and Presentation
+
+1. **Over-reliance on the Inaccessible Companion Note [14]:**  
+   The manuscript cites Ref. [14] over 25 times for essential aspects of the analysis (e.g., flux evaluation, background subtraction closure, construction of $C_{\text{model}}$, coverage test protocols). A PRD article must be scientifically self-contained. Key definitions, the refinement classifier architecture, and core systematic groupings must be summarized in the paper or its Supplemental Material rather than deferred to an inaccessible internal document.
+2. **Dense, Audit-Style Register:**  
+   The narrative tone in several sections (especially Sec. IV A, IV B, and IV F) reads like an internal quality-assurance audit rather than a journal article. Sentences are excessively burdened with procedural narratives (e.g., *"following an audit of its overlap with the other blocks and of its noise treatment, whose stopping condition was fixed before any of its numbers were read"*). The authors should streamline the text to focus on physical and statistical facts.
+3. **Missing Tables and Appendices:**  
+   The text frequently references Table IV, Table V, and Appendix A (e.g., *"Table IV gives the uncertainty of each group... Table V the correlation matrix"* in Sec. V A and Appendix A). However, these tables and the body of Appendix A are completely absent from the manuscript text provided. They must be included in the submission.
+4. **Figure 1 Readability and Formatting:**  
+   In the bottom-left panel of Figure 1, the standardized residuals across 205 bins are plotted with equal bin widths on an irregular kinematic grid. The resulting axes are cramped and illegible. In the top panels, the ratio curves for Tune v1, the published data, and this work overlap heavily; distinct line styles or clearer error shading are required.
+5. **Figure 2 Presentation:**  
+   Figure 2 displays an obsolete development variant (panel a: 100 trees, 8 leaves) alongside the joint-test estimator (panel b). The caption explicitly warns: *"Neither panel shows the sixteen-cell result or its reported covariance."* Devoting half of Figure 2 to an abandoned development model that is not used for the final result clutters the paper. Panel (a) should be removed, and panel (b) should be expanded and replotted with legible bin tick labels instead of the compressed string *"123456123456..."*.
+6. **Figure 3 Error Bars vs. Full Covariance:**  
+   Figure 3 displays data/prediction ratios with error bars showing only the diagonal uncertainty $\sqrt{C_{ii}}/f$. However, the caption and text note that the $\chi^2$ values in Table II depend almost entirely on off-diagonal correlations. Displaying only diagonal errors is visually deceptive, as data points appear consistent with predictions by eye while the full $\chi^2$ indicates overwhelming tension. The authors should include a visual representation of correlation or explicitly emphasize this visual divergence in the caption.
+7. **Table III Notation:**  
+   In Table III, several kinematic boundaries are denoted as `"all"`. While the text mentions that these cells integrate over the full phase space, the table caption must explicitly define what `"all"` denotes in terms of specific numeric cuts (e.g., $E_{\text{avail}} \in [0, 100]$ GeV, $W \in [0, 100]$ GeV).
+8. **Clarification of "Support Rule":**  
+   The "support rule" (requiring $\ge 1000$ reconstructed signal events and truth weight) is introduced abruptly in Sec. II. The authors should provide a brief physical and statistical rationale for this specific threshold.
+
+---
+
+### 7. Scores and Final Summary
+
+SCORE: 4/10
+
+**Main Contribution:**  
+The paper provides a pioneering, unsparingly rigorous demonstration of applying multidimensional unbinned machine-learning unfolding to neutrino scattering data, uncovering critical vulnerabilities regarding prior retention, numerical instability, and coverage validation.
+
+**Alternative Journal:**  
+If the authors prefer not to resolve the experimental cross-section deficiencies but wish to retain the full, valuable methodological diagnostic record, the manuscript would be ideally suited for submission to *Journal of Instrumentation (JINST)* or *Computer Physics Communications (CPC)* as a dedicated methodology and software validation study.
