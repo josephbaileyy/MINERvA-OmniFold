@@ -18,3 +18,7 @@ close_items	close-items session	close-items session [46ca5a]	Joseph	assigned
 paper_rewrite	paper rewrite lane	paper rewrite session [f64680]	Joseph	assigned
 director	the director (paper-tighten lane)	director session [8d862e]	Joseph	assigned
 coverage-5b-audit	scalar-5D adoption/statistics owner (Ruling 7), designated 2026-10-31	coverage-5b-audit session	Joseph	assigned
+cov2d	cov2d lane (2D method coverage, campaign (c))	cov2d session [0d87ab]	Joseph	assigned
+coverage-5b	coverage-5b lane (5D 1B staged method coverage)	coverage-5b session [92731d]	Joseph	assigned
+limitation-resolver	limitation-resolver lane (cluster connects; RPD-RECO)	limitation-resolver session [ea4633]	Joseph	assigned
+limitations-catalog	limitations-catalog lane (REF-G1 and REF-C2C1 code)	limitations-catalog session [9fac5b]	Joseph	assigned
