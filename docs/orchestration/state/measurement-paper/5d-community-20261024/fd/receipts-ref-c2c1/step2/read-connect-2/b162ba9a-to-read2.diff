@@ -1,0 +1,38 @@
+2,3c2,5
+< # REF-C2C1 step two, stage 3b: the READ (REF-C2C1-BINDING-2.md ruling 2.3 and the director's ruling of 2026-11-06,
+< # #825; code at M = 77d76cfc), on a login node, 0 node-h, under the binding's fixed conditional sequence. It refuses
+---
+> # REF-C2C1 step two, stage 3b: the READ, second run (REF-C2C1-BINDING-2.md ruling 2.3; the director's rulings of
+> # 2026-11-06, #825, and on C-PUB's operand, #839 and #842: the read is bound at M' = af70e9c4, re-run in a fresh
+> # directory $O/read-2 with the stopped read's $O/read left as it is, cells.root copied from $O/read by O_NOATIME and
+> # required to be f06e4a26), on a login node, 0 node-h, under the binding's fixed conditional sequence. It refuses
+21,23c23,25
+< R=$O/read
+< D=$O/deploy-read
+< M=77d76cfc2d621f8faa010b75006811868494652a
+---
+> R=$O/read-2
+> D=$O/deploy-read-2
+> M=af70e9c4685acdf2d64e30d812942bea1e7ccb0c
+31c33
+< [ -s "$R/cells.root" ] && [ -d "$O/units" ] && [ -x "$PY" ] && [ -s "$O/logs-replicas/cov2d-watch-paths.txt" ] && [ -s "$O/logs-replicas/lanes.tsv" ] || bail
+---
+> [ -s "$O/read/cells.root" ] && [ ! -e "$R" ] && [ -d "$O/units" ] && [ -x "$PY" ] && [ -s "$O/logs-replicas/cov2d-watch-paths.txt" ] && [ -s "$O/logs-replicas/lanes.tsv" ] || bail
+40a43,45
+> dd if="$O/read/cells.root" iflag=noatime status=none of="$R/cells.root" || { echo "STOP: copying cells.root"; finish 4; }
+> echo "cells.root copied from $O/read by O_NOATIME: sha256 $(sha256sum "$R/cells.root" | cut -d' ' -f1) (required $CELLS_SHA)"
+> [ "$(sha256sum "$R/cells.root" | cut -d' ' -f1)" = "$CELLS_SHA" ] || { echo "STOP: the copied cells.root is not f06e4a26"; finish 4; }
+96,99c101,104
+< e51367aa3d9d68b8c89f76cd7f556c70bd4a226f 2d-unfolding/ref_c2c1/ref_c2c1_read.py
+< 96dbbaa223a3dec4ceba80686f07721e87ec9045 2d-unfolding/ref_c2c1/config.json
+< 0d2f1a2445fe22130be94635cabb280837be4edb 2d-unfolding/ref_c2c1/test_ref_c2c1.py
+< 0e80efd2d927390e4360cf10134e5b74e7554deb 2d-unfolding/ref_c2c1/ref_c2c1_mutation.py
+---
+> 1baf74b5163ff36e22fb66c4b13dc17c6a92d400 2d-unfolding/ref_c2c1/ref_c2c1_read.py
+> f27545e9ca70382a318eb284a0c9ea01cc0e5891 2d-unfolding/ref_c2c1/config.json
+> 4633f384392cbb7d18e159d72bffbe81aca19a8d 2d-unfolding/ref_c2c1/test_ref_c2c1.py
+> a2ce6e48a0d3b65b3d7467bd7b72dfd0cf436817 2d-unfolding/ref_c2c1/ref_c2c1_mutation.py
+101c106
+< f4dbaf1fe57bcf4ab0f128d70c1725aa64ae8d29 2d-unfolding/ref_c2c1/run_tests.sh
+---
+> 1d3f971f2b2a3a0cc9cf477b6f11061d8f35f07e 2d-unfolding/ref_c2c1/run_tests.sh
