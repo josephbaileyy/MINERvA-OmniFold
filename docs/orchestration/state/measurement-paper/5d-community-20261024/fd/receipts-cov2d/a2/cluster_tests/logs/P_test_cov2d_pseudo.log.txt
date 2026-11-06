@@ -1,0 +1,28 @@
+test_pot_mismatch_refuses (test_cov2d_pseudo.Guards) ... /dev/shm/josephrb-cov2d-a2tests2/deploy/2d-unfolding/cov2d/tests/test_cov2d_pseudo.py:71: FutureWarning: Starting in version 5.7.0, Uproot will default to writing RNTuples instead of TTrees. You will need to use `mktree` to explicitly create a TTree. This can be done by changing `file['tree_name'] = data` to `file.mktree('tree_name', data)`. Please update your code accordingly.
+  f["mc_truth_denom"] = truth
+ok
+test_r1_counts_are_zero_on_a_clean_fixture (test_cov2d_pseudo.Guards) ... ok
+test_r1_in_box_outside_the_phase_space_stops (test_cov2d_pseudo.Guards) ... ok
+test_r1_nonfinite_stops (test_cov2d_pseudo.Guards) ... ok
+test_r1_weight_at_or_above_1e4_stops (test_cov2d_pseudo.Guards) ... ok
+test_section_9_6_stops_when_compose_is_not_bitwise (test_cov2d_pseudo.Guards) ... ok
+test_signal_tree_without_5d_truth_refuses (test_cov2d_pseudo.Guards) ... ok
+test_a_copy_whose_atime_will_not_settle_is_refused_before_the_work (test_cov2d_pseudo.PseudoA) ... ok
+test_a_plain_read_of_a_staged_copy_stops (test_cov2d_pseudo.PseudoA) ... ok
+test_a_staged_input_off_its_pin_is_a_stop (test_cov2d_pseudo.PseudoA) ... ok
+test_chunking_changes_nothing (test_cov2d_pseudo.PseudoA) ... ok
+test_counts_equal_an_independent_draw (test_cov2d_pseudo.PseudoA) ... ok
+test_inputs_are_staged_and_the_guard_records_its_values (test_cov2d_pseudo.PseudoA) ... ok
+test_pass_and_products (test_cov2d_pseudo.PseudoA) ... ok
+test_r_T_is_one_call_shared_by_both_trees (test_cov2d_pseudo.PseudoA) ... ok
+test_refuses_an_existing_output (test_cov2d_pseudo.PseudoA) ... ok
+test_seeds_are_the_declared_ranges (test_cov2d_pseudo.PseudoA) ... ok
+test_seen_sums_use_the_reco_kept_rows (test_cov2d_pseudo.PseudoA) ... ok
+test_truth_is_clipped_row_by_row_in_the_phase_space (test_cov2d_pseudo.PseudoA) ... ok
+test_reads_both_tparameters (test_cov2d_pseudo.ReadPot) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 19.615s
+
+OK
+SUITE env=P module=test_cov2d_pseudo ran=20 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
