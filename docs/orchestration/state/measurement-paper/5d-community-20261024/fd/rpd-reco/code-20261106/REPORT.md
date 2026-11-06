@@ -1,5 +1,10 @@
 # RPD-RECO implementation and local code receipt
 
+Historical code receipt. The [binding-2 audit correction](../code-audit-fix-20261106/REPORT.md)
+supersedes this implementation route. Its B1 disposition retracts the broad
+CFS STOP-write claim in this report; the original tests did not cover early
+resource and dry-run refusals. Original receipt identities remain unchanged.
+
 This package implements the reconstruction-level d1/d2 diagnostic in
 `nd-unfolding/fd_rpd_reco.py`. It supplies code and local checks for the subsequent
 code audit and binding 2. It contains no production measurement, run permission,
@@ -79,9 +84,11 @@ The CLI limits numerical threads to one and nice to 19, emits a price-review STO
 when the planning estimate exceeds two hours, and refuses an elapsed stage over
 two hours. The estimate times a bounded Poisson probe; its factor-ten planning
 allowance is explicitly an estimate, not a measured total runtime. Every STOP
-has `readings: null`. `require_output_root` rejects CFS before mkdir, including
-before a STOP receipt could be written there. Resource, wall-clock, dry-run,
-output-existence and CFS refusal have positive/negative tests and REQUIRED mutants.
+has `readings: null`. At this freeze `require_output_root` rejected CFS only
+after entry reached `Inputs`; the binding-2 audit reproduced CFS STOP writes
+from earlier refusals. The broad protection claim and matching review-prompt
+assertion are withdrawn. The audit correction adds entry and handler checks
+and the missing combined-failure tests and mutants.
 
 ## Readings and licences
 

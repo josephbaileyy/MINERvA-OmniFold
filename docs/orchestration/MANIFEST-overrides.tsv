@@ -1280,7 +1280,18 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/cod
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/SUITE.txt	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/VERIFICATION.json	MACHINE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/local_receipt.py	MACHINE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/AUDIT-848-10731ed3.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/DIRECTOR-COMMON-UNITS.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/DIRECTOR-FENCE-BRACKET.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/DIRECTOR-FRESH-CONSTRAINT.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/DIRECTOR-MEASURED-PRICE.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/DIRECTOR-PREPARE-CUSTODY.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/DIRECTOR-PRICE-PAIR.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/DIRECTOR-STATIC-INVENTORY.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/DIRECTOR-TIMING-SCHEMA.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/DIRECTOR-TRACE-RULES.txt	LIVE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/production-config.draft.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/deposit-candidate/SUPPLEMENT-COVARIANCES.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-design-20261023/ASSIGNMENT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-design-20261023/DESIGN.md	LIVE	open	""

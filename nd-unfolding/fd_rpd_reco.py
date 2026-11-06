@@ -57,12 +57,24 @@ BOOTSTRAPS = 200
 PARTITIONS = 20
 CHUNK_ROWS = 65_536
 DEFAULT_WALL_SECONDS = 7_200
-MAX_PRICED_WALL_SECONDS = 39_600
+MAX_PRICED_WALL_SECONDS = 165_600
 MEASURED_MARGIN = 1.5
 DEFAULT_PLANNING_FACTOR = 10.0
 TIMING_AXES = tuple(
     sorted(
-        ["step", "pz", "pmu", "theta", "pt", "eavail", "q3", "W", "cells"]
+        [
+            "step",
+            "pz",
+            "pmu",
+            "theta",
+            "pt",
+            "eavail",
+            "q3",
+            "W",
+            "cells",
+            "rate@0",
+            "rate@1",
+        ]
         + [
             f"{axis}@{stratum}"
             for axis in ("eavail", "q3", "W")
@@ -148,7 +160,7 @@ def wall_budget_seconds(
         and not isinstance(budget, bool)
         and 0 < budget <= MAX_PRICED_WALL_SECONDS,
         "WALL_BUDGET",
-        "priced wall seconds must be positive and at most 39600",
+        "priced wall seconds must be positive and at most 165600",
     )
     return budget
 
@@ -177,6 +189,18 @@ def execution_fields(
         "estimate_status": (
             "unavailable_before_input_metadata" if estimate is None else "available"
         ),
+        "scheduler_request": {
+            key: os.environ.get(key)
+            for key in (
+                "SLURM_JOB_ID",
+                "SLURM_JOB_QOS",
+                "SLURM_QOS",
+                "SLURM_CPUS_PER_TASK",
+                "SLURM_JOB_CPUS_PER_NODE",
+                "SLURM_MEM_PER_NODE",
+                "SLURM_MEM_PER_CPU",
+            )
+        },
         "timing_source": timing_source,
         "timing_chunk_shape": (
             None
@@ -381,6 +405,20 @@ class Inputs:
             "CONFIG_READY",
             "draft configuration has unresolved runtime fields",
         )
+        self.prestage: Json | None = None
+        if "prestage" in self.config:
+            manifest = self.config["prestage"]
+            path = stage_copy(
+                Path(manifest["path"]),
+                self.staged / "prestage.json",
+                manifest["sha256"],
+            )
+            self.prestage = json.loads(path.read_text())
+            require(
+                self.prestage.get("status") == "PASS",
+                "MAT_DATA_STAGE",
+                "prestage did not pass",
+            )
         self.hashes: dict[str, str] = {str(config_path.resolve()): config_sha}
         self.roots = [config_path.resolve(), Path(self.config["dump_root"]).resolve()]
         for key in ("pins", "h2", "inventory", "constants", "flux_source"):
@@ -499,6 +537,22 @@ class Inputs:
         identity = source.resolve(), expected
         if identity in self.copies:
             return self.copies[identity]
+        if self.prestage is not None:
+            item = self.prestage["files"].get(str(source.resolve()))
+            require(
+                item is not None and item["sha256"] == expected,
+                "MAT_DATA_STAGE",
+                f"no fresh staged source for {source}",
+            )
+            copied = Path(item["staged"])
+            require(
+                copied.is_file() and digest(copied) == expected,
+                "MAT_DATA_STAGE",
+                f"staged source differs: {source}",
+            )
+            self.hashes[str(source.resolve())] = expected
+            self.copies[identity] = copied
+            return copied
         label = hashlib.sha256(str(source.resolve()).encode()).hexdigest()[:16]
         with read_guards(self.roots):
             copied = stage_copy(
@@ -506,6 +560,15 @@ class Inputs:
             )
         self.hashes[str(source.resolve())] = expected
         self.copies[identity] = copied
+        return copied
+
+    def derived(self, spec: Json, label: str) -> Path:
+        """Stage a digest-pinned derived handoff created after original-input prestaging."""
+        source = Path(spec["path"])
+        self.roots.append(source.resolve())
+        with read_guards([source]):
+            copied = stage_copy(source, self.staged / label, spec["sha256"])
+        self.hashes[str(source.resolve())] = spec["sha256"]
         return copied
 
     def declared(self, name: str) -> Path:
@@ -539,11 +602,15 @@ class Inputs:
             "PIN_SET",
             "pin set differs from 24 declared dumps",
         )
-        actual = {
-            path.name
-            for path in Path(self.config["dump_root"]).iterdir()
-            if path.is_file()
-        }
+        actual = (
+            set(self.prestage["dump_listing"])
+            if self.prestage is not None
+            else {
+                path.name
+                for path in Path(self.config["dump_root"]).iterdir()
+                if path.is_file()
+            }
+        )
         known_sibling_names = {f"nn_{playlist}.npz" for playlist in PLAYLISTS}
         require(
             expected <= actual and actual <= expected | known_sibling_names,
@@ -554,6 +621,9 @@ class Inputs:
         self.known_siblings = []
         for sibling_name in sorted(actual & known_sibling_names):
             sibling_path = Path(self.config["dump_root"]) / sibling_name
+            if self.prestage is not None:
+                self.known_siblings.append(self.prestage["dump_listing"][sibling_name])
+                continue
             info = sibling_path.stat()
             self.known_siblings.append(
                 {
@@ -978,33 +1048,33 @@ def bracket_outcome(primary: str, bracket: str) -> str:
     return primary if primary == bracket else "INCONCLUSIVE"
 
 
-def read_flux_histogram(path: Path, histogram: str) -> Json:
-    """Read one actual ROOT histogram from a staged file using uproot."""
-    import uproot
-
-    with uproot.open(path) as root_file:
-        require(
-            histogram in root_file, "FLUX_HISTOGRAM", f"missing histogram {histogram}"
-        )
-        values, edges = root_file[histogram].to_numpy(flow=False)
+def validate_flux_spectrum(spectrum: Json) -> Json:
+    """Validate extracted CV bins without opening a ROOT file."""
+    values = np.asarray(spectrum["values"], dtype=float)
+    edges = np.asarray(spectrum["edges"], dtype=float)
+    errors = np.asarray(spectrum["errors"], dtype=float)
     require(
-        values.ndim == 1
+        values.ndim == edges.ndim == errors.ndim == 1
+        and len(values) > 0
         and len(edges) == len(values) + 1
-        and bool(np.all(np.diff(edges) > 0))
-        and bool(np.all(np.isfinite(values)) and np.all(values >= 0)),
+        and len(errors) == len(values)
+        and bool(np.all(np.isfinite(edges)) and np.all(np.diff(edges) > 0))
+        and bool(np.all(np.isfinite(values)) and np.all(values >= 0))
+        and bool(np.all(np.isfinite(errors)) and np.all(errors >= 0)),
         "FLUX_LAYOUT",
-        "invalid flux histogram",
+        "invalid extracted flux histogram",
     )
     return {
-        "histogram": histogram,
+        **spectrum,
         "edges": edges,
         "values": values,
+        "errors": errors,
         "integral": float(np.sum(values * np.diff(edges))),
     }
 
 
-def p0(inputs: Inputs) -> Json:
-    """Record explicit runtime flux selections, constants and the source-pinned P-F premise."""
+def selected_flux_files(inputs: Inputs) -> Json:
+    """Resolve only explicit selections in the unchanged candidate inventory."""
     rows = list(
         csv.DictReader(
             io.StringIO(inputs.declared("inventory").read_text()), delimiter="\t"
@@ -1014,9 +1084,9 @@ def p0(inputs: Inputs) -> Json:
     require(
         set(selection) == {"1D", "1M", "1N"},
         "FLUX_SELECTION",
-        "P0 requires three explicit file selections",
+        "three runtime file selections are required",
     )
-    spectra: Json = {}
+    resolved: Json = {}
     for group, spec in selection.items():
         matches = [
             row
@@ -1027,30 +1097,722 @@ def p0(inputs: Inputs) -> Json:
         require(
             len(matches) == 1,
             "FLUX_SELECTION",
-            f"selection {group} is absent or ambiguous in C-N inventory",
+            f"absent or ambiguous selection {group}",
         )
         row = matches[0]
         source = Path(inputs.config["flux_root"]) / row["relative_path"]
         require(
             source.resolve().is_relative_to(Path(inputs.config["flux_root"]).resolve()),
             "FLUX_SELECTION",
-            "flux path escapes declared root",
+            "flux path escapes root",
         )
-        copy = inputs.copy(source, row["sha256"])
-        require(
-            copy.stat().st_size == int(row["bytes"]),
-            "FLUX_SIZE",
-            "flux size differs from C-N",
-        )
-        with read_guards(inputs.roots):
-            spectrum = read_flux_histogram(copy, spec["histogram"])
-        spectra[group] = {
-            **spectrum,
-            "path_opened": str(copy),
+        resolved[group] = {
             "original_path": str(source),
             "sha256": row["sha256"],
+            "bytes": int(row["bytes"]),
+            "histogram": spec["histogram"],
             "retention": spec["retention"],
         }
+    return resolved
+
+
+def flux_selection_digest(config: Json) -> str:
+    """Bind extraction inputs without a circular dependency on its output digest."""
+    selection = {
+        key: config.get(key)
+        for key in (
+            "flux_root",
+            "flux_selection",
+            "inventory",
+            "flux_source",
+            "mat_dependencies",
+            "premise",
+        )
+    }
+    return hashlib.sha256(
+        json.dumps(selection, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+def load_mat_instrument() -> Any:
+    """Load the existing MAT checks from this checkout, never a sibling checkout."""
+    import importlib.util
+
+    path = Path(__file__).with_name("fd_rpd_inputs.py").resolve()
+    spec = importlib.util.spec_from_file_location("fd_rpd_reco_mat_instrument", path)
+    require(
+        spec is not None and spec.loader is not None,
+        "MAT_ENVIRONMENT",
+        "MAT instrument is unavailable",
+    )
+    assert spec is not None and spec.loader is not None
+    instrument = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = instrument
+    spec.loader.exec_module(instrument)
+    assert instrument.__file__ is not None
+    require(
+        Path(instrument.__file__).resolve() == path
+        and Path(instrument.pi.__file__).resolve().parent == path.parent,
+        "MAT_ENVIRONMENT",
+        "MAT instrument imported a foreign checkout",
+    )
+    return instrument
+
+
+def checked_mat_environment(inputs: Inputs | None = None) -> tuple[Any, Json]:
+    """Reuse the pinned setup and process checks; their refusal keeps exit code 7."""
+    if inputs is not None:
+        require(
+            inputs.prestage is not None,
+            "MAT_PREPARE",
+            "same-connect prepare receipt required",
+        )
+        assert inputs.prestage is not None
+        try:
+            return checked_prepared_mat(inputs)
+        except ImportError as error:
+            raise Refused(
+                "MAT_ENVIRONMENT", f"traced MAT imports failed: {error}"
+            ) from error
+    try:
+        instrument = load_mat_instrument()
+        capture = io.StringIO()
+        with contextlib.redirect_stdout(capture):
+            instrument.run_check_mat_setup(None)
+        environment = instrument.mat_environment()
+        import ROOT
+    except Exception as error:
+        raise Refused(
+            "MAT_ENVIRONMENT", f"existing MAT checks refused: {error}"
+        ) from error
+    require(
+        environment.get("plotutils_mnvh1d_dictionary") is True,
+        "MAT_ENVIRONMENT",
+        "MnvH1D dictionary was not verified",
+    )
+    return ROOT, {
+        **environment,
+        "instrument_sha256": digest(Path(instrument.__file__)),
+        "setup_check_output": capture.getvalue(),
+        "interpreter": sys.executable,
+        "python": sys.version.split()[0],
+        "ROOT": str(ROOT.gROOT.GetVersion()),
+    }
+
+
+def checked_prepared_mat(inputs: Inputs) -> tuple[Any, Json]:
+    """Verify same-connect MAT custody without reopening protected instrument sources."""
+    import importlib.util
+    import ROOT
+
+    path = Path(__file__).with_name("fd_rpd_reco_custody.py")
+    spec = importlib.util.spec_from_file_location("rpd_custody_runtime", path)
+    assert spec is not None and spec.loader is not None
+    custody = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(custody)
+    prepared = inputs.prestage
+    assert prepared is not None
+    require(
+        prepared.get("run") == str(inputs.run)
+        and bool(os.environ.get("FD_RPD_RECO_CONNECT_ID"))
+        and prepared.get("connect_id") == os.environ.get("FD_RPD_RECO_CONNECT_ID")
+        and 0 < time.time_ns() - prepared.get("prepare_time_ns", 0) < 7_200_000_000_000
+        and {
+            k: v
+            for k, v in prepared.get("environment_after_setup", {}).items()
+            if k != "_"
+        }
+        == {k: v for k, v in custody.environment_record().items() if k != "_"},
+        "MAT_PREPARE",
+        "stale, foreign or environment-mismatched prepare receipt",
+    )
+    instrument = load_mat_instrument()
+    environment = prepared["mat_environment"]
+    mapped = instrument.mapped_files()
+    dictionary = ROOT.TClass.GetClass("PlotUtils::MnvH1D")
+    bad = instrument.mat_env_problems(
+        environment["setup_sha256"],
+        environment["mat_sha256"],
+        next(iter(environment["symlink"].values())),
+        mapped,
+        dict(os.environ),
+        bool(dictionary) and bool(dictionary.HasDictionary()),
+    )
+    require(not bad, "MAT_ENVIRONMENT", "; ".join(bad))
+    for filename, before in prepared["mapped_mat_stats"].items():
+        info = Path(filename).stat()
+        require(
+            filename in mapped and [info.st_dev, info.st_ino, info.st_size] == before,
+            "MAT_ENVIRONMENT",
+            "mapped MAT library stat changed",
+        )
+    for item in prepared["instrument_files"]:
+        copied = Path(item["staged"])
+        require(
+            copied.is_file() and digest(copied) == item["sha256"],
+            "MAT_PREPARE",
+            "staged checked instrument changed",
+        )
+    return ROOT, {
+        **environment,
+        "verified_from_same_connect_prepare": True,
+        "environment_after_setup": custody.environment_record(),
+        "module_paths": custody.module_paths(),
+    }
+
+
+@contextlib.contextmanager
+def guarded_tfile(root: Any, staged_paths: Sequence[Path]) -> Iterator[None]:
+    """Constrain both Python TFile entries to read-only digest-checked stage paths."""
+    allowed = {path.resolve() for path in staged_paths}
+    original = root.TFile
+
+    def checked_open(
+        path: str, option: str = "READ", *_args: Any, **_kwargs: Any
+    ) -> Any:
+        require(
+            Path(path).resolve() in allowed and option.upper() == "READ",
+            "MAT_TFILE_STAGE",
+            "TFile may only read a checked staged file",
+        )
+        return original.Open(path, "READ")
+
+    class CheckedTFile:
+        Open = staticmethod(checked_open)
+
+        def __new__(
+            cls, path: str, option: str = "READ", *args: Any, **kwargs: Any
+        ) -> Any:
+            return checked_open(path, option, *args, **kwargs)
+
+    root.TFile = CheckedTFile
+    try:
+        yield
+    finally:
+        root.TFile = original
+
+
+def read_flux_histogram(path: Path, histogram: str, *, root: Any) -> Json:
+    """Extract MnvH1D base CV bins and errors in the already checked MAT process."""
+    with guarded_tfile(root, [path]):
+        handle = root.TFile.Open(str(path), "READ")
+        require(
+            bool(handle) and not handle.IsZombie(),
+            "MAT_ROOT_FILE",
+            "ROOT file did not open",
+        )
+        try:
+            hist = handle.Get(histogram)
+            require(bool(hist), "FLUX_HISTOGRAM", f"missing histogram {histogram}")
+            require(
+                bool(hist.InheritsFrom("PlotUtils::MnvH1D")),
+                "MAT_MNVH1D",
+                "histogram is not a real MnvH1D",
+            )
+            bins = int(hist.GetNbinsX())
+            spectrum = {
+                "histogram": histogram,
+                "class_name": str(hist.ClassName()),
+                "edges": [
+                    float(hist.GetXaxis().GetBinLowEdge(i)) for i in range(1, bins + 2)
+                ],
+                "values": [float(hist.GetBinContent(i)) for i in range(1, bins + 1)],
+                "errors": [float(hist.GetBinError(i)) for i in range(1, bins + 1)],
+                "flow_values": [float(hist.GetBinContent(i)) for i in (0, bins + 1)],
+                "flow_errors": [float(hist.GetBinError(i)) for i in (0, bins + 1)],
+                "error_convention": "MnvH1D base CV GetBinError; no uncertainty-band construction",
+            }
+            return validate_flux_spectrum(spectrum)
+        finally:
+            handle.Close()
+
+
+def flux_units_metadata(path: Path, *, root: Any) -> Json:
+    """Record unit/POT metadata when present, without inferring absent declarations."""
+    with guarded_tfile(root, [path]):
+        handle = root.TFile.Open(str(path), "READ")
+        require(
+            bool(handle) and not handle.IsZombie(),
+            "MAT_ROOT_FILE",
+            "units file did not open",
+        )
+        try:
+            metadata = {}
+            for key in handle.GetListOfKeys():
+                name, class_name = str(key.GetName()), str(key.GetClassName())
+                if not re.search(r"unit|pot|normalization|density", name, re.I):
+                    continue
+                if class_name not in {"TNamed", "TObjString"}:
+                    continue
+                obj = key.ReadObj()
+                text = (
+                    str(obj.GetString())
+                    if class_name == "TObjString"
+                    else str(obj.GetTitle())
+                )
+                metadata[name] = {"class_name": class_name, "text": text}
+            return metadata
+        finally:
+            handle.Close()
+
+
+def common_flux_units(spectra: Json) -> Json:
+    """Measure P-F's shared convention, without assuming an absolute normalization."""
+    reference = spectra["1D"]
+    reference_edges = np.asarray(reference["edges"], dtype=float)
+    observed = {
+        group: {
+            key: spectrum.get(key)
+            for key in ("title", "axis_titles", "file_units_metadata")
+        }
+        for group, spectrum in spectra.items()
+    }
+    try:
+        for group, spectrum in spectra.items():
+            for role, histogram in (
+                ("constrained_phi", spectrum),
+                ("own_generated", spectrum["generated_spectrum"]),
+            ):
+                edges = np.asarray(histogram["edges"], dtype=float)
+                require(
+                    edges.shape == reference_edges.shape
+                    and bool(np.all(np.isfinite(edges)))
+                    and bool(np.all(np.abs(edges - reference_edges) <= 1e-12)),
+                    "P_F_BINNING",
+                    f"{group} {role} differs from 1D binning",
+                )
+            require(
+                isinstance(spectrum.get("title"), str)
+                and isinstance(spectrum.get("axis_titles"), dict)
+                and set(spectrum["axis_titles"]) == {"x", "y"}
+                and all(isinstance(v, str) for v in spectrum["axis_titles"].values())
+                and isinstance(spectrum.get("file_units_metadata"), dict)
+                and observed[group] == observed["1D"],
+                "P_F_UNITS",
+                f"{group} declared units differ: {json.dumps(observed, sort_keys=True)}",
+            )
+    except Refused as error:
+        error.details = {
+            "shared_units_observed": observed,
+            "bin_edges": {
+                g: {"phi": s["edges"], "g": s["generated_spectrum"]["edges"]}
+                for g, s in spectra.items()
+            },
+        }
+        raise
+    return {
+        "identical_binning": True,
+        "binning_absolute_tolerance": 1e-12,
+        "declared_units_byte_equal": True,
+        "observed": observed,
+        "absolute_per_POT_per_GeV_normalization_claim": False,
+    }
+
+
+def mat_flux_swap(
+    energy: FloatArray, own: Any, target: Any, generated: Any
+) -> tuple[FloatArray, NDArray[np.bool_], NDArray[np.int64]]:
+    """Evaluate A1 with ROOT, preserving MAT's strict >75 branch and zero rule.
+
+    The returned zero-pattern code has bits own=1, target=2, generated=4.
+    Out-of-range or nonfinite rows retain unity, as declared.
+    """
+    histograms = (own, target, generated)
+    low = max(float(h.GetXaxis().GetXmin()) for h in histograms[:2])
+    high = min(float(h.GetXaxis().GetXmax()) for h in histograms[:2])
+    inside = np.isfinite(energy) & (energy >= low) & (energy < high)
+    values = np.ones((3, len(energy)))
+    evaluated = np.isfinite(energy)
+    for index, histogram in enumerate(histograms):
+        values[index, evaluated] = np.fromiter(
+            (
+                (
+                    histogram.GetBinContent(histogram.FindBin(float(e)))
+                    if e > 75.0
+                    else histogram.Interpolate(float(e))
+                )
+                for e in energy[evaluated]
+            ),
+            dtype=float,
+            count=int(evaluated.sum()),
+        )
+    require(
+        bool(np.all(np.isfinite(values)) and np.all(values >= 0)),
+        "FLUX_SUPPORT",
+        "MAT returned negative or nonfinite flux",
+    )
+    own_values, target_values, generation = values
+    weights = np.ones((2, len(energy)))
+    for index, numerator in enumerate((own_values, target_values)):
+        nonzero = (numerator != 0) & (generation != 0)
+        weights[index, nonzero] = numerator[nonzero] / generation[nonzero]
+    factors = weights[1] / weights[0]
+    factors[~inside] = 1.0
+    patterns = sum(
+        (values[index] == 0).astype(np.int64) * (1 << index) for index in range(3)
+    )
+    return factors, ~inside, patterns
+
+
+def zero_pattern_counts(
+    patterns: NDArray[np.int64], passed: NDArray[np.bool_], weights: FloatArray
+) -> Json:
+    """Report all eight zero combinations among pass_reco rows, including zero weights."""
+    total = float(weights[passed].sum())
+    return {
+        str(pattern): {
+            "own_zero": bool(pattern & 1),
+            "target_zero": bool(pattern & 2),
+            "generated_zero": bool(pattern & 4),
+            "count": int(np.count_nonzero(passed & (patterns == pattern))),
+            "pass_reco_weight_share": (
+                float(weights[passed & (patterns == pattern)].sum()) / total
+                if total > 0
+                else 0.0
+            ),
+        }
+        for pattern in range(8)
+    }
+
+
+@contextlib.contextmanager
+def staged_mat_prefixes(prefixes: Json) -> Iterator[None]:
+    """Temporarily redirect both MAT data roots, without changing loaded libraries."""
+    require(
+        set(prefixes) == {"PLOTUTILSROOT", "MPARAMFILES"}
+        and all(Path(value).is_dir() for value in prefixes.values()),
+        "MAT_DATA_STAGE",
+        "both complete staged data prefixes are mandatory",
+    )
+    previous = {key: os.environ.get(key) for key in prefixes}
+    try:
+        os.environ.update(prefixes)
+        yield
+    finally:
+        for key, value in previous.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
+
+def histogram_spectrum(hist: Any) -> Json:
+    """Record the constrained MnvH1D's base CV bins and errors."""
+    require(
+        bool(hist) and hist.InheritsFrom("PlotUtils::MnvH1D"),
+        "MAT_MNVH1D",
+        "MAT getter did not return MnvH1D",
+    )
+    bins = int(hist.GetNbinsX())
+    return validate_flux_spectrum(
+        {
+            "class_name": str(hist.ClassName()),
+            "title": str(hist.GetTitle()),
+            "axis_titles": {
+                "x": str(hist.GetXaxis().GetTitle()),
+                "y": str(hist.GetYaxis().GetTitle()),
+            },
+            "edges": [
+                float(hist.GetXaxis().GetBinLowEdge(i)) for i in range(1, bins + 2)
+            ],
+            "values": [float(hist.GetBinContent(i)) for i in range(1, bins + 1)],
+            "errors": [float(hist.GetBinError(i)) for i in range(1, bins + 1)],
+            "flow_values": [float(hist.GetBinContent(i)) for i in (0, bins + 1)],
+            "flow_errors": [float(hist.GetBinError(i)) for i in (0, bins + 1)],
+            "error_convention": "constrained MnvH1D base CV GetBinError",
+        }
+    )
+
+
+def flux_extract(inputs: Inputs, argv: Sequence[str]) -> Json:
+    """Evaluate constrained MAT fluxes and full-row factors in the pinned MAT process."""
+    root, environment = checked_mat_environment(inputs)
+    selected = selected_flux_files(inputs)
+    require(inputs.prestage is not None, "MAT_DATA_STAGE", "fresh prestage is required")
+    assert inputs.prestage is not None
+    prefixes = inputs.prestage["mat_prefixes"]
+    for item in inputs.prestage["mat_dependencies"]:
+        path = Path(item["staged"])
+        require(
+            path.is_file() and digest(path) == item["sha256"],
+            "MAT_DATA_STAGE",
+            "staged MAT dependency missing or changed",
+        )
+    for group, selection in selected.items():
+        matching = [
+            item
+            for item in inputs.prestage["mat_dependencies"]
+            if item.get("playlist_group") == group
+            and item.get("pdg") == 14
+            and item.get("role") == "constrained-numerator-input"
+        ]
+        require(
+            len(matching) == 1 and matching[0]["sha256"] == selection["sha256"],
+            "FLUX_SELECTION",
+            "constructor input differs from C-N selection",
+        )
+    inputs.load_pins()
+    spectra: Json = {}
+    products: Json = {}
+    with staged_mat_prefixes(prefixes):
+        reweighters = {
+            group: root.PlotUtils.FluxReweighter(
+                14,
+                True,
+                root.std.string("minervame" + group),
+                root.PlotUtils.FluxReweighter.gen2thin,
+                root.PlotUtils.FluxReweighter.g4numiv6,
+                100,
+            )
+            for group in ("1D", "1M", "1N")
+        }
+        phi = {group: obj.GetFluxReweighted(14) for group, obj in reweighters.items()}
+        generated = {
+            group: obj.GetFluxGenerated(14) for group, obj in reweighters.items()
+        }
+        units = {
+            item["environment_key"]
+            + ":"
+            + item["relative_path"]: flux_units_metadata(
+                Path(item["staged"]), root=root
+            )
+            for item in inputs.prestage["mat_dependencies"]
+            if item["relative_path"].endswith(".root")
+        }
+        for group, spec in selected.items():
+            spectra[group] = {
+                **spec,
+                **histogram_spectrum(phi[group]),
+                "file_units_metadata": units[
+                    f"PLOTUTILSROOT:data/flux/flux-gen2thin-pdg14-minervame{group}_rearrangedUniverses.root"
+                ],
+                "opened_by": "MAT string constructor, constrained GetFluxReweighted(14)",
+                "generated_spectrum": histogram_spectrum(generated[group]),
+                "raw_file_integral_descriptive_only": read_flux_histogram(
+                    inputs.copy(Path(spec["original_path"]), spec["sha256"]),
+                    spec["histogram"],
+                    root=root,
+                )["integral"],
+            }
+        for playlist in PLAYLISTS:
+            name = f"lat_{playlist}.npz"
+            truth = np.asarray(inputs.key(name, "MCgen"), dtype=float)
+            passed = np.asarray(inputs.key(name, "pass_reco"), dtype=bool)
+            weights = np.asarray(inputs.key(name, "w_reco"), dtype=float)
+            proton, _, _ = reconstructed_energy(truth, M_PROTON)
+            neutron, _, _ = reconstructed_energy(truth, M_NEUTRON)
+            energy = (proton + neutron) * 0.5
+            require(
+                passed.shape == weights.shape == energy.shape,
+                "ARRAY_SHAPE",
+                "flux row layout differs",
+            )
+            arrays: dict[str, NDArray[Any]] = {}
+            counts = {}
+            for target in ("1D", "1M"):
+                factor, outside, patterns = mat_flux_swap(
+                    np.where(passed, energy, np.nan),
+                    phi[OWN_FLUX[playlist]],
+                    phi[target],
+                    generated[OWN_FLUX[playlist]],
+                )
+                arrays[f"factor_{target}"] = factor
+                arrays[f"outside_{target}"] = outside
+                counts[target] = zero_pattern_counts(patterns, passed, weights)
+            product = inputs.run / f"flux-factors-{playlist}.npz"
+            with product.open("xb") as output:
+                np.savez(output, **arrays)
+            products[playlist] = {
+                "path": str(product),
+                "sha256": digest(product),
+                "rows": len(energy),
+                "signal_sha256": inputs.pins[name][1],
+                "zero_patterns": counts,
+            }
+            inputs.check_wall_clock()
+    inputs.plan_step("p0", None)
+    record = {
+        "schema": "fd-rpd-reco-flux-extract/2",
+        "step": "flux-extract",
+        "status": "PASS",
+        "dry_run": False,
+        "run_class": inputs.config.get("run_class", "diagnostic"),
+        "code_sha256": digest(Path(__file__)),
+        "config_sha256_at_extraction": next(iter(inputs.hashes.values())),
+        "selection_sha256": flux_selection_digest(inputs.config),
+        "argv": list(argv),
+        "input_sha256": inputs.hashes,
+        "keys_read": inputs.keys_read,
+        "mat_environment": environment,
+        "dependency_units_metadata": units,
+        "descriptive_ALL_unit_cross_check": {
+            "status": "SKIPPED",
+            "read_by_nothing": True,
+            "reason": "extract does not call GetIntegratedFluxReweighted for the exposure-weighted ALL combination",
+            "analysis_phi_cm2_per_POT": 6.243e-8,
+            "analysis_source": "docs/analysis-note/paper_body.tex:27 and sec_method.tex:187; provenance docs/orchestration/state/s5p/gen5d/README-gen5d-fluxfix.md:43-49,74",
+        },
+        "spectra": spectra,
+        "factor_products": products,
+        "prestage_sha256": inputs.config["prestage"]["sha256"],
+        "formula": "w(phi_target,g_own)/w(phi_own,g_own); w=1 if n==0 or d==0; ROOT interpolation E<=75",
+        **inputs.execution(),
+    }
+    write_json(inputs.run / "flux-extract.json", record)
+    return record
+
+
+def extracted_flux(inputs: Inputs, selected: Json) -> Json:
+    """Read only the pinned extraction JSON in the numerical environment."""
+    require(
+        isinstance(inputs.config.get("flux_extract"), dict),
+        "FLUX_EXTRACT",
+        "P0 requires a pinned MAT flux extract",
+    )
+    spec = inputs.config["flux_extract"]
+    source = Path(spec["path"])
+    inputs.roots.append(source.resolve())
+    copied = inputs.derived(spec, "flux-extract-input.json")
+    record = json.loads(copied.read_text())
+    require(
+        record.get("schema") == "fd-rpd-reco-flux-extract/2"
+        and record.get("status") == "PASS"
+        and record.get("code_sha256") == digest(Path(__file__))
+        and record.get("run_class") == inputs.config.get("run_class", "diagnostic")
+        and record.get("mat_environment", {}).get("plotutils_mnvh1d_dictionary") is True
+        and record.get("mat_environment", {}).get("instrument_sha256")
+        == digest(Path(__file__).with_name("fd_rpd_inputs.py"))
+        and set(record.get("spectra", {})) == set(selected),
+        "FLUX_EXTRACT",
+        "extract identity or pinned MAT check does not match",
+    )
+    custody = inputs.config.get("flux_custody")
+    require(
+        isinstance(custody, dict),
+        "FLUX_CUSTODY",
+        "checked syscall custody receipt required",
+    )
+    assert isinstance(custody, dict)
+    receipt_path = inputs.derived(custody, "flux-custody-input.json")
+    receipt = json.loads(receipt_path.read_text())
+    require(
+        receipt.get("schema") == "fd-rpd-reco-flux-custody/1"
+        and receipt.get("status") == "PASS"
+        and receipt.get("custody_code_sha256")
+        == digest(Path(__file__).with_name("fd_rpd_reco_custody.py"))
+        and receipt.get("extract_sha256") == spec["sha256"]
+        and receipt.get("code_sha256") == digest(Path(__file__))
+        and bool(receipt.get("trace_sha256")),
+        "FLUX_CUSTODY",
+        "custody receipt does not bind this extraction",
+    )
+    require(
+        set(record.get("factor_products", {})) == set(PLAYLISTS),
+        "FLUX_FACTORS",
+        "twelve full-row products required",
+    )
+    spectra = {}
+    for group, expected in selected.items():
+        spectrum = record["spectra"][group]
+        require(
+            spectrum.get("bytes") == expected["bytes"],
+            "FLUX_SIZE",
+            "extracted file size differs from inventory",
+        )
+        require(
+            spectrum.get("histogram") == expected["histogram"],
+            "FLUX_HISTOGRAM",
+            "extract histogram differs from runtime selection",
+        )
+        require(
+            all(
+                spectrum.get(key) == expected[key]
+                for key in ("original_path", "sha256", "retention")
+            ),
+            "FLUX_SELECTION",
+            "extracted file differs from selection",
+        )
+        require(
+            spectrum.get("class_name") == "PlotUtils::MnvH1D",
+            "MAT_MNVH1D",
+            "extract does not record MnvH1D",
+        )
+        spectra[group] = {
+            **validate_flux_spectrum(spectrum),
+            "extract_path_opened": str(copied),
+            "extract_sha256": spec["sha256"],
+        }
+    require(
+        record.get("selection_sha256") == flux_selection_digest(inputs.config),
+        "FLUX_EXTRACT_IDENTITY",
+        "extract selection fingerprint differs",
+    )
+    spectra["factor_products"] = record["factor_products"]
+    return spectra
+
+
+def pinned_flux_factors(
+    inputs: Inputs, products: Json, playlist: str, rows: int
+) -> Json:
+    """Read a full-row ROOT-evaluated product paired by the original signal digest."""
+    spec = products[playlist]
+    require(
+        spec["signal_sha256"] == inputs.pins[f"lat_{playlist}.npz"][1]
+        and spec["rows"] == rows,
+        "FLUX_FACTORS",
+        "factor rows differ from the bound signal",
+    )
+    source = Path(spec["path"])
+    inputs.roots.append(source.resolve())
+    # Derived products are added after prestaging and remain individually pinned.
+    with read_guards([source]):
+        copied = stage_copy(
+            source, inputs.staged / f"factors-{playlist}.npz", spec["sha256"]
+        )
+    with np.load(copied, allow_pickle=False) as archive:
+        required = {
+            f"{kind}_{group}"
+            for kind in ("factor", "outside")
+            for group in ("1D", "1M")
+        }
+        require(set(archive.files) == required, "FLUX_FACTORS", "factor keys differ")
+        arrays = {key: archive[key] for key in required}
+    require(
+        all(value.shape == (rows,) for value in arrays.values())
+        and all(arrays[f"outside_{g}"].dtype == np.bool_ for g in ("1D", "1M"))
+        and all(
+            np.all(np.isfinite(arrays[f"factor_{g}"]))
+            and np.all(arrays[f"factor_{g}"] >= 0)
+            for g in ("1D", "1M")
+        ),
+        "FLUX_FACTORS",
+        "invalid full-row factors",
+    )
+    return arrays
+
+
+def common_flux_integral_ratio(own: Json, target: Json) -> float:
+    """Integrate the constrained CV densities over their common histogram range."""
+    low = max(own["edges"][0], target["edges"][0])
+    high = min(own["edges"][-1], target["edges"][-1])
+
+    def integral(spectrum: Json) -> float:
+        edges = np.asarray(spectrum["edges"], dtype=float)
+        widths = np.maximum(
+            0, np.minimum(edges[1:], high) - np.maximum(edges[:-1], low)
+        )
+        return float(np.sum(widths * np.asarray(spectrum["values"], dtype=float)))
+
+    denominator = integral(own)
+    require(
+        high > low and denominator > 0, "FLUX_SUPPORT", "empty common flux integral"
+    )
+    return integral(target) / denominator
+
+
+def p0(inputs: Inputs) -> Json:
+    """Record explicit runtime flux selections, constants and the source-pinned P-F premise."""
+    selected = selected_flux_files(inputs)
     constants = inputs.declared("constants").read_text()
     parsed = {}
     for mass in ("M_p", "M_n"):
@@ -1071,7 +1833,7 @@ def p0(inputs: Inputs) -> Json:
         "cv_numerator",
         "common_generation_denominator",
         "playlist_mapping",
-        "per_pot_units",
+        "common_units_convention",
     ):
         spec = premise["evidence"][role]
         first, last = spec["lines"]
@@ -1090,8 +1852,7 @@ def p0(inputs: Inputs) -> Json:
         }
     require(
         premise["cv_numerator_is_selected_spectrum"] is True
-        and premise["generation_denominator_is_common"] is True
-        and premise["spectra_are_per_pot_density"] is True,
+        and premise["generation_denominator_is_common"] is True,
         "P_F",
         "bound source premise does not permit the flux ratio",
     )
@@ -1113,11 +1874,36 @@ def p0(inputs: Inputs) -> Json:
         "SOURCE_COMMIT",
         "MAT checkout differs from source pin",
     )
+    spectra = extracted_flux(inputs, selected)
+    products = spectra.pop("factor_products")
+    units = common_flux_units(spectra)
+    zero_patterns = {}
+    for playlist in PLAYLISTS:
+        rows = len(inputs.key(f"lat_{playlist}.npz", "pass_reco"))
+        pinned_flux_factors(inputs, products, playlist, rows)
+        zero_patterns[playlist] = products[playlist]["zero_patterns"]
+    environment = runtime_environment()
+    require(
+        inputs.config.get("expected_environment", environment) == environment,
+        "TIMING_ENVIRONMENT",
+        "numerical environment differs from production config",
+    )
     return {
+        "background_scale": {
+            own: {
+                target: common_flux_integral_ratio(spectra[own], spectra[target])
+                for target in ("1D", "1M")
+            }
+            for own in ("1D", "1M", "1N")
+        },
+        "factor_products": products,
+        "zero_patterns": zero_patterns,
         "spectra": spectra,
         "environment": runtime_environment(),
         "P-F": {
             "pass": True,
+            "generated_flux_premise": True,
+            "common_units": units,
             "source_sha256": inputs.config["flux_source"]["sha256"],
             "git_sha": source_commit.stdout.strip(),
             "evidence": evidence,
@@ -1125,27 +1911,6 @@ def p0(inputs: Inputs) -> Json:
         "constants_GeV": parsed,
         "keys_read": [],
     }
-
-
-def spectrum_ratio(
-    energy: FloatArray, own: Json, target: Json
-) -> tuple[FloatArray, NDArray[np.bool_]]:
-    """Use piecewise-constant flux ratios and retain unity outside the common range."""
-    own_edges = np.asarray(own["edges"], dtype=float)
-    target_edges = np.asarray(target["edges"], dtype=float)
-    low, high = max(own_edges[0], target_edges[0]), min(own_edges[-1], target_edges[-1])
-    inside = np.isfinite(energy) & (energy >= low) & (energy < high)
-    ratio = np.ones(len(energy))
-    own_bin = np.searchsorted(own_edges, energy[inside], side="right") - 1
-    target_bin = np.searchsorted(target_edges, energy[inside], side="right") - 1
-    denominator = np.asarray(own["values"], dtype=float)[own_bin]
-    require(
-        bool(np.all(denominator > 0)),
-        "FLUX_SUPPORT",
-        "zero own flux on supported MC energy",
-    )
-    ratio[inside] = np.asarray(target["values"], dtype=float)[target_bin] / denominator
-    return ratio, ~inside
 
 
 def reporting_cells(values: FloatArray, definition: Json) -> NDArray[np.int64]:
@@ -1322,7 +2087,6 @@ def aggregate(
             kind: np.zeros(12) for kind in ("signal", "background", "data")
         },
     }
-    spectra = p0_record["spectra"]
     for sample in inputs.samples(data=data):
         assignments = axis_assignments(sample.values, bins)
         if partition is not None:
@@ -1351,17 +2115,20 @@ def aggregate(
             allocated, weights=sample.weights, minlength=12
         )
         factors = np.ones((5, count))
-        own = spectra[OWN_FLUX[sample.playlist]]
         if sample.kind == "signal":
             assert sample.truth is not None
             energy_part = energy_statistics(
                 sample.truth, sample.weights, sample.values[:, 1]
             )
-            energy = energy_part.pop("energy")
+            energy_part.pop("energy")
             controls["energy_parts"].append(energy_part)
             for target, variant_slots in (("1D", (1, 2)), ("1M", (3, 4))):
-                factor, outside = spectrum_ratio(
-                    np.where(sample.weights > 0, energy, np.nan), own, spectra[target]
+                product = pinned_flux_factors(
+                    inputs, p0_record["factor_products"], sample.playlist, count
+                )
+                factor, outside = (
+                    product[f"factor_{target}"],
+                    product[f"outside_{target}"],
                 )
                 factors[list(variant_slots)] = factor
                 if target == "1D" and sample.playlist in GROUPS["PB"]:
@@ -1371,8 +2138,8 @@ def aggregate(
                         sample.weights[selected & outside].sum()
                     )
         elif sample.kind == "background":
-            factors[2] = spectra["1D"]["integral"] / own["integral"]
-            factors[4] = spectra["1M"]["integral"] / own["integral"]
+            factors[2] = p0_record["background_scale"][OWN_FLUX[sample.playlist]]["1D"]
+            factors[4] = p0_record["background_scale"][OWN_FLUX[sample.playlist]]["1M"]
         for name, (_indices, size) in assignments.items():
             if name not in accumulated:
                 accumulated[name] = {
@@ -1976,7 +2743,7 @@ def run_stage(
     publication adoption or permission for a subsequent cluster run.
     """
     require_output_root(run)
-    require(step in STEPS, "STEP_NAME", f"unknown step {step}")
+    require(step in (*STEPS, "flux-extract"), "STEP_NAME", f"unknown step {step}")
     require(
         not (run / f"{step}.json").exists(),
         "OUTPUT_EXISTS",
@@ -1997,6 +2764,8 @@ def run_stage(
         timing_record_sha256=timing_record_sha256,
     )
     try:
+        if step == "flux-extract":
+            return flux_extract(inputs, argv)
         if prediction is not None and prediction_sha is not None:
             inputs.prediction = prediction, prediction_sha
         records = require_predecessors(inputs, step, dry_run=dry_run)
@@ -2101,7 +2870,7 @@ def run_stage(
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the local diagnostic CLI; stop explicitly when a guard refuses."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("step", choices=STEPS)
+    parser.add_argument("step", choices=(*STEPS, "flux-extract"))
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--config-sha256", required=True)
     parser.add_argument("--run", type=Path, required=True)
@@ -2187,13 +2956,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                 },
             )
         print(f"STOP {guard}: {error}", file=sys.stderr)
-        return 4
+        return 7 if guard == "MAT_ENVIRONMENT" else 4
     print(
         json.dumps(
             {
                 "step": record["step"],
                 "status": record["status"],
-                "dry_run": record["dry_run"],
+                "dry_run": record.get("dry_run", False),
             },
             sort_keys=True,
         )

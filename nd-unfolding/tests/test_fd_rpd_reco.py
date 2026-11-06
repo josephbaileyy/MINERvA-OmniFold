@@ -76,6 +76,53 @@ def _reco(count: int, rng: np.random.Generator) -> np.ndarray:
     )
 
 
+class FluxHistogramDouble:
+    """Small ROOT protocol double; this does not certify a MAT histogram."""
+
+    def __init__(self, edges: Any, values: Any):
+        self.edges = np.asarray(edges, dtype=float)
+        self.values = np.asarray(values, dtype=float)
+        self.calls: list[tuple[str, float]] = []
+
+    def GetXaxis(self) -> Any:
+        return SimpleNamespace(
+            GetTitle=lambda: "E_nu (GeV)",
+            GetXmin=lambda: self.edges[0],
+            GetXmax=lambda: self.edges[-1],
+            GetBinLowEdge=lambda i: self.edges[i - 1],
+        )
+
+    def GetTitle(self) -> str:
+        return "constrained flux"
+
+    def GetYaxis(self) -> Any:
+        return SimpleNamespace(GetTitle=lambda: "flux convention shared by fixture")
+
+    def Interpolate(self, value: float) -> float:
+        self.calls.append(("interpolate", value))
+        centers = (self.edges[:-1] + self.edges[1:]) / 2
+        return float(np.interp(value, centers, self.values))
+
+    def FindBin(self, value: float) -> int:
+        self.calls.append(("bin", value))
+        return int(np.searchsorted(self.edges, value, side="right"))
+
+    def GetBinContent(self, index: int) -> float:
+        return float(self.values[index - 1]) if 1 <= index <= len(self.values) else 0.0
+
+    def GetBinError(self, index: int) -> float:
+        return self.GetBinContent(index) / 10
+
+    def GetNbinsX(self) -> int:
+        return len(self.values)
+
+    def InheritsFrom(self, name: str) -> bool:
+        return name == "PlotUtils::MnvH1D"
+
+    def ClassName(self) -> str:
+        return "PlotUtils::MnvH1D"
+
+
 class Fixture:
     """Twelve real NPZ pairs, three real ROOT spectra and pinned source stand-ins."""
 
@@ -91,7 +138,7 @@ class Fixture:
         self.source = root / "mat-source"
         self.source.mkdir()
         _git(self.source, "init", "-q")
-        text = "selected_CV_spectrum_is_numerator\ncommon_generator_histogram_is_denominator\nplaylist_mapping_is_1D_1M_1N\nall_spectra_are_per_POT_per_GeV\n"
+        text = "selected_CV_spectrum_is_numerator\ncommon_generator_histogram_is_denominator\nplaylist_mapping_is_1D_1M_1N\nall_spectra_share_one_convention\n"
         source = self.source / "FluxReweighter.cxx"
         source.write_text(text)
         _git(self.source, "add", "FluxReweighter.cxx")
@@ -172,7 +219,6 @@ class Fixture:
             "premise": {
                 "cv_numerator_is_selected_spectrum": True,
                 "generation_denominator_is_common": True,
-                "spectra_are_per_pot_density": True,
                 "evidence": {
                     role: {
                         "lines": [index, index],
@@ -184,7 +230,7 @@ class Fixture:
                                 "cv_numerator",
                                 "common_generation_denominator",
                                 "playlist_mapping",
-                                "per_pot_units",
+                                "common_units_convention",
                             ),
                             text.splitlines(),
                         ),
@@ -197,6 +243,112 @@ class Fixture:
         self.save_config()
 
     def save_config(self) -> None:
+        if not hasattr(self, "fixture_flux_spectra"):
+            self.fixture_flux_spectra = {}
+            for group in ("1D", "1M", "1N"):
+                path = self.flux / f"{group}.root"
+                with uproot.open(path) as root_file:
+                    values, edges = root_file["CV"].to_numpy(flow=False)
+                    errors = root_file["CV"].errors(flow=False)
+                self.fixture_flux_spectra[group] = {
+                    "histogram": "CV",
+                    "class_name": "PlotUtils::MnvH1D",
+                    "original_path": str(path),
+                    "sha256": R.digest(path),
+                    "bytes": path.stat().st_size,
+                    "path_opened": "$FIXTURE/staged-root",
+                    "opened_by": "synthetic extract fixture; no PyROOT class claim",
+                    "retention": "local disposable fixture",
+                    "values": values.tolist(),
+                    "edges": edges.tolist(),
+                    "errors": errors.tolist(),
+                    "title": "constrained flux",
+                    "axis_titles": {"x": "E_nu (GeV)", "y": "fixture density"},
+                    "file_units_metadata": {},
+                    "generated_spectrum": {"edges": edges.tolist()},
+                }
+        extracted = self.root / "flux-extract-fixture.json"
+        if not hasattr(self, "fixture_factor_products"):
+            self.fixture_factor_products = {}
+            histograms = {
+                group: FluxHistogramDouble(spec["edges"], spec["values"])
+                for group, spec in self.fixture_flux_spectra.items()
+            }
+            for playlist in R.PLAYLISTS:
+                with np.load(self.dump / f"lat_{playlist}.npz") as archive:
+                    truth, passed, weights = (
+                        archive["MCgen"],
+                        archive["pass_reco"],
+                        archive["w_reco"],
+                    )
+                proton, _, _ = R.reconstructed_energy(truth, R.M_PROTON)
+                neutron, _, _ = R.reconstructed_energy(truth, R.M_NEUTRON)
+                energy = np.where(passed, (proton + neutron) / 2, np.nan)
+                arrays, counts = {}, {}
+                for target in ("1D", "1M"):
+                    factor, outside, patterns = R.mat_flux_swap(
+                        energy,
+                        histograms[R.OWN_FLUX[playlist]],
+                        histograms[target],
+                        FluxHistogramDouble([0, 128], [1]),
+                    )
+                    arrays[f"factor_{target}"], arrays[f"outside_{target}"] = (
+                        factor,
+                        outside,
+                    )
+                    counts[target] = R.zero_pattern_counts(patterns, passed, weights)
+                product = self.root / f"fixture-factors-{playlist}.npz"
+                np.savez(product, **arrays)
+                self.fixture_factor_products[playlist] = {
+                    "path": str(product),
+                    "sha256": R.digest(product),
+                    "rows": len(energy),
+                    "zero_patterns": counts,
+                }
+        for playlist, product in self.fixture_factor_products.items():
+            product["signal_sha256"] = R.digest(self.dump / f"lat_{playlist}.npz")
+        record = {
+            "schema": "fd-rpd-reco-flux-extract/2",
+            "step": "flux-extract",
+            "status": "PASS",
+            "run_class": "local_fixture",
+            "fixture_only": True,
+            "code_sha256": R.digest(Path(R.__file__)),
+            "selection_sha256": R.flux_selection_digest(self.config),
+            "mat_environment": {
+                "plotutils_mnvh1d_dictionary": True,
+                "instrument_sha256": R.digest(REPO / "nd-unfolding/fd_rpd_inputs.py"),
+                "scope": "synthetic handoff fixture; not a MAT environment verification",
+            },
+            "spectra": self.fixture_flux_spectra,
+            "factor_products": self.fixture_factor_products,
+        }
+        extracted.write_text(json.dumps(record))
+        self.config["flux_extract"] = {
+            "path": str(extracted),
+            "sha256": R.digest(extracted),
+        }
+        custody = self.root / "flux-custody-fixture.json"
+        custody.write_text(
+            json.dumps(
+                {
+                    "schema": "fd-rpd-reco-flux-custody/1",
+                    "custody_code_sha256": R.digest(
+                        REPO / "nd-unfolding/fd_rpd_reco_custody.py"
+                    ),
+                    "status": "PASS",
+                    "extract_sha256": R.digest(extracted),
+                    "code_sha256": R.digest(Path(R.__file__)),
+                    "trace_sha256": "f" * 64,
+                    "fixture_only": True,
+                    "scope": "synthetic custody fixture; no runtime trace claim",
+                }
+            )
+        )
+        self.config["flux_custody"] = {
+            "path": str(custody),
+            "sha256": R.digest(custody),
+        }
         self.config_path.write_text(json.dumps(self.config))
         self.config_sha = R.digest(self.config_path)
 
@@ -408,7 +560,7 @@ def test_finite_data_refusal(fixture: Fixture) -> None:
         list(inputs.samples(data=True))
 
 
-def test_p0_real_root_inputs_and_no_data(fixture: Fixture) -> None:
+def test_p0_pinned_extract_and_no_data(fixture: Fixture) -> None:
     fixture.execute("pins")
     record = fixture.execute("p0")
     assert {row["key"] for row in record["keys_read"]} <= R.MC_KEYS | R.BKG_KEYS
@@ -484,10 +636,12 @@ def test_energy_controls_each_stratum_and_bars() -> None:
 
 
 def test_flux_range_step_function_and_gate() -> None:
-    own = {"edges": [0, 2, 4], "values": [1, 2]}
-    target = {"edges": [1, 2, 3], "values": [3, 4]}
-    factors, outside = R.spectrum_ratio(np.array([0.5, 1.0, 2.0, 3.0]), own, target)
-    np.testing.assert_array_equal(factors, [1, 3, 2, 1])
+    own = FluxHistogramDouble([0, 2, 4], [1, 2])
+    target = FluxHistogramDouble([1, 2, 3], [3, 4])
+    factors, outside, _ = R.mat_flux_swap(
+        np.array([0.5, 1.0, 2.0, 3.0]), own, target, FluxHistogramDouble([0, 4], [1])
+    )
+    np.testing.assert_array_equal(factors, [1, 3, 3.5 / 1.5, 1])
     np.testing.assert_array_equal(outside, [True, False, False, True])
     truth = _truth(1000, 13)
     part = R.energy_statistics(truth, np.ones(1000), truth[:, 1])
@@ -832,14 +986,13 @@ def test_empty_support_flux_layout_and_cells(fixture: Fixture) -> None:
     )
     with pytest.raises(R.Refused, match="CE_SUPPORT"):
         R.energy_controls(truth, np.ones(20))
-    own = {"edges": [0.0, 1.0], "values": [0.0]}
+    own = FluxHistogramDouble([0, 1], [-1])
     with pytest.raises(R.Refused, match="FLUX_SUPPORT"):
-        R.spectrum_ratio(np.array([0.5]), own, {"edges": [0.0, 1.0], "values": [1.0]})
-    path = fixture.root / "bad-flux.root"
-    with uproot.recreate(path) as root:
-        root["CV"] = np.array([-1.0, 2.0]), np.array([0.0, 1.0, 2.0])
+        R.mat_flux_swap(np.array([0.5]), own, own, FluxHistogramDouble([0, 1], [1]))
     with pytest.raises(R.Refused, match="FLUX_LAYOUT"):
-        R.read_flux_histogram(path, "CV")
+        R.validate_flux_spectrum(
+            {"values": [-1.0, 2.0], "edges": [0.0, 1.0, 2.0], "errors": [0.0, 0.0]}
+        )
     definition = json.loads(
         (REPO / "nd-unfolding/pv-ladder/readouts/h2_definition.json").read_text()
     )
@@ -1311,7 +1464,7 @@ def test_cfs_handler_rechecks_before_stop_write(
     assert "STOP OUTPUT_LOCATION" in capsys.readouterr().err
 
 
-@pytest.mark.parametrize("invalid", [-1, 0, 39601])
+@pytest.mark.parametrize("invalid", [-1, 0, 165601])
 def test_priced_wall_budget_limits(
     fixture: Fixture,
     monkeypatch: pytest.MonkeyPatch,
@@ -1319,7 +1472,7 @@ def test_priced_wall_budget_limits(
 ) -> None:
     assert R.wall_budget_seconds(None) == 7200
     assert R.wall_budget_seconds(1, 0.026) == 1
-    assert R.wall_budget_seconds(39600, 0.026) == 39600
+    assert R.wall_budget_seconds(165600, 0.026) == 165600
     with pytest.raises(R.Refused, match="WALL_BUDGET"):
         R.wall_budget_seconds(invalid, 0.026)
     destination = fixture.root / f"invalid-budget-{invalid}"
@@ -1360,7 +1513,7 @@ def test_priced_wall_budget_admission_and_elapsed(
     assert price["needs_director_price"]
     own_price = price["steps"]["d2-predict"]["planning_seconds_with_factor_10"]
     assert 7200 < own_price < 8000
-    assert price["steps"]["c0"]["planning_seconds_with_factor_10"] > 39600
+    assert price["steps"]["c0"]["planning_seconds_with_factor_10"] > 165600
     with pytest.raises(R.Refused, match="PRICE_REVIEW"):
         fixture.execute("d2-predict")
     with pytest.raises(R.Refused, match="PRICE_REVIEW"):
@@ -1543,7 +1696,7 @@ def test_measured_plan_and_price_stop_receipt(fixture: Fixture) -> None:
     assert inputs.execution()["planning_factor"] == 1.5
     assert inputs.execution()["timing_chunk_shape"]["axes"] == list(R.TIMING_AXES)
     inputs.plan_step("c0", estimate)
-    assert inputs.step_estimate["planned_seconds"] > 39600
+    assert inputs.step_estimate["planned_seconds"] > 165600
     arguments = [
         "d2-predict",
         "--config",
@@ -1579,3 +1732,807 @@ def test_draft_configuration_refuses(fixture: Fixture) -> None:
     fixture.run = fixture.root / "draft-config"
     with pytest.raises(R.Refused, match="CONFIG_READY"):
         fixture.execute("pins")
+
+
+def test_timing_shape_matches_actual_aggregate_axes(fixture: Fixture) -> None:
+    inputs = fixture.inputs()
+    bins = R.step0(inputs)
+    values = inputs.key("lat_1A.npz", "MCreco")
+    assignments = R.axis_assignments(values, bins)
+    assert sorted(assignments) == list(R.TIMING_AXES)
+    assert len(assignments) == 23
+
+
+class _RootDouble:
+    """Mechanical TFile/MnvH1D protocol double; never a real MAT class test."""
+
+    def __init__(
+        self,
+        *,
+        missing: bool = False,
+        wrong_class: bool = False,
+        zombie: bool = False,
+        no_file: bool = False,
+    ):
+        owner = self
+        self.opened: list[str] = []
+        self.closed = 0
+        self.gROOT = SimpleNamespace(GetVersion=lambda: "fixture-root")
+
+        class Hist:
+            def InheritsFrom(self, name: str) -> bool:
+                return name == "PlotUtils::MnvH1D" and not wrong_class
+
+            def ClassName(self) -> str:
+                return "TH1D" if wrong_class else "PlotUtils::MnvH1D"
+
+            def GetNbinsX(self) -> int:
+                return 2
+
+            def GetXaxis(self) -> Any:
+                return SimpleNamespace(GetBinLowEdge=lambda i: float(i - 1))
+
+            def GetBinContent(self, i: int) -> float:
+                return float(i)
+
+            def GetBinError(self, i: int) -> float:
+                return float(i) / 10
+
+        class File:
+            def GetListOfKeys(self) -> list[Any]:
+                return []
+
+            def IsZombie(self) -> bool:
+                return zombie
+
+            def Get(self, name: str) -> Any:
+                return None if missing or name != "CV" else Hist()
+
+            def Close(self) -> None:
+                owner.closed += 1
+
+        class TFile:
+            @staticmethod
+            def Open(path: str, mode: str) -> Any:
+                owner.opened.append(path)
+                assert mode == "READ"
+                return None if no_file else File()
+
+        self.TFile = TFile
+
+
+def _mock_mat_checks(
+    monkeypatch: pytest.MonkeyPatch, root: Any, *, dictionary: bool = True
+) -> list[str]:
+    calls: list[str] = []
+
+    def setup(_unused: Any) -> int:
+        calls.append("setup")
+        return 0
+
+    def environment() -> dict[str, Any]:
+        calls.append("environment")
+        return {
+            "plotutils_mnvh1d_dictionary": dictionary,
+            "scope": "local protocol double only",
+        }
+
+    instrument = SimpleNamespace(
+        __file__=str(REPO / "nd-unfolding/fd_rpd_inputs.py"),
+        run_check_mat_setup=setup,
+        mat_environment=environment,
+    )
+    monkeypatch.setattr(R, "load_mat_instrument", lambda: instrument)
+    monkeypatch.setitem(sys.modules, "ROOT", root)
+    return calls
+
+
+def test_tfile_guard_both_entries(fixture: Fixture) -> None:
+    source = fixture.flux / "1D.root"
+    staged = fixture.root / "checked.root"
+    R.stage_copy(source, staged, R.digest(source))
+    root = _RootDouble()
+    original = root.TFile
+    with R.guarded_tfile(root, [staged]):
+        assert root.TFile.Open(str(staged), "READ") is not None
+        for open_file in (root.TFile.Open, root.TFile):
+            with pytest.raises(R.Refused, match="MAT_TFILE_STAGE"):
+                open_file(str(source), "READ")
+            with pytest.raises(R.Refused, match="MAT_TFILE_STAGE"):
+                open_file(str(staged), "RECREATE")
+    assert root.TFile is original
+    assert root.opened == [str(staged)]
+
+
+@pytest.mark.parametrize(
+    "defect,guard",
+    [
+        ("missing", "FLUX_HISTOGRAM"),
+        ("wrong_class", "MAT_MNVH1D"),
+        ("zombie", "MAT_ROOT_FILE"),
+        ("no_file", "MAT_ROOT_FILE"),
+    ],
+)
+def test_pyroot_reader_protocol_guards(
+    fixture: Fixture, defect: str, guard: str
+) -> None:
+    source = fixture.flux / "1D.root"
+    staged = fixture.root / "checked.root"
+    R.stage_copy(source, staged, R.digest(source))
+    valid = _RootDouble()
+    result = R.read_flux_histogram(staged, "CV", root=valid)
+    assert result["class_name"] == "PlotUtils::MnvH1D"
+    np.testing.assert_array_equal(result["edges"], [0, 1, 2])
+    np.testing.assert_array_equal(result["values"], [1, 2])
+    np.testing.assert_array_equal(result["errors"], [0.1, 0.2])
+    assert valid.closed == 1
+    with pytest.raises(R.Refused, match=guard):
+        R.read_flux_histogram(staged, "CV", root=_RootDouble(**{defect: True}))
+
+
+@pytest.mark.parametrize("dictionary", [True, False])
+def test_mat_environment_reuses_instrument(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch, dictionary: bool
+) -> None:
+    root = _RootDouble()
+    calls = _mock_mat_checks(monkeypatch, root, dictionary=dictionary)
+    if dictionary:
+        observed, environment = R.checked_mat_environment()
+        assert observed is root
+        assert environment["instrument_sha256"] == R.digest(
+            REPO / "nd-unfolding/fd_rpd_inputs.py"
+        )
+    else:
+        with pytest.raises(R.Refused, match="MAT_ENVIRONMENT"):
+            R.checked_mat_environment()
+    assert calls == ["setup", "environment"]
+    assert root.opened == []
+
+
+@pytest.mark.parametrize(
+    "defect,guard",
+    [
+        ("missing", "FLUX_EXTRACT"),
+        ("status", "FLUX_EXTRACT"),
+        ("code", "FLUX_EXTRACT"),
+        ("selection_digest", "FLUX_EXTRACT_IDENTITY"),
+        ("sha", "INPUT_DIGEST"),
+    ],
+)
+def test_flux_extract_identity_guards(
+    fixture: Fixture, defect: str, guard: str
+) -> None:
+    if defect == "missing":
+        fixture.config.pop("flux_extract")
+    elif defect == "sha":
+        fixture.config["flux_extract"]["sha256"] = "a" * 64
+    else:
+        spec = fixture.config["flux_extract"]
+        path = Path(spec["path"])
+        record = json.loads(path.read_text())
+        if defect == "status":
+            record["status"] = "STOP"
+        elif defect == "code":
+            record["code_sha256"] = "a" * 64
+        else:
+            record["selection_sha256"] = "a" * 64
+        path.write_text(json.dumps(record))
+        spec["sha256"] = R.digest(path)
+        custody_path = Path(fixture.config["flux_custody"]["path"])
+        custody = json.loads(custody_path.read_text())
+        custody["extract_sha256"] = R.digest(path)
+        custody_path.write_text(json.dumps(custody))
+        fixture.config["flux_custody"]["sha256"] = R.digest(custody_path)
+    fixture.config_path.write_text(json.dumps(fixture.config))
+    fixture.config_sha = R.digest(fixture.config_path)
+    fixture.execute("pins")
+    with pytest.raises(R.Refused, match=guard):
+        fixture.execute("p0")
+
+
+def test_mat_environment_failure_exit_code(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def unavailable() -> Any:
+        raise RuntimeError("controlled pinned setup refusal")
+
+    monkeypatch.setattr(R, "load_mat_instrument", unavailable)
+    original_check = R.checked_mat_environment
+    monkeypatch.setattr(
+        R, "checked_mat_environment", lambda _inputs=None: original_check()
+    )
+    assert (
+        R.main(
+            [
+                "flux-extract",
+                "--config",
+                str(fixture.config_path),
+                "--config-sha256",
+                fixture.config_sha,
+                "--run",
+                str(fixture.run),
+            ]
+        )
+        == 7
+    )
+    stop = json.loads((fixture.run / "flux-extract.STOP.json").read_text())
+    assert stop["guard"] == "MAT_ENVIRONMENT"
+    assert stop["readings"] is None
+
+
+def test_a1_root_interpolation_and_boundary() -> None:
+    energy = np.array([74.999, 75.0, 75.001])
+    own = FluxHistogramDouble([0, 50, 100], [2, 4])
+    target = FluxHistogramDouble([0, 50, 100], [6, 8])
+    generated = FluxHistogramDouble([0, 100], [3])
+    factors, outside, _ = R.mat_flux_swap(energy, own, target, generated)
+    expected = np.array(
+        [target.Interpolate(float(e)) / own.Interpolate(float(e)) for e in energy[:2]]
+        + [8 / 4]
+    )
+    np.testing.assert_allclose(factors, expected, rtol=1e-14)
+    assert not outside.any()
+    assert own.calls[:3] == [
+        ("interpolate", 74.999),
+        ("interpolate", 75.0),
+        ("bin", 75.001),
+    ]
+    # A point well away from the centers discriminates interpolation from bins.
+    factor, _, _ = R.mat_flux_swap(np.array([50.0]), own, target, generated)
+    assert factor[0] == pytest.approx(7 / 3)
+    assert factor[0] != 8 / 4
+
+
+@pytest.mark.parametrize("pattern", range(8))
+def test_a1_every_zero_pattern(pattern: int) -> None:
+    values = [
+        0.0 if pattern & (1 << i) else value for i, value in enumerate((2.0, 6.0, 4.0))
+    ]
+    own, target, generated = [FluxHistogramDouble([0, 100], [v]) for v in values]
+    factors, outside, codes = R.mat_flux_swap(
+        np.array([50.0, 50.0]), own, target, generated
+    )
+    w_own = 1 if values[0] == 0 or values[2] == 0 else values[0] / values[2]
+    w_target = 1 if values[1] == 0 or values[2] == 0 else values[1] / values[2]
+    np.testing.assert_array_equal(factors, [w_target / w_own] * 2)
+    np.testing.assert_array_equal(codes, [pattern] * 2)
+    assert not outside.any()
+    counts = R.zero_pattern_counts(codes, np.array([True, True]), np.array([2.0, 0.0]))
+    assert counts[str(pattern)]["count"] == 2
+    assert counts[str(pattern)]["pass_reco_weight_share"] == 1
+    assert sum(record["count"] for record in counts.values()) == 2
+
+
+def test_flux_custody_and_factor_guards(fixture: Fixture) -> None:
+    inputs = fixture.inputs()
+    products = fixture.fixture_factor_products
+    assert R.pinned_flux_factors(inputs, products, "1A", 64)["factor_1D"].shape == (64,)
+    for defect in ("rows", "signal_sha256"):
+        wrong = json.loads(json.dumps(products))
+        wrong["1A"][defect] = 65 if defect == "rows" else "a" * 64
+        with pytest.raises(R.Refused, match="FLUX_FACTORS"):
+            R.pinned_flux_factors(inputs, wrong, "1A", 64)
+    fixture.config.pop("flux_custody")
+    fixture.config_path.write_text(json.dumps(fixture.config))
+    fixture.config_sha = R.digest(fixture.config_path)
+    fixture.run = fixture.root / "custody-refusal"
+    fixture.execute("pins")
+    with pytest.raises(R.Refused, match="FLUX_CUSTODY"):
+        fixture.execute("p0")
+
+
+def _custody_module() -> Any:
+    path = Path(
+        os.environ.get(
+            "FD_RPD_CUSTODY_MODULE", REPO / "nd-unfolding/fd_rpd_reco_custody.py"
+        )
+    )
+    spec = importlib.util.spec_from_file_location("rpd_custody_test", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_custody_trace_directions() -> None:
+    custody = _custody_module()
+    policy = {
+        "cwd": "/run/extract",
+        "protected_roots": [
+            "/original/data",
+            "/constraint.txt",
+            "/mat/FluxReweighter.cxx",
+        ],
+        "allowed": {
+            "staged_data": ["/run/extract/mat-data"],
+            "run": ["/run/extract"],
+            "system": ["/etc", "/usr", "/proc"],
+            "environment": ["/env"],
+            "pinned_mat_libs": ["/mat/libMAT.so"],
+        },
+        "failed_prefixes": ["/optional/lib"],
+    }
+    lines = [
+        '13 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3</etc/ld.so.cache>',
+        '13 openat(AT_FDCWD, "/optional/lib/not-here.so", O_RDONLY) = -1 ENOENT (No such file or directory)',
+        '13 openat(4</run/extract/mat-data>, "flux.root", O_RDONLY) = 5</run/extract/mat-data/flux.root>',
+    ]
+    result = custody.classify_trace(lines, policy)
+    assert result["successful_open_counts"] == {"system": 1, "staged_data": 1}
+    assert result["failed_nonprotected_counts"] == {"/optional/lib": 1}
+    bad_lines = [
+        '13 openat(AT_FDCWD, "/mat/FluxReweighter.cxx", O_RDONLY) = 3</mat/FluxReweighter.cxx>',
+        '13 openat(AT_FDCWD, "/original/data/not-here", O_RDONLY) = -1 ENOENT (No such file or directory)',
+        '13 openat(AT_FDCWD, "/constraint.txt", O_RDONLY) = 3</constraint.txt>',
+        '13 openat(AT_FDCWD, "/unknown/other.root", O_RDONLY) = 3</unknown/other.root>',
+        '13 openat(4, "relative.root", O_RDONLY) = 3',
+        '13 openat(AT_FDCWD, "/run/extract/link", O_RDONLY) = 3</original/data/a.root>',
+    ]
+    for line in bad_lines:
+        with pytest.raises(custody.CustodyRefused):
+            custody.classify_trace(lines + [line], policy)
+
+
+def test_cov2d_fence_both_directions(monkeypatch: pytest.MonkeyPatch) -> None:
+    custody = _custody_module()
+    responses = []
+
+    def run(command: list[str], **_kwargs: Any) -> Any:
+        responses.append(command[0])
+        return SimpleNamespace(
+            returncode=0,
+            stdout=(
+                ""
+                if command[0] == "squeue"
+                else "60909280|COMPLETED|\n60911676|FAILED|\n"
+            ),
+            stderr="",
+        )
+
+    monkeypatch.setattr(custody.subprocess, "run", run)
+    assert custody.cov2d_fence()["exit_code"] == 0
+    assert responses == ["squeue", "sacct"]
+    for queue, accounting, code in (
+        ("60909280|cov2d-test|RUNNING|0|2h\n", "", 0),
+        ("", "60909280|COMPLETED|\n60911676|RUNNING|\n", 0),
+        ("", "60909280|COMPLETED|\n", 0),
+        ("", "", 1),
+    ):
+        monkeypatch.setattr(
+            custody.subprocess,
+            "run",
+            lambda command, **kw: SimpleNamespace(
+                returncode=code,
+                stdout=queue if command[0] == "squeue" else accounting,
+                stderr="",
+            ),
+        )
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.cov2d_fence()
+        assert caught.value.details["exit_code"] == 3
+        assert caught.value.details["queue_stdout"] == queue
+
+
+def test_staged_prefix_restore_and_missing(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    prefixes = {
+        key: str(fixture.root / key) for key in ("PLOTUTILSROOT", "MPARAMFILES")
+    }
+    for key, value in prefixes.items():
+        Path(value).mkdir()
+        monkeypatch.setenv(key, "original-" + key)
+    with pytest.raises(RuntimeError):
+        with R.staged_mat_prefixes(prefixes):
+            assert {key: os.environ[key] for key in prefixes} == prefixes
+            raise RuntimeError("controlled failure")
+    assert os.environ["PLOTUTILSROOT"] == "original-PLOTUTILSROOT"
+    assert os.environ["MPARAMFILES"] == "original-MPARAMFILES"
+    Path(prefixes["MPARAMFILES"]).rmdir()
+    with pytest.raises(R.Refused, match="MAT_DATA_STAGE"):
+        with R.staged_mat_prefixes(prefixes):
+            pass
+
+
+def test_constrained_common_integral_bracket() -> None:
+    own = {"edges": [0, 2, 4], "values": [10, 20]}
+    target = {"edges": [1, 2, 3], "values": [60, 80]}
+    assert R.common_flux_integral_ratio(own, target) == pytest.approx(140 / 30)
+    with pytest.raises(R.Refused, match="FLUX_SUPPORT"):
+        R.common_flux_integral_ratio(
+            {"edges": [0, 1], "values": [0]}, {"edges": [0, 1], "values": [1]}
+        )
+
+
+def test_same_connect_prepare_receipt(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import time
+
+    root = _RootDouble()
+    root.TClass = SimpleNamespace(
+        GetClass=lambda _name: SimpleNamespace(HasDictionary=lambda: True)
+    )
+    monkeypatch.setitem(sys.modules, "ROOT", root)
+    monkeypatch.setenv("FD_RPD_RECO_CONNECT_ID", "unit-connect")
+    instrument = SimpleNamespace(
+        mapped_files=lambda: set(), mat_env_problems=lambda *args: []
+    )
+    monkeypatch.setattr(R, "load_mat_instrument", lambda: instrument)
+    custody = _custody_module()
+    prepared = {
+        "run": str(fixture.run.resolve()),
+        "connect_id": "unit-connect",
+        "prepare_time_ns": time.time_ns(),
+        "environment_after_setup": custody.environment_record(),
+        "mapped_mat_stats": {},
+        "instrument_files": [],
+        "mat_environment": {
+            "setup_sha256": {},
+            "mat_sha256": {},
+            "symlink": {"link": "target"},
+        },
+    }
+    inputs = fixture.inputs()
+    inputs.prestage = prepared
+    assert R.checked_prepared_mat(inputs)[0] is root
+    for key, bad in (
+        ("run", "/foreign"),
+        ("connect_id", "foreign"),
+        ("prepare_time_ns", 0),
+        ("environment_after_setup", {}),
+    ):
+        inputs.prestage = prepared | {key: bad}
+        with pytest.raises(R.Refused, match="MAT_PREPARE"):
+            R.checked_prepared_mat(inputs)
+    inputs.prestage = prepared
+    instrument.mat_env_problems = lambda *args: ["controlled mismatch"]
+    with pytest.raises(R.Refused, match="MAT_ENVIRONMENT"):
+        R.checked_prepared_mat(inputs)
+
+
+def test_extract_missing_dependency_before_constructor(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = _RootDouble()
+    monkeypatch.setattr(R, "checked_mat_environment", lambda _inputs=None: (root, {}))
+    inputs = fixture.inputs()
+    inputs.prestage = {
+        "mat_prefixes": {},
+        "mat_dependencies": [
+            {"staged": str(fixture.root / "absent.root"), "sha256": "a" * 64}
+        ],
+    }
+    # Resolve selections before assigning a strict manifest (the files are mechanical stand-ins).
+    selected = R.selected_flux_files(fixture.inputs())
+    monkeypatch.setattr(R, "selected_flux_files", lambda _inputs: selected)
+    with pytest.raises(R.Refused, match="MAT_DATA_STAGE"):
+        R.flux_extract(inputs, [])
+    assert root.opened == []
+
+
+def test_constrained_extract_protocol_roundtrip(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Mechanical double checks constructor arguments and row custody, not MAT validity."""
+    inputs = fixture.inputs()
+    selected = R.selected_flux_files(inputs)
+    sources = {
+        Path(fixture.config[key]["path"]): fixture.config[key]["sha256"]
+        for key in ("pins", "h2", "inventory", "constants", "flux_source")
+    }
+    sources.update({path: checksum for path, checksum in inputs.pins.values()})
+    sources.update(
+        {Path(item["original_path"]): item["sha256"] for item in selected.values()}
+    )
+    copies = {
+        str(path.resolve()): {
+            "staged": str(inputs.copy(path, checksum)),
+            "sha256": checksum,
+        }
+        for path, checksum in sources.items()
+    }
+    prefixes = {key: str(fixture.run / key) for key in ("PLOTUTILSROOT", "MPARAMFILES")}
+    for path in prefixes.values():
+        Path(path).mkdir(parents=True)
+    dependencies = [
+        {
+            "playlist_group": group,
+            "pdg": 14,
+            "role": "constrained-numerator-input",
+            "environment_key": "PLOTUTILSROOT",
+            "relative_path": f"data/flux/flux-gen2thin-pdg14-minervame{group}_rearrangedUniverses.root",
+            "staged": copies[str(Path(item["original_path"]).resolve())]["staged"],
+            "sha256": item["sha256"],
+        }
+        for group, item in selected.items()
+    ]
+    listing = {
+        path.name: {
+            "name": path.name,
+            "bytes": path.stat().st_size,
+            "mtime_ns": path.stat().st_mtime_ns,
+        }
+        for path in fixture.dump.iterdir()
+    }
+    inputs.prestage = {
+        "files": copies,
+        "dump_listing": listing,
+        "mat_prefixes": prefixes,
+        "mat_dependencies": dependencies,
+    }
+    inputs.config["prestage"] = {"sha256": "a" * 64}
+    calls = []
+    spectra = {
+        group: FluxHistogramDouble([0, 2, 4], [2 + i, 4 + i])
+        for i, group in enumerate(("1D", "1M", "1N"))
+    }
+
+    class Reweighter:
+        gen2thin = 2
+        g4numiv6 = 1
+
+        def __init__(self, *args: Any):
+            calls.append(args)
+            self.group = str(args[2])[-2:]
+
+        def GetFluxReweighted(self, pdg: int) -> Any:
+            assert pdg == 14
+            return spectra[self.group]
+
+        def GetFluxGenerated(self, pdg: int) -> Any:
+            assert pdg == 14
+            return FluxHistogramDouble([0, 2, 4], [1, 1])
+
+    root = _RootDouble()
+    root.PlotUtils = SimpleNamespace(FluxReweighter=Reweighter)
+    root.std = SimpleNamespace(string=str)
+    monkeypatch.setattr(
+        R,
+        "checked_mat_environment",
+        lambda _inputs=None: (
+            root,
+            {
+                "plotutils_mnvh1d_dictionary": True,
+                "instrument_sha256": R.digest(REPO / "nd-unfolding/fd_rpd_inputs.py"),
+            },
+        ),
+    )
+    result = R.flux_extract(inputs, ["unit protocol"])
+    assert calls == [
+        (14, True, "minervame" + group, 2, 1, 100) for group in ("1D", "1M", "1N")
+    ]
+    assert all(row["key"] != "measured" for row in result["keys_read"])
+    assert len(result["factor_products"]) == 12
+    assert result["spectra"]["1D"]["integral"] == 12
+    assert result["spectra"]["1D"]["raw_file_integral_descriptive_only"] == 3
+    assert len(root.opened) == 6 and all(
+        Path(p).is_relative_to(fixture.run / "staged") for p in root.opened
+    )
+    extract = fixture.run / "flux-extract.json"
+    fixture.config["flux_extract"] = {"path": str(extract), "sha256": R.digest(extract)}
+    receipt = fixture.root / "protocol-custody.json"
+    receipt.write_text(
+        json.dumps(
+            {
+                "schema": "fd-rpd-reco-flux-custody/1",
+                "custody_code_sha256": R.digest(
+                    REPO / "nd-unfolding/fd_rpd_reco_custody.py"
+                ),
+                "status": "PASS",
+                "extract_sha256": R.digest(extract),
+                "trace_sha256": "f" * 64,
+                "code_sha256": R.digest(Path(R.__file__)),
+                "fixture_only": True,
+            }
+        )
+    )
+    fixture.config["flux_custody"] = {"path": str(receipt), "sha256": R.digest(receipt)}
+    fixture.config_path.write_text(json.dumps(fixture.config))
+    fixture.config_sha = R.digest(fixture.config_path)
+    fixture.run = fixture.root / "numeric-protocol"
+    fixture.execute("pins")
+    p0 = fixture.execute("p0")["result"]
+    assert len(root.opened) == 6
+    assert p0["spectra"]["1D"]["integral"] == 12
+    assert p0["background_scale"]["1M"]["1D"] == pytest.approx(12 / 16)
+
+
+def test_fresh_prepare_stages_closed_inventory(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody = _custody_module()
+    inventory = (
+        REPO
+        / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json"
+    )
+    entries = json.loads(inventory.read_text())["entries"]
+    roots = {key: fixture.root / key for key in ("PLOTUTILSROOT", "MPARAMFILES")}
+    for key, path in roots.items():
+        path.mkdir()
+        monkeypatch.setenv(key, str(path))
+    for item in entries:
+        path = roots[item["environment_key"]] / item["relative_path"]
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if item.get("role") == "constrained-numerator-input" and item.get("pdg") == 14:
+            shutil.copyfile(fixture.flux / f'{item["playlist_group"]}.root', path)
+        else:
+            path.write_text("disposable native dependency stand-in\n")
+    library = fixture.root / "libMAT.so"
+    library.write_text("disposable instrument stand-in\n")
+    instrument = SimpleNamespace(
+        MAT_SETUP={}, MAT_FILES={str(library): R.digest(library)}
+    )
+    environment = {
+        "mapped_mat_files": [str(library)],
+        "mat_sha256": instrument.MAT_FILES,
+        "setup_sha256": {},
+        "plotutils_mnvh1d_dictionary": True,
+    }
+    monkeypatch.setattr(R, "load_mat_instrument", lambda: instrument)
+    monkeypatch.setattr(R, "checked_mat_environment", lambda: (None, environment))
+    monkeypatch.setattr(
+        custody, "cov2d_fence", lambda: {"status": "PASS", "exit_code": 0}
+    )
+    # This test exercises stat comparisons; native O_NOATIME is a separate run-lane gate.
+    stat = custody.source_stat
+    monkeypatch.setattr(custody, "source_stat", lambda p: stat(p) | {"atime_ns": 0})
+    monkeypatch.setenv("FD_RPD_RECO_CONNECT_ID", "fixture-prepare")
+    fixture.config.update(
+        {
+            "configuration_status": "READY",
+            "mat_dependencies": {"path": str(inventory), "sha256": R.digest(inventory)},
+            "trace_environment_roots": ["/synthetic/env"],
+            "cov2d_protected_paths": ["/synthetic/cov2d-input"],
+        }
+    )
+    fixture.save_config()
+    run = fixture.root / "fresh-prepare"
+    prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    assert len(prepared["mat_dependencies"]) == 15
+    constraint = next(
+        item
+        for item in prepared["mat_dependencies"]
+        if item["environment_key"] == "MPARAMFILES"
+    )
+    assert constraint["stat_before"] == constraint["stat_after"]
+    assert (
+        Path(constraint["staged"]).read_text()
+        == "disposable native dependency stand-in\n"
+    )
+    policy = json.loads((run / "trace-policy.json").read_text())
+    assert str(roots["MPARAMFILES"]) in policy["protected_roots"]
+    config = run / "extract-config.json"
+    protected = [Path(item["original"]) for item in prepared["files"].values()]
+    with R.read_guards(protected):
+        inputs = R.Inputs(config, R.digest(config), run)
+        inputs.load_pins()
+        assert len(inputs.key("lat_1A.npz", "MCgen")) == 64
+    assert inputs.keys_read == [{"file": "lat_1A.npz", "key": "MCgen"}]
+    with pytest.raises(custody.CustodyRefused, match="fresh prestage"):
+        custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+
+
+def test_pf_common_binning_silent_and_firing(fixture: Fixture) -> None:
+    spectra = json.loads(json.dumps(fixture.fixture_flux_spectra))
+    assert R.common_flux_units(spectra)["identical_binning"] is True
+    spectra["1M"]["generated_spectrum"]["edges"][2] += 0.5e-12
+    assert R.common_flux_units(spectra)["identical_binning"] is True
+    spectra["1M"]["generated_spectrum"]["edges"][2] += 1.5e-12
+    with pytest.raises(R.Refused, match="P_F_BINNING") as caught:
+        R.common_flux_units(spectra)
+    assert caught.value.details["bin_edges"]["1M"]["g"] != spectra["1D"]["edges"]
+    spectra["1M"]["generated_spectrum"]["edges"] = spectra["1D"]["edges"]
+    spectra["1N"]["edges"] = spectra["1N"]["edges"][:-1]
+    with pytest.raises(R.Refused, match="P_F_BINNING"):
+        R.common_flux_units(spectra)
+
+
+@pytest.mark.parametrize("field", ["title", "axis_titles", "file_units_metadata"])
+def test_pf_common_units_silent_and_firing(fixture: Fixture, field: str) -> None:
+    spectra = json.loads(json.dumps(fixture.fixture_flux_spectra))
+    assert R.common_flux_units(spectra)["declared_units_byte_equal"] is True
+    spectra["1M"][field] = (
+        {"x": "different", "y": "units"}
+        if field == "axis_titles"
+        else (
+            {"units": {"class_name": "TNamed", "text": "different"}}
+            if field == "file_units_metadata"
+            else "different title"
+        )
+    )
+    with pytest.raises(R.Refused, match="P_F_UNITS") as caught:
+        R.common_flux_units(spectra)
+    assert (
+        caught.value.details["shared_units_observed"]["1M"][field]
+        == spectra["1M"][field]
+    )
+    assert (
+        caught.value.details["shared_units_observed"]["1D"][field]
+        == spectra["1D"][field]
+    )
+
+
+def test_environment_receipt_preserves_setup_and_redacts_credentials(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    custody = _custody_module()
+    monkeypatch.setenv("OPENAI_API_KEY", "fixture-private-key")
+    monkeypatch.setenv("SERVICE_ACCOUNT", "fixture-credential-json")
+    monkeypatch.setenv("PROXY_URL", "https://name:password@proxy.invalid")
+    monkeypatch.setenv("LD_LIBRARY_PATH", "/pinned/MAT/lib:/pinned/ROOT/lib")
+    record = custody.environment_record()
+    assert record["LD_LIBRARY_PATH"] == "/pinned/MAT/lib:/pinned/ROOT/lib"
+    assert record["OPENAI_API_KEY"] == "<redacted credential field>"
+    assert record["SERVICE_ACCOUNT"] == "<redacted credential field>"
+    assert record["PROXY_URL"] == "https://<redacted>@proxy.invalid"
+
+
+def test_flux_file_units_metadata_protocol(fixture: Fixture) -> None:
+    read_keys = []
+
+    class Key:
+        def __init__(self, name: str, kind: str, text: str):
+            self.name, self.kind, self.text = name, kind, text
+
+        def GetName(self) -> str:
+            return self.name
+
+        def GetClassName(self) -> str:
+            return self.kind
+
+        def ReadObj(self) -> Any:
+            read_keys.append(self.name)
+            return SimpleNamespace(
+                GetString=lambda: self.text, GetTitle=lambda: self.text
+            )
+
+    class File:
+        def IsZombie(self) -> bool:
+            return False
+
+        def GetListOfKeys(self) -> list[Any]:
+            return [
+                Key("units", "TNamed", "shared units"),
+                Key("POT", "TObjString", "shared exposure convention"),
+                Key("flux_E_cvweighted", "PlotUtils::MnvH1D", "not metadata"),
+                Key("units_hist", "TH1D", "not text"),
+            ]
+
+        def Close(self) -> None:
+            pass
+
+    root = SimpleNamespace(TFile=SimpleNamespace(Open=lambda *args: File()))
+    path = fixture.root / "staged-units.root"
+    result = R.flux_units_metadata(path, root=root)
+    assert result == {
+        "units": {"class_name": "TNamed", "text": "shared units"},
+        "POT": {"class_name": "TObjString", "text": "shared exposure convention"},
+    }
+    assert read_keys == ["units", "POT"]
+
+
+def test_trace_failure_writes_stop_without_pass(fixture: Fixture) -> None:
+    custody = _custody_module()
+    run = fixture.root / "failed-trace"
+    run.mkdir()
+    policy = run / "policy.json"
+    policy.write_text(
+        json.dumps(
+            {
+                "protected_roots": ["/original/data"],
+                "allowed": {"run": [str(run)]},
+                "cwd": str(run),
+            }
+        )
+    )
+    trace = run / "raw.strace"
+    trace.write_text(
+        'openat(AT_FDCWD, "/original/data/missing", O_RDONLY) = -1 ENOENT (No such file or directory)\n'
+    )
+    with pytest.raises(custody.CustodyRefused):
+        custody.check_trace(R, run, trace, policy, R.digest(policy))
+    stop = json.loads((run / "flux-custody.STOP.json").read_text())
+    assert stop["status"] == "STOP" and stop["readings"] is None
+    assert stop["violations"][0]["request"] == "/original/data/missing"
+    assert not (run / "flux-custody.json").exists()

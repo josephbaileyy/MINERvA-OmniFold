@@ -12,6 +12,7 @@ import ast
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -24,6 +25,18 @@ PRODUCER = ROOT / "nd-unfolding/fd_rpd_reco.py"
 TESTS = ROOT / "nd-unfolding/tests/test_fd_rpd_reco.py"
 
 GUARD_TESTS = {
+    "P_F_BINNING": "test_pf_common_binning_silent_and_firing",
+    "P_F_UNITS": "test_pf_common_units_silent_and_firing",
+    "FLUX_CUSTODY": "test_flux_custody_and_factor_guards",
+    "FLUX_EXTRACT": "test_flux_extract_identity_guards",
+    "FLUX_EXTRACT_IDENTITY": "test_flux_extract_identity_guards",
+    "FLUX_FACTORS": "test_flux_custody_and_factor_guards",
+    "MAT_DATA_STAGE": "test_staged_prefix_restore_and_missing or test_extract_missing_dependency_before_constructor",
+    "MAT_ENVIRONMENT": "test_mat_environment_reuses_instrument",
+    "MAT_MNVH1D": "test_pyroot_reader_protocol_guards",
+    "MAT_PREPARE": "test_same_connect_prepare_receipt",
+    "MAT_ROOT_FILE": "test_pyroot_reader_protocol_guards",
+    "MAT_TFILE_STAGE": "test_tfile_guard_both_entries",
     "CONFIG_READY": "test_draft_configuration_refuses",
     "WALL_BUDGET": "test_priced_wall_budget_limits",
     "PRICED_TIMING_PAIR": "test_priced_timing_pair_refuses",
@@ -93,7 +106,7 @@ GUARD_TESTS = {
 }
 BAR_MUTANTS = {
     "DEFAULT_WALL_SECONDS": (3600, "test_priced_wall_budget_limits"),
-    "MAX_PRICED_WALL_SECONDS": (86400, "test_priced_wall_budget_limits"),
+    "MAX_PRICED_WALL_SECONDS": (172800, "test_priced_wall_budget_limits"),
     "MEASURED_MARGIN": (1.0, "test_measured_plan_and_price_stop_receipt"),
     "DEFAULT_PLANNING_FACTOR": (1.0, "test_priced_wall_budget_admission_and_elapsed"),
     "MIN_PREDICTION": (0.0, "test_leave_one_out_and_bootstrap_sigma_hand_calculation"),
@@ -129,6 +142,58 @@ class Mutation:
 
 REQUIRED = tuple(
     [
+        Mutation(
+            "REQUIRED_ROOT_INTERPOLATION",
+            "flux_step",
+            "mat_flux_swap",
+            "test_a1_root_interpolation_and_boundary",
+        ),
+        Mutation(
+            "REQUIRED_ROOT_75_BOUNDARY",
+            "flux_boundary",
+            "mat_flux_swap",
+            "test_a1_root_interpolation_and_boundary",
+        ),
+        Mutation(
+            "REQUIRED_TIMING_FULL_AXES",
+            "timing_axes",
+            "TIMING_AXES",
+            "test_timing_shape_matches_actual_aggregate_axes",
+        ),
+        Mutation(
+            "REQUIRED_TRACE_PROTECTED_ATTEMPT",
+            "custody_protected",
+            "classify_trace",
+            "test_custody_trace_directions",
+        ),
+        Mutation(
+            "REQUIRED_TRACE_UNKNOWN_SUCCESS",
+            "custody_unknown",
+            "classify_trace",
+            "test_custody_trace_directions",
+        ),
+        Mutation(
+            "REQUIRED_TRACE_FAILED_SEARCH_ALLOWED",
+            "custody_failed",
+            "classify_trace",
+            "test_custody_trace_directions",
+        ),
+        Mutation(
+            "REQUIRED_COV2D_FENCE",
+            "custody_fence",
+            "cov2d_fence",
+            "test_cov2d_fence_both_directions",
+        ),
+        *[
+            Mutation(
+                f"REQUIRED_ZERO_PATTERN_{i}",
+                "flux_zero",
+                "mat_flux_swap",
+                "test_a1_every_zero_pattern",
+                i,
+            )
+            for i in range(8)
+        ],
         Mutation(
             "REQUIRED_CFS_ENTRY_ORDER",
             "output_order",
@@ -250,7 +315,10 @@ class Mutator(ast.NodeTransformer):
     def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.AST:
         previous = self.function
         self.function = node.name
-        if self.mutation.kind == "bracket" and node.name == self.mutation.target:
+        if self.mutation.kind == "custody_fence" and node.name == self.mutation.target:
+            node.body = ast.parse("return {'status': 'PASS', 'exit_code': 0}").body
+            self.changed += 1
+        elif self.mutation.kind == "bracket" and node.name == self.mutation.target:
             node.body = [
                 node.body[0],
                 ast.Return(value=ast.Name(id="primary", ctx=ast.Load())),
@@ -303,7 +371,50 @@ class Mutator(ast.NodeTransformer):
                     self.changed += 1
         return self.generic_visit(node)
 
+    def visit_If(self, node: ast.If) -> ast.AST:
+        mutation = self.mutation
+        if self.function == mutation.target:
+            if (
+                mutation.kind == "custody_protected"
+                and isinstance(node.test, ast.Name)
+                and node.test.id == "protected"
+            ):
+                node.test = ast.Constant(False)
+                self.changed += 1
+            if (
+                mutation.kind == "custody_failed"
+                and isinstance(node.test, ast.Name)
+                and node.test.id == "success"
+            ):
+                node.test = ast.Constant(True)
+                self.changed += 1
+            if (
+                mutation.kind == "custody_unknown"
+                and ast.unparse(node.test) == "len(categories) != 1"
+            ):
+                node.test = ast.Constant(False)
+                self.changed += 1
+        return self.generic_visit(node)
+
+    def visit_Return(self, node: ast.Return) -> Any:
+        if self.mutation.kind == "flux_zero" and self.function == self.mutation.target:
+            self.changed += 1
+            return [
+                ast.parse(
+                    f"factors[patterns == {int(self.mutation.replacement)}] = 0.123"
+                ).body[0],
+                node,
+            ]
+        return self.generic_visit(node)
+
     def visit_Compare(self, node: ast.Compare) -> ast.AST:
+        if (
+            self.mutation.kind == "flux_boundary"
+            and self.function == self.mutation.target
+            and ast.unparse(node) == "e > 75.0"
+        ):
+            node.ops = [ast.GtE()]
+            self.changed += 1
         if (
             self.mutation.kind == "clock_default"
             and self.function == self.mutation.target
@@ -334,6 +445,14 @@ class Mutator(ast.NodeTransformer):
 
     def visit_Assign(self, node: ast.Assign) -> ast.AST:
         mutation = self.mutation
+        if mutation.kind == "timing_axes" and any(
+            isinstance(t, ast.Name) and t.id == "TIMING_AXES" for t in node.targets
+        ):
+            self.changed += 1
+            node.value = ast.parse(
+                "tuple(x for x in " + ast.unparse(node.value) + " if x != 'rate@1')",
+                mode="eval",
+            ).body
         if mutation.kind in {"sibling_empty", "sibling_extra"} and any(
             isinstance(target, ast.Name) and target.id == mutation.target
             for target in node.targets
@@ -419,6 +538,28 @@ class Mutator(ast.NodeTransformer):
     def visit_Call(self, node: ast.Call) -> ast.AST:
         mutation = self.mutation
         if (
+            mutation.kind == "flux_step"
+            and self.function == mutation.target
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "Interpolate"
+        ):
+            self.changed += 1
+            return ast.Call(
+                func=ast.Attribute(
+                    value=node.func.value, attr="GetBinContent", ctx=ast.Load()
+                ),
+                args=[
+                    ast.Call(
+                        func=ast.Attribute(
+                            value=node.func.value, attr="FindBin", ctx=ast.Load()
+                        ),
+                        args=node.args,
+                        keywords=[],
+                    )
+                ],
+                keywords=[],
+            )
+        if (
             mutation.kind == "guard"
             and isinstance(node.func, ast.Name)
             and node.func.id == "require"
@@ -501,11 +642,24 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
         )
     outcomes = []
     with tempfile.TemporaryDirectory(prefix="rpd-reco-mutants-") as temporary:
+        shutil.copyfile(
+            ROOT / "nd-unfolding/fd_rpd_inputs.py", Path(temporary) / "fd_rpd_inputs.py"
+        )
+        shutil.copyfile(
+            ROOT / "nd-unfolding/fd_rpd_reco_custody.py",
+            Path(temporary) / "fd_rpd_reco_custody.py",
+        )
         for mutation in REQUIRED:
             if selected is not None and mutation.name not in selected:
                 continue
             transformer = Mutator(mutation)
-            changed = transformer.visit(ast.parse(source))
+            custody_mutant = mutation.kind.startswith("custody_")
+            mutation_source = (
+                (ROOT / "nd-unfolding/fd_rpd_reco_custody.py").read_text()
+                if custody_mutant
+                else source
+            )
+            changed = transformer.visit(ast.parse(mutation_source))
             if transformer.changed == 0:
                 raise RuntimeError(
                     f"mutation {mutation.name} did not change the producer"
@@ -524,7 +678,12 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
             completed = subprocess.run(
                 command,
                 cwd=ROOT,
-                env=os.environ | {"FD_RPD_RECO_MODULE": str(path)},
+                env=os.environ
+                | (
+                    {"FD_RPD_CUSTODY_MODULE": str(path)}
+                    if custody_mutant
+                    else {"FD_RPD_RECO_MODULE": str(path)}
+                ),
                 text=True,
                 capture_output=True,
                 timeout=120,
@@ -550,6 +709,9 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
         "schema": "fd-rpd-reco-mutation/1",
         "producer_sha256": hashlib.sha256(PRODUCER.read_bytes()).hexdigest(),
         "tests_sha256": hashlib.sha256(TESTS.read_bytes()).hexdigest(),
+        "custody_sha256": hashlib.sha256(
+            (ROOT / "nd-unfolding/fd_rpd_reco_custody.py").read_bytes()
+        ).hexdigest(),
         "required": [mutation.name for mutation in REQUIRED],
         "selected": sorted(selected) if selected else None,
         "outcomes": outcomes,
@@ -574,6 +736,21 @@ def main() -> int:
     if arguments.out is None:
         parser.error("--out is required")
     result = run(arguments.out, set(arguments.only) if arguments.only else None)
+    print(
+        json.dumps(
+            {
+                "required": len(REQUIRED),
+                "executed": len(result["outcomes"]),
+                "killed": sum(
+                    item["status"] == "KILLED" for item in result["outcomes"]
+                ),
+                "complete": result["complete"],
+                "all_killed": result["all_killed"],
+            },
+            sort_keys=True,
+        ),
+        flush=True,
+    )
     return 0 if result["all_killed"] else 1
 
 
