@@ -1,0 +1,35 @@
+test_flux_band_is_weighted (test_cov2d_blocks.Assemble.test_flux_band_is_weighted) ... ok
+test_norm_is_built_from_x_hat_T_once (test_cov2d_blocks.Assemble.test_norm_is_built_from_x_hat_T_once) ... ok
+test_pair_band_and_minos_x01 (test_cov2d_blocks.Assemble.test_pair_band_and_minos_x01) ... ok
+test_r6_blocks_sum_to_the_functions_total (test_cov2d_blocks.Assemble.test_r6_blocks_sum_to_the_functions_total) ... ok
+test_r6_key_set_is_38_universe_5_lateral_and_the_norm (test_cov2d_blocks.Assemble.test_r6_key_set_is_38_universe_5_lateral_and_the_norm) ... ok
+test_refuses_a_drifted_dict_layout (test_cov2d_blocks.Assemble.test_refuses_a_drifted_dict_layout) ... ok
+test_section_9_8 (test_cov2d_blocks.Assemble.test_section_9_8) ... ok
+test_stat_c08_and_model_forms (test_cov2d_blocks.Assemble.test_stat_c08_and_model_forms) ... ok
+test_bypass_scan_fires_on_each_bypass_and_not_on_the_real_modules (test_cov2d_blocks.Audit.test_bypass_scan_fires_on_each_bypass_and_not_on_the_real_modules) ... ok
+test_counts_guarded_opens (test_cov2d_blocks.Audit.test_counts_guarded_opens) ... ok
+test_sanctioned_noatime_reads_and_free_paths_pass_and_are_logged (test_cov2d_blocks.Audit.test_sanctioned_noatime_reads_and_free_paths_pass_and_are_logged) ... ok
+test_tfile_open_is_audited (test_cov2d_blocks.Audit.test_tfile_open_is_audited) ... ok
+test_uninstall_restores (test_cov2d_blocks.Audit.test_uninstall_restores) ... ok
+test_unredirected_guarded_reads_are_refused (test_cov2d_blocks.Audit.test_unredirected_guarded_reads_are_refused) ... ok
+test_a_changed_file_or_matrix_refuses (test_cov2d_blocks.CModel.test_a_changed_file_or_matrix_refuses) ... ok
+test_full_construction_reproduces_the_pinned_sha_and_minus_takes_two_vertices (test_cov2d_blocks.CModel.test_full_construction_reproduces_the_pinned_sha_and_minus_takes_two_vertices) ... ok
+test_main_reads_every_rollup_input_through_noatime_copies (test_cov2d_blocks.Control95Main.test_main_reads_every_rollup_input_through_noatime_copies) ... /dev/shm/josephrb-cov2d-a2tests2/deploy/2d-unfolding/re2/partc/re2c_rollup.py:221: ResourceWarning: unclosed file <_io.TextIOWrapper name='/dev/shm/josephrb-cov2d-a2tests2/tmp/tmp1z6n8swz/tmp/tmpisbzoecb/rollup/constraint.txt' mode='r' encoding='UTF-8'>
+  for line in open(PIN["constraint"][0]):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_it_is_rpds_function_and_a_refusal_propagates (test_cov2d_blocks.MatEnvironment.test_it_is_rpds_function_and_a_refusal_propagates) ... ok
+test_rpds_pins_are_the_six_scripts_and_libmat (test_cov2d_blocks.MatEnvironment.test_rpds_pins_are_the_six_scripts_and_libmat) ... ok
+test_a_wrong_pin_refuses (test_cov2d_blocks.NoatimeInputs.test_a_wrong_pin_refuses) ... ok
+test_copies_and_repoints_every_read (test_cov2d_blocks.NoatimeInputs.test_copies_and_repoints_every_read) ... ok
+test_check_matched_on_every_regime (test_cov2d_blocks.NullOnTheRealPath.test_check_matched_on_every_regime) ... ok
+test_a_changed_band_or_stat_or_cells_fails (test_cov2d_blocks.Section95.test_a_changed_band_or_stat_or_cells_fails) ... ok
+test_a_missing_band_key_fails (test_cov2d_blocks.Section95.test_a_missing_band_key_fails) ... ok
+test_labels_are_part_bs (test_cov2d_blocks.Section95.test_labels_are_part_bs) ... ok
+test_reproduces_and_passes (test_cov2d_blocks.Section95.test_reproduces_and_passes) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 17.752s
+
+OK
+SUITE env=R module=test_cov2d_blocks ran=26 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True

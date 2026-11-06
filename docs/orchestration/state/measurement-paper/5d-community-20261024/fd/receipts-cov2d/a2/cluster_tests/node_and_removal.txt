@@ -1,0 +1,37 @@
+/dev/shm/josephrb-cov2d-a2tests2:
+total 8
+drwxrwx--- 3 josephrb josephrb   80 Nov  5 21:56 .
+drwxrwxrwt 3 root     root       80 Nov  5 21:48 ..
+-rw-rw---- 1 josephrb josephrb 5959 Nov  5 21:56 connect-a2tests.log
+drwxrwx--- 2 josephrb josephrb  360 Nov  5 21:56 logs
+
+/dev/shm/josephrb-cov2d-a2tests2/logs:
+total 72
+drwxrwx--- 2 josephrb josephrb  360 Nov  5 21:56 .
+drwxrwx--- 3 josephrb josephrb   80 Nov  5 21:56 ..
+-rw-rw---- 1 josephrb josephrb 2611 Nov  5 21:48 blobs.txt
+-rw-rw---- 1 josephrb josephrb 3891 Nov  5 21:53 P_test_cov2d_jobs.log
+-rw-rw---- 1 josephrb josephrb 3772 Nov  5 21:53 P_test_cov2d.log
+-rw-rw---- 1 josephrb josephrb  575 Nov  5 21:51 P_test_cov2d_null.log
+-rw-rw---- 1 josephrb josephrb 2094 Nov  5 21:48 P_test_cov2d_pseudo.log
+-rw-rw---- 1 josephrb josephrb 1552 Nov  5 21:50 P_test_cov2d_readouts.log
+-rw-rw---- 1 josephrb josephrb 1139 Nov  5 21:53 P_test_cov2d_score.log
+-rw-rw---- 1 josephrb josephrb  673 Nov  5 21:56 quota_login.log
+-rw-rw---- 1 josephrb josephrb 6752 Nov  5 21:55 RM_test_cov2d_jobs.log
+-rw-rw---- 1 josephrb josephrb 6076 Nov  5 21:55 RM_test_cov2d.log
+-rw-rw---- 1 josephrb josephrb 2753 Nov  5 21:55 RM_test_cov2d_pilot.log
+-rw-rw---- 1 josephrb josephrb 3558 Nov  5 21:55 RM_test_cov2d_pseudo_write.log
+-rw-rw---- 1 josephrb josephrb 3549 Nov  5 21:54 R_test_cov2d_blocks.log
+-rw-rw---- 1 josephrb josephrb  801 Nov  5 21:54 R_test_cov2d_null.log
+-rw-rw---- 1 josephrb josephrb 1683 Nov  5 21:54 R_test_cov2d_score.log
+-rw-rw---- 1 josephrb josephrb 1315 Nov  5 21:56 SHA256SUMS
+d0bfd1aea9a9fe06c0ddfb211d24d02ff70f5a275dbd2a787db526f50824492f  /dev/shm/josephrb-cov2d-a2tests2.sh
+72ea74d60829d678e19178f13bdca747fbad802a75701a00e84512209ad62002  /dev/shm/josephrb-cov2d-a2tests2/connect-a2tests.log
+host=login02 2026-11-06T05:57:38Z
+rm -rf /dev/shm/josephrb-cov2d-a2tests2 rc=0
+rm -f /dev/shm/josephrb-cov2d-a2tests2.sh rc=0
+total 0
+drwxrwxrwt  2 root root   40 Nov  5 21:57 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..
+/pscratch/sd/j/josephrb/cov2d-deploy-a6054769 head=a60547692df5f963e428cdfe4661fc51ab785b7b plain=0 ignored=0
+/pscratch/sd/j/josephrb/cov2d-deploy-cf533377 head=cf533377c7f9e1638940c677b9af5242f3ba66f4 plain=0 ignored=0
