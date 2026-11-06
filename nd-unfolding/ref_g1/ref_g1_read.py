@@ -276,7 +276,9 @@ def block_sigma(lib, central: np.ndarray, reps: np.ndarray, univ: dict[str, np.n
 
 
 def read(lib, cfg: dict, run: Path, bars_path: Path, bars_sha: str, out: Path, U: np.ndarray,
-         wflux: np.ndarray, staged: G.Staged) -> dict:
+         wflux: np.ndarray, staged: G.Staged, gibu1: dict) -> dict:
+    """``gibu1`` = {"path", "sha256"}: the gibu1 re-run's product, from the command line (A1 §1, option (a)): it is not
+    in config.json, so the configuration the bars recorded is the one the read checks."""
     if G.sha256(bars_path) != bars_sha:
         raise Refused("the bars file is not the committed one (sha256 differs)")
     bars_rec = json.loads(bars_path.read_text())
@@ -297,11 +299,12 @@ def read(lib, cfg: dict, run: Path, bars_path: Path, bars_sha: str, out: Path, U
     x_ibu, _ = ibu_cells(run, "central", cfg)
     x_e = e_cells(staged(ep["central"]), U)
     controls["G-CV"] = g_cv(run)
-    controls["G-IBU1"] = g_ibu1(cfg, staged)
+    controls["G-IBU1"] = g_ibu1(cfg, staged, gibu1)
     controls["G-cells"] = g_cells(cfg, x_e, staged)
     failed = [name for name, c in controls.items() if not c["pass"]]
     if failed:  # §3.3: a failed control stops the run; no Delta is formed and no reading is written
         stop = {"schema": "ref-g1-stop/1", "stopped": True, "stopped_by": failed, "controls": controls,
+                "gibu1_product": gibu1,
                 "bars_sha256": bars_sha, "reader_sha256": G.sha256(Path(__file__).resolve()),
                 "staged_sha256": staged.sha, "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
         (out.parent / "STOP.json").write_text(json.dumps(stop, indent=1) + "\n")
@@ -355,7 +358,8 @@ def read(lib, cfg: dict, run: Path, bars_path: Path, bars_sha: str, out: Path, U
     ratio = s_ibu / s_e
     r3 = {"sigma_ibu_over_e": ratio.tolist(), "median": float(np.median(ratio)),
           "note": "(e)'s C_stat absorbs its estimator noise (refit per replica, jitter); IBU has none"}
-    rec = {"schema": "ref-g1-readout/1", "bars_sha256": bars_sha, "R1": r1, "printed_beside_R1": beside, "R2": r2,
+    rec = {"schema": "ref-g1-readout/1", "bars_sha256": bars_sha, "gibu1_product": gibu1,
+           "R1": r1, "printed_beside_R1": beside, "R2": r2,
            "R3": r3, "controls": controls, "controls_pass": all(c["pass"] for c in controls.values()),
            "reader_sha256": G.sha256(Path(__file__).resolve()), "config_sha256": G.sha256(G.CONFIG),
            "staged_sha256": staged.sha, "written_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
@@ -401,10 +405,10 @@ def g_cv(run: Path) -> dict:
     return {"pass": bool(same)}
 
 
-def g_ibu1(cfg: dict, staged: G.Staged) -> dict:
-    """The re-run's gibu1 product (A1 §1: config.json gibu1_product, pinned from its done-marker) against IBU-1's D_N,
-    both read as staged O_NOATIME copies."""
-    ref, own = cfg["gibu1_reference"], cfg["gibu1_product"]
+def g_ibu1(cfg: dict, staged: G.Staged, own: dict) -> dict:
+    """The re-run's gibu1 product (A1 §1: ``own``, its path and the sha256 of its done-marker, given to ``read``)
+    against IBU-1's D_N, both read as staged O_NOATIME copies."""
+    ref = cfg["gibu1_reference"]
     b_path, a_path = staged(ref["path"]), staged(own["path"])
     if staged.sha[ref["path"]] != ref["sha256"]:
         return {"pass": False, "why": "IBU-1's D_N.npz digest differs"}
@@ -477,6 +481,8 @@ def main(argv=None) -> int:
     r.add_argument("--bars", type=Path, required=True)
     r.add_argument("--bars-sha256", required=True)
     r.add_argument("--out", type=Path, required=True)
+    r.add_argument("--gibu1-product", help="the gibu1 re-run's gibu1.npz (A1 section 1)")
+    r.add_argument("--gibu1-sha256", help="its sha256, from its done-marker, as committed with bars.json")
     sub.add_parser("reads")
     a = ap.parse_args(argv)
     cfg = json.loads(G.CONFIG.read_text())
@@ -491,7 +497,7 @@ def main(argv=None) -> int:
         if a.cmd == "read" and a.out.parent.resolve() != a.bars.parent.resolve():
             raise Refused("the readout goes beside its bars, so the bars step can see it")
         a.out.parent.mkdir(parents=True, exist_ok=True)
-        with G.read_guards(G.PROTECTED, (G.REPO, a.run, a.out.parent)):
+        with G.read_guards(G.PROTECTED, (G.REPO, a.run, a.out.parent), root=False):  # the reader opens no ROOT file
             rec = command(lib, cfg, a, G.Staged(a.out.parent / f"inputs-{a.cmd}"))
         if a.cmd == "bars":
             print(json.dumps({"bars": rec["bars"], "sha256": G.sha256(a.out), "self_check": rec["self_check"]["pass"]}))
@@ -512,12 +518,13 @@ def command(lib, cfg: dict, a, staged: G.Staged) -> dict:
     wflux = lib.s1a.flux_weights(staged(cfg["inputs"]["flux_constraint"]))  # its pin is checked on the copy
     if a.cmd == "bars":
         return bars(lib, cfg, a.run, a.out, U, wflux, staged)
-    if not (cfg["gibu1_product"]["path"] and cfg["gibu1_product"]["sha256"]):
-        raise Refused("config.json gibu1_product is pinned from the gibu1 re-run before the read (A1 §1)")
-    return read(lib, cfg, a.run, a.bars, a.bars_sha256, a.out, U, wflux, staged)
+    if not (a.gibu1_product and a.gibu1_sha256):
+        raise Refused("the read needs --gibu1-product and --gibu1-sha256, the gibu1 re-run's product (A1 §1)")
+    return read(lib, cfg, a.run, a.bars, a.bars_sha256, a.out, U, wflux, staged,
+                {"path": str(a.gibu1_product), "sha256": a.gibu1_sha256})
 
 
-def reader_reads(cfg: dict) -> list[tuple[str, str]]:
+def reader_reads(cfg: dict, gibu1_product: str | None = None) -> list[tuple[str, str]]:
     """(role, path) of every non-repository file the reader stages, in Paired's and the controls' terms (A1 §4)."""
     ep, r = cfg["e_products"], cfg["replicas"]
     out = [("flux_constraint", cfg["inputs"]["flux_constraint"]), ("e_central", ep["central"])]
@@ -527,8 +534,8 @@ def reader_reads(cfg: dict) -> list[tuple[str, str]]:
     out += [("e_ladder", ep["ladder"].format(name=v)) for v in cfg["vertices"]]
     out += [("e_closure", ep["closure"].format(product=p)) for p in cfg["closures"].values()]
     out += [("s1_assembly", ep["s1_assembly"]), ("gibu1_reference", cfg["gibu1_reference"]["path"])]
-    if cfg["gibu1_product"]["path"]:  # pinned after the gibu1 re-run (A1 §1)
-        out.append(("gibu1_product", cfg["gibu1_product"]["path"]))
+    if gibu1_product:  # known after the gibu1 re-run (A1 §1)
+        out.append(("gibu1_product", str(gibu1_product)))
     return out
 
 

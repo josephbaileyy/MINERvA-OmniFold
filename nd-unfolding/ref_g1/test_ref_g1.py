@@ -239,7 +239,7 @@ class Units(unittest.TestCase):
             n_sent = int(np.any(np.asarray(INPUTS["MCgen"]) < -9000, axis=1).sum())
             run.staged = G.Staged(tmp / "stage")
             with mock.patch.object(LIB.uni, "SENTINEL_ROWS", n_sent), \
-                    G.read_guards((bank, det), (G.REPO, tmp / "stage")):  # A1: the bank is read only as copies
+                    G.read_guards((bank, det), (G.REPO, tmp / "stage"), root=False):  # A1: the bank is read only as copies
                 arrays, meta = run.universe("GEANT_Pion", "0")
             self.assertEqual(set(meta["weight_sha256"]), {"wt", "wr", "denom_nd", "bkgw"})
             self.assertEqual(meta["weight_sha256"], {k: G.sha256(det / f"GEANT_Pion_0_{k}.npy") for k in w})
@@ -259,7 +259,7 @@ class Units(unittest.TestCase):
             cfg = cfg_with(ratios__dir=str(tmp), ratios__sha256={"genie_mec": sha, "nuwro": sha_n})
             run = copy.copy(RUN)
             run.cfg, run.staged = cfg, G.Staged(tmp / "stage")
-            with G.read_guards((tmp,), (G.REPO, tmp / "stage")):  # A1: the ratio is read only as its copy
+            with G.read_guards((tmp,), (G.REPO, tmp / "stage"), root=False):  # A1: the ratio is read only as its copy
                 a, meta = run.vertex("genie_mec")  # r = 1: the prior is unchanged, so the vertex is the central
             c, _ = RUN.central()
             for k in ("F_fold", "F_sub"):
@@ -390,8 +390,8 @@ class Fixture:
                         "universe": str(e / "S1_{tag}.npz"), "ladder": str(e / "L-5D-PV_e_{name}.npz"),
                         "closure": str(e / "{product}.npz"), "s1_assembly": str(self.tmp / "s1_assembly.npz"),
                         "s1_assembly_sha256": G.sha256(self.tmp / "s1_assembly.npz")},
-            gibu1_reference={"path": str(self.tmp / "D_N.npz"), "sha256": G.sha256(self.tmp / "D_N.npz")},
-            gibu1_product={"path": str(self.gibu1), "sha256": G.sha256(self.gibu1)})
+            gibu1_reference={"path": str(self.tmp / "D_N.npz"), "sha256": G.sha256(self.tmp / "D_N.npz")})
+        self.gibu1_pin = {"path": str(self.gibu1), "sha256": G.sha256(self.gibu1)}  # the read's arguments (A1 §1)
         self.cfg["readings"]["bars"].update(draws=draws, batch=2000)
         self.out = self.tmp / "out"
         # the declared inputs a run on the cluster finds on pscratch: read only as staged O_NOATIME copies
@@ -403,14 +403,14 @@ class Fixture:
         return G.Staged(self.out / f"inputs-{self.n_staged}")
 
     def bars(self):
-        with G.read_guards(self.protected, (G.REPO, self.run, self.out)):
+        with G.read_guards(self.protected, (G.REPO, self.run, self.out), root=False):
             return R.bars(LIB, self.cfg, self.run, self.out / "bars.json", U, self.wflux, self.staged())
 
     def read(self, sha=None):
         p = self.out / "bars.json"
-        with G.read_guards(self.protected, (G.REPO, self.run, self.out)):
+        with G.read_guards(self.protected, (G.REPO, self.run, self.out), root=False):
             return R.read(LIB, self.cfg, self.run, p, sha or G.sha256(p), self.out / "readout.json", U, self.wflux,
-                          self.staged())
+                          self.staged(), self.gibu1_pin)
 
     def close(self):
         shutil.rmtree(self.tmp)
@@ -618,7 +618,7 @@ class Controls(unittest.TestCase):
             fx = Fixture()
             try:
                 self.tamper(fx, str(fx.gibu1), key, 1.0000001)
-                fx.cfg["gibu1_product"]["sha256"] = G.sha256(fx.gibu1)  # re-pinned: the arrays decide
+                fx.gibu1_pin["sha256"] = G.sha256(fx.gibu1)  # re-pinned: the arrays decide
                 with self.subTest(key=key):
                     c = self.control(fx, "G-IBU1")
                     self.assertFalse(c["pass"])
@@ -628,7 +628,7 @@ class Controls(unittest.TestCase):
         for pin in ("gibu1_reference", "gibu1_product"):
             fx = Fixture()
             try:
-                fx.cfg[pin]["sha256"] = "0" * 64
+                (fx.cfg["gibu1_reference"] if pin == "gibu1_reference" else fx.gibu1_pin)["sha256"] = "0" * 64
                 with self.subTest(pin=pin):
                     self.assertFalse(self.control(fx, "G-IBU1")["pass"])
             finally:
@@ -711,7 +711,7 @@ class Reads(unittest.TestCase):
         ok.mkdir()
         for d in (prot, ok, self.tmp):
             np.save(d / "a.npy", np.arange(3))
-        with G.read_guards((prot,), (ok,)):
+        with G.read_guards((prot,), (ok,), root=False):
             for plain in (lambda: np.load(prot / "a.npy"), lambda: np.load(prot / "a.npy", mmap_mode="r"),
                           lambda: open(prot / "a.npy", "rb").close(), lambda: G.sha256(prot / "a.npy"),
                           lambda: (prot / "a.npy").read_bytes()):
@@ -733,7 +733,7 @@ class Reads(unittest.TestCase):
         run.mkdir()
         other.mkdir()
         with mock.patch.dict(sys.modules, {"ROOT": fake}):
-            with G.read_guards((), (run,)):
+            with G.read_guards((), (run,), root=True):
                 with self.assertRaises(G.GateFailure):
                     fake.TFile.Open(str(other / "f.root"))
                 for mode in ("UPDATE", "READ_WITHOUT_GLOBALREGISTRATION", "RECREATE"):  # any mode, outside
@@ -742,6 +742,22 @@ class Reads(unittest.TestCase):
                 fake.TFile.Open(str(run / "f.root"))
             fake.TFile.Open(str(other / "f.root"))
         self.assertEqual([p for p, _ in opened], [str(run / "f.root"), str(other / "f.root")])
+
+    def test_a_block_without_the_tfile_guard_refuses_a_root_import(self):
+        """Without ``root`` the guard does not import ROOT, and the block fails if anything does (L2 on #806); the
+        gibu1 unit's set needs no ROOT, a Flux universe's does."""
+        fake = type(sys)("ROOT")
+        with self.assertRaises(G.GateFailure):
+            with mock.patch.dict(sys.modules):
+                with G.read_guards((), (self.tmp,), root=False):
+                    sys.modules["ROOT"] = fake  # as `import ROOT` inside the block would
+        with mock.patch.dict(sys.modules):
+            with G.read_guards((), (self.tmp,), root=False):
+                pass  # silent when nothing imports ROOT
+        self.assertNotIn("ROOT", sys.modules)
+        self.assertFalse(G.needs_root([("gibu1",), ("central",), ("universe", "MaRES", "0")]))
+        self.assertTrue(G.needs_root([("universe", "Flux", "3")]))
+        self.assertIs(G.environment()["root_loaded"], False)
 
     def test_a_staging_directory_is_new(self):
         G.Staged(self.tmp / "s")
@@ -765,7 +781,7 @@ class Reads(unittest.TestCase):
             fx.bars()
             rec = fx.read()
             self.assertTrue(rec["controls_pass"], rec["controls"])
-            declared = {p for role, p in R.reader_reads(fx.cfg) if role != "flux_constraint"}
+            declared = {p for role, p in R.reader_reads(fx.cfg, fx.gibu1_pin["path"]) if role != "flux_constraint"}
             self.assertEqual(set(rec["staged_sha256"]), declared)  # every declared file, and only those
             self.assertEqual(rec["staged_sha256"], {p: G.sha256(Path(p)) for p in declared})
         finally:
@@ -786,7 +802,7 @@ class Reads(unittest.TestCase):
             return INPUTS, BKG
         st = G.Staged(self.tmp / "stage")
         with mock.patch.object(G.ibu1, "load_inputs", load_inputs), \
-                G.read_guards((src,), (G.REPO, self.tmp / "out", self.tmp / "stage")):
+                G.read_guards((src,), (G.REPO, self.tmp / "out", self.tmp / "stage"), root=False):
             self.assertEqual(G.run_units(cfg, [("central",)], self.tmp / "out", st), 0)
         (npz, bkg, nb, bb), = got
         self.assertTrue(G.under(npz, st.root.resolve()) and G.under(bkg, st.root.resolve()))
@@ -802,27 +818,49 @@ class Reads(unittest.TestCase):
             fx.cfg["inputs"]["flux_constraint"] = str(c)
             a = type("A", (), {"cmd": "bars", "run": fx.run, "out": fx.out / "bars.json"})
             with mock.patch.object(LIB.s1a, "CONSTRAINT_SHA256", G.sha256(c)), \
-                    G.read_guards((*fx.protected, c), (G.REPO, fx.run, fx.out)):
+                    G.read_guards((*fx.protected, c), (G.REPO, fx.run, fx.out), root=False):
                 rec = R.command(LIB, fx.cfg, a, G.Staged(fx.out / "inputs-cmd"))
             self.assertIn(str(c), rec["staged_sha256"])
             self.assertEqual(rec["flux_universes"], 100)
         finally:
             fx.close()
 
-    def test_the_read_refuses_until_the_gibu1_product_is_pinned(self):
+    def test_the_read_refuses_until_the_gibu1_product_is_given(self):
         fx = Fixture()
         try:
-            fx.cfg["gibu1_product"] = {"path": None, "sha256": None}
             a = type("A", (), {"cmd": "read", "run": fx.run, "bars": fx.out / "bars.json", "bars_sha256": "x",
-                               "out": fx.out / "readout.json"})
+                               "out": fx.out / "readout.json", "gibu1_product": None, "gibu1_sha256": None})
             with mock.patch.object(LIB.s1a, "flux_weights", lambda path: fx.wflux), \
                     mock.patch.dict(fx.cfg["inputs"], {"flux_constraint": str(fx.tmp / "s1_assembly.npz")}):
                 with self.assertRaises(R.Refused):
                     R.command(LIB, fx.cfg, a, G.Staged(fx.out / "inputs-cmd"))
             self.assertNotIn("gibu1_product", dict(R.reader_reads(fx.cfg)))
+            self.assertNotIn("gibu1_product", CFG)  # A1 §1, option (a): the pin is not in config.json
         finally:
             fx.close()
 
+    def test_bars_then_the_pin_merge_then_the_read(self):
+        """B1 on #806: the bars record config.json's digest, so nothing between the bars and the read may change it.
+        The gibu1 re-run's pin is committed beside bars.json and given to the read, and the read forms a reading; a
+        changed config.json between the two is refused."""
+        fx = Fixture()
+        try:
+            cfg_copy = fx.tmp / "config.json"
+            cfg_copy.write_bytes(G.CONFIG.read_bytes())
+            with mock.patch.object(G, "CONFIG", cfg_copy):
+                fx.bars()
+                pins = fx.out / "gibu1-pin.json"  # the merge: bars.json and the pin, config.json untouched
+                pins.write_text(json.dumps(fx.gibu1_pin))
+                fx.gibu1_pin = json.loads(pins.read_text())
+                rec = fx.read()
+                self.assertIn("R1", rec)
+                self.assertEqual(rec["gibu1_product"], fx.gibu1_pin)
+                (fx.out / "readout.json").unlink()
+                cfg_copy.write_text(json.dumps({**json.loads(cfg_copy.read_text()), "gibu1_product": fx.gibu1_pin}))
+                with self.assertRaises(R.Refused):  # option (b)'s defect: the pin merged into config.json
+                    fx.read()
+        finally:
+            fx.close()
 
 def tearDownModule():
     NOATIME_SUB.stop()

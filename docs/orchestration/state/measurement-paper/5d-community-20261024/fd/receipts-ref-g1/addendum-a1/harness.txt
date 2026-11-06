@@ -38,8 +38,9 @@ KILLED    D6: a ratio read in place                        by Units.test_vertex_
 KILLED    D8: the (e) central read in place                by Reads.test_the_reader_stages_its_declared_set_and_the_digest_is_unchanged
 KILLED    D8: IBU-1's D_N read in place                    by Reads.test_the_reader_stages_its_declared_set_and_the_digest_is_unchanged
 KILLED    the gibu1 product's pin unchecked                by Controls.test_g_ibu1_fires_on_either_variant_and_on_the_pin
-KILLED    the read without the gibu1 product pinned        by Reads.test_the_read_refuses_until_the_gibu1_product_is_pinned
+KILLED    a ROOT import admitted without the TFile guard   by Reads.test_a_block_without_the_tfile_guard_refuses_a_root_import
+KILLED    the read without the gibu1 product pinned        by Reads.test_the_read_refuses_until_the_gibu1_product_is_given
 SURVIVED (expected; equivalent)           the jitter step skipped in g1's builder
 SURVIVED (expected; equivalent)           the IBU replica's jitter seed not (e)'s
-MUTATION CHECK :: PASS (41 mutations, 2 expected survivors)
+MUTATION CHECK :: PASS (42 mutations, 2 expected survivors)
 exit=0

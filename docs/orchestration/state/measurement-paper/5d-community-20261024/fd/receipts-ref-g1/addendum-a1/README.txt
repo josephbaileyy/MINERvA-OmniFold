@@ -4,9 +4,9 @@ read.
 
 files.sha256    sha256 of nd-unfolding/ref_g1/{ref_g1.py, ref_g1_read.py, test_ref_g1.py, ref_g1_mutation.py,
                 config.json}, taken before and after the two runs below (identical) and equal to the files committed.
-tests.txt       python3 -B nd-unfolding/ref_g1/test_ref_g1.py -v  ->  Ran 38 tests, OK, exit 0.
-harness.txt     python3 -B nd-unfolding/ref_g1/ref_g1_mutation.py  ->  MUTATION CHECK :: PASS (41 mutations, 2 expected
-                survivors), exit 0. The two expected survivors are the bound ones (the jitter step skipped; the IBU
+tests.txt       python3 -B nd-unfolding/ref_g1/test_ref_g1.py -v  ->  Ran 40 tests, OK, exit 0 (revision 2).
+harness.txt     python3 -B nd-unfolding/ref_g1/ref_g1_mutation.py  ->  MUTATION CHECK :: PASS (42 mutations, 2 expected
+                survivors; revision 2), exit 0. The two expected survivors are the bound ones (the jitter step skipped; the IBU
                 replica's jitter seed), each run against the whole suite.
 
 Environment: Python 3.14.6, numpy 2.4.4, scipy 1.18.1 (a scratch venv; no ROOT), macOS arm64; PYTHONDONTWRITEBYTECODE=1
@@ -49,16 +49,44 @@ Not covered by a local test: D7, the flux-universe file (it needs ROOT and a Flu
 re-runs under A1).
 
 The closure grep (A1 §2.4):
-- closure-files.txt     the 23 files of REF-G1's import closure.
-- closure-reads-at-M.tsv  the grep at M's blobs (origin/main 10b3b7f9e, same blobs as M 609d8f24): 89 hits, each with
-                        its function and disposition; the 15 DECLARED rows are A1's D1-D8.
-- closure-reads.tsv     the grep at A1's revision: 97 hits, each with its function and disposition, produced by
+- closure-files.txt     the 28 files of REF-G1's import closure (revision 2; see below).
+- closure-reads-at-M.tsv  the grep at M 609d8f24 (git grep at that commit): 99 hits, each with its function
+                        and disposition; the 15 DECLARED rows are A1's D1-D8.
+- closure-reads.tsv     the grep at A1's revision: 108 hits, each with its function and disposition, produced by
                         closure_dispositions.py from
                           xargs grep -nE "open\(|np\.load|read_text|read_bytes|mmap|TFile|uproot\.open" < closure-files.txt
 - closure-trace.txt     python3 -B closure_trace.py <repo> closure-reads.tsv closure-trace.txt: the suite under
                         sys.monitoring LINE events; a "not reached" hit counts as REACHED only when a ref_g1.py or
-                        ref_g1_read.py frame is on the stack. Result: 38 tests OK; 0 of 64 "not reached" hits executed
+                        ref_g1_read.py frame is on the stack. Result: 40 tests OK; 0 of 74 "not reached" hits executed
                         from the run path; 1 fixture-only (pvl_lib.sha256_path, called by the test's own
                         pvl_ratios.write_ratio). The trace sees only what the fixtures exercise.
 - closure-trace-control.txt  the same run with ibu1.py:55 and s5p_universe.py:94 (both on the run path) relabelled "not
                         reached": both REACHED, exit 1. The check has power.
+
+Revision 2 (coverage-5b-audit's review of #806 at a8e14aa9 and the director's rulings of 2026-11-06). Every file above
+is replaced by this revision's run; the counts below supersede the ones above.
+- B1 (blocking): the bars record config_sha256, and A1's first order merged the gibu1 pin into config.json between
+  the bars and the read, so the read would have refused. The director ruled option (a): config.json carries no
+  gibu1_product; `ref_g1_read.py read` takes --gibu1-product PATH --gibu1-sha256 SHA (from the re-run's done-marker,
+  committed with bars.json in connect 1's receipt); G-IBU1 checks the product on its staged copy; the readout and
+  STOP.json record both. Test Reads.test_bars_then_the_pin_merge_then_the_read: bars, then the pin committed beside
+  them, then the read, which forms a reading; and the same read refused once config.json is changed between the two.
+  Reads.test_the_read_refuses_until_the_gibu1_product_is_given replaces the config-pin test.
+- L1: the closure is 28 files, derived from the code (every repository module reached by an import anywhere in
+  ref_g1.py, ref_g1_read.py and the path-loaded did.py, stdlib names excluded); it adds the five modules imported
+  only inside uncalled functions. The grep: 99 hits at M (closure-reads-at-M.tsv; the 10 new ones are in the five
+  modules, each in a function REF-G1 does not call), 108 at this revision (closure-reads.tsv).
+- L2: read_guards(protected, allowed, root). The TFile guard is installed only for a unit set with a Flux universe
+  (needs_root); otherwise ROOT is not imported for it, and the block fails if anything imports ROOT. The gibu1 unit
+  and the reader run with root=False. Test Reads.test_a_block_without_the_tfile_guard_refuses_a_root_import; REQUIRED
+  mutant "a ROOT import admitted without the TFile guard".
+- L3: environment() records threadpoolctl.threadpool_info() where threadpoolctl can be imported, else says so, and
+  root_loaded.
+- tests.txt     40 tests, OK, exit 0.
+- harness.txt   MUTATION CHECK :: PASS (42 mutations, 2 expected survivors), exit 0.
+- closure-trace.txt   40 tests OK; 0 of 74 "not reached" hits executed from the run path; 1 fixture-only
+                      (pvl_lib.sha256_path).
+- closure-trace-control.txt   ibu1.py:55 and s5p_universe.py:94 relabelled: both REACHED, exit 1.
+- files.sha256  identical before and after the runs, and to the files committed.
+Follow-up list (deferred under the director's freeze; changed only if a run STOPs): none raised against REF-G1 at
+this revision beyond D7's missing local test (above).

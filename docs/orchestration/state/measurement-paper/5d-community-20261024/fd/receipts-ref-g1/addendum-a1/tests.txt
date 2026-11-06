@@ -17,16 +17,20 @@ test_the_batch_weighted_covariance_is_s1s_mat_cov (__main__.Readings.test_the_ba
 test_the_flux_block_is_resampled (__main__.Readings.test_the_flux_block_is_resampled) ... ok
 test_the_order_guard_and_the_bars_identity (__main__.Readings.test_the_order_guard_and_the_bars_identity) ... ok
 test_the_reading_words_at_their_bars (__main__.Readings.test_the_reading_words_at_their_bars) ... ok
+test_a_block_without_the_tfile_guard_refuses_a_root_import (__main__.Reads.test_a_block_without_the_tfile_guard_refuses_a_root_import)
+Without ``root`` the guard does not import ROOT, and the block fails if anything does (L2 on #806); the ... ok
 test_a_staging_directory_is_new (__main__.Reads.test_a_staging_directory_is_new) ... ok
+test_bars_then_the_pin_merge_then_the_read (__main__.Reads.test_bars_then_the_pin_merge_then_the_read)
+B1 on #806: the bars record config.json's digest, so nothing between the bars and the read may change it. ... ok
 test_o_noatime_absent_is_refused (__main__.Reads.test_o_noatime_absent_is_refused) ... ok
 test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise (__main__.Reads.test_the_audit_guard_fires_on_a_plain_read_and_is_silent_otherwise) ... ok
 test_the_constraint_is_read_as_a_copy (__main__.Reads.test_the_constraint_is_read_as_a_copy) ... ok
-test_the_read_refuses_until_the_gibu1_product_is_pinned (__main__.Reads.test_the_read_refuses_until_the_gibu1_product_is_pinned) ... ok
+test_the_read_refuses_until_the_gibu1_product_is_given (__main__.Reads.test_the_read_refuses_until_the_gibu1_product_is_given) ... ok
 test_the_reader_stages_its_declared_set_and_the_digest_is_unchanged (__main__.Reads.test_the_reader_stages_its_declared_set_and_the_digest_is_unchanged) ... ok
 test_the_tfile_guard_refuses_root_reads_outside_the_roots (__main__.Reads.test_the_tfile_guard_refuses_root_reads_outside_the_roots)
 ROOT is not in this suite's environment; a stand-in module carries TFile.Open, so the guard's own logic runs. ... ok
 test_the_units_load_the_staged_inputs (__main__.Reads.test_the_units_load_the_staged_inputs)
-run_units hands ibu1.load_inputs (which checks the pins and loads) the O_NOATIME copies, never the ... {"unit": "central", "seconds": 0.048}
+run_units hands ibu1.load_inputs (which checks the pins and loads) the O_NOATIME copies, never the ... {"unit": "central", "seconds": 0.065}
 ok
 test_a_jitter_that_moves_membership_is_refused_before_any_replica (__main__.Replicas.test_a_jitter_that_moves_membership_is_refused_before_any_replica)
 The refusal (e)'s loop applies (s5p_numerics.py:188-191). Edge-safe jitter cannot move a row across an ... refusing: jitter 101 changed grid membership {'MCgen': 0, 'MCreco': 1, 'measured': 0, 'bkg_reco': 0}
@@ -34,16 +38,16 @@ ok
 test_g_draw_fires_on_a_replica_that_is_not_es (__main__.Replicas.test_g_draw_fires_on_a_replica_that_is_not_es) ... ok
 test_the_replica_is_es_construction_and_g_draw_is_silent (__main__.Replicas.test_the_replica_is_es_construction_and_g_draw_is_silent) ... ok
 test_a_detector_universe_through_the_bank_parsers (__main__.Units.test_a_detector_universe_through_the_bank_parsers) ... ok
-test_a_unit_that_failed_g_draw_is_never_done (__main__.Units.test_a_unit_that_failed_g_draw_is_never_done) ... {"unit": "replica_b4", "seconds": 0.079, "g_draw": false}
+test_a_unit_that_failed_g_draw_is_never_done (__main__.Units.test_a_unit_that_failed_g_draw_is_never_done) ... {"unit": "replica_b4", "seconds": 0.125, "g_draw": false}
 refusing: replica_b4.npz exists without a PASS done-marker (verdict FAIL)
-{"unit": "replica_b5", "seconds": 0.085, "g_draw": true}
+{"unit": "replica_b5", "seconds": 0.121, "g_draw": true}
 ok
 test_gibu1_runs_only_in_ibu1s_environment (__main__.Units.test_gibu1_runs_only_in_ibu1s_environment)
-The interpreter and Python version, and (A1 §1) IBU-1's thread environment and CPU count. ... {"unit": "gibu1", "seconds": 0.098}
-refusing: gibu1 runs only in IBU-1's environment, not {'interpreter': '<scratch>/venv-g1/bin/python', 'python_version': '3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]', 'numpy': '2.4.4', 'scipy': '1.18.1', 'thread_env': {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None}, 'cpus': 10}
-refusing: gibu1 runs only in IBU-1's environment, not {'interpreter': '<scratch>/venv-g1/bin/python', 'python_version': '3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]', 'numpy': '2.4.4', 'scipy': '1.18.1', 'thread_env': {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None}, 'cpus': 10}
-refusing: gibu1 runs only in IBU-1's environment, not {'interpreter': '<scratch>/venv-g1/bin/python', 'python_version': '3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]', 'numpy': '2.4.4', 'scipy': '1.18.1', 'thread_env': {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None}, 'cpus': 10}
-refusing: gibu1 runs only in IBU-1's environment, not {'interpreter': '<scratch>/venv-g1/bin/python', 'python_version': '3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]', 'numpy': '2.4.4', 'scipy': '1.18.1', 'thread_env': {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None}, 'cpus': 10}
+The interpreter and Python version, and (A1 §1) IBU-1's thread environment and CPU count. ... {"unit": "gibu1", "seconds": 0.153}
+refusing: gibu1 runs only in IBU-1's environment, not {'interpreter': '<scratch>/venv-g1/bin/python', 'python_version': '3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]', 'numpy': '2.4.4', 'scipy': '1.18.1', 'thread_env': {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None}, 'cpus': 10, 'threadpools': 'threadpoolctl not importable', 'root_loaded': False}
+refusing: gibu1 runs only in IBU-1's environment, not {'interpreter': '<scratch>/venv-g1/bin/python', 'python_version': '3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]', 'numpy': '2.4.4', 'scipy': '1.18.1', 'thread_env': {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None}, 'cpus': 10, 'threadpools': 'threadpoolctl not importable', 'root_loaded': False}
+refusing: gibu1 runs only in IBU-1's environment, not {'interpreter': '<scratch>/venv-g1/bin/python', 'python_version': '3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]', 'numpy': '2.4.4', 'scipy': '1.18.1', 'thread_env': {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None}, 'cpus': 10, 'threadpools': 'threadpoolctl not importable', 'root_loaded': False}
+refusing: gibu1 runs only in IBU-1's environment, not {'interpreter': '<scratch>/venv-g1/bin/python', 'python_version': '3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]', 'numpy': '2.4.4', 'scipy': '1.18.1', 'thread_env': {'OMP_NUM_THREADS': None, 'OPENBLAS_NUM_THREADS': None, 'MKL_NUM_THREADS': None}, 'cpus': 10, 'threadpools': 'threadpoolctl not importable', 'root_loaded': False}
 ok
 test_the_cv_universe_is_the_central_bitwise (__main__.Units.test_the_cv_universe_is_the_central_bitwise) ... ok
 test_the_real_format_inputs_load_to_the_same_central (__main__.Units.test_the_real_format_inputs_load_to_the_same_central) ... ok
@@ -55,7 +59,7 @@ test_the_g1_world_is_ibu1s_with_the_h2_cells_and_s1s_rows (__main__.World.test_t
 test_the_noise_free_closure_is_a_fixed_point_at_every_k (__main__.World.test_the_noise_free_closure_is_a_fixed_point_at_every_k) ... ok
 
 ----------------------------------------------------------------------
-Ran 38 tests in 117.197s
+Ran 40 tests in 160.205s
 
 OK
 exit=0

@@ -1,4 +1,4 @@
-suite ran=38 ok=True; rows=97; not-reached rows=64; not-reached rows executed from the run path=0; fixture-only=1
+suite ran=40 ok=True; rows=108; not-reached rows=74; not-reached rows executed from the run path=0; fixture-only=1
 not-run	docs/orchestration/state/next-preparation-20261009/d-id/did.py:68	sha256	not reached from REF-G1's run path under A1 (in sha256) -> n
 not-run	docs/orchestration/state/next-preparation-20261009/d-id/did.py:513	load_events	not reached from REF-G1's run path under A1 (in load_events)
 not-run	docs/orchestration/state/next-preparation-20261009/d-id/did.py:567	build_rows	not reached from REF-G1's run path under A1 (in build_rows) 
@@ -29,11 +29,11 @@ fixture-only	nd-unfolding/pv-ladder/pvl_lib.py:45	sha256_path	not reached from R
 not-run	nd-unfolding/pv-ladder/pvl_lib.py:52	load_json	not reached from REF-G1's run path under A1 (in load_json) -
 ran	nd-unfolding/ref_g1/ref_g1_read.py:47	load	the run's own products in place, and staged copies (D_N, the
 ran	nd-unfolding/ref_g1/ref_g1_read.py:69	e_cells	an (e) product's staged copy (D8, fixed)
-ran	nd-unfolding/ref_g1/ref_g1_read.py:282	read	the bars file (beside the readout, an allowed root) and repo
-ran	nd-unfolding/ref_g1/ref_g1_read.py:383	reading_r2	the run's own closure product in place; the (e) closure's st
-ran	nd-unfolding/ref_g1/ref_g1_read.py:425	g_cells	s1_assembly.npz's staged copy (D8, fixed)
-ran	nd-unfolding/ref_g1/ref_g1_read.py:435	g_pair	repo: the listing; (e) digests from the staged copies (D8, f
-ran	nd-unfolding/ref_g1/ref_g1_read.py:482	main	repo: config.json
+ran	nd-unfolding/ref_g1/ref_g1_read.py:284	read	the bars file (beside the readout, an allowed root) and repo
+ran	nd-unfolding/ref_g1/ref_g1_read.py:387	reading_r2	the run's own closure product in place; the (e) closure's st
+ran	nd-unfolding/ref_g1/ref_g1_read.py:429	g_cells	s1_assembly.npz's staged copy (D8, fixed)
+ran	nd-unfolding/ref_g1/ref_g1_read.py:439	g_pair	repo: the listing; (e) digests from the staged copies (D8, f
+ran	nd-unfolding/ref_g1/ref_g1_read.py:488	main	repo: config.json
 ran	nd-unfolding/ref_g1/ref_g1.py:84	open_noatime	O_NOATIME open; EPERM raised, never retried plain
 ran	nd-unfolding/ref_g1/ref_g1.py:91	copy_noatime	the O_NOATIME source read and the copy's write ('xb'); the c
 not-run	nd-unfolding/ref_g1/ref_g1.py:157	tfile_guard	the TFile guard: any mode outside the allowed roots refused
@@ -42,13 +42,14 @@ ran	nd-unfolding/ref_g1/ref_g1.py:164	tfile_guard	the TFile guard: any mode outs
 ran	nd-unfolding/ref_g1/ref_g1.py:170	guarded	the TFile guard handing an admitted open (under the allowed 
 ran	nd-unfolding/ref_g1/ref_g1.py:171	tfile_guard	the TFile guard: any mode outside the allowed roots refused
 not-run	nd-unfolding/ref_g1/ref_g1.py:177	read_guards	docstring, no read
-ran	nd-unfolding/ref_g1/ref_g1.py:201	__init__	repo: IBU-1's config (Lib)
-ran	nd-unfolding/ref_g1/ref_g1.py:293	load_ratio	the ratio's staged copy (D6, fixed)
-ran	nd-unfolding/ref_g1/ref_g1.py:308	universes	repo: the committed preconditions listing
-ran	nd-unfolding/ref_g1/ref_g1.py:332	bank_cv	the bank cv.npz's staged copy (D1, fixed)
-ran	nd-unfolding/ref_g1/ref_g1.py:483	run_unit	run output: the unit's own done-marker and product (own prod
-not-run	nd-unfolding/ref_g1/ref_g1.py:519	main	repo: config.json
-ran	nd-unfolding/ref_g1/ref_g1.py:561	run_units	repo: the listing and IBU-1's contract; of_inputs_5d and bkg
+ran	nd-unfolding/ref_g1/ref_g1.py:190	read_guards	docstring, no read
+ran	nd-unfolding/ref_g1/ref_g1.py:211	__init__	repo: IBU-1's config (Lib)
+ran	nd-unfolding/ref_g1/ref_g1.py:303	load_ratio	the ratio's staged copy (D6, fixed)
+ran	nd-unfolding/ref_g1/ref_g1.py:318	universes	repo: the committed preconditions listing
+ran	nd-unfolding/ref_g1/ref_g1.py:342	bank_cv	the bank cv.npz's staged copy (D1, fixed)
+ran	nd-unfolding/ref_g1/ref_g1.py:501	run_unit	run output: the unit's own done-marker and product (own prod
+not-run	nd-unfolding/ref_g1/ref_g1.py:537	main	repo: config.json
+ran	nd-unfolding/ref_g1/ref_g1.py:579	run_units	repo: the listing and IBU-1's contract; of_inputs_5d and bkg
 ran	nd-unfolding/s1_assemble.py:70	sha256	plain read via require_sha, reached only on the constraint's
 not-run	nd-unfolding/s1_assemble.py:85	load_manifest	not reached from REF-G1's run path under A1 (in load_manifes
 not-run	nd-unfolding/s1_assemble.py:100	xs	not reached from REF-G1's run path under A1 (in xs) -> no ch
@@ -96,3 +97,13 @@ not-run	nd-unfolding/s5p_universe.py:195	main	not reached from REF-G1's run path
 not-run	nd-unfolding/flux_universe.py:115	read_flux_universe_table	the flux-universe file's staged copy, under the TFile guard 
 not-run	nd-unfolding/flux_universe.py:133	read_flux_universe_table	the flux-universe file's staged copy, under the TFile guard 
 not-run	nd-unfolding/flux_universe.py:261	load_banked_flux_ratio_table	not reached from REF-G1's run path under A1 (in load_banked_
+not-run	2d-unfolding/unfold_2d_omnifold_unbinned.py:130	load_flux_bins	not reached from REF-G1's run path under A1 (in load_flux_bi
+not-run	2d-unfolding/unfold_2d_omnifold_unbinned.py:163	load_flux_universe_bins	not reached from REF-G1's run path under A1 (in load_flux_un
+not-run	2d-unfolding/unfold_2d_omnifold_unbinned.py:1317	file_sha256	not reached from REF-G1's run path under A1 (in file_sha256)
+not-run	2d-unfolding/unfold_2d_omnifold_unbinned.py:1642	main	not reached from REF-G1's run path under A1 (in main) -> no 
+not-run	2d-unfolding/unfold_2d_omnifold_unbinned.py:2349	main	not reached from REF-G1's run path under A1 (in main) -> no 
+not-run	nd-unfolding/unfold_nd_omnifold_unbinned.py:768	main	not reached from REF-G1's run path under A1 (in main) -> no 
+not-run	nd-unfolding/unfold_nd_omnifold_unbinned.py:855	main	not reached from REF-G1's run path under A1 (in main) -> no 
+not-run	nd-unfolding/unfold_nd_omnifold_unbinned.py:1098	main	not reached from REF-G1's run path under A1 (in main) -> no 
+not-run	nd-unfolding/seed_offset_policy.py:427	derive_seed_literal_sites	not reached from REF-G1's run path under A1 (in derive_seed_
+not-run	nd-unfolding/seed_offset_policy.py:568	member_axis_code_basis	not reached from REF-G1's run path under A1 (in member_axis_

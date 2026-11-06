@@ -21,3 +21,8 @@ nd-unfolding/s5p_universe.py
 nd-unfolding/uq_math.py
 nd-unfolding/xsec_nd.py
 nd-unfolding/flux_universe.py
+2d-unfolding/unfold_2d_omnifold_unbinned.py
+nd-unfolding/unfold_nd_omnifold_unbinned.py
+nd-unfolding/seed_offset_policy.py
+nd-unfolding/s5e_geometry.py
+nd-unfolding/s5p_converge.py

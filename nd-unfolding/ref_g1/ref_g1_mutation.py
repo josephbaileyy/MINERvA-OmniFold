@@ -21,7 +21,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TEST = HERE / "test_ref_g1.py"
 D, R = "ref_g1.py", "ref_g1_read.py"
-EXPECTED_TESTS = 38  # a run that stops early exits 0 with fewer: refuse it
+EXPECTED_TESTS = 40  # a run that stops early exits 0 with fewer: refuse it
 NULL_CALL = 't = null_t(c_stat, c_flux, wflux, c_fixed, n_rep, b["draws"], b["seed"], b["batch"], rd["norm_fraction"])'
 MUTATIONS = [
     # §7's required mutants
@@ -127,9 +127,12 @@ MUTATIONS = [
      "Reads.test_the_reader_stages_its_declared_set_and_the_digest_is_unchanged"),
     ("the gibu1 product's pin unchecked", R, '    if staged.sha[own["path"]] != own["sha256"]:', "    if False:",
      "Controls.test_g_ibu1_fires_on_either_variant_and_on_the_pin"),
+    ("a ROOT import admitted without the TFile guard", D,
+     '        if not root and not root_before and "ROOT" in sys.modules:', "        if False:",
+     "Reads.test_a_block_without_the_tfile_guard_refuses_a_root_import"),
     ("the read without the gibu1 product pinned", R,
-     '    if not (cfg["gibu1_product"]["path"] and cfg["gibu1_product"]["sha256"]):', "    if False:",
-     "Reads.test_the_read_refuses_until_the_gibu1_product_is_pinned"),
+     '    if not (a.gibu1_product and a.gibu1_sha256):', "    if False:",
+     "Reads.test_the_read_refuses_until_the_gibu1_product_is_given"),
 ]
 # Equivalent mutants: each runs once against the whole suite and must survive, so the label is measured, not only
 # declared (REF-G1 §7; the director, 2026-11-05). A kill refutes its proof.

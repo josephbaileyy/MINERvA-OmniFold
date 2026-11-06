@@ -61,7 +61,6 @@
   "path": "/pscratch/sd/j/josephrb/ibu1-20261022/run/products/D_N.npz",
   "sha256": "a160dbea95006f552f3f724302d30c0da852bf7747907268e712a2251ccf593b"
  },
- "gibu1_product": {"path": null, "sha256": null, "note": "the gibu1 re-run's product (REF-G1-ADDENDUM-A1.md section 1), pinned from its done-marker before the read; the reader refuses while null"},
  "gibu1_environment": {
   "interpreter": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
   "python_version": "3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]",

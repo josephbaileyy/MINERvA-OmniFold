@@ -45,11 +45,21 @@ relaxed after it fails.
   2 (`os.sched_getaffinity`), **for the gibu1 unit only**. It fails closed as before (rc 4), and the unit records what
   it saw. A test fires on each (a wrong thread value, a wrong CPU count) and is silent on the match; each guard has a
   REQUIRED mutant.
+- The unit's environment record also carries `threadpoolctl.threadpool_info()` where it can be imported (the pools
+  actually loaded, not only the variables asked for) and `root_loaded`. The gibu1 unit runs with no ROOT library
+  loaded: the TFile guard is installed only for a unit set with a Flux universe, and otherwise the run fails if
+  anything imports ROOT (§2.3). So a G-IBU1 STOP cannot come from a ROOT load (coverage-5b-audit's L2 and L3 on
+  #806).
 - The gibu1 unit re-runs with `srun -c 2` or `taskset` on two cores, at those three values, into a **new** directory.
   The batch's directory and its `SHA256SUMS` `6a4c1929…` are not touched.
 - **The other 232 units stay as they ran.** Their products are bound by `SHA256SUMS` `6a4c1929…`. They do not re-run.
-- The reader's G-IBU1 reads the re-run's product by a new pin, `config.json` `gibu1_product` {path, sha256}, recorded
-  from the re-run's done-marker before the read. It no longer reads `<run>/gibu1.npz`.
+- **The re-run's product is given to the read, not put in `config.json`** (the director's ruling on coverage-5b-audit's
+  B1 on #806, option (a)). `ref_g1_read.py read` takes `--gibu1-product PATH --gibu1-sha256 SHA`; the sha comes from
+  the re-run's done-marker, recorded in connect 1's receipt and committed with `bars.json`. G-IBU1 checks the
+  product against it on its staged copy, and no longer reads `<run>/gibu1.npz`. The read refuses without both
+  arguments, and the readout and `STOP.json` record them. `config.json` stays exactly as the bars recorded it: the
+  bars pin `config_sha256`, and a pin merged into `config.json` between the bars and the read would make the read
+  refuse (a test runs bars, then the pin's merge, then the read, and checks that the changed-config form refuses).
 
 **If gibu1 is still not bitwise at IBU-1's threads**, that is a STOP to the director. A tolerance would be a separate
 decision with its post hoc label.
@@ -106,15 +116,18 @@ are read in place, as the director ruled for #787's reader.
 
 ### 2.3 The runtime guard
 
-`read_guards(protected, allowed)` is active for each unit's whole run and for the reader's `bars` and `read`.
+`read_guards(protected, allowed, root)` is active for each unit's whole run and for the reader's `bars` and `read`.
 - **An audit hook on Python opens** (`sys.addaudithook`, event `open`, whose arguments carry the open's flags). Any open
   for reading of a path under `/pscratch` or `/global/cfs` that is outside the allowed roots and lacks O_NOATIME raises
   `GateFailure`. The allowed roots are the checkout, the run's output directory, the stage directory and the read
   directory. `np.load`, `open`, `Path.read_text`, `read_bytes`, `mmap` (through its `open`) and `sha256` all pass
   through it.
-- **A TFile guard.** `ROOT.TFile.Open` in any mode is refused outside the allowed roots (REF-G1 writes no ROOT file,
+- **A TFile guard, only where ROOT is needed.** With `root` (a unit set with a Flux universe), `ROOT.TFile.Open` in any
+  mode is refused outside the allowed roots (REF-G1 writes no ROOT file,
   and `UPDATE` or `READ_WITHOUT_GLOBALREGISTRATION` also read; coverage-5b-audit's note on #787). The audit hook does
-  not see C-level opens. Where ROOT cannot be imported no TFile open can happen, and nothing is patched.
+  not see C-level opens. Where ROOT cannot be imported no TFile open can happen, and nothing is patched. Without
+  `root` (the gibu1 unit and the reader), ROOT is not imported for the guard, and the block fails if anything imports
+  it, since a ROOT open would then have been unguarded.
 - **The residual, named.** A C extension or ctypes call that opens a file below both layers is not seen. A grep of the
   23 closure files for `ctypes`, `cffi`, `uproot`, `os.open(`, `io.open`, `codecs.open`, `gzip.open`, `h5py` and
   `tables.open` finds one hit, A1's own `os.open` with O_NOATIME (`open_noatime`). numpy opens files through Python's
@@ -134,20 +147,27 @@ are read in place, as the director ruled for #787's reader.
 
 ### 2.4 The closure grep
 
-The grep covers REF-G1's import closure (22 repository modules and `flux_universe.py`) for `open(`, `np.load`,
-`read_text`, `read_bytes`, `mmap`, `TFile` and `uproot.open`.
-- **At M, 89 hits.** 15 read a declared input (D1-D8 above); 10 read the repository or REF-G1's own outputs; 64 sit
-  in functions REF-G1's run path does not call (CLI mains, other campaigns' loaders).
-- **At A1's revision, 97 hits** (the eight new ones are A1's own O_NOATIME opens, the guards and their docstrings).
-  Every hit, with its function and disposition, is in `fd/receipts-ref-g1/addendum-a1/closure-reads.tsv`:
+The grep covers REF-G1's import closure for `open(`, `np.load`, `read_text`, `read_bytes`, `mmap`, `TFile` and
+`uproot.open`.
+- **The closure, from the code** (`closure-files.txt`): 28 files, every repository module reached by an `import`
+  anywhere in `ref_g1.py`, `ref_g1_read.py` and `did.py` (which `ibu1.py:80-81` loads by path), transitively,
+  stdlib names excluded. That includes five modules imported only inside functions REF-G1 does not call
+  (`unfold_2d_omnifold_unbinned`, `unfold_nd_omnifold_unbinned`, `seed_offset_policy`, `s5e_geometry`,
+  `s5p_converge`; coverage-5b-audit's L1 on #806). Two names are outside it: `did.py`'s path-loaded GBDT
+  `comparator.py` (`load_comparator`, not reached) and `omnifold`, ambiguous between two checkouts and imported only
+  inside the two `unfold_*` mains.
+- **At M, 99 hits.** 15 read a declared input (D1-D8 above); 10 read the repository or REF-G1's own outputs; 74 sit
+  in functions REF-G1's run path does not call.
+- **At A1's revision, 108 hits.** Every hit, with its function and disposition, is in
+  `fd/receipts-ref-g1/addendum-a1/closure-reads.tsv`:
   - 14 are declared reads, now each through a staged copy;
   - 2 are plain digest helpers (`ibu1.sha256`, `s1_assemble.sha256`), reached only on staged copies, repository files
     and REF-G1's own outputs;
-  - 8 are the read-discipline code itself; 9 read the repository or REF-G1's outputs, write, or are docstrings;
-  - 64 are not called from REF-G1's run path.
+  - 18 are the read-discipline code itself, read the repository or REF-G1's outputs, write, or are docstrings;
+  - 74 are not called from REF-G1's run path.
 - **The "not called" class is checked at run time** (`closure-trace.txt`). The suite runs under `sys.monitoring` LINE
   events, and a hit counts as reached only when a REF-G1 production frame (`ref_g1.py`, `ref_g1_read.py`) is on the
-  stack. Result: 0 of the 64 reached from the run path. One runs from the test file's own fixture only
+  stack. Result: 0 of the 74 reached from the run path. One runs from the test file's own fixture only
   (`pvl_lib.sha256_path`, hashing a ratio the fixture writes). The check has power: relabelling two run-path hits
   (`ibu1.py:55`, `s5p_universe.py:94`) as "not reached" makes it fail on both (`closure-trace-control.txt`).
 - **The trace's limit:** it sees only what the suite's fixtures exercise. A function the fixtures never call is
@@ -157,7 +177,8 @@ The grep covers REF-G1's import closure (22 repository modules and `flux_univers
 
 - `bars.json` (`de12c674…`, on main) is valid only while its recorded `products_digest`, `reader_sha256` and
   `config_sha256` match (`ref_g1_read.py:275-284`). A1 changes the reader and the config, so **the bars are re-made
-  by the new reader** (connect 1), merged, and only then read (connect 2). The old bars are not hand-carried.
+  by the new reader** (connect 1), merged with the gibu1 pin, and only then read (connect 2). `config.json` does not
+  change between them (§1). The old bars are not hand-carried.
 - The products are the same batch, so the new `products_digest` should equal the old one. A difference is reported,
   not repaired.
 - The read writes into a new directory, so its `inputs/` is new and the old `STOP.json` stays as it was.
@@ -186,8 +207,9 @@ The grep covers REF-G1's import closure (22 repository modules and `flux_univers
    - the `stat` of `ref_g1_read.py reads`' set;
    - the gibu1 re-run at 1/1/1 threads on 2 CPUs into a new directory;
    - the bars, by the new reader, into a new read directory.
-3. The merge of the new `bars.json` and the `gibu1_product` pin.
-4. Connect 2: the read, in that read directory.
+3. The merge of the new `bars.json` and connect 1's receipt, which records the gibu1 product's path and sha256 from
+   its done-marker. `config.json` is not changed.
+4. Connect 2: the read, in that read directory, with `--gibu1-product` and `--gibu1-sha256` from that receipt.
 
 A STOP of any control comes to the director unrepaired (`REF-G1-BINDING-2.md` ruling 6).
 

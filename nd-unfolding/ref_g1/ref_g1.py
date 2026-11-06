@@ -172,19 +172,29 @@ def tfile_guard(allowed):
 
 
 @contextlib.contextmanager
-def read_guards(protected, allowed):
+def read_guards(protected, allowed, root: bool):
     """For the block's whole run: Python reads under ``protected`` need O_NOATIME unless under ``allowed`` (the audit
-    hook), and ROOT.TFile.Open reads only under ``allowed`` (tfile_guard)."""
+    hook). With ``root``, ROOT.TFile.Open opens only under ``allowed`` (tfile_guard). Without it, ROOT is not imported
+    for the guard, and the block fails if anything imports it: a ROOT open would then have been unguarded (and the
+    gibu1 unit runs with no ROOT library loaded; coverage-5b-audit's L2 on #806)."""
     if not _AUDIT_INSTALLED:
         sys.addaudithook(_audit)
         _AUDIT_INSTALLED.append(True)
     _READS.update(active=True, protected=tuple(Path(r).resolve() for r in protected),
                   allowed=tuple(Path(r).resolve() for r in allowed))
+    root_before = "ROOT" in sys.modules
     try:
-        with tfile_guard(allowed):
+        with tfile_guard(allowed) if root else contextlib.nullcontext():
             yield
+        if not root and not root_before and "ROOT" in sys.modules:
+            raise GateFailure("ROOT was imported inside a block run without the TFile guard")
     finally:
         _READS.update(active=False, protected=(), allowed=())
+
+
+def needs_root(units: list[tuple]) -> bool:
+    """Only a Flux universe opens a ROOT file (flux_universe.read_flux_universe_table, the flux-universe file)."""
+    return any(u[0] == "universe" and u[1] == "Flux" for u in units)
 
 
 class MembershipMoved(RuntimeError):
@@ -416,9 +426,17 @@ def cpu_count() -> int:
 
 
 def environment() -> dict:
+    """What the unit ran in; threadpoolctl's view of the loaded BLAS/OpenMP pools is recorded where it can be imported
+    (coverage-5b-audit's L3 on #806: the environment variables are what was asked for, the pools what was used)."""
     import scipy
+    try:
+        import threadpoolctl
+        pools = threadpoolctl.threadpool_info()
+    except ImportError:
+        pools = "threadpoolctl not importable"
     return {"interpreter": sys.executable, "python_version": sys.version, "numpy": np.__version__,
-            "scipy": scipy.__version__, "thread_env": {k: os.environ.get(k) for k in THREAD_VARS}, "cpus": cpu_count()}
+            "scipy": scipy.__version__, "thread_env": {k: os.environ.get(k) for k in THREAD_VARS}, "cpus": cpu_count(),
+            "threadpools": pools, "root_loaded": "ROOT" in sys.modules}
 
 
 def gibu1_environment(cfg: dict) -> tuple[bool, dict]:
@@ -528,7 +546,7 @@ def main(argv=None) -> int:
     a.out.mkdir(parents=True, exist_ok=True)
     tmp = Path(tempfile.mkdtemp(prefix="ref-g1-stage-"))  # under $TMPDIR; removed at exit
     try:
-        with read_guards(PROTECTED, (REPO, a.out, tmp)):
+        with read_guards(PROTECTED, (REPO, a.out, tmp), needs_root(units)):
             return run_units(cfg, units, a.out, Staged(tmp / "in"))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)

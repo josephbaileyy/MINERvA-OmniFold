@@ -29,11 +29,11 @@ nd-unfolding/pv-ladder/pvl_lib.py	45	sha256_path	with open(path, "rb") as f:	not
 nd-unfolding/pv-ladder/pvl_lib.py	52	load_json	with open(path) as f:	not reached from REF-G1's run path under A1 (in load_json) -> no change
 nd-unfolding/ref_g1/ref_g1_read.py	47	load	with np.load(path, allow_pickle=False) as z:	the run's own products in place, and staged copies (D_N, the gibu1 product)
 nd-unfolding/ref_g1/ref_g1_read.py	69	e_cells	with np.load(path, allow_pickle=False) as z:	an (e) product's staged copy (D8, fixed)
-nd-unfolding/ref_g1/ref_g1_read.py	282	read	bars_rec = json.loads(bars_path.read_text())	the bars file (beside the readout, an allowed root) and repo digests
-nd-unfolding/ref_g1/ref_g1_read.py	383	reading_r2	with np.load(staged(cfg["e_products"]["closure"].format(product=product)), allow_pickle=False) as z:	the run's own closure product in place; the (e) closure's staged copy (D8, fixed)
-nd-unfolding/ref_g1/ref_g1_read.py	425	g_cells	with np.load(p, allow_pickle=False) as z:	s1_assembly.npz's staged copy (D8, fixed)
-nd-unfolding/ref_g1/ref_g1_read.py	435	g_pair	listing = json.loads((G.REPO / cfg["listing"]["path"]).read_text())	repo: the listing; (e) digests from the staged copies (D8, fixed)
-nd-unfolding/ref_g1/ref_g1_read.py	482	main	cfg = json.loads(G.CONFIG.read_text())	repo: config.json
+nd-unfolding/ref_g1/ref_g1_read.py	284	read	bars_rec = json.loads(bars_path.read_text())	the bars file (beside the readout, an allowed root) and repo digests
+nd-unfolding/ref_g1/ref_g1_read.py	387	reading_r2	with np.load(staged(cfg["e_products"]["closure"].format(product=product)), allow_pickle=False) as z:	the run's own closure product in place; the (e) closure's staged copy (D8, fixed)
+nd-unfolding/ref_g1/ref_g1_read.py	429	g_cells	with np.load(p, allow_pickle=False) as z:	s1_assembly.npz's staged copy (D8, fixed)
+nd-unfolding/ref_g1/ref_g1_read.py	439	g_pair	listing = json.loads((G.REPO / cfg["listing"]["path"]).read_text())	repo: the listing; (e) digests from the staged copies (D8, fixed)
+nd-unfolding/ref_g1/ref_g1_read.py	488	main	cfg = json.loads(G.CONFIG.read_text())	repo: config.json
 nd-unfolding/ref_g1/ref_g1.py	84	open_noatime	return os.fdopen(os.open(str(path), os.O_RDONLY | noatime_flag()), "rb")	O_NOATIME open; EPERM raised, never retried plain
 nd-unfolding/ref_g1/ref_g1.py	91	copy_noatime	with open_noatime(src) as fh, open(dest, "xb") as fo:	the O_NOATIME source read and the copy's write ('xb'); the copy re-hashed (allowed root)
 nd-unfolding/ref_g1/ref_g1.py	157	tfile_guard	"""A patch of ROOT.TFile.Open refusing an open in any mode outside the ``allowed`` roots (ROOT cannot take	the TFile guard: any mode outside the allowed roots refused
@@ -41,14 +41,15 @@ nd-unfolding/ref_g1/ref_g1.py	159	tfile_guard	also read). Where ROOT cannot be i
 nd-unfolding/ref_g1/ref_g1.py	164	tfile_guard	real_open = ROOT.TFile.Open	the TFile guard: any mode outside the allowed roots refused
 nd-unfolding/ref_g1/ref_g1.py	170	guarded	return real_open(path, mode, *a, **k)	the TFile guard handing an admitted open (under the allowed roots) to ROOT
 nd-unfolding/ref_g1/ref_g1.py	171	tfile_guard	return mock.patch.object(ROOT.TFile, "Open", staticmethod(guarded))	the TFile guard: any mode outside the allowed roots refused
-nd-unfolding/ref_g1/ref_g1.py	177	read_guards	hook), and ROOT.TFile.Open reads only under ``allowed`` (tfile_guard)."""	docstring, no read
-nd-unfolding/ref_g1/ref_g1.py	201	__init__	self.ibu1_cfg = json.loads((REPO / cfg["ibu1_config"]).read_text())	repo: IBU-1's config (Lib)
-nd-unfolding/ref_g1/ref_g1.py	293	load_ratio	ratio = json.loads(p.read_text())	the ratio's staged copy (D6, fixed)
-nd-unfolding/ref_g1/ref_g1.py	308	universes	listing = json.loads((REPO / cfg["listing"]["path"]).read_text())	repo: the committed preconditions listing
-nd-unfolding/ref_g1/ref_g1.py	332	bank_cv	self._bank_cv = np.load(self.staged(Path(self.cfg["inputs"]["bank"]) / "cv.npz"), allow_pickle=True)	the bank cv.npz's staged copy (D1, fixed)
-nd-unfolding/ref_g1/ref_g1.py	483	run_unit	verdict = json.loads(marker.read_text()).get("verdict") if marker.exists() else None	run output: the unit's own done-marker and product (own products read in place)
-nd-unfolding/ref_g1/ref_g1.py	519	main	cfg = json.loads(CONFIG.read_text())	repo: config.json
-nd-unfolding/ref_g1/ref_g1.py	561	run_units	contract = json.loads((REPO / icfg["contract"]["path"]).read_text())	repo: the listing and IBU-1's contract; of_inputs_5d and bkg_dump as staged copies (D5, fixed)
+nd-unfolding/ref_g1/ref_g1.py	177	read_guards	hook). With ``root``, ROOT.TFile.Open opens only under ``allowed`` (tfile_guard). Without it, ROOT is not impo	docstring, no read
+nd-unfolding/ref_g1/ref_g1.py	190	read_guards	raise GateFailure("ROOT was imported inside a block run without the TFile guard")	docstring, no read
+nd-unfolding/ref_g1/ref_g1.py	211	__init__	self.ibu1_cfg = json.loads((REPO / cfg["ibu1_config"]).read_text())	repo: IBU-1's config (Lib)
+nd-unfolding/ref_g1/ref_g1.py	303	load_ratio	ratio = json.loads(p.read_text())	the ratio's staged copy (D6, fixed)
+nd-unfolding/ref_g1/ref_g1.py	318	universes	listing = json.loads((REPO / cfg["listing"]["path"]).read_text())	repo: the committed preconditions listing
+nd-unfolding/ref_g1/ref_g1.py	342	bank_cv	self._bank_cv = np.load(self.staged(Path(self.cfg["inputs"]["bank"]) / "cv.npz"), allow_pickle=True)	the bank cv.npz's staged copy (D1, fixed)
+nd-unfolding/ref_g1/ref_g1.py	501	run_unit	verdict = json.loads(marker.read_text()).get("verdict") if marker.exists() else None	run output: the unit's own done-marker and product (own products read in place)
+nd-unfolding/ref_g1/ref_g1.py	537	main	cfg = json.loads(CONFIG.read_text())	repo: config.json
+nd-unfolding/ref_g1/ref_g1.py	579	run_units	contract = json.loads((REPO / icfg["contract"]["path"]).read_text())	repo: the listing and IBU-1's contract; of_inputs_5d and bkg_dump as staged copies (D5, fixed)
 nd-unfolding/s1_assemble.py	70	sha256	with open(path, "rb") as fh:	plain read via require_sha, reached only on the constraint's staged copy and repo files
 nd-unfolding/s1_assemble.py	85	load_manifest	for line in path.read_text().splitlines():	not reached from REF-G1's run path under A1 (in load_manifest) -> no change
 nd-unfolding/s1_assemble.py	100	xs	return np.asarray(np.load(path, allow_pickle=False)["xsec_flat"], float)	not reached from REF-G1's run path under A1 (in xs) -> no change
@@ -96,3 +97,13 @@ nd-unfolding/s5p_universe.py	195	main	ratio, ratio_sha = (json.loads(Path(rf[0])
 nd-unfolding/flux_universe.py	115	read_flux_universe_table	with np.load(path) as z:	the flux-universe file's staged copy, under the TFile guard (D7, fixed)
 nd-unfolding/flux_universe.py	133	read_flux_universe_table	f = ROOT.TFile.Open(path, "READ")	the flux-universe file's staged copy, under the TFile guard (D7, fixed)
 nd-unfolding/flux_universe.py	261	load_banked_flux_ratio_table	return _validate_ratio_table(np.load(path), n_pt, n_flux, path)	not reached from REF-G1's run path under A1 (in load_banked_flux_ratio_table) -> no change
+2d-unfolding/unfold_2d_omnifold_unbinned.py	130	load_flux_bins	f_mc = ROOT.TFile.Open(mc_path, "READ")	not reached from REF-G1's run path under A1 (in load_flux_bins) -> no change
+2d-unfolding/unfold_2d_omnifold_unbinned.py	163	load_flux_universe_bins	f = ROOT.TFile.Open(path, "READ")	not reached from REF-G1's run path under A1 (in load_flux_universe_bins) -> no change
+2d-unfolding/unfold_2d_omnifold_unbinned.py	1317	file_sha256	with open(path, "rb") as fh:	not reached from REF-G1's run path under A1 (in file_sha256) -> no change
+2d-unfolding/unfold_2d_omnifold_unbinned.py	1642	main	f_in = ROOT.TFile.Open(args.omnifile, "READ")	not reached from REF-G1's run path under A1 (in main) -> no change
+2d-unfolding/unfold_2d_omnifold_unbinned.py	2349	main	f_out = ROOT.TFile.Open(args.out, "RECREATE")	not reached from REF-G1's run path under A1 (in main) -> no change
+nd-unfolding/unfold_nd_omnifold_unbinned.py	768	main	f_in = ROOT.TFile.Open(args.omnifile, "READ")	not reached from REF-G1's run path under A1 (in main) -> no change
+nd-unfolding/unfold_nd_omnifold_unbinned.py	855	main	f_pr = ROOT.TFile.Open(pr_fn)	not reached from REF-G1's run path under A1 (in main) -> no change
+nd-unfolding/unfold_nd_omnifold_unbinned.py	1098	main	f_out = ROOT.TFile.Open(args.out, "RECREATE"); f_out.cd()	not reached from REF-G1's run path under A1 (in main) -> no change
+nd-unfolding/seed_offset_policy.py	427	derive_seed_literal_sites	with open(full, encoding="utf-8", errors="replace") as fh:	not reached from REF-G1's run path under A1 (in derive_seed_literal_sites) -> no change
+nd-unfolding/seed_offset_policy.py	568	member_axis_code_basis	with open(full, "rb") as fh:	not reached from REF-G1's run path under A1 (in member_axis_code_basis) -> no change
