@@ -269,6 +269,8 @@ class Inputs:
         )
         self.keys_read: list[dict[str, str]] = []
         self.prediction: tuple[Path, str] | None = None
+        self.prediction_checks = 0
+        self.prediction_prefix = f"prediction-{time.time_ns()}"
         self.pins: dict[str, tuple[Path, str]] = {}
         self.copies: dict[tuple[Path, str], Path] = {}
 
@@ -353,17 +355,35 @@ class Inputs:
         assert self.prediction is not None
         path, expected = self.prediction
         require(
-            path.is_file() and digest(path) == expected,
+            path.is_file(),
             "PREDICTION_SHA",
-            "prediction record digest differs",
+            "prediction record is missing",
         )
+        if path.resolve() not in self.roots:
+            self.roots.append(path.resolve())
+        self.prediction_checks += 1
+        try:
+            with read_guards(self.roots):
+                committed_copy = stage_copy(
+                    path,
+                    self.staged
+                    / f"{self.prediction_prefix}-{self.prediction_checks:05d}.json",
+                    expected,
+                )
+        except Refused as error:
+            if error.guard in {"INPUT_DIGEST", "STAGED_DIGEST"}:
+                raise Refused(
+                    "PREDICTION_SHA", "prediction record digest differs"
+                ) from error
+            raise
+        self.hashes[str(path.resolve())] = expected
         local = self.run / "d2-predict.json"
         require(
             local.is_file() and digest(local) == expected,
             "PREDICTION_SHA",
             "committed prediction differs from this run",
         )
-        record = json.loads(local.read_text())
+        record = json.loads(committed_copy.read_text())
         require(
             record.get("status") == "PASS"
             and record.get("step") == "d2-predict"

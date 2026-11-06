@@ -312,6 +312,10 @@ def test_prediction_required_committed_and_exact(fixture: Fixture) -> None:
     prediction.write_text(prediction.read_text() + " ")
     with pytest.raises(R.Refused, match="PREDICTION_SHA"):
         inputs.key("lat_1A.npz", "measured")
+    another_command = fixture.inputs()
+    another_command.prediction = prediction, sha
+    with pytest.raises(R.Refused, match="PREDICTION_SHA"):
+        another_command.key("lat_1A.npz", "measured")
     shutil.copyfile(fixture.run / "d2-predict.json", prediction)
     uncommitted = fixture.prediction_repo / "not-committed.json"
     shutil.copyfile(prediction, uncommitted)
@@ -325,6 +329,15 @@ def test_key_allowlist_and_object_array(fixture: Fixture) -> None:
     assert inputs.key("lat_1A.npz", "axes").dtype == object
     with pytest.raises(R.Refused, match="KEY_ALLOWLIST"):
         inputs.key("lat_1A.npz", "measured_weights")
+
+
+def test_committed_prediction_is_staged_before_read(fixture: Fixture) -> None:
+    path, sha = fixture.prepare_prediction()
+    inputs = fixture.inputs()
+    inputs.prediction = path, sha
+    with R.read_guards([path]):
+        inputs.require_prediction()
+    assert len(list(inputs.staged.glob("prediction-*.json"))) == 1
 
 
 @pytest.mark.parametrize(
