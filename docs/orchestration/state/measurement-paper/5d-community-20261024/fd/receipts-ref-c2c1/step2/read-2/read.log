@@ -1,0 +1,46 @@
+node login04 nproc=244 loadavg 5.61 4.86 4.91
+2026-11-06T15:03:17Z
+read script sha256 d37f6682d8124ba292efd6a17906e53ed0a87f332e60a42f171b42c92ec42b95
+cells.root copied from /pscratch/sd/j/josephrb/ref-c2c1-20261106/read by O_NOATIME: sha256 f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743 (required f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743)
+fence, recorded: squeue -u josephrb at 2026-11-06T15:03:17Z:
+  60895578|cov2d-G18_Uc|RUNNING|4:30:16|8:54:00
+  60895585|cov2d-G18_Ud|RUNNING|4:30:16|8:54:00
+  60895562|cov2d-G18_Ua|RUNNING|5:19:08|8:54:00
+  60895566|cov2d-G18_Ub|RUNNING|5:19:08|8:54:00
+  60895985|cov2d-AR23_Ba|RUNNING|3:04:40|8:06:00
+  60895990|cov2d-AR23_Bb|RUNNING|3:04:40|8:06:00
+  60895956|cov2d-G18_Ta|RUNNING|3:31:42|7:38:00
+  60895973|cov2d-G18_Tb|RUNNING|3:31:42|7:38:00
+  60895982|cov2d-G18_Tc|RUNNING|3:17:49|7:38:00
+  60895597|cov2d-AR23_Ud|RUNNING|4:03:53|8:54:00
+  60896048|cov2d-AR23_Ta|RUNNING|2:53:35|7:38:00
+  60895992|cov2d-AR23_Bc|RUNNING|2:54:37|8:06:00
+  60895594|cov2d-AR23_Ua|RUNNING|4:15:26|8:54:00
+  60895595|cov2d-AR23_Ub|RUNNING|4:15:26|8:54:00
+  60895951|cov2d-G18_Bb|RUNNING|3:47:23|8:06:00
+  60895953|cov2d-G18_Bc|RUNNING|3:47:23|8:06:00
+  60895596|cov2d-AR23_Uc|RUNNING|4:05:31|8:54:00
+  60895949|cov2d-G18_Ba|RUNNING|3:55:45|8:06:00
+gate: CENTRALS-DONE {"job": "60889566", "rcs": "0 0 0", "pass_markers": 3, "porcelain_after": 0}
+origin/main 2968b58ac9c9031a13dd5acb98e661f28964423d
+gate: REPLICAS-TIMEOUT-j0 origin/main 33e194d4a5a1cc65327de83c5e3e57f1f0a72acd6a4b2da67f119b160f6bfcbb; pscratch 33e194d4a5a1cc65327de83c5e3e57f1f0a72acd6a4b2da67f119b160f6bfcbb
+gate: REPLICAS-TIMEOUT-j1 origin/main d953475831e657c34d507e1ba894f512ef5aef0c199bd8e73cdb036fc7a99fec; pscratch d953475831e657c34d507e1ba894f512ef5aef0c199bd8e73cdb036fc7a99fec
+gate: REPLICAS-TIMEOUT-j2 origin/main 3e5c2557f5d6824cbd3dcfe466528a13fc30485c4531d07d3efc868a8eb7b8b6; pscratch 3e5c2557f5d6824cbd3dcfe466528a13fc30485c4531d07d3efc868a8eb7b8b6
+gate: REPLICAS-TIMEOUT-j3 origin/main 809fc7715ecb22ea366b2555c14ec9ac61609a3735082ff315fe1c4c0f119424; pscratch 809fc7715ecb22ea366b2555c14ec9ac61609a3735082ff315fe1c4c0f119424
+gate: REPLICAS-DONE-j4 origin/main 5680f1f9d0e37602e5627fbb6eefd014ce18a9b5e96806d8e3ecf352e4b918e5; pscratch 5680f1f9d0e37602e5627fbb6eefd014ce18a9b5e96806d8e3ecf352e4b918e5
+gate: records failing their fields []; unit sets [73, 77, 77, 76, 47], disjoint True, union 350, equal to the 350 of lanes.tsv True; without a PASS marker []
+cells: origin/main 2968b58ac9c9031a13dd5acb98e661f28964423d f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743; read directory f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743; expected f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743
+HEAD af70e9c4685acdf2d64e30d812942bea1e7ccb0c; porcelain --ignored lines before: 0
+bound blobs: 8 checked, 0 mismatches
+COV2D inputs stat'd before: 303; not owned by josephrb: 0
+interpreter /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3: 3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]; threads 4; nice 19; ionice idle
+read rc=0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:19.21
+	Maximum resident set size (kbytes): 391168
+readout.json sha256 0ee21301744cf04df4e1ebf7224692a00fba5188532b31af9d596be8ce69cf5a
+staged into inputs/: 302 files
+reader stdout (the readings; not echoed here) is /pscratch/sd/j/josephrb/ref-c2c1-20261106/read-2/read.stdout
+COV2D inputs: no atime moved
+porcelain --ignored lines after: 0
+ref-c2c1 read rc=0
+2026-11-06T15:04:20Z
