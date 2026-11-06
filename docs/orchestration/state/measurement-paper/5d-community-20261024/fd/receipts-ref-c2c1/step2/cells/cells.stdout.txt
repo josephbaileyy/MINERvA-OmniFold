@@ -1,0 +1,2 @@
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+{"cells": 205, "sha256": "f06e4a26efc3085eac71d80fce5f806f17dc04cb89bfcc51ee2c939332aed743"}
