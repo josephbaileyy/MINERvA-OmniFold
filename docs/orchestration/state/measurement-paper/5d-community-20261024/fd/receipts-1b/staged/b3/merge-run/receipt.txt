@@ -1,0 +1,11 @@
+# 1B binding 3, stage 2: c2check-merge (A2.1 §11), a login step, 0 node-h.
+# connect-merge.sh sha256 abe3281734b4ad5598474ddc662768bfdf5e3e643d456661148a367b416480d3 (committed 09e2e47b),
+#   piped from 73c60075 and compared on the login node (login33) in the same ssh as the launch, 2026-11-06T05:43:41Z.
+# squeue --me at launch: no cov2d-* job (the COV2D fence).
+# arguments: G18's part 0cdb50cf84f3c8b99a675508c65eca470c117c31e39b94259da8311f5c59dcf5 and AR23's part
+#   7fe0edfdc9937452e6400939c7bd0a2ecba6dddc280e632e035d02ce977fa243, from stage 1's committed receipts (73c60075).
+# deploy a47cfb4b, clean; bound blobs OK; under fd_1b_noatime_guard --declared ("installed over 10 roots", merge.time).
+# rc 0; C2-GATE-MERGED verdict=PASS reads={"ar23": "option (1)", "g18": "option (1)"}; 0.64 s elapsed.
+# gate.json sha256 6a832bf0692864aefb5f7e97e22f3c8025d87679561463358550dc12b090b062 (the log's own sha256sum line).
+# atime-pre.tsv (05:43:41Z) / atime-post.tsv (05:44:43Z): 1147 declared files by `find -printf %A@`, 0 moved.
+# fetched through O_NOATIME.

@@ -1,0 +1,16 @@
+host=login33 start=2026-11-06T05:43:41Z pid=2146417
+deploy porcelain_lines=0 head=a47cfb4b9410cbf0cc8e34bee98e73c3e110f171
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_noatime_guard.py: OK
+sourcing /pscratch/sd/j/josephrb/fd-1b-b3-merge/deploy/setup_salloc_env.sh sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+c2check-merge rc=0
+C2-GATE-MERGED verdict=PASS reads={"ar23": "option (1)", "g18": "option (1)"}
+fd_1b_noatime_guard: installed over 10 roots; running /pscratch/sd/j/josephrb/fd-1b-b3-merge/deploy/nd-unfolding/fd_1b_c2.py
+	Command being timed: "nice -n 19 python3 -B /pscratch/sd/j/josephrb/fd-1b-b3-merge/deploy/nd-unfolding/fd_1b_noatime_guard.py --declared -- /pscratch/sd/j/josephrb/fd-1b-b3-merge/deploy/nd-unfolding/fd_1b_c2.py c2check-merge --part /pscratch/sd/j/josephrb/fd-1b-b3-c2check-g18/gate-g18.json --expect-part-sha256 0cdb50cf84f3c8b99a675508c65eca470c117c31e39b94259da8311f5c59dcf5 --part /pscratch/sd/j/josephrb/fd-1b-b3-c2check-ar23/gate-ar23.json --expect-part-sha256 7fe0edfdc9937452e6400939c7bd0a2ecba6dddc280e632e035d02ce977fa243 --out /pscratch/sd/j/josephrb/fd-1b-b3-merge/gate.json"
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.64
+	Maximum resident set size (kbytes): 34816
+	Exit status: 0
+6a832bf0692864aefb5f7e97e22f3c8025d87679561463358550dc12b090b062  /pscratch/sd/j/josephrb/fd-1b-b3-merge/gate.json
+bd1717e9a7caff1cd229059c571c67b0b18b02742f50d741b6ddee42700e75e9  /pscratch/sd/j/josephrb/fd-1b-b3-merge/merge.out
+end=2026-11-06T05:44:22Z
