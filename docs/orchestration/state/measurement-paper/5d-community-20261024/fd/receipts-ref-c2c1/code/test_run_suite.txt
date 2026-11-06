@@ -6,7 +6,7 @@ test_it_passes_only_a_complete_clean_run (__main__.Verdict.test_it_passes_only_a
 test_the_check_command_exits_by_the_verdict (__main__.Verdict.test_the_check_command_exits_by_the_verdict) ... ok
 
 ----------------------------------------------------------------------
-Ran 5 tests in 0.055s
+Ran 5 tests in 0.046s
 
 OK
 RUN PASS: 2 tests, none skipped, failed or errored; Ibu.test_roounfold_bayes_is_the_same_update ok

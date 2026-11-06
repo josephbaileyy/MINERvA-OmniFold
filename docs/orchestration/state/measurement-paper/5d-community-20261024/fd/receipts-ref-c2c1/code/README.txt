@@ -152,3 +152,24 @@ cluster suite at this head):
 - run_tests-dummy-lib.txt  run_tests.sh (EXPECT 29) with a dummy library: 29 ran, C-ROO "error", RUN FAIL.
 - files.sha256      identical before and after.
 - closure-reads.tsv   regenerated at this revision (42 hits: ref_c2c1.py gains the mode constant; its line numbers moved; the guard's row states the new rule).
+
+Revision 8 (the director's message of 2026-11-06: step two's three values, bound at the binding; code frozen):
+- config.json, data only, three values:
+  - replica_set.choice = "reuse" (C-DRAW PASS, cdraw/run/compare.log:8, #784): Q_R's S1_001..S1_300 at rank 75;
+  - inputs.staging.root = /pscratch/sd/j/josephrb/ref-c2c1-20261106/stage (the director's path; this lane cannot
+    check that it does not exist yet: step two's connect refuses if it does);
+  - inputs.roounfold_lib_sha256 = the full 0b34e1e39102b0dddc5923dad7f69e59c70cd6a2fcbcef07728b72cf2933fefd from
+    #779's preconditions/listing.json:4334 (17,319,792 bytes); the note beside it says so.
+- One test line (the director's go): Units.test_the_replica_set_is_bound_at_step_two sets
+  cfg["replica_set"]["choice"] = None before its unbound assertion, so it states its premise instead of reading it
+  from the committed config (which now carries "reuse"). The REQUIRED mutant "the replica set not bound" is still
+  killed by that test (harness.txt). ref_c2c1.py, ref_c2c1_read.py, ref_c2c1_mutation.py, run_suite.py,
+  test_run_suite.py and run_tests.sh are byte-identical to main 8b9cdb55 (files.sha256).
+- tests.txt 29 tests, OK (skipped=1: C-ROO); harness.txt MUTATION CHECK :: PASS (43 mutations); test_run_suite.txt
+  5 OK; run_tests-dummy-lib.txt 29 ran, C-ROO "error", RUN FAIL; files.sha256 identical before and after.
+
+Follow-up list (deferred under the director's freeze of 2026-11-06; changed only if a run STOPs):
+- F1 tfile_guard reads the mode positionally: a keyword option="RECREATE" is classified as READ, so it could write
+  under a readable root (coverage-5b-audit, #787 issuecomment-6673345560). No call site at this head uses a keyword.
+- F2 roounfold_lib_sha256 is not read by the code (ref_c2c1.py uses only the library's path); step two's connect
+  checks the digest, as attempts 1-3 did (refc2c1_tests_login.sh:74).
