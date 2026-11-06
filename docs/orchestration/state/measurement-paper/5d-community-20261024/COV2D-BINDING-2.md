@@ -63,3 +63,66 @@
 8. **Unchanged:** binding 1's rulings 5–7 (schedule, retention and HPSS, the paper and the note).
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 2, addendum A2: private staged inputs, recording guards, and the AR23 rerun (director, 2026-11-06)
+
+**Binds** [`COV2D-ADDENDUM-A2.md`](COV2D-ADDENDUM-A2.md), sha256
+`9648a7bedd493ce8d0fdb636ff7fc3db6a5d72f819f8b329d7e090d6d2695d59`, and its code, as merged in #803 at:
+
+**M = `cf533377c7f9e1638940c677b9af5242f3ba66f4`**
+
+(code commit `038f28e8`; `git diff 038f28e8 cf533377 -- 2d-unfolding/cov2d/` is empty.)
+
+**Under** `DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md` §1, which counts the AR23 firing as STOP #2,
+rules it externally caused, and continues (c) under this addendum. **A third STOP of any kind, or any guard firing on a
+private staged copy, ends (c).**
+
+### What the director checked
+
+- **The digest.** A2's sha256 at M is the one above.
+- **The code is the code that was audited and receipted.** The cov2d tree at M equals `038f28e8`. The receipts at `038f28e8`:
+  182 tests, 0 skipped; 91 of 91 mutants killed, 38 of them REQUIRED.
+- **The audit** (coverage-5b-audit, `fd/receipts-cov2d/a2/AUDIT-A2.md`). Its findings, all closed: D1, a staged hash off
+  its pin now writes a STOP record; D2, settle before guarding (fsync and two agreeing atime readings 5 s apart); L1,
+  `pins_checked` is required on the pseudo-data records, and step B refuses an unpinned step A; N1, the `PRIOR_RECORDS`
+  table, ruling R1, which admits exactly G18's and the pilot's committed bytes at `cb31611c`. The auditor ran the real
+  `order()` on the committed records at a new M.
+- **The two-M-line binding.** `cov2d_submit.sh` matches `^\*\*M = \`<M>\`\*\*`. The cov2d lane ran the real script on
+  fixtures: each M is bound only by its own line, and a sha cited in prose or on an indented line is refused. The
+  `cb31611c` line above stays as bound text. A deploy at `cb31611c` is refused by AR23's existing directory and by
+  `order()`.
+
+### Rulings
+
+1. **A2 is bound at M.** The deploy is a fresh clean clone at M. A2's code is frozen unless a run STOPs.
+2. **The classification of outcomes** is A2 §6 as ruled:
+   - a guard verdict STOP on a private copy is a STOP;
+   - a staged copy's hash off its pin is a STOP;
+   - a refusal before any read or product (an existing directory, quota headroom under 2×, a dirty deploy, atime that
+     does not settle) is not a STOP, and is reported;
+   - a crash, OOM, kill or time-out is INVALID (§9.13). It is not a STOP; it comes to the director unrepaired and needs
+     a go to rerun.
+3. **A fixed conditional sequence.** It replaces binding 2's go for each connect, for this sequence only. Each stage
+   proceeds automatically when the previous stage's declared PASS record is committed on main with M. Anything else
+   stops and comes to the director. The cluster lane reports each connect's sha256 and result as it goes.
+   1. **The A2 cluster-environment test run** at M:
+      - the suites in P, R and RM, with every environment named;
+      - the four Linux both-direction guard tests, shown running, not skipped;
+      - the 1-minute compute-node showquota check, run as job `a2quota` outside the gate (about 0.02 node-h, reported in
+        the receipt);
+      - porcelain with `--ignored` before and after.
+   2. **The AR23 pseudo-data rerun** into `pseudo/AR23-a2`, at `--time=04:00:00`.
+   3. **The eight universe jobs**, the `$UNI` readers, after AR23's PASS. They must be submitted by 2026-12-01.
+   4. **The rest of the bulk** in the amendment's waves, after all eight are submitted.
+   5. **The blocks and readout login steps**, after the bulk.
+4. **The director's notes owed to binding 2,** recorded here:
+   - the REQUIRED set grew from 10 to 12 by ruling (i), with test blob `e3682f8d` and #797, and is 38 at A2;
+   - test_cov2d's Receipt class (11 tests) runs only in the all-in-one local environment. It is skipped in every
+     cluster environment, and §8's table is corrected accordingly;
+   - Perlmutter maps `--qos=regular` to QOS `regular_1`, and the job's substring check admits it;
+   - the D2 settle check and the `PRIOR_RECORDS` admission are the only changes to the order logic.
+5. **Price.** The cap stays at 165.8 node-h, with about 9.6 spent so far. The AR23 rerun holds 4.0 at submission.
+6. **The STOP count is two.** STOP #1 is CONTROL-2A (11-03). STOP #2 is the AR23 firing, ruled externally caused
+   (11-05).
+
+Nothing is submitted, deposited or tagged.
