@@ -865,9 +865,13 @@ changes unless a stage STOPs. The freeze covers all five gate files (below), not
   `abe32817`. connect-c2check's `bound.sha256` checked two of the five gate files (fd_1b_c2 and fd_1b_mc), with the
   guard and sbatch-c2check.sh. It is recorded as passed: c2check's in-run calibration check compared all five, through
   `gate_code_digests()`, and the merged record's `code_sha256` holds the five blobs above.
-- **Stage 3's scripts:** b3/connect-receipt.sh `f2b5b2cb`, b3/connect-receipt-readout.sh
+- **Stage 3's scripts:** b3/connect-receipt.sh `16968494`, b3/connect-receipt-readout.sh
   `322216ef`. connect-receipt also checks the job path's blobs: fd_f1_lane `fbcb7869`, s5c_array.sh
   `dd95db5d`, mnv_guarded_run `30162f57`, sbatch_timing_packed.sh `b72aaa62` and setup_salloc_env.sh `ea3c6998`.
+  connect-receipt records the queue at launch, cov2d jobs included, and does not refuse on a cov2d job (the director,
+  2026-11-06): the COV2D fence covers plain readers of COV2D inputs, and every 1B read is O_NOATIME under the guard.
+  It replaced `f2b5b2cb`, which refused on any queued cov2d-* job. The connect requires that it be M3's own copy, so
+  M3 is the commit that carries it, after the pin's.
 - **The estimator:** configuration (e) (`R`). B4 resolved NONE_PASS, terminal (#785; fd_stab.json `653356ae…`).
 - **The records:**
   - the large-sample calibration, rerun2 (job 60857361; calibration.json `66f2ae44…`, npz `9047a6f7…`);

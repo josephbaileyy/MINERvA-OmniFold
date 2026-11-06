@@ -28,8 +28,9 @@ mkdir -p "$W/logs" || exit 2
 exec >> "$W/logs/connect-receipt.log" 2>&1
 echo "host=$(hostname) start=$(date -u +%FT%TZ) pid=$$ M3=$M3"
 [ "$(squeue --me -h -o %j | grep -c '^fd1b')" = "0" ] || stop "an fd1b job is queued"
-c=$(squeue --me -h -o "%i %j %T" | grep -i cov2d | tr '\n' ';'); echo "cov2d jobs at launch: [$c]"
-[ -z "$c" ] || stop "a cov2d job is queued (the COV2D fence)"
+# The COV2D fence covers plain readers of COV2D inputs; every 1B read is O_NOATIME under the guard, so the queue at
+# launch, cov2d jobs included, is recorded, not refused (the director, 2026-11-06).
+echo "squeue at launch: [$(squeue --me -h -o "%i %j %T" | tr '\n' ';')]"
 
 # 1. The balance: stop if binding 3's remaining cap is above half of what m3246 has left.
 echo "== iris"; iris 2>&1 | head -2; row=$(iris 2>&1 | grep -E '^m3246 ' | head -1); echo "$row"
