@@ -1,0 +1,4 @@
+# Stat-only listing (ls/stat, no read) at 2026-11-06T12:22:38Z, after job 60897523 ended. Verbatim summary lines.
+== files under units/ for the 47 (stat only)
+hits 0; units/ entries 918
+== tmp-replicas-j4: 0 entries
