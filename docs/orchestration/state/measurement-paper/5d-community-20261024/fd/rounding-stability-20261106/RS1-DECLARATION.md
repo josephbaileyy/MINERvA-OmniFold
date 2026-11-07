@@ -15,8 +15,8 @@ citations are at `origin/main` `d95ed680` unless stated.
   then an estimator that averages over rounding perturbations is declared as a variant." It reached main in #865,
   merge `6d0aca7f`, after this declaration's base `d95ed680`, and is cited at that merge.
 - Compute: `DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md` item 2 (#640). Each campaign is
-  declared, priced and bound, and one priced above half the group balance returns to Joseph first. This one is priced
-  at 4.5 CPU node-h (§7).
+  declared, priced and bound, and one priced above half the group balance returns to Joseph first. This one is capped
+  at 8.0 CPU node-h (§7), the director's ruling on #867.
 
 **This is step 1 of two.** Step 2, the ensemble-averaged estimator, is a separate declaration (§11).
 
@@ -98,11 +98,11 @@ reading fixed here (§5 defines M, the bands and DEFINITE).
 
 | id | candidate | the test (arms, §4) | prediction if the candidate is the mechanism |
 |---|---|---|---|
-| K1 | **ties broken by the jitter, entering through LightGBM's data-derived bins** (the referees' "split ties" and "histogram binning") | V: the tie-preserving, order-preserving jitter of §2 item 6, against A0, the bound protocol's jitter, at the same 10 seeds | the spread vanishes: M_V reads R (removed). Most fits should be bitwise identical to the unjittered float64 base. |
+| K1 | **ties broken by the jitter, entering through LightGBM's data-derived bins** (the referees' "split ties" and "histogram binning") | V: the tie-preserving, order-preserving jitter of §2 item 6, against A0, the bound protocol's jitter, at the same 20 seeds | the spread vanishes: M_V reads R (removed). Most fits should be bitwise identical to the unjittered float64 base. |
 | K2 | **histogram coarseness** (`max_bin`) | B63 and B1023: the bound protocol at `max_bin` 63 and 1023 on all four models, against 255, LightGBM's default and the configuration's | finer bins reduce the spread: M_1023 ≤ 0.5 |
 | K3 | **float32 against float64 inputs** | the unjittered base in float64 against the same base in float32 | the two bases differ by at least 0.3 of the jitter spread |
 | K4 | **near-degenerate gains flipped by arithmetic noise** | P: the unjittered float64 base with the OmniFold rows permuted (two seeds), against the unpermuted base | the permutation moves the result by at least 0.1 of the jitter spread |
-| K5 | **the refinement stage, including its clip** at 2g − 1 < 0 | S-ref: only the refinement's inputs jittered; S-omni: only the OmniFold loop's inputs jittered; S-all: both, through the same code path, as the equivalence control | if the refinement is a sufficient entry: M_ref reads C (carried) |
+| K5 | **the refinement stage, including its clip** at 2g − 1 < 0 | S-ref: only the refinement sees the protocol's jittered coordinates; S-omni: only the OmniFold loop does; both paired with A0 seed by seed. S-all, the same code path with nothing swapped, must reproduce A0 bitwise (G4) | if the refinement is a sufficient entry: M_ref reads C (carried) |
 | K6 | **the W² clamp** (reco W = 0, 1.5 % of events; `M4-W-RECORD.md:8`) | **no separating test is possible here** (below) | — |
 
 **K5 cannot separate the clip from the refinement classifier.** Removing the clip would change the estimator, which is
@@ -143,20 +143,30 @@ changing bin move a functional by a statistical σ. RS1 records two readouts on 
 - No data enter a product. The production loader reads the data file, as in FD-STAB, but the pseudo-experiment's
   measured side is built from the simulation and the background dump alone (`FD-STAB-DECLARATION.md:75-82`).
 
-**Jitter seeds 1–10** in every jittered arm (S-all: 1–5). These are FD-STAB's first ten seeds, so A0 has a bitwise
-reference.
+**Jitter seeds 1–20** in every jittered arm (S-all: 1–3). These are FD-STAB's first twenty seeds, so A0 has a bitwise
+reference. Twenty, not ten, is the director's ruling on the audit's E3 (§12).
+
+**The unjittered float64 base (audit E2).**
+- It is jitter seed 0, a seed the protocol never uses (FD-STAB's are 1–51).
+- The wrapper rebinds `s5p_numerics.jittered` (`s5p_numerics.py:79-87`, called at `:186`) so that seed 0 returns
+  `jittered(inputs, bkg, None)`.
+- That gives `s5e_trace.jitter_coords(x, None, edges)`, the float64 copy of the float32 values with no step
+  (`s5e_trace.py:358-361`). Every other seed is passed to the bound function unchanged.
+- `s5p_numerics.main` then takes its jittered branch (`:186-191`): float64 coordinates, with the membership check.
+- So the float64 base differs from a jittered product only by the step. §8 tests both statements bitwise.
+- Its products are named `_j0`. Their metadata records `jitter_seed: 0` and `"unjittered_float64": true`.
 
 | arm | what changes | products | unfolds |
 |---|---|---|---:|
-| **A0** | nothing: the bound protocol, traced | base in float32; base in float64 (unjittered); jitters 1–10 | 12 |
-| **V** | the jitter is keyed on the value, not the row (below) | jitters 1–10 | 10 |
-| **F_k**, 5 axes | only axis k is jittered, with the protocol's draws | 5 × jitters 1–10 | 50 |
-| **S-ref** | only the refinement sees jittered coordinates; the OmniFold loop gets the unjittered float64 ones | jitters 1–10 | 10 |
-| **S-omni** | the refinement runs on the unjittered float64 coordinates; the loop gets jittered ones | jitters 1–10 | 10 |
-| **S-all** | both jittered, applied after the experiment is built, as S-ref and S-omni are | jitters 1–5 | 5 |
-| **B63**, **B1023** | `max_bin` 63 or 1023 on all four LightGBM models | float64 base; jitters 1–10, each | 22 |
-| **P** | the float64 base with the OmniFold input rows permuted (`s5c_unfold.permute`, `nd-unfolding/s5c_unfold.py:106-116`) | seeds 1 and 2 | 2 |
-| **total** | | | **121** |
+| **A0** | nothing: the bound protocol, traced | base in float32; base in float64 (seed 0); jitters 1–20 | 22 |
+| **V** | the jitter is keyed on the value, not the row (below) | jitters 1–20 | 20 |
+| **F_k**, 5 axes | only axis k is jittered, with the protocol's draws | 5 × jitters 1–20 | 100 |
+| **S-ref** | the protocol's jitter; the OmniFold loop gets the unjittered float64 arrays | jitters 1–20 | 20 |
+| **S-omni** | the protocol's jitter; the refinement gets the unjittered float64 arrays | jitters 1–20 | 20 |
+| **S-all** | the S code path with nothing swapped: the identity control G4 | jitters 1–3 | 3 |
+| **B63**, **B1023** | `max_bin` 63 or 1023 on all four LightGBM models | float64 base; jitters 1–20, each | 42 |
+| **P** | the float64 base with the OmniFold input rows permuted (`s5c_unfold.permute`, `nd-unfolding/s5c_unfold.py:106-116`) | permutation seeds 1 and 2 | 2 |
+| **total** | | | **229** |
 
 **The value-keyed jitter (V).**
 - Each value moves by `u × ½ × ulp↓(x)`, where ulp↓ is the float32 spacing toward zero, `|x| − nextafter(|x|, 0)`,
@@ -168,15 +178,22 @@ reference.
   step could then reorder two adjacent float32 values. With ulp↓ the order is strictly preserved (§8 tests it). The
   two scales differ only at powers of two.
 
-**S-ref, S-omni and S-all.**
-- These arms jitter the built experiment's arrays (MC truth and reco, observed, template), not the inputs before the
-  experiment is built.
-- **S-all is the equivalence control:** jittering after the build should reproduce the protocol's spread in
-  distribution. The unfolding MC (half A) and the pseudo-data source (half B) are disjoint rows, so each value is still
-  perturbed independently.
-- If S-all does not read C against A0 (DEFINITE), S-ref and S-omni are UNINFORMATIVE and K5 is not read.
-- **Grid membership** is checked after every post-build jitter, with the same `s5e_trace.flat_index` as
-  `s5p_numerics.cell_membership` (`s5p_numerics.py:73-76`). A product whose membership changed is refused.
+**S-ref, S-omni and S-all (revised for the audit's E1).**
+- **The protocol's jitter is applied exactly as in A0,** before the experiment is built. Each arm also builds a second
+  experiment from the unjittered float64 inputs (seed 0's arrays) with the same split key and pseudo-seed. The wrapper
+  rebinds `s5p_numerics.jittered` and `s5n_pseudo.build_pseudo`, called at `s5p_numerics.py:198`.
+- **The two experiments are row-aligned, and this is checked, not assumed.** The jitter keeps grid membership, so the
+  same rows are selected and the same Poisson counts drawn. Every non-coordinate array must be bitwise equal between
+  them: counts, template weights, MC weights and pass masks. Otherwise the product is refused.
+- **What each arm swaps.** The arm then swaps in the unjittered arrays for one consumer:
+  - S-ref: the OmniFold loop gets the unjittered MC coordinates and the unjittered measured rows, with the refined
+    weights from the jittered refinement;
+  - S-omni: the refinement gets the unjittered measured rows, and the loop gets the jittered arrays and those refined
+    weights.
+- **S-ref and S-omni are paired with A0 seed by seed:** the same jitter draws enter one consumer.
+- **S-all swaps nothing, through the same code path, so it must equal A0 bitwise (G4).** Equivalence is then an
+  identity, not a statistical reading, and needs no band and no power. That answers E1's point that a one-sided band
+  passes M = 3. If G4 fails, the S path is defective: K5 is not read, and the run is reported to the director.
 
 ## 5. The statistics and the readings
 
@@ -196,8 +213,7 @@ reference.
 
 **Its interval.**
 - 2,000 bootstrap resamples of the seeds, at bootstrap seed 20261106.
-- Paired arms (V, F_k, B63, B1023) resample their seeds jointly with A0's; S-ref, S-omni and S-all resample
-  independently of it.
+- Every jittered arm is paired with A0 (V, F_k, S-ref, S-omni, B63, B1023) and resamples its seeds jointly with A0's.
 - The interval is the 5th to 95th percentile of M_a.
 
 **Bands:**
@@ -207,16 +223,36 @@ reference.
 
 A reading is **DEFINITE** only when its 90 % interval lies inside one band. Otherwise it is INCONCLUSIVE.
 
+**Power, from a declared local simulation** (`power/rs1_power_sim.py`; output `power/rs1_power_sim.out.txt`; pure
+numpy, no inputs, no data). It applies this section's statistic exactly to 153 functionals with known true M. The
+functionals are correlated through the shared seed at c = 0 or 0.8 (a parameter of the simulation, bracketing the audit's two values; A0's products give its value on this input).
+
+At 20 paired seeds, 150 trials per cell:
+
+| true M | reads the right band DEFINITE (c = 0 / c = 0.8) | median 90 % interval at c = 0.8, pair correlation 0 |
+|---|---|---|
+| 0 | 1.00 / 1.00 (R) | [0.00, 0.00] |
+| 0.05 | 1.00 / 0.99–1.00 (R) | [0.04, 0.06] |
+| 0.4 | 1.00 / 0.94–0.96 (P) | [0.29, 0.51] |
+| 1.0 | 1.00 / 0.70–0.79 (C) | [0.74, 1.34] |
+| 1.5 | 1.00 / 1.00 (C) | [1.12, 2.01] |
+
+The ranges at c = 0.8 span pair correlations of 0 and 0.5. At 10 seeds a true M = 1 read DEFINITE C in 0.46–0.51 of
+trials at c = 0.8, which matches the audit's E3.
+- **Wrong readings.** At 20 seeds no cell gave a wrong DEFINITE band, so there the failure mode is INCONCLUSIVE, not
+  a wrong reading.
+- At 10 seeds a true M = 1 read DEFINITE P in 0.01–0.02 of trials at c = 0.8.
+
 **A base-difference statistic** for K3 and K4: D = median_j |F_{x,j} / F_{ref,j} − 1| / s_{A0,j}.
 - K3: x is the float64 base, ref the float32 base.
 - K4: x is each permuted base, ref the float64 base. D_P is the larger of the two seeds' values.
 
 ### 5.1 Gates, before any reading
 
-- **G1, bitwise reproduction.** A0's float32 base and jitters 1–10 must equal FD-STAB's control products
-  `runs/control/stability/stab_control_b-_j-.npz` and `…_j1.npz` to `…_j10.npz` in `xsec_flat`, bitwise. Those
-  products are pinned in `fd/receipts-stab-a1r/full/SHA256SUMS` (sha256 `e2c35e55…`, lines 229, 239, 250, 261, 272,
-  275-280).
+- **G1, bitwise reproduction.** A0's float32 base and jitters 1–20 must equal FD-STAB's control products
+  `runs/control/stability/stab_control_b-_j-.npz` and `…_j1.npz` to `…_j20.npz` in `xsec_flat`, bitwise. Those
+  products are pinned in `fd/receipts-stab-a1r/full/SHA256SUMS` (sha256 `e2c35e55…`, lines 229–240, 250, 261, 272,
+  275–280).
   - The comparison is of arrays, not file digests, because product metadata carries timings.
   - A0 runs with the same thread count and lane layout as FD-STAB: 32 threads, 8 lanes. A bitwise check across jobs
     needs the same thread environment.
@@ -225,6 +261,8 @@ A reading is **DEFINITE** only when its 90 % interval lies inside one band. Othe
   s_{A0,j} = 0, the study reads UNINFORMATIVE.
 - **G3, the tracer is a pass-through.** The traced A0 products must equal the untraced ones bitwise; G1 checks this
   directly. `s5e_trace.traced_unfold` also checks its own rebuild bitwise (`s5e_trace.py:243-264`).
+- **G4, the S path's identity.** S-all's jitters 1–3 must equal A0's in `xsec_flat`, bitwise. If they do not, K5 is
+  not read.
 
 ### 5.2 The readings
 
@@ -237,7 +275,7 @@ the same DEFINITE reading. Otherwise it is INCONCLUSIVE.
 | K2 | M_1023 ≤ 0.5 and its interval's upper end ≤ 0.7 | — | the interval's lower end ≥ 0.7 | INCONCLUSIVE |
 | K3 | D ≥ 0.3 | 0 < D < 0.3: present, below the jitter scale | the two bases are bitwise equal | — |
 | K4 | D_P ≥ 0.10 | — | D_P ≤ 0.01 | INCONCLUSIVE |
-| K5 | M_ref reads C: the refinement is a sufficient entry | M_ref reads P | M_ref reads R | UNINFORMATIVE if S-all fails |
+| K5 | M_ref reads C: the refinement is a sufficient entry | M_ref reads P | M_ref reads R | INCONCLUSIVE; not read if G4 fails |
 | K6 | — | — | — | NOT TESTABLE (§3) |
 
 **What each outcome licenses.**
@@ -271,11 +309,13 @@ with it:
 
 - **R0, the spread on the 16 reported cells in units of σ_stat.** This answers referee request (iii), and decision
   item 1.3's "first the spread is measured on the sixteen reported cells".
-  - It is arithmetic on two records on main, at 0 node-h, done locally:
-    - per cell, I0's measured data floor σ_J/f (`fd/receipts-1b/inv/i0/i0.json`, `sigma_J_data`, sha256
-      `9a4142d3…`; described at `FD-1B-INV-I0-REPORT.md:66-68`);
-    - over S1's statistical σ (`s1/readout/s1_assembly.json`, `relative_sigma`, stat group, sha256 `81e5ef3f…`;
-      tabulated at `S1-REPORT.md:253-271`).
+  - It is arithmetic on three records on main, at 0 node-h, done locally:
+    - per cell, I0's measured data floor σ_J (`fd/receipts-1b/inv/i0/i0.json`, `sigma_J_data`, sha256 `9a4142d3…`;
+      described at `FD-1B-INV-I0-REPORT.md:66-68`). **It is absolute:** the SD of the jittered unfolds' cell
+      integrals (`nd-unfolding/fd_1b_inv.py:220-225`, `:342`);
+    - the reported central value f per cell (`fd/data-product/fd_data_product.json`, `f`, sha256 `b79556f0…`);
+    - S1's statistical σ (`s1/readout/s1_assembly.json`, `relative_sigma`, stat group, sha256 `81e5ef3f…`; tabulated
+      at `S1-REPORT.md:253-271`). **It is relative,** σ/f (`nd-unfolding/s1_assemble.py:266-267`).
   - **Disclosed:** both medians are already printed on main (0.133 % and 0.24 %), so R0 is not blind. S1's stat σ is
     a refit-per-replica data bootstrap, which already carries the rounding spread (`KNOWN_ISSUES.md` 80: about 37 %
     of its variance). So σ_J/σ_stat is a share of a variance that contains it, not a ratio of independent terms.
@@ -289,11 +329,18 @@ with it:
          (replica variance above the rounding variance for every functional) but does not establish per cell. The
          record states that assumption.
   - **Neither number is read as a pass or a fail.** No bar applies to them.
-  - **Units.** σ_J/f and S1's `relative_sigma` are both relative. The code reads each file's own unit, refuses if
-    either is not stated or not derivable from the file, and prints the unit it used.
+  - **Units and controls.** The units are fixed by the producers' code, cited above, not by the files, which state
+    none. So R0 forms σ_J,c / f_c, and σ_S1,c = `relative_sigma`.stat,c. It refuses unless:
+    - all three files list the cells R00–R15 in the same order;
+    - the data product's `relative_sigma` C_e equals S1's `relative_sigma` C_e in every cell (rtol 1e-12), so that f
+      belongs to S1's assembly;
+    - the median of σ_J/f, in %, rounds to I0's printed 0.133, and its minimum and maximum round to 0.055 and 0.252
+      (`FD-1B-INV-I0-REPORT.md:67`). This is a reproduction control at the printed precision, not a tolerance
+      finer than it.
   - R0 is the only reading on data-derived numbers, and it reads committed results, not data.
 - **Absolute spreads** of every arm in pseudo-data σ: FD-STAB's σ (`state/s5e/cand/assess_receipt.json`
-  `sigma_rel_pct`, sha256 `84266e30…`) and FD-STAB's 25-pair statistic, for A0 only. These are for comparison with
+  `sigma_rel_pct`, sha256 `84266e30…`), and, for A0 only, s5e's pair statistic over A0's 10 disjoint pairs
+  (1, 2) … (19, 20) against the float32 base. FD-STAB used 25 pairs. These are for comparison with
   FD-STAB; neither enters §5.2.
 - **The per-iteration spread** on A0 (§3), as the ratio s(k)/s(1), k = 1–5, as a median over functionals.
 - **The split-table diffs** (§3).
@@ -313,15 +360,18 @@ with it:
 
 | | unfolds | unit-equivalents | CPU node-h |
 |---|---:|---:|---:|
-| all arms but B1023 | 110 | 121.0 | 2.76 |
-| B1023 | 11 | 24.2 | 0.55 |
-| **full run, expected** | **121** | **145.2** | **3.31** |
+| all arms but B1023 | 208 | 228.8 | 5.22 |
+| B1023 | 21 | 46.2 | 1.05 |
+| **full run, expected** | **229** | **275.0** | **6.28** |
 
-**Cap: 4.5 CPU node-h, dry run and full run together.** It binds three ways:
+The wall time on 8 lanes is 275.0 × 657 s / 8 = 22,584 s, or 6.27 h.
+
+**Cap: 8.0 CPU node-h, dry run and full run together** (the director's ruling on #867, with 20 seeds). It binds three
+ways:
 1. **Slurm's limit, on one node.** The dry run is submitted with `--time=0:45:00` and the full run with
-   `--time=3:45:00`. On one exclusive node the charge cannot exceed `--time`. Both are written H:MM:SS:
+   `--time=7:15:00`. On one exclusive node the charge cannot exceed `--time`. Both are written H:MM:SS:
    `--time=0:45` means 45 seconds, the error that invalidated FD-STAB's first dry run.
-2. **The dry run's projection.** The dry run runs 8 one-unfold tasks on 8 lanes:
+2. **The dry run's projection.** The dry run runs 9 one-unfold tasks on 8 lanes, as FD-STAB's did:
    - A0's float32 base;
    - A0's float64 base;
    - A0 jitter 1;
@@ -329,11 +379,17 @@ with it:
    - B1023's base;
    - B63's base;
    - S-ref jitter 1;
+   - S-all jitter 1;
    - P seed 1.
 
-   It checks G1 on the float32 base and jitter 1. The full run starts only if the projected full wall, from the dry
-   run's per-kind times packed on 8 lanes, is at most the smaller of 3.75 h and 0.9 × (4.5 − the dry run's `sacct` charge). FD-STAB's 9-task dry run charged 992 s, about 0.28 node-h (`fd/receipts-stab-a1r/sacct-60827080.txt`), so the expected 3.31 h fits with about 12 % to spare. Otherwise it
-   returns to the director for a reprice. The dry run's products carry into the full run, which skips them.
+   It checks G1 on the float32 base and jitter 1, and G4 on S-all's jitter 1.
+
+   **The full run starts only if** the projected full wall, from the dry run's per-kind times packed on 8 lanes, is at
+   most the smaller of 7.25 h and 0.9 × (8.0 − the dry run's `sacct` charge). Otherwise the run returns to the
+   director for a reprice.
+   - FD-STAB's 9-task dry run charged 992 s, about 0.28 node-h (`fd/receipts-stab-a1r/sacct-60827080.txt`). That
+     gives a limit of 6.95 h, so the expected 6.27 h fits with about 10 % to spare.
+   - The dry run's products carry into the full run, which skips them.
 3. **No resume without the director.** A stopped or time-limited run leaves no DONE receipt and is not graded; it is
    reported as INCOMPLETE. The job refuses to re-run a mode whose log exists (FD-STAB's rule).
 
@@ -341,7 +397,7 @@ with it:
 - CPU only, QOS regular, `--exclusive`, `--no-requeue`.
 - Nothing is written to CFS from a job. Products go to `/pscratch/sd/j/josephrb/rs1-20261106/`.
 - The charge is read from `sacct` after the job ends, not before the next `sbatch`, because `sacct` lags.
-- **The authority bound:** 4.5 is far below half the group balance (2,069.4 node-h remaining, last recorded
+- **The authority bound:** 8.0 is far below half the group balance (2,069.4 node-h remaining, last recorded
   `FD-1B-INV-I0-REPORT.md:61`). The cluster lane reads `iris` before launch.
 - **Reads:**
   - the job reads its inputs through the production loaders, as FD-STAB's did;
@@ -373,7 +429,8 @@ director's ruling on #867).
 |---|---|
 | F_k | `s5e_trace.jitter_coords` → the same draws, with the other axes' steps zeroed |
 | V | `s5e_trace.jitter_coords` → the value-keyed jitter |
-| S-ref, S-omni, S-all | `s5p_numerics.unfold_one` → jitter the built experiment's arrays for the refinement, the loop, or both, then check grid membership |
+| A0 f64 base, B bases, P (seed 0) | `s5p_numerics.jittered` → for seed 0 only, `jittered(inputs, bkg, None)`: the step-free float64 copy (audit E2); every other seed passes through unchanged |
+| S-ref, S-omni, S-all | `s5p_numerics.jittered` → also keep seed 0's arrays; `s5n_pseudo.build_pseudo` → also build the unjittered experiment and check the row alignment; `s5p_numerics.unfold_one` → hand one consumer the unjittered arrays (S-all: none) |
 | B63, B1023 | `s5c_unfold.config_params` → add `max_bin`, which the refinement also reads (`s5n_pseudo.py:234-236`); `s5c_unfold.unfold` already verifies every built estimator's parameters (`s5c_unfold.py:129-134`) |
 | P | `s5c_unfold.unfold` → `s5c_unfold.permute` first |
 | A0 trace | `omnifold_nn_core.make_estimators` → a recorder of each fit's model dump; `s5e_trace.traced_unfold` for the per-iteration functionals |
@@ -396,7 +453,12 @@ director's ruling on #867).
 - **V, a counterfactual:** the protocol's row-keyed jitter does reorder or break ties in the same fixture;
 - **F_k:** the masked draws equal the protocol's on axis k, bitwise;
 - **the composed config parameters** reach all four models;
-- **post-build jitter:** refused when membership changes;
+- **the float64 base (E2):** seed 0's arrays equal the protocol's upcast `x.astype(float32).astype(float64)` bitwise.
+  A jittered product's arrays differ from them only where the protocol's step is nonzero, by exactly that step, which
+  the test recomputes from `jitter_coords`'s own draws;
+- **the S path:** S-all's unfold inputs equal A0's bitwise (G4's local form), and S-ref and S-omni swap only their
+  declared consumer;
+- **the row alignment:** refused when a non-coordinate array of the two experiments differs;
 - **G1:** refuses on a one-ulp difference; passes on a metadata-only difference;
 - **the readings:** every band boundary and INCONCLUSIVE case, in both directions;
 - **K3:** NOT SUPPORTED only on bitwise equality;
@@ -410,7 +472,7 @@ jitter 1 is its first test on the real code, and the record reports it as measur
 
 ## 9. Limits and disclosures
 
-- **One pseudo-experiment realization**, and 10 jitters per arm (S-all: 5). The intervals cover the jitter draws,
+- **One pseudo-experiment realization**, and 20 jitters per arm (S-all: 3, an identity check). The intervals cover the jitter draws,
   not the realization.
 - **The GiBUU-like input** is the development truth of the paper's Fig. 3 and lies within 2 % in shape of Stage 0c
   GiBUU (`FD-STAB-DECLARATION.md:100-103`). RS1 adopts nothing, so the selection-contamination rule (ii) is not
@@ -431,8 +493,7 @@ jitter 1 is its first test on the real code, and the record reports it as measur
    - this lane runs the jobs (§7).
 2. **The bands** (0.10, 0.70) and the K2/K3/K4 thresholds are this lane's choice, made before any number. The audit
    may tighten them.
-3. **Ten jitters per arm.** Doubling them would add about 2.8 node-h, still under half the group balance by far.
-   The audit may ask for it.
+3. **Settled by the director (E3):** 20 seeds and an 8.0 node-h cap.
 
 ## 11. What follows: step 2, declared separately
 
@@ -442,3 +503,13 @@ Step 2 is the ensemble-averaged estimator: the mean over N perturbed fits, with 
 - If K1 reads SUPPORTED, step 2's perturbation can be chosen with knowledge of the channel. The order of declaration
   is set so that its acceptance is fixed first.
 - Whether a passing variant replaces the reported estimator is Joseph's decision.
+
+## 12. The audit and its dispositions (`coverage-5b-audit`, #867 comment 6700714430, at `a2b67496`)
+
+| item | finding | disposition |
+|---|---|---|
+| E1 | S-all, at 5 unpaired seeds against a one-sided band, could not read equivalent when it was (P ≤ 0.07), and M = 3 would also pass | **Fixed, more strictly than asked.** The S arms now take the protocol's jitter, swap in a row-aligned unjittered experiment for one consumer, and are paired with A0. S-all swaps nothing, so equivalence is the bitwise identity G4 and needs no band and no power. The power of the paired readings is shown by `power/rs1_power_sim.py` (§5). If the director prefers S-all as a 20-seed statistical arm with a two-sided band [0.70, 1/0.70], it adds 17 unfolds (about 0.43 node-h) inside the 8.0 cap. |
+| E2 | the unjittered float64 base had no named code path | **Fixed:** seed 0 through a rebinding of `s5p_numerics.jittered` to `jittered(inputs, bkg, None)` (§4), in §8's table, with the bitwise test the audit asked for |
+| E3 | at 10 seeds a true M = 1 reads DEFINITE C only 50–60 % of the time with correlated functionals | **The director's ruling: 20 seeds, cap 8.0** (§4, §7). The declared simulation reproduces E3 at 10 seeds (0.46–0.51) and gives 0.70–0.79 at 20 |
+| open 1 | #865 | merged; cited at `6d0aca7f` |
+| open 2 | R0's σ_stat | confirmed. While repairing, this lane found that I0's `sigma_J_data` is absolute, not σ_J/f, so R0 now divides by the data product's f, with three refusal controls (§6) |
