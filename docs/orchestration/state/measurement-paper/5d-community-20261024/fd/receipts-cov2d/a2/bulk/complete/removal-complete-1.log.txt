@@ -1,0 +1,19 @@
+1c8edacdb0974c2c8baa02df4a6676626318478c60f0b88db1d8d5931d983603  /dev/shm/josephrb-cov2d-complete.log
+9584dd4ada99c96b519b79839a2fb59155654b146982760d9e58f3c44c6e740f  /dev/shm/josephrb-cov2d-complete/connect-complete.sh
+1ce76ea373f474e7c32520c69fbc90eae9419d5cbd901927df5a41fbe6973c5e  /dev/shm/josephrb-cov2d-complete/cov2d_cap.py
+cf7de9d868c102d2a9d145c8b5c41b1d2880230e9041284ab79627319541d981  /dev/shm/josephrb-cov2d-complete/jobs_G18C.tsv
+5ef2aca150959b972c6519a6599d6f84d5539504589a664ce9e591e9a6c2db7d  /dev/shm/josephrb-cov2d-complete/runs_G18C.tsv
+7a07c3acf7f361f1af89276064bc64c8ab60e4d6bc06c658f2dcd10422f9c324  /dev/shm/josephrb-cov2d-complete/test_cov2d_cap.py
+e586fc0f3bb2a05f4c80f07d1b4c6171e830592f6c7aaf70d4af3b0aa3ebd072  /dev/shm/josephrb-cov2d-complete/test.out
+host=login02 2026-11-06T16:26:13Z
+rm -f /dev/shm/josephrb-cov2d-complete/connect-complete.sh rc=0
+rm -f /dev/shm/josephrb-cov2d-complete/cov2d_cap.py rc=0
+rm -f /dev/shm/josephrb-cov2d-complete/jobs_G18C.tsv rc=0
+rm -f /dev/shm/josephrb-cov2d-complete/runs_G18C.tsv rc=0
+rm -f /dev/shm/josephrb-cov2d-complete/test_cov2d_cap.py rc=0
+rm -f /dev/shm/josephrb-cov2d-complete/test.out rc=0
+rm -f /dev/shm/josephrb-cov2d-complete.log rc=0
+rmdir rc=0
+total 0
+drwxrwxrwt  2 root root   40 Nov  6 08:26 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..

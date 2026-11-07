@@ -1,0 +1,29 @@
+host=login02 start=2026-11-07T02:11:38Z pid=943770 ppid=941482
+deploy porcelain_lines=0 head=a60547692df5f963e428cdfe4661fc51ab785b7b
+2d-unfolding/cov2d/cov2d.py: OK
+2d-unfolding/cov2d/cov2d_readouts.py: OK
+2d-unfolding/cov2d/cov2d_receipt.py: OK
+2d-unfolding/cov2d/cov2d_pseudo.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root size=171117087867 mtime=2026-07-08 08:08:15.000000000 -0700 atime=2026-11-06 08:34:23.000000000 -0800 inode=882725391507234642
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt size=25403 mtime=2021-08-31 08:49:26.000000000 -0700 atime=2026-11-05 07:18:14.000000000 -0800 inode=882722362129162055
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep/bridged/genie_v3_g18.json size=543301 mtime=2026-10-28 04:22:12.000000000 -0700 atime=2026-10-31 16:17:27.000000000 -0700 inode=882727061460966325
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep/bridged/genie_v3_ar23.json size=541943 mtime=2026-10-28 04:22:12.000000000 -0700 atime=2026-10-31 16:17:27.000000000 -0700 inode=882727061460966324
+cross-terms rc=0
+COV2D-CROSS-TERMS draws=600 atime_moved=0
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:51:47
+	Maximum resident set size (kbytes): 14044176
+	File system inputs: 170557504
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root size=171117087867 mtime=2026-07-08 08:08:15.000000000 -0700 atime=2026-11-06 08:34:23.000000000 -0800 inode=882725391507234642
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt size=25403 mtime=2021-08-31 08:49:26.000000000 -0700 atime=2026-11-05 07:18:14.000000000 -0800 inode=882722362129162055
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep/bridged/genie_v3_g18.json size=543301 mtime=2026-10-28 04:22:12.000000000 -0700 atime=2026-10-31 16:17:27.000000000 -0700 inode=882727061460966325
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep/bridged/genie_v3_ar23.json size=541943 mtime=2026-10-28 04:22:12.000000000 -0700 atime=2026-10-31 16:17:27.000000000 -0700 inode=882727061460966324
+STAT_UNCHANGED
+deploy porcelain_ignored_after_lines=0
+84a7f73ed7c348daad384fc8dbde83a4fbd06cc094b8f08faba2abcee8a457f4  /pscratch/sd/j/josephrb/cov2d-crossterms-20261107/crossterms.json
+178a3a3b033a2d693e554411bbb81d0fe22e09e2fb56a080904eb2199c6f0aa1  /pscratch/sd/j/josephrb/cov2d-crossterms-20261107/crossterms.npz
+189e75c51ed2606beae355be0cda9301e7a4144fd030b6f61f15f4b70ac5cfde  /pscratch/sd/j/josephrb/cov2d-crossterms-20261107/crossterms.out
+e0e04c3f25ff792017c92d6a5ba841303f52897159c7a27f276750fd018119d8  /pscratch/sd/j/josephrb/cov2d-crossterms-20261107/crossterms.time
+end=2026-11-07T06:04:18Z

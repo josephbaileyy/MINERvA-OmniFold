@@ -1,0 +1,68 @@
+host=login02 start=2026-11-07T02:09:17Z pid=787848
+porcelain_before_lines=0 head=a60547692df5f963e428cdfe4661fc51ab785b7b
+100644 blob 9e510e89e1b731ab5899fb1e4e85089b7442f303	2d-unfolding/cov2d/cov2d.py
+100644 blob b9e63a3827e44c31a529f8d92482b7d7969d8223	2d-unfolding/cov2d/cov2d_blocks.py
+100644 blob d5718bf44c2084c20c30a8b8614e9c40e6fbeee3	2d-unfolding/cov2d/cov2d_receipt.py
+100644 blob bb3892e5447d37ee524c720c5ab623baa7184f30	2d-unfolding/cov2d/cov2d_writer.py
+100644 blob 7a987e25924895803bea756f3e63e3b8b21cd25c	2d-unfolding/pv2d/cmodel/build_cmodel.py
+100644 blob e41940cb3b4af8f273f34723fb4389d4dac86e0a	2d-unfolding/re2/partc/re2c_rollup.py
+100755 blob 97f26a1d03be8cf14cdb6e0ce05e794f66f9b571	2d-unfolding/re2/re2_driver.py
+100644 blob 1810161d53c6b849d0dce7fb506d88d551d89900	nd-unfolding/fd_1b_null.py
+100644 blob 7c2e018f1169a9be0c5642daab991c664acbefcf	nd-unfolding/fd_rpd_inputs.py
+blobs (before): 9 of 9
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python TMPDIR=/dev/shm/josephrb-cov2d-95/tmp
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+MAT preflight file: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root sha256 d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+[PASS] weights_identical_across_playlists
+[PASS] weights_equal_constraint_file
+[PASS] weights_equal_vl175_build_json  {'sum': 211.01200325082078, 'n_eff': 19.060534772246488}
+[PASS] cov2d_9_5_minos_outputs_divided_by_phi_cv  0.0
+[PASS] cov2d_9_5_x01_scale_equals_vl175  0.0
+COV2D-9.5 PASS worst=4.5852173151654e-16 stops=0
+porcelain_after_lines=0 head=a60547692df5f963e428cdfe4661fc51ab785b7b
+100644 blob 9e510e89e1b731ab5899fb1e4e85089b7442f303	2d-unfolding/cov2d/cov2d.py
+100644 blob b9e63a3827e44c31a529f8d92482b7d7969d8223	2d-unfolding/cov2d/cov2d_blocks.py
+100644 blob d5718bf44c2084c20c30a8b8614e9c40e6fbeee3	2d-unfolding/cov2d/cov2d_receipt.py
+100644 blob bb3892e5447d37ee524c720c5ab623baa7184f30	2d-unfolding/cov2d/cov2d_writer.py
+100644 blob 7a987e25924895803bea756f3e63e3b8b21cd25c	2d-unfolding/pv2d/cmodel/build_cmodel.py
+100644 blob e41940cb3b4af8f273f34723fb4389d4dac86e0a	2d-unfolding/re2/partc/re2c_rollup.py
+100755 blob 97f26a1d03be8cf14cdb6e0ce05e794f66f9b571	2d-unfolding/re2/re2_driver.py
+100644 blob 1810161d53c6b849d0dce7fb506d88d551d89900	nd-unfolding/fd_1b_null.py
+100644 blob 7c2e018f1169a9be0c5642daab991c664acbefcf	nd-unfolding/fd_rpd_inputs.py
+blobs (after): 9 of 9
+873fdd8e4207598b69ce9c6e46c2e64fb4f2df58bb5fbda009caebe59f29e04a  /dev/shm/josephrb-cov2d-95/control95.json
+removal: host=login02 2026-11-07T02:09:56Z 1.2G /dev/shm/josephrb-cov2d-95/deploy
+rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-95/deploy': No such file or directory
+CONTROL-95 PASS
+end=2026-11-07T02:09:57Z
+DONE

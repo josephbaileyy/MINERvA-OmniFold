@@ -1,0 +1,8 @@
+2026-11-06T15:21:31Z FAILED=2 RUNNING=16 PENDING=1 COMPLETED=2 | known=       2 | AR23_Tc(07:38:00): rc=3 total=169.37 unlisted=[]
+2026-11-06T15:36:43Z FAILED=2 RUNNING=16 PENDING=1 COMPLETED=2 | known=       2 | AR23_Tc(07:38:00): rc=3 total=169.37 unlisted=[]
+2026-11-06T15:51:56Z FAILED=2 RUNNING=16 PENDING=1 COMPLETED=2 | known=       2 | AR23_Tc(07:38:00): rc=3 total=169.37 unlisted=[]
+2026-11-06T16:07:25Z known collision 60895949 (G18_Ba:B_G18_001) MATCH
+2026-11-06T16:07:25Z FAILED=3 RUNNING=12 PENDING=1 COMPLETED=5 | known=       3 | AR23_Tc(07:38:00): rc=0 total=156.19 unlisted=[]
+FITS AR23_Tc
+
+[exited with code 0]

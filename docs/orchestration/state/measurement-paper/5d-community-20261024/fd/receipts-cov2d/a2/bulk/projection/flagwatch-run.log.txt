@@ -1,0 +1,184 @@
+2026-11-06T15:26:54Z runs=1080 started-unended=16 flags=1 | overmax.log=1
+2026-11-06T15:42:01Z runs=1144 started-unended=16 flags=2 | overmax.log=2
+2026-11-06T15:57:09Z runs=1221 started-unended=16 flags=2 | overmax.log=2
+2026-11-06T16:12:15Z runs=1272 started-unended=11 flags=2 | overmax.log=2
+2026-11-06T16:27:22Z runs=1313 started-unended=9 flags=2 | overmax.log=2
+2026-11-06T16:42:29Z runs=1345 started-unended=4 flags=2 | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+fetch failed
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/a521c516-1aad-4f64-89cb-e3ed26161eec/scratchpad/proj/flags.py", line 37, in <module>
+    if fixed_runs is not None and (b, lab) not in fixed_runs and round(r, 3) > round(1.3 * fixed_mean[(t, c[0])], 3):
+                                                                                           ~~~~~~~~~~^^^^^^^^^^^
+KeyError: ('G18', 'C')
+ | overmax.log=2
+BASELINE-ENDED
+
+[exited with code 0]

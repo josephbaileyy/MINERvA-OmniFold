@@ -1,0 +1,35 @@
+login04
+2026-11-07T02:13:14Z
+lrwxrwxrwx  1 josephrb josephrb   64 Dec 18  2025 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles -> /pscratch/sd/j/josephrb/minerva/minerva_large_files//MParamFiles
+drwxrwx--- 11 josephrb josephrb 4096 Dec 18  2025 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include
+drwxrwx---  4 josephrb josephrb 4096 Jul 18 14:36 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib
+lrwxrwxrwx  1 josephrb josephrb   76 Dec 18  2025 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/data -> /pscratch/sd/j/josephrb/minerva/minerva_large_files//MATFluxAndReweightFiles
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles
+total 96
+drwxr-x--- 11 josephrb josephrb  4096 Aug  3 13:03 .
+drwxrwx---  6 josephrb josephrb  4096 Dec 18  2025 ..
+drwxr-x---  2 josephrb josephrb  4096 Aug  3 13:03 CVS
+drwxr-x---  3 josephrb josephrb  4096 Aug 17  2021 data
+drwxr-x---  3 josephrb josephrb  4096 Aug  3 13:03 dataMCWiggle
+drwxr-x---  4 josephrb josephrb 20480 Aug  3 13:03 flux
+drwxr-x---  7 josephrb josephrb  4096 Jul 12  2022 flux_daisy
+drwxr-x---  3 josephrb josephrb  4096 Aug  3 13:03 hadronReweight
+drwxr-x---  3 josephrb josephrb  4096 Aug  3 13:03 lowNuReweight
+drwxr-x---  3 josephrb josephrb 32768 Aug  3 13:03 mhrwKineRenorm
+-rw-r-----  1 josephrb josephrb  5801 Sep 13  2021 Minerva_Planes.txt
+drwxr-x---  3 josephrb josephrb  4096 Aug  3 13:03 neutronInelasticReweight
+/pscratch/sd/j/josephrb/minerva/minerva_large_files/MATFluxAndReweightFiles
+-rw-rw---- 1 josephrb josephrb 89876 Dec 17  2025 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT/PlotUtils/FluxReweighter.cxx
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh:6:export PLOTUTILSROOT=${PREFIX}/lib
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh:7:export LD_LIBRARY_PATH=${PLOTUTILSROOT}:$LD_LIBRARY_PATH
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh:14:export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$PLOTUTILSROOT
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh:18:export MPARAMFILESROOT=${INSTALL_DIR}/etc/MParamFiles
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh:20:export MPARAMFILES=${MPARAMFILESROOT}/data
+drwxrws--- 25 josephrb josephrb 4096 Mar 29  2026 /global/homes/j/josephrb/.conda/envs/root_6_28
+/global/u2/j/josephrb/.conda/envs/root_6_28
+-rw-r----- 1 josephrb josephrb   62196 Oct 24 00:23 /pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root
+drwxrwx--- 8 josephrb josephrb   16384 Nov  6 12:52 /pscratch/sd/j/josephrb/cov2d-run-20261104
+drwxrwx--- 2 josephrb josephrb    4096 Nov  4 00:48 /pscratch/sd/j/josephrb/fd-rpd-20261103/dumps
+-rw-rw---- 1 josephrb josephrb 1272641 Apr 26  2026 /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root
+-rw-r----- 1 josephrb josephrb   25403 Aug 31  2021 /pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt
+300

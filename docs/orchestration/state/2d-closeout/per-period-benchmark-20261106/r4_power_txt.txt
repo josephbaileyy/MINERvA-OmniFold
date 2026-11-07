@@ -1,0 +1,2 @@
+TotalCovariance      G = sigma_pub(st=0) = 0.04280   'differs' needs st >= 0.1473   'matches' up to st = 0.0936
+StatOnlyCovariance   G = sigma_pub(st=0) = 0.00246   'differs' needs st >= 0.0074   'matches' up to st = 0.0049
