@@ -1,5 +1,5 @@
 sha256 7c3ffe86b721f79ba9ee3d426b4c711ca96eeec7b2a4071eba5cf62bf102ef0f  fd_1b_precheck_fd.py
-sha256 05ed491bde0c7072e825d9dd7154c5731f7bff607bf599a03e3729bef46b0f9a  tests/test_fd_1b_precheck_fd.py
+sha256 a3e1fb329beda09795b2ecfeed56cb36cd8c302ccb404ccedd8c5e6e43f5122a  tests/test_fd_1b_precheck_fd.py
 sha256 71b3903aa1329807af7e48b29b4ffd3336ad637d4b8c7e43ae0a6cbe28bcdf1f  fd_1b_inv.py
 sha256 420088436948d9422dd82f7663ae4f6c6728329f6462cf6353f6ad7737f2b992  fd_1b_moded.py
 sha256 869a65c3bcce1a3b56ecd197ecdf3b6cf2741e0611f91b582c3064f67967bc08  fd_1b_toys.py
@@ -41,7 +41,22 @@ KILLED   flux-file control skipped
 KILLED   walls limit doubled
 KILLED   walls RSS ignored
 KILLED   a missing pilot product passes
-unmutated, PYTHONHASHSEED=0: rc 0: 30 passed, 1 warning in 12.69s
-unmutated, PYTHONHASHSEED=1: rc 0: 30 passed, 1 warning in 13.89s
-unmutated, PYTHONHASHSEED=12345: rc 0: 30 passed, 1 warning in 12.47s
-37 of 37 killed
+KILLED   T1: rule F window clause dropped
+KILLED   T1: rule F same-side clause dropped
+KILLED   T1: rule F reads unresolved cells
+KILLED   T1: F_truth's M on the nominal floor
+KILLED   T1: total's M on the nominal floor
+KILLED   T1: a group's floor from one band
+KILLED   T2: input digests not checked
+KILLED   T2: pins digest not checked
+KILLED   T2: weight digest not checked
+KILLED   T2: non-finite unfold accepted
+KILLED   T2: B's bad factor accepted
+KILLED   T2: readout's mode/universe/schema check skipped
+KILLED   T2: I0's floor kind not checked
+KILLED   T2: identity control skipped
+KILLED   T2: mode A keeps non-finite weights
+unmutated, PYTHONHASHSEED=0: rc 0: 42 passed, 1 warning in 18.08s
+unmutated, PYTHONHASHSEED=1: rc 0: 42 passed, 1 warning in 18.02s
+unmutated, PYTHONHASHSEED=12345: rc 0: 42 passed, 1 warning in 28.18s
+52 of 52 killed

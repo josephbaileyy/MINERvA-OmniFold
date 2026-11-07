@@ -260,31 +260,42 @@ atime. A missing source is a STOP to the director, with HPSS fallback paths name
 - `walls`;
 - `readout`.
 
-**Its tests** (`nd-unfolding/tests/test_fd_1b_precheck_fd.py`, 30 tests, synthetic fixtures only):
+**Its tests** (`nd-unfolding/tests/test_fd_1b_precheck_fd.py`, 42 tests, synthetic fixtures only):
 - **B's factors** equal `fd_1b_toys.source_factors`' bitwise;
 - **each mode at CV** equals the derivation CV experiment bitwise;
 - **§2.1's flux key** in each mode, with the inherited `with_mc` shown to give the wrong flux. The job refuses a
   product unfolded with another mode's flux;
 - **Dnom's truth** carries Φ_u;
 - **HD1's flags** are recorded;
-- **rules S, F and K** at their edges, with unresolved cells ignored, and the levels at n/2 and n/4;
+- **rules S, F and K** at their edges, with unresolved cells ignored, and the levels at n/2 and n/4. Rule F does
+  not attribute a dominant factor inside the window, or a larger factor on the other side of 1, and reads only
+  resolved cells;
+- **the floors:** the M side of F_truth and of the total is read against the data floor, and a group's noise
+  expectation sums its bands'. κ's floor is uncarried;
 - **the readout end to end:**
   - B = E reads REPRODUCED and 1.2 E DEPARTS;
   - the attribution lands on the factor the fixture sets;
   - κ = 1.2 fails;
   - κ's floor is uncarried;
   - A_Φ = A for pure-normalization universes;
-- **each of nine controls** refuses with its own message;
+- **each of eleven readout controls** refuses with its own message, the mode/universe/schema check and I0's floor
+  kind among them. The identity control refuses inconsistent factors;
+- **the job's guards fire:** the input digests, the pins digest, a weight off its pin, a non-finite unfold and B's
+  non-finite or negative factor. Mode A zeroes a non-finite universe weight (S1's rule);
 - **an atime move** exits 8;
 - **O_NOATIME over the call graph.**
 
-**The mutation receipt** (`fd/receipts-1b/precheck-fd/code/mutation.{py,out}`) kills 37 of 37 mutants:
+**The mutation receipt** (`fd/receipts-1b/precheck-fd/code/mutation.{py,out}`) kills 52 of 52 mutants:
 - the flux key in each mode, and the job's flux refusal;
 - B's factors, and Dnom's nature and unfolding MC;
-- every threshold and every rule edge;
+- the rules' thresholds and edges (window, levels, resolution);
 - the weights, the carry and Dnom's object;
 - κ's floor and A_Φ;
-- each control.
+- each control;
+- the 15 mutants from `coverage-5b-audit`'s code audit of `40824375` (T1: rule F's window, same-side and
+  resolution clauses and the three floor assignments; T2: the input, pins and weight digests, the non-finite unfold,
+  B's factor guard, the readout's product check, I0's floor kind, the identity control and mode A's zero rule).
+  15 of those 16 survived the 30-test suite. Each now has a firing test.
 
 The suite passes at PYTHONHASHSEED 0, 1 and 12345.
 

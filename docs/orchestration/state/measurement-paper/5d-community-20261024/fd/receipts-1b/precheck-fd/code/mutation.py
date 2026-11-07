@@ -53,6 +53,23 @@ M = [
  ("walls limit doubled", "ok = s_max <= UNIT_SECONDS and r_max <= RSS_LIMIT_KIB", "ok = s_max <= 2 * UNIT_SECONDS and r_max <= RSS_LIMIT_KIB"),
  ("walls RSS ignored", "ok = s_max <= UNIT_SECONDS and r_max <= RSS_LIMIT_KIB", "ok = s_max <= UNIT_SECONDS"),
  ("a missing pilot product passes", '            raise Refusal(f"pilot product {p.name} is missing")', "            continue"),
+ # coverage-5b-audit's code audit of 40824375 (T1, T2): sixteen extra single-site mutants, fifteen of which survived
+ # that suite; each has a firing test now
+ ("T1: rule F window clause dropped", "if bool(in_window(F[k][c])) or mag < 0.5 * abs(tot):", "if mag < 0.5 * abs(tot):"),
+ ("T1: rule F same-side clause dropped", "for k in FACTORS if math.log(F[k][c]) * tot > 0]", "for k in FACTORS]"),
+ ("T1: rule F reads unresolved cells", 'if allres[c] and not in_window(F["total"][c])]', 'if not in_window(F["total"][c])]'),
+ ("T1: F_truth's M on the nominal floor", '"F_truth": ~noise(a, m, f_n, f_d)', '"F_truth": ~noise(a, m, f_n, f_n)'),
+ ("T1: total's M on the nominal floor", 'res["total"] = ~noise(e, m, f_n, f_d)', 'res["total"] = ~noise(e, m, f_n, f_n)'),
+ ("T1: a group's floor from one band", "(sum(nf[b] for b in bs) * x for x in (sd2, sn2, sn2 / g ** 2))", "(nf[bs[0]] * x for x in (sd2, sn2, sn2 / g ** 2))"),
+ ("T2: input digests not checked", "if (npz_sha, bkg_sha) != (sa.INPUT_NPZ_SHA256, sa.BKG_SHA256):", "if False:"),
+ ("T2: pins digest not checked", "if inv.sha256_noatime(a.pins) != a.expect_pins_sha256:", "if False:"),
+ ("T2: weight digest not checked", 'if inv.sha256_noatime(p) != pins["files"][str(p)]["sha256"]:', "if False:"),
+ ("T2: non-finite unfold accepted", "if not np.all(np.isfinite(xs)):", "if False:"),
+ ("T2: B's bad factor accepted", "if not np.all(np.isfinite(f)) or np.any(f < 0):", "if False:"),
+ ("T2: readout's mode/universe/schema check skipped", 'if (meta.get("mode"), meta.get("universe"), meta.get("schema")) != (mode, u, SCHEMA):', "if False:"),
+ ("T2: I0's floor kind not checked", 'if r0.get("floor", {}).get("kind") != "measured":', "if False:"),
+ ("T2: identity control skipped", 'if not np.allclose(prod[ok], F["total"][ok], rtol=1e-12, atol=0):', "if False:"),
+ ("T2: mode A keeps non-finite weights", 'w = inv.universe_weights(weights_dir(tag, bank, det_dir), tag, "zero")', 'w = inv.universe_weights(weights_dir(tag, bank, det_dir), tag, "keep")'),
 ]
 rows = []
 try:

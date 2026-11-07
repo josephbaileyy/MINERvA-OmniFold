@@ -12,7 +12,11 @@ FD-1B-PRECHECK-FD-DECLARATION.md), each rule in the direction it acts and in the
   attribution lands on the factor the fixture sets, kappa = 1 passes and 1.2 fails; the identity; and every control
   refuses (gate D's ratio, the diagnosis's ratio, S1's blocks, a CV product, a product's flux, one code, the flux
   file); A_Phi equals A where the fixture's universes are pure normalization;
-* the job's products record the flux they unfolded with, and the pilot trigger reads PASS and REPRICE at its edges.
+* the job's products record the flux they unfolded with, and the pilot trigger reads PASS and REPRICE at its edges;
+* coverage-5b-audit's T1 and T2 on 40824375: rule F's window, same-side and resolution clauses; the M side on the data
+  floor and a group's floor summed over its bands; every job guard firing (input, pins and weight digests, a
+  non-finite unfold, B's bad factor); the readout's product check, I0's floor kind and the identity control; mode A's
+  zeroing of a non-finite universe weight.
 
 No real data are read: every fixture is synthetic."""
 from __future__ import annotations
@@ -172,6 +176,29 @@ class UnfoldingFlux(ToyCase):
             np.testing.assert_array_equal(exp["flux"], self.inputs["flux"], err_msg=f"{mode} {tag}")
             np.testing.assert_array_equal(pfd.expected_flux(mode, tag, self.inputs, ui), self.inputs["flux"])
 
+    def test_bs_non_finite_or_negative_factor_refuses(self):
+        for bad in (np.nan, -1.0):
+            with self.subTest(bad), \
+                    mock.patch.object(pfd.ne, "checked_ratio", lambda w, cv, *a, **k: np.full(np.shape(cv), bad)), \
+                    self.assertRaisesRegex(inv.Refusal, "source factor"):
+                pfd.toy_factors("Flux_3", self.inputs, self.bkg, self.w.bank, self.w.det)
+
+    def test_mode_a_zeroes_a_non_finite_universe_weight(self):
+        # S1's universe rule (s5p_universe.weights): a non-finite weight is zeroed, as S1's unfolds read it
+        real = inv.load_npy
+
+        def with_nan(path):
+            w = np.array(real(path), dtype=float)
+            if Path(path).name == "Flux_3_wt.npy":
+                w[5] = np.nan
+            return w
+
+        with mock.patch.object(inv, "load_npy", with_nan):
+            ui, *_ = pfd.mode_inputs("A", "Flux_3", self.inputs, self.bkg, self.w.bank, self.w.det, self.bank_cv,
+                                     self.flux_file)
+        self.assertEqual(ui["w_truth"][5], 0.0)
+        self.assertTrue(np.all(np.isfinite(ui["w_truth"])))
+
     def test_hd1s_premise_flags_are_recorded(self):
         _, _, info, *_ = self.modes("A", "MinosEfficiency_0")
         self.assertIn(info["wt_equals_cv"], (True, False))
@@ -220,6 +247,46 @@ class Jobs(ToyCase):
                 contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
             self.assertEqual(pfd.main(self.argv("B", "CV", out)), 8)
         self.assertEqual(json.loads(next(out.glob("atime-*.json")).read_text())["moved"], [str(self.w.inputs)])
+
+    def test_the_input_digests_are_checked(self):
+        with mock.patch.object(sa, "INPUT_NPZ_SHA256", "0" * 64):
+            self.assertEqual(self.run_job("B", "CV", self.tmp / "unf-npz"), 4)
+        with mock.patch.object(sa, "BKG_SHA256", "0" * 64):
+            self.assertEqual(self.run_job("B", "CV", self.tmp / "unf-bkg"), 4)
+        self.assertFalse((self.tmp / "unf-npz").exists() or (self.tmp / "unf-bkg").exists())
+
+    def test_the_pins_digest_is_checked(self):
+        argv = self.argv("B", "CV", self.tmp / "unf-pins")
+        argv[argv.index("--expect-pins-sha256") + 1] = "0" * 64
+        with mock.patch.object(s5n_pseudo, "unfold_negweight", fake_unfold), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(pfd.main(argv), 4)
+        self.assertFalse((self.tmp / "unf-pins").exists())
+
+    def test_a_universe_weight_off_its_pin_refuses(self):
+        pins = json.loads(self.w.pins.read_text())
+        key = str(self.w.det / "GEANT_Proton_1_wr.npy")
+        pins["files"][key]["sha256"] = "0" * 64
+        bad = self.tmp / "pins-bad.json"
+        bad.write_text(json.dumps(pins))
+        argv = self.argv("B", "GEANT_Proton_1", self.tmp / "unf-w")
+        argv[argv.index("--pins") + 1] = str(bad)
+        argv[argv.index("--expect-pins-sha256") + 1] = digest(bad)
+        with mock.patch.object(s5n_pseudo, "unfold_negweight", fake_unfold), \
+                contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(pfd.main(argv), 4)
+        self.assertFalse((self.tmp / "unf-w" / f"{pfd.TAG}_B_GEANT_Proton_1.npz").exists())
+
+    def test_a_non_finite_unfold_refuses(self):
+        def nan_unfold(exp, *a, **k):
+            x, ev = fake_unfold(exp, *a, **k)
+            x = np.asarray(x, float).copy()
+            x.flat[0] = np.nan
+            return x, ev
+
+        with mock.patch.object(s5n_pseudo, "unfold_negweight", nan_unfold), \
+                contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(pfd.main(self.argv("A", "Flux_7", self.tmp / "unf-nan")), 4)
+        self.assertFalse((self.tmp / "unf-nan" / f"{pfd.TAG}_A_Flux_7.npz").exists())
 
     def test_an_interaction_universe_refuses(self):
         self.assertEqual(self.run_job("B", "MaRES_0", self.tmp / "unf-r"), 4)
@@ -337,6 +404,17 @@ class Rules(unittest.TestCase):
         F = {"total": np.array([1.5]), "F_src": np.array([1.2]), "F_side": np.array([1.2]), "F_truth": np.array([1.5 / 1.44])}
         self.assertIsNone(pfd.attribute(F, 0)["factor"])    # 1.2 carries under half of ln 1.5
         F = {"total": np.array([0.7]), "F_src": np.array([1.05]), "F_side": np.array([1.0]), "F_truth": np.array([0.7 / 1.05])}
+        self.assertEqual(pfd.attribute(F, 0)["factor"], "F_truth")
+
+    def test_a_dominant_factor_inside_the_window_is_not_attributed(self):
+        # F_side 1.08 is the largest same-side factor and carries over half of ln 1.12, but lies inside the window
+        F = {"total": np.array([1.12]), "F_src": np.array([1.0]), "F_side": np.array([1.08]),
+             "F_truth": np.array([1.12 / 1.08])}
+        self.assertIsNone(pfd.attribute(F, 0)["factor"])
+
+    def test_a_larger_factor_on_the_other_side_is_not_attributed(self):
+        # F_src 0.4 has the largest |ln| but lies on the other side of 1 from rho = 1.5; F_truth 2.0 is the answer
+        F = {"total": np.array([1.5]), "F_src": np.array([0.4]), "F_side": np.array([1.875]), "F_truth": np.array([2.0])}
         self.assertEqual(pfd.attribute(F, 0)["factor"], "F_truth")
 
     def test_levels_at_n_over_2_and_n_over_4(self):
@@ -527,6 +605,48 @@ class Readout(unittest.TestCase):
         self.assertEqual((r["bands"][sa.FLUX]["rule_K"]["verdict"], r["bands"][sa.FLUX]["rule_K"]["n_resolved"]),
                          ("PASS", 0))
 
+    def test_rule_f_reads_only_resolved_cells(self):
+        # rho_flux = 1.5, all of it in F_side, in every cell; with every block under its floor, nothing is attributed
+        r = Staged(self.tmp, m={sa.FLUX: 1 / 1.5}, side={sa.FLUX: 1.5}, sigma=1.0).run()
+        self.assertEqual((r["bands"][sa.FLUX]["rule_F"]["n_cells"], r["bands"][sa.FLUX]["rule_F"]["attribution"]), (0, {}))
+
+    @staticmethod
+    def band_E(st, band):
+        X = np.array([st.xD[f"{band}_{i}"] for i in range(sa.EXPECT[band])])
+        return np.diag(sa.mat_cov(X, st.w if band == sa.FLUX else None)) * st.g ** 2
+
+    @staticmethod
+    def set_floors(st, sd2, sn2):
+        """I0's sigma_J_data and sigma_J_nom_carried such that the upper floors (1.878 sigma^2) are sd2 and sn2."""
+        z = json.loads(st.i0.read_text())
+        z["sigma_J_data"], z["sigma_J_nom_carried"] = np.sqrt(sd2 / 1.878).tolist(), np.sqrt(sn2 / 1.878).tolist()
+        st.i0.write_text(json.dumps(z))
+
+    def test_the_m_side_is_read_against_the_data_floor(self):
+        # A = B = E, M = 9 E. Thresholds (k nf floor): nominal 2 E, data 20 E. Against the data floor M is noise, so
+        # F_truth (A vs M) and the total (E vs M) are unresolved; against the nominal floor M would be resolved
+        st = Staged(self.tmp, m={"MinosEfficiency": 3.0})
+        with st.patched(gate=False):
+            st.committed()
+        E = self.band_E(st, "MinosEfficiency")
+        c = pfd.RESOLVE_K * 0.5
+        self.set_floors(st, 20 * E / c, 2 * E / c)
+        res = st.run()["bands"]["MinosEfficiency"]["resolved"]
+        self.assertEqual((res["F_truth"], res["total"]), ([], []))
+        self.assertEqual(res["F_side"], [])      # A and B both under the nominal floor
+
+    def test_a_groups_noise_expectation_sums_its_bands(self):
+        # the detector group's E against a floor of k x (sum of its four bands' nf = 2) x sn2, set at 1.5 E_sum:
+        # unresolved; one band's nf (0.5) alone would put the threshold at 0.375 E_sum and resolve it
+        st = Staged(self.tmp)
+        with st.patched(gate=False):
+            st.committed()
+        e_sum = sum(self.band_E(st, b) for b in sa.DETECTOR_BANDS)
+        sn2 = 1.5 * e_sum / (pfd.RESOLVE_K * 2.0)
+        self.set_floors(st, sn2, sn2)
+        r = st.run()
+        self.assertEqual(r["groups"]["detector"]["resolved"]["F_src"], [])
+
     def test_kappas_floor_is_uncarried(self):
         # a floor set per cell so that A_unc sits above the uncarried floor (0.8 x A_unc) and below the carried one
         # (0.8 g^2 x A_unc, g = 1.2): the band's kappa cells are resolved only with the uncarried floor
@@ -591,7 +711,17 @@ class Readout(unittest.TestCase):
             (st.root / "staged.json").write_text(json.dumps({"staged": [{"role": "flux-file", "sha256": "e" * 64}],
                                                               "missing": []}))
 
-        for fn, why in ((gate_ratio, "flux ratio does not reproduce gate D"),
+        def wrong_universe(st):
+            st.save("B", "GEANT_Pion_1", st.x_cv, st.x_t, st.cv_flux, meta=st.meta("B", "GEANT_Pion_0", st.cv_flux))
+
+        def floor_kind(st):
+            z = json.loads(st.i0.read_text())
+            z["floor"]["kind"] = "fallback"
+            st.i0.write_text(json.dumps(z))
+
+        for fn, why in ((wrong_universe, "B_GEANT_Pion_1.npz: not mode B, universe GEANT_Pion_1"),
+                        (floor_kind, "I0's floor is not the measured one"),
+                        (gate_ratio, "flux ratio does not reproduce gate D"),
                         (diag_ratio, "GEANT_Pion: the per-band ratio does not reproduce the diagnosis"),
                         (s1_block, "band GEANT_Proton: the staged S1 unfolds do not reproduce"),
                         (cv_product, "mode Dnom at CV does not reproduce"),
@@ -602,6 +732,18 @@ class Readout(unittest.TestCase):
                         (flux_file, "flux file is not the staged one")):
             with self.subTest(fn.__name__):
                 broken(fn, why)
+
+    def test_the_identity_control_refuses_inconsistent_factors(self):
+        st = Staged(self.tmp)
+        real = pfd.factors
+
+        def off(E, B, A, M):
+            F = real(E, B, A, M)
+            F["total"] = F["total"] * 1.000001
+            return F
+
+        with st.patched(), mock.patch.object(pfd, "factors", off), self.assertRaisesRegex(fs.Invalid, "the identity"):
+            pfd.readout(st.root, st.unf, st.gate_d, st.diag, st.i0)
 
     def test_gate_d_must_be_the_committed_readout(self):
         st = Staged(self.tmp)
