@@ -104,7 +104,7 @@ None has been measured.
 | **HD1** (detector) | the detector bands are weight-only on reco and background (`fd_1b_toys.py:255–260`); if the dump's truth weights and denominator equal the CV's, A ≡ B up to the ratio guards | F_side inside the window in every resolved cell | rule F, and a control on the dump's arrays (§5) |
 | **H2** (noise) | a band whose blocks sit near the rounding floor | the band-cell is noise-consistent | the noise rule (§4.1) |
 
-F_truth is computed as an attribution operand only; it is not studied (the director's ruling D1 on #861; CANNOT AUTHORIZE, above).
+F_truth is computed as an attribution operand only; not studied (the director's ruling D1 on #861; CANNOT AUTHORIZE, above).
 
 ## 4. The readings, fixed before any number is read
 
@@ -161,7 +161,7 @@ Per band and per group:
 | rule S REPRODUCED for the flux and detector groups | with Part 0's interaction checks, "in all three drawn groups the pseudo-experiments reproduce, within 10 % in σ in every resolved cell, the block that the same weight factors give on the simulation side" | coverage; that S1's flux or detector block is right; the laterals and normalization surrogates (29.0 % of the trace, `gate-d.json:6`), C_model and C_resp |
 | rule S DEPARTS for a band | "for band b the pseudo-experiments and the simulation side give blocks more than 10 % apart in σ in cells …"; a finding for the director | which of a defect and a non-linearity causes it; any repair |
 | rule F, F_side the account | "gate D's departure for band b is mostly a comparison of unlike objects, the toys' factors against S1's whole universe at the same truth" | why they differ (HF2 is descriptive); which object is right |
-| rule F, F_truth the account | "in the named cells the dominant same-side factor is F_truth = √(A/M)" | any study of the truth dependence (excluded); any mechanism for the truth dependence; which truth the intervals should use |
+| rule F, F_truth the account | "in the named cells, the dominant same-side factor is F_truth = √(A/M), the full universe at the nominal truth against S1's blocks" | any study of the truth dependence, any mechanism for it, and any statement about which truth the intervals should use: all outside this study, as excluded item (c) |
 | rule K PASS | "full-universe pseudo-data reproduce S1's universe block for band b at the nominal truth" | that the toys realize S1's M; coverage |
 | rule K FAIL | a finding for the director | a repair |
 
