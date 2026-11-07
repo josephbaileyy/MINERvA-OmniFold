@@ -322,18 +322,34 @@ class EndToEnd(Fixture):
         super().setUpClass()
         d, s = cls.d, cls.shas
         cls.rc = {}
+        loop_seen = []
+        orig_unfold = s5c_unfold.unfold
+
+        def seen_unfold(unf_in, *a, **k):
+            loop_seen.append((np.array(unf_in["MCgen"], copy=True), np.array(unf_in["measured"], copy=True)))
+            return orig_unfold(unf_in, *a, **k)
+
+        s5c_unfold.unfold = seen_unfold
+        cls.addClassCleanup(setattr, s5c_unfold, "unfold", orig_unfold)
         with standins(d):
             cls.rc["A0"] = run_arm(d, s, "A0", "-:-,-:0,-:1,-:2,-:3", U=cls.U)
             cls.rc["V"] = run_arm(d, s, "V", "-:1,-:2,-:3")
             cls.rc["S_all"] = run_arm(d, s, "S_all", "-:1,-:2,-:3")
             REFINE_SEEN.clear()
+            loop_seen.clear()
             cls.rc["S_ref"] = run_arm(d, s, "S_ref", "-:1")
-            cls.seen_ref = list(REFINE_SEEN)
+            cls.seen_ref, cls.loop_ref = list(REFINE_SEEN), list(loop_seen)
             REFINE_SEEN.clear()
+            loop_seen.clear()
             cls.rc["S_omni"] = run_arm(d, s, "S_omni", "-:1")
-            cls.seen_omni = list(REFINE_SEEN)
+            cls.seen_omni, cls.loop_omni = list(REFINE_SEEN), list(loop_seen)
             cls.rc["B63"] = run_arm(d, s, "B63", "-:0,-:1")
+            loop_seen.clear()
+            cls.rc["P2"] = run_arm(d, s, "P2", "-:0")  # P2's permutation, for the order check below
+            cls.loop_p2 = list(loop_seen)
+            loop_seen.clear()
             cls.rc["P1"] = run_arm(d, s, "P1", "-:0")
+            cls.loop_p1 = list(loop_seen)
             cls.rc["F_pz"] = run_arm(d, s, "F_pz", "-:1")
 
     def test_every_arm_ran(self):
@@ -377,6 +393,13 @@ class EndToEnd(Fixture):
             self.assertTrue(np.all(np.isfinite(x)))
         self.assertFalse(np.array_equal(a0_1, base))
 
+        def upcast(x):
+            return np.array_equal(x, x.astype(np.float32).astype(np.float64))
+        # the loop saw unjittered MC and measured rows under S-ref, and jittered ones under S-omni
+        (mc_r, meas_r), (mc_o, meas_o) = self.loop_ref[0], self.loop_omni[0]
+        self.assertTrue(upcast(mc_r) and upcast(meas_r))
+        self.assertFalse(upcast(mc_o) or upcast(meas_o))
+
     def test_trace_sidecars(self):
         t = rma.trace(self.d / "runs", "A0", 1)
         self.assertEqual(np.shape(t["fn_push"]), (5, self.U.shape[0]))
@@ -401,6 +424,9 @@ class EndToEnd(Fixture):
         base = product(self.d, "A0", 0)[0]
         self.assertEqual(x.shape, base.shape)
         self.assertTrue(np.allclose(x, base, rtol=1e-9, atol=0))
+        mc1, mc2 = self.loop_p1[0][0], self.loop_p2[0][0]
+        self.assertFalse(np.array_equal(mc1, mc2), "the two permutation seeds gave the same row order")
+        self.assertTrue(np.array_equal(np.sort(mc1, axis=0), np.sort(mc2, axis=0)))
 
     def test_names_restored_after_every_arm(self):
         self.assertEqual(s5p_numerics.jittered.__module__, "s5p_numerics")
@@ -501,7 +527,7 @@ class Queue(unittest.TestCase):
         self.assertEqual(sum(int(l.split("\t")[1]) for l in body), 229)
         self.assertEqual(len(dry), 9)
         self.assertTrue(all(int(l.split("\t")[1]) == 1 for l in body if l.split("\t")[0] in dry))
-        self.assertTrue(all(int(l.split("\t")[1]) <= rmp.CHUNK for l in body))
+        self.assertTrue(all(int(l.split("\t")[1]) <= 4 for l in body))  # the declared task size, not rmp.CHUNK
         per_arm = {}
         for l in body:
             per_arm[l.split("\t")[0].rsplit("_", 1)[0]] = per_arm.get(l.split("\t")[0].rsplit("_", 1)[0], 0) + int(l.split("\t")[1])
@@ -559,6 +585,12 @@ class Statistics(unittest.TestCase):
         r = rma.spread_ratio(Fa, F0, rng)
         self.assertLess(r["interval_90"][0], rma.C_MIN)
         self.assertEqual(r["reading"], "INCONCLUSIVE")
+
+    def test_a_paired_identical_arm_reads_exactly_one(self):
+        rng = np.random.default_rng(4)
+        _, F0 = self.F(1.0)
+        r = rma.spread_ratio(F0.copy(), F0, rng)
+        self.assertEqual((r["M"], r["interval_90"]), (1.0, [1.0, 1.0]))
 
     def test_zero_spread_functionals_are_excluded_and_too_many_invalidate(self):
         rng = np.random.default_rng(3)
@@ -821,7 +853,8 @@ class JobScript(unittest.TestCase):
 
     def job(self, mode, pin=None):
         env = dict(os.environ, RS1_TIME_BIN=str(self.time))
-        return subprocess.run(["bash", str(ND / "sbatch_rs1.sh"), mode, str(self.D), pin or self.pin, str(self.OUT)],
+        script = os.environ.get("RS1_SBATCH", str(ND / "sbatch_rs1.sh"))  # the mutation harness's copy
+        return subprocess.run(["bash", script, mode, str(self.D), pin or self.pin, str(self.OUT)],
                               capture_output=True, text=True, env=env)
 
     def test_dry_then_full_skips_the_dry_tasks_and_writes_done(self):
@@ -838,16 +871,25 @@ class JobScript(unittest.TestCase):
         self.assertIn("runs/A0/c.npz", (self.OUT / "log-full" / "SHA256SUMS").read_text())
 
     def test_full_refuses_without_a_dry_receipt(self):
+        """Every dry task ended, but the dry run wrote no DONE (or wrote FAILED): the full run still refuses."""
         self.queue("dry.tsv", ["a"])
         self.queue("queue.tsv", ["a", "b"])
+        (self.OUT / "log-dry").mkdir()
+        (self.OUT / "log-dry" / "a.end").write_text("1")
         r = self.job("full")
         self.assertEqual(r.returncode, 2)
+        self.assertIn("no DONE receipt", r.stderr)
         self.assertFalse((self.OUT / "log-full").exists())
+        (self.OUT / "log-dry" / "DONE").write_text("{}")
+        (self.OUT / "log-dry" / "FAILED").write_text("rc=1")
+        r = self.job("full")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("no DONE receipt", r.stderr)
 
     def test_a_failed_task_leaves_no_receipt(self):
         self.queue("dry.tsv", ["a", "b"], fail=("b",))
         self.assertEqual(self.job("dry").returncode, 1)
-        self.assertTrue((self.OUT / "log-dry" / "FAILED").exists())
+        self.assertTrue((self.OUT / "log-dry" / "FAILED").read_text().startswith("rc="))  # the record names the queue's rc
         self.assertFalse((self.OUT / "log-dry" / "DONE").exists())
         self.assertTrue((self.OUT / "log-dry" / "SHA256SUMS").exists())
 
@@ -858,6 +900,13 @@ class JobScript(unittest.TestCase):
         shutil.rmtree(self.OUT / "log-dry")
         self.assertEqual(self.job("dry", pin="0" * 40).returncode, 2)
         self.assertEqual(self.job("dry").returncode, 0)
+
+    def test_an_environment_without_lightgbm_is_refused(self):
+        self.queue("dry.tsv", ["a"])
+        (self.stub / "lightgbm.py").unlink()
+        r = self.job("dry")
+        self.assertEqual(r.returncode, 7, r.stderr)
+        self.assertFalse((self.OUT / "runs").exists())
 
     def test_a_dirty_deploy_is_refused(self):
         self.queue("dry.tsv", ["a"])
