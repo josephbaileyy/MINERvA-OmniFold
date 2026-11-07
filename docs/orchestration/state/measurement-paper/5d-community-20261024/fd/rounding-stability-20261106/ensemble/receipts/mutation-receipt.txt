@@ -1,0 +1,62 @@
+# ENS1 mutation receipt (ENS1-BINDING-1.md ruling 4). Run locally, 2026-11-07T19:38:26Z, python 3.12.2, numpy 1.26.4.
+# Command: PYTHONDONTWRITEBYTECODE=1 python3 -B nd-unfolding/tests/ensemble_estimator_mutation.py (rc 0)
+# The suite imports RS1's stand-ins from tests/test_rounding_mechanism.py (bound at e306087e, unchanged).
+# sha256 of the files it ran on:
+#   9d86d435f397d6a0168839182963257758efeb4a8851d55b9bd13a190d9adcb9  nd-unfolding/ensemble_estimator_probe.py
+#   ef2f467cc010b37017f0d526a999637a7c3215ed2c91a2ab7b9bd3c6c1fe7181  nd-unfolding/ensemble_estimator_analyze.py
+#   220110ed3132badd9eb8d608ff974051fd53e7cffe9f711f7d3fbfe08446b1d9  nd-unfolding/sbatch_ens1.sh
+#   b3aef8e3c5051de4979800a7796f1e7d7b7a49b7de070c84b177679e1e28f4c5  nd-unfolding/tests/test_ensemble_estimator.py
+#   319e3aab6af0f769d4af4bb3ca6a83f5610cbebc15294962d6993b10a23b9c53  nd-unfolding/tests/ensemble_estimator_mutation.py
+#   e7d48236a67e2b89f56e9b0e72efdc6f57b2289ce02b542ef5f38a0bdf183d36  nd-unfolding/tests/test_rounding_mechanism.py
+UNMUTATED SUITE: 45 tests, rc 0
+KILLED    REQ internal jitter after a float32 cast   by test_it_acts_on_y_at_full_precision_not_after_a_float32_cast
+KILLED    REQ internal jitter at +-1/4 spacing       by test_the_scale_is_plus_or_minus_half_the_float32_spacing_in_both_directions
+KILLED    REQ closure unfolds in float32             by test_the_closure_unfolds_in_float64_whatever_the_runner_asks
+KILLED    REQ G0 admits a float32 base               by test_g0_refuses_a_float32_base
+KILLED    REQ seed 0 is a protocol jitter            by test_seed_zero_is_the_float64_copy_and_then_delta_k
+KILLED    grid edges moved                           by test_grid_edges_are_not_moved_and_other_values_are
+KILLED    one stream for every k                     by test_fixed_per_k_and_distinct_across_k
+KILLED    undeclared k accepted                      by test_an_undeclared_k_is_refused
+KILLED    a write without the check                  by test_a_write_without_the_namespace_check_is_refused
+KILLED    any pair accepted                          by test_undeclared_pairs_and_inputs_are_refused_and_the_declared_call_is_not
+KILLED    threads unchecked (stability)              by test_undeclared_pairs_and_inputs_are_refused_and_the_declared_call_is_not
+KILLED    truth unchecked (stability)                by test_undeclared_pairs_and_inputs_are_refused_and_the_declared_call_is_not
+KILLED    closure hypothesis unchecked               by test_closure_namespace
+KILLED    closure alternative unchecked              by test_closure_namespace
+KILLED    closure noise allowed                      by test_closure_namespace
+KILLED    closure grid move unchecked                by test_a_move_across_the_grid_is_refused_before_the_build
+KILLED    closure build without delta_k              by test_the_closure_inputs_carry_delta_k_and_differ_across_k
+KILLED    CLI accepts an undeclared k                by test_cli_refuses_an_undeclared_k
+KILLED    queue runs A7 MnvTune at every k           by test_the_declared_counts
+KILLED    E1 two codes accepted                      by test_one_code_and_distinct_digests_are_required
+KILLED    E2 identical inputs accepted               by test_one_code_and_distinct_digests_are_required
+KILLED    E3 reference unpinned                      by test_references_must_be_pinned_and_from_the_same_estimator_code
+KILLED    LOW-2 other estimator code                 by test_references_must_be_pinned_and_from_the_same_estimator_code
+KILLED    G0 always informative                      by test_g0_reads_uninformative_when_the_control_passes
+KILLED    bar ignored                                by test_a_small_ensemble_spread_passes_and_a_large_one_fails
+KILLED    P = 9                                      by test_the_rebound_statistic_is_the_hand_computation_and_the_bound_one_at_25
+KILLED    N_PAIRS not restored                       by test_n_pairs_is_restored_after_a_raise
+KILLED    receipt pin unchecked                      by test_an_incomplete_stage_grades_nothing
+KILLED    receipt FAILED ignored                     by test_an_incomplete_stage_grades_nothing
+KILLED    receipt missing shard accepted             by test_an_incomplete_stage_grades_nothing
+KILLED    c_hat without the 1/(1+q)                  by test_c_hat_recovers_c
+KILLED    c_hat reading at eps for c*                by test_the_c_hat_reading_in_each_direction
+KILLED    stage 2 without STAB_PASS                  by test_stage2_refuses_without_stab_pass
+KILLED    s_E without its own factor                 by test_s_e_carries_its_own_upper_factor
+KILLED    s_F not reproduced                         by test_the_stops
+KILLED    determinism xsec unchecked                 by test_the_stops
+KILLED    determinism xtrue unchecked                by test_the_stops
+KILLED    truth vector across k unchecked            by test_the_stops
+KILLED    closure digests unchecked                  by test_the_stops
+KILLED    closure split unchecked                    by test_the_stops
+KILLED    zero floor read as a verdict               by test_a_zero_floor_is_invalid
+KILLED    worse read as a pass                       by test_pass_and_bias_worse
+KILLED    pin unchecked                              by test_refusals_existing_log_wrong_pin_bad_stage_or_shard_dirty_deploy
+KILLED    existing log reused                        by test_refusals_existing_log_wrong_pin_bad_stage_or_shard_dirty_deploy
+KILLED    any stage accepted                         by test_refusals_existing_log_wrong_pin_bad_stage_or_shard_dirty_deploy
+KILLED    any shard accepted                         by test_refusals_existing_log_wrong_pin_bad_stage_or_shard_dirty_deploy
+KILLED    shard without the dry receipt              by test_a_shard_refuses_without_the_dry_done_or_at_another_pin
+KILLED    shard at another pin                       by test_a_shard_refuses_without_the_dry_done_or_at_another_pin
+KILLED    a failed task still writes DONE            by test_a_failed_task_leaves_no_receipt
+KILLED    environment unchecked                      by test_an_environment_without_lightgbm_is_refused
+MUTATION CHECK :: PASS (50 mutations)

@@ -10294,6 +10294,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-sta
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/ENS1-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/power/ens_power_sim.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/power/ens_power_sim.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/ensemble/receipts/mutation-receipt.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/power/rs1_power_sim.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/power/rs1_power_sim.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/receipts/dry/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
