@@ -1,0 +1,40 @@
+--- launch-s5.sh (2c9a5de8, as in readout/G18/phase-s-1-invalid/launch-s5-s.diff.txt)
++++ launch-s5.sh (with a5t)
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ # Launch one stage-5 bound-CLI connect (the director's ruling 2, 2026-11-07), or A4's cluster test receipt (a4t).
+-# Usage: launch-s5.sh 95|x1|a4t|nG18|nAR23|sG18|sAR23   (n<T>/s<T>: A4's phase N/S for one truth, connect-n|s-<T>.sh)
++# Usage: launch-s5.sh 95|x1|a4t|a5t|nG18|nAR23|sG18|sAR23   (n<T>/s<T>: A4's phase N/S for one truth, connect-n|s-<T>.sh)
+ #   1. the fence, read-only: no cov2d job unended (sacct) and none in squeue, recorded;
+ #   2. stage the connect at /dev/shm/josephrb-cov2d-<name>.sh; compare its node sha256 to the local one (separate step);
+ #   3. launch detached; wait for its end line;
+@@ -22,7 +22,13 @@
+      FILES="connect-n-$T.log null_$T.log blobs.before blobs.after out/null_$T.json"; NPZ="out/blocks_$T.npz"; END=DONE ;;
+   sG18|sAR23) T=${N#s}; WD=/dev/shm/josephrb-cov2d-s-$T; LOGP=$WD/connect-s-$T.log; mkdir "$OUT/out"
+      FILES="connect-s-$T.log score_$T.log blobs.before blobs.after"; END=DONE ;;
+-  *) echo "usage: launch-s5.sh 95|x1|a4t|nG18|nAR23|sG18|sAR23"; exit 2 ;;
++  a5t) LOGP=/dev/shm/josephrb-cov2d-a5t/connect-a5t.log; WD=/dev/shm/josephrb-cov2d-a5t; mkdir "$OUT/logs"
++      FILES="connect-a5t.log logs/SHA256SUMS logs/blobs.txt"
++      for m in test_cov2d_readout test_cov2d_score test_cov2d_readouts test_cov2d_blocks test_cov2d_null test_cov2d; do FILES="$FILES logs/RM_$m.log"; done
++      FILES="$FILES logs/R_test_cov2d_readout.log logs/R_test_cov2d_score.log"
++      for e in R P; do for m in test_fd_1b_mc test_cov2d_readouts; do FILES="$FILES logs/${e}_$m.log logs/${e}-M_$m.log"; done; done
++      END=DONE ;;
++  *) echo "usage: launch-s5.sh 95|x1|a4t|a5t|nG18|nAR23|sG18|sAR23"; exit 2 ;;
+ esac
+ SH=/dev/shm/josephrb-cov2d-$N.sh; SRC=$H/connect-$N.sh
+ case "$N" in n*|s*) SH=/dev/shm/josephrb-cov2d-${N:0:1}-$T.sh; SRC=$H/connect-${N:0:1}-$T.sh ;; esac
+@@ -84,11 +90,12 @@
+ rmdir $WD; echo "rmdir $WD rc=\$?"
+ EOF
+ ;; esac
+-[ "$N" = a4t ] && cat >> "$OUT/remove.sh" <<EOF
++case "$N" in a4t|a5t) cat >> "$OUT/remove.sh" <<EOF
+ for f in $WD/logs/* $WD/*; do [ -d "\$f" ] && continue; rm -f "\$f"; echo "rm -f \$f rc=\$?"; done
+-for d in $WD/logs $WD/tmp $WD/deploy; do [ -e "\$d" ] && { rmdir "\$d"; echo "rmdir \$d rc=\$?"; }; done
++for d in $WD/logs $WD/tmp $WD/deploy $WD/deploy-m; do [ -e "\$d" ] && { rmdir "\$d"; echo "rmdir \$d rc=\$?"; }; done
+ rmdir $WD; echo "rmdir $WD rc=\$?"
+ EOF
++;; esac
+ echo 'ls -la /dev/shm | grep josephrb; echo "ls end"' >> "$OUT/remove.sh"
+ r < "$OUT/remove.sh" > "$OUT/removal.log.txt" 2>&1; echo "removal rc=$?"
+ cat "$OUT/removal.log.txt"

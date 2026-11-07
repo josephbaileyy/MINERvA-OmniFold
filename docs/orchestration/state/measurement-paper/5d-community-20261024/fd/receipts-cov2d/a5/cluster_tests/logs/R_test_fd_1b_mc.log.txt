@@ -1,0 +1,88 @@
+test_1b_default_is_1e_9_and_refuses_here_with_its_message (test_fd_1b_mc.CholeskyTolerance.test_1b_default_is_1e_9_and_refuses_here_with_its_message) ... ok
+test_a5_tolerance_passes_and_reports_the_compared_values (test_fd_1b_mc.CholeskyTolerance.test_a5_tolerance_passes_and_reports_the_compared_values) ... ok
+test_a_wrong_cholesky_refuses_at_the_a5_tolerance (test_fd_1b_mc.CholeskyTolerance.test_a_wrong_cholesky_refuses_at_the_a5_tolerance) ... ok
+test_below_full_rank_the_check_is_skipped_and_reported_so (test_fd_1b_mc.CholeskyTolerance.test_below_full_rank_the_check_is_skipped_and_reported_so) ... ok
+test_the_fixture_is_full_rank_and_ill_conditioned (test_fd_1b_mc.CholeskyTolerance.test_the_fixture_is_full_rank_and_ill_conditioned) ... ok
+test_well_conditioned_grades_are_unchanged_by_the_argument (test_fd_1b_mc.CholeskyTolerance.test_well_conditioned_grades_are_unchanged_by_the_argument) ... ok
+test_denominators_compose_per_cell (test_fd_1b_mc.Compose.test_denominators_compose_per_cell) ... ok
+test_draw_order (test_fd_1b_mc.Compose.test_draw_order) ... ok
+test_flux_universe_divides_by_its_own_flux (test_fd_1b_mc.Compose.test_flux_universe_divides_by_its_own_flux) ... ok
+test_flux_without_a_table_refuses (test_fd_1b_mc.Compose.test_flux_without_a_table_refuses) ... ok
+test_no_universe_is_the_cv (test_fd_1b_mc.Compose.test_no_universe_is_the_cv) ... ok
+test_nonfinite_weights_are_zeroed_at_load_as_s1 (test_fd_1b_mc.Compose.test_nonfinite_weights_are_zeroed_at_load_as_s1) ... ok
+test_one_universe_is_universe_inputs_exactly (test_fd_1b_mc.Compose.test_one_universe_is_universe_inputs_exactly) ... ok
+test_two_flux_universes_refuse (test_fd_1b_mc.Compose.test_two_flux_universes_refuse) ... ok
+test_two_universes_multiply_ratios_and_add_on_zero_cv_rows (test_fd_1b_mc.Compose.test_two_universes_multiply_ratios_and_add_on_zero_cv_rows) ... ok
+test_mean_experiment_is_the_toy_path_at_its_means (test_fd_1b_mc.Experiments.test_mean_experiment_is_the_toy_path_at_its_means) ... ok
+test_stat_replica_on_the_data_is_set_As_path (test_fd_1b_mc.Experiments.test_stat_replica_on_the_data_is_set_As_path) ... ok
+test_stat_replicas_share_one_realization (test_fd_1b_mc.Experiments.test_stat_replicas_share_one_realization) ... ok
+test_toy_carries_set_As_mc_and_template_streams (test_fd_1b_mc.Experiments.test_toy_carries_set_As_mc_and_template_streams) ... ok
+test_toy_unfolds_with_the_nominal_mc_and_keeps_natures_truth (test_fd_1b_mc.Experiments.test_toy_unfolds_with_the_nominal_mc_and_keeps_natures_truth) ... ok
+test_with_mc_sets_the_unfolding_flux (test_fd_1b_mc.Experiments.test_with_mc_sets_the_unfolding_flux) ... ok
+test_a_bias_is_attributed_to_bias (test_fd_1b_mc.Grading.test_a_bias_is_attributed_to_bias) ... ok
+test_cell_flag_boundary (test_fd_1b_mc.Grading.test_cell_flag_boundary) ... ok
+test_matched_errors_cover (test_fd_1b_mc.Grading.test_matched_errors_cover) ... ok
+test_narrow_errors_do_not_flag (test_fd_1b_mc.Grading.test_narrow_errors_do_not_flag) ... ok
+test_wide_errors_under_cover_and_are_attributed_to_width (test_fd_1b_mc.Grading.test_wide_errors_under_cover_and_are_attributed_to_width) ... ok
+test_wrong_correlations_flag_the_joint_region_only (test_fd_1b_mc.Grading.test_wrong_correlations_flag_the_joint_region_only)
+Per-cell widths right, correlations wrong: only the chi2 region can see it. ... ok
+test_an_atime_move_exits_8 (test_fd_1b_mc.Jobs.test_an_atime_move_exits_8) ... {"out": "fd1b_mc_g18_central_T.npz", "seconds_unfold": 0.003}
+[fd-1b-mc] DEVIATION: atime moved on ['x']
+ok
+test_central_and_seed_products (test_fd_1b_mc.Jobs.test_central_and_seed_products) ... {"out": "fd1b_mc_g18_central_T.npz", "seconds_unfold": 0.003}
+{"out": "fd1b_mc_g18_seed_T.npz", "seconds_unfold": 0.004}
+ok
+test_control_and_capture_only_on_the_data (test_fd_1b_mc.Jobs.test_control_and_capture_only_on_the_data) ... [fd-1b-mc] refusing: Refusal: the control and capture roles run on the data (--truth data), and only they
+[fd-1b-mc] refusing: Refusal: the control and capture roles run on the data (--truth data), and only they
+ok
+test_declared_ranges (test_fd_1b_mc.Jobs.test_declared_ranges) ... ok
+test_a_non_finite_toy_truth (test_fd_1b_mc.Loaders.test_a_non_finite_toy_truth) ... ok
+test_an_atime_move_exits_8 (test_fd_1b_mc.Loaders.test_an_atime_move_exits_8) ... {"out": "fd1b_mc_g18_central_T.npz", "seconds_unfold": 0.005}
+[fd-1b-mc] DEVIATION: atime moved on ['x']
+ok
+test_central_and_seed_products (test_fd_1b_mc.Loaders.test_central_and_seed_products) ... {"out": "fd1b_mc_g18_central_T.npz", "seconds_unfold": 0.006}
+{"out": "fd1b_mc_g18_seed_T.npz", "seconds_unfold": 0.005}
+ok
+test_control_and_capture_only_on_the_data (test_fd_1b_mc.Loaders.test_control_and_capture_only_on_the_data) ... [fd-1b-mc] refusing: Refusal: the control and capture roles run on the data (--truth data), and only they
+[fd-1b-mc] refusing: Refusal: the control and capture roles run on the data (--truth data), and only they
+ok
+test_declared_ranges (test_fd_1b_mc.Loaders.test_declared_ranges) ... ok
+test_input_and_flux_table_digests (test_fd_1b_mc.Loaders.test_input_and_flux_table_digests) ... [fd-1b-mc] refusing: Refusal: input digests 0b50d59354a451e45eb62d36f54e3e84fe1cad2637faf41fc5d9735d7d0a968c / 8d448fb2413276964118748f5a566a73d3cfd349e2dcef5334619c263d985ccb are not the declared ones
+ok
+test_weight_pins_and_push_digest (test_fd_1b_mc.Loaders.test_weight_pins_and_push_digest) ... ok
+test_compose_records_the_composite_per_row (test_fd_1b_mc.N1Composite.test_compose_records_the_composite_per_row) ... ok
+test_cv_zero_rows_bound_by_band_count_and_the_exact_pass_sums (test_fd_1b_mc.N1Composite.test_cv_zero_rows_bound_by_band_count_and_the_exact_pass_sums) ... ok
+test_declared_draws_are_all_three_truths_seeds (test_fd_1b_mc.N1Composite.test_declared_draws_are_all_three_truths_seeds) ... ok
+test_rows_beyond_the_cap_are_not_evaluated_and_stop (test_fd_1b_mc.N1Composite.test_rows_beyond_the_cap_are_not_evaluated_and_stop) ... ok
+test_the_all_draws_bound_is_attained_and_the_exact_pass_is_composes (test_fd_1b_mc.N1Composite.test_the_all_draws_bound_is_attained_and_the_exact_pass_is_composes) ... ok
+test_a_toy_reads_the_constraint_through_o_noatime (test_fd_1b_mc.NoAtime.test_a_toy_reads_the_constraint_through_o_noatime) ... ok
+test_null_reads_the_assembly_through_o_noatime (test_fd_1b_mc.NoAtime.test_null_reads_the_assembly_through_o_noatime) ... ok
+test_readout_reads_the_assembly_through_o_noatime (test_fd_1b_mc.NoAtime.test_readout_reads_the_assembly_through_o_noatime) ... ok
+test_receipt_reads_the_constraint_through_o_noatime (test_fd_1b_mc.NoAtime.test_receipt_reads_the_constraint_through_o_noatime) ... ok
+test_remade_reads_the_constraint_through_o_noatime (test_fd_1b_mc.NoAtime.test_remade_reads_the_constraint_through_o_noatime) ... ok
+test_the_copy_gives_the_bound_readers_answer (test_fd_1b_mc.NoAtime.test_the_copy_gives_the_bound_readers_answer) ... ok
+test_n1_reads_the_toys_record_without_grading (test_fd_1b_mc.Pipeline.test_n1_reads_the_toys_record_without_grading) ... ok
+test_null_refuses_a_foreign_u_and_an_unrebuilt_cmodel (test_fd_1b_mc.Pipeline.test_null_refuses_a_foreign_u_and_an_unrebuilt_cmodel) ... ok
+test_plugin_control_b (test_fd_1b_mc.Pipeline.test_plugin_control_b) ... ok
+test_readout_refuses_a_missing_toy (test_fd_1b_mc.Pipeline.test_readout_refuses_a_missing_toy) ... ok
+test_readout_refuses_what_the_null_was_not_made_from (test_fd_1b_mc.Pipeline.test_readout_refuses_what_the_null_was_not_made_from) ... ok
+test_readout_reproduces_every_graded_and_printed_number (test_fd_1b_mc.Pipeline.test_readout_reproduces_every_graded_and_printed_number) ... ok
+test_counts_against_the_raw_weights (test_fd_1b_mc.Receipt.test_counts_against_the_raw_weights) ... ok
+test_flux_law_is_constraint_weighted (test_fd_1b_mc.Remade.test_flux_law_is_constraint_weighted) ... ok
+test_lateral_is_s1s_transferred (test_fd_1b_mc.Remade.test_lateral_is_s1s_transferred) ... ok
+test_laws_carry_their_blocks_and_the_null_matches (test_fd_1b_mc.Remade.test_laws_carry_their_blocks_and_the_null_matches) ... ok
+test_the_seed_check_refuses_a_difference (test_fd_1b_mc.Remade.test_the_seed_check_refuses_a_difference) ... ok
+test_a_ratio_off_the_committed_sum_refuses (test_fd_1b_mc.Truths.test_a_ratio_off_the_committed_sum_refuses) ... ok
+test_capture_is_the_unfold_and_keeps_the_push (test_fd_1b_mc.Truths.test_capture_is_the_unfold_and_keeps_the_push) ... ok
+test_g18_truth_is_f1s_ratio (test_fd_1b_mc.Truths.test_g18_truth_is_f1s_ratio) ... ok
+test_plugin_r_is_the_push_on_truth_rows (test_fd_1b_mc.Truths.test_plugin_r_is_the_push_on_truth_rows) ... ok
+test_plugin_truth_is_the_unfolds_result_by_construction (test_fd_1b_mc.Truths.test_plugin_truth_is_the_unfolds_result_by_construction)
+Control (b): with r = the push weights, true_xsec is s5c_unfold.unfold's formula applied to them. ... ok
+test_pass_and_reprice (test_fd_1b_mc.Walls.test_pass_and_reprice) ... ok
+test_the_pilot_without_the_plugin_has_no_capture (test_fd_1b_mc.Walls.test_the_pilot_without_the_plugin_has_no_capture) ... ok
+
+----------------------------------------------------------------------
+Ran 67 tests in 20.856s
+
+OK
+SUITE env=R module=test_fd_1b_mc ran=67 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
