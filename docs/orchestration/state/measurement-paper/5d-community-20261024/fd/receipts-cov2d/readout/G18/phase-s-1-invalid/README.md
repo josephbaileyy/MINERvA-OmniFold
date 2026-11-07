@@ -34,6 +34,22 @@ the sha256 below. It went to the director unrepaired, with the mechanism named. 
      removal with rc 0 (`removal.log.txt`).
    - `score_G18.log.txt` holds the preflight lines and the traceback, and no reading.
 
+## Disclosure: the toys were read, and produced no output
+
+Phase S passed its gate before it crashed, so it did read G18's 300 toy products:
+- each was copied through O_NOATIME into the run's `tmp`, with its digest checked;
+- their §9.9 provenance was checked;
+- their errors E were formed in memory.
+
+The crash came in the grade, after that and before any number was written or printed. Nothing derived from the toys
+left the process:
+- no `score_G18.json` and no other output (`out_list.txt` is empty);
+- no verdict line, and no reading in `score_G18.log.txt`;
+- the toy copies in `tmp` were removed with the clone (rc 0).
+
+No one has seen any coverage number for G18. Under addendum A5 (the director, 2026-11-07), G18's phase S reruns only
+at A5's bound M, from the same committed null (`../null_G18.json`, `ecdb4be2…`).
+
 ## The mechanism (from the bound code; no toy was used to find it)
 
 - **The check.** `fd_1b_mc.grade` (`fd_1b_mc.py:662-667`) computes `chi2, ndf = fn.chi2_nonnull(E, C)` on the
