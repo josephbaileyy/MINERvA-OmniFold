@@ -1,0 +1,39 @@
+node login26 nproc=244 loadavg 11.69 11.81 11.02
+2026-11-07T18:43:50Z
+connect script sha256 fe47b981c6faabf56fe38351488fd9790e9d29ff153a64a93ed47c326a90a8d1
+== COV2D fence
+FENCE: no cov2d-* job queued or running
+squeue lines: 0
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2337.3            10000.0     18225.7      20000.0
+balance_node_h=1774.3 half=887.1 price=8.0
+== the dry run
+{"mode": "dry", "tasks": 9, "ended": 9, "rc": 0, "job": "60970044", "pin": "e306087e68fd497541d32b440848a40f7f29611e"}
+dry ends present: 9 of 9
+log-dry/SHA256SUMS sha256 e3cc597cdc1cdb0a3bfea0095130b9a2f99a3578c63ce1541c2a893092ab2935 (committed e3cc597cdc1cdb0a3bfea0095130b9a2f99a3578c63ce1541c2a893092ab2935)
+dry products: all 18 at their SHA256SUMS lines
+dry job 60970044: COMPLETED|944|1
+queue.tsv 58c213a24da0366ef27194ecea9fb247c6698819c5eb374f538e85e0df2fd22b; dry.tsv 5579ea8c2b228b13df33b77d71018a14a347c26e2b6d25b5e17ce7ace2b5e8d6
+projected full wall 4.082 h; limit 6.964 h; charge ceiling 7.25 + dry 0.2622 against cap 8.0
+== stat
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz size=1548438020 mtime=2026-06-27 18:31:48.000000000 -0700 atime=2026-11-07 10:06:36.000000000 -0800
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz size=16017201 mtime=2026-09-24 23:51:44.000000000 -0700 atime=2026-11-07 10:06:36.000000000 -0800
+HEAD e306087e68fd497541d32b440848a40f7f29611e; porcelain --ignored lines before: 0
+bound blobs: 5 checked, 0 mismatches; declaration sha256 dbfb0c941b2ad6999b2edb3b8bf77ca735b2f01f86ca593425e44c2ad5c91e76; binding 1 sha256 947fd2750343ead7aff5281af8bfb03a137f76346071a84233b62ebf12744255
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+2026-11-07T18:44:31Z
+sbatch rc=0
+Submitted batch job 60972000
+full run job 60972000
+scontrol TimeLimit=07:15:00 (declared 07:15:00)
+60972000 rs1_full PENDING 0:00 7:15:00 1 regular_1 m3246
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=07:15:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login26:1061079
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+porcelain --ignored lines after: 0
+rs1 full submit rc=0
+2026-11-07T18:44:38Z
