@@ -1,0 +1,88 @@
+--- readout/G18/connect-n-G18.sh
++++ readout/G18/phase-s-1-invalid/connect-s-G18.sh
+@@ -1,30 +1,33 @@
+ #!/bin/bash
+-# COV2D connect N-<T>: addendum A4's phase N (COV2D-ADDENDUM-A4.md section 3), `cov2d_readout.py null --truth T`, for
+-# one truth (one connect per truth; noatime_inputs repoints the rollup's globals: one truth per process). Login node,
+-# 0 node-h (A4 section 9), at M = ac25b665 (COV2D-BINDING-2 addendum A4). Template: connect-95-run3.sh (control95, receipted in #869): a fresh
+-# clone in /dev/shm (cov2d_blocks' open audit guards /pscratch), the MAT pin before and after sourcing
+-# setup_salloc_env.sh, a MAT preflight on one real MnvH1D, nice 19, taskset -c 8-11, threads 1, porcelain before and
+-# after, the clone removed at the end (logged).
+-# Reads are the driver's own (A4 section 3.1): each through O_NOATIME, digest-checked, under the open audit. No toy is
+-# opened (stat only; the driver checks its own audit log). The outputs (null_<T>.json, blocks_<T>.npz) stay in
+-# $W/out for the fetch; they are committed to main before phase S may run (A4 section 4).
+-# Verdict: PASS (rc 0, "COV2D-NULL <T> PASS"), STOP (rc 3, "COV2D-NULL <T> STOP"), else INVALID. An INVALID (or a
+-# section 9.9 / runArgv mismatch) goes to the director unrepaired, with the mechanism named (binding A4, ruling 2).
+-# connect-n-G18.sh and connect-n-AR23.sh are this file with T set; nothing else differs.
+-# Run on login02: setsid nohup bash /dev/shm/josephrb-cov2d-n-<T>.sh >/dev/null 2>&1 </dev/null &
++# COV2D connect S-<T>: addendum A4's phase S (COV2D-ADDENDUM-A4.md section 4), `cov2d_readout.py score --truth T
++# --null-digest D`, for one truth, after its null record is merged to main (COV2D-BINDING-2 addendum A4, ruling 1).
++# Login node, 0 node-h (A4 section 9), at M = ac25b665. The same template as connect-n.sh (phase N, receipted in
++# readout/<T>/): a fresh clone at M in /dev/shm, the MAT pin before and after sourcing, the MnvH1D preflight, nice 19,
++# taskset -c 8-11, threads 1, porcelain before and after, the clone removed at the end (logged).
++# The gate is the driver's (section 9.7): origin/main's null_<T>.json must hash to D, name this M, this truth and PASS;
++# the blocks npz and the re-hashed inventory must match; only then is a toy opened. Before running, this script records
++# origin/main's sha and the sha256 of `git show origin/main:<null record>` (the driver still does its own check).
++# Verdict: COVERS or UNDER-COVERS (rc 0, "COV2D-SCORE <T> COVERS|UNDER-COVERS"); REFUSED (rc 2, the gate);
++# STOP or INVALID from the driver (rc 3, "COV2D-SCORE <T> STOP|INVALID"); else INVALID (connect). A section 9.9 INVALID
++# goes to the director unrepaired, with the mechanism named (binding A4, ruling 2).
++# connect-s-<T>.sh is this file with T and D set; nothing else differs.
++# Run on login02: setsid nohup bash /dev/shm/josephrb-cov2d-s-<T>.sh >/dev/null 2>&1 </dev/null &
+ M=ac25b66533788ceb18b1d4e5add259c53b216669
+ T=G18
++D=ecdb4be2fbb18852d32c1a4f9fb3cbc4107310d72c5bdeb2eb3651996ed0c41f
+ READOUT_SHA=d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
+-W=/dev/shm/josephrb-cov2d-n-$T; DD=$W/deploy
++W=/dev/shm/josephrb-cov2d-s-$T; DD=$W/deploy
+ A=/pscratch/sd/j/josephrb/MINERvA-OmniFold   # the shared checkout with the MAT build (setup_salloc_env.sh)
+ PY310=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
+ RUN="nice -n 19 taskset -c 8-11"
+ cleanup() { echo "removal: host=$(hostname) $(date -u +%FT%TZ) $(du -sh "$DD" 2>/dev/null | cut -f1) $DD"; rm -rf "$DD" "$W/tmp"; echo "rc=$?"; ls -d "$DD" "$W/tmp" 2>&1; }
+-stop() { echo "STOP $*"; cleanup; echo "PHASE-N INVALID (connect)"; echo "end=$(date -u +%FT%TZ)"; echo DONE; exit 2; }
++stop() { echo "STOP $*"; cleanup; echo "PHASE-S INVALID (connect)"; echo "end=$(date -u +%FT%TZ)"; echo DONE; exit 2; }
+ case "$T" in G18|AR23) ;; *) echo "STOP T is not set"; exit 2 ;; esac
++case "$D" in *[!0-9a-f]*|"") echo "STOP D is not set"; exit 2 ;; esac
++[ ${#D} = 64 ] || { echo "STOP D is not a sha256"; exit 2; }
+ [ -e "$W" ] && { echo "STOP $W exists"; exit 2; }
+ mkdir "$W" "$W/tmp" "$W/out" || exit 2
+-exec >> "$W/connect-n-$T.log" 2>&1
++exec >> "$W/connect-s-$T.log" 2>&1
+ echo "host=$(hostname) start=$(date -u +%FT%TZ) pid=$$"
+ export TMPDIR=$W/tmp PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+ git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$DD" && git -C "$DD" -c advice.detachedHead=false checkout --quiet --detach "$M" || stop clone
+@@ -33,6 +36,10 @@
+ got=$(sha256sum "$DD/2d-unfolding/cov2d/cov2d_readout.py" | cut -c1-64)
+ [ "$got" = "$READOUT_SHA" ] && echo "READOUT-SHA OK $got" || stop "cov2d_readout.py is $got"
+ (cd "$DD" && git ls-tree -r HEAD 2d-unfolding/cov2d | grep -v __pycache__) > "$W/blobs.before"
++NR=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/$T/null_$T.json
++echo "origin/main=$(git -C "$DD" rev-parse origin/main)"
++g=$(git -C "$DD" show "origin/main:$NR" | sha256sum | cut -c1-64)
++[ "$g" = "$D" ] && echo "NULL-ON-MAIN OK $g" || stop "origin/main null_$T.json is $g, not $D"
+ (
+   "$PY310" -B -c "import sys; sys.path.insert(0, '$DD/nd-unfolding'); import fd_rpd_inputs as r; r.run_check_mat_setup(None)" || exit 7
+   source "$A/setup_salloc_env.sh" > /dev/null 2>&1 || exit 3
+@@ -55,13 +62,17 @@
+ assert h.ClassName().startswith("PlotUtils::MnvH1D"), h.ClassName()
+ os.remove(dst)
+ PYEOF
+-  cd "$DD/2d-unfolding/cov2d" && $RUN /usr/bin/time -v python -B cov2d_readout.py null --truth "$T" --out "$W/out"
+-) > "$W/null_$T.log" 2>&1; rc=$?
+-grep -v '^Warning in <TInterpreter::ReadRootmapFile>' "$W/null_$T.log" | tail -40
+-if [ "$rc" = 0 ] && grep -q "^COV2D-NULL $T PASS" "$W/null_$T.log"; then V=PASS
+-elif [ "$rc" = 3 ] && grep -q "^COV2D-NULL $T STOP" "$W/null_$T.log"; then V=STOP
+-else V=INVALID; fi
+-echo "PHASE-N $T $V rc=$rc"
++  cd "$DD/2d-unfolding/cov2d" && $RUN /usr/bin/time -v python -B cov2d_readout.py score --truth "$T" --null-digest "$D" --out "$W/out"
++) > "$W/score_$T.log" 2>&1; rc=$?
++grep -v '^Warning in <TInterpreter::ReadRootmapFile>' "$W/score_$T.log" | tail -40
++L=$(grep "^COV2D-SCORE $T " "$W/score_$T.log" | tail -1)
++case "$rc:$L" in
++  "0:COV2D-SCORE $T COVERS"|"0:COV2D-SCORE $T UNDER-COVERS") V=${L#COV2D-SCORE $T } ;;
++  "2:COV2D-SCORE $T REFUSED "*) V=REFUSED ;;
++  "3:COV2D-SCORE $T STOP"|"3:COV2D-SCORE $T INVALID") V=${L#COV2D-SCORE $T } ;;
++  *) V="INVALID (connect: rc=$rc, no matching verdict line)" ;;
++esac
++echo "PHASE-S $T $V rc=$rc"
+ (cd "$W/out" && sha256sum * 2>&1)
+ n=$(git -C "$DD" status --porcelain | wc -l); echo "porcelain_after_lines=$n head=$(git -C "$DD" rev-parse HEAD)"
+ git -C "$DD" status --porcelain | head -20
