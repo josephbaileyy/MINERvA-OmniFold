@@ -1,0 +1,4 @@
+[rs1] mode=full job=60972000 host=nid005699 pin=e306087e68fd497541d32b440848a40f7f29611e lanes=8 start=2026-11-07T18:46:50Z
+xargs: bash: exited with status 255; aborting
+[rs1] queue rc=124 end=2026-11-07T19:44:59Z
+[rs1] STOP: a task failed (rc=124)
