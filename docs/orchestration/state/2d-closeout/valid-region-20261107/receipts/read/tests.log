@@ -1,0 +1,9 @@
+.......................readings written
+STOP: a control failed; see readout.json
+.REFUSED: missing input I6 docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json
+.REFUSED: /var/folders/gn/_qj5k2lj0cgfdp5p263yqcm80000gn/T/tmpiosjyila/exists exists; use a new directory
+...............................
+----------------------------------------------------------------------
+Ran 56 tests in 0.248s
+
+OK
