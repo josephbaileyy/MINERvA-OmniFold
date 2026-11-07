@@ -1,0 +1,288 @@
+{
+  "configuration_status": "DRAFT_UNRESOLVED_RUNTIME",
+  "run_class": "diagnostic",
+  "dump_root": "/pscratch/sd/j/josephrb/fd-rpd-20261103/dumps",
+  "data_rows_estimate": 4091707,
+  "pins": {
+    "path": "/dev/shm/limres-rpd-prologue2-20261107/repo/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/INPUTS.sha256",
+    "sha256": "7638f94f56ad0471769445cffe68ff538c9b68158f48415e7c3cafa7ee95a295"
+  },
+  "h2": {
+    "path": "/dev/shm/limres-rpd-prologue2-20261107/repo/nd-unfolding/pv-ladder/readouts/h2_definition.json",
+    "sha256": "b67907615fe2e903e60ae6caa1c141fa007676c0a1b3ae9f42490d331bfdda89"
+  },
+  "inventory": {
+    "path": "/dev/shm/limres-rpd-prologue2-20261107/repo/docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv",
+    "sha256": "e60609e756e35fbc9846ae5983c1d848999bc17c7504e3ca876c22c9bcc0e88f"
+  },
+  "constants": {
+    "path": "/dev/shm/limres-rpd-prologue2-20261107/repo/MINERvA101/MINERvA-101-Cross-Section/event/CVUniverse.h",
+    "sha256": "900d7368d6184d503399bd99c0fd30085212df0327b8be374182495b85a3677d"
+  },
+  "flux_root": "/pscratch/sd/j/josephrb/minerva/minerva_large_files",
+  "flux_source": {
+    "path": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/MAT/PlotUtils/FluxReweighter.cxx",
+    "sha256": "4576346db5e7a9e3673253bfc89f38bd2ca1dc260f24ebe66df055069990bbbc",
+    "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+  },
+  "flux_selection": {
+    "1D": {
+      "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root",
+      "family": "gen2thin",
+      "variant": "rearrangedUniverses",
+      "histogram": "flux_E_cvweighted",
+      "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
+      "source_citation": {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          883,
+          945
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      },
+      "constraint_source_citation": {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          372,
+          431
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      },
+      "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged"
+    },
+    "1M": {
+      "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1M_rearrangedUniverses.root",
+      "family": "gen2thin",
+      "variant": "rearrangedUniverses",
+      "histogram": "flux_E_cvweighted",
+      "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
+      "source_citation": {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          883,
+          945
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      },
+      "constraint_source_citation": {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          372,
+          431
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      },
+      "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged"
+    },
+    "1N": {
+      "relative_path": "MATFluxAndReweightFiles/flux/flux-gen2thin-pdg14-minervame1N_rearrangedUniverses.root",
+      "family": "gen2thin",
+      "variant": "rearrangedUniverses",
+      "histogram": "flux_E_cvweighted",
+      "retention": "AWAITING_RUNTIME_STAT_AND_STAGED_RETENTION_RECORD",
+      "source_citation": {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          883,
+          945
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      },
+      "constraint_source_citation": {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          372,
+          431
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      },
+      "proposal_status": "DRAFT_FOR_AUDIT; C-N candidate status unchanged"
+    }
+  },
+  "premise": {
+    "cv_numerator_is_selected_spectrum": null,
+    "generation_denominator_is_common": null,
+    "boolean_source_citations": {
+      "cv_numerator_is_selected_spectrum": {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          396,
+          406
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      },
+      "generation_denominator_is_common": {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          977,
+          992
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      },
+      "common_units_convention_measured_at_P0": {
+        "repository": "MinervaExpt/MAT",
+        "file": "PlotUtils/FluxReweighter.cxx",
+        "lines": [
+          883,
+          945
+        ],
+        "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+      }
+    },
+    "evidence": {
+      "cv_numerator": {
+        "lines": [
+          396,
+          406
+        ],
+        "sha256": "2d4aa43c38cc1d40c38c200f913d088e68874f995c783c6030ce0814394893a0",
+        "source_citation": {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            396,
+            406
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      },
+      "common_generation_denominator": {
+        "lines": [
+          977,
+          992
+        ],
+        "sha256": "397bef038910e1b86c2b4c701f237753d29af4838d82c4b108b4daa94f1d32d8",
+        "source_citation": {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            977,
+            992
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      },
+      "playlist_mapping": {
+        "lines": [
+          1938,
+          1990
+        ],
+        "sha256": "662a127db7033267012cbe50af93601036b7c8dca10cd6d449891b755720e2fd",
+        "source_citation": {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            1938,
+            1990
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      },
+      "common_units_convention": {
+        "lines": [
+          883,
+          945
+        ],
+        "sha256": "bf59c2d480e01c37da472ca8ee1c898f8533d1d15aad7729a43fb4edc9941432",
+        "source_citation": {
+          "repository": "MinervaExpt/MAT",
+          "file": "PlotUtils/FluxReweighter.cxx",
+          "lines": [
+            883,
+            945
+          ],
+          "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+        }
+      }
+    },
+    "interpretation": {
+      "cv_numerator_is_selected_spectrum": "selected input followed by MAT constraint, never the raw histogram substituted for constrained phi",
+      "generation_denominator_is_common": "common to the two w calls for a given MC row; it remains that row’s own generated flux, not a common file across playlists",
+      "common_units_convention_measured_at_P0": "P0 measures identical phi/g edges at 1e-12 absolute tolerance and byte-equal phi title, axis titles and available file units metadata, within gen2thin rearrangedUniverses. Absolute normalization is not inferred. This result remains null until P0."
+    },
+    "common_units_convention_measured_at_P0": null
+  },
+  "expected_environment": {
+    "interpreter": "/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python3",
+    "resolved_interpreter": "/global/u2/j/josephrb/.conda/envs/omnifold_py310/bin/python3.10",
+    "python": "3.10.19",
+    "numpy": "2.2.6",
+    "scipy": "1.15.3",
+    "uproot": "5.6.9"
+  },
+  "selection_scope": "DRAFT ONLY. Proposed gen2thin rearranged choices follow the analysis string constructor; C-N candidate statuses stay unchanged until runtime P0. Nothing beyond the declaration and A1 is selected or authorized. Runtime roots, trace classes, retention, source premise acceptance and extract/custody digests await audit. P-F common units is measured at P0; the draft supplies no result.",
+  "mat_constructor": {
+    "nu_pdg": 14,
+    "apply_nue_constraint": true,
+    "playlist": "minervame + {1D,1M,1N}",
+    "flux_version": "gen2thin",
+    "generation_version": "g4numiv6",
+    "n_flux_universes": 100,
+    "source_citation": {
+      "repository": "MinervaExpt/MAT",
+      "file": "PlotUtils/FluxReweighter.cxx",
+      "lines": [
+        42,
+        98
+      ],
+      "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+    },
+    "constraint_source_citation": {
+      "repository": "MinervaExpt/MAT",
+      "file": "PlotUtils/FluxReweighter.cxx",
+      "lines": [
+        372,
+        431
+      ],
+      "git_sha": "35097b65ab1680db8058f9ede18fecffdc3a1ea3"
+    },
+    "analysis_arguments_citation": {
+      "file": "MINERvA101/MINERvA-101-Cross-Section/runEventLoopOmniFold.cpp",
+      "lines": [
+        1698,
+        1701
+      ],
+      "git_sha": "f4cd8f8b",
+      "status": "short source revision f4cd8f8b verified; full SHA must be measured before READY"
+    }
+  },
+  "mat_dependencies": {
+    "path": "/dev/shm/limres-rpd-prologue2-20261107/repo/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/MAT-DATA-DEPENDENCIES.json",
+    "sha256": "b056487e592e7704c2a98c14243b26f44c82821382837a263b75c169859cce0b"
+  },
+  "flux_extract": {
+    "path": "${EXTRACT_RUN}/flux-extract.json",
+    "sha256": null
+  },
+  "flux_custody": {
+    "path": "${EXTRACT_RUN}/flux-custody.json",
+    "sha256": null
+  },
+  "trace_environment_roots": [
+    "/global/homes/j/josephrb/.conda/envs/root_6_28",
+    "/global/u2/j/josephrb/.conda/envs/root_6_28"
+  ],
+  "cov2d_protected_paths": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+    "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+    "/pscratch/sd/j/josephrb/cov2d-run-20261104",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root",
+    "/global/cfs/cdirs/m3246/josephrb/two-d-followup-20261010/xr-input/runEventLoopOmniFold_MEFHC.root"
+  ],
+  "trace_instrument_directories": [
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib",
+    "/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/include"
+  ],
+  "trace_directory_policy": "Exact pinned files take precedence over instrument-directory scans; sys.path entries admit directory listings only. Non-pinned mapped instrument libraries refuse. Resolve these paths before the data-free trace."
+}
