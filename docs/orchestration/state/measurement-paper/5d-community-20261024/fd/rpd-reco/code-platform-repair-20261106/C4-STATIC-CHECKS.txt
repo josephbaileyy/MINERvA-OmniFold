@@ -1,0 +1,3 @@
+zsh:1: no such file or directory: /tmp/rpd-reco-checkenv/bin/black
+zsh:2: no such file or directory: /tmp/rpd-reco-checkenv/bin/ruff
+Both connect wrappers: bash -n PASS

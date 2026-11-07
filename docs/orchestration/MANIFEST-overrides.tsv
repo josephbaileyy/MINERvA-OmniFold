@@ -256,6 +256,7 @@ docs/orchestration/DECISION-20261106-joseph-diagnoses-jinst-corrections.md	LIVE	
 docs/orchestration/DECISION-20261106-joseph-measurement-target-and-delta.md	LIVE	open	""
 docs/orchestration/DECISION-20261106-joseph-methods-revision-round.md	LIVE	open	""
 docs/orchestration/DECISION-20261106-joseph-methods-study-and-archive.md	LIVE	open	""
+docs/orchestration/DECISION-20261106-joseph-plateau-next-work.md	LIVE	open	""
 docs/orchestration/DECISION-20261106-joseph-relax-12h-job-limit.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
@@ -1138,6 +1139,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-INV-I2-DI
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-INV-I2-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-MODED-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-PRECHECK-ATTRIBUTION.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-PRECHECK-FD-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGE1-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGE2-AMENDMENT-1-BINDING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-STAGE2-AMENDMENT-1.md	LIVE	open	""
@@ -1264,6 +1266,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-r
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-receipt-stop-20261106/AGY-PROMPT.txt	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_followup_readout/README.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/RS1-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/AGY-ANSWER-2.txt	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/AGY-ANSWER-SIBLINGS.txt	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-20261106/AGY-ANSWER.txt	LIVE	open	""
@@ -1310,6 +1313,13 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/cod
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/production-config.draft.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/AUDIT-C1-C3.txt	LIVE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/C3-SINGLE-SITE-COVERAGE.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/C4-FOCUSED.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/C4-NOUNSET-COUNTERFACTUAL.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/C4-REPORT.md	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/C4-SOURCE-IDENTITIES.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/C4-STATIC-CHECKS.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/C4-SUITE.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/C4-VERIFICATION.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/IMPORT-CLOSURE.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/LOCAL-DRY-RUN.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/MUTATIONS.json	MACHINE	open	

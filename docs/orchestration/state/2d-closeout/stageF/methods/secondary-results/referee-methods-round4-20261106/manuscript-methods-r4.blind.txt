@@ -1,0 +1,2314 @@
+We test what unbinned unfolding with OmniFold delivers on neutrino data, unfolding MINERvA
+medium-energy open data simultaneously in five observables: muon transverse and longitudinal
+momenta, available hadronic energy, three-momentum transfer and hadronic invariant mass. The
+unfolding reproduces the published muon-kinematic cross-section integral within about 1%, but differs
+from it in shape, over many eigenmodes of the published covariance, for a reason not identified. A
+binned iterative Bayesian unfolding of the same inputs differs from the method in two dimensions and
+on the five-observable cells, without localising the shape difference. The five-observable result retains
+part of its prior: fake-data studies at a GiBUU-like truth and at a synthetic momentum-transfer
+tilt find residual bias exceeding uncertainty-based criteria (p < 0.01, or any cell with |z| > 2) that
+were fixed before the tests were graded. The estimator is bitwise independent of its training seed,
+yet rounding-level changes of its inputs move its results by up to 2.6 statistical standard deviations,
+beyond a stability requirement fixed in advance. A coverage test declared in advance was stopped at
+a preliminary check that, for the interaction uncertainties, compared unlike objects; the coverage of
+the reported uncertainty intervals has not been validated, and the run periods differ for a cause not
+known. The five-observable output on data is therefore given only as an illustration.
+
+I.
+
+INTRODUCTION
+
+Multidifferential neutrino cross sections test interaction
+models across muon and hadronic observables. Their
+interpretation depends on correcting detector response
+and on assessing the bias and uncertainty of the unfolding procedure. Iterative Bayesian unfolding on a binned
+migration matrix [1] is widely used, but its response
+tensor grows rapidly as observables are added. OmniFold learns event weights in an unbinned feature space
+through classifier-based density-ratio estimation [2, 3].
+This makes simultaneous higher-dimensional unfolding
+possible without specifying a separate binned response
+tensor for every projection. Unbinned unfolding has been
+applied to collider data, for example to eight observables
+in deep-inelastic scattering at H1 [4] and to twenty-four
+Z+jets observables at ATLAS [5] (see Ref. [6] for a survey). In neutrino physics, it has been demonstrated on
+a public simulated T2K near-detector sample [7]. Multidifferential neutrino measurements on data reach three
+dimensions [8–11].
+This paper is a methods and validation study of a
+simultaneous unbinned unfolding in five observables on
+real neutrino data. We apply OmniFold to MINERvA
+medium-energy νµ data from the open-data release [12], in
+the transverse and longitudinal muon momenta pT and p∥ ,
+the available hadronic energy Eavail , the three-momentum
+transfer q3 , and the hadronic invariant mass W . Reconstructed W is fixed by the reconstructed (pT , p∥ , q3 ), so
+
+the five observables are simultaneous but not independent. The unfolding is benchmarked against the published
+double-differential cross section d2 σ/(dpT dp∥ ) from the
+same data [13], and the five-observable estimator is tested
+for bias, numerical stability, coverage, and run-period
+consistency.
+Table I gives each test and its result; the failures
+and the stopped test are findings of the study. The
+two-dimensional result reproduces the published integral
+within about 1% but differs from it in shape, for a reason
+not identified. A binned iterative Bayesian unfolding of
+the same inputs differs from the method both in two dimensions and on the sixteen cells, so the reported cells
+depend on the unfolding algorithm, and in two dimensions
+the comparison does not localise the shape difference. Closures at the simulation’s own truth meet the bias criteria,
+but the five-observable result retains part of its prior: its
+fake-data bias exceeds criteria fixed before grading at a
+GiBUU-like hybrid truth and at a synthetic q3 tilt. The
+estimator is bitwise independent of its training seed, yet
+fails a stability requirement under rounding-level changes
+of its inputs. A declared coverage test was stopped before
+any coverage pseudo-experiment ran, at a check that, for
+the interaction uncertainties, compared unlike objects; the
+run periods differ for a cause not known. The sixteen-cell
+cross section the estimator gives on the data is therefore
+not a measurement; Appendix A gives it as illustrative
+output (Sec. V).
+Interval coverage has not been validated. The findings are those of one OmniFold implementation on one
+data set, for the observables, configurations, and deformations tested, rather than of multidimensional OmniFold
+in general.
+
+TABLE I. The validation programme: each test, the section that reports it, its result and its status. “Flagged” means that the
+fake-data bias meets the criterion of Sec. IV H, p < 0.01 or a cell with |z| > 2, under the reported covariance.
+Test
+
+Sec.
+
+Benchmark against the published IV B
+(pT , p∥ ) result
+Binned IBU of the same data on the IV C
+sixteen cells, five iterations
+Binned IBU of the two-dimensional IV C
+inputs, ten iterations
+Joint-test estimator on the two- IV C
+dimensional inputs
+Sixteen-cell and two-dimensional IV E
+quadrant sums
+Closure at nominal truth, reported IV E
+estimator
+GiBUU-to-GENIE Eavail change, de- IV F
+velopment variant
+Other fixed generator shapes, re- IV F
+ported estimator
+Exact binned unfolding of the same IV F
+changes, five iterations
+10, 15 or 20 iterations instead of five III
+Fake-data bias at 12 truths, criteria IV H
+fixed before grading
+Two held-out GENIE v3 tunes
+IV H
+Shifted recoil response at nominal IV H
+truth
+Rounding-level changes of the inputs IV G
+
+Result
+
+Status
+
+Integral ratio 1.010; χ2 /ndf = 2.27 over 205 bins (shape part 465, normal- Descriptive; source
+ization part 0.04; the 73 best-determined directions hold 0.66 × 205 of it); not identified
+learner and background treatment chosen with the comparison in view
+T = 194.4, against bars of 28.12 and 39.04
+Differ
+T = 382.8, against a null maximum of 138.5; distance ratio ρ = 0.452, 90 % Differ; localisation
+interval 0.701–1.128
+unresolved
+T = 13.87, against a 95th-percentile bar of 14.46
+Equivalent, by 4 %
+χ2 ≤ 1.25 for 4 degrees of freedom
+
+Agree
+
+40 pseudo-experiments with backgrounds: largest deviation 2.7 standard Pass
+errors
+Largest (Eavail , W ) residual 74 %, in one high-W cell
+Recovered in part
+Most affected (Eavail , W ) cell: 16 % to 31 %
+
+Recovered in part
+
+Median residuals 4.9 % to 8.3 %, against 4.3 % to 9.5 % for the boosted trees Same size
+Largest residual proxy 0.314 at five iterations, at least 0.384 otherwise
+GiBUU hybrid: χ2 = 171 for 16 degrees of freedom; synthetic q3 tilt: p <
+10−5
+χ2 = 9 and 14 for 16 degrees of freedom
+At most 0.40σ per deposit category
+
+Five kept
+Flagged
+at
+truths
+Pass;
+independent
+Descriptive
+
+two
+not
+
+Median 0.8 and at most 2.6 statistical standard deviations, against a require- Fail
+ment of 0.3 and 1.0; on the 16 cells, a median 0.133 % of the cross section
+Cross-fitting and tree regularization, IV G
+No variant met the stability requirement; cross-fitting worse in bias at three Fail
+on simulated pseudo-data
+truths
+Training seed and input row order
+IV G
+Result bitwise independent
+Reproducible
+Declared coverage test at the two IV H
+Reproduced-to-drawn uncertainty ratio outside 0.9–1.1 in 11 of 16 cells; Stopped; gate comtunes
+interaction group at nominal truth: like-for-like control within 0.9–1.1 in 16 pared unlike objects;
+of 16 cells
+flux, detector open
+Miscover
+Earlier statistical intervals: five ob- IV F, VI A 68 % intervals cover down to 0.06; the band undercovers in its tails
+servables; two-dimensional band
+Run-period consistency
+IV A
+Groups differ beyond their bootstrap scatter; in two dimensions a step of Present before un+6.10 % at reconstruction level and +(6.94 ± 0.41) % after unfolding
+folding; cause not
+known
+
+Section II describes the data, the simulation and the
+observables, Sec. III the unfolding and the reporting cells,
+and Sec. VI what the study shows about the method,
+with its principal limitations in Sec. VI A. The companion
+analysis note [14], cited below by section, gives the full
+validation record, the construction of the uncertainties,
+and the tests with their assumptions.
+II.
+
+DATA, SIMULATION, AND OBSERVABLES
+
+inputs with those of the published analysis.
+The unfolded observables are defined at truth level,
+with muon momentum components pT = pµ sin θµ
+and p∥ = pµ cos θµ . The magnitude of the threemomentum transfer q3 = |⃗q| comes from the generator’s
+p four-vectors, and the hadronic invariant mass W =
+M 2 + 2M (Eν − Eµ ) − Q2 uses the struck-nucleon mass
+M . We define the available energy as
+X
+X
+Eavail =
+(Ep − mp ) +
+(Eπ − 135 MeV)
+p
+
+The data come from the twelve MINERvA mediumenergy, forward-horn-current run periods (playlists 1A–1G
+and 1L–1P), corresponding to 1.057 × 1021 protons on
+target, with an average neutrino energy near 6 GeV [13].
+The input is an earlier production of the MINERvA opendata release (see Data availability), in the form of preselected analysis ntuples (AnaTuples) [12]. Of its playlists
+only 1A predates the current release; within the selection,
+its events and their kinematics are the same in both
+copies, and its selected yield per proton on target differs by
+−0.9×10−5 in the data and −1.8×10−5 in the simulation,
+of order 10−6 on the combined sample. This compares
+selected samples, not unfolded results, and not these
+
++
+
+π±
+
+X
+π0
+
+Eπ +
+
+X
+
+Eγ ,
+
+(1)
+
+γ
+
+which subtracts a defined constant of 135 MeV, rather
+than the charged-pion mass, in the charged-pion term.
+The constant defines the reported observable and is used
+consistently by the analysis and every prediction. The
+sums run over the generator’s final-state particles after
+final-state interactions, where neutral pions appear undecayed. All other final-state particles, including neutrons,
+contribute nothing. No single published definition of
+Eavail exists. Eq. (1) keeps the species of the closed list
+of Ref. [15] except electrons and positrons, omits species
+such as kaons that the open list of Ref. [16] includes, and
+
+has a charged-pion term 4.57 MeV per pion above the
+kinetic energy used in Refs. [15, 17] (Ref. [14], Sec. 7.1).
+To first order in the unfolding, without retraining, replacing the constant alone by the charged-pion mass moves
+the sixteen-cell result by at most 0.19σ in any cell and
+by 0.42σ as one coherent shift, the norm of the shift
+under the reported covariance (0.21σ and 0.42σ without the run-period block). Reconstructed Eavail is 1.17
+times the calorimetric recoil energy in the tracker and
+electromagnetic calorimeter, with muon deposits removed.
+Reconstructed q3 and W instead combine the muon kinematics with a separate calorimetric estimate q0 of the
+energy transfer.
+Reconstructed W is an exact function of the reconstructed (pT , p∥ , q3 ), apart from a clamp at W 2 = 0,
+2
+2
+because Wreco
+= (M̄ + q0 )2 − q3,reco
+, with M̄ an average nucleon mass, and q3,reco increases with q0 at fixed
+muon kinematics. The five reconstructed inputs therefore
+share information and do not provide five independent
+constraints. Only reconstructed W is fixed by the others; reconstructed Eavail comes from its own calorimetric
+estimator and is not a function of them. At truth level,
+θµ , and with it pT and p∥ , is measured from a fixed beam
+axis rather than from the true neutrino direction, so truth
+W is fixed by (pT , p∥ , q3 ) only up to that event-by-event
+angle and the choice of M . The definitions are detailed
+in Ref. [14], Secs. 7.1 and 8.2.
+The external predictions for CH are the untuned GENIE 2.12.10 without (“GENIE CV”) and with (“GENIE +
+MEC”) the Valencia 2p2h component [18], which models
+meson-exchange currents (MEC). NuWro 21.09 [19] and
+GiBUU 2019 [20] are generated on carbon; in the sixteencell comparison of Sec. A 3 they are corrected to CH by
+adding each generator’s own free-proton prediction with
+weight 1/13 per nucleon. All predictions are per nucleon
+of their target (CH, or carbon for NuWro and GiBUU
+elsewhere); GENIE and NuWro are reweighted event by
+event to the analysis flux, and the GiBUU sample stops
+at Eν ≈ 20 GeV. In the sixteen-cell comparison the predictions use the analysis definitions: W with the struck
+nucleon’s mass, or an average nucleon mass where the generator records none, and the muon angle from the beam
+axis, with each event’s beam-direction offset sampled from
+the analysis simulation. This changes no cell of any prediction by more than 0.07 of the cell’s uncertainty (at most
+0.063). Elsewhere the predictions compute W with the
+neutron mass for every event and measure pT about their
+own neutrino axis. Hydrogen has no quasielastic, 2p2h,
+or coherent νµ charged-current channel, so normalizing
+per nucleon does not remove the difference between the
+targets. In GENIE’s own CH sample, the carbon-only
+cross section per nucleon exceeds that of CH by 8.3 % for
+W < 1.1 GeV. The comparisons of NuWro and GiBUU on
+carbon contain a target difference of this kind (Ref. [14],
+Secs. 8.1 and 8.3).
+The fine grid is the analysis binning: the published
+14 × 16 muon-momentum bins, crossed with 7 Eavail , 7 q3 ,
+and 6 W bins. A coarse 35 grid in (pT , p∥ , Eavail , q3 , W )
+
+has its edges at the fine edges nearest the simulated tertiles.
+A coarse cell is kept if its expected reconstructed signal
+and its truth weight at the data exposure are both at
+least 1000 events. We call this requirement the support
+rule. The 109 coarse cells that meet it are the joint cells,
+on which the note’s joint tests are evaluated. The others,
+which hold 0.47 % of the expected signal, stay in the
+total only. The construction of the coarse grid is given in
+Ref. [14], Sec. 11.1.
+III.
+
+CROSS-SECTION EXTRACTION
+
+Each OmniFold iteration has two classification steps. A
+reconstruction-level classifier distinguishes data from simulated events and defines a likelihood-ratio weight. The
+event pairing transfers that weight to truth, including
+unmatched events, and a truth-level classifier propagates
+a smooth reweighting to the next iteration. Cross sections are formed by histogramming the reweighted truth
+events in the reporting binning and dividing by integrated
+flux, target count, and bin width. Events that fail reconstruction enter as unmatched truth events, so no separate
+efficiency correction is applied.
+Backgrounds enter the reconstruction-level step through
+the density the classifier learns to match. In the puritybased subtraction, every data event in reconstructed bin b
+carries the weight wpur (b) = max(0, 1−Bb /Db ), where Db
+and Bb are the data and predicted background counts in
+that bin, so the classifier’s target density is D(x) wpur (b).
+The unbinned negative-weight treatment instead adds
+simulated background events with negative weight to the
+data, so that the target is D(x) − B(x) pointwise. A
+classifier refinement [21], clipped at zero, converts the
+signed sample to non-negative weights before the first
+iteration. The two targets share bin integrals wherever
+Bb < Db but differ inside a bin wherever the background
+fraction varies within it (Ref. [14], App. C).
+The results use two estimators. Both use five OmniFold iterations, gradient-boosted decision trees [22, 23]
+of nominal capacity (100 trees, 8 leaves) in both OmniFold steps, and negative-weight background subtraction
+with a refinement classifier at 400 trees and 31 leaves.
+The two-observable estimator, LightGBM [23] at a fixed
+seed, gives the two-dimensional central value and its covariance (Sec. IV B). This reproducible central value is
+that of its own systematic-universe ensemble, so its covariance is built with the same estimator. The threeand four-observable central values and the sixteen-cell
+five-observable result (Sec. V) use the joint-test estimator,
+a deterministic LightGBM with the same background
+treatment and refinement capacity, named for the note’s
+calibrated joint tests of generator predictions, which use
+it (Ref. [14], Sec. 11). Its seeds are fixed, so its training is
+reproducible, and it also gives the held-out shape tests of
+Fig. 2b. This estimator removes most of the bias of puritybased subtraction at nominal truth in the highest-W cells
+(Ref. [14], Sec. 9.2). Results from the two estimators are
+
+not combined. The other configurations used below, and
+their results, are described in Ref. [14], Sec. 3.2.
+The iteration count and classifier capacity regularize the
+unfolding. No learner setting, whether capacity, learning
+rate, refinement capacity or iteration count, was tuned on
+data. The nominal settings are the scikit-learn defaults,
+with LightGBM matched to their capacity. The refinement capacity, which the two estimators share, was chosen
+in simulation closure studies, and so were the joint-test
+estimator’s five iterations (below). The two-observable
+estimator uses five iterations following common practice;
+this choice was checked on data, against ten iterations
+with purity-based subtraction and against the published
+result, without a search over the iteration count (Ref. [14],
+Sec. 3.2). Two other choices for the two-dimensional result
+were made with the comparison to the published result
+in view: the learner implementation and the backgroundsubtraction treatment (Sec. IV B). That comparison is
+therefore not an independent test of the method. Each
+classifier is trained on the full sample whose weights it
+then sets, so no held-out or cross-fitted split is used; it is
+trained without early stopping, and the two classes keep
+their physical weights (Ref. [14], Sec. 3.1).
+The joint-test estimator keeps five iterations because 10,
+15, or 20 iterations did not reduce its model dependence,
+measured as the largest residual proxy over the truth
+changes used in its development. In the noise-free study,
+this measure on the 27 coarser joint cells is 0.314 at five
+iterations and at least 0.384 at 10, 15 or 20; a classifier of
+400 trees and 31 leaves lowers it by 8 %, short of the 20 %
+the rule required for a change (Ref. [14], Sec. 9.4).
+A.
+
+Reporting cells
+
+The joint-test estimator’s output on the data is given,
+as illustrative output with total uncertainties, on 16 cells,
+R00–R15 (Appendix A). Other reporting definitions of
+a five-observable measurement, with their precision, are
+studied in Ref. [14], Sec. 9.4. They come from the 32 boxes
+formed by one interior edge per axis, at pT 0.7, p∥ 4.5 and
+q3 2 GeV/c, and at Eavail 0.8 and W 1.8 GeV. In forming
+the cells, each supported box (one that meets the support
+rule) with purity, the fraction of the simulated signal
+reconstructed in it that was generated in it, below 0.1 is
+merged into a neighbour, 4 boxes remain unreported, and
+every reported cell passes the support rule. The result’s
+covariance is given in Sec. IV A.
+IV.
+
+UNCERTAINTIES AND THE VALIDATION
+PROGRAMME
+
+A closure test measures how well a specified deformation of the known simulated truth is recovered, with the
+prior, the initial truth distribution, held fixed. Coverage, how often intervals contain their target over repeated
+experiments, tests the estimator and the interval construc-
+
+tion together. The closure, deformation, and coverage
+studies reweight the true signal of the simulated events
+used as pseudo-data, which changes their reconstructed
+and true distributions together and keeps the detector
+response at fixed truth. Throughout, the prior used to unfold them stays at Tune v1. Every study uses the analysis
+simulation’s detector response.
+A.
+
+The reported covariance
+
+The reported covariance of the sixteen-cell result is
+Ctotal + Cresp + CPL,5D . The term Ctotal sums the statistical, flux, interaction, detector, lateral and normalization
+uncertainties of the joint-test estimator and Cmodel ; the
+lateral uncertainties shift the reconstructed muon kinematics and beam angle rather than reweighting events
+(Appendix A 2). The model term Cmodel is built from the
+change in the unfolded data when the prior is reweighted
+to GENIE + MEC, NuWro and GiBUU in turn. Its
+contributions come from those generators’ samples in
+their own definitions, with NuWro and GiBUU on carbon and GENIE CV as the common reference, not from
+the predictions compared in Sec. A 3. The comparisons
+there with GENIE + MEC, NuWro and GiBUU therefore use covariance contributions derived from the same
+generators. It is a measure of unscaled generator-shape
+dependence, not a calibrated bound (Ref. [14], Sec. 10.3).
+The response term Cresp is the response of the result to a
+one-standard-deviation scale of the reconstructed recoil
+energy in the simulation. The scale is applied to proton, meson, electromagnetic and other deposits. Cresp
+does not cover neutron or muon deposits, nor species,
+energy-dependence or resolution effects beyond a scale.
+It enters only this result, its fake-data tests and its comparison in Sec. A 3. The unfolded results of the three
+run-period groups, each relative to its own simulation,
+differ by more than their bootstrap scatter. The offsets of
+the twelve playlists differ between the three period groups
+by more than expected from their playlist-to-playlist scatter (Ref. [14], Sec. 10.4). The cause is not known, and
+these data cannot establish which period is correct. The
+run-period block CPL,5D includes this inconsistency in the
+reported covariance. It is built from the double ratios
+among the groups, each group’s unfolded result over its
+own simulated truth, with no group chosen as the reference, so it contains the differences by construction. It
+was added after these differences were seen. It has rank 2
+and is not corrected for the bootstrap noise it contains,
+and with three groups its size is poorly determined: the
+68 % interval on the ratio of its true to its estimated size
+is 0.73–2.56. The median per-cell relative uncertainty is
+7.86%, 7.29% without CPL,5D , and 6.74% without CPL,5D
+or Cresp . The block raises the median by about 7.8 %,
+and the uncertainty of the most affected cell, R04, by
+14.1 %. The fake-data tests and the generator comparison
+are given with and without it (Sec. IV H, Appendix A 3;
+Ref. [14], Sec. 10.4).
+
+Every χ2 of this result inverts the full covariance of the
+cells compared, 16×16 or 8×8, by Cholesky decomposition
+and without truncation, so its number of degrees of freedom is the number of cells (one fewer for the shape-only
+χ2 ). Of the blocks, the statistical block is the unbiased
+sample covariance of 50 bootstrap replicas, and the flux
+block a covariance of 100 weighted universes (effective
+number 19), normalized by the sum of the weights. The
+others are a 2p2h band, two-point shifts, chosen models,
+the normalization, the run-period block, built from three
+exposure-weighted periods, and the training-seed block,
+which is zero; each comparison with a prediction adds
+Vg , the diagonal covariance from the finite size of the
+prediction’s own simulated sample. No finite-ensemble
+correction is applied. Appendix A 2 lists the systematic
+groups and gives the per-group uncertainties and the
+correlation matrix of the reported covariance; the note
+gives each block’s ensemble and normalization (Ref. [14],
+Sec. 10.3).
+B.
+
+Two-dimensional benchmark
+
+The two-dimensional result benchmarks the unfolding
+against a measurement from the same data. Its integrated
+cross section is 3.069×10−38 cm2 /nucleon, compared with
+3.039 × 10−38 cm2 /nucleon in the published analysis, a
+ratio of 1.010. The standardized bin differences formed
+with the published uncertainties have an RMS of 0.535.
+Against the full published covariance, the descriptive
+covariance-weighted distance is χ2 /ndf = 2.27. It is computed with the pseudo-inverse over the 205 reported bins,
+which keeps all 205 eigenmodes of the published covariance (condition number 1.5×1012 ), and ndf is the number
+of reported bins. The value is descriptive, and no p-value
+is quoted for it. It indicates a correlated shape difference,
+not a normalization difference: its normalization part is
+χ2 = 0.04, against 465 for the shape. In the eigenbasis of the published covariance, the largest standardized
+component is 4.8 and the next nine 3.4–3.8, and the ten
+smallest-eigenvalue modes carry 9.6 % of the χ2 . Keeping
+only the 73 best-determined directions (λ/λmax > 10−4 )
+gives χ2 /205 = 0.66, and the 139 with λ/λmax > 10−6
+give 1.39, against 2.27 for all 205; the divisor is the number of bins in each case, not the number of directions kept.
+Most of the χ2 therefore lies outside the best-determined
+directions, and those directions also contribute to it. Of
+the six leading modes, three are poorly determined directions (λ/λmax ≲ 4 × 10−9 ) in the highest-p∥ bins, and
+three are moderate-λ modes (4 × 10−6 to 6 × 10−5 ) below
+them (Fig. 3; Ref. [14], Sec. 6.4). The source of the shape
+difference has not been identified.
+We quote the LightGBM result as the central value
+because its covariance uses the same estimator. LightGBM, rather than the scikit-learn exact-split estimator
+at the same settings, was chosen after both, and a third
+implementation, the scikit-learn histogram estimator, had
+been compared with the published result. With purity-
+
+based subtraction and with ndf the 205 reported bins,
+their χ2 /ndf values were 3.66 for exact-split, 2.65 for
+LightGBM and 2.70 for the histogram estimator (a mean
+over ten seeds), and the distance depends on the estimator (Ref. [14], Sec. 6.4). The refined negative-weight
+background treatment was chosen on a closure test in simulation. With the simulation’s own truth as the target,
+the 20-seed mean residual of the purity-based estimate
+reached a maximum over the 205 bins of 5.9, in units
+of the data result’s per-bin statistical uncertainty; the
+corresponding maximum for the refined estimate was 0.44.
+In the closure, the two estimates differed by more than
+one such unit in 14 of the 205 bins. That choice was made
+on the closure test, before the refined result’s comparison
+with the published result was computed. It was adopted
+in the analysis only after that comparison was known,
+and the change lowered χ2 /ndf from 2.65 to 2.27. The
+χ2 /ndf values quoted for the two-dimensional comparison are therefore conditional on both choices, and the
+comparison should be read as a descriptive comparison,
+not a blind validation. With purity-based subtraction,
+using the published configuration’s ten iterations instead
+of five changes the LightGBM χ2 /ndf from 2.65 to 2.66
+(Ref. [14], App. A.5). The purity-subtracted exact-split
+result differs from the central value by a median of 1.03 %
+per bin (maximum 17.6 %; Ref. [14], Sec. 3.2).
+C.
+
+Binned unfolding of the same inputs
+
+Three comparisons, each declared before it ran, put
+the method beside a binned D’Agostini iterative Bayesian
+unfolding (IBU) of this analysis’s own inputs, or run the
+joint-test estimator on the two-dimensional inputs. Each
+compares a statistic T , formed from the difference of
+the two results and its covariance over paired replicas or
+universes, with bars from a null of exact agreement, so
+a reading of differ means that a difference is detectable
+at this noise, not that it is large. The comparisons use
+this analysis’s inputs: agreement between the methods
+would not show that these inputs or intermediate stages
+equal the publication’s, and a difference does not show
+that either method is correct.
+On the sixteen cells, an IBU of the same data, with the
+same simulation, background template and weight-only
+systematic universes as the joint-test estimator, at five
+iterations, differs from it: T = 194.4, against calibrated
+bars of 28.12 (0.95) and 39.04 (0.997). The reported
+cells therefore depend on the unfolding algorithm at the
+level of T . The covariance of that comparison holds the
+statistical, universe and normalization blocks; the model
+block and the lateral, Cresp and run-period blocks are
+not in it. Descriptively, the IBU uncertainty is a median
+1.37 times the joint-test estimator’s over the sixteen cells
+(0.77–4.05). The IBU result is a cross-check and enters
+neither the reported result nor its covariance.
+In two dimensions, an IBU of the two-dimensional
+result’s own inputs at ten iterations differs from it:
+
+d¾=dp ∥ (10 ¡39 cm 2 (GeV/c) ¡1 nucleon ¡1 )
+
+4
+Published §1¾
+
+Published (PRD 104, 092007)
+This work §1¾
+
+3
+
+This work (OmniFold)
+MINERvA Tune v1
+2
+
+1
+
+0
+
+1.2
+
+ratio to
+published
+
+ratio to
+published
+
+d¾=dpT (10 ¡38 cm 2 (GeV/c) ¡1 nucleon ¡1 )
+
+6
+
+1.0
+0.8
+0
+
+1
+
+2
+
+3
+
+4
+
+6
+5
+4
+3
+2
+1
+0
+
+1.2
+1.0
+0.8
+2
+
+3
+
+5
+
+pT (GeV/c)
+
+20
+
+40
+
+60
+
+3
+
+20
+
+2
+
+10
+1
+
+8
+6
+
+0
+
+4.5
+
+−1
+
+3.5
+−2
+
+2.5
+1.5
+
+(OmniFold ¡ published)=¾published
+
+60
+
+p ∥ (GeV/c), bin edges
+
+10
+
+p ∥ (GeV/c)
+
+Median relative uncertainty
+This work
+
+6.41%
+
+Published
+
+6.85%
+
+Published-¾ standardized residuals
+mean = 0.060, RMS = 0.535 (205 bins)
+
+−3
+0
+
+0.15
+
+0.33
+
+0.47
+
+0.7
+
+1
+
+1.5
+
+4.5
+
+pT (GeV/c), bin edges
+
+FIG. 1. Comparison with the published result [13]. Top: pT and p∥ projections of the published result and of this analysis,
+each with its total ±1σ band, and of the MINERvA Tune v1, with ratios to the published result below. The band of this
+analysis is the four-block covariance of Sec. IV D, without Cmodel . Here the two bands are correlated, so their overlap is not a
+compatibility test. Bottom left: (OmniFold − published)/σpublished per reported bin, with cells drawn at equal size (grey: not
+reported). Bottom right: median relative uncertainties and residual summary.
+
+T = 382.8, against a null 95th percentile of 123.6 and
+maximum of 138.5 over 300 paired replicas. The ratio ρ
+of the IBU’s distance from the published result to that
+of the two-dimensional result is 0.452, but its 90 % interval over the replicas, 0.701–1.128, straddles a declared
+class boundary, so the localisation reads unresolved; the
+point lies below the interval, for a reason not tested. This
+reading attributes the shape difference neither to the
+inputs nor to the algorithm and does not narrow the
+statement that its source has not been identified. The
+joint-test estimator, run on the two-dimensional inputs,
+reproduces the two-dimensional central value within its
+paired noise: T = 13.87 over 50 paired replicas, 4 % below
+its 95th-percentile bar of 14.46.
+
+D.
+
+Two-dimensional covariance
+
+The two-dimensional covariance is the sum of four
+blocks, each from LightGBM unfoldings with the central
+value’s estimator: systematic universes (187 universes,
+including the normalization), statistical (300 bootstrap
+replicas), run period (three period groups), and training
+seed (five seed settings, so that its own size is poorly determined). The resulting relative uncertainty has a median
+of 6.41 % per bin and is 4.76 % on the integrated cross
+section, compared with 6.85 % and 4.61 % for the publication. The published flux uncertainty (median 4.01 %)
+is larger than ours (3.71 %), for a reason the released
+inputs do not let us determine. The covariance omits the
+approximation in the systematic-universe unfoldings for
+events that fail reconstruction, the learner dependence of
+Sec. IV B, and the dependence on the regularization, while
+
+(a) with unbinned background refinement,
+refinement classifier 100 trees, 8 leaves
+0–0.1
+
+(unfolded ¡ truth)/truth (%)
+
+100
+
+0.1–0.2
+
+0.2–0.4
+
+0.4–0.8
+
+0.8–1.5
+
+(b) joint-test estimator: as (a), with refinement
+classifier 400 trees, 31 leaves
+1.5–3
+
+¸3
+
+injected truth change (deformed/nominal ¡ 1)
+
+80
+
+residual, GiBUU/GENIE Eavail (60 exp.)
+
+100
+80
+
+60
+
+60
+
+40
+
+40
+
+20
+
+20
+
+0
+
+0
+
+−20
+
+−20
+
+−40
+
+0–0.1
+
+0.1–0.2
+
+0.2–0.4
+
+0.4–0.8
+
+0.8–1.5
+
+1.5–3
+
+¸3
+
+§ quoted total ¾ of the (Eavail ; W) projection
+NuWro Eavail (20 exp.)
+
+GENIE MEC (Eavail ; W) (20 exp.)
+NuWro (pT ; p ∥ ; Eavail ) (20 exp.)
+
+−40
+123456123456123456123456123456123456123456
+
+123456123456123456123456123456123456123456
+
+(Eavail ; W) cell: W bin 1–6 within each Eavail bin (GeV, top)
+
+(Eavail ; W) cell: W bin 1–6 within each Eavail bin (GeV, top)
+
+FIG. 2. A development diagnostic: neither panel shows the sixteen-cell result or its reported covariance. Fractional recovery
+residual, (unfolded − truth)/truth, per (Eavail , W ) cell, at each pseudo-experiment’s deformed truth, with backgrounds. (a) A
+development variant of the joint-test estimator, with a refinement of 100 trees and 8 leaves, and the truth reweighted by the
+GiBUU/GENIE Eavail shape ratio (60 pseudo-experiments); the grey step is the injected change of the cell truth. At nominal
+truth its largest residual is 0.39 % (Ref. [14], Sec. 9.2). (b) The joint-test estimator, for three shape changes not used while
+it was chosen (NuWro in Eavail ; GENIE + MEC in (Eavail , W ); NuWro in (pT , p∥ , Eavail )), 20 pseudo-experiments each; the
+grey band is ± the total uncertainty of the (Eavail , W ) projection of an earlier purity-subtracted five-observable covariance,
+not the reported one (Ref. [14], Sec. 9.6). At nominal truth (40 pseudo-experiments) its largest residual is 0.09 %. W bin 6 is
+W ≥ 3 GeV. Error bars are standard errors of the mean.
+
+16
+20
+
+14
+12
+
+2 contribution
+
+10
+
+p bin
+
+10
+8
+
+0
+
+6
+10
+
+4
+2
+0
+
+20
+0
+
+2
+
+4
+
+6
+
+8
+
+pT bin
+
+10
+
+12
+
+14
+
+FIG. 3. Per-bin contribution ∆i (C+ ∆)i to the publishedcovariance χ2 of the two-dimensional result, where ∆ is its
+difference from the published result and C the published
+covariance, on the grid of reported (pT , p∥ ) bins, numbered
+upward in momentum. The contributions sum to the χ2 and
+can be negative.
+
+the dependence on the prior’s generator shape is reported
+beside it (below). Details are in Ref. [14], Secs. 6.3, 4.5,
+and 4.6.
+The statistical block, with a median statistical uncertainty of 0.676 %, is a bootstrap of 300 replicas drawn at
+the central value’s training seed, in which the background
+templates are also resampled.
+In the two-dimensional result, data from different run
+periods are not mutually consistent within the other un-
+
+certainties: one period group’s unfolded p∥ distribution,
+relative to its own simulation, differs from that of the
+earliest periods by a step of about 7 % near 8 GeV/c, of
+unknown cause (Sec. IV A). Its run-period block, built
+from these differences in the same way, includes this inconsistency, amounts to 2.0 % on the integrated cross section
+and passes its own consistency check by construction.
+The step is already in the reconstructed data: there, the
+1G–1M group against 1A–1E has a step of +6.10 %, and
+in a per-period unfolding the double ratio of each period’s
+result to its own simulated truth gives +(6.94 ± 0.41) %,
+so the step survives unfolding at about its reconstructionlevel size. These data cannot establish which period is
+right or the cause.
+We report the dependence on the prior’s generator
+shape as a separate
+P covariance beside the four-block covariance, Cmodel = k sk sT
+k . Here sk is the per-bin relative
+change of the result when the prior truth is reweighted
+by the ratio of the (pT , p∥ ) shape of generator k (GENIE
+with meson-exchange currents, NuWro, or GiBUU) to
+that of GENIE, with its normalization kept. Its median is
+3.71 % per bin. It is a measure of generator-shape model
+dependence, not a calibrated bound on the unfolding bias.
+Added to the four-block covariance, it gives a total with
+a median of 7.90 % per bin. The comparison with the
+published uncertainty uses the covariance without Cmodel ,
+because neither has a component for the residual dependence on the prior’s generator shape. For the published
+analysis, this is because it chose its ten iterations in a fakedata study and assigns no uncertainty to the remaining
+dependence [13]. The iteration counts differ (ten there,
+five here), so we make no statement about the size of the
+
+published analysis’s residual.
+E.
+
+Normalization and closure
+
+Summed over each of the four (pT , p∥ ) quadrants, the
+sixteen-cell result agrees with the two-dimensional result:
+the sums differ by −1.5 to +0.7 per cent, and with the
+covariance between the two results evaluated from the
+systematic variations they share, the four differences give
+χ2 ≤ 1.25 for four degrees of freedom (p ≥ 0.87), with
+no quadrant beyond one standard deviation. The statistical correlation, and that of four systematic terms
+that could not be evaluated directly, are bounded within
+a one-parameter family of valid covariances, each such
+cross term taken as a common fraction, from zero to one,
+of its fully correlated value, over which the agreement
+holds. Of the joint-test estimator’s other results, only
+the three-observable marginal has been compared with
+the two-dimensional result, agreeing with it to 0.141 % in
+area-weighted total over all 205 reported cells (Ref. [14],
+Sec. 10.2).
+For the joint-test estimator, a background-inclusive
+closure at nominal truth on 40 pseudo-experiments, not
+held out from its development, has a largest deviation of
+2.7 standard errors and a largest (Eavail , W ) residual of
+0.09 % (Ref. [14], Sec. 9.3); on the sixteen cells, the closures of Table II meet the bias criteria. Closure tests with
+backgrounds included, comparing purity-based with unbinned negative-weight subtraction, are given in Ref. [14],
+Sec. 9.2 and Ref. [14], App. C.6.
+F.
+
+Generator-sized truth changes
+
+Figure 2 shows that the unfolding recovers only part of
+a change of the Eavail shape as large as the difference between generators. When the true shape is reweighted by
+the GiBUU-to-GENIE ratio, the (Eavail , W ) cells unfolded
+with a development variant of the joint-test estimator (a
+100-tree, 8-leaf refinement), not the reported estimator, deviate from it by several percent in the largest cells and by
+up to 74 % at high W , in the cell 0.8 ≤ Eavail < 1.5 GeV,
+W ≥ 3 GeV. These deviations occur with or without
+background, so background subtraction alone does not
+explain the residual. In a noise-free comparison in simulation on the 109 joint cells, an exact binned iterative
+unfolding of the same development truth changes leaves
+about the same median residual at five iterations: 8.3 %,
+5.4 %, 4.9 % and 5.3 % for the GiBUU-to-GENIE Eavail
+change, a NuWro Eavail shape, a NuWro (pT , p∥ , Eavail )
+shape and a q3 stress test, against 9.5 %, 5.4 %, 5.6 %
+and 4.3 % for the boosted trees. Longer exact iteration
+removes much of the residual of the GiBUU-to-GENIE
+change (its median falls to 3.3 % at 200 iterations) and
+part of the NuWro Eavail one, but not that of the other
+two (4.4 % and 6.6 % at 200), and the long runs do not
+converge. The residual is therefore consistent with finite-
+
+iteration regularization for the GiBUU-like change, but
+not for every change tested, and no single cause is established (Ref. [14], Sec. 9.3). In that comparison, 121 of
+the 144 residuals stable under the truth resolution lie in
+quantities that the binned response constrains weakly at
+the analysis exposure, with Cramér–Rao widths above
+10 % (median 31 %), and the tree approximation dominates 15, of which 2 lie in identified quantities; this
+holds for a binned, signal-only, noise-free comparison at
+the simulation’s detector response. For other fixed generator shapes tested with the joint-test estimator, it is
+16 % to 31 % in the most affected (Eavail , W ) cell and
+lies within the quoted total uncertainty in about half
+of those cells. Those uncertainties come from an earlier
+purity-subtracted five-observable covariance that fails its
+specified acceptance criteria (Ref. [14], Sec. 9.6). For the
+sixteen-cell result, Sec. IV H reports the fake-data tests
+of the estimator’s bias. The studies, their scope and their
+seed sets are in Ref. [14], Secs. 9.2 and 9.3.
+Statistical intervals of an earlier five-observable estimator with purity-based subtraction, corrected for its
+closure bias at nominal truth, miscover at the tested
+truths, most strongly when the true signal rate is lowered by about 10 %, with coverage as low as 0.06 for 68%
+intervals (Ref. [14], Sec. 9.5).
+G.
+
+Sensitivity to input rounding
+
+The joint-test estimator is unstable under floatingpoint rounding of its inputs: over 20 rounding-level perturbations of the data, the reported quantities scatter
+by a median of 0.23 % per joint cell, against a median
+data-bootstrap statistical uncertainty of 0.37 %, and each
+bootstrap replica carries this scatter at the same size.
+Rounding-level changes of its inputs move its results by
+up to 2.6 statistical standard deviations, and those of the
+lower-capacity development variant by up to 2.5, so the
+estimator fails a data-stability requirement of at most
+0.3 (median) and 1.0 (maximum) statistical standard deviations. The training-seed block of Sec. IV A is zero
+because, in the unfolds we ran, the result is bitwise independent of the training seed and of input row order;
+this is distinct from the sensitivity to rounding-level input changes quoted above. That sensitivity enters the
+reported statistical block by construction: each of its
+50 bootstrap replicas refits the whole unfolding with its
+own rounding-level perturbation of the inputs. On the
+finer joint cells, the rounding spread is about 37 % of
+the statistical variance and below a tenth of any total
+uncertainty (Ref. [14]); on the 16 reported cells, over 20
+rounding-level perturbations of the data, it is a median
+0.133 % of the cross section (0.055 % to 0.252 %); the
+quoted 2.6 statistical standard deviations is the largest
+shift, over 153 quantities (the joint cells, the (Eavail , W )
+cells and two totals) under two such perturbations of the
+data, not the typical one. A declared probe on simulated
+pseudo-data of two-fold cross-fitting and of two tree regu-
+
+larisations found no variant that met the data-stability
+requirement, so the estimator is unchanged (Ref. [14]).
+Cross-fitting also gives a larger fake-data bias than the
+current estimator at three of the 17 truths it was graded
+on.
+H.
+
+Fake-data tests of the sixteen-cell result
+
+To compare the estimator’s bias with the reported
+covariance when the truth differs from the simulation, we
+unfold pseudo-data at 12 truths and compare the mean
+unfolded result with each truth on the 16 cells through χ2
+with 16 degrees of freedom. The truths are not held out:
+they are the simulation’s prior; five hybrid truths, each
+equal to a generator prediction in every cell of the fine
+grid and to the MINERvA Tune v1 simulation’s event
+composition within each cell; NuWro shape changes in
+Eavail and in (pT , p∥ , Eavail ); a GENIE + MEC shape
+change in (Eavail , W ); a GiBUU-to-GENIE Eavail ratio; a
+noise-free closure at the NuWro shape; and a synthetic
+tilt of the q3 distribution at fixed (Eavail , W ). For a
+truth from a generator that contributes to Cmodel , the
+covariance omits that generator’s component (the Cov.
+column of Table II). Two of the truths, the simulation
+prior and the Tune v1 hybrid, are the simulation’s own
+truth, so they are closure tests (marked ∗ in Table II). A
+truth is flagged when p < 0.01 or when a cell has |z| > 2,
+where z is the cell’s bias divided by its uncertainty under
+the same covariance; these criteria were fixed before any
+of the tests was graded against them; Table II lists all
+12 truths. Table II gives the results under the reported
+covariance and under Ctotal alone, and 6 further truths,
+given in the note, are descriptive and not judged against
+these criteria.
+Under the reported covariance, without the GiBUU
+component for the two GiBUU truths, the flagged truths
+(p < 0.01, or a cell with |z| > 2) are the GiBUU hybrid
+truth (p < 10−27 ; cells R02, R06) and the synthetic q3
+tilt, by p alone (p < 10−5 ). Under Ctotal + Cresp , the
+covariance without CPL,5D , which Table II does not show,
+the GiBUU Eavail shape also meets the flagging criterion,
+in cell R06 (z = 2.01, against 1.76 with the block). Thus
+the fake-data bias exceeds the stated thresholds at the
+GiBUU hybrid truth and the q3 tilt under the reported
+covariance, and also at the GiBUU Eavail shape without
+CPL,5D . The bias is the same in both; only the covariance
+differs. Under Ctotal alone, the right-hand columns of Table II, the flagged truths are the GiBUU hybrid truth, the
+GiBUU Eavail shape (cell R06, p = 0.0031), the synthetic
+q3 tilt and the NuWro (pT , p∥ , Eavail ) shape, the last by
+p alone (p = 0.0027). At the other 10 truths the bias
+passes both criteria under the reported covariance, with
+no cell beyond 2σ and p ≥ 0.01. Both cells flagged at
+the GiBUU hybrid truth, R02 and R06, are low-stability
+cells. On the eight cells with p∥ < 4.5 GeV/c, which leave
+out R06, that truth still gives χ2 = 132.4 for 8 degrees of
+freedom under the reported covariance; the comparison is
+
+descriptive, and selecting cells after these outcomes would
+be a post hoc change.
+Two GENIE v3 tunes, G18_10a_02_11b and
+AR23_20i_00_000, were generated for this test and held
+out of the analysis. Each reweights the simulated truth
+using its shape ratio to GENIE CV, constructed as for
+the Cmodel components. The simulated detector response
+is not varied in these tests. Separate noise-free closures
+at the nominal truth, with pseudo-data from a simulation
+whose reconstructed recoil response is shifted and the
+unfolding on the nominal response, move the sixteen cells
+by at most 0.40σ when each deposit category of Cresp is
+shifted by its ±1σ, and by a median of 0.50σ (at most
+0.97σ) when the whole recoil energy is scaled by ±4 %,
+with σ the per-cell uncertainty of Ctotal + Cresp . These
+closures are descriptive: no pass threshold is set, and
+they do not establish the bias under the true detector
+response (Ref. [14], App. D). For each tune, 20 Poisson
+pseudo-experiments and a noise-free closure are compared
+with the truth using the full reported covariance. Both
+tunes satisfy the bias criteria: the pseudo-experiment
+means give χ2 = 9 (p = 0.90) and 14 (p = 0.59), respectively, with |z| ≤ 0.62 in every cell of the means and
+closures. In cell R11 at G18_10a_02_11b, the bias lies
+below the reported uncertainty only with Cmodel included.
+The tunes share a quasielastic cross-section model, and
+G18_10a_02_11b and the GENIE + MEC component of
+Cmodel also use Valencia-family MEC models. These tests
+provide partial evidence and are not independent. Omitting that Cmodel component gives χ2 = 12 (p = 0.77) and
+19 (p = 0.28), respectively, as a descriptive comparison.
+These tests assess bias, not coverage: only event counts
+fluctuate, with the systematic parameters fixed. A coverage test at the two tunes was declared in advance for
+the covariance without the run-period block, with pseudoexperiments that also draw the flux, interaction and detector uncertainties (the lateral and normalization ones
+as surrogates, and Cmodel and Cresp not at all). It was
+stopped at one of its gates, before any coverage pseudoexperiment ran: the ratio of each cell’s uncertainty reproduced through the pseudo-experiments to that of the
+drawn covariance lay outside 0.9–1.1 in 11 of the 16 cells,
+ranging from 0.70 to 2.30. The gate compares the fixedtruth pseudo-experiments, which move only the response,
+with the reported blocks, which are built from the prior
+and the response, and so would be predicted to fail by
+construction (Ref. [14], Sec. 10.5). Its diagnosis found
+the following. No set of three or fewer of the 38 drawn
+bands brings every cell inside the window; in R08, the
+cell with the largest ratio, the interaction bands MaRES,
+MaCCQE and MvRES carry most of the excess. Estimator noise is rejected as the account of every failing
+cell. For the interaction group at the nominal truth, the
+pseudo-experiments reproduce the block of the response
+alone moved in the simulation, within 0.986–1.015 in every cell, whereas the reported construction’s full universe
+at the same truth gives a block that differs from it by a
+factor of median 2.72 (0.49–6.51); the full block is not
+
+TABLE II. Fake-data tests on the sixteen cells: χ2 (16 degrees of freedom), p, the cells with |z| > 2 and, under the reported
+covariance, the largest |z|, against the reported Ctotal + Cresp + CPL,5D and against Ctotal , each without the truth’s own generator
+component where the second column says so (−). ∗ Closure test: the truth is the simulation’s own.
+Ctotal + Cresp + CPL,5D
+χ2
+
+Cov.
+
+simulation prior∗
+Tune v1, hybrid∗
+GENIE CV, hybrid
+GENIE + MEC, hybrid
+GENIE + MEC, (Eavail , W ) shape
+NuWro, hybrid
+NuWro, Eavail shape
+NuWro, (pT , p∥ , Eavail ) shape
+NuWro shape, noise-free closure
+GiBUU, Eavail shape
+GiBUU, hybrid
+synthetic q3 tilt
+
+full
+0
+1.00
+full
+0
+1.00
+full
+16
+0.48
+−GENIE + MEC 14
+0.62
+−GENIE + MEC
+0
+1.00
+−NuWro
+24
+0.093
+−NuWro
+5
+1.00
+−NuWro
+27
+0.037
+−NuWro
+11
+0.83
+−GiBUU
+25
+0.078
+−GiBUU
+171 < 10−27
+full
+52 < 10−5
+
+that response block plus a cell-mean truth-reweight block,
+whose sum misses it by about the response block’s own
+size. A like-for-like control, whose pseudo-data carry each
+interaction universe’s full event weights, reproduces the
+full-universe interaction block within 0.9–1.1 in all 16 cells
+at the nominal truth. Three things stay open: the flux
+and detector groups have no such split, and in R00 and
+R05 the single flux band carries a large part of the departure; the blocks’ non-additivity is not explained; and
+the truth dependence, between the nominal truth and the
+data where the reported block is made, lies outside the
+window in 15 of the 16 cells. None of these readings is a
+coverage result, in either direction. Coverage is discussed
+in Sec. VI A.
+V.
+
+APPLICATION TO DATA
+
+Applied to the data, the joint-test estimator gives a
+cross section on the sixteen cells of Sec. III, with the
+covariance of Sec. IV A. Appendix A gives the cells, the
+covariance and descriptive comparisons with five generator
+predictions. They are illustrative output, not for fitting
+or for constraining models: no interval has validated
+coverage, the fake-data bias exceeds the stated criteria
+at two truths, four cells have low reconstruction stability,
+and the run-period block was added after the period
+differences were seen. Figure 4 shows the output over
+each prediction, cell by cell.
+VI.
+
+p cells
+
+Truth
+
+DISCUSSION AND CONCLUSIONS
+
+The method provides a simultaneous unbinned unfolding in five observables, without a separate binned response
+tensor for each projection, whose normalization agrees
+with the two-dimensional result. Its reported cells depend
+on the unfolding algorithm, by the binned comparison of
+Sec. IV C. It does not yet provide validated interval coverage, numerical stability, recovery of every generator-sized
+truth change tested within the reported uncertainty, run-
+
+—
+—
+—
+—
+—
+—
+—
+—
+—
+—
+R02, R06
+—
+
+Ctotal
+
+max |z|
+
+χ2
+
+p cells
+
+0.01
+0
+1.00
+0.01
+0
+1.00
+0.35 17
+0.36
+0.29 16
+0.44
+0.12
+1
+1.00
+1.26 30
+0.018
+0.63
+6
+0.99
+1.02 36
+0.0027
+0.54 13
+0.67
+1.76 36
+0.0031
+4.53 247 < 10−30
+1.55 60 < 10−6
+
+—
+—
+—
+—
+—
+—
+—
+—
+—
+R06
+R02, R06, R07
+—
+
+period consistency, or an identified source of the shape
+difference from the published result (Table I).
+Two validation findings point to the unfolded result
+retaining part of its prior. The first is the residual under a
+generator-sized change of the truth in Sec. IV F, which for
+the GiBUU-like change is consistent with finite-iteration
+regularization. The second is the shift of the data result
+when the simulation’s prior is reweighted to generatorsized changes of the truth, which tracks the same bias
+(Ref. [14], Sec. 9.4). The note’s calibrated tests of the
+predictions show the same bias toward the prior (Ref. [14],
+Sec. 11.5).
+The studies of Sec. IV and of the companion note
+show what must be checked before unfolded intervals
+are interpreted: closure with the backgrounds included;
+truth changes of generator size, not only nominal closure;
+coverage under changes of the truth, not only at nominal
+truth; robustness to training seeds and rounding-level
+input changes; and run-period consistency.
+Until the coverage, the prior dependence, the numerical stability, and the run-period effect are resolved, the
+sixteen-cell output is a demonstration of the method.
+A.
+
+Limitations
+
+Apart from the validation of the uncertainties and
+the low stability of four of the sixteen cells (below), the
+limitations of these results are stated with the results they
+qualify, in Secs. III–V, and those of the calibrated tests
+in the companion note. The principal ones are these.
+1. No reported interval has validated coverage. The
+fake-data tests of Sec. IV H assess bias, not coverage, so interval widths cannot be tested, and the
+coverage test declared for the sixteen-cell covariance
+was stopped by one of its preliminary checks before any coverage pseudo-experiment ran; for the
+interaction group at the nominal truth that check
+compared unlike objects, and the flux and detector
+groups, the blocks’ non-additivity and the truth
+
+data / prediction
+
+GENIE 2.12.10 CV, no MEC
+GENIE 2.12.10 + Valencia MEC
+NuWro 21.09: CH
+
+GiBUU 2019: CH; p ∥ < 4.5 cells only
+MINERvA Tune v1: prior (not an independent prediction)
+
+1.4
+1.2
+1.0
+
+data / prediction
+
+0.8
+
+2.5
+2.0
+1.5
+1.0
+R00
+
+R01
+
+R02
+
+R03
+
+R04
+
+R05
+
+R06
+
+R07
+
+R08
+
+R09
+
+R10
+
+R11
+
+R12
+
+R13
+
+R14
+
+R15
+
+pT (GeV/c)
+
+< 0.7
+
+< 0.7
+
+< 0.7
+
+< 0.7
+
+< 0.7
+
+< 0.7
+
+< 0.7
+
+< 0.7
+
+> 0.7
+
+> 0.7
+
+> 0.7
+
+> 0.7
+
+> 0.7
+
+> 0.7
+
+> 0.7
+
+> 0.7
+
+p ∥ (GeV/c)
+
+< 4.5
+
+< 4.5
+
+< 4.5
+
+< 4.5
+
+> 4.5
+
+> 4.5
+
+> 4.5
+
+> 4.5
+
+< 4.5
+
+< 4.5
+
+< 4.5
+
+< 4.5
+
+> 4.5
+
+> 4.5
+
+> 4.5
+
+> 4.5
+
+Eavail (GeV)
+
+< 0.8
+
+all
+
+> 0.8
+
+> 0.8
+
+< 0.8
+
+all
+
+> 0.8
+
+> 0.8
+
+< 0.8
+
+all
+
+> 0.8
+
+> 0.8
+
+< 0.8
+
+all
+
+all
+
+> 0.8
+
+q3 (GeV/c)
+
+<2
+
+>2
+
+<2
+
+<2
+
+<2
+
+>2
+
+<2
+
+<2
+
+all
+
+all
+
+<2
+
+>2
+
+<2
+
+>2
+
+>2
+
+<2
+
+W (GeV)
+
+all
+
+> 1.8
+
+< 1.8
+
+> 1.8
+
+all
+
+> 1.8
+
+< 1.8
+
+> 1.8
+
+< 1.8
+
+> 1.8
+
+< 1.8
+
+< 1.8
+
+all
+
+< 1.8
+
+> 1.8
+
+all
+
+FIG. 4. Illustrative output (Sec. V). Data over prediction, f /g, on the sixteen cells for the five predictions of Table VI, all in
+the analysis definitions, with NuWro and GiBUU corrected to CH. Each error bar is (f /g) σ/f , with σ the square root of the
+diagonal of Ctotal + Cresp + CPL,5D , and the predictions’ finite-sample uncertainties are not drawn. GiBUU (lower panel) is
+shown on its 8 cells with p∥ < 4.5 GeV/c only. The key below the axes gives each cell’s box. The χ2 of Table VI uses the full
+covariance, whose correlations the error bars do not show.
+
+dependence stay open (Sec. IV H). Neither the coverage of Cmodel at truths held out of its construction
+nor the size of either run-period block is independently validated (Ref. [14], Secs. 10.3, 10.4 and 4.5).
+The two-dimensional covariance has not been independently validated and gives no calibrated significance for generator comparisons; an earlier statistical band of that result undercovered in its tails in
+a coverage test at fixed truth (Ref. [14], Sec. 5.2),
+and the coverage of the current statistical block and
+of the total covariance has not been tested. The
+coverage tests cited are pointwise, for each reported
+quantity separately, not the stronger simultaneous
+coverage of all of them. We make no coverage claim
+on independent simulated samples or simultaneously
+over all reported bins and projections.
+2. Four of the sixteen cells, R02, R06, R10 and R15,
+have a reconstruction stability of 0.16–0.25: of the
+simulated signal events generated in such a cell and
+reconstructed, only that fraction is reconstructed in
+the same cell.
+3. The note’s calibrated tests reject hybrid nulls, con-
+
+ditionally on the simulation’s hadronic response and
+on the simulated chain reproducing the analysis of
+the data. A rejection extends to a generator prediction only if the residual below the fine grid is
+bounded, and no such bound has been shown. They
+are not physical exclusions, and show no evidence
+of additional discrimination beyond matched coarse
+projections (Ref. [14], Sec. 11.4).
+
+Appendix A: Illustrative output on data: not for
+fitting or for constraining models
+
+This appendix gives the joint-test estimator’s sixteencell output on the data, its covariance and descriptive
+comparisons with generator predictions, for the reasons
+and with the limits of Sec. V.
+1.
+
+The sixteen cells
+
+Table III gives the sixteen cells: for each cell, its box
+in the five observables, the cell-integrated cross section f ,
+
+and its marginal relative uncertainty under the reported
+covariance Ctotal + Cresp + CPL,5D of Sec. IV A. The cells
+are correlated, so quantitative comparisons need the full
+covariance, whose correlation matrix is given in Table V;
+Table IV gives the uncertainty of each group of the covariance, and Ref. [14], Table 12, the uncertainties without
+CPL,5D .
+2.
+
+Uncertainty tables
+
+The reported covariance of the sixteen-cell result
+(Sec. IV A) is a sum of blocks, grouped as follows.
+• Statistical : the bootstrap of the data, 50 replicas.
+• Flux : 100 hadron-production (PPFX) flux universes,
+weighted by the neutrino–electron and inverse-muondecay constraint (effective number 19).
+• Interaction: the 33 interaction-model bands of the
+MINERvA systematic set, which reweight simulated
+events.
+• Detector : the 4 detector-model bands, which
+reweight simulated events: the MINOS muonmatching efficiency and the GEANT4 neutron, pion
+and proton reweights.
+• Lateral : the 5 bands that shift the reconstructed
+kinematics of each simulated event rather than
+reweighting it: the beam angle in two directions, the
+muon momentum resolution, and the muon energy
+scales in MINERvA and in MINOS.
+• Normalization: 1.40 % in every cell.
+• Cmodel , Cresp and CPL,5D , as defined in Sec. IV A.
+The statistical, flux, interaction, detector, lateral and normalization groups, with a training-seed block that is zero
+in every cell, form Ce , and Ctotal = Ce + Cmodel . Table IV
+gives each group’s relative uncertainty in each cell, and
+Table V the correlation matrix of the reported covariance.
+With the cross sections and the marginal uncertainties
+of Table III, the correlation matrix gives the reported
+covariance to the printed precision; the covariance is also
+provided in the Supplemental Material.
+3.
+
+Descriptive comparison with generator
+predictions
+
+Table VI compares the sixteen-cell output with five
+predictions through a χ2 against the reported covariance
+plus each prediction’s finite-sample (diagonal) covariance
+Vg , with a shape-only χ2 beside it. The comparison
+is descriptive: its χ2 values establish no exclusion of a
+generator, and they depend on the covariance (below).
+For GENIE + MEC and the Tune v1, the shape-only
+χ2 is within one unit of the total, although Fig. 4 shows
+
+both predictions below the data in most cells: freeing the
+normalization lowers χ2 only by the residual’s component
+along the result’s own cell values in the metric of the
+reported covariance, and for these two predictions that
+component is small. GiBUU’s sample stops at Eν =
+20 GeV, so GiBUU is compared on the 8 cells with p∥ <
+4.5 GeV/c only. MINERvA Tune v1 is the simulation’s
+prior. On carbon, NuWro gives χ2 = 130 (shape-only 113)
+and GiBUU 45 (25). For GiBUU, the effect of the CH
+correction on the total χ2 depends on whether Cmodel ’s
+shape ratios are from carbon or CH and on the hydrogen
+sample (Ref. [14], Sec. 10.7). A native CH generation of
+NuWro agrees with
+P the combination within a tolerance
+fixed in advance ( z 2 = 17.9 for 16 cells, largest |z| = 2.2,
+in the generators’ own definitions). The size of Cmodel is
+not calibrated; Table VII gives how the total χ2 changes
+with it.
+With the run-period block, each total χ2 is lower by
+3.6–29.3 % of its value without it, and each shape-only χ2
+by 7.4–40.4 %.
+Weakening only the flux correlations by 10 % lowers
+the χ2 of the 16-cell predictions by 23–38 %, and the
+same change to the detector or lateral correlations by
+at most 18 %; with the correlations of the interaction,
+flux, detector and lateral groups removed, every 16-cell
+prediction keeps χ2 ≥ 41 for 16 degrees of freedom. Bootstrapping the 100 flux universes, with the flux variances
+kept, gives 16th–84th percentile bands for each 16-cell
+χ2 with edges within 3.8 % of the reported value and
+a median at most 0.4 % above it (Ref. [14], Sec. 10.6).
+These dependences calibrate neither set of values, and no
+exclusion of a generator follows.
+
+TABLE III. The joint-test estimator’s sixteen-cell output on data (illustrative, Sec. V): each cell’s box (pT , p∥ and q3 in GeV/c;
+Eavail and W in GeV), the cell-integrated cross section f (an integral over the box, not a differential density) in units of
+10−40 cm2 /nucleon, and the marginal relative uncertainty σ/f (%), the square root of the diagonal of Ctotal + Cresp + CPL,5D
+over f . The largest edge on each axis is the outer edge of the analysis grid, which contains every signal event (Ref. [14], Sec. 3.5).
+The last row gives the median over the cells. Quantitative comparisons need the full covariance (Sec. IV A). † Reconstruction
+stability 0.16–0.25 (Sec. VI A, item 2).
+cell
+
+pT
+
+p∥
+
+Eavail
+
+q3
+
+W
+
+f
+
+marginal σ/f
+
+R00
+R01
+R02†
+R03
+R04
+R05
+R06†
+R07
+R08
+R09
+R10†
+R11
+R12
+R13
+R14
+R15†
+
+0–0.7
+0–0.7
+0–0.7
+0–0.7
+0–0.7
+0–0.7
+0–0.7
+0–0.7
+0.7–4.5
+0.7–4.5
+0.7–4.5
+0.7–4.5
+0.7–4.5
+0.7–4.5
+0.7–4.5
+0.7–4.5
+
+1.5–4.5
+1.5–4.5
+1.5–4.5
+1.5–4.5
+4.5–60
+4.5–60
+4.5–60
+4.5–60
+1.5–4.5
+1.5–4.5
+1.5–4.5
+1.5–4.5
+4.5–60
+4.5–60
+4.5–60
+4.5–60
+
+0–0.8
+0–100
+0.8–100
+0.8–100
+0–0.8
+0–100
+0.8–100
+0.8–100
+0–0.8
+0–100
+0.8–100
+0.8–100
+0–0.8
+0–100
+0–100
+0.8–100
+
+0–2
+2–100
+0–2
+0–2
+0–2
+2–100
+0–2
+0–2
+0–100
+0–100
+0–2
+2–100
+0–2
+2–100
+2–100
+0–2
+
+0–100
+1.8–100
+0–1.8
+1.8–100
+0–100
+1.8–100
+0–1.8
+1.8–100
+0–1.8
+1.8–100
+0–1.8
+0–1.8
+0–100
+0–1.8
+1.8–100
+0–100
+
+32.6
+36.7
+6.31
+4.30
+49.0
+9.98
+5.57
+3.21
+13.9
+39.6
+7.83
+5.61
+22.0
+9.04
+49.6
+11.3
+
+7.11
+7.59
+14.05
+12.73
+4.80
+8.12
+6.56
+8.45
+6.26
+6.85
+8.69
+13.89
+6.98
+11.38
+5.68
+8.29
+
+median
+
+7.86
+
+TABLE IV. Per-cell relative uncertainty (%) of each group of the reported covariance: the square root of the group’s diagonal
+over f . Ce is the sum of the first six groups; the last column is the reported Ctotal + Cresp + CPL,5D , as in Table III. The last
+row gives the median over the cells.
+cell
+
+stat.
+
+flux
+
+interaction
+
+detector
+
+lateral
+
+norm.
+
+Ce
+
+Cmodel
+
+Cresp
+
+CPL,5D
+
+reported
+
+R00
+R01
+R02
+R03
+R04
+R05
+R06
+R07
+R08
+R09
+R10
+R11
+R12
+R13
+R14
+R15
+
+0.2
+0.2
+0.3
+0.3
+0.1
+0.4
+0.3
+0.3
+0.2
+0.2
+0.2
+0.3
+0.2
+0.3
+0.2
+0.2
+
+3.9
+3.6
+3.7
+3.5
+3.5
+4.1
+3.5
+3.9
+3.7
+3.5
+3.4
+3.4
+3.5
+3.9
+3.7
+3.5
+
+1.0
+1.2
+3.6
+5.4
+0.6
+2.1
+2.3
+5.1
+1.5
+1.8
+5.5
+5.2
+1.9
+5.9
+1.2
+3.2
+
+1.6
+2.1
+2.0
+1.7
+1.3
+1.7
+1.2
+1.8
+2.2
+2.2
+2.4
+2.6
+1.7
+2.1
+2.1
+1.8
+
+5.0
+4.9
+5.1
+4.7
+0.6
+1.9
+0.7
+1.7
+0.8
+1.1
+0.4
+2.9
+4.3
+3.9
+1.3
+3.2
+
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+1.4
+
+6.8
+6.7
+7.6
+8.3
+4.0
+5.5
+4.6
+7.0
+4.9
+4.9
+7.1
+7.4
+6.2
+8.5
+4.9
+6.1
+
+0.4
+0.7
+11.4
+9.4
+0.9
+3.5
+3.2
+3.5
+1.6
+3.2
+4.0
+11.1
+0.5
+6.8
+0.8
+4.8
+
+2.1
+2.4
+2.9
+1.9
+0.7
+3.7
+1.8
+1.6
+3.6
+2.3
+2.7
+2.8
+2.2
+2.1
+1.8
+1.6
+
+0.4
+2.7
+1.1
+1.5
+2.3
+3.2
+2.9
+2.8
+0.3
+2.8
+1.3
+2.4
+2.2
+2.6
+2.1
+2.4
+
+7.1
+7.6
+14.1
+12.7
+4.8
+8.1
+6.6
+8.5
+6.3
+6.9
+8.7
+13.9
+7.0
+11.4
+5.7
+8.3
+
+median
+
+0.2
+
+3.6
+
+2.2
+
+1.9
+
+2.4
+
+1.4
+
+6.4
+
+3.3
+
+2.1
+
+2.3
+
+7.9
+
+TABLE V. Correlation matrix of the reported covariance Ctotal + Cresp + CPL,5D on the sixteen cells (lower triangle; the diagonal
+is one).
+R00 R01
+R01
+R02
+R03
+R04
+R05
+R06
+R07
+R08
+R09
+R10
+R11
+R12
+R13
+R14
+R15
+
+0.69
+0.52
+0.53
+0.49
+0.34
+0.36
+0.41
+0.66
+0.19
+0.37
+0.06
+0.02
+0.03
+0.24
+0.08
+
+0.30
+0.32
+0.53
+0.70
+0.51
+0.40
+0.30
+0.57
+0.13
+0.07
+0.03
+0.05
+0.52
+0.05
+
+R02
+
+0.81
+0.15
+−0.03
+0.64
+0.40
+0.24
+−0.24
+0.73
+−0.40
+−0.01
+−0.26
+0.18
+0.61
+
+R03 R04 R05
+
+0.21
+−0.14
+0.57
+0.75
+0.31
+−0.07
+0.42
+−0.43
+0.00
+−0.38
+0.21
+0.43
+
+0.57
+0.59
+0.55
+0.73
+0.77
+0.41
+0.39
+0.73
+0.51
+0.74
+0.52
+
+R06
+
+R07 R08
+
+R09 R10
+
+R11 R12 R13 R14
+
+0.43
+0.19
+0.64
+0.13
+0.31
+0.40
+0.65
+0.42
+0.48 0.40
+0.16
+0.56
+0.21 0.36 −0.06
+0.46 −0.04 −0.15 0.16
+0.26 0.14
+0.22
+0.35
+0.26 0.60
+0.51 0.29
+0.34
+0.50
+0.13 −0.09 0.21
+0.31 0.34
+0.92 0.46
+0.65
+0.65
+0.48 0.38
+0.72 0.26
+0.11 0.64 0.25
+0.11
+0.71
+0.41 0.32
+0.20 0.83 −0.04 0.54 0.23 0.52
+
+TABLE VI. χ2 for each prediction in the indicated comparison
+region, against the reported covariance Ctotal + Cresp + CPL,5D
+and against the covariance without CPL,5D , each plus Vg ,
+where Vg is the prediction’s finite-sample (diagonal) covariance.
+Shape-only χ2 frees the normalization. All five predictions are
+in the analysis definitions, with NuWro and GiBUU corrected
+to CH (Sec. II). The ndf of each block is given in its heading.
+reported covariance
+Prediction
+
+χ
+
+2
+
+All 16 cells: ndf 16, shape-only 15
+GENIE 2.12.10 CV
+107
+GENIE 2.12.10 + Valencia MEC 229
+a
+NuWro 21.09 (CH)
+128
+MINERvA Tune v1
+262
+
+shape-only χ
+102
+229
+108
+262
+
+8-cell subset, p∥ < 4.5 GeV/c: ndf 8, shape-only 7
+GiBUU 2019 (CH)b
+48
+22
+
+2
+
+without CPL,5D
+χ2 shape-only χ2
+111
+278
+181
+330
+
+110
+264
+181
+311
+
+61
+
+25
+
+a In NuWro’s free-proton sample, the supplement generated at
+
+neutrino energies of 50–100 GeV is flagged: the events lost to
+generator aborts there were not shown to be negligible (Ref. [14],
+Sec. 11.9).
+b Corrected to CH with GiBUU’s own free-proton sample, which
+enters with weight 1/13 per nucleon. That sample failed its
+sampling-closure check, and its deep-inelastic events, 46 % of it,
+do not conserve energy (Ref. [14], Sec. 11.9).
+
+TABLE VII. Change of each prediction’s total χ2 of Table VI
+when Cmodel ’s NuWro and GiBUU shape ratios are taken from
+CH instead of carbon, when Cmodel is doubled, and when it is
+removed (Ref. [14], Sec. 10.7).
+Prediction
+GENIE 2.12.10 CV
+GENIE 2.12.10 + Valencia MEC
+NuWro 21.09 (CH)
+GiBUU 2019 (CH)
+
+ratios from CH doubled removed
+−0.9
+−5.6
++0.2
+−2.7
+
+−2.2
+−5.2
+−0.8
+−2.3
+
++14.6
++32.5
++12.6
++119.0
+
+DATA AVAILABILITY
+
+The input data and simulation are the MINERvA opendata AnaTuples, released under CC0 [12]. The sixteen-cell
+cross section, its covariance matrix and the cell definitions
+are provided as machine-readable files in the Supplemental
+Material. This analysis used an earlier production of that
+release; its 2,374 input files are identified by SHA256
+checksum in the records cited in Ref. [14], App. G. The
+analysis note’s figures of the joint-test null distributions
+and the (Eavail , W ) map are regenerated by a candidate
+release package of about 16 MB, not yet deposited, that
+requires only numpy, scipy, and matplotlib. The paper’s
+quoted numbers and the event-level processing require
+the archived analysis products, the open-data AnaTuples,
+and the generator samples produced for this analysis;
+Ref. [14], App. G states what each part of the release
+does and does not reproduce.
