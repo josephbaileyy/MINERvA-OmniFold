@@ -54,10 +54,10 @@ Login node, root_6_28 with the pinned MAT environment, the same environment and 
   `L_<T>_<band>_<i>` and the 300 `B_<T>_<NNN>`. Each one's sha256 must equal its row in #866's `completeness.tsv`. A
   missing product, or one off its digest, refuses (INVALID, §9.13).
 - **Part B's E_R** (`ro.NS_R/out/ER/xsec.root`), against `ro.partb_sums()`, as control95 checks it.
-- **The rollup's own inputs**, through `cov2d_blocks.noatime_inputs` (:160) exactly as control95 calls it (:371):
+- **The rollup's own inputs**, through `cov2d_blocks.noatime_inputs` (:152) exactly as control95 calls it (:371):
   the constraint, the VL175 build JSON and MINOS npz, the MEFHC flux file, and the per-playlist flux and POT files.
-- **C08_R:** `cov2d_blocks.C08_R_FILE` (:52, sha256 `7153b194…`), key `c08`.
-- **C_model and C_model⁻:** `cov2d_blocks.c_model()` (:76; JSON `aabc66d1…` :48, matrix `11fe6818…` :50).
+- **C08_R:** `cov2d_blocks.C08_R_FILE` (:51, sha256 `7153b194…`), key `c08`.
+- **C_model and C_model⁻:** `cov2d_blocks.c_model()` (:88; JSON `aabc66d1…` :49, matrix `11fe6818…` :50).
 - **No toy product, no toy truth, no step-A/B array is parsed in phase N** (§3.4 hashes three files, unparsed).
 
 ### 3.2 Computation (each call to a bound function at M)
@@ -79,11 +79,27 @@ Login node, root_6_28 with the pinned MAT environment, the same environment and 
 
 ### 3.3 §9.9 for the non-toy products (§9.9 implemented here, not glue)
 
-For each product read in §3.1, its `TNamed` provenance is read (`driverSha256`, `runArgv`, `runConfig`,
-`dataFileSha256`), as `test_re2_data_file.records` reads it (:101-111).
+For each product read in §3.1, its `TNamed` provenance is read (`driverSha256`, `omnifoldHelperSha256`, `runArgv`,
+`runConfig`, `dataFileSha256`), as `test_re2_data_file.records` reads it (:101-111). `runConfig` is `vars(args)` and
+`runArgv` is `sys.argv` (re2_driver.py:1404-1405).
+
+**"Every product names its truth, role and seed"** (:524) is established by `runConfig`, per class (auditor A4-2).
+`out` must be `$O/out/<label>/xsec.root`, and the label must parse as:
+
+| class | label | role and seed evidence in `runConfig` |
+|---|---|---|
+| central | `X_<T>` | `data_file` = the realization file `data_<REALIZATION_SEED[T]>.root`; `omnifile` = `$CV`; no `universe`, no `bootstrap_seed` |
+| universe | `U_<T>_<band>_<idx>` | `universe` = `<band>:<idx>`; `omnifile` = `$UNI`; `data_file` = the realization file |
+| lateral | `L_<T>_<Band>_<i>` | `omnifile` = `$ACT/…_active_<Band>_<i>.root`; `data_file` = the realization file |
+| replica | `B_<T>_<NNN>` | `bootstrap_seed` = int(NNN), 1–300; `data_file` = the realization file |
+| toy | `T_<T>_<s>` | `data_file` = `data_<s>.root`, with s ∈ `cov2d.TOY_SEEDS[T]` |
+
+In every class, `<T>` must equal `--truth` and `seed` must equal the row's `--seed` (42). A product that names
+another truth, another role, or a seed that differs from its label refuses.
 
 **Required:**
-- one `driverSha256` across all of them;
+- one `driverSha256` and one `omnifoldHelperSha256` across all of them. Both are recorded in `null_<T>.json` as
+  `code` (auditor A4-1);
 - `dataFileSha256` equal to the realization file's sha256 in the committed `pseudo_b.json` of T. The universes,
   laterals, replicas and central run all unfold d̃_T (declaration §4.4);
 - `runArgv` equal to the product's `runs_<T>.tsv` row with its variables expanded;
@@ -93,11 +109,13 @@ Any difference is INVALID at T.
 
 ### 3.4 The input inventory, which phase S will check
 
-Phase N hashes, **without parsing**, through O_NOATIME, and records sha256, size and mtime for:
+Phase N records, without parsing (step A/B files hashed through O_NOATIME; toys by stat only, below):
 - step A's `cells.npz` and `pseudo_a.json` for T;
 - step B's `truth_xsec.npz` for T;
-- the 300 toy products `T_<T>_<seed>/xsec.root`. Their digests are taken from #866's `completeness.tsv`; they are not
-  opened.
+- the 300 toy products `T_<T>_<seed>/xsec.root`: **stat only** (size, mtime, inode; no open, so no read and no hash).
+  Phase S hashes each toy through O_NOATIME when it reads it, and requires the digest to equal #866's
+  `completeness.tsv` row and the stat to equal phase N's (auditor A4-3). The rule tested is: **phase N opens no path
+  under `$O/out/T_<T>_*`**, and phase S opens none before §4.1 passes.
 
 **What this proves:** phase N and phase S read the same bytes. **What it does not prove:** that those bytes are the
 ones step A or step B wrote. A search for earlier evidence of their identity (§7) found the following, and phase N
@@ -109,6 +127,10 @@ checks each item:
 | AR23 `cells.npz` | its name only (`pseudo/AR23/end_state.txt:20`); job 60889690, 2026-11-05T22:19:09 to 2026-11-06T00:50:53 PST | mtime within the job's window |
 | G18, AR23 `truth_xsec.npz` | none (only step B's file counts, 303 and 304) | mtime within its job's window |
 | G18, AR23 `pseudo_a.json` | sha256 `163cf1aa…` and `bdb7a57d…` (`pseudo/<T>/remote_sha256.txt`), with a committed copy | sha256 equal |
+
+**The mtime windows** are converted from the committed sacct times, which are node-local PST (UTC−8 on these dates,
+after DST ended on 2026-11-01), to epoch seconds, with the offset stated in code. Each window is tested at its edges:
+inside by 1 s, and outside by 1 s.
 
 No earlier digest of either `cells.npz` or `truth_xsec.npz` exists in any job log or record. That limit is
 disclosed here, and it is not a STOP (the director's ruling of 2026-11-07).
@@ -137,7 +159,7 @@ unrepaired.
 
 1. `git show origin/main:<path>/null_<T>.json` must exist, and its sha256 must equal `--null-digest`. An absent record
    or another digest refuses.
-2. The record's `M` must equal the deploy's HEAD, and its `verdict` must be `PASS`.
+2. The record's `M` must equal the deploy's HEAD, its `truth` must equal `--truth`, and its `verdict` must be `PASS`.
 3. `blocks_<T>.npz` from origin/main must match the digest the record holds.
 4. The input inventory (§3.4) is re-hashed through O_NOATIME and must equal the record, file by file.
 
@@ -150,10 +172,12 @@ unrepaired.
 
 ### 4.3 Checks and computation (bound functions at M)
 
-1. **§9.9 for the 300 toys** (implemented here, not glue), as in §3.3, before `errors` uses any toy error. For toy seed s, `dataFileSha256` must equal `pseudo_b.json`'s `files[seed=s]`
+1. **§9.9 for the 300 toys** (implemented here, not glue), as in §3.3, before `errors` uses any toy error:
+   - each toy's `driverSha256` and `omnifoldHelperSha256` must equal the null record's `code`, phase N's single values.
+     So "one code across every product of a truth" (:523) holds across both phases (auditor A4-1); For toy seed s, `dataFileSha256` must equal `pseudo_b.json`'s `files[seed=s]`
    sha256. The seeds must be exactly `cov2d.TOY_SEEDS[T]` (declaration §9.9: "the toys' seeds are exactly the declared
    ranges").
-2. `deltas = cov2d_score.lateral_deltas(bands, minos_x)` (:35).
+2. `deltas = cov2d_score.lateral_deltas(bands, minos_x)` (:36).
 3. `(E, cross) = cov2d_score.errors(x_hat, x_true, natures, deltas, C_T)` (:52), with the natures' `lateral_signs` and
    `norm_z`.
 4. `g = cov2d_score.score(E, C_T, null, T, cells, weakened_ratio, controls_failed)` (:70), with `weakened_ratio` from
@@ -188,7 +212,7 @@ COV2D-DECLARATION.md:269-273 (main):
 
 - **The weakened pass** (:279): an unflagged cell in `cov2d.weakened_cells` at T "passes, weakened by clipping". A flag
   there is read as any other flag. The share of weakened cells is given beside the joint reading.
-- **The outlier cell 216** (:300): reported by name, "whatever it is".
+- **The outlier cell 216** (:300, its reading "whatever it is" at :306): reported by name.
 - **One-sided** (:307): over-coverage is reported, not failed.
 
 ### 5.3 The readouts (§6, :326-350)
@@ -221,8 +245,9 @@ Recorded per the director's requirement of 2026-11-07.
   `pseudo_b.json` and `remote_sha256.txt`.
 - **What it found:** three hits, all in the end states (§3.4's table).
 - **Partial content evidence:** `pseudo_a.json`'s per-toy `truth_lambda` sums lam_plus over all truth rows, while
-  `cells.npz` bins only the rows in the truth phase space (cov2d_pseudo.py:130-139). So the two give an inequality, not
-  an identity: Σ_c m_all[k] ≤ −sum_lambda_neg[k]. Phase S records it, as a consistency check that is not decisive.
+  `cells.npz` bins only the rows in the truth phase space (cov2d_pseudo.py:130-138). So the two give an inequality, not
+  an identity: Σ_c m_all[k] ≤ −sum_lambda_neg[k]. Phase S records it, as a consistency check that is not decisive,
+  with its operands' digests beside it: `cells.npz` and `pseudo_a.json`.
 
 ## 8. Tests and mutants
 
@@ -235,6 +260,12 @@ Recorded per the director's requirement of 2026-11-07.
   - each inventory file changed;
   - a toy product opened before the gate;
   - a wrong toy seed set, and the seeds out of order for R_c;
+  - a toy whose `driverSha256` or `omnifoldHelperSha256` differs from the null record's `code` (A4-1), and a matching toy
+    that passes;
+  - a product that names another truth or another role, or whose seed differs from its label (A4-2);
+  - phase N opening a toy path (A4-3);
+  - a null record whose `truth` differs from `--truth`;
+  - each mtime window at its edges;
   - §9.9: a wrong `driverSha256`, a wrong `dataFileSha256`, a wrong `runArgv` and a wrong seed each refuse, and a
     correct product passes;
   - a product off its #866 digest;
@@ -242,6 +273,12 @@ Recorded per the director's requirement of 2026-11-07.
 - **The mutation harness:** in `mutation_amendment.py`'s style. Its REQUIRED mutants:
   - the null gate removed;
   - the digest compare removed;
+  - the `M` refusal removed, the `verdict` refusal removed, and the blocks-digest refusal removed, each separately;
+  - the toy seed-set check removed;
+  - the #866 product-digest pin removed;
+  - the atime STOP removed;
+  - the A4-1 code compare (toys against the null record's `code`) removed;
+  - the A4-2 label parse removed;
   - the inventory re-hash removed;
   - §9.9 skipped, and each of its four field compares removed;
   - the toy order changed;
