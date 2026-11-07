@@ -1,0 +1,7 @@
+fence host=login02 utc=2026-11-07T17:57:04Z
+squeue:
+60970044 rs1_dry PENDING
+sacct unended cov2d:
+fence end
+REFUSED the fence is not clear
+launcher rc=2

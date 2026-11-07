@@ -1,0 +1,8 @@
+# the launcher's fence test (launch-s5.sh sha256 dae7b3fb778be3a39a7e5507849dcc4c26fe078cf8ebe7c936a0492b73a06304) on synthetic fence outputs
+squeue empty: FENCE_CLEAR 
+squeue rs1_dry: FENCE_ALLOWED_RS1 60970044 rs1_dry PENDING FENCE_CLEAR 
+squeue rs1_dry + rs1_full: FENCE_ALLOWED_RS1 1 rs1_dry RUNNING FENCE_ALLOWED_RS1 2 rs1_full PENDING FENCE_CLEAR 
+squeue cov2d-g18: REFUSED the fence is not clear 
+squeue rs1_dry + rs1_dryx: FENCE_ALLOWED_RS1 1 rs1_dry RUNNING REFUSED the fence is not clear 
+squeue interactive: REFUSED the fence is not clear 
+sacct unended cov2d-x: REFUSED the fence is not clear 

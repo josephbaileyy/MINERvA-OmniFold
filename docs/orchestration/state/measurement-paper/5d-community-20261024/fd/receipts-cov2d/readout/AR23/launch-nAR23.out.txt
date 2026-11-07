@@ -1,0 +1,43 @@
+fence host=login02 utc=2026-11-07T18:01:26Z
+squeue:
+60970044 rs1_dry RUNNING
+sacct unended cov2d:
+fence end
+FENCE_ALLOWED_RS1 60970044 rs1_dry RUNNING
+FENCE_CLEAR
+staged rc=0 node=47728db0d948b512de1219bfa9551ab384c2ff69ad1d6ece1dccc02d8b25e1ff local=47728db0d948b512de1219bfa9551ab384c2ff69ad1d6ece1dccc02d8b25e1ff
+DIGEST_MATCH
+launched rc=0 at 2026-11-07T18:01:44Z
+last line: DONE
+fetched connect-n-AR23.log rc=0
+fetched null_AR23.log rc=0
+fetched blobs.before rc=0
+fetched blobs.after rc=0
+fetched out/null_AR23.json rc=0
+fetched out/blocks_AR23.npz rc=0
+removal rc=0
+host=login02 utc=2026-11-07T18:07:34Z
+9b6e25b91066641e88715fa30776f84e5406fba5786176f47caefb117f83d3fb  connect-n-AR23.log
+8a4ce11e2fa2de8ebc5a112019c04c1aefc780ee836b7b57af17a7f31cbf29ff  null_AR23.log
+b3926bf6b212a71ddae679a9f5d1ae8fd20e20b964eebd6ddd0b466fb839c5c2  blobs.before
+b3926bf6b212a71ddae679a9f5d1ae8fd20e20b964eebd6ddd0b466fb839c5c2  blobs.after
+80274e52c23365e5c6f84fad977576e54507bf186e1d04a8da8d596a75b0ac76  out/null_AR23.json
+abaebaeae6c9cb075dcb974a420dbf148809d01b2cabc8deda31f318bf6715ee  out/blocks_AR23.npz
+47728db0d948b512de1219bfa9551ab384c2ff69ad1d6ece1dccc02d8b25e1ff  /dev/shm/josephrb-cov2d-n-AR23.sh
+rm -f /dev/shm/josephrb-cov2d-n-AR23.sh rc=0
+rm -f /dev/shm/josephrb-cov2d-n-AR23/out/blocks_AR23.npz rc=0
+rm -f /dev/shm/josephrb-cov2d-n-AR23/out/null_AR23.json rc=0
+rm -f /dev/shm/josephrb-cov2d-n-AR23/blobs.after rc=0
+rm -f /dev/shm/josephrb-cov2d-n-AR23/blobs.before rc=0
+rm -f /dev/shm/josephrb-cov2d-n-AR23/connect-n-AR23.log rc=0
+rm -f /dev/shm/josephrb-cov2d-n-AR23/null_AR23.log rc=0
+rmdir /dev/shm/josephrb-cov2d-n-AR23/out rc=0
+rmdir /dev/shm/josephrb-cov2d-n-AR23 rc=0
+ls end
+MATCH connect-n-AR23.log
+MATCH null_AR23.log
+MATCH blobs.before
+MATCH blobs.after
+MATCH out/null_AR23.json
+MATCH out/blocks_AR23.npz
+launcher rc=0
