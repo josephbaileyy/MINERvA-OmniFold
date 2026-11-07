@@ -224,4 +224,56 @@ planning defect and sets stage 4's PASS record.
 
    sacct's FAILED state for those four jobs does not block stage 5 when this record is committed on main.
 
+
+## Binding 2, addendum A4: the bulk readout driver, phases N and S (director, 2026-11-07)
+
+**Binds** `COV2D-ADDENDUM-A4.md`, sha256 `ea7113c01ba26696e3e5eb17f04c035d1bf311e5bd113a828240eac338631b49`, and its
+code, as merged in #875 at:
+
+**M = `ac25b66533788ceb18b1d4e5add259c53b216669`**
+
+The code commit is `7177d0f8`, and `git diff 7177d0f8 ac25b665 -- 2d-unfolding/cov2d/` is empty. This M binds the
+readout stage only: phase N and phase S, from `cov2d_readout.py`. The bulk products it reads stay those of the bulk's M
+(`a6054769`), checked by A4's §9.9 provenance and #866's completeness digests.
+
+**What led to it.** The stage-5 code bound at `a6054769` had no driver from the 1,572 bulk outputs to `assemble` →
+`null_at_T` → `score` → the readouts. cov2d reported this before reading anything, and the director authorized A4 as an
+amendment on 2026-11-07.
+
+**What the director checked:**
+- **The design.** coverage-5b-audit's design GO on A4-1, A4-2 and A4-3, all closed, at `e6444745`:
+  - one code across both phases;
+  - truth, role and seed taken from runConfig;
+  - phase N only stats the toys.
+- **The code.** Its code GO at `7177d0f8`, with no blockers and one LOW on its follow-up list. The auditor checked that:
+  - the bound modules are unchanged;
+  - phase S's gate refuses before any toy is opened;
+  - phase N opens no toy;
+  - §9.9 is implemented as declared.
+- **The tests.** 36 tests OK, 37 of 37 mutants killed (19 REQUIRED), and the root_6_28 cluster receipt (`27f20b4b`)
+  shows the atime guard live on Linux.
+- **Nothing has read a bulk output** before this binding.
+
+**Rulings:**
+1. **The two-phase order is bound.**
+   - Phase N writes `null_<T>.json` and `blocks_<T>.npz` per truth, and they are committed to main through a receipt PR
+     the director merges.
+   - Phase S refuses unless origin/main's `null_<T>.json` digest equals its `--null-digest`, with this M and verdict
+     PASS. It refuses unless the blocks digest and the re-hashed input inventory match.
+   - Only then does it open a toy product.
+2. **§9.9 is new check logic, labelled as such in A4,** and is bound as declared:
+   - one driverSha256;
+   - dataFileSha256 equal to the realization or toy data file;
+   - runArgv equal to its runs-table row;
+   - the row's seed.
+
+   A mismatch reads INVALID, fails closed before any toy is read, and comes to the director unrepaired, with the
+   mechanism named.
+3. **The step-A and step-B arrays** (cells.npz, truth_xsec.npz) are hash-pinned in phase N without being parsed. Their
+   provenance before now has the limits A4 §3.4 states: G18's size and mtime, the mtime windows, and no earlier digest.
+   These are disclosed limits, not STOPs.
+4. **Each connect** sends its sha256 to the director before launch, from a fresh clone at this M. The fence logic runs
+   first, inputs are read by O_NOATIME, ssh's rc is read unpiped, and each connect's receipt is a PR.
+5. **The readout due date stays 2026-12-18.**
+
 Nothing is submitted, deposited or tagged.
