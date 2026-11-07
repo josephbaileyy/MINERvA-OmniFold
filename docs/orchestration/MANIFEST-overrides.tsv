@@ -1309,7 +1309,23 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/cod
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/local_receipt.py	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-audit-fix-20261106/production-config.draft.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/AUDIT-C1-C3.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/C3-SINGLE-SITE-COVERAGE.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/IMPORT-CLOSURE.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/LOCAL-DRY-RUN.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/MUTATIONS.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/MUTATIONS.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/NATIVE-NOATIME-STOP.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/OPEN-CLOSURE.tsv	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/PLATFORM-CRASH-PR863.txt	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/REPORT.md	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/SCIENTIFIC-AST-CHECK.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/SHA256SUMS	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/SOURCE-IDENTITIES.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/SOURCE-SHA256SUMS	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/STATIC-CHECKS.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/SUITE.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/VERIFICATION.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/local_receipt.py	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/production-config.draft.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/deposit-candidate/SUPPLEMENT-COVARIANCES.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-design-20261023/ASSIGNMENT.md	LIVE	open	""
