@@ -11,17 +11,19 @@ citations are at `origin/main` `d95ed680` unless stated.
 - `DECISION-20261106-joseph-diagnoses-jinst-corrections.md:40-41`, item 1.3: "The rounding-instability fix. First the
   spread is measured on the sixteen reported cells. Then an ensemble-averaged estimator is declared as a variant. It
   is declared, audited and bound before it runs."
-- `DECISION-20261106-joseph-plateau-next-work.md`, "What is decided" item 1: "The mechanism is found first, then an
-  estimator that averages over rounding perturbations is declared as a variant." **This record is on PR #865
-  (branch `docs/decision-plateau-next-20261106`, commit `050f3a91`) and is not on main at `d95ed680`.** The binding
-  should cite it once it is merged.
+- `DECISION-20261106-joseph-plateau-next-work.md:45-46`, "What is decided" item 1: "The mechanism is found first,
+  then an estimator that averages over rounding perturbations is declared as a variant." It reached main in #865,
+  merge `6d0aca7f`, after this declaration's base `d95ed680`, and is cited at that merge.
 - Compute: `DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md` item 2 (#640). Each campaign is
   declared, priced and bound, and one priced above half the group balance returns to Joseph first. This one is priced
   at 4.5 CPU node-h (§7).
 
 **This is step 1 of two.** Step 2, the ensemble-averaged estimator, is a separate declaration (§11).
 
-**CITABLE FOR:** the design, readings, price and code plan of the step-1 study, as declared.
+**CITABLE FOR:**
+- the design, readings, price and code plan of the step-1 study, as declared;
+- once its outcome record exists: R0's two ratios on the 16 reported cells (§6), **as a description only**. Neither
+  is read as a pass or a fail.
 
 **NOT CITABLE FOR:**
 - any result or mechanism. Only RS1's outcome record can name one;
@@ -277,7 +279,18 @@ with it:
   - **Disclosed:** both medians are already printed on main (0.133 % and 0.24 %), so R0 is not blind. S1's stat σ is
     a refit-per-replica data bootstrap, which already carries the rounding spread (`KNOWN_ISSUES.md` 80: about 37 %
     of its variance). So σ_J/σ_stat is a share of a variance that contains it, not a ratio of independent terms.
-    The record states both.
+  - **Two numbers per cell, with their median and range over the 16 cells** (the director's ruling on #867):
+    1. **R0a**, the ratio as defined: σ_J,c / σ_S1,c;
+    2. **R0b**, the ratio against the rounding-removed stat σ: σ_J,c / √(σ_S1,c² − σ_J,c²).
+       - It is well defined in cell c only if σ_S1,c > σ_J,c.
+       - Where it is not, the record says so for that cell, gives no value, and computes no median unless all 16 are
+         defined.
+       - R0b assumes the two variances add, which `KNOWN_ISSUES.md` 80's absorption measurement supports in aggregate
+         (replica variance above the rounding variance for every functional) but does not establish per cell. The
+         record states that assumption.
+  - **Neither number is read as a pass or a fail.** No bar applies to them.
+  - **Units.** σ_J/f and S1's `relative_sigma` are both relative. The code reads each file's own unit, refuses if
+    either is not stated or not derivable from the file, and prints the unit it used.
   - R0 is the only reading on data-derived numbers, and it reads committed results, not data.
 - **Absolute spreads** of every arm in pseudo-data σ: FD-STAB's σ (`state/s5e/cand/assess_receipt.json`
   `sigma_rel_pct`, sha256 `84266e30…`) and FD-STAB's 25-pair statistic, for A0 only. These are for comparison with
@@ -339,8 +352,14 @@ with it:
 - **Retention:** FD-STAB's products were written 2026-11-04/05, and the 5D bank was read by FD-STAB on 2026-11-04,
   inside the pscratch window. The dry run's first step is a `stat` of every input and of the G1 references.
 
-**Who runs it.** This lane, after binding, from a clean deploy at the bound pin. If the NERSC certificate has expired,
-the lane tells the director; Joseph renews it.
+**Who runs it.** This lane, after the audit and the director's binding, from a clean deploy at the bound sha (the
+director's ruling on #867).
+- The dry run goes first.
+- Before each connect, the lane sends the director the connect script's sha256.
+- `squeue` is checked for `cov2d-*` jobs before any connect, and the check is recorded in the receipts.
+- ssh's return code is read unpiped.
+- Receipts are committed as PRs.
+- If the NERSC certificate has expired, the lane tells the director; Joseph renews it.
 
 ## 8. Code plan (written after this declaration is audited, before binding step two)
 
@@ -406,12 +425,13 @@ jitter 1 is its first test on the real code, and the record reports it as measur
 
 ## 10. Open items for the audit and the binding
 
-1. **PR #865** (the plateau decision) is not on main. The binding should wait for it, or cite the branch commit.
-2. **R0's use of S1's stat σ.** Is it the right σ_stat for the referees' request? The alternatives are FD-STAB's
-   pseudo-data σ, which is not a data σ, or a σ_stat without the rounding share, which no record measures.
-3. **The bands** (0.10, 0.70) and the K2/K3/K4 thresholds are this lane's choice, made before any number. The audit
+1. **Settled by the director:**
+   - #865 is merged and is cited at `6d0aca7f`;
+   - R0 is in scope, with the two ratios of §6;
+   - this lane runs the jobs (§7).
+2. **The bands** (0.10, 0.70) and the K2/K3/K4 thresholds are this lane's choice, made before any number. The audit
    may tighten them.
-4. **Ten jitters per arm.** Doubling them would add about 2.8 node-h, still under half the group balance by far.
+3. **Ten jitters per arm.** Doubling them would add about 2.8 node-h, still under half the group balance by far.
    The audit may ask for it.
 
 ## 11. What follows: step 2, declared separately
