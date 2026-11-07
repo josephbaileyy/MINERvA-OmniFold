@@ -178,7 +178,9 @@ averaging. Under exact scaling the expected maximum reaches 1.0 at c* = 1/6.83²
   internal jitter. For every k, the 21 inputs' digests are distinct; for every s, the 96 internal seeds' digests are
   distinct. This is the run-time form of the trap test (§2.2), independent of F's sensitivity.
 - **E3, the control's references:** the 20 control jitters equal FD-STAB's `SHA256SUMS` lines, and F₆₄(x) carries
-  the ENS1 code digests, pseudo-seed 990000, `jitter_seed` 0 and `coords` float64.
+  the ENS1 code digests, pseudo-seed 990000, `jitter_seed` 0 and `coords` float64. G0 mixes two deploys (FD-STAB's
+  jitters, ENS1's base), so F₆₄(x)'s runner `code_sha256` entries for the estimator files must equal those of
+  FD-STAB's j1–j20, or the analysis stops (audit LOW-2).
 - **E4, the σ receipt** is the pinned file and its functionals are s5c's 153 (`estimator_stability_analyze.py:284-288`).
 
 **4.6 Power (§6 has the simulation).** At N = 96 and P = 10, P(pass) if c = 0 is 0.969 in the conservative Gaussian,
@@ -378,3 +380,4 @@ All three were answered by the audit (§13). None is open.
 | §11.2 | one fit is enough for determinism if `xsec_flat` and `xtrue_flat` are compared bitwise, in separate tasks, at the same threads | **Adopted** (§3.2) |
 | §11.3 | keep stage 2's dry run: the closure path is new | **Kept** (§8) |
 | LOW | E₉₆'s closures are float64 against F's float32 | **Disclosed** (§10) |
+| LOW-2 (at `9db73df2`) | G0 mixes two deploys; E3 should require F₆₄(x)'s estimator `code_sha256` to equal FD-STAB's j1–j20 | **Adopted** (§4.5 E3) |
