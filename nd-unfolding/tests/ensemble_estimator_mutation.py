@@ -19,7 +19,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_ensemble_estimator.py"
 P, A, S = "ensemble_estimator_probe.py", "ensemble_estimator_analyze.py", "sbatch_ens1.sh"
-EXPECTED_TESTS = 45  # a script-mode run that stops early exits 0 with fewer: refuse it
+EXPECTED_TESTS = 49  # a script-mode run that stops early exits 0 with fewer: refuse it
 
 # (label, file, old, new, the test that must fail)
 MUTATIONS = [
@@ -126,7 +126,22 @@ MUTATIONS = [
     ("shard without the dry receipt", S, '[ -s "$SD/log-dry/DONE" ] && [ ! -e "$SD/log-dry/FAILED" ] ||', "true ||",
      "test_a_shard_refuses_without_the_dry_done_or_at_another_pin"),
     ("shard at another pin", S, '[ "$dry_pin" = "$PIN" ] ||', "true ||", "test_a_shard_refuses_without_the_dry_done_or_at_another_pin"),
-    ("a failed task still writes DONE", S, '[ "$rc" -eq 0 ] || {', "true || {", "test_a_failed_task_leaves_no_receipt"),
+    ("a failed task still writes DONE", S, '[ -z "$failed" ] && [ "$rc" -eq 0 ] || {', "true || {",
+     "test_a_failed_task_leaves_no_receipt"),
+    # --- REQUIRED: the teardown guard (RS1-BINDING-2 addendum A1; the director's ruling 5 for ENS1)
+    ("REQ teardown crash read as a failure", S, 'if [ "$all" -ne 1 ]; then echo "rc=$rc before',
+     'if true; then echo "rc=$rc before', "test_a_teardown_crash_is_recomputed_once_and_compared"),
+    ("REQ pre-write failure read as a teardown", S, 'for f in "${files[@]}"; do [ -e "$f" ] || all=0; done', "true",
+     "test_a_failure_before_writing_is_a_failure_and_the_queue_continues"),
+    ("REQ a second crash accepted", S, 'if [ "$rc" -ne 0 ]; then echo "rc=$rc on the re-run',
+     'if false; then echo "rc=$rc on the re-run', "test_a_second_crash_is_a_failure"),
+    ("REQ xargs aborts on a failure", S, 'before every product was written" > "$L/$id.failed"; exit 1; fi',
+     'before every product was written" > "$L/$id.failed"; exit 255; fi',
+     "test_a_failure_before_writing_is_a_failure_and_the_queue_continues"),
+    ("REQ crashed products kept, not recomputed", S, 'for f in "${files[@]}"; do mv "$f" "$T/" ||',
+     'for f in; do mv "$f" "$T/" ||', "test_a_teardown_crash_is_recomputed_once_and_compared"),
+    ("expect names another tag", P, 'product_name(f"ens1_k{k:03d}", b, j) for k in ks]',
+     'product_name(f"ens1_k{k:02d}", b, j) for k in ks]', "test_expect_names_exactly_what_the_task_wrote"),
     ("environment unchecked", S, '|| { echo "[ens1] refusing: the environment lacks lightgbm/scipy" >&2; exit 7; }', "|| true",
      "test_an_environment_without_lightgbm_is_refused"),
 ]

@@ -345,10 +345,26 @@ def main(argv=None) -> int:
         print(json.dumps({"stage": a.stage, "dry_tasks": len(dry), "dry_unfolds": n(dry), "full_tasks": len(full),
                           "full_unfolds": n(full), "shard_tasks": [len(s) for s in shards(full)]}))
         return 0
-    if argv[:1] not in (["stability"], ["base"], ["closure"]) or "--" not in argv:
-        print("usage: ensemble_estimator_probe.py {stability --k LIST | base | closure --k LIST --truth T} --runs DIR "
-              "-- <runner arguments>", file=sys.stderr)
+    if argv[:1] == ["expect"]:
+        try:
+            print("\n".join(str(p) for p in expected_outputs(argv[1:])))
+        except (ValueError, SystemExit) as exc:
+            print(f"refusing: {exc}", file=sys.stderr)
+            return 2
+        return 0
+    try:
+        mode, ks, truth, rest, runs = parse_task(argv)
+    except ValueError as exc:
+        print(f"refusing: {exc}" if str(exc).startswith("--k") else str(exc), file=sys.stderr)
         return 2
+    return run(mode, ks, truth, rest, runs)
+
+
+def parse_task(argv: list[str]):
+    """A task's argv -> (mode, internal seeds, truth, runner arguments, runs directory)."""
+    if argv[:1] not in (["stability"], ["base"], ["closure"]) or "--" not in argv:
+        raise ValueError("usage: ensemble_estimator_probe.py {stability --k LIST | base | closure --k LIST --truth T} "
+                         "--runs DIR -- <runner arguments>")
     mode, cut = argv[0], argv.index("--")
     ap = argparse.ArgumentParser(prog=f"ensemble_estimator_probe.py {mode}", allow_abbrev=False)
     ap.add_argument("--runs", type=Path, required=True)
@@ -359,9 +375,22 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv[1:cut])
     ks: list[int | None] = [None] if mode == "base" else [int(v) for v in a.k.split(",")]
     if mode != "base" and (len(set(ks)) != len(ks) or any(k not in range(1, N_ENS + 1) for k in ks)):
-        print(f"refusing: --k must be distinct values in 1-{N_ENS}", file=sys.stderr)
-        return 2
-    return run(mode, ks, getattr(a, "truth", None), argv[cut + 1:], a.runs)
+        raise ValueError(f"--k must be distinct values in 1-{N_ENS}")
+    return mode, ks, getattr(a, "truth", None), argv[cut + 1:], a.runs
+
+
+def expected_outputs(argv: list[str]) -> list[Path]:
+    """Every product a task writes, as ``run`` names them; the job script's teardown guard reads this (§8)."""
+    mode, ks, truth, rest, runs = parse_task(argv)
+    if mode == "closure":
+        return [runs / "closure" / truth / f"ens1_{truth}_k{k:03d}_s{esp.CLOSURE_SEED}.npz" for k in ks]
+    pairs = [t.split("=", 1)[1] for t in rest if t.startswith("--pairs=")]
+    if len(pairs) != 1:
+        raise ValueError("a stability task carries exactly one --pairs=")
+    (b, j), = s5p_numerics.parse_pairs(pairs[0])
+    if mode == "base":
+        return [runs / "F64" / s5p_numerics.product_name("ens1_F64", b, j)]
+    return [runs / "stability" / s5p_numerics.product_name(f"ens1_k{k:03d}", b, j) for k in ks]
 
 
 if __name__ == "__main__":

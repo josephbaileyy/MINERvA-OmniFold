@@ -140,6 +140,18 @@ class Stability(trm.Fixture):
             for key in m0["coord_sha256"]:
                 self.assertNotEqual(m0["coord_sha256"][key], m1["coord_sha256"][key])
 
+    def test_expect_names_exactly_what_the_task_wrote(self):
+        rest = trm.runner_args(self.d, self.shas, "-:1", "x")
+        got = eep.expected_outputs(["stability", "--k", "1,2", "--runs", str(self.d / "runs"), "--", *rest])
+        self.assertEqual(got, [self.d / "runs" / "stability" / f"ens1_k00{k}_b-_j1.npz" for k in (1, 2)])
+        self.assertTrue(all(p.exists() for p in got))
+        rest0 = trm.runner_args(self.d, self.shas, "-:0", "x")
+        base = eep.expected_outputs(["base", "--runs", str(self.d / "runs"), "--", *rest0])
+        self.assertEqual(base, [self.d / "runs" / "F64" / "ens1_F64_b-_j0.npz"])
+        self.assertTrue(base[0].exists())
+        cl = eep.expected_outputs(["closure", "--k", "3", "--truth", "W1", "--runs", "/R", "--", "--x"])
+        self.assertEqual(cl, [Path("/R/closure/W1/ens1_W1_k003_s991000.npz")])
+
     def test_the_fits_differ_across_k(self):
         self.assertFalse(np.array_equal(stab_product(self.d, 1, 0)[0], stab_product(self.d, 2, 0)[0]))
 
@@ -620,8 +632,27 @@ class Stage2(unittest.TestCase):
 class JobScript(unittest.TestCase):
     """sbatch_ens1.sh run locally on a stand-in deploy whose runner writes one product per task."""
 
+    RUNNER = (
+        "import sys, pathlib, numpy as np\n"
+        "argv = sys.argv[1:]\n"
+        "expect = argv[:1] == ['expect']\n"
+        "argv = argv[1:] if expect else argv\n"
+        "out = pathlib.Path(argv[argv.index('--out') + 1]); p = out / (argv[0] + '.npz')\n"
+        "if expect: print(p); sys.exit(0)\n"
+        "if 'FAIL' in argv: sys.exit(3)\n"
+        "out.mkdir(parents=True, exist_ok=True)\n"
+        "if not p.exists(): np.savez(p, xsec_flat=np.arange(4.0), xtrue_flat=np.ones(4))\n"
+        "mark = out.parent / ('crashed-' + argv[0])\n"
+        "if 'CRASH2' in argv: sys.exit(129)\n"
+        "if 'CRASH' in argv and not mark.exists(): mark.write_text('1'); sys.exit(129)\n")
+
     def setUp(self):
         trm.JobScript.setUp(self)
+        (self.D / "nd-unfolding" / "runner.py").write_text(self.RUNNER)
+        subprocess.run(["git", "-C", str(self.D), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qam", "r"],
+                       check=True)
+        self.pin = subprocess.run(["git", "-C", str(self.D), "rev-parse", "HEAD"], capture_output=True, text=True,
+                                  check=True).stdout.strip()
         (self.OUT / "stage1").mkdir()
 
     def tearDown(self):
@@ -693,6 +724,49 @@ class JobScript(unittest.TestCase):
         self.queue("dry.tsv", ["a"])
         (self.stub / "lightgbm.py").unlink()
         self.assertEqual(self.job("dry", "1").returncode, 7)
+
+    def queue_flags(self, name, rows):
+        lines = ["# id\tunfolds\tscript\targv"]
+        for i, flags in rows:
+            lines.append("\t".join([i, "1", "runner.py", i, "--out", str(self.OUT / "runs" / "stability"), *flags]))
+        (self.OUT / "stage1" / name).write_text("\n".join(lines) + "\n")
+
+    def test_a_teardown_crash_is_recomputed_once_and_compared(self):
+        """REQUIRED (A1 guard): exit 129 after the product exists -> recorded, moved aside, recomputed, compared."""
+        self.queue_flags("dry.tsv", [("a", ["CRASH"]), ("b", [])])
+        r = self.job("dry", "1")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        L = self.OUT / "stage1" / "log-dry"
+        t = (L / "a.teardown").read_text()
+        self.assertIn("exit=129", t)
+        self.assertIn("a.npz bitwise_identical", t)
+        self.assertTrue((self.OUT / "runs-teardown" / "a" / "a.npz").exists())
+        self.assertTrue((self.OUT / "runs" / "stability" / "a.npz").exists())
+        self.assertTrue((self.OUT / "runs" / "crashed-a").exists())   # the first run did crash
+        self.assertIn("a", json.loads((L / "DONE").read_text())["teardown"])
+        self.assertFalse((L / "b.teardown").exists())
+
+    def test_a_failure_before_writing_is_a_failure_and_the_queue_continues(self):
+        """REQUIRED (A1 guard): no product -> a failure, not a teardown; the other tasks still run; no DONE."""
+        others = [f"t{i:02d}" for i in range(12)]   # more than the 8 lanes, so an aborting xargs leaves some unstarted
+        self.queue_flags("dry.tsv", [("a", ["FAIL"])] + [(i, []) for i in others])
+        r = self.job("dry", "1")
+        self.assertEqual(r.returncode, 1)
+        L = self.OUT / "stage1" / "log-dry"
+        self.assertIn("before every product was written", (L / "a.failed").read_text())
+        self.assertFalse((L / "a.teardown").exists())
+        self.assertTrue(all((L / f"{i}.end").exists() for i in others))
+        self.assertIn("a", (L / "FAILED").read_text())
+        self.assertFalse((L / "DONE").exists())
+
+    def test_a_second_crash_is_a_failure(self):
+        """REQUIRED (A1 guard): a crash on the re-run is a failure."""
+        self.queue_flags("dry.tsv", [("a", ["CRASH2"])])
+        r = self.job("dry", "1")
+        self.assertEqual(r.returncode, 1)
+        L = self.OUT / "stage1" / "log-dry"
+        self.assertIn("on the re-run", (L / "a.failed").read_text())
+        self.assertFalse((L / "DONE").exists())
 
 
 class DeclaredConstants(unittest.TestCase):
