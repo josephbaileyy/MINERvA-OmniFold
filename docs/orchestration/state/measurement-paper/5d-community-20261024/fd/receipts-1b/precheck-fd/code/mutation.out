@@ -1,5 +1,5 @@
-sha256 7c3ffe86b721f79ba9ee3d426b4c711ca96eeec7b2a4071eba5cf62bf102ef0f  fd_1b_precheck_fd.py
-sha256 a3e1fb329beda09795b2ecfeed56cb36cd8c302ccb404ccedd8c5e6e43f5122a  tests/test_fd_1b_precheck_fd.py
+sha256 a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d  fd_1b_precheck_fd.py
+sha256 4f67dec8ab548f84324953e7e2e9443a4438ef56478a579e27f841423afeb30c  tests/test_fd_1b_precheck_fd.py
 sha256 71b3903aa1329807af7e48b29b4ffd3336ad637d4b8c7e43ae0a6cbe28bcdf1f  fd_1b_inv.py
 sha256 420088436948d9422dd82f7663ae4f6c6728329f6462cf6353f6ad7737f2b992  fd_1b_moded.py
 sha256 869a65c3bcce1a3b56ecd197ecdf3b6cf2741e0611f91b582c3064f67967bc08  fd_1b_toys.py
@@ -56,7 +56,9 @@ KILLED   T2: readout's mode/universe/schema check skipped
 KILLED   T2: I0's floor kind not checked
 KILLED   T2: identity control skipped
 KILLED   T2: mode A keeps non-finite weights
-unmutated, PYTHONHASHSEED=0: rc 0: 42 passed, 1 warning in 18.08s
-unmutated, PYTHONHASHSEED=1: rc 0: 42 passed, 1 warning in 18.02s
-unmutated, PYTHONHASHSEED=12345: rc 0: 42 passed, 1 warning in 28.18s
-52 of 52 killed
+KILLED   REQUIRED: control M rebuilds with the stored float32 U
+KILLED   control M's U not from the definition
+unmutated, PYTHONHASHSEED=0: rc 0: 44 passed, 1 warning in 15.04s
+unmutated, PYTHONHASHSEED=1: rc 0: 44 passed, 1 warning in 14.55s
+unmutated, PYTHONHASHSEED=12345: rc 0: 44 passed, 1 warning in 15.97s
+54 of 54 killed

@@ -25,7 +25,7 @@ and unchanged.
     fd_1b_precheck_fd.py unfold --mode A --universes Flux_0,Flux_1 --npz N --bkg B --bank K --detector-dir D \\
         --flux-file F --pins P --expect-pins-sha256 H --out U
     fd_1b_precheck_fd.py walls --unfolds U --out W
-    fd_1b_precheck_fd.py readout --staged DIR --unfolds U --gate-d G --diag DG --i0 I0 --out O
+    fd_1b_precheck_fd.py readout --staged DIR --unfolds U --gate-d G --diag DG --i0 I0 --definition H2DEF --out O
 
 MEASURES: the declared readouts, labelled DERIVATION. CANNOT AUTHORIZE: a coverage verdict, a change to the toys,
 M_d, the covariance or gate D's window, a 1B rerun, or any claim.
@@ -357,7 +357,8 @@ def flux_norm_block(cv_flat: np.ndarray, edges: list, phis: list, cv_flux: np.nd
     return sa.mat_cov(np.array(S), w_flux) * np.outer(g, g)
 
 
-def readout(staged: Path, unfolds: Path, gate_d: Path, diag_json: Path, i0_json: Path, tag: str = TAG) -> dict:
+def readout(staged: Path, unfolds: Path, gate_d: Path, diag_json: Path, i0_json: Path, definition: Path,
+            tag: str = TAG) -> dict:
     if sa.sha256(gate_d) != fdg.GATE_D_SHA256:
         raise fs.Invalid(f"{gate_d} is not gate D's committed readout")
     r0 = json.loads(i0_json.read_text())
@@ -380,10 +381,13 @@ def readout(staged: Path, unfolds: Path, gate_d: Path, diag_json: Path, i0_json:
     for b in BANDS:
         if fdg.ratio(E[b], M[b]) != dg["per_band"][b]["sigma_ratio"]:
             raise fs.Invalid(f"{b}: the per-band ratio does not reproduce the diagnosis's bit for bit")
-    # control M: S1's staged universe unfolds rebuild the assembly's blocks exactly
+    # control M: S1's staged universe unfolds rebuild the assembly's blocks exactly, with the float64 U S1 built them
+    # with (s1_assemble.py:303), from the H2 definition as I0's control M took it (fd_1b_inv.py:321). The assembly
+    # stores U as float32 (s1_assemble.py:370), so its s1["U"] cannot reproduce them bit for bit (P1, #877)
+    U_def = sa.functional_matrix(sa.fine_map(definition))
     uni = sa.universe_bands([staged / "uni"], S1_TAG)
     for b in BANDS:
-        X = np.array([U @ sa.xs(p) for p in uni[b]])
+        X = np.array([U_def @ sa.xs(p) for p in uni[b]])
         if not np.array_equal(sa.mat_cov(X, w if b == sa.FLUX else None), s1["blocks"][f"band:{b}"]):
             raise fs.Invalid(f"band {b}: the staged S1 unfolds do not reproduce the assembly's block exactly")
     cv_z = np.load(staged / "derivation" / f"{DER_TAG}_CV.npz", allow_pickle=False)
@@ -462,7 +466,7 @@ def main(argv=None) -> int:
     p.add_argument("--tag", default=TAG)
     p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("readout")
-    for k in ("staged", "unfolds", "gate-d", "diag", "i0", "out"):
+    for k in ("staged", "unfolds", "gate-d", "diag", "i0", "definition", "out"):
         p.add_argument(f"--{k}", type=Path, required=True)
     p.add_argument("--tag", default=TAG)
     a = ap.parse_args(argv)
@@ -481,7 +485,7 @@ def main(argv=None) -> int:
             a.out.write_text(json.dumps(res, indent=1) + "\n")
             print(json.dumps({"out": str(a.out), "verdict": res["verdict"]}))
             return 0 if res["verdict"] == "PASS" else 1
-        res = readout(a.staged, a.unfolds, a.gate_d, a.diag, a.i0, a.tag)
+        res = readout(a.staged, a.unfolds, a.gate_d, a.diag, a.i0, a.definition, a.tag)
         res["code_sha256"] = {"fd_1b_precheck_fd.py": sa.sha256(Path(__file__).resolve())}
         a.out.write_text(json.dumps(res, indent=1) + "\n")
         print(json.dumps({"out": str(a.out), "S": {k: v["rule_S"]["verdict"] for k, v in res["groups"].items()},

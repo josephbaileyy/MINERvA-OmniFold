@@ -52,6 +52,9 @@ from test_fd_1b_inv import plain_noatime  # noqa: E402
 
 CELLS = [f"R{c:02d}" for c in range(16)]
 EYE = np.eye(16)
+# the readout world's float64 functional matrix, as S1 builds U from the H2 definition (s1_assemble.py:303); it is not
+# exact in float32, so the assembly's stored float32 copy (s1_assemble.py:370) differs from it, as on the cluster
+U64 = np.diag(1.0 + 1e-9 * np.arange(1, 17))
 
 
 # --------------------------------------------------------------------------------------------------- the toy world
@@ -434,9 +437,9 @@ class Rules(unittest.TestCase):
 
 
 class Staged:
-    """A staged readout world on 16 cells (U = I, g = f / x_T): toy derivation products for every S1 universe, S1
+    """A staged readout world on 16 cells (g = f / x_T): toy derivation products for every S1 universe, S1
     universe unfolds whose band-b shifts are ``m[b]`` x the carried toy shifts (so rho_b = 1 / m[b]), the assembly
-    built from them, gate D's and the diagnosis's committed readouts from the same arrays, I0's floors, and mode
+    built from them with the float64 U64 and storing U as float32 (as S1 does, s1_assemble.py:303 and :370), gate D's and the diagnosis's committed readouts from the same arrays, I0's floors, and mode
     products whose blocks set F_src = src[b], F_side = side[b] and kappa = kap[b]. Flux universes in mode A carry
     Phi_u = Phi_CV / (1 + shift) per cell when ``pure_norm``, so A is pure normalization."""
 
@@ -471,10 +474,12 @@ class Staged:
         for b in sa.LATERAL_BANDS:
             blocks[f"lat:{b}"] = np.diag((0.01 * self.f) ** 2)
         for b in sorted(sa.EXPECT):
-            X = np.array([xS[f"{b}_{i}"] for i in range(sa.EXPECT[b])])
+            X = np.array([U64 @ xS[f"{b}_{i}"] for i in range(sa.EXPECT[b])])
             blocks[f"band:{b}"] = sa.mat_cov(X, w if b == sa.FLUX else None)
         self.s1 = self.root / "s1" / "s1_assembly.npz"
-        np.savez_compressed(self.s1, f=self.f, U=np.eye(16, dtype=np.float32), C_e=sum(blocks.values()),
+        self.definition = tmp / "h2_definition.json"     # read only through sa.fine_map, which the tests replace
+        self.definition.write_text("{}")
+        np.savez_compressed(self.s1, f=self.f, U=U64.astype(np.float32), C_e=sum(blocks.values()),
                             **{"C_" + k.replace(":", "_"): v for k, v in blocks.items()},
                             meta=json.dumps({"blocks": sorted(blocks)}))
         self.flux_sha = "f" * 64
@@ -534,9 +539,11 @@ class Staged:
                                        "sigma_J_data": (self.sigma * self.f).tolist(),
                                        "sigma_J_nom_carried": (self.sigma * self.f).tolist()}))
 
-    def base_patches(self):
+    def base_patches(self, functional=None):
         return [mock.patch.object(fs, "S1_NPZ_SHA256", digest(self.s1)),
-                mock.patch.object(sa, "CONSTRAINT_SHA256", digest(self.constraint)), plain_noatime()]
+                mock.patch.object(sa, "CONSTRAINT_SHA256", digest(self.constraint)), plain_noatime(),
+                mock.patch.object(sa, "fine_map", lambda d: None),
+                mock.patch.object(sa, "functional_matrix", functional or (lambda fm: U64))]
 
     @contextlib.contextmanager
     def patched(self, gate=True):
@@ -557,7 +564,7 @@ class Staged:
 
     def run(self):
         with self.patched():
-            return pfd.readout(self.root, self.unf, self.gate_d, self.diag, self.i0)
+            return pfd.readout(self.root, self.unf, self.gate_d, self.diag, self.i0, self.definition)
 
 
 class Readout(unittest.TestCase):
@@ -673,7 +680,7 @@ class Readout(unittest.TestCase):
             with st.patched():
                 fn(st)
             with st.patched(), self.assertRaisesRegex(fs.Invalid, why):
-                pfd.readout(st.root, st.unf, st.gate_d, st.diag, st.i0)
+                pfd.readout(st.root, st.unf, st.gate_d, st.diag, st.i0, st.definition)
 
         def gate_ratio(st):
             z = json.loads(st.gate_d.read_text())
@@ -743,12 +750,33 @@ class Readout(unittest.TestCase):
             return F
 
         with st.patched(), mock.patch.object(pfd, "factors", off), self.assertRaisesRegex(fs.Invalid, "the identity"):
-            pfd.readout(st.root, st.unf, st.gate_d, st.diag, st.i0)
+            pfd.readout(st.root, st.unf, st.gate_d, st.diag, st.i0, st.definition)
+
+    def test_the_fixtures_u_is_not_exact_in_float32(self):
+        self.assertFalse(np.array_equal(U64.astype(np.float32).astype(float), U64))
+
+    def test_control_m_rebuilds_s1s_blocks_with_the_definitions_float64_u(self):
+        # P1 (#877): the assembly's stored float32 U cannot reproduce S1's blocks; the definition's float64 U does
+        st = Staged(self.tmp)
+        r = st.run()
+        self.assertEqual(r["groups"]["flux"]["rule_S"]["verdict"], "REPRODUCED")
+        stored = np.asarray(np.load(st.s1)["U"], float)
+        self.assertFalse(np.array_equal(stored, U64))
+        ps = st.base_patches(functional=lambda fm: stored)
+        for p in ps:
+            p.start()
+        try:
+            with mock.patch.object(fdg, "GATE_D_SHA256", digest(st.gate_d)), \
+                    self.assertRaisesRegex(fs.Invalid, "band Flux: the staged S1 unfolds do not reproduce"):
+                pfd.readout(st.root, st.unf, st.gate_d, st.diag, st.i0, st.definition)
+        finally:
+            for p in reversed(ps):
+                p.stop()
 
     def test_gate_d_must_be_the_committed_readout(self):
         st = Staged(self.tmp)
         with st.patched(gate=False), self.assertRaises(fs.Invalid):
-            pfd.readout(st.root, st.unf, st.gate_d, st.diag, st.i0)
+            pfd.readout(st.root, st.unf, st.gate_d, st.diag, st.i0, st.definition)
 
 
 if __name__ == "__main__":
