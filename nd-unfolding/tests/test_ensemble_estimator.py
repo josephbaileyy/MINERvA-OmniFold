@@ -820,9 +820,14 @@ class JobScript(unittest.TestCase):
         "expect = argv[:1] == ['expect']\n"
         "argv = argv[1:] if expect else argv\n"
         "out = pathlib.Path(argv[argv.index('--out') + 1]); p = out / (argv[0] + '.npz')\n"
+        "if expect and 'NOEXPECT' in argv: sys.exit(2)\n"
         "if expect: print(p); sys.exit(0)\n"
         "if 'SLOW' in argv: __import__('time').sleep(1.5)\n"
         "if 'FAIL' in argv: sys.exit(3)\n"
+        "if 'KILLTASK' in argv:\n"
+        "    import os, signal, subprocess\n"
+        "    gp = int(subprocess.run(['ps', '-o', 'ppid=', '-p', str(os.getppid())], capture_output=True, text=True).stdout)\n"
+        "    os.kill(gp, signal.SIGKILL); sys.exit(0)\n"
         "if 'DROPEND' in argv:\n"
         "    import os, time; e = pathlib.Path(os.environ['L']) / 'b.end'\n"
         "    for _ in range(100):\n"
@@ -955,6 +960,34 @@ class JobScript(unittest.TestCase):
         L = self.OUT / "stage1" / "log-dry"
         self.assertIn("ended=1 of 2", (L / "FAILED").read_text())
         self.assertFalse((L / "DONE").exists())
+
+    def test_a_task_whose_expect_fails_is_a_failure_not_a_teardown(self):
+        """Ported from A1's W04: no declared products is never 'all present'."""
+        self.queue_flags("dry.tsv", [("a", ["FAIL", "NOEXPECT"])])
+        r = self.job("dry", "1")
+        self.assertEqual(r.returncode, 1)
+        L = self.OUT / "stage1" / "log-dry"
+        self.assertIn("before every product was written", (L / "a.failed").read_text())
+        self.assertFalse((L / "a.teardown").exists())
+
+    def test_xargs_rc_alone_stops_the_run(self):
+        """Ported from A1's W06: a task killed by a signal writes no .failed; xargs's rc must still decide FAILED."""
+        self.queue_flags("dry.tsv", [("a", ["KILLTASK"])])
+        r = self.job("dry", "1")
+        self.assertEqual(r.returncode, 1)
+        f = (self.OUT / "stage1" / "log-dry" / "FAILED").read_text()
+        self.assertTrue(f.startswith("rc=") and not f.startswith("rc=0 "), f)
+        self.assertFalse((self.OUT / "stage1" / "log-dry" / "DONE").exists())
+
+    def test_a_failed_move_aside_is_a_failure_and_the_crashed_products_are_not_used(self):
+        """Ported from A1's W09."""
+        self.queue_flags("dry.tsv", [("a", ["CRASH"])])
+        (self.OUT / "runs-teardown").write_text("a file, so the move-aside directory cannot be made")
+        r = self.job("dry", "1")
+        self.assertEqual(r.returncode, 1)
+        L = self.OUT / "stage1" / "log-dry"
+        self.assertIn("could not move", (L / "a.failed").read_text())
+        self.assertFalse((L / "a.end").exists())
 
     def test_a_second_crash_is_a_failure(self):
         """REQUIRED (A1 guard): a crash on the re-run is a failure."""

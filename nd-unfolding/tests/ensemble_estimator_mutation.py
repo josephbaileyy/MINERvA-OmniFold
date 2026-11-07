@@ -19,7 +19,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_ensemble_estimator.py"
 P, A, S = "ensemble_estimator_probe.py", "ensemble_estimator_analyze.py", "sbatch_ens1.sh"
-EXPECTED_TESTS = 64  # a script-mode run that stops early exits 0 with fewer: refuse it
+EXPECTED_TESTS = 67  # a script-mode run that stops early exits 0 with fewer: refuse it
 
 # (label, file, old, new, the test that must fail)
 MUTATIONS = [
@@ -177,6 +177,10 @@ MUTATIONS = [
     ("Y10 runner rc swallowed", P, "        if rc:\n            return rc\n    return 0", "        pass\n    return 0", "test_run_returns_the_first_non_zero_rc_and_stops"),
     ("Y11 closure tag without k", P, 'tag, out = f"ens1_{truth}_k{k:03d}", runs / "closure" / truth', 'tag, out = f"ens1_{truth}", runs / "closure" / truth', "test_every_closure_tag_carries_k"),
     ("Z01 ended-count check dropped", S, '[ "$n_end" -eq "$n_q" ] ||', "true ||", "test_a_task_without_its_end_record_leaves_no_receipt"),
+    # --- A1's guard sites ported to ENS1's job script (audit #902 W04, W06, W09)
+    ("W04 empty expect list read as all present", S, '[ "${#files[@]}" -gt 0 ] || all=0', "true", "test_a_task_whose_expect_fails_is_a_failure_not_a_teardown"),
+    ("W06 xargs rc ignored", S, '[ -z "$failed" ] && [ "$rc" -eq 0 ] ||', '[ -z "$failed" ] ||', "test_xargs_rc_alone_stops_the_run"),
+    ("W09 mv failure ignored", S, 'mv "$f" "$T/" || { echo "could not move $f aside" > "$L/$id.failed"; exit 1; }', 'mv "$f" "$T/" || true', "test_a_failed_move_aside_is_a_failure_and_the_crashed_products_are_not_used"),
 ]
 
 
