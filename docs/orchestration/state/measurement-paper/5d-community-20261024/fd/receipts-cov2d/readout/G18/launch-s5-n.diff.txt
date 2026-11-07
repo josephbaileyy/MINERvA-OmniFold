@@ -1,0 +1,85 @@
+--- a2/stage5-control95/launch-s5.sh
++++ launch-s5.sh
+@@ -1,5 +1,6 @@
+ #!/bin/bash
+-# Launch one stage-5 bound-CLI connect (the director's ruling 2, 2026-11-07). Usage: launch-s5.sh 95|x1
++# Launch one stage-5 bound-CLI connect (the director's ruling 2, 2026-11-07), or A4's cluster test receipt (a4t).
++# Usage: launch-s5.sh 95|x1|a4t|nG18|nAR23   (n<T>: A4's phase N for one truth, connect-n-<T>.sh)
+ #   1. the fence, read-only: no cov2d job unended (sacct) and none in squeue, recorded;
+ #   2. stage the connect at /dev/shm/josephrb-cov2d-<name>.sh; compare its node sha256 to the local one (separate step);
+ #   3. launch detached; wait for its end line;
+@@ -7,15 +8,22 @@
+ # Every ssh's rc is read directly (no pipe).
+ set -u
+ N=$1; H=$(cd "$(dirname "$0")" && pwd); OUT=$H/run-$N; [ -e "$OUT" ] && { echo "REFUSED $OUT exists"; exit 2; }
+-mkdir "$OUT"
++mkdir "$OUT"; NPZ=""
+ case "$N" in
+   95) LOGP=/dev/shm/josephrb-cov2d-95/connect-95.log; WD=/dev/shm/josephrb-cov2d-95
+       FILES="connect-95.log control95.json control95.log blobs.before blobs.after"; END=DONE ;;
+   x1) LOGP=/pscratch/sd/j/josephrb/cov2d-crossterms-20261107/connect-x1.log; WD=/pscratch/sd/j/josephrb/cov2d-crossterms-20261107
+       FILES="connect-x1.log crossterms.json crossterms.out crossterms.time stat_before.txt stat_after.txt bound.sha256"; END=end= ;;
+-  *) echo "usage: launch-s5.sh 95|x1"; exit 2 ;;
++  a4t) LOGP=/dev/shm/josephrb-cov2d-a4t/connect-a4t.log; WD=/dev/shm/josephrb-cov2d-a4t; mkdir "$OUT/logs"
++      FILES="connect-a4t.log logs/SHA256SUMS logs/blobs.txt"
++      for e in RM R; do for m in test_cov2d_readout test_cov2d_blocks test_cov2d_null test_cov2d_score; do FILES="$FILES logs/${e}_$m.log"; done; done
++      FILES="$FILES logs/RM_test_cov2d.log logs/P_test_cov2d_readouts.log"; END=DONE ;;
++  nG18|nAR23) T=${N#n}; WD=/dev/shm/josephrb-cov2d-n-$T; LOGP=$WD/connect-n-$T.log; mkdir "$OUT/out"
++     FILES="connect-n-$T.log null_$T.log blobs.before blobs.after out/null_$T.json"; NPZ="out/blocks_$T.npz"; END=DONE ;;
++  *) echo "usage: launch-s5.sh 95|x1|a4t|nG18|nAR23"; exit 2 ;;
+ esac
+-SH=/dev/shm/josephrb-cov2d-$N.sh
++SH=/dev/shm/josephrb-cov2d-$N.sh; SRC=$H/connect-$N.sh
++case "$N" in n*) SH=/dev/shm/josephrb-cov2d-n-$T.sh; SRC=$H/connect-n-$T.sh ;; esac
+ r() { ssh -o ControlPath=none saul.nersc.gov "ssh -o BatchMode=yes -o LogLevel=QUIET login02 bash -s"; }
+ 
+ cat > "$OUT/fence.sh" <<'EOF'
+@@ -32,10 +40,10 @@
+   || { echo "REFUSED the fence is not clear"; exit 2; }
+ echo "FENCE_CLEAR"
+ 
+-ssh -o ControlPath=none saul.nersc.gov "ssh -o BatchMode=yes -o LogLevel=QUIET login02 'test ! -e $SH && cat > $SH'" < "$H/connect-$N.sh"; src=$?
++ssh -o ControlPath=none saul.nersc.gov "ssh -o BatchMode=yes -o LogLevel=QUIET login02 'test ! -e $SH && cat > $SH'" < "$SRC"; src=$?
+ [ "$src" = 0 ] || { echo "REFUSED staging rc=$src ($SH exists?)"; exit 2; }
+ echo "sha256sum $SH" | r > "$OUT/staged_sha.txt" 2>&1; s2=$?
+-want=$(shasum -a 256 "$H/connect-$N.sh" | cut -c1-64); got=$(cut -c1-64 "$OUT/staged_sha.txt")
++want=$(shasum -a 256 "$SRC" | cut -c1-64); got=$(cut -c1-64 "$OUT/staged_sha.txt")
+ echo "staged rc=$s2 node=$got local=$want"
+ [ "$s2" = 0 ] && [ "$got" = "$want" ] || { echo "DIGEST_MISMATCH: not launched ($SH left for inspection)"; exit 3; }
+ echo "DIGEST_MATCH"
+@@ -50,10 +58,11 @@
+ done
+ echo "last line: $(cat "$OUT/tail.txt")"
+ for f in $FILES; do echo "cat $WD/$f" | r > "$OUT/$f" 2>&1; echo "fetched $f rc=$?"; done
++case "$N" in n*) for z in $NPZ; do echo "base64 $WD/$z" | r > "$OUT/$z.b64"; echo "fetched $z rc=$?"; base64 -D -i "$OUT/$z.b64" -o "$OUT/$z" && rm "$OUT/$z.b64"; done ;; esac
+ [ "$N" = x1 ] && { echo "base64 $WD/crossterms.npz" | r > "$OUT/crossterms.npz.b64"; echo "fetched npz rc=$?"; base64 -D -i "$OUT/crossterms.npz.b64" -o "$OUT/crossterms.npz" && rm "$OUT/crossterms.npz.b64"; }
+ cat > "$OUT/remove.sh" <<EOF
+ echo "host=\$(hostname) utc=\$(date -u +%FT%TZ)"
+-cd $WD && sha256sum $FILES $( [ "$N" = x1 ] && echo crossterms.npz ) 2>&1
++cd $WD && sha256sum $FILES $( [ "$N" = x1 ] && echo crossterms.npz ) $NPZ 2>&1
+ sha256sum $SH; rm -f $SH; echo "rm -f $SH rc=\$?"
+ EOF
+ [ "$N" = 95 ] && cat >> "$OUT/remove.sh" <<EOF
+@@ -61,10 +70,21 @@
+ for f in $WD/tmp/*; do [ -e "\$f" ] || continue; rm -f "\$f"; echo "rm -f \$f rc=\$?"; done
+ rmdir $WD/tmp; echo "rmdir $WD/tmp rc=\$?"; rmdir $WD; echo "rmdir $WD rc=\$?"
+ EOF
++case "$N" in n*) cat >> "$OUT/remove.sh" <<EOF
++for f in $WD/out/* $WD/*; do [ -d "\$f" ] && continue; rm -f "\$f"; echo "rm -f \$f rc=\$?"; done
++for d in $WD/out $WD/tmp $WD/deploy; do [ -e "\$d" ] && { rmdir "\$d"; echo "rmdir \$d rc=\$?"; }; done
++rmdir $WD; echo "rmdir $WD rc=\$?"
++EOF
++;; esac
++[ "$N" = a4t ] && cat >> "$OUT/remove.sh" <<EOF
++for f in $WD/logs/* $WD/*; do [ -d "\$f" ] && continue; rm -f "\$f"; echo "rm -f \$f rc=\$?"; done
++for d in $WD/logs $WD/tmp $WD/deploy; do [ -e "\$d" ] && { rmdir "\$d"; echo "rmdir \$d rc=\$?"; }; done
++rmdir $WD; echo "rmdir $WD rc=\$?"
++EOF
+ echo 'ls -la /dev/shm | grep josephrb; echo "ls end"' >> "$OUT/remove.sh"
+ r < "$OUT/remove.sh" > "$OUT/removal.log.txt" 2>&1; echo "removal rc=$?"
+ cat "$OUT/removal.log.txt"
+-for f in $FILES $( [ "$N" = x1 ] && echo crossterms.npz ); do
++for f in $FILES $( [ "$N" = x1 ] && echo crossterms.npz ) $NPZ; do
+   l=$(shasum -a 256 "$OUT/$f" | cut -c1-64); n=$(awk -v f="$f" '$2 == f {print $1}' "$OUT/removal.log.txt")
+   [ "$l" = "$n" ] && echo "MATCH $f" || echo "MISMATCH $f local=$l node=$n"
+ done
