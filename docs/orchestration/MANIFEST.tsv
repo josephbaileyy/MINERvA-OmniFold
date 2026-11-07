@@ -6637,6 +6637,7 @@ docs/orchestration/state/live-state-last-known.json	tracked	LIVE	state-artifact	
 docs/orchestration/state/live-state.json	tracked	LIVE	state-artifact			open		route-only	no
 docs/orchestration/state/live-state.schema.json	tracked	LIVE	state-artifact			open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-ADDENDUM-A2.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-ADDENDUM-A4.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-AMENDMENT-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-1-A1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/COV2D-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
