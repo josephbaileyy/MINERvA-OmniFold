@@ -1,0 +1,67 @@
+[paper TH2D] xaxis='p_{||} (gev/c)' (nbinsX=16)  yaxis='p_{t} (gev/c)' (nbinsY=14)
+{
+ "stage": "smoke",
+ "source_atimes": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root": {
+   "atime_before": 1793499822000000000,
+   "atime_after": 1793499822000000000,
+   "equal": true
+  },
+  "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b01/xsec.root": {
+   "atime_before": 1792858691000000000,
+   "atime_after": 1792858691000000000,
+   "equal": true
+  }
+ },
+ "verify": {
+  "inputs_sha256": "9c05e5e1aa3d12d6782a23c0b5625ea63de429071667761b026366d92b6a3be0",
+  "files": [
+   {
+    "src": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+    "copy": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies/cov_ptpl_minerva_inclusive_6GeV.root",
+    "declared": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+    "measured": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+    "equal": true
+   },
+   {
+    "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b01/xsec.root",
+    "copy": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies/pu_PA_b01__xsec.root",
+    "declared": "32806b61e6800f9b157143ccd33b92e64f88c8dfa5bfaa62444d014795dbf5b4",
+    "measured": "32806b61e6800f9b157143ccd33b92e64f88c8dfa5bfaa62444d014795dbf5b4",
+    "equal": true
+   }
+  ],
+  "verdict": "PASS"
+ },
+ "checks": {
+  "published_shapes": [
+   [
+    224
+   ],
+   [
+    224,
+    224
+   ],
+   [
+    224,
+    224
+   ]
+  ],
+  "n_reported": 205,
+  "total_symmetric_max_abs": 2.926047721682624e-98,
+  "published_vs_text_release_max_rel_reported_cells": 0.0035092397271386066,
+  "product_shape": [
+   224
+  ],
+  "product_finite": true,
+  "product_positive_cells": 205,
+  "cells_control": {
+   "id": "C-IN-cells",
+   "verdict": "PASS",
+   "n_published": 205,
+   "mismatches": {}
+  },
+  "n_products_loaded": 38
+ },
+ "verdict": "PASS"
+}
