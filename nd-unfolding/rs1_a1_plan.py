@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """RS1-BINDING-2 addendum A1: the resume of RS1's full run in a fresh root, after attempt 1's teardown crash.
 
-Python 3.6-compatible (the cluster's /usr/bin/python3 is 3.6.15): no `from __future__ import annotations` and no
-subscripted builtins in annotations, which 3.6 evaluates when a function is defined.
+It runs only under the job's sourced environment (setup_salloc_env.sh, Python 3.11), never under the cluster's
+system python3 (3.6.15, which it does not support): the wrapper and the connect source the environment first.
 
 Attempt 1 (job 60972000, receipt fd/rounding-stability-20261106/receipts/full-attempt-1/) stays intact as evidence.
 This module stages a fresh root from it and names each task's outputs; it never runs a fit, and the bound RS1 code

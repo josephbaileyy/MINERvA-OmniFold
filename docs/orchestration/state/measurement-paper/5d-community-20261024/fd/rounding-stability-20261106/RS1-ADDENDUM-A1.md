@@ -93,7 +93,7 @@ first, scontrol's TimeLimit checked, and the receipt committed as a PR.
 |---|---|
 | `nd-unfolding/rs1_a1_plan.py` | `stage`, `verify`, `expect` |
 | `nd-unfolding/sbatch_rs1_a1.sh` | the resume wrapper with the guard |
-| `nd-unfolding/tests/test_rs1_a1.py` | 30 tests: staging in each direction, the plan, the guard's three REQUIRED directions, the refusals, and the bound analysis accepting the fresh root's receipts |
+| `nd-unfolding/tests/test_rs1_a1.py` | 29 tests: staging in each direction, the plan, the guard's three REQUIRED directions, the refusals, and the bound analysis accepting the fresh root's receipts |
 | `nd-unfolding/tests/rs1_a1_mutation.py` | the harness: REQUIRED mutants for the guard (a teardown read as a failure, a pre-write failure read as a teardown, a second crash accepted, xargs aborting, crashed files kept), and one per staging rule and refusal |
 
 **ENS1 carries the same guard** in `sbatch_ens1.sh` (#899), with its own REQUIRED mutants (the director's ruling 5).
@@ -118,19 +118,19 @@ submitted nothing and charged nothing.
   so under the system interpreter too.
 - **Why the tests missed it:** they ran under 3.12.
 
-**The repair (the director's rulings):**
-- **`rs1_a1_plan.py` is 3.6-compatible.** It has no future import, and its annotations use `typing` (`List`, `Dict`,
-  `Tuple`), which 3.6 evaluates when a function is defined.
+**The repair (the director's rulings; after the delta audit's A1R-C1, the director withdrew any 3.6 claim):**
+- **The rule:** every planner call runs under the job's sourced environment (`setup_salloc_env.sh`, Python 3.11),
+  never under the cluster's system `python3`. The planner does not support 3.6, and no claim is made that it does. Its
+  `argparse` call `add_subparsers(required=True)` is 3.7+, as the audit found.
 - **The wrapper sources `setup_salloc_env.sh` before its first planner call.** The source's log is held in a temporary
   file and moved into `log-full` once `log-full` exists, so a refusal still writes nothing.
-- **The connect runs `stage` and `verify` in a subshell** that sources the deploy's `setup_salloc_env.sh`.
-- **The connect's preflight compiles and imports the planner under `/usr/bin/python3`,** as a 0 node-h login check:
-  `-m py_compile`, then an import. It refuses on any failure.
-- **Tests.**
-  - The stand-in environment puts a recording `python3` first on PATH, and a test requires every planner call
-    (`verify`, `expect`) to go through it. Its REQUIRED mutant moves `verify` back above the source.
-  - A static test requires the planner to parse at the 3.6 grammar, with no future annotations import and no
-    subscripted builtins in annotations. Its REQUIRED mutants restore each.
+- **The connect runs `stage` and `verify` in a subshell** that sources the deploy's `setup_salloc_env.sh`. Its
+  preflight runs the planner's `--help` in the same sourced environment, and refuses on failure.
+- **The test:** the job starts with a stand-in system `python3` that refuses any planner call, as 3.6 effectively did.
+  The sourced stand-in environment puts a recording `python3` first on PATH, and a test requires every planner call
+  (`verify`, `expect`) to go through it. Its REQUIRED mutant moves `verify` back above the source, and the run then
+  fails.
+- **The planner's annotations** now use `typing`, with no future import. This is a style edit, not a 3.6 claim.
 
 **The partial root.** The stop had left `deploy/`, `a1/`, `queue.tsv`, `dry.tsv` and `logs/` (no products and no
 staging). It was deleted under a ledger row, by literal path. The listing and the check that each path was gone are in

@@ -18,7 +18,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_rs1_a1.py"
 P, S = "rs1_a1_plan.py", "sbatch_rs1_a1.sh"
-EXPECTED_TESTS = 30
+EXPECTED_TESTS = 29
 
 MUTATIONS = [
     # --- REQUIRED: the teardown guard
@@ -78,10 +78,8 @@ MUTATIONS = [
     ("W09 mv failure ignored", S, 'mv "$f" "$T/" || { echo "could not move $f aside" > "$L/$id.failed"; exit 1; }', 'mv "$f" "$T/" || true', "test_a_failed_move_aside_is_a_failure_and_the_crashed_files_are_not_used"),
     ("W10 attempt-1 STOP in log-dry accepted", P, 'if (old / "log-dry" / "FAILED").exists() or (old / "log-dry" / "STOP").exists():', 'if (old / "log-dry" / "FAILED").exists():', "test_a_dry_run_that_left_stop_is_refused"),
     ("W11 a file missing from sums still done", P, "ok = ended and all(str(r) in sums[kind] and (old / r).is_file() and sha256_path(old / r) == sums[kind][str(r)]", "ok = ended and all((old / r).is_file() and sha256_path(old / r) == sums[kind].get(str(r), sha256_path(old / r))", "test_a_file_missing_from_sha256sums_makes_a_task_todo"),
-    # --- A1 connect 1's stop (Python 3.6 on the cluster; the director's rulings, items 1-3)
+    # --- A1 connect 1's stop: every planner call under the sourced environment (the director's rulings)
     ("REQ verify above the source", S, 'source "$D/setup_salloc_env.sh" > "$ENVLOG" 2>&1\npython3 "$PLANPY" verify --root "$OUT" > /dev/null \\\n    || { echo "[rs1-a1] refusing: a staged file no longer verifies" >&2; exit 2; }', 'python3 "$PLANPY" verify --root "$OUT" > /dev/null \\\n    || { echo "[rs1-a1] refusing: a staged file no longer verifies" >&2; exit 2; }\nsource "$D/setup_salloc_env.sh" > "$ENVLOG" 2>&1', "test_every_planner_call_runs_under_the_sourced_environment"),
-    ("REQ the future import back", P, "import argparse\nimport hashlib", "from __future__ import annotations\n\nimport argparse\nimport hashlib", "test_the_planner_is_python36_compatible"),
-    ("REQ a PEP 585 annotation back", P, "def verify(root: Path) -> List[str]:", "def verify(root: Path) -> list[str]:", "test_the_planner_is_python36_compatible"),
 ]
 
 
