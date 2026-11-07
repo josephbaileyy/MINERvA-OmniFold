@@ -1,0 +1,59 @@
+test_combine_indexwise (test_per_period_benchmark.TestAlgebra.test_combine_indexwise) ... ok
+test_complement_partitions (test_per_period_benchmark.TestAlgebra.test_complement_partitions) ... ok
+test_distance_debias (test_per_period_benchmark.TestAlgebra.test_distance_debias) ... ok
+test_eigen_sum_equals_chi2_with_cov (test_per_period_benchmark.TestAlgebra.test_eigen_sum_equals_chi2_with_cov) ... ok
+test_exposure_weights (test_per_period_benchmark.TestAlgebra.test_exposure_weights) ... ok
+test_n1_each_model_is_biased_in_the_other_regime (test_per_period_benchmark.TestAlgebra.test_n1_each_model_is_biased_in_the_other_regime)
+Why the classes are read only where both models agree: neither model is right in both regimes. ... ok
+test_n1_replica_model_is_unbiased_when_the_seed_rerandomizes (test_per_period_benchmark.TestAlgebra.test_n1_replica_model_is_unbiased_when_the_seed_rerandomizes) ... ok
+test_n1_seed_term_is_unbiased_when_the_seed_is_fixed_in_replicas (test_per_period_benchmark.TestAlgebra.test_n1_seed_term_is_unbiased_when_the_seed_is_fixed_in_replicas) ... ok
+test_noise_var_models (test_per_period_benchmark.TestAlgebra.test_noise_var_models) ... ok
+test_quad_equals_matrix_form_on_k73 (test_per_period_benchmark.TestAlgebra.test_quad_equals_matrix_form_on_k73) ... ok
+test_zscore_edges (test_per_period_benchmark.TestAlgebra.test_zscore_edges) ... ok
+test_combined_statement (test_per_period_benchmark.TestClasses.test_combined_statement) ... ok
+test_merge_class (test_per_period_benchmark.TestClasses.test_merge_class) ... ok
+test_r2_patterns (test_per_period_benchmark.TestClasses.test_r2_patterns) ... ok
+test_r3 (test_per_period_benchmark.TestClasses.test_r3) ... ok
+test_r4_boundaries (test_per_period_benchmark.TestClasses.test_r4_boundaries) ... ok
+test_r5_boundaries (test_per_period_benchmark.TestClasses.test_r5_boundaries) ... ok
+test_c_comb (test_per_period_benchmark.TestControls.test_c_comb) ... ok
+test_c_ctrl (test_per_period_benchmark.TestControls.test_c_ctrl) ... ok
+test_c_grad_silent_and_fires_on_off_by_one_range (test_per_period_benchmark.TestControls.test_c_grad_silent_and_fires_on_off_by_one_range) ... ok
+test_c_in_cells (test_per_period_benchmark.TestControls.test_c_in_cells) ... ok
+test_c_k (test_per_period_benchmark.TestControls.test_c_k) ... ok
+test_c_m_fires_on_rotated_pair (test_per_period_benchmark.TestControls.test_c_m_fires_on_rotated_pair) ... ok
+test_c_m_fires_on_swapped_entries (test_per_period_benchmark.TestControls.test_c_m_fires_on_swapped_entries) ... ok
+test_c_m_silent_on_true_modes (test_per_period_benchmark.TestControls.test_c_m_silent_on_true_modes) ... ok
+test_c_partc (test_per_period_benchmark.TestControls.test_c_partc) ... ok
+test_c_pub (test_per_period_benchmark.TestControls.test_c_pub) ... ok
+test_c_step (test_per_period_benchmark.TestControls.test_c_step) ... ok
+test_c_sum (test_per_period_benchmark.TestControls.test_c_sum) ... ok
+test_partc_digest_refused (test_per_period_benchmark.TestControls.test_partc_digest_refused) ... ok
+test_copy_names_unique (test_per_period_benchmark.TestDigests.test_copy_names_unique) ... ok
+test_inputs_file_has_39_distinct_operands (test_per_period_benchmark.TestDigests.test_inputs_file_has_39_distinct_operands) ... ok
+test_inputs_file_refused_when_short_or_malformed (test_per_period_benchmark.TestDigests.test_inputs_file_refused_when_short_or_malformed) ... ok
+test_main_refusal_exit_is_not_python_crash_exit (test_per_period_benchmark.TestDigests.test_main_refusal_exit_is_not_python_crash_exit) ... ok
+test_noatime_copy (test_per_period_benchmark.TestDigests.test_noatime_copy) ... ok
+test_verify_fires_on_missing_copy (test_per_period_benchmark.TestDigests.test_verify_fires_on_missing_copy) ... ok
+test_verify_fires_on_one_flipped_byte (test_per_period_benchmark.TestDigests.test_verify_fires_on_one_flipped_byte) ... ok
+test_verify_silent_on_true_copies (test_per_period_benchmark.TestDigests.test_verify_silent_on_true_copies) ... ok
+test_cluster_path_removed (test_per_period_benchmark.TestImports.test_cluster_path_removed) ... ok
+test_provenance_fires_on_foreign_module (test_per_period_benchmark.TestImports.test_provenance_fires_on_foreign_module) ... ok
+test_provenance_fires_on_foreign_module_only_the_path_check_sees (test_per_period_benchmark.TestImports.test_provenance_fires_on_foreign_module_only_the_path_check_sees) ... ok
+test_provenance_fires_when_analyze_periods_binds_another_common (test_per_period_benchmark.TestImports.test_provenance_fires_when_analyze_periods_binds_another_common) ... ok
+test_reused_modules_resolve_in_repo (test_per_period_benchmark.TestImports.test_reused_modules_resolve_in_repo) ... ok
+test_identical_groups (test_per_period_benchmark.TestReadingsEndToEnd.test_identical_groups) ... ok
+test_injected_b_only_step_at_20pct (test_per_period_benchmark.TestReadingsEndToEnd.test_injected_b_only_step_at_20pct) ... ok
+test_injected_b_only_step_at_7pct (test_per_period_benchmark.TestReadingsEndToEnd.test_injected_b_only_step_at_7pct)
+A 7% step is inside the published ratio's own uncertainty (sigma_pub ~ 4.3%), so R4 cannot separate. ... ok
+test_r4_injection_at_z_2p5_reads_unresolved (test_per_period_benchmark.TestReadingsEndToEnd.test_r4_injection_at_z_2p5_reads_unresolved) ... ok
+test_r4_ratio_identity (test_per_period_benchmark.TestReadingsEndToEnd.test_r4_ratio_identity)
+(1 + st_B)/(1 + st_A) - 1 equals step_stat(x_B, x_A): the published result cancels (C-STEP's basis). ... ok
+test_r5_sigma_is_the_paired_difference (test_per_period_benchmark.TestReadingsEndToEnd.test_r5_sigma_is_the_paired_difference) ... ok
+test_roles_from_declared_inputs (test_per_period_benchmark.TestRoles.test_roles_from_declared_inputs) ... ok
+test_roles_refused_when_a_replica_is_missing (test_per_period_benchmark.TestRoles.test_roles_refused_when_a_replica_is_missing) ... ok
+
+----------------------------------------------------------------------
+Ran 51 tests in 0.994s
+
+OK
