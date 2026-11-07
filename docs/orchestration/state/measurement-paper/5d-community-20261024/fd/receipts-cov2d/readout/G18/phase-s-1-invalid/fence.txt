@@ -1,0 +1,5 @@
+fence host=login02 utc=2026-11-07T18:11:45Z
+squeue:
+60970044 rs1_dry RUNNING
+sacct unended cov2d:
+fence end

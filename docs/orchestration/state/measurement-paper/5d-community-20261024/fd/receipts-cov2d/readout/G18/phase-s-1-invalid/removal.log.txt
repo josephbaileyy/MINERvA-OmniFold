@@ -1,0 +1,15 @@
+host=login02 utc=2026-11-07T18:13:41Z
+135b545a5dfaa1f78a7f2f9e3c8c6fd2b7a4f56f2f5c758f7b3ea6958c705bbc  connect-s-G18.log
+e8942a15827ddd5b0e6dcad21bfc7417ee9f463afc1e0854340202aa15a018d6  score_G18.log
+b3926bf6b212a71ddae679a9f5d1ae8fd20e20b964eebd6ddd0b466fb839c5c2  blobs.before
+b3926bf6b212a71ddae679a9f5d1ae8fd20e20b964eebd6ddd0b466fb839c5c2  blobs.after
+207c797c67b45386fffe4ad21cfe69d1084ad40e1ae51ef504a1156549b7aac2  /dev/shm/josephrb-cov2d-s-G18.sh
+rm -f /dev/shm/josephrb-cov2d-s-G18.sh rc=0
+rm -f /dev/shm/josephrb-cov2d-s-G18/out/* rc=0
+rm -f /dev/shm/josephrb-cov2d-s-G18/blobs.after rc=0
+rm -f /dev/shm/josephrb-cov2d-s-G18/blobs.before rc=0
+rm -f /dev/shm/josephrb-cov2d-s-G18/connect-s-G18.log rc=0
+rm -f /dev/shm/josephrb-cov2d-s-G18/score_G18.log rc=0
+rmdir /dev/shm/josephrb-cov2d-s-G18/out rc=0
+rmdir /dev/shm/josephrb-cov2d-s-G18 rc=0
+ls end
