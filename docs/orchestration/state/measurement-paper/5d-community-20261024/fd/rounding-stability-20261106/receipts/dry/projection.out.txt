@@ -1,0 +1,88 @@
+{
+ "dry_tasks": 9,
+ "dry_task_wall_s": {
+  "rs1_A0_00": 524.7,
+  "rs1_A0_01": 489.5,
+  "rs1_A0_02": 463.4,
+  "rs1_B1023_00": 463.0,
+  "rs1_B63_00": 438.8,
+  "rs1_P1_00": 477.8,
+  "rs1_S_all_00": 495.7,
+  "rs1_S_ref_00": 458.2,
+  "rs1_V_00": 554.3
+ },
+ "per_unfold_s_used": {
+  "A0": [
+   524.7,
+   "measured"
+  ],
+  "B1023": [
+   463.0,
+   "measured"
+  ],
+  "B63": [
+   438.8,
+   "measured"
+  ],
+  "F_W": [
+   554.3,
+   "overall max"
+  ],
+  "F_eavail": [
+   554.3,
+   "overall max"
+  ],
+  "F_pt": [
+   554.3,
+   "overall max"
+  ],
+  "F_pz": [
+   554.3,
+   "overall max"
+  ],
+  "F_q3": [
+   554.3,
+   "overall max"
+  ],
+  "P1": [
+   477.8,
+   "measured"
+  ],
+  "P2": [
+   477.8,
+   "family max P1"
+  ],
+  "S_all": [
+   495.7,
+   "measured"
+  ],
+  "S_omni": [
+   495.7,
+   "family max S_ref/S_all"
+  ],
+  "S_ref": [
+   458.2,
+   "measured"
+  ],
+  "V": [
+   554.3,
+   "measured"
+  ]
+ },
+ "remaining_tasks": 57,
+ "remaining_unfolds": 220,
+ "lane_loads_h": [
+  3.931,
+  4.048,
+  4.005,
+  4.005,
+  3.966,
+  3.868,
+  3.974,
+  3.884
+ ],
+ "projected_full_wall_h": 4.082,
+ "dry_charge_node_h": 0.2622,
+ "limit_h": 6.964,
+ "full_run_may_start": true
+}
