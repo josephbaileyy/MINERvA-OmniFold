@@ -369,6 +369,15 @@ versions), and a `SHA256SUMS`.
 It has one mutant per control, per bar, per noise term, per domain rule, and for the threshold's direction. Every
 mutant must be killed.
 
+**As committed (revision 2):**
+- `valid_region.py`, sha256 `896201cc9d03754ddac5185f548b1b7e3a56183dbb0fe6503fcd75c5c59d5433`;
+- `test_valid_region.py`, sha256 `0df3207292ebd8c9e302f263eaa38e0012ef755940c95d311603d22916064580`, with 56 tests,
+  all OK;
+- `mutate_valid_region.py`: 48 mutants, 48 killed ([`mutants.txt`](mutants.txt)), run with Python 3.12.2 on the
+  lane's machine on synthetic fixtures. No real input was read.
+
+The mutants include the VR-1 guard: a reinstated class key in reading (3) is killed by `test_vr1_no_class_no_sentence`.
+
 ## 10. Licences
 
 **CITABLE FOR:**
