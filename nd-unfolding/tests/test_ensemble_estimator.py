@@ -192,6 +192,31 @@ class Refusals(trm.Fixture):
                 self.assertIn("refusing", err)
             self.assertEqual(run_stability(self.d, self.shas, 1, 0)[0], 0)
 
+    def test_each_stability_namespace_check_refuses(self):
+        """Audit Y01-Y05: the ratio file, the expected digests, iters, the estimator seed, a fixed split."""
+        (self.d / "ratio2.json").write_text(json.dumps({"schema": "other"}))
+        cases = (({"--eavail-ratio": str(self.d / "ratio2.json")}, "--eavail-ratio file is not the declared one"),
+                 ({"--expect-npz-sha256": "0" * 64}, "expected input digests"),
+                 ({"--iters": "4"}, "--iters must be 5"),
+                 ({"--estimator-seed": "7"}, "--estimator-seed must be 42"),
+                 ({"--fixed-split-seed": "3"}, "--fixed-split-seed and --pseudo-seeds are refused"))
+        with trm.standins(self.d):
+            for over, why in cases:
+                rc, err = run_stability(self.d, self.shas, 1, 2, **over)
+                self.assertEqual(rc, 2, (over, err))
+                self.assertIn(why, err, over)
+
+    def test_run_returns_the_first_non_zero_rc_and_stops(self):
+        """Audit Y10."""
+        calls = []
+        orig = esp.main
+        esp.main = lambda argv: calls.append(argv) or (3 if len(calls) == 1 else 0)
+        try:
+            self.assertEqual(eep.run("stability", [1, 2], None, ["--pairs=-:1"], self.d / "runs"), 3)
+        finally:
+            esp.main = orig
+        self.assertEqual(len(calls), 1)
+
     def test_two_pairs_in_one_call_are_refused(self):
         ns = type("NS", (), {})()
         st = eep.STABILITY
@@ -300,6 +325,80 @@ class ClosurePath(unittest.TestCase):
         self.assertIsNotNone(eep.check_closure_namespace(ns, "W1"))
 
 
+class Sentinel(Exception):
+    pass
+
+
+class ClosureRun(trm.Fixture):
+    """The closure path through eep.run and install, with the real runners' parsers (audit Y06-Y09, Y11). A call that
+    passes every check reaches s5c_unfold.load_inputs, which the test replaces by a sentinel."""
+
+    def argv(self, truth, **over):
+        a = type("A", (), {})()
+        for k, v in {"npz": str(self.d / "in.npz"), "bkg": str(self.d / "bkg.npz"), "expect_npz_sha256": self.shas[0],
+                     "expect_bkg_sha256": self.shas[1], "bank": str(self.d), "detector_dir": str(self.d),
+                     "closure_ratio_dir": str(self.d), "runs": str(self.d / "runs")}.items():
+            setattr(a, k, v)
+        out = eep.closure_argv(truth, a)
+        out[out.index("--threads") + 1] = "1"
+        for k, v in over.items():
+            out[out.index(k) + 1] = v
+        return out
+
+    def call(self, truth, argv):
+        import s5c_unfold
+        orig = s5c_unfold.load_inputs
+
+        def sentinel(*a, **kw):
+            raise Sentinel()
+        s5c_unfold.load_inputs = sentinel
+        err = io.StringIO()
+        try:
+            with trm.standins(self.d), contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+                try:
+                    return eep.run("closure", [1], truth, argv, self.d / "runs"), err.getvalue()
+                except SystemExit as exc:
+                    return exc.code, err.getvalue()
+                except Sentinel:
+                    return "passed", err.getvalue()
+        finally:
+            s5c_unfold.load_inputs = orig
+
+    def test_the_declared_closure_passes_every_check(self):
+        self.assertEqual(self.call("nominal", self.argv("nominal"))[0], "passed")
+
+    def test_the_install_enforces_the_closure_namespace(self):
+        """Audit Y06: another truth's hypothesis is refused through the install, not only by the checker."""
+        rc, err = self.call("nominal", self.argv("A7_genie_cv"))
+        self.assertEqual(rc, 2)
+        self.assertIn("the hypothesis is not", err)
+
+    def test_each_closure_namespace_check_refuses(self):
+        """Audit Y07-Y09: the expected digests, iters, the split."""
+        for over, why in (({"--expect-npz-sha256": "0" * 64}, "expected input digests"),
+                          ({"--iters": "4"}, "--iters must be 5"),
+                          ({"--pseudo-seeds": "991001:991001"}, "closures are FD-STAB's")):
+            rc, err = self.call("nominal", self.argv("nominal", **over))
+            self.assertEqual(rc, 2, (over, err))
+            self.assertIn(why, err, over)
+
+    def test_every_closure_tag_carries_k(self):
+        """Audit Y11: per k its own tag, so the products never collide, and expect names them."""
+        calls = []
+        orig = esp.main
+        esp.main = lambda argv: calls.append(argv) or 0
+        try:
+            eep.run("closure", [1, 2], "nominal", ["--tag", "x", "--out", "y"], self.d / "runs")
+        finally:
+            esp.main = orig
+        tags = [c[c.index("--tag") + 1] for c in calls]
+        outs = {c[c.index("--out") + 1] for c in calls}
+        self.assertEqual(tags, ["ens1_nominal_k001", "ens1_nominal_k002"])
+        self.assertEqual(outs, {str(self.d / "runs" / "closure" / "nominal")})
+        got = eep.expected_outputs(["closure", "--k", "1,2", "--truth", "nominal", "--runs", str(self.d / "runs"), "--", "--x"])
+        self.assertEqual([p.name for p in got], [f"{t}_s991000.npz" for t in tags])
+
+
 def argparse_like(argv):
     ns = type("NS", (), {"expectation": False, "no_nuisance": False, "alternative": None,
                          "alternative_amplitude": 1.0, "estimator_seed": 42})()
@@ -405,23 +504,38 @@ F_DIM = 6   # fake functionals: 4 "s5e functionals" and 2 "cells", over a fine g
 
 
 class FakeRun:
-    """A fake ENS1 root: 21 x 96 stability products, the F64 base, FD-STAB references and SHA256SUMS, receipts."""
+    """A fake ENS1 root: 21 x 96 stability products, the F64 base, FD-STAB references and SHA256SUMS, receipts.
 
-    def __init__(self, d: Path, spread_E=1e-6, spread_F=1e-2, tamper=None):
+    ``balanced=a``: each fit is base * (1 + a * eps_{s,k}) with eps = +-1 balanced over k for every s, so E_96 is exactly
+    the base at every input while any single fit moves by +-a (one fit and the mean read differently, audit X16).
+    ``f64_offset``: F64(x) is base * (1 + offset) while E_96(x) stays at base (F64 and E_96 differ, audit X15).
+    ``tamper``: one gate's defect, by name."""
+
+    def __init__(self, d: Path, spread_E=1e-6, spread_F=1e-2, tamper=None, balanced=None, f64_offset=0.0):
         self.d, self.refs = d / "root", d / "refs"
         rng = np.random.default_rng(4)
         self.pin = "p" * 40
         code = {"a.py": "1"}
         base = np.linspace(1.0, 2.0, 8)
+        if tamper == "zero":
+            base[0] = 0.0
         meta0 = {"construction": "pseudo", "truth": eep.STABILITY["truth"], "eavail_ratio_sha256": eep.STABILITY["ratio_sha256"],
                  "pseudo_seed": eep.STABILITY["pseudo_seed"], "input_npz_sha256": eep.STABILITY["npz_sha256"],
                  "bkg_dump_sha256": eep.STABILITY["bkg_sha256"], "bootstrap_seed": None, "code_sha256": code,
                  "stability_probe": {"candidate": "control", "code_sha256": "esp"}}
+        e1 = {"jseed": ("jitter_seed", 6), "coords": ("coords", "float32"), "boot": ("bootstrap_seed", 1),
+              "npz": ("input_npz_sha256", "x"), "path": ("stability_probe", {"candidate": "B2", "code_sha256": "esp"}),
+              "construction": ("construction", "data")}
         st = self.d / "runs" / "stability"
         st.mkdir(parents=True)
         for s in range(21):
+            eps = np.array([1.0, -1.0] * (eep.N_ENS // 2))
+            rng.shuffle(eps)
             for k in range(1, eep.N_ENS + 1):
-                x = base * (1 + spread_E * rng.normal(size=8) * math.sqrt(eep.N_ENS))
+                if balanced is not None:
+                    x = base * (1 + balanced * eps[k - 1])
+                else:
+                    x = base * (1 + spread_E * rng.normal(size=8) * math.sqrt(eep.N_ENS))
                 e = {"schema": eep.SCHEMA, "mode": "stability", "k": k, "internal_seed": 10000 + k, "protocol_seed": s,
                      "coord_sha256": {"MCgen": f"{s}-{k}"}, "code_sha256": "ens1"}
                 m = {**meta0, "jitter_seed": s, "coords": "float64", "ens1": e}
@@ -429,11 +543,20 @@ class FakeRun:
                     m["code_sha256"] = {"a.py": "2"}
                 if tamper == "digest" and s == 2:
                     e["coord_sha256"] = {"MCgen": f"1-{k}"}
+                if tamper == "digest_k" and s == 4:
+                    e["coord_sha256"] = {"MCgen": "4-same"}
+                if tamper == "pseed" and (s, k) == (5, 5):
+                    e["protocol_seed"] = 6
+                if tamper in e1 and (s, k) == (5, 5):
+                    key, val = e1[tamper]
+                    m[key] = val
                 self.write(st / f"ens1_k{k:03d}_b-_j{s}.npz", x, base, m)
         f64m = {**meta0, "jitter_seed": 0, "coords": "float32" if tamper == "f32base" else "float64",
-                "ens1": {"mode": "base", "k": None, "code_sha256": "ens1"}}
+                "ens1": {"mode": "stability" if tamper == "f64mode" else "base", "k": None, "code_sha256": "ens1"}}
+        if tamper == "f64meta":
+            f64m["truth"] = "nominal"
         (self.d / "runs" / "F64").mkdir()
-        self.write(self.d / "runs" / "F64" / "ens1_F64_b-_j0.npz", base, base, f64m)
+        self.write(self.d / "runs" / "F64" / "ens1_F64_b-_j0.npz", base * (1 + f64_offset), base, f64m)
         sums = []
         for s in range(1, 21):
             name = eea.STAB_REF.format(s)
@@ -442,6 +565,8 @@ class FakeRun:
             m = {**meta0, "jitter_seed": s, "coords": "float64"}
             if tamper == "refcode" and s == 5:
                 m["code_sha256"] = {"a.py": "other"}
+            if tamper == "refmeta" and s == 5:
+                m["pseudo_seed"] = 1
             self.write(p, base * (1 + spread_F * rng.normal(size=8)), None, m)
             sums.append(f"{eea.sha256_path(p)}  {name}")
         if tamper == "refsum":
@@ -533,6 +658,55 @@ class Analysis(unittest.TestCase):
                                                                            "pin": "q" * 40}))
         self.assertEqual(self.read(run3)[1]["verdict"], "INCOMPLETE")
 
+    def test_the_mean_of_96_not_one_fit_is_read(self):
+        """Audit X16: every single fit moves by +-1 sigma, the mean of the 96 not at all: STAB_PASS only for the mean."""
+        rc, out = self.read(FakeRun(self.t / "a", balanced=1e-3))
+        self.assertEqual((rc, out["verdict"]), (0, "STAB_PASS"))
+        self.assertLess(out["stability_E96"]["mean_max"], 1e-6)
+
+    def test_g0_reads_against_f64_not_against_e96(self):
+        """Audit X15 (ENS-1's contrast): the control jitters sit at E_96(x), 10 sigma away from F64(x)."""
+        rc, out = self.read(FakeRun(self.t / "a", spread_F=1e-9, f64_offset=1e-2))
+        self.assertTrue(out["g0_informative"])
+        self.assertGreater(out["stability_F_P10"]["mean_max"], 5.0)
+
+    def test_each_e1_sub_check_stops_the_read(self):
+        """Audit X02-X08: one product with the wrong jitter seed, protocol seed, coords, bootstrap, input digest,
+        control path or construction."""
+        for i, tamper in enumerate(("jseed", "pseed", "coords", "boot", "npz", "path", "construction")):
+            rc, out = self.read(FakeRun(self.t / f"e{i}", tamper=tamper))
+            self.assertEqual((rc, out["verdict"]), (eea.STOP_RC, "STOP"), tamper)
+            self.assertIn("E1", out["why"], tamper)
+
+    def test_e2_across_k(self):
+        """Audit X01: at one input, two internal seeds gave identical coordinates."""
+        rc, out = self.read(FakeRun(self.t / "a", tamper="digest_k"))
+        self.assertIn("E2: at input 4", out["why"])
+
+    def test_e3_f64_identity_meta_and_control_meta(self):
+        """Audit X09-X11."""
+        rc, out = self.read(FakeRun(self.t / "a", tamper="f64mode"))
+        self.assertIn("not ENS1's base product", out["why"])
+        rc, out = self.read(FakeRun(self.t / "b", tamper="f64meta"))
+        self.assertIn("ens1_F64_b-_j0.npz is not the declared stability input", out["why"])
+        rc, out = self.read(FakeRun(self.t / "c", tamper="refmeta"))
+        self.assertIn("stab_control_b-_j5.npz is not the declared stability input", out["why"])
+
+    def test_every_functional_must_be_usable(self):
+        """Audit X12: a functional with a zero base is not silently dropped."""
+        rc, out = self.read(FakeRun(self.t / "a", tamper="zero"))
+        self.assertEqual(out["verdict"], "STOP")
+        self.assertIn("usable functionals", out["why"])
+
+    def test_each_receipt_field_is_checked(self):
+        """Audit X18-X20: rc, tasks == ended, and the stage."""
+        for i, bad in enumerate(({"rc": 1}, {"ended": 2}, {"stage": 2})):
+            run = FakeRun(self.t / f"r{i}")
+            d = {"stage": 1, "rc": 0, "tasks": 3, "ended": 3, "pin": run.pin, **bad}
+            (run.d / "stage1" / "log-shard2" / "DONE").write_text(json.dumps(d))
+            rc, out = self.read(run)
+            self.assertEqual((rc, out["verdict"]), (eea.INCOMPLETE_RC, "INCOMPLETE"), bad)
+
     def test_stage2_refuses_without_stab_pass(self):
         with self.assertRaises(eea.Stop):
             eea.stage2(None, {"verdict": "STAB_FAIL"})
@@ -549,7 +723,7 @@ class Stage2(unittest.TestCase):
         self.tmp.cleanup()
 
     def make(self, worse=None, det_differs=False, xt_differs=False, zero_floor=False, sf_off=False, det_xt=False,
-             hyp_differs=False, split_differs=False):
+             hyp_differs=False, split_differs=False, balanced=None, truth_differs=False, alt_differs=False):
         root, refs = self.t / "root", self.t / "refs"
         cells_true = np.array([1.0, 1.0])
         M16 = np.eye(8)[4:6]
@@ -576,11 +750,14 @@ class Stage2(unittest.TestCase):
                     xt = xt * 1.0000001
                 b = 0.05 if t == worse else 0.01
                 x = np.ones(8) * (1 + b)
+                if balanced is not None:   # +-a per fit, exactly 0 over the 96 (audit X17); A7 k=1 matches nominal's
+                    x = x * (1 + balanced * (1.0 if k % 2 else -1.0))
                 if det_differs and t == "A7_mnvtune":
                     x = x * 1.0000001
-                m = {"ens1": {"mode": "closure", "truth": t, "k": k},
+                m = {"ens1": {"mode": "closure", "truth": "W2" if (truth_differs and t == "W1" and k == 7) else t, "k": k},
                      "hypothesis": {"sha256": "h2" if (hyp_differs and t == "W3") else "h"},
-                     "alternative": None, "split_key": 8 if (split_differs and t == "q3") else 7}
+                     "alternative": {"sha256": "a2"} if (alt_differs and t == "W1") else None,
+                     "split_key": 8 if (split_differs and t == "q3") else 7}
                 FakeRun.write(d / f"ens1_{t}_k{k:03d}_s991000.npz", x, xt, m)
             if t != "A7_mnvtune":
                 n = eea.CLOSURE_REF.format(t=t)
@@ -613,11 +790,16 @@ class Stage2(unittest.TestCase):
         np.testing.assert_allclose(out["s_E_scaled"], np.array([1e-3, 1e-3]) * 1.357637703528655 / esa.SD_UPPER,
                                    rtol=1e-12)
 
+    def test_the_mean_of_96_closure_fits_not_one_is_read(self):
+        """Audit X17: each fit is 5 % off, the mean of the 96 exactly on F's bias."""
+        self.assertEqual(self.run2(balanced=0.05)["verdict"], "PASS")
+
     def test_a_zero_floor_is_invalid(self):
         self.assertEqual(self.run2(zero_floor=True)["verdict"], "INVALID")
 
     def test_the_stops(self):
-        for kw, why in (({"det_differs": True}, "determinism"), ({"det_xt": True}, "determinism"),
+        for kw, why in (({"truth_differs": True}, "does not carry its own"), ({"alt_differs": True}, "alternative digest"),
+                        ({"det_differs": True}, "determinism"), ({"det_xt": True}, "determinism"),
                         ({"xt_differs": True}, "truth vector"), ({"sf_off": True}, "s_F"),
                         ({"hyp_differs": True}, "hypothesis digest"), ({"split_differs": True}, "MC split")):
             self.tmp.cleanup()
@@ -639,7 +821,13 @@ class JobScript(unittest.TestCase):
         "argv = argv[1:] if expect else argv\n"
         "out = pathlib.Path(argv[argv.index('--out') + 1]); p = out / (argv[0] + '.npz')\n"
         "if expect: print(p); sys.exit(0)\n"
+        "if 'SLOW' in argv: __import__('time').sleep(1.5)\n"
         "if 'FAIL' in argv: sys.exit(3)\n"
+        "if 'DROPEND' in argv:\n"
+        "    import os, time; e = pathlib.Path(os.environ['L']) / 'b.end'\n"
+        "    for _ in range(100):\n"
+        "        if e.exists(): e.unlink(); break\n"
+        "        time.sleep(0.05)\n"
         "out.mkdir(parents=True, exist_ok=True)\n"
         "if not p.exists(): np.savez(p, xsec_flat=np.arange(4.0), xtrue_flat=np.ones(4))\n"
         "mark = out.parent / ('crashed-' + argv[0])\n"
@@ -749,7 +937,7 @@ class JobScript(unittest.TestCase):
     def test_a_failure_before_writing_is_a_failure_and_the_queue_continues(self):
         """REQUIRED (A1 guard): no product -> a failure, not a teardown; the other tasks still run; no DONE."""
         others = [f"t{i:02d}" for i in range(12)]   # more than the 8 lanes, so an aborting xargs leaves some unstarted
-        self.queue_flags("dry.tsv", [("a", ["FAIL"])] + [(i, []) for i in others])
+        self.queue_flags("dry.tsv", [("a", ["FAIL"])] + [(i, ["SLOW"]) for i in others])   # still running when a fails
         r = self.job("dry", "1")
         self.assertEqual(r.returncode, 1)
         L = self.OUT / "stage1" / "log-dry"
@@ -757,6 +945,15 @@ class JobScript(unittest.TestCase):
         self.assertFalse((L / "a.teardown").exists())
         self.assertTrue(all((L / f"{i}.end").exists() for i in others))
         self.assertIn("a", (L / "FAILED").read_text())
+        self.assertFalse((L / "DONE").exists())
+
+    def test_a_task_without_its_end_record_leaves_no_receipt(self):
+        """Audit Z01: every queue task must have ended, even when none failed."""
+        self.queue_flags("dry.tsv", [("b", []), ("c", ["DROPEND"])])
+        r = self.job("dry", "1")
+        self.assertEqual(r.returncode, 1)
+        L = self.OUT / "stage1" / "log-dry"
+        self.assertIn("ended=1 of 2", (L / "FAILED").read_text())
         self.assertFalse((L / "DONE").exists())
 
     def test_a_second_crash_is_a_failure(self):

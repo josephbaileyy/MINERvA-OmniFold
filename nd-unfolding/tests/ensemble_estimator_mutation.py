@@ -19,7 +19,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_ensemble_estimator.py"
 P, A, S = "ensemble_estimator_probe.py", "ensemble_estimator_analyze.py", "sbatch_ens1.sh"
-EXPECTED_TESTS = 49  # a script-mode run that stops early exits 0 with fewer: refuse it
+EXPECTED_TESTS = 64  # a script-mode run that stops early exits 0 with fewer: refuse it
 
 # (label, file, old, new, the test that must fail)
 MUTATIONS = [
@@ -144,6 +144,39 @@ MUTATIONS = [
      'product_name(f"ens1_k{k:02d}", b, j) for k in ks]', "test_expect_names_exactly_what_the_task_wrote"),
     ("environment unchecked", S, '|| { echo "[ens1] refusing: the environment lacks lightgbm/scipy" >&2; exit 7; }', "|| true",
      "test_an_environment_without_lightgbm_is_refused"),
+    # --- the audit's ENS1-C1 sites (coverage-5b-audit, #899 comment 6712373597), its anchors verbatim
+    ("X01 E2 across-k loop dropped", A, "    for s in seeds:\n        if len({digests[(s, k)] for k in range(1, N + 1)}) != N:", "    for s in ():\n        if len({digests[(s, k)] for k in range(1, N + 1)}) != N:", "test_e2_across_k"),
+    ("X02 E1 jitter_seed unchecked", A, ' or m.get("jitter_seed") != s:', ":", "test_each_e1_sub_check_stops_the_read"),
+    ("X03 E1 protocol_seed unchecked", A, 'eep.SCHEMA, "stability", k, eep.INTERNAL_BASE + k, s)', 'eep.SCHEMA, "stability", k, eep.INTERNAL_BASE + k, e.get("protocol_seed"))', "test_each_e1_sub_check_stops_the_read"),
+    ("X04 E1 stability coords unchecked", A, '            if m.get("coords") != "float64":', '            if False:', "test_each_e1_sub_check_stops_the_read"),
+    ("X05 E1 bootstrap unchecked", A, 'if m.get("bootstrap_seed") is not None:', "if False:", "test_each_e1_sub_check_stops_the_read"),
+    ("X06 E1 input digests unchecked", A, 'if (m.get("input_npz_sha256"), m.get("bkg_dump_sha256")) != (st["npz_sha256"], st["bkg_sha256"]):', "if False:", "test_each_e1_sub_check_stops_the_read"),
+    ("X07 E1 control path unchecked", A, 'if (m.get("stability_probe") or {}).get("candidate") != "control":', "if False:", "test_each_e1_sub_check_stops_the_read"),
+    ("X08 E1 construction/truth/pseudo unchecked", A, '"pseudo", st["truth"], st["ratio_sha256"], st["pseudo_seed"]):', '"pseudo", st["truth"], st["ratio_sha256"], st["pseudo_seed"]) and False:', "test_each_e1_sub_check_stops_the_read"),
+    ("X09 E3 F64 identity unchecked", A, 'if e.get("mode") != "base" or e.get("k") is not None or e.get("code_sha256") != code["ens1"]:', "if False:", "test_e3_f64_identity_meta_and_control_meta"),
+    ("X10 E3 F64 meta unchecked", A, '    check_stability_meta(m, p.name)\n    if e.get("mode")', '    if e.get("mode")', "test_e3_f64_identity_meta_and_control_meta"),
+    ("X11 E3 control-jitter meta unchecked", A, "        check_stability_meta(m, n)\n", "", "test_e3_f64_identity_meta_and_control_meta"),
+    ("X12 usable count unchecked", A, "if int(ok.sum()) != esa.N_FUNCTIONALS:", "if False:", "test_every_functional_must_be_usable"),
+    ("X13 stage2 product identity unchecked", A, 'if (e.get("mode"), e.get("truth"), e.get("k")) != ("closure", t, k):', "if False:", "test_the_stops"),
+    ("X14 stage2 alternative digest unchecked", A, 'for key in ("hypothesis", "alternative"):', 'for key in ("hypothesis",):', "test_the_stops"),
+    ("X15 G0 against E96(x) not F64(x)", A, "rel_F = Fj[:, :nf][:, ok0] / f64[:nf][ok0] - 1.0", "rel_F = Fj[:, :nf][:, ok0] / E[0, :nf][ok0] - 1.0", "test_g0_reads_against_f64_not_against_e96"),
+    ("X16 stage1 no averaging (one fit)", A, "E = F.mean(axis=1)", "E = F[:, 0]", "test_the_mean_of_96_not_one_fit_is_read"),
+    ("X17 stage2 no averaging (one fit)", A, "b_E = np.mean(xs, axis=0) / (M16 @ xt0) - 1.0", "b_E = xs[0] / (M16 @ xt0) - 1.0", "test_the_mean_of_96_closure_fits_not_one_is_read"),
+    ("X18 receipt rc unchecked", A, 'if d.get("rc") != 0 or ', "if ", "test_each_receipt_field_is_checked"),
+    ("X19 receipt tasks!=ended unchecked", A, ' or d.get("tasks") != d.get("ended")', "", "test_each_receipt_field_is_checked"),
+    ("X20 receipt stage unchecked", A, ' or d.get("stage") != stage:', ":", "test_each_receipt_field_is_checked"),
+    ("Y01 ratio sha unchecked", P, 'if ratio is None or rmp.sha256_path(Path(ratio)) != want["ratio_sha256"]:', "if False:", "test_each_stability_namespace_check_refuses"),
+    ("Y02 stability expect digests unchecked", P, '    if getattr(ns, "expect_npz_sha256", None) != want["npz_sha256"] or \\\n            getattr(ns, "expect_bkg_sha256", None) != want["bkg_sha256"]:', "    if False:", "test_each_stability_namespace_check_refuses"),
+    ("Y03 stability iters unchecked", P, '    for key in ("iters", "threads", "estimator_seed"):\n        if getattr(ns, key, None) != want[key]:', '    for key in ("threads", "estimator_seed"):\n        if getattr(ns, key, None) != want[key]:', "test_each_stability_namespace_check_refuses"),
+    ("Y04 stability estimator_seed unchecked", P, '    for key in ("iters", "threads", "estimator_seed"):\n        if getattr(ns, key, None) != want[key]:', '    for key in ("iters", "threads"):\n        if getattr(ns, key, None) != want[key]:', "test_each_stability_namespace_check_refuses"),
+    ("Y05 fixed-split/pseudo-seeds unchecked", P, 'if getattr(ns, "fixed_split_seed", None) is not None or getattr(ns, "pseudo_seeds", None) is not None:', "if False:", "test_each_stability_namespace_check_refuses"),
+    ("Y06 closure namespace never enforced", P, "            why = check_closure_namespace(ns, truth)", "            why = None", "test_the_install_enforces_the_closure_namespace"),
+    ("Y07 closure expect digests unchecked", P, '    if getattr(ns, "expect_npz_sha256", None) != STABILITY["npz_sha256"] or \\\n            getattr(ns, "expect_bkg_sha256", None) != STABILITY["bkg_sha256"]:', "    if False:", "test_each_closure_namespace_check_refuses"),
+    ("Y08 closure iters/threads/seed unchecked", P, '    for key in ("iters", "threads", "estimator_seed"):\n        if getattr(ns, key, None) != STABILITY[key]:', '    for key in ():\n        if getattr(ns, key, None) != STABILITY[key]:', "test_each_closure_namespace_check_refuses"),
+    ("Y09 closure split unchecked", P, ' or \\\n            getattr(ns, "pseudo_seeds", None) != f"{esp.CLOSURE_SEED}:{esp.CLOSURE_SEED}":', ":", "test_each_closure_namespace_check_refuses"),
+    ("Y10 runner rc swallowed", P, "        if rc:\n            return rc\n    return 0", "        pass\n    return 0", "test_run_returns_the_first_non_zero_rc_and_stops"),
+    ("Y11 closure tag without k", P, 'tag, out = f"ens1_{truth}_k{k:03d}", runs / "closure" / truth', 'tag, out = f"ens1_{truth}", runs / "closure" / truth', "test_every_closure_tag_carries_k"),
+    ("Z01 ended-count check dropped", S, '[ "$n_end" -eq "$n_q" ] ||', "true ||", "test_a_task_without_its_end_record_leaves_no_receipt"),
 ]
 
 
@@ -169,13 +202,13 @@ def main() -> int:
         print(f"UNMUTATED SUITE: rc {rc}, ran {ran.group(1) if ran else '?'} of {EXPECTED_TESTS} expected tests\n" + out[-2000:])
         return 1
     print(f"UNMUTATED SUITE: {EXPECTED_TESTS} tests, rc 0")
-    ok = True
-    for label, fname, old, new, test in MUTATIONS:
+    from concurrent.futures import ThreadPoolExecutor
+
+    def one(m):
+        label, fname, old, new, test = m
         src = (ND / fname).read_text()
         if src.count(old) != 1:
-            print(f"MUTATION NOT APPLIED  {label}: anchor occurs {src.count(old)} times")
-            ok = False
-            continue
+            return f"MUTATION NOT APPLIED  {label}: anchor occurs {src.count(old)} times", False
         with tempfile.TemporaryDirectory() as d:
             for f in (P, A, S):
                 shutil.copy(ND / f, Path(d) / f)
@@ -183,9 +216,13 @@ def main() -> int:
             rc, out = run_suite(Path(d), Path(d) / S if fname == S else None)
         fails = failing(out)
         killed = test in fails
-        ok &= killed
-        print(f"{'KILLED' if killed else 'SURVIVED':8s}  {label:42s} by {test}" + ("" if killed else f"  (failing: {sorted(fails)})"),
-              flush=True)
+        return (f"{'KILLED' if killed else 'SURVIVED':8s}  {label:42s} by {test}"
+                + ("" if killed else f"  (failing: {sorted(fails)})")), killed
+    ok = True
+    with ThreadPoolExecutor(int(os.environ.get("ENS1_MUTATION_WORKERS", "6"))) as ex:
+        for text, killed in ex.map(one, MUTATIONS):   # results in MUTATIONS order
+            ok &= killed
+            print(text, flush=True)
     print("MUTATION CHECK ::", "PASS" if ok else "FAIL", f"({len(MUTATIONS)} mutations)")
     return 0 if ok else 1
 
