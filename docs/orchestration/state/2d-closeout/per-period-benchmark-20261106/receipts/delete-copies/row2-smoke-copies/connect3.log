@@ -1,0 +1,4 @@
+delete_smoke_copies.py sha256 1e50a3eef5823788258c5a89d6bb1e7d1fe5ab58a7e25058fbdc954b65b15f42
+on login36: delete_smoke_copies.py sha256 1e50a3eef5823788258c5a89d6bb1e7d1fe5ab58a7e25058fbdc954b65b15f42
+delete_smoke_copies rc 0
+remote rc 0; fetch rc 0
