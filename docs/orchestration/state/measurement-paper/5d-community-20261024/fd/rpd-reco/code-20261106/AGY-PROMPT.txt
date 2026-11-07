@@ -1,0 +1,31 @@
+Independent read-only second review: RPD-RECO code for audit and binding 2.
+
+Repository: josephbaileyy/MINERvA-OmniFold.
+Review commit: 3e5a13bc02741f30b4f4ebbe49c0ec35084de866.
+Use the isolated worktree ../MINERvA-OmniFold-rpd-reco-review-20261106 (relative to the shared project checkout), detached at that commit. Confirm HEAD and clean status before and after review. Do not edit, stage, commit, merge, contact a cluster/network, run production analysis, or spawn agents. One bounded read, prioritizing blocking/major defects. Pure local tests on synthetic fixtures are allowed; an interpreter with numpy/scipy/pytest/uproot is available at ~/miniconda3/bin/python.
+
+Read in full:
+- docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-DECLARATION.md (revision 2)
+- FD-RPD-RECO-BINDING-1.md and the audit-1 Q&A beside it
+- nd-unfolding/fd_rpd_reco.py
+- nd-unfolding/tests/test_fd_rpd_reco.py
+- nd-unfolding/tests/fd_rpd_reco_mutation.py
+- the C-N energy-spectrum-candidates.tsv routed by the handoff, the 24 INPUTS.sha256 pins, and referenced h2_definition.json/CVUniverse constants as needed.
+
+Two director clarifications are awaiting documentation in binding 2, not silently claimed to be in binding 1:
+1. The scientific pre-data guard overrides binding 1's ordering summary. Implemented order: pins -> p0 -> d2-predict -> step0 -> c0 -> d1 -> d2. A committed, matching d2-predict JSON plus matching product is required before every measured-key or data-product access. p0 and step0 are MC/flux/exposure metadata only. c0/d1/d2 are data-bearing. Director reply id: 6711f520-0201-4b0c-920e-486db0334a3f.
+2. C0 data counts are exact via a shuffled fixed-size assignment. Signal and background assignments are independent categorical draws at their real selected-weight fractions, interpreted as expected fractions; actual fractions and counts are disclosed but not read by scoring. C-E strata use reconstructed p_parallel, while energy/q3 derive from MCgen. Director reply id: 0d25e722-5f46-4375-baf0-8126770eee5f.
+
+Audit the actual implementation against those contracts:
+- no measured read before committed prediction; predecessor chain, config/code/product digests, refusal on STOP;
+- every declared source, including the committed prediction receipt, read through an O_NOATIME digest-checked staged copy; runtime plain-open audit; no ROOT/TFile import (uproot reads only staged ROOT files); no foreign-checkout imports;
+- per-row paired Poisson draws shared across all axes, references and flux swaps; full row membership and overflow/unreported accounting;
+- exact C0 allocations and all calibration gates; weighted-mean chi-square/ndf and sparse simulation-only P>=25 rule;
+- E_nu inversion, reco-stratified pooled C-E controls, source-pinned P-F and out-of-range cap;
+- d1 readings, rates/POT, conditional family bars, carriers;
+- d2 sign, ordered exhaustive classifier, sigma_f and residual-size-test pairing, background bracket, descriptive-only mirror/PC;
+- tests and REQUIRED mutants actually discriminate each guard/bar. Distinguish integration from isolated unit fixtures.
+
+Testing disclosures: NPZs have the dump writers' object-array schema, and ROOT fixtures are real TH1 ROOT files. No real MAT flux candidate was opened. macOS has no O_NOATIME: test-only fixtures substitute O_NONBLOCK as a distinguishable descriptor flag, and a separate test requires native absence to refuse. The downstream two-seed scoring tests explicitly supply a synthetic passing C0 predecessor; they do not claim the planted-step fixture passed C0. A separate integrated real-format null fixture tests an actual C0 pass (seed 17) and actual C0 STOP (seed 43). This is code validation, not scientific calibration/coverage.
+
+Report findings with severity, file:line and concrete failure path; include any material unverified dependency. Give a one-line code-readiness verdict, not scientific adoption or run authorization. Return your answer verbatim as a standard open-agent-bridge reply in this conversation; it will be committed with this exact prompt. Do not request any action from Joseph.

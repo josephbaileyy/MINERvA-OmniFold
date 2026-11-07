@@ -1,0 +1,27 @@
+{
+  "schema": "fd-rpd-reco-local-verification/1",
+  "code_commit": "6b690fbc89520de53cc3df742270ac07640853ea",
+  "merged_main_head": "002c66af25665d662a0ac488560e3a7fedf99f49",
+  "file_sha256": {
+    "nd-unfolding/fd_rpd_reco.py": "353085b37a9076ee9adaa23cc8cb40b8db80904c110b964be6fc14c78fb4dd3c",
+    "nd-unfolding/tests/test_fd_rpd_reco.py": "8e0f8cfb89488b6e37ed99cae58597e6c6c6c69adf42f33fd16f4a8922479c36",
+    "nd-unfolding/tests/fd_rpd_reco_mutation.py": "341d8ea983bfef625f1675728144d3eaa73551ae24e5bcbe74d7a76f86dd0746",
+    "docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-DECLARATION.md": "b0eee33c95ccb037c681df8d33dccdf1b3d3af60098bba6545c725f706ebe5d8",
+    "docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-RECO-BINDING-1.md": "6fe0007ae6e1d6e5ae999f1a3481929f06dcdde5636def27c7cd94543dc4d47b"
+  },
+  "suite": {
+    "passed": 71,
+    "returncode": 0
+  },
+  "mutation": {
+    "required": 87,
+    "killed": 87,
+    "complete": true,
+    "returncode": 0
+  },
+  "style": "ruff check passed",
+  "typing": "mypy --strict --ignore-missing-imports: producer and mutation harness passed",
+  "run_scope": "local fixtures only; no cluster contact",
+  "head_rerun": "Completed at 98a1fea4e4fe550420f0fa3c01fe2f1346484d59; exact outputs and source blob identities are bound in HEAD-VERIFICATION.json. The subsequent receipt commit changes no executable code.",
+  "focused_sibling_review": "8549c3db-406b-43cf-8bb6-a8596f30d715"
+}

@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "pins",
+    "--config",
+    "$FIXTURE/absent.json",
+    "--config-sha256",
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "--run",
+    "$FIXTURE/run",
+    "--dry-run"
+  ],
+  "code_sha256": "353085b37a9076ee9adaa23cc8cb40b8db80904c110b964be6fc14c78fb4dd3c",
+  "config_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "details": null,
+  "guard": "NOATIME",
+  "input_sha256": {},
+  "message": "NOATIME: O_NOATIME is unavailable",
+  "readings": null,
+  "schema": "fd-rpd-reco-stop/1",
+  "status": "STOP",
+  "step": "pins"
+}
