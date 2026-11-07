@@ -1,0 +1,14 @@
+2026-11-06T13:06:33Z known collision 60895948 (G18_L:L_G18_BeamAngleX_0,X_G18) MATCH
+2026-11-06T13:06:34Z FAILED=1 RUNNING=19 | known=       1 | Tb: rc=3 total=170.00 unlisted=[]
+2026-11-06T13:21:46Z FAILED=1 RUNNING=19 | known=       1 | Tb: rc=3 total=170.00 unlisted=[]
+2026-11-06T13:37:00Z FAILED=1 RUNNING=18 COMPLETED=1 | known=       1 | Tb: rc=3 total=168.47 unlisted=[]
+2026-11-06T13:52:12Z FAILED=1 RUNNING=18 COMPLETED=1 | known=       1 | Tb: rc=3 total=168.47 unlisted=[]
+2026-11-06T14:07:24Z FAILED=1 RUNNING=18 COMPLETED=1 | known=       1 | Tb: rc=3 total=168.47 unlisted=[]
+2026-11-06T14:22:45Z FAILED=1 RUNNING=18 COMPLETED=1 | known=       1 | Tb: rc=3 total=168.47 unlisted=[]
+2026-11-06T14:37:56Z FAILED=1 RUNNING=18 COMPLETED=1 | known=       1 | Tb: rc=3 total=168.47 unlisted=[]
+2026-11-06T15:03:14Z FAILED=1 RUNNING=18 COMPLETED=1 | known=       1 | Tb: rc=3 total=168.47 unlisted=[]
+2026-11-06T15:18:33Z known collision 60895562 (G18_Ua:U_G18_Flux_0) MATCH
+2026-11-06T15:18:33Z FAILED=2 RUNNING=16 COMPLETED=2 | known=       2 | Tb: rc=0 total=161.73 unlisted=[]
+TB-FITS
+
+[exited with code 0]

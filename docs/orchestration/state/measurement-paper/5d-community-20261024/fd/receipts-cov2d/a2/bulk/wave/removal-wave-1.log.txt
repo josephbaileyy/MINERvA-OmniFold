@@ -1,0 +1,15 @@
+a88b4203e172c5532ef7e4f41d6bdf9e454cad027c5810dbb55e24162b42baf6  /dev/shm/josephrb-cov2d-wave.log
+29714c36ea2dff478d7c89bd6f374ba739869d59a066ccf5e007ef4eb1b35ae2  /dev/shm/josephrb-cov2d-wave/connect-wave.sh
+1ce76ea373f474e7c32520c69fbc90eae9419d5cbd901927df5a41fbe6973c5e  /dev/shm/josephrb-cov2d-wave/cov2d_cap.py
+7a07c3acf7f361f1af89276064bc64c8ab60e4d6bc06c658f2dcd10422f9c324  /dev/shm/josephrb-cov2d-wave/test_cov2d_cap.py
+e586fc0f3bb2a05f4c80f07d1b4c6171e830592f6c7aaf70d4af3b0aa3ebd072  /dev/shm/josephrb-cov2d-wave/test.out
+host=login02 2026-11-06T09:22:50Z
+rm -f /dev/shm/josephrb-cov2d-wave/connect-wave.sh rc=0
+rm -f /dev/shm/josephrb-cov2d-wave/cov2d_cap.py rc=0
+rm -f /dev/shm/josephrb-cov2d-wave/test_cov2d_cap.py rc=0
+rm -f /dev/shm/josephrb-cov2d-wave/test.out rc=0
+rm -f /dev/shm/josephrb-cov2d-wave.log rc=0
+rmdir /dev/shm/josephrb-cov2d-wave rc=0
+total 0
+drwxrwxrwt  2 root root   40 Nov  6 01:22 .
+drwxr-xr-x 23 root root 5300 Oct 29 10:57 ..
