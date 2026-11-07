@@ -47,12 +47,13 @@ the lane's session had read:
 - **`fd/with-cpl/readout/fd_f0b_readout.json` and `fd/readout/fd_f0b_readout.json`:** their structure, and the
   first three entries of some bias, noise and z arrays, printed while the keys were being mapped.
 - **`fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json`:** the full per-cell pull vectors of the data
-  against all five predictions, Tune v1 included. They were printed in full while the keys were being mapped on
-  2026-11-07.
+  against all five predictions, Tune v1 included. They are the `variant` record's pulls, against C_total + V_g,
+  without C_resp + C_PL5D. They were printed in full while the keys were being mapped on 2026-11-07.
   - **Reading (3) is therefore not blind.** The pulls against Tune v1 that were seen are largest in R08 and R14
     (both above 3.9).
-- **The 16-cell f and the per-cell relative σ of every block**, including `s1_assembly.json`'s statistical σ. In
-  `values_fived16.tex` it is 0.2–0.3 % in R00–R03.
+- **The 16-cell f, and the per-cell relative σ of C_e, C_model, C_resp and their sum.** These were all 16 rows of
+  `fd/data-product/fd_data_product_cells.csv`, the product without C_PL,5D.
+- **The statistical σ in `values_fived16.tex`:** 0.2–0.3 % in R00–R03.
 
 **What this means for each rule:**
 - **A1 and A2 (§4) are likely to pass everywhere,** judging from the values already seen, though not all of them
