@@ -93,7 +93,7 @@ first, scontrol's TimeLimit checked, and the receipt committed as a PR.
 |---|---|
 | `nd-unfolding/rs1_a1_plan.py` | `stage`, `verify`, `expect` |
 | `nd-unfolding/sbatch_rs1_a1.sh` | the resume wrapper with the guard |
-| `nd-unfolding/tests/test_rs1_a1.py` | 28 tests: staging in each direction, the plan, the guard's three REQUIRED directions, the refusals, and the bound analysis accepting the fresh root's receipts |
+| `nd-unfolding/tests/test_rs1_a1.py` | 30 tests: staging in each direction, the plan, the guard's three REQUIRED directions, the refusals, and the bound analysis accepting the fresh root's receipts |
 | `nd-unfolding/tests/rs1_a1_mutation.py` | the harness: REQUIRED mutants for the guard (a teardown read as a failure, a pre-write failure read as a teardown, a second crash accepted, xargs aborting, crashed files kept), and one per staging rule and refusal |
 
 **ENS1 carries the same guard** in `sbatch_ens1.sh` (#899), with its own REQUIRED mutants (the director's ruling 5).
@@ -105,3 +105,34 @@ first, scontrol's TimeLimit checked, and the receipt committed as a PR.
    FD-STAB, RS1 and ENS1 are bound to, so it is a follow-up item with its own binding, not part of this resume.
 2. **Should the crash recur in the resume,** the guard recomputes the task once. Recurrent crashes would be reported
    with their tasks and exit codes, unrepaired.
+
+## 6. Connect 1's stop (Python 3.6) and its repair (2026-11-07)
+
+**What happened.** The first A1 connect (sha256 `deab082b…`) stopped at staging with rc 6 (stop receipt PR). It had
+submitted nothing and charged nothing.
+- **Before the stop,** every check passed: the fence, iris, attempt 1's digests and charges, the clones, the blobs and
+  the queue.
+- **The failure:** `python3 -I -B rs1_a1_plan.py stage` ran under the login node's `/usr/bin/python3`, which is
+  **3.6.15**. That interpreter rejects `from __future__ import annotations` (`rs1_a1_plan.py:20` at M_A1 `4fd5b9c2`).
+- **The same defect was in the wrapper.** `sbatch_rs1_a1.sh:42` ran `verify` before sourcing the environment (`:45`),
+  so under the system interpreter too.
+- **Why the tests missed it:** they ran under 3.12.
+
+**The repair (the director's rulings):**
+- **`rs1_a1_plan.py` is 3.6-compatible.** It has no future import, and its annotations use `typing` (`List`, `Dict`,
+  `Tuple`), which 3.6 evaluates when a function is defined.
+- **The wrapper sources `setup_salloc_env.sh` before its first planner call.** The source's log is held in a temporary
+  file and moved into `log-full` once `log-full` exists, so a refusal still writes nothing.
+- **The connect runs `stage` and `verify` in a subshell** that sources the deploy's `setup_salloc_env.sh`.
+- **The connect's preflight compiles and imports the planner under `/usr/bin/python3`,** as a 0 node-h login check:
+  `-m py_compile`, then an import. It refuses on any failure.
+- **Tests.**
+  - The stand-in environment puts a recording `python3` first on PATH, and a test requires every planner call
+    (`verify`, `expect`) to go through it. Its REQUIRED mutant moves `verify` back above the source.
+  - A static test requires the planner to parse at the 3.6 grammar, with no future annotations import and no
+    subscripted builtins in annotations. Its REQUIRED mutants restore each.
+
+**The partial root.** The stop had left `deploy/`, `a1/`, `queue.tsv`, `dry.tsv` and `logs/` (no products and no
+staging). It was deleted under a ledger row, by literal path. The listing and the check that each path was gone are in
+the stop receipt, and the logs were kept there first, each matching its listed sha256. The resume reruns at the bound
+root path.

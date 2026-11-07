@@ -71,6 +71,29 @@ class Expect(unittest.TestCase):
         self.assertEqual(names, set(a1.read_sums(rec / "log-dry" / "SHA256SUMS")))
 
 
+class Python36(unittest.TestCase):
+    """The cluster's /usr/bin/python3 is 3.6.15 (A1 connect 1's stop). The connect's preflight compiles and imports the
+    planner under it; this test holds the two 3.6 rules locally."""
+
+    def test_the_planner_is_python36_compatible(self):
+        import ast
+        src = PLAN.read_text()
+        tree = ast.parse(src, feature_version=(3, 6))
+        futures = [a.name for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module == "__future__"
+                   for a in n.names]
+        self.assertNotIn("annotations", futures)
+        bad = []
+        for n in ast.walk(tree):
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                anns = [a.annotation for a in n.args.args + n.args.kwonlyargs if a.annotation] + [n.returns]
+                for ann in anns:
+                    for sub in ast.walk(ann) if ann is not None else ():
+                        if isinstance(sub, ast.Subscript) and isinstance(sub.value, ast.Name) and \
+                                sub.value.id in ("list", "dict", "tuple", "set", "frozenset", "type"):
+                            bad.append(f"{n.name}: {sub.value.id}[...]")
+        self.assertEqual(bad, [])
+
+
 class Stage(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -265,8 +288,14 @@ class JobScript(unittest.TestCase):
         (self.stub / "lightgbm.py").write_text("__version__ = 'stub'\n")
         (self.stub / "scipy.py").write_text("")
         self.D, self.A1, self.OUT = t / "deploy", t / "a1", t / "root"
+        # The sourced environment puts its own python3 first on PATH, as the real setup_salloc_env.sh puts root_6_28's;
+        # this one records each call, so a test can tell which interpreter ran it.
+        self.envbin, self.calls = t / "envbin", t / "env-python-calls.txt"
+        self.envbin.mkdir()
+        (self.envbin / "python3").write_text(f'#!/bin/bash\necho "$*" >> {self.calls}\nexec {sys.executable} "$@"\n')
+        (self.envbin / "python3").chmod(0o755)
         self.pin = git_repo(self.D, {"nd-unfolding/runner.py": RUNNER,
-                                     "setup_salloc_env.sh": f"export PYTHONPATH={self.stub}\n"})
+                                     "setup_salloc_env.sh": f"export PYTHONPATH={self.stub}\nexport PATH={self.envbin}:$PATH\n"})
         self.a1pin = git_repo(self.A1, {"nd-unfolding/rs1_a1_plan.py": PLAN.read_text()})
         self.OUT.mkdir()
         (self.OUT / "log-dry").mkdir()
@@ -421,6 +450,17 @@ class JobScript(unittest.TestCase):
         L = self.OUT / "log-full"
         self.assertIn("could not move", (L / "a.failed").read_text())
         self.assertFalse((L / "a.end").exists())
+
+    def test_every_planner_call_runs_under_the_sourced_environment(self):
+        """REQUIRED (A1 connect 1's stop): verify and expect run under the job's environment, never the system python3
+        (3.6 on the cluster)."""
+        self.setup_plan([("a", "todo", "V", "-:6", ("CRASH",))])
+        r = self.job()
+        self.assertEqual(r.returncode, 0, r.stderr)
+        calls = self.calls.read_text()
+        self.assertIn("rs1_a1_plan.py verify --root", calls)
+        self.assertIn("rs1_a1_plan.py expect", calls)
+        self.assertTrue((self.OUT / "log-full" / "env.log").exists())
 
     def test_an_environment_without_lightgbm_is_refused(self):
         self.setup_plan([("a", "todo", "V", "-:1", ())])

@@ -1,12 +1,12 @@
-# RS1 addendum A1 mutation receipt, after audit #902 (W01-W11). Run locally, 2026-11-07T21:17:54Z, python 3.12.2, numpy 1.26.4.
+# RS1 addendum A1 mutation receipt, after A1 connect 1 stopped on Python 3.6 (the director rulings, items 1-3). Run locally, 2026-11-07T23:15:17Z, python 3.12.2, numpy 1.26.4.
 # Command: PYTHONDONTWRITEBYTECODE=1 python3 -B nd-unfolding/tests/rs1_a1_mutation.py (rc 0)
 # The W mutants are coverage-5b-audit sites with its anchors verbatim (#902 comment 6712619323).
 # sha256 of the files it ran on:
-#   01e0f82ba6baad5b9d2437f3ddac709253d9d126d9915f9bd58668e3f5812a9b  nd-unfolding/rs1_a1_plan.py
-#   d526f0cca205fa7b30c47fd98aaf6ee9b712a3bfa0b8de698b809d2221fcf96f  nd-unfolding/sbatch_rs1_a1.sh
-#   b5628d4b907aff34647071509724cf534a9c643f56e40f473b6ae05d57633cf2  nd-unfolding/tests/test_rs1_a1.py
-#   8d8bde9d69d9fc3dbf8157c72e96c6b1713d10eba9af6f79cbd31edbad7cab5a  nd-unfolding/tests/rs1_a1_mutation.py
-UNMUTATED SUITE: 28 tests, rc 0
+#   046a66b8534fcb3bce726fc89d70eb89ea63c2eef8b8b164f95d4f3aa9409e41  nd-unfolding/rs1_a1_plan.py
+#   c34512725d24408d9fbd5ed0693a2bb1713fd5aaa73bdd6ca43a05af16c560e7  nd-unfolding/sbatch_rs1_a1.sh
+#   04d02f5b6cf6863700d3603235c4d4660650b2e7c39386fe25c4fff729df7a06  nd-unfolding/tests/test_rs1_a1.py
+#   ee7ca2ce22d92a8e038e155f6ec71ded3052ddfed39e023214052ecadf192dd8  nd-unfolding/tests/rs1_a1_mutation.py
+UNMUTATED SUITE: 30 tests, rc 0
 KILLED    REQ teardown crash read as a failure       by test_a_teardown_crash_is_recomputed_once_and_compared
 KILLED    REQ pre-write failure read as a teardown   by test_a_failure_before_writing_is_a_failure_and_the_queue_continues
 KILLED    REQ a second crash accepted                by test_a_second_crash_is_a_failure
@@ -40,4 +40,7 @@ KILLED    W08 a1 plan file not required              by test_the_a1_clone_must_h
 KILLED    W09 mv failure ignored                     by test_a_failed_move_aside_is_a_failure_and_the_crashed_files_are_not_used
 KILLED    W10 attempt-1 STOP in log-dry accepted     by test_a_dry_run_that_left_stop_is_refused
 KILLED    W11 a file missing from sums still done    by test_a_file_missing_from_sha256sums_makes_a_task_todo
-MUTATION CHECK :: PASS (33 mutations)
+KILLED    REQ verify above the source                by test_every_planner_call_runs_under_the_sourced_environment
+KILLED    REQ the future import back                 by test_the_planner_is_python36_compatible
+KILLED    REQ a PEP 585 annotation back              by test_the_planner_is_python36_compatible
+MUTATION CHECK :: PASS (36 mutations)
