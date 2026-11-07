@@ -1,0 +1,80 @@
+# RS1 mutation receipt (RS1-BINDING-1.md ruling 3), after RS1-C1. Run locally, 2026-11-07T07:44:32Z, python 3.12.2, numpy 1.26.4.
+# Command: PYTHONDONTWRITEBYTECODE=1 python3 -B nd-unfolding/tests/rounding_mechanism_mutation.py (rc 0)
+# sha256 of the files it ran on:
+#   b2e6785837470d8ea815061e39df071e007a48459eb6b178d84e86ec03bde471  nd-unfolding/rounding_mechanism_probe.py
+#   5542278154f701d23fd79a62f7521ab397babef902cca58799e999e6bb50fe95  nd-unfolding/rounding_mechanism_analyze.py
+#   b4fc2f69131d292e5f8b6c23c7121c49f53a2e9129850b6b7c6ee0d3597f81b2  nd-unfolding/sbatch_rs1.sh
+#   e7d48236a67e2b89f56e9b0e72efdc6f57b2289ce02b542ef5f38a0bdf183d36  nd-unfolding/tests/test_rounding_mechanism.py
+#   fdddb9eef884884031b36145991d7c4e1e86f2862497349119fa9b339ff07f16  nd-unfolding/tests/rounding_mechanism_mutation.py
+UNMUTATED SUITE: 53 tests, rc 0
+KILLED    seed 0 is a jitter (E2)                    by test_seed_zero_is_the_upcast_and_a_jitter_differs_by_exactly_the_step
+KILLED    V steps by the spacing above               by test_order_is_strictly_preserved_across_powers_of_two
+KILLED    V keyed by row, not value                  by test_ties_are_kept_and_the_protocol_breaks_them
+KILLED    V moves grid edges                         by test_edges_unmoved_and_steps_within_half_the_spacing_toward_zero
+KILLED    F_k leaks the other axes                   by test_axis_k_carries_the_protocols_own_draws_and_the_others_none
+KILLED    S-ref's loop jittered                      by test_s_ref_jitters_only_the_refinement_and_s_omni_only_the_loop
+KILLED    S-omni's refinement jittered               by test_s_ref_jitters_only_the_refinement_and_s_omni_only_the_loop
+KILLED    S path drops the refined weights (G4)      by test_G4_s_all_is_a0_bitwise
+KILLED    alignment unchecked                        by test_an_s_arm_whose_second_build_differs_stops_with_rc5
+KILLED    alignment skips the counts                 by test_misaligned_experiments_are_refused_and_aligned_ones_pass
+KILLED    alignment skips the truth                  by test_misaligned_experiments_are_refused_and_aligned_ones_pass
+KILLED    max_bin not added                          by test_b_arm_max_bin_reaches_the_loop_and_the_refinement
+KILLED    refinement max_bin unverified              by test_a_refinement_without_max_bin_is_refused
+KILLED    P not permuted                             by test_p_arm_is_a_permutation_of_the_float64_base
+KILLED    trace drops the per-iteration functionals  by test_trace_sidecars
+KILLED    booster hidden from the bound probe        by test_the_bound_probes_leaf_counts_read_through_the_wrapper
+KILLED    namespace check skipped                    by test_undeclared_pair_wrong_truth_and_wrong_threads_are_refused_and_the_declared_run_is_not
+KILLED    undeclared pair allowed                    by test_undeclared_pair_wrong_truth_and_wrong_threads_are_refused_and_the_declared_run_is_not
+KILLED    threads unchecked                          by test_undeclared_pair_wrong_truth_and_wrong_threads_are_refused_and_the_declared_run_is_not
+KILLED    truth unchecked                            by test_undeclared_pair_wrong_truth_and_wrong_threads_are_refused_and_the_declared_run_is_not
+KILLED    write without the check                    by test_a_write_without_the_namespace_check_is_refused
+KILLED    names not restored                         by test_names_are_restored_after_an_error
+KILLED    traced arm without U                       by test_a_traced_arm_without_u_is_refused
+KILLED    pairs as two tokens                        by test_every_queue_line_passes_the_real_parsers_and_rs1s_check
+KILLED    tasks of five                              by test_the_declared_counts
+KILLED    S-all dropped from the dry run             by test_the_declared_counts
+KILLED    ten seeds                                  by test_constants_match_the_declaration
+KILLED    S-all at twenty seeds                      by test_constants_match_the_declaration
+KILLED    no receipt graded                          by test_no_receipt_grades_nothing
+KILLED    FAILED beside the receipt ignored          by test_no_receipt_grades_nothing
+KILLED    G1 ignored                                 by test_g1_failure_reads_nothing
+KILLED    G1 references unpinned                     by test_a_reference_that_is_not_fdstabs_pinned_product_is_refused
+KILLED    G4 ignored                                 by test_g4_failure_leaves_k5_unread
+KILLED    G2 / exclusion never invalidates           by test_zero_spread_functionals_are_excluded_and_too_many_invalidate
+KILLED    C band moved                               by test_bands_read_in_each_direction
+KILLED    R band moved                               by test_bands_read_in_each_direction
+KILLED    DEFINITE from the point alone              by test_an_interval_across_a_band_edge_is_inconclusive
+KILLED    unpaired bootstrap                         by test_a_paired_identical_arm_reads_exactly_one
+KILLED    sets need not agree                        by test_rules
+KILLED    K1 inverted                                by test_rules
+KILLED    K2 without its upper end                   by test_rules
+KILLED    K3 bitwise ignored                         by test_rules
+KILLED    K4 threshold strict                        by test_rules
+KILLED    K5 inverted                                by test_rules
+KILLED    D over all functionals                     by test_base_difference
+KILLED    bands retyped                              by test_constants_match_the_declaration
+KILLED    seed set unchecked                         by test_product_refusals
+KILLED    stability input unchecked                  by test_product_refusals
+KILLED    arm unchecked                              by test_product_refusals
+KILLED    R0 cell order unchecked                    by test_each_control_refuses
+KILLED    R0 C_e identity unchecked                  by test_each_control_refuses
+KILLED    R0 printed control unchecked               by test_each_control_refuses
+KILLED    R0 sigma_J read as relative                by test_r0_reads_with_its_controls_and_an_undefined_cell
+KILLED    R0b defined everywhere                     by test_r0_reads_with_its_controls_and_an_undefined_cell
+KILLED    expected input digests unchecked           by test_undeclared_pair_wrong_truth_and_wrong_threads_are_refused_and_the_declared_run_is_not
+KILLED    product input digests unchecked            by test_product_refusals
+KILLED    code consistency unchecked                 by test_one_code_across_all_products
+KILLED    one code digest dropped                    by test_one_code_across_all_products
+KILLED    a missing code digest passes               by test_one_code_across_all_products
+KILLED    pins not compared in the analysis          by test_dry_and_full_pins_must_agree
+KILLED    dry receipt not required by the analysis   by test_dry_and_full_pins_must_agree
+KILLED    full run at another pin                    by test_full_refuses_a_dry_run_at_another_pin
+KILLED    DONE without the pin                       by test_dry_then_full_skips_the_dry_tasks_and_writes_done
+KILLED    pin unchecked                              by test_a_dirty_deploy_is_refused
+KILLED    existing log reused                        by test_an_existing_log_and_a_wrong_pin_are_refused
+KILLED    full without a dry receipt                 by test_full_refuses_without_a_dry_receipt
+KILLED    a failed task still writes DONE            by test_a_failed_task_leaves_no_receipt
+KILLED    dry tasks re-run in the full run           by test_dry_then_full_skips_the_dry_tasks_and_writes_done
+KILLED    environment unchecked                      by test_an_environment_without_lightgbm_is_refused
+MUTATION CHECK :: PASS (69 mutations)
+rc=0
