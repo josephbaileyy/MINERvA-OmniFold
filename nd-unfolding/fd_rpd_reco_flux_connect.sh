@@ -17,7 +17,12 @@ export FD_RPD_RECO_CONNECT_ID
 FD_RPD_RECO_CONNECT_ID=$("$reco_python" -c 'import uuid;print(uuid.uuid4())')
 # This must precede source. Existing instrument pins the shared setup and all scripts it sources.
 "$reco_python" "$reco_checkout/nd-unfolding/fd_rpd_inputs.py" check-mat-setup --r "$reco_run"
-source /pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh
+# Conda activation reads unset variables; checked MAT postconditions decide readiness.
+set +u
+reco_setup_rc=0
+source /pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh || reco_setup_rc=$?
+set -u
+printf 'MAT setup exit status: %s\n' "$reco_setup_rc" >&2
 # The setup changes TMPDIR to shared scratch; restore the run-local directory afterwards.
 export TMPDIR="$reco_run/tmp"
 mkdir -p "$TMPDIR"

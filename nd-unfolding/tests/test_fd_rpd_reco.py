@@ -6,6 +6,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -3027,3 +3028,71 @@ def test_prologue_prepare_opens_no_declared_data(
     assert digest == R.digest(run / "prologue-prepare.json")
     assert not (run / "original-inputs").exists()
     assert not (run / "mat-data").exists()
+
+
+def test_connect_mat_setup_disables_nounset() -> None:
+    """Every live MAT connect suspends nounset during setup sourcing."""
+    sources = 0
+    for path in (REPO / "nd-unfolding").rglob("*_connect.sh"):
+        nounset = False
+        for line in path.read_text().splitlines():
+            if not line.lstrip().startswith(("set ", "source ", ". ")):
+                continue
+            words = shlex.split(line, comments=True)
+            if not words:
+                continue
+            if words[0] == "set":
+                for option in words[1:]:
+                    if option.startswith("-") and "u" in option:
+                        nounset = True
+                    elif option.startswith("+") and "u" in option:
+                        nounset = False
+            if (
+                words[0] in {"source", "."}
+                and len(words) > 1
+                and Path(words[1]).name == "setup_salloc_env.sh"
+            ):
+                sources += 1
+                assert not nounset, f"{path}: MAT setup sourced under nounset"
+    assert sources == 2
+
+
+@pytest.mark.parametrize(
+    "wrapper", ["fd_rpd_reco_prologue_connect.sh", "fd_rpd_reco_flux_connect.sh"]
+)
+@pytest.mark.parametrize("setup_rc", [0, 7])
+def test_connect_mat_activation_preserves_shell_options(
+    tmp_path: Path, wrapper: str, setup_rc: int
+) -> None:
+    """Activation may use unset variables and return nonzero before postchecks."""
+    setup = tmp_path / "setup_salloc_env.sh"
+    setup.write_text(
+        'printf "activation stderr: %s\\n" "$RPD_UNSET_ACTIVATION_TEST" >&2\n'
+        f"return {setup_rc}\n"
+    )
+    script = (REPO / "nd-unfolding" / wrapper).read_text()
+    start = script.index("set +u\n")
+    stop = script.index("# The setup changes TMPDIR", start)
+    block = script[start:stop]
+    source = next(
+        shlex.split(line)[1]
+        for line in block.splitlines()
+        if line.startswith("source ")
+    )
+    block = block.replace(source, shlex.quote(str(setup)))
+    program = (
+        "set -euo pipefail\nunset RPD_UNSET_ACTIVATION_TEST\n"
+        + block
+        + '[[ "$-" == *u* && "$-" == *e* ]]\n'
+        + '[[ "$(set -o pipefail)" == *on ]]\n'
+        + 'printf "postcondition reached: %s\\n" "$reco_setup_rc"\n'
+        + "false\nprintf 'unreachable\\n'\n"
+    )
+    completed = subprocess.run(
+        ["bash", "-c", program], capture_output=True, text=True, check=False
+    )
+    assert completed.returncode == 1
+    assert completed.stdout == f"postcondition reached: {setup_rc}\n"
+    assert "activation stderr:" in completed.stderr
+    assert f"MAT setup exit status: {setup_rc}" in completed.stderr
+    assert "unbound variable" not in completed.stderr
