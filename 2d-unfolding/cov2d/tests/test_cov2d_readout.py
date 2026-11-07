@@ -135,6 +135,11 @@ class Tree:
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_bytes(k.encode())
             self.pins[k] = (str(p), sha(k.encode()))
+        (self.g / "bf").mkdir()
+        import cov2d_blocks as cb_
+        for pl in cb_.rollup().BR.PLAYLISTS:
+            for kind in ("MC", "Data"):
+                (self.g / "bf" / f"runEventLoop{kind}_{pl}.root").write_bytes(f"{kind}{pl}".encode())
         self.origin = {}
 
     def build_truth(self, t: str, r):
@@ -265,7 +270,7 @@ class Base(unittest.TestCase):
             (cb, "AUDIT", None), (cb.OpenAudit.__init__, "__defaults__", ((str(T.g),),)),
             (cb, "pinned_mat_environment", lambda: {"stub": "MAT"}),
             (cb, "c_model", lambda: (T.C_model, T.C_minus, {"cells": T.flat})),
-            (cb, "C08_R_FILE", T.c08), (cb, "noatime_inputs", lambda ro_, tmp, files: {k: v[1] for k, v in files.items()}),
+            (cb, "C08_R_FILE", T.c08), (ro, "BF", str(T.g / "bf")),
             (ro, "NS_R", str(T.ns)), (ro, "partb_sums", lambda: {"ER/xsec.root": sha(b"ER")}),
             (ro, "Cells", FakeCells), (ro, "flux_weights", lambda: (np.linspace(0.5, 1.5, 100), np.ones(3))),
             (ro, "x01", lambda cells, paths, phi, tag: np.stack([tree.vec[Path(p).read_bytes().decode()] for p in paths])),
@@ -299,8 +304,11 @@ class Base(unittest.TestCase):
         self.addCleanup(lambda: cb.AUDIT is not None and cb.AUDIT.uninstall())
 
     def null(self, t="G18"):
-        rec = rd.phase_null(t, self.out, str(self.tree.run))
-        return rec
+        """One phase N; noatime_inputs repoints the rollup's globals at its private copies (one truth per process in a
+        real run), so each call here starts from the fixture's own."""
+        ro = cb.rollup()
+        with mock.patch.object(ro, "BF", str(self.tree.g / "bf")), mock.patch.dict(ro.PIN, self.tree.pins):
+            return rd.phase_null(t, self.out, str(self.tree.run))
 
     def commit(self, t="G18", rec_bytes=None, npz_bytes=None):
         nb = rec_bytes if rec_bytes is not None else (self.out / f"null_{t}.json").read_bytes()
@@ -323,6 +331,10 @@ class PhaseN(Base):
             self.assertEqual(rec["M"], "M0")
             self.assertEqual(rec["blocks_npz_sha256"], sha((self.out / f"blocks_{t}.npz").read_bytes()))
             self.assertLessEqual(rec["null"]["match_rel"], 1e-12)
+            ro = cb.rollup()       # the real noatime_inputs: every pinned rollup input and 2 x playlists flux/POT copies
+            self.assertEqual({k: rec["inputs"][k] for k in rd.ROLLUP_PINS}, {k: v[1] for k, v in self.tree.pins.items()})
+            self.assertEqual(len([k for k in rec["inputs"] if k.startswith(str(self.tree.g / "bf"))]),
+                             2 * len(ro.BR.PLAYLISTS))
 
     def peek(self, how):
         T = self.tree
@@ -361,6 +373,16 @@ class PhaseN(Base):
         with mock.patch.object(rd, "COMPLETENESS", (self.tree.comp[0], "0" * 64)):
             with self.assertRaises(c.Refusal):
                 self.null("G18")
+
+    def test_an_inventory_file_outside_its_job_window_stops(self):
+        p = self.tree.run / "pseudo/AR23-a2/b/truth_xsec.npz"
+        st = p.stat()
+        hi = rd.epoch_pst(rd.JOB_WINDOW["AR23"][1])
+        os.utime(p, (hi + 5, hi + 5))
+        self.addCleanup(os.utime, p, ns=(st.st_atime_ns, st.st_mtime_ns))
+        rec = self.null("AR23")
+        self.assertEqual(rec["verdict"], "STOP")
+        self.assertTrue(any("truth_xsec_npz: mtime" in x for x in rec["identity"]["problems"]))
 
     def test_non_toy_code_differs_is_invalid(self):
         lab = "U_G18_Flux_3"
@@ -487,6 +509,20 @@ class PhaseS(Base):
         self.toy_field("T_G18_5720204", cfg={"data_file": f"{self.tree.run}/pseudo/G18/b/data_5720205.root"})
         self.assert_invalid("not its toy's")
 
+    def test_truth_rows_out_of_natures_order_refuse(self):
+        p = self.tree.run / "pseudo/G18/b/truth_xsec.npz"
+        old, st = p.read_bytes(), p.stat()
+        z = np.load(io.BytesIO(old))
+        seeds = np.array(z["seeds"])
+        seeds[[0, 1]] = seeds[[1, 0]]
+        np.savez(p, xsec=z["xsec"], seeds=seeds)
+        os.utime(p, ns=(st.st_atime_ns, st.st_mtime_ns))
+        self.addCleanup(lambda: (p.write_bytes(old), os.utime(p, ns=(st.st_atime_ns, st.st_mtime_ns))))
+        self.null("G18")        # a fresh null record over the changed file, so the gate passes
+        cb.AUDIT = None
+        self.assertEqual(self.score(), 2)
+        self.assertRegex(self.refused(), "not pseudo_a's natures in order")
+
     def test_toy_seeds_not_declared_refuse(self):
         pa = self.tree.rec / "pseudo/G18/pseudo_a.json"
         rec = json.loads(pa.read_text())
@@ -546,6 +582,14 @@ class Pure(unittest.TestCase):
         c_["out"] = f"{self.tree.run}/out/B_G18_001/xsec.root"
         p["runConfig"] = json.dumps(c_)
         self.assertTrue(any("runConfig out" in x for x in self.check("X_G18", p, code=CODE)))
+
+    def test_plan_refuses_an_undeclared_toy_set(self):
+        comp = {lab: {} for lab in labels_of("G18")}
+        rd.plan("G18", comp)
+        comp.pop("T_G18_5720007")
+        comp["T_G18_5729999"] = {}
+        with self.assertRaisesRegex(c.Refusal, "declared seeds"):
+            rd.plan("G18", comp)
 
     def test_one_code(self):
         self.assertEqual(rd.one_code({"a": CODE, "b": CODE}), (CODE, []))
