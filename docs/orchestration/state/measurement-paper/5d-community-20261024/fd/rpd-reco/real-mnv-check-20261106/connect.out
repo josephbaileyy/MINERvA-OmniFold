@@ -1,0 +1,164 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3115c0s15b0n0:
+
+remote-sha 908d313f12a7bfb65f8505015c097fd6cb2941c874e83955c4a3675d7a409d35
+node login27 2026-11-06T22:39:37Z
+connect script sha256 908d313f12a7bfb65f8505015c097fd6cb2941c874e83955c4a3675d7a409d35
+== COV2D fence (RECORDED line; this check reads no COV2D input)
+60909280|cov2d-AR23_Tb|RUNNING|2:04:40|7:38:00
+60911676|cov2d-AR23_Tc|RUNNING|1:57:26|7:38:00
+fence squeue rc=0
+== fresh clone at d9740563f014c1642546edf314559887003b9920
+HEAD d9740563f014c1642546edf314559887003b9920; porcelain lines 0
+probe sha256 d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840 (pin d9704aa45c016b044284d9e3cfc8c6d5c07cda0835a445866d5f792c8ac82840)
+blob afdff2a451e71b94595881ae2c34c4d95754e9e8 sha256 d11f98d5e6e721c8daf1f9ef5ba2a1032c5c7645d8881658f0b52e224a0609c8 nd-unfolding/tests/fd_rpd_reco_mat_check.py
+blob 36d334dd21eb13e78aa75b8744d5f588887eab0f sha256 6e5df35d48f398be18582e6635a5ffd6c977864a5663214babd9b697fc091847 nd-unfolding/fd_rpd_reco.py
+blob 7c2e018f1169a9be0c5642daab991c664acbefcf sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70 nd-unfolding/fd_rpd_inputs.py
+== check-mat-setup (before sourcing)
+{"mat_setup_scripts": 6, "mismatches": 0}
+check-mat-setup rc=0
+source rc=0; setup log lines 0
+env: MAT_PYTHON=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14; python3 on PATH /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3; PLOTUTILSROOT=[/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib]; MINERVA_PREFIX=[/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt]; ROOTSYS=[/global/homes/j/josephrb/.conda/envs/root_6_28]
+== /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 nd-unfolding/tests/fd_rpd_reco_mat_check.py --probe docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/timing-20261106/flux-gen2thin-pdg-14-minervame1M_rearrangedUniverses.root --run /dev/shm/limres-rpd-mnv-20261106/run/probe
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+ *** Break *** segmentation violation
+
+
+
+===========================================================
+There was a crash.
+This is the entire stack trace of all threads:
+===========================================================
+#0  0x00007fb9f2d4f143 in wait4 () from /lib64/libc.so.6
+#1  0x00007fb9f2ca16cb in do_system () from /lib64/libc.so.6
+#2  0x00007fb9e61e986b in TUnixSystem::StackTrace() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#3  0x00007fb9e63a6af0 in (anonymous namespace)::TExceptionHandlerImp::HandleException(int) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libcppyy_backend3_11.so.6.28
+#4  0x00007fb9e61e9051 in TUnixSystem::DispatchSignals(ESignals) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#5  <signal handler called>
+#6  0x00007fb9e61389bd in TList::Delete(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#7  0x00007fb9e612f87b in THashList::Delete(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#8  0x00007fb9e486f076 in TDirectoryFile::Close(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so
+#9  0x00007fb9e488fa85 in TFile::Close(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so
+#10 0x00007fb9c43d7049 in ?? ()
+#11 0x0000562101b0a550 in ?? ()
+#12 0x00007ffca44ef440 in ?? ()
+#13 0x00005620ff7da1e0 in ?? ()
+#14 0x00000000c43d1013 in ?? ()
+#15 0x0000000000000000 in ?? ()
+===========================================================
+
+
+The lines below might hint at the cause of the crash. If you see question
+marks as part of the stack trace, try to recompile with debugging information
+enabled and export CLING_DEBUG=1 environment variable before running.
+You may get help by asking at the ROOT forum https://root.cern/forum
+Only if you are really convinced it is a bug in ROOT then please submit a
+report at https://root.cern/bugs Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+===========================================================
+#6  0x00007fb9e61389bd in TList::Delete(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#7  0x00007fb9e612f87b in THashList::Delete(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#8  0x00007fb9e486f076 in TDirectoryFile::Close(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so
+#9  0x00007fb9e488fa85 in TFile::Close(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so
+#10 0x00007fb9c43d7049 in ?? ()
+#11 0x0000562101b0a550 in ?? ()
+#12 0x00007ffca44ef440 in ?? ()
+#13 0x00005620ff7da1e0 in ?? ()
+#14 0x00000000c43d1013 in ?? ()
+#15 0x0000000000000000 in ?? ()
+===========================================================
+
+
+ *** Break *** segmentation violation
+
+
+
+===========================================================
+There was a crash.
+This is the entire stack trace of all threads:
+===========================================================
+#0  0x00007fb9f2d4f143 in wait4 () from /lib64/libc.so.6
+#1  0x00007fb9f2ca16cb in do_system () from /lib64/libc.so.6
+#2  0x00007fb9e61e986b in TUnixSystem::StackTrace() () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#3  0x00007fb9e63a6965 in (anonymous namespace)::TExceptionHandlerImp::HandleException(int) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libcppyy_backend3_11.so.6.28
+#4  0x00007fb9e61e9051 in TUnixSystem::DispatchSignals(ESignals) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#5  <signal handler called>
+#6  0x00007fb9e61389bd in TList::Delete(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#7  0x00007fb9e612f87b in THashList::Delete(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#8  0x00007fb9e486f076 in TDirectoryFile::Close(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so
+#9  0x00007fb9e488fa85 in TFile::Close(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so
+#10 0x00007fb9c43d7049 in ?? ()
+#11 0x0000562101b0a550 in ?? ()
+#12 0x00007ffca44ef440 in ?? ()
+#13 0x00005620ff7da1e0 in ?? ()
+#14 0x00000000c43d1013 in ?? ()
+#15 0x0000000000000000 in ?? ()
+===========================================================
+
+
+The lines below might hint at the cause of the crash. If you see question
+marks as part of the stack trace, try to recompile with debugging information
+enabled and export CLING_DEBUG=1 environment variable before running.
+You may get help by asking at the ROOT forum https://root.cern/forum
+Only if you are really convinced it is a bug in ROOT then please submit a
+report at https://root.cern/bugs Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+===========================================================
+#6  0x00007fb9e61389bd in TList::Delete(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#7  0x00007fb9e612f87b in THashList::Delete(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libCore.so.6.28
+#8  0x00007fb9e486f076 in TDirectoryFile::Close(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so
+#9  0x00007fb9e488fa85 in TFile::Close(char const*) () from /global/u2/j/josephrb/.conda/envs/root_6_28/lib/libRIO.so
+#10 0x00007fb9c43d7049 in ?? ()
+#11 0x0000562101b0a550 in ?? ()
+#12 0x00007ffca44ef440 in ?? ()
+#13 0x00005620ff7da1e0 in ?? ()
+#14 0x00000000c43d1013 in ?? ()
+#15 0x0000000000000000 in ?? ()
+===========================================================
+
+
+mat_check rc=129
+== subshell rc=129
+== FILE /dev/shm/limres-rpd-mnv-20261106/run/matenv.log sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+== END /dev/shm/limres-rpd-mnv-20261106/run/matenv.log
+== ABSENT /dev/shm/limres-rpd-mnv-20261106/run/probe/real-mnv-check.json
+total 3064
+drwxrwx--- 2 josephrb josephrb      60 Nov  6 14:40 .
+drwxrwx--- 4 josephrb josephrb     100 Nov  6 14:40 ..
+-rw-rw---- 1 josephrb josephrb 3136251 Nov  6 14:40 non-input-probe.root
+== rpd-mnv-check rc=129 2026-11-06T22:40:09Z
+script-rc=129
