@@ -24,8 +24,9 @@ The director made two rulings on this lane's two questions of 2026-11-07, both g
 
 **MEASURES (once bound and run):** for each of the 16 reporting cells R00–R15:
 - whether it is valid under two separately labelled rules, V-ATLAS (§4) and V-PRIOR (§5);
-- within the valid cells under each rule, whether the data's departure from the simulation's prior differs
-  between cells of the same (p_T, p_∥) quadrant (§6). Such cells are distinguished only by E_avail, q_3 or W.
+- within the valid cells under each rule, descriptively, the data's departure from the simulation's prior and its
+  contrasts between cells of the same (p_T, p_∥) quadrant, which are distinguished only by E_avail, q_3 or W (§6).
+  Reading (3) has no class and no sentence (audit VR-1).
 
 **CANNOT AUTHORIZE:** any paper or note wording; any change to the reported result, its cells or its covariance;
 any reading of non-valid cells as excluded, wrong or unreported; anything outward. Wording comes later, through a
@@ -99,7 +100,8 @@ and "spread" do not occur in it (`pdftotext -layout SM.pdf - | grep -c -i -E 'pr
 - **V-ATLAS** is the guide's own thresholds, adapted per cell (§4).
 - **V-PRIOR** is the advisor's idea as relayed (§5). Its threshold is labelled as this lane's operationalization
   of "comparable", not ATLAS's.
-- Reading (3) is made within the cells valid under each rule, and reported separately for each.
+- Reading (3) is made within the cells valid under each rule, and reported separately for each. Revision 2 makes
+  it descriptive only, after audit VR-1, which the director accepted (§6).
 - The director is asking Joseph whether the advisor had a specific source for the prior-spread metric. If one is
   named, V-PRIOR is adjusted before the binding.
 
@@ -274,68 +276,46 @@ from the prior spread like the generators' departures.
 - **So ρ compares two spreads over different sets.** It is an indicator of the size of the bias relative to the
   model spread, not a measured fraction of the prior that is retained.
 
-## 6. Reading (3): within the valid cells, does the departure from the prior sit in the extra dimensions?
+## 6. Reading (3): descriptive only (audit VR-1)
+
+**Revision 2, coverage-5b-audit's VR-1 on #892 at `91c99caf`, accepted by the director on 2026-11-07:** reading
+(3) carries no class and no combined sentence. It prints the quantities below and nothing else.
+
+**Why:** the full per-cell pulls of the data against the prior were seen before this declaration (§0). Reading (3)'s
+z_c is the same contrast against a larger covariance. A class such as "localized in the extra dimensions", which
+needs only one valid pair at 3σ, was therefore foreseeable in some quadrants. A class name or a sentence would be
+cited alone as a test result.
+
+**Every operand of reading (3) was seen before,** as the per-cell pulls against Tune v1. So no blind version of
+this reading is possible with these inputs.
+
+**The revision-1 classes and sentence are withdrawn:**
+- the quadrant status ("2D departure" and the others);
+- the per-quadrant classes ("localized in the extra dimensions", "not localized at the resolved size", "not
+  testable", "unresolved");
+- the per-rule combined sentence.
+
+No bar applies in this section.
 
 **Its inputs:** f and the reported covariance C (I4); the prior g_P and its V_P = (`sigma_Vg_over_f`_P · f)² (I3).
 
-**The quantities:**
-- **Per cell:** the departure r_c = f_c/g_P,c − 1. Its covariance is
-  R = diag(1/g_P) C diag(1/g_P) + diag(f² V_P / g_P⁴). The pull is z_c = r_c/√R_cc, printed.
-- **Per quadrant**, over all four cells, valid or not, because this is the two-dimensional-level quantity:
-  r_Q = Σ_Q f / Σ_Q g_P − 1. Its σ_Q is from the same linearization, with the full C on the quadrant's cells, and
-  z_Q = r_Q/σ_Q.
-- **The contrast between valid cells i and j of the same quadrant:**
-  z_ij = (r_i − r_j)/√(R_ii + R_jj − 2R_ij).
-  - It uses the full covariance, including the correlation between i and j.
-  - The readout names the axes, among E_avail, q_3 and W, on which the boxes of i and j differ.
+**What is printed:**
+- **Per cell, for all 16 cells:** the departure r_c = f_c/g_P,c − 1. Its covariance is
+  R = diag(1/g_P) C diag(1/g_P) + diag(f² V_P / g_P⁴), and the pull is z_c = r_c/√R_cc.
+- **Per quadrant**, over all four cells, the two-dimensional-level quantity (§3): r_Q = Σ_Q f / Σ_Q g_P − 1, its σ_Q
+  from the same linearization with the full C on the quadrant's cells, and z_Q = r_Q/σ_Q.
+- **Per rule X (V-ATLAS, V-PRIOR) and quadrant,** the cells valid under X. For every pair (i, j) of them:
+  - the contrast r_i − r_j;
+  - its σ_ij = √(R_ii + R_jj − 2R_ij), with the full covariance, including the correlation between i and j;
+  - z_ij = (r_i − r_j)/σ_ij;
+  - the resolved size 3σ_ij;
+  - the axes, among E_avail, q_3 and W, on which the boxes of i and j differ. By §3, these are the only axes on
+    which they can differ.
+- **Per rule:** the number of contrasts printed. At most 4 × 6 = 24 per rule. Taken independently, the chance of
+  at least one |z| ≥ 3 by chance among 24 is at most about 0.065.
 
-**The bars** (as in the per-period lane): |z| ≥ 3 is positive, |z| ≤ 2 is null, and anything between is
-unresolved.
-
-**The quadrant status** does not depend on the validity rule:
-
-| status | condition |
-|---|---|
-| "2D departure" | \|z_Q\| ≥ 3 |
-| "no 2D departure" | \|z_Q\| ≤ 2 |
-| "2D departure unresolved" | otherwise |
-
-**The class of reading (3) in quadrant Q under rule X** (X is V-ATLAS or V-PRIOR; V_Q is Q's cells that are valid
-under X):
-
-| class | condition |
-|---|---|
-| "not applicable (no 2D departure in Q)" | Q's status is "no 2D departure" |
-| "unresolved (2D departure unresolved)" | Q's status is "2D departure unresolved" |
-| "not testable (fewer than two valid cells)" | Q's status is "2D departure", and \|V_Q\| < 2 |
-| **"localized in the extra dimensions"** | Q's status is "2D departure", and some pair in V_Q has \|z_ij\| ≥ 3 |
-| "not localized at the resolved size" | Q's status is "2D departure", and every pair in V_Q has \|z_ij\| ≤ 2 |
-| "unresolved" | otherwise |
-
-**"Localized in the extra dimensions" means exactly this:** within a quadrant whose 2D-level departure is resolved,
-two valid cells, which by §3 differ only in E_avail, q_3 or W, depart from the prior by amounts that differ at 3σ
-under the full covariance.
-- Printed beside the class, with no class of its own: whether the departure is carried by particular cells, that
-  is, a valid cell with |z_c| ≥ 3 beside a valid cell with |z_c| ≤ 2.
-- Also printed: the resolved size of each contrast, 3·√(R_ii + R_jj − 2R_ij).
-
-**The combined sentence per rule X**, chosen by these conditions:
-
-| condition | sentence |
-|---|---|
-| any quadrant is localized | "Under X, within the valid cells, the data's departure from the prior in quadrant(s) {Q…} differs between cells distinguished by {axes}." |
-| no quadrant is localized, and at least one is "not localized at the resolved size" | "Under X, within the valid cells, the data's departure from the prior is not resolved into E_avail, q_3 or W at the resolved size." |
-| neither of the above | "Under X, reading (3) is not testable in the valid cells." (or "unresolved", as the classes are) |
-
-**Multiplicity, disclosed.**
-- At most 4 × 6 = 24 contrasts are tested per rule, and the bar is per contrast.
-- Taken independently, the chance of at least one false |z| ≥ 3 is at most about 0.065.
-- The readout prints the number of contrasts tested under each rule. No correction is applied.
-
-**A null result is a result.** "Not localized at the resolved size" and "not testable" are reported with the same
-prominence as a positive.
-
-**The data/prior pattern over all 16 cells** (r_c, z_c) is printed once as context, with no class.
+**What reading (3) is citable for:** the printed quantities, labelled "computed after the pulls against the prior
+were seen (L4)". It is not citable as a test, or for the words "localized" or "not localized".
 
 ## 7. Controls (any failure: exit 3, nothing classified, no reading printed)
 
@@ -365,9 +345,11 @@ compared:
 - the controls;
 - per cell: the A1–A3 inputs and class, the V-ATLAS class, S_b and S_g (four values each), ρ (four), the
   V-PRIOR class, the sensitivity classes, C_model's relative σ, r_c and z_c;
-- per quadrant: r_Q, z_Q and the status;
-- per rule: V_Q, every contrast with its axes and resolved size, the class, and the combined sentence;
+- per quadrant: r_Q and z_Q;
+- per rule: V_Q, and every contrast with its axes and resolved size;
 - the numbers of contrasts.
+
+Reading (3) prints no class and no sentence (§6).
 
 **The receipts** go in `receipts/read/`: the stdout and stderr of the run, the environment (Python and numpy
 versions), and a `SHA256SUMS`.
@@ -391,7 +373,8 @@ mutant must be killed.
 
 **CITABLE FOR:**
 - per cell, the V-ATLAS and V-PRIOR classes, with their inputs as defined here;
-- per quadrant and per rule, reading (3)'s class and its contrasts;
+- reading (3)'s printed quantities only: r_c, z_c, r_Q, z_Q and the contrasts, each labelled "computed after the
+  pulls against the prior were seen (L4)";
 - the record that the ATLAS User Guide states no prior-spread validity rule (§1, re-runnable).
 
 **NOT CITABLE FOR:**
@@ -404,6 +387,8 @@ mutant must be killed.
   relayed;
 - **a non-valid cell as excluded, wrong or unreported.** The reported result and its covariance are unchanged;
 - **held-out truths.** The truths are not held out (`paper_body.tex:168`);
+- **that the 2D mismodeling is localized in the extra dimensions, or that it is not,** in either direction;
+- **reading (3) as a test** (§6, audit VR-1);
 - **guide item 5.** It is not met (§4).
 
 ## 11. Limits
@@ -417,7 +402,8 @@ truths whose departures match the generators'.
 **L3: few elements per spread.** S_g rests on 3 or 4 generators per cell, and S_b on 8 or 10 truths. Those truths
 are correlated by family: four share the NuWro vertex.
 
-**L4: reading (3) is not blind** (§0). The pulls against Tune v1 were seen before this declaration.
+**L4: reading (3) is not blind** (§0). The pulls against Tune v1 were seen before this declaration, so reading (3) is
+descriptive only (§6).
 
 **L5: the quadrant is the coarsest two-dimensional region.** "The identified region of the 2D mismodeling" is read
 at quadrant granularity, because that is what the 16 cells resolve (§3). A finer two-dimensional region is outside
