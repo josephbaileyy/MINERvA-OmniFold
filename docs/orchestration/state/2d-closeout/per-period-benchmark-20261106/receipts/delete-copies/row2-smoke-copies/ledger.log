@@ -1,0 +1,12 @@
+node login36 2026-11-07T07:04:36.984Z python 3.6.15
+before /pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies f 1272641 cov_ptpl_minerva_inclusive_6GeV.root
+before /pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies f 62334 pu_PA_b01__xsec.root
+sha256 (O_NOATIME) /pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies/cov_ptpl_minerva_inclusive_6GeV.root 6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3 declared 6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3 OK
+sha256 (O_NOATIME) /pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies/pu_PA_b01__xsec.root 32806b61e6800f9b157143ccd33b92e64f88c8dfa5bfaa62444d014795dbf5b4 declared 32806b61e6800f9b157143ccd33b92e64f88c8dfa5bfaa62444d014795dbf5b4 OK
+2026-11-07T07:04:36.989Z rm /pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies/cov_ptpl_minerva_inclusive_6GeV.root
+2026-11-07T07:04:36.990Z rm /pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies/pu_PA_b01__xsec.root
+2026-11-07T07:04:36.990Z rmdir /pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies
+after absent /pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies/cov_ptpl_minerva_inclusive_6GeV.root
+after absent /pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies/pu_PA_b01__xsec.root
+after absent /pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies
+rc 0 at 2026-11-07T07:04:36.992Z

@@ -1,0 +1,46 @@
+{
+ "host": "login36",
+ "python": "3.6.15",
+ "start": "2026-11-07T07:04:36.984Z",
+ "roots": {
+  "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies": {
+   "declared": {
+    "cov_ptpl_minerva_inclusive_6GeV.root": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+    "pu_PA_b01__xsec.root": "32806b61e6800f9b157143ccd33b92e64f88c8dfa5bfaa62444d014795dbf5b4"
+   },
+   "before": [
+    [
+     "f",
+     1272641,
+     "cov_ptpl_minerva_inclusive_6GeV.root"
+    ],
+    [
+     "f",
+     62334,
+     "pu_PA_b01__xsec.root"
+    ]
+   ],
+   "measured": {
+    "cov_ptpl_minerva_inclusive_6GeV.root": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+    "pu_PA_b01__xsec.root": "32806b61e6800f9b157143ccd33b92e64f88c8dfa5bfaa62444d014795dbf5b4"
+   },
+   "removed": [
+    [
+     "2026-11-07T07:04:36.989Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies/cov_ptpl_minerva_inclusive_6GeV.root"
+    ],
+    [
+     "2026-11-07T07:04:36.990Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies/pu_PA_b01__xsec.root"
+    ]
+   ],
+   "rmdir": [
+    "2026-11-07T07:04:36.990Z",
+    "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/connect1/smoke-copies"
+   ]
+  }
+ },
+ "still_present": [],
+ "rc": 0,
+ "end": "2026-11-07T07:04:36.992Z"
+}
