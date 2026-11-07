@@ -17,9 +17,13 @@ Joseph (COV2D-DECLARATION.md §10 item 7, main).
 - **Glue only.** A4 adds one module, `2d-unfolding/cov2d/cov2d_readout.py`. It imports `cov2d_blocks`, `cov2d_null`,
   `cov2d_score` and `cov2d_readouts` at M, unchanged. No bound function is edited, copied or re-implemented. If one would
   have to change, A4 stops and goes to the director (ruling 1).
-- **One new check:** §9.9 (COV2D-DECLARATION.md:523-525, main). It has no implementation at M: `git grep` for
-  `dataFileSha256` finds only the writer, `re2_driver.py:2238`, and an re2 test. A4 implements it as a read of each
-  product's provenance (§4.3). That is a control the declaration already states, not a new rule.
+- **§9.9 implemented here (not glue)** (the director's ruling of 2026-11-07): §9.9 (COV2D-DECLARATION.md:523-525, main)
+  has no implementation at M. `git grep` for `dataFileSha256` finds only the writer, `re2_driver.py:2238`, and an re2
+  test. A4 adds check logic for that already-declared control: a read of each product's provenance (§3.3, §4.3).
+  - It reads only the products' `TNamed` provenance.
+  - It refuses before any toy error is used.
+  - It has tests in both directions and REQUIRED mutants (§8).
+  It is the only part of A4 that is not glue.
 - **Two phases, ordered structurally (ruling 1; §9.7, COV2D-DECLARATION.md:521, main):** "the null: check_matched at
   10⁻¹², computed and committed before the scorer opens any toy product".
   - Phase N reads no toy product.
@@ -73,7 +77,7 @@ Login node, root_6_28 with the pinned MAT environment, the same environment and 
    gives the null, the thresholds, the size and `null_minus`. `check_matched` ≤ 10⁻¹² is enforced inside
    `fd_1b_null.null_contents`, which refuses otherwise.
 
-### 3.3 §9.9 for the non-toy products
+### 3.3 §9.9 for the non-toy products (§9.9 implemented here, not glue)
 
 For each product read in §3.1, its `TNamed` provenance is read (`driverSha256`, `runArgv`, `runConfig`,
 `dataFileSha256`), as `test_re2_data_file.records` reads it (:101-111).
@@ -146,7 +150,7 @@ unrepaired.
 
 ### 4.3 Checks and computation (bound functions at M)
 
-1. **§9.9 for the 300 toys**, as in §3.3. For toy seed s, `dataFileSha256` must equal `pseudo_b.json`'s `files[seed=s]`
+1. **§9.9 for the 300 toys** (implemented here, not glue), as in §3.3, before `errors` uses any toy error. For toy seed s, `dataFileSha256` must equal `pseudo_b.json`'s `files[seed=s]`
    sha256. The seeds must be exactly `cov2d.TOY_SEEDS[T]` (declaration §9.9: "the toys' seeds are exactly the declared
    ranges").
 2. `deltas = cov2d_score.lateral_deltas(bands, minos_x)` (:35).
@@ -231,14 +235,15 @@ Recorded per the director's requirement of 2026-11-07.
   - each inventory file changed;
   - a toy product opened before the gate;
   - a wrong toy seed set, and the seeds out of order for R_c;
-  - each §9.9 field differing;
+  - §9.9: a wrong `driverSha256`, a wrong `dataFileSha256`, a wrong `runArgv` and a wrong seed each refuse, and a
+    correct product passes;
   - a product off its #866 digest;
   - an atime moved.
 - **The mutation harness:** in `mutation_amendment.py`'s style. Its REQUIRED mutants:
   - the null gate removed;
   - the digest compare removed;
   - the inventory re-hash removed;
-  - §9.9 skipped;
+  - §9.9 skipped, and each of its four field compares removed;
   - the toy order changed;
   - the open audit off;
   - `noatime_inputs` dropped.
