@@ -334,7 +334,7 @@ class Fixture:
                 {
                     "schema": "fd-rpd-reco-flux-custody/1",
                     "custody_code_sha256": R.digest(
-                        REPO / "nd-unfolding/fd_rpd_reco_custody.py"
+                        Path(R.__file__).with_name("fd_rpd_reco_custody.py")
                     ),
                     "status": "PASS",
                     "extract_sha256": R.digest(extracted),
@@ -1766,11 +1766,22 @@ class _RootDouble:
             def ClassName(self) -> str:
                 return "TH1D" if wrong_class else "PlotUtils::MnvH1D"
 
+            def SetDirectory(self, _directory: int) -> None:
+                pass
+
+            def GetTitle(self) -> str:
+                return "protocol flux"
+
+            def GetYaxis(self) -> Any:
+                return SimpleNamespace(GetTitle=lambda: "protocol density")
+
             def GetNbinsX(self) -> int:
                 return 2
 
             def GetXaxis(self) -> Any:
-                return SimpleNamespace(GetBinLowEdge=lambda i: float(i - 1))
+                return SimpleNamespace(
+                    GetBinLowEdge=lambda i: float(i - 1), GetTitle=lambda: "energy"
+                )
 
             def GetBinContent(self, i: int) -> float:
                 return float(i)
@@ -1799,6 +1810,10 @@ class _RootDouble:
                 return None if no_file else File()
 
         self.TFile = TFile
+        self.TH1 = SimpleNamespace(
+            AddDirectoryStatus=lambda: True, AddDirectory=lambda _value: None
+        )
+        self.SetOwnership = lambda _object, _owned: None
 
 
 def _mock_mat_checks(
@@ -2024,7 +2039,8 @@ def test_flux_custody_and_factor_guards(fixture: Fixture) -> None:
 def _custody_module() -> Any:
     path = Path(
         os.environ.get(
-            "FD_RPD_CUSTODY_MODULE", REPO / "nd-unfolding/fd_rpd_reco_custody.py"
+            "FD_RPD_CUSTODY_MODULE",
+            Path(R.__file__).with_name("fd_rpd_reco_custody.py"),
         )
     )
     spec = importlib.util.spec_from_file_location("rpd_custody_test", path)
@@ -2174,6 +2190,11 @@ def test_same_connect_prepare_receipt(
         },
     }
     inputs = fixture.inputs()
+    policy_path = inputs.run / "trace-policy.json"
+    policy_path.write_text(
+        json.dumps({"allowed": {"pinned_mat_libs": []}, "instrument_directories": []})
+    )
+    prepared["trace_policy_sha256"] = R.digest(policy_path)
     inputs.prestage = prepared
     assert R.checked_prepared_mat(inputs)[0] is root
     for key, bad in (
@@ -2317,7 +2338,7 @@ def test_constrained_extract_protocol_roundtrip(
             {
                 "schema": "fd-rpd-reco-flux-custody/1",
                 "custody_code_sha256": R.digest(
-                    REPO / "nd-unfolding/fd_rpd_reco_custody.py"
+                    Path(R.__file__).with_name("fd_rpd_reco_custody.py")
                 ),
                 "status": "PASS",
                 "extract_sha256": R.digest(extract),
@@ -2338,9 +2359,9 @@ def test_constrained_extract_protocol_roundtrip(
     assert p0["background_scale"]["1M"]["1D"] == pytest.approx(12 / 16)
 
 
-def test_fresh_prepare_stages_closed_inventory(
+def _prepare_fixture(
     fixture: Fixture, monkeypatch: pytest.MonkeyPatch
-) -> None:
+) -> tuple[Any, Path, dict[str, Path]]:
     custody = _custody_module()
     inventory = (
         REPO
@@ -2383,11 +2404,19 @@ def test_fresh_prepare_stages_closed_inventory(
             "configuration_status": "READY",
             "mat_dependencies": {"path": str(inventory), "sha256": R.digest(inventory)},
             "trace_environment_roots": ["/synthetic/env"],
+            "trace_instrument_directories": [str(library.parent / "instrument")],
             "cov2d_protected_paths": ["/synthetic/cov2d-input"],
         }
     )
     fixture.save_config()
     run = fixture.root / "fresh-prepare"
+    return custody, run, roots
+
+
+def test_fresh_prepare_stages_closed_inventory(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, run, roots = _prepare_fixture(fixture, monkeypatch)
     prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
     assert len(prepared["mat_dependencies"]) == 15
     constraint = next(
@@ -2502,7 +2531,12 @@ def test_flux_file_units_metadata_protocol(fixture: Fixture) -> None:
         def Close(self) -> None:
             pass
 
-    root = SimpleNamespace(TFile=SimpleNamespace(Open=lambda *args: File()))
+    root = SimpleNamespace(
+        TFile=SimpleNamespace(Open=lambda *args: File()),
+        TH1=SimpleNamespace(
+            AddDirectoryStatus=lambda: True, AddDirectory=lambda value: None
+        ),
+    )
     path = fixture.root / "staged-units.root"
     result = R.flux_units_metadata(path, root=root)
     assert result == {
@@ -2536,3 +2570,460 @@ def test_trace_failure_writes_stop_without_pass(fixture: Fixture) -> None:
     assert stop["status"] == "STOP" and stop["readings"] is None
     assert stop["violations"][0]["request"] == "/original/data/missing"
     assert not (run / "flux-custody.json").exists()
+
+
+def _prepared_mat_fixture(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> tuple[Any, Any, Any, Path]:
+    """Real instrument verifier plus real local stats; lazy dictionary/map protocol."""
+    import time
+
+    # The checked instrument is code-only; no environment/data checks are invoked here.
+    instrument = R.load_mat_instrument()
+    opt = fixture.root / "opt"
+    lib = opt / "lib/libMAT.so"
+    lib.parent.mkdir(parents=True)
+    lib.write_bytes(b"original mapped code")
+    setup = fixture.root / "setup.sh"
+    setup.write_text("fixture setup")
+    instrument.MAT_PREFIX = str(opt)
+    instrument.MAT_LIB = str(lib.parent)
+    instrument.MAT_SETUP = {str(setup): R.digest(setup)}
+    instrument.MAT_FILES = {str(lib): R.digest(lib)}
+    instrument.MAT_LINK = (str(lib.parent / "libMATDict.so"), str(lib))
+    instrument.MAT_MAPPED = {str(lib)}
+    monkeypatch.setenv("PLOTUTILSROOT", str(lib.parent))
+    monkeypatch.setenv("MINERVA_PREFIX", str(opt))
+    monkeypatch.setenv("FD_RPD_RECO_CONNECT_ID", "lazy-map-test")
+    state = SimpleNamespace(loaded=False, calls=[])
+
+    def get_class(name: str) -> Any:
+        assert name == "PlotUtils::MnvH1D"
+        state.calls.append("dictionary")
+        state.loaded = True
+        return SimpleNamespace(HasDictionary=lambda: True)
+
+    def mapped_files() -> set[str]:
+        state.calls.append("maps")
+        return {str(lib)} if state.loaded else set()
+
+    instrument.mapped_files = mapped_files
+    monkeypatch.setattr(R, "load_mat_instrument", lambda: instrument)
+    root = SimpleNamespace(TClass=SimpleNamespace(GetClass=get_class))
+    monkeypatch.setitem(sys.modules, "ROOT", root)
+    inputs = fixture.inputs()
+    policy = inputs.run / "trace-policy.json"
+    policy.write_text(
+        json.dumps(
+            {
+                "allowed": {"pinned_mat_libs": [str(lib)]},
+                "instrument_directories": [str(lib.parent)],
+            }
+        )
+    )
+    staged_code = fixture.root / "staged-checked.py"
+    staged_code.write_text("checked instrument")
+    info = lib.stat()
+    inputs.prestage = {
+        "run": str(inputs.run),
+        "connect_id": "lazy-map-test",
+        "prepare_time_ns": time.time_ns(),
+        "environment_after_setup": _custody_module().environment_record(),
+        "trace_policy_sha256": R.digest(policy),
+        "mapped_mat_stats": {str(lib): [info.st_dev, info.st_ino, info.st_size]},
+        "instrument_files": [
+            {"staged": str(staged_code), "sha256": R.digest(staged_code)}
+        ],
+        "mat_environment": {
+            "setup_sha256": instrument.MAT_SETUP,
+            "mat_sha256": instrument.MAT_FILES,
+            "symlink": {instrument.MAT_LINK[0]: str(lib)},
+        },
+    }
+    return inputs, state, root, lib
+
+
+def test_lazy_dictionary_before_maps(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    inputs, state, root, _lib = _prepared_mat_fixture(fixture, monkeypatch)
+    assert R.checked_prepared_mat(inputs)[0] is root
+    assert state.calls == ["dictionary", "maps"]
+    state.calls.clear()
+    assert R.checked_prepared_mat(inputs)[0] is root
+    assert state.calls == ["dictionary", "maps"]
+
+
+@pytest.mark.parametrize("defect", ["size", "inode", "staged_digest"])
+def test_prepared_mapped_stats_and_staged_digest(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch, defect: str
+) -> None:
+    inputs, _state, _root, lib = _prepared_mat_fixture(fixture, monkeypatch)
+    R.checked_prepared_mat(inputs)
+    if defect == "size":
+        lib.write_bytes(b"changed mapped library length")
+    elif defect == "inode":
+        replacement = lib.with_name("replacement.so")
+        replacement.write_bytes(lib.read_bytes())
+        replacement.replace(lib)
+        assert lib.stat().st_ino != inputs.prestage["mapped_mat_stats"][str(lib)][1]
+    else:
+        Path(inputs.prestage["instrument_files"][0]["staged"]).write_text("changed")
+    guard = "MAT_INSTRUMENT_DIGEST" if defect == "staged_digest" else "MAT_MAPPED_STAT"
+    with pytest.raises(R.Refused, match=guard):
+        R.checked_prepared_mat(inputs)
+
+
+@pytest.mark.parametrize(
+    "defect,guard",
+    [
+        ("inventory", "MAT_INVENTORY"),
+        ("atime", "STAGE_SOURCE_STAT"),
+        ("native", "NATIVE_SELECTION"),
+        ("fence_call", "PREPARE_FENCE"),
+        ("fence_status", "PREPARE_FENCE"),
+    ],
+)
+def test_prepare_firing_guards(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch, defect: str, guard: str
+) -> None:
+    custody, run, roots = _prepare_fixture(fixture, monkeypatch)
+    if defect == "inventory":
+        original = Path(fixture.config["mat_dependencies"]["path"])
+        record = json.loads(original.read_text())
+        record["entries"] = record["entries"][:-1]
+        wrong = fixture.root / "wrong-inventory.json"
+        wrong.write_text(json.dumps(record))
+        fixture.config["mat_dependencies"] = {
+            "path": str(wrong),
+            "sha256": R.digest(wrong),
+        }
+        fixture.save_config()
+    elif defect == "atime":
+        stat = custody.source_stat
+        seen = {}
+
+        def moving(path: Path) -> Any:
+            info = stat(path)
+            seen[str(path)] = seen.get(str(path), 0) + 1
+            if seen[str(path)] > 1:
+                info["atime_ns"] += 1
+            return info
+
+        monkeypatch.setattr(custody, "source_stat", moving)
+    elif defect == "native":
+        path = (
+            roots["PLOTUTILSROOT"]
+            / "data/flux/flux-gen2thin-pdg14-minervame1D_rearrangedUniverses.root"
+        )
+        path.write_bytes(b"different native source")
+    elif defect == "fence_call":
+
+        def refused() -> Any:
+            raise custody.CustodyRefused("fence refused", {"guard": guard})
+
+        monkeypatch.setattr(custody, "cov2d_fence", refused)
+    else:
+        monkeypatch.setattr(
+            custody, "cov2d_fence", lambda: {"status": "STOP", "exit_code": 3}
+        )
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    assert caught.value.details["guard"] == guard
+    if defect.startswith("fence"):
+        assert not (run / "original-inputs").exists()
+        assert not (run / "mat-data").exists()
+
+
+def test_run_overlaps_protected_guard(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, run, _roots = _prepare_fixture(fixture, monkeypatch)
+    prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    prepared["files"][str(run)] = {"original": str(run)}
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.build_trace_policy(fixture.config, prepared, run)
+    assert caught.value.details["guard"] == "RUN_PROTECTED_OVERLAP"
+
+
+def test_trace_extract_identity_guard(fixture: Fixture) -> None:
+    custody = _custody_module()
+    run = fixture.root / "identity-trace"
+    run.mkdir()
+    policy = run / "policy.json"
+    policy.write_text(
+        json.dumps(
+            {"cwd": str(run), "protected_roots": [], "allowed": {"system": ["/etc"]}}
+        )
+    )
+    trace = run / "trace.txt"
+    trace.write_text(
+        'openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY) = 3</etc/ld.so.cache>\n'
+    )
+    extract = run / "flux-extract.json"
+    extract.write_text(
+        json.dumps({"status": "PASS", "code_sha256": R.digest(Path(R.__file__))})
+    )
+    assert (
+        custody.check_trace(R, run, trace, policy, R.digest(policy))["status"] == "PASS"
+    )
+    (run / "flux-custody.json").unlink()
+    for wrong in (
+        {"status": "STOP", "code_sha256": R.digest(Path(R.__file__))},
+        {"status": "PASS", "code_sha256": "0" * 64},
+    ):
+        extract.write_text(json.dumps(wrong))
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.check_trace(R, run, trace, policy, R.digest(policy))
+        assert caught.value.details["guard"] == "TRACE_EXTRACT_IDENTITY"
+
+
+def test_negative_expected_guard(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody = _custody_module()
+    run = fixture.run.resolve()
+    run.mkdir()
+    dependency = run / "constraint.txt"
+    dependency.write_text("own staged input")
+    (run / "prestage.json").write_text(
+        json.dumps(
+            {
+                "mat_dependencies": [
+                    {"environment_key": "MPARAMFILES", "staged": str(dependency)}
+                ]
+            }
+        )
+    )
+
+    def stopped(_command: Any, **kwargs: Any) -> Any:
+        assert not dependency.exists()
+        (run / "flux-extract.STOP.json").write_text(
+            json.dumps({"guard": "OTHER_GUARD"})
+        )
+        return SimpleNamespace(returncode=4, stdout="", stderr="")
+
+    monkeypatch.setattr(custody.subprocess, "run", stopped)
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.missing_dependency_check(
+            R, fixture.config_path, fixture.config_sha, run, "a" * 64
+        )
+    assert caught.value.details["guard"] == "NEGATIVE_EXPECTED_GUARD"
+    assert dependency.read_text() == "own staged input"
+
+
+def test_extract_selection_guard(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    inputs = fixture.inputs()
+    source = fixture.flux / "1D.root"
+    inputs.prestage = {
+        "mat_prefixes": {},
+        "mat_dependencies": [
+            {
+                "staged": str(source),
+                "sha256": R.digest(source),
+                "playlist_group": "1D",
+                "pdg": 14,
+                "role": "constrained-numerator-input",
+            }
+        ],
+    }
+    monkeypatch.setattr(
+        R, "checked_mat_environment", lambda _inputs=None: (_RootDouble(), {})
+    )
+    monkeypatch.setattr(
+        R, "selected_flux_files", lambda _inputs: {"1D": {"sha256": "0" * 64}}
+    )
+    with pytest.raises(R.Refused, match="FLUX_CONSTRUCTOR_SELECTION"):
+        R.flux_extract(inputs, [])
+
+
+def test_instrument_directory_scan_and_mapping() -> None:
+    custody = _custody_module()
+    policy = {
+        "cwd": "/code",
+        "protected_roots": ["/mat/lib/data"],
+        "instrument_directories": ["/mat/lib", "/mat/include"],
+        "python_directories": ["/code", "/user/site"],
+        "allowed": {
+            "pinned_mat_libs": ["/mat/lib/libMAT.so", "/mat/lib/MATDict.rootmap"],
+            "environment": ["/mat/lib", "/env"],
+            "system": ["/etc"],
+        },
+    }
+    lines = [
+        'openat(AT_FDCWD, "/mat/lib", O_RDONLY|O_DIRECTORY) = 3</mat/lib>',
+        'openat(AT_FDCWD, "/mat/lib/MATDict.rootmap", O_RDONLY) = 4</mat/lib/MATDict.rootmap>',
+        'openat(AT_FDCWD, "/mat/lib/MAT-MINERvADict.rootmap", O_RDONLY) = 4</mat/lib/MAT-MINERvADict.rootmap>',
+        'openat(AT_FDCWD, "/mat/lib/libMATDict.so", O_RDONLY) = 4</mat/lib/libMAT.so>',
+        'openat(AT_FDCWD, "/code", O_RDONLY|O_DIRECTORY) = 5</code>',
+        'openat(AT_FDCWD, "/mat/include/PlotUtils/MnvH1D.h", O_RDONLY) = 5</mat/include/PlotUtils/MnvH1D.h>',
+    ]
+    result = custody.classify_trace(lines, policy)
+    assert result["successful_open_counts"] == {
+        "instrument_directory": 3,
+        "pinned_mat_libs": 2,
+        "python_directory": 1,
+    }
+    assert custody.mapped_instrument_violations({"/mat/lib/libMAT.so"}, policy) == []
+    assert custody.mapped_instrument_violations(
+        {"/mat/lib/libMAT.so", "/mat/lib/libUnfoldUtils.so"}, policy
+    ) == ["/mat/lib/libUnfoldUtils.so"]
+    with pytest.raises(custody.CustodyRefused):
+        custody.classify_trace(
+            lines
+            + ['openat(AT_FDCWD, "/mat/lib/data/fallback.root", O_RDONLY) = -1 ENOENT'],
+            policy,
+        )
+
+
+def test_instrument_directories_required() -> None:
+    custody = _custody_module()
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.build_trace_policy(
+            {"trace_environment_roots": ["/env"], "trace_instrument_directories": []},
+            {},
+            Path("/run"),
+        )
+    assert caught.value.details["guard"] == "INSTRUMENT_DIRECTORIES"
+
+
+def test_nonpinned_mapped_library_refuses(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    inputs, state, _root, library = _prepared_mat_fixture(fixture, monkeypatch)
+    instrument = R.load_mat_instrument()
+    foreign = fixture.root / "other-instrument/libUnpinned.so"
+    foreign.parent.mkdir()
+    foreign.write_bytes(b"unapproved library")
+    policy = inputs.run / "trace-policy.json"
+    value = json.loads(policy.read_text())
+    value["instrument_directories"].append(str(foreign.parent))
+    policy.write_text(json.dumps(value))
+    inputs.prestage["trace_policy_sha256"] = R.digest(policy)
+    instrument.mapped_files = lambda: (
+        {str(library), str(foreign)} if state.loaded else set()
+    )
+    with pytest.raises(R.Refused, match="MAT_MAPPED_SET"):
+        R.checked_prepared_mat(inputs)
+
+
+def test_root_reader_releases_before_close(fixture: Fixture) -> None:
+    import weakref
+
+    events = []
+    automatic = [True]
+
+    class Histogram(FluxHistogramDouble):
+        def SetDirectory(self, value: int) -> None:
+            assert value == 0
+            events.append("detach")
+
+    references = []
+
+    class File:
+        def IsZombie(self) -> bool:
+            return False
+
+        def Get(self, name: str) -> Any:
+            assert automatic[0] is False
+            hist = Histogram([0, 1, 2], [2, 4])
+            references.append(weakref.ref(hist))
+            return hist
+
+        def Close(self) -> None:
+            assert automatic[0] is False
+            assert references[0]() is None, "histogram proxy survived into Close"
+            events.append("close")
+
+    root = SimpleNamespace(
+        TFile=SimpleNamespace(Open=lambda *args: File()),
+        TH1=SimpleNamespace(
+            AddDirectoryStatus=lambda: automatic[0],
+            AddDirectory=lambda v: automatic.__setitem__(0, v),
+        ),
+        SetOwnership=lambda obj, value: events.append("own"),
+    )
+    result = R.read_flux_histogram(fixture.root / "staged.root", "CV", root=root)
+    np.testing.assert_array_equal(result["values"], [2, 4])
+    assert events == ["detach", "own", "close"]
+    assert automatic == [True]
+
+
+def test_real_mnv_worker_crash_cannot_publish_pass(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec = importlib.util.spec_from_file_location(
+        "real_mnv_supervisor",
+        Path(
+            os.environ.get(
+                "FD_RPD_MAT_CHECK_MODULE",
+                REPO / "nd-unfolding/tests/fd_rpd_reco_mat_check.py",
+            )
+        ),
+    )
+    assert spec is not None and spec.loader is not None
+    check = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(check)
+    check.r = R
+    run = fixture.root / "segfault-protocol"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["check", "--probe", str(fixture.flux / "1D.root"), "--run", str(run)],
+    )
+
+    def crash(_command: Any, **kwargs: Any) -> Any:
+        (run / "real-mnv-worker.json").write_text(
+            json.dumps({"status": "PASS", "class_name": "PlotUtils::MnvH1D"})
+        )
+        return SimpleNamespace(
+            returncode=-11, stdout="reader before close", stderr="segfault"
+        )
+
+    monkeypatch.setattr(check.subprocess, "run", crash)
+    assert check.main() == 4
+    assert not (run / "real-mnv-check.json").exists()
+
+
+def test_prologue_prepare_opens_no_declared_data(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, _run, _roots = _prepare_fixture(fixture, monkeypatch)
+    spec = importlib.util.spec_from_file_location(
+        "rpd_prologue_test", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+    )
+    assert spec is not None and spec.loader is not None
+    prologue = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco", R)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco_custody", custody)
+    spec.loader.exec_module(prologue)
+    prologue.r, prologue.custody = R, custody
+    active = [True]
+    protected = [
+        fixture.dump.resolve(),
+        fixture.flux.resolve(),
+        fixture.source.resolve(),
+    ]
+
+    def forbid(event: str, args: Any) -> None:
+        if (
+            active[0]
+            and event == "open"
+            and isinstance(args[0], (str, bytes, os.PathLike))
+        ):
+            path = Path(os.fsdecode(args[0])).resolve()
+            assert not any(
+                path == root or root in path.parents for root in protected
+            ), "prologue opened declared data"
+
+    sys.addaudithook(forbid)
+    run = fixture.root / "data-free-prepare"
+    try:
+        digest = prologue.prepare(fixture.config_path, fixture.config_sha, run)
+    finally:
+        active[0] = False
+    assert digest == R.digest(run / "prologue-prepare.json")
+    assert not (run / "original-inputs").exists()
+    assert not (run / "mat-data").exists()

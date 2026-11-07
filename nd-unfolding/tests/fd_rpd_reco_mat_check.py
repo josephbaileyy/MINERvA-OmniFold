@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
+from array import array
 import sys
 from pathlib import Path
 from typing import Any
@@ -27,25 +29,53 @@ def check(probe: Path, run: Path) -> dict[str, Any]:
     r.require_output_root(run)
     root, environment = r.checked_mat_environment()
     staged = r.stage_copy(probe, run / "non-input-probe.root", PROBE_SHA256)
-    spectrum = r.read_flux_histogram(staged, "flux_E_cvweighted", root=root)
-    with r.guarded_tfile(root, [staged]):
-        file = root.TFile.Open(str(staged), "READ")
-        try:
-            original = file.Get("flux_E_cvweighted")
-            clones = [
-                original.Clone(f"rpd_probe_{name}")
-                for name in ("own", "target", "generated")
-            ]
-            for histogram in clones:
-                histogram.SetDirectory(0)
-        finally:
-            file.Close()
-    own, target, generated = clones
-    r.require(
-        all(hist.InheritsFrom("PlotUtils::MnvH1D") for hist in clones),
-        "MAT_MNVH1D",
-        "clone lost real class",
+    print("REAL_MNV before reader", flush=True)
+    points = [20.031, 74.999, 75.0, 75.001]
+    spectrum = r.read_flux_histogram(
+        staged, "flux_E_cvweighted", root=root, evaluation_points=points
     )
+    print(
+        "REAL_MNV reader returned; file closed and only plain arrays retained",
+        flush=True,
+    )
+    previous = bool(root.TH1.AddDirectoryStatus())
+    root.TH1.AddDirectory(False)
+    try:
+        clones = [
+            root.TH1D(
+                f"rpd_probe_{name}",
+                "ROOT CV witness",
+                len(spectrum["values"]),
+                array("d", spectrum["edges"]),
+            )
+            for name in ("own", "target", "generated")
+        ]
+        for histogram in clones:
+            histogram.SetDirectory(0)
+            root.SetOwnership(histogram, True)
+        for index, value in enumerate(spectrum["values"], 1):
+            clones[0].SetBinContent(index, float(value))
+        for index, value in zip(
+            (0, len(spectrum["values"]) + 1), spectrum["flow_values"]
+        ):
+            clones[0].SetBinContent(index, float(value))
+        actual = [
+            float(
+                clones[0].GetBinContent(clones[0].FindBin(e))
+                if e > 75
+                else clones[0].Interpolate(e)
+            )
+            for e in points
+        ]
+        np.testing.assert_allclose(
+            actual,
+            [v["value"] for v in spectrum["root_evaluations"]],
+            rtol=1e-12,
+            atol=0,
+        )
+    finally:
+        root.TH1.AddDirectory(previous)
+    own, target, generated = clones
     for i in range(own.GetNbinsX() + 2):
         own.SetBinContent(i, 2 + i / 10)
         target.SetBinContent(i, 7 + i / 5)
@@ -109,6 +139,8 @@ def check(probe: Path, run: Path) -> dict[str, Any]:
         "probe_sha256": PROBE_SHA256,
         "code_sha256": r.digest(Path(r.__file__)),
         "class_name": spectrum["class_name"],
+        "ownership": "TH1 auto-directory disabled while streaming; nominal detached, Python-owned proxy released before close; no MnvH1D clones",
+        "real_histogram_root_witnesses": spectrum["root_evaluations"],
         "environment": environment,
         "energy": energies.tolist(),
         "factors": factors.tolist(),
@@ -120,18 +152,71 @@ def check(probe: Path, run: Path) -> dict[str, Any]:
 
 
 def main() -> int:
-    """Write a PASS receipt only when all real-class checks succeed."""
+    """Publish PASS only after the ROOT worker exits normally, including teardown."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--probe", type=Path, required=True)
     parser.add_argument("--run", type=Path, required=True)
+    parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     try:
-        result = check(args.probe, args.run)
-        r.write_json(args.run / "real-mnv-check.json", result)
+        r.require_output_root(args.run)
+        args.run.mkdir(parents=True, exist_ok=True)
+        if args.worker:
+            result = check(args.probe, args.run)
+            r.write_json(args.run / "real-mnv-worker.json", result)
+            print(
+                "REAL_MNV worker checks complete; entering process teardown", flush=True
+            )
+            return 0
+        target = args.run / "real-mnv-check.json"
+        r.require(
+            not target.exists() and not (args.run / "real-mnv-worker.json").exists(),
+            "OUTPUT_EXISTS",
+            "fresh real-Mnv run required",
+        )
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(Path(__file__)),
+                "--worker",
+                "--probe",
+                str(args.probe),
+                "--run",
+                str(args.run),
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        (args.run / "worker.stdout.txt").write_text(result.stdout)
+        (args.run / "worker.stderr.txt").write_text(result.stderr)
+        r.require(
+            result.returncode == 0,
+            "MAT_WORKER_EXIT",
+            f"ROOT worker exited {result.returncode}; no passing receipt",
+        )
+        record = json.loads((args.run / "real-mnv-worker.json").read_text())
+        r.require(
+            record.get("status") == "PASS",
+            "MAT_WORKER_EXIT",
+            "worker record did not pass",
+        )
+        record["worker_exit_code"] = result.returncode
+        record["worker_receipt_sha256"] = r.digest(args.run / "real-mnv-worker.json")
+        record["check_code_sha256"] = r.digest(Path(__file__))
+        r.write_json(target, record)
     except (r.Refused, OSError, ValueError, AssertionError, ImportError) as error:
         print(f"STOP REAL_MNV_CHECK: {error}", file=sys.stderr)
         return 4
-    print(json.dumps({"status": result["status"], "class_name": result["class_name"]}))
+    print(
+        json.dumps(
+            {
+                "status": record["status"],
+                "class_name": record["class_name"],
+                "worker_exit": 0,
+            }
+        )
+    )
     return 0
 
 

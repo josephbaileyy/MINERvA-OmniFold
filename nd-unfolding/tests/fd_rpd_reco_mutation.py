@@ -24,7 +24,21 @@ ROOT = Path(__file__).resolve().parents[2]
 PRODUCER = ROOT / "nd-unfolding/fd_rpd_reco.py"
 TESTS = ROOT / "nd-unfolding/tests/test_fd_rpd_reco.py"
 
+CUSTODY_GUARD_TESTS = {
+    "MAT_INVENTORY": "test_prepare_firing_guards and inventory",
+    "STAGE_SOURCE_STAT": "test_prepare_firing_guards and atime",
+    "NATIVE_SELECTION": "test_prepare_firing_guards and native",
+    "RUN_PROTECTED_OVERLAP": "test_run_overlaps_protected_guard",
+    "NEGATIVE_EXPECTED_GUARD": "test_negative_expected_guard",
+    "TRACE_EXTRACT_IDENTITY": "test_trace_extract_identity_guard",
+    "PREPARE_FENCE": "test_prepare_firing_guards and fence_status",
+    "INSTRUMENT_DIRECTORIES": "test_instrument_directories_required",
+}
 GUARD_TESTS = {
+    "MAT_MAPPED_STAT": "test_prepared_mapped_stats_and_staged_digest and (size or inode)",
+    "MAT_INSTRUMENT_DIGEST": "test_prepared_mapped_stats_and_staged_digest and staged_digest",
+    "MAT_MAPPED_SET": "test_nonpinned_mapped_library_refuses",
+    "FLUX_CONSTRUCTOR_SELECTION": "test_extract_selection_guard",
     "P_F_BINNING": "test_pf_common_binning_silent_and_firing",
     "P_F_UNITS": "test_pf_common_units_silent_and_firing",
     "FLUX_CUSTODY": "test_flux_custody_and_factor_guards",
@@ -142,6 +156,52 @@ class Mutation:
 
 REQUIRED = tuple(
     [
+        Mutation(
+            "REQUIRED_ROOT_AUTODIRECTORY_OFF",
+            "root_autodirectory",
+            "histogram_directory_ownership",
+            "test_root_reader_releases_before_close",
+        ),
+        Mutation(
+            "REQUIRED_ROOT_PROXY_RELEASE",
+            "root_release",
+            "read_flux_histogram",
+            "test_root_reader_releases_before_close",
+        ),
+        Mutation(
+            "REQUIRED_REAL_WORKER_EXIT",
+            "platform_check",
+            "MAT_WORKER_EXIT",
+            "test_real_mnv_worker_crash_cannot_publish_pass",
+        ),
+        *[
+            Mutation(f"REQUIRED_CUSTODY_{guard}", "custody_guard", guard, selector)
+            for guard, selector in CUSTODY_GUARD_TESTS.items()
+        ],
+        Mutation(
+            "REQUIRED_DICTIONARY_BEFORE_MAPS",
+            "dictionary_order",
+            "checked_prepared_mat",
+            "test_lazy_dictionary_before_maps",
+        ),
+        Mutation(
+            "REQUIRED_PREPARE_CALLS_FENCE",
+            "custody_skip_fence",
+            "prepare",
+            "test_prepare_firing_guards and fence_call",
+        ),
+        Mutation(
+            "REQUIRED_EXACT_PIN_PRECEDENCE",
+            "custody_pin_priority",
+            "classify_successful_open",
+            "test_instrument_directory_scan_and_mapping",
+        ),
+        Mutation(
+            "REQUIRED_NONPINNED_MAPPING",
+            "custody_unmapped",
+            "mapped_instrument_violations",
+            "test_instrument_directory_scan_and_mapping",
+        ),
         Mutation(
             "REQUIRED_ROOT_INTERPOLATION",
             "flux_step",
@@ -315,7 +375,15 @@ class Mutator(ast.NodeTransformer):
     def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.AST:
         previous = self.function
         self.function = node.name
-        if self.mutation.kind == "custody_fence" and node.name == self.mutation.target:
+        if (
+            self.mutation.kind == "custody_unmapped"
+            and node.name == self.mutation.target
+        ):
+            node.body = ast.parse("return []").body
+            self.changed += 1
+        elif (
+            self.mutation.kind == "custody_fence" and node.name == self.mutation.target
+        ):
             node.body = ast.parse("return {'status': 'PASS', 'exit_code': 0}").body
             self.changed += 1
         elif self.mutation.kind == "bracket" and node.name == self.mutation.target:
@@ -344,6 +412,19 @@ class Mutator(ast.NodeTransformer):
                         id="DEFAULT_WALL_SECONDS", ctx=ast.Load()
                     )
                     self.changed += 1
+        if (
+            self.mutation.kind == "dictionary_order"
+            and node.name == self.mutation.target
+        ):
+            indices = {
+                statement.targets[0].id: i
+                for i, statement in enumerate(node.body)
+                if isinstance(statement, ast.Assign)
+                and isinstance(statement.targets[0], ast.Name)
+            }
+            first, second = indices["dictionary"], indices["mapped"]
+            node.body[first], node.body[second] = node.body[second], node.body[first]
+            self.changed += 1
         self.function = previous
         return node
 
@@ -373,6 +454,13 @@ class Mutator(ast.NodeTransformer):
 
     def visit_If(self, node: ast.If) -> ast.AST:
         mutation = self.mutation
+        if (
+            mutation.kind == "custody_pin_priority"
+            and self.function == mutation.target
+            and ast.unparse(node.test) == "paths & pinned"
+        ):
+            node.test = ast.Constant(False)
+            self.changed += 1
         if self.function == mutation.target:
             if (
                 mutation.kind == "custody_protected"
@@ -445,6 +533,13 @@ class Mutator(ast.NodeTransformer):
 
     def visit_Assign(self, node: ast.Assign) -> ast.AST:
         mutation = self.mutation
+        if (
+            mutation.kind == "custody_skip_fence"
+            and self.function == "prepare"
+            and any(isinstance(t, ast.Name) and t.id == "fence" for t in node.targets)
+        ):
+            node.value = ast.parse("{'status':'PASS','exit_code':0}", mode="eval").body
+            self.changed += 1
         if mutation.kind == "timing_axes" and any(
             isinstance(t, ast.Name) and t.id == "TIMING_AXES" for t in node.targets
         ):
@@ -519,6 +614,15 @@ class Mutator(ast.NodeTransformer):
             self.changed += 1
         return self.generic_visit(node)
 
+    def visit_Delete(self, node: ast.Delete) -> ast.AST:
+        if (
+            self.mutation.kind == "root_release"
+            and self.function == self.mutation.target
+        ):
+            self.changed += 1
+            return ast.Pass()
+        return self.generic_visit(node)
+
     def visit_Raise(self, node: ast.Raise) -> ast.AST:
         """Disable an explicit refusal as well as predicate-based guards."""
         exception = node.exc
@@ -537,6 +641,40 @@ class Mutator(ast.NodeTransformer):
 
     def visit_Call(self, node: ast.Call) -> ast.AST:
         mutation = self.mutation
+        if (
+            mutation.kind == "root_autodirectory"
+            and self.function == mutation.target
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "AddDirectory"
+            and node.args
+            and isinstance(node.args[0], ast.Constant)
+            and node.args[0].value is False
+        ):
+            node.args[0] = ast.Constant(True)
+            self.changed += 1
+        if (
+            mutation.kind == "platform_check"
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "require"
+            and len(node.args) > 1
+            and isinstance(node.args[1], ast.Constant)
+            and node.args[1].value == mutation.target
+        ):
+            node.args[0] = ast.Constant(True)
+            self.changed += 1
+        if (
+            mutation.kind == "custody_guard"
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "require"
+        ):
+            if any(
+                k.arg == "guard"
+                and isinstance(k.value, ast.Constant)
+                and k.value.value == mutation.target
+                for k in node.keywords
+            ):
+                node.args[0] = ast.Constant(True)
+                self.changed += 1
         if (
             mutation.kind == "flux_step"
             and self.function == mutation.target
@@ -641,6 +779,7 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
             f"unmapped guards: {guards.symmetric_difference(GUARD_TESTS)}"
         )
     outcomes = []
+    controls = []
     with tempfile.TemporaryDirectory(prefix="rpd-reco-mutants-") as temporary:
         shutil.copyfile(
             ROOT / "nd-unfolding/fd_rpd_inputs.py", Path(temporary) / "fd_rpd_inputs.py"
@@ -649,22 +788,100 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
             ROOT / "nd-unfolding/fd_rpd_reco_custody.py",
             Path(temporary) / "fd_rpd_reco_custody.py",
         )
+        control_dir = Path(temporary) / "comment-control"
+        control_dir.mkdir()
+        for filename in (
+            "fd_rpd_inputs.py",
+            "fd_ct_period_inputs.py",
+            "fd_rpd_reco.py",
+            "fd_rpd_reco_custody.py",
+        ):
+            shutil.copyfile(ROOT / "nd-unfolding" / filename, control_dir / filename)
+        control_file = control_dir / "fd_rpd_reco_custody.py"
+        control_file.write_text(
+            control_file.read_text() + "\n# Byte-only custody control.\n"
+        )
+        control_command = [sys.executable, "-m", "pytest", "-q", str(TESTS)]
+        if selected is not None:
+            selectors = sorted({m.selector for m in REQUIRED if m.name in selected})
+            control_command += [
+                "-k",
+                " or ".join(f"({selector})" for selector in selectors),
+            ]
+        control = subprocess.run(
+            control_command,
+            cwd=ROOT,
+            env=os.environ
+            | {
+                "FD_RPD_RECO_MODULE": str(control_dir / "fd_rpd_reco.py"),
+                "FD_RPD_CUSTODY_MODULE": str(control_file),
+            },
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=600,
+        )
+        controls.append(
+            {
+                "name": "comment_only_custody",
+                "returncode": control.returncode,
+                "stdout": control.stdout,
+                "stderr": control.stderr,
+            }
+        )
+        if control.returncode != 0:
+            output.write_text(
+                json.dumps(
+                    {"controls": controls, "all_killed": False, "complete": False},
+                    indent=2,
+                )
+                + "\n"
+            )
+            raise RuntimeError(
+                "comment-only custody control failed: "
+                + control.stdout
+                + control.stderr
+            )
+        print("PASS comment-only custody control", flush=True)
         for mutation in REQUIRED:
             if selected is not None and mutation.name not in selected:
                 continue
             transformer = Mutator(mutation)
             custody_mutant = mutation.kind.startswith("custody_")
+            platform_mutant = mutation.kind == "platform_check"
             mutation_source = (
-                (ROOT / "nd-unfolding/fd_rpd_reco_custody.py").read_text()
-                if custody_mutant
-                else source
+                (ROOT / "nd-unfolding/tests/fd_rpd_reco_mat_check.py").read_text()
+                if platform_mutant
+                else (
+                    (ROOT / "nd-unfolding/fd_rpd_reco_custody.py").read_text()
+                    if custody_mutant
+                    else source
+                )
             )
             changed = transformer.visit(ast.parse(mutation_source))
+            if mutation.kind == "custody_guard" and transformer.changed != 1:
+                raise RuntimeError(
+                    f"named custody mutation must change exactly one site: {mutation.name}, {transformer.changed}"
+                )
             if transformer.changed == 0:
                 raise RuntimeError(
                     f"mutation {mutation.name} did not change the producer"
                 )
-            path = Path(temporary) / f"{mutation.name}.py"
+            directory = Path(temporary) / mutation.name
+            directory.mkdir()
+            for filename in (
+                "fd_rpd_inputs.py",
+                "fd_ct_period_inputs.py",
+                "fd_rpd_reco.py",
+                "fd_rpd_reco_custody.py",
+            ):
+                shutil.copyfile(ROOT / "nd-unfolding" / filename, directory / filename)
+            (directory / "tests").mkdir()
+            path = directory / (
+                "tests/fd_rpd_reco_mat_check.py"
+                if platform_mutant
+                else "fd_rpd_reco_custody.py" if custody_mutant else "fd_rpd_reco.py"
+            )
             path.write_text(ast.unparse(ast.fix_missing_locations(changed)) + "\n")
             command = [
                 sys.executable,
@@ -679,11 +896,15 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
                 command,
                 cwd=ROOT,
                 env=os.environ
-                | (
-                    {"FD_RPD_CUSTODY_MODULE": str(path)}
-                    if custody_mutant
-                    else {"FD_RPD_RECO_MODULE": str(path)}
-                ),
+                | {
+                    "FD_RPD_RECO_MODULE": str(directory / "fd_rpd_reco.py"),
+                    "FD_RPD_CUSTODY_MODULE": str(directory / "fd_rpd_reco_custody.py"),
+                    **(
+                        {"FD_RPD_MAT_CHECK_MODULE": str(path)}
+                        if platform_mutant
+                        else {}
+                    ),
+                },
                 text=True,
                 capture_output=True,
                 timeout=120,
@@ -714,6 +935,7 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
         ).hexdigest(),
         "required": [mutation.name for mutation in REQUIRED],
         "selected": sorted(selected) if selected else None,
+        "controls": controls,
         "outcomes": outcomes,
         "complete": selected is None and len(outcomes) == len(REQUIRED),
         "all_killed": bool(outcomes)

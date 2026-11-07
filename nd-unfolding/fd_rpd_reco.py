@@ -23,7 +23,7 @@ import time
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 THREAD_KEYS = (
     "OMP_NUM_THREADS",
@@ -1200,7 +1200,14 @@ def checked_mat_environment(inputs: Inputs | None = None) -> tuple[Any, Json]:
     }
 
 
-def checked_prepared_mat(inputs: Inputs) -> tuple[Any, Json]:
+class PreparedMatContext(Protocol):
+    """Only the receipt and own run directory needed for a traced MAT check."""
+
+    run: Path
+    prestage: Json | None
+
+
+def checked_prepared_mat(inputs: PreparedMatContext) -> tuple[Any, Json]:
     """Verify same-connect MAT custody without reopening protected instrument sources."""
     import importlib.util
     import ROOT
@@ -1228,8 +1235,8 @@ def checked_prepared_mat(inputs: Inputs) -> tuple[Any, Json]:
     )
     instrument = load_mat_instrument()
     environment = prepared["mat_environment"]
-    mapped = instrument.mapped_files()
     dictionary = ROOT.TClass.GetClass("PlotUtils::MnvH1D")
+    mapped = instrument.mapped_files()
     bad = instrument.mat_env_problems(
         environment["setup_sha256"],
         environment["mat_sha256"],
@@ -1239,18 +1246,31 @@ def checked_prepared_mat(inputs: Inputs) -> tuple[Any, Json]:
         bool(dictionary) and bool(dictionary.HasDictionary()),
     )
     require(not bad, "MAT_ENVIRONMENT", "; ".join(bad))
+    policy_path = inputs.run / "trace-policy.json"
+    require(
+        policy_path.is_file()
+        and digest(policy_path) == prepared.get("trace_policy_sha256"),
+        "MAT_PREPARE",
+        "prepared trace policy changed",
+    )
+    policy = json.loads(policy_path.read_text())
+    require(
+        not custody.mapped_instrument_violations(mapped, policy),
+        "MAT_MAPPED_SET",
+        "a non-pinned instrument library is mapped",
+    )
     for filename, before in prepared["mapped_mat_stats"].items():
         info = Path(filename).stat()
         require(
             filename in mapped and [info.st_dev, info.st_ino, info.st_size] == before,
-            "MAT_ENVIRONMENT",
+            "MAT_MAPPED_STAT",
             "mapped MAT library stat changed",
         )
     for item in prepared["instrument_files"]:
         copied = Path(item["staged"])
         require(
             copied.is_file() and digest(copied) == item["sha256"],
-            "MAT_PREPARE",
+            "MAT_INSTRUMENT_DIGEST",
             "staged checked instrument changed",
         )
     return ROOT, {
@@ -1292,9 +1312,21 @@ def guarded_tfile(root: Any, staged_paths: Sequence[Path]) -> Iterator[None]:
         root.TFile = original
 
 
-def read_flux_histogram(path: Path, histogram: str, *, root: Any) -> Json:
-    """Extract MnvH1D base CV bins and errors in the already checked MAT process."""
-    with guarded_tfile(root, [path]):
+@contextlib.contextmanager
+def histogram_directory_ownership(root: Any) -> Iterator[None]:
+    """Keep streamed histograms and their error bands out of TFile ownership lists."""
+    previous = bool(root.TH1.AddDirectoryStatus())
+    root.TH1.AddDirectory(False)
+    try:
+        yield
+    finally:
+        root.TH1.AddDirectory(previous)
+
+
+@contextlib.contextmanager
+def checked_root_file(path: Path, *, root: Any) -> Iterator[Any]:
+    """Open only a checked stage path and close after histogram proxies are released."""
+    with histogram_directory_ownership(root), guarded_tfile(root, [path]):
         handle = root.TFile.Open(str(path), "READ")
         require(
             bool(handle) and not handle.IsZombie(),
@@ -1302,58 +1334,77 @@ def read_flux_histogram(path: Path, histogram: str, *, root: Any) -> Json:
             "ROOT file did not open",
         )
         try:
-            hist = handle.Get(histogram)
+            yield handle
+        finally:
+            handle.Close()
+
+
+def read_flux_histogram(
+    path: Path,
+    histogram: str,
+    *,
+    root: Any,
+    evaluation_points: Sequence[float] = (),
+) -> Json:
+    """Copy real MnvH1D CV values into plain arrays and release it before file close.
+
+    Optional evaluation points record ROOT witnesses for the platform ownership
+    and interpolation check. No histogram or file proxy escapes this function.
+    """
+    with checked_root_file(path, root=root) as handle:
+        hist = handle.Get(histogram)
+        try:
             require(bool(hist), "FLUX_HISTOGRAM", f"missing histogram {histogram}")
             require(
                 bool(hist.InheritsFrom("PlotUtils::MnvH1D")),
                 "MAT_MNVH1D",
                 "histogram is not a real MnvH1D",
             )
-            bins = int(hist.GetNbinsX())
+            hist.SetDirectory(0)
+            root.SetOwnership(hist, True)
             spectrum = {
                 "histogram": histogram,
-                "class_name": str(hist.ClassName()),
-                "edges": [
-                    float(hist.GetXaxis().GetBinLowEdge(i)) for i in range(1, bins + 2)
-                ],
-                "values": [float(hist.GetBinContent(i)) for i in range(1, bins + 1)],
-                "errors": [float(hist.GetBinError(i)) for i in range(1, bins + 1)],
-                "flow_values": [float(hist.GetBinContent(i)) for i in (0, bins + 1)],
-                "flow_errors": [float(hist.GetBinError(i)) for i in (0, bins + 1)],
-                "error_convention": "MnvH1D base CV GetBinError; no uncertainty-band construction",
+                **histogram_spectrum(hist),
+                "error_convention": "MnvH1D base CV GetBinError; this reader applies no constraint or uncertainty construction",
             }
+            if evaluation_points:
+                spectrum["root_evaluations"] = [
+                    {
+                        "energy": float(e),
+                        "value": float(
+                            hist.GetBinContent(hist.FindBin(e))
+                            if e > 75.0
+                            else hist.Interpolate(e)
+                        ),
+                    }
+                    for e in evaluation_points
+                ]
             return validate_flux_spectrum(spectrum)
         finally:
-            handle.Close()
+            del hist
 
 
 def flux_units_metadata(path: Path, *, root: Any) -> Json:
-    """Record unit/POT metadata when present, without inferring absent declarations."""
-    with guarded_tfile(root, [path]):
-        handle = root.TFile.Open(str(path), "READ")
-        require(
-            bool(handle) and not handle.IsZombie(),
-            "MAT_ROOT_FILE",
-            "units file did not open",
-        )
-        try:
-            metadata = {}
-            for key in handle.GetListOfKeys():
-                name, class_name = str(key.GetName()), str(key.GetClassName())
-                if not re.search(r"unit|pot|normalization|density", name, re.I):
-                    continue
-                if class_name not in {"TNamed", "TObjString"}:
-                    continue
-                obj = key.ReadObj()
+    """Copy declared textual units without retaining ROOT object proxies at close."""
+    with checked_root_file(path, root=root) as handle:
+        metadata = {}
+        for key in handle.GetListOfKeys():
+            name, class_name = str(key.GetName()), str(key.GetClassName())
+            if not re.search(r"unit|pot|normalization|density", name, re.I):
+                continue
+            if class_name not in {"TNamed", "TObjString"}:
+                continue
+            obj = key.ReadObj()
+            try:
                 text = (
                     str(obj.GetString())
                     if class_name == "TObjString"
                     else str(obj.GetTitle())
                 )
                 metadata[name] = {"class_name": class_name, "text": text}
-            return metadata
-        finally:
-            handle.Close()
+            finally:
+                del obj
+        return metadata
 
 
 def common_flux_units(spectra: Json) -> Json:
@@ -1548,13 +1599,13 @@ def flux_extract(inputs: Inputs, argv: Sequence[str]) -> Json:
         ]
         require(
             len(matching) == 1 and matching[0]["sha256"] == selection["sha256"],
-            "FLUX_SELECTION",
+            "FLUX_CONSTRUCTOR_SELECTION",
             "constructor input differs from C-N selection",
         )
     inputs.load_pins()
     spectra: Json = {}
     products: Json = {}
-    with staged_mat_prefixes(prefixes):
+    with histogram_directory_ownership(root), staged_mat_prefixes(prefixes):
         reweighters = {
             group: root.PlotUtils.FluxReweighter(
                 14,
@@ -1630,6 +1681,8 @@ def flux_extract(inputs: Inputs, argv: Sequence[str]) -> Json:
                 "zero_patterns": counts,
             }
             inputs.check_wall_clock()
+    # Recheck after ROOT has read the objects and may have autoloaded dictionaries.
+    _, final_environment = checked_mat_environment(inputs)
     inputs.plan_step("p0", None)
     record = {
         "schema": "fd-rpd-reco-flux-extract/2",
@@ -1644,6 +1697,7 @@ def flux_extract(inputs: Inputs, argv: Sequence[str]) -> Json:
         "input_sha256": inputs.hashes,
         "keys_read": inputs.keys_read,
         "mat_environment": environment,
+        "final_mat_environment": final_environment,
         "dependency_units_metadata": units,
         "descriptive_ALL_unit_cross_check": {
             "status": "SKIPPED",
@@ -2956,7 +3010,17 @@ def main(argv: Sequence[str] | None = None) -> int:
                 },
             )
         print(f"STOP {guard}: {error}", file=sys.stderr)
-        return 7 if guard == "MAT_ENVIRONMENT" else 4
+        return (
+            7
+            if guard
+            in {
+                "MAT_ENVIRONMENT",
+                "MAT_MAPPED_STAT",
+                "MAT_MAPPED_SET",
+                "MAT_INSTRUMENT_DIGEST",
+            }
+            else 4
+        )
     print(
         json.dumps(
             {

@@ -33,10 +33,10 @@ class CustodyRefused(ValueError):
         super().__init__(message)
 
 
-def require(condition: bool, message: str) -> None:
+def require(condition: bool, message: str, *, guard: str = "CUSTODY") -> None:
     """Refuse an incomplete or inconsistent boundary record."""
     if not condition:
-        raise CustodyRefused(message)
+        raise CustodyRefused(message, {"guard": guard})
 
 
 def module_paths() -> Json:
@@ -195,6 +195,11 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
             },
         )
         raise
+    require(
+        fence.get("status") == "PASS" and fence.get("exit_code") == 0,
+        "prepare requires a passing COV2D fence",
+        guard="PREPARE_FENCE",
+    )
     r.write_json(run / "cov2d-fence.json", fence)
     files: Json = {}
 
@@ -214,7 +219,9 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
         r.stage_copy(path, target, checksum)
         after = source_stat(path)
         require(
-            before == after, "source stat or atime changed during fresh stage: " + key
+            before == after,
+            "source stat or atime changed during fresh stage: " + key,
+            guard="STAGE_SOURCE_STAT",
         )
         item = {
             "original": key,
@@ -266,6 +273,7 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
         len(entries) == 15
         and {(e["environment_key"], e["relative_path"]) for e in entries} == expected,
         "MAT static inventory differs from the closed fifteen-path set",
+        guard="MAT_INVENTORY",
     )
     prefixes = {
         key: str((run / "mat-data" / key).resolve())
@@ -288,6 +296,7 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
             require(
                 staged["sha256"] == selected[item["playlist_group"]]["sha256"],
                 "native constructor input differs from C-N inventory selection",
+                guard="NATIVE_SELECTION",
             )
         dependencies.append({**item, **staged, "staged": str(target.resolve())})
     instrument_files = []
@@ -326,6 +335,7 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
         "module_paths": module_paths(),
     }
     r.write_json(run / "trace-policy.json", build_trace_policy(config, manifest, run))
+    manifest["trace_policy_sha256"] = r.digest(run / "trace-policy.json")
     r.write_json(run / "prestage.json", manifest)
     config["prestage"] = {
         "path": str((run / "prestage.json").resolve()),
@@ -337,6 +347,54 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
 
 def _under(path: str, root: str) -> bool:
     return path == root or path.startswith(root.rstrip("/") + "/")
+
+
+def classify_successful_open(
+    paths: set[str], arguments: str, policy: Json
+) -> list[str]:
+    """Keep exact pinned files distinct from reviewed instrument-directory scans."""
+    pinned = set(policy["allowed"].get("pinned_mat_libs", []))
+    if paths & pinned:
+        return ["pinned_mat_libs"]
+    if any(
+        _under(p, directory)
+        for p in paths
+        for directory in policy.get("instrument_directories", [])
+    ):
+        return ["instrument_directory"]
+    if "O_DIRECTORY" in arguments and any(
+        p == directory
+        for p in paths
+        for directory in policy.get("python_directories", [])
+    ):
+        return ["python_directory"]
+    categories = [
+        category
+        for category, roots in policy["allowed"].items()
+        if category != "pinned_mat_libs"
+        and any(_under(p, root) for p in paths for root in roots)
+    ]
+    if "staged_data" in categories and "run" in categories:
+        categories.remove("run")
+    return categories
+
+
+def mapped_instrument_violations(mapped: set[str], policy: Json) -> list[str]:
+    """A rootmap may be read without admitting a new mapped instrument library."""
+    pinned = {
+        str(Path(path).resolve())
+        for path in policy["allowed"].get("pinned_mat_libs", [])
+    }
+    return sorted(
+        path
+        for path in mapped
+        if re.search(r"\.so(?:\.\d+)*$|\.dylib$", path)
+        and any(
+            _under(path, directory)
+            for directory in policy.get("instrument_directories", [])
+        )
+        and path not in pinned
+    )
 
 
 def classify_trace(lines: list[str], policy: Json) -> Json:
@@ -404,14 +462,7 @@ def classify_trace(lines: list[str], policy: Json) -> Json:
         if protected:
             violations.append({**event, "reason": "protected root attempt"})
         elif success:
-            categories = [
-                category
-                for category, roots in policy["allowed"].items()
-                if any(_under(p, root) for p in paths for root in roots)
-            ]
-            # Nested explicit stage roots belong to staged_data, not the enclosing run.
-            if "staged_data" in categories and "run" in categories:
-                categories.remove("run")
+            categories = classify_successful_open(paths, arguments, policy)
             if len(categories) != 1:
                 violations.append(
                     {
@@ -460,10 +511,19 @@ def build_trace_policy(config: Json, prepared: Json, run: Path) -> Json:
         and all(Path(p).is_absolute() for p in extra),
         "reviewed environment/ROOT prefixes required",
     )
+    directories = config["trace_instrument_directories"]
+    require(
+        isinstance(directories, list)
+        and bool(directories)
+        and all(Path(p).is_absolute() for p in directories),
+        "reviewed instrument directories required",
+        guard="INSTRUMENT_DIRECTORIES",
+    )
     cov2d = config["cov2d_protected_paths"]
     require(isinstance(cov2d, list) and bool(cov2d), "COV2D input paths required")
     roots = [
         config["dump_root"],
+        config["flux_root"],
         str(Path(prepared["original_mat_prefixes"]["PLOTUTILSROOT"]) / "data"),
         prepared["original_mat_prefixes"]["MPARAMFILES"],
         *cov2d,
@@ -483,8 +543,19 @@ def build_trace_policy(config: Json, prepared: Json, run: Path) -> Json:
     require(
         not any(_under(str(run.resolve()), root) for root in roots),
         "run overlaps protected root",
+        guard="RUN_PROTECTED_OVERLAP",
     )
-    modules = list(prepared["module_paths"].values())
+    owned_sources = [
+        str(Path(__file__).with_name(name).resolve())
+        for name in (
+            "fd_rpd_reco.py",
+            "fd_rpd_reco_custody.py",
+            "fd_rpd_reco_prologue.py",
+            "fd_rpd_inputs.py",
+            "fd_ct_period_inputs.py",
+        )
+    ]
+    modules = list(prepared["module_paths"].values()) + owned_sources
     # Import machinery can inspect only the matching cached Python code directory.
     cache = [
         str(Path(path).parent / "__pycache__")
@@ -495,6 +566,16 @@ def build_trace_policy(config: Json, prepared: Json, run: Path) -> Json:
         "schema": "fd-rpd-reco-trace-policy/1",
         "cwd": str(Path.cwd()),
         "protected_roots": roots,
+        "instrument_directories": sorted(
+            {
+                str(value)
+                for path in directories
+                for value in (Path(path).absolute(), Path(path).resolve())
+            }
+        ),
+        "python_directories": sorted(
+            {str(Path(path or os.getcwd()).resolve()) for path in sys.path}
+        ),
         "allowed": {
             "staged_data": [
                 str((run / "original-inputs").resolve()),
@@ -545,6 +626,7 @@ def check_trace(
         record.get("status") == "PASS"
         and record.get("code_sha256") == r.digest(Path(r.__file__)),
         "extract did not pass under this producer",
+        guard="TRACE_EXTRACT_IDENTITY",
     )
     receipt = {
         "schema": "fd-rpd-reco-flux-custody/1",
@@ -617,6 +699,7 @@ def missing_dependency_check(
     require(
         refusal.get("guard") == "MAT_DATA_STAGE",
         "missing dependency refused at a different boundary",
+        guard="NEGATIVE_EXPECTED_GUARD",
     )
     policy = r.stage_copy(
         run / "trace-policy.json", run / "negative-policy.checked.json", policy_sha

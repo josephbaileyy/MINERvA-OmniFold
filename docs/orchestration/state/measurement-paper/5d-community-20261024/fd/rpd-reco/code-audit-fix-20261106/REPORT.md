@@ -1,5 +1,7 @@
 # RPD-RECO: audit repairs and the constrained-MAT boundary
 
+**Historical local verification at 338a1bcb.** The subsequent C1/C2 audit is NO-GO and the real-Mnv check crashed (#863). The counts below remain local measurements; they establish no runtime readiness. Follow `code-platform-repair-20261106/` for the repair and new verification.
+
 This packet repairs the code reviewed at `10731ed3` in draft PR #848. It does not supply Binding 2, a P0 go, a production result, or a publication claim. The governing recipe is `FD-RPD-RECO-DECLARATION.md` revision 2, with Binding 1 addendum A1 (merged in #854). The director's measured-price and custody rulings are preserved verbatim beside this report.
 
 Owner: Codex2, local code and fixtures only. Reviewer: coverage-5b-audit through the director; the director retains the merge and execution decisions. The decision is whether this code implements the bound reconstruction-level recipe. The terminal condition for this lane is passing local tests and required mutants, committed receipts, and a pushed draft PR. The review budget is one consolidated delta audit plus repairs to concrete blockers. No scientific sampling, cluster contact, or new campaign is authorized for this lane.
