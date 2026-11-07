@@ -654,8 +654,13 @@ def null_at(rm: dict) -> dict:
     return fn.null_contents([law for _, law, _ in rm["laws"]], rm["gauss"], rm["C_T"])
 
 
-def grade(E: np.ndarray, C: np.ndarray, null: dict) -> dict:
-    """Section 5.1-5.2 for one matrix: counts, the flags against the null, the chi2 statistics, pulls, attribution."""
+def grade(E: np.ndarray, C: np.ndarray, null: dict, chol_tol: float = 1e-9, chol_out: dict | None = None) -> dict:
+    """Section 5.1-5.2 for one matrix: counts, the flags against the null, the chi2 statistics, pulls, attribution.
+
+    At full rank the non-null chi2 is cross-checked against a Cholesky chi2 to the relative ``chol_tol``. 1B's default
+    (1e-9) is unchanged; COV2D-BINDING-2 addendum A5 passes max(1e-9, 10 kappa_2(C) eps). ``chol_out``, if given,
+    receives the compared values (``ndf``, ``max_rel_diff``, ``tol``); a refusal carries the same dict as
+    ``.compared``."""
     thr = fn.thresholds(null, E.shape[0])
     sigma = np.sqrt(np.diag(C))
     inside = np.sum(np.abs(E) <= sigma, axis=0)
@@ -663,8 +668,15 @@ def grade(E: np.ndarray, C: np.ndarray, null: dict) -> dict:
     if ndf == C.shape[0]:
         L = np.linalg.cholesky(C)
         ref = np.sum(np.linalg.solve(L, E.T) ** 2, axis=0)
-        if np.max(np.abs(chi2 / ref - 1)) > 1e-9:
-            raise Refusal("the non-null chi2 and the Cholesky chi2 differ")
+        compared = {"ndf": ndf, "max_rel_diff": float(np.max(np.abs(chi2 / ref - 1))), "tol": float(chol_tol)}
+        if chol_out is not None:
+            chol_out.update(compared)
+        if compared["max_rel_diff"] > chol_tol:
+            e = Refusal("the non-null chi2 and the Cholesky chi2 differ")
+            e.compared = compared
+            raise e
+    elif chol_out is not None:
+        chol_out.update({"ndf": ndf, "max_rel_diff": None, "tol": float(chol_tol)})
     joint = int(np.sum(chi2 <= null["chi2_cut"]))
     cell_flag = [bool(int(n) <= k) for n, k in zip(inside, thr["k_cell"])]
     joint_flag = joint <= thr["k_joint"]
