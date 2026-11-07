@@ -1,0 +1,39 @@
+KILLED  cov2d_readout.py: null gate reads the local record, not origin's
+KILLED  cov2d_readout.py: digest compare removed
+KILLED  cov2d_readout.py: M refusal removed
+KILLED  cov2d_readout.py: truth refusal removed
+KILLED  cov2d_readout.py: verdict refusal removed
+KILLED  cov2d_readout.py: blocks-digest refusal removed
+KILLED  cov2d_readout.py: inventory re-hash removed
+KILLED  cov2d_readout.py: toy stat compare removed
+KILLED  cov2d_readout.py: section 9.9 skipped on the toys
+KILLED  cov2d_readout.py: A4-1 toys not held to the null record's code
+KILLED  cov2d_readout.py: code compare removed
+KILLED  cov2d_readout.py: dataFileSha256 compare removed
+KILLED  cov2d_readout.py: runArgv compare removed
+KILLED  cov2d_readout.py: seed compare removed
+KILLED  cov2d_readout.py: A4-2 the product's own label not checked
+KILLED  cov2d_readout.py: toy data_file not its own
+KILLED  cov2d_readout.py: non-toy data_file not the realization's
+KILLED  cov2d_readout.py: universe compare removed
+KILLED  cov2d_readout.py: bootstrap seed compare removed
+KILLED  cov2d_readout.py: lateral omnifile compare removed
+KILLED  cov2d_readout.py: X/L may carry a universe
+KILLED  cov2d_readout.py: one code: several drivers admitted
+KILLED  cov2d_readout.py: toys graded despite section 9.9
+KILLED  cov2d_readout.py: pins removed (read_pinned)
+KILLED  cov2d_readout.py: #866 product-digest pin removed
+KILLED  cov2d_readout.py: toy seed-set check removed
+KILLED  cov2d_readout.py: plan admits any toy set
+KILLED  cov2d_readout.py: truth rows' order unchecked
+KILLED  cov2d_readout.py: phase N's toy-open check removed
+KILLED  cov2d_readout.py: identity problems ignored
+KILLED  cov2d_readout.py: mtime window an hour early
+KILLED  cov2d_readout.py: PST taken as UTC-7
+KILLED  cov2d_readout.py: G18 cells size unchecked
+KILLED  cov2d_readout.py: atime STOP removed
+KILLED  cov2d_readout.py: a stop does not outrank the reading
+KILLED  cov2d_readout.py: noatime_inputs dropped
+KILLED  cov2d_blocks.py: open audit off
+killed 37 of 37
+harness rc=0

@@ -1,0 +1,18 @@
+test_a_failed_control_is_invalid_and_keeps_the_grade (test_cov2d_score.Score.test_a_failed_control_is_invalid_and_keeps_the_grade) ... ok
+test_errors_apply_the_surrogates_per_toy (test_cov2d_score.Score.test_errors_apply_the_surrogates_per_toy) ... ok
+test_grade_is_1bs_and_gaussian_errors_cover (test_cov2d_score.Score.test_grade_is_1bs_and_gaussian_errors_cover) ... ok
+test_needs_205_cells (test_cov2d_score.Score.test_needs_205_cells) ... ok
+test_refuses_any_toy_count_but_the_declared_300 (test_cov2d_score.Score.test_refuses_any_toy_count_but_the_declared_300) ... ok
+test_refuses_cells_without_the_outlier (test_cov2d_score.Score.test_refuses_cells_without_the_outlier) ... ok
+test_the_outlier_cells_values_are_read_at_its_own_position (test_cov2d_score.Score.test_the_outlier_cells_values_are_read_at_its_own_position) ... ok
+test_too_narrow_c_t_under_covers_and_a_weakened_cell_that_flags_is_not_labelled (test_cov2d_score.Score.test_too_narrow_c_t_under_covers_and_a_weakened_cell_that_flags_is_not_labelled) ... ok
+test_weakened_share_counts_every_weakened_cell_when_they_flag (test_cov2d_score.Score.test_weakened_share_counts_every_weakened_cell_when_they_flag) ... ok
+test_deltas_use_minos_x01 (test_cov2d_score.Surrogate.test_deltas_use_minos_x01) ... ok
+test_lateral_then_normalization (test_cov2d_score.Surrogate.test_lateral_then_normalization) ... ok
+test_signs_must_be_one_per_lateral_band (test_cov2d_score.Surrogate.test_signs_must_be_one_per_lateral_band) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 26.733s
+
+OK
+SUITE env=R module=test_cov2d_score ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
