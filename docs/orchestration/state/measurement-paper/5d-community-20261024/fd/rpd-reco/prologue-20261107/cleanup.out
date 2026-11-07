@@ -1,0 +1,37 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3115c0s15b0n0:
+
+login27
+2026-11-07T02:18:26Z
+d 100 
+f 10860 policy-config.json
+d 760 repo
+f 4584 strace-probe.txt
+3992108792db2bc7c26b570531efec2df739a392398c03af366b82eb9190fa4b  /dev/shm/limres-rpd-prologue-20261107/policy-config.json
+744664c75ae21ec699272b2290a65e85773c24184dd0507c6f7c41a28e59c8d7  /dev/shm/limres-rpd-prologue-20261107/strace-probe.txt
+absent: /dev/shm/limres-rpd-prologue-20261107
+0
