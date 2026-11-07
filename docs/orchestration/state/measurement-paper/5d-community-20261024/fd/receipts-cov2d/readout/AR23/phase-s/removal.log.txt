@@ -1,0 +1,16 @@
+host=login02 utc=2026-11-07T18:24:32Z
+fd1af0073301d8f8de49199b7fc86c3213191d6ac66abd94ec24bbfc20b8a36f  connect-s-AR23.log
+d67f4aa0100976b8a903bd59f43c30d45407f4f9c8797b6540ea7dbdc91d1c97  score_AR23.log
+b3926bf6b212a71ddae679a9f5d1ae8fd20e20b964eebd6ddd0b466fb839c5c2  blobs.before
+b3926bf6b212a71ddae679a9f5d1ae8fd20e20b964eebd6ddd0b466fb839c5c2  blobs.after
+fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1  out/score_AR23.json
+c71883a09433504839f144f96bb62d42a3c05a17257467c3fa4cebff2d0e1fe0  /dev/shm/josephrb-cov2d-s-AR23.sh
+rm -f /dev/shm/josephrb-cov2d-s-AR23.sh rc=0
+rm -f /dev/shm/josephrb-cov2d-s-AR23/out/score_AR23.json rc=0
+rm -f /dev/shm/josephrb-cov2d-s-AR23/blobs.after rc=0
+rm -f /dev/shm/josephrb-cov2d-s-AR23/blobs.before rc=0
+rm -f /dev/shm/josephrb-cov2d-s-AR23/connect-s-AR23.log rc=0
+rm -f /dev/shm/josephrb-cov2d-s-AR23/score_AR23.log rc=0
+rmdir /dev/shm/josephrb-cov2d-s-AR23/out rc=0
+rmdir /dev/shm/josephrb-cov2d-s-AR23 rc=0
+ls end
