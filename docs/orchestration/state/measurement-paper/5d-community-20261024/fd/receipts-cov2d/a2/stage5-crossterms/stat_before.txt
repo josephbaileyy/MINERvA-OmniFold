@@ -1,0 +1,4 @@
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/runEventLoopOmniFold_MEFHC_universes_full.root size=171117087867 mtime=2026-07-08 08:08:15.000000000 -0700 atime=2026-11-06 08:34:23.000000000 -0800 inode=882725391507234642
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/etc/MParamFiles/data/FluxConstraints/sorted_NuEConstraint_FHC_RHC_IMD.txt size=25403 mtime=2021-08-31 08:49:26.000000000 -0700 atime=2026-11-05 07:18:14.000000000 -0800 inode=882722362129162055
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep/bridged/genie_v3_g18.json size=543301 mtime=2026-10-28 04:22:12.000000000 -0700 atime=2026-10-31 16:17:27.000000000 -0700 inode=882727061460966325
+/pscratch/sd/j/josephrb/fd-f1-20261027/f1b3/prep/bridged/genie_v3_ar23.json size=541943 mtime=2026-10-28 04:22:12.000000000 -0700 atime=2026-10-31 16:17:27.000000000 -0700 inode=882727061460966324

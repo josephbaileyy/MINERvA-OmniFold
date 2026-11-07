@@ -1,0 +1,12 @@
+host=login02 utc=2026-11-07T06:32:14Z
+5c842b6645f40a34e846344c102d5766ded9dc2d347dafd8e18c9f46dd2267f1  connect-x1.log
+84a7f73ed7c348daad384fc8dbde83a4fbd06cc094b8f08faba2abcee8a457f4  crossterms.json
+189e75c51ed2606beae355be0cda9301e7a4144fd030b6f61f15f4b70ac5cfde  crossterms.out
+e0e04c3f25ff792017c92d6a5ba841303f52897159c7a27f276750fd018119d8  crossterms.time
+82dea7e518e8580da44a79c2f0bd9514d229d459fca0ed8c708cf54cdb252818  stat_before.txt
+82dea7e518e8580da44a79c2f0bd9514d229d459fca0ed8c708cf54cdb252818  stat_after.txt
+49ab7d0d48bfd5fa779533385c529fcef52082f3c92cbf989b712ed88bc1eb31  bound.sha256
+178a3a3b033a2d693e554411bbb81d0fe22e09e2fb56a080904eb2199c6f0aa1  crossterms.npz
+4dc6b184eb151b152292ba2d864ccb539f5d7f1e46ed0e1968e428a299fe4d20  /dev/shm/josephrb-cov2d-x1.sh
+rm -f /dev/shm/josephrb-cov2d-x1.sh rc=0
+ls end
