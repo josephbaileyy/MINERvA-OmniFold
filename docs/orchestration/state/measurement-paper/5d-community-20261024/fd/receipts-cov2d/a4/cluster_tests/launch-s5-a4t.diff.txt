@@ -1,0 +1,35 @@
+--- a2/stage5-control95/launch-s5.sh
++++ launch-s5.sh
+@@ -1,5 +1,6 @@
+ #!/bin/bash
+-# Launch one stage-5 bound-CLI connect (the director's ruling 2, 2026-11-07). Usage: launch-s5.sh 95|x1
++# Launch one stage-5 bound-CLI connect (the director's ruling 2, 2026-11-07), or A4's cluster test receipt (a4t).
++# Usage: launch-s5.sh 95|x1|a4t
+ #   1. the fence, read-only: no cov2d job unended (sacct) and none in squeue, recorded;
+ #   2. stage the connect at /dev/shm/josephrb-cov2d-<name>.sh; compare its node sha256 to the local one (separate step);
+ #   3. launch detached; wait for its end line;
+@@ -13,7 +14,11 @@
+       FILES="connect-95.log control95.json control95.log blobs.before blobs.after"; END=DONE ;;
+   x1) LOGP=/pscratch/sd/j/josephrb/cov2d-crossterms-20261107/connect-x1.log; WD=/pscratch/sd/j/josephrb/cov2d-crossterms-20261107
+       FILES="connect-x1.log crossterms.json crossterms.out crossterms.time stat_before.txt stat_after.txt bound.sha256"; END=end= ;;
+-  *) echo "usage: launch-s5.sh 95|x1"; exit 2 ;;
++  a4t) LOGP=/dev/shm/josephrb-cov2d-a4t/connect-a4t.log; WD=/dev/shm/josephrb-cov2d-a4t; mkdir "$OUT/logs"
++      FILES="connect-a4t.log logs/SHA256SUMS logs/blobs.txt"
++      for e in RM R; do for m in test_cov2d_readout test_cov2d_blocks test_cov2d_null test_cov2d_score; do FILES="$FILES logs/${e}_$m.log"; done; done
++      FILES="$FILES logs/RM_test_cov2d.log logs/P_test_cov2d_readouts.log"; END=DONE ;;
++  *) echo "usage: launch-s5.sh 95|x1|a4t"; exit 2 ;;
+ esac
+ SH=/dev/shm/josephrb-cov2d-$N.sh
+ r() { ssh -o ControlPath=none saul.nersc.gov "ssh -o BatchMode=yes -o LogLevel=QUIET login02 bash -s"; }
+@@ -61,6 +66,11 @@
+ for f in $WD/tmp/*; do [ -e "\$f" ] || continue; rm -f "\$f"; echo "rm -f \$f rc=\$?"; done
+ rmdir $WD/tmp; echo "rmdir $WD/tmp rc=\$?"; rmdir $WD; echo "rmdir $WD rc=\$?"
+ EOF
++[ "$N" = a4t ] && cat >> "$OUT/remove.sh" <<EOF
++for f in $WD/logs/* $WD/*; do [ -d "\$f" ] && continue; rm -f "\$f"; echo "rm -f \$f rc=\$?"; done
++for d in $WD/logs $WD/tmp $WD/deploy; do [ -e "\$d" ] && { rmdir "\$d"; echo "rmdir \$d rc=\$?"; }; done
++rmdir $WD; echo "rmdir $WD rc=\$?"
++EOF
+ echo 'ls -la /dev/shm | grep josephrb; echo "ls end"' >> "$OUT/remove.sh"
+ r < "$OUT/remove.sh" > "$OUT/removal.log.txt" 2>&1; echo "removal rc=$?"
+ cat "$OUT/removal.log.txt"

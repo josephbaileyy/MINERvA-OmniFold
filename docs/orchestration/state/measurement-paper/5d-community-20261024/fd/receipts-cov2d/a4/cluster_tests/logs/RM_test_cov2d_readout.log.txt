@@ -1,0 +1,69 @@
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+test_atime_moved_stops_and_unmoved_does_not (test_cov2d_readout.Atime.test_atime_moved_stops_and_unmoved_does_not) ... ok
+test_a_noatime_toy_read_in_phase_n_stops (test_cov2d_readout.PhaseN.test_a_noatime_toy_read_in_phase_n_stops) ... ok
+test_a_plain_toy_open_in_phase_n_is_refused_by_the_audit (test_cov2d_readout.PhaseN.test_a_plain_toy_open_in_phase_n_is_refused_by_the_audit) ... ok
+test_a_product_off_its_digest_refuses (test_cov2d_readout.PhaseN.test_a_product_off_its_digest_refuses) ... ok
+test_an_inventory_file_outside_its_job_window_stops (test_cov2d_readout.PhaseN.test_an_inventory_file_outside_its_job_window_stops) ... ok
+test_completeness_off_its_pin_refuses (test_cov2d_readout.PhaseN.test_completeness_off_its_pin_refuses) ... ok
+test_non_toy_code_differs_is_invalid (test_cov2d_readout.PhaseN.test_non_toy_code_differs_is_invalid) ... ok
+test_null_passes_at_both_truths_and_opens_no_toy (test_cov2d_readout.PhaseN.test_null_passes_at_both_truths_and_opens_no_toy) ... ok
+test_a_changed_inventory_file_refuses (test_cov2d_readout.PhaseS.test_a_changed_inventory_file_refuses) ... ok
+test_a_changed_toy_stat_refuses (test_cov2d_readout.PhaseS.test_a_changed_toy_stat_refuses) ... ok
+test_a_stop_verdict_refuses (test_cov2d_readout.PhaseS.test_a_stop_verdict_refuses) ... ok
+test_a_toy_naming_another_toys_data_is_invalid (test_cov2d_readout.PhaseS.test_a_toy_naming_another_toys_data_is_invalid) ... ok
+test_a_toy_naming_another_truth_is_invalid (test_cov2d_readout.PhaseS.test_a_toy_naming_another_truth_is_invalid) ... ok
+test_a_toy_with_another_argv_is_invalid (test_cov2d_readout.PhaseS.test_a_toy_with_another_argv_is_invalid) ... ok
+test_a_toy_with_another_data_file_digest_is_invalid (test_cov2d_readout.PhaseS.test_a_toy_with_another_data_file_digest_is_invalid) ... ok
+test_a_toy_with_another_driver_is_invalid (test_cov2d_readout.PhaseS.test_a_toy_with_another_driver_is_invalid) ... ok
+test_a_toy_with_another_helper_is_invalid (test_cov2d_readout.PhaseS.test_a_toy_with_another_helper_is_invalid) ... ok
+test_a_toy_with_another_seed_is_invalid (test_cov2d_readout.PhaseS.test_a_toy_with_another_seed_is_invalid) ... ok
+test_absent_record_refuses (test_cov2d_readout.PhaseS.test_absent_record_refuses) ... ok
+test_another_m_refuses (test_cov2d_readout.PhaseS.test_another_m_refuses) ... ok
+test_another_truth_refuses (test_cov2d_readout.PhaseS.test_another_truth_refuses) ... ok
+test_blocks_off_the_record_refuses (test_cov2d_readout.PhaseS.test_blocks_off_the_record_refuses) ... ok
+test_score_completes_after_the_gate (test_cov2d_readout.PhaseS.test_score_completes_after_the_gate) ... ok
+test_toy_seeds_not_declared_refuse (test_cov2d_readout.PhaseS.test_toy_seeds_not_declared_refuse) ... ok
+test_truth_rows_out_of_natures_order_refuse (test_cov2d_readout.PhaseS.test_truth_rows_out_of_natures_order_refuse) ... ok
+test_wrong_digest_refuses (test_cov2d_readout.PhaseS.test_wrong_digest_refuses) ... ok
+test_reads_only_tnamed_records_of_a_real_root_file (test_cov2d_readout.Provenance.test_reads_only_tnamed_records_of_a_real_root_file) ... ok
+test_another_role_refuses (test_cov2d_readout.Pure.test_another_role_refuses) ... ok
+test_each_wrong_field_refuses (test_cov2d_readout.Pure.test_each_wrong_field_refuses) ... ok
+test_every_correct_product_passes (test_cov2d_readout.Pure.test_every_correct_product_passes) ... ok
+test_g18_cells_size_and_minute (test_cov2d_readout.Pure.test_g18_cells_size_and_minute) ... ok
+test_job_env_and_argv (test_cov2d_readout.Pure.test_job_env_and_argv) ... ok
+test_one_code (test_cov2d_readout.Pure.test_one_code) ... ok
+test_plan_refuses_an_undeclared_toy_set (test_cov2d_readout.Pure.test_plan_refuses_an_undeclared_toy_set) ... ok
+test_pst_is_utc_minus_8 (test_cov2d_readout.Pure.test_pst_is_utc_minus_8) ... ok
+test_window_edges (test_cov2d_readout.Pure.test_window_edges) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 122.287s
+
+OK
+COV2D-SCORE G18 REFUSED inventory: cells_npz differs from the null record
+COV2D-SCORE G18 REFUSED inventory: T_G18_5720011's stat differs from the null record
+COV2D-SCORE G18 REFUSED the null record's verdict is STOP
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 REFUSED origin/main holds no null_G18.json
+COV2D-SCORE G18 REFUSED the null record's M M1 is not this deploy's HEAD
+COV2D-SCORE G18 REFUSED the null record is AR23's, not G18's
+COV2D-SCORE G18 REFUSED blocks npz does not match the null record
+COV2D-SCORE G18 COVERS
+COV2D-SCORE G18 REFUSED pseudo_a's toys are not the declared seeds in order
+COV2D-SCORE G18 REFUSED truth_xsec.npz's rows are not pseudo_a's natures in order
+COV2D-SCORE G18 REFUSED origin/main's null_G18.json is e346fc889f8e8af89d8ae0f5cc18c9d1e7e26cf4e3ab07540afe22e1295fe582, not 1111111111111111111111111111111111111111111111111111111111111111
+SUITE env=RM module=test_cov2d_readout ran=36 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True

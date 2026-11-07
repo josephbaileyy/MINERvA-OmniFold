@@ -1,7 +1,8 @@
 # COV2D addendum A4: the driver's tests and mutants, run locally (2026-11-07)
 
 **By** the `cov2d` session, for PR #875. This is the test and mutation receipt for `2d-unfolding/cov2d/cov2d_readout.py`
-under `../../COV2D-ADDENDUM-A4.md` §8. The cluster receipt on root_6_28 is a separate step and is not here.
+under `../../COV2D-ADDENDUM-A4.md` §8. The cluster receipt on root_6_28 is `cluster_tests/` (10 of 10 suite runs ok
+at the code head `7177d0f83`).
 
 - **MEASURES:** whether `test_cov2d_readout` passes, and whether it kills each declared mutant, on the files hashed below.
 - **CANNOT AUTHORIZE:** a bulk read, phase N or phase S. Those wait for the director's binding of A4 (COV2D-BINDING-2
@@ -20,7 +21,7 @@ Neither the test file nor the harness changed after the harness started. After i
 byte-equal to the harness's backup, and `git diff HEAD` on both was empty.
 
 **Interpreter:** Python 3.13.7, ROOT 6.36.000, numpy 2.4.4, on Joseph's Mac. This is not the cluster's environment
-(root_6_28: ROOT 6.28/12, numpy 1.26.4), which is why the cluster receipt is still owed.
+(root_6_28: ROOT 6.28/12, numpy 1.26.4); that run is `cluster_tests/README.md`.
 
 ## Results
 
