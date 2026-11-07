@@ -19,7 +19,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_rounding_mechanism.py"
 P, A, S = "rounding_mechanism_probe.py", "rounding_mechanism_analyze.py", "sbatch_rs1.sh"
-EXPECTED_TESTS = 50  # a script-mode run that stops early exits 0 with fewer: refuse it
+EXPECTED_TESTS = 53  # a script-mode run that stops early exits 0 with fewer: refuse it
 
 # (label, file, old, new, the test that must fail). Every gate, reading and refusal has at least one.
 MUTATIONS = [
@@ -127,6 +127,26 @@ MUTATIONS = [
      "test_r0_reads_with_its_controls_and_an_undefined_cell"),
     ("R0b defined everywhere", A, "    defined = stat > rel_j\n", "    defined = stat > 0\n",
      "test_r0_reads_with_its_controls_and_an_undefined_cell"),
+    # --- RS1-C1 (coverage-5b-audit on #882): one code and one input set across the products
+    ("expected input digests unchecked", P, 'if getattr(ns, "expect_npz_sha256", None) != want["npz_sha256"] or \\',
+     "if False and \\", "test_undeclared_pair_wrong_truth_and_wrong_threads_are_refused_and_the_declared_run_is_not"),
+    ("product input digests unchecked", A, "        if (m.get(\"input_npz_sha256\"), m.get(\"bkg_dump_sha256\")) != (rmp.STABILITY[\"npz_sha256\"],",
+     "        if False and (m.get(\"input_npz_sha256\"), m.get(\"bkg_dump_sha256\")) != (rmp.STABILITY[\"npz_sha256\"],",
+     "test_product_refusals"),
+    ("code consistency unchecked", A, "    why = code_problem(metas)\n    if why:", "    why = None\n    if why:",
+     "test_one_code_across_all_products"),
+    ("one code digest dropped", A,
+     '                ("stability_probe.code_sha256", lambda m: (m.get("stability_probe") or {}).get("code_sha256")),\n', "",
+     "test_one_code_across_all_products"),
+    ("a missing code digest passes", A, "            if v is None:\n                return", "            if False:\n                return",
+     "test_one_code_across_all_products"),
+    ("pins not compared in the analysis", A, 'if not pins["dry"] or pins["dry"] != pins["full"]:', 'if not pins["dry"]:',
+     "test_dry_and_full_pins_must_agree"),
+    ("dry receipt not required by the analysis", A, 'for mode in ("dry", "full"):\n        log = Path(runs).parent',
+     'for mode in ("full",):\n        log = Path(runs).parent', "test_dry_and_full_pins_must_agree"),
+    ("full run at another pin", S, '[ "$dry_pin" = "$PIN" ] ||', "true ||", "test_full_refuses_a_dry_run_at_another_pin"),
+    ("DONE without the pin", S, ', \\"pin\\": \\"$PIN\\"}" > "$L/DONE"', '}" > "$L/DONE"',
+     "test_dry_then_full_skips_the_dry_tasks_and_writes_done"),
     # --- the job script
     ("pin unchecked", S, 'if [ "$head_sha" != "$PIN" ] || [ "$dirty" -ne 0 ]; then', "if false; then",
      "test_a_dirty_deploy_is_refused"),

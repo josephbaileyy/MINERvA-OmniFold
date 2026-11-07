@@ -65,7 +65,10 @@ VALUE_KEY = 0x0B51_2026_1106
 DUMP_SEEDS = {"A0": (None, UNJITTERED_F64, 1, 2, 3), "V": (1, 2, 3)}
 STABILITY = {"truth": "eavail_shape", "amplitude": 1.0, "ratio": esp.STABILITY_TRUTH["ratio"],
              "ratio_sha256": esp.STABILITY_TRUTH["ratio_sha256"], "pseudo_seed": esp.STABILITY_PSEUDO_SEED,
-             "iters": 5, "threads": 32, "estimator_seed": 42}
+             "iters": 5, "threads": 32, "estimator_seed": 42,
+             # the declared inputs (FD-STAB's queue line, fd/receipts-stab-a1r/connect/queue.tsv:2; RS1 §4)
+             "npz_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+             "bkg_sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"}
 
 
 def _arms() -> dict:
@@ -231,6 +234,9 @@ def check_namespace(ns, arm: str) -> str | None:
     ratio = getattr(ns, "eavail_ratio", None)
     if ratio is None or sha256_path(Path(ratio)) != want["ratio_sha256"]:
         return "the --eavail-ratio file is not the declared one"
+    if getattr(ns, "expect_npz_sha256", None) != want["npz_sha256"] or \
+            getattr(ns, "expect_bkg_sha256", None) != want["bkg_sha256"]:
+        return "the expected input digests are not the declared of_inputs_5d.npz and bkg_dump.npz"
     for key in ("iters", "threads", "estimator_seed"):
         if getattr(ns, key, None) != want[key]:
             return f"--{key.replace('_', '-')} must be {want[key]}"

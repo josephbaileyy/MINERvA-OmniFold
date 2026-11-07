@@ -1,12 +1,12 @@
-# RS1 mutation receipt (RS1-BINDING-1.md ruling 3). Run locally, 2026-11-07T06:57:15Z, python 3.12.2, numpy 1.26.4.
+# RS1 mutation receipt (RS1-BINDING-1.md ruling 3), after RS1-C1. Run locally, 2026-11-07T07:44:32Z, python 3.12.2, numpy 1.26.4.
 # Command: PYTHONDONTWRITEBYTECODE=1 python3 -B nd-unfolding/tests/rounding_mechanism_mutation.py (rc 0)
 # sha256 of the files it ran on:
-#   c3c81eb73e09eacf03136f667c95e6d002b4be5ad1eee81ca81dc23ef48d111a  nd-unfolding/rounding_mechanism_probe.py
-#   dc7692748435a89fc55003c21d51e13002fd7c2ca8cf8b99bdc2241aa1accabc  nd-unfolding/rounding_mechanism_analyze.py
-#   3e5c11ea461d5bec4e5c3ea5fce02853e72d1e88eefdd213bc193ef7a186b258  nd-unfolding/sbatch_rs1.sh
-#   f9fa7758814a27119e633a62830d6a268760899da916471d91d8e544448d8003  nd-unfolding/tests/test_rounding_mechanism.py
-#   738a3deac3753f205dd8d4bac45e36ea62f2315ed1a72071a7162523182ef079  nd-unfolding/tests/rounding_mechanism_mutation.py
-UNMUTATED SUITE: 50 tests, rc 0
+#   b2e6785837470d8ea815061e39df071e007a48459eb6b178d84e86ec03bde471  nd-unfolding/rounding_mechanism_probe.py
+#   5542278154f701d23fd79a62f7521ab397babef902cca58799e999e6bb50fe95  nd-unfolding/rounding_mechanism_analyze.py
+#   b4fc2f69131d292e5f8b6c23c7121c49f53a2e9129850b6b7c6ee0d3597f81b2  nd-unfolding/sbatch_rs1.sh
+#   e7d48236a67e2b89f56e9b0e72efdc6f57b2289ce02b542ef5f38a0bdf183d36  nd-unfolding/tests/test_rounding_mechanism.py
+#   fdddb9eef884884031b36145991d7c4e1e86f2862497349119fa9b339ff07f16  nd-unfolding/tests/rounding_mechanism_mutation.py
+UNMUTATED SUITE: 53 tests, rc 0
 KILLED    seed 0 is a jitter (E2)                    by test_seed_zero_is_the_upcast_and_a_jitter_differs_by_exactly_the_step
 KILLED    V steps by the spacing above               by test_order_is_strictly_preserved_across_powers_of_two
 KILLED    V keyed by row, not value                  by test_ties_are_kept_and_the_protocol_breaks_them
@@ -61,11 +61,20 @@ KILLED    R0 C_e identity unchecked                  by test_each_control_refuse
 KILLED    R0 printed control unchecked               by test_each_control_refuses
 KILLED    R0 sigma_J read as relative                by test_r0_reads_with_its_controls_and_an_undefined_cell
 KILLED    R0b defined everywhere                     by test_r0_reads_with_its_controls_and_an_undefined_cell
+KILLED    expected input digests unchecked           by test_undeclared_pair_wrong_truth_and_wrong_threads_are_refused_and_the_declared_run_is_not
+KILLED    product input digests unchecked            by test_product_refusals
+KILLED    code consistency unchecked                 by test_one_code_across_all_products
+KILLED    one code digest dropped                    by test_one_code_across_all_products
+KILLED    a missing code digest passes               by test_one_code_across_all_products
+KILLED    pins not compared in the analysis          by test_dry_and_full_pins_must_agree
+KILLED    dry receipt not required by the analysis   by test_dry_and_full_pins_must_agree
+KILLED    full run at another pin                    by test_full_refuses_a_dry_run_at_another_pin
+KILLED    DONE without the pin                       by test_dry_then_full_skips_the_dry_tasks_and_writes_done
 KILLED    pin unchecked                              by test_a_dirty_deploy_is_refused
 KILLED    existing log reused                        by test_an_existing_log_and_a_wrong_pin_are_refused
 KILLED    full without a dry receipt                 by test_full_refuses_without_a_dry_receipt
 KILLED    a failed task still writes DONE            by test_a_failed_task_leaves_no_receipt
 KILLED    dry tasks re-run in the full run           by test_dry_then_full_skips_the_dry_tasks_and_writes_done
 KILLED    environment unchecked                      by test_an_environment_without_lightgbm_is_refused
-MUTATION CHECK :: PASS (60 mutations)
+MUTATION CHECK :: PASS (69 mutations)
 rc=0

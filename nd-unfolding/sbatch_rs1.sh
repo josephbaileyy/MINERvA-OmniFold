@@ -32,6 +32,9 @@ L="$OUT/log-$MODE"
 [ ! -e "$L" ] || { echo "[rs1] refusing: $L exists" >&2; exit 2; }
 if [ "$MODE" = full ]; then  # checked before anything is written, so a refusal leaves no trace
     [ -s "$OUT/log-dry/DONE" ] && [ ! -e "$OUT/log-dry/FAILED" ] || { echo "[rs1] refusing: no DONE receipt from the dry run" >&2; exit 2; }
+    # RS1-C1: the dry products carry into the full run only at the same deploy pin
+    dry_pin=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("pin", ""))' "$OUT/log-dry/DONE" 2>/dev/null)
+    [ "$dry_pin" = "$PIN" ] || { echo "[rs1] refusing: the dry run ran at pin '$dry_pin', not $PIN" >&2; exit 2; }
     for id in $(grep -v '^#' "$OUT/dry.tsv" | cut -f1); do
         [ -e "$OUT/log-dry/$id.end" ] || { echo "[rs1] refusing: dry-run task $id never ended" >&2; exit 2; }
     done
@@ -64,4 +67,4 @@ echo "[rs1] queue rc=$rc end=$(date -u +%FT%TZ)"
 n_q=$(grep -vc '^#' "$Q"); n_end=0
 for id in $(grep -v '^#' "$Q" | cut -f1); do [ -e "$L/$id.end" ] && n_end=$((n_end + 1)); done
 [ "$n_end" -eq "$n_q" ] || { echo "ended=$n_end of $n_q" > "$L/FAILED"; echo "[rs1] STOP: $n_end of $n_q tasks ended" >&2; exit 1; }
-echo "{\"mode\": \"$MODE\", \"tasks\": $n_q, \"ended\": $n_end, \"rc\": 0, \"job\": \"$SLURM_JOB_ID\"}" > "$L/DONE"
+echo "{\"mode\": \"$MODE\", \"tasks\": $n_q, \"ended\": $n_end, \"rc\": 0, \"job\": \"$SLURM_JOB_ID\", \"pin\": \"$PIN\"}" > "$L/DONE"

@@ -155,7 +155,9 @@ def standins(d: Path):
     onc.make_estimators = standin_estimators
     s5n_pseudo.refine = lambda feat, w, seed, thr, refine_fn=None: orig_refine(feat, w, seed, thr, refine_fn=standin_refine)
     rmp.STABILITY.update({"truth": "nominal", "amplitude": 0.0, "ratio": str(d / "ratio.json"),
-                          "ratio_sha256": s5n_pseudo.sha256_path(d / "ratio.json"), "threads": 1})
+                          "ratio_sha256": s5n_pseudo.sha256_path(d / "ratio.json"), "threads": 1,
+                          "npz_sha256": s5n_pseudo.sha256_path(d / "in.npz"),
+                          "bkg_sha256": s5n_pseudo.sha256_path(d / "bkg.npz")})
     try:
         yield
     finally:
@@ -444,6 +446,8 @@ class Refusals(Fixture):
             self.assertEqual(run_arm(d, s, "V", "-:21")[0], 2)         # beyond the 20 seeds
             self.assertEqual(run_arm(d, s, "V", "-:1", **{"--threads": "2"})[0], 2)
             self.assertEqual(run_arm(d, s, "V", "-:1", **{"--truth": "eavail_shape"})[0], 2)
+            self.assertEqual(run_arm(d, s, "V", "-:1", **{"--expect-npz-sha256": "0" * 64})[0], 2)  # RS1-C1
+            self.assertEqual(run_arm(d, s, "V", "-:1", **{"--expect-bkg-sha256": "0" * 64})[0], 2)
             self.assertEqual(run_arm(d, s, "V", "-:4")[0], 0)
 
     def test_a_write_without_the_namespace_check_is_refused(self):
@@ -517,7 +521,8 @@ class Refusals(Fixture):
 class Queue(unittest.TestCase):
     def lines(self, d):
         a = type("A", (), {"npz": Path("/x/of_inputs_5d.npz"), "bkg": Path("/x/bkg_dump.npz"), "runs": d / "runs",
-                           "expect_npz_sha256": "0" * 64, "expect_bkg_sha256": "1" * 64})
+                           "expect_npz_sha256": rmp.STABILITY["npz_sha256"],
+                           "expect_bkg_sha256": rmp.STABILITY["bkg_sha256"]})
         return rmp.task_lines(a)
 
     def test_the_declared_counts(self):
@@ -665,8 +670,10 @@ def fake_products(runs: Path, arms=None, tamper=None, s_all_differs=False):
             meta = {"construction": "pseudo", "truth": rmp.STABILITY["truth"],
                     "eavail_ratio_sha256": rmp.STABILITY["ratio_sha256"], "pseudo_seed": rmp.STABILITY["pseudo_seed"],
                     "bootstrap_seed": None, "amplitude": rmp.STABILITY["amplitude"], "jitter_seed": seed,
-                    "stability_probe": {"candidate": "control"},
-                    "rounding_mechanism": {"schema": rmp.SCHEMA, "arm": arm, "jitter_seed": seed}}
+                    "input_npz_sha256": rmp.STABILITY["npz_sha256"], "bkg_dump_sha256": rmp.STABILITY["bkg_sha256"],
+                    "code_sha256": {"s5p_numerics.py": "c" * 64},
+                    "stability_probe": {"candidate": "control", "code_sha256": "e" * 64},
+                    "rounding_mechanism": {"schema": rmp.SCHEMA, "arm": arm, "jitter_seed": seed, "code_sha256": "r" * 64}}
             if tamper:
                 meta = tamper(arm, seed, meta)
             s = "-" if seed is None else seed
@@ -682,8 +689,9 @@ def fake_products(runs: Path, arms=None, tamper=None, s_all_differs=False):
             shutil.copy(src, dst)
             lines.append(f"{rma.sha256_path(dst)}  runs/control/stability/{dst.name}")
     (runs.parent / "SUMS").write_text("\n".join(lines) + "\n")
-    (runs.parent / "log-full").mkdir(exist_ok=True)
-    (runs.parent / "log-full" / "DONE").write_text("{}")
+    for mode in ("dry", "full"):
+        (runs.parent / f"log-{mode}").mkdir(exist_ok=True)
+        (runs.parent / f"log-{mode}" / "DONE").write_text(json.dumps({"mode": mode, "pin": "a" * 40}))
     return refs, runs.parent / "SUMS"
 
 
@@ -723,10 +731,49 @@ class Analysis(unittest.TestCase):
             (d / "log-full" / "DONE").unlink()
             rc, out = self.run_read(d, refs, sums)
             self.assertEqual((rc, out["status"]), (rma.INCOMPLETE_RC, "INCOMPLETE"))
-            (d / "log-full" / "DONE").write_text("{}")
+            (d / "log-full" / "DONE").write_text(json.dumps({"pin": "a" * 40}))
             (d / "log-full" / "FAILED").write_text("rc=1")
             rc, out = self.run_read(d, refs, sums)
         self.assertEqual(out["status"], "INCOMPLETE")
+
+    def test_dry_and_full_pins_must_agree(self):
+        """RS1-C1: the dry products carry into the graded set only at the full run's pin."""
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            refs, sums = fake_products(d / "runs")
+            (d / "log-full" / "DONE").write_text(json.dumps({"pin": "b" * 40}))
+            rc, out = self.run_read(d, refs, sums)
+            self.assertEqual((rc, out["status"]), (rma.INCOMPLETE_RC, "INCOMPLETE"))
+            self.assertIn("pins differ", out["why"])
+            (d / "log-dry" / "DONE").write_text(json.dumps({"pin": "b" * 40}))
+            rc, out = self.run_read(d, refs, sums)
+            self.assertEqual(out["status"], "READ")
+            (d / "log-dry" / "DONE").unlink()
+            rc, out = self.run_read(d, refs, sums)
+            self.assertEqual(out["status"], "INCOMPLETE")
+
+    def test_one_code_across_all_products(self):
+        """RS1-C1: each of the three code digests takes one value over the 229 products; one foreign product refuses."""
+        changes = {
+            "runner": lambda m: dict(m, code_sha256={"s5p_numerics.py": "d" * 64}),
+            "stability_probe": lambda m: dict(m, stability_probe={**m["stability_probe"], "code_sha256": "f" * 64}),
+            "rounding_mechanism": lambda m: dict(m, rounding_mechanism={**m["rounding_mechanism"], "code_sha256": "s" * 64}),
+            "missing": lambda m: {k: v for k, v in m.items() if k != "code_sha256"},
+        }
+        for name, change in changes.items():
+            with self.subTest(name), tempfile.TemporaryDirectory() as d:
+                d = Path(d)
+                refs, sums = fake_products(d / "runs", tamper=lambda arm, s, m, c=change: c(m) if (arm, s) == ("P1", 0) else m)
+                with self.assertRaises(SystemExit) as cm:
+                    self.run_read(d, refs, sums)
+                self.assertIn("RS1-C1", str(cm.exception))
+        self.assertIsNone(rma.code_problem([("a", {"code_sha256": {"x": 1}, "stability_probe": {"code_sha256": "e"},
+                                                    "rounding_mechanism": {"code_sha256": "r"}})] * 3))
+        # a digest missing from EVERY product takes one value too ("null"), so only the explicit check refuses it
+        for drop in ("code_sha256", "stability_probe", "rounding_mechanism"):
+            m = {"code_sha256": {"x": 1}, "stability_probe": {"code_sha256": "e"}, "rounding_mechanism": {"code_sha256": "r"}}
+            m = {k: (v if k != drop else ({} if k != "code_sha256" else None)) for k, v in m.items()}
+            self.assertIsNotNone(rma.code_problem([("a", m)] * 3), drop)
 
     def test_g1_failure_reads_nothing(self):
         with tempfile.TemporaryDirectory() as d:
@@ -764,6 +811,8 @@ class Analysis(unittest.TestCase):
             "wrong truth": lambda arm, s, m: dict(m, truth="nominal_other"),
             "not control": lambda arm, s, m: dict(m, stability_probe={"candidate": "B2"}),
             "seed mismatch": lambda arm, s, m: dict(m, rounding_mechanism={**m["rounding_mechanism"], "jitter_seed": -1}),
+            "foreign npz (RS1-C1)": lambda arm, s, m: dict(m, input_npz_sha256="0" * 64),
+            "foreign bkg (RS1-C1)": lambda arm, s, m: dict(m, bkg_dump_sha256="0" * 64),
         }
         for name, tamper in cases.items():
             with self.subTest(name), tempfile.TemporaryDirectory() as d:
@@ -861,7 +910,7 @@ class JobScript(unittest.TestCase):
         self.queue("dry.tsv", ["a", "b"])
         self.queue("queue.tsv", ["a", "b", "c", "d"])
         self.assertEqual(self.job("dry").returncode, 0)
-        self.assertTrue((self.OUT / "log-dry" / "DONE").exists())
+        self.assertEqual(json.loads((self.OUT / "log-dry" / "DONE").read_text())["pin"], self.pin)
         (self.OUT / "runs" / "A0" / "a.npz").write_text("dry product")
         r = self.job("full")
         self.assertEqual(r.returncode, 0, r.stderr)
@@ -885,6 +934,20 @@ class JobScript(unittest.TestCase):
         r = self.job("full")
         self.assertEqual(r.returncode, 2)
         self.assertIn("no DONE receipt", r.stderr)
+
+    def test_full_refuses_a_dry_run_at_another_pin(self):
+        """RS1-C1: a code change between the dry and full runs would mix two codes in one product set."""
+        self.queue("dry.tsv", ["a"])
+        self.queue("queue.tsv", ["a", "b"])
+        self.assertEqual(self.job("dry").returncode, 0)
+        (self.D / "nd-unfolding" / "runner.py").write_text((self.D / "nd-unfolding" / "runner.py").read_text() + "# repaired\n")
+        subprocess.run(["git", "-C", str(self.D), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qam", "r"], check=True)
+        pin2 = subprocess.run(["git", "-C", str(self.D), "rev-parse", "HEAD"], capture_output=True, text=True,
+                              check=True).stdout.strip()
+        r = self.job("full", pin=pin2)
+        self.assertEqual(r.returncode, 2, r.stderr)
+        self.assertIn("ran at pin", r.stderr)
+        self.assertFalse((self.OUT / "log-full").exists())
 
     def test_a_failed_task_leaves_no_receipt(self):
         self.queue("dry.tsv", ["a", "b"], fail=("b",))

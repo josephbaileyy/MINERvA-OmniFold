@@ -56,8 +56,9 @@ def load(path: Path) -> tuple[np.ndarray, dict]:
     return np.asarray(z["xsec_flat"], float), json.loads(str(z["meta"]))
 
 
-def arm_products(runs: Path, arm: str) -> dict:
-    """{jitter seed (None, 0, 1..): xsec} for one arm, every product checked against the declared input and arm."""
+def arm_products(runs: Path, arm: str, metas: list | None = None) -> dict:
+    """{jitter seed (None, 0, 1..): xsec} for one arm, every product checked against the declared input and arm. With
+    ``metas``, each product's (name, meta) is appended to it for the code-consistency check."""
     out = {}
     for p in sorted((Path(runs) / arm).glob("*.npz")):
         if ".partial" in p.name:
@@ -74,6 +75,11 @@ def arm_products(runs: Path, arm: str) -> dict:
         if want != ("pseudo", rmp.STABILITY["truth"], rmp.STABILITY["ratio_sha256"], rmp.STABILITY["pseudo_seed"], None,
                     rmp.STABILITY["amplitude"]):
             raise SystemExit(f"{p.name}: not the declared stability input")
+        if (m.get("input_npz_sha256"), m.get("bkg_dump_sha256")) != (rmp.STABILITY["npz_sha256"],
+                                                                     rmp.STABILITY["bkg_sha256"]):
+            raise SystemExit(f"{p.name}: its input digests are not the declared inputs' (RS1-C1)")
+        if metas is not None:
+            metas.append((f"{arm}/{p.name}", m))
         j = m.get("jitter_seed")
         if j != rm.get("jitter_seed"):
             raise SystemExit(f"{p.name}: the runner's and RS1's jitter seeds differ")
@@ -95,13 +101,38 @@ def trace(runs: Path, arm: str, seed) -> dict | None:
         return json.load(fh)
 
 
+CODE_DIGESTS = (("runner code_sha256", lambda m: m.get("code_sha256")),
+                ("stability_probe.code_sha256", lambda m: (m.get("stability_probe") or {}).get("code_sha256")),
+                ("rounding_mechanism.code_sha256", lambda m: (m.get("rounding_mechanism") or {}).get("code_sha256")))
+
+
+def code_problem(metas: list) -> str | None:
+    """RS1-C1: each code digest must take ONE value, never missing, across every product of the run."""
+    for label, get in CODE_DIGESTS:
+        seen = {}
+        for name, m in metas:
+            v = get(m)
+            if v is None:
+                return f"{name}: no {label}"
+            seen.setdefault(json.dumps(v, sort_keys=True), name)
+        if len(seen) != 1:
+            return f"{label} takes {len(seen)} values across the products (e.g. {sorted(seen.values())[:2]})"
+    return None
+
+
 def receipt_problem(runs: Path) -> str | None:
-    log = Path(runs).parent / "log-full"
-    if not (log / "DONE").is_file():
-        return f"no DONE receipt at {log / 'DONE'}"
-    for bad in ("STOP", "FAILED"):
-        if (log / bad).exists():
-            return f"{bad} beside the receipt"
+    """The full run's DONE, with no STOP or FAILED beside it, and the dry run's DONE at the same deploy pin."""
+    pins = {}
+    for mode in ("dry", "full"):
+        log = Path(runs).parent / f"log-{mode}"
+        if not (log / "DONE").is_file():
+            return f"no DONE receipt at {log / 'DONE'}"
+        for bad in ("STOP", "FAILED"):
+            if (log / bad).exists():
+                return f"{bad} beside the {mode} receipt"
+        pins[mode] = json.loads((log / "DONE").read_text()).get("pin")
+    if not pins["dry"] or pins["dry"] != pins["full"]:
+        return f"the dry and full runs' pins differ or are missing: {pins} (RS1-C1)"
     return None
 
 
@@ -269,7 +300,11 @@ def read(a) -> int:
     sets = {"functionals_153": slice(0, U.shape[0] - 16), "cells_16": slice(U.shape[0] - 16, U.shape[0])}
     if U.shape[0] - 16 != 153:
         raise SystemExit(f"{U.shape[0] - 16} functionals, not s5e's 153")
-    prods = {arm: arm_products(a.runs, arm) for arm in rmp.ARMS}
+    metas: list = []
+    prods = {arm: arm_products(a.runs, arm, metas) for arm in rmp.ARMS}
+    why = code_problem(metas)
+    if why:
+        raise SystemExit(f"RS1-C1: {why}")
     refs = fdstab_refs(a.fdstab_refs, a.fdstab_sums)
     a0 = prods["A0"]
     g1 = {str(s): bool(np.array_equal(a0[s], refs[s])) for s in refs}
