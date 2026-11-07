@@ -1,0 +1,14 @@
+--- launch-s5.sh (before the fence ruling; as in ../G18/launch-s5-n.diff.txt)
++++ launch-s5.sh (the fence ruling)
+@@ -35,7 +35,10 @@
+ r < "$OUT/fence.sh" > "$OUT/fence.txt" 2>&1; frc=$?
+ cat "$OUT/fence.txt"
+ [ "$frc" = 0 ] && grep -q '^fence end$' "$OUT/fence.txt" || { echo "REFUSED fence fetch rc=$frc"; exit 2; }
+-[ "$(sed -n '/^squeue:$/,/^sacct unended cov2d:$/p' "$OUT/fence.txt" | grep -vc -e '^squeue:$' -e '^sacct unended cov2d:$')" = 0 ] \
++# the director's fence ruling (2026-11-07): RS1's jobs (rs1_dry, rs1_full; RS1 reads no COV2D input) do not block;
++# any cov2d-* job or any other name does.
++sed -n '/^squeue:$/,/^sacct unended cov2d:$/p' "$OUT/fence.txt" | awk '$1 != "squeue:" && $1 != "sacct" && ($2 == "rs1_dry" || $2 == "rs1_full") {print "FENCE_ALLOWED_RS1 " $0}'
++[ "$(sed -n '/^squeue:$/,/^sacct unended cov2d:$/p' "$OUT/fence.txt" | grep -v -e '^squeue:$' -e '^sacct unended cov2d:$' | awk '$2 != "rs1_dry" && $2 != "rs1_full"' | wc -l | tr -d ' ')" = 0 ] \
+   && [ "$(sed -n '/^sacct unended cov2d:$/,/^fence end$/p' "$OUT/fence.txt" | grep -vc -e '^sacct unended cov2d:$' -e '^fence end$')" = 0 ] \
+   || { echo "REFUSED the fence is not clear"; exit 2; }
+ echo "FENCE_CLEAR"

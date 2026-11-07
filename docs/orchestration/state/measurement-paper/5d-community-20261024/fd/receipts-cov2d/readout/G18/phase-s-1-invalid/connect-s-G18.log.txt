@@ -1,0 +1,55 @@
+host=login02 start=2026-11-07T18:12:12Z pid=1822952
+porcelain_before_lines=0 head=ac25b66533788ceb18b1d4e5add259c53b216669
+READOUT-SHA OK d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
+origin/main=7db5cb8003a077d0491c693ff0156243caa9bd04
+NULL-ON-MAIN OK ecdb4be2fbb18852d32c1a4f9fb3cbc4107310d72c5bdeb2eb3651996ed0c41f
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-s-G18/deploy/2d-unfolding/cov2d/cov2d_readout.py", line 598, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/dev/shm/josephrb-cov2d-s-G18/deploy/2d-unfolding/cov2d/cov2d_readout.py", line 588, in main
+    rec = phase_score(a.truth, a.null_digest, out, a.run_dir, a.ref)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/dev/shm/josephrb-cov2d-s-G18/deploy/2d-unfolding/cov2d/cov2d_readout.py", line 553, in phase_score
+    g = cs.score(E, C_T, null, truth, flat, weak_ratio, rec["controls_failed"] + nrec["controls_failed"])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/dev/shm/josephrb-cov2d-s-G18/deploy/2d-unfolding/cov2d/cov2d_score.py", line 81, in score
+    g = mc.grade(E, C_T, null)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/dev/shm/josephrb-cov2d-s-G18/deploy/nd-unfolding/fd_1b_mc.py", line 667, in grade
+    raise Refusal("the non-null chi2 and the Cholesky chi2 differ")
+fd_1b_mc.Refusal: the non-null chi2 and the Cholesky chi2 differ
+Command exited with non-zero status 1
+	Command being timed: "python -B cov2d_readout.py score --truth G18 --null-digest ecdb4be2fbb18852d32c1a4f9fb3cbc4107310d72c5bdeb2eb3651996ed0c41f --out /dev/shm/josephrb-cov2d-s-G18/out"
+	User time (seconds): 7.13
+	System time (seconds): 1.54
+	Percent of CPU this job got: 97%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.95
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 395036
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 128728
+	Voluntary context switches: 2506
+	Involuntary context switches: 4688
+	Swaps: 0
+	File system inputs: 38530
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 1
+PHASE-S G18 INVALID (connect: rc=1, no matching verdict line) rc=1
+sha256sum: '*': No such file or directory
+porcelain_after_lines=0 head=ac25b66533788ceb18b1d4e5add259c53b216669
+blobs unchanged
+removal: host=login02 2026-11-07T18:12:46Z 1.2G /dev/shm/josephrb-cov2d-s-G18/deploy
+rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-s-G18/deploy': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-s-G18/tmp': No such file or directory
+end=2026-11-07T18:12:47Z
+DONE
