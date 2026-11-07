@@ -1,0 +1,60 @@
+host=login02 start=2026-11-06T15:19:36Z pid=2169846 user=josephrb
+deploy=/pscratch/sd/j/josephrb/cov2d-deploy-a6054769 head=a60547692df5f963e428cdfe4661fc51ab785b7b plain=0 ignored=0
+sha256 /dev/shm/josephrb-cov2d-wave/connect-wave.sh=f20da2d56845de3be68c0b3c828ef66d6560dc33ceb6441f683f8acc066d112e want=f20da2d56845de3be68c0b3c828ef66d6560dc33ceb6441f683f8acc066d112e
+sha256 /dev/shm/josephrb-cov2d-wave/cov2d_cap.py=1ce76ea373f474e7c32520c69fbc90eae9419d5cbd901927df5a41fbe6973c5e want=1ce76ea373f474e7c32520c69fbc90eae9419d5cbd901927df5a41fbe6973c5e
+sha256 /dev/shm/josephrb-cov2d-wave/test_cov2d_cap.py=7a07c3acf7f361f1af89276064bc64c8ab60e4d6bc06c658f2dcd10422f9c324 want=7a07c3acf7f361f1af89276064bc64c8ab60e4d6bc06c658f2dcd10422f9c324
+DIGESTS_MATCH
+companion test (Python 3.6.15) rc=0: OK
+origin/main=002c66af25665d662a0ac488560e3a7fedf99f49
+skip G18_L: already submitted at M
+skip G18_Ba: already submitted at M
+skip G18_Bb: already submitted at M
+skip G18_Bc: already submitted at M
+skip G18_Ta: already submitted at M
+skip G18_Tb: already submitted at M
+skip G18_Tc: already submitted at M
+skip AR23_L: already submitted at M
+skip AR23_Ba: already submitted at M
+skip AR23_Bb: already submitted at M
+skip AR23_Bc: already submitted at M
+skip AR23_Ta: already submitted at M
+LABELS AR23_Tb: 100 in runs_AR23.tsv, existing in /pscratch/sd/j/josephrb/cov2d-run-20261104/out: none
+TOTALS AR23_Tb limit=07:38:00 gate(rc=0)={"spent": 21.567500000000003, "held": 132.53333333333333, "want": "AR23_Tb", "want_node_h": 7.633333333333334, "total": 161.73416666666665, "cap": 165.8, "pass": true} connect(rc=0)={"spent": 21.567500000000003, "held": 132.53333333333333, "unlisted_ids": [], "want_node_h": 7.633333333333334, "total": 161.73416666666665, "cap": 165.8, "pass": true}
+2026-11-06T15:19:52Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Tb id=60909280 limit=07:38:00
+submit AR23_Tb rc=0
+sacct lists 60909280 after 1 polls of 10 s
+LABELS AR23_Tc: 100 in runs_AR23.tsv, existing in /pscratch/sd/j/josephrb/cov2d-run-20261104/out: none
+TOTALS AR23_Tc limit=07:38:00 gate(rc=3)={"spent": 21.567500000000003, "held": 140.16666666666666, "want": "AR23_Tc", "want_node_h": 7.633333333333334, "total": 169.36749999999998, "cap": 165.8, "pass": false} connect(rc=3)={"spent": 21.567500000000003, "held": 140.16666666666666, "unlisted_ids": [], "want_node_h": 7.633333333333334, "total": 169.36749999999998, "cap": 165.8, "pass": false}
+WAVE-END at AR23_Tc: over the cap of 165.8 (gate rc=3, connect rc=3); it waits for earlier jobs to end
+plain-after=0 ignored-after=0
+2026-11-06T09:08:23Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Ub id=60895595 limit=08:54:00
+2026-11-06T09:08:24Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Uc id=60895596 limit=08:54:00
+2026-11-06T09:08:25Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Ud id=60895597 limit=08:54:00
+2026-11-06T09:19:07Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_L id=60895948 limit=03:20:00
+2026-11-06T09:19:12Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Ba id=60895949 limit=08:06:00
+2026-11-06T09:19:27Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Bb id=60895951 limit=08:06:00
+2026-11-06T09:19:45Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Bc id=60895953 limit=08:06:00
+2026-11-06T09:20:02Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Ta id=60895956 limit=07:38:00
+2026-11-06T09:20:18Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Tb id=60895973 limit=07:38:00
+2026-11-06T09:20:33Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_Tc id=60895982 limit=07:38:00
+2026-11-06T09:20:47Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_L id=60895983 limit=03:20:00
+2026-11-06T09:21:04Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Ba id=60895985 limit=08:06:00
+2026-11-06T09:21:18Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Bb id=60895990 limit=08:06:00
+2026-11-06T09:21:23Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Bc id=60895992 limit=08:06:00
+2026-11-06T09:21:39Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Ta id=60896048 limit=07:38:00
+2026-11-06T15:19:52Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Tb id=60909280 limit=07:38:00
+
+JobId=60895949 JobName=cov2d-G18_Ba Priority=67682 Nice=0 Account=m3246 QOS=regular_1 JobState=RUNNING Reason=None Dependency=(null) RunTime=04:12:34 TimeLimit=08:06:00 TimeMin=N/A NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895951 JobName=cov2d-G18_Bb Priority=67686 Nice=0 Account=m3246 QOS=regular_1 JobState=RUNNING Reason=None Dependency=(null) RunTime=04:04:12 TimeLimit=08:06:00 TimeMin=N/A NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895953 JobName=cov2d-G18_Bc Priority=67684 Nice=0 Account=m3246 QOS=regular_1 JobState=RUNNING Reason=None Dependency=(null) RunTime=04:04:13 TimeLimit=08:06:00 TimeMin=N/A NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895956 JobName=cov2d-G18_Ta Priority=67691 Nice=0 Account=m3246 QOS=regular_1 JobState=RUNNING Reason=None Dependency=(null) RunTime=03:48:32 TimeLimit=07:38:00 TimeMin=N/A NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895973 JobName=cov2d-G18_Tb Priority=67691 Nice=0 Account=m3246 QOS=regular_1 JobState=RUNNING Reason=None Dependency=(null) RunTime=03:48:32 TimeLimit=07:38:00 TimeMin=N/A NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895982 JobName=cov2d-G18_Tc Priority=67690 Nice=0 Account=m3246 QOS=regular_1 JobState=RUNNING Reason=None Dependency=(null) RunTime=03:34:39 TimeLimit=07:38:00 TimeMin=N/A NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+
+JobId=60895985 JobName=cov2d-AR23_Ba Priority=67691 Nice=0 Account=m3246 QOS=regular_1 JobState=RUNNING Reason=None Dependency=(null) RunTime=03:21:30 TimeLimit=08:06:00 TimeMin=N/A NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895990 JobName=cov2d-AR23_Bb Priority=67691 Nice=0 Account=m3246 QOS=regular_1 JobState=RUNNING Reason=None Dependency=(null) RunTime=03:21:30 TimeLimit=08:06:00 TimeMin=N/A NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60895992 JobName=cov2d-AR23_Bc Priority=67688 Nice=0 Account=m3246 QOS=regular_1 JobState=RUNNING Reason=None Dependency=(null) RunTime=03:11:27 TimeLimit=08:06:00 TimeMin=N/A NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60896048 JobName=cov2d-AR23_Ta Priority=67688 Nice=0 Account=m3246 QOS=regular_1 JobState=RUNNING Reason=None Dependency=(null) RunTime=03:10:25 TimeLimit=07:38:00 TimeMin=N/A NumNodes=1 NumCPUs=256 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+JobId=60909280 JobName=cov2d-AR23_Tb Priority=67679 Nice=0 Account=m3246 QOS=regular_1 JobState=PENDING Reason=Priority Dependency=(null) RunTime=00:00:00 TimeLimit=07:38:00 TimeMin=N/A NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+end=2026-11-06T15:20:07Z
+DONE

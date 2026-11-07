@@ -1,0 +1,44 @@
+== X_G18
+/pscratch/sd/j/josephrb/cov2d-run-20261104/out/X_G18 2026-11-05 07:13:57.000000000 -0800 4096
+/pscratch/sd/j/josephrb/cov2d-run-20261104/out/X_G18/xsec.root 2026-11-05 07:14:10.000000000 -0800 62634
+== L_G18_BeamAngleX_0
+/pscratch/sd/j/josephrb/cov2d-run-20261104/out/L_G18_BeamAngleX_0 2026-11-05 07:25:43.000000000 -0800 4096
+/pscratch/sd/j/josephrb/cov2d-run-20261104/out/L_G18_BeamAngleX_0/xsec.root 2026-11-05 07:25:43.000000000 -0800 62933
+== SHA256SUMS lines naming them
+/pscratch/sd/j/josephrb/cov2d-run-20261104/SHA256SUMS.pilot.1:f04eafde46077e0515e445022d4df14dd756a1975cc8d84cdf4f45305c54e0db  L_G18_BeamAngleX_0/xsec.root
+/pscratch/sd/j/josephrb/cov2d-run-20261104/SHA256SUMS.pilot.2:7575b7ce966ac0121e039e3e6a840e83e2856b495d8438bd3a2671822b5cd62c  X_G18/xsec.root
+== walls naming them
+/pscratch/sd/j/josephrb/cov2d-run-20261104/walls.pilot.1.tsv:L_G18_BeamAngleX_0	1793891409	1793892349	0
+/pscratch/sd/j/josephrb/cov2d-run-20261104/walls.pilot.2.tsv:X_G18	1793891070	1793891659	0
+== exists-not-overwritten in any cov2d log
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/cov2d-G18_Ba-60895949.out:1
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/cov2d-G18_L-60895948.out:2
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/cov2d-G18_Ta-60895956.out:1
+/pscratch/sd/j/josephrb/cov2d-run-20261104/logs/cov2d-G18_Ua-60895562.out:1
+== G18_L walls
+L_G18_BeamAngleX_1	1793964180	1793965491	0
+L_G18_BeamAngleY_1	1793965491	1793966477	0
+L_G18_MuonResolution_1	1793966477	1793967538	0
+L_G18_Muon_Energy_MINERvA_1	1793967538	1793968655	0
+L_G18_Muon_Energy_MINOS_1	1793968655	1793969663	0
+L_G18_BeamAngleY_0	1793964180	1793965461	0
+L_G18_MuonResolution_0	1793965461	1793966533	0
+L_G18_Muon_Energy_MINERvA_0	1793966533	1793967703	0
+L_G18_Muon_Energy_MINOS_0	1793967703	1793968782	0
+== pilot entries
+2026-11-05T14:44:04Z M=cb31611ca8b96ed2d1eeb809fda7236e56645863 job=pilot id=60857636 limit=01:41:00
+== pilot runs table
+jobs_AR23.tsv
+jobs_G18.tsv
+jobs_pilot.tsv
+runs_AR23.tsv
+runs_G18.tsv
+runs_pilot.tsv
+pilot	pilot.1	P912_L_BeamAngleX_0	128
+pilot	pilot.1	L_G18_BeamAngleX_0	128
+pilot	pilot.1	P912_U_MaRES_0	128
+pilot	pilot.2	P2b_ER	64
+pilot	pilot.2	X_G18	64
+pilot	pilot.2	T_G18_5720000	64
+pilot	pilot.3	B_G18_001	64
+pilot	pilot.3	U_G18_Flux_0	64

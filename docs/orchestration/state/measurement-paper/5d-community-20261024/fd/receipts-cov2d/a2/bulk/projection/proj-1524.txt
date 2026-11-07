@@ -1,0 +1,54 @@
+ratio wall/est_s by class: n, mean, sd, min, p90, max
+  ('AR23', 'B') 205 0.754 0.079 0.632 0.843 0.966
+  ('AR23', 'L')  11 0.635 0.075 0.569 0.678 0.855
+  ('AR23', 'T')  64 0.801 0.070 0.682 0.867 0.930
+  ('AR23', 'U') 136 0.796 0.197 0.635 0.873 1.834
+  ('G18', 'B') 254 0.743 0.124 0.612 0.846 1.245
+  ('G18', 'L')   9 0.668 0.064 0.588 0.781 0.781
+  ('G18', 'T') 233 0.787 0.071 0.686 0.876 0.997
+  ('G18', 'U') 162 0.783 0.221 0.602 0.858 2.350
+job tail after last run (s), ended jobs: [1.0, 5.0, 1.0, 1.0]
+
+spent (ended, actual): 21.567 node-h
+
+job       id        state      age_h | projected charge node-h (low/point/p90/high) | limit | projected end UTC (point)
+G18_Uc    60895578  RUNNING     4.86 | 5.44 / 5.66 / 5.76 / 7.67 | 8.90 | 16:12Z
+G18_Ud    60895585  RUNNING     4.86 | 5.38 / 5.56 / 5.63 / 7.06 | 8.90 | 16:06Z
+AR23_Ua   60895594  RUNNING     4.62 | 5.58 / 5.84 / 5.96 / 7.50 | 8.90 | 16:38Z
+AR23_Ub   60895595  RUNNING     4.62 | 5.57 / 5.82 / 5.95 / 7.48 | 8.90 | 16:37Z
+AR23_Uc   60895596  RUNNING     4.45 | 5.44 / 5.70 / 5.82 / 7.36 | 8.90 | 16:39Z
+AR23_Ud   60895597  RUNNING     4.42 | 5.39 / 5.64 / 5.77 / 7.30 | 8.90 | 16:37Z
+G18_Ba    60895949  RUNNING     4.29 | 4.82 / 4.96 / 5.06 / 5.47 | 8.10 | 16:04Z
+G18_Bb    60895951  RUNNING     4.15 | 4.69 / 4.82 / 4.93 / 5.34 | 8.10 | 16:05Z
+G18_Bc    60895953  RUNNING     4.15 | 4.70 / 4.83 / 4.94 / 5.35 | 8.10 | 16:05Z
+G18_Ta    60895956  RUNNING     3.89 | 4.68 / 4.80 / 4.91 / 5.05 | 7.63 | 16:19Z
+G18_Tb    60895973  RUNNING     3.89 | 4.68 / 4.80 / 4.91 / 5.06 | 7.63 | 16:19Z
+G18_Tc    60895982  RUNNING     3.66 | 4.72 / 4.89 / 5.04 / 5.24 | 7.63 | 16:38Z
+AR23_Ba   60895985  RUNNING     3.44 | 4.62 / 4.87 / 5.05 / 5.30 | 8.10 | 16:50Z
+AR23_Bb   60895990  RUNNING     3.44 | 4.72 / 4.98 / 5.16 / 5.41 | 8.10 | 16:57Z
+AR23_Bc   60895992  RUNNING     3.27 | 4.61 / 4.89 / 5.10 / 5.38 | 8.10 | 17:02Z
+AR23_Ta   60896048  RUNNING     3.25 | 4.61 / 4.87 / 5.01 / 5.15 | 7.63 | 17:01Z
+AR23_Tb   60909280  PENDING     0.00 | 4.12 / 4.84 / 5.23 / 5.61 | 7.63 | (not started)
+AR23_Tc (not submitted)  4.12 / 4.84 / 5.23 / 5.61 | 7.63
+G18_C   (not submitted)  0.57 / 0.64 / 0.75 / 0.75 | 1.32
+
+projected FINAL actual spend (everything incl. Tb, Tc, G18_C): low=110.04  point=114.82  p90=117.78  high=130.64   cap=165.8
+all-at-limit bound: 170.68
+
+gate total (point) after each projected end; Tc wants 7.633, G18_C wants 1.317, both 8.950:
+  16:04Z G18_Ba    ends -> Tc alone 166.22 | G18_C alone 159.91 | both 167.54
+  16:05Z G18_Bb    ends -> Tc alone 162.95 | G18_C alone 156.63 | both 164.26
+  16:05Z G18_Bc    ends -> Tc alone 159.68 | G18_C alone 153.36 | both 161.00
+  16:06Z G18_Ud    ends -> Tc alone 156.34 | G18_C alone 150.02 | both 157.66
+  16:12Z G18_Uc    ends -> Tc alone 153.10 | G18_C alone 146.79 | both 154.42
+  16:19Z G18_Ta    ends -> Tc alone 150.27 | G18_C alone 143.95 | both 151.59
+  16:19Z G18_Tb    ends -> Tc alone 147.44 | G18_C alone 141.12 | both 148.76
+  16:37Z AR23_Ub   ends -> Tc alone 144.36 | G18_C alone 138.05 | both 145.68
+  16:37Z AR23_Ud   ends -> Tc alone 141.11 | G18_C alone 134.79 | both 142.42
+  16:38Z AR23_Ua   ends -> Tc alone 138.04 | G18_C alone 131.73 | both 139.36
+  16:38Z G18_Tc    ends -> Tc alone 135.30 | G18_C alone 128.99 | both 136.62
+  16:39Z AR23_Uc   ends -> Tc alone 132.10 | G18_C alone 125.79 | both 133.42
+  16:50Z AR23_Ba   ends -> Tc alone 128.87 | G18_C alone 122.55 | both 130.19
+  16:57Z AR23_Bb   ends -> Tc alone 125.75 | G18_C alone 119.43 | both 127.06
+  17:01Z AR23_Ta   ends -> Tc alone 122.98 | G18_C alone 116.67 | both 124.30
+  17:02Z AR23_Bc   ends -> Tc alone 119.77 | G18_C alone 113.46 | both 121.09
