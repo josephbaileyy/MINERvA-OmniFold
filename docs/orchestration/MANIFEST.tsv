@@ -6165,6 +6165,7 @@ docs/orchestration/state/2d-closeout/stageF/rebuild/scripts/build_q_products.py	
 docs/orchestration/state/2d-closeout/stageF/rebuild/scripts/check_rebuild.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/rebuild/scripts/make_fig1_q.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/rebuild/scripts/run_rebuild.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/valid-region-20261107/BINDING-1.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/valid-region-20261107/INPUTS.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/valid-region-20261107/mutants.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
