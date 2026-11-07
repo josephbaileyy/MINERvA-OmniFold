@@ -52,13 +52,18 @@ does it worsen bias? The estimator is E_N; configuration (e) is F.
 where F is configuration (e) unchanged (the bound OmniFold classifiers and regressor and the Stay-Positive
 refinement, as FD-STAB's control ran it), run in float64 coordinates, and δ_k is the **internal jitter**:
 
-  δ_k(y) = u_k ⊙ ½ · spacing₃₂(round₃₂(y)),   u_k ~ U(−½, ½) i.i.d. per coordinate, from `default_rng(10000 + k)`,
+  δ_k(y) = u_k ⊙ spacing₃₂(round₃₂(y)),   u_k ~ U(−½, ½) i.i.d. per coordinate, from `default_rng(10000 + k)`,
 
-applied **to y at full precision in float64**, with δ_k = 0 wherever round₃₂(y) equals a grid edge of its axis (the
+so each step lies within **±½ of the value's float32 spacing**, the protocol's own scale
+(`s5e_trace.py:362-364`: `rng.uniform(-0.5, 0.5, out.shape) * ulp`). It is applied **to y at full precision in
+float64**, with δ_k = 0 wherever round₃₂(y) equals a grid edge of its axis (the
 edge-safe rule of `s5e_trace.jitter_coords`, `nd-unfolding/s5e_trace.py:365-367`). The draws u_k have the shape of
 each coordinate array and are drawn in a fixed order (MCgen, MCreco, measured, bkg_reco), so δ_k is a fixed function
 of k and the array shape: **E_N is one deterministic estimator**, the same for every input it is given.
 
+- **The scale is pinned by a test in both directions:** over a large fixture, every |δ_k| / spacing₃₂ is ≤ ½, and its
+  maximum exceeds 0.49. A REQUIRED mutant that halves the scale (the ±¼ of this declaration's first head, audit ENS-2)
+  is killed by it.
 - **Internal seeds 10001–10096** are disjoint from the protocol's jitter seeds (1–51, `s5p_numerics` pairs), from
   RS1's seed 0, and from the pseudo-seeds 990000 and 991000. A test checks the disjointness.
 - **The mean is of the unfolded cross section** (`xsec_flat`). s5e's 153 functionals and the 16 cells are linear in
@@ -104,15 +109,17 @@ The data never enter a product, as in FD-STAB (`FD-STAB-DECLARATION.md` §3, `ch
 - truth `eavail_shape`, amplitude 1, `state/s5n/eavail-ratio-gibuu-over-genie.json` (sha256 `45cc3e0a…`);
 - `--construction pseudo`, pseudo-seed **990000**, `--config R --iters 5 --threads 32`, estimator seed 42;
 - the 21 inputs: the base x (seed 0) and the protocol jitters x_s, **s = 1–20** (s5e's `jitter_coords`, the same
-  seeds as FD-STAB's control products j1–j20). Each runs through E₉₆: 21 × 96 = **2,016 unfolds**.
+  seeds as FD-STAB's control products j1–j20). Each runs through E₉₆: 21 × 96 = **2,016 unfolds**, plus
+  the one unfold of F₆₄(x) for G0 (§4.2).
 
 **3.2 Stage 2, the bias input.** FD-STAB's 18 noise-free closures at the F0b truths (`FD-STAB-DECLARATION.md` §3.2;
 `estimator_stability_probe.CLOSURES`, `nd-unfolding/estimator_stability_probe.py:315-336`), unchanged:
 `s5p_nullexp.py --expectation --no-nuisance --mc-fraction half` at split seed 991000, with the bank and detector
 directory of FD-STAB's queue (`connect/queue.tsv:58`).
 - The 17 distinct truths run through E₉₆: 17 × 96 = 1,632 unfolds.
-- **The determinism control:** A7 MnvTune is the same closure as nominal. It runs at k = 1 only (1 unfold), and must
-  equal nominal's k = 1 product bitwise, or the analysis stops.
+- **The determinism control:** A7 MnvTune is the same closure as nominal. It runs at k = 1 only (1 unfold), in a task
+  separate from nominal's k = 1, at the same 32 threads. Its `xsec_flat` and `xtrue_flat` must both equal nominal's
+  k = 1 bitwise, or the analysis stops.
 - **The comparison F** is FD-STAB's own control closures, at the same truths, split and MC fraction, pinned in
   `fd/receipts-stab-a1r/full/SHA256SUMS` (the 18 `runs/control/closure/…_s991000.npz` lines; file sha256
   `e2c35e55…`). They are copied with `dd iflag=noatime` and verified against those lines. F is not re-run.
@@ -128,17 +135,26 @@ directory of FD-STAB's queue (`connect/queue.tsv:58`).
 - the disjoint pairs (1,2), (3,4), …, (19,20), **P = 10**; per pair and functional the larger |r|/σ; then the median
   and the maximum over the 153 functionals;
 - the criterion reads the **mean over the 10 pairs: mean median ≤ 0.3 and mean maximum ≤ 1.0.**
-- It is computed by the bound `estimator_stability_analyze.stability_stats` (`:73-90`) with its module constant
-  `N_PAIRS` rebound to 10 for the call, as RS1 rebinds bound names. A test checks that the result equals a hand
-  computation, and that at `N_PAIRS = 25` on 51 rows it equals the bound function unchanged.
+- It is computed by the bound `estimator_stability_analyze.stability_stats` (`:73-90`), which reads its module
+  constant `N_PAIRS` at call time (`:77-88`). The wrapper rebinds it to 10 for the call and restores it in a `finally`,
+  as RS1 rebinds bound names; G0 uses the same P = 10. Tests check that the result equals a hand computation, that at
+  `N_PAIRS = 25` on 51 rows it equals the bound function unchanged, and that the constant is restored after a raise.
 - **Why σ is configuration (e)'s, not E₉₆'s:** the bar is a fraction of the estimator's statistical scale, and ENS1
   does not bootstrap E₉₆: the bootstrap of a 96-fit mean costs 96× a bootstrap. This is disclosed (§10).
   <!-- absence-ok: scopes what this declaration's own design computes, not a claim that a result is absent from the repository -->
 
-**4.2 G0, the informativeness gate, on the same seeds.** The control F, from FD-STAB's committed products at the
-same input (the base `stab_control_b-_j-.npz` and jitters 1–20, the 21 files RS1's dry-run connect verified, copied
-and verified again in ENS1's own connect), is evaluated with the same statistic at P = 10. **F must fail the bar**, or the verdict is UNINFORMATIVE.
-FD-STAB's control at P = 25 fails it by a factor of 6.8 in the maximum, so G0 is expected to hold.
+**4.2 G0, the informativeness gate, on the same seeds and the same base dtype.** The control F is evaluated with
+the same statistic at P = 10, with r_j(s) = (U F(x_s))_j / (U F₆₄(x))_j − 1. **F must fail the bar**, or the verdict is
+UNINFORMATIVE. FD-STAB's control at P = 25 fails it by a factor of 6.8 in the maximum, so G0 is expected to hold.
+- **The jitters** F(x_s), s = 1–20, are FD-STAB's committed products `stab_control_b-_j1.npz` … `_j20.npz` (float64
+  coordinates, `s5p_numerics.py:186-188`), copied with `dd iflag=noatime` in ENS1's connect and verified against
+  FD-STAB's `SHA256SUMS`.
+- **The base F₆₄(x) is F's float64 seed-0 base, computed by ENS1** (audit ENS-1): one unfold through the bound control
+  stability path with pair `-:0` and RS1's seed-0 rebinding only (no internal jitter), in stage 1's dry run. FD-STAB's
+  base `stab_control_b-_j-.npz` is float32 (`s5p_numerics.py:183-184`). Against it, F's r_j would mix the dtype change
+  with the jitter, which is RS1's K3 contrast, and G0 could read informative where F passes on E₉₆'s own statistic.
+- **A test refuses a float32 base for G0** (meta `coords` "float32" or `jitter_seed` null), with a REQUIRED mutant
+  that admits FD-STAB's float32 base.
 
 **4.3 The expectation, stated as an expectation and not part of the bar** (the director's ruling 3). If the 96 fits
 behave as independent draws of F's rounding response, the statistic scales as 1/√96: about 0.077 median and 0.70
@@ -161,7 +177,8 @@ averaging. Under exact scaling the expected maximum reaches 1.0 at c* = 1/6.83²
 - **E2, the perturbations survived:** each product records the sha256 of its four coordinate arrays after the
   internal jitter. For every k, the 21 inputs' digests are distinct; for every s, the 96 internal seeds' digests are
   distinct. This is the run-time form of the trap test (§2.2), independent of F's sensitivity.
-- **E3, the control's references:** the 21 control files equal FD-STAB's `SHA256SUMS` lines.
+- **E3, the control's references:** the 20 control jitters equal FD-STAB's `SHA256SUMS` lines, and F₆₄(x) carries
+  the ENS1 code digests, pseudo-seed 990000, `jitter_seed` 0 and `coords` float64.
 - **E4, the σ receipt** is the pinned file and its functionals are s5c's 153 (`estimator_stability_analyze.py:284-288`).
 
 **4.6 Power (§6 has the simulation).** At N = 96 and P = 10, P(pass) if c = 0 is 0.969 in the conservative Gaussian,
@@ -250,9 +267,9 @@ mean (over pairs) of the stage-1 statistic.
 and per cell, the SD over k of the base input's 96 fits divided by √96, in σ units and as a relative value on the 16
 cells.
 
-**7.3 The control at P = 10.** F's statistic from §4.2, printed beside E₉₆'s for the same seeds.
+**7.3 The control at P = 10.** F's statistic from §4.2, on F₆₄(x), printed beside E₉₆'s for the same seeds.
 
-**7.4 E₉₆ against F at the stability truth.** b on the 16 cells for E₉₆(x) and for F(x) against the pseudo-experiment's
+**7.4 E₉₆ against F at the stability truth.** b on the 16 cells for E₉₆(x) and for F₆₄(x) against the pseudo-experiment's
 `xtrue_flat`. A description only: one truth, one experiment, and not an F0b truth.
 
 ## 8. Compute
@@ -271,9 +288,9 @@ RS1's job script. A failed task exits 255 and its shard starts nothing further.
 
 | stage | run | unfolds | expected node-h | wall per shard | `--time` | charge ceiling |
 |---|---|---|---|---|---|---|
-| 1 | dry: (s, k) ∈ {0, 1} × {1–4}, 8 one-unfold tasks, one node | 8 | 0.18 | ~0.25 h | `0:45:00` | 0.75 |
+| 1 | dry: (s, k) ∈ {0, 1} × {1–4}, and F₆₄(x) (§4.2), 9 one-unfold tasks, one node | 9 | 0.21 | ~0.3 h | `0:45:00` | 0.75 |
 | 1 | full: the other 2,008, 6 shards | 2,008 | 45.84 | 7.67 h | `9:00:00` each | 54.00 |
-| **1** | | **2,016** | **46.02** | | | **cap 55.0** |
+| **1** | | **2,017** | **46.04** | | | **cap 55.0** |
 | 2 | dry: nominal at k = 1–4, W1 at k = 1–2, A7 MnvTune at k = 1, one node | 7 | 0.16 | ~0.25 h | `0:45:00` | 0.75 |
 | 2 | full: the other 1,626, 6 shards | 1,626 | 37.12 | 6.21 h | `7:30:00` each | 45.00 |
 | **2** | | **1,633** | **37.28** | | | **cap 46.0** |
@@ -286,7 +303,7 @@ RS1's job script. A failed task exits 255 and its shard starts nothing further.
   for a reprice.
 - **The dry runs' products carry into the full runs**, which skip them (RS1's rule).
 - **No resume without the director.** A shard that stops leaves no DONE receipt; the stage is INCOMPLETE.
-- **Totals:** expected 83.30 node-h, caps 101.0 node-h, below half the balance (887.2).
+- **Totals:** expected 83.32 node-h, caps 101.0 node-h, below half the balance (887.2).
 
 **Rules.** CPU only, QOS regular, `--exclusive`, `--no-requeue`. Nothing written to CFS from a job. Products go to
 `/pscratch/sd/j/josephrb/ens1-20261107/`. The charge is read from `sacct` after each job ends. Every connect: a fresh
@@ -331,22 +348,33 @@ probe's control closure path with FD-STAB's closure arguments.
   pseudo-seed 990000. A pass here is not a pass at other truths or on data.
 - **Stage 2's floor transfers from the stability input to every closure,** as FD-STAB's does (§5.2 there): an
   assumption, stated.
-- **The perturbation scale is the protocol's,** ½ float32 spacing. A different scale defines a different estimator.
+- **The perturbation scale is the protocol's,** ±½ of the float32 spacing (§2.1). A different scale defines a different estimator.
   It is not chosen with knowledge of RS1's outcome, which is unread.
 - **N = 96 fits cost 96× one fit.** That is a property of the estimator a referee will weigh; this study does not
   address it.
-- **The power is modelled** (§5.3), not measured. A heavier tail or a stronger correlation than the grid's lowers it.
+- **Stage 2 compares a float64 estimator with a float32 one.** E₉₆'s closures run in float64 coordinates (§2.2); F's,
+  FD-STAB's control closures, ran in float32 (`s5p_nullexp.py:342`), as the reported estimator does. So "no worse"
+  compares E₉₆ with the reported estimator as it is, dtype included; it does not isolate the effect of averaging. F's
+  floor s_F is FD-STAB's, from a float32 base and float64 jitters (audit LOW).
+- **The power is modelled** (§6), not measured. A heavier tail or a stronger correlation than the grid's lowers it.
 
 ## 11. Open items for the audit and the binding
 
-1. Is `N_PAIRS` rebound for the call (§4.1) acceptable as "wrap, not fork", or should the statistic be re-implemented
-   and tested against the bound function?
-2. The determinism control is one unfold (k = 1); FD-STAB's ran the full closure twice. Is one fit enough?
-3. Stage 2's dry run: is a separate 0.75 node-h dry run wanted, given stage 1's dry run has measured the stability path?
-   The closure path (float64 rebinding, `build` rebinding, grid check) is new, so this declaration keeps it.
+All three were answered by the audit (§13). None is open.
 
 ## 12. What follows
 
 - STAB_PASS then PASS: the outcome record and its CITABLE FOR go to the director, then to Joseph for the replacement
   decision. Any paper text is the paper lane's, through the PRD-referee read.
 - Any other verdict: the outcome record states it, and no estimator change follows from ENS1.
+
+## 13. The audit and its dispositions (`coverage-5b-audit`, #887, at `b3690707`)
+
+| item | finding | disposition |
+|---|---|---|
+| ENS-1 | G0's F was on FD-STAB's float32 base, while E₉₆'s statistic uses a float64 seed-0 base: F's r_j mixed dtype with jitter (RS1's K3), so G0 could read informative where F would pass on E₉₆'s statistic | **Fixed** (§4.2): F₆₄(x), F's float64 seed-0 base, is computed in stage 1's dry run (1 unfold, 0.023 node-h; stage 1 now 2,017 unfolds, 46.04 node-h, cap unchanged) and used by G0, §7.3 and §7.4. A test refuses a float32 base, with a REQUIRED mutant |
+| ENS-2 | §2.1 wrote δ = u ⊙ ½·spacing with u ~ U(−½, ½), which is ±¼ spacing, while §10 called it the protocol's ±½ | **Fixed** (§2.1): δ_k = u_k ⊙ spacing₃₂, u_k ~ U(−½, ½), the protocol's ±½ (`s5e_trace.py:362-364`), pinned by a step-range test in both directions and a REQUIRED mutant at ±¼ |
+| §11.1 | rebinding `N_PAIRS` is fine (read at call time, `:77-88`); restore it in a `finally`; G0 at the same P = 10 | **Adopted** (§4.1), with a restore-after-raise test |
+| §11.2 | one fit is enough for determinism if `xsec_flat` and `xtrue_flat` are compared bitwise, in separate tasks, at the same threads | **Adopted** (§3.2) |
+| §11.3 | keep stage 2's dry run: the closure path is new | **Kept** (§8) |
+| LOW | E₉₆'s closures are float64 against F's float32 | **Disclosed** (§10) |
