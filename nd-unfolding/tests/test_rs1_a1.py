@@ -148,6 +148,67 @@ class Stage(unittest.TestCase):
         (self.new / "runs" / "V" / "rs1_V_b-_j1.npz").write_bytes(b"x")
         self.assertEqual(a1.verify(self.new), ["runs/V/rs1_V_b-_j1.npz"])
 
+    def test_a_bad_copy_is_refused(self):
+        """Audit W01: the copy is re-hashed against attempt 1's line, so a bad copy never reaches copies.sha256."""
+        orig = a1.copy_noatime
+
+        def bad(src, dst):
+            orig(src, dst)
+            with open(dst, "ab") as fh:
+                fh.write(b"x")
+        a1.copy_noatime = bad
+        try:
+            with self.assertRaises(a1.Refusal) as cm:
+                a1.stage(self.old, self.new)
+        finally:
+            a1.copy_noatime = orig
+        self.assertIn("does not match its line", str(cm.exception))
+
+    def test_a_bad_log_dry_copy_is_refused(self):
+        """Audit W02."""
+        orig = a1.shutil.copytree
+
+        def bad(src, dst, *a, **kw):
+            out = orig(src, dst, *a, **kw)
+            with open(Path(dst) / "DONE", "a") as fh:
+                fh.write(" ")
+            return out
+        a1.shutil.copytree = bad
+        try:
+            with self.assertRaises(a1.Refusal) as cm:
+                a1.stage(self.old, self.new)
+        finally:
+            a1.shutil.copytree = orig
+        self.assertIn("log-dry copy", str(cm.exception))
+
+    def test_a_dry_task_is_judged_against_log_dry(self):
+        """Audit W03: a dry task needs log-dry's end and SHA256SUMS, not log-full's."""
+        (self.old / "log-full" / "d0.end").unlink()
+        full = [l for l in (self.old / "log-full" / "SHA256SUMS").read_text().splitlines() if "rs1_A0_b-_j0" not in l]
+        (self.old / "log-full" / "SHA256SUMS").write_text("\n".join(full) + "\n")
+        a1.stage(self.old, self.new)
+        self.assertEqual(self.plan()["d0"][0], "done")
+
+    def test_attempt_ones_dry_done_is_required(self):
+        """Audit W07."""
+        (self.old / "log-dry" / "DONE").unlink()
+        with self.assertRaises(a1.Refusal) as cm:
+            a1.stage(self.old, self.new)
+        self.assertIn("missing", str(cm.exception))
+
+    def test_a_dry_run_that_left_stop_is_refused(self):
+        """Audit W10."""
+        (self.old / "log-dry" / "STOP").write_text("x")
+        with self.assertRaises(a1.Refusal):
+            a1.stage(self.old, self.new)
+
+    def test_a_file_missing_from_sha256sums_makes_a_task_todo(self):
+        """Audit W11: the line-absent direction of 'every file matches its line'."""
+        full = [l for l in (self.old / "log-full" / "SHA256SUMS").read_text().splitlines() if "rs1_V_b-_j1.npz" not in l]
+        (self.old / "log-full" / "SHA256SUMS").write_text("\n".join(full) + "\n")
+        a1.stage(self.old, self.new)
+        self.assertEqual(self.plan()["f1"][0], "todo")
+
     def test_the_bound_analysis_accepts_the_fresh_roots_receipts(self):
         """rounding_mechanism_analyze.receipt_problem: dry and full DONE at the same pin, no FAILED beside them."""
         a1.stage(self.old, self.new)
@@ -163,6 +224,15 @@ RUNNER = (
     "pairs = [t.split('=', 1)[1] for t in rest if t.startswith('--pairs=')][0].split(',')\n"
     "if 'SLOW' in rest: __import__('time').sleep(1.5)\n"
     "if 'FAIL' in rest: sys.exit(3)\n"
+    "if 'KILLTASK' in rest:\n"
+    "    import os, signal, subprocess\n"
+    "    gp = int(subprocess.run(['ps', '-o', 'ppid=', '-p', str(os.getppid())], capture_output=True, text=True).stdout)\n"
+    "    os.kill(gp, signal.SIGKILL); sys.exit(0)\n"
+    "if 'DROPEND' in rest:\n"
+    "    import os, time; e = pathlib.Path(os.environ['L']) / 'b.end'\n"
+    "    for _ in range(100):\n"
+    "        if e.exists(): e.unlink(); break\n"
+    "        time.sleep(0.05)\n"
     "out.mkdir(parents=True, exist_ok=True)\n"
     "for item in pairs:\n"
     "    b, j = item.split(':'); p = out / f'{tag}_b{b}_j{j}.npz'\n"
@@ -302,6 +372,55 @@ class JobScript(unittest.TestCase):
         (self.OUT / "copies.sha256").write_text("\n")
         self.assertEqual(self.job().returncode, 0)
         self.assertEqual(self.job().returncode, 2)          # log-full now exists
+
+    def test_a_task_whose_expect_fails_is_a_failure_not_a_teardown(self):
+        """Audit W04: no declared files (expect refuses a line without --tag) is never 'all present'."""
+        self.setup_plan([("a", "todo", "V", "-:1", ())])
+        q = (self.OUT / "queue.tsv").read_text().replace("\t--tag\trs1_V", "")
+        (self.OUT / "queue.tsv").write_text(q)
+        r = self.job()
+        self.assertEqual(r.returncode, 1)
+        L = self.OUT / "log-full"
+        self.assertIn("before every product was written", (L / "a.failed").read_text())
+        self.assertFalse((L / "a.teardown").exists())
+
+    def test_every_task_must_be_done_or_ended(self):
+        """Audit W05: a task without its end record leaves no DONE even when none failed."""
+        self.setup_plan([("b", "todo", "V", "-:1", ()), ("c", "todo", "V", "-:2", ("DROPEND",))])
+        r = self.job()
+        self.assertEqual(r.returncode, 1)
+        self.assertIn("done=0 ran=1 of 2", (self.OUT / "log-full" / "FAILED").read_text())
+        self.assertFalse((self.OUT / "log-full" / "DONE").exists())
+
+    def test_xargs_rc_alone_stops_the_run(self):
+        """Audit W06: a task killed by a signal writes no .failed; xargs's rc must still decide FAILED."""
+        self.setup_plan([("a", "todo", "V", "-:1", ("KILLTASK",))])
+        r = self.job()
+        self.assertEqual(r.returncode, 1)
+        f = (self.OUT / "log-full" / "FAILED").read_text()
+        self.assertTrue(f.startswith("rc=") and not f.startswith("rc=0 "), f)
+        self.assertFalse((self.OUT / "log-full" / "DONE").exists())
+
+    def test_the_a1_clone_must_hold_the_plan_module(self):
+        """Audit W08: a clean clone at its pin, but without rs1_a1_plan.py."""
+        self.setup_plan([("a", "todo", "V", "-:1", ())])
+        other = Path(self.tmp.name) / "other"
+        pin = git_repo(other, {"README": "x\n"})
+        env = dict(os.environ, RS1_TIME_BIN=str(self.time))
+        r = subprocess.run(["bash", str(SBATCH), str(self.D), self.pin, str(self.OUT), str(other), pin],
+                           capture_output=True, text=True, env=env)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("refusing: a1 tools", r.stderr)
+
+    def test_a_failed_move_aside_is_a_failure_and_the_crashed_files_are_not_used(self):
+        """Audit W09: if the crashed files cannot move aside, the runner would skip them and they would be used."""
+        self.setup_plan([("a", "todo", "V", "-:6", ("CRASH",))])
+        (self.OUT / "runs-teardown").write_text("a file, so the move-aside directory cannot be made")
+        r = self.job()
+        self.assertEqual(r.returncode, 1)
+        L = self.OUT / "log-full"
+        self.assertIn("could not move", (L / "a.failed").read_text())
+        self.assertFalse((L / "a.end").exists())
 
     def test_an_environment_without_lightgbm_is_refused(self):
         self.setup_plan([("a", "todo", "V", "-:1", ())])

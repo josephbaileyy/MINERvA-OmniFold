@@ -18,7 +18,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_rs1_a1.py"
 P, S = "rs1_a1_plan.py", "sbatch_rs1_a1.sh"
-EXPECTED_TESTS = 17
+EXPECTED_TESTS = 28
 
 MUTATIONS = [
     # --- REQUIRED: the teardown guard
@@ -66,6 +66,18 @@ MUTATIONS = [
      "test_verify_finds_a_changed_copy"),
     ("two --tag accepted", P, "        if rest.count(name) != 1:", "        if rest.count(name) < 1:",
      "test_a_line_without_one_pairs_or_tag_is_refused"),
+    # --- coverage-5b-audit's A1 sites (#902 comment 6712619323), its anchors verbatim
+    ("W01 copy not re-hashed", P, "                if h != sums[kind][str(r)]:\n                    raise Refusal", "                if False:\n                    raise Refusal", "test_a_bad_copy_is_refused"),
+    ("W02 log-dry copy not verified", P, 'raise Refusal(f"log-dry copy of {f.name} differs")', "pass", "test_a_bad_log_dry_copy_is_refused"),
+    ("W03 dry tasks judged against log-full", P, 'kind = "dry" if tid in dry_ids else "full"', 'kind = "full"', "test_a_dry_task_is_judged_against_log_dry"),
+    ("W04 empty expect list read as all present", S, '[ "${#files[@]}" -gt 0 ] || all=0', "true", "test_a_task_whose_expect_fails_is_a_failure_not_a_teardown"),
+    ("W05 not every task done-or-ended still DONE", S, '[ $((n_done + n_ran)) -eq "$n_q" ] ||', "true ||", "test_every_task_must_be_done_or_ended"),
+    ("W06 xargs rc ignored", S, '[ -z "$failed" ] && [ "$rc" -eq 0 ] ||', '[ -z "$failed" ] ||', "test_xargs_rc_alone_stops_the_run"),
+    ("W07 old log-dry DONE not required", P, 'for need in (old / "log-dry" / "DONE", ', "for need in (", "test_attempt_ones_dry_done_is_required"),
+    ("W08 a1 plan file not required", S, ' || [ ! -f "$A1/nd-unfolding/rs1_a1_plan.py" ]', "", "test_the_a1_clone_must_hold_the_plan_module"),
+    ("W09 mv failure ignored", S, 'mv "$f" "$T/" || { echo "could not move $f aside" > "$L/$id.failed"; exit 1; }', 'mv "$f" "$T/" || true', "test_a_failed_move_aside_is_a_failure_and_the_crashed_files_are_not_used"),
+    ("W10 attempt-1 STOP in log-dry accepted", P, 'if (old / "log-dry" / "FAILED").exists() or (old / "log-dry" / "STOP").exists():', 'if (old / "log-dry" / "FAILED").exists():', "test_a_dry_run_that_left_stop_is_refused"),
+    ("W11 a file missing from sums still done", P, "ok = ended and all(str(r) in sums[kind] and (old / r).is_file() and sha256_path(old / r) == sums[kind][str(r)]", "ok = ended and all((old / r).is_file() and sha256_path(old / r) == sums[kind].get(str(r), sha256_path(old / r))", "test_a_file_missing_from_sha256sums_makes_a_task_todo"),
 ]
 
 

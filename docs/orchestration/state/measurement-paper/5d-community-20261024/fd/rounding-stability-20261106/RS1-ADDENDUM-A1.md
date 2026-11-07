@@ -93,7 +93,7 @@ first, scontrol's TimeLimit checked, and the receipt committed as a PR.
 |---|---|
 | `nd-unfolding/rs1_a1_plan.py` | `stage`, `verify`, `expect` |
 | `nd-unfolding/sbatch_rs1_a1.sh` | the resume wrapper with the guard |
-| `nd-unfolding/tests/test_rs1_a1.py` | 17 tests: staging in each direction, the plan, the guard's three REQUIRED directions, the refusals, and the bound analysis accepting the fresh root's receipts |
+| `nd-unfolding/tests/test_rs1_a1.py` | 28 tests: staging in each direction, the plan, the guard's three REQUIRED directions, the refusals, and the bound analysis accepting the fresh root's receipts |
 | `nd-unfolding/tests/rs1_a1_mutation.py` | the harness: REQUIRED mutants for the guard (a teardown read as a failure, a pre-write failure read as a teardown, a second crash accepted, xargs aborting, crashed files kept), and one per staging rule and refusal |
 
 **ENS1 carries the same guard** in `sbatch_ens1.sh` (#899), with its own REQUIRED mutants (the director's ruling 5).

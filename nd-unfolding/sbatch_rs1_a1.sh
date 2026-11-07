@@ -85,7 +85,7 @@ echo "[rs1-a1] queue rc=$rc end=$(date -u +%FT%TZ)"
 failed=$(cd "$L" && ls *.failed 2>/dev/null | sed 's/\.failed$//' | tr '\n' ' ')
 teardown=$(cd "$L" && ls *.teardown 2>/dev/null | sed 's/\.teardown$//' | tr '\n' ' ')
 [ -z "$failed" ] && [ "$rc" -eq 0 ] || { echo "rc=$rc failed=$failed" > "$L/FAILED"; echo "[rs1-a1] STOP: failed tasks: $failed (rc=$rc)" >&2; exit 1; }
-n_done=$(awk -F "\t" '!/^#/ && $2 == "done"' "$PLAN" | wc -l); n_ran=0
+n_done=$(awk -F "\t" '!/^#/ && $2 == "done" {n++} END {print n + 0}' "$PLAN"); n_ran=0
 for id in $(cat "$L/todo.txt"); do [ -e "$L/$id.end" ] && n_ran=$((n_ran + 1)); done
 [ $((n_done + n_ran)) -eq "$n_q" ] || { echo "done=$n_done ran=$n_ran of $n_q" > "$L/FAILED"; echo "[rs1-a1] STOP: not every task is done or ended" >&2; exit 1; }
 echo "{\"mode\": \"full\", \"addendum\": \"A1\", \"tasks\": $n_q, \"ended\": $n_q, \"staged\": $n_done, \"ran\": $n_ran, \"rc\": 0, \"job\": \"$SLURM_JOB_ID\", \"pin\": \"$PIN\", \"a1_pin\": \"$A1PIN\", \"teardown\": \"$teardown\"}" > "$L/DONE"

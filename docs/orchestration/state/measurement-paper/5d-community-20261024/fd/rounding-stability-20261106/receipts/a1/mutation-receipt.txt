@@ -1,11 +1,12 @@
-# RS1 addendum A1 mutation receipt. Run locally, 2026-11-07T20:21:42Z, python 3.12.2, numpy 1.26.4.
+# RS1 addendum A1 mutation receipt, after audit #902 (W01-W11). Run locally, 2026-11-07T21:17:54Z, python 3.12.2, numpy 1.26.4.
 # Command: PYTHONDONTWRITEBYTECODE=1 python3 -B nd-unfolding/tests/rs1_a1_mutation.py (rc 0)
+# The W mutants are coverage-5b-audit sites with its anchors verbatim (#902 comment 6712619323).
 # sha256 of the files it ran on:
 #   01e0f82ba6baad5b9d2437f3ddac709253d9d126d9915f9bd58668e3f5812a9b  nd-unfolding/rs1_a1_plan.py
-#   3a6a71af58064221eeec798041a3aca26a5ca763cae1146a70af9dd6cada0613  nd-unfolding/sbatch_rs1_a1.sh
-#   bd76dd68b21d66eabf7397b426fddff41c2698c7f7b5331058d812dc6bf920cb  nd-unfolding/tests/test_rs1_a1.py
-#   7b5fa80e310a4ce9db5a2e9463eb3727e86cf58a26a3a8b8c199c082be74b3da  nd-unfolding/tests/rs1_a1_mutation.py
-UNMUTATED SUITE: 17 tests, rc 0
+#   d526f0cca205fa7b30c47fd98aaf6ee9b712a3bfa0b8de698b809d2221fcf96f  nd-unfolding/sbatch_rs1_a1.sh
+#   b5628d4b907aff34647071509724cf534a9c643f56e40f473b6ae05d57633cf2  nd-unfolding/tests/test_rs1_a1.py
+#   8d8bde9d69d9fc3dbf8157c72e96c6b1713d10eba9af6f79cbd31edbad7cab5a  nd-unfolding/tests/rs1_a1_mutation.py
+UNMUTATED SUITE: 28 tests, rc 0
 KILLED    REQ teardown crash read as a failure       by test_a_teardown_crash_is_recomputed_once_and_compared
 KILLED    REQ pre-write failure read as a teardown   by test_a_failure_before_writing_is_a_failure_and_the_queue_continues
 KILLED    REQ a second crash accepted                by test_a_second_crash_is_a_failure
@@ -28,4 +29,15 @@ KILLED    staging twice                              by test_log_dry_is_copied_v
 KILLED    a failed dry run staged                    by test_a_dry_run_that_left_failed_is_refused
 KILLED    verify passes a changed copy               by test_verify_finds_a_changed_copy
 KILLED    two --tag accepted                         by test_a_line_without_one_pairs_or_tag_is_refused
-MUTATION CHECK :: PASS (22 mutations)
+KILLED    W01 copy not re-hashed                     by test_a_bad_copy_is_refused
+KILLED    W02 log-dry copy not verified              by test_a_bad_log_dry_copy_is_refused
+KILLED    W03 dry tasks judged against log-full      by test_a_dry_task_is_judged_against_log_dry
+KILLED    W04 empty expect list read as all present  by test_a_task_whose_expect_fails_is_a_failure_not_a_teardown
+KILLED    W05 not every task done-or-ended still DONE by test_every_task_must_be_done_or_ended
+KILLED    W06 xargs rc ignored                       by test_xargs_rc_alone_stops_the_run
+KILLED    W07 old log-dry DONE not required          by test_attempt_ones_dry_done_is_required
+KILLED    W08 a1 plan file not required              by test_the_a1_clone_must_hold_the_plan_module
+KILLED    W09 mv failure ignored                     by test_a_failed_move_aside_is_a_failure_and_the_crashed_files_are_not_used
+KILLED    W10 attempt-1 STOP in log-dry accepted     by test_a_dry_run_that_left_stop_is_refused
+KILLED    W11 a file missing from sums still done    by test_a_file_missing_from_sha256sums_makes_a_task_todo
+MUTATION CHECK :: PASS (33 mutations)
