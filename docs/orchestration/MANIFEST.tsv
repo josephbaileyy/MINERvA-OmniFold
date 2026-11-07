@@ -939,8 +939,14 @@ docs/orchestration/state/2d-closeout/c04-repair/scripts/make_sigma_json.py	track
 docs/orchestration/state/2d-closeout/c04-repair/scripts/run_repair.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/DECLARATION.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/INPUTS.sha256	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/mutants.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/mutate_per_period.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/per_period_benchmark.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/r4_power_txt.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/r4_power_txt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/spectrum_gap_txt.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/spectrum_gap_txt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/test_per_period_benchmark.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/period-unfold-20261014/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/period-unfold-20261014/outputs/SHA256SUMS.inputs	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/period-unfold-20261014/outputs/analysis.json	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
