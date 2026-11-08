@@ -6893,6 +6893,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-2026102
 docs/orchestration/state/measurement-paper/5d-community-20261024/HANDOFF-20261029-coverage-session.md	tracked	LIVE	state-artifact	measurement-paper	20261029	open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/LIMITATION-PLAN-ADDENDUM-20261028.md	tracked	LIVE	state-artifact	measurement-paper	20261028	open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/LIMITATION-PLAN.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-AMENDMENT-A1A.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/RECORD-20261030-director-pscratch-retention-additions.md	tracked	LIVE	state-artifact	measurement-paper	20261030	open		route-only	no
@@ -9368,6 +9369,11 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-g/s
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-g/summary.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-gibuu-enu/run.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-gibuu-enu/tests.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1a/mutation.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1a/tests-numpy126-seed0.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1a/tests-numpy126-seed1.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1a/tests-numpy126-seed2.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1a/tests-numpy2-seed0.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/metaprobe-40427c14.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/metaprobe.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

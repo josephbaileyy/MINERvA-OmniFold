@@ -1,0 +1,89 @@
+# test_ll5d.py at PYTHONHASHSEED=1
+# date 2026-11-08T18:45:28Z  base 1acdee665ea162b2b5a2026ab620990a116c6092
+# python 3.12.2 numpy 1.26.4
+# b7674f6729754616930944a32a71889ce599e8419cf539f792c180217f484f9a  ll5d.py
+# 522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f  fd_1b_c2.py
+# 8011bcafcad4334d7abf9f5574ca31bfea38baf0c343c2aa5f2dd45054e402cc  tests/test_ll5d.py
+# 8fbecaae657fa40015e51fb917422321734e3d1c79dcd6591efc42639bc2365a  tests/ll5d_a21_reference.py
+# 6f83ff288008d7ecb63df2bd42002f0dd4719c1b629d3c5f6035f0a4f46e3d17  tests/ll5d_a1a_mutation.py
+# 062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67  tests/data/fd_1b_mc_at_342c0ce5.py.txt
+test_the_all_path_equals_a21s_bitwise (__main__.A21Equality.test_the_all_path_equals_a21s_bitwise) ... ok
+test_detector_rows_carry_tdw_ref_and_enter_with_zero_departure (__main__.Builders.test_detector_rows_carry_tdw_ref_and_enter_with_zero_departure) ... ok
+test_m2d_the_minus2_reference_is_all_less_the_two_bands_variances (__main__.Builders.test_m2d_the_minus2_reference_is_all_less_the_two_bands_variances) ... ok
+test_m2g_restrict_copies_no_row_array_and_the_zero_columns_are_the_selected_form (__main__.Builders.test_m2g_restrict_copies_no_row_array_and_the_zero_columns_are_the_selected_form) ... ok
+test_the_cv_denominator_is_hist_tdw_ref (__main__.Builders.test_the_cv_denominator_is_hist_tdw_ref) ... ok
+test_m2e_each_minus2_replicate_is_the_all_replicates_draws_less_two (__main__.Calibration.test_m2e_each_minus2_replicate_is_the_all_replicates_draws_less_two) ... ok
+test_the_calibration_streams_are_disjoint_and_fixed (__main__.Calibration.test_the_calibration_streams_are_disjoint_and_fixed) ... ok
+test_each_tree_is_clipped_on_its_own_composite_and_nowhere_else (__main__.Clip.test_each_tree_is_clipped_on_its_own_composite_and_nowhere_else) ... ok
+test_the_bins_are_histogramdds (__main__.Clip.test_the_bins_are_histogramdds) ... ok
+test_the_denominator_is_never_negative_under_adversarial_composites (__main__.Clip.test_the_denominator_is_never_negative_under_adversarial_composites) ... ok
+test_first_order_in_draw_order (__main__.Composition.test_first_order_in_draw_order) ... ok
+test_k1_is_the_universe_bitwise (__main__.Composition.test_k1_is_the_universe_bitwise) ... ok
+test_m2c_each_reading_is_clipped_on_its_own_composite (__main__.Composition.test_m2c_each_reading_is_clipped_on_its_own_composite)
+A row where the all composite clips and the minus2 one does not, and one where the reverse holds: each ... ok
+test_m2c_minus2_is_all_less_the_two_terms_before_the_clip (__main__.Composition.test_m2c_minus2_is_all_less_the_two_terms_before_the_clip) ... ok
+test_m2c_the_fine_sum_composites_too (__main__.Composition.test_m2c_the_fine_sum_composites_too) ... ok
+test_the_product_composite_is_crossterms_rule (__main__.Composition.test_the_product_composite_is_crossterms_rule) ... ok
+test_the_streamed_product_equals_a21s_crossterm (__main__.CrossTerms.test_the_streamed_product_equals_a21s_crossterm) ... ok
+test_the_streamed_product_holds_no_array_the_size_of_v (__main__.CrossTerms.test_the_streamed_product_holds_no_array_the_size_of_v) ... ok
+test_d1_fires_on_one_ulp (__main__.Denominator.test_d1_fires_on_one_ulp) ... ok
+test_d1_passes_on_six_equal_arrays (__main__.Denominator.test_d1_passes_on_six_equal_arrays) ... ok
+test_d2_and_d3_pass_on_the_fixture (__main__.Denominator.test_d2_and_d3_pass_on_the_fixture) ... ok
+test_d2_at_its_cell_edge (__main__.Denominator.test_d2_at_its_cell_edge)
+hist(tdw_ref) is the npz's denom_nd here; one npz cell moved so that dn / ref - 1 is f there, with the ... ok
+test_d2_at_its_total_edge (__main__.Denominator.test_d2_at_its_total_edge) ... ok
+test_d2_fails_on_the_support_alone (__main__.Denominator.test_d2_fails_on_the_support_alone)
+A denominator row reweighted to 1e-6, alone in its fine cell, and the npz's cell there 0 with that mass on its ... ok
+test_d2_fires_on_a_one_ulp_support_change (__main__.Denominator.test_d2_fires_on_a_one_ulp_support_change)
+The npz cell at the smallest positive float where hist(tdw_ref) is 0 (a support change of one ULP). ... ok
+test_d3_fires_on_one_ulp (__main__.Denominator.test_d3_fires_on_one_ulp) ... ok
+test_tdw_ref_must_be_the_recorded_file (__main__.Denominator.test_tdw_ref_must_be_the_recorded_file) ... ok
+test_an_atime_move_sets_8 (__main__.ExitCodes.test_an_atime_move_sets_8) ... ok
+test_one_blas_thread_is_required (__main__.ExitCodes.test_one_blas_thread_is_required) ... ok
+test_refusals_are_invalid_and_reprices_are_reprices (__main__.ExitCodes.test_refusals_are_invalid_and_reprices_are_reprices) ... ok
+test_a_calibration_over_the_toy_world (__main__.Jobs.test_a_calibration_over_the_toy_world) ... LL5D-CALIBRATION verdict=CALIBRATED atime_moved=1
+LL5D-GATE g18 verdict=STOP atime_moved=1
+LL5D-GATE g18 verdict=PASS
+LL5D-CALIBRATION INVALID (bad input)
+LL5D-GATE g18 REPRICE (slow)
+LL5D-CALIBRATION verdict=POWER_SHORT_TO_DIRECTOR
+{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.3159308433532715, "workers": 2, "projected_seconds": 14.88231086730957, "budget_seconds": 1000000.0, "projection_line_seconds": 9000000.0}
+ok
+test_a_failed_control_is_invalid_before_anything_is_read (__main__.Jobs.test_a_failed_control_is_invalid_before_anything_is_read) ... ok
+test_a_failing_gate_reading_is_a_stop (__main__.Jobs.test_a_failing_gate_reading_is_a_stop) ... ok
+test_a_gate_over_the_toy_world (__main__.Jobs.test_a_gate_over_the_toy_world) ... ok
+test_the_gate_refuses_an_uncalibrated_or_foreign_calibration (__main__.Jobs.test_the_gate_refuses_an_uncalibrated_or_foreign_calibration) ... ok
+test_the_gate_reprices_past_its_line (__main__.Jobs.test_the_gate_reprices_past_its_line) ... ok
+test_the_receipt_reprices_past_its_line (__main__.Jobs.test_the_receipt_reprices_past_its_line) ... ok
+test_drop2_keeps_the_order_and_every_other_universe (__main__.Layouts.test_drop2_keeps_the_order_and_every_other_universe) ... ok
+test_m2a_minus2_is_s1s_layout_less_exactly_two_bands (__main__.Layouts.test_m2a_minus2_is_s1s_layout_less_exactly_two_bands) ... ok
+test_pass_needs_both (__main__.Merge.test_pass_needs_both) ... ok
+test_refusals (__main__.Merge.test_refusals) ... ok
+test_the_bound_is_strict (__main__.N1.test_the_bound_is_strict) ... ok
+test_tdw_ref_the_manifest_and_the_universes_are_read_with_o_noatime_only (__main__.NoAtime.test_tdw_ref_the_manifest_and_the_universes_are_read_with_o_noatime_only) ... ok
+test_the_calibration_record_is_read_with_o_noatime_only (__main__.NoAtime.test_the_calibration_record_is_read_with_o_noatime_only) ... ok
+test_fd_1b_c2_is_342c0ce5s_bytes (__main__.Provenance.test_fd_1b_c2_is_342c0ce5s_bytes) ... ok
+test_the_drivers_are_not_called (__main__.Provenance.test_the_drivers_are_not_called) ... ok
+test_the_vendored_fd_1b_mc_is_342c0ce5s_bytes (__main__.Provenance.test_the_vendored_fd_1b_mc_is_342c0ce5s_bytes) ... ok
+test_a_clean_receipt_passes_and_records (__main__.Receipt.test_a_clean_receipt_passes_and_records) ... ok
+test_each_reading_composes_its_own_draw_and_the_truth_takes_phi_u (__main__.Receipt.test_each_reading_composes_its_own_draw_and_the_truth_takes_phi_u) ... ok
+test_n1_stops (__main__.Receipt.test_n1_stops) ... ok
+test_t_le_0_stops_and_halts_at_the_first (__main__.Receipt.test_t_le_0_stops_and_halts_at_the_first)
+Every row of reporting cell c at 0.95 x the CV in every universe: each reading's composite there is ... ok
+test_t_le_0_takes_composes_clip_sign_on_near_zero_rows (__main__.Receipt.test_t_le_0_takes_composes_clip_sign_on_near_zero_rows)
+Every row of reporting cell c with every Flux universe's wt 0 and every other universe's equal to the CV's, ... ok
+test_the_receipt_projection_reprices (__main__.Receipt.test_the_receipt_projection_reprices) ... ok
+test_i_alone_over_the_budget_is_flagged (__main__.Rule.test_i_alone_over_the_budget_is_flagged) ... ok
+test_paired_evaluations_cost_less_budget_than_independent_ones (__main__.Rule.test_paired_evaluations_cost_less_budget_than_independent_ones) ... ok
+test_power_and_the_verdict_run_on_evaluation_keys (__main__.Rule.test_power_and_the_verdict_run_on_evaluation_keys) ... ok
+test_the_rule_is_over_exactly_the_four_paired_evaluations (__main__.Rule.test_the_rule_is_over_exactly_the_four_paired_evaluations) ... ok
+test_the_union_is_measured_jointly_per_replicate (__main__.Rule.test_the_union_is_measured_jointly_per_replicate) ... ok
+test_no_other_tracked_file_uses_the_seed_range (__main__.Seeds.test_no_other_tracked_file_uses_the_seed_range)
+Section 3.6's collision check, repeated at this sha: integer tokens in 4,751,000-4,770,999 in tracked ... ok
+test_the_declared_seeds (__main__.Seeds.test_the_declared_seeds) ... ok
+test_the_gate_sample_extends_the_toys_and_cannot_overlap (__main__.Seeds.test_the_gate_sample_extends_the_toys_and_cannot_overlap) ... ok
+test_m2b_selection_accepts_drop2_and_refuses_a_kept_band (__main__.Selection.test_m2b_selection_accepts_drop2_and_refuses_a_kept_band) ... ok
+test_m2f_the_product_composition_is_off_the_nature_path (__main__.SourceFactors.test_m2f_the_product_composition_is_off_the_nature_path) ... ok
+----------------------------------------------------------------------
+Ran 63 tests in 73.443s
+OK
