@@ -1,0 +1,96 @@
+== S1 H2 near a comparison word
+docs/orchestration/DECISION-20261024-joseph-5d-community-standard-route.md:60:    - **S2.** Establish whether C_model,#D on the H2 cells can be built from the prior-variation ladder's existing
+docs/orchestration/PROPOSAL-20261005-scalar-measurement-successor.md:144: J/H2. These are historical ratios, not a completed flux-repaired prior scan.
+docs/orchestration/state/measurement-scoping/pv-ladder/H2-DEFINITION-ADDENDUM-GIBUU-DOMAIN.md:123: - **The rule did not involve GiBUU.** The merge rule (`h2_definition.py`, declaration §#) used the Tune v1 analysis
+docs/orchestration/state/measurement-scoping/pv-ladder/H2-DEFINITION-DECLARATION.md:135: - **R09 absorbs H2 cell #**, which s5p left unreported (MC n_eff #,#, # % of the prior), because # and # joined
+docs/orchestration/state/measurement-scoping/pv-ladder/S2-H2-CMODEL-SCOPE.md:80:   - C_abs = diag(x) C_model diag(x), with x = X_0. X_0 is (e)'s central value on H2, because `L-#D-PV_e_tune_v1`
+docs/orchestration/state/measurement-scoping/pv-ladder/S2-H2-CMODEL-SCOPE.md:170: **On H2,** the share of each cell's prior weight in such fine cells (the union over the vertices) has a **minimum of
+docs/orchestration/state/measurement-scoping/pv-ladder/S2-H2-CMODEL-SCOPE.md:227: - **What s5p read:** s5p Stage #, study P, already read R's data shifts on H2 under the MC prior reweighted to D1–D5,
+docs/orchestration/state/next-preparation-20261009/gbdt/REPORT.md:116: | truth (prior) | J: R² of r explained by −s / slope / Pearson | EW | H2 |
+docs/orchestration/state/next-preparation-20261009/gbdt/REPORT.md:177: | # | **Classifier ratio approximation / iteration error** | For: E6 q3 (reco-level stall removed by capacity, λ_5D # → #), capacity on W3 H2 (#% → #%). Against: E_avail truth residual is insensitive to capacity; q3 J/H2 change only #%/#% |
+nd-unfolding/gbdt_model_dependence/README.md:69: | Prior shifts correlate with residuals without bounding each cell | `prior.csv`: W3 J/H2/EW fractions above residual #/#/#%; J r≈# | Different denominators, shared origins, historical shapes. Data truth within the vertex span is unproved. 
+nd-unfolding/pet/configuration_comparison/CLAIM_EVIDENCE_INDEX-20260918.md:204: | H2 | detector-space KNN adjacency is a better prior than (η,φ) Fourier encoding for a calorimetric recoil measurement | an argument from what the measurement is, **not** a measurement |
+nd-unfolding/pet/gbdt_comparison/HANDOFF-20261005-pet-gbdt-existing-outputs.md:99: The measured study cost is # A100-hours for H2 or # for L128 per run at #,# prior and #,# pseudodata rows, with two concurrent tasks per GPU. It is not a full-statistics production benchmark. The recorded H2 interval repair estimate is abou
+nd-unfolding/pet/gbdt_comparison/REPORT-20261005.md:388:   #: a # M-row prior, # iterations, # epochs per step, about # A100-h per training. With H2's rates the model
+== S2 extra axis by slice/quadrant
+3d-unfolding/build_bootstrap_band_3d.py:120:         sl = slice(#, len(cv[a]) - #) if a == "eavail" else slice(#, len(cv[a]))
+3d-unfolding/genie/overlay_generators.py:72:         sl = slice(#, len(val) - #) if key == "eavail" else slice(#, len(val))
+3d-unfolding/genie/overlay_generators_band.py:235:         sl = slice(#, len(dval) - #) if key == "eavail" else slice(#, len(dval))
+3d-unfolding/genie/overlay_generators_band.py:278:         sl = slice(#, len(dval) - #) if key == "eavail" else slice(#, len(dval))
+VALIDATION_LEDGER.md:1701:   at low E_avail in the highest-q3 slice. q3<# has too little complete LE
+VALIDATION_LEDGER.md:1836:   `d sigma/dq3` and low-q3 `Eavail` slices; no real Ascencio chi2 is computed
+docs/GREGOR_FOUNDATION_MODEL_REFERENCE.md:83: size / weight tails, prior swaps, high-W / low-q3 slices, wall-clock. Only
+docs/OPEN_ITEMS.md:166: | OI-# | **RETIRED #-#-# by the close-items session, on the director's ruling — the analysis defines the observable with the constant: the paper prints *"a defined constant of # MeV"* (`paper_body.tex:#`), and Joseph's #-#-# decision record
+docs/analysis-note/redraw_central_only.py:136:         sl = slice(#, len(dval) - #) if key == "eavail" else slice(#, len(dval))
+docs/orchestration/CAMPAIGN-s5c-20260924-paper-wide-table.md:335: | Tune v1, analysis MC truth (`w_truth`) | GENIE #.# + Tune v1 (N `sec_3d.tex:#-#`) | #D slices, #D; **also the "GENIE-CV" in the #D q3 map and the #D `(E_avail,W)` map** (R10a) | `#d-unfolding/genie/model_tune_xsec3d.py`; `nd-unfolding/q3_
+docs/orchestration/CATALOG.md:828: | Valid-region declaration (#-#-#, for audit and binding; nothing computed, records-only, # node-h): the advisor's story as Joseph relayed it, on the # cells. ATLAS's User Guide (PRL #, # SM, sha efb5beef) states NO prior-spread rule, so tw
+docs/orchestration/OUTCOME-20261107-valid-region.md:114: **The contrasts between valid cells within a quadrant,** which differ only in E_avail, q_3 or W:
+docs/orchestration/state/2d-closeout/stageF/methods/M4-W-RECORD.md:142: #. **Truth W is not redundant in exact form.** The paper should say the truth θ (and so pT, p∥) is measured from a fixed beam axis tilted # mrad from detector z, while q3 uses the true neutrino four-vector. W is then fixed by (pT, p∥, q3, M
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4-install/agy-read.md:18: | Q3 | C2, Figs. # and # | the slices' bars defined, with a cross-reference; Fig. # "with the same error bars" | pass |
+docs/orchestration/state/2d-closeout/valid-region-20261107/DECLARATION.md:28:   contrasts between cells of the same (p_T, p_∥) quadrant, which are distinguished only by E_avail, q_3 or W (§#).
+docs/orchestration/state/2d-closeout/valid-region-20261107/test_valid_region.py:509:         self.assertEqual([vr.quadrant_of(box(k)) for k in (#, #, #, #)], ["Q1", "Q2", "Q3", "Q4"])
+docs/orchestration/state/2d-closeout/valid-region-20261107/valid_region.py:36: QUADRANTS = {"Q1": CELLS[#:#], "Q2": CELLS[#:#], "Q3": CELLS[#:#], "Q4": CELLS[#:#]}
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-DECLARATION.md:224: E_avail, q3 and W inside those. So the overlaps are the four (pT, p∥) quadrants:
+docs/orchestration/state/measurement-paper/ADDENDUM-14-ANALYSIS.md:280: #. Report the product species mix, the shift in E_avail and in each species sum for the #,# events, and the shift
+nd-unfolding/compare_ascencio_q3.py:157:     # ---------- plot #: Eavail spectra in low-q3 slices (the Ascencio observable) ----------
+nd-unfolding/compare_ascencio_q3.py:162:         # d2sigma/dq3dEavail is per-(eavail,q3); the Eavail spectrum at q3 slice j
+nd-unfolding/compare_ascencio_q3.py:168:     ax.set_title("E_avail in low-q3 slices (bin-identical to Ascencio #)")
+nd-unfolding/compare_ascencio_q3.py:175:         print("[note] no --ascencio-#d file: our d2sigma/dq3dEavail slices only. Obtain "
+nd-unfolding/compare_ascencio_q3.py:179:     p2 = f"{args.out_prefix}_eavail_in_q3slices.png"
+nd-unfolding/compare_le_evolution.py:14:      (E_avail, q3) grid -- their edges nest exactly in ours -- then per-q3-slice
+nd-unfolding/compare_le_evolution.py:16:      (E_avail, q3) marginal of our #D product. Slices with incomplete LE
+nd-unfolding/compare_le_evolution.py:198:     # row #: Rodrigues (E_avail, q3) per-q3-slice shapes (complete slices only)
+nd-unfolding/fd_gencmp.py:420:     """The eight H2 boxes (C order over pt, pz, E_avail, q3, W, two bins each) in a quadrant."""
+nd-unfolding/pet/pet_vs_gbdt_uncertainty.py:293:     # median ratio over (eavail, q3) per (pt, pz) cell -> #x16 heatmap, RdBu_r at #.
+nd-unfolding/q3_vs_ascencio_metrics.py:60: q3_in = slice(#, iq_lo)      # q3 < #  (Ascencio window)
+nd-unfolding/q3_vs_ascencio_metrics.py:61: q3_out = slice(iq_lo, shape[#])  # q3 >= # (beyond Ascencio)
+nd-unfolding/q3_vs_ascencio_metrics.py:62: ea_dip = slice(#, #)         # Eavail < # GeV (the #p2h dip: bins [#,.#],[.#,.#],[.#,.#])
+nd-unfolding/q3_vs_ascencio_metrics.py:92: print(" low-Eavail (<#) data/GENIE in pT slices (flat => excess factorizes from muon kin.):")
+nd-unfolding/re1/redraw_central_only_p3.py:136:         sl = slice(#, len(dval) - #) if key == "eavail" else slice(#, len(dval))
+nd-unfolding/re1/redraw_central_only_p4.py:136:         sl = slice(#, len(dval) - #) if key == "eavail" else slice(#, len(dval))
+== S3 factoriz family
+docs/analysis-note/app_statmethods.tex:13: \paragraph{Cholesky and ridge jitter.} $\mathbf{C}$ is positive-definite (PD) iff its Cholesky factorization $\mathbf{C}=\mathbf{L}\mathbf{L}\T$ exists with lower-triangular $\mathbf{L}$; then Eq.~\eqref{eq:chi2} is well-posed. Numerical no
+docs/analysis-note/app_statmethods.tex:113: checked with the Cholesky factorization and ridge jitter of \S\ref{sec:invert}. The quoted $N=#$ block varies only the bootstrap seed and carries no training-seed variation.
+docs/orchestration/BRIEF-20260901-greif-fps-thesis-implications-for-gbdt5d.md:90: > *"The prior shifts can be large, for example altering the QCD factorization scales can result in
+docs/orchestration/RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md:313: computed**, and both `s_eig` and the baseline factorization §#'s statistic needs are byproducts.
+docs/orchestration/RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md:453: factorization of the baseline (**once**, not per member) and one extreme-eigenvalue solve per member;
+docs/orchestration/RECOMMENDATION-20260910-z-scientific-acceptance-criteria.md:1026: cost class as `s_eig`: one baseline factorization **once** plus one extreme-eigenvalue solve per
+docs/orchestration/REQUIREMENTS-20260814-cstat-assembly-conventions.md:597:    (`RUNBOOK:#` — "no Poisson variation")**. That is a clean factorisation *if* the replica jobs hold
+docs/orchestration/VERDICTS-20260811-session-D.md:1152: Two files, one written for the covariance path and one for the unfolder, agree on the factorization.
+docs/orchestration/runs/agy-g2-gate-verifier/20260826-stackgrade-VERDICT-P1-P8.md:105:     ./nd-unfolding/q3_vs_ascencio_metrics.py
+docs/orchestration/state/2d-closeout/c04-repair/REPORT.md:68:   - Φ_MINOS,u/Φ_CV = **#** for u0 and **#** for u1, flat in pT.
+docs/orchestration/state/2d-closeout/c04-repair/review/VERIFICATION.md:37: | # | Φ_MINOS,u/Φ_CV | CONFIRMED | # / #, flat in pT (spread #); per playlist within #e-# | same |
+docs/orchestration/state/2d-closeout/c04-repair/review/VERIFICATION.md:93: - *The axis is moot.* Φ is flat in pT (spread #).
+docs/orchestration/state/2d-closeout/stageF/methods/r22/base/pieces/B12.txt:69: Cholesky and ridge jitter. C is positive-definite (PD) iff its Cholesky factorization C = LL⊤
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/chunk06/pairs-control.txt:153: AFTER: Each replica's $#\times16$ histogram becomes a $#$-vector $\mathbf{X}^{(k)}$ of reported bins, row-major over $(\pT,\pPar)$, with unbiased sample covariance \begin{equation} \big(\mathbf{C}^{\boot}\big)_{ij} \;=\; \frac{#}{N-#}\sum_{
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/chunk06/pairs.txt:153: AFTER: Each replica's $#\times16$ histogram becomes a $#$-vector $\mathbf{X}^{(k)}$ of reported bins, row-major over $(\pT,\pPar)$, with unbiased sample covariance \begin{equation} \big(\mathbf{C}^{\boot}\big)_{ij} \;=\; \frac{#}{N-#}\sum_{
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/agy/triage-06-09.md:27: | chunk06 | Q38 | app_statmethods.tex AA22 | MOVED-OK | np.cov is in the app_guide.tex row. "Cholesky factorization and ridge jitter" is the base sec:invert heading "\paragraph{Cholesky and ridge jitter.}". | none |
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/ledger-B12.md:7: | B12-# | Implementation calls that duplicate equations (np.cov with ddof=# for Eq. bootcov; default_rng().poisson(#) per event; np.linalg.pinv at its default cutoff; the --add-norm # option of the earlier MAT check) (B12-s-#) | AG8 AA22 AA
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/ledger.md:527: | B12-# | Implementation calls that duplicate equations (np.cov with ddof=# for Eq. bootcov; default_rng().poisson(#) per event; np.linalg.pinv at its default cutoff; the --add-norm # option of the earlier MAT check) (B12-s-#) | AG8 AA22 AA
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/pieces/B12.txt:77: Cholesky and ridge jitter. C is positive-definite (PD) iff its Cholesky factorization C = LL⊤
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/pieces/B12.txt:287: checked with the Cholesky factorization and ridge jitter of §A.#. The quoted N = # block varies
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step2/review-B11-B15.md:159:   - "Cholesky factorization and ridge jitter" matches the §invert heading.
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/adopted/pieces/B12.txt:44: Cholesky and ridge jitter. C is positive-definite (PD) iff its Cholesky factorization C = LL⊤
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/adopted/pieces/B12.txt:256: checked with the Cholesky factorization and ridge jitter of §A.#. The quoted N = # block varies
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/new/pieces/B12.txt:44: Cholesky and ridge jitter. C is positive-definite (PD) iff its Cholesky factorization C = LL⊤
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step3/new/pieces/B12.txt:256: checked with the Cholesky factorization and ridge jitter of §A.#. The quoted N = # block varies
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4/pieces/B12.txt:44: Cholesky and ridge jitter. C is positive-definite (PD) iff its Cholesky factorization C = LL⊤
+docs/orchestration/state/2d-closeout/stageF/methods/r22/step4/pieces/B12.txt:256: checked with the Cholesky factorization and ridge jitter of §A.#. The quoted N = # block varies
+docs/orchestration/state/inelastic-high-region-20261011/REPORT.md:291:      as a normalized post-vertex kernel**, Σ_f K(f|X) = #, at fixed primary inclusive dynamics. That is the factorized
+docs/orchestration/state/inelastic-high-region-20261011/REPORT.md:293:    - It is a property of that factorization, not a theorem about nature. In a full many-body treatment the struck
+docs/orchestration/state/inelastic-high-region-20261011/REPORT.md:670: | # | (ii) Partition / FSI / hadronization | only through A\|t (≤ #%) in the factorized picture; sign channel-dependent (§#) | hadron–nucleus data, e-scattering knockout | not identifiable with this estimator | none |
+docs/orchestration/state/inelastic-high-region-20261011/REVIEW.md:119: | C10 | MINOR | LIT-REPORT candidate table still had unqualified rate invariance | **Fixed.** Qualified as "factorized post-vertex kernel at fixed primary dynamics" |
+docs/orchestration/state/inelastic-high-region-20261011/literature/LIT-REPORT.md:569: | Weaker FSI / longer formation zone / less neutron share | **+ (migration in E_avail at fixed ω)** — *CORRECTED #-#-#: sign channel-dependent, net not determined (REPORT §#)* | **#** | # in rate (E_avail-shape only; for a factorized post-v
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-INV-I2-CONSULT-ANSWER.txt:35: - **The # of # count.** It depends on rule I2's dominance-by-factor construction, which orders the factorization. Read it as qualitative.
+docs/orchestration/state/measurement-paper/5d-community-20261024/S1-DECLARATION.md:71: | # | **MINOS lateral rescale (added)** | each `lat_Muon_Energy_MINOS_<i>` product × Φ_CV(pT) / Φ_MINOS,i(pT) per fine pT bin, using the recorded factors `minos_rescaled.npz` (`#e…`; # and #, flat in pT) | X01 (KI #), adopted for #D. The #D
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/units-replicas/completion-attempt-1/rename-ledger/measure-after.txt:17214:   f # # nd-unfolding/q3_vs_ascencio_metrics.py
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/step2/units-replicas/completion-attempt-1/rename-ledger/measure-before.txt:17214:   f # # nd-unfolding/q3_vs_ascencio_metrics.py
+docs/orchestration/state/measurement-paper/phase0/receipts/mp3/03_cvmfs_nuwro.txt:115: #:#sf_method = # // use factorized spectral function: (O16, Ar40, Ca40)
+docs/research/MINERVA-MODEL-IMPROVEMENT-MEMO-20261011.md:199: SuSAv2-MEC already supplies a different, electron-constrained QE plus two-body framework, with a GENIE implementation and explicit scrutiny of inclusive-to-exclusive factorization. It is an established benchmark, not a fourth candidate prop
+docs/research/MINERVA-MODEL-IMPROVEMENT-MEMO-20261011.md:351: The sums include continuous phase-space integrals. $P$ is the exclusive distribution consistent with the lepton-contracted current, not a universal phase-space guess; $K$ is the nuclear transport kernel. For reconstructed predictions, repla
+docs/slides_3D+_outline.md:83: - **Takeaway — this is a *result*, not a limitation:** the stability of pT/p∥ across #D→#D→#D says the recoil discrepancy (the #p2h excess) **roughly factorizes from the muon kinematics**. The new physics shows up where data and models actu
+== S4 code reading P5
+docs/orchestration/test_verify_receipt_artifacts.py
+nd-unfolding/pv-ladder/build_cmodel5d.py
+== S5 committed figures
+415
