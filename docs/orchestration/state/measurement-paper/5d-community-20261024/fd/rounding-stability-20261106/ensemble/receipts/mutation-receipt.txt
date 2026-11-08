@@ -1,15 +1,15 @@
-# ENS1 mutation receipt (ENS1-BINDING-1.md ruling 4), after audit ENS1-C1 and the teardown guard. Run locally, 2026-11-07T21:03:00Z, python 3.12.2, numpy 1.26.4.
-# Command: PYTHONDONTWRITEBYTECODE=1 python3 -B nd-unfolding/tests/ensemble_estimator_mutation.py (rc 0; 6 workers, results in list order)
+# ENS1 mutation receipt (ENS1-BINDING-1.md ruling 4), after audit ENS1-C1 and ENS1-C2 (A1 guard tests W04, W06, W09 ported). Run locally, 2026-11-08T00:16:45Z, python 3.12.2, numpy 1.26.4.
+# Command: PYTHONDONTWRITEBYTECODE=1 python3 -B nd-unfolding/tests/ensemble_estimator_mutation.py (rc 0; 6 workers, results in list order; one run, its own log)
 # The suite imports RS1 stand-ins from tests/test_rounding_mechanism.py (bound at e306087e, unchanged).
-# The X/Y/Z mutants are coverage-5b-audit ENS1-C1 sites with its anchors verbatim (#899 comment 6712373597).
+# The X/Y/Z mutants are coverage-5b-audit ENS1-C1 sites with its anchors verbatim (#899 comment 6712373597); W04/W06/W09 are #902 anchors (ENS1-C2).
 # sha256 of the files it ran on:
 #   9721fc97e12794f377a889590e9006960df5e125acafa8a678f25bccfbbd5a94  nd-unfolding/ensemble_estimator_probe.py
 #   ef2f467cc010b37017f0d526a999637a7c3215ed2c91a2ab7b9bd3c6c1fe7181  nd-unfolding/ensemble_estimator_analyze.py
 #   0390e5c71f1b958558dbae7916e39ead33865362c1369d2f25b205061b2b7267  nd-unfolding/sbatch_ens1.sh
-#   b62d90ccf5893cf69316beeb30b3eeb5e97cce20c94adb5da37f686234c5a30f  nd-unfolding/tests/test_ensemble_estimator.py
-#   a0700e83dfc15eaa379f51cc02ff3cff15497ed89b8c34ea8a067be13637ee8c  nd-unfolding/tests/ensemble_estimator_mutation.py
+#   1fe53df8ead62e306680a27b3a884beaec2f021c898f8d1d84bdf4ceebeb2120  nd-unfolding/tests/test_ensemble_estimator.py
+#   2b6620e5230514f4747d681027c6cb525c93c92a2a0b2d0b56b6ba2e37335ffa  nd-unfolding/tests/ensemble_estimator_mutation.py
 #   e7d48236a67e2b89f56e9b0e72efdc6f57b2289ce02b542ef5f38a0bdf183d36  nd-unfolding/tests/test_rounding_mechanism.py
-UNMUTATED SUITE: 64 tests, rc 0
+UNMUTATED SUITE: 67 tests, rc 0
 KILLED    REQ internal jitter after a float32 cast   by test_it_acts_on_y_at_full_precision_not_after_a_float32_cast
 KILLED    REQ internal jitter at +-1/4 spacing       by test_the_scale_is_plus_or_minus_half_the_float32_spacing_in_both_directions
 KILLED    REQ closure unfolds in float32             by test_the_closure_unfolds_in_float64_whatever_the_runner_asks
@@ -98,4 +98,7 @@ KILLED    Y09 closure split unchecked                by test_each_closure_namesp
 KILLED    Y10 runner rc swallowed                    by test_run_returns_the_first_non_zero_rc_and_stops
 KILLED    Y11 closure tag without k                  by test_every_closure_tag_carries_k
 KILLED    Z01 ended-count check dropped              by test_a_task_without_its_end_record_leaves_no_receipt
-MUTATION CHECK :: PASS (88 mutations)
+KILLED    W04 empty expect list read as all present  by test_a_task_whose_expect_fails_is_a_failure_not_a_teardown
+KILLED    W06 xargs rc ignored                       by test_xargs_rc_alone_stops_the_run
+KILLED    W09 mv failure ignored                     by test_a_failed_move_aside_is_a_failure_and_the_crashed_products_are_not_used
+MUTATION CHECK :: PASS (91 mutations)
