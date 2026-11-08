@@ -9,7 +9,7 @@
   "It is declared, priced, audited and bound before it runs."
 - Compute that resolves a limitation is under `DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md`
   item 2 (#640), as `FD-STAB-DECLARATION.md` §7 cites it. A campaign priced above half the group balance goes back to
-  Joseph first. The cap here, 25.0 CPU node-h, is far below that. The director checks the current balance at binding.
+  Joseph first. The cap here, 26.5 CPU node-h, is far below that. The director checks the current balance at binding.
 
 **Status.**
 - Rev 1 fixes the question, design, readings, price and licences.
@@ -416,13 +416,14 @@ Nothing is written to CFS. The charge is taken from `sacct`.
 | job name | contents | units | lane wall at 1,062 s | `--time` | node-h at most |
 |---|---|---:|---|---|---:|
 | `prr_dry` | one nominal task per level type (13), split 991000; C-PAIR, C-MASK, C-COLS, C-CAP | 41.9 | the longest, (1000, 63), 4.4 h | 4:45:00 | 4.75 |
-| `prr_iter` | the rest of F1 | 180.4 | 6.65 h | 7:00:00 | 7.00 |
-| `prr_cap` | the rest of F2 | 214.5 | 7.9 h | 8:15:00 | 8.25 |
-| `prr_misc` | the rest of B0, F3 and F4, and the floor splits | 114.0 | 4.2 h | 4:30:00 | 4.50 |
+| `prr_iter` | the rest of F1 | 180.4 | 6.65 h | 7:30:00 | 7.50 |
+| `prr_cap` | the rest of F2 | 214.5 | 7.9 h | 9:00:00 | 9.00 |
+| `prr_misc` | the rest of B0, F3 and F4, and the floor splits | 114.0 | 4.2 h | 4:45:00 | 4.75 |
 | `prr_ibu` | route 2, R-ID, R-SUP and C-IBU | — | — | 0:30:00 | 0.50 |
-| **total** | | **550.8** | | | **25.00** |
+| **total** | | **550.8** | | | **26.50** |
 
-**Cap: 25.0 CPU node-h, the sum of the five limits.** It binds three ways:
+**Cap: 26.5 CPU node-h, the sum of the five limits.** Each full job's limit is its lane wall at the conservative unit
+over 0.9, rounded up to a quarter hour, so the gate's 0.9 rule passes at that unit. It binds three ways:
 1. **Slurm.** On one node a job cannot charge more than its `--time`, so the five `--time` limits sum to the cap.
 2. **The gate.** The full jobs start only after `prr_dry` completes, every one of its tasks has ended and C-PAIR has
    passed.
@@ -476,7 +477,7 @@ Nothing is written to CFS. The charge is taken from `sacct`.
    admissible under that rule?
 3. **The order of work.** Rev 1 is design only, and the code is not written. Should I write the code now and send rev 2
    with digests for the audit? Or would you rule on the design first?
-4. **The cap.** 25.0 CPU node-h under the 11-01 authority. You check the current balance against the half-balance
+4. **The cap.** 26.5 CPU node-h under the 11-01 authority. You check the current balance against the half-balance
    rule.
 
 The other choices are the lane's, as the brief allows:
