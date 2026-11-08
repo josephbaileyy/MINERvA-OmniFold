@@ -144,6 +144,8 @@ For each of the 8 detector universes, the experiments are built exactly as the u
 - **Signal.** Over every reco-passing row inside the window, E's observed count (`fd_1b_toys.py:284`, at its mean) is
   compared with B's simulation reco weight w_reco·f. A row absent from E's pseudo-data (`n_sig > 0`, :288) counts as 0.
 - **Background.** Over every background row inside the window, E's observed count is compared with B's template weight.
+- Rows of zero or negative weight are absent from E's pseudo-data (`fd_1b_toys.py:288–289`). They are left out of
+  both sides of the comparison, and §4.6 reports their share.
 
 Readings:
 - **EQUAL** if both comparisons are bitwise equal, row by row, in all 8 universes;
@@ -189,8 +191,11 @@ What the slopes mean:
 
 ### 4.6 Descriptive, with no verdict role
 
-- **HW:** per detector universe, Σ w_reco·(f − 1) over reco-passing rows outside the window, divided by the same sum
-  inside it.
+- **HW:** per detector universe, the in-window sum Σ w_reco·(f − 1) over reco-passing rows, and two shares of it:
+  - the same sum over rows outside the window;
+  - the same sum over in-window rows whose weight w_reco·f is zero or negative.
+
+  E's pseudo-data carry neither kind of row; B's simulation carries both.
 - **HC:** for the four GEANT_Neutron and GEANT_Proton universes, F_src^signal and F_src^background in every resolved
   cell, set beside F_src.
 - **The per-universe cell values** s_E,i and s_B,i for every variant, and F_src(ε) for the reference bands.
@@ -219,12 +224,17 @@ Any failed control makes the run **INVALID**, and it is reported unrepaired.
 - **B rebuilt.** The new code's B at seed 42, ε = 1, for the four GEANT_Neutron and GEANT_Proton universes and for CV,
   equals Part 1's P3 product's `xsec_flat` bitwise.
 - **Part 1's readout reproduced.**
-  - The new readout's E block for each detector band, rebuilt from the staged derivation products, equals
-    `fd_1b_score.derivation_blocks`' carried block bitwise. The same holds for g.
-  - Its F_src and κ for the four detector bands, from Part 1's products, equal readout.json's
-    `/bands/<b>/factors/{F_src,kappa}` bit for bit.
-- **One code and one input set** across the new products (`fd_1b_inv.ONE_CODE_KEYS`), with the seed, ε and channel
-  recorded in each product and checked against its name.
+  - Gate D's builder (`fd_1b_score.derivation_blocks`, `fd_1b_score.py:432–466`) and `fd_1b_score.load_s1` read
+    plainly, so they are not called. Their arithmetic (x_u = U·x̂, one truth across the products, g = f/(U·truth),
+    the carried block) is repeated on O_NOATIME reads, with the builder's meta checks.
+  - That repetition is checked twice. P1's F_src and κ for the four detector bands, from Part 1's products, equal
+    readout.json's `/bands/<b>/factors/{F_src,kappa}` bit for bit. P4's F_src at seed 42, and its resolved cells,
+    equal `/bands/<b>/factors/F_src` and `/bands/<b>/resolved/F_src`.
+  - Part 1's A, B and Dnom products at CV equal the derivation CV product bitwise.
+- **One code and one input set** across the new products: `fd_1b_inv.ONE_CODE_KEYS` less `estimator_seed`, which
+  varies by design. The seed, ε and channel are recorded in each product and checked against its name. The
+  estimator's parameters are checked at the product's own seed, by `s1_assemble.check_meta`'s clauses
+  (`s1_assemble.py:203–208`): three estimators at random_state = seed, and the refinement at seed + 3.
 - **Threads.** Every lane runs at 32 threads, as Part 1's P3 did, with Part 1's thread probe. Bitwise reproduction
   across jobs needs the same thread environment.
 - **Every input has a sha256:**
@@ -238,18 +248,19 @@ Any failed control makes the run **INVALID**, and it is reported unrepaired.
 **Read, never written, with O_NOATIME (`fd_1b_inv.open_noatime`):**
 - from Part 1's root `$V`:
   - `stage/staged.json`;
-  - all 176 staged derivation products in `stage/derivation/`, which gate D's builder needs for g and the carried
-    blocks (`fd_1b_score.derivation_blocks`, `fd_1b_score.py:432`);
-  - `stage/s1/s1_assembly.npz`, and Part 1's staged copy of the flux constraint, `stage/flux_constraint.txt`, which
-    that builder also reads;
-  - `unf/fd1b_pfd_{A,B,Dnom}_{CV,<u>}.npz` for the 8 detector universes;
-- in place, as Part 1's jobs read them: the inputs npz (S1's digest), the background dump, the bank's `cv.npz`, the 8
-  detector-dump weight sets (digest-checked against the pins file before every item), and the three committed files
-  Part 1's readout reads (`gate-d.json`, `diag.json`, `i0.json`).
+  - `stage/derivation/fd1b_derivation_{CV,<u>}.npz` for the 8 detector universes, each checked against `staged.json`;
+  - `stage/s1/s1_assembly.npz`, checked against S1's digest (`fd_1b_score.S1_NPZ_SHA256`) and `staged.json`;
+  - `unf/fd1b_pfd_{A,B,Dnom}_{CV,<u>}.npz` for the same universes;
+- in place, as Part 1's jobs read them: the inputs npz (S1's digest), the background dump, and the 8 detector-dump
+  weight sets (digest-checked against the pins file before every item);
+- from the clone: readout.json (`8e05ca9b…`) and `i0.json`, each recorded by sha256.
 
-**No COV2D original is read.** The only constraint read is Part 1's staged copy in `$V`. No Flux universe is
-unfolded, so the flux-universe file is not opened. Nothing therefore waits on the COV2D fence. Nothing is staged; the new products go to a new root,
-`$W = /pscratch/sd/j/josephrb/fd-1b-band-diag-<date>`.
+Each file is hashed when first read, and a later read in the same step must give the same digest.
+
+**No COV2D input is read.** The detector bands' blocks are unweighted, so no flux constraint is opened, and no Flux
+universe is unfolded, so the flux-universe file is not either. Nothing therefore waits on the COV2D fence.
+
+**Nothing is staged.** The new products go to a new root, `$W = /pscratch/sd/j/josephrb/fd-1b-band-diag-<date>`.
 
 **The fence.** `cov2d_fence.sh` runs from the Mac before every connect. Each connect's in-script fence allows
 `fd1b_bdg_*` and the families the director names at binding; anything else refuses.
@@ -308,20 +319,20 @@ P3's worst lane at the unit is 5 × (1,370 + 75) + 60 = 7,285 s, inside 02:30:00
 ## 8. The code (in this PR before binding)
 
 **The module:** `nd-unfolding/fd_1b_band_diag.py`. It imports `fd_1b_precheck_fd`, `fd_1b_inv`, `fd_1b_toys`,
-`s5n_pseudo` and `s1_assemble` unchanged and modifies none of them. Its subcommands:
+`fd_1b_score`, `s5n_pseudo`, `s5p_universe` and `s1_assemble` unchanged and modifies none of them. Its subcommands:
 - `same`: §4.2 and the readout-reproduction control;
-- `inputs`: §4.3;
+- `inputs`: §4.3 and HW; rc 0 EQUAL, 1 DIFFER;
 - `unfold --mode {E,B} --seed {42,45,48,51,54} --eps {0.5,1,2} --channel {both,signal,background} --universes …`,
   which refuses any universe outside CV and the 8 detector universes, and any combination outside §7's table;
-- `walls`;
+- `pilot`: §5's E and B rebuild controls and §7's walls; rc 0 PASS, 1 REPRICE, 2 INVALID;
 - `readout`: §4.4–§4.6.
 
-**Its tests** (synthetic fixtures only):
+**Its tests** (`nd-unfolding/tests/test_fd_1b_band_diag.py`, 49 tests, synthetic fixtures only):
 - E at ε = 1, channel both, equals `fd_1b_toys.experiment("derivation", single_universe(u))`'s experiment bitwise;
 - B at ε = 1 equals `fd_1b_precheck_fd.mode_inputs("B")` bitwise;
 - f_ε = f at ε = 1 with no arithmetic, and f^ε otherwise;
 - each channel sets the other factor to exactly 1;
-- the seed reaches both the refinement and the unfold;
+- the seed reaches the estimator, and the product's estimator parameters are checked at its own seed;
 - the §4.3 comparison fires on one planted row in each channel;
 - rules §4.2, §4.4 and §4.5 at their edges:
   - the 1e-12 and 1e-5 thresholds;
@@ -337,8 +348,15 @@ P3's worst lane at the unit is 5 × (1,370 + 75) + 60 = 7,285 s, inside 02:30:00
 - O_NOATIME over the call graph;
 - an atime move exits 8.
 
-**A mutation receipt** (`fd/receipts-1b/band-diag/code/mutation.{py,out}`) covers each rule edge, each control and each
-guard. The suite runs at PYTHONHASHSEED 0, 1 and 12345.
+**The mutation receipt** (`fd/receipts-1b/band-diag/code/mutation.{py,out}`) kills 60 of 60 single-site mutants. They
+cover the factor, the channels and the two experiments; every job guard; §4.3's row comparison and its verdict; §4.2's
+thresholds and resolution; each reproduction and digest control; the pilot's rebuild control and walls; §4.4's and
+§4.5's edges (window, side of 1, resolution, the 0.5 and 0.25 margins, the infinite slopes, the band reading); and the
+readout's item, one-code, seed-42 and I0 controls.
+- The first run killed 57. The three survivors each got a test: ε applied to the signal factor only; g formed against
+  the unmapped truth (g cancels from every ratio read here, so only a direct test of g sees it); and the window's edges
+  made exclusive.
+- The suite passes at PYTHONHASHSEED 0, 1 and 12345.
 
 ## 9. Routing
 
