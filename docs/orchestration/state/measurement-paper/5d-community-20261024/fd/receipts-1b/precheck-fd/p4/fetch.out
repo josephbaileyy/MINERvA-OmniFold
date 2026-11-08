@@ -1,0 +1,28 @@
+remote sha256 675a91124ed17b2194dd3a61fdea17e5b2a537be7558d2f0747f0868c80a7317
+node login16 2026-11-08T08:50:11Z
+connect script sha256 675a91124ed17b2194dd3a61fdea17e5b2a537be7558d2f0747f0868c80a7317
+== fence (allowed names: rs1_* and ens1_*; anything else refuses)
+60993979|ens1_a1_dry|RUNNING|17:29|45:00
+squeue rc=0; refusing rows: []
+== listing of /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p4
+total 168
+-rw-rw---- 1 josephrb josephrb 31727 2026-11-08T00:43:15 readout.json
+-rw-rw---- 1 josephrb josephrb     0 2026-11-08T00:43:15 readout.stderr
+-rw-rw---- 1 josephrb josephrb   176 2026-11-08T00:43:15 readout.stdout
+-rw-rw---- 1 josephrb josephrb 17851 2026-11-08T00:43:16 stage-atime-after-readout.tsv
+-rw-rw---- 1 josephrb josephrb 17851 2026-11-08T00:43:16 stage-atime-after-rehash.tsv
+-rw-rw---- 1 josephrb josephrb 17851 2026-11-08T00:43:16 stage-atime-before.tsv
+-rw-rw---- 1 josephrb josephrb 36021 2026-11-08T00:43:16 stat-p4-after.txt
+-rw-rw---- 1 josephrb josephrb 36021 2026-11-08T00:43:16 stat-p4-before.txt
+sha256 8e05ca9bc2d0f2142b5c8d2bff28f05176c48f27454218390f09658344cea7b0 p4/readout.json
+sha256 2708c6e6631eee7d88381ab1602a4cb3fb0308ae8ae1fe582f2040c42f66c15a p4/readout.stdout
+sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 p4/readout.stderr
+sha256 ad7de880545aa54c7d7d066cfd3837ea45a4e922e2bf1cd46bf09635b8e5c2c9 p4/stage-atime-before.tsv
+sha256 ad7de880545aa54c7d7d066cfd3837ea45a4e922e2bf1cd46bf09635b8e5c2c9 p4/stage-atime-after-rehash.tsv
+sha256 e0ed8e0fb9af5e0359266542b50b9e055dab6591097f8467498546cf9804e648 p4/stage-atime-after-readout.tsv
+sha256 a14aeddf80d49fd7cb0d470e9296569e5f754d373dcd098800e828bbd20885a1 p4/stat-p4-before.txt
+sha256 a14aeddf80d49fd7cb0d470e9296569e5f754d373dcd098800e828bbd20885a1 p4/stat-p4-after.txt
+== TAR BEGIN
+[base64 tar body removed from the committed copy; the decoded tar has sha256 a371512bd727f2f7c63277bf437dec8d50d36cfc2eded15a15811552cca29262; its 8 files are under records/p4/, each matching the sha256 lines above]
+== TAR END tar rc=0
+== pfd-p4-fetch rc=0 2026-11-08T08:50:12Z
