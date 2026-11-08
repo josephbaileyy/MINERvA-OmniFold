@@ -10,19 +10,19 @@ Roles: Antigravity is the drafting owner; Grok verifies each change against gove
 Every item is assigned a single, unambiguous class:
 * **[T] (Textual / Editorial):** A finding requiring textual or editorial adjustment in the note (e.g., resolving inconsistencies, harmonizing definitions, clarifying scope, correcting typos, or removing overclaims).
 * **[R] (Record-Backed):** A finding requiring an update to numbers, tables, or macros backed by a landed, immutable OUTCOME, DECISION, or pinned receipt in `docs/orchestration/`.
-* **[A] (Author / Director Decision):** A finding requiring an explicit policy or scope ruling from the director or Joseph before text can be drafted or modified.
+* **[A] (New Analysis):** A finding requiring new scientific analysis or compute, which goes to the director and cannot be resolved by drafting.
 * **[D] (Dispute / Void):** A referee finding that is demonstrably refuted by code, mathematics, or governing records (with technical proof recorded in the resolution); or voided by instruction (e.g., reader-side text truncation).
 
 ## Summary of Classifications
 
-| Source | [T] Textual | [R] Record | [A] Author | [D] Dispute/Void | Total |
+| Source | [T] Textual | [R] Record | [A] Analysis | [D] Dispute/Void | Total |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Part 1: Currency Audit (`AUDIT.txt`)** | 11 | 8 | 2 | 0 | **21** |
+| **Part 1: Currency Audit (`AUDIT.txt`)** | 12 | 9 | 0 | 0 | **21** |
 | **Part 2: Sonnet Report 1 (`sonnet-note-r1-1.txt`)** | 61 | 4 | 0 | 1 | **66** |
 | **Part 3: Sonnet Report 2 (`sonnet-note-r1-2.txt`)** | 63 | 3 | 0 | 1 | **67** |
 | **Part 4: Gemini Report 1 (`gemini-note-r1-1.txt`)** | 34 | 2 | 0 | 1 | **37** |
 | **Part 5: Gemini Report 2 (`gemini-note-r1-2.txt`)** | 27 | 0 | 0 | 3 | **30** |
-| **Total Enumerated Findings** | **196** | **17** | **2** | **6** | **221** |
+| **Total Enumerated Findings** | **197** | **18** | **0** | **6** | **221** |
 
 ---
 
@@ -113,17 +113,17 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Record:* `DECISION-20261101-joseph-1b-keep-block-redesign-test.md:38-40`.  
   *Status:* Drafted as AUD-E9.
 
-* **AUD-N4 [A]** — **Release appendix update.**  
+* **AUD-N4 [T]** — **Release appendix update.**  
   *Finding:* The release appendix still specifies the measurement release; archive package is not mentioned.  
   *Record:* `AUDIT.txt` row N4; `DECISION-20261106-joseph-methods-study-and-archive.md:57-61, :64-67` ("Publication, release and contact acts stay Joseph's").  
   *Target:* `docs/analysis-note/app_release.tex:4`, `:58`.  
-  *Status:* **HELD.** Held by the director (2026-11-08) and Joseph; no release schema change may be executed without explicit authorization. Not classed as an edit.
+  *Status:* **HELD.** Held by the director (2026-11-08) and Joseph; kept out of steps 4 and 5; no release schema change drafted.
 
-* **AUD-N5 [A]** — **Event-loop preservation.**  
+* **AUD-N5 [R]** — **Event-loop preservation.**  
   *Finding:* Event-loop preservation CFS paths in `app_release.tex:50, :53`.  
   *Record:* `AUDIT.txt` row N5; `DECISION-20261101-joseph-eventloops-copy-to-cfs.md:28-34, :38-48` has no CITABLE FOR block.  
   *Target:* `docs/analysis-note/app_release.tex:50`, `:53`.  
-  *Status:* **HELD.** Held by the director (2026-11-08); no text drafted without authorization. Not classed as an edit.
+  *Status:* **HELD.** Held by the director (2026-11-08) and Joseph; kept out of steps 4 and 5; no text drafted without authorization.
 
 * **AUD-N6 [T]** — **Abstract resync.**  
   *Finding:* Resync note abstract to match reframed paper abstract per `DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:57-59`.  
@@ -169,9 +169,9 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 ### Section 3: Accuracy
 
 * **S1-ACC-1 [T]** — **Tune v1 in quasielastic-Δ dip inconsistency.**  
-  *Finding:* Executive summary and §7.6 assert all four generators under-predict data in the dip ($0.1 \\le E_{\\text{avail}} < 0.4\\text{ GeV}$), but §7.8 states the $E_{\\text{avail}}$-marginal data/Tune v1 ratio dips to 1.01 (matching data), and Fig. 23 shows cells dipping to 0.66.  
+  *Finding:* Executive summary and §7.6 assert all four generators under-predict data in the dip ($0.1 \\le E_{\\text{avail}} < 0.4\\text{ GeV}$), but §7.8 states the $E_{\\text{avail}}$-marginal data/Tune v1 ratio dips to 1.01, and Fig. 23 shows cells dipping to 0.66.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:13`, `sec_3d.tex:140`, `sec_eavailw.tex:151`.  
-  *Resolution:* Reconcile executive summary and §7.6 with §7.8: Tune v1 matches data in the dip (data/Tune v1 $\\approx 1.01$ in lowest bin); strip any localization wording per `OUTCOME-20261107-valid-region.md:36` and AUD-L1.
+  *Resolution:* Reconcile executive summary and §7.6 with §7.8 by removing contradictions. The rewrite adds no sentence claiming where the data–Tune difference sits; strip any localization wording per `OUTCOME-20261107-valid-region.md:36` and AUD-L1.
 
 * **S1-ACC-2 [R]** — **Tune v1 normalization deficit quoted four ways.**  
   *Finding:* Deficit quoted as ~9% (ratio 0.91) in §6.5; 0.883 (10–28%) in §7.6; integrated data/Tune = 1.13 (0.885) in §7.8; ~12% in §2.5.  
@@ -205,7 +205,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 * **S1-ACC-8 [D]** — **Band count in cross-covariance at `sec_fived16.tex:66-72`.**  
   *Finding:* Referee asserts §10.2 / `sec_fived16.tex:66-72` has a typo: it names four failing weight checks (AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency) and then writes "These five enter as...", so referee proposes changing "five" to "four".  
-  *Resolution:* **DISPUTE.** The referee's assertion is factually mistaken. At `sec_fived16.tex:66-72` at base `b1da7ba8`, the text sets out the cross-covariance pairing with the 2D result: the paired systematic bands, the lateral shifts, the normalization, the run-period terms, and the $C_{\\text{model}}$ shifts, followed by two parts that could not be paired: the statistical correlation and the four weight-check failure bands named in `\\fvval{x-bounded}` (AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency). "These five" refers to these 1 statistical + 4 weight-check failure bands entering the bounded $r \\in [0, 1]$ family as $r S_{16}^{1/2} S_{2D}^{1/2}$. It is not a typo for four. Dispute stands on this verified structural fact.
+  *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), "These five enter" follows the paired terms: the systematic bands, the lateral shifts, the normalization, the run-period terms, and the $C_{\\text{model}}$ shifts. The statistical correlation is the part that is not measured. Do not change "five" to "four".
 
 * **S1-ACC-9 [T]** — **"At least fifteen-fold" arithmetic error.**  
   *Finding:* §3.2 claims purity bias reduced "at least fifteen-fold (from 3.5% to 4.1% to 0.11% to 0.24%)"; worst case is 3.5 / 0.24 = 14.58.  
@@ -337,7 +337,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-15 [T]** — **Reproducibility tolerances and archival completeness.**  
   *Finding:* Quoted central values reproducible only within float32 rounding spread (≈0.8 median, 2.6 max statistical SD under perturbations, §9.3); rerun tolerance should be stated. App. G package not deposited, repository/snapshot placeholders unfilled, 2D uncertainty and coverage figures not reproduced by it, 489 simulation AnaTuples have no preservation copy. Release schema marks 5-axis covariance as fixed identity despite failing criteria.  
   *Evidence:* `docs/analysis-note/sec_5d.tex:95`, `app_release.tex:25`.  
-  *Resolution:* State numerical reproducibility tolerance explicitly; replace placeholders with formal archival deposit statements; reconcile release schema with non-passing 5D covariance status.
+  *Resolution:* State numerical reproducibility tolerance explicitly; replace placeholders with formal archival deposit statements.
 
 ### Section 5: Self-Containment
 
@@ -520,7 +520,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* `docs/analysis-note/sec_validation.tex:35`, `app_response_mismatch.tex:12`.  
   *Resolution:* Reconcile text: App. D ran exploratory shifted response samples; the full formal closure protocol was not executed.
 * **S2-ACC-6 [D]** — **Count of bands that failed pairing.** Same finding as S1-ACC-8.  
-  *Resolution:* **DISPUTE.** `sec_fived16.tex:66-72` at `b1da7ba8` lists the cross-covariance pairing, where two parts could not be paired: the statistical correlation and the four weight-check failure bands named in `\\fvval{x-bounded}` (AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency). "These five" refers to these 1 statistical + 4 weight-check failure bands entering the bounded $r \\in [0, 1]$ family as $r S_{16}^{1/2} S_{2D}^{1/2}$. It is not a typo for four. Dispute stands on this verified structural fact.
+  *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), "These five enter" follows the paired terms: the systematic bands, the lateral shifts, the normalization, the run-period terms, and the $C_{\\text{model}}$ shifts. The statistical correlation is the part that is not measured. Do not change "five" to "four".
 * **S2-ACC-7 [T]** — **Band counts and classifications across sections.**  
   *Finding:* 44 evaluated systematic bands plus 1 global normalization; clarify GEANT FSI lateral treatment.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:35`, `app_statmethods.tex:210`.  
@@ -928,6 +928,6 @@ The companion note is restructured into a coherent methods-and-benchmark narrati
 1. **Step 1:** Establish this exhaustive issue ledger on `draft/note-round2-20261108` and obtain confirmation from Grok (`client-grok-shell-open-agent-bridge-c4a99362fc6f`).
 2. **Step 2:** Execute structural reordering in `docs/analysis-note/main_note.tex` in its own commit (2D benchmark before 16-cell result; Executive Summary methods-and-benchmark opening; no prose edits).
 3. **Step 3:** Draft the comprehensive Per-Result Status & Citability Matrix in `sec_execsummary.tex` / Section 1.
-4. **Step 4:** Execute editorial and wording reconciliations ([T] items, excluding held [A] items) across all sections, replacing hardcoded numbers with `values*.tex` macros and removing overclaims. Held items ([A]: AUD-N4, AUD-N5) remain unedited without director/Joseph authorization.
+4. **Step 4:** Execute editorial and wording reconciliations ([T] items, excluding held items AUD-N4 and AUD-N5) across all sections, replacing hardcoded numbers with `values*.tex` macros and removing overclaims. Held items (AUD-N4 [T] and AUD-N5 [R]) remain unedited without director/Joseph authorization.
 5. **Step 5:** Inline essential mathematical definitions from internal records ([R] items) into self-contained appendices and text.
 6. **Step 6:** Verify entire test suite (`test_build_all.py`, `check_body_pointers.py`, `check_note_records.py pin .`), ensure clean PDF builds, and submit for rater review.
