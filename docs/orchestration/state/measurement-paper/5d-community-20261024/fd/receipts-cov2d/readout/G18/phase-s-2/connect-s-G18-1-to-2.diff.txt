@@ -1,0 +1,74 @@
+--- /Users/josephbailey/cov2d-work/a4/connect-s-G18-1.sh	2026-11-07 10:10:29
++++ /Users/josephbailey/cov2d-work/connect-s-G18.sh	2026-11-07 19:25:15
+@@ -1,7 +1,7 @@
+ #!/bin/bash
+ # COV2D connect S-<T>: addendum A4's phase S (COV2D-ADDENDUM-A4.md section 4), `cov2d_readout.py score --truth T
+ # --null-digest D`, for one truth, after its null record is merged to main (COV2D-BINDING-2 addendum A4, ruling 1).
+-# Login node, 0 node-h (A4 section 9), at M = ac25b665. The same template as connect-n.sh (phase N, receipted in
++# Login node, 0 node-h (A4 section 9), at M_A5 = b1d56e4f (A5's M line; was ac25b665). The same template as connect-n.sh (phase N, receipted in
+ # readout/<T>/): a fresh clone at M in /dev/shm, the MAT pin before and after sourcing, the MnvH1D preflight, nice 19,
+ # taskset -c 8-11, threads 1, porcelain before and after, the clone removed at the end (logged).
+ # The gate is the driver's (section 9.7): origin/main's null_<T>.json must hash to D, name this M, this truth and PASS;
+@@ -10,12 +10,18 @@
+ # Verdict: COVERS or UNDER-COVERS (rc 0, "COV2D-SCORE <T> COVERS|UNDER-COVERS"); REFUSED (rc 2, the gate);
+ # STOP or INVALID from the driver (rc 3, "COV2D-SCORE <T> STOP|INVALID"); else INVALID (connect). A section 9.9 INVALID
+ # goes to the director unrepaired, with the mechanism named (binding A4, ruling 2).
++# A5 (M line rulings 1-3): a grade refusal is rc 3 "COV2D-SCORE <T> INVALID (grade refused, <grade>: <text>)" with
++# score_<T>.invalid.json. Ruling 3's reading rule is applied here after the run and printed per grade (A5-READING):
++# for each grade (cholesky_check = C_T, cholesky_check_minus = C_T-) whose compared ndf is 205, kappa2, tol and
++# max_rel_diff must be finite, max_rel_diff <= tol, and the tol the grade used (compared.tol) must be the recorded
++# tol; a grade with no compared values also fails. If it fails, the PHASE-S line reads INVALID (A5 reading rule),
++# whatever the driver printed; the records are left as written.
+ # connect-s-<T>.sh is this file with T and D set; nothing else differs.
+ # Run on login02: setsid nohup bash /dev/shm/josephrb-cov2d-s-<T>.sh >/dev/null 2>&1 </dev/null &
+-M=ac25b66533788ceb18b1d4e5add259c53b216669
++M=b1d56e4f08e62983784e34b2278f38a09a68eca0   # M_A5 (#900's merge; bound by #911)
+ T=G18
+-D=ecdb4be2fbb18852d32c1a4f9fb3cbc4107310d72c5bdeb2eb3651996ed0c41f
+-READOUT_SHA=d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
++D=6bd5259d61b062af7b3a8b09af78fc544e3eba48e35a062a28fdcd923b90f6e0   # null_G18.json of phase-n-2 (#914)
++READOUT_SHA=0c3ad137be128691cce7bbe3ec72493b76791e761e6cd897f75aaf0a4fc7444f   # cov2d_readout.py at M_A5
+ W=/dev/shm/josephrb-cov2d-s-$T; DD=$W/deploy
+ A=/pscratch/sd/j/josephrb/MINERvA-OmniFold   # the shared checkout with the MAT build (setup_salloc_env.sh)
+ PY310=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
+@@ -70,8 +76,40 @@
+   "0:COV2D-SCORE $T COVERS"|"0:COV2D-SCORE $T UNDER-COVERS") V=${L#COV2D-SCORE $T } ;;
+   "2:COV2D-SCORE $T REFUSED "*) V=REFUSED ;;
+   "3:COV2D-SCORE $T STOP"|"3:COV2D-SCORE $T INVALID") V=${L#COV2D-SCORE $T } ;;
++  "3:COV2D-SCORE $T INVALID (grade refused, "*) V=${L#COV2D-SCORE $T } ;;
+   *) V="INVALID (connect: rc=$rc, no matching verdict line)" ;;
+ esac
++# A5 M line ruling 3: the reading rule, per grade, from whichever score record was written
++SR=""; for f in "$W/out/score_$T.json" "$W/out/score_$T.invalid.json"; do [ -f "$f" ] && SR="$SR $f"; done
++if [ -n "$SR" ]; then
++  "$PY310" -B - $SR <<'A5R'; a5=$?
++import json, math, sys
++ok = True
++for p in sys.argv[1:]:
++    rec = json.load(open(p))
++    for key, grade in (("cholesky_check", "C_T"), ("cholesky_check_minus", "C_T_minus")):
++        cc = rec.get(key) or {}
++        cmp = cc.get("compared") or {}
++        k, tol, mrd, ndf = cc.get("kappa2"), cc.get("tol"), cmp.get("max_rel_diff"), cmp.get("ndf")
++        fin = lambda x: isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
++        if not cmp:
++            good = False; why = "no compared values"
++        elif ndf != 205:
++            good = True; why = f"ndf {ndf}: the rule applies at ndf 205 only"
++        else:
++            good = fin(k) and fin(tol) and fin(mrd) and mrd <= tol and cmp.get("tol") == tol
++            why = ("finite, max_rel_diff <= tol, the grade used the recorded tol" if good
++                   else "not finite, or max_rel_diff > tol, or the grade's tol is not the recorded tol")
++        ok &= good
++        print(f"A5-READING {p.rsplit('/', 1)[-1]} {grade} ndf={ndf} kappa2={k!r} tol={tol!r} cmp_tol={cmp.get('tol')!r} "
++              f"max_rel_diff={mrd!r} {'OK' if good else 'FAIL'} ({why})")
++print("A5-READING-RULE " + ("PASS" if ok else "FAIL"))
++sys.exit(0 if ok else 8)
++A5R
++  [ "$a5" = 0 ] || V="INVALID (A5 reading rule; the driver printed: $V)"
++else
++  echo "A5-READING-RULE NOT-CHECKED (no score record written; verdict $V)"
++fi
+ echo "PHASE-S $T $V rc=$rc"
+ (cd "$W/out" && sha256sum * 2>&1)
+ n=$(git -C "$DD" status --porcelain | wc -l); echo "porcelain_after_lines=$n head=$(git -C "$DD" rev-parse HEAD)"

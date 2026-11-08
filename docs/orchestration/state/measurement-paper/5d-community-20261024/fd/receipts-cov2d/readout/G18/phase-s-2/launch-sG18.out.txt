@@ -1,0 +1,40 @@
+LAUNCHER-SHA OK 314fa64d950770dd527fae1f01f1cf9efe6e6394b25f7d7ca00bd9f0ba74f26f
+CONNECT-SHA OK /Users/josephbailey/cov2d-work/connect-s-G18.sh 3cd401648abb6aa72b80ace1680d89124ebe6fca320c63d18259ab67f66a041d
+fence host=login02 utc=2026-11-08T03:34:48Z
+squeue:
+sacct unended cov2d:
+fence end
+FENCE_CLEAR
+staged rc=0 node=3cd401648abb6aa72b80ace1680d89124ebe6fca320c63d18259ab67f66a041d local=3cd401648abb6aa72b80ace1680d89124ebe6fca320c63d18259ab67f66a041d
+DIGEST_MATCH
+launched rc=0 at 2026-11-08T03:35:06Z
+last line: DONE
+out listing rc=0: score_G18.json 
+fetched connect-s-G18.log rc=0
+fetched score_G18.log rc=0
+fetched blobs.before rc=0
+fetched blobs.after rc=0
+fetched out/score_G18.json rc=0
+removal rc=0
+host=login02 utc=2026-11-08T03:36:40Z
+9bd88f210b5b666607183f704d825e07cdd07b2cea01b3521f1955b8f7ac0a96  connect-s-G18.log
+35a3929de1d524401ff4dc793de53e39817256665432334d4e955377a3152e4b  score_G18.log
+7a219ce63f170fc56cf09da7245f3ba61f118b13766e08c9bc5d43edcbf76859  blobs.before
+7a219ce63f170fc56cf09da7245f3ba61f118b13766e08c9bc5d43edcbf76859  blobs.after
+849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec  out/score_G18.json
+3cd401648abb6aa72b80ace1680d89124ebe6fca320c63d18259ab67f66a041d  /dev/shm/josephrb-cov2d-s-G18.sh
+rm -f /dev/shm/josephrb-cov2d-s-G18.sh rc=0
+rm -f /dev/shm/josephrb-cov2d-s-G18/out/score_G18.json rc=0
+rm -f /dev/shm/josephrb-cov2d-s-G18/blobs.after rc=0
+rm -f /dev/shm/josephrb-cov2d-s-G18/blobs.before rc=0
+rm -f /dev/shm/josephrb-cov2d-s-G18/connect-s-G18.log rc=0
+rm -f /dev/shm/josephrb-cov2d-s-G18/score_G18.log rc=0
+rmdir /dev/shm/josephrb-cov2d-s-G18/out rc=0
+rmdir /dev/shm/josephrb-cov2d-s-G18 rc=0
+ls end
+MATCH connect-s-G18.log
+MATCH score_G18.log
+MATCH blobs.before
+MATCH blobs.after
+MATCH out/score_G18.json
+go rc=0
