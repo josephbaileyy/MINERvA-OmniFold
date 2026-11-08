@@ -49,7 +49,7 @@ GUARD_TESTS = {
     "MAT_DATA_STAGE": "test_staged_prefix_restore_and_missing or test_extract_missing_dependency_before_constructor",
     "MAT_ENVIRONMENT": "test_mat_environment_reuses_instrument",
     "MAT_MNVH1D": "test_pyroot_reader_protocol_guards",
-    "MAT_PREPARE": "test_same_connect_prepare_receipt",
+    "MAT_PREPARE": "test_same_connect_prepare_receipt or test_legacy_prepare_presence_and_policy_guards",
     "MAT_PREPARE_PRESENT": "test_prepare_receipt_named_guards",
     "MAT_PREPARE_RUN": "test_prepare_receipt_named_guards",
     "MAT_PREPARE_CONNECT_PRESENT": "test_prepare_receipt_named_guards",

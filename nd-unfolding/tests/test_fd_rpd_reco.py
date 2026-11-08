@@ -2214,6 +2214,23 @@ def test_same_connect_prepare_receipt(
         R.checked_prepared_mat(inputs)
 
 
+def test_legacy_prepare_presence_and_policy_guards(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    inputs, _state, _root, _lib = _prepared_mat_fixture(fixture, monkeypatch)
+    prepared = inputs.prestage
+    assert R.checked_prepared_mat(inputs)
+    inputs.prestage = None
+    with pytest.raises(R.Refused) as caught:
+        R.checked_mat_environment(inputs)
+    assert caught.value.guard == "MAT_PREPARE"
+    inputs.prestage = prepared
+    (inputs.run / "trace-policy.json").write_text("{}")
+    with pytest.raises(R.Refused) as caught:
+        R.checked_prepared_mat(inputs)
+    assert caught.value.guard == "MAT_PREPARE"
+
+
 def test_extract_missing_dependency_before_constructor(
     fixture: Fixture, monkeypatch: pytest.MonkeyPatch
 ) -> None:
