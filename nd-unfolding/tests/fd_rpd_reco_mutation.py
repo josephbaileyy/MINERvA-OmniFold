@@ -25,6 +25,7 @@ PRODUCER = ROOT / "nd-unfolding/fd_rpd_reco.py"
 TESTS = ROOT / "nd-unfolding/tests/test_fd_rpd_reco.py"
 
 CUSTODY_GUARD_TESTS = {
+    "ENVIRONMENT_EXCLUSIONS": "test_environment_exclusions_reject_interpreter_keys",
     "MAT_INVENTORY": "test_prepare_firing_guards and inventory",
     "STAGE_SOURCE_STAT": "test_prepare_firing_guards and atime",
     "NATIVE_SELECTION": "test_prepare_firing_guards and native",
@@ -49,6 +50,12 @@ GUARD_TESTS = {
     "MAT_ENVIRONMENT": "test_mat_environment_reuses_instrument",
     "MAT_MNVH1D": "test_pyroot_reader_protocol_guards",
     "MAT_PREPARE": "test_same_connect_prepare_receipt",
+    "MAT_PREPARE_PRESENT": "test_prepare_receipt_named_guards",
+    "MAT_PREPARE_RUN": "test_prepare_receipt_named_guards",
+    "MAT_PREPARE_CONNECT_PRESENT": "test_prepare_receipt_named_guards",
+    "MAT_PREPARE_CONNECT": "test_prepare_receipt_named_guards",
+    "MAT_PREPARE_AGE": "test_prepare_receipt_named_guards",
+    "MAT_PREPARE_ENVIRONMENT": "test_prepare_receipt_named_guards",
     "MAT_ROOT_FILE": "test_pyroot_reader_protocol_guards",
     "MAT_TFILE_STAGE": "test_tfile_guard_both_entries",
     "CONFIG_READY": "test_draft_configuration_refuses",
@@ -177,6 +184,15 @@ REQUIRED = tuple(
         *[
             Mutation(f"REQUIRED_CUSTODY_{guard}", "custody_guard", guard, selector)
             for guard, selector in CUSTODY_GUARD_TESTS.items()
+        ],
+        *[
+            Mutation(
+                f"REQUIRED_UNSAFE_EXCLUSION_{key}",
+                "custody_unsafe_exclusion",
+                key,
+                "test_environment_exclusions_are_reviewed",
+            )
+            for key in ("LD_PRELOAD", "PYTHONPATH", "ROOT_INCLUDE_PATH")
         ],
         Mutation(
             "REQUIRED_DICTIONARY_BEFORE_MAPS",
@@ -533,6 +549,14 @@ class Mutator(ast.NodeTransformer):
 
     def visit_Assign(self, node: ast.Assign) -> ast.AST:
         mutation = self.mutation
+        if mutation.kind == "custody_unsafe_exclusion" and any(
+            isinstance(target, ast.Name) and target.id == "ENVIRONMENT_EXCLUSIONS"
+            for target in node.targets
+        ):
+            node.value = ast.parse(
+                "{'_': 'shell', " + repr(mutation.target) + ": 'unsafe'}", mode="eval"
+            ).body
+            self.changed += 1
         if (
             mutation.kind == "custody_skip_fence"
             and self.function == "prepare"

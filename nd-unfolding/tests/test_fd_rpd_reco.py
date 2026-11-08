@@ -2182,6 +2182,7 @@ def test_same_connect_prepare_receipt(
         "connect_id": "unit-connect",
         "prepare_time_ns": time.time_ns(),
         "environment_after_setup": custody.environment_record(),
+        "environment_snapshot": custody.environment_snapshot(),
         "mapped_mat_stats": {},
         "instrument_files": [],
         "mat_environment": {
@@ -2630,6 +2631,7 @@ def _prepared_mat_fixture(
         "connect_id": "lazy-map-test",
         "prepare_time_ns": time.time_ns(),
         "environment_after_setup": _custody_module().environment_record(),
+        "environment_snapshot": _custody_module().environment_snapshot(),
         "trace_policy_sha256": R.digest(policy),
         "mapped_mat_stats": {str(lib): [info.st_dev, info.st_ino, info.st_size]},
         "instrument_files": [
@@ -3028,6 +3030,110 @@ def test_prologue_prepare_opens_no_declared_data(
     assert digest == R.digest(run / "prologue-prepare.json")
     assert not (run / "original-inputs").exists()
     assert not (run / "mat-data").exists()
+
+
+def test_prepare_receipt_named_guards(monkeypatch: pytest.MonkeyPatch) -> None:
+    import time
+
+    custody = _custody_module()
+    monkeypatch.setenv("FD_RPD_RECO_CONNECT_ID", "receipt-test")
+    run = Path("/fixture/run")
+    prepared = {
+        "run": str(run),
+        "connect_id": "receipt-test",
+        "prepare_time_ns": time.time_ns(),
+        "environment_after_setup": custody.environment_record(),
+        "environment_snapshot": custody.environment_snapshot(),
+    }
+    context = SimpleNamespace(run=run, prestage=prepared)
+    assert R.check_prepare_receipt(context, custody) is prepared
+    cases = [
+        ("MAT_PREPARE_PRESENT", None, None),
+        ("MAT_PREPARE_RUN", "run", "/foreign"),
+        ("MAT_PREPARE_CONNECT", "connect_id", "foreign"),
+        ("MAT_PREPARE_AGE", "prepare_time_ns", 0),
+        ("MAT_PREPARE_ENVIRONMENT", "environment_after_setup", {}),
+    ]
+    for guard, key, value in cases:
+        context.prestage = None if key is None else prepared | {key: value}
+        with pytest.raises(R.Refused) as caught:
+            R.check_prepare_receipt(context, custody)
+        assert caught.value.guard == guard
+        assert caught.value.details["presence"]["required"]
+        if key is not None:
+            assert caught.value.details["run"]["observed"] == str(run)
+    context.prestage = prepared
+    monkeypatch.delenv("FD_RPD_RECO_CONNECT_ID")
+    with pytest.raises(R.Refused) as caught:
+        R.check_prepare_receipt(context, custody)
+    assert caught.value.guard == "MAT_PREPARE_CONNECT_PRESENT"
+    assert caught.value.details["connect_presence"]["observed"] is False
+
+
+@pytest.mark.parametrize("change", ["changed", "added", "removed", "credential"])
+def test_prepare_environment_whole_comparison(
+    monkeypatch: pytest.MonkeyPatch, change: str
+) -> None:
+    import time
+
+    custody = _custody_module()
+    monkeypatch.setenv("FD_RPD_RECO_CONNECT_ID", "env-test")
+    monkeypatch.setenv("LD_LIBRARY_PATH", "/pinned/lib")
+    monkeypatch.setenv("PLOTUTILSROOT", "/pinned/mat")
+    monkeypatch.setenv("TEST_API_KEY", "first-private-value")
+    monkeypatch.delenv("LD_PRELOAD", raising=False)
+    prepared = {
+        "run": "/fixture/run",
+        "connect_id": "env-test",
+        "prepare_time_ns": time.time_ns(),
+        "environment_after_setup": custody.environment_record(),
+        "environment_snapshot": custody.environment_snapshot(),
+    }
+    context = SimpleNamespace(run=Path("/fixture/run"), prestage=prepared)
+    monkeypatch.setenv("_", "different-shell-command")
+    assert R.check_prepare_receipt(context, custody) is prepared
+    if change == "changed":
+        monkeypatch.setenv("LD_LIBRARY_PATH", "/foreign/lib")
+        key, section = "LD_LIBRARY_PATH", "changed"
+    elif change == "added":
+        monkeypatch.setenv("LD_PRELOAD", "/foreign/libextra.so")
+        key, section = "LD_PRELOAD", "added"
+    elif change == "removed":
+        monkeypatch.delenv("PLOTUTILSROOT")
+        key, section = "PLOTUTILSROOT", "removed"
+    else:
+        monkeypatch.setenv("TEST_API_KEY", "second-private-value")
+        key, section = "TEST_API_KEY", "changed"
+    with pytest.raises(R.Refused) as caught:
+        R.check_prepare_receipt(context, custody)
+    assert caught.value.guard == "MAT_PREPARE_ENVIRONMENT"
+    diff = caught.value.details["environment"]["diff"]
+    assert key in diff[section]
+    if section == "changed":
+        assert set(diff[section][key]) == {"prepared", "observed"}
+    rendered = json.dumps(caught.value.details)
+    assert "first-private-value" not in rendered
+    assert "second-private-value" not in rendered
+
+
+@pytest.mark.parametrize(
+    "key", ["LD_PRELOAD", "PYTHONPATH", "ROOT_INCLUDE_PATH", "CLING_TEST"]
+)
+def test_environment_exclusions_reject_interpreter_keys(
+    monkeypatch: pytest.MonkeyPatch, key: str
+) -> None:
+    custody = _custody_module()
+    snapshot = custody.environment_snapshot()
+    monkeypatch.setitem(custody.ENVIRONMENT_EXCLUSIONS, key, "forbidden")
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.environment_diff(snapshot, snapshot)
+    assert caught.value.details["guard"] == "ENVIRONMENT_EXCLUSIONS"
+
+
+def test_environment_exclusions_are_reviewed() -> None:
+    assert _custody_module().ENVIRONMENT_EXCLUSIONS == {
+        "_": "shell-maintained last-command value"
+    }
 
 
 def test_connect_mat_setup_disables_nounset() -> None:

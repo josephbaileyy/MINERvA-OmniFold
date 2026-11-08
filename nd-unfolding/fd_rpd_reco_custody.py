@@ -65,6 +65,50 @@ def environment_record() -> Json:
     }
 
 
+# POSIX shells update '_' to the last command; it is not interpreter configuration.
+# A new exclusion requires a recorded worker diff and review of its setter.
+ENVIRONMENT_EXCLUSIONS = {"_": "shell-maintained last-command value"}
+
+
+def environment_snapshot() -> Json:
+    """Retain redacted display values and exact value fingerprints for comparison."""
+    return {
+        "values": environment_record(),
+        "fingerprints": {
+            key: hashlib.sha256(value.encode()).hexdigest()
+            for key, value in sorted(os.environ.items())
+        },
+    }
+
+
+def environment_diff(prepared: Json, observed: Json) -> Json:
+    """Compare every environment key except explicitly reviewed volatile fields."""
+    protected = ("LD_", "DYLD_", "PYTHON", "ROOT", "CLING", "CPPYY", "EXTRA_CLING")
+    require(
+        not any(key.startswith(protected) for key in ENVIRONMENT_EXCLUSIONS),
+        "interpreter or loader key cannot be excluded",
+        guard="ENVIRONMENT_EXCLUSIONS",
+    )
+    before = prepared["fingerprints"]
+    after = observed["fingerprints"]
+    old_keys = set(before) - ENVIRONMENT_EXCLUSIONS.keys()
+    new_keys = set(after) - ENVIRONMENT_EXCLUSIONS.keys()
+    return {
+        "added": {key: observed["values"][key] for key in sorted(new_keys - old_keys)},
+        "removed": {
+            key: prepared["values"][key] for key in sorted(old_keys - new_keys)
+        },
+        "changed": {
+            key: {
+                "prepared": prepared["values"][key],
+                "observed": observed["values"][key],
+            }
+            for key in sorted(old_keys & new_keys)
+            if before[key] != after[key]
+        },
+    }
+
+
 def source_stat(path: Path) -> Json:
     """Record source metadata without opening the file."""
     info = path.stat()
@@ -332,6 +376,7 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
         "fence": fence,
         "original_config_sha256": config_sha,
         "environment_after_setup": environment_record(),
+        "environment_snapshot": environment_snapshot(),
         "module_paths": module_paths(),
     }
     r.write_json(run / "trace-policy.json", build_trace_policy(config, manifest, run))

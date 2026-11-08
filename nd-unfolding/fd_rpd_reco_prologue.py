@@ -78,6 +78,7 @@ def prepare(config_path: Path, checksum: str, run: Path) -> str:
         "connect_id": os.environ["FD_RPD_RECO_CONNECT_ID"],
         "prepare_time_ns": time.time_ns(),
         "environment_after_setup": custody.environment_record(),
+        "environment_snapshot": custody.environment_snapshot(),
         "mat_environment": environment,
         "mapped_mat_stats": {},
         "instrument_files": [],
@@ -213,6 +214,16 @@ def main() -> int:
         KeyError,
         ImportError,
     ) as error:
+        if args.worker and isinstance(error, r.Refused):
+            r.write_json(
+                args.run / "prologue-worker.STOP.json",
+                {
+                    "status": "STOP",
+                    "guard": error.guard,
+                    "details": error.details,
+                },
+            )
+            print(json.dumps(error.details, sort_keys=True), file=sys.stderr)
         print(f"STOP DATA_FREE_TRACE: {error}", file=sys.stderr)
         return 4
     return 0

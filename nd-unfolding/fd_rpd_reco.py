@@ -1207,6 +1207,96 @@ class PreparedMatContext(Protocol):
     prestage: Json | None
 
 
+def check_prepare_receipt(inputs: PreparedMatContext, custody: Any) -> Json:
+    """Check each custody predicate and retain both sides of every comparison."""
+    prepared = inputs.prestage
+    required = {
+        "run",
+        "connect_id",
+        "prepare_time_ns",
+        "environment_after_setup",
+        "environment_snapshot",
+    }
+    details: Json = {
+        "presence": {"required": sorted(required), "observed": sorted(prepared or {})}
+    }
+    try:
+        require(
+            isinstance(prepared, dict)
+            and required <= prepared.keys()
+            and isinstance(prepared.get("environment_after_setup"), dict)
+            and isinstance(prepared.get("environment_snapshot"), dict)
+            and {"values", "fingerprints"} <= prepared["environment_snapshot"].keys()
+            and isinstance(prepared["environment_snapshot"]["values"], dict)
+            and isinstance(prepared["environment_snapshot"]["fingerprints"], dict)
+            and prepared["environment_snapshot"]["values"].keys()
+            == prepared["environment_snapshot"]["fingerprints"].keys(),
+            "MAT_PREPARE_PRESENT",
+            "prepare receipt fields are missing",
+        )
+        assert prepared is not None
+        connect_id = os.environ.get("FD_RPD_RECO_CONNECT_ID")
+        stamp = prepared["prepare_time_ns"]
+        now = time.time_ns()
+        age = now - stamp if isinstance(stamp, int) else None
+        snapshot = prepared["environment_snapshot"]
+        observed = custody.environment_snapshot()
+        diff = custody.environment_diff(snapshot, observed)
+        record_values = prepared["environment_after_setup"]
+        display_diff = {
+            key: {
+                "prepared": record_values.get(key),
+                "snapshot": snapshot["values"].get(key),
+            }
+            for key in sorted(record_values.keys() | snapshot["values"].keys())
+            if record_values.get(key) != snapshot["values"].get(key)
+        }
+        details.update(
+            {
+                "run": {"prepared": prepared["run"], "observed": str(inputs.run)},
+                "connect_presence": {"required": True, "observed": bool(connect_id)},
+                "connect_id": {
+                    "prepared": prepared["connect_id"],
+                    "observed": connect_id,
+                },
+                "age": {
+                    "prepare_time_ns": stamp,
+                    "now_ns": now,
+                    "observed_age_ns": age,
+                    "exclusive_bounds_ns": [0, 7_200_000_000_000],
+                },
+                "environment": {
+                    "excluded": custody.ENVIRONMENT_EXCLUSIONS,
+                    "diff": diff,
+                    "record_display_diff": display_diff,
+                },
+            }
+        )
+        require(
+            prepared["run"] == str(inputs.run), "MAT_PREPARE_RUN", "prepare run differs"
+        )
+        require(bool(connect_id), "MAT_PREPARE_CONNECT_PRESENT", "connect ID is absent")
+        require(
+            prepared["connect_id"] == connect_id,
+            "MAT_PREPARE_CONNECT",
+            "connect ID differs",
+        )
+        require(
+            age is not None and 0 < age < 7_200_000_000_000,
+            "MAT_PREPARE_AGE",
+            "prepare receipt age is outside the bound",
+        )
+        require(
+            not display_diff and not any(diff.values()),
+            "MAT_PREPARE_ENVIRONMENT",
+            "prepare environment differs",
+        )
+    except Refused as error:
+        error.details = details
+        raise
+    return prepared
+
+
 def checked_prepared_mat(inputs: PreparedMatContext) -> tuple[Any, Json]:
     """Verify same-connect MAT custody without reopening protected instrument sources."""
     import importlib.util
@@ -1217,22 +1307,7 @@ def checked_prepared_mat(inputs: PreparedMatContext) -> tuple[Any, Json]:
     assert spec is not None and spec.loader is not None
     custody = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(custody)
-    prepared = inputs.prestage
-    assert prepared is not None
-    require(
-        prepared.get("run") == str(inputs.run)
-        and bool(os.environ.get("FD_RPD_RECO_CONNECT_ID"))
-        and prepared.get("connect_id") == os.environ.get("FD_RPD_RECO_CONNECT_ID")
-        and 0 < time.time_ns() - prepared.get("prepare_time_ns", 0) < 7_200_000_000_000
-        and {
-            k: v
-            for k, v in prepared.get("environment_after_setup", {}).items()
-            if k != "_"
-        }
-        == {k: v for k, v in custody.environment_record().items() if k != "_"},
-        "MAT_PREPARE",
-        "stale, foreign or environment-mismatched prepare receipt",
-    )
+    prepared = check_prepare_receipt(inputs, custody)
     instrument = load_mat_instrument()
     environment = prepared["mat_environment"]
     dictionary = ROOT.TClass.GetClass("PlotUtils::MnvH1D")
