@@ -1209,7 +1209,9 @@ class PreparedMatContext(Protocol):
     prestage: Json | None
 
 
-def check_prepare_receipt(inputs: PreparedMatContext, custody: Any) -> Json:
+def check_prepare_receipt(
+    inputs: PreparedMatContext, custody: Any, *, observed_snapshot: Json | None = None
+) -> Json:
     """Check each custody predicate and retain both sides of every comparison."""
     prepared = inputs.prestage
     required = {
@@ -1242,7 +1244,11 @@ def check_prepare_receipt(inputs: PreparedMatContext, custody: Any) -> Json:
         now = time.time_ns()
         age = now - stamp if isinstance(stamp, int) else None
         snapshot = prepared["environment_snapshot"]
-        observed = custody.environment_snapshot()
+        observed = (
+            custody.environment_snapshot()
+            if observed_snapshot is None
+            else observed_snapshot
+        )
         diff = custody.environment_diff(snapshot, observed)
         record_values = prepared["environment_after_setup"]
         display_diff = {
@@ -1313,25 +1319,50 @@ def load_custody_instrument() -> Any:
 
 def checked_prepared_mat(inputs: PreparedMatContext) -> tuple[Any, Json]:
     """Verify same-connect MAT custody without reopening protected instrument sources."""
-    import ROOT
-
     custody = load_custody_instrument()
+    observed = custody.environment_snapshot(native=True)
+    runtime_baseline = getattr(inputs, "_mat_runtime_snapshot", None)
+    entry_snapshot = getattr(inputs, "_mat_entry_snapshot", observed)
     try:
-        prepared = check_prepare_receipt(inputs, custody)
-    except Refused as error:
-        observed = custody.environment_snapshot()
-        raw = inputs.prestage or {}
-        error.details = custody.public_record(
-            error.details, raw.get("environment_snapshot", {}), observed
+        if runtime_baseline is not None:
+            runtime_diff = custody.environment_diff(
+                runtime_baseline, observed, exclusions={}
+            )
+            try:
+                require(
+                    not any(runtime_diff.values()),
+                    "MAT_RUNTIME_ENVIRONMENT",
+                    "environment changed after MAT initialization",
+                )
+            except Refused as error:
+                error.details = {
+                    "environment": {
+                        "diff": runtime_diff,
+                        "excluded": {},
+                    },
+                    "boundary": "after-root-initialization",
+                }
+                raise
+        prepared = check_prepare_receipt(
+            inputs, custody, observed_snapshot=entry_snapshot
         )
+    except Refused as error:
+        raw = inputs.prestage or {}
+        before = (
+            runtime_baseline
+            if error.guard == "MAT_RUNTIME_ENVIRONMENT"
+            else raw.get("environment_snapshot", {})
+        )
+        error.details = custody.public_record(error.details, before, observed)
         custody.publish_prepare_view(
             sys.modules[__name__], inputs.run, raw, observed, stopped=True
         )
         raise
-    observed = custody.environment_snapshot()
     custody.publish_prepare_view(
-        sys.modules[__name__], inputs.run, prepared, observed, stopped=False
+        sys.modules[__name__], inputs.run, prepared, entry_snapshot, stopped=False
     )
+    import ROOT
+
     instrument = load_mat_instrument()
     environment = prepared["mat_environment"]
     dictionary = ROOT.TClass.GetClass("PlotUtils::MnvH1D")
@@ -1372,15 +1403,46 @@ def checked_prepared_mat(inputs: PreparedMatContext) -> tuple[Any, Json]:
             "MAT_INSTRUMENT_DIGEST",
             "staged checked instrument changed",
         )
+    post_import = custody.environment_snapshot(native=True)
+    import_record = getattr(inputs, "_mat_import_record", None)
+    if import_record is None:
+        import_record = custody.root_import_record(entry_snapshot, post_import)
+        try:
+            require(
+                import_record["pass"],
+                "MAT_IMPORT_ENVIRONMENT",
+                "unreviewed environment change during MAT initialization",
+            )
+        except Refused as error:
+            error.details = custody.public_record(
+                {
+                    "environment": import_record,
+                    "boundary": "before-to-after-root-initialization",
+                },
+                entry_snapshot,
+                post_import,
+            )
+            custody.publish_prepare_view(
+                sys.modules[__name__], inputs.run, prepared, post_import, stopped=True
+            )
+            raise
+    setattr(inputs, "_mat_entry_snapshot", entry_snapshot)
+    setattr(inputs, "_mat_runtime_snapshot", post_import)
+    setattr(inputs, "_mat_import_record", import_record)
     return ROOT, custody.public_record(
         {
             **environment,
             "verified_from_same_connect_prepare": True,
-            "environment_after_setup": custody.environment_record(),
+            "environment_after_setup": entry_snapshot["values"],
+            "native_environment_after_mat": post_import["values"],
+            "root_import_environment_diff": import_record["diff"],
+            "root_import_validation": import_record,
+            "root_import_allowed_keys": sorted(custody.ROOT_IMPORT_KEYS),
+            "runtime_environment_exclusions": {},
             "module_paths": custody.module_paths(),
         },
         prepared["environment_snapshot"],
-        observed,
+        post_import,
     )
 
 

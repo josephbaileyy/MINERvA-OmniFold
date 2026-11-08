@@ -36,6 +36,8 @@ CUSTODY_GUARD_TESTS = {
     "INSTRUMENT_DIRECTORIES": "test_instrument_directories_required",
 }
 GUARD_TESTS = {
+    "MAT_IMPORT_ENVIRONMENT": "test_import_diff_is_bounded or test_import_values_are_pinned",
+    "MAT_RUNTIME_ENVIRONMENT": "test_worker_snapshot_before_root_and_runtime_recheck",
     "MAT_MAPPED_STAT": "test_prepared_mapped_stats_and_staged_digest and (size or inode)",
     "MAT_INSTRUMENT_DIGEST": "test_prepared_mapped_stats_and_staged_digest and staged_digest",
     "MAT_MAPPED_SET": "test_nonpinned_mapped_library_refuses",
@@ -265,6 +267,51 @@ REQUIRED = tuple(
     [
         *RECORD_MUTATIONS,
         Mutation(
+            "REQUIRED_NATIVE_ENVIRONMENT",
+            "custody_native_copy",
+            "native_environment",
+            "test_native_runtime_changes_refuse",
+        ),
+        Mutation(
+            "REQUIRED_RUNTIME_UUID_NOT_EXCLUDED",
+            "runtime_uuid_exclusion",
+            "checked_prepared_mat",
+            "test_native_runtime_changes_refuse and NERSC_PYMON_UUID",
+        ),
+        Mutation(
+            "REQUIRED_IMPORT_SIXTH_KEY",
+            "custody_import_extra",
+            "ROOT_IMPORT_KEYS",
+            "test_import_diff_is_bounded",
+        ),
+        Mutation(
+            "REQUIRED_IMPORT_ROOTSYS_REALPATH",
+            "custody_import_root",
+            "root_valid",
+            "test_import_values_are_pinned and (ROOTSYS or unset_missing)",
+        ),
+        *[
+            Mutation(
+                "REQUIRED_IMPORT_PIN_" + key,
+                "custody_import_pin",
+                key,
+                "test_import_values_are_pinned and " + key,
+            )
+            for key in ("CLING_STANDARD_PCH", "CPPYY_API_PATH", "CPPYY_NO_ROOT_FILTER")
+        ],
+        Mutation(
+            "REQUIRED_PROLOGUE_EXPLICIT_ENVIRONMENT",
+            "prologue_environment",
+            "main",
+            "test_prologue_child_environment_boundary",
+        ),
+        Mutation(
+            "REQUIRED_WORKER_SNAPSHOT_BEFORE_ROOT",
+            "root_import_first",
+            "checked_prepared_mat",
+            "test_worker_snapshot_before_root_and_runtime_recheck",
+        ),
+        Mutation(
             "REQUIRED_PRIVATE_PREPARE_LEAK",
             "custody_public_leak",
             "public_record",
@@ -331,7 +378,13 @@ REQUIRED = tuple(
                 key,
                 "test_environment_exclusions_are_reviewed",
             )
-            for key in ("LD_PRELOAD", "PYTHONPATH", "ROOT_INCLUDE_PATH")
+            for key in (
+                "LD_PRELOAD",
+                "PYTHONPATH",
+                "ROOT_INCLUDE_PATH",
+                "ROOTSYS",
+                "CLING_PREBUILT_MODULE_PATH",
+            )
         ],
         Mutation(
             "REQUIRED_DICTIONARY_BEFORE_MAPS",
@@ -531,6 +584,14 @@ class Mutator(ast.NodeTransformer):
         previous = self.function
         self.function = node.name
         if (
+            self.mutation.kind == "custody_native_copy"
+            and node.name == self.mutation.target
+        ):
+            node.body = ast.parse("return dict(os.environ)").body
+            self.changed += 1
+            self.function = previous
+            return node
+        if (
             self.mutation.kind == "custody_public_leak"
             and node.name == self.mutation.target
         ):
@@ -555,6 +616,18 @@ class Mutator(ast.NodeTransformer):
             self.changed += 1
         else:
             self.generic_visit(node)
+        if (
+            self.mutation.kind == "root_import_first"
+            and node.name == self.mutation.target
+        ):
+            index = next(
+                i
+                for i, statement in enumerate(node.body)
+                if isinstance(statement, ast.Import)
+                and any(alias.name == "ROOT" for alias in statement.names)
+            )
+            node.body.insert(1, node.body.pop(index))
+            self.changed += 1
         if self.mutation.kind == "output_order" and node.name == self.mutation.target:
             for statement in node.body:
                 if (
@@ -774,6 +847,37 @@ class Mutator(ast.NodeTransformer):
 
     def visit_Assign(self, node: ast.Assign) -> ast.AST:
         mutation = self.mutation
+        if mutation.kind in {
+            "custody_import_extra",
+            "custody_import_root",
+            "custody_import_pin",
+        }:
+            names = [
+                target.id for target in node.targets if isinstance(target, ast.Name)
+            ]
+            if mutation.kind == "custody_import_extra" and "ROOT_IMPORT_KEYS" in names:
+                node.value = ast.BinOp(
+                    left=node.value,
+                    op=ast.BitOr(),
+                    right=ast.Set(elts=[ast.Constant("RPD_UNEXPECTED_IMPORT_KEY")]),
+                )
+                self.changed += 1
+            elif mutation.kind == "custody_import_root" and "root_valid" in names:
+                node.value = ast.Constant(True)
+                self.changed += 1
+            elif (
+                mutation.kind == "custody_import_pin"
+                and "ROOT_IMPORT_VALUES" in names
+                and isinstance(node.value, ast.Dict)
+            ):
+                index = next(
+                    i
+                    for i, key in enumerate(node.value.keys)
+                    if isinstance(key, ast.Constant) and key.value == mutation.target
+                )
+                del node.value.keys[index]
+                del node.value.values[index]
+                self.changed += 1
         if mutation.kind == "custody_unsafe_exclusion" and any(
             isinstance(target, ast.Name) and target.id == "ENVIRONMENT_EXCLUSIONS"
             for target in node.targets
@@ -904,6 +1008,26 @@ class Mutator(ast.NodeTransformer):
             ).body
             self.changed += 1
         mutation = self.mutation
+        if (
+            mutation.kind == "runtime_uuid_exclusion"
+            and self.function == "checked_prepared_mat"
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "environment_diff"
+        ):
+            for keyword in node.keywords:
+                if keyword.arg == "exclusions":
+                    keyword.value = ast.Constant(None)
+                    self.changed += 1
+        if (
+            mutation.kind == "prologue_environment"
+            and self.function == "main"
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "run"
+        ):
+            for keyword in node.keywords:
+                if keyword.arg == "env":
+                    keyword.value = ast.Constant(None)
+                    self.changed += 1
         if (
             mutation.kind == "root_autodirectory"
             and self.function == mutation.target
@@ -1122,13 +1246,18 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
             transformer = Mutator(mutation)
             custody_mutant = mutation.kind.startswith("custody_")
             platform_mutant = mutation.kind == "platform_check"
+            prologue_mutant = mutation.kind == "prologue_environment"
             mutation_source = (
-                (ROOT / "nd-unfolding/tests/fd_rpd_reco_mat_check.py").read_text()
-                if platform_mutant
+                (ROOT / "nd-unfolding/fd_rpd_reco_prologue.py").read_text()
+                if prologue_mutant
                 else (
-                    (ROOT / "nd-unfolding/fd_rpd_reco_custody.py").read_text()
-                    if custody_mutant
-                    else source
+                    (ROOT / "nd-unfolding/tests/fd_rpd_reco_mat_check.py").read_text()
+                    if platform_mutant
+                    else (
+                        (ROOT / "nd-unfolding/fd_rpd_reco_custody.py").read_text()
+                        if custody_mutant
+                        else source
+                    )
                 )
             )
             changed = transformer.visit(ast.parse(mutation_source))
@@ -1157,7 +1286,13 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
             path = directory / (
                 "tests/fd_rpd_reco_mat_check.py"
                 if platform_mutant
-                else "fd_rpd_reco_custody.py" if custody_mutant else "fd_rpd_reco.py"
+                else (
+                    "fd_rpd_reco_prologue.py"
+                    if prologue_mutant
+                    else (
+                        "fd_rpd_reco_custody.py" if custody_mutant else "fd_rpd_reco.py"
+                    )
+                )
             )
             path.write_text(ast.unparse(ast.fix_missing_locations(changed)) + "\n")
             command = [
@@ -1174,6 +1309,9 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
                 cwd=ROOT,
                 env=os.environ
                 | {
+                    **(
+                        {"FD_RPD_PROLOGUE_MODULE": str(path)} if prologue_mutant else {}
+                    ),
                     "FD_RPD_RECO_MODULE": str(directory / "fd_rpd_reco.py"),
                     "FD_RPD_CUSTODY_MODULE": str(directory / "fd_rpd_reco_custody.py"),
                     **(
@@ -1207,6 +1345,9 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
         "schema": "fd-rpd-reco-mutation/1",
         "producer_sha256": hashlib.sha256(PRODUCER.read_bytes()).hexdigest(),
         "tests_sha256": hashlib.sha256(TESTS.read_bytes()).hexdigest(),
+        "prologue_sha256": hashlib.sha256(
+            (ROOT / "nd-unfolding/fd_rpd_reco_prologue.py").read_bytes()
+        ).hexdigest(),
         "custody_sha256": hashlib.sha256(
             (ROOT / "nd-unfolding/fd_rpd_reco_custody.py").read_bytes()
         ).hexdigest(),

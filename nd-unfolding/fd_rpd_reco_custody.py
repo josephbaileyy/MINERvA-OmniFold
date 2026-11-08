@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import ctypes
 import hashlib
 import json
 import os
@@ -49,7 +50,7 @@ def module_paths() -> Json:
     }
 
 
-def environment_record() -> Json:
+def environment_record(environ: dict[str, str] | None = None) -> Json:
     """Preserve setup's environment while redacting credential-bearing fields."""
     secret = re.compile(
         r"TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIAL|COOKIE|AUTH|PRIVATE_KEY|ACCESS_KEY|API_KEY|BEARER|CONNECTION_STRING|SERVICE_ACCOUNT",
@@ -61,38 +62,62 @@ def environment_record() -> Json:
             if secret.search(key)
             else re.sub(r"(://)[^/@\s]+:[^/@\s]+@", r"\1<redacted>@", value)
         )
-        for key, value in sorted(os.environ.items())
+        for key, value in sorted((os.environ if environ is None else environ).items())
     }
 
 
 # POSIX shells update '_' to the last command; it is not interpreter configuration.
 # A new exclusion requires a recorded worker diff and review of its setter.
-ENVIRONMENT_EXCLUSIONS = {"_": "shell-maintained last-command value"}
+# pymon-fetch-20261107/copies/sitecustomize__init__.py.txt:9-11 and
+# nersc_pymon__init__.py.txt:128,150-151 @ d0d4cfd5: each interpreter
+# draws and installs a new UUID, retaining the inherited one only as parent_uuid.
+ENVIRONMENT_EXCLUSIONS = {
+    "_": "shell-maintained last-command value",
+    "NERSC_PYMON_UUID": "per-interpreter pymon UUID; inherited value is replaced",
+}
 
 
-def environment_snapshot() -> Json:
+def native_environment() -> dict[str, str]:
+    """Read libc's live environ, including changes made by native ROOT code."""
+    pointer = ctypes.POINTER(ctypes.c_char_p).in_dll(ctypes.CDLL(None), "environ")
+    result = {}
+    index = 0
+    while pointer[index] is not None:
+        item = os.fsdecode(pointer[index])
+        key, separator, value = item.partition("=")
+        require(bool(separator), "native environment entry is malformed")
+        result[key] = value
+        index += 1
+    return result
+
+
+def environment_snapshot(*, native: bool = False) -> Json:
     """Retain redacted display values and exact value fingerprints for comparison."""
+    environ = native_environment() if native else dict(os.environ)
     return {
-        "values": environment_record(),
+        "values": environment_record(environ),
         "fingerprints": {
             key: hashlib.sha256(value.encode()).hexdigest()
-            for key, value in sorted(os.environ.items())
+            for key, value in sorted(environ.items())
         },
     }
 
 
-def environment_diff(prepared: Json, observed: Json) -> Json:
+def environment_diff(
+    prepared: Json, observed: Json, *, exclusions: dict[str, str] | None = None
+) -> Json:
     """Compare every environment key except explicitly reviewed volatile fields."""
+    ignored = ENVIRONMENT_EXCLUSIONS if exclusions is None else exclusions
     protected = ("LD_", "DYLD_", "PYTHON", "ROOT", "CLING", "CPPYY", "EXTRA_CLING")
     require(
-        not any(key.startswith(protected) for key in ENVIRONMENT_EXCLUSIONS),
+        not any(key.startswith(protected) for key in ignored),
         "interpreter or loader key cannot be excluded",
         guard="ENVIRONMENT_EXCLUSIONS",
     )
     before = prepared["fingerprints"]
     after = observed["fingerprints"]
-    old_keys = set(before) - ENVIRONMENT_EXCLUSIONS.keys()
-    new_keys = set(after) - ENVIRONMENT_EXCLUSIONS.keys()
+    old_keys = set(before) - ignored.keys()
+    new_keys = set(after) - ignored.keys()
     return {
         "added": {key: observed["values"][key] for key in sorted(new_keys - old_keys)},
         "removed": {
@@ -106,6 +131,66 @@ def environment_diff(prepared: Json, observed: Json) -> Json:
             for key in sorted(old_keys & new_keys)
             if before[key] != after[key]
         },
+    }
+
+
+# ROOT v6-28-12: core/unix/src/TUnixSystem.cxx:453-460 and
+# core/metacling/src/TCling.cxx:1468-1480. These are import effects,
+# never exclusions from a subsequent native-environment comparison.
+# ROOT/__init__.py:9-16 @ v6-28-12 assigns the three pinned values.
+ROOT_IMPORT_KEYS = {
+    "ROOTSYS",
+    "CLING_PREBUILT_MODULE_PATH",
+    "CLING_STANDARD_PCH",
+    "CPPYY_API_PATH",
+    "CPPYY_NO_ROOT_FILTER",
+}
+ROOT_IMPORT_VALUES = {
+    "CLING_STANDARD_PCH": "none",
+    "CPPYY_API_PATH": "none",
+    "CPPYY_NO_ROOT_FILTER": "1",
+}
+
+
+def root_import_record(before: Json, after: Json) -> Json:
+    """Bound ROOT initialization effects and verify the source-defined values."""
+    diff = environment_diff(before, after, exclusions={})
+    unexpected = {
+        section: {
+            key: value
+            for key, value in values.items()
+            if section == "removed" or key not in ROOT_IMPORT_KEYS
+        }
+        for section, values in diff.items()
+    }
+    invalid_values = {
+        key: {"expected": value, "observed": after["values"].get(key)}
+        for key, value in ROOT_IMPORT_VALUES.items()
+        if after["values"].get(key) != value
+    }
+    root_before = before["values"].get("ROOTSYS")
+    root_after = after["values"].get("ROOTSYS")
+    expected_root = (
+        str(Path(root_before).resolve()) if root_before is not None else None
+    )
+    root_valid = (
+        root_after == expected_root
+        if root_before is not None
+        else isinstance(root_after, str) and Path(root_after).is_dir()
+    )
+    return {
+        "diff": diff,
+        "unexpected": unexpected,
+        "allowed_import_keys": sorted(ROOT_IMPORT_KEYS),
+        "invalid_pinned_values": invalid_values,
+        "rootsys": {
+            "prepared_present": root_before is not None,
+            "prepared": root_before,
+            "observed": root_after,
+            "expected_realpath": expected_root,
+            "valid": root_valid,
+        },
+        "pass": not any(unexpected.values()) and not invalid_values and root_valid,
     }
 
 
@@ -187,8 +272,12 @@ def read_private_prepare(r: Any, reference: Path, expected_sha: str, run: Path) 
         guard="PRIVATE_PREPARE",
     )
     info = path.stat()
+    parent_info = path.parent.stat()
     require(
-        info.st_uid == os.getuid() and info.st_mode & 0o077 == 0,
+        info.st_uid == os.getuid()
+        and info.st_mode & 0o077 == 0
+        and parent_info.st_uid == os.getuid()
+        and parent_info.st_mode & 0o077 == 0,
         "canonical prepare is not owner-only",
         guard="PRIVATE_PREPARE",
     )
@@ -399,6 +488,7 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
     require(
         bool(os.environ.get("FD_RPD_RECO_CONNECT_ID")), "explicit connect ID required"
     )
+    before_root = environment_snapshot(native=True)
     _, mat_environment = r.checked_mat_environment()
     instrument = r.load_mat_instrument()
     try:
@@ -550,8 +640,8 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
         "mat_dependencies": dependencies,
         "fence": fence,
         "original_config_sha256": config_sha,
-        "environment_after_setup": environment_record(),
-        "environment_snapshot": environment_snapshot(),
+        "environment_after_setup": before_root["values"],
+        "environment_snapshot": before_root,
         "module_paths": module_paths(),
     }
     manifest["private_prepare_path"] = str(

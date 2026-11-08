@@ -2627,7 +2627,13 @@ def _prepared_mat_fixture(
     monkeypatch.setenv("PLOTUTILSROOT", str(lib.parent))
     monkeypatch.setenv("MINERVA_PREFIX", str(opt))
     monkeypatch.setenv("FD_RPD_RECO_CONNECT_ID", "lazy-map-test")
-    state = SimpleNamespace(loaded=False, calls=[])
+    custody = R.load_custody_instrument()
+    native_reader = custody.native_environment
+    monkeypatch.setattr(custody, "native_environment", lambda: dict(os.environ))
+    monkeypatch.setattr(R, "load_custody_instrument", lambda: custody)
+    state = SimpleNamespace(
+        loaded=False, calls=[], native_environment=native_reader, custody=custody
+    )
 
     def get_class(name: str) -> Any:
         assert name == "PlotUtils::MnvH1D"
@@ -2643,6 +2649,16 @@ def _prepared_mat_fixture(
     monkeypatch.setattr(R, "load_mat_instrument", lambda: instrument)
     root = SimpleNamespace(TClass=SimpleNamespace(GetClass=get_class))
     monkeypatch.setitem(sys.modules, "ROOT", root)
+    root_prefix = fixture.root / "root-runtime"
+    root_prefix.mkdir()
+    if "ROOTSYS" not in os.environ:
+        monkeypatch.setenv("ROOTSYS", str(root_prefix))
+    for key, value in {
+        "CLING_STANDARD_PCH": "none",
+        "CPPYY_API_PATH": "none",
+        "CPPYY_NO_ROOT_FILTER": "1",
+    }.items():
+        monkeypatch.setenv(key, value)
     inputs = fixture.inputs()
     policy = inputs.run / "trace-policy.json"
     policy.write_text(
@@ -3030,7 +3046,12 @@ def test_prologue_prepare_opens_no_declared_data(
     monkeypatch.setenv("TEST_API_KEY", "private-prologue-prepare-fixture")
     custody, _run, _roots = _prepare_fixture(fixture, monkeypatch)
     spec = importlib.util.spec_from_file_location(
-        "rpd_prologue_test", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+        "rpd_prologue_test",
+        Path(
+            os.environ.get(
+                "FD_RPD_PROLOGUE_MODULE", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+            )
+        ),
     )
     assert spec is not None and spec.loader is not None
     prologue = importlib.util.module_from_spec(spec)
@@ -3203,7 +3224,10 @@ def test_prepare_receipt_named_guards(
                 "exclusive_bounds_ns": [0, 7_200_000_000_000],
             },
             "environment": {
-                "excluded": {"_": "shell-maintained last-command value"},
+                "excluded": {
+                    "_": "shell-maintained last-command value",
+                    "NERSC_PYMON_UUID": "per-interpreter pymon UUID; inherited value is replaced",
+                },
                 "diff": diff,
                 "record_display_diff": {},
             },
@@ -3275,7 +3299,7 @@ def test_prepare_environment_whole_comparison(
     assert "second-private-value" not in rendered
 
 
-@pytest.mark.parametrize("key", ["HOME", "NERSC_PYMON_UUID", "UNLISTED_ENV_KEY"])
+@pytest.mark.parametrize("key", ["HOME", "NERSC_TEST_UNLISTED", "UNLISTED_ENV_KEY"])
 @pytest.mark.parametrize("operation", ["added", "removed", "changed"])
 def test_prepare_environment_nonprotected_keys(
     monkeypatch: pytest.MonkeyPatch, key: str, operation: str
@@ -3309,7 +3333,15 @@ def test_prepare_environment_nonprotected_keys(
 
 
 @pytest.mark.parametrize(
-    "key", ["LD_PRELOAD", "PYTHONPATH", "ROOT_INCLUDE_PATH", "CLING_TEST"]
+    "key",
+    [
+        "LD_PRELOAD",
+        "PYTHONPATH",
+        "ROOT_INCLUDE_PATH",
+        "CLING_TEST",
+        "ROOTSYS",
+        "CLING_PREBUILT_MODULE_PATH",
+    ],
 )
 def test_environment_exclusions_reject_interpreter_keys(
     monkeypatch: pytest.MonkeyPatch, key: str
@@ -3324,7 +3356,8 @@ def test_environment_exclusions_reject_interpreter_keys(
 
 def test_environment_exclusions_are_reviewed() -> None:
     assert _custody_module().ENVIRONMENT_EXCLUSIONS == {
-        "_": "shell-maintained last-command value"
+        "_": "shell-maintained last-command value",
+        "NERSC_PYMON_UUID": "per-interpreter pymon UUID; inherited value is replaced",
     }
 
 
@@ -3332,7 +3365,12 @@ def test_prologue_worker_stop_records_values_and_cfs_guard(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     spec = importlib.util.spec_from_file_location(
-        "rpd_prologue_stop_test", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+        "rpd_prologue_stop_test",
+        Path(
+            os.environ.get(
+                "FD_RPD_PROLOGUE_MODULE", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+            )
+        ),
     )
     assert spec is not None and spec.loader is not None
     prologue = importlib.util.module_from_spec(spec)
@@ -3491,7 +3529,12 @@ def test_private_prepare_public_outputs(
         == prepared
     )
     spec = importlib.util.spec_from_file_location(
-        "privacy_prologue", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+        "privacy_prologue",
+        Path(
+            os.environ.get(
+                "FD_RPD_PROLOGUE_MODULE", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+            )
+        ),
     )
     assert spec is not None and spec.loader is not None
     prologue = importlib.util.module_from_spec(spec)
@@ -3563,12 +3606,13 @@ def test_private_prepare_public_outputs(
 
 
 @pytest.mark.parametrize(
-    "defect", ["sha", "raw_sha", "location", "permissions", "identity"]
+    "defect",
+    ["sha", "raw_sha", "location", "permissions", "directory_permissions", "identity"],
 )
 def test_private_prepare_refuses(tmp_path: Path, defect: str) -> None:
     custody = _custody_module()
     run = tmp_path / "run"
-    run.mkdir()
+    run.mkdir(mode=0o700)
     prepared = {"run": str(run), "connect_id": "private-fixture"}
     reference = custody.write_private_prepare(
         R, run, "prestage", prepared, protected_roots=[]
@@ -3587,6 +3631,8 @@ def test_private_prepare_refuses(tmp_path: Path, defect: str) -> None:
         record["private_prepare"]["path"] = str(leaked)
     elif defect == "permissions":
         private.chmod(0o644)
+    elif defect == "directory_permissions":
+        private.parent.chmod(0o755)
     elif defect == "identity":
         record["run"] = str(tmp_path / "other")
     reference.write_text(json.dumps(record))
@@ -3658,3 +3704,396 @@ def test_private_prepare_write_boundary(
     assert not (run / "prestage-reference.json").exists()
     if defect != "permissions":
         assert touched == []
+
+
+@pytest.mark.parametrize("protected", [None, "ROOTSYS", "CLING_PREBUILT_MODULE_PATH"])
+def test_pymon_exclusion_keeps_root_guards(
+    monkeypatch: pytest.MonkeyPatch, protected: str | None
+) -> None:
+    custody, context = _diagnostic_prepare_context(monkeypatch)
+    monkeypatch.setenv("NERSC_PYMON_UUID", "parent-process-id")
+    monkeypatch.setenv("ROOTSYS", "/prepared/root")
+    context.prestage["environment_after_setup"] = custody.environment_record()
+    context.prestage["environment_snapshot"] = custody.environment_snapshot()
+    monkeypatch.setenv("NERSC_PYMON_UUID", "child-process-id")
+    assert R.check_prepare_receipt(context, custody) is context.prestage
+    if protected is not None:
+        monkeypatch.setenv(protected, "/unexpected/root/lib:")
+        with pytest.raises(R.Refused) as caught:
+            R.check_prepare_receipt(context, custody)
+        assert caught.value.guard == "MAT_PREPARE_ENVIRONMENT"
+        diff = caught.value.details["environment"]["diff"]
+        assert protected in (
+            diff["changed"] if protected == "ROOTSYS" else diff["added"]
+        )
+        assert "NERSC_PYMON_UUID" not in diff["changed"]
+
+
+@pytest.mark.parametrize("entry", ["custody", "prologue"])
+def test_prepare_snapshot_before_root(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch, entry: str
+) -> None:
+    custody, run, _roots = _prepare_fixture(fixture, monkeypatch)
+    monkeypatch.setenv("ROOTSYS", "/before/root")
+    monkeypatch.delenv("CLING_PREBUILT_MODULE_PATH", raising=False)
+    check = R.checked_mat_environment
+
+    def importing_root() -> Any:
+        result = check()
+        os.environ["ROOTSYS"] = "/after/root"
+        os.environ["CLING_PREBUILT_MODULE_PATH"] = "/after/root/lib:"
+        return result
+
+    monkeypatch.setattr(R, "checked_mat_environment", importing_root)
+    if entry == "custody":
+        prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    else:
+        spec = importlib.util.spec_from_file_location(
+            "boundary_prologue",
+            Path(
+                os.environ.get(
+                    "FD_RPD_PROLOGUE_MODULE",
+                    REPO / "nd-unfolding/fd_rpd_reco_prologue.py",
+                )
+            ),
+        )
+        assert spec is not None and spec.loader is not None
+        prologue = importlib.util.module_from_spec(spec)
+        monkeypatch.setitem(sys.modules, "fd_rpd_reco", R)
+        monkeypatch.setitem(sys.modules, "fd_rpd_reco_custody", custody)
+        spec.loader.exec_module(prologue)
+        checksum = prologue.prepare(fixture.config_path, fixture.config_sha, run)
+        prepared = custody.read_private_prepare(
+            R, run / "prologue-prepare-reference.json", checksum, run
+        )
+    assert prepared["environment_snapshot"]["values"]["ROOTSYS"] == "/before/root"
+    assert (
+        "CLING_PREBUILT_MODULE_PATH" not in prepared["environment_snapshot"]["values"]
+    )
+    assert (
+        prepared["environment_after_setup"]
+        == prepared["environment_snapshot"]["values"]
+    )
+
+
+@pytest.mark.parametrize(
+    "perturb", [None, "ROOTSYS", "CLING_PREBUILT_MODULE_PATH", "HOME"]
+)
+def test_worker_snapshot_before_root_and_runtime_recheck(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch, perturb: str | None
+) -> None:
+    import builtins
+
+    module_override = os.environ.get("FD_RPD_CUSTODY_MODULE")
+    real_root = fixture.root / "real-root"
+    real_root.mkdir()
+    alias_root = fixture.root / "root-alias"
+    alias_root.symlink_to(real_root, target_is_directory=True)
+    monkeypatch.setattr(os, "environ", {"PATH": os.defpath, "ROOTSYS": str(alias_root)})
+    if module_override:
+        monkeypatch.setenv("FD_RPD_CUSTODY_MODULE", module_override)
+    inputs, _state, root, _lib = _prepared_mat_fixture(fixture, monkeypatch)
+    importer = builtins.__import__
+    imports = []
+
+    def mutating_import(name: str, *args: Any, **kwargs: Any) -> Any:
+        if name == "ROOT":
+            imports.append(name)
+            os.environ["ROOTSYS"] = str(real_root)
+            os.environ["CLING_PREBUILT_MODULE_PATH"] = str(real_root / "lib") + ":"
+            return root
+        return importer(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", mutating_import)
+    environment = R.checked_prepared_mat(inputs)[1]
+    assert imports == ["ROOT"]
+    assert environment["environment_after_setup"]["ROOTSYS"] == str(alias_root)
+    assert "CLING_PREBUILT_MODULE_PATH" not in environment["environment_after_setup"]
+    if perturb is None:
+        assert R.checked_prepared_mat(inputs)[0] is root
+    else:
+        monkeypatch.setenv(perturb, "/unexpected")
+        with pytest.raises(R.Refused) as caught:
+            R.checked_prepared_mat(inputs)
+        assert caught.value.guard == "MAT_RUNTIME_ENVIRONMENT"
+        section = "added" if perturb == "HOME" else "changed"
+        assert caught.value.details["environment"]["diff"][section][perturb] == (
+            "/unexpected"
+            if section == "added"
+            else {
+                "prepared": (
+                    str(real_root)
+                    if perturb == "ROOTSYS"
+                    else str(real_root / "lib") + ":"
+                ),
+                "observed": "/unexpected",
+            }
+        )
+        assert imports == ["ROOT"]
+
+
+def test_prologue_child_environment_boundary(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Native putenv must not change which environment the child is promised."""
+    custody = _custody_module()
+    path = Path(
+        os.environ.get(
+            "FD_RPD_PROLOGUE_MODULE", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+        )
+    )
+    spec = importlib.util.spec_from_file_location("launch_boundary_prologue", path)
+    assert spec is not None and spec.loader is not None
+    prologue = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco", R)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco_custody", custody)
+    spec.loader.exec_module(prologue)
+    key = "RPD_NATIVE_ENV_BOUNDARY_TEST"
+    monkeypatch.setenv(key, "before-native-setter")
+    baseline = dict(os.environ)
+    run = tmp_path / "run"
+
+    def prepare(_config: Any, _sha: Any, target: Path) -> str:
+        assert target == run
+        target.mkdir()
+        (target / "trace-policy.json").write_text("{}")
+        (target / "prologue-worker.json").write_text(
+            json.dumps({"status": "PASS", "data_keys_read": []})
+        )
+        os.putenv(key, "after-native-setter")
+        assert os.environ[key] == "before-native-setter"
+        return "a" * 64
+
+    subprocess_run = subprocess.run
+
+    def child(_command: Any, **kwargs: Any) -> Any:
+        assert kwargs.get("env") == baseline
+        process = subprocess_run(
+            [
+                sys.executable,
+                "-c",
+                'import os; print(os.environ["RPD_NATIVE_ENV_BOUNDARY_TEST"])',
+            ],
+            **kwargs,
+        )
+        assert process.stdout.strip() == "before-native-setter"
+        (run / "prologue.strace").write_text("")
+        return process
+
+    monkeypatch.setattr(prologue, "prepare", prepare)
+    monkeypatch.setattr(prologue.subprocess, "run", child)
+    monkeypatch.setattr(custody, "classify_trace", lambda *_args: {"status": "PASS"})
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "prologue",
+            "--config",
+            str(tmp_path / "config.json"),
+            "--config-sha256",
+            "b" * 64,
+            "--run",
+            str(run),
+        ],
+    )
+    try:
+        assert prologue.main() == 0
+        assert (
+            json.loads((run / "data-free-trace.json").read_text())["status"] == "PASS"
+        )
+    finally:
+        # Restore native state too; Python's mapping never saw the native setter.
+        os.putenv(key, baseline[key])
+
+
+@pytest.mark.parametrize(
+    "key",
+    [
+        "RPD_NATIVE_RUNTIME_TEST",
+        "NERSC_PYMON_UUID",
+        "ROOTSYS",
+        "CLING_PREBUILT_MODULE_PATH",
+    ],
+)
+def test_native_runtime_changes_refuse(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch, key: str
+) -> None:
+    import ctypes
+
+    inputs, state, _root, _lib = _prepared_mat_fixture(fixture, monkeypatch)
+    monkeypatch.setattr(state.custody, "native_environment", state.native_environment)
+    R.checked_prepared_mat(inputs)
+    native_before = state.native_environment()
+    python_before = os.environ.get(key)
+    library = ctypes.CDLL(None)
+    library.setenv.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int]
+    library.setenv.restype = ctypes.c_int
+    assert library.setenv(key.encode(), b"native-only-change", 1) == 0
+    try:
+        assert os.environ.get(key) == python_before
+        with pytest.raises(R.Refused) as caught:
+            R.checked_prepared_mat(inputs)
+        assert caught.value.guard == "MAT_RUNTIME_ENVIRONMENT"
+        assert caught.value.details["environment"]["excluded"] == {}
+        section = "changed" if key in native_before else "added"
+        item = caught.value.details["environment"]["diff"][section][key]
+        assert item == (
+            {"prepared": native_before[key], "observed": "native-only-change"}
+            if section == "changed"
+            else "native-only-change"
+        )
+    finally:
+        if key in native_before:
+            os.putenv(key, native_before[key])
+        else:
+            os.unsetenv(key)
+
+
+@pytest.mark.parametrize(
+    "third_key", [None, "RPD_UNEXPECTED_IMPORT_KEY", "NERSC_PYMON_UUID"]
+)
+def test_import_diff_is_bounded(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch, third_key: str | None
+) -> None:
+    import builtins
+
+    override = os.environ.get("FD_RPD_CUSTODY_MODULE")
+    real_root = fixture.root / "real-root"
+    real_root.mkdir()
+    alias_root = fixture.root / "root-alias"
+    alias_root.symlink_to(real_root, target_is_directory=True)
+    monkeypatch.setattr(os, "environ", {"PATH": os.defpath, "ROOTSYS": str(alias_root)})
+    if override:
+        monkeypatch.setenv("FD_RPD_CUSTODY_MODULE", override)
+    inputs, _state, root, _lib = _prepared_mat_fixture(fixture, monkeypatch)
+    importer = builtins.__import__
+
+    def initialize(name: str, *args: Any, **kwargs: Any) -> Any:
+        if name == "ROOT":
+            os.environ["ROOTSYS"] = str(real_root)
+            os.environ["CLING_PREBUILT_MODULE_PATH"] = str(real_root / "lib") + ":"
+            if third_key:
+                os.environ[third_key] = "unreviewed-import-value"
+            return root
+        return importer(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", initialize)
+    diff = {
+        "added": {"CLING_PREBUILT_MODULE_PATH": str(real_root / "lib") + ":"},
+        "removed": {},
+        "changed": {
+            "ROOTSYS": {"prepared": str(alias_root), "observed": str(real_root)}
+        },
+    }
+    if third_key:
+        with pytest.raises(R.Refused) as caught:
+            R.checked_prepared_mat(inputs)
+        assert caught.value.guard == "MAT_IMPORT_ENVIRONMENT"
+        diff["added"][third_key] = "unreviewed-import-value"
+        assert caught.value.details["environment"]["diff"] == diff
+        assert caught.value.details["environment"]["unexpected"] == {
+            "added": {third_key: "unreviewed-import-value"},
+            "removed": {},
+            "changed": {},
+        }
+    else:
+        record = R.checked_prepared_mat(inputs)[1]
+        assert record["root_import_environment_diff"] == diff
+        assert record["root_import_allowed_keys"] == [
+            "CLING_PREBUILT_MODULE_PATH",
+            "CLING_STANDARD_PCH",
+            "CPPYY_API_PATH",
+            "CPPYY_NO_ROOT_FILTER",
+            "ROOTSYS",
+        ]
+        assert record["runtime_environment_exclusions"] == {}
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "CLING_STANDARD_PCH",
+        "CPPYY_API_PATH",
+        "CPPYY_NO_ROOT_FILTER",
+        "ROOTSYS",
+        "unset_valid",
+        "unset_missing",
+    ],
+)
+def test_import_values_are_pinned(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch, defect: str
+) -> None:
+    import builtins
+
+    inputs, _state, root, _lib = _prepared_mat_fixture(fixture, monkeypatch)
+    custody = R.load_custody_instrument()
+    if defect.startswith("unset_"):
+        monkeypatch.delenv("ROOTSYS", raising=False)
+        inputs.prestage["environment_snapshot"] = custody.environment_snapshot()
+        inputs.prestage["environment_after_setup"] = custody.environment_record()
+    importer = builtins.__import__
+
+    def initialize(name: str, *args: Any, **kwargs: Any) -> Any:
+        if name == "ROOT":
+            if defect == "unset_valid":
+                os.environ["ROOTSYS"] = str(fixture.root)
+            else:
+                os.environ["ROOTSYS" if defect == "unset_missing" else defect] = (
+                    "/unexpected-import-value"
+                )
+            return root
+        return importer(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", initialize)
+    if defect == "unset_valid":
+        record = R.checked_prepared_mat(inputs)[1]
+        assert record["root_import_validation"]["rootsys"] == {
+            "prepared_present": False,
+            "prepared": None,
+            "observed": str(fixture.root),
+            "expected_realpath": None,
+            "valid": True,
+        }
+    else:
+        with pytest.raises(R.Refused) as caught:
+            R.checked_prepared_mat(inputs)
+        assert caught.value.guard == "MAT_IMPORT_ENVIRONMENT"
+        validation = caught.value.details["environment"]
+        if defect in {"ROOTSYS", "unset_missing"}:
+            assert validation["rootsys"]["valid"] is False
+        else:
+            assert validation["invalid_pinned_values"][defect] == {
+                "expected": {
+                    "CLING_STANDARD_PCH": "none",
+                    "CPPYY_API_PATH": "none",
+                    "CPPYY_NO_ROOT_FILTER": "1",
+                }[defect],
+                "observed": "/unexpected-import-value",
+            }
+
+
+def test_import_prebuilt_removal_refuses(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import builtins
+
+    inputs, _state, root, _lib = _prepared_mat_fixture(fixture, monkeypatch)
+    custody = R.load_custody_instrument()
+    monkeypatch.setenv("CLING_PREBUILT_MODULE_PATH", "/prepared/lib:")
+    inputs.prestage["environment_snapshot"] = custody.environment_snapshot()
+    inputs.prestage["environment_after_setup"] = custody.environment_record()
+    importer = builtins.__import__
+
+    def removing(name: str, *args: Any, **kwargs: Any) -> Any:
+        if name == "ROOT":
+            os.environ.pop("CLING_PREBUILT_MODULE_PATH")
+            return root
+        return importer(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", removing)
+    with pytest.raises(R.Refused) as caught:
+        R.checked_prepared_mat(inputs)
+    assert caught.value.guard == "MAT_IMPORT_ENVIRONMENT"
+    assert caught.value.details["environment"]["unexpected"]["removed"] == {
+        "CLING_PREBUILT_MODULE_PATH": "/prepared/lib:"
+    }

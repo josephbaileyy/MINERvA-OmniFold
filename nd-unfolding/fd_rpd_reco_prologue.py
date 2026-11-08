@@ -58,6 +58,7 @@ def prepare(config_path: Path, checksum: str, run: Path) -> str:
         "MAT_PREPARE",
         "resolve every policy path before the data-free trace; source/physics fields may remain DRAFT",
     )
+    before_root = custody.environment_snapshot(native=True)
     _, environment = r.checked_mat_environment()
     instrument = r.load_mat_instrument()
     files = {}
@@ -77,8 +78,8 @@ def prepare(config_path: Path, checksum: str, run: Path) -> str:
         "run": str(run.resolve()),
         "connect_id": os.environ["FD_RPD_RECO_CONNECT_ID"],
         "prepare_time_ns": time.time_ns(),
-        "environment_after_setup": custody.environment_record(),
-        "environment_snapshot": custody.environment_snapshot(),
+        "environment_after_setup": before_root["values"],
+        "environment_snapshot": before_root,
         "mat_environment": environment,
         "mapped_mat_stats": {},
         "instrument_files": [],
@@ -134,6 +135,7 @@ def main() -> int:
     parser.add_argument("--prepare-sha256", help=argparse.SUPPRESS)
     args = parser.parse_args()
     prepared: r.Json | None = None
+    launch_environment = custody.native_environment()
     try:
         r.require_output_root(args.run)
         if args.worker:
@@ -184,7 +186,9 @@ def main() -> int:
             "--prepare-sha256",
             checksum,
         ]
-        child = subprocess.run(command, text=True, capture_output=True, check=False)
+        child = subprocess.run(
+            command, text=True, capture_output=True, check=False, env=launch_environment
+        )
         (args.run / "worker.stdout.txt").write_text(child.stdout)
         (args.run / "worker.stderr.txt").write_text(child.stderr)
         r.require(
