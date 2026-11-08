@@ -1356,6 +1356,17 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/cod
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/VERIFICATION.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/local_receipt.py	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/production-config.draft.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/AUDIT-C1-C2.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/GUARD-COVERAGE.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/MUTATIONS.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/MUTATIONS.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/PRODUCTION-BYTE-CHECK.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/REPORT.md	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/SHA256SUMS	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/SOURCE-IDENTITIES.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/STATIC-CHECKS.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/SUITE.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-assertions-20261107/VERIFICATION.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/GUARD-COVERAGE.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/MUTATIONS.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/MUTATIONS.txt	MACHINE	open	

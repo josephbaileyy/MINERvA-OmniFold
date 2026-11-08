@@ -1,0 +1,102 @@
+{
+  "tested_head": "91dbf0a7aacd5c3b8beafcd3c4cecc76441c70fd",
+  "scope": "Exact recorded values, legacy prepare shape and non-protected comparison filters; all sixteen are single-site mutants",
+  "outcomes": [
+    {
+      "name": "REQUIRED_PREPARE_RUN_OBSERVED",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PREPARE_CONNECT_OBSERVED",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PREPARE_CONNECT_PREPARED",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PREPARE_NOW_RECORDED",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PREPARE_AGE_RECORDED",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_DIFF_CHANGED_OBSERVED",
+      "status": "KILLED",
+      "selector": "test_prepare_environment_whole_comparison",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_DIFF_ADDED_VALUE",
+      "status": "KILLED",
+      "selector": "test_prepare_environment_whole_comparison",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_DIFF_REMOVED_VALUE",
+      "status": "KILLED",
+      "selector": "test_prepare_environment_whole_comparison",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_DIFF_ADDED_NONPROTECTED",
+      "status": "KILLED",
+      "selector": "test_prepare_environment_nonprotected_keys",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_DIFF_NERSC_COVERED",
+      "status": "KILLED",
+      "selector": "test_prepare_environment_nonprotected_keys",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_DIFF_HOME_COVERED",
+      "status": "KILLED",
+      "selector": "test_prepare_environment_nonprotected_keys",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PREPARE_LEGACY_SNAPSHOT_REQUIRED",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PREPARE_FIELDS_RECORDED",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PREPARE_CONNECT_PRESENCE_RECORDED",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_PREPARE_TIMESTAMP_RECORDED",
+      "status": "KILLED",
+      "selector": "test_prepare_receipt_named_guards",
+      "returncode": 1
+    },
+    {
+      "name": "REQUIRED_DIFF_CHANGED_PREPARED",
+      "status": "KILLED",
+      "selector": "test_prepare_environment_whole_comparison",
+      "returncode": 1
+    }
+  ]
+}
