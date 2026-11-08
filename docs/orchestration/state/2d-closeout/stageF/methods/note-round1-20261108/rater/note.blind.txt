@@ -1582,13 +1582,13 @@ deviation. Because the block is the covariance about the replica mean, it does n
 The bootstrap block is smaller than the published statistical block (ratio of square-root traces 0.407;
 App. A.4).
 The statistical block quoted here has had no coverage test: the fixed-truth coverage studies of
-§5.2 scored two earlier statistical bands, not this block. No coverage test on held-out simulation
-has been run, and no design for one has been registered in advance. A declared test of the analysis
-procedure’s 2D covariance, remade at each of two held-out GENIE v3 tunes, reads under-covers
-(§5.3); a held-out tune moves the truth, not the sample, and that test concerns the procedure’s
-covariance at those tunes, not this block at the data. Because the fixed-truth test’s truth equals
-the prior, it also cannot decide whether the smaller statistical block reflects an efficiency gain,
-regularization bias or undercoverage.
+§5.2 scored two earlier statistical bands, not this block. No coverage test on held-out simulation has
+been run, and no design for one has been registered in advance. Because the fixed-truth test’s truth
+equals the prior, it also cannot decide whether the smaller statistical block reflects an efficiency
+gain, regularization bias or undercoverage. A declared test of the analysis procedure’s 2D covariance,
+remade at each of two held-out GENIE v3 tunes, reads under-covers (§5.3); a held-out tune moves
+the truth, not the sample, and that test concerns the procedure’s covariance at those tunes, not this
+block at the data.
 1.00
 200
 15.0
