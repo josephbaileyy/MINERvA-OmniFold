@@ -1,0 +1,44 @@
+node login33 nproc=244 loadavg 162.87 167.40 162.55
+2026-11-08T16:02:18Z
+connect script sha256 10ea53cb37f6b501e889535af4bfc23f38a84102cdad8cccc333dfbcb8b392b2
+0 60995093
+1 60995094
+2 60995095
+3 60995096
+4 60995097
+5 60995098
+== the fence (only rs1_* and ens1_* pass)
+FENCE: pass; none of the six jobs is queued
+== the jobs
+60995093|ens1_a1_s1_0|COMPLETED|0:0|06:26:51|23211|1|256|2026-11-08T01:21:24|2026-11-08T07:48:15|nid006396
+60995094|ens1_a1_s1_1|COMPLETED|0:0|06:25:20|23120|1|256|2026-11-08T01:21:24|2026-11-08T07:46:44|nid006419
+60995095|ens1_a1_s1_2|COMPLETED|0:0|06:21:56|22916|1|256|2026-11-08T01:22:26|2026-11-08T07:44:22|nid006755
+60995096|ens1_a1_s1_3|COMPLETED|0:0|06:23:35|23015|1|256|2026-11-08T01:22:26|2026-11-08T07:46:01|nid006773
+60995097|ens1_a1_s1_4|COMPLETED|0:0|06:20:44|22844|1|256|2026-11-08T01:22:26|2026-11-08T07:43:10|nid006814
+60995098|ens1_a1_s1_5|COMPLETED|0:0|06:28:50|23330|1|256|2026-11-08T01:22:26|2026-11-08T07:51:16|nid004447
+shard 0 job 60995093 name=ens1_a1_s1_0 state=COMPLETED elapsed_raw=23211 nnodes=1
+shard 1 job 60995094 name=ens1_a1_s1_1 state=COMPLETED elapsed_raw=23120 nnodes=1
+shard 2 job 60995095 name=ens1_a1_s1_2 state=COMPLETED elapsed_raw=22916 nnodes=1
+shard 3 job 60995096 name=ens1_a1_s1_3 state=COMPLETED elapsed_raw=23015 nnodes=1
+shard 4 job 60995097 name=ens1_a1_s1_4 state=COMPLETED elapsed_raw=22844 nnodes=1
+shard 5 job 60995098 name=ens1_a1_s1_5 state=COMPLETED elapsed_raw=23330 nnodes=1
+charge node_h=38.4544 (sum of ElapsedRaw 138436 s on 1 node each); stage 1 spend 0.4622 + 38.4544 = 38.9166 of 55.0
+== the deploy and the dry run
+HEAD f4d2d7f3833834390b7b031df61ba1a5765e9900; modified tracked files: 0
+runs-teardown/: absent
+log-shard0/DONE: {"mode": "shard", "stage": 1, "shard": "0", "tasks": 168, "ended": 168, "rc": 0, "job": "60995093", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+log-shard1/DONE: {"mode": "shard", "stage": 1, "shard": "1", "tasks": 168, "ended": 168, "rc": 0, "job": "60995094", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+log-shard2/DONE: {"mode": "shard", "stage": 1, "shard": "2", "tasks": 167, "ended": 167, "rc": 0, "job": "60995095", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+log-shard3/DONE: {"mode": "shard", "stage": 1, "shard": "3", "tasks": 167, "ended": 167, "rc": 0, "job": "60995096", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+log-shard4/DONE: {"mode": "shard", "stage": 1, "shard": "4", "tasks": 167, "ended": 167, "rc": 0, "job": "60995097", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+log-shard5/DONE: {"mode": "shard", "stage": 1, "shard": "5", "tasks": 167, "ended": 167, "rc": 0, "job": "60995098", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+files under runs/: 2017
+e96d07dafe4015040fc84c9b6feaf41bf73dfe271589b48d4ce3382fc64b6b09  /pscratch/sd/j/josephrb/ens1-a1-20261108/post-full/runs-SHA256SUMS
+== the run's records, the products, E5, the timing (sourced environment)
+read.py sha256 7990940cdd47f3a98a955731f057d86b541a4b80e6eee761c43cace0d2d559e5
+Python 3.11.14
+{"verdict": "PASS", "failures": [], "n_failures": 0, "products": {"read": 2017, "moved_rows_nonzero": 0, "block_mismatch": 0, "code_mismatch": 0}, "n_files": 2017, "teardowns": [], "runs_teardown_files": 0, "timing": {"unfolds": 2008, "seconds_unfold_lines": 2008, "seconds_unfold_max": 779.908, "seconds_unfold_median": 498.04999999999995, "task_wall_max": 1498.1, "shard_wall_s_max": 23330, "shard_wall_h_max": 6.481, "projected_h_from_dry": 6.799, "limit_h": 9.0}, "shards": {"0": {"tasks": 168, "job": "60995093", "elapsed_raw": 23211}, "1": {"tasks": 168, "job": "60995094", "elapsed_raw": 23120}, "2": {"tasks": 167, "job": "60995095", "elapsed_raw": 22916}, "3": {"tasks": 167, "job": "60995096", "elapsed_raw": 23015}, "4": {"tasks": 167, "job": "60995097", "elapsed_raw": 22844}, "5": {"tasks": 167, "job": "60995098", "elapsed_raw": 23330}}}
+read rc=0
+daee5538267f12b9534a6d146336bfd9839bdd4cca897314162c1fe12f781979  /pscratch/sd/j/josephrb/ens1-a1-20261108/post-full/a1-full-read.json
+ens1 a1 full postrun rc=0
+2026-11-08T16:02:32Z
