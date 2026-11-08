@@ -1,0 +1,45 @@
+LAUNCHER-SHA OK 314fa64d950770dd527fae1f01f1cf9efe6e6394b25f7d7ca00bd9f0ba74f26f
+CONNECT-SHA OK /Users/josephbailey/cov2d-work/connect-n-G18.sh 7ef5550c94f203218950e1cb3e46cef89bce4f4d1db8b520aacab4da6c698ddb
+fence host=login02 utc=2026-11-08T03:13:48Z
+squeue:
+sacct unended cov2d:
+fence end
+FENCE_CLEAR
+staged rc=0 node=7ef5550c94f203218950e1cb3e46cef89bce4f4d1db8b520aacab4da6c698ddb local=7ef5550c94f203218950e1cb3e46cef89bce4f4d1db8b520aacab4da6c698ddb
+DIGEST_MATCH
+launched rc=0 at 2026-11-08T03:14:07Z
+last line: DONE
+fetched connect-n-G18.log rc=0
+fetched null_G18.log rc=0
+fetched blobs.before rc=0
+fetched blobs.after rc=0
+fetched out/null_G18.json rc=0
+fetched out/blocks_G18.npz rc=0
+removal rc=0
+host=login02 utc=2026-11-08T03:21:05Z
+e5957a1063e057c5ee914943e89ab804f2c079386289a80ebf5568759ad105cb  connect-n-G18.log
+46616d2ca12237fa1d78a6fde8a798ab2d3fffd2491e2471c2f534e247b963ce  null_G18.log
+7a219ce63f170fc56cf09da7245f3ba61f118b13766e08c9bc5d43edcbf76859  blobs.before
+7a219ce63f170fc56cf09da7245f3ba61f118b13766e08c9bc5d43edcbf76859  blobs.after
+6bd5259d61b062af7b3a8b09af78fc544e3eba48e35a062a28fdcd923b90f6e0  out/null_G18.json
+7eb657b82ae953bdf0584eda27264c52a64bcb48baea52dfc194f5efe440ea3d  out/blocks_G18.npz
+7ef5550c94f203218950e1cb3e46cef89bce4f4d1db8b520aacab4da6c698ddb  /dev/shm/josephrb-cov2d-n-G18.sh
+rm -f /dev/shm/josephrb-cov2d-n-G18.sh rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/out/blocks_G18.npz rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/out/null_G18.json rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/blobs.after rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/blobs.before rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/committed_blocks_G18.npz rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/committed_null_G18.json rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/connect-n-G18.log rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/null_G18.log rc=0
+rmdir /dev/shm/josephrb-cov2d-n-G18/out rc=0
+rmdir /dev/shm/josephrb-cov2d-n-G18 rc=0
+ls end
+MATCH connect-n-G18.log
+MATCH null_G18.log
+MATCH blobs.before
+MATCH blobs.after
+MATCH out/null_G18.json
+MATCH out/blocks_G18.npz
+go rc=0

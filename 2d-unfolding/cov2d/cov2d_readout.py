@@ -18,6 +18,11 @@ environment, on a login node, as control95.
   truth; each product's runConfig names its truth, role and seed (the label in ``out``, and per class ``data_file``,
   ``universe``, ``omnifile``, ``bootstrap_seed``); its runArgv is its runs-table row expanded, plus --out; its
   dataFileSha256 is the realization's or its own toy's file in the committed pseudo_b.json.
+* Addendum A5 (COV2D-BINDING-2): at ndf = 205, 1B grade's Cholesky cross-check runs to max(1e-9, 10 kappa_2(C_T) eps),
+  kappa_2 computed from C_T alone before any toy is read and recorded with the tolerance (``cholesky_check``); the
+  leave-out-MEC readout's grade of C_T- takes the same rule from C_T- (``cholesky_check_minus``). A refusal from either
+  grade writes score_<T>.invalid.json (which grade, its text and compared values) through Run.finish and prints
+  "COV2D-SCORE <T> INVALID (grade refused, C_T|C_T_minus: ...)".
 
   python cov2d_readout.py null  --truth T --out DIR [--run-dir O]
   python cov2d_readout.py score --truth T --null-digest SHA256 --out DIR [--run-dir O] [--ref origin/main]
@@ -487,7 +492,17 @@ def gate(truth: str, digest: str, ref: str, run_dir: str) -> tuple[dict, dict]:
     return rec, blocks
 
 
+def cholesky_tol(C_T: np.ndarray) -> dict:
+    """COV2D-BINDING-2 addendum A5: the tolerance of 1B grade's Cholesky cross-check at full rank, from C_T alone:
+    max(1e-9, 10 kappa_2(C_T) eps), kappa_2 = lambda_max / lambda_min, eps float64's machine epsilon."""
+    lam = np.linalg.eigvalsh(np.asarray(C_T, np.float64))
+    eps = float(np.finfo(np.float64).eps)
+    kappa = float(lam[-1] / lam[0]) if lam[0] > 0 else float("inf")
+    return {"rule": "max(1e-9, 10 kappa_2(C_T) eps)", "kappa2": kappa, "eps": eps, "tol": max(1e-9, 10 * kappa * eps)}
+
+
 def phase_score(truth: str, digest: str, out: Path, run_dir: str, ref: str) -> dict:
+    import fd_1b_mc as mc
     with tempfile.TemporaryDirectory(dir=os.environ.get("TMPDIR")) as td:
         run = Run(truth, run_dir, Path(td))
         try:
@@ -499,6 +514,8 @@ def phase_score(truth: str, digest: str, out: Path, run_dir: str, ref: str) -> d
             raise
         rec, ro = run.rec, run.ro
         rec.update(null_digest=digest, ref=ref, code=nrec["code"])
+        rec["cholesky_check"] = cholesky_tol(B["C_T"])      # addendum A5: from C_T alone, before any toy is read
+        rec["cholesky_check_minus"] = cholesky_tol(B["C_T_minus"])     # the same rule for the leave-out-MEC grade
         comp = completeness(truth)
         pl = plan(truth, comp)
         rows = runs_rows(run_dir, truth)
@@ -550,7 +567,22 @@ def phase_score(truth: str, digest: str, out: Path, run_dir: str, ref: str) -> d
         if [int(x) for x in ratio_rec["efficiency"]["cells205"]] != flat:
             raise c.Refusal("C2's 205 cells are not E_R's reported cells")
         weak_ratio = np.asarray(ratio_rec["b"][truth]["variance_ratio"]["option_1_clipped"], np.float64)
-        g = cs.score(E, C_T, null, truth, flat, weak_ratio, rec["controls_failed"] + nrec["controls_failed"])
+        compared, compared_minus, which = {}, {}, "C_T"
+        try:
+            g = cs.score(E, C_T, null, truth, flat, weak_ratio, rec["controls_failed"] + nrec["controls_failed"],
+                         chol_tol=rec["cholesky_check"]["tol"], chol_out=compared)
+            which = "C_T_minus"
+            lom = cr.leave_out_mec(E, {"C_T_minus": B["C_T_minus"]}, null_minus, g, flat,
+                                   chol_tol=rec["cholesky_check_minus"]["tol"], chol_out=compared_minus)
+        except mc.Refusal as e:      # addendum A5: a grade refusal is INVALID with its record, and Run finishes
+            key = "cholesky_check" if which == "C_T" else "cholesky_check_minus"
+            rec[key]["compared"] = getattr(e, "compared", None)
+            rec["grade_refusal"] = {"grade": which, "text": str(e), "compared": getattr(e, "compared", None)}
+            rec["controls_failed"].append(f"grade refused ({which}): {e}")
+            rec["verdict"] = "INVALID"
+            return run.finish(out, f"score_{truth}.invalid.json")
+        rec["cholesky_check"]["compared"] = compared
+        rec["cholesky_check_minus"]["compared"] = compared_minus
         sigma = np.sqrt(np.diag(C_T))
         rec["grade"] = g
         rec["cross_term"] = cross
@@ -558,7 +590,7 @@ def phase_score(truth: str, digest: str, out: Path, run_dir: str, ref: str) -> d
             "spread_alone": cr.spread_alone(E, C_T, B["C_model_abs"]),
             "bias": cr.bias(E, sigma),
             "predicted_offset": cr.predicted_offset(bands, B["w_flux"], B["x_T"]),
-            "leave_out_mec": cr.leave_out_mec(E, {"C_T_minus": B["C_T_minus"]}, null_minus, g, flat),
+            "leave_out_mec": lom,
             "realization_check": cr.realization_check(B["x_T"], x_true_real, sigma),
             "clipping_residual": cr.clipping_residual(cnpz, toy_index, np.asarray(flat), x_true, sigma, C_T,
                                                       g["flagged_cells"], truth)}
@@ -590,6 +622,10 @@ def main(argv=None) -> int:
         (out / f"score_{a.truth}.refused.json").write_text(json.dumps({"truth": a.truth, "refused": str(e)}, indent=1))
         print(f"COV2D-SCORE {a.truth} REFUSED {e}")
         return 2
+    if rec.get("grade_refusal"):
+        gr = rec["grade_refusal"]
+        print(f"COV2D-SCORE {a.truth} {rec['verdict']} (grade refused, {gr['grade']}: {gr['text']})")
+        return 3
     print(f"COV2D-SCORE {a.truth} {rec['verdict']}")
     return 0 if rec["verdict"] in ("COVERS", "UNDER-COVERS") else 3
 

@@ -1,0 +1,33 @@
+--- /Users/josephbailey/cov2d-work/wt-a5/docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/a5/cluster_tests/connect-a5t.sh	2026-11-07 12:01:48
++++ /Users/josephbailey/cov2d-work/connect-a5t.sh	2026-11-07 17:14:08
+@@ -9,7 +9,7 @@
+ #   P  = omnifold_py310: test_fd_1b_mc and test_cov2d_readouts at H5 and at M
+ # No data are read; RM's only pscratch reads are its MAT setup, as before. login02, nice 19, taskset -c 8-11, threads 1.
+ # Run on login02: setsid nohup bash /dev/shm/josephrb-cov2d-a5t.sh >/dev/null 2>&1 </dev/null &
+-H5=b25918fbd1fa0207ad65b830c57104d42d66152e
++H5=49e4202269ff3d3a6250b824f39c9347680f6b6e
+ M=ac25b66533788ceb18b1d4e5add259c53b216669   # the readout's M (COV2D-BINDING-2 addendum A4): the before of before/after
+ W=/dev/shm/josephrb-cov2d-a5t; DD=$W/deploy; DM=$W/deploy-m; L=$W/logs
+ A=/pscratch/sd/j/josephrb/MINERvA-OmniFold
+@@ -99,15 +99,17 @@
+   both P
+ ); echo "P rc=$?"
+ porc after
+-# A5's tests ran, ok, not skipped
++# A5's tests ran, ok, not skipped: the first ' ... <status>' line at or after the test's own line is its status
++# (a test with a docstring prints its status on the next line)
++ranok() { awk -v t="$1" '$1==t{f=1} f&&/ \.\.\. /{s=$0; exit} END{exit !(s ~ / \.\.\. ok$/)}' "$2"; }
+ for e in RM R; do
+-  for t in test_kappa_1e12_in_both_C_T_and_C_T_minus_grades_under_a5 test_each_tolerance_is_recorded_from_its_matrix_before_any_toy_and_passed_to_its_grade test_a_refusal_of_the_C_T_grade_writes_the_invalid_record_and_finishes_run test_a_refusal_of_the_C_T_minus_grade_writes_the_invalid_record_and_finishes_run test_the_formula test_the_floor_is_1b_s_1e_9; do
+-    grep -q "^$t .* ok$" "$L/${e}_test_cov2d_readout.log" && echo "A5-TEST RAN-OK $e $t" || echo "A5-TEST NOT-OK $e $t"
++  for t in test_kappa_1e12_in_both_C_T_and_C_T_minus_grades_under_a5 test_each_tolerance_is_recorded_from_its_matrix_before_any_toy_and_passed_to_its_grade test_a_refusal_of_the_C_T_grade_writes_the_invalid_record_and_finishes_run test_a_refusal_of_the_C_T_minus_grade_writes_the_invalid_record_and_finishes_run test_a_cov2d_refusal_inside_the_try_stays_a_refusal_not_a_grade_refusal test_any_other_failure_inside_the_try_propagates_unrecorded test_the_formula test_the_floor_is_1b_s_1e_9; do
++    ranok "$t" "$L/${e}_test_cov2d_readout.log" && echo "A5-TEST RAN-OK $e $t" || echo "A5-TEST NOT-OK $e $t"
+   done
+ done
+ for e in R P; do
+   for t in test_the_fixture_is_full_rank_and_ill_conditioned test_1b_default_is_1e_9_and_refuses_here_with_its_message test_a5_tolerance_passes_and_reports_the_compared_values test_a_wrong_cholesky_refuses_at_the_a5_tolerance test_below_full_rank_the_check_is_skipped_and_reported_so test_well_conditioned_grades_are_unchanged_by_the_argument; do
+-    grep -q "^$t .* ok$" "$L/${e}_test_fd_1b_mc.log" && echo "A5-TEST RAN-OK $e $t" || echo "A5-TEST NOT-OK $e $t"
++    ranok "$t" "$L/${e}_test_fd_1b_mc.log" && echo "A5-TEST RAN-OK $e $t" || echo "A5-TEST NOT-OK $e $t"
+   done
+   # before/after: the failing or erroring tests at H5 equal those at M
+   for m in test_fd_1b_mc test_cov2d_readouts; do

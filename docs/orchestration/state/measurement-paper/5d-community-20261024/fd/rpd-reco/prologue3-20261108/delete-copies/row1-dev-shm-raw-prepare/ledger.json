@@ -1,0 +1,18 @@
+{
+ "status": "DECLARED: the deletion runs after this receipt merges; its own ledger, in the same form, is added then",
+ "host": "login04",
+ "roots": {
+  "/dev/shm/limres-rpd-prologue3-20261108": {
+   "declared": {
+    "run/prologue-prepare.json": "337a88c893f0e1b24d90db8d940133d172f22a1d67f0aa7f8cc5f5044c73b5c8"
+   },
+   "scope": "the whole root: the fresh clone, the policy config, the redaction tools and the run directory",
+   "reason": "run/prologue-prepare.json holds unsalted SHA-256 fingerprints of every environment value, credential fields included; the director's condition is that they never reach the repo and that the raw record is deleted on the cluster after the receipt merges. The receipt carries the redacted view instead.",
+   "permissions": "root 700, files 600 (umask 077 in the connect)"
+  }
+ },
+ "cleanup_connect": {
+  "path": "rpd_prologue3_cleanup.sh in this receipt",
+  "sha256": "418c6aadad1384332a8866d4970d31ee3d7635c220316d6d5f03fcfcc48de761"
+ }
+}

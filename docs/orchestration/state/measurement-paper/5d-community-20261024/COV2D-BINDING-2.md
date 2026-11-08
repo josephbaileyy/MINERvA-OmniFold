@@ -316,5 +316,51 @@ later, at its own M, after coverage-5b-audit audits it.
    - G18's phase S reruns only at A5's bound M, from the same committed null (`ecdb4be2…`).
    - The G18 toys read in the INVALID run produced no output, and nothing from them was seen.
 
+### Addendum A5, the M line: the code (director, 2026-11-08)
+
+**Binds A5's code,** as merged in #900 at **M_A5 = `b1d56e4f08e62983784e34b2278f38a09a68eca0`**. The audited code head
+is `49e42022`, and `git diff 49e42022 b1d56e4f -- 2d-unfolding/ nd-unfolding/fd_1b_mc.py` is empty. `76eb30d0` adds
+receipts only.
+
+| file | sha256 (prefix) |
+|---|---|
+| `2d-unfolding/cov2d/cov2d_readout.py` | `0c3ad137be128691` |
+| `2d-unfolding/cov2d/cov2d_readouts.py` | `a288592ff0a726d6` |
+| `2d-unfolding/cov2d/cov2d_score.py` | `6616e14ef32699ac` |
+| `nd-unfolding/fd_1b_mc.py` (grade's `chol_tol` and `chol_out`; the 1B default 1e-9 is unchanged) | `936e1957d330e24d` |
+
+**What the director checked:**
+- **The code.** coverage-5b-audit's GO at `49e42022`
+  (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/900#issuecomment-6716452638). A5-C1 is closed.
+- **The mutants.** The lane's harness killed 24 of 24, including the auditor's V11 (the catch widened to any exception)
+  and V12 (the catch widened to cov2d's own Refusal). The auditor's own V06 and V08 are killed.
+- **The cluster receipt.** `76eb30d0`: 28 A5 tests RAN-OK under root_6_28, with the same failures as before in all four
+  comparisons, all from the environment. 17 of 17 log sums match.
+- **Nothing has read a toy** at this M.
+
+**Rulings:**
+1. **Ruling 1 is extended to C_T⁻.** The leave-out-MEC grade's cross-check uses the same rule, with κ₂ computed from
+   C_T⁻ alone (`cholesky_check_minus`). Both grade calls are inside the catch of ruling 3.
+2. **Ruling 5 is amended.** Phase S's gate needs a null recorded at the M it runs under, so G18's null is recomputed:
+   - **phase N reruns for G18 at M_A5,** into a fresh run directory;
+   - **a field-equality control** against the committed null `ecdb4be2…`. Every field must be equal except the fields
+     that record the code identity (the M and the code digests). cov2d names those fields in the connect, before it
+     runs. Any other difference is a STOP, reported unrepaired;
+   - its receipt PR is merged before phase S;
+   - **phase S then runs at M_A5** with `--null-digest` set to the new null's digest.
+3. **The two held lows,** L-A5-a (κ₂ = inf on λ_min ≤ 0, so tol = inf and the check never compares) and L-A5-b (a NaN
+   `max_rel_diff` passes `> tol`), **are closed for this run by a reading rule, not code.**
+   - For every grade with ndf = 205, the score record must show a finite κ₂ and tol, and a finite `max_rel_diff` ≤ tol.
+   - Otherwise the truth's score reads INVALID, and comes to the director unrepaired.
+   - The code fix stays on the auditor's follow-up list.
+4. **The launch guard.** cov2d disclosed that while testing its wrapper `go.sh`, it twice invoked it with the real digest
+   of the old G18 connect. Both calls exec'd `launch-s5.sh nG18`, which refused at its first action because the run
+   directory existed. Nothing was staged or run, and `run-nG18` is unchanged. The ruling:
+   - a wrapper that can exec a real launcher is tested only against a stub launcher, never with real digests;
+   - a launch without the director's go on that connect's sha256 is a STOP, whatever refuses it first;
+   - this incident is recorded in the phase-N rerun's receipt.
+5. **Unchanged:** A4's rulings 1–5, the statistic, the rank cut, ndf, every reading and licence, the fence (rs1_* and
+   ens1_* job names allowed, cov2d-* or an unknown name refusing), and the readout due date.
+
 
 Nothing is submitted, deposited or tagged.

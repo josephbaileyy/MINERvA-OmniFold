@@ -1,0 +1,15 @@
+# NERSC Python Monitoring
+# https://gitlab.nersc.gov/nersc/nersc-user-env/nersc-python-monitoring
+
+import os
+import sys
+
+if sys.version_info[0] > 2:
+    try:
+        if os.getenv("NERSC_PYMON_DISABLE", "0") == "0":
+            from nersc_pymon import PyMon
+            PyMon().site_hooks()
+    except Exception:
+        if os.environ.get("NERSC_PYMON_DEBUG") is not None:
+            import traceback
+            traceback.print_exc()

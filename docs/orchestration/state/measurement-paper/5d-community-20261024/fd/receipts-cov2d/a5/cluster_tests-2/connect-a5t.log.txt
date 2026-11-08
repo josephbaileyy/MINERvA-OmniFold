@@ -1,0 +1,117 @@
+host=login02 start=2026-11-08T01:15:36Z pid=1951960
+worktree-m=ac25b66533788ceb18b1d4e5add259c53b216669
+head=49e4202269ff3d3a6250b824f39c9347680f6b6e
+porcelain-before plain=0 ignored=0
+A5 diff M..H5 (code):
+ 2d-unfolding/cov2d/cov2d_readout.py             |  40 ++++++-
+ 2d-unfolding/cov2d/cov2d_readouts.py            |   9 +-
+ 2d-unfolding/cov2d/cov2d_score.py               |  12 +-
+ 2d-unfolding/cov2d/tests/test_cov2d_readout.py  | 144 ++++++++++++++++++++++++
+ 2d-unfolding/cov2d/tests/test_cov2d_readouts.py |   2 +-
+ nd-unfolding/fd_1b_mc.py                        |  20 +++-
+ nd-unfolding/tests/test_fd_1b_mc.py             |  68 +++++++++++
+ 7 files changed, 280 insertions(+), 15 deletions(-)
+UNCHANGED 2d-unfolding/cov2d/cov2d.py
+UNCHANGED 2d-unfolding/cov2d/cov2d_blocks.py
+UNCHANGED 2d-unfolding/cov2d/cov2d_null.py
+{"mat_setup_scripts": 6, "mismatches": 0}
+RM python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+MAT {"mapped": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"], "dictionary": true}
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+ENV RM /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python 3.11.14 numpy 1.26.4 uproot absent (ModuleNotFoundError) ROOT 6.28/12 O_NOATIME 262144
+rc env=RM module=test_cov2d_readout rc=0
+SUITE env=RM module=test_cov2d_readout ran=44 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d_score rc=0
+SUITE env=RM module=test_cov2d_score ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d_readouts rc=1
+SUITE env=RM module=test_cov2d_readouts ran=12 failures=0 errors=1 skipped=0 guarded_reads=0 ok=False
+rc env=RM module=test_cov2d_blocks rc=0
+SUITE env=RM module=test_cov2d_blocks ran=26 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d_null rc=0
+SUITE env=RM module=test_cov2d_null ran=5 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d rc=0
+SUITE env=RM module=test_cov2d ran=35 failures=0 errors=0 skipped=11 guarded_reads=0 ok=True
+RM rc=0
+ENV R /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python 3.11.14 numpy 1.26.4 uproot absent (ModuleNotFoundError) ROOT 6.28/12 O_NOATIME 262144
+rc env=R module=test_cov2d_readout rc=0
+SUITE env=R module=test_cov2d_readout ran=44 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R module=test_cov2d_score rc=0
+SUITE env=R module=test_cov2d_score ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R module=test_fd_1b_mc rc=0
+SUITE env=R module=test_fd_1b_mc ran=67 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R-M module=test_fd_1b_mc rc=0
+SUITE env=R-M module=test_fd_1b_mc ran=61 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R module=test_cov2d_readouts rc=1
+SUITE env=R module=test_cov2d_readouts ran=12 failures=0 errors=1 skipped=0 guarded_reads=0 ok=False
+rc env=R-M module=test_cov2d_readouts rc=1
+SUITE env=R-M module=test_cov2d_readouts ran=12 failures=0 errors=1 skipped=0 guarded_reads=0 ok=False
+R rc=0
+ENV P /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python 3.10.19 numpy 2.2.6 uproot 5.6.9 ROOT absent (ModuleNotFoundError) O_NOATIME 262144
+rc env=P module=test_fd_1b_mc rc=1
+SUITE env=P module=test_fd_1b_mc ran=61 failures=0 errors=7 skipped=0 guarded_reads=0 ok=False
+rc env=P-M module=test_fd_1b_mc rc=1
+SUITE env=P-M module=test_fd_1b_mc ran=55 failures=0 errors=7 skipped=0 guarded_reads=0 ok=False
+rc env=P module=test_cov2d_readouts rc=0
+SUITE env=P module=test_cov2d_readouts ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=P-M module=test_cov2d_readouts rc=0
+SUITE env=P-M module=test_cov2d_readouts ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+P rc=0
+porcelain-after plain=0 ignored=0
+A5-TEST RAN-OK RM test_kappa_1e12_in_both_C_T_and_C_T_minus_grades_under_a5
+A5-TEST RAN-OK RM test_each_tolerance_is_recorded_from_its_matrix_before_any_toy_and_passed_to_its_grade
+A5-TEST RAN-OK RM test_a_refusal_of_the_C_T_grade_writes_the_invalid_record_and_finishes_run
+A5-TEST RAN-OK RM test_a_refusal_of_the_C_T_minus_grade_writes_the_invalid_record_and_finishes_run
+A5-TEST RAN-OK RM test_a_cov2d_refusal_inside_the_try_stays_a_refusal_not_a_grade_refusal
+A5-TEST RAN-OK RM test_any_other_failure_inside_the_try_propagates_unrecorded
+A5-TEST RAN-OK RM test_the_formula
+A5-TEST RAN-OK RM test_the_floor_is_1b_s_1e_9
+A5-TEST RAN-OK R test_kappa_1e12_in_both_C_T_and_C_T_minus_grades_under_a5
+A5-TEST RAN-OK R test_each_tolerance_is_recorded_from_its_matrix_before_any_toy_and_passed_to_its_grade
+A5-TEST RAN-OK R test_a_refusal_of_the_C_T_grade_writes_the_invalid_record_and_finishes_run
+A5-TEST RAN-OK R test_a_refusal_of_the_C_T_minus_grade_writes_the_invalid_record_and_finishes_run
+A5-TEST RAN-OK R test_a_cov2d_refusal_inside_the_try_stays_a_refusal_not_a_grade_refusal
+A5-TEST RAN-OK R test_any_other_failure_inside_the_try_propagates_unrecorded
+A5-TEST RAN-OK R test_the_formula
+A5-TEST RAN-OK R test_the_floor_is_1b_s_1e_9
+A5-TEST RAN-OK R test_the_fixture_is_full_rank_and_ill_conditioned
+A5-TEST RAN-OK R test_1b_default_is_1e_9_and_refuses_here_with_its_message
+A5-TEST RAN-OK R test_a5_tolerance_passes_and_reports_the_compared_values
+A5-TEST RAN-OK R test_a_wrong_cholesky_refuses_at_the_a5_tolerance
+A5-TEST RAN-OK R test_below_full_rank_the_check_is_skipped_and_reported_so
+A5-TEST RAN-OK R test_well_conditioned_grades_are_unchanged_by_the_argument
+SAME-FAILURES R test_fd_1b_mc []
+SAME-FAILURES R test_cov2d_readouts [ERROR: test_runs_over_600_draws_and_matches_a_hand_first_order_histogram (test_cov2d_readouts.CrossTermsCLI.test_runs_over_600_draws_and_matches_a_hand_first_order_histogram);]
+A5-TEST RAN-OK P test_the_fixture_is_full_rank_and_ill_conditioned
+A5-TEST RAN-OK P test_1b_default_is_1e_9_and_refuses_here_with_its_message
+A5-TEST RAN-OK P test_a5_tolerance_passes_and_reports_the_compared_values
+A5-TEST RAN-OK P test_a_wrong_cholesky_refuses_at_the_a5_tolerance
+A5-TEST RAN-OK P test_below_full_rank_the_check_is_skipped_and_reported_so
+A5-TEST RAN-OK P test_well_conditioned_grades_are_unchanged_by_the_argument
+SAME-FAILURES P test_fd_1b_mc [ERROR: setUpClass (test_fd_1b_mc.Pipeline);ERROR: test_a_non_finite_toy_truth (test_fd_1b_mc.Loaders);ERROR: test_counts_against_the_raw_weights (test_fd_1b_mc.Receipt);ERROR: test_declared_draws_are_all_three_truths_seeds (test_fd_1b_mc.N1Composite);ERROR: test_flux_law_is_constraint_weighted (test_fd_1b_mc.Remade);ERROR: test_lateral_is_s1s_transferred (test_fd_1b_mc.Remade);ERROR: test_laws_carry_their_blocks_and_the_null_matches (test_fd_1b_mc.Remade);]
+SAME-FAILURES P test_cov2d_readouts []
+TESTS-SUMMARY 11 ok of 16 suite runs
+removal: host=login02 2026-11-08T01:28:46Z 1.3G
+rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-a5t/deploy-m': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-a5t/deploy': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-a5t/tmp': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-a5t/runsuite.py': No such file or directory
+end=2026-11-08T01:28:48Z
+DONE

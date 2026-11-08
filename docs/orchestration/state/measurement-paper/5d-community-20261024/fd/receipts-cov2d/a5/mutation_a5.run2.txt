@@ -1,0 +1,27 @@
+BASELINE ok
+KILLED  fd_1b_mc.py: grade ignores chol_tol (1e-9 hard)
+KILLED  fd_1b_mc.py: 1B default changed to 1e-3
+KILLED  fd_1b_mc.py: 1B refusal message changed
+KILLED  fd_1b_mc.py: full-rank cross-check skipped
+KILLED  fd_1b_mc.py: refusal carries no compared values
+KILLED  fd_1b_mc.py: chol_out not filled at full rank
+KILLED  cov2d_score.py: cov2d_score drops the C_T passthrough
+KILLED  cov2d_readouts.py: leave_out_mec drops the C_T- passthrough
+KILLED  cov2d_readout.py: tol without the factor 10
+KILLED  cov2d_readout.py: tol without the 1e-9 floor
+KILLED  cov2d_readout.py: kappa from the second-smallest eigenvalue
+KILLED  cov2d_readout.py: C_T- tolerance taken from C_T
+KILLED  cov2d_readout.py: driver does not pass C_T's tolerance
+KILLED  cov2d_readout.py: driver does not pass C_T-'s tolerance
+KILLED  cov2d_readout.py: compared values not recorded on a pass
+KILLED  cov2d_readout.py: grade refusal not caught
+KILLED  cov2d_readout.py: catch widened to Exception (auditor V11)
+KILLED  cov2d_readout.py: catch widened to cov2d's Refusal too (auditor V12)
+KILLED  cov2d_readout.py: a refusal does not finish Run
+KILLED  cov2d_readout.py: invalid record written as score_<T>.json
+KILLED  cov2d_readout.py: a refusal's verdict is not INVALID
+KILLED  cov2d_readout.py: the refusing grade is not named
+KILLED  cov2d_readout.py: compared values not recorded on a refusal
+KILLED  cov2d_readout.py: no distinct INVALID line
+killed 24 of 24
+harness rc=0

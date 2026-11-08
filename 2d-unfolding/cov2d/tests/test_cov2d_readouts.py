@@ -185,7 +185,7 @@ class LeaveOutMEC(unittest.TestCase):
     def test_a_joint_flag_alone_is_a_shift_reading(self):
         import fd_1b_mc as mc
         g = {"cell_flag": [False] * N, "joint_flag": True, "verdict": "UNDER-COVERS"}
-        with mock.patch.object(mc, "grade", lambda *a: g):
+        with mock.patch.object(mc, "grade", lambda *a, **kw: g):        # addendum A5: grade takes chol_tol/chol_out
             out = ro.leave_out_mec(np.zeros((300, N)), self.blocks, self.null_minus, {"verdict": "COVERS"}, list(range(N)))
         self.assertEqual(out["reading"], "its coverage in cells [] (and jointly) rests on the GENIE + MEC shift")
 

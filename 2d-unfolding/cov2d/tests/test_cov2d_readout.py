@@ -536,6 +536,150 @@ class PhaseS(Base):
 
 
 @unittest.skipUnless(HAVE, "needs PyROOT")
+class CholeskyTolPure(unittest.TestCase):
+    """Addendum A5's tolerance, max(1e-9, 10 kappa_2(C_T) eps), from C_T alone."""
+    def test_the_formula(self):
+        eps = np.finfo(np.float64).eps
+        Q, _ = np.linalg.qr(np.random.default_rng(3).normal(size=(6, 6)))
+        lam = np.array([1.0, 0.5, 1e-3, 1e-6, 1e-9, 1.5e-12])
+        t = rd.cholesky_tol((Q * lam) @ Q.T)
+        self.assertAlmostEqual(t["kappa2"] / (1 / 1.5e-12), 1, places=3)
+        self.assertEqual(t["eps"], eps)
+        self.assertEqual(t["tol"], 10 * t["kappa2"] * eps)
+        self.assertGreater(t["tol"], 1e-4)
+        self.assertEqual(t["rule"], "max(1e-9, 10 kappa_2(C_T) eps)")
+
+    def test_the_floor_is_1b_s_1e_9(self):
+        t = rd.cholesky_tol(np.eye(5))
+        self.assertEqual(t["kappa2"], 1.0)
+        self.assertEqual(t["tol"], 1e-9)
+
+
+class CholeskyA5(Base):
+    """Addendum A5 in phase S: each grade's tolerance (C_T's, and C_T-'s for the leave-out-MEC readout) from its matrix
+    before any toy is read, passed to 1B's grade and recorded; a refusal from either grade writes score_<T>.invalid.json
+    through Run.finish and prints a distinct INVALID line naming the grade, exit 3."""
+    def setUp(self):
+        super().setUp()
+        self.nrec = self.null("G18")
+        cb.AUDIT = None
+
+    def score(self, digest=None, t="G18"):
+        return rd.main(["score", "--truth", t, "--null-digest", digest or self.commit(t), "--out", str(self.out),
+                        "--run-dir", str(self.tree.run)])
+
+    def committed(self, key):
+        return np.load(self.out / "blocks_G18.npz")[key]
+
+    def test_kappa_1e12_in_both_C_T_and_C_T_minus_grades_under_a5(self):
+        """Both matrices full rank at kappa ~ 1e12 (the null record re-pinned to the new blocks): each grade's correct
+        Cholesky differs from the non-null chi2 by more than 1B's 1e-9 and passes A5's tolerance."""
+        z = dict(np.load(self.out / "blocks_G18.npz"))
+        for key, seed in (("C_T", 21), ("C_T_minus", 22)):
+            Q, _ = np.linalg.qr(np.random.default_rng(seed).normal(size=(205, 205)))
+            top = np.linalg.eigvalsh(z[key])[-1]
+            C = (Q * (top * np.logspace(0, np.log10(1.5e-12), 205))) @ Q.T
+            z[key] = (C + C.T) / 2
+        buf = io.BytesIO()
+        np.savez(buf, **z)
+        zb = buf.getvalue()
+        rec = json.loads((self.out / "null_G18.json").read_text())
+        rec["blocks_npz_sha256"] = sha(zb)
+        self.assertEqual(self.score(self.commit("G18", json.dumps(rec).encode(), zb)), 0)
+        out = json.loads((self.out / "score_G18.json").read_text())
+        for field in ("cholesky_check", "cholesky_check_minus"):
+            chk = out[field]
+            self.assertGreater(chk["kappa2"], 1e11, field)
+            self.assertEqual(chk["compared"]["ndf"], 205, field)
+            self.assertGreater(chk["compared"]["max_rel_diff"], 1e-9, field)    # 1B's default would refuse
+            self.assertLessEqual(chk["compared"]["max_rel_diff"], chk["tol"], field)
+
+    def test_each_tolerance_is_recorded_from_its_matrix_before_any_toy_and_passed_to_its_grade(self):
+        import fd_1b_mc as mc
+        real_tol, real_grade, seen, calls = rd.cholesky_tol, mc.grade, [], []
+
+        def tol(C):
+            seen.append([p for _, p, _ in cb.AUDIT.log if "/out/T_G18_" in p])
+            return real_tol(C)
+
+        def grade(E, C, null, **kw):
+            calls.append((C, kw))
+            return real_grade(E, C, null, **kw)
+        with mock.patch.object(rd, "cholesky_tol", tol), mock.patch.object(mc, "grade", grade):
+            self.assertEqual(self.score(), 0)
+        rec = json.loads((self.out / "score_G18.json").read_text())
+        self.assertEqual(seen, [[], []])                                   # both computed before any toy was opened
+        for key, field, i in (("C_T", "cholesky_check", 0), ("C_T_minus", "cholesky_check_minus", 1)):
+            want = real_tol(self.committed(key))
+            self.assertEqual({k: rec[field][k] for k in want}, want, key)
+            np.testing.assert_array_equal(calls[i][0], self.committed(key))
+            self.assertEqual(calls[i][1]["chol_tol"], want["tol"], key)
+            self.assertEqual(rec[field]["compared"]["tol"], want["tol"], key)
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(rec["cholesky_check"]["compared"]["ndf"], rec["grade"]["ndf"])
+        self.assertEqual(rec["cholesky_check_minus"]["compared"]["ndf"], rec["readouts"]["leave_out_mec"]["grade"]["ndf"])
+
+    def refuse_at(self, key):
+        import contextlib
+        import fd_1b_mc as mc
+        real_grade, target = mc.grade, self.committed(key)
+
+        def grade(E, C, null, **kw):
+            if np.array_equal(C, target):
+                e = mc.Refusal("the non-null chi2 and the Cholesky chi2 differ")
+                e.compared = {"ndf": 205, "max_rel_diff": 0.5, "tol": kw["chol_tol"]}
+                raise e
+            return real_grade(E, C, null, **kw)
+        buf = io.StringIO()
+        with mock.patch.object(mc, "grade", grade), contextlib.redirect_stdout(buf):
+            self.assertEqual(self.score(), 3)
+        self.assertIn(f"COV2D-SCORE G18 INVALID (grade refused, {key}: the non-null chi2 and the Cholesky chi2 differ)",
+                      buf.getvalue())
+        self.assertFalse((self.out / "score_G18.json").exists())
+        rec = json.loads((self.out / "score_G18.invalid.json").read_text())
+        self.assertEqual(rec["verdict"], "INVALID")
+        self.assertEqual(rec["grade_refusal"]["grade"], key)
+        self.assertEqual(rec["grade_refusal"]["text"], "the non-null chi2 and the Cholesky chi2 differ")
+        self.assertEqual(rec["grade_refusal"]["compared"]["max_rel_diff"], 0.5)
+        field = "cholesky_check" if key == "C_T" else "cholesky_check_minus"
+        self.assertEqual(rec[field]["compared"]["max_rel_diff"], 0.5)
+        self.assertIn(f"grade refused ({key}): the non-null chi2 and the Cholesky chi2 differ", rec["controls_failed"])
+        self.assertNotIn("grade", rec)
+        self.assertNotIn("readouts", rec)
+        for k in ("atime_checked", "atime_moved", "open_audit", "modules"):    # Run.finish ran
+            self.assertIn(k, rec)
+        self.assertEqual(cb.AUDIT._undo, [])                                       # the open audit is uninstalled
+
+    def raise_in_the_grade(self, exc):
+        import fd_1b_mc as mc
+
+        def grade(E, C, null, **kw):
+            raise exc
+        return mock.patch.object(mc, "grade", grade)
+
+    def test_a_cov2d_refusal_inside_the_try_stays_a_refusal_not_a_grade_refusal(self):     # auditor A5-C1 (V12)
+        with self.raise_in_the_grade(c.Refusal("another refusal, not 1B's grade")):
+            self.assertEqual(self.score(), 2)
+        refused = json.loads((self.out / "score_G18.refused.json").read_text())["refused"]
+        self.assertEqual(refused, "another refusal, not 1B's grade")
+        self.assertFalse((self.out / "score_G18.invalid.json").exists())
+        self.assertFalse((self.out / "score_G18.json").exists())
+
+    def test_any_other_failure_inside_the_try_propagates_unrecorded(self):                  # auditor A5-C1 (V11)
+        with self.raise_in_the_grade(ZeroDivisionError("not a refusal")):
+            with self.assertRaises(ZeroDivisionError):
+                self.score()
+        self.assertFalse((self.out / "score_G18.invalid.json").exists())
+        self.assertFalse((self.out / "score_G18.json").exists())
+
+    def test_a_refusal_of_the_C_T_grade_writes_the_invalid_record_and_finishes_run(self):
+        self.refuse_at("C_T")
+
+    def test_a_refusal_of_the_C_T_minus_grade_writes_the_invalid_record_and_finishes_run(self):
+        self.refuse_at("C_T_minus")
+
+
+@unittest.skipUnless(HAVE, "needs PyROOT")
 class Pure(unittest.TestCase):
     """The section 9.9 compares and the identity windows on their own."""
     def setUp(self):

@@ -1,0 +1,126 @@
+files 44
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/data-product/fd_data_product.json 1
+    /h2/h2_to_reporting_cell
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/nopl/readout/fd_g_sens2_readout.json 0
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_sens2_readout.json 0
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/old/nopl/readout/fd_g_sens2_readout.json 0
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/old/with/readout/fd_g_sens2_readout.json 0
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_sens2_readout.json 0
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/inv/i0/i0.json 0
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue-20261107/policy-config.json 0
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue2-20261107/policy-config.json 0
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl.json 1
+    /h2/h2_to_reporting_cell
+== docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_g_sens2_readout.json 0
+== docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/stage0-binding.json 0
+== docs/orchestration/state/measurement-paper/5d-design-20261023/stage0/receipts-A/stage0-provisional.json 0
+== docs/orchestration/state/measurement-paper/phase0/receipts/mp4/did_cr_floor.json 0
+== docs/orchestration/state/measurement-paper/phase1/mp4a/extra_c.json 0
+== docs/orchestration/state/measurement-paper/phase1/mp4a/gate-v1.json 0
+== docs/orchestration/state/measurement-paper/phase1/mp4a/gate.json 0
+== docs/orchestration/state/measurement-paper/phase1/mp4a/osb_functionals.json 0
+== docs/orchestration/state/measurement-paper/phase1/mp4a/osb_summary.json 0
+== docs/orchestration/state/measurement-scoping/r10/outputs/r10_results.json 0
+== docs/orchestration/state/next-preparation-20261009/d-id/outputs/results.json 0
+== docs/orchestration/state/next-preparation-20261009/gbdt/results.json 0
+== docs/orchestration/state/s5c/b1/partition_scan_1.json 4
+    /levels/H2/per_cell/expected_reco_signal
+    /levels/H2/per_cell/purity
+    /levels/H2/per_cell/stability
+    /levels/H2/per_cell/truth
+== docs/orchestration/state/s5c/b1/partition_scan_2.json 4
+    /levels/H2/per_cell/expected_reco_signal
+    /levels/H2/per_cell/purity
+    /levels/H2/per_cell/stability
+    /levels/H2/per_cell/truth
+== docs/orchestration/state/s5c/c1/f1_member_check.json 0
+== docs/orchestration/state/s5c/review-3-disposition.json 0
+== docs/orchestration/state/s5p/stage1/stage1_inspect.json 42
+    /mc/H2/truth_denominator
+    /mc/H2/truth_selected
+    /mc/H2/completeness
+    /mc/H2/reco_passing_fraction
+    /mc/H2/purity
+    /mc/H2/stability
+    /mc/H2/expected_reco_signal
+    /mc/H2/expected_reco_background
+    /mc/H2/background_fraction
+    /mc/H2/mc_neff_truth
+    /mc/H2/reported
+    /development_residuals/nominal/H2/mean_rel
+    /development_residuals/nominal/H2/se_rel
+    /development_residuals/nominal/H2/rel_sd
+    /development_residuals/nominal/H2/mean_truth
+    /development_residuals/eavail_gibuu/H2/mean_rel
+    /development_residuals/eavail_gibuu/H2/se_rel
+    /development_residuals/eavail_gibuu/H2/rel_sd
+    /development_residuals/eavail_gibuu/H2/mean_truth
+    /development_residuals/q3/H2/mean_rel
+    /development_residuals/q3/H2/se_rel
+    /development_residuals/q3/H2/rel_sd
+    /development_residuals/q3/H2/mean_truth
+    /development_residuals/W1/H2/mean_rel
+    /development_residuals/W1/H2/se_rel
+    /development_residuals/W1/H2/rel_sd
+    /development_residuals/W1/H2/mean_truth
+    /development_residuals/W2/H2/mean_rel
+    /development_residuals/W2/H2/se_rel
+    /development_residuals/W2/H2/rel_sd
+    /development_residuals/W2/H2/mean_truth
+    /development_residuals/W3/H2/mean_rel
+    /development_residuals/W3/H2/se_rel
+    /development_residuals/W3/H2/rel_sd
+    /development_residuals/W3/H2/mean_truth
+    /departures/eavail_gibuu/H2/departure_rel
+    /departures/q3/H2/departure_rel
+    /departures/W1/H2/departure_rel
+    /departures/W2/H2/departure_rel
+    /departures/W3/H2/departure_rel
+    /sigma_boot_dev_700000/H2
+    /sigma_boot_data_R/H2
+== docs/orchestration/state/s5p/stage2/stage2_receipt.json 27
+    /study_N/N1_data/H2/sigma_num_base_rel
+    /study_N/N1_data/H2/sigma_boot_rel
+    /study_N/N1_data/H2/sigma_num_rep_rel
+    /study_N/N1_data/H2/sigma_smooth_sq_rel
+    /study_N/N1_data/H2/absorption_ratio
+    /study_N/N1_data/H2/consistency_ratio
+    /study_N/N2_nominal_930000/H2/sigma_num_base_rel
+    /study_N/N2_nominal_930000/H2/sigma_boot_rel
+    /study_N/N2_nominal_930000/H2/sigma_num_rep_rel
+    /study_N/N2_nominal_930000/H2/sigma_smooth_sq_rel
+    /study_N/N2_nominal_930000/H2/absorption_ratio
+    /study_N/N2_nominal_930000/H2/consistency_ratio
+    /study_N/N3_gibuu_931000/H2/sigma_num_base_rel
+    /study_N/N3_gibuu_931000/H2/sigma_boot_rel
+    /study_N/N3_gibuu_931000/H2/sigma_num_rep_rel
+    /study_N/N3_gibuu_931000/H2/sigma_smooth_sq_rel
+    /study_N/N3_gibuu_931000/H2/absorption_ratio
+    /study_N/N3_gibuu_931000/H2/consistency_ratio
+    /study_C/per_definition/H2/ensemble_rel_sd
+    /study_C/per_definition/H2/sigma_single_700000
+    /study_C/per_definition/H2/sigma_mean
+    /study_C/per_definition/H2/sigma_cv_over_experiments
+    /study_C/per_definition/H2/pull_sd_single_sigma
+    /study_C/per_definition/H2/pull_sd_mean_sigma
+    /study_C/per_definition/H2/mean_pull_mean_sigma
+    /study_C/per_definition/H2/se_mean_pull
+    /study_C/per_definition/H2/fixed_over_varying_split_sd
+== docs/orchestration/state/s5p/stage3/envelope-receipt.json 0
+== nd-unfolding/gbdt_model_dependence/definition.json 1
+    /reported/H2
+== nd-unfolding/gbdt_model_dependence/results/summary.json 0
+== nd-unfolding/pet/final_design/dev/DEV_TABLES-20260926.json 0
+== nd-unfolding/pet/final_design/dev/DEV_TABLES-20260927.json 0
+== nd-unfolding/pet/final_design/dev/SCREENS-20260926.json 0
+== nd-unfolding/pet/final_design/dev/SCREENS-20260927-3d.json 0
+== nd-unfolding/pet/final_design/dev/SCREENS-20260927.json 0
+== nd-unfolding/pet/final_design/scalar/frozen_config.json 0
+== nd-unfolding/pet/final_design/slides/deck_numbers.json 0
+== nd-unfolding/pet/final_design/slides/summary_deck_numbers.json 0
+== nd-unfolding/pet/gbdt_comparison/results/costs.json 0
+== nd-unfolding/pet/generator_diagnosis/results/diagnosis.json 0
+== nd-unfolding/pet/runtime_runs/20260910/linux-distributions.json 0
+== nd-unfolding/pv-ladder/readouts/cmodel_5d.json 0
+== nd-unfolding/pv-ladder/readouts/h2_definition.json 1
+    /h2_to_reporting_cell
