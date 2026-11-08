@@ -5223,3 +5223,104 @@ def test_prepared_mapping_identity_refuses(
         record["libraries"][str(library)]["prepared_mapped_identity"]
         != mappings[str(library)]
     )
+
+
+@pytest.mark.parametrize("pinned", [False, True], ids=["unpinned", "pinned"])
+def test_negative_check_after_exit_library_custody(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch, pinned: bool
+) -> None:
+    """The negative-check path must verify late code and publish its refusal."""
+    custody = _custody_module()
+    run = fixture.run.resolve()
+    run.mkdir()
+    dependency = run / "constraint.txt"
+    dependency.write_text("own staged dependency")
+    custody.write_private_prepare(
+        R,
+        run,
+        "prestage",
+        {
+            "run": str(run),
+            "connect_id": "negative-late-library",
+            "mat_dependencies": [
+                {"environment_key": "MPARAMFILES", "staged": str(dependency)}
+            ],
+        },
+        protected_roots=[],
+    )
+    platform = fixture.root / "platform"
+    platform.mkdir()
+    library = platform / "suffixless"
+    library.write_bytes(b"\x7fELF disposable late library")
+    pin = {**custody.platform_identity(library), "sha256": R.digest(library)}
+    pins = {str(library): pin} if pinned else {}
+    clone = str(Path(custody.__file__).resolve().parents[1])
+    policy = {**_late_library_policy(platform, pins), "cwd": clone, "clone_root": clone}
+    policy_path = run / "trace-policy.json"
+    policy_path.write_text(json.dumps(policy))
+    policy_sha = R.digest(policy_path)
+    raw = f'817 openat(AT_FDCWD, "{library}", O_RDONLY|O_CLOEXEC) = 4<{library}>'
+    # Both inputs pass path classification. Only after-exit inspection distinguishes
+    # the unpinned, suffixless ELF from ordinary platform metadata.
+    assert custody.classify_trace([raw], policy)["status"] == "PASS"
+    calls = []
+
+    def stopped(command: Any, **kwargs: Any) -> Any:
+        calls.append(command)
+        assert not dependency.exists()
+        assert (
+            dependency.with_name(dependency.name + ".negative-check-held").read_text()
+            == "own staged dependency"
+        )
+        assert kwargs["cwd"] == clone
+        (run / "flux-extract.STOP.json").write_text(
+            json.dumps({"status": "STOP", "guard": "MAT_DATA_STAGE"})
+        )
+        (run / "missing-dependency.strace").write_text(raw + "\n")
+        return SimpleNamespace(returncode=4, stdout="", stderr="STOP MAT_DATA_STAGE")
+
+    monkeypatch.setattr(custody.subprocess, "run", stopped)
+    if pinned:
+        receipt = custody.missing_dependency_check(
+            R, fixture.config_path, fixture.config_sha, run, policy_sha
+        )
+        assert (
+            receipt["status"] == "PASS"
+            and receipt["expected_guard"] == "MAT_DATA_STAGE"
+        )
+        assert (
+            receipt["trace_check"]["library_open_checks"][str(library)]["observed"]
+            == pin
+        )
+        assert (run / "missing-dependency-check.json").is_file()
+        assert (run / "missing-dependency.STOP.json").is_file()
+        assert not (run / "missing-dependency-trace.STOP.json").exists()
+    else:
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.missing_dependency_check(
+                R, fixture.config_path, fixture.config_sha, run, policy_sha
+            )
+        assert str(caught.value) == "library custody violations"
+        record = json.loads((run / "missing-dependency-trace.STOP.json").read_text())
+        assert record["status"] == "STOP"
+        assert record["policy_sha256"] == policy_sha
+        assert record["trace_sha256"] == R.digest(run / "missing-dependency.strace")
+        assert record["violations"] == caught.value.details["violations"]
+        assert len(record["violations"]) == 1
+        violation = record["violations"][0]
+        assert violation["class"] == "platform_library"
+        assert violation["path"] == violation["resolved"] == str(library)
+        assert violation["pid"] == 817
+        assert violation["raw_line"] == raw and violation["raw_lines"] == [raw]
+        assert violation["reason"] == "library open has no prepare pin"
+        assert violation["comparison"] == {
+            "prepared": None,
+            "kind": "library",
+            "stat": custody.platform_identity(library),
+        }
+        assert "fingerprints" not in json.dumps(record)
+        assert not (run / "missing-dependency-check.json").exists()
+        assert (run / "flux-extract.STOP.json").is_file()
+    assert len(calls) == 1 and "/usr/bin/strace" == calls[0][0]
+    assert dependency.read_text() == "own staged dependency"
+    assert not dependency.with_name(dependency.name + ".negative-check-held").exists()

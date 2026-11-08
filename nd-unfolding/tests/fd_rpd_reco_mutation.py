@@ -278,6 +278,16 @@ RECORD_MUTATIONS = (
 REQUIRED = tuple(
     [
         Mutation(
+            "REQUIRED_NEGATIVE_AFTER_EXIT_CHECK",
+            "custody_r3",
+            "missing_dependency_check",
+            "test_negative_check_after_exit_library_custody and unpinned",
+            (
+                "classify_trace_with_stop(r, run, 'missing-dependency-trace', trace.read_text().splitlines(), trace_policy, {'policy_sha256': policy_sha, 'trace_sha256': r.digest(trace)})",
+                "classify_trace(trace.read_text().splitlines(), trace_policy)",
+            ),
+        ),
+        Mutation(
             "REQUIRED_EXIT_INSTRUMENT_PIN_ENFORCEMENT",
             "custody_r3",
             "classify_trace",
