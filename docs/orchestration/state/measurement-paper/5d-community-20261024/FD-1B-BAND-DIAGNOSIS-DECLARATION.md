@@ -105,7 +105,8 @@ each universe's cell values, so a reader can see the ratio of differences behind
 
 ## 3. Candidate mechanisms, each with its test
 
-None has been measured.
+None has been tested. HK's arithmetic was read from Part 1's committed readout before these rules were written (disclosed
+above); that read is a record, not a test.
 
 | | mechanism | predicts | tested by |
 |---|---|---|---|
@@ -204,7 +205,7 @@ What the slopes mean:
 
 | outcome | CITABLE FOR | NOT CITABLE FOR |
 |---|---|---|
-| §4.2 SAME COMPARISON for band b | "for band b, Part 1's rule K compares the same blocks as rule S, up to F_side = √(B/A), which differs from 1 by at most [value]; rule K's FAIL is not separate evidence" | anything about κ for the flux or interaction groups, or at another truth |
+| §4.2 SAME COMPARISON for band b | a record of Part 1's committed products, not a test: "reading Part 1's committed readout and products, for band b κ/(F_src·F_side) = 1 to [value] in \|ln\| and g²·Dnom = E to [value], with F_side = √(B/A) differing from 1 by at most [value]; the thresholds were set after these values were seen. On that record, rule K's FAIL is not separate evidence" | a test of HK; anything about κ for the flux or interaction groups, or at another truth |
 | §4.2 DIFFERENT | a finding for the director | a cause |
 | §4.3 EQUAL | "the pseudo-data and the simulation side carry the same factor on the same reco rows inside the window, for every detector universe" | anything inside the estimator; HW's rows outside the window |
 | §4.3 DIFFER | "for universe u, the two sides do not carry the same factor on the same rows in [channel]"; a candidate defect for the director | which code; any repair |
