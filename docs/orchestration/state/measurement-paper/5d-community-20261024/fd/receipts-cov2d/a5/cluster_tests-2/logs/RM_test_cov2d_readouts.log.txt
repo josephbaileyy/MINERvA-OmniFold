@@ -1,0 +1,30 @@
+test_runs_over_600_draws_and_matches_a_hand_first_order_histogram (test_cov2d_readouts.CrossTermsCLI.test_runs_over_600_draws_and_matches_a_hand_first_order_histogram) ... ERROR
+test_a_joint_flag_alone_is_a_shift_reading (test_cov2d_readouts.LeaveOutMEC.test_a_joint_flag_alone_is_a_shift_reading) ... ok
+test_c_t_covers_and_c_t_minus_flags (test_cov2d_readouts.LeaveOutMEC.test_c_t_covers_and_c_t_minus_flags) ... ok
+test_c_t_minus_also_covers (test_cov2d_readouts.LeaveOutMEC.test_c_t_minus_also_covers) ... ok
+test_no_reading_when_c_t_under_covers (test_cov2d_readouts.LeaveOutMEC.test_no_reading_when_c_t_under_covers) ... ok
+test_clipping_residual_and_its_reading (test_cov2d_readouts.Pure.test_clipping_residual_and_its_reading) ... ok
+test_clipping_residual_on_varying_inputs_against_a_hand_computation (test_cov2d_readouts.Pure.test_clipping_residual_on_varying_inputs_against_a_hand_computation) ... ok
+test_predicted_offset (test_cov2d_readouts.Pure.test_predicted_offset) ... ok
+test_product_compose_is_c2s (test_cov2d_readouts.Pure.test_product_compose_is_c2s) ... ok
+test_refuses_cells_without_the_outlier (test_cov2d_readouts.Pure.test_refuses_cells_without_the_outlier) ... ok
+test_refuses_rows_that_are_not_the_truths_toys_in_seed_order (test_cov2d_readouts.Pure.test_refuses_rows_that_are_not_the_truths_toys_in_seed_order) ... ok
+test_spread_bias_realization (test_cov2d_readouts.Pure.test_spread_bias_realization) ... ok
+
+======================================================================
+ERROR: test_runs_over_600_draws_and_matches_a_hand_first_order_histogram (test_cov2d_readouts.CrossTermsCLI.test_runs_over_600_draws_and_matches_a_hand_first_order_histogram)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/2d-unfolding/cov2d/tests/test_cov2d_readouts.py", line 206, in test_runs_over_600_draws_and_matches_a_hand_first_order_histogram
+    truth, sig, bkg = tp.build(d)
+                      ^^^^^^^^^^^
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/2d-unfolding/cov2d/tests/test_cov2d_pseudo.py", line 70, in build
+    with uproot.recreate(d / "uni.root") as f:
+         ^^^^^^
+NameError: name 'uproot' is not defined
+
+----------------------------------------------------------------------
+Ran 12 tests in 19.178s
+
+FAILED (errors=1)
+SUITE env=RM module=test_cov2d_readouts ran=12 failures=0 errors=1 skipped=0 guarded_reads=0 ok=False

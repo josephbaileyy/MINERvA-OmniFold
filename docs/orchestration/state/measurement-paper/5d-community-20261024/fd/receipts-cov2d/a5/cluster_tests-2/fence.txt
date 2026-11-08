@@ -1,0 +1,6 @@
+fence host=login02 utc=2026-11-08T01:15:18Z
+squeue:
+60982139 rs1_a1 RUNNING
+60983221 ens1_dry1 RUNNING
+sacct unended cov2d:
+fence end
