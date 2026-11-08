@@ -2164,40 +2164,9 @@ def test_constrained_common_integral_bracket() -> None:
 def test_same_connect_prepare_receipt(
     fixture: Fixture, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    import time
-
-    root = _RootDouble()
-    root.TClass = SimpleNamespace(
-        GetClass=lambda _name: SimpleNamespace(HasDictionary=lambda: True)
-    )
-    monkeypatch.setitem(sys.modules, "ROOT", root)
-    monkeypatch.setenv("FD_RPD_RECO_CONNECT_ID", "unit-connect")
-    instrument = SimpleNamespace(
-        mapped_files=lambda: set(), mat_env_problems=lambda *args: []
-    )
-    monkeypatch.setattr(R, "load_mat_instrument", lambda: instrument)
-    custody = _custody_module()
-    prepared = {
-        "run": str(fixture.run.resolve()),
-        "connect_id": "unit-connect",
-        "prepare_time_ns": time.time_ns(),
-        "environment_after_setup": custody.environment_record(),
-        "environment_snapshot": custody.environment_snapshot(),
-        "mapped_mat_stats": {},
-        "instrument_files": [],
-        "mat_environment": {
-            "setup_sha256": {},
-            "mat_sha256": {},
-            "symlink": {"link": "target"},
-        },
-    }
-    inputs = fixture.inputs()
-    policy_path = inputs.run / "trace-policy.json"
-    policy_path.write_text(
-        json.dumps({"allowed": {"pinned_mat_libs": []}, "instrument_directories": []})
-    )
-    prepared["trace_policy_sha256"] = R.digest(policy_path)
-    inputs.prestage = prepared
+    inputs, _state, root, _lib = _prepared_mat_fixture(fixture, monkeypatch)
+    prepared = inputs.prestage
+    instrument = R.load_mat_instrument()
     assert R.checked_prepared_mat(inputs)[0] is root
     for key, bad in (
         ("run", "/foreign"),
