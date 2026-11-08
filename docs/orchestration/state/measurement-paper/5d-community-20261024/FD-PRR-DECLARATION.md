@@ -1,4 +1,4 @@
-# FD-PRR DECLARATION: what moves the estimator's retained prior on the 16 cells, a one-factor-at-a-time study in simulation with IBU on the same fake data (2026-11-08, rev 1, for the director; nothing runs)
+# FD-PRR DECLARATION: what moves the estimator's retained prior on the 16 cells, a one-factor-at-a-time study in simulation with IBU on the same fake data (2026-11-08, rev 2, for coverage-5b-audit; nothing runs)
 
 **By:** the valid-region lane (session director-helper-2), at the director's request of 2026-11-08.
 
@@ -9,13 +9,15 @@
   "It is declared, priced, audited and bound before it runs."
 - Compute that resolves a limitation is under `DECISION-20261101-joseph-reopen-1b-and-compute-for-limitations.md`
   item 2 (#640), as `FD-STAB-DECLARATION.md` §7 cites it. A campaign priced above half the group balance goes back to
-  Joseph first. The cap here, 26.5 CPU node-h, is far below that. The director checks the current balance at binding.
+  Joseph first. The cap here, 27.0 CPU node-h, is far below that. The director checks the current balance at binding.
+- **The director's rulings on rev 1's §11 (2026-11-08)** are in §11.1. They are written into the licences.
 
 **Status.**
-- Rev 1 fixes the question, design, readings, price and licences.
-- **The code in §8 is not written yet.** Rev 2 will pin its digests and its test and mutation counts, before
-  coverage-5b-audit's audit. The director rules on the order in §11.
-- Nothing runs before the audit and the director's binding. Every path is relative to `docs/orchestration/` unless it
+- Rev 1 fixed the question, design, readings, price and licences. The director ruled on its four questions and
+  asked for the code with the declaration (§11.1).
+- **Rev 2 adds the code (§8), with its digests and 102 tests.** The mutation receipt follows on this PR (§8.2). It also corrects what rev 1
+  got wrong or left out. Each change is listed in §13.
+- Design and code are audited together by coverage-5b-audit. Nothing runs before that audit and the director's binding. Every path is relative to `docs/orchestration/` unless it
   starts with `nd-unfolding/` or `docs/analysis-note/`. Every `file:line` is at main `52334c34` unless another commit is
   named.
 
@@ -30,14 +32,20 @@
 - each level's ρ, per-cell bias, noise-free χ², p and z at each graded truth, labelled "noise-free, one MC split,
   simulation only";
 - each factor's class at the two flagged truths (§5.1);
-- the IBU-against-(e) classes (§5.2), and whether each level clears the flagged truths under the Table II rule (§5.3);
+- the IBU-against-(e) classes (§5.2);
+- whether each level, and IBU at K = 5, clears or does not clear the flagged truths **at these truths**, under the
+  Table II rule on the noise-free analogue (§5.3);
 - the composite labels of §5.4, each worded "consistent with", as defined there;
 - the measured cost per level.
 
 **NOT CITABLE FOR:**
 - **a cause.** The labels say which factors move the retained prior over the tested levels. They do not establish
   why;
-- **an estimator change.** No level is adopted, whatever it shows (§6);
+- **an estimator change.** No level is adopted, whatever PR-3 shows. A level that clears the flagged truths is a
+  finding about the mechanism, not a new estimator. Any change to the reported procedure would need a new decision by
+  Joseph and its own held-out test (§6; the director's ruling 1);
+- **any held-out performance claim, or any statement that a level "would pass".** Grading at F0b's truths is
+  admissible here only because nothing is selected on them (the director's ruling 2);
 - **Table II or its grades.** Noise-free closures at one MC split are not F0b's pseudo-experiment means. §5.3 is an
   analogue, read relative to its own baseline;
 - **coverage, an interval, or a measurement;**
@@ -181,14 +189,23 @@ readings. The other ten carry §5.3's "no new flag" check and are printed.
 
 - **The algorithm.** REF-G1's IBU, unchanged: D'Agostini with the background as a known additive reco term (`fold`),
   through IBU-1's `unfold_ibu`, on the H2 truth grid, integrated to R00–R15 (`REF-G1-DECLARATION.md:46-54`).
-- **The data.** At each graded truth, the same expectation experiment B0 unfolds, built by `s5p_nullexp`'s own `build`
-  at the same split.
+- **The data.** At each graded truth, the same expectation experiment B0 unfolds. It is not rebuilt: B0's own queue
+  line runs through `s5p_nullexp.main`, unchanged, under B0's namespace check, and is stopped where `build` returns,
+  before the refinement and before any unfold (`prr_ibu.capture`, the pattern of FD-STAB's truth control). The
+  runner's `--out` is moved to an empty scratch directory, which must still be empty afterwards.
 - **The response.** It is binned from the same MC half A that (e) unfolds with, through `ibu1.Half` on those rows. So
   "the same fake data" also means the same simulation. That is the one change from REF-G1, which used the full MC.
 - **K:** 1, 2, 3, 4, 5, 10, 20, 50, 200. K = 5 is primary, as in REF-G1.
+- **The experiments:** the 12 graded truths at split 991000, and A7 GiBUU and the nominal truth at each floor split, for
+  s_IBU (§3.5): 20 in all. Rev 1 defined s_IBU but did not list these eight.
 - **R-ID (descriptive, read by nothing).** The binned Cramér–Rao width of each of the 16 cells, from the same response
   at the analysis exposure, by D-ID's definition (`d-id/REPORT.md:518`). It answers the referees' question of which
-  reported cells are weakly constrained (`sonnet-jinst-methods-r4-2.txt:47-51`). Rev 2 pins the definition's code.
+  reported cells are weakly constrained (`sonnet-jinst-methods-r4-2.txt:47-51`).
+  - **The definition, pinned:** D-ID's `did.fisher` and `did.widths_from_eig`, on the response, prior and known term
+    the nominal truth's `fold` unfold hands `did.ibu` (captured as it calls it). A cell's quantity is its truth count
+    as IBU represents it: each H2 cell's estimate spread over its fine cells by the prior shape (`did.share_matrix`),
+    summed over the fine cells the cell's S1 row covers. The width is relative to the prior's count
+    (`prr_ibu.r_id`).
 - **R-SUP (descriptive, read by nothing): the 11-04 diagnosis's A-S at the reported cells.**
   - **What it prints,** per cell and per graded truth: the unfolding MC half A's sum of weights, sum of squared
     weights and Kish effective count, after the truth reweight, and the largest single-event weight share.
@@ -204,7 +221,7 @@ readings. The other ten carry §5.3's "no new flag" check and are printed.
 - **s_L** is the sample SD, over the five splits, of Δρ_L = ρ_L − ρ_B0. It has 4 degrees of freedom.
 - A factor's s is the s_L of its measured level, applied to all of that factor's levels and at both flagged truths.
   At q3 that is a transfer, and it is labelled as one.
-- **For IBU,** s_IBU is the same SD of ρ_IBU(K = 5) − ρ_B0.
+- **For IBU,** s_IBU is the same SD of ρ_IBU(K = 5) − ρ_B0, from route 2 at the same five splits.
 - **Why splits, not rounding jitter.** A paired difference at one split cancels most MC noise. What is left is how
   much Δρ itself varies with the split. That is the scale against which a level must differ.
 - **Seeds 994001–994004.** They are not 991001–991004, because 991001 appears in two committed tests as the value the
@@ -236,16 +253,26 @@ undefined by construction; they print the RMS of b.
 
 ### 4.2 Noise-free χ², p and z (the Table II analogue)
 
-- **The bias** is b_abs,c = X̂_c − X_c, in cross-section units.
-- **The matrix C_T is Table II's matrix for T:** the reported covariance C_total + C_resp + C_PL,5D, without T's own
-  vertex for the vertex-family truths. It is built by the bound code that made the with-C_PL,5D grades (`FD-CT-5B-ADDITION`'s
-  re-grade, whose products are in `fd/with-cpl/`;
-  `FD-CT-5B-ADDITION-REPORT.md:40`). Rev 2 names the function and pins it.
-- **The statistics:** χ²₁₆ = b_absᵀ C_T⁻¹ b_abs, p from χ²₁₆, and z_c = b_abs,c / √(C_T)_cc.
+- **The bias** is F0b's: r_c = X̂_c / X_c − 1, relative, on R00–R15.
+- **The matrix C_T is F0b's grade matrix for T, relative:** C_e/(f fᵀ) + Σ_{j ≠ own(T)} s_j s_jᵀ + (C_resp + C_PL,5D)/(f fᵀ).
+  - It is built by F0b's own `fd_f0_regrade.leave_out`, with own(T) read from `fd_f0_regrade.TRUTHS`.
+  - The inputs are committed: C_e and f from the with-C_PL,5D data product (`fd/with-cpl/data-product/fd_data_product_cpl.json`),
+    S from `cmodel_5d.json`, and the block `C_resp_plus_C_PL5D` from `fd/with-cpl/block/cpl_block.npz` (`d9aa32fd…`,
+    the block F0b's with-C_PL,5D re-grade added; `FD-CT-5B-ADDITION-REPORT.md:40`).
+  - **f, the data's central value, enters only as the divisor that makes the matrix relative,** as in F0b. No data
+    quantity is formed, and the readout passes F0b's `LeakGuard` before it is written.
+  - **Control C-CT (§7)** checks that these matrices reproduce F0b's committed relative sigmas for all five matrices,
+    and its noise-free `closure_nuwro` grade (χ² and every z). On the committed files they agree to 0 in σ and
+    1.9 × 10⁻¹⁴ in χ² (my arithmetic, rerun by the test `test_c_ct_reproduces_f0b`).
+- **The statistics,** by F0b's `grade` with its noise term zero: χ²₁₆ = rᵀ C_T⁻¹ r, p from χ²₁₆, and
+  z_c = r_c / √(C_T)_cc.
 - **Flagged** under Table II's rule: p < 0.01, or some |z_c| > 2 (`manuscript-methods-r4.blind.txt:1031-1033`).
 - **Disclosed:**
   - there is no pseudo-data noise term, so this is the bias alone against the reported matrix;
-  - B0's flagged set need not equal Table II's. It is printed beside Table II's and read by nothing.
+  - B0's flagged set need not equal Table II's. It is printed beside the committed one and read by nothing.
+
+**Rev 1 got this wrong.** It defined the bias in cross-section units against an absolute matrix. F0b grades the
+relative bias against the relative matrix, and rev 2 follows the bound code.
 
 ## 5. Readings, fixed before any number is read
 
@@ -254,7 +281,8 @@ undefined by construction; they print the RMS of b.
 At T ∈ {A7 GiBUU, q3} and factor F with non-baseline levels L, at split 991000:
 - **The bar** is δ_F = max(0.05, 9.03 s_F).
   - 9.03 is the two-sided Student-t quantile on 4 degrees of freedom at 0.01/12, Bonferroni over the 12 primary
-    readings of §5.1 and §5.2 at familywise 0.01. The arithmetic is mine; rev 2 recomputes it in a test.
+    readings of §5.1 and §5.2 at familywise 0.01. The code uses 9.02936702750999 (`prr_read.T_Q`), and
+    `test_t_quantile` recomputes it with `scipy.stats.t.ppf`.
   - The absolute floor of 0.05 keeps a tiny s from making a trivial change "real".
 - **The classes:**
   - **reduces** if some L has ρ_L ≤ ρ_B0 − δ_F and none has ρ_L ≥ ρ_B0 + δ_F;
@@ -274,11 +302,14 @@ At each flagged truth T:
     fixed. The 0.05 is the bar.
   - ρ_IBU at every K is printed.
 
-### 5.3 PR-3: does a level clear the flagged truths? (descriptive, one reading per level)
+### 5.3 PR-3: does a level clear the flagged truths at these truths? (descriptive, one reading per level)
 
 At each level L, and for IBU at K = 5:
-- **clears** if neither A7 GiBUU nor q3 is flagged under §4.2's rule;
+- **"clears at these truths"** if neither A7 GiBUU nor q3 is flagged under §4.2's rule; otherwise **"does not clear
+  at these truths"**. Those are the only wordings (the director's ruling 2);
 - **without new flags** if, in addition, no graded truth unflagged at B0 is flagged at L.
+- A level that clears is a finding about the mechanism. It is not a new estimator, and it is not evidence that the
+  level would pass a held-out test (§6).
 
 The full 12 × levels table of χ², p and max |z| is printed.
 
@@ -314,7 +345,8 @@ R-ID and R-SUP are printed beside these labels and enter none of them.
 
 ## 6. What the readings can and cannot change
 
-- **No estimator change follows from any reading.** That includes a level that "clears" in §5.3.
+- **No estimator change follows from any reading.** That includes a level that "clears at these truths" in §5.3. The
+  director ruled so on 2026-11-08 (§11.1, ruling 1).
   - This is the FD-STAB precedent: §6's terminal branches, "No estimator change proceeds from this probe"
     (`FD-STAB-DECLARATION.md:214`), applied at NONE_PASS (`OUTCOME-20261105-fd-stab-none-pass.md:40-42`). It is also
     the 11-04 scope's e1 ("not now"; `scope-referee-analysis-20261104/REPORT.md:458`).
@@ -328,29 +360,74 @@ R-ID and R-SUP are printed beside these labels and enter none of them.
 
 ## 7. Controls (each gates the readings; any failure is a STOP reported to the director)
 
-| control | check |
-|---|---|
-| **C-PINS** | every imported bound module and every input equals its binding's digest at run time: `s5p_nullexp.py`, `s5p_numerics.py`, `estimator_stability_probe.py` (truth plumbing only), `ref_g1.py`, `ibu1.py`, `s1_assemble.py`, the truth files, and the C_T inputs |
-| **C-PAIR** | B0's unfolded array at split 991000 equals FD-STAB's control closure **bitwise** at nominal and at A7 GiBUU. The FD-STAB products are read with O_NOATIME; the thread layout is the same, 8 lanes × 32 threads. A mismatch stops the study: the pairing with the bound pipeline has failed. RS1 met the same kind of check on FD-STAB's control stability products, 21 of 21 bitwise (`OUTCOME-20261108-rs1-rounding-mechanism.md`, G1) |
-| **C-MASK** | the F4 wrapper with all five columns is a bitwise pass-through of B0 (at nominal, in the dry run) |
-| **C-COLS** | the classifier columns' order is (p_T, p_∥, E_avail, q3, W), read from the experiment's own edges and keys, before any mask is applied |
-| **C-IBU** | the route-2 adapter, given REF-G1's NuWro closure experiment, reproduces REF-G1's committed `R2.nuwro.median_abs_residual_ibu` to 10⁻¹² relative |
-| **C-SPLIT** | every level's split key equals B0's at the same seed and truth |
-| **C-CAP** | every product records `capacity`, `iters` and `mc_fraction`, and each equals its level's declared value |
-| **C-FIN** | every X̂, X, P and C_T is finite, and C_T is positive definite |
+| control | check | where |
+|---|---|---|
+| **C-PINS** | every bound module equals its digest before the runner is imported: the 15 in `prr_probe.CODE_PINS` (the runner `s5p_nullexp.py` and every module it imports, the unfold and loop, the truths, FD-STAB's truth plumbing, and the refinement driver `2d-unfolding/unfold_2d_omnifold_unbinned.py`, which `s5n_pseudo` loads at call time), and REF-G1's and IBU-1's five in `prr_ibu.CODE_PINS`. Each product's recorded code digests must be these. Each staged input equals its pin (§10.4). Each product's runner digest, and its hypothesis and alternative digests by FD-STAB's `expected_pin`, are checked by the reader. The reader's committed inputs are in `prr_read.INPUT_PINS` | `prr_probe.check_pins`, `stage`; `prr_read.meta_problems`, `check_inputs` |
+| **C-PAIR** | B0's unfolded array at split 991000 equals FD-STAB's control closure **bitwise** at nominal and at A7 GiBUU, read from their staged copies, each carrying its pin (`3753f414…`, `b4d2ba5c…`; `fd/receipts-stab-a1r/{dry,full}/SHA256SUMS`). Both B0 tasks are in the dry run, so the pairing is checked before any full job. A mismatch stops the study. Same thread layout as FD-STAB, 8 lanes × 32 threads. FD-STAB's production modules are unchanged between its pin `cc54d86f` and `52334c34` (`git diff --stat cc54d86f 52334c34` on all 15 is empty) | `prr_probe.pair`, at the end of `prr_dry` |
+| **C-MASK** | the five-column mask (level O5, at nominal, in the dry run) equals B0 bitwise, dtype included | `prr_probe.pair`; recomputed by `prr_read.c_mask` |
+| **C-COLS** | the input's axis names are (p_T, p_∥, E_avail, q3, W) in that order (`pvl_lib.npz_axes`), and its edges are the pv-ladder's 5D fine grid (`pvl_lib.check_edges`). Read from the input file at every task, before any mask is applied, and recorded in the product | `prr_probe.check_columns`; `prr_read` |
+| **C-IBU** | (a) the route-2 adapter, given REF-G1's NuWro closure experiment, reproduces REF-G1's committed `R2.nuwro.median_abs_residual_ibu` (0.03322119601639817) to 10⁻¹² relative; (b) route 2's truth on R00–R15 equals (e)'s B0 truth at every one of its 20 experiments to 10⁻¹² relative | `prr_ibu.c_ibu`; `prr_read.route2` |
+| **C-CT** | the rebuilt grade matrices reproduce F0b's committed relative sigmas and its noise-free `closure_nuwro` grade (§4.2) | `prr_read.grade_matrices` |
+| **C-SPLIT** | at each seed, every product's split key is `s5c_pseudo.split_key_for(seed)` | `prr_read.products` |
+| **C-CAP** | every product records its level's declared and recorded `iters`, `capacity` and `mc_fraction`, and they are equal. A masked level records exactly one loop call through its mask, with its columns; an unmasked level records none | `prr_probe.install`; `prr_read.meta_problems` |
+| **C-FIN** | every X̂, X, P and IBU estimate is finite, every truth integral positive, and every C_T positive definite | `prr_read` |
 
-## 8. Code (to be written; rev 2 pins it)
+## 8. Code
+
+### 8.1 The files
+
+All under `nd-unfolding/prior_retention/`. **No production module is edited.** The runner is `s5p_nullexp.py`,
+unchanged. Each wrapper rebinds a name for one invocation and restores it on exit, as FD-STAB's does.
 
 | file | role |
 |---|---|
-| `nd-unfolding/prior_retention/prr_probe.py` | the level table; the F4 column mask (a pass-through around `omnifold_nn_core.omnifold_loop` for one invocation, slicing the classifier inputs only); the task queue; the budget gate, ported from `estimator_stability_probe.project` and `gate` with its tests. **No production module is edited**; the runner is `s5p_nullexp.py`, unchanged |
-| `nd-unfolding/prior_retention/prr_ibu.py` | route 2: `s5p_nullexp`'s `build` at expectation, then REF-G1's `unfold_experiment` on `ibu1.Half` of MC half A; R-ID; R-SUP |
-| `nd-unfolding/prior_retention/sbatch_prr.sh` | the jobs of §10, on 8 lanes, every task through the gate; a DONE receipt only for a complete, clean run, as `sbatch_fd_stab.sh` |
-| `nd-unfolding/prior_retention/prr_read.py` | §4–§5: completeness, controls, quantities, readings |
-| `nd-unfolding/prior_retention/test_prr.py`, `prr_mutation.py` | every reading tested in the direction it acts and the other, the gate, the refusals; planted defects, each killed by a named test |
+| `prr_probe.py` | the level table (14 levels, with O5 for C-MASK); the truths, read from FD-STAB's `CLOSURES`; the task list, jobs and queues; the namespace check on the runner's own parse; the F4 column mask around `omnifold_nn_core.omnifold_loop`; C-PINS and C-COLS; the gate and its packing price; `stage` and `verify-stage` (§10.4); `pair` (C-PAIR, C-MASK); `limit` (each job's `--time` as Slurm reads it) |
+| `prr_ibu.py` | route 2: the capture, REF-G1's `unfold_experiment` on `ibu1.half_from_experiment` (half A), R-ID, R-SUP and C-IBU, under REF-G1's O_NOATIME read guard |
+| `prr_read.py` | completeness; the controls; §4's quantities; §5's readings; F0b's `LeakGuard` on the readout |
+| `sbatch_prr.sh` | the five jobs. It refuses unless the deploy is the pin, the job is named `prr_<mode>` and Slurm's TimeLimit is at most the declared limit. It writes a DONE only for a complete, clean run, as `sbatch_fd_stab.sh` does |
+| `test_prr.py` | 102 tests (§8.2) |
+| `prr_mutation.py` | 60 planted defects, each to be killed by a named test, run in a mirrored tree (§8.2) |
 
-**Not testable locally:** LightGBM and the real inputs are absent here, so the tests use stand-in estimators on a
-synthetic grid, as FD-STAB's do. The dry run is the first run with LightGBM.
+**Digests** (sha256 of the files at this revision's commit; the binding pins them):
+
+| file | sha256 |
+|---|---|
+| `prr_probe.py` | `f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232` |
+| `prr_ibu.py` | `17acad82bad7c43f45c423e41039eb81381f5acab15ecdf983ad0d023848d046` |
+| `prr_read.py` | `f35bc3282b50215dd583b76b0d6a747f90185e4b96b6e3f5b693d42c01166372` |
+| `sbatch_prr.sh` | `810bd0f46c5973dea23c0a02296b9c2710358c7a92e071d7aa4102abcd041c5c` |
+| `test_prr.py` | `32fee7bf0715ff62fa213405c7b2dcb3e32e95af028f26a6b1d3da4c895e245a` |
+| `prr_mutation.py` | `3ad89d64337d6bd0e4bae91f76db8cb692b1588b8b934795caa236b26ac2064d` |
+
+The serial test log's header records the same six (`fd/receipts-prr/rev2/tests-serial.txt`).
+
+### 8.2 Tests and the mutation receipt
+
+- **The suite has 102 tests.** At this commit, 94 were run in one serial process with every BLAS and OpenMP thread
+  cap at 1: **Ran 94 tests, OK** (`fd/receipts-prr/rev2/tests-serial.txt`).
+  - **The other 8, the `JobScript` class, are held, not skipped by an edit.** The director asked on 2026-11-08 that
+    nothing fan out on the shared machine while Codex2's #848 verification runs, and that class runs
+    `sbatch_prr.sh`, which starts 8 gate processes at once by design.
+  - They were selected out by the test loader, with no test edited. They ran and passed in the earlier full run of
+    the suite before the throttle, at 101 tests on the code before the last C-PINS addition (the refinement driver's
+    pin and the product code-digest check, with its test `test_a_product_made_by_other_code_refuses`). That run is
+    not a receipt for this commit.
+  - The full 102 run on this PR before the audit reads it.
+- The tests run without LightGBM, ROOT or the cluster:
+  - the estimators are deterministic stand-ins;
+  - the inputs are synthetic rows on the real 5D fine grid, FD-STAB's test helpers;
+  - REF-G1's own `Lib`, `worlds` and `unfold_experiment` run on them, with the real H2 cells and S1 rows.
+- **They include:**
+  - every queue line through the real runner's parser, all 181;
+  - the job script, run on a stand-in deploy with the real gate;
+  - C-CT on the committed files;
+  - the readings end to end on a planted run.
+- `python3 -B nd-unfolding/prior_retention/prr_mutation.py`: **pending.** It is held for the same reason, and runs
+  serially when the director clears the machine. Its receipt is added to this PR. A first run at 4 mutants at once
+  was stopped at the director's request before it reported, and is not a receipt.
+- **The receipts** are in `fd/receipts-prr/rev2/`: the serial log now, and the held runs' logs when they have run.
+- **Not testable here:** LightGBM, the real inputs, `squeue` and O_NOATIME (macOS has none, so the tests read with a
+  zero flag). The dry run is the first run with each.
 
 ## 9. Disclosures and limits
 
@@ -371,6 +448,10 @@ synthetic grid, as FD-STAB's do. The dry run is the first run with LightGBM.
   need noisy ensembles per level, about 20× this price. It is out of scope.
 - **The cost per K and per capacity is unmeasured,** so the dry run measures it before any full job (§10).
   <!-- absence-ok: describes this declaration's own pricing assumption, measured by its own dry run -->
+- **The staged bank directory holds only `cv.npz`.** Under `--no-nuisance` the runner reads nothing else from the bank:
+  it globs the bank's universe files to list bands and flux universes, and draws none. So each product's meta records
+  `model_bands` as empty, where FD-STAB's lists the bank's bands. The unfolded arrays do not depend on it, and C-PAIR
+  checks that bitwise. The detector directory is never read under `--no-nuisance`.
 
 ## 10. Price, caps and job names
 
@@ -401,92 +482,162 @@ u = one B0 unfold.
 | F2: three capacities × 12 | 36 | 234.0 |
 | F3: quarter × 12 | 12 | 12.0 |
 | F4: four masks × 12 | 48 | 48.0 |
+| C-MASK: O5 at nominal | 1 | 1.0 |
 | floor: 4 splits × (nominal + A7 GiBUU at B0, K = 20, (400, 31), quarter, O2) | 24 | 48.0 |
-| **total, (e)** | **180** | **550.8** |
-| route 2: IBU at 12 truths × 9 K, plus R-ID, plus C-IBU | — | priced apart: 0.25 node-h. REF-G1's whole run was 0.225 (`OUTCOME-20261106-ref-g1-r1-differ.md:55`) |
+| **total, (e)** | **181** | **551.8** |
+| route 2: IBU at 20 experiments × 9 K, plus R-ID, R-SUP and C-IBU | — | priced apart: 0.25 node-h. REF-G1's whole run was 0.225 (`OUTCOME-20261106-ref-g1-r1-differ.md:55`) |
 
-- **Expected:** 550.8 × 0.022828 = **12.57** node-h, plus 0.25 for IBU: **about 12.8 CPU node-h**.
-- **At the conservative unit:** 550.8 × 0.036875 = 20.31, plus 0.5.
+- **Expected:** 551.8 × 0.022828 = **12.60** node-h, plus 0.25 for IBU: **about 12.9 CPU node-h**.
+- **At the conservative unit:** 551.8 × 0.036875 = 20.35, plus 0.5.
+- `prr_probe.all_tasks` is the list, and the tests check its count (181) and its units (551.8).
 
 ### 10.3 Jobs, `--time` and the cap
 
 Every job runs on one node with 8 lanes, CPU only, QOS regular, `--exclusive --no-requeue`. Every job is under 12 h.
 Nothing is written to CFS. The charge is taken from `sacct`.
 
-| job name | contents | units | lane wall at 1,062 s | `--time` | node-h at most |
-|---|---|---:|---|---|---:|
-| `prr_dry` | one nominal task per level type (13), split 991000; C-PAIR, C-MASK, C-COLS, C-CAP | 41.9 | the longest, (1000, 63), 4.4 h | 4:45:00 | 4.75 |
-| `prr_iter` | the rest of F1 | 180.4 | 6.65 h | 7:30:00 | 7.50 |
-| `prr_cap` | the rest of F2 | 214.5 | 7.9 h | 9:00:00 | 9.00 |
-| `prr_misc` | the rest of B0, F3 and F4, and the floor splits | 114.0 | 4.2 h | 4:45:00 | 4.75 |
-| `prr_ibu` | route 2, R-ID, R-SUP and C-IBU | — | — | 0:30:00 | 0.50 |
-| **total** | | **550.8** | | | **26.50** |
+| job name | contents | tasks | units | packed lane wall at 1,062 s | `--time` | node-h at most |
+|---|---|---:|---:|---|---|---:|
+| `prr_dry` | one nominal task per level (13), O5 at nominal (C-MASK), B0 at A7 GiBUU (C-PAIR); then C-PAIR and C-MASK | 15 | 43.9 | 4.43 h (the (1000, 63) task) | 5:15:00 | 5.25 |
+| `prr_iter` | the rest of F1 | 44 | 180.4 | 6.73 h | 7:30:00 | 7.50 |
+| `prr_cap` | the rest of F2, except (1000, 63) at the last four truths | 29 | 154.5 | 5.75 h | 6:30:00 | 6.50 |
+| `prr_misc` | the rest of B0, F3 and F4, (1000, 63) at A7 GENIE CV, GENIE+MEC, NuWro and GiBUU, and the floor splits | 93 | 173.0 | 6.49 h | 7:15:00 | 7.25 |
+| `prr_ibu` | route 2, R-ID, R-SUP and C-IBU | — | — | — | 0:30:00 | 0.50 |
+| **total** | | **181** | **551.8** | | | **27.00** |
 
-**Cap: 26.5 CPU node-h, the sum of the five limits.** Each full job's limit is its lane wall at the conservative unit
-over 0.9, rounded up to a quarter hour, so the gate's 0.9 rule passes at that unit. It binds three ways:
+**Cap: 27.0 CPU node-h, the sum of the five limits.**
+- Each full job's limit is its queue's packed lane wall at the conservative unit, over 0.9, rounded up to a quarter
+  hour. The queue is fed longest first to the lane that frees first, as `xargs -P 8` does (`prr_probe.price`).
+- The dry job adds 0.25 h for its staging, verify and pair steps, which the gate does not project.
+- At the expected unit the packed walls are 2.7, 4.2, 3.6 and 4.0 h.
+- A test fails if any limit is below what `price` requires, or if the limits do not sum to the cap.
+
+**The packing arithmetic** (`prr_probe.price` and `pack`; u = 1,062 s of one lane):
+
+| job | its tasks, by units | the 8 lane totals, u | the longest lane | its wall | wall / 0.9 | `--time` |
+|---|---|---|---|---|---|---|
+| `prr_dry` | 15 × 1, 10 × 1, 4 × 2, 2 × 1, 1 × 8, 0.5 × 1, 0.4 × 1 | 15.0, 10.0, 4.0, 4.0, 3.0, 3.0, 2.5, 2.4 | 15 | 15 u = 4.425 h | 4.917 h, + 0.25 = 5.167 h | 5.25 h |
+| `prr_iter` | 10 × 11, 4 × 11, 2 × 11, 0.4 × 11 | 22.8 × 3, 22.4 × 5 | 10 + 10 + 2 + 0.4 + 0.4 | 22.8 u = 6.726 h | 7.473 h | 7.5 h |
+| `prr_cap` | 15 × 7, 4 × 11, 0.5 × 11 | 19.5 × 5, 19.0 × 3 | 15 + 4 + 0.5 | 19.5 u = 5.753 h | 6.392 h | 6.5 h |
+| `prr_misc` | 15 × 4, 4 × 8, 1 × 81 | 22.0 × 5, 21.0 × 3 | 15 + 7 × 1 | 22.0 u = 6.490 h | 7.211 h | 7.25 h |
+
+- **Unsplit, for comparison:** with all 11 (1000, 63) tasks in `prr_cap`, three lanes carry two of them, 30 u or more.
+  That is 8.85 h, so the job would need 10.0 h, and `prr_misc` 5.0 h, for a sum of 28.25 with the dry job and route 2.
+- **The queue order** is longest first, ties broken by task id, and each task goes to the lane that frees first. The
+  lane totals above are that order's, not an optimum's.
+
+**Rev 1's limits were wrong.** It priced each job's lane wall as its units over 8 lanes, as if perfectly packed. Whole
+tasks do not pack that way:
+- 11 tasks of (1000, 63) at 15 u each put two on three lanes of `prr_cap`. That job needs 10.0 h, not rev 1's 9.0.
+- Moving four of them to `prr_misc` gives the smallest total of the splits I tried that keep each factor's other
+  levels together: 27.0, against 28.25 unsplit.
+- So the cap rises from rev 1's 26.5 to 27.0. That touches the director's ruling 4 (§11.2).
+
+**It binds three ways:**
 1. **Slurm.** On one node a job cannot charge more than its `--time`, so the five `--time` limits sum to the cap.
-2. **The gate.** The full jobs start only after `prr_dry` completes, every one of its tasks has ended and C-PAIR has
-   passed.
-   - Each full job's gate projects its whole queue, tail included, from the dry run's measured per-level rates, packed
-     onto 8 lanes as `xargs -P 8` feeds them.
-   - If a projection exceeds 0.9 × that job's `--time`, the job does not start. The study comes back to the director
+   - The job script refuses unless its Slurm TimeLimit is at most the declared limit (`prr_probe.py limit <mode>`,
+     printed as H:MM:SS).
+   - It also refuses unless its job name is `prr_<mode>`.
+2. **The gate.** Every task starts only through `prr_probe.py gate`.
+   - It projects the job's whole queue, tail included, packed onto 8 lanes.
+   - If the projection exceeds 0.9 × the job's `--time`, nothing further starts. The study comes back to the director
      with the measured rates, to be repriced.
-   - Every level type is in the dry run, so nothing starts on an assumed rate.
+   - In the dry job, a level not yet measured is priced at 657 s × its assumed units.
+   - A full job starts only after `prr_dry` has completed: its DONE, every one of its tasks ended, and C-PAIR and
+     C-MASK passed. A full job's gate refuses any level without a dry-run rate, so nothing starts on an assumed rate.
 3. **No raise.** A full job's `--time` can be lowered from the dry run's measurements, never raised without an
    addendum the director binds.
 
 **After a stop:**
-- there is no resume without an addendum the director binds;
+- there is no resume without an addendum the director binds. The script refuses if the job's log exists;
 - the products already made are kept and pinned;
 - nothing is read until every job has completed. An incomplete study is reported as INCOMPLETE.
 
 **Job-name family: `prr_`** (`prr_dry`, `prr_iter`, `prr_cap`, `prr_misc`, `prr_ibu`).
-- No committed file uses it: `git grep -i -E '\bprr_'` over the tree at `52334c34` gives no hit.
+- No committed file uses it.
   <!-- absence-ok: scoped to the stated git grep over the whole tree at the named commit -->
-- The director tells every fenced lane before any go (the job-family rule).
+  Search: `git grep -n -i -E '(^|[^A-Za-z0-9])prr_'` over the tree at `52334c34` gives one hit, a binary PDF.
+- The director tells every fenced lane before any go (the job-family rule). The director has noted it (§11.1).
+
+**Order of the jobs:** `prr_dry` first. Then `prr_iter`, `prr_cap`, `prr_misc` and `prr_ibu`, in any order, each
+after the dry run's DONE.
 
 **Who runs it.** A cluster lane the director assigns at binding submits the jobs, watches them and charges them from
 `sacct`. This lane writes the code and does not connect.
 
-### 10.4 Calendar and inputs
+### 10.4 Inputs, the shared reads and the connect design
 
-- **The inputs are FD-STAB's:**
-  - `of_inputs_5d.npz` and `bkg_dump.npz` (pscratch, the s5p bank);
-  - the s5p detector directory;
-  - the pv-ladder closure ratio;
-  - for route 2, also IBU-1's and REF-G1's world inputs and the S1 bank.
-- **C-PAIR also reads** FD-STAB's control closure products under `/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/`.
-- **Their exposure dates are not recorded here.** As FD-STAB did, a DTN pins-and-atime check precedes the dry run
-  (`FD-STAB-DECLARATION.md:349-351`). If an input is missing, differs or is exposed before the planned run, the study
-  stops and reports.
-- **Overlap with ENS1.** The ensemble-estimator lane (director-helper-3) reads the same inputs. It runs FD-STAB's 18
-  closures at seed 991000 and compares them with the same FD-STAB control products
-  (`fd/rounding-stability-20261106/ensemble/ENS1-DECLARATION.md:118-127`).
-  - Its products and job names are its own. This study writes nothing it reads.
-  - Both read FD-STAB's control products, which pushes their atime, and so their exposure, later.
-  - The director's job-family notice goes to that lane too.
-- The jobs read through the production loaders, which update atime. That is legitimate use
-  (`DECISION-20261101-joseph-eventloops-copy-to-cfs.md` item 4). Any inspection read uses O_NOATIME.
+**Every file outside the deploy that the jobs read is staged once,** by `prr_dry`, before its queue starts
+(`prr_probe.py stage`, from `prr_probe.SOURCES`):
 
-## 11. For the director: design questions that touch rulings
+| role | source | pin | where the pin comes from |
+|---|---|---|---|
+| `of_inputs_5d` | `/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz` | `07fccc1a…` | `s1_assemble.INPUT_NPZ_SHA256`; REF-G1's preconditions listing |
+| `bkg_dump` | `/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz` | `2addac8f…` | `s1_assemble.BKG_SHA256`; the listing |
+| `bank_cv` | `…/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz` | `072643e1…` | `s1/PRESERVE-INVENTORY.sha256`; the listing |
+| `closure_ratio_nuwro` | `/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json` | `38e47eb6…` | `fd_f0_regrade.RATIO["closure_nuwro"]` |
+| `fd_stab_control_nominal`, `fd_stab_control_A7_gibuu` | FD-STAB's control closures under `/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/` | `3753f414…`, `b4d2ba5c…` | `fd/receipts-stab-a1r/{dry,full}/SHA256SUMS` |
 
-1. **No estimator change (§6).** Is FD-STAB §6's terminal rule the rule here: no level is adopted, whatever PR-3 shows?
-   The licences in the header assume yes.
-2. **F0b's truths as the object.** FD-STAB §3.1's selection-contamination rule kept F0b's truths out of a stability
-   input that selected a candidate. Here nothing is selected and the graded truths are the subject. Is grading at them
-   admissible under that rule?
-3. **The order of work.** Rev 1 is design only, and the code is not written. Should I write the code now and send rev 2
-   with digests for the audit? Or would you rule on the design first?
-4. **The cap.** 26.5 CPU node-h under the 11-01 authority. You check the current balance against the half-balance
-   rule.
+The listing is `fd/receipts-ref-g1/preconditions/listing.json`.
 
-The other choices are the lane's, as the brief allows:
-- the levels;
-- ρ's definition;
-- the bars 0.05 and 9.03 s;
-- IBU on MC half A;
-- background-inclusive pseudo-data;
-- the split floor.
+**How each file is staged:**
+- It is copied once through O_NOATIME, by REF-G1's `copy_noatime`, into `<OUT>/stage/`. The digest is taken in the
+  same pass, and the copy is refused unless that digest is the pin.
+- **Its own stat is recorded before and after the copy:** size, mtime, atime and inode. The copy is refused if any of
+  them moved.
+- **Only per-file stat records are used.** No directory's atime is read or compared: ENS1's stat listing of the bank
+  directory moved that directory's atime on 2026-11-08 (#940), and the director ruled it out as a control.
+- **No absolute atime is expected.** The before-stat is whatever the file shows at staging. ENS1 stage 1's bound
+  plain reads left `of_inputs_5d.npz` and `bkg_dump.npz` at 15:42:54Z, and ENS1 stage 2 will move them again. The
+  check is only that this study's own copy moved nothing.
+
+**After staging:**
+- Every task reads only the staged copies. The queues point the runner's `--npz`, `--bkg`, `--bank` and the closure
+  ratio at them (`prr_probe.py tasks --stage-dir`).
+- Each later job re-verifies every copy's digest before its queue starts (`verify-stage`).
+- Route 2 reads under REF-G1's read guard, which refuses a plain read of anything under `/pscratch` or `/global/cfs`
+  outside the repository, the stage and its own output.
+- **So after the dry run's one copy, no job of this study touches a shared file.**
+
+**Sharing with ENS1** (the director's ruling of 2026-11-08):
+- ENS1 stage 2 runs first.
+- The two lanes' connects never copy at the same time.
+- Both use noatime copies.
+- The cluster lane confirms the first two before `prr_dry` is submitted.
+
+**The rest:**
+- The deploy is a clean clone at the bound commit on pscratch. Its committed truth files are read from it.
+- As FD-STAB did, a DTN pins check precedes the dry run (`FD-STAB-DECLARATION.md:349-351`). Staging then re-checks
+  every pin, so a missing or changed input stops the study before any unfold.
+
+## 11. Rulings
+
+### 11.1 The director's rulings on rev 1 (2026-11-08)
+
+1. **FD-STAB §6's terminal rule applies.**
+   - No level is adopted, whatever PR-3 shows.
+   - A level that clears the flagged truths is a finding about the mechanism, not a new estimator.
+   - Any change to the reported procedure would need a new decision by Joseph and its own held-out test.
+   - Written into the licences and §6.
+2. **Grading at F0b's truths is admissible, because nothing is selected.**
+   - FD-STAB §3.1's contamination rule bars selection on those truths, not description.
+   - NOT CITABLE FOR now includes any held-out performance claim and any statement that a level "would pass".
+   - PR-3 is worded "clears / does not clear at these truths" (§5.3; `prr_read.LABELS`).
+3. **Write the code now.** Rev 2 comes with the digests, the tests and a mutation receipt, and design and code are
+   audited together.
+4. **26.5 node-h was within the 11-01 authority.**
+   - All the new caps together come to about 180 node-h, far below half the balance.
+   - The balance is re-read at the first connect.
+- **Overlap with ENS1:** ENS1 stage 2 first, connects never copying at the same time, noatime copies for both, per-file
+  stat records only (§10.4).
+
+### 11.2 For the director: what rev 2 changes that touches a ruling
+
+1. **The cap, 26.5 → 27.0 node-h** (§10.3). Rev 1's limits assumed perfect packing; with whole tasks on 8 lanes,
+   `prr_cap` needed 10.0 h. The repacked limits sum to 27.0, and the expected cost is unchanged at about 12.9.
+
+Everything else in §13 is the lane's to choose under the brief: the R-ID definition, the IBU floor experiments, the
+extra dry-run tasks, F0b's relative grade convention and the staged inputs.
 
 ## 12. Not changed
 
@@ -494,6 +645,22 @@ The other choices are the lane's, as the brief allows:
   - the reported result R00–R15 and every covariance block;
   - every fake-data readout, Table II and REF-G1;
   - the paper and the note.
-- **No code is edited.** No bound file is touched.
+- **No production or bound file is edited.** The new code is under `nd-unfolding/prior_retention/` only.
 - **Nothing is run, submitted, deposited or tagged.**
 <!-- absence-ok: a statement about this declaration's own status -->
+
+## 13. What rev 2 changes from rev 1
+
+| § | change | why |
+|---|---|---|
+| licences, §5.3, §6 | the director's rulings 1 and 2: no adoption whatever PR-3 shows; NOT CITABLE FOR held-out claims and "would pass"; PR-3 worded "clears / does not clear at these truths" | §11.1 |
+| §4.2 | the χ² grades F0b's relative bias X̂/X − 1 against F0b's relative grade matrix, built by `fd_f0_regrade.leave_out` from committed files, with control C-CT. Rev 1 wrote an absolute bias against an absolute matrix | rev 1 did not follow the bound code's convention |
+| §3.4, §3.5 | route 2 also runs A7 GiBUU and the nominal truth at the four floor splits (20 experiments), which s_IBU needs | rev 1 defined s_IBU without listing them |
+| §3.4 | the capture: B0's own queue line, stopped where `build` returns, with `--out` moved to scratch | the runner makes its output directory before building; found by a test |
+| §3.4 | R-ID's definition pinned | rev 1 deferred it to rev 2 |
+| §7 | C-CT added; C-IBU (b), route 2's truths against (e)'s; each control names its code | — |
+| §10.2, §10.3 | O5 at nominal added (C-MASK; rev 1 used it without counting it), and B0 at A7 GiBUU moved into the dry run so C-PAIR is complete before any full job: 181 tasks, 551.8 u. Limits repacked: 5.25, 7.5, 6.5, 7.25, 0.5; cap 27.0 | rev 1's limits assumed perfect packing (§10.3) |
+| §10.3 | the job script checks its job name and Slurm TimeLimit | a `--time` in the wrong format would otherwise pass unseen |
+| §10.4 | every shared read staged once through O_NOATIME with per-file stat records; no directory atime and no absolute atime used | the director's sharing ruling and note of 2026-11-08 |
+| §8 | the code, its digests, 102 tests and the mutation receipt | ruling 3 |
+
