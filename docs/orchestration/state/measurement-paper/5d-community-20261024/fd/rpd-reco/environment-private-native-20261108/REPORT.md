@@ -4,6 +4,8 @@ The code separates a private exact-value environment comparison from its committ
 
 C1 and C2 were closed by the [independent round-1 review](https://github.com/josephbaileyy/MINERvA-OmniFold/pull/848#issuecomment-6717323539) at `2ed446b4`, tested at `91dbf0a7`. That review reproduced 185 tests, the 185-test comment-only control, and 175 killed mutants. It also corrects the earlier X17 KeyError claim: the existing required-field set already refused a legacy prepare with MAT_PREPARE_PRESENT. The held low findings remain held. This delta answers C3 and the subsequently measured round-2 environment refusal; it does not claim native-platform readiness.
 
+The ROOT Python citation is corrected to raw-file lines 14–20 (assignments at 14, 17 and 20); the pinned file bytes are unchanged. The 226/195 outputs below remain the original verification at the stated head. The [subsequent round-2 audit](https://github.com/josephbaileyy/MINERvA-OmniFold/pull/848#issuecomment-6718925944) is NO-GO on the added/missing import-pin test paths and that citation; the follow-up repair adds those test paths without changing production predicates.
+
 ## C3: enforce the private-prepare boundary
 
 Both prepare paths write their canonical JSON to an owner-only sibling directory outside the run: `.rpd-private/<run-and-connect-identity>/<prepare-name>.json`. The leaf directory is 0700 and the canonical file is 0600. The writer refuses CFS and protected-root overlap before creating a private directory or file. The reader checks the file and directory ownership/permissions, the exact location and run identity, the public reference digest, and the canonical digest. It reads the canonical JSON directly; Inputs stages only the public reference, never the fingerprints.
@@ -28,7 +30,7 @@ The platform record reports ROOT 6.28/12. The relevant upstream source is v6-28-
 | --- | --- |
 | ROOTSYS derives from the resolved libCore location | [TUnixSystem.cxx:453–460](https://github.com/root-project/root/blob/v6-28-12/core/unix/src/TUnixSystem.cxx#L453-L460) |
 | CLING_PREBUILT_MODULE_PATH is built and assigned during interpreter initialization | [TCling.cxx:1468–1480](https://github.com/root-project/root/blob/v6-28-12/core/metacling/src/TCling.cxx#L1468-L1480) |
-| CLING_STANDARD_PCH, CPPYY_API_PATH and CPPYY_NO_ROOT_FILTER are assigned their fixed values | [ROOT/__init__.py:9–16](https://github.com/root-project/root/blob/v6-28-12/bindings/pyroot/pythonizations/python/ROOT/__init__.py#L9-L16) |
+| CLING_STANDARD_PCH, CPPYY_API_PATH and CPPYY_NO_ROOT_FILTER are assigned their fixed values | [ROOT/__init__.py:14–20](https://github.com/root-project/root/blob/v6-28-12/bindings/pyroot/pythonizations/python/ROOT/__init__.py#L14-L20) |
 
 A local libc.setenv probe demonstrates that Python's os.environ can retain its old value while an implicitly launched child inherits the new native value; an explicit environment mapping preserves the declared launch value. NATIVE-ENVIRONMENT-PROBE.json records only a disposable probe key. Python [documents the cached mapping](https://docs.python.org/3.11/library/os.html#os.environ). The source and probe establish the mechanism and motivate the boundary; they do not replace a new native MAT prologue measurement.
 

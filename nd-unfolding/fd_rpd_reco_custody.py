@@ -137,7 +137,7 @@ def environment_diff(
 # ROOT v6-28-12: core/unix/src/TUnixSystem.cxx:453-460 and
 # core/metacling/src/TCling.cxx:1468-1480. These are import effects,
 # never exclusions from a subsequent native-environment comparison.
-# ROOT/__init__.py:9-16 @ v6-28-12 assigns the three pinned values.
+# ROOT/__init__.py:14-20 @ v6-28-12 assigns the three pinned values.
 ROOT_IMPORT_KEYS = {
     "ROOTSYS",
     "CLING_PREBUILT_MODULE_PATH",

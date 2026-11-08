@@ -4093,3 +4093,82 @@ def test_public_module_names_are_not_artifacts() -> None:
         "nersc_pymon.log",
         "package.root",
     }
+
+
+@pytest.mark.parametrize(
+    "key", ["CLING_STANDARD_PCH", "CPPYY_API_PATH", "CPPYY_NO_ROOT_FILTER"]
+)
+@pytest.mark.parametrize(
+    "case", ["added_wrong", "never_set", "unchanged_wrong", "added_correct"]
+)
+def test_import_pin_added_missing_and_unchanged(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch, key: str, case: str
+) -> None:
+    """Exercise pin validation when startup adds a key or leaves it untouched."""
+    import builtins
+
+    expected_values = {
+        "CLING_STANDARD_PCH": "none",
+        "CPPYY_API_PATH": "none",
+        "CPPYY_NO_ROOT_FILTER": "1",
+    }
+    inputs, _state, root, _lib = _prepared_mat_fixture(fixture, monkeypatch)
+    custody = R.load_custody_instrument()
+    for name in expected_values:
+        monkeypatch.delenv(name, raising=False)
+    if case == "unchanged_wrong":
+        monkeypatch.setenv(key, "/wrong-pre-import-value")
+    prepared_snapshot = custody.environment_snapshot(native=True)
+    inputs.prestage["environment_snapshot"] = prepared_snapshot
+    inputs.prestage["environment_after_setup"] = prepared_snapshot["values"]
+    importer = builtins.__import__
+
+    def initialize(name: str, *args: Any, **kwargs: Any) -> Any:
+        if name == "ROOT":
+            for pin, value in expected_values.items():
+                if pin == key and case in {"never_set", "unchanged_wrong"}:
+                    continue
+                os.environ[pin] = (
+                    "/wrong-added-value"
+                    if pin == key and case == "added_wrong"
+                    else value
+                )
+            return root
+        return importer(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", initialize)
+    added = dict(expected_values)
+    if case in {"never_set", "unchanged_wrong"}:
+        del added[key]
+    elif case == "added_wrong":
+        added[key] = "/wrong-added-value"
+    expected_diff = {"added": added, "removed": {}, "changed": {}}
+    if case == "added_correct":
+        record = R.checked_prepared_mat(inputs)[1]
+        validation = record["root_import_validation"]
+        assert validation["pass"] is True
+        assert validation["invalid_pinned_values"] == {}
+        assert (
+            record["native_environment_after_mat"] | expected_values
+            == record["native_environment_after_mat"]
+        )
+    else:
+        with pytest.raises(R.Refused) as caught:
+            R.checked_prepared_mat(inputs)
+        assert caught.value.guard == "MAT_IMPORT_ENVIRONMENT"
+        validation = caught.value.details["environment"]
+        observed = (
+            None
+            if case == "never_set"
+            else (
+                "/wrong-pre-import-value"
+                if case == "unchanged_wrong"
+                else "/wrong-added-value"
+            )
+        )
+        assert validation["invalid_pinned_values"] == {
+            key: {"expected": expected_values[key], "observed": observed}
+        }
+        assert validation["pass"] is False
+    assert validation["diff"] == expected_diff
+    assert validation["unexpected"] == {"added": {}, "removed": {}, "changed": {}}

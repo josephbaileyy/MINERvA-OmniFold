@@ -267,6 +267,12 @@ REQUIRED = tuple(
     [
         *RECORD_MUTATIONS,
         Mutation(
+            "REQUIRED_IMPORT_PIN_CHANGED_ONLY",
+            "custody_import_changed_only",
+            "invalid_values",
+            "test_import_pin_added_missing_and_unchanged",
+        ),
+        Mutation(
             "REQUIRED_PUBLIC_MODULE_NAME_NOT_ARTIFACT",
             "custody_module_name",
             "public_record",
@@ -853,6 +859,18 @@ class Mutator(ast.NodeTransformer):
 
     def visit_Assign(self, node: ast.Assign) -> ast.AST:
         mutation = self.mutation
+        if (
+            mutation.kind == "custody_import_changed_only"
+            and any(
+                isinstance(target, ast.Name) and target.id == "invalid_values"
+                for target in node.targets
+            )
+            and isinstance(node.value, ast.DictComp)
+        ):
+            node.value.generators[0].ifs.append(
+                ast.parse("key in diff['changed']", mode="eval").body
+            )
+            self.changed += 1
         if mutation.kind in {
             "custody_import_extra",
             "custody_import_root",
@@ -1279,7 +1297,12 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
             changed = transformer.visit(ast.parse(mutation_source))
             if (
                 mutation.kind
-                in {"custody_guard", "custody_guard_site", "custody_public_leak"}
+                in {
+                    "custody_guard",
+                    "custody_guard_site",
+                    "custody_public_leak",
+                    "custody_import_changed_only",
+                }
                 or mutation in RECORD_MUTATIONS
             ) and transformer.changed != 1:
                 raise RuntimeError(
