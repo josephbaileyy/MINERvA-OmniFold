@@ -650,6 +650,28 @@ class CholeskyA5(Base):
             self.assertIn(k, rec)
         self.assertEqual(cb.AUDIT._undo, [])                                       # the open audit is uninstalled
 
+    def raise_in_the_grade(self, exc):
+        import fd_1b_mc as mc
+
+        def grade(E, C, null, **kw):
+            raise exc
+        return mock.patch.object(mc, "grade", grade)
+
+    def test_a_cov2d_refusal_inside_the_try_stays_a_refusal_not_a_grade_refusal(self):     # auditor A5-C1 (V12)
+        with self.raise_in_the_grade(c.Refusal("another refusal, not 1B's grade")):
+            self.assertEqual(self.score(), 2)
+        refused = json.loads((self.out / "score_G18.refused.json").read_text())["refused"]
+        self.assertEqual(refused, "another refusal, not 1B's grade")
+        self.assertFalse((self.out / "score_G18.invalid.json").exists())
+        self.assertFalse((self.out / "score_G18.json").exists())
+
+    def test_any_other_failure_inside_the_try_propagates_unrecorded(self):                  # auditor A5-C1 (V11)
+        with self.raise_in_the_grade(ZeroDivisionError("not a refusal")):
+            with self.assertRaises(ZeroDivisionError):
+                self.score()
+        self.assertFalse((self.out / "score_G18.invalid.json").exists())
+        self.assertFalse((self.out / "score_G18.json").exists())
+
     def test_a_refusal_of_the_C_T_grade_writes_the_invalid_record_and_finishes_run(self):
         self.refuse_at("C_T")
 

@@ -1,8 +1,9 @@
-..........................................................
+............................................................
 ----------------------------------------------------------------------
-Ran 58 tests in 201.392s
+Ran 60 tests in 187.505s
 
 OK
+COV2D-SCORE G18 REFUSED another refusal, not 1B's grade
 COV2D-SCORE G18 COVERS
 COV2D-SCORE G18 UNDER-COVERS
 COV2D-SCORE G18 REFUSED inventory: cells_npz differs from the null record
@@ -22,11 +23,11 @@ COV2D-SCORE G18 REFUSED blocks npz does not match the null record
 COV2D-SCORE G18 COVERS
 COV2D-SCORE G18 REFUSED pseudo_a's toys are not the declared seeds in order
 COV2D-SCORE G18 REFUSED truth_xsec.npz's rows are not pseudo_a's natures in order
-COV2D-SCORE G18 REFUSED origin/main's null_G18.json is 6ed9139b2450fd999779d0181f1e33a9c53c86000b042c18dfda08d61cfdac92, not 1111111111111111111111111111111111111111111111111111111111111111
+COV2D-SCORE G18 REFUSED origin/main's null_G18.json is 5736602761b8cec24cdce35f125947acf8214558e85403dd877e99e111c78414, not 1111111111111111111111111111111111111111111111111111111111111111
 cov2d rc=0
 ............
 ----------------------------------------------------------------------
-Ran 12 tests in 6.625s
+Ran 12 tests in 6.048s
 
 OK
 1b rc=0

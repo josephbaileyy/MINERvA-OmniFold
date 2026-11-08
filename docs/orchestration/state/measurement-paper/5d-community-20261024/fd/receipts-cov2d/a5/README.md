@@ -2,7 +2,8 @@
 
 **By** the `cov2d` session. This implements COV2D-BINDING-2 addendum A5 (#889), the Cholesky cross-check's tolerance
 at full rank, and the director's extension of 2026-11-07 to the leave-out-MEC grade. It is the local test and mutation
-receipt. The cluster receipt is `cluster_tests/` (a separate commit).
+receipt. The cluster receipts are `cluster_tests/` (at the A5 code head `b25918fb`) and `cluster_tests-2/` (at the
+head with the A5-C1 tests), each a separate commit.
 
 - **MEASURES:** whether the A5 change does what A5 rules, whether its tests kill the declared mutants, and whether 1B's
   default is unchanged.
@@ -55,10 +56,10 @@ the tolerance without either copying grade's statistics into cov2d, so that "exa
 | `2d-unfolding/cov2d/cov2d_score.py` | `6616e14ef32699ac38297382372cb697185212449963b96aed4f40be0b21fe8c` |
 | `2d-unfolding/cov2d/cov2d_readouts.py` | `a288592ff0a726d6a726809f18c50fbadbfdbc1c9e1f10d22e560122f712474b` |
 | `2d-unfolding/cov2d/cov2d_readout.py` | `0c3ad137be128691cce7bbe3ec72493b76791e761e6cd897f75aaf0a4fc7444f` |
-| `2d-unfolding/cov2d/tests/test_cov2d_readout.py` | `ed04d2718896a6be0c7e9e5e121f80dda02ab9ec32150f61342d744779b9f881` |
+| `2d-unfolding/cov2d/tests/test_cov2d_readout.py` | `b9e04c6fc31608d29700e499f8506a818db53513e7eded4c0c13ca700fa65ff3` |
 | `2d-unfolding/cov2d/tests/test_cov2d_readouts.py` | `e78b722438e2b6d49137b2b5792b7a4863d91ff48348e162402c76578de09a19` |
 | `nd-unfolding/tests/test_fd_1b_mc.py` | `22b0fddf1e5926620d9329900b4878a9bc7711e79176f4039fdc282f29ebff8f` |
-| `mutation_a5.py` | `85452ef6903fd8a7ff21dcf15fe70a5c71694f62b8484c2811e80386b8b54f27` |
+| `mutation_a5.py` | `2d7310c2c110b8e23e4ae59e7c243f36860cf91e4c0214fa12e14ba1964ea6d0` |
 
 **Interpreter:** Python 3.13.7, ROOT 6.36, numpy 2.4.4, on Joseph's Mac.
 
@@ -71,30 +72,36 @@ the tolerance without either copying grade's statistics into cov2d, so that "exa
   - below full rank the check is skipped and reported so;
   - a well-conditioned grade is unchanged by the argument.
 - **`test_cov2d_readout.CholeskyTolPure`** (2 tests): the formula, and the 1e-9 floor.
-- **`test_cov2d_readout.CholeskyA5`** (4 tests):
+- **`test_cov2d_readout.CholeskyA5`** (6 tests):
   - each tolerance is computed from its own matrix before any toy is opened, passed to its own grade, and recorded;
   - κ ≈ 1e12 in both C_T and C_T⁻ (205×205, full rank, the null record re-pinned to the new blocks): both grades pass
     under A5, with compared values above 1e-9;
   - a refusal of the C_T grade, and a refusal of the C_T⁻ grade, each write the invalid record naming the grade, finish
-    Run, uninstall the open audit, and print the distinct line.
+    Run, uninstall the open audit, and print the distinct line;
+  - **the catch's other direction** (coverage-5b-audit's A5-C1): a COV2D `Refusal` raised inside the scoring `try`
+    stays a plain refusal (status 2, `score_G18.refused.json` with its own text, no invalid record, no score
+    record), and any other exception raised there propagates with nothing written. Mutants V11 and V12 below.
 - **`test_cov2d_readouts.LeaveOutMEC`:** one existing mock of 1B's grade now accepts the new keywords (`**kw`).
-- **Results** (`tests.seed{0,1,12345}.txt`): at PYTHONHASHSEED 0, 1 and 12345, `test_cov2d_readout`, `test_cov2d_score`
-  and `test_cov2d_readouts.LeaveOutMEC` ran 58 OK, and `test_fd_1b_mc.CholeskyTolerance` and `Grading` ran 12 OK.
+- **Results** (`tests.seed{0,1,12345}.txt`, rerun with the A5-C1 tests): at PYTHONHASHSEED 0, 1 and 12345,
+  `test_cov2d_readout`, `test_cov2d_score` and `test_cov2d_readouts.LeaveOutMEC` ran 60 OK, and `test_fd_1b_mc.CholeskyTolerance` and `Grading` ran 12 OK.
 - **Run whole on the Mac:**
-  - `test_cov2d_readout` 42 OK and `test_cov2d_score` 12 OK.
+  - `test_cov2d_readout` 44 OK and `test_cov2d_score` 12 OK.
   - `test_cov2d_readouts` has 1 error and `test_fd_1b_mc` 7. They are the same tests that error on unmodified main on
     the Mac: absent uproot, and numpy 2's scalar repr.
   - The cluster receipt runs them whole in root_6_28 and omnifold_py310.
 
-## The mutants (`mutation_a5.run1.txt`)
+## The mutants (`mutation_a5.run2.txt`)
 
-**`BASELINE ok`, then killed 22 of 22, harness rc 0.**
-- All 15 REQUIRED mutants are among them, including the director's "leave_out_mec drops the C_T- passthrough".
+**`BASELINE ok`, then killed 24 of 24, harness rc 0.**
+- All 17 REQUIRED mutants are among them, including the director's "leave_out_mec drops the C_T- passthrough" and
+  coverage-5b-audit's A5-C1 pair: "catch widened to Exception (auditor V11)" and "catch widened to cov2d's Refusal too
+  (auditor V12)". Both survived the tests of run 1.
+- `mutation_a5.run1.txt` is run 1 (22 of 22, before V11 and V12), kept as run.
 - Every mutant's text matched exactly once.
 - Each mutant runs the test sets named in `mutation_a5.py`: the classes the change touches. That way an environment-only
   error elsewhere in a module cannot count as a kill. The unmutated tree must pass them first.
 
 ## Files
 
-- `mutation_a5.py`, `mutation_a5.run1.txt`;
+- `mutation_a5.py`, `mutation_a5.run1.txt`, `mutation_a5.run2.txt`;
 - `tests.seed0.txt`, `tests.seed1.txt`, `tests.seed12345.txt`.

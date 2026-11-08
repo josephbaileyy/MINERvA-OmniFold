@@ -53,6 +53,10 @@ M = [
     # the grade-refusal record (ruling 2, extended to both grades)
     (R, "grade refusal not caught", "        except mc.Refusal as e:      # addendum A5",
      "        except ZeroDivisionError as e:      # addendum A5"),
+    (R, "catch widened to Exception (auditor V11)", "        except mc.Refusal as e:      # addendum A5",
+     "        except Exception as e:      # addendum A5"),
+    (R, "catch widened to cov2d's Refusal too (auditor V12)", "        except mc.Refusal as e:      # addendum A5",
+     "        except (mc.Refusal, c.Refusal) as e:      # addendum A5"),
     (R, "a refusal does not finish Run", '            return run.finish(out, f"score_{truth}.invalid.json")',
      "            raise"),
     (R, "invalid record written as score_<T>.json", 'f"score_{truth}.invalid.json"', 'f"score_{truth}.json"'),
@@ -68,7 +72,8 @@ REQUIRED = {"grade ignores chol_tol (1e-9 hard)", "1B default changed to 1e-3", 
             "leave_out_mec drops the C_T- passthrough", "tol without the factor 10", "tol without the 1e-9 floor",
             "C_T- tolerance taken from C_T", "driver does not pass C_T's tolerance",
             "driver does not pass C_T-'s tolerance", "grade refusal not caught", "a refusal does not finish Run",
-            "invalid record written as score_<T>.json", "no distinct INVALID line"}
+            "invalid record written as score_<T>.json", "no distinct INVALID line",
+            "catch widened to Exception (auditor V11)", "catch widened to cov2d's Refusal too (auditor V12)"}
 assert REQUIRED <= {m[1] for m in M}
 if sys.argv[2:]:
     unknown = set(sys.argv[2:]) - {m[1] for m in M}
