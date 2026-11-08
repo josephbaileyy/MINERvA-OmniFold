@@ -15,6 +15,8 @@ Miss completeness & Full truth-event inventory; production truth--reco event mat
 \addlinespace
 Iteration stability & Same data, exact-split cross-check; five versus ten iterations & Shared sample; movement of total and shape & Small observed movement; not a known-truth accuracy test \\
 \addlinespace
+Held-out-tune coverage & Two held-out GENIE~v3 tunes; the procedure's 2D covariance remade at each tune & Pseudo-experiments that draw the covariance's shifts; joint and per-cell containment & Declared test; under-covers at both tunes (\S\ref{sec:coverage-tunes}) \\
+\addlinespace
 Fixed-truth coverage & Fixed unfluctuated MC truth; LightGBM statistical estimator & Poisson pseudo-data; MC resampling shares the band's mechanism; pooled toy--bin containment & Predeclared coverage windows; earlier (completeness-divided) band undercovers in its tails (\S\ref{sec:coverage}) \\
 \bottomrule
 \end{tabular}
@@ -181,6 +183,40 @@ The excess width lies in the data-statistics component. The per-bin pull RMS fal
 \textbf{Scope.} The test concerns the statistical band alone and changes no central value or quoted uncertainty. It tests the LightGBM statistical estimator at the band's training seed (seed~1), not at the quoted central value's seed~42, and does not address systematic, total or five-dimensional coverage. Its simulation-side scatter reuses the resampling that built the band, so only the data-side fluctuation is tested by an independent mechanism. Because $T$ equals the prior, the test cannot detect regularization bias toward the prior.
         % J3/J4 provisional (DECISION-20261018, packet W3: D2): true of the test; the quoted statistical block is at seed 42.
 
+\subsection{Held-out-tune coverage of the 2D covariance}
+\label{sec:coverage-tunes}
+A second coverage test, declared before it ran, asks whether the analysis procedure's 2D covariance covers truths held out of its construction. At each of two held-out GENIE~v3 tunes, \fvval{f1-tune-ar23} and \fvval{f1-tune-g18}, with \lrval{cov2d-ntoys} pseudo-experiments each and the analysis procedure's 2D covariance remade at each tune's truth (model term included, run-period term excluded), the declared test reads \emph{under-covers}. The joint in-region count is \lrval{cov2d-ar23-joint} of \lrval{cov2d-ntoys} at both tunes, against declared thresholds of \lrval{cov2d-ar23-kjoint} (\fvval{f1-tune-ar23}) and \lrval{cov2d-g18-kjoint} (\fvval{f1-tune-g18}). Per cell, \lrval{cov2d-ar23-nflagged} cells are flagged at \fvval{f1-tune-ar23} and \lrval{cov2d-g18-nflagged} at \fvval{f1-tune-g18}, each attributed to bias (Table~\ref{tab:coverage-tunes}). The mean $\chi^{2}/\mathrm{ndf}$ of the pseudo-experiments is $\lrval{cov2d-ar23-chi2ndf}\pm\lrval{cov2d-ar23-chi2ndf-se}$ ($\mathrm{ndf}=\lrval{cov2d-ar23-ndf}$) at \fvval{f1-tune-ar23} and $\lrval{cov2d-g18-chi2ndf}\pm\lrval{cov2d-g18-chi2ndf-se}$ ($\mathrm{ndf}=\lrval{cov2d-g18-ndf}$) at \fvval{f1-tune-g18}. The test's false-flag rate under its null's law is at most \lrval{cov2d-ar23-size} and \lrval{cov2d-g18-size} per tune.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{llllll}
+\toprule
+Tune & Cell & $\pT$, $\pPar$ (GeV/$c$) & In-interval count (threshold) & Pull mean, width & Driven by \\
+\midrule
+\fvval{f1-tune-ar23} & 29 & \lrval{cov2d-cell29-range} & \lrval{cov2d-ar23-29-count} (\lrval{cov2d-ar23-29-kc}) & \lrval{cov2d-ar23-29-pullmean}, \lrval{cov2d-ar23-29-pullsd} & bias \\
+\fvval{f1-tune-ar23} & 56 & \lrval{cov2d-cell56-range} & \lrval{cov2d-ar23-56-count} (\lrval{cov2d-ar23-56-kc}) & \lrval{cov2d-ar23-56-pullmean}, \lrval{cov2d-ar23-56-pullsd} & bias \\
+\fvval{f1-tune-g18} & 29 & \lrval{cov2d-cell29-range} & \lrval{cov2d-g18-29-count} (\lrval{cov2d-g18-29-kc}) & \lrval{cov2d-g18-29-pullmean}, \lrval{cov2d-g18-29-pullsd} & bias \\
+\bottomrule
+\end{tabular}
+\caption{Cells flagged by the held-out-tune coverage test of the 2D covariance, out of \lrval{cov2d-ntoys} pseudo-experiments per tune. A cell's number is $16i+j$ for $\pT$ bin $i$ and $\pPar$ bin $j$, counted from zero.}
+\label{tab:coverage-tunes}
+\end{table}
+
+\textbf{Limits.} The test resolves a per-cell deficit in content of about \lrval{cov2d-res-cell}, and about \lrval{cov2d-res-joint} jointly; smaller deficits can pass. It is one-sided: over-coverage is reported, not failed. The pseudo-experiments depart from the null's law in known ways: the flux and pair-band draws are not centred, clipping truncates the shifts, and three terms of the covariance are not drawn (C08, $C_{\mathrm{model}}$ and the simulation-statistics part of the statistical term), which can only lower the flag rate. \fvval{f1-tune-g18} shares its 2p2h model family with one of the model term's generators. The run-period block was not drawn.
+
+\textbf{Scope.} The result concerns the procedure's covariance at those two tunes, not the reported intervals at the data, where the quoted covariance is made. It is not a coverage rate, says nothing about truths unlike these two or about $C_{\mathrm{PL}}$ or $C_{\mathrm{model}}$, and gives no cause for the joint under-coverage or for any flag. A held-out tune moves the truth, not the sample, so this is not the re-test on held-out simulation of \S\ref{sec:coverage}. It adds to the fixed-truth result of \S\ref{sec:coverage}; it does not replace it.
+% Note round 1 (2026-11-08, draft for a PRD-referee read and Joseph): OUTCOME-20261108-cov2d-both-tunes-under-cover.md
+% @ b551b05f, CITABLE FOR :99-106 (the sentence "At each of two held-out GENIE v3 tunes ... reads UNDER-COVERS", the joint
+% count, the flagged cells with pull means and widths, the per-tune chi2/ndf, the false-flag rate), the limits of sec. 4
+% :85-95 and the facts sec. 12 requires the text to state (:123-125); NOT CITABLE FOR :110-119 respected (no coverage at
+% the data's point, no rate, no cause, nothing on C_PL_R or C_model, "A held-out tune moves the truth, not the sample",
+% adds to VL162, no "both COVER"). Every number is \lrval (make_values_landed.py: score_AR23.json fe5263e9,
+% score_G18.json 84976694; cell ranges and resolution from the record's lines 52-53 and 91).
+% Not drafted here, for a later round (record :127-129, DECISION-20261103-joseph-coverage-clip-rule.md:74-77): the clipping
+% rule with C2's and the toys' residuals, outlier cell 216, the weakened cells, the +-1 sigma endpoint draws, the shared
+% universes, the cross terms, the single realization, the fixed simulation.
+
 \subsection{Other validation diagnostics}
 \label{sec:val-other}
 
@@ -196,7 +232,7 @@ The excess width lies in the data-statistics component. The per-bin pull RMS fal
 
 In reported bin $i$ with $\bar X^{\text{truth}}_{i}>0$, define $\sigma_{i}$ as the across-toy sample standard deviation (denominator $N_{\text{toy}}-1$) and standardized residual $r^{(t)}_{i}=(U^{(t)}_{i}-\bar X^{\text{truth}}_{i})/\sigma_{i}$. Compare the per-bin fraction $c_{i}$ of toys with $|r^{(t)}_{i}|\le1$ to the unit-normal $\Phi(1)-\Phi(-1)=\mathrm{erf}(1/\sqrt 2)\approx0.6827$ and the mean absolute pull $\langle|r|\rangle$ to $\sqrt{2/\pi}$. The fraction with $|r|\le1$ is \SI{\pullFrac}{\percent} (Gaussian reference $68.27\%$; $\Delta = +0.44\%$; median $68.50\%$), and $\langle|r|\rangle=\pullMeanAbs$ against $\sqrt{2/\pi}=\pullGauss$ (within $0.5\%$). The signed residual mean is $+0.006 \pm 0.082\,\sigma$, consistent with zero. The within-bin fraction is above \SI{65}{\percent} in \SI{97.6}{\percent} of bins (only $5$ of $205$ fall below). These show that the standardized toy residuals are approximately normal.
 
-Because $\sigma_i$ is estimated from the same toys that are evaluated, these figures diagnose standardized pulls and Gaussianity only and are not a coverage test of the bootstrap band; no coverage number is quoted from this ensemble, and the 2D coverage statement is the fixed-truth test of \S\ref{sec:coverage}.
+Because $\sigma_i$ is estimated from the same toys that are evaluated, these figures diagnose standardized pulls and Gaussianity only and are not a coverage test of the bootstrap band; no coverage number is quoted from this ensemble, and the 2D coverage statements are the fixed-truth test of \S\ref{sec:coverage} and the held-out-tune test of \S\ref{sec:coverage-tunes}.
 % Note register round n1, batch n1-B (2026-10-25; R-N1): the separate sentence denying a coverage measurement was
 % dropped; the closing sentence ("not a coverage test of the bootstrap band") states it.
 % Search: coverage-toys; coverage_summary; same-ensemble pull @ ddf16f10
