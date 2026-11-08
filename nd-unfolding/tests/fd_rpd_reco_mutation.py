@@ -25,6 +25,14 @@ PRODUCER = ROOT / "nd-unfolding/fd_rpd_reco.py"
 TESTS = ROOT / "nd-unfolding/tests/test_fd_rpd_reco.py"
 
 CUSTODY_GUARD_TESTS = {
+    "PLATFORM_CONFIG": "test_platform_config_closed_roles_and_reasons",
+    "PLATFORM_MAP_IDENTITY": "test_platform_executable_maps_identity",
+    "PLATFORM_MAP_SET": "test_platform_prepare_pins_and_protected_first and set",
+    "PLATFORM_PROTECTED": "test_platform_prepare_pins_and_protected_first and protected",
+    "PLATFORM_MAP_FILE": "test_platform_prepare_pins_and_protected_first and inode",
+    "PLATFORM_PIN_CHANGED": "test_platform_prepare_pins_and_protected_first and unstable",
+    "TRACE_CWD": "test_trace_policy_disjoint_under_system_run",
+    "TRACE_RECORD_NAME": "test_trace_stop_record_is_complete_public_and_cfs_first",
     "ENVIRONMENT_EXCLUSIONS": "test_environment_exclusions_reject_interpreter_keys",
     "MAT_INVENTORY": "test_prepare_firing_guards and inventory",
     "STAGE_SOURCE_STAT": "test_prepare_firing_guards and atime",
@@ -36,6 +44,7 @@ CUSTODY_GUARD_TESTS = {
     "INSTRUMENT_DIRECTORIES": "test_instrument_directories_required",
 }
 GUARD_TESTS = {
+    "MAT_PLATFORM_LIBRARIES": "test_platform_guard_on_production_path",
     "MAT_IMPORT_ENVIRONMENT": "test_import_diff_is_bounded or test_import_values_are_pinned",
     "MAT_RUNTIME_ENVIRONMENT": "test_worker_snapshot_before_root_and_runtime_recheck",
     "MAT_MAPPED_STAT": "test_prepared_mapped_stats_and_staged_digest and (size or inode)",
@@ -265,6 +274,105 @@ RECORD_MUTATIONS = (
 
 REQUIRED = tuple(
     [
+        Mutation(
+            "REQUIRED_PLATFORM_PREPARE_PINS",
+            "custody_r3",
+            "prepare",
+            "test_fresh_prepare_stages_closed_inventory",
+            (
+                "pin_platform_libraries(r, instrument.mapped_files(), build_trace_policy(config, manifest, run))",
+                "{}",
+            ),
+        ),
+        Mutation(
+            "REQUIRED_PLATFORM_PROLOGUE_PINS",
+            "prologue_r3",
+            "prepare",
+            "test_prologue_prepare_opens_no_declared_data",
+            (
+                "custody.pin_platform_libraries(r, instrument.mapped_files(), custody.build_trace_policy(config, prepared, run))",
+                "{}",
+            ),
+        ),
+        Mutation(
+            "REQUIRED_TRACE_UNFINISHED_RETAINED",
+            "custody_r3",
+            "complete_trace_calls",
+            "test_trace_unpaired_calls_refuse and unfinished",
+            (
+                "pending[pid] = record",
+                "retained.append({'pid': pid, 'raw_line': line, 'line_numbers': [number]})",
+            ),
+        ),
+        Mutation(
+            "REQUIRED_TRACE_PAIRS_SAME_PID",
+            "custody_r3",
+            "complete_trace_calls",
+            "test_trace_interleaving_keeps_pid_and_every_line",
+            (
+                "pending_pid = pid",
+                "pending_pid = next((candidate for candidate in pending if candidate != pid), pid)",
+            ),
+        ),
+        Mutation(
+            "REQUIRED_TRACE_DISJOINT_EXCLUSIONS",
+            "custody_r3",
+            "classify_successful_open",
+            "test_trace_policy_disjoint_under_system_run",
+            ("policy.get('class_exclusions', {}).get(category, [])", "[]"),
+        ),
+        Mutation(
+            "REQUIRED_PLATFORM_WORKER_PIN_DIGEST",
+            "custody_r3",
+            "platform_library_record",
+            "test_platform_worker_exact_pins",
+            ("observed == expected[filename]", "True"),
+        ),
+        Mutation(
+            "REQUIRED_PLATFORM_WORKER_EXACT_SET",
+            "custody_r3",
+            "platform_library_record",
+            "test_platform_worker_exact_pins and (added or removed)",
+            ("added or removed or inconsistent", "False"),
+        ),
+        Mutation(
+            "REQUIRED_PLATFORM_WORKER_PROTECTED_FIRST",
+            "custody_r3",
+            "platform_library_record",
+            "test_platform_worker_exact_pins and protected",
+            (
+                "any((_under(filename, root) for root in policy['protected_roots']))",
+                "False",
+            ),
+        ),
+        Mutation(
+            "REQUIRED_TRACE_CLONE_CHDIR_ONLY",
+            "custody_r3",
+            "classify_trace",
+            "test_trace_exact_clone_chdir_and_other_refusal",
+            ("target is None or target != policy.get('clone_root')", "False"),
+        ),
+        Mutation(
+            "REQUIRED_TRACE_STOP_PUBLIC_EXPORT",
+            "custody_r3",
+            "write_trace_record",
+            "test_trace_stop_record_is_complete_public_and_cfs_first",
+            ("public_record(record, {}, {})", "record"),
+        ),
+        Mutation(
+            "REQUIRED_TRACE_STOP_WRITTEN",
+            "custody_r3_stop",
+            "classify_trace_with_stop",
+            "test_trace_stop_record_is_complete_public_and_cfs_first",
+            None,
+        ),
+        Mutation(
+            "REQUIRED_TRACE_CHILD_CWD",
+            "prologue_r3",
+            "main",
+            "test_prologue_child_environment_boundary",
+            ("custody.trace_cwd(policy)", "None"),
+        ),
         *RECORD_MUTATIONS,
         Mutation(
             "REQUIRED_IMPORT_PIN_CHANGED_ONLY",
@@ -591,6 +699,31 @@ class Mutator(ast.NodeTransformer):
         self.mutation = mutation
         self.changed = 0
         self.function: str | None = None
+
+    def visit(self, node: ast.AST) -> Any:
+        mutation = self.mutation
+        if (
+            mutation.kind in {"custody_r3", "prologue_r3"}
+            and self.function == mutation.target
+            and ast.unparse(node) == mutation.replacement[0]
+        ):
+            self.changed += 1
+            replacement = ast.parse(mutation.replacement[1])
+            return (
+                replacement.body[0].value
+                if isinstance(node, ast.expr)
+                else replacement.body[0]
+            )
+        if (
+            mutation.kind == "custody_r3_stop"
+            and self.function == mutation.target
+            and isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "write_trace_record"
+        ):
+            self.changed += 1
+            return ast.Constant(None)
+        return super().visit(node)
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.AST:
         previous = self.function
@@ -1280,7 +1413,7 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
             transformer = Mutator(mutation)
             custody_mutant = mutation.kind.startswith("custody_")
             platform_mutant = mutation.kind == "platform_check"
-            prologue_mutant = mutation.kind == "prologue_environment"
+            prologue_mutant = mutation.kind in {"prologue_environment", "prologue_r3"}
             mutation_source = (
                 (ROOT / "nd-unfolding/fd_rpd_reco_prologue.py").read_text()
                 if prologue_mutant
@@ -1302,6 +1435,9 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
                     "custody_guard_site",
                     "custody_public_leak",
                     "custody_import_changed_only",
+                    "custody_r3",
+                    "custody_r3_stop",
+                    "prologue_r3",
                 }
                 or mutation in RECORD_MUTATIONS
             ) and transformer.changed != 1:

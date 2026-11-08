@@ -1403,6 +1403,22 @@ def checked_prepared_mat(inputs: PreparedMatContext) -> tuple[Any, Json]:
             "MAT_INSTRUMENT_DIGEST",
             "staged checked instrument changed",
         )
+    platform_record = custody.platform_library_record(
+        sys.modules[__name__], prepared, mapped, policy
+    )
+    try:
+        require(
+            platform_record["status"] == "PASS",
+            "MAT_PLATFORM_LIBRARIES",
+            "platform mapped library custody differs",
+        )
+    except Refused as error:
+        error.details = custody.public_record(
+            {"platform_libraries": platform_record},
+            entry_snapshot,
+            custody.environment_snapshot(native=True),
+        )
+        raise
     post_import = custody.environment_snapshot(native=True)
     import_record = getattr(inputs, "_mat_import_record", None)
     if import_record is None:
@@ -1433,6 +1449,7 @@ def checked_prepared_mat(inputs: PreparedMatContext) -> tuple[Any, Json]:
         {
             **environment,
             "verified_from_same_connect_prepare": True,
+            "platform_libraries": platform_record,
             "environment_after_setup": entry_snapshot["values"],
             "native_environment_after_mat": post_import["values"],
             "root_import_environment_diff": import_record["diff"],

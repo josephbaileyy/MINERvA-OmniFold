@@ -2067,6 +2067,7 @@ def test_custody_trace_directions() -> None:
             "environment": ["/env"],
             "pinned_mat_libs": ["/mat/libMAT.so"],
         },
+        "class_exclusions": {"run": ["/run/extract/mat-data"]},
         "failed_prefixes": ["/optional/lib"],
     }
     lines = [
@@ -2370,7 +2371,9 @@ def _prepare_fixture(
     library = fixture.root / "libMAT.so"
     library.write_text("disposable instrument stand-in\n")
     instrument = SimpleNamespace(
-        MAT_SETUP={}, MAT_FILES={str(library): R.digest(library)}
+        MAT_SETUP={},
+        MAT_FILES={str(library): R.digest(library)},
+        mapped_files=lambda: {str(library)},
     )
     environment = {
         "mapped_mat_files": [str(library)],
@@ -2387,6 +2390,7 @@ def _prepare_fixture(
     stat = custody.source_stat
     monkeypatch.setattr(custody, "source_stat", lambda p: stat(p) | {"atime_ns": 0})
     monkeypatch.setenv("FD_RPD_RECO_CONNECT_ID", "fixture-prepare")
+    monkeypatch.setattr(custody, "executable_mapped_files", lambda: {})
     fixture.config.update(
         {
             "configuration_status": "READY",
@@ -2394,6 +2398,15 @@ def _prepare_fixture(
             "trace_environment_roots": ["/synthetic/env"],
             "trace_instrument_directories": [str(library.parent / "instrument")],
             "cov2d_protected_paths": ["/synthetic/cov2d-input"],
+            "trace_platform_library_digest": "ordinary_instrument_code_only",
+            "trace_platform_roots": [
+                {
+                    "role": role,
+                    "path": str(fixture.root / "platform" / role),
+                    "reason": "disposable platform policy fixture",
+                }
+                for role in sorted(custody.PLATFORM_ROLES)
+            ],
         }
     )
     fixture.save_config()
@@ -2401,12 +2414,37 @@ def _prepare_fixture(
     return custody, run, roots
 
 
+def _add_prepare_platform_mapping(
+    custody: Any, fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> Path:
+    library = Path(fixture.config["trace_platform_roots"][0]["path"]) / "instrument.so"
+    library.parent.mkdir(parents=True)
+    library.write_bytes(b"mapped platform prepare fixture")
+    info = library.stat()
+    instrument = R.load_mat_instrument()
+    previous = instrument.mapped_files
+    instrument.mapped_files = lambda: previous() | {str(library)}
+    monkeypatch.setattr(
+        custody,
+        "executable_mapped_files",
+        lambda: {str(library): {"device": info.st_dev, "inode": info.st_ino}},
+    )
+    return library
+
+
 def test_fresh_prepare_stages_closed_inventory(
     fixture: Fixture, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setenv("TEST_API_KEY", "private-full-prepare-fixture")
     custody, run, roots = _prepare_fixture(fixture, monkeypatch)
+    platform_library = _add_prepare_platform_mapping(custody, fixture, monkeypatch)
     prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    assert prepared["platform_libraries"] == {
+        str(platform_library): {
+            **custody.platform_identity(platform_library),
+            "sha256": R.digest(platform_library),
+        }
+    }
     assert len(prepared["mat_dependencies"]) == 15
     constraint = next(
         item
@@ -2633,7 +2671,12 @@ def _prepared_mat_fixture(
     policy.write_text(
         json.dumps(
             {
-                "allowed": {"pinned_mat_libs": [str(lib)]},
+                "allowed": {
+                    "pinned_mat_libs": [str(lib)],
+                    "platform_system": [],
+                    "pinned_platform_libs": [],
+                },
+                "protected_roots": [],
                 "instrument_directories": [str(lib.parent)],
             }
         )
@@ -2648,6 +2691,7 @@ def _prepared_mat_fixture(
         "environment_after_setup": _custody_module().environment_record(),
         "environment_snapshot": _custody_module().environment_snapshot(),
         "trace_policy_sha256": R.digest(policy),
+        "platform_libraries": {},
         "mapped_mat_stats": {str(lib): [info.st_dev, info.st_ino, info.st_size]},
         "instrument_files": [
             {"staged": str(staged_code), "sha256": R.digest(staged_code)}
@@ -2818,6 +2862,16 @@ def test_negative_expected_guard(
         protected_roots=[],
     )
 
+    policy = run / "trace-policy.json"
+    policy.write_text(
+        json.dumps(
+            {
+                "cwd": str(Path(custody.__file__).resolve().parents[1]),
+                "clone_root": str(Path(custody.__file__).resolve().parents[1]),
+            }
+        )
+    )
+
     def stopped(_command: Any, **kwargs: Any) -> Any:
         assert not dependency.exists()
         (run / "flux-extract.STOP.json").write_text(
@@ -2828,7 +2882,7 @@ def test_negative_expected_guard(
     monkeypatch.setattr(custody.subprocess, "run", stopped)
     with pytest.raises(custody.CustodyRefused) as caught:
         custody.missing_dependency_check(
-            R, fixture.config_path, fixture.config_sha, run, "a" * 64
+            R, fixture.config_path, fixture.config_sha, run, R.digest(policy)
         )
     assert caught.value.details["guard"] == "NEGATIVE_EXPECTED_GUARD"
     assert dependency.read_text() == "own staged input"
@@ -3014,6 +3068,7 @@ def test_prologue_prepare_opens_no_declared_data(
 ) -> None:
     monkeypatch.setenv("TEST_API_KEY", "private-prologue-prepare-fixture")
     custody, _run, _roots = _prepare_fixture(fixture, monkeypatch)
+    platform_library = _add_prepare_platform_mapping(custody, fixture, monkeypatch)
     spec = importlib.util.spec_from_file_location(
         "rpd_prologue_test",
         Path(
@@ -3056,6 +3111,12 @@ def test_prologue_prepare_opens_no_declared_data(
     prepared = custody.read_private_prepare(
         R, run / "prologue-prepare-reference.json", digest, run
     )
+    assert prepared["platform_libraries"] == {
+        str(platform_library): {
+            **custody.platform_identity(platform_library),
+            "sha256": R.digest(platform_library),
+        }
+    }
     private = Path(prepared["private_prepare_path"])
     fingerprint = (
         hashlib.sha256(b"private-prologue-prepare-fixture").hexdigest().encode()
@@ -3825,7 +3886,14 @@ def test_prologue_child_environment_boundary(
     def prepare(_config: Any, _sha: Any, target: Path) -> str:
         assert target == run
         target.mkdir()
-        (target / "trace-policy.json").write_text("{}")
+        (target / "trace-policy.json").write_text(
+            json.dumps(
+                {
+                    "cwd": str(Path(custody.__file__).resolve().parents[1]),
+                    "clone_root": str(Path(custody.__file__).resolve().parents[1]),
+                }
+            )
+        )
         (target / "prologue-worker.json").write_text(
             json.dumps({"status": "PASS", "data_keys_read": []})
         )
@@ -3837,6 +3905,7 @@ def test_prologue_child_environment_boundary(
 
     def child(_command: Any, **kwargs: Any) -> Any:
         assert kwargs.get("env") == baseline
+        assert kwargs.get("cwd") == str(Path(custody.__file__).resolve().parents[1])
         process = subprocess_run(
             [
                 sys.executable,
@@ -4172,3 +4241,589 @@ def test_import_pin_added_missing_and_unchanged(
         assert validation["pass"] is False
     assert validation["diff"] == expected_diff
     assert validation["unexpected"] == {"added": {}, "removed": {}, "changed": {}}
+
+
+def _trace_fixture(name: str) -> list[str]:
+    directory = REPO / "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4"
+    return (directory / f"{name}.strace.txt").read_text().splitlines()
+
+
+def _round3_trace_policy() -> dict[str, Any]:
+    clone = "/dev/shm/limres-rpd-prologue4-20261108/repo"
+    return {
+        "cwd": clone,
+        "clone_root": clone,
+        "protected_roots": [],
+        "allowed": {"system": ["/etc"]},
+    }
+
+
+def test_real_trace_fixture_provenance() -> None:
+    directory = REPO / "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4"
+    manifest = json.loads((directory / "manifest.json").read_text())
+    source = subprocess.run(
+        ["git", "show", manifest["source_commit"] + ":" + manifest["source_file"]],
+        cwd=REPO,
+        capture_output=True,
+        check=True,
+    ).stdout
+    assert len(source) == manifest["source_bytes"]
+    assert hashlib.sha256(source).hexdigest() == manifest["source_sha256"]
+    lines = source.decode().splitlines()
+    for item in manifest["fixtures"].values():
+        actual = (directory / item["file"]).read_bytes()
+        assert (
+            actual
+            == ("\n".join(lines[n - 1] for n in item["source_lines"]) + "\n").encode()
+        )
+        assert hashlib.sha256(actual).hexdigest() == item["sha256"]
+
+
+def test_trace_interleaving_keeps_pid_and_every_line() -> None:
+    custody = _custody_module()
+    lines = _trace_fixture("interleaved_failures")
+    calls, violations, retained = custody.complete_trace_calls(lines)
+    assert violations == retained == []
+    assert [call["pid"] for call in calls] == [1600512, 1600533, 1600532]
+    assert [call["line_numbers"] for call in calls] == [[1], [2, 4], [3, 5]]
+    assert [call["raw_lines"] for call in calls] == [
+        [lines[0]],
+        [lines[1], lines[3]],
+        [lines[2], lines[4]],
+    ]
+    checked = custody.classify_trace(lines, _round3_trace_policy())
+    assert checked["status"] == "PASS"
+    assert checked["trace_line_count"] == len(lines)
+    assert [event["success"] for event in checked["events"]] == [True, False, False]
+    success = custody.classify_trace(
+        _trace_fixture("split_success"), _round3_trace_policy()
+    )
+    assert success["successful_open_counts"] == {"system": 2}
+    assert success["events"][1]["pid"] == 1600533
+    assert success["events"][1]["line_numbers"] == [2, 3]
+
+
+@pytest.mark.parametrize(
+    "defect", ["unfinished", "orphan", "wrong_pid", "wrong_name", "duplicate"]
+)
+def test_trace_unpaired_calls_refuse(defect: str) -> None:
+    custody = _custody_module()
+    lines = _trace_fixture("split_success")
+    if defect == "unfinished":
+        lines = lines[:2]
+    elif defect == "orphan":
+        lines = [lines[0], lines[2]]
+    elif defect == "wrong_pid":
+        lines[2] = lines[2].replace("1600533", "1600532")
+    elif defect == "wrong_name":
+        lines[2] = lines[2].replace("openat resumed", "open resumed")
+    else:
+        lines.insert(2, lines[1])
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.classify_trace(lines, _round3_trace_policy())
+    details = caught.value.details
+    assert details["status"] == "STOP"
+    assert any(item["class"] == "parse" for item in details["violations"])
+    retained = [
+        *details["events"],
+        *details["violations"],
+        *details["retained_noncall_lines"],
+    ]
+    assert {n for item in retained for n in item["line_numbers"]} == set(
+        range(1, len(lines) + 1)
+    )
+    for item in details["violations"]:
+        assert {"class", "path", "pid", "raw_line", "raw_lines"} <= item.keys()
+
+
+def test_trace_exact_clone_chdir_and_other_refusal() -> None:
+    custody = _custody_module()
+    lines = _trace_fixture("exact_clone_chdir")
+    result = custody.classify_trace(lines, _round3_trace_policy())
+    assert [event["category"] for event in result["events"]] == [
+        "system",
+        "declared_clone_cwd",
+        "declared_clone_cwd",
+    ]
+    for changed in (
+        lines[:1] + [lines[1].replace('/repo"', '/elsewhere"')],
+        lines[:1] + ["1600512 fchdir(9) = 0"],
+    ):
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.classify_trace(changed, _round3_trace_policy())
+        assert caught.value.details["violations"][0]["class"] == "cwd"
+        assert caught.value.details["violations"][0]["pid"] == 1600512
+
+
+def _platform_fixture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> tuple[Any, Path, dict[str, Any], dict[str, Any]]:
+    custody = _custody_module()
+    library = tmp_path / "platform/libinstrument.so"
+    library.parent.mkdir(parents=True)
+    library.write_bytes(b"mapped platform instrument")
+    identity = custody.platform_identity(library)
+    mappings = {str(library): {key: identity[key] for key in ("device", "inode")}}
+    monkeypatch.setattr(custody, "executable_mapped_files", lambda: mappings)
+    policy = {
+        "allowed": {"platform_system": [str(library.parent)]},
+        "protected_roots": [],
+    }
+    return custody, library, mappings, policy
+
+
+def test_platform_config_closed_roles_and_reasons(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, _run, _roots = _prepare_fixture(fixture, monkeypatch)
+    config = fixture.config
+    assert len(custody.platform_settings(config)) == 8
+    for change in ("missing", "duplicate", "reason", "relative", "glob", "digest"):
+        wrong = json.loads(json.dumps(config))
+        if change == "missing":
+            wrong["trace_platform_roots"].pop()
+        elif change == "duplicate":
+            wrong["trace_platform_roots"][0] = wrong["trace_platform_roots"][1]
+        elif change == "reason":
+            wrong["trace_platform_roots"][0]["reason"] = ""
+        elif change in {"relative", "glob"}:
+            wrong["trace_platform_roots"][0]["path"] = (
+                "relative" if change == "relative" else "/opt/*"
+            )
+        else:
+            wrong["trace_platform_library_digest"] = "ordinary_all_inputs"
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.platform_settings(wrong)
+        assert caught.value.details["guard"] == "PLATFORM_CONFIG"
+
+
+def test_platform_executable_maps_identity() -> None:
+    custody = _custody_module()
+    lines = [
+        "1000-2000 r-xp 0000 08:01 42 /opt/platform/suffixless",
+        "2000-3000 r--p 0000 08:01 99 /var/lib/sss/mc/passwd",
+        "3000-4000 r--p 0000 08:01 43 /opt/platform/cache.pcm",
+        "4000-5000 rwxp 0000 00:00 0 [anonymous]",
+    ]
+    assert custody.parse_executable_maps(lines) == {
+        "/opt/platform/suffixless": {"device": os.makedev(8, 1), "inode": 42}
+    }
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.parse_executable_maps(lines + [lines[0].replace(" 42 ", " 44 ")])
+    assert caught.value.details["guard"] == "PLATFORM_MAP_IDENTITY"
+
+
+@pytest.mark.parametrize("defect", ["none", "set", "protected", "inode", "unstable"])
+def test_platform_prepare_pins_and_protected_first(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, defect: str
+) -> None:
+    custody, library, mappings, policy = _platform_fixture(tmp_path, monkeypatch)
+    calls = []
+
+    def digest(path: Path) -> str:
+        calls.append(str(path))
+        checksum = R.digest(path)
+        if defect == "unstable":
+            path.write_bytes(b"changed while hashing")
+        return checksum
+
+    reader = SimpleNamespace(digest=digest)
+    mapped = {str(library)}
+    if defect == "set":
+        mapped = set()
+    elif defect == "protected":
+        policy["protected_roots"] = [str(library.parent)]
+    elif defect == "inode":
+        mappings[str(library)]["inode"] += 1
+    if defect == "none":
+        pins = custody.pin_platform_libraries(reader, mapped, policy)
+        assert pins == {
+            str(library): {
+                **custody.platform_identity(library),
+                "sha256": R.digest(library),
+            }
+        }
+        assert calls == [str(library)]
+    else:
+        guard = {
+            "set": "PLATFORM_MAP_SET",
+            "protected": "PLATFORM_PROTECTED",
+            "inode": "PLATFORM_MAP_FILE",
+            "unstable": "PLATFORM_PIN_CHANGED",
+        }[defect]
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.pin_platform_libraries(reader, mapped, policy)
+        assert caught.value.details["guard"] == guard
+        assert calls == ([str(library)] if defect == "unstable" else [])
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "none",
+        "added",
+        "removed",
+        "sha256",
+        "inode",
+        "bytes",
+        "mtime_ns",
+        "mapping",
+        "protected",
+        "absent_pins",
+    ],
+)
+def test_platform_worker_exact_pins(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, defect: str
+) -> None:
+    custody, library, mappings, policy = _platform_fixture(tmp_path, monkeypatch)
+    mapped = {str(library)}
+    pins = custody.pin_platform_libraries(R, mapped, policy)
+    prepared = {"platform_libraries": pins}
+    if defect == "added":
+        pins.clear()
+    elif defect == "removed":
+        mappings.clear()
+        mapped.clear()
+    elif defect in {"sha256", "inode", "bytes", "mtime_ns"}:
+        pins[str(library)][defect] = "0" * 64 if defect == "sha256" else -1
+    elif defect == "mapping":
+        mappings[str(library)]["inode"] += 1
+    elif defect == "protected":
+        policy["protected_roots"] = [str(library)]
+    elif defect == "absent_pins":
+        prepared = {}
+    calls = []
+
+    def digest(path: Path) -> str:
+        calls.append(path)
+        return R.digest(path)
+
+    record = custody.platform_library_record(
+        SimpleNamespace(digest=digest), prepared, mapped, policy
+    )
+    assert record["status"] == ("PASS" if defect == "none" else "STOP")
+    if defect in {"added", "removed", "protected", "absent_pins"}:
+        assert calls == []
+    if defect in {"sha256", "inode", "bytes", "mtime_ns", "mapping"}:
+        assert record["libraries"][str(library)]["prepared"] == pins[str(library)]
+        assert record["libraries"][str(library)]["observed"] == {
+            **custody.platform_identity(library),
+            "sha256": R.digest(library),
+        }
+
+
+def test_platform_guard_on_production_path(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    inputs, state, _root, lib = _prepared_mat_fixture(fixture, monkeypatch)
+    custody = state.custody
+    library = fixture.root / "platform/libnative.so"
+    library.parent.mkdir()
+    library.write_bytes(b"real local mapped identity")
+    identity = custody.platform_identity(library)
+    monkeypatch.setattr(
+        custody,
+        "executable_mapped_files",
+        lambda: {str(library): {key: identity[key] for key in ("device", "inode")}},
+    )
+    instrument = R.load_mat_instrument()
+    instrument.mapped_files = lambda: {str(lib), str(library)}
+    policy_path = inputs.run / "trace-policy.json"
+    policy = json.loads(policy_path.read_text())
+    policy["allowed"]["platform_system"] = [str(library.parent)]
+    policy_path.write_text(json.dumps(policy))
+    inputs.prestage["trace_policy_sha256"] = R.digest(policy_path)
+    inputs.prestage["platform_libraries"] = custody.pin_platform_libraries(
+        R, {str(library)}, policy
+    )
+    assert R.checked_prepared_mat(inputs)[1]["platform_libraries"]["status"] == "PASS"
+    library.write_bytes(b"tampered platform instrument")
+    with pytest.raises(R.Refused) as caught:
+        R.checked_prepared_mat(inputs)
+    assert caught.value.guard == "MAT_PLATFORM_LIBRARIES"
+    assert caught.value.details["platform_libraries"]["status"] == "STOP"
+    assert (
+        caught.value.details["platform_libraries"]["libraries"][str(library)][
+            "prepared"
+        ]
+        != caught.value.details["platform_libraries"]["libraries"][str(library)][
+            "observed"
+        ]
+    )
+
+
+def test_trace_policy_disjoint_under_system_run(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, run, _roots = _prepare_fixture(fixture, monkeypatch)
+    prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    clone = Path("/dev/shm/trace-policy-fixture/repo")
+    monkeypatch.setattr(
+        custody, "__file__", str(clone / "nd-unfolding/fd_rpd_reco_custody.py")
+    )
+    native_run = Path("/dev/shm/trace-policy-fixture/run")
+    prepared["mat_prefixes"] = {"PLOTUTILSROOT": str(native_run / "stage")}
+    policy = custody.build_trace_policy(fixture.config, prepared, native_run)
+    assert custody.trace_cwd(policy) == str(clone)
+    for path, expected in (
+        (native_run / "reference.json", "run"),
+        (native_run / "instrument/0-setup.sh", "run"),
+        (native_run / "stage/flux.root", "staged_data"),
+        (clone / "nd-unfolding/fd_rpd_reco.py", "environment"),
+        (clone / "nd-unfolding/__pycache__/fd_rpd_reco.cpython-311.pyc", "environment"),
+    ):
+        assert custody.classify_successful_open({str(path)}, "O_RDONLY", policy) == [
+            expected
+        ]
+    assert (
+        custody.classify_successful_open(
+            {str(clone / "unknown.dat")}, "O_RDONLY", policy
+        )
+        == []
+    )
+    bad = json.loads(json.dumps(policy))
+    bad["class_exclusions"]["system"] = []
+    line = f'22 openat(AT_FDCWD, "{native_run}/reference.json", O_RDONLY) = 3'
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.classify_trace([line], bad)
+    assert caught.value.details["violations"][0]["categories"] == ["system", "run"]
+    for key in ("cwd", "clone_root"):
+        wrong = {**policy, key: "/elsewhere"}
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.trace_cwd(wrong)
+        assert caught.value.details["guard"] == "TRACE_CWD"
+
+
+def test_platform_nonlibrary_opens_are_recorded() -> None:
+    custody = _custody_module()
+    roots = [
+        "/opt/cray/pe",
+        "/opt/ovis-ldms",
+        "/opt/nvidia/hpc_sdk",
+        "/opt/nersc/pymon",
+        "/opt/nersc/etc/nerscjson_client",
+        "/var/lib/sss/mc",
+        "/platform/darshan",
+        "/platform/libfabric",
+    ]
+    policy = {
+        "cwd": "/code",
+        "protected_roots": [],
+        "allowed": {"platform_system": roots},
+    }
+    lines = [f'10 openat(AT_FDCWD, "{root}/metadata", O_RDONLY) = 3' for root in roots]
+    result = custody.classify_trace(lines, policy)
+    assert result["successful_open_counts"] == {"platform_system": 8}
+    assert [event["path"] for event in result["events"]] == [
+        root + "/metadata" for root in roots
+    ]
+
+
+def test_trace_stop_record_is_complete_public_and_cfs_first(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody = _custody_module()
+    run = tmp_path / "run"
+    run.mkdir()
+    policy = _round3_trace_policy()
+    policy["protected_roots"] = ["/protected/source"]
+    lines = _trace_fixture("split_success")[:1] + [
+        '41 openat(AT_FDCWD, "/protected/source", O_RDONLY) = -1 ENOENT (No such file or directory)'
+    ]
+    secret = "fixture-redacted-value-24998"
+    provenance = {
+        "trace_sha256": "a" * 64,
+        "fingerprints": {"TOKEN": hashlib.sha256(secret.encode()).hexdigest()},
+    }
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.classify_trace_with_stop(
+            R, run, "data-free-trace", lines, policy, provenance
+        )
+    path = run / "data-free-trace.STOP.json"
+    record = json.loads(path.read_text())
+    assert record["status"] == "STOP"
+    assert record["trace_sha256"] == "a" * 64
+    assert record["violations"] == caught.value.details["violations"]
+    item = record["violations"][0]
+    assert (
+        item["class"] == "protected_root"
+        and item["path"] == "/protected/source"
+        and item["pid"] == 41
+    )
+    assert item["raw_lines"] == [lines[1]] and item["raw_line"] == lines[1]
+    assert secret not in path.read_text()
+    assert hashlib.sha256(secret.encode()).hexdigest() not in path.read_text()
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.write_trace_record(R, run, "unknown-stage", {"status": "STOP"})
+    assert caught.value.details["guard"] == "TRACE_RECORD_NAME"
+    writes = []
+    monkeypatch.setattr(R, "write_json", lambda *args: writes.append(args))
+    with pytest.raises(R.Refused, match="OUTPUT_LOCATION"):
+        custody.write_trace_record(
+            R, Path("/global/cfs/custody-run"), "data-free-trace", record
+        )
+    assert writes == []
+
+
+def test_prologue_persists_classifier_stop(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    custody = _custody_module()
+    path = Path(
+        os.environ.get(
+            "FD_RPD_PROLOGUE_MODULE", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+        )
+    )
+    spec = importlib.util.spec_from_file_location("trace_stop_prologue", path)
+    assert spec is not None and spec.loader is not None
+    prologue = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco", R)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco_custody", custody)
+    spec.loader.exec_module(prologue)
+    run = tmp_path / "run"
+    clone = str(Path(custody.__file__).resolve().parents[1])
+    policy = {
+        "cwd": clone,
+        "clone_root": clone,
+        "protected_roots": ["/protected/source"],
+        "allowed": {"system": ["/etc"]},
+    }
+    lines = _trace_fixture("split_success")[:2] + [
+        '72 openat(AT_FDCWD, "/protected/source", O_RDONLY) = -1 ENOENT (missing)'
+    ]
+
+    def prepare(_config: Any, _sha: Any, target: Path) -> str:
+        target.mkdir()
+        (target / "trace-policy.json").write_text(json.dumps(policy))
+        return "a" * 64
+
+    def child(_command: Any, **kwargs: Any) -> Any:
+        assert kwargs["cwd"] == clone
+        (run / "prologue.strace").write_text("\n".join(lines) + "\n")
+        (run / "prologue-worker.json").write_text(
+            json.dumps({"status": "PASS", "data_keys_read": []})
+        )
+        return SimpleNamespace(returncode=0, stdout="", stderr="")
+
+    monkeypatch.setattr(prologue, "prepare", prepare)
+    monkeypatch.setattr(prologue.subprocess, "run", child)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "prologue",
+            "--config",
+            str(tmp_path / "config.json"),
+            "--config-sha256",
+            "b" * 64,
+            "--run",
+            str(run),
+        ],
+    )
+    assert prologue.main() == 4
+    record = json.loads((run / "data-free-trace.STOP.json").read_text())
+    assert record["status"] == "STOP" and record["worker_exit_code"] == 0
+    assert record["trace_sha256"] == R.digest(run / "prologue.strace")
+    assert record["policy_sha256"] == R.digest(run / "trace-policy.json")
+    assert record["prepare_sha256"] == "a" * 64
+    assert {item["class"] for item in record["violations"]} == {
+        "parse",
+        "protected_root",
+    }
+    assert {item["pid"] for item in record["violations"]} == {1600533, 72}
+    assert all(
+        item["raw_line"] and item["raw_lines"] and "path" in item
+        for item in record["violations"]
+    )
+    assert "fingerprints" not in json.dumps(record)
+    assert "STOP DATA_FREE_TRACE: syscall custody violations" in capsys.readouterr().err
+    assert not (run / "data-free-trace.json").exists()
+
+
+def test_platform_worker_stat_stability(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, library, _mappings, policy = _platform_fixture(tmp_path, monkeypatch)
+    pins = custody.pin_platform_libraries(R, {str(library)}, policy)
+
+    def digest(path: Path) -> str:
+        checksum = R.digest(path)
+        path.write_bytes(b"changed during worker digest")
+        return checksum
+
+    record = custody.platform_library_record(
+        SimpleNamespace(digest=digest),
+        {"platform_libraries": pins},
+        {str(library)},
+        policy,
+    )
+    assert record["status"] == "STOP"
+    assert record["libraries"][str(library)]["stable"] is False
+
+
+def test_full_prologue4_trace_offline_with_built_policy(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Replay committed syscalls; this cannot establish native library pin identity."""
+    custody = _custody_module()
+    directory = REPO / "nd-unfolding/tests/fixtures/fd_rpd_reco_trace/prologue4"
+    manifest = json.loads((directory / "manifest.json").read_text())
+    prefix = str(Path(manifest["source_file"]).parents[1]) + "/"
+
+    def source(name: str) -> bytes:
+        return subprocess.run(
+            ["git", "show", manifest["source_commit"] + ":" + prefix + name],
+            cwd=REPO,
+            capture_output=True,
+            check=True,
+        ).stdout
+
+    config = json.loads(source("policy-config.json"))
+    prepared = json.loads(source("run/prologue-prepare.json"))
+    old_policy = json.loads(source("run/trace-policy.json"))
+    draft = json.loads(
+        (
+            REPO
+            / "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/trace-classifier-repair-20261108/production-config.draft.json"
+        ).read_text()
+    )
+    for key in ("trace_platform_roots", "trace_platform_library_digest"):
+        config[key] = draft[key]
+    config["trace_instrument_directories"].append(
+        "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build"
+    )
+    prepared["module_paths"] = {
+        ".".join(item["module_name_components"]): item["source_path"]
+        for item in prepared["module_paths"]
+    }
+    clone = Path(prepared["run"]).parent / "repo"
+    monkeypatch.setattr(
+        custody, "__file__", str(clone / "nd-unfolding/fd_rpd_reco_custody.py")
+    )
+    monkeypatch.setattr(sys, "path", old_policy["python_directories"])
+    policy = custody.build_trace_policy(config, prepared, Path(prepared["run"]))
+    # The local machine cannot resolve this platform symlink. Its target is
+    # the successful descriptor annotation at committed trace line 1625.
+    policy["allowed"]["platform_system"].append(
+        "/global/common/software/nersc9/darshan/3.4.6-gcc-13.2.1/lib"
+    )
+    trace = source("run/prologue.strace")
+    assert hashlib.sha256(trace).hexdigest() == manifest["source_sha256"]
+    result = custody.classify_trace(trace.decode().splitlines(), policy)
+    assert result["status"] == "PASS" and result["violations"] == []
+    assert result["trace_line_count"] == 2709
+    assert sum(len(event["raw_lines"]) == 2 for event in result["events"]) == 67
+    assert (
+        sum(event.get("category") == "declared_clone_cwd" for event in result["events"])
+        == 2
+    )
+    assert result["successful_open_counts"] == {
+        "system": 296,
+        "instrument_directory": 7,
+        "python_directory": 9,
+        "environment": 552,
+        "platform_system": 57,
+        "run": 16,
+        "private_prepare": 2,
+        "pinned_mat_libs": 6,
+    }

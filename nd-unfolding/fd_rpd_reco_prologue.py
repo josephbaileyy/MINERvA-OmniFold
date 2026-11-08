@@ -116,6 +116,9 @@ def prepare(config_path: Path, checksum: str, run: Path) -> str:
     prepared["private_prepare_path"] = str(
         custody.private_prepare_path(run, "prologue-prepare", prepared["connect_id"])
     )
+    prepared["platform_libraries"] = custody.pin_platform_libraries(
+        r, instrument.mapped_files(), custody.build_trace_policy(config, prepared, run)
+    )
     policy = custody.build_trace_policy(config, prepared, run)
     r.write_json(run / "trace-policy.json", policy)
     prepared["trace_policy_sha256"] = r.digest(run / "trace-policy.json")
@@ -134,6 +137,7 @@ def main() -> int:
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--prepare-sha256", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    args.run = args.run.resolve()
     prepared: r.Json | None = None
     launch_environment = custody.native_environment()
     try:
@@ -186,8 +190,14 @@ def main() -> int:
             "--prepare-sha256",
             checksum,
         ]
+        policy = json.loads((args.run / "trace-policy.json").read_text())
         child = subprocess.run(
-            command, text=True, capture_output=True, check=False, env=launch_environment
+            command,
+            text=True,
+            capture_output=True,
+            check=False,
+            env=launch_environment,
+            cwd=custody.trace_cwd(policy),
         )
         (args.run / "worker.stdout.txt").write_text(child.stdout)
         (args.run / "worker.stderr.txt").write_text(child.stderr)
@@ -197,15 +207,32 @@ def main() -> int:
             f"prologue worker exited {child.returncode}",
         )
         policy = json.loads((args.run / "trace-policy.json").read_text())
-        result = custody.classify_trace(trace.read_text().splitlines(), policy)
+        result = custody.classify_trace_with_stop(
+            r,
+            args.run,
+            "data-free-trace",
+            trace.read_text().splitlines(),
+            policy,
+            {
+                "scope": "data-free prologue only; no full-connect permission",
+                "worker_exit_code": child.returncode,
+                "prepare_sha256": checksum,
+                "policy_sha256": r.digest(args.run / "trace-policy.json"),
+                "trace_sha256": r.digest(trace),
+                "producer_sha256": r.digest(Path(r.__file__)),
+                "custody_sha256": r.digest(Path(custody.__file__)),
+            },
+        )
         worker = json.loads((args.run / "prologue-worker.json").read_text())
         r.require(
             worker.get("status") == "PASS" and worker.get("data_keys_read") == [],
             "MAT_WORKER_EXIT",
             "invalid prologue worker record",
         )
-        r.write_json(
-            args.run / "data-free-trace.json",
+        custody.write_trace_record(
+            r,
+            args.run,
+            "data-free-trace",
             {
                 **result,
                 "scope": "data-free prologue only; no full-connect permission",

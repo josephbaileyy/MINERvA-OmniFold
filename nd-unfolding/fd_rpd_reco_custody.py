@@ -650,6 +650,9 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
     manifest["private_prepare_path"] = str(
         private_prepare_path(run, "prestage", manifest["connect_id"])
     )
+    manifest["platform_libraries"] = pin_platform_libraries(
+        r, instrument.mapped_files(), build_trace_policy(config, manifest, run)
+    )
     policy = build_trace_policy(config, manifest, run)
     r.write_json(run / "trace-policy.json", policy)
     manifest["trace_policy_sha256"] = r.digest(run / "trace-policy.json")
@@ -677,6 +680,8 @@ def classify_successful_open(
         return ["private_prepare"]
     if paths & pinned:
         return ["pinned_mat_libs"]
+    if paths & set(policy["allowed"].get("pinned_platform_libs", [])):
+        return ["pinned_platform_libs"]
     if any(
         _under(p, directory)
         for p in paths
@@ -692,11 +697,14 @@ def classify_successful_open(
     categories = [
         category
         for category, roots in policy["allowed"].items()
-        if category != "pinned_mat_libs"
+        if category not in {"pinned_mat_libs", "pinned_platform_libs"}
         and any(_under(p, root) for p in paths for root in roots)
+        and not any(
+            _under(p, root)
+            for p in paths
+            for root in policy.get("class_exclusions", {}).get(category, [])
+        )
     ]
-    if "staged_data" in categories and "run" in categories:
-        categories.remove("run")
     return categories
 
 
@@ -718,54 +726,191 @@ def mapped_instrument_violations(mapped: set[str], policy: Json) -> list[str]:
     )
 
 
-def classify_trace(lines: list[str], policy: Json) -> Json:
-    """Classify strace -f -yy opens; any protected attempt refuses, even ENOENT.
+def _trace_pid_body(line: str) -> tuple[int | None, str]:
+    """Separate both strace PID-prefix forms from the syscall text."""
+    match = re.match(r"^\s*(?:\[pid\s+(\d+)\]|(\d+))\s+(.*)$", line)
+    return (int(match[1] or match[2]), match[3]) if match else (None, line.strip())
 
-    Successful opens must have one explicit disposition. Relative requests require
-    an annotated directory fd or AT_FDCWD path. We refuse incomplete/resumed calls
-    rather than guess their origin. Failed nonprotected searches remain counted.
-    """
+
+def _trace_violation(record: Json, reason: str, *, category: str = "parse") -> Json:
+    """Keep original trace evidence even when a pathname cannot be resolved."""
+    request = re.search(r'"((?:[^"\\]|\\.)*)"', record["call"])
+    path = None
+    if request:
+        try:
+            path = ast.literal_eval('"' + request[1] + '"')
+        except (ValueError, SyntaxError):
+            pass
+    return {
+        "class": category,
+        "reason": reason,
+        "path": path,
+        "pid": record["pid"],
+        "raw_line": "\n".join(record["raw_lines"]),
+        "raw_lines": record["raw_lines"],
+        "line_numbers": record["line_numbers"],
+    }
+
+
+def complete_trace_calls(lines: list[str]) -> tuple[list[Json], list[Json], list[Json]]:
+    """Join split syscalls only within one PID and preserve every input line."""
+    pending: dict[int, Json] = {}
+    calls: list[Json] = []
+    violations: list[Json] = []
+    retained: list[Json] = []
+    names = r"open|openat|openat2|chdir|fchdir"
+    for number, line in enumerate(lines, 1):
+        pid, body = _trace_pid_body(line)
+        record = {
+            "pid": pid,
+            "call": body,
+            "raw_lines": [line],
+            "line_numbers": [number],
+        }
+        if body.endswith("<unfinished ...>"):
+            start = re.match(r"^(" + names + r")\(", body)
+            if pid is None or start is None:
+                violations.append(
+                    _trace_violation(
+                        record, "unfinished syscall has no PID or recognized name"
+                    )
+                )
+                continue
+            if pid in pending:
+                violations.append(
+                    _trace_violation(
+                        pending.pop(pid), "second unfinished syscall for pending PID"
+                    )
+                )
+            record["name"] = start[1]
+            record["call"] = body.removesuffix("<unfinished ...>")
+            pending[pid] = record
+            continue
+        resumed = re.match(r"^<\.\.\. (\w+) resumed>(.*)$", body)
+        if resumed:
+            pending_pid = pid
+            if pending_pid is None or pending_pid not in pending:
+                violations.append(
+                    _trace_violation(
+                        record, "resumed syscall has no unfinished call for its PID"
+                    )
+                )
+                continue
+            first = pending.pop(pending_pid)
+            joined = {
+                "pid": pid,
+                "call": first["call"] + resumed[2],
+                "raw_lines": first["raw_lines"] + record["raw_lines"],
+                "line_numbers": first["line_numbers"] + record["line_numbers"],
+            }
+            if first["name"] != resumed[1]:
+                violations.append(
+                    _trace_violation(
+                        joined, "resumed syscall name differs from unfinished call"
+                    )
+                )
+            else:
+                calls.append(joined)
+            continue
+        if re.match(r"^(?:" + names + r")\(", body):
+            calls.append(record)
+        else:
+            retained.append({"pid": pid, "raw_line": line, "line_numbers": [number]})
+    for record in pending.values():
+        violations.append(
+            _trace_violation(
+                record, "unfinished syscall remains unpaired at end of trace"
+            )
+        )
+    accounted = {
+        n for record in [*calls, *violations, *retained] for n in record["line_numbers"]
+    }
+    for number in sorted(set(range(1, len(lines) + 1)) - accounted):
+        pid, body = _trace_pid_body(lines[number - 1])
+        violations.append(
+            _trace_violation(
+                {
+                    "pid": pid,
+                    "call": body,
+                    "raw_lines": [lines[number - 1]],
+                    "line_numbers": [number],
+                },
+                "trace line was not accounted for",
+            )
+        )
+    return sorted(calls, key=lambda item: item["line_numbers"][0]), violations, retained
+
+
+def classify_trace(lines: list[str], policy: Json) -> Json:
+    """Classify complete calls, refusing protected attempts and every ambiguity."""
     counts: Counter[str] = Counter()
     failed: Counter[str] = Counter()
-    violations: list[Json] = []
-    events = []
-    for line in lines:
-        if re.search(r"\b(?:chdir|fchdir)\(", line):
-            violations.append(
-                {"line": line, "reason": "cwd changed inside extraction trace"}
-            )
-            continue
-        if not re.search(r"\b(?:open|openat|openat2)\(", line):
-            continue
-        call = re.search(r"\b(open|openat|openat2)\((.*)\)\s+=\s+(.+)$", line)
+    calls, violations, retained = complete_trace_calls(lines)
+    events: list[Json] = []
+    cwd_by_pid: dict[int | None, str] = {}
+    for record in calls:
+        line = record["call"]
+        call = re.match(r"(open|openat|openat2|chdir|fchdir)\((.*)\)\s+=\s+(.+)$", line)
         if call is None:
-            violations.append({"line": line, "reason": "unparsed open syscall"})
+            violations.append(_trace_violation(record, "unparsed syscall"))
             continue
         name, arguments, result = call.groups()
+        cwd = cwd_by_pid.get(record["pid"], policy.get("cwd"))
+        if name in {"chdir", "fchdir"}:
+            try:
+                directory = ast.literal_eval(arguments) if name == "chdir" else None
+            except (ValueError, SyntaxError):
+                directory = None
+            if name == "fchdir":
+                annotated = re.search(r"^\d+<(/[^>]*)>$", arguments)
+                directory = annotated[1] if annotated else None
+            target = (
+                os.path.normpath(os.path.join(cwd, directory))
+                if isinstance(directory, str) and isinstance(cwd, str)
+                else None
+            )
+            event = {
+                **_trace_violation(record, "cwd operation", category="cwd"),
+                "path": target,
+                "result": result,
+                "success": result.startswith("0"),
+            }
+            if target is None or target != policy.get("clone_root"):
+                violations.append(
+                    {**event, "reason": "cwd changed outside declared clone"}
+                )
+            else:
+                event["category"] = "declared_clone_cwd"
+            if event["success"] and target is not None:
+                cwd_by_pid[record["pid"]] = target
+            events.append(event)
+            continue
         request = re.search(r'"((?:[^"\\]|\\.)*)"', arguments)
         if request is None:
-            violations.append({"line": line, "reason": "missing pathname"})
+            violations.append(_trace_violation(record, "missing pathname"))
             continue
         try:
             path = ast.literal_eval('"' + request[1] + '"')
         except (ValueError, SyntaxError):
-            violations.append({"line": line, "reason": "invalid quoted path"})
+            violations.append(_trace_violation(record, "invalid quoted path"))
             continue
         success = re.match(r"\d+(?:<.*>)?(?:\s|$)", result) is not None
+        if not success and re.match(r"-1\s+\w+", result) is None:
+            violations.append(_trace_violation(record, "unresolved open result"))
+            continue
         if not path.startswith("/"):
-            directory = (
+            directory_fd = (
                 re.search(r"^[^,]*<(/[^>]*)>", arguments) if name != "open" else None
             )
-            if directory is not None:
-                base = directory[1]
-            else:
-                base = (
-                    policy.get("cwd")
-                    if name == "open" or arguments.startswith("AT_FDCWD,")
-                    else None
+            base = (
+                directory_fd[1]
+                if directory_fd is not None
+                else (
+                    cwd if name == "open" or arguments.startswith("AT_FDCWD,") else None
                 )
+            )
             if base is None:
-                violations.append({"line": line, "reason": "unresolved relative path"})
+                violations.append(_trace_violation(record, "unresolved relative path"))
                 continue
             path = os.path.normpath(os.path.join(base, path))
         else:
@@ -775,19 +920,27 @@ def classify_trace(lines: list[str], policy: Json) -> Json:
         protected = any(
             _under(p, root) for p in paths for root in policy["protected_roots"]
         )
-        event: Json = {
+        event = {
+            "pid": record["pid"],
+            "path": path,
             "request": path,
             "resolved": resolved[1] if resolved else None,
             "success": success,
+            "raw_line": "\n".join(record["raw_lines"]),
+            "raw_lines": record["raw_lines"],
+            "line_numbers": record["line_numbers"],
         }
         if protected:
-            violations.append({**event, "reason": "protected root attempt"})
+            violations.append(
+                {**event, "class": "protected_root", "reason": "protected root attempt"}
+            )
         elif success:
             categories = classify_successful_open(paths, arguments, policy)
             if len(categories) != 1:
                 violations.append(
                     {
                         **event,
+                        "class": "classification",
                         "reason": "unclassified or ambiguous successful open",
                         "categories": categories,
                     }
@@ -802,25 +955,233 @@ def classify_trace(lines: list[str], policy: Json) -> Json:
             )
             failed[prefix] += 1
         events.append(event)
-    require(bool(events), "trace contains no classified open events")
-    if violations:
-        raise CustodyRefused(
-            "syscall custody violations: " + json.dumps(violations),
+    if not any("request" in event for event in events):
+        violations.append(
             {
-                "status": "STOP",
-                "violations": violations,
-                "successful_open_counts": dict(counts),
-                "failed_nonprotected_counts": dict(failed),
-                "events": events,
-            },
+                "class": "trace",
+                "reason": "trace contains no open events",
+                "path": None,
+                "pid": None,
+                "raw_line": None,
+                "raw_lines": [],
+                "line_numbers": [],
+            }
         )
-    return {
-        "status": "PASS",
+    checked = {
+        "status": "STOP" if violations else "PASS",
+        "violations": violations,
         "successful_open_counts": dict(counts),
         "failed_nonprotected_counts": dict(failed),
         "events": events,
+        "retained_noncall_lines": retained,
+        "trace_line_count": len(lines),
+    }
+    if violations:
+        raise CustodyRefused("syscall custody violations", checked)
+    return checked
+
+
+PLATFORM_ROLES = {
+    "cray_pe",
+    "ovis_ldms",
+    "nvidia_hpc",
+    "nersc_pymon",
+    "nerscjson_client",
+    "sss_cache",
+    "darshan",
+    "libfabric",
+}
+
+
+def platform_settings(config: Json) -> list[Json]:
+    """Require the reviewed platform namespaces and their stated reasons."""
+    entries = config.get("trace_platform_roots")
+    valid = (
+        isinstance(entries, list)
+        and len(entries) == len(PLATFORM_ROLES)
+        and all(
+            isinstance(item, dict) and isinstance(item.get("role"), str)
+            for item in entries
+        )
+        and {item.get("role") for item in entries} == PLATFORM_ROLES
+        and config.get("trace_platform_library_digest")
+        == "ordinary_instrument_code_only"
+        and all(
+            isinstance(item.get("path"), str)
+            and Path(item["path"]).is_absolute()
+            and not any(token in item["path"] for token in ("${", "*", "?", "[", "]"))
+            and isinstance(item.get("reason"), str)
+            and bool(item["reason"].strip())
+            for item in entries
+        )
+    )
+    require(
+        valid,
+        "reviewed platform roots/reasons and instrument digest mode required",
+        guard="PLATFORM_CONFIG",
+    )
+    assert isinstance(entries, list)
+    return entries
+
+
+def parse_executable_maps(lines: list[str]) -> Json:
+    """Retain native executable file mappings, without assuming a .so suffix."""
+    records: Json = {}
+    for line in lines:
+        fields = line.split(None, 5)
+        if len(fields) != 6 or "x" not in fields[1] or not fields[5].startswith("/"):
+            continue
+        major, minor = fields[3].split(":")
+        identity = {
+            "device": os.makedev(int(major, 16), int(minor, 16)),
+            "inode": int(fields[4]),
+        }
+        path = str(Path(fields[5].strip()).resolve())
+        require(
+            path not in records or records[path] == identity,
+            "inconsistent executable mapping identity",
+            guard="PLATFORM_MAP_IDENTITY",
+        )
+        records[path] = identity
+    return records
+
+
+def executable_mapped_files() -> Json:
+    """Read Linux's current executable mappings; non-library caches are not pinned."""
+    return parse_executable_maps(Path("/proc/self/maps").read_text().splitlines())
+
+
+def platform_identity(path: Path) -> Json:
+    """Record code identity; loader/library atime is not custody evidence."""
+    info = path.stat()
+    return {
+        "device": info.st_dev,
+        "inode": info.st_ino,
+        "bytes": info.st_size,
+        "mtime_ns": info.st_mtime_ns,
+    }
+
+
+def platform_mapping_snapshot(
+    mapped: set[str], policy: Json
+) -> tuple[Json, list[str], list[str]]:
+    """Separate mapped platform code from non-executable platform data."""
+    roots = policy["allowed"].get("platform_system", [])
+    if not roots:
+        return {}, [], []
+    executable = {
+        path: identity
+        for path, identity in executable_mapped_files().items()
+        if any(_under(path, root) for root in roots)
+    }
+    nonexecutable = sorted(
+        path
+        for path in mapped
+        if any(_under(path, root) for root in roots) and path not in executable
+    )
+    return executable, sorted(set(executable) - mapped), nonexecutable
+
+
+def pin_platform_libraries(r: Any, mapped: set[str], policy: Json) -> Json:
+    """Pin mapped instrument code by ordinary read, refusing protected inputs first."""
+    executable, missing, _nonexecutable = platform_mapping_snapshot(mapped, policy)
+    require(
+        not missing,
+        "executable platform mappings differ from process snapshot",
+        guard="PLATFORM_MAP_SET",
+    )
+    pins = {}
+    for filename, mapping in executable.items():
+        require(
+            not any(_under(filename, root) for root in policy["protected_roots"]),
+            "protected input cannot use ordinary platform digest",
+            guard="PLATFORM_PROTECTED",
+        )
+        path = Path(filename)
+        before = platform_identity(path)
+        require(
+            all(before[key] == mapping[key] for key in ("device", "inode")),
+            "mapped code differs from on-disk identity",
+            guard="PLATFORM_MAP_FILE",
+        )
+        checksum = r.digest(path)
+        require(
+            before == platform_identity(path),
+            "platform library changed while pinning",
+            guard="PLATFORM_PIN_CHANGED",
+        )
+        pins[filename] = {**before, "sha256": checksum}
+    return pins
+
+
+def platform_library_record(
+    r: Any, prepared: Json, mapped: set[str], policy: Json
+) -> Json:
+    """Compare the exact prepared/worker platform code sets and every code pin."""
+    expected = prepared.get("platform_libraries")
+    executable, inconsistent, nonexecutable = platform_mapping_snapshot(mapped, policy)
+    record: Json = {
+        "status": "STOP",
+        "digest_mode": "ordinary_instrument_code_only",
+        "expected_mapped": sorted(expected) if isinstance(expected, dict) else None,
+        "observed_mapped": sorted(executable),
+        "missing_from_process_snapshot": inconsistent,
+        "nonexecutable_platform_mappings": nonexecutable,
+        "libraries": {},
         "violations": [],
     }
+    if not isinstance(expected, dict):
+        record["violations"].append({"reason": "platform prepare pins missing"})
+        return record
+    added, removed = sorted(set(executable) - set(expected)), sorted(
+        set(expected) - set(executable)
+    )
+    record.update(unexpected_mapped=added, missing_mapped=removed)
+    if added or removed or inconsistent:
+        record["violations"].append({"reason": "platform mapped set differs"})
+        return record
+    for filename, mapping in executable.items():
+        if any(_under(filename, root) for root in policy["protected_roots"]):
+            record["violations"].append(
+                {
+                    "reason": "protected input cannot use ordinary platform digest",
+                    "path": filename,
+                }
+            )
+            continue
+        try:
+            path = Path(filename)
+            before = platform_identity(path)
+            observed = {**before, "sha256": r.digest(path)}
+            stable = before == platform_identity(path)
+            valid = (
+                stable
+                and observed == expected[filename]
+                and all(observed[key] == mapping[key] for key in ("device", "inode"))
+            )
+            record["libraries"][filename] = {
+                "prepared": expected[filename],
+                "observed": observed,
+                "mapped_identity": mapping,
+                "stable": stable,
+            }
+            if not valid:
+                record["violations"].append(
+                    {
+                        "reason": "platform library identity or digest differs",
+                        "path": filename,
+                    }
+                )
+        except OSError as error:
+            record["violations"].append(
+                {
+                    "reason": "platform library unavailable",
+                    "path": filename,
+                    "errno": error.errno,
+                }
+            )
+    record["status"] = "STOP" if record["violations"] else "PASS"
+    return record
 
 
 def build_trace_policy(config: Json, prepared: Json, run: Path) -> Json:
@@ -840,6 +1201,7 @@ def build_trace_policy(config: Json, prepared: Json, run: Path) -> Json:
         "reviewed instrument directories required",
         guard="INSTRUMENT_DIRECTORIES",
     )
+    platform = platform_settings(config)
     cov2d = config["cov2d_protected_paths"]
     require(isinstance(cov2d, list) and bool(cov2d), "COV2D input paths required")
     roots = [
@@ -891,30 +1253,85 @@ def build_trace_policy(config: Json, prepared: Json, run: Path) -> Json:
         for path in modules
         if path.endswith(".py")
     ]
+    clone = str(Path(__file__).resolve().parents[1])
+    platform_roots = sorted(
+        {
+            str(value)
+            for item in platform
+            for value in (Path(item["path"]).absolute(), Path(item["path"]).resolve())
+        }
+    )
+    staged_roots = [
+        str((run / "original-inputs").resolve()),
+        *prepared["mat_prefixes"].values(),
+    ]
+    environment_roots = sorted(set(extra + modules + cache))
+    instrument_roots = sorted(
+        {
+            str(value)
+            for path in directories
+            for value in (Path(path).absolute(), Path(path).resolve())
+        }
+    )
+    pinned_platform = list(prepared.get("platform_libraries", {}))
     return {
-        "schema": "fd-rpd-reco-trace-policy/1",
-        "cwd": str(Path.cwd()),
+        "schema": "fd-rpd-reco-trace-policy/2",
+        "cwd": clone,
+        "clone_root": clone,
         "protected_roots": roots,
         "private_prepare_files": private_files,
-        "instrument_directories": sorted(
-            {
-                str(value)
-                for path in directories
-                for value in (Path(path).absolute(), Path(path).resolve())
-            }
-        ),
+        "instrument_directories": instrument_roots,
         "python_directories": sorted(
-            {str(Path(path or os.getcwd()).resolve()) for path in sys.path}
+            {clone, *[str(Path(path or os.getcwd()).resolve()) for path in sys.path]}
         ),
+        "platform_root_reasons": platform,
+        "platform_library_digest": "ordinary_instrument_code_only",
         "allowed": {
-            "staged_data": [
-                str((run / "original-inputs").resolve()),
-                *prepared["mat_prefixes"].values(),
-            ],
+            "staged_data": staged_roots,
             "pinned_mat_libs": list(prepared["mat_environment"]["mat_sha256"]),
-            "environment": sorted(set(extra + modules + cache)),
+            "pinned_platform_libs": pinned_platform,
+            "platform_system": platform_roots,
+            "environment": environment_roots,
             "system": ["/etc", "/lib", "/lib64", "/usr", "/proc", "/sys", "/dev"],
             "run": [str(run.resolve())],
+        },
+        "class_exclusions": {
+            "system": sorted(
+                set(
+                    [
+                        str(run.resolve()),
+                        clone,
+                        *staged_roots,
+                        *environment_roots,
+                        *platform_roots,
+                        *instrument_roots,
+                        *private_files,
+                    ]
+                )
+            ),
+            "environment": sorted(
+                set(
+                    [
+                        str(run.resolve()),
+                        *staged_roots,
+                        *platform_roots,
+                        *instrument_roots,
+                        *private_files,
+                    ]
+                )
+            ),
+            "platform_system": sorted(
+                set(
+                    [
+                        str(run.resolve()),
+                        *staged_roots,
+                        *pinned_platform,
+                        *instrument_roots,
+                        *private_files,
+                    ]
+                )
+            ),
+            "run": staged_roots,
         },
         "failed_prefixes": (
             os.environ.get("LD_LIBRARY_PATH", "").split(":")
@@ -923,6 +1340,44 @@ def build_trace_policy(config: Json, prepared: Json, run: Path) -> Json:
         ),
         "connect_id": prepared["connect_id"],
     }
+
+
+def trace_cwd(policy: Json) -> str:
+    """Keep the traced child in the frozen checkout, before strace starts."""
+    expected = str(Path(__file__).resolve().parents[1])
+    require(
+        policy.get("cwd") == expected and policy.get("clone_root") == expected,
+        "trace cwd is not the declared source clone",
+        guard="TRACE_CWD",
+    )
+    return expected
+
+
+def write_trace_record(r: Any, run: Path, stage: str, record: Json) -> Json:
+    """Write the trace disposition through the existing public export boundary."""
+    r.require_output_root(run)
+    require(
+        stage in {"data-free-trace", "flux-custody", "missing-dependency-trace"},
+        "unknown trace record stage",
+        guard="TRACE_RECORD_NAME",
+    )
+    suffix = ".STOP.json" if record["status"] == "STOP" else ".json"
+    public: Json = public_record(record, {}, {})
+    r.write_json(run / (stage + suffix), public)
+    return public
+
+
+def classify_trace_with_stop(
+    r: Any, run: Path, stage: str, lines: list[str], policy: Json, provenance: Json
+) -> Json:
+    """Persist every classified violation before propagating a trace refusal."""
+    try:
+        return classify_trace(lines, policy)
+    except CustodyRefused as error:
+        write_trace_record(
+            r, run, stage, {**provenance, **(error.details or {}), "status": "STOP"}
+        )
+        raise
 
 
 def check_trace(
@@ -935,21 +1390,18 @@ def check_trace(
     )
     policy = json.loads(policy_copy.read_text())
     trace_bytes = trace.read_bytes()
-    try:
-        checked = classify_trace(trace_bytes.decode().splitlines(), policy)
-    except CustodyRefused as error:
-        r.write_json(
-            run / "flux-custody.STOP.json",
-            {
-                **(error.details or {}),
-                "status": "STOP",
-                "message": str(error),
-                "policy_sha256": policy_sha,
-                "trace_sha256": hashlib.sha256(trace_bytes).hexdigest(),
-                "readings": None,
-            },
-        )
-        raise
+    checked = classify_trace_with_stop(
+        r,
+        run,
+        "flux-custody",
+        trace_bytes.decode().splitlines(),
+        policy,
+        {
+            "policy_sha256": policy_sha,
+            "trace_sha256": hashlib.sha256(trace_bytes).hexdigest(),
+            "readings": None,
+        },
+    )
     extract = run / "flux-extract.json"
     record = json.loads(extract.read_text())
     require(
@@ -996,6 +1448,10 @@ def missing_dependency_check(
     held = path.with_name(path.name + ".negative-check-held")
     require(not held.exists(), "negative-check holding file already exists")
     trace = run / "missing-dependency.strace"
+    policy = r.stage_copy(
+        run / "trace-policy.json", run / "negative-policy.checked.json", policy_sha
+    )
+    trace_policy = json.loads(policy.read_text())
     command = [
         "/usr/bin/strace",
         "-f",
@@ -1018,7 +1474,13 @@ def missing_dependency_check(
     ]
     path.rename(held)
     try:
-        result = subprocess.run(command, text=True, capture_output=True, check=False)
+        result = subprocess.run(
+            command,
+            text=True,
+            capture_output=True,
+            check=False,
+            cwd=trace_cwd(trace_policy),
+        )
     finally:
         held.rename(path)
     stop = run / "flux-extract.STOP.json"
@@ -1032,11 +1494,13 @@ def missing_dependency_check(
         "missing dependency refused at a different boundary",
         guard="NEGATIVE_EXPECTED_GUARD",
     )
-    policy = r.stage_copy(
-        run / "trace-policy.json", run / "negative-policy.checked.json", policy_sha
-    )
-    checked = classify_trace(
-        trace.read_text().splitlines(), json.loads(policy.read_text())
+    checked = classify_trace_with_stop(
+        r,
+        run,
+        "missing-dependency-trace",
+        trace.read_text().splitlines(),
+        trace_policy,
+        {"policy_sha256": policy_sha, "trace_sha256": r.digest(trace)},
     )
     stop.rename(run / "missing-dependency.STOP.json")
     receipt = {
