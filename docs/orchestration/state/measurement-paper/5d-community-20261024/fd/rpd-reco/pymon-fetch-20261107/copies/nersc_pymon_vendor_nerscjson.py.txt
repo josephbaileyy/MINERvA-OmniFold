@@ -1,0 +1,177 @@
+import configparser
+import ctypes
+import datetime
+import json
+import os
+import socket
+import time
+
+
+# import nerscjson_client
+class LDMS_t(ctypes.Structure):
+    pass
+
+
+class ldms_msg_type_t(ctypes.c_int):
+    LDMS_MSG_STRING = 0
+    LDMS_MSG_JSON = 1
+    LDMS_MSG_AVRO_SER = 2
+
+
+def ldms_publish(xprt, auth, host, port, stream, message):
+    lib_path = "/opt/ovis-ldms/lib/"
+    lib_ldms = ctypes.cdll.LoadLibrary(os.path.join(lib_path, "libldms.so"))
+
+    lib_ldms.ldms_xprt_new_with_auth.restype = ctypes.POINTER(LDMS_t)
+
+    lib_ldms.ldms_xprt_new_with_auth.argtypes = [
+        ctypes.c_char_p,  # const char *xprt_name
+        ctypes.c_char_p,  # const char *auth_name
+        ctypes.c_void_p,  # struct attr_value_list *auth_av_list, NULL
+    ]
+
+    ldms = lib_ldms.ldms_xprt_new_with_auth(xprt.encode(), auth.encode(), None)
+
+    rc = lib_ldms.ldms_xprt_connect_by_name(
+        ldms,
+        host.encode(),
+        port.encode(),
+        None,
+        None
+    )
+
+    rc = lib_ldms.ldms_msg_publish(
+        ldms,
+        stream.encode(),
+        ldms_msg_type_t.LDMS_MSG_JSON,
+        None,
+        0o400,
+        message.encode(),
+        len(message) + 1
+    )
+
+    rc = lib_ldms.ldms_xprt_close(ldms)
+    return rc
+
+
+def rfc3339_timestamp():
+    """
+    Format a timestamp according to rfc3339 strftime() *almost* works!
+    '%FT%T%z' is SO close to what is needed, but of course you need a
+    special GNU extension to get '%FT%T%:z' for RFC3339
+    """
+    if time.localtime().tm_isdst:
+        utc_offset_sec = time.altzone
+    else:
+        utc_offset_sec = time.timezone
+    utc_offset = datetime.timedelta(seconds=-utc_offset_sec)
+    tzinfo = datetime.timezone(offset=utc_offset)
+    t = datetime.datetime.now().replace(tzinfo=tzinfo).isoformat()
+    return t
+
+
+def system_name():
+    with open("/etc/clustername", "r") as f:
+        name = f.read().strip()
+    return name
+
+
+def format_omni_message(key, msg):
+    ndc_dict = {
+        "system": system_name()
+    }
+    formatted_time = rfc3339_timestamp()
+    hostname = socket.gethostname()
+    message = {
+        "@timestamp": f"{formatted_time}",
+        "data": msg,
+        "ndc": ndc_dict,
+        "msgtype": f"{key}",
+        "host": f"{hostname}"
+    }
+    return json.dumps(message)
+
+
+def read_config():
+
+    config = configparser.ConfigParser()
+    configpath = os.environ.get("NERSCJSON_CONFIG", "/opt/nersc/etc/nerscjson_client/ldms.ini")
+    config.read(configpath)
+    if "nerscjson_client.transport" not in config:
+        config = {"nerscjson_client.transport": {}}
+
+    def _get(name, default):
+        """Returns the first non-null of (env, config, or default) for "name"
+        """
+        return (
+            os.environ.get("NERSCJSON_{}".format(name.upper())) or
+            config["nerscjson_client.transport"].get(name.lower()) or
+            default
+        )
+
+    protocol = _get("protocol", "null")
+
+    if protocol == "ldms":
+        config = {
+            k: _get(k, d) for k, d in [
+                ("protocol", "ldms"),
+                ("xprt", "sock"),
+                ("auth", "munge"),
+                ("host", "localhost"),
+                ("port", "6002"),
+                ("stream", "nersc"),
+            ]
+        }
+    else:
+        config = dict(
+            protocol=protocol
+        )
+
+    return config
+
+
+class Handler:
+    def __init__(self, opts):
+        for key, value in opts.items():
+            setattr(self, key, value)
+
+
+class NullHandler(Handler):
+    def log(self, key, msg):
+        pass
+
+
+class StdoutHandler(Handler):
+    def log(self, key, msg):
+        print(format_omni_message(key, msg))
+
+
+class LDMSHandler(Handler):
+    def log(self, key, msg):
+        ldms_publish(self.xprt, self.auth, self.host, self.port,
+                     self.stream, format_omni_message(key, msg))
+
+
+def init_handler(config):
+    protocol_handlers = {
+        "ldms": LDMSHandler,
+        "null": NullHandler,
+        "stdout": StdoutHandler,
+    }
+    return protocol_handlers[config['protocol']](config)
+
+
+config = None
+handler = None
+
+
+def log(key, msg):
+    global config, handler
+    if config is None:
+        config = read_config()
+    if handler is None:
+        handler = init_handler(config)
+    handler.log(key, msg)
+
+
+# end import nerscjson_client
