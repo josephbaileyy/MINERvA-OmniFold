@@ -1,0 +1,79 @@
+FD-PRR rev 2: the mutation run, one serial process (--jobs 1), nice -n 19, every BLAS/OpenMP thread cap 1 (the director's go of 2026-11-08)
+date_utc_start: 2026-11-08T18:13:22Z  host: DN0a1f6baa  git_head: 2adce9508d965b0f67b38503f1d872aad6c80e11
+python: 3.12.2  numpy: 1.26.4
+thread caps: OMP=1 MKL=1 OPENBLAS=1 NUMEXPR=1 VECLIB=1
+files (sha256):
+f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232  prr_probe.py
+17acad82bad7c43f45c423e41039eb81381f5acab15ecdf983ad0d023848d046  prr_ibu.py
+f35bc3282b50215dd583b76b0d6a747f90185e4b96b6e3f5b693d42c01166372  prr_read.py
+323f491afa2038a55bfb791be0d7abf81a6cda7e27a7f5124ea8cacb75efda66  sbatch_prr.sh
+2a990367610678eb3ffde1adaa90ba5acd08b69b59acdc15a8116322159868ea  test_prr.py
+28f3f9e5edf1e63c65ba5db9f2050c9159a89372bf27fe7e1558cc9ffb682b86  prr_mutation.py
+command: nice -n 19 python3 -B -u nd-unfolding/prior_retention/prr_mutation.py
+---
+unmutated suite: 103 tests OK, in the mirrored tree
+KILLED    mask columns swapped                     by test_each_mask_hands_the_loop_its_columns_and_the_histogram_all_five
+KILLED    measured side unmasked                   by test_each_mask_hands_the_loop_its_columns_and_the_histogram_all_five
+KILLED    O4r drops W everywhere                   by test_the_masks
+KILLED    iters unchecked                          by test_the_refusals_fire_on_the_runners_parse
+KILLED    capacity unchecked                       by test_the_refusals_fire_on_the_runners_parse
+KILLED    undeclared seed admitted                 by test_the_refusals_fire_on_the_runners_parse
+KILLED    hypothesis unchecked                     by test_the_refusals_fire_on_the_runners_parse
+KILLED    write without the check                  by test_no_product_without_the_check_or_with_a_missed_mask
+KILLED    mask call count ignored                  by test_no_product_without_the_check_or_with_a_missed_mask
+KILLED    pins unchecked                           by test_a_changed_module_is_refused
+SURVIVED  C-COLS order skipped                     by test_the_input_columns_are_checked_not_assumed  (failing: [])
+KILLED    loop not restored                        by test_the_loop_is_restored_and_a_wrong_shape_refused
+KILLED    the 0.9 rule relaxed                     by test_the_0_9_rule_is_exact
+KILLED    full job on assumed rates                by test_a_full_job_refuses_an_unmeasured_level
+KILLED    pack without its tail                    by test_pack_is_list_scheduling_with_its_tail
+KILLED    measured rates ignored                   by test_a_full_job_runs_on_measured_rates
+KILLED    cap's (1000, 63) not split               by test_each_limit_passes_the_gate_at_the_conservative_unit
+KILLED    a limit lowered                          by test_each_limit_passes_the_gate_at_the_conservative_unit
+KILLED    floor seed on a refused value            by test_the_floor_seeds_are_no_campaigns
+KILLED    C-PAIR not complete in the dry run       by test_the_dry_run_measures_every_level_and_completes_c_pair
+KILLED    queue not longest first                  by test_the_queue_is_longest_first
+KILLED    stage atime unchecked                    by test_a_moved_atime_is_refused
+KILLED    stage pin unchecked                      by test_a_wrong_pin_or_a_used_destination_is_refused
+KILLED    C-PAIR within a tolerance                by test_one_ulp_fails_c_pair
+SURVIVED  C-MASK ignores the dtype                 by test_a_mask_that_moves_b0_fails_c_mask  (failing: [])
+KILLED    capture writes into B0's directory       by test_the_capture_is_the_runners_experiment_and_writes_nothing
+KILLED    R-SUP without the truth reweight         by test_r_sup
+KILLED    overlapping cells admitted               by test_fine_to_cell_refuses_an_overlap
+KILLED    C-IBU tolerance widened                  by test_c_ibu_passes_on_the_committed_value_and_fails_off_it
+KILLED    R-ID on the sub unfold                   by test_r_id_reads_the_fold_problem
+KILLED    rho's sign                               by test_the_prior_retains_one_and_the_truth_zero
+KILLED    no |d| threshold                         by test_undefined_below_two_cells
+KILLED    P from the primary split                 by test_planted_classes
+KILLED    floor SD with ddof 0                     by test_floor_needs_five_defined_splits
+KILLED    T_Q retyped                              by test_t_quantile
+KILLED    no bar floor                             by test_bar
+KILLED    strict bar                               by test_factor_class_both_directions
+KILLED    information limit without F2             by test_labels
+KILLED    PR-3 ignores new flags                   by test_clears
+KILLED    Table II flag by p only                  by test_table_ii_flags_by_p_and_by_z
+KILLED    PR-2b without its bar                    by test_ibu_classes
+KILLED    own vertex dropped                       by test_the_own_vertex_is_f0s
+KILLED    C-CT tolerance dropped                   by test_a_moved_vertex_fails_c_ct
+KILLED    ended count unchecked                    by test_incomplete_runs_read_nothing
+KILLED    route 2 not required                     by test_incomplete_runs_read_nothing
+KILLED    C-SPLIT unchecked                        by test_a_split_off_its_seed_refuses
+KILLED    C-CAP recorded unchecked                 by test_c_cap_on_the_recorded_iters
+KILLED    mask record unchecked                    by test_a_missed_mask_refuses
+KILLED    truth file unchecked                     by test_a_wrong_truth_file_refuses
+KILLED    product code digests unchecked           by test_a_product_made_by_other_code_refuses
+KILLED    a noisy product admitted                 by test_a_noisy_product_refuses
+KILLED    C-IBU truths unchecked                   by test_c_ibu_truths_must_be_es
+KILLED    C-MASK not recomputed                    by test_c_mask_on_the_products
+KILLED    a cell value leaks                       by test_planted_classes
+KILLED    pair does not gate                       by test_a_failed_pair_stops_the_dry_run_and_every_full_job
+KILLED    TimeLimit unchecked                      by test_a_limit_above_the_declared_is_refused
+KILLED    full without the dry run's DONE          by test_a_failed_pair_stops_the_dry_run_and_every_full_job
+KILLED    stage not re-verified                    by test_a_full_job_refuses_a_changed_stage
+KILLED    runs outside Slurm                       by test_outside_slurm_without_the_smoke_flag_it_refuses
+KILLED    ens1 jobs not checked                    by test_an_ens1_job_queued_or_running_refuses_the_dry_run
+KILLED    squeue failure admitted                  by test_an_ens1_job_queued_or_running_refuses_the_dry_run
+SURVIVED  a failed task still DONE                 by test_a_failed_task_leaves_no_done  (failing: [])
+MUTATION CHECK :: FAIL (62 mutations)
+rc=1
+date_utc_end: 2026-11-08T18:58:05Z

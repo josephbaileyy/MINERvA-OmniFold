@@ -5973,6 +5973,15 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-me
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-round4-20261106/sonnet-jinst-methods-r4-2.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-round4-20261106/sonnet-prd-methods-r4-1.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-round4-20261106/sonnet-prd-methods-r4-2.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-note-round1-20261108/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-note-round1-20261108/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-note-round1-20261108/gemini-note-r1-1.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-note-round1-20261108/gemini-note-r1-2.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-note-round1-20261108/gemini-preamble.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-note-round1-20261108/note-r1.blind.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-note-round1-20261108/referee-prompt-note.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-note-round1-20261108/sonnet-note-r1-1.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-note-round1-20261108/sonnet-note-r1-2.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-request-map-20261106/MAP.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-request-map-20261106/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-request-map-20261106/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
@@ -6864,6 +6873,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-WOR
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-WORDING-SONNET-PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-XCOV-SCOPING.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PLAN.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PRR-DECLARATION.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PSCRATCH-RETENTION-PROPOSAL.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-A1-CHECK-SONNET-ANSWER.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-RPD-A1-CHECK-SONNET-PROMPT.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
@@ -9385,6 +9395,10 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b/tests-b-numpy126-seed1.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b/tests-b-numpy126-seed2.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b/tests-b-numpy2-seed0.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/ovl/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/ovl/connect-ovl.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/ovl/launch-ll5d.sh	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/ovl/ovl.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/metaprobe-40427c14.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/metaprobe.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
@@ -9398,6 +9412,11 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-pre
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/tests-dae47273.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/tests-f0b-885ad0eb.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prebinding/tests-g-885ad0eb.log	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/rev2/README.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/rev2/mutation-run1-fail.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/rev2/mutation.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/rev2/tests-jobscript.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/rev2/tests-serial.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/cdraw/README.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/cdraw/SHA256SUMS.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-c2c1/cdraw/cdraw_compare.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
