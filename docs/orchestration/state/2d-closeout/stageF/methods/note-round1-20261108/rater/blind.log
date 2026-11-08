@@ -1,0 +1,11 @@
+page numbers dropped: 7 at page top, 129 at page bottom
+front matter dropped: lines 1-14 (Analysis Note: | Unbinned OmniFold analysis of MINERvA charged-current | inclusive data | Joseph Bailey∗1 and Benjamin Nachman†2 | 1 | 2 | Department of Physics, Stanford University | Department of Particle Physics and Astrophysics, Stanford University and SLAC National | Laboratory | Version 1.0 (r)
+references dropped from line 12729 ('References'); kept after refs: []
+cut lines 10233-10254: 'Acknowledgments [funding statement pending] This analysis was carried out on the Perlmutter system at the National Energy Research Scientific Computing Center (NERSC), a U.S. Department of Energy Offi'...
+  drop line 37: '∗'
+  drop line 38: '†'
+  drop line 40: 'josephrb@stanford.edu'
+  drop line 41: 'nachman@stanford.edu'
+  drop line 10703: 'arXiv:1906.00111); a 1.4% target-nucleon normalization; an in-situ test-beam hadron response with'
+  drop line 10742: 'arXiv:1510.05494;'
+single-line drops: 6; words in=71683 out=68951
