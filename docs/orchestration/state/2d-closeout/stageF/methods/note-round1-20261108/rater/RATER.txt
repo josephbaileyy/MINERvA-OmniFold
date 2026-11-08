@@ -1,10 +1,13 @@
-The blinded rater copy of the analysis note for round 1's referee reads (not yet run).
+The blinded rater copy of the analysis note for round 1's referee reads (not yet run), after the reframe.
 Built by ../make_note_rater_copy.sh from a git archive of draft/note-round1-20261108 at
-a73f9fedad2a36a7c948dce4d110df0d961677fa (the note sources this copy reflects; later commits on the branch add only
-this rater/ directory). main_note.pdf: 138 pages, sha256 70c5eb5c1cffb9c4dc6241f0b6e753faec22cee9ca99c9059432920d52f65716.
+bd4cabea7e4a961c06ce8610c185cf91b80e8d42: round 1's currency edits, N3 and N7, the reframe (N1 + N6) and REF-G1 as a
+stated limitation (N2), under DECISION-20261108-joseph-note-framing-and-estimator-dependence.md (#947). Later commits on
+the branch add only this rater/ directory. main_note.pdf: 139 pages, sha256
+4a364d6c2cd32e7797c1f4348a34129c9a235bc8bb2bdee4c19242f7729a7d44.
 Kept: abstract, executive summary, contents, body and appendices A-H. Dropped: title block, e-mail footnotes,
 acknowledgments, reference list. Masked: the repository URL (1 occurrence) as [repository].
 Complete (check.txt): 37 of 37 figure captions, 35 of 35 table captions, appendix headings A-H, the last body section
-(13 Summary and outlook) and the last line before the references.
-Words: full text 71,819; blinded copy 68,951.
+(13 Summary and outlook) and the last line before the references. The identifying-text grep is clean.
+Words: full text 72,404; blinded copy 69,536.
 Files: note.blind.txt (the copy), check.txt (completeness), blind.log (every cut, for audit).
+The superseded copy of a73f9fed (68,951 words) is in git history.
