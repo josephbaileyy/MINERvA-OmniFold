@@ -1,0 +1,35 @@
+2026-11-08T07:27:01Z
+login24
+== before
+d 4096 .
+d 4096 ./logs
+f 2 ./logs/connect-a1-dry.done
+f 967 ./logs/connect-a1-dry.log
+f 21384 ./logs/ens1_a1_dry_submit.sh
+f 322 ./logs/squeue-before.txt
+d 4096 ./refs
+d 4096 ./refs/runs
+d 4096 ./refs/runs/control
+d 4096 ./refs/runs/control/stability
+== the files' sha256
+2e6d31a5983a91251bfae5aefa1c0a19d8ba3cf601d0e8a706b4cfa9661a6b8a  logs/connect-a1-dry.done
+c424f08a5e784ee41f7430c3f08593fd49c0e485629af627e457330bd5a80969  logs/connect-a1-dry.log
+488057837438b79c745f53c3256107463fed04130f39c0f6d976bf2dd9faa20e  logs/ens1_a1_dry_submit.sh
+9f91b0090d3b19e32049e6993525dc2f8dabf70abfa08fc65f33de8ede687fb3  logs/squeue-before.txt
+== delete
+== after
+ls: cannot access '/pscratch/sd/j/josephrb/ens1-a1-20261108': No such file or directory
+== gone?
+gone: /pscratch/sd/j/josephrb/ens1-a1-20261108/logs/connect-a1-dry.done
+gone: /pscratch/sd/j/josephrb/ens1-a1-20261108/logs/connect-a1-dry.log
+gone: /pscratch/sd/j/josephrb/ens1-a1-20261108/logs/ens1_a1_dry_submit.sh
+gone: /pscratch/sd/j/josephrb/ens1-a1-20261108/logs/squeue-before.txt
+gone: /pscratch/sd/j/josephrb/ens1-a1-20261108/logs
+gone: /pscratch/sd/j/josephrb/ens1-a1-20261108/refs/runs/control/stability
+gone: /pscratch/sd/j/josephrb/ens1-a1-20261108/refs/runs/control
+gone: /pscratch/sd/j/josephrb/ens1-a1-20261108/refs/runs
+gone: /pscratch/sd/j/josephrb/ens1-a1-20261108/refs
+gone: /pscratch/sd/j/josephrb/ens1-a1-20261108
+attempt 1 root still present: yes
+2026-11-08T07:27:01Z
+DELETE: PASS

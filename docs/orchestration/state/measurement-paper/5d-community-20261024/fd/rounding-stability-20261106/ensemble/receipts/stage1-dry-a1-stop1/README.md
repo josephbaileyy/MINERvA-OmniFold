@@ -58,7 +58,12 @@ relaunch needs this root deleted.
 - It checks each of the ten paths is gone, and that attempt 1's root `/pscratch/sd/j/josephrb/ens1-20261107` is still
   present.
 
-Its output and its `fd/LEDGER.tsv` row will be added to this receipt.
+**The cleanup ran** (`cleanup/delete-partial.out.txt`, added after #926 merged at `d34613ab`). The director gave a go
+on sha256 `8f368b52…`, matching the merged copy. It ran on login24 at 2026-11-08T07:27:01Z, ssh rc 0.
+- **Before:** the 10 entries listed above, with the four files at their digests.
+- **After:** `ls` of the root path returns "cannot access" (the deleted directory). <!-- absence-ok: a filesystem listing after an authorized deletion, not a claim about a result -->
+- All 10 paths were reported gone, and attempt 1's root is present. **DELETE: PASS.**
+- The transcript includes NERSC's login banner, unedited.
 
 **Tested locally** on a copy of the tree, with shims for `find -printf` and `squeue`:
 - a clean tree gives DELETE: PASS;
@@ -110,6 +115,6 @@ The relaunch uses the same SUBMIT sha `48805783…`, unchanged, once all three o
 The POST-RUN connect stays `90af5e54…`. On the director's ruling 3 (A1 §7), the post-run opens only attempt 1's F₆₄
 product, and only through a digest-verified noatime copy. Attempt 1's other four products stay unopened.
 
-**The ledger:** `fd/LEDGER.tsv` has one row for this stop.
+**The ledger:** `fd/LEDGER.tsv` has one row for this stop and one for the deletion.
 
 **Renames:** git ignores `*.log` and `*.out`, so those files carry a `.txt` suffix here. Their contents are unchanged.
