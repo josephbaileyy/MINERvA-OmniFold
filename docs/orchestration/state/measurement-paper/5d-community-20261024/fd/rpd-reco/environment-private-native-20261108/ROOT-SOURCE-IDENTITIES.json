@@ -1,0 +1,26 @@
+{
+  "core/unix/src/TUnixSystem.cxx": {
+    "url": "https://raw.githubusercontent.com/root-project/root/v6-28-12/core/unix/src/TUnixSystem.cxx",
+    "sha256": "294b9bb26fb67dc572a594073e142656ea4b82440995c4340e19c8d9e79d71dd",
+    "lines": [
+      441,
+      461
+    ]
+  },
+  "core/metacling/src/TCling.cxx": {
+    "url": "https://raw.githubusercontent.com/root-project/root/v6-28-12/core/metacling/src/TCling.cxx",
+    "sha256": "3b96cc23d3f83dd6aeaa64b6e63285dd36c0fd41c8cdc89dbb47dbfaeff31fd7",
+    "lines": [
+      1464,
+      1481
+    ]
+  },
+  "bindings/pyroot/pythonizations/python/ROOT/__init__.py": {
+    "url": "https://raw.githubusercontent.com/root-project/root/v6-28-12/bindings/pyroot/pythonizations/python/ROOT/__init__.py",
+    "sha256": "871cfb70674a74f6b10a1352e2563734c6e95221d4ced0c6780ddb9abd5ca7eb",
+    "lines": [
+      9,
+      16
+    ]
+  }
+}
