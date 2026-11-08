@@ -1,0 +1,138 @@
+remote sha256 a00b632b7ffdc60fd55eeb9568001bbe8ec924bc76cec5234e825241ffe07c14
+node login27 2026-11-08T07:00:52Z
+connect script sha256 a00b632b7ffdc60fd55eeb9568001bbe8ec924bc76cec5234e825241ffe07c14
+products in /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf: fd1b_pfd_A_CV.npz fd1b_pfd_A_Flux_0.npz fd1b_pfd_A_MinosEfficiency_0.npz fd1b_pfd_B_CV.npz fd1b_pfd_B_Flux_0.npz fd1b_pfd_B_MinosEfficiency_0.npz fd1b_pfd_Dnom_CV.npz fd1b_pfd_Dnom_Flux_0.npz 
+== 1. iris (read first)
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2341.8            10000.0     18243.9      20000.0
+iris rc=0; m3246 row: [m3246               2341.8            10000.0     18243.9      20000.0]
+balance: user remaining 7658.2, project remaining 1756.1, cap 18.5; half user 3829.1, half project 878.0; Part 1 charged 0.2631 + P3 reserved 17.5 = 17.7631 -> OK
+== 2. fence (before anything is written)
+squeue rc=0; rows:
+
+-- end rows
+refusing rows: []
+FENCE: clear
+== 3. fresh deploy clone at M_A1
+deploy HEAD 8d7a40c23b3b6b70c2913ba363a10a22e152aee4; porcelain lines 0
+sha256 b72aaa627d12e6953ad6b1f40a4ae35ffd9b5439db3c0114defe93742f14c6d3 (bound b72aaa627d12e6953ad6b1f40a4ae35ffd9b5439db3c0114defe93742f14c6d3) docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh
+sha256 dd95db5de1a801eb6b47c8d60bc7da43532ed2ad38e10597ae2db94c0a12526f (bound dd95db5de1a801eb6b47c8d60bc7da43532ed2ad38e10597ae2db94c0a12526f) nd-unfolding/s5c_array.sh
+sha256 a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d (bound a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d) nd-unfolding/fd_1b_precheck_fd.py
+sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48 (bound ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48) setup_salloc_env.sh
+setup_salloc_env.sh blob b4a9c3f6bb766d8488cbab98878cbac1262cc1bb (bound b4a9c3f6bb766d8488cbab98878cbac1262cc1bb)
+== 4. the wrapper and the probe (P2's) and P3's table generator
+sha256 038a6353b81a066476f96312e9764feac714bdc3cc350b5e533fd2a40f6e0256 (expected 038a6353b81a066476f96312e9764feac714bdc3cc350b5e533fd2a40f6e0256) pfd_p2_wrapper.sh
+sha256 d93697123b1e3c5a467efde2488dff8422c684061b39f58fa8cc82c545e6190f (expected d93697123b1e3c5a467efde2488dff8422c684061b39f58fa8cc82c545e6190f) pfd_threadprobe.py
+sha256 f066f1a09fefc87ef213a71bb692bc36fd7966537c4ada8fe3f5ff642e56c4a2 (expected f066f1a09fefc87ef213a71bb692bc36fd7966537c4ada8fe3f5ff642e56c4a2) make_p3_table.py
+== 5. the task table
+TABLE: 54 lanes, 319 items; per mode A 106 in 18 lanes, B 106 in 18 lanes, Dnom 107 in 18 lanes; items per lane 5..6
+JOBS: 0-7 8-15 16-23 24-31 32-39 40-47 48-53
+tasks-p3.tsv sha256 490b73be3a750f813ca694e5d1d7d76de7224f5e1ab3404d2008b64c790ddbf2
+# 1B pre-check Part 1, P3 (FD-1B-PRECHECK-FD-DECLARATION.md section 7; Binding 1, addendum A1)
+fd1b_pfd_p3_lane00_A	--mode	A	--universes	Flux_1,Flux_2,Flux_3,Flux_4,Flux_5,Flux_6
+fd1b_pfd_p3_lane01_A	--mode	A	--universes	Flux_7,Flux_8,Flux_9,Flux_10,Flux_11,Flux_12
+fd1b_pfd_p3_lane02_A	--mode	A	--universes	Flux_13,Flux_14,Flux_15,Flux_16,Flux_17,Flux_18
+fd1b_pfd_p3_lane03_A	--mode	A	--universes	Flux_19,Flux_20,Flux_21,Flux_22,Flux_23,Flux_24
+fd1b_pfd_p3_lane04_A	--mode	A	--universes	Flux_25,Flux_26,Flux_27,Flux_28,Flux_29,Flux_30
+fd1b_pfd_p3_lane05_A	--mode	A	--universes	Flux_31,Flux_32,Flux_33,Flux_34,Flux_35,Flux_36
+fd1b_pfd_p3_lane06_A	--mode	A	--universes	Flux_37,Flux_38,Flux_39,Flux_40,Flux_41,Flux_42
+fd1b_pfd_p3_lane07_A	--mode	A	--universes	Flux_43,Flux_44,Flux_45,Flux_46,Flux_47,Flux_48
+fd1b_pfd_p3_lane08_A	--mode	A	--universes	Flux_49,Flux_50,Flux_51,Flux_52,Flux_53,Flux_54
+fd1b_pfd_p3_lane09_A	--mode	A	--universes	Flux_55,Flux_56,Flux_57,Flux_58,Flux_59,Flux_60
+fd1b_pfd_p3_lane10_A	--mode	A	--universes	Flux_61,Flux_62,Flux_63,Flux_64,Flux_65,Flux_66
+fd1b_pfd_p3_lane11_A	--mode	A	--universes	Flux_67,Flux_68,Flux_69,Flux_70,Flux_71,Flux_72
+fd1b_pfd_p3_lane12_A	--mode	A	--universes	Flux_73,Flux_74,Flux_75,Flux_76,Flux_77,Flux_78
+fd1b_pfd_p3_lane13_A	--mode	A	--universes	Flux_79,Flux_80,Flux_81,Flux_82,Flux_83,Flux_84
+fd1b_pfd_p3_lane14_A	--mode	A	--universes	Flux_85,Flux_86,Flux_87,Flux_88,Flux_89,Flux_90
+fd1b_pfd_p3_lane15_A	--mode	A	--universes	Flux_91,Flux_92,Flux_93,Flux_94,Flux_95,Flux_96
+fd1b_pfd_p3_lane16_A	--mode	A	--universes	Flux_97,Flux_98,Flux_99,GEANT_Neutron_0,GEANT_Neutron_1
+fd1b_pfd_p3_lane17_A	--mode	A	--universes	GEANT_Pion_0,GEANT_Pion_1,GEANT_Proton_0,GEANT_Proton_1,MinosEfficiency_1
+fd1b_pfd_p3_lane18_B	--mode	B	--universes	Flux_1,Flux_2,Flux_3,Flux_4,Flux_5,Flux_6
+fd1b_pfd_p3_lane19_B	--mode	B	--universes	Flux_7,Flux_8,Flux_9,Flux_10,Flux_11,Flux_12
+fd1b_pfd_p3_lane20_B	--mode	B	--universes	Flux_13,Flux_14,Flux_15,Flux_16,Flux_17,Flux_18
+fd1b_pfd_p3_lane21_B	--mode	B	--universes	Flux_19,Flux_20,Flux_21,Flux_22,Flux_23,Flux_24
+fd1b_pfd_p3_lane22_B	--mode	B	--universes	Flux_25,Flux_26,Flux_27,Flux_28,Flux_29,Flux_30
+fd1b_pfd_p3_lane23_B	--mode	B	--universes	Flux_31,Flux_32,Flux_33,Flux_34,Flux_35,Flux_36
+fd1b_pfd_p3_lane24_B	--mode	B	--universes	Flux_37,Flux_38,Flux_39,Flux_40,Flux_41,Flux_42
+fd1b_pfd_p3_lane25_B	--mode	B	--universes	Flux_43,Flux_44,Flux_45,Flux_46,Flux_47,Flux_48
+fd1b_pfd_p3_lane26_B	--mode	B	--universes	Flux_49,Flux_50,Flux_51,Flux_52,Flux_53,Flux_54
+fd1b_pfd_p3_lane27_B	--mode	B	--universes	Flux_55,Flux_56,Flux_57,Flux_58,Flux_59,Flux_60
+fd1b_pfd_p3_lane28_B	--mode	B	--universes	Flux_61,Flux_62,Flux_63,Flux_64,Flux_65,Flux_66
+fd1b_pfd_p3_lane29_B	--mode	B	--universes	Flux_67,Flux_68,Flux_69,Flux_70,Flux_71,Flux_72
+fd1b_pfd_p3_lane30_B	--mode	B	--universes	Flux_73,Flux_74,Flux_75,Flux_76,Flux_77,Flux_78
+fd1b_pfd_p3_lane31_B	--mode	B	--universes	Flux_79,Flux_80,Flux_81,Flux_82,Flux_83,Flux_84
+fd1b_pfd_p3_lane32_B	--mode	B	--universes	Flux_85,Flux_86,Flux_87,Flux_88,Flux_89,Flux_90
+fd1b_pfd_p3_lane33_B	--mode	B	--universes	Flux_91,Flux_92,Flux_93,Flux_94,Flux_95,Flux_96
+fd1b_pfd_p3_lane34_B	--mode	B	--universes	Flux_97,Flux_98,Flux_99,GEANT_Neutron_0,GEANT_Neutron_1
+fd1b_pfd_p3_lane35_B	--mode	B	--universes	GEANT_Pion_0,GEANT_Pion_1,GEANT_Proton_0,GEANT_Proton_1,MinosEfficiency_1
+fd1b_pfd_p3_lane36_Dnom	--mode	Dnom	--universes	Flux_1,Flux_2,Flux_3,Flux_4,Flux_5,Flux_6
+fd1b_pfd_p3_lane37_Dnom	--mode	Dnom	--universes	Flux_7,Flux_8,Flux_9,Flux_10,Flux_11,Flux_12
+fd1b_pfd_p3_lane38_Dnom	--mode	Dnom	--universes	Flux_13,Flux_14,Flux_15,Flux_16,Flux_17,Flux_18
+fd1b_pfd_p3_lane39_Dnom	--mode	Dnom	--universes	Flux_19,Flux_20,Flux_21,Flux_22,Flux_23,Flux_24
+fd1b_pfd_p3_lane40_Dnom	--mode	Dnom	--universes	Flux_25,Flux_26,Flux_27,Flux_28,Flux_29,Flux_30
+fd1b_pfd_p3_lane41_Dnom	--mode	Dnom	--universes	Flux_31,Flux_32,Flux_33,Flux_34,Flux_35,Flux_36
+fd1b_pfd_p3_lane42_Dnom	--mode	Dnom	--universes	Flux_37,Flux_38,Flux_39,Flux_40,Flux_41,Flux_42
+fd1b_pfd_p3_lane43_Dnom	--mode	Dnom	--universes	Flux_43,Flux_44,Flux_45,Flux_46,Flux_47,Flux_48
+fd1b_pfd_p3_lane44_Dnom	--mode	Dnom	--universes	Flux_49,Flux_50,Flux_51,Flux_52,Flux_53,Flux_54
+fd1b_pfd_p3_lane45_Dnom	--mode	Dnom	--universes	Flux_55,Flux_56,Flux_57,Flux_58,Flux_59,Flux_60
+fd1b_pfd_p3_lane46_Dnom	--mode	Dnom	--universes	Flux_61,Flux_62,Flux_63,Flux_64,Flux_65,Flux_66
+fd1b_pfd_p3_lane47_Dnom	--mode	Dnom	--universes	Flux_67,Flux_68,Flux_69,Flux_70,Flux_71,Flux_72
+fd1b_pfd_p3_lane48_Dnom	--mode	Dnom	--universes	Flux_73,Flux_74,Flux_75,Flux_76,Flux_77,Flux_78
+fd1b_pfd_p3_lane49_Dnom	--mode	Dnom	--universes	Flux_79,Flux_80,Flux_81,Flux_82,Flux_83,Flux_84
+fd1b_pfd_p3_lane50_Dnom	--mode	Dnom	--universes	Flux_85,Flux_86,Flux_87,Flux_88,Flux_89,Flux_90
+fd1b_pfd_p3_lane51_Dnom	--mode	Dnom	--universes	Flux_91,Flux_92,Flux_93,Flux_94,Flux_95,Flux_96
+fd1b_pfd_p3_lane52_Dnom	--mode	Dnom	--universes	Flux_97,Flux_98,Flux_99,GEANT_Neutron_0,GEANT_Neutron_1,GEANT_Pion_0
+fd1b_pfd_p3_lane53_Dnom	--mode	Dnom	--universes	GEANT_Pion_1,GEANT_Proton_0,GEANT_Proton_1,MinosEfficiency_0,MinosEfficiency_1
+re-check: lanes 54 items 319 over6 0 dup 0 malformed 0 pilot 0
+== 6. stat only: in-place inputs and the staged flux copy
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz|1548438020|1782610308|1794105515
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz|16017201|1790319104|1794105516
+/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json|170298|1793473279|1793496788
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz|2163648810|1784034785|1793890180
+/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root|6396|1794033543|1794033543
+== 7. thread variables in the submitting shell (none set; inherited through --export=ALL)
+OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+== 8. fence, immediately before submission
+squeue rc=0; rows:
+
+-- end rows
+refusing rows: []
+FENCE: clear
+sbatch -A m3246 -q regular -C cpu --nodes=1 --exclusive --no-requeue --export=ALL,HOME=/global/homes/j/josephrb --time=02:30:00 -J fd1b_pfd_p3_j0 -o /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_p2_wrapper.sh /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 8d7a40c23b3b6b70c2913ba363a10a22e152aee4 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/lanes 0 7 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_threadprobe.py
+Submitted batch job 60991405
+sbatch rc=0
+job 0: 60991405 lines 0-7 TimeLimit=02:30:00
+sbatch -A m3246 -q regular -C cpu --nodes=1 --exclusive --no-requeue --export=ALL,HOME=/global/homes/j/josephrb --time=02:30:00 -J fd1b_pfd_p3_j1 -o /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_p2_wrapper.sh /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 8d7a40c23b3b6b70c2913ba363a10a22e152aee4 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/lanes 8 15 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_threadprobe.py
+Submitted batch job 60991413
+sbatch rc=0
+job 1: 60991413 lines 8-15 TimeLimit=02:30:00
+sbatch -A m3246 -q regular -C cpu --nodes=1 --exclusive --no-requeue --export=ALL,HOME=/global/homes/j/josephrb --time=02:30:00 -J fd1b_pfd_p3_j2 -o /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_p2_wrapper.sh /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 8d7a40c23b3b6b70c2913ba363a10a22e152aee4 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/lanes 16 23 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_threadprobe.py
+Submitted batch job 60991415
+sbatch rc=0
+job 2: 60991415 lines 16-23 TimeLimit=02:30:00
+sbatch -A m3246 -q regular -C cpu --nodes=1 --exclusive --no-requeue --export=ALL,HOME=/global/homes/j/josephrb --time=02:30:00 -J fd1b_pfd_p3_j3 -o /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_p2_wrapper.sh /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 8d7a40c23b3b6b70c2913ba363a10a22e152aee4 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/lanes 24 31 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_threadprobe.py
+Submitted batch job 60991418
+sbatch rc=0
+job 3: 60991418 lines 24-31 TimeLimit=02:30:00
+sbatch -A m3246 -q regular -C cpu --nodes=1 --exclusive --no-requeue --export=ALL,HOME=/global/homes/j/josephrb --time=02:30:00 -J fd1b_pfd_p3_j4 -o /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_p2_wrapper.sh /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 8d7a40c23b3b6b70c2913ba363a10a22e152aee4 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/lanes 32 39 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_threadprobe.py
+Submitted batch job 60991419
+sbatch rc=0
+job 4: 60991419 lines 32-39 TimeLimit=02:30:00
+sbatch -A m3246 -q regular -C cpu --nodes=1 --exclusive --no-requeue --export=ALL,HOME=/global/homes/j/josephrb --time=02:30:00 -J fd1b_pfd_p3_j5 -o /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_p2_wrapper.sh /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 8d7a40c23b3b6b70c2913ba363a10a22e152aee4 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/lanes 40 47 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_threadprobe.py
+Submitted batch job 60991420
+sbatch rc=0
+job 5: 60991420 lines 40-47 TimeLimit=02:30:00
+sbatch -A m3246 -q regular -C cpu --nodes=1 --exclusive --no-requeue --export=ALL,HOME=/global/homes/j/josephrb --time=02:30:00 -J fd1b_pfd_p3_j6 -o /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_p2_wrapper.sh /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 8d7a40c23b3b6b70c2913ba363a10a22e152aee4 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/lanes 48 53 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tools/pfd_threadprobe.py
+Submitted batch job 60991421
+sbatch rc=0
+job 6: 60991421 lines 48-53 TimeLimit=02:30:00
+submitted: 60991405 60991413 60991415 60991418 60991419 60991420 60991421
+60991421 fd1b_pfd_p3_j6 PENDING 2:30:00 1 (Priority)
+60991420 fd1b_pfd_p3_j5 PENDING 2:30:00 1 (Priority)
+60991419 fd1b_pfd_p3_j4 PENDING 2:30:00 1 (Priority)
+60991418 fd1b_pfd_p3_j3 PENDING 2:30:00 1 (Priority)
+60991415 fd1b_pfd_p3_j2 PENDING 2:30:00 1 (Priority)
+60991413 fd1b_pfd_p3_j1 PENDING 2:30:00 1 (Priority)
+60991405 fd1b_pfd_p3_j0 PENDING 2:30:00 1 (Priority)
+== pfd-p3 rc=0 2026-11-08T07:01:33Z

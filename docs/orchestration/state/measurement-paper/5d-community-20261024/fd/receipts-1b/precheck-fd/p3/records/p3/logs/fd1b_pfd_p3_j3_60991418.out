@@ -1,0 +1,20 @@
+[pfd-wrapper] 2026-11-08T07:03:09.788Z job=60991418 host=nid004554 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 table=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv lines=24..31
+[pfd-wrapper] submitting-shell thread variables: OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+[pfd-wrapper] 2026-11-08T07:03:53.706Z probe rc=0
+[timing] 2026-11-08T07:03:53.748Z job=60991418 host=nid004554 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 lines=24..31 cpt=32 mem=56G gres=none
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-11-08T07:03:53.921Z launch line 24
+[timing] 2026-11-08T07:03:53.932Z launch line 25
+[timing] 2026-11-08T07:03:53.938Z launch line 26
+[timing] 2026-11-08T07:03:53.943Z launch line 27
+[timing] 2026-11-08T07:03:53.948Z launch line 28
+[timing] 2026-11-08T07:03:53.960Z launch line 29
+[timing] 2026-11-08T07:03:53.965Z launch line 30
+[timing] 2026-11-08T07:03:53.971Z launch line 31
+[timing] 2026-11-08T08:19:15.601Z lines 24..31 done rc=0
+[pfd-wrapper] 2026-11-08T08:19:15.657Z packer rc=0
