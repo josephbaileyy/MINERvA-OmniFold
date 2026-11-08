@@ -196,7 +196,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-6 [T]** — **Unusable covariance used as a benchmark yardstick.**  
   *Finding:* Configuration-(a) 5D covariance is marked "not to be used" (§9.6), yet is used as a scale in §5.1, §8.4, §9.2, §9.3, Table 5, App. G.2.  
   *Evidence:* `docs/analysis-note/sec_5d.tex:225`, `sec_eavailw.tex:162`, `app_release.tex:72`.  
-  *Resolution:* Governed by S2-COM-2: remove configuration-(a) covariance from the release checklist; state explicitly that it failed acceptance criteria ($s_{\text{proj}} = 6.145\%$ against 5% limit), is adopted under §6.4 exception for technical diagnostics only, and is not a yardstick or uncertainty product.
+  *Resolution:* Governed by S2-COM-2: disclosure in §9.6 and citability matrix is that configuration-(a) covariance is adopted under the §6.4 exception; $s_{\text{proj}} = 6.145\%$ against the 5% limit; five bands unmeasured; the pre-production null bound not met; not a yardstick and not an uncertainty product. The release checklist stays unedited while `app_release.tex` is held under AUD-N4.
 
 * **S1-ACC-7 [T]** — **Executive summary marginalization claim (1–2%) vs body.**  
   *Finding:* Executive summary claims 4D and 5D marginalization passes to 1–2%, but §8.1 gives 0.11% total and 0.3–1.5% median per axis; §7.8 gives no number for 4D→3D.  
@@ -205,7 +205,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 * **S1-ACC-8 [D]** — **Band count in cross-covariance at `sec_fived16.tex:66-72`.**  
   *Finding:* Referee asserts §10.2 / `sec_fived16.tex:66-72` has a typo: it names four failing weight checks (AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency) and then writes "These five enter as...", so referee proposes changing "five" to "four".  
-  *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), the cross covariance sums the paired terms (systematic bands, lateral shifts, normalization, run-period terms, and $C_{\\text{model}}$ shifts), then states two parts could not be paired: the unmeasured statistical correlation plus the four bands where the weight check failed (`\fvval{x-bounded}`: AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency). "These five" are the unmeasured statistical correlation plus those four bands entering as $r\,S_{16}^{1/2}S_{\\text{2D}}^{1/2}$. Do not change "five" to "four".
+  *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), "These five enter" follows the paired terms: the systematic bands, the lateral shifts, the normalization, the run-period terms, and the $C_{\text{model}}$ shifts. The statistical correlation is the part that is not measured. Do not change "five" to "four".
 
 * **S1-ACC-9 [T]** — **"At least fifteen-fold" arithmetic error.**  
   *Finding:* §3.2 claims purity bias reduced "at least fifteen-fold (from 3.5% to 4.1% to 0.11% to 0.24%)"; worst case is 3.5 / 0.24 = 14.58.  
@@ -520,7 +520,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* `docs/analysis-note/sec_validation.tex:35`, `app_response_mismatch.tex:12`.  
   *Resolution:* Reconcile text: App. D ran exploratory shifted response samples; the full formal closure protocol was not executed.
 * **S2-ACC-6 [D]** — **Count of bands that failed pairing.** Same finding as S1-ACC-8.  
-  *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), the cross covariance sums the paired terms (systematic bands, lateral shifts, normalization, run-period terms, and $C_{\\text{model}}$ shifts), then states two parts could not be paired: the unmeasured statistical correlation plus the four bands where the weight check failed (`\fvval{x-bounded}`: AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency). "These five" are the unmeasured statistical correlation plus those four bands entering as $r\,S_{16}^{1/2}S_{\\text{2D}}^{1/2}$. Do not change "five" to "four".
+  *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), "These five enter" follows the paired terms: the systematic bands, the lateral shifts, the normalization, the run-period terms, and the $C_{\text{model}}$ shifts. The statistical correlation is the part that is not measured. Do not change "five" to "four".
 * **S2-ACC-7 [T]** — **Band counts and classifications across sections.**  
   *Finding:* 44 evaluated systematic bands plus 1 global normalization; clarify GEANT FSI lateral treatment.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:35`, `app_statmethods.tex:210`.  
@@ -880,7 +880,7 @@ The companion note is restructured into a coherent methods-and-benchmark narrati
      * 2D uncertainty $Q = S_5 + C_{\\text{PL}}$: Quoted 2D uncertainty construction through values macros `\uqMedian` and `\uqIntegral`; not citable for validated coverage.
      * 3D & 4D central values: Citable for dimensional consistency and marginal normalization; not citable with covariance.
      * 5D configuration-(a) central value: Citable as exploratory unregularized 5D central value; not citable with covariance.
-     * 5D configuration-(a) covariance ($C_Z$): Adopted under §6.4 exception for technical diagnostics; non-passing; not a yardstick and not citable as uncertainty product (governed by S2-COM-2).
+     * 5D configuration-(a) covariance ($C_Z$): Adopted under the §6.4 exception; non-passing ($s_{\text{proj}} = 6.145\%$ against the 5% limit, five bands unmeasured, the pre-production null bound not met); not a yardstick and not an uncertainty product (governed by S2-COM-2).
      * 16-cell five-observable result: Illustrative output demonstrating multi-differential data handling; not citable as physical measurement or for model tuning.
      * Generator joint tests: Methodological demonstration of calibrated hybrid-null hypothesis testing with biased estimators; not citable as measured cross sections.
      * Extended fiducial volume: Exploratory demonstration of unbinned phase-space extension; not citable as finalized cross section.
