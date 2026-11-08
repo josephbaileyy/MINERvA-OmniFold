@@ -677,13 +677,13 @@ class Receipt(Fixture):
         const_full = {"n_nucleons": float(inputs["n_nucleons"]), "data_pot": float(inputs["data_pot"]),
                       "edges": inputs["edges"]}
         flux_map = {f"Flux_{i}": i for i in range(100)}
-        rc, fine = ll5d.receipt(V, cv, draws, P["col"], self.r[truth] if r is None else r,
+        rc, fine, seal = ll5d.receipt(V, cv, draws, P["col"], self.r[truth] if r is None else r,
                                 P["phi"] if phi is None else phi, geo, self.U, P["d_ref"], const_full, flux_map,
                                 list(ll5d.TOY_SEEDS[truth]), rel, clock)
-        return rc, fine, P, geo, V, cv, draws, const_full
+        return rc, fine, P, geo, V, cv, draws, const_full, seal
 
     def test_a_clean_receipt_passes_and_records(self):
-        rc, fine, P, geo, V, cv, draws, const_full = self.run_receipt()
+        rc, fine, P, geo, V, cv, draws, const_full, seal = self.run_receipt()
         self.assertEqual(rc["verdict"], "PASS")
         self.assertEqual(rc["natures_evaluated"], 2 * len(draws))
         self.assertEqual([p["reading"] for p in rc["per_nature"]], ["minus2"] * len(draws) + ["all"] * len(draws))
@@ -692,7 +692,7 @@ class Receipt(Fixture):
         self.assertEqual(fine["wt"].shape, (self.U.shape[1],))
 
     def test_each_reading_composes_its_own_draw_and_the_truth_takes_phi_u(self):
-        rc, fine, P, geo, V, cv, draws, const_full = self.run_receipt(n=3)
+        rc, fine, P, geo, V, cv, draws, const_full, seal = self.run_receipt(n=3)
         refs = {"wt": cv["wt"], "wr": cv["wr"], "bkgw": cv["bkgw"], "tdw": cv["tdw"]}
         for row in rc["per_nature"]:
             tags = draws[row["draw"]] if row["reading"] == "all" else ll5d.drop2(draws[row["draw"]])
@@ -700,9 +700,44 @@ class Receipt(Fixture):
             comp = {q: ll5d.compose_rows(V[q], refs[q], cols)[0] for q in ("wt", "tdw")}
             u = int(tags[0].rpartition("_")[2])
             nt = ll5d.nature_truth(comp, self.r["g18"], geo, P["phi"][u], const_full)
-            np.testing.assert_allclose(row["T16"], self.U @ nt["x"], rtol=1e-12, atol=0)   # BLAS vs compose's order
+            T16 = seal[f"U_T_clipped_{row['reading']}"][row["draw"]]
+            np.testing.assert_allclose(T16, self.U @ nt["x"], rtol=1e-12, atol=0)   # BLAS vs compose's order
             other = ll5d.nature_truth(comp, self.r["g18"], geo, np.asarray(self.inputs["flux"], float), const_full)
-            self.assertFalse(np.allclose(row["T16"], self.U @ other["x"], rtol=1e-6, atol=0))
+            self.assertFalse(np.allclose(T16, self.U @ other["x"], rtol=1e-6, atol=0))
+
+    def test_the_clip_prep_products_equal_a_direct_computation(self):
+        """REQUIRED (the director's ruling on the clipcheck inputs): per reading, the per-row sums of max(-lambda, 0)
+        (signal on the reco-passing rows, background) and each draw's U T_D clipped and unclipped equal a direct
+        computation: compose's order per draw, and the truths through s5n_pseudo.true_xsec (histogramdd and the
+        extraction, an independent path) on the nature's arrays, clipped or not. Not bitwise: BLAS composites and two
+        binnings, so 1e-10 relative."""
+        rc, fine, P, geo, V, cv, draws, const_full, seal = self.run_receipt(n=5)
+        import s5n_pseudo
+        reco = geo["reco"] >= 0
+        r = self.r["g18"]
+        for rd in ll5d.READINGS:
+            sig, bkg = np.zeros(V["wr"].shape[1]), np.zeros(V["bkgw"].shape[1])
+            self.assertEqual(int(seal[f"draws_{rd}"]), len(draws))
+            for d, tags in enumerate(ll5d.reading_draws(draws, rd)):
+                cols = [P["col"][x] for x in tags]
+                comp = {q: ll5d.compose_rows(V[q], np.asarray(cv[q], float), cols)[0] for q in ("wt", "wr", "bkgw", "tdw")}
+                lam = comp["wr"] * r
+                sig[reco] += np.maximum(-lam[reco], 0.0)
+                bkg += np.maximum(-comp["bkgw"], 0.0)
+                u = int(tags[0].rpartition("_")[2])
+                for key, clip in (("U_T_clipped", True), ("U_T_unclipped", False)):
+                    wt = np.maximum(comp["wt"], 0.0) if clip else comp["wt"]
+                    tdw = np.maximum(comp["tdw"], 0.0) if clip else comp["tdw"]
+                    ui = dict(self.inputs, w_truth=0.5 * wt, flux=P["phi"][u],
+                              denom_nd=s5p_universe.denominator(self.bank_cv, tdw, self.inputs["edges"]))
+                    x = s5n_pseudo.true_xsec(ui, np.ones(wt.size, bool), r)
+                    np.testing.assert_allclose(seal[f"{key}_{rd}"][d], self.U @ np.ravel(x), rtol=1e-10, atol=0,
+                                               err_msg=f"{key} {rd} {d}")
+            np.testing.assert_allclose(seal[f"signal_negative_lambda_sum_{rd}"], sig, rtol=1e-10, atol=0)
+            np.testing.assert_allclose(seal[f"background_negative_lambda_sum_{rd}"], bkg, rtol=1e-10, atol=0)
+            self.assertGreater(float(seal[f"signal_negative_lambda_sum_{rd}"].sum()) +
+                               float(seal[f"background_negative_lambda_sum_{rd}"].sum()) + 1.0, 0.0)
+        self.assertNotIn("T16", json.dumps(rc))
 
     def test_t_le_0_stops_and_halts_at_the_first(self):
         """Every row of reporting cell c at 0.95 x the CV in every universe: each reading's composite there is
@@ -718,12 +753,12 @@ class Receipt(Fixture):
             V["wt"] = V["wt"].copy()
             V["wt"][:, rows_c] = 0.95 * cv_wt[rows_c]
             return V
-        rc, *_ = self.run_receipt(V_edit=kill)
+        rc, *_, seal = self.run_receipt(V_edit=kill)
         self.assertEqual(rc["verdict"], "STOP")
         self.assertEqual(rc["natures_evaluated"], 1)
         self.assertEqual(rc["stop"]["reading"], "minus2")
         self.assertEqual(rc["stop"]["reasons"], [f"T <= 0: reporting cells [{c}]"])
-        self.assertEqual(rc["per_nature"][0]["T16"][c], 0.0)
+        self.assertEqual(seal["U_T_clipped_minus2"][0][c], 0.0)
         self.assertEqual(rc["per_nature"][0]["n1"]["wt"]["rows_above"], 0)
 
         def nearly(V, P, geo):
@@ -731,9 +766,9 @@ class Receipt(Fixture):
             live = [i for i in rows_c if P["d_ref"][geo["gen"][i]] > 0]
             V["wt"][:, live[0]] = cv_wt[live[0]]
             return V
-        rc, *_ = self.run_receipt(V_edit=nearly)
+        rc, *_, seal = self.run_receipt(V_edit=nearly)
         self.assertEqual(rc["verdict"], "PASS")
-        self.assertTrue(all(p["T16"][c] > 0 for p in rc["per_nature"]))
+        self.assertTrue(all(np.all(seal[f"U_T_clipped_{rd}"][:, c] > 0) for rd in ll5d.READINGS))
 
     def test_t_le_0_takes_composes_clip_sign_on_near_zero_rows(self):
         """Every row of reporting cell c with every Flux universe's wt 0 and every other universe's equal to the CV's,
@@ -762,7 +797,7 @@ class Receipt(Fixture):
         inputs = self.inputs
         const_full = {"n_nucleons": float(inputs["n_nucleons"]), "data_pot": float(inputs["data_pot"]),
                       "edges": inputs["edges"]}
-        rc, _ = ll5d.receipt(V, cv, draws, P["col"], self.r["g18"], P["phi"], geo, self.U, P["d_ref"], const_full,
+        rc, _, _ = ll5d.receipt(V, cv, draws, P["col"], self.r["g18"], P["phi"], geo, self.U, P["d_ref"], const_full,
                              {f"Flux_{i}": i for i in range(100)}, list(ll5d.TOY_SEEDS["g18"]), rel)
         self.assertEqual(rc["verdict"], "STOP")
         self.assertEqual(rc["stop"]["reasons"], [f"T <= 0: reporting cells [{c}]"])
@@ -785,7 +820,7 @@ class Receipt(Fixture):
         inputs = self.inputs
         const_full = {"n_nucleons": float(inputs["n_nucleons"]), "data_pot": float(inputs["data_pot"]),
                       "edges": inputs["edges"]}
-        rc, _ = ll5d.receipt(V, cv, draws, P["col"], self.r["g18"], P["phi"], geo, self.U, P["d_ref"], const_full,
+        rc, _, _ = ll5d.receipt(V, cv, draws, P["col"], self.r["g18"], P["phi"], geo, self.U, P["d_ref"], const_full,
                              {f"Flux_{i}": i for i in range(100)}, list(ll5d.TOY_SEEDS["g18"]), rel)
         self.assertEqual(rc["verdict"], "PASS")
         self.assertEqual(rc["per_nature"][0]["n1"]["wr"]["max_past_screen"], 10.0)
@@ -1147,6 +1182,37 @@ class Jobs(Fixture):
         with mock.patch.object(c2, "c2_truth", shifted), \
                 self.assertRaisesRegex(ll5d.Refusal, "first 300 differ from the declared draws in N"):
             self.gate(cal_rec=self.calibrated())
+
+    def test_the_clip_prep_is_sealed_and_moves_no_verdict(self):
+        """The gate record holds only the sealed file's path, size, sha256 and keys; the verdict, the readings and the
+        backstop are the same with the clip-prep products removed (the director's condition 3)."""
+        g = self.gate(cal_rec=self.calibrated())
+        cp = g["clip_prep"]
+        self.assertEqual(set(cp), {"path", "bytes", "sha256", "keys", "sealed"})
+        f = self.tmp / cp["path"]
+        self.assertEqual(hashlib.sha256(f.read_bytes()).hexdigest(), cp["sha256"])
+        self.assertEqual(f.stat().st_size, cp["bytes"])
+
+        def keys(x):
+            if isinstance(x, dict):
+                for k, v in x.items():
+                    yield k
+                    yield from keys(v)
+            elif isinstance(x, list):
+                for v in x:
+                    yield from keys(v)
+        rest = {k: v for k, v in g.items() if k != "clip_prep"}
+        self.assertFalse([k for k in keys(rest) if k.startswith(("signal_negative", "background_negative", "U_T_"))])
+        real = ll5d.receipt
+
+        def unsealed(*a, **k):
+            rc, fine, _ = real(*a, **k)
+            return rc, fine, {}
+        with mock.patch.object(ll5d, "receipt", unsealed):
+            h = self.gate(cal_rec=self.calibrated())
+        self.assertIsNone(h["clip_prep"])
+        for k in ("verdict", "reads", "backstop", "reading_detail"):
+            self.assertEqual(json.dumps(g[k], sort_keys=True), json.dumps(h[k], sort_keys=True), k)
 
     def test_a_failing_gate_reading_is_a_stop(self):
         g = self.gate(cal_rec=self.calibrated(ii=0.0, iii=0.0))

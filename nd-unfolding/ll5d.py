@@ -714,10 +714,11 @@ def receipt(V: dict, cv: dict, draws_all: list[list[str]], col: dict, r: np.ndar
     so every clip sign is compose's (a BLAS composite's rounding is far below that margin), and T_D is 0 in a cell
     exactly when every row there clips in compose's order.
 
-    Recorded per nature (BLAS arithmetic, descriptive): N1's maxima, U T_D, the clipped fractions |sum lambda-| / sum
-    lambda (signal on the reco-passing rows, background), the fine cells with dn+ = 0 < d_ref and with ofin+ = 0 <
-    ofin_CV, and the clipped tdw and wt masses mapped by the fine map to the 16 cells; per fine cell, the masses summed
-    over the natures (the npz). The cross terms (section 7, Joseph's 11-02 addition (i), descriptive; they move no
+    Recorded per nature (BLAS arithmetic, descriptive): N1's maxima, the clipped fractions |sum lambda-| / sum lambda
+    (signal on the reco-passing rows, background), the fine cells with dn+ = 0 < d_ref and with ofin+ = 0 < ofin_CV,
+    and the clipped tdw and wt masses mapped by the fine map to the 16 cells; per fine cell, the masses summed over the
+    natures (the npz). Returned apart, to be sealed (clip_prep_seal), and read by no verdict: per reading the per-row
+    sums of max(-lambda, 0) and each draw's U T_D clipped and unclipped (section 5.3's inputs). The cross terms (section 7, Joseph's 11-02 addition (i), descriptive; they move no
     verdict and gate nothing): per nature the U-mapped histograms under the product (product_rows, streamed) and the
     first-order composite, of the reco proxy (w_reco on the reco-passing rows at their reco cells, plus the
     background) and of the truth weight (at the gen cells), summarized per reading by cross_z in units of sigma_c / x_c
@@ -737,6 +738,7 @@ def receipt(V: dict, cv: dict, draws_all: list[list[str]], col: dict, r: np.ndar
     H0 = {"reco": hist16(flat_s, refs["wr"]) + hist16(geo["bkg"], refs["bkgw"]), "truth": hist16(geo["gen"], refs["wt"])}
     H = {reading: {k: [] for k in ("p_reco", "a_reco", "p_truth", "a_truth")} for reading in READINGS}
     per, fine_mass = [], {"wt": np.zeros(nf), "tdw": np.zeros(nf)}
+    seal = {}                                                 # the clip-prep products (sealed; see clip_prep_seal)
     stop, n_done = None, 0
     total = len(READINGS) * len(draws_all)
     exact = {q: {"pairs_past_screen": 0, "near_bound_recomputed": 0} for q in Q}
@@ -752,6 +754,9 @@ def receipt(V: dict, cv: dict, draws_all: list[list[str]], col: dict, r: np.ndar
             by_band.setdefault(t.rpartition("_")[0], []).append(col[t])
         lim = {q: N1_BOUND * screen_floor(V[q], by_band) * (1.0 - NEAR_BOUND_REL) for q in Q}
         dcols = [[col[t] for t in tags] for tags in dtags]
+        sig_neg = np.zeros(V["wr"].shape[1])
+        bkg_neg = np.zeros(V["bkgw"].shape[1])
+        t_clip, t_unclip = [], []
         S = np.zeros((len(dcols), V["wt"].shape[0]))
         for d, cs in enumerate(dcols):
             S[d, cs] = 1.0
@@ -796,7 +801,11 @@ def receipt(V: dict, cv: dict, draws_all: list[list[str]], col: dict, r: np.ndar
                 nt = nature_truth(comp, r, geo, phi, const_full)
                 T16 = U_full @ nt["x"]
                 lam = comp["wr"][reco] * r[reco]
-                per.append({"reading": reading, "draw": d, "seed": int(seeds[d]), "n1": n1, "T16": T16.tolist(),
+                sig_neg[reco] += np.maximum(-lam, 0.0)            # section 5.3's clipmean input, per row
+                bkg_neg += np.maximum(-comp["bkgw"], 0.0)
+                t_clip.append(T16)
+                t_unclip.append(U_full @ unclipped_truth(comp, r, geo, phi, const_full))   # section 5.3's tau_c input
+                per.append({"reading": reading, "draw": d, "seed": int(seeds[d]), "n1": n1,
                             "clipped_fraction_signal": float(clipped_fraction(np.minimum(lam, 0.0).sum(), lam.sum())),
                             "clipped_fraction_background": float(clipped_fraction(
                                 np.minimum(comp["bkgw"], 0.0).sum(), comp["bkgw"].sum())),
@@ -820,6 +829,9 @@ def receipt(V: dict, cv: dict, draws_all: list[list[str]], col: dict, r: np.ndar
             del A
             if stop:
                 break
+        seal.update({f"signal_negative_lambda_sum_{reading}": sig_neg, f"background_negative_lambda_sum_{reading}": bkg_neg,
+                     f"U_T_clipped_{reading}": np.array(t_clip), f"U_T_unclipped_{reading}": np.array(t_unclip),
+                     f"draws_{reading}": np.array(len(t_clip))})
         if stop:
             break
     cross = {}
@@ -833,9 +845,32 @@ def receipt(V: dict, cv: dict, draws_all: list[list[str]], col: dict, r: np.ndar
     rec = {"verdict": "STOP" if stop else "PASS", "stop": stop, "natures_evaluated": n_done, "natures_declared": total,
            "n1_bound": N1_BOUND, "per_nature": per, "exact": exact,
            "n1_max_past_screen": {q: max(p["n1"][q]["max_past_screen"] for p in per) for q in Q} if per else None,
-           "T16_min": float(min(min(p["T16"]) for p in per)) if per else None, "crossterm": cross,
+           "crossterm": cross,
            "arithmetic": "BLAS composites; N1 and every clip sign exact in compose's order (section 5.1, 1B's 2d (ii))"}
-    return rec, fine_mass
+    return rec, fine_mass, seal
+
+
+def unclipped_truth(comp: dict, r: np.ndarray, geo: dict, phi: np.ndarray, const_full: dict) -> np.ndarray:
+    """x_T of a nature's per-row composites with no clip (tau_c's subtrahend, section 5.3): the fine sums of wt r, wt
+    and tdw as composed, through fd_1b_c2.xt_flat, so T is kept only where the unclipped denominator is > 0 and the
+    extraction's own positive-denominator mask holds."""
+    nf = int(np.prod(geo["shape"]))
+    wt, tdw = comp["wt"], comp["tdw"]
+    A, B, D = _bins(geo["gen"], wt * r, nf), _bins(geo["gen"], wt, nf), _bins(geo["td"], tdw, nf)
+    return c2.xt_flat(A[None], B[None], D[None], np.asarray(phi, float)[None], const_full["n_nucleons"],
+                      const_full["data_pot"], geo["shape"], const_full["edges"])[0]
+
+
+def clip_prep_seal(path: Path, seal: dict) -> dict:
+    """The clip-prep products (the director's ruling of 2026-11-08 on A1b's clipcheck inputs): per reading, the per-row
+    sum over the declared draws of max(-lambda, 0) for signal (lambda = w_reco_D r on the reco-passing rows) and
+    background (lambda = bkg_w_D), and each draw's U T_D clipped and unclipped. They are construction inputs to section
+    5.3 (A1b's clipmean and tau_c), written sealed: the gate record holds only their path, size and sha256, no one
+    opens or summarizes them before binding 3, and no verdict reads them."""
+    np.savez(path, **seal)
+    raw = path.read_bytes()
+    return {"path": path.name, "bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest(),
+            "keys": sorted(seal), "sealed": "not opened or summarized before binding 3; gates nothing"}
 
 
 # --------------------------------------------------------------------------------------------------- the gate
@@ -913,12 +948,13 @@ def gate_main(a) -> dict:
             rec["receipt_projection"] = {"after": done, "seconds_per_nature": per, "projected_seconds": proj}
             if proj > line:
                 raise Reprice(f"the receipt alone projects {proj:.0f} s past the line {line:.0f} s")
-    rc, fine_mass = receipt(V, cv, draws300, P["col"], r[t], P["phi"], geo, U_full, P["d_ref"], const_full,
+    rc, fine_mass, seal = receipt(V, cv, draws300, P["col"], r[t], P["phi"], geo, U_full, P["d_ref"], const_full,
                             flux_map, list(TOY_SEEDS[t]), rel, clock)
     rc["seconds"] = round(time.time() - t_r, 1)
     rec["receipt"] = rc
     np.savez_compressed(a.out.with_suffix(".receipt.npz"), clipped_wt_mass_fine=fine_mass["wt"],
                         clipped_tdw_mass_fine=fine_mass["tdw"])
+    rec["clip_prep"] = clip_prep_seal(a.out.with_suffix(".clipprep.npz"), seal) if seal else None
     if rc["verdict"] == "STOP":
         return finish(a, rec, "STOP", f"the receipt fired: {rc['stop']}", t0)
     terms = c2.c2_terms(V, cv)
