@@ -1016,7 +1016,7 @@ class Mutator(ast.NodeTransformer):
         mutation = self.mutation
         if (
             mutation.kind == "custody_module_name"
-            and self.function == "public_record"
+            and self.function == "export"
             and isinstance(node.func, ast.Attribute)
             and node.func.attr == "split"
             and isinstance(node.func.value, ast.Name)
