@@ -267,6 +267,12 @@ REQUIRED = tuple(
     [
         *RECORD_MUTATIONS,
         Mutation(
+            "REQUIRED_PUBLIC_MODULE_NAME_NOT_ARTIFACT",
+            "custody_module_name",
+            "public_record",
+            "test_public_module_names_are_not_artifacts",
+        ),
+        Mutation(
             "REQUIRED_NATIVE_ENVIRONMENT",
             "custody_native_copy",
             "native_environment",
@@ -1008,6 +1014,16 @@ class Mutator(ast.NodeTransformer):
             ).body
             self.changed += 1
         mutation = self.mutation
+        if (
+            mutation.kind == "custody_module_name"
+            and self.function == "public_record"
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "split"
+            and isinstance(node.func.value, ast.Name)
+            and node.func.value.id == "module"
+        ):
+            self.changed += 1
+            return node.func.value
         if (
             mutation.kind == "runtime_uuid_exclusion"
             and self.function == "checked_prepared_mat"

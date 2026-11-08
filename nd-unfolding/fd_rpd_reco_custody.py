@@ -331,7 +331,10 @@ def public_record(value: Any, before: Json, after: Json) -> Any:
                     if key in summaries
                     else (
                         [
-                            {"module_name": module, "source_path": path}
+                            {
+                                "module_name_components": module.split("."),
+                                "source_path": path,
+                            }
                             for module, path in child.items()
                         ]
                         if key == "module_paths" and isinstance(child, dict)

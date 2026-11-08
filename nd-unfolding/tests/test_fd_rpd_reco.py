@@ -4066,3 +4066,30 @@ def test_import_prebuilt_removal_refuses(
     assert caught.value.details["environment"]["unexpected"]["removed"] == {
         "CLING_PREBUILT_MODULE_PATH": "/prepared/lib:"
     }
+
+
+def test_public_module_names_are_not_artifacts() -> None:
+    custody = _custody_module()
+    spec = importlib.util.spec_from_file_location(
+        "receipt_artifacts_for_module_names",
+        REPO / "docs/orchestration/verify_receipt_artifacts.py",
+    )
+    assert spec is not None and spec.loader is not None
+    checker = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(checker)
+    modules = {
+        "nersc_pymon.log": "/instrument/nersc_pymon/log.py",
+        "package.root": "/environment/package/root.py",
+        "plain_module": "/environment/plain_module.py",
+    }
+    exported = custody.public_record({"module_paths": modules}, {}, {})
+    rebuilt = {
+        ".".join(item["module_name_components"]): item["source_path"]
+        for item in exported["module_paths"]
+    }
+    assert rebuilt == modules
+    assert not checker.bare_citations(json.dumps(exported))
+    assert checker.bare_citations(json.dumps({"module_paths": modules})) == {
+        "nersc_pymon.log",
+        "package.root",
+    }
