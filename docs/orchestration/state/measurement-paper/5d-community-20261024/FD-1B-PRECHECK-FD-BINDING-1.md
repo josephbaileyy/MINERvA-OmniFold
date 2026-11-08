@@ -43,4 +43,38 @@
    rc is read unpiped, and each connect's receipt goes in as a PR.
 6. **The report** gives the readings and the outcome per §4.6 with its licences, and the cost measured.
 
+## Binding 1, addendum A1: control M rebuilt from the H2 definition (director, 2026-11-08)
+
+**Binds** the control-M repair as merged in #883, at **M_A1 = `8d7a40c23b3b6b70c2913ba363a10a22e152aee4`**. The audited
+head is `fff04ed0`, and the module and its tests are identical at the two commits. This **supersedes M above** for
+every step from P1 on.
+
+| file | sha256 (prefix) |
+|---|---|
+| `nd-unfolding/fd_1b_precheck_fd.py` | `a7fbbb5850733b24` |
+| `nd-unfolding/pv-ladder/readouts/h2_definition.json` (the readout's new `--definition` input; unchanged by #883) | `b67907615fe2e903` |
+
+**What led to it.** P1 at M ended INVALID on control M (#877): the readout rebuilt S1's blocks from the float32-stored U,
+not S1's own float64 functional matrix. Staging and control E passed.
+
+**What the director checked:** coverage-5b-audit's GO at `fff04ed0`
+(https://github.com/josephbaileyy/MINERvA-OmniFold/pull/883#issuecomment-6717707336).
+- **The route.** U_def follows S1's own build (`s1_assemble.py:303`, `:328-329`) and I0's control-M route, which passed.
+  The mode blocks and A_Φ keep `s1["U"]`, as ruled. The definition's digest is checked.
+- **The tests.** 54 of 54 mutants killed, and 44 tests pass at 3 hash seeds. The REQUIRED mutant fails 13 tests,
+  including its named one.
+- **The auditor's extras.** E1–E4 and E7 are killed. E5 and E6 survive, because the tests mock `fine_map`. Both fail
+  safe in production, and they are held as lows.
+
+**Rulings:**
+1. **The P1 rerun** (`pfd_p1r_login.sh`) runs at M_A1, from a fresh clone with empty porcelain, and passes the committed
+   `h2_definition.json` as `--definition`. P1's earlier five-argument call is a TypeError at M_A1.
+2. **The thread environment matches I0's, which passed.** The rerun sets exactly the BLAS and OpenMP thread variables I0
+   set, which were none, and records the full thread environment in its receipt.
+   - Locally the 16 × 65,856 matvec is thread-invariant at 1, 2, 8 and 64 threads, but the cluster's BLAS is unverified.
+   - If control M fails again, the receipt diffs the thread environment against I0's first, and the result comes to
+     the director unrepaired.
+3. **Unchanged:** rulings 1–6 above, including the price, the cap of 18.5 node-h, `iris` before P2 and P3, the fence,
+   O_NOATIME reads, and each connect's sha256 sent to the director before launch.
+
 Nothing is submitted, deposited or tagged.
