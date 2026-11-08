@@ -1,0 +1,47 @@
+node login38 nproc=244 loadavg 13.37 16.67 18.87
+2026-11-08T23:43:27Z
+connect script sha256 b725acce5180643a730f022559513c0364b68dd81ea6aebd2d864b2f0ff32ad8
+0 61004986
+1 61004987
+2 61004988
+3 61004989
+4 61004990
+5 61004991
+== the fence (only rs1_* and ens1_* pass)
+FENCE: pass; none of the six jobs is queued
+== the jobs
+61004986|ens1_a1_s2_0|COMPLETED|0:0|05:31:12|19872|1|256|2026-11-08T09:55:13|2026-11-08T15:26:25|nid004676
+61004987|ens1_a1_s2_1|COMPLETED|0:0|05:31:48|19908|1|256|2026-11-08T09:55:13|2026-11-08T15:27:01|nid004710
+61004988|ens1_a1_s2_2|COMPLETED|0:0|05:28:13|19693|1|256|2026-11-08T09:55:13|2026-11-08T15:23:26|nid004715
+61004989|ens1_a1_s2_3|COMPLETED|0:0|05:24:19|19459|1|256|2026-11-08T09:55:13|2026-11-08T15:19:32|nid004720
+61004990|ens1_a1_s2_4|COMPLETED|0:0|05:28:53|19733|1|256|2026-11-08T09:55:13|2026-11-08T15:24:06|nid004732
+61004991|ens1_a1_s2_5|COMPLETED|0:0|05:31:55|19915|1|256|2026-11-08T09:55:13|2026-11-08T15:27:08|nid004747
+shard 0 job 61004986 name=ens1_a1_s2_0 state=COMPLETED elapsed_raw=19872 nnodes=1
+shard 1 job 61004987 name=ens1_a1_s2_1 state=COMPLETED elapsed_raw=19908 nnodes=1
+shard 2 job 61004988 name=ens1_a1_s2_2 state=COMPLETED elapsed_raw=19693 nnodes=1
+shard 3 job 61004989 name=ens1_a1_s2_3 state=COMPLETED elapsed_raw=19459 nnodes=1
+shard 4 job 61004990 name=ens1_a1_s2_4 state=COMPLETED elapsed_raw=19733 nnodes=1
+shard 5 job 61004991 name=ens1_a1_s2_5 state=COMPLETED elapsed_raw=19915 nnodes=1
+charge node_h=32.9389 (sum of ElapsedRaw 118580 s on 1 node each); stage 2 spend 0.1958 + 32.9389 = 33.1347 of 46.0
+== the deploy, the dry run and stage 1's listing
+HEAD f4d2d7f3833834390b7b031df61ba1a5765e9900; modified tracked files: 0
+probe, dry DONE, dry SHA256SUMS and stage 1's listing: at their receipted sha256s
+runs-teardown/ exists, 2 files (judged by read.py against the DONEs):
+26a1f767b78124110a4849c4137974a3bd8b10fb98ecdc4b34b5dfa4b4e6fe98  runs-teardown/ens1_stage0c_gibuu_k057/ens1_stage0c_gibuu_k057_s991000.npz
+adf52382e54e4f7c7e90412791bb202d54fc7bc39fa6933469be3b69c70d6dbe  runs-teardown/ens1_stage0c_gibuu_k057/ens1_stage0c_gibuu_k058_s991000.npz
+log-shard0/DONE: {"mode": "shard", "stage": 2, "shard": "0", "tasks": 136, "ended": 136, "rc": 0, "job": "61004986", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+log-shard1/DONE: {"mode": "shard", "stage": 2, "shard": "1", "tasks": 136, "ended": 136, "rc": 0, "job": "61004987", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": "ens1_stage0c_gibuu_k057 "}
+log-shard2/DONE: {"mode": "shard", "stage": 2, "shard": "2", "tasks": 136, "ended": 136, "rc": 0, "job": "61004988", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+log-shard3/DONE: {"mode": "shard", "stage": 2, "shard": "3", "tasks": 135, "ended": 135, "rc": 0, "job": "61004989", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+log-shard4/DONE: {"mode": "shard", "stage": 2, "shard": "4", "tasks": 135, "ended": 135, "rc": 0, "job": "61004990", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+log-shard5/DONE: {"mode": "shard", "stage": 2, "shard": "5", "tasks": 135, "ended": 135, "rc": 0, "job": "61004991", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+files under runs/: 3650
+ad6b364cdee69a3792ded21f11042de55f562341cbd186de5840a3326cda84dd  /pscratch/sd/j/josephrb/ens1-a1-20261108/post-s2-full/runs-SHA256SUMS
+== the run's records, the products, the blocks, the timing (sourced environment)
+read.py sha256 911649bd5a15f2955dabd4b9448392a3662ffb496d54062b7891feec794841d8
+Python 3.11.14
+{"verdict": "PASS", "failures": [], "n_failures": 0, "products": {"read": 1633, "moved_rows_nonzero": 0, "block_mismatch": 0, "code_mismatch": 0, "dtype_unrecorded": 0}, "n_files": 3650, "n_stage1": 2017, "teardowns": ["ens1_stage0c_gibuu_k057"], "runs_teardown_files": 2, "timing": {"unfolds": 1626, "runner_lines": 1628, "seconds_max": 792.827, "seconds_median": 523.771, "meta_seconds_unfold_n": 1626, "meta_seconds_unfold_max": 792.827, "meta_seconds_unfold_median": 523.6510000000001, "meta_seconds_unfold_over_705": 42, "task_wall_max": 2586.3, "shard_wall_s_max": 19915, "shard_wall_h_max": 5.532, "projected_h_from_dry": 5.779, "limit_h": 7.5}, "shards": {"0": {"tasks": 136, "job": "61004986", "elapsed_raw": 19872}, "1": {"tasks": 136, "job": "61004987", "elapsed_raw": 19908}, "2": {"tasks": 136, "job": "61004988", "elapsed_raw": 19693}, "3": {"tasks": 135, "job": "61004989", "elapsed_raw": 19459}, "4": {"tasks": 135, "job": "61004990", "elapsed_raw": 19733}, "5": {"tasks": 135, "job": "61004991", "elapsed_raw": 19915}}}
+read rc=0
+b0dcdb271c1823f5213a4efc4cd815f39101e7b42aa2d6214bfd1c4115083168  /pscratch/sd/j/josephrb/ens1-a1-20261108/post-s2-full/s2-full-read.json
+ens1 a1 stage-2 full postrun rc=0
+2026-11-08T23:43:56Z
