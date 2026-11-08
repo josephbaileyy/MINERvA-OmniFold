@@ -1,0 +1,28 @@
+FD-PRR rev 2: the JobScript class alone, serially, after the other run ended (the director cleared it on 2026-11-08; its script runs xargs -P 8 briefly)
+date_utc: 2026-11-08T18:03:24Z  host: DN0a1f6baa
+python: 3.12.2  numpy: 1.26.4  scipy: 1.15.2  bash: GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25)
+thread caps: OMP=1 MKL=1 OPENBLAS=1 NUMEXPR=1 VECLIB=1
+files (sha256):
+f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232  prr_probe.py
+17acad82bad7c43f45c423e41039eb81381f5acab15ecdf983ad0d023848d046  prr_ibu.py
+f35bc3282b50215dd583b76b0d6a747f90185e4b96b6e3f5b693d42c01166372  prr_read.py
+323f491afa2038a55bfb791be0d7abf81a6cda7e27a7f5124ea8cacb75efda66  sbatch_prr.sh
+2a990367610678eb3ffde1adaa90ba5acd08b69b59acdc15a8116322159868ea  test_prr.py
+28f3f9e5edf1e63c65ba5db9f2050c9159a89372bf27fe7e1558cc9ffb682b86  prr_mutation.py
+---
+collected 103 tests; selected 9 (the JobScript class only)
+test_a_failed_pair_stops_the_dry_run_and_every_full_job (test_prr.JobScript.test_a_failed_pair_stops_the_dry_run_and_every_full_job) ... ok
+test_a_failed_task_leaves_no_done (test_prr.JobScript.test_a_failed_task_leaves_no_done) ... ok
+test_a_full_job_refuses_a_changed_stage (test_prr.JobScript.test_a_full_job_refuses_a_changed_stage) ... ok
+test_a_limit_above_the_declared_is_refused (test_prr.JobScript.test_a_limit_above_the_declared_is_refused) ... ok
+test_a_refused_staging_stops_before_any_task (test_prr.JobScript.test_a_refused_staging_stops_before_any_task) ... ok
+test_a_wrong_pin_or_a_rerun_is_refused (test_prr.JobScript.test_a_wrong_pin_or_a_rerun_is_refused) ... ok
+test_an_ens1_job_queued_or_running_refuses_the_dry_run (test_prr.JobScript.test_an_ens1_job_queued_or_running_refuses_the_dry_run) ... ok
+test_dry_then_a_full_job_then_ibu (test_prr.JobScript.test_dry_then_a_full_job_then_ibu) ... ok
+test_outside_slurm_without_the_smoke_flag_it_refuses (test_prr.JobScript.test_outside_slurm_without_the_smoke_flag_it_refuses) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 30.063s
+
+OK
+rc=0

@@ -21,7 +21,7 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("prr_probe.py", "prr_ibu.py", "prr_read.py", "sbatch_prr.sh", "test_prr.py")
 PB, IB, RD, SB = FILES[:4]
-EXPECTED_TESTS = 102
+EXPECTED_TESTS = 103
 MUTATIONS = [
     # --- the probe: the mask, the guard, the pins, the columns
     ("mask columns swapped", PB, "return orig(MCgen[:, gi], MCreco[:, ri], measured[:, ri], *args, **kwargs)",
@@ -135,6 +135,10 @@ MUTATIONS = [
      "test_a_full_job_refuses_a_changed_stage"),
     ("runs outside Slurm", SB, '    echo "[prr] refusing: not inside a Slurm job" >&2; exit 2', '    NAME="prr_$MODE"; TL="$LIMIT"',
      "test_outside_slurm_without_the_smoke_flag_it_refuses"),
+    ("ens1 jobs not checked", SB, '    [ -z "$ens" ] || {', '    true || {',
+     "test_an_ens1_job_queued_or_running_refuses_the_dry_run"),
+    ("squeue failure admitted", SB, "2>/dev/null) || { echo \"[prr] refusing: squeue failed", "2>/dev/null) || true || { echo \"[prr] refusing: squeue failed",
+     "test_an_ens1_job_queued_or_running_refuses_the_dry_run"),
     ("a failed task still DONE", SB, '[ "$rc" -eq 0 ] || { echo "rc=$rc" > "$L/FAILED"; echo "[prr] STOP: a task failed',
      'true || { echo "rc=$rc" > "$L/FAILED"; echo "[prr] STOP: a task failed',
      "test_a_failed_task_leaves_no_done"),

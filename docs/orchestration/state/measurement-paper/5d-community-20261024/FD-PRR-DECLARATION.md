@@ -15,7 +15,7 @@
 **Status.**
 - Rev 1 fixed the question, design, readings, price and licences. The director ruled on its four questions and
   asked for the code with the declaration (§11.1).
-- **Rev 2 adds the code (§8), with its digests and 102 tests.** The mutation receipt follows on this PR (§8.2). It also corrects what rev 1
+- **Rev 2 adds the code (§8), with its digests and 103 tests.** The mutation receipt follows on this PR (§8.2). It also corrects what rev 1
   got wrong or left out. Each change is listed in §13.
 - Design and code are audited together by coverage-5b-audit. Nothing runs before that audit and the director's binding. Every path is relative to `docs/orchestration/` unless it
   starts with `nd-unfolding/` or `docs/analysis-note/`. Every `file:line` is at main `52334c34` unless another commit is
@@ -385,8 +385,8 @@ unchanged. Each wrapper rebinds a name for one invocation and restores it on exi
 | `prr_ibu.py` | route 2: the capture, REF-G1's `unfold_experiment` on `ibu1.half_from_experiment` (half A), R-ID, R-SUP and C-IBU, under REF-G1's O_NOATIME read guard |
 | `prr_read.py` | completeness; the controls; §4's quantities; §5's readings; F0b's `LeakGuard` on the readout |
 | `sbatch_prr.sh` | the five jobs. It refuses unless the deploy is the pin, the job is named `prr_<mode>` and Slurm's TimeLimit is at most the declared limit. It writes a DONE only for a complete, clean run, as `sbatch_fd_stab.sh` does |
-| `test_prr.py` | 102 tests (§8.2) |
-| `prr_mutation.py` | 60 planted defects, each to be killed by a named test, run in a mirrored tree (§8.2) |
+| `test_prr.py` | 103 tests (§8.2) |
+| `prr_mutation.py` | 62 planted defects, each to be killed by a named test, run in a mirrored tree (§8.2) |
 
 **Digests** (sha256 of the files at this revision's commit; the binding pins them):
 
@@ -395,24 +395,21 @@ unchanged. Each wrapper rebinds a name for one invocation and restores it on exi
 | `prr_probe.py` | `f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232` |
 | `prr_ibu.py` | `17acad82bad7c43f45c423e41039eb81381f5acab15ecdf983ad0d023848d046` |
 | `prr_read.py` | `f35bc3282b50215dd583b76b0d6a747f90185e4b96b6e3f5b693d42c01166372` |
-| `sbatch_prr.sh` | `810bd0f46c5973dea23c0a02296b9c2710358c7a92e071d7aa4102abcd041c5c` |
-| `test_prr.py` | `32fee7bf0715ff62fa213405c7b2dcb3e32e95af028f26a6b1d3da4c895e245a` |
-| `prr_mutation.py` | `3ad89d64337d6bd0e4bae91f76db8cb692b1588b8b934795caa236b26ac2064d` |
+| `sbatch_prr.sh` | `323f491afa2038a55bfb791be0d7abf81a6cda7e27a7f5124ea8cacb75efda66` |
+| `test_prr.py` | `2a990367610678eb3ffde1adaa90ba5acd08b69b59acdc15a8116322159868ea` |
+| `prr_mutation.py` | `28f3f9e5edf1e63c65ba5db9f2050c9159a89372bf27fe7e1558cc9ffb682b86` |
 
-The serial test log's header records the same six (`fd/receipts-prr/rev2/tests-serial.txt`).
+Both test logs record the same six (`fd/receipts-prr/rev2/tests-serial.txt`, `tests-jobscript.txt`).
 
 ### 8.2 Tests and the mutation receipt
 
-- **The suite has 102 tests.** At this commit, 94 were run in one serial process with every BLAS and OpenMP thread
-  cap at 1: **Ran 94 tests, OK** (`fd/receipts-prr/rev2/tests-serial.txt`).
-  - **The other 8, the `JobScript` class, are held, not skipped by an edit.** The director asked on 2026-11-08 that
-    nothing fan out on the shared machine while Codex2's #848 verification runs, and that class runs
-    `sbatch_prr.sh`, which starts 8 gate processes at once by design.
-  - They were selected out by the test loader, with no test edited. They ran and passed in the earlier full run of
-    the suite before the throttle, at 101 tests on the code before the last C-PINS addition (the refinement driver's
-    pin and the product code-digest check, with its test `test_a_product_made_by_other_code_refuses`). That run is
-    not a receipt for this commit.
-  - The full 102 run on this PR before the audit reads it.
+- **The suite has 103 tests, and all 103 pass at this commit,** in two serial processes with every BLAS and OpenMP
+  thread cap at 1. Both logs carry the six files' digests above.
+  - **Every class but `JobScript`: Ran 94 tests, OK** (`fd/receipts-prr/rev2/tests-serial.txt`).
+  - **The `JobScript` class alone, afterwards: Ran 9 tests, OK** (`fd/receipts-prr/rev2/tests-jobscript.txt`).
+  - **Why two runs:** that class runs `sbatch_prr.sh`, which starts 8 gate processes at once by design. The director
+    held it while Codex2's #848 verification loaded the shared machine, then cleared it. The split is by the test
+    loader's selection; no test is edited.
 - The tests run without LightGBM, ROOT or the cluster:
   - the estimators are deterministic stand-ins;
   - the inputs are synthetic rows on the real 5D fine grid, FD-STAB's test helpers;
@@ -422,10 +419,10 @@ The serial test log's header records the same six (`fd/receipts-prr/rev2/tests-s
   - the job script, run on a stand-in deploy with the real gate;
   - C-CT on the committed files;
   - the readings end to end on a planted run.
-- `python3 -B nd-unfolding/prior_retention/prr_mutation.py`: **pending.** It is held for the same reason, and runs
-  serially when the director clears the machine. Its receipt is added to this PR. A first run at 4 mutants at once
+- `python3 -B nd-unfolding/prior_retention/prr_mutation.py`: **pending.** It is held until Codex2's #848 run has
+  finished, and runs serially when the director clears it. Its receipt is added to this PR. A first run at 4 mutants at once
   was stopped at the director's request before it reported, and is not a receipt.
-- **The receipts** are in `fd/receipts-prr/rev2/`: the serial log now, and the held runs' logs when they have run.
+- **The receipts** are in `fd/receipts-prr/rev2/`: the two test logs now, and the mutation log when it has run.
 - **Not testable here:** LightGBM, the real inputs, `squeue` and O_NOATIME (macOS has none, so the tests read with a
   zero flag). The dry run is the first run with each.
 
@@ -600,10 +597,14 @@ The listing is `fd/receipts-ref-g1/preconditions/listing.json`.
 - **So after the dry run's one copy, no job of this study touches a shared file.**
 
 **Sharing with ENS1** (the director's ruling of 2026-11-08):
-- ENS1 stage 2 runs first.
+- **ENS1's stage 2 has ended and its post-run is done before `prr_dry` is submitted.** ENS1's jobs read
+  `of_inputs_5d.npz` and `bkg_dump.npz` in place with plain reads, so "runs first" is not enough.
 - The two lanes' connects never copy at the same time.
 - Both use noatime copies.
-- The cluster lane confirms the first two before `prr_dry` is submitted.
+- **Enforced in part by the job script.** `prr_dry` refuses before staging if any `ens1_*` job is queued or running
+  (`squeue -u <user> -o '%j|%T'`). It also refuses if `squeue` cannot answer.
+- **The rest is the cluster lane's to confirm** before `prr_dry` is submitted: that ENS1's post-run is done, and that
+  no ENS1 connect is copying. A queue check cannot see either.
 
 **The rest:**
 - The deploy is a clean clone at the bound commit on pscratch. Its committed truth files are read from it.
@@ -662,5 +663,6 @@ extra dry-run tasks, F0b's relative grade convention and the staged inputs.
 | §10.2, §10.3 | O5 at nominal added (C-MASK; rev 1 used it without counting it), and B0 at A7 GiBUU moved into the dry run so C-PAIR is complete before any full job: 181 tasks, 551.8 u. Limits repacked: 5.25, 7.5, 6.5, 7.25, 0.5; cap 27.0 | rev 1's limits assumed perfect packing (§10.3) |
 | §10.3 | the job script checks its job name and Slurm TimeLimit | a `--time` in the wrong format would otherwise pass unseen |
 | §10.4 | every shared read staged once through O_NOATIME with per-file stat records; no directory atime and no absolute atime used | the director's sharing ruling and note of 2026-11-08 |
-| §8 | the code, its digests, 102 tests and the mutation receipt | ruling 3 |
+| §10.4, `sbatch_prr.sh` | ENS1's stage 2 ended and post-run done before `prr_dry`; the dry job refuses while any `ens1_*` job is queued or running, or if `squeue` fails (with its test and two mutants) | coverage-5b-audit's low on dd33c678, at the director's direction |
+| §8 | the code, its digests, 103 tests and the mutation receipt | ruling 3 |
 

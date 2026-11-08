@@ -1229,7 +1229,8 @@ class JobScript(unittest.TestCase):
         (r / "bin").mkdir()
         (r / "bin" / "fake_time").write_text('#!/bin/bash\nshift 3\nexec "$@"\n')
         (r / "bin" / "sha256sum").write_text('#!/bin/bash\nexec shasum -a 256 "$@"\n')
-        for b in ("fake_time", "sha256sum"):
+        (r / "bin" / "squeue").write_text('#!/bin/bash\nprintf "%s" "$PRR_FAKE_SQUEUE"\nexit "${PRR_FAKE_SQUEUE_RC:-0}"\n')
+        for b in ("fake_time", "sha256sum", "squeue"):
             (r / "bin" / b).chmod(0o755)
         g = ["git", "-C", str(self.D), "-c", "user.name=t", "-c", "user.email=t@t"]
         subprocess.run(["git", "init", "-q", str(self.D)], check=True)
@@ -1276,6 +1277,16 @@ class JobScript(unittest.TestCase):
         self.assertFalse((self.OUT / "log-dry" / "DONE").exists())
         for m in ("iter", "cap", "misc", "ibu"):
             self.assertEqual(self.job(m).returncode, 2, m)
+
+    def test_an_ens1_job_queued_or_running_refuses_the_dry_run(self):
+        for q in ("ens1_stage2|RUNNING\n", "x|RUNNING\nens1_post|PENDING\n"):
+            p = self.job("dry", PRR_FAKE_SQUEUE=q)
+            self.assertEqual(p.returncode, 2, q)
+            self.assertIn("ens1_", p.stderr)
+            self.assertFalse((self.OUT / "stage.json").exists())
+        self.assertEqual(self.job("dry", PRR_FAKE_SQUEUE_RC="1").returncode, 2)  # squeue cannot answer: refuse
+        self.assertFalse((self.OUT / "log-dry").exists())
+        self.assertEqual(self.job("dry", PRR_FAKE_SQUEUE="prr_other|RUNNING\nxens1_a|RUNNING\n").returncode, 0)
 
     def test_a_refused_staging_stops_before_any_task(self):
         p = self.job("dry", PRR_STAGE_RC="2")

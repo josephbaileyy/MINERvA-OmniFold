@@ -54,6 +54,11 @@ L="$OUT/log-$MODE"
 if [ "$MODE" = dry ]; then
     [ -s "$OUT/manifest.json" ] || { echo "[prr] refusing: no $OUT/manifest.json" >&2; exit 2; }
     [ ! -e "$OUT/stage" ] || { echo "[prr] refusing: $OUT/stage exists" >&2; exit 2; }
+    # The director's sharing ruling (FD-PRR §10.4): ENS1 reads the same inputs in place, so nothing is staged or
+    # written while any ens1_* job is queued or running. Fails closed: if squeue cannot answer, the dry run refuses.
+    sq=$(squeue -h -u "${USER:-josephrb}" -o '%j|%T' 2>/dev/null) || { echo "[prr] refusing: squeue failed; cannot check for ens1_* jobs" >&2; exit 2; }
+    ens=$(printf '%s\n' "$sq" | grep '^ens1_')
+    [ -z "$ens" ] || { echo "[prr] refusing: ens1_* jobs are queued or running: $ens" >&2; exit 2; }
 else  # checked before anything is written, so a refusal leaves no trace
     [ -s "$OUT/log-dry/DONE" ] && [ ! -e "$OUT/log-dry/STOP" ] || { echo "[prr] refusing: no DONE receipt from the dry run" >&2; exit 2; }
     for id in $(grep -v '^#' "$OUT/queues/dry.tsv" | cut -f1); do
