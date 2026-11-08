@@ -107,7 +107,7 @@ Table~\ref{tab:generators-impl} lists the generator predictions compared in this
 % Methods rewrite (M4, BINDING-PHASE1-20261019 sec. 5): the target consequence, quantified for GENIE. Source: docs/orchestration/state/inelastic-high-region-20261011/results/r5_genie_events.json:240 (W0, W < 1.1 GeV: Conly_over_CH_per_nucleon 1.0829), :283 (W1, 1.1 <= W < 1.4 GeV: 0.9779), :271 and :314 (rel_to_total 1.0560, 0.9537); W bins are the fine W bins (code/r5_genie_events.py:126-127); KNOWN_ISSUES.md row 97.
 Hydrogen has no quasielastic, 2p2h, or coherent $\nu_{\mu}$ charged-current channel, so normalizing per nucleon does not remove the difference between the targets.  In GENIE's own CH sample, the carbon-only cross section per nucleon exceeds that of CH by \SI{8.3}{\percent} for $W<\SI{1.1}{GeV}$ and is \SI{2.2}{\percent} below it for $1.1\le W<\SI{1.4}{GeV}$ (\SI{+5.6}{\percent} and \SI{-4.6}{\percent} with the overall normalization removed).  The NuWro and GiBUU comparisons contain a target difference of this kind, which the tests of \S\ref{sec:joint5d}, as run, do not correct. Section~\ref{sec:joint5d-ch} re-evaluates them with the correction.
 
-\subsection{Distribution of the excess in the $(\Eavail,W)$ plane}
+\subsection{Projection onto the $(\Eavail,W)$ plane}
 \label{sec:eavailw-map}
 
 Figure~\ref{fig:eavailWexcess} shows the unfolded five-dimensional result projected onto $(\Eavail,W)$, with the MINERvA Tune~v1 prediction subtracted. That prediction is the OmniFold prior, the simulation's truth weighted by its full tune weight; the untuned GENIE~CV of \S\ref{sec:eavailw-band} is a separate prediction.
