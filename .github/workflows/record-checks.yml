@@ -247,6 +247,11 @@ jobs:
           python3 docs/analysis-note/make_values_fived16.py --self-test
           python3 docs/analysis-note/make_values_fived16.py --check
 
+      # Note round 1 (2026-11-08): the results that landed from 2026-11-01 on; a stale values_landed.tex fails here.
+      - name: "note: landed-result values fresh (make_values_landed.py --check)"
+        if: ${{ !cancelled() }}
+        run: python3 docs/analysis-note/make_values_landed.py --check
+
       - name: "note: records citation pin, Q1-Q4 (check_note_records.py pin)"
         if: ${{ !cancelled() }}
         run: python3 docs/analysis-note/check_note_records.py pin docs/analysis-note

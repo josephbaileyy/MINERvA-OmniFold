@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""Generate values_landed.tex: the printed numbers of the results that landed from 2026-11-01 on, from their records.
+
+usage: make_values_landed.py [--check]     (run from anywhere inside the repository; SKIP where the readouts are absent)
+
+Two kinds of source, and no printed number is typed by hand in the note:
+- a committed readout, pinned by sha256 in READOUTS (the digest each OUTCOME record states); a value is read at a key
+  path and formatted here at its printed precision;
+- an OUTCOME record line, for a number the record states but whose readout is not on main (the 1B receipt lives on
+  its campaign branch) or which the record tabulates from the bound code (the 2D cell ranges). The literal must occur
+  on that line of the record, or the run stops.
+Assertions (ASSERT) pin the classes the prose states in words (for example the verdict UNDER-COVERS), so the words
+cannot drift from the record either. --check fails unless the committed values_landed.tex equals a fresh generation.
+Each key prints with \\lrval{key}; an unknown key stops the build.
+"""
+import hashlib
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+_top = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, cwd=Path(__file__).parent)
+ROOT = Path(_top.stdout.strip()) if _top.returncode == 0 else Path(__file__).resolve().parents[2]
+OUT = Path(__file__).with_name("values_landed.tex")
+FD = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd"
+ST = "docs/orchestration/state/2d-closeout"
+OR = "docs/orchestration"
+READOUTS = {  # name: (path, sha256 as the OUTCOME record states it)
+    "ar23": (f"{FD}/receipts-cov2d/readout/AR23/score_AR23.json",
+             "fe5263e904f65892ce26b75fb279441230713c38675c2a3615c59d561c4f5ce1"),
+    "g18": (f"{FD}/receipts-cov2d/readout/G18/score_G18.json",
+            "849766942b3ecd9e6e72fd5db9d1a59815796b3f917875f8d0122b0c639088ec"),
+    "vr": (f"{ST}/valid-region-20261107/receipts/read/readout.json",
+           "91bb604e3a62e2654e611750830e225061e5c0b0255b12455a23ac9be4eec84c"),
+    "pp": (f"{ST}/per-period-benchmark-20261106/receipts/read/readout.json",
+           "4872df322a4e2e49ef009c4fa7eb78f273b8bea75a8a97855fd57451d229dca1"),
+    "p1": (f"{FD}/receipts-1b/precheck-fd/p4/records/p4/readout.json",
+           "8e05ca9bc2d0f2142b5c8d2bff28f05176c48f27454218390f09658344cea7b0"),
+}
+REC = {
+    "stop": f"{OR}/OUTCOME-20261106-1b-stage1-receipt-stop.md",
+    "cov2d": f"{OR}/OUTCOME-20261108-cov2d-both-tunes-under-cover.md",
+}
+WORDS = {1: "one", 2: "two", 3: "three", 4: "four"}
+
+
+def load():
+    out = {}
+    for name, (rel, sha) in READOUTS.items():
+        if not (ROOT / rel).exists():
+            return None
+        b = (ROOT / rel).read_bytes()
+        got = hashlib.sha256(b).hexdigest()
+        if got != sha:
+            sys.exit(f"FAIL: {rel}: sha256 {got} is not the record's {sha}")
+        out[name] = json.loads(b)
+    return out
+
+
+def at(d, path):
+    for k in path.split("/"):
+        d = d[int(k)] if isinstance(d, list) else d[k]
+    return d
+
+
+def record(key, line, literal):
+    text = (ROOT / REC[key]).read_text(encoding="utf-8").splitlines()[line - 1]
+    if literal not in text:
+        sys.exit(f"FAIL: {REC[key]}:{line} does not contain {literal!r}")
+    return literal
+
+
+def tex_num(x, nd):
+    s = f"{x:.{nd}f}"
+    return s.replace("-", "$-$") if s.startswith("-") else s
+
+
+def cells_words(cs):
+    cs = list(cs)
+    return cs[0] if len(cs) == 1 else ", ".join(cs[:-1]) + " and " + cs[-1]
+
+
+def build(R):
+    V, A = {}, []  # values; assertion failures
+    def expect(cond, what):
+        if not cond:
+            A.append(what)
+    # --- COV2D (OUTCOME-20261108-cov2d-both-tunes-under-cover.md, sections 1-4 and CITABLE FOR)
+    V["cov2d-ntoys"] = str(at(R["ar23"], "section_9_9/products"))
+    expect(at(R["g18"], "section_9_9/products") == at(R["ar23"], "section_9_9/products"), "COV2D toy counts differ")
+    for t in ("ar23", "g18"):
+        g = R[t]["grade"]
+        expect(R[t]["verdict"] == "UNDER-COVERS" and g["verdict"] == "UNDER-COVERS", f"{t} verdict")
+        expect(R[t]["stop"] == [] and R[t]["controls_failed"] == [], f"{t} controls")
+        V[f"cov2d-{t}-joint"] = str(g["joint_count"])
+        V[f"cov2d-{t}-kjoint"] = str(g["k_joint"])
+        V[f"cov2d-{t}-ndf"] = str(g["ndf"])
+        V[f"cov2d-{t}-chi2ndf"] = tex_num(g["chi2_mean_over_ndf"], 2)
+        V[f"cov2d-{t}-chi2ndf-se"] = tex_num(g["chi2_mean_over_ndf_se"], 2)
+        V[f"cov2d-{t}-size"] = tex_num(g["size"]["per_truth_union_bound"], 4)
+        fl = g["flagged_cells"]
+        V[f"cov2d-{t}-flagged"] = cells_words([str(c) for c in fl])
+        V[f"cov2d-{t}-nflagged"] = WORDS[len(fl)]
+        for c in fl:
+            a = g["attribution"][f"R{c}"]
+            expect(a["driven_by"] == "bias", f"{t} cell {c} attribution")
+            V[f"cov2d-{t}-{c}-count"] = str(g["counts"][c])
+            V[f"cov2d-{t}-{c}-kc"] = str(a["k_flag"])
+            V[f"cov2d-{t}-{c}-sc"] = tex_num(g["s_c"][c], 3)
+            V[f"cov2d-{t}-{c}-pullmean"] = tex_num(a["pull_mean"], 2)
+            V[f"cov2d-{t}-{c}-pullsd"] = tex_num(a["pull_sd"], 2)
+        oc = g["outlier_cell"]
+        expect(oc["cell"] == 216 and oc["flagged"] is False, f"{t} outlier cell")
+    V["cov2d-size-max"] = tex_num(max(R[t]["grade"]["size"]["per_truth_union_bound"] for t in ("ar23", "g18")), 3)
+    V["cov2d-cell29-range"] = record("cov2d", 52, "0.07–0.15, 15–20").replace("–", "--")
+    V["cov2d-cell56-range"] = record("cov2d", 53, "0.25–0.33, 6–7").replace("–", "--")
+    V["cov2d-res-cell"] = record("cov2d", 91, "0.10–0.13").replace("–", "--")
+    V["cov2d-res-joint"] = record("cov2d", 91, "0.08")
+    # --- the 1B stage-1 receipt STOP (OUTCOME-20261106-1b-stage1-receipt-stop.md; the receipt is on its campaign branch)
+    V["stop-flagged"] = record("stop", 27, "892")
+    V["stop-draws"] = record("stop", 27, "900")
+    V["stop-maxcells"] = record("stop", 29, "is 62")[len("is "):]
+    # --- valid regions (OUTCOME-20261107-valid-region.md, sections 1-3)
+    cells = [f"R{i:02d}" for i in range(16)]
+    va, vp = at(R["vr"], "readings/V-ATLAS/valid"), at(R["vr"], "readings/V-PRIOR/valid")
+    V["vr-atlas-nvalid"], V["vr-prior-nvalid"] = str(len(va)), str(len(vp))
+    V["vr-atlas-not"] = cells_words([c for c in cells if c not in va])
+    V["vr-prior-not"] = cells_words([c for c in cells if c not in vp])
+    V["vr-both-n"] = str(len([c for c in cells if c in va and c in vp]))
+    V["vr-prior-tau"] = str(at(R["vr"], "readings/V-PRIOR/tau"))
+    for c in [c for c in cells if c not in va]:
+        V[f"vr-{c}-z-gibuu"] = tex_num(at(R["vr"], f"readings/V-ATLAS/cells/{c}/z/A7_gibuu"), 2)
+    # --- the per-period 2D benchmark (OUTCOME-20261107-per-period-2d-benchmark.md, sections 2-3)
+    pp = R["pp"]["readings"]
+    expect(at(pp, "classes/R5") == "no change" and at(pp, "classes/R5bar") == "farther without 1G-1M", "R5 classes")
+    V["pp-combined"] = pp["combined_statement"]
+    V["pp-nrep"] = str(pp["n_replicas"])
+    V["pp-ncells"] = str(pp["n_cells"])
+    ck = [c for c in R["pp"]["controls"] if c["id"] == "C-K"][0]
+    expect(ck["verdict"] == "PASS" and ck["k_measured"] == ck["k_declared"], "C-K")
+    V["pp-nk"] = str(ck["k_measured"])
+    V["pp-nkbar"] = str(pp["n_cells"] - ck["k_measured"])
+    for m, tag in (("replica", "rep"), ("replica+seed", "seed")):
+        V[f"pp-k-z-{tag}"] = tex_num(at(pp, f"by_model/{m}/R5/z"), 2)
+        V[f"pp-kbar-z-{tag}"] = tex_num(at(pp, f"by_model/{m}/R5bar/z"), 2)
+    V["pp-k-res"] = tex_num(at(pp, "by_model/replica/R5/resolved_3sigma"), 2)
+    V["pp-kbar-delta"] = tex_num(-at(pp, "by_model/replica/R5bar/delta"), 2)
+    V["pp-kbar-frac"] = tex_num(-at(pp, "by_model/replica/R5bar/fraction"), 2)
+    # --- the 1B pre-check, Part 1 (OUTCOME-20261108-1b-precheck-part1.md)
+    p1 = R["p1"]
+    for grp in ("flux", "detector"):
+        expect(at(p1, f"groups/{grp}/rule_S/verdict") == "REPRODUCED", f"group {grp}")
+    for b in ("Flux", "GEANT_Pion", "MinosEfficiency"):
+        expect(at(p1, f"bands/{b}/rule_K/verdict") == "PASS", f"band {b} rule K")
+    for b, tag in (("GEANT_Neutron", "neutron"), ("GEANT_Proton", "proton")):
+        expect(at(p1, f"bands/{b}/rule_S/verdict") == "DEPARTS", f"band {b} rule S")
+        V[f"p1-{tag}-cells"] = cells_words(at(p1, f"bands/{b}/rule_S/cells_outside"))
+    expect(at(p1, "window") == [0.9, 1.1], "pre-check window")
+    if A:
+        sys.exit("FAIL: a record no longer says what the prose states: " + "; ".join(A))
+    return V
+
+
+def render(V):
+    # one paragraph per line, blank-separated, so reflow_tex.py --note leaves the file as generated
+    lines = ["% Generated by make_values_landed.py from the records it pins (readouts by sha256, OUTCOME lines by literal). "
+             "Do not edit. Regenerate: python3 docs/analysis-note/make_values_landed.py",
+             "\\makeatletter",
+             "\\providecommand{\\lrval}[1]{\\@ifundefined{lr@#1}{\\errmessage{values_landed: no value '#1'}}{\\@nameuse{lr@#1}}}"]
+    for k in sorted(V):
+        lines += ["", f"\\@namedef{{lr@{k}}}{{{V[k]}}}"]
+    lines += ["", "\\makeatother"]
+    return "\n".join(lines) + "\n"
+
+
+def main():
+    R = load()
+    if R is None:  # the standalone note repository carries no readouts (as make_values_fived16.py)
+        print(f"SKIP: the pinned readouts are not in this tree; {OUT.name} is used as committed")
+        return
+    text = render(build(R))
+    if "--check" in sys.argv[1:]:
+        if not OUT.exists() or OUT.read_text(encoding="utf-8") != text:
+            sys.exit(f"FAIL: {OUT.name} is not a fresh generation; run make_values_landed.py")
+        print(f"OK: {OUT.name} is fresh")
+        return
+    OUT.write_text(text, encoding="utf-8")
+    print(f"wrote {OUT.name}: {text.count(chr(92) + '@namedef')} keys")
+
+
+if __name__ == "__main__":
+    main()
