@@ -1421,6 +1421,16 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/lat
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/late-platform-library-repair-20261108/TRACE-EVIDENCE.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/late-platform-library-repair-20261108/VERIFICATION.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/late-platform-library-repair-20261108/production-config.draft.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/GUARD-COVERAGE.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/MUTATIONS.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/MUTATIONS.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/PRODUCTION-BYTE-CHECK.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/REPORT.md	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/SHA256SUMS	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/SOURCE-IDENTITIES.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/STATIC-CHECKS.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/SUITE.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/negative-exit-test-repair-20261108/VERIFICATION.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/trace-classifier-repair-20261108/BINDINGS.txt	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/trace-classifier-repair-20261108/GUARD-COVERAGE.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/trace-classifier-repair-20261108/MUTATIONS.json	MACHINE	open	
