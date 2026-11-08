@@ -20,7 +20,7 @@ ND = Path(__file__).resolve().parents[1]
 TESTS = ND / "tests"
 TEST = TESTS / "test_ll5d.py"
 SRC = ND / "ll5d.py"
-EXPECTED_TESTS = 66
+EXPECTED_TESTS = 67
 
 MUTATIONS = [
     # --- section 12's REQUIRED list (A1a's part)

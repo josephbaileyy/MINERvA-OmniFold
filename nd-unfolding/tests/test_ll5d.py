@@ -47,6 +47,27 @@ RUNNER = ND / "tests" / "ll5d_a21_reference.py"
 ONES = {k: "1" for k in ll5d.THREAD_VARS}
 
 
+SEED_PATTERN = r"(?<![0-9A-Za-z.,])(47[5-7][0-9]{4}|4,7[5-7][0-9],[0-9]{3}|4_7[5-7][0-9]_[0-9]{3})(?![0-9A-Za-z]|,[0-9])"
+_RCPT = "docs/orchestration/state/measurement-paper/5d-community-20261024/"
+OWN_SEED_FILES = ("nd-unfolding/ll5d.py", "nd-unfolding/tests/test_ll5d.py", "nd-unfolding/tests/ll5d_a1a_mutation.py",
+                  _RCPT + "LL5D-DECLARATION.md", _RCPT + "LL5D-AMENDMENT-A1A.md") + tuple(
+    _RCPT + "fd/receipts-ll5d/a1a/" + f for f in ("tests-numpy126-seed0.txt", "tests-numpy126-seed1.txt",
+                                                    "tests-numpy126-seed2.txt", "tests-numpy2-seed0.txt"))
+
+
+def seed_collisions(lines: list[str]) -> list[str]:
+    """git grep -n -o lines (path:line:token) whose token is an integer in section 3.6's range, outside LL5D's own
+    files (exact paths); a token ending in a decimal fraction is a float literal, not a seed."""
+    bad = []
+    for line in lines:
+        path, _, tok = line.split(":", 2)
+        if path in OWN_SEED_FILES or re.search(r"\.[0-9]$", tok):
+            continue
+        if 4_751_000 <= int(re.sub(r"[,_]", "", tok)) <= 4_770_999:
+            bad.append(line)
+    return bad
+
+
 def git_blob(data: bytes) -> str:
     return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
 
@@ -876,26 +897,24 @@ class Seeds(unittest.TestCase):
 
     def test_no_other_tracked_file_uses_the_seed_range(self):
         """Section 3.6's collision check, repeated at this sha: integer tokens in 4,751,000-4,770,999 in tracked
-        .py/.sh/.tsv/.json/.md/.txt files appear only in LL5D's own files or as float literals."""
+        .py/.sh/.tsv/.json/.md/.txt files appear only in LL5D's own files, named exactly (OWN_SEED_FILES), or as float
+        literals."""
         if not (REPO / ".git").exists():
             self.skipTest("not a git checkout")
-        pat = r"(?<![0-9A-Za-z.,])(47[5-7][0-9]{4}|4,7[5-7][0-9],[0-9]{3}|4_7[5-7][0-9]_[0-9]{3})(?![0-9A-Za-z]|,[0-9])"
-        out = subprocess.run(["git", "grep", "-I", "-n", "-o", "-P", pat + r"(\.[0-9])?", "--", "*.py", "*.sh",
+        out = subprocess.run(["git", "grep", "-I", "-n", "-o", "-P", SEED_PATTERN + r"(\.[0-9])?", "--", "*.py", "*.sh",
                               "*.tsv", "*.json", "*.md", "*.txt"], cwd=REPO, capture_output=True, text=True)
-        rcpt = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1a/"
-        own = ("nd-unfolding/ll5d.py", "nd-unfolding/tests/test_ll5d.py", "nd-unfolding/tests/ll5d_a1a_mutation.py",
-               "LL5D-DECLARATION.md", "LL5D-AMENDMENT-A1A.md", "docs/orchestration/CATALOG.md",
-               "docs/orchestration/MANIFEST", rcpt + "tests-numpy126-seed0.txt", rcpt + "tests-numpy126-seed1.txt",
-               rcpt + "tests-numpy126-seed2.txt", rcpt + "tests-numpy2-seed0.txt")
-        bad = []
-        for line in out.stdout.splitlines():
-            path, _, tok = line.split(":", 2)
-            if any(o in path for o in own) or re.search(r"\.[0-9]$", tok):
-                continue
-            v = int(re.sub(r"[,_]", "", tok))
-            if 4_751_000 <= v <= 4_770_999:
-                bad.append(line)
-        self.assertEqual(bad, [])
+        self.assertIn(out.returncode, (0, 1), out.stderr)
+        self.assertEqual(seed_collisions(out.stdout.splitlines()), [])
+
+    def test_the_seed_check_still_catches_a_real_collision(self):
+        """The exclusion is by exact path: a hit in any other file is a collision, in each of the three spellings, and
+        so is a hit in a file whose path merely contains an own file's name; a float literal is not."""
+        own = OWN_SEED_FILES[0]
+        lines = [f"{own}:3:4751000", "nd-unfolding/other.py:7:4751000", "docs/x.md:2:4,760,500",
+                 "nd-unfolding/y.py:9:4_770_999", f"copy/{own}:1:4751001", "data/z.json:4:4755555.5",
+                 "nd-unfolding/w.py:1:4771000"]
+        self.assertEqual(seed_collisions(lines), lines[1:5])
+        self.assertTrue(re.fullmatch(SEED_PATTERN, "4751000") and re.fullmatch(SEED_PATTERN, "4,751,000"))
 
 
 # ---------------------------------------------------------------------------------------------- O_NOATIME
