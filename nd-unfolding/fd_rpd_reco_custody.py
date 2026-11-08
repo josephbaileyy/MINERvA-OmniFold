@@ -109,6 +109,181 @@ def environment_diff(prepared: Json, observed: Json) -> Json:
     }
 
 
+def private_prepare_path(run: Path, name: str, connect_id: str) -> Path:
+    """Locate one canonical prepare outside the committable run directory."""
+    require(
+        name in {"prestage", "prologue-prepare"},
+        "unknown prepare name",
+        guard="PRIVATE_PREPARE",
+    )
+    token = hashlib.sha256(
+        (str(run.resolve()) + "\0" + name + "\0" + connect_id).encode()
+    ).hexdigest()
+    return (run.resolve().parent / ".rpd-private" / token / (name + ".json")).resolve()
+
+
+def write_private_prepare(
+    r: Any, run: Path, name: str, prepared: Json, *, protected_roots: list[str]
+) -> Path:
+    """Write owner-only canonical data and a safe, digest-pinned reference."""
+    r.require_output_root(run)
+    path = private_prepare_path(run, name, prepared["connect_id"])
+    r.require_output_root(path)
+    require(
+        run.resolve() not in path.parents,
+        "private prepare overlaps run",
+        guard="PRIVATE_PREPARE",
+    )
+    require(
+        not any(_under(str(path), root) for root in protected_roots),
+        "private prepare overlaps protected root",
+        guard="PRIVATE_PREPARE",
+    )
+    path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    info = path.parent.stat()
+    require(
+        info.st_uid == os.getuid() and info.st_mode & 0o077 == 0,
+        "private prepare directory is not owner-only",
+        guard="PRIVATE_PREPARE",
+    )
+    prepared["private_prepare_path"] = str(path)
+    prepared["prepare_name"] = name
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, "w") as stream:
+        json.dump(prepared, stream, indent=2, sort_keys=True, allow_nan=False)
+        stream.write("\n")
+    reference = run / (name + "-reference.json")
+    r.write_json(
+        reference,
+        {
+            "schema": "fd-rpd-reco-private-prepare-reference/1",
+            "status": "PASS",
+            "run": str(run.resolve()),
+            "connect_id": prepared["connect_id"],
+            "prepare_name": name,
+            "private_prepare": {"path": str(path), "sha256": r.digest(path)},
+        },
+    )
+    return reference
+
+
+def read_private_prepare(r: Any, reference: Path, expected_sha: str, run: Path) -> Json:
+    """Verify a public reference and read its canonical data without staging it."""
+    require(
+        r.digest(reference) == expected_sha,
+        "prepare reference digest differs",
+        guard="PRIVATE_PREPARE",
+    )
+    record = json.loads(reference.read_text())
+    item = record["private_prepare"]
+    path = Path(item["path"]).resolve()
+    r.require_output_root(path)
+    require(
+        record["run"] == str(run.resolve())
+        and path
+        == private_prepare_path(run, record["prepare_name"], record["connect_id"])
+        and run.resolve() not in path.parents,
+        "private prepare identity or location differs",
+        guard="PRIVATE_PREPARE",
+    )
+    info = path.stat()
+    require(
+        info.st_uid == os.getuid() and info.st_mode & 0o077 == 0,
+        "canonical prepare is not owner-only",
+        guard="PRIVATE_PREPARE",
+    )
+    data = path.read_bytes()
+    require(
+        hashlib.sha256(data).hexdigest() == item["sha256"],
+        "private prepare digest differs",
+        guard="PRIVATE_PREPARE",
+    )
+    prepared: Json = json.loads(data)
+    require(
+        prepared.get("run") == record["run"]
+        and prepared.get("connect_id") == record["connect_id"],
+        "private prepare does not match its reference",
+        guard="PRIVATE_PREPARE",
+    )
+    return prepared
+
+
+def public_record(value: Any, before: Json, after: Json) -> Any:
+    """Export comparison metadata without credential values or fingerprints."""
+    keys = {
+        key
+        for snapshot in (before, after)
+        for key, display in snapshot.get("values", {}).items()
+        if isinstance(display, str)
+        and (display == "<redacted credential field>" or "<redacted>@" in display)
+    }
+    summaries = {
+        key: {
+            "prepared_present": key in before.get("fingerprints", {}),
+            "observed_present": key in after.get("fingerprints", {}),
+            "state": (
+                "equal"
+                if (
+                    key in before.get("fingerprints", {})
+                    and key in after.get("fingerprints", {})
+                    and before["fingerprints"][key] == after["fingerprints"][key]
+                )
+                else "changed"
+            ),
+        }
+        for key in sorted(keys)
+    }
+
+    def export(item: Any) -> Any:
+        if isinstance(item, dict):
+            return {
+                key: (
+                    summaries[key]
+                    if key in summaries
+                    else (
+                        [
+                            {"module_name": module, "source_path": path}
+                            for module, path in child.items()
+                        ]
+                        if key == "module_paths" and isinstance(child, dict)
+                        else export(child)
+                    )
+                )
+                for key, child in item.items()
+                if key != "fingerprints"
+            }
+        if isinstance(item, list):
+            return [export(child) for child in item]
+        return item
+
+    result = export(value)
+    if isinstance(result, dict):
+        result["redacted_environment"] = summaries
+    return result
+
+
+def publish_prepare_view(
+    r: Any, run: Path, prepared: Json, observed: Json, *, stopped: bool
+) -> None:
+    """Produce the committable view after a worker has compared the environments."""
+    if "private_prepare_path" not in prepared:
+        return
+    r.require_output_root(run)
+    name = prepared["prepare_name"] + (".STOP.json" if stopped else ".json")
+    path = run / name
+    public = public_record(prepared, prepared.get("environment_snapshot", {}), observed)
+    public["private_prepare_sha256"] = r.digest(Path(prepared["private_prepare_path"]))
+    public["comparison_status"] = "STOP" if stopped else "PASS"
+    if path.exists():
+        require(
+            json.loads(path.read_text()) == public,
+            "public prepare view changed",
+            guard="PRIVATE_PREPARE",
+        )
+    else:
+        r.write_json(path, public)
+
+
 def source_stat(path: Path) -> Json:
     """Record source metadata without opening the file."""
     info = path.stat()
@@ -213,7 +388,7 @@ def cov2d_fence() -> Json:
 def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
     """Freshly stage all bound inputs and the fifteen static MAT dependencies."""
     r.require_output_root(run)
-    require(not (run / "prestage.json").exists(), "fresh prestage required")
+    require(not (run / "prestage-reference.json").exists(), "fresh prestage required")
     run.mkdir(parents=True, exist_ok=True)
     config_copy = r.stage_copy(config_path, run / "original-config.json", config_sha)
     config = json.loads(config_copy.read_text())
@@ -379,12 +554,18 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
         "environment_snapshot": environment_snapshot(),
         "module_paths": module_paths(),
     }
-    r.write_json(run / "trace-policy.json", build_trace_policy(config, manifest, run))
+    manifest["private_prepare_path"] = str(
+        private_prepare_path(run, "prestage", manifest["connect_id"])
+    )
+    policy = build_trace_policy(config, manifest, run)
+    r.write_json(run / "trace-policy.json", policy)
     manifest["trace_policy_sha256"] = r.digest(run / "trace-policy.json")
-    r.write_json(run / "prestage.json", manifest)
+    reference = write_private_prepare(
+        r, run, "prestage", manifest, protected_roots=policy["protected_roots"]
+    )
     config["prestage"] = {
-        "path": str((run / "prestage.json").resolve()),
-        "sha256": r.digest(run / "prestage.json"),
+        "path": str(reference.resolve()),
+        "sha256": r.digest(reference),
     }
     r.write_json(run / "extract-config.json", config)
     return manifest
@@ -399,6 +580,8 @@ def classify_successful_open(
 ) -> list[str]:
     """Keep exact pinned files distinct from reviewed instrument-directory scans."""
     pinned = set(policy["allowed"].get("pinned_mat_libs", []))
+    if paths & set(policy.get("private_prepare_files", [])):
+        return ["private_prepare"]
     if paths & pinned:
         return ["pinned_mat_libs"]
     if any(
@@ -590,6 +773,14 @@ def build_trace_policy(config: Json, prepared: Json, run: Path) -> Json:
         "run overlaps protected root",
         guard="RUN_PROTECTED_OVERLAP",
     )
+    private_files = (
+        [prepared["private_prepare_path"]] if "private_prepare_path" in prepared else []
+    )
+    require(
+        not any(_under(path, root) for path in private_files for root in roots),
+        "planned private prepare overlaps protected root",
+        guard="PRIVATE_PREPARE",
+    )
     owned_sources = [
         str(Path(__file__).with_name(name).resolve())
         for name in (
@@ -611,6 +802,7 @@ def build_trace_policy(config: Json, prepared: Json, run: Path) -> Json:
         "schema": "fd-rpd-reco-trace-policy/1",
         "cwd": str(Path.cwd()),
         "protected_roots": roots,
+        "private_prepare_files": private_files,
         "instrument_directories": sorted(
             {
                 str(value)
@@ -696,7 +888,8 @@ def missing_dependency_check(
         not (run / "flux-extract.json").exists(),
         "negative check must precede extraction",
     )
-    prepared = json.loads((run / "prestage.json").read_text())
+    reference = run / "prestage-reference.json"
+    prepared = read_private_prepare(r, reference, r.digest(reference), run)
     item = next(
         entry
         for entry in prepared["mat_dependencies"]
@@ -764,7 +957,7 @@ def missing_dependency_check(
         "trace_check": checked,
         "trace_sha256": r.digest(trace),
         "code_sha256": r.digest(Path(r.__file__)),
-        "prestage_sha256": r.digest(run / "prestage.json"),
+        "prestage_sha256": r.digest(reference),
     }
     r.write_json(run / "missing-dependency-check.json", receipt)
     return receipt

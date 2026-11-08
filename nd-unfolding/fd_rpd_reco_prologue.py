@@ -26,7 +26,7 @@ def prepare(config_path: Path, checksum: str, run: Path) -> str:
     r.require_output_root(run)
     run.mkdir(parents=True, exist_ok=True)
     r.require(
-        not (run / "prologue-prepare.json").exists(),
+        not (run / "prologue-prepare-reference.json").exists(),
         "OUTPUT_EXISTS",
         "fresh prologue run required",
     )
@@ -112,11 +112,16 @@ def prepare(config_path: Path, checksum: str, run: Path) -> str:
         prepared["instrument_files"].append(
             {"staged": str(copy), "sha256": digest, "stat_before": before}
         )
+    prepared["private_prepare_path"] = str(
+        custody.private_prepare_path(run, "prologue-prepare", prepared["connect_id"])
+    )
     policy = custody.build_trace_policy(config, prepared, run)
     r.write_json(run / "trace-policy.json", policy)
     prepared["trace_policy_sha256"] = r.digest(run / "trace-policy.json")
-    r.write_json(run / "prologue-prepare.json", prepared)
-    return r.digest(run / "prologue-prepare.json")
+    reference = custody.write_private_prepare(
+        r, run, "prologue-prepare", prepared, protected_roots=policy["protected_roots"]
+    )
+    return r.digest(reference)
 
 
 def main() -> int:
@@ -128,19 +133,21 @@ def main() -> int:
     parser.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--prepare-sha256", help=argparse.SUPPRESS)
     args = parser.parse_args()
+    prepared: r.Json | None = None
     try:
         r.require_output_root(args.run)
         if args.worker:
-            path = args.run / "prologue-prepare.json"
+            path = args.run / "prologue-prepare-reference.json"
             r.require(
                 r.digest(path) == args.prepare_sha256,
                 "MAT_PREPARE",
                 "prologue prepare changed",
             )
+            prepared = custody.read_private_prepare(
+                r, path, args.prepare_sha256, args.run
+            )
             environment = r.checked_prepared_mat(
-                SimpleNamespace(
-                    run=args.run.resolve(), prestage=json.loads(path.read_text())
-                )
+                SimpleNamespace(run=args.run.resolve(), prestage=prepared)
             )[1]
             r.write_json(
                 args.run / "prologue-worker.json",
@@ -216,6 +223,12 @@ def main() -> int:
     ) as error:
         print(f"STOP DATA_FREE_TRACE: {error}", file=sys.stderr)
         if args.worker and isinstance(error, r.Refused):
+            if prepared is not None:
+                error.details = custody.public_record(
+                    error.details,
+                    prepared.get("environment_snapshot", {}),
+                    custody.environment_snapshot(),
+                )
             print(json.dumps(error.details, sort_keys=True), file=sys.stderr)
             try:
                 r.require_output_root(args.run)

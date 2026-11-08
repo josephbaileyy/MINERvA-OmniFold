@@ -2435,6 +2435,7 @@ def _prepare_fixture(
 def test_fresh_prepare_stages_closed_inventory(
     fixture: Fixture, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    monkeypatch.setenv("TEST_API_KEY", "private-full-prepare-fixture")
     custody, run, roots = _prepare_fixture(fixture, monkeypatch)
     prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
     assert len(prepared["mat_dependencies"]) == 15
@@ -2457,6 +2458,18 @@ def test_fresh_prepare_stages_closed_inventory(
         inputs.load_pins()
         assert len(inputs.key("lat_1A.npz", "MCgen")) == 64
     assert inputs.keys_read == [{"file": "lat_1A.npz", "key": "MCgen"}]
+    private = Path(prepared["private_prepare_path"])
+    assert private.is_file() and not private.is_relative_to(run)
+    assert inputs.prestage == prepared
+    assert (run / "staged/prestage-reference.json").is_file()
+    assert not (run / "staged/prestage.json").exists()
+    fingerprint = hashlib.sha256(b"private-full-prepare-fixture").hexdigest().encode()
+    assert fingerprint in private.read_bytes()
+    assert all(
+        fingerprint not in path.read_bytes()
+        for path in run.rglob("*")
+        if path.is_file()
+    )
     with pytest.raises(custody.CustodyRefused, match="fresh prestage"):
         custody.prepare(R, fixture.config_path, fixture.config_sha, run)
 
@@ -2806,14 +2819,18 @@ def test_negative_expected_guard(
     run.mkdir()
     dependency = run / "constraint.txt"
     dependency.write_text("own staged input")
-    (run / "prestage.json").write_text(
-        json.dumps(
-            {
-                "mat_dependencies": [
-                    {"environment_key": "MPARAMFILES", "staged": str(dependency)}
-                ]
-            }
-        )
+    custody.write_private_prepare(
+        R,
+        run,
+        "prestage",
+        {
+            "run": str(run),
+            "connect_id": "negative-check",
+            "mat_dependencies": [
+                {"environment_key": "MPARAMFILES", "staged": str(dependency)}
+            ],
+        },
+        protected_roots=[],
     )
 
     def stopped(_command: Any, **kwargs: Any) -> Any:
@@ -3010,6 +3027,7 @@ def test_real_mnv_worker_crash_cannot_publish_pass(
 def test_prologue_prepare_opens_no_declared_data(
     fixture: Fixture, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    monkeypatch.setenv("TEST_API_KEY", "private-prologue-prepare-fixture")
     custody, _run, _roots = _prepare_fixture(fixture, monkeypatch)
     spec = importlib.util.spec_from_file_location(
         "rpd_prologue_test", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
@@ -3044,7 +3062,21 @@ def test_prologue_prepare_opens_no_declared_data(
         digest = prologue.prepare(fixture.config_path, fixture.config_sha, run)
     finally:
         active[0] = False
-    assert digest == R.digest(run / "prologue-prepare.json")
+    assert digest == R.digest(run / "prologue-prepare-reference.json")
+    prepared = custody.read_private_prepare(
+        R, run / "prologue-prepare-reference.json", digest, run
+    )
+    private = Path(prepared["private_prepare_path"])
+    fingerprint = (
+        hashlib.sha256(b"private-prologue-prepare-fixture").hexdigest().encode()
+    )
+    assert private.is_file() and not private.is_relative_to(run)
+    assert fingerprint in private.read_bytes()
+    assert all(
+        fingerprint not in path.read_bytes()
+        for path in run.rglob("*")
+        if path.is_file()
+    )
     assert not (run / "original-inputs").exists()
     assert not (run / "mat-data").exists()
 
@@ -3308,8 +3340,16 @@ def test_prologue_worker_stop_records_values_and_cfs_guard(
     monkeypatch.setitem(sys.modules, "fd_rpd_reco_custody", _custody_module())
     spec.loader.exec_module(prologue)
     prologue.r = R
-    receipt = tmp_path / "prologue-prepare.json"
-    receipt.write_text("{}")
+    receipt = prologue.custody.write_private_prepare(
+        R,
+        tmp_path,
+        "prologue-prepare",
+        {
+            "run": str(tmp_path),
+            "connect_id": "stop-record",
+        },
+        protected_roots=[],
+    )
     error = R.Refused("MAT_PREPARE_RUN", "controlled mismatch")
     error.details = {"run": {"prepared": "/foreign", "observed": str(tmp_path)}}
 
@@ -3410,3 +3450,206 @@ def test_connect_mat_activation_preserves_shell_options(
     assert "activation stderr:" in completed.stderr
     assert f"MAT setup exit status: {setup_rc}" in completed.stderr
     assert "unbound variable" not in completed.stderr
+
+
+@pytest.mark.parametrize("mode", ["equal", "changed", "added", "removed"])
+def test_private_prepare_public_outputs(
+    fixture: Fixture,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    mode: str,
+) -> None:
+    """Exercise the actual worker and scan every committable output for leaks."""
+    custody = _custody_module()
+    secret = "disposable-private-credential-value"
+    replacement = "changed-disposable-credential-value"
+    url = "https://user:disposable-password@example.invalid"
+    changed = mode != "equal"
+    monkeypatch.setenv("TEST_API_KEY", secret)
+    if mode == "added":
+        monkeypatch.delenv("TEST_API_KEY")
+    monkeypatch.setenv("TEST_DATABASE_URL", url)
+    inputs, _state, _root, _lib = _prepared_mat_fixture(fixture, monkeypatch)
+    prepared = inputs.prestage
+    reference = custody.write_private_prepare(
+        R, inputs.run, "prologue-prepare", prepared, protected_roots=[]
+    )
+    private = Path(prepared["private_prepare_path"])
+    assert not private.is_relative_to(inputs.run)
+    assert private.stat().st_mode & 0o777 == 0o600
+    assert private.parent.stat().st_mode & 0o777 == 0o700
+    assert json.loads(reference.read_text())["private_prepare"]["sha256"] == R.digest(
+        private
+    )
+    assert (
+        custody.read_private_prepare(R, reference, R.digest(reference), inputs.run)
+        == prepared
+    )
+    spec = importlib.util.spec_from_file_location(
+        "privacy_prologue", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+    )
+    assert spec is not None and spec.loader is not None
+    prologue = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco", R)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco_custody", custody)
+    spec.loader.exec_module(prologue)
+    if mode == "removed":
+        monkeypatch.delenv("TEST_API_KEY")
+    elif changed:
+        monkeypatch.setenv("TEST_API_KEY", replacement)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "prologue",
+            "--worker",
+            "--run",
+            str(inputs.run),
+            "--prepare-sha256",
+            R.digest(reference),
+        ],
+    )
+    assert prologue.main() == (4 if changed else 0)
+    exported = custody.public_record(
+        prepared, prepared["environment_snapshot"], custody.environment_snapshot()
+    )
+    output = capsys.readouterr()
+    texts = [output.out, output.err, json.dumps(exported)]
+    texts += [path.read_text() for path in inputs.run.rglob("*") if path.is_file()]
+    for text in texts:
+        assert '"fingerprints"' not in text
+        for value in (secret, replacement, url, "disposable-password"):
+            assert value not in text
+            assert hashlib.sha256(value.encode()).hexdigest() not in text
+    summary = {
+        "prepared_present": mode != "added",
+        "observed_present": mode != "removed",
+        "state": "changed" if changed else "equal",
+    }
+    view = json.loads(
+        (
+            inputs.run
+            / ("prologue-prepare.STOP.json" if changed else "prologue-prepare.json")
+        ).read_text()
+    )
+    assert view["redacted_environment"]["TEST_API_KEY"] == summary
+    if mode != "added":
+        assert view["environment_snapshot"]["values"]["TEST_API_KEY"] == summary
+        assert view["environment_after_setup"]["TEST_API_KEY"] == summary
+    assert view["private_prepare_sha256"] == R.digest(private)
+    if changed:
+        stop = json.loads((inputs.run / "prologue-worker.STOP.json").read_text())
+        assert stop["guard"] == "MAT_PREPARE_ENVIRONMENT"
+        section = mode if mode in {"added", "removed"} else "changed"
+        assert (
+            stop["details"]["environment"]["diff"][section]["TEST_API_KEY"] == summary
+        )
+        assert (
+            json.loads(output.err.splitlines()[-1])["environment"]["diff"][section][
+                "TEST_API_KEY"
+            ]
+            == summary
+        )
+    else:
+        worker = json.loads((inputs.run / "prologue-worker.json").read_text())
+        assert (
+            worker["environment"]["environment_after_setup"]["TEST_API_KEY"] == summary
+        )
+
+
+@pytest.mark.parametrize(
+    "defect", ["sha", "raw_sha", "location", "permissions", "identity"]
+)
+def test_private_prepare_refuses(tmp_path: Path, defect: str) -> None:
+    custody = _custody_module()
+    run = tmp_path / "run"
+    run.mkdir()
+    prepared = {"run": str(run), "connect_id": "private-fixture"}
+    reference = custody.write_private_prepare(
+        R, run, "prestage", prepared, protected_roots=[]
+    )
+    assert (
+        custody.read_private_prepare(R, reference, R.digest(reference), run) == prepared
+    )
+    private = Path(prepared["private_prepare_path"])
+    record = json.loads(reference.read_text())
+    if defect == "raw_sha":
+        private.write_text(private.read_text() + " ")
+    elif defect == "location":
+        leaked = run / "private.json"
+        leaked.write_bytes(private.read_bytes())
+        leaked.chmod(0o600)
+        record["private_prepare"]["path"] = str(leaked)
+    elif defect == "permissions":
+        private.chmod(0o644)
+    elif defect == "identity":
+        record["run"] = str(tmp_path / "other")
+    reference.write_text(json.dumps(record))
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.read_private_prepare(
+            R, reference, "0" * 64 if defect == "sha" else R.digest(reference), run
+        )
+    assert caught.value.details["guard"] == "PRIVATE_PREPARE"
+
+
+def test_private_prepare_trace_exact_path() -> None:
+    custody = _custody_module()
+    private = "/private-metadata/run/prestage.json"
+    policy = {
+        "cwd": "/run",
+        "protected_roots": ["/original"],
+        "private_prepare_files": [private],
+        "allowed": {},
+    }
+    line = lambda path: f'openat(AT_FDCWD, "{path}", O_RDONLY) = 3<{path}>'
+    result = custody.classify_trace([line(private)], policy)
+    assert result["status"] == "PASS"
+    for path in (private + ".other", private + "/child", "/original/source.cxx"):
+        with pytest.raises(custody.CustodyRefused):
+            custody.classify_trace(
+                [line(path)],
+                {**policy, "private_prepare_files": [private, "/original/source.cxx"]},
+            )
+
+
+@pytest.mark.parametrize("defect", ["cfs", "protected", "permissions"])
+def test_private_prepare_write_boundary(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, defect: str
+) -> None:
+    custody = _custody_module()
+    run = tmp_path / "run"
+    run.mkdir()
+    path = (
+        Path("/global/cfs/private-record.json")
+        if defect == "cfs"
+        else tmp_path / "private" / "prestage.json"
+    )
+    monkeypatch.setattr(custody, "private_prepare_path", lambda *_args: path)
+    if defect == "permissions":
+        path.parent.mkdir(mode=0o755)
+        path.parent.chmod(0o755)
+    touched = []
+    mkdir = Path.mkdir
+
+    def tracked_mkdir(target: Path, *args: Any, **kwargs: Any) -> Any:
+        touched.append(target)
+        return mkdir(target, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "mkdir", tracked_mkdir)
+    expected = R.Refused if defect == "cfs" else custody.CustodyRefused
+    with pytest.raises(expected) as caught:
+        custody.write_private_prepare(
+            R,
+            run,
+            "prestage",
+            {"run": str(run), "connect_id": "boundary"},
+            protected_roots=[str(path.parent)] if defect == "protected" else [],
+        )
+    if defect == "cfs":
+        assert caught.value.guard == "OUTPUT_LOCATION"
+    else:
+        assert caught.value.details["guard"] == "PRIVATE_PREPARE"
+    assert not path.exists()
+    assert not (run / "prestage-reference.json").exists()
+    if defect != "permissions":
+        assert touched == []

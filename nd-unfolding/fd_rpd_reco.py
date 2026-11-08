@@ -410,10 +410,12 @@ class Inputs:
             manifest = self.config["prestage"]
             path = stage_copy(
                 Path(manifest["path"]),
-                self.staged / "prestage.json",
+                self.staged / "prestage-reference.json",
                 manifest["sha256"],
             )
-            self.prestage = json.loads(path.read_text())
+            self.prestage = load_custody_instrument().read_private_prepare(
+                sys.modules[__name__], path, manifest["sha256"], self.run
+            )
             require(
                 self.prestage.get("status") == "PASS",
                 "MAT_DATA_STAGE",
@@ -1297,17 +1299,39 @@ def check_prepare_receipt(inputs: PreparedMatContext, custody: Any) -> Json:
     return prepared
 
 
-def checked_prepared_mat(inputs: PreparedMatContext) -> tuple[Any, Json]:
-    """Verify same-connect MAT custody without reopening protected instrument sources."""
+def load_custody_instrument() -> Any:
+    """Load the custody implementation paired with this producer."""
     import importlib.util
-    import ROOT
 
     path = Path(__file__).with_name("fd_rpd_reco_custody.py")
     spec = importlib.util.spec_from_file_location("rpd_custody_runtime", path)
     assert spec is not None and spec.loader is not None
     custody = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(custody)
-    prepared = check_prepare_receipt(inputs, custody)
+    return custody
+
+
+def checked_prepared_mat(inputs: PreparedMatContext) -> tuple[Any, Json]:
+    """Verify same-connect MAT custody without reopening protected instrument sources."""
+    import ROOT
+
+    custody = load_custody_instrument()
+    try:
+        prepared = check_prepare_receipt(inputs, custody)
+    except Refused as error:
+        observed = custody.environment_snapshot()
+        raw = inputs.prestage or {}
+        error.details = custody.public_record(
+            error.details, raw.get("environment_snapshot", {}), observed
+        )
+        custody.publish_prepare_view(
+            sys.modules[__name__], inputs.run, raw, observed, stopped=True
+        )
+        raise
+    observed = custody.environment_snapshot()
+    custody.publish_prepare_view(
+        sys.modules[__name__], inputs.run, prepared, observed, stopped=False
+    )
     instrument = load_mat_instrument()
     environment = prepared["mat_environment"]
     dictionary = ROOT.TClass.GetClass("PlotUtils::MnvH1D")
@@ -1348,12 +1372,16 @@ def checked_prepared_mat(inputs: PreparedMatContext) -> tuple[Any, Json]:
             "MAT_INSTRUMENT_DIGEST",
             "staged checked instrument changed",
         )
-    return ROOT, {
-        **environment,
-        "verified_from_same_connect_prepare": True,
-        "environment_after_setup": custody.environment_record(),
-        "module_paths": custody.module_paths(),
-    }
+    return ROOT, custody.public_record(
+        {
+            **environment,
+            "verified_from_same_connect_prepare": True,
+            "environment_after_setup": custody.environment_record(),
+            "module_paths": custody.module_paths(),
+        },
+        prepared["environment_snapshot"],
+        observed,
+    )
 
 
 @contextlib.contextmanager

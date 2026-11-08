@@ -265,6 +265,44 @@ REQUIRED = tuple(
     [
         *RECORD_MUTATIONS,
         Mutation(
+            "REQUIRED_PRIVATE_PREPARE_LEAK",
+            "custody_public_leak",
+            "public_record",
+            "test_private_prepare_public_outputs",
+        ),
+        *[
+            Mutation(
+                "REQUIRED_PRIVATE_" + name, "custody_guard_site", message, selector
+            )
+            for name, message, selector in (
+                (
+                    "PROTECTED",
+                    "private prepare overlaps protected root",
+                    "test_private_prepare_write_boundary and protected",
+                ),
+                (
+                    "PERMISSIONS",
+                    "private prepare directory is not owner-only",
+                    "test_private_prepare_write_boundary and permissions",
+                ),
+                (
+                    "RAW_SHA",
+                    "private prepare digest differs",
+                    "test_private_prepare_refuses and raw_sha",
+                ),
+                (
+                    "REFERENCE_SHA",
+                    "prepare reference digest differs",
+                    "test_private_prepare_refuses and sha",
+                ),
+                (
+                    "LOCATION",
+                    "private prepare identity or location differs",
+                    "test_private_prepare_refuses and location",
+                ),
+            )
+        ],
+        Mutation(
             "REQUIRED_ROOT_AUTODIRECTORY_OFF",
             "root_autodirectory",
             "histogram_directory_ownership",
@@ -493,6 +531,12 @@ class Mutator(ast.NodeTransformer):
         previous = self.function
         self.function = node.name
         if (
+            self.mutation.kind == "custody_public_leak"
+            and node.name == self.mutation.target
+        ):
+            node.body = ast.parse("return value").body
+            self.changed += 1
+        elif (
             self.mutation.kind == "custody_unmapped"
             and node.name == self.mutation.target
         ):
@@ -882,6 +926,16 @@ class Mutator(ast.NodeTransformer):
             node.args[0] = ast.Constant(True)
             self.changed += 1
         if (
+            mutation.kind == "custody_guard_site"
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "require"
+            and len(node.args) > 1
+            and isinstance(node.args[1], ast.Constant)
+            and node.args[1].value == mutation.target
+        ):
+            node.args[0] = ast.Constant(True)
+            self.changed += 1
+        if (
             mutation.kind == "custody_guard"
             and isinstance(node.func, ast.Name)
             and node.func.id == "require"
@@ -1079,7 +1133,9 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
             )
             changed = transformer.visit(ast.parse(mutation_source))
             if (
-                mutation.kind == "custody_guard" or mutation in RECORD_MUTATIONS
+                mutation.kind
+                in {"custody_guard", "custody_guard_site", "custody_public_leak"}
+                or mutation in RECORD_MUTATIONS
             ) and transformer.changed != 1:
                 raise RuntimeError(
                     f"named custody mutation must change exactly one site: {mutation.name}, {transformer.changed}"
