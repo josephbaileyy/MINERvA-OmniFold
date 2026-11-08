@@ -1,0 +1,21 @@
+node login23 nproc=244 loadavg 30.60 21.37 18.61
+2026-11-08T07:13:50Z
+connect script sha256 488057837438b79c745f53c3256107463fed04130f39c0f6d976bf2dd9faa20e
+== the fence (only rs1_* and ens1_* pass; cov2d-* or any other name stops)
+60991420|fd1b_pfd_p3_j5|RUNNING|10:49|2:30:00
+60991421|fd1b_pfd_p3_j6|RUNNING|10:49|2:30:00
+60991415|fd1b_pfd_p3_j2|RUNNING|10:50|2:30:00
+60991418|fd1b_pfd_p3_j3|RUNNING|10:50|2:30:00
+60991419|fd1b_pfd_p3_j4|RUNNING|10:50|2:30:00
+60991405|fd1b_pfd_p3_j0|RUNNING|11:37|2:30:00
+60991413|fd1b_pfd_p3_j1|RUNNING|11:37|2:30:00
+FENCE STOP: a job of another name is present:
+60991420|fd1b_pfd_p3_j5|RUNNING|10:49|2:30:00
+60991421|fd1b_pfd_p3_j6|RUNNING|10:49|2:30:00
+60991415|fd1b_pfd_p3_j2|RUNNING|10:50|2:30:00
+60991418|fd1b_pfd_p3_j3|RUNNING|10:50|2:30:00
+60991419|fd1b_pfd_p3_j4|RUNNING|10:50|2:30:00
+60991405|fd1b_pfd_p3_j0|RUNNING|11:37|2:30:00
+60991413|fd1b_pfd_p3_j1|RUNNING|11:37|2:30:00
+ens1 a1 dry submit rc=9
+2026-11-08T07:13:52Z
