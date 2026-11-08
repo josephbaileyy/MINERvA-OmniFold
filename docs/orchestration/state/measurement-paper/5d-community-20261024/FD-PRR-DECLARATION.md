@@ -396,20 +396,22 @@ unchanged. Each wrapper rebinds a name for one invocation and restores it on exi
 | `prr_ibu.py` | `17acad82bad7c43f45c423e41039eb81381f5acab15ecdf983ad0d023848d046` |
 | `prr_read.py` | `f35bc3282b50215dd583b76b0d6a747f90185e4b96b6e3f5b693d42c01166372` |
 | `sbatch_prr.sh` | `323f491afa2038a55bfb791be0d7abf81a6cda7e27a7f5124ea8cacb75efda66` |
-| `test_prr.py` | `2a990367610678eb3ffde1adaa90ba5acd08b69b59acdc15a8116322159868ea` |
+| `test_prr.py` | `33bfdf099077dbc420c7db67ff517efc1fd798f9d2ab41fd285752e91a7b2caf` |
 | `prr_mutation.py` | `28f3f9e5edf1e63c65ba5db9f2050c9159a89372bf27fe7e1558cc9ffb682b86` |
 
 Both test logs record the same six (`fd/receipts-prr/rev2/tests-serial.txt`, `tests-jobscript.txt`).
 
 ### 8.2 Tests and the mutation receipt
 
-- **The suite has 103 tests, and all 103 pass at this commit,** in two serial processes with every BLAS and OpenMP
-  thread cap at 1. Both logs carry the six files' digests above.
-  - **Every class but `JobScript`: Ran 94 tests, OK** (`fd/receipts-prr/rev2/tests-serial.txt`).
-  - **The `JobScript` class alone, afterwards: Ran 9 tests, OK** (`fd/receipts-prr/rev2/tests-jobscript.txt`).
-  - **Why two runs:** that class runs `sbatch_prr.sh`, which starts 8 gate processes at once by design. The director
-    held it while Codex2's #848 verification loaded the shared machine, then cleared it. The split is by the test
-    loader's selection; no test is edited.
+- **Where the receipts were made.** Every receipt is made in a clean clone at the code commit, the commit that
+  carries the six files above. The receipt README names that commit. The next commit adds only the receipt files.
+  - Each run is one serial process, under `nice -n 19`, with every BLAS and OpenMP thread cap at 1.
+  - Each log's header carries the six files' digests and the clone's HEAD.
+- **The suite has 103 tests.**
+  - Every class but `JobScript`: `fd/receipts-prr/rev2/tests-serial.txt`.
+  - The `JobScript` class alone, afterwards: `tests-jobscript.txt`. That class runs `sbatch_prr.sh`, which starts
+    8 gate processes at once by design, so the director held it while the shared machine was loaded. The split is by
+    the test loader's selection.
 - The tests run without LightGBM, ROOT or the cluster:
   - the estimators are deterministic stand-ins;
   - the inputs are synthetic rows on the real 5D fine grid, FD-STAB's test helpers;
@@ -419,10 +421,16 @@ Both test logs record the same six (`fd/receipts-prr/rev2/tests-serial.txt`, `te
   - the job script, run on a stand-in deploy with the real gate;
   - C-CT on the committed files;
   - the readings end to end on a planted run.
-- `python3 -B nd-unfolding/prior_retention/prr_mutation.py`: **pending.** It is held until Codex2's #848 run has
-  finished, and runs serially when the director clears it. Its receipt is added to this PR. A first run at 4 mutants at once
-  was stopped at the director's request before it reported, and is not a receipt.
-- **The receipts** are in `fd/receipts-prr/rev2/`: the two test logs now, and the mutation log when it has run.
+- **Mutation, `python3 -B nd-unfolding/prior_retention/prr_mutation.py`:** 62 mutants. Each must be killed by its
+  named test, and the unmutated suite must pass with 103 tests in the mirrored tree (`mutation.txt`).
+- **The first serial mutation run failed: 59 of 62 killed** (`mutation-run1-fail.txt`, at the earlier test file).
+  - Three tests did not isolate their check, and a neighbouring check masked each mutant:
+    - C-COLS's order check, behind the edges check;
+    - C-MASK's dtype check, behind a value change;
+    - the job script's rc record, behind the end count.
+  - Three assertions were added to `test_prr.py`, and no checked code changed.
+  - The receipts here are the rerun at the commit with those assertions.
+- **The receipts** are in `fd/receipts-prr/rev2/`, with a README naming the commit they were made at.
 - **Not testable here:** LightGBM, the real inputs, `squeue` and O_NOATIME (macOS has none, so the tests read with a
   zero flag). The dry run is the first run with each.
 

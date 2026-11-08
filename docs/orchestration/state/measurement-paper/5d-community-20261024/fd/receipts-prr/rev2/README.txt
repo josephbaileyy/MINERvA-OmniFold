@@ -1,16 +1,10 @@
-FD-PRR rev 2 receipts (FD-PRR-DECLARATION.md section 8.2). Local, on the lane's machine, at 0 node-h, with no cluster
-contact. Every run is one serial process with every BLAS/OpenMP thread cap at 1. Each log's header carries the sha256
-of the six FD-PRR files it ran.
+FD-PRR rev 2 receipts (FD-PRR-DECLARATION.md section 8.2). PENDING: the rerun at this commit is being made in a
+clean clone. The next commit replaces this README and the test logs, and names the commit they were made at.
 
-tests-serial.txt     every class but JobScript (selected by the test loader; no test edited): 103 collected, 94 run, OK,
-                     rc 0.
-tests-jobscript.txt  the JobScript class alone, run after the first had ended: 9 run, OK, rc 0. Its script starts 8
-                     gate processes at once by design. The director held it while Codex2's #848 verification loaded
-                     the machine, then cleared it on 2026-11-08.
+mutation-run1-fail.txt  the first serial mutation run, at the earlier test file: 59 of 62 killed, 3 survived, FAIL.
+                        Kept as a receipt (the director, 2026-11-08). Three assertions were added to test_prr.py after
+                        it, and no checked code changed.
+tests-serial.txt,       the earlier serial runs, at the earlier test file (their headers carry its digest). Superseded
+tests-jobscript.txt     by the next commit.
 
-HELD, at the director's request: the mutation run (prr_mutation.py, 62 mutants), until Codex2's #848 run has finished.
-Its receipt is added here, on the same PR. A first mutation run at 4 mutants at once was stopped at the director's
-request before it reported anything. It is not a receipt.
-
-CITABLE FOR: that the listed tests passed on the listed files. NOT CITABLE FOR: the mutation check, or anything about
-the cluster run.
+CITABLE FOR: nothing at this commit's files until the next commit. NOT CITABLE FOR: anything about the cluster run.

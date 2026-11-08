@@ -387,6 +387,17 @@ class Columns(unittest.TestCase):
             np.savez(Path(d) / "swapped.npz", **arrays)
             with self.assertRaises(P.Refused):
                 P.check_columns(Path(d) / "swapped.npz")
+            # columns in another order with their edges consistent: only the order check can refuse it
+            import pvl_lib
+            arrays = dict(np.load(Path(d) / "ok.npz", allow_pickle=True))
+            arrays["axes"] = np.array(["eavail", "W", "q3"], dtype=object)
+            arrays["edges_3"], arrays["edges_4"] = arrays["edges_4"], arrays["edges_3"]
+            np.savez(Path(d) / "reordered.npz", **arrays)
+            with np.load(Path(d) / "reordered.npz", allow_pickle=True) as z:
+                names = tuple(pvl_lib.npz_axes(z))
+                pvl_lib.check_edges(names, [z[f"edges_{i}"] for i in range(5)])  # the edges agree with the names
+            with self.assertRaises(P.Refused):
+                P.check_columns(Path(d) / "reordered.npz")
             arrays = dict(np.load(Path(d) / "ok.npz", allow_pickle=True))
             arrays["edges_2"] = arrays["edges_2"] * 1.01
             np.savez(Path(d) / "edges.npz", **arrays)
@@ -575,7 +586,7 @@ class Pair(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         r = Path(self.tmp.name)
         self.runs = r / "runs"
-        x = np.linspace(1, 2, 50).astype(np.float64)
+        x = 1.0 + np.arange(50) / 8.0  # exact in float32, so a dtype change alone can be tested
         self.files = []
         pins = {}
         for t in ("nominal", "A7_gibuu"):
@@ -609,7 +620,9 @@ class Pair(unittest.TestCase):
 
     def test_a_mask_that_moves_b0_fails_c_mask(self):
         p = P.product_path(self.runs, "O5", "nominal", P.PRIMARY_SEED)
-        np.savez(p, xsec_flat=np.load(p)["xsec_flat"].astype(np.float32))
+        x32 = np.load(p)["xsec_flat"].astype(np.float32)
+        self.assertTrue(np.array_equal(x32, np.load(p)["xsec_flat"]))  # the same values: only the dtype differs
+        np.savez(p, xsec_flat=x32)
         self.assertFalse(P.pair({"files": self.files}, self.runs)["C-MASK"]["nominal"]["pass"])
 
     def test_an_unpinned_reference_fails(self):
@@ -1309,7 +1322,7 @@ class JobScript(unittest.TestCase):
     def test_a_failed_task_leaves_no_done(self):
         p = self.job("dry", PRR_FAIL_TASK="prr_K2_nominal")
         self.assertEqual(p.returncode, 1)
-        self.assertTrue((self.OUT / "log-dry" / "FAILED").exists())
+        self.assertTrue((self.OUT / "log-dry" / "FAILED").read_text().startswith("rc="))  # the failure is recorded as such
         self.assertFalse((self.OUT / "log-dry" / "DONE").exists())
 
     def test_a_wrong_pin_or_a_rerun_is_refused(self):
