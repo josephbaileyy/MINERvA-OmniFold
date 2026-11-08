@@ -747,6 +747,29 @@ class Receipt(Fixture):
         self.assertEqual(rc["stop"]["reasons"], [f"T <= 0: reporting cells [{c}]"])
         self.assertGreater(rc["exact"]["zero_recomputed"]["wt"], 0)
 
+    def test_n1_at_exactly_the_bound_does_not_stop(self):
+        """A w_reco row with the CV's weight 0, 1.0 in ten of draw 0's universes and 0 in every other: draw 0's composite
+        there is 1 + ... + 1 = 10 exactly against a peak of 1, so N1's statistic is exactly 10, which is not above the
+        bound; the receipt passes and records 10."""
+        P = self.prepared(truths=["g18"])
+        rel, geo, V, cv = ll5d.c2_inputs(P, self.s1, self.fm)
+        draws = self.draws("g18", 3)
+        row = 11
+        cols = [P["col"][x] for x in ll5d.drop2(draws[0])][:10]
+        V = dict(V, wr=V["wr"].copy())
+        V["wr"][:, row] = 0.0
+        V["wr"][cols, row] = 1.0
+        cv = dict(cv, wr=np.asarray(cv["wr"], float).copy())
+        cv["wr"][row] = 0.0
+        inputs = self.inputs
+        const_full = {"n_nucleons": float(inputs["n_nucleons"]), "data_pot": float(inputs["data_pot"]),
+                      "edges": inputs["edges"]}
+        rc, _ = ll5d.receipt(V, cv, draws, P["col"], self.r["g18"], P["phi"], geo, self.U, P["d_ref"], const_full,
+                             {f"Flux_{i}": i for i in range(100)}, list(ll5d.TOY_SEEDS["g18"]), rel)
+        self.assertEqual(rc["verdict"], "PASS")
+        self.assertEqual(rc["per_nature"][0]["n1"]["wr"]["max_past_screen"], 10.0)
+        self.assertEqual(rc["per_nature"][0]["n1"]["wr"]["rows_above"], 0)
+
     def test_n1_stops(self):
         def spike(V, P, geo):
             V["wr"] = V["wr"].copy()
@@ -859,8 +882,11 @@ class Seeds(unittest.TestCase):
         pat = r"(?<![0-9A-Za-z.,])(47[5-7][0-9]{4}|4,7[5-7][0-9],[0-9]{3}|4_7[5-7][0-9]_[0-9]{3})(?![0-9A-Za-z]|,[0-9])"
         out = subprocess.run(["git", "grep", "-I", "-n", "-o", "-P", pat + r"(\.[0-9])?", "--", "*.py", "*.sh",
                               "*.tsv", "*.json", "*.md", "*.txt"], cwd=REPO, capture_output=True, text=True)
-        own = ("nd-unfolding/ll5d.py", "nd-unfolding/tests/test_ll5d.py", "LL5D-DECLARATION.md", "LL5D-AMENDMENT-A1A.md",
-               "docs/orchestration/CATALOG.md", "docs/orchestration/MANIFEST")
+        rcpt = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1a/"
+        own = ("nd-unfolding/ll5d.py", "nd-unfolding/tests/test_ll5d.py", "nd-unfolding/tests/ll5d_a1a_mutation.py",
+               "LL5D-DECLARATION.md", "LL5D-AMENDMENT-A1A.md", "docs/orchestration/CATALOG.md",
+               "docs/orchestration/MANIFEST", rcpt + "tests-numpy126-seed0.txt", rcpt + "tests-numpy126-seed1.txt",
+               rcpt + "tests-numpy126-seed2.txt", rcpt + "tests-numpy2-seed0.txt")
         bad = []
         for line in out.stdout.splitlines():
             path, _, tok = line.split(":", 2)
@@ -1077,6 +1103,31 @@ class Jobs(Fixture):
         one["sd300_per_cell"].pop("ar23/minus2")
         with self.assertRaisesRegex(ll5d.Refusal, "no threshold"):
             self.gate(cal_rec=one)
+
+    def test_each_evaluation_reads_its_own_thresholds(self):
+        rec = self.calibrated()
+        for e in ll5d.EVALUATIONS:
+            if e.endswith("/minus2"):
+                rec["rule"]["thresholds"][e].update(ii_mean_log=0.0, iii_alpha_multiple=0.0)
+        g = self.gate(cal_rec=rec)
+        self.assertNotEqual(g["reads"]["g18/minus2"], "option (1)")
+        self.assertEqual(g["reading_detail"]["g18/all"]["gate_n"]["passes"], True)
+        self.assertEqual(g["reading_detail"]["g18/minus2"]["gate_n"]["passes"], False)
+
+    def test_a_gate_sample_whose_first_300_differ_is_refused(self):
+        """11-04 item 1's bit-for-bit check: the gate sample's first 300 must be the declared draws' C2 quantities."""
+        real, calls = c2.c2_truth, []
+
+        def shifted(V, cv, S, *a, **k):
+            q = real(V, cv, S, *a, **k)
+            calls.append(S.shape[0])
+            if len(calls) == 3:                             # the first reading's gate sample (head, tail, sample)
+                q = dict(q, N=q["N"].copy())
+                q["N"][0, 0] = np.nextafter(q["N"][0, 0], np.inf)
+            return q
+        with mock.patch.object(c2, "c2_truth", shifted), \
+                self.assertRaisesRegex(ll5d.Refusal, "first 300 differ from the declared draws in N"):
+            self.gate(cal_rec=self.calibrated())
 
     def test_a_failing_gate_reading_is_a_stop(self):
         g = self.gate(cal_rec=self.calibrated(ii=0.0, iii=0.0))

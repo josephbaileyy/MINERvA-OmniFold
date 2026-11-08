@@ -20,7 +20,7 @@ ND = Path(__file__).resolve().parents[1]
 TESTS = ND / "tests"
 TEST = TESTS / "test_ll5d.py"
 SRC = ND / "ll5d.py"
-EXPECTED_TESTS = 63
+EXPECTED_TESTS = 66
 
 MUTATIONS = [
     # --- section 12's REQUIRED list (A1a's part)
@@ -122,6 +122,12 @@ MUTATIONS = [
      "            if False:\n                raise Reprice(f\"the receipt alone", "Jobs.test_the_receipt_reprices_past_its_line"),
     ("the gate's projection never reprices", "            if proj > line:\n                raise Reprice(f\"the gate projects",
      "            if False:\n                raise Reprice(f\"the gate projects", "Jobs.test_the_gate_reprices_past_its_line"),
+    ("the first-300 check skipped", "            if not np.array_equal(qn[k][:, :v.shape[1]], v):",
+     "            if False:", "Jobs.test_a_gate_sample_whose_first_300_differ_is_refused"),
+    ("N1 stops at exactly the bound", "above, mx = int(np.sum(rr > N1_BOUND)), float(rr.max())",
+     "above, mx = int(np.sum(rr >= N1_BOUND)), float(rr.max())", "Receipt.test_n1_at_exactly_the_bound_does_not_stop"),
+    ("a reading takes the other reading's thresholds", "        thr = cal[\"rule\"][\"thresholds\"][e]\n",
+     "        thr = cal[\"rule\"][\"thresholds\"][f\"{t}/all\"]\n", "Jobs.test_each_evaluation_reads_its_own_thresholds"),
     ("the merge passes on one truth", "    verdict = (\"PASS\" if all(v == \"PASS\" for v in verdicts.values()) else",
      "    verdict = (\"PASS\" if any(v == \"PASS\" for v in verdicts.values()) else", "Merge.test_pass_needs_both"),
 ]
