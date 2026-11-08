@@ -1,0 +1,101 @@
+{
+ "files": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_97_bkgw.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_97_tdw.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_97_wr.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_97_wt.npy": {
+   "atime_ns_first": 1793890108000000000,
+   "atime_ns_now": 1793890108000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_98_bkgw.npy": {
+   "atime_ns_first": 1793890118000000000,
+   "atime_ns_now": 1793890118000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_98_tdw.npy": {
+   "atime_ns_first": 1793890117000000000,
+   "atime_ns_now": 1793890117000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_98_wr.npy": {
+   "atime_ns_first": 1793890117000000000,
+   "atime_ns_now": 1793890117000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_98_wt.npy": {
+   "atime_ns_first": 1793890117000000000,
+   "atime_ns_now": 1793890117000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_99_bkgw.npy": {
+   "atime_ns_first": 1793890105000000000,
+   "atime_ns_now": 1793890105000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_99_tdw.npy": {
+   "atime_ns_first": 1793890105000000000,
+   "atime_ns_now": 1793890105000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_99_wr.npy": {
+   "atime_ns_first": 1793890104000000000,
+   "atime_ns_now": 1793890104000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_99_wt.npy": {
+   "atime_ns_first": 1793890104000000000,
+   "atime_ns_now": 1793890104000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz": {
+   "atime_ns_first": 1793890180000000000,
+   "atime_ns_now": 1793890180000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz": {
+   "atime_ns_first": 1794105515000000000,
+   "atime_ns_now": 1794105515000000000
+  },
+  "/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json": {
+   "atime_ns_first": 1793496788000000000,
+   "atime_ns_now": 1793496788000000000
+  },
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz": {
+   "atime_ns_first": 1794105516000000000,
+   "atime_ns_now": 1794105516000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_bkgw.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_denom_nd.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_wr.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_wt.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_bkgw.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_denom_nd.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_wr.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  },
+  "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_wt.npy": {
+   "atime_ns_first": 1793890109000000000,
+   "atime_ns_now": 1793890109000000000
+  }
+ },
+ "moved": []
+}

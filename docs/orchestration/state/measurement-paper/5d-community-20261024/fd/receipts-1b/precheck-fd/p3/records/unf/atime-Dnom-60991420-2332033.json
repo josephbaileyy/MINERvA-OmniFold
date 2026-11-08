@@ -1,0 +1,117 @@
+{
+ "files": {
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_61_bkgw.npy": {
+   "atime_ns_first": 1793890069000000000,
+   "atime_ns_now": 1793890069000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_61_tdw.npy": {
+   "atime_ns_first": 1793890069000000000,
+   "atime_ns_now": 1793890069000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_61_wr.npy": {
+   "atime_ns_first": 1793890069000000000,
+   "atime_ns_now": 1793890069000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_61_wt.npy": {
+   "atime_ns_first": 1793890068000000000,
+   "atime_ns_now": 1793890068000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_62_bkgw.npy": {
+   "atime_ns_first": 1793890057000000000,
+   "atime_ns_now": 1793890057000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_62_tdw.npy": {
+   "atime_ns_first": 1793890057000000000,
+   "atime_ns_now": 1793890057000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_62_wr.npy": {
+   "atime_ns_first": 1793890057000000000,
+   "atime_ns_now": 1793890057000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_62_wt.npy": {
+   "atime_ns_first": 1793890056000000000,
+   "atime_ns_now": 1793890056000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_63_bkgw.npy": {
+   "atime_ns_first": 1793890040000000000,
+   "atime_ns_now": 1793890040000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_63_tdw.npy": {
+   "atime_ns_first": 1793890040000000000,
+   "atime_ns_now": 1793890040000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_63_wr.npy": {
+   "atime_ns_first": 1793890040000000000,
+   "atime_ns_now": 1793890040000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_63_wt.npy": {
+   "atime_ns_first": 1793890039000000000,
+   "atime_ns_now": 1793890039000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_64_bkgw.npy": {
+   "atime_ns_first": 1793890057000000000,
+   "atime_ns_now": 1793890057000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_64_tdw.npy": {
+   "atime_ns_first": 1793890057000000000,
+   "atime_ns_now": 1793890057000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_64_wr.npy": {
+   "atime_ns_first": 1793890056000000000,
+   "atime_ns_now": 1793890056000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_64_wt.npy": {
+   "atime_ns_first": 1793890056000000000,
+   "atime_ns_now": 1793890056000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_65_bkgw.npy": {
+   "atime_ns_first": 1793890043000000000,
+   "atime_ns_now": 1793890043000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_65_tdw.npy": {
+   "atime_ns_first": 1793890043000000000,
+   "atime_ns_now": 1793890043000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_65_wr.npy": {
+   "atime_ns_first": 1793890043000000000,
+   "atime_ns_now": 1793890043000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_65_wt.npy": {
+   "atime_ns_first": 1793890042000000000,
+   "atime_ns_now": 1793890042000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_66_bkgw.npy": {
+   "atime_ns_first": 1793890047000000000,
+   "atime_ns_now": 1793890047000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_66_tdw.npy": {
+   "atime_ns_first": 1793890047000000000,
+   "atime_ns_now": 1793890047000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_66_wr.npy": {
+   "atime_ns_first": 1793890046000000000,
+   "atime_ns_now": 1793890046000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/Flux_66_wt.npy": {
+   "atime_ns_first": 1793890046000000000,
+   "atime_ns_now": 1793890046000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz": {
+   "atime_ns_first": 1793890180000000000,
+   "atime_ns_now": 1793890180000000000
+  },
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz": {
+   "atime_ns_first": 1794105515000000000,
+   "atime_ns_now": 1794105515000000000
+  },
+  "/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json": {
+   "atime_ns_first": 1793496788000000000,
+   "atime_ns_now": 1793496788000000000
+  },
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz": {
+   "atime_ns_first": 1794105516000000000,
+   "atime_ns_now": 1794105516000000000
+  }
+ },
+ "moved": []
+}
