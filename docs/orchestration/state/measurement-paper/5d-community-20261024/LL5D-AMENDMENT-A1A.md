@@ -31,6 +31,7 @@ before binding 2.
     - it stays a readout.
   - **(4) The receipt's exact pass** follows 1B's §2d (ii) / exact_n1 precedent. The near-zero recompute that makes clip
     signs exact is named as part of T ≤ 0's construction, with its own test.
+  - **(5) §5.3's clipcheck inputs are written by the gate job, sealed (§5j).** Binding 2's routing carries the seal rule.
 
 **MEASURES:** nothing. No job has run for A1a. Every number below is a test result on synthetic fixtures, or arithmetic
 on recorded timings.
@@ -55,7 +56,7 @@ on recorded timings.
 ## 1. Files and digests
 
 All digests are sha256 at this commit.
-- **The receipts were made at `43b73ffa2224d1ce8e2fc9654fa94498cfbab01f`,** from a clean checkout of that commit
+- **The receipts were made at `6a9558ff8f58768c812c1b246ebe4452dcab0e1a`,** from a clean checkout of that commit
   (porcelain 0 before and after), so every tracked file was in scope (`fd/receipts-ll5d/a1a/README.md`).
 - **The commit that adds them** changes only the receipts, their README, this file, CATALOG and MANIFEST. None of the
   code or tests changes.
@@ -69,11 +70,11 @@ All digests are sha256 at this commit.
 
 | file | role | sha256 |
 |---|---|---|
-| `nd-unfolding/ll5d.py` | A1a's module: `calib`, `gate`, `gate-merge` | `b7674f6729754616930944a32a71889ce599e8419cf539f792c180217f484f9a` |
+| `nd-unfolding/ll5d.py` | A1a's module: `calib`, `gate`, `gate-merge` | `9dbf9cf499f2c709ed7cffe809336a9dfd2122d34185d433036944c6927bf8fc` |
 | `nd-unfolding/fd_1b_c2.py` | verbatim copy of `342c0ce5`'s (§2) | `522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f` |
-| `nd-unfolding/tests/test_ll5d.py` | the 67 tests | `c5fd4deba61abdc540c1f6f9c918812aa48f406c62eaa172c8f44e708be91b6f` |
+| `nd-unfolding/tests/test_ll5d.py` | the 69 tests | `f7ee9aed4bf666f29185c0cd1252b7cfe3256fc0c701f1eadf077dd456a05f3a` |
 | `nd-unfolding/tests/ll5d_a21_reference.py` | the all-path equality's subprocess runner | `8fbecaae657fa40015e51fb917422321734e3d1c79dcd6591efc42639bc2365a` |
-| `nd-unfolding/tests/ll5d_a1a_mutation.py` | the mutation check (45 mutants) | `74c530e9debab593082e3b3c540be8a6d265e6643a2f89bf0b61229965732fd4` |
+| `nd-unfolding/tests/ll5d_a1a_mutation.py` | the mutation check (47 mutants) | `d43ed9f3bf063345f01ec5f873026963e18ce4551ace4bdf576404c39f3a6138` |
 | `nd-unfolding/tests/data/fd_1b_mc_at_342c0ce5.py.txt` | `342c0ce5`'s fd_1b_mc, vendored for the equality test only | `062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67` |
 | `fd/receipts-ll5d/a1a/tests-numpy126-seed{0,1,2}.txt`, `tests-numpy2-seed0.txt`, `mutation.txt`, `README.md` | the receipts (§7) | in MANIFEST.tsv |
 
@@ -217,6 +218,33 @@ repository file at the deploy, not an input another lane made.
 
 **i. r_T > 0 and finite is checked on every row** (§3.1, §10). A failure is INVALID before anything is read.
 
+**j. §5.3's clipcheck inputs: the gate job writes them, sealed** (the director's ruling of 2026-11-08 on A1b's inputs).
+- **Why the gate job.** §5.3's clipmean needs each row's mean |λ⁻| over the 300 declared draws, and τ_c needs each
+  draw's U·T_D clipped and unclipped. Both need the per-row arrays V in memory and a pass over exactly the receipt's
+  draws. The pilot, where §9 places the clipmeans, holds neither.
+- **What is written,** per reading, inside the receipt's existing pass (`receipt`, `clip_prep_seal`):
+  - the per-row sums over the declared draws of max(−λ, 0): signal on the reco-passing rows (λ = w_reco,D r_T) and
+    background (λ = bkg_w,D);
+  - each draw's U·T_D clipped (§3.4) and unclipped (`unclipped_truth`: the composites' fine sums through
+    `fd_1b_c2.xt_flat`, so T is kept only where the unclipped denominator is > 0, under the extraction's own mask);
+  - the number of draws composed.
+- **The seal:**
+  - the gate record (`clip_prep`) holds only the file's path, size, sha256 and key names;
+  - no one (the lane, the auditor or the director) opens or summarizes the file before binding 3 freezes A1b;
+  - no readout prints it.
+- **The consumer:** A1b reads it by that sha256, as §5.3 declares, and refuses a mismatch.
+- **It gates nothing.** The gate's PASS or STOP never reads it. `Jobs.test_the_clip_prep_is_sealed_and_moves_no_verdict`
+  removes the products and shows the verdict, the readings and the backstop unchanged.
+- **The record no longer prints each nature's U·T_D.** That is half of τ_c's input, so it is in the sealed file. The
+  T ≤ 0 STOP still names the cells it fired on.
+- **Marginal cost:** about four elementwise passes over the rows per draw (two for the |λ⁻| sums, plus the unclipped
+  sums' three bincounts at the fine-cell level). That is about 1–2 minutes per truth over 600 natures, unmeasured,
+  inside the receipt's allowance and covered by the projections (§5a).
+  <!-- absence-ok: a scoping statement about a projected cost; no LL5D job has run, so no timing exists to cite -->
+- **The test:** `Receipt.test_the_clip_prep_products_equal_a_direct_computation` (REQUIRED) equates them with compose's
+  order and `s5n_pseudo.true_xsec` on the nature's arrays, an independent path, to 10⁻¹⁰. Its two mutants are λ⁺ summed
+  in place of λ⁻, and the unclipped truth taken from the clipped one.
+
 ## 6. The jobs
 
 **`ll5d calib`:** one job, two truths, four evaluations.
@@ -235,13 +263,14 @@ repository file at the deploy, not an input another lane made.
 2. D2, D3 and r_T > 0. A failure writes the record as INVALID, before anything else is read.
 3. `prepare` with rows. The tie to the calibration: its digests, CALIBRATED, this code's digests, a threshold and a
    backstop SD for every evaluation, N in range, and the single-universe U x_T bitwise.
-4. The receipt (§5b), with the cross terms. A STOP writes the record and halts.
+4. The receipt (§5b), with the cross terms and the sealed clip-prep products (§5j). A STOP writes the record and
+   halts.
 5. Per reading: C2's record on the declared 300 and on the gate sample of N. The first 300 must be bitwise the declared
    ones, or the job is INVALID. Then `reading_1b` with the large-sample gate at the calibration's thresholds, and the
    backstop.
 6. PASS needs "option (1)" and the backstop passing in both readings; anything else is a STOP. The record
    (`ll5d-gate/1`) carries the receipt, the per-evaluation readings, the projections, the config hash, the peak RSS and
-   the atime check. The receipt npz holds the clipped masses per fine cell.
+   the atime check. The receipt npz holds the clipped masses per fine cell. The `.clipprep.npz` is sealed (§5j).
 
 **`ll5d gate-merge`:** two per-truth records with their digests give one record (`ll5d-gate-merged/1`). PASS needs PASS
 at both truths, with every shared field equal. A STOP or INVALID is carried as it is.
@@ -284,7 +313,7 @@ test holds them within 10⁻¹² relative with no absolute tolerance. The first-
 tolerance, because crossterm multiplies on the masked columns and the receipt on all of them.
 
 **Other tests:**
-- the gate end to end over the toy world (`Jobs.*`, 9 tests): the calibration; the gate; an uncalibrated, foreign or
+- the gate end to end over the toy world (`Jobs.*`, 10 tests, the seal's among them): the calibration; the gate; an uncalibrated, foreign or
   incomplete calibration refused; a failed control INVALID before anything is read; a failing reading a STOP; each
   evaluation reading its own thresholds; a gate sample whose first 300 differ refused (11-04 item 1, its mutant the
   check skipped); each projection repricing;
@@ -293,10 +322,10 @@ tolerance, because crossterm multiplies on the masked columns and the receipt on
 - `Selection`, `Clip.test_the_bins_are_histogramdds`.
 
 **Results** (`fd/receipts-ll5d/a1a/`):
-- All made at `43b73ffa`, from a clean checkout.
-- `test_ll5d.py`: 67 tests, OK, at PYTHONHASHSEED 0, 1 and 2 under Python 3.12.2 and numpy 1.26.4 (the cluster's numpy).
+- All made at `6a9558ff`, from a clean checkout.
+- `test_ll5d.py`: 69 tests, OK, at PYTHONHASHSEED 0, 1 and 2 under Python 3.12.2 and numpy 1.26.4 (the cluster's numpy).
   Also OK once under Python 3.13.7 and numpy 2.4.4.
-- `ll5d_a1a_mutation.py`: **45 mutations, all killed.** The unmutated suite runs its 67 tests and passes, rc 0.
+- `ll5d_a1a_mutation.py`: **47 mutations, all killed.** The unmutated suite runs its 69 tests and passes, rc 0.
 - Each receipt heads its file digests.
 - The suite's fixture is A2.1's toy world (`test_fd_1b.World`), with the bank's tdw about tdw_ref within 2 % row by row
   (A2.1's fixture rule, centred on tdw_ref). The world's weights are hash-seeded, so each PYTHONHASHSEED is a

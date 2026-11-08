@@ -1,11 +1,11 @@
 # test_ll5d.py at PYTHONHASHSEED=2
-# date 2026-11-08T19:15:08Z  made at HEAD 43b73ffa2224d1ce8e2fc9654fa94498cfbab01f, a clean checkout (porcelain 0)
+# date 2026-11-08T19:50:32Z  made at HEAD 6a9558ff8f58768c812c1b246ebe4452dcab0e1a, a clean checkout (porcelain 0)
 # python 3.12.2 numpy 1.26.4
-# b7674f6729754616930944a32a71889ce599e8419cf539f792c180217f484f9a  ll5d.py
+# 9dbf9cf499f2c709ed7cffe809336a9dfd2122d34185d433036944c6927bf8fc  ll5d.py
 # 522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f  fd_1b_c2.py
-# c5fd4deba61abdc540c1f6f9c918812aa48f406c62eaa172c8f44e708be91b6f  tests/test_ll5d.py
+# f7ee9aed4bf666f29185c0cd1252b7cfe3256fc0c701f1eadf077dd456a05f3a  tests/test_ll5d.py
 # 8fbecaae657fa40015e51fb917422321734e3d1c79dcd6591efc42639bc2365a  tests/ll5d_a21_reference.py
-# 74c530e9debab593082e3b3c540be8a6d265e6643a2f89bf0b61229965732fd4  tests/ll5d_a1a_mutation.py
+# d43ed9f3bf063345f01ec5f873026963e18ce4551ace4bdf576404c39f3a6138  tests/ll5d_a1a_mutation.py
 # 062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67  tests/data/fd_1b_mc_at_342c0ce5.py.txt
 test_the_all_path_equals_a21s_bitwise (__main__.A21Equality.test_the_all_path_equals_a21s_bitwise) ... ok
 test_detector_rows_carry_tdw_ref_and_enter_with_zero_departure (__main__.Builders.test_detector_rows_carry_tdw_ref_and_enter_with_zero_departure) ... ok
@@ -47,7 +47,7 @@ LL5D-GATE g18 verdict=PASS
 LL5D-CALIBRATION INVALID (bad input)
 LL5D-GATE g18 REPRICE (slow)
 LL5D-CALIBRATION verdict=POWER_SHORT_TO_DIRECTOR
-{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.8621711730957031, "workers": 2, "projected_seconds": 40.55882740020752, "budget_seconds": 1000000.0, "projection_line_seconds": 9000000.0}
+{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.6842927932739258, "workers": 2, "projected_seconds": 32.19542455673218, "budget_seconds": 1000000.0, "projection_line_seconds": 9000000.0}
 ok
 test_a_failed_control_is_invalid_before_anything_is_read (__main__.Jobs.test_a_failed_control_is_invalid_before_anything_is_read) ... ok
 test_a_failing_gate_reading_is_a_stop (__main__.Jobs.test_a_failing_gate_reading_is_a_stop) ... ok
@@ -55,6 +55,8 @@ test_a_gate_over_the_toy_world (__main__.Jobs.test_a_gate_over_the_toy_world) ..
 test_a_gate_sample_whose_first_300_differ_is_refused (__main__.Jobs.test_a_gate_sample_whose_first_300_differ_is_refused)
 11-04 item 1's bit-for-bit check: the gate sample's first 300 must be the declared draws' C2 quantities. ... ok
 test_each_evaluation_reads_its_own_thresholds (__main__.Jobs.test_each_evaluation_reads_its_own_thresholds) ... ok
+test_the_clip_prep_is_sealed_and_moves_no_verdict (__main__.Jobs.test_the_clip_prep_is_sealed_and_moves_no_verdict)
+The gate record holds only the sealed file's path, size, sha256 and keys; the verdict, the readings and the ... ok
 test_the_gate_refuses_an_uncalibrated_or_foreign_calibration (__main__.Jobs.test_the_gate_refuses_an_uncalibrated_or_foreign_calibration) ... ok
 test_the_gate_reprices_past_its_line (__main__.Jobs.test_the_gate_reprices_past_its_line) ... ok
 test_the_receipt_reprices_past_its_line (__main__.Jobs.test_the_receipt_reprices_past_its_line) ... ok
@@ -77,6 +79,8 @@ test_t_le_0_stops_and_halts_at_the_first (__main__.Receipt.test_t_le_0_stops_and
 Every row of reporting cell c at 0.95 x the CV in every universe: each reading's composite there is ... ok
 test_t_le_0_takes_composes_clip_sign_on_near_zero_rows (__main__.Receipt.test_t_le_0_takes_composes_clip_sign_on_near_zero_rows)
 Every row of reporting cell c with every Flux universe's wt 0 and every other universe's equal to the CV's, ... ok
+test_the_clip_prep_products_equal_a_direct_computation (__main__.Receipt.test_the_clip_prep_products_equal_a_direct_computation)
+REQUIRED (the director's ruling on the clipcheck inputs): per reading, the per-row sums of max(-lambda, 0) ... ok
 test_the_receipt_projection_reprices (__main__.Receipt.test_the_receipt_projection_reprices) ... ok
 test_i_alone_over_the_budget_is_flagged (__main__.Rule.test_i_alone_over_the_budget_is_flagged) ... ok
 test_paired_evaluations_cost_less_budget_than_independent_ones (__main__.Rule.test_paired_evaluations_cost_less_budget_than_independent_ones) ... ok
@@ -92,5 +96,5 @@ The exclusion is by exact path: a hit in any other file is a collision, in each 
 test_m2b_selection_accepts_drop2_and_refuses_a_kept_band (__main__.Selection.test_m2b_selection_accepts_drop2_and_refuses_a_kept_band) ... ok
 test_m2f_the_product_composition_is_off_the_nature_path (__main__.SourceFactors.test_m2f_the_product_composition_is_off_the_nature_path) ... ok
 ----------------------------------------------------------------------
-Ran 67 tests in 117.648s
+Ran 69 tests in 173.513s
 OK
