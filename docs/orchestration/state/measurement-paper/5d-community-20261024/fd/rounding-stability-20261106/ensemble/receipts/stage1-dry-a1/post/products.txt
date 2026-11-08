@@ -1,0 +1,9 @@
+ens1_F64	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/F64/ens1_F64_b-_j0.npz
+ens1_s00_k001	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k001_b-_j0.npz
+ens1_s00_k002	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k002_b-_j0.npz
+ens1_s00_k003	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k003_b-_j0.npz
+ens1_s00_k004	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k004_b-_j0.npz
+ens1_s01_k001	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k001_b-_j1.npz
+ens1_s01_k002	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k002_b-_j1.npz
+ens1_s01_k003	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k003_b-_j1.npz
+ens1_s01_k004	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k004_b-_j1.npz
