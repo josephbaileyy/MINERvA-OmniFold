@@ -132,6 +132,8 @@ def stage1_products(root: Path, U_all: np.ndarray):
                     eep.SCHEMA, "stability", k, eep.INTERNAL_BASE + k, s) or m.get("jitter_seed") != s:
                 raise Stop(f"E1: {p.name} does not carry its own (s, k)")
             check_stability_meta(m, p.name)
+            if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:
+                raise Stop(f"E5: {p.name} records moved rows {e.get('moved_rows')} (A1: the zone keeps every cell)")
             if m.get("coords") != "float64":
                 raise Stop(f"E1: {p.name} did not run in float64 coordinates")
             codes.add(json.dumps({**estimator_code(m), "ens1": e.get("code_sha256")}, sort_keys=True))
@@ -160,6 +162,8 @@ def f64_base(root: Path, U_all: np.ndarray, code: dict):
     check_stability_meta(m, p.name)
     if e.get("mode") != "base" or e.get("k") is not None or e.get("code_sha256") != code["ens1"]:
         raise Stop("E3: the F64 base is not ENS1's base product")
+    if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:
+        raise Stop(f"E5: the F64 base records moved rows {e.get('moved_rows')}")
     check_float64_base(m, p.name)
     return U_all @ x, xt, m
 
@@ -301,6 +305,8 @@ def stage2(a, s1: dict) -> dict:
             e = m.get("ens1") or {}
             if (e.get("mode"), e.get("truth"), e.get("k")) != ("closure", t, k):
                 raise Stop(f"{p.name} does not carry its own (truth, k)")
+            if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:
+                raise Stop(f"E5: {p.name} records moved rows {e.get('moved_rows')}")
             if xt0 is None:
                 xt0 = xt
             elif not np.array_equal(xt, xt0):

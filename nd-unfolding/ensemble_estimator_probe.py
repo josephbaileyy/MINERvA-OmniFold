@@ -13,7 +13,10 @@ the single fits F(y + delta_k(y)), and ``ensemble_estimator_analyze.py`` average
 
 The internal jitter (§2.1): delta_k(y) = u_k * spacing32(round32(y)), u_k ~ U(-1/2, 1/2) from default_rng(10000 + k),
 drawn per coordinate array in the fixed order MCgen, MCreco, measured, bkg_reco, and added to y in float64 at full
-precision; zero where round32(y) is a grid edge of its axis. It never casts y to float32 (the trap of §2.2:
+precision; zero where round32(y) is a grid edge of its axis and, under addendum A1, anywhere within one float32
+spacing of an edge (``in_edge_zone``, ENS1-ADDENDUM-A1.md §2), so the combined move never changes a coordinate's
+fine-grid cell (the declaration's §2.3 claim, withdrawn, held only for float32-representable edges). It never casts y to
+float32 (the trap of §2.2:
 ``s5e_trace.jitter_coords`` does, ``s5e_trace.py:358``).
 
 Rebindings, each of a name the bound code resolves at call time, restored on exit:
@@ -74,17 +77,43 @@ def sha256_bytes(*arrays) -> str:
 
 
 # ------------------------------------------------------------------------------------------ the internal jitter
+def in_edge_zone(r32: np.ndarray, edges: list) -> np.ndarray:
+    """ENS1 addendum A1: True where a float32 coordinate lies within one float32 spacing of a grid edge of its axis,
+    |float64(r) - e| <= spacing32(|r|), on or off the edge. ``edges`` is the inputs' own ``edges`` list, the one
+    s5p_numerics.cell_membership compares against (float64 values, one array per axis), never a copied table."""
+    r32 = np.asarray(r32, np.float32)
+    r64 = r32.astype(np.float64)
+    ulp = np.spacing(np.abs(r32)).astype(np.float64)
+    zone = np.zeros(r32.shape, bool)
+    for a, e in enumerate(edges):
+        e = np.asarray(e, float)
+        j = np.clip(np.searchsorted(e, r64[:, a]), 1, len(e) - 1)
+        d = np.minimum(np.abs(r64[:, a] - e[j - 1]), np.abs(e[j] - r64[:, a]))
+        zone[:, a] = d <= ulp[:, a]
+    return zone
+
+
 def internal_step(y: np.ndarray, rng: np.random.Generator, edges: list | None) -> np.ndarray:
-    """delta for one coordinate array: u * spacing32(round32(y)), u ~ U(-1/2, 1/2); zero on a grid edge."""
+    """delta for one coordinate array: u * spacing32(round32(y)), u ~ U(-1/2, 1/2); zero on a grid edge and, under
+    addendum A1, anywhere in the edge zone (``in_edge_zone``: within one float32 spacing of an edge), so a coordinate
+    never changes its fine-grid cell (ENS1-ADDENDUM-A1.md §2). The draws are unchanged; only the zone's steps are zero."""
     y = np.asarray(y, np.float64)
     r32 = y.astype(np.float32)
     ulp = np.spacing(np.abs(r32)).astype(np.float64)
     step = rng.uniform(-0.5, 0.5, y.shape) * ulp
     if edges is not None:
-        r64 = r32.astype(np.float64)
-        for a, e in enumerate(edges):
-            step[np.isin(r64[:, a], np.asarray(e, np.float32).astype(np.float64)), a] = 0.0
+        # The zone contains the bound design's exact-edge rule (round32(y) equal to round32(e): d <= 0.44 spacing), so
+        # that rule is no longer a separate line (A1 §2).
+        step[in_edge_zone(r32, edges)] = 0.0
     return step
+
+
+def moved_rows(inputs: dict, bkg: dict, ji: dict, jb: dict) -> dict:
+    """Rows whose fine-grid cell differs between the given and the jittered coordinates, per class, by the guard's own
+    s5p_numerics.cell_membership (A1: recorded in every product; the runner's guard still refuses on any)."""
+    before = s5p_numerics.cell_membership(inputs, bkg["bkg_reco"])
+    after = s5p_numerics.cell_membership(ji, jb["bkg_reco"])
+    return {key: int((after[key] != before[key]).sum()) for key in before}
 
 
 def internal_jitter(inputs: dict, bkg: dict, k: int) -> tuple[dict, dict, dict]:
@@ -195,16 +224,16 @@ def install(mode: str, k: int | None, truth: str | None = None):
     def jittered(inputs, bkg, seed):
         item["protocol_seed"] = seed
         ji, jb = o["jittered"](inputs, bkg, None if seed == BASE_SEED else seed)
-        if k is None:
-            return ji, jb
-        ji, jb, item["coord_sha256"] = internal_jitter(ji, jb, k)
+        if k is not None:
+            ji, jb, item["coord_sha256"] = internal_jitter(ji, jb, k)
+        item["moved_rows"] = moved_rows(inputs, bkg, ji, jb)    # A1: the guard's own count, recorded (0 expected)
+        print(f"[ens1] grid membership moved rows {item['moved_rows']}", file=sys.stderr)
         return ji, jb
 
     def build(ui, ub, split, seed, expectation, mc_fraction):
-        before = s5p_numerics.cell_membership(ui, ub["bkg_reco"])
         ji, jb, item["coord_sha256"] = internal_jitter(ui, ub, k)
-        after = s5p_numerics.cell_membership(ji, jb["bkg_reco"])
-        moved = {key: int((after[key] != before[key]).sum()) for key in before}
+        moved = item["moved_rows"] = moved_rows(ui, ub, ji, jb)
+        print(f"[ens1] grid membership moved rows {moved}", file=sys.stderr)
         if any(moved.values()):
             raise Refusal(f"internal seed {k} changed grid membership {moved}")
         return o["build"](ji, jb, split, seed, expectation, mc_fraction)
@@ -218,7 +247,8 @@ def install(mode: str, k: int | None, truth: str | None = None):
             raise Refusal("refusing to write: the runner's arguments were never checked by ENS1")
         block = {"schema": SCHEMA, "mode": mode, "k": k, "internal_seed": None if k is None else INTERNAL_BASE + k,
                  "truth": truth, "protocol_seed": item.get("protocol_seed"), "coord_sha256": item.get("coord_sha256"),
-                 "closure_dtype_requested": item.get("closure_dtype_requested"), "code_sha256": here}
+                 "closure_dtype_requested": item.get("closure_dtype_requested"), "moved_rows": item.get("moved_rows"),
+                 "code_sha256": here}
         item.clear()
         return o["write_product"](out, arrays, {**meta, "ens1": block})
 

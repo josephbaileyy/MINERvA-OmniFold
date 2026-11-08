@@ -113,6 +113,128 @@ class InternalJitter(unittest.TestCase):
                 eep.internal_jitter(self.inputs, self.bkg, k)
 
 
+# ------------------------------------------------------------------------------- the edge zone (addendum A1)
+def f32_neighbours(e):
+    e32 = np.float32(e)
+    lo = e32 if float(e32) < e else np.nextafter(e32, np.float32(-1))
+    return lo, np.nextafter(lo, np.float32(2))
+
+
+class EdgeZone(unittest.TestCase):
+    """ENS1-ADDENDUM-A1.md §2: delta_k = 0 within one float32 spacing of an edge, the edges being the inputs' own."""
+
+    def setUp(self):
+        self.edges = [np.array([0.0, 0.5, 1.0])] * 3 + [np.array([0.0, 0.2, 1.0]), np.array([0.0, 0.5, 1.0])]
+        self.lo, self.hi = f32_neighbours(0.2)            # 0.2: lo at 0.8 spacing (farther), hi = round32(0.2) at 0.2
+
+    def zone(self, col, v):
+        x = np.full((1, 5), 0.75, np.float32)
+        x[0, col] = v
+        return bool(eep.in_edge_zone(x, self.edges)[0, col])
+
+    def test_the_zone_is_one_spacing_inclusive_and_no_wider(self):
+        """REQUIRED (A1): the farther neighbour (0.8 spacing) and exactly one spacing are in; two spacings are out."""
+        half = np.float32(0.5)
+        one_up = np.nextafter(half, np.float32(1))
+        two_up = np.nextafter(one_up, np.float32(1))
+        self.assertTrue(self.zone(3, self.lo))                       # 0.8 spacing from 0.2
+        self.assertTrue(self.zone(3, self.hi))                       # round32(0.2), 0.2 spacing
+        self.assertTrue(self.zone(0, one_up))                        # exactly one spacing from the edge 0.5
+        self.assertTrue(self.zone(0, half))                          # on the edge
+        self.assertFalse(self.zone(0, two_up))                       # two spacings
+        self.assertFalse(self.zone(0, np.float32(0.75)))
+
+    def test_the_zone_uses_each_axis_own_edges(self):
+        """REQUIRED (A1): 0.2 is an edge of axis 3 only."""
+        self.assertTrue(self.zone(3, self.lo))
+        self.assertFalse(self.zone(0, self.lo))
+
+    def test_the_zone_compares_the_float64_edges_not_their_float32_rounding(self):
+        """REQUIRED (A1): one spacing beyond round32(0.2), on its far side from 0.2, is 1.2 spacings from 0.2: out."""
+        beyond = np.nextafter(self.hi, np.float32(1))
+        self.assertFalse(self.zone(3, beyond))
+
+    def no_crossing(self, values, axis, seeds=200):
+        """Protocol jitter s plus delta_k (s, k over many seeds) on rows at the given values never changes the cell."""
+        n = len(values)
+        x = np.full((n, 5), 0.75, np.float32)
+        x[:, axis] = values
+        base = s5e_trace.flat_index(np.asarray(x, np.float64), self.edges)
+        for s in range(1, seeds + 1):
+            y = s5e_trace.jitter_coords(x, s, self.edges)
+            y = y + eep.internal_step(y, np.random.default_rng(10000 + s), self.edges)
+            self.assertTrue(np.array_equal(s5e_trace.flat_index(y, self.edges), base), s)
+
+    def test_the_zone_uses_the_values_own_spacing_on_the_narrow_side_of_a_binade(self):
+        """REQUIRED (A1, the director's item 2): 0.5 is a power of two, so the spacing just below it is half the
+        edge's. One float32 below is in the zone, two below is out, and two below never crosses under the combined move."""
+        one_below = np.nextafter(np.float32(0.5), np.float32(0))
+        two_below = np.nextafter(one_below, np.float32(0))
+        self.assertTrue(self.zone(0, one_below))
+        self.assertFalse(self.zone(0, two_below))
+        self.no_crossing(np.full(64, two_below), 0)
+
+    def test_the_zero_edge(self):
+        """REQUIRED (A1, the director's item 3): at 0 the spacing is subnormal. 0 and the smallest subnormal are in the
+        zone; two and three subnormal spacings are out, move, and never cross below 0."""
+        tiny = np.nextafter(np.float32(0), np.float32(1))
+        self.assertTrue(self.zone(0, np.float32(0)))
+        self.assertTrue(self.zone(0, tiny))
+        self.assertFalse(self.zone(0, np.float32(2) * tiny))
+        vals = np.array([2 * tiny, 3 * tiny] * 32, np.float32)
+        self.no_crossing(vals, 0)
+        x = np.full((64, 5), 0.75, np.float32)
+        x[:, 0] = vals
+        step = eep.internal_step(np.asarray(x, np.float64), np.random.default_rng(10001), self.edges)
+        self.assertGreater(np.mean(step[:, 0] != 0), 0.9)
+
+    def test_the_internal_jitter_never_moves_a_zone_coordinate_and_moves_the_rest(self):
+        n = 400
+        x = np.full((n, 5), 0.75, np.float32)
+        x[: n // 2, 3] = self.lo
+        x[n // 2:, 3] = np.nextafter(np.nextafter(self.hi, np.float32(1)), np.float32(1))   # 2.2 spacings: out
+        inputs = {"MCgen": x, "MCreco": x.copy(), "measured": x[:5].copy(), "edges": self.edges}
+        ji, _, _ = eep.internal_jitter(inputs, {"bkg_reco": x[:5].copy()}, 1)
+        step = ji["MCgen"][:, 3] - np.asarray(x[:, 3], np.float64)
+        self.assertTrue(np.all(step[: n // 2] == 0))
+        self.assertGreater(np.mean(step[n // 2:] != 0), 0.99)
+
+
+def write_edge_fixture(d: Path, n=2400, nb=500, seed=7):
+    """RS1's lattice fixture, but axis 3 has the non-representable edge 0.2 and a third of its MC truth values sit at
+    that edge's farther float32 neighbour (0.8 spacing), where protocol jitter plus delta_k can cross it."""
+    rng = np.random.default_rng(seed)
+    edges = [np.array([0.0, 0.5, 1.0])] * 3 + [np.array([0.0, 0.2, 1.0]), np.array([0.0, 0.5, 1.0])]
+    mc_gen = trm.lattice(rng, n)
+    lo, _ = f32_neighbours(0.2)
+    mc_gen[: n // 3, 3] = lo
+    np.savez(d / "in.npz", MCgen=mc_gen, MCreco=trm.lattice(rng, n), measured=trm.lattice(rng, 300),
+             pass_reco=np.ones(n, bool), pass_truth=np.ones(n, bool), w_truth=np.full(n, 0.5),
+             w_reco=np.full(n, 0.5), measured_weights=np.ones(300), denom_nd=np.full([2] * 5, 40.0),
+             flux=np.ones(2), data_pot=np.array(1.0), n_nucleons=np.array(1.0), nedges=np.array(5),
+             **{f"edges_{i}": e for i, e in enumerate(edges)})
+    sha = s5n_pseudo.sha256_path(d / "in.npz")
+    np.savez(d / "bkg.npz", bkg_reco=trm.lattice(rng, nb), bkg_w=np.full(nb, 0.2), bkg_nd=np.zeros([2] * 5),
+             meta=json.dumps({"npz_sha256": sha}))
+    (d / "ratio.json").write_text(json.dumps({"schema": "test"}))
+    return sha, s5n_pseudo.sha256_path(d / "bkg.npz")
+
+
+class EdgeZoneEndToEnd(unittest.TestCase):
+    """REQUIRED (A1): through the bound runner and its grid guard, protocol jitter 1 plus delta_k on 800 rows at the
+    farther neighbour of a non-representable edge: refused without the zone (the attempt-1 failure), passed with it."""
+
+    def test_the_bound_guard_passes_every_internal_seed(self):
+        with tempfile.TemporaryDirectory() as t:
+            d = Path(t)
+            shas = write_edge_fixture(d)
+            with trm.standins(d):
+                rcs = {k: run_stability(d, shas, k, 1) for k in (1, 2, 3, 4)}
+        for k, (rc, err) in rcs.items():
+            self.assertEqual(rc, 0, (k, err[-400:]))
+            self.assertNotIn("changed grid membership", err)
+
+
 # ------------------------------------------------------------------------------------- the stability path
 class Stability(trm.Fixture):
     @classmethod
@@ -159,6 +281,13 @@ class Stability(trm.Fixture):
         self.assertEqual(self.rc_again, 0)
         np.testing.assert_array_equal(stab_product(self.d, 1, 1)[0],
                                       esa.load(self.d / "first" / "ens1_k001_b-_j1.npz")[0])
+
+    def test_every_product_records_zero_moved_rows(self):
+        for k, s in ((1, 0), (2, 1)):
+            self.assertEqual(stab_product(self.d, k, s)[2]["ens1"]["moved_rows"],
+                             {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0})
+        m = esa.load(self.d / "runs" / "F64" / "ens1_F64_b-_j0.npz")[2]
+        self.assertEqual(m["ens1"]["moved_rows"], {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0})
 
     def test_products_carry_their_s_k_float64_and_the_control_path(self):
         x, _, m = stab_product(self.d, 2, 1)
@@ -537,7 +666,9 @@ class FakeRun:
                 else:
                     x = base * (1 + spread_E * rng.normal(size=8) * math.sqrt(eep.N_ENS))
                 e = {"schema": eep.SCHEMA, "mode": "stability", "k": k, "internal_seed": 10000 + k, "protocol_seed": s,
-                     "coord_sha256": {"MCgen": f"{s}-{k}"}, "code_sha256": "ens1"}
+                     "coord_sha256": {"MCgen": f"{s}-{k}"}, "code_sha256": "ens1",
+                     "moved_rows": {"MCgen": 1 if (tamper == "moved" and (s, k) == (5, 5)) else 0, "MCreco": 0,
+                                    "measured": 0, "bkg_reco": 0}}
                 m = {**meta0, "jitter_seed": s, "coords": "float64", "ens1": e}
                 if tamper == "code" and (s, k) == (3, 3):
                     m["code_sha256"] = {"a.py": "2"}
@@ -552,7 +683,8 @@ class FakeRun:
                     m[key] = val
                 self.write(st / f"ens1_k{k:03d}_b-_j{s}.npz", x, base, m)
         f64m = {**meta0, "jitter_seed": 0, "coords": "float32" if tamper == "f32base" else "float64",
-                "ens1": {"mode": "stability" if tamper == "f64mode" else "base", "k": None, "code_sha256": "ens1"}}
+                "ens1": {"mode": "stability" if tamper == "f64mode" else "base", "k": None, "code_sha256": "ens1",
+                         "moved_rows": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}}}
         if tamper == "f64meta":
             f64m["truth"] = "nominal"
         (self.d / "runs" / "F64").mkdir()
@@ -678,6 +810,12 @@ class Analysis(unittest.TestCase):
             self.assertEqual((rc, out["verdict"]), (eea.STOP_RC, "STOP"), tamper)
             self.assertIn("E1", out["why"], tamper)
 
+    def test_every_product_must_record_zero_moved_rows(self):
+        """A1 (the director's item 4): the guard's count, recorded per product, must be 0 in every class."""
+        rc, out = self.read(FakeRun(self.t / "a", tamper="moved"))
+        self.assertEqual(out["verdict"], "STOP")
+        self.assertIn("E5", out["why"])
+
     def test_e2_across_k(self):
         """Audit X01: at one input, two internal seeds gave identical coordinates."""
         rc, out = self.read(FakeRun(self.t / "a", tamper="digest_k"))
@@ -754,7 +892,8 @@ class Stage2(unittest.TestCase):
                     x = x * (1 + balanced * (1.0 if k % 2 else -1.0))
                 if det_differs and t == "A7_mnvtune":
                     x = x * 1.0000001
-                m = {"ens1": {"mode": "closure", "truth": "W2" if (truth_differs and t == "W1" and k == 7) else t, "k": k},
+                m = {"ens1": {"mode": "closure", "truth": "W2" if (truth_differs and t == "W1" and k == 7) else t, "k": k,
+                              "moved_rows": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}},
                      "hypothesis": {"sha256": "h2" if (hyp_differs and t == "W3") else "h"},
                      "alternative": {"sha256": "a2"} if (alt_differs and t == "W1") else None,
                      "split_key": 8 if (split_differs and t == "q3") else 7}
