@@ -1,0 +1,52 @@
+node login36 nproc=244 loadavg 23.17 23.98 23.85
+2026-11-08T17:10:21Z
+connect script sha256 5e1409292a9274872df8cfbb7d2dcba9c37b2112621f4f8b9288e097475690e3
+stage 1: analysis done 0; ens1_stage1.json 7f5a9ce4da8f59f3284715ff6f14f8106034b42c0301ad04979a8ed6b461ad99, verdict STAB_PASS
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2389.6            10000.0     18301.7      20000.0
+balance_node_h=1698.3 half=849.1 caps=109.0
+== the fence (only rs1_* and ens1_* pass; cov2d-*, prr_* or any other name stops)
+FENCE: pass (0 jobs; none outside rs1_*, no ens1_*)
+== stage 2's charge ceiling (sacct)
+stage 2 spent 0 node-h; + the dry run's 0.75 = 0.75; cap 46.0
+== the shared inputs (unchanged since the records-only stat; stat only)
+inputs identity: 738 lines, sha256 f533a9add1b24143017b3a0a4aaea250b01994d894a3bc2386526f3938526ee6 (sent f533a9add1b24143017b3a0a4aaea250b01994d894a3bc2386526f3938526ee6); errors: 0
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz size=1548438020 mtime=2026-06-27 18:31:48.000000000 -0700 atime=2026-11-08 07:42:54.000000000 -0800
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz size=16017201 mtime=2026-09-24 23:51:44.000000000 -0700 atime=2026-11-08 07:42:54.000000000 -0800
+/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json size=547429 mtime=2026-10-24 01:55:24.000000000 -0700 atime=2026-11-05 06:45:22.000000000 -0800
+pv-ladder nuwro.json sha256 38e47eb6b6ac63f6657022ae0cc5a2b5eaffc6a2e503735ce7222275771fea6e (pin 38e47eb6b6ac63f6657022ae0cc5a2b5eaffc6a2e503735ce7222275771fea6e); atime 1793889922 -> 1793889922
+== the deploy (re-checked)
+HEAD f4d2d7f3833834390b7b031df61ba1a5765e9900; modified tracked files: 0
+porcelain --ignored lines (recorded): 2
+blobs: 12 checked, 0 mismatches; sha256: 7 checked, 0 mismatches
+stage 1's control-jitter copies: 20, as at the dry connect
+== FD-STAB's stage-2 references (dd iflag=noatime; stat before and after)
+references: 50 (base 1, jitters j21-j51 31, closures 18)
+copy window start 2026-11-08T17:10:26.364Z
+copy window end 2026-11-08T17:10:28.090Z
+references: 50 copied, 0 problems; stat before/after (incl. atime and ctime): identical
+refs now: 70 files (20 from stage 1 + 50)
+== the environment (sourced)
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+== the stage-2 queue (sourced)
+{"stage": 2, "dry_tasks": 7, "dry_unfolds": 7, "full_tasks": 813, "full_unfolds": 1626, "shard_tasks": [136, 136, 136, 135, 135, 135]}
+b55370daaee3443fad48285364aeee05d94ec0c675d87cd23ae1d9c609597c77  dry.tsv
+bdc92a9c4f99f04db553caca532412bffa6dc89ff24e67ab8c2db40b63ea85e0  shard0.tsv
+855d9f951c909f1cd32b91682766bffa4888ce77ae2415757f2a5945ed1c7528  shard1.tsv
+773ab6bbc2202ad7bd7886573af2b48c71fabd7bee1762cb11e7f442606cee53  shard2.tsv
+01c002b1913d9b47f44253d5b3f7f0411073a407d17e793ce0842b6414b4b2b6  shard3.tsv
+26d4e7cd900a30098e15fd3e0c109f0497f9b4462ac7270869a64fbabbf22f50  shard4.tsv
+7f1ac5bf33c9d4c387b3090cf33c9e1bd9f27bf5b8a54ffc4361c0f5c04ab3fd  shard5.tsv
+dry tasks: 7
+shard tasks: 136 136 136 135 135 135 
+2026-11-08T17:10:40Z
+sbatch rc=0
+Submitted batch job 61004211
+stage-2 dry job 61004211
+scontrol TimeLimit=00:45:00 (declared 00:45:00)
+61004211 ens1_a1_s2_dry PENDING 0:00 45:00 1 regular_1 m3246
+modified tracked files after: 0
+ens1 a1 stage-2 dry submit rc=0
+2026-11-08T17:10:47Z
