@@ -161,8 +161,109 @@ class Mutation:
     replacement: float | None = None
 
 
+RECORD_MUTATIONS = (
+    Mutation(
+        "REQUIRED_PREPARE_RUN_OBSERVED",
+        "prepare_detail_side",
+        "run.observed",
+        "test_prepare_receipt_named_guards",
+    ),
+    Mutation(
+        "REQUIRED_PREPARE_CONNECT_OBSERVED",
+        "prepare_detail_side",
+        "connect_id.observed",
+        "test_prepare_receipt_named_guards",
+    ),
+    Mutation(
+        "REQUIRED_PREPARE_CONNECT_PREPARED",
+        "prepare_detail_none",
+        "connect_id.prepared",
+        "test_prepare_receipt_named_guards",
+    ),
+    Mutation(
+        "REQUIRED_PREPARE_NOW_RECORDED",
+        "prepare_detail_none",
+        "age.now_ns",
+        "test_prepare_receipt_named_guards",
+    ),
+    Mutation(
+        "REQUIRED_PREPARE_AGE_RECORDED",
+        "prepare_detail_none",
+        "age.observed_age_ns",
+        "test_prepare_receipt_named_guards",
+    ),
+    Mutation(
+        "REQUIRED_DIFF_CHANGED_OBSERVED",
+        "custody_diff_side",
+        "changed.observed",
+        "test_prepare_environment_whole_comparison",
+    ),
+    Mutation(
+        "REQUIRED_DIFF_ADDED_VALUE",
+        "custody_diff_none",
+        "added",
+        "test_prepare_environment_whole_comparison",
+    ),
+    Mutation(
+        "REQUIRED_DIFF_REMOVED_VALUE",
+        "custody_diff_none",
+        "removed",
+        "test_prepare_environment_whole_comparison",
+    ),
+    Mutation(
+        "REQUIRED_DIFF_ADDED_NONPROTECTED",
+        "custody_added_protected",
+        "added",
+        "test_prepare_environment_nonprotected_keys",
+    ),
+    Mutation(
+        "REQUIRED_DIFF_NERSC_COVERED",
+        "custody_env_filter",
+        "nersc",
+        "test_prepare_environment_nonprotected_keys",
+    ),
+    Mutation(
+        "REQUIRED_DIFF_HOME_COVERED",
+        "custody_env_filter",
+        "home",
+        "test_prepare_environment_nonprotected_keys",
+    ),
+    Mutation(
+        "REQUIRED_PREPARE_LEGACY_SNAPSHOT_REQUIRED",
+        "prepare_snapshot_optional",
+        "MAT_PREPARE_PRESENT",
+        "test_prepare_receipt_named_guards",
+    ),
+    Mutation(
+        "REQUIRED_PREPARE_FIELDS_RECORDED",
+        "prepare_detail_side",
+        "presence.observed",
+        "test_prepare_receipt_named_guards",
+    ),
+    Mutation(
+        "REQUIRED_PREPARE_CONNECT_PRESENCE_RECORDED",
+        "prepare_detail_side",
+        "connect_presence.observed",
+        "test_prepare_receipt_named_guards",
+    ),
+    Mutation(
+        "REQUIRED_PREPARE_TIMESTAMP_RECORDED",
+        "prepare_detail_none",
+        "age.prepare_time_ns",
+        "test_prepare_receipt_named_guards",
+    ),
+    Mutation(
+        "REQUIRED_DIFF_CHANGED_PREPARED",
+        "custody_diff_none",
+        "changed.prepared",
+        "test_prepare_environment_whole_comparison",
+    ),
+)
+
+
 REQUIRED = tuple(
     [
+        *RECORD_MUTATIONS,
         Mutation(
             "REQUIRED_ROOT_AUTODIRECTORY_OFF",
             "root_autodirectory",
@@ -441,6 +542,27 @@ class Mutator(ast.NodeTransformer):
             first, second = indices["dictionary"], indices["mapped"]
             node.body[first], node.body[second] = node.body[second], node.body[first]
             self.changed += 1
+        if (
+            self.mutation.kind == "custody_env_filter"
+            and node.name == "environment_diff"
+        ):
+            condition = (
+                "not key.startswith('NERSC_')"
+                if self.mutation.target == "nersc"
+                else "key != 'HOME'"
+            )
+            statement = ast.parse(
+                "old_keys, new_keys = ({key for key in old_keys if "
+                + condition
+                + "}, {key for key in new_keys if "
+                + condition
+                + "})"
+            ).body[0]
+            index = next(
+                i for i, item in enumerate(node.body) if isinstance(item, ast.Return)
+            )
+            node.body.insert(index, statement)
+            self.changed += 1
         self.function = previous
         return node
 
@@ -535,6 +657,65 @@ class Mutator(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_Dict(self, node: ast.Dict) -> ast.AST:
+        mutation = self.mutation
+        if (
+            mutation.kind in {"prepare_detail_side", "prepare_detail_none"}
+            and self.function == "check_prepare_receipt"
+        ):
+            parent, field = mutation.target.split(".")
+            for key, value in zip(node.keys, node.values):
+                if (
+                    isinstance(key, ast.Constant)
+                    and key.value == parent
+                    and isinstance(value, ast.Dict)
+                ):
+                    for index, child in enumerate(value.keys):
+                        if isinstance(child, ast.Constant) and child.value == field:
+                            expressions = {
+                                "run.observed": "prepared['run']",
+                                "connect_id.observed": "prepared['connect_id']",
+                                "presence.observed": "sorted(required)",
+                                "connect_presence.observed": "True",
+                            }
+                            value.values[index] = (
+                                ast.Constant(None)
+                                if mutation.kind == "prepare_detail_none"
+                                else ast.parse(
+                                    expressions[mutation.target], mode="eval"
+                                ).body
+                            )
+                            self.changed += 1
+        if (
+            mutation.kind
+            in {"custody_diff_side", "custody_diff_none", "custody_added_protected"}
+            and self.function == "environment_diff"
+        ):
+            section, _, field = mutation.target.partition(".")
+            for key, value in zip(node.keys, node.values):
+                if (
+                    isinstance(key, ast.Constant)
+                    and key.value == section
+                    and isinstance(value, ast.DictComp)
+                ):
+                    if mutation.kind == "custody_added_protected":
+                        value.generators[0].ifs.append(
+                            ast.parse("key.startswith(protected)", mode="eval").body
+                        )
+                        self.changed += 1
+                    elif not field:
+                        value.value = ast.Constant(None)
+                        self.changed += 1
+                    elif isinstance(value.value, ast.Dict):
+                        for index, child in enumerate(value.value.keys):
+                            if isinstance(child, ast.Constant) and child.value == field:
+                                value.value.values[index] = (
+                                    ast.Constant(None)
+                                    if mutation.kind == "custody_diff_none"
+                                    else ast.parse(
+                                        "prepared['values'][key]", mode="eval"
+                                    ).body
+                                )
+                                self.changed += 1
         if (
             self.mutation.kind == "drop_environment"
             and self.function == self.mutation.target
@@ -664,6 +845,20 @@ class Mutator(ast.NodeTransformer):
         return self.generic_visit(node)
 
     def visit_Call(self, node: ast.Call) -> ast.AST:
+        if (
+            self.mutation.kind == "prepare_snapshot_optional"
+            and self.function == "check_prepare_receipt"
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "require"
+            and len(node.args) > 1
+            and isinstance(node.args[1], ast.Constant)
+            and node.args[1].value == "MAT_PREPARE_PRESENT"
+        ):
+            node.args[0] = ast.parse(
+                "isinstance(prepared, dict) and {'run','connect_id','prepare_time_ns','environment_after_setup'} <= prepared.keys()",
+                mode="eval",
+            ).body
+            self.changed += 1
         mutation = self.mutation
         if (
             mutation.kind == "root_autodirectory"
@@ -883,7 +1078,9 @@ def run(output: Path, selected: set[str] | None = None) -> dict[str, Any]:
                 )
             )
             changed = transformer.visit(ast.parse(mutation_source))
-            if mutation.kind == "custody_guard" and transformer.changed != 1:
+            if (
+                mutation.kind == "custody_guard" or mutation in RECORD_MUTATIONS
+            ) and transformer.changed != 1:
                 raise RuntimeError(
                     f"named custody mutation must change exactly one site: {mutation.name}, {transformer.changed}"
                 )
