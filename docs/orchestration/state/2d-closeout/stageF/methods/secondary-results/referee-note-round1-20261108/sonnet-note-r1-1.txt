@@ -1,0 +1,287 @@
+# Referee report: companion technical note on unbinned OmniFold unfolding of MINERvA medium-energy data
+
+## 1. Summary of what the note documents and claims
+
+The note is offered as the technical record behind a methods paper. It applies OmniFold with gradient-boosted trees to the public MINERvA ME FHC CC-inclusive data. The unfolding is unbinned and simultaneous in five observables (pT, p∥, Eavail, q3, W), in 2D, 3D, 4D and 5D.
+
+For the 2D result it reports a total cross section within about 1 % of the published value (ratio 1.010). It also reports a correlated shape difference with a published covariance (χ²/bin 2.27) that it cannot attribute. A four-block 2D covariance is built from systematics, a Poisson bootstrap, training seed and a run-period term added after period differences were seen. Its per-bin median is 6.41 %, against 6.85 % published.
+
+Higher-dimensional work consists of:
+- 3D and 4D central values with no uncertainty.
+- A 5D central value from "configuration (a)" that carries a 5D covariance its own metadata mark "not to be used".
+- A sixteen-cell 5D result from "configuration (e)", with median 7.86 % per-cell uncertainty, labelled illustrative.
+- Simulation-calibrated joint tests of five generator predictions, all ten of which reject.
+- A preliminary extended-fiducial central value.
+
+Most of the note is validation and limitation bookkeeping. Coverage is not validated at any dimensionality. Fake-data bias exceeds the pre-set criteria at two truths. The estimator shows regularization bias towards the prior. The result changes at the 2.6σ level under rounding-level input changes, and it differs from a binned IBU. The note repeatedly says its central comparisons are descriptive, not tests.
+
+## 2. Recommendation: major revision
+
+The note is unusually candid about what failed. That is its main strength as a record. Nevertheless it cannot yet be cited as the complete technical record, for four reasons.
+
+- **Internal contradictions.** There are material contradictions in numbers and statements (Section 3). The most serious is a headline physics statement in the executive summary that conflicts with the body.
+- **Unresolved status.** Several items remain provisional or unresolved:
+  - a covariance used while flagged "not to be used";
+  - a protocol "implemented but not yet run";
+  - unfilled placeholders ("[snapshot identifier pending deposit]");
+  - an undeposited package.
+- **Results stated only by pointer.** Several results and decisions appear only as references to an internal records document (Ref. [37]), a "specification" [52], and an unseen "companion journal article".
+- **Claim strength.** Some executive-summary claims are stronger than the evidence in the body.
+
+None of this requires new physics. It requires reconciliation, a clear statement of what a reader may cite, and relocation of key results into the note.
+
+## 3. Accuracy: inconsistencies and statements that look wrong
+
+1. **Tune v1 in the quasielastic–Δ dip.**
+   - Executive summary: "All four truth-level generators, GENIE, MINERvA Tune, NuWro and GiBUU, under-predict the unfolded central value in the quasielastic–∆ dip (0.1 ≤ Eavail < 0.4 GeV)". §7.6 repeats this ("Data lie above all four across the quasielastic–∆ dip").
+   - §7.8: the Eavail-marginal "data/Tune v1 ratio is 1.21 in the lowest bin, dips to 1.01 across the quasielastic–∆ region". Fig. 23 shows cells down to 0.66, so Tune v1 over-predicts there.
+   - Data/Tune ≈ 1.01 in the dip cannot be reconciled with "Tune v1 under-predicts in the dip". It also undercuts the framing in §7.7 and §8, where the excess is localized at high Eavail relative to Tune v1.
+
+2. **Size of the Tune v1 normalization deficit.**
+   - §6.5: "under-predicts the total cross section by ∼ 9 % (σtune/σdata = 0.91)".
+   - §7.6: Tune v1 2.71 vs data 3.07 × 10⁻³⁸, a ratio of 0.883, and "All four under-predict … by 10 % to 28 %".
+   - §7.8: integrated data/Tune v1 = 1.13 (0.885).
+   - §2.5: reco-level excess ∼12 %.
+   - The §6.5 figure disagrees with §§7.6 and 7.8.
+
+3. **Where the Tune v1 deficit lies in pT.**
+   - §2.5: the data/MC ratio "rises with pT, from 0.88 in the lowest bin to ∼ 1.2 above 1 GeV/c".
+   - §6.5: "the deficit is concentrated in the low-pT peak".
+   - Fig. 14 caption: ratios are "below [unity] at the lowest pT".
+   - These are hard to reconcile as stated.
+
+4. **The status of the five-dimensional coverage test.**
+   - Abstract: "the declared five-observable coverage test did not run to a result".
+   - §9.5 describes an end-to-end test of 1,200 pseudo-experiments that ran and "failed its futility criterion". Only the sixteen-cell coverage test "did not run to a result".
+   - Two different tests appear to be conflated in the abstract.
+   - §10.5 also describes two stopped coverage efforts at the two held-out tunes. One is "stopped before any coverage pseudo-experiment ran" and the other is a "staged coverage test … first stage stopped". It is unclear whether these are one test or two.
+
+5. **"Fresh" versus reused pseudo-experiments.**
+   - §9.3: the capacity candidate "passes the nominal background-inclusive closure on 40 fresh pseudo-experiments". App. C.8 says the same.
+   - §9.4: these experiments "are not an independent validation: their samples were used during development, and their assessment seeds … were later also used in the estimator's development".
+   - "Fresh" and "used in development" cannot both hold.
+
+6. **A covariance used while flagged unusable.**
+   - §9.6: the CV-centered covariance "does not meet the acceptance criteria of its specification, and its metadata mark it as not passing and as not to be used. … This note nevertheless uses this covariance".
+   - It is relied on in:
+     - §8.4: seed shifts are "a small fraction of the projected uncertainties".
+     - §9.2: bias in units of "total uncertainty in the configuration-(a) covariance".
+     - Table 5 and §9.3: "within the configuration-(a) total uncertainty in 20 of 42 cells".
+     - §5.1: "regularization bias outside every uncertainty quoted".
+   - App. G.2 item 4 marks this covariance "✓" as a fixed identity for release.
+   - Using it as a yardstick while declaring it invalid is internally inconsistent.
+
+7. **Executive-summary marginalization claim versus the body.**
+   - Executive summary: "the 4D and 5D marginal-normalization checks against the lower-dimensional result pass to ≈1–2 %".
+   - §8.1 gives 5D/4D total = 1.0011 (0.11 %) and per-axis median differences of 0.3 %–1.5 %.
+   - §7.8 gives no number at all for the 4D→3D check, only that the marginalization "reproduces the 3D Eavail spectrum".
+   - "Pass" has no stated threshold, and no number supports the "1–2 %" figure for 4D.
+
+8. **Count of bands in the cross-covariance.** §10.2 says "34 of the 38 systematic bands" are paired, so four are unpaired. It names four failing weight checks (AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency), then writes "These five enter as r S^{1/2}…".
+
+9. **A fifteen-fold claim that the numbers do not support.** §3.2: the refined subtraction reduces the purity bias "at least fifteen-fold (from 3.5 % to 4.1 % to 0.11 % to 0.24 %)". The worst-case ratio is 3.5/0.24 ≈ 14.6.
+
+10. **Learner settings "fixed a priori".**
+    - §3.2 "Hyperparameter choice": "The learner settings were fixed a priori; no hyperparameter search was performed on data".
+    - The refinement classifier of (e) and (f), used for the quoted 2D result, has 400 trees and 31 leaves. It was developed after background bias was found (§9.3: "the refinement classifier underfits… candidate with raised refinement capacity").
+    - The same §3.2 admits that the choice of (f) and its adoption were made with the published distance known.
+
+11. **Two χ² values for the same quantity.** §4.5: p∥ χ² "against the earlier 2D budget is nevertheless 34.4"; later in the same section, "34.8 against the other blocks alone". The references differ, but the text presents them as one quantity.
+
+12. **Suspicious duplicate numbers that need checking.**
+    - §7.3: the 3D marginal agrees with the 2D total to "0.141 %". §10.2: "QA's [quadrant difference] is +0.141 %". These are asserted to be different quantities.
+    - §4.6: Cmodel median fractional SD "3.71 %", identical to the flux band median of 3.71 % (§4.1, §6.3).
+    - §11.9: ratios r_c minimum/median 0.923/0.963 are identical for NuWro (109 cells) and GiBUU (72 cells).
+    - These could be coincidences or transcription errors. Please verify against source.
+
+13. **Closures and cross-checks do not cover the configuration of the quoted 3D/4D values.**
+    - 3D and 4D central values are quoted from configuration (e) (Table 9).
+    - The 3D closure, 4D marginalization (Fig. 23), classifier-family check (Fig. 18) and Fig. 17 use configuration (a).
+    - §7.4 says the result "does not extend to (e)".
+    - §3.2 states "Results from different configurations are not combined", yet §8 (introduction), §7.3, §7.8 and §10.2 set (a), (e) and (f) side by side.
+
+14. **Matched-projection statement.**
+    - Executive summary: "matched coarse projections reject as well".
+    - Table 29: GENIE 2.12.10 is not rejected in (pT, p∥) (p = 0.48 total, 0.63 shape).
+    - §11.10 and §13: the tests "recover established discrepancies". The published 2D comparison is said to disfavour the same generator families, yet GENIE CV is not rejected in muon kinematics.
+
+15. **Hadronic-fraction/target numbers and "J" definitions.**
+    - §9.4 and Table 12 call J "109 supported fine joint cells". §11.1 describes the same 109 cells as a "coarse 3⁵ grid". Please reconcile the "fine/coarse" terminology.
+
+16. **Related counts to reconcile.**
+    - §7.8: "4830 populated" 4D bins. B.1: "4825-bin 5D→4D projection". Different objects may be meant, but they are not distinguished.
+    - §5.3: ndf = 204 at one tune and 205 at the other, unexplained.
+    - §10.1: 27 supported boxes, "12 predefined steps" of merging, and 16 resulting cells. The arithmetic is not evident, and the role of the one absorbed unsupported box is unclear.
+    - §8.2: "0.15 % have no real solution" (truth W) versus a negative-W² fraction of "4.9 × 10⁻⁵" excluded from the analysis. Both are stated, with different definitions that are not reconciled.
+
+17. **Seed dependence of the central value versus the training-seed block.** §3.2: seed 1 versus seed 42 per-bin median 0.18 % (maximum 1.79 %), and against seeds 1–10 "RMS standardized difference 1.28, maximum 4.25". §4.3: the training-seed block has a median fractional SD of 0.048 % and is "the smallest block". The note's own numbers say a single-seed central value moves by several times that block, yet the block is described as covering "ML noise".
+
+18. **Iteration stability.**
+    - §3.2 justifies n = 5 empirically: "total cross section agrees to within 0.026 % between five and ten iterations".
+    - §5.4 gives "the per-bin shape differs by 1.54 % RMS", which is larger than the bootstrap median per-bin uncertainty (0.676 %).
+    - §9.4 shows in 5D that the iteration dependence is large.
+    - The total alone is not an adequate justification.
+
+19. **Check of the "standard magnitude" statement in §7.7.** "Closing the integrated deficit requires 2p2h at ≈ 45 % of the QE rate … This is the standard magnitude of the empirical and Valencia MEC models". The same section gives f_MEC = 2.87 % of the CC total and QE = 11 % of the unweighted sample, which is not obviously consistent with 45 % of QE. A source or calculation is needed.
+
+## 4. Completeness as a citable record
+
+1. **No result carries a validated interval.** Section 4.6 and the executive summary say this. A reader needs one explicit table stating, per product (2D, 3D, 4D, 5D(a), 16-cell, extended fiducial), what may be cited and for what. Examples would be "central value only", "descriptive comparison only", or "intervals with unvalidated coverage".
+
+2. **The 5D (a) central value has no usable covariance.** §9.6 says the covariance fails its criteria and is not to be used. The note should say what a reader may cite from the (a) 5D value and its uncertainty. At present the answer appears to be "nothing quantitative".
+
+3. **Fake-data bias at failing truths is not quantified in physical units.** Table 18 gives χ², p and flagged cells. For the GiBUU hybrid (p = 5.3 × 10⁻²⁸) and the q3 tilt (p = 9.1 × 10⁻⁶) the per-cell bias in percent, relative to the reported σ, should be tabulated. Without it the reader cannot judge how much the output is shifted.
+
+4. **q3 truth used in the abstract's failing study versus a q3 reweighting that "does not implement the intended change".**
+   - The Fig. 36 caption says the third truth, "a change of the q3 dependence at fixed (Eavail, W), is omitted because its reweighting does not implement the intended change".
+   - A q3 stress is used in §9.2, §9.4 and §10.5 (the "synthetic q3 tilt"), and one of the abstract's two failing studies is the "synthetic momentum-transfer tilt".
+   - Whether the §10.5 tilt is correctly implemented must be stated.
+
+5. **Quantification of the nonlinearity finding is missing.**
+   - The executive summary names "a methodological finding": that sums of single-source matrices omit "nonlinear cross-source response terms". It never gives a magnitude for 2D.
+   - §4.5 describes the procedure. In §9.6, Eq. (5) uses the inflation g_i, but no summary of g is given and one variant's TrC is "lower by 7.13 %".
+   - Report the measured effect (for example, the unified-throw to block-sum trace ratio) in 2D and 5D, or state that it was not measured.
+
+6. **Tests described whose outcome is absent or pending.**
+   - App. D: the reconstruction-only response-mismatch closure "has been implemented but not yet run: no output of it has been produced and no pass threshold has been set". §8.4 and the executive-summary narrative lean on its eventual result.
+   - §5.2: a held-out-simulation re-test of the statistical band "has not been run". §4.2: "no design for one has been registered in advance".
+   - §10.5: no coverage result for the sixteen cells (892 of 900 declared draws tripped the fail-closed rule).
+   - §10.3: the "reconstruction-information test … ended incomplete, neither passing nor stopping".
+   - The seed sensitivity of the (Eavail, W) excess shares "has not been measured separately" (§8.4).
+
+7. **Unresolved items in the 2D covariance.**
+   - Of 187 universes, "seven … reproduced"; the others "accepted by inference" (§4.4).
+   - NormDISCC is identically zero and "we have not been able to confirm is intended" (§4.6).
+   - The POT-counting argument has two steps "inferred, not verified".
+   - The universe × retraining numbers "cannot be recomputed from the saved covariance products" (§4.6).
+   - The flux-band difference from the published (3.71 % vs 4.01 %) has "the FHC-only constraint file … leading, unconfirmed hypothesis" (§6.3).
+   - The statistical block is 0.407 of the published statistical block in trace. The note gives three untested explanations (A.4) and says the split-bootstrap diagnostic "has not been repeated for the quoted statistical block".
+   - Taken together these are weakly bounded.
+
+8. **The run-period block is poorly determined.** The 68 % interval on its true-to-estimated σ ratio is 0.73–2.56 (§10.4), the 2D block is rank 2 from three groups, and the cause of the period differences is unknown. The total-uncertainty comparison with the publication should be shown with and without it. Without it, the 2D per-bin median is 5.98 %, which is 13 % below the published 6.85 %.
+
+9. **Background normalization.** §2.3: "neither prediction carries an uncertainty". The 2D-level treatment of background normalization and its uncertainty should be stated explicitly. The composition of the "∼ 3 %" purity correction (§3.1, C.4) should also be given. It is much larger than the 0.35 % genuine background (§2.3), so out-of-phase-space signal presumably dominates.
+
+10. **Own-covariance χ² versus the publication.** §6.2 says χ² "is computed only in the covariance's well-constrained subspace" but gives no number. A.4 gives χ²/ndf = 22.29 (direct inverse of systematic plus bootstrap against the published result) versus 2.27 with the published covariance. The note should state the own-covariance χ² and say what it means for the claim that the uncertainty budget is "comparable" to the published one.
+
+11. **Dependence of the sixteen-cell generator χ² on correlation assumptions.**
+    - Table 22: shrinking only flux correlations by 10 % lowers χ² by 23–38 %.
+    - With four groups' correlations removed, GENIE CV falls from 107 to ≈ 42.
+    - The flux block uses 100 PPFX universes with an effective number of 19, inverted in 16 dimensions with "no finite-ensemble correction" (§10.3).
+    - χ² values in Table 20 should not appear in the executive summary without this sensitivity. A statement of the effective degrees of freedom of the flux block should be added.
+
+12. **Joint tests.**
+    - Fine-grid convergence "has not shown convergence" (last refinement 0.50–0.86 of the whole change; condition (i)).
+    - No hadronic-response nuisance band is in the declared nuisance model (§11.8). The ±4 % study moves observed statistics by up to ≈ 11 % and the null is not regenerated.
+    - Compare that 11 % with the margin of the NuWro total test (observed 7427 against a null median 6324, ratio 1.17) and of the GiBUU total test (2867 against 1791).
+    - "No rejection rate has been measured for null pseudo-data processed like the data" (§11.3).
+    - A1 and A2 (including independent loss of pseudo-experiments) are unproven.
+    - Calibration is "conditional on … data-derived inputs" (§11.2).
+    - The CH-target correction is not among the six stated conditions, yet it makes the NuWro total rejection "not robust" (§11.9, and not rejected at κ = 3).
+    - A seventh condition (target) should be added to the list in §11.4 and to the executive summary.
+
+13. **Extended-fiducial study.**
+    - There is no covariance, and the central value uses purity subtraction, not the "designated" treatment.
+    - The three-prior envelope depends on a NuWro-shaped prior built from the flux-mis-sampled sample, "not rebuilt after the flux repair" (§12.2).
+    - The 28 % of the rate in tier 2 has only a prior-spread envelope, with a total-cross-section spread of ±1.5 %. The note should state what total uncertainty applies to σext = 4.502 × 10⁻³⁸.
+
+14. **Ascencio et al. comparison (§7.8).**
+    - Our central values are 9.2 % and 6.0 % above. The note says the comparison "neither refutes nor validates".
+    - Ascencio's covariance is in hand, yet no uncertainty on the difference is given. At minimum, give Ascencio's own uncertainty on the two super-cells.
+
+15. **Reproducibility.**
+    - Quoted central values are reproducible only "within this spread" (≈ 0.8 median, 2.6 maximum statistical SD under rounding perturbations, §9.3). A rerun tolerance for each product should be stated.
+    - App. G: the package is "not deposited", "[repository]" and "[snapshot identifier pending deposit]" are unfilled, the 2D uncertainty and coverage figures are not reproduced by it, and the 489 simulation AnaTuples have no preservation copy.
+    - The release schema marks the five-axis covariance as a fixed identity even though §9.6 says it fails its criteria.
+
+## 5. Self-containment
+
+Acceptable for a technical note (pointer to supporting detail):
+- code names and paths in App. H;
+- provenance entries such as run-log checksums and job IDs;
+- upstream references for MAT, PPFX, GENIE and the published measurement's ancillary files.
+
+Not acceptable (a result, definition or decision stated only by reference):
+1. The "records document" Ref. [37] is cited by entry number for results the reader needs:
+   - R1.4: "the estimator-seed magnitude criterion … has not been computed for this covariance".
+   - R1.14: the exclusions and numerical verification of the exact binned diagnostic, a central argument of §9.3.
+   - R1.1, R1.2, R1.3, R1.12 and R1.16 as well.
+   - Some values are cited as "superseded values" or "retired material" (§4.7: 0.28 % and 0.18 % from "superseded values"; A.4 split bootstrap; A.3.2 the 1.47 value). A superseded record cannot support a quoted number.
+2. Ref. [52] "gives the specification and the decisions" of the joint tests. The note should be self-sufficient on every input to a decision. The stopping rule, shrinkage, metric, variants and priors are partly there, but several elements ("a condition set in July 2026", "fixed on 2026-09-18") are recorded only by date.
+3. The "companion journal article" is invoked for definitions and outputs: Table 10 "as used in the companion journal article", §8.2 "The companion journal article distinguishes the five classifier inputs…", §9.3 "the paper's recovery figure", Table 20 "the paper prints these values", and "figures of the earlier article version" (App. G). The reader does not have it.
+4. The "[42]" follow-up assessment and saved products of the earlier 2D budget are the sole evidence for the May-sweep defects in §4.6.
+5. Private communications are used where a decision depends on them:
+   - the collaboration's pseudo-inverse convention;
+   - the FrInel_pi degeneracy;
+   - the McFarland suggestion in App. D.
+6. App. G placeholders and the unreleased RC7 package make any "reproduce" statement uncheckable.
+7. The App. G item "an earlier version of the package, RC1, was replayed … by a separate AI agent session" is not an appropriate verification statement without a description of the check.
+
+## 6. Support for claims
+
+1. **Abstract and executive summary: the 1 % integral agreement.** The note itself says the choice of LightGBM, the background treatment and the adoption of the rebuilt result were made with the published distance known (§3.2). That caveat appears in the executive summary but not in the abstract. The abstract states the agreement without it.
+
+2. **"Comparable" uncertainty budget (§6.3, Table 8).** The 6.41 % per-bin median depends on a post hoc run-period block (5.98 % without it, against 6.85 % published). The bootstrap block is 0.407 of the published statistical block, for reasons not identified. The evidence supports "a different budget with a different composition, not independently validated".
+
+3. **The (Eavail, W) localization of the excess (executive summary, §8.4).** "Most of the positive difference from the Tune v1 prior lies at Eavail ≥ 0.8 GeV, much of it at W ≥ 1.8 GeV" rests on:
+   - the configuration-(a) 5D value, whose purity bias is largest in the highest-W column (3.5 %–4.1 % low);
+   - an estimator with the largest regularization bias exactly there (residuals up to 74 %);
+   - shares whose seed sensitivity is unmeasured;
+   - a response-mismatch closure that "has not yet produced a result".
+   The evidence supports "the central-value map shows a larger data–Tune difference at high Eavail and W, conditional on the nominal response and an estimator known to pull towards the prior".
+
+4. **Generator χ² values (executive summary).**
+   - "χ² between 107 and 229 for 16 degrees of freedom" and "GiBUU … χ² = 48 on those cells" are given without the sensitivity.
+   - GiBUU's shift is 0.890 of the trace of Cmodel, and GiBUU's χ² is 166.83 with Cmodel removed. The covariance for the GiBUU comparison is largely built from GiBUU itself.
+   - Shrinking flux correlations changes χ² by 23–38 %.
+   - The evidence supports "descriptive distances under an assumed correlation structure".
+
+5. **"Calibrated joint tests … reject all ten" (executive summary, §11).**
+   - The note establishes rejection within a simulated model with five documented gaps: sub-grid convergence, hadronic response, target (CH versus carbon), data-conditioning of nuisance inputs, and no rate measured on data-like null pseudo-data.
+   - "Calibrated" is stronger than the evidence. It supports "calibrated within the implemented simulation model".
+   - The NuWro total rejection does not survive the target correction at its Holm position.
+
+6. **"The generator tests are an application that illustrates calibrated inference with a biased estimator."** The matched-projection result (§11.7) shows no added discrimination over coarse projections, and §11.10 says the tests recover known disagreements. That supports a methodological illustration only, not a measurement of discriminating power.
+
+7. **"3D, 4D and 5D unfolds are reported as central values" (executive summary).**
+   - The 5D (a) value has no valid covariance, regularization bias outside any quoted uncertainty (§5.1, §9.3), and a purity bias that was subsequently found and removed in the sixteen-cell product.
+   - The 3D and 4D values have no uncertainty and no closure for their own configuration.
+   - They support "illustrative central values with unquantified uncertainty".
+
+8. **"The 3D marginal … agrees to 0.141 % in total" (executive summary).** Only the normalization is reported. The shape scatter is "∼ 3.7 %" and χ²/ndf = 4.52 against the publication, worse than the 2D result's 2.27 (§7.3). The executive summary should give both.
+
+9. **The 1.1 % shape and "agreement" language for validation.**
+   - Several "pass" statements have no pre-set threshold: the 3D closure ("no predeclared threshold"), the 4D marginal and the 5D W-bump (0.180 against 0.20, "a narrow pass").
+   - The evidence supports "recovery of the injected feature in one projection".
+
+10. **"Pion-FSI variations cannot account for the excess" (§7.7).** Only two dials were varied. The note correctly limits the conclusion to these dials, but the executive-summary phrasing about the "established low-recoil discrepancy" should keep that limit.
+
+11. **"Run-period block … no evidence of overlap" (§10.4).** The audit "did not fire" its stopping condition, but the note also says a detector-response pair "reproduces one period's offset pattern within noise". The evidence supports "overlap is neither established nor excluded".
+
+## 7. Minor issues and presentation
+
+1. **Length and organization.** About 130 pages. The abstract is a single 17-line list of negative findings. The executive summary is two dense pages of conditional clauses and cross-references. Consider a one-paragraph abstract, and a table of "claim / scope / status" for each product.
+2. **Repeated limitation lists.** The same limitations appear in the introduction, executive summary, §13 and the end of §10. State them once and cross-refer.
+3. **Provenance narrative reads like a lab notebook.** Examples: "decided during production while the monitoring output showed observed claim p values", dates, "the design's reviewers had seen descriptive per-cell residuals". Some of this belongs in a provenance appendix with a consolidated timeline of pre-declared versus post hoc decisions.
+4. **Configuration letters (a)–(f), R, J, H2, EW, RD1–3, D1/W1–3, P1–P3.** There are too many labels, and Table 2 and Table 9 are visibly broken in extraction. Provide a single glossary table.
+5. **Table 3 has no column headers** ("Increase in total σ" and "Block's share of total variance" run together).
+6. **Table 2, Table 6 and Table 18 layouts** are hard to follow. The pairing of "p" and "cells" columns is ambiguous in Table 18.
+7. **"Purity" and "stability" terminology.** Fig. 3 calls P(reco bin = truth bin) "diagonal purity". §10.1 defines "reconstruction stability" and uses "purity" with a threshold of τ = 0.1. The usage should be standard and consistent.
+8. **Exponents of statistics.** §3.2 states standard errors both on σ (4.1 %) and on variance (71 %) with the same Gaussian formula family. Specify which each is.
+9. **The A.1 pseudo-inverse cutoff (1e-15 σmax) versus A.4 (1e-10 λmax)** should be stated as different conventions for different χ² values, as they currently read as an inconsistency.
+10. **Eq. (3)** is printed with missing radicals in extraction. Please check that W has the square root in the typeset version.
+11. **Unusual phrases to remove.** "a separate AI agent session (Opus 5.5)", "private communication from the collaboration, 2026", "Kevin McFarland suggested…" in the validation protocol.
+12. **Figures.** The corner plot, migration matrices and eigenmode figures are dense. Fig. 15 and Table 35 are tangential to a technical record. Several "descriptive" figures lack uncertainty bars by design (Figs. 19–23), which should be flagged in captions rather than only in text.
+13. **Mixed 2D and N-D degrees of freedom** (ndf = 205 for 2D, retained rank for N-D, B.1). The note makes this point well and should refer to it at every χ² that is quoted.
+14. **Numbers appearing twice with slightly different rounding** (0.13 % versus 0.14 %, 0.9 %, 6.41 % versus 6.414 %) should use one convention.
+
+## 8. Scores
+
+SCORE: 4/10
+
+**What the note establishes.** As I read it, the note establishes a reproducible 2D unbinned OmniFold central value that agrees with the published integral to 1 % with an unexplained correlated shape difference, together with a catalogue of validation failures and limitations. It also provides illustrative 3D/4D/5D and sixteen-cell outputs and a simulation-calibrated test framework, none of which has validated intervals.
+
+**Three changes that would most improve it.**
+1. Add a "what may be cited" table per product, resolve the contradictions in Section 3 (especially the Tune v1 dip statement and the §6.5 deficit), and reconcile the abstract and executive summary with the body.
+2. Move every result a reader must rely on out of Ref. [37], Ref. [52] and the companion article and into the note. Remove superseded values and placeholders, and deposit the package or state plainly that no deposit exists.
+3. Resolve or explicitly retire the open items: the not-to-be-used 5D covariance, the unrun App. D closure, the stopped sixteen-cell coverage test, and the unquantified nonlinearity finding. Quantify the per-cell bias at the failing fake-data truths.
