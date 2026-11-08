@@ -1,0 +1,42 @@
+% ====================================================================
+% Supplemental Material of the methods paper (main_paper.tex). Round-5 draft, 2026-11-08: Joseph asked for referee
+% rounds on the paper, the Supplement and the note (the round-4 referees' self-containment item, referee-methods-
+% round4-20261106/README.md item 5). Build: latexmk -pdf main_note.tex, then latexmk -pdf main_supplement.tex.
+% The Supplement takes the definitions the paper needs from the analysis note's own text
+% (supplemental_body.tex names each block's source); pointers it keeps into the note resolve through xr-hyper
+% from main_note.aux with the prefix N-, as the paper's do. No wording is approved: draft for the referee reads
+% and Joseph.
+% ====================================================================
+\documentclass[11pt]{article}
+\usepackage{xr-hyper}
+\input{preamble}
+\NOTEtrue
+\input{values}
+\input{values_inference}
+\input{values_fived16}
+\addbibresource{publication.bib}
+\externaldocument[N-]{main_note}
+\newcommand{\pubhold}[1]{\textcolor{red}{[HOLD: #1]}}
+
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\title{Supplemental Material for ``Five-observable unbinned unfolding of MINERvA open data with OmniFold: a methods and
+validation study''}
+\author{Joseph Bailey and Benjamin Nachman}
+\date{}
+
+\begin{document}
+\maketitle
+
+This Supplement gives the definitions that the paper's results depend on: the event selection, the observables,
+the reporting cells and their machine-readable files, the estimators, the reported covariances, the joint tests and
+the comparisons with binned unfolding, and the designs of the coverage and fake-data tests. Its text is taken from
+the companion analysis note~\cite{AnalysisNote2026}, which gives the full record; where a detail stays in the note,
+the Supplement points to it by section.
+
+\input{supplemental_body}
+
+\printbibliography
+\end{document}
