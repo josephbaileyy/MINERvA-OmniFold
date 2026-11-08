@@ -1,0 +1,4 @@
+MOVE: view before the move sha256 ea71db558c44231a683a5b7b0a13a11f7850ade8e91e8d5cbc14e11b2f467307
+MOVE: committed view sha256 c4f52563cd40a345c9d764b6cb7df84f6532a4bf5dd660c75e98bae5ee7a3a6d
+MOVE: module-paths.tsv sha256 1b7f7df9890915dc7d05d6e3ecfe5bbcd599735ee8f9fa12b3775a6cb7b9d0a9 rows 320
+MOVE: rebuilt from the committed view and the TSV equals the input byte for byte: True

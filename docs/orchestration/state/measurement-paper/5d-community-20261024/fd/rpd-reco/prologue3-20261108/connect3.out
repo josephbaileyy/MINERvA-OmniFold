@@ -1,0 +1,97 @@
+remote sha256 03d4ab1ea2814fa5f0c1341a0976a2aa8c3e54c84dba8804c7474c698955e0a5
+node login04 2026-11-08T04:47:26Z
+connect script sha256 03d4ab1ea2814fa5f0c1341a0976a2aa8c3e54c84dba8804c7474c698955e0a5
+== 1. COV2D fence (allowed names: rs1_* and ens1_*; anything else refuses)
+squeue rc=0; rows:
+
+-- end rows
+refusing rows: []
+FENCE: clear
+== 2. fresh clone at 2ed446b4ba78269565ee1104462fc9e15b63afba
+HEAD 2ed446b4ba78269565ee1104462fc9e15b63afba; porcelain lines 0
+blob b2872a6c0632f0ceb258f4c1cfbf4b23cbc51319 sha256 c375e94a47b859ee57be9126ccc2aabb544374ac0ed528a095352164175d6dc5 nd-unfolding/fd_rpd_reco_prologue_connect.sh
+blob 8f8bccf87091428cb859b4e5d59257facb6e0c1f sha256 ce57bb1d759610940282788969686a15c9ee3d10101c0bb1dff67d84b80e6a1a nd-unfolding/fd_rpd_reco_prologue.py
+blob 4a703a8c5d49a7f8cc48c57839fb87c5778bcfd7 sha256 b28f158e7a24222eba9382d98fae88800b9728c65f88d3742bef1d04b6bce7a3 nd-unfolding/fd_rpd_reco.py
+blob cf75b1c04a69e359c4b7179270c22ff14d75fc44 sha256 217f1649b5e0a43a78a5b26d35f2db55e63a521618932fb815faa016b5ce1962 nd-unfolding/fd_rpd_reco_custody.py
+blob 7c2e018f1169a9be0c5642daab991c664acbefcf sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70 nd-unfolding/fd_rpd_inputs.py
+== 3. the policy config and the redaction scripts
+sha256 6c60de0b6077c593b3e221c6b39706633e09ae24eda54e65adc3fb21445a9bea (expected 6c60de0b6077c593b3e221c6b39706633e09ae24eda54e65adc3fb21445a9bea) /dev/shm/limres-rpd-prologue3-20261108/policy-config.json
+sha256 5be4650d281d4eb896e94ea74ac74172cbe5beb6df56437351b701d5b108c6c8 (expected 5be4650d281d4eb896e94ea74ac74172cbe5beb6df56437351b701d5b108c6c8) /dev/shm/limres-rpd-prologue3-20261108/tools/redact_prepare.py
+sha256 df244a49b46b13797b32f583cbed6ca48cf9df03f4c4c8a9e16e1ccf9526a8ad (expected df244a49b46b13797b32f583cbed6ca48cf9df03f4c4c8a9e16e1ccf9526a8ad) /dev/shm/limres-rpd-prologue3-20261108/tools/check_redaction.py
+== 4. strace probe
+strace probe rc=0 lines 30
+== 5. the prologue: bash fd_rpd_reco_prologue_connect.sh CHECKOUT CONFIG SHA RUN MAT_PYTHON
+{"mat_setup_scripts": 6, "mismatches": 0}
+prologue wrapper rc=4
+== run directory (sha256 of every file, the raw record included)
+600 11153 policy-config.json
+600 162122 prologue-prepare.json
+600 344904 prologue.strace
+600 1924 prologue-worker.STOP.json
+600 40016 trace-policy.json
+600 2572 worker.stderr.txt
+600 0 worker.stdout.txt
+sha256 6c60de0b6077c593b3e221c6b39706633e09ae24eda54e65adc3fb21445a9bea run/policy-config.json
+sha256 337a88c893f0e1b24d90db8d940133d172f22a1d67f0aa7f8cc5f5044c73b5c8 run/prologue-prepare.json
+sha256 7d6152c7d4d868e45ceec3a8959392b7fc12dc99b1a1e2df0a629bf1b02b26ec run/prologue.strace
+sha256 ba3e8c6de222e288352a7ff2817bc1601278ab5c865be957acce603f1efdca87 run/prologue-worker.STOP.json
+sha256 6e7fc8e15be4e3a13a52411c976b6918ccedf2b9b6188af6da78e877843d9acd run/trace-policy.json
+sha256 88727842c5c56beb0e01c66cc80b5ece83e4f1a20d2fe8f510007974e81ae5b7 run/worker.stderr.txt
+sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 run/worker.stdout.txt
+== 6. redaction
+worker STOP record: /dev/shm/limres-rpd-prologue3-20261108/run/prologue-worker.STOP.json
+REDACT: source sha256 337a88c893f0e1b24d90db8d940133d172f22a1d67f0aa7f8cc5f5044c73b5c8
+REDACT: view sha256 ea71db558c44231a683a5b7b0a13a11f7850ade8e91e8d5cbc14e11b2f467307
+REDACT: keys by comparison {"added": 1, "changed": 2, "equal": 355, "excluded": 1}
+redact rc=0
+CHECK: raw fingerprints 358 keys, 262 distinct values
+CHECK 1 view environment_snapshot.fingerprints present: False
+CHECK 2 64-hex strings under environment_snapshot/environment_after_setup in the view: 0
+CHECK 3 prologue-prepare.view.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 strace-probe.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 trace-policy.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prologue.strace: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 worker.stderr.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 worker.stdout.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 redact.out: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prologue-worker.STOP.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 policy-config.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 4 other 64-hex strings in the view (record only): 21
+  /instrument_files[0]/sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+  /instrument_files[1]/sha256 40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598
+  /instrument_files[2]/sha256 e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6
+  /instrument_files[3]/sha256 733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e
+  /instrument_files[4]/sha256 c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac
+  /instrument_files[5]/sha256 bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9
+  /instrument_files[6]/sha256 5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48
+  /instrument_files[7]/sha256 bd66930866410c2302a29b3c1bb70a45ea5de489e025852e28455bc5090d38aa
+  /instrument_files[8]/sha256 9eedbfd94a452f3bb9b267ca890b52d7a5567c0da86059e2b1fb90aac480550a
+  /mat_environment/instrument_sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70
+  /mat_environment/mat_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MATDict.rootmap bd66930866410c2302a29b3c1bb70a45ea5de489e025852e28455bc5090d38aa
+  /mat_environment/mat_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MAT_rdict.pcm 9eedbfd94a452f3bb9b267ca890b52d7a5567c0da86059e2b1fb90aac480550a
+  /mat_environment/mat_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so 5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh 733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh 40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598
+  /redaction/source_sha256 337a88c893f0e1b24d90db8d940133d172f22a1d67f0aa7f8cc5f5044c73b5c8
+  /trace_policy_sha256 6e7fc8e15be4e3a13a52411c976b6918ccedf2b9b6188af6da78e877843d9acd
+REDACTION CHECK: PASS
+check rc=0
+== 7. files sent (explicit list)
+sha256 49967a54ddbb8bf4d219248c075f04673379bb44c6df84ab7ff9593f53e8c3a6 strace-probe.txt
+sha256 6e7fc8e15be4e3a13a52411c976b6918ccedf2b9b6188af6da78e877843d9acd run/trace-policy.json
+sha256 7d6152c7d4d868e45ceec3a8959392b7fc12dc99b1a1e2df0a629bf1b02b26ec run/prologue.strace
+sha256 88727842c5c56beb0e01c66cc80b5ece83e4f1a20d2fe8f510007974e81ae5b7 run/worker.stderr.txt
+sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 run/worker.stdout.txt
+sha256 ea71db558c44231a683a5b7b0a13a11f7850ade8e91e8d5cbc14e11b2f467307 run/prologue-prepare.view.json
+sha256 0cc3dc80026bf5073aba83a70d1188914e0b0df17e5dd36f1ef44962559be6bd run/redact.out
+sha256 6823d0679aec069fdf415483b05447e4d6c330f97f1a1b3b028169fca60c9c53 run/redaction-check.txt
+sha256 ba3e8c6de222e288352a7ff2817bc1601278ab5c865be957acce603f1efdca87 run/prologue-worker.STOP.json
+== TAR BEGIN
+[base64 tar block removed from this committed copy: 10420 lines; decoded tar sha256 b697cf2586eecb43abaa575d36c363673206a956062800318ca1f5d49356547c; its nine files are committed beside this log; the full stdout sha256 is 3a5d87db94a717dcafad12f4fbb7ce30ed87be6f69445cd3b1974bacfe2e9a7e]
+== TAR END tar rc=0
+left in place for the post-merge deletion: /dev/shm/limres-rpd-prologue3-20261108 (raw record run/prologue-prepare.json)
+== rpd-prologue3 rc=4 2026-11-08T04:47:55Z
