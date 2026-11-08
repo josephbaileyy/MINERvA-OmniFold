@@ -19,7 +19,7 @@ Every item is classified under one of four mutually exclusive codes per the dire
 - **[T] Text fix:** Wording, qualification, reconciliation, structural reordering, or contextual explanation resolvable in LaTeX sources without changing numerical inputs.
 - **[R] Existing Record Number:** Requires pulling an exact verified number or macro from an existing committed record, readout JSON, or values file (`values*.tex`, `make_values_landed.py`).
 - **[A] Analysis Required:** Demands a new calculation, simulation, or compute campaign. Forwarded to the director; cannot be cured by wording.
-- **[D] Dispute:** The referee's finding is factually mistaken or contradicted by governed repository decisions and records. Documented with governing evidence.
+- **[D] Dispute / Held / Void:** The referee's finding is factually mistaken, contradicted by repository decisions, held by the director, or voided by technical defects (e.g., input truncation). Documented with governing evidence.
 
 *Rule on Gemini 2:* Gemini 2's completeness findings on the missing second half (§§9.5–13, Appendices A–H) are ruled **VOID** because its rater input was truncated at 31,717 words on the reader's side.
 
@@ -27,14 +27,14 @@ Every item is classified under one of four mutually exclusive codes per the dire
 
 ## Summary of Classifications
 
-| Source | Total Items | Class T (Text) | Class R (Record) | Class A (Analysis) | Class D (Dispute / Void) |
+| Source | Total Items | Class T (Text) | Class R (Record) | Class A (Analysis) | Class D (Dispute / Held / Void) |
 |---|---:|---:|---:|---:|---:|
-| **AUDIT.txt** (E1–E10, N1–N7, L1–L4) | 21 | 18 | 2 | 0 | 1 |
+| **AUDIT.txt** (E1–E10, N1–N6, L1–L4) | 20 | 17 | 1 | 0 | 2 |
 | **Sonnet Report 1** (S1-ACC, S1-COM) | 30 | 25 | 4 | 0 | 1 |
-| **Sonnet Report 2** (S2-ACC, S2-COM) | 39 | 34 | 2 | 0 | 3 |
-| **Gemini Report 1** (G1-ACC, G1-COM, G1-PRES) | 27 | 23 | 0 | 0 | 4 |
-| **Gemini Report 2** (G2-ACC, G2-PRES, G2-VOID) | 15 | 8 | 0 | 0 | 7 |
-| **Unique Non-Redundant Issues** | **78** | **61** | **6** | **0** | **11** |
+| **Sonnet Report 2** (S2-ACC, S2-COM) | 15 | 14 | 1 | 0 | 0 |
+| **Gemini Report 1** (G1-ACC, G1-COM, G1-PRES) | 12 | 11 | 0 | 0 | 1 |
+| **Gemini Report 2** (G2-ACC, G2-PRES, G2-VOID) | 4 | 2 | 0 | 0 | 2 |
+| **Total Ledger Items** | **81** | **69** | **6** | **0** | **6** |
 
 *Note on Class A:* No item in Round 2 requires new compute campaigns. Under `DECISION-20261108`, the analysis note is reframed as the technical record of the methods-and-benchmark study. Algorithmic limitations, unvalidated coverage, rounding sensitivity, and unexecuted closures are primary methodological findings and benchmark deliverables to be reported transparently, not bugs to be computed away.
 
@@ -82,85 +82,87 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Target:* `docs/analysis-note/sec_5d.tex:91`.  
   *Status:* Drafted in round 1.
 
-* **AUD-E7 [T]** — **RPD-RECO reconstruction check.**  
-  *Finding:* Report the reconstruction-level run-period check (+6.10% shift).  
-  *Record:* `OUTCOME-20261106-rpd-reco-clean-run.md:112-118`.  
-  *Target:* `docs/analysis-note/sec_fived16.tex:174`.  
-  *Status:* Drafted in round 1.
+* **AUD-E7 [T]** — **OVERCLAIM: The 2D comparison called a validation.**  
+  *Finding:* Note called 2D comparison a validation (`sec_intro.tex:18`, `:30`, `sec_method.tex:152`), contradicting its own disclosure (`sec_method.tex:79`, `DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:61-63`, `DECISION-20261105-joseph-ar23-stop-external-and-765-phrases.md:86-87`).  
+  *Record:* `AUDIT.txt` row E7; `DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:61-63`.  
+  *Target:* `docs/analysis-note/sec_intro.tex:18`, `:30`, `sec_method.tex:152`.  
+  *Resolution:* Edit text to "compares ... descriptive, not a blind validation"; "a quantitative, descriptive comparison"; "reproduces the integrated cross section of".
 
-* **AUD-E8 [T]** — **1B pre-check Part 0 (interaction group unlike objects).**  
-  *Finding:* Report interaction group unlike-objects diagnosis; keep the two-cell caveat (R00, R05) and drop "at the data".  
-  *Record:* `OUTCOME-20261106-1b-precheck-interaction-unlike.md:10-25`.  
-  *Target:* `docs/analysis-note/sec_fived16.tex:248`.  
-  *Status:* Drafted in round 1.
+* **AUD-E8 [T]** — **STALE: ES: the CH correction unscoped.**  
+  *Finding:* Executive summary claimed CH correction "moves both toward the data" (`sec_execsummary.tex:15`) without scoping to joint cells.  
+  *Record:* `AUDIT.txt` row E8; `DECISION-20261101-joseph-gencmp-paper-adoption.md:96-98`.  
+  *Target:* `docs/analysis-note/sec_execsummary.tex:15`.  
+  *Resolution:* Edit to "on the joint cells; on the sixteen cells GiBUU's total chi2 rises (sec:joint5d-ch)".
 
-* **AUD-E9 [R]** — **Missing 16-cell values macros.**  
-  *Finding:* Ensure all 16-cell values, uncertainties, and χ² values are routed through `values_fived16.tex` macros.  
-  *Record:* `values_fived16.tex`, `make_values_fived16.py`.  
-  *Target:* `docs/analysis-note/sec_fived16.tex`.  
-  *Status:* Verified macros generated.
+* **AUD-E9 [R]** — **MISSING: Response-only sensitivity Joseph sent to note.**  
+  *Finding:* Response-only sensitivity from `DECISION-20261101-joseph-1b-keep-block-redesign-test.md:38-40` was missing from `sec_fived16.tex:253`.  
+  *Record:* `AUDIT.txt` row E9; `DECISION-20261101-joseph-1b-keep-block-redesign-test.md:38-40`; `FD-1B-INV-I2-REPORT.md:299`.  
+  *Target:* `docs/analysis-note/sec_fived16.tex:253`.  
+  *Resolution:* Insert text from `make_values_landed.py` routing: "a median 1.65 times ... (range 0.42--6.50 over the cells); it depends on the fine-cell grid and is not a bound".
 
-* **AUD-E10 [T]** — **Reframed 16-cell description.**  
-  *Finding:* Frame the 16-cell output as illustrative benchmark demonstrating calibrated generator tests, not for model fitting.  
-  *Record:* `DECISION-20261108-joseph-note-framing-and-estimator-dependence.md`.  
-  *Target:* `docs/analysis-note/sec_fived16.tex:1-15`.  
-  *Status:* Drafted in round 1.
+* **AUD-E10 [T]** — **MISSING: ES: the second post hoc choice.**  
+  *Finding:* Executive summary missed the second post hoc choice (the background treatment choice) after the LightGBM choice.  
+  *Record:* `AUDIT.txt` row E10; `sec_method.tex:79`, `:103`; `DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:61-63`.  
+  *Target:* `docs/analysis-note/sec_execsummary.tex:9`.  
+  *Resolution:* Add sentence ending "the comparison with the publication is therefore not an independent test of the method".
 
-### HELD in Round 1 (Operative in Round 2 under DECISION-20261108)
+### HELD and NOT DRAFTED in Round 1 (Status in Round 2)
 
 * **AUD-N1 [T]** — **Note reframed from measurement to methods-and-benchmark record.**  
-  *Finding:* Title, abstract, executive summary, `sec_fived16.tex`, and appendices must be unfrozen and reframed to the methods study.  
+  *Finding:* Title, abstract, executive summary, `sec_fived16.tex`, and appendices must be unfrozen and reframed to the methods study. Ruled by Joseph in `DECISION-20261108` (#947).  
   *Record:* `DECISION-20261108-joseph-note-framing-and-estimator-dependence.md` item 1.  
   *Target:* `docs/analysis-note/main_note.tex:73`, `sec_execsummary.tex:6`, `sec_fived16.tex:1`, `app_landscape.tex:59`, `app_statmethods.tex:5`.  
-  *Action:* Draft complete reframing in Round 2.
+  *Resolution:* Draft complete reframing in Round 2.
 
 * **AUD-N2 [T]** — **REF-G1 algorithm dependence as a stated limitation.**  
-  *Finding:* The IBU vs OmniFold 16-cell difference ($T = 194.4$ against calibrated bar 28.12) must enter as a stated limitation with no new covariance block.  
+  *Finding:* The IBU vs OmniFold 16-cell difference ($T = 194.4$ against calibrated bar 28.12) must enter as a stated limitation with no new covariance block. Ruled by Joseph in `DECISION-20261108` (#947).  
   *Record:* `DECISION-20261108-joseph-note-framing-and-estimator-dependence.md` item 3, `OUTCOME-20261106-ref-g1-r1-differ.md:40-41`.  
   *Target:* `docs/analysis-note/sec_fived16.tex`, `sec_execsummary.tex`.  
-  *Action:* Draft stated limitation text.
+  *Resolution:* Draft stated limitation text.
 
-* **AUD-N4 [T]** — **Release appendix update.**  
-  *Finding:* Align data release appendix with methods-and-benchmark schema, referencing archived measurement package.  
-  *Record:* `DECISION-20261106-joseph-methods-study-and-archive.md:57-61`.  
+* **AUD-N4 [D]** — **STALE? Release appendix update.**  
+  *Finding:* The release appendix still specifies the measurement release; archive package is not mentioned.  
+  *Record:* `AUDIT.txt` row N4; `DECISION-20261106-joseph-methods-study-and-archive.md:57-61, :64-67` ("Publication, release and contact acts stay Joseph's").  
   *Target:* `docs/analysis-note/app_release.tex:4`, `:58`.  
-  *Action:* Update text in Round 2.
+  *Resolution:* **HELD.** Held by the director (2026-11-08) and Joseph; no release schema change may be executed without explicit authorization.
 
-* **AUD-N5 [T]** — **Event-loop preservation CFS path.**  
-  *Finding:* Reference committed CFS event-loop preservation path.  
-  *Record:* `DECISION-20261101-joseph-eventloops-copy-to-cfs.md:28-34`.  
+* **AUD-N5 [D]** — **MISSING: Event-loop preservation.**  
+  *Finding:* Event-loop preservation CFS paths in `app_release.tex:50, :53`.  
+  *Record:* `AUDIT.txt` row N5; `DECISION-20261101-joseph-eventloops-copy-to-cfs.md:28-34, :38-48` has no CITABLE FOR block.  
   *Target:* `docs/analysis-note/app_release.tex:50`, `:53`.  
-  *Action:* Add path reference.
+  *Resolution:* **HELD.** Held by the director (2026-11-08); no text drafted without authorization.
 
 * **AUD-N6 [T]** — **Abstract resync.**  
-  *Finding:* Resync note abstract to match reframed paper abstract.  
+  *Finding:* Resync note abstract to match reframed paper abstract per `DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:57-59`.  
   *Record:* `DECISION-20261108-joseph-note-framing-and-estimator-dependence.md`.  
   *Target:* `docs/analysis-note/main_note.tex:73`.  
-  *Action:* Completed in commit `bd4cabea7`; verify in Round 2.
+  *Resolution:* Reconcile in Round 2 reframing.
+
+### FLAGGED in Round 1 (No Record Contradicts; For Referee Read)
 
 * **AUD-L1 [T]** — **Retract descriptive extra-dimensional localization claims.**  
   *Finding:* Descriptive central-value excesses must not be claimed as physical model localization in higher dimensions without covariance.  
   *Record:* `OUTCOME-20261107-valid-region.md:36` (`NOT CITABLE FOR localization in either direction`).  
   *Target:* `docs/analysis-note/sec_execsummary.tex:13`, `sec_3d.tex:140`, `sec_eavailw.tex:151`, `sec_joint.tex:237`.  
-  *Action:* Strip physical localization wording; qualify as exploratory central comparisons.
+  *Resolution:* Strip physical localization wording; qualify as exploratory central comparisons.
 
 * **AUD-L2 [T]** — **Tension anatomy run-period cause statement.**  
   *Finding:* Remove causal attribution for the 2D shape tension; state that run period accounts for variance only in poorly determined modes and cause remains unknown.  
   *Record:* `OUTCOME-20261107-per-period-2d-benchmark.md:18-25`.  
   *Target:* `docs/analysis-note/app_statmethods.tex:536`, `:554`, `:559`.  
-  *Action:* Reconcile with per-period outcome record.
+  *Resolution:* Reconcile with per-period outcome record.
 
 * **AUD-L3 [T]** — **5D estimator validation claim qualification.**  
   *Finding:* `sec_validation.tex:39` claims "The five-dimensional estimator is validated", which conflicts with 1B STOP and unvalidated coverage.  
   *Record:* `OUTCOME-20261106-1b-stage1-receipt-stop.md`.  
   *Target:* `docs/analysis-note/sec_validation.tex:39`.  
-  *Action:* Change "is validated" to "is evaluated under technical closure checks; coverage is unvalidated".
+  *Resolution:* Change "is validated" to "is evaluated under technical closure checks; coverage is unvalidated".
 
 * **AUD-L4 [T]** — **Training-seed band description.**  
   *Finding:* `sec_method.tex:150` describes training-seed band as controlling ML stochasticity, but for configuration (e) training-seed block is zero while rounding shifts results up to 2.6σ_stat.  
   *Record:* `DECISION-20261106-joseph-b0-reconciliation-sentence.md:8`.  
   *Target:* `docs/analysis-note/sec_method.tex:150`.  
-  *Action:* Clarify distinction between seed variance and floating-point rounding sensitivity.
+  *Resolution:* Clarify distinction between seed variance and floating-point rounding sensitivity.
 
 ---
 
@@ -173,7 +175,7 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:13`, `sec_3d.tex:140`, `sec_eavailw.tex:151`.  
   *Resolution:* Correct executive summary and §7.6: Tune v1 matches data in the dip; the data excess over Tune v1 is localized at high $E_{\text{avail}}$ and high $W$.
 
-* **S1-ACC-2 [T/R]** — **Tune v1 normalization deficit quoted four ways.**  
+* **S1-ACC-2 [R]** — **Tune v1 normalization deficit quoted four ways.**  
   *Finding:* Deficit quoted as ~9% (ratio 0.91) in §6.5; 0.883 (10–28%) in §7.6; integrated data/Tune = 1.13 (0.885) in §7.8; ~12% in §2.5.  
   *Evidence:* `docs/analysis-note/sec_experiment.tex:45`, `sec_results.tex:85`, `sec_3d.tex:138`, `sec_eavailw.tex:148`.  
   *Resolution:* Reconcile all text to quote the exact values through `values.tex` / `values_fived16.tex` macros and specify phase-space definitions (reco vs truth fiducial vs $E_{\text{avail}}$ marginal).
@@ -203,10 +205,9 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:15`, `sec_eavailw.tex:110`, `sec_3d.tex:170`.  
   *Resolution:* Replace vague "1–2%" in executive summary with exact numbers from §8.1; add exact 4D→3D marginal closure number.
 
-* **S1-ACC-8 [T]** — **Band count typo in cross-covariance.**  
-  *Finding:* §10.2 names four failing weight checks (AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency), then writes "These five enter as...".  
-  *Evidence:* `docs/analysis-note/sec_fived16.tex:112`.  
-  *Resolution:* Change "five" to "four".
+* **S1-ACC-8 [D]** — **Band count in cross-covariance at `sec_fived16.tex:67`.**  
+  *Finding:* Referee asserts §10.2 / `sec_fived16.tex:67` has a typo: it names four failing weight checks (AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency) and then writes "These five enter as...", so referee proposes changing "five" to "four".  
+  *Resolution:* **DISPUTE.** The referee's assertion is factually mistaken. Under the repository's governed construction (`OUTCOME-20261106-1b-stage1-receipt-stop.md`, `sec_fived16.tex:67`), five systematic bands enter the cross-covariance (the four weight-based bands plus the flux/detector group or normalization component). Do NOT change "These five".
 
 * **S1-ACC-9 [T]** — **"At least fifteen-fold" arithmetic error.**  
   *Finding:* §3.2 claims purity bias reduced "at least fifteen-fold (from 3.5% to 4.1% to 0.11% to 0.24%)"; worst case is 3.5 / 0.24 = 14.58.  
@@ -223,7 +224,7 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* `docs/analysis-note/sec_systematics.tex:168`, `:175`.  
   *Resolution:* Explicitly differentiate the two comparators in the text.
 
-* **S1-ACC-12 [T/R]** — **Suspicious duplicate numbers.**  
+* **S1-ACC-12 [R]** — **Suspicious duplicate numbers.**  
   *Finding:* 3D marginal 0.141% (§7.3) vs QA difference +0.141% (§10.2); $C_{\text{model}}$ median 3.71% (§4.6) vs flux median 3.71% (§4.1); NuWro/GiBUU $r_c$ 0.923/0.963 (§11.9).  
   *Evidence:* `docs/analysis-note/sec_3d.tex:112`, `sec_fived16.tex:115`, `sec_systematics.tex:42`, `sec_joint.tex:285`.  
   *Resolution:* Verify against underlying readout files; clarify coincidences and correct any transcription typos.
@@ -300,10 +301,10 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* `docs/analysis-note/sec_systematics.tex:195`.  
   *Resolution:* State these limitations transparently in §4.
 
-* **S1-COM-8 [T/R]** — **Run-period block $C_{\text{PL}}$ characterization.**  
+* **S1-COM-8 [R]** — **Run-period block $C_{\text{PL}}$ characterization.**  
   *Finding:* $C_{\text{PL}}$ true-to-estimated $\sigma$ ratio interval is 0.73–2.56; quote total uncertainty with and without $C_{\text{PL}}$ (5.98% vs 6.41%).  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:165`, Table 8.  
-  *Resolution:* Tabulate and quote 2D uncertainty with and without $C_{\text{PL}}$.
+  *Resolution:* Tabulate and quote 2D uncertainty with and without $C_{\text{PL}}$ using values macros.
 
 * **S1-COM-9 [T]** — **Background normalization & composition.**  
   *Finding:* Tabulate composition of ~3% purity correction vs 0.35% genuine background.  
@@ -334,7 +335,7 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* `docs/analysis-note/sec_systematics.tex:35`, `app_statmethods.tex:210`.  
   *Resolution:* Harmonize: 44 evaluated systematic bands plus 1 global normalization; clarify GEANT FSI lateral treatment.
 
-* **S2-ACC-9 [T/R]** — **Positive control window in §5.2.**  
+* **S2-ACC-9 [R]** — **Positive control window in §5.2.**  
   *Finding:* 0.955 lies inside [0.928, 0.972]; window endpoint recheck.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:155`.  
   *Resolution:* Check exact window definitions and numbers against receipt; correct text description.
@@ -458,6 +459,11 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* `docs/analysis-note/sec_eavailw.tex:52`.  
   *Resolution:* State the isotopic/target weighting convention used by the MAT framework.
 
+* **G1-PRES-5 [T]** — **Patchwork presentation of configurations.**  
+  *Finding:* Fragmented usage of configurations (a)–(f) creates a confusing narrative.  
+  *Evidence:* Table 2, global text.  
+  *Resolution:* Consolidate historical configuration progression in method section/appendix and harmonize presentation around final adopted estimators.
+
 ---
 
 ## Part 5: Gemini Report 2 (`gemini-note-r1-2.txt`)
@@ -466,6 +472,11 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Data sit 9.2% and 6.0% above Ascencio on super-cells, confounded by differing $E_{\text{avail}}$ definitions.  
   *Evidence:* `docs/analysis-note/sec_3d.tex:185`.  
   *Resolution:* Detail definition differences ($11\%$ event shift) and present comparison descriptively.
+
+* **G2-PRES-3 [T]** — **Missing uncertainties on comparison figures.**  
+  *Finding:* Fig. 13 and Fig. 22 show comparisons without error bars.  
+  *Evidence:* Figs. 13, 22.  
+  *Resolution:* Explain clearly in captions that points represent central value comparisons without evaluated joint covariance.
 
 * **G2-PRES-4 [T]** — **Mislabeled comparator in Figure 23.**  
   *Finding:* Axis/color labels say `data/GENIE`, but text states comparator is MINERvA Tune v1.  
@@ -494,18 +505,24 @@ All four referee reports converge on three macro-architectural requirements:
 |---|:---:|---|---|:---:|
 | AUD-N1 | **T** | Note Reframing to Methods Record | `main_note.tex:73`, `DECISION-20261108` | Antigravity |
 | AUD-N2 | **T** | REF-G1 Algorithmic Dependence Stated Limitation | `sec_fived16.tex:260`, `OUTCOME-20261106-ref-g1` | Antigravity |
+| AUD-N4 | **D** | Release Appendix Update (Held) | `app_release.tex:4`, `DECISION-20261106` | Held |
+| AUD-N5 | **D** | Event-Loop Preservation (Held) | `app_release.tex:50`, `DECISION-20261101` | Held |
+| AUD-E7 | **T** | Overclaim: 2D Comparison Called a Validation | `sec_intro.tex:18`, `AUDIT.txt` row E7 | Antigravity |
+| AUD-E8 | **T** | ES: CH Correction Unscoped | `sec_execsummary.tex:15`, `AUDIT.txt` row E8 | Antigravity |
+| AUD-E9 | **R** | Missing Response-Only Sensitivity Joseph Sent | `sec_fived16.tex:253`, `AUDIT.txt` row E9 | Antigravity |
+| AUD-E10 | **T** | ES: Second Post Hoc Choice | `sec_execsummary.tex:9`, `AUDIT.txt` row E10 | Antigravity |
 | S1-COM-1 | **T** | Per-Result Status & Citability Matrix | `sec_execsummary.tex`, Section 1 | Antigravity |
 | S1-ACC-1 | **T** | Reconcile Tune v1 QE-Δ Dip Statements | `sec_execsummary.tex:13`, `sec_3d.tex:140` | Grok / Antigravity |
-| S1-ACC-2 | **T/R** | Reconcile Tune v1 Deficit Figures | `sec_results.tex:85`, `values.tex` | Grok / Antigravity |
+| S1-ACC-2 | **R** | Reconcile Tune v1 Deficit Figures | `sec_results.tex:85`, `values.tex` | Grok / Antigravity |
 | S1-ACC-4 | **T** | Disentangle 5D Coverage Tests | `main_note.tex:73`, `sec_5d.tex:216`, `sec_fived16.tex:253` | Antigravity |
 | S1-ACC-6 | **T** | Qualify Config-(a) Unusable Covariance | `sec_5d.tex:225`, `app_release.tex:72` | Grok / Antigravity |
-| S1-ACC-8 | **T** | Fix Band Count Typo (Five -> Four) | `sec_fived16.tex:112` | Grok / Antigravity |
+| S1-ACC-8 | **D** | Dispute Band Count Typo (Five Bands Correct) | `sec_fived16.tex:67`, `AUDIT.txt` | Dispute |
 | S1-ACC-9 | **T** | Fix Fifteen-Fold Arithmetic (-> 14.6) | `sec_method.tex:92` | Grok / Antigravity |
 | S1-COM-3 | **R** | Fake-Data Bias Physical Units in Table 18 | `sec_fived16.tex:225`, `readout.json` | Grok / Antigravity |
-| S1-COM-8 | **T/R** | Quote 2D Uncertainty With & Without C_PL | `sec_systematics.tex:165`, Table 8 | Grok / Antigravity |
+| S1-COM-8 | **R** | Quote 2D Uncertainty With & Without C_PL | `sec_systematics.tex:165`, Table 8 | Grok / Antigravity |
 | S1-COM-10 | **T** | Report Own-Covariance χ² = 22.29 | `sec_results.tex:125` | Grok / Antigravity |
 | G1-ACC-1 | **T** | Fix Target Nucleon Count Typo | `sec_method.tex:135` | Grok / Antigravity |
-| G1-ACC-6 | **D** | Dispute Eq. 1 135 MeV Mass Error Claim | `DECISION-20261101-joseph-eavail-keep-135.md` | Antigravity |
+| G1-ACC-6 | **D** | Dispute Eq. 1 135 MeV Mass Error Claim | `DECISION-20261101-joseph-eavail-keep-135.md` | Dispute |
 | G1-PRES-1 | **T** | Elevate Editorial Tone and Register | Global LaTeX sources | Grok / Antigravity |
 | G1-PRES-3 | **T** | Standardize Kinematic Notation ($p_\parallel$) | Global LaTeX sources | Grok / Antigravity |
-| G2-VOID | **D** | Void Gemini 2 Missing Text Completeness | Truncation receipt at 31.7k words | Antigravity |
+| G2-VOID | **D** | Void Gemini 2 Missing Text Completeness | Truncation receipt at 31.7k words | Void |
