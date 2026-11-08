@@ -1,0 +1,44 @@
+CHECK: raw fingerprints 355 keys, 261 distinct values
+CHECK: view /dev/shm/limres-rpd-prologue4-20261108/run/prologue-prepare.json
+CHECK 1 view environment_snapshot.fingerprints present: False
+CHECK 2 64-hex strings under environment_snapshot/environment_after_setup in the view: 0
+CHECK 3 prologue-prepare.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 strace-probe.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 wrapper.out: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 trace-policy.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prologue-prepare-reference.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prologue.strace: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 worker.stderr.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 worker.stdout.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prologue-worker.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 policy-config.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 c3-check.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 4 other 64-hex strings in the view (record only): 22
+  /instrument_files[0]/sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+  /instrument_files[1]/sha256 40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598
+  /instrument_files[2]/sha256 e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6
+  /instrument_files[3]/sha256 733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e
+  /instrument_files[4]/sha256 c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac
+  /instrument_files[5]/sha256 bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9
+  /instrument_files[6]/sha256 5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48
+  /instrument_files[7]/sha256 bd66930866410c2302a29b3c1bb70a45ea5de489e025852e28455bc5090d38aa
+  /instrument_files[8]/sha256 9eedbfd94a452f3bb9b267ca890b52d7a5567c0da86059e2b1fb90aac480550a
+  /mat_environment/instrument_sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70
+  /mat_environment/mat_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MATDict.rootmap bd66930866410c2302a29b3c1bb70a45ea5de489e025852e28455bc5090d38aa
+  /mat_environment/mat_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MAT_rdict.pcm 9eedbfd94a452f3bb9b267ca890b52d7a5567c0da86059e2b1fb90aac480550a
+  /mat_environment/mat_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so 5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh 733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh 40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598
+  /private_prepare_path 3cdf27c8d29fe5d5407acb8ca456ade8a1df23de41ce5930c70a2a3bcb5cc522
+  /private_prepare_sha256 7f12fdfdd14bf82ff1e9ba72324b9269bba183984f41cc6fdf5b4383573a0afb
+  /trace_policy_sha256 b92eb4714a6490f9a216fb41bf1ada31d8cf49cec89ae4c7d8b414187ea5dd2e
+CHECK 5 prologue-prepare.json: keys named fingerprints 0
+CHECK 5 trace-policy.json: keys named fingerprints 0
+CHECK 5 prologue-prepare-reference.json: keys named fingerprints 0
+CHECK 5 prologue-worker.json: keys named fingerprints 0
+CHECK 5 policy-config.json: keys named fingerprints 0
+REDACTION CHECK: PASS

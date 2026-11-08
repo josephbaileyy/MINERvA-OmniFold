@@ -1,0 +1,905 @@
+{
+ "schema": "rpd-prologue-classifier-stop-entries/1",
+ "source_path": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue4-20261108/wrapper.out",
+ "source_bytes_digest_sha256": "da37e525154ea5311a7f71d7783c402c7e22bb0dc49f947b35af0a4e51d85b08",
+ "line_number": 12,
+ "line_characters": 30767,
+ "prefix": "STOP DATA_FREE_TRACE: syscall custody violations: ",
+ "entry_count": 146,
+ "entries_by_reason": {
+  "cwd changed inside extraction trace": 2,
+  "unclassified or ambiguous successful open": 77,
+  "unparsed open syscall": 67
+ },
+ "roundtrip_json_text_equal": true,
+ "roundtrip_line_equal": true,
+ "entries": [
+  {
+   "request": "/opt/nersc/pymon/nersc_pymon",
+   "resolved": "/opt/nersc/pymon/nersc_pymon",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/nersc/pymon/nersc_pymon/_vendor",
+   "resolved": "/opt/nersc/pymon/nersc_pymon/_vendor",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/nersc/pymon/nersc_pymon/config/default.ini",
+   "resolved": "/opt/nersc/pymon/nersc_pymon/config/default.ini",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/fd_rpd_reco_prologue.py",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/fd_rpd_reco_prologue.py",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "environment",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/fd_rpd_reco_prologue.py",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/fd_rpd_reco_prologue.py",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "environment",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/__pycache__/fd_rpd_reco.cpython-311.pyc",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/__pycache__/fd_rpd_reco.cpython-311.pyc",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "environment",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/__pycache__/fd_rpd_reco_custody.cpython-311.pyc",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/__pycache__/fd_rpd_reco_custody.cpython-311.pyc",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "environment",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-prepare-reference.json",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-prepare-reference.json",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-prepare-reference.json",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-prepare-reference.json",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-prepare-reference.json",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-prepare-reference.json",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/__pycache__/fd_rpd_reco_custody.cpython-311.pyc",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/__pycache__/fd_rpd_reco_custody.cpython-311.pyc",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "environment",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-prepare.json",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-prepare.json",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/var/lib/sss/mc/passwd",
+   "resolved": "/var/lib/sss/mc/passwd",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/glibc-hwcaps/x86-64-v3/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/global/common/software/nersc9/darshan/default/lib/glibc-hwcaps/x86-64-v3/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/usr/local/cuda-13.2/compat/glibc-hwcaps/x86-64-v3/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/global/common/software/nersc9/darshan/default/lib/glibc-hwcaps/x86-64-v2/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/usr/local/cuda-13.2/compat/glibc-hwcaps/x86-64-v2/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/global/common/software/nersc9/darshan/default/lib/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/usr/local/cuda-13.2/compat/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/usr/local/cuda-13.2/compat/glibc-hwcaps/x86-64-v3/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/lib64/glibc-hwcaps/x86-64-v3/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/usr/local/cuda-13.2/compat/glibc-hwcaps/x86-64-v2/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/lib64/glibc-hwcaps/x86-64-v2/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64/glibc-hwcaps/x86-64-v3/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/lib64/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64/glibc-hwcaps/x86-64-v3/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64/glibc-hwcaps/x86-64-v2/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64/glibc-hwcaps/x86-64-v2/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/Debugger/lib64/glibc-hwcaps/x86-64-v3/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/Debugger/lib64/glibc-hwcaps/x86-64-v3/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/Debugger/lib64/glibc-hwcaps/x86-64-v2/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/Debugger/lib64/glibc-hwcaps/x86-64-v2/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/Debugger/lib64/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64/glibc-hwcaps/x86-64-v3/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64/glibc-hwcaps/x86-64-v2/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64/glibc-hwcaps/x86-64-v3/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64/glibc-hwcaps/x86-64-v2/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/lib64/glibc-hwcaps/x86-64-v3/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/lib64/glibc-hwcaps/x86-64-v2/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/lib64/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/lib64/glibc-hwcaps/x86-64-v3/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/lib64/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/cray/pe/papi/7.3.0.1/lib64/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/cray/libfabric/2.3.1/lib64/glibc-hwcaps/x86-64-v3/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/cray/pe/papi/7.3.0.1/lib64/glibc-hwcaps/x86-64-v3/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/cray/libfabric/2.3.1/lib64/glibc-hwcaps/x86-64-v2/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/cray/pe/papi/7.3.0.1/lib64/glibc-hwcaps/x86-64-v2/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/cray/pe/papi/7.3.0.1/lib64/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/glibc-hwcaps/x86-64-v3/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/cray/libfabric/2.3.1/lib64/glibc-hwcaps/x86-64-v3/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/glibc-hwcaps/x86-64-v2/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/cray/libfabric/2.3.1/lib64/glibc-hwcaps/x86-64-v2/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/cray/libfabric/2.3.1/lib64/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/etc/ld.so.cache\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/lib64/libacl.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/glibc-hwcaps/x86-64-v2/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/lib64/libm.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libselinux.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/cray/pe/papi/7.3.0.1/lib64/libselinux.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/cray/libfabric/2.3.1/lib64/libselinux.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/global/common/software/nersc9/darshan/default/lib/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libselinux.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/usr/local/cuda-13.2/compat/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/usr/lib64/libselinux.so.1\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/cray/pe/papi/7.3.0.1/lib64/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/opt/cray/libfabric/2.3.1/lib64/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/global/common/software/nersc9/darshan/default/lib/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/usr/local/cuda-13.2/compat/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/lib64/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/lib64/libc.so.6\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600532 openat(AT_FDCWD, \"/global/u2/j/josephrb/.conda/envs/root_6_28/bin/../lib/gcc/x86_64-conda-linux-gnu/12.4.0/specs\", O_RDONLY <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "line": "1600533 openat(AT_FDCWD, \"/usr/lib/locale/en_US.utf8/LC_NAME\", O_RDONLY|O_CLOEXEC <unfinished ...>",
+   "reason": "unparsed open syscall"
+  },
+  {
+   "request": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/include/cuda.h",
+   "resolved": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/targets/x86_64-linux/include/cuda.h",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libRooUnfold.rootmap",
+   "resolved": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/libRooUnfold.rootmap",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/global/common/software/nersc9/darshan/default/lib",
+   "resolved": "/global/common/software/nersc9/darshan/3.4.6-gcc-13.2.1/lib",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/lib64",
+   "resolved": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/math_libs/13.2/targets/x86_64-linux/lib",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64",
+   "resolved": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/extras/CUPTI/lib64",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64",
+   "resolved": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/nvvm/lib64",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/lib64",
+   "resolved": "/opt/nvidia/hpc_sdk/Linux_x86_64/26.5/cuda/13.2/targets/x86_64-linux/lib",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/papi/7.3.0.1/lib64",
+   "resolved": "/opt/cray/pe/papi/7.3.0.1/lib",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/libfabric/2.3.1/lib64",
+   "resolved": "/opt/cray/libfabric/2.3.1/lib64",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "line": "1600512 chdir(\"/dev/shm/limres-rpd-prologue4-20261108/repo\") = 0",
+   "reason": "cwd changed inside extraction trace"
+  },
+  {
+   "line": "1600512 chdir(\"/dev/shm/limres-rpd-prologue4-20261108/repo\") = 0",
+   "reason": "cwd changed inside extraction trace"
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/__pycache__/fd_rpd_inputs.cpython-311.pyc",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/__pycache__/fd_rpd_inputs.cpython-311.pyc",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "environment",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/__pycache__/fd_ct_period_inputs.cpython-311.pyc",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/__pycache__/fd_ct_period_inputs.cpython-311.pyc",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "environment",
+    "system"
+   ]
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/init/bash",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/init/bash",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/libexec/addto",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/libexec/addto",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/strict.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/strict.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/strict.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/strict.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/string_utils.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/string_utils.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/string_utils.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/string_utils.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/pairsByKeys.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/pairsByKeys.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/pairsByKeys.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/pairsByKeys.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/Dbg.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/Dbg.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/Dbg.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/Dbg.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/Optiks.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/Optiks.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/Optiks.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/Optiks.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/TermWidth.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/TermWidth.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/TermWidth.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/TermWidth.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/haveTermSupport.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/haveTermSupport.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/haveTermSupport.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/haveTermSupport.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/capture.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/capture.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/capture.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/capture.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/Cosmic.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/Cosmic.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/Cosmic.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/Cosmic.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/declare.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/declare.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/declare.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/declare.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/BeautifulTbl.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/BeautifulTbl.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/BeautifulTbl.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/BeautifulTbl.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/Optiks_Option.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/Optiks_Option.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/cray/pe/lmod/lmod/tools/Optiks_Option.lua",
+   "resolved": "/opt/cray/pe/lmod/8.7.60/tools/Optiks_Option.lua",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/trace-policy.json",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/trace-policy.json",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/trace-policy.json",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/trace-policy.json",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/0-setup_salloc_env.sh",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/0-setup_salloc_env.sh",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/1-setup.sh",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/1-setup.sh",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/2-setup.sh",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/2-setup.sh",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/3-setup_MAT.sh",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/3-setup_MAT.sh",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/4-setup_MAT-MINERvA.sh",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/4-setup_MAT-MINERvA.sh",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/5-setup_UnfoldUtils.sh",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/5-setup_UnfoldUtils.sh",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/6-libMAT.so",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/6-libMAT.so",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/7-MATDict.rootmap",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/7-MATDict.rootmap",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/8-MAT_rdict.pcm",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/instrument/8-MAT_rdict.pcm",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/fd_rpd_reco.py",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/repo/nd-unfolding/fd_rpd_reco.py",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "environment",
+    "system"
+   ]
+  },
+  {
+   "request": "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-worker.json",
+   "resolved": "/dev/shm/limres-rpd-prologue4-20261108/run/prologue-worker.json",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": [
+    "run",
+    "system"
+   ]
+  },
+  {
+   "request": "/opt/nersc/etc/nerscjson_client/ldms.ini",
+   "resolved": "/opt/nersc/etc/nerscjson_client/ldms.ini",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libldms.so",
+   "resolved": "/opt/ovis-ldms/lib/libldms.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libovis_json.so.0",
+   "resolved": "/opt/ovis-ldms/lib/libovis_json.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libovis_event.so.0",
+   "resolved": "/opt/ovis-ldms/lib/libovis_event.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libmmalloc.so.0",
+   "resolved": "/opt/ovis-ldms/lib/libmmalloc.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libzap.so.0",
+   "resolved": "/opt/ovis-ldms/lib/libzap.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libovis_thrstats.so.0",
+   "resolved": "/opt/ovis-ldms/lib/libovis_thrstats.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libovis_log.so.0",
+   "resolved": "/opt/ovis-ldms/lib/libovis_log.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libovis_ev.so.0",
+   "resolved": "/opt/ovis-ldms/lib/libovis_ev.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libcoll.so.0",
+   "resolved": "/opt/ovis-ldms/lib/libcoll.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libovis_third.so.0",
+   "resolved": "/opt/ovis-ldms/lib/libovis_third.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libovis_util.so.0",
+   "resolved": "/opt/ovis-ldms/lib/libovis_util.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/ovis-ldms/libzap_sock.so",
+   "resolved": "/opt/ovis-ldms/lib/ovis-ldms/libzap_sock.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  },
+  {
+   "request": "/opt/ovis-ldms/lib/libldms_auth_munge.so",
+   "resolved": "/opt/ovis-ldms/lib/libldms_auth_munge.so.0.0.0",
+   "success": true,
+   "reason": "unclassified or ambiguous successful open",
+   "categories": []
+  }
+ ]
+}
