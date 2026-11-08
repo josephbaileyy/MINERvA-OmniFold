@@ -5,6 +5,11 @@ for `connect-n-G18.sh` at the sha256 below.
 
 **M = `ac25b66533788ceb18b1d4e5add259c53b216669`** (code `7177d0f8`).
 
+> **Superseded at this path (2026-11-08).** `null_G18.json` here is now phase N's rerun at M_A5 (`6bd5259d…`,
+> `phase-n-2/README.md`), under COV2D-BINDING-2's A5 M line, ruling 2. This page is run 1's receipt: its record
+> `ecdb4be2…` is at `7db5cb80` (#886). The two records differ only in `M` and `utc`, and the field-equality
+> control read EQUAL. `blocks_G18.npz` is unchanged.
+
 - **MEASURES:** phase N for G18 (`COV2D-ADDENDUM-A4.md` §3). That is G18's null at C_T, with its thresholds and size,
   the blocks phase S needs, §9.8, §9.9 for the 486 non-toy products (X, the U, L and B), and the input inventory and identity (§3.4).
 - **CANNOT AUTHORIZE:** phase S, until this record is merged to main by the director. Phase S then runs at this M with
