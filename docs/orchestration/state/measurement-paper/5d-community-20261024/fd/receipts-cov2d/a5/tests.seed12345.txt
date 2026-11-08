@@ -1,0 +1,33 @@
+............................................................
+----------------------------------------------------------------------
+Ran 60 tests in 187.802s
+
+OK
+COV2D-SCORE G18 REFUSED another refusal, not 1B's grade
+COV2D-SCORE G18 COVERS
+COV2D-SCORE G18 UNDER-COVERS
+COV2D-SCORE G18 REFUSED inventory: cells_npz differs from the null record
+COV2D-SCORE G18 REFUSED inventory: T_G18_5720011's stat differs from the null record
+COV2D-SCORE G18 REFUSED the null record's verdict is STOP
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 INVALID
+COV2D-SCORE G18 REFUSED origin/main holds no null_G18.json
+COV2D-SCORE G18 REFUSED the null record's M M1 is not this deploy's HEAD
+COV2D-SCORE G18 REFUSED the null record is AR23's, not G18's
+COV2D-SCORE G18 REFUSED blocks npz does not match the null record
+COV2D-SCORE G18 COVERS
+COV2D-SCORE G18 REFUSED pseudo_a's toys are not the declared seeds in order
+COV2D-SCORE G18 REFUSED truth_xsec.npz's rows are not pseudo_a's natures in order
+COV2D-SCORE G18 REFUSED origin/main's null_G18.json is e05c3d6f5f65113ba1e766a72976106fea52f0f023a51b67bb4e7a0c190fca5a, not 1111111111111111111111111111111111111111111111111111111111111111
+cov2d rc=0
+............
+----------------------------------------------------------------------
+Ran 12 tests in 6.130s
+
+OK
+1b rc=0

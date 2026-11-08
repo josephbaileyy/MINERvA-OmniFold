@@ -1,7 +1,8 @@
 """COV2D's scorer at a truth (COV2D-DECLARATION.md sections 4.2 and 5; the director's R4 of 2026-11-04): the errors
-e = x_hat - x_true on E_R's 205 cells after the surrogates, graded by 1B's own ``fd_1b_mc.grade``, imported unchanged
+e = x_hat - x_true on E_R's 205 cells after the surrogates, graded by 1B's own ``fd_1b_mc.grade``
 (section 5.1-5.2: counts, flags against the null, chi2 on C_T's non-null subspace with the Cholesky equality when
-ndf = 205, the joint count, pulls, mean chi2/ndf, s_c, attribution, over-coverage, size, COVERS / UNDER-COVERS).
+ndf = 205, to the tolerance the caller passes: 1B's 1e-9 by default, addendum A5's max(1e-9, 10 kappa_2 eps) from the
+driver; the joint count, pulls, mean chi2/ndf, s_c, attribution, over-coverage, size, COVERS / UNDER-COVERS).
 
 * The surrogates, in the declaration table's order (R4): the lateral first, x_hat + sum_b s_b Delta_b(T) / 2 with each
   draw's ``lateral_signs`` over ``cov2d.LATERAL_BANDS`` (Muon_Energy_MINOS after X01), then the normalization,
@@ -68,9 +69,10 @@ def errors(x_hat: np.ndarray, x_true: np.ndarray, natures: list[dict], deltas: n
 
 
 def score(E: np.ndarray, C_T: np.ndarray, null: dict, truth: str, cells: np.ndarray, weakened_ratio: np.ndarray,
-          controls_failed: list[str] | None = None) -> dict:
+          controls_failed: list[str] | None = None, chol_tol: float = 1e-9, chol_out: dict | None = None) -> dict:
     """1B's grade, then the weakened labels, the outlier cell and INVALID. ``cells`` are E_R's 205 flat cell indices,
-    ``weakened_ratio`` C2's option-1 clipped variance ratio on them, at this truth."""
+    ``weakened_ratio`` C2's option-1 clipped variance ratio on them, at this truth. ``chol_tol`` and ``chol_out`` go to
+    1B's grade unchanged (its Cholesky cross-check at full rank; COV2D-BINDING-2 addendum A5); the defaults are 1B's."""
     import fd_1b_mc as mc
     if E.shape[1] != 205 or C_T.shape != (205, 205) or len(cells) != 205:
         raise c.Refusal("205 cells are required")
@@ -78,7 +80,7 @@ def score(E: np.ndarray, C_T: np.ndarray, null: dict, truth: str, cells: np.ndar
         raise c.Refusal(f"{E.shape[0]} toys; the declared {truth} set is {len(c.TOY_SEEDS[truth])}")
     if c.OUTLIER_CELL not in [int(x) for x in cells]:     # section 5.2: its reading "whatever it is"
         raise c.Refusal(f"the outlier cell {c.OUTLIER_CELL} is not among the cells")
-    g = mc.grade(E, C_T, null)
+    g = mc.grade(E, C_T, null, chol_tol=chol_tol, chol_out=chol_out)
     weak = set(c.weakened_cells(weakened_ratio, cells))
     cells = [int(x) for x in cells]
     g["weakened_pass"] = [cell for i, cell in enumerate(cells) if cell in weak and not g["cell_flag"][i]]
