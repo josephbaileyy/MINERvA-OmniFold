@@ -1,0 +1,5 @@
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz|1548438020|1782610308|1794105515
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz|16017201|1790319104|1794105516
+/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json|170298|1793473279|1793496788
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz|2163648810|1784034785|1793890180
+/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root|6396|1794033543|1794118648
