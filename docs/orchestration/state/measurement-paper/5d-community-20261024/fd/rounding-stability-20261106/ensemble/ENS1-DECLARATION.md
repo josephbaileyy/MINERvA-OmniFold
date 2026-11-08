@@ -57,7 +57,8 @@ refinement, as FD-STAB's control ran it), run in float64 coordinates, and δ_k i
 so each step lies within **±½ of the value's float32 spacing**, the protocol's own scale
 (`s5e_trace.py:362-364`: `rng.uniform(-0.5, 0.5, out.shape) * ulp`). It is applied **to y at full precision in
 float64**, with δ_k = 0 wherever round₃₂(y) equals a grid edge of its axis (the
-edge-safe rule of `s5e_trace.jitter_coords`, `nd-unfolding/s5e_trace.py:365-367`). The draws u_k have the shape of
+edge-safe rule of `s5e_trace.jitter_coords`, `nd-unfolding/s5e_trace.py:365-367`). **Amended by `ENS1-ADDENDUM-A1.md`
+§2:** δ_k = 0 within one float32 spacing of an edge, which contains the exact-edge rule. The draws u_k have the shape of
 each coordinate array and are drawn in a fixed order (MCgen, MCreco, measured, bkg_reco), so δ_k is a fixed function
 of k and the array shape: **E_N is one deterministic estimator**, the same for every input it is given.
 
@@ -90,8 +91,10 @@ passes the same way. Two other float32 casts sit on the path and are closed the 
   across k on a sensitive fixture;
 - a REQUIRED mutant that runs the base unjittered pair `-:-` (float32) instead of seed 0.
 
-**2.3 The grid guard.** The total move |δ_s + δ_k| is below one float32 spacing, so a value off an edge cannot reach
-it. The stability loop's own check refuses any product whose fine-grid membership changes (`s5p_numerics.py:186-191`,
+**2.3 The grid guard.** ~~The total move |δ_s + δ_k| is below one float32 spacing, so a value off an edge cannot reach
+it.~~ **Withdrawn by `ENS1-ADDENDUM-A1.md` (2026-11-08).** The claim holds only for edges float32 can represent. 21 of the
+npz's 55 edges are not, and stage 1's dry run, attempt 1, was refused on 1–2 rows per internal seed (receipts #908,
+#909). The internal jitter now has an edge zone (A1 §2), which keeps every cell by construction (A1 §3). The stability loop's own check refuses any product whose fine-grid membership changes (`s5p_numerics.py:186-191`,
 exit 5), and since the internal jitter is added inside the rebound `jittered`, that check covers the total
 perturbation. The closure runner has no such check; the wrapper adds it, with `s5p_numerics.cell_membership`
 (`:73`), before any closure fit. A refusal is a failed task, so the run is INCOMPLETE (§4.4).
@@ -124,7 +127,8 @@ directory of FD-STAB's queue (`connect/queue.tsv:58`).
   `fd/receipts-stab-a1r/full/SHA256SUMS` (the 18 `runs/control/closure/…_s991000.npz` lines; file sha256
   `e2c35e55…`). They are copied with `dd iflag=noatime` and verified against those lines. F is not re-run.
 - **The truth vectors.** Every k of one truth must give the same `xtrue_flat` bitwise, since the internal jitter
-  preserves grid membership. Otherwise the analysis stops.
+  preserves grid membership by construction (`ENS1-ADDENDUM-A1.md` §3; this reason replaces the withdrawn §2.3).
+  Otherwise the analysis stops.
 
 ## 4. Stage 1: the stability criterion
 

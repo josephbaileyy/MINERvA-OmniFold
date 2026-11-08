@@ -1,0 +1,45 @@
+{
+ "part1_sources": 355,
+ "part1_stat_sha256": "a14aeddf80d49fd7cb0d470e9296569e5f754d373dcd098800e828bbd20885a1",
+ "ens1_inputs_with_stat": 22,
+ "ens1_inputs": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j1.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j10.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j11.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j12.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j13.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j14.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j15.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j16.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j17.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j18.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j19.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j2.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j20.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j3.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j4.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j5.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j6.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j7.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j8.npz",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j9.npz",
+  "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "/pscratch/sd/j/josephrb/ens1-20261107/runs/F64/ens1_F64_b-_j0.npz"
+ ],
+ "literal_path_overlap": [],
+ "directory_overlap": [],
+ "size_and_mtime_overlap": [],
+ "size_only_overlap": [],
+ "part1_roots": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+  "/pscratch/sd/j/josephrb/fd-1b-20261030",
+  "/pscratch/sd/j/josephrb/s1-20261024"
+ ],
+ "ens1_roots": [
+  "/pscratch/sd/j/josephrb/MINERvA-OmniFold",
+  "/pscratch/sd/j/josephrb/ens1-20261107",
+  "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104",
+  "/pscratch/sd/j/josephrb/s5c-20260924"
+ ]
+}

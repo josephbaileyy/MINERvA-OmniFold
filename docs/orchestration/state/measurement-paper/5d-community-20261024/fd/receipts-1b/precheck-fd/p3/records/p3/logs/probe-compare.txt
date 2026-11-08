@@ -1,0 +1,9 @@
+P2 probe 60990199: status ok
+P3 probe 60991405: status ok; differing keys []; MATCH
+P3 probe 60991413: status ok; differing keys []; MATCH
+P3 probe 60991415: status ok; differing keys []; MATCH
+P3 probe 60991418: status ok; differing keys []; MATCH
+P3 probe 60991419: status ok; differing keys []; MATCH
+P3 probe 60991420: status ok; differing keys []; MATCH
+P3 probe 60991421: status ok; differing keys []; MATCH
+PROBES: ALL MATCH P2

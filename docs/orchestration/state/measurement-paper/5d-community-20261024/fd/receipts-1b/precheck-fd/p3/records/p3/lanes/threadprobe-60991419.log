@@ -1,0 +1,57 @@
+{
+ "SLURM_CPUS_PER_TASK": "32",
+ "SLURM_JOB_ID": "60991419",
+ "SLURM_STEP_ID": "0",
+ "affinity_size": 32,
+ "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+ "lightgbm": "4.6.0",
+ "numpy": "1.26.4",
+ "openmp_default_num_threads": [
+  32,
+  32
+ ],
+ "os_cpu_count": 256,
+ "python": "3.11.14",
+ "status": "ok",
+ "thread_variables": {
+  "MKL_NUM_THREADS": "<unset>",
+  "NUMEXPR_NUM_THREADS": "<unset>",
+  "OMP_NUM_THREADS": "<unset>",
+  "OPENBLAS_NUM_THREADS": "<unset>"
+ },
+ "threadpool_info": [
+  {
+   "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libopenblasp-r0.3.30.so",
+   "internal_api": "openblas",
+   "num_threads": 32,
+   "prefix": "libopenblas",
+   "user_api": "blas",
+   "version": "0.3.30"
+  },
+  {
+   "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libgomp.so.1.0.0",
+   "internal_api": "openmp",
+   "num_threads": 32,
+   "prefix": "libgomp",
+   "user_api": "openmp",
+   "version": null
+  },
+  {
+   "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy.libs/libscipy_openblas-b75cc656.so",
+   "internal_api": "openblas",
+   "num_threads": 32,
+   "prefix": "libscipy_openblas",
+   "user_api": "blas",
+   "version": "0.3.29.dev"
+  },
+  {
+   "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scikit_learn.libs/libgomp-e985bcbb.so.1.0.0",
+   "internal_api": "openmp",
+   "num_threads": 32,
+   "prefix": "libgomp",
+   "user_api": "openmp",
+   "version": null
+  }
+ ],
+ "threadpoolctl": "3.6.0"
+}

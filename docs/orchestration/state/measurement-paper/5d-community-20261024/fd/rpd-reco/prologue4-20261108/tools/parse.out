@@ -1,0 +1,4 @@
+PARSE: wrapper.out sha256 da37e525154ea5311a7f71d7783c402c7e22bb0dc49f947b35af0a4e51d85b08; STOP line 12, 30767 characters
+PARSE: 146 entries; by reason {"cwd changed inside extraction trace": 2, "unclassified or ambiguous successful open": 77, "unparsed open syscall": 67}
+PARSE: json.dumps(entries) equals the line's JSON text: True; prefix + it equals the line: True
+PARSE: wrote classifier-stop-entries.json sha256 58b4d1f4a2cc66152fa864b73f22c7ac07c7e0b852a6e610d5b0f91b8686d02b

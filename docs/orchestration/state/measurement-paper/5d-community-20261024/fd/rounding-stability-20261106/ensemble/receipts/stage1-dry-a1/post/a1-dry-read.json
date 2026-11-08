@@ -1,0 +1,327 @@
+{
+ "schema": "ens1-a1-dry-postrun/1",
+ "numpy": "1.26.4",
+ "products": {
+  "ens1_F64": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/F64/ens1_F64_b-_j0.npz",
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "block": {
+    "mode": "base",
+    "k": null,
+    "protocol_seed": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25"
+  },
+  "ens1_s00_k001": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k001_b-_j0.npz",
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "block": {
+    "mode": "stability",
+    "k": 1,
+    "protocol_seed": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25"
+  },
+  "ens1_s00_k002": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k002_b-_j0.npz",
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "block": {
+    "mode": "stability",
+    "k": 2,
+    "protocol_seed": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25"
+  },
+  "ens1_s00_k003": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k003_b-_j0.npz",
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "block": {
+    "mode": "stability",
+    "k": 3,
+    "protocol_seed": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25"
+  },
+  "ens1_s00_k004": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k004_b-_j0.npz",
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "block": {
+    "mode": "stability",
+    "k": 4,
+    "protocol_seed": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25"
+  },
+  "ens1_s01_k001": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k001_b-_j1.npz",
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "block": {
+    "mode": "stability",
+    "k": 1,
+    "protocol_seed": 1
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25"
+  },
+  "ens1_s01_k002": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k002_b-_j1.npz",
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "block": {
+    "mode": "stability",
+    "k": 2,
+    "protocol_seed": 1
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25"
+  },
+  "ens1_s01_k003": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k003_b-_j1.npz",
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "block": {
+    "mode": "stability",
+    "k": 3,
+    "protocol_seed": 1
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25"
+  },
+  "ens1_s01_k004": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k004_b-_j1.npz",
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "block": {
+    "mode": "stability",
+    "k": 4,
+    "protocol_seed": 1
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25"
+  }
+ },
+ "logs": {
+  "ens1_F64": [
+   {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   }
+  ],
+  "ens1_s00_k001": [
+   {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   }
+  ],
+  "ens1_s00_k002": [
+   {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   }
+  ],
+  "ens1_s00_k003": [
+   {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   }
+  ],
+  "ens1_s00_k004": [
+   {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   }
+  ],
+  "ens1_s01_k001": [
+   {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   }
+  ],
+  "ens1_s01_k002": [
+   {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   }
+  ],
+  "ens1_s01_k003": [
+   {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   }
+  ],
+  "ens1_s01_k004": [
+   {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   }
+  ]
+ },
+ "timing": {
+  "ens1_F64": {
+   "seconds_unfold": [
+    508.025
+   ],
+   "wall": 533.6
+  },
+  "ens1_s00_k001": {
+   "seconds_unfold": [
+    493.519
+   ],
+   "wall": 518.9
+  },
+  "ens1_s00_k002": {
+   "seconds_unfold": [
+    485.678
+   ],
+   "wall": 510.6
+  },
+  "ens1_s00_k003": {
+   "seconds_unfold": [
+    535.88
+   ],
+   "wall": 560.9
+  },
+  "ens1_s00_k004": {
+   "seconds_unfold": [
+    443.124
+   ],
+   "wall": 470.1
+  },
+  "ens1_s01_k001": {
+   "seconds_unfold": [
+    509.884
+   ],
+   "wall": 535.0
+  },
+  "ens1_s01_k002": {
+   "seconds_unfold": [
+    461.693
+   ],
+   "wall": 486.3
+  },
+  "ens1_s01_k003": {
+   "seconds_unfold": [
+    460.693
+   ],
+   "wall": 484.9
+  },
+  "ens1_s01_k004": {
+   "seconds_unfold": [
+    537.935
+   ],
+   "wall": 575.6
+  }
+ },
+ "f64_keys": {
+  "new": [
+   "meta",
+   "shape",
+   "xsec_flat",
+   "xtrue_flat"
+  ],
+  "attempt1": [
+   "meta",
+   "shape",
+   "xsec_flat",
+   "xtrue_flat"
+  ]
+ },
+ "f64_compare": {
+  "xsec_flat": {
+   "dtype": [
+    "float64",
+    "float64"
+   ],
+   "shape": [
+    [
+     65856
+    ],
+    [
+     65856
+    ]
+   ],
+   "bitwise_identical": true
+  },
+  "xtrue_flat": {
+   "dtype": [
+    "float64",
+    "float64"
+   ],
+   "shape": [
+    [
+     65856
+    ],
+    [
+     65856
+    ]
+   ],
+   "bitwise_identical": true
+  }
+ },
+ "projection": {
+  "t_max_seconds_unfold": 537.935,
+  "task_wall_max": 575.6,
+  "bound_t": 687,
+  "limit_h": 8.1,
+  "shard_wall_h_from_t": 6.359,
+  "shard_wall_h_from_wall": 6.799
+ },
+ "failures": [],
+ "verdict": "PASS"
+}
