@@ -78,4 +78,31 @@ crashed run's files in use. Each is now tested and killed against a byte-only co
    It touches FD-STAB's, RS1's and ENS1's bound code, so it is not done here.
 6. **The connect's sha256** comes to the director before launch, and its receipt is a PR.
 
+### Addendum A1, revision 2: the planner's interpreter (director, 2026-11-07)
+
+**Binds** the repaired A1, as merged in PR #904, at **M_A1 = `1f747346519d75a680b5c67d644bae798eeb5f86`**. The audited
+head is `fe39a495`, and the A1 files are identical at the two commits. This **supersedes A1's M_A1 above** (`4fd5b9c2`).
+
+| file | sha256 (prefix) |
+|---|---|
+| `RS1-ADDENDUM-A1.md` | `cef9555afdf99ecf` |
+| `nd-unfolding/sbatch_rs1_a1.sh` | `c34512725d24408d` |
+| `nd-unfolding/rs1_a1_plan.py` | `41c1c25ceea03ab1` |
+
+**What led to it.** The first A1 connect stopped at staging (#905, 0 node-h). It ran `rs1_a1_plan.py` under the login
+node's /usr/bin/python3 3.6.15, where `from __future__ import annotations` is a SyntaxError. The bound wrapper would
+also have run the planner's `verify` before sourcing the environment. The partial root, which held no product, was
+deleted under ledger rows in #905.
+
+**Rulings:**
+1. **Every planner call runs after the deploy's environment is sourced,** under root_6_28's Python 3.11, in both the
+   wrapper and the connect. This is tested, including with the REQUIRED mutant "verify above the source".
+2. **The Python 3.6-compatibility claim is withdrawn** (the director's choice (b)). The planner is not claimed to run
+   under 3.6, and no call relies on it.
+3. **The connect's preflight** runs the planner's `--help` under the sourced environment, and refuses on failure.
+4. **Unchanged:** A1's rulings 1–6, including the fresh root at the same path, the teardown guard, V_02 recomputed,
+   and the 8.0 cap. RS1 stands at 1.2400 node-h spent.
+5. **coverage-5b-audit's GO** at `fe39a495`: 34 named mutants and its 12 extras are killed, with a byte-only control.
+   The audit reads the connect script with its receipt.
+
 Nothing is submitted, deposited or tagged.
