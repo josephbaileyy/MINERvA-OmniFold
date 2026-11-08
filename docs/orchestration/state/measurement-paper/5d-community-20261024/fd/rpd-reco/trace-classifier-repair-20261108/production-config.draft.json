@@ -328,6 +328,7 @@
     "file": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue4-20261108/run/prologue.strace",
     "sha256": "e925be68626e21f88d8ffb2dc5a2295bfe1b3047a00450b4a843ef307105d4ad",
     "darshan_success_line": 1625,
-    "libfabric_success_line": 1632
+    "libfabric_success_line": 1632,
+    "revision": "68a36cf8f013aab145faf3cf7ed8d64971a433d8"
   }
 }
