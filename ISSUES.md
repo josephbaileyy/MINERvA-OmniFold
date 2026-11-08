@@ -17,12 +17,12 @@ Every item is assigned a single, unambiguous class:
 
 | Source | [T] Textual | [R] Record | [A] Author | [D] Dispute/Void | Total |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Part 1: Currency Audit (`AUDIT.txt`)** | 12 | 9 | 0 | 0 | **21** |
-| **Part 2: Sonnet Report 1 (`sonnet-note-r1-1.txt`)** | 57 | 4 | 0 | 1 | **62** |
+| **Part 1: Currency Audit (`AUDIT.txt`)** | 11 | 8 | 2 | 0 | **21** |
+| **Part 2: Sonnet Report 1 (`sonnet-note-r1-1.txt`)** | 61 | 4 | 0 | 1 | **66** |
 | **Part 3: Sonnet Report 2 (`sonnet-note-r1-2.txt`)** | 63 | 3 | 0 | 1 | **67** |
-| **Part 4: Gemini Report 1 (`gemini-note-r1-1.txt`)** | 35 | 2 | 0 | 1 | **38** |
+| **Part 4: Gemini Report 1 (`gemini-note-r1-1.txt`)** | 34 | 2 | 0 | 1 | **37** |
 | **Part 5: Gemini Report 2 (`gemini-note-r1-2.txt`)** | 27 | 0 | 0 | 3 | **30** |
-| **Total Enumerated Findings** | **194** | **18** | **0** | **6** | **218** |
+| **Total Enumerated Findings** | **196** | **17** | **2** | **6** | **221** |
 
 ---
 
@@ -113,17 +113,17 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Record:* `DECISION-20261101-joseph-1b-keep-block-redesign-test.md:38-40`.  
   *Status:* Drafted as AUD-E9.
 
-* **AUD-N4 [T]** — **Release appendix update.**  
+* **AUD-N4 [A]** — **Release appendix update.**  
   *Finding:* The release appendix still specifies the measurement release; archive package is not mentioned.  
   *Record:* `AUDIT.txt` row N4; `DECISION-20261106-joseph-methods-study-and-archive.md:57-61, :64-67` ("Publication, release and contact acts stay Joseph's").  
   *Target:* `docs/analysis-note/app_release.tex:4`, `:58`.  
-  *Status:* **HELD.** Held by the director (2026-11-08) and Joseph; no release schema change may be executed without explicit authorization.
+  *Status:* **HELD.** Held by the director (2026-11-08) and Joseph; no release schema change may be executed without explicit authorization. Not classed as an edit.
 
-* **AUD-N5 [R]** — **Event-loop preservation.**  
+* **AUD-N5 [A]** — **Event-loop preservation.**  
   *Finding:* Event-loop preservation CFS paths in `app_release.tex:50, :53`.  
   *Record:* `AUDIT.txt` row N5; `DECISION-20261101-joseph-eventloops-copy-to-cfs.md:28-34, :38-48` has no CITABLE FOR block.  
   *Target:* `docs/analysis-note/app_release.tex:50`, `:53`.  
-  *Status:* **HELD.** Held by the director (2026-11-08); no text drafted without authorization.
+  *Status:* **HELD.** Held by the director (2026-11-08); no text drafted without authorization. Not classed as an edit.
 
 * **AUD-N6 [T]** — **Abstract resync.**  
   *Finding:* Resync note abstract to match reframed paper abstract per `DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:57-59`.  
@@ -318,6 +318,26 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Generator $\\chi^2$ drops sharply when flux correlations are shrunk or removed.  
   *Evidence:* `docs/analysis-note/sec_fived16.tex:185`, Table 22.  
   *Resolution:* Discuss covariance regularization and correlation sensitivity in §10.
+
+* **S1-COM-12 [T]** — **Joint tests condition and nuisance model disclosure.**  
+  *Finding:* Fine-grid convergence has not shown convergence (condition (i)). No hadronic-response nuisance band in declared nuisance model (§11.8; ±4% study moves observed statistics by up to ≈11% without regenerating null). No rejection rate measured for null pseudo-data processed like data (§11.3). A1/A2 unproven. Calibration conditional on data-derived inputs (§11.2). CH-target correction makes NuWro total rejection not robust (§11.9).  
+  *Evidence:* `docs/analysis-note/sec_joint.tex:120`, `:165`, `:210`.  
+  *Resolution:* State all conditions and limitations transparently in §11; add target condition to list in §11.4 and executive summary.
+
+* **S1-COM-13 [T]** — **Extended-fiducial study uncertainties and envelope.**  
+  *Finding:* No covariance; central value uses purity subtraction, not designated treatment. Three-prior envelope depends on NuWro-shaped prior built from flux-mis-sampled sample, not rebuilt after flux repair (§12.2). 28% of rate in tier 2 has only prior-spread envelope (±1.5% total cross section spread). Total uncertainty for $\\sigma_{\\text{ext}} = 4.502 \\times 10^{-38}$ is unquantified.  
+  *Evidence:* `docs/analysis-note/sec_fps.tex:45-90`.  
+  *Resolution:* Explicitly document that extended-fiducial central value is exploratory and unbinned tier-2 rate has unquantified covariance.
+
+* **S1-COM-14 [T]** — **Ascencio et al. comparison uncertainties.**  
+  *Finding:* Central values are 9.2% and 6.0% above Ascencio on two super-cells. Note says comparison "neither refutes nor validates". Ascencio's covariance is in hand, yet no uncertainty on the difference is given. At minimum, give Ascencio's own uncertainty on the two super-cells.  
+  *Evidence:* `docs/analysis-note/sec_3d.tex:185`.  
+  *Resolution:* Tabulate Ascencio's reported uncertainties on the two super-cells and describe difference in terms of differing $E_{\\text{avail}}$ definitions.
+
+* **S1-COM-15 [T]** — **Reproducibility tolerances and archival completeness.**  
+  *Finding:* Quoted central values reproducible only within float32 rounding spread (≈0.8 median, 2.6 max statistical SD under perturbations, §9.3); rerun tolerance should be stated. App. G package not deposited, repository/snapshot placeholders unfilled, 2D uncertainty and coverage figures not reproduced by it, 489 simulation AnaTuples have no preservation copy. Release schema marks 5-axis covariance as fixed identity despite failing criteria.  
+  *Evidence:* `docs/analysis-note/sec_5d.tex:95`, `app_release.tex:25`.  
+  *Resolution:* State numerical reproducibility tolerance explicitly; replace placeholders with formal archival deposit statements; reconcile release schema with non-passing 5D covariance status.
 
 ### Section 5: Self-Containment
 
@@ -709,10 +729,6 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* 8 cells in §10 vs 72 cells in Table 11.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:18`, Table 11.  
   *Resolution:* Clarify in text: GiBUU covers 8 of the 16 reporting cells in §10, and 72 of the 109 joint cells in §11.
-* **G1-ACC-10 [T]** — **Average nucleon mass definition $\\bar{M}$.**  
-  *Finding:* Origin of 1.5:1 ratio in $\\bar{M} = (1.5 M_n + M_p)/2.5$ for CH tracker.  
-  *Evidence:* `docs/analysis-note/sec_eavailw.tex:52`.  
-  *Resolution:* State the isotopic/target weighting convention used by the MAT framework.
 
 ### Section 4: Completeness as a Citable Record
 
@@ -779,7 +795,10 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Avoid internal software tracker phrases ("until 2026-10-11", "run log not found", "inferred, not verified").  
   *Evidence:* `docs/analysis-note/sec_method.tex:95`, `sec_systematics.tex:195`.  
   *Resolution:* Refactor text into formal, objective archival register while preserving full scientific disclosures.
-* **G1-PRES-10 [T]** — **Target composition explanation.** Same finding as G1-ACC-10.
+* **G1-PRES-10 [T]** — **Average nucleon mass definition $\\bar{M}$.**  
+  *Finding:* In §8.2, average nucleon mass is defined as $\\bar{M} = (1.5 M_n + M_p)/2.5$. Origin of 1.5:1 ratio for CH tracker should be stated.  
+  *Evidence:* `docs/analysis-note/sec_eavailw.tex:52`.  
+  *Resolution:* State the isotopic/target weighting convention used by the MAT framework.
 
 ---
 
@@ -909,6 +928,6 @@ The companion note is restructured into a coherent methods-and-benchmark narrati
 1. **Step 1:** Establish this exhaustive issue ledger on `draft/note-round2-20261108` and obtain confirmation from Grok (`client-grok-shell-open-agent-bridge-c4a99362fc6f`).
 2. **Step 2:** Execute structural reordering in `docs/analysis-note/main_note.tex` in its own commit (2D benchmark before 16-cell result; Executive Summary methods-and-benchmark opening; no prose edits).
 3. **Step 3:** Draft the comprehensive Per-Result Status & Citability Matrix in `sec_execsummary.tex` / Section 1.
-4. **Step 4:** Execute editorial and wording reconciliations ([T] items) across all sections, replacing hardcoded numbers with `values*.tex` macros and removing overclaims.
+4. **Step 4:** Execute editorial and wording reconciliations ([T] items, excluding held [A] items) across all sections, replacing hardcoded numbers with `values*.tex` macros and removing overclaims. Held items ([A]: AUD-N4, AUD-N5) remain unedited without director/Joseph authorization.
 5. **Step 5:** Inline essential mathematical definitions from internal records ([R] items) into self-contained appendices and text.
 6. **Step 6:** Verify entire test suite (`test_build_all.py`, `check_body_pointers.py`, `check_note_records.py pin .`), ensure clean PDF builds, and submit for rater review.
