@@ -37,7 +37,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Record:* `OUTCOME-20261108-cov2d-both-tunes-under-cover.md:99-106` (`CITABLE FOR`), `:108-119` (`NOT CITABLE FOR`).  
   *Target:* `docs/analysis-note/sec_validation.tex:199`, `sec_systematics.tex:53`, `sec_systematics.tex:214`, `sec_execsummary.tex:21`.  
   *Prohibitions (`NOT CITABLE FOR` lines 108–119):* Must strictly carry all negative constraints: (1) NOT citable for coverage of reported intervals at the data's point ($Q_R$ is made at the data, not at $T$); (2) NOT citable for a coverage rate or statements about truths unlike these two; (3) NOT citable for a cause of joint under-coverage or of any flag; (4) NOT citable for anything about $C_{\\text{PL},R}$ or $C_{\\text{model}}$ (neither drawn); (5) NOT citable for independence from training rows; (6) does NOT replace or remove earlier fixed-truth failure (`VL162`; adds to it); (7) NOT citable as wording for the paper or the note (must go through PRD-referee read and Joseph, §12); (8) the "both COVER" sentence of §13 is not available.  
-  *Resolution:* Note text must strictly reflect only the citable facts without asserting coverage of reported data intervals or unmeasured causes.
+  *Resolution:* Under prohibition (7) and `OUTCOME-20261108-cov2d-both-tunes-under-cover.md:118-119`, this result is not wording for the note until the paper lane, a PRD-referee read, and Joseph say so; this row adds no note sentence and authorizes no text change.
 
 * **AUD-E2 [R]** — **1B STOP rule and counts.**  
   *Finding:* The 5D coverage pre-check fail-closed rule and exact draw counts (892 of 900 draws with non-positive composite denominator; up to 62 cells) must be explicitly stated.  
@@ -205,7 +205,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 * **S1-ACC-8 [D]** — **Band count in cross-covariance at `sec_fived16.tex:66-72`.**  
   *Finding:* Referee asserts §10.2 / `sec_fived16.tex:66-72` has a typo: it names four failing weight checks (AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency) and then writes "These five enter as...", so referee proposes changing "five" to "four".  
-  *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), "These five enter" follows the paired terms: the systematic bands, the lateral shifts, the normalization, the run-period terms, and the $C_{\\text{model}}$ shifts. The statistical correlation is the part that is not measured. Do not change "five" to "four".
+  *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), the cross covariance sums the paired terms (systematic bands, lateral shifts, normalization, run-period terms, and $C_{\\text{model}}$ shifts), then states two parts could not be paired: the unmeasured statistical correlation plus the four bands where the weight check failed (`\fvval{x-bounded}`: AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency). "These five" are the unmeasured statistical correlation plus those four bands entering as $r\,S_{16}^{1/2}S_{\\text{2D}}^{1/2}$. Do not change "five" to "four".
 
 * **S1-ACC-9 [T]** — **"At least fifteen-fold" arithmetic error.**  
   *Finding:* §3.2 claims purity bias reduced "at least fifteen-fold (from 3.5% to 4.1% to 0.11% to 0.24%)"; worst case is 3.5 / 0.24 = 14.58.  
@@ -320,7 +320,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* Discuss covariance regularization and correlation sensitivity in §10.
 
 * **S1-COM-12 [T]** — **Joint tests condition and nuisance model disclosure.**  
-  *Finding:* Fine-grid convergence has not shown convergence (condition (i)). No hadronic-response nuisance band in declared nuisance model (§11.8; ±4% study moves observed statistics by up to ≈11% without regenerating null). No rejection rate measured for null pseudo-data processed like data (§11.3). A1/A2 unproven. Calibration conditional on data-derived inputs (§11.2). CH-target correction makes NuWro total rejection not robust (§11.9).  
+  *Finding:* Fine-grid convergence has not shown convergence (condition (i)). No hadronic-response nuisance band in declared nuisance model (§11.8; ±4% study moves observed statistics by up to ≈11% without regenerating null; compare the ≈11% hadronic-response shift with the NuWro total margin of observed 7427 against a null median 6324, and the GiBUU total margin of 2867 against 1791). No rejection rate measured for null pseudo-data processed like data (§11.3). A1/A2 unproven. Calibration conditional on data-derived inputs (§11.2). CH-target correction makes NuWro total rejection not robust (§11.9).  
   *Evidence:* `docs/analysis-note/sec_joint.tex:120`, `:165`, `:210`.  
   *Resolution:* State all conditions and limitations transparently in §11; add target condition to list in §11.4 and executive summary.
 
@@ -520,7 +520,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* `docs/analysis-note/sec_validation.tex:35`, `app_response_mismatch.tex:12`.  
   *Resolution:* Reconcile text: App. D ran exploratory shifted response samples; the full formal closure protocol was not executed.
 * **S2-ACC-6 [D]** — **Count of bands that failed pairing.** Same finding as S1-ACC-8.  
-  *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), "These five enter" follows the paired terms: the systematic bands, the lateral shifts, the normalization, the run-period terms, and the $C_{\\text{model}}$ shifts. The statistical correlation is the part that is not measured. Do not change "five" to "four".
+  *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), the cross covariance sums the paired terms (systematic bands, lateral shifts, normalization, run-period terms, and $C_{\\text{model}}$ shifts), then states two parts could not be paired: the unmeasured statistical correlation plus the four bands where the weight check failed (`\fvval{x-bounded}`: AGKYxF1pi, AhtBY, BhtBY, MinosEfficiency). "These five" are the unmeasured statistical correlation plus those four bands entering as $r\,S_{16}^{1/2}S_{\\text{2D}}^{1/2}$. Do not change "five" to "four".
 * **S2-ACC-7 [T]** — **Band counts and classifications across sections.**  
   *Finding:* 44 evaluated systematic bands plus 1 global normalization; clarify GEANT FSI lateral treatment.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:35`, `app_statmethods.tex:210`.  
@@ -929,5 +929,5 @@ The companion note is restructured into a coherent methods-and-benchmark narrati
 2. **Step 2:** Execute structural reordering in `docs/analysis-note/main_note.tex` in its own commit (2D benchmark before 16-cell result; Executive Summary methods-and-benchmark opening; no prose edits).
 3. **Step 3:** Draft the comprehensive Per-Result Status & Citability Matrix in `sec_execsummary.tex` / Section 1.
 4. **Step 4:** Execute editorial and wording reconciliations ([T] items, excluding held items AUD-N4 and AUD-N5) across all sections, replacing hardcoded numbers with `values*.tex` macros and removing overclaims. Held items (AUD-N4 [T] and AUD-N5 [R]) remain unedited without director/Joseph authorization.
-5. **Step 5:** Inline essential mathematical definitions from internal records ([R] items) into self-contained appendices and text.
+5. **Step 5:** Inline essential mathematical definitions from internal records ([R] items, excluding held item AUD-N5) into self-contained appendices and text. Held item AUD-N5 [R] remains unedited without director/Joseph authorization.
 6. **Step 6:** Verify entire test suite (`test_build_all.py`, `check_body_pointers.py`, `check_note_records.py pin .`), ensure clean PDF builds, and submit for rater review.
