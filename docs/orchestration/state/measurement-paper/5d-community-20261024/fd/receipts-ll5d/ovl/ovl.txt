@@ -1,0 +1,19 @@
+overlap host=login02 utc=2026-11-08T20:16:43Z scratch=/dev/shm/josephrb-ll5d-ovl.b0ll2T
+ll5d files=742 missing=0
+bd files=780 missing=0
+prr files=22 missing=0
+== LL5D x bd: 35 shared files (realpath)
+      1 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding
+      1 /pscratch/sd/j/josephrb/s5c-20260924/runs/p2
+     33 /pscratch/sd/j/josephrb/s5p-20260926/bank_detector
+  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+  /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+== LL5D x prr: 3 shared files (realpath)
+      1 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding
+      1 /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware
+      1 /pscratch/sd/j/josephrb/s5c-20260924/runs/p2
+  /pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+  /pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+rm -rf /dev/shm/josephrb-ll5d-ovl.b0ll2T rc=0
+no ll5d-ovl scratch left
+DONE utc=2026-11-08T20:17:03Z
