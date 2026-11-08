@@ -1,0 +1,8 @@
+0 | COVERS
+0 | UNDER-COVERS
+2 | REFUSED
+3 | INVALID
+3 | INVALID (grade refused, C_T_minus: the non-null chi2 and the Cholesky chi2 differ)
+3 | STOP
+1 | INVALID (connect: rc=1, no matching verdict line)
+0 | INVALID (connect: rc=0, no matching verdict line)

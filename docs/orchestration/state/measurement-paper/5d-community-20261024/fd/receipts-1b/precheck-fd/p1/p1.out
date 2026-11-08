@@ -1,0 +1,47 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3115c0s15b0n0:
+
+remote-sha 7b8cb1c3be4d560662c098dde503364e2283459bc5a45e82175c640b5dc29579
+node login27 2026-11-07T06:38:45Z
+connect script sha256 7b8cb1c3be4d560662c098dde503364e2283459bc5a45e82175c640b5dc29579
+== COV2D fence, immediately before staging (must be empty)
+squeue rc=0; cov2d-* rows: []
+HEAD ed8f328fab52122112f54850d0078d79e81834c5; porcelain lines 0
+module sha256 7c3ffe86b721f79ba9ee3d426b4c711ca96eeec7b2a4071eba5cf62bf102ef0f (bound 7c3ffe86...)
+spec entries 355; sha256 f648816d5b4dbbe1fc1a9b55f5517eb58116fef79c927ec7c224be50dbb912d6
+stat before: 355 lines; missing 0
+== stage (bound code), 2026-11-07T06:39:01Z
+{"staged": 355, "missing": []}
+stage rc=0 2026-11-07T06:39:03Z
+stat after: byte-identical to before (355 sources)
+staged.json sha256 f2f0641975d810172ad946f650d9b59c52fea57e3b70947c12cb87656bf31189
+staged by role {'derivation': 176, 's1-universe': 176, 's1-assembly': 1, 'flux-constraint': 1, 'flux-file': 1} missing []
+== controls E and M (the bound readout, stopping at the first mode product), 2026-11-07T06:39:04Z
+CONTROLS: FAIL (fs.Invalid): band Flux: the staged S1 unfolds do not reproduce the assembly's block exactly
+controls rc=7 2026-11-07T06:39:05Z
+== pfd-p1 rc=7 2026-11-07T06:39:05Z
+script-rc=7

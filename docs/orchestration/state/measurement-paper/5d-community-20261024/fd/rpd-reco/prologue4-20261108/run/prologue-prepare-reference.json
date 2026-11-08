@@ -1,0 +1,11 @@
+{
+  "connect_id": "c6bb620f-367d-4f11-b63f-409d20154748",
+  "prepare_name": "prologue-prepare",
+  "private_prepare": {
+    "path": "/dev/shm/limres-rpd-prologue4-20261108/.rpd-private/3cdf27c8d29fe5d5407acb8ca456ade8a1df23de41ce5930c70a2a3bcb5cc522/prologue-prepare.json",
+    "sha256": "7f12fdfdd14bf82ff1e9ba72324b9269bba183984f41cc6fdf5b4383573a0afb"
+  },
+  "run": "/dev/shm/limres-rpd-prologue4-20261108/run",
+  "schema": "fd-rpd-reco-private-prepare-reference/1",
+  "status": "PASS"
+}

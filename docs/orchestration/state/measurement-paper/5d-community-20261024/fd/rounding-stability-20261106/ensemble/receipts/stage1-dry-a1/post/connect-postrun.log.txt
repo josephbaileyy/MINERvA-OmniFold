@@ -1,0 +1,37 @@
+node login06 nproc=244 loadavg 32.82 56.57 58.54
+2026-11-08T08:51:36Z
+connect script sha256 90af5e54e895bf0f75b62bd3bd93d53bcf294f47c1bb141f3bbf35b5dc17c933
+job 60993979
+== the fence (only rs1_* and ens1_* pass)
+FENCE: pass
+== the job
+60993979|ens1_a1_dry|COMPLETED|0:0|00:18:13|1093|1|256|2026-11-08T00:32:43|2026-11-08T00:50:56|nid004549
+60993979.batch|batch|COMPLETED|0:0|00:18:13|1093|1|256|2026-11-08T00:32:43|2026-11-08T00:50:56|nid004549
+60993979.extern|extern|COMPLETED|0:0|00:18:14|1094|1|256|2026-11-08T00:32:43|2026-11-08T00:50:57|nid004549
+state=COMPLETED elapsed_raw=1093 nnodes=1
+charge node_h=0.3036; stage 1 spend 0.1586 + 0.3036 = 0.4622 of 55.0
+== the run
+{"mode": "dry", "stage": 1, "shard": "-", "tasks": 9, "ended": 9, "rc": 0, "job": "60993979", "pin": "f4d2d7f3833834390b7b031df61ba1a5765e9900", "teardown": ""}
+
+HEAD f4d2d7f3833834390b7b031df61ba1a5765e9900; modified tracked files: 0
+== the nine products (the bound probe's expect)
+ens1_F64	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/F64/ens1_F64_b-_j0.npz
+ens1_s00_k001	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k001_b-_j0.npz
+ens1_s00_k002	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k002_b-_j0.npz
+ens1_s00_k003	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k003_b-_j0.npz
+ens1_s00_k004	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k004_b-_j0.npz
+ens1_s01_k001	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k001_b-_j1.npz
+ens1_s01_k002	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k002_b-_j1.npz
+ens1_s01_k003	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k003_b-_j1.npz
+ens1_s01_k004	/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/stability/ens1_k004_b-_j1.npz
+products: 9
+== F64: attempt 1's product, one noatime copy
+attempt 1 F64: atime 1794100660 -> 1794100660; copy sha256 94ef51532161aa578f2c0944658d2172fda9c1c118ea81ffa2415cc74a5808e7 (pinned 94ef51532161aa578f2c0944658d2172fda9c1c118ea81ffa2415cc74a5808e7)
+== E5 at the dry run, F64 bitwise, the projection (sourced environment)
+read.py sha256 59f861dec274384df44154033fb9cf9c9d59cab289a655cf6f9ef5dda965db4f
+Python 3.11.14
+{"verdict": "PASS", "failures": [], "f64_compare": {"xsec_flat": {"dtype": ["float64", "float64"], "shape": [[65856], [65856]], "bitwise_identical": true}, "xtrue_flat": {"dtype": ["float64", "float64"], "shape": [[65856], [65856]], "bitwise_identical": true}}, "moved_rows": {"ens1_F64": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "ens1_s00_k001": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "ens1_s00_k002": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "ens1_s00_k003": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "ens1_s00_k004": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "ens1_s01_k001": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "ens1_s01_k002": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "ens1_s01_k003": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "ens1_s01_k004": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}}, "projection": {"t_max_seconds_unfold": 537.935, "task_wall_max": 575.6, "bound_t": 687, "limit_h": 8.1, "shard_wall_h_from_t": 6.359, "shard_wall_h_from_wall": 6.799}}
+read rc=0
+11663f0cc6a5b049bb4308f32ddc77fe59ece62f2e26631e3e6862bde670ef91  /pscratch/sd/j/josephrb/ens1-a1-20261108/post/a1-dry-read.json
+ens1 a1 dry postrun rc=0
+2026-11-08T08:52:02Z

@@ -1,0 +1,20 @@
+2026-11-07T18:40:44Z
+login05
+FENCE: no cov2d-* job queued or running
+BEFORE 1794075258 1794074830 184429 /pscratch/sd/j/josephrb/rs1-20261106/runs/A0/rs1_A0_b-_j0.npz
+BEFORE 1794075258 1794074830 782472 /pscratch/sd/j/josephrb/rs1-20261106/runs/A0/rs1_A0_b-_j0.trace.json.gz
+BEFORE 1794075258 1794074894 184430 /pscratch/sd/j/josephrb/rs1-20261106/runs/V/rs1_V_b-_j1.npz
+BEFORE 1794075258 1794074894 774587 /pscratch/sd/j/josephrb/rs1-20261106/runs/V/rs1_V_b-_j1.trace.json.gz
+AFTER  1794075258 1794074830 184429 /pscratch/sd/j/josephrb/rs1-20261106/runs/A0/rs1_A0_b-_j0.npz
+AFTER  1794075258 1794074830 782472 /pscratch/sd/j/josephrb/rs1-20261106/runs/A0/rs1_A0_b-_j0.trace.json.gz
+AFTER  1794075258 1794074894 184430 /pscratch/sd/j/josephrb/rs1-20261106/runs/V/rs1_V_b-_j1.npz
+AFTER  1794075258 1794074894 774587 /pscratch/sd/j/josephrb/rs1-20261106/runs/V/rs1_V_b-_j1.trace.json.gz
+rs1_A0_b-_j0.npz: OK
+rs1_A0_b-_j0.trace.json.gz: OK
+rs1_V_b-_j1.npz: OK
+rs1_V_b-_j1.trace.json.gz: OK
+DIGESTS: 4 of 4 match #891
+TIEREAD {"V": {"arm": "V", "jitter_seed": 1}, "base": {"arm": "A0", "jitter_seed": 0}, "fits": {"first": {"V": ["l", 0.014322243460743978, 3990552], "base": ["l", 0.014322241727664248, 3990552], "fit": 2, "node": 3, "role": "clf2", "tree": 0}, "identical": 0, "n_fits": [15, 15], "structure_differs": 13, "threshold_only": 2}, "refinement_tree": {"first": null, "identical": 0, "n_fits": [1, 1], "structure_differs": 0, "threshold_only": 1}, "xsec_flat": {"bitwise_equal": false, "max_rel_diff": 2.9720572669589274e-09, "median_rel_diff_of_differing": 4.283462473608779e-10, "n": 65856, "n_differ": 10397}}
+compare rc=0
+REMOVED /pscratch/sd/j/josephrb/c5b-tieread-20261107
+ssh rc=0

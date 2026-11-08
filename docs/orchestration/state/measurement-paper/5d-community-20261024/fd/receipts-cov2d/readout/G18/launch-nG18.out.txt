@@ -1,0 +1,41 @@
+fence host=login02 utc=2026-11-07T17:50:34Z
+squeue:
+sacct unended cov2d:
+fence end
+FENCE_CLEAR
+staged rc=0 node=c9b3e929f6369c51f5a77a09cecf31e725de8d36592e7dfef9375032951c9832 local=c9b3e929f6369c51f5a77a09cecf31e725de8d36592e7dfef9375032951c9832
+DIGEST_MATCH
+launched rc=0 at 2026-11-07T17:50:54Z
+last line: DONE
+fetched connect-n-G18.log rc=0
+fetched null_G18.log rc=0
+fetched blobs.before rc=0
+fetched blobs.after rc=0
+fetched out/null_G18.json rc=0
+fetched out/blocks_G18.npz rc=0
+removal rc=0
+host=login02 utc=2026-11-07T17:56:52Z
+c8f495cf729665b882ff05f736a8bbae52233893efaea5d60440915472709b05  connect-n-G18.log
+20b87a222c0396857e4c0d2cdc47f0e37c477652faa3d9bc47abf6fcd7ddbe41  null_G18.log
+b3926bf6b212a71ddae679a9f5d1ae8fd20e20b964eebd6ddd0b466fb839c5c2  blobs.before
+b3926bf6b212a71ddae679a9f5d1ae8fd20e20b964eebd6ddd0b466fb839c5c2  blobs.after
+ecdb4be2fbb18852d32c1a4f9fb3cbc4107310d72c5bdeb2eb3651996ed0c41f  out/null_G18.json
+7eb657b82ae953bdf0584eda27264c52a64bcb48baea52dfc194f5efe440ea3d  out/blocks_G18.npz
+c9b3e929f6369c51f5a77a09cecf31e725de8d36592e7dfef9375032951c9832  /dev/shm/josephrb-cov2d-n-G18.sh
+rm -f /dev/shm/josephrb-cov2d-n-G18.sh rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/out/blocks_G18.npz rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/out/null_G18.json rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/blobs.after rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/blobs.before rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/connect-n-G18.log rc=0
+rm -f /dev/shm/josephrb-cov2d-n-G18/null_G18.log rc=0
+rmdir /dev/shm/josephrb-cov2d-n-G18/out rc=0
+rmdir /dev/shm/josephrb-cov2d-n-G18 rc=0
+ls end
+MATCH connect-n-G18.log
+MATCH null_G18.log
+MATCH blobs.before
+MATCH blobs.after
+MATCH out/null_G18.json
+MATCH out/blocks_G18.npz
+launcher rc=0

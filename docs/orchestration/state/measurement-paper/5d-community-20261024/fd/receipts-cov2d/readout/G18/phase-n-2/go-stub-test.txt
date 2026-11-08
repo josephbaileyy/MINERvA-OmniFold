@@ -1,0 +1,24 @@
+go.sh sha256 e55e174bcf1fad0a471be480451f0032f25fec1aa20dc7be608ed88e6e8ff692; stub launcher d0aa767faf4b3d3b569506e9572448cffaa8df9460ee78b25ca9b788fb1076da; stub connect 75011f7bc5e975456380280a02bedbe9562542ee6178fadc58d0f85128c3ac45
+copy vs go.sh:
+4c4
+< LAUNCHER_SHA=314fa64d950770dd527fae1f01f1cf9efe6e6394b25f7d7ca00bd9f0ba74f26f   # director 2026-11-07 (fence: rs1_*, ens1_*)
+---
+> LAUNCHER_SHA=d0aa767faf4b3d3b569506e9572448cffaa8df9460ee78b25ca9b788fb1076da   # director 2026-11-07 (fence: rs1_*, ens1_*)
+== right digests: go.sh nG18 75011f7bc5e975456380280a02bedbe9562542ee6178fadc58d0f85128c3ac45
+LAUNCHER-SHA OK d0aa767faf4b3d3b569506e9572448cffaa8df9460ee78b25ca9b788fb1076da
+CONNECT-SHA OK /Users/josephbailey/cov2d-work/a4/gostub/connect-n-G18.sh 75011f7bc5e975456380280a02bedbe9562542ee6178fadc58d0f85128c3ac45
+STUB-LAUNCHER ran with N=nG18 from /Users/josephbailey/cov2d-work/a4/gostub
+rc=0
+== wrong connect digest: go.sh nG18 0000000000000000000000000000000000000000000000000000000000000000
+LAUNCHER-SHA OK d0aa767faf4b3d3b569506e9572448cffaa8df9460ee78b25ca9b788fb1076da
+REFUSED /Users/josephbailey/cov2d-work/a4/gostub/connect-n-G18.sh is 75011f7bc5e975456380280a02bedbe9562542ee6178fadc58d0f85128c3ac45, not 0000000000000000000000000000000000000000000000000000000000000000
+rc=2
+== no such connect: go.sh sAR23 75011f7bc5e975456380280a02bedbe9562542ee6178fadc58d0f85128c3ac45
+REFUSED no /Users/josephbailey/cov2d-work/a4/gostub/connect-s-AR23.sh
+rc=2
+== no digest: go.sh nG18
+usage: go.sh <N> <connect sha256>
+rc=2
+== launcher changed: go.sh nG18 75011f7bc5e975456380280a02bedbe9562542ee6178fadc58d0f85128c3ac45
+REFUSED launch-s5.sh is 4dd24ff24cd1985c609958ee66f9b470fdb2f769fb6fb982a0216cf447dd0d2b, not d0aa767faf4b3d3b569506e9572448cffaa8df9460ee78b25ca9b788fb1076da
+rc=2

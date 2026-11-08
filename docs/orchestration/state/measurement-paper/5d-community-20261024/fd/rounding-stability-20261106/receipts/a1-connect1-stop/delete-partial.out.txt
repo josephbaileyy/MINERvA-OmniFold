@@ -1,0 +1,28 @@
+2026-11-07T22:49:33Z
+login09
+top-level entries: a1 deploy dry.tsv logs queue.tsv 
+== listing (files: 41678, bytes: 2492240149)
+92195b6dc70658d8e3d348737d6eda5a83952dc4f88a5ff1a81b574f6541071d  dry.tsv
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  logs/clone-a1.log
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  logs/clone-deploy.log
+06e9d52c1720fca412803e3b07c4b228ff113e303f4c7ab94665319d832bbfb7  logs/connect-a1.done
+889e2b9ffa45d10d3be2921c1524b3bf5be2c9515fd4d5be44c82aec8bb0ba07  logs/connect-a1.log
+c407fe6892d539dcf4188dba1a9108eb097e4855f81478a260f7ebe2491c26e8  logs/env-tasks.log
+161304361345a7a452a15c2775fe412d6fd68c79254d537f7f22c2f42c1b385c  logs/iris.txt
+deab082b4997b352d151c4553ced4a0c1c3ce971a66601f74da3df74905b6261  logs/rs1_a1_submit.sh
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  logs/squeue-before.txt
+ae18fff5bc5ba2cf1f59a5f967de56c62504ba344e9f996fd7e4d86ff734f087  logs/stage.out
+252c9628c0a238820d851f5d77e72afefda3d9e61d6fcc9a658e5a3e8543ea73  queue.tsv
+deploy: HEAD e306087e68fd497541d32b440848a40f7f29611e, files 20699, porcelain --ignored 0
+a1: HEAD 4fd5b9c2db1cda2177cd4540c9a44c404cb1cc81, files 20968, porcelain --ignored 0
+== delete
+== gone?
+gone: /pscratch/sd/j/josephrb/rs1-a1-20261107/deploy
+gone: /pscratch/sd/j/josephrb/rs1-a1-20261107/a1
+gone: /pscratch/sd/j/josephrb/rs1-a1-20261107/queue.tsv
+gone: /pscratch/sd/j/josephrb/rs1-a1-20261107/dry.tsv
+gone: /pscratch/sd/j/josephrb/rs1-a1-20261107/logs
+gone: /pscratch/sd/j/josephrb/rs1-a1-20261107
+attempt 1 root still present: yes
+2026-11-07T22:50:15Z
+DELETE: PASS

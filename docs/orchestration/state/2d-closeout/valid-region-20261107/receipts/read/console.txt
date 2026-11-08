@@ -1,0 +1,7 @@
+== valid-region read 2026-11-07T18:48:13Z M=0687d6f2776b3ad691568f701de3aff166d9ca2a host=DN0a1f6baa
+clone at M; porcelain empty
+binding pins 4/4 equal
+inputs 6/6 equal (shasum -a 256 -c INPUTS.sha256, rc 0)
+tests rc 0: Ran 56 tests in 0.248s OK
+read rc 0; stderr: readings written
+clone porcelain after the read: ''

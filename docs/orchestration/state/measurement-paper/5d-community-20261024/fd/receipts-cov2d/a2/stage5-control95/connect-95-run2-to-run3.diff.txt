@@ -1,0 +1,35 @@
+diff --git a/connect-95.sh b/connect-95.sh
+index 911e972..7fa8931 100644
+--- a/connect-95.sh
++++ b/connect-95.sh
+@@ -1,7 +1,7 @@
+ #!/bin/bash
+ # COV2D connect 95: section 9.5's control (COV2D-DECLARATION.md section 9.5; the director's R2 of 2026-11-04: "a login
+ # connect in root_6_28 before the pilot, sha first, threads capped"). The amendment's block code (cov2d_blocks.py,
+-# blob 7c656f4a, at M = the amendment branch's 0bb6bca8; not yet bound) applies the RE-2 rollup's own functions to part
++# blob b9e63a38, at M = a6054769, bound by binding 2 A2 rev 2) applies the RE-2 rollup's own functions to part
+ # B's products and must reproduce part B's S5_R blocks (s5/production_cov.npz, 631cf255...: band_<b>, universe, stat)
+ # to 1e-12, with E_R's reported cells equal to cmodel_2d.json's.
+ #   * Every product is copied through O_NOATIME and checked against part B's committed sums before ROOT opens the copy;
+@@ -28,7 +28,7 @@
+ #     libMATDict.so -> libMAT.so, mapped MAT files exactly {libMAT.so}, PLOTUTILSROOT/MINERVA_PREFIX, the dictionary).
+ #     Any mismatch is INVALID.
+ # Run on login02: setsid nohup bash /dev/shm/josephrb-cov2d-95.sh >/dev/null 2>&1 </dev/null &
+-M=0bb6bca8f9944f28ec494231dc53fb282f741ab2
++M=a60547692df5f963e428cdfe4661fc51ab785b7b
+ W=/dev/shm/josephrb-cov2d-95; DD=$W/deploy
+ A=/pscratch/sd/j/josephrb/MINERvA-OmniFold   # the shared checkout with the MAT build (setup_salloc_env.sh)
+ PY310=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
+@@ -47,10 +47,10 @@ blobs() {
+     2d-unfolding/cov2d/cov2d_writer.py nd-unfolding/fd_1b_null.py 2d-unfolding/re2/partc/re2c_rollup.py \
+     2d-unfolding/pv2d/cmodel/build_cmodel.py 2d-unfolding/cov2d/cov2d_blocks.py nd-unfolding/fd_rpd_inputs.py) > "$W/blobs.$1"
+   cat "$W/blobs.$1"
+-  for b in 97f26a1d03be8cf14cdb6e0ce05e794f66f9b571 7dafdd3ff827378554931bd1b3d1f19aeeabe11d \
++  for b in 97f26a1d03be8cf14cdb6e0ce05e794f66f9b571 9e510e89e1b731ab5899fb1e4e85089b7442f303 \
+            d5718bf44c2084c20c30a8b8614e9c40e6fbeee3 bb3892e5447d37ee524c720c5ab623baa7184f30 \
+            1810161d53c6b849d0dce7fb506d88d551d89900 e41940cb3b4af8f273f34723fb4389d4dac86e0a \
+-           7a987e25924895803bea756f3e63e3b8b21cd25c 7c656f4a7ae269ffa1350cfc638132efb89a2172 \
++           7a987e25924895803bea756f3e63e3b8b21cd25c b9e63a3827e44c31a529f8d92482b7d7969d8223 \
+            7c2e018f1169a9be0c5642daab991c664acbefcf; do
+     grep -q " $b	" "$W/blobs.$1" || stop "blob $b missing at M ($1)"
+   done

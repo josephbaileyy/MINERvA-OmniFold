@@ -1,0 +1,118 @@
+inputs: gate_d e1838c0a, diag 6fd6669e, i0 9a4142d3, i2 a9d3dc9c, stage0 05be73ee
+window 0.9-1.1; failing cells (11): R00 R02 R05 R07 R08 R09 R10 R11 R12 R13 R15
+
+== band classes per group (band-cells)
+  interaction  matching 15  over 148  under 155  noise 194  undefined 16
+  flux         matching 7  over 6  under 3  noise 0  undefined 0
+  detector     matching 15  over 21  under 23  noise 5  undefined 0
+
+== group sigma ratio per cell (gate D per_group_sigma_ratio), class
+  cell  rho          interaction               flux           detector
+  R00  1.157     3.183     over     1.189     over     1.077 matching
+  R01  1.032     1.687     over     1.009 matching     1.006 matching
+  R02  1.149     1.430     over     1.183     over     0.981 matching
+  R03  0.938     0.689    under     1.217     over     1.179     over
+  R04  1.020     2.186     over     0.971 matching     1.030 matching
+  R05  0.838     0.540    under     0.837    under     0.892    under
+  R06  1.015     1.023 matching     0.983 matching     1.247     over
+  R07  0.696     0.418    under     0.876    under     0.907 matching
+  R08  2.296     6.521     over     1.170     over     0.934 matching
+  R09  1.113     1.631     over     0.983 matching     1.043 matching
+  R10  1.780     2.107     over     1.201     over     0.908 matching
+  R11  1.827     2.402     over     1.080 matching     0.966 matching
+  R12  1.251     2.667     over     0.963 matching     0.916 matching
+  R13  1.314     1.605     over     0.897    under     0.958 matching
+  R14  1.091     1.324     over     1.112     over     1.016 matching
+  R15  1.418     2.191     over     0.981 matching     0.961 matching
+
+== failing cells: share of rho^2 - 1 by group; the three largest |terms|
+  R00 rho 1.157 rho2-1 +0.338  interaction +0.565  flux +0.410  detector +0.025  | Flux +0.139, MaRES +0.130, MvRES +0.030
+  R02 rho 1.149 rho2-1 +0.321  interaction +0.708  flux +0.300  detector -0.008  | MaRES +0.212, Flux +0.096, Rvp2pi +0.063
+  R05 rho 0.838 rho2-1 -0.298  interaction +0.359  flux +0.576  detector +0.065  | Flux -0.171, MvRES -0.034, MinosEfficiency -0.024
+  R07 rho 0.696 rho2-1 -0.516  interaction +0.839  flux +0.140  detector +0.022  | Rvn2pi -0.163, MvRES -0.080, Flux -0.072
+  R08 rho 2.296 rho2-1 +4.271  interaction +0.955  flux +0.051  detector -0.006  | MaRES +2.098, MaCCQE +1.224, MvRES +0.602
+  R09 rho 1.113 rho2-1 +0.240  interaction +0.999  flux -0.072  detector +0.073  | Rvn2pi +0.076, MFP_pi +0.076, BhtBY +0.067
+  R10 rho 1.780 rho2-1 +2.170  interaction +0.962  flux +0.047  detector -0.009  | MaRES +1.611, MvRES +0.379, Flux +0.103
+  R11 rho 1.827 rho2-1 +2.337  interaction +0.989  flux +0.015  detector -0.003  | MaRES +1.662, MvRES +0.351, Rvn2pi +0.160
+  R12 rho 1.251 rho2-1 +0.564  interaction +1.060  flux -0.040  detector -0.021  | MaCCQE +0.281, MaRES +0.235, MvRES +0.072
+  R13 rho 1.314 rho2-1 +0.728  interaction +1.062  flux -0.055  detector -0.007  | MaRES +0.596, Rvn2pi +0.059, MvRES +0.048
+  R15 rho 1.418 rho2-1 +1.012  interaction +1.019  flux -0.012  detector -0.007  | MaRES +0.796, MvRES +0.219, Rvp2pi +0.056
+
+== harness checks per cell: I2 F_src = sqrt(E/B); stage 0 kappa = sqrt(Dnom/A_unc)
+  R00  F_src 0.994 matching   kappa 1.0004 matching
+  R01  F_src 0.998 matching   kappa 0.9757 matching
+  R02  F_src 1.006 matching   kappa 0.9950 matching
+  R03  F_src 0.986 matching   kappa 0.9931 matching
+  R04  F_src 0.989 matching   kappa 1.0210 matching
+  R05  F_src 0.996 matching   kappa 0.9882 matching
+  R06  F_src 0.997 matching   kappa 0.9987 matching
+  R07  F_src 1.004 matching   kappa 0.9916 matching
+  R08  F_src 1.003 matching   kappa 1.0570 matching
+  R09  F_src 1.007 matching   kappa 1.0062 matching
+  R10  F_src 0.987 matching   kappa 0.9968 matching
+  R11  F_src 1.014 matching   kappa 1.0008 matching
+  R12  F_src 1.012 matching   kappa 1.0001 matching
+  R13  F_src 1.015 matching   kappa 1.0367 matching
+  R14  F_src 0.997 matching   kappa 1.0056 matching
+  R15  F_src 1.007 matching   kappa 0.9974 matching
+  per interaction band-cell sqrt(B/E): n 512, median 0.995, p10 0.63, p90 1.63, range 0.015-72.091
+
+== I2 factors per cell (interaction group), class
+  R00  total 3.183  F_src 0.994 matching  F_prior 5.980     over  F_truth 0.536    under
+  R01  total 1.687  F_src 0.998 matching  F_prior 2.432     over  F_truth 0.695    under
+  R02  total 1.430  F_src 1.006 matching  F_prior 2.501     over  F_truth 0.568    under
+  R03  total 0.689  F_src 0.986 matching  F_prior 0.801    under  F_truth 0.872    under
+  R04  total 2.186  F_src 0.989 matching  F_prior 3.949     over  F_truth 0.559    under
+  R05  total 0.540  F_src 0.996 matching  F_prior 0.857    under  F_truth 0.632    under
+  R06  total 1.023  F_src 0.997 matching  F_prior 1.195     over  F_truth 0.858    under
+  R07  total 0.418  F_src 1.004 matching  F_prior 0.493    under  F_truth 0.844    under
+  R08  total 6.521  F_src 1.003 matching  F_prior 6.506     over  F_truth 0.999 matching
+  R09  total 1.631  F_src 1.007 matching  F_prior 2.343     over  F_truth 0.691    under
+  R10  total 2.107  F_src 0.987 matching  F_prior 3.750     over  F_truth 0.569    under
+  R11  total 2.402  F_src 1.014 matching  F_prior 4.025     over  F_truth 0.588    under
+  R12  total 2.667  F_src 1.012 matching  F_prior 3.909     over  F_truth 0.674    under
+  R13  total 1.605  F_src 1.015 matching  F_prior 3.003     over  F_truth 0.527    under
+  R14  total 1.324  F_src 0.997 matching  F_prior 1.732     over  F_truth 0.767    under
+  R15  total 2.191  F_src 1.007 matching  F_prior 2.942     over  F_truth 0.739    under
+
+== per band: classes over the 16 cells (M matching, + over, - under, n noise, . undefined)
+  inter 2p2h                   Mnn-+nn--nnn--n-  sum|term| 0.020
+  inter AGKYxF1pi              +--+-n-M+M-M++--  sum|term| 0.057
+  inter AhtBY                  -+-M----++-+-++-  sum|term| 0.074
+  inter BhtBY                  n+-n----++-+-++-  sum|term| 0.172
+  inter CCQEPauliSupViaKF      +nn-+nn-nnnnnnnn  sum|term| 0.026
+  inter CV1uBY                 n+nn-++-++-+-M+-  sum|term| 0.062
+  inter CV2uBY                 n+nn+---++-++++-  sum|term| 0.062
+  inter EtaNCEL                nnnnnnnnnnnnnnnn  sum|term| 0.004
+  inter FrAbs_N                nnnn-nnn-+----+-  sum|term| 0.014
+  inter FrAbs_pi               -----+-M-+----+-  sum|term| 0.107
+  inter FrCEx_N                n-------+--n--+-  sum|term| 0.022
+  inter FrCEx_pi               nnnn-nnnnnnnnnnn  sum|term| 0.010
+  inter FrElas_N               nn-n-n--n--n-nn-  sum|term| 0.052
+  inter FrElas_pi              n----n-+nn-nn-n-  sum|term| 0.013
+  inter FrInel_N               nnnn+n--nnnnn-n-  sum|term| 0.012
+  inter FrPiProd_N             nnnn-nnnnnnnnnn-  sum|term| 0.010
+  inter FrPiProd_pi            nnnnnnnnnnnnnnnn  sum|term| 0.007
+  inter HighQ2                 +n-nM---+nM-+-n-  sum|term| 0.119
+  inter LowQ2                  +nnn+nnn-nnn-nnn  sum|term| 0.009
+  inter MFP_N                  ++-+++--++-++++-  sum|term| 0.110
+  inter MFP_pi                 +++-++--++++-++-  sum|term| 0.250
+  inter MaCCQE                 +---+M-++-++++-+  sum|term| 1.720
+  inter MaNCEL                 nnnnnnnnnnnnnnnn  sum|term| 0.002
+  inter MaRES                  +-+++-+-+-++++-+  sum|term| 7.634
+  inter MvRES                  +-M-+-+-+-++++-+  sum|term| 1.903
+  inter NormDISCC              ................  sum|term| 0.000
+  inter NormNCRES              nnnnnnnnnnnnnnnn  sum|term| 0.009
+  inter RDecBR1gamma           nnnnnnnnnnnnnnnn  sum|term| 0.002
+  inter Rvn1pi                 +---+n+-++++++M+  sum|term| 0.021
+  inter Rvn2pi                 +++---+-++++-+++  sum|term| 0.799
+  inter Rvp2pi                 +-+-+-+-++++-+++  sum|term| 0.557
+  inter Theta_Delta2Npi        +M+++n+-++++++n+  sum|term| 0.045
+  inter VecFFCCQEshape         --n-----+-+M+Mn+  sum|term| 0.026
+  flux  Flux                   +M++M-M-+M+MM-+M  sum|term| 1.218
+  detec GEANT_Neutron          ----++nn----+M++  sum|term| 0.009
+  detec GEANT_Pion             ++---++-Mn----M+  sum|term| 0.081
+  detec GEANT_Proton           n+++-+++--n-+-+-  sum|term| 0.006
+  detec MinosEfficiency        MMM+M-++MMMMMMMM  sum|term| 0.196
+
+code sha256 639e5fa7dabbba4334249e56877785c211e4be2a06aac0b9d080faf8a30a39b2

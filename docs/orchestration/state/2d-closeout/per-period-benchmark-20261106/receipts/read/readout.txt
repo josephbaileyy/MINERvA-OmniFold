@@ -1,0 +1,31 @@
+per-period 2D benchmark readout; every sigma, and the noise behind every null class, comes from 10 bootstrap draws plus one seed draw per group (accepted by the director on 2026-11-06); a sigma is uncertain by about +-24%
+classes (read only where both noise models agree): {"R5": "no change", "R5bar": "farther without 1G-1M", "R2": "no group separates", "R2bar": "other pattern", "R3": {"23": "group-independent at this resolution", "9": "unresolved", "118": "group-independent at this resolution", "2": "group-independent at this resolution", "79": "unresolved", "121": "group-dependent"}, "R4": {"PA": "matches the published p_par high/low ratio", "PB": "matches the published p_par high/low ratio", "PC": "matches the published p_par high/low ratio"}}
+--- noise model replica
+R5: delta -0.0683  sigma 0.0960  z -0.71  -> no change
+R5bar: delta -0.6927  sigma 0.1539  z -4.50  -> farther without 1G-1M
+R2: PA T~ 2.0493+-0.1783  PB T~ 2.6139+-0.3449  PC T~ 2.7798+-0.5061  z {'PB-PA': 1.4544344136205083, 'PB-PC': -0.27091974935866864, 'PC-PA': 1.3615684575883522}  -> no group separates
+R2bar: PA T~ 2.7620+-0.2106  PB T~ 5.0345+-0.5330  PC T~ 3.2928+-0.6618  z {'PB-PA': 3.964894824630223, 'PB-PC': 2.0496882201017463, 'PC-PA': 0.7643605376805932}  -> other pattern
+R3 mode 23: z_E_R +4.75  delta {'PB-PA': -1.168245390983127, 'PB-PC': -0.4627157146412003, 'PC-PA': -0.5181419155850016}  -> group-independent at this resolution
+R3 mode 9: z_E_R +3.78  delta {'PB-PA': 0.4298137610321739, 'PB-PC': -1.9178508188495789, 'PC-PA': 2.419373682007655}  -> unresolved
+R3 mode 118: z_E_R +3.65  delta {'PB-PA': 0.43644835833118356, 'PB-PC': 0.44084508150229734, 'PC-PA': -0.12656192215936002}  -> group-independent at this resolution
+R3 mode 2: z_E_R +3.64  delta {'PB-PA': 1.478596458118579, 'PB-PC': 1.0519357071980557, 'PC-PA': -0.24789840672050203}  -> group-independent at this resolution
+R3 mode 79: z_E_R +3.61  delta {'PB-PA': 2.350055813818979, 'PB-PC': 2.078888676654714, 'PC-PA': -0.18436055909520482}  -> unresolved
+R3 mode 121: z_E_R +3.50  delta {'PB-PA': 3.7304224967250317, 'PB-PC': 1.1166130702153978, 'PC-PA': 1.757250447926511}  -> group-dependent
+R4 PA: st -0.03367  sigma_pub 0.04136  z -0.81  -> matches the published p_par high/low ratio
+R4 PB: st +0.06523  sigma_pub 0.04559  z +1.42  -> matches the published p_par high/low ratio
+R4 PC: st -0.00199  sigma_pub 0.04271  z -0.05  -> matches the published p_par high/low ratio
+--- noise model replica+seed
+R5: delta -0.0614  sigma 0.0983  z -0.63  -> no change
+R5bar: delta -0.6898  sigma 0.1541  z -4.48  -> farther without 1G-1M
+R2: PA T~ 2.0245+-0.1784  PB T~ 2.5974+-0.3515  PC T~ 2.7550+-0.5102  z {'PB-PA': 1.453520382339832, 'PB-PC': -0.2542799408025446, 'PC-PA': 1.3515996246872584}  -> no group separates
+R2bar: PA T~ 2.7436+-0.2117  PB T~ 5.0155+-0.5398  PC T~ 3.2760+-0.6620  z {'PB-PA': 3.9182023369795065, 'PB-PC': 2.036483439817525, 'PC-PA': 0.766143575752848}  -> other pattern
+R3 mode 23: z_E_R +4.75  delta {'PB-PA': -1.1649215394287575, 'PB-PC': -0.4608755545790025, 'PC-PA': -0.5159714138855274}  -> group-independent at this resolution
+R3 mode 9: z_E_R +3.78  delta {'PB-PA': 0.4262616314816406, 'PB-PC': -1.9071201066392875, 'PC-PA': 2.4170841191435346}  -> unresolved
+R3 mode 118: z_E_R +3.65  delta {'PB-PA': 0.4357751043338755, 'PB-PC': 0.4289958425965889, 'PC-PA': -0.12140646794276573}  -> group-independent at this resolution
+R3 mode 2: z_E_R +3.64  delta {'PB-PA': 1.4416352091042697, 'PB-PC': 1.0445234571439228, 'PC-PA': -0.2475253824627212}  -> group-independent at this resolution
+R3 mode 79: z_E_R +3.61  delta {'PB-PA': 2.317377009663762, 'PB-PC': 2.066650100414128, 'PC-PA': -0.1831925456789809}  -> unresolved
+R3 mode 121: z_E_R +3.50  delta {'PB-PA': 3.58247674908309, 'PB-PC': 1.1087646687661474, 'PC-PA': 1.7214992067960266}  -> group-dependent
+R4 PA: st -0.03367  sigma_pub 0.04136  z -0.81  -> matches the published p_par high/low ratio
+R4 PB: st +0.06523  sigma_pub 0.04559  z +1.42  -> matches the published p_par high/low ratio
+R4 PC: st -0.00199  sigma_pub 0.04271  z -0.05  -> matches the published p_par high/low ratio
+combined statement: The run-period step does not account for the distance in the best-determined directions, at the resolved size.

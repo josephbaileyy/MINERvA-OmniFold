@@ -1,0 +1,4 @@
+2026-11-07T01:44:00Z runs=1572 started-unended=0 flags=3
+FLAG RUN-OVER-MAX AR23_Ta T_AR23_5730064 ratio 0.934 > class max 0.930
+FLAG RUN-OVER-MAX G18_C X_G18 ratio 0.853 > class max 0.781
+FLAG RUN-OVER-MAX G18_Ta T_G18_5720080 ratio 0.999 > class max 0.997

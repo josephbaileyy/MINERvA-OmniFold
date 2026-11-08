@@ -1,0 +1,18 @@
+host=login02 utc=2026-11-07T02:10:52Z
+4de2ea14bb520adf66476c55e40052ac15d403ae16cc80f0237e8afab58229f2  connect-95.log
+873fdd8e4207598b69ce9c6e46c2e64fb4f2df58bb5fbda009caebe59f29e04a  control95.json
+483d773d9a7ae728ef15872bc1e3648a2c0c233b1ed6090dc53f106fe58f8232  control95.log
+45f88f7b518c7e21c8001e9aee5a5e79634fd082cd32ca7f767fefb8d34b7e51  blobs.before
+45f88f7b518c7e21c8001e9aee5a5e79634fd082cd32ca7f767fefb8d34b7e51  blobs.after
+6aa6658ed7f017d77e342a1acd3f96cef2d8c0c5a28cc99b6a37f554644e2efd  /dev/shm/josephrb-cov2d-95.sh
+rm -f /dev/shm/josephrb-cov2d-95.sh rc=0
+rm -f /dev/shm/josephrb-cov2d-95/blobs.after rc=0
+rm -f /dev/shm/josephrb-cov2d-95/blobs.before rc=0
+rm -f /dev/shm/josephrb-cov2d-95/connect-95.log rc=0
+rm -f /dev/shm/josephrb-cov2d-95/control95.json rc=0
+rm -f /dev/shm/josephrb-cov2d-95/control95.log rc=0
+dir left: /dev/shm/josephrb-cov2d-95/tmp
+rm -f /dev/shm/josephrb-cov2d-95/tmp/mat_preflight.root rc=0
+rmdir /dev/shm/josephrb-cov2d-95/tmp rc=0
+rmdir /dev/shm/josephrb-cov2d-95 rc=0
+ls end

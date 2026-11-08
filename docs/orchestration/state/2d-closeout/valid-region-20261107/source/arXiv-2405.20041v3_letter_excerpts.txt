@@ -1,0 +1,49 @@
+211	Systematic uncertainties are split into 25 components that are each treated as independent. Experimental
+212	sources of uncertainty include systematic bias due to: the muon efficiency and calibration [69]; track
+213	reconstruction [70]; pileup modeling; and, the luminosity measurement [87]. Theoretical uncertainties
+214	are evaluated for variations of PDF and 𝛼𝑠 choices [73], QCD scales [73], and the generator tune [9].
+215	Imperfections inherent to the choice of Monte Carlo simulation contribute to two sources of systematic
+216	uncertainty: the sensitivity to differences in the underlying truth distribution of the measured observables,
+217	and the sensitivity to mismodelling of detector effects by the Monte Carlo generator that are not captured
+218	by the chosen input variables. The uncertainty (“unfolding prior”) for the imperfect particle-level shape
+219	of the initial MC sample is assessed by reweighting the nominal MC sample at particle level such that it
+220	approximately agrees with data for the 24 observables. This reweighting function is constructed using a
+221	sequence of one-dimensional Gaussian-kernel functions, iteratively obtained from the data-to-MC ratio.
+222	The obtained data-driven correction is applied to the MC to obtain an “Asimov dataset” used as the input to
+223	the measurement, and the difference between the resulting measurement and the corresponded reweighted
+224	particle level MC is taken as the uncertainty. An uncertainty in the top-quark background is assessed as
+225	the full difference between measurements performed using two Asimov datasets constructed from MC
+226	predictions with and without the top-quark contribution. To assess the dependence on the detector response
+408	The analysis was validated using a “pseudo-data” sample constructed by reweighting the particle-level
+409	quantities in the alternative MC sample to resemble the real reconstruction-level data. Two such samples
+410	were generated: a high-statistics sample with weighted events and a data-like sample with unit weights
+411	
+412	
+413	
+414	
+415	                                                                                                                                                                                  6
+416	obtained by bootstrapping the former sample. The full analysis was performed on the unit-weight pseudo-
+417	dataset, and the unfolding bias uncertainty was evaluated by assessing the closure between the OmniFold
+418	result with the particle-level target. Chi-squared compatibility tests between the obtained measurements
+419	and the known underlying particle-level distributions for each of the 24+2 observables all yielded 𝑝-values
+420	                      𝑗
+421	> 0.07, except for 𝑝 𝑇1 , with a 𝑝-value of 0.038. A full analysis of the pseudo-dataset was also performed
+422	using IBU, where each observable was measured individually with the same binning and input data. The
+423	central values of the IBU measurements agree well within precision with the OmniFold result. The IBU
+424	experimental, theoretical, unfolding and statistical uncertainty components are also similar to those of
+425	the OmniFold measurement in magnitude, shape, and resulting covariance. IBU also demonstrates a
+426	very similar performance in the closure test against the target. The total uncertainty was found overall
+427	to be similar, but tends to be somewhat larger for the OmniFold measurement, primarily due to the NN
+428	initialization uncertainty that does not apply to IBU. The average bin uncertainty across all 24 observables
+429	was found to be 3.0% for IBU and 3.9% for OmniFold. The uncertainty due to hidden variables does
+430	decrease for certain variables, but not generally, which is likely an indication that the detector response is
+431	not strongly covariate with the variables used for this measurement.
+432	The OmniFold result was then validated by performing 𝜒2 tests of differential spectra in dedicated
+433	                                 𝜇𝜇   𝜇𝜇
+434	kinematic subregions: high 𝑝 T (𝑝 T > 250 GeV), electroweak-enhanced (𝑚 𝑗 𝑗 > 200 GeV, Δ𝑦 𝑗 𝑗 > 2),
+435	and diboson-enhanced (𝑚 𝑗1 > 32 GeV). Chi-squared tests were performed against the pseudo-data target
+436	within each subregion for all measured and several derived observables. All results yielded 𝑝-values greater
+437	than 0.05, except for one observable (𝑚 𝑗1 ) in the electroweak-enhanced region, which had a 𝑝-value of 0.02.
+438	                                                                                      𝜇𝜇
+439	The result was also validated in two-dimensional kinematic subregions, e.g. for 𝑝 T vs. 𝑦 𝜇𝜇 , with 𝑝-values
+440	> 0.05. Ablation studies on the input variables were performed to understand the effect of removing one or

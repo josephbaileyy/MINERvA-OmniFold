@@ -1,0 +1,84 @@
+host=login02 start=2026-11-06T16:25:31Z pid=1139451 user=josephrb
+deploy=/pscratch/sd/j/josephrb/cov2d-deploy-a6054769 head=a60547692df5f963e428cdfe4661fc51ab785b7b plain=0 ignored=0
+sha256 /dev/shm/josephrb-cov2d-complete/connect-complete.sh=9584dd4ada99c96b519b79839a2fb59155654b146982760d9e58f3c44c6e740f want=9584dd4ada99c96b519b79839a2fb59155654b146982760d9e58f3c44c6e740f
+sha256 /dev/shm/josephrb-cov2d-complete/cov2d_cap.py=1ce76ea373f474e7c32520c69fbc90eae9419d5cbd901927df5a41fbe6973c5e want=1ce76ea373f474e7c32520c69fbc90eae9419d5cbd901927df5a41fbe6973c5e
+sha256 /dev/shm/josephrb-cov2d-complete/test_cov2d_cap.py=7a07c3acf7f361f1af89276064bc64c8ab60e4d6bc06c658f2dcd10422f9c324 want=7a07c3acf7f361f1af89276064bc64c8ab60e4d6bc06c658f2dcd10422f9c324
+DIGESTS_MATCH
+companion test (Python 3.6.15) rc=0: OK
+origin/main=3bd6e3ce30438936ebbe3f1697bff6b91c108685
+CHECK 60895948: job=G18_L expected skips=L_G18_BeamAngleX_0,X_G18
+  sacct FAILED|1:0
+  steps 9, not COMPLETED 0:0: none
+  walls rows 9, run_rc not 0: none
+  run failures in the job log: none
+  skips in the job log: L_G18_BeamAngleX_0,X_G18
+  walls 9 + skips 2 vs runs_G18.tsv rows 11; end line: [cov2d] end 2026-11-06T12:54:24Z rc=1
+  MATCH the ruling's collision
+CHECK 60895562: job=G18_Ua expected skips=U_G18_Flux_0
+  sacct FAILED|1:0
+  steps 43, not COMPLETED 0:0: none
+  walls rows 43, run_rc not 0: none
+  run failures in the job log: none
+  skips in the job log: U_G18_Flux_0
+  walls 43 + skips 1 vs runs_G18.tsv rows 44; end line: [cov2d] end 2026-11-06T15:14:58Z rc=1
+  MATCH the ruling's collision
+CHECK 60895949: job=G18_Ba expected skips=B_G18_001
+  sacct FAILED|1:0
+  steps 99, not COMPLETED 0:0: none
+  walls rows 99, run_rc not 0: none
+  run failures in the job log: none
+  skips in the job log: B_G18_001
+  walls 99 + skips 1 vs runs_G18.tsv rows 100; end line: [cov2d] end 2026-11-06T16:05:22Z rc=1
+  MATCH the ruling's collision
+CHECK 60895956: job=G18_Ta expected skips=T_G18_5720000
+  sacct FAILED|1:0
+  steps 99, not COMPLETED 0:0: none
+  walls rows 99, run_rc not 0: none
+  run failures in the job log: none
+  skips in the job log: T_G18_5720000
+  walls 99 + skips 1 vs runs_G18.tsv rows 100; end line: [cov2d] end 2026-11-06T16:16:26Z rc=1
+  MATCH the ruling's collision
+MODE fresh
+row L_G18_BeamAngleX_0 from G18_L/G18_L.2 -> G18_C/G18_C.1, cpus 128, est_s 1678
+row X_G18 from G18_L/G18_L.1 -> G18_C/G18_C.1, cpus 128, est_s 866
+row B_G18_001 from G18_Ba/G18_Ba.1 -> G18_C/G18_C.1, cpus 64, est_s 920
+row U_G18_Flux_0 from G18_Ua/G18_Ua.1 -> G18_C/G18_C.2, cpus 128, est_s 1150
+row T_G18_5720000 from G18_Ta/G18_Ta.1 -> G18_C/G18_C.2, cpus 64, est_s 866
+lanes {'1': 3464, '2': 2016} longest 3464 limit 01:19:00
+5ef2aca150959b972c6519a6599d6f84d5539504589a664ce9e591e9a6c2db7d  /dev/shm/josephrb-cov2d-complete/runs_G18C.tsv
+cf7de9d868c102d2a9d145c8b5c41b1d2880230e9041284ab79627319541d981  /dev/shm/josephrb-cov2d-complete/jobs_G18C.tsv
+PRECHECK G18_C limit=01:19:00 connect(rc=0)={"spent": 56.75194444444445, "held": 90.43333333333335, "unlisted_ids": [], "want_node_h": 1.3166666666666667, "total": 148.50194444444446, "cap": 165.8, "pass": true}
+VERIFY L_G18_BeamAngleX_0: /pscratch/sd/j/josephrb/cov2d-run-20261104/out/L_G18_BeamAngleX_0/xsec.root size=62933 mtime=2026-11-05 07:25:43.000000000 -0800 inode=882727298657157467 sha256=f04eafde46077e0515e445022d4df14dd756a1975cc8d84cdf4f45305c54e0db pilot=f04eafde46077e0515e445022d4df14dd756a1975cc8d84cdf4f45305c54e0db
+VERIFY X_G18: /pscratch/sd/j/josephrb/cov2d-run-20261104/out/X_G18/xsec.root size=62634 mtime=2026-11-05 07:14:10.000000000 -0800 inode=882727298657157413 sha256=7575b7ce966ac0121e039e3e6a840e83e2856b495d8438bd3a2671822b5cd62c pilot=7575b7ce966ac0121e039e3e6a840e83e2856b495d8438bd3a2671822b5cd62c
+VERIFY B_G18_001: /pscratch/sd/j/josephrb/cov2d-run-20261104/out/B_G18_001/xsec.root size=63634 mtime=2026-11-05 07:04:08.000000000 -0800 inode=882727298657157268 sha256=d6efdbdab5320a920ee640a9719d4712218e15b8c6f0eee1f96f247c81259816 pilot=d6efdbdab5320a920ee640a9719d4712218e15b8c6f0eee1f96f247c81259816
+VERIFY U_G18_Flux_0: /pscratch/sd/j/josephrb/cov2d-run-20261104/out/U_G18_Flux_0/xsec.root size=66248 mtime=2026-11-05 07:15:37.000000000 -0800 inode=882727298657157459 sha256=db669e81d15f66d0c406bedd493e5887fd46d88776c0a492db6d4420a5f4a5b2 pilot=db669e81d15f66d0c406bedd493e5887fd46d88776c0a492db6d4420a5f4a5b2
+VERIFY T_G18_5720000: /pscratch/sd/j/josephrb/cov2d-run-20261104/out/T_G18_5720000/xsec.root size=62770 mtime=2026-11-05 07:23:51.000000000 -0800 inode=882727298657157464 sha256=1980449271a084bd99fc19e9496023b56bd969a9f5b4a41e18120780a33a6097 pilot=1980449271a084bd99fc19e9496023b56bd969a9f5b4a41e18120780a33a6097
+renamed '/pscratch/sd/j/josephrb/cov2d-run-20261104/out/L_G18_BeamAngleX_0' -> '/pscratch/sd/j/josephrb/cov2d-run-20261104/out/L_G18_BeamAngleX_0.pilot-60857636'
+MV 2026-11-06T16:25:40Z rc=0 /pscratch/sd/j/josephrb/cov2d-run-20261104/out/L_G18_BeamAngleX_0 -> /pscratch/sd/j/josephrb/cov2d-run-20261104/out/L_G18_BeamAngleX_0.pilot-60857636
+renamed '/pscratch/sd/j/josephrb/cov2d-run-20261104/out/X_G18' -> '/pscratch/sd/j/josephrb/cov2d-run-20261104/out/X_G18.pilot-60857636'
+MV 2026-11-06T16:25:40Z rc=0 /pscratch/sd/j/josephrb/cov2d-run-20261104/out/X_G18 -> /pscratch/sd/j/josephrb/cov2d-run-20261104/out/X_G18.pilot-60857636
+renamed '/pscratch/sd/j/josephrb/cov2d-run-20261104/out/B_G18_001' -> '/pscratch/sd/j/josephrb/cov2d-run-20261104/out/B_G18_001.pilot-60857636'
+MV 2026-11-06T16:25:41Z rc=0 /pscratch/sd/j/josephrb/cov2d-run-20261104/out/B_G18_001 -> /pscratch/sd/j/josephrb/cov2d-run-20261104/out/B_G18_001.pilot-60857636
+renamed '/pscratch/sd/j/josephrb/cov2d-run-20261104/out/U_G18_Flux_0' -> '/pscratch/sd/j/josephrb/cov2d-run-20261104/out/U_G18_Flux_0.pilot-60857636'
+MV 2026-11-06T16:25:42Z rc=0 /pscratch/sd/j/josephrb/cov2d-run-20261104/out/U_G18_Flux_0 -> /pscratch/sd/j/josephrb/cov2d-run-20261104/out/U_G18_Flux_0.pilot-60857636
+renamed '/pscratch/sd/j/josephrb/cov2d-run-20261104/out/T_G18_5720000' -> '/pscratch/sd/j/josephrb/cov2d-run-20261104/out/T_G18_5720000.pilot-60857636'
+MV 2026-11-06T16:25:42Z rc=0 /pscratch/sd/j/josephrb/cov2d-run-20261104/out/T_G18_5720000 -> /pscratch/sd/j/josephrb/cov2d-run-20261104/out/T_G18_5720000.pilot-60857636
+utc	path	sha256	size	mtime	inode	stat_match	condition	to
+2026-11-06T16:25:40Z	/pscratch/sd/j/josephrb/cov2d-run-20261104/out/L_G18_BeamAngleX_0/xsec.root	f04eafde46077e0515e445022d4df14dd756a1975cc8d84cdf4f45305c54e0db	62933	1793892343	882727298657157467	yes	the director's ruling on G18_L, 2026-11-06, item 3(a): the pilot's products do not count for the bulk	/pscratch/sd/j/josephrb/cov2d-run-20261104/out/L_G18_BeamAngleX_0.pilot-60857636/xsec.root
+2026-11-06T16:25:40Z	/pscratch/sd/j/josephrb/cov2d-run-20261104/out/X_G18/xsec.root	7575b7ce966ac0121e039e3e6a840e83e2856b495d8438bd3a2671822b5cd62c	62634	1793891650	882727298657157413	yes	the director's ruling on G18_L, 2026-11-06, item 3(a): the pilot's products do not count for the bulk	/pscratch/sd/j/josephrb/cov2d-run-20261104/out/X_G18.pilot-60857636/xsec.root
+2026-11-06T16:25:41Z	/pscratch/sd/j/josephrb/cov2d-run-20261104/out/B_G18_001/xsec.root	d6efdbdab5320a920ee640a9719d4712218e15b8c6f0eee1f96f247c81259816	63634	1793891048	882727298657157268	yes	the director's ruling on G18_L, 2026-11-06, item 3(a): the pilot's products do not count for the bulk	/pscratch/sd/j/josephrb/cov2d-run-20261104/out/B_G18_001.pilot-60857636/xsec.root
+2026-11-06T16:25:42Z	/pscratch/sd/j/josephrb/cov2d-run-20261104/out/U_G18_Flux_0/xsec.root	db669e81d15f66d0c406bedd493e5887fd46d88776c0a492db6d4420a5f4a5b2	66248	1793891737	882727298657157459	yes	the director's ruling on G18_L, 2026-11-06, item 3(a): the pilot's products do not count for the bulk	/pscratch/sd/j/josephrb/cov2d-run-20261104/out/U_G18_Flux_0.pilot-60857636/xsec.root
+2026-11-06T16:25:42Z	/pscratch/sd/j/josephrb/cov2d-run-20261104/out/T_G18_5720000/xsec.root	1980449271a084bd99fc19e9496023b56bd969a9f5b4a41e18120780a33a6097	62770	1793892231	882727298657157464	yes	the director's ruling on G18_L, 2026-11-06, item 3(a): the pilot's products do not count for the bulk	/pscratch/sd/j/josephrb/cov2d-run-20261104/out/T_G18_5720000.pilot-60857636/xsec.root
+installed /pscratch/sd/j/josephrb/cov2d-run-20261104/tables/runs_G18C.tsv, /pscratch/sd/j/josephrb/cov2d-run-20261104/tables/jobs_G18C.tsv; /pscratch/sd/j/josephrb/cov2d-run-20261104/pseudo/G18C -> G18
+LABELS G18_C: 5 in runs_G18C.tsv, existing in /pscratch/sd/j/josephrb/cov2d-run-20261104/out: none
+TOTALS G18_C limit=01:19:00 gate(rc=0)={"spent": 56.75194444444445, "held": 90.43333333333335, "want": "G18_C", "want_node_h": 1.3166666666666667, "total": 148.50194444444446, "cap": 165.8, "pass": true} connect(rc=0)={"spent": 56.75194444444445, "held": 90.43333333333335, "unlisted_ids": [], "want_node_h": 1.3166666666666667, "total": 148.50194444444446, "cap": 165.8, "pass": true}
+2026-11-06T16:25:49Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_C id=60912517 limit=01:19:00
+submit G18_C rc=0
+id=60912517
+JobId=60912517 JobName=cov2d-G18_C Priority=67679 Nice=0 Account=m3246 QOS=regular_1 JobState=PENDING Reason=Priority Dependency=(null) RunTime=00:00:00 TimeLimit=01:19:00 TimeMin=N/A NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:* 
+plain-after=0 ignored-after=0
+2026-11-06T15:19:52Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Tb id=60909280 limit=07:38:00
+2026-11-06T16:08:22Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=AR23_Tc id=60911676 limit=07:38:00
+2026-11-06T16:25:49Z M=a60547692df5f963e428cdfe4661fc51ab785b7b job=G18_C id=60912517 limit=01:19:00
+end=2026-11-06T16:25:52Z
+DONE

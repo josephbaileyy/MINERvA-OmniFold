@@ -489,6 +489,74 @@ class Grading(unittest.TestCase):
         self.assertEqual(g["attribution"]["R03"]["driven_by"], "bias")
 
 
+class CholeskyTolerance(unittest.TestCase):
+    """COV2D-BINDING-2 addendum A5: grade's Cholesky cross-check at full rank takes a tolerance. 1B's default (1e-9)
+    and message are unchanged; on a full-rank C with kappa ~ 1e12 a correct Cholesky agrees only to ~kappa eps, so
+    1B's default refuses and A5's max(1e-9, 10 kappa eps) passes, while a wrong Cholesky refuses at either."""
+
+    def setUp(self):
+        rng = np.random.default_rng(12)
+        Q, _ = np.linalg.qr(rng.normal(size=(16, 16)))
+        C = (Q * np.logspace(0, np.log10(1.5e-12), 16)) @ Q.T
+        self.C = (C + C.T) / 2
+        lam = np.linalg.eigvalsh(self.C)
+        self.kappa = lam[-1] / lam[0]
+        self.tol = max(1e-9, 10 * self.kappa * np.finfo(np.float64).eps)
+        self.E = rng.normal(size=(300, 16)) * np.sqrt(np.diag(self.C))
+        self.null = {"p_cell": np.full(16, fn.P0), "se_cell": np.zeros(16), "q_joint": fn.P0, "se_joint": 0.0,
+                     "chi2_cut": inv.chi2_ppf(fn.P0, 16)}
+
+    def test_the_fixture_is_full_rank_and_ill_conditioned(self):
+        self.assertEqual(fn.chi2_nonnull(self.E, self.C)[1], 16)
+        self.assertGreater(self.kappa, 1e11)
+        self.assertLess(self.tol, 1e-2)
+
+    def test_1b_default_is_1e_9_and_refuses_here_with_its_message(self):
+        import inspect
+        self.assertEqual(inspect.signature(mc.grade).parameters["chol_tol"].default, 1e-9)
+        with self.assertRaises(mc.Refusal) as cm:
+            mc.grade(self.E, self.C, self.null)
+        self.assertEqual(str(cm.exception), "the non-null chi2 and the Cholesky chi2 differ")
+        self.assertEqual(cm.exception.compared["tol"], 1e-9)
+        self.assertGreater(cm.exception.compared["max_rel_diff"], 1e-9)
+        self.assertEqual(cm.exception.compared["ndf"], 16)
+
+    def test_a5_tolerance_passes_and_reports_the_compared_values(self):
+        out = {}
+        g = mc.grade(self.E, self.C, self.null, chol_tol=self.tol, chol_out=out)
+        self.assertEqual(g["ndf"], 16)
+        self.assertEqual(out["ndf"], 16)
+        self.assertEqual(out["tol"], self.tol)
+        self.assertLessEqual(out["max_rel_diff"], self.tol)
+        self.assertGreater(out["max_rel_diff"], 1e-9)
+        self.assertEqual(g, mc.grade(self.E, self.C, self.null, chol_tol=self.tol))   # chol_out changes nothing
+
+    def test_a_wrong_cholesky_refuses_at_the_a5_tolerance(self):
+        real = np.linalg.cholesky
+        for name, wrong in (("scaled by 1.01", lambda C: 1.01 * real(C)), ("transposed", lambda C: real(C).T)):
+            with self.subTest(name), mock.patch.object(mc.np.linalg, "cholesky", wrong):
+                with self.assertRaises(mc.Refusal) as cm:
+                    mc.grade(self.E, self.C, self.null, chol_tol=self.tol)
+                self.assertGreater(cm.exception.compared["max_rel_diff"], self.tol)
+
+    def test_below_full_rank_the_check_is_skipped_and_reported_so(self):
+        lam, V = np.linalg.eigh(self.C)
+        lam[0] = 0.0
+        C = (V * lam) @ V.T
+        out = {}
+        g = mc.grade(self.E, (C + C.T) / 2, self.null, chol_out=out)
+        self.assertLess(g["ndf"], 16)
+        self.assertIsNone(out["max_rel_diff"])
+        self.assertEqual(out["tol"], 1e-9)
+
+    def test_well_conditioned_grades_are_unchanged_by_the_argument(self):
+        rng = np.random.default_rng(12)
+        A = rng.normal(size=(16, 16))
+        C = A @ A.T / 16 + np.eye(16)
+        E = (np.linalg.cholesky(C) @ rng.normal(size=(16, 300))).T
+        self.assertEqual(mc.grade(E, C, self.null), mc.grade(E, C, self.null, chol_tol=1e-3))
+
+
 # --------------------------------------------------------------------------------- D1: reads through O_NOATIME
 
 

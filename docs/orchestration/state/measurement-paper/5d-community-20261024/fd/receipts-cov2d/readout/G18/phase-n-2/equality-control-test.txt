@@ -1,0 +1,37 @@
+connect-n-G18.sh 7ef5550c94f203218950e1cb3e46cef89bce4f4d1db8b520aacab4da6c698ddb; cmp.py 2afd06477f9d2168181d8ec0ea197336dae3875a46c288c2649104ffcfb8ffed; old.json ecdb4be2fbb18852d32c1a4f9fb3cbc4107310d72c5bdeb2eb3651996ed0c41f; old.npz 7eb657b82ae953bdf0584eda27264c52a64bcb48baea52dfc194f5efe440ea3d
+cmp.py = the connect's CMP block
+variants (from mk.py): equal = M_A5 + a new utc; host = login01; nested = null.q_joint + 1e-12; wrongM = 40 zeros; code = code.driverSha256 'x'; extra = a new top-level field; bad.npz = array C08 element 0 + 1
+== equal
+NULL-FIELDS compared 26 excepted ['M', 'utc'] differing []
+NULL-LEAVES differing 0 []
+NULL-EQUALITY EQUAL
+rc=0
+== host
+NULL-FIELDS compared 26 excepted ['M', 'utc'] differing ['host']
+NULL-LEAVES differing 1 ['host']
+NULL-EQUALITY DIFFERS
+rc=9
+== nested
+NULL-FIELDS compared 26 excepted ['M', 'utc'] differing ['null']
+NULL-LEAVES differing 1 ['null.q_joint']
+NULL-EQUALITY DIFFERS
+rc=9
+== wrongM
+NULL-FIELDS compared 26 excepted ['M', 'utc'] differing []
+NULL-LEAVES differing 0 []
+NULL-EQUALITY DIFFERS
+rc=9
+== code
+NULL-FIELDS compared 26 excepted ['M', 'utc'] differing ['code']
+NULL-LEAVES differing 1 ['code.driverSha256']
+NULL-EQUALITY DIFFERS
+rc=9
+== extra
+NULL-FIELDS compared 27 excepted ['M', 'utc'] differing ['extra']
+NULL-LEAVES differing 1 ['extra']
+NULL-EQUALITY DIFFERS
+rc=9
+== bad blocks
+BLOCKS byte_equal False arrays 56 differing ['C08'] sha new 50839ef85f6795f816a7c16e8b0d810b6b6d0a69727a0fe58bbb7c759d54a423 old 7eb657b82ae953bdf0584eda27264c52a64bcb48baea52dfc194f5efe440ea3d
+NULL-EQUALITY DIFFERS
+rc=9

@@ -1,0 +1,2 @@
+on login36: delete_copies.py sha256 31cc5838476dbb382a9ec45010f6330146eb6f48fb26aeda1404d9c28626b92d
+delete_copies rc 0

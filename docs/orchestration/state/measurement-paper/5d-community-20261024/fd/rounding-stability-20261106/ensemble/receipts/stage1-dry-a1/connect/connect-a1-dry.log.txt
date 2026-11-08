@@ -1,0 +1,68 @@
+node login20 nproc=244 loadavg 40.66 35.04 28.43
+2026-11-08T08:31:21Z
+connect script sha256 488057837438b79c745f53c3256107463fed04130f39c0f6d976bf2dd9faa20e
+== the fence (only rs1_* and ens1_* pass; cov2d-* or any other name stops)
+FENCE: pass (0 jobs, all rs1_*)
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2347.3            10000.0     18250.4      20000.0
+balance_node_h=1749.6 half=874.8 caps=109.0
+== stat
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz size=1548438020 mtime=2026-06-27 18:31:48.000000000 -0700 atime=2026-11-07 18:38:35.000000000 -0800
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz size=16017201 mtime=2026-09-24 23:51:44.000000000 -0700 atime=2026-11-07 18:38:36.000000000 -0800
+/pscratch/sd/j/josephrb/ens1-20261107/runs/F64/ens1_F64_b-_j0.npz size=184442 mtime=2026-11-07 17:17:40.000000000 -0800 atime=2026-11-07 17:17:40.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j1.npz size=184291 mtime=2026-11-04 16:31:16.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j2.npz size=184250 mtime=2026-11-04 21:49:36.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j3.npz size=184259 mtime=2026-11-04 21:56:24.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j4.npz size=184258 mtime=2026-11-04 22:02:35.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j5.npz size=184257 mtime=2026-11-04 21:44:13.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j6.npz size=184216 mtime=2026-11-04 21:50:49.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j7.npz size=184259 mtime=2026-11-04 21:57:05.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j8.npz size=184259 mtime=2026-11-04 22:03:25.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j9.npz size=184237 mtime=2026-11-04 22:10:00.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j10.npz size=184256 mtime=2026-11-04 22:16:40.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j11.npz size=184218 mtime=2026-11-04 22:22:49.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j12.npz size=184277 mtime=2026-11-04 22:28:56.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j13.npz size=184256 mtime=2026-11-04 22:11:53.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j14.npz size=184284 mtime=2026-11-04 22:18:13.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j15.npz size=184249 mtime=2026-11-04 22:24:25.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j16.npz size=184278 mtime=2026-11-04 22:30:48.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j17.npz size=184267 mtime=2026-11-04 22:36:41.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j18.npz size=184304 mtime=2026-11-04 22:43:05.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j19.npz size=184229 mtime=2026-11-04 22:49:37.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/stability/stab_control_b-_j20.npz size=184299 mtime=2026-11-04 22:55:45.000000000 -0800 atime=2026-11-05 02:18:42.000000000 -0800
+stat: 23 files, 0 missing
+== the deploy
+HEAD f4d2d7f3833834390b7b031df61ba1a5765e9900; porcelain --ignored lines before: 0
+blobs: 12 checked, 0 mismatches; sha256: 7 checked, 0 mismatches; binding 2's A1 section names M_A1: 1
+origin/main 646a50df1cfedbe00ed3ccc615d36d6dcaee6528; binding 2 at origin/main sha256 614afe02faba57d5bd1291b8ab33b8fcd0201624db24eac573537406cfa4972e
+== the control jitters j1-j20 (dd iflag=noatime)
+control jitters: 20 copied, 0 problems
+== A1's preconditions on the npz's own edges (sourced environment)
+ens1_a1_pre.py sha256 4064ef02a9eb9455c2ea778a02c86f27a6c0ec79668c35e82ca80b7f54054e89 (sent 4064ef02a9eb9455c2ea778a02c86f27a6c0ec79668c35e82ca80b7f54054e89)
+Python 3.11.14
+{"verdict": "PASS", "failures": [], "d_min": {"pt": 1.04, "pz": 2.0, "eavail": 1.2, "q3": 1.2, "W": 1.2}, "far_min": {"pt": 0.56, "pz": null, "eavail": 0.8, "q3": 0.6, "W": 0.6}, "non_representable": {"pt": 8, "pz": 0, "eavail": 4, "q3": 5, "W": 4}}
+precondition check rc=0; npz atime 1794105515 -> 1794105515
+aa88ab5bfd08186abea1da2088bf0f6a21b731f428952371000c99670a551633  /pscratch/sd/j/josephrb/ens1-a1-20261108/logs/a1-preconditions.json
+== the environment (sourced)
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+== the stage-1 queue (sourced)
+{"stage": 1, "dry_tasks": 9, "dry_unfolds": 9, "full_tasks": 1004, "full_unfolds": 2008, "shard_tasks": [168, 168, 167, 167, 167, 167]}
+83ae2e8c6ce7916725ed3c31096ae4ea7c831b40aed70386225dff520de0f8f2  dry.tsv
+76b3b25a31a37f818126fe5d03e2b99f4694ee7581ce5ef1791b5ca936b71349  shard0.tsv
+30383483dfe727762c8ba268996ae266385a547944b58e2ec339d36d422d4741  shard1.tsv
+4df6defc7b2b542062edda09d4bc32d7a973f058e30f51489f2c3364a6a5701a  shard2.tsv
+7df85feadf16a3c1c6f166661acbda57d27004bec21dcb3935ca8f6f3dba86f5  shard3.tsv
+eeca67f3ded9548611db5544830dc8075c7f6fdfd3bf4bee503a22afdf9f2468  shard4.tsv
+761c27c42131f2c1b4013301e972e5b7d5f34a28fda84bd6e7df25e420ee615a  shard5.tsv
+dry tasks: 9
+2026-11-08T08:32:14Z
+sbatch rc=0
+Submitted batch job 60993979
+dry rerun job 60993979
+scontrol TimeLimit=00:45:00 (declared 00:45:00)
+60993979 ens1_a1_dry PENDING 0:00 45:00 1 regular_1 m3246
+porcelain --ignored lines after: 0
+ens1 a1 dry submit rc=0
+2026-11-08T08:32:21Z

@@ -1,0 +1,14 @@
+ok rc=0 A5-READING-RULE PASS
+over rc=8 A5-READING-RULE FAIL
+A5-READING over.json C_T_minus ndf=205 kappa2=955000000000.0 tol=0.0021 cmp_tol=0.0021 max_rel_diff=0.003 FAIL (not finite, or max_rel_diff > tol, or the grade's tol is not the recorded tol)
+nan rc=8 A5-READING-RULE FAIL
+A5-READING nan.json C_T_minus ndf=205 kappa2=955000000000.0 tol=0.0021 cmp_tol=0.0021 max_rel_diff=nan FAIL (not finite, or max_rel_diff > tol, or the grade's tol is not the recorded tol)
+inf rc=8 A5-READING-RULE FAIL
+A5-READING inf.json C_T ndf=205 kappa2=inf tol=inf cmp_tol=inf max_rel_diff=4e-08 FAIL (not finite, or max_rel_diff > tol, or the grade's tol is not the recorded tol)
+nocmp rc=8 A5-READING-RULE FAIL
+A5-READING nocmp.json C_T_minus ndf=None kappa2=955000000000.0 tol=0.0021 cmp_tol=None max_rel_diff=None FAIL (no compared values)
+ndf204 rc=0 A5-READING-RULE PASS
+none_mrd rc=8 A5-READING-RULE FAIL
+A5-READING none_mrd.json C_T_minus ndf=205 kappa2=955000000000.0 tol=0.0021 cmp_tol=0.0021 max_rel_diff=None FAIL (not finite, or max_rel_diff > tol, or the grade's tol is not the recorded tol)
+usedtol rc=8 A5-READING-RULE FAIL
+A5-READING usedtol.json C_T ndf=205 kappa2=950000000000.0 tol=0.0021 cmp_tol=1e-09 max_rel_diff=4e-08 FAIL (not finite, or max_rel_diff > tol, or the grade's tol is not the recorded tol)

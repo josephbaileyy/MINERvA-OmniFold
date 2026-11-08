@@ -1,0 +1,51 @@
+25	2 Usage recommendations
+26	
+27	As detailed in the paper, the unbinned measurements were validated both in the full phase space
+28	   𝜇𝜇
+29	(𝑝 T > 200 GeV) and in various kinematic sub-regions. In these regions, a series of binned differential
+30	cross sections were studied, both for the 24 directly measured observables and additional observables
+31	derived as a function of the 24, such as 𝑚 𝑗 𝑗 , Δ𝑦 𝑗 𝑗 and Δ𝑅(ℓℓ, 𝑗1 ). When using these results, the following
+32	guidance is recommended:
+33	
+34	1. Jet 𝒑 T threshold
+35	      When studying jet observables, a jet 𝑝 T threshold should be applied of at least 5 GeV. For example,
+36	      if plotting Δ𝑅(ℓℓ, 𝑗1 ), which relies on the leading jet, a requirement should be placed on the leading
+37	      jet 𝑝 T , and for 𝑚 𝑗 𝑗 , 𝑝 T requirements should be applied to both jets.
+38	2. Sufficient Monte Carlo statistical precision
+39	      Each bin should contain a minimum of 5,000 effective events defined by 𝑛eff ≡ (Σ𝑖 𝑤 𝑖 ) 2 /Σ𝑖 𝑤 2𝑖 . This
+40	      ensures that the bin has sufficient statistical precision, which is important for stabilizing the bin
+41	      uncertainties.
+42	
+43	
+44	
+45	
+46	                                                      18
+47	    3. Sufficient data statistical precision
+48	          Each bin should further have a data statistical uncertainty smaller than 15%, which ensures that the
+49	          kinematic region probed has sufficient support by the data. This criterion is most likely fulfilled
+50	          when 𝑛eff > 5,000.
+51	    4. Validation using the pseudo-measurement
+52	          Any analysis should always be checked using the pseudo-measurement against the target, to ensure a
+53	          reliable result is obtained before drawing any conclusion based on the measurement with real data.
+54	          Examples of such tests are performed in ATLAS_Zjets_MultiFold_PseudoResults.ipynb.
+55	          The tests performed as part of the example code is a standard, binned 𝜒2 compatibility test between the
+56	          pseudo-measurement and the target. The key step of this procedure is to construct the measurement
+57	          covariance matrix that encodes the correlation between bins. The 𝜒2 and associated 𝑝-value are then
+58	          obtained with a few lines of code that performs matrix operations. The outcome of these tests will
+59	          depend on the assumed correlation model as discussed in the next bullet.
+60	    5. Alternative treatment of uncertainty correlation
+61	          The default recommended procedure is to treat each systematic uncertainty component as fully
+62	          correlated across bins. However, this might not be ideal for two-point systematic uncertainties,
+63	          for which the internal uncertainty correlation is not known. Certain regions of phase space have
+64	          dominant uncertainty from the two unfolding systematic uncertainty sources, which both are two-point
+65	          systematic uncertainties. This can in particular be an issue when using 𝑚 𝑗2 , where the uncertainty
+66	          amplitude has a strong shape dependence, and a switch in sign in the middle of the distribution. In
+67	          cases like this, poor 𝑝-values may sometimes result from assuming bins are fully correlated.
+68	          In these cases, other correlation models may be used. As the true correlation model is not known, any
+69	          correlation assumption must be tested on the pseudodata before it can be used to extract information
+70	          from the actual data. If few bins are used, one can treat the bins as fully uncorrelated for this
+71	          uncertainty component. For instance, if four bins are used, the systematic uncertainty can be split
+72	          into four components (‘nuisance parameters’). More sophisticated decorrelation schemes could be
+73	          explored for which each uncertainty component has a smooth uncertainty amplitude spanning the
+74	          full range where at any point (i.e. for any bin) this uncertainty adds in quadrature to match the total
+75	          uncertainty of the two-point systematics.

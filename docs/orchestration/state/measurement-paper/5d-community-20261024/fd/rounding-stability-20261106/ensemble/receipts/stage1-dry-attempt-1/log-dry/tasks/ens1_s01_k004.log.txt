@@ -1,0 +1,1 @@
+refusing: jitter 1 changed grid membership {'MCgen': 1, 'MCreco': 0, 'measured': 0, 'bkg_reco': 0}

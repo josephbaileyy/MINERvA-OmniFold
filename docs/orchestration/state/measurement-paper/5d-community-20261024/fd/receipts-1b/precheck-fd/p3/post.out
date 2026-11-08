@@ -1,0 +1,947 @@
+remote sha256 ca6f868c7b5e83d22054991638f5596153a5b269cc14cac66e93274d56516139
+node login03 2026-11-08T08:31:04Z
+connect script sha256 ca6f868c7b5e83d22054991638f5596153a5b269cc14cac66e93274d56516139
+== 1. fence and the jobs' states
+
+squeue rc=0; refusing rows: []
+job 60991405 state: COMPLETED
+job 60991413 state: COMPLETED
+job 60991415 state: COMPLETED
+job 60991418 state: COMPLETED
+job 60991419 state: COMPLETED
+job 60991420 state: COMPLETED
+job 60991421 state: COMPLETED
+== 2. probes against P2's (before any P3 result is read)
+P2 probe 60990199: status ok
+P3 probe 60991405: status ok; differing keys []; MATCH
+P3 probe 60991413: status ok; differing keys []; MATCH
+P3 probe 60991415: status ok; differing keys []; MATCH
+P3 probe 60991418: status ok; differing keys []; MATCH
+P3 probe 60991419: status ok; differing keys []; MATCH
+P3 probe 60991420: status ok; differing keys []; MATCH
+P3 probe 60991421: status ok; differing keys []; MATCH
+PROBES: ALL MATCH P2
+== 3. sacct
+60991405|fd1b_pfd_p3_j0|COMPLETED|0:0|01:17:26|4646|1|256||2026-11-07T23:02:15|2026-11-08T00:19:41
+60991405.batch|batch|COMPLETED|0:0|01:17:26|4646|1|256|118356K|2026-11-07T23:02:15|2026-11-08T00:19:41
+60991405.extern|extern|COMPLETED|0:0|01:17:26|4646|1|256||2026-11-07T23:02:15|2026-11-08T00:19:41
+60991405.0|threadprobe|COMPLETED|0:0|00:00:58|58|1|32|199608K|2026-11-07T23:02:21|2026-11-07T23:03:19
+60991405.1|line0|COMPLETED|0:0|01:16:22|4582|1|32|22876036K|2026-11-07T23:03:19|2026-11-08T00:19:41
+60991405.2|line7|COMPLETED|0:0|01:13:19|4399|1|32|23083256K|2026-11-07T23:03:20|2026-11-08T00:16:39
+60991405.3|line2|COMPLETED|0:0|01:15:06|4506|1|32|22853812K|2026-11-07T23:03:20|2026-11-08T00:18:26
+60991405.4|line6|COMPLETED|0:0|01:15:50|4550|1|32|22843632K|2026-11-07T23:03:20|2026-11-08T00:19:10
+60991405.5|line4|COMPLETED|0:0|01:16:07|4567|1|32|22842932K|2026-11-07T23:03:20|2026-11-08T00:19:27
+60991405.6|line1|COMPLETED|0:0|01:16:02|4562|1|32|25109632K|2026-11-07T23:03:20|2026-11-08T00:19:22
+60991405.7|line3|COMPLETED|0:0|01:15:04|4504|1|32|23082068K|2026-11-07T23:03:20|2026-11-08T00:18:24
+60991405.8|line5|COMPLETED|0:0|01:16:18|4578|1|32|22860568K|2026-11-07T23:03:20|2026-11-08T00:19:38
+60991413|fd1b_pfd_p3_j1|COMPLETED|0:0|01:17:20|4640|1|256||2026-11-07T23:02:15|2026-11-08T00:19:35
+60991413.batch|batch|COMPLETED|0:0|01:17:20|4640|1|256|120624K|2026-11-07T23:02:15|2026-11-08T00:19:35
+60991413.extern|extern|COMPLETED|0:0|01:17:20|4640|1|256||2026-11-07T23:02:15|2026-11-08T00:19:35
+60991413.0|threadprobe|COMPLETED|0:0|00:00:58|58|1|32|199460K|2026-11-07T23:02:21|2026-11-07T23:03:19
+60991413.1|line8|COMPLETED|0:0|01:16:04|4564|1|32|23706924K|2026-11-07T23:03:20|2026-11-08T00:19:24
+60991413.2|line9|COMPLETED|0:0|01:15:02|4502|1|32|23326840K|2026-11-07T23:03:20|2026-11-08T00:18:22
+60991413.3|line10|COMPLETED|0:0|01:14:35|4475|1|32|23247988K|2026-11-07T23:03:20|2026-11-08T00:17:55
+60991413.4|line11|COMPLETED|0:0|01:16:15|4575|1|32|22955108K|2026-11-07T23:03:20|2026-11-08T00:19:35
+60991413.5|line14|COMPLETED|0:0|01:15:23|4523|1|32|23276608K|2026-11-07T23:03:20|2026-11-08T00:18:43
+60991413.6|line12|COMPLETED|0:0|01:14:50|4490|1|32|23220728K|2026-11-07T23:03:20|2026-11-08T00:18:10
+60991413.7|line15|COMPLETED|0:0|01:14:15|4455|1|32|23326264K|2026-11-07T23:03:20|2026-11-08T00:17:35
+60991413.8|line13|COMPLETED|0:0|01:14:43|4483|1|32|23841428K|2026-11-07T23:03:20|2026-11-08T00:18:03
+60991415|fd1b_pfd_p3_j2|COMPLETED|0:0|01:17:40|4660|1|256||2026-11-07T23:03:02|2026-11-08T00:20:42
+60991415.batch|batch|COMPLETED|0:0|01:17:40|4660|1|256|119672K|2026-11-07T23:03:02|2026-11-08T00:20:42
+60991415.extern|extern|COMPLETED|0:0|01:17:41|4661|1|256||2026-11-07T23:03:02|2026-11-08T00:20:43
+60991415.0|threadprobe|COMPLETED|0:0|00:00:53|53|1|32|212196K|2026-11-07T23:03:10|2026-11-07T23:04:03
+60991415.1|line17|COMPLETED|0:0|01:03:42|3822|1|32|22311184K|2026-11-07T23:04:04|2026-11-08T00:07:46
+60991415.2|line16|COMPLETED|0:0|01:03:13|3793|1|32|22627540K|2026-11-07T23:04:04|2026-11-08T00:07:17
+60991415.3|line18|COMPLETED|0:0|01:16:22|4582|1|32|22961236K|2026-11-07T23:04:04|2026-11-08T00:20:26
+60991415.4|line20|COMPLETED|0:0|01:15:26|4526|1|32|22794356K|2026-11-07T23:04:04|2026-11-08T00:19:30
+60991415.5|line21|COMPLETED|0:0|01:15:30|4530|1|32|23200552K|2026-11-07T23:04:04|2026-11-08T00:19:34
+60991415.6|line22|COMPLETED|0:0|01:16:28|4588|1|32|22826284K|2026-11-07T23:04:04|2026-11-08T00:20:32
+60991415.7|line19|COMPLETED|0:0|01:16:08|4568|1|32|23173604K|2026-11-07T23:04:04|2026-11-08T00:20:12
+60991415.8|line23|COMPLETED|0:0|01:16:38|4598|1|32|22900772K|2026-11-07T23:04:04|2026-11-08T00:20:42
+60991418|fd1b_pfd_p3_j3|COMPLETED|0:0|01:16:15|4575|1|256||2026-11-07T23:03:02|2026-11-08T00:19:17
+60991418.batch|batch|COMPLETED|0:0|01:16:15|4575|1|256|121656K|2026-11-07T23:03:02|2026-11-08T00:19:17
+60991418.extern|extern|COMPLETED|0:0|01:16:15|4575|1|256||2026-11-07T23:03:02|2026-11-08T00:19:17
+60991418.0|threadprobe|COMPLETED|0:0|00:00:43|43|1|32|244796K|2026-11-07T23:03:10|2026-11-07T23:03:53
+60991418.1|line24|COMPLETED|0:0|01:14:37|4477|1|32|23333996K|2026-11-07T23:03:53|2026-11-08T00:18:30
+60991418.2|line26|COMPLETED|0:0|01:14:30|4470|1|32|23256376K|2026-11-07T23:03:54|2026-11-08T00:18:24
+60991418.3|line25|COMPLETED|0:0|01:12:26|4346|1|32|23577812K|2026-11-07T23:03:54|2026-11-08T00:16:20
+60991418.4|line27|COMPLETED|0:0|01:13:50|4430|1|32|23291760K|2026-11-07T23:03:54|2026-11-08T00:17:44
+60991418.5|line30|COMPLETED|0:0|01:13:53|4433|1|32|23135756K|2026-11-07T23:03:54|2026-11-08T00:17:47
+60991418.6|line28|COMPLETED|0:0|01:13:23|4403|1|32|23013224K|2026-11-07T23:03:54|2026-11-08T00:17:17
+60991418.7|line31|COMPLETED|0:0|01:13:39|4419|1|32|22944976K|2026-11-07T23:03:54|2026-11-08T00:17:33
+60991418.8|line29|COMPLETED|0:0|01:15:21|4521|1|32|22968096K|2026-11-07T23:03:54|2026-11-08T00:19:15
+60991419|fd1b_pfd_p3_j4|COMPLETED|0:0|01:18:32|4712|1|256||2026-11-07T23:03:02|2026-11-08T00:21:34
+60991419.batch|batch|COMPLETED|0:0|01:18:32|4712|1|256|124768K|2026-11-07T23:03:02|2026-11-08T00:21:34
+60991419.extern|extern|COMPLETED|0:0|01:18:32|4712|1|256||2026-11-07T23:03:02|2026-11-08T00:21:34
+60991419.0|threadprobe|COMPLETED|0:0|00:00:50|50|1|32|194316K|2026-11-07T23:03:09|2026-11-07T23:03:59
+60991419.1|line32|COMPLETED|0:0|01:14:50|4490|1|32|22836524K|2026-11-07T23:03:59|2026-11-08T00:18:49
+60991419.2|line33|COMPLETED|0:0|01:13:36|4416|1|32|22777860K|2026-11-07T23:03:59|2026-11-08T00:17:35
+60991419.3|line34|COMPLETED|0:0|01:01:22|3682|1|32|22817908K|2026-11-07T23:03:59|2026-11-08T00:05:21
+60991419.4|line35|COMPLETED|0:0|01:02:22|3742|1|32|22346384K|2026-11-07T23:03:59|2026-11-08T00:06:21
+60991419.5|line36|COMPLETED|0:0|01:17:14|4634|1|32|23483768K|2026-11-07T23:03:59|2026-11-08T00:21:13
+60991419.6|line37|COMPLETED|0:0|01:17:34|4654|1|32|23530976K|2026-11-07T23:04:00|2026-11-08T00:21:34
+60991419.7|line38|COMPLETED|0:0|01:16:33|4593|1|32|23830196K|2026-11-07T23:04:00|2026-11-08T00:20:33
+60991419.8|line39|COMPLETED|0:0|01:16:14|4574|1|32|24044736K|2026-11-07T23:04:00|2026-11-08T00:20:14
+60991420|fd1b_pfd_p3_j5|COMPLETED|0:0|01:19:45|4785|1|256||2026-11-07T23:03:03|2026-11-08T00:22:48
+60991420.batch|batch|COMPLETED|0:0|01:19:45|4785|1|256|117036K|2026-11-07T23:03:03|2026-11-08T00:22:48
+60991420.extern|extern|COMPLETED|0:0|01:19:45|4785|1|256||2026-11-07T23:03:03|2026-11-08T00:22:48
+60991420.0|threadprobe|COMPLETED|0:0|00:00:52|52|1|32|218172K|2026-11-07T23:03:10|2026-11-07T23:04:02
+60991420.1|line40|COMPLETED|0:0|01:18:19|4699|1|32|23569228K|2026-11-07T23:04:02|2026-11-08T00:22:21
+60991420.2|line41|COMPLETED|0:0|01:18:44|4724|1|32|24044344K|2026-11-07T23:04:02|2026-11-08T00:22:46
+60991420.3|line42|COMPLETED|0:0|01:17:48|4668|1|32|23679628K|2026-11-07T23:04:02|2026-11-08T00:21:50
+60991420.4|line45|COMPLETED|0:0|01:17:13|4633|1|32|23871848K|2026-11-07T23:04:02|2026-11-08T00:21:15
+60991420.5|line47|COMPLETED|0:0|01:18:02|4682|1|32|23599432K|2026-11-07T23:04:02|2026-11-08T00:22:04
+60991420.6|line43|COMPLETED|0:0|01:15:40|4540|1|32|23669392K|2026-11-07T23:04:02|2026-11-08T00:19:42
+60991420.7|line46|COMPLETED|0:0|01:16:59|4619|1|32|23777492K|2026-11-07T23:04:02|2026-11-08T00:21:01
+60991420.8|line44|COMPLETED|0:0|01:17:52|4672|1|32|23847412K|2026-11-07T23:04:02|2026-11-08T00:21:54
+60991421|fd1b_pfd_p3_j6|COMPLETED|0:0|01:18:23|4703|1|256||2026-11-07T23:03:03|2026-11-08T00:21:26
+60991421.batch|batch|COMPLETED|0:0|01:18:23|4703|1|256|97760K|2026-11-07T23:03:03|2026-11-08T00:21:26
+60991421.extern|extern|COMPLETED|0:0|01:18:23|4703|1|256||2026-11-07T23:03:03|2026-11-08T00:21:26
+60991421.0|threadprobe|COMPLETED|0:0|00:00:52|52|1|32|219680K|2026-11-07T23:03:10|2026-11-07T23:04:02
+60991421.1|line49|COMPLETED|0:0|01:17:03|4623|1|32|23977980K|2026-11-07T23:04:02|2026-11-08T00:21:05
+60991421.2|line51|COMPLETED|0:0|01:16:41|4601|1|32|23971108K|2026-11-07T23:04:02|2026-11-08T00:20:43
+60991421.3|line48|COMPLETED|0:0|01:17:24|4644|1|32|23787728K|2026-11-07T23:04:02|2026-11-08T00:21:26
+60991421.4|line50|COMPLETED|0:0|01:17:06|4626|1|32|24207268K|2026-11-07T23:04:02|2026-11-08T00:21:08
+60991421.5|line52|COMPLETED|0:0|01:14:32|4472|1|32|23583284K|2026-11-07T23:04:02|2026-11-08T00:18:34
+60991421.6|line53|COMPLETED|0:0|01:03:48|3828|1|32|22884216K|2026-11-07T23:04:02|2026-11-08T00:07:50
+P3 charged node-h = sum(ElapsedRaw x NNodes) / 3600 = 32721 / 3600 = 9.0892 over 7 jobs (reserved 17.5); Part 1 total with P2 0.2631 = 9.3523 (cap 18.5)
+== 4. logs
+-- job log 60991405
+[pfd-wrapper] 2026-11-08T07:02:21.458Z job=60991405 host=nid005690 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 table=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv lines=0..7
+[pfd-wrapper] submitting-shell thread variables: OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+[pfd-wrapper] 2026-11-08T07:03:19.530Z probe rc=0
+[timing] 2026-11-08T07:03:19.618Z job=60991405 host=nid005690 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 lines=0..7 cpt=32 mem=56G gres=none
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-11-08T07:03:19.841Z launch line 0
+[timing] 2026-11-08T07:03:19.897Z launch line 1
+[timing] 2026-11-08T07:03:19.922Z launch line 2
+[timing] 2026-11-08T07:03:19.931Z launch line 3
+[timing] 2026-11-08T07:03:19.937Z launch line 4
+[timing] 2026-11-08T07:03:19.943Z launch line 5
+[timing] 2026-11-08T07:03:19.953Z launch line 6
+[timing] 2026-11-08T07:03:19.960Z launch line 7
+[timing] 2026-11-08T08:19:41.098Z lines 0..7 done rc=0
+[pfd-wrapper] 2026-11-08T08:19:41.107Z packer rc=0
+-- job log 60991413
+[pfd-wrapper] 2026-11-08T07:02:21.655Z job=60991413 host=nid005722 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 table=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv lines=8..15
+[pfd-wrapper] submitting-shell thread variables: OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+[pfd-wrapper] 2026-11-08T07:03:19.914Z probe rc=0
+[timing] 2026-11-08T07:03:19.963Z job=60991413 host=nid005722 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 lines=8..15 cpt=32 mem=56G gres=none
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-11-08T07:03:20.188Z launch line 8
+[timing] 2026-11-08T07:03:20.194Z launch line 9
+[timing] 2026-11-08T07:03:20.201Z launch line 10
+[timing] 2026-11-08T07:03:20.210Z launch line 11
+[timing] 2026-11-08T07:03:20.216Z launch line 12
+[timing] 2026-11-08T07:03:20.221Z launch line 13
+[timing] 2026-11-08T07:03:20.226Z launch line 14
+[timing] 2026-11-08T07:03:20.231Z launch line 15
+[timing] 2026-11-08T08:19:35.325Z lines 8..15 done rc=0
+[pfd-wrapper] 2026-11-08T08:19:35.333Z packer rc=0
+-- job log 60991415
+[pfd-wrapper] 2026-11-08T07:03:10.039Z job=60991415 host=nid004278 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 table=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv lines=16..23
+[pfd-wrapper] submitting-shell thread variables: OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+[pfd-wrapper] 2026-11-08T07:04:03.750Z probe rc=0
+[timing] 2026-11-08T07:04:03.783Z job=60991415 host=nid004278 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 lines=16..23 cpt=32 mem=56G gres=none
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-11-08T07:04:03.935Z launch line 16
+[timing] 2026-11-08T07:04:03.940Z launch line 17
+[timing] 2026-11-08T07:04:03.945Z launch line 18
+[timing] 2026-11-08T07:04:03.954Z launch line 19
+[timing] 2026-11-08T07:04:03.959Z launch line 20
+[timing] 2026-11-08T07:04:03.964Z launch line 21
+[timing] 2026-11-08T07:04:03.970Z launch line 22
+[timing] 2026-11-08T07:04:03.975Z launch line 23
+[timing] 2026-11-08T08:20:42.928Z lines 16..23 done rc=0
+[pfd-wrapper] 2026-11-08T08:20:42.971Z packer rc=0
+-- job log 60991418
+[pfd-wrapper] 2026-11-08T07:03:09.788Z job=60991418 host=nid004554 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 table=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv lines=24..31
+[pfd-wrapper] submitting-shell thread variables: OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+[pfd-wrapper] 2026-11-08T07:03:53.706Z probe rc=0
+[timing] 2026-11-08T07:03:53.748Z job=60991418 host=nid004554 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 lines=24..31 cpt=32 mem=56G gres=none
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-11-08T07:03:53.921Z launch line 24
+[timing] 2026-11-08T07:03:53.932Z launch line 25
+[timing] 2026-11-08T07:03:53.938Z launch line 26
+[timing] 2026-11-08T07:03:53.943Z launch line 27
+[timing] 2026-11-08T07:03:53.948Z launch line 28
+[timing] 2026-11-08T07:03:53.960Z launch line 29
+[timing] 2026-11-08T07:03:53.965Z launch line 30
+[timing] 2026-11-08T07:03:53.971Z launch line 31
+[timing] 2026-11-08T08:19:15.601Z lines 24..31 done rc=0
+[pfd-wrapper] 2026-11-08T08:19:15.657Z packer rc=0
+-- job log 60991419
+[pfd-wrapper] 2026-11-08T07:03:09.640Z job=60991419 host=nid004670 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 table=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv lines=32..39
+[pfd-wrapper] submitting-shell thread variables: OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+[pfd-wrapper] 2026-11-08T07:03:59.455Z probe rc=0
+[timing] 2026-11-08T07:03:59.487Z job=60991419 host=nid004670 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 lines=32..39 cpt=32 mem=56G gres=none
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-11-08T07:03:59.660Z launch line 32
+[timing] 2026-11-08T07:03:59.691Z launch line 33
+[timing] 2026-11-08T07:03:59.745Z launch line 34
+[timing] 2026-11-08T07:03:59.774Z launch line 35
+[timing] 2026-11-08T07:03:59.836Z launch line 36
+[timing] 2026-11-08T07:03:59.895Z launch line 37
+[timing] 2026-11-08T07:03:59.915Z launch line 38
+[timing] 2026-11-08T07:03:59.926Z launch line 39
+[timing] 2026-11-08T08:21:34.611Z lines 32..39 done rc=0
+[pfd-wrapper] 2026-11-08T08:21:34.619Z packer rc=0
+-- job log 60991420
+[pfd-wrapper] 2026-11-08T07:03:10.153Z job=60991420 host=nid004794 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 table=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv lines=40..47
+[pfd-wrapper] submitting-shell thread variables: OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+[pfd-wrapper] 2026-11-08T07:04:02.290Z probe rc=0
+[timing] 2026-11-08T07:04:02.415Z job=60991420 host=nid004794 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 lines=40..47 cpt=32 mem=56G gres=none
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-11-08T07:04:02.652Z launch line 40
+[timing] 2026-11-08T07:04:02.662Z launch line 41
+[timing] 2026-11-08T07:04:02.670Z launch line 42
+[timing] 2026-11-08T07:04:02.677Z launch line 43
+[timing] 2026-11-08T07:04:02.682Z launch line 44
+[timing] 2026-11-08T07:04:02.690Z launch line 45
+[timing] 2026-11-08T07:04:02.698Z launch line 46
+[timing] 2026-11-08T07:04:02.703Z launch line 47
+[timing] 2026-11-08T08:22:46.037Z lines 40..47 done rc=0
+[pfd-wrapper] 2026-11-08T08:22:46.047Z packer rc=0
+-- job log 60991421
+[pfd-wrapper] 2026-11-08T07:03:10.158Z job=60991421 host=nid004826 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 table=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p3/tables/tasks-p3.tsv lines=48..53
+[pfd-wrapper] submitting-shell thread variables: OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+[pfd-wrapper] 2026-11-08T07:04:02.119Z probe rc=0
+[timing] 2026-11-08T07:04:02.222Z job=60991421 host=nid004826 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy-p3 pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 lines=48..53 cpt=32 mem=56G gres=none
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-11-08T07:04:02.425Z launch line 48
+[timing] 2026-11-08T07:04:02.454Z launch line 49
+[timing] 2026-11-08T07:04:02.508Z launch line 50
+[timing] 2026-11-08T07:04:02.523Z launch line 51
+[timing] 2026-11-08T07:04:02.552Z launch line 52
+[timing] 2026-11-08T07:04:02.584Z launch line 53
+[timing] 2026-11-08T08:21:26.752Z lines 48..53 done rc=0
+[pfd-wrapper] 2026-11-08T08:21:26.764Z packer rc=0
+-- lanes
+## line0-60991405.log
+[s5c] task=0 name=fd1b_pfd_p3_lane00_A job=60991405 host=nid005690 start=2026-11-08T07:03:28Z
+{"out": "fd1b_pfd_A_Flux_1.npz", "seconds_unfold": 837.887}
+{"out": "fd1b_pfd_A_Flux_2.npz", "seconds_unfold": 762.567}
+{"out": "fd1b_pfd_A_Flux_3.npz", "seconds_unfold": 718.767}
+{"out": "fd1b_pfd_A_Flux_4.npz", "seconds_unfold": 700.768}
+{"out": "fd1b_pfd_A_Flux_5.npz", "seconds_unfold": 729.072}
+{"out": "fd1b_pfd_A_Flux_6.npz", "seconds_unfold": 764.755}
+[s5c] task=0 name=fd1b_pfd_p3_lane00_A rc=0 end=2026-11-08T08:19:41Z
+## line10-60991413.log
+[s5c] task=10 name=fd1b_pfd_p3_lane10_A job=60991413 host=nid005722 start=2026-11-08T07:03:32Z
+{"out": "fd1b_pfd_A_Flux_61.npz", "seconds_unfold": 850.834}
+{"out": "fd1b_pfd_A_Flux_62.npz", "seconds_unfold": 694.87}
+{"out": "fd1b_pfd_A_Flux_63.npz", "seconds_unfold": 724.264}
+{"out": "fd1b_pfd_A_Flux_64.npz", "seconds_unfold": 715.045}
+{"out": "fd1b_pfd_A_Flux_65.npz", "seconds_unfold": 684.929}
+{"out": "fd1b_pfd_A_Flux_66.npz", "seconds_unfold": 728.736}
+[s5c] task=10 name=fd1b_pfd_p3_lane10_A rc=0 end=2026-11-08T08:17:55Z
+## line11-60991413.log
+[s5c] task=11 name=fd1b_pfd_p3_lane11_A job=60991413 host=nid005722 start=2026-11-08T07:03:32Z
+{"out": "fd1b_pfd_A_Flux_67.npz", "seconds_unfold": 798.663}
+{"out": "fd1b_pfd_A_Flux_68.npz", "seconds_unfold": 744.6}
+{"out": "fd1b_pfd_A_Flux_69.npz", "seconds_unfold": 725.089}
+{"out": "fd1b_pfd_A_Flux_70.npz", "seconds_unfold": 741.037}
+{"out": "fd1b_pfd_A_Flux_71.npz", "seconds_unfold": 735.806}
+{"out": "fd1b_pfd_A_Flux_72.npz", "seconds_unfold": 750.464}
+[s5c] task=11 name=fd1b_pfd_p3_lane11_A rc=0 end=2026-11-08T08:19:35Z
+## line12-60991413.log
+[s5c] task=12 name=fd1b_pfd_p3_lane12_A job=60991413 host=nid005722 start=2026-11-08T07:03:32Z
+{"out": "fd1b_pfd_A_Flux_73.npz", "seconds_unfold": 807.569}
+{"out": "fd1b_pfd_A_Flux_74.npz", "seconds_unfold": 751.756}
+{"out": "fd1b_pfd_A_Flux_75.npz", "seconds_unfold": 686.919}
+{"out": "fd1b_pfd_A_Flux_76.npz", "seconds_unfold": 691.519}
+{"out": "fd1b_pfd_A_Flux_77.npz", "seconds_unfold": 752.827}
+{"out": "fd1b_pfd_A_Flux_78.npz", "seconds_unfold": 722.036}
+[s5c] task=12 name=fd1b_pfd_p3_lane12_A rc=0 end=2026-11-08T08:18:10Z
+## line13-60991413.log
+[s5c] task=13 name=fd1b_pfd_p3_lane13_A job=60991413 host=nid005722 start=2026-11-08T07:03:32Z
+{"out": "fd1b_pfd_A_Flux_79.npz", "seconds_unfold": 813.873}
+{"out": "fd1b_pfd_A_Flux_80.npz", "seconds_unfold": 715.899}
+{"out": "fd1b_pfd_A_Flux_81.npz", "seconds_unfold": 730.912}
+{"out": "fd1b_pfd_A_Flux_82.npz", "seconds_unfold": 703.607}
+{"out": "fd1b_pfd_A_Flux_83.npz", "seconds_unfold": 707.359}
+{"out": "fd1b_pfd_A_Flux_84.npz", "seconds_unfold": 734.897}
+[s5c] task=13 name=fd1b_pfd_p3_lane13_A rc=0 end=2026-11-08T08:18:03Z
+## line14-60991413.log
+[s5c] task=14 name=fd1b_pfd_p3_lane14_A job=60991413 host=nid005722 start=2026-11-08T07:03:32Z
+{"out": "fd1b_pfd_A_Flux_85.npz", "seconds_unfold": 837.717}
+{"out": "fd1b_pfd_A_Flux_86.npz", "seconds_unfold": 733.765}
+{"out": "fd1b_pfd_A_Flux_87.npz", "seconds_unfold": 682.135}
+{"out": "fd1b_pfd_A_Flux_88.npz", "seconds_unfold": 722.812}
+{"out": "fd1b_pfd_A_Flux_89.npz", "seconds_unfold": 705.298}
+{"out": "fd1b_pfd_A_Flux_90.npz", "seconds_unfold": 763.56}
+[s5c] task=14 name=fd1b_pfd_p3_lane14_A rc=0 end=2026-11-08T08:18:43Z
+## line15-60991413.log
+[s5c] task=15 name=fd1b_pfd_p3_lane15_A job=60991413 host=nid005722 start=2026-11-08T07:03:32Z
+{"out": "fd1b_pfd_A_Flux_91.npz", "seconds_unfold": 823.804}
+{"out": "fd1b_pfd_A_Flux_92.npz", "seconds_unfold": 699.063}
+{"out": "fd1b_pfd_A_Flux_93.npz", "seconds_unfold": 682.282}
+{"out": "fd1b_pfd_A_Flux_94.npz", "seconds_unfold": 765.431}
+{"out": "fd1b_pfd_A_Flux_95.npz", "seconds_unfold": 725.999}
+{"out": "fd1b_pfd_A_Flux_96.npz", "seconds_unfold": 680.208}
+[s5c] task=15 name=fd1b_pfd_p3_lane15_A rc=0 end=2026-11-08T08:17:35Z
+## line1-60991405.log
+[s5c] task=1 name=fd1b_pfd_p3_lane01_A job=60991405 host=nid005690 start=2026-11-08T07:03:28Z
+{"out": "fd1b_pfd_A_Flux_7.npz", "seconds_unfold": 847.909}
+{"out": "fd1b_pfd_A_Flux_8.npz", "seconds_unfold": 713.1}
+{"out": "fd1b_pfd_A_Flux_9.npz", "seconds_unfold": 726.231}
+{"out": "fd1b_pfd_A_Flux_10.npz", "seconds_unfold": 737.545}
+{"out": "fd1b_pfd_A_Flux_11.npz", "seconds_unfold": 724.507}
+{"out": "fd1b_pfd_A_Flux_12.npz", "seconds_unfold": 739.894}
+[s5c] task=1 name=fd1b_pfd_p3_lane01_A rc=0 end=2026-11-08T08:19:22Z
+## line16-60991415.log
+[s5c] task=16 name=fd1b_pfd_p3_lane16_A job=60991415 host=nid004278 start=2026-11-08T07:04:12Z
+{"out": "fd1b_pfd_A_Flux_97.npz", "seconds_unfold": 919.495}
+{"out": "fd1b_pfd_A_Flux_98.npz", "seconds_unfold": 669.364}
+{"out": "fd1b_pfd_A_Flux_99.npz", "seconds_unfold": 720.96}
+{"out": "fd1b_pfd_A_GEANT_Neutron_0.npz", "seconds_unfold": 673.48}
+{"out": "fd1b_pfd_A_GEANT_Neutron_1.npz", "seconds_unfold": 685.36}
+[s5c] task=16 name=fd1b_pfd_p3_lane16_A rc=0 end=2026-11-08T08:07:17Z
+## line17-60991415.log
+[s5c] task=17 name=fd1b_pfd_p3_lane17_A job=60991415 host=nid004278 start=2026-11-08T07:04:12Z
+{"out": "fd1b_pfd_A_GEANT_Pion_0.npz", "seconds_unfold": 867.334}
+{"out": "fd1b_pfd_A_GEANT_Pion_1.npz", "seconds_unfold": 722.284}
+{"out": "fd1b_pfd_A_GEANT_Proton_0.npz", "seconds_unfold": 709.105}
+{"out": "fd1b_pfd_A_GEANT_Proton_1.npz", "seconds_unfold": 712.102}
+{"out": "fd1b_pfd_A_MinosEfficiency_1.npz", "seconds_unfold": 691.399}
+[s5c] task=17 name=fd1b_pfd_p3_lane17_A rc=0 end=2026-11-08T08:07:46Z
+## line18-60991415.log
+[s5c] task=18 name=fd1b_pfd_p3_lane18_B job=60991415 host=nid004278 start=2026-11-08T07:04:12Z
+{"out": "fd1b_pfd_B_Flux_1.npz", "seconds_unfold": 880.785}
+{"out": "fd1b_pfd_B_Flux_2.npz", "seconds_unfold": 754.438}
+{"out": "fd1b_pfd_B_Flux_3.npz", "seconds_unfold": 711.484}
+{"out": "fd1b_pfd_B_Flux_4.npz", "seconds_unfold": 694.043}
+{"out": "fd1b_pfd_B_Flux_5.npz", "seconds_unfold": 721.861}
+{"out": "fd1b_pfd_B_Flux_6.npz", "seconds_unfold": 746.618}
+[s5c] task=18 name=fd1b_pfd_p3_lane18_B rc=0 end=2026-11-08T08:20:26Z
+## line19-60991415.log
+[s5c] task=19 name=fd1b_pfd_p3_lane19_B job=60991415 host=nid004278 start=2026-11-08T07:04:12Z
+{"out": "fd1b_pfd_B_Flux_7.npz", "seconds_unfold": 888.619}
+{"out": "fd1b_pfd_B_Flux_8.npz", "seconds_unfold": 707.403}
+{"out": "fd1b_pfd_B_Flux_9.npz", "seconds_unfold": 718.67}
+{"out": "fd1b_pfd_B_Flux_10.npz", "seconds_unfold": 731.285}
+{"out": "fd1b_pfd_B_Flux_11.npz", "seconds_unfold": 716.099}
+{"out": "fd1b_pfd_B_Flux_12.npz", "seconds_unfold": 729.364}
+[s5c] task=19 name=fd1b_pfd_p3_lane19_B rc=0 end=2026-11-08T08:20:12Z
+## line20-60991415.log
+[s5c] task=20 name=fd1b_pfd_p3_lane20_B job=60991415 host=nid004278 start=2026-11-08T07:04:12Z
+{"out": "fd1b_pfd_B_Flux_13.npz", "seconds_unfold": 869.274}
+{"out": "fd1b_pfd_B_Flux_14.npz", "seconds_unfold": 734.011}
+{"out": "fd1b_pfd_B_Flux_15.npz", "seconds_unfold": 747.782}
+{"out": "fd1b_pfd_B_Flux_16.npz", "seconds_unfold": 707.719}
+{"out": "fd1b_pfd_B_Flux_17.npz", "seconds_unfold": 712.582}
+{"out": "fd1b_pfd_B_Flux_18.npz", "seconds_unfold": 669.113}
+[s5c] task=20 name=fd1b_pfd_p3_lane20_B rc=0 end=2026-11-08T08:19:30Z
+## line21-60991415.log
+[s5c] task=21 name=fd1b_pfd_p3_lane21_B job=60991415 host=nid004278 start=2026-11-08T07:04:12Z
+{"out": "fd1b_pfd_B_Flux_19.npz", "seconds_unfold": 847.975}
+{"out": "fd1b_pfd_B_Flux_20.npz", "seconds_unfold": 748.798}
+{"out": "fd1b_pfd_B_Flux_21.npz", "seconds_unfold": 683.611}
+{"out": "fd1b_pfd_B_Flux_22.npz", "seconds_unfold": 713.003}
+{"out": "fd1b_pfd_B_Flux_23.npz", "seconds_unfold": 716.796}
+{"out": "fd1b_pfd_B_Flux_24.npz", "seconds_unfold": 736.588}
+[s5c] task=21 name=fd1b_pfd_p3_lane21_B rc=0 end=2026-11-08T08:19:34Z
+## line22-60991415.log
+[s5c] task=22 name=fd1b_pfd_p3_lane22_B job=60991415 host=nid004278 start=2026-11-08T07:04:12Z
+{"out": "fd1b_pfd_B_Flux_25.npz", "seconds_unfold": 863.343}
+{"out": "fd1b_pfd_B_Flux_26.npz", "seconds_unfold": 731.396}
+{"out": "fd1b_pfd_B_Flux_27.npz", "seconds_unfold": 700.944}
+{"out": "fd1b_pfd_B_Flux_28.npz", "seconds_unfold": 715.353}
+{"out": "fd1b_pfd_B_Flux_29.npz", "seconds_unfold": 749.694}
+{"out": "fd1b_pfd_B_Flux_30.npz", "seconds_unfold": 753.128}
+[s5c] task=22 name=fd1b_pfd_p3_lane22_B rc=0 end=2026-11-08T08:20:32Z
+## line23-60991415.log
+[s5c] task=23 name=fd1b_pfd_p3_lane23_B job=60991415 host=nid004278 start=2026-11-08T07:04:12Z
+{"out": "fd1b_pfd_B_Flux_31.npz", "seconds_unfold": 889.69}
+{"out": "fd1b_pfd_B_Flux_32.npz", "seconds_unfold": 735.42}
+{"out": "fd1b_pfd_B_Flux_33.npz", "seconds_unfold": 737.34}
+{"out": "fd1b_pfd_B_Flux_34.npz", "seconds_unfold": 725.977}
+{"out": "fd1b_pfd_B_Flux_35.npz", "seconds_unfold": 725.577}
+{"out": "fd1b_pfd_B_Flux_36.npz", "seconds_unfold": 708.222}
+[s5c] task=23 name=fd1b_pfd_p3_lane23_B rc=0 end=2026-11-08T08:20:42Z
+## line24-60991418.log
+[s5c] task=24 name=fd1b_pfd_p3_lane24_B job=60991418 host=nid004554 start=2026-11-08T07:04:03Z
+{"out": "fd1b_pfd_B_Flux_37.npz", "seconds_unfold": 802.028}
+{"out": "fd1b_pfd_B_Flux_38.npz", "seconds_unfold": 710.109}
+{"out": "fd1b_pfd_B_Flux_39.npz", "seconds_unfold": 695.882}
+{"out": "fd1b_pfd_B_Flux_40.npz", "seconds_unfold": 725.228}
+{"out": "fd1b_pfd_B_Flux_41.npz", "seconds_unfold": 730.285}
+{"out": "fd1b_pfd_B_Flux_42.npz", "seconds_unfold": 737.347}
+[s5c] task=24 name=fd1b_pfd_p3_lane24_B rc=0 end=2026-11-08T08:18:30Z
+## line25-60991418.log
+[s5c] task=25 name=fd1b_pfd_p3_lane25_B job=60991418 host=nid004554 start=2026-11-08T07:04:03Z
+{"out": "fd1b_pfd_B_Flux_43.npz", "seconds_unfold": 781.15}
+{"out": "fd1b_pfd_B_Flux_44.npz", "seconds_unfold": 684.15}
+{"out": "fd1b_pfd_B_Flux_45.npz", "seconds_unfold": 713.067}
+{"out": "fd1b_pfd_B_Flux_46.npz", "seconds_unfold": 694.859}
+{"out": "fd1b_pfd_B_Flux_47.npz", "seconds_unfold": 680.653}
+{"out": "fd1b_pfd_B_Flux_48.npz", "seconds_unfold": 705.24}
+[s5c] task=25 name=fd1b_pfd_p3_lane25_B rc=0 end=2026-11-08T08:16:20Z
+## line2-60991405.log
+[s5c] task=2 name=fd1b_pfd_p3_lane02_A job=60991405 host=nid005690 start=2026-11-08T07:03:28Z
+{"out": "fd1b_pfd_A_Flux_13.npz", "seconds_unfold": 827.317}
+{"out": "fd1b_pfd_A_Flux_14.npz", "seconds_unfold": 736.363}
+{"out": "fd1b_pfd_A_Flux_15.npz", "seconds_unfold": 752.901}
+{"out": "fd1b_pfd_A_Flux_16.npz", "seconds_unfold": 713.65}
+{"out": "fd1b_pfd_A_Flux_17.npz", "seconds_unfold": 721.434}
+{"out": "fd1b_pfd_A_Flux_18.npz", "seconds_unfold": 681.268}
+[s5c] task=2 name=fd1b_pfd_p3_lane02_A rc=0 end=2026-11-08T08:18:26Z
+## line26-60991418.log
+[s5c] task=26 name=fd1b_pfd_p3_lane26_B job=60991418 host=nid004554 start=2026-11-08T07:04:03Z
+{"out": "fd1b_pfd_B_Flux_49.npz", "seconds_unfold": 775.013}
+{"out": "fd1b_pfd_B_Flux_50.npz", "seconds_unfold": 734.409}
+{"out": "fd1b_pfd_B_Flux_51.npz", "seconds_unfold": 745.671}
+{"out": "fd1b_pfd_B_Flux_52.npz", "seconds_unfold": 702.145}
+{"out": "fd1b_pfd_B_Flux_53.npz", "seconds_unfold": 714.339}
+{"out": "fd1b_pfd_B_Flux_54.npz", "seconds_unfold": 724.699}
+[s5c] task=26 name=fd1b_pfd_p3_lane26_B rc=0 end=2026-11-08T08:18:24Z
+## line27-60991418.log
+[s5c] task=27 name=fd1b_pfd_p3_lane27_B job=60991418 host=nid004554 start=2026-11-08T07:04:03Z
+{"out": "fd1b_pfd_B_Flux_55.npz", "seconds_unfold": 812.834}
+{"out": "fd1b_pfd_B_Flux_56.npz", "seconds_unfold": 719.717}
+{"out": "fd1b_pfd_B_Flux_57.npz", "seconds_unfold": 699.623}
+{"out": "fd1b_pfd_B_Flux_58.npz", "seconds_unfold": 731.276}
+{"out": "fd1b_pfd_B_Flux_59.npz", "seconds_unfold": 683.107}
+{"out": "fd1b_pfd_B_Flux_60.npz", "seconds_unfold": 709.124}
+[s5c] task=27 name=fd1b_pfd_p3_lane27_B rc=0 end=2026-11-08T08:17:43Z
+## line28-60991418.log
+[s5c] task=28 name=fd1b_pfd_p3_lane28_B job=60991418 host=nid004554 start=2026-11-08T07:04:03Z
+{"out": "fd1b_pfd_B_Flux_61.npz", "seconds_unfold": 820.384}
+{"out": "fd1b_pfd_B_Flux_62.npz", "seconds_unfold": 690.162}
+{"out": "fd1b_pfd_B_Flux_63.npz", "seconds_unfold": 711.906}
+{"out": "fd1b_pfd_B_Flux_64.npz", "seconds_unfold": 706.402}
+{"out": "fd1b_pfd_B_Flux_65.npz", "seconds_unfold": 678.242}
+{"out": "fd1b_pfd_B_Flux_66.npz", "seconds_unfold": 722.306}
+[s5c] task=28 name=fd1b_pfd_p3_lane28_B rc=0 end=2026-11-08T08:17:17Z
+## line29-60991418.log
+[s5c] task=29 name=fd1b_pfd_p3_lane29_B job=60991418 host=nid004554 start=2026-11-08T07:04:03Z
+{"out": "fd1b_pfd_B_Flux_67.npz", "seconds_unfold": 766.793}
+{"out": "fd1b_pfd_B_Flux_68.npz", "seconds_unfold": 739.21}
+{"out": "fd1b_pfd_B_Flux_69.npz", "seconds_unfold": 719.094}
+{"out": "fd1b_pfd_B_Flux_70.npz", "seconds_unfold": 734.426}
+{"out": "fd1b_pfd_B_Flux_71.npz", "seconds_unfold": 729.509}
+{"out": "fd1b_pfd_B_Flux_72.npz", "seconds_unfold": 743.844}
+[s5c] task=29 name=fd1b_pfd_p3_lane29_B rc=0 end=2026-11-08T08:19:15Z
+## line30-60991418.log
+[s5c] task=30 name=fd1b_pfd_p3_lane30_B job=60991418 host=nid004554 start=2026-11-08T07:04:03Z
+{"out": "fd1b_pfd_B_Flux_73.npz", "seconds_unfold": 777.784}
+{"out": "fd1b_pfd_B_Flux_74.npz", "seconds_unfold": 747.939}
+{"out": "fd1b_pfd_B_Flux_75.npz", "seconds_unfold": 686.199}
+{"out": "fd1b_pfd_B_Flux_76.npz", "seconds_unfold": 684.399}
+{"out": "fd1b_pfd_B_Flux_77.npz", "seconds_unfold": 750.333}
+{"out": "fd1b_pfd_B_Flux_78.npz", "seconds_unfold": 713.26}
+[s5c] task=30 name=fd1b_pfd_p3_lane30_B rc=0 end=2026-11-08T08:17:47Z
+## line31-60991418.log
+[s5c] task=31 name=fd1b_pfd_p3_lane31_B job=60991418 host=nid004554 start=2026-11-08T07:04:03Z
+{"out": "fd1b_pfd_B_Flux_79.npz", "seconds_unfold": 780.082}
+{"out": "fd1b_pfd_B_Flux_80.npz", "seconds_unfold": 710.061}
+{"out": "fd1b_pfd_B_Flux_81.npz", "seconds_unfold": 727.015}
+{"out": "fd1b_pfd_B_Flux_82.npz", "seconds_unfold": 699.747}
+{"out": "fd1b_pfd_B_Flux_83.npz", "seconds_unfold": 700.299}
+{"out": "fd1b_pfd_B_Flux_84.npz", "seconds_unfold": 726.805}
+[s5c] task=31 name=fd1b_pfd_p3_lane31_B rc=0 end=2026-11-08T08:17:33Z
+## line32-60991419.log
+[s5c] task=32 name=fd1b_pfd_p3_lane32_B job=60991419 host=nid004670 start=2026-11-08T07:04:11Z
+{"out": "fd1b_pfd_B_Flux_85.npz", "seconds_unfold": 835.421}
+{"out": "fd1b_pfd_B_Flux_86.npz", "seconds_unfold": 728.812}
+{"out": "fd1b_pfd_B_Flux_87.npz", "seconds_unfold": 678.159}
+{"out": "fd1b_pfd_B_Flux_88.npz", "seconds_unfold": 720.876}
+{"out": "fd1b_pfd_B_Flux_89.npz", "seconds_unfold": 701.519}
+{"out": "fd1b_pfd_B_Flux_90.npz", "seconds_unfold": 749.356}
+[s5c] task=32 name=fd1b_pfd_p3_lane32_B rc=0 end=2026-11-08T08:18:49Z
+## line33-60991419.log
+[s5c] task=33 name=fd1b_pfd_p3_lane33_B job=60991419 host=nid004670 start=2026-11-08T07:04:11Z
+{"out": "fd1b_pfd_B_Flux_91.npz", "seconds_unfold": 819.594}
+{"out": "fd1b_pfd_B_Flux_92.npz", "seconds_unfold": 696.196}
+{"out": "fd1b_pfd_B_Flux_93.npz", "seconds_unfold": 682.888}
+{"out": "fd1b_pfd_B_Flux_94.npz", "seconds_unfold": 753.289}
+{"out": "fd1b_pfd_B_Flux_95.npz", "seconds_unfold": 720.541}
+{"out": "fd1b_pfd_B_Flux_96.npz", "seconds_unfold": 667.978}
+[s5c] task=33 name=fd1b_pfd_p3_lane33_B rc=0 end=2026-11-08T08:17:34Z
+## line34-60991419.log
+[s5c] task=34 name=fd1b_pfd_p3_lane34_B job=60991419 host=nid004670 start=2026-11-08T07:04:11Z
+{"out": "fd1b_pfd_B_Flux_97.npz", "seconds_unfold": 850.608}
+{"out": "fd1b_pfd_B_Flux_98.npz", "seconds_unfold": 660.713}
+{"out": "fd1b_pfd_B_Flux_99.npz", "seconds_unfold": 710.667}
+{"out": "fd1b_pfd_B_GEANT_Neutron_0.npz", "seconds_unfold": 672.196}
+{"out": "fd1b_pfd_B_GEANT_Neutron_1.npz", "seconds_unfold": 684.878}
+[s5c] task=34 name=fd1b_pfd_p3_lane34_B rc=0 end=2026-11-08T08:05:21Z
+## line35-60991419.log
+[s5c] task=35 name=fd1b_pfd_p3_lane35_B job=60991419 host=nid004670 start=2026-11-08T07:04:11Z
+{"out": "fd1b_pfd_B_GEANT_Pion_0.npz", "seconds_unfold": 819.17}
+{"out": "fd1b_pfd_B_GEANT_Pion_1.npz", "seconds_unfold": 721.578}
+{"out": "fd1b_pfd_B_GEANT_Proton_0.npz", "seconds_unfold": 709.461}
+{"out": "fd1b_pfd_B_GEANT_Proton_1.npz", "seconds_unfold": 709.696}
+{"out": "fd1b_pfd_B_MinosEfficiency_1.npz", "seconds_unfold": 691.19}
+[s5c] task=35 name=fd1b_pfd_p3_lane35_B rc=0 end=2026-11-08T08:06:21Z
+## line3-60991405.log
+[s5c] task=3 name=fd1b_pfd_p3_lane03_A job=60991405 host=nid005690 start=2026-11-08T07:03:28Z
+{"out": "fd1b_pfd_A_Flux_19.npz", "seconds_unfold": 808.707}
+{"out": "fd1b_pfd_A_Flux_20.npz", "seconds_unfold": 753.903}
+{"out": "fd1b_pfd_A_Flux_21.npz", "seconds_unfold": 683.099}
+{"out": "fd1b_pfd_A_Flux_22.npz", "seconds_unfold": 720.549}
+{"out": "fd1b_pfd_A_Flux_23.npz", "seconds_unfold": 720.487}
+{"out": "fd1b_pfd_A_Flux_24.npz", "seconds_unfold": 744.379}
+[s5c] task=3 name=fd1b_pfd_p3_lane03_A rc=0 end=2026-11-08T08:18:24Z
+## line36-60991419.log
+[s5c] task=36 name=fd1b_pfd_p3_lane36_Dnom job=60991419 host=nid004670 start=2026-11-08T07:04:11Z
+{"out": "fd1b_pfd_Dnom_Flux_1.npz", "seconds_unfold": 839.593}
+{"out": "fd1b_pfd_Dnom_Flux_2.npz", "seconds_unfold": 777.188}
+{"out": "fd1b_pfd_Dnom_Flux_3.npz", "seconds_unfold": 728.569}
+{"out": "fd1b_pfd_Dnom_Flux_4.npz", "seconds_unfold": 702.71}
+{"out": "fd1b_pfd_Dnom_Flux_5.npz", "seconds_unfold": 740.314}
+{"out": "fd1b_pfd_Dnom_Flux_6.npz", "seconds_unfold": 775.547}
+[s5c] task=36 name=fd1b_pfd_p3_lane36_Dnom rc=0 end=2026-11-08T08:21:13Z
+## line37-60991419.log
+[s5c] task=37 name=fd1b_pfd_p3_lane37_Dnom job=60991419 host=nid004670 start=2026-11-08T07:04:11Z
+{"out": "fd1b_pfd_Dnom_Flux_7.npz", "seconds_unfold": 857.222}
+{"out": "fd1b_pfd_Dnom_Flux_8.npz", "seconds_unfold": 731.902}
+{"out": "fd1b_pfd_Dnom_Flux_9.npz", "seconds_unfold": 744.177}
+{"out": "fd1b_pfd_Dnom_Flux_10.npz", "seconds_unfold": 759.035}
+{"out": "fd1b_pfd_Dnom_Flux_11.npz", "seconds_unfold": 740.11}
+{"out": "fd1b_pfd_Dnom_Flux_12.npz", "seconds_unfold": 752.722}
+[s5c] task=37 name=fd1b_pfd_p3_lane37_Dnom rc=0 end=2026-11-08T08:21:34Z
+## line38-60991419.log
+[s5c] task=38 name=fd1b_pfd_p3_lane38_Dnom job=60991419 host=nid004670 start=2026-11-08T07:04:11Z
+{"out": "fd1b_pfd_Dnom_Flux_13.npz", "seconds_unfold": 833.435}
+{"out": "fd1b_pfd_Dnom_Flux_14.npz", "seconds_unfold": 749.258}
+{"out": "fd1b_pfd_Dnom_Flux_15.npz", "seconds_unfold": 768.92}
+{"out": "fd1b_pfd_Dnom_Flux_16.npz", "seconds_unfold": 737.172}
+{"out": "fd1b_pfd_Dnom_Flux_17.npz", "seconds_unfold": 735.495}
+{"out": "fd1b_pfd_Dnom_Flux_18.npz", "seconds_unfold": 694.702}
+[s5c] task=38 name=fd1b_pfd_p3_lane38_Dnom rc=0 end=2026-11-08T08:20:32Z
+## line39-60991419.log
+[s5c] task=39 name=fd1b_pfd_p3_lane39_Dnom job=60991419 host=nid004670 start=2026-11-08T07:04:11Z
+{"out": "fd1b_pfd_Dnom_Flux_19.npz", "seconds_unfold": 817.402}
+{"out": "fd1b_pfd_Dnom_Flux_20.npz", "seconds_unfold": 765.221}
+{"out": "fd1b_pfd_Dnom_Flux_21.npz", "seconds_unfold": 698.504}
+{"out": "fd1b_pfd_Dnom_Flux_22.npz", "seconds_unfold": 732.194}
+{"out": "fd1b_pfd_Dnom_Flux_23.npz", "seconds_unfold": 744.495}
+{"out": "fd1b_pfd_Dnom_Flux_24.npz", "seconds_unfold": 744.245}
+[s5c] task=39 name=fd1b_pfd_p3_lane39_Dnom rc=0 end=2026-11-08T08:20:14Z
+## line40-60991420.log
+[s5c] task=40 name=fd1b_pfd_p3_lane40_Dnom job=60991420 host=nid004794 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_25.npz", "seconds_unfold": 877.564}
+{"out": "fd1b_pfd_Dnom_Flux_26.npz", "seconds_unfold": 740.587}
+{"out": "fd1b_pfd_Dnom_Flux_27.npz", "seconds_unfold": 732.199}
+{"out": "fd1b_pfd_Dnom_Flux_28.npz", "seconds_unfold": 729.063}
+{"out": "fd1b_pfd_Dnom_Flux_29.npz", "seconds_unfold": 767.484}
+{"out": "fd1b_pfd_Dnom_Flux_30.npz", "seconds_unfold": 775.448}
+[s5c] task=40 name=fd1b_pfd_p3_lane40_Dnom rc=0 end=2026-11-08T08:22:21Z
+## line41-60991420.log
+[s5c] task=41 name=fd1b_pfd_p3_lane41_Dnom job=60991420 host=nid004794 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_31.npz", "seconds_unfold": 908.128}
+{"out": "fd1b_pfd_Dnom_Flux_32.npz", "seconds_unfold": 755.597}
+{"out": "fd1b_pfd_Dnom_Flux_33.npz", "seconds_unfold": 755.247}
+{"out": "fd1b_pfd_Dnom_Flux_34.npz", "seconds_unfold": 752.542}
+{"out": "fd1b_pfd_Dnom_Flux_35.npz", "seconds_unfold": 740.735}
+{"out": "fd1b_pfd_Dnom_Flux_36.npz", "seconds_unfold": 728.175}
+[s5c] task=41 name=fd1b_pfd_p3_lane41_Dnom rc=0 end=2026-11-08T08:22:45Z
+## line42-60991420.log
+[s5c] task=42 name=fd1b_pfd_p3_lane42_Dnom job=60991420 host=nid004794 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_37.npz", "seconds_unfold": 891.109}
+{"out": "fd1b_pfd_Dnom_Flux_38.npz", "seconds_unfold": 737.12}
+{"out": "fd1b_pfd_Dnom_Flux_39.npz", "seconds_unfold": 717.323}
+{"out": "fd1b_pfd_Dnom_Flux_40.npz", "seconds_unfold": 745.745}
+{"out": "fd1b_pfd_Dnom_Flux_41.npz", "seconds_unfold": 742.323}
+{"out": "fd1b_pfd_Dnom_Flux_42.npz", "seconds_unfold": 752.481}
+[s5c] task=42 name=fd1b_pfd_p3_lane42_Dnom rc=0 end=2026-11-08T08:21:50Z
+## line43-60991420.log
+[s5c] task=43 name=fd1b_pfd_p3_lane43_Dnom job=60991420 host=nid004794 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_43.npz", "seconds_unfold": 876.255}
+{"out": "fd1b_pfd_Dnom_Flux_44.npz", "seconds_unfold": 697.559}
+{"out": "fd1b_pfd_Dnom_Flux_45.npz", "seconds_unfold": 733.736}
+{"out": "fd1b_pfd_Dnom_Flux_46.npz", "seconds_unfold": 721.309}
+{"out": "fd1b_pfd_Dnom_Flux_47.npz", "seconds_unfold": 707.178}
+{"out": "fd1b_pfd_Dnom_Flux_48.npz", "seconds_unfold": 721.669}
+[s5c] task=43 name=fd1b_pfd_p3_lane43_Dnom rc=0 end=2026-11-08T08:19:42Z
+## line44-60991420.log
+[s5c] task=44 name=fd1b_pfd_p3_lane44_Dnom job=60991420 host=nid004794 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_49.npz", "seconds_unfold": 866.873}
+{"out": "fd1b_pfd_Dnom_Flux_50.npz", "seconds_unfold": 741.381}
+{"out": "fd1b_pfd_Dnom_Flux_51.npz", "seconds_unfold": 765.317}
+{"out": "fd1b_pfd_Dnom_Flux_52.npz", "seconds_unfold": 728.131}
+{"out": "fd1b_pfd_Dnom_Flux_53.npz", "seconds_unfold": 734.914}
+{"out": "fd1b_pfd_Dnom_Flux_54.npz", "seconds_unfold": 753.572}
+[s5c] task=44 name=fd1b_pfd_p3_lane44_Dnom rc=0 end=2026-11-08T08:21:54Z
+## line45-60991420.log
+[s5c] task=45 name=fd1b_pfd_p3_lane45_Dnom job=60991420 host=nid004794 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_55.npz", "seconds_unfold": 916.569}
+{"out": "fd1b_pfd_Dnom_Flux_56.npz", "seconds_unfold": 736.54}
+{"out": "fd1b_pfd_Dnom_Flux_57.npz", "seconds_unfold": 717.678}
+{"out": "fd1b_pfd_Dnom_Flux_58.npz", "seconds_unfold": 749.793}
+{"out": "fd1b_pfd_Dnom_Flux_59.npz", "seconds_unfold": 706.322}
+{"out": "fd1b_pfd_Dnom_Flux_60.npz", "seconds_unfold": 727.522}
+[s5c] task=45 name=fd1b_pfd_p3_lane45_Dnom rc=0 end=2026-11-08T08:21:15Z
+## line4-60991405.log
+[s5c] task=4 name=fd1b_pfd_p3_lane04_A job=60991405 host=nid005690 start=2026-11-08T07:03:28Z
+{"out": "fd1b_pfd_A_Flux_25.npz", "seconds_unfold": 822.319}
+{"out": "fd1b_pfd_A_Flux_26.npz", "seconds_unfold": 734.925}
+{"out": "fd1b_pfd_A_Flux_27.npz", "seconds_unfold": 706.527}
+{"out": "fd1b_pfd_A_Flux_28.npz", "seconds_unfold": 718.791}
+{"out": "fd1b_pfd_A_Flux_29.npz", "seconds_unfold": 751.437}
+{"out": "fd1b_pfd_A_Flux_30.npz", "seconds_unfold": 758.524}
+[s5c] task=4 name=fd1b_pfd_p3_lane04_A rc=0 end=2026-11-08T08:19:27Z
+## line46-60991420.log
+[s5c] task=46 name=fd1b_pfd_p3_lane46_Dnom job=60991420 host=nid004794 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_61.npz", "seconds_unfold": 907.696}
+{"out": "fd1b_pfd_Dnom_Flux_62.npz", "seconds_unfold": 712.268}
+{"out": "fd1b_pfd_Dnom_Flux_63.npz", "seconds_unfold": 730.765}
+{"out": "fd1b_pfd_Dnom_Flux_64.npz", "seconds_unfold": 727.992}
+{"out": "fd1b_pfd_Dnom_Flux_65.npz", "seconds_unfold": 708.338}
+{"out": "fd1b_pfd_Dnom_Flux_66.npz", "seconds_unfold": 742.28}
+[s5c] task=46 name=fd1b_pfd_p3_lane46_Dnom rc=0 end=2026-11-08T08:21:01Z
+## line47-60991420.log
+[s5c] task=47 name=fd1b_pfd_p3_lane47_Dnom job=60991420 host=nid004794 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_67.npz", "seconds_unfold": 867.929}
+{"out": "fd1b_pfd_Dnom_Flux_68.npz", "seconds_unfold": 752.068}
+{"out": "fd1b_pfd_Dnom_Flux_69.npz", "seconds_unfold": 731.609}
+{"out": "fd1b_pfd_Dnom_Flux_70.npz", "seconds_unfold": 750.691}
+{"out": "fd1b_pfd_Dnom_Flux_71.npz", "seconds_unfold": 744.553}
+{"out": "fd1b_pfd_Dnom_Flux_72.npz", "seconds_unfold": 757.413}
+[s5c] task=47 name=fd1b_pfd_p3_lane47_Dnom rc=0 end=2026-11-08T08:22:04Z
+## line48-60991421.log
+[s5c] task=48 name=fd1b_pfd_p3_lane48_Dnom job=60991421 host=nid004826 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_73.npz", "seconds_unfold": 878.27}
+{"out": "fd1b_pfd_Dnom_Flux_74.npz", "seconds_unfold": 763.474}
+{"out": "fd1b_pfd_Dnom_Flux_75.npz", "seconds_unfold": 712.027}
+{"out": "fd1b_pfd_Dnom_Flux_76.npz", "seconds_unfold": 709.587}
+{"out": "fd1b_pfd_Dnom_Flux_77.npz", "seconds_unfold": 769.757}
+{"out": "fd1b_pfd_Dnom_Flux_78.npz", "seconds_unfold": 739.909}
+[s5c] task=48 name=fd1b_pfd_p3_lane48_Dnom rc=0 end=2026-11-08T08:21:26Z
+## line49-60991421.log
+[s5c] task=49 name=fd1b_pfd_p3_lane49_Dnom job=60991421 host=nid004826 start=2026-11-08T07:04:09Z
+{"out": "fd1b_pfd_Dnom_Flux_79.npz", "seconds_unfold": 885.072}
+{"out": "fd1b_pfd_Dnom_Flux_80.npz", "seconds_unfold": 730.333}
+{"out": "fd1b_pfd_Dnom_Flux_81.npz", "seconds_unfold": 738.845}
+{"out": "fd1b_pfd_Dnom_Flux_82.npz", "seconds_unfold": 723.503}
+{"out": "fd1b_pfd_Dnom_Flux_83.npz", "seconds_unfold": 726.116}
+{"out": "fd1b_pfd_Dnom_Flux_84.npz", "seconds_unfold": 745.118}
+[s5c] task=49 name=fd1b_pfd_p3_lane49_Dnom rc=0 end=2026-11-08T08:21:05Z
+## line50-60991421.log
+[s5c] task=50 name=fd1b_pfd_p3_lane50_Dnom job=60991421 host=nid004826 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_85.npz", "seconds_unfold": 896.494}
+{"out": "fd1b_pfd_Dnom_Flux_86.npz", "seconds_unfold": 742.943}
+{"out": "fd1b_pfd_Dnom_Flux_87.npz", "seconds_unfold": 699.931}
+{"out": "fd1b_pfd_Dnom_Flux_88.npz", "seconds_unfold": 736.751}
+{"out": "fd1b_pfd_Dnom_Flux_89.npz", "seconds_unfold": 708.41}
+{"out": "fd1b_pfd_Dnom_Flux_90.npz", "seconds_unfold": 768.831}
+[s5c] task=50 name=fd1b_pfd_p3_lane50_Dnom rc=0 end=2026-11-08T08:21:08Z
+## line51-60991421.log
+[s5c] task=51 name=fd1b_pfd_p3_lane51_Dnom job=60991421 host=nid004826 start=2026-11-08T07:04:09Z
+{"out": "fd1b_pfd_Dnom_Flux_91.npz", "seconds_unfold": 881.314}
+{"out": "fd1b_pfd_Dnom_Flux_92.npz", "seconds_unfold": 718.112}
+{"out": "fd1b_pfd_Dnom_Flux_93.npz", "seconds_unfold": 703.847}
+{"out": "fd1b_pfd_Dnom_Flux_94.npz", "seconds_unfold": 774.246}
+{"out": "fd1b_pfd_Dnom_Flux_95.npz", "seconds_unfold": 739.247}
+{"out": "fd1b_pfd_Dnom_Flux_96.npz", "seconds_unfold": 701.941}
+[s5c] task=51 name=fd1b_pfd_p3_lane51_Dnom rc=0 end=2026-11-08T08:20:43Z
+## line52-60991421.log
+[s5c] task=52 name=fd1b_pfd_p3_lane52_Dnom job=60991421 host=nid004826 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_Flux_97.npz", "seconds_unfold": 917.558}
+{"out": "fd1b_pfd_Dnom_Flux_98.npz", "seconds_unfold": 675.133}
+{"out": "fd1b_pfd_Dnom_Flux_99.npz", "seconds_unfold": 726.819}
+{"out": "fd1b_pfd_Dnom_GEANT_Neutron_0.npz", "seconds_unfold": 663.009}
+{"out": "fd1b_pfd_Dnom_GEANT_Neutron_1.npz", "seconds_unfold": 698.215}
+{"out": "fd1b_pfd_Dnom_GEANT_Pion_0.npz", "seconds_unfold": 708.741}
+[s5c] task=52 name=fd1b_pfd_p3_lane52_Dnom rc=0 end=2026-11-08T08:18:34Z
+## line53-60991421.log
+[s5c] task=53 name=fd1b_pfd_p3_lane53_Dnom job=60991421 host=nid004826 start=2026-11-08T07:04:10Z
+{"out": "fd1b_pfd_Dnom_GEANT_Pion_1.npz", "seconds_unfold": 873.98}
+{"out": "fd1b_pfd_Dnom_GEANT_Proton_0.npz", "seconds_unfold": 707.692}
+{"out": "fd1b_pfd_Dnom_GEANT_Proton_1.npz", "seconds_unfold": 723.192}
+{"out": "fd1b_pfd_Dnom_MinosEfficiency_0.npz", "seconds_unfold": 698.626}
+{"out": "fd1b_pfd_Dnom_MinosEfficiency_1.npz", "seconds_unfold": 701.395}
+[s5c] task=53 name=fd1b_pfd_p3_lane53_Dnom rc=0 end=2026-11-08T08:07:50Z
+## line5-60991405.log
+[s5c] task=5 name=fd1b_pfd_p3_lane05_A job=60991405 host=nid005690 start=2026-11-08T07:03:28Z
+{"out": "fd1b_pfd_A_Flux_31.npz", "seconds_unfold": 846.571}
+{"out": "fd1b_pfd_A_Flux_32.npz", "seconds_unfold": 743.344}
+{"out": "fd1b_pfd_A_Flux_33.npz", "seconds_unfold": 744.701}
+{"out": "fd1b_pfd_A_Flux_34.npz", "seconds_unfold": 731.673}
+{"out": "fd1b_pfd_A_Flux_35.npz", "seconds_unfold": 727.028}
+{"out": "fd1b_pfd_A_Flux_36.npz", "seconds_unfold": 715.903}
+[s5c] task=5 name=fd1b_pfd_p3_lane05_A rc=0 end=2026-11-08T08:19:38Z
+## line6-60991405.log
+[s5c] task=6 name=fd1b_pfd_p3_lane06_A job=60991405 host=nid005690 start=2026-11-08T07:03:28Z
+{"out": "fd1b_pfd_A_Flux_37.npz", "seconds_unfold": 842.609}
+{"out": "fd1b_pfd_A_Flux_38.npz", "seconds_unfold": 716.8}
+{"out": "fd1b_pfd_A_Flux_39.npz", "seconds_unfold": 699.914}
+{"out": "fd1b_pfd_A_Flux_40.npz", "seconds_unfold": 732.066}
+{"out": "fd1b_pfd_A_Flux_41.npz", "seconds_unfold": 739.162}
+{"out": "fd1b_pfd_A_Flux_42.npz", "seconds_unfold": 745.964}
+[s5c] task=6 name=fd1b_pfd_p3_lane06_A rc=0 end=2026-11-08T08:19:10Z
+## line7-60991405.log
+[s5c] task=7 name=fd1b_pfd_p3_lane07_A job=60991405 host=nid005690 start=2026-11-08T07:03:28Z
+{"out": "fd1b_pfd_A_Flux_43.npz", "seconds_unfold": 820.082}
+{"out": "fd1b_pfd_A_Flux_44.npz", "seconds_unfold": 692.514}
+{"out": "fd1b_pfd_A_Flux_45.npz", "seconds_unfold": 718.251}
+{"out": "fd1b_pfd_A_Flux_46.npz", "seconds_unfold": 699.016}
+{"out": "fd1b_pfd_A_Flux_47.npz", "seconds_unfold": 685.389}
+{"out": "fd1b_pfd_A_Flux_48.npz", "seconds_unfold": 706.314}
+[s5c] task=7 name=fd1b_pfd_p3_lane07_A rc=0 end=2026-11-08T08:16:39Z
+## line8-60991413.log
+[s5c] task=8 name=fd1b_pfd_p3_lane08_A job=60991413 host=nid005722 start=2026-11-08T07:03:32Z
+{"out": "fd1b_pfd_A_Flux_49.npz", "seconds_unfold": 805.464}
+{"out": "fd1b_pfd_A_Flux_50.npz", "seconds_unfold": 738.087}
+{"out": "fd1b_pfd_A_Flux_51.npz", "seconds_unfold": 753.611}
+{"out": "fd1b_pfd_A_Flux_52.npz", "seconds_unfold": 716.612}
+{"out": "fd1b_pfd_A_Flux_53.npz", "seconds_unfold": 729.55}
+{"out": "fd1b_pfd_A_Flux_54.npz", "seconds_unfold": 738.959}
+[s5c] task=8 name=fd1b_pfd_p3_lane08_A rc=0 end=2026-11-08T08:19:24Z
+## line9-60991413.log
+[s5c] task=9 name=fd1b_pfd_p3_lane09_A job=60991413 host=nid005722 start=2026-11-08T07:03:31Z
+{"out": "fd1b_pfd_A_Flux_55.npz", "seconds_unfold": 847.992}
+{"out": "fd1b_pfd_A_Flux_56.npz", "seconds_unfold": 724.663}
+{"out": "fd1b_pfd_A_Flux_57.npz", "seconds_unfold": 705.069}
+{"out": "fd1b_pfd_A_Flux_58.npz", "seconds_unfold": 740.427}
+{"out": "fd1b_pfd_A_Flux_59.npz", "seconds_unfold": 690.273}
+{"out": "fd1b_pfd_A_Flux_60.npz", "seconds_unfold": 713.328}
+[s5c] task=9 name=fd1b_pfd_p3_lane09_A rc=0 end=2026-11-08T08:18:22Z
+-- refusals or tracebacks in lane logs
+== 5-7. products, meta (meta only) and atime sidecars
+products: expected 327, present 327, missing 0 [], extra []
+meta: 327 products read (meta only); from P3 jobs 319, from P2 8, other jobs []
+threads values [32]; module digests ['a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d']
+P3 seconds_unfold min 660.713 median 730.912 max 919.495 (unit 1370); peak_rss_kib max 21638880 (limit 44040192)
+atime sidecars: 62; with moved files: 0 []
+== 8. stat-after vs P3's stat-before
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz|1548438020|1782610308|1794105515
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz|16017201|1790319104|1794105516
+/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json|170298|1793473279|1793496788
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz|2163648810|1784034785|1793890180
+/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root|6396|1794033543|1794125403
+originals changed: 0; staged flux copy changed: 1
+== 9. records (base64 tar, explicit list)
+files in the tar: 192
+sha256 d6f76cf102dea942919b1ea5d409e297a2f9563504262a396f07c91a47080965 p3/logs/submit-p3.txt
+sha256 2ff1140c4ab47a0a0adba5cef5b0263fd0db3f3269d9d5c51dc81b236a2f801f p3/logs/submit-p3.out
+sha256 4c18f4c13a7e005924763d205ce647dda184df9d6f8bb69643bd529a2a926099 p3/logs/stat-before.txt
+sha256 1b74a5bb49c9ece40b9703ffae916036fc5f6d5d766b18b6f74ab880394fe5d5 p3/logs/stat-after.txt
+sha256 d62fb7b874f454d1ebb27e49487a2e6d3afbbaf511854f6ee7c458022aa0cd33 p3/logs/sacct-p3.psv
+sha256 67d08aef4658f6ae629bcb4ca4217d35efcab6f4cf3bf294c8b6dca06ff0682e p3/logs/meta-p3.jsonl
+sha256 aea623c234b65c95f044465b074a623c9d3248e7802c64b8d4bacd6ec597ac6a p3/logs/probe-compare.txt
+sha256 490b73be3a750f813ca694e5d1d7d76de7224f5e1ab3404d2008b64c790ddbf2 p3/tables/tasks-p3.tsv
+sha256 557eee10b7eba44e0206a275a0acab44b1ad662a3ae8224833d3894c9556c693 p3/logs/fd1b_pfd_p3_j0_60991405.out
+sha256 7ba0073ef0c758b3233c7e25bbc27a543cfe25ae43e38c5cd1c9bf339d8e0f54 p3/logs/fd1b_pfd_p3_j1_60991413.out
+sha256 b75cd865a1c7f7572ea610a413ad5a0a2868d1c2eeaf930ff8a2927de702d4e7 p3/logs/fd1b_pfd_p3_j2_60991415.out
+sha256 1be04a45bceb18a893f722232082a777622732e94ec33dbe9ba52446983ef55f p3/logs/fd1b_pfd_p3_j3_60991418.out
+sha256 3dcd3983b9a92929526bbb4abcc934df0774dee2efc06d8c536c0834978abd11 p3/logs/fd1b_pfd_p3_j4_60991419.out
+sha256 c423024eb33e10c662b8909c8a0a1902b6ff9ec1a47b42b5d662e4dd4557df10 p3/logs/fd1b_pfd_p3_j5_60991420.out
+sha256 3057db9596400e76613111cb37d3213ec5d1d272a5f366951ac2a372550ad998 p3/logs/fd1b_pfd_p3_j6_60991421.out
+sha256 5438ce46aff0bdb4995e0f1bc21d11ef0ccc5acee1734d7f7e1c587923117309 p3/lanes/threadprobe-60991405.log
+sha256 1f65d0597eb51ca3b9443be6a5414c7bdba07fbedc317d33f2b1555db3e90048 p3/lanes/threadprobe-60991413.log
+sha256 2f04c35cada758232739ac87290afd5dfb27ca2c2b1c8da675a7058e33621fae p3/lanes/threadprobe-60991415.log
+sha256 6a1d7d4cd41631126d4febda5539698276cded873164925e35e9e284c8f8b1f4 p3/lanes/threadprobe-60991418.log
+sha256 ca7e0637d24d04728b2142b05497876b6cbcbdd16e2d95b203b6c86c6f12c058 p3/lanes/threadprobe-60991419.log
+sha256 15e25b2c3c67106246134d6e342364896dfe2d958c238ee04954fac5f2297025 p3/lanes/threadprobe-60991420.log
+sha256 94e081695fdad8862e133931d973cef2031c299937ce0a0ae0162a7681fcc568 p3/lanes/threadprobe-60991421.log
+sha256 56471096beec4740be8e8382b6b15add33752cda3323d9562897e1835ebecd63 p3/lanes/line0-60991405.log
+sha256 41d47eb529e4ebdfa64ed71132b06b98a1059de01f2f528fbeb7e9384d075506 p3/lanes/line10-60991413.log
+sha256 0d012251d74fbfa48c93c881e27834188a0e4dfbef982c3fa09714a4da87a7d5 p3/lanes/line11-60991413.log
+sha256 3c02af9fa97278dfebc94a990c0536b555ef8bc4714ea4ae2ee1664f18b898e9 p3/lanes/line12-60991413.log
+sha256 9f1599ee65991b3baf78be6a375e0a9f1b6470c209e27bf3e8faf7b116b4eaa7 p3/lanes/line13-60991413.log
+sha256 e9481739fc29f140ea469e86d6a3866156fd5f016f0cd4c7dc259aa1131ddc7f p3/lanes/line14-60991413.log
+sha256 b6fc3c09d991e15389c166f08b5fde4e3641deef9aa927ca2eece8b8fddb235a p3/lanes/line15-60991413.log
+sha256 04f4266acff36e3ceeef1a4473abed4a23132a61cd79b102ec7ff43752185fe4 p3/lanes/line1-60991405.log
+sha256 fee9b1f0ee65ad5a6ace92c7d095a78c2b67b5a2bf6cd03f196b8433ec2a6c10 p3/lanes/line16-60991415.log
+sha256 5ef48da9930e57d78642c8592be1a96813db225705f4b7072d6a6e35caa8dc86 p3/lanes/line17-60991415.log
+sha256 ff140b7162564e021ffa5ddb1e12a8d90dac7a552a8f82e284f17030f604c410 p3/lanes/line18-60991415.log
+sha256 8610cf7f4d366148e54087543c306c6869f421de4e112aecdce1564407bc606e p3/lanes/line19-60991415.log
+sha256 f92e638ec61d347b50a32b1480d83679247f8f7fc5d49a2fb8ba99a91e8432e3 p3/lanes/line20-60991415.log
+sha256 554e70aec63428e2c62a9ea9055fdd3ae491ad21ecc1b3ec1709d979265d3b10 p3/lanes/line21-60991415.log
+sha256 3628f79e5701a9fb9ab124acad532b4f2d6894e62b69dc57167a85d69e0a2ebd p3/lanes/line22-60991415.log
+sha256 eb75f84bed9aa8ef18e2eb27f01d69fdebf5179d292f5ddac551f1f0553db2de p3/lanes/line23-60991415.log
+sha256 f60738671560689f3b8cc1ef38efd28ca1eece26291ed33ddc2d24d7bef09d83 p3/lanes/line24-60991418.log
+sha256 426b4de197c41e213a6d07fd3f4d06769d25cccbf91bdc298875021a46fd1567 p3/lanes/line25-60991418.log
+sha256 5c8089d4e1c782fe01b653a7a0bc5fd7bbd2faf54e1626542460a491d3765d2f p3/lanes/line2-60991405.log
+sha256 0b8621b3959a2b17db5c76660061f2aa10181dead96c2cdf4839d7e0c5a5014c p3/lanes/line26-60991418.log
+sha256 f7b2be46c7f2f2c0abd1419e74a6fef654a39d163feeb99f9df3627b3c490f14 p3/lanes/line27-60991418.log
+sha256 75ffa5a7d3782b91a139984ba5f6e332515ba0835ef82873ca0d2f3345d16cf7 p3/lanes/line28-60991418.log
+sha256 0f7acac071847590d48f3cf7a63a810c94b0c67a385e20cd8d5462a5ec2685c2 p3/lanes/line29-60991418.log
+sha256 0586df6cdf83f5cd00308fd017e7f1423ba8bc202841e53cfb39babcbcc08bf9 p3/lanes/line30-60991418.log
+sha256 8eba6aa7f0d69507eda67d98d7ba16413f87a476a3fcb0b4cdbf9d89f85832a7 p3/lanes/line31-60991418.log
+sha256 3b5da9921dad2e0167e1c0745fd6e0e5d95a364837ac157103ca5dc6423ccfba p3/lanes/line32-60991419.log
+sha256 98902635f2b685f668a23684e65ef6914b7f68d65adb932b13b4403ec4c6cc2e p3/lanes/line33-60991419.log
+sha256 7f62eda59d78f53117ea29147aba9f206fab590d9ac520bea07c6d654600998a p3/lanes/line34-60991419.log
+sha256 695a143b2c8c9f90a47f08e29b10dec3220d417d4d0000741eeca315d747aa94 p3/lanes/line35-60991419.log
+sha256 52bf868f853816300a0c7308e98b76a30546ac7fdc47dcd669e40e98df527f05 p3/lanes/line3-60991405.log
+sha256 8f5dccc04009b72089e35c34d1a6800e87e5f98e1fefdfaadc8deb70455bcacd p3/lanes/line36-60991419.log
+sha256 5f936ef57c5b839045489acc2ff812b5984b2f67a84c6391e7cd01d5f35b6169 p3/lanes/line37-60991419.log
+sha256 42abec1cc3a82b14dd80950ef93e71e9fa14bf4d6adb16ae72b839a7f8b54268 p3/lanes/line38-60991419.log
+sha256 9daa6a2a2e8233e83c6109f9b5b86eec1e99fa93087bc6ec59dd16bcfed2376f p3/lanes/line39-60991419.log
+sha256 371e2abe3a4f0457973bf6d0986bed04366321a8f12b9a006b6441f3cf4960b8 p3/lanes/line40-60991420.log
+sha256 f20bc6b88728b4158648c82892fbe3a27e6e15231d9ad5083a7f5765b5b252c6 p3/lanes/line41-60991420.log
+sha256 1407154d1839bb89721ecf333bfc85eba03fdfe0400daf454848d09dcf71e7c7 p3/lanes/line42-60991420.log
+sha256 5868ebc1fc6a3d52ae5dff5df8c908b552d86c619762bd5022346070937fc09d p3/lanes/line43-60991420.log
+sha256 d86b4fce206bdd24fa39f8fb2bc20171ecbcd9615e188de4876e101fd6d79c99 p3/lanes/line44-60991420.log
+sha256 4e2a1e48adb0011531dde11612bd28eed9249095397e860c18c9b608b0ffb7bc p3/lanes/line45-60991420.log
+sha256 ee23f800c642496c7b62c6510387a4b7983aa0a52e086c4ee763cdbbd20b5ddf p3/lanes/line4-60991405.log
+sha256 6ffd74a01fc299d947827362bdaca14be7b529a16aaa56473b0ed6c46c99e3aa p3/lanes/line46-60991420.log
+sha256 ece5b4dca169cd36566357fc48142dc9cc6f121e25d17fea7be2f938f6c54a26 p3/lanes/line47-60991420.log
+sha256 7e9b112945070eb8af7567de49b1d5284ef9b0a4d0736d0ae3c497397e559699 p3/lanes/line48-60991421.log
+sha256 ba400a05b04d134980db02e5fda9424da2ab880af971b827a38bc54d636e8454 p3/lanes/line49-60991421.log
+sha256 29e31ad4d4234fecfa32c64ae6a678586b810ad4a44aa946baab14b1a941f0d1 p3/lanes/line50-60991421.log
+sha256 61e90aac5cb5f4b2ee9f8e9f108855e773566ee904e0c1e58a0066a1864cef78 p3/lanes/line51-60991421.log
+sha256 19c484cf99748b102ddd0a70f12bcc5d5c786bc77c5fe8ca46118fc09d19557b p3/lanes/line52-60991421.log
+sha256 9b42d5d10b4647e433d0b5456fdeddb4daa00549b082ca6ac93465840a8d870d p3/lanes/line53-60991421.log
+sha256 928d21b76adf08a21d36764f2f6a92512c7251624ed183176e5ce3b92daaae32 p3/lanes/line5-60991405.log
+sha256 d6d7e3adf80cd153925a05024848a52ebad60f84bf62df6582bb7303e99a2f25 p3/lanes/line6-60991405.log
+sha256 787748036d8f4751a59823f0d781f23e755ac296a5e950e88ce02c98f811ba76 p3/lanes/line7-60991405.log
+sha256 d19b128360b696a0c3f2484ba32cb42e0feb781c2ee64db4803d279b3dc3976a p3/lanes/line8-60991413.log
+sha256 a2c5c5e7ae0bbc6b66d608832f65a087dd0918d426f12e01672e5bb73e8e64a5 p3/lanes/line9-60991413.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane00_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane01_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane02_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane03_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane04_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane05_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane06_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane07_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane08_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane09_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane10_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane11_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane12_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane13_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane14_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane15_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane16_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane17_A.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane18_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane19_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane20_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane21_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane22_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane23_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane24_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane25_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane26_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane27_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane28_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane29_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane30_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane31_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane32_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane33_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane34_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane35_B.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane36_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane37_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane38_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane39_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane40_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane41_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane42_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane43_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane44_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane45_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane46_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane47_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane48_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane49_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane50_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane51_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane52_Dnom.env.log
+sha256 409329bbf5be822e47ca636447cba73a96cc7a6f4f1232e51897c75b108b3dce p3/lanes/logs/fd1b_pfd_p3_lane53_Dnom.env.log
+sha256 831d808e331181eefcd63a73408ec0e2af5ce0f7cf3f336b0753771901644ee7 unf/atime-A-60990199-85418.json
+sha256 e706ec34e183999203cd6e65716cefa4d4b773e76ec6119f830e86763e9d48c2 unf/atime-A-60990199-85466.json
+sha256 123454aa346a56e721176c43bf7ddbe37cc717063f425535fcbc09ebe4da0d8b unf/atime-A-60990199-85578.json
+sha256 f554efd6ee5c0e94e4bfbf294c1785be8c0350f1a65c94d459527c9d557ccb92 unf/atime-A-60991405-1942808.json
+sha256 a6995dfe90338799249def7c7e93ca5164658f0e86dd60f002d057c51b30b801 unf/atime-A-60991405-1942998.json
+sha256 41d2475d030d53a07285780030d8d62acca1e3257d2942c9ebffb175b9f365d0 unf/atime-A-60991405-1943000.json
+sha256 c53236773c83676788d7ca3d5db5264521ee4b312a7c5333822d510e1075cee7 unf/atime-A-60991405-1943001.json
+sha256 1f009d21a0881880b3a861cd0c2c1146a12a2e3b854fa15d648476b8b9f608e9 unf/atime-A-60991405-1943054.json
+sha256 10797ab92252ce193d2ae9296a66670f4bcafdec18df4f0930bfd9ed01ffddcb unf/atime-A-60991405-1943058.json
+sha256 84c725c8db7e9d7a7b639ce08690ab66500467d6518dfe090fb6c75f426efc2c unf/atime-A-60991405-1943067.json
+sha256 1c11e75b5cfe4532cf0355168a3fe9e20a2cdc1786b40f0a63d2028e8861a84e unf/atime-A-60991405-1943072.json
+sha256 8c6ff4bea441156c1c8a4b77879f4785d5f61bcb44411ceedfc3effa056aaba5 unf/atime-A-60991413-1909280.json
+sha256 dcd3359b9310d0057395690733f606832f290d51aeb0d6fee12f497c1faf0b6d unf/atime-A-60991413-1909470.json
+sha256 633bf59090369b75e898081dbbda32083c74eb94fa5c964444a6fe3a86289331 unf/atime-A-60991413-1909471.json
+sha256 c4de1d64149cb273de8e3cf2587b04dc3f5c465b984be1f74cb79b3e4413424e unf/atime-A-60991413-1909553.json
+sha256 ac2a8e9f1695ea5788ce8808e70a4b84ae59fb6c2b5533cf6fb63616630ad88f unf/atime-A-60991413-1909560.json
+sha256 e35debf9aff71be84ba43df36f59177da5600295837fb7bdf43bde5a797005f0 unf/atime-A-60991413-1909566.json
+sha256 c2df0a157993dc182ecc6d3e7e93b65c889c2291a82a6d05fe115c64ee4018ab unf/atime-A-60991413-1909575.json
+sha256 b6e633df266a6bbdba3bdebf0ac6004c64f159a228455e73da70d2dec939afd4 unf/atime-A-60991413-1909580.json
+sha256 e057a8d316447ccf827ec7a0345cf39ec5fba0dbf305cdcc95894eefa9bbc621 unf/atime-A-60991415-1140899.json
+sha256 52732168bab7fce9706ca0f68f9376aa7c360c10193eed9d161fb4afbc598b0a unf/atime-A-60991415-1140906.json
+sha256 e706ec34e183999203cd6e65716cefa4d4b773e76ec6119f830e86763e9d48c2 unf/atime-B-60990199-85423.json
+sha256 831d808e331181eefcd63a73408ec0e2af5ce0f7cf3f336b0753771901644ee7 unf/atime-B-60990199-85680.json
+sha256 123454aa346a56e721176c43bf7ddbe37cc717063f425535fcbc09ebe4da0d8b unf/atime-B-60990199-85681.json
+sha256 41d2475d030d53a07285780030d8d62acca1e3257d2942c9ebffb175b9f365d0 unf/atime-B-60991415-1140952.json
+sha256 1f009d21a0881880b3a861cd0c2c1146a12a2e3b854fa15d648476b8b9f608e9 unf/atime-B-60991415-1140971.json
+sha256 84c725c8db7e9d7a7b639ce08690ab66500467d6518dfe090fb6c75f426efc2c unf/atime-B-60991415-1140984.json
+sha256 a6995dfe90338799249def7c7e93ca5164658f0e86dd60f002d057c51b30b801 unf/atime-B-60991415-1140985.json
+sha256 10797ab92252ce193d2ae9296a66670f4bcafdec18df4f0930bfd9ed01ffddcb unf/atime-B-60991415-1140989.json
+sha256 1c11e75b5cfe4532cf0355168a3fe9e20a2cdc1786b40f0a63d2028e8861a84e unf/atime-B-60991415-1140992.json
+sha256 dcd3359b9310d0057395690733f606832f290d51aeb0d6fee12f497c1faf0b6d unf/atime-B-60991418-1484474.json
+sha256 c53236773c83676788d7ca3d5db5264521ee4b312a7c5333822d510e1075cee7 unf/atime-B-60991418-1484602.json
+sha256 633bf59090369b75e898081dbbda32083c74eb94fa5c964444a6fe3a86289331 unf/atime-B-60991418-1484832.json
+sha256 c2df0a157993dc182ecc6d3e7e93b65c889c2291a82a6d05fe115c64ee4018ab unf/atime-B-60991418-1484922.json
+sha256 ac2a8e9f1695ea5788ce8808e70a4b84ae59fb6c2b5533cf6fb63616630ad88f unf/atime-B-60991418-1484930.json
+sha256 f554efd6ee5c0e94e4bfbf294c1785be8c0350f1a65c94d459527c9d557ccb92 unf/atime-B-60991418-1484940.json
+sha256 c4de1d64149cb273de8e3cf2587b04dc3f5c465b984be1f74cb79b3e4413424e unf/atime-B-60991418-1484943.json
+sha256 8c6ff4bea441156c1c8a4b77879f4785d5f61bcb44411ceedfc3effa056aaba5 unf/atime-B-60991418-1484945.json
+sha256 e35debf9aff71be84ba43df36f59177da5600295837fb7bdf43bde5a797005f0 unf/atime-B-60991419-2251512.json
+sha256 b6e633df266a6bbdba3bdebf0ac6004c64f159a228455e73da70d2dec939afd4 unf/atime-B-60991419-2251517.json
+sha256 e057a8d316447ccf827ec7a0345cf39ec5fba0dbf305cdcc95894eefa9bbc621 unf/atime-B-60991419-2251877.json
+sha256 52732168bab7fce9706ca0f68f9376aa7c360c10193eed9d161fb4afbc598b0a unf/atime-B-60991419-2251879.json
+sha256 e706ec34e183999203cd6e65716cefa4d4b773e76ec6119f830e86763e9d48c2 unf/atime-Dnom-60990199-85579.json
+sha256 831d808e331181eefcd63a73408ec0e2af5ce0f7cf3f336b0753771901644ee7 unf/atime-Dnom-60990199-85671.json
+sha256 84c725c8db7e9d7a7b639ce08690ab66500467d6518dfe090fb6c75f426efc2c unf/atime-Dnom-60991419-2251731.json
+sha256 10797ab92252ce193d2ae9296a66670f4bcafdec18df4f0930bfd9ed01ffddcb unf/atime-Dnom-60991419-2251811.json
+sha256 a6995dfe90338799249def7c7e93ca5164658f0e86dd60f002d057c51b30b801 unf/atime-Dnom-60991419-2251880.json
+sha256 41d2475d030d53a07285780030d8d62acca1e3257d2942c9ebffb175b9f365d0 unf/atime-Dnom-60991419-2251885.json
+sha256 8c6ff4bea441156c1c8a4b77879f4785d5f61bcb44411ceedfc3effa056aaba5 unf/atime-Dnom-60991420-2331747.json
+sha256 1f009d21a0881880b3a861cd0c2c1146a12a2e3b854fa15d648476b8b9f608e9 unf/atime-Dnom-60991420-2331873.json
+sha256 1c11e75b5cfe4532cf0355168a3fe9e20a2cdc1786b40f0a63d2028e8861a84e unf/atime-Dnom-60991420-2331907.json
+sha256 f554efd6ee5c0e94e4bfbf294c1785be8c0350f1a65c94d459527c9d557ccb92 unf/atime-Dnom-60991420-2331912.json
+sha256 c53236773c83676788d7ca3d5db5264521ee4b312a7c5333822d510e1075cee7 unf/atime-Dnom-60991420-2332022.json
+sha256 633bf59090369b75e898081dbbda32083c74eb94fa5c964444a6fe3a86289331 unf/atime-Dnom-60991420-2332024.json
+sha256 dcd3359b9310d0057395690733f606832f290d51aeb0d6fee12f497c1faf0b6d unf/atime-Dnom-60991420-2332026.json
+sha256 c4de1d64149cb273de8e3cf2587b04dc3f5c465b984be1f74cb79b3e4413424e unf/atime-Dnom-60991420-2332033.json
+sha256 b6e633df266a6bbdba3bdebf0ac6004c64f159a228455e73da70d2dec939afd4 unf/atime-Dnom-60991421-1935992.json
+sha256 ac2a8e9f1695ea5788ce8808e70a4b84ae59fb6c2b5533cf6fb63616630ad88f unf/atime-Dnom-60991421-1936038.json
+sha256 c2df0a157993dc182ecc6d3e7e93b65c889c2291a82a6d05fe115c64ee4018ab unf/atime-Dnom-60991421-1936085.json
+sha256 615eb32f494e50e4d81b8ae3edf2c84d4acb821bb9337224911982aee1d36994 unf/atime-Dnom-60991421-1936189.json
+sha256 e35debf9aff71be84ba43df36f59177da5600295837fb7bdf43bde5a797005f0 unf/atime-Dnom-60991421-1936200.json
+sha256 244b38224958ddbb7adc7bf5521e759fe0cffe08dbde65a439a229d3a3dc88a0 unf/atime-Dnom-60991421-1936208.json
+== TAR BEGIN
+[base64 tar body removed from the committed copy (it began at line 944 of the original); the decoded tar has sha256 47a635ff428c05e04c0a3e5f86b17fd49fb4240b072ec546a4744ca243f56cad; its 192 files are under records/, each matching the sha256 lines above]
+== TAR END tar rc=0
+== pfd-p3-post rc=0 2026-11-08T08:31:08Z

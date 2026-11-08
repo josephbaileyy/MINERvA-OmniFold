@@ -493,8 +493,19 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   nd-unfolding/pv-ladder/readouts/h2_definition.json                                     b6790761
 #: Power-tested before the bump: one flipped hex digit in each of the three pins gives MISMATCH, rc 1.
 #: Delta and controls: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ref-g1/code/binding-delta.txt.
-RECEIPT_BINDING_COUNT = 161
-RECEIPT_BINDING_SHA256 = "2ba0b27d7c6cfe3cbc313a11bcf13d6b02aaa4ca5ce3919e50ca5dd7ff91b3af"
+#: 161 -> 166, digest 2ba0b27d -> 6a2ac974 (2026-11-06, the 1B gate-D pre-check attribution). Its record
+#: (state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-attribution/attribution.json) pins the five
+#: committed readouts it assembles. Enumerated before the constant moved (receipt_inventory() rows with and without
+#: that record on the branch): five ADDED, nothing removed or repointed, all OK:
+#:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/diag/diag.json 6fd6669e
+#:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/inv/i0/i0.json 9a4142d3
+#:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/inv/i2/i2.json a9d3dc9c
+#:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/stage2/run/score/gate-d.json e1838c0a
+#:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage0/readout.json 05be73ee
+#: Power-tested after the bump: one flipped hex digit in each of the five pins gives MISMATCH on that path, rc 1.
+#: Delta and controls: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-attribution/binding-delta.txt.
+RECEIPT_BINDING_COUNT = 166
+RECEIPT_BINDING_SHA256 = "6a2ac9747880c12033efe4ab152ba023e67406a75ec055400beb71951a1f1f74"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

@@ -1,0 +1,2 @@
+[rs1] mode=dry job=60970044 host=nid005821 pin=e306087e68fd497541d32b440848a40f7f29611e lanes=8 start=2026-11-07T17:59:00Z
+[rs1] queue rc=0 end=2026-11-07T18:14:18Z

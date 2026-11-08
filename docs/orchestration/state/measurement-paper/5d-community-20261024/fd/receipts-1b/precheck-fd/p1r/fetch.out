@@ -1,0 +1,23 @@
+remote sha256 70e30fa6fc28e5cb0093fecf26fdfe1acedbe29a3ce6952da662ba1ff746e654
+node login27 2026-11-08T05:42:23Z
+connect script sha256 70e30fa6fc28e5cb0093fecf26fdfe1acedbe29a3ce6952da662ba1ff746e654
+== COV2D fence (allowed names: rs1_* and ens1_*; anything else refuses)
+
+squeue rc=0; refusing rows: []
+== FILE p1r-stage-atime-before.tsv sha256 b4b5e134df00800c27b1a5a6747fcb8d89b997a17f304aa5377e8271fd50540d bytes 17851
+[base64 removed in this committed copy: 314 lines; the decoded file is committed beside this log]
+== END FILE p1r-stage-atime-before.tsv
+== FILE p1r-stage-atime-after-rehash.tsv sha256 b4b5e134df00800c27b1a5a6747fcb8d89b997a17f304aa5377e8271fd50540d bytes 17851
+[base64 removed in this committed copy: 314 lines; the decoded file is committed beside this log]
+== END FILE p1r-stage-atime-after-rehash.tsv
+== FILE p1r-stage-atime-after-controls.tsv sha256 cd8b5812ec8be763a3a863159a1020f008bf3de097342880faa4d88fc9d9adff bytes 17851
+[base64 removed in this committed copy: 314 lines; the decoded file is committed beside this log]
+== END FILE p1r-stage-atime-after-controls.tsv
+== FILE stat-p1r.txt sha256 a14aeddf80d49fd7cb0d470e9296569e5f754d373dcd098800e828bbd20885a1 bytes 36021
+[base64 removed in this committed copy: 632 lines; the decoded file is committed beside this log]
+== END FILE stat-p1r.txt
+== FILE stat-p1r-end.txt sha256 a14aeddf80d49fd7cb0d470e9296569e5f754d373dcd098800e828bbd20885a1 bytes 36021
+[base64 removed in this committed copy: 632 lines; the decoded file is committed beside this log]
+== END FILE stat-p1r-end.txt
+== pfd-p1r-fetch rc=0 2026-11-08T05:42:23Z
+[full stdout sha256 316dacf7933cfdad934896423c156aa2befa65aacd66e3eca3aa2eb969bb49b1; not committed]
