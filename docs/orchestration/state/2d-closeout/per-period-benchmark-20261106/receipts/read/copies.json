@@ -1,0 +1,158 @@
+[
+ {
+  "src": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/minerva_paper_anc/cov_ptpl_minerva_inclusive_6GeV.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/cov_ptpl_minerva_inclusive_6GeV.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/ER__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_CTRL_s42/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_CTRL_s42__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_s42/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_s42__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_s43/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_s43__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_s42/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_s42__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_s43/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_s43__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_s42/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_s42__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_s43/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_s43__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b01/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b01__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b02/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b02__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b03/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b03__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b04/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b04__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b05/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b05__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b06/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b06__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b07/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b07__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b08/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b08__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b09/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b09__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PA_b10/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b10__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b01/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b01__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b02/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b02__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b03/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b03__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b04/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b04__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b05/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b05__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b06/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b06__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b07/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b07__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b08/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b08__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b09/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b09__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PB_b10/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b10__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b01/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b01__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b02/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b02__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b03/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b03__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b04/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b04__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b05/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b05__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b06/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b06__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b07/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b07__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b08/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b08__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b09/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b09__xsec.root"
+ },
+ {
+  "src": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/pu_PC_b10/xsec.root",
+  "dst": "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b10__xsec.root"
+ }
+]

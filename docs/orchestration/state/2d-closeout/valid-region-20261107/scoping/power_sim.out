@@ -1,0 +1,70 @@
+== 16-cell within-quadrant contrasts: sigma(r_i - r_j) from the reported covariance (g-relative), and stat-only
+Q1 R00-R01 axes=eavail,q3,W    3sigma_tot=0.1950 3sigma_stat=0.0092 tot/stat=21.2 resolves r_Q=0.099: no
+Q1 R00-R02 axes=eavail,W       3sigma_tot=0.3467 3sigma_stat=0.0115 tot/stat=30.1 resolves r_Q=0.099: no
+Q1 R00-R03 axes=eavail,W       3sigma_tot=0.3827 3sigma_stat=0.0115 tot/stat=33.3 resolves r_Q=0.099: no
+Q1 R01-R02 axes=eavail,q3,W    3sigma_tot=0.4129 3sigma_stat=0.0120 tot/stat=34.4 resolves r_Q=0.099: no
+Q1 R01-R03 axes=eavail,q3      3sigma_tot=0.4434 3sigma_stat=0.0120 tot/stat=37.1 resolves r_Q=0.099: no
+Q1 R02-R03 axes=W              3sigma_tot=0.2677 3sigma_stat=0.0139 tot/stat=19.3 resolves r_Q=0.099: no
+Q2 R04-R05 axes=eavail,q3,W    3sigma_tot=0.2464 3sigma_stat=0.0118 tot/stat=20.9 resolves r_Q=0.046: no
+Q2 R04-R06 axes=eavail,W       3sigma_tot=0.1499 3sigma_stat=0.0108 tot/stat=13.9 resolves r_Q=0.046: no
+Q2 R04-R07 axes=eavail,W       3sigma_tot=0.2467 3sigma_stat=0.0099 tot/stat=25.0 resolves r_Q=0.046: no
+Q2 R05-R06 axes=eavail,q3,W    3sigma_tot=0.2748 3sigma_stat=0.0149 tot/stat=18.5 resolves r_Q=0.046: no
+Q2 R05-R07 axes=eavail,q3      3sigma_tot=0.3767 3sigma_stat=0.0142 tot/stat=26.5 resolves r_Q=0.046: no
+Q2 R06-R07 axes=W              3sigma_tot=0.2253 3sigma_stat=0.0134 tot/stat=16.8 resolves r_Q=0.046: no
+Q3 R08-R09 axes=eavail,W       3sigma_tot=0.2574 3sigma_stat=0.0085 tot/stat=30.2 resolves r_Q=0.170: no
+Q3 R08-R10 axes=eavail,q3      3sigma_tot=0.3175 3sigma_stat=0.0099 tot/stat=32.1 resolves r_Q=0.170: no
+Q3 R08-R11 axes=eavail,q3      3sigma_tot=0.5239 3sigma_stat=0.0113 tot/stat=46.4 resolves r_Q=0.170: no
+Q3 R09-R10 axes=eavail,q3,W    3sigma_tot=0.4005 3sigma_stat=0.0093 tot/stat=43.0 resolves r_Q=0.170: no
+Q3 R09-R11 axes=eavail,q3,W    3sigma_tot=0.5011 3sigma_stat=0.0108 tot/stat=46.4 resolves r_Q=0.170: no
+Q3 R10-R11 axes=q3             3sigma_tot=0.5579 3sigma_stat=0.0119 tot/stat=46.8 resolves r_Q=0.170: no
+Q4 R12-R13 axes=eavail,q3,W    3sigma_tot=0.3710 3sigma_stat=0.0101 tot/stat=36.8 resolves r_Q=0.212: no
+Q4 R12-R14 axes=eavail,q3,W    3sigma_tot=0.1976 3sigma_stat=0.0073 tot/stat=27.0 resolves r_Q=0.212: yes
+Q4 R12-R15 axes=eavail         3sigma_tot=0.2602 3sigma_stat=0.0085 tot/stat=30.7 resolves r_Q=0.212: no
+Q4 R13-R14 axes=W              3sigma_tot=0.4160 3sigma_stat=0.0098 tot/stat=42.6 resolves r_Q=0.212: no
+Q4 R13-R15 axes=eavail,q3,W    3sigma_tot=0.4462 3sigma_stat=0.0107 tot/stat=41.8 resolves r_Q=0.212: no
+Q4 R14-R15 axes=eavail,q3,W    3sigma_tot=0.2540 3sigma_stat=0.0081 tot/stat=31.3 resolves r_Q=0.212: no
+median tot/stat ratio per quadrant: {'Q1': 31.7, 'Q2': 19.7, 'Q3': 44.7, 'Q4': 34.0}
+
+== H2 boxes used: 28 (unreported [2, 6, 10, 14]); sigma_boot_data_R n=100
+Q1 box00-box01 axis=W      NEW (inside R00)       purity 0.724/0.035 3sigma_stat_floor=0.0165 3sigma_est(x31.7)=0.5227 r_Q=0.099 resolvable_est=no
+Q1 box00-box04 axis=eavail across R00/R02         purity 0.724/0.392 3sigma_stat_floor=0.0117 3sigma_est(x31.7)=0.3719 r_Q=0.099 resolvable_est=no
+Q1 box01-box03 axis=q3     across R00/R01         purity 0.035/0.041 3sigma_stat_floor=0.0194 3sigma_est(x31.7)=0.6137 r_Q=0.099 resolvable_est=no
+Q1 box01-box05 axis=eavail across R00/R03         purity 0.035/0.274 3sigma_stat_floor=0.0182 3sigma_est(x31.7)=0.5762 r_Q=0.099 resolvable_est=no
+Q1 box03-box07 axis=eavail NEW (inside R01)       purity 0.041/0.733 3sigma_stat_floor=0.0136 3sigma_est(x31.7)=0.4311 r_Q=0.099 resolvable_est=no
+Q1 box04-box05 axis=W      across R02/R03         purity 0.392/0.274 3sigma_stat_floor=0.0140 3sigma_est(x31.7)=0.4440 r_Q=0.099 resolvable_est=no
+Q1 box05-box07 axis=q3     across R03/R01         purity 0.274/0.733 3sigma_stat_floor=0.0119 3sigma_est(x31.7)=0.3758 r_Q=0.099 resolvable_est=no
+Q2 box08-box09 axis=W      NEW (inside R04)       purity 0.852/0.028 3sigma_stat_floor=0.0144 3sigma_est(x19.7)=0.2837 r_Q=0.046 resolvable_est=no
+Q2 box08-box12 axis=eavail across R04/R06         purity 0.852/0.455 3sigma_stat_floor=0.0100 3sigma_est(x19.7)=0.1965 r_Q=0.046 resolvable_est=no
+Q2 box09-box11 axis=q3     across R04/R05         purity 0.028/0.012 3sigma_stat_floor=0.0210 3sigma_est(x19.7)=0.4129 r_Q=0.046 resolvable_est=no
+Q2 box09-box13 axis=eavail across R04/R07         purity 0.028/0.306 3sigma_stat_floor=0.0167 3sigma_est(x19.7)=0.3277 r_Q=0.046 resolvable_est=no
+Q2 box11-box15 axis=eavail NEW (inside R05)       purity 0.012/0.558 3sigma_stat_floor=0.0191 3sigma_est(x19.7)=0.3763 r_Q=0.046 resolvable_est=no
+Q2 box12-box13 axis=W      across R06/R07         purity 0.455/0.306 3sigma_stat_floor=0.0130 3sigma_est(x19.7)=0.2560 r_Q=0.046 resolvable_est=no
+Q2 box13-box15 axis=q3     across R07/R05         purity 0.306/0.558 3sigma_stat_floor=0.0142 3sigma_est(x19.7)=0.2802 r_Q=0.046 resolvable_est=no
+Q3 box16-box17 axis=W      across R08/R09         purity 0.515/0.004 3sigma_stat_floor=0.0175 3sigma_est(x44.7)=0.7822 r_Q=0.170 resolvable_est=no
+Q3 box16-box18 axis=q3     NEW (inside R08)       purity 0.515/0.075 3sigma_stat_floor=0.0134 3sigma_est(x44.7)=0.5969 r_Q=0.170 resolvable_est=no
+Q3 box16-box20 axis=eavail across R08/R10         purity 0.515/0.383 3sigma_stat_floor=0.0103 3sigma_est(x44.7)=0.4619 r_Q=0.170 resolvable_est=no
+Q3 box17-box19 axis=q3     NEW (inside R09)       purity 0.004/0.079 3sigma_stat_floor=0.0180 3sigma_est(x44.7)=0.8044 r_Q=0.170 resolvable_est=no
+Q3 box17-box21 axis=eavail NEW (inside R09)       purity 0.004/0.037 3sigma_stat_floor=0.0191 3sigma_est(x44.7)=0.8546 r_Q=0.170 resolvable_est=no
+Q3 box18-box19 axis=W      across R08/R09         purity 0.075/0.079 3sigma_stat_floor=0.0140 3sigma_est(x44.7)=0.6257 r_Q=0.170 resolvable_est=no
+Q3 box18-box22 axis=eavail across R08/R11         purity 0.075/0.319 3sigma_stat_floor=0.0141 3sigma_est(x44.7)=0.6281 r_Q=0.170 resolvable_est=no
+Q3 box19-box23 axis=eavail NEW (inside R09)       purity 0.079/0.696 3sigma_stat_floor=0.0105 3sigma_est(x44.7)=0.4689 r_Q=0.170 resolvable_est=no
+Q3 box20-box21 axis=W      across R10/R09         purity 0.383/0.037 3sigma_stat_floor=0.0129 3sigma_est(x44.7)=0.5761 r_Q=0.170 resolvable_est=no
+Q3 box20-box22 axis=q3     across R10/R11         purity 0.383/0.319 3sigma_stat_floor=0.0112 3sigma_est(x44.7)=0.5015 r_Q=0.170 resolvable_est=no
+Q3 box21-box23 axis=q3     NEW (inside R09)       purity 0.037/0.696 3sigma_stat_floor=0.0123 3sigma_est(x44.7)=0.5507 r_Q=0.170 resolvable_est=no
+Q3 box22-box23 axis=W      across R11/R09         purity 0.319/0.696 3sigma_stat_floor=0.0106 3sigma_est(x44.7)=0.4721 r_Q=0.170 resolvable_est=no
+Q4 box24-box25 axis=W      NEW (inside R12)       purity 0.585/0.007 3sigma_stat_floor=0.0139 3sigma_est(x34.0)=0.4743 r_Q=0.212 resolvable_est=no
+Q4 box24-box26 axis=q3     across R12/R13         purity 0.585/0.065 3sigma_stat_floor=0.0114 3sigma_est(x34.0)=0.3898 r_Q=0.212 resolvable_est=no
+Q4 box24-box28 axis=eavail across R12/R15         purity 0.585/0.467 3sigma_stat_floor=0.0077 3sigma_est(x34.0)=0.2610 r_Q=0.212 resolvable_est=no
+Q4 box25-box27 axis=q3     across R12/R14         purity 0.007/0.051 3sigma_stat_floor=0.0154 3sigma_est(x34.0)=0.5244 r_Q=0.212 resolvable_est=no
+Q4 box25-box29 axis=eavail across R12/R15         purity 0.007/0.074 3sigma_stat_floor=0.0160 3sigma_est(x34.0)=0.5440 r_Q=0.212 resolvable_est=no
+Q4 box26-box27 axis=W      across R13/R14         purity 0.065/0.051 3sigma_stat_floor=0.0132 3sigma_est(x34.0)=0.4495 r_Q=0.212 resolvable_est=no
+Q4 box26-box30 axis=eavail NEW (inside R13)       purity 0.065/0.285 3sigma_stat_floor=0.0127 3sigma_est(x34.0)=0.4337 r_Q=0.212 resolvable_est=no
+Q4 box27-box31 axis=eavail NEW (inside R14)       purity 0.051/0.787 3sigma_stat_floor=0.0096 3sigma_est(x34.0)=0.3253 r_Q=0.212 resolvable_est=no
+Q4 box28-box29 axis=W      NEW (inside R15)       purity 0.467/0.074 3sigma_stat_floor=0.0110 3sigma_est(x34.0)=0.3730 r_Q=0.212 resolvable_est=no
+Q4 box28-box30 axis=q3     across R15/R13         purity 0.467/0.285 3sigma_stat_floor=0.0095 3sigma_est(x34.0)=0.3229 r_Q=0.212 resolvable_est=no
+Q4 box29-box31 axis=q3     across R15/R14         purity 0.074/0.787 3sigma_stat_floor=0.0105 3sigma_est(x34.0)=0.3561 r_Q=0.212 resolvable_est=no
+Q4 box30-box31 axis=W      across R13/R14         purity 0.285/0.787 3sigma_stat_floor=0.0089 3sigma_est(x34.0)=0.3032 r_Q=0.212 resolvable_est=no
+
+edges: 38 single-axis within-quadrant, 13 inside a merged cell (new); 26 touch a box with purity < 0.1
+n=13: P(any |z|>=3 | null, independent) = 0.035; Bonferroni two-sided 0.05 -> |z| >= 2.89
+n=38: P(any |z|>=3 | null, independent) = 0.098; Bonferroni two-sided 0.05 -> |z| >= 3.21

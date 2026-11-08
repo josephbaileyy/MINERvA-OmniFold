@@ -1,0 +1,475 @@
+{
+ "host": "login36",
+ "python": "3.6.15",
+ "start": "2026-11-07T07:03:47.224Z",
+ "roots": {
+  "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies": {
+   "declared": {
+    "ER__xsec.root": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+    "copies.json": "5e3dd182079ae73d00ec0e650214d24399bb6a79b047541c75868058304c6156",
+    "cov_ptpl_minerva_inclusive_6GeV.root": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+    "pu_CTRL_s42__xsec.root": "a6d3a69119aba5636401371d9f119b30a8be9da154f85ac90b25d0bc41507a8a",
+    "pu_PA_b01__xsec.root": "32806b61e6800f9b157143ccd33b92e64f88c8dfa5bfaa62444d014795dbf5b4",
+    "pu_PA_b02__xsec.root": "c555a4a22c62966dcf6de2f3dff497e9033e13b97cdc3d7d7907006ea7ddb5c6",
+    "pu_PA_b03__xsec.root": "f927a3e66aa13394fe802faf3c73fccbda7c88830d3dd420e3f9822d9e960d95",
+    "pu_PA_b04__xsec.root": "ae68f5c44f072724f61f3aed47a43a21ad636f263c4f564917288db06478ebda",
+    "pu_PA_b05__xsec.root": "107de3388d522f462d28d7e722acd8ff1691a225c207200ac6f332dcf57d4718",
+    "pu_PA_b06__xsec.root": "24f00a80343adfe58d1c1a2fd35749e48cdb5893fe2c0fdf0542a10817dcee80",
+    "pu_PA_b07__xsec.root": "5c9c9adebe1205f0268569d76f881ad3e31155048daebd3c1f0f58b4592b1ce8",
+    "pu_PA_b08__xsec.root": "7f442829abff9922e6cc08f0572c7bd742be2f0d272cfe641a3f7edcb8b71564",
+    "pu_PA_b09__xsec.root": "575ace0ad5e441bffeaa2f881a09dc3e3867de4178e5005fe6a3f64ad874ca3a",
+    "pu_PA_b10__xsec.root": "029ebe4ab60908bc7898d70511fd643c85e19103d4d242838e903d993fc10a82",
+    "pu_PA_s42__xsec.root": "c2fb12944635294777030c98fd97503b8016be8c89b16ec70b5cadd0cec84131",
+    "pu_PA_s43__xsec.root": "4515dd3bc1ac8b3b37821bc7a69f823428c8202b3d5b946d97345b5818a5e3a5",
+    "pu_PB_b01__xsec.root": "34fe5c49f28a9a7e907c363a7995f7fb4c3a13707ce568409a1f02a1ea5b1ac8",
+    "pu_PB_b02__xsec.root": "35c3753b0d66b8e86e3cbdf226fb205af56ae0d5f3156a9f2dac64ba5b7f9d04",
+    "pu_PB_b03__xsec.root": "7a43976fc2bd25f32744ba81d0d843b335eed76d8d71cee83d4dd26ccd9b5aac",
+    "pu_PB_b04__xsec.root": "ca1fa2db02eaad43cfd1cc5b97011a9b0a34e7db0ff5e991c0311e636ce724cd",
+    "pu_PB_b05__xsec.root": "bc975f6efe9f0dc1f6e0a85e4b202d491241ea188177b0249e87739e35044cf7",
+    "pu_PB_b06__xsec.root": "18c53b300133322cb4897267f39bf5ae158aeef4e30c1c45b500f03086acc23d",
+    "pu_PB_b07__xsec.root": "338af18f283a42267c65862d2c9e0d9d9ab5b430dcad42cb31ece182eb409bbf",
+    "pu_PB_b08__xsec.root": "ff5e678a848e40bc2a146ec905f76e1e7ab7c1e8f6c859991caf93b008b88b42",
+    "pu_PB_b09__xsec.root": "98986966d2056047b9d1a9687e941a5e679003a23b8ee30874071fe64f4247f9",
+    "pu_PB_b10__xsec.root": "914b755cafa9a4afa9fdbf6abdeb199b64841ffcbf84e304a1bf927459ee75c0",
+    "pu_PB_s42__xsec.root": "356b1293a227b318f552faf725e25796ef77fdc4fed301684f2844dfb74d24dc",
+    "pu_PB_s43__xsec.root": "2f1b82322818d589579addcc50367e4bcf3ba9b370f6caef49339379bad9ecf1",
+    "pu_PC_b01__xsec.root": "c3eb171cc83aca648dbc569e6a4eaeddec4d1f50fc61b628f137b9bafbcde522",
+    "pu_PC_b02__xsec.root": "28f52d118f61717e57c5ee57d9ecda719139c2017ce8d72d880b9a5f0ba90d78",
+    "pu_PC_b03__xsec.root": "32c3186f9da97eff9686fd7ced01350ab27a3e6c6f57acb3738d42ec66903ed5",
+    "pu_PC_b04__xsec.root": "b079a3316c6e56b031110dbb82a2cbf30322d67fbb6f4e819ee1cacf3c0991d5",
+    "pu_PC_b05__xsec.root": "290c6a2bc7f58705f5d45b7ff6cf94ad43e5dfee61c7bdc0381439c280d6a737",
+    "pu_PC_b06__xsec.root": "2e47fef20e0e7c770c952a00ab8966e07191b000b93250885e82cdaeca39468e",
+    "pu_PC_b07__xsec.root": "dbcf7781cab3ce41565b2c0accfbc955bf9dc1025c85a44541e3f22a3ef1f8e8",
+    "pu_PC_b08__xsec.root": "cb0dddcc40d8fe12cdae1d95353a1d3a6db6556f42ae9e38b3c09a91a9b5346f",
+    "pu_PC_b09__xsec.root": "284109be1f37542ffec5d3418b24917e7f7b1c62087ee59a69213c61c3fca989",
+    "pu_PC_b10__xsec.root": "fe61b6f9194acf6ce000f1931e10749d2d7eef064b8d72bac7cabd830e52e8f2",
+    "pu_PC_s42__xsec.root": "ea4a4d16cfc66170b37933a883cef3c905f685f5234c11d9ef0854a8439c7cbc",
+    "pu_PC_s43__xsec.root": "0ca364aa2a1789b85fcce7bc09873558671491428f61d3c5b98177300df09896",
+    "verify.json": "1b9e6feaa47ecffbc042fff851961549e67d64920374a422bd4b1f79f0ccad15"
+   },
+   "before": [
+    [
+     "f",
+     62196,
+     "ER__xsec.root"
+    ],
+    [
+     "f",
+     7683,
+     "copies.json"
+    ],
+    [
+     "f",
+     1272641,
+     "cov_ptpl_minerva_inclusive_6GeV.root"
+    ],
+    [
+     "f",
+     62250,
+     "pu_CTRL_s42__xsec.root"
+    ],
+    [
+     "f",
+     62334,
+     "pu_PA_b01__xsec.root"
+    ],
+    [
+     "f",
+     62381,
+     "pu_PA_b02__xsec.root"
+    ],
+    [
+     "f",
+     62299,
+     "pu_PA_b03__xsec.root"
+    ],
+    [
+     "f",
+     62391,
+     "pu_PA_b04__xsec.root"
+    ],
+    [
+     "f",
+     62314,
+     "pu_PA_b05__xsec.root"
+    ],
+    [
+     "f",
+     62293,
+     "pu_PA_b06__xsec.root"
+    ],
+    [
+     "f",
+     62355,
+     "pu_PA_b07__xsec.root"
+    ],
+    [
+     "f",
+     62354,
+     "pu_PA_b08__xsec.root"
+    ],
+    [
+     "f",
+     62387,
+     "pu_PA_b09__xsec.root"
+    ],
+    [
+     "f",
+     62356,
+     "pu_PA_b10__xsec.root"
+    ],
+    [
+     "f",
+     62181,
+     "pu_PA_s42__xsec.root"
+    ],
+    [
+     "f",
+     62160,
+     "pu_PA_s43__xsec.root"
+    ],
+    [
+     "f",
+     62260,
+     "pu_PB_b01__xsec.root"
+    ],
+    [
+     "f",
+     62245,
+     "pu_PB_b02__xsec.root"
+    ],
+    [
+     "f",
+     62271,
+     "pu_PB_b03__xsec.root"
+    ],
+    [
+     "f",
+     62253,
+     "pu_PB_b04__xsec.root"
+    ],
+    [
+     "f",
+     62280,
+     "pu_PB_b05__xsec.root"
+    ],
+    [
+     "f",
+     62291,
+     "pu_PB_b06__xsec.root"
+    ],
+    [
+     "f",
+     62307,
+     "pu_PB_b07__xsec.root"
+    ],
+    [
+     "f",
+     62276,
+     "pu_PB_b08__xsec.root"
+    ],
+    [
+     "f",
+     62280,
+     "pu_PB_b09__xsec.root"
+    ],
+    [
+     "f",
+     62267,
+     "pu_PB_b10__xsec.root"
+    ],
+    [
+     "f",
+     62112,
+     "pu_PB_s42__xsec.root"
+    ],
+    [
+     "f",
+     62086,
+     "pu_PB_s43__xsec.root"
+    ],
+    [
+     "f",
+     62229,
+     "pu_PC_b01__xsec.root"
+    ],
+    [
+     "f",
+     62277,
+     "pu_PC_b02__xsec.root"
+    ],
+    [
+     "f",
+     62252,
+     "pu_PC_b03__xsec.root"
+    ],
+    [
+     "f",
+     62232,
+     "pu_PC_b04__xsec.root"
+    ],
+    [
+     "f",
+     62255,
+     "pu_PC_b05__xsec.root"
+    ],
+    [
+     "f",
+     62253,
+     "pu_PC_b06__xsec.root"
+    ],
+    [
+     "f",
+     62273,
+     "pu_PC_b07__xsec.root"
+    ],
+    [
+     "f",
+     62215,
+     "pu_PC_b08__xsec.root"
+    ],
+    [
+     "f",
+     62228,
+     "pu_PC_b09__xsec.root"
+    ],
+    [
+     "f",
+     62238,
+     "pu_PC_b10__xsec.root"
+    ],
+    [
+     "f",
+     62082,
+     "pu_PC_s42__xsec.root"
+    ],
+    [
+     "f",
+     62057,
+     "pu_PC_s43__xsec.root"
+    ],
+    [
+     "f",
+     15175,
+     "verify.json"
+    ]
+   ],
+   "measured": {
+    "ER__xsec.root": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+    "copies.json": "5e3dd182079ae73d00ec0e650214d24399bb6a79b047541c75868058304c6156",
+    "cov_ptpl_minerva_inclusive_6GeV.root": "6c6dce72050bb8f128fab8e286349b250bc60d1c767e162bf15a0f009f3573e3",
+    "pu_CTRL_s42__xsec.root": "a6d3a69119aba5636401371d9f119b30a8be9da154f85ac90b25d0bc41507a8a",
+    "pu_PA_b01__xsec.root": "32806b61e6800f9b157143ccd33b92e64f88c8dfa5bfaa62444d014795dbf5b4",
+    "pu_PA_b02__xsec.root": "c555a4a22c62966dcf6de2f3dff497e9033e13b97cdc3d7d7907006ea7ddb5c6",
+    "pu_PA_b03__xsec.root": "f927a3e66aa13394fe802faf3c73fccbda7c88830d3dd420e3f9822d9e960d95",
+    "pu_PA_b04__xsec.root": "ae68f5c44f072724f61f3aed47a43a21ad636f263c4f564917288db06478ebda",
+    "pu_PA_b05__xsec.root": "107de3388d522f462d28d7e722acd8ff1691a225c207200ac6f332dcf57d4718",
+    "pu_PA_b06__xsec.root": "24f00a80343adfe58d1c1a2fd35749e48cdb5893fe2c0fdf0542a10817dcee80",
+    "pu_PA_b07__xsec.root": "5c9c9adebe1205f0268569d76f881ad3e31155048daebd3c1f0f58b4592b1ce8",
+    "pu_PA_b08__xsec.root": "7f442829abff9922e6cc08f0572c7bd742be2f0d272cfe641a3f7edcb8b71564",
+    "pu_PA_b09__xsec.root": "575ace0ad5e441bffeaa2f881a09dc3e3867de4178e5005fe6a3f64ad874ca3a",
+    "pu_PA_b10__xsec.root": "029ebe4ab60908bc7898d70511fd643c85e19103d4d242838e903d993fc10a82",
+    "pu_PA_s42__xsec.root": "c2fb12944635294777030c98fd97503b8016be8c89b16ec70b5cadd0cec84131",
+    "pu_PA_s43__xsec.root": "4515dd3bc1ac8b3b37821bc7a69f823428c8202b3d5b946d97345b5818a5e3a5",
+    "pu_PB_b01__xsec.root": "34fe5c49f28a9a7e907c363a7995f7fb4c3a13707ce568409a1f02a1ea5b1ac8",
+    "pu_PB_b02__xsec.root": "35c3753b0d66b8e86e3cbdf226fb205af56ae0d5f3156a9f2dac64ba5b7f9d04",
+    "pu_PB_b03__xsec.root": "7a43976fc2bd25f32744ba81d0d843b335eed76d8d71cee83d4dd26ccd9b5aac",
+    "pu_PB_b04__xsec.root": "ca1fa2db02eaad43cfd1cc5b97011a9b0a34e7db0ff5e991c0311e636ce724cd",
+    "pu_PB_b05__xsec.root": "bc975f6efe9f0dc1f6e0a85e4b202d491241ea188177b0249e87739e35044cf7",
+    "pu_PB_b06__xsec.root": "18c53b300133322cb4897267f39bf5ae158aeef4e30c1c45b500f03086acc23d",
+    "pu_PB_b07__xsec.root": "338af18f283a42267c65862d2c9e0d9d9ab5b430dcad42cb31ece182eb409bbf",
+    "pu_PB_b08__xsec.root": "ff5e678a848e40bc2a146ec905f76e1e7ab7c1e8f6c859991caf93b008b88b42",
+    "pu_PB_b09__xsec.root": "98986966d2056047b9d1a9687e941a5e679003a23b8ee30874071fe64f4247f9",
+    "pu_PB_b10__xsec.root": "914b755cafa9a4afa9fdbf6abdeb199b64841ffcbf84e304a1bf927459ee75c0",
+    "pu_PB_s42__xsec.root": "356b1293a227b318f552faf725e25796ef77fdc4fed301684f2844dfb74d24dc",
+    "pu_PB_s43__xsec.root": "2f1b82322818d589579addcc50367e4bcf3ba9b370f6caef49339379bad9ecf1",
+    "pu_PC_b01__xsec.root": "c3eb171cc83aca648dbc569e6a4eaeddec4d1f50fc61b628f137b9bafbcde522",
+    "pu_PC_b02__xsec.root": "28f52d118f61717e57c5ee57d9ecda719139c2017ce8d72d880b9a5f0ba90d78",
+    "pu_PC_b03__xsec.root": "32c3186f9da97eff9686fd7ced01350ab27a3e6c6f57acb3738d42ec66903ed5",
+    "pu_PC_b04__xsec.root": "b079a3316c6e56b031110dbb82a2cbf30322d67fbb6f4e819ee1cacf3c0991d5",
+    "pu_PC_b05__xsec.root": "290c6a2bc7f58705f5d45b7ff6cf94ad43e5dfee61c7bdc0381439c280d6a737",
+    "pu_PC_b06__xsec.root": "2e47fef20e0e7c770c952a00ab8966e07191b000b93250885e82cdaeca39468e",
+    "pu_PC_b07__xsec.root": "dbcf7781cab3ce41565b2c0accfbc955bf9dc1025c85a44541e3f22a3ef1f8e8",
+    "pu_PC_b08__xsec.root": "cb0dddcc40d8fe12cdae1d95353a1d3a6db6556f42ae9e38b3c09a91a9b5346f",
+    "pu_PC_b09__xsec.root": "284109be1f37542ffec5d3418b24917e7f7b1c62087ee59a69213c61c3fca989",
+    "pu_PC_b10__xsec.root": "fe61b6f9194acf6ce000f1931e10749d2d7eef064b8d72bac7cabd830e52e8f2",
+    "pu_PC_s42__xsec.root": "ea4a4d16cfc66170b37933a883cef3c905f685f5234c11d9ef0854a8439c7cbc",
+    "pu_PC_s43__xsec.root": "0ca364aa2a1789b85fcce7bc09873558671491428f61d3c5b98177300df09896",
+    "verify.json": "1b9e6feaa47ecffbc042fff851961549e67d64920374a422bd4b1f79f0ccad15"
+   },
+   "removed": [
+    [
+     "2026-11-07T07:03:47.366Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/ER__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.367Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/copies.json"
+    ],
+    [
+     "2026-11-07T07:03:47.368Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/cov_ptpl_minerva_inclusive_6GeV.root"
+    ],
+    [
+     "2026-11-07T07:03:47.369Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_CTRL_s42__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.370Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b01__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.371Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b02__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.372Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b03__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.372Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b04__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.373Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b05__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.374Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b06__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.375Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b07__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.376Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b08__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.377Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b09__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.377Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_b10__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.378Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_s42__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.379Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PA_s43__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.380Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b01__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.380Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b02__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.383Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b03__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.384Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b04__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.386Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b05__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.387Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b06__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.388Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b07__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.389Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b08__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.390Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b09__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.391Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_b10__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.392Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_s42__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.393Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PB_s43__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.394Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b01__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.394Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b02__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.396Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b03__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.396Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b04__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.397Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b05__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.398Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b06__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.399Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b07__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.400Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b08__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.401Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b09__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.401Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_b10__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.402Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_s42__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.403Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/pu_PC_s43__xsec.root"
+    ],
+    [
+     "2026-11-07T07:03:47.404Z",
+     "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies/verify.json"
+    ]
+   ],
+   "rmdir": [
+    "2026-11-07T07:03:47.406Z",
+    "/pscratch/sd/j/josephrb/per-period-benchmark-20261106/read/copies"
+   ]
+  }
+ },
+ "still_present": [],
+ "rc": 0,
+ "end": "2026-11-07T07:03:47.421Z"
+}

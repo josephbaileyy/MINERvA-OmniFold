@@ -1,0 +1,8 @@
+Python 3.11.14
+usage: rs1_a1_plan.py [-h] {stage,verify} ...
+
+positional arguments:
+  {stage,verify}
+
+options:
+  -h, --help      show this help message and exit

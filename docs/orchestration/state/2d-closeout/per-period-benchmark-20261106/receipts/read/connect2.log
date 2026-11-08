@@ -1,0 +1,39 @@
+== connect2 2026-11-07T06:45:30Z M=a7af2e614f2d65ca10d169e6d73582e83f9ecf1d
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/DECLARATION.md: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/per_period_benchmark.py: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/test_per_period_benchmark.py: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/INPUTS.sha256: OK
+clone at M, porcelain empty, pins 4/4 equal
+archive sha256 bb1e00e4ed9c8ef27b9681a9daf47078b9d89d5559937104f778afd5c06c716e
+== upload (new namespace; refuses if /pscratch/sd/j/josephrb/per-period-benchmark-20261106/read exists)
+== remote run
+== remote 2026-11-07T06:45:48Z login01
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/DECLARATION.md: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/per_period_benchmark.py: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/test_per_period_benchmark.py: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/INPUTS.sha256: OK
+fence before_copy: squeue rc 0, rows 0
+== step copy
+copy rc 0
+== step verify
+verify rc 0
+fence before_read: squeue rc 0, rows 0
+== step read
+read rc 0
+copies.json
+copy.log
+env.txt
+pins.check
+pins.sha256
+read.log
+readout.json
+readout.txt
+squeue_before_copy.err
+squeue_before_copy.txt
+squeue_before_read.err
+squeue_before_read.txt
+verify.json
+verify.log
+remote rc 0
+== fetch receipt
+receipt in /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/5d61e7d7-c2cc-4084-a179-c751bf301f61/scratchpad/ppb/w2/receipt/R; remote rc 0

@@ -1,0 +1,104 @@
+# ENS1 mutation receipt (ENS1-BINDING-1.md ruling 4), after audit ENS1-C1 and ENS1-C2 (A1 guard tests W04, W06, W09 ported). Run locally, 2026-11-08T00:16:45Z, python 3.12.2, numpy 1.26.4.
+# Command: PYTHONDONTWRITEBYTECODE=1 python3 -B nd-unfolding/tests/ensemble_estimator_mutation.py (rc 0; 6 workers, results in list order; one run, its own log)
+# The suite imports RS1 stand-ins from tests/test_rounding_mechanism.py (bound at e306087e, unchanged).
+# The X/Y/Z mutants are coverage-5b-audit ENS1-C1 sites with its anchors verbatim (#899 comment 6712373597); W04/W06/W09 are #902 anchors (ENS1-C2).
+# sha256 of the files it ran on:
+#   9721fc97e12794f377a889590e9006960df5e125acafa8a678f25bccfbbd5a94  nd-unfolding/ensemble_estimator_probe.py
+#   ef2f467cc010b37017f0d526a999637a7c3215ed2c91a2ab7b9bd3c6c1fe7181  nd-unfolding/ensemble_estimator_analyze.py
+#   0390e5c71f1b958558dbae7916e39ead33865362c1369d2f25b205061b2b7267  nd-unfolding/sbatch_ens1.sh
+#   1fe53df8ead62e306680a27b3a884beaec2f021c898f8d1d84bdf4ceebeb2120  nd-unfolding/tests/test_ensemble_estimator.py
+#   2b6620e5230514f4747d681027c6cb525c93c92a2a0b2d0b56b6ba2e37335ffa  nd-unfolding/tests/ensemble_estimator_mutation.py
+#   e7d48236a67e2b89f56e9b0e72efdc6f57b2289ce02b542ef5f38a0bdf183d36  nd-unfolding/tests/test_rounding_mechanism.py
+UNMUTATED SUITE: 67 tests, rc 0
+KILLED    REQ internal jitter after a float32 cast   by test_it_acts_on_y_at_full_precision_not_after_a_float32_cast
+KILLED    REQ internal jitter at +-1/4 spacing       by test_the_scale_is_plus_or_minus_half_the_float32_spacing_in_both_directions
+KILLED    REQ closure unfolds in float32             by test_the_closure_unfolds_in_float64_whatever_the_runner_asks
+KILLED    REQ G0 admits a float32 base               by test_g0_refuses_a_float32_base
+KILLED    REQ seed 0 is a protocol jitter            by test_seed_zero_is_the_float64_copy_and_then_delta_k
+KILLED    grid edges moved                           by test_grid_edges_are_not_moved_and_other_values_are
+KILLED    one stream for every k                     by test_fixed_per_k_and_distinct_across_k
+KILLED    undeclared k accepted                      by test_an_undeclared_k_is_refused
+KILLED    a write without the check                  by test_a_write_without_the_namespace_check_is_refused
+KILLED    any pair accepted                          by test_undeclared_pairs_and_inputs_are_refused_and_the_declared_call_is_not
+KILLED    threads unchecked (stability)              by test_undeclared_pairs_and_inputs_are_refused_and_the_declared_call_is_not
+KILLED    truth unchecked (stability)                by test_undeclared_pairs_and_inputs_are_refused_and_the_declared_call_is_not
+KILLED    closure hypothesis unchecked               by test_closure_namespace
+KILLED    closure alternative unchecked              by test_closure_namespace
+KILLED    closure noise allowed                      by test_closure_namespace
+KILLED    closure grid move unchecked                by test_a_move_across_the_grid_is_refused_before_the_build
+KILLED    closure build without delta_k              by test_the_closure_inputs_carry_delta_k_and_differ_across_k
+KILLED    CLI accepts an undeclared k                by test_cli_refuses_an_undeclared_k
+KILLED    queue runs A7 MnvTune at every k           by test_the_declared_counts
+KILLED    E1 two codes accepted                      by test_one_code_and_distinct_digests_are_required
+KILLED    E2 identical inputs accepted               by test_one_code_and_distinct_digests_are_required
+KILLED    E3 reference unpinned                      by test_references_must_be_pinned_and_from_the_same_estimator_code
+KILLED    LOW-2 other estimator code                 by test_references_must_be_pinned_and_from_the_same_estimator_code
+KILLED    G0 always informative                      by test_g0_reads_uninformative_when_the_control_passes
+KILLED    bar ignored                                by test_a_small_ensemble_spread_passes_and_a_large_one_fails
+KILLED    P = 9                                      by test_the_rebound_statistic_is_the_hand_computation_and_the_bound_one_at_25
+KILLED    N_PAIRS not restored                       by test_n_pairs_is_restored_after_a_raise
+KILLED    receipt pin unchecked                      by test_an_incomplete_stage_grades_nothing
+KILLED    receipt FAILED ignored                     by test_an_incomplete_stage_grades_nothing
+KILLED    receipt missing shard accepted             by test_an_incomplete_stage_grades_nothing
+KILLED    c_hat without the 1/(1+q)                  by test_c_hat_recovers_c
+KILLED    c_hat reading at eps for c*                by test_the_c_hat_reading_in_each_direction
+KILLED    stage 2 without STAB_PASS                  by test_stage2_refuses_without_stab_pass
+KILLED    s_E without its own factor                 by test_s_e_carries_its_own_upper_factor
+KILLED    s_F not reproduced                         by test_the_stops
+KILLED    determinism xsec unchecked                 by test_the_stops
+KILLED    determinism xtrue unchecked                by test_the_stops
+KILLED    truth vector across k unchecked            by test_the_stops
+KILLED    closure digests unchecked                  by test_the_stops
+KILLED    closure split unchecked                    by test_the_stops
+KILLED    zero floor read as a verdict               by test_a_zero_floor_is_invalid
+KILLED    worse read as a pass                       by test_pass_and_bias_worse
+KILLED    pin unchecked                              by test_refusals_existing_log_wrong_pin_bad_stage_or_shard_dirty_deploy
+KILLED    existing log reused                        by test_refusals_existing_log_wrong_pin_bad_stage_or_shard_dirty_deploy
+KILLED    any stage accepted                         by test_refusals_existing_log_wrong_pin_bad_stage_or_shard_dirty_deploy
+KILLED    any shard accepted                         by test_refusals_existing_log_wrong_pin_bad_stage_or_shard_dirty_deploy
+KILLED    shard without the dry receipt              by test_a_shard_refuses_without_the_dry_done_or_at_another_pin
+KILLED    shard at another pin                       by test_a_shard_refuses_without_the_dry_done_or_at_another_pin
+KILLED    a failed task still writes DONE            by test_a_failed_task_leaves_no_receipt
+KILLED    REQ teardown crash read as a failure       by test_a_teardown_crash_is_recomputed_once_and_compared
+KILLED    REQ pre-write failure read as a teardown   by test_a_failure_before_writing_is_a_failure_and_the_queue_continues
+KILLED    REQ a second crash accepted                by test_a_second_crash_is_a_failure
+KILLED    REQ xargs aborts on a failure              by test_a_failure_before_writing_is_a_failure_and_the_queue_continues
+KILLED    REQ crashed products kept, not recomputed  by test_a_teardown_crash_is_recomputed_once_and_compared
+KILLED    expect names another tag                   by test_expect_names_exactly_what_the_task_wrote
+KILLED    environment unchecked                      by test_an_environment_without_lightgbm_is_refused
+KILLED    X01 E2 across-k loop dropped               by test_e2_across_k
+KILLED    X02 E1 jitter_seed unchecked               by test_each_e1_sub_check_stops_the_read
+KILLED    X03 E1 protocol_seed unchecked             by test_each_e1_sub_check_stops_the_read
+KILLED    X04 E1 stability coords unchecked          by test_each_e1_sub_check_stops_the_read
+KILLED    X05 E1 bootstrap unchecked                 by test_each_e1_sub_check_stops_the_read
+KILLED    X06 E1 input digests unchecked             by test_each_e1_sub_check_stops_the_read
+KILLED    X07 E1 control path unchecked              by test_each_e1_sub_check_stops_the_read
+KILLED    X08 E1 construction/truth/pseudo unchecked by test_each_e1_sub_check_stops_the_read
+KILLED    X09 E3 F64 identity unchecked              by test_e3_f64_identity_meta_and_control_meta
+KILLED    X10 E3 F64 meta unchecked                  by test_e3_f64_identity_meta_and_control_meta
+KILLED    X11 E3 control-jitter meta unchecked       by test_e3_f64_identity_meta_and_control_meta
+KILLED    X12 usable count unchecked                 by test_every_functional_must_be_usable
+KILLED    X13 stage2 product identity unchecked      by test_the_stops
+KILLED    X14 stage2 alternative digest unchecked    by test_the_stops
+KILLED    X15 G0 against E96(x) not F64(x)           by test_g0_reads_against_f64_not_against_e96
+KILLED    X16 stage1 no averaging (one fit)          by test_the_mean_of_96_not_one_fit_is_read
+KILLED    X17 stage2 no averaging (one fit)          by test_the_mean_of_96_closure_fits_not_one_is_read
+KILLED    X18 receipt rc unchecked                   by test_each_receipt_field_is_checked
+KILLED    X19 receipt tasks!=ended unchecked         by test_each_receipt_field_is_checked
+KILLED    X20 receipt stage unchecked                by test_each_receipt_field_is_checked
+KILLED    Y01 ratio sha unchecked                    by test_each_stability_namespace_check_refuses
+KILLED    Y02 stability expect digests unchecked     by test_each_stability_namespace_check_refuses
+KILLED    Y03 stability iters unchecked              by test_each_stability_namespace_check_refuses
+KILLED    Y04 stability estimator_seed unchecked     by test_each_stability_namespace_check_refuses
+KILLED    Y05 fixed-split/pseudo-seeds unchecked     by test_each_stability_namespace_check_refuses
+KILLED    Y06 closure namespace never enforced       by test_the_install_enforces_the_closure_namespace
+KILLED    Y07 closure expect digests unchecked       by test_each_closure_namespace_check_refuses
+KILLED    Y08 closure iters/threads/seed unchecked   by test_each_closure_namespace_check_refuses
+KILLED    Y09 closure split unchecked                by test_each_closure_namespace_check_refuses
+KILLED    Y10 runner rc swallowed                    by test_run_returns_the_first_non_zero_rc_and_stops
+KILLED    Y11 closure tag without k                  by test_every_closure_tag_carries_k
+KILLED    Z01 ended-count check dropped              by test_a_task_without_its_end_record_leaves_no_receipt
+KILLED    W04 empty expect list read as all present  by test_a_task_whose_expect_fails_is_a_failure_not_a_teardown
+KILLED    W06 xargs rc ignored                       by test_xargs_rc_alone_stops_the_run
+KILLED    W09 mv failure ignored                     by test_a_failed_move_aside_is_a_failure_and_the_crashed_products_are_not_used
+MUTATION CHECK :: PASS (91 mutations)

@@ -1,0 +1,112 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3115c0s15b0n0:
+
+remote-sha 106bf513d0985ba6b96d3e2aed9d2345f1bf18d8930c6133f3ce974b8b999848
+node login27 2026-11-07T06:48:01Z
+connect script sha256 106bf513d0985ba6b96d3e2aed9d2345f1bf18d8930c6133f3ce974b8b999848
+== 1. COV2D fence, immediately before (must be empty)
+squeue rc=0; cov2d-* rows: []
+== 2. fresh clone at 2cfa1a1ea6f474471dda43bb95d292edea2a73e3
+HEAD 2cfa1a1ea6f474471dda43bb95d292edea2a73e3; porcelain lines 0
+blob b2872a6c0632f0ceb258f4c1cfbf4b23cbc51319 sha256 c375e94a47b859ee57be9126ccc2aabb544374ac0ed528a095352164175d6dc5 nd-unfolding/fd_rpd_reco_prologue_connect.sh
+blob 58f3666d905015ac82c4f8b8780aaffcf129e17a sha256 4e0bc8591c0b11e9959d15e642e737b5411cc6ed0c3c66e04efe58e287ddb21d nd-unfolding/fd_rpd_reco_prologue.py
+blob 487084bc2fb7480cbae042aae2840ce32da65962 sha256 2d39beb7714f3bfcd4665983ed32e738f5f1bf51d4399aa02fb8008e933af588 nd-unfolding/fd_rpd_reco.py
+blob 837704db607bdbbef25577351f42cbc7187f74f3 sha256 4dd84252842a7be13041fe20cb48ef399c722034707084af154158fabee689ae nd-unfolding/fd_rpd_reco_custody.py
+blob 7c2e018f1169a9be0c5642daab991c664acbefcf sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70 nd-unfolding/fd_rpd_inputs.py
+== 3. the resolved policy config
+policy config sha256 fe1ce7830d9c230dda6cc1c6c569113b58c425c575d97ffc5d9fc12e994370eb (expected fe1ce7830d9c230dda6cc1c6c569113b58c425c575d97ffc5d9fc12e994370eb)
+== 4. strace probe
+strace probe rc=0 lines 30
+== 5. C4a probe (data-free; its own run dir)
+probe script:
+set -euo pipefail
+"$1" "$2/nd-unfolding/fd_rpd_inputs.py" check-mat-setup --r "$3"
+set +u
+source "$4"
+set -u
+echo "flags=$-"
+set -o | grep -E "errexit|nounset|pipefail"
+C4a probe rc=0
+-- C4a output:
+{"mat_setup_scripts": 6, "mismatches": 0}
+flags=ehuB
+errexit        	on
+nounset        	on
+pipefail       	on
+-- end C4a output
+== 6. the prologue: bash fd_rpd_reco_prologue_connect.sh CHECKOUT CONFIG SHA RUN MAT_PYTHON
+{"mat_setup_scripts": 6, "mismatches": 0}
+MAT setup exit status: 0
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+STOP DATA_FREE_TRACE: MAT_WORKER_EXIT: prologue worker exited 4
+prologue wrapper rc=4
+== run directory
+d 200 
+d 220 instrument
+f 1407 instrument/0-setup_salloc_env.sh
+f 345 instrument/1-setup.sh
+f 816 instrument/2-setup.sh
+f 630 instrument/3-setup_MAT.sh
+f 612 instrument/4-setup_MAT-MINERvA.sh
+f 639 instrument/5-setup_UnfoldUtils.sh
+f 1985624 instrument/6-libMAT.so
+f 4114 instrument/7-MATDict.rootmap
+f 17061 instrument/8-MAT_rdict.pcm
+f 11153 policy-config.json
+f 87503 prologue-prepare.json
+f 344916 prologue.strace
+d 40 tmp
+f 40016 trace-policy.json
+f 1256 worker.stderr.txt
+f 0 worker.stdout.txt
+== ABSENT data-free-trace.json
+== FILE worker.stderr.txt sha256 0f7608473b114ddabed271fbe5239626c503a5e289ec74869bc3a8fe1961281e
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+STOP DATA_FREE_TRACE: MAT_PREPARE: stale, foreign or environment-mismatched prepare receipt
+
+== END worker.stderr.txt
+== FILE worker.stdout.txt sha256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+== END worker.stdout.txt
+== rpd-prologue2 rc=4 2026-11-07T06:48:27Z
+script-rc=4

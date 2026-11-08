@@ -1,0 +1,140 @@
+--- a2/stage5-control95/connect-95-run3.sh
++++ readout/G18/connect-n-G18.sh
+@@ -1,64 +1,38 @@
+ #!/bin/bash
+-# COV2D connect 95: section 9.5's control (COV2D-DECLARATION.md section 9.5; the director's R2 of 2026-11-04: "a login
+-# connect in root_6_28 before the pilot, sha first, threads capped"). The amendment's block code (cov2d_blocks.py,
+-# blob b9e63a38, at M = a6054769, bound by binding 2 A2 rev 2) applies the RE-2 rollup's own functions to part
+-# B's products and must reproduce part B's S5_R blocks (s5/production_cov.npz, 631cf255...: band_<b>, universe, stat)
+-# to 1e-12, with E_R's reported cells equal to cmodel_2d.json's.
+-#   * Every product is copied through O_NOATIME and checked against part B's committed sums before ROOT opens the copy;
+-#     the rollup's own inputs (constraint, VL175 build json and MINOS npz, MEFHC flux, 24 per-playlist flux/POT files)
+-#     likewise; every input's atime is checked unchanged.
+-#   * The rollup (re2c_rollup.py e41940cb) and build_cmodel.py (7a987e25) are the blobs part C ran (deploy 903fb78b),
+-#     asserted here; the five bound blobs (writer at A1's bb3892e5) are asserted unchanged.
+-#   * The director's open audit: builtins.open, io.open, os.open and ROOT.TFile.Open are wrapped before the rollup
+-#     is imported; every open is logged and one under /global/cfs or /pscratch that is not a sanctioned O_NOATIME read
+-#     is refused (INVALID); bypass_scan's list (subprocess, os.system, TFile constructors, copied constants) is recorded.
+-#   * nice 19, taskset -c 8-11, OMP/OPENBLAS/MKL/NUMEXPR threads 1. A login node, 0 node-h, no job. A fresh clone at M
+-#     in /dev/shm; porcelain and blobs before and after; the clone removed at the end, logged.
+-# Verdict: CONTROL-95 PASS (rc 0, "COV2D-9.5 PASS"), FAIL (the control's own STOP, rc 3), else INVALID.
+-#   * Rerun after run 1 (a407fecf...) was INVALID: the rollup's flux_weights reads PlotUtils::MnvH1D flux histograms,
+-#     and root_6_28 activated by prefix has no MAT dictionaries. Like part C's rollup step (re2c_run.sh:33;
+-#     re2c_rollup.py:48 'Run in root_6_28 (setup_salloc_env.sh; MAT on the path)'), the control now runs after sourcing
+-#     the shared checkout's setup_salloc_env.sh (root_6_28 by prefix + unbinned_unfolding and MINERvA101 setups), then
+-#     re-exports TMPDIR (that script sets it to $SCRATCH/tmp) and the thread caps; a MAT preflight reads one real MnvH1D
+-#     (an O_NOATIME copy of the 1A per-playlist flux file, the file run 1 failed on; its sha256 recorded) before the
+-#     control.
+-#   * The MAT environment is pinned as RPD's binding 2 A1 pins it (the director's ruling): BEFORE sourcing,
+-#     fd_rpd_inputs.run_check_mat_setup (omnifold_py310, no ROOT) digests the six setup scripts through O_NOATIME;
+-#     AFTER sourcing, control95 calls fd_rpd_inputs.mat_environment (digests of the scripts and the three MAT files,
+-#     libMATDict.so -> libMAT.so, mapped MAT files exactly {libMAT.so}, PLOTUTILSROOT/MINERVA_PREFIX, the dictionary).
+-#     Any mismatch is INVALID.
+-# Run on login02: setsid nohup bash /dev/shm/josephrb-cov2d-95.sh >/dev/null 2>&1 </dev/null &
+-M=a60547692df5f963e428cdfe4661fc51ab785b7b
+-W=/dev/shm/josephrb-cov2d-95; DD=$W/deploy
++# COV2D connect N-<T>: addendum A4's phase N (COV2D-ADDENDUM-A4.md section 3), `cov2d_readout.py null --truth T`, for
++# one truth (one connect per truth; noatime_inputs repoints the rollup's globals: one truth per process). Login node,
++# 0 node-h (A4 section 9), at M = ac25b665 (COV2D-BINDING-2 addendum A4). Template: connect-95-run3.sh (control95, receipted in #869): a fresh
++# clone in /dev/shm (cov2d_blocks' open audit guards /pscratch), the MAT pin before and after sourcing
++# setup_salloc_env.sh, a MAT preflight on one real MnvH1D, nice 19, taskset -c 8-11, threads 1, porcelain before and
++# after, the clone removed at the end (logged).
++# Reads are the driver's own (A4 section 3.1): each through O_NOATIME, digest-checked, under the open audit. No toy is
++# opened (stat only; the driver checks its own audit log). The outputs (null_<T>.json, blocks_<T>.npz) stay in
++# $W/out for the fetch; they are committed to main before phase S may run (A4 section 4).
++# Verdict: PASS (rc 0, "COV2D-NULL <T> PASS"), STOP (rc 3, "COV2D-NULL <T> STOP"), else INVALID. An INVALID (or a
++# section 9.9 / runArgv mismatch) goes to the director unrepaired, with the mechanism named (binding A4, ruling 2).
++# connect-n-G18.sh and connect-n-AR23.sh are this file with T set; nothing else differs.
++# Run on login02: setsid nohup bash /dev/shm/josephrb-cov2d-n-<T>.sh >/dev/null 2>&1 </dev/null &
++M=ac25b66533788ceb18b1d4e5add259c53b216669
++T=G18
++READOUT_SHA=d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
++W=/dev/shm/josephrb-cov2d-n-$T; DD=$W/deploy
+ A=/pscratch/sd/j/josephrb/MINERvA-OmniFold   # the shared checkout with the MAT build (setup_salloc_env.sh)
+ PY310=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
+ RUN="nice -n 19 taskset -c 8-11"
+-verdict() { echo "CONTROL-95 $1"; echo "end=$(date -u +%FT%TZ)"; echo DONE; exit "$2"; }
+-cleanup() { echo "removal: host=$(hostname) $(date -u +%FT%TZ) $(du -sh "$DD" 2>/dev/null | cut -f1) $DD"; rm -rf "$DD"; echo "rc=$?"; ls -d "$DD" 2>&1; }
+-stop() { echo "STOP $*"; cleanup; verdict INVALID 2; }
++cleanup() { echo "removal: host=$(hostname) $(date -u +%FT%TZ) $(du -sh "$DD" 2>/dev/null | cut -f1) $DD"; rm -rf "$DD" "$W/tmp"; echo "rc=$?"; ls -d "$DD" "$W/tmp" 2>&1; }
++stop() { echo "STOP $*"; cleanup; echo "PHASE-N INVALID (connect)"; echo "end=$(date -u +%FT%TZ)"; echo DONE; exit 2; }
++case "$T" in G18|AR23) ;; *) echo "STOP T is not set"; exit 2 ;; esac
+ [ -e "$W" ] && { echo "STOP $W exists"; exit 2; }
+-mkdir "$W" "$W/tmp" || exit 2
+-exec >> "$W/connect-95.log" 2>&1
++mkdir "$W" "$W/tmp" "$W/out" || exit 2
++exec >> "$W/connect-n-$T.log" 2>&1
+ echo "host=$(hostname) start=$(date -u +%FT%TZ) pid=$$"
+ export TMPDIR=$W/tmp PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+-git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$DD" && git -C "$DD" checkout --quiet --detach "$M" || stop clone
+-blobs() {
+-  (cd "$DD" && git ls-tree HEAD 2d-unfolding/re2/re2_driver.py 2d-unfolding/cov2d/cov2d.py 2d-unfolding/cov2d/cov2d_receipt.py \
+-    2d-unfolding/cov2d/cov2d_writer.py nd-unfolding/fd_1b_null.py 2d-unfolding/re2/partc/re2c_rollup.py \
+-    2d-unfolding/pv2d/cmodel/build_cmodel.py 2d-unfolding/cov2d/cov2d_blocks.py nd-unfolding/fd_rpd_inputs.py) > "$W/blobs.$1"
+-  cat "$W/blobs.$1"
+-  for b in 97f26a1d03be8cf14cdb6e0ce05e794f66f9b571 9e510e89e1b731ab5899fb1e4e85089b7442f303 \
+-           d5718bf44c2084c20c30a8b8614e9c40e6fbeee3 bb3892e5447d37ee524c720c5ab623baa7184f30 \
+-           1810161d53c6b849d0dce7fb506d88d551d89900 e41940cb3b4af8f273f34723fb4389d4dac86e0a \
+-           7a987e25924895803bea756f3e63e3b8b21cd25c b9e63a3827e44c31a529f8d92482b7d7969d8223 \
+-           7c2e018f1169a9be0c5642daab991c664acbefcf; do
+-    grep -q " $b	" "$W/blobs.$1" || stop "blob $b missing at M ($1)"
+-  done
+-  echo "blobs ($1): 9 of 9"
+-}
++git clone --quiet https://github.com/josephbaileyy/MINERvA-OmniFold "$DD" && git -C "$DD" -c advice.detachedHead=false checkout --quiet --detach "$M" || stop clone
+ n=$(git -C "$DD" status --porcelain | wc -l); h=$(git -C "$DD" rev-parse HEAD); echo "porcelain_before_lines=$n head=$h"
+ [ "$n" = "0" ] && [ "$h" = "$M" ] || stop "deploy not clean at M"
+-blobs before
++got=$(sha256sum "$DD/2d-unfolding/cov2d/cov2d_readout.py" | cut -c1-64)
++[ "$got" = "$READOUT_SHA" ] && echo "READOUT-SHA OK $got" || stop "cov2d_readout.py is $got"
++(cd "$DD" && git ls-tree -r HEAD 2d-unfolding/cov2d | grep -v __pycache__) > "$W/blobs.before"
+ (
+   "$PY310" -B -c "import sys; sys.path.insert(0, '$DD/nd-unfolding'); import fd_rpd_inputs as r; r.run_check_mat_setup(None)" || exit 7
+   source "$A/setup_salloc_env.sh" > /dev/null 2>&1 || exit 3
+@@ -67,29 +41,32 @@
+   python -c "import sys, numpy, ROOT; print(sys.version.split()[0], 'numpy', numpy.__version__, 'ROOT', ROOT.gROOT.GetVersion())" || exit 4
+   python - <<'PYEOF' || exit 5
+ import hashlib, os, ROOT
+-src = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root"   # run 1 failed here
++src = "/pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root"
+ fd = os.open(src, os.O_RDONLY | os.O_NOATIME); data = b""
+ while True:
+-    b = os.read(fd, 1 << 24)
+-    if not b: break
+-    data += b
++  b = os.read(fd, 1 << 24)
++  if not b: break
++  data += b
+ os.close(fd)
+ print("MAT preflight file:", src, "sha256", hashlib.sha256(data).hexdigest())
+ dst = os.path.join(os.environ["TMPDIR"], "mat_preflight.root"); open(dst, "wb").write(data)
+ f = ROOT.TFile.Open(dst); h = f.Get("pTmu_reweightedflux_integrated")
+ print("MAT preflight:", type(h).__name__, h.ClassName(), h.GetNbinsX(), "bins")
+ assert h.ClassName().startswith("PlotUtils::MnvH1D"), h.ClassName()
++os.remove(dst)
+ PYEOF
+-  cd "$DD/2d-unfolding/cov2d" && $RUN python -B cov2d_blocks.py control95 --out "$W/control95.json"
+-) > "$W/control95.log" 2>&1; rc=$?
+-cat "$W/control95.log"
++  cd "$DD/2d-unfolding/cov2d" && $RUN /usr/bin/time -v python -B cov2d_readout.py null --truth "$T" --out "$W/out"
++) > "$W/null_$T.log" 2>&1; rc=$?
++grep -v '^Warning in <TInterpreter::ReadRootmapFile>' "$W/null_$T.log" | tail -40
++if [ "$rc" = 0 ] && grep -q "^COV2D-NULL $T PASS" "$W/null_$T.log"; then V=PASS
++elif [ "$rc" = 3 ] && grep -q "^COV2D-NULL $T STOP" "$W/null_$T.log"; then V=STOP
++else V=INVALID; fi
++echo "PHASE-N $T $V rc=$rc"
++(cd "$W/out" && sha256sum * 2>&1)
+ n=$(git -C "$DD" status --porcelain | wc -l); echo "porcelain_after_lines=$n head=$(git -C "$DD" rev-parse HEAD)"
+ git -C "$DD" status --porcelain | head -20
+-[ "$n" = "0" ] || stop "porcelain after: $n lines"
+-blobs after
+-if [ "$rc" = 0 ] && grep -q "^COV2D-9.5 PASS" "$W/control95.log"; then V=PASS; X=0
+-elif [ "$rc" = 3 ] && grep -q "^COV2D-9.5 STOP" "$W/control95.log"; then V=FAIL; X=3
+-else V=INVALID; X=2; fi
+-sha256sum "$W/control95.json" 2>&1
++(cd "$DD" && git ls-tree -r HEAD 2d-unfolding/cov2d | grep -v __pycache__) > "$W/blobs.after"
++cmp -s "$W/blobs.before" "$W/blobs.after" && echo "blobs unchanged" || echo "blobs CHANGED"
+ cleanup
+-verdict "$V" "$X"
++echo "end=$(date -u +%FT%TZ)"
++echo DONE

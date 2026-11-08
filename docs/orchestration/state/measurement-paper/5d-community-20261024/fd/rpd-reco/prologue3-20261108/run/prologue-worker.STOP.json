@@ -1,0 +1,74 @@
+{
+  "details": {
+    "age": {
+      "exclusive_bounds_ns": [
+        0,
+        7200000000000
+      ],
+      "now_ns": 1794113275211401682,
+      "observed_age_ns": 2064781177,
+      "prepare_time_ns": 1794113273146620505
+    },
+    "connect_id": {
+      "observed": "f15a28ae-e0cc-415d-9e8a-f93f049a2a76",
+      "prepared": "f15a28ae-e0cc-415d-9e8a-f93f049a2a76"
+    },
+    "connect_presence": {
+      "observed": true,
+      "required": true
+    },
+    "environment": {
+      "diff": {
+        "added": {
+          "CLING_PREBUILT_MODULE_PATH": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib:"
+        },
+        "changed": {
+          "NERSC_PYMON_UUID": {
+            "observed": "277b2777-abc4-4ea2-9d6c-ec6965ae4fab",
+            "prepared": "edfe380a-17cb-4881-9a8a-aa894f32fba2"
+          },
+          "ROOTSYS": {
+            "observed": "/global/u2/j/josephrb/.conda/envs/root_6_28",
+            "prepared": "/global/homes/j/josephrb/.conda/envs/root_6_28"
+          }
+        },
+        "removed": {}
+      },
+      "excluded": {
+        "_": "shell-maintained last-command value"
+      },
+      "record_display_diff": {}
+    },
+    "presence": {
+      "observed": [
+        "connect_id",
+        "environment_after_setup",
+        "environment_snapshot",
+        "files",
+        "instrument_files",
+        "mapped_mat_stats",
+        "mat_environment",
+        "mat_prefixes",
+        "module_paths",
+        "original_mat_prefixes",
+        "prepare_time_ns",
+        "run",
+        "status",
+        "trace_policy_sha256"
+      ],
+      "required": [
+        "connect_id",
+        "environment_after_setup",
+        "environment_snapshot",
+        "prepare_time_ns",
+        "run"
+      ]
+    },
+    "run": {
+      "observed": "/dev/shm/limres-rpd-prologue3-20261108/run",
+      "prepared": "/dev/shm/limres-rpd-prologue3-20261108/run"
+    }
+  },
+  "guard": "MAT_PREPARE_ENVIRONMENT",
+  "status": "STOP"
+}

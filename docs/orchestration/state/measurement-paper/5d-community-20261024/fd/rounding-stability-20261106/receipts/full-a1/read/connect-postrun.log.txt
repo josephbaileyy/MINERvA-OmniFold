@@ -1,0 +1,42 @@
+node login16 nproc=244 loadavg 17.71 20.42 18.40
+2026-11-08T03:13:16Z
+connect script sha256 7351e8ab2db24a1b494170f79897b182aaefa794d6f145c5ca9411248459eac3
+== the run
+{"mode": "full", "addendum": "A1", "tasks": 66, "ended": 66, "staged": 20, "ran": 46, "rc": 0, "job": "60982139", "pin": "e306087e68fd497541d32b440848a40f7f29611e", "a1_pin": "1f747346519d75a680b5c67d644bae798eeb5f86", "teardown": ""}
+
+60982139 COMPLETED|10090|1
+== COV2D fence
+FENCE: no cov2d-* job queued or running
+== the deploy
+HEAD e306087e68fd497541d32b440848a40f7f29611e; modified tracked files: 0
+== V_02 bitwise (sourced environment)
+{"rs1_V_b-_j6.npz": {"xsec_flat": true, "xtrue_flat": true}, "rs1_V_b-_j7.npz": {"xsec_flat": true, "xtrue_flat": true}, "rs1_V_b-_j8.npz": {"xsec_flat": true, "xtrue_flat": true}, "rs1_V_b-_j9.npz": {"xsec_flat": true, "xtrue_flat": true}}
+{
+ "schema": "rs1-v02-compare/1",
+ "compare": {
+  "rs1_V_b-_j6.npz": {
+   "xsec_flat": true,
+   "xtrue_flat": true
+  },
+  "rs1_V_b-_j7.npz": {
+   "xsec_flat": true,
+   "xtrue_flat": true
+  },
+  "rs1_V_b-_j8.npz": {
+   "xsec_flat": true,
+   "xtrue_flat": true
+  },
+  "rs1_V_b-_j9.npz": {
+   "xsec_flat": true,
+   "xtrue_flat": true
+  }
+ },
+ "all_bitwise_identical": true
+}== the analysis (bound, sourced environment)
+Python 3.11.14
+{"status": "READ", "readings": {"K1": "SUPPORTED", "K2": "NOT SUPPORTED", "K3": "NOT SUPPORTED", "K4": "NOT SUPPORTED", "K5": "SUPPORTED", "K6": "NOT TESTABLE"}}
+analysis rc=0
+9938e1685018a1943125cd4414ea93d1cc5a0852e82234fe49d1678d89e8b9ef  /pscratch/sd/j/josephrb/rs1-a1-20261107/read/rs1_read.json
+runs files pinned: 458
+rs1 postrun rc=0
+2026-11-08T03:13:35Z

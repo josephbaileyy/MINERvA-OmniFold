@@ -1,0 +1,439 @@
+{
+ "schema": "ens1-diag/1",
+ "python": "3.11.14",
+ "numpy": "1.26.4",
+ "digests": {
+  "npz": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+  "bkg": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955"
+ },
+ "edges_from": "the npz (edges_0..edges_{nedges-1}), as s5c_unfold.load_inputs returns them",
+ "n_edges_per_axis": {
+  "pt": 15,
+  "pz": 17,
+  "eavail": 8,
+  "q3": 8,
+  "W": 7
+ },
+ "rows": {
+  "MCgen": 32849103,
+  "MCreco": 32849103,
+  "measured": 4091707,
+  "bkg_reco": 621547
+ },
+ "edges_not_float32": {
+  "pt": [
+   {
+    "edge": 0.07,
+    "lo": 0.06999999284744263,
+    "hi": 0.07000000029802322,
+    "lo_spacings": 0.9600000008940697,
+    "hi_spacings": 0.03999999910593033
+   },
+   {
+    "edge": 0.15,
+    "lo": 0.14999999105930328,
+    "hi": 0.15000000596046448,
+    "lo_spacings": 0.599999999627471,
+    "hi_spacings": 0.40000000037252903
+   },
+   {
+    "edge": 0.33,
+    "lo": 0.32999998331069946,
+    "hi": 0.33000001311302185,
+    "lo_spacings": 0.5600000005215406,
+    "hi_spacings": 0.43999999947845936
+   },
+   {
+    "edge": 0.4,
+    "lo": 0.3999999761581421,
+    "hi": 0.4000000059604645,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   },
+   {
+    "edge": 0.47,
+    "lo": 0.4699999988079071,
+    "hi": 0.4700000286102295,
+    "lo_spacings": 0.03999999910593033,
+    "hi_spacings": 0.9600000008940697
+   },
+   {
+    "edge": 0.55,
+    "lo": 0.5499999523162842,
+    "hi": 0.550000011920929,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   },
+   {
+    "edge": 0.7,
+    "lo": 0.699999988079071,
+    "hi": 0.7000000476837158,
+    "lo_spacings": 0.19999999925494194,
+    "hi_spacings": 0.8000000007450581
+   },
+   {
+    "edge": 0.85,
+    "lo": 0.8499999642372131,
+    "hi": 0.8500000238418579,
+    "lo_spacings": 0.599999999627471,
+    "hi_spacings": 0.40000000037252903
+   }
+  ],
+  "pz": [],
+  "eavail": [
+   {
+    "edge": 0.1,
+    "lo": 0.09999999403953552,
+    "hi": 0.10000000149011612,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   },
+   {
+    "edge": 0.2,
+    "lo": 0.19999998807907104,
+    "hi": 0.20000000298023224,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   },
+   {
+    "edge": 0.4,
+    "lo": 0.3999999761581421,
+    "hi": 0.4000000059604645,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   },
+   {
+    "edge": 0.8,
+    "lo": 0.7999999523162842,
+    "hi": 0.800000011920929,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   }
+  ],
+  "q3": [
+   {
+    "edge": 0.2,
+    "lo": 0.19999998807907104,
+    "hi": 0.20000000298023224,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   },
+   {
+    "edge": 0.4,
+    "lo": 0.3999999761581421,
+    "hi": 0.4000000059604645,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   },
+   {
+    "edge": 0.6,
+    "lo": 0.5999999642372131,
+    "hi": 0.6000000238418579,
+    "lo_spacings": 0.599999999627471,
+    "hi_spacings": 0.40000000037252903
+   },
+   {
+    "edge": 0.8,
+    "lo": 0.7999999523162842,
+    "hi": 0.800000011920929,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   },
+   {
+    "edge": 1.2,
+    "lo": 1.1999999284744263,
+    "hi": 1.2000000476837158,
+    "lo_spacings": 0.599999999627471,
+    "hi_spacings": 0.40000000037252903
+   }
+  ],
+  "W": [
+   {
+    "edge": 1.1,
+    "lo": 1.0999999046325684,
+    "hi": 1.100000023841858,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   },
+   {
+    "edge": 1.4,
+    "lo": 1.399999976158142,
+    "hi": 1.4000000953674316,
+    "lo_spacings": 0.19999999925494194,
+    "hi_spacings": 0.8000000007450581
+   },
+   {
+    "edge": 1.8,
+    "lo": 1.7999999523162842,
+    "hi": 1.8000000715255737,
+    "lo_spacings": 0.40000000037252903,
+    "hi_spacings": 0.599999999627471
+   },
+   {
+    "edge": 2.2,
+    "lo": 2.1999998092651367,
+    "hi": 2.200000047683716,
+    "lo_spacings": 0.8000000007450581,
+    "hi_spacings": 0.19999999925494194
+   }
+  ]
+ },
+ "protocol_only": {
+  "MCgen": 0,
+  "MCreco": 0,
+  "measured": 0,
+  "bkg_reco": 0
+ },
+ "protocol_only_rows": {},
+ "plus_delta": {
+  "1": {
+   "counts": {
+    "MCgen": 2,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "rows": {
+    "MCgen": [
+     {
+      "row": 13803463,
+      "cell_before": 30140,
+      "axes": [
+       {
+        "axis": "q3",
+        "x_float32": 1.1999999284744263,
+        "x_jittered": 1.2000000298986906,
+        "move": 1.0142426432047102e-07,
+        "crossed_edges": [
+         1.2
+        ],
+        "edge_float32_representable": false,
+        "edge_neighbours": [
+         1.1999999284744263,
+         1.2000000476837158
+        ],
+        "distance_spacings": 0.599999999627471,
+        "move_spacings": 0.8508083950728178,
+        "at_farther_neighbour": true,
+        "at_nearer_neighbour": false
+       }
+      ]
+     },
+     {
+      "row": 15432031,
+      "cell_before": 35523,
+      "axes": [
+       {
+        "axis": "W",
+        "x_float32": 1.8000000715255737,
+        "x_jittered": 1.7999999775498288,
+        "move": -9.397574496361472e-08,
+        "crossed_edges": [
+         1.8
+        ],
+        "edge_float32_representable": false,
+        "edge_neighbours": [
+         1.7999999523162842,
+         1.8000000715255737
+        ],
+        "distance_spacings": -0.599999999627471,
+        "move_spacings": -0.7883256860077381,
+        "at_farther_neighbour": true,
+        "at_nearer_neighbour": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "2": {
+   "counts": {
+    "MCgen": 1,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "rows": {
+    "MCgen": [
+     {
+      "row": 28958138,
+      "cell_before": 21278,
+      "axes": [
+       {
+        "axis": "pt",
+        "x_float32": 0.3999999761581421,
+        "x_jittered": 0.40000000252449686,
+        "move": 2.6366354766160782e-08,
+        "crossed_edges": [
+         0.4
+        ],
+        "edge_float32_representable": false,
+        "edge_neighbours": [
+         0.3999999761581421,
+         0.4000000059604645
+        ],
+        "distance_spacings": 0.8000000007450581,
+        "move_spacings": 0.8847080580890179,
+        "at_farther_neighbour": true,
+        "at_nearer_neighbour": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "3": {
+   "counts": {
+    "MCgen": 2,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "rows": {
+    "MCgen": [
+     {
+      "row": 13803463,
+      "cell_before": 30140,
+      "axes": [
+       {
+        "axis": "q3",
+        "x_float32": 1.1999999284744263,
+        "x_jittered": 1.20000000925391,
+        "move": 8.077948376872257e-08,
+        "crossed_edges": [
+         1.2
+        ],
+        "edge_float32_representable": false,
+        "edge_neighbours": [
+         1.1999999284744263,
+         1.2000000476837158
+        ],
+        "distance_spacings": 0.599999999627471,
+        "move_spacings": 0.6776274237781763,
+        "at_farther_neighbour": true,
+        "at_nearer_neighbour": false
+       }
+      ]
+     },
+     {
+      "row": 15432031,
+      "cell_before": 35523,
+      "axes": [
+       {
+        "axis": "W",
+        "x_float32": 1.8000000715255737,
+        "x_jittered": 1.7999999841595635,
+        "move": -8.736601020409296e-08,
+        "crossed_edges": [
+         1.8
+        ],
+        "edge_float32_representable": false,
+        "edge_neighbours": [
+         1.7999999523162842,
+         1.8000000715255737
+        ],
+        "distance_spacings": -0.599999999627471,
+        "move_spacings": -0.7328792121261358,
+        "at_farther_neighbour": true,
+        "at_nearer_neighbour": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "4": {
+   "counts": {
+    "MCgen": 1,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "rows": {
+    "MCgen": [
+     {
+      "row": 15432031,
+      "cell_before": 35523,
+      "axes": [
+       {
+        "axis": "W",
+        "x_float32": 1.8000000715255737,
+        "x_jittered": 1.7999999746001758,
+        "move": -9.692539792993671e-08,
+        "crossed_edges": [
+         1.8
+        ],
+        "edge_float32_representable": false,
+        "edge_neighbours": [
+         1.7999999523162842,
+         1.8000000715255737
+        ],
+        "distance_spacings": -0.599999999627471,
+        "move_spacings": -0.8130691684782505,
+        "at_farther_neighbour": true,
+        "at_nearer_neighbour": false
+       }
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "near_edge": {
+  "MCgen": {
+   "coordinates_within_one_spacing": 104,
+   "rows_within_one_spacing": 104,
+   "per_axis_within_one_spacing": {
+    "pt": 32,
+    "pz": 39,
+    "eavail": 2,
+    "q3": 11,
+    "W": 20
+   },
+   "coordinates_on_an_edge": 293319
+  },
+  "MCreco": {
+   "coordinates_within_one_spacing": 57,
+   "rows_within_one_spacing": 57,
+   "per_axis_within_one_spacing": {
+    "pt": 17,
+    "pz": 20,
+    "eavail": 3,
+    "q3": 2,
+    "W": 15
+   },
+   "coordinates_on_an_edge": 233805
+  },
+  "measured": {
+   "coordinates_within_one_spacing": 15,
+   "rows_within_one_spacing": 15,
+   "per_axis_within_one_spacing": {
+    "pt": 5,
+    "pz": 7,
+    "eavail": 0,
+    "q3": 1,
+    "W": 2
+   },
+   "coordinates_on_an_edge": 48171
+  },
+  "bkg_reco": {
+   "coordinates_within_one_spacing": 3,
+   "rows_within_one_spacing": 3,
+   "per_axis_within_one_spacing": {
+    "pt": 0,
+    "pz": 2,
+    "eavail": 0,
+    "q3": 0,
+    "W": 1
+   },
+   "coordinates_on_an_edge": 11516
+  }
+ },
+ "checks": {
+  "plus_delta_reproduces_the_job": true,
+  "protocol_only_zero": true,
+  "every_mover_at_a_farther_neighbour": true
+ },
+ "verdict": "CONFIRMED",
+ "seconds": 231.9
+}

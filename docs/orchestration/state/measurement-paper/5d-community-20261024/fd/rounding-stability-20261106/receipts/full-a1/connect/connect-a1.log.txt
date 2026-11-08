@@ -1,0 +1,114 @@
+node login34 nproc=244 loadavg 388.72 325.92 280.42
+2026-11-08T00:13:27Z
+connect script sha256 008667637a734cb4681a578fb20debaa3d117b4c8979d4c3ce2314a3afa50fe0
+== COV2D fence
+FENCE: no cov2d-* job queued or running
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2338.6            10000.0     18233.9      20000.0
+balance_node_h=1766.1 half=883.0 price=8.0
+== attempt 1
+log-dry/SHA256SUMS e3cc597cdc1cdb0a3bfea0095130b9a2f99a3578c63ce1541c2a893092ab2935; log-full/SHA256SUMS 846e322a8ced04ecb63953e7109328ca6f01b6d115486c205fedcfac83d97fd3; FAILED 'rc=124'
+60970044 COMPLETED|944|1; 60972000 FAILED|3520|1
+spent 1.2400 node-h; ceiling 4.5; cap 8.0
+== stat
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz size=1548438020 mtime=2026-06-27 18:31:48.000000000 -0700 atime=2026-11-07 11:16:37.000000000 -0800
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz size=16017201 mtime=2026-09-24 23:51:44.000000000 -0700 atime=2026-11-07 11:16:37.000000000 -0800
+== the clones
+deploy at e306087e68fd497541d32b440848a40f7f29611e; porcelain --ignored lines: 0
+a1 at 1f747346519d75a680b5c67d644bae798eeb5f86; porcelain --ignored lines: 0
+blobs: 6 checked, 0 mismatches; declaration dbfb0c941b2ad6999b2edb3b8bf77ca735b2f01f86ca593425e44c2ad5c91e76; binding 1 947fd2750343ead7aff5281af8bfb03a137f76346071a84233b62ebf12744255; addendum A1 cef9555afdf99ecfebe21b60f374c64728640968496ecdf310afd29242d90e5a
+== the queue
+{"tasks": 66, "unfolds": 229, "dry": 9}
+queue.tsv 252c9628c0a238820d851f5d77e72afefda3d9e61d6fcc9a658e5a3e8543ea73; dry.tsv 92195b6dc70658d8e3d348737d6eda5a83952dc4f88a5ff1a81b574f6541071d
+== the planner's --help under the deploy's sourced environment (never the system python3; A1 connect 1)
+Python 3.11.14
+usage: rs1_a1_plan.py [-h] {stage,verify} ...
+
+positional arguments:
+  {stage,verify}
+
+options:
+  -h, --help      show this help message and exit
+== the staging, under the deploy's environment
+Python 3.11.14
+{"schema": "rs1-a1-plan/1", "tasks": 66, "done": 20, "todo": ["rs1_V_02", "rs1_F_pt_02", "rs1_F_pt_03", "rs1_F_pt_04", "rs1_F_pz_00", "rs1_F_pz_01", "rs1_F_pz_02", "rs1_F_pz_03", "rs1_F_pz_04", "rs1_F_eavail_00", "rs1_F_eavail_01", "rs1_F_eavail_02", "rs1_F_eavail_03", "rs1_F_eavail_04", "rs1_F_q3_00", "rs1_F_q3_01", "rs1_F_q3_02", "rs1_F_q3_03", "rs1_F_q3_04", "rs1_F_W_00", "rs1_F_W_01", "rs1_F_W_02", "rs1_F_W_03", "rs1_F_W_04", "rs1_S_ref_01", "rs1_S_ref_02", "rs1_S_ref_03", "rs1_S_ref_04", "rs1_S_ref_05", "rs1_S_omni_00", "rs1_S_omni_01", "rs1_S_omni_02", "rs1_S_omni_03", "rs1_S_omni_04", "rs1_S_all_01", "rs1_B63_01", "rs1_B63_02", "rs1_B63_03", "rs1_B63_04", "rs1_B63_05", "rs1_B1023_01", "rs1_B1023_02", "rs1_B1023_03", "rs1_B1023_04", "rs1_B1023_05", "rs1_P2_00"], "copied_files": 102, "attempt1_left": ["rs1_V_02"]}
+{
+ "schema": "rs1-a1-plan/1",
+ "tasks": 66,
+ "done": 20,
+ "todo": [
+  "rs1_V_02",
+  "rs1_F_pt_02",
+  "rs1_F_pt_03",
+  "rs1_F_pt_04",
+  "rs1_F_pz_00",
+  "rs1_F_pz_01",
+  "rs1_F_pz_02",
+  "rs1_F_pz_03",
+  "rs1_F_pz_04",
+  "rs1_F_eavail_00",
+  "rs1_F_eavail_01",
+  "rs1_F_eavail_02",
+  "rs1_F_eavail_03",
+  "rs1_F_eavail_04",
+  "rs1_F_q3_00",
+  "rs1_F_q3_01",
+  "rs1_F_q3_02",
+  "rs1_F_q3_03",
+  "rs1_F_q3_04",
+  "rs1_F_W_00",
+  "rs1_F_W_01",
+  "rs1_F_W_02",
+  "rs1_F_W_03",
+  "rs1_F_W_04",
+  "rs1_S_ref_01",
+  "rs1_S_ref_02",
+  "rs1_S_ref_03",
+  "rs1_S_ref_04",
+  "rs1_S_ref_05",
+  "rs1_S_omni_00",
+  "rs1_S_omni_01",
+  "rs1_S_omni_02",
+  "rs1_S_omni_03",
+  "rs1_S_omni_04",
+  "rs1_S_all_01",
+  "rs1_B63_01",
+  "rs1_B63_02",
+  "rs1_B63_03",
+  "rs1_B63_04",
+  "rs1_B63_05",
+  "rs1_B1023_01",
+  "rs1_B1023_02",
+  "rs1_B1023_03",
+  "rs1_B1023_04",
+  "rs1_B1023_05",
+  "rs1_P2_00"
+ ],
+ "copied_files": 102,
+ "attempt1_left": [
+  "rs1_V_02"
+ ]
+}
+{"verified": true, "bad": []}
+rs1_V_b-_j6.npz
+rs1_V_b-_j6.trace.json.gz
+rs1_V_b-_j7.npz
+rs1_V_b-_j7.trace.json.gz
+rs1_V_b-_j8.npz
+rs1_V_b-_j8.trace.json.gz
+rs1_V_b-_j9.npz
+rs1_V_b-_j9.trace.json.gz
+== the environment
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+2026-11-08T00:15:03Z
+sbatch rc=0
+Submitted batch job 60982139
+a1 job 60982139
+scontrol TimeLimit=04:30:00 (declared 04:30:00)
+60982139 rs1_a1 PENDING 0:00 4:30:00 1 regular_1 m3246
+deploy porcelain --ignored after: 0
+a1 porcelain --ignored after: 0
+rs1 a1 submit rc=0
+2026-11-08T00:15:12Z

@@ -1,0 +1,11 @@
+--- readout/G18/connect-n-G18.sh
++++ readout/AR23/connect-n-AR23.sh
+@@ -13,7 +13,7 @@
+ # connect-n-G18.sh and connect-n-AR23.sh are this file with T set; nothing else differs.
+ # Run on login02: setsid nohup bash /dev/shm/josephrb-cov2d-n-<T>.sh >/dev/null 2>&1 </dev/null &
+ M=ac25b66533788ceb18b1d4e5add259c53b216669
+-T=G18
++T=AR23
+ READOUT_SHA=d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
+ W=/dev/shm/josephrb-cov2d-n-$T; DD=$W/deploy
+ A=/pscratch/sd/j/josephrb/MINERvA-OmniFold   # the shared checkout with the MAT build (setup_salloc_env.sh)

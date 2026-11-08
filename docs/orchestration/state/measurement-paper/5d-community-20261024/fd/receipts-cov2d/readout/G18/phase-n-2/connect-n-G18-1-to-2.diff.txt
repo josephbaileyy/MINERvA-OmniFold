@@ -1,0 +1,95 @@
+--- /Users/josephbailey/cov2d-work/a4/connect-n-G18-1.sh	2026-11-07 09:49:45
++++ /Users/josephbailey/cov2d-work/connect-n-G18.sh	2026-11-07 19:12:01
+@@ -1,20 +1,20 @@
+ #!/bin/bash
+-# COV2D connect N-<T>: addendum A4's phase N (COV2D-ADDENDUM-A4.md section 3), `cov2d_readout.py null --truth T`, for
+-# one truth (one connect per truth; noatime_inputs repoints the rollup's globals: one truth per process). Login node,
+-# 0 node-h (A4 section 9), at M = ac25b665 (COV2D-BINDING-2 addendum A4). Template: connect-95-run3.sh (control95, receipted in #869): a fresh
+-# clone in /dev/shm (cov2d_blocks' open audit guards /pscratch), the MAT pin before and after sourcing
+-# setup_salloc_env.sh, a MAT preflight on one real MnvH1D, nice 19, taskset -c 8-11, threads 1, porcelain before and
+-# after, the clone removed at the end (logged).
+-# Reads are the driver's own (A4 section 3.1): each through O_NOATIME, digest-checked, under the open audit. No toy is
+-# opened (stat only; the driver checks its own audit log). The outputs (null_<T>.json, blocks_<T>.npz) stay in
+-# $W/out for the fetch; they are committed to main before phase S may run (A4 section 4).
+-# Verdict: PASS (rc 0, "COV2D-NULL <T> PASS"), STOP (rc 3, "COV2D-NULL <T> STOP"), else INVALID. An INVALID (or a
+-# section 9.9 / runArgv mismatch) goes to the director unrepaired, with the mechanism named (binding A4, ruling 2).
+-# connect-n-G18.sh and connect-n-AR23.sh are this file with T set; nothing else differs.
++# COV2D connect N5-G18: G18's phase N rerun at M_A5 (COV2D-BINDING-2, "Addendum A5, the M line", ruling 2: ruling 5 as
++# amended), so that phase S at M_A5 passes A4's gate (the null record's M must be the deploy's HEAD). The same template
++# as connect-n.sh (readout/G18/connect-n-G18.sh, c9b3e929), the same /dev/shm path (the record's `modules` holds the
++# clone's paths), plus the field-equality control against origin/main's committed null_G18.json (ecdb4be2...):
++#   EXCEPTED, named before the run (the CMP block's EXCEPT):
++#     M    the record's only code-identity field (c.deploy_head of the clone); it must equal M_A5;
++#     utc  the run's clock (time.gmtime at Run start), not a content field.
++#   COMPARED, everything else, by exact JSON equality at full depth, including `code` (the toys' driverSha256 and
++#   omnifoldHelperSha256 under section 9.9, a provenance of the inputs, not of this deploy) and `host` (the launcher
++#   pins login02). blocks_G18.npz must be byte-equal, or equal in every array.
++# Any other difference is NULL-EQUALITY DIFFERS: a STOP to the director, unrepaired; phase S does not follow.
++# Verdict: PASS and EQUAL (rc 0), else STOP/INVALID as connect-n.sh, or NULL-EQUALITY DIFFERS.
+ # Run on login02: setsid nohup bash /dev/shm/josephrb-cov2d-n-<T>.sh >/dev/null 2>&1 </dev/null &
+-M=ac25b66533788ceb18b1d4e5add259c53b216669
++M=b1d56e4f08e62983784e34b2278f38a09a68eca0   # M_A5 (#900's merge; bound by #911)
+ T=G18
+-READOUT_SHA=d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
++READOUT_SHA=0c3ad137be128691cce7bbe3ec72493b76791e761e6cd897f75aaf0a4fc7444f   # cov2d_readout.py at M_A5 (the M line's table)
+ W=/dev/shm/josephrb-cov2d-n-$T; DD=$W/deploy
+ A=/pscratch/sd/j/josephrb/MINERvA-OmniFold   # the shared checkout with the MAT build (setup_salloc_env.sh)
+ PY310=/global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python
+@@ -22,6 +22,7 @@
+ cleanup() { echo "removal: host=$(hostname) $(date -u +%FT%TZ) $(du -sh "$DD" 2>/dev/null | cut -f1) $DD"; rm -rf "$DD" "$W/tmp"; echo "rc=$?"; ls -d "$DD" "$W/tmp" 2>&1; }
+ stop() { echo "STOP $*"; cleanup; echo "PHASE-N INVALID (connect)"; echo "end=$(date -u +%FT%TZ)"; echo DONE; exit 2; }
+ case "$T" in G18|AR23) ;; *) echo "STOP T is not set"; exit 2 ;; esac
++case "$M" in *[!0-9a-f]*|"") echo "STOP M is not set"; exit 2 ;; esac
+ [ -e "$W" ] && { echo "STOP $W exists"; exit 2; }
+ mkdir "$W" "$W/tmp" "$W/out" || exit 2
+ exec >> "$W/connect-n-$T.log" 2>&1
+@@ -63,6 +64,49 @@
+ else V=INVALID; fi
+ echo "PHASE-N $T $V rc=$rc"
+ (cd "$W/out" && sha256sum * 2>&1)
++# the director's control: equal in content to the committed null except the named fields; blocks byte- or array-equal
++NR=docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/readout/$T
++echo "origin/main=$(git -C "$DD" rev-parse origin/main)"
++git -C "$DD" show "origin/main:$NR/null_$T.json" > "$W/committed_null_$T.json"; g1=$?
++git -C "$DD" show "origin/main:$NR/blocks_$T.npz" > "$W/committed_blocks_$T.npz"; g2=$?
++echo "committed: git show rc=$g1/$g2 $(sha256sum "$W/committed_null_$T.json" "$W/committed_blocks_$T.npz" | tr '\n' ' ')"
++if [ "$V" = PASS ] && [ "$g1" = 0 ] && [ "$g2" = 0 ]; then
++  "$PY310" -B - "$W/out/null_$T.json" "$W/committed_null_$T.json" "$W/out/blocks_$T.npz" "$W/committed_blocks_$T.npz" "$M" <<'CMP'
++import hashlib, json, sys
++import numpy as np
++new_p, old_p, newz_p, oldz_p, m = sys.argv[1:6]
++new, old = json.load(open(new_p)), json.load(open(old_p))
++EXCEPT = {"M", "utc"}   # named before the run: see the header
++keys = sorted(set(new) | set(old))
++diff = [k for k in keys if k not in EXCEPT and new.get(k, "<absent>") != old.get(k, "<absent>")]
++print("NULL-FIELDS compared", len([k for k in keys if k not in EXCEPT]), "excepted", sorted(EXCEPT & set(keys)),
++      "differing", diff)
++print("NULL-M new", new.get("M"), "old", old.get("M"), "new M is this M:", new.get("M") == m)
++print("NULL-UTC new", new.get("utc"), "old", old.get("utc"))
++# diagnostic only (the verdict is the top-level test above): the leaf paths that differ, first 40
++def leaves(a, b, p=""):
++    if isinstance(a, dict) and isinstance(b, dict):
++        for k in sorted(set(a) | set(b)):
++            yield from leaves(a.get(k, "<absent>"), b.get(k, "<absent>"), f"{p}.{k}" if p else k)
++    elif a != b:
++        yield p
++paths = [q for k in diff for q in leaves(new.get(k, "<absent>"), old.get(k, "<absent>"), k)]
++print("NULL-LEAVES differing", len(paths), paths[:40])
++nb, ob = open(newz_p, "rb").read(), open(oldz_p, "rb").read()
++byte_equal = nb == ob
++zn, zo = np.load(newz_p), np.load(oldz_p)
++arr_diff = sorted(set(zn.files) ^ set(zo.files)) + [k for k in sorted(set(zn.files) & set(zo.files))
++                                                       if zn[k].dtype != zo[k].dtype or not np.array_equal(zn[k], zo[k])]
++print("BLOCKS byte_equal", byte_equal, "arrays", len(zn.files), "differing", arr_diff,
++      "sha new", hashlib.sha256(nb).hexdigest(), "old", hashlib.sha256(ob).hexdigest())
++ok = not diff and new.get("M") == m and (byte_equal or not arr_diff)
++print("NULL-EQUALITY " + ("EQUAL" if ok else "DIFFERS"))
++sys.exit(0 if ok else 9)
++CMP
++  echo "equality rc=$?"
++else
++  echo "NULL-EQUALITY NOT-CHECKED (verdict $V, git show $g1/$g2)"
++fi
+ n=$(git -C "$DD" status --porcelain | wc -l); echo "porcelain_after_lines=$n head=$(git -C "$DD" rev-parse HEAD)"
+ git -C "$DD" status --porcelain | head -20
+ (cd "$DD" && git ls-tree -r HEAD 2d-unfolding/cov2d | grep -v __pycache__) > "$W/blobs.after"

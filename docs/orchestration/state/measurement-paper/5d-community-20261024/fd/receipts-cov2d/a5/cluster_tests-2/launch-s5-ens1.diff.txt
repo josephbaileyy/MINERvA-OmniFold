@@ -1,0 +1,17 @@
+--- /Users/josephbailey/cov2d-work/a4/launch-s5.pre-ens1.sh	2026-11-07 10:43:42
++++ /Users/josephbailey/cov2d-work/launch-s5.sh	2026-11-07 17:14:51
+@@ -43,10 +43,10 @@
+ r < "$OUT/fence.sh" > "$OUT/fence.txt" 2>&1; frc=$?
+ cat "$OUT/fence.txt"
+ [ "$frc" = 0 ] && grep -q '^fence end$' "$OUT/fence.txt" || { echo "REFUSED fence fetch rc=$frc"; exit 2; }
+-# the director's fence ruling (2026-11-07): RS1's jobs (rs1_dry, rs1_full; RS1 reads no COV2D input) do not block;
+-# any cov2d-* job or any other name does.
+-sed -n '/^squeue:$/,/^sacct unended cov2d:$/p' "$OUT/fence.txt" | awk '$1 != "squeue:" && $1 != "sacct" && ($2 == "rs1_dry" || $2 == "rs1_full") {print "FENCE_ALLOWED_RS1 " $0}'
+-[ "$(sed -n '/^squeue:$/,/^sacct unended cov2d:$/p' "$OUT/fence.txt" | grep -v -e '^squeue:$' -e '^sacct unended cov2d:$' | awk '$2 != "rs1_dry" && $2 != "rs1_full"' | wc -l | tr -d ' ')" = 0 ] \
++# the director's fence rulings (2026-11-07): RS1's jobs (first rs1_dry, rs1_full; then any rs1_*) and ENS1's jobs
++# (ens1_*; ENS1-BINDING-2) do not block, since neither reads COV2D input; any cov2d-* job or any other name does.
++sed -n '/^squeue:$/,/^sacct unended cov2d:$/p' "$OUT/fence.txt" | awk '$1 != "squeue:" && $1 != "sacct" && $2 ~ /^rs1_/ {print "FENCE_ALLOWED_RS1 " $0} $1 != "squeue:" && $1 != "sacct" && $2 ~ /^ens1_/ {print "FENCE_ALLOWED_ENS1 " $0}'
++[ "$(sed -n '/^squeue:$/,/^sacct unended cov2d:$/p' "$OUT/fence.txt" | grep -v -e '^squeue:$' -e '^sacct unended cov2d:$' | awk '$2 !~ /^(rs1|ens1)_/' | wc -l | tr -d ' ')" = 0 ] \
+   && [ "$(sed -n '/^sacct unended cov2d:$/,/^fence end$/p' "$OUT/fence.txt" | grep -vc -e '^sacct unended cov2d:$' -e '^fence end$')" = 0 ] \
+   || { echo "REFUSED the fence is not clear"; exit 2; }
+ echo "FENCE_CLEAR"

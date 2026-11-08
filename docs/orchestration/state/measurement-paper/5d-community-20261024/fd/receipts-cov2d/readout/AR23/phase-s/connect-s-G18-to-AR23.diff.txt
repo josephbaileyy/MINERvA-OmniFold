@@ -1,0 +1,13 @@
+--- readout/G18/phase-s-1-invalid/connect-s-G18.sh
++++ readout/AR23/phase-s/connect-s-AR23.sh
+@@ -13,8 +13,8 @@
+ # connect-s-<T>.sh is this file with T and D set; nothing else differs.
+ # Run on login02: setsid nohup bash /dev/shm/josephrb-cov2d-s-<T>.sh >/dev/null 2>&1 </dev/null &
+ M=ac25b66533788ceb18b1d4e5add259c53b216669
+-T=G18
+-D=ecdb4be2fbb18852d32c1a4f9fb3cbc4107310d72c5bdeb2eb3651996ed0c41f
++T=AR23
++D=80274e52c23365e5c6f84fad977576e54507bf186e1d04a8da8d596a75b0ac76
+ READOUT_SHA=d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
+ W=/dev/shm/josephrb-cov2d-s-$T; DD=$W/deploy
+ A=/pscratch/sd/j/josephrb/MINERvA-OmniFold   # the shared checkout with the MAT build (setup_salloc_env.sh)

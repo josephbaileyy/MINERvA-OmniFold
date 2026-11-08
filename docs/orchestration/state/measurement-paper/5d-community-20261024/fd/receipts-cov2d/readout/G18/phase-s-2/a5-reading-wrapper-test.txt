@@ -1,0 +1,13 @@
+# the reading-rule shell block of connect-s-G18.sh (3cd40164), extracted verbatim, run end to end on 4 cases
+-- case1: driver V=COVERS, record=ok as score_G18.json
+A5-READING-RULE PASS
+PHASE-S G18 COVERS rc=0
+-- case2: driver V=UNDER-COVERS, record=nan as score_G18.json
+A5-READING-RULE FAIL
+PHASE-S G18 INVALID (A5 reading rule; the driver printed: UNDER-COVERS) rc=0
+-- case3: driver V=INVALID (grade refused, C_T: x), record=over as score_G18.invalid.json
+A5-READING-RULE FAIL
+PHASE-S G18 INVALID (A5 reading rule; the driver printed: INVALID (grade refused, C_T: x)) rc=0
+-- case4: driver V=REFUSED, record=none
+A5-READING-RULE NOT-CHECKED (no score record written; verdict REFUSED)
+PHASE-S G18 REFUSED rc=0

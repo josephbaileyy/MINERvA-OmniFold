@@ -1,0 +1,267 @@
+# NERSC Python Monitoring
+# https://gitlab.nersc.gov/nersc/nersc-user-env/nersc-python-monitoring
+
+import atexit
+import configparser
+import os
+import pathlib
+import random
+import socket
+import sys
+import time
+import uuid
+
+import nersc_pymon.log as log
+
+_init_sys_modules = tuple(sys.modules)
+
+__version__ = "0.5.0"
+
+
+def nersc_env_metadata():
+    """Extract interesting info from user environment and process.
+
+    Returns a dictionary of metadata.
+
+    >>> metadata = nersc_env_metadata()
+    >>> list(metadata)
+    ['executable', 'version', 'cwd', 'cmdline', 'user', 'system', 'hostname', 'is_nstaff', 'job_id', 'job_account', 'job_qos', 'job_num_nodes']
+
+    """
+    NSTAFF_UNIX_GROUP = 73067
+    # construct metadata
+    metadata = {
+        "executable": sys.executable,
+        "version": sys.version,
+        "cwd": os.getcwd(),
+        # sys.argv is not filled in until after site is finished importing!
+        # "argv0": sys.argv[0],
+        # TODO: what if this is really long??
+        "cmdline": pathlib.Path("/proc/self/cmdline").read_text().replace("\x00", " ").strip(),
+        "user": os.environ.get("USER", ""),
+        # system may be redundant with ldms / nerscjson_client info
+        "system": os.environ.get("NERSC_HOST", ""),
+        "hostname": socket.gethostname(),
+        # "is_compute": socket.gethostname().startswith("nid"),
+        # "is_shifter": "SHIFTER_RUNTIME" in os.environ,
+        "is_nstaff": NSTAFF_UNIX_GROUP in os.getgroups(),
+        # "has_gpu": os.path.exists('/proc/driver/nvidia/version'),
+        # note slurm data can be joined later if needed
+        "job_id": os.environ.get("SLURM_JOB_ID", ""),
+        "job_account": os.environ.get("SLURM_JOB_ACCOUNT", ""),
+        "job_qos": os.environ.get("SLURM_JOB_QOS", ""),
+        "job_num_nodes": os.environ.get("SLURM_JOB_NUM_NODES", ""),
+    }
+    return metadata
+
+
+def _get_module_version(name):
+    """Lookup name in sys.modules and return the version or an empty string.
+    """
+    # builtin / stdlib modules may not have __version__ set
+    # filter on sys.builtin_module_names ?
+    # new in py3.10: sys.stdlib_module_names
+    try:
+        version = sys.modules[name].__version__
+    except (AttributeError, KeyError):
+        version = ""
+    if isinstance(version, bytes):
+        version = version.decode("utf-8")
+    return str(version)
+
+
+def inspect_sys_modules(include=None):
+    """Inspects sys.modules and returns a list of modules.
+
+    For the special case include=None, attempts to exclude modules
+    that are builtin, hidden, or imported by this module. In this case,
+    only the top level of nested module names (names containing ".") are
+    returned.
+
+    An empty include list returns an empty list:
+
+    >>> import time
+    >>> import concurrent.futures
+    >>> inspect_sys_modules(include=[])
+    []
+
+    A non-empty include list returns imported modules that match.
+
+    >>> sorted(inspect_sys_modules(include=["concurrent.futures", "time", "somethingelse"]))
+    ['concurrent.futures', 'time']
+
+    With include=None, `time` is omitted since it is a builtin and `concurrent.futures` is
+    shortened to "concurrent":
+
+    # TODO: fix doctest
+    >> result = inspect_sys_modules()
+    >> "time" in result
+    False
+    >> "concurrent.futures" in result
+    False
+    >> "concurrent" in result
+    True
+    """
+    modules = set(sys.modules)
+    if include is None:
+        # skip modules if they:
+        #  *) are builtin
+        modules -= set(sys.builtin_module_names)
+        #  *) hidden / start with an underscore
+        modules = set([name for name in modules if not name.startswith("_")])
+        #  *) were loaded during our init
+        modules -= set(_init_sys_modules)
+        #  *) collapse submodules to their top level name
+        modules = set([name.split(".")[0] for name in modules])
+    else:
+        modules &= set(include)
+    return list(modules)
+
+
+class PyMon:
+    def __init__(self, **kwargs):
+        """
+        Precedence:
+            param > env > config
+        """
+        self.create_ts = time.time()
+        self.uuid = str(uuid.uuid4())
+
+        config = configparser.ConfigParser()
+        configpath = os.environ.get("NERSC_PYMON_CONFIG", "default")
+        if configpath in ("default", "test"):
+            configpath = os.path.join(
+                os.path.dirname(__file__), "config", "{}.ini".format(configpath))
+        if os.path.exists(configpath):
+            config.read(configpath)
+        else:
+            config = {"nersc-pymon": {}}
+
+        def _get(name, default):
+            """Returns the first non-null of (kwarg, env, config, or default) for "name"
+            """
+            return (
+                kwargs.get(name) or
+                os.environ.get("NERSC_PYMON_{}".format(name.upper())) or
+                config["nersc-pymon"].get(name.lower()) or
+                default
+            )
+
+        self.parent_uuid = _get("uuid", "")
+        os.environ["NERSC_PYMON_UUID"] = str(self.uuid)
+
+        # the notion of a key is somewhat specific to nerscjson
+        self.key = _get("key", "pymon")
+
+        logger = _get("logger", "null")
+        self.logger = log.getlogger(logger)
+        if hasattr(self.logger, "key"):
+            self.logger.key = self.key
+
+        hooks = _get("hooks", "")
+        if isinstance(hooks, str):
+            hooks = hooks.split(",")
+        self.hooks = hooks
+
+        modules = _get("modules", "")
+        if isinstance(modules, str):
+            modules = modules.strip().replace('\n', ',').split(",")
+        self.modules = modules
+
+        self.rate = float(_get("rate", 0))
+
+        # messages
+        self.metadata = nersc_env_metadata()
+        self.base_record = {
+            "instance": {
+                "id": self.uuid,
+                "parent": self.parent_uuid,
+                "ts": self.create_ts,
+                "version": __version__,
+                "metadata": self.metadata,
+                "rate": self.rate,
+            }
+        }
+
+    def report_event(self, name, data=None, ts=None):
+        try:
+            # most of the interesting info to report
+            # is likely already in the base_record
+            record = {
+                **self.base_record,
+                "event": {
+                    "name": name,
+                    "ts": ts if ts else time.time(),
+                }
+            }
+
+            if data is None:
+                self.logger.log(record)
+            else:
+                self.logger.log({**record, **data})
+        except Exception:
+            if os.environ.get("NERSC_PYMON_DEBUG") is not None:
+                import traceback
+                traceback.print_exc()
+
+    def _report_modules(self, name, modules):
+        modules = inspect_sys_modules(modules)
+
+        # TODO: fix version lookup for case modules=None and module names collapsed to top-level
+        # Transform a list of names to a list of dicts with name, version keys
+        modules = [
+            dict(name=name, version=_get_module_version(name))
+            for name in modules
+        ]
+
+        # self.report_event(name, data={"modules": modules})
+        ts = time.time()
+        for module in modules:
+            self.report_event(name, data={"module": module}, ts=ts)
+
+    def report_modules_matched(self):
+        """Reports imported modules have a match on the list of modules."""
+        self._report_modules("module-match", self.modules)
+
+    def report_modules_all(self):
+        """Reports all imported modules, except ones that builtin, hidden, or used by us)."""
+        self._report_modules("module-all", None)
+
+    def report_modules_site(self):
+        site_modules = []
+        for path in sys.path:
+            if 'site-packages' not in path:
+                continue
+            site_modules += [
+                name.rstrip(".py") for name in os.listdir(path)
+                if not name.endswith(".egg-info")
+            ]
+        self._report_modules("module-site", site_modules)
+
+    def site_hooks(self):
+        """Activates hooks. Intended for use in sitecustomize."""
+        # nersc ovis ldms dlopen'd by nerscjson conflicts with cray ldms in /usr/lib64
+        # https://gitlab.nersc.gov/nersc/n9/issues/-/issues/4612
+        if "/usr/lib64" in os.environ.get("LD_LIBRARY_PATH", "").split(":"):
+            return
+        # skip hooks for MPI rank > 0
+        if int(os.environ.get("SLURM_PROCID", 0)):
+            return
+        # skip hooks for multiprocessing children
+        # if "-c from multiprocessing" in self.base_record["instance"]["metadata"]["cmdline"]:
+        #     return
+
+        # TODO: dynamic control rate
+        control = random.random() < self.rate
+
+        if "init" in self.hooks:
+            if control:
+                self.report_event("init")
+                atexit.register(self.report_event, "exit")
+
+        if "imports" in self.hooks:
+            atexit.register(self.report_modules_matched)
+
+        if "imports_sampler" in self.hooks:
+            if control:
+                atexit.register(self.report_modules_all)

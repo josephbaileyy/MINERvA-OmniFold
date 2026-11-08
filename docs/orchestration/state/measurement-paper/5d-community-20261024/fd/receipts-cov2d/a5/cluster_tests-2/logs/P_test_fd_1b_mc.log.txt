@@ -1,0 +1,189 @@
+test_1b_default_is_1e_9_and_refuses_here_with_its_message (test_fd_1b_mc.CholeskyTolerance) ... ok
+test_a5_tolerance_passes_and_reports_the_compared_values (test_fd_1b_mc.CholeskyTolerance) ... ok
+test_a_wrong_cholesky_refuses_at_the_a5_tolerance (test_fd_1b_mc.CholeskyTolerance) ... ok
+test_below_full_rank_the_check_is_skipped_and_reported_so (test_fd_1b_mc.CholeskyTolerance) ... ok
+test_the_fixture_is_full_rank_and_ill_conditioned (test_fd_1b_mc.CholeskyTolerance) ... ok
+test_well_conditioned_grades_are_unchanged_by_the_argument (test_fd_1b_mc.CholeskyTolerance) ... ok
+test_denominators_compose_per_cell (test_fd_1b_mc.Compose) ... ok
+test_draw_order (test_fd_1b_mc.Compose) ... ok
+test_flux_universe_divides_by_its_own_flux (test_fd_1b_mc.Compose) ... ok
+test_flux_without_a_table_refuses (test_fd_1b_mc.Compose) ... ok
+test_no_universe_is_the_cv (test_fd_1b_mc.Compose) ... ok
+test_nonfinite_weights_are_zeroed_at_load_as_s1 (test_fd_1b_mc.Compose) ... ok
+test_one_universe_is_universe_inputs_exactly (test_fd_1b_mc.Compose) ... ok
+test_two_flux_universes_refuse (test_fd_1b_mc.Compose) ... ok
+test_two_universes_multiply_ratios_and_add_on_zero_cv_rows (test_fd_1b_mc.Compose) ... ok
+test_mean_experiment_is_the_toy_path_at_its_means (test_fd_1b_mc.Experiments) ... ok
+test_stat_replica_on_the_data_is_set_As_path (test_fd_1b_mc.Experiments) ... ok
+test_stat_replicas_share_one_realization (test_fd_1b_mc.Experiments) ... ok
+test_toy_carries_set_As_mc_and_template_streams (test_fd_1b_mc.Experiments) ... ok
+test_toy_unfolds_with_the_nominal_mc_and_keeps_natures_truth (test_fd_1b_mc.Experiments) ... ok
+test_with_mc_sets_the_unfolding_flux (test_fd_1b_mc.Experiments) ... ok
+test_a_bias_is_attributed_to_bias (test_fd_1b_mc.Grading) ... ok
+test_cell_flag_boundary (test_fd_1b_mc.Grading) ... ok
+test_matched_errors_cover (test_fd_1b_mc.Grading) ... ok
+test_narrow_errors_do_not_flag (test_fd_1b_mc.Grading) ... ok
+test_wide_errors_under_cover_and_are_attributed_to_width (test_fd_1b_mc.Grading) ... ok
+test_wrong_correlations_flag_the_joint_region_only (test_fd_1b_mc.Grading)
+Per-cell widths right, correlations wrong: only the chi2 region can see it. ... ok
+test_an_atime_move_exits_8 (test_fd_1b_mc.Jobs) ... {"out": "fd1b_mc_g18_central_T.npz", "seconds_unfold": 0.004}
+[fd-1b-mc] DEVIATION: atime moved on ['x']
+ok
+test_central_and_seed_products (test_fd_1b_mc.Jobs) ... {"out": "fd1b_mc_g18_central_T.npz", "seconds_unfold": 0.003}
+{"out": "fd1b_mc_g18_seed_T.npz", "seconds_unfold": 0.004}
+ok
+test_control_and_capture_only_on_the_data (test_fd_1b_mc.Jobs) ... [fd-1b-mc] refusing: Refusal: the control and capture roles run on the data (--truth data), and only they
+[fd-1b-mc] refusing: Refusal: the control and capture roles run on the data (--truth data), and only they
+ok
+test_declared_ranges (test_fd_1b_mc.Jobs) ... ok
+test_a_non_finite_toy_truth (test_fd_1b_mc.Loaders) ... ERROR
+test_an_atime_move_exits_8 (test_fd_1b_mc.Loaders) ... {"out": "fd1b_mc_g18_central_T.npz", "seconds_unfold": 0.004}
+[fd-1b-mc] DEVIATION: atime moved on ['x']
+ok
+test_central_and_seed_products (test_fd_1b_mc.Loaders) ... {"out": "fd1b_mc_g18_central_T.npz", "seconds_unfold": 0.004}
+{"out": "fd1b_mc_g18_seed_T.npz", "seconds_unfold": 0.004}
+ok
+test_control_and_capture_only_on_the_data (test_fd_1b_mc.Loaders) ... [fd-1b-mc] refusing: Refusal: the control and capture roles run on the data (--truth data), and only they
+[fd-1b-mc] refusing: Refusal: the control and capture roles run on the data (--truth data), and only they
+ok
+test_declared_ranges (test_fd_1b_mc.Loaders) ... ok
+test_input_and_flux_table_digests (test_fd_1b_mc.Loaders) ... [fd-1b-mc] refusing: Refusal: input digests bbfb79ec798217159576ad108a54ec1ac7de9a1f2e3496160c5f8a75f3a3a030 / 93f30df4c46cdf2b5d594fe2cf839669919b1e8581e43f93e3ad071fcea95160 are not the declared ones
+ok
+test_weight_pins_and_push_digest (test_fd_1b_mc.Loaders) ... ok
+test_compose_records_the_composite_per_row (test_fd_1b_mc.N1Composite) ... ok
+test_cv_zero_rows_bound_by_band_count_and_the_exact_pass_sums (test_fd_1b_mc.N1Composite) ... ok
+test_declared_draws_are_all_three_truths_seeds (test_fd_1b_mc.N1Composite) ... ERROR
+test_rows_beyond_the_cap_are_not_evaluated_and_stop (test_fd_1b_mc.N1Composite) ... ok
+test_the_all_draws_bound_is_attained_and_the_exact_pass_is_composes (test_fd_1b_mc.N1Composite) ... ok
+test_a_toy_reads_the_constraint_through_o_noatime (test_fd_1b_mc.NoAtime) ... ok
+test_null_reads_the_assembly_through_o_noatime (test_fd_1b_mc.NoAtime) ... ok
+test_readout_reads_the_assembly_through_o_noatime (test_fd_1b_mc.NoAtime) ... ok
+test_receipt_reads_the_constraint_through_o_noatime (test_fd_1b_mc.NoAtime) ... ok
+test_remade_reads_the_constraint_through_o_noatime (test_fd_1b_mc.NoAtime) ... ok
+test_the_copy_gives_the_bound_readers_answer (test_fd_1b_mc.NoAtime) ... ok
+ERROR
+test_counts_against_the_raw_weights (test_fd_1b_mc.Receipt) ... ERROR
+test_flux_law_is_constraint_weighted (test_fd_1b_mc.Remade) ... ERROR
+test_lateral_is_s1s_transferred (test_fd_1b_mc.Remade) ... ERROR
+test_laws_carry_their_blocks_and_the_null_matches (test_fd_1b_mc.Remade) ... ERROR
+test_the_seed_check_refuses_a_difference (test_fd_1b_mc.Remade) ... ok
+test_a_ratio_off_the_committed_sum_refuses (test_fd_1b_mc.Truths) ... ok
+test_capture_is_the_unfold_and_keeps_the_push (test_fd_1b_mc.Truths) ... ok
+test_g18_truth_is_f1s_ratio (test_fd_1b_mc.Truths) ... ok
+test_plugin_r_is_the_push_on_truth_rows (test_fd_1b_mc.Truths) ... ok
+test_plugin_truth_is_the_unfolds_result_by_construction (test_fd_1b_mc.Truths)
+Control (b): with r = the push weights, true_xsec is s5c_unfold.unfold's formula applied to them. ... ok
+test_pass_and_reprice (test_fd_1b_mc.Walls) ... ok
+test_the_pilot_without_the_plugin_has_no_capture (test_fd_1b_mc.Walls) ... ok
+
+======================================================================
+ERROR: test_a_non_finite_toy_truth (test_fd_1b_mc.Loaders)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 1050, in test_a_non_finite_toy_truth
+    mc.run_item(a, world, "toy", "3620000")
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 449, in run_item
+    d = toys.draw_for_seed(seed, via_noatime(toys.flux_probabilities, a.flux_constraint), world["groups"])
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 97, in via_noatime
+    return reader(copy)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_toys.py", line 203, in flux_probabilities
+    w = s1_assemble.flux_weights(constraint)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/s1_assemble.py", line 140, in flux_weights
+    cons.append((int(t[1]), float(t[2])))
+ValueError: could not convert string to float: 'np.float64(3.8451650991152744)'
+
+======================================================================
+ERROR: test_declared_draws_are_all_three_truths_seeds (test_fd_1b_mc.N1Composite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 963, in test_declared_draws_are_all_three_truths_seeds
+    flux_p = mc.via_noatime(toys.flux_probabilities, self.w.constraint)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 97, in via_noatime
+    return reader(copy)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_toys.py", line 203, in flux_probabilities
+    w = s1_assemble.flux_weights(constraint)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/s1_assemble.py", line 140, in flux_weights
+    cons.append((int(t[1]), float(t[2])))
+ValueError: could not convert string to float: 'np.float64(3.8451650991152744)'
+
+======================================================================
+ERROR: setUpClass (test_fd_1b_mc.Pipeline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 702, in setUpClass
+    ce = np.diag(cls.c_e(cls)) / cls.X_T ** 2
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 773, in c_e
+    w = np.array([float(l.split()[2]) for l in self.constraint.read_text().splitlines()])
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 773, in <listcomp>
+    w = np.array([float(l.split()[2]) for l in self.constraint.read_text().splitlines()])
+ValueError: could not convert string to float: 'np.float64(0.7915834247800635)'
+
+======================================================================
+ERROR: test_counts_against_the_raw_weights (test_fd_1b_mc.Receipt)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 1000, in test_counts_against_the_raw_weights
+    res = mc.receipt(a)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 566, in receipt
+    flux_p = via_noatime(toys.flux_probabilities, a.flux_constraint)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 97, in via_noatime
+    return reader(copy)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_toys.py", line 203, in flux_probabilities
+    w = s1_assemble.flux_weights(constraint)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/s1_assemble.py", line 140, in flux_weights
+    cons.append((int(t[1]), float(t[2])))
+ValueError: could not convert string to float: 'np.float64(3.8451650991152744)'
+
+======================================================================
+ERROR: test_flux_law_is_constraint_weighted (test_fd_1b_mc.Remade)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 413, in test_flux_law_is_constraint_weighted
+    rm = self.remade()
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 403, in remade
+    return mc.remade(self.tmp, "t", "g18", self.s1, self.U, self.constraint, self.frac)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 628, in remade
+    w = via_noatime(sa.flux_weights, constraint)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 97, in via_noatime
+    return reader(copy)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/s1_assemble.py", line 140, in flux_weights
+    cons.append((int(t[1]), float(t[2])))
+ValueError: could not convert string to float: 'np.float64(0.6948875849881262)'
+
+======================================================================
+ERROR: test_lateral_is_s1s_transferred (test_fd_1b_mc.Remade)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 420, in test_lateral_is_s1s_transferred
+    rm = self.remade()
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 403, in remade
+    return mc.remade(self.tmp, "t", "g18", self.s1, self.U, self.constraint, self.frac)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 628, in remade
+    w = via_noatime(sa.flux_weights, constraint)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 97, in via_noatime
+    return reader(copy)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/s1_assemble.py", line 140, in flux_weights
+    cons.append((int(t[1]), float(t[2])))
+ValueError: could not convert string to float: 'np.float64(0.6948875849881262)'
+
+======================================================================
+ERROR: test_laws_carry_their_blocks_and_the_null_matches (test_fd_1b_mc.Remade)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 406, in test_laws_carry_their_blocks_and_the_null_matches
+    rm = self.remade()
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/tests/test_fd_1b_mc.py", line 403, in remade
+    return mc.remade(self.tmp, "t", "g18", self.s1, self.U, self.constraint, self.frac)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 628, in remade
+    w = via_noatime(sa.flux_weights, constraint)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/fd_1b_mc.py", line 97, in via_noatime
+    return reader(copy)
+  File "/dev/shm/josephrb-cov2d-a5t/deploy/nd-unfolding/s1_assemble.py", line 140, in flux_weights
+    cons.append((int(t[1]), float(t[2])))
+ValueError: could not convert string to float: 'np.float64(0.6948875849881262)'
+
+----------------------------------------------------------------------
+Ran 61 tests in 31.727s
+
+FAILED (errors=7)
+SUITE env=P module=test_fd_1b_mc ran=61 failures=0 errors=7 skipped=0 guarded_reads=0 ok=False

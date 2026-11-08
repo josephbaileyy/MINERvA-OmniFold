@@ -64,11 +64,14 @@ def predicted_offset(bands: dict, w_flux: np.ndarray, x_hat_T: np.ndarray) -> np
     return -off
 
 
-def leave_out_mec(E, blocks: dict, null_minus: dict, grade_CT: dict, cells) -> dict:
+def leave_out_mec(E, blocks: dict, null_minus: dict, grade_CT: dict, cells, chol_tol: float = 1e-9,
+                  chol_out: dict | None = None) -> dict:
     """C_T- graded against its own null (built in the null step, before any toy error was read: cov2d_null.null_at_T's
-    ``null_minus``), read exactly as 1B §5.4 (fd_1b_mc.py:803-808). It changes no verdict."""
+    ``null_minus``), read exactly as 1B §5.4 (fd_1b_mc.py:803-808). It changes no verdict. ``chol_tol`` and
+    ``chol_out`` go to 1B's grade (its Cholesky cross-check at full rank; COV2D-BINDING-2 addendum A5); the defaults
+    are 1B's."""
     import fd_1b_mc as mc
-    g = mc.grade(E, blocks["C_T_minus"], null_minus)
+    g = mc.grade(E, blocks["C_T_minus"], null_minus, chol_tol=chol_tol, chol_out=chol_out)
     cells = [int(x) for x in cells]
     hit = [cells[i] for i, fl in enumerate(g["cell_flag"]) if fl]
     if grade_CT["verdict"] == "COVERS":

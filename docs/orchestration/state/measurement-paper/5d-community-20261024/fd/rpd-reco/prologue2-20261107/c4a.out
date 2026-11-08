@@ -1,0 +1,5 @@
+{"mat_setup_scripts": 6, "mismatches": 0}
+flags=ehuB
+errexit        	on
+nounset        	on
+pipefail       	on
