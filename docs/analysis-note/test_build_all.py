@@ -173,6 +173,14 @@ with open(os.environ["BUILD_TEST_LOG"], "a") as fh:
 mode = "self" if "--self-test" in sys.argv[1:] else "check"
 sys.exit(1 if os.environ.get("BUILD_TEST_VALUES_FAIL") == mode else 0)
 """
+# The landed-result values generator (note round 1, 2026-11-08) is stubbed the same way; its own behaviour is tested by
+# its --check in CI ("note: landed-result values fresh").
+FAKE_LANDED = r"""#!/usr/bin/env python3
+import os, sys
+with open(os.environ["BUILD_TEST_LOG"], "a") as fh:
+    fh.write("landed: reached with args %r\n" % (sys.argv[1:],))
+sys.exit(1 if os.environ.get("BUILD_TEST_LANDED_FAIL") == "check" else 0)
+"""
 FAKE_SUPPLEMENTAL = r"""#!/usr/bin/env python3
 import os, sys
 with open(os.environ["BUILD_TEST_LOG"], "a") as fh:
@@ -207,6 +215,7 @@ class BuildAllHarness(unittest.TestCase):
         self._install(self.sandbox / "check_body_pointers.py", FAKE_BODY_LINT)
         self._install(self.sandbox / "check_note_records.py", FAKE_PIN)
         self._install(self.sandbox / "make_values_fived16.py", FAKE_VALUES)
+        self._install(self.sandbox / "make_values_landed.py", FAKE_LANDED)
         self._install(self.sandbox / "make_supplemental.py", FAKE_SUPPLEMENTAL)
         # The pending-placeholder check (build_all.sh, after the containment) extracts each PDF's text with pdftotext,
         # which the minimal PATH below does not reach; the fake PDFs are plain text, so a shim that copies them is the
@@ -231,7 +240,7 @@ class BuildAllHarness(unittest.TestCase):
             os.utime(str(lg), (old, old))
 
     def run_build(self, mode, containment_rc="0", drop_latexmk=False, sec4_fail="", bodylint_fail="", pin_fail="",
-                  values_fail="", supplemental_fail=""):
+                  values_fail="", supplemental_fail="", landed_fail=""):
         env = dict(os.environ)
         # NERSC exports `module` as a Bash function and recreates it through
         # BASH_ENV.  If either reaches the fixture shell, build_all.sh loads the
@@ -249,6 +258,7 @@ class BuildAllHarness(unittest.TestCase):
         env["BUILD_TEST_PIN_FAIL"] = pin_fail             # likewise for the records-pin check
         env["BUILD_TEST_VALUES_FAIL"] = values_fail       # likewise for make_values_fived16.py
         env["BUILD_TEST_SUPPLEMENTAL_FAIL"] = supplemental_fail   # likewise for make_supplemental.py
+        env["BUILD_TEST_LANDED_FAIL"] = landed_fail       # "check": make_values_landed.py --check exits 1
         # A minimal PATH plus the shim dir, so the fake latexmk is the only one reachable.
         base = "/usr/bin:/bin:/usr/sbin:/sbin"
         env["PATH"] = base if drop_latexmk else "%s:%s" % (self.bin, base)
@@ -384,6 +394,15 @@ class TestTheHappyPath(BuildAllHarness):
                     self.assertNotEqual(0, proc.returncode, proc.stdout)
                     self.assertIn(tag + ": reached", self.calls)
                     self.assertNotIn("latexmk: fake invoked", self.calls)
+
+    def test_a_stale_landed_values_file_fails_the_build_before_any_latexmk(self):
+        """A stale values_landed.tex must stop the build before any LaTeX run, after the five-observable check."""
+        proc = self.run_build("build", landed_fail="check")
+        self.assertNotEqual(0, proc.returncode, proc.stdout)
+        self.assertIn("landed: reached with args ['--check']", self.calls)
+        self.assertNotIn("latexmk: fake invoked", self.calls)
+        self.assertLess(self.calls.index("values: reached with args ['--check']"),
+                        self.calls.index("landed: reached with args ['--check']"))
 
     def test_the_values_and_supplemental_checks_run_after_their_self_tests(self):
         self.run_build("build")
