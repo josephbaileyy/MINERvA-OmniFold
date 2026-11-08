@@ -1393,6 +1393,17 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/env
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-private-native-20261108/STATIC-CHECKS.txt	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-private-native-20261108/SUITE.txt	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-private-native-20261108/VERIFICATION.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/GUARD-COVERAGE.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/MUTATIONS.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/MUTATIONS.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/PRODUCTION-AST-CHECK.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/REPORT.md	LIVE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/ROOT-SOURCE-IDENTITIES.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/SHA256SUMS	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/SOURCE-IDENTITIES.json	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/STATIC-CHECKS.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/SUITE.txt	MACHINE	open	
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/VERIFICATION.json	MACHINE	open	
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/deposit-candidate/SUPPLEMENT-COVARIANCES.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-design-20261023/ASSIGNMENT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-design-20261023/DESIGN.md	LIVE	open	""

@@ -11055,6 +11055,17 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/env
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-private-native-20261108/STATIC-CHECKS.txt	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-private-native-20261108/SUITE.txt	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-private-native-20261108/VERIFICATION.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/GUARD-COVERAGE.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/MUTATIONS.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/MUTATIONS.txt	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/PRODUCTION-AST-CHECK.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/ROOT-SOURCE-IDENTITIES.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/SOURCE-IDENTITIES.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/STATIC-CHECKS.txt	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/SUITE.txt	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/import-pin-paths-repair-20261108/VERIFICATION.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue-20261107/README.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue-20261107/SHA256SUMS.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue-20261107/cleanup.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
