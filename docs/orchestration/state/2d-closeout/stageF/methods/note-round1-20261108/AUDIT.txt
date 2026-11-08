@@ -101,6 +101,16 @@ E10 LOW   MISSING  ES: the second post hoc choice (was N7; the director's go, 20
 
 == NOT DRAFTED: a decision is needed first ==
 Held by the director (2026-11-08): N1 and N2 go to Joseph; N6 goes with N1; N4 and N5 hold.
+Joseph ruled on N1 and N2 in DECISION-20261108-joseph-note-framing-and-estimator-dependence.md (#947, merged at af73565):
+- the current note archived first: archive-note-measurement-framed-20261108/ (commit 3b3f8ce4);
+- N2 drafted as a stated limitation, new sec:fived16-ibu (commit 12186634);
+- N1 and N6 drafted: the abstract, the ES opening, sec_fived16's title and opening (the 16 cells as the paper's
+  round-5 draft presents them: illustrative output, not for fitting or for constraining models, with its reasons),
+  and the four appendix sites. The title ("Analysis Note: Unbinned OmniFold analysis of MINERvA charged-current
+  inclusive data") is neutral and unchanged. Remaining uses of "this measurement" in sec_method.tex:210,
+  sec_results.tex:23, :35, :164, app_statmethods.tex:39 and app_negweight.tex:40, :153 refer to the 2D unbinned
+  result and are left as they are.
+N4 and N5 stay held.
 
 N1  HIGH  STALE (framing)  The note is framed as a measurement.
     Note: main_note.tex:73 (abstract: "We present a simultaneous measurement ..."); sec_execsummary.tex:6 ("The principal
