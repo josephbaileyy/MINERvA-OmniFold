@@ -10609,6 +10609,16 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/cod
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/VERIFICATION.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/local_receipt.py	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/code-platform-repair-20261106/production-config.draft.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/GUARD-COVERAGE.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/MUTATIONS.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/MUTATIONS.txt	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/REPORT.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/SCIENTIFIC-AST-CHECK.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/SHA256SUMS	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/SOURCE-IDENTITIES.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/STATIC-CHECKS.txt	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/SUITE.txt	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/environment-guard-split-20261107/VERIFICATION.json	tracked	MACHINE	state-artifact	measurement-paper		open		exact-path-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue-20261107/README.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue-20261107/SHA256SUMS.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rpd-reco/prologue-20261107/cleanup.out	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
