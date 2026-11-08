@@ -1,0 +1,134 @@
+remote sha256 418c6aadad1384332a8866d4970d31ee3d7635c220316d6d5f03fcfcc48de761
+node login04 2026-11-08T04:57:45Z
+connect script sha256 418c6aadad1384332a8866d4970d31ee3d7635c220316d6d5f03fcfcc48de761
+== 1. COV2D fence (allowed names: rs1_* and ens1_*; anything else refuses)
+squeue rc=0; rows:
+
+-- end rows
+refusing rows: []
+FENCE: clear
+== 2 and 3. verify, list, remove
+== LEDGER BEGIN
+{
+ "host": "login04",
+ "python": "3.6.15",
+ "start": "2026-11-08T04:57:46.236Z",
+ "roots": {
+  "/dev/shm/limres-rpd-prologue3-20261108": {
+   "declared": {
+    "run/prologue-prepare.json": "337a88c893f0e1b24d90db8d940133d172f22a1d67f0aa7f8cc5f5044c73b5c8"
+   },
+   "before_file_count": 21312,
+   "before_run": [
+    [
+     "f",
+     11153,
+     "run/policy-config.json"
+    ],
+    [
+     "f",
+     162122,
+     "run/prologue-prepare.json"
+    ],
+    [
+     "f",
+     170498,
+     "run/prologue-prepare.view.json"
+    ],
+    [
+     "f",
+     1924,
+     "run/prologue-worker.STOP.json"
+    ],
+    [
+     "f",
+     344904,
+     "run/prologue.strace"
+    ],
+    [
+     "f",
+     255,
+     "run/redact.out"
+    ],
+    [
+     "f",
+     3786,
+     "run/redaction-check.txt"
+    ],
+    [
+     "f",
+     40016,
+     "run/trace-policy.json"
+    ],
+    [
+     "f",
+     2572,
+     "run/worker.stderr.txt"
+    ],
+    [
+     "f",
+     0,
+     "run/worker.stdout.txt"
+    ],
+    [
+     "f",
+     1407,
+     "run/instrument/0-setup_salloc_env.sh"
+    ],
+    [
+     "f",
+     345,
+     "run/instrument/1-setup.sh"
+    ],
+    [
+     "f",
+     816,
+     "run/instrument/2-setup.sh"
+    ],
+    [
+     "f",
+     630,
+     "run/instrument/3-setup_MAT.sh"
+    ],
+    [
+     "f",
+     612,
+     "run/instrument/4-setup_MAT-MINERvA.sh"
+    ],
+    [
+     "f",
+     639,
+     "run/instrument/5-setup_UnfoldUtils.sh"
+    ],
+    [
+     "f",
+     1985624,
+     "run/instrument/6-libMAT.so"
+    ],
+    [
+     "f",
+     4114,
+     "run/instrument/7-MATDict.rootmap"
+    ],
+    [
+     "f",
+     17061,
+     "run/instrument/8-MAT_rdict.pcm"
+    ]
+   ],
+   "measured": {
+    "run/prologue-prepare.json": "337a88c893f0e1b24d90db8d940133d172f22a1d67f0aa7f8cc5f5044c73b5c8"
+   },
+   "rmtree": [
+    "2026-11-08T04:57:47.197Z",
+    "/dev/shm/limres-rpd-prologue3-20261108"
+   ]
+  }
+ },
+ "still_present": [],
+ "rc": 0,
+ "end": "2026-11-08T04:57:47.197Z"
+}
+== LEDGER END
+cleanup python rc=0
+== rpd-prologue3-cleanup rc=0 2026-11-08T04:57:47Z
