@@ -39,6 +39,10 @@ import s1_assemble as sa  # noqa: E402
 import s5p_universe  # noqa: E402
 from test_ll5d import Fixture, digest  # noqa: E402
 
+# The declared seeds come from ll5d (A1a's tests pin their values); no literal of section 3.6's range is written here, so
+# A1a's seed-collision test (test_ll5d.Seeds) passes with this file tracked.
+G, A = list(ll5d.TOY_SEEDS["g18"]), list(ll5d.TOY_SEEDS["ar23"])
+
 
 def fake_unfold(exp, threads, seed=42, *rest):
     """A deterministic stand-in for the estimator: the observed counts' histogram on the fine grid, times a seed
@@ -118,12 +122,12 @@ class Items(unittest.TestCase):
         self.assertEqual(sum(r == "stat" for r, _ in it), 50)
         self.assertEqual([i for r, i in it if r == "clipmean"], ["minus2", "all"])
         self.assertEqual(len(b.PILOT), 13)
-        self.assertIn(("g18", "toy", "minus2_4751000"), b.PILOT)
+        self.assertIn(("g18", "toy", f"minus2_{G[0]}"), b.PILOT)
         self.assertIn(("ar23", "stat", "1"), b.PILOT)
 
     def test_toy_items_name_a_reading_and_a_declared_seed(self):
-        self.assertEqual(b.parse_toy("all_4761299", "ar23"), ("all", 4761299))
-        for bad in ("half_4751000", "minus2_4761000", "minus2_x", "minus2"):
+        self.assertEqual(b.parse_toy(f"all_{A[-1]}", "ar23"), ("all", A[-1]))
+        for bad in (f"half_{G[0]}", f"minus2_{A[0]}", "minus2_x", "minus2"):
             with self.assertRaises(b.Refusal):
                 b.parse_toy(bad, "g18")
 
@@ -180,7 +184,7 @@ class Nature(World):
                       "edges": inputs["edges"]}
         for tags in (draw, ll5d.drop2(draw)):
             ui, ub, acc, _ = b.nature_inputs(self.world(), self.load, tags, self.r["g18"])
-            exp, x_true = mc.toy_experiment(inputs, self.bkg, ui, ub, self.r["g18"], 4751001)
+            exp, x_true = mc.toy_experiment(inputs, self.bkg, ui, ub, self.r["g18"], G[1])
             nt = ll5d.nature_truth(acc, self.r["g18"], geo, ui["flux"], const_full)
             np.testing.assert_allclose(self.U @ np.ravel(x_true), self.U @ nt["x"], rtol=1e-12, atol=0)
             np.testing.assert_array_equal(exp["flux"], inputs["flux"])            # the unfolding MC divides by Phi_CV
@@ -212,7 +216,7 @@ class Unfold(World):
 
     def test_each_role_writes_its_arrays(self):
         for role, item in (("central", "T"), ("seed", "T"), ("block", "MaRES_1"), ("block", "GEANT_Proton_0"),
-                           ("block", "Flux_7"), ("stat", "3"), ("toy", "minus2_4751002"), ("toy", "all_4751002")):
+                           ("block", "Flux_7"), ("stat", "3"), ("toy", f"minus2_{G[2]}"), ("toy", f"all_{G[2]}")):
             arrays, meta = self.item_run(role, item)
             self.assertTrue(np.all(np.isfinite(arrays["xsec_flat"])), (role, item))
             if role == "toy":
@@ -226,12 +230,12 @@ class Unfold(World):
             if role == "stat":
                 self.assertEqual(meta["stat_seed"], ll5d.STAT_SEED["g18"])
         ar, mr = self.item_run("stat", "3", truth="ar23")
-        self.assertEqual(mr["stat_seed"], 4_770_200)
+        self.assertEqual(mr["stat_seed"], ll5d.STAT_SEED["ar23"])
         seen, real = [], mc.stat_experiment
         with mock.patch.object(mc, "stat_experiment", lambda i, k, r, seed, b_: seen.append(seed) or real(i, k, r, seed, b_)):
             self.item_run("stat", "4")
             self.item_run("stat", "4", truth="ar23")
-        self.assertEqual(seen, [4_770_100, 4_770_200])           # the realization d~_T at section 3.6's seeds
+        self.assertEqual(seen, [ll5d.STAT_SEED["g18"], ll5d.STAT_SEED["ar23"]])           # the realization d~_T at section 3.6's seeds
 
     def test_the_seed_role_differs_from_central_only_by_the_estimator_seed(self):
         a1, _ = self.item_run("central", "T")
@@ -240,7 +244,7 @@ class Unfold(World):
         self.assertFalse(np.array_equal(a1["xsec_flat"], a2["xsec_flat"]))     # the fake estimator sees the seed
 
     def test_refusals(self):
-        for role, item, why in (("block", "Rvp1pi_0", "175"), ("toy", "minus2_4761000", "declared"),
+        for role, item, why in (("block", "Rvp1pi_0", "175"), ("toy", f"minus2_{A[0]}", "declared"),
                                 ("stat", "51", "set A"), ("central", "X", "item T"), ("clipmean", "half", "reading")):
             with self.assertRaisesRegex(b.Refusal, why):
                 self.item_run(role, item)
