@@ -876,8 +876,8 @@ The companion note is restructured into a coherent methods-and-benchmark narrati
 
 1. **Executive Summary as Methods-and-Benchmark Scope:**  
    * Opens with the comprehensive **Per-Result Status & Citability Matrix**:
-     * 2D central value: Citable for reproduction of published integral through values macros `\sigTwoD` and `\ratioTot`; not citable as independent validation.
-     * 2D uncertainty $Q = S_5 + C_{\\text{PL}}$: Quoted 2D uncertainty construction through values macros `\uqMedian` and `\uqIntegral`; not citable for validated coverage.
+     * 2D central value: Citable for reproduction of published integral; not citable as independent validation.
+     * 2D uncertainty $Q = S_5 + C_{\\text{PL}}$: Quoted 2D uncertainty construction (adopted Q, median per bin 6.45%, integral 4.75%); not citable for validated coverage.
      * 3D & 4D central values: Citable for dimensional consistency and marginal normalization; not citable with covariance.
      * 5D configuration-(a) central value: Citable as exploratory unregularized 5D central value; not citable with covariance.
      * 5D configuration-(a) covariance ($C_Z$): Adopted under the §6.4 exception; non-passing ($s_{\text{proj}} = 6.145\%$ against the 5% limit, five bands unmeasured, the pre-production null bound not met); not a yardstick and not an uncertainty product (governed by S2-COM-2).
@@ -886,7 +886,7 @@ The companion note is restructured into a coherent methods-and-benchmark narrati
      * Extended fiducial volume: Exploratory demonstration of unbinned phase-space extension; not citable as finalized cross section.
 
 2. **The 2D Benchmark (Sections 2–6):**  
-   * Integral agreement with publication through values macro `\ratioTot`.  
+   * Integral agreement with publication.  
    * Paper-covariance distance $\\chi^2/\\text{ndf}$ quoted strictly through `\\chiPaper` over 205 bins, with correlated shape difference of unidentified origin.  
    * Stated limitations: run-period block $C_{\\text{PL}}$ absorbs playlist inconsistency by construction; no COV2D note sentence is added under AUD-E1.  
    * Method choice disclosures: LightGBM architecture, negative-weight subtraction refinement, and result adoption were selected with published distance known.
