@@ -29,12 +29,12 @@ Every item is classified under one of four mutually exclusive codes per the dire
 
 | Source | Total Items | Class T (Text) | Class R (Record) | Class A (Analysis) | Class D (Dispute / Held / Void) |
 |---|---:|---:|---:|---:|---:|
-| **AUDIT.txt** (E1–E10, N1–N6, L1–L4) | 20 | 17 | 1 | 0 | 2 |
+| **AUDIT.txt** (E1–E10, N1, N2, N4–N6, L1–L4) | 19 | 16 | 1 | 0 | 2 |
 | **Sonnet Report 1** (S1-ACC, S1-COM) | 30 | 25 | 4 | 0 | 1 |
 | **Sonnet Report 2** (S2-ACC, S2-COM) | 15 | 14 | 1 | 0 | 0 |
 | **Gemini Report 1** (G1-ACC, G1-COM, G1-PRES) | 12 | 11 | 0 | 0 | 1 |
-| **Gemini Report 2** (G2-ACC, G2-PRES, G2-VOID) | 4 | 2 | 0 | 0 | 2 |
-| **Total Ledger Items** | **81** | **69** | **6** | **0** | **6** |
+| **Gemini Report 2** (G2-ACC, G2-PRES, G2-VOID) | 4 | 3 | 0 | 0 | 1 |
+| **Total Ledger Items** | **80** | **69** | **6** | **0** | **5** |
 
 *Note on Class A:* No item in Round 2 requires new compute campaigns. Under `DECISION-20261108`, the analysis note is reframed as the technical record of the methods-and-benchmark study. Algorithmic limitations, unvalidated coverage, rounding sensitivity, and unexecuted closures are primary methodological findings and benchmark deliverables to be reported transparently, not bugs to be computed away.
 
@@ -47,10 +47,11 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
 ### EDITED in Round 1 (Review & Verification)
 
 * **AUD-E1 [T]** — **COV2D held-out tune result.**  
-  *Finding:* Held-out tune test results (0/300 coverage at AR23 and G18) must be integrated into the note without violating pinned adjacent sentences.  
+  *Finding:* Held-out tune test results (joint in-region count 0 of 300 at AR23 and G18, reading UNDER-COVERS, with flagged cells attributed to bias and false-flag rate $\le 0.036$) are reported as an empirical test of the procedure's covariance at those tunes.  
   *Record:* `OUTCOME-20261108-cov2d-both-tunes-under-cover.md:99-106` (`CITABLE FOR`), `:108-119` (`NOT CITABLE FOR`).  
   *Target:* `docs/analysis-note/sec_validation.tex:199`, `sec_systematics.tex:53`, `sec_systematics.tex:214`, `sec_execsummary.tex:21`.  
-  *Status:* Integrated in round 1; verify flow and placement after paragraph's final sentence to keep `check_note_records.py` green.
+  *Prohibitions (`NOT CITABLE FOR` lines 108–119):* Must strictly carry all negative constraints: (1) NOT citable for coverage of reported intervals at the data's point ($Q_R$ is made at the data, not at $T$); (2) NOT citable for a coverage rate or statements about truths unlike these two; (3) NOT citable for a cause of joint under-coverage or of any flag; (4) NOT citable for anything about $C_{\text{PL},R}$ or $C_{\text{model}}$ (neither drawn); (5) NOT citable for independence from training rows; (6) does NOT replace or remove earlier fixed-truth failure (`VL162`; adds to it); (7) NOT citable as wording for the paper or the note (must go through PRD-referee read and Joseph, §12); (8) the "both COVER" sentence of §13 is not available.  
+  *Resolution:* Note text must strictly reflect only the citable facts without asserting coverage of reported data intervals or unmeasured causes.
 
 * **AUD-E2 [T]** — **1B STOP rule and counts.**  
   *Finding:* The 5D coverage pre-check fail-closed rule and exact draw counts (892 of 900 draws with non-positive composite denominator; up to 62 cells) must be explicitly stated.  
@@ -65,10 +66,11 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Status:* Drafted in round 1.
 
 * **AUD-E4 [T]** — **Valid-region classes of the 16 cells.**  
-  *Finding:* Tabulate V-ATLAS (14 valid; not R02, R06) and V-PRIOR (14 valid; not R08, R15), with 12 valid under both. Clarify neither is a coverage test.  
+  *Finding:* Tabulate each cell's V-ATLAS class (14 valid; fails in R02, R06 from A7 GiBUU hybrid truth alone) and V-PRIOR class (14 valid; fails in R08, R15), with 12 valid under both, and reading (3)'s printed quantities labeled "computed after the pulls against the prior were seen (L4)".  
   *Record:* `OUTCOME-20261107-valid-region.md:21-25` (`CITABLE FOR`), `:27-37` (`NOT CITABLE FOR`).  
   *Target:* `docs/analysis-note/sec_fived16.tex:218`.  
-  *Status:* Drafted in round 1.
+  *Prohibitions (`NOT CITABLE FOR` lines 27–37):* Must strictly carry all negative constraints: (1) NOT citable for coverage (diagnostics grade bias, not coverage; no interval is validated); (2) NOT citable as a measurement (diagnostics of estimator on committed products; no reported value changes); (3) NOT citable for any physics claim about generators; (4) NOT citable for the cause of any departure; (5) NOT citable for V-PRIOR, or its threshold of 0.5, as ATLAS's or as the advisor's own formulation; (6) NOT citable as non-valid cells being excluded, wrong, or unreported (no cell is excluded or changed); (7) NOT citable for held-out truths; (8) ATLAS guide item 5 is NOT met; (9) NOT citable that 2D mismodeling is localized in the extra dimensions, or that it is not, in either direction; (10) reading (3) is NOT citable as a test.  
+  *Resolution:* Incorporate classification as descriptive diagnostics while enforcing all negative constraints.
 
 * **AUD-E5 [T]** — **Per-period 2D benchmark.**  
   *Finding:* Add the per-period 2D benchmark combined sentence from `readout.json` and the R5-bar sentence after `sec_results.tex:134`.  
@@ -173,7 +175,7 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-1 [T]** — **Tune v1 in quasielastic-Δ dip inconsistency.**  
   *Finding:* Executive summary and §7.6 assert all four generators under-predict data in the dip ($0.1 \le E_{\text{avail}} < 0.4\text{ GeV}$), but §7.8 states the $E_{\text{avail}}$-marginal data/Tune v1 ratio dips to 1.01 (matching data), and Fig. 23 shows cells dipping to 0.66.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:13`, `sec_3d.tex:140`, `sec_eavailw.tex:151`.  
-  *Resolution:* Correct executive summary and §7.6: Tune v1 matches data in the dip; the data excess over Tune v1 is localized at high $E_{\text{avail}}$ and high $W$.
+  *Resolution:* Reconcile executive summary and §7.6 with §7.8: Tune v1 matches data in the dip (data/Tune v1 $\approx 1.01$ in lowest bin); strip any localization wording per `OUTCOME-20261107-valid-region.md:36` and AUD-L1.
 
 * **S1-ACC-2 [R]** — **Tune v1 normalization deficit quoted four ways.**  
   *Finding:* Deficit quoted as ~9% (ratio 0.91) in §6.5; 0.883 (10–28%) in §7.6; integrated data/Tune = 1.13 (0.885) in §7.8; ~12% in §2.5.  
@@ -302,9 +304,9 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* State these limitations transparently in §4.
 
 * **S1-COM-8 [R]** — **Run-period block $C_{\text{PL}}$ characterization.**  
-  *Finding:* $C_{\text{PL}}$ true-to-estimated $\sigma$ ratio interval is 0.73–2.56; quote total uncertainty with and without $C_{\text{PL}}$ (5.98% vs 6.41%).  
-  *Evidence:* `docs/analysis-note/sec_systematics.tex:165`, Table 8.  
-  *Resolution:* Tabulate and quote 2D uncertainty with and without $C_{\text{PL}}$ using values macros.
+  *Finding:* $C_{\text{PL}}$ true-to-estimated $\sigma$ ratio interval is 0.73–2.56; quote adopted uncertainty $Q = S_5 + C_{\text{PL}}$ (median per bin 6.45%).  
+  *Evidence:* `docs/analysis-note/sec_systematics.tex:165`, Table 8; `DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md`.  
+  *Resolution:* Quote the adopted uncertainty $Q = S_5\text{ total} + C_{\text{PL}}$ (DECISION-20261017, median per bin 6.45%) via values macros, describing $C_{\text{PL}}$'s role in absorbing the run-period difference.
 
 * **S1-COM-9 [T]** — **Background normalization & composition.**  
   *Finding:* Tabulate composition of ~3% purity correction vs 0.35% genuine background.  
@@ -314,7 +316,7 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-10 [T]** — **Own-covariance $\chi^2$ vs publication.**  
   *Finding:* State $\chi^2/\text{ndf} = 22.29$ with own covariance against published result, alongside 2.27 with published covariance.  
   *Evidence:* `docs/analysis-note/sec_results.tex:125`, `app_statmethods.tex:520`.  
-  *Resolution:* Report both $\chi^2$ values in §6 and discuss implications.
+  *Resolution:* Clarify in §6 that while direct inversion without regularisation yields 22.29, a defensible single own-covariance $\chi^2$ is out of reach (`app_statmethods.tex:458`); quote the paper-covariance distance strictly through the macro `\chiPaper` without hardcoding.
 
 * **S1-COM-11 [T]** — **Correlation sensitivity of 16-cell generator $\chi^2$.**  
   *Finding:* Generator $\chi^2$ drops sharply when flux correlations are shrunk or removed.  
@@ -483,7 +485,7 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Evidence:* Fig. 23 labels and caption.  
   *Resolution:* Update label annotation to `data / Tune v1`.
 
-* **G2-VOID-1..5 [D]** — **Completeness findings on §§9.5–13 and Appendices A–H.**  
+* **G2-VOID [D]** — **Completeness findings on §§9.5–13 and Appendices A–H.**  
   *Finding:* Gemini 2 claimed §§9.5–13 and Appendices are missing.  
   *Evidence:* Input cut at 31,717 words on reader's side; rater copy contains full 69,536 words.  
   *Resolution:* **VOID per director's instructions.**
@@ -494,7 +496,7 @@ Base: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 All four referee reports converge on three macro-architectural requirements:
 1. **Front-Matter Per-Result Status & Citability Matrix:** Section 1 must establish a clear, unequivocal table declaring exactly what each result is citable for.
-2. **Transition from Measurement to Methods Record:** Reframing the entire manuscript to lead with the 16-cell multidimensional benchmark and the 2D reproduction benchmark, treating coverage breakdown, rounding instability, and algorithmic differences as primary methodological deliverables.
+2. **Transition from Measurement to Methods Record:** Reframing the entire manuscript to lead with the 2D reproduction benchmark (establishing the 1.0% integral match, the correlated shape difference $\chi^2/\text{ndf} = 2.27$ with unidentified origin, and the $Q$ uncertainty construction), followed by higher-dimensional anchors/closures, and then the illustrative 16-cell benchmark, treating coverage breakdown, rounding instability, and algorithmic differences as primary methodological deliverables.
 3. **Harmonization of Estimators:** Disentangling the six configurations ((a) through (f)) into a clear chronological development and standardizing the primary benchmark results on adopted configurations ((f) for 2D, (e) for 16-cell).
 
 ---
@@ -507,22 +509,24 @@ All four referee reports converge on three macro-architectural requirements:
 | AUD-N2 | **T** | REF-G1 Algorithmic Dependence Stated Limitation | `sec_fived16.tex:260`, `OUTCOME-20261106-ref-g1` | Antigravity |
 | AUD-N4 | **D** | Release Appendix Update (Held) | `app_release.tex:4`, `DECISION-20261106` | Held |
 | AUD-N5 | **D** | Event-Loop Preservation (Held) | `app_release.tex:50`, `DECISION-20261101` | Held |
+| AUD-E1 | **T** | COV2D Held-Out Tune Under-Cover Outcome | `sec_validation.tex:199`, `OUTCOME-20261108-cov2d` | Antigravity |
+| AUD-E4 | **T** | Valid-Region Diagnostic Classes (16 Cells) | `sec_fived16.tex:218`, `OUTCOME-20261107-valid-region` | Antigravity |
 | AUD-E7 | **T** | Overclaim: 2D Comparison Called a Validation | `sec_intro.tex:18`, `AUDIT.txt` row E7 | Antigravity |
 | AUD-E8 | **T** | ES: CH Correction Unscoped | `sec_execsummary.tex:15`, `AUDIT.txt` row E8 | Antigravity |
 | AUD-E9 | **R** | Missing Response-Only Sensitivity Joseph Sent | `sec_fived16.tex:253`, `AUDIT.txt` row E9 | Antigravity |
 | AUD-E10 | **T** | ES: Second Post Hoc Choice | `sec_execsummary.tex:9`, `AUDIT.txt` row E10 | Antigravity |
 | S1-COM-1 | **T** | Per-Result Status & Citability Matrix | `sec_execsummary.tex`, Section 1 | Antigravity |
-| S1-ACC-1 | **T** | Reconcile Tune v1 QE-Δ Dip Statements | `sec_execsummary.tex:13`, `sec_3d.tex:140` | Grok / Antigravity |
-| S1-ACC-2 | **R** | Reconcile Tune v1 Deficit Figures | `sec_results.tex:85`, `values.tex` | Grok / Antigravity |
+| S1-ACC-1 | **T** | Reconcile Tune v1 QE-Δ Dip Statements | `sec_execsummary.tex:13`, `sec_3d.tex:140` | Antigravity |
+| S1-ACC-2 | **R** | Reconcile Tune v1 Deficit Figures | `sec_results.tex:85`, `values.tex` | Antigravity |
 | S1-ACC-4 | **T** | Disentangle 5D Coverage Tests | `main_note.tex:73`, `sec_5d.tex:216`, `sec_fived16.tex:253` | Antigravity |
-| S1-ACC-6 | **T** | Qualify Config-(a) Unusable Covariance | `sec_5d.tex:225`, `app_release.tex:72` | Grok / Antigravity |
+| S1-ACC-6 | **T** | Qualify Config-(a) Unusable Covariance | `sec_5d.tex:225`, `app_release.tex:72` | Antigravity |
 | S1-ACC-8 | **D** | Dispute Band Count Typo (Five Bands Correct) | `sec_fived16.tex:67`, `AUDIT.txt` | Dispute |
-| S1-ACC-9 | **T** | Fix Fifteen-Fold Arithmetic (-> 14.6) | `sec_method.tex:92` | Grok / Antigravity |
-| S1-COM-3 | **R** | Fake-Data Bias Physical Units in Table 18 | `sec_fived16.tex:225`, `readout.json` | Grok / Antigravity |
-| S1-COM-8 | **R** | Quote 2D Uncertainty With & Without C_PL | `sec_systematics.tex:165`, Table 8 | Grok / Antigravity |
-| S1-COM-10 | **T** | Report Own-Covariance χ² = 22.29 | `sec_results.tex:125` | Grok / Antigravity |
-| G1-ACC-1 | **T** | Fix Target Nucleon Count Typo | `sec_method.tex:135` | Grok / Antigravity |
+| S1-ACC-9 | **T** | Fix Fifteen-Fold Arithmetic (-> 14.6) | `sec_method.tex:92` | Antigravity |
+| S1-COM-3 | **R** | Fake-Data Bias Physical Units in Table 18 | `sec_fived16.tex:225`, `readout.json` | Antigravity |
+| S1-COM-8 | **R** | Quote Adopted Uncertainty Q = S5 + C_PL | `sec_systematics.tex:165`, `DECISION-20261017` | Antigravity |
+| S1-COM-10 | **T** | Report Own-Covariance χ² Status via \chiPaper | `sec_results.tex:125`, `app_statmethods.tex:458` | Antigravity |
+| G1-ACC-1 | **T** | Fix Target Nucleon Count Typo | `sec_method.tex:135` | Antigravity |
 | G1-ACC-6 | **D** | Dispute Eq. 1 135 MeV Mass Error Claim | `DECISION-20261101-joseph-eavail-keep-135.md` | Dispute |
-| G1-PRES-1 | **T** | Elevate Editorial Tone and Register | Global LaTeX sources | Grok / Antigravity |
-| G1-PRES-3 | **T** | Standardize Kinematic Notation ($p_\parallel$) | Global LaTeX sources | Grok / Antigravity |
+| G1-PRES-1 | **T** | Elevate Editorial Tone and Register | Global LaTeX sources | Antigravity |
+| G1-PRES-3 | **T** | Standardize Kinematic Notation ($p_\parallel$) | Global LaTeX sources | Antigravity |
 | G2-VOID | **D** | Void Gemini 2 Missing Text Completeness | Truncation receipt at 31.7k words | Void |
