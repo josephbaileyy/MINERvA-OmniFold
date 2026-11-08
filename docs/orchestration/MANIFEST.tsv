@@ -261,6 +261,7 @@ docs/orchestration/DECISION-20261106-joseph-plateau-next-work.md	tracked	LIVE	do
 docs/orchestration/DECISION-20261106-joseph-relax-12h-job-limit.md	tracked	LIVE	document		20261106	open		route-only	no
 docs/orchestration/DECISION-20261108-joseph-5d-coverage-and-parallel-studies.md	tracked	LIVE	document		20261108	open		route-only	no
 docs/orchestration/DECISION-20261108-joseph-ll5d-stop-rule.md	tracked	LIVE	document		20261108	open		route-only	no
+docs/orchestration/DECISION-20261108-joseph-note-framing-and-estimator-dependence.md	tracked	LIVE	document		20261108	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	tracked	LIVE	document		20260918	open		route-only	no
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	tracked	ARCHIVAL	document	fe-fps-campaign	20261029	terminal		exact-path-only	yes
