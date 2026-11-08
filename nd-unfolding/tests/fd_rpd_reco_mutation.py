@@ -25,6 +25,9 @@ PRODUCER = ROOT / "nd-unfolding/fd_rpd_reco.py"
 TESTS = ROOT / "nd-unfolding/tests/test_fd_rpd_reco.py"
 
 CUSTODY_GUARD_TESTS = {
+    "PLATFORM_LATE_ROOT": "test_exit_inventory_refuses_before_plain_read and (protected or escape)",
+    "PLATFORM_LATE_PRESENT": "test_exit_inventory_refuses_before_plain_read and missing",
+    "PLATFORM_PREPARE_SUBSET": "test_prepare_mapped_subset_refuses",
     "PLATFORM_CONFIG": "test_platform_config_closed_roles_and_reasons",
     "PLATFORM_MAP_IDENTITY": "test_platform_executable_maps_identity",
     "PLATFORM_MAP_SET": "test_platform_prepare_pins_and_protected_first and set",
@@ -274,6 +277,71 @@ RECORD_MUTATIONS = (
 
 REQUIRED = tuple(
     [
+        Mutation(
+            "REQUIRED_EXIT_INSTRUMENT_PIN_ENFORCEMENT",
+            "custody_r3",
+            "classify_trace",
+            "test_other_classes_cover_late_library_opens and instrument",
+            (
+                "any((_under(value, root) for value in paths for root in policy.get('instrument_directories', []))) and any((re.search('\\\\.so(?:\\\\.\\\\d+)*$|\\\\.dylib$', value) for value in paths)) and (endpoint not in policy['allowed'].get('pinned_mat_libs', []))",
+                "False",
+            ),
+        ),
+        Mutation(
+            "REQUIRED_EXIT_OVIS_PIN_REQUIRED",
+            "custody_r3",
+            "pin_platform_libraries",
+            "test_ovis_inventory_covers_committed_exit_loads",
+            (
+                "return pins",
+                "return {name: pin for name, pin in pins.items() if Path(name).name != 'libldms.so.0.0.0'}",
+            ),
+        ),
+        Mutation(
+            "REQUIRED_EXIT_PLATFORM_PIN_ENFORCEMENT",
+            "custody_r3",
+            "classify_trace",
+            "test_ovis_inventory_covers_committed_exit_loads",
+            (
+                "platform_library and endpoint not in policy.get('platform_library_pins', {})",
+                "False",
+            ),
+        ),
+        Mutation(
+            "REQUIRED_EXIT_POST_CHECK_REQUIRED",
+            "custody_r3",
+            "classify_trace_with_stop",
+            "test_real_atexit_library_load_is_checked_after_worker",
+            ("check_trace_libraries(r, checked, policy)", "checked"),
+        ),
+        Mutation(
+            "REQUIRED_EXIT_SUFFIXLESS_ELF_REQUIRED",
+            "custody_r3",
+            "check_trace_libraries",
+            "test_post_exit_library_verification and suffixless",
+            ("stream.read(4) == b'\\x7fELF'", "False"),
+        ),
+        Mutation(
+            "REQUIRED_EXIT_PIN_CONTENT_REQUIRED",
+            "custody_r3",
+            "check_trace_libraries",
+            "test_post_exit_library_verification and digest",
+            ("observed != pins[endpoint]", "False"),
+        ),
+        Mutation(
+            "REQUIRED_EXIT_INSTRUMENT_DIGEST_REQUIRED",
+            "custody_r3",
+            "check_trace_libraries",
+            "test_instrument_post_exit_digest_refuses",
+            ("observed['sha256'] != pins[endpoint]", "False"),
+        ),
+        Mutation(
+            "REQUIRED_PREPARED_MAPPED_IDENTITY_REQUIRED",
+            "custody_r3",
+            "platform_library_record",
+            "test_prepared_mapping_identity_refuses",
+            ("mapping == expected_mapped[filename]", "True"),
+        ),
         Mutation(
             "REQUIRED_PLATFORM_PREPARE_PINS",
             "custody_r3",

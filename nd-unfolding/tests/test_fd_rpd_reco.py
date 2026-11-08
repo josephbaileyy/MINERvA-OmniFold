@@ -2409,6 +2409,17 @@ def _prepare_fixture(
             ],
         }
     )
+    ovis = Path(
+        next(
+            item["path"]
+            for item in fixture.config["trace_platform_roots"]
+            if item["role"] == "ovis_ldms"
+        )
+    )
+    for relative in custody.OVIS_EXIT_LIBRARIES:
+        path = ovis / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b"\x7fELF synthetic exit-hook code")
     fixture.save_config()
     run = fixture.root / "fresh-prepare"
     return custody, run, roots
@@ -2439,7 +2450,11 @@ def test_fresh_prepare_stages_closed_inventory(
     custody, run, roots = _prepare_fixture(fixture, monkeypatch)
     platform_library = _add_prepare_platform_mapping(custody, fixture, monkeypatch)
     prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
-    assert prepared["platform_libraries"] == {
+    assert {
+        name: pin
+        for name, pin in prepared["platform_libraries"].items()
+        if name in prepared["platform_mapped"]
+    } == {
         str(platform_library): {
             **custody.platform_identity(platform_library),
             "sha256": R.digest(platform_library),
@@ -2692,6 +2707,7 @@ def _prepared_mat_fixture(
         "environment_snapshot": _custody_module().environment_snapshot(),
         "trace_policy_sha256": R.digest(policy),
         "platform_libraries": {},
+        "platform_mapped": {},
         "mapped_mat_stats": {str(lib): [info.st_dev, info.st_ino, info.st_size]},
         "instrument_files": [
             {"staged": str(staged_code), "sha256": R.digest(staged_code)}
@@ -3111,7 +3127,11 @@ def test_prologue_prepare_opens_no_declared_data(
     prepared = custody.read_private_prepare(
         R, run / "prologue-prepare-reference.json", digest, run
     )
-    assert prepared["platform_libraries"] == {
+    assert {
+        name: pin
+        for name, pin in prepared["platform_libraries"].items()
+        if name in prepared["platform_mapped"]
+    } == {
         str(platform_library): {
             **custody.platform_identity(platform_library),
             "sha256": R.digest(platform_library),
@@ -3920,7 +3940,11 @@ def test_prologue_child_environment_boundary(
 
     monkeypatch.setattr(prologue, "prepare", prepare)
     monkeypatch.setattr(prologue.subprocess, "run", child)
-    monkeypatch.setattr(custody, "classify_trace", lambda *_args: {"status": "PASS"})
+    monkeypatch.setattr(
+        custody,
+        "classify_trace",
+        lambda *_args: {"status": "PASS", "events": [], "violations": []},
+    )
     monkeypatch.setattr(
         sys,
         "argv",
@@ -4478,7 +4502,10 @@ def test_platform_worker_exact_pins(
     custody, library, mappings, policy = _platform_fixture(tmp_path, monkeypatch)
     mapped = {str(library)}
     pins = custody.pin_platform_libraries(R, mapped, policy)
-    prepared = {"platform_libraries": pins}
+    prepared = {
+        "platform_libraries": pins,
+        "platform_mapped": json.loads(json.dumps(mappings)),
+    }
     if defect == "added":
         pins.clear()
     elif defect == "removed":
@@ -4535,6 +4562,9 @@ def test_platform_guard_on_production_path(
     inputs.prestage["trace_policy_sha256"] = R.digest(policy_path)
     inputs.prestage["platform_libraries"] = custody.pin_platform_libraries(
         R, {str(library)}, policy
+    )
+    inputs.prestage["platform_mapped"] = custody.platform_prepared_mappings(
+        {str(library)}, policy
     )
     assert R.checked_prepared_mat(inputs)[1]["platform_libraries"]["status"] == "PASS"
     library.write_bytes(b"tampered platform instrument")
@@ -4753,7 +4783,13 @@ def test_platform_worker_stat_stability(
 
     record = custody.platform_library_record(
         SimpleNamespace(digest=digest),
-        {"platform_libraries": pins},
+        {
+            "platform_libraries": pins,
+            "platform_mapped": {
+                name: {key: pin[key] for key in ("device", "inode")}
+                for name, pin in pins.items()
+            },
+        },
         {str(library)},
         policy,
     )
@@ -4801,6 +4837,13 @@ def test_full_prologue4_trace_offline_with_built_policy(
         custody, "__file__", str(clone / "nd-unfolding/fd_rpd_reco_custody.py")
     )
     monkeypatch.setattr(sys, "path", old_policy["python_directories"])
+    prepared["platform_libraries"] = {
+        line.split(" = ", 1)[1]
+        .split("<", 1)[1]
+        .split(">", 1)[0]: {"fixture_only": True}
+        for line in _trace_fixture("late_ovis_loads")
+        if "/opt/ovis-ldms/" in line
+    }
     policy = custody.build_trace_policy(config, prepared, Path(prepared["run"]))
     # The local machine cannot resolve this platform symlink. Its target is
     # the successful descriptor annotation at committed trace line 1625.
@@ -4822,8 +4865,361 @@ def test_full_prologue4_trace_offline_with_built_policy(
         "instrument_directory": 7,
         "python_directory": 9,
         "environment": 552,
-        "platform_system": 57,
+        "platform_system": 44,
+        "pinned_platform_libs": 13,
         "run": 16,
         "private_prepare": 2,
         "pinned_mat_libs": 6,
     }
+
+
+def _late_library_policy(root: Path, pins: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "cwd": str(root),
+        "protected_roots": [],
+        "platform_library_pins": pins,
+        "allowed": {"platform_system": [str(root)], "pinned_platform_libs": list(pins)},
+    }
+
+
+def test_ovis_inventory_covers_committed_exit_loads(
+    fixture: Fixture, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, run, _roots = _prepare_fixture(fixture, monkeypatch)
+    ovis = Path(
+        next(
+            item["path"]
+            for item in fixture.config["trace_platform_roots"]
+            if item["role"] == "ovis_ldms"
+        )
+    )
+    lines = _trace_fixture("late_ovis_loads")
+    for line in lines:
+        if "/opt/ovis-ldms/" not in line:
+            continue
+        requested = line.split('"', 2)[1]
+        resolved = line.split(" = ", 1)[1].split("<", 1)[1].split(">", 1)[0]
+        source = ovis / Path(requested).relative_to("/opt/ovis-ldms")
+        target = ovis / Path(resolved).relative_to("/opt/ovis-ldms")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        content = source.read_bytes()
+        source.unlink()
+        target.write_bytes(content)
+        source.symlink_to(target.name)
+    prepared = custody.prepare(R, fixture.config_path, fixture.config_sha, run)
+    pins = {
+        "/opt/ovis-ldms/" + str(Path(name).relative_to(ovis)): pin
+        for name, pin in prepared["platform_libraries"].items()
+    }
+    policy = _late_library_policy(Path("/opt/ovis-ldms"), pins)
+    policy["allowed"].update(
+        system=["/proc"], run=["/dev/shm/limres-rpd-prologue4-20261108/run"]
+    )
+    result = custody.classify_trace(lines, policy)
+    assert result["successful_open_counts"]["pinned_platform_libs"] == 13
+    assert prepared["platform_mapped"] == {}
+    assert len(prepared["platform_libraries"]) == 13
+    assert [event["pid"] for event in result["events"]] == [1600512] * 15
+    assert all(
+        event["category"] == "pinned_platform_libs" for event in result["events"][2:]
+    )
+    for missing in pins:
+        wrong = {
+            **policy,
+            "platform_library_pins": {
+                name: pin for name, pin in pins.items() if name != missing
+            },
+        }
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.classify_trace(lines, wrong)
+        violations = caught.value.details["violations"]
+        assert len(violations) == 1
+        assert violations[0]["class"] == "platform_library"
+        assert violations[0]["resolved"] == missing
+        assert violations[0]["pid"] == 1600512
+        assert violations[0]["raw_line"] in lines[2:]
+
+
+@pytest.mark.parametrize("defect", ["missing", "protected", "escape"])
+def test_exit_inventory_refuses_before_plain_read(tmp_path: Path, defect: str) -> None:
+    custody = _custody_module()
+    root = tmp_path / "ovis"
+    root.mkdir()
+    policy = {
+        "platform_root_reasons": [{"role": "ovis_ldms", "path": str(root)}],
+        "protected_roots": [],
+    }
+    first = root / custody.OVIS_EXIT_LIBRARIES[0]
+    for relative in custody.OVIS_EXIT_LIBRARIES:
+        path = root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b"code")
+    if defect == "missing":
+        first.unlink()
+    if defect == "protected":
+        policy["protected_roots"] = [str(first)]
+    elif defect == "escape":
+        target = tmp_path / "outside.so"
+        target.write_bytes(b"code")
+        first.unlink()
+        first.symlink_to(target)
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.platform_late_library_paths(policy)
+    assert caught.value.details["guard"] == (
+        "PLATFORM_LATE_PRESENT" if defect == "missing" else "PLATFORM_LATE_ROOT"
+    )
+
+
+def test_prepare_mapped_subset_refuses(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, library, _mappings, policy = _platform_fixture(tmp_path, monkeypatch)
+    assert str(library) in custody.platform_prepared_mappings({str(library)}, policy)
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.platform_prepared_mappings(set(), policy)
+    assert caught.value.details["guard"] == "PLATFORM_PREPARE_SUBSET"
+
+
+@pytest.mark.parametrize(
+    "defect",
+    ["none", "digest", "inode", "bytes", "mtime_ns", "suffixless", "protected"],
+)
+def test_post_exit_library_verification(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, defect: str
+) -> None:
+    custody = _custody_module()
+    root = tmp_path / "platform"
+    root.mkdir()
+    library = root / ("suffixless" if defect == "suffixless" else "late.so")
+    library.write_bytes(b"\x7fELF fixture code")
+    pin = {**custody.platform_identity(library), "sha256": R.digest(library)}
+    pins = {str(library): pin} if defect != "suffixless" else {}
+    policy = _late_library_policy(root, pins)
+    lines = [f'72 openat(AT_FDCWD, "{library}", O_RDONLY) = 3<{library}>']
+    if defect == "digest":
+        pin["sha256"] = "0" * 64
+    elif defect in {"inode", "bytes", "mtime_ns"}:
+        pin[defect] = -1
+    elif defect == "protected":
+        policy["protected_roots"] = [str(library)]
+        observed = {
+            "status": "PASS",
+            "events": [
+                {
+                    "request": str(library),
+                    "resolved": str(library),
+                    "path": str(library),
+                    "success": True,
+                    "pid": 72,
+                    "raw_lines": lines,
+                    "raw_line": lines[0],
+                }
+            ],
+            "violations": [],
+        }
+        reads = []
+        monkeypatch.setattr(R, "digest", lambda path: reads.append(path))
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.check_trace_libraries(R, observed, policy)
+        assert reads == []
+        assert "protected" in caught.value.details["violations"][0]["reason"]
+        return
+    run = tmp_path / "run"
+    run.mkdir()
+    if defect == "none":
+        checked = custody.classify_trace_with_stop(
+            R, run, "data-free-trace", lines, policy, {}
+        )
+        assert checked["library_open_checks"][str(library)]["observed"] == pin
+    else:
+        with pytest.raises(custody.CustodyRefused) as caught:
+            custody.classify_trace_with_stop(
+                R, run, "data-free-trace", lines, policy, {}
+            )
+        record = json.loads((run / "data-free-trace.STOP.json").read_text())
+        assert record["violations"] == caught.value.details["violations"]
+        violation = record["violations"][0]
+        assert violation["pid"] == 72 and violation["path"] == str(library)
+        assert violation["class"] == "platform_library"
+        if defect != "suffixless":
+            assert violation["comparison"]["prepared"] == pin
+            assert violation["comparison"]["observed"] != pin
+
+
+@pytest.mark.parametrize("category", ["environment", "system", "instrument"])
+def test_other_classes_cover_late_library_opens(category: str, tmp_path: Path) -> None:
+    custody = _custody_module()
+    root = tmp_path / category
+    root.mkdir()
+    library = root / "late.so"
+    library.write_bytes(b"\x7fELF fixture code")
+    policy = {
+        "cwd": str(root),
+        "protected_roots": [],
+        "allowed": {"run": [str(tmp_path / "run")]},
+    }
+    if category == "instrument":
+        policy["instrument_directories"] = [str(root)]
+        policy["allowed"]["pinned_mat_libs"] = [str(library)]
+        policy["mat_library_sha256"] = {str(library): R.digest(library)}
+    else:
+        policy["allowed"][category] = [str(root)]
+    lines = [
+        f'81 openat(AT_FDCWD, "{tmp_path}/run/worker.json", O_WRONLY|O_CREAT) = 3',
+        f'81 openat(AT_FDCWD, "{library}", O_RDONLY) = 4<{library}>',
+    ]
+    checked = custody.classify_trace(lines, policy)
+    assert checked["status"] == "PASS" and checked["events"][-1]["category"] == (
+        "pinned_mat_libs" if category == "instrument" else category
+    )
+    if category == "instrument":
+        assert custody.check_trace_libraries(R, checked, policy)["library_open_checks"][
+            str(library)
+        ]["observed"]["sha256"] == R.digest(library)
+        policy["allowed"]["pinned_mat_libs"] = []
+    else:
+        policy["allowed"][category] = [str(root / "other-prefix")]
+    with pytest.raises(custody.CustodyRefused):
+        custody.classify_trace(lines, policy)
+
+
+def test_real_atexit_library_load_is_checked_after_worker(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Load real local code at exit; replay its audited read after the checkpoint."""
+    custody = _custody_module()
+    compiler = shutil.which("cc")
+    assert compiler is not None, "a C compiler is required for the exit-load fixture"
+    library = tmp_path / "late.so"
+    built = subprocess.run(
+        [
+            compiler,
+            "-dynamiclib" if sys.platform == "darwin" else "-shared",
+            "-fPIC",
+            "-x",
+            "c",
+            "-",
+            "-o",
+            str(library),
+        ],
+        input="int fixture_answer(void) { return 42; }\n",
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert built.returncode == 0, built.stderr
+    pin = {**custody.platform_identity(library), "sha256": R.digest(library)}
+    pins = {str(library): pin}
+    policy = _late_library_policy(tmp_path, pins)
+    monkeypatch.setattr(custody, "executable_mapped_files", lambda: {})
+    middle = custody.platform_library_record(
+        R, {"platform_libraries": pins, "platform_mapped": {}}, set(), policy
+    )
+    assert middle["status"] == "PASS" and middle["observed_mapped"] == []
+    events = tmp_path / "child-events.json"
+    checkpoint = tmp_path / "worker.json"
+    script = """import atexit, ctypes, json, os, pathlib, sys
+library, checkpoint, events = map(pathlib.Path, sys.argv[1:])
+observed = []
+def audit(name, args):
+    if name == "open" and args[0] in (str(library), str(checkpoint)):
+        observed.append(str(args[0]))
+sys.addaudithook(audit)
+def save():
+    events.write_text(json.dumps(observed))
+def late():
+    loaded = ctypes.CDLL(str(library))
+    assert loaded.fixture_answer() == 42
+    assert library.read_bytes()
+atexit.register(save)
+atexit.register(late)
+checkpoint.write_text(json.dumps({"library_loaded": False}))
+"""
+    child = subprocess.run(
+        [sys.executable, "-c", script, str(library), str(checkpoint), str(events)],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert (
+        child.returncode == 0 and "Exception ignored" not in child.stderr
+    ), child.stderr
+    assert json.loads(events.read_text()) == [str(checkpoint), str(library)]
+    lines = [
+        f'91 openat(AT_FDCWD, "{checkpoint}", O_WRONLY|O_CREAT) = 3',
+        f'91 openat(AT_FDCWD, "{library}", O_RDONLY) = 4<{library}>',
+    ]
+    checked = custody.classify_trace_with_stop(
+        R, tmp_path, "data-free-trace", lines, policy, {}
+    )
+    assert checked["events"][-1]["category"] == "pinned_platform_libs"
+    assert checked["library_open_checks"][str(library)]["observed"] == pin
+    wrong = {**policy, "platform_library_pins": {}}
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.classify_trace(lines, wrong)
+    assert caught.value.details["violations"][0]["path"] == str(library)
+    library.write_bytes(library.read_bytes() + b"changed after snapshot and exit")
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.classify_trace_with_stop(
+            R, tmp_path, "data-free-trace", lines, policy, {}
+        )
+    assert (
+        caught.value.details["violations"][0]["reason"]
+        == "opened library differs from prepare pin"
+    )
+
+
+def test_instrument_post_exit_digest_refuses(tmp_path: Path) -> None:
+    custody = _custody_module()
+    library = tmp_path / "instrument.so"
+    library.write_bytes(b"\x7fELF instrument fixture")
+    policy = {
+        "cwd": str(tmp_path),
+        "protected_roots": [],
+        "instrument_directories": [str(tmp_path)],
+        "allowed": {"pinned_mat_libs": [str(library)]},
+        "mat_library_sha256": {str(library): R.digest(library)},
+    }
+    lines = [f'75 openat(AT_FDCWD, "{library}", O_RDONLY) = 3<{library}>']
+    assert (
+        custody.classify_trace_with_stop(
+            R, tmp_path, "data-free-trace", lines, policy, {}
+        )["status"]
+        == "PASS"
+    )
+    library.write_bytes(b"\x7fELF changed after worker")
+    with pytest.raises(custody.CustodyRefused) as caught:
+        custody.classify_trace_with_stop(
+            R, tmp_path, "data-free-trace", lines, policy, {}
+        )
+    violation = caught.value.details["violations"][0]
+    assert violation["class"] == "instrument_library"
+    assert (
+        violation["comparison"]["prepared"]
+        == policy["mat_library_sha256"][str(library)]
+    )
+    assert violation["comparison"]["observed"]["sha256"] == R.digest(library)
+
+
+def test_prepared_mapping_identity_refuses(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    custody, library, mappings, policy = _platform_fixture(tmp_path, monkeypatch)
+    prepared = {
+        "platform_libraries": custody.pin_platform_libraries(R, {str(library)}, policy),
+        "platform_mapped": json.loads(json.dumps(mappings)),
+    }
+    assert (
+        custody.platform_library_record(R, prepared, {str(library)}, policy)["status"]
+        == "PASS"
+    )
+    prepared["platform_mapped"][str(library)]["inode"] += 1
+    record = custody.platform_library_record(R, prepared, {str(library)}, policy)
+    assert record["status"] == "STOP"
+    assert (
+        record["libraries"][str(library)]["mapped_identity"] == mappings[str(library)]
+    )
+    assert (
+        record["libraries"][str(library)]["prepared_mapped_identity"]
+        != mappings[str(library)]
+    )

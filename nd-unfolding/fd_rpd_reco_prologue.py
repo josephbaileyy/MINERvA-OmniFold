@@ -119,6 +119,9 @@ def prepare(config_path: Path, checksum: str, run: Path) -> str:
     prepared["platform_libraries"] = custody.pin_platform_libraries(
         r, instrument.mapped_files(), custody.build_trace_policy(config, prepared, run)
     )
+    prepared["platform_mapped"] = custody.platform_prepared_mappings(
+        instrument.mapped_files(), custody.build_trace_policy(config, prepared, run)
+    )
     policy = custody.build_trace_policy(config, prepared, run)
     r.write_json(run / "trace-policy.json", policy)
     prepared["trace_policy_sha256"] = r.digest(run / "trace-policy.json")

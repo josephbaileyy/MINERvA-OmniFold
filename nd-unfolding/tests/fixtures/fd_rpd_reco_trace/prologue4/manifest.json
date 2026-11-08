@@ -32,6 +32,27 @@
         1001
       ],
       "sha256": "2514248361d316c20c5ade833643715e7e7805a96101147cd50594c6f3bed98d"
+    },
+    "late_ovis_loads": {
+      "file": "late_ovis_loads.strace.txt",
+      "source_lines": [
+        2546,
+        2559,
+        2562,
+        2575,
+        2586,
+        2597,
+        2608,
+        2619,
+        2630,
+        2641,
+        2652,
+        2663,
+        2674,
+        2678,
+        2692
+      ],
+      "sha256": "3b8deb0339f5d78bbb8bbfdf09d78020c3a4770010409f525c6542ba5a2a4412"
     }
   },
   "revision": "68a36cf8f013aab145faf3cf7ed8d64971a433d8"

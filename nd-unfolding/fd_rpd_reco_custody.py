@@ -653,6 +653,9 @@ def prepare(r: Any, config_path: Path, config_sha: str, run: Path) -> Json:
     manifest["platform_libraries"] = pin_platform_libraries(
         r, instrument.mapped_files(), build_trace_policy(config, manifest, run)
     )
+    manifest["platform_mapped"] = platform_prepared_mappings(
+        instrument.mapped_files(), build_trace_policy(config, manifest, run)
+    )
     policy = build_trace_policy(config, manifest, run)
     r.write_json(run / "trace-policy.json", policy)
     manifest["trace_policy_sha256"] = r.digest(run / "trace-policy.json")
@@ -680,7 +683,7 @@ def classify_successful_open(
         return ["private_prepare"]
     if paths & pinned:
         return ["pinned_mat_libs"]
-    if paths & set(policy["allowed"].get("pinned_platform_libs", [])):
+    if paths & set(policy.get("platform_library_pins", {})):
         return ["pinned_platform_libs"]
     if any(
         _under(p, directory)
@@ -936,7 +939,41 @@ def classify_trace(lines: list[str], policy: Json) -> Json:
             )
         elif success:
             categories = classify_successful_open(paths, arguments, policy)
-            if len(categories) != 1:
+            endpoint = resolved[1] if resolved else path
+            platform_library = any(
+                _under(value, root)
+                for value in paths
+                for root in policy["allowed"].get("platform_system", [])
+            ) and any(re.search(r"\.so(?:\.\d+)*$|\.dylib$", value) for value in paths)
+            if platform_library and endpoint not in policy.get(
+                "platform_library_pins", {}
+            ):
+                violations.append(
+                    {
+                        **event,
+                        "class": "platform_library",
+                        "reason": "platform library open has no prepare pin",
+                    }
+                )
+            elif (
+                any(
+                    _under(value, root)
+                    for value in paths
+                    for root in policy.get("instrument_directories", [])
+                )
+                and any(
+                    re.search(r"\.so(?:\.\d+)*$|\.dylib$", value) for value in paths
+                )
+                and endpoint not in policy["allowed"].get("pinned_mat_libs", [])
+            ):
+                violations.append(
+                    {
+                        **event,
+                        "class": "instrument_library",
+                        "reason": "instrument library open has no prepare pin",
+                    }
+                )
+            elif len(categories) != 1:
                 violations.append(
                     {
                         **event,
@@ -1082,8 +1119,68 @@ def platform_mapping_snapshot(
     return executable, sorted(set(executable) - mapped), nonexecutable
 
 
+# prologue4/run/prologue.strace:2562-2692 @ 68a36cf8 records these loads.
+# pymon-fetch/copies/nersc_pymon__init__.py.txt:260-267 @ d0d4cfd5 registers
+# the exit hooks; nersc_pymon_vendor_nerscjson.py.txt:22-23 loads libldms.
+OVIS_EXIT_LIBRARIES = (
+    "lib/libldms.so",
+    "lib/libovis_json.so.0",
+    "lib/libovis_event.so.0",
+    "lib/libmmalloc.so.0",
+    "lib/libzap.so.0",
+    "lib/libovis_thrstats.so.0",
+    "lib/libovis_log.so.0",
+    "lib/libovis_ev.so.0",
+    "lib/libcoll.so.0",
+    "lib/libovis_third.so.0",
+    "lib/libovis_util.so.0",
+    "lib/ovis-ldms/libzap_sock.so",
+    "lib/libldms_auth_munge.so",
+)
+
+
+def platform_late_library_paths(policy: Json) -> list[str]:
+    """Resolve the declared exit-hook libraries without loading or disabling pymon."""
+    roots = [
+        item["path"]
+        for item in policy.get("platform_root_reasons", [])
+        if item["role"] == "ovis_ldms"
+    ]
+    paths = []
+    for root in roots:
+        for relative in OVIS_EXIT_LIBRARIES:
+            path = Path(root) / relative
+            resolved = str(path.resolve())
+            require(
+                not any(
+                    _under(value, protected)
+                    for value in (str(path), resolved)
+                    for protected in policy["protected_roots"]
+                )
+                and _under(resolved, str(Path(root).resolve())),
+                "exit-hook library escapes reviewed code root or overlaps protected input",
+                guard="PLATFORM_LATE_ROOT",
+            )
+            require(
+                path.is_file(),
+                "required exit-hook library missing",
+                guard="PLATFORM_LATE_PRESENT",
+            )
+            paths.append(resolved)
+    return sorted(set(paths))
+
+
+def platform_prepared_mappings(mapped: set[str], policy: Json) -> Json:
+    """Keep the instantaneous mapped subset separate from the fixed library inventory."""
+    executable, missing, _ = platform_mapping_snapshot(mapped, policy)
+    require(
+        not missing, "incomplete prepare mapped subset", guard="PLATFORM_PREPARE_SUBSET"
+    )
+    return executable
+
+
 def pin_platform_libraries(r: Any, mapped: set[str], policy: Json) -> Json:
-    """Pin mapped instrument code by ordinary read, refusing protected inputs first."""
+    """Pin mapped and declared exit-hook code, refusing protected inputs first."""
     executable, missing, _nonexecutable = platform_mapping_snapshot(mapped, policy)
     require(
         not missing,
@@ -1091,7 +1188,8 @@ def pin_platform_libraries(r: Any, mapped: set[str], policy: Json) -> Json:
         guard="PLATFORM_MAP_SET",
     )
     pins = {}
-    for filename, mapping in executable.items():
+    for filename in sorted(set(executable) | set(platform_late_library_paths(policy))):
+        mapping = executable.get(filename)
         require(
             not any(_under(filename, root) for root in policy["protected_roots"]),
             "protected input cannot use ordinary platform digest",
@@ -1100,7 +1198,8 @@ def pin_platform_libraries(r: Any, mapped: set[str], policy: Json) -> Json:
         path = Path(filename)
         before = platform_identity(path)
         require(
-            all(before[key] == mapping[key] for key in ("device", "inode")),
+            mapping is None
+            or all(before[key] == mapping[key] for key in ("device", "inode")),
             "mapped code differs from on-disk identity",
             guard="PLATFORM_MAP_FILE",
         )
@@ -1117,30 +1216,36 @@ def pin_platform_libraries(r: Any, mapped: set[str], policy: Json) -> Json:
 def platform_library_record(
     r: Any, prepared: Json, mapped: set[str], policy: Json
 ) -> Json:
-    """Compare the exact prepared/worker platform code sets and every code pin."""
+    """Compare the mapped subset and every pin in the fixed library inventory."""
     expected = prepared.get("platform_libraries")
+    expected_mapped = prepared.get("platform_mapped")
     executable, inconsistent, nonexecutable = platform_mapping_snapshot(mapped, policy)
     record: Json = {
         "status": "STOP",
         "digest_mode": "ordinary_instrument_code_only",
-        "expected_mapped": sorted(expected) if isinstance(expected, dict) else None,
+        "expected_mapped": (
+            sorted(expected_mapped) if isinstance(expected_mapped, dict) else None
+        ),
+        "inventory_paths": sorted(expected) if isinstance(expected, dict) else None,
         "observed_mapped": sorted(executable),
         "missing_from_process_snapshot": inconsistent,
         "nonexecutable_platform_mappings": nonexecutable,
         "libraries": {},
         "violations": [],
     }
-    if not isinstance(expected, dict):
+    if not isinstance(expected, dict) or not isinstance(expected_mapped, dict):
         record["violations"].append({"reason": "platform prepare pins missing"})
         return record
-    added, removed = sorted(set(executable) - set(expected)), sorted(
-        set(expected) - set(executable)
+    added, removed = sorted(set(executable) - set(expected_mapped)), sorted(
+        set(expected_mapped) - set(executable)
     )
+    inconsistent += sorted(set(executable) - set(expected))
     record.update(unexpected_mapped=added, missing_mapped=removed)
     if added or removed or inconsistent:
         record["violations"].append({"reason": "platform mapped set differs"})
         return record
-    for filename, mapping in executable.items():
+    for filename in expected:
+        mapping = executable.get(filename)
         if any(_under(filename, root) for root in policy["protected_roots"]):
             record["violations"].append(
                 {
@@ -1157,12 +1262,21 @@ def platform_library_record(
             valid = (
                 stable
                 and observed == expected[filename]
-                and all(observed[key] == mapping[key] for key in ("device", "inode"))
+                and (
+                    mapping is None
+                    or (
+                        all(
+                            observed[key] == mapping[key] for key in ("device", "inode")
+                        )
+                        and mapping == expected_mapped[filename]
+                    )
+                )
             )
             record["libraries"][filename] = {
                 "prepared": expected[filename],
                 "observed": observed,
                 "mapped_identity": mapping,
+                "prepared_mapped_identity": expected_mapped.get(filename),
                 "stable": stable,
             }
             if not valid:
@@ -1275,7 +1389,9 @@ def build_trace_policy(config: Json, prepared: Json, run: Path) -> Json:
     )
     pinned_platform = list(prepared.get("platform_libraries", {}))
     return {
-        "schema": "fd-rpd-reco-trace-policy/2",
+        "schema": "fd-rpd-reco-trace-policy/3",
+        "platform_library_pins": prepared.get("platform_libraries", {}),
+        "mat_library_sha256": prepared["mat_environment"]["mat_sha256"],
         "cwd": clone,
         "clone_root": clone,
         "protected_roots": roots,
@@ -1367,12 +1483,102 @@ def write_trace_record(r: Any, run: Path, stage: str, record: Json) -> Json:
     return public
 
 
+def check_trace_libraries(r: Any, checked: Json, policy: Json) -> Json:
+    """Verify opened instrument libraries after every traced process exits.
+
+    Protected roots refuse before any read. Metadata receives only a four-byte
+    file-kind probe; hashes are computed only for prepared instrument-library pins.
+    No content from the probe is exported.
+    """
+    records: Json = {}
+    violations = []
+    for event in checked["events"]:
+        if not event.get("success") or "request" not in event:
+            continue
+        names = {event["request"], event.get("resolved") or event["request"]}
+        platform = any(
+            _under(name, root)
+            for name in names
+            for root in policy["allowed"].get("platform_system", [])
+        )
+        instrument = any(
+            _under(name, root)
+            for name in names
+            for root in policy.get("instrument_directories", [])
+        )
+        if not platform and not instrument:
+            continue
+        pins = (
+            policy.get("platform_library_pins", {})
+            if platform
+            else policy.get("mat_library_sha256", {})
+        )
+        category = "platform_library" if platform else "instrument_library"
+        endpoint = event.get("resolved") or event["request"]
+        path = Path(endpoint)
+        resolved = str(path.resolve())
+        item: Json = {"prepared": pins.get(endpoint)}
+        try:
+            if any(
+                _under(name, root)
+                for name in names | {resolved}
+                for root in policy["protected_roots"]
+            ):
+                raise ValueError("instrument-code open resolves into protected input")
+            if resolved != endpoint:
+                raise ValueError("library descriptor path changed after trace")
+            if path.is_dir():
+                records[endpoint] = {"kind": "directory"}
+                continue
+            before = platform_identity(path)
+            with path.open("rb") as stream:
+                elf = stream.read(4) == b"\x7fELF"
+            library = (
+                elf or re.search(r"\.so(?:\.\d+)*$|\.dylib$", endpoint) is not None
+            )
+            item.update(kind="library" if library else "metadata", stat=before)
+            if library or endpoint in pins:
+                if endpoint not in pins:
+                    raise ValueError("library open has no prepare pin")
+                observed = {**before, "sha256": r.digest(path)}
+                item.update(prepared=pins[endpoint], observed=observed)
+                if (
+                    (observed != pins[endpoint])
+                    if platform
+                    else (observed["sha256"] != pins[endpoint])
+                ):
+                    raise ValueError("opened library differs from prepare pin")
+            if before != platform_identity(path):
+                raise ValueError("file changed during post-exit verification")
+            records[endpoint] = item
+        except (OSError, ValueError) as error:
+            violations.append(
+                {
+                    **event,
+                    "class": category,
+                    "reason": str(error),
+                    "comparison": item,
+                }
+            )
+    result = {
+        **checked,
+        "library_open_checks": records,
+        "violations": checked["violations"] + violations,
+    }
+    if violations:
+        result["status"] = "STOP"
+        raise CustodyRefused("library custody violations", result)
+    return result
+
+
 def classify_trace_with_stop(
     r: Any, run: Path, stage: str, lines: list[str], policy: Json, provenance: Json
 ) -> Json:
     """Persist every classified violation before propagating a trace refusal."""
+    r.require_output_root(run)
     try:
-        return classify_trace(lines, policy)
+        checked = classify_trace(lines, policy)
+        return check_trace_libraries(r, checked, policy)
     except CustodyRefused as error:
         write_trace_record(
             r, run, stage, {**provenance, **(error.details or {}), "status": "STOP"}
