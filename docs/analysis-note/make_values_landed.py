@@ -37,11 +37,16 @@ READOUTS = {  # name: (path, sha256 as the OUTCOME record states it)
            "4872df322a4e2e49ef009c4fa7eb78f273b8bea75a8a97855fd57451d229dca1"),
     "p1": (f"{FD}/receipts-1b/precheck-fd/p4/records/p4/readout.json",
            "8e05ca9bc2d0f2142b5c8d2bff28f05176c48f27454218390f09658344cea7b0"),
+    "rg1": (f"{FD}/receipts-ref-g1/a1-read/readout.json",
+            "4db170d36cffa0be2aeb53926e94158ef4e5e2e1d88fa50dd29baeace8ed6fd7"),
     # I2's readout, as its receipt's SHA256SUMS pins it (fd/receipts-1b/inv/i2/SHA256SUMS)
     "i2": (f"{FD}/receipts-1b/inv/i2/i2.json",
            "a9d3dc9c0e331eb635d6598c03b5bf95f6931f88c0cf0a43a1e73e2df9135bdb"),
 }
 REC = {
+    "methods": f"{OR}/DECISION-20261106-joseph-methods-study-and-archive.md",
+    "refg1": f"{OR}/OUTCOME-20261106-ref-g1-r1-differ.md",
+    "refg1decl": "docs/orchestration/state/measurement-paper/5d-community-20261024/REF-G1-DECLARATION.md",
     "i2report": "docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-INV-I2-REPORT.md",
     "keepblock": f"{OR}/DECISION-20261101-joseph-1b-keep-block-redesign-test.md",
     "stop": f"{OR}/OUTCOME-20261106-1b-stage1-receipt-stop.md",
@@ -173,6 +178,24 @@ def build(R):
     record("keepblock", 38, f"median {med:.2f}×")
     record("keepblock", 39, f"{lo:.2f}–{hi:.2f}")
     V["i2-resp-med"], V["i2-resp-lo"], V["i2-resp-hi"] = f"{med:.2f}", f"{lo:.2f}", f"{hi:.2f}"
+    # --- REF-G1, the sixteen-cell binned head-to-head (OUTCOME-20261106-ref-g1-r1-differ.md; a stated limitation,
+    # DECISION-20261108-joseph-note-framing-and-estimator-dependence.md item 3)
+    g1 = R["rg1"]
+    expect(g1["R1"]["reading"] == "differ" and g1["controls_pass"] is True, "REF-G1 R1")
+    expect(g1["R2"]["nuwro"]["reading"] == "IBU worse" and g1["R2"]["tune_v1"]["reading"] == "IBU better", "REF-G1 R2")
+    V["rg1-T"] = record("refg1", 16, f"T = {g1['R1']['T']:.1f}")[len("T = "):]
+    b1, b2 = g1["R1"]["bars"]
+    V["rg1-bar1"], V["rg1-lev1"] = record("refg1", 17, f"{b1:.2f} (0.95)").split(" ")[0], "0.95"
+    V["rg1-bar2"], V["rg1-lev2"] = record("refg1", 17, f"{b2:.2f} (0.997)").split(" ")[0], "0.997"
+    V["rg1-K"] = record("refg1decl", 130, "K = 5")[len("K = "):]
+    V["rg1-r2-nuwro"] = tex_num(g1["R2"]["nuwro"]["ratio"], 2)
+    r3 = g1["R3"]["sigma_ibu_over_e"]
+    expect(len(r3) == 16, "REF-G1 R3 cells")
+    V["rg1-r3-med"] = record("refg1", 35, f"{g1['R3']['median']:.2f}")
+    V["rg1-r3-lo"] = record("refg1", 35, f"{min(r3):.2f}")
+    V["rg1-r3-hi"] = record("refg1", 36, f"{max(r3):.2f}")
+    # --- the rounding-level shift, as the methods-study decision states it (:20; FD-STAB's NONE_PASS)
+    V["stab-max"] = record("methods", 20, "2.6")
     if A:
         sys.exit("FAIL: a record no longer says what the prose states: " + "; ".join(A))
     return V
