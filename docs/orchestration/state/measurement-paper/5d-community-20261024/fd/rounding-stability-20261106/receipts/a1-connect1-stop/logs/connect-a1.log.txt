@@ -1,0 +1,32 @@
+node login03 nproc=244 loadavg 31.61 31.80 33.81
+2026-11-07T22:46:22Z
+connect script sha256 deab082b4997b352d151c4553ced4a0c1c3ce971a66601f74da3df74905b6261
+== COV2D fence
+FENCE: no cov2d-* job queued or running
+== iris
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2338.6            10000.0     18230.6      20000.0
+balance_node_h=1769.4 half=884.7 price=8.0
+== attempt 1
+log-dry/SHA256SUMS e3cc597cdc1cdb0a3bfea0095130b9a2f99a3578c63ce1541c2a893092ab2935; log-full/SHA256SUMS 846e322a8ced04ecb63953e7109328ca6f01b6d115486c205fedcfac83d97fd3; FAILED 'rc=124'
+60970044 COMPLETED|944|1; 60972000 FAILED|3520|1
+spent 1.2400 node-h; ceiling 4.5; cap 8.0
+== stat
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz size=1548438020 mtime=2026-06-27 18:31:48.000000000 -0700 atime=2026-11-07 11:16:37.000000000 -0800
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz size=16017201 mtime=2026-09-24 23:51:44.000000000 -0700 atime=2026-11-07 11:16:37.000000000 -0800
+== the clones
+deploy at e306087e68fd497541d32b440848a40f7f29611e; porcelain --ignored lines: 0
+a1 at 4fd5b9c2db1cda2177cd4540c9a44c404cb1cc81; porcelain --ignored lines: 0
+blobs: 6 checked, 0 mismatches; declaration dbfb0c941b2ad6999b2edb3b8bf77ca735b2f01f86ca593425e44c2ad5c91e76; binding 1 947fd2750343ead7aff5281af8bfb03a137f76346071a84233b62ebf12744255; addendum A1 0899d55cb35c1d541a3b8fb630daaa83e39ae8bfba24289554b6d849c68a38fc
+== the queue
+{"tasks": 66, "unfolds": 229, "dry": 9}
+queue.tsv 252c9628c0a238820d851f5d77e72afefda3d9e61d6fcc9a658e5a3e8543ea73; dry.tsv 92195b6dc70658d8e3d348737d6eda5a83952dc4f88a5ff1a81b574f6541071d
+== the staging
+  File "/pscratch/sd/j/josephrb/rs1-a1-20261107/a1/nd-unfolding/rs1_a1_plan.py", line 20
+    from __future__ import annotations
+    ^
+SyntaxError: future feature annotations is not defined
+STOP: staging
+rs1 a1 submit rc=6
+2026-11-07T22:47:39Z

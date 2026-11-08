@@ -214,7 +214,13 @@ def main() -> int:
         KeyError,
         ImportError,
     ) as error:
+        print(f"STOP DATA_FREE_TRACE: {error}", file=sys.stderr)
         if args.worker and isinstance(error, r.Refused):
+            print(json.dumps(error.details, sort_keys=True), file=sys.stderr)
+            try:
+                r.require_output_root(args.run)
+            except (r.Refused, OSError, ValueError):
+                return 4
             r.write_json(
                 args.run / "prologue-worker.STOP.json",
                 {
@@ -223,8 +229,6 @@ def main() -> int:
                     "details": error.details,
                 },
             )
-            print(json.dumps(error.details, sort_keys=True), file=sys.stderr)
-        print(f"STOP DATA_FREE_TRACE: {error}", file=sys.stderr)
         return 4
     return 0
 

@@ -1,0 +1,27 @@
+== remote 2026-11-07T06:45:48Z login01
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/DECLARATION.md: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/per_period_benchmark.py: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/test_per_period_benchmark.py: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/INPUTS.sha256: OK
+fence before_copy: squeue rc 0, rows 0
+== step copy
+copy rc 0
+== step verify
+verify rc 0
+fence before_read: squeue rc 0, rows 0
+== step read
+read rc 0
+copies.json
+copy.log
+env.txt
+pins.check
+pins.sha256
+read.log
+readout.json
+readout.txt
+squeue_before_copy.err
+squeue_before_copy.txt
+squeue_before_read.err
+squeue_before_read.txt
+verify.json
+verify.log

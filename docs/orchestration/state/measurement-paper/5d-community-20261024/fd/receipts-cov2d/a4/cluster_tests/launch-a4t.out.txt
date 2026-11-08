@@ -1,0 +1,69 @@
+fence host=login02 utc=2026-11-07T08:27:27Z
+squeue:
+sacct unended cov2d:
+fence end
+FENCE_CLEAR
+staged rc=0 node=69e2e3f02b3a432c792b663c0c5c5282421cc06ac04bd76953230b40cea3a4d4 local=69e2e3f02b3a432c792b663c0c5c5282421cc06ac04bd76953230b40cea3a4d4
+DIGEST_MATCH
+launched rc=0 at 2026-11-07T08:27:46Z
+last line: DONE
+fetched connect-a4t.log rc=0
+fetched logs/SHA256SUMS rc=0
+fetched logs/blobs.txt rc=0
+fetched logs/RM_test_cov2d_readout.log rc=0
+fetched logs/RM_test_cov2d_blocks.log rc=0
+fetched logs/RM_test_cov2d_null.log rc=0
+fetched logs/RM_test_cov2d_score.log rc=0
+fetched logs/R_test_cov2d_readout.log rc=0
+fetched logs/R_test_cov2d_blocks.log rc=0
+fetched logs/R_test_cov2d_null.log rc=0
+fetched logs/R_test_cov2d_score.log rc=0
+fetched logs/RM_test_cov2d.log rc=0
+fetched logs/P_test_cov2d_readouts.log rc=0
+removal rc=0
+host=login02 utc=2026-11-07T08:37:19Z
+39a8e182e87b6e213a4d87140132eec4ac510c24f4edd893465fcd8ee08cd193  connect-a4t.log
+4479d40e01b39d17f7fcdcdeb4492fc1fffcf7893ea2fbbc6757e0bc5aa9603a  logs/SHA256SUMS
+b3926bf6b212a71ddae679a9f5d1ae8fd20e20b964eebd6ddd0b466fb839c5c2  logs/blobs.txt
+a26367d87c326d63f0c31571a696c3e322dad9df7d4cd935ab5397b8ab4487cb  logs/RM_test_cov2d_readout.log
+180264c0f421e1fcef6017a2fd6c5a0576653d8ea8a911a514235c622d3dd7e7  logs/RM_test_cov2d_blocks.log
+b56746a291e285dda5ac6257b59694e50a1aa5b1078fc2e3a730bc660f3c87d1  logs/RM_test_cov2d_null.log
+ba6ce2c530de985109cc02595b021f7f3d8cce79fb15df12900a58822dad1b8a  logs/RM_test_cov2d_score.log
+1cd085b415817cf73336c14929d7ac768f99e661d1de4c8096b0f100bbfc5be1  logs/R_test_cov2d_readout.log
+8d2c5822577e4e2ab73dce046e80f0c520237a8288b80179054901219ff59e27  logs/R_test_cov2d_blocks.log
+95c9ab4a0160e491f5acddf63226ee7990e5e176653c7ad63569b6f265e97e65  logs/R_test_cov2d_null.log
+25a906dff2d19a29fb79e0bd63b56883c1d677d3739314ca9174bfa43f717349  logs/R_test_cov2d_score.log
+b7f5cf88c4079fcab8f5dcadd2aa27a808dd732af5cf497d488f6cb68da76eb5  logs/RM_test_cov2d.log
+880b37a8c37af67ff366ae8aea074eaa33b0ba9b5e7c1a7a8d9262590d699ab3  logs/P_test_cov2d_readouts.log
+69e2e3f02b3a432c792b663c0c5c5282421cc06ac04bd76953230b40cea3a4d4  /dev/shm/josephrb-cov2d-a4t.sh
+rm -f /dev/shm/josephrb-cov2d-a4t.sh rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/blobs.txt rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/P_test_cov2d_readouts.log rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/RM_test_cov2d_blocks.log rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/RM_test_cov2d.log rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/RM_test_cov2d_null.log rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/RM_test_cov2d_readout.log rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/RM_test_cov2d_score.log rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/R_test_cov2d_blocks.log rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/R_test_cov2d_null.log rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/R_test_cov2d_readout.log rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/R_test_cov2d_score.log rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/logs/SHA256SUMS rc=0
+rm -f /dev/shm/josephrb-cov2d-a4t/connect-a4t.log rc=0
+rmdir /dev/shm/josephrb-cov2d-a4t/logs rc=0
+rmdir /dev/shm/josephrb-cov2d-a4t rc=0
+ls end
+MATCH connect-a4t.log
+MATCH logs/SHA256SUMS
+MATCH logs/blobs.txt
+MATCH logs/RM_test_cov2d_readout.log
+MATCH logs/RM_test_cov2d_blocks.log
+MATCH logs/RM_test_cov2d_null.log
+MATCH logs/RM_test_cov2d_score.log
+MATCH logs/R_test_cov2d_readout.log
+MATCH logs/R_test_cov2d_blocks.log
+MATCH logs/R_test_cov2d_null.log
+MATCH logs/R_test_cov2d_score.log
+MATCH logs/RM_test_cov2d.log
+MATCH logs/P_test_cov2d_readouts.log
+launcher rc=0

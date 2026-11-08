@@ -1,0 +1,48 @@
+host=login02 start=2026-11-07T17:50:52Z pid=436534
+porcelain_before_lines=0 head=ac25b66533788ceb18b1d4e5add259c53b216669
+READOUT-SHA OK d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
+{"mat_setup_scripts": 6, "mismatches": 0}
+python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python TMPDIR=/dev/shm/josephrb-cov2d-n-G18/tmp
+3.11.14 numpy 1.26.4 ROOT 6.28/12
+MAT preflight file: /pscratch/sd/j/josephrb/MINERvA-OmniFold/2d-unfolding/baseline_flux/runEventLoopMC_1A.root sha256 d54d2a2c6e0454b035c69d82aff3d3ac2c8cb5e589fea09f2b439804854b1107
+MAT preflight: MnvH1D PlotUtils::MnvH1D 14 bins
+[PASS] weights_identical_across_playlists
+[PASS] weights_equal_constraint_file
+[PASS] weights_equal_vl175_build_json  {'sum': 211.01200325082078, 'n_eff': 19.060534772246488}
+[PASS] cov2d_G18_minos_outputs_divided_by_phi_cv  0.0
+[PASS] cov2d_G18_x01_scale_equals_vl175  0.0
+COV2D-NULL G18 PASS stops=0 controls_failed=0
+	Command being timed: "python -B cov2d_readout.py null --truth G18 --out /dev/shm/josephrb-cov2d-n-G18/out"
+	User time (seconds): 101.20
+	System time (seconds): 166.44
+	Percent of CPU this job got: 98%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:30.57
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1096600
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 80224468
+	Voluntary context switches: 5963
+	Involuntary context switches: 162691
+	Swaps: 0
+	File system inputs: 101318
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
+PHASE-N G18 PASS rc=0
+7eb657b82ae953bdf0584eda27264c52a64bcb48baea52dfc194f5efe440ea3d  blocks_G18.npz
+ecdb4be2fbb18852d32c1a4f9fb3cbc4107310d72c5bdeb2eb3651996ed0c41f  null_G18.json
+porcelain_after_lines=0 head=ac25b66533788ceb18b1d4e5add259c53b216669
+blobs unchanged
+removal: host=login02 2026-11-07T17:55:54Z 1.2G /dev/shm/josephrb-cov2d-n-G18/deploy
+rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-n-G18/deploy': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-n-G18/tmp': No such file or directory
+end=2026-11-07T17:55:55Z
+DONE

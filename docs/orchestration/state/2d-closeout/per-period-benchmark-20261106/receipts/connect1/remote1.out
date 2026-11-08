@@ -1,0 +1,17 @@
+== remote 2026-11-07T06:42:30Z login36
+archive digest equal: bb1e00e4ed9c8ef27b9681a9daf47078b9d89d5559937104f778afd5c06c716e
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/DECLARATION.md: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/per_period_benchmark.py: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/test_per_period_benchmark.py: OK
+docs/orchestration/state/2d-closeout/per-period-benchmark-20261106/INPUTS.sha256: OK
+squeue rc 0, rows 0
+fence: no cov2d-* job
+python /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+3.11.14 | packaged by conda-forge | (main, Oct 22 2025, 22:46:25) [GCC 14.3.0]
+numpy 1.26.4 matplotlib 3.10.8 ROOT 6.28/12
+suite rc 0; Ran 51 tests in 0.994s; last line 'OK'
+smoke rc 0
+ },
+ "verdict": "PASS"
+}
+CONNECT1 PASS

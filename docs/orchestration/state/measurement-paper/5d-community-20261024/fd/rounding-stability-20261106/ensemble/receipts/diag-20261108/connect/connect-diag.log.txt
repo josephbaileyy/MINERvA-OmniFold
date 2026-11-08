@@ -1,0 +1,26 @@
+node login18 nproc=244 loadavg 59.60 52.88 52.40
+2026-11-08T01:32:36Z
+connect script sha256 6103b4ff261ff3a1a4d15e1d04d10efbde080b3354414067e866c6e249c62127
+== COV2D fence
+FENCE: no cov2d-* job queued or running
+60982139|rs1_a1|RUNNING|1:14:04|4:30:00
+== stat (before)
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz size=1548438020 atime=1794100255
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz size=16017201 atime=1794100255
+== the deploy
+HEAD 53382844e72057d6eacb47f3bf8556cd47766a70; porcelain --ignored lines: 0
+blobs: 4 checked, 0 mismatches
+== the diagnosis script
+ens1_diag.py sha256 d4b5ba16edc2eddb6b83751316db0f16a22fb8476f3450644e3c78d514fa0eba (sent d4b5ba16edc2eddb6b83751316db0f16a22fb8476f3450644e3c78d514fa0eba)
+== the diagnosis (sourced environment)
+Python 3.11.14
+{"verdict": "CONFIRMED", "checks": {"plus_delta_reproduces_the_job": true, "protocol_only_zero": true, "every_mover_at_a_farther_neighbour": true}, "protocol_only": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "plus_delta": {"1": {"MCgen": 2, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "2": {"MCgen": 1, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "3": {"MCgen": 2, "MCreco": 0, "measured": 0, "bkg_reco": 0}, "4": {"MCgen": 1, "MCreco": 0, "measured": 0, "bkg_reco": 0}}}
+diagnosis rc=0
+== stat (after; atime must not move)
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz size=1548438020 atime=1794100255
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz size=16017201 atime=1794100255
+atime unchanged
+919642809fdc9947a1457065d7c75cb9c98eed6249fe50ba578fe5c66ce0ab52  /pscratch/sd/j/josephrb/ens1-diag-20261108/diag.json
+deploy porcelain --ignored after: 0
+ens1 diag rc=0
+2026-11-08T01:37:12Z

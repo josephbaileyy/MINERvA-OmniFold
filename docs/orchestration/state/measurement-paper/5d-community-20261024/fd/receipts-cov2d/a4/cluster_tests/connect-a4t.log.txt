@@ -1,0 +1,75 @@
+host=login02 start=2026-11-07T08:27:44Z pid=2182709
+head=7177d0f83120a70373057adc6a64a2c84985e867
+porcelain-before plain=0 ignored=0
+READOUT-SHA OK d1a3cff9768cb3913c9b95c9c6c1bb7402c5a14103f1dd22f5131c16aacda297
+BOUND-UNCHANGED cov2d.py
+BOUND-UNCHANGED cov2d_blocks.py
+BOUND-UNCHANGED cov2d_null.py
+BOUND-UNCHANGED cov2d_score.py
+BOUND-UNCHANGED cov2d_readouts.py
+{"mat_setup_scripts": 6, "mismatches": 0}
+RM python=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+MAT {"mapped": ["/pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so"], "dictionary": true}
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBayes found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldBinByBin found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldErrors found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldInvert found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldParms found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldResponse found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldSvd found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+Warning in <TInterpreter::ReadRootmapFile>: class  RooUnfoldTUnfold found in libUnfoldUtilsDict.so  is already in libRooUnfold.so 
+ENV RM /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python 3.11.14 numpy 1.26.4 uproot absent (ModuleNotFoundError) ROOT 6.28/12 O_NOATIME 262144
+rc env=RM module=test_cov2d_readout rc=0
+SUITE env=RM module=test_cov2d_readout ran=36 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d_blocks rc=0
+SUITE env=RM module=test_cov2d_blocks ran=26 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d_null rc=0
+SUITE env=RM module=test_cov2d_null ran=5 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d_score rc=0
+SUITE env=RM module=test_cov2d_score ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=RM module=test_cov2d rc=0
+SUITE env=RM module=test_cov2d ran=35 failures=0 errors=0 skipped=11 guarded_reads=0 ok=True
+RM rc=0
+ENV R /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python 3.11.14 numpy 1.26.4 uproot absent (ModuleNotFoundError) ROOT 6.28/12 O_NOATIME 262144
+rc env=R module=test_cov2d_readout rc=0
+SUITE env=R module=test_cov2d_readout ran=36 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R module=test_cov2d_blocks rc=0
+SUITE env=R module=test_cov2d_blocks ran=26 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R module=test_cov2d_null rc=0
+SUITE env=R module=test_cov2d_null ran=5 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+rc env=R module=test_cov2d_score rc=0
+SUITE env=R module=test_cov2d_score ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+R rc=0
+ENV P /global/homes/j/josephrb/.conda/envs/omnifold_py310/bin/python 3.10.19 numpy 2.2.6 uproot 5.6.9 ROOT absent (ModuleNotFoundError) O_NOATIME 262144
+rc env=P module=test_cov2d_readouts rc=0
+SUITE env=P module=test_cov2d_readouts ran=12 failures=0 errors=0 skipped=0 guarded_reads=0 ok=True
+P rc=0
+porcelain-after plain=0 ignored=0
+GUARD-TEST RAN-OK RM test_null_passes_at_both_truths_and_opens_no_toy
+GUARD-TEST RAN-OK RM test_score_completes_after_the_gate
+GUARD-TEST RAN-OK RM test_a_plain_toy_open_in_phase_n_is_refused_by_the_audit
+GUARD-TEST RAN-OK RM test_a_noatime_toy_read_in_phase_n_stops
+GUARD-TEST RAN-OK RM test_atime_moved_stops_and_unmoved_does_not
+GUARD-TEST RAN-OK R test_null_passes_at_both_truths_and_opens_no_toy
+GUARD-TEST RAN-OK R test_score_completes_after_the_gate
+GUARD-TEST RAN-OK R test_a_plain_toy_open_in_phase_n_is_refused_by_the_audit
+GUARD-TEST RAN-OK R test_a_noatime_toy_read_in_phase_n_stops
+GUARD-TEST RAN-OK R test_atime_moved_stops_and_unmoved_does_not
+TESTS-SUMMARY 10 ok of 10 suite runs
+removal: host=login02 2026-11-07T08:35:56Z 1.2G
+rc=0
+ls: cannot access '/dev/shm/josephrb-cov2d-a4t/deploy': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-a4t/tmp': No such file or directory
+ls: cannot access '/dev/shm/josephrb-cov2d-a4t/runsuite.py': No such file or directory
+end=2026-11-07T08:35:57Z
+DONE

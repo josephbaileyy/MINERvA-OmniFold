@@ -3153,6 +3153,54 @@ def test_environment_exclusions_are_reviewed() -> None:
     }
 
 
+def test_prologue_worker_stop_records_values_and_cfs_guard(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    spec = importlib.util.spec_from_file_location(
+        "rpd_prologue_stop_test", REPO / "nd-unfolding/fd_rpd_reco_prologue.py"
+    )
+    assert spec is not None and spec.loader is not None
+    prologue = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco", R)
+    monkeypatch.setitem(sys.modules, "fd_rpd_reco_custody", _custody_module())
+    spec.loader.exec_module(prologue)
+    prologue.r = R
+    receipt = tmp_path / "prologue-prepare.json"
+    receipt.write_text("{}")
+    error = R.Refused("MAT_PREPARE_RUN", "controlled mismatch")
+    error.details = {"run": {"prepared": "/foreign", "observed": str(tmp_path)}}
+
+    def refuse(_inputs: Any) -> Any:
+        raise error
+
+    monkeypatch.setattr(R, "checked_prepared_mat", refuse)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "prologue",
+            "--worker",
+            "--run",
+            str(tmp_path),
+            "--prepare-sha256",
+            R.digest(receipt),
+        ],
+    )
+    assert prologue.main() == 4
+    stop = json.loads((tmp_path / "prologue-worker.STOP.json").read_text())
+    assert stop["guard"] == error.guard
+    assert stop["details"] == error.details
+
+    def forbid_write(*_args: Any, **_kwargs: Any) -> None:
+        pytest.fail("CFS-refused worker must not write a STOP receipt")
+
+    monkeypatch.setattr(R, "write_json", forbid_write)
+    monkeypatch.setattr(
+        sys, "argv", ["prologue", "--worker", "--run", "/global/cfs/forbidden-run"]
+    )
+    assert prologue.main() == 4
+
+
 def test_connect_mat_setup_disables_nounset() -> None:
     """Every live MAT connect suspends nounset during setup sourcing."""
     sources = 0
