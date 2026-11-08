@@ -1,0 +1,18 @@
+{
+ "status": "DECLARED: the deletion runs after this receipt merges; its own ledger, in the same form, is added then",
+ "host": "login27",
+ "roots": {
+  "/dev/shm/limres-rpd-prologue4-20261108": {
+   "declared": {
+    ".rpd-private/3cdf27c8d29fe5d5407acb8ca456ade8a1df23de41ce5930c70a2a3bcb5cc522/prologue-prepare.json": "7f12fdfdd14bf82ff1e9ba72324b9269bba183984f41cc6fdf5b4383573a0afb"
+   },
+   "scope": "the whole root: the fresh clone, the policy config, the check tools, the wrapper's captured output and the check outputs, the run directory and .rpd-private",
+   "reason": "the canonical prepare record under .rpd-private holds unsalted SHA-256 fingerprints of every environment value, credential fields included; the code writes it owner-only outside the run (C3), and the director's condition is that it never reaches the repo and is deleted on the cluster after the receipt merges. The receipt carries the code's public view and the reference instead.",
+   "permissions": "root 700; .rpd-private/<token> 700; the record 600 (umask 077 in the connect; modes as measured in c3-check.txt)"
+  }
+ },
+ "cleanup_connect": {
+  "path": "rpd_prologue4_cleanup.sh in this receipt",
+  "sha256": "58b2942c901a1672759d6efda5157fe33db58bfefba25f97521285866a417594"
+ }
+}
