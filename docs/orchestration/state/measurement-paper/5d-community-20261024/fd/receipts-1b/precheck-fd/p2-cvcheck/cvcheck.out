@@ -1,0 +1,20 @@
+remote sha256 70ebae4d75506437c70be301d52ff33686456dc568a7010c0bc7fa3f764e06ed
+node login03 2026-11-08T06:50:40Z
+connect script sha256 70ebae4d75506437c70be301d52ff33686456dc568a7010c0bc7fa3f764e06ed
+== fence (allowed names: rs1_* and ens1_*; anything else refuses)
+
+squeue rc=0; refusing rows: []
+== CV bitwise
+read /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_CV.npz sha256 44f22acfb6e38b60a450a2aa4881437b9911e61cdba792a3df9b75a6080ee6ed bytes 189270 (O_NOATIME)
+reference keys: ['meta', 'xsec_flat', 'xtrue_flat']
+read /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_CV.npz sha256 0876f73e6c337c9bb649d45d8b590baba1600dc48859e8298bca9b4ede9f93a4 bytes 189463 (O_NOATIME)
+A xsec_flat: dtype float64 vs float64 (True); shape (65856,) vs (65856,) (True); array_equal True; first differing index None
+A xtrue_flat: dtype float64 vs float64 (True); shape (65856,) vs (65856,) (True); array_equal True; first differing index None
+read /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_CV.npz sha256 dfc186f96c3a7f0bad1b0121218c1a22567b65ad91a9c0aa027aafece302bb06 bytes 189466 (O_NOATIME)
+B xsec_flat: dtype float64 vs float64 (True); shape (65856,) vs (65856,) (True); array_equal True; first differing index None
+B xtrue_flat: dtype float64 vs float64 (True); shape (65856,) vs (65856,) (True); array_equal True; first differing index None
+read /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_CV.npz sha256 ecea5e258b0692bcb69aec222e908fecc8c8be32970643d801a78d74c705e67c bytes 189465 (O_NOATIME)
+Dnom xsec_flat: dtype float64 vs float64 (True); shape (65856,) vs (65856,) (True); array_equal True; first differing index None
+Dnom xtrue_flat: dtype float64 vs float64 (True); shape (65856,) vs (65856,) (True); array_equal True; first differing index None
+CV BITWISE: PASS
+== pfd-p2-cvcheck rc=0 2026-11-08T06:50:40Z
