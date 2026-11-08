@@ -3461,6 +3461,11 @@ def test_private_prepare_public_outputs(
 ) -> None:
     """Exercise the actual worker and scan every committable output for leaks."""
     custody = _custody_module()
+    # Mutation failures must never serialize host credential fingerprints.
+    module_override = os.environ.get("FD_RPD_CUSTODY_MODULE")
+    monkeypatch.setattr(os, "environ", {"PATH": os.defpath})
+    if module_override:
+        monkeypatch.setenv("FD_RPD_CUSTODY_MODULE", module_override)
     secret = "disposable-private-credential-value"
     replacement = "changed-disposable-credential-value"
     url = "https://user:disposable-password@example.invalid"
