@@ -13,6 +13,8 @@
 - [`DECISION-20261106-joseph-plateau-next-work.md`](../../../DECISION-20261106-joseph-plateau-next-work.md), item 2,
   at `:49-52`. This is Joseph's override of 1B's rule (iii) (`DECISION-20261102-joseph-1b-redesign.md:78`), for "a
   declared coverage test built like-for-like".
+- [`DECISION-20261108-joseph-ll5d-stop-rule.md`](../../../DECISION-20261108-joseph-ll5d-stop-rule.md) (#939, merge
+  `274eef82`), items 1–4, at `:28-35`: Joseph's ruling on R3, "Decide at the STOP" (§8).
 - The director's brief of 2026-11-08, and the director's rulings on this draft (2026-11-08, by message), listed in §14.
 
 **After:**
@@ -24,7 +26,7 @@
   covariance rebuilt at each tune.
 - 1B's staged design and its amendments, read from the campaign branch at `342c0ce5` without touching it.
 
-Citations are at main `52334c34` unless another sha is given. "Part 1 `[path]`" is a key path in Part 1's
+Citations are at main `52334c34` unless another sha is given; the stop-rule decision is at `274eef82`. "Part 1 `[path]`" is a key path in Part 1's
 `readout.json`.
 
 **MEASURES:** nothing.
@@ -48,8 +50,10 @@ Citations are at main `52334c34` unless another sha is given. "Part 1 `[path]`" 
 
 **NOT CITABLE FOR:**
 - **any coverage statement, in either direction,** about the 5D intervals, the reported covariance, or the procedure;
-- that the like-for-like construction holds at G18 or AR23. Rule K was read at the nominal truth only (Part 1;
-  limitation-resolver's answer Q5);
+- **that Part 1's like-for-like result carries to G18 or AR23.** Rule K was read at the nominal truth only, r = 1
+  (Part 1; limitation-resolver's answer Q5). There unf = ofin, so a universe's truth weights w_truth cancel out of its
+  truth; at r ≠ 1 they do not (limitation-resolver's answer Q2). So Part 1's PASS for flux, detector, GEANT_Pion and
+  MinosEfficiency says nothing about like-for-like at either tune, and this test does not measure it (§2, §13, §14);
 - the cause of the GEANT_Neutron or GEANT_Proton departure, or any repair of it;
 - the truth dependence (item (c)), or which truth the intervals should use;
 - the coverage of any ENS1 estimator (the director's ruling 5);
@@ -59,9 +63,15 @@ Citations are at main `52334c34` unless another sha is given. "Part 1 `[path]`" 
 **The job-name family is `ll5d_*`** (§9): `ll5d_calib`, `ll5d_gate_G18`, `ll5d_gate_AR23`, `ll5d_pilot` and
 `ll5d_bulk_01` to `ll5d_bulk_10`. The family is new. The director tells every fenced lane before any go.
 
-**PENDING-JOSEPH:**
-- **The analogue of rule (iii) for this test** (§8, row R3). Until Joseph rules, the default is fail-closed: any
-  STOP or INVALID goes to the director and to Joseph unrepaired, and nothing relaunches.
+**The STOP rule (§8, row R3): Joseph ruled "Decide at the STOP"** (`DECISION-20261108-joseph-ll5d-stop-rule.md`).
+- No stop rule is fixed in advance.
+- Each STOP goes to the director and to Joseph unrepaired. Nothing relaunches, and no repair is declared, until Joseph
+  decides for that STOP.
+- An INVALID may still be rerun unchanged under the director's authority.
+- Any repair after a STOP is disclosed in the paper and the note as chosen after that STOP was seen.
+
+**Still Joseph's, not drafted here:** R5, the wording of the two readings (after the result, §8), and whether to
+override R8, the director's mapping of the 1 % budget.
 
 ## 1. What is tested, and what is fixed
 
@@ -450,9 +460,9 @@ Each is produced per (truth, reading):
 | R1 | first-order composition, in draw order, k = 1 bitwise | `DECISION-20261102-joseph-1b-redesign.md` item 1 | **carries**, with the denominator per row (§3.3–§3.4, the director's ruling D) |
 | R2a | addition (i): cross terms, descriptive | same, item 2 (i) | **carries** (§7) |
 | R2b | addition (ii): clipped mass per reco and truth cell per toy, the offset from one mean unfold per truth, and its reading fixed before any number | same, item 2 (ii) | **carries**, per row, per reading, with the truth side added (§5.3, §6) |
-| R3 | a second STOP ends stage 1 unless Joseph rules otherwise | same, item 2 (iii), `:78` | **overridden by Joseph for 1B** (2026-11-06 item 2). **Whether this test carries its own STOP limit is PENDING-JOSEPH.** Until then: fail-closed, any STOP or INVALID to the director and Joseph unrepaired, and nothing relaunches |
+| R3 | a second STOP ends stage 1 unless Joseph rules otherwise | same, item 2 (iii), `:78` | **overridden by Joseph for 1B** (2026-11-06 item 2). **For this test, Joseph ruled "Decide at the STOP"** (`DECISION-20261108-joseph-ll5d-stop-rule.md:28-35`): no stop rule fixed in advance; each STOP goes to the director and Joseph unrepaired, with nothing relaunched and no repair declared until Joseph decides for that STOP; an INVALID may still be rerun unchanged under the director's authority; any repair after a STOP is disclosed in the paper and the note as chosen after it was seen |
 | R4 | negative counts: option (a), λ⁺ in the pseudo-data only | same, item 3 | **superseded** by the 11-03 clip rule (R7) |
-| R5 | the wording: one neutral methods sentence, no "does not test" clause, the required facts as description, clipping, the ±1σ draws, shared universes and cross terms to the note; the paper lane drafts, a PRD-referee read follows, and Joseph reads | same, item 4 | **carries**. **New and Joseph's:** how, or whether, the paper describes the two readings and the exclusion of two bands, and the note's text on the denominator clip (§13) |
+| R5 | the wording: one neutral methods sentence, no "does not test" clause, the required facts as description, clipping, the ±1σ draws, shared universes and cross terms to the note; the paper lane drafts, a PRD-referee read follows, and Joseph reads | same, item 4 | **carries**. **New and Joseph's:** how, or whether, the paper describes the two readings and the exclusion of two bands, and the note's text on the denominator clip (§13). **Not drafted now** (the director, 2026-11-08): it waits for the result, then the PRD-referee read, then Joseph |
 | R6 | the director's §2d (ii), an exact float64 pass; §2b, a non-positive denominator fails closed | same, item 5 | §2d (ii) **carries** (§5.1). §2b is **replaced by construction** (§3.4), and a non-positive *reporting-cell* truth STOPs (§5.1), as the director accepted |
 | R7 | consistent clipping, each tree on its own composite, row by row; 1B gated on C2's fixed reading as a hard stop; the weakened-pass reading | `DECISION-20261103-joseph-coverage-clip-rule.md` items 1–4 and clarification | **carries**, and is the ground of §3.4. The gate is §5.2 |
 | R8 | the 16-cell variance gate (i)–(iii), calibration first, 1 % over three truths | `DECISION-20261103-joseph-1b-variance-gate.md` | **carries**, on 16 cells. The 1 % is over four evaluations: **the director's mapping, which Joseph may override** (§5.2) |
@@ -461,9 +471,9 @@ Each is produced per (truth, reading):
 | R11 | a campaign above half the group balance goes to Joseph first | plateau decision item 2; DECISION-20261108 item 1 | **carries** (§9) |
 
 **Flagged for Joseph, through the director:**
-- R3, the STOP limit;
-- R5, the wording of the two readings;
-- R8, whether the director's population mapping stands.
+- R3, the STOP limit: **ruled**, "Decide at the STOP" (above);
+- R5, the wording of the two readings: after the result, through the PRD-referee read;
+- R8, whether the director's population mapping stands. It stands until Joseph overrides it; the director tells him.
 
 ## 9. Price, caps and the projection gate (task item 4)
 
@@ -665,16 +675,24 @@ data's point (§4).
 - **1:** G18 and AR23 only.
 - **2:** paired ensembles, with an exact removal that is tested.
 - **3:** the 1 % budget over four evaluations, as the director's mapping, which Joseph may override.
-- **4:** the analogue of rule (iii) is PENDING-JOSEPH, with the fail-closed default.
+- **4:** the analogue of rule (iii) went to Joseph. **Joseph ruled "Decide at the STOP"** (#939), written into the
+  head and §8 R3.
 - **5:** configuration (e), with no wait for ENS1.
 
-**Two changes from what I sent you, both above:**
+**Two changes from what I sent you, both above, and both ACCEPTED by the director (2026-11-08):**
 - **The receipt runs in the gate jobs, not on a login node** (§5.1). The per-row composites need about 270 GiB.
 - **The cap is 100.0 node-h, and about 52 expected,** not about 80 and 38. The gate jobs and the calibration were
-  missing from my message. The total is still below half the last recorded balance.
+  missing from my message. The total is still below half the last recorded balance. The director ruled it within
+  authority; the balance (iris) is re-read at the first connect.
 
-**An option I have not included.** κ at each tune: Dnom against A at T, which would measure like-for-like at the
-truths themselves. It costs 175 extra unfolds per truth, about 8 node-h expected. It is not requested, and the
-report states the limit (§13).
+**The director's later rulings (2026-11-08):** R5's wording waits for the result (§8); R8 stands as the director's
+mapping until Joseph overrides it.
+
+**An option not exercised (the director, 2026-11-08: "not now").** κ at each tune: Dnom against A at T, which would
+measure like-for-like at the truths themselves. It costs 175 extra unfolds per truth, about 8 node-h expected.
+- **Why it matters:** Part 1's rule K is read at r = 1, where a universe's truth weights w_truth cancel out of its
+  truth. At r ≠ 1 they do not (limitation-resolver's answer Q2). So Part 1's like-for-like result does not carry to
+  G18 or AR23, and the head marks that NOT CITABLE FOR.
+- It is not in the price (§9) or the order (§11). Adding it needs a new binding. The report states the limit (§13).
 
 Nothing is submitted, deposited or tagged.
