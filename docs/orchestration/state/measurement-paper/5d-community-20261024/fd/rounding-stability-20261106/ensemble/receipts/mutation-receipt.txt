@@ -1,15 +1,15 @@
-# ENS1 mutation receipt under addendum A1 (the edge zone), at #912 head 1ae4fcea (frozen before RS1 read). Run locally, 2026-11-08T04:04:44Z, python 3.12.2, numpy 1.26.4.
+# ENS1 mutation receipt under addendum A1, after the audit fixes A1-C1 and A1-C2 (after RS1 read; tests and harness only). Run locally, 2026-11-08T05:45:48Z, python 3.12.2, numpy 1.26.4.
 # Command: PYTHONDONTWRITEBYTECODE=1 python3 -B nd-unfolding/tests/ensemble_estimator_mutation.py (rc 0; 6 workers, results in list order; one run, its own log)
-# Receipt only: no design or code change. The suite imports RS1 stand-ins from tests/test_rounding_mechanism.py (bound at e306087e, unchanged).
-# The X/Y/Z mutants are coverage-5b-audit ENS1-C1 anchors (#899); W04/W06/W09 are #902 anchors; REQ A1 mutants are the zone boundary and edge-set mutants.
+# Receipt only. Production code is byte-identical to the frozen 1ae4fcea. RS1 stand-ins from tests/test_rounding_mechanism.py (bound at e306087e, unchanged).
+# X/Y/Z: ENS1-C1 anchors (#899); W04/W06/W09: #902 anchors; REQ A1: zone mutants; REQ A1-C1 B12-B19, A1-C2 B03: #912 audit sites.
 # sha256 of the files it ran on:
 #   807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25  nd-unfolding/ensemble_estimator_probe.py
 #   1d6a0448ac75c90a2282ceb8bd5383cf0cae27024c0dbb9a5adc27ff93b11281  nd-unfolding/ensemble_estimator_analyze.py
 #   0390e5c71f1b958558dbae7916e39ead33865362c1369d2f25b205061b2b7267  nd-unfolding/sbatch_ens1.sh
-#   c77431bd86d1c7faa62671cba391b681b874906efd682cacbc618c0568a2f2b6  nd-unfolding/tests/test_ensemble_estimator.py
-#   a372e58c116a5d973bfbfb233cd19ebb70986318b4e174065f2ef3007414a6df  nd-unfolding/tests/ensemble_estimator_mutation.py
+#   222c16e987da50d13203bb52b6a0947dfe3488ecaec355ac62f4fa2e6722f389  nd-unfolding/tests/test_ensemble_estimator.py
+#   dd1f9303774850421eb11af41212641daa070cf7eb9e69abe278c9039ffa54ce  nd-unfolding/tests/ensemble_estimator_mutation.py
 #   e7d48236a67e2b89f56e9b0e72efdc6f57b2289ce02b542ef5f38a0bdf183d36  nd-unfolding/tests/test_rounding_mechanism.py
-UNMUTATED SUITE: 76 tests, rc 0
+UNMUTATED SUITE: 81 tests, rc 0
 KILLED    REQ internal jitter after a float32 cast   by test_it_acts_on_y_at_full_precision_not_after_a_float32_cast
 KILLED    REQ internal jitter at +-1/4 spacing       by test_the_scale_is_plus_or_minus_half_the_float32_spacing_in_both_directions
 KILLED    REQ closure unfolds in float32             by test_the_closure_unfolds_in_float64_whatever_the_runner_asks
@@ -109,4 +109,11 @@ KILLED    REQ A1 float32-rounded edges               by test_the_zone_compares_t
 KILLED    REQ A1 the edge's spacing, not the value's by test_the_zone_uses_the_values_own_spacing_on_the_narrow_side_of_a_binade
 KILLED    A1 E5 moved-rows gate removed              by test_every_product_must_record_zero_moved_rows
 KILLED    A1 moved rows not recorded                 by test_every_product_records_zero_moved_rows
-MUTATION CHECK :: PASS (99 mutations)
+KILLED    REQ A1-C1 B16 E5 removed at F64            by test_the_f64_base_must_record_zero_moved_rows
+KILLED    REQ A1-C1 B17 E5 removed in stage 2        by test_every_closure_must_record_zero_moved_rows
+KILLED    REQ A1-C1 B18 a missing record accepted    by test_every_product_must_record_zero_moved_rows
+KILLED    REQ A1-C1 B19 only MCgen checked           by test_every_product_must_record_zero_moved_rows
+KILLED    REQ A1-C1 B14 closure record dropped       by test_the_closure_install_records_its_moved_rows
+KILLED    REQ A1-C1 B12 the count compares jittered with jittered by test_the_logged_count_compares_the_given_with_the_jittered_coordinates
+KILLED    REQ A1-C2 B03 the last edge dropped        by test_the_last_inclusive_edge
+MUTATION CHECK :: PASS (106 mutations)
