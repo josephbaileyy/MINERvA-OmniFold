@@ -265,8 +265,22 @@ class JobScript(unittest.TestCase):
         (self.stub / "lightgbm.py").write_text("__version__ = 'stub'\n")
         (self.stub / "scipy.py").write_text("")
         self.D, self.A1, self.OUT = t / "deploy", t / "a1", t / "root"
+        # The sourced environment puts its own python3 first on PATH, as the real setup_salloc_env.sh puts root_6_28's;
+        # this one records each call, so a test can tell which interpreter ran it.
+        self.envbin, self.calls = t / "envbin", t / "env-python-calls.txt"
+        self.envbin.mkdir()
+        (self.envbin / "python3").write_text(f'#!/bin/bash\necho "$*" >> {self.calls}\nexec {sys.executable} "$@"\n')
+        (self.envbin / "python3").chmod(0o755)
+        # The "system" python3 the job starts with: it refuses the planner, as the cluster's 3.6 did, so any planner
+        # call made before the environment is sourced fails.
+        self.sysbin = t / "sysbin"
+        self.sysbin.mkdir()
+        (self.sysbin / "python3").write_text(
+            '#!/bin/bash\ncase "$*" in *rs1_a1_plan.py*) echo "system python3: the planner is not supported" >&2; exit 99;; esac\n'
+            f'exec {sys.executable} "$@"\n')
+        (self.sysbin / "python3").chmod(0o755)
         self.pin = git_repo(self.D, {"nd-unfolding/runner.py": RUNNER,
-                                     "setup_salloc_env.sh": f"export PYTHONPATH={self.stub}\n"})
+                                     "setup_salloc_env.sh": f"export PYTHONPATH={self.stub}\nexport PATH={self.envbin}:$PATH\n"})
         self.a1pin = git_repo(self.A1, {"nd-unfolding/rs1_a1_plan.py": PLAN.read_text()})
         self.OUT.mkdir()
         (self.OUT / "log-dry").mkdir()
@@ -285,7 +299,7 @@ class JobScript(unittest.TestCase):
         (self.OUT / "plan.tsv").write_text("# id\tstatus\tsource\n" + "\n".join(f"{i}\t{s}\tx" for i, s, *_ in rows) + "\n")
 
     def job(self, pin=None, a1pin=None):
-        env = dict(os.environ, RS1_TIME_BIN=str(self.time))
+        env = dict(os.environ, RS1_TIME_BIN=str(self.time), PATH=f"{self.sysbin}:{os.environ['PATH']}")
         return subprocess.run(["bash", str(SBATCH), str(self.D), pin or self.pin, str(self.OUT), str(self.A1),
                                a1pin or self.a1pin], capture_output=True, text=True, env=env)
 
@@ -421,6 +435,17 @@ class JobScript(unittest.TestCase):
         L = self.OUT / "log-full"
         self.assertIn("could not move", (L / "a.failed").read_text())
         self.assertFalse((L / "a.end").exists())
+
+    def test_every_planner_call_runs_under_the_sourced_environment(self):
+        """REQUIRED (A1 connect 1's stop): every planner call runs under the job's sourced environment. The job starts
+        with a "system" python3 that refuses the planner, so a call made before the source fails the run."""
+        self.setup_plan([("a", "todo", "V", "-:6", ("CRASH",))])
+        r = self.job()
+        self.assertEqual(r.returncode, 0, r.stderr)
+        calls = self.calls.read_text()
+        self.assertIn("rs1_a1_plan.py verify --root", calls)
+        self.assertIn("rs1_a1_plan.py expect", calls)
+        self.assertTrue((self.OUT / "log-full" / "env.log").exists())
 
     def test_an_environment_without_lightgbm_is_refused(self):
         self.setup_plan([("a", "todo", "V", "-:1", ())])

@@ -39,10 +39,14 @@ dry_pin=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("p
 [ "$dry_pin" = "$PIN" ] || { echo "[rs1-a1] refusing: the dry run ran at pin '$dry_pin', not $PIN" >&2; exit 2; }
 n_q=$(grep -vc '^#' "$Q"); n_p=$(grep -vc '^#' "$PLAN")
 [ "$n_q" -eq "$n_p" ] || { echo "[rs1-a1] refusing: the plan has $n_p tasks, the queue $n_q" >&2; exit 2; }
+# Every rs1_a1_plan.py call runs under the job's own environment, never under the system python3, which is 3.6 on
+# the cluster (A1 connect 1 stopped on it, 2026-11-07). The source's log is moved into $L once $L exists.
+ENVLOG=$(mktemp); trap 'rm -f "$ENVLOG"' EXIT
+source "$D/setup_salloc_env.sh" > "$ENVLOG" 2>&1
 python3 "$PLANPY" verify --root "$OUT" > /dev/null \
     || { echo "[rs1-a1] refusing: a staged file no longer verifies" >&2; exit 2; }
 mkdir -p "$L/tasks"
-source "$D/setup_salloc_env.sh" > "$L/env.log" 2>&1
+mv "$ENVLOG" "$L/env.log"
 python3 -c "import lightgbm, scipy, numpy, sys; print('lightgbm', lightgbm.__version__, 'numpy', numpy.__version__, 'python', sys.version.split()[0])" >> "$L/env.log" 2>&1 \
     || { echo "[rs1-a1] refusing: the environment lacks lightgbm/scipy" >&2; exit 7; }
 awk -F "\t" '!/^#/ && $2 == "todo" {print $1}' "$PLAN" > "$L/todo.txt"

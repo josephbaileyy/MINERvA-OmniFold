@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """RS1-BINDING-2 addendum A1: the resume of RS1's full run in a fresh root, after attempt 1's teardown crash.
 
+It runs only under the job's sourced environment (setup_salloc_env.sh, Python 3.11), never under the cluster's
+system python3 (3.6.15, which it does not support): the wrapper and the connect source the environment first.
+
 Attempt 1 (job 60972000, receipt fd/rounding-stability-20261106/receipts/full-attempt-1/) stays intact as evidence.
 This module stages a fresh root from it and names each task's outputs; it never runs a fit, and the bound RS1 code
 (``rounding_mechanism_probe.py``, ``rounding_mechanism_analyze.py``, ``sbatch_rs1.sh``) is unchanged.
@@ -17,8 +20,6 @@ copied (O_NOATIME where the platform has it) into NEW/runs and re-hashed. Every 
 files attempt 1 left are copied to NEW/runs-attempt1/<id>/ for the comparison only (the director's ruling 4), never
 into NEW/runs, where the runner would skip them.
 """
-from __future__ import annotations
-
 import argparse
 import hashlib
 import json
@@ -26,6 +27,7 @@ import os
 import shutil
 import sys
 from pathlib import Path
+from typing import Dict, List, Tuple
 
 _ND = Path(__file__).resolve().parent
 if str(_ND) not in sys.path:
@@ -60,7 +62,7 @@ def product_name(tag: str, b, j) -> str:
     return f"{tag}_b{'-' if b is None else b}_j{'-' if j is None else j}.npz"
 
 
-def expected(argv: list[str]) -> list[Path]:
+def expected(argv: List[str]) -> List[Path]:
     """Every file one RS1 queue line writes: per pair, the product and its trace sidecar (rounding_mechanism_probe
     ``write_product``), under the runner's --out with its --tag."""
     if "--" not in argv:
@@ -83,7 +85,7 @@ def expected(argv: list[str]) -> list[Path]:
     return files
 
 
-def read_queue(path: Path) -> list[tuple[str, list[str]]]:
+def read_queue(path: Path) -> List[Tuple[str, List[str]]]:
     out = []
     for line in Path(path).read_text().splitlines():
         if line and not line.startswith("#"):
@@ -92,7 +94,7 @@ def read_queue(path: Path) -> list[tuple[str, list[str]]]:
     return out
 
 
-def read_sums(path: Path) -> dict[str, str]:
+def read_sums(path: Path) -> Dict[str, str]:
     out = {}
     for line in Path(path).read_text().splitlines():
         if line.strip():
@@ -150,7 +152,7 @@ def stage(old: Path, new: Path) -> dict:
     return summary
 
 
-def verify(root: Path) -> list[str]:
+def verify(root: Path) -> List[str]:
     """Problems with the staged files: each copies.sha256 line must still hold."""
     root = Path(root)
     bad = []
