@@ -152,8 +152,16 @@ the guard's own `cell_membership` count per class, and each task logs it. The an
 product records 0 in every class. **The dry rerun's receipt must show 0 moved rows at all nine tasks.**
 
 **Where the edges come from.** The edge lists used here are `project_cov_nd.AXIS_EDGES` at M. Their counts and their
-non-representable sets equal the npz's (diag.json). **The rerun's connect recomputes d_min on the npz's own edges**, at 0
-node-h under the sourced environment, and refuses unless d_min > 1 + 2⁻²⁰ spacings on every axis.
+non-representable sets equal the npz's (diag.json). **The rerun's connect rechecks every precondition of (ii) and (iii) on
+the npz's own edges,** at 0 node-h under the sourced environment. It refuses unless all three hold:
+- d_min > 1 + 2⁻²⁰ spacings on every axis;
+- every non-representable edge's farther neighbour lies more than ½ + 2⁻²⁰ of its own spacing from the edge;
+- no non-representable edge has a power of two as a float32 neighbour.
+
+(The second and third conditions were added after RS1's read, as the audit's low on §3(iii)(c).)
+
+**A harmless tie, for completeness** (also added after RS1's read). The float64 sum x + δ can round up to exactly
+x + ½ s. That is still within the bound of (i), so it is covered.
 
 **The zone's width is one spacing because of (i).** A REQUIRED mutant narrows it to ½ spacing, which leaves the farther
 neighbours moving. Another widens it to 2 spacings, which zeroes coordinates outside the declared zone. A third makes
@@ -227,6 +235,18 @@ the sites on main that state it or rely on it:
 - the edges rounded to float32.
 
 The E5 gate removed and `moved_rows` left unrecorded are also killed. The receipt is `receipts/mutation-receipt.txt`.
+
+**Added after RS1's read, as audit fixes** (A1-C1 and A1-C2, coverage-5b-audit on #912). These are tests and harness
+only, with no design or production-code change:
+- **E5 at all three sites:** a nonzero count in any class, or a missing record, STOPs at stage 1, at the F₆₄ base and in
+  stage 2.
+- **The closure path** records its count.
+- **The logged count's provenance:** it is nonzero with the zone disabled on the edge-0.2 fixture, so it compares the
+  given coordinates with the jittered ones.
+- **The last, inclusive edge:** values on it and one spacing either side are in the zone, two below are out, and none
+  changes cell.
+
+Their REQUIRED mutants are the audit's B16, B17, B18, B19, B14, B12 and B03.
 
 ## 7. The rerun: root, products and cost
 

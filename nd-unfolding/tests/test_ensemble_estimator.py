@@ -174,6 +174,18 @@ class EdgeZone(unittest.TestCase):
         self.assertFalse(self.zone(0, two_below))
         self.no_crossing(np.full(64, two_below), 0)
 
+    def test_the_last_inclusive_edge(self):
+        """REQUIRED (A1-C2, audit B03): the last edge, 1.0, is inclusive (flat_index puts 1.0 in the top bin). On it,
+        one spacing below and one spacing above are in the zone; two below are out; none of them changes cell."""
+        top = np.float32(1.0)
+        below = np.nextafter(top, np.float32(0))
+        above = np.nextafter(top, np.float32(2))
+        self.assertTrue(self.zone(0, top))
+        self.assertTrue(self.zone(0, below))
+        self.assertTrue(self.zone(0, above))
+        self.assertFalse(self.zone(0, np.nextafter(below, np.float32(0))))
+        self.no_crossing(np.array([top, below, above] * 20, np.float32), 0)
+
     def test_the_zero_edge(self):
         """REQUIRED (A1, the director's item 3): at 0 the spacing is subnormal. 0 and the smallest subnormal are in the
         zone; two and three subnormal spacings are out, move, and never cross below 0."""
@@ -223,6 +235,26 @@ def write_edge_fixture(d: Path, n=2400, nb=500, seed=7):
 class EdgeZoneEndToEnd(unittest.TestCase):
     """REQUIRED (A1): through the bound runner and its grid guard, protocol jitter 1 plus delta_k on 800 rows at the
     farther neighbour of a non-representable edge: refused without the zone (the attempt-1 failure), passed with it."""
+
+    def test_the_logged_count_compares_the_given_with_the_jittered_coordinates(self):
+        """REQUIRED (A1-C1, audit B12): with the zone disabled the count logged before the guard is nonzero, so it is
+        the given-versus-jittered comparison, not a constant 0."""
+        orig = eep.in_edge_zone
+        eep.in_edge_zone = lambda r32, edges: np.zeros(np.shape(r32), bool)
+        try:
+            with tempfile.TemporaryDirectory() as t:
+                d = Path(t)
+                shas = write_edge_fixture(d)
+                with trm.standins(d):
+                    rc, err = run_stability(d, shas, 1, 1)
+        finally:
+            eep.in_edge_zone = orig
+        self.assertEqual(rc, 5)
+        line = [l for l in err.splitlines() if l.startswith("[ens1] grid membership moved rows")]
+        self.assertTrue(line, err[-400:])
+        import ast
+        counts = ast.literal_eval(line[0].split("moved rows ", 1)[1])
+        self.assertGreater(counts["MCgen"], 0)
 
     def test_the_bound_guard_passes_every_internal_seed(self):
         with tempfile.TemporaryDirectory() as t:
@@ -424,6 +456,12 @@ class ClosurePath(unittest.TestCase):
             self.assertFalse(np.array_equal(self.seen["ub"]["bkg_reco"], np.asarray(self.ub["bkg_reco"], np.float64)))
         self.assertFalse(np.array_equal(got[0], got[1]))
         self.assertFalse(np.array_equal(got[0], np.asarray(self.x, np.float64)))
+
+    def test_the_closure_install_records_its_moved_rows(self):
+        """REQUIRED (A1-C1, audit B14): the closure path records the guard's count, 0 in every class."""
+        with eep.install("closure", 1, "nominal") as item:
+            self.nx.build(self.ui, self.ub, 1, 991000, True, "half")
+            self.assertEqual(item["moved_rows"], {c: 0 for c in CLASSES})
 
     def test_a_move_across_the_grid_is_refused_before_the_build(self):
         orig = eep.internal_step
@@ -632,6 +670,22 @@ class Statistics(unittest.TestCase):
 F_DIM = 6   # fake functionals: 4 "s5e functionals" and 2 "cells", over a fine grid of 8
 
 
+CLASSES = ("MCgen", "MCreco", "measured", "bkg_reco")
+
+
+def moved_record(tamper, prefix, here):
+    """The ens1 block's moved_rows: all 0, or (where ``here``) 1 in one class (tamper "<prefix>:<class>") or absent
+    (tamper "<prefix>:missing")."""
+    rec = {c: 0 for c in CLASSES}
+    if not here or not isinstance(tamper, str) or not tamper.startswith(prefix + ":"):
+        return rec
+    what = tamper.split(":", 1)[1]
+    if what == "missing":
+        return None
+    rec[what] = 1
+    return rec
+
+
 class FakeRun:
     """A fake ENS1 root: 21 x 96 stability products, the F64 base, FD-STAB references and SHA256SUMS, receipts.
 
@@ -667,8 +721,7 @@ class FakeRun:
                     x = base * (1 + spread_E * rng.normal(size=8) * math.sqrt(eep.N_ENS))
                 e = {"schema": eep.SCHEMA, "mode": "stability", "k": k, "internal_seed": 10000 + k, "protocol_seed": s,
                      "coord_sha256": {"MCgen": f"{s}-{k}"}, "code_sha256": "ens1",
-                     "moved_rows": {"MCgen": 1 if (tamper == "moved" and (s, k) == (5, 5)) else 0, "MCreco": 0,
-                                    "measured": 0, "bkg_reco": 0}}
+                     "moved_rows": moved_record(tamper, "moved", (s, k) == (5, 5))}
                 m = {**meta0, "jitter_seed": s, "coords": "float64", "ens1": e}
                 if tamper == "code" and (s, k) == (3, 3):
                     m["code_sha256"] = {"a.py": "2"}
@@ -684,7 +737,7 @@ class FakeRun:
                 self.write(st / f"ens1_k{k:03d}_b-_j{s}.npz", x, base, m)
         f64m = {**meta0, "jitter_seed": 0, "coords": "float32" if tamper == "f32base" else "float64",
                 "ens1": {"mode": "stability" if tamper == "f64mode" else "base", "k": None, "code_sha256": "ens1",
-                         "moved_rows": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}}}
+                         "moved_rows": moved_record(tamper, "f64moved", True)}}
         if tamper == "f64meta":
             f64m["truth"] = "nominal"
         (self.d / "runs" / "F64").mkdir()
@@ -811,10 +864,19 @@ class Analysis(unittest.TestCase):
             self.assertIn("E1", out["why"], tamper)
 
     def test_every_product_must_record_zero_moved_rows(self):
-        """A1 (the director's item 4): the guard's count, recorded per product, must be 0 in every class."""
-        rc, out = self.read(FakeRun(self.t / "a", tamper="moved"))
-        self.assertEqual(out["verdict"], "STOP")
-        self.assertIn("E5", out["why"])
+        """A1 (the director's item 4), REQUIRED after the audit (A1-C1): at stage 1, a nonzero count in any class, or
+        a missing record, STOPs."""
+        for i, what in enumerate((*CLASSES, "missing")):
+            rc, out = self.read(FakeRun(self.t / f"m{i}", tamper=f"moved:{what}"))
+            self.assertEqual(out["verdict"], "STOP", what)
+            self.assertIn("E5", out["why"], what)
+
+    def test_the_f64_base_must_record_zero_moved_rows(self):
+        """REQUIRED (A1-C1, audit B16): the same at the F64 base."""
+        for i, what in enumerate((*CLASSES, "missing")):
+            rc, out = self.read(FakeRun(self.t / f"f{i}", tamper=f"f64moved:{what}"))
+            self.assertEqual(out["verdict"], "STOP", what)
+            self.assertIn("E5: the F64 base", out["why"], what)
 
     def test_e2_across_k(self):
         """Audit X01: at one input, two internal seeds gave identical coordinates."""
@@ -861,7 +923,8 @@ class Stage2(unittest.TestCase):
         self.tmp.cleanup()
 
     def make(self, worse=None, det_differs=False, xt_differs=False, zero_floor=False, sf_off=False, det_xt=False,
-             hyp_differs=False, split_differs=False, balanced=None, truth_differs=False, alt_differs=False):
+             hyp_differs=False, split_differs=False, balanced=None, truth_differs=False, alt_differs=False,
+             closure_moved=None):
         root, refs = self.t / "root", self.t / "refs"
         cells_true = np.array([1.0, 1.0])
         M16 = np.eye(8)[4:6]
@@ -893,7 +956,7 @@ class Stage2(unittest.TestCase):
                 if det_differs and t == "A7_mnvtune":
                     x = x * 1.0000001
                 m = {"ens1": {"mode": "closure", "truth": "W2" if (truth_differs and t == "W1" and k == 7) else t, "k": k,
-                              "moved_rows": {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}},
+                              "moved_rows": moved_record(closure_moved, "c", t == "W2" and k == 5)},
                      "hypothesis": {"sha256": "h2" if (hyp_differs and t == "W3") else "h"},
                      "alternative": {"sha256": "a2"} if (alt_differs and t == "W1") else None,
                      "split_key": 8 if (split_differs and t == "q3") else 7}
@@ -923,6 +986,16 @@ class Stage2(unittest.TestCase):
         self.t = Path(self.tmp.name)
         out = self.run2(worse="W2")
         self.assertEqual((out["verdict"], out["worse"]), ("BIAS_WORSE", ["W2"]))
+
+    def test_every_closure_must_record_zero_moved_rows(self):
+        """REQUIRED (A1-C1, audit B17): in stage 2, a nonzero count in any class, or a missing record, STOPs."""
+        for what in (*CLASSES, "missing"):
+            self.tmp.cleanup()
+            self.tmp = tempfile.TemporaryDirectory()
+            self.t = Path(self.tmp.name)
+            with self.assertRaises(eea.Stop) as cm:
+                self.run2(closure_moved=f"c:{what}")
+            self.assertIn("E5", str(cm.exception), what)
 
     def test_s_e_carries_its_own_upper_factor(self):
         out = self.run2()

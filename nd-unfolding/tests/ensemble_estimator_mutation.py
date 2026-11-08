@@ -19,7 +19,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_ensemble_estimator.py"
 P, A, S = "ensemble_estimator_probe.py", "ensemble_estimator_analyze.py", "sbatch_ens1.sh"
-EXPECTED_TESTS = 76  # a script-mode run that stops early exits 0 with fewer: refuse it
+EXPECTED_TESTS = 81  # a script-mode run that stops early exits 0 with fewer: refuse it
 
 # (label, file, old, new, the test that must fail)
 MUTATIONS = [
@@ -191,6 +191,14 @@ MUTATIONS = [
     ("REQ A1 the edge's spacing, not the value's", P, "        zone[:, a] = d <= ulp[:, a]", "        near = np.where(np.abs(r64[:, a] - e[j - 1]) <= np.abs(e[j] - r64[:, a]), e[j - 1], e[j])\n        zone[:, a] = d <= np.spacing(np.abs(near.astype(np.float32))).astype(np.float64)", "test_the_zone_uses_the_values_own_spacing_on_the_narrow_side_of_a_binade"),
     ("A1 E5 moved-rows gate removed", A, '            if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', '            if False:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', "test_every_product_must_record_zero_moved_rows"),
     ("A1 moved rows not recorded", P, '"moved_rows": item.get("moved_rows"),', '"moved_rows": None,', "test_every_product_records_zero_moved_rows"),
+    # --- audit A1-C1 / A1-C2 (coverage-5b-audit, #912 comment 6717396858), REQUIRED; added after RS1's read
+    ("REQ A1-C1 B16 E5 removed at F64", A, '    if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n        raise Stop(f"E5: the F64 base records', '    if False:\n        raise Stop(f"E5: the F64 base records', "test_the_f64_base_must_record_zero_moved_rows"),
+    ("REQ A1-C1 B17 E5 removed in stage 2", A, '            if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')}")\n', '            if False:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')}")\n', "test_every_closure_must_record_zero_moved_rows"),
+    ("REQ A1-C1 B18 a missing record accepted", A, '            if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', '            if e.get("moved_rows") is not None and e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', "test_every_product_must_record_zero_moved_rows"),
+    ("REQ A1-C1 B19 only MCgen checked", A, '            if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', '            if (e.get("moved_rows") or {"MCgen": 1}).get("MCgen", 0) != 0:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', "test_every_product_must_record_zero_moved_rows"),
+    ("REQ A1-C1 B14 closure record dropped", P, '        moved = item["moved_rows"] = moved_rows(ui, ub, ji, jb)', '        moved = moved_rows(ui, ub, ji, jb)', "test_the_closure_install_records_its_moved_rows"),
+    ("REQ A1-C1 B12 the count compares jittered with jittered", P, '        item["moved_rows"] = moved_rows(inputs, bkg, ji, jb)', '        item["moved_rows"] = moved_rows(ji, jb, ji, jb)', "test_the_logged_count_compares_the_given_with_the_jittered_coordinates"),
+    ("REQ A1-C2 B03 the last edge dropped", P, "        j = np.clip(np.searchsorted(e, r64[:, a]), 1, len(e) - 1)", "        j = np.clip(np.searchsorted(e, r64[:, a]), 1, len(e) - 2)", "test_the_last_inclusive_edge"),
 ]
 
 

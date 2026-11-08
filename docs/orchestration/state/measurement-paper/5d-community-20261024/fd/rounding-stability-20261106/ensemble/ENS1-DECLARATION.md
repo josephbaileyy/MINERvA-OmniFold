@@ -57,7 +57,8 @@ refinement, as FD-STAB's control ran it), run in float64 coordinates, and δ_k i
 so each step lies within **±½ of the value's float32 spacing**, the protocol's own scale
 (`s5e_trace.py:362-364`: `rng.uniform(-0.5, 0.5, out.shape) * ulp`). It is applied **to y at full precision in
 float64**, with δ_k = 0 wherever round₃₂(y) equals a grid edge of its axis (the
-edge-safe rule of `s5e_trace.jitter_coords`, `nd-unfolding/s5e_trace.py:365-367`). The draws u_k have the shape of
+edge-safe rule of `s5e_trace.jitter_coords`, `nd-unfolding/s5e_trace.py:365-367`). **Amended by `ENS1-ADDENDUM-A1.md`
+§2:** δ_k = 0 within one float32 spacing of an edge, which contains the exact-edge rule. The draws u_k have the shape of
 each coordinate array and are drawn in a fixed order (MCgen, MCreco, measured, bkg_reco), so δ_k is a fixed function
 of k and the array shape: **E_N is one deterministic estimator**, the same for every input it is given.
 
