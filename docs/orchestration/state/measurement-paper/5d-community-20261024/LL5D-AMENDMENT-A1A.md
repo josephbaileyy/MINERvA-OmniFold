@@ -54,19 +54,28 @@ on recorded timings.
 
 ## 1. Files and digests
 
-All digests are sha256 at this commit. The test runs were made on base `1acdee66`. Nothing under `nd-unfolding/`,
-`2d-unfolding/cov2d/` or `…/receipts-cov2d/clip/` differs between `1acdee66` and this branch's base `b551b05f` (an empty
-`git diff`). The seed-collision test was rerun at `b551b05f`.
+All digests are sha256 at this commit.
+- **The receipts were made at `43b73ffa2224d1ce8e2fc9654fa94498cfbab01f`,** from a clean checkout of that commit
+  (porcelain 0 before and after), so every tracked file was in scope (`fd/receipts-ll5d/a1a/README.md`).
+- **The commit that adds them** changes only the receipts, their README, this file, CATALOG and MANIFEST. None of the
+  code or tests changes.
+- **Correction (coverage-5b-audit's NO-GO C1 on #945 at `73684077`):** the receipts at `73684077` were made on base
+  `1acdee66`, before the PR's own files were tracked.
+  - At that head the seed-collision test found those files (the test receipts printing its docstring, and the mutation
+    script's mutant strings) and failed.
+  - So the unmutated control failed, and the "killed" count meant nothing.
+  - The check now excludes LL5D's own nine files by exact path, and a positive control shows it still catches a
+    collision anywhere else (§7).
 
 | file | role | sha256 |
 |---|---|---|
 | `nd-unfolding/ll5d.py` | A1a's module: `calib`, `gate`, `gate-merge` | `b7674f6729754616930944a32a71889ce599e8419cf539f792c180217f484f9a` |
 | `nd-unfolding/fd_1b_c2.py` | verbatim copy of `342c0ce5`'s (§2) | `522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f` |
-| `nd-unfolding/tests/test_ll5d.py` | the 63 tests | `8011bcafcad4334d7abf9f5574ca31bfea38baf0c343c2aa5f2dd45054e402cc` |
+| `nd-unfolding/tests/test_ll5d.py` | the 67 tests | `c5fd4deba61abdc540c1f6f9c918812aa48f406c62eaa172c8f44e708be91b6f` |
 | `nd-unfolding/tests/ll5d_a21_reference.py` | the all-path equality's subprocess runner | `8fbecaae657fa40015e51fb917422321734e3d1c79dcd6591efc42639bc2365a` |
-| `nd-unfolding/tests/ll5d_a1a_mutation.py` | the mutation check (42 mutants) | `6f83ff288008d7ecb63df2bd42002f0dd4719c1b629d3c5f6035f0a4f46e3d17` |
+| `nd-unfolding/tests/ll5d_a1a_mutation.py` | the mutation check (45 mutants) | `74c530e9debab593082e3b3c540be8a6d265e6643a2f89bf0b61229965732fd4` |
 | `nd-unfolding/tests/data/fd_1b_mc_at_342c0ce5.py.txt` | `342c0ce5`'s fd_1b_mc, vendored for the equality test only | `062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67` |
-| `fd/receipts-ll5d/a1a/tests-numpy126-seed{0,1,2}.txt`, `tests-numpy2-seed0.txt`, `mutation.txt` | the receipts (§8) | in MANIFEST.tsv |
+| `fd/receipts-ll5d/a1a/tests-numpy126-seed{0,1,2}.txt`, `tests-numpy2-seed0.txt`, `mutation.txt`, `README.md` | the receipts (§7) | in MANIFEST.tsv |
 
 ## 2. fd_1b_c2.py: provenance
 
@@ -181,9 +190,10 @@ null of the same law, in place of A2.1's separate 300-draw calibration job. That
 C(N)'s overstatement (§9).
 
 **d. N = 3,000 is fixed** (11-04 item 1).
-- A calibration verdict of `POWER_SHORT_TO_DIRECTOR` goes to the director.
-- A rerun at a larger N ≤ 9,000 runs the same code with `--draws`, on the director's go. Every N ≤ 9,000 is inside the
-  cap.
+- A calibration verdict of `POWER_SHORT_TO_DIRECTOR` goes to the director, not to Joseph.
+- A rerun at a larger N ≤ 9,000 is inside the declared design (§3.6, §5.2), so it is an operational go by the director
+  (the director, 2026-11-08). It runs the same code with `--draws`, and the director tells Joseph.
+- Every N ≤ 9,000 is inside the cap.
 
 **e. The calibration's streams** are A2.1's form, `default_rng([CAL_SEED[truth], set, CAL_SALT])`, with
 CAL_SEED = 4,770,500 (G18) and 4,770,600 (AR23), and A2.1's CAL_SALT 202,611,037.
@@ -252,11 +262,11 @@ at both truths, with every shared field equal. A STOP or INVALID is carried as i
 | each tree clipped on its own composite, and nowhere else | `Clip.test_each_tree_is_clipped_on_its_own_composite_and_nowhere_else` | tdw unclipped |
 | the denominator ≥ 0 under adversarial composites | `Clip.test_the_denominator_is_never_negative_under_adversarial_composites` | tdw unclipped |
 | D1, D2, D3 at one ULP, and D2 at its edges | `Denominator.test_d1_fires_on_one_ulp`, `…test_d2_at_its_cell_edge`, `…test_d2_at_its_total_edge`, `…test_d2_fires_on_a_one_ulp_support_change`, `…test_d2_fails_on_the_support_alone`, `…test_d3_fires_on_one_ulp` | allclose for D1 and D3; the edges widened; support ignored |
-| the T ≤ 0 STOP and N1 at their edges | `Receipt.test_t_le_0_stops_and_halts_at_the_first`, `…test_t_le_0_takes_composes_clip_sign_on_near_zero_rows`, `…test_n1_stops`, `N1.test_the_bound_is_strict` | T = 0 missed; the run continuing after a STOP; ZERO_REL = 0; the bound loosened; the screen hiding a pair |
+| the T ≤ 0 STOP and N1 at their edges | `Receipt.test_t_le_0_stops_and_halts_at_the_first`, `…test_t_le_0_takes_composes_clip_sign_on_near_zero_rows`, `…test_n1_stops`, `…test_n1_at_exactly_the_bound_does_not_stop`, `N1.test_the_bound_is_strict` | T = 0 missed; the run continuing after a STOP; ZERO_REL = 0; the bound loosened; the screen hiding a pair; N1 stopping at exactly 10 |
 | the paired draw, and the `minus2` removal | m2-a, m2-b, m2-e below | as below |
 | Φ_u in the truth | `Receipt.test_each_reading_composes_its_own_draw_and_the_truth_takes_phi_u` | phi = universe 0's |
-| the gate's thresholds and the four-evaluation budget | `Rule.*` (5 tests) | a non-joint union; any evaluation set accepted |
-| the seed ranges | `Seeds.*` (3 tests, including §3.6's collision search repeated at this sha) | a toy seed moved; the gate sample skipping the toys |
+| the gate's thresholds and the four-evaluation budget | `Rule.*` (5 tests), `Jobs.test_each_evaluation_reads_its_own_thresholds` | a non-joint union; any evaluation set accepted; a reading taking the other reading's thresholds |
+| the seed ranges | `Seeds.*` (4 tests): §3.6's collision search repeated at this sha, excluding only LL5D's own nine files by exact path (`OWN_SEED_FILES`), and its positive control `test_the_seed_check_still_catches_a_real_collision` | a toy seed moved; the gate sample skipping the toys |
 | O_NOATIME over the call graph, and an atime move exiting 8 | `NoAtime.*` (2), `ExitCodes.test_an_atime_move_sets_8` | plain reads; 8 not set |
 | **m2-a** | `Layouts.test_m2a_minus2_is_s1s_layout_less_exactly_two_bands` | the tags kept; GEANT_Pion removed instead |
 | **m2-b** | `Selection.test_m2b_selection_accepts_drop2_and_refuses_a_kept_band`, `Layouts.test_drop2_…` | drop2 keeping one band |
@@ -274,17 +284,19 @@ test holds them within 10⁻¹² relative with no absolute tolerance. The first-
 tolerance, because crossterm multiplies on the masked columns and the receipt on all of them.
 
 **Other tests:**
-- the gate end to end over the toy world (`Jobs.*`, 7 tests): the calibration; the gate; an uncalibrated, foreign or
+- the gate end to end over the toy world (`Jobs.*`, 9 tests): the calibration; the gate; an uncalibrated, foreign or
   incomplete calibration refused; a failed control INVALID before anything is read; a failing reading a STOP; each
-  projection repricing;
+  evaluation reading its own thresholds; a gate sample whose first 300 differ refused (11-04 item 1, its mutant the
+  check skipped); each projection repricing;
 - the merge (`Merge.*`);
 - the one-BLAS-thread refusal;
 - `Selection`, `Clip.test_the_bins_are_histogramdds`.
 
 **Results** (`fd/receipts-ll5d/a1a/`):
-- `test_ll5d.py`: 63 tests, OK, at PYTHONHASHSEED 0, 1 and 2 under Python 3.12.2 and numpy 1.26.4 (the cluster's numpy).
+- All made at `43b73ffa`, from a clean checkout.
+- `test_ll5d.py`: 67 tests, OK, at PYTHONHASHSEED 0, 1 and 2 under Python 3.12.2 and numpy 1.26.4 (the cluster's numpy).
   Also OK once under Python 3.13.7 and numpy 2.4.4.
-- `ll5d_a1a_mutation.py`: **42 mutations, all killed.** The unmutated suite runs its 63 tests and passes, rc 0.
+- `ll5d_a1a_mutation.py`: **45 mutations, all killed.** The unmutated suite runs its 67 tests and passes, rc 0.
 - Each receipt heads its file digests.
 - The suite's fixture is A2.1's toy world (`test_fd_1b.World`), with the bank's tdw about tdw_ref within 2 % row by row
   (A2.1's fixture rule, centred on tdw_ref). The world's weights are hash-seeded, so each PYTHONHASHSEED is a
@@ -298,13 +310,9 @@ tolerance, because crossterm multiplies on the masked columns and the receipt on
   - the pilot's controls;
   - the grading and the Cholesky reading rule.
 - **The connects and sbatch files,** which come with each connect's go.
-- **Mutants not planted,** for the auditor:
-  - P1's first-300 mismatch path (its refusal has no test that reaches it; `grep -c "first 300 differ"
-    nd-unfolding/tests/test_ll5d.py` gives 0 at this commit);
-  - N1's strictness at exactly 10 inside the receipt (`n1_ratio`'s value at the edge is tested);
-  - a gate reading taking another evaluation's thresholds (the toy calibration writes equal thresholds into every
-    evaluation).
-  <!-- absence-ok: a statement about this amendment's own test file, checked by the grep given in the first item -->
+- **The three mutants first left unplanted** at `73684077` are now planted, each with its test (the director,
+  2026-11-08): P1's first-300 refusal, N1 at exactly the bound inside the receipt, and each evaluation reading its own
+  thresholds.
 
 ## 9. For the auditor
 

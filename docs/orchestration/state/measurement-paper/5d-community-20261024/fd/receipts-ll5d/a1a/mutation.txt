@@ -1,15 +1,15 @@
 # ll5d_a1a_mutation.py
-# date 2026-11-08T18:48:29Z  base 1acdee665ea162b2b5a2026ab620990a116c6092
+# date 2026-11-08T19:17:39Z  made at HEAD 43b73ffa2224d1ce8e2fc9654fa94498cfbab01f, a clean checkout (porcelain 0)
 # python 3.12.2 numpy 1.26.4
 # b7674f6729754616930944a32a71889ce599e8419cf539f792c180217f484f9a  ll5d.py
 # 522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f  fd_1b_c2.py
-# 8011bcafcad4334d7abf9f5574ca31bfea38baf0c343c2aa5f2dd45054e402cc  tests/test_ll5d.py
+# c5fd4deba61abdc540c1f6f9c918812aa48f406c62eaa172c8f44e708be91b6f  tests/test_ll5d.py
 # 8fbecaae657fa40015e51fb917422321734e3d1c79dcd6591efc42639bc2365a  tests/ll5d_a21_reference.py
-# 6f83ff288008d7ecb63df2bd42002f0dd4719c1b629d3c5f6035f0a4f46e3d17  tests/ll5d_a1a_mutation.py
+# 74c530e9debab593082e3b3c540be8a6d265e6643a2f89bf0b61229965732fd4  tests/ll5d_a1a_mutation.py
 # 062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67  tests/data/fd_1b_mc_at_342c0ce5.py.txt
 ll5d.py sha256 b7674f6729754616930944a32a71889ce599e8419cf539f792c180217f484f9a
-test_ll5d.py sha256 8011bcafcad4334d7abf9f5574ca31bfea38baf0c343c2aa5f2dd45054e402cc
-UNMUTATED PASS tests=63 expected=63 rc=0
+test_ll5d.py sha256 c5fd4deba61abdc540c1f6f9c918812aa48f406c62eaa172c8f44e708be91b6f
+UNMUTATED PASS tests=67 expected=67 rc=0
 MUTATION KILLED REQ per-row first order drops the reference [Composition.test_first_order_in_draw_order] sha256=a3bbe43cc646d368
 MUTATION KILLED REQ k = 1 aliases the universe [Composition.test_k1_is_the_universe_bitwise] sha256=673bddd6a4dab007
 MUTATION KILLED REQ the tdw reference is not tdw_ref [Builders.test_detector_rows_carry_tdw_ref_and_enter_with_zero_departure] sha256=a4d193fd40148949
@@ -51,6 +51,9 @@ MUTATION KILLED an incomplete calibration accepted [Jobs.test_the_gate_refuses_a
 MUTATION KILLED a failing reading passes [Jobs.test_a_failing_gate_reading_is_a_stop] sha256=7fa480a9972b1cdf
 MUTATION KILLED the receipt's projection never reprices [Jobs.test_the_receipt_reprices_past_its_line] sha256=4af50075e7fca476
 MUTATION KILLED the gate's projection never reprices [Jobs.test_the_gate_reprices_past_its_line] sha256=4a10f26828af237d
+MUTATION KILLED the first-300 check skipped [Jobs.test_a_gate_sample_whose_first_300_differ_is_refused] sha256=7e2daefdf99e1eb4
+MUTATION KILLED N1 stops at exactly the bound [Receipt.test_n1_at_exactly_the_bound_does_not_stop] sha256=fd9e820925450e37
+MUTATION KILLED a reading takes the other reading's thresholds [Jobs.test_each_evaluation_reads_its_own_thresholds] sha256=2ae3df6c84c70687
 MUTATION KILLED the merge passes on one truth [Merge.test_pass_needs_both] sha256=bbe04dcb80afc577
 ALL-KILLED
 # rc=0

@@ -1,11 +1,11 @@
 # test_ll5d.py at PYTHONHASHSEED=0, numpy 2
-# date 2026-11-08T18:48:03Z  base 1acdee665ea162b2b5a2026ab620990a116c6092
+# date 2026-11-08T19:17:07Z  made at HEAD 43b73ffa2224d1ce8e2fc9654fa94498cfbab01f, a clean checkout (porcelain 0)
 # python 3.13.7 numpy 2.4.4
 # b7674f6729754616930944a32a71889ce599e8419cf539f792c180217f484f9a  ll5d.py
 # 522d7edd71643df61d0c5ef5a7488834e664eb36d20c3e0c0b46e10a5808f02f  fd_1b_c2.py
-# 8011bcafcad4334d7abf9f5574ca31bfea38baf0c343c2aa5f2dd45054e402cc  tests/test_ll5d.py
+# c5fd4deba61abdc540c1f6f9c918812aa48f406c62eaa172c8f44e708be91b6f  tests/test_ll5d.py
 # 8fbecaae657fa40015e51fb917422321734e3d1c79dcd6591efc42639bc2365a  tests/ll5d_a21_reference.py
-# 6f83ff288008d7ecb63df2bd42002f0dd4719c1b629d3c5f6035f0a4f46e3d17  tests/ll5d_a1a_mutation.py
+# 74c530e9debab593082e3b3c540be8a6d265e6643a2f89bf0b61229965732fd4  tests/ll5d_a1a_mutation.py
 # 062628b69976f730d9d394e64ecf6f93d9952654306471ac0119542c6b07dd67  tests/data/fd_1b_mc_at_342c0ce5.py.txt
 test_the_all_path_equals_a21s_bitwise (__main__.A21Equality.test_the_all_path_equals_a21s_bitwise) ... ok
 test_detector_rows_carry_tdw_ref_and_enter_with_zero_departure (__main__.Builders.test_detector_rows_carry_tdw_ref_and_enter_with_zero_departure) ... ok
@@ -47,11 +47,14 @@ LL5D-GATE g18 verdict=PASS
 LL5D-CALIBRATION INVALID (bad input)
 LL5D-GATE g18 REPRICE (slow)
 LL5D-CALIBRATION verdict=POWER_SHORT_TO_DIRECTOR
-{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.07433104515075684, "workers": 2, "projected_seconds": 3.5311760902404785, "budget_seconds": 1000000.0, "projection_line_seconds": 9000000.0}
+{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.06476330757141113, "workers": 2, "projected_seconds": 3.0778121948242188, "budget_seconds": 1000000.0, "projection_line_seconds": 9000000.0}
 ok
 test_a_failed_control_is_invalid_before_anything_is_read (__main__.Jobs.test_a_failed_control_is_invalid_before_anything_is_read) ... ok
 test_a_failing_gate_reading_is_a_stop (__main__.Jobs.test_a_failing_gate_reading_is_a_stop) ... ok
 test_a_gate_over_the_toy_world (__main__.Jobs.test_a_gate_over_the_toy_world) ... ok
+test_a_gate_sample_whose_first_300_differ_is_refused (__main__.Jobs.test_a_gate_sample_whose_first_300_differ_is_refused)
+11-04 item 1's bit-for-bit check: the gate sample's first 300 must be the declared draws' C2 quantities. ... ok
+test_each_evaluation_reads_its_own_thresholds (__main__.Jobs.test_each_evaluation_reads_its_own_thresholds) ... ok
 test_the_gate_refuses_an_uncalibrated_or_foreign_calibration (__main__.Jobs.test_the_gate_refuses_an_uncalibrated_or_foreign_calibration) ... ok
 test_the_gate_reprices_past_its_line (__main__.Jobs.test_the_gate_reprices_past_its_line) ... ok
 test_the_receipt_reprices_past_its_line (__main__.Jobs.test_the_receipt_reprices_past_its_line) ... ok
@@ -67,6 +70,8 @@ test_the_drivers_are_not_called (__main__.Provenance.test_the_drivers_are_not_ca
 test_the_vendored_fd_1b_mc_is_342c0ce5s_bytes (__main__.Provenance.test_the_vendored_fd_1b_mc_is_342c0ce5s_bytes) ... ok
 test_a_clean_receipt_passes_and_records (__main__.Receipt.test_a_clean_receipt_passes_and_records) ... ok
 test_each_reading_composes_its_own_draw_and_the_truth_takes_phi_u (__main__.Receipt.test_each_reading_composes_its_own_draw_and_the_truth_takes_phi_u) ... ok
+test_n1_at_exactly_the_bound_does_not_stop (__main__.Receipt.test_n1_at_exactly_the_bound_does_not_stop)
+A w_reco row with the CV's weight 0, 1.0 in ten of draw 0's universes and 0 in every other: draw 0's composite ... ok
 test_n1_stops (__main__.Receipt.test_n1_stops) ... ok
 test_t_le_0_stops_and_halts_at_the_first (__main__.Receipt.test_t_le_0_stops_and_halts_at_the_first)
 Every row of reporting cell c at 0.95 x the CV in every universe: each reading's composite there is ... ok
@@ -82,8 +87,10 @@ test_no_other_tracked_file_uses_the_seed_range (__main__.Seeds.test_no_other_tra
 Section 3.6's collision check, repeated at this sha: integer tokens in 4,751,000-4,770,999 in tracked ... ok
 test_the_declared_seeds (__main__.Seeds.test_the_declared_seeds) ... ok
 test_the_gate_sample_extends_the_toys_and_cannot_overlap (__main__.Seeds.test_the_gate_sample_extends_the_toys_and_cannot_overlap) ... ok
+test_the_seed_check_still_catches_a_real_collision (__main__.Seeds.test_the_seed_check_still_catches_a_real_collision)
+The exclusion is by exact path: a hit in any other file is a collision, in each of the three spellings, and ... ok
 test_m2b_selection_accepts_drop2_and_refuses_a_kept_band (__main__.Selection.test_m2b_selection_accepts_drop2_and_refuses_a_kept_band) ... ok
 test_m2f_the_product_composition_is_off_the_nature_path (__main__.SourceFactors.test_m2f_the_product_composition_is_off_the_nature_path) ... ok
 ----------------------------------------------------------------------
-Ran 63 tests in 25.210s
+Ran 67 tests in 30.819s
 OK
