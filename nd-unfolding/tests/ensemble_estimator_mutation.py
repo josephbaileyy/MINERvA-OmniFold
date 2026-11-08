@@ -19,7 +19,7 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_ensemble_estimator.py"
 P, A, S = "ensemble_estimator_probe.py", "ensemble_estimator_analyze.py", "sbatch_ens1.sh"
-EXPECTED_TESTS = 67  # a script-mode run that stops early exits 0 with fewer: refuse it
+EXPECTED_TESTS = 81  # a script-mode run that stops early exits 0 with fewer: refuse it
 
 # (label, file, old, new, the test that must fail)
 MUTATIONS = [
@@ -39,9 +39,9 @@ MUTATIONS = [
     ("REQ seed 0 is a protocol jitter", P, 'ji, jb = o["jittered"](inputs, bkg, None if seed == BASE_SEED else seed)',
      'ji, jb = o["jittered"](inputs, bkg, seed)', "test_seed_zero_is_the_float64_copy_and_then_delta_k"),
     # --- the internal jitter
-    ("grid edges moved", P,
-     "            step[np.isin(r64[:, a], np.asarray(e, np.float32).astype(np.float64)), a] = 0.0", "            pass",
-     "test_grid_edges_are_not_moved_and_other_values_are"),
+    # "grid edges moved" (the bound design's exact-edge line) is retired under addendum A1: the edge zone contains it
+    # (d = 0 and round32(e) are inside one spacing), so the line was removed and its mutant would be equivalent. The
+    # zone's own mutants below (removed, 1/2 and 2 spacings, strict, the edge's spacing, the wrong edge sets) cover it.
     ("one stream for every k", P, "rng = np.random.default_rng(INTERNAL_BASE + k)", "rng = np.random.default_rng(INTERNAL_BASE)",
      "test_fixed_per_k_and_distinct_across_k"),
     ("undeclared k accepted", P, "    if k not in range(1, N_ENS + 1):\n        raise Refusal", "    if False:\n        raise Refusal",
@@ -181,6 +181,24 @@ MUTATIONS = [
     ("W04 empty expect list read as all present", S, '[ "${#files[@]}" -gt 0 ] || all=0', "true", "test_a_task_whose_expect_fails_is_a_failure_not_a_teardown"),
     ("W06 xargs rc ignored", S, '[ -z "$failed" ] && [ "$rc" -eq 0 ] ||', '[ -z "$failed" ] ||', "test_xargs_rc_alone_stops_the_run"),
     ("W09 mv failure ignored", S, 'mv "$f" "$T/" || { echo "could not move $f aside" > "$L/$id.failed"; exit 1; }', 'mv "$f" "$T/" || true', "test_a_failed_move_aside_is_a_failure_and_the_crashed_products_are_not_used"),
+    # --- ENS1 addendum A1: the edge zone (the director's terms: zone boundary, off by one spacing, the wrong edge set)
+    ("REQ A1 zone removed", P, "        step[in_edge_zone(r32, edges)] = 0.0\n", "        pass\n", "test_the_bound_guard_passes_every_internal_seed"),
+    ("REQ A1 zone half a spacing", P, "        zone[:, a] = d <= ulp[:, a]", "        zone[:, a] = d <= 0.5 * ulp[:, a]", "test_the_zone_is_one_spacing_inclusive_and_no_wider"),
+    ("REQ A1 zone two spacings", P, "        zone[:, a] = d <= ulp[:, a]", "        zone[:, a] = d <= 2 * ulp[:, a]", "test_the_zone_is_one_spacing_inclusive_and_no_wider"),
+    ("REQ A1 zone boundary strict", P, "        zone[:, a] = d <= ulp[:, a]", "        zone[:, a] = d < ulp[:, a]", "test_the_zone_is_one_spacing_inclusive_and_no_wider"),
+    ("REQ A1 axis 0's edges for every axis", P, "    for a, e in enumerate(edges):\n        e = np.asarray(e, float)\n        j = np.clip", "    for a, e in enumerate([edges[0]] * len(edges)):\n        e = np.asarray(e, float)\n        j = np.clip", "test_the_zone_uses_each_axis_own_edges"),
+    ("REQ A1 float32-rounded edges", P, "        e = np.asarray(e, float)\n        j = np.clip", "        e = np.asarray(e, np.float32).astype(float)\n        j = np.clip", "test_the_zone_compares_the_float64_edges_not_their_float32_rounding"),
+    ("REQ A1 the edge's spacing, not the value's", P, "        zone[:, a] = d <= ulp[:, a]", "        near = np.where(np.abs(r64[:, a] - e[j - 1]) <= np.abs(e[j] - r64[:, a]), e[j - 1], e[j])\n        zone[:, a] = d <= np.spacing(np.abs(near.astype(np.float32))).astype(np.float64)", "test_the_zone_uses_the_values_own_spacing_on_the_narrow_side_of_a_binade"),
+    ("A1 E5 moved-rows gate removed", A, '            if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', '            if False:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', "test_every_product_must_record_zero_moved_rows"),
+    ("A1 moved rows not recorded", P, '"moved_rows": item.get("moved_rows"),', '"moved_rows": None,', "test_every_product_records_zero_moved_rows"),
+    # --- audit A1-C1 / A1-C2 (coverage-5b-audit, #912 comment 6717396858), REQUIRED; added after RS1's read
+    ("REQ A1-C1 B16 E5 removed at F64", A, '    if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n        raise Stop(f"E5: the F64 base records', '    if False:\n        raise Stop(f"E5: the F64 base records', "test_the_f64_base_must_record_zero_moved_rows"),
+    ("REQ A1-C1 B17 E5 removed in stage 2", A, '            if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')}")\n', '            if False:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')}")\n', "test_every_closure_must_record_zero_moved_rows"),
+    ("REQ A1-C1 B18 a missing record accepted", A, '            if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', '            if e.get("moved_rows") is not None and e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', "test_every_product_must_record_zero_moved_rows"),
+    ("REQ A1-C1 B19 only MCgen checked", A, '            if e.get("moved_rows") != {"MCgen": 0, "MCreco": 0, "measured": 0, "bkg_reco": 0}:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', '            if (e.get("moved_rows") or {"MCgen": 1}).get("MCgen", 0) != 0:\n                raise Stop(f"E5: {p.name} records moved rows {e.get(\'moved_rows\')} (A1', "test_every_product_must_record_zero_moved_rows"),
+    ("REQ A1-C1 B14 closure record dropped", P, '        moved = item["moved_rows"] = moved_rows(ui, ub, ji, jb)', '        moved = moved_rows(ui, ub, ji, jb)', "test_the_closure_install_records_its_moved_rows"),
+    ("REQ A1-C1 B12 the count compares jittered with jittered", P, '        item["moved_rows"] = moved_rows(inputs, bkg, ji, jb)', '        item["moved_rows"] = moved_rows(ji, jb, ji, jb)', "test_the_logged_count_compares_the_given_with_the_jittered_coordinates"),
+    ("REQ A1-C2 B03 the last edge dropped", P, "        j = np.clip(np.searchsorted(e, r64[:, a]), 1, len(e) - 1)", "        j = np.clip(np.searchsorted(e, r64[:, a]), 1, len(e) - 2)", "test_the_last_inclusive_edge"),
 ]
 
 
