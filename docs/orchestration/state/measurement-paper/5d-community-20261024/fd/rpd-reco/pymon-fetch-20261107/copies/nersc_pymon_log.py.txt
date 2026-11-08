@@ -1,0 +1,43 @@
+import json
+import sys
+
+
+class NullLogger:
+    def log(self, msg):
+        pass
+
+
+class PrintLogger:
+    def __init__(self, file=None):
+        self.file = file
+
+    def log(self, msg):
+        print(json.dumps(msg), file=self.file)
+
+
+loggers = {
+    "null": NullLogger(),
+    "stdout": PrintLogger(),
+    "stderr": PrintLogger(file=sys.stderr),
+}
+
+
+def getlogger(logger):
+    if logger not in loggers:
+        logger = "null"
+    return loggers[logger]
+
+
+try:
+    from nersc_pymon._vendor import nerscjson
+
+    class NERSCJSONLogger:
+        def __init__(self, key=None):
+            self.key = key
+
+        def log(self, msg):
+            nerscjson.log(self.key, msg)
+
+    loggers["nerscjson"] = NERSCJSONLogger()
+except ImportError:
+    pass
