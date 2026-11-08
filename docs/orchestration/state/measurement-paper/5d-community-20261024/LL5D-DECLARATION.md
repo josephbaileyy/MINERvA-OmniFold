@@ -190,7 +190,11 @@ for a ∈ {wt, wr, bkgw, tdw}.
 **The rule.**
 1. **Compose per row.** tdw_D = tdw_{u₁} + Σ_{j≥2} (tdw_{u_j} − tdw_ref), over the truth-denominator rows.
    - tdw_ref is the bank's GEANT tdw, which S1's own denominator control already uses as the CV-equal per-row truth
-     weight (`s1_controls.py:14`, `:131-132`).
+     weight (`s1_controls.py:14`, `:131-132`). The bank holds 6 GEANT universes with tdw,
+     GEANT_{Neutron,Pion,Proton}_{0,1} (`S1-PLAN.md:83`, `S1-DECLARATION.md:180`, `s1_controls.py:41`). tdw_ref is
+     `GEANT_Neutron_0_tdw.npy`, and D1 (§5.1) shows the other five equal to it bitwise, so the choice is immaterial.
+     These 6 bank universes are never drawn. The drawn detector universes are the dump's 8 (§2), so the `minus2`
+     reading's removal of GEANT_Neutron and GEANT_Proton does not touch tdw_ref.
    - A detector universe carries a `denom_nd` histogram, not per-row tdw (`s5p_universe.py:83-86`). It enters with
      zero departure. This requires its `denom_nd` to equal the CV's bitwise, which Part 1 recorded for all 8 detector
      universes (`[descriptive/detector_dump_equals_cv/<u>/denom_equals_cv]` = true). The control re-checks it and
@@ -334,17 +338,23 @@ This is run exactly in float64, in compose's order, over every declared draw of 
 **Recorded:** §3.4's counts and masses, N1's maxima, and the clipped fractions |Σλ⁻| / Σλ for signal and background.
 
 **The denominator controls, REQUIRED** (the director's ruling D):
-- **(D1)** the 8 GEANT tdw arrays are bitwise equal to each other, so tdw_ref is well defined;
+- **(D1)** the bank's 6 GEANT tdw arrays, GEANT_{Neutron,Pion,Proton}_{0,1}`_tdw.npy` in `bank_sweep_5d_bkgaware`
+  (`S1-PLAN.md:83`, `s1_controls.py:41`), are bitwise equal to each other, so tdw_ref is well defined. (Corrected
+  from "the 8 GEANT tdw arrays" at `662224be`: the auditor's 936-C3. The 8 are the dump's, and they carry no tdw.)
 - **(D2)** hist(tdw_ref) on the bank's coordinates matches the CV `denom_nd` with the same support, total within
   10⁻⁹, and every cell within 10⁻³ (S1's tolerances, `s1_controls.py:14-18`);
-- **(D3)** each detector dump's `denom_nd` equals the CV's bitwise.
+- **(D3)** each of the dump's 8 detector universes, MinosEfficiency_{0,1} and GEANT_{Neutron,Pion,Proton}_{0,1} in
+  `bank_detector` (`S1-PLAN.md:73`), carries `denom_nd` and no tdw (`s5p_universe.weight_keys`,
+  `s5p_universe.py:83-86`), and each `denom_nd` equals the CV's bitwise.
+- **Like with like:** D1 compares tdw arrays with tdw arrays (the bank's 6); D2 compares one histogram of tdw_ref with
+  the CV `denom_nd`; D3 compares the dump's 8 `denom_nd` histograms with the CV `denom_nd`.
 
 A failed control is INVALID, reported unrepaired.
 
 **Why it is not on a login node.** The per-row composites need about 270 GiB: A2.1's c2check probe peaked at 269 GiB
 over the same 175 × 32,849,103 tdw rows (`FD-1B-STAGED-ADDENDUM-A2-1.md` §8c). So the receipt runs at the start of
-each gate job, before the gate's blocks, at no extra item. This corrects my message to the director, which said
-"0-node-h".
+each gate job, before the gate's blocks, in no separate job. §9 prices it as an allowance inside the gate job. This
+corrects my message to the director, which said "0-node-h".
 
 ### 5.2 The clipping gate (Joseph's 11-03 clip rule and gates, with 11-04's large sample)
 
@@ -369,6 +379,43 @@ override (the director's ruling 3):
   N ≤ 9,000, that is a REPRICE to the director;
 - (i) keeps ±0.20 with k = 2, unless the null at N shows that (i) alone exceeds the budget. In that case it goes to
   Joseph (11-04 item 2).
+
+**How the `minus2` evaluation is formed. This departs from the verbatim gate code** (the auditor's 936-C1).
+- **Why the verbatim code cannot do it.** `fd_1b_c2.layout_1b` builds the layout from all of S1's bands
+  (`sa.EXPECT`, `fd_1b_c2.py:143-150` @ `342c0ce5`). `selection` refuses any draw that does not hold one universe of
+  every band in its `bands` argument (`:153-162`). `prepare` calls `layout_1b` internally (`:657`), and so does every
+  reference variance it builds (`:690-691`). `calibrate_main` and `c2check_main` also carry 1B's seeds, truths and
+  calibration record. So LL5D runs neither driver.
+- **Bound code is not edited.** `nd-unfolding/ll5d.py` adds new drivers, `ll5d calib` and `ll5d gate`. They call
+  `fd_1b_c2`'s building blocks unchanged: `selection`, `band_reference`, `composite_sums`, `draw_flux`, `c2_terms`,
+  `c2_truth`, `c2_block`, `set_ratios`, `rates`, `threshold_rule`, `power_at`, `gate_n`, `reading_1b` and `backstop`.
+  They pass LL5D's seeds (§3.6) and a layout argument. The new functions are these:
+  - **`layout_minus2()`:** `layout_1b()`'s (order, bands, tags) with GEANT_Neutron and GEANT_Proton removed. That is
+    the two bands off `order` and `bands`, and their 4 universes off `tags`, with every other entry in its order;
+  - **`drop2(draw)`:** an `all` draw with GEANT_Neutron's and GEANT_Proton's universes removed. The `all` draw comes
+    from `toys.draw_for_seed` (the gate sample and the declared draws) or `toys.draw` (a calibration replicate), on the
+    same stream. So the `minus2` draw is the `all` draw less two universes (§3.2, the paired draw);
+  - **`restrict(P, layout)`:** the `minus2` view of one `prepare`-equivalent pass over the `all` layout. The fine sums
+    H and the single-universe U·x_T are the `all` pass's rows for the `minus2` tags, selected and not recomputed. The
+    column map is rebuilt on those rows, `flux_cols` with it.
+- **The `minus2` selection** is the unchanged `selection(drop2 draws, col_minus2, bands_minus2)`. It accepts exactly
+  one universe of each remaining band. It refuses a draw that still holds a GEANT_Neutron or GEANT_Proton universe.
+- **The `minus2` first-order law and composite.** `composite_sums` and `c2_truth` run on S_minus2, so k counts the
+  `minus2` draw's universes. The composite before the clip is the `all` composite less the two bands' departure terms,
+  (a_{GN,j} − a_ref) + (a_{GP,j} − a_ref), up to summation order. Each reading's composite is then clipped on its own
+  (R7), never derived from the `all` composite after its clip.
+- **The `minus2` reference variance** is the unchanged `band_reference` over `restrict`'s rows, with (order_minus2,
+  bands_minus2). It is the `all` reference less the two bands' Var_b terms, up to summation order.
+- **The calibration null for `minus2`** uses only that reading's bands. Each replicate set is the `all` replicate's
+  draws, from the same stream (§3.6's calibration seeds), passed through `drop2`, then `selection`, `set_ratios` and
+  `rates` on the `minus2` layout, against the `minus2` reference. Thresholds t_ii and t_iii are set per evaluation. The
+  joint 1 % is measured on the paired replicates across all four evaluations, so the correlation between the readings
+  is inside the budget, not bounded by a union.
+- **The calibration's code tie carries.** A2.1 ties its gate to a calibration computed by the same code
+  (`gate_code_digests`). Here both `ll5d calib` and `ll5d gate` run at amendment A1's sha, and the digests include
+  `ll5d.py`.
+- **The equality test against `342c0ce5` covers the `all` path only** (§12). The `minus2` path has its own REQUIRED
+  tests and mutants (§12).
 
 **First, the large-N unclipped null** (11-04 item 4). At N, under the unclipped first-order law, the per-cell mean
 ratio is 1 within its measured SE: the law control at z = 4, and the linearisation tolerance 0.02. If it fails,
@@ -484,13 +531,20 @@ Each is produced per (truth, reading):
 | a change on the MC side (rebuilt blocks) | max 849.6 s, median 725.1 s per unfold | I2 (`FD-1B-INV-I2-REPORT.md:81`) |
 | a change on the pseudo-data side (toys) | max 801.4 s plus 16.0 s load | `FD-1B-STAGE2-REPORT.md` §2 |
 | node-h per unfold at 8 lanes | 0.022828 | `S1-REPORT.md` §3 |
-| c2check at N = 3,000, one truth, one law | 1,314.2 s one-off + 165 × 62.59 s blocks = 3.23 h; peak 269 GiB | A2.1 §8c, job 60859504 |
-| the calibration at N, two truths | 0.721 node-h | A2.1 §8b, job 60783756 |
+| c2check at N = 3,000, one truth, one law, **at 1 BLAS thread** (c2check's configuration) | 1,333.9 s one-off + 165 × 99.23 s blocks = 17,708 s (4.92 h); blocks 98.9–100.3 s; peak 269 GiB | A2.1 §8c, job 60870880, `a2-1/c2probe-1t-run/probe.json` `c87d162d…` |
+| the calibration at N = 3,000, two truths, 1 thread | 2,595 s, 0.721 node-h | A2.1 §8b, job 60783756 |
+
+**The thread count (the auditor's 936-C2).** The gate and the calibration run at THREADS = 1, as A2.1's ruling (a)
+requires. The gate's tie to its calibration checks that the single-universe U·x_T is the calibration's bit for bit.
+That needs the same BLAS reduction order, and the bits of a product of this shape change between 1 and 8 or 64
+threads (A2.1 §8c). So they are priced from the 1-thread probe, job 60870880. The 64-thread probe, job 60859504
+(62.59 s per block), does not price them. Corrected from `662224be`, which used it.
 
 **The unit** is 1,062 s per unfold (1.25 × 849.6 s), as in mode D and 1B staged.
 
-**The resources:** 8 lanes per node, CPU only, `-A m3246 -q regular -C cpu --exclusive --no-requeue`. Every job runs
-under 12 h, and nothing goes on CFS.
+**The resources:** 8 lanes per node, CPU only, `-A m3246 -q regular -C cpu --exclusive --no-requeue`. Every job's `--time` is
+at most 46 h (165,600 s) for a priced step, under MaxWall 48 h (`DECISION-20261106-joseph-relax-12h-job-limit.md`,
+#851). Only the two gate jobs exceed 12 h. Nothing goes on CFS.
 
 **Items:**
 - per truth: 227 rebuilt blocks, 600 toys (300 per reading) and 2 clipmeans = 829;
@@ -499,17 +553,49 @@ under 12 h, and nothing goes on CFS.
 
 | step | job name(s) | nodes | `--time` | reserved node-h | expected node-h |
 |---|---|---:|---|---:|---:|
-| calibration at N, 4 evaluations | `ll5d_calib` | 1 | `03:00:00` | 3.0 | about 1.5 |
-| receipt + gate + cross terms, per truth (both readings) | `ll5d_gate_G18`, `ll5d_gate_AR23` | 1 each | `08:00:00` | 16.0 | about 12.2 |
+| calibration at N, 4 evaluations | `ll5d_calib` | 1 | `05:00:00` | 5.0 | 1.44 at N = 3,000; 4.33 at N = 9,000 |
+| receipt + gate + cross terms, per truth (both readings) | `ll5d_gate_G18`, `ll5d_gate_AR23` | 1 each | `31:00:00` | 62.0 | 20.59 at N = 3,000; 53.66 at N = 9,000 |
 | pilot: 4 controls, x̂_T × 2, clipmean × 4, G18 toy 4,751,000 in both readings, AR23 stat replica b = 1 (13 items) | `ll5d_pilot` | 1 | `01:00:00` | 1.0 | about 0.4 |
 | bulk: the other 1,649 items, at most 22 per lane at the unit (23,364 s, 81 %) | `ll5d_bulk_01` … `ll5d_bulk_10` | 10 × 1 | `08:00:00` | 80.0 | about 37.6 |
-| **cap** | | | | **100.0** | **about 52** |
+| **cap** | | | | **148.0** | **about 60 at N = 3,000; about 96 at N = 9,000** |
 
-- **The expected cost** is S1's measured 0.022828 node-h per unfold for the unfolds, and the A2.1 measurements for
-  the gate. The gate is 1,314 s plus 2 × 165 × 62.6 s, about 6.1 h per truth. It does not count any saving from
-  sharing blocks between the readings.
-- **This is above the "about 38 expected, about 80 cap" I sent the director.** That figure left out the gate jobs and
-  the calibration (19.0 node-h of cap). I flag it here.
+**The gate as a function of N** (N ≤ 9,000, §3.6, in whole blocks of 20 draws; the auditor's 936-C2):
+- **Blocks per reading:** 300/20 + N/20 = 15 + N/20. These are the declared 300 apart, then the gate sample, whose
+  first 300 are the same draws, as in `c2check_main`. At N = 3,000 that is 165, A2.1's figure.
+- **The receipt's allowance:** 2 × 15 blocks at the block rate. These are the per-row composites of the 300 declared
+  draws in each reading. If A1 reads the receipt from the gate's own declared-draw pass, the allowance is not spent.
+- **The cross terms** are A2.1's multiplicative-against-additive comparison, inside `c2_truth`. The block time already
+  includes them, because the terms are built once per job (A2.1 §8c).
+- **The one-off steps,** once per job: 1,333.9 s. The `minus2` rows are selected from the `all` pass (§5.2).
+- **G(N) = 1,333.9 + 99.23 × (2 × (15 + N/20) + 30) s per truth**, with no saving counted for `minus2`'s 171
+  universes against 175:
+  - N = 3,000: 360 blocks, 37,056.7 s (10.29 h);
+  - N = 6,000: 660 blocks, 66,825.7 s (18.56 h);
+  - **N = 9,000: 960 blocks, 96,594.7 s (26.83 h).** At the slowest measured block, 100.3 s, that is 97,621.9 s.
+- **`--time` 31:00:00** (111,600 s) for each gate job:
+  - the in-job projection line is 0.9 × 111,600 = 100,440 s, above G(9,000) at the slowest block;
+  - the priced step, 96,594.7 s, is at most 165,600 s, and `--time` is under MaxWall 48 h
+    (`DECISION-20261106-joseph-relax-12h-job-limit.md:27-29`, #851).
+
+**The calibration as a function of N:** C(N) = 2,595 s × (N / 3,000) × (4 evaluations / 2 truths). This scales the
+whole measured job, prepare included, so it overstates.
+- N = 3,000: 5,190 s (1.44 h);
+- N = 9,000: 15,570 s (4.33 h).
+- `--time` 05:00:00 (18,000 s). Its 0.9 line is 16,200 s, above C(9,000).
+
+**The expected cost:**
+- **The unfolds:** S1's measured 0.022828 node-h per unfold. The pilot is 0.4 node-h, and the bulk is
+  1,649 × 0.022828 = 37.64 node-h.
+- **Total at N = 3,000:** 1.44 + 2 × 10.29 + 0.4 + 37.64 = 60.07 node-h.
+- **Total at N = 9,000:** 4.33 + 2 × 26.83 + 0.4 + 37.64 = 96.03 node-h.
+- No saving is counted from sharing blocks between the readings.
+
+**The cap,** with every N ≤ 9,000 inside it: 5.0 + 2 × 31.0 + 1.0 + 80.0 = **148.0 node-h**.
+- **History:** 100.0 at `662224be`, and before that "about 80" in my first message, which left out the gate jobs and
+  the calibration.
+- **The rise from 100.0 to 148.0** is the gate at 1 thread and at the largest N the declaration allows. It is still
+  under half the last recorded balance, about 1,017 node-h (below), so the director may set it (the director,
+  2026-11-08).
 
 **The caps bind through `--time`.**
 - Every connect prints `scontrol show job`'s TimeLimit after submission, and cancels on any mismatch with the table.
@@ -521,15 +607,17 @@ under 12 h, and nothing goes on CFS.
 - plus the full `--time` × nodes of every `ll5d_*` job that has been submitted but is not yet ended in sacct. This
   guards against sacct lagging its own sbatch;
 - plus this job's `--time` × nodes;
-- must be ≤ 100.0 node-h. Otherwise nothing is submitted, and it goes to the director.
+- must be ≤ 148.0 node-h. Otherwise nothing is submitted, and it goes to the director.
 
 **The in-job cost guards:**
-- each gate job projects its total from prepare and its first two blocks, and exits before the blocks if the
-  projection exceeds 7:30:00. That is a REPRICE to the director, not a STOP;
+- each gate job projects its total at the calibrated N from its one-off steps and its first two blocks. If the
+  projection exceeds 0.9 × `--time` (100,440 s), it exits before the remaining blocks. That is a REPRICE to the
+  director, not a STOP;
+- `ll5d_calib` projects the same way against 0.9 × `--time` (16,200 s);
 - after the pilot, every unfold's wall must be ≤ 1,062 s and its peak RSS within S1's per-lane limit, or REPRICE (an
   amendment).
 
-**The balance.** `iris` is read at the first connect. If 100.0 is above half the remaining balance, it goes to Joseph
+**The balance.** `iris` is read at the first connect. If 148.0 is above half the remaining balance, it goes to Joseph
 before any submission (R11). The last balance on record is about 2,035 node-h (A2.1 §8b, 2026-11-04), so half is
 about 1,017.
 
@@ -618,6 +706,12 @@ each readout before the next submission.
   `xsec_nd` and `s1_assemble`'s block functions.
 - **C2's and A2.1's gate code** is imported from where it lands on main, or copied verbatim from `342c0ce5` with an
   equality test on a shared fixture. Either way it is pinned to a main sha, never to the campaign branch.
+  - **The equality test covers the `all` path only:** `ll5d gate` on the `all` layout with 1B's seeds writes the same
+    record fields as `c2check_main` on a shared fixture, bitwise.
+  - **The departure, named:** LL5D's drivers, `layout_minus2`, `drop2` and `restrict` (§5.2). No bound function is
+    edited.
+- **The gate and the calibration run at one BLAS thread** (§9). Every variable in `fd_1b_c2.THREAD_VARS` is 1. The
+  sbatch asserts it, and the record writes it.
 - **Its subcommands:** `calib`, `gate` (receipt, gate and cross terms), `unfold`, `walls`, `clipcheck`, `null` and
   `readout`.
 
@@ -630,6 +724,24 @@ each readout before the next submission.
   ruling D);
 - the T ≤ 0 STOP and N1 at their edges;
 - the paired draw, and the `minus2` removal on both sides, including the block-removal tolerance;
+- **the `minus2` gate (936-C1).** Each item has a mutant:
+  - **(m2-a)** `layout_minus2` equals `layout_1b` with exactly the two bands and their 4 tags removed, in order.
+    Mutants: removing only one band; removing GEANT_Pion instead.
+  - **(m2-b)** the unchanged `selection` accepts every `drop2` draw on the `minus2` layout, and refuses a draw that
+    keeps a GEANT_Neutron or GEANT_Proton universe. Mutant: a `drop2` that leaves one tag in.
+  - **(m2-c), the auditor's low, the additive composite** (the director, 2026-11-08). Before the clip, the `minus2`
+    per-row composite of each of tdw, wt, wr and bkgw equals the `all` composite less (a_{GN,j} − a_ref) +
+    (a_{GP,j} − a_ref). This holds bitwise on an integer-valued fixture, and to 10⁻¹² relative on a float fixture,
+    which is the summation-order tolerance. The same holds for the fine-sum composites from `composite_sums`. After
+    the clip, the `minus2` value is max(its own composite, 0) on a fixture where the `all` composite clips a row and
+    the `minus2` one does not, and on one where the reverse holds. Mutant: `minus2` taken from the clipped `all`
+    composite less the terms.
+  - **(m2-d)** the `minus2` reference variance equals the `all` reference less the two bands' Var_b terms, to
+    10⁻¹² relative. Mutant: the `all` reference used for `minus2`.
+  - **(m2-e)** each `minus2` calibration replicate is the `all` replicate's draws through `drop2`, from the same
+    stream. Mutant: an independent stream for `minus2`.
+  - **(m2-f), the auditor's low:** `fd_1b_toys.source_factors`, the product composition, is not on the nature path
+    (a call-graph test). Products enter only §7's cross-term readout;
 - Φ_u in the truth, and Φ_CV in the unfolding (Part 1 §2.1's inherited `with_mc` defect killed);
 - the gate's thresholds and the four-evaluation budget;
 - clipcheck's δ* and its σ proxy;
@@ -683,7 +795,22 @@ data's point (§4).
 - **The receipt runs in the gate jobs, not on a login node** (§5.1). The per-row composites need about 270 GiB.
 - **The cap is 100.0 node-h, and about 52 expected,** not about 80 and 38. The gate jobs and the calibration were
   missing from my message. The total is still below half the last recorded balance. The director ruled it within
-  authority; the balance (iris) is re-read at the first connect.
+  authority; the balance (iris) is re-read at the first connect. **Superseded by the audit's repair below: 148.0.**
+
+**The audit's NO-GO at `662224be` (coverage-5b-audit, #936 comment 6724391390) and the repair (the director,
+2026-11-08):**
+- **936-C1, the `minus2` gate:** §5.2 now says how the `minus2` evaluation and its calibration null are formed. It names
+  that as a departure from the verbatim code, with new drivers and no bound function edited. The `342c0ce5` equality
+  test covers the `all` path only, and §12 gives the `minus2` path REQUIRED tests m2-a to m2-f, each with a mutant.
+- **936-C2, the gate's price:** §9 prices the gate at 1 BLAS thread (job 60870880, 99.23 s per block) and as a
+  function of N, at N = 9,000 for the cap. The gate's `--time` is 31:00:00, with the 0.9 line at 100,440 s, and the
+  calibration's is 05:00:00. The cap is 148.0 node-h: about 60 expected at N = 3,000, about 96 at N = 9,000.
+- **936-C3, the tdw count:** D1 names the bank's 6 GEANT tdw arrays, and D3 the dump's 8 `denom_nd` universes. tdw_ref
+  is fixed as `GEANT_Neutron_0_tdw.npy` (§3.4).
+- **The lows:** (m2-c) and (m2-f) are written into §12. The other two lows are held for the follow-up list under the
+  freeze:
+  - INVALID against a deterministic control failure;
+  - union bound against a joint 1 % for the correlated readings. §5.2 already measures it jointly.
 
 **The director's later rulings (2026-11-08):** R5's wording waits for the result (§8); R8 stands as the director's
 mapping until Joseph overrides it.
