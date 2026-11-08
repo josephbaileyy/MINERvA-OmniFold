@@ -24,8 +24,8 @@
 - the timing readout.
 
 **NOT CITABLE FOR:**
-- any ENS1 reading: the stage-2 verdict (PASS / BIAS_WORSE / INVALID) belongs to the ANALYSIS connect, which has not
-  run; <!-- absence-ok: a workflow status (the next connect is not yet launched), not a claim about a result -->
+- any ENS1 reading: the stage-2 verdict belongs to the ANALYSIS connect and is receipted in
+  `../stage2-a1-analysis/`;
 - any product value. The products are listed by sha256 and stay on pscratch, unread here beyond the post-run's checks
   of their meta blocks.
 
@@ -191,6 +191,21 @@ ENS1).
 - GNU time reports 129 as the command's exit status ("exited with non-zero status"), not as termination by a signal,
   and its "Signals delivered" line reads 0. The lane has not investigated the cause and makes no claim about it.
 - No `.failed` file exists in any shard. <!-- absence-ok: the post-run's check of the shard log directories (read.py "odd" list), not a claim about a result -->
+- **The teardown does not bear on the verdict.** The re-run's `xsec_flat` and `xtrue_flat` equal the first run's
+  array for array, so the products the ANALYSIS reads are the same whichever run produced them.
+
+### The GiBUU truths and the stage-2 verdict
+
+`stage0c_gibuu` is the one truth at which the ANALYSIS (separate receipt, `../stage2-a1-analysis/`) read E₉₆ worse.
+The director confirmed that the GiBUU truths are judged by "no worse", on these two sentences:
+- `ENS1-DECLARATION.md` §5.3 (`:220`, `:225-226`): "**PASS:** no worse at all 17 truths." and "**The GiBUU
+  readout** (A7 GiBUU and Stage 0c GiBUU biases, per estimator) is printed and used by no criterion (FD-STAB §5.3)."
+- `FD-STAB-DECLARATION.md` §5.3 (`:206-209`): "**Neither the bias criterion beyond "no worse", nor any other
+  criterion, nor the tie-break may use them**".
+
+So "no worse" judges both GiBUU truths, and only their bias magnitudes are descriptive. The declaration states the
+familywise rate of a false "worse" over 17 truths × 2 metrics (`ENS1-DECLARATION.md:216-217`): "about 0.5 % with
+correctly estimated SDs, at most about 4.5 % if both are underestimated by their full factors."
 
 ## The POST-RUN connect (`post/`)
 
@@ -272,4 +287,4 @@ unchanged.
 are empty, as they were on pscratch.
 
 **Next:** the director gave the go on this readout for the ANALYSIS connect (`ens1_a1_s2_analysis.sh`, `c5ee4378…`). Its
-receipt is separate.
+receipt is `../stage2-a1-analysis/` (verdict BIAS_WORSE, worse at `stage0c_gibuu`).
