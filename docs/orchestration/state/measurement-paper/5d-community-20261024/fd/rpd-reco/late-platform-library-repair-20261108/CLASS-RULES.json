@@ -1,0 +1,28 @@
+{
+  "tested_head": "0fbbbf8448f16e9e18741a330e1dd9d8cb35f88b",
+  "file": "nd-unfolding/fd_rpd_reco_custody.py",
+  "classes": {
+    "platform": {
+      "inventory": 1182,
+      "snapshot_subset": 1216,
+      "every_open": 847,
+      "after_exit": 1486,
+      "rule": "Prepare-fixed inventory; every platform library open must match it through exit, followed by stat/digest verification."
+    },
+    "MAT/instrument": {
+      "every_open": 847,
+      "after_exit": 1486,
+      "rule": "Exact existing MAT library pins; unknown instrument-library opens refuse through exit, and known pins are digest-checked after exit. Directory/rootmap access remains allowed."
+    },
+    "environment/conda/ROOT": {
+      "every_open": 677,
+      "complete_trace": 847,
+      "rule": "Existing reviewed-prefix and exclusion rules are applied to every completed open, including late loads. No snapshot-only admission and no new per-library pin rule."
+    },
+    "system": {
+      "every_open": 677,
+      "complete_trace": 847,
+      "rule": "Existing system-prefix and exclusion rules are applied to every completed open through exit; protected roots override all classes."
+    }
+  }
+}
