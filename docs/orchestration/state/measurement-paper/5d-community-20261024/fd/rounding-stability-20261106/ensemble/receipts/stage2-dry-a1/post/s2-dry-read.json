@@ -1,0 +1,344 @@
+{
+ "schema": "ens1-a1-s2-dry-postrun/1",
+ "numpy": "1.26.4",
+ "products": {
+  "ens1_nominal_k001": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/nominal/ens1_nominal_k001_s991000.npz",
+   "block": {
+    "schema": "ens1-ensemble-estimator/1",
+    "mode": "closure",
+    "k": 1,
+    "internal_seed": 10001,
+    "truth": "nominal"
+   },
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25",
+   "closure_dtype_requested": "float32",
+   "coord_sha256": {
+    "MCgen": "3e258a0223afa235a530201bd3649b9e53a567f4c850324a769a5606d12233de",
+    "MCreco": "a7091ff9cdc11bf3e6ff2ad9cfba2dc5c94b164f9756e1bf3254847b17cf7161",
+    "measured": "cf71bdcf8b15ef9d39d6b0fe5133f4ad5f3a8a6ae814fda9854261385979722b",
+    "bkg_reco": "1e8b1c8a60978ed17d60d8e0f88cd1027de63521f4c025e72d3af77783be56fb"
+   },
+   "hypothesis_sha256": "ceea00e77dbf4b64df24141435f131b40fa769f8fb038e9d7bc99758f504bf76",
+   "alternative_sha256": null,
+   "pseudo_seed": 991000,
+   "development": {
+    "expectation": true,
+    "mc_fraction": "half"
+   },
+   "seconds_unfold_meta": 572.788
+  },
+  "ens1_nominal_k002": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/nominal/ens1_nominal_k002_s991000.npz",
+   "block": {
+    "schema": "ens1-ensemble-estimator/1",
+    "mode": "closure",
+    "k": 2,
+    "internal_seed": 10002,
+    "truth": "nominal"
+   },
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25",
+   "closure_dtype_requested": "float32",
+   "coord_sha256": {
+    "MCgen": "5def1747cf47d426d699de0725fb0e10ed73470e0fc63561df9284bbc5970cc5",
+    "MCreco": "9f79ccbb9692f5d18caf94fe4db9a62f7bf51518cce23a86fcc384052863e875",
+    "measured": "8d576845d1245295a0f659c3427fd86ee70e379200060f541a70f79ec55e303f",
+    "bkg_reco": "317111d30a8293ee427ed1e37cffc661ebb668f331f1f585087b73b14711ca8c"
+   },
+   "hypothesis_sha256": "ceea00e77dbf4b64df24141435f131b40fa769f8fb038e9d7bc99758f504bf76",
+   "alternative_sha256": null,
+   "pseudo_seed": 991000,
+   "development": {
+    "expectation": true,
+    "mc_fraction": "half"
+   },
+   "seconds_unfold_meta": 514.646
+  },
+  "ens1_nominal_k003": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/nominal/ens1_nominal_k003_s991000.npz",
+   "block": {
+    "schema": "ens1-ensemble-estimator/1",
+    "mode": "closure",
+    "k": 3,
+    "internal_seed": 10003,
+    "truth": "nominal"
+   },
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25",
+   "closure_dtype_requested": "float32",
+   "coord_sha256": {
+    "MCgen": "14afa0e2a2ab8c53fd7bc61a215e1918fa39bf7dad6f87e829ac6d61eb62a228",
+    "MCreco": "261834ca1e0a5b4327a1e3d192b0af9f0ba32a99e123d4b7131115e8a52eea44",
+    "measured": "ecaafe70c72ac7c4e9940e3b6dd0720395f099e63f910f4271c2982e8419f9ff",
+    "bkg_reco": "96b605972bae6bc17b6d65cf478661ba8066abdfba71212dc0b5e6324b77e566"
+   },
+   "hypothesis_sha256": "ceea00e77dbf4b64df24141435f131b40fa769f8fb038e9d7bc99758f504bf76",
+   "alternative_sha256": null,
+   "pseudo_seed": 991000,
+   "development": {
+    "expectation": true,
+    "mc_fraction": "half"
+   },
+   "seconds_unfold_meta": 523.244
+  },
+  "ens1_nominal_k004": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/nominal/ens1_nominal_k004_s991000.npz",
+   "block": {
+    "schema": "ens1-ensemble-estimator/1",
+    "mode": "closure",
+    "k": 4,
+    "internal_seed": 10004,
+    "truth": "nominal"
+   },
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25",
+   "closure_dtype_requested": "float32",
+   "coord_sha256": {
+    "MCgen": "6a8071490395b65de9e6de65c6eec475bed2f11a273ec11b4e3403854ee805c0",
+    "MCreco": "4766f097e7ddc74b95fc334af2513f423c9eb2510ddf0ac01578ae84340728ce",
+    "measured": "fd95882d48cd30e9cfc79300b3c8849e8e3c4972ad5b2ffaeef7a78d31ef2a59",
+    "bkg_reco": "37bf65b5ab56e9402b03901cfec320c54439648c1cab3db5df16cd0680d0389e"
+   },
+   "hypothesis_sha256": "ceea00e77dbf4b64df24141435f131b40fa769f8fb038e9d7bc99758f504bf76",
+   "alternative_sha256": null,
+   "pseudo_seed": 991000,
+   "development": {
+    "expectation": true,
+    "mc_fraction": "half"
+   },
+   "seconds_unfold_meta": 503.558
+  },
+  "ens1_W1_k001": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/W1/ens1_W1_k001_s991000.npz",
+   "block": {
+    "schema": "ens1-ensemble-estimator/1",
+    "mode": "closure",
+    "k": 1,
+    "internal_seed": 10001,
+    "truth": "W1"
+   },
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25",
+   "closure_dtype_requested": "float32",
+   "coord_sha256": {
+    "MCgen": "3e258a0223afa235a530201bd3649b9e53a567f4c850324a769a5606d12233de",
+    "MCreco": "a7091ff9cdc11bf3e6ff2ad9cfba2dc5c94b164f9756e1bf3254847b17cf7161",
+    "measured": "cf71bdcf8b15ef9d39d6b0fe5133f4ad5f3a8a6ae814fda9854261385979722b",
+    "bkg_reco": "1e8b1c8a60978ed17d60d8e0f88cd1027de63521f4c025e72d3af77783be56fb"
+   },
+   "hypothesis_sha256": "ceea00e77dbf4b64df24141435f131b40fa769f8fb038e9d7bc99758f504bf76",
+   "alternative_sha256": "2a208df97fcd63937587d67098feb542c5e7e6759693bcc0609f0eb5fa0ff767",
+   "pseudo_seed": 991000,
+   "development": {
+    "expectation": true,
+    "mc_fraction": "half"
+   },
+   "seconds_unfold_meta": 603.117
+  },
+  "ens1_W1_k002": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/W1/ens1_W1_k002_s991000.npz",
+   "block": {
+    "schema": "ens1-ensemble-estimator/1",
+    "mode": "closure",
+    "k": 2,
+    "internal_seed": 10002,
+    "truth": "W1"
+   },
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25",
+   "closure_dtype_requested": "float32",
+   "coord_sha256": {
+    "MCgen": "5def1747cf47d426d699de0725fb0e10ed73470e0fc63561df9284bbc5970cc5",
+    "MCreco": "9f79ccbb9692f5d18caf94fe4db9a62f7bf51518cce23a86fcc384052863e875",
+    "measured": "8d576845d1245295a0f659c3427fd86ee70e379200060f541a70f79ec55e303f",
+    "bkg_reco": "317111d30a8293ee427ed1e37cffc661ebb668f331f1f585087b73b14711ca8c"
+   },
+   "hypothesis_sha256": "ceea00e77dbf4b64df24141435f131b40fa769f8fb038e9d7bc99758f504bf76",
+   "alternative_sha256": "2a208df97fcd63937587d67098feb542c5e7e6759693bcc0609f0eb5fa0ff767",
+   "pseudo_seed": 991000,
+   "development": {
+    "expectation": true,
+    "mc_fraction": "half"
+   },
+   "seconds_unfold_meta": 533.075
+  },
+  "ens1_A7_mnvtune_k001": {
+   "path": "/pscratch/sd/j/josephrb/ens1-a1-20261108/runs/closure/A7_mnvtune/ens1_A7_mnvtune_k001_s991000.npz",
+   "block": {
+    "schema": "ens1-ensemble-estimator/1",
+    "mode": "closure",
+    "k": 1,
+    "internal_seed": 10001,
+    "truth": "A7_mnvtune"
+   },
+   "moved_rows": {
+    "MCgen": 0,
+    "MCreco": 0,
+    "measured": 0,
+    "bkg_reco": 0
+   },
+   "code_sha256": "807c40d3cb64e2e09d2fa9a5b91fb7a786f4eb51090e4291d65b3896b47e3b25",
+   "closure_dtype_requested": "float32",
+   "coord_sha256": {
+    "MCgen": "3e258a0223afa235a530201bd3649b9e53a567f4c850324a769a5606d12233de",
+    "MCreco": "a7091ff9cdc11bf3e6ff2ad9cfba2dc5c94b164f9756e1bf3254847b17cf7161",
+    "measured": "cf71bdcf8b15ef9d39d6b0fe5133f4ad5f3a8a6ae814fda9854261385979722b",
+    "bkg_reco": "1e8b1c8a60978ed17d60d8e0f88cd1027de63521f4c025e72d3af77783be56fb"
+   },
+   "hypothesis_sha256": "ceea00e77dbf4b64df24141435f131b40fa769f8fb038e9d7bc99758f504bf76",
+   "alternative_sha256": null,
+   "pseudo_seed": 991000,
+   "development": {
+    "expectation": true,
+    "mc_fraction": "half"
+   },
+   "seconds_unfold_meta": 487.76
+  }
+ },
+ "timing": {
+  "ens1_nominal_k001": {
+   "seconds": [
+    572.788
+   ],
+   "seconds_unfold_meta": 572.788,
+   "wall": 603.2
+  },
+  "ens1_nominal_k002": {
+   "seconds": [
+    514.646
+   ],
+   "seconds_unfold_meta": 514.646,
+   "wall": 544.1
+  },
+  "ens1_nominal_k003": {
+   "seconds": [
+    523.244
+   ],
+   "seconds_unfold_meta": 523.244,
+   "wall": 553.8
+  },
+  "ens1_nominal_k004": {
+   "seconds": [
+    503.558
+   ],
+   "seconds_unfold_meta": 503.558,
+   "wall": 533.1
+  },
+  "ens1_W1_k001": {
+   "seconds": [
+    603.117
+   ],
+   "seconds_unfold_meta": 603.117,
+   "wall": 634.5
+  },
+  "ens1_W1_k002": {
+   "seconds": [
+    533.075
+   ],
+   "seconds_unfold_meta": 533.075,
+   "wall": 564.9
+  },
+  "ens1_A7_mnvtune_k001": {
+   "seconds": [
+    487.76
+   ],
+   "seconds_unfold_meta": 487.76,
+   "wall": 517.3
+  }
+ },
+ "compare": {
+  "determinism": {
+   "xsec_flat": {
+    "dtype": [
+     "float64",
+     "float64"
+    ],
+    "shape": [
+     [
+      65856
+     ],
+     [
+      65856
+     ]
+    ],
+    "bitwise_identical": true
+   },
+   "xtrue_flat": {
+    "dtype": [
+     "float64",
+     "float64"
+    ],
+    "shape": [
+     [
+      65856
+     ],
+     [
+      65856
+     ]
+    ],
+    "bitwise_identical": true
+   }
+  },
+  "truth_vectors": {
+   "W1": {
+    "k": [
+     1,
+     2
+    ],
+    "bitwise_identical": true
+   },
+   "nominal": {
+    "k": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "bitwise_identical": true
+   }
+  }
+ },
+ "projection": {
+  "t_max_seconds": 603.117,
+  "task_wall_max": 634.5,
+  "lane_unfolds": 34,
+  "bound_t": 705,
+  "limit_h": 6.75,
+  "shard_wall_h_from_t": 5.779,
+  "shard_wall_h_from_wall": 6.076
+ },
+ "failures": [],
+ "verdict": "PASS"
+}
