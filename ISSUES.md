@@ -196,7 +196,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-6 [T]** — **Unusable covariance used as a benchmark yardstick.**  
   *Finding:* Configuration-(a) 5D covariance is marked "not to be used" (§9.6), yet is used as a scale in §5.1, §8.4, §9.2, §9.3, Table 5, App. G.2.  
   *Evidence:* `docs/analysis-note/sec_5d.tex:225`, `sec_eavailw.tex:162`, `app_release.tex:72`.  
-  *Resolution:* Remove config-(a) covariance from the release checklist; state explicitly that it failed acceptance criteria and qualify any use as purely exploratory/diagnostic.
+  *Resolution:* Governed by S2-COM-2: remove configuration-(a) covariance from the release checklist; state explicitly that it failed acceptance criteria ($s_{\text{proj}} = 6.145\%$ against 5% limit), is adopted under §6.4 exception for technical diagnostics only, and is not a yardstick or uncertainty product.
 
 * **S1-ACC-7 [T]** — **Executive summary marginalization claim (1–2%) vs body.**  
   *Finding:* Executive summary claims 4D and 5D marginalization passes to 1–2%, but §8.1 gives 0.11% total and 0.3–1.5% median per axis; §7.8 gives no number for 4D→3D.  
@@ -320,8 +320,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* Discuss covariance regularization and correlation sensitivity in §10.
 
 * **S1-COM-12 [T]** — **Joint tests condition and nuisance model disclosure.**  
-  *Finding:* Fine-grid convergence has not shown convergence (condition (i)). No hadronic-response nuisance band in declared nuisance model (§11.8; ±4% study moves observed statistics by up to ≈11% without regenerating null; compare the ≈11% hadronic-response shift with the NuWro total margin of observed 7427 against a null median 6324, and the GiBUU total margin of 2867 against 1791). No rejection rate measured for null pseudo-data processed like data (§11.3). A1/A2 unproven. Calibration conditional on data-derived inputs (§11.2). CH-target correction makes NuWro total rejection not robust (§11.9).  
-  *Evidence:* `docs/analysis-note/sec_joint.tex:120`, `:165`, `:210`.  
+  *Finding:* Fine-grid convergence has not shown convergence (condition (i)). No hadronic-response nuisance band in declared nuisance model (§11.8; ±4% study moves observed statistics by up to ≈11% without regenerating null; compare the ≈11% hadronic-response shift with the NuWro total margin of observed 7427 against a null median 6324, and the GiBUU total margin of 2867 against 1791, table cells at `sec_joint.tex:287-288`). No rejection rate measured for null pseudo-data processed like data (§11.3). A1/A2 unproven. Calibration conditional on data-derived inputs (§11.2). CH-target correction makes NuWro total rejection not robust (§11.9).  
+  *Evidence:* `docs/analysis-note/sec_joint.tex:120`, `:165`, `:210`, `:287-288`.  
   *Resolution:* State all conditions and limitations transparently in §11; add target condition to list in §11.4 and executive summary.
 
 * **S1-COM-13 [T]** — **Extended-fiducial study uncertainties and envelope.**  
@@ -876,19 +876,19 @@ The companion note is restructured into a coherent methods-and-benchmark narrati
 
 1. **Executive Summary as Methods-and-Benchmark Scope:**  
    * Opens with the comprehensive **Per-Result Status & Citability Matrix**:
-     * 2D central value: Citable for reproduction of published integral ($3.073 \\times 10^{-38}\\text{ cm}^2/\\text{nucleon}$, ratio 1.010); not citable as independent validation.
-     * 2D uncertainty $Q = S_5 + C_{\\text{PL}}$: Quoted 2D uncertainty construction (median per bin 6.45%, integral 4.75%); not citable for validated coverage.
+     * 2D central value: Citable for reproduction of published integral through values macros `\sigTwoD` and `\ratioTot`; not citable as independent validation.
+     * 2D uncertainty $Q = S_5 + C_{\\text{PL}}$: Quoted 2D uncertainty construction through values macros `\uqMedian` and `\uqIntegral`; not citable for validated coverage.
      * 3D & 4D central values: Citable for dimensional consistency and marginal normalization; not citable with covariance.
      * 5D configuration-(a) central value: Citable as exploratory unregularized 5D central value; not citable with covariance.
-     * 5D configuration-(a) covariance ($C_Z$): Adopted under §6.4 exception for technical diagnostics; non-passing; not citable as uncertainty product.
+     * 5D configuration-(a) covariance ($C_Z$): Adopted under §6.4 exception for technical diagnostics; non-passing; not a yardstick and not citable as uncertainty product (governed by S2-COM-2).
      * 16-cell five-observable result: Illustrative output demonstrating multi-differential data handling; not citable as physical measurement or for model tuning.
      * Generator joint tests: Methodological demonstration of calibrated hybrid-null hypothesis testing with biased estimators; not citable as measured cross sections.
      * Extended fiducial volume: Exploratory demonstration of unbinned phase-space extension; not citable as finalized cross section.
 
 2. **The 2D Benchmark (Sections 2–6):**  
-   * Integral agreement with publication (1.0% above publication total, ratio 1.010).  
+   * Integral agreement with publication through values macro `\ratioTot`.  
    * Paper-covariance distance $\\chi^2/\\text{ndf}$ quoted strictly through `\\chiPaper` over 205 bins, with correlated shape difference of unidentified origin.  
-   * Stated limitations: COV2D under-covers at both held-out tunes (0 of 300 in-region draws at AR23 and G18); run-period block $C_{\\text{PL}}$ absorbs playlist inconsistency by construction.  
+   * Stated limitations: run-period block $C_{\\text{PL}}$ absorbs playlist inconsistency by construction; no COV2D note sentence is added under AUD-E1.  
    * Method choice disclosures: LightGBM architecture, negative-weight subtraction refinement, and result adoption were selected with published distance known.
 
 3. **Multidimensional Central Values & Marginal Anchors (Sections 7–8):**  
