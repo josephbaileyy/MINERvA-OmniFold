@@ -1,0 +1,270 @@
+remote sha256 7d4c13a0648df68d007c56fd22c9dbc5eb329554fc66b5684c4d53a8fe315438
+node login03 2026-11-08T06:36:56Z
+connect script sha256 7d4c13a0648df68d007c56fd22c9dbc5eb329554fc66b5684c4d53a8fe315438
+== 1. fence and the job's state
+
+squeue rc=0; refusing rows: []
+job 60990199 state: COMPLETED
+== 2. sacct
+60990199|fd1b_pfd_p2|COMPLETED|0:0|00:15:47|947|1|256||2026-11-07T22:16:10|2026-11-07T22:31:57
+60990199.batch|batch|COMPLETED|0:0|00:15:47|947|1|256|130196K|2026-11-07T22:16:10|2026-11-07T22:31:57
+60990199.extern|extern|COMPLETED|0:0|00:15:47|947|1|256||2026-11-07T22:16:10|2026-11-07T22:31:57
+60990199.0|threadprobe|COMPLETED|0:0|00:00:56|56|1|32|216660K|2026-11-07T22:16:15|2026-11-07T22:17:11
+60990199.1|line0|COMPLETED|0:0|00:13:06|786|1|32|20040M|2026-11-07T22:17:11|2026-11-07T22:30:17
+60990199.2|line1|COMPLETED|0:0|00:13:05|785|1|32|20557240K|2026-11-07T22:17:11|2026-11-07T22:30:16
+60990199.3|line3|COMPLETED|0:0|00:14:39|879|1|32|21069200K|2026-11-07T22:17:12|2026-11-07T22:31:51
+60990199.4|line2|COMPLETED|0:0|00:13:04|784|1|32|21197092K|2026-11-07T22:17:12|2026-11-07T22:30:16
+60990199.5|line4|COMPLETED|0:0|00:14:38|878|1|32|20653876K|2026-11-07T22:17:12|2026-11-07T22:31:50
+60990199.6|line6|COMPLETED|0:0|00:14:03|843|1|32|21452492K|2026-11-07T22:17:12|2026-11-07T22:31:15
+60990199.7|line5|COMPLETED|0:0|00:14:45|885|1|32|21522860K|2026-11-07T22:17:12|2026-11-07T22:31:57
+60990199.8|line7|COMPLETED|0:0|00:14:03|843|1|32|20618908K|2026-11-07T22:17:12|2026-11-07T22:31:15
+charged node-h = ElapsedRaw 947 x NNodes 1 / 3600 = 0.2631 (reserved 1.0; cap 18.5)
+== 3. logs
+-- job log
+[pfd-wrapper] 2026-11-08T06:16:15.458Z job=60990199 host=nid005567 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 table=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p2/tables/tasks-p2.tsv lines=0..7
+[pfd-wrapper] submitting-shell thread variables: OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+[pfd-wrapper] 2026-11-08T06:17:11.605Z probe rc=0
+[timing] 2026-11-08T06:17:11.640Z job=60990199 host=nid005567 deploy=/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy pin=8d7a40c23b3b6b70c2913ba363a10a22e152aee4 lines=0..7 cpt=32 mem=56G gres=none
+[timing] lscpu CPU(s):                                  256
+[timing] lscpu Model name:                              AMD EPYC 7763 64-Core Processor
+[timing] lscpu Thread(s) per core:                      2
+[timing] lscpu Core(s) per socket:                      64
+[timing] lscpu Socket(s):                               2
+[timing] lscpu CPU(s) scaling MHz:                      69%
+[timing] 2026-11-08T06:17:11.827Z launch line 0
+[timing] 2026-11-08T06:17:11.838Z launch line 1
+[timing] 2026-11-08T06:17:11.846Z launch line 2
+[timing] 2026-11-08T06:17:11.865Z launch line 3
+[timing] 2026-11-08T06:17:11.872Z launch line 4
+[timing] 2026-11-08T06:17:11.878Z launch line 5
+[timing] 2026-11-08T06:17:11.884Z launch line 6
+[timing] 2026-11-08T06:17:11.890Z launch line 7
+[timing] 2026-11-08T06:31:57.096Z lines 0..7 done rc=0
+[pfd-wrapper] 2026-11-08T06:31:57.106Z packer rc=0
+-- thread probe
+{
+ "SLURM_CPUS_PER_TASK": "32",
+ "SLURM_JOB_ID": "60990199",
+ "SLURM_STEP_ID": "0",
+ "affinity_size": 32,
+ "executable": "/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3",
+ "lightgbm": "4.6.0",
+ "numpy": "1.26.4",
+ "openmp_default_num_threads": [
+  32,
+  32
+ ],
+ "os_cpu_count": 256,
+ "python": "3.11.14",
+ "status": "ok",
+ "thread_variables": {
+  "MKL_NUM_THREADS": "<unset>",
+  "NUMEXPR_NUM_THREADS": "<unset>",
+  "OMP_NUM_THREADS": "<unset>",
+  "OPENBLAS_NUM_THREADS": "<unset>"
+ },
+ "threadpool_info": [
+  {
+   "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libopenblasp-r0.3.30.so",
+   "internal_api": "openblas",
+   "num_threads": 32,
+   "prefix": "libopenblas",
+   "user_api": "blas",
+   "version": "0.3.30"
+  },
+  {
+   "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/libgomp.so.1.0.0",
+   "internal_api": "openmp",
+   "num_threads": 32,
+   "prefix": "libgomp",
+   "user_api": "openmp",
+   "version": null
+  },
+  {
+   "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scipy.libs/libscipy_openblas-b75cc656.so",
+   "internal_api": "openblas",
+   "num_threads": 32,
+   "prefix": "libscipy_openblas",
+   "user_api": "blas",
+   "version": "0.3.29.dev"
+  },
+  {
+   "filepath": "/global/u2/j/josephrb/.conda/envs/root_6_28/lib/python3.11/site-packages/scikit_learn.libs/libgomp-e985bcbb.so.1.0.0",
+   "internal_api": "openmp",
+   "num_threads": 32,
+   "prefix": "libgomp",
+   "user_api": "openmp",
+   "version": null
+  }
+ ],
+ "threadpoolctl": "3.6.0"
+}
+-- lanes
+## line0-60990199.log
+[s5c] task=0 name=fd1b_pfd_p2_A_CV job=60990199 host=nid005567 start=2026-11-08T06:17:21Z
+{"out": "fd1b_pfd_A_CV.npz", "seconds_unfold": 711.848}
+[s5c] task=0 name=fd1b_pfd_p2_A_CV rc=0 end=2026-11-08T06:30:17Z
+## line1-60990199.log
+[s5c] task=1 name=fd1b_pfd_p2_B_CV job=60990199 host=nid005567 start=2026-11-08T06:17:20Z
+{"out": "fd1b_pfd_B_CV.npz", "seconds_unfold": 709.779}
+[s5c] task=1 name=fd1b_pfd_p2_B_CV rc=0 end=2026-11-08T06:30:16Z
+## line2-60990199.log
+[s5c] task=2 name=fd1b_pfd_p2_Dnom_CV job=60990199 host=nid005567 start=2026-11-08T06:17:21Z
+{"out": "fd1b_pfd_Dnom_CV.npz", "seconds_unfold": 708.423}
+[s5c] task=2 name=fd1b_pfd_p2_Dnom_CV rc=0 end=2026-11-08T06:30:16Z
+## line3-60990199.log
+[s5c] task=3 name=fd1b_pfd_p2_A_Flux_0 job=60990199 host=nid005567 start=2026-11-08T06:17:20Z
+{"out": "fd1b_pfd_A_Flux_0.npz", "seconds_unfold": 814.013}
+[s5c] task=3 name=fd1b_pfd_p2_A_Flux_0 rc=0 end=2026-11-08T06:31:51Z
+## line4-60990199.log
+[s5c] task=4 name=fd1b_pfd_p2_B_Flux_0 job=60990199 host=nid005567 start=2026-11-08T06:17:21Z
+{"out": "fd1b_pfd_B_Flux_0.npz", "seconds_unfold": 814.157}
+[s5c] task=4 name=fd1b_pfd_p2_B_Flux_0 rc=0 end=2026-11-08T06:31:50Z
+## line5-60990199.log
+[s5c] task=5 name=fd1b_pfd_p2_Dnom_Flux_0 job=60990199 host=nid005567 start=2026-11-08T06:17:21Z
+{"out": "fd1b_pfd_Dnom_Flux_0.npz", "seconds_unfold": 821.547}
+[s5c] task=5 name=fd1b_pfd_p2_Dnom_Flux_0 rc=0 end=2026-11-08T06:31:57Z
+## line6-60990199.log
+[s5c] task=6 name=fd1b_pfd_p2_A_MinosEfficiency_0 job=60990199 host=nid005567 start=2026-11-08T06:17:21Z
+{"out": "fd1b_pfd_A_MinosEfficiency_0.npz", "seconds_unfold": 772.388}
+[s5c] task=6 name=fd1b_pfd_p2_A_MinosEfficiency_0 rc=0 end=2026-11-08T06:31:15Z
+## line7-60990199.log
+[s5c] task=7 name=fd1b_pfd_p2_B_MinosEfficiency_0 job=60990199 host=nid005567 start=2026-11-08T06:17:21Z
+{"out": "fd1b_pfd_B_MinosEfficiency_0.npz", "seconds_unfold": 773.919}
+[s5c] task=7 name=fd1b_pfd_p2_B_MinosEfficiency_0 rc=0 end=2026-11-08T06:31:15Z
+-- refusals or tracebacks in lane logs
+-- products
+total 1536
+-rw-rw---- 1 josephrb josephrb   1405 Nov  7 22:31 atime-A-60990199-85418.json
+-rw-rw---- 1 josephrb josephrb    666 Nov  7 22:29 atime-A-60990199-85466.json
+-rw-rw---- 1 josephrb josephrb   1350 Nov  7 22:30 atime-A-60990199-85578.json
+-rw-rw---- 1 josephrb josephrb    666 Nov  7 22:29 atime-B-60990199-85423.json
+-rw-rw---- 1 josephrb josephrb   1405 Nov  7 22:31 atime-B-60990199-85680.json
+-rw-rw---- 1 josephrb josephrb   1350 Nov  7 22:30 atime-B-60990199-85681.json
+-rw-rw---- 1 josephrb josephrb    666 Nov  7 22:29 atime-Dnom-60990199-85579.json
+-rw-rw---- 1 josephrb josephrb   1405 Nov  7 22:31 atime-Dnom-60990199-85671.json
+-rw-rw---- 1 josephrb josephrb 189463 Nov  7 22:29 fd1b_pfd_A_CV.npz
+-rw-rw---- 1 josephrb josephrb 189650 Nov  7 22:31 fd1b_pfd_A_Flux_0.npz
+-rw-rw---- 1 josephrb josephrb 189596 Nov  7 22:30 fd1b_pfd_A_MinosEfficiency_0.npz
+-rw-rw---- 1 josephrb josephrb 189466 Nov  7 22:29 fd1b_pfd_B_CV.npz
+-rw-rw---- 1 josephrb josephrb 189511 Nov  7 22:31 fd1b_pfd_B_Flux_0.npz
+-rw-rw---- 1 josephrb josephrb 189536 Nov  7 22:30 fd1b_pfd_B_MinosEfficiency_0.npz
+-rw-rw---- 1 josephrb josephrb 189465 Nov  7 22:29 fd1b_pfd_Dnom_CV.npz
+-rw-rw---- 1 josephrb josephrb 189628 Nov  7 22:31 fd1b_pfd_Dnom_Flux_0.npz
+== 4. walls
+{"out": "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p2/walls.json", "verdict": "PASS"}
+walls rc=0
+{
+ "schema": "fd-1b-precheck-fd/1",
+ "step": "P2",
+ "items": [
+  {
+   "item": "A_CV",
+   "seconds_unfold": 711.848,
+   "peak_rss_kib": 20197840
+  },
+  {
+   "item": "B_CV",
+   "seconds_unfold": 709.779,
+   "peak_rss_kib": 20143908
+  },
+  {
+   "item": "Dnom_CV",
+   "seconds_unfold": 708.423,
+   "peak_rss_kib": 20927976
+  },
+  {
+   "item": "A_Flux_0",
+   "seconds_unfold": 814.013,
+   "peak_rss_kib": 20828764
+  },
+  {
+   "item": "B_Flux_0",
+   "seconds_unfold": 814.157,
+   "peak_rss_kib": 20493244
+  },
+  {
+   "item": "Dnom_Flux_0",
+   "seconds_unfold": 821.547,
+   "peak_rss_kib": 21342840
+  },
+  {
+   "item": "A_MinosEfficiency_0",
+   "seconds_unfold": 772.388,
+   "peak_rss_kib": 20852940
+  },
+  {
+   "item": "B_MinosEfficiency_0",
+   "seconds_unfold": 773.919,
+   "peak_rss_kib": 20389876
+  }
+ ],
+ "max_seconds_unfold": 821.547,
+ "unit_seconds": 1370.0,
+ "max_peak_rss_kib": 21342840,
+ "rss_limit_kib": 44040192,
+ "verdict": "PASS"
+}
+== 5. per-product meta (meta only)
+{"product": "fd1b_pfd_A_CV.npz", "mode": "A", "universe": "CV", "threads": 32, "seconds_unfold": 711.848, "peak_rss_kib": 20197840, "slurm_job": "60990199", "numpy": "1.26.4", "fd_1b_precheck_fd.py": "a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d"}
+{"product": "fd1b_pfd_A_Flux_0.npz", "mode": "A", "universe": "Flux_0", "threads": 32, "seconds_unfold": 814.013, "peak_rss_kib": 20828764, "slurm_job": "60990199", "numpy": "1.26.4", "fd_1b_precheck_fd.py": "a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d"}
+{"product": "fd1b_pfd_A_MinosEfficiency_0.npz", "mode": "A", "universe": "MinosEfficiency_0", "threads": 32, "seconds_unfold": 772.388, "peak_rss_kib": 20852940, "slurm_job": "60990199", "numpy": "1.26.4", "fd_1b_precheck_fd.py": "a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d"}
+{"product": "fd1b_pfd_B_CV.npz", "mode": "B", "universe": "CV", "threads": 32, "seconds_unfold": 709.779, "peak_rss_kib": 20143908, "slurm_job": "60990199", "numpy": "1.26.4", "fd_1b_precheck_fd.py": "a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d"}
+{"product": "fd1b_pfd_B_Flux_0.npz", "mode": "B", "universe": "Flux_0", "threads": 32, "seconds_unfold": 814.157, "peak_rss_kib": 20493244, "slurm_job": "60990199", "numpy": "1.26.4", "fd_1b_precheck_fd.py": "a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d"}
+{"product": "fd1b_pfd_B_MinosEfficiency_0.npz", "mode": "B", "universe": "MinosEfficiency_0", "threads": 32, "seconds_unfold": 773.919, "peak_rss_kib": 20389876, "slurm_job": "60990199", "numpy": "1.26.4", "fd_1b_precheck_fd.py": "a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d"}
+{"product": "fd1b_pfd_Dnom_CV.npz", "mode": "Dnom", "universe": "CV", "threads": 32, "seconds_unfold": 708.423, "peak_rss_kib": 20927976, "slurm_job": "60990199", "numpy": "1.26.4", "fd_1b_precheck_fd.py": "a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d"}
+{"product": "fd1b_pfd_Dnom_Flux_0.npz", "mode": "Dnom", "universe": "Flux_0", "threads": 32, "seconds_unfold": 821.547, "peak_rss_kib": 21342840, "slurm_job": "60990199", "numpy": "1.26.4", "fd_1b_precheck_fd.py": "a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d"}
+== 6. atime sidecars
+atime-A-60990199-85418.json files 8 moved []
+atime-A-60990199-85466.json files 4 moved []
+atime-A-60990199-85578.json files 8 moved []
+atime-B-60990199-85423.json files 4 moved []
+atime-B-60990199-85680.json files 8 moved []
+atime-B-60990199-85681.json files 8 moved []
+atime-Dnom-60990199-85579.json files 4 moved []
+atime-Dnom-60990199-85671.json files 8 moved []
+== 7. stat-after vs stat-before
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz|1548438020|1782610308|1794105515
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz|16017201|1790319104|1794105516
+/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json|170298|1793473279|1793496788
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz|2163648810|1784034785|1793890180
+/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root|6396|1794033543|1794118648
+originals changed: 0; staged flux copy changed: 1
+== 8. records (base64 tar, explicit list)
+sha256 860f42091426ab8e136682d55bfbdbd53426b3d43d5c86b17b1cd41800f10b93 p2/logs/submit-p2.txt
+sha256 88ae88421f9de9ffbc733807d67babe8b3318d86d6edde141c7273c713494656 p2/logs/submit-p2.out
+sha256 4c18f4c13a7e005924763d205ce647dda184df9d6f8bb69643bd529a2a926099 p2/logs/stat-before.txt
+sha256 abe203d85ccd889f93ba0c50a98d62d61533607c5ccc95d280ff23ed84c83f83 p2/logs/stat-after.txt
+sha256 6fe90974e6b2f0287bdfc73ed2a59508e42cd2dcd4e07513f6a8c0ee516665b0 p2/logs/sacct-p2.psv
+sha256 474400d51cb953622c147db986fc28a73d165628f4e6d2cd1a05ba08fae7d647 p2/logs/fd1b_pfd_p2_60990199.out
+sha256 2c12bbac2816b3e7ff3b32cd513819bd9e41dbb01767dd90dbb128da882bdef7 p2/lanes/threadprobe-60990199.log
+sha256 16c55eca5ca2a3dca8a0c6d5e27f1b88128d55883ac2fb8c349519bb17d3726d p2/tables/tasks-p2.tsv
+sha256 582559f65453735a4a915849e9233cd6cc279a707499007ec8ebbbf77927f8e8 p2/walls.json
+sha256 9c172ffe82067b39f4e7254a0eab92135a85440c4181ea079a6007d7de44047c p2/lanes/line0-60990199.log
+sha256 3b55a7dc64db5890bcf395db3a6c26670252636206568d3cc2127295dddda8d6 p2/lanes/line1-60990199.log
+sha256 703748c17bf4bb69f734556c6cad960c6f470e951b50486c539c3e4401d36140 p2/lanes/line2-60990199.log
+sha256 84b7f5dabba3122cbd318067500f35434a0d147f8c8399addd3b11e804997dc6 p2/lanes/line3-60990199.log
+sha256 d9359b7a8200f5bb81bcc5180c2526427061af1592541add2c0a626e07bf1f34 p2/lanes/line4-60990199.log
+sha256 079273cac002599cdb85b4a6f8717c7547a401c8592afa05dd9841634cf5c2ca p2/lanes/line5-60990199.log
+sha256 e9d25a950598a8dc277726013a887025b08d9332cd6698c80f99aa077ac81a87 p2/lanes/line6-60990199.log
+sha256 0cb5906c41022741fafd17aebbec2aa153b5ff405a5dc020f31f7f8b330da712 p2/lanes/line7-60990199.log
+sha256 860143d0bb719ca4b3aff2561166c2da55616a693527aacc0617088274702816 p2/lanes/logs/fd1b_pfd_p2_A_CV.env.log
+sha256 860143d0bb719ca4b3aff2561166c2da55616a693527aacc0617088274702816 p2/lanes/logs/fd1b_pfd_p2_A_Flux_0.env.log
+sha256 860143d0bb719ca4b3aff2561166c2da55616a693527aacc0617088274702816 p2/lanes/logs/fd1b_pfd_p2_A_MinosEfficiency_0.env.log
+sha256 860143d0bb719ca4b3aff2561166c2da55616a693527aacc0617088274702816 p2/lanes/logs/fd1b_pfd_p2_B_CV.env.log
+sha256 860143d0bb719ca4b3aff2561166c2da55616a693527aacc0617088274702816 p2/lanes/logs/fd1b_pfd_p2_B_Flux_0.env.log
+sha256 860143d0bb719ca4b3aff2561166c2da55616a693527aacc0617088274702816 p2/lanes/logs/fd1b_pfd_p2_B_MinosEfficiency_0.env.log
+sha256 860143d0bb719ca4b3aff2561166c2da55616a693527aacc0617088274702816 p2/lanes/logs/fd1b_pfd_p2_Dnom_CV.env.log
+sha256 860143d0bb719ca4b3aff2561166c2da55616a693527aacc0617088274702816 p2/lanes/logs/fd1b_pfd_p2_Dnom_Flux_0.env.log
+sha256 831d808e331181eefcd63a73408ec0e2af5ce0f7cf3f336b0753771901644ee7 unf/atime-A-60990199-85418.json
+sha256 e706ec34e183999203cd6e65716cefa4d4b773e76ec6119f830e86763e9d48c2 unf/atime-A-60990199-85466.json
+sha256 123454aa346a56e721176c43bf7ddbe37cc717063f425535fcbc09ebe4da0d8b unf/atime-A-60990199-85578.json
+sha256 e706ec34e183999203cd6e65716cefa4d4b773e76ec6119f830e86763e9d48c2 unf/atime-B-60990199-85423.json
+sha256 831d808e331181eefcd63a73408ec0e2af5ce0f7cf3f336b0753771901644ee7 unf/atime-B-60990199-85680.json
+sha256 123454aa346a56e721176c43bf7ddbe37cc717063f425535fcbc09ebe4da0d8b unf/atime-B-60990199-85681.json
+sha256 e706ec34e183999203cd6e65716cefa4d4b773e76ec6119f830e86763e9d48c2 unf/atime-Dnom-60990199-85579.json
+sha256 831d808e331181eefcd63a73408ec0e2af5ce0f7cf3f336b0753771901644ee7 unf/atime-Dnom-60990199-85671.json
+== TAR BEGIN
+[base64 tar block removed from this committed copy: 2336 lines; decoded tar sha256 1964a19bf0e44fb304f833102823ca6b9b0a61f7fb57bae41de8ca9e2bc02aeb; its files are committed under records/; the full stdout sha256 is ca96914b55a13cd9693f507f5fed2207b9b8ef7811fc3048d0aca5ea5f5e2481]
+== TAR END tar rc=0
+== pfd-p2-post rc=0 2026-11-08T06:36:59Z

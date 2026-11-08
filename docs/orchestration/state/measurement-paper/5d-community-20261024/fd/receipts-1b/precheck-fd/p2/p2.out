@@ -1,0 +1,59 @@
+remote sha256 1f9e1f854f14b3f9eb0d7fc9daacfaa824d5f159eeb6ec48a6aa61f3e775fe20
+node login27 2026-11-08T06:14:17Z
+connect script sha256 1f9e1f854f14b3f9eb0d7fc9daacfaa824d5f159eeb6ec48a6aa61f3e775fe20
+== 1. iris (read first)
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2341.5            10000.0     18242.7      20000.0
+iris rc=0; m3246 row: [m3246               2341.5            10000.0     18242.7      20000.0]
+balance: user remaining 7658.5, project remaining 1757.3, cap 18.5; half user 3829.2, half project 878.6 -> OK
+== 2. fence (before anything is written)
+squeue rc=0; rows:
+
+-- end rows
+refusing rows: []
+FENCE: clear
+== 3. fresh deploy clone at M_A1
+deploy HEAD 8d7a40c23b3b6b70c2913ba363a10a22e152aee4; porcelain lines 0
+sha256 b72aaa627d12e6953ad6b1f40a4ae35ffd9b5439db3c0114defe93742f14c6d3 (bound b72aaa627d12e6953ad6b1f40a4ae35ffd9b5439db3c0114defe93742f14c6d3) docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh
+sha256 dd95db5de1a801eb6b47c8d60bc7da43532ed2ad38e10597ae2db94c0a12526f (bound dd95db5de1a801eb6b47c8d60bc7da43532ed2ad38e10597ae2db94c0a12526f) nd-unfolding/s5c_array.sh
+sha256 a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d (bound a7fbbb5850733b248c89c3f4e9527c40b8531228b88241ab2d3f2063c0863d2d) nd-unfolding/fd_1b_precheck_fd.py
+sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48 (bound ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48) setup_salloc_env.sh
+setup_salloc_env.sh blob b4a9c3f6bb766d8488cbab98878cbac1262cc1bb (bound b4a9c3f6bb766d8488cbab98878cbac1262cc1bb)
+== 4. the wrapper, the probe and the table generator
+sha256 038a6353b81a066476f96312e9764feac714bdc3cc350b5e533fd2a40f6e0256 (expected 038a6353b81a066476f96312e9764feac714bdc3cc350b5e533fd2a40f6e0256) pfd_p2_wrapper.sh
+sha256 d93697123b1e3c5a467efde2488dff8422c684061b39f58fa8cc82c545e6190f (expected d93697123b1e3c5a467efde2488dff8422c684061b39f58fa8cc82c545e6190f) pfd_threadprobe.py
+sha256 43f35c8e3af24184a5af028420a36a371e0225408853b043cdb77787d6af1692 (expected 43f35c8e3af24184a5af028420a36a371e0225408853b043cdb77787d6af1692) make_p2_table.py
+== 5. the task table
+TABLE: 8 lines written to /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p2/tables/tasks-p2.tsv
+tasks-p2.tsv sha256 16c55eca5ca2a3dca8a0c6d5e27f1b88128d55883ac2fb8c349519bb17d3726d
+# 1B pre-check Part 1, P2 (FD-1B-PRECHECK-FD-DECLARATION.md section 7; Binding 1, addendum A1)
+fd1b_pfd_p2_A_CV	fd_1b_precheck_fd.py	unfold	--mode	A	--universes	CV	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--flux-file	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf
+fd1b_pfd_p2_B_CV	fd_1b_precheck_fd.py	unfold	--mode	B	--universes	CV	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--flux-file	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf
+fd1b_pfd_p2_Dnom_CV	fd_1b_precheck_fd.py	unfold	--mode	Dnom	--universes	CV	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--flux-file	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf
+fd1b_pfd_p2_A_Flux_0	fd_1b_precheck_fd.py	unfold	--mode	A	--universes	Flux_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--flux-file	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf
+fd1b_pfd_p2_B_Flux_0	fd_1b_precheck_fd.py	unfold	--mode	B	--universes	Flux_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--flux-file	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf
+fd1b_pfd_p2_Dnom_Flux_0	fd_1b_precheck_fd.py	unfold	--mode	Dnom	--universes	Flux_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--flux-file	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf
+fd1b_pfd_p2_A_MinosEfficiency_0	fd_1b_precheck_fd.py	unfold	--mode	A	--universes	MinosEfficiency_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--flux-file	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf
+fd1b_pfd_p2_B_MinosEfficiency_0	fd_1b_precheck_fd.py	unfold	--mode	B	--universes	MinosEfficiency_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--flux-file	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf
+lines 8; items: A_CV B_CV Dnom_CV A_Flux_0 B_Flux_0 Dnom_Flux_0 A_MinosEfficiency_0 B_MinosEfficiency_0 
+== 6. stat only: in-place inputs and the staged flux copy
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz|1548438020|1782610308|1794105515
+/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz|16017201|1790319104|1794105516
+/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json|170298|1793473279|1793496788
+/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz|2163648810|1784034785|1793890180
+/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/flux_universes.root|6396|1794033543|1794033543
+== 7. thread variables in the submitting shell (none set; inherited by the job through --export=ALL)
+OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+== 8. fence, immediately before submission
+squeue rc=0; rows:
+
+-- end rows
+refusing rows: []
+FENCE: clear
+sbatch -A m3246 -q regular -C cpu --nodes=1 --exclusive --no-requeue --export=ALL,HOME=/global/homes/j/josephrb --time=01:00:00 -J fd1b_pfd_p2 -o /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p2/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p2/tools/pfd_p2_wrapper.sh /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/deploy 8d7a40c23b3b6b70c2913ba363a10a22e152aee4 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p2/tables/tasks-p2.tsv /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p2/lanes 0 7 /pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/p2/tools/pfd_threadprobe.py
+Submitted batch job 60990199
+sbatch rc=0
+job 60990199 TimeLimit=01:00:00
+60990199 fd1b_pfd_p2 PENDING 1:00:00 1 (Priority)
+== pfd-p2 rc=0 2026-11-08T06:14:54Z
