@@ -65,10 +65,8 @@ E6  LOW   MISSING  RS1's mechanism readings.
     Record: OUTCOME-20261108-rs1-rounding-mechanism.md CITABLE FOR :128-129 in the wording :56-58 (K1) and :63 (K5);
     NOT CITABLE FOR :136-144.
     Edit: the K1 and K5 statements, "on one pseudo-experiment", not about the data, ties not a defect.
-    FOR THE DIRECTOR: :142 lists "Any change to the reported estimator, to OUTCOME-20261105-fd-stab-none-pass.md, or
-    to any wording on main (sec. 5.2: no outcome changes them)" as NOT CITABLE FOR. The draft reads it as "the outcome
-    changes no existing wording" and adds the licensed statements without changing any. If the director reads it as
-    barring any added text, E6 is reverted.
+    :142 ("Any change ... to any wording on main (sec. 5.2: no outcome changes them)") is read as "the outcome itself
+    rewrites no existing text"; the director confirmed that reading on 2026-11-08 (keep E6).
 
 E7  MED   OVERCLAIM  The 2D comparison called a validation.
     Note: sec_intro.tex:18 ("It validates the method directly against a published binned measurement"),
@@ -85,7 +83,24 @@ E8  LOW   STALE  ES: the CH correction unscoped.
     Record: DECISION-20261101-joseph-gencmp-paper-adoption.md:96-98.
     Edit: "on the joint cells; on the sixteen cells GiBUU's total chi2 rises (sec:joint5d-ch)".
 
+E9  MED   MISSING  The response-only sensitivity Joseph sent to the note (was N3; the director's go, 2026-11-08).
+    Note: sec_fived16.tex:253.
+    Record: DECISION-20261101-joseph-1b-keep-block-redesign-test.md:38-40.
+    Edit: "a median 1.65 times ... (range 0.42--6.50 over the cells); it depends on the fine-cell grid and is not a
+    bound". The numbers are derived in make_values_landed.py as sqrt(B/M) per cell from fd/receipts-1b/inv/i2/i2.json
+    (a9d3dc9c, as the receipt's SHA256SUMS pins it), checked against FD-1B-INV-I2-REPORT.md:299 (median 1.654, range
+    0.416-6.501) and against the decision's :38-39, and printed at the decision's precision.
+
+E10 LOW   MISSING  ES: the second post hoc choice (was N7; the director's go, 2026-11-08).
+    Note: sec_execsummary.tex:9.
+    Records: the note's own sec_method.tex:79 (LightGBM) and :103 (the background treatment: "decided on that closure
+    test, before the rebuilt result's distance from the published result was computed, and the rebuilt result was
+    adopted after that distance was known"); DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:61-63.
+    Edit: one sentence after the LightGBM sentence, ending "the comparison with the publication is therefore not an
+    independent test of the method".
+
 == NOT DRAFTED: a decision is needed first ==
+Held by the director (2026-11-08): N1 and N2 go to Joseph; N6 goes with N1; N4 and N5 hold.
 
 N1  HIGH  STALE (framing)  The note is framed as a measurement.
     Note: main_note.tex:73 (abstract: "We present a simultaneous measurement ..."); sec_execsummary.tex:6 ("The principal
@@ -102,13 +117,7 @@ N2  HIGH  MISSING  REF-G1's algorithm dependence of the 16 cells is nowhere in t
     Why not drafted: :51-54, "No text is drafted before his decision" (uncertainty, limitation, or both). No later
     record decides it.
 
-N3  MED   MISSING  The response-only sensitivity Joseph sent to the note.
-    Note: sec_fived16.tex:253 ("reproduce in every cell the spread of the response alone"), qualitative only.
-    Record: DECISION-20261101-joseph-1b-keep-block-redesign-test.md:38-40 (median 1.65x in sigma, range 0.42-6.50;
-    labelled grid-dependent, not a bound).
-    Why not drafted: the numbers are the I2 report's arithmetic (FD-1B-INV-I2-REPORT.md:299: median 1.654, range
-    0.416-6.501), not a readout key; the decision rounds 0.416 to 0.42. A macro needs its derivation from i2.json fixed
-    first.
+N3  (drafted as E9 on the director's go.)
 
 N4  LOW-MED  STALE?  The release appendix still specifies the measurement release.
     Note: app_release.tex:4, :58; the archive package (state/2d-closeout/stageF/methods/archive-measurement-framed-20261106/)
@@ -124,10 +133,7 @@ N6  LOW   STALE  The note abstract was not resynced after the paper abstract's 1
     Note: main_note.tex:73 ("residual bias exceeds predeclared uncertainty-based thresholds").
     Record: DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:57-59. The abstract is frozen; Joseph's.
 
-N7  LOW   MISSING  ES: only one of the two post hoc choices is disclosed.
-    Note: sec_execsummary.tex:9 (the learner choice; the background-treatment choice is in the body,
-    sec_method.tex:103).
-    Record: DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:61-62 (paper text).
+N7  (drafted as E10 on the director's go.)
 
 == FLAGGED, no record contradicts; for the referee read ==
 

@@ -15,6 +15,7 @@ Each key prints with \\lrval{key}; an unknown key stops the build.
 """
 import hashlib
 import json
+import math
 import subprocess
 import sys
 from pathlib import Path
@@ -36,8 +37,13 @@ READOUTS = {  # name: (path, sha256 as the OUTCOME record states it)
            "4872df322a4e2e49ef009c4fa7eb78f273b8bea75a8a97855fd57451d229dca1"),
     "p1": (f"{FD}/receipts-1b/precheck-fd/p4/records/p4/readout.json",
            "8e05ca9bc2d0f2142b5c8d2bff28f05176c48f27454218390f09658344cea7b0"),
+    # I2's readout, as its receipt's SHA256SUMS pins it (fd/receipts-1b/inv/i2/SHA256SUMS)
+    "i2": (f"{FD}/receipts-1b/inv/i2/i2.json",
+           "a9d3dc9c0e331eb635d6598c03b5bf95f6931f88c0cf0a43a1e73e2df9135bdb"),
 }
 REC = {
+    "i2report": "docs/orchestration/state/measurement-paper/5d-community-20261024/FD-1B-INV-I2-REPORT.md",
+    "keepblock": f"{OR}/DECISION-20261101-joseph-1b-keep-block-redesign-test.md",
     "stop": f"{OR}/OUTCOME-20261106-1b-stage1-receipt-stop.md",
     "cov2d": f"{OR}/OUTCOME-20261108-cov2d-both-tunes-under-cover.md",
 }
@@ -156,6 +162,17 @@ def build(R):
         expect(at(p1, f"bands/{b}/rule_S/verdict") == "DEPARTS", f"band {b} rule S")
         V[f"p1-{tag}-cells"] = cells_words(at(p1, f"bands/{b}/rule_S/cells_outside"))
     expect(at(p1, "window") == [0.9, 1.1], "pre-check window")
+    # --- the response-only sensitivity (DECISION-20261101-joseph-1b-keep-block-redesign-test.md item 1): sqrt(B/M) per
+    # cell from I2's committed M and B (FD-1B-INV-I2-REPORT.md sec. 5), its median and range checked against the
+    # report's printed arithmetic (:299) and printed at the decision's precision (:38-39)
+    i2 = R["i2"]
+    expect(i2["cells"] == [f"R{i:02d}" for i in range(16)], "I2 cells")
+    r = sorted(math.sqrt(b / m) for b, m in zip(i2["B"], i2["M"]))
+    med, lo, hi = (r[7] + r[8]) / 2, r[0], r[-1]
+    record("i2report", 299, f"median {med:.3f} and range {lo:.3f}–{hi:.3f}")
+    record("keepblock", 38, f"median {med:.2f}×")
+    record("keepblock", 39, f"{lo:.2f}–{hi:.2f}")
+    V["i2-resp-med"], V["i2-resp-lo"], V["i2-resp-hi"] = f"{med:.2f}", f"{lo:.2f}", f"{hi:.2f}"
     if A:
         sys.exit("FAIL: a record no longer says what the prose states: " + "; ".join(A))
     return V
