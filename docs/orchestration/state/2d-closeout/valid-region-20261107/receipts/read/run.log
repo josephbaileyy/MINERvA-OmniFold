@@ -1,0 +1,18 @@
+== valid-region read 2026-11-07T18:48:13Z M=0687d6f2776b3ad691568f701de3aff166d9ca2a host=DN0a1f6baa
+clone at M; porcelain empty
+docs/orchestration/state/2d-closeout/valid-region-20261107/DECLARATION.md: OK
+docs/orchestration/state/2d-closeout/valid-region-20261107/valid_region.py: OK
+docs/orchestration/state/2d-closeout/valid-region-20261107/test_valid_region.py: OK
+docs/orchestration/state/2d-closeout/valid-region-20261107/INPUTS.sha256: OK
+binding pins 4/4 equal
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/gencmp-e/rerun1/chain/chdefs/with/readout/fd_g_readout.json: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/data-product/fd_data_product_cpl.json: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/s1/readout/s1_assembly.json: OK
+inputs 6/6 equal (shasum -a 256 -c INPUTS.sha256, rc 0)
+python 3.12.2 numpy 1.26.4 exe /Users/josephbailey/miniconda3/bin/python3
+tests rc 0: Ran 56 tests in 0.248s OK
+read rc 0; stderr: readings written
+clone porcelain after the read: ''
