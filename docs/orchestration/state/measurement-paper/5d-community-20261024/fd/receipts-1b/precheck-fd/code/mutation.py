@@ -70,6 +70,10 @@ M = [
  ("T2: I0's floor kind not checked", 'if r0.get("floor", {}).get("kind") != "measured":', "if False:"),
  ("T2: identity control skipped", 'if not np.allclose(prod[ok], F["total"][ok], rtol=1e-12, atol=0):', "if False:"),
  ("T2: mode A keeps non-finite weights", 'w = inv.universe_weights(weights_dir(tag, bank, det_dir), tag, "zero")', 'w = inv.universe_weights(weights_dir(tag, bank, det_dir), tag, "keep")'),
+ # the director's ruling on P1's INVALID (#877): control M rebuilds S1's blocks with the float64 U from the H2
+ # definition, not the assembly's float32-stored U. The first mutant is REQUIRED
+ ("REQUIRED: control M rebuilds with the stored float32 U", "X = np.array([U_def @ sa.xs(p) for p in uni[b]])", "X = np.array([U @ sa.xs(p) for p in uni[b]])"),
+ ("control M's U not from the definition", "U_def = sa.functional_matrix(sa.fine_map(definition))", "U_def = U"),
 ]
 rows = []
 try:
