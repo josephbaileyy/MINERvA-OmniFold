@@ -18,6 +18,13 @@ itself, but say where the claims or structure depend on its outcome.
 - Each read ran from its own empty directory, which was still empty afterwards. All four exited 0 with empty stderr.
   `run.sh.txt` is the script.
 
+**Two defects in the read text, found by journal-editor after the reads started and confirmed by the lane:**
+- the placeholders print internal study names ("[PENDING: FD-PRR, …]", "LL5D", "V-HALF"), which one Gemini read
+  quotes;
+- the abstract's "The uncertainties are not calibrated" goes further than the records support (its W-11).
+
+Both are fixed after this round. Weigh the reads' remarks on them with that in mind.
+
 **Comparability:** the venue is JINST only, the draft is new (shortened and restructured), and the prompt has the
 placeholder sentence. So round 6 is not strictly comparable with round 5.
 
