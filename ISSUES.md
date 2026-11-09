@@ -579,7 +579,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-15 [T]** — **Cross-checks description in §3.2.**  
   *Finding:* §3.2 mentions MLP/transformer cross-checks in §7.5, but §7.5 contains only Keras MLP, and App. F notes no transformer result is used.  
   *Evidence:* `docs/analysis-note/sec_method.tex:90`, `sec_3d.tex:130`.  
-  *Resolution:* Remove mention of transformer from §3.2.
+  *Resolution:* Landed in this commit. The method sentence now says MLP cross-checks. The point-cloud transformer study is unchanged.
 * **S2-ACC-16 [T]** — **"Differ in learner" description in §7.3.**  
   *Finding:* 3D marginal (e) and 2D result (f) are both LightGBM, differing in seed and refinement capacity, not learner family.  
   *Evidence:* `docs/analysis-note/sec_3d.tex:115`.  
