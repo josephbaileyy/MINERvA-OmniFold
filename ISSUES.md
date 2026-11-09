@@ -513,7 +513,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-11 [T]** — **Unusual phrases to remove.**  
   *Finding:* Remove colloquialisms, AI agent references, and named suggestions.  
   *Evidence:* `docs/analysis-note/app_release.tex:45`, `app_response_mismatch.tex:10`.  
-  *Resolution:* Strip informal phrases in favor of formal technical documentation.
+  *Resolution:* This row authorizes no tex edit. Do not edit app_release.tex. The cited response-mismatch line is an equation. Do not remove the private-communication citation or the RC1 session citation.
 
 * **S1-PRES-12 [T]** — **Dense figures and missing uncertainty labels in captions.**  
   *Finding:* Descriptive figures (Figs. 19–23) lack error bars without explicit explanation in captions.  
