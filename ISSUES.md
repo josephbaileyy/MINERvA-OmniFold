@@ -357,7 +357,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-14 [T]** — **Ascencio et al. comparison uncertainties.**  
   *Finding:* Central values are 9.2% and 6.0% above Ascencio on two super-cells. Note says comparison "neither refutes nor validates". Ascencio's covariance is in hand, yet no uncertainty on the difference is given. At minimum, give Ascencio's own uncertainty on the two super-cells.  
   *Evidence:* `docs/analysis-note/sec_3d.tex:185`.  
-  *Resolution:* Tabulate Ascencio's reported uncertainties on the two super-cells and describe difference in terms of differing $E_{\\text{avail}}$ definitions.
+  *Resolution:* Do not tabulate new Ascencio uncertainties until each value is bound through a checked-values macro. This row authorizes no tex edit.
 
 * **S1-COM-15 [T]** — **Reproducibility tolerances and archival completeness.**  
   *Finding:* Quoted central values reproducible only within float32 rounding spread (≈0.8 median, 2.6 max statistical SD under perturbations, §9.3); rerun tolerance should be stated. App. G package not deposited, repository/snapshot placeholders unfilled, 2D uncertainty and coverage figures not reproduced by it, 489 simulation AnaTuples have no preservation copy. Release schema marks 5-axis covariance as fixed identity despite failing criteria.  
