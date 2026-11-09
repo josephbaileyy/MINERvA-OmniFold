@@ -478,7 +478,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-4 [T]** — **Proliferation of configuration labels and unclear tables.**  
   *Finding:* Confusing proliferation of labels ((a)–(f), R, J, H2, EW, RD1–3, P1–P3).  
   *Evidence:* Table 2, Table 9.  
-  *Resolution:* Add a unified configuration glossary table.
+  *Resolution:* This row authorizes no tex edit. Do not add a glossary until its rows are copied from the configuration list already in sec_method.tex, one row per existing label, with no new claim.
 
 * **S1-PRES-5 [T]** — **Table 3 missing column headers.**  
   *Finding:* Headers run together in Table 3.  
