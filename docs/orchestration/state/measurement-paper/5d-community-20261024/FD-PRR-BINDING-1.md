@@ -115,3 +115,47 @@ other ruling are unchanged. No job ran under the wrong limits: prr_dry (61022062
 **For the connects:** prr_cap, prr_misc and prr_ibu pin this file's sha256 as it is on main after this erratum merges.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A2: the readout emits d (director, 2026-11-09)
+
+**Binds** [`FD-PRR-ADDENDUM-A2.md`](FD-PRR-ADDENDUM-A2.md) and its code, as merged in PR #980 at
+**M_A2 = `cf76aec7cdff4e86f375ffe945f4d22f4799c4e0`**. The audited head is `ded09733`. The branch's later commit
+`227b982d` merged main and changed only the index files; the addendum and every file under
+`nd-unfolding/prior_retention/` are identical at `ded09733` and M_A2.
+
+| file | sha256 (prefix) |
+|---|---|
+| `FD-PRR-ADDENDUM-A2.md` | `41e53237ceacb99e` |
+| `nd-unfolding/prior_retention/prr_read.py` | `d7c7c2c0d6cbe4a1` |
+| `nd-unfolding/prior_retention/test_prr.py` | `59e6fcf8d6a56c05` |
+| `nd-unfolding/prior_retention/prr_mutation.py` | `a6f673cdc4ab8bcb` |
+
+`prr_probe.py` (`f87ee90c58d2b890`), `prr_ibu.py` (`17acad82bad7c43f`) and `sbatch_prr.sh` (`10290087cdd57d97`) are
+M_A1's bytes. No job script changes, so every FD-PRR job still runs from M_A1 (addendum A1, ruling 1) until addendum
+A3 is bound.
+
+**What led to it.** V-HALF (`DECISION-20261109-joseph-bias-half-rule.md`) needs each graded truth's departure from the
+prior, d = (X − P)/P, on R00–R15. The director ruled option B for V-HALF's input: the bias from F0b's committed readout,
+and d from FD-PRR's own computation, which the readout computed inside `rho()` but did not emit.
+
+**What the director checked:**
+- coverage-5b-audit's GO at `ded09733`, with no lows
+  (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/980#issuecomment-6744156227):
+  - the diff is the d line, its key, the REQUIRED test and its mutant, with EXPECTED_TESTS 105;
+  - d is (X − P)/P with P the prior at the entry's own split, and the denominator-swap mutant is killed by the named
+    test;
+  - the fixture comparison reproduces in the auditor's own clean worktrees at M_A1 and at the head: readout.txt is
+    identical, and readout.json less its 181 d keys is byte-identical;
+  - the leak guard refuses d emitted as x − p, p or x, and the readout stays a set of ratios;
+  - 105 tests pass and 64 of 64 mutants are killed at the head.
+- The director ran `test_prr.py` from a `git archive` of M_A2 (one thread, `PYTHONHASHSEED=0`, own TMPDIR): 105 passed.
+
+**Rulings:**
+1. **The PRR read runs from M_A2's `prr_read.py`.** Binding 1's rulings 1–8 and addendum A1's rulings stand otherwise.
+   No reading, class, control, label or licence reads d.
+2. **d is an input to V-HALF only,** declared and licensed separately under its own declaration and binding. Its
+   CITABLE FOR here is the emitted value with FD-PRR §4.1's definition.
+3. **Addendum A3 (#989)** merges main by union, and the union head is what is audited and bound. The PRR read then runs
+   from the later of the two merge commits.
+
+Nothing is submitted, deposited or tagged.
