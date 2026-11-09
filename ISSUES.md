@@ -685,7 +685,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-CONT-8 [T]** — **Internal stage/date jargon.**  
   *Finding:* Avoid internal milestone dates and phrases ("Stage 0", "condition set in July 2026").  
   *Evidence:* `docs/analysis-note/sec_5d.tex:135`, `sec_fived16.tex:210`.  
-  *Resolution:* Replace internal project milestones with objective physical descriptions.
+  *Resolution:* This row authorizes no tex edit. The sentence already names the three conditions. Do not replace the July 2026 parenthetical, and do not edit the Stage 0 comments.
 * **S2-CONT-9 [T]** — **Repository labels used before defined.** Same finding as S1-PRES-4.
 
 ### Section 6: Support for Claims
