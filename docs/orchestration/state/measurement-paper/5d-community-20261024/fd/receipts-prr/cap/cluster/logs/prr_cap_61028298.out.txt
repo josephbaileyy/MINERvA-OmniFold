@@ -1,0 +1,3 @@
+[prr] mode=cap job=61028298 host=nid005928 pin=6727020a7c58b00dd00806151c627c8a24f72402 lanes=8 limit=6:30:00 start=2026-11-09T09:44:23Z
+[prr] queue rc=0 end=2026-11-09T11:10:52Z
+[prr] done

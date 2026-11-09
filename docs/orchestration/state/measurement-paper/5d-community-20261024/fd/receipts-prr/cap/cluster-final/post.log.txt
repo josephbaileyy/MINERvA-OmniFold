@@ -1,0 +1,23 @@
+node login28
+2026-11-09T11:14:58Z
+post script sha256 15a7e143260aa4544bf196c484cbb9ba7ab3fd4ba9f5a39eeaa8c3bc8f35ef1a
+job 61028298 state COMPLETED
+JobID|JobName|State|ExitCode|Elapsed|ElapsedRaw|NNodes|AllocCPUS|Start|End|TimelimitRaw|Timelimit
+61028298|prr_cap|COMPLETED|0:0|01:27:00|5220|1|256|2026-11-09T01:43:52|2026-11-09T03:10:52|390|06:30:00
+61028298.batch|batch|COMPLETED|0:0|01:27:00|5220|1|256|2026-11-09T01:43:52|2026-11-09T03:10:52||
+61028298.extern|extern|COMPLETED|0:0|01:27:03|5223|1|256|2026-11-09T01:43:52|2026-11-09T03:10:55||
+charge_node_h=1.4500 (ElapsedRaw x NNodes / 3600; the cap limit is 6.5)
+61022062|prr_dry|COMPLETED|3648|1
+61024185|prr_iter|COMPLETED|9038|1
+61028298|prr_cap|COMPLETED|5220|1
+study_charged_node_h=4.9739 (cap 27.0)
+copied: 167 files
+total 392
+drwx------  3 josephrb josephrb 12288 Nov  9 03:10 .
+drwx------ 15 josephrb josephrb  4096 Nov  9 03:14 ..
+-rw-------  1 josephrb josephrb    70 Nov  9 03:10 DONE
+-rw-------  1 josephrb josephrb   380 Nov  9 01:44 env.log
+log-cap entries: 93; tasks/: 58
+1e1e071161e35abd45a4d30b524003ae641c567c11c414cfd0a1e8694df758d2  post-cap.tar.gz
+prr cap post rc=0
+2026-11-09T11:14:59Z

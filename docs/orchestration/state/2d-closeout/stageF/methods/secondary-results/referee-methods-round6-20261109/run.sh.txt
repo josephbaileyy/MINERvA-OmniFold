@@ -1,0 +1,7 @@
+#!/bin/bash
+S=$1
+run_s() { (cd $S/empty-s$1 && CLAUDE_CONFIG_DIR=$HOME/.claude-school claude -p --model sonnet --strict-mcp-config --tools "" --disable-slash-commands < $S/input-sonnet.txt > $S/sonnet-jinst-short-r6-$1.txt 2> $S/sonnet-$1.err; echo "sonnet $1 rc=$?" >> $S/rc.txt); }
+run_g() { (cd $S/empty-g$1 && agy --sandbox --model gemini-3.8-flash-high -p "$(cat $S/input-gemini.txt)" > $S/gemini-jinst-short-r6-$1.txt 2> $S/gemini-$1.err; echo "gemini $1 rc=$?" >> $S/rc.txt); }
+run_s 1 & run_s 2 & run_g 1 & run_g 2 & wait
+for d in s1 s2 g1 g2; do echo "empty-$d: $(ls -A $S/empty-$d | wc -l)"; done
+cat $S/rc.txt; wc -c $S/*-r6-*.txt; grep -h "SCORE:" $S/*-r6-*.txt

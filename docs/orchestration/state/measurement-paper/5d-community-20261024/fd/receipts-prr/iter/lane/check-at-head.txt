@@ -1,0 +1,14 @@
+# FD-PRR prr_iter receipt: checks rerun in a clean clone at 3065419698eb5c7ed5e45ddaf0180b87e22be683, 2026-11-09T08:57:00Z
+# one serial process, nice -n 19, thread caps 1; porcelain before: 0
+## 1. python3 -I lane/verify_receipts.py <iter>
+225 files in cluster/SHA256SUMS, 225 match, 54 renamed
+rc=0
+## 2. python3 -I lane/iter_times.py <receipts-prr>, compared byte for byte with lane/iter_times.json
+rc=0
+identical: sha256 0b86e84c9b8a0a2f1dfa283d648648da3701ad6936084fc7cc1fcdd2c54126a4
+## 3. the dry receipt's verifier on its unchanged files: python3 -I dry/lane/verify_receipts.py <dry>
+85 files in cluster/SHA256SUMS, 85 match, 26 renamed
+rc=0
+## 4. dry/cluster-final/post.log.txt against dry/cluster/post.log.txt: lines added, lines removed
+diff rc=1 added 3 removed 0
+# porcelain after: 0

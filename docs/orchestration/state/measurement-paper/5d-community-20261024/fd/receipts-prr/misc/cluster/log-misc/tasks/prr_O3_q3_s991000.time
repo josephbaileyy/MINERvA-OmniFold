@@ -1,0 +1,23 @@
+	Command being timed: "python3 nd-unfolding/prior_retention/prr_probe.py run --level O3 --truth q3 -- --npz /pscratch/sd/j/josephrb/fd-prr-20261108/stage/of_inputs_5d.npz --bkg /pscratch/sd/j/josephrb/fd-prr-20261108/stage/bkg_dump.npz --expect-npz-sha256 07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f --expect-bkg-sha256 2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955 --config R --iters 5 --threads 32 --bank /pscratch/sd/j/josephrb/fd-prr-20261108/stage/bank --detector-dir /pscratch/sd/j/josephrb/fd-prr-20261108/stage/no-detector-band-is-drawn --hypothesis docs/orchestration/state/s5p/ratios/nullsJ/null-mnvtune_v1-J.json --pseudo-seeds 991000:991000 --no-nuisance --expectation --mc-fraction half --tag prr_O3_q3 --out /pscratch/sd/j/josephrb/fd-prr-20261108/runs/O3/q3 --alternative docs/orchestration/state/measurement-paper/5d-community-20261024/fd/stab/no-ratio.json --alternative-truth q3_given_eavail_w --alternative-amplitude 0.3"
+	User time (seconds): 8015.83
+	System time (seconds): 33.59
+	Percent of CPU this job got: 1453%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 9:13.97
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 10568300
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 177
+	Minor (reclaiming a frame) page faults: 1093012
+	Voluntary context switches: 202028
+	Involuntary context switches: 56675
+	Swaps: 0
+	File system inputs: 136
+	File system outputs: 472
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

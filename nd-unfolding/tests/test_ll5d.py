@@ -55,17 +55,33 @@ OWN_SEED_FILES = ("nd-unfolding/ll5d.py", "nd-unfolding/tests/test_ll5d.py", "nd
                                                     "tests-numpy126-seed2.txt", "tests-numpy2-seed0.txt"))
 
 
+OWN_RECEIPT_PREFIX = _RCPT + "fd/receipts-ll5d/"     # LL5D's own receipt tree (the director, 2026-11-09)
+
+
 def seed_collisions(lines: list[str]) -> list[str]:
     """git grep -n -o lines (path:line:token) whose token is an integer in section 3.6's range, outside LL5D's own
-    files (exact paths); a token ending in a decimal fraction is a float literal, not a seed."""
+    files (OWN_SEED_FILES, exact paths) and LL5D's own receipt tree (OWN_RECEIPT_PREFIX, an exact path prefix: its
+    receipts name LL5D's own products, which are not collisions); a token ending in a decimal fraction is a float
+    literal, not a seed."""
     bad = []
     for line in lines:
         path, _, tok = line.split(":", 2)
-        if path in OWN_SEED_FILES or re.search(r"\.[0-9]$", tok):
+        if path in OWN_SEED_FILES or path.startswith(OWN_RECEIPT_PREFIX) or re.search(r"\.[0-9]$", tok):
             continue
         if 4_751_000 <= int(re.sub(r"[,_]", "", tok)) <= 4_770_999:
             bad.append(line)
     return bad
+
+
+def law_control_computed(tc: unittest.TestCase, law: dict) -> None:
+    """The law control was computed for every evaluation and cell (finite z, a boolean verdict). Whether it holds on
+    a toy null of a few dozen sets is chance: 64 z-values at 4 SE from 20-40 sets fail about 2-5 % of worlds by the t
+    distribution (PYTHONHASHSEED=17 showed it). The rule itself is fd_1b_c2.control, verbatim from 342c0ce5."""
+    tc.assertIsInstance(law["holds"], bool)
+    for e in ll5d.EVALUATIONS:
+        z = np.asarray(law[e]["z"], float)
+        tc.assertEqual(z.shape, (sa.N_CELLS,))
+        tc.assertTrue(np.all(np.isfinite(z)), e)
 
 
 def git_blob(data: bytes) -> str:
@@ -931,9 +947,9 @@ class Seeds(unittest.TestCase):
                     ll5d.check_n(n)
 
     def test_no_other_tracked_file_uses_the_seed_range(self):
-        """Section 3.6's collision check, repeated at this sha: integer tokens in 4,751,000-4,770,999 in tracked
-        .py/.sh/.tsv/.json/.md/.txt files appear only in LL5D's own files, named exactly (OWN_SEED_FILES), or as float
-        literals."""
+        """Section 3.6's collision check, repeated at this sha: integer tokens in section 3.6's seed range, in tracked
+        .py/.sh/.tsv/.json/.md/.txt files, appear only in LL5D's own files, named exactly (OWN_SEED_FILES), or as float
+        literals. (The range is not written in this docstring, which a verbose test log prints.)"""
         if not (REPO / ".git").exists():
             self.skipTest("not a git checkout")
         out = subprocess.run(["git", "grep", "-I", "-n", "-o", "-P", SEED_PATTERN + r"(\.[0-9])?", "--", "*.py", "*.sh",
@@ -949,6 +965,12 @@ class Seeds(unittest.TestCase):
                  "nd-unfolding/y.py:9:4_770_999", f"copy/{own}:1:4751001", "data/z.json:4:4755555.5",
                  "nd-unfolding/w.py:1:4771000"]
         self.assertEqual(seed_collisions(lines), lines[1:5])
+        ours = OWN_RECEIPT_PREFIX + "pilot/unfold.log.txt:12:4751000"
+        other_campaign = _RCPT + "fd/receipts-1b/staged/x.txt:3:4751000"
+        look_alike = _RCPT + "fd/receipts-ll5d-copy/x.txt:4:4751000"
+        nested = "elsewhere/" + OWN_RECEIPT_PREFIX + "x.txt:5:4751000"
+        self.assertEqual(seed_collisions([ours, other_campaign, look_alike, nested]), [other_campaign, look_alike, nested])
+        self.assertTrue(OWN_RECEIPT_PREFIX.endswith("/fd/receipts-ll5d/"))
         self.assertTrue(re.fullmatch(SEED_PATTERN, "4751000") and re.fullmatch(SEED_PATTERN, "4,751,000"))
 
 
@@ -1111,7 +1133,7 @@ class Jobs(Fixture):
         self.assertEqual(rec["evaluations"], list(ll5d.EVALUATIONS))
         self.assertEqual(rec["draws_per_set"], 300)
         self.assertEqual(set(rec["sd300_per_cell"]), set(ll5d.EVALUATIONS))
-        self.assertTrue(rec["control_law"]["holds"])
+        law_control_computed(self, rec["control_law"])
         self.assertTrue(rec["checks"]["D1"]["passes"])
         self.assertEqual(rec["code_sha256"], ll5d.code_digests())
         self.assertEqual(rec["fd_1b_c2_source"], ll5d.FD_1B_C2_SOURCE)
@@ -1235,6 +1257,160 @@ class Jobs(Fixture):
         with mock.patch.object(ll5d, "RECEIPT_PROBE", 10 ** 9), \
                 self.assertRaisesRegex(ll5d.Reprice, "the gate projects"):
             self.gate(cal_rec=self.calibrated(), time_limit_seconds=1e-3)
+
+
+# ------------------------------------------------------------------- the real chain (amendment A1a.1)
+
+
+def pristine_s5n():
+    """s5n_pseudo's own definitions, loaded afresh from its source: the state of a fresh process, before any
+    s5e_candidate.install. Patched over the shared module, it makes a test independent of what earlier tests installed."""
+    from importlib.machinery import SourceFileLoader
+    pr = SourceFileLoader("s5n_pseudo_pristine", str(ND / "s5n_pseudo.py")).load_module()
+    import s5n_pseudo
+    return mock.patch.multiple(s5n_pseudo, truth_weight=pr.truth_weight, TRUTHS=pr.TRUTHS,
+                               refine_params=pr.refine_params, code_digests=pr.code_digests)
+
+
+class RealChain(unittest.TestCase):
+    """Amendment A1a.1 (the director's ruling on ll5d_calib run 1): the entry points over real files, with nothing in
+    the fd_1b_mc / s5n_pseudo / s5c_pseudo chain mocked. A2.1's toy world, rewritten so its files agree as the real
+    bank's do (the bank's td_* rows in cv.npz, every bank tdw about tdw_ref within 2 %, the six bank GEANT tdw equal
+    to tdw_ref, the npz's and every detector universe's denom_nd hist(tdw_ref)), then re-pinned (detector receipt,
+    sf1-style manifest, pins) and given a staged flux table. Outside the chain only: the H2 definition's map and S1's
+    functional (s1_assemble, the toy grid), S1's assembly and reported matrix (fd_1b_score, gate only), the input
+    digests and F1 sums (the world's own patches), O_NOATIME off (macOS), and the thread variables."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = Path(tempfile.mkdtemp(prefix="ll5d-real-"))
+        w = cls.w = ToyWorld(cls.tmp)
+        w.constraint.write_text("".join(f"Flux {i} {float(w.flux_w[i])!r}\n" for i in range(100)) + "Other 0 1.0\n")
+        rng = np.random.default_rng(9)                 # the constraint in plain floats: numpy 2's repr is np.float64(...)
+        z = dict(np.load(w.bank / "cv.npz", allow_pickle=False))
+        edges = [np.asarray(np.load(w.inputs)[f"edges_{i}"], float) for i in range(5)]
+        for k, e in zip(("td_pt", "td_pz", "td_ea", "td_q3", "td_w"), edges):
+            z[k] = rng.uniform(e[0], e[-1], 50)
+        np.savez(w.bank / "cv.npz", **z)
+        cls.tdw_ref = rng.uniform(0.95, 1.05, 50)
+        for p in sorted(w.bank.glob("*_tdw.npy")):
+            tag = p.name[:-len("_tdw.npy")]
+            v = cls.tdw_ref if tag in ll5d.GEANT_BANK_TAGS else \
+                cls.tdw_ref * np.random.default_rng(zlib.crc32(tag.encode())).uniform(0.98, 1.02, 50)
+            np.save(p, v)
+        dn = s5p_universe.denominator(z, cls.tdw_ref, edges)
+        zi = dict(np.load(w.inputs, allow_pickle=False))
+        zi["denom_nd"] = dn
+        np.savez(w.inputs, **zi)
+        zb = dict(np.load(w.bkg, allow_pickle=True))
+        zb["meta"] = json.dumps({"npz_sha256": digest(w.inputs)})
+        np.savez(w.bkg, **zb)
+        for p in sorted(w.det.glob("*_denom_nd.npy")):
+            np.save(p, dn)
+        w.receipt.write_text(json.dumps({"files_sha256": {p.name: digest(p) for p in sorted(w.det.iterdir())}}))
+        w.manifest.write_text("".join(f"{digest(p)}  {p}\n" for p in sorted(w.bank.iterdir()))
+                              + f"{digest(w.receipt)}  {w.receipt}\n")
+        w.pins.write_text(json.dumps(toys.make_pins(w.bank, w.det, w.manifest, w.receipt)))
+        flux = np.asarray(zi["flux"], float)
+        cls.flux_table = cls.tmp / "flux_universes.npz"
+        np.savez(cls.flux_table, hFluxCV=flux, hFluxUniv=flux[None] * rng.uniform(0.9, 1.1, (100, flux.size)))
+        n_bins = int(np.prod([e.size - 1 for e in edges]))
+        cells = ll5d.flat_cells(np.asarray(zi["MCgen"], float), edges)
+        live = np.unique(cells[(cells >= 0) & np.asarray(zi["pass_truth"], bool)])
+        fm = np.full(n_bins, -1)
+        fm[live] = np.arange(live.size) % sa.N_CELLS
+        cls.fm = fm
+        cls.U = np.vstack([np.where(fm == c, 1.0 + 0.1 * c, 0.0) for c in range(sa.N_CELLS)])
+        f = np.linspace(1.0, 2.0, sa.N_CELLS)
+        cls.s1 = {"U": cls.U.astype(np.float32), "f": f}
+        cls.reported = np.diag((0.05 * f) ** 2)
+        cls.cal = cls.tmp / "cal" / "calibration.json"
+        cls.gate_out = cls.tmp / "gate" / "gate-g18.json"
+        (cls.tmp / "s1").mkdir()
+        (cls.tmp / "s1" / "s1_assembly.npz").write_bytes(b"S1's assembly stands in: fd_1b_score.load_s1 is patched")
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp)
+
+    def setUp(self):
+        self.ps = self.w.patches() + [plain(), mock.patch.dict(os.environ, ONES),
+                                      mock.patch.object(ll5d, "TDW_REF_SHA256", digest(self.w.bank / "GEANT_Neutron_0_tdw.npy")),
+                                      mock.patch.object(sa, "fine_map", lambda p: self.fm),
+                                      mock.patch.object(sa, "functional_matrix", lambda fm: self.U),
+                                      mock.patch.object(fs, "load_s1", lambda p: self.s1),
+                                      mock.patch.object(fs, "reported_matrix", lambda s1: self.reported),
+                                      pristine_s5n()]
+        for p in self.ps:
+            p.start()
+
+    def tearDown(self):
+        for p in reversed(self.ps):
+            p.stop()
+
+    def args(self, **kw):
+        w = self.w
+        base = dict(npz=w.inputs, bkg=w.bkg, bank=w.bank, detector_dir=w.det, pins=w.pins, expect_pins_sha256=digest(w.pins),
+                    flux_constraint=w.constraint, flux_table=self.flux_table,
+                    expect_flux_table_sha256=digest(self.flux_table), definition=self.tmp / "definition.json",
+                    prep=w.prep, manifest=w.manifest, expect_manifest_sha256=digest(w.manifest), time_limit_seconds=1e7)
+        base.update(kw)
+        return argparse.Namespace(**base)
+
+    def calibrate(self):
+        if not self.cal.exists():
+            ll5d.calib_main(self.args(out=self.cal, draws=300, sets=20, workers=2, budget_seconds=1e7))
+        rec = json.loads(self.cal.read_text())
+        return rec
+
+    def gate(self):
+        if self.gate_out.exists():
+            return json.loads(self.gate_out.read_text())
+        rec = json.loads(json.dumps(self.calibrate()))
+        rec["verdict"] = "CALIBRATED"
+        rec["rule"]["s"] = 1.0
+        for e in ll5d.EVALUATIONS:
+            rec["rule"]["thresholds"][e].update(ii_mean_log=10.0, iii_alpha_multiple=100.0)
+        cal = self.tmp / "cal" / "calibrated.json"
+        cal.write_text(json.dumps(rec))
+        shutil.copy(self.cal.with_suffix(".npz"), cal.with_suffix(".npz"))
+        with pristine_s5n():                           # the gate installs on its own, whatever the calibration did
+            return ll5d.gate_main(self.args(out=self.gate_out, truth="g18", staged=self.tmp, calibration=cal,
+                                            expect_calibration_sha256=digest(cal),
+                                            expect_calibration_npz_sha256=digest(cal.with_suffix(".npz"))))
+
+    def test_truths_r_runs_the_real_truth_weight_after_the_install(self):
+        """REQUIRED (A1a.1): truths_r over the world's real F1 prep ratios with fd_1b_mc.truth_weight unmocked. In a
+        fresh process's state it raises ValueError("ratio_nd"), ll5d_calib run 1's crash; after install_config it
+        returns r_T, finite and positive here, and different for the two truths."""
+        world = mc._load_world(self.args())
+        with self.assertRaisesRegex(ValueError, "ratio_nd"):
+            ll5d.truths_r(world, self.w.prep, ["g18"])
+        ll5d.install_config()
+        r, ctl = ll5d.truths_r(world, self.w.prep, list(ll5d.TRUTHS))
+        self.assertTrue(all(c["passes"] for c in ctl.values()))
+        self.assertFalse(np.array_equal(r["g18"], r["ar23"]))
+        self.assertFalse(np.all(r["g18"] == 1.0))
+
+    def test_calib_main_runs_the_real_chain(self):
+        """The calibration's entry point over real files, nothing in the chain mocked: it installs the candidate
+        itself, loads the world, reads tdw_ref with D1, the truths, every universe, and writes its record."""
+        rec = self.calibrate()
+        self.assertEqual(rec["schema"], ll5d.SCHEMA_CAL)
+        self.assertTrue(rec["checks"]["D1"]["passes"])
+        self.assertTrue(all(v["passes"] for v in rec["checks"]["r_positive"].values()))
+        law_control_computed(self, rec["control_law"])
+        self.assertEqual(rec["atime"]["moved"], [])
+
+    def test_gate_main_runs_the_real_chain(self):
+        """The gate's entry point over real files, nothing in the chain mocked: the controls, the receipt over the
+        declared draws in both readings, the sealed clip-prep file, the gate."""
+        g = self.gate()
+        self.assertTrue(g["controls"]["denominator"]["passes"], g["controls"])
+        self.assertTrue(g["controls"]["r_positive"]["passes"])
+        self.assertEqual(g["receipt"]["verdict"], "PASS", g["receipt"].get("stop"))
+        self.assertIn(g["verdict"], ("PASS", "STOP"))
+        self.assertTrue((self.gate_out.parent / g["clip_prep"]["path"]).exists())
 
 
 # --------------------------------------------------------------------------------- the all-path equality
