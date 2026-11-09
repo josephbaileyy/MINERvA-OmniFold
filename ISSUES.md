@@ -342,7 +342,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-11 [T]** — **Correlation sensitivity of 16-cell generator $\\chi^2$.**  
   *Finding:* Generator $\\chi^2$ drops sharply when flux correlations are shrunk or removed.  
   *Evidence:* `docs/analysis-note/sec_fived16.tex:185`, Table 22.  
-  *Resolution:* Discuss covariance regularization and correlation sensitivity in §10.
+  *Resolution:* This row authorizes no tex edit. Do not add that discussion until a record states the shrinkage and says the sentence may be quoted. The 16-cell covariance is not a benchmark yardstick.
 
 * **S1-COM-12 [T]** — **Joint tests condition and nuisance model disclosure.**  
   *Finding:* Fine-grid convergence has not shown convergence (condition (i)). No hadronic-response nuisance band in declared nuisance model (§11.8; ±4% study moves observed statistics by up to ≈11% without regenerating null; compare the ≈11% hadronic-response shift with the NuWro total margin of observed 7427 against a null median 6324, and the GiBUU total margin of 2867 against 1791, table cells at `sec_joint.tex:287-288`). No rejection rate measured for null pseudo-data processed like data (§11.3). A1/A2 unproven. Calibration conditional on data-derived inputs (§11.2). CH-target correction makes NuWro total rejection not robust (§11.9).  
