@@ -538,7 +538,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 * **S2-ACC-1 [T]** — **"At least fifteen-fold" is false on its own numbers.** Same finding as S1-ACC-9.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-ACC-9, which has landed. Do not restore "at least fifteen-fold."
-* **S2-ACC-2 [R]** — **Tune v1 normalization deficit quoted four ways.** Same finding as S1-ACC-2.
+* **S2-ACC-2 [R]** — **Tune v1 normalization deficit quoted four ways.** Same finding as S1-ACC-2.  
+  *Resolution:* This row authorizes no tex edit. The four quotes are different comparisons. Do not replace them with one macro.
 * **S2-ACC-3 [T]** — **Tune v1 in quasielastic–Δ dip inconsistency.** Same finding as S1-ACC-1.
 * **S2-ACC-4 [T]** — **Which coverage test "did not run to a result".** Same finding as S1-ACC-4.
 * **S2-ACC-5 [T]** — **Detector-response-mismatch closure status.**  
