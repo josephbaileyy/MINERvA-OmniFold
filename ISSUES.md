@@ -885,7 +885,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 * **G2-ACC-1 [T]** — **Discrepancy in Target Nucleon Count $N$.** Same finding as G1-ACC-1.  
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-ACC-1. The cited 4.123e30 and 4.128e30 are not in the note. The printed counts are 3.2353e30 and 3.235e30, two roundings of the same tracker-geometry constant. Do not harmonize them to a typed standard value.
-* **G2-ACC-2 [T]** — **Inconsistent Marginal Normalization Agreement Metrics.** Same finding as S1-ACC-7 / S2-ACC-17 / G1-ACC-4.
+* **G2-ACC-2 [T]** — **Inconsistent Marginal Normalization Agreement Metrics.** Same finding as S1-ACC-7 / S2-ACC-17 / G1-ACC-4.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as G1-ACC-4. Do not follow the S1-ACC-7 wording. The executive summary no longer says the marginal checks pass to 1-2%. Do not add further marginal percentages to the executive summary.
 * **G2-ACC-3 [T]** — **Inconsistent Run-Period $\\chi^2$ Values.** Same finding as G1-ACC-2.
 * **G2-ACC-4 [T]** — **Conflicting Statements on Run-Period Block Variance Impact.** Same finding as S2-ACC-10.
 * **G2-ACC-5 [T]** — **Discrepancy in Total Cross-Section Values.**  
