@@ -292,7 +292,11 @@ SCOPE OF USE, BY FILE
       is not met here.
     - The prior_* rule and its threshold of 0.5 are this analysis's own, not ATLAS's.
   the 2D benchmark:
-    - The adopted two-dimensional result; no coverage validation is claimed for it.
+    - The adopted two-dimensional result. Its coverage has been tested and not established. A fixed-truth
+      coverage test of an earlier version of the 2D statistical band alone failed. At two held-out GENIE v3
+      tunes (AR23 and G18_10a_02_11b), the analysis procedure's 2D covariance, remade at each tune's truth,
+      under-covers jointly (0 of 300 pseudo-experiments in the joint region at each). Neither test measures
+      the reported intervals at the data's point.
     - It does not show that the five-observable result reproduces the full distribution, beyond this benchmark
       with its stated limits. The paper's status for the comparison: "Descriptive; source not identified".
     - The run-period rows do not say which period is right, nor the cause of the shape difference or of the

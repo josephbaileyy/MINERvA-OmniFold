@@ -10,7 +10,7 @@ HOW EACH VALUE IS CHECKED
   summary, and the pT and p_par projection uncertainties.
 
 CODE (sha256)
-  2be08094e826bd57547a4faf4ef0e73c33272a953e686ad66d4573d8c744b825  docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/build_package.py
+  0841f193a651c2fed2dcc081bdc83fb94a59572efd4bf82162143de97497c8e8  docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/build_package.py
   5414b123eaebc426ce7cd2dc9acc897c8c679b0349332c9d9dc056d46d2bfcec  docs/analysis-note/make_values_fived16.py
   2d7744155df3e802ce9ec4619931bea8b5d442e8eb5c857e9f03a6ac3bc3dada  docs/analysis-note/values_fived16.tex
   168d9b569d572daef5a862b7039426cf0e348a7452d5b8392c99b1bfef4ec4c9  docs/analysis-note/values.tex
@@ -168,8 +168,30 @@ the 2D benchmark:
     - a cause of the 2D shape difference or of the run-period step;
   THE PAPER (Table tab:outcomes, status) -- docs/analysis-note/paper_body.tex at bc867318
     - Descriptive; source not identified
+  CITABLE FOR -- docs/orchestration/OUTCOME-20261108-cov2d-both-tunes-under-cover.md
+    - At each of two held-out GENIE v3 tunes (AR23 and G18_10a_02_11b), with 300 pseudo-experiments each and
+      the analysis procedure's 2D covariance remade at each tune's truth (model term included, run-period term
+      excluded), the declared test reads UNDER-COVERS:
+    - the joint in-region count is 0 of 300 at both tunes;
+  NOT CITABLE FOR -- docs/orchestration/OUTCOME-20261108-cov2d-both-tunes-under-cover.md
+    - Coverage of the reported intervals at the data's point (Q_R is made at the data, not at T).
+  THE VERDICT -- docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md
+    - The verdict is FAIL-undercoverage, by the interim futility rule at toys 1–100.
+  NOT CITABLE FOR -- docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md
+    - the coverage of the systematic or total uncertainty;
 
 the 2D result per bin and its covariance:
+  CITABLE FOR -- docs/orchestration/OUTCOME-20261108-cov2d-both-tunes-under-cover.md
+    - At each of two held-out GENIE v3 tunes (AR23 and G18_10a_02_11b), with 300 pseudo-experiments each and
+      the analysis procedure's 2D covariance remade at each tune's truth (model term included, run-period term
+      excluded), the declared test reads UNDER-COVERS:
+    - the joint in-region count is 0 of 300 at both tunes;
+  NOT CITABLE FOR -- docs/orchestration/OUTCOME-20261108-cov2d-both-tunes-under-cover.md
+    - Coverage of the reported intervals at the data's point (Q_R is made at the data, not at T).
+  THE VERDICT -- docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md
+    - The verdict is FAIL-undercoverage, by the interim futility rule at toys 1–100.
+  NOT CITABLE FOR -- docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md
+    - the coverage of the systematic or total uncertainty;
   THE PAPER -- docs/analysis-note/paper_body.tex at bc867318
     - We report the dependence on the prior's generator shape as a separate covariance beside the four-block
       covariance

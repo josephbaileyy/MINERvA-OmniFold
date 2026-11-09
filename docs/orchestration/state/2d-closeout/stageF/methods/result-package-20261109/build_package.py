@@ -713,7 +713,11 @@ SCOPE = {
         "The guide's recommended test of correlation assumptions on pseudo-data (its item 5) is not met here.",
         "The prior_* rule and its threshold of 0.5 are this analysis's own, not ATLAS's."],
     "benchmark2d": [
-        "The adopted two-dimensional result; no coverage validation is claimed for it.",
+        "The adopted two-dimensional result. Its coverage has been tested and not established. A fixed-truth coverage "
+        "test of an earlier version of the 2D statistical band alone failed. At two held-out GENIE v3 tunes (AR23 and "
+        "G18_10a_02_11b), the analysis procedure's 2D covariance, remade at each tune's truth, under-covers jointly (0 "
+        "of 300 pseudo-experiments in the joint region at each). Neither test measures the reported intervals at the "
+        "data's point.",
         "It does not show that the five-observable result reproduces the full distribution, beyond this benchmark with "
         "its stated limits. The paper's status for the comparison: \"Descriptive; source not identified\".",
         "The run-period rows do not say which period is right, nor the cause of the shape difference or of the "
@@ -791,8 +795,30 @@ PROV = {
             "which run period is right, that 1G–1M is wrong, or that the published result is right;",
             "a cause of the 2D shape difference or of the run-period step;"]),
         (P_, "THE PAPER (Table tab:outcomes, status)", ["Descriptive; source not identified"]),
+        ("docs/orchestration/OUTCOME-20261108-cov2d-both-tunes-under-cover.md", "CITABLE FOR", [
+            "At each of two held-out GENIE v3 tunes (AR23 and G18_10a_02_11b), with 300 pseudo-experiments each and the "
+            "analysis procedure's 2D covariance remade at each tune's truth (model term included, run-period term "
+            "excluded), the declared test reads UNDER-COVERS:",
+            "the joint in-region count is 0 of 300 at both tunes;"]),
+        ("docs/orchestration/OUTCOME-20261108-cov2d-both-tunes-under-cover.md", "NOT CITABLE FOR", [
+            "Coverage of the reported intervals at the data's point (Q_R is made at the data, not at T)."]),
+        ("docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md", "THE VERDICT", [
+            "The verdict is FAIL-undercoverage, by the interim futility rule at toys 1–100."]),
+        ("docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md", "NOT CITABLE FOR", [
+            "the coverage of the systematic or total uncertainty;"]),
     ],
     "arrays2d": [
+        ("docs/orchestration/OUTCOME-20261108-cov2d-both-tunes-under-cover.md", "CITABLE FOR", [
+            "At each of two held-out GENIE v3 tunes (AR23 and G18_10a_02_11b), with 300 pseudo-experiments each and the "
+            "analysis procedure's 2D covariance remade at each tune's truth (model term included, run-period term "
+            "excluded), the declared test reads UNDER-COVERS:",
+            "the joint in-region count is 0 of 300 at both tunes;"]),
+        ("docs/orchestration/OUTCOME-20261108-cov2d-both-tunes-under-cover.md", "NOT CITABLE FOR", [
+            "Coverage of the reported intervals at the data's point (Q_R is made at the data, not at T)."]),
+        ("docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md", "THE VERDICT", [
+            "The verdict is FAIL-undercoverage, by the interim futility rule at toys 1–100."]),
+        ("docs/orchestration/OUTCOME-20261005-2d-fixed-truth-coverage-fail.md", "NOT CITABLE FOR", [
+            "the coverage of the systematic or total uncertainty;"]),
         (P_, "THE PAPER", [
             "We report the dependence on the prior's generator shape as a separate covariance beside the four-block "
             "covariance"]),
