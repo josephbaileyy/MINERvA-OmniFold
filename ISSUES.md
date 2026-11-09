@@ -235,7 +235,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-9 [T]** — **"At least fifteen-fold" arithmetic error.**  
   *Finding:* §3.2 claims purity bias reduced "at least fifteen-fold (from 3.5% to 4.1% to 0.11% to 0.24%)"; worst case is 3.5 / 0.24 = 14.58.  
   *Evidence:* `docs/analysis-note/sec_method.tex:92`.  
-  *Resolution:* Change "at least fifteen-fold" to "an order of magnitude (from 3.5–4.1% to 0.11–0.24%)".
+  *Resolution:* Landed at 786a38814631b37d8a2df6d5a0d43c333053285e. The configuration-(e) item now says "by about an order of magnitude". The ranges 3.5--4.1% and 0.11--0.24% are unchanged. No further tex edit.
 
 * **S1-ACC-10 [T]** — **Hyperparameter tuning sequence clarification.**  
   *Finding:* §3.2 claims learner settings fixed a priori, but refinement classifier (400 trees, 31 leaves) was adapted after background bias was observed.  
