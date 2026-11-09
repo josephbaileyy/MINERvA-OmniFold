@@ -948,7 +948,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 * **G2-PRES-1 [T]** — **Inappropriate Editorial Tone and Register.** Same finding as G1-PRES-9.  
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-PRES-9. Do not refactor the register. The three phrases are disclosures and stay: "until 2026-10-11" names when the exact-split central value stopped being the quoted 2D result; "its run log was not found" stays; and "inferred, not verified" states that two links in the POT-counting argument were not verified. Do not delete those sentences.
-* **G2-PRES-2 [T]** — **Misleading Error Bars on Headline Figures.** Same finding as S2-PRES-5 / G1-PRES-3.
+* **G2-PRES-2 [T]** — **Misleading Error Bars on Headline Figures.** Same finding as S2-PRES-5 / G1-PRES-3.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as G1-PRES-3. The Fig. 7 caption already says the vertical error bars are the weight statistics of the reweighted simulated sample, and that they are neither the data's statistical uncertainty nor the reported covariance. Do not add a further explanation.
 * **G2-PRES-3 [T]** — **Missing Uncertainties on Comparison Figures.**  
   *Finding:* Fig. 13 and Fig. 22 show comparisons without error bars.  
   *Evidence:* Figs. 13, 22.  
