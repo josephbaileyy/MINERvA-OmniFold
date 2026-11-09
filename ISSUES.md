@@ -611,7 +611,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-24 [T]** — **Minor numerical mismatches.**  
   *Finding:* Reconcile $p_T$ peak ranges (0.7 vs 0.55–0.70 vs ~0.6), GiBUU carbon $\\chi^2$ (45.49 vs 45.25), and 1G–1M $p_\\parallel$ $\\chi^2$ (34.4 vs 34.8).  
   *Evidence:* `docs/analysis-note/sec_experiment.tex:45`, `sec_fived16.tex:185`, `sec_systematics.tex:168`.  
-  *Resolution:* Standardize numbers to exact macro values across all sections.
+  *Resolution:* This row authorizes no tex edit. The three pairs already name different quantities. Do not reconcile them.
 
 ### Section 4: Completeness as a Citable Record
 
