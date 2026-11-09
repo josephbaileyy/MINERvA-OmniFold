@@ -292,7 +292,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-1 [T]** — **Missing Per-Result Status & Citability Matrix.**  
   *Finding:* No result carries a validated interval; reader needs an explicit table defining what each product is citable for.  
   *Evidence:* All 4 referee reports.  
-  *Resolution:* Add comprehensive Per-Result Status & Citability Matrix to Section 1.
+  *Resolution:* The per-result citability matrix is already in sec_execsummary.tex. This row authorizes no further tex edit.
 
 * **S1-COM-2 [T]** — **5D config-(a) covariance citability.**  
   *Finding:* Explicitly state what may be cited from config-(a) 5D value and uncertainty (exploratory central comparisons only; covariance unusable).  
