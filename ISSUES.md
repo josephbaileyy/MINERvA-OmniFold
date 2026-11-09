@@ -589,7 +589,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-18 [T]** — **5D bin count definitions.**  
   *Finding:* "10,694 reported bins" undefined; distinguish dense grid (65,856), occupied cells (10,499), and 4D projections (4,830).  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:210`, `sec_5d.tex:150`.  
-  *Resolution:* Provide explicit definitions for each bin count.
+  *Resolution:* This row authorizes no tex edit. The counts already name different objects. Do not identify 4830 with 4825, and do not add a combined definition.
 * **S2-ACC-19 [T]** — **Model-dependence magnitudes.**  
   *Finding:* Table 5 quotes median 2–6% for held-out shapes, §9.4 quotes prior dependence of 10–13% per coarse cell.  
   *Evidence:* `docs/analysis-note/sec_5d.tex:145`, Table 5.  
