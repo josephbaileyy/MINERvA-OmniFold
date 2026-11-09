@@ -327,7 +327,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-8 [R]** — **Run-period block $C_{\\text{PL}}$ characterization.**  
   *Finding:* $C_{\\text{PL}}$ true-to-estimated $\\sigma$ ratio interval is 0.73–2.56; quote adopted uncertainty $Q = S_5 + C_{\\text{PL}}$ (median per bin 6.45%).  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:165`, Table 8; `DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md`.  
-  *Resolution:* Quote the adopted uncertainty $Q = S_5\\text{ total} + C_{\\text{PL}}$ (DECISION-20261017, median per bin 6.45%) via values macros, describing $C_{\\text{PL}}$'s role in absorbing the run-period difference.
+  *Resolution:* The 6.45% clause is superseded. The headline uncertainty is $Q_R$, already printed by \uqMedian and \uqIntegral (`DECISION-20261024-joseph-adopt-re2-2d-refined.md:9`, `:30`). Do not put 6.45 back into the note. This row authorizes no tex edit.
 
 * **S1-COM-9 [T]** — **Background normalization & composition.**  
   *Finding:* Tabulate composition of ~3% purity correction vs 0.35% genuine background.  
