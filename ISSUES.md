@@ -322,7 +322,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-7 [T]** — **Unresolved items in 2D covariance.**  
   *Finding:* Document bounds: only 7 of 187 universes reproduced by committed code, NormDISCC zero, POT counting inferred.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:195`.  
-  *Resolution:* State these limitations transparently in §4.
+  *Resolution:* This row authorizes no tex edit. Do not add those three statements until a record states each one.
 
 * **S1-COM-8 [R]** — **Run-period block $C_{\\text{PL}}$ characterization.**  
   *Finding:* $C_{\\text{PL}}$ true-to-estimated $\\sigma$ ratio interval is 0.73–2.56; quote adopted uncertainty $Q = S_5 + C_{\\text{PL}}$ (median per bin 6.45%).  
