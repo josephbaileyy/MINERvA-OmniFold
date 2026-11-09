@@ -937,7 +937,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-CLM-1. Do not add the broader claim that the background treatment was selected with the published result known.
 * **G2-CLM-2 [T]** — **Claim of a "Five-Observable Unfolding".** Same finding as S2-CLM-9.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S2-CLM-9. The kinematic relation and the unmeasured added information are already stated, including the clamp. Do not drop the clamp. Do not rename configuration (e).
-* **G2-CLM-3 [T]** — **Claim of Calibrated Hypothesis-Testing Rejections of Generator Predictions.** Same finding as S1-CLM-5.
+* **G2-CLM-3 [T]** — **Claim of Calibrated Hypothesis-Testing Rejections of Generator Predictions.** Same finding as S1-CLM-5.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as G1-CLM-5. Do not replace the six conditions with a new scope sentence.
 * **G2-CLM-4 [T]** — **Claim that Low-$E_{\\text{avail}}$ Excess Corresponds to Established Low-Recoil Excess.** Same finding as S1-CLM-3 / S2-CLM-3 / G1-CLM-4.
 * **G2-CLM-5 [T]** — **Claim of a Meaningful 7.86% Uncertainty on 16-Cell Output.** Same finding as S1-CLM-2 / S2-CLM-6.
 
