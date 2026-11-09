@@ -1357,6 +1357,52 @@ class JobScript(unittest.TestCase):
         self.assertEqual(self.job("dry", PRR_TIMELIMIT="1-00:00:00").returncode, 2)
         self.assertEqual(self.job("dry", PRR_TIMELIMIT="4:00:00").returncode, 0)
 
+    def test_a_sub_hour_limit_in_squeues_m_ss_form_is_read(self):
+        """REQUIRED (Addendum A3). squeue's %l prints a limit under an hour as M:SS: prr_ibu's 0:30:00 reads "30:00".
+        At M_A1 the check split it as H:M:S, raised, and refused it as "exceeds" (prr_ibu 61035510). Under the dry
+        run's 5:15:00 it must pass."""
+        p = self.job("dry", PRR_TIMELIMIT="30:00")
+        self.assertEqual(p.returncode, 0, p.stderr)
+        self.assertTrue((self.OUT / "log-dry" / "DONE").exists())
+
+    def test_two_fields_are_minutes_and_seconds(self):
+        """A3. Two fields are M:SS, as Slurm prints them: "316:00" is 316 min, above 5:15:00, refused as exceeding;
+        "5:16" is 5 min 16 s and passes."""
+        p = self.job("dry", PRR_TIMELIMIT="316:00")
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("exceeds the declared 5:15:00", p.stderr)
+        self.assertFalse((self.OUT / "log-dry").exists())
+        p = self.job("dry", PRR_TIMELIMIT="5:16")
+        self.assertEqual(p.returncode, 0, p.stderr)
+
+    def test_one_field_is_minutes_and_a_limit_equal_to_the_declared_passes(self):
+        """A3. One field is minutes: "316" is refused as exceeding 5:15:00, and "315", equal to it, passes."""
+        p = self.job("dry", PRR_TIMELIMIT="316")
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("exceeds the declared 5:15:00", p.stderr)
+        p = self.job("dry", PRR_TIMELIMIT="315")
+        self.assertEqual(p.returncode, 0, p.stderr)
+
+    def test_the_day_forms_are_read(self):
+        """A3. With a day, D-H, D-H:MM and D-H:MM:SS: "1-0" (one day) and "0-05:16" are refused as exceeding;
+        "0-5" (5 h) passes."""
+        for tl in ("1-0", "0-05:16"):
+            p = self.job("dry", PRR_TIMELIMIT=tl)
+            self.assertEqual(p.returncode, 2, tl)
+            self.assertIn("exceeds the declared 5:15:00", p.stderr, tl)
+        p = self.job("dry", PRR_TIMELIMIT="0-5")
+        self.assertEqual(p.returncode, 0, p.stderr)
+
+    def test_an_unreadable_limit_is_refused_as_unreadable_not_as_exceeding(self):
+        """A3. A limit in no form Slurm prints (UNLIMITED, INVALID, four fields) is refused with its own message,
+        never reported as exceeding the declared limit, and nothing is written."""
+        for tl in ("UNLIMITED", "INVALID", "1:2:3:4"):
+            p = self.job("dry", PRR_TIMELIMIT=tl)
+            self.assertEqual(p.returncode, 2, tl)
+            self.assertIn(f"could not read the Slurm TimeLimit '{tl}'", p.stderr, tl)
+            self.assertNotIn("exceeds", p.stderr, tl)
+            self.assertFalse((self.OUT / "log-dry").exists(), tl)
+
     def test_outside_slurm_without_the_smoke_flag_it_refuses(self):
         env = {k: v for k, v in self.env.items() if k != "PRR_SMOKE"}
         p = subprocess.run(["bash", os.environ.get("PRR_SBATCH", str(HERE / "sbatch_prr.sh")), "dry", str(self.D),

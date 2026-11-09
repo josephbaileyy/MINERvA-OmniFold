@@ -21,7 +21,7 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("prr_probe.py", "prr_ibu.py", "prr_read.py", "sbatch_prr.sh", "test_prr.py")
 PB, IB, RD, SB = FILES[:4]
-EXPECTED_TESTS = 105
+EXPECTED_TESTS = 110
 MUTATIONS = [
     # --- the probe: the mask, the guard, the pins, the columns
     ("mask columns swapped", PB, "return orig(MCgen[:, gi], MCreco[:, ri], measured[:, ri], *args, **kwargs)",
@@ -127,7 +127,7 @@ MUTATIONS = [
     # --- the job script
     ("pair does not gate", SB, '    [ "$pc" -eq 0 ] || {', '    [ "$pc" -eq "$pc" ] || {',
      "test_a_failed_pair_stops_the_dry_run_and_every_full_job"),
-    ("TimeLimit unchecked", SB, "sys.exit(0 if sec(sys.argv[1]) <= sec(sys.argv[2]) else 1)", "sys.exit(0)",
+    ("TimeLimit unchecked", SB, "sys.exit(0 if tl <= lim else 4)", "sys.exit(0)",
      "test_a_limit_above_the_declared_is_refused"),
     ("full without the dry run's DONE", SB, '    [ -s "$OUT/log-dry/DONE" ] && [ ! -e "$OUT/log-dry/STOP" ] ||',
      "    true ||", "test_a_failed_pair_stops_the_dry_run_and_every_full_job"),
@@ -148,6 +148,21 @@ MUTATIONS = [
     ("a failed task still DONE", SB, '[ "$rc" -eq 0 ] || { echo "rc=$rc" > "$L/FAILED"; echo "[prr] STOP: a task failed',
      'true || { echo "rc=$rc" > "$L/FAILED"; echo "[prr] STOP: a task failed',
      "test_a_failed_task_leaves_no_done"),
+    # --- Addendum A3 (REQUIRED: the first two): every form Slurm prints a limit in; an unreadable one is not "exceeds"
+    ("two fields read as H:M", SB, "        return f[0] * 60 + f[1]\n", "        return f[0] * 3600 + f[1] * 60\n",
+     "test_a_sub_hour_limit_in_squeues_m_ss_form_is_read"),
+    ("a parse error reported as exceeds", SB, "    sys.exit(3)\n", "    sys.exit(4)\n",
+     "test_an_unreadable_limit_is_refused_as_unreadable_not_as_exceeding"),
+    ("one field read as hours", SB, "        return f[0] * 60\n", "        return f[0] * 3600\n",
+     "test_one_field_is_minutes_and_a_limit_equal_to_the_declared_passes"),
+    ("the day dropped", SB, "        return int(d) * 86400 + h * 3600 + m * 60 + s", "        return h * 3600 + m * 60 + s",
+     "test_the_day_forms_are_read"),
+    ("a limit equal to the declared refused", SB, "sys.exit(0 if tl <= lim else 4)", "sys.exit(0 if tl < lim else 4)",
+     "test_one_field_is_minutes_and_a_limit_equal_to_the_declared_passes"),
+    ("the unreadable branch removed", SB, '[ "$trc" -ne 3 ] || {', 'true || {',
+     "test_an_unreadable_limit_is_refused_as_unreadable_not_as_exceeding"),
+    ("exceeds reported as a failed check", SB, '[ "$trc" -ne 4 ] || {', 'true || {',
+     "test_two_fields_are_minutes_and_seconds"),
 ]
 
 
