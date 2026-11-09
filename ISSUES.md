@@ -822,7 +822,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-5. Do not replace a private-communication citation with a rationale the note does not already state.
 * **G1-CONT-3 [T]** — **Lost run logs and unrecorded configurations.** Same finding as S2-COM-3.  
   *Resolution:* This row authorizes no tex edit. The exact-split paragraph already says the seed was not fixed and the run log was not found. Do not add a further sentence. Do not apply the S2-COM-3 table instruction as a new table.
-* **G1-CONT-4 [T]** — **Incomplete mathematical definition of reconstructed available energy.** Same finding as S2-COM-9.
+* **G1-CONT-4 [T]** — **Incomplete mathematical definition of reconstructed available energy.** Same finding as S2-COM-9.  
+  *Resolution:* This row authorizes no tex edit. The table already states reconstructed E_avail as 1.17 times the calorimetric recoil energy in the tracker and electromagnetic calorimeter, with muon deposits removed. Do not replace that implemented definition. Do not apply the S2-COM-9 instruction to add Ascencio uncertainties.
 
 ### Section 6: Support for Claims
 
