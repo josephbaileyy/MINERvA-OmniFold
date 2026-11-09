@@ -175,3 +175,14 @@ refuses a change to it). My gloss there was reverted, and goes to Joseph with W-
   - The new W-24 covers how the published covariance is characterized.
   - The holds-enforcement and citable-home submission blockers, in W-OPTIONS.md.
 - **Counts:** 13 pages, 8,842 blind words.
+
+## Follow-up: before submission
+
+The director, 2026-11-09:
+- **A submission-time check that refuses "[HOLD:"** in the built paper and Supplement. It is not added to the normal
+  build (`build_all.sh:283` refuses only "PENDING:"), because the paper carries its funding and deposit holds by design.
+  check_round should self-test it when it is built.
+- **The first hold's results have no citable source for a JINST reader:** the IBU comparisons, the gate diagnosis, the
+  per-period benchmark, the rounding studies, the 2D held-out-tune coverage test and the validity rules. These are
+  banked for Joseph with W-19 and W-21: the deposit, and what the note must carry.
+- **The AGENTS.md refresh** (the stale 2D value and Q's 6.45/4.75) is on the director's follow-up list, not on #977.
