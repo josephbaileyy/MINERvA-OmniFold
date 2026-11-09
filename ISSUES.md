@@ -953,7 +953,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G2-PRES-3 [T]** — **Missing Uncertainties on Comparison Figures.**  
   *Finding:* Fig. 13 and Fig. 22 show comparisons without error bars.  
   *Evidence:* Figs. 13, 22.  
-  *Resolution:* Explain clearly in captions that points represent central value comparisons without evaluated joint covariance.
+  *Resolution:* Fig. 13 (fig:model) already says uncertainties are not drawn. It is not edited. The 2D covariance is quoted and is not drawn on that figure. One sentence is added at the end of the Fig. 22 caption (fig:q3excess): uncertainties are not drawn because no 4D covariance is quoted. Do not relabel the figure. Do not add purely.
 * **G2-PRES-4 [T]** — **Mislabeled Denominator in Figure 23.** Same finding as S2-PRES-6 / G1-PRES-7.
 * **G2-PRES-5 [T]** — **Proliferation and Fragmented Usage of Estimator Configurations.** Same finding as S1-PRES-4 / G1-PRES-2.
 * **G2-PRES-6 [D]** — **Physical Truncation of Document Text.**  
