@@ -369,7 +369,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CONT-1 [T]** — **Opaque citations to internal records document [37].**  
   *Finding:* Reference [37] cited by internal entry numbers (R1.1, R1.4, R1.14) for results required by reader.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:185`, `sec_5d.tex:160`.  
-  *Resolution:* Inline the necessary definitions and numerical values directly into the note text.
+  *Resolution:* This row authorizes no tex edit. Do not inline those values until each one is bound through a checked-values macro and a record says it may be quoted.
 
 * **S1-CONT-2 [T]** — **Dependence on internal joint test specification [52].**  
   *Finding:* Specification and decisions of joint tests cited from internal Ref. [52].  
