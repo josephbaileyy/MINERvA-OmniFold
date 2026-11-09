@@ -547,7 +547,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-5 [T]** — **Detector-response-mismatch closure status.**  
   *Finding:* §5 says "not run", while App. D reports shifted response closures with $|\\Delta|/\\sigma$ up to 0.97.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:35`, `app_response_mismatch.tex:12`.  
-  *Resolution:* Reconcile text: App. D ran exploratory shifted response samples; the full formal closure protocol was not executed.
+  *Resolution:* This row authorizes no tex edit. The rescaling test and the shifted-response closures already have separate statuses. Do not call the shifted-response closures exploratory, and do not say they did not run.
 * **S2-ACC-6 [D]** — **Count of bands that failed pairing.** Same finding as S1-ACC-8.  
   *Resolution:* **DISPUTE.** Class [D]. At base `b1da7ba8` (`sec_fived16.tex:66-72`), "These five enter" follows the paired terms: the systematic bands, the lateral shifts, the normalization, the run-period terms, and the $C_{\text{model}}$ shifts. The statistical correlation is the part that is not measured. Do not change "five" to "four".
 * **S2-ACC-7 [T]** — **Band counts and classifications across sections.**  
