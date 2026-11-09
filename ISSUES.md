@@ -775,7 +775,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. The cited 5.14% and 5.38% are not in the note. The cited line is a source comment. Do not harmonize a median uncertainty to a value from values.tex.
 * **G1-ACC-6 [D]** — **Neutral pion mass subtraction for charged pions in Eq. (1).**  
   *Finding:* Referee questions $(E_{\\pi^\\pm} - m_{\\pi^0})$ in $E_{\\text{avail}}$ definition as unphysical.  
-  *Resolution:* **DISPUTE.** The subtraction $E_{\\text{avail}} = \\sum T_p + \\sum T_\\pi + \\sum E_\\gamma + (E_{\\pi^\\pm} - m_{\\pi^0})$ is the established, published MINERvA analysis definition inherited from previous CC-inclusive analyses. Clarify text to state explicitly that this is an intentional convention.
+  *Resolution:* This row authorizes no tex edit. The subtraction is the inherited 135 MeV constant, and the note already says there is no unique published definition. Do not call it unphysical, and do not add a sentence that it is the published definition.
 * **G1-ACC-7 [T]** — **Massless-lepton approximation in Table 10.**  
   *Finding:* Table 10 lists $Q^2 = 4 E_\\nu E_\\mu \\sin^2(\\theta/2)$, which is ultra-relativistic approximation ($m_\\mu = 0$).  
   *Evidence:* `docs/analysis-note/sec_eavailw.tex:55`, Table 10.  
