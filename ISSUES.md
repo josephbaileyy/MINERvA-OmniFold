@@ -797,7 +797,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as S2-ACC-5. The rescaling test and the shifted-response closures already have separate statuses. Do not call the shifted-response closures exploratory, and do not say they did not run.
 * **G1-COM-3 [T]** — **Complete absence of 3D and 4D uncertainty quantification.** Same finding as S2-COM-8.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S2-COM-8. The comparisons are already called descriptive central values, with no 3D or 4D covariance and no generator chi-squared. Do not add purely.
-* **G1-COM-4 [T]** — **Headline 5D central value retains known-biased purity background subtraction.** Same finding as S2-COM-11.
+* **G1-COM-4 [T]** — **Headline 5D central value retains known-biased purity background subtraction.** Same finding as S2-COM-11.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S2-COM-11. The purity bias in the highest-W column is already stated, as 0.36-1.07 standard deviations of the configuration-(a) total uncertainty. Do not type 8-12.
 * **G1-COM-5 [R]** — **The 5-axis covariance ($C_Z$) exceeds pre-declared stability thresholds.** Same finding as S2-COM-2.
 * **G1-COM-6 [T]** — **Uncorrected playlist pooling bias.**  
   *Finding:* Global exposure ratio induces $-1.83\\%$ to $+3.78\\%$ single-cell pooling bias.  
