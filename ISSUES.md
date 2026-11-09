@@ -628,7 +628,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-COM-4 [T]** — **Joint test condition (i) disclosure.**  
   *Finding:* Condition (i) fine-grid convergence unmeasured; disclose sub-grid residual limits.  
   *Evidence:* `docs/analysis-note/sec_joint.tex:120`.  
-  *Resolution:* State condition (i) bounds explicitly in §11.
+  *Resolution:* This row authorizes no tex edit. Condition (i) already says the below-grid residual is unmeasured and unbounded by the scan. Do not add a bound.
 * **S2-COM-5 [T]** — **Joint tests omit hadronic response nuisance.**  
   *Finding:* Response model not shown to be complete; $\\pm 4\\%$ study did not regenerate nulls.  
   *Evidence:* `docs/analysis-note/sec_joint.tex:165`.  
