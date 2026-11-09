@@ -942,9 +942,9 @@ class Seeds(unittest.TestCase):
                     ll5d.check_n(n)
 
     def test_no_other_tracked_file_uses_the_seed_range(self):
-        """Section 3.6's collision check, repeated at this sha: integer tokens in 4,751,000-4,770,999 in tracked
-        .py/.sh/.tsv/.json/.md/.txt files appear only in LL5D's own files, named exactly (OWN_SEED_FILES), or as float
-        literals."""
+        """Section 3.6's collision check, repeated at this sha: integer tokens in section 3.6's seed range, in tracked
+        .py/.sh/.tsv/.json/.md/.txt files, appear only in LL5D's own files, named exactly (OWN_SEED_FILES), or as float
+        literals. (The range is not written in this docstring, which a verbose test log prints.)"""
         if not (REPO / ".git").exists():
             self.skipTest("not a git checkout")
         out = subprocess.run(["git", "grep", "-I", "-n", "-o", "-P", SEED_PATTERN + r"(\.[0-9])?", "--", "*.py", "*.sh",
@@ -1274,7 +1274,8 @@ class RealChain(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp = Path(tempfile.mkdtemp(prefix="ll5d-real-"))
         w = cls.w = ToyWorld(cls.tmp)
-        rng = np.random.default_rng(9)
+        w.constraint.write_text("".join(f"Flux {i} {float(w.flux_w[i])!r}\n" for i in range(100)) + "Other 0 1.0\n")
+        rng = np.random.default_rng(9)                 # the constraint in plain floats: numpy 2's repr is np.float64(...)
         z = dict(np.load(w.bank / "cv.npz", allow_pickle=False))
         edges = [np.asarray(np.load(w.inputs)[f"edges_{i}"], float) for i in range(5)]
         for k, e in zip(("td_pt", "td_pz", "td_ea", "td_q3", "td_w"), edges):
@@ -1362,9 +1363,10 @@ class RealChain(unittest.TestCase):
         cal = self.tmp / "cal" / "calibrated.json"
         cal.write_text(json.dumps(rec))
         shutil.copy(self.cal.with_suffix(".npz"), cal.with_suffix(".npz"))
-        return ll5d.gate_main(self.args(out=self.gate_out, truth="g18", staged=self.tmp, calibration=cal,
-                                        expect_calibration_sha256=digest(cal),
-                                        expect_calibration_npz_sha256=digest(cal.with_suffix(".npz"))))
+        with pristine_s5n():                           # the gate installs on its own, whatever the calibration did
+            return ll5d.gate_main(self.args(out=self.gate_out, truth="g18", staged=self.tmp, calibration=cal,
+                                            expect_calibration_sha256=digest(cal),
+                                            expect_calibration_npz_sha256=digest(cal.with_suffix(".npz"))))
 
     def test_truths_r_runs_the_real_truth_weight_after_the_install(self):
         """REQUIRED (A1a.1): truths_r over the world's real F1 prep ratios with fd_1b_mc.truth_weight unmocked. In a

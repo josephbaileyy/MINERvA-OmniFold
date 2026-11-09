@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import builtins
+import contextlib
 import functools
 import hashlib
 import io
@@ -641,7 +642,8 @@ class RealUnfold(tl.RealChain):
         for truth, role, its in jobs:
             a = self.args(truth=truth, role=role, items=its, out=out, threads=1, clip_prep=cp,
                           expect_clip_prep_sha256=g["clip_prep"]["sha256"])
-            self.assertEqual(b.run_unfold(a, unfold_fn=fake_unfold), 0, (truth, role))
+            with tl.pristine_s5n(), contextlib.redirect_stdout(io.StringIO()):   # its own install; its product
+                self.assertEqual(b.run_unfold(a, unfold_fn=fake_unfold), 0, (truth, role))   # names stay out of logs
         made = sorted(p.name for p in out.glob(f"{b.TAG}_*.npz"))
         self.assertEqual(len(made), 13, made)
         z = np.load(out / b.product_name("g18", "toy", f"minus2_{s0}"), allow_pickle=False)
