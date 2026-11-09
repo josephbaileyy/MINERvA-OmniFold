@@ -389,7 +389,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CONT-5 [T]** — **Citations to private communications.**  
   *Finding:* Private communications cited for key methodology choices (pseudo-inverse convention, FrInel_pi degeneracy, McFarland suggestion).  
   *Evidence:* `docs/analysis-note/app_statmethods.tex:450`, `app_response_mismatch.tex:10`.  
-  *Resolution:* Replace private communication citations with technical descriptions of the underlying mathematical/physical rationales.
+  *Resolution:* This row authorizes no tex edit. Do not replace a private-communication citation with a rationale the note does not already state.
 
 * **S1-CONT-6 [T]** — **App. G placeholders and unreleased RC7 package.**  
   *Finding:* Placeholder strings (`[repository] ... [snapshot identifier pending deposit]`) and unreleased package references.  
