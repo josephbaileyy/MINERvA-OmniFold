@@ -1451,6 +1451,7 @@ docs/orchestration/state/s5c/campaign-state.json	MACHINE	open
 docs/orchestration/state/s5c/pilot-contract.json	MACHINE	open	
 docs/orchestration/state/s5e/budget.json	MACHINE	open	
 docs/orchestration/state/s5e/campaign-state.json	MACHINE	open	
+docs/orchestration/state/s5e/cand/a3-rounding-shifts-20261109/README.md	LIVE	open	""
 docs/orchestration/state/s5e/contract-amendment-1-diagnosis-execution.json	MACHINE	open	
 docs/orchestration/state/s5e/contract-amendment-2-diagnosis-repairs.json	MACHINE	open	
 docs/orchestration/state/s5e/contract-amendment-3-candidate-R-and-assessment.json	MACHINE	open	

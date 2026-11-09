@@ -1,0 +1,21 @@
+Receipt-binding inventory delta from docs/orchestration/state/s5e/cand/a3-rounding-shifts-20261109/cluster/a3_rounding_shifts.json
+(the s5e A3 rounding-shift extraction, valid-region lane, 2026-11-09; the director's ruling (a), after 107233af).
+
+receipt_inventory() rows on the branch, with and without that record (docs/orchestration/verify_hash_bindings.py's own
+collect(), tracked_paths() and receipt_inventory(), over docs/**/*.json and nd-unfolding/**/*.json, fixtures excluded;
+lane/binding_delta.py, run before the constant moved):
+  without: 166 rows, sha256 6a2ac9747880c12033efe4ab152ba023e67406a75ec055400beb71951a1f1f74 (constant 166 / 6a2ac9747880c12033efe4ab152ba023e67406a75ec055400beb71951a1f1f74)
+  with:    167 rows, sha256 18818a17805efb7d230532627c17580e20c91572460a800759cab0483e568482
+  ADDED   nd-unfolding/s5e_analyze_candidate.py cc00829e
+  (Rerun after the bump: the same 166 and 167 rows and digests; only the constant it prints is then 167 / 18818a17.)
+The one row is the record's "producer": {"path": "nd-unfolding/s5e_analyze_candidate.py", "sha256": "cc00829e…"},
+the producer the extraction ran (s5e_analyze_candidate.py:147-151 at 2f958652, unchanged at main). Nothing was
+removed or repointed. The record is the cluster's own output, committed byte for byte (sha256 93f5f2e1…), so its keys
+were not renamed.
+
+After the bump (RECEIPT_BINDING_COUNT 166 -> 167, RECEIPT_BINDING_SHA256 6a2ac974 -> 18818a17):
+  unflipped: verify_hash_bindings.py rc 0, "ALL BINDINGS INTACT".
+Power test: the pin's final hex digit flipped in a temporary copy of the record, then restored from the fetched copy
+and cmp-verified (sha256 93f5f2e1c4dc8d52e30aca642e24fc1b714c1edf8a892f82a204708a2ed8f9dd):
+  cc00829e flipped: rc 1, "*** RECEIPT BINDING INVENTORY CHANGED ***" and "MISMATCH nd-unfolding/s5e_analyze_candidate.py" (restored, cmp OK)
+  restored: rc 0, "ALL BINDINGS INTACT".

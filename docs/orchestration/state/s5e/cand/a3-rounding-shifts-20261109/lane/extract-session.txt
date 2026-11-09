@@ -1,0 +1,33 @@
+session node login09 2026-11-09T23:38:29Z
+staged sha256 7c843f2950e3cc7cd5fa74a2d03a588ad0b5fa91d458414996b67dcdac1f2cf0
+== iris (m3246)
+m3246               2447.7            10000.0     18376.1      20000.0
+connect rc=0; staged copy removed: yes
+== extract.done
+0
+== extract.log
+     1	node login09 nproc=244 loadavg 323.11 236.61 218.33
+     2	2026-11-09T23:38:29Z
+     3	connect script sha256 7c843f2950e3cc7cd5fa74a2d03a588ad0b5fa91d458414996b67dcdac1f2cf0
+     4	squeue --me:
+     5	61040235 ll5d_gate_AR23 RUNNING
+     6	61040163 ll5d_gate_G18 RUNNING
+     7	processes on this node naming s5e-20260925: none
+     8	HEAD 2f958652f092e4e8938dbfa7b8142791e0c8e18d; porcelain --ignored lines before: 0
+     9	nd-unfolding/s5e_analyze_candidate.py sha256 cc00829eb7baf2e64cbeb9165fd89a3ef232c54fdb7d354c3688542d6e73514a
+    10	docs/orchestration/state/s5c/contract.json sha256 d54fd7c9641901736e58430e666db1ee782a54d9c95bf4439541872567c39c93
+    11	assess_receipt.json at 843fc99ef9dcec1545e41e4c7ab95d45810a38fd sha256 84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c
+    12	a3_extract.py sha256 15f9b923a5754b19d8b1cc50d43f5c2bcf11191c2ac3dedb3746ccc1f9d7fb1f
+    13	python 3.11.14 numpy 1.26.4; threads 1; nice 19; ionice idle
+    14	{"gate": true, "computed": {"median": 0.7829505732456221, "max": 2.5837789197284393, "argmax": "J145"}, "csv_sha256": "9ac8f7d8b74f090c28efc9023a21729ef5505090864ee1459fd998667e2c3987", "lines_sha256": "01aee82c24adb408142de2698b093fa7117dd0d21c313dd4b6fcc1e892d8d97c"}
+    15	extract rc=0
+    16	total 9
+    17	drwx------ 2 josephrb josephrb  4096 Nov  9 15:39 .
+    18	drwx------ 4 josephrb josephrb  4096 Nov  9 15:39 ..
+    19	-rw------- 1 josephrb josephrb  4177 Nov  9 15:39 a3_rounding_shifts.csv
+    20	-rw------- 1 josephrb josephrb 51738 Nov  9 15:39 a3_rounding_shifts.json
+    21	a3_rounding_shifts.csv sha256 9ac8f7d8b74f090c28efc9023a21729ef5505090864ee1459fd998667e2c3987 bytes 4177
+    22	a3_rounding_shifts.json sha256 93f5f2e1c4dc8d52e30aca642e24fc1b714c1edf8a892f82a204708a2ed8f9dd bytes 51738
+    23	porcelain --ignored lines after: 0
+    24	s5e-a3 extract rc=0
+    25	2026-11-09T23:39:21Z
