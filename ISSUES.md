@@ -503,7 +503,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-9 [T]** — **Pseudo-inverse cutoff conventions (A.1 vs A.4).**  
   *Finding:* Cutoff quoted as $10^{-15} \\sigma_{\\max}$ in A.1 vs $10^{-10} \\lambda_{\\max}$ in A.4.  
   *Evidence:* `docs/analysis-note/app_statmethods.tex:85`, `:350`.  
-  *Resolution:* Explain distinct conventions used for different matrix operations.
+  *Resolution:* This row authorizes no tex edit. The cited lines are not the cutoff sentences. The two cutoffs already name different operations. Do not add an explanation.
 
 * **S1-PRES-10 [T]** — **Eq. (3) radical extraction.**  
   *Finding:* Missing radical sign on $W$ formula in some text extractions.  
