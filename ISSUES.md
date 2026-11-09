@@ -384,7 +384,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CONT-4 [T]** — **Reliance on superseded/retired records for numbers.**  
   *Finding:* Numbers quoted from superseded values (e.g., 0.28% and 0.18% in §4.7, A.4 split bootstrap).  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:215`, `app_statmethods.tex:430`.  
-  *Resolution:* Remove citations to superseded numbers; quote only ratified and adopted values.
+  *Resolution:* This row authorizes no tex edit. Do not remove or replace those figures until a named record identifies each as superseded and the replacement is a checked-values macro.
 
 * **S1-CONT-5 [T]** — **Citations to private communications.**  
   *Finding:* Private communications cited for key methodology choices (pseudo-inverse convention, FrInel_pi degeneracy, McFarland suggestion).  
