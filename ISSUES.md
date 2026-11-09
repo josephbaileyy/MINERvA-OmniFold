@@ -664,7 +664,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-COM-15 [T]** — **Extended fiducial prior envelope.**  
   *Finding:* Tier-2 prior envelope has median 7.9% (90th percentile 62%) with no covariance.  
   *Evidence:* `docs/analysis-note/sec_fps.tex:85`.  
-  *Resolution:* Clarify exploratory nature of extended fiducial central values.
+  *Resolution:* This row authorizes no tex edit. The preliminary status, the absence of a covariance, and the 7.9% and 62% envelope are already stated. Do not add a further label, and do not type 4.502.
 
 ### Section 5: Self-Containment
 
