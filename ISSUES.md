@@ -416,7 +416,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CLM-3 [T]** — **$(E_{\\text{avail}}, W)$ excess localization without covariance.**  
   *Finding:* Localizing excess at high $E_{\\text{avail}}$ and $W$ rests on biased purity estimator without evaluated joint covariance.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:13`, `sec_eavailw.tex:150`.  
-  *Resolution:* Qualify as descriptive central-value comparison under nominal response; strip physical localization claims.
+  *Resolution:* The Tune v1 corner sentence was deleted at 904e1e99851b07ed883fcb53e5b64f3137eddeb0, and the fig:eavailWband caption clause at df56846001e9dc9522b8d0c21ce4d1043f45e138. The named-bin central-value ratios and the Valencia paragraph stay. This row authorizes no further tex edit.
 
 * **S1-CLM-4 [T]** — **Generator $\\chi^2$ values sensitivity and interpretation.**  
   *Finding:* Generator $\\chi^2$ values presented as definitive tests despite extreme correlation sensitivity and circularity with $C_{\\text{model}}$.  
