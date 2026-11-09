@@ -10028,6 +10028,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/cluster/queues/iter.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/cluster/sacct.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/cluster/study-charge.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/lane/check-at-head.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/lane/iter_times.json	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/lane/iter_times.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/lane/launch-session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
