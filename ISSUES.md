@@ -606,7 +606,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Negative-weight rebuild has $\\sqrt{\\text{Tr} C} = 2.98 \\times 10^{-39}$ vs Table 8 $2.69 \\times 10^{-39}$.  
   *Evidence:* `docs/analysis-note/app_negweight.tex:85`, Table 8.  
   *Resolution:* This row authorizes no tex edit. The two traces already name different ensembles. Do not identify them.
-* **S2-ACC-23 [T]** — **Terminology mismatch across sections.** Same finding as S1-ACC-15.
+* **S2-ACC-23 [T]** — **Terminology mismatch across sections.** Same finding as S1-ACC-15.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-ACC-15. Do not merge the two descriptions of the 109 cells.
 * **S2-ACC-24 [T]** — **Minor numerical mismatches.**  
   *Finding:* Reconcile $p_T$ peak ranges (0.7 vs 0.55–0.70 vs ~0.6), GiBUU carbon $\\chi^2$ (45.49 vs 45.25), and 1G–1M $p_\\parallel$ $\\chi^2$ (34.4 vs 34.8).  
   *Evidence:* `docs/analysis-note/sec_experiment.tex:45`, `sec_fived16.tex:185`, `sec_systematics.tex:168`.  
