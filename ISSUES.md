@@ -406,7 +406,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CLM-1 [T]** — **Abstract 1% integral agreement without method-choice caveats.**  
   *Finding:* Abstract quotes 1% integral agreement without disclosing that LightGBM and background treatment were selected with published result known.  
   *Evidence:* `docs/analysis-note/main_note.tex:73`, `sec_method.tex:90`.  
-  *Resolution:* Include method-selection disclosure directly in abstract and executive summary.
+  *Resolution:* Do not add that broader claim. This row authorizes no tex edit.
 
 * **S1-CLM-2 [T]** — **"Comparable" uncertainty budget wording in §6.3.**  
   *Finding:* Claiming uncertainty budget is "comparable" to publication overlooks post hoc run-period addition and smaller bootstrap block.  
