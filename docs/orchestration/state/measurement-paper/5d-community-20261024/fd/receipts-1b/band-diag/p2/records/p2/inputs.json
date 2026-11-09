@@ -1,0 +1,311 @@
+{
+ "schema": "fd-1b-band-diag/1",
+ "step": "inputs",
+ "label": "DERIVATION",
+ "verdict": "EQUAL",
+ "universes": {
+  "GEANT_Neutron_0": {
+   "signal": {
+    "equal": true,
+    "n_rows": 20403864,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "background": {
+    "equal": true,
+    "n_rows": 621445,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "HW": {
+    "in_window_sum": 113.5753960212501,
+    "out_of_window_share": 0.0003318214362099484,
+    "non_positive_in_window_share": 0.0
+   }
+  },
+  "GEANT_Neutron_1": {
+   "signal": {
+    "equal": true,
+    "n_rows": 20403864,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "background": {
+    "equal": true,
+    "n_rows": 621445,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "HW": {
+    "in_window_sum": 288.3359726757368,
+    "out_of_window_share": -0.0010742994747082123,
+    "non_positive_in_window_share": 0.0
+   }
+  },
+  "GEANT_Pion_0": {
+   "signal": {
+    "equal": true,
+    "n_rows": 20403864,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "background": {
+    "equal": true,
+    "n_rows": 621445,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "HW": {
+    "in_window_sum": 875.2401091442772,
+    "out_of_window_share": 1.2526481566082904e-05,
+    "non_positive_in_window_share": 0.0
+   }
+  },
+  "GEANT_Pion_1": {
+   "signal": {
+    "equal": true,
+    "n_rows": 20403864,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "background": {
+    "equal": true,
+    "n_rows": 621445,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "HW": {
+    "in_window_sum": -1981.2869890783604,
+    "out_of_window_share": 8.021365834212584e-05,
+    "non_positive_in_window_share": -0.0
+   }
+  },
+  "GEANT_Proton_0": {
+   "signal": {
+    "equal": true,
+    "n_rows": 20403864,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "background": {
+    "equal": true,
+    "n_rows": 621445,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "HW": {
+    "in_window_sum": -177.815394833564,
+    "out_of_window_share": -0.0017711134264278873,
+    "non_positive_in_window_share": -0.0
+   }
+  },
+  "GEANT_Proton_1": {
+   "signal": {
+    "equal": true,
+    "n_rows": 20403864,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "background": {
+    "equal": true,
+    "n_rows": 621445,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "HW": {
+    "in_window_sum": -23.666938202888602,
+    "out_of_window_share": 0.014865765569228785,
+    "non_positive_in_window_share": -0.0
+   }
+  },
+  "MinosEfficiency_0": {
+   "signal": {
+    "equal": true,
+    "n_rows": 20403864,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "background": {
+    "equal": true,
+    "n_rows": 621445,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "HW": {
+    "in_window_sum": -55752.52512268722,
+    "out_of_window_share": 1.9734964496597268e-05,
+    "non_positive_in_window_share": -0.0
+   }
+  },
+  "MinosEfficiency_1": {
+   "signal": {
+    "equal": true,
+    "n_rows": 20403864,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "background": {
+    "equal": true,
+    "n_rows": 621445,
+    "n_differ": 0,
+    "max_rel_diff": 0.0
+   },
+   "HW": {
+    "in_window_sum": 55752.525083185086,
+    "out_of_window_share": 1.9734965071425217e-05,
+    "non_positive_in_window_share": 0.0
+   }
+  }
+ },
+ "input_npz_sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+ "bkg_dump_sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955",
+ "pins_sha256": "5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248",
+ "atime": {
+  "files": {
+   "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz": {
+    "atime_ns_first": 1794179838000000000,
+    "atime_ns_now": 1794179838000000000
+   },
+   "/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json": {
+    "atime_ns_first": 1793496788000000000,
+    "atime_ns_now": 1793496788000000000
+   },
+   "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz": {
+    "atime_ns_first": 1794179838000000000,
+    "atime_ns_now": 1794179838000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_bkgw.npy": {
+    "atime_ns_first": 1793890109000000000,
+    "atime_ns_now": 1793890109000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_denom_nd.npy": {
+    "atime_ns_first": 1793890109000000000,
+    "atime_ns_now": 1793890109000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_wr.npy": {
+    "atime_ns_first": 1793890109000000000,
+    "atime_ns_now": 1793890109000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_wt.npy": {
+    "atime_ns_first": 1793890109000000000,
+    "atime_ns_now": 1793890109000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_bkgw.npy": {
+    "atime_ns_first": 1793890109000000000,
+    "atime_ns_now": 1793890109000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_denom_nd.npy": {
+    "atime_ns_first": 1793890109000000000,
+    "atime_ns_now": 1793890109000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_wr.npy": {
+    "atime_ns_first": 1793890109000000000,
+    "atime_ns_now": 1793890109000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_wt.npy": {
+    "atime_ns_first": 1793890109000000000,
+    "atime_ns_now": 1793890109000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_bkgw.npy": {
+    "atime_ns_first": 1793890147000000000,
+    "atime_ns_now": 1793890147000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_denom_nd.npy": {
+    "atime_ns_first": 1793890147000000000,
+    "atime_ns_now": 1793890147000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_wr.npy": {
+    "atime_ns_first": 1793890146000000000,
+    "atime_ns_now": 1793890146000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_wt.npy": {
+    "atime_ns_first": 1793890146000000000,
+    "atime_ns_now": 1793890146000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_bkgw.npy": {
+    "atime_ns_first": 1793890137000000000,
+    "atime_ns_now": 1793890137000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_denom_nd.npy": {
+    "atime_ns_first": 1793890137000000000,
+    "atime_ns_now": 1793890137000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_wr.npy": {
+    "atime_ns_first": 1793890137000000000,
+    "atime_ns_now": 1793890137000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_wt.npy": {
+    "atime_ns_first": 1793890136000000000,
+    "atime_ns_now": 1793890136000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_bkgw.npy": {
+    "atime_ns_first": 1793890147000000000,
+    "atime_ns_now": 1793890147000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_denom_nd.npy": {
+    "atime_ns_first": 1793890147000000000,
+    "atime_ns_now": 1793890147000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_wr.npy": {
+    "atime_ns_first": 1793890146000000000,
+    "atime_ns_now": 1793890146000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_wt.npy": {
+    "atime_ns_first": 1793890146000000000,
+    "atime_ns_now": 1793890146000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_bkgw.npy": {
+    "atime_ns_first": 1793890133000000000,
+    "atime_ns_now": 1793890133000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_denom_nd.npy": {
+    "atime_ns_first": 1793890133000000000,
+    "atime_ns_now": 1793890133000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_wr.npy": {
+    "atime_ns_first": 1793890133000000000,
+    "atime_ns_now": 1793890133000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_wt.npy": {
+    "atime_ns_first": 1793890132000000000,
+    "atime_ns_now": 1793890132000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_bkgw.npy": {
+    "atime_ns_first": 1793890160000000000,
+    "atime_ns_now": 1793890160000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_denom_nd.npy": {
+    "atime_ns_first": 1793890160000000000,
+    "atime_ns_now": 1793890160000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_wr.npy": {
+    "atime_ns_first": 1793890160000000000,
+    "atime_ns_now": 1793890160000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_wt.npy": {
+    "atime_ns_first": 1793890160000000000,
+    "atime_ns_now": 1793890160000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_bkgw.npy": {
+    "atime_ns_first": 1793890146000000000,
+    "atime_ns_now": 1793890146000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_denom_nd.npy": {
+    "atime_ns_first": 1793890146000000000,
+    "atime_ns_now": 1793890146000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_wr.npy": {
+    "atime_ns_first": 1793890146000000000,
+    "atime_ns_now": 1793890146000000000
+   },
+   "/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_wt.npy": {
+    "atime_ns_first": 1793890145000000000,
+    "atime_ns_now": 1793890145000000000
+   }
+  },
+  "moved": []
+ },
+ "code_sha256": {
+  "fd_1b_band_diag.py": "658ca91849a8151a4fb801e41004102f0ba621c367f1c23146a8fc3a580484df"
+ }
+}

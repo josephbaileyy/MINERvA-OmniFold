@@ -1,0 +1,15 @@
+C3 reference schema fd-rpd-reco-private-prepare-reference/1; status PASS; prepare_name prologue-prepare; run /dev/shm/limres-rpd-prologue5-20261108/run
+C3 private path /dev/shm/limres-rpd-prologue5-20261108/.rpd-private/23ee3e970f74d1084106615b6dba8e6c4798e1728044d8831a90b8abc1296a66/prologue-prepare.json
+C3 recomputed   /dev/shm/limres-rpd-prologue5-20261108/.rpd-private/23ee3e970f74d1084106615b6dba8e6c4798e1728044d8831a90b8abc1296a66/prologue-prepare.json
+C3 1 reference names the recomputed location: ok
+C3 2 under ROOT/.rpd-private and not under the run: ok
+C3 record mode -rw------- uid 112498; directory mode drwx------ uid 112498; this uid 112498
+C3 3 owner-only file and directory: ok
+C3 record sha256 81c3fb7af87602b13cff1cdad59e2faababffff8cd9d69a80a660fcffc3988e4 (reference 81c3fb7af87602b13cff1cdad59e2faababffff8cd9d69a80a660fcffc3988e4); environment fingerprints 355 keys
+C3 4 digest equals the reference and the record carries the fingerprints: ok
+C3 private entry drwx------ .rpd-private/23ee3e970f74d1084106615b6dba8e6c4798e1728044d8831a90b8abc1296a66
+C3 private entry -rw------- .rpd-private/23ee3e970f74d1084106615b6dba8e6c4798e1728044d8831a90b8abc1296a66/prologue-prepare.json
+C3 5 .rpd-private holds exactly the one record: ok
+C3 send files examined 11; under .rpd-private or equal to the record: []
+C3 6 nothing on the send list is the record: ok
+C3 CHECK: PASS

@@ -1,0 +1,2 @@
+[ens1] mode=shard stage=2 shard=2 job=61004988 host=nid004715 pin=f4d2d7f3833834390b7b031df61ba1a5765e9900 lanes=8 start=2026-11-08T17:56:20Z
+[ens1] queue rc=0 end=2026-11-08T23:23:18Z

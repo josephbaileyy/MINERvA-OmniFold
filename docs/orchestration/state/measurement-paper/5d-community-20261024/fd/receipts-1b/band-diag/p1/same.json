@@ -1,0 +1,147 @@
+{
+ "schema": "fd-1b-band-diag/1",
+ "step": "same",
+ "label": "DERIVATION",
+ "cells": [
+  "R00",
+  "R01",
+  "R02",
+  "R03",
+  "R04",
+  "R05",
+  "R06",
+  "R07",
+  "R08",
+  "R09",
+  "R10",
+  "R11",
+  "R12",
+  "R13",
+  "R14",
+  "R15"
+ ],
+ "bands": {
+  "GEANT_Neutron": {
+   "HK": {
+    "verdict": "SAME COMPARISON",
+    "cells_outside": [],
+    "max_abs_ln_g2Dnom_over_E": 2.2204460492503128e-16,
+    "max_abs_ln_B_over_A": 1.2076949403707816e-07,
+    "n_resolved": 14
+   },
+   "per_universe": {
+    "GEANT_Neutron_0": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    },
+    "GEANT_Neutron_1": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    }
+   }
+  },
+  "GEANT_Pion": {
+   "HK": {
+    "verdict": "SAME COMPARISON",
+    "cells_outside": [],
+    "max_abs_ln_g2Dnom_over_E": 0.0,
+    "max_abs_ln_B_over_A": 3.3437662309606903e-08,
+    "n_resolved": 16
+   },
+   "per_universe": {
+    "GEANT_Pion_0": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    },
+    "GEANT_Pion_1": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    }
+   }
+  },
+  "GEANT_Proton": {
+   "HK": {
+    "verdict": "SAME COMPARISON",
+    "cells_outside": [],
+    "max_abs_ln_g2Dnom_over_E": 2.2204460492503128e-16,
+    "max_abs_ln_B_over_A": 3.1161353061103836e-07,
+    "n_resolved": 14
+   },
+   "per_universe": {
+    "GEANT_Proton_0": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    },
+    "GEANT_Proton_1": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    }
+   }
+  },
+  "MinosEfficiency": {
+   "HK": {
+    "verdict": "SAME COMPARISON",
+    "cells_outside": [],
+    "max_abs_ln_g2Dnom_over_E": 2.2204460492503136e-16,
+    "max_abs_ln_B_over_A": 5.292099189299157e-09,
+    "n_resolved": 16
+   },
+   "per_universe": {
+    "MinosEfficiency_0": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    },
+    "MinosEfficiency_1": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    }
+   }
+  }
+ },
+ "reproduced": {
+  "part1_readout_sha256": "8e05ca9bc2d0f2142b5c8d2bff28f05176c48f27454218390f09658344cea7b0",
+  "F_src_kappa_bitwise": true
+ },
+ "digests": {
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/s1/s1_assembly.npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_CV.npz": "44f22acfb6e38b60a450a2aa4881437b9911e61cdba792a3df9b75a6080ee6ed",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Neutron_0.npz": "148902b3872e8495af0fa6d0a7a4deb9464f1fe4787e2fba8180c1f69cacf297",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Neutron_1.npz": "0c224c12a687cc24ff5476f5742de3e5b866259bc6822684a231fc1a3a85223f",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Pion_0.npz": "d2a89cd6d7beed576469e672c79aac5dbdaa4fa519924476d127b4a55a45138b",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Pion_1.npz": "6bfdecfb8f341c03155ff9cf3eade23c087e7ff4ccc80b3b5725e7d02cdd4734",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Proton_0.npz": "a519bd4e04093ad05776a99d3609a6a725f7f7d89f876a2b9b22d52ba97a7df8",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Proton_1.npz": "b171b1ce4a83a555a8a17eb3545ff26a9d249f004b9ab20ef7c490f341619b98",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_MinosEfficiency_0.npz": "b2ff18e89eafc4ce1f92a6175eded857cdde538f2df66c76fa8fd5bc35210e1d",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_MinosEfficiency_1.npz": "3195cea120698bea719a85582e0c5eb8e6bfce85814d68c6a41d922e3eca4107",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_CV.npz": "0876f73e6c337c9bb649d45d8b590baba1600dc48859e8298bca9b4ede9f93a4",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Neutron_0.npz": "3a30c98ef5db0f65c6de12ff7d66649f05b2ae201de2c74eee022472ca484c74",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Neutron_1.npz": "70f4e7e450ae5a6da0de96dce870b510dd277ced4d576f309ce53741cfb7d359",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Pion_0.npz": "dd864941949ad0b7ab0272617e4745ec8ee4775596c671300f652256923e5c19",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Pion_1.npz": "ec672bcbaa05d83a349944ba3d49ad1cb95d0d350717202886a184804abbb291",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Proton_0.npz": "4c69e3e7371981e2dcc8626632639dc60642b356a370cc6693e8a0fbda14c6bd",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Proton_1.npz": "db81e3e674a62862b02a03f8f586e3dbacbc16a42bd5087ac8398d2a86e071ed",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_MinosEfficiency_0.npz": "1dcc2952e4155f2082286fe1ab55d4a76813995a83fad7b2c35237ab1db9d755",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_MinosEfficiency_1.npz": "52f5fcc5e1e0bb7b8d5b2f0dd055390bc4fe91512305da27d4babf3c145d145d",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_CV.npz": "dfc186f96c3a7f0bad1b0121218c1a22567b65ad91a9c0aa027aafece302bb06",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Neutron_0.npz": "fee2f0dcfd799335701c98c31c1c104a423dbe3cf57c1623399960c7d083f4e5",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Neutron_1.npz": "32c1ca2acfc226cbf135c2692489abf06d814ed9de692546c82e24d1ad93b604",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Pion_0.npz": "e7544fdf5e0e86d9efb91e9cb1ba89e02be424a739329084c4c4bb9b77cd0ed2",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Pion_1.npz": "7ccbc6fea08e01ce8bafb94c53e9925a57ecfa569bdceacd9fb2284cb5903595",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Proton_0.npz": "89156322e9f0d6d94ddf8e8d3be4bab0660e5bbd3ce2c01950db0f77775df182",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Proton_1.npz": "36c52f36c0e092e55d89481dda8fe2ff99d9142da9b81af0c503dc8cadaf46ca",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_MinosEfficiency_0.npz": "5d95cd1029674d5c753136e31ec9fa43ee297b25625b6d9d1f90919d87dd841a",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_MinosEfficiency_1.npz": "4bae927e3f908794bb6d39aaf597111c78b1503430441b5c9eee6f3ed588feae",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_CV.npz": "ecea5e258b0692bcb69aec222e908fecc8c8be32970643d801a78d74c705e67c",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Neutron_0.npz": "80bc1372a763c717fe6e8af0451f56138511e30b7e009ff6f6aa04a61ac767b5",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Neutron_1.npz": "a17494a19f4b384cee7ce95b73d80f3fbbadb23c46a582a522fbd6d7a8cb2890",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Pion_0.npz": "4e66e1bf015bf915d32071f66a46a1a16b6e78cf7ae278f5ba4c9446f699124d",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Pion_1.npz": "64843b511de500c09073276bda1a641f105e3564b2d7b7de551aec2d8158018c",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Proton_0.npz": "3c250dc330ff2b2ba962fc843e558e664b3effae434fec5acba19f5f2a43d03e",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Proton_1.npz": "a874647752210d264a58d0ec4ea8d019c3c3917b24e183d1976fb0b54aa5e1c3",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_MinosEfficiency_0.npz": "a0119a2d52db00bcaaca71cf4eeb0443d0e9cfe5b34838d5fd700349fd28fe69",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_MinosEfficiency_1.npz": "0ef9bd8a8b40e38e820ea46deb29c7a5ee6fda4e5fa25759629f5ad02d6d7043"
+ },
+ "code_sha256": {
+  "fd_1b_band_diag.py": "658ca91849a8151a4fb801e41004102f0ba621c367f1c23146a8fc3a580484df"
+ }
+}
