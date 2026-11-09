@@ -871,7 +871,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-PRES-9 [T]** — **Inappropriate register and defensive tone.**  
   *Finding:* Avoid internal software tracker phrases ("until 2026-10-11", "run log not found", "inferred, not verified").  
   *Evidence:* `docs/analysis-note/sec_method.tex:95`, `sec_systematics.tex:195`.  
-  *Resolution:* Refactor text into formal, objective archival register while preserving full scientific disclosures.
+  *Resolution:* This row authorizes no tex edit. Do not refactor the register. The three phrases are disclosures and stay: "until 2026-10-11" names when the exact-split central value stopped being the quoted 2D result; "its run log was not found" stays, same disposition as G1-ACC-8; and "inferred, not verified" states that two links in the POT-counting argument were not verified. Do not delete those sentences.
 * **G1-PRES-10 [T]** — **Average nucleon mass definition $\\bar{M}$.**  
   *Finding:* In §8.2, average nucleon mass is defined as $\\bar{M} = (1.5 M_n + M_p)/2.5$. Origin of 1.5:1 ratio for CH tracker should be stated.  
   *Evidence:* `docs/analysis-note/sec_eavailw.tex:52`.  
