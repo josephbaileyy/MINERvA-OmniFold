@@ -1,4 +1,4 @@
-# DECISION 2026-11-09 — Joseph: configuration (e) is frozen as the methods paper's baseline, with the ensemble reported as a tested mitigation; the consult's ranked plan is adopted; the bias–variance study of the ensemble waits until the initial methods paper is finalized
+# DECISION 2026-11-09 — Joseph: configuration (e) is frozen as the methods paper's baseline, with the ensemble reported as a tested mitigation; the consult's ranked plan is adopted; the bias–variance study of the ensemble starts after the methods paper's compute, which the paper does not wait on
 
 **Recorded by** the paper-tighten lane, as director.
 
@@ -27,11 +27,17 @@
   1. freeze (e) as the methods baseline;
   2. declare the stronger study, or skip it.
 
-## Joseph's answer, verbatim
+## Joseph's answers, verbatim
 
 > Lets do what you and astra recommend, and I can tell Ben that we can start the stronger study as soon as we finalize everything for this initial methods paper we publish
 
 sha256 of the text plus a final newline begins `0b8b9f78cfb98323`.
+
+His follow-up, verbatim:
+
+> although if we do finish all of the methods paper compute it doesn't hurt to start on the new compute too right? to use up the hours we have as we still have them
+
+sha256 of the text plus a final newline begins `1e196774065b3092`.
 
 ## What is decided
 
@@ -50,8 +56,13 @@ sha256 of the text plus a final newline begins `0b8b9f78cfb98323`.
    3. finish LL5D on (e) within its 148.0 node-h cap, whichever verdict it reads;
    4. write a short, self-contained paper and a reproducible result package, read by Joseph and a human experimental or
       statistical reviewer before submission.
-4. **The bias–variance study of E₉₆ (the strengthened option C) is deferred.** It is declared and priced only after the
-   initial methods paper is finalized. It is not run before then. Nothing in that paper waits on it.
+4. **The bias–variance study of E₉₆ (the strengthened option C) comes after the methods paper's compute.**
+   - It is declared, audited, priced and bound once FD-PRR and LL5D have ended, and it may then run while the paper is
+     written, so the remaining hours are used. This is Joseph's follow-up below.
+   - **The initial methods paper neither waits on it nor changes because of it.** Its result, either way, belongs to
+     the next paper. If it lands before submission, nothing about it enters this paper without a new decision by Joseph.
+   - Its launch follows the usual gates: it is priced from measured rates, and a campaign above half the balance goes
+     to Joseph.
    <!-- absence-ok: a scheduling rule for a future study, not a claim that a result does not exist -->
 5. **Stopped:**
    - broad hyperparameter or numerical searches;
