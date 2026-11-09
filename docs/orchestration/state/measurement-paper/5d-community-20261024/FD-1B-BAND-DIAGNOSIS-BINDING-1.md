@@ -60,3 +60,22 @@ primary reading.
    director, then to Joseph. No paper or note text.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A1: the P2 and P3 fence after ENS1 (director, 2026-11-09)
+
+**What led to it.** P0 read BRANCH SHARED on all 34 ruling-4 sources (#944), so ruling 4 sequenced this campaign after
+ENS1, whose tasks read those files plainly. ENS1's stage 2, its post-run and its analysis have now ended
+(analysis 23:54:11Z, 2026-11-08). P1 ran after that (#955) with its before-stat at 23:58Z, and its re-stat was
+byte-identical. The other campaigns that share these files read them without moving atimes: LL5D through O_NOATIME
+(overlap receipt #949), FD-PRR only through `dd iflag=noatime` copies with per-file stat before and after
+(FD-PRR-BINDING-1 ruling 5).
+
+**Rulings:**
+1. **P2's and P3's connects allow `fd1b_bdg_*`, `ll5d_*` and `prr_*`** in the queue; any other name refuses, `ens1_*`
+   and `rs1_*` included. Ruling 4's sequencing against ENS1 is discharged by ENS1's end.
+2. **§5's atime comparison is unchanged**: P3's after-stat against P1's before-stat (`stat-before.txt`, sha256
+   `7986e2bf…`), byte for byte, atime included. If any lane moves a shared file's atime, P3 STOPs. That is fail-safe, and
+   the STOP comes to the director unrepaired.
+3. **No two lanes' connects copy the shared files at the same time.** P2's and P3's connects log their copy or read
+   window to the second; the director names each launch window.
+4. Everything else in binding 1 stands.
