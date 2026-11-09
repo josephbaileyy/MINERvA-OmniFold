@@ -575,7 +575,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-14 [T]** — **Flux units and integration bounds.**  
   *Finding:* Formula in §3.4 uses $\\text{m}^2$, text uses $\\Phi = 6.243 \\times 10^{-8}\\text{ cm}^{-2}$; per-$p_T$ flux integral vs 0–100 GeV integrated flux.  
   *Evidence:* `docs/analysis-note/sec_method.tex:125`.  
-  *Resolution:* State exact unit conversion factor ($10^4\\text{ cm}^2/\\text{m}^2$) and specify flux integration bounds.
+  *Resolution:* This row authorizes no tex edit. The unit conversion and the two flux integrals are already stated. Do not add another conversion.
 * **S2-ACC-15 [T]** — **Cross-checks description in §3.2.**  
   *Finding:* §3.2 mentions MLP/transformer cross-checks in §7.5, but §7.5 contains only Keras MLP, and App. F notes no transformer result is used.  
   *Evidence:* `docs/analysis-note/sec_method.tex:90`, `sec_3d.tex:130`.  
