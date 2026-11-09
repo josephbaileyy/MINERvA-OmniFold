@@ -29,7 +29,7 @@ The calibration's rerun waits for that addendum and the director's go.
 | file | change |
 |---|---|
 | `nd-unfolding/ll5d.py` | `install_config()` = `s5e_candidate.install(toys.CONFIG)`, called once at the entry of `calib_main` and of `gate_main`, before anything reads a truth. This is exactly what `fd_1b_mc.run_unfold` does at `fd_1b_mc.py:507` at `dbaaf09d46f7bfcf671b04cc161cfd57c16222f7`. Nothing else changes. |
-| `nd-unfolding/tests/test_ll5d.py` | the `RealChain` tests (§2); `pristine_s5n()`; the law-control assertions made structural (§2) |
+| `nd-unfolding/tests/test_ll5d.py` | the `RealChain` tests (§2); `pristine_s5n()`; the law-control assertions made structural (§2); LL5D's receipt tree excluded from the collision check by exact prefix, with its positive control (§2) |
 | `nd-unfolding/tests/test_ll5d_b.py` | the `RealUnfold` test (§2). `ll5d_b.py` is unchanged, since A1b's `run_unfold` already installs the candidate. |
 | `nd-unfolding/tests/ll5d_a1a_mutation.py`, `ll5d_a1b_mutation.py` | the install mutants: three for A1a, one for A1b |
 | the calibration and gate job scripts (connects; not in this commit) | each ends with `exit $rc`, so sacct's state is the step's. Run 1 read COMPLETED 0:0 on rc 1. The connects' M and bound `ll5d.py` digest move to this amendment's merge, and their sha256s go to the director then. |
@@ -40,7 +40,7 @@ Digests (sha256) of the files at the commit the receipts were made at (`fd/recei
 |---|---|
 | `nd-unfolding/ll5d.py` | `b49f5d5f793265ef0cf569abe1912838cce9280e692f4dd61100d05c133aec1f` |
 | `nd-unfolding/ll5d_b.py` (unchanged) | `24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb` |
-| `nd-unfolding/tests/test_ll5d.py` | `cd4fddc2edda142a67dad20326cdc6e0910f40df0304c8bc3073aabe3dd3fddc` |
+| `nd-unfolding/tests/test_ll5d.py` | `9ef0f23838e5dd0eb3bffca9ed02c702281ba103174518cb245393650bc0aa35` |
 | `nd-unfolding/tests/test_ll5d_b.py` | `918d75bfd9c2c89faa0250918e52fdbccb2e9dd2e83bc2353b5d4b86ddebc0c2` |
 
 **The mechanism** (run 1's receipt, #963):
@@ -105,10 +105,16 @@ Digests (sha256) of the files at the commit the receipts were made at (`fd/recei
 - **Seed values leaked into the verbose test logs:** the seed test's docstring wrote section 3.6's range, and
   `run_unfold` printed product names. A1a's collision check scans tracked `.txt` files, so these would have failed it
   once committed. The docstring no longer writes the range, and the test captures `run_unfold`'s output.
-  - **For the director: a follow-up, not part of this amendment.** The pilot's and the bulk's receipts will carry
-    product names with toy seeds (`ll5d_<truth>_toy_<reading>_<seed>.npz`) in their logs. A1a's check would flag
-    those once they are committed, unless each is added to `OWN_SEED_FILES` by exact path, or the check's scope over
-    receipts is ruled on.
+- **LL5D's own receipt tree is excluded from A1a's collision check by exact path prefix** (the director's ruling,
+  2026-11-09, folded into this amendment). The check exists to catch other campaigns' code or records reusing LL5D's
+  seed range. LL5D's own receipts naming its own products are not collisions.
+  - `seed_collisions` now skips paths that start with
+    `docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/` (`OWN_RECEIPT_PREFIX`), beside
+    the exact files in `OWN_SEED_FILES`.
+  - A path that merely contains that string does not qualify.
+  - The positive control (`Seeds.test_the_seed_check_still_catches_a_real_collision`) holds that a seed-range hit still
+    collides in each of these places: another campaign's receipt directory, a look-alike directory
+    (`receipts-ll5d-copy/`), and a path with the prefix nested under another root.
 
 ## 3. Every other mock in test_ll5d.py and test_ll5d_b.py, and what covers it (the director's item 3)
 
@@ -142,7 +148,7 @@ Digests (sha256) of the files at the commit the receipts were made at (`fd/recei
 
 ## 4. Results
 
-**Receipts** (`fd/receipts-ll5d/a1a1/`, made at `c58c0eda2f4ea6f4e3aec3b8c5800389bd0820da` from a clean checkout):
+**Receipts** (`fd/receipts-ll5d/a1a1/`, made at `eeed15993831f4f2b352595b98842ed05f62097c` from a clean checkout):
 - `test_ll5d.py`: 72 tests, OK, at PYTHONHASHSEED 0, 1 and 2 under numpy 1.26.4, and OK under numpy 2.4.4.
 - `test_ll5d_b.py`: 29 tests, OK, the same.
 - `ll5d_a1a_mutation.py`: 50 mutants, all killed, the unmutated control PASS (72 tests).

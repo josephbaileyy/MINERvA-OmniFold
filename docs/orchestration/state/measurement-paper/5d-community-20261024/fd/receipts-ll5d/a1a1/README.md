@@ -1,6 +1,6 @@
 # LL5D A1a.1 receipts: both suites and both mutation checks
 
-**Made at** `c58c0eda2f4ea6f4e3aec3b8c5800389bd0820da` (branch `amend/ll5d-a1a1-20261109`), from a clean detached checkout of that commit (porcelain 0
+**Made at** `eeed15993831f4f2b352595b98842ed05f62097c` (branch `amend/ll5d-a1a1-20261109`), from a clean detached checkout of that commit (porcelain 0
 before and after). Each receipt's header repeats the commit and the file digests.
 
 | receipt | result |

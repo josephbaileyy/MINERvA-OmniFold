@@ -1,9 +1,9 @@
 # test_ll5d.py at PYTHONHASHSEED=2
-# date 2026-11-09T01:06:54Z  made at HEAD c58c0eda2f4ea6f4e3aec3b8c5800389bd0820da, a clean checkout (porcelain 0)
+# date 2026-11-09T01:24:59Z  made at HEAD eeed15993831f4f2b352595b98842ed05f62097c, a clean checkout (porcelain 0)
 # python 3.12.2 numpy 1.26.4
 # b49f5d5f793265ef0cf569abe1912838cce9280e692f4dd61100d05c133aec1f  ll5d.py
 # 24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb  ll5d_b.py
-# cd4fddc2edda142a67dad20326cdc6e0910f40df0304c8bc3073aabe3dd3fddc  tests/test_ll5d.py
+# 9ef0f23838e5dd0eb3bffca9ed02c702281ba103174518cb245393650bc0aa35  tests/test_ll5d.py
 # 918d75bfd9c2c89faa0250918e52fdbccb2e9dd2e83bc2353b5d4b86ddebc0c2  tests/test_ll5d_b.py
 # b5849b1d9a9a795b4975f177ba737aaa76fbfdb9bfebee48b09d36a2db3c544d  tests/ll5d_a1a_mutation.py
 # 1b09bf22969b26984cac245d30d734e654088e61af43bedd3add341911389f61  tests/ll5d_a1b_mutation.py
@@ -47,7 +47,7 @@ LL5D-GATE g18 verdict=PASS
 LL5D-CALIBRATION INVALID (bad input)
 LL5D-GATE g18 REPRICE (slow)
 LL5D-CALIBRATION verdict=POWER_SHORT_TO_DIRECTOR
-{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.4964301586151123, "workers": 2, "projected_seconds": 23.38397765159607, "budget_seconds": 1000000.0, "projection_line_seconds": 9000000.0}
+{"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.30559420585632324, "workers": 2, "projected_seconds": 14.396761417388916, "budget_seconds": 1000000.0, "projection_line_seconds": 9000000.0}
 ok
 test_a_failed_control_is_invalid_before_anything_is_read (__main__.Jobs.test_a_failed_control_is_invalid_before_anything_is_read) ... ok
 test_a_failing_gate_reading_is_a_stop (__main__.Jobs.test_a_failing_gate_reading_is_a_stop) ... ok
@@ -71,7 +71,7 @@ test_fd_1b_c2_is_342c0ce5s_bytes (__main__.Provenance.test_fd_1b_c2_is_342c0ce5s
 test_the_drivers_are_not_called (__main__.Provenance.test_the_drivers_are_not_called) ... ok
 test_the_vendored_fd_1b_mc_is_342c0ce5s_bytes (__main__.Provenance.test_the_vendored_fd_1b_mc_is_342c0ce5s_bytes) ... ok
 test_calib_main_runs_the_real_chain (__main__.RealChain.test_calib_main_runs_the_real_chain)
-The calibration's entry point over real files, nothing in the chain mocked: it installs the candidate ... {"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.08877182006835938, "workers": 2, "projected_seconds": 2.272324800491333, "budget_seconds": 10000000.0, "projection_line_seconds": 9000000.0}
+The calibration's entry point over real files, nothing in the chain mocked: it installs the candidate ... {"calibration": "timing", "fine_cells_kept": 48, "set_seconds_measured": 0.6981170177459717, "workers": 2, "projected_seconds": 16.93910026550293, "budget_seconds": 10000000.0, "projection_line_seconds": 9000000.0}
 ok
 test_gate_main_runs_the_real_chain (__main__.RealChain.test_gate_main_runs_the_real_chain)
 The gate's entry point over real files, nothing in the chain mocked: the controls, the receipt over the ... ok
@@ -103,5 +103,5 @@ The exclusion is by exact path: a hit in any other file is a collision, in each 
 test_m2b_selection_accepts_drop2_and_refuses_a_kept_band (__main__.Selection.test_m2b_selection_accepts_drop2_and_refuses_a_kept_band) ... ok
 test_m2f_the_product_composition_is_off_the_nature_path (__main__.SourceFactors.test_m2f_the_product_composition_is_off_the_nature_path) ... ok
 ----------------------------------------------------------------------
-Ran 72 tests in 151.435s
+Ran 72 tests in 156.425s
 OK
