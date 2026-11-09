@@ -704,7 +704,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-CLM-5 [T]** — **$n=5$ iterations justified empirically.**  
   *Finding:* $n=5$ empirical justification based only on total cross section is incomplete given shape drift.  
   *Evidence:* `docs/analysis-note/sec_method.tex:85`.  
-  *Resolution:* Fully disclose shape and dimensional sensitivity to iteration count.
+  *Resolution:* This row authorizes no tex edit. The total agreement and the shape difference are already stated in the section the method paragraph cites. Do not add a dimensional-sensitivity claim.
 * **S2-CLM-6 [T]** — **Sixteen-cell median uncertainty (7.86%).** Same finding as S1-CLM-2.
 * **S2-CLM-7 [T]** — **"Methodological finding" on nonlinear cross-source terms.** Same finding as S1-COM-5 / S1-CLM-9.
 * **S2-CLM-8 [T]** — **A.5 direct evidence of implicit regularization.**  
