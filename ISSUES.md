@@ -307,7 +307,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-4 [T]** — **$q_3$ truth in abstract vs omitted $q_3$ reweighting.**  
   *Finding:* Fig. 36 caption notes $q_3$ reweighting omitted because it did not implement intended change, while abstract cites synthetic $q_3$ tilt.  
   *Evidence:* `docs/analysis-note/main_note.tex:73`, Fig. 36 caption, `sec_fived16.tex:220`.  
-  *Resolution:* Clarify distinction: the synthetic $q_3$ tilt in §10.5 is an implemented stress test; the omitted reweighting was a separate exploratory test.
+  *Resolution:* Those are two different objects. Do not call the omitted reweighting exploratory. This row authorizes no tex edit.
 
 * **S1-COM-5 [T]** — **Quantification of nonlinear cross-source terms.**  
   *Finding:* Executive summary names omitted nonlinear cross-terms as a methodological finding without quantification.  
