@@ -642,7 +642,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-COM-8 [T]** — **No 3D/4D uncertainty; no 3D/4D generator $\\chi^2$.**  
   *Finding:* 3D and 4D central values used for generator comparisons without evaluated covariance.  
   *Evidence:* `docs/analysis-note/sec_3d.tex:145`, `sec_eavailw.tex:140`.  
-  *Resolution:* Qualify all 3D/4D generator comparisons as purely descriptive central comparisons.
+  *Resolution:* This row authorizes no tex edit. The comparisons are already called descriptive central values, with no 3D or 4D covariance and no generator chi-squared. Do not add purely.
 * **S2-COM-9 [T]** — **Ascencio et al. comparison unresolved.**  
   *Finding:* Data sit 9.2% and 6.0% above Ascencio on super-cells, confounded by differing $E_{\\text{avail}}$ definitions.  
   *Evidence:* `docs/analysis-note/sec_3d.tex:185`.  
