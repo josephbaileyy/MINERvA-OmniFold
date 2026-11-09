@@ -624,7 +624,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-COM-3 [T]** — **Learner and configuration dependence table.**  
   *Finding:* Consolidate algorithmic variations (exact-split vs LightGBM, seed shifts, MLP vs GBDT) into a unified summary table.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:115`.  
-  *Resolution:* Create consolidated algorithmic variation table in §4 / §7.
+  *Resolution:* This row authorizes no tex edit. The estimator configurations already have a table. Do not add a second one.
 * **S2-COM-4 [T]** — **Joint test condition (i) disclosure.**  
   *Finding:* Condition (i) fine-grid convergence unmeasured; disclose sub-grid residual limits.  
   *Evidence:* `docs/analysis-note/sec_joint.tex:120`.  
