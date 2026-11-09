@@ -818,7 +818,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 * **G1-CONT-1 [T]** — **Heavy reliance on inaccessible internal records ("Ref. [37]").** Same finding as S1-CONT-1.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-1. Do not inline those values until each one is bound through a checked-values macro and a record says it may be quoted.
-* **G1-CONT-2 [T]** — **Citations to private communications with anomalous dates.** Same finding as S1-CONT-5.
+* **G1-CONT-2 [T]** — **Citations to private communications with anomalous dates.** Same finding as S1-CONT-5.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-5. Do not replace a private-communication citation with a rationale the note does not already state.
 * **G1-CONT-3 [T]** — **Lost run logs and unrecorded configurations.** Same finding as S2-COM-3.
 * **G1-CONT-4 [T]** — **Incomplete mathematical definition of reconstructed available energy.** Same finding as S2-COM-9.
 
