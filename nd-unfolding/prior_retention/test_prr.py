@@ -1235,7 +1235,10 @@ class JobScript(unittest.TestCase):
             "o = pathlib.Path(sys.argv[sys.argv.index('--out') + 1]); o.mkdir()\n"
             "(o / 'route2.npz').write_text('x'); (o / 'route2.json').write_text('{}')\n"
             "sys.exit(int(os.environ.get('PRR_IBU_RC', '0')))\n")
-        (self.D / "setup_salloc_env.sh").write_text(f"export PYTHONPATH={str(r / 'mods')!r}\n")
+        # The sourced environment may put its own python3 first on PATH, as the real one puts root_6_28's (A1's test sets
+        # PRR_ENVBIN); the other tests leave it unset, so their environment is unchanged.
+        (self.D / "setup_salloc_env.sh").write_text(f"export PYTHONPATH={str(r / 'mods')!r}\n"
+                                                    'export PATH="${PRR_ENVBIN:+$PRR_ENVBIN:}$PATH"\n')
         (r / "mods").mkdir()
         for m in ("lightgbm", "scipy"):
             (r / "mods" / f"{m}.py").write_text("")
@@ -1300,6 +1303,30 @@ class JobScript(unittest.TestCase):
         self.assertEqual(self.job("dry", PRR_FAKE_SQUEUE_RC="1").returncode, 2)  # squeue cannot answer: refuse
         self.assertFalse((self.OUT / "log-dry").exists())
         self.assertEqual(self.job("dry", PRR_FAKE_SQUEUE="prr_other|RUNNING\nxens1_a|RUNNING\n").returncode, 0)
+
+    def test_every_python3_call_runs_after_the_environment_is_sourced(self):
+        """REQUIRED (Addendum A1). The job starts with the login node's python3, 3.6.15 on the cluster, which cannot
+        import prr_probe.py; only the sourced environment's python3 can. Statically, no python3 call precedes the
+        source; and a job whose starting python3 refuses prr_probe.py still runs once the environment is sourced."""
+        script = Path(os.environ.get("PRR_SBATCH", str(HERE / "sbatch_prr.sh"))).read_text().splitlines()
+        code = [(i, l) for i, l in enumerate(script) if l.strip() and not l.lstrip().startswith("#")]
+        src = [i for i, l in code if l.strip().startswith('source "$D/setup_salloc_env.sh"')]
+        calls = [i for i, l in code if "python3" in l]
+        self.assertTrue(src and calls)
+        self.assertLess(src[0], calls[0], f"line {calls[0] + 1} calls python3 before the environment is sourced")
+        r = Path(self.tmp.name)
+        sysbin, envbin = r / "sysbin", r / "envbin"
+        for b in (sysbin, envbin):
+            b.mkdir()
+        (sysbin / "python3").write_text('#!/bin/bash\ncase "$*" in *prr_probe.py*) echo "system python3 3.6: SyntaxError: '
+                                        'from __future__ import annotations" >&2; exit 99;; esac\n'
+                                        f'exec {sys.executable} "$@"\n')
+        (envbin / "python3").write_text(f'#!/bin/bash\nexec {sys.executable} "$@"\n')
+        for b in (sysbin, envbin):
+            (b / "python3").chmod(0o755)
+        p = self.job("dry", PATH=f"{sysbin}:{self.env['PATH']}", PRR_ENVBIN=str(envbin))
+        self.assertEqual(p.returncode, 0, p.stderr)
+        self.assertTrue((self.OUT / "log-dry" / "DONE").exists())
 
     def test_a_refused_staging_stops_before_any_task(self):
         p = self.job("dry", PRR_STAGE_RC="2")

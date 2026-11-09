@@ -21,7 +21,7 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("prr_probe.py", "prr_ibu.py", "prr_read.py", "sbatch_prr.sh", "test_prr.py")
 PB, IB, RD, SB = FILES[:4]
-EXPECTED_TESTS = 103
+EXPECTED_TESTS = 104
 MUTATIONS = [
     # --- the probe: the mask, the guard, the pins, the columns
     ("mask columns swapped", PB, "return orig(MCgen[:, gi], MCreco[:, ri], measured[:, ri], *args, **kwargs)",
@@ -139,6 +139,9 @@ MUTATIONS = [
      "test_an_ens1_job_queued_or_running_refuses_the_dry_run"),
     ("squeue failure admitted", SB, "2>/dev/null) || { echo \"[prr] refusing: squeue failed", "2>/dev/null) || true || { echo \"[prr] refusing: squeue failed",
      "test_an_ens1_job_queued_or_running_refuses_the_dry_run"),
+    # --- Addendum A1 (REQUIRED): the environment is sourced before every python3 call
+    ("limit above the source", SB, 'source "$D/setup_salloc_env.sh" > /dev/null 2>&1\n', "",
+     "test_every_python3_call_runs_after_the_environment_is_sourced"),
     ("a failed task still DONE", SB, '[ "$rc" -eq 0 ] || { echo "rc=$rc" > "$L/FAILED"; echo "[prr] STOP: a task failed',
      'true || { echo "rc=$rc" > "$L/FAILED"; echo "[prr] STOP: a task failed',
      "test_a_failed_task_leaves_no_done"),
