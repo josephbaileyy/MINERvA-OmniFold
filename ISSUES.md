@@ -902,10 +902,10 @@ The companion note is restructured into a coherent methods-and-benchmark narrati
 1. **Executive Summary as Methods-and-Benchmark Scope:**  
    * Opens with the comprehensive **Per-Result Status & Citability Matrix**:
      * 2D central value: Citable for reproduction of published integral; not citable as independent validation.
-     * 2D uncertainty $Q = S_5 + C_{\\text{PL}}$: Quoted 2D uncertainty construction (adopted Q, median per bin 6.45%, integral 4.75%); not citable for validated coverage.
+     * 2D uncertainty ($Q_R$): headline uncertainty, printed by \uqMedian and \uqIntegral; DECISION-20261024 replaces the 2026-10-17 sizes. Not citable for validated coverage. Do not put 6.45 or 4.75 back.
      * 3D & 4D central values: Citable for dimensional consistency and marginal normalization; not citable with covariance.
      * 5D configuration-(a) central value: Citable as exploratory unregularized 5D central value; not citable with covariance.
-     * 5D configuration-(a) covariance ($C_Z$): Adopted under the §6.4 exception; non-passing ($s_{\text{proj}} = 6.145\%$ against the 5% limit, five bands unmeasured, the pre-production null bound not met); not a yardstick and not an uncertainty product (governed by S2-COM-2).
+     * 5D configuration-(a) covariance ($C_Z$): Adopted under the §6.4 exception; non-passing (M1, DECISION-20260920 line 57; M3, lines 73-79: the seed variation does not probe those five bands, and the effect on the total when they also vary has not been measured; the pre-production null bound not met); not a yardstick and not an uncertainty product (governed by S2-COM-2). The note must not type 6.145.
      * 16-cell five-observable result: Illustrative output demonstrating multi-differential data handling; not citable as physical measurement or for model tuning.
      * Generator joint tests: Methodological demonstration of calibrated hybrid-null hypothesis testing with biased estimators; not citable as measured cross sections.
      * Extended fiducial volume: Exploratory demonstration of unbinned phase-space extension; not citable as finalized cross section.
@@ -923,7 +923,7 @@ The companion note is restructured into a coherent methods-and-benchmark narrati
 
 4. **Scalar 5D Unfolding Methodology & Limitations (Section 9):**  
    * Configuration-(a) 5D central value on $(p_T, p_\\parallel, E_{\\text{avail}}, q_3, W)$.  
-   * Full disclosure of non-passing status of covariance $C_Z$ ($s_{\\text{proj}} = 6.145\\%$ against 5% limit, 5 bands unmeasured).  
+   * Full disclosure of the non-passing status of covariance $C_Z$ uses S2-COM-2's resolution. The note must not say "five bands unmeasured" and must not type 6.145.  
    * Technical closure and futility-stopped 1,200-pseudo-experiment coverage test.
 
 5. **Illustrative Sixteen-Cell Five-Observable Output (Section 10):**  
