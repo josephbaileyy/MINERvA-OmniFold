@@ -59,3 +59,33 @@ The audit's two lows (the dry gate's 657 s unit against the 1,062 s `--time`; C-
 are held for the follow-up list. Both fail safe.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A1: the job script sources its environment first (director, 2026-11-09)
+
+**Binds** [`FD-PRR-ADDENDUM-A1.md`](FD-PRR-ADDENDUM-A1.md) and its code, as merged in PR #966 at
+**M_A1 = `6727020a7c58b00dd00806151c627c8a24f72402`**. The audited head is `3c612c12`; every file under
+`nd-unfolding/prior_retention/` is identical at the two commits. This **supersedes M above** for every FD-PRR job.
+
+| file | sha256 (prefix) |
+|---|---|
+| `FD-PRR-ADDENDUM-A1.md` | `ca6b8457e74c9323` |
+| `nd-unfolding/prior_retention/sbatch_prr.sh` | `10290087cdd57d97` |
+| `nd-unfolding/prior_retention/test_prr.py` | `44223143a6982fb8` |
+| `nd-unfolding/prior_retention/prr_mutation.py` | `4666aa0654dccbe9` |
+
+`prr_probe.py`, `prr_ibu.py` and `prr_read.py` are M's bytes.
+
+**What led to it.** Before any connect, director-helper-2 found that `sbatch_prr.sh:34` ran `python3 prr_probe.py limit`
+before sourcing `setup_salloc_env.sh`. Under the login environment's `/usr/bin/python3` 3.6.15, `from __future__ import
+annotations` is a SyntaxError, so the job would refuse at once. RS1's A1 hit the same order on 2026-11-07 (#905).
+
+**What the director checked:** coverage-5b-audit's GO at `3c612c12`
+(https://github.com/josephbaileyy/MINERvA-OmniFold/pull/966#issuecomment-6730268631): the diff is the one source line, its
+REQUIRED test and the mutant "limit above the source"; no python3 call precedes the source on any path; each half of the
+test kills the mutant alone; 104 tests and 63 of 63 mutants reproduce at the head.
+
+**Rulings:**
+1. **Every FD-PRR job runs from M_A1.** BINDING 1's rulings 1–8 stand otherwise.
+2. **The connects carry the audit's two lows:** the login-side `prr_probe.py limit` call that sets `--time` runs under
+   root_6_28's python3 after sourcing, in a subshell, as the job does; and the source's rc is checked with its own STOP
+   message before any limit call.
