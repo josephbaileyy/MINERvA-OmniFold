@@ -695,7 +695,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CLM-1. Do not add that broader claim.
 * **S2-CLM-2 [T]** — **Calibrated joint tests reject all ten.** Same finding as S1-CLM-5.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CLM-5. Do not replace the six conditions with a new scope sentence.
-* **S2-CLM-3 [T]** — **Generator localization without covariance.** Same finding as S1-CLM-3.
+* **S2-CLM-3 [T]** — **Generator localization without covariance.** Same finding as S1-CLM-3.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CLM-3, which has landed. Do not restore the corner sentence, and do not add a localization claim.
 * **S2-CLM-4 [T]** — **Closure validation claims.**  
   *Finding:* §5 claims "These closure tests validate the estimator", but 5D generator closure fails and hidden-variable closure fails at $A = 0.30$.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:30`.  
