@@ -657,7 +657,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. The purity bias in the highest-W column is already stated, as 0.36--1.07 standard deviations of the configuration-(a) total uncertainty. Do not type 8--12.
 * **S2-COM-12 [T]** — **Unverified items admitted in text.** Same finding as S1-COM-7.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-COM-7. Do not add those three statements until a record states each one.
-* **S2-COM-13 [T]** — **Reproduction is not possible.** Same finding as S1-CONT-6.
+* **S2-COM-13 [T]** — **Reproduction is not possible.** Same finding as S1-CONT-6.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-6. Do not edit app_release.tex while AUD-N4 is held.
 * **S2-COM-14 [T]** — **Fake-data tests are not held-out truths.** Same finding as S1-COM-3.
 * **S2-COM-15 [T]** — **Extended fiducial prior envelope.**  
   *Finding:* Tier-2 prior envelope has median 7.9% (90th percentile 62%) with no covariance.  
