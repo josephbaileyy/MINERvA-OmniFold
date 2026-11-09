@@ -1,0 +1,163 @@
+{
+ "unit_s": 657.4464,
+ "tasks": {
+  "prr_C1000_nominal_s991000": {
+   "level": "C1000",
+   "assumed_units": 15.0,
+   "wall_s": 2531.1,
+   "measured_units": 3.85
+  },
+  "prr_K50_nominal_s991000": {
+   "level": "K50",
+   "assumed_units": 10.0,
+   "wall_s": 3596.9,
+   "measured_units": 5.471
+  },
+  "prr_C400_nominal_s991000": {
+   "level": "C400",
+   "assumed_units": 4.0,
+   "wall_s": 1254.3,
+   "measured_units": 1.908
+  },
+  "prr_K20_nominal_s991000": {
+   "level": "K20",
+   "assumed_units": 4.0,
+   "wall_s": 1417.9,
+   "measured_units": 2.157
+  },
+  "prr_K10_nominal_s991000": {
+   "level": "K10",
+   "assumed_units": 2.0,
+   "wall_s": 860.5,
+   "measured_units": 1.309
+  },
+  "prr_B0_A7_gibuu_s991000": {
+   "level": "B0",
+   "assumed_units": 1.0,
+   "wall_s": 487.6,
+   "measured_units": 0.742
+  },
+  "prr_B0_nominal_s991000": {
+   "level": "B0",
+   "assumed_units": 1.0,
+   "wall_s": 536.5,
+   "measured_units": 0.816
+  },
+  "prr_MCq_nominal_s991000": {
+   "level": "MCq",
+   "assumed_units": 1.0,
+   "wall_s": 283.3,
+   "measured_units": 0.431
+  },
+  "prr_O2_nominal_s991000": {
+   "level": "O2",
+   "assumed_units": 1.0,
+   "wall_s": 497.4,
+   "measured_units": 0.757
+  },
+  "prr_O3_nominal_s991000": {
+   "level": "O3",
+   "assumed_units": 1.0,
+   "wall_s": 440.4,
+   "measured_units": 0.67
+  },
+  "prr_O4_nominal_s991000": {
+   "level": "O4",
+   "assumed_units": 1.0,
+   "wall_s": 433.4,
+   "measured_units": 0.659
+  },
+  "prr_O4r_nominal_s991000": {
+   "level": "O4r",
+   "assumed_units": 1.0,
+   "wall_s": 394.7,
+   "measured_units": 0.6
+  },
+  "prr_O5_nominal_s991000": {
+   "level": "O5",
+   "assumed_units": 1.0,
+   "wall_s": 405.5,
+   "measured_units": 0.617
+  },
+  "prr_C25_nominal_s991000": {
+   "level": "C25",
+   "assumed_units": 0.5,
+   "wall_s": 254.1,
+   "measured_units": 0.387
+  },
+  "prr_K2_nominal_s991000": {
+   "level": "K2",
+   "assumed_units": 0.4,
+   "wall_s": 215.9,
+   "measured_units": 0.328
+  }
+ },
+ "rates_s": {
+  "C25": 254.11629986763,
+  "C1000": 2531.0668189525604,
+  "O4": 433.3784992694855,
+  "B0": 512.0722442865372,
+  "K2": 215.9227273464203,
+  "C400": 1254.3478920459747,
+  "O2": 497.38895440101624,
+  "O4r": 394.704638004303,
+  "K50": 3596.900402069092,
+  "K20": 1417.873999118805,
+  "O5": 405.50538206100464,
+  "MCq": 283.32571959495544,
+  "K10": 860.4791133403778,
+  "O3": 440.4134933948517
+ },
+ "jobs": {
+  "iter": {
+   "tasks": 44,
+   "already_ended_in_dry": 0,
+   "projected_h": 2.3573,
+   "limit_h": 7.5,
+   "gate_h": 6.75,
+   "passes": true,
+   "unmeasured": [],
+   "levels": [
+    "K10",
+    "K2",
+    "K20",
+    "K50"
+   ]
+  },
+  "cap": {
+   "tasks": 29,
+   "already_ended_in_dry": 0,
+   "projected_h": 1.3937,
+   "limit_h": 6.5,
+   "gate_h": 5.85,
+   "passes": true,
+   "unmeasured": [],
+   "levels": [
+    "C1000",
+    "C25",
+    "C400"
+   ]
+  },
+  "misc": {
+   "tasks": 93,
+   "already_ended_in_dry": 0,
+   "projected_h": 1.9468,
+   "limit_h": 7.25,
+   "gate_h": 6.525,
+   "passes": true,
+   "unmeasured": [],
+   "levels": [
+    "B0",
+    "C1000",
+    "C400",
+    "K20",
+    "MCq",
+    "O2",
+    "O3",
+    "O4",
+    "O4r"
+   ]
+  }
+ },
+ "dry_queue_span_s": 3597.2
+}
