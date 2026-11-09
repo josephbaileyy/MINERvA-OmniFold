@@ -302,7 +302,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-3 [R]** — **Fake-data bias in physical units.**  
   *Finding:* Tabulate per-cell bias in % and relative to reported $\\sigma$ for GiBUU hybrid and $q_3$ tilt in Table 18.  
   *Evidence:* `docs/analysis-note/sec_fived16.tex:225`, Table 18.  
-  *Resolution:* Pull numerical values from `readout.json` / `f0b` receipts and add to Table 18.
+  *Resolution:* This row authorizes no tex edit. Do not type per-cell bias values into Table 18 until each value is bound through the checked-values macros from a named readout.
 
 * **S1-COM-4 [T]** — **$q_3$ truth in abstract vs omitted $q_3$ reweighting.**  
   *Finding:* Fig. 36 caption notes $q_3$ reweighting omitted because it did not implement intended change, while abstract cites synthetic $q_3$ tilt.  
