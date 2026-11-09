@@ -483,7 +483,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-5 [T]** — **Table 3 missing column headers.**  
   *Finding:* Headers run together in Table 3.  
   *Evidence:* Table 3 in `sec_systematics.tex`.  
-  *Resolution:* Fix table header formatting.
+  *Resolution:* Those headers are already separate. This row authorizes no tex edit.
 
 * **S1-PRES-6 [T]** — **Table layouts hard to follow (Tables 2, 6, 18).**  
   *Finding:* Ambiguous column pairings and alignments.  
