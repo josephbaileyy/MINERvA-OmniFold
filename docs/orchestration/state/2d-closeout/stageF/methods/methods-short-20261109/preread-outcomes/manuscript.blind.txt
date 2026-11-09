@@ -398,11 +398,12 @@ TABLE 1. The tests and their results: each test, the estimator it tests (2D: the
 estimator, the baseline), the section that reports it, its result and its status. The status words mean: Pass and Fail, the test’s
 criterion is or is not met; Flagged, the fake-data bias meets the flagging criterion of section 3.3 under the reported covariance;
 Agree, the two results agree within the test’s noise; Differ, a difference is detectable at the test’s noise, which does not mean
-that it is large; Partial, the truth change is recovered only in part; Covers, in the test’s primary variant no cell and no joint
-reading under-covers at either truth; Under-covers, fewer pseudo-experiments lie within the intervals than the test’s threshold
-requires; Invalid, a control of the test fails; Stopped, the test stopped before it gave a coverage result; Not adopted, the variant
-was tested and is not used; Reproducible, repeated unfolds give bitwise-identical results; In data, the effect is present in the
-reconstructed data before unfolding; Descriptive, no criterion applies; Pending, the result has not yet been reported.
+that it is large; Partial, the truth change is recovered only in part; Covers, no cell and no joint reading under-covers at either
+truth, in either variant; Mixed, the readings differ by truth or variant; Under-covers, fewer pseudo-experiments lie within the
+intervals than the test’s threshold requires; Invalid, a control of the test fails; Stopped, the test stopped before it gave a coverage
+result; Not adopted, the variant was tested and is not used; Reproducible, repeated unfolds give bitwise-identical results; In data,
+the effect is present in the reconstructed data before unfolding; Descriptive, no criterion applies; Pending, the result has not yet
+been reported.
 Test
 
 Est.
@@ -455,6 +456,8 @@ Run-period consistency
 5D; 2D
 
 Sec. Result
+
+Status
 
 4.1
 
@@ -557,17 +560,13 @@ T = 13.87 over 50 paired replicas, 4 % below its 95thpercentile bar of 14.46.
 
 4.2.
 
-Status
+Agree
 
 Run periods and the five-observable quadrant
 sums
 
 In the two-dimensional result, data from different run
-periods are not mutually consistent within the other un-
-
-Agree
-
-certainties: one period group’s unfolded p∥ distribution,
+periods are not mutually consistent within the other uncertainties: one period group’s unfolded p∥ distribution,
 relative to its own simulation, differs from that of the
 earliest periods by a step of about 7 % near 8 GeV/c,
 of unknown cause. The step is already in the reconstructed data: there, the 1G–1M group against 1A–1E,
@@ -579,12 +578,6 @@ at about its reconstruction-level size. Compared with
 the published result in the 73 best-determined directions
 of its covariance, removing the 1G–1M group does not
 change the distance to the published result beyond noise;
-the smallest change resolved is 3σ = 0.29 per direction,
-about 15 % of the three-group value. The run-period step
-does not account for the distance in the best-determined
-directions, at the resolved size (section S6).
-Summed over each of the four (pT , p∥ ) quadrants, the
-sixteen-cell result agrees with the two-dimensional result:
 
 d¾=dp ∥ (10 ¡39 cm 2 (GeV/c) ¡1 nucleon ¡1 )
 
@@ -725,6 +718,12 @@ analysis is the four-block covariance of section 3.2, without Cmodel . Here the 
 compatibility test. Bottom left: (OmniFold − published)/σpublished per reported bin, with cells drawn at equal size (grey: not
 reported). Bottom right: median relative uncertainties and residual summary.
 
+the smallest change resolved is 3σ = 0.29 per direction,
+about 15 % of the three-group value. The run-period step
+does not account for the distance in the best-determined
+directions, at the resolved size (section S6).
+Summed over each of the four (pT , p∥ ) quadrants, the
+sixteen-cell result agrees with the two-dimensional result:
 the sums differ by −1.5 to +0.7 per cent, and with the
 covariance between the two results evaluated from the
 systematic variations they share, the four differences give
@@ -735,6 +734,7 @@ a one-parameter family of valid covariances, each such
 cross term taken as a common fraction, from zero to one,
 of its fully correlated value, over which the agreement
 holds. The five-observable result therefore agrees with the
+
 two-dimensional normalization in each muon-kinematic
 quadrant; the benchmark does not test its distribution in
 the three hadronic observables.
@@ -752,13 +752,10 @@ largest deviation of 2.7 standard errors and a largest
 (Eavail , W ) residual of 0.09 % (ref. [14], section 9.3); on
 the sixteen cells, the closures of table 2 meet the bias
 criteria.
-Figure 3 shows that the unfolding recovers only part
-of a change of the Eavail shape as large as the difference
-between generators. When the true shape is reweighted
-by the GiBUU-to-GENIE ratio, the (Eavail , W ) cells un-
 
 16
-20
+
+5.2.
 
 14
 12
@@ -780,6 +777,10 @@ p bin
 4
 2
 0
+
+Fake-data tests of the sixteen-cell result
+
+20
 
 20
 0
@@ -806,7 +807,10 @@ covariance, on the grid of reported (pT , p∥ ) bins, numbered
 upward in momentum. The contributions sum to the χ2 and
 can be negative.
 
-folded with a lower-capacity variant of the five-observable
+Figure 3 shows that the unfolding recovers only part
+of a change of the Eavail shape as large as the difference
+between generators. When the true shape is reweighted
+by the GiBUU-to-GENIE ratio, the (Eavail , W ) cells unfolded with a lower-capacity variant of the five-observable
 estimator (a 100-tree, 8-leaf refinement), not the reported estimator, deviate from it by several percent in
 the largest cells and by up to 74 % at high W , in the
 cell 0.8 ≤ Eavail < 1.5 GeV, W ≥ 3 GeV. For the reported estimator at the same truth, the result is given
@@ -830,6 +834,9 @@ the five-observable estimator, the reported one, it is 16 %
 to 31 % in the most affected (Eavail , W ) cell (ref. [14],
 section 9.6).
 
+To compare the estimator’s bias with the reported
+covariance when the truth differs from the simulation, we
+unfold pseudo-data at the 12 graded truths of section 3.3
 and compare the mean unfolded result with each truth on
 the 16 cells through χ2 with 16 degrees of freedom. For
 a truth from a generator that contributes to Cmodel , the
@@ -876,22 +883,6 @@ sixteen cells by at most 0.40σ per deposit category of
 Cresp , without a pass threshold (ref. [14], appendix D).
 These tests assess bias, not coverage: only event counts
 fluctuate, with the systematic parameters fixed.
-
-5.3.
-5.2.
-
-Fake-data tests of the sixteen-cell result
-
-To compare the estimator’s bias with the reported
-covariance when the truth differs from the simulation, we
-unfold pseudo-data at the 12 graded truths of section 3.3
-
-What moves the retained prior
-
-A study specified in advance asks which settings of
-the five-observable estimator change the part of a truth
-change that it leaves unrecovered. On noise-free pseudodata with backgrounds, at one split of the simulation,
-it measures at each graded truth the retained frac-
 
 (a) with unbinned background refinement,
 refinement classifier 100 trees, 8 leaves
@@ -999,10 +990,6 @@ Cov.
 
 p cells
 
-Ctotal + Cresp
-
-max |z| χ2
-
 simulation prior∗
 
 full
@@ -1053,13 +1040,17 @@ GiBUU, hybrid
 synthetic q3 tilt full
 52 < 10−5 —
 
-P
-P
-tion ρ = − c bc dc / c d2c . Here dc = (Xc − Pc )/Pc
-is the truth’s departure from the prior in cell c and
-bc = (X̂c − Xc )/Pc the bias, with X̂, X and P the unfolded, true and prior cross sections, and the sums run
-over the cells where |dc | is at least 1 %; ρ = 1 if the result
-is the prior and ρ = 0 if the departure is recovered. It
+5.3.
+
+Ctotal + Cresp
+
+max |z| χ2
+
+What moves the retained prior
+
+A study specified in advance asks which settings of
+the five-observable estimator change the part of a truth
+change that it leaves unrecovered. On noise-free pseudodata with backgrounds, at one split of the simulation,
 
 p cells
 
@@ -1157,20 +1148,31 @@ p cells
 1.55 53 < 10−5 —
 60 < 10−6 —
 
-changes one setting at a time, the iteration count, the classifier capacity, the training statistics and the observables
-the classifiers see, and runs an exact binned IBU on the
-same pseudo-data. At the two flagged truths, each setting
-is classed by whether some level reduces or increases ρ by
-more than a bar fixed in advance, the larger of 0.05 and
+it measures P
+at each P
+graded truth the retained fraction ρ = − c bc dc / c d2c . Here dc = (Xc − Pc )/Pc
+is the truth’s departure from the prior in cell c and
+bc = (X̂c − Xc )/Pc the bias, with X̂, X and P the unfolded, true and prior cross sections, and the sums run
+over the cells where |dc | is at least 1 %; ρ = 1 if the result
 
-9.03 times the standard deviation of the paired change
-of ρ over five splits of the simulation (9.03 is the twosided Student-t quantile on four degrees of freedom at a
-familywise rate of 0.01 over the study’s twelve primary
-readings), and the IBU at five iterations by whether it
-retains less or more of the prior than the five-observable
-estimator, by the same rule with its own bar, and by
-whether its retention falls or rises by at least 0.05 when it
-runs to 200 iterations. A level clears a flagged truth if the
+is the prior and ρ = 0 if the departure is recovered. It
+changes one setting at a time, the iteration count, the
+classifier capacity, the training statistics and the observables the classifiers see, and runs an exact binned IBU
+on the same pseudo-data. At the two flagged truths,
+each setting is classed by whether some level reduces or
+increases ρ by more than a bar fixed in advance, the
+larger of 0.05 and 9.03 times the standard deviation of
+the paired change of ρ over five splits of the simulation
+(9.03 is the two-sided Student-t quantile on four degrees
+of freedom at a familywise rate of 0.01 over the study’s
+twelve primary readings), and the IBU at five iterations
+by whether it retains less or more of the prior than the
+five-observable estimator, by the same rule with its own
+bar, and by whether its retention falls or rises by at least
+a fixed margin of 0.05, separate from that bar, between
+five and 200 iterations. The retained fraction is undefined
+at a truth where fewer than two cells depart from the
+prior by at least 1 %. A level clears a flagged truth if the
 truth is no longer flagged, by the criterion of section 3.3
 applied to the noise-free pseudo-data. The readings are
 combined into labels fixed in advance: consistent with
@@ -1208,6 +1210,7 @@ and 12 under both (supplementary material, section S11).
 A third rule asks that a cell’s bias be at most half of
 the truth’s departure from the prior, |bc | ≤ 0.5 |dc | in the
 notation of section 5.3, at each graded truth where that
+
 departure is at least 1 %; a cell where it applies at no truth
 is reported as not assessed, and one whose class changes
 within the noise of the estimate as unresolved. All three
@@ -1264,6 +1267,7 @@ float32 values, which changes LightGBM’s histogram bins;
 a perturbation that keeps the ties removes the spread,
 leaving a ratio of 6.2 × 10−7 and 1.07 × 10−6 on the 153
 quantities and the 16 cells. Equal float32 values are what
+
 float32 storage of these kinematics produces. Perturbing
 only the input of the refinement stage reproduces the
 full spread, so the perturbation can enter there, though
@@ -1272,9 +1276,7 @@ float64 inputs and a permutation of the input rows do
 not reduce the spread (table 1; section S4).
 An ensemble-averaged variant of the estimator, the
 mean of 96 fits, specified before the mechanism study
-was read, meets the stability requirement on the pseudo-
-
-data used to test stability (median 0.08 and at most 0.76,
+was read, meets the stability requirement on the pseudodata used to test stability (median 0.08 and at most 0.76,
 against 0.3 and 1.0), where the reported estimator does
 not. On noise-free fake-data closures at the 17 distinct
 truths it is no worse than the reported estimator at 16
@@ -1322,6 +1324,7 @@ intervals (ref. [14], section 9.5).
 A first coverage test of the five-observable covariance
 at the two tunes, specified in advance, was stopped at
 one of its gates before any coverage pseudo-experiment
+
 ran, because the gate compared unlike objects, pseudoexperiments that move only the detector response at fixed
 truth against blocks built from the prior and the response
 together, and a staged redesign stopped at its first stage
@@ -1333,19 +1336,26 @@ section S9).
 
 A like-for-like five-observable coverage test
 
-The design of the two-dimensional test has been carried
-to the sixteen cells, at the same two tunes, with each
-drawn uncertainty group’s pseudo-data built as its covariance block is built, and with the covariance rebuilt at each
-tune by the reported procedure. It has two variants, fixed
-in advance and correlated by construction: a primary one
-without the GEANT4 neutron and proton bands, and one
-with them. Its covariance is rebuilt once per truth, not per
-pseudo-experiment; the response and run-period terms
-are not drawn, and the lateral uncertainties are carried
-by a surrogate. It grades each of the two truths and each
-variant separately, and it tests the reported estimator, not
-the ensemble average. The tunes are held out of the analysis but not independent of it: they share a quasielastic
-model, and G18_10a_02_11b shares its 2p2h model family with one of the generators of Cmodel . [PENDING:
+The design of the two-dimensional test is carried to
+the sixteen cells: at each of the same two tunes, 300
+pseudo-experiments in each variant, each drawn uncertainty group’s pseudo-data built as its covariance block is
+built, the model term Cmodel in the graded covariance but
+not drawn, since it is what should cover each tune’s departure from the simulation, the response and run-period
+terms neither drawn nor in the graded covariance, the
+lateral uncertainties carried by a surrogate, and the covariance rebuilt once per tune by the reported procedure.
+It has two variants, fixed in advance and correlated by
+construction: a primary one without the GEANT4 neutron and proton bands, and one with them. Each tune
+and each variant is graded separately, per cell and jointly,
+against thresholds set from the test’s null distribution: a
+reading under-covers when too few pseudo-experiments
+lie within the intervals, and a pass means that no undercoverage is detected at these thresholds, whose resolution
+is about 0.10 in coverage per cell and 0.08 jointly; in one
+variant at one tune, the cell readings flag a cell falsely
+with probability at most 0.025 and the joint reading with
+probability at most 0.025. It tests the reported estimator,
+not the ensemble average. The tunes are held out of the
+analysis but not independent of it: they share a quasielastic model, and G18_10a_02_11b shares its 2p2h model
+family with one of the generators of Cmodel . [PENDING:
 the like-for-like five-observable coverage test]
 
 7.
@@ -1366,9 +1376,12 @@ show a run-period inconsistency, present before unfolding,
 of unknown cause.
 Two findings point to the unfolded result retaining part
 of its prior. The first is the residual under a generatorsized change of the truth in section 5.1, which for the
-GiBUU-like change is consistent with finite-iteration regularization. The second is on the data. When the simulation’s prior is changed, the data result shifts in correlation with minus the noise-free residual at the same truth
-(ref. [14], section 9.4); these shifts are sensitivities, not a
-measured bias on data.
+
+GiBUU-to-GENIE Eavail change is consistent with finiteiteration regularization. The second is on the data. When
+the simulation’s prior is changed, the data result shifts in
+correlation with minus the noise-free residual at the same
+truth (ref. [14], section 9.4); these shifts are sensitivities,
+not a measured bias on data.
 These results bound what the study shows. The benchmark establishes normalization agreement and a qualified
 shape comparison in two dimensions, not the validity
 of the five-observable distribution. The validity rules
@@ -1381,7 +1394,6 @@ muon-kinematic regions, with their joint uncertainty and
 a treatment of multiplicity, and a demonstration that
 plausible changes of the unfolding and of the detector
 response cannot produce the observed pattern. That test
-
 is a next step.
 The studies of section 3–6 and of the companion note
 show what must be checked before unfolded intervals
@@ -1403,6 +1415,7 @@ coverage test of the five-observable covariance did
 not run to a result; the like-for-like test of section 6.3, whatever its outcome, grades the procedure at two truths, not the reported intervals; and
 the procedure’s two-dimensional covariance undercovers at both held-out tunes, a result about the
 procedure’s covariance at those tunes, not the reported intervals at the data (section 6.2). Neither
+
 the coverage of Cmodel at truths held out of its construction nor the size of either run-period block is
 independently validated (supplementary material,
 section S5, and section S6). The per-cell coverage readings cited are pointwise, for each reported

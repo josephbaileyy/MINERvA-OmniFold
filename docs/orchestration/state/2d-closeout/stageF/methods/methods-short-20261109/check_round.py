@@ -40,13 +40,18 @@ EMPTY = {**{f"prr-label-{l}-{t}": {"not"} for l in ("fir", "info", "impl", "obs"
          **{f"ll5d-{t}-{r}": {"na"} for t in ("g18", "ar23") for r in ("minus2", "all")},
          **{f"ll5d-{t}-{r}-{x}": {"none", "na"} for t in ("g18", "ar23") for r in ("minus2", "all")
             for x in ("weak", "over", "clip")},
-         "ll5d-route": {"direct", "na"}}
+         "ll5d-route": {"direct", "na"},
+         "ll5d-abs-minus2": {"na"}, "ll5d-abs-all": {"na"}, "ll5d-abs-close": {"na"},
+         **{f"ll5d-{x}": {"none", "na"} for x in ("anypass", "anyunder", "cellflags", "anyweak", "anyover")}}
 # numerals the paper prints that the base does not, each with its source (ledger rows)
 NEW_NUMERALS = {"285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55, 1.391 x 205 = 285.2 (in [285.05, 285.26])",
                 "136": "L-12b: the note's sec_results.tex:128 (chi2 = 136 on the 73 best-determined directions)",
                 "0.05": "L-27: FD-PRR-DECLARATION.md:281-286, the bar delta_F = max(0.05, 9.03 s_F)",
                 "9.03": "L-27: FD-PRR-DECLARATION.md:281-286 (the two-sided Student-t quantile on 4 degrees of freedom at 0.01/12)",
                 "0.01": "L-27: FD-PRR-DECLARATION.md:282-284 (the familywise rate 0.01 over the 12 primary readings)",
+                "0.10": "P-9: LL5D-DECLARATION.md:486, the test's resolution, about 0.10 in coverage per cell",
+                "0.08": "P-9: LL5D-DECLARATION.md:486, the test's resolution, about 0.08 jointly (0.10 per cell)",
+                "0.025": "P-9: LL5D-DECLARATION.md:471-472, :482, the size per (truth, reading): 0.025 over the cells, 0.025 joint",
                 "99.7": "L-28: r5:176's bar 39.04 at the null's 0.997 quantile, printed as the 99.7th percentile (round 6, the editor's B8)"}
 ONCE = [
     "and their cross-covariance is not available, so no difference between them can be given a calibrated significance.",
@@ -252,12 +257,13 @@ def fill_test(wt):
             return [f"fill test: main_note build failed ({r.returncode})"]
         base_vals = (d / "values_fived16.tex").read_text()
         head = base_vals.split("\n")
-        ll5d = mv.ll5d_fill_cases()
-        for i in range(max(n, len(ll5d))):
+        ll5d, prr = mv.ll5d_fill_cases(), mv.prr_fill_cases()
+        for i in range(max(n, len(ll5d), len(prr))):
             ver = {}
             for k, (g, cls) in mv.PENDING.items():
                 ver[k] = cls[i % len(cls)] if cls else f"X{k.split('-')[-1]}"
             ver.update(ll5d[i % len(ll5d)])
+            ver.update(prr[i % len(prr)])
             lines = [l for l in head if not re.match(r"\\@namedef\{fv(g|gd|c)@", l)
                      and not any(l.startswith(rf"\@namedef{{fv@{k}}}") for k in mv.PENDING)]
             end = lines.index(r"\makeatother")

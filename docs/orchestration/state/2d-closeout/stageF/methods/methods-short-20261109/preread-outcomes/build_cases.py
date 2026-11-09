@@ -20,9 +20,8 @@ from pathlib import Path
 
 NOTE = "docs/analysis-note"
 
-C1 = "[cells R03, R11]"
-C2 = "[cells R06]"
-CHECK = "[the check]"
+C1 = "[cells R03, R11, with their coverage fractions]"
+C2 = "[cell R06, with its coverage fraction]"
 
 
 def P(g, a, bg=None, ba=None):
@@ -30,60 +29,65 @@ def P(g, a, bg=None, ba=None):
     return {("g18", "minus2"): g, ("ar23", "minus2"): a, ("g18", "all"): bg or g, ("ar23", "all"): ba or a}
 
 
+c, uc, uj, ujc, i = "covers", "under-cells", "under-joint-only", "under-joint", "invalid"
 CELLS = {(t, r): C1 if t == "ar23" else C2 for t in ("g18", "ar23") for r in ("minus2", "all")}
 CELLS.update({(t, r, x): C1 if t == "ar23" else C2 for t in ("g18", "ar23") for r in ("minus2", "all")
               for x in ("weak", "over", "clip")})
-# case -> the like-for-like group's arguments for make_values_fived16.ll5d_case (campaign, per, route, flags)
+NUM = {("ar23", "all", "why"): "[the numerical check of the grade that failed]"}
+# case -> (campaign, per, route, flags, text) for make_values_fived16.ll5d_case
 LL5D_CASES = {
-    "cov-both-cover": ("graded", P("covers", "covers"), "direct", {}),
-    "cov-both-cover-qualified": ("graded", P("covers", "covers"), "direct",
-                                 {("g18", "minus2", "weak"): "some", ("ar23", "minus2", "over"): "some"}),
-    "cov-bands-under-one": ("graded", P("covers", "covers", "covers", "under-cells"), "direct", {}),
-    "cov-bands-under-both": ("graded", P("covers", "covers", "under-cells", "under-joint"), "direct", {}),
-    "cov-bands-invalid-one": ("graded", P("covers", "covers", "covers", "invalid"), "direct", {}),
-    "cov-bands-invalid-both": ("graded", P("covers", "covers", "invalid", "invalid"), "direct", {}),
-    "cov-one-under-cells": ("graded", P("covers", "under-cells"), "direct", {}),
-    "cov-one-under-clip": ("graded", P("covers", "under-cells"), "direct", {("ar23", "minus2", "clip"): "some"}),
-    "cov-one-under-joint-only": ("graded", P("covers", "under-joint-only"), "direct", {}),
-    "cov-both-under-joint": ("graded", P("under-joint", "under-joint"), "direct", {}),
-    "cov-invalid-one-covers": ("graded", P("invalid", "covers"), "direct", {}),
-    "cov-invalid-one-under": ("graded", P("invalid", "under-cells"), "direct", {}),
-    "cov-invalid-both": ("graded", P("invalid", "invalid"), "direct", {}),
-    "cov-offset-proceeded": ("graded", P("covers", "covers"), "offset-proceeded", {}),
-    "cov-repaired": ("graded", P("covers", "covers"), "repaired", {}),
-    "cov-gate-failed": ("gate-failed", None, "direct", {}),
-    "cov-offset-stopped": ("offset-stopped", None, "direct", {}),
-    "cov-stop": ("stop", None, "direct", {}),
+    "cov-all-cover": ("graded", P(c, c), "direct", {}, {}),
+    "cov-all-cover-qualified": ("graded", P(c, c), "direct",
+                                {("g18", "minus2", "weak"): "some", ("ar23", "minus2", "over"): "some",
+                                 ("ar23", "all", "weak"): "some"}, {}),
+    "cov-bands-under-one": ("graded", P(c, c, c, uc), "direct", {}, {}),
+    "cov-bands-under-both": ("graded", P(c, c, uc, ujc), "direct", {}, {}),
+    "cov-bands-invalid-one": ("graded", P(c, c, c, i), "direct", {}, NUM),
+    "cov-bands-invalid-both": ("graded", P(c, c, i, i), "direct", {}, {}),
+    "cov-primary-under-bands-cover": ("graded", P(c, uc, c, c), "direct", {}, {}),
+    "cov-primary-invalid-bands-cover": ("graded", P(i, i, c, c), "direct", {}, {}),
+    "cov-one-under-cells": ("graded", P(c, uc), "direct", {}, {}),
+    "cov-one-under-clip": ("graded", P(c, uc), "direct", {("ar23", "minus2", "clip"): "some", ("ar23", "all", "clip"): "some"}, {}),
+    "cov-one-under-joint-only": ("graded", P(c, uj), "direct", {}, {}),
+    "cov-mixed-cell-joint": ("graded", P(uc, uj, ujc, c), "direct", {}, {}),
+    "cov-both-under-joint": ("graded", P(ujc, ujc), "direct", {}, {}),
+    "cov-invalid-one-covers": ("graded", P(i, c), "direct", {}, {}),
+    "cov-invalid-one-under": ("graded", P(i, uc), "direct", {}, {}),
+    "cov-invalid-all": ("graded", P(i, i), "direct", {}, {}),
+    "cov-proceeded-cover": ("graded", P(c, c), "offset-proceeded", {}, {}),
+    "cov-proceeded-under": ("graded", P(c, uc), "offset-proceeded", {}, {}),
+    "cov-repaired-cover": ("graded", P(c, c), "repaired", {}, {}),
+    "cov-repaired-under": ("graded", P(ujc, ujc), "repaired", {}, {}),
+    "cov-gate-failed": ("gate-failed", None, "direct", {}, {}),
+    "cov-offset-stopped": ("offset-stopped", None, "direct", {}, {}),
+    "cov-stop": ("stop", None, "direct", {}, {}),
 }
 
 
-def prr(ibu, k):
-    """The prior-retention group at one IBU class (both truths), with the longer-iteration class k. Only the labels the
-    IBU class forces are set (FD-PRR §5.4: the implementation-specific share when the IBU retains less)."""
-    v = {}
-    for t in ("gibuu", "q3"):
+def prr(g, q, kg, kq):
+    """The prior-retention group with PR-2a classes g (GiBUU hybrid) and q (q3 tilt) and PR-2b classes kg, kq. Only the
+    labels the IBU classes force are set (FD-PRR §5.4: the implementation-specific share where the IBU retains less)."""
+    v = {"prr-pr2a-gibuu": g, "prr-pr2a-q3": q, "prr-pr2b-gibuu": kg, "prr-pr2b-q3": kq, "prr-abs": f"{g}-{q}"}
+    for t, a in (("gibuu", g), ("q3", q)):
         for f in ("F1", "F2", "F3", "F4"):
-            v[f"prr-pr1-{f}-{t}"] = "undefined" if ibu == "undefined" else "no-effect"
-        v[f"prr-pr2a-{t}"] = ibu
-        v[f"prr-pr2b-{t}"] = k
+            v[f"prr-pr1-{f}-{t}"] = "undefined" if a == "undefined" else "no-effect"
         for lab in ("fir", "info", "impl", "obs", "stat", "unattr"):
-            v[f"prr-label-{lab}-{t}"] = "holds" if (lab == "impl" and ibu == "less") else "not"
-    v["prr-pr3-any"] = "not"
-    v["prr-pr3-ibu"] = "not"
-    v["prr-pr3-levels"] = "[levels]"
+            v[f"prr-label-{lab}-{t}"] = "holds" if (lab == "impl" and a == "less") else "not"
+    v.update({"prr-pr3-any": "not", "prr-pr3-ibu": "not", "prr-pr3-levels": "[levels]", "prr-ibu-bar": "[the bar]"})
     return v
 
 
-PRR_CASES = {"ibu-less": ("less", "falls"), "ibu-same": ("same", "flat"), "ibu-more": ("more", "rises"),
-             "ibu-undefined": ("undefined", "undefined")}
+PRR_CASES = {"ibu-less": ("less", "less", "falls", "falls"), "ibu-same": ("same", "same", "flat", "flat"),
+             "ibu-more": ("more", "more", "rises", "rises"), "ibu-undefined": ("undefined", "undefined", "undefined", "undefined"),
+             "ibu-split-less-same": ("less", "same", "falls", "flat"), "ibu-split-same-more": ("same", "more", "flat", "rises")}
 
 
 def cases(mv):
     out = {}
-    for name, (camp, per, route, flags) in LL5D_CASES.items():
-        out[name] = mv.ll5d_case(camp, per, route, flags, CELLS, CHECK)
-    for name, (ibu, k) in PRR_CASES.items():
-        out[name] = prr(ibu, k)
+    for name, (camp, per, route, flags, text) in LL5D_CASES.items():
+        out[name] = mv.ll5d_case(camp, per, route, flags, CELLS, text)
+    for name, args in PRR_CASES.items():
+        out[name] = prr(*args)
     return out
 
 
@@ -91,7 +95,7 @@ def cases(mv):
 PASSAGES = {
     "abstract-coverage": ("intervals is not established.", "The five-observable output on data is therefore", "text"),
     "sec-coverage": ("one of the generators of Cmodel .", "7. DISCUSSION AND CONCLUSIONS", "text"),
-    "abstract-ibu": ("At the GiBUU-like truth, a binned iterative unfolding", "The estimator is reproducible", "text"),
+    "abstract-ibu": ("fixed before the tests were graded.", "The estimator is reproducible", "text"),
     "sec-ibu": ("At the GiBUU hybrid truth, the IBU at five iterations", "No tested level clears both flagged truths.", "text"),
     # Table 1's row, from pdftotext -raw (content order keeps a table row together)
     "table-coverage": ("Like-for-like five-observable coverage test 5D 6.3", "Run-period consistency", "raw"),
@@ -113,11 +117,12 @@ def load_mv(wt):
 
 
 def norm(txt):
+    txt = re.sub(r"\f\s*\d+\s*\n", " ", txt)        # a page break and the next page's number
     # pdftotext's end-of-line hyphenation; a break at a compound's own hyphen keeps it (under-covers, five-observable)
     txt = re.sub(r"\b(under|five|two|pseudo|noise|like|for|run|held|well|non)-\n(?=[a-z])", r"\1-", txt)
     txt = re.sub(r"-\n(?=[a-z])", "", txt)
     # pdftotext also drops the hyphen of a compound it rejoins on one line; the source prints only "under-cover..."
-    txt = txt.replace("undercover", "under-cover")
+    txt = txt.replace("undercover", "under-cover").replace("runperiod", "run-period")
     txt = re.sub(r"\f", " ", txt)
     return re.sub(r"\s+", " ", txt)
 

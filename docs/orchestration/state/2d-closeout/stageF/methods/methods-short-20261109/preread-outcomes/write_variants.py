@@ -18,14 +18,50 @@ version as it would print, under a plain-language label for its outcome.
 
 How the text was made: the manuscript was built once per outcome, and each passage below was copied from that build.
 
-Square brackets mark placeholders. Any text in square brackets, such as "[cells R03, R11]" or "[the check]", is a
-made-up stand-in for a value that does not exist yet. It is not a result.
+Square brackets mark placeholders. Any text in square brackets, such as "[cells R03, R11, with their coverage
+fractions]" or "[the failed control]", is a made-up stand-in for a value that does not exist yet. It is not a result.
 
 The manuscript and its Supplement accompany this file. No sentence that is not shown here changes with these
-outcomes (Part 5 lists the other pending text).
+outcomes (Part 3 lists the other pending text).
 """
 
 RULE = "=" * 118
+COV = [
+    ("No under-coverage detected, in both variants at both tunes", "cov-all-cover"),
+    ("As CV1, with some passes weakened by clipping, in both variants, and some over-coverage", "cov-all-cover-qualified"),
+    ("Primary variant: no under-coverage at either tune. With the bands: under-coverage in some cells at one tune", "cov-bands-under-one"),
+    ("Primary: none at either tune. With the bands: under-coverage at both tunes, in cells at one and jointly and in cells at the other",
+     "cov-bands-under-both"),
+    ("Primary: none at either tune. With the bands: invalid at one tune, by a numerical check of the grade", "cov-bands-invalid-one"),
+    ("Primary: none at either tune. With the bands: invalid at both tunes", "cov-bands-invalid-both"),
+    ("Primary: under-coverage in some cells at one tune. With the bands: none at either tune", "cov-primary-under-bands-cover"),
+    ("Primary: invalid at both tunes. With the bands: none at either tune", "cov-primary-invalid-bands-cover"),
+    ("Both variants: under-coverage in some cells, not jointly, at one tune; none at the other", "cov-one-under-cells"),
+    ("As CV9, where the flags meet the condition for a possible clipping artefact", "cov-one-under-clip"),
+    ("Both variants: joint under-coverage, with no cell flagged, at one tune; none at the other", "cov-one-under-joint-only"),
+    ("Cell and joint outcomes that differ by tune and by variant", "cov-mixed-cell-joint"),
+    ("Both variants: under-coverage jointly and in some cells at both tunes", "cov-both-under-joint"),
+    ("Both variants: invalid at one tune; no under-coverage at the other", "cov-invalid-one-covers"),
+    ("Both variants: invalid at one tune; under-coverage in some cells at the other", "cov-invalid-one-under"),
+    ("Invalid at both tunes, in both variants", "cov-invalid-all"),
+    ("The test went on after its clipping-offset check exceeded its bound; then no under-coverage anywhere", "cov-proceeded-cover"),
+    ("The test went on after its clipping-offset check exceeded its bound; then under-coverage in some cells at one tune",
+     "cov-proceeded-under"),
+    ("An earlier run stopped, and the test ran with a repair; then no under-coverage anywhere", "cov-repaired-cover"),
+    ("An earlier run stopped, and the test ran with a repair; then under-coverage jointly and in cells at both tunes",
+     "cov-repaired-under"),
+    ("Stopped at a gate before any pseudo-experiment ran", "cov-gate-failed"),
+    ("Stopped by a decision made after the clipping-offset check exceeded its bound", "cov-offset-stopped"),
+    ("Stopped at another check before any pseudo-experiment ran", "cov-stop"),
+]
+IBU = [
+    ("At both flagged truths, the IBU retains less of the prior than the estimator", "ibu-less"),
+    ("At both, the IBU's retention differs from the estimator's by less than the bar", "ibu-same"),
+    ("At both, the IBU retains more of the prior than the estimator", "ibu-more"),
+    ("At both, the retained fraction is undefined, so no comparison is made", "ibu-undefined"),
+    ("Split: less at the GiBUU hybrid truth; a difference below the bar at the q3 tilt", "ibu-split-less-same"),
+    ("Split: a difference below the bar at the GiBUU hybrid truth; more at the q3 tilt", "ibu-split-same-more"),
+]
 
 
 def part(title, intro):
@@ -42,79 +78,28 @@ def main(argv):
             sys.exit(f"write_variants: no passage {p} in case {case}")
 
     out = [HEAD]
-    out.append(part("PART 1. THE ABSTRACT: THE SENTENCE ON THE FIVE-OBSERVABLE COVERAGE TEST",
-                    'It follows this sentence, which prints in every outcome: "The procedure\'s two-dimensional covariance, rebuilt at each\n'
-                    'of two held-out generator tunes, under-covers at both; coverage of the reported five-observable intervals is not\n'
-                    'established." The test has two variants: a primary one, without two bands of the detector simulation\'s\n'
-                    "uncertainties, and one with them.\n"))
-    for lab, case in (
-            ("AB1. Both tunes covered, in both variants", "cov-both-cover"),
-            ("AB2. The primary variant covers at both tunes; with the bands, it under-covers at one", "cov-bands-under-one"),
-            ("AB3. The primary variant covers at both tunes; with the bands, it under-covers at both", "cov-bands-under-both"),
-            ("AB4. The primary variant covers at both tunes; with the bands, the test is invalid at one", "cov-bands-invalid-one"),
-            ("AB5. The primary variant covers at both tunes; with the bands, the test is invalid at both", "cov-bands-invalid-both"),
-            ("AB6. The primary variant under-covers at one tune", "cov-one-under-cells"),
-            ("AB7. The primary variant under-covers at both tunes", "cov-both-under-joint"),
-            ("AB8. The test is invalid at one tune, and the primary variant covers at the other", "cov-invalid-one-covers"),
-            ("AB9. The test is invalid at one tune, and the primary variant under-covers at the other", "cov-invalid-one-under"),
-            ("AB10. The test is invalid at both tunes", "cov-invalid-both"),
-            ("AB11. The test stopped before any pseudo-experiment ran", "cov-gate-failed"),
-            ("AB12. The test stopped after a check, before most of its pseudo-experiments ran", "cov-offset-stopped")):
-        out.append(f"{lab}\n\n    {P(case, 'abstract-coverage')}\n")
-
-    out.append(part('PART 2. SECTION 6.3, "A LIKE-FOR-LIKE FIVE-OBSERVABLE COVERAGE TEST": THE RESULT',
-                    "The text below follows the section's fixed paragraph, which ends \"...shares its 2p2h model family with one of the\n"
-                    'generators of Cmodel." It ends the section. G18_10a_02_11b and AR23_20i_00_000 are the two held-out tunes.\n'
-                    '"Without the two bands" is the test\'s primary variant.\n\nThe test ran to a result:\n'))
-    for lab, case in (
-            ("SC1. Both tunes covered, in both variants", "cov-both-cover"),
-            ("SC2. Both tunes covered, in both variants, with some passes weakened and some over-coverage", "cov-both-cover-qualified"),
-            ("SC3. The primary variant covers at both tunes; with the bands, it under-covers in some cells at one", "cov-bands-under-one"),
-            ("SC4. The primary variant covers at both tunes; with the bands, it under-covers at both", "cov-bands-under-both"),
-            ("SC5. The primary variant covers at both tunes; with the bands, the test is invalid at one", "cov-bands-invalid-one"),
-            ("SC6. The primary variant covers at both tunes; with the bands, the test is invalid at both", "cov-bands-invalid-both"),
-            ("SC7. One tune under-covers in some cells; the other covers (both variants alike)", "cov-one-under-cells"),
-            ("SC8. As SC7, where a flag may be an artefact of clipping", "cov-one-under-clip"),
-            ("SC9. One tune under-covers jointly, with no single cell flagged; the other covers", "cov-one-under-joint-only"),
-            ("SC10. Both tunes under-cover, jointly and in some cells (both variants alike)", "cov-both-under-joint"),
-            ("SC11. The test is invalid at one tune; the other covers", "cov-invalid-one-covers"),
-            ("SC12. The test is invalid at one tune; the other under-covers in some cells", "cov-invalid-one-under"),
-            ("SC13. The test is invalid at both tunes", "cov-invalid-both"),
-            ("SC14. Both tunes covered, after a check of the clipping offset exceeded its bound and the test went on",
-             "cov-offset-proceeded"),
-            ("SC15. Both tunes covered, after the test had stopped and was repaired", "cov-repaired")):
-        out.append(f"{lab}\n\n    {P(case, 'sec-coverage')}\n")
-    out.append("In SC14 and SC15 the abstract prints AB1; in SC7 to SC9, AB6; in SC10, AB7.\n\n"
-               "The test stopped (the abstract prints AB11, or AB12 for SC17):\n")
-    for lab, case in (("SC16. Stopped at a gate", "cov-gate-failed"),
-                      ("SC17. Stopped after a check of the clipping offset exceeded its bound", "cov-offset-stopped"),
-                      ("SC18. Stopped at another check", "cov-stop")):
-        out.append(f"{lab}\n\n    {P(case, 'sec-coverage')}\n")
-
-    out.append(part("PART 3. TABLE 1: THE ROW FOR THE FIVE-OBSERVABLE COVERAGE TEST",
-                    'The row\'s "Result" and "Status" cells, for a selection of the cases above; the other cases follow the same pattern.\n'
-                    'The table caption defines the status words.\n'))
-    for lab, case in (("AB1 / SC1", "cov-both-cover"), ("AB2 / SC3", "cov-bands-under-one"), ("AB6 / SC7", "cov-one-under-cells"),
-                      ("SC9", "cov-one-under-joint-only"), ("AB7 / SC10", "cov-both-under-joint"),
-                      ("AB8 / SC11", "cov-invalid-one-covers"), ("AB10 / SC13", "cov-invalid-both"),
-                      ("AB11 / SC16", "cov-gate-failed"), ("AB12 / SC17", "cov-offset-stopped"), ("AB11 / SC18", "cov-stop")):
-        out.append(f"{lab}\n\n    {P(case, 'table-coverage')}\n")
-
-    out.append(part("PART 4. THE STUDY OF WHAT CHANGES THE RETAINED PRIOR: THE BINNED ITERATIVE UNFOLDING (IBU) AGAINST THE ESTIMATOR",
-                    "Each case is shown at both flagged truths, the GiBUU hybrid truth and the q3 tilt. The two truths are read\n"
-                    "separately, so they can differ. The clause on longer iteration (\"and its retention ...\") is a separate reading\n"
-                    "with four forms; each case below shows one of them, and any form can go with any case.\n"))
-    for lab, case in (("C1. The IBU retains less of the prior than the estimator", "ibu-less"),
-                      ("C2. The IBU's retention differs from the estimator's by less than the bar fixed in advance", "ibu-same"),
-                      ("C3. The IBU retains more of the prior than the estimator", "ibu-more"),
-                      ("C4. The retained share is undefined at a truth, so the comparison is not made", "ibu-undefined")):
-        out.append(f"{lab}\n\n  Abstract:\n\n    {P(case, 'abstract-ibu')}\n\n  Section 5.3, end of the section:\n\n"
+    out.append(part("PART 1. THE FIVE-OBSERVABLE COVERAGE TEST: EACH CASE IN THE ABSTRACT, SECTION 6.3 AND TABLE 1",
+                    'The test has two variants: a primary one, without two bands of the detector simulation\'s uncertainties (the\n'
+                    '"GEANT4 neutron and proton bands"), and one with them. G18_10a_02_11b and AR23_20i_00_000 are the two\n'
+                    "held-out tunes. In the abstract, each case's sentence follows this one, which prints in every outcome: \"The\n"
+                    "procedure's two-dimensional covariance, rebuilt at each of two held-out generator tunes, under-covers at both;\n"
+                    "coverage of the reported five-observable intervals is not established.\" In section 6.3, each case's text follows\n"
+                    'the section\'s fixed paragraph, which ends "...shares its 2p2h model family with one of the generators of Cmodel."\n'
+                    "Table 1's caption defines the status words.\n"))
+    for n, (lab, case) in enumerate(COV, 1):
+        out.append(f"CV{n}. {lab}\n\n  Abstract:\n\n    {P(case, 'abstract-coverage')}\n\n  Section 6.3:\n\n    {P(case, 'sec-coverage')}\n\n"
+                   f"  Table 1 row:\n\n    {P(case, 'table-coverage')}\n")
+    out.append(part("PART 2. THE STUDY OF WHAT CHANGES THE RETAINED PRIOR: THE BINNED ITERATIVE UNFOLDING (IBU) AGAINST THE ESTIMATOR",
+                    "The two flagged truths, the GiBUU hybrid truth and the q3 tilt, are read separately, so they can differ; the split\n"
+                    "cases show that. The clause on longer iteration (\"and its retention ...\") is a separate reading with four forms; each\n"
+                    "case shows one of them, and any form can go with any case. Where the IBU retains less at a truth, that truth's\n"
+                    "sentence \"the readings are consistent with a share specific to the implementation\" prints, by the study's rule fixed in\n"
+                    "advance. Several such labels can hold at once, and each prints its own sentence; none takes precedence over\n"
+                    "another. Labels that depend on other readings of the study are not shown.\n"))
+    for n, (lab, case) in enumerate(IBU, 1):
+        out.append(f"IB{n}. {lab}\n\n  Abstract:\n\n    {P(case, 'abstract-ibu')}\n\n  Section 5.3, end of the section:\n\n"
                    f"    {P(case, 'sec-ibu')}\n")
-    out.append("In C1, the last two sentences print because, by the study's rule fixed in advance, a lower retention for the IBU\n"
-               "means its readings are consistent with a share specific to the implementation. In C2 to C4, those sentences print\n"
-               "only if another reading of the study gives the same label.\n")
-
-    out.append(part("PART 5. OTHER SENTENCES",
+    out.append(part("PART 3. OTHER SENTENCES",
                     "No sentence of the Discussion and conclusions (section 7), and no other sentence of the manuscript's prose,\n"
                     "changes with the outcomes shown here. Two other pending results have their own pre-written text, which is not part\n"
                     "of this read: the other readings of the prior-retention study (section 5.3 and its Table 1 row), and a per-cell\n"
@@ -132,6 +117,13 @@ def main(argv):
     mv = load(wt / "docs/analysis-note/make_values_fived16.py", "mv")
     cr = load(Path(__file__).resolve().parent.parent / "check_round.py", "check_round")
     bad += cr.printed_class_names(text, mv)
+    src = "".join((wt / "docs/analysis-note" / f).read_text() for f in ("paper_body.tex", "main_paper.tex", "values_fived16.tex"))
+    stand_in = " ".join(re.findall(r"\[[^]]*\]", " ".join(v for c in res.values() for v in c["passages"].values())))
+    for case in res.values():                       # every word of every passage is in the source, or in a stand-in
+        for p in case["passages"].values():
+            for w in re.findall(r"[A-Za-z][A-Za-z-]+", p):
+                if w not in src and w not in stand_in:
+                    bad.append(f"a word not in the source: {w}")
     if bad:
         sys.exit(f"write_variants: banned terms or class names print: {bad}")
     Path(argv[3]).write_text(text)

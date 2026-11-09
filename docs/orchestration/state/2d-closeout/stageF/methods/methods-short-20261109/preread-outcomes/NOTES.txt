@@ -8,6 +8,90 @@ FD-PRR-DECLARATION.md are under state/measurement-paper/5d-community-20261024/. 
 commit, where both files are byte-identical to main 5a028842a.
 
 ======================================================================================================================
+THIRD BUILD OF THE PACK: THE PRE-READ RULINGS (#998)
+======================================================================================================================
+
+The two reads are secondary-results/preread-outcomes-20261109/ (#998). The director's rulings 1-16, O-4 and O-5 are
+applied as ledger.md rows P-9 to P-27, each with its record cite. No second pre-read is planned. The sections below
+this one describe the first and second builds; their case ids are superseded by VARIANTS.txt's CV1-CV23 and
+IB1-IB6.
+
+The files:
+- manuscript.blind.txt: 8,925 words, sha256 9eea97e9ae08efa2;
+- supplement.blind.txt: 13,595 words, b1d87541fa1d1d86, unchanged;
+- VARIANTS.txt: 9,204 words, 0d3a0ec1344ae344.
+
+Checks:
+- check_round: PASS; its self-test: PASS;
+- the fill test: 31 builds, every class of every key typeset, no class name and no "joseph" printed;
+- check_registry: PASS.
+
+The banned-term grep: the manuscript's one hit is "configuration (e)", the Supplement's are the known nine, and
+VARIANTS.txt has none.
+
+What VARIANTS.txt is now:
+- one block per case;
+- for the coverage test, the abstract, section 6.3 and the Table 1 row together: 23 cases, CV1-CV23;
+- for the IBU, the abstract and section 5.3: 6 cases, IB1-IB6, including two splits.
+Every passage is cut from a build at that case (29 builds). write_variants.py now also refuses any word not found in
+the paper source or a stand-in. That check would have caught the two pdftotext faults fixed in this build: a dropped
+hyphen ("runperiod"), and a page number inside a passage that crosses a page break.
+
+A correction found while applying ruling 2. Section 6.3's method sentence said only that the response and run-period
+terms are not drawn. LL5D §3.7 (:270) also lists C_model as not drawn ("It is what should cover each tune's
+departure"). §4 (:305-307) grades C_T = C_e(T) + C_model_abs(T) and leaves C_resp and C_PL,5D out of both readings
+(:318-322).
+- The method sentence now says so.
+- Every pass carries the licensed consequence, "a pass carries over to the procedure's full covariance at that tune"
+  (:318-320, :768-769).
+- Every under-coverage carries "not shown to persist with them" (:322).
+- This answers Sonnet G2: the undrawn response and run-period terms do not inflate the graded matrix. C_model does,
+  by design.
+
+Power (ruling 1). The calibration record's power.meets (receipts-ll5d/calib-2/calibration.json) belongs to the
+variance gate: constants.power_min 0.8 against uniform_deflation 0.08 (§5.2, R9). It is not the power of the coverage
+grade. So the paper does not cite it as coverage power, and gives the declaration's resolution instead (:486). If you
+want the gate's power stated too, it is one clause.
+
+O-5. R5's text (DECISION-20261102-joseph-1b-redesign.md:81-83) is "The method, in one neutral sentence: ... The result
+follows it." I read that as a cap on the method statement.
+- Section 6.3's two method sentences are merged into one.
+- The remaining fixed sentences are the two variants, what a pass and a flag mean, which estimator is tested, and the
+  overlap. They are the required facts and readings "stated as description" (:85-87).
+
+PENDING JOSEPH (#993 item 4). Every case that states coverage:
+- CV1-CV20, the graded cases, in the abstract, section 6.3 and Table 1. CV21-CV23 state no coverage.
+- Within those cases, these wordings are new:
+  - "detects no under-coverage" and the pass sentence (P-9, P-10);
+  - the abstract's per-variant clauses and its pass clause (P-12, P-10);
+  - the descriptive labelling of the proceed and repair routes (P-16);
+  - the 2D contrast sentence (P-19);
+  - the Table 1 status "Mixed" (P-13).
+- Section 6.3's fixed paragraph: the grading sentence (P-9) and the corrected method sentence (P-10).
+
+Still open, and nothing drafted:
+- O-1: the bias-versus-width attribution. fd_1b_null.attribute (cf0505d9e, :170-186) emits bias / width / both, but
+  the declaration defines no reading or wording.
+- O-2: when PR-1 is undefined, FD-PRR :292 says that truth's χ² prints instead. That needs a readout key.
+- Joint over-coverage has no class. The readout flags over-coverage per cell only (fd_1b_mc @ b25918fbd :684,
+  over_covers). chi2_mean_over_ndf prints in each reading's statistics but has no reading.
+- A short pseudo-experiment count has no class. The readout refuses it, which makes the reading INVALID (ll5d_b
+  @ ffbbb7455 :603), so it is covered by the invalid cases.
+- A numerical failure has no class of its own. It is INVALID by the Cholesky reading rule, and CV5 names it in its
+  "-why" placeholder.
+
+Reader points that are not in the rulings, left for you:
+- Sonnet A: the Discussion should say that a pass would not lift the illustration status.
+- Sonnet AB11: say that a stop is the second five-observable coverage test without a result.
+- Sonnet SC17: why a stop rather than a proceed. The text says the decision was made after the check; the reason is
+  in the record, not the paper.
+- Gemini C3: why IBU retention would rise with iteration. "Rises" is a declared class (FD-PRR :299-300), with no
+  cause licensed (NOT CITABLE FOR a cause).
+
+Verified label rule (ruling 16): FD-PRR :321 says "Several can hold at once, and none excludes another." No precedence
+applies, and each holding label prints its own sentence.
+
+======================================================================================================================
 SECOND BUILD OF THE PACK: WHAT CHANGED, AND WHAT IS STILL OPEN
 ======================================================================================================================
 

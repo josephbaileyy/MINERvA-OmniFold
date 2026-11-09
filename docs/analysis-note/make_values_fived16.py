@@ -198,22 +198,30 @@ PR2A = ("less", "more", "same", "undefined")     # FD-PRR-DECLARATION.md:297-298
 PR2B = ("falls", "rises", "flat", "undefined")   # FD-PRR-DECLARATION.md:299-300; "undefined": prr_read.ibu_k_class @ cf76aec7 :314-317
 PR3 = ("clears", "not")                                                    # FD-PRR-DECLARATION.md:307-309
 LABEL = ("holds", "not")                                                   # FD-PRR-DECLARATION.md:321-330
+# the abstract's IBU sentence, both flagged truths (the pre-read ruling 13, #998): one class per (GiBUU hybrid, q3 tilt)
+PRR_ABS = tuple(f"{g}-{q}" for g in PR2A for q in PR2A)
 # LL5D-DECLARATION.md §6 :469-481. COVERS / UNDER-COVERS / INVALID at (T, reading); UNDER-COVERS split by what :474
-# names (the cells, and whether the joint fraction is under): under-cells (cells only), under-joint (joint and cells),
-# under-joint-only (joint, no cell). na: the campaign is not graded.
+# names (the cells, and whether the joint fraction is under): under-cells (cells, not joint), under-joint (joint and
+# cells), under-joint-only (joint, no cell). na: the campaign is not graded. A reading is INVALID when the Cholesky
+# reading rule fails (ll5d_b.readout_reading @ ffbbb7455), or the whole step is (its "why").
 LL5D_T = ("covers", "under-cells", "under-joint", "under-joint-only", "invalid", "na")
 LL5D_FLAG = ("none", "some", "na")       # per (T, reading): weakened passes :478; over-coverage :477; clipping artefact :480-481
 # the campaign: graded, or stopped at a gate (§5.2 :427), by the clipping-offset routing (§5.3 :439-440, :692, when the
 # decision after it stops the test), or at another STOP trigger fixed in advance (§5.1 :333-335, §11 :684). What follows
 # a STOP is decided after it (:66-71; DECISION-20261108-joseph-ll5d-stop-rule.md:28-35).
 LL5D_C = ("graded", "gate-failed", "offset-stopped", "stop")
-# how a graded campaign got there: directly; after the offset routing, by a decision to proceed (:439-440); or after a
-# repair chosen once a STOP was seen, which the paper discloses (:71; the stop-rule decision item 4). na: not graded.
+# how a graded campaign got there: directly; past the offset routing by a decision to proceed (:439-440); or with a
+# repair chosen after an earlier run stopped (:71; the stop-rule decision item 4). Both of the latter make the readings
+# descriptive (the pre-read ruling 8, pending Joseph). na: not graded.
 LL5D_ROUTE = ("direct", "offset-proceeded", "repaired", "na")
-LL5D_ABSTRACT = ("both-cover", "both-cover-bands-under-one", "both-cover-bands-under-both", "both-cover-bands-invalid-one",
-                 "both-cover-bands-invalid-both", "one-under", "both-under", "invalid-one-covers", "invalid-one-under",
-                 "invalid-both", "stopped-early", "stopped-offset")
-LL5D_STATUS = ("covers", "under", "invalid", "stopped")              # Table 1's status words (its caption)
+# one variant's two tunes, unordered (the pre-read ruling 4: one abstract clause per variant, keeping the cell-versus-
+# joint distinction): c covers, uc cells only, uj joint only, ujc joint and cells, i invalid
+_TL = {"covers": "c", "under-cells": "uc", "under-joint-only": "uj", "under-joint": "ujc", "invalid": "i"}
+_TO = ("c", "uc", "uj", "ujc", "i")
+LL5D_PAIR = tuple(f"{a}-{b}" for i, a in enumerate(_TO) for b in _TO[i:]) + ("na",)
+LL5D_SOME = ("some", "none", "na")
+LL5D_CLOSE = ("scope", "none", "na")    # the scope clause on every graded case; "none" when no reading was graded
+LL5D_STATUS = ("covers", "mixed", "under", "invalid", "stopped")            # Table 1's status words (its caption)
 VHALF_O = ("none-fail", "some-fail")                  # DECISION-20261109-joseph-bias-half-rule.md item 1 (counts below)
 PENDING_GROUPS = {
     # printed inside [PENDING: ...]: descriptive names only, no internal study labels (round 6, the editor's C4)
@@ -232,18 +240,28 @@ for _t in ("gibuu", "q3"):
 PENDING["prr-pr3-any"] = ("prr", PR3)               # "clears" if some level clears at these truths
 PENDING["prr-pr3-ibu"] = ("prr", PR3)
 PENDING["prr-pr3-levels"] = ("prr", None)           # the levels that clear, as printed words
+PENDING["prr-ibu-bar"] = ("prr", None)              # the IBU's bar, prr_read floor.bars.IBU (the pre-read ruling 14)
+PENDING["prr-abs"] = ("prr", PRR_ABS)               # derived: prr_derived()
 PENDING["ll5d-campaign"] = ("ll5d", LL5D_C)
 PENDING["ll5d-route"] = ("ll5d", LL5D_ROUTE)
-PENDING["ll5d-stop-check"] = ("ll5d", None)         # the STOP's check, as printed words (stop; repaired)
+PENDING["ll5d-stop-what"] = ("ll5d", None)          # the gate or check a STOP fired at (gate-failed; stop; repaired)
+PENDING["ll5d-repair"] = ("ll5d", None)             # the repair, as the record names it (repaired)
+PENDING["ll5d-offset"] = ("ll5d", None)             # clipcheck's largest |o_c|, its cell and the bound (offset routes)
 for _t in ("g18", "ar23"):
     for _r in ("minus2", "all"):
         PENDING[f"ll5d-{_t}-{_r}"] = ("ll5d", LL5D_T)
-        PENDING[f"ll5d-{_t}-{_r}-cells"] = ("ll5d", None)
+        PENDING[f"ll5d-{_t}-{_r}-cells"] = ("ll5d", None)   # the flagged cells with their coverage fractions (counts/300)
+        PENDING[f"ll5d-{_t}-{_r}-stats"] = ("ll5d", None)   # joint_count, k_joint, chi2_mean_over_ndf and its se, ndf
+        PENDING[f"ll5d-{_t}-{_r}-why"] = ("ll5d", None)     # the failed control, for an invalid reading
         for _x in ("weak", "over", "clip"):
             PENDING[f"ll5d-{_t}-{_r}-{_x}"] = ("ll5d", LL5D_FLAG)
             PENDING[f"ll5d-{_t}-{_r}-{_x}-cells"] = ("ll5d", None)
-PENDING["ll5d-abstract"] = ("ll5d", LL5D_ABSTRACT)  # derived: ll5d_derived()
-PENDING["ll5d-status"] = ("ll5d", LL5D_STATUS)      # derived: ll5d_derived()
+for _r in ("minus2", "all"):
+    PENDING[f"ll5d-abs-{_r}"] = ("ll5d", LL5D_PAIR)  # derived: ll5d_derived()
+PENDING["ll5d-abs-close"] = ("ll5d", LL5D_CLOSE)    # derived
+for _x in ("anypass", "anyunder", "cellflags", "anyweak", "anyover"):
+    PENDING[f"ll5d-{_x}"] = ("ll5d", LL5D_SOME)     # derived
+PENDING["ll5d-status"] = ("ll5d", LL5D_STATUS)      # derived
 PENDING["vhalf-outcome"] = ("vhalf", VHALF_O)
 for _c in ("valid", "notvalid", "notassessed", "unresolved"):
     PENDING[f"vhalf-n-{_c}"] = ("vhalf", None)
@@ -253,12 +271,20 @@ PENDING["vhalf-cells-notvalid"] = ("vhalf", None)
 WORDS = {
     **{k: {"reduces": "reduces", "increases": "increases", "both": "reduces and increases", "no-effect": "no effect",
            "undefined": "undefined"} for k, (_, c) in PENDING.items() if c is PR1},
-    **{k: {"covers": "covers", "under-cells": "under-covers in cells", "under-joint": "under-covers jointly and in cells",
-           "under-joint-only": "under-covers jointly", "invalid": "invalid", "na": ""}
+    **{k: {"covers": "no under-coverage", "under-cells": "cells under", "under-joint": "joint and cells under",
+           "under-joint-only": "joint under", "invalid": "invalid", "na": ""}
        for k, (_, c) in PENDING.items() if c is LL5D_T},
 }
 # filled when a record lands: key -> class (or printed value); a group is filled only when every key has one
 VERDICTS = {}
+DERIVED = {"prr": ("prr-abs",),
+           "ll5d": ("ll5d-abs-minus2", "ll5d-abs-all", "ll5d-abs-close", "ll5d-anypass", "ll5d-anyunder", "ll5d-cellflags",
+                    "ll5d-anyweak", "ll5d-anyover", "ll5d-status")}
+
+
+def prr_derived(v):
+    """The prior-retention group's derived key: the abstract's class, from both flagged truths' PR-2a classes."""
+    return {"prr-abs": f"{v['prr-pr2a-gibuu']}-{v['prr-pr2a-q3']}"}
 
 
 def ll5d_derived(v):
@@ -269,49 +295,51 @@ def ll5d_derived(v):
         assert all(v[f"ll5d-{t}-{r}"] == "na" for t, r in tr), "a per-tune class on an ungraded campaign"
         assert v["ll5d-route"] == "na", "a route on an ungraded campaign"
         assert all(v[f"ll5d-{t}-{r}-{x}"] == "na" for t, r in tr for x in ("weak", "over", "clip")), "a flag, ungraded"
-        return {"ll5d-abstract": "stopped-offset" if camp == "offset-stopped" else "stopped-early",
-                "ll5d-status": "stopped"}
+        return {**{k: "na" for k in DERIVED["ll5d"]}, "ll5d-status": "stopped"}
     assert v["ll5d-route"] != "na" and all(v[f"ll5d-{t}-{r}"] != "na" for t, r in tr), "a graded campaign with na"
-    p = [v[f"ll5d-{t}-minus2"] for t in ("g18", "ar23")]
-    b = [v[f"ll5d-{t}-all"] for t in ("g18", "ar23")]
-    under = lambda c: c.startswith("under")  # noqa: E731
-    if p == ["covers", "covers"]:
-        nu, ni = sum(map(under, b)), b.count("invalid")
-        ab = (f"both-cover-bands-invalid-{('one', 'both')[ni - 1]}" if ni else
-              f"both-cover-bands-under-{('one', 'both')[nu - 1]}" if nu else "both-cover")
-    elif p.count("invalid") == 2:
-        ab = "invalid-both"
-    elif "invalid" in p:
-        ab = "invalid-one-under" if any(map(under, p)) else "invalid-one-covers"
-    else:
-        ab = "both-under" if all(map(under, p)) else "one-under"
-    st = "under" if any(map(under, p)) else "invalid" if "invalid" in p else "covers"
     for t, r in tr:                                  # the flags read only where the (tune, reading) was graded
+        c = v[f"ll5d-{t}-{r}"]
         for x in ("weak", "over", "clip"):
-            if v[f"ll5d-{t}-{r}"] == "invalid":
-                assert v[f"ll5d-{t}-{r}-{x}"] == "na", f"a {x} flag on an invalid reading"
-            else:
-                assert v[f"ll5d-{t}-{r}-{x}"] != "na", f"no {x} flag on a graded reading"
-        if v[f"ll5d-{t}-{r}"] in ("covers", "under-joint-only"):
-            assert v[f"ll5d-{t}-{r}-clip"] in ("none", "na"), "a clipping-artefact reading with no flagged cell"
-    return {"ll5d-abstract": ab, "ll5d-status": st}
+            assert (v[f"ll5d-{t}-{r}-{x}"] == "na") == (c == "invalid"), f"{t}/{r}: the {x} flag against {c}"
+        if c in ("covers", "under-joint-only"):
+            assert v[f"ll5d-{t}-{r}-clip"] == "none", "a clipping-artefact reading with no flagged cell"
+    out = {}
+    for r in ("minus2", "all"):
+        a, b = sorted((_TL[v[f"ll5d-{t}-{r}"]] for t in ("g18", "ar23")), key=_TO.index)
+        out[f"ll5d-abs-{r}"] = f"{a}-{b}"
+    cls = [v[f"ll5d-{t}-{r}"] for t, r in tr]
+    some = lambda cond: "some" if cond else "none"  # noqa: E731
+    out["ll5d-abs-close"] = "none" if all(c == "invalid" for c in cls) else "scope"
+    out["ll5d-anypass"] = some("covers" in cls)
+    out["ll5d-anyunder"] = some(any(c.startswith("under") for c in cls))
+    out["ll5d-cellflags"] = some(any(c in ("under-cells", "under-joint") for c in cls))
+    out["ll5d-anyweak"] = some(any(v[f"ll5d-{t}-{r}-weak"] == "some" for t, r in tr))
+    out["ll5d-anyover"] = some(any(v[f"ll5d-{t}-{r}-over"] == "some" for t, r in tr))
+    out["ll5d-status"] = ("covers" if all(c == "covers" for c in cls) else
+                          "under" if all(c.startswith("under") for c in cls) else
+                          "invalid" if all(c == "invalid" for c in cls) else "mixed")
+    return out
 
 
-
-def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, stop_check="[the check]"):
+def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, text=None):
     """One consistent filling of the like-for-like group, with its derived keys (fill tests and the pre-read pack).
 
     per[(tune, reading)] -> class (graded only); flags[(tune, reading, x)] -> "some" (x in weak, over, clip), else
-    "none" on a graded reading and "na" otherwise; cells[(tune, reading)] or cells[(tune, reading, x)] -> printed text.
+    "none" on a graded reading and "na" otherwise; cells[(tune, reading)] or cells[(tune, reading, x)] -> printed
+    text; text[key] overrides a printed value (stop-what, repair, offset, -stats, -why).
     """
-    per, flags, cells = per or {}, flags or {}, cells or {}
+    per, flags, cells, text = per or {}, flags or {}, cells or {}, text or {}
     graded = campaign == "graded"
-    v = {"ll5d-campaign": campaign, "ll5d-route": route if graded else "na", "ll5d-stop-check": stop_check}
+    v = {"ll5d-campaign": campaign, "ll5d-route": route if graded else "na",
+         "ll5d-stop-what": text.get("stop-what", "[the gate or check]"), "ll5d-repair": text.get("repair", "[the repair]"),
+         "ll5d-offset": text.get("offset", "[the largest offset, its cell, and the bound]")}
     for t in ("g18", "ar23"):
         for r in ("minus2", "all"):
             c = per.get((t, r), "covers") if graded else "na"
             v[f"ll5d-{t}-{r}"] = c
-            v[f"ll5d-{t}-{r}-cells"] = cells.get((t, r), "[cells R..]")
+            v[f"ll5d-{t}-{r}-cells"] = cells.get((t, r), "[cells R.., with their coverage fractions]")
+            v[f"ll5d-{t}-{r}-stats"] = text.get((t, r, "stats"), "[joint region: n of 300, flagged at k or fewer; mean chi2/ndf]")
+            v[f"ll5d-{t}-{r}-why"] = text.get((t, r, "why"), "[the failed control]")
             for x in ("weak", "over", "clip"):
                 v[f"ll5d-{t}-{r}-{x}"] = "na" if c in ("na", "invalid") else flags.get((t, r, x), "none")
                 v[f"ll5d-{t}-{r}-{x}-cells"] = cells.get((t, r, x), "[cells R..]")
@@ -321,30 +349,49 @@ def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, stop_c
 
 def ll5d_fill_cases():
     """Consistent fillings that between them give every class of every like-for-like key (check_round --fill-test)."""
-    P = lambda g, a, bg=None, ba=None: {("g18", "minus2"): g, ("ar23", "minus2"): a,  # noqa: E731
-                                        ("g18", "all"): bg or g, ("ar23", "all"): ba or a}
-    return [
-        ll5d_case("graded", P("covers", "covers")),
-        ll5d_case("graded", P("covers", "covers", "covers", "under-cells"), "offset-proceeded",
-                  {("ar23", "all", "clip"): "some"}),
-        ll5d_case("graded", P("covers", "covers", "under-joint", "under-joint-only"), "repaired",
-                  {("g18", "minus2", "weak"): "some", ("ar23", "minus2", "over"): "some"}),
-        ll5d_case("graded", P("covers", "covers", "invalid", "covers")),
-        ll5d_case("graded", P("covers", "covers", "invalid", "invalid")),
-        ll5d_case("graded", P("under-cells", "covers", "under-joint-only", "under-joint"), "direct",
-                  {("g18", "minus2", "clip"): "some", ("g18", "minus2", "over"): "some", ("g18", "all", "weak"): "some",
-                   ("g18", "all", "over"): "some", ("ar23", "all", "weak"): "some", ("ar23", "all", "over"): "some"}),
-        ll5d_case("graded", P("under-joint-only", "under-joint", "under-cells", "covers"), "direct",
-                  {("ar23", "minus2", "weak"): "some", ("ar23", "minus2", "clip"): "some", ("g18", "all", "clip"): "some"}),
-        ll5d_case("graded", P("invalid", "covers")),
-        ll5d_case("graded", P("under-joint", "invalid")),
-        ll5d_case("graded", P("covers", "under-joint-only")),
-        ll5d_case("graded", P("covers", "under-cells")),
-        ll5d_case("graded", P("invalid", "invalid")),
-        ll5d_case("gate-failed"),
-        ll5d_case("offset-stopped"),
-        ll5d_case("stop"),
-    ]
+    out, seen = [], set()
+    order = list(_TL)
+    for i, a in enumerate(order):                    # every per-variant pair, in each variant, with mixed partners
+        for b in order[i:]:
+            j = len(out)
+            pm = (a, b) if j % 2 else (b, a)
+            pa = (order[(j + 1) % 5], order[(j + 3) % 5])
+            per = {("g18", "minus2"): pm[0], ("ar23", "minus2"): pm[1], ("g18", "all"): pa[0], ("ar23", "all"): pa[1]}
+            flags = {}
+            for (t, r), c in per.items():
+                if c != "invalid":
+                    flags[(t, r, "weak")] = "some" if (j + len(t)) % 2 else "none"
+                    flags[(t, r, "over")] = "some" if (j + len(r)) % 3 == 0 else "none"
+                    if c in ("under-cells", "under-joint"):
+                        flags[(t, r, "clip")] = "some" if j % 2 else "none"
+            route = LL5D_ROUTE[j % 3]
+            out.append(ll5d_case("graded", per, route, flags))
+            for r in ("minus2", "all"):                # the same pair in the other variant
+                seen.add((r, out[-1][f"ll5d-abs-{r}"]))
+    for a in order:                                  # the pairs each variant has not yet had
+        for b in order[order.index(a):]:
+            pr = f"{_TL[a]}-{_TL[b]}" if _TO.index(_TL[a]) <= _TO.index(_TL[b]) else f"{_TL[b]}-{_TL[a]}"
+            for r, o in (("minus2", "all"), ("all", "minus2")):
+                if (r, pr) not in seen:
+                    per = {("g18", r): a, ("ar23", r): b, ("g18", o): "covers", ("ar23", o): "covers"}
+                    out.append(ll5d_case("graded", per))
+                    seen.add((r, pr))
+    out.append(ll5d_case("graded", {(t, r): "covers" for t in ("g18", "ar23") for r in ("minus2", "all")}))
+    out.append(ll5d_case("graded", {(t, r): "invalid" for t in ("g18", "ar23") for r in ("minus2", "all")}))
+    out.append(ll5d_case("graded", {(t, r): "under-cells" for t in ("g18", "ar23") for r in ("minus2", "all")}))
+    out += [ll5d_case("gate-failed"), ll5d_case("offset-stopped"), ll5d_case("stop")]
+    return out
+
+
+def prr_fill_cases():
+    """Every PR-2a pair (and so every abstract class), with PR-2b cycled."""
+    out = []
+    for i, cls in enumerate(PRR_ABS):
+        g, q = cls.split("-")
+        out.append({"prr-pr2a-gibuu": g, "prr-pr2a-q3": q, "prr-pr2b-gibuu": PR2B[i % 4], "prr-pr2b-q3": PR2B[(i + 1) % 4],
+                    "prr-abs": cls})
+    return out
+
 
 def pending_lines(verdicts=None):
     """The TeX for the pending groups and keys: a group's state, each key's class (\\fvcase) and printed value."""
@@ -354,9 +401,9 @@ def pending_lines(verdicts=None):
         keys = [k for k, (gg, _) in PENDING.items() if gg == g]
         have = [k for k in keys if k in verdicts]
         assert not have or len(have) == len(keys), f"group {g} is part-filled: {sorted(set(keys) - set(have))[:4]}"
-        if g == "ll5d" and have:
-            want = ll5d_derived(verdicts)
-            assert all(verdicts[k] == x for k, x in want.items()), f"ll5d derived keys {want} disagree with the verdicts"
+        if have and g in DERIVED:
+            want = (ll5d_derived if g == "ll5d" else prr_derived)(verdicts)
+            assert all(verdicts[k] == x for k, x in want.items()), f"{g} derived keys {want} disagree with the verdicts"
         out.append(rf"\@namedef{{fvg@{g}}}{{{'FILLED' if have else 'PENDING'}}}")
         out.append(rf"\@namedef{{fvgd@{g}}}{{{PENDING_GROUPS[g]}}}")
     for k, (g, classes) in sorted(PENDING.items()):

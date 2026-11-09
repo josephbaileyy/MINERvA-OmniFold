@@ -123,3 +123,25 @@ rules and variant rows above are the ones the fixes introduced. `make_values_fiv
 that reach every class of every like-for-like key, and the fill test uses them. The C3 check above was re-read for the
 new classes: §1, §7 ¶1 and Limitation 1 stay true in each, and every covering abstract class now names the procedure's
 rebuilt covariance and says the result is not about the reported intervals.
+
+**Pre-read rulings (2026-11-09, #998; ledger P-9 to P-27).** These supersede the like-for-like rows above where they
+differ.
+- **Derived keys** (`ll5d_derived()`):
+  - `ll5d-abs-{minus2,all}`: the unordered pair of a variant's two tune classes (c, uc, uj, ujc, i), 15 classes plus
+    na. One abstract clause per variant.
+  - `ll5d-abs-close`: scope, or none when every reading is invalid.
+  - `ll5d-{anypass,anyunder,cellflags,anyweak,anyover}`: some or none (EMPTY none, na).
+  - `ll5d-status`: covers (all four cover), under (all four under-cover), invalid (all four invalid), mixed
+    (otherwise), stopped.
+  - `ll5d-abstract` is retired.
+- **New printed values:**
+  - `ll5d-stop-what`, `ll5d-repair` and `ll5d-offset`;
+  - per (tune, reading), `-stats`: fd_1b_mc.grade's joint_count, k_joint, chi2_mean_over_ndf with its se, and ndf;
+  - per (tune, reading), `-why`: the failed control, from the reading rule or the step's `why`;
+  - `-cells` now carries each flagged cell's coverage fraction, counts/300.
+- **IBU:**
+  - `prr-abs` (`prr_derived()`): the ordered pair of the two truths' PR-2a classes, 16 classes. The abstract says
+    "at both of those truths" or splits.
+  - `prr-ibu-bar`: prr_read's `floor.bars.IBU`.
+- **Fill cases:** `ll5d_fill_cases()` (31) and `prr_fill_cases()` (16) together reach every class. The fill test uses
+  both.
