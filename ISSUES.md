@@ -542,7 +542,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. The four quotes are different comparisons. Do not replace them with one macro.
 * **S2-ACC-3 [T]** — **Tune v1 in quasielastic–Δ dip inconsistency.** Same finding as S1-ACC-1.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-ACC-1, which has landed. Do not restore the dip under-prediction sentence, and do not add a localization claim.
-* **S2-ACC-4 [T]** — **Which coverage test "did not run to a result".** Same finding as S1-ACC-4.
+* **S2-ACC-4 [T]** — **Which coverage test "did not run to a result".** Same finding as S1-ACC-4.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-ACC-4, which has landed. The abstract already names the two tests separately. Do not merge them.
 * **S2-ACC-5 [T]** — **Detector-response-mismatch closure status.**  
   *Finding:* §5 says "not run", while App. D reports shifted response closures with $|\\Delta|/\\sigma$ up to 0.97.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:35`, `app_response_mismatch.tex:12`.  
