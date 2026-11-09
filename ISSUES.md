@@ -650,7 +650,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-COM-10 [T]** — **Hidden-variable closure fails at largest amplitude.**  
   *Finding:* Hidden-variable closure fails at $A = 0.30$; injected bump closures have narrow passes or no predeclared thresholds.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:170`.  
-  *Resolution:* Disclose failure at $A = 0.30$ and discuss sensitivity limitations.
+  *Resolution:* This row authorizes no tex edit. The A=0.30 failure and the narrow or unthresholded closures are already stated. Do not add a further discussion.
 * **S2-COM-11 [T]** — **Purity-subtracted central value in use in 5D.**  
   *Finding:* Config-(a) 5D value retains known purity background bias (8–12$\\sigma$ stat at high $W$).  
   *Evidence:* `docs/analysis-note/sec_eavailw.tex:130`, App. C.8.  
