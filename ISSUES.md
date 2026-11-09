@@ -914,7 +914,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G2-COM-4 [T]** — **Uncorrected Miss-Weight Approximation in Systematics.**  
   *Finding:* Miss weights evaluated on central MC without reweighting under systematic universes.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:190`.  
-  *Resolution:* Disclose miss-weight approximation in systematics discussion.
+  *Resolution:* This row authorizes no tex edit. The approximation is already disclosed. The systematic-universe unfolds approximate the weighting of events that fail reconstruction, the approximation is not corrected, and its effect has not been measured beyond the two-universe test. Do not add a further sentence. Do not add the internal label miss-weight.
 * **G2-COM-5 [T]** — **Pending Detector-Response Mismatch Closure Test.** Same finding as S2-ACC-5 / G1-COM-2.
 * **G2-COM-6 [T]** — **Missing Configuration Records and Run Logs.** Same finding as S2-COM-3 / G1-CONT-3.
 * **G2-COM-7 [T]** — **Unverified Systematics (Zeroed DIS and Inferred POT).** Same finding as S2-COM-12 / G1-COM-8.
