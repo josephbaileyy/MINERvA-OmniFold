@@ -735,7 +735,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-PRES-5 [T]** — **Fig. 7 error bars are MC weight statistics.**  
   *Finding:* Headline figure error bars are MC weight statistics, not experimental uncertainties.  
   *Evidence:* Caption to Fig. 7.  
-  *Resolution:* Explicitly explain error bar meaning in caption.
+  *Resolution:* This row authorizes no tex edit. The Fig. 7 caption already says the vertical error bars are the weight statistics of the reweighted simulated sample, and that they are neither the data's statistical uncertainty nor the reported covariance. Do not add a further explanation.
 * **S2-PRES-6 [T]** — **Fig. 23 colorbar reads `data/GENIE` instead of `data/Tune v1`.**  
   *Finding:* Mislabeled denominator on Fig. 23 colorbar.  
   *Evidence:* Fig. 23 graphic and caption.  
