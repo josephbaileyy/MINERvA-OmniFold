@@ -722,7 +722,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 * **S2-PRES-1 [T]** — **Length and executive summary organization.** Same finding as S1-PRES-1.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-PRES-1. Do not rewrite the executive summary. The citability matrix stays.
-* **S2-PRES-2 [T]** — **Heavy repetition of caveats.** Same finding as S1-PRES-2.
+* **S2-PRES-2 [T]** — **Heavy repetition of caveats.** Same finding as S1-PRES-2.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-PRES-2. Do not consolidate limitation paragraphs until a later instruction names two paragraphs that are the same text.
 * **S2-PRES-3 [T]** — **Appendix figures/tables numbering and splitting across pages.**  
   *Finding:* Fix figures/tables numbered after use or split awkwardly across pages (Figs. 36, 37; Tables 3, 6, 13, 16, 18).  
   *Evidence:* Global formatting.  
