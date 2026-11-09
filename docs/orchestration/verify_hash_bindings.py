@@ -504,8 +504,8 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage0/readout.json 05be73ee
 #: Power-tested after the bump: one flipped hex digit in each of the five pins gives MISMATCH on that path, rc 1.
 #: Delta and controls: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-attribution/binding-delta.txt.
-#: 166 -> 167, digest 6a2ac974 -> 18818a17 (2026-11-09, the s5e A3 rounding-shift extraction, branch
-#: receipts/s5e-a3-rounding-shifts-20261109; the director's ruling (a), after the 107233af precedent). Its record
+#: 166 -> 167, digest 6a2ac974 -> 18818a17 (2026-11-09, the s5e A3 rounding-shift extraction, PR #1008; the
+#: director's ruling (a), after the 107233af precedent). Its record
 #: (state/s5e/cand/a3-rounding-shifts-20261109/cluster/a3_rounding_shifts.json, written on the cluster) pins the
 #: producer it ran. Enumerated before the constant moved (receipt_inventory() rows with and without that record on the
 #: branch): one ADDED, nothing removed or repointed, OK:
