@@ -772,7 +772,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-ACC-5 [T]** — **Discrepancy between systematic median uncertainty in text and Table 8.**  
   *Finding:* Systematic median uncertainty quoted as 5.14% in §4.1 vs 5.38% in Table 8.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:45`, Table 8.  
-  *Resolution:* Reconcile text with Table 8 macros.
+  *Resolution:* This row authorizes no tex edit. The cited 5.14% and 5.38% are not in the note. The cited line is a source comment. Do not harmonize a median uncertainty to a value from values.tex.
 * **G1-ACC-6 [D]** — **Neutral pion mass subtraction for charged pions in Eq. (1).**  
   *Finding:* Referee questions $(E_{\\pi^\\pm} - m_{\\pi^0})$ in $E_{\\text{avail}}$ definition as unphysical.  
   *Resolution:* **DISPUTE.** The subtraction $E_{\\text{avail}} = \\sum T_p + \\sum T_\\pi + \\sum E_\\gamma + (E_{\\pi^\\pm} - m_{\\pi^0})$ is the established, published MINERvA analysis definition inherited from previous CC-inclusive analyses. Clarify text to state explicitly that this is an intentional convention.
