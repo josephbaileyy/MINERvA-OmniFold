@@ -285,7 +285,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-19 [T]** — **2p2h standard magnitude arithmetic in §7.7.**  
   *Finding:* Reconcile statement that closing deficit requires 2p2h at ~45% of QE with $f_{\\text{MEC}} = 2.87\\%$ of CC total and $\\text{QE} = 11\\%$.  
   *Evidence:* `docs/analysis-note/sec_3d.tex:155`.  
-  *Resolution:* Clarify post-flux phase-space definitions and show exact arithmetic.
+  *Resolution:* Those statements are already in sec_3d.tex. Do not add an arithmetic that identifies 2.87% of the CC total with 45% of QE. This row authorizes no tex edit.
 
 ### Section 4: Completeness as a Citable Record
 
