@@ -79,3 +79,23 @@ byte-identical. The other campaigns that share these files read them without mov
 3. **No two lanes' connects copy the shared files at the same time.** P2's and P3's connects log their copy or read
    window to the second; the director names each launch window.
 4. Everything else in binding 1 stands.
+
+## Binding 1, addendum A2: P3's job layout, repriced (director, 2026-11-09)
+
+**What led to it.** limitation-resolver found, while preparing P3, that §7's "112 other items on 3 nodes × 8 lanes, at
+most 5 per lane" cannot be realized. A table line is one `fd_1b_band_diag.py unfold` call with a single mode, seed, ε
+and channel, so a lane holds only items of one group. `bulk_items()` at M has 16 groups: 12 of 8 universes ((E, B) ×
+seeds 45, 48, 51, 54 and ε ½, 2 at seed 42) and 4 of 4 ((E, B) × signal, background). At most 5 per lane needs at least
+28 lines, which 24 lanes cannot hold without queued lines breaking the unit-time wall bound (about 11,620 s against
+02:30:00). The lane reported it as its own declaration's error, before any P3 submission.
+
+**Rulings:**
+1. **P3 is 4 jobs × 7 lanes × 4 items:** 28 lines, each of 4 distinct universes from one group (the 12 groups of 8
+   split 4 + 4; the 4 channel groups whole). Job j runs lines 7j to 7j+6.
+2. **`--time=01:40:00` per job** (6,000 s against a worst lane at the unit of 4 × (1,370 + 75) + 60 = 5,840 s).
+   Reserved 4 × 1.667 = 6.67 node-h; with P2's 1.5, 8.17, inside the **unchanged 9.0 cap**.
+3. **P3's table generator refuses** unless the 28 lines carry exactly `bulk_items()`, each line is one group, no item is
+   in `pilot_items()`, and every item is in `items()`. It is gated by sha256 in the connect.
+4. **Unchanged:** the items, the controls, the gates (P2's PASS and EQUAL, the identical re-stat, coverage-5b-audit's
+   read of P2's readout), the fence of addendum A1, 32 threads per lane, and the family `fd1b_bdg_p3`. This replaces only
+   binding ruling 2's "P3, the bulk: 3 jobs at `--time=02:30:00`".
