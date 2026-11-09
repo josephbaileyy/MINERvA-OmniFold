@@ -150,3 +150,8 @@ J/H2/EW in the caption. Only the cell of maximum |z| in an outlined row now rece
 label, at two decimals as in the table. Thus every printed maximum is covered by check_against;
 no nonmaximum cell is numerically annotated. The hard-to-read negative nonmaximum label is removed.
 Colourbar starts with z. Inputs, plotted coordinates and scientific claims unchanged.
+
+
+Integrator's final count request: caption now prints J/H2/EW with 109/27/39, explicitly sourced to
+app_statmethods_nd.tex:25 and verified by the pinned reduction. This supersedes earlier count removal.
+The caption source comment quotes sec_5d.tex:204 verbatim for the correlation/bias limitation.
