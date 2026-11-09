@@ -1,0 +1,20 @@
+# FD-PRR prr_cap receipt: checks rerun in a clean clone at d0fc0e491aa5db384b09772f0959f4ef3cf3cc27, 2026-11-09T11:19:32Z
+# one serial process, nice -n 19, thread caps 1; porcelain before: 0
+## 1. python3 -I lane/verify_receipts.py <cap> e791abe3eb1ffafc1f401d0668d0770edf06464285f2d1cd00ae0816bd442141
+OK  log-cap/SHA256SUMS e791abe3eb1ffafc1f401d0668d0770edf06464285f2d1cd00ae0816bd442141
+165 files in cluster/SHA256SUMS, 165 match, 39 renamed, 0 renamed files missing; log-cap/SHA256SUMS matches
+rc=0
+## 2. python3 -I lane/cap_times.py <receipts-prr>, compared byte for byte with lane/cap_times.json
+rc=0
+identical: sha256 f007bdf38a19c50a57be13e1457007794a17da29d492a65bc4074817e15cbbce
+## 3. the iter and dry receipts' verifiers on their unchanged files
+225 files in cluster/SHA256SUMS, 225 match, 54 renamed
+rc=0
+85 files in cluster/SHA256SUMS, 85 match, 26 renamed
+rc=0
+## 4. cap/cluster-final/post.log.txt against cap/cluster/post.log.txt: lines added, lines removed
+diff rc=1 added 3 removed 0
+## 5. log-dry/SHA256SUMS and log-iter/SHA256SUMS against the cluster sha256 in cap/README.md
+3e8c59f31c43decd1633d2ab6089138a06a072438c9666b1c5c9dff44d5f1af3  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/cluster/log-iter/SHA256SUMS
+082506fae14749f8791bb227e9bf8bca29e87200abbd8ff29d75f0feb69a0f3d  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/dry/cluster/log-dry/SHA256SUMS
+# porcelain after: 0

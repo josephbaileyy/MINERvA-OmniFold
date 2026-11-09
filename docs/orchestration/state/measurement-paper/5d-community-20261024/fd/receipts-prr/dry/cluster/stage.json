@@ -1,0 +1,120 @@
+{
+ "schema": "prr-stage/1",
+ "dest": "/pscratch/sd/j/josephrb/fd-prr-20261108/stage",
+ "files": [
+  {
+   "role": "of_inputs_5d",
+   "src": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+   "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+   "name": "of_inputs_5d.npz",
+   "copy": "/pscratch/sd/j/josephrb/fd-prr-20261108/stage/of_inputs_5d.npz",
+   "stat_before": {
+    "size": 1548438020,
+    "mtime_ns": 1782610308000000000,
+    "atime_ns": 1794179838000000000,
+    "ino": 882725251803251539
+   },
+   "stat_after": {
+    "size": 1548438020,
+    "mtime_ns": 1782610308000000000,
+    "atime_ns": 1794179838000000000,
+    "ino": 882725251803251539
+   }
+  },
+  {
+   "role": "bkg_dump",
+   "src": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+   "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955",
+   "name": "bkg_dump.npz",
+   "copy": "/pscratch/sd/j/josephrb/fd-prr-20261108/stage/bkg_dump.npz",
+   "stat_before": {
+    "size": 16017201,
+    "mtime_ns": 1790319104000000000,
+    "atime_ns": 1794179838000000000,
+    "ino": 882726729389460450
+   },
+   "stat_after": {
+    "size": 16017201,
+    "mtime_ns": 1790319104000000000,
+    "atime_ns": 1794179838000000000,
+    "ino": 882726729389460450
+   }
+  },
+  {
+   "role": "bank_cv",
+   "src": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz",
+   "sha256": "072643e1e86ed0f359fa2dc94b87eebe5c9437615c05df5fbeb65e7d89ce9e3b",
+   "name": "bank/cv.npz",
+   "copy": "/pscratch/sd/j/josephrb/fd-prr-20261108/stage/bank/cv.npz",
+   "stat_before": {
+    "size": 2163648810,
+    "mtime_ns": 1784034785000000000,
+    "atime_ns": 1794179841000000000,
+    "ino": 882725636068606034
+   },
+   "stat_after": {
+    "size": 2163648810,
+    "mtime_ns": 1784034785000000000,
+    "atime_ns": 1794179841000000000,
+    "ino": 882725636068606034
+   }
+  },
+  {
+   "role": "closure_ratio_nuwro",
+   "src": "/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json",
+   "sha256": "38e47eb6b6ac63f6657022ae0cc5a2b5eaffc6a2e503735ce7222275771fea6e",
+   "name": "pvl/prep/ratios/L-5D-PV/nuwro.json",
+   "copy": "/pscratch/sd/j/josephrb/fd-prr-20261108/stage/pvl/prep/ratios/L-5D-PV/nuwro.json",
+   "stat_before": {
+    "size": 547429,
+    "mtime_ns": 1792832124000000000,
+    "atime_ns": 1794169508000000000,
+    "ino": 882727026430050692
+   },
+   "stat_after": {
+    "size": 547429,
+    "mtime_ns": 1792832124000000000,
+    "atime_ns": 1794169508000000000,
+    "ino": 882727026430050692
+   }
+  },
+  {
+   "role": "fd_stab_control_nominal",
+   "src": "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/nominal/stab_control_nominal_s991000.npz",
+   "sha256": "3753f4149fdcda5b7a67fad0eddb5b783e4642636d1574849743b9eb733f6cf4",
+   "name": "fd-stab/stab_control_nominal_s991000.npz",
+   "copy": "/pscratch/sd/j/josephrb/fd-prr-20261108/stage/fd-stab/stab_control_nominal_s991000.npz",
+   "stat_before": {
+    "size": 184571,
+    "mtime_ns": 1793838582000000000,
+    "atime_ns": 1793873922000000000,
+    "ino": 882727265857700431
+   },
+   "stat_after": {
+    "size": 184571,
+    "mtime_ns": 1793838582000000000,
+    "atime_ns": 1793873922000000000,
+    "ino": 882727265857700431
+   }
+  },
+  {
+   "role": "fd_stab_control_A7_gibuu",
+   "src": "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_gibuu/stab_control_A7_gibuu_s991000.npz",
+   "sha256": "b4d2ba5c34199352f90aab36b3a3c1cc9ad55c3cab79b375eb2c398746435179",
+   "name": "fd-stab/stab_control_A7_gibuu_s991000.npz",
+   "copy": "/pscratch/sd/j/josephrb/fd-prr-20261108/stage/fd-stab/stab_control_A7_gibuu_s991000.npz",
+   "stat_before": {
+    "size": 184716,
+    "mtime_ns": 1793870907000000000,
+    "atime_ns": 1793873922000000000,
+    "ino": 882727271964607420
+   },
+   "stat_after": {
+    "size": 184716,
+    "mtime_ns": 1793870907000000000,
+    "atime_ns": 1793873922000000000,
+    "ino": 882727271964607420
+   }
+  }
+ ]
+}

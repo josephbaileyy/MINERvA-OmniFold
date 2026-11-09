@@ -1,0 +1,58 @@
+login36
+2026-11-09T18:23:52Z
+== find log-ibu route2
+d 4096 2026-11-09T10:11 log-ibu
+f 388 2026-11-09T10:10 log-ibu/env.log
+f 5 2026-11-09T10:11 log-ibu/FAILED
+f 151 2026-11-09T10:11 log-ibu/ibu.log
+d 4096 2026-11-09T10:10 log-ibu/tasks
+f 0 2026-11-09T10:11 log-ibu/verify-stage.log
+d 4096 2026-11-09T10:11 route2
+== sha256
+986cd8be1cbe0a1a8b5640e6417203f8bfedea06b9284be5b62163521c164608  log-ibu/env.log
+9830ce9d409097e8147e1ce53d55c9b0539a7344c241bd2caad75ca441f08355  log-ibu/FAILED
+6c0c07e7bc387fb7b6f1edcfe7c5106c9c4c4114e419e1ea1fdb19083763b1e6  log-ibu/ibu.log
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  log-ibu/verify-stage.log
+ad09bcc548581c24b878cf05f66996d0a8ba6bd2f15b1ab9f1aa44b6664953ae  logs/prr_ibu_61043652.out
+def4009295989967af8e3eca07627664223bb71e8a762636cb7248ec01871a1c  logs/connect-ibu-2.log
+9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  logs/connect-ibu-2.done
+9474febe2b786898450973682b42c6fc622acc69ee5ba1debd4c0595e09533dc  logs/ibu-2.jobid
+== ibu logs
+charge-before-ibu-2.txt
+charge-before-ibu.txt
+clone-ibu-2.log
+clone-ibu.log
+connect-ibu-2.done
+connect-ibu-2.log
+connect-ibu.done
+connect-ibu.log
+connect-source-ibu-2.log
+connect-source-ibu.log
+env-precheck-ibu-2.log
+env-precheck-ibu.log
+ibu-2.jobid
+ibu.jobid
+prr_ibu-2_submit.sh
+prr_ibu_61035510.out
+prr_ibu_61043652.out
+prr_ibu_submit.sh
+sourced-python-ibu-2.err
+sourced-python-ibu.err
+submit-ibu-2.out
+submit-ibu.out
+== absent
+ls: cannot access 'post-ibu': No such file or directory
+ls: cannot access 'post-ibu.tar.gz': No such file or directory
+== squeue
+61040235 ll5d_gate_AR23 RUNNING
+61040163 ll5d_gate_G18 RUNNING
+== sacct
+61043652|prr_ibu|FAILED|1:0|00:02:12|132|1|256|2026-11-09T10:09:24|2026-11-09T10:11:36|00:30:00
+61043652.batch|batch|FAILED|1:0|00:02:12|132|1|256|2026-11-09T10:09:24|2026-11-09T10:11:36|
+61043652.extern|extern|COMPLETED|0:0|00:02:14|134|1|256|2026-11-09T10:09:24|2026-11-09T10:11:38|
+61022062|prr_dry|COMPLETED|3648|1
+61024185|prr_iter|COMPLETED|9038|1
+61028298|prr_cap|COMPLETED|5220|1
+61030122|prr_misc|COMPLETED|8657|1
+61035510|prr_ibu|FAILED|41|1
+61043652|prr_ibu|FAILED|132|1

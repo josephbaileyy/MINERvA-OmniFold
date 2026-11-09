@@ -1,0 +1,44 @@
+FD-PRR addendum A3 (the union with A2, at its merge of main): the JobScript class alone, after the other run ended
+date_utc: 2026-11-09T15:51:35Z  host: DN0a1f6baa
+clone: a clean clone, HEAD 08848a768b684164ebde74a7cd24fac4369cf8e9, porcelain lines before: 0
+python: 3.12.2  numpy: 1.26.4  scipy: 1.15.2  bash: GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25)
+thread caps: OMP=1 MKL=1 OPENBLAS=1 NUMEXPR=1 VECLIB=1; nice -n 19; one serial process
+f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232  prr_probe.py
+17acad82bad7c43f45c423e41039eb81381f5acab15ecdf983ad0d023848d046  prr_ibu.py
+d7c7c2c0d6cbe4a13d445a779335699de3d5275c4bcd3efc9f4e84a166868fbe  prr_read.py
+4493aad5dff0a8a0316c0f8b4d159c8f08c7666856474b5cf9c4c963a3a7e975  sbatch_prr.sh
+c600e4b1c291eabb1c4083539df557cba5f35e1f081e04fd4dbe46b9216a0b8e  test_prr.py
+dfa994667f4afe8133aab77849e13594ca4d420beb29b22bc41f8d0202cc8337  prr_mutation.py
+command: echo job | nice -n 19 python3 -B -c "<the loader selection: the JobScript class alone>"
+----
+collected 110, selected 15
+test_a_failed_pair_stops_the_dry_run_and_every_full_job (test_prr.JobScript.test_a_failed_pair_stops_the_dry_run_and_every_full_job) ... ok
+test_a_failed_task_leaves_no_done (test_prr.JobScript.test_a_failed_task_leaves_no_done) ... ok
+test_a_full_job_refuses_a_changed_stage (test_prr.JobScript.test_a_full_job_refuses_a_changed_stage) ... ok
+test_a_limit_above_the_declared_is_refused (test_prr.JobScript.test_a_limit_above_the_declared_is_refused) ... ok
+test_a_refused_staging_stops_before_any_task (test_prr.JobScript.test_a_refused_staging_stops_before_any_task) ... ok
+test_a_sub_hour_limit_in_squeues_m_ss_form_is_read (test_prr.JobScript.test_a_sub_hour_limit_in_squeues_m_ss_form_is_read)
+REQUIRED (Addendum A3). squeue's %l prints a limit under an hour as M:SS: prr_ibu's 0:30:00 reads "30:00". ... ok
+test_a_wrong_pin_or_a_rerun_is_refused (test_prr.JobScript.test_a_wrong_pin_or_a_rerun_is_refused) ... ok
+test_an_ens1_job_queued_or_running_refuses_the_dry_run (test_prr.JobScript.test_an_ens1_job_queued_or_running_refuses_the_dry_run) ... ok
+test_an_unreadable_limit_is_refused_as_unreadable_not_as_exceeding (test_prr.JobScript.test_an_unreadable_limit_is_refused_as_unreadable_not_as_exceeding)
+A3. A limit in no form Slurm prints (UNLIMITED, INVALID, four fields) is refused with its own message, ... ok
+test_dry_then_a_full_job_then_ibu (test_prr.JobScript.test_dry_then_a_full_job_then_ibu) ... ok
+test_every_python3_call_runs_after_the_environment_is_sourced (test_prr.JobScript.test_every_python3_call_runs_after_the_environment_is_sourced)
+REQUIRED (Addendum A1). The job starts with the login node's python3, 3.6.15 on the cluster, which cannot ... ok
+test_one_field_is_minutes_and_a_limit_equal_to_the_declared_passes (test_prr.JobScript.test_one_field_is_minutes_and_a_limit_equal_to_the_declared_passes)
+A3. One field is minutes: "316" is refused as exceeding 5:15:00, and "315", equal to it, passes. ... ok
+test_outside_slurm_without_the_smoke_flag_it_refuses (test_prr.JobScript.test_outside_slurm_without_the_smoke_flag_it_refuses) ... ok
+test_the_day_forms_are_read (test_prr.JobScript.test_the_day_forms_are_read)
+A3. With a day, D-H, D-H:MM and D-H:MM:SS: "1-0" (one day) and "0-05:16" are refused as exceeding; ... ok
+test_two_fields_are_minutes_and_seconds (test_prr.JobScript.test_two_fields_are_minutes_and_seconds)
+A3. Two fields are M:SS, as Slurm prints them: "316:00" is 316 min, above 5:15:00, refused as exceeding; ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 33.991s
+
+OK
+----
+rc=0
+porcelain lines after: 0
+date_utc: 2026-11-09T15:52:10Z

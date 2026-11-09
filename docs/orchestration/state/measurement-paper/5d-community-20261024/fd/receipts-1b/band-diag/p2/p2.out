@@ -1,0 +1,59 @@
+node login27 2026-11-09T00:11:26Z
+connect script sha256 a59fba1791197ab7e2fc3da607f7b202c1d8af72e54e88af33b4b6b374581335
+== 1. iris (read first) 2026-11-09T00:11:26Z
+Project      Charged(user)    Allocated(user)     Charged    Allocated
+---------  ---------------  -----------------  ----------  -----------
+m3246               2422.8            10000.0     18340.4      20000.0
+iris rc=0; m3246 row: [m3246               2422.8            10000.0     18340.4      20000.0]
+balance: user remaining 7577.2, project remaining 1659.6, cap 9.0; half user 3788.6, half project 829.8 -> OK
+== 2. fence (before anything is written) 2026-11-09T00:11:26Z
+squeue rc=0; rows:
+
+-- end rows
+refusing rows: []
+FENCE: clear
+== 3. fresh deploy clone at M 2026-11-09T00:11:27Z
+deploy HEAD 83ac32fb5024026ac6c51c0621d5ae9ff9073370; porcelain lines 0 2026-11-09T00:12:04Z
+sha256 658ca91849a8151a4fb801e41004102f0ba621c367f1c23146a8fc3a580484df (bound 658ca91849a8151a4fb801e41004102f0ba621c367f1c23146a8fc3a580484df) nd-unfolding/fd_1b_band_diag.py
+sha256 b72aaa627d12e6953ad6b1f40a4ae35ffd9b5439db3c0114defe93742f14c6d3 (bound b72aaa627d12e6953ad6b1f40a4ae35ffd9b5439db3c0114defe93742f14c6d3) docs/orchestration/state/gpu-timing-20261023/tools/sbatch_timing_packed.sh
+sha256 dd95db5de1a801eb6b47c8d60bc7da43532ed2ad38e10597ae2db94c0a12526f (bound dd95db5de1a801eb6b47c8d60bc7da43532ed2ad38e10597ae2db94c0a12526f) nd-unfolding/s5c_array.sh
+sha256 30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b (bound 30162f57771c9d5a1206eae623a7eb3fc80ac3f0bb150c82fb561be7254b510b) nd-unfolding/mnv_guarded_run.py
+sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48 (bound ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48) setup_salloc_env.sh
+setup_salloc_env.sh blob b4a9c3f6bb766d8488cbab98878cbac1262cc1bb (bound b4a9c3f6bb766d8488cbab98878cbac1262cc1bb)
+== 4. the wrapper, the probe and the table generator
+sha256 d8b9ea6832d7125f2768c5585d2e4735fef71bca8c1c3ba85582e0ec326ae863 (expected d8b9ea6832d7125f2768c5585d2e4735fef71bca8c1c3ba85582e0ec326ae863) bdg_p2_wrapper.sh
+sha256 d93697123b1e3c5a467efde2488dff8422c684061b39f58fa8cc82c545e6190f (expected d93697123b1e3c5a467efde2488dff8422c684061b39f58fa8cc82c545e6190f) pfd_threadprobe.py
+sha256 3ba4ad306afc937a71fa489c0243ea123464b50dcd8e22a815207cc7a1275ce9 (expected 3ba4ad306afc937a71fa489c0243ea123464b50dcd8e22a815207cc7a1275ce9) make_bdg_p2_tables.py
+== 5. the task tables 2026-11-09T00:12:05Z
+TABLES: 1 inputs line; 8 unfold lines carrying the 14 pilot items: E CV,GEANT_Neutron_0; E GEANT_Neutron_1,GEANT_Pion_0; E GEANT_Pion_1,GEANT_Proton_0; E GEANT_Proton_1,MinosEfficiency_0; E MinosEfficiency_1; B CV,GEANT_Neutron_0; B GEANT_Neutron_1,GEANT_Proton_0; B GEANT_Proton_1
+tasks-p2-inputs.tsv sha256 4f42373fe20395e418855e9d2d52bc38508263fc5cd2d3713e1633ef3fb3396e
+# band diagnosis, P2 (FD-1B-BAND-DIAGNOSIS-DECLARATION.md section 7; BINDING-1 ruling 2)
+fd1b_bdg_p2_inputs	fd_1b_band_diag.py	inputs	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--out	/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/p2/inputs.json
+tasks-p2.tsv sha256 a79a5db1f5f952d758389166e5b9776f23f99e5297a7c6d8d9f7e6252e44a855
+# band diagnosis, P2 (FD-1B-BAND-DIAGNOSIS-DECLARATION.md section 7; BINDING-1 ruling 2)
+fd1b_bdg_p2_0_E	fd_1b_band_diag.py	unfold	--mode	E	--seed	42	--eps	1	--channel	both	--universes	CV,GEANT_Neutron_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf
+fd1b_bdg_p2_1_E	fd_1b_band_diag.py	unfold	--mode	E	--seed	42	--eps	1	--channel	both	--universes	GEANT_Neutron_1,GEANT_Pion_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf
+fd1b_bdg_p2_2_E	fd_1b_band_diag.py	unfold	--mode	E	--seed	42	--eps	1	--channel	both	--universes	GEANT_Pion_1,GEANT_Proton_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf
+fd1b_bdg_p2_3_E	fd_1b_band_diag.py	unfold	--mode	E	--seed	42	--eps	1	--channel	both	--universes	GEANT_Proton_1,MinosEfficiency_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf
+fd1b_bdg_p2_4_E	fd_1b_band_diag.py	unfold	--mode	E	--seed	42	--eps	1	--channel	both	--universes	MinosEfficiency_1	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf
+fd1b_bdg_p2_5_B	fd_1b_band_diag.py	unfold	--mode	B	--seed	42	--eps	1	--channel	both	--universes	CV,GEANT_Neutron_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf
+fd1b_bdg_p2_6_B	fd_1b_band_diag.py	unfold	--mode	B	--seed	42	--eps	1	--channel	both	--universes	GEANT_Neutron_1,GEANT_Proton_0	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf
+fd1b_bdg_p2_7_B	fd_1b_band_diag.py	unfold	--mode	B	--seed	42	--eps	1	--channel	both	--universes	GEANT_Proton_1	--npz	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz	--bkg	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz	--bank	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware	--detector-dir	/pscratch/sd/j/josephrb/s5p-20260926/bank_detector	--pins	/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json	--expect-pins-sha256	5adcd576eb46f443fe4133b05044cd315c0eeb0f281e21acee5f2318b4bab248	--threads	32	--out	/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf
+unfold lines 8; inputs lines 1
+== 6. section 5's control: the 73 sources against P1's stat-before.txt (stat only) 2026-11-09T00:12:05Z
+stat-submit.txt: 73 lines; sha256 7986e2bf31aac583c03273f96804c2adaac85bcfdde5bd4b3da5b0f834c95b22 2026-11-09T00:12:05Z
+sources: byte-identical to P1's stat-before
+== 7. thread variables in the submitting shell (none set; inherited by the job through --export=ALL)
+OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+== 8. fence, immediately before submission 2026-11-09T00:12:05Z
+squeue rc=0; rows:
+
+-- end rows
+refusing rows: []
+FENCE: clear
+sbatch -A m3246 -q regular -C cpu --nodes=1 --exclusive --no-requeue --export=ALL,HOME=/global/homes/j/josephrb --time=01:30:00 -J fd1b_bdg_p2 -o /pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/p2/logs/%x_%j.out /pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/p2/tools/bdg_p2_wrapper.sh /pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/deploy 83ac32fb5024026ac6c51c0621d5ae9ff9073370 /pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/p2/tables/tasks-p2-inputs.tsv /pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/p2/tables/tasks-p2.tsv /pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/p2/lanes /pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/p2/tools/pfd_threadprobe.py /pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/p2/inputs.json
+Submitted batch job 61014446
+sbatch rc=0 2026-11-09T00:12:07Z
+job 61014446 TimeLimit=01:30:00
+61014446 fd1b_bdg_p2 PENDING 1:30:00 1 (Priority)
+== bdg-p2 rc=0 2026-11-09T00:12:07Z

@@ -1,0 +1,20 @@
+{
+ "C-PAIR": {
+  "nominal": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  },
+  "A7_gibuu": {
+   "pass": true,
+   "cells": 65856,
+   "cells_differing": 0
+  }
+ },
+ "C-MASK": {
+  "nominal": {
+   "pass": true
+  }
+ },
+ "pass": true
+}

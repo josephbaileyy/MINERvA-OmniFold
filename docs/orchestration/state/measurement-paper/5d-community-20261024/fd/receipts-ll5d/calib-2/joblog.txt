@@ -1,0 +1,55 @@
+host=login02 utc=2026-11-09T16:15:35Z
+/pscratch/sd/j/josephrb/ll5d-calib-2-20261109:
+total 14012
+drwxrwx---   4 josephrb josephrb     4096 Nov  9 08:14 .
+drwx------ 383 josephrb josephrb    69632 Nov  9 07:02 ..
+-rw-rw----   1 josephrb josephrb    85980 Nov  9 07:03 atime-pre.tsv
+-rw-rw----   1 josephrb josephrb     1447 Nov  9 07:03 bound.sha256
+-rw-rw----   1 josephrb josephrb   206613 Nov  9 08:14 calibration.json
+-rw-rw----   1 josephrb josephrb 13951349 Nov  9 08:14 calibration.npz
+-rw-rw----   1 josephrb josephrb      249 Nov  9 08:14 calibration.out
+-rw-rw----   1 josephrb josephrb     2176 Nov  9 08:14 calibration.time
+drwxrwx---   2 josephrb josephrb     4096 Nov  9 07:04 logs
+-rw-rw----   1 josephrb josephrb     2663 Nov  9 07:03 sbatch-ll5d-calib.sh
+
+/pscratch/sd/j/josephrb/ll5d-calib-2-20261109/logs:
+total 20
+drwxrwx--- 2 josephrb josephrb 4096 Nov  9 07:04 .
+drwxrwx--- 4 josephrb josephrb 4096 Nov  9 08:14 ..
+-rw-rw---- 1 josephrb josephrb 1245 Nov  9 07:03 connect-calib-2.log
+-rw-rw---- 1 josephrb josephrb  388 Nov  9 07:04 env-job.log
+-rw-rw---- 1 josephrb josephrb 1697 Nov  9 08:14 ll5d_calib_61037236.out
+===JOBOUT
+host=nid004382 job=61037236 start=2026-11-09T15:04:10Z
+deploy head=a95cc39f7437170af0b65ba042934fad079e0ee2 porcelain_lines=0
+nd-unfolding/ll5d.py: OK
+nd-unfolding/fd_1b_c2.py: OK
+nd-unfolding/fd_1b_mc.py: OK
+nd-unfolding/fd_1b_toys.py: OK
+nd-unfolding/fd_1b_inv.py: OK
+nd-unfolding/s1_assemble.py: OK
+nd-unfolding/s5p_universe.py: OK
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-cov2d/clip/clip_probe2.py: OK
+2d-unfolding/cov2d/cov2d.py: OK
+docs/orchestration/state/2d-closeout/stageF/methods/sf1/manifest/inputs-sha256.txt: OK
+nd-unfolding/pv-ladder/readouts/h2_definition.json: OK
+setup_salloc_env.sh: OK
+nd-unfolding/s5e_candidate.py: OK
+nd-unfolding/s5e_deform.py: OK
+threads OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1
+calib rc=0
+{"calibration": "timing", "fine_cells_kept": 10693, "set_seconds_measured": 4.214205980300903, "workers": 64, "projected_seconds": 2657.711823195219, "budget_seconds": 16200.0, "projection_line_seconds": 16200.0}
+LL5D-CALIBRATION verdict=CALIBRATED
+	Percent of CPU this job got: 4594%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:10:29
+	Maximum resident set size (kbytes): 10028020
+	Exit status: 0
+ea039893e8ec98a9cd3da15dd7811a82a99563da8fbb253e6fc0766eb960fb17  /pscratch/sd/j/josephrb/ll5d-calib-2-20261109/calibration.json
+b31ddd12d050163396b4811705777fc1fa28f77757575af73c8dc5976b3c1a7c  /pscratch/sd/j/josephrb/ll5d-calib-2-20261109/calibration.npz
+d80f52313b28947dc420be724d4c905bf1e7a074720cc2a254d367616b0d1a01  /pscratch/sd/j/josephrb/ll5d-calib-2-20261109/calibration.out
+afcf8f861f59a93a24dd5d226d62f1f95cb2d60b56e14fde12b4c6353c0e3d14  /pscratch/sd/j/josephrb/ll5d-calib-2-20261109/calibration.time
+end=2026-11-09T16:14:46Z
+===SACCT
+61037236|ll5d_calib|COMPLETED|0:0|01:10:37|2026-11-09T07:04:09|2026-11-09T08:14:46|1|256|
+61037236.batch|batch|COMPLETED|0:0|01:10:37|2026-11-09T07:04:09|2026-11-09T08:14:46|1|256|156331324K
+61037236.extern|extern|COMPLETED|0:0|01:10:37|2026-11-09T07:04:09|2026-11-09T08:14:46|1|256|

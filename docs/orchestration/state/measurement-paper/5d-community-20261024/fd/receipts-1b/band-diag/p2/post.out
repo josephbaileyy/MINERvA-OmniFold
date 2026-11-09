@@ -1,0 +1,212 @@
+node login27 2026-11-09T00:44:00Z
+connect script sha256 e0b599b362023cc6536898432a67087991ee4fdc03029b2fe31b3e1dc6ad4b09
+== 1. the job 2026-11-09T00:44:00Z
+job id [61014446]
+61014446|fd1b_bdg_p2|COMPLETED|0:0|2026-11-08T16:13:09|2026-11-08T16:40:34|00:27:25|1645|1|nid005738|90
+61014446|fd1b_bdg_p2|COMPLETED|0:0|00:27:25||1-22:28:03
+61014446.batch|batch|COMPLETED|0:0|00:27:25|120196K|00:01.067
+61014446.extern|extern|COMPLETED|0:0|00:27:25||00:00:00
+61014446.0|threadprobe|COMPLETED|0:0|00:00:14|0|00:10.103
+61014446.1|inputs|COMPLETED|0:0|00:02:09|11121368K|02:09.059
+61014446.2|line0|COMPLETED|0:0|00:22:41|19033408K|05:59:26
+61014446.3|line2|COMPLETED|0:0|00:24:56|19135712K|07:00:23
+61014446.4|line1|COMPLETED|0:0|00:24:36|19091976K|06:52:31
+61014446.5|line6|COMPLETED|0:0|00:24:11|18813536K|06:44:22
+61014446.6|line3|COMPLETED|0:0|00:24:34|19101492K|06:55:39
+61014446.7|line5|COMPLETED|0:0|00:22:24|18922936K|06:01:59
+61014446.8|line7|COMPLETED|0:0|00:12:41|18697408K|03:28:55
+61014446.9|line4|COMPLETED|0:0|00:12:34|18891684K|03:22:24
+== 2. the deploy
+deploy HEAD 83ac32fb5024026ac6c51c0621d5ae9ff9073370; tracked porcelain 0; module 658ca91849a8151a4fb801e41004102f0ba621c367f1c23146a8fc3a580484df
+== 3. section 4.3: inputs.json 2026-11-09T00:44:02Z
+inputs.json sha256 457b256ac223e80fd5875948990ac9382deb96bb74db9b437cf8c54923f19637
+inputs verdict: EQUAL | atime: {"files": {"/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz": {"atime_ns_first": 1794179838000000000, "atime_ns_now": 1794179838000000000}, "/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json": {"atime_ns_first": 1793496788000000000, "atime_ns_now": 1793496788000000000}, "/pscra
+== 4. section 7's pilot reading 2026-11-09T00:44:02Z
+{"out": "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/p2/pilot.json", "step": "P2", "verdict": "PASS", "rc": 0}
+pilot rc=0 2026-11-09T00:44:03Z
+== 5. section 5: the 73 sources against P1's stat-before.txt (stat only) 2026-11-09T00:44:03Z
+stat-post.txt: 73 lines; sha256 7986e2bf31aac583c03273f96804c2adaac85bcfdde5bd4b3da5b0f834c95b22
+sources: byte-identical to P1's stat-before
+== 6. products in /pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf
+188822 bb049e69e3404406ddaedaa6c20b1db228baf7489fcd5a1e79c5751d93671847 fd1b_bdg_B_CV_s42_e100_both.npz
+188829 7046b188c7f21ba205116ea82fef100a2f1d3864b7913620c87050936f4412d0 fd1b_bdg_B_GEANT_Neutron_0_s42_e100_both.npz
+188850 f4175594dd78ee877b782a0ecf570f3c3834d23ae044a69b319f399e705d92d5 fd1b_bdg_B_GEANT_Neutron_1_s42_e100_both.npz
+188857 769cb3817518db7bbfbbc3f0248d00fecac4f5005fa8488f88a3e6a8c4c8285f fd1b_bdg_B_GEANT_Proton_0_s42_e100_both.npz
+188868 9c55e40ad1ef3c3451f09ba942c12f166f9a881cb41cf39f381c80468506a2e4 fd1b_bdg_B_GEANT_Proton_1_s42_e100_both.npz
+188825 746effd998ae98d90fbfbf1f5de46ff79dbc30c167d9311c81b286706000db99 fd1b_bdg_E_CV_s42_e100_both.npz
+188884 a8006778bd49c4294806ab88151ca2f0f577c5a2b8c372541e041e305f416953 fd1b_bdg_E_GEANT_Neutron_0_s42_e100_both.npz
+188843 471412ac58371fa6c647132c53ceead9c8dfdae15ea24bcd06bc6374274eea01 fd1b_bdg_E_GEANT_Neutron_1_s42_e100_both.npz
+188862 0ecbfd158a677598d86ce255d58c021ed4edded5831c2e2234c1ef6ee49e8810 fd1b_bdg_E_GEANT_Pion_0_s42_e100_both.npz
+188825 db35b284bd20333b8e76b77488ed63d5c87b0cc05b59e8793c651dea71613662 fd1b_bdg_E_GEANT_Pion_1_s42_e100_both.npz
+188886 a9fbe388b57e54d967a021a37a1048e292d9edf8ae35b691a46d69ef052539a1 fd1b_bdg_E_GEANT_Proton_0_s42_e100_both.npz
+188842 a818e971b15491775d9e4ee3c0dc8a13b78f72a93d5da64a456c8371529d398c fd1b_bdg_E_GEANT_Proton_1_s42_e100_both.npz
+188902 75f36e9235469bfc753dac67d4f30361ca564ffc7f631c0e37e7135ef972534e fd1b_bdg_E_MinosEfficiency_0_s42_e100_both.npz
+188865 be29b8c04e584ba7045bdf05fc9dcbf5d88c19d5e35aab5fa88cc82c1f758a56 fd1b_bdg_E_MinosEfficiency_1_s42_e100_both.npz
+products: 14
+== 7. records 2026-11-09T00:44:04Z
+sha256 44d582579f6b14e00bbe2e07a7a8ecc4c8f9c9abe66d299f0a61d47919330b9e p2/lanes/inputs-61014446.log
+sha256 5bfc738c457a185dcddedf2359979c90c5241f4a63162f142ebeb2884a864a86 p2/lanes/inventory/fd1b_bdg_p2_0_E.jsonl
+sha256 b2269d6e57844520ca03841309e7c7c70a80e213bb1ff21e56ca76e6950faa25 p2/lanes/inventory/fd1b_bdg_p2_1_E.jsonl
+sha256 e6591e8f49ac6b8511595026bdc6e4e809f6255b0bfb9bd4a77935d3e97057af p2/lanes/inventory/fd1b_bdg_p2_2_E.jsonl
+sha256 c6a5c8a8ddcc4b8a704731b8f3a335fea908d746732e886cf2b6b5836dc324c4 p2/lanes/inventory/fd1b_bdg_p2_3_E.jsonl
+sha256 3b7b798fe095ef2a55c229405f596a993ad35c94fcf2567bbfcf58647011978d p2/lanes/inventory/fd1b_bdg_p2_4_E.jsonl
+sha256 cbe72f83bf0d0fe208de9dfaa7be727c18d82b34a63f5efebd401a4b8458cc03 p2/lanes/inventory/fd1b_bdg_p2_5_B.jsonl
+sha256 a97a245b7571fa26b2be55fe55f720dc4eef56562fc383f0e829e365bf3deb1e p2/lanes/inventory/fd1b_bdg_p2_6_B.jsonl
+sha256 efe6247f0b0a02c652621dfa2896c8ab22db43284aeaeddb998802f4514531b3 p2/lanes/inventory/fd1b_bdg_p2_7_B.jsonl
+sha256 592bef64979f922a1031ab94245e5e3245d13ef24068a21133d745328fbc0f58 p2/lanes/inventory/fd1b_bdg_p2_inputs.jsonl
+sha256 4a9da7083b1f83662f192c79ef4b19fa4bcdfe28b2675faae4148ab55feb3c0d p2/lanes/line0-61014446.log
+sha256 b327057fdaefab6e6af69503cee08c19adb81052873689740461b8ec63190568 p2/lanes/line1-61014446.log
+sha256 cfc2c1fb28d6eaca57cecab3618d5205766e837bb866c2b6af3d967143b15c57 p2/lanes/line2-61014446.log
+sha256 083bcdb1b73b592cd105e0395f9721538d3a7c069ae2858a13b224914ba11659 p2/lanes/line3-61014446.log
+sha256 af6903acfde465e7d6440a8ee12dc80c52e32267444256cf11f7f332065bc8c2 p2/lanes/line4-61014446.log
+sha256 d6ac984ce20516bb19b848db0a8a8ce4ad0fbe556648f6e39ca74bbd720d61ac p2/lanes/line5-61014446.log
+sha256 0b6375b84bef60743457c097d9748150ecfcae2444e0ff48edbcceac403b7ce8 p2/lanes/line6-61014446.log
+sha256 9c6c57cbcd1e874b650f596dc3770cbab3cf2fb3562114c4ce0c56ce5ff184f1 p2/lanes/line7-61014446.log
+sha256 6a2bfeb24afc65f352e19641eef033b98f2a465f015c3e73ca031ebc0ccb39be p2/lanes/logs/fd1b_bdg_p2_0_E.env.log
+sha256 6a2bfeb24afc65f352e19641eef033b98f2a465f015c3e73ca031ebc0ccb39be p2/lanes/logs/fd1b_bdg_p2_1_E.env.log
+sha256 6a2bfeb24afc65f352e19641eef033b98f2a465f015c3e73ca031ebc0ccb39be p2/lanes/logs/fd1b_bdg_p2_2_E.env.log
+sha256 6a2bfeb24afc65f352e19641eef033b98f2a465f015c3e73ca031ebc0ccb39be p2/lanes/logs/fd1b_bdg_p2_3_E.env.log
+sha256 6a2bfeb24afc65f352e19641eef033b98f2a465f015c3e73ca031ebc0ccb39be p2/lanes/logs/fd1b_bdg_p2_4_E.env.log
+sha256 6a2bfeb24afc65f352e19641eef033b98f2a465f015c3e73ca031ebc0ccb39be p2/lanes/logs/fd1b_bdg_p2_5_B.env.log
+sha256 6a2bfeb24afc65f352e19641eef033b98f2a465f015c3e73ca031ebc0ccb39be p2/lanes/logs/fd1b_bdg_p2_6_B.env.log
+sha256 6a2bfeb24afc65f352e19641eef033b98f2a465f015c3e73ca031ebc0ccb39be p2/lanes/logs/fd1b_bdg_p2_7_B.env.log
+sha256 6a2bfeb24afc65f352e19641eef033b98f2a465f015c3e73ca031ebc0ccb39be p2/lanes/logs/fd1b_bdg_p2_inputs.env.log
+sha256 30fae21f95cd07a743b63965b3021f4389de9eaf257da181930ed09eea5f3997 p2/lanes/threadprobe-61014446.log
+sha256 3ee5c40b70a10374557b85ed549705282db211bd9b47e243cec3accc09c98d41 p2/logs/fd1b_bdg_p2_61014446.out
+sha256 7986e2bf31aac583c03273f96804c2adaac85bcfdde5bd4b3da5b0f834c95b22 p2/logs/stat-post.txt
+sha256 7986e2bf31aac583c03273f96804c2adaac85bcfdde5bd4b3da5b0f834c95b22 p2/logs/stat-submit.txt
+sha256 68c9591d5e664b78d1bd9cc6e5ca80ec92af9a0f19b3b48f1e40bb384aa41ea4 p2/logs/submit-p2.out
+sha256 ab07e7b0bc935c00958e463280d18d9304147604eb88628f9f0b95cc58357a18 p2/logs/submit-p2.txt
+sha256 4f42373fe20395e418855e9d2d52bc38508263fc5cd2d3713e1633ef3fb3396e p2/tables/tasks-p2-inputs.tsv
+sha256 a79a5db1f5f952d758389166e5b9776f23f99e5297a7c6d8d9f7e6252e44a855 p2/tables/tasks-p2.tsv
+sha256 457b256ac223e80fd5875948990ac9382deb96bb74db9b437cf8c54923f19637 p2/inputs.json
+sha256 7e41c5a165d9e3e63a534ab8acb48193db438b52c59ffa31cc73f99a8c5bba82 p2/pilot.json
+sha256 7e11304350a264d3b64ba0b4d30b38ac904c46fe719c219b9baa20271ec0103c unf/atime-B-61014446-591885.json
+sha256 4619d8f5185e676cd2c647bb67b6e9256cb9beedb5e4631bb4a755f24befbd71 unf/atime-B-61014446-591888.json
+sha256 6b63c450ac68928d53705e30a0da1ea5e5dc58660d231b08b8c60bf9f2591e36 unf/atime-B-61014446-591890.json
+sha256 c03add42e708d8b7ed8279b2be6b2404d6c208ed71c0a8e31d42535d2aa372ae unf/atime-E-61014446-591819.json
+sha256 a7320ee761dd079369a00a0d1bcdb134ba352704abc33c2a55922dbb7442e604 unf/atime-E-61014446-591866.json
+sha256 ea2a2bccb72638004ae6cd11309271f7b77cb93e3f0fc7052c0e73692a04a510 unf/atime-E-61014446-591878.json
+sha256 4619d8f5185e676cd2c647bb67b6e9256cb9beedb5e4631bb4a755f24befbd71 unf/atime-E-61014446-591879.json
+sha256 a4b7529885d801b15df3526fa4d78597f25f72f86fc1b573a860bc485b41ff3a unf/atime-E-61014446-591880.json
+== TAR BEGIN
+[the 5929-line base64 block is omitted from the committed copy: decoded tar sha256 6ec927e2a2a87778aed7fb88f6bb359a1447b30dc9a04dc6721710325264c9e8; the full stdout sha256 e965b48dfe24296629219af19ba3e36a567b9f25702132fee694c8d0874f260d]
+== TAR END tar rc=0
+== pilot.json
+{
+ "schema": "fd-1b-band-diag/1",
+ "step": "P2",
+ "items": [
+  {
+   "item": "E_CV",
+   "seconds_unfold": 653.698,
+   "peak_rss_kib": 19038248
+  },
+  {
+   "item": "E_GEANT_Neutron_0",
+   "seconds_unfold": 672.616,
+   "peak_rss_kib": 19183348
+  },
+  {
+   "item": "E_GEANT_Neutron_1",
+   "seconds_unfold": 714.674,
+   "peak_rss_kib": 19005964
+  },
+  {
+   "item": "E_GEANT_Pion_0",
+   "seconds_unfold": 728.696,
+   "peak_rss_kib": 19240908
+  },
+  {
+   "item": "E_GEANT_Pion_1",
+   "seconds_unfold": 753.834,
+   "peak_rss_kib": 18971300
+  },
+  {
+   "item": "E_GEANT_Proton_0",
+   "seconds_unfold": 709.018,
+   "peak_rss_kib": 19218236
+  },
+  {
+   "item": "E_GEANT_Proton_1",
+   "seconds_unfold": 743.278,
+   "peak_rss_kib": 19086152
+  },
+  {
+   "item": "E_MinosEfficiency_0",
+   "seconds_unfold": 697.194,
+   "peak_rss_kib": 19256560
+  },
+  {
+   "item": "E_MinosEfficiency_1",
+   "seconds_unfold": 718.201,
+   "peak_rss_kib": 19050496
+  },
+  {
+   "item": "B_CV",
+   "seconds_unfold": 649.507,
+   "peak_rss_kib": 18612980
+  },
+  {
+   "item": "B_GEANT_Neutron_0",
+   "seconds_unfold": 659.506,
+   "peak_rss_kib": 18809008
+  },
+  {
+   "item": "B_GEANT_Neutron_1",
+   "seconds_unfold": 705.118,
+   "peak_rss_kib": 18643140
+  },
+  {
+   "item": "B_GEANT_Proton_0",
+   "seconds_unfold": 711.353,
+   "peak_rss_kib": 18856924
+  },
+  {
+   "item": "B_GEANT_Proton_1",
+   "seconds_unfold": 727.174,
+   "peak_rss_kib": 18703428
+  }
+ ],
+ "rebuild_not_bitwise": [],
+ "walls": "PASS",
+ "max_seconds_unfold": 753.834,
+ "unit_seconds": 1370.0,
+ "max_peak_rss_kib": 19256560,
+ "rss_limit_kib": 44040192,
+ "verdict": "PASS",
+ "digests": {
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_E_CV_s42_e100_both.npz": "746effd998ae98d90fbfbf1f5de46ff79dbc30c167d9311c81b286706000db99",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_CV.npz": "44f22acfb6e38b60a450a2aa4881437b9911e61cdba792a3df9b75a6080ee6ed",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_E_GEANT_Neutron_0_s42_e100_both.npz": "a8006778bd49c4294806ab88151ca2f0f577c5a2b8c372541e041e305f416953",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Neutron_0.npz": "148902b3872e8495af0fa6d0a7a4deb9464f1fe4787e2fba8180c1f69cacf297",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_E_GEANT_Neutron_1_s42_e100_both.npz": "471412ac58371fa6c647132c53ceead9c8dfdae15ea24bcd06bc6374274eea01",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Neutron_1.npz": "0c224c12a687cc24ff5476f5742de3e5b866259bc6822684a231fc1a3a85223f",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_E_GEANT_Pion_0_s42_e100_both.npz": "0ecbfd158a677598d86ce255d58c021ed4edded5831c2e2234c1ef6ee49e8810",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Pion_0.npz": "d2a89cd6d7beed576469e672c79aac5dbdaa4fa519924476d127b4a55a45138b",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_E_GEANT_Pion_1_s42_e100_both.npz": "db35b284bd20333b8e76b77488ed63d5c87b0cc05b59e8793c651dea71613662",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Pion_1.npz": "6bfdecfb8f341c03155ff9cf3eade23c087e7ff4ccc80b3b5725e7d02cdd4734",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_E_GEANT_Proton_0_s42_e100_both.npz": "a9fbe388b57e54d967a021a37a1048e292d9edf8ae35b691a46d69ef052539a1",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Proton_0.npz": "a519bd4e04093ad05776a99d3609a6a725f7f7d89f876a2b9b22d52ba97a7df8",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_E_GEANT_Proton_1_s42_e100_both.npz": "a818e971b15491775d9e4ee3c0dc8a13b78f72a93d5da64a456c8371529d398c",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Proton_1.npz": "b171b1ce4a83a555a8a17eb3545ff26a9d249f004b9ab20ef7c490f341619b98",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_E_MinosEfficiency_0_s42_e100_both.npz": "75f36e9235469bfc753dac67d4f30361ca564ffc7f631c0e37e7135ef972534e",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_MinosEfficiency_0.npz": "b2ff18e89eafc4ce1f92a6175eded857cdde538f2df66c76fa8fd5bc35210e1d",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_E_MinosEfficiency_1_s42_e100_both.npz": "be29b8c04e584ba7045bdf05fc9dcbf5d88c19d5e35aab5fa88cc82c1f758a56",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_MinosEfficiency_1.npz": "3195cea120698bea719a85582e0c5eb8e6bfce85814d68c6a41d922e3eca4107",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_B_CV_s42_e100_both.npz": "bb049e69e3404406ddaedaa6c20b1db228baf7489fcd5a1e79c5751d93671847",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_CV.npz": "dfc186f96c3a7f0bad1b0121218c1a22567b65ad91a9c0aa027aafece302bb06",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_B_GEANT_Neutron_0_s42_e100_both.npz": "7046b188c7f21ba205116ea82fef100a2f1d3864b7913620c87050936f4412d0",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Neutron_0.npz": "fee2f0dcfd799335701c98c31c1c104a423dbe3cf57c1623399960c7d083f4e5",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_B_GEANT_Neutron_1_s42_e100_both.npz": "f4175594dd78ee877b782a0ecf570f3c3834d23ae044a69b319f399e705d92d5",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Neutron_1.npz": "32c1ca2acfc226cbf135c2692489abf06d814ed9de692546c82e24d1ad93b604",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_B_GEANT_Proton_0_s42_e100_both.npz": "769cb3817518db7bbfbbc3f0248d00fecac4f5005fa8488f88a3e6a8c4c8285f",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Proton_0.npz": "89156322e9f0d6d94ddf8e8d3be4bab0660e5bbd3ce2c01950db0f77775df182",
+  "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/unf/fd1b_bdg_B_GEANT_Proton_1_s42_e100_both.npz": "9c55e40ad1ef3c3451f09ba942c12f166f9a881cb41cf39f381c80468506a2e4",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Proton_1.npz": "36c52f36c0e092e55d89481dda8fe2ff99d9142da9b81af0c503dc8cadaf46ca"
+ },
+ "code_sha256": {
+  "fd_1b_band_diag.py": "658ca91849a8151a4fb801e41004102f0ba621c367f1c23146a8fc3a580484df"
+ }
+}
+== bdg-p2-post rc=0 2026-11-09T00:44:04Z

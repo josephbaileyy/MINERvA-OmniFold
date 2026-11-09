@@ -1,0 +1,120 @@
+{
+ "host": "login27",
+ "python": "3.6.15",
+ "start": "2026-11-09T00:03:54.533Z",
+ "roots": {
+  "/dev/shm/limres-rpd-prologue5-20261108": {
+   "declared": {
+    ".rpd-private/23ee3e970f74d1084106615b6dba8e6c4798e1728044d8831a90b8abc1296a66/prologue-prepare.json": "81c3fb7af87602b13cff1cdad59e2faababffff8cd9d69a80a660fcffc3988e4"
+   },
+   "before_file_count": 22197,
+   "before_run": [
+    [
+     "f",
+     165061,
+     ".rpd-private/23ee3e970f74d1084106615b6dba8e6c4798e1728044d8831a90b8abc1296a66/prologue-prepare.json"
+    ],
+    [
+     "f",
+     1966092,
+     "run/data-free-trace.json"
+    ],
+    [
+     "f",
+     14697,
+     "run/policy-config.json"
+    ],
+    [
+     "f",
+     490,
+     "run/prologue-prepare-reference.json"
+    ],
+    [
+     "f",
+     161472,
+     "run/prologue-prepare.json"
+    ],
+    [
+     "f",
+     169432,
+     "run/prologue-worker.json"
+    ],
+    [
+     "f",
+     444803,
+     "run/prologue.strace"
+    ],
+    [
+     "f",
+     85253,
+     "run/trace-policy.json"
+    ],
+    [
+     "f",
+     1164,
+     "run/worker.stderr.txt"
+    ],
+    [
+     "f",
+     0,
+     "run/worker.stdout.txt"
+    ],
+    [
+     "f",
+     1407,
+     "run/instrument/0-setup_salloc_env.sh"
+    ],
+    [
+     "f",
+     345,
+     "run/instrument/1-setup.sh"
+    ],
+    [
+     "f",
+     816,
+     "run/instrument/2-setup.sh"
+    ],
+    [
+     "f",
+     630,
+     "run/instrument/3-setup_MAT.sh"
+    ],
+    [
+     "f",
+     612,
+     "run/instrument/4-setup_MAT-MINERvA.sh"
+    ],
+    [
+     "f",
+     639,
+     "run/instrument/5-setup_UnfoldUtils.sh"
+    ],
+    [
+     "f",
+     1985624,
+     "run/instrument/6-libMAT.so"
+    ],
+    [
+     "f",
+     4114,
+     "run/instrument/7-MATDict.rootmap"
+    ],
+    [
+     "f",
+     17061,
+     "run/instrument/8-MAT_rdict.pcm"
+    ]
+   ],
+   "measured": {
+    ".rpd-private/23ee3e970f74d1084106615b6dba8e6c4798e1728044d8831a90b8abc1296a66/prologue-prepare.json": "81c3fb7af87602b13cff1cdad59e2faababffff8cd9d69a80a660fcffc3988e4"
+   },
+   "rmtree": [
+    "2026-11-09T00:03:55.508Z",
+    "/dev/shm/limres-rpd-prologue5-20261108"
+   ]
+  }
+ },
+ "still_present": [],
+ "rc": 0,
+ "end": "2026-11-09T00:03:55.508Z"
+}

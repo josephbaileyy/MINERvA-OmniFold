@@ -1,0 +1,78 @@
+You are an independent senior reviewer: an experimental neutrino physicist who also knows ML unfolding (OmniFold). You are
+advising Joseph Bailey, the author of this project, who asked: "what is the best option to get to a solid publishable
+result?" Give your own judgement. You are not bound by any earlier recommendation in the repository.
+
+The working directory is a clean, read-only checkout of the project at commit 82ee901c. Read the files; do not write,
+run jobs, or use the network. Treat everything below as a claim to check against the files. Cite file:line for every
+fact you rely on, and say so wherever a file contradicts this brief.
+
+## What exists
+
+- **The paper:** `docs/analysis-note/main_paper.tex` and `docs/analysis-note/paper_body.tex`. It is a 5D OmniFold unfolding
+  of the public MINERvA medium-energy ν_μ CC open data, reported on 16 cells, plus a reproduction of MINERvA's
+  published 2D (p_T, p_∥) result. The companion note is `docs/analysis-note/main_note.tex`.
+- **The latest AI-referee round (round 5; all eight reads say major revision):**
+  `docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-round5-20261109/`. The README
+  summarizes; read the reads themselves too.
+- **The study outcomes since 2026-11-05,** in `docs/orchestration/`:
+  - `OUTCOME-20261105-fd-stab-none-pass.md`
+  - `OUTCOME-20261106-1b-stage1-receipt-stop.md`
+  - `OUTCOME-20261107-per-period-2d-benchmark.md`
+  - `OUTCOME-20261107-valid-region.md`
+  - `OUTCOME-20261108-1b-precheck-part1.md`
+  - `OUTCOME-20261108-cov2d-both-tunes-under-cover.md`
+  - `OUTCOME-20261108-rs1-rounding-mechanism.md`
+  - `OUTCOME-20261109-band-diagnosis.md`
+  - `OUTCOME-20261109-ens1-stab-pass-bias-worse.md`
+  - `OUTCOME-20261106-ref-*.md`
+- **Joseph's decisions:** `docs/orchestration/DECISION-2026110[6-8]-*.md`, especially:
+  - `-methods-study-and-archive`
+  - `-measurement-target-and-delta`
+  - `-plateau-next-work`
+  - `-5d-coverage-and-parallel-studies`
+  - `-note-framing-and-estimator-dependence`
+- **Running now:**
+  - the like-for-like 5D coverage test: `docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-DECLARATION.md`.
+    It tests the current estimator, configuration (e); its cap is 148 CPU node-h, and it is still in calibration;
+  - the prior-retention study: `FD-PRR-DECLARATION.md` in the same directory, with a cap of 27 node-h, mid-run.
+- **Decided today, not yet in this checkout:** V-HALF, a per-cell validity rule computed from committed fake-data
+  products at 0 node-h. A cell passes at a truth when |bias| ≤ 0.5 × |truth − prior|, applied where they differ by at
+  least 1 %, at the 12 graded truths.
+
+## The advisor's view (Joseph's advisor, paraphrased)
+
+- Put out a shorter paper in about a month, with the longer version as the thesis.
+- The story:
+  1. the 5D result reproduces the published 2D;
+  2. fake-data closure across phase space, with regions where the detector response is not good enough, identified
+     by a bias-versus-prior-spread metric (now the V-HALF rule above), and only valid regions explored;
+  3. where 2D shows data–simulation mismodeling, the 5D result localizes it in the extra dimensions, in valid regions.
+- On the rounding instability (Sec. IV G of the paper), the advisor's reaction to the ensemble's cost was "seems worth it".
+
+## Compute and constraints
+
+- **The allocation:** 1,653.7 CPU node-h remain. Any campaign above half of that needs Joseph's explicit approval.
+- **The ensemble estimator:** switching the reported result to the 96-fit ensemble (ENS1's E₉₆) is estimated at about
+  500 node-h. That estimate is the director's; check whether any record supports it.
+- **The instability options on the table:**
+  - (A) keep configuration (e) and state the instability as a limitation;
+  - (B) adopt the ensemble despite ENS1's BIAS_WORSE at one truth, with disclosure (its coverage would then be untested,
+    since LL5D tests (e));
+  - (C) a new held-out bias test of the ensemble, declared before it runs, then adopt on a pass.
+  - You may propose others.
+- **Nothing is published** without Joseph. Every claim needs a committed record.
+
+## What to answer (about 1,500 words, plain language)
+
+1. **Your recommended path to a solid, publishable result:**
+   - the framing (measurement or methods study) and the venue type;
+   - what the paper should claim, and what it should drop or move;
+   - whether the advisor's three-part story is supported by the committed records, part by part.
+2. **The instability:** A, B, C or something else, and why. Include what it does to the coverage question.
+3. **Coverage:** given COV2D's 2D result at both tunes, what LL5D can realistically show, and whether it is worth its
+   148 node-h before or after the estimator decision.
+4. **A ranked plan:** for each step, the referee item it answers, its rough cost in node-h or days, and its risk.
+   Also say what to stop doing.
+5. **The single biggest risk** to publication that the project is under-weighting.
+
+Be direct. Where the records cannot support something, say so, and say what record would.

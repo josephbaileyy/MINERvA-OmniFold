@@ -1,0 +1,49 @@
+node login31 nproc=244 loadavg 55.37 70.16 69.48
+2026-11-09T11:25:40Z
+connect script sha256 6e0a66a3946c51150df7fd4066a84bfc20e3eb693b39fd129275a05df50b286e
+squeue --me before:
+other lanes' families (listed, not refused; this job reads nothing outside $OUT):
+  none
+== iris
+m3246               2431.0            10000.0     18353.1      20000.0
+balance_node_h=1646.9 half=823.5 cap=27.0
+== the study's charge so far (sacct, prr_* jobs since 2026-11-08)
+61022062|prr_dry|COMPLETED|3648|1
+61024185|prr_iter|COMPLETED|9038|1
+61028298|prr_cap|COMPLETED|5220|1
+charged_node_h=4.9739 this_job_limit_h=7.2500 sum=12.2239 cap=27.0
+HEAD 6727020a7c58b00dd00806151c627c8a24f72402; porcelain --ignored lines before: 0
+prr_probe.py: OK
+prr_ibu.py: OK
+prr_read.py: OK
+sbatch_prr.sh: OK
+test_prr.py: OK
+prr_mutation.py: OK
+declaration sha256 5be1e19cb8db67064cb0f90382ed7ac2365a2ed4841d9b498f323ed2761b64ce
+addendum A1 sha256 ca6b8457e74c9323fcb985766a88f404038f6f16c3e822a67bf2606af223f38b
+FD-PRR-BINDING-1.md at origin/main 348ddc94666362ee8e881eed1ce64814da7d5801 sha256 04686d70ba8a6401669f1f7fa956c0e86785e362cb367bfe5653644184a8ee4d
+queues/misc.tsv: OK
+stage.json: OK
+log-dry/DONE: OK
+queue misc: 93 tasks
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+plain python3 (not used by any call below): /usr/bin/python3 Python 3.6.15
+sourced python3: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14
+LIMIT 7:15:00
+PROJECTION {"mode": "misc", "projected_h": 1.9468, "limit_h": 7.25, "gate_h": 6.525, "unmeasured": [], "pass": true}
+root_6_28 python3 prr_probe.py limit misc -> '7:15:00'
+--time=07:15:00
+2026-11-09T11:26:34Z
+sbatch rc=0
+Submitted batch job 61030122
+misc job 61030122
+scontrol TimeLimit=07:15:00 (declared 07:15:00)
+61030122 prr_misc PENDING 0:00 7:15:00 1 regular_1 m3246
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=07:15:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login31:1176210
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+porcelain --ignored lines after: 0
+prr misc submit rc=0
+2026-11-09T11:26:40Z

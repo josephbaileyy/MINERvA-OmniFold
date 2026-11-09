@@ -60,3 +60,42 @@ primary reading.
    director, then to Joseph. No paper or note text.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A1: the P2 and P3 fence after ENS1 (director, 2026-11-09)
+
+**What led to it.** P0 read BRANCH SHARED on all 34 ruling-4 sources (#944), so ruling 4 sequenced this campaign after
+ENS1, whose tasks read those files plainly. ENS1's stage 2, its post-run and its analysis have now ended
+(analysis 23:54:11Z, 2026-11-08). P1 ran after that (#955) with its before-stat at 23:58Z, and its re-stat was
+byte-identical. The other campaigns that share these files read them without moving atimes: LL5D through O_NOATIME
+(overlap receipt #949), FD-PRR only through `dd iflag=noatime` copies with per-file stat before and after
+(FD-PRR-BINDING-1 ruling 5).
+
+**Rulings:**
+1. **P2's and P3's connects allow `fd1b_bdg_*`, `ll5d_*` and `prr_*`** in the queue; any other name refuses, `ens1_*`
+   and `rs1_*` included. Ruling 4's sequencing against ENS1 is discharged by ENS1's end.
+2. **§5's atime comparison is unchanged**: P3's after-stat against P1's before-stat (`stat-before.txt`, sha256
+   `7986e2bf…`), byte for byte, atime included. If any lane moves a shared file's atime, P3 STOPs. That is fail-safe, and
+   the STOP comes to the director unrepaired.
+3. **No two lanes' connects copy the shared files at the same time.** P2's and P3's connects log their copy or read
+   window to the second; the director names each launch window.
+4. Everything else in binding 1 stands.
+
+## Binding 1, addendum A2: P3's job layout, repriced (director, 2026-11-09)
+
+**What led to it.** limitation-resolver found, while preparing P3, that §7's "112 other items on 3 nodes × 8 lanes, at
+most 5 per lane" cannot be realized. A table line is one `fd_1b_band_diag.py unfold` call with a single mode, seed, ε
+and channel, so a lane holds only items of one group. `bulk_items()` at M has 16 groups: 12 of 8 universes ((E, B) ×
+seeds 45, 48, 51, 54 and ε ½, 2 at seed 42) and 4 of 4 ((E, B) × signal, background). At most 5 per lane needs at least
+28 lines, which 24 lanes cannot hold without queued lines breaking the unit-time wall bound (about 11,620 s against
+02:30:00). The lane reported it as its own declaration's error, before any P3 submission.
+
+**Rulings:**
+1. **P3 is 4 jobs × 7 lanes × 4 items:** 28 lines, each of 4 distinct universes from one group (the 12 groups of 8
+   split 4 + 4; the 4 channel groups whole). Job j runs lines 7j to 7j+6.
+2. **`--time=01:40:00` per job** (6,000 s against a worst lane at the unit of 4 × (1,370 + 75) + 60 = 5,840 s).
+   Reserved 4 × 1.667 = 6.67 node-h; with P2's 1.5, 8.17, inside the **unchanged 9.0 cap**.
+3. **P3's table generator refuses** unless the 28 lines carry exactly `bulk_items()`, each line is one group, no item is
+   in `pilot_items()`, and every item is in `items()`. It is gated by sha256 in the connect.
+4. **Unchanged:** the items, the controls, the gates (P2's PASS and EQUAL, the identical re-stat, coverage-5b-audit's
+   read of P2's readout), the fence of addendum A1, 32 threads per lane, and the family `fd1b_bdg_p3`. This replaces only
+   binding ruling 2's "P3, the bulk: 3 jobs at `--time=02:30:00`".

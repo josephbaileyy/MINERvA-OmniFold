@@ -1,0 +1,40 @@
+node login28 2026-11-09T11:14:58Z
+staged sha256 15a7e143260aa4544bf196c484cbb9ba7ab3fd4ba9f5a39eeaa8c3bc8f35ef1a
+logs/*cap* before the post:
+-rw------- 1 josephrb josephrb     9 Nov  9 01:42 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/cap.jobid
+-rw------- 1 josephrb josephrb    69 Nov  9 01:41 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/charge-before-cap.txt
+-rw------- 1 josephrb josephrb     0 Nov  9 01:41 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/clone-cap.log
+-rw------- 1 josephrb josephrb     2 Nov  9 01:42 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/connect-cap.done
+-rw------- 1 josephrb josephrb  2142 Nov  9 01:42 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/connect-cap.log
+-rw------- 1 josephrb josephrb   380 Nov  9 01:42 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/connect-source-cap.log
+-rw------- 1 josephrb josephrb   380 Nov  9 01:42 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/env-precheck-cap.log
+-rw------- 1 josephrb josephrb   190 Nov  9 03:10 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/prr_cap_61028298.out
+-rw------- 1 josephrb josephrb 13273 Nov  9 01:41 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/prr_cap_submit.sh
+-rw------- 1 josephrb josephrb     0 Nov  9 01:42 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/sourced-python-cap.err
+-rw------- 1 josephrb josephrb    29 Nov  9 01:42 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/submit-cap.out
+post_rc=0
+ls: cannot access '/dev/shm/prr_cap_post.756307.sh': No such file or directory
+1e1e071161e35abd45a4d30b524003ae641c567c11c414cfd0a1e8694df758d2  post-cap.tar.gz
+1e1e071161e35abd45a4d30b524003ae641c567c11c414cfd0a1e8694df758d2  post-cap.tar.gz
+-rw------- 1 josephrb josephrb 36415 Nov  9 03:14 /pscratch/sd/j/josephrb/fd-prr-20261108/post-cap.tar.gz
+post-cap/logs entries:
+total 13
+drwx------ 2 josephrb josephrb  4096 Nov  9 03:14 .
+drwx------ 5 josephrb josephrb  4096 Nov  9 03:14 ..
+-rw------- 1 josephrb josephrb     9 Nov  9 01:42 cap.jobid
+-rw------- 1 josephrb josephrb    69 Nov  9 01:41 charge-before-cap.txt
+-rw------- 1 josephrb josephrb     0 Nov  9 01:41 clone-cap.log
+-rw------- 1 josephrb josephrb     2 Nov  9 01:42 connect-cap.done
+-rw------- 1 josephrb josephrb  2142 Nov  9 01:42 connect-cap.log
+-rw------- 1 josephrb josephrb   380 Nov  9 01:42 connect-source-cap.log
+-rw------- 1 josephrb josephrb   380 Nov  9 01:42 env-precheck-cap.log
+-rw------- 1 josephrb josephrb   190 Nov  9 03:10 prr_cap_61028298.out
+-rw------- 1 josephrb josephrb 13273 Nov  9 01:41 prr_cap_submit.sh
+-rw------- 1 josephrb josephrb     0 Nov  9 01:42 sourced-python-cap.err
+-rw------- 1 josephrb josephrb    29 Nov  9 01:42 submit-cap.out
+tasks entries:
+     29 log
+     29 time
+post.done: 0
+0f8433852ff6e6cead2bdf05535b067be459a1b171c350d186b75b6f09bc91c4  post.log
+9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  post.done
