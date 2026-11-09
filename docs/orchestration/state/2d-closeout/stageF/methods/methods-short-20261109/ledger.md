@@ -231,3 +231,133 @@ the declaration defines no reading or wording for it. O-2, the χ² that prints 
 **Reader points not in the rulings:** both are listed in NOTES.txt for the director. One is Sonnet A's request that the
 Discussion say a pass would not lift the illustration status; the other is Sonnet AB11's "the second five-observable
 coverage test without a result".
+
+## Style integration (the director, 2026-11-09, at Joseph's request): wording only
+
+**The brief (Joseph, through the director):** write as an experienced experimental physicist would for JINST, in plain
+declarative sentences with concrete subjects. State each limitation once, where it applies. Cut the reflexive ", not X"
+contrasts, give the scope once per place, and avoid labels coined for our own process. A list of AI-text indicators
+is not the target. It is a validation set, scored against a field baseline (check_round check 8).
+
+**Two drafts, from cb87c1832, compared passage by passage:**
+- **GPT:** codex-school gpt-6.1-sol at high effort (the director's run; its files, CHANGES.txt and prompt are in the
+  director's scratch, `restyle/`).
+- **Mine:** `style/helper3-draft-20261109` at `68ea8a04d`, local, unpushed and kept for the comparison.
+
+**The gate:** check_restyle.py (new, in this directory). It refuses any change to the \fvval keys, the (\fvcase key,
+class) pairs, \fvgroup, \cite, \label, \ref, the numerals and the macros, and to the protected text (Data
+availability, the B0 sentences, RS1's paragraph, the LISTED_CLAIMS anchors). It reports every changed sentence.
+- **The GPT draft as delivered failed it on three counts:**
+  - Data availability ("This analysis used" → "We used");
+  - B0's third and fourth sentences;
+  - RS1's paragraph.
+  All three are restored verbatim.
+- **The integrated text passes on every protected span, anchor, numeral and ONCE sentence.** It fails only on the
+  structure the rulings below remove or add, each listed and intended:
+  - the clipping cases, the weakened marker and the offset;
+  - "not shown to persist";
+  - the per-case scope clause;
+  - the abstract's pass clause, now in the lead;
+  - the four S9 pointers, and the S9 paragraph with its pending key;
+  - one \mathrm, for "the model term".
+
+**Where each paragraph comes from** (paper_body.tex lines, unchanged in count):
+- **GPT:** 14, 17, 24, 29, 50, 53, 62, 71, 77, 81, 83, 89, 93, 146, 157, 160, 166, 169, 179, 190, 196, 222, 225,
+  231, 234-236, 243, 246, 272 (results only), 294, 298 and 301, and the abstract's opening and stability sentences.
+- **Mine:** 20, 91, 97 (the caption), 125, 185, 278, 281, 304 and 314.
+- **Base, kept:**
+  - 68, the estimator paragraph, whose line the registry cites by hash;
+  - 256, B0, verbatim, with GPT's split of the probe sentence after it;
+  - 259, RS1, verbatim;
+  - 264, with W-4 verbatim;
+  - 272's method sentence, because R5 caps the method at one sentence;
+  - the acknowledgments and Data availability, which were outside the brief.
+- **New, under the rulings:** 233 (the §5.3 IBU sentence: my structure, GPT's words), 285 and 288 (§6.3), and the
+  abstract's coverage and IBU sentences.
+
+**Reverted or adjusted inside the GPT paragraphs, with the reason:**
+- **Decided wordings kept:**
+  - §1: W-1's "This paper is a benchmark and diagnostic study…", which matches the provisional title;
+  - W-22's "An uncertainty for a new choice must be constructed and checked for that choice";
+  - §7's "is not established", a claim the director keeps;
+  - W-5's "That test is a next step." (ONCE).
+- **Chronology (W-20).** GPT's "Two choices … took account of the comparison" goes back to "were made with the
+  comparison to the published result in view". The records show that the learner was chosen after the comparison and
+  that the background treatment was chosen before it but adopted after. "Took account of" would claim the comparison
+  drove both choices.
+  - GPT's other chronology edits read true against §4.1's record and are kept: "We chose the refined negative-weight
+    background treatment from a closure test in simulation, before computing the refined result's comparison…; we
+    adopted it in the analysis only after that comparison was known", and §3.2's "It was added after the differences
+    were observed".
+- **"Readings" → "results":** kept for the paper's prose. It is our word, not a record's, except in FD-PRR §5.4's
+  label names, which stay: "labels fixed in advance" and "a share specific to the implementation" (GPT had
+  "interpretations" and "a contribution"). In §6.3 the variants keep "variant"; LL5D's own "reading" means variant.
+- **US spelling (B15):** "neighbor", "percent".
+- **Kept from mine over GPT's version:**
+  - §1's scope: "is an illustration of the method". <!-- absence-ok: quotes draft wording for the comparison; states no finding that a result does not exist --> GPT's "Since interval coverage has not been validated, … is not a
+    measurement" narrows §7's four reasons to one.
+  - §6.2's first five-observable test stays one sentence (W-20). GPT's "Neither test gave a coverage result" counts
+    one test's redesign as a second test.
+  - §4.1's duplicated "does not attribute …" sentence is dropped, as in mine.
+  - The C_model sentences: "It measures … and is not calibrated as a bound".
+  - §5.1's "GiBUU-to-GENIE change", for the GiBUU-like label.
+
+**The director's rulings, applied** (R5 strict; `DECISION-20261102-joseph-1b-redesign.md` item 4, carried by LL5D §8):
+1. **Clipping goes to the Supplement.**
+   - The weakened passes, the clipping-artefact reading, and the offset's value and cell leave the cases, including
+     P-2 and P-18's sentences and Table 1's weakened marker.
+   - §6.3's last fixed sentence points to supplementary material S9. S9 gets a paragraph on the second test, with
+     "Negative expected counts in its pseudo-data are clipped to zero, and checks fixed in advance bound the effect of
+     the clipping before the main run", and its clipping record as the printed key `ll5d-clip-record` inside the coverage test's pending group, filled from the readout. It prints "[PENDING: …]" until the fill, like the paper's other pending results. The director named a \pubhold, but the Supplement's blind build refuses holds by design (`make_supp_rater_copy.sh:9`, "The Supplement has no \pubhold"), and a pending key is filled from the readout as the ruling asks.
+   - **This is the director's reading of R5's "to the note":** out of the paper's main text, into the paper's own
+     Supplement, so the pointer resolves for a JINST reader. **It is reversible by Joseph, since his text names the
+     note.**
+   - Per-cell over-coverage stays, as one plain clause per reading.
+2. **The decision after the check stays, without clipping:**
+   - "A check fixed in advance was exceeded, and the test continued by a decision made after that check was seen, so
+     the results below are descriptive (supplementary material, section S9)";
+   - the repair route likewise;
+   - the stopped case: "…was stopped there by a decision made after that check was seen".
+3. **No "does not test" clause:**
+   - the 2D contrast is the bare fact, "The procedure's two-dimensional covariance under-covers at both tunes
+     (section 6.2).";
+   - "not shown to persist" goes;
+   - "does not count it as a failure" becomes the fixed text's "Only under-coverage counts as a failure; over-coverage
+     is reported."
+4. **R5's facts, once, in §6.3's fixed paragraph:**
+   - G18's shared 2p2h family;
+   - "The result concerns the procedure's covariance at those tunes, not the reported intervals at the data." This is
+     the one ", not" in §6.3, Joseph's required wording.
+   - The method is one sentence, and it carries what is not drawn.
+5. **C_model, PENDING JOSEPH:** "The graded covariance includes the model term, whose role is to cover each tune's
+   departure from the simulation, and leaves out the response and run-period terms."
+
+**Also:**
+- **The coined label is gone:** "like-for-like five-observable coverage test" is now "a second five-observable
+  coverage test", in the §6.3 title, the fixed text, the abstract, Table 1, Limitation 1, the hold and
+  `PENDING_GROUPS["ll5d"]`.
+- **W-12, a wording change on the same record (sec_5d.tex:196-204, which calls them sensitivities):** "these shifts
+  measure the result's sensitivity to the prior".
+- **Kept as written, above the field by design:** the five corrective sentences that are this paper's claims, W-11,
+  W-22, §1's third finding, §5.4's licensed sentence and §7. REPORT.md says so beside check 8.
+- **check_sec4_receipts.py:** VL154's anchor is now `(?:it|the residual) is \SIrange…`, since GPT's "the residual is"
+  replaced "it is". The value and the receipt are unchanged, and its test case follows.
+- **check_round:**
+  - ONCE follows the cross-covariance sentence ("…is unavailable, so the significance of their difference cannot be
+    calibrated."), takes "We report the ensemble average as a tested mitigation of the instability." for the
+    ensemble, and drops "These results bound what the study shows.";
+  - EMPTY: ll5d-abs-close's scope class, and ll5d-anyunder is retired;
+  - the no-number check now skips section pointers (\ssec{S9}…).
+
+**Triads, read by hand** (style_metrics' 43 hits in the integrated blind manuscript):
+- 25 are lists the physics or the definitions need: the five observables, the uncertainty blocks, the generators,
+  the deposit species, the settings varied, the terms not drawn, and the problems still open in §7.
+- 18 are the regex's artefacts: two-item lists, clause commas, and table text.
+- 3 are in the protected Data availability text.
+- **2 were reflexive and are cut:**
+  - §1's "for the observables, configurations, and deformations tested" becomes "in the cases tested";
+  - §3.2's "The blocks, their ensembles and their normalizations are given in …" becomes "Each block is defined in …".
+- The three-findings frame ("the estimator has the first, fails the second, and the third…") was the GPT draft's
+  cut, and is kept.
+- **Reflexive triads: 3 at cb87c1832, 0 now.** The field-maximum flag stays on this pattern, because the needed lists
+  remain.

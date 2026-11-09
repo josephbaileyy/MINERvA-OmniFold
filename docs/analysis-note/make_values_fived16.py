@@ -220,13 +220,13 @@ _TL = {"covers": "c", "under-cells": "uc", "under-joint-only": "uj", "under-join
 _TO = ("c", "uc", "uj", "ujc", "i")
 LL5D_PAIR = tuple(f"{a}-{b}" for i, a in enumerate(_TO) for b in _TO[i:]) + ("na",)
 LL5D_SOME = ("some", "none", "na")
-LL5D_CLOSE = ("scope", "none", "na")    # the scope clause on every graded case; "none" when no reading was graded
+LL5D_CLOSE = ("scope", "none", "na")    # "none" when no reading was graded; the scope itself is stated once (the style pass)
 LL5D_STATUS = ("covers", "mixed", "under", "invalid", "stopped")            # Table 1's status words (its caption)
 VHALF_O = ("none-fail", "some-fail")                  # DECISION-20261109-joseph-bias-half-rule.md item 1 (counts below)
 PENDING_GROUPS = {
     # printed inside [PENDING: ...]: descriptive names only, no internal study labels (round 6, the editor's C4)
     "prr": "the study of what changes the retained prior",
-    "ll5d": "the like-for-like five-observable coverage test",
+    "ll5d": "the second five-observable coverage test",
     "vhalf": "the per-cell bias-half validity rule",
 }
 PENDING = {}                                         # key -> (group, class set, or None for a printed value)
@@ -247,6 +247,7 @@ PENDING["ll5d-route"] = ("ll5d", LL5D_ROUTE)
 PENDING["ll5d-stop-what"] = ("ll5d", None)          # the gate or check a STOP fired at (gate-failed; stop; repaired)
 PENDING["ll5d-repair"] = ("ll5d", None)             # the repair, as the record names it (repaired)
 PENDING["ll5d-offset"] = ("ll5d", None)             # clipcheck's largest |o_c|, its cell and the bound (offset routes)
+PENDING["ll5d-clip-record"] = ("ll5d", None)        # the Supplement S9 clipping record (the director's option (a))
 for _t in ("g18", "ar23"):
     for _r in ("minus2", "all"):
         PENDING[f"ll5d-{_t}-{_r}"] = ("ll5d", LL5D_T)
@@ -259,7 +260,7 @@ for _t in ("g18", "ar23"):
 for _r in ("minus2", "all"):
     PENDING[f"ll5d-abs-{_r}"] = ("ll5d", LL5D_PAIR)  # derived: ll5d_derived()
 PENDING["ll5d-abs-close"] = ("ll5d", LL5D_CLOSE)    # derived
-for _x in ("anypass", "anyunder", "cellflags", "anyweak", "anyover"):
+for _x in ("anypass", "cellflags", "anyweak", "anyover"):
     PENDING[f"ll5d-{_x}"] = ("ll5d", LL5D_SOME)     # derived
 PENDING["ll5d-status"] = ("ll5d", LL5D_STATUS)      # derived
 PENDING["vhalf-outcome"] = ("vhalf", VHALF_O)
@@ -278,7 +279,7 @@ WORDS = {
 # filled when a record lands: key -> class (or printed value); a group is filled only when every key has one
 VERDICTS = {}
 DERIVED = {"prr": ("prr-abs",),
-           "ll5d": ("ll5d-abs-minus2", "ll5d-abs-all", "ll5d-abs-close", "ll5d-anypass", "ll5d-anyunder", "ll5d-cellflags",
+           "ll5d": ("ll5d-abs-minus2", "ll5d-abs-all", "ll5d-abs-close", "ll5d-anypass", "ll5d-cellflags",
                     "ll5d-anyweak", "ll5d-anyover", "ll5d-status")}
 
 
@@ -311,7 +312,6 @@ def ll5d_derived(v):
     some = lambda cond: "some" if cond else "none"  # noqa: E731
     out["ll5d-abs-close"] = "none" if all(c == "invalid" for c in cls) else "scope"
     out["ll5d-anypass"] = some("covers" in cls)
-    out["ll5d-anyunder"] = some(any(c.startswith("under") for c in cls))
     out["ll5d-cellflags"] = some(any(c in ("under-cells", "under-joint") for c in cls))
     out["ll5d-anyweak"] = some(any(v[f"ll5d-{t}-{r}-weak"] == "some" for t, r in tr))
     out["ll5d-anyover"] = some(any(v[f"ll5d-{t}-{r}-over"] == "some" for t, r in tr))
@@ -332,13 +332,14 @@ def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, text=N
     graded = campaign == "graded"
     v = {"ll5d-campaign": campaign, "ll5d-route": route if graded else "na",
          "ll5d-stop-what": text.get("stop-what", "[the gate or check]"), "ll5d-repair": text.get("repair", "[the repair]"),
-         "ll5d-offset": text.get("offset", "[the largest offset, its cell, and the bound]")}
+         "ll5d-offset": text.get("offset", "[the largest offset, its cell, and the bound]"),
+         "ll5d-clip-record": text.get("clip-record", "[the clipping record]")}
     for t in ("g18", "ar23"):
         for r in ("minus2", "all"):
             c = per.get((t, r), "covers") if graded else "na"
             v[f"ll5d-{t}-{r}"] = c
             v[f"ll5d-{t}-{r}-cells"] = cells.get((t, r), "[cells R.., with their coverage fractions]")
-            v[f"ll5d-{t}-{r}-stats"] = text.get((t, r, "stats"), "[joint region: n of 300, flagged at k or fewer; mean chi2/ndf]")
+            v[f"ll5d-{t}-{r}-stats"] = text.get((t, r, "stats"), "[joint region: n of 300, flagged at k or fewer, mean chi2/ndf]")
             v[f"ll5d-{t}-{r}-why"] = text.get((t, r, "why"), "[the failed control]")
             for x in ("weak", "over", "clip"):
                 v[f"ll5d-{t}-{r}-{x}"] = "na" if c in ("na", "invalid") else flags.get((t, r, x), "none")

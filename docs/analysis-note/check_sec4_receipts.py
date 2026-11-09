@@ -176,7 +176,7 @@ CHECKS = [
      regularization_max, "round"),
     ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "paper_body.tex",
      r"with coverage as low as ([0-9.]+) for 68\\% intervals", tilt_coverage68_min, "round"),
-    ("other fixed shapes, most affected cell (VL154)", "paper_body.tex", r"it is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the most affected",
+    ("other fixed shapes, most affected cell (VL154)", "paper_body.tex", r"(?:it|the residual) is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the most affected",
      shapes_range, "round"),
 ]
 # The short methods paper (methods-short-20261109, W-15, the director's decision of 2026-11-09 on IR-sol, #988) dropped

@@ -38,8 +38,7 @@ NUM = {("ar23", "all", "why"): "[the numerical check of the grade that failed]"}
 LL5D_CASES = {
     "cov-all-cover": ("graded", P(c, c), "direct", {}, {}),
     "cov-all-cover-qualified": ("graded", P(c, c), "direct",
-                                {("g18", "minus2", "weak"): "some", ("ar23", "minus2", "over"): "some",
-                                 ("ar23", "all", "weak"): "some"}, {}),
+                                {("ar23", "minus2", "over"): "some", ("g18", "all", "over"): "some"}, {}),
     "cov-bands-under-one": ("graded", P(c, c, c, uc), "direct", {}, {}),
     "cov-bands-under-both": ("graded", P(c, c, uc, ujc), "direct", {}, {}),
     "cov-bands-invalid-one": ("graded", P(c, c, c, i), "direct", {}, NUM),
@@ -47,7 +46,6 @@ LL5D_CASES = {
     "cov-primary-under-bands-cover": ("graded", P(c, uc, c, c), "direct", {}, {}),
     "cov-primary-invalid-bands-cover": ("graded", P(i, i, c, c), "direct", {}, {}),
     "cov-one-under-cells": ("graded", P(c, uc), "direct", {}, {}),
-    "cov-one-under-clip": ("graded", P(c, uc), "direct", {("ar23", "minus2", "clip"): "some", ("ar23", "all", "clip"): "some"}, {}),
     "cov-one-under-joint-only": ("graded", P(c, uj), "direct", {}, {}),
     "cov-mixed-cell-joint": ("graded", P(uc, uj, ujc, c), "direct", {}, {}),
     "cov-both-under-joint": ("graded", P(ujc, ujc), "direct", {}, {}),
@@ -93,12 +91,14 @@ def cases(mv):
 
 # anchors: fixed text around each changed passage, as pdftotext prints it (whitespace normalized)
 PASSAGES = {
-    "abstract-coverage": ("intervals is not established.", "The five-observable output on data is therefore", "text"),
-    "sec-coverage": ("one of the generators of Cmodel .", "7. DISCUSSION AND CONCLUSIONS", "text"),
+    "abstract-coverage": ("intervals is not established.", "We therefore present the five-observable output", "text"),
+    # the end: section 7's heading, or what pdftotext puts before it in some layouts (a hold, or "7.1.")
+    "sec-coverage": ("the checks made on it before the main run, are given in supplementary material, section S9.",
+                     ("7. DISCUSSION AND CONCLUSIONS", "[HOLD:", " 7.1. "), "text"),
     "abstract-ibu": ("fixed before the tests were graded.", "The estimator is reproducible", "text"),
     "sec-ibu": ("At the GiBUU hybrid truth, the IBU at five iterations", "No tested level clears both flagged truths.", "text"),
     # Table 1's row, from pdftotext -raw (content order keeps a table row together)
-    "table-coverage": ("Like-for-like five-observable coverage test 5D 6.3", "Run-period consistency", "raw"),
+    "table-coverage": ("Second five-observable coverage test 5D 6.3", "Run-period consistency", "raw"),
 }
 
 
@@ -122,7 +122,7 @@ def norm(txt):
     txt = re.sub(r"\b(under|five|two|pseudo|noise|like|for|run|held|well|non)-\n(?=[a-z])", r"\1-", txt)
     txt = re.sub(r"-\n(?=[a-z])", "", txt)
     # pdftotext also drops the hyphen of a compound it rejoins on one line; the source prints only "under-cover..."
-    txt = txt.replace("undercover", "under-cover").replace("runperiod", "run-period")
+    txt = txt.replace("undercover", "under-cover").replace("runperiod", "run-period").replace("pseudodata", "pseudo-data")
     txt = re.sub(r"\f", " ", txt)
     return re.sub(r"\s+", " ", txt)
 
@@ -133,8 +133,8 @@ def cut(txt, a, b):
         return None
     if a.endswith("."):
         i += len(a)
-    j = txt.find(b, i + 1)
-    return txt[i:j].strip() if j > 0 else None
+    ends = [k for k in (txt.find(e, i + 1) for e in ((b,) if isinstance(b, str) else b)) if k > 0]
+    return txt[i:min(ends)].strip() if ends else None
 
 
 def recut(out):

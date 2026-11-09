@@ -22,7 +22,7 @@ The test has two variants: a primary one, without two bands of the detector simu
 held-out tunes. In the abstract, each case's sentence follows this one, which prints in every outcome: "The
 procedure's two-dimensional covariance, rebuilt at each of two held-out generator tunes, under-covers at both;
 coverage of the reported five-observable intervals is not established." In section 6.3, each case's text follows
-the section's fixed paragraph, which ends "...shares its 2p2h model family with one of the generators of Cmodel."
+the section's fixed paragraph, which ends "...are given in supplementary material, section S9."
 Table 1's caption defines the status words.
 
 
@@ -30,323 +30,309 @@ CV1. No under-coverage detected, in both variants at both tunes
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at either tune, and the variant with those bands detects no under-coverage at either tune; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at either tune; with those bands, it detects no under-coverage at either tune.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage Covers
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage Covers
 
-CV2. As CV1, with some passes weakened by clipping, in both variants, and some over-coverage
+CV2. As CV1, with over-coverage in some cells
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at either tune, and the variant with those bands detects no under-coverage at either tune; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at either tune; with those bands, it detects no under-coverage at either tune.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). In the primary variant, at G18_10a_02_11b, the passes in cells [cell R06, with its coverage fraction] count as weakened: their variance ratio after clipping is below a bound fixed in advance; the label changes no reading. In the primary variant, at AR23_20i_00_000, it over-covers in cells [cells R03, R11, with their coverage fractions], which the test reports and does not count as a failure. With the two bands, at AR23_20i_00_000, the passes in cells [cells R03, R11, with their coverage fractions] count as weakened: their variance ratio after clipping is below a bound fixed in advance; the label changes no reading. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands at G18_10a_02_11b, it over-covers in cells [cell R06, with its coverage fraction]. Without the two bands at AR23_20i_00_000, it over-covers in cells [cells R03, R11, with their coverage fractions]. The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; some passes weakened; some cells over-cover Covers
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; some cells over-cover Covers
 
 CV3. Primary variant: no under-coverage at either tune. With the bands: under-coverage in some cells at one tune
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at either tune, and the variant with those bands detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at either tune; with those bands, it detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each cell flag is a pointwise reading, at the false-flag rate stated above. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). Each cell flag is pointwise, with the false-flag rate given above. The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under Mixed
 
 CV4. Primary: none at either tune. With the bands: under-coverage at both tunes, in cells at one and jointly and in cells at the other
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at either tune, and the variant with those bands detects under-coverage in some cells at both tunes, and jointly at one; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at either tune; with those bands, it detects under-coverage in some cells at both tunes, and jointly at one.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it flags under-coverage in cells [cell R06, with its coverage fraction], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]) and in cells [cells R03, R11, with their coverage fractions]. Each cell flag is a pointwise reading, at the false-flag rate stated above. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it flags under-coverage in cells [cell R06, with its coverage fraction], but not jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]) and in cells [cells R03, R11, with their coverage fractions]. Each cell flag is pointwise, with the false-flag rate given above. The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b cells under, AR23_20i_00_000 joint and cells under Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b cells under, AR23_20i_00_000 joint and cells under Mixed
 
 CV5. Primary: none at either tune. With the bands: invalid at one tune, by a numerical check of the grade
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at either tune, and the variant with those bands detects no under-coverage at one tune and is invalid by its own controls at the other; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at either tune; with those bands, it detects no under-coverage at one tune and fails its own controls at the other.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it is invalid by its own controls, [the numerical check of the grade that failed], and gives no reading. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it fails its own controls, [the numerical check of the grade that failed], and gives no result. The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 invalid Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 invalid Mixed
 
 CV6. Primary: none at either tune. With the bands: invalid at both tunes
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at either tune, and the variant with those bands is invalid by its own controls at both tunes; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at either tune; with those bands, it fails its own controls at both tunes.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it is invalid by its own controls, [the failed control], and gives no reading, and at AR23_20i_00_000 it is invalid by its own controls, [the failed control], and gives no reading. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it fails its own controls, [the failed control], and gives no result, and at AR23_20i_00_000 it fails its own controls, [the failed control], and gives no result. The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b invalid, AR23_20i_00_000 invalid Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b invalid, AR23_20i_00_000 invalid Mixed
 
 CV7. Primary: under-coverage in some cells at one tune. With the bands: none at either tune
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other, and the variant with those bands detects no under-coverage at either tune; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other; with those bands, it detects no under-coverage at either tune.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each cell flag is a pointwise reading, at the false-flag rate stated above. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). Each cell flag is pointwise, with the false-flag rate given above. The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage Mixed
 
 CV8. Primary: invalid at both tunes. With the bands: none at either tune
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, is invalid by its own controls at both tunes, and the variant with those bands detects no under-coverage at either tune; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, fails its own controls at both tunes; with those bands, it detects no under-coverage at either tune.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b is invalid by its own controls, [the failed control], and gives no reading, and at AR23_20i_00_000 it is invalid by its own controls, [the failed control], and gives no reading. With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b fails its own controls, [the failed control], and gives no result, and at AR23_20i_00_000 it fails its own controls, [the failed control], and gives no result. With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b invalid, AR23_20i_00_000 invalid; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b invalid, AR23_20i_00_000 invalid; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage Mixed
 
 CV9. Both variants: under-coverage in some cells, not jointly, at one tune; none at the other
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other, and the variant with those bands detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other; with those bands, it detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each cell flag is a pointwise reading, at the false-flag rate stated above. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). Each cell flag is pointwise, with the false-flag rate given above. The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under Mixed
 
-CV10. As CV9, where the flags meet the condition for a possible clipping artefact
+CV10. Both variants: joint under-coverage, with no cell flagged, at one tune; none at the other
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other, and the variant with those bands detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at one tune and joint under-coverage, with no cell flagged, at the other; with those bands, it detects no under-coverage at one tune and joint under-coverage, with no cell flagged, at the other.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). In the primary variant, at AR23_20i_00_000, the flagged cells [cells R03, R11, with their coverage fractions] meet the condition fixed in advance under which a flag is read as possibly the clipping artefact, a clipping offset at or above a bound fixed in advance; that reading does not remove the flags, and no further test of it was run. With the two bands, at AR23_20i_00_000, the flagged cells [cells R03, R11, with their coverage fractions] meet the condition fixed in advance under which a flag is read as possibly the clipping artefact, a clipping offset at or above a bound fixed in advance; that reading does not remove the flags, and no further test of it was run. Each cell flag is a pointwise reading, at the false-flag rate stated above. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), with no cell flagged. With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), with no cell flagged. The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 joint under; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 joint under Mixed
 
-CV11. Both variants: joint under-coverage, with no cell flagged, at one tune; none at the other
+CV11. Cell and joint outcomes that differ by tune and by variant
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at one tune and joint under-coverage, with no cell flagged, at the other, and the variant with those bands detects no under-coverage at one tune and joint under-coverage, with no cell flagged, at the other; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects under-coverage in some cells, but not jointly, at one tune and joint under-coverage, with no cell flagged, at the other; with those bands, it detects no under-coverage at one tune and under-coverage jointly and in some cells at the other.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), with no cell flagged. With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), with no cell flagged. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b flags under-coverage in cells [cell R06, with its coverage fraction], but not jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), with no cell flagged. With the two bands, at G18_10a_02_11b it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]) and in cells [cell R06, with its coverage fraction], and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). Each cell flag is pointwise, with the false-flag rate given above. The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 joint under; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 joint under Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b cells under, AR23_20i_00_000 joint under; with them, G18_10a_02_11b joint and cells under, AR23_20i_00_000 no under-coverage Mixed
 
-CV12. Cell and joint outcomes that differ by tune and by variant
+CV12. Both variants: under-coverage jointly and in some cells at both tunes
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects under-coverage in some cells, but not jointly, at one tune and joint under-coverage, with no cell flagged, at the other, and the variant with those bands detects no under-coverage at one tune and under-coverage jointly and in some cells at the other; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects under-coverage jointly and in some cells at both tunes; with those bands, it detects under-coverage jointly and in some cells at both tunes.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b flags under-coverage in cells [cell R06, with its coverage fraction], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), with no cell flagged. With the two bands, at G18_10a_02_11b it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]) and in cells [cell R06, with its coverage fraction], and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each cell flag is a pointwise reading, at the false-flag rate stated above. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]) and in cells [cell R06, with its coverage fraction], and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]) and in cells [cells R03, R11, with their coverage fractions]. With the two bands, at G18_10a_02_11b it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]) and in cells [cell R06, with its coverage fraction], and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]) and in cells [cells R03, R11, with their coverage fractions]. Each cell flag is pointwise, with the false-flag rate given above.
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b cells under, AR23_20i_00_000 joint under; with them, G18_10a_02_11b joint and cells under, AR23_20i_00_000 no under-coverage Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b joint and cells under, AR23_20i_00_000 joint and cells under; with them, G18_10a_02_11b joint and cells under, AR23_20i_00_000 joint and cells under Under-covers
 
-CV13. Both variants: under-coverage jointly and in some cells at both tunes
+CV13. Both variants: invalid at one tune; no under-coverage at the other
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects under-coverage jointly and in some cells at both tunes, and the variant with those bands detects under-coverage jointly and in some cells at both tunes; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at one tune and fails its own controls at the other; with those bands, it detects no under-coverage at one tune and fails its own controls at the other.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]) and in cells [cell R06, with its coverage fraction], and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]) and in cells [cells R03, R11, with their coverage fractions]. With the two bands, at G18_10a_02_11b it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]) and in cells [cell R06, with its coverage fraction], and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]) and in cells [cells R03, R11, with their coverage fractions]. Each cell flag is a pointwise reading, at the false-flag rate stated above. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b fails its own controls, [the failed control], and gives no result, and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it fails its own controls, [the failed control], and gives no result, and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b joint and cells under, AR23_20i_00_000 joint and cells under; with them, G18_10a_02_11b joint and cells under, AR23_20i_00_000 joint and cells under Under-covers
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b invalid, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b invalid, AR23_20i_00_000 no under-coverage Mixed
 
-CV14. Both variants: invalid at one tune; no under-coverage at the other
+CV14. Both variants: invalid at one tune; under-coverage in some cells at the other
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at one tune and is invalid by its own controls at the other, and the variant with those bands detects no under-coverage at one tune and is invalid by its own controls at the other; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects under-coverage in some cells, but not jointly, at one tune and fails its own controls at the other; with those bands, it detects under-coverage in some cells, but not jointly, at one tune and fails its own controls at the other.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b is invalid by its own controls, [the failed control], and gives no reading, and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it is invalid by its own controls, [the failed control], and gives no reading, and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b fails its own controls, [the failed control], and gives no result, and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it fails its own controls, [the failed control], and gives no result, and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). Each cell flag is pointwise, with the false-flag rate given above.
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b invalid, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b invalid, AR23_20i_00_000 no under-coverage Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b invalid, AR23_20i_00_000 cells under; with them, G18_10a_02_11b invalid, AR23_20i_00_000 cells under Mixed
 
-CV15. Both variants: invalid at one tune; under-coverage in some cells at the other
+CV15. Invalid at both tunes, in both variants
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects under-coverage in some cells, but not jointly, at one tune and is invalid by its own controls at the other, and the variant with those bands detects under-coverage in some cells, but not jointly, at one tune and is invalid by its own controls at the other; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, fails its own controls at both tunes; with those bands, it fails its own controls at both tunes. It gives no coverage result.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b is invalid by its own controls, [the failed control], and gives no reading, and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it is invalid by its own controls, [the failed control], and gives no reading, and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each cell flag is a pointwise reading, at the false-flag rate stated above. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    Without the two bands, the test at G18_10a_02_11b fails its own controls, [the failed control], and gives no result, and at AR23_20i_00_000 it fails its own controls, [the failed control], and gives no result. With the two bands, at G18_10a_02_11b it fails its own controls, [the failed control], and gives no result, and at AR23_20i_00_000 it fails its own controls, [the failed control], and gives no result. The test therefore gives no coverage result.
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b invalid, AR23_20i_00_000 cells under; with them, G18_10a_02_11b invalid, AR23_20i_00_000 cells under Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b invalid, AR23_20i_00_000 invalid; with them, G18_10a_02_11b invalid, AR23_20i_00_000 invalid Invalid
 
-CV16. Invalid at both tunes, in both variants
+CV16. The test went on after a check fixed in advance was exceeded; then no under-coverage anywhere
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, is invalid by its own controls at both tunes, and the variant with those bands is invalid by its own controls at both tunes; the test therefore gives no coverage reading.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at either tune; with those bands, it detects no under-coverage at either tune. These results are descriptive, because a check fixed in advance was exceeded and the test continued by a decision made after the check was seen.
 
   Section 6.3:
 
-    In the primary variant, without the two bands, the test at G18_10a_02_11b is invalid by its own controls, [the failed control], and gives no reading, and at AR23_20i_00_000 it is invalid by its own controls, [the failed control], and gives no reading. With the two bands, at G18_10a_02_11b it is invalid by its own controls, [the failed control], and gives no reading, and at AR23_20i_00_000 it is invalid by its own controls, [the failed control], and gives no reading. The test therefore gives no coverage reading.
+    A check fixed in advance was exceeded, and the test continued by a decision made after that check was seen, so the results below are descriptive (supplementary material, section S9). Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b invalid, AR23_20i_00_000 invalid; with them, G18_10a_02_11b invalid, AR23_20i_00_000 invalid Invalid
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; descriptive: continued past a check by a later decision Covers
 
-CV17. The test went on after its clipping-offset check exceeded its bound; then no under-coverage anywhere
+CV17. The test went on after a check fixed in advance was exceeded; then under-coverage in some cells at one tune
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at either tune, and the variant with those bands detects no under-coverage at either tune; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged, and these readings are descriptive, because the test continued past its own clipping-offset check by a decision made after that check was seen.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other; with those bands, it detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other. These results are descriptive, because a check fixed in advance was exceeded and the test continued by a decision made after the check was seen.
 
   Section 6.3:
 
-    Its check of the clipping offset exceeded the bound fixed in advance ([the largest offset, its cell, and the bound]), and the test continued past it by a decision made after that check was seen, so the readings below are descriptive, not grades fixed in advance. In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    A check fixed in advance was exceeded, and the test continued by a decision made after that check was seen, so the results below are descriptive (supplementary material, section S9). Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). Each cell flag is pointwise, with the false-flag rate given above. The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; descriptive: continued past its clipping-offset check by a later decision Covers
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under; descriptive: continued past a check by a later decision Mixed
 
-CV18. The test went on after its clipping-offset check exceeded its bound; then under-coverage in some cells at one tune
+CV18. An earlier run stopped, and the test ran with a repair; then no under-coverage anywhere
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other, and the variant with those bands detects no under-coverage at one tune and under-coverage in some cells, but not jointly, at the other; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged, and these readings are descriptive, because the test continued past its own clipping-offset check by a decision made after that check was seen.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects no under-coverage at either tune; with those bands, it detects no under-coverage at either tune. These results are descriptive, because the test ran with a repair chosen after an earlier run of it stopped.
 
   Section 6.3:
 
-    Its check of the clipping offset exceeded the bound fixed in advance ([the largest offset, its cell, and the bound]), and the test continued past it by a decision made after that check was seen, so the readings below are descriptive, not grades fixed in advance. In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it flags under-coverage in cells [cells R03, R11, with their coverage fractions], but not jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each cell flag is a pointwise reading, at the false-flag rate stated above. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    An earlier run of this test stopped at a check fixed in advance, [the gate or check]; the test then ran with a repair, [the repair], chosen after that stop was seen, so the results below are descriptive (supplementary material, section S9). Without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]). The passes are for pseudo-data without the model, response and run-period terms, at tunes where the bias is not flagged (section 5.2). The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2).
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 cells under; descriptive: continued past its clipping-offset check by a later decision Mixed
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; descriptive: run with a repair chosen after a stop Covers
 
-CV19. An earlier run stopped, and the test ran with a repair; then no under-coverage anywhere
+CV19. An earlier run stopped, and the test ran with a repair; then under-coverage jointly and in cells at both tunes
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects no under-coverage at either tune, and the variant with those bands detects no under-coverage at either tune; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data; each pass is for pseudo-data that do not draw the model, response and run-period terms, at tunes other than the two truths where the bias is flagged, and these readings are descriptive, because the test ran with a repair chosen after an earlier run of it stopped.
+    A second five-observable test, built the same way, then grades the procedure’s covariance at the same tunes, where the bias tests pass, with pseudo-data that do not draw the model, response and run-period terms. Its primary variant, which omits two detector bands, detects under-coverage jointly and in some cells at both tunes; with those bands, it detects under-coverage jointly and in some cells at both tunes. These results are descriptive, because the test ran with a repair chosen after an earlier run of it stopped.
 
   Section 6.3:
 
-    An earlier run of this test stopped at a check fixed in advance, [the gate or check]; it then ran with a repair, [the repair], chosen after that stop was seen, so the readings below are descriptive, not grades fixed in advance. In the primary variant, without the two bands, the test at G18_10a_02_11b detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). With the two bands, at G18_10a_02_11b it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]), and at AR23_20i_00_000 it detects no under-coverage, per cell or jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]). Each pass is for pseudo-data that do not draw the model, response and run-period terms, with the lateral uncertainties carried by a surrogate, and at tunes that are not the two truths at which the fake-data bias is flagged (section 5.2); since the response and run-period terms are also left out of the graded covariance, a pass carries over to the procedure’s full covariance at that tune. The procedure’s two-dimensional covariance under-covers at both tunes (section 6.2); this test does not establish why the five-observable result differs. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    An earlier run of this test stopped at a check fixed in advance, [the gate or check]; the test then ran with a repair, [the repair], chosen after that stop was seen, so the results below are descriptive (supplementary material, section S9). Without the two bands, the test at G18_10a_02_11b flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]) and in cells [cell R06, with its coverage fraction], and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]) and in cells [cells R03, R11, with their coverage fractions]. With the two bands, at G18_10a_02_11b it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]) and in cells [cell R06, with its coverage fraction], and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer, mean chi2/ndf]) and in cells [cells R03, R11, with their coverage fractions]. Each cell flag is pointwise, with the false-flag rate given above.
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; with them, G18_10a_02_11b no under-coverage, AR23_20i_00_000 no under-coverage; descriptive: run with a repair chosen after a stop Covers
+    Second five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b joint and cells under, AR23_20i_00_000 joint and cells under; with them, G18_10a_02_11b joint and cells under, AR23_20i_00_000 joint and cells under; descriptive: run with a repair chosen after a stop Under-covers
 
-CV20. An earlier run stopped, and the test ran with a repair; then under-coverage jointly and in cells at both tunes
+CV20. Stopped at a gate before any pseudo-experiment ran
 
   Abstract:
 
-    In a like-for-like five-observable coverage test of the procedure’s covariance, rebuilt at each of the same tunes, the primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, detects under-coverage jointly and in some cells at both tunes, and the variant with those bands detects under-coverage jointly and in some cells at both tunes; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data, and these readings are descriptive, because the test ran with a repair chosen after an earlier run of it stopped.
+    A second five-observable coverage test at the same tunes stopped at a gate fixed in advance, before its pseudo-experiments, and gives no coverage result.
 
   Section 6.3:
 
-    An earlier run of this test stopped at a check fixed in advance, [the gate or check]; it then ran with a repair, [the repair], chosen after that stop was seen, so the readings below are descriptive, not grades fixed in advance. In the primary variant, without the two bands, the test at G18_10a_02_11b flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]) and in cells [cell R06, with its coverage fraction], and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]) and in cells [cells R03, R11, with their coverage fractions]. With the two bands, at G18_10a_02_11b it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]) and in cells [cell R06, with its coverage fraction], and at AR23_20i_00_000 it flags under-coverage jointly ([joint region: n of 300, flagged at k or fewer; mean chi2/ndf]) and in cells [cells R03, R11, with their coverage fractions]. Each cell flag is a pointwise reading, at the false-flag rate stated above. Each under-coverage is found with the response and run-period terms left out of the graded covariance, and is not shown to persist with them. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+    It stopped at a gate fixed in advance, [the gate or check], before its pseudo-experiments, and gives no coverage result.
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 without the two bands, G18_10a_02_11b joint and cells under, AR23_20i_00_000 joint and cells under; with them, G18_10a_02_11b joint and cells under, AR23_20i_00_000 joint and cells under; descriptive: run with a repair chosen after a stop Under-covers
+    Second five-observable coverage test 5D 6.3 Stopped at a gate fixed in advance, [the gate or check] Stopped
 
-CV21. Stopped at a gate before any pseudo-experiment ran
+CV21. Stopped by a decision made after a check fixed in advance was exceeded
 
   Abstract:
 
-    A like-for-like five-observable coverage test at the same tunes stopped at a gate fixed in advance, before its pseudo-experiments, and gives no coverage reading.
+    A second five-observable coverage test at the same tunes was stopped before the bulk of its pseudo-experiments, by a decision made after a check fixed in advance was exceeded, and gives no coverage result.
 
   Section 6.3:
 
-    It stopped at a gate fixed in advance, [the gate or check], before its pseudo-experiments, and gives no coverage reading.
+    A check fixed in advance was exceeded, and the test was stopped there by a decision made after that check was seen (supplementary material, section S9). Only the pilot had run, one pseudo-experiment at one tune in each variant, and none was graded. The test gives no coverage result.
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 Stopped at a gate fixed in advance, [the gate or check] Stopped
+    Second five-observable coverage test 5D 6.3 Stopped by a decision made after a check was exceeded Stopped
 
-CV22. Stopped by a decision made after the clipping-offset check exceeded its bound
+CV22. Stopped at another check before any pseudo-experiment ran
 
   Abstract:
 
-    A like-for-like five-observable coverage test at the same tunes was stopped, by a decision made after its clipping-offset check exceeded its bound, before the bulk of its pseudo-experiments, and gives no coverage reading.
+    A second five-observable coverage test at the same tunes stopped at a check fixed in advance, before its pseudo-experiments, and gives no coverage result.
 
   Section 6.3:
 
-    Its check of the clipping offset exceeded the bound fixed in advance ([the largest offset, its cell, and the bound]), and the test was stopped there, by a decision made after that check was seen, when only the pilot had run, one pseudo-experiment at one tune in each variant, none of them graded; it gives no coverage reading.
+    It stopped at a check fixed in advance, [the gate or check], before its pseudo-experiments, and gives no coverage result.
 
   Table 1 row:
 
-    Like-for-like five-observable coverage test 5D 6.3 Stopped by a decision made after its clipping-offset check exceeded its bound Stopped
-
-CV23. Stopped at another check before any pseudo-experiment ran
-
-  Abstract:
-
-    A like-for-like five-observable coverage test at the same tunes stopped at a check fixed in advance, before its pseudo-experiments, and gives no coverage reading.
-
-  Section 6.3:
-
-    It stopped at a check fixed in advance, [the gate or check], before its pseudo-experiments, and gives no coverage reading.
-
-  Table 1 row:
-
-    Like-for-like five-observable coverage test 5D 6.3 Stopped at a check fixed in advance, [the gate or check] Stopped
+    Second five-observable coverage test 5D 6.3 Stopped at a check fixed in advance, [the gate or check] Stopped
 
 
 ======================================================================================================================
@@ -365,61 +351,61 @@ IB1. At both flagged truths, the IBU retains less of the prior than the estimato
 
   Abstract:
 
-    At both of those truths, a binned iterative unfolding of noise-free pseudo-data at five iterations retains less of the prior than the estimator, by more than a bar fixed in advance.
+    At both of those truths, a binned iterative unfolding of noise-free pseudo-data at five iterations retains less of the prior than the estimator, by more than a threshold fixed in advance.
 
   Section 5.3, end of the section:
 
-    At the GiBUU hybrid truth, the IBU at five iterations retains less of the prior than the five-observable estimator, by more than its bar, [the bar], and its retention falls by at least the fixed margin with longer iteration; at the q3 tilt, it retains less, by more than its bar, and its retention falls by at least that margin. At the GiBUU hybrid truth, the readings are consistent with a share specific to the implementation. At the q3 tilt, the readings are consistent with a share specific to the implementation.
+    At the GiBUU hybrid truth, the IBU at five iterations retains less of the prior than the five-observable estimator, by more than its threshold of [the bar]. Its retention falls by at least the fixed margin with more iterations. At the q3 tilt, it retains less, by more than its threshold, and its retention falls by at least that margin. At the GiBUU hybrid truth, the results are consistent with a share specific to the implementation. At the q3 tilt, the results are consistent with a share specific to the implementation.
 
 IB2. At both, the IBU's retention differs from the estimator's by less than the bar
 
   Abstract:
 
-    At both of those truths, a binned iterative unfolding of noise-free pseudo-data at five iterations retains a share of the prior that differs from the estimator’s by less than a bar fixed in advance.
+    At both of those truths, a binned iterative unfolding of noise-free pseudo-data at five iterations retains a fraction of the prior within a threshold fixed in advance of the estimator’s.
 
   Section 5.3, end of the section:
 
-    At the GiBUU hybrid truth, the IBU at five iterations retains a share of the prior that differs from the five-observable estimator’s by less than its bar, [the bar], and its retention changes by less than the fixed margin with longer iteration; at the q3 tilt, it retains a share that differs by less than its bar, and its retention changes by less than that margin.
+    At the GiBUU hybrid truth, the IBU at five iterations retains a fraction of the prior that differs from the five-observable estimator’s by less than its threshold of [the bar]. Its retention changes by less than the fixed margin with more iterations. At the q3 tilt, it retains a fraction that differs by less than its threshold, and its retention changes by less than that margin.
 
 IB3. At both, the IBU retains more of the prior than the estimator
 
   Abstract:
 
-    At both of those truths, a binned iterative unfolding of noise-free pseudo-data at five iterations retains more of the prior than the estimator, by more than a bar fixed in advance.
+    At both of those truths, a binned iterative unfolding of noise-free pseudo-data at five iterations retains more of the prior than the estimator, by more than a threshold fixed in advance.
 
   Section 5.3, end of the section:
 
-    At the GiBUU hybrid truth, the IBU at five iterations retains more of the prior than the five-observable estimator, by more than its bar, [the bar], and its retention rises by at least the fixed margin with longer iteration; at the q3 tilt, it retains more, by more than its bar, and its retention rises by at least that margin.
+    At the GiBUU hybrid truth, the IBU at five iterations retains more of the prior than the five-observable estimator, by more than its threshold of [the bar]. Its retention rises by at least the fixed margin with more iterations. At the q3 tilt, it retains more, by more than its threshold, and its retention rises by at least that margin.
 
 IB4. At both, the retained fraction is undefined, so no comparison is made
 
   Abstract:
 
-    At both of those truths, the share of the prior retained is undefined, so a binned iterative unfolding of noise-free pseudo-data is not compared with the estimator on it.
+    At both of those truths the retained fraction of the prior is undefined, so a binned iterative unfolding of noise-free pseudo-data at five iterations is not compared with the estimator.
 
   Section 5.3, end of the section:
 
-    At the GiBUU hybrid truth, the IBU at five iterations is not compared with the five-observable estimator, because the retained fraction is undefined at this truth, and its retention is undefined at longer iteration; at the q3 tilt, it is not compared, because the retained fraction is undefined there, and its retention is undefined at longer iteration.
+    At the GiBUU hybrid truth, the IBU at five iterations is not compared with the five-observable estimator, because the retained fraction is undefined at this truth. Its retention is undefined at higher iteration counts. At the q3 tilt, it is not compared, because the retained fraction is undefined there, and its retention is undefined at higher iteration counts.
 
 IB5. Split: less at the GiBUU hybrid truth; a difference below the bar at the q3 tilt
 
   Abstract:
 
-    At the GiBUU-like truth, a binned iterative unfolding of noise-free pseudo-data at five iterations retains less of the prior than the estimator, by more than a bar fixed in advance; at the tilt, it retains a share of the prior that differs from the estimator’s by less than a bar fixed in advance.
+    At the GiBUU-like truth, a binned iterative unfolding of noise-free pseudo-data at five iterations retains less of the prior than the estimator, by more than a threshold fixed in advance. At the tilt the difference is within the threshold.
 
   Section 5.3, end of the section:
 
-    At the GiBUU hybrid truth, the IBU at five iterations retains less of the prior than the five-observable estimator, by more than its bar, [the bar], and its retention falls by at least the fixed margin with longer iteration; at the q3 tilt, it retains a share that differs by less than its bar, and its retention changes by less than that margin. At the GiBUU hybrid truth, the readings are consistent with a share specific to the implementation.
+    At the GiBUU hybrid truth, the IBU at five iterations retains less of the prior than the five-observable estimator, by more than its threshold of [the bar]. Its retention falls by at least the fixed margin with more iterations. At the q3 tilt, it retains a fraction that differs by less than its threshold, and its retention changes by less than that margin. At the GiBUU hybrid truth, the results are consistent with a share specific to the implementation.
 
 IB6. Split: a difference below the bar at the GiBUU hybrid truth; more at the q3 tilt
 
   Abstract:
 
-    At the GiBUU-like truth, a binned iterative unfolding of noise-free pseudo-data at five iterations retains a share of the prior that differs from the estimator’s by less than a bar fixed in advance; at the tilt, it retains more of the prior than the estimator, by more than a bar fixed in advance.
+    At the GiBUU-like truth, a binned iterative unfolding of noise-free pseudo-data at five iterations retains a fraction of the prior within a threshold fixed in advance of the estimator’s. At the tilt it retains more, by more than the threshold.
 
   Section 5.3, end of the section:
 
-    At the GiBUU hybrid truth, the IBU at five iterations retains a share of the prior that differs from the five-observable estimator’s by less than its bar, [the bar], and its retention changes by less than the fixed margin with longer iteration; at the q3 tilt, it retains more, by more than its bar, and its retention rises by at least that margin.
+    At the GiBUU hybrid truth, the IBU at five iterations retains a fraction of the prior that differs from the five-observable estimator’s by less than its threshold of [the bar]. Its retention changes by less than the fixed margin with more iterations. At the q3 tilt, it retains more, by more than its threshold, and its retention rises by at least that margin.
 
 
 ======================================================================================================================

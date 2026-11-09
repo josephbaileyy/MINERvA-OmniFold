@@ -187,6 +187,30 @@ The director, 2026-11-09:
   banked for Joseph with W-19 and W-21: the deposit, and what the note must carry.
 - **The AGENTS.md refresh** (the stale 2D value and Q's 6.45/4.75) is on the director's follow-up list, not on #977.
 
+- **The note must carry the second coverage test's clipping record when it resumes** (the director's option (a),
+  2026-11-09). The paper's Supplement S9 carries it, as the pending key `ll5d-clip-record`, filled from the readout: the passes weakened by
+  clipping, the flags that meet the clipping-artefact condition, and the clipping check's largest offset with its
+  cell. R5 (`DECISION-20261102-joseph-1b-redesign.md:88`) names the note, so the note gets the same record. Joseph may
+  move it there from S9.
+
+## The style report (check_round check 8)
+
+check_round prints, as a report and never a failure, each style pattern's rate per 1,000 words against the field's
+per-paper maximum. The script is style_metrics.py, vendored from the director's baseline, and the limits are in
+style-baseline.json: 11 human-written papers before November 2022, 78,599 words.
+- **Above the field by design; do not "fix" these.** Five corrective sentences are claims this paper exists to make:
+  - W-11's "coverage of the reported five-observable intervals is not established";
+  - W-22's "this study does not establish a practical gain over binned unfolding";
+  - §1's third finding, "its uncertainty calibration is not established";
+  - §5.4's licensed "a difference does not show that either method is correct";
+  - §7's "is not established", before the next step.
+  The director ruled (2026-11-09) that a paper whose findings are limits should sit above the field here. Rewording
+  them only to pass the pattern would be overfitting the metric.
+- **The ", not" contrasts that remain are required or protected:**
+  - §6.2's and §6.3's R5 sentence, "the result concerns the procedure's covariance at those tunes, not the reported
+    intervals at the data", is Joseph's required wording;
+  - B0's "not the typical one" is approved verbatim.
+
 ## Banked for Joseph
 
 - **W-9, W-10, W-19 and W-21,** as before.

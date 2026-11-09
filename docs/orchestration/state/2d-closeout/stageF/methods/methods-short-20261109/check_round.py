@@ -22,9 +22,15 @@
   8. NO CLASS NAME IN PRINT (printed_class_names; run by the fill test and by preread-outcomes/build_cases.py on
      every build). A filled build prints no raw class name (any class with a hyphen, in either spelling, or "na"),
      and never "joseph" outside the author line, the email and the repository URL (the director, 2026-11-09, item 8).
-usage: check_round.py <worktree> [--base SHA] [--fill-test]   (exit 1 on any failure)
+  8. STYLE REPORT (printed, never a failure; the director, 2026-11-09). The rate per 1,000 words of each pattern of
+     style_metrics.py, vendored unchanged from the director's field baseline (sha256 8bf224280556ea41), against the
+     field's per-paper maximum in style-baseline.json (11 human-written papers before November 2022, 78,599 words).
+     A pattern above the field maximum is marked ABOVE. It runs on the round's blind manuscript and VARIANTS.txt
+     (preread-outcomes/, or --printed FILE ...).
+usage: check_round.py <worktree> [--base SHA] [--fill-test] [--printed FILE ...]   (exit 1 on any failure)
        check_round.py <worktree> --self-test                  (each planted defect must be caught)"""
 import importlib.util
+import json
 import re
 import shutil
 import subprocess
@@ -33,6 +39,7 @@ import tempfile
 from pathlib import Path
 
 BASE = "bc8673186"
+HERE = Path(__file__).resolve().parent
 NOTE = "docs/analysis-note"
 FILES = ["paper_body.tex", "main_paper.tex"]
 # classes that print nothing by design (variants.md, the rows marked EMPTY)
@@ -41,8 +48,8 @@ EMPTY = {**{f"prr-label-{l}-{t}": {"not"} for l in ("fir", "info", "impl", "obs"
          **{f"ll5d-{t}-{r}-{x}": {"none", "na"} for t in ("g18", "ar23") for r in ("minus2", "all")
             for x in ("weak", "over", "clip")},
          "ll5d-route": {"direct", "na"},
-         "ll5d-abs-minus2": {"na"}, "ll5d-abs-all": {"na"}, "ll5d-abs-close": {"na"},
-         **{f"ll5d-{x}": {"none", "na"} for x in ("anypass", "anyunder", "cellflags", "anyweak", "anyover")}}
+         "ll5d-abs-minus2": {"na"}, "ll5d-abs-all": {"na"}, "ll5d-abs-close": {"scope", "na"},
+         **{f"ll5d-{x}": {"none", "na"} for x in ("anypass", "cellflags", "anyweak", "anyover")}}
 # numerals the paper prints that the base does not, each with its source (ledger rows)
 NEW_NUMERALS = {"285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55, 1.391 x 205 = 285.2 (in [285.05, 285.26])",
                 "136": "L-12b: the note's sec_results.tex:128 (chi2 = 136 on the 73 best-determined directions)",
@@ -54,10 +61,9 @@ NEW_NUMERALS = {"285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55,
                 "0.025": "P-9: LL5D-DECLARATION.md:471-472, :482, the size per (truth, reading): 0.025 over the cells, 0.025 joint",
                 "99.7": "L-28: r5:176's bar 39.04 at the null's 0.997 quantile, printed as the 99.7th percentile (round 6, the editor's B8)"}
 ONCE = [
-    "and their cross-covariance is not available, so no difference between them can be given a calibrated significance.",
+    "and their cross-covariance is unavailable, so the significance of their difference cannot be calibrated.",
     "The five-observable estimator is the baseline this study characterizes",
-    "It is a tested mitigation of the instability, not a replacement.",
-    "These results bound what the study shows.",
+    "We report the ensemble average as a tested mitigation of the instability.",
     "That test is a next step.",
     "The grading rules and their timing are stated with the individual tests; comparisons without a grading rule are descriptive.",
 ]
@@ -131,6 +137,7 @@ def check_no_number(texts):
     for f, t in texts.items():
         for _, _, (k, c, body) in macro_calls(strip_comments(t), "fvcase", 3):
             b = re.sub(r"\\(fvval|ref|cite|label)\{[^}]*\}", "", body)
+            b = re.sub(r"\\(ssecc?|nsec|napp|stab)\{[^}]*\}(\{[^}]*\})?", "", b)   # pointers to sections, not numbers
             b = re.sub(r"\\fvcase\{[^}]*\}\{[^}]*\}", "", b)          # a nested variant's key and class
             b = re.sub(r"_\{?\d\}?", "", b)                             # a symbol's subscript, as in $q_3$
             if re.search(r"\d", b):
@@ -241,6 +248,36 @@ def printed_class_names(txt, mv):
     return sorted(set(found))
 
 
+def style_report(paths):
+    """Check 8: each file's pattern rates against the field maximum; returns the printed lines (never a failure)."""
+    sm = importlib.util.spec_from_file_location("style_metrics", HERE / "style_metrics.py")
+    mod = importlib.util.module_from_spec(sm)
+    sm.loader.exec_module(mod)
+    base = json.loads((HERE / "style-baseline.json").read_text())["patterns"]
+    lines = []
+    for p in paths:
+        r = mod.score(Path(p).read_text())
+        above = []
+        lines.append(f"STYLE (report only) {Path(p).name}: {r['words']} words")
+        for k, e in r["patterns"].items():
+            fmax = base[k]["field_max"]
+            mark = "ABOVE" if e["per_1000"] > fmax else ""
+            if mark:
+                above.append(k)
+            lines.append(f"  {k:24s} ours {e['per_1000']:6.2f} ({e['count']:3d})  field max {fmax:5.2f}  pooled "
+                         f"{base[k].get('field_pooled', float('nan')):5.2f}  {mark}")
+        lines.append(f"  above the field maximum: {', '.join(above) if above else 'none'}")
+    return lines
+
+
+def style_report_text(text):
+    """The style counts for one text (the self-test's check of the vendored script)."""
+    sm = importlib.util.spec_from_file_location("style_metrics", HERE / "style_metrics.py")
+    mod = importlib.util.module_from_spec(sm)
+    sm.loader.exec_module(mod)
+    return {k: e["count"] for k, e in mod.score(text)["patterns"].items()}
+
+
 def fill_test(wt):
     """Build the paper once per class index, every pending key at its i-th class; every build must be clean."""
     mv = load_mv(wt)
@@ -329,6 +366,9 @@ def self_test():
     for planted in ("it under cells here", "it under-\ncells here", "the status to joseph", "na, na", "under-cells"):
         if not printed_class_names(planted, _MV):
             print("self-test: NOT CAUGHT a printed class name:", repr(planted)); ok = False
+    sr = style_report_text("The test grades bias, not coverage. It holds.")
+    if sr.get("1_comma_not") != 1:
+        print("self-test: the style report misses a ', not' contrast"); ok = False
     del EMPTY["e"]
     print("self-test:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
@@ -340,6 +380,13 @@ def main(argv):
     wt = Path(argv[0]).resolve()
     base = argv[argv.index("--base") + 1] if "--base" in argv else BASE
     fails = run(wt, base)
+    if "--printed" in argv:
+        printed = [a for a in argv[argv.index("--printed") + 1:] if not a.startswith("--")]
+    else:
+        po = HERE / "preread-outcomes"
+        printed = [po / "manuscript.blind.txt", po / "VARIANTS.txt"]
+    for line in style_report([p for p in printed if Path(p).exists()]):
+        print(line)
     if "--fill-test" in argv:
         fails += fill_test(wt)
     for f in fails:

@@ -1629,6 +1629,9 @@ On the eight cells with p∥ < 4.5 GeV/c, which leave out R06, the GiBUU hybrid 
 and selecting cells after these outcomes would be a post hoc change. At the two held-out tunes,
 omitting the GENIE + MEC component of Cmodel gives χ2 = 12 (p = 0.77) and 19 (p = 0.28),
 respectively, as a descriptive comparison.
+The second five-observable coverage test. Negative expected counts in its pseudo-data are
+clipped to zero, and checks fixed in advance bound the effect of the clipping before the main run.
+[PENDING: the second five-observable coverage test]
 
 S10
 
@@ -1667,13 +1670,6 @@ and descriptive comparisons with generator predictions, for the reasons and with
 Sec. S10. The sixteen cells, with their boxes, cross sections and uncertainties, are in Table S2,
 and the per-group uncertainties and the correlation matrix of the reported covariance in Tables S4
 and S5.
-
-S10.2
-
-Descriptive comparison with generator predictions
-
-Table S7 compares the sixteen-cell output with five predictions through a χ2 against the reported
-covariance plus each prediction’s finite-sample (diagonal) covariance Vg , with a shape-only χ2 beside
 
 data / prediction
 
@@ -1904,6 +1900,13 @@ Each error bar is (f /g) σ/f , with σ the square root of the diagonal of Ctota
 the predictions’ finite-sample uncertainties are not drawn. GiBUU (lower panel) is shown on its 8
 cells with p∥ < 4.5 GeV/c only. The key below the axes gives each cell’s box. The χ2 of Table S7
 uses the full covariance, whose correlations the error bars do not show.
+
+S10.2
+
+Descriptive comparison with generator predictions
+
+Table S7 compares the sixteen-cell output with five predictions through a χ2 against the reported
+covariance plus each prediction’s finite-sample (diagonal) covariance Vg , with a shape-only χ2 beside
 it. The comparison is descriptive: its χ2 values establish no exclusion of a generator, and they
 depend on the covariance (below). For GENIE + MEC and the Tune v1, the shape-only χ2 is within
 one unit of the total, although Fig. S1 shows both predictions below the data in most cells: freeing
@@ -1917,9 +1920,6 @@ native
 CH generation of NuWro agrees with the combination within a tolerance fixed in advance
 P
 ( z 2 = 17.9 for 16 cells, largest |z| = 2.2, in the generators’ own definitions). The size of Cmodel is
-not calibrated; Table S8 gives how the total χ2 changes with it.
-With the run-period block, each total χ2 is lower by 3.6–29.3 % of its value without it, and each
-shape-only χ2 by 7.4–40.4 %.
 
 Table S7: χ2 for each prediction in the indicated comparison region, against the reported covariance
 Ctotal + Cresp + CPL,5D and against the covariance without CPL,5D , each plus Vg , where Vg is the
@@ -2013,6 +2013,9 @@ GENIE 2.12.10 + Valencia MEC
 NuWro 21.09 (CH)
 GiBUU 2019 (CH)
 
+not calibrated; Table S8 gives how the total χ2 changes with it.
+With the run-period block, each total χ2 is lower by 3.6–29.3 % of its value without it, and each
+shape-only χ2 by 7.4–40.4 %.
 Weakening only the flux correlations by 10 % lowers the χ2 of the 16-cell predictions by 23–38 %,
 and the same change to the detector or lateral correlations by at most 18 %; with the correlations of
 the interaction, flux, detector and lateral groups removed, every 16-cell prediction keeps χ2 ≥ 41
@@ -2032,10 +2035,10 @@ and |z| ≤ 2 at each of the 12 graded truths under the reported covariance. The
 every cell (the smallest effective number is 331 614, in R07, and the largest statistical uncertainty
 0.368 %, in R05), so the rule rests on the third, and its recommended test of correlation assumptions
 on pseudo-data is not met here. Fourteen cells are valid under it; R02 and R06 fail, each from
+
 the GiBUU hybrid truth alone, at z = +4.19 and +4.53. The second rule is ours, not taken from
 Ref. [15]: a cell is valid if the spread of its fake-data bias over the graded truths is less than half the
 spread of the generator predictions, ρ < 0.5, in each of four noise treatments, which agree in every
-
 cell. Fourteen cells are valid under it; R08 (ρ = 0.522–0.534) and R15 (0.564–0.565) are not, and the
 largest ρ among the valid cells is 0.444, in R10. The threshold of 0.5 is our choice: at 1/3, 11 cells
 are valid, and at 1, all 16. Twelve cells are valid under both rules. The two rules test different things,

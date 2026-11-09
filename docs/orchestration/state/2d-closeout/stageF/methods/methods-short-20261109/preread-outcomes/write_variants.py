@@ -28,7 +28,7 @@ outcomes (Part 3 lists the other pending text).
 RULE = "=" * 118
 COV = [
     ("No under-coverage detected, in both variants at both tunes", "cov-all-cover"),
-    ("As CV1, with some passes weakened by clipping, in both variants, and some over-coverage", "cov-all-cover-qualified"),
+    ("As CV1, with over-coverage in some cells", "cov-all-cover-qualified"),
     ("Primary variant: no under-coverage at either tune. With the bands: under-coverage in some cells at one tune", "cov-bands-under-one"),
     ("Primary: none at either tune. With the bands: under-coverage at both tunes, in cells at one and jointly and in cells at the other",
      "cov-bands-under-both"),
@@ -37,21 +37,20 @@ COV = [
     ("Primary: under-coverage in some cells at one tune. With the bands: none at either tune", "cov-primary-under-bands-cover"),
     ("Primary: invalid at both tunes. With the bands: none at either tune", "cov-primary-invalid-bands-cover"),
     ("Both variants: under-coverage in some cells, not jointly, at one tune; none at the other", "cov-one-under-cells"),
-    ("As CV9, where the flags meet the condition for a possible clipping artefact", "cov-one-under-clip"),
     ("Both variants: joint under-coverage, with no cell flagged, at one tune; none at the other", "cov-one-under-joint-only"),
     ("Cell and joint outcomes that differ by tune and by variant", "cov-mixed-cell-joint"),
     ("Both variants: under-coverage jointly and in some cells at both tunes", "cov-both-under-joint"),
     ("Both variants: invalid at one tune; no under-coverage at the other", "cov-invalid-one-covers"),
     ("Both variants: invalid at one tune; under-coverage in some cells at the other", "cov-invalid-one-under"),
     ("Invalid at both tunes, in both variants", "cov-invalid-all"),
-    ("The test went on after its clipping-offset check exceeded its bound; then no under-coverage anywhere", "cov-proceeded-cover"),
-    ("The test went on after its clipping-offset check exceeded its bound; then under-coverage in some cells at one tune",
+    ("The test went on after a check fixed in advance was exceeded; then no under-coverage anywhere", "cov-proceeded-cover"),
+    ("The test went on after a check fixed in advance was exceeded; then under-coverage in some cells at one tune",
      "cov-proceeded-under"),
     ("An earlier run stopped, and the test ran with a repair; then no under-coverage anywhere", "cov-repaired-cover"),
     ("An earlier run stopped, and the test ran with a repair; then under-coverage jointly and in cells at both tunes",
      "cov-repaired-under"),
     ("Stopped at a gate before any pseudo-experiment ran", "cov-gate-failed"),
-    ("Stopped by a decision made after the clipping-offset check exceeded its bound", "cov-offset-stopped"),
+    ("Stopped by a decision made after a check fixed in advance was exceeded", "cov-offset-stopped"),
     ("Stopped at another check before any pseudo-experiment ran", "cov-stop"),
 ]
 IBU = [
@@ -84,7 +83,7 @@ def main(argv):
                     "held-out tunes. In the abstract, each case's sentence follows this one, which prints in every outcome: \"The\n"
                     "procedure's two-dimensional covariance, rebuilt at each of two held-out generator tunes, under-covers at both;\n"
                     "coverage of the reported five-observable intervals is not established.\" In section 6.3, each case's text follows\n"
-                    'the section\'s fixed paragraph, which ends "...shares its 2p2h model family with one of the generators of Cmodel."\n'
+                    'the section\'s fixed paragraph, which ends "...are given in supplementary material, section S9."\n'
                     "Table 1's caption defines the status words.\n"))
     for n, (lab, case) in enumerate(COV, 1):
         out.append(f"CV{n}. {lab}\n\n  Abstract:\n\n    {P(case, 'abstract-coverage')}\n\n  Section 6.3:\n\n    {P(case, 'sec-coverage')}\n\n"

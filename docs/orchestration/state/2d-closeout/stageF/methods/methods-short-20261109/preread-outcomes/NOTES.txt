@@ -8,6 +8,35 @@ FD-PRR-DECLARATION.md are under state/measurement-paper/5d-community-20261024/. 
 commit, where both files are byte-identical to main 5a028842a.
 
 ======================================================================================================================
+FOURTH BUILD OF THE PACK: THE STYLE INTEGRATION (wording only)
+======================================================================================================================
+
+The pack is rebuilt from the integrated text. That text takes the GPT restyle (gpt-6.1-sol, the director's run) and
+my draft (style/helper3-draft-20261109), passage by passage. It applies the director's R5 rulings 1-5, option (a) and
+W-12. The ledger's "Style integration" section lists the source of every paragraph and every revert, with its reason.
+
+The case ids change once more:
+- CV1-CV22 for the coverage test. The clipping-artefact case went, because the paper no longer prints clipping detail
+  (ruling 1), and the old CV10 printed the same as CV9.
+- IB1-IB6 for the IBU.
+
+What a reader of the cases now sees:
+- no clipping language in the paper's main text: the weakened passes, the clipping-artefact reading and the offset
+  are in Supplement S9's record;
+- the after-the-check decision, worded generically and marked descriptive;
+- the 2D contrast as a bare fact;
+- R5's scope sentence once, in section 6.3's fixed paragraph.
+
+PENDING JOSEPH, unchanged from before:
+- every graded coverage case, CV1-CV19 now;
+- the descriptive labelling of the routes;
+- the C_model sentence, in the director's wording.
+
+Open for the director:
+- the S9 record is a pending key, not a \pubhold, because the Supplement's blind build refuses holds by design;
+- O-1 and O-2, as before.
+
+======================================================================================================================
 THIRD BUILD OF THE PACK: THE PRE-READ RULINGS (#998)
 ======================================================================================================================
 

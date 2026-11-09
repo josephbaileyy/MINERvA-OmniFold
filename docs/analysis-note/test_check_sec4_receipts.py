@@ -43,7 +43,7 @@ def test_self_test_rejects_every_perturbation():
      "negative-weight residual, highest-W cells (VL151)"),
     # The short methods paper (methods-short-20261109) also prints the range in Table 1, so the bound sentence is
     # named by its own words
-    ("paper_body.tex", r"it is \SIrange{16}{31}{\percent}", r"it is \SIrange{16}{33}{\percent}",
+    ("paper_body.tex", r"the residual is \SIrange{16}{31}{\percent}", r"the residual is \SIrange{16}{33}{\percent}",
      "other fixed shapes, most affected cell (VL154)"),
     ("sec_5d.tex", r"cell to at most \SI{0.39}{\percent}", r"cell to at most \SI{0.49}{\percent}",  # true but loose
      "negative-weight residual, other (E_avail, W) cells (VL151)"),
