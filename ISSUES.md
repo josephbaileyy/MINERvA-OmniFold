@@ -441,7 +441,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CLM-8 [T]** — **3D marginal agreement: report shape scatter alongside total.**  
   *Finding:* Quoting 0.141% total agreement conceals 3.7% per-bin shape scatter and $\\chi^2/\\text{ndf} = 4.52$.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:14`, `sec_3d.tex:115`.  
-  *Resolution:* Report both total integral agreement and shape scatter in executive summary and §7.
+  *Resolution:* Do not type those figures into the executive summary until each is a checked-values macro. This row authorizes no tex edit.
 
 * **S1-CLM-9 [T]** — **Validation language vs descriptive feature recovery.**  
   *Finding:* Closure tests describe recovery of injected features, not formal statistical validation of the estimator.  
