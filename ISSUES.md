@@ -793,7 +793,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 * **G1-COM-1 [T]** — **The 5D coverage test did not produce a result.** Same finding as S1-ACC-4.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S2-ACC-4. The abstract already names the two tests separately. Do not merge them.
-* **G1-COM-2 [T]** — **Detector-response-mismatch closure test is unexecuted.** Same finding as S2-ACC-5.
+* **G1-COM-2 [T]** — **Detector-response-mismatch closure test is unexecuted.** Same finding as S2-ACC-5.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S2-ACC-5. The rescaling test and the shifted-response closures already have separate statuses. Do not call the shifted-response closures exploratory, and do not say they did not run.
 * **G1-COM-3 [T]** — **Complete absence of 3D and 4D uncertainty quantification.** Same finding as S2-COM-8.
 * **G1-COM-4 [T]** — **Headline 5D central value retains known-biased purity background subtraction.** Same finding as S2-COM-11.
 * **G1-COM-5 [R]** — **The 5-axis covariance ($C_Z$) exceeds pre-declared stability thresholds.** Same finding as S2-COM-2.
