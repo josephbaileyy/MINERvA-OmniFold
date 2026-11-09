@@ -1,0 +1,10 @@
+node login02 2026-11-09T08:52:51Z
+staged sha256 f97dfe4388945de4474b50d3805188231a4ca3c4bdfbf9236f1dfe0891da7f67
+post_rc=0
+ls: cannot access '/dev/shm/prr_iter_post.865867.sh': No such file or directory
+bd6f59c59e3e6b0e5fed564d838927ee81ce5b6602adc0345265c8902ac147dd  post-iter.tar.gz
+bd6f59c59e3e6b0e5fed564d838927ee81ce5b6602adc0345265c8902ac147dd  post-iter.tar.gz
+-rw------- 1 josephrb josephrb 58072 Nov  9 00:52 /pscratch/sd/j/josephrb/fd-prr-20261108/post-iter.tar.gz
+tasks entries:
+     44 log
+     44 time
