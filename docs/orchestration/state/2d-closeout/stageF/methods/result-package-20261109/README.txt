@@ -13,7 +13,7 @@ LICENCE
 
 CONVENTIONS
   - Cells R00-R15 are always in that order, in rows and columns alike.
-  - p_par (the muon momentum along the beam) is written pz in tab-result16_cells.csv and ppar elsewhere; momenta
+  - p_par (the muon momentum along the beam) is written pz in tab-fived16-cells.csv and ppar elsewhere; momenta
     are in GeV/c, E_avail and W in GeV.
   - Every rel_sigma_* and *_over_f column is a fraction, not a percent. In sec-repro2d_benchmark.csv the unit
     column gives each row's unit.
@@ -22,35 +22,38 @@ CONVENTIONS
   - Numbers are written at full float64 precision. Values such as p = 1.0000000000000002 and matrices that are
     symmetric only to about 3e-16 of sqrt(C_ii C_jj) are floating-point rounding in the source records, kept as
     they are.
-  - Files are named by the paper's LaTeX label; the label-to-number map is below, to be completed at release.
+  - Files are named by the paper's LaTeX labels (':' written '-'); each file below gives its table, figure or
+    section number in the paper or its Supplemental Material.
 
 GLOSSARY
   cell (R00-R15)
       one of the 16 reporting cells: a box in the five observables p_T, p_par, E_avail, q3 and W. The cells are
-      boxes, not a product grid; tab-result16_cells.csv gives each box.
-      Paper: "The largest edge on each axis is the outer edge of the analysis grid, which contains every signal
-      event"
+      boxes, not a product grid; tab-fived16-cells.csv gives each box. The largest edge on each axis is the
+      analysis grid's outer edge.
+      Data product label: "whose largest edges (4.5 for p_T, 60 for p_parallel, 100 for E_avail, q3 and W) are
+      the analysis grid's outer edges"
   f
       a cell's cross section integrated over its box, in cm^2/nucleon.
-      Paper: "the cell-integrated cross section f (an integral over the box, not a differential density)"
+      Supplement: "its cell-integrated cross section f"
+      Data product label: "f: each cell's integral sum_f xsec_flat_f * vol_f in cm^2/nucleon"
   g
       a generator's prediction for the same cell and quantity as f; f/g is data over prediction.
-      Paper: "Data over prediction, f/g"
+      Supplement: "Data over prediction, f/g"
   C_e, C_total
-      C_e holds the statistical, flux, interaction, detector, lateral and normalization groups; C_total = C_e +
-      C_model.
-      Paper: "The statistical, flux, interaction, detector, lateral and normalization groups, with a
-      training-seed block that is zero in every cell, form C_e, and C_total=C_e+C_model."
+      C_e holds the statistical, flux, interaction, detector, lateral and normalization groups (and a
+      training-seed block that is zero); C_total = C_e + C_model.
+      Supplement: "C_e is the sum of the first six groups and the training-seed block (zero in every cell);
+      C_total=C_e+C_model."
   lateral
       uncertainties that shift the reconstructed muon kinematics and beam angle instead of reweighting events.
       Paper: "the lateral uncertainties shift the reconstructed muon kinematics and beam angle rather than
       reweighting events"
   C_model (C_model_abs)
       the dependence on the prior's generator shape. The data product names the matrix C_model_abs (an absolute
-      covariance, like every matrix here); tab-groups16.csv's rel_sigma_C_model is the same matrix (checked by
-      the build).
+      covariance, like every matrix here); tab-fived16-groups.csv's rel_sigma_C_model is the same matrix
+      (checked by the build).
       Paper: "The model term C_model is built from the change in the unfolded data when the prior is reweighted
-      to GENIE + MEC, NuWro and GiBUU in turn."
+      to GENIE + MEC, NuWro and GiBUU in turn, with GENIE CV as the common reference."
   C_resp
       the response to a one-standard-deviation scale of the reconstructed recoil energy.
       Paper: "The response term C_resp is the response of the result to a one-standard-deviation scale of the
@@ -62,11 +65,12 @@ GLOSSARY
       the reported covariance, C_total + C_resp + C_PL,5D.
       Paper: "The reported covariance of the sixteen-cell result is C_total+C_resp+C_PL,5D."
   V_g
-      a prediction's own finite-sample covariance (diagonal), added in every comparison with a prediction.
-      Paper: "V_g, the diagonal covariance from the finite size of the prediction's own simulated sample"
+      a prediction's own finite-sample covariance: the diagonal sum of its squared event weights, added in every
+      comparison with a prediction.
+      Supplement: "Each comparison with a prediction adds V_g, its diagonal sum of squared event weights"
   shape-only
       a chi^2 with the normalization freed (one fewer degree of freedom).
-      Paper: "Shape-only chi^2 frees the normalization"
+      Supplement: "Shape-only chi^2 frees the normalization"
   fake-data chi^2, z
       the mean unfolded result at a truth against that truth, on the 16 cells; z is a cell's bias over its
       uncertainty under the same covariance. A truth is flagged at p < 0.01 or a cell with |z| > 2.
@@ -98,7 +102,7 @@ TRUTHS (tab-fd16.csv; * marks the paper's closure tests, where the truth is the 
 
 FILES (package/)
 
-* tab-result16_cells.csv   [paper label tab:result16; table or figure number: to be completed at release]
+* tab-fived16-cells.csv   [Supplement table S2; label tab:fived16-cells]
     The 16 cells: each box, f, and each matrix's relative uncertainty.
     - cell: R00-R15
     - pt_lo, pt_hi; pz_lo, pz_hi; q3_lo, q3_hi: box edges in GeV/c (pz is p_par)
@@ -107,49 +111,49 @@ FILES (package/)
     - rel_sigma_<M>: sqrt(diag M)/f for each matrix M (fraction)
     Scope: see "the 16-cell result and its covariance" below.
 
-* sec-cov16_reported.csv   [paper label sec:cov16; table or figure number: to be completed at release]
+* sec-cov16_reported.csv   [paper section 3.2; label sec:cov16]
     The reported covariance C_total + C_resp + C_PL,5D.
     - cell, R00-R15: a 16 x 16 matrix in (cm^2/nucleon)^2, rows and columns in the order R00-R15
     Scope: see "the 16-cell result and its covariance" below.
 
-* sec-cov16_C_total_plus_C_resp.csv   [paper label sec:cov16; table or figure number: to be completed at release]
+* sec-cov16_C_total_plus_C_resp.csv   [paper section 3.2; label sec:cov16]
     The covariance without C_PL,5D.
     - cell, R00-R15: a 16 x 16 matrix in (cm^2/nucleon)^2, rows and columns in the order R00-R15
     Scope: see "the 16-cell result and its covariance" below.
 
-* sec-cov16_C_e.csv   [paper label sec:cov16; table or figure number: to be completed at release]
+* sec-cov16_C_e.csv   [paper section 3.2; label sec:cov16]
     C_e.
     - cell, R00-R15: a 16 x 16 matrix in (cm^2/nucleon)^2, rows and columns in the order R00-R15
     Scope: see "the 16-cell result and its covariance" below.
 
-* sec-cov16_C_model_abs.csv   [paper label sec:cov16; table or figure number: to be completed at release]
+* sec-cov16_C_model_abs.csv   [paper section 3.2; label sec:cov16]
     C_model.
     - cell, R00-R15: a 16 x 16 matrix in (cm^2/nucleon)^2, rows and columns in the order R00-R15
     Scope: see "the 16-cell result and its covariance" below.
 
-* sec-cov16_C_resp.csv   [paper label sec:cov16; table or figure number: to be completed at release]
+* sec-cov16_C_resp.csv   [paper section 3.2; label sec:cov16]
     C_resp.
     - cell, R00-R15: a 16 x 16 matrix in (cm^2/nucleon)^2, rows and columns in the order R00-R15
     Scope: see "the 16-cell result and its covariance" below.
 
-* sec-cov16_C_PL5D.csv   [paper label sec:cov16; table or figure number: to be completed at release]
+* sec-cov16_C_PL5D.csv   [paper section 3.2; label sec:cov16]
     C_PL,5D.
     - cell, R00-R15: a 16 x 16 matrix in (cm^2/nucleon)^2, rows and columns in the order R00-R15
     Scope: see "the 16-cell result and its covariance" below.
 
-* tab-corr16.csv   [paper label tab:corr16; table or figure number: to be completed at release]
+* tab-fived16-corr.csv   [Supplement table S5; label tab:fived16-corr]
     The correlation matrix of the reported covariance.
     - cell, R00-R15: a dimensionless 16 x 16 matrix, rows and columns in the order R00-R15
     Scope: see "the 16-cell result and its covariance" below.
 
-* tab-groups16.csv   [paper label tab:groups16; table or figure number: to be completed at release]
+* tab-fived16-groups.csv   [Supplement table S4; label tab:fived16-groups]
     Each group's relative uncertainty per cell.
     - cell: R00-R15
     - rel_sigma_<group>: sqrt(diag)/f of that group (fraction; the paper prints percent); reported = C_total +
       C_resp + C_PL,5D
     Scope: see "the per-group uncertainties" below.
 
-* tab-fd16.csv   [paper label tab:fd16; table or figure number: to be completed at release]
+* tab-fd16.csv   [paper table 2; label tab:fd16]
     Fake-data tests at the 12 graded truths (see TRUTHS), under the reported covariance and under C_total.
     - truth: the truth's id (see TRUTHS)
     - <cov>_matrix: the covariance the test uses; <cov> is reported or C_total
@@ -162,7 +166,7 @@ FILES (package/)
     - <cov>_n_pseudo_experiments: pseudo-experiments averaged; 1 marks a noise-free closure
     Scope: see "the fake-data tests" below.
 
-* sec-fd16_tunes.csv   [paper label sec:fd16; table or figure number: to be completed at release]
+* sec-fd16_tunes.csv   [paper section 5.2; label sec:fd16]
     The two held-out GENIE v3 tunes, under the reported covariance.
     - tune: the GENIE v3 tune
     - record: the test: an ensemble of pseudo-experiments, or a noise-free closure
@@ -170,7 +174,7 @@ FILES (package/)
     - max_abs_z_cell: the cell with the largest |z| (tab-fd16.csv has no such column)
     Scope: see "the held-out tunes" below.
 
-* sec-fd16_validity.csv   [paper label sec:fd16; table or figure number: to be completed at release]
+* supp-validity.csv   [Supplement section S11; label supp:validity]
     Each cell's class under the two validity rules.
     - atlas_A1: at least 5000 effective simulated events (here those of the simulation's weights)
     - atlas_A2: a data statistical uncertainty below 15 %
@@ -184,7 +188,7 @@ FILES (package/)
     - prior_class: valid if rho < 0.5 in all four, else not valid
     Scope: see "the per-cell validity rules" below.
 
-* sec-repro2d_benchmark.csv   [paper label sec:repro2d; table or figure number: to be completed at release]
+* sec-repro2d_benchmark.csv   [paper section 4.1; label sec:repro2d]
     The two-dimensional benchmark against the published result, and the run-period rows.
     - quantity: an id
     - description: what it is
@@ -193,7 +197,7 @@ FILES (package/)
     - unit: its unit (1 is dimensionless)
     Scope: see "the 2D benchmark" below.
 
-* sec-repro2d_result2d.csv   [paper label fig:validation; table or figure number: to be completed at release]
+* fig-validation_result2d.csv   [paper figure 1; label fig:validation]
     The two-dimensional result on the 205 reported bins.
     - global_id: pt_bin * 16 + ppar_bin
     - pt_bin, ppar_bin: bin indices from 0
@@ -201,43 +205,43 @@ FILES (package/)
     - d2sigma_dpt_dppar: d^2 sigma / (dp_T dp_par) in cm^2/nucleon per (GeV/c)^2
     Scope: see "the 2D result per bin and its covariance" below.
 
-* sec-uq2d_Q.csv   [paper label sec:uq2d; table or figure number: to be completed at release]
+* sec-uq2d_Q.csv   [paper section 6.2; label sec:uq2d]
     2D covariance block: the four-block covariance: universe + stat + training seed + run period.
     - global_id, then the 205 ids: a 205 x 205 matrix in (cm^2/nucleon per (GeV/c)^2)^2, rows and columns in
-      the order of sec-repro2d_result2d.csv
+      the order of fig-validation_result2d.csv
     Scope: see "the 2D result per bin and its covariance" below.
 
-* sec-uq2d_universe.csv   [paper label sec:uq2d; table or figure number: to be completed at release]
+* sec-uq2d_universe.csv   [paper section 6.2; label sec:uq2d]
     2D covariance block: systematic universes (including the normalization).
     - global_id, then the 205 ids: a 205 x 205 matrix in (cm^2/nucleon per (GeV/c)^2)^2, rows and columns in
-      the order of sec-repro2d_result2d.csv
+      the order of fig-validation_result2d.csv
     Scope: see "the 2D result per bin and its covariance" below.
 
-* sec-uq2d_stat.csv   [paper label sec:uq2d; table or figure number: to be completed at release]
+* sec-uq2d_stat.csv   [paper section 6.2; label sec:uq2d]
     2D covariance block: statistical.
     - global_id, then the 205 ids: a 205 x 205 matrix in (cm^2/nucleon per (GeV/c)^2)^2, rows and columns in
-      the order of sec-repro2d_result2d.csv
+      the order of fig-validation_result2d.csv
     Scope: see "the 2D result per bin and its covariance" below.
 
-* sec-uq2d_c08.csv   [paper label sec:uq2d; table or figure number: to be completed at release]
+* sec-uq2d_c08.csv   [paper section 6.2; label sec:uq2d]
     2D covariance block: training seed.
     - global_id, then the 205 ids: a 205 x 205 matrix in (cm^2/nucleon per (GeV/c)^2)^2, rows and columns in
-      the order of sec-repro2d_result2d.csv
+      the order of fig-validation_result2d.csv
     Scope: see "the 2D result per bin and its covariance" below.
 
-* sec-uq2d_C_PL.csv   [paper label sec:uq2d; table or figure number: to be completed at release]
+* sec-uq2d_C_PL.csv   [paper section 6.2; label sec:uq2d]
     2D covariance block: run period.
     - global_id, then the 205 ids: a 205 x 205 matrix in (cm^2/nucleon per (GeV/c)^2)^2, rows and columns in
-      the order of sec-repro2d_result2d.csv
+      the order of fig-validation_result2d.csv
     Scope: see "the 2D result per bin and its covariance" below.
 
-* sec-uq2d_s5_total.csv   [paper label sec:uq2d; table or figure number: to be completed at release]
+* sec-uq2d_s5_total.csv   [paper section 6.2; label sec:uq2d]
     2D covariance block: universe + stat + training seed, the covariance without the run-period block.
     - global_id, then the 205 ids: a 205 x 205 matrix in (cm^2/nucleon per (GeV/c)^2)^2, rows and columns in
-      the order of sec-repro2d_result2d.csv
+      the order of fig-validation_result2d.csv
     Scope: see "the 2D result per bin and its covariance" below.
 
-* tab-gen16.csv   [paper label tab:gen16; table or figure number: to be completed at release]
+* tab-gen16.csv   [Supplement table S7; label tab:gen16]
     chi^2 of each generator prediction. Illustrative, descriptive; not for fitting or constraining models.
     - prediction, label: the prediction
     - <cov>_<kind>_chi2, _ndf, _p: <cov> is reported or without_C_PL5D; <kind> is total or shape_only
@@ -245,7 +249,7 @@ FILES (package/)
     - n_cells: cells compared (GiBUU: the 8 cells below p_par 4.5 GeV/c)
     Scope: see "the generator comparisons" below.
 
-* tab-cmodel16.csv   [paper label tab:cmodel16; table or figure number: to be completed at release]
+* tab-cmodel16.csv   [Supplement table S8; label tab:cmodel16]
     How each prediction's chi^2 changes with C_model. Illustrative, descriptive; not for fitting or constraining
     models.
     - matrix, prediction, chi2_kind: as in tab-gen16.csv
@@ -256,7 +260,7 @@ FILES (package/)
     - delta_CH, delta_doubled, delta_removed: each minus chi2_carbon_ratios
     Scope: see "the generator comparisons" below.
 
-* fig-ratio16.csv   [paper label fig:ratio16; table or figure number: to be completed at release]
+* fig-ratio16.csv   [Supplement figure S1; label fig:ratio16]
     The data behind the ratio figure. Illustrative, descriptive; not for fitting or constraining models.
     - f_data, g_prediction: cm^2/nucleon
     - f_over_g: data over prediction
@@ -318,7 +322,7 @@ NOT INCLUDED
   - The paper's validation-programme table (tab:outcomes) as a table: it is a text table, and its numerical
     entries are in the files above.
   - Per-group 16 x 16 matrices for the groups inside C_e: the source records give their relative uncertainties
-    only (tab-groups16.csv).
+    only (tab-fived16-groups.csv).
 
 NOT YET AVAILABLE (pending/)
   - ENS1.txt: the ensemble-averaged variant of the estimator (96 fits): its stability and bias results.
