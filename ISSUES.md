@@ -431,7 +431,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CLM-6 [T]** — **Joint tests as methodological illustration vs power measurement.**  
   *Finding:* Tests do not demonstrate added power over coarse projections; represent methodological demonstration.  
   *Evidence:* `docs/analysis-note/sec_joint.tex:210`.  
-  *Resolution:* Frame joint tests explicitly as an illustration of calibrated inference with a biased estimator.
+  *Resolution:* That sentence is already in sec_execsummary.tex. Do not add a claim that the tests do not demonstrate added power. This row authorizes no tex edit.
 
 * **S1-CLM-7 [T]** — **3D, 4D, 5D unfolds reported as central values only.**  
   *Finding:* Higher-dimensional results lack valid covariances and represent illustrative central values.  
