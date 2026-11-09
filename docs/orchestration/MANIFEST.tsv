@@ -265,6 +265,7 @@ docs/orchestration/DECISION-20261108-joseph-note-framing-and-estimator-dependenc
 docs/orchestration/DECISION-20261109-joseph-away-wording-delegation.md	tracked	LIVE	document		20261109	open		route-only	no
 docs/orchestration/DECISION-20261109-joseph-bias-half-rule.md	tracked	LIVE	document		20261109	open		route-only	no
 docs/orchestration/DECISION-20261109-joseph-bv-mention-title-preread.md	tracked	LIVE	document		20261109	open		route-only	no
+docs/orchestration/DECISION-20261109-joseph-coverage-case-wording.md	tracked	LIVE	document		20261109	open		route-only	no
 docs/orchestration/DECISION-20261109-joseph-methods-baseline-and-plan.md	tracked	LIVE	document		20261109	open		route-only	no
 docs/orchestration/DECISION-20261109-joseph-placeholder-draft-reads.md	tracked	LIVE	document		20261109	open		route-only	no
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	tracked	LIVE	document		20260911	open		route-only	no
@@ -5919,6 +5920,11 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/energy-spectrum-candidates.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/flux-pot-provenance-20261104/playlist-integrals.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-coverage-status-20261109/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-coverage-status-20261109/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-coverage-status-20261109/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-coverage-status-20261109/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-coverage-status-20261109/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-w-items-20261109/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-w-items-20261109/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/independent-read-w-items-20261109/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
