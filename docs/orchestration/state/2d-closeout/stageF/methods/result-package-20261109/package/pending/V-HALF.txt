@@ -1,0 +1,3 @@
+PENDING: V-HALF
+Waits for: the V-HALF declaration and its committed readout (DECISION-20261109-joseph-bias-half-rule.md: |bias| <= 1/2 x the truth's departure from the prior, per cell)
+Nothing in this package stands in for it.

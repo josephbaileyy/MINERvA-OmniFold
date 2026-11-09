@@ -1,0 +1,14 @@
+id,printed_at,value,printed,record,note
+m-sigTwoD,values.tex \sigTwoD,3.0687381668997114e-38,3.069e-38,values_table.tsv,area-weighted total on the 205 reported cells
+m-ratioTot,values.tex \ratioTot,1.00978172454241,1.010,values_table.tsv,the '~1 %' claim: ours/published total
+m-chiPaper,values.tex \chiPaper,2.27,2.27,values_table.tsv,chi2/ndf against the published covariance
+m-pullRMS,values.tex \pullRMS,0.535,0.535,values_table.tsv,
+m-uqMedian,values.tex \uqMedian,6.413665927768751,6.41,values_table.tsv,bound by check_sec4_receipts.py:120
+m-uqIntegral,values.tex \uqIntegral,4.759173209888885,4.76,values_table.tsv,bound by check_sec4_receipts.py:121
+m-fluxBand,values.tex \fluxBand,3.7124503352159897,3.71,values_table.tsv,
+tens-chi2-shape,N/sec_results.tex:224,465.23,465,values_table.tsv,chi2_shape 544.13
+tens-chi2-norm,N/sec_results.tex:223,0.04,0.04,values_table.tsv,
+tens-73-modes,N/sec_results.tex:228,73.0,73,values_table.tsv,modes kept by pinv at rcond 1e-4
+tens-73-chi2,N/sec_results.tex:229,0.662,0.66,values_table.tsv,"chi2/ndf keeping the 73 best-measured directions (rcond 1e-4, 0.806)"
+period-R5-K73-resolved_3sigma,tab:outcomes,0.2881016776639168,0.29,per-period readout.json,class: no change
+period-R5-K132-delta,tab:outcomes,-0.6926719974612343,0.69,per-period readout.json,class: farther without 1G-1M; the paper prints -delta

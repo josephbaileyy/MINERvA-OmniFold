@@ -1,0 +1,3 @@
+PENDING: LL5D
+Waits for: the LL5D outcome record and its committed readout (LL5D-DECLARATION.md); the plan's step 3, within its 148.0 node-h cap
+Nothing in this package stands in for it.

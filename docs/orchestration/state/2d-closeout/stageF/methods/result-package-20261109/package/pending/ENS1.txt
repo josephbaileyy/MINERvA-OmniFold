@@ -1,0 +1,3 @@
+PENDING: ENS1
+Waits for: the ens1-* keys of values_fived16.tex, which land with the round-5 paper branch (draft/methods-round5-20261108 at bc867318); its sources are already pinned here
+Nothing in this package stands in for it.
