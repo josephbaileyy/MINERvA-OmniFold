@@ -456,7 +456,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CLM-11 [T]** — **Run-period block overlap wording.**  
   *Finding:* State that overlap between run-period differences and systematic errors is neither established nor excluded.  
   *Evidence:* `docs/analysis-note/sec_fived16.tex:180`.  
-  *Resolution:* Clarify that empirical run-period block absorbs observed differences without proving distinct physical origin.
+  *Resolution:* Those statements are already there. Do not add "distinct physical origin". This row authorizes no tex edit.
 
 ### Section 7: Minor Issues and Presentation
 
