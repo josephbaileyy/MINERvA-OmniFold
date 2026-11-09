@@ -9985,6 +9985,17 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/dry/lane/stale-sweep-raw.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/dry/lane/stale-sweep-summary.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/dry/lane/verify_receipts.py	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/RENAMES.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/cluster/logs/connect-ibu.done	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/cluster/logs/connect-ibu.log.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/cluster/logs/ibu.jobid	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/cluster/logs/prr_ibu_61035510.out.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/cluster/sacct.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/lane/absent-check.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/lane/iris-before.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/lane/launch-session.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/ibu/attempt1/lane/remote-sha256.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/README.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/RENAMES.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/iter/cluster-final/post.done	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

@@ -1,0 +1,52 @@
+node login13 nproc=244 loadavg 25.03 72.42 87.56
+2026-11-09T14:05:19Z
+connect script sha256 23a4f44f7da9a870003682e9c70a3160f73857bab385585c3c88f5f76690a765
+squeue --me before:
+other lanes' families (listed, not refused; this job reads nothing outside $OUT):
+  none
+== iris
+m3246               2433.9            10000.0     18356.2      20000.0
+balance_node_h=1643.8 half=821.9 cap=27.0
+== the study's charge so far (sacct, prr_* jobs since 2026-11-08)
+61022062|prr_dry|COMPLETED|3648|1
+61024185|prr_iter|COMPLETED|9038|1
+61028298|prr_cap|COMPLETED|5220|1
+61030122|prr_misc|COMPLETED|8657|1
+charged_node_h=7.3786 this_job_limit_h=0.5000 sum=7.8786 cap=27.0
+HEAD 6727020a7c58b00dd00806151c627c8a24f72402; porcelain --ignored lines before: 0
+prr_probe.py: OK
+prr_ibu.py: OK
+prr_read.py: OK
+sbatch_prr.sh: OK
+test_prr.py: OK
+prr_mutation.py: OK
+declaration sha256 5be1e19cb8db67064cb0f90382ed7ac2365a2ed4841d9b498f323ed2761b64ce
+addendum A1 sha256 ca6b8457e74c9323fcb985766a88f404038f6f16c3e822a67bf2606af223f38b
+FD-PRR-BINDING-1.md at origin/main 5898c79105d9123fdfbdf4d279c93816adeb884e sha256 04686d70ba8a6401669f1f7fa956c0e86785e362cb367bfe5653644184a8ee4d
+queues/dry.tsv: OK
+queues/iter.tsv: OK
+queues/cap.tsv: OK
+queues/misc.tsv: OK
+stage.json: OK
+log-dry/DONE: OK
+B0 lines in the four queues: 20
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+plain python3 (not used by any call below): /usr/bin/python3 Python 3.6.15
+sourced python3: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14
+LIMIT 0:30:00
+root_6_28 python3 prr_probe.py limit ibu -> '0:30:00'
+--time=00:30:00
+2026-11-09T14:06:07Z
+sbatch rc=0
+Submitted batch job 61035510
+ibu job 61035510
+scontrol TimeLimit=00:30:00 (declared 00:30:00)
+61035510 prr_ibu PENDING 0:00 30:00 1 regular_1 m3246
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login13:721834
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+porcelain --ignored lines after: 0
+prr ibu submit rc=0
+2026-11-09T14:06:13Z
