@@ -394,7 +394,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CONT-6 [T]** — **App. G placeholders and unreleased RC7 package.**  
   *Finding:* Placeholder strings (`[repository] ... [snapshot identifier pending deposit]`) and unreleased package references.  
   *Evidence:* `docs/analysis-note/app_release.tex:25`.  
-  *Resolution:* Replace literal placeholders with clear formal archival deposit statements.
+  *Resolution:* Do not edit app_release.tex while AUD-N4 is held. This row authorizes no tex edit.
 
 * **S1-CONT-7 [T]** — **Reference to AI agent session replay for verification.**  
   *Finding:* Verification claim cites replay by "a separate AI agent session (Opus 5.5)".  
