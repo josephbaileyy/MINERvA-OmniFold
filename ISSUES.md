@@ -783,7 +783,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-ACC-8 [T]** — **Exact-split estimator reproducibility description.**  
   *Finding:* Reconcile "unseeded reproducible to $7 \\times 10^{-15}$" with "reseeding moves bins by up to 1.6%".  
   *Evidence:* `docs/analysis-note/sec_method.tex:98`.  
-  *Resolution:* Clarify that bitwise reproduction was achieved under the unseeded default runtime, but reseeding demonstrates 1.6% algorithmic sensitivity.
+  *Resolution:* This row authorizes no tex edit. The paragraph already separates the unseeded regeneration from the one reseeded run. The spread over seeds is already said to be unmeasured. Do not add a further sentence.
 * **G1-ACC-9 [T]** — **GiBUU cell count reconciliation.**  
   *Finding:* 8 cells in §10 vs 72 cells in Table 11.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:18`, Table 11.  
