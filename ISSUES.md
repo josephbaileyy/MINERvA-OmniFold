@@ -583,7 +583,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-16 [T]** — **"Differ in learner" description in §7.3.**  
   *Finding:* 3D marginal (e) and 2D result (f) are both LightGBM, differing in seed and refinement capacity, not learner family.  
   *Evidence:* `docs/analysis-note/sec_3d.tex:115`.  
-  *Resolution:* Change "differ in learner" to "differ in learner capacity and training seed".
+  *Resolution:* This row authorizes no tex edit. Do not say the two results differ in learner capacity. Both are LightGBM and the table says both use the same refinement.
 * **S2-ACC-17 [T]** — **Marginal checks agreement overstated in executive summary.** Same finding as S1-ACC-7.
 * **S2-ACC-18 [T]** — **5D bin count definitions.**  
   *Finding:* "10,694 reported bins" undefined; distinguish dense grid (65,856), occupied cells (10,499), and 4D projections (4,830).  
