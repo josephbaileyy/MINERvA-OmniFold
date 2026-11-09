@@ -188,7 +188,7 @@ valid.
 | C-PIN | H1 and H2 equal their pins |
 | C-CELLS | H1's cells are R00–R15 in order. Every graded truth's `bias` and `noise_sigma` has 16 entries |
 | C-TRUTHS | H1's graded truths are exactly §3's 12, in order. H2 has B0/A7_gibuu at all five splits. Each truth's H2 entry is listed; a missing one is "no d", not a STOP |
-| C-PRR | H2's `verdict` is COMPLETE. At every B0 entry used, H2's own b = r(1 + d), to a relative 10⁻⁹ (its d, b and r agree). B0/nominal's d is exactly 0 at all five splits |
+| C-PRR | H2's `verdict` is COMPLETE. At every B0 entry used, H2's own b = r(1 + d), to a relative 10⁻⁹ (its d, b and r agree). B0/nominal's d is exactly 0 at all five splits. Every d, b and r present at those entries has 16 values (§8.2); H2 carries no cell labels, so their order rests on `prr_read.py`'s M16 |
 | C-DOMAIN | the two GiBUU-family truths name the same eight `p_parallel_lt_4p5.cells` |
 | C-FINITE | every r, ν, d and σ_d is finite; ν ≥ 0; 1 + d > 0 |
 | C-FORM | the two forms of the rule agree at every applicable pair, by point value |
@@ -235,6 +235,45 @@ the printed raw values and written out in its README. R06 is the cell where A3 f
   rerun in a clean clone of this declaration's commit is in `receipts/code/`, added by the following commit.
 - **The pin file `PRR-READOUT.sha256` is absent by design.** The binding adds it after the PRR read is committed.
   Until then `v_half.py read` refuses (exit 4).
+
+### 8.2 The follow-up to coverage-5b-audit's lows (#992, before the binding)
+
+coverage-5b-audit's GO on #992 (at `fd0ed5f1`) held four non-blocking lows. The director ruled that all four close
+before the V-HALF read, (a) and (c) by tests only and (b) and (d) by code. **`v_half.py`'s diff from `ce07a6f0` is
+exactly these two changes:**
+- **(d) the length check, in C-PRR.** C-PRR fails unless every d, b and r present at the B0 entries it reads (the 12
+  truths at 991000, A7_gibuu and nominal at the five splits) has 16 values. Without it, seventeen values passed every
+  control and were cut to 16 cells, and one value passed b = r(1 + d) by broadcasting. Order cannot be checked, because
+  H2 carries no cell labels. The binding states its reliance on `prr_read.py`'s M16.
+- **(b) the licence.** LICENCE carries §10's list in full. Its new item is "held-out truths (the truths are not held
+  out)". Its ATLAS item now also names "the hybrid source of d" among this record's additions, as §10 does.
+
+**The tests (tests only, for (a) and (c); with the code, for (b) and (d)):**
+
+| low | test | mutant it kills |
+|---|---|---|
+| (a) | `test_the_departure_noise_derivative_holds_in_every_sign_quadrant`: σ_m's d-term against a central finite difference at d < 0 and d > 0, r < 0 and r > 0 | `sigma-d-sgn-d-dropped`, `sigma-d-abs-r-dropped` |
+| (b) | `test_the_licence_is_section_10_in_full`: the whole LICENCE, pinned | `licence-without-held-out` |
+| (c) | `test_c_form_fails_where_the_two_forms_disagree`: `ctl_form` called directly on a pair with 1 + d < 0, the only place the forms differ, which C-FINITE also refuses | `c-form-compares-a-form-with-itself` |
+| (d) | `test_c_prr_refuses_an_h2_entry_not_sixteen_long`: 17 and 1 values at q3, 15 at nominal s994004 | `c-prr-no-length-check` |
+
+- **Against `ce07a6f0`**, the four new tests give exactly two failures, the (b) and (d) tests. The (a) and (c) tests
+  pass there, because their code was already right.
+
+**As committed:**
+
+| file | sha256 |
+|---|---|
+| `v_half.py` | `8a1cdbe7da7d8af4cbf50f941a40ac0754255e19ced04e913ad5d3ddb107932d` |
+| `test_v_half.py` | `d2d28b9f38f422c9e350c407d76c1307795a0ac1348e0f232b87520ebfbd1df7` |
+| `mutate_v_half.py` | `09a10bc79152f1988ca4eb8cb81488080e6fa3d5613e92794bb9a4a4a34f99e7` |
+| `INPUTS.sha256` | unchanged, `7ee79713…` |
+
+- **The tests:** 37, all passing.
+- **The mutants:** 41, all killed ([`mutants.txt`](mutants.txt), sha256 `36696b39…`, last line "mutants 41; killed
+  41; survivors []").
+- **The run:** in place, the same way as §8.1. The clean-clone rerun is in `receipts/code-lows/`, and the receipts of
+  §8.1 stay in `receipts/code/`.
 
 ## 9. The run, the outputs and the receipts
 

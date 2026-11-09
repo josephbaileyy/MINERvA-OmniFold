@@ -52,9 +52,10 @@ VALID, NOT_VALID, NO_D, NOWHERE = "valid", "not valid", "no d", "rule applies at
 LICENCE = {
     "citable_for": ["each cell's V-HALF class, with its inputs, as declared"],
     "not_citable_for": ["coverage", "a measurement", "the cause of any failure",
-                        "V-HALF as ATLAS's rule, or as the advisor's exact formulation (the 1 % floor and the noise "
-                        "treatment are this record's additions)",
+                        "V-HALF as ATLAS's rule, or as the advisor's exact formulation (the 1 % floor, the noise "
+                        "treatment and the hybrid source of d are this record's additions)",
                         "a failing cell as excluded, wrong or unreported",
+                        "held-out truths (the truths are not held out)",
                         "any paper or note sentence without the PRD-referee read and Joseph",
                         "the print-only sections, which change no class"],
 }
@@ -252,10 +253,16 @@ def ctl_truths(D):
 
 def ctl_prr(D):
     """H2 is a COMPLETE FD-PRR readout; at every B0 entry used, b = r (1 + d) holds (its own d, b and r agree);
-    d is exactly 0 at B0/nominal at every noise split."""
+    d is exactly 0 at B0/nominal at every noise split; every d, b and r present at those entries has one value per
+    cell, 16 (H2 carries no cell labels, so their order rests on prr_read's own M16)."""
     h2 = D["H2"]
     bad = []
     keys = [(TRUTH_MAP[n], PRIMARY_SEED) for n in TRUTH_MAP] + [(NOISE_TRUTH, s) for s in NOISE_SEEDS]
+    short = []
+    for t, s in dict.fromkeys(keys + [(PRIOR_TRUTH, s) for s in NOISE_SEEDS]):
+        e = prr_entry(h2, t, s)
+        if e is not None and any(len(e[k]) != len(CELLS) for k in ("b", "r", "d") if k in e):
+            short.append(f"B0/{t}/s{s}")
     for t, s in keys:
         e = prr_entry(h2, t, s)
         if e is None or "d" not in e:
@@ -265,8 +272,9 @@ def ctl_prr(D):
             bad.append(f"B0/{t}/s{s}")
     zeros = [s for s in NOISE_SEEDS if prr_entry(h2, PRIOR_TRUTH, s) is None
              or np.any(np.asarray(prr_entry(h2, PRIOR_TRUTH, s).get("d", [1.0]), float) != 0.0)]
-    ok = h2.get("verdict") == "COMPLETE" and not bad and not zeros
-    return _ctl("C-PRR", ok, {"verdict": h2.get("verdict"), "b_ne_r_1pd": bad, "prior_d_not_zero": zeros})
+    ok = h2.get("verdict") == "COMPLETE" and not bad and not zeros and not short
+    return _ctl("C-PRR", ok, {"verdict": h2.get("verdict"), "b_ne_r_1pd": bad, "prior_d_not_zero": zeros,
+                              "not_16_long": short})
 
 
 def ctl_domain(D):
