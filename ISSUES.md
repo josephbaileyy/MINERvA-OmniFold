@@ -240,7 +240,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-10 [T]** — **Hyperparameter tuning sequence clarification.**  
   *Finding:* §3.2 claims learner settings fixed a priori, but refinement classifier (400 trees, 31 leaves) was adapted after background bias was observed.  
   *Evidence:* `docs/analysis-note/sec_method.tex:90`, `sec_5d.tex:140`.  
-  *Resolution:* Clarify chronology: nominal GBDT hyperparameters were set a priori, while refinement capacity was increased after observing purity bias at Stage 0.
+  *Resolution:* Do not draft this chronology. OUTCOME-20260925-s5c-purity-background-bias-at-high-W.md:23-31 and OUTCOME-20260925-s5n-stage1-development-fail.md:25-28 do not say that the refinement capacity was increased after the purity bias was observed. This row authorizes no tex edit.
 
 * **S1-ACC-11 [T]** — **Two $\\chi^2$ values for same quantity in §4.5.**  
   *Finding:* §4.5 reports $p_\\parallel$ $\\chi^2 = 34.4$ against earlier 2D budget, then $34.8$ against other blocks alone.  
