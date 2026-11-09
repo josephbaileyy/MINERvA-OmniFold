@@ -508,7 +508,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-10 [T]** — **Eq. (3) radical extraction.**  
   *Finding:* Missing radical sign on $W$ formula in some text extractions.  
   *Evidence:* `docs/analysis-note/sec_method.tex:110`.  
-  *Resolution:* Verify square root formatting in typeset LaTeX.
+  *Resolution:* This row authorizes no tex edit. The cited line is a comment. The W formula already includes the square root. Do not change the formula.
 
 * **S1-PRES-11 [T]** — **Unusual phrases to remove.**  
   *Finding:* Remove colloquialisms, AI agent references, and named suggestions.  
