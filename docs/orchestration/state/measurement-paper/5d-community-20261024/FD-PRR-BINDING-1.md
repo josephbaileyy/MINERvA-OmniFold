@@ -159,3 +159,50 @@ and d from FD-PRR's own computation, which the readout computed inside `rho()` b
    from the later of the two merge commits.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A3: the job script reads every TimeLimit form Slurm prints (director, 2026-11-09)
+
+**Binds** [`FD-PRR-ADDENDUM-A3.md`](FD-PRR-ADDENDUM-A3.md) and its code, as merged in PR #989 at
+**M_A3 = `06657cff7a6ed6c9832fe27957899125e6cac4ad`**. The audited head is `a09437c3`, the union of A3 with A2 (merge
+commit `08848a76`); the addendum and every file under `nd-unfolding/prior_retention/` are identical at `a09437c3` and
+M_A3. This **supersedes M_A1** for every FD-PRR job from here on, and M_A2 for the PRR read.
+
+| file | sha256 (prefix) |
+|---|---|
+| `FD-PRR-ADDENDUM-A3.md` | `48641cf9ba6a6e30` |
+| `nd-unfolding/prior_retention/sbatch_prr.sh` | `4493aad5dff0a8a0` |
+| `nd-unfolding/prior_retention/test_prr.py` | `c600e4b1c291eabb` |
+| `nd-unfolding/prior_retention/prr_mutation.py` | `dfa994667f4afe81` |
+| `nd-unfolding/prior_retention/prr_read.py` (A2's) | `d7c7c2c0d6cbe4a1` |
+| `nd-unfolding/prior_retention/prr_probe.py` (M's) | `f87ee90c58d2b890` |
+| `nd-unfolding/prior_retention/prr_ibu.py` (M's) | `17acad82bad7c43f` |
+
+**What led to it.** prr_ibu attempt 1 (job 61035510, FAILED after 41 s, 0.0114 node-h; receipt #986) refused at its
+own TimeLimit check. squeue's `%l` prints a limit under one hour as M:SS ("30:00"), while `sec()` (`sbatch_prr.sh:48-50`
+at M_A1) read only H:M:S, and the parse error was reported as "exceeds". No test used the M:SS form. dry, iter, cap and
+misc (limits ≥ 1 h) were unaffected.
+
+**What the director checked:**
+- coverage-5b-audit's GO at `a09437c3`, with no blockers
+  (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/989#issuecomment-6747168382):
+  - the union is exactly A2 plus A3, with EXPECTED_TESTS at 110 the only difference;
+  - 110 tests pass; the control against M_A1's `sbatch_prr.sh` fails exactly A3's five tests;
+  - 71 of 71 mutants are killed, among them "TimeLimit unchecked", both A3 REQUIRED mutants and A2's REQUIRED mutant;
+  - in a static check over about 30 forms, every unreadable input (UNLIMITED, INVALID, NOT_SET, empty, padded, four
+    fields) exits 3, and every other rc reaches the catch-all refusal;
+  - the six digests match the addendum's §6.
+- The director ran `test_prr.py` from a `git archive` of M_A3 (one thread, `PYTHONHASHSEED=0`, own TMPDIR): 110 passed.
+
+**Rulings:**
+1. **Every FD-PRR job from here on runs from M_A3,** prr_ibu attempt 2 first among them. Binding 1's rulings 1–8 and
+   addenda A1 and A2 stand otherwise. No limit, the cap or any reading changes.
+2. **prr_ibu attempt 2** follows the director's layout of 2026-11-09:
+   - the connect side gets the -2 suffix: `deploy-ibu-2`, `logs/connect-ibu-2.log/.done`, `logs/ibu-2.jobid`;
+   - the job keeps the name `prr_ibu` and writes `log-ibu` and `route2`;
+   - the connect pins `61035510|prr_ibu|FAILED|41|1` in its sacct check;
+   - the post reads `logs/ibu-2.jobid`.
+   Its connect and post pin this file's sha256 as it is on main after this addendum merges, and both shas go to the
+   director before launch.
+3. **The PRR read** runs from M_A3's `prr_read.py` (A2's bytes) once prr_ibu has completed.
+
+Nothing is submitted, deposited or tagged.
