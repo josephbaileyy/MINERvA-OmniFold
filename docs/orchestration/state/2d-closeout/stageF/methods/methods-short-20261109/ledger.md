@@ -98,10 +98,10 @@ line's evidence route. The full list is in OUTLINE.md's revision note.
 
 | W | decision | what prints now | read and records |
 |---|---|---|---|
-| W-1 | IR-sol "other"; **the director wants Joseph to look at it first on return** | title: "Five-observable unbinned unfolding of MINERvA open data with OmniFold: a benchmark and diagnostic study"; §1: "a benchmark and diagnostic study"; the Supplement's title to match | IR-sol `:7-10`; decision `943d5f97:…:49-51` |
+| W-1 | IR-sol "other"; **Joseph, 11-09: provisional, not locked** (below) | title: "Five-observable unbinned unfolding of MINERvA open data with OmniFold: a benchmark and diagnostic study"; §1: "a benchmark and diagnostic study"; the Supplement's title to match | IR-sol `:7-10`; decision `943d5f97:…:49-51` |
 | W-2 | option 1's cuts plus option 2's clause | the abstract drops "over many eigenmodes …" and the criteria in parentheses, and adds "and by a median of 0.133 % of the cross section on the 16 reported cells" | IR-sol `:12-15`. **0.133 %'s source:** `state/measurement-paper/5d-community-20261024/FD-1B-INV-I0-REPORT.md:66-67` ("σ_J/f on the data has median 0.133 %, range 0.055–0.252 %"), the source r5:238 records for §6.1's same number |
 | W-3 | 1 | §5.4: "All three rules classify the bias under simulated truths: none is a coverage statement, none assesses the detector model, and none excludes a cell from the output."; S11: "neither excludes a cell from the output" | IR-sol `:17-20`; `OUTCOME-20261107-valid-region.md:21-36`; `DECISION-20261109-joseph-bias-half-rule.md:28-40` |
-| W-4 | 3, not named in the paper; my option 1 is banked for Joseph as a scope question (REPORT.md) | nothing | IR-sol `:22-25`; decision `943d5f97:…:59-64` |
+| W-4 | superseded by Joseph, 11-09: option 1 (below) | the option-1 sentence in §6.1 (below) | IR-sol `:22-25`; decision `943d5f97:…:59-64` |
 | W-5 | 1, with "a next step" | "That test is a next step." | IR-sol `:27-30` |
 | W-6 | 1 | unchanged | IR-sol `:32-35` |
 | W-7 | 1 | unchanged | IR-sol `:37-40` |
@@ -160,3 +160,19 @@ five-observable estimator. The PDF is regenerated, not edited (new sha256 `53598
   - **A new figure in print:** without the block, the GiBUU hybrid truth also flags R07. It is the committed readout's
     own value.
 - **check_round now runs `test_check_sec4_receipts.py`** (check 6), so stale cases fail loudly.
+
+## Decided by Joseph (2026-11-09)
+
+**Record:** `DECISION-20261109-joseph-bv-mention-title-preread.md` (#993), items 1–3, from Joseph's answer quoted there verbatim ("for none of these things should the
+wording be locked"). **Both wordings are Joseph, 11-09: provisional, not locked.** Neither is protected text, and
+neither is added to any protected-text list or check (item 3). Either may change through the PRD-referee read, a ledger
+entry and the director's decision, or Joseph's.
+
+| W | decision | what prints now | status |
+|---|---|---|---|
+| W-4 | option 1 (W-OPTIONS.md W-4), in §6.1 right after "not adopted" (item 1) | "Whether a small bias increase is an acceptable price for the stability gain is a bias–variance question, which a separate study, specified in advance at truths reserved from this one, is to address; this paper's conclusions do not depend on it." It states that the study exists and why, and reports no result; the plan decision's item 4 stands. **The study's description:** the plan decision `943d5f975:…-methods-baseline-and-plan.md:19-20` ("a declared bias–variance (mean-squared-error) trade-off study at reserved truths", adopted as the strengthened option C at `:59-66`) | Joseph, 11-09: provisional, not locked |
+| W-1 | the provisional title stands (item 2) | "Five-observable unbinned unfolding of MINERvA open data with OmniFold: a benchmark and diagnostic study" (unchanged) | Joseph, 11-09: provisional, not locked |
+
+**Presentation, applied with the pre-read pack (`preread-outcomes/`, #993 item 4):** in §5.3, four label variants
+began "they are consistent with …", which has no antecedent when the finite-iteration label doesn't hold. They now read
+"the readings are consistent with …". The pack's build of case C1 showed the fault. No claim changes.

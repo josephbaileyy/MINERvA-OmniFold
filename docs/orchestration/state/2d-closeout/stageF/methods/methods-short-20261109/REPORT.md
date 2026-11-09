@@ -189,14 +189,6 @@ The director, 2026-11-09:
 
 ## Banked for Joseph
 
-- **W-4, naming a future bias–variance study as the basis for the ensemble's adoption question.** The director decided
-  option 3: it is not named in the paper. My option 1 is banked as a scope question for Joseph. Both positions:
-  - **IR-sol (`answer.txt:22-25`):** "A referee can reasonably question the adoption rule, but a promised study cannot
-    supply its missing trade-off result … Joseph says nothing about the future study enters this initial paper without
-    a new decision (`943d5f97:…:59-64`). Options 1 and 2 exceed that scope, even as promises rather than findings."
-  - **Mine (W-OPTIONS.md, W-4):** three of the four round-6 reads, and G1 too, ask for exactly that basis. One sentence
-    would state the basis without claiming any result. I read "nothing about it enters this paper" as being about the
-    study's result, not its existence.
 - **W-9, W-10, W-19 and W-21,** as before.
 - **A both-cover calibration sentence,** if the like-for-like test covers at both tunes. It would be a coverage
   statement. The current W-11 sentence holds in every outcome without it.

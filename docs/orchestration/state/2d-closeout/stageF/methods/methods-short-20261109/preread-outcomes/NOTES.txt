@@ -1,0 +1,289 @@
+NOTES FOR THE DIRECTOR ONLY. NOT FOR THE READERS: do not include this file in a read prompt.
+
+The pre-read pack of the short methods paper (#977), built by director-helper-3, 2026-11-09, under
+DECISION-20261109-joseph-bv-mention-title-preread.md (#993) item 4.
+
+Every path is relative to docs/orchestration/ unless it starts with docs/analysis-note/. LL5D-DECLARATION.md and
+FD-PRR-DECLARATION.md are under state/measurement-paper/5d-community-20261024/. Their line numbers are at this pack's
+commit, where both files are byte-identical to main 5a028842a.
+
+======================================================================================================================
+0. THE PACK
+======================================================================================================================
+
+For the readers:
+- (a) manuscript.blind.txt and supplement.blind.txt. They were made by the usual blind build
+  (rater-calibration/make_rater_copy.sh and make_supp_rater_copy.sh, both rc 0) from this commit's
+  docs/analysis-note, with every placeholder pending. The banned-term grep is in section 6.
+  - manuscript.blind.txt: 8,712 words, sha256 73e30ac1211f0f2e;
+  - supplement.blind.txt: 13,595 words, sha256 b1d87541fa1d1d86.
+- (b) VARIANTS.txt, written by write_variants.py from build_cases.py's builds (the commands are in section 7).
+
+Not for the readers: this file; build_cases.py; write_variants.py; passages.json.
+
+How VARIANTS.txt is made. build_cases.py builds the paper once per case, with every key of the case's group given a
+declared class through make_values_fived16.pending_lines(), which is the path a fill takes. Each passage is cut from that
+build's pdftotext, between anchors that no case changes. No passage is retyped. Three edits are made:
+- the bracketed stand-ins for values that do not exist yet, stated in the file;
+- the IBU-iteration clause, shown as "[falls / rises / does not change]", stated in the file;
+- a hyphen that pdftotext drops when it rejoins a line break: "undercovers" becomes "under-covers", as the source
+  prints it.
+Every word of every passage was checked to occur in paper_body.tex, main_paper.tex or values_fived16.tex.
+VARIANTS.txt: 1,218 words.
+
+======================================================================================================================
+1. WHAT LICENSES THE COVERAGE CASES (Parts 1 and 2 of VARIANTS.txt)
+======================================================================================================================
+
+The record that will license each case is the like-for-like test's OUTCOME, which does not exist yet. Its CITABLE FOR
+is bounded by LL5D-DECLARATION.md:
+- :52, NOT CITABLE FOR: "any coverage statement, in either direction, about the 5D intervals, the reported
+  covariance, or the procedure". The declaration licenses no coverage sentence by itself.
+- :88: "Grading is per tune and per reading. With two truths there is no coverage rate." Also :758-759.
+- :89-94: two readings, minus2 primary and all beside it. They are paired, and "Neither reading is a test of the
+  other". Also :500-501.
+- §6 :469-475, the classes: COVERS at (T, reading) means no cell under-covers and no joint under-coverage. UNDER-COVERS
+  names each cell, with whether the joint fraction is under. INVALID applies when a §10 control or the Cholesky rule
+  fails, reported unrepaired.
+- :477: one-sided. Over-coverage is reported but is not a failure.
+- :478: a weakened pass, in a cell whose clipped variance ratio is below 0.9.
+- :480-481: a flagged cell with |o_c| >= 0.667 is read "the flag may be the clipping artefact", and that reading
+  cannot un-flag it.
+- :768-769: "A pass under C_T carries over to the procedure's full covariance at T, not to the reported covariance
+  made at the data's point."
+- :758-766, CANNOT SUPPORT whatever the outcome:
+  - a coverage rate, or coverage at other truths;
+  - that the reported intervals cover nature;
+  - the lateral block, C_resp, C_PL,5D or the response model;
+  - that the toys realize S1's block at the tunes;
+  - ENS1's coverage;
+  - item (c).
+- :146-148: "Held out" is not "independent". G18's Valencia 2p2h shares the GENIE + MEC shift's family, and AR23
+  shares G18's Nieves quasielastic model.
+- :66-71 with DECISION-20261108-joseph-ll5d-stop-rule.md:28-35: no stop rule is fixed in advance. Each STOP goes to
+  Joseph unrepaired. An INVALID may be rerun unchanged under the director's authority. A repair after a STOP is
+  disclosed as chosen after the STOP was seen.
+- The wording rule, R5 (:512, carrying DECISION-20261102-joseph-1b-redesign.md:80-89):
+  - one neutral methods sentence;
+  - no "does not test" clause;
+  - the required facts stated as description, not as qualifiers. These are G18's shared 2p2h family, and "the result
+    concerns the procedure's covariance at those tunes, not the reported intervals at the data".
+  - :774: whether and how the paper names the two readings and the excluded bands is Joseph's. R5 says "not drafted
+    now": the wording waits for the result.
+  - Every coverage case in the draft is therefore a pre-result draft of a sentence Joseph reserved. #993 item 4
+    authorizes this pre-read, and says any coverage sentence still comes to him before it is final.
+
+======================================================================================================================
+2. CASE BY CASE: WHERE THE TEXT STATES MORE THAN THE READINGS COULD LICENSE
+======================================================================================================================
+
+Legend: OVER means the text states more than the record could license if that outcome occurs. GAP means no
+pre-written text exists for a possible outcome; it is proposed here and not applied. PRESENTATION means wording only.
+
+--- A1 / B1. Both tunes cover (the case to read most closely) ---
+
+Licence if it occurs: COVERS at (G18, minus2) and (AR23, minus2) (:473). Under :52 and :768-769, a pass licenses only
+the procedure's full covariance, rebuilt at each of the two tunes, in the declared readings. It never licenses the
+reported intervals at the data, a rate, or the 5D intervals in general.
+
+1. OVER, in the abstract. "A like-for-like five-observable coverage test at the same tunes covers at both." The
+   sentence names no object and no variant.
+   - The sentence before it ("coverage of the reported five-observable intervals is not established") helps.
+   - But alone, "covers at both" reads as five-observable coverage holding at the tunes. It omits that the object is
+     the procedure's rebuilt covariance, and that this is the variant without two GEANT4 bands.
+   - Proposed, for Joseph: "A like-for-like coverage test of the same procedure on the five-observable result, at the
+     same tunes and without two GEANT4 hadron-interaction bands, covers at both; the result concerns the procedure's
+     covariance at those tunes, not the reported intervals at the data."
+2. OVER by placement, in section 6.3, against R5. The required description sits before the outcome, as a qualifier:
+   "it does not estimate a rate over truths, and neither outcome bears on the reported intervals at the data or on the
+   ensemble average". R5 wants description, not qualifiers, and no "does not" clause.
+   - Proposed for every graded case: after the result, section 6.2's sentence, "The result concerns the procedure's
+     covariance at those tunes, not the reported intervals at the data."
+   - The "rate" and "ensemble average" facts would then become description ("It grades each tune and each variant
+     separately; ...").
+3. GAP, in section 6.3, for the required overlap fact. The paragraph does not state :146-148, though R5 requires the
+   G18 fact. Section 5.2 already says it for the bias tests: "The tunes share a quasielastic cross-section model, and
+   G18_10a_02_11b and the GENIE + MEC component of C_model also use Valencia-family MEC models."
+   - Under a pass this is the fact that limits "held out".
+   - Proposed: "As in sections 5.2 and 6.2, the tunes are held out but not independent: they share a quasielastic
+     model, and G18_10a_02_11b shares its 2p2h model family with one of C_model's generators."
+4. GAP, in section 6.3, for the qualifiers inside COVERS. No clause exists for a weakened pass (:478) or for reported
+   over-coverage (:477).
+   - Proposed, printed only when the record has one: "; in cells [cells], the pass is weakened by clipping" and "; it
+     over-covers in cells [cells], which the test does not count as a failure".
+5. PRESENTATION. "at G18_10a_02_11b it covers": "it" is the test. Proposed: "the rebuilt covariance covers".
+6. True in this case: §1 "the third is not established", §7 ¶1 "It does not yet provide validated interval coverage",
+   and Limitation 1 ("whatever its outcome, grades the procedure at two truths, not the reported intervals"). See the
+   round-6 check, variants.md:95-107.
+7. Banked for Joseph already (REPORT.md): a calibration sentence for this case. It would be a coverage statement.
+
+--- B5. The primary variant covers at both tunes; the variant with the bands under-covers (a missing abstract case) ---
+
+8. OVER, in the abstract. ll5d-abstract is derived from the two primary keys only (variants.md:44-49). So in B5 the
+   abstract prints A1, "covers at both", while the with-bands reading under-covers.
+   - Neither reading tests the other (:94), but dropping one reading's failure from the abstract overstates.
+   - Proposed, a new abstract class (not applied; it needs a class in ll5d-abstract and a change to the derivation
+     rule): "A like-for-like five-observable coverage test at the same tunes covers at both in its primary variant,
+     which omits two GEANT4 hadron-interaction bands, and under-covers at [one / both] with them."
+   - The reverse case, primary under and with-bands covering, prints A2 or A3, which is faithful. No text may
+     present the with-bands cover as offsetting the primary failure (:94), and none does.
+
+--- A2 / B2 and A3 / B3. Under-coverage ---
+
+Licence: UNDER-COVERS at (T, reading), each cell named, with the joint flag (:474). These are failure statements about
+the procedure at the tunes. The fixed sentences keep them away from the reported intervals.
+9. GAP, joint-only under-coverage. under-joint prints "under-covers jointly and in cells [cells]". If the joint
+   fraction is under with no cell flagged, which §6 allows, the list is empty.
+   - Proposed class "under-joint-only": "under-covers jointly, with no cell flagged".
+10. GAP, the bias-versus-width attribution and the clipping-artefact reading. §6's statistics include the
+    attribution of every flagged cell (fd_1b_null.attribute, :457), and section 6.2 prints it for the 2D test ("each
+    attributed to bias"). No clause carries either reading.
+    - Proposed: "; the flags are attributed to [bias / width]" and "; in cell [R..], the flag may be the clipping
+      artefact" (:480-481, which cannot un-flag).
+11. PRESENTATION. A2 says "under-covers at one", without naming the tune or the variant. It is acceptable, since
+    section 6.3 names both.
+
+--- A4 / B4. Invalid ---
+
+Licence: INVALID at (T, reading), reported unrepaired (:475). It may be rerun unchanged under the director's
+authority (:70). The printed case must be the final state after any rerun.
+12. OVER/GAP, in the abstract. A4 prints if either primary key is invalid (variants.md:46). With one tune invalid
+    and the other graded, "is invalid by its own controls" misdescribes the graded tune.
+    - Proposed: "is invalid by its own controls at one tune and [covers / under-covers] at the other".
+
+--- B6. Stopped at a gate ---
+
+Licence: §5.2 :427: "A failed gate, at either reading or either tune, means nothing launches, and the test returns to
+Joseph."
+13. The text is true when the gate fails. It is final only once Joseph decides. If a repair then runs, the case becomes
+    graded, and the repair is disclosed as chosen after the stop (:71; stop-rule decision item 4).
+
+--- B7. The clipping-offset check exceeded its bound ---
+
+Licence: §5.3 :439-440 and :692. TO_JOSEPH sends the case to Joseph before any bulk. It is a routing, not a stop.
+14. OVER. "It stopped before its pseudo-experiments, when its check of the clipping offset exceeded the bound" is true
+    only if Joseph stops the test there.
+    - GAP: Joseph lets it proceed. The case is then graded, and the text should add that the offset check exceeded
+      its bound and the test proceeded by a decision made after it was seen.
+15. To check against the record: clipcheck reads after the pilot (:692), which may unfold some pseudo-experiments. So
+    B7 and A5's "before its pseudo-experiments" may need to read "before the bulk of its pseudo-experiments".
+
+--- B8. Stopped at another stopping point: a defect ---
+
+16. OVER: this contradicts the record. "It stopped under a stopping rule fixed in advance" contradicts :66-67 and the
+    stop-rule decision :28 ("No stop rule is fixed in advance for LL5D").
+    - The STOP triggers are fixed in advance: §5.1 :333-335 (N1, T <= 0) and :684 (a missing source). What follows a
+      STOP is Joseph's.
+    - Proposed: "It stopped before its pseudo-experiments, at a check fixed in advance, [the check], and gives no
+      coverage reading", with any later repair disclosed (:71).
+    - Not applied: it is claim-level wording, and this is my drafting error.
+
+======================================================================================================================
+3. THE PRIOR-RETENTION CASES (Part 3 of VARIANTS.txt)
+======================================================================================================================
+
+Licence: FD-PRR-DECLARATION.md.
+- :35 CITABLE FOR "the IBU-against-(e) classes (§5.2)".
+- :297-300, the classes:
+  - PR-2a (less / more / same) is Δ = ρ_IBU(5) − ρ_B0 against δ_IBU = max(0.05, 9.03 s_IBU);
+  - PR-2b (falls / rises / flat) is ρ_IBU(200) against ρ_IBU(5) ± 0.05.
+- §5.4 :319-332: the labels. "implementation-specific share" holds if PR-2a = less.
+- NOT CITABLE FOR :41-58:
+  - no cause and no estimator change;
+  - no held-out claim and no "would pass";
+  - not Table II or its grades (:49);
+  - no coverage, no data quantity and no real-data bias.
+
+17. C1 (less) and C3 (more) are within the licence. In C1 the label sentence follows by §5.4.
+18. OVER in C2 (same). "retains as much of the prior as the estimator" states equality, but "same" means |Δ| < δ_IBU:
+    a difference below a bar fixed in advance (:297-298).
+    - Proposed, abstract: "retains a share of the prior that does not differ from the estimator's by more than a bar
+      fixed in advance".
+    - Proposed, section 5.3: "retains a share of the prior within the bar of the five-observable estimator's".
+19. OVER, the same way, in every case's "[... / does not change]" clause. flat is |ρ_IBU(200) − ρ_IBU(5)| < 0.05
+    (:299-300). Proposed: "changes by less than 0.05 between five and 200 iterations".
+20. PRESENTATION, the abstract in every case. "a binned iterative unfolding of the same noise-free pseudo-data" has no
+    antecedent: the sentence before describes fake-data tests, not noise-free pseudo-data.
+    - Proposed: "of noise-free pseudo-data at that truth".
+    - The placement after the fake-data sentence must not suggest a Table II grade for the IBU (:49), and no wording
+      says one.
+21. GAP. If ρ is undefined at a flagged truth (PR-1 "undefined", :292; :251-252), PR-2a has no class, and no variant
+    exists. It is not expected at the flagged truths, but nothing in the text handles it.
+22. APPLIED at this commit, PRESENTATION. Four label sentences began "they are consistent with ...", which has no
+    antecedent when the finite-iteration label does not hold. They now read "the readings are consistent with ...".
+    The build of case C1 showed the fault.
+
+======================================================================================================================
+4. SECTION 7 AND THE CONCLUSIONS
+======================================================================================================================
+
+No sentence of section 7 changes with any outcome; the paper's only \fvgroup sites are the abstract, Table 1,
+sections 3.3, 5.3, 5.4 and 6.3. The round-6 check (variants.md:95-107) found every fixed sentence true under every
+coverage outcome.
+
+23. A claim-level item for the director, from round 5. Limitation 1 ends "The coverage tests cited are pointwise, for
+    each reported quantity separately, not the stronger simultaneous coverage of all of them". But the like-for-like
+    test (§6 :472) and the 2D test (section 6.2's "joint region") also grade a joint χ² region. So "pointwise"
+    misdescribes their joint reading in every graded case. Proposed: "The per-cell readings are pointwise; the joint
+    readings grade a χ² region, not simultaneous intervals for every quantity."
+
+======================================================================================================================
+5. TABLE 1: A DEFECT IN THE FILL, NOT SHOWN TO THE READERS
+======================================================================================================================
+
+24. Table 1 prints class names. In a filled build, the coverage row prints the raw class names: \fvval of a class key
+    prints the class with "-" replaced by a space. Seen in this pack's builds:
+    - the non-graded cases print "without the two GEANT4 bands: na, na; with them: na, na";
+    - B2 prints "covers, under cells";
+    - the Status cell prints "graded", "gate failed", "to joseph" (Joseph's name, in the paper) or "stop";
+    - none of these is a status word defined in the caption.
+    Proposed fix, a presentation change to my own placeholder code, which I apply if you agree:
+    - the Result cell per (tune, variant) in words: covers / under-covers in cells / under-covers jointly / invalid;
+    - the Status from the caption's words: Under-covers if either primary reading under-covers; Covers (a new caption
+      word) if both cover; Invalid (new); and Stopped for every non-graded case;
+    - check_round to fail any class name that prints.
+    The prior-retention row prints PR-1's words. "capacity both" reads poorly, so I propose "reduces and increases".
+    Table 1 is left out of VARIANTS.txt for this reason, and Part 4 there says so.
+
+======================================================================================================================
+6. THE BANNED-TERM GREP
+======================================================================================================================
+
+The pattern list is check_round.GONE (the paper's internal labels and retired phrases), plus:
+- every study label and record type (LL5D, FD-PRR, PRR, V-HALF, ENS1, COV2D, RS1, FD-1B, 1B, F0/F0b, B0, B4, REF-G1,
+  REF-C2C1, PR-1..3, minus2, A7, stage0c, GEANT_, DECISION, OUTCOME, DECLARATION, .md);
+- the \fv macros and key prefixes;
+- the class names;
+- peer and person names;
+- ISO dates;
+- PR numbers.
+
+Results:
+- manuscript.blind.txt: one hit, "configuration (e) of section S4". This is the paper's own defined term for the
+  baseline, not an internal label.
+- supplement.blind.txt:
+  - "configuration (e)" five times, as above;
+  - "declared" three times (Supplement lines 1277, 1296, 1495), in moved text that was already there. check_round's
+    GONE applies to the paper (FILES = paper_body.tex, main_paper.tex), and W-8 keeps "declared" in approved
+    sentences, so this pack doesn't change them. Say if you want them changed.
+- VARIANTS.txt: write_variants.py refuses to write the file if any of its own banned list prints. It wrote the file.
+
+======================================================================================================================
+7. COMMANDS
+======================================================================================================================
+
+  bash state/2d-closeout/stageF/methods/rater-calibration/make_rater_copy.sh <wt> <scratch>/manuscript.txt
+  bash state/2d-closeout/stageF/methods/rater-calibration/make_supp_rater_copy.sh <wt> <scratch>/supplement.txt
+  python3 -I <round>/preread-outcomes/build_cases.py <wt> <scratch>/cases
+  python3 -I <round>/preread-outcomes/write_variants.py <scratch>/cases/passages.json <round>/preread-outcomes/VARIANTS.txt
+
+Here <round> is state/2d-closeout/stageF/methods/methods-short-20261109.
+
+======================================================================================================================
+8. NOT IN THIS PACK
+======================================================================================================================
+
+- The per-cell bias-half rule's cases: not requested. They print counts only, and the record has no coverage
+  reading.
+- The prior-retention study's other readings: the factor classes, the other labels, and which levels clear. Not
+  requested. Their sentences are in section 5.3 of the source and print only through their own readings.
