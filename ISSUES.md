@@ -941,7 +941,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-CLM-5. Do not replace the six conditions with a new scope sentence.
 * **G2-CLM-4 [T]** — **Claim that Low-$E_{\\text{avail}}$ Excess Corresponds to Established Low-Recoil Excess.** Same finding as S1-CLM-3 / S2-CLM-3 / G1-CLM-4.  
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-CLM-4. Do not restore the corner sentence, and do not add a localization claim.
-* **G2-CLM-5 [T]** — **Claim of a Meaningful 7.86% Uncertainty on 16-Cell Output.** Same finding as S1-CLM-2 / S2-CLM-6.
+* **G2-CLM-5 [T]** — **Claim of a Meaningful 7.86% Uncertainty on 16-Cell Output.** Same finding as S1-CLM-2 / S2-CLM-6.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S2-CLM-6. Do not type 7.86, and do not add "not independently validated." The budget sentence has already landed. Do not edit it again.
 
 ### Section 7: Minor Issues and Presentation
 
