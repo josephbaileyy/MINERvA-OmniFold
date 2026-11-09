@@ -646,7 +646,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-COM-9 [T]** — **Ascencio et al. comparison unresolved.**  
   *Finding:* Data sit 9.2% and 6.0% above Ascencio on super-cells, confounded by differing $E_{\\text{avail}}$ definitions.  
   *Evidence:* `docs/analysis-note/sec_3d.tex:185`.  
-  *Resolution:* Detail definition differences ($11\\%$ event shift) and present comparison descriptively.
+  *Resolution:* This row authorizes no tex edit. The differences, the definition shift, and the absence of a chi-squared are already stated. Do not tabulate new uncertainties.
 * **S2-COM-10 [T]** — **Hidden-variable closure fails at largest amplitude.**  
   *Finding:* Hidden-variable closure fails at $A = 0.30$; injected bump closures have narrow passes or no predeclared thresholds.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:170`.  
