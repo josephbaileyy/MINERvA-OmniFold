@@ -312,7 +312,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-5 [T]** — **Quantification of nonlinear cross-source terms.**  
   *Finding:* Executive summary names omitted nonlinear cross-terms as a methodological finding without quantification.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:19`, `sec_systematics.tex:180`, `sec_5d.tex:230`.  
-  *Resolution:* State that effect was not measured in 2D; quote 5D trace ratio from `uq_5d` receipts.
+  *Resolution:* Do not quote a trace ratio until it is bound through a checked-values macro from a named receipt. This row authorizes no tex edit.
 
 * **S1-COM-6 [T]** — **Unexecuted or incomplete tests.**  
   *Finding:* Clarify status of tests that did not run (App. D response mismatch, §5.2 re-test, §10.5 16-cell coverage, §10.3 reco info).  
