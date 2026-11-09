@@ -742,7 +742,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Do not relabel the figure. The caption already says the ratio is data/Tune v1 and that the figure prints data/GENIE. The denominator is the tune-weighted prior.
 * **S2-PRES-7 [T]** — **Statements citing AI agent session replay.** Same finding as S1-CONT-7.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-7. Do not edit app_release.tex while AUD-N4 is held. Do not replace the session citation with a claim of an automated verification pipeline.
-* **S2-PRES-8 [T]** — **Dates, internal job labels, file names in text.** Same finding as S1-PRES-3.
+* **S2-PRES-8 [T]** — **Dates, internal job labels, file names in text.** Same finding as S1-PRES-3.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-PRES-3. Do not move provenance sentences out of the body until a later instruction names them.
 * **S2-PRES-9 [T]** — **Terminology used before defined.** Same finding as S1-PRES-4.
 * **S2-PRES-10 [T]** — **Figure-based numbers cited without tables.**  
   *Finding:* Text quotes numbers read from figures (e.g., Fig. 23 ratios) without supporting tables.  
