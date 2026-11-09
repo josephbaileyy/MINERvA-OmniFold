@@ -1,0 +1,12 @@
+{
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/with-cpl/readout/fd_f0b_readout.json": "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6",
+  "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_f0b_readout.json": "b9db935a3187646ba2accaf3865cf4aa26ad72676063c58e7f5e6220224ef17b",
+  "nd-unfolding/gbdt_model_dependence/analyze.py": "e44d5f5e11953b2490844b00ad9dab0b511655045ce21577c6484fd63fbc9f7c",
+  "nd-unfolding/gbdt_model_dependence/inputs/inventory.json": "e3f3289b064bc54ea0ef5b6de19fee69ae6a6a8c8d03b72339b96d765053c5e4",
+  "nd-unfolding/gbdt_model_dependence/inputs/operands.npz": "61c32477cdaa4c43dce20fa9c62370fbc3f53f7af36efcd64179a6ad00d4cbc2",
+  "nd-unfolding/fd_f0_regrade.py": "0dfa722c2b74abed09fb255ccb7c0e80e6c55eb922ea1326dd74e6c880697aa2",
+  "nd-unfolding/s5e_candidate.py": "bda8c48ce2365e173bbba083b18233d6f6b7c2dfbab5179156073860c8281ec7",
+  "nd-unfolding/s5e_analyze_candidate.py": "cc00829eb7baf2e64cbeb9165fd89a3ef232c54fdb7d354c3688542d6e73514a",
+  "docs/orchestration/state/s5e/cand/assess_receipt.json": "84266e309d1aae0d2db1db315750b8164413a7d0125fcaa4a6c9b25834261a2c",
+  "nd-unfolding/gbdt_model_dependence/results/prior.csv": "0aa5a1e9aabe7261633e9e6462a55c584bf996365640f75ceb0cf9727c5565dd"
+}
