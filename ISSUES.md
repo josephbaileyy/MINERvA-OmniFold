@@ -270,7 +270,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-16 [T]** — **Reconciliation of related counts.**  
   *Finding:* Reconcile 4830 populated 4D bins vs 4825 in App. B.1; ndf = 204 vs 205 in §5.3; 27 boxes merged into 16 cells in §10.1; truth $W$ real solutions ($0.15\\%$) vs negative $W^2$ fraction ($4.9 \\times 10^{-5}$) in §8.2.  
   *Evidence:* `docs/analysis-note/sec_3d.tex:175`, `sec_validation.tex:198`, `sec_fived16.tex:35`, `sec_eavailw.tex:50`, App. B.1.  
-  *Resolution:* Provide explicit accounting for each discrepancy in footnotes or text.
+  *Resolution:* This row authorizes no tex edit. Each listed pair stays as written until a record shows what the two counts are and why they differ.
 
 * **S1-ACC-17 [T]** — **Seed dependence vs training-seed block magnitude.**  
   *Finding:* Single seed variation (seed 1 vs 42 per-bin median 0.18%, max 1.79%) exceeds training-seed block median (0.048%).  
