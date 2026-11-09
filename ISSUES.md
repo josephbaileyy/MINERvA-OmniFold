@@ -297,7 +297,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-2 [T]** — **5D config-(a) covariance citability.**  
   *Finding:* Explicitly state what may be cited from config-(a) 5D value and uncertainty (exploratory central comparisons only; covariance unusable).  
   *Evidence:* `docs/analysis-note/sec_5d.tex:225`.  
-  *Resolution:* Clarify in status matrix and §8/§9.
+  *Resolution:* Those two rows are already in sec_execsummary.tex. Do not call $C_Z$ exploratory. This row authorizes no tex edit.
 
 * **S1-COM-3 [R]** — **Fake-data bias in physical units.**  
   *Finding:* Tabulate per-cell bias in % and relative to reported $\\sigma$ for GiBUU hybrid and $q_3$ tilt in Table 18.  
