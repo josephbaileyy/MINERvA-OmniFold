@@ -853,7 +853,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-PRES-4 [T]** — **Hadronic catch bin compression.**  
   *Finding:* Explain catch bin handling in kinematic distributions.  
   *Evidence:* `docs/analysis-note/sec_experiment.tex:55`.  
-  *Resolution:* Document catch bin definitions clearly in text and captions.
+  *Resolution:* This row authorizes no tex edit. The control-plot caption already says the wide hadronic catch bins extend to 100 GeV and are compressed at each panel's right edge. The corner-plot caption already says those bins are dropped. The reporting edges are already in sec_method.tex. Do not add a further sentence.
 * **G1-PRES-5 [T]** — **Inconsistent kinematic notation ($p_\\parallel$ vs $p_z$).**  
   *Finding:* Longitudinal momentum denoted interchangeably as $p_\\parallel$, $p_z$, `p_||`.  
   *Evidence:* Figures 5, 17, 18, text.  
