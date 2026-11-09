@@ -875,7 +875,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-PRES-10 [T]** — **Average nucleon mass definition $\\bar{M}$.**  
   *Finding:* In §8.2, average nucleon mass is defined as $\\bar{M} = (1.5 M_n + M_p)/2.5$. Origin of 1.5:1 ratio for CH tracker should be stated.  
   *Evidence:* `docs/analysis-note/sec_eavailw.tex:52`.  
-  *Resolution:* State the isotopic/target weighting convention used by the MAT framework.
+  *Resolution:* This row authorizes no tex edit. The formula is already printed. Do not add a target-weighting convention. The defining header sets the constant and does not derive 1.5 from the tracker composition. Do not replace the factor with a CH ratio.
 
 ---
 
