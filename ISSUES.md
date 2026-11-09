@@ -265,7 +265,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-15 [T]** — **Terminology of $J$ (109 cells).**  
   *Finding:* Reconcile §9.4 / Table 12 ("109 supported fine joint cells") with §11.1 ("coarse $3^5$ grid").  
   *Evidence:* `docs/analysis-note/sec_5d.tex:150`, `sec_joint.tex:45`.  
-  *Resolution:* Harmonize: $J$ consists of 109 populated cells within the $3^5$ joint binning definition.
+  *Resolution:* The two descriptions already differ by what they are compared with. sec_joint.tex places the 109 supported cells on the coarse $3^{5}$ grid. The sec_5d.tex table calls those cells fine relative to the 27 H2 cells. This row authorizes no tex edit.
 
 * **S1-ACC-16 [T]** — **Reconciliation of related counts.**  
   *Finding:* Reconcile 4830 populated 4D bins vs 4825 in App. B.1; ndf = 204 vs 205 in §5.3; 27 boxes merged into 16 cells in §10.1; truth $W$ real solutions ($0.15\\%$) vs negative $W^2$ fraction ($4.9 \\times 10^{-5}$) in §8.2.  
