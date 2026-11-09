@@ -919,7 +919,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-COM-2. The rescaling test and the shifted-response closures already have separate statuses. Do not call the shifted-response closures exploratory, and do not say they did not run.
 * **G2-COM-6 [T]** — **Missing Configuration Records and Run Logs.** Same finding as S2-COM-3 / G1-CONT-3.  
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-CONT-3. Do not apply the S2-COM-3 table instruction. The exact-split paragraph already says the seed was not fixed and the run log was not found. Do not add a further sentence. Do not add a second estimator table.
-* **G2-COM-7 [T]** — **Unverified Systematics (Zeroed DIS and Inferred POT).** Same finding as S2-COM-12 / G1-COM-8.
+* **G2-COM-7 [T]** — **Unverified Systematics (Zeroed DIS and Inferred POT).** Same finding as S2-COM-12 / G1-COM-8.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as G1-COM-8. The paragraph already says NormDISCC is identically zero, that it is carried as zero, and that this has not been confirmed as intended. The same paragraph already says two POT-counting links are inferred, not verified. Do not add a further sentence. Do not add the 7-of-187 statement.
 
 ### Section 5: Self-Containment
 
