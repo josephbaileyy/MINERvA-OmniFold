@@ -899,7 +899,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-ACC-3. Do not write that a kinematically inaccessible cell was excluded. The two ndf macros already print 204 and 205.
 * **G2-ACC-7 [T]** — **Unexplained Higher-Dimensional Bin Count.** Same finding as S2-ACC-18.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S2-ACC-18. The counts already name different objects. Do not identify 4830 with 4825, and do not add a combined definition.
-* **G2-ACC-8 [T]** — **Face-Invalid $\\chi^2$ Annotations in Figures 9 and 10.** Same finding as S2-PRES-4.
+* **G2-ACC-8 [T]** — **Face-Invalid $\\chi^2$ Annotations in Figures 9 and 10.** Same finding as S2-PRES-4.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S2-PRES-4. The Fig. 9 caption already says the annotated per-panel chi-squared uses only the weight statistics and is a descriptive scale. Fig. 10 says it uses the same error bars. Do not remove the annotated values. Do not add a further sentence.
 
 ### Section 4: Completeness as a Citable Record
 
