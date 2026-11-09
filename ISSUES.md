@@ -727,7 +727,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-PRES-3 [T]** — **Appendix figures/tables numbering and splitting across pages.**  
   *Finding:* Fix figures/tables numbered after use or split awkwardly across pages (Figs. 36, 37; Tables 3, 6, 13, 16, 18).  
   *Evidence:* Global formatting.  
-  *Resolution:* Clean up LaTeX floats and table layouts.
+  *Resolution:* This row authorizes no tex edit. Do not run a global float cleanup. The named figures and tables are layout comments on a built PDF. No one of them is identified as a broken float in the source. Do not move floats, and do not reformat a table.
 * **S2-PRES-4 [T]** — **Fig. 9 prints per-panel $\\chi^2$ from weight statistics.**  
   *Finding:* Fig. 9 prints misleading per-panel $\\chi^2$ computed from MC weight statistics alone.  
   *Evidence:* Caption and annotations on Fig. 9.  
