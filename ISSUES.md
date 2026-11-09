@@ -565,7 +565,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-10 [T]** — **Run-period effect on 2D median.**  
   *Finding:* §6.3 states run-period block raises per-bin median from 5.98% to 6.41% (+7%), while Table 3 says median ratio is 5.8%.  
   *Evidence:* `docs/analysis-note/sec_results.tex:90`, Table 3.  
-  *Resolution:* Clarify ratio of medians (+7.2%) vs median of ratios (+5.8%).
+  *Resolution:* This row authorizes no tex edit. The two medians and the median of the per-bin increases are already stated separately. Do not add a ratio of the two medians.
 * **S2-ACC-11 [T]** — **Repeated numbers that may be copy errors.** Same finding as S1-ACC-12.
 * **S2-ACC-12 [T]** — **2p2h closure arithmetic in §7.7.** Same finding as S1-ACC-19.
 * **S2-ACC-13 [T]** — **Size of background correction.** Same finding as S1-COM-9.
