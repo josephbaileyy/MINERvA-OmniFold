@@ -379,7 +379,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CONT-3 [T]** — **Dependencies on companion journal article definitions.**  
   *Finding:* Note invokes "companion journal article" for classifier definitions (Table 10), recovery figures, and printed values.  
   *Evidence:* `docs/analysis-note/sec_eavailw.tex:55`, `sec_5d.tex:142`, Table 20.  
-  *Resolution:* Ensure the companion technical note is completely self-contained without requiring access to the unsubmitted article.
+  *Resolution:* This row authorizes no tex edit. Do not copy article text into the note.
 
 * **S1-CONT-4 [T]** — **Reliance on superseded/retired records for numbers.**  
   *Finding:* Numbers quoted from superseded values (e.g., 0.28% and 0.18% in §4.7, A.4 split bootstrap).  
