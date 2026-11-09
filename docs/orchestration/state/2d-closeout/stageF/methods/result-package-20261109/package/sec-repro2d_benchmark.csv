@@ -1,7 +1,7 @@
 quantity,description,value,printed,unit
 total_cross_section,this analysis's 2D cross section integrated over the 205 reported bins,3.0687381668997114e-38,3.069e-38,cm^2/nucleon
 ratio_to_published_total,that integral divided by the published one,1.00978172454241,1.010,1
-chi2_over_205,"chi^2 of the difference from the published result under the published covariance, divided by 205 (the reported bins; nothing is fitted, so 205 is the ndf)",2.27,2.27,1
+chi2_per_ndf,"chi^2 per degree of freedom of the difference from the published result under the published covariance; ndf = 205, the reported bins, with no fitted parameter",2.27,2.27,1
 chi2_shape_part,the shape part of that chi^2 (normalization along the published spectrum removed),465.23,465,1
 chi2_normalization_part,the normalization part of that chi^2,0.04,0.04,1
 n_best_determined_directions,the number of best-determined eigen-directions of the published covariance kept (eigenvalues above 1e-4 of the largest),73.0,73,1

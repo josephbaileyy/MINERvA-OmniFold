@@ -444,8 +444,8 @@ BENCH = [
      "cm^2/nucleon", ("macro", "sigTwoD")),
     ("ratio_to_published_total", "m-ratioTot", "that integral divided by the published one", "1",
      ("macro", "ratioTot")),
-    ("chi2_over_205", "m-chiPaper", "chi^2 of the difference from the published result under the published covariance, "
-     "divided by 205 (the reported bins; nothing is fitted, so 205 is the ndf)", "1", ("macro", "chiPaper")),
+    ("chi2_per_ndf", "m-chiPaper", "chi^2 per degree of freedom of the difference from the published result under the "
+     "published covariance; ndf = 205, the reported bins, with no fitted parameter", "1", ("macro", "chiPaper")),
     ("chi2_shape_part", "tens-chi2-shape", "the shape part of that chi^2 (normalization along the published spectrum "
      "removed)", "1", ("printed", None)),
     ("chi2_normalization_part", "tens-chi2-norm", "the normalization part of that chi^2", "1", ("printed", None)),
