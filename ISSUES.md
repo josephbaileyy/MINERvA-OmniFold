@@ -332,7 +332,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-9 [T]** — **Background normalization & composition.**  
   *Finding:* Tabulate composition of ~3% purity correction vs 0.35% genuine background.  
   *Evidence:* `docs/analysis-note/sec_experiment.tex:42`, `sec_method.tex:75`.  
-  *Resolution:* Tabulate genuine background (0.35%) vs out-of-phase-space signal (~2.65%).
+  *Resolution:* The 0.35% genuine-background fraction is already in sec_experiment.tex. Do not add a 2.65% out-of-phase-space fraction until it is bound through a checked-values macro from a named record. This row authorizes no tex edit.
 
 * **S1-COM-10 [T]** — **Own-covariance $\\chi^2$ vs publication.**  
   *Finding:* State $\\chi^2/\\text{ndf} = 22.29$ with own covariance against published result, alongside 2.27 with published covariance.  
