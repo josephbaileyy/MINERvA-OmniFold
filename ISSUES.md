@@ -636,7 +636,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-COM-6 [T]** — **Offset control check failure disclosure.**  
   *Finding:* Offset check gives $\\chi^2 = 245.74$ for 16 ndf; disclose failure and implications.  
   *Evidence:* `docs/analysis-note/sec_fived16.tex:240`.  
-  *Resolution:* Document offset check failure clearly in §10.
+  *Resolution:* This row authorizes no tex edit. The offset-check failure and its consequence are already stated through the macro. Do not type 245.74.
 * **S2-COM-7 [T]** — **Sixteen-cell output algorithm dependence and stability.** Same finding as S1-COM-3 / AUD-N2 / REF-G1.
 * **S2-COM-8 [T]** — **No 3D/4D uncertainty; no 3D/4D generator $\\chi^2$.**  
   *Finding:* 3D and 4D central values used for generator comparisons without evaluated covariance.  
