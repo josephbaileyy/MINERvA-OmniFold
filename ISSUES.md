@@ -50,7 +50,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* State Part 1 pre-check outcome: both flux and detector groups reproduce within the [0.9, 1.1] window; GEANT neutron and proton bands depart in named cells.  
   *Record:* `OUTCOME-20261108-1b-precheck-part1.md:49-62` (`CITABLE FOR`).  
   *Target:* `docs/analysis-note/sec_fived16.tex:253`.  
-  *Status:* Drafted in round 1.
+  *Resolution:* This row authorizes no tex edit. The Part 1 pre-check is already stated. The pseudo-experiments reproduce the simulation-side block within the gate window, which prints 0.9 to 1.1, in every resolved cell. The GEANT neutron and proton bands depart in the named cells. Do not add a cause. Do not add a coverage statement. Do not add a further sentence.
 
 * **AUD-E4 [R]** — **Valid-region classes of the 16 cells.**  
   *Finding:* Tabulate each cell's V-ATLAS class (14 valid; fails in R02, R06 from A7 GiBUU hybrid truth alone) and V-PRIOR class (14 valid; fails in R08, R15), with 12 valid under both, and reading (3)'s printed quantities labeled "computed after the pulls against the prior were seen (L4)".  
