@@ -157,3 +157,21 @@ sentence add words, and the presentation cuts take some out. No new rater copy i
 **One check found during the round:** the Data availability first sentence is protected text (the rater script
 refuses a change to it). My gloss there was reverted, and goes to Joseph with W-19.
 - **Registry:** ALIASES rows 38 and 47 and ATTRIBUTION row 17 are re-cited to `paper_body.tex:68` (digest `824f4ce05ad1b7b0`), the estimators paragraph after the table moved; `records_estimators.tex` is regenerated. **The label map** is regenerated (`label-map.tsv`).
+
+**After the editor's second read of f51d22c8b:**
+- **Applied (presentation):**
+  - Table 1's held-out-tune row gets its "not independent" qualifier back.
+  - The run-period groups are written out once, and the reconstruction-level reference 1A–1E (without 1F) is stated.
+  - The abstract's variant uses "the estimator".
+  - §5.3 defines the composite labels, "clears", and the 9.03's origin, and the repeated "at these truths" is cut.
+  - Table 1's caption is shorter.
+  - "record" becomes "result" in §5.1.
+  - The 0.8 median is named as over the 153 quantities.
+  - The 204 degrees of freedom are explained from the AR23 readout README.
+- **Sent to the director:**
+  - W-22: the editor's "one covariance" point becomes a new recommended option 0 in W-OPTIONS.md. The paper's W-22 text is unchanged, since the director asked that no W-item be applied before the decisions.
+  - W-11 is redrafted as one sentence per like-for-like outcome. The current sentence contradicts the both-cover
+    variant, and it is the one C3 failure found.
+  - The new W-24 covers how the published covariance is characterized.
+  - The holds-enforcement and citable-home submission blockers, in W-OPTIONS.md.
+- **Counts:** 13 pages, 8,842 blind words.

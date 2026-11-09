@@ -102,3 +102,6 @@ outcome:
 - **The prior-retention finding (§1, §5):** it rests on Table 2, which no FD-PRR outcome changes (FD-PRR NOT CITABLE
   FOR: "Table II or its grades").
 - **The abstract (C1):** each pending clause is now its own sentence, and every variant is grammatical alone.
+- **The abstract (the editor's second read, item 1): no fixed calibration sentence is true for every outcome.** The
+  current "The uncertainties are not calibrated" contradicts a both-cover variant. This is W-11, for the director,
+  with per-class options in W-OPTIONS.md. It is the one C3 failure found, and it stays open until W-11 is decided.

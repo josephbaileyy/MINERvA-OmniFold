@@ -3,7 +3,7 @@
 **Recorded by** `director-helper-3`, for the director's independent read and decision under Joseph's away delegation
 (`DECISION-20261109-joseph-away-wording-delegation.md`).
 
-**What this covers:** W-1 to W-8, W-11 to W-18, W-20, W-22 and W-23. W-9, W-10, W-19 and W-21 are banked for Joseph
+**What this covers:** W-1 to W-8, W-11 to W-18, W-20 and W-22 to W-24. W-9, W-10, W-19 and W-21 are banked for Joseph
 and are not here.
 
 **The text quoted** is the draft at this file's commit, on PR #977, by section. It is not quoted by line, because
@@ -147,23 +147,40 @@ lines move.
 
 ## W-11. The abstract's calibration sentence
 
-<!-- absence-ok: this section quotes draft wording options for the director's decision; it states no finding that a result does not exist -->
-
 - **Current:** "The uncertainties are not calibrated: the two-dimensional covariance under-covers at two held-out
-  generator tunes."
+  generator tunes." The like-for-like test follows as its own pending sentence.
+- **The problem, from the editor's second read (item 1):** no single fixed sentence is true under every outcome of the
+  like-for-like test.
+  - The current text contradicts the "both-cover" variant.
+  - The editor's first wording, "… and no five-observable coverage test has run to a result", becomes false once the
+    test is graded. <!-- absence-ok: quoted draft wording for the director's decision -->
+  - The abstract's "covers at both" also drops the body's scope: the primary variant only, at two truths, and nothing
+    about the reported intervals.
 - **Options:**
-  1. **(Recommended, the editor's wording)** "The calibration of the uncertainties is not established: the
-     two-dimensional covariance under-covers at two held-out generator tunes, and no five-observable coverage test has
-     run to a result." The current text goes beyond COV2D's NOT CITABLE FOR. Two reads say the same: S1 `:53` ("must
-     be restricted to 2D"), S2 `:59`.
-  <!-- absence-ok: quoted draft wording for the director's decision; the record it rests on is cited in this item -->
-  2. "The two-dimensional covariance under-covers at two held-out generator tunes; the five-observable intervals have
-     not been tested for coverage." This drops the generalization altogether.
-  <!-- absence-ok: quoted draft wording for the director's decision; the record it rests on is cited in this item -->
-  3. Keep the current text. Against it: COV2D's licence, and §1 and Limitation 1 of this paper.
-- **Rests on:** `OUTCOME-20261108-cov2d-both-tunes-under-cover.md:97-106` (CITABLE FOR), `:108-110` (NOT CITABLE FOR:
-  "Coverage of the reported intervals at the data's point"; "A coverage rate"). The like-for-like variant clause stays
-  under every option.
+  1. **(Recommended)** One sentence per `ll5d-abstract` class, inside the like-for-like group, replacing both the
+     calibration sentence and the pending clause. Every variant keeps the body's scope (`LL5D-DECLARATION.md:88`,
+     `:76-94`). Draft:
+     - **both-cover:** "The two-dimensional covariance under-covers at two held-out generator tunes, while a like-for-like
+       five-observable coverage test, in its primary variant at the same two tunes, covers at both; neither result
+       concerns the reported intervals at the data."
+     - **one-under** and **both-under:** "The two-dimensional covariance under-covers at two held-out generator tunes,
+       and a like-for-like five-observable coverage test at the same tunes under-covers at one [both] of them in its
+       primary variant."
+     - **invalid** and **not-graded:** "The two-dimensional covariance under-covers at two held-out generator tunes,
+       and the calibration of the five-observable uncertainties is not established."
+     - **While pending:** the fixed sentence "The calibration of the uncertainties is not established: the
+       two-dimensional covariance under-covers at two held-out generator tunes", with no five-observable clause.
+
+     The C3 check is then extended to the abstract.
+  2. Option 1's pending sentence, kept fixed for every outcome, with the variant sentence after it. This is simpler,
+     but "not established" sits beside a both-cover result, which the director would need to judge consistent (two
+     truths are not a rate).
+  3. Keep the current text. Against it: it contradicts one variant, and it goes beyond COV2D's licence.
+- **Rests on:**
+  - `OUTCOME-20261108-cov2d-both-tunes-under-cover.md:97-106` (CITABLE FOR) and `:108-110` (NOT CITABLE FOR);
+  - `LL5D-DECLARATION.md:88`, `:473-475`;
+  - variants.md (V-A2).
+- **Who decides:** a both-cover sentence is a coverage statement. The editor marks it for Joseph, through the director.
 
 ## W-12. "Tracks the same bias" (§7, second paragraph)
 
@@ -291,12 +308,19 @@ lines move.
 
 <!-- absence-ok: this section quotes draft wording options for the director's decision; it states no finding that a result does not exist -->
 
-- **Current, a draft in §1 after the redundancy sentence:** "Unfolding them jointly keeps their correlations event by
-  event, so that projections and cells in any of the observables can be formed afterwards from one result and one
-  covariance, and the hadronic observables are corrected together with the muon kinematics rather than through a
-  separate binned response for each choice; this study does not test whether that gain is realized."
+- **Current, a draft in §1 after the redundancy sentence, as at f51d22c8b:** "Unfolding them jointly keeps their
+  correlations event by event, so that projections and cells in any of the observables can be formed afterwards from
+  one result and one covariance, and the hadronic observables are corrected together with the muon kinematics rather
+  than through a separate binned response for each choice; this study does not test whether that gain is realized."
+- **The editor's second read (item 3(a)):** "and one covariance" overstates. The reported covariance exists on the 16
+  cells and the joint cells, and a new projection would need its uncertainty ensemble re-run. So I now recommend option
+  0 below over the current draft.
+  0. **(Recommended, after the editor's second read)** "Unfolding them jointly keeps their correlations event by event,
+     so that projections and cells in any of the observables can be formed afterwards from one unfolded result, with
+     the hadronic observables corrected together with the muon kinematics; this study does not test whether that offers
+     a practical gain."
 - **Options:**
-  1. **(Recommended, as drafted)** It gives the motivation, says nothing is claimed, and answers S1's issue 7 and S2's
+  1. **(As drafted at f51d22c8b)** It gives the motivation, says nothing is claimed, and answers S1's issue 7 and S2's
      issue 7 ("the five-observable physics case is not made", `:80-84`, `:61-65`) with a motivation, not a result.
   2. Shorter: "Unfolding the observables jointly lets any projection or cell definition be formed afterwards from one
      result with one covariance; whether that offers a practical gain over binned unfolding is not tested here."
@@ -318,6 +342,43 @@ lines move.
   2. Leave the paper as it is. The package already quotes S5's definition.
 - **Rests on:** `supplemental_body.tex`, S5 ("$C_{\mathrm{e}}$ sums the statistical bootstrap of configuration (e)
   …"); limitation-resolver's reply of 2026-11-09 (#981 at `0b6fb4df`).
+
+## W-24. How the published covariance is characterized (§4.1 and Table 1)
+
+- **Current:**
+  - §4.1: "The published covariance is nearly singular: its condition number is 1.5×10¹², and only 73 of its 205
+    directions are well determined (λ/λmax > 10⁻⁴)".
+  - Table 1: "against a near-singular covariance".
+
+  These follow the director's round-6 item 4.
+- **The editor's point (second read, item 3(b)):** "well determined" describes MINERvA's published covariance through
+  a cutoff this analysis chose.
+- **Options:**
+  1. **(Recommended, the editor's neutral form)** "Its condition number is 1.5×10¹², and 73 of its 205 eigenvalues
+     exceed 10⁻⁴ of the largest." Table 1 would read "against a covariance of condition number 1.5×10¹²". The facts are
+     the same, and the paper's cutoff is not attributed to the publication.
+  2. Keep "nearly singular", which the condition number supports, and replace only "well determined" with "above 10⁻⁴
+     of the largest eigenvalue".
+  3. Keep the current text.
+- **Rests on:** the note's `sec_results.tex:128`; re2 `tension_report.txt:55-56`; r5:151 (the condition number).
+
+## Submission blockers the editor raised (item 2), for the director, not W-items
+
+- **The holds are not enforced by any build.** `build_all.sh:283` refuses "PENDING:" but not "[HOLD:".
+  - Adding that refusal to `build_all.sh` would make every normal build fail, because the paper carries its funding
+    and deposit holds by design, and the rater build drops them.
+  - So the right home is a submission-time check that refuses "[HOLD:" in the paper and the Supplement. It would be
+    built when the submission build is.
+- **The first hold** says that several results rely on records the note does not carry, so a JINST reader has no
+  citable source for them:
+  - the IBU comparisons;
+  - the gate diagnosis;
+  - the per-period benchmark;
+  - the rounding studies;
+  - the 2D held-out-tune coverage test;
+  - the validity rules.
+
+  That needs a home (the note, or a deposited record) before submission.
 
 ---
 

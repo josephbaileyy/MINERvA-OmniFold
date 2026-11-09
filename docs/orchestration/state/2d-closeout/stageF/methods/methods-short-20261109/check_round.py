@@ -37,6 +37,7 @@ NEW_NUMERALS = {"285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55,
                 "136": "L-12b: the note's sec_results.tex:128 (chi2 = 136 on the 73 best-determined directions)",
                 "0.05": "L-27: FD-PRR-DECLARATION.md:281-286, the bar delta_F = max(0.05, 9.03 s_F)",
                 "9.03": "L-27: FD-PRR-DECLARATION.md:281-286 (the two-sided Student-t quantile on 4 degrees of freedom at 0.01/12)",
+                "0.01": "L-27: FD-PRR-DECLARATION.md:282-284 (the familywise rate 0.01 over the 12 primary readings)",
                 "99.7": "L-28: r5:176's bar 39.04 at the null's 0.997 quantile, printed as the 99.7th percentile (round 6, the editor's B8)"}
 ONCE = [
     "and their cross-covariance is not available, so no difference between them can be given a calibrated significance.",
