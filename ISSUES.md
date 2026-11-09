@@ -779,7 +779,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-ACC-7 [T]** — **Massless-lepton approximation in Table 10.**  
   *Finding:* Table 10 lists $Q^2 = 4 E_\\nu E_\\mu \\sin^2(\\theta/2)$, which is ultra-relativistic approximation ($m_\\mu = 0$).  
   *Evidence:* `docs/analysis-note/sec_eavailw.tex:55`, Table 10.  
-  *Resolution:* Add exact muon-mass formula or note that Table 10 describes nominal generator coordinate definitions.
+  *Resolution:* This row authorizes no tex edit. The truth-W cell already prints the massless formula the implementation uses. The sentence before the table already says exact Q^2 is the four-vector quantity and that truth W uses the massless-muon Q^2. Do not replace the implemented formula.
 * **G1-ACC-8 [T]** — **Exact-split estimator reproducibility description.**  
   *Finding:* Reconcile "unseeded reproducible to $7 \\times 10^{-15}$" with "reseeding moves bins by up to 1.6%".  
   *Evidence:* `docs/analysis-note/sec_method.tex:98`.  
