@@ -1,0 +1,200 @@
+# Referee report on the pre-written cases
+
+I judged only from the manuscript, Supplement and cases file, and I did not comment on bracketed placeholders.
+
+## Shared points (cited as G1–G5 below)
+
+- **G1. Meaning of "covers".** A pass can only mean that no under-coverage was detected at the test's threshold. The manuscript says "Agree" and "Differ" mean only "at this noise" for the IBU comparisons, but gives no such statement for coverage. No case says what degree of under-coverage this test could detect, or that a positive control was run. "Covers" should be worded as "no under-coverage detected".
+- **G2. What was drawn.** The test does not draw the response (Cresp) or run-period terms, and uses a surrogate for the lateral terms. The pseudo-data for each group are built "as its covariance block is built". A pass therefore certifies that the propagation and estimator are consistent with the assumed block sizes, not that the sizes are right. No case says whether the undrawn terms are inside the covariance being tested. If they are, they inflate it and can hide under-coverage in the drawn terms.
+- **G3. Per-cell flags.** These are pointwise, and there are 16 cells × 2 tunes × 2 variants. Section 6.2 gave a false-flag rate per tune, and the new cases give none. Cases that report cell flags also omit the joint reading.
+- **G4. Scope clause.** The "not the reported intervals at the data" clause is attached to passes but missing from several failures (AB6, AB7, AB9, AB12). A failure at the tunes equally does not show that the reported intervals fail.
+- **G5. Weak stress at the tunes.** Section 5.2 shows the bias at both tunes is below 0.62σ in every cell. The truths where bias exceeds uncertainty (GiBUU hybrid, q3 tilt) are not the ones tested. A pass here cannot speak to coverage where the estimator is known to be biased.
+
+## Abstract cases
+
+**AB1: REVISE (light).**
+- Claim: "covers" is unqualified (G1).
+- Missing: G2 and G5. Also, "like-for-like" is an earned claim, and the lateral surrogate and per-truth covariance are differences from the 2D test.
+- Wording: "shows no under-coverage… (response and run-period terms not drawn)".
+
+**AB2: REVISE.**
+- Claim: "under-covers at one" is also the abstract for SC3, which is a cell-only flag.
+- Wording: "…under-covers in some cells at one, with those bands".
+
+**AB3: REVISE.**
+- Claim: same cell-versus-joint problem as AB2, because SC4 is cells at one tune and joint at the other.
+- Missing: the with-bands variant is the one whose bands appear in the reported detector covariance. Leading with the pass overweights the variant that omits them.
+- Wording: say "designated primary in advance" and give both outcomes equal prominence.
+
+**AB4: ACCEPT.**
+- Missing: add that the with-bands variant therefore gives no reading at that tune.
+
+**AB5: ACCEPT.**
+- Missing: add that the variant containing all the reported detector bands gives no reading.
+
+**AB6: REVISE.**
+- Claim: it covers SC7 (cells only), SC8 (possible artefact) and SC9 (joint only), but says "under-covers at one" for all three.
+- Missing: the scope clause (G4).
+- Wording: "…under-covers, in some cells or jointly, at one…; this concerns the procedure's covariance at those tunes".
+
+**AB7: REVISE.**
+- Missing: the scope clause (G4), and whether it is joint, per-cell or both.
+
+**AB8: ACCEPT.**
+- Missing: the pass is at one tune only.
+
+**AB9: REVISE.**
+- Missing: the scope clause (G4), and "in cells" if that is what SC12 shows.
+
+**AB10: REVISE (one clause).**
+- Missing: "and gives no coverage reading". Otherwise "invalid" can be read as a failure.
+
+**AB11: REVISE (one clause).**
+- Missing: "and gives no coverage reading", and that this is the second five-observable coverage test without a result.
+
+**AB12: REVISE.**
+- Claim: "stopped after a check" hides that the stop was a post-hoc decision (SC17), and "the bulk" is vague.
+- Missing: that no coverage reading exists, and how many pseudo-experiments ran.
+- Wording: "stopped, by a decision made after a check was seen, before most of its pseudo-experiments; it gives no coverage reading".
+
+## Section 6.3 cases
+
+**SC1: REVISE (light).**
+- Claim: "covers" ×4 (G1).
+- Missing: say whether "covers" means no cell and no joint reading flagged. Also G2 and G5.
+
+**SC2: REVISE.**
+- Claim: "covers" and "count as weakened" contradict each other.
+- Missing: a weakened pass should not count as a pass in that cell. Over-coverage should be described as conservative, and as able to offset under-coverage in the joint reading. Only the primary variant is addressed.
+- Wording: "covers, except in cells [X], where the pass is weakened and not counted as evidence".
+
+**SC3: REVISE.**
+- Missing: the joint reading at AR23 with the bands (G3), and G2.
+- Wording: the Table 1 status should not be a bare "Covers" (see Table 1 below).
+
+**SC4: REVISE.**
+- Missing: the joint reading at G18, whose cell flag is reported with no joint reading.
+- Claim: with the bands, both tunes fail, so the headline "primary covers" is not representative of the reported detector bands.
+
+**SC5: REVISE.**
+- Missing: name the control that failed. State that the primary variant's controls pass, since the variants are "correlated by construction".
+
+**SC6: REVISE.**
+- Missing: the same as SC5. The only variant containing all the reported bands has no reading.
+
+**SC7: REVISE.**
+- Claim: it flags cells but is silent on the joint reading at AR23 (G3).
+- Missing: how many flags are expected by chance.
+- Wording: "covers jointly but under-covers in cells [..]; per-cell readings are pointwise".
+
+**SC8: REVISE.**
+- Claim: "may be the clipping artefact" is speculation unless a quantity supports it.
+- Missing: say whether the artefact was tested, and why the remark is attached to the primary variant only when the same cells are flagged with the bands.
+
+**SC9: ACCEPT.**
+- Missing: mean χ²/ndf and degrees of freedom, as given for 2D. Say the cause (bias, variance or correlation) is not diagnosed.
+
+**SC10: ACCEPT.**
+- Missing: χ²/ndf, and that no cause is claimed.
+
+**SC11: ACCEPT.**
+- Missing: only one tune is graded.
+
+**SC12: REVISE.**
+- Missing: the joint reading at the valid tune (G3). Note that one graded tune is thin.
+
+**SC13: ACCEPT.**
+
+**SC14: REVISE (substantial).**
+- Claim: "covers" is stated in the ordinary grading voice after a pre-set check was exceeded.
+- Missing:
+  - Table 1 defines Invalid as "a control of the test fails". If the clipping-offset check is a control, the status must be Invalid or the pass descriptive.
+  - The size and direction of the offset, and whether it favours a pass.
+  - A sensitivity analysis.
+  - The rationale for proceeding, and that it did not use coverage readings.
+- Wording: "…the pass is descriptive because the test's own validity check was exceeded".
+
+**SC15: REVISE (substantial).**
+- Missing:
+  - What the repair was.
+  - Whether the repair was chosen with sight of the tunes' coverage numbers.
+  - Whether the null and thresholds were re-derived for the repaired test.
+  - How many designs have now been tried.
+- Claim: "It first stopped" is ambiguous with the earlier test of section 6.2. Say "an earlier run of this test".
+
+**SC16: REVISE (light).**
+- Missing: name the gate. SC18 names its check; SC16 does not. Say whether it is the same gate that stopped the first test.
+
+**SC17: REVISE.**
+- Missing: why the test stopped here when SC14 proceeded on the same exceedance. State that the proceed/stop rule did not use partial coverage results, and how many pseudo-experiments had run and whether any were graded.
+
+**SC18: ACCEPT.**
+- Missing: say whether the failed check reflects test design or a property of the covariance.
+
+## Table 1 rows
+
+- **AB1/SC1: ACCEPT.** The Result text should say "no under-coverage detected".
+- **AB2/SC3: REVISE.** "Covers" is defined on the primary variant only. The status should show that the with-bands variant under-covers (e.g. "Covers (primary only)").
+- **AB6/SC7: REVISE.** "Under-covers" needs "jointly: covers" in the Result text. The caption defines Under-covers by pseudo-experiments inside the interval and Covers as "no cell and no joint reading"; cell-only flags straddle the two.
+- **SC9: ACCEPT.**
+- **AB7/SC10: ACCEPT.**
+- **AB8/SC11: ACCEPT.**
+- **AB10/SC13: ACCEPT.**
+- **AB11/SC16: ACCEPT.**
+- **AB12/SC17: REVISE.** Add "stop decided after the check was seen".
+- **AB11/SC18: ACCEPT.**
+- **Rows for SC2, SC4, SC14 and SC15 are not shown.** "Follows the same pattern" is not enough. They must carry a marker for weakened passes, a with-bands failure, a post-hoc continuation or a post-hoc repair.
+
+## IBU cases (C1–C4)
+
+All four abstract sentences name only the GiBUU-like truth, although the section reads the two truths separately and says they can differ. That is selective if they differ. They should state both truths or "at both flagged truths".
+
+- **C1: REVISE.**
+  - Claim: "retains less" omits the bar and "five iterations", while C2 includes the bar.
+  - Claim: "falls by that margin" conflates the IBU's own bar with the fixed 0.05.
+  - Claim: the label "specific to the implementation" is derived from one reading. IBU retention falling with its own iterations is the signature of the finite-iteration label. The rule does not say which label has precedence.
+  - Missing: noise-free, one split, IBU on a coarse truth grid, descriptive only.
+  - Wording: "retains less by more than a bar fixed in advance… by at least 0.05".
+- **C2: REVISE.**
+  - Claim: "differs by less than a bar" reads as equivalence. The bar is at least 0.05 and up to 9.03 SD, so power is low.
+  - Missing: the bar's value and the same scope items as C1.
+- **C3: REVISE.**
+  - Missing: the bar, "five iterations", both truths and the same scope items as C1.
+- **C4: ACCEPT.**
+  - Missing: say that the "flagged" finding itself is unaffected.
+
+## A. If the coverage test passes, do I accept the scoping?
+
+Not as written. The clause "not the reported intervals at the data" is necessary but not sufficient. I would still object that:
+- G2 applies: undrawn terms, a surrogate, and nuisance draws built from the covariance's own blocks.
+- G5 applies: a pass at near-unbiased truths says nothing at the flagged truths.
+- Only two truths are tested, and they are not independent of Cmodel (they share a QE model, and G18 shares a 2p2h family).
+- Power is not stated.
+- The Discussion says "Until the coverage… resolved". It should say explicitly that a pass would not lift the illustration status.
+
+## B. Should the abstract also say it?
+
+- **SC14 and SC15: yes.** These claim a result that depends on a decision made after seeing the check. The abstract prints AB1, which is silent. The abstract already stresses "fixed before the tests were graded", so a reader will assume this test was too.
+- **SC17: one clause, preferably.** No result is claimed, but SC14 shows the same exceedance led to a different discretionary choice. Say "by a decision made after the check".
+
+## C. Consistency between abstract, main text and Table 1
+
+- The abstract-to-case mapping is stated only for SC7–10, 14 and 15, so I inferred the rest. Please state it fully.
+- Several abstracts lose a main-text qualifier:
+  - AB2/AB3 lose "in cells".
+  - AB6 loses the joint-only versus cell-only distinction.
+  - AB1 loses the weakened passes and over-coverage of SC2.
+  - The SC14, SC15 and SC17 disclosures are absent from the abstract, and AB12 is absent from its Table 1 row.
+- Main-text failures carry the scope clause, but AB6, AB7, AB9 and AB12 do not.
+- The Table 1 "Covers" status for AB3/SC4 contradicts a with-bands failure at both tunes.
+- "GiBUU-like" means the GiBUU hybrid truth in the abstract and the GiBUU Eavail shape in the Discussion. The two should be disambiguated.
+
+## D. Outcomes with no case
+
+- **Variants differing in mixed ways.** The primary fails but the bands variant covers. Cell-only or joint-only failures that differ by tune or variant. Invalid in one variant only. A catch-all per-tune, per-variant sentence is needed.
+- **Post-hoc modifiers on non-pass outcomes.** The proceeded-after-check and repaired-test prefixes exist only for all-covers, so a post-hoc proceed or repair that ends in a failure prints no disclosure. They should be modifiers applicable to every outcome.
+- **Joint over-coverage.** Conservative intervals overall, with mean χ²/ndf well below 1.
+- **Weakened passes with the bands or at the other tune.**
+- **Pseudo-experiment count short of plan**, or a result in an indeterminate zone.
+- **A failed positive control.**
+- **IBU unresolved class.** The IBU difference straddles its bar, as in the 2D IBU comparison. Also the two truths giving different classes, and IBU non-convergence.

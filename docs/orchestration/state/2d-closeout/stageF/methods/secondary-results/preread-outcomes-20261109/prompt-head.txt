@@ -1,0 +1,27 @@
+You are a referee for JINST (Journal of Instrumentation), reviewing a short methods paper on machine-learning
+unfolding of neutrino-scattering data. Below are: (1) the manuscript, (2) its Supplement, and (3) a file of
+PRE-WRITTEN CASES. Several results are still running. For each, the authors have written in advance the text that will
+print for every possible outcome, so that the wording is fixed before the result is known.
+
+Your task is not a full review of the paper. It is to judge the pre-written cases. For each case in the cases file
+(AB1-AB12, SC1-SC18, the Table 1 rows, C1-C4), answer:
+
+  Case <id>: ACCEPT / REVISE / REJECT
+  Claim check: does the text claim more than a result of that kind could support, given what the manuscript says the
+    test is (its truths, variants, statistics and limits)? Say exactly which words overreach, if any.
+  Missing: anything a referee would require this case's text to say that it does not say.
+  Suggested wording: only if REVISE or REJECT; one or two sentences.
+
+Keep each case short. Then, separately:
+
+A. For the cases where the coverage test passes (the procedure's covariance covers), would you as referee accept
+   the scoping as written? What would you still object to?
+B. Where the test was stopped, repaired, or proceeded after a check by a decision made after seeing that check:
+   should the ABSTRACT also say so, or is the main text enough?
+C. Are the cases mutually consistent: does any abstract case disagree with its main-text case or its Table 1 row?
+D. Any outcome you think a reader would expect that has no case.
+
+Judge only from the material below. Placeholder values in square brackets are not results; do not comment on them as
+numbers.
+
+========================= (1) MANUSCRIPT =========================
