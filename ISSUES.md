@@ -275,7 +275,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-17 [T]** — **Seed dependence vs training-seed block magnitude.**  
   *Finding:* Single seed variation (seed 1 vs 42 per-bin median 0.18%, max 1.79%) exceeds training-seed block median (0.048%).  
   *Evidence:* `docs/analysis-note/sec_method.tex:95`, `sec_systematics.tex:110`.  
-  *Resolution:* Clarify that the training-seed block quantifies variance across training replicates of the central model, not the full spread across extreme outlying seeds.
+  *Resolution:* This row authorizes no tex edit. Do not compare a seed-1 versus seed-42 shift with the training-seed block until a record states both numbers and what each measures.
 
 * **S1-ACC-18 [T]** — **Iteration stability justification.**  
   *Finding:* Justifying $n=5$ iterations via 0.026% total cross section stability overlooks 1.54% per-bin shape variation in §5.4 and iteration drift in 5D.  
