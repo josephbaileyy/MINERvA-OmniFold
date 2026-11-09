@@ -153,7 +153,8 @@ CHECKS = [
      lambda: interim("C1"), "round"),
     ("two-sigma nominal of the earlier band's test (note sec:coverage)", "sec_validation.tex",
      r"lies entirely below its window \(Gaussian ([0-9.]+)\)", lambda: math.erf(2.0 / math.sqrt(2.0)), "round"),
-    ("statistical block median (Q_R, S1)", "paper_body.tex",
+    # the short methods paper (methods-short-20261109) moved this sentence to the Supplement, S6
+    ("statistical block median (Q_R, S1)", "supplemental_body.tex",
      r"with a median statistical uncertainty of \\SI\{([0-9.]+)\}\{\\percent\}", stat_median, "round"),
     ("rescoring against the rebuilt (VL170) band, 2 and 1 sigma (note sec:coverage)", "sec_validation.tex",
      r"removes the tail undercoverage: \$C_2=([0-9.]+)\$ \$\[[0-9.,]+\]\$ and \$C_1=([0-9.]+)\$",
@@ -214,7 +215,7 @@ def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:
 
 
 def load() -> dict[str, str]:
-    return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex", "sec_validation.tex", "sec_5d.tex")}
+    return {n: (HERE / n).read_text() for n in ("paper_body.tex", "values.tex", "sec_validation.tex", "sec_5d.tex", "supplemental_body.tex")}
 
 
 def gzip_self_test() -> bool:

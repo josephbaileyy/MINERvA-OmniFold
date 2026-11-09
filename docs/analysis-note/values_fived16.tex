@@ -5,6 +5,11 @@
 \makeatletter
 \providecommand{\fvval}[1]{\@ifundefined{fv@#1}{\errmessage{values_fived16: no value '#1'}}{\@nameuse{fv@#1}}}
 \providecommand{\fvpending}[1]{\textbf{[PENDING: #1]}}
+% \fvgroup{group}{text} prints text once the group's record has landed, else one [PENDING: ...]; inside it,
+% \fvcase{key}{class}{text} prints text only when key has that class (methods-short-20261109/variants.md).
+\def\fv@PENDING{PENDING}
+\providecommand{\fvgroup}[2]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING\fvpending{\@nameuse{fvgd@#1}}\else#2\fi}}
+\providecommand{\fvcase}[3]{\@ifundefined{fvc@#1}{\errmessage{values_fived16: no verdict key '#1'}}{\def\fv@tmp{#2}\expandafter\ifx\csname fvc@#1\endcsname\fv@tmp#3\fi}}
 \@namedef{fv@box-R00-W}{0--100}
 \@namedef{fv@box-R00-eavail}{0--0.8}
 \@namedef{fv@box-R00-pt}{0--0.7}
@@ -3630,4 +3635,96 @@
 \@namedef{fv@x-qr-p-r1}{0.921}
 \@namedef{fv@x-qr-zmax}{0.720}
 \@namedef{fv@x-zmax}{0.985}
+\@namedef{fvg@prr}{PENDING}
+\@namedef{fvgd@prr}{FD-PRR, the prior-retention study (PR-1 to PR-3, the composite labels)}
+\@namedef{fvg@ll5d}{PENDING}
+\@namedef{fvgd@ll5d}{LL5D, the like-for-like five-observable coverage test}
+\@namedef{fvg@vhalf}{PENDING}
+\@namedef{fvgd@vhalf}{V-HALF, the per-cell bias-half validity rule}
+\@namedef{fvc@ll5d-abstract}{PENDING}
+\@namedef{fv@ll5d-abstract}{\fvpending{ll5d-abstract}}
+\@namedef{fvc@ll5d-ar23-all}{PENDING}
+\@namedef{fv@ll5d-ar23-all}{\fvpending{ll5d-ar23-all}}
+\@namedef{fvc@ll5d-ar23-all-cells}{PENDING}
+\@namedef{fv@ll5d-ar23-all-cells}{\fvpending{ll5d-ar23-all-cells}}
+\@namedef{fvc@ll5d-ar23-minus2}{PENDING}
+\@namedef{fv@ll5d-ar23-minus2}{\fvpending{ll5d-ar23-minus2}}
+\@namedef{fvc@ll5d-ar23-minus2-cells}{PENDING}
+\@namedef{fv@ll5d-ar23-minus2-cells}{\fvpending{ll5d-ar23-minus2-cells}}
+\@namedef{fvc@ll5d-campaign}{PENDING}
+\@namedef{fv@ll5d-campaign}{\fvpending{ll5d-campaign}}
+\@namedef{fvc@ll5d-g18-all}{PENDING}
+\@namedef{fv@ll5d-g18-all}{\fvpending{ll5d-g18-all}}
+\@namedef{fvc@ll5d-g18-all-cells}{PENDING}
+\@namedef{fv@ll5d-g18-all-cells}{\fvpending{ll5d-g18-all-cells}}
+\@namedef{fvc@ll5d-g18-minus2}{PENDING}
+\@namedef{fv@ll5d-g18-minus2}{\fvpending{ll5d-g18-minus2}}
+\@namedef{fvc@ll5d-g18-minus2-cells}{PENDING}
+\@namedef{fv@ll5d-g18-minus2-cells}{\fvpending{ll5d-g18-minus2-cells}}
+\@namedef{fvc@prr-label-fir-gibuu}{PENDING}
+\@namedef{fv@prr-label-fir-gibuu}{\fvpending{prr-label-fir-gibuu}}
+\@namedef{fvc@prr-label-fir-q3}{PENDING}
+\@namedef{fv@prr-label-fir-q3}{\fvpending{prr-label-fir-q3}}
+\@namedef{fvc@prr-label-impl-gibuu}{PENDING}
+\@namedef{fv@prr-label-impl-gibuu}{\fvpending{prr-label-impl-gibuu}}
+\@namedef{fvc@prr-label-impl-q3}{PENDING}
+\@namedef{fv@prr-label-impl-q3}{\fvpending{prr-label-impl-q3}}
+\@namedef{fvc@prr-label-info-gibuu}{PENDING}
+\@namedef{fv@prr-label-info-gibuu}{\fvpending{prr-label-info-gibuu}}
+\@namedef{fvc@prr-label-info-q3}{PENDING}
+\@namedef{fv@prr-label-info-q3}{\fvpending{prr-label-info-q3}}
+\@namedef{fvc@prr-label-obs-gibuu}{PENDING}
+\@namedef{fv@prr-label-obs-gibuu}{\fvpending{prr-label-obs-gibuu}}
+\@namedef{fvc@prr-label-obs-q3}{PENDING}
+\@namedef{fv@prr-label-obs-q3}{\fvpending{prr-label-obs-q3}}
+\@namedef{fvc@prr-label-stat-gibuu}{PENDING}
+\@namedef{fv@prr-label-stat-gibuu}{\fvpending{prr-label-stat-gibuu}}
+\@namedef{fvc@prr-label-stat-q3}{PENDING}
+\@namedef{fv@prr-label-stat-q3}{\fvpending{prr-label-stat-q3}}
+\@namedef{fvc@prr-label-unattr-gibuu}{PENDING}
+\@namedef{fv@prr-label-unattr-gibuu}{\fvpending{prr-label-unattr-gibuu}}
+\@namedef{fvc@prr-label-unattr-q3}{PENDING}
+\@namedef{fv@prr-label-unattr-q3}{\fvpending{prr-label-unattr-q3}}
+\@namedef{fvc@prr-pr1-F1-gibuu}{PENDING}
+\@namedef{fv@prr-pr1-F1-gibuu}{\fvpending{prr-pr1-F1-gibuu}}
+\@namedef{fvc@prr-pr1-F1-q3}{PENDING}
+\@namedef{fv@prr-pr1-F1-q3}{\fvpending{prr-pr1-F1-q3}}
+\@namedef{fvc@prr-pr1-F2-gibuu}{PENDING}
+\@namedef{fv@prr-pr1-F2-gibuu}{\fvpending{prr-pr1-F2-gibuu}}
+\@namedef{fvc@prr-pr1-F2-q3}{PENDING}
+\@namedef{fv@prr-pr1-F2-q3}{\fvpending{prr-pr1-F2-q3}}
+\@namedef{fvc@prr-pr1-F3-gibuu}{PENDING}
+\@namedef{fv@prr-pr1-F3-gibuu}{\fvpending{prr-pr1-F3-gibuu}}
+\@namedef{fvc@prr-pr1-F3-q3}{PENDING}
+\@namedef{fv@prr-pr1-F3-q3}{\fvpending{prr-pr1-F3-q3}}
+\@namedef{fvc@prr-pr1-F4-gibuu}{PENDING}
+\@namedef{fv@prr-pr1-F4-gibuu}{\fvpending{prr-pr1-F4-gibuu}}
+\@namedef{fvc@prr-pr1-F4-q3}{PENDING}
+\@namedef{fv@prr-pr1-F4-q3}{\fvpending{prr-pr1-F4-q3}}
+\@namedef{fvc@prr-pr2a-gibuu}{PENDING}
+\@namedef{fv@prr-pr2a-gibuu}{\fvpending{prr-pr2a-gibuu}}
+\@namedef{fvc@prr-pr2a-q3}{PENDING}
+\@namedef{fv@prr-pr2a-q3}{\fvpending{prr-pr2a-q3}}
+\@namedef{fvc@prr-pr2b-gibuu}{PENDING}
+\@namedef{fv@prr-pr2b-gibuu}{\fvpending{prr-pr2b-gibuu}}
+\@namedef{fvc@prr-pr2b-q3}{PENDING}
+\@namedef{fv@prr-pr2b-q3}{\fvpending{prr-pr2b-q3}}
+\@namedef{fvc@prr-pr3-any}{PENDING}
+\@namedef{fv@prr-pr3-any}{\fvpending{prr-pr3-any}}
+\@namedef{fvc@prr-pr3-ibu}{PENDING}
+\@namedef{fv@prr-pr3-ibu}{\fvpending{prr-pr3-ibu}}
+\@namedef{fvc@prr-pr3-levels}{PENDING}
+\@namedef{fv@prr-pr3-levels}{\fvpending{prr-pr3-levels}}
+\@namedef{fvc@vhalf-cells-notvalid}{PENDING}
+\@namedef{fv@vhalf-cells-notvalid}{\fvpending{vhalf-cells-notvalid}}
+\@namedef{fvc@vhalf-n-notassessed}{PENDING}
+\@namedef{fv@vhalf-n-notassessed}{\fvpending{vhalf-n-notassessed}}
+\@namedef{fvc@vhalf-n-notvalid}{PENDING}
+\@namedef{fv@vhalf-n-notvalid}{\fvpending{vhalf-n-notvalid}}
+\@namedef{fvc@vhalf-n-unresolved}{PENDING}
+\@namedef{fv@vhalf-n-unresolved}{\fvpending{vhalf-n-unresolved}}
+\@namedef{fvc@vhalf-n-valid}{PENDING}
+\@namedef{fv@vhalf-n-valid}{\fvpending{vhalf-n-valid}}
+\@namedef{fvc@vhalf-outcome}{PENDING}
+\@namedef{fv@vhalf-outcome}{\fvpending{vhalf-outcome}}
 \makeatother

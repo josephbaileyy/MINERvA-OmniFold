@@ -188,6 +188,70 @@ LISTED_CLAIMS = [
     ("main_note.tex", "At a GiBUU-like truth and a synthetic momentum-transfer tilt", {"kind": "count", "gibuu": 1, "also": ["q3"]}),
 ]
 
+# Pending verdicts of the short methods paper (stageF/methods/methods-short-20261109/variants.md). A sentence that
+# depends on a pending verdict is written once per class, \fvcase{key}{class}{text}, inside \fvgroup{group}{...}. While a
+# group is pending, the group prints one [PENDING: ...] and no variant; filling it means pinning the record's readout in
+# READOUTS and giving every key of the group its class in VERDICTS, which prints exactly one variant per key and writes
+# no prose. Each class set is the declaration's, at the line given (paths relative to FD unless they start with docs/).
+PR1 = ("reduces", "increases", "both", "no-effect", "undefined")            # FD-PRR-DECLARATION.md:287-292
+PR2A = ("less", "more", "same")                                            # FD-PRR-DECLARATION.md:297-298
+PR2B = ("falls", "rises", "flat")                                          # FD-PRR-DECLARATION.md:299-300
+PR3 = ("clears", "not")                                                    # FD-PRR-DECLARATION.md:307-309
+LABEL = ("holds", "not")                                                   # FD-PRR-DECLARATION.md:321-330
+LL5D_T = ("covers", "under-cells", "under-joint", "invalid", "na")         # LL5D-DECLARATION.md:473-475 (na: not graded)
+LL5D_C = ("graded", "gate-failed", "to-joseph", "stop")                    # LL5D-DECLARATION.md:427, :439-440, :233
+VHALF_O = ("none-fail", "some-fail")                  # DECISION-20261109-joseph-bias-half-rule.md item 1 (counts below)
+PENDING_GROUPS = {
+    "prr": "FD-PRR, the prior-retention study (PR-1 to PR-3, the composite labels)",
+    "ll5d": "LL5D, the like-for-like five-observable coverage test",
+    "vhalf": "V-HALF, the per-cell bias-half validity rule",
+}
+PENDING = {}                                         # key -> (group, class set, or None for a printed value)
+for _t in ("gibuu", "q3"):
+    for _f in ("F1", "F2", "F3", "F4"):
+        PENDING[f"prr-pr1-{_f}-{_t}"] = ("prr", PR1)
+    PENDING[f"prr-pr2a-{_t}"] = ("prr", PR2A)
+    PENDING[f"prr-pr2b-{_t}"] = ("prr", PR2B)
+    for _l in ("fir", "info", "impl", "obs", "stat", "unattr"):
+        PENDING[f"prr-label-{_l}-{_t}"] = ("prr", LABEL)
+PENDING["prr-pr3-any"] = ("prr", PR3)               # "clears" if some level clears at these truths
+PENDING["prr-pr3-ibu"] = ("prr", PR3)
+PENDING["prr-pr3-levels"] = ("prr", None)           # the levels that clear, as printed words
+PENDING["ll5d-campaign"] = ("ll5d", LL5D_C)
+for _t in ("g18", "ar23"):
+    for _r in ("minus2", "all"):
+        PENDING[f"ll5d-{_t}-{_r}"] = ("ll5d", LL5D_T)
+        PENDING[f"ll5d-{_t}-{_r}-cells"] = ("ll5d", None)
+PENDING["ll5d-abstract"] = ("ll5d", ("both-cover", "one-under", "both-under", "invalid", "not-graded"))  # primary reading, per tune
+PENDING["vhalf-outcome"] = ("vhalf", VHALF_O)
+for _c in ("valid", "notvalid", "notassessed", "unresolved"):
+    PENDING[f"vhalf-n-{_c}"] = ("vhalf", None)
+PENDING["vhalf-cells-notvalid"] = ("vhalf", None)
+# filled when a record lands: key -> class (or printed value); a group is filled only when every key has one
+VERDICTS = {}
+
+
+def pending_lines(verdicts=None):
+    """The TeX for the pending groups and keys: a group's state, each key's class (\\fvcase) and printed value."""
+    verdicts = VERDICTS if verdicts is None else verdicts
+    out = []
+    for g in PENDING_GROUPS:
+        keys = [k for k, (gg, _) in PENDING.items() if gg == g]
+        have = [k for k in keys if k in verdicts]
+        assert not have or len(have) == len(keys), f"group {g} is part-filled: {sorted(set(keys) - set(have))[:4]}"
+        out.append(rf"\@namedef{{fvg@{g}}}{{{'FILLED' if have else 'PENDING'}}}")
+        out.append(rf"\@namedef{{fvgd@{g}}}{{{PENDING_GROUPS[g]}}}")
+    for k, (g, classes) in sorted(PENDING.items()):
+        x = verdicts.get(k)
+        if x is None:
+            out.append(rf"\@namedef{{fvc@{k}}}{{PENDING}}")
+            out.append(rf"\@namedef{{fv@{k}}}{{\fvpending{{{k}}}}}")
+        else:
+            assert classes is None or x in classes, f"{k}: {x!r} is not a declared class {classes}"
+            out.append(rf"\@namedef{{fvc@{k}}}{{{x}}}")
+            out.append(rf"\@namedef{{fv@{k}}}{{{x.replace('-', ' ')}}}")
+    return out
+
 
 def load(readouts=None):
     data = {}
@@ -1106,9 +1170,15 @@ def render(v):
              "% not landed; it prints [PENDING: what], which build_all.sh refuses (the PDF text check), so it never ships.",
              r"\makeatletter",
              r"\providecommand{\fvval}[1]{\@ifundefined{fv@#1}{\errmessage{values_fived16: no value '#1'}}{\@nameuse{fv@#1}}}",
-             r"\providecommand{\fvpending}[1]{\textbf{[PENDING: #1]}}"]
+             r"\providecommand{\fvpending}[1]{\textbf{[PENDING: #1]}}",
+             "% \\fvgroup{group}{text} prints text once the group's record has landed, else one [PENDING: ...]; inside it,",
+             "% \\fvcase{key}{class}{text} prints text only when key has that class (methods-short-20261109/variants.md).",
+             r"\def\fv@PENDING{PENDING}",
+             r"\providecommand{\fvgroup}[2]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING\fvpending{\@nameuse{fvgd@#1}}\else#2\fi}}",
+             r"\providecommand{\fvcase}[3]{\@ifundefined{fvc@#1}{\errmessage{values_fived16: no verdict key '#1'}}{\def\fv@tmp{#2}\expandafter\ifx\csname fvc@#1\endcsname\fv@tmp#3\fi}}"]
     for k in sorted(v):
         lines.append(rf"\@namedef{{fv@{k}}}{{{v[k]}}}")
+    lines.extend(pending_lines())
     lines.append(r"\makeatother")
     return "\n".join(lines) + "\n"
 

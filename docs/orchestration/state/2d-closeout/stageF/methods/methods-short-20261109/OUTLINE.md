@@ -3,6 +3,14 @@
 **Recorded by** `director-helper-3`, for the director's review before the full prose is written. No paper text has
 been written yet, and no wording is approved.
 
+**Revision, 2026-11-09, after the director's approval and the journal-editor's read.** The structure below is the one the director approved. The prose follows it, with the editor's changes, which are listed in REPORT.md under "The structure":
+- a validation-strategy subsection;
+- descriptive titles, and JINST numbering;
+- Table 1's estimator column;
+- Appendix A's three tables not duplicated in S10 (S3 and S5 already carry them).
+
+This outline is kept as the record of what was approved. REPORT.md and the prose are current.
+
 **Branch:** `draft/methods-short-20261109`. It starts from `bc8673186` (methods round 5) with main at `c120e0d07`
 merged in (`e9b8ea160`).
 

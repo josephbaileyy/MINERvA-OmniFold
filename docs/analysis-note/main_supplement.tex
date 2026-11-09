@@ -17,9 +17,13 @@
 \addbibresource{publication.bib}
 \externaldocument[N-]{main_note}
 \newcommand{\pubhold}[1]{\textcolor{red}{[HOLD: #1]}}
+% Short paper (methods-short-20261109): the pointers of the text moved here from the paper print as in the Supplement's own text.
+\providecommand{\nsec}[1]{Ref.~\cite{AnalysisNote2026}, Sec.~\ref*{N-#1}}
+\providecommand{\napp}[1]{Ref.~\cite{AnalysisNote2026}, App.~\ref*{N-#1}}
 
 \renewcommand{\thesection}{S\arabic{section}}
 \renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
 \renewcommand{\theequation}{S\arabic{equation}}
 
 \title{Supplemental Material for ``Five-observable unbinned unfolding of MINERvA open data with OmniFold: a methods and
@@ -32,7 +36,7 @@ validation study''}
 
 This Supplement gives the definitions that the paper's results depend on: the event selection, the observables,
 the reporting cells and their machine-readable files, the estimators, the reported covariances, the joint tests and
-the comparisons with binned unfolding, and the designs of the coverage and fake-data tests. Its text is taken from
+the comparisons with binned unfolding, the designs of the coverage and fake-data tests, the illustrative output on data with its descriptive comparisons with generator predictions, and two per-cell validity rules. Its text is taken from
 the companion analysis note~\cite{AnalysisNote2026}, which gives the full record; where a detail stays in the note,
 the Supplement points to it by section.
 
