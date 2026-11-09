@@ -255,7 +255,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-13 [T]** — **Configuration mismatch in 3D/4D closures vs reported values.**  
   *Finding:* 3D/4D central values quoted from configuration (e), while closures use configuration (a).  
   *Evidence:* Table 9, `docs/analysis-note/sec_3d.tex:120`.  
-  *Resolution:* Explicitly state that closures performed under configuration (a) demonstrate technical methodology and do not constitute formal validation of configuration (e).
+  *Resolution:* The 3D closure section already states that the test is configuration (a) only and does not extend to (e). This row authorizes no tex edit. Do not add a 4D sentence in this commit.
 
 * **S1-ACC-14 [T]** — **Matched-projection claim in executive summary.**  
   *Finding:* Executive summary states matched coarse projections reject as well, but GENIE 2.12.10 is not rejected in $(p_T, p_\\parallel)$ ($p = 0.48$ total, $0.63$ shape).  
