@@ -867,7 +867,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-PRES-8 [T]** — **Missing units on corner plot axes.**  
   *Finding:* Figure 2 lacks units on several sub-axes.  
   *Evidence:* Fig. 2 graphic.  
-  *Resolution:* Ensure all kinematic variables specify units (GeV, GeV/c, deg).
+  *Resolution:* This row authorizes no tex edit. Do not regenerate the figure. The installed corner plot already prints units on its axis labels: p (GeV/c), E_avail (GeV), q_3 (GeV), p_T (GeV/c), and W (GeV). Do not add degrees.
 * **G1-PRES-9 [T]** — **Inappropriate register and defensive tone.**  
   *Finding:* Avoid internal software tracker phrases ("until 2026-10-11", "run log not found", "inferred, not verified").  
   *Evidence:* `docs/analysis-note/sec_method.tex:95`, `sec_systematics.tex:195`.  
