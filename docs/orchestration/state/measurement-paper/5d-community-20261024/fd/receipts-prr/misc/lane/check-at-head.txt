@@ -1,0 +1,19 @@
+# FD-PRR prr_misc receipt: checks rerun in a clean clone at 094e12ad5cf5370a05c8c96d97ce6a40a1eb9a12, 2026-11-09T13:57:15Z
+# one serial process, nice -n 19, thread caps 1; porcelain before: 0
+## 1. python3 -I lane/verify_receipts.py <misc> 90f6531dd496d0d9b878c95f4fb058ab0bc7ff8af155ce0ed8a3c8858fe5de6d
+OK  log-misc/SHA256SUMS 90f6531dd496d0d9b878c95f4fb058ab0bc7ff8af155ce0ed8a3c8858fe5de6d
+421 files in cluster/SHA256SUMS, 421 match, 103 renamed, 0 renamed files missing; log-misc/SHA256SUMS matches
+rc=0
+## 2. python3 -I lane/misc_times.py <receipts-prr>, compared byte for byte with lane/misc_times.json
+rc=0
+identical: sha256 a002befa79d81d646ddd851830fe0234d5fb280c109e5ebd0bc01a636baf0896
+## 3. the cap, iter and dry receipts' verifiers on their unchanged files
+165 files in cluster/SHA256SUMS, 165 match, 39 renamed, 0 renamed files missing; log-cap/SHA256SUMS matches
+rc=0
+225 files in cluster/SHA256SUMS, 225 match, 54 renamed
+rc=0
+85 files in cluster/SHA256SUMS, 85 match, 26 renamed
+rc=0
+## 4. misc/cluster-final/post.log.txt against misc/cluster/post.log.txt: lines added, lines removed
+diff rc=1 added 3 removed 0
+# porcelain after: 0
