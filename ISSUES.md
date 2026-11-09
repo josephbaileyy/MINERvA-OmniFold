@@ -889,7 +889,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-ACC-4. Do not follow the S1-ACC-7 wording. The executive summary no longer says the marginal checks pass to 1-2%. Do not add further marginal percentages to the executive summary.
 * **G2-ACC-3 [T]** — **Inconsistent Run-Period $\\chi^2$ Values.** Same finding as G1-ACC-2.  
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-ACC-2. The cited 209.6 and 205.8 are not in the note. Table 3 does not quote a run-period chi-squared. Do not reconcile a run-period chi-squared to a value from values.tex.
-* **G2-ACC-4 [T]** — **Conflicting Statements on Run-Period Block Variance Impact.** Same finding as S2-ACC-10.
+* **G2-ACC-4 [T]** — **Conflicting Statements on Run-Period Block Variance Impact.** Same finding as S2-ACC-10.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S2-ACC-10. The two medians and the median of the per-bin increases are already stated separately. Do not add a ratio of the two medians.
 * **G2-ACC-5 [T]** — **Discrepancy in Total Cross-Section Values.**  
   *Finding:* Total cross section quoted as $3.073 \\times 10^{-38}\\text{ cm}^2$ vs $3.07 \\times 10^{-38}\\text{ cm}^2$.  
   *Evidence:* `docs/analysis-note/sec_results.tex:80`, `sec_execsummary.tex:5`.  
