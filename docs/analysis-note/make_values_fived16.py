@@ -90,6 +90,10 @@ READOUTS = {
     # the run-period diagnosis's readout (FD-RPD-DECLARATION.md sec. 5; DECISION-20261104-joseph-rpd-sentence.md item 2),
     # computed once from the per-playlist unfolds, so both arms read the same file
     "rpd": (f"{FD}/fd/receipts-rpd/run/readout/fd_rpd.json", "c0b06cfd"),
+    # ENS1, the ensemble-averaged estimator (OUTCOME-20261109-ens1-stab-pass-bias-worse.md): stage 1's stability readout
+    # (#940) and stage 2's bias readout (#957), each computed once, so both arms read the same files
+    "ens1s1": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage1-a1-analysis/ens1_stage1.json", "7f5a9ce4"),
+    "ens1s2": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage2-a1-analysis/ens1_stage2.json", "c2ee701d"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -1048,6 +1052,23 @@ def values(d, arm="with"):
     assert rv["verdict"] == "INCOMPLETE" and rv["passing"] == [] and rv["n_decisive"] == len(rv["per_config"])
     assert all(x["leg_b_departures"] == 0 for x in rv["per_config"].values())
     v["r10-nconfig"] = str(rv["n_decisive"])
+    # ENS1 (OUTCOME-20261109-ens1-stab-pass-bias-worse.md): stage 1 STAB_PASS against FD-STAB's bars; stage 2 BIAS_WORSE at
+    # exactly one truth, Stage 0c GiBUU, by its RMS (the MAX within its floor). Each clause the sentence states is asserted
+    e1, e2 = d["ens1s1"], d["ens1s2"]
+    st = e1["stability_E96"]
+    assert e1["verdict"] == "STAB_PASS" and e1["g0_informative"] and st["passes"] and e1["N"] == 96
+    assert st["mean_median"] <= e1["bars"]["median"] and st["mean_max"] <= e1["bars"]["max"]
+    assert not e1["stability_F_P10"]["passes"]
+    v["ens1-n"] = str(e1["N"])
+    v["ens1-median"], v["ens1-max"] = f"{st['mean_median']:.2f}", f"{st['mean_max']:.2f}"
+    v["ens1-bar-median"], v["ens1-bar-max"] = f"{e1['bars']['median']:.1f}", f"{e1['bars']['max']:.1f}"
+    assert e2["verdict"] == "BIAS_WORSE" and e2["worse"] == ["stage0c_gibuu"] and len(e2["truths_judged"]) == 17
+    bw = e2["bias"]["stage0c_gibuu"]
+    assert bw["valid"] and not bw["no_worse"] and bw["max"] - bw["max_control"] <= bw["delta_max"]
+    assert all(e2["bias"][t]["no_worse"] and e2["bias"][t]["valid"] for t in e2["truths_judged"] if t != "stage0c_gibuu")
+    v["ens1-ntruths"] = str(len(e2["truths_judged"]))
+    v["ens1-nnoworse"] = str(len(e2["truths_judged"]) - len(e2["worse"]))
+    v["ens1-rms-ratio"] = f"{(bw['rms'] - bw['rms_control']) / bw['delta_rms']:.2f}"
     return v
 
 
