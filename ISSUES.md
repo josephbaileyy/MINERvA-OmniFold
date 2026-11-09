@@ -691,7 +691,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 ### Section 6: Support for Claims
 
-* **S2-CLM-1 [T]** — **Abstract 1% integral agreement.** Same finding as S1-CLM-1.
+* **S2-CLM-1 [T]** — **Abstract 1% integral agreement.** Same finding as S1-CLM-1.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CLM-1. Do not add that broader claim.
 * **S2-CLM-2 [T]** — **Calibrated joint tests reject all ten.** Same finding as S1-CLM-5.
 * **S2-CLM-3 [T]** — **Generator localization without covariance.** Same finding as S1-CLM-3.
 * **S2-CLM-4 [T]** — **Closure validation claims.**  
