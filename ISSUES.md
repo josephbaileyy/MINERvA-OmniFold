@@ -451,7 +451,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CLM-10 [T]** — **Pion-FSI variation limits.**  
   *Finding:* Claim that pion-FSI cannot explain excess should be scoped strictly to the two dials varied.  
   *Evidence:* `docs/analysis-note/sec_3d.tex:160`.  
-  *Resolution:* State explicitly that conclusion applies strictly to the two evaluated GENIE FSI parameters.
+  *Resolution:* That limit is already stated. This row authorizes no tex edit.
 
 * **S1-CLM-11 [T]** — **Run-period block overlap wording.**  
   *Finding:* State that overlap between run-period differences and systematic errors is neither established nor excluded.  
