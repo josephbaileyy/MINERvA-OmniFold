@@ -1,0 +1,59 @@
+CHECK: raw fingerprints 355 keys, 261 distinct values
+CHECK: view /dev/shm/limres-rpd-prologue5-20261108/run/prologue-prepare.json
+CHECK 1 view environment_snapshot.fingerprints present: False
+CHECK 2 64-hex strings under environment_snapshot/environment_after_setup in the view: 0
+CHECK 3 prologue-prepare.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 strace-probe.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 wrapper.out: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 trace-policy.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prologue-prepare-reference.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prologue.strace: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 worker.stderr.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 worker.stdout.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 prologue-worker.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 data-free-trace.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 policy-config.json: fingerprint values found 0; empty-string fingerprint found False
+CHECK 3 c3-check.txt: fingerprint values found 0; empty-string fingerprint found False
+CHECK 4 other 64-hex strings in the view (record only): 35
+  /instrument_files[0]/sha256 ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+  /instrument_files[1]/sha256 40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598
+  /instrument_files[2]/sha256 e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6
+  /instrument_files[3]/sha256 733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e
+  /instrument_files[4]/sha256 c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac
+  /instrument_files[5]/sha256 bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9
+  /instrument_files[6]/sha256 5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48
+  /instrument_files[7]/sha256 bd66930866410c2302a29b3c1bb70a45ea5de489e025852e28455bc5090d38aa
+  /instrument_files[8]/sha256 9eedbfd94a452f3bb9b267ca890b52d7a5567c0da86059e2b1fb90aac480550a
+  /mat_environment/instrument_sha256 6e4ed0f1d7f55b7bfe2f26752eeb28bb9cbe33325a9d91cc7c06d9494a0b0a70
+  /mat_environment/mat_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MATDict.rootmap bd66930866410c2302a29b3c1bb70a45ea5de489e025852e28455bc5090d38aa
+  /mat_environment/mat_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/MAT_rdict.pcm 9eedbfd94a452f3bb9b267ca890b52d7a5567c0da86059e2b1fb90aac480550a
+  /mat_environment/mat_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/lib/libMAT.so 5901f18ab069824b04c90e89ade74405a3336c827215a41dfaabdf9d2d66dc48
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup.sh e22a5b93d327111bf6ffc80f15ef36b908fab642072a6ef296e8bb9cd3719ba6
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT-MINERvA.sh c259101619ac365dcc57043d8ac4926908e51a8a87dad08f601394c9b418c3ac
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_MAT.sh 733e9cd839a0f75186d109eaab3dfe746a921d6d7b0347fbd6662b6f1ced3c0e
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/MINERvA101/opt/bin/setup_UnfoldUtils.sh bd305c17ddcd507f88ab49cbfcf5fe5a14075e0c1a173e631addcb3423212cd9
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/setup_salloc_env.sh ea3c6998d33f45c831b80da5e5228032a19fc392018ede54a7f52f2f283d1d48
+  /mat_environment/setup_sha256//pscratch/sd/j/josephrb/MINERvA-OmniFold/unbinned_unfolding/build/setup.sh 40ff3a3d0c0308a82d90fd6cb4858696931fa00563277e5865141f8ebdc84598
+  /platform_libraries//opt/ovis-ldms/lib/libcoll.so.0.0.0/sha256 50b675d5a18c97930121bf09dca8e4eecce363a816c5ef20d59e330b4818f7d8
+  /platform_libraries//opt/ovis-ldms/lib/libldms.so.0.0.0/sha256 8ce5af86e82a9f5d531015c19982f4c19b03a700916befd3cda834de918c94cc
+  /platform_libraries//opt/ovis-ldms/lib/libldms_auth_munge.so.0.0.0/sha256 0d22174cd171ceb9858eb034d4f934c53c48e954df223b61ac55065eb72b685e
+  /platform_libraries//opt/ovis-ldms/lib/libmmalloc.so.0.0.0/sha256 17b442c523bda66b6631503d522766115c77a4df4a72151c205103aafff89e56
+  /platform_libraries//opt/ovis-ldms/lib/libovis_ev.so.0.0.0/sha256 40a890050f8e4acaf066122b56bca2813bfd6291504decbe6d6843081fee1bee
+  /platform_libraries//opt/ovis-ldms/lib/libovis_event.so.0.0.0/sha256 d728738eb158c81cc1d98092e4a03cb713652dc4a00e60fc715211d7fb1c3be5
+  /platform_libraries//opt/ovis-ldms/lib/libovis_json.so.0.0.0/sha256 023783f131e6ca73bd844ba73a90d500594ad14768503fce60d7c859ef944905
+  /platform_libraries//opt/ovis-ldms/lib/libovis_log.so.0.0.0/sha256 18d9aab82b27252b7506268fd4442cf5da16f0c895efdb8140ca07754a5aa021
+  /platform_libraries//opt/ovis-ldms/lib/libovis_third.so.0.0.0/sha256 07d08dd77d446a87f12eeb4d79c99a562801b04961596b6892ca8551cf38a39a
+  /platform_libraries//opt/ovis-ldms/lib/libovis_thrstats.so.0.0.0/sha256 6b0cd5da6416f080e1ddbedc34fc178260bf8646d8a20e64b31ec17635e52c16
+  /platform_libraries//opt/ovis-ldms/lib/libovis_util.so.0.0.0/sha256 2d8a4a8643dccafbb18c5dfab32939aa06d3c4a2b57e8393084a481895b6197d
+  /platform_libraries//opt/ovis-ldms/lib/libzap.so.0.0.0/sha256 eb11c66113e5150a6514dfd12557669ac14cac4260409e66bf5290e09a7a0651
+  /platform_libraries//opt/ovis-ldms/lib/ovis-ldms/libzap_sock.so.0.0.0/sha256 61a5a84264c7d291a3b10eeb8c7475e36c7f2a8736229c15dd256d2e5f48f1b8
+  /private_prepare_path 23ee3e970f74d1084106615b6dba8e6c4798e1728044d8831a90b8abc1296a66
+  /private_prepare_sha256 81c3fb7af87602b13cff1cdad59e2faababffff8cd9d69a80a660fcffc3988e4
+  /trace_policy_sha256 5ae27d2bf3181e8cab78845be011c7349539352e6b5743154996e8d4af746ab4
+CHECK 5 prologue-prepare.json: keys named fingerprints 0
+CHECK 5 trace-policy.json: keys named fingerprints 0
+CHECK 5 prologue-prepare-reference.json: keys named fingerprints 0
+CHECK 5 prologue-worker.json: keys named fingerprints 0
+CHECK 5 data-free-trace.json: keys named fingerprints 0
+CHECK 5 policy-config.json: keys named fingerprints 0
+REDACTION CHECK: PASS
