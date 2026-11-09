@@ -561,7 +561,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-9 [R]** — **Positive control window in §5.2.**  
   *Finding:* 0.955 lies inside stated window $C_2 \\in [0.928, 0.972]$; check window endpoint arithmetic.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:155`.  
-  *Resolution:* Recompute exact window endpoints against receipt and update text.
+  *Resolution:* This row authorizes no tex edit. The window endpoints match the stated formula. Do not change them. The 0.955 is the high control point, not an endpoint.
 * **S2-ACC-10 [T]** — **Run-period effect on 2D median.**  
   *Finding:* §6.3 states run-period block raises per-bin median from 5.98% to 6.41% (+7%), while Table 3 says median ratio is 5.8%.  
   *Evidence:* `docs/analysis-note/sec_results.tex:90`, Table 3.  
