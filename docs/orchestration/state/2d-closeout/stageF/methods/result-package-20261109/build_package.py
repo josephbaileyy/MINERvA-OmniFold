@@ -49,7 +49,7 @@ C2A_DIR = "docs/orchestration/state/2d-closeout/stageF/methods/result-package-20
 
 # The paper whose labels and printed text the package is keyed to: the short methods paper and its Supplemental
 # Material at director-helper-3's draft (draft/methods-short-20261109, PR #977), with that draft's label map.
-PAPER_REF = "e3b99c82b921834f791f80983d9ca0513e9c4ca9"
+PAPER_REF = "5c8f0d7a179aaff116f71f73ab836e8e59875465"
 PAPER_PATH = "docs/analysis-note/paper_body.tex"
 SUPP_PATH = "docs/analysis-note/supplemental_body.tex"
 LABEL_MAP = "docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/label-map.tsv"
@@ -64,6 +64,8 @@ SOURCES = {
               "19bb2ee12827207fa346242ac901af48f6c80785eff5a14ff54133dff1ea01f0"),
     "f0b": (f"{FD}/fd/with-cpl/readout/fd_f0b_readout.json",
             "5f542830561731b567f2b97d78e5e9677a9802a35ef9c21855828bf184e6f3d6"),
+    "f0b-nopl": (f"{FD}/fd/readout/fd_f0b_readout.json",
+                 "b9db935a3187646ba2accaf3865cf4aa26ad72676063c58e7f5e6220224ef17b"),
     "f0": (f"{FD}/fd/readout/fd_f0_readout.json",
            "6e7d718bd393dd0600e974d0ce9b5c389486890cb7112550b22289008d6d312b"),
     "f1": (f"{FD}/fd/with-cpl/readout/fd_f1_readout.json",
@@ -227,6 +229,8 @@ class Ctx:
     def printed(self, fname, phrase, doc="paper"):
         """A value with no key: the phrase, built from the record, must occur in the paper (or the Supplement)."""
         need(norm(phrase) in self.flat[doc], f"{fname}: the {doc} at {PAPER_REF[:8]} does not print {phrase!r}")
+        need(self.flat[doc].count(norm(phrase)) == 1,
+             f"{fname}: the {doc} prints {phrase!r} {self.flat[doc].count(norm(phrase))} times, not once")
         self.n_checked[fname] = self.n_checked.get(fname, 0) + 1
 
 
@@ -344,35 +348,40 @@ FD16_ROWS = ["nominal", "A7_mnvtune", "A7_genie_cv", "A7_genie_mec", "W2", "A7_n
 
 
 def build_fd16(c):
-    """tab:fd16: the fake-data grades under the reported covariance (F0b) and under C_total (F0)."""
+    """tab:fd16: the fake-data grades under the reported covariance (F0b), under it without C_PL,5D (F0b without the
+    block) and under C_total (F0): the paper's three column groups."""
     fn = "tab-fd16.csv"
     mv = c.mv
-    tr = {tag: {t["name"]: t for t in c.d[tag]["truths"]} for tag in ("f0b", "f0")}
-    trig = c.d["f0b"]["triggers"]
+    groups = [("f0b", "f0b", "", "reported", "C_total + C_resp + C_PL5D"),
+              ("f0b-nopl", "f0b", "-nopl", "C_total_plus_C_resp", "C_total + C_resp"),
+              ("f0", "f0", "", "C_total", "C_total")]
+    tr = {src: {t["name"]: t for t in c.d[src]["truths"]} for src, *_ in groups}
     rows = []
     for name in FD16_ROWS:
         row = [name]
-        for tag in ("f0b", "f0"):
-            t = tr[tag][name]
-            need(t["graded"], f"{fn}: {tag} {name} is not graded")
+        for src, tag, suf, _, matrix in groups:
+            t = tr[src][name]
+            need(t["graded"], f"{fn}: {src} {name} is not graded")
+            ov = t["own_vertex"]
+            gm = t["grade_matrix"].replace(f"C_total minus {ov}", "C_total") if ov else t["grade_matrix"]
+            need(gm == matrix, f"{fn}: {src} {name} is graded against {t['grade_matrix']!r}, not {matrix!r}")
             g = t["grade"]
             k = f"{tag}-{name}"
-            c.key(fn, f"{k}-chi2", f"{g['chi2']:.2f}")
-            c.key(fn, f"{k}-chi2int", f"{g['chi2']:.0f}")
-            c.key(fn, f"{k}-p", mv.p_tex(g["p"]))
-            cells = ", ".join(g["cells_abs_z_gt_2"]) or "---"
-            c.key(fn, f"{k}-cells", cells)
+            c.key(fn, f"{k}-chi2{suf}", f"{g['chi2']:.2f}")
+            c.key(fn, f"{k}-chi2int{suf}", f"{g['chi2']:.0f}")
+            c.key(fn, f"{k}-p{suf}", mv.p_tex(g["p"]))
+            c.key(fn, f"{k}-cells{suf}", ", ".join(g["cells_abs_z_gt_2"]) or "---")
             zmax = max(abs(z) for z in g["z"])
-            c.key(fn, f"{k}-zmax", f"{zmax:.2f}")
-            c.key(fn, f"{k}-n", str(t["n_experiments"]))
+            c.key(fn, f"{k}-zmax{suf}", f"{zmax:.2f}")
+            c.key(fn, f"{k}-n{suf}", str(t["n_experiments"]))
             row += [t["grade_matrix"], t["own_vertex"] or "", num(g["chi2"]), g["ndf"], num(g["p"]),
                     " ".join(g["cells_abs_z_gt_2"]), num(zmax), t["n_experiments"]]
-        need(tr["f0b"][name]["own_vertex"] == tr["f0"][name]["own_vertex"], f"{fn}: {name}'s own vertex differs")
+        need(len({tr[src][name]["own_vertex"] for src, *_ in groups}) == 1, f"{fn}: {name}'s own vertex differs")
         rows.append(row)
-    hdr = ["truth"] + [f"{a}_{b}" for a in ("reported", "C_total") for b in
+    hdr = ["truth"] + [f"{lab}_{b}" for *_, lab, _m in groups for b in
                        ("matrix", "without_component", "chi2", "ndf", "p", "cells_abs_z_gt_2", "max_abs_z",
                         "n_pseudo_experiments")]
-    need(trig["rule"] == c.d["f0"]["triggers"]["rule"], f"{fn}: F0 and F0b trigger rules differ")
+    need(len({c.d[src]["triggers"]["rule"] for src, *_ in groups}) == 1, f"{fn}: the trigger rules differ")
     return {fn: write_csv(rows, hdr)}
 
 
@@ -451,8 +460,6 @@ BENCH = [
     ("chi2_normalization_part", "tens-chi2-norm", "the normalization part of that chi^2", "1", ("printed", None)),
     ("n_best_determined_directions", "tens-73-modes", "the number of best-determined eigen-directions of the published "
      "covariance kept (eigenvalues above 1e-4 of the largest)", "1", ("printed", None)),
-    ("chi2_73_directions_over_205", "tens-73-chi2", "the chi^2 carried by those directions, divided by 205 "
-     "(the reported bins, not the directions kept)", "1", ("printed", None)),
     ("pull_rms", "m-pullRMS", "RMS of the bin differences divided by the published uncertainties", "1",
      ("macro", "pullRMS")),
     ("median_relative_uncertainty", "m-uqMedian", "median over the 205 bins of this analysis's relative uncertainty "
@@ -476,7 +483,8 @@ def build_benchmark2d(c):
             need(r["where"] == f"N/values.tex:\\{m}", f"{fn}: {row} is not the row for \\{m}")
             c.macro(fn, m, r["refined_rendered"])
         rows.append([qid, desc, r["refined_value"], r["refined_rendered"], unit])
-    v = {k: vt[k]["refined_rendered"] for k in ("tens-chi2-shape", "tens-chi2-norm", "tens-73-modes", "tens-73-chi2")}
+    v = {k: vt[k]["refined_rendered"] for k in ("tens-chi2-shape", "tens-chi2-norm", "tens-73-modes")}
+    need(vt["tens-73-chi2"]["status"] == "control PASS", f"{fn}: tens-73-chi2 status is {vt['tens-73-chi2']['status']!r}")
     scan = {m_[1]: (float(m_[2]), int(m_[3])) for m_ in
             re.finditer(r"^\s*(1e-0[46])\s+([\d.]+)\s+(\d+)\s*$", c.d["tension"], re.M)}
     need(set(scan) == {"1e-04", "1e-06"}, f"{fn}: the tension report's rank-truncation rows are not 1e-04 and 1e-06")
@@ -484,29 +492,29 @@ def build_benchmark2d(c):
          f"{fn}: the tension report's rcond 1e-4 row does not give the 73-direction values")
     (r73, n73), (r139, n139) = scan["1e-04"], scan["1e-06"]
     chi73, chi139 = f"{205 * r73:.0f}", f"{205 * r139:.0f}"
-    c.printed(fn, rf"Integral ratio $\ratioTot$; $\chi^2/\mathrm{{ndf}}=\chiPaper$, ndf $=205$ (shape part "
-                  rf"{v['tens-chi2-shape']}, normalization part {v['tens-chi2-norm']}; the {n73} best-determined "
-                  rf"directions: $\chi^2={chi73}$)")
-    c.printed(fn, rf"Keeping only the {n73} best-determined directions ($\lambda/\lambda_{{\max}}>10^{{-4}}$) gives "
-                  rf"$\chi^{{2}}={chi73}$ ($\chi^{{2}}/205={r73:.2f}$), and the {n139} with "
-                  rf"$\lambda/\lambda_{{\max}}>10^{{-6}}$ give $\chi^{{2}}={chi139}$ ($\chi^{{2}}/205={r139:.2f}$)")
+    c.printed(fn, r"Integral ratio $\ratioTot$; $\chi^2/\mathrm{ndf}=\chiPaper$ (ndf $=205$) against a covariance of "
+                  r"condition number $1.5\times10^{12}$")
+    c.printed(fn, rf"its normalization part is $\chi^{{2}}={v['tens-chi2-norm']}$, against {v['tens-chi2-shape']} for the "
+                  rf"shape")
+    c.printed(fn, rf"{n73} of its 205 eigenvalues exceed $10^{{-4}}$ of the largest")
+    c.printed(fn, rf"Keeping the {n73} directions with $\lambda/\lambda_{{\max}}>10^{{-4}}$ gives $\chi^{{2}}={chi73}$, and "
+                  rf"the {n139} with $\lambda/\lambda_{{\max}}>10^{{-6}}$ give $\chi^{{2}}={chi139}$.")
     for qid, val, pr_, desc in (
-            ("chi2_73_directions", 205 * r73, chi73, "the chi^2 carried by those 73 directions (205 x the tension report's "
-                                                     "chi^2/205, which it gives to three decimals)"),
+            ("chi2_73_directions", 205 * r73, chi73, "chi^2 over the 73 eigen-directions with lambda/lambda_max > 1e-4 "
+                                                     "(from the tension report's chi^2/205 for them, given to three "
+                                                     "decimals, times 205)"),
             ("n_directions_eigen_above_1e-6", n139, str(n139), "the number of eigen-directions of the published "
                                                                "covariance with eigenvalues above 1e-6 of the largest"),
-            ("chi2_139_directions_over_205", r139, f"{r139:.2f}", "the chi^2 carried by those directions, divided by "
-                                                                  "205 (the reported bins, not the directions kept)"),
-            ("chi2_139_directions", 205 * r139, chi139, "the chi^2 carried by those 139 directions (205 x the tension "
-                                                        "report's chi^2/205, given to three decimals)")):
+            ("chi2_139_directions", 205 * r139, chi139, "chi^2 over the 139 eigen-directions with lambda/lambda_max > "
+                                                        "1e-6 (from the tension report's chi^2/205 for them, given to "
+                                                        "three decimals, times 205)")):
         rows.append([qid, desc, f"{val:.3f}" if isinstance(val, float) else str(val), pr_, "1"])   # 205 x a 3-decimal ratio
     pr = c.d["period"]["readings"]["by_model"]["replica"]
     k73, kbar = pr["R5"], pr["R5bar"]
     need(k73["class"] == "no change" and kbar["class"].startswith("farther without"), f"{fn}: the classes changed")
     need(k73["ABC"]["k"] == 73 and kbar["ABC"]["k"] == 132, f"{fn}: the direction counts changed")
     s73, dbar = f"{k73['resolved_3sigma']:.2f}", f"{-kbar['delta']:.2f}"
-    c.printed(fn, f"73 best-determined directions: no change without 1G--1M (smallest resolved change {s73} per "
-                  f"direction)")
+    c.printed(fn, rf"the smallest change resolved is $3\sigma={s73}$ per direction")
     c.printed(fn, f"In the 132 poorly determined directions, the combination of the other two run-period groups is "
                   f"farther from the published result than the three-group combination, by {dbar} per direction",
               "supplement")
@@ -736,8 +744,8 @@ SCOPE = {
         "or the detector response.",
         "No reading of the difference between the two covariance columns."],
     "tunes": [
-        "A bias test at two held-out GENIE v3 tunes, not a coverage test. The paper's status for it: \"Pass; not "
-        "independent\"."],
+        "A bias test at two held-out GENIE v3 tunes, not a coverage test. The paper: \"They are partial evidence on the "
+        "bias at truths held out of the analysis, and they are not independent of each other or of C_model.\""],
     "validity": [
         "Per-cell diagnostics of the estimator at simulated truths: not a measurement and not a coverage statement; no "
         "reported value changes, and a cell that is not valid is not thereby excluded, wrong or unreported.",
@@ -752,7 +760,8 @@ SCOPE = {
         "of 300 pseudo-experiments in the joint region at each). Neither test measures the reported intervals at the "
         "data's point.",
         "It does not show that the five-observable result reproduces the full distribution, beyond this benchmark with "
-        "its stated limits. The paper's status for the comparison: \"Descriptive; source not identified\".",
+        "its stated limits. The paper's status for the comparison is \"Descriptive\", and Sec. 4.1: \"The source of the "
+        "shape difference has not been identified.\"",
         "The run-period rows do not say which period is right, nor the cause of the shape difference or of the "
         "run-period step."],
     "arrays2d": [
@@ -803,7 +812,9 @@ PROV = {
     ],
     "tunes": [
         (f"{FD}/FD-F1-REPORT.md", "WHAT THIS IS", ["a bias test at two held-out GENIE v3 truths, not a coverage test"]),
-        (P_, "THE PAPER (Table tab:outcomes, status)", ["Pass; not independent"]),
+        (P_, "THE PAPER (Sec. 5.2)", [
+            "They are partial evidence on the bias at truths held out of the analysis, and they are not independent of "
+            "each other or of $C_{\\mathrm{model}}$."]),
     ],
     "validity": [
         ("docs/orchestration/OUTCOME-20261107-valid-region.md", "CITABLE FOR", [
@@ -827,7 +838,7 @@ PROV = {
         ("docs/orchestration/OUTCOME-20261107-per-period-2d-benchmark.md", "NOT CITABLE FOR (the run-period rows)", [
             "which run period is right, that 1G–1M is wrong, or that the published result is right;",
             "a cause of the 2D shape difference or of the run-period step;"]),
-        (P_, "THE PAPER (Table tab:outcomes, status)", ["Descriptive; source not identified"]),
+        (P_, "THE PAPER (Sec. 4.1)", ["The source of the shape difference has not been identified."]),
         ("docs/orchestration/OUTCOME-20261108-cov2d-both-tunes-under-cover.md", "CITABLE FOR", [
             "At each of two held-out GENIE v3 tunes (AR23 and G18_10a_02_11b), with 300 pseudo-experiments each and the "
             "analysis procedure's 2D covariance remade at each tune's truth (model term included, run-period term "
@@ -900,6 +911,8 @@ def check_licences(texts):
             hay = norm(texts[DOC_OF[rel]] if rel in DOC_OF else (ROOT / rel).read_text())
             for q in quotes:
                 need(norm(q) in hay, f"scope quote not found in {rel}: {q!r}")
+                if rel in DOC_OF:      # a quote from the paper or the Supplement must be unambiguous: exactly once
+                    need(hay.count(norm(q)) == 1, f"scope quote occurs {hay.count(norm(q))} times in {rel}: {q!r}")
 
 
 # --------------------------------------------------------------------------------------------------- glossary
@@ -919,7 +932,8 @@ GLOSSARY = [
      [("supplement", "Data over prediction, $f/g$")]),
     ("C_e, C_total", "C_e holds the statistical, flux, interaction, detector, lateral and normalization groups (and a "
      "training-seed block that is zero); C_total = C_e + C_model.",
-     [("supplement", "$C_{\\mathrm{e}}$ is the sum of the first six groups and the training-seed block (zero in every "
+     [("paper", "whose sum is $C_{\\mathrm{e}}$, and $C_{\\mathrm{model}}$"),
+      ("supplement", "$C_{\\mathrm{e}}$ is the sum of the first six groups and the training-seed block (zero in every "
                      "cell); $C_{\\mathrm{total}}=C_{\\mathrm{e}}+C_{\\mathrm{model}}$.")]),
     ("lateral", "uncertainties that shift the reconstructed muon kinematics and beam angle instead of reweighting events.",
      [("paper", "the lateral uncertainties shift the reconstructed muon kinematics and beam angle rather than "
@@ -985,10 +999,11 @@ FILES = [
     ("tab-fived16-groups.csv", "tab:fived16-groups", "Each group's relative uncertainty per cell.",
      {"cell": "R00-R15", "rel_sigma_<group>": "sqrt(diag)/f of that group (fraction; the paper prints percent); "
       "reported = C_total + C_resp + C_PL,5D"}, ["s1", "cresp", "dp"], "groups16"),
-    ("tab-fd16.csv", "tab:fd16", "Fake-data tests at the 12 graded truths (see TRUTHS), under the reported covariance "
-     "and under C_total.",
+    ("tab-fd16.csv", "tab:fd16", "Fake-data tests at the 12 graded truths (see TRUTHS), under the reported covariance, "
+     "under it without C_PL,5D, and under C_total.",
      {"truth": "the truth's id (see TRUTHS)",
-      "<cov>_matrix": "the covariance the test uses; <cov> is reported or C_total",
+      "<cov>_matrix": "the covariance the test uses; <cov> is reported, C_total_plus_C_resp (without C_PL,5D) or "
+                      "C_total",
       "<cov>_without_component": "when the truth is a generator that also enters C_model, that generator's component is "
                                  "removed from the covariance; this names it (empty otherwise)",
       "<cov>_chi2, _ndf, _p": "chi^2 of the mean unfolded result against the truth on the 16 cells, its degrees of "
@@ -996,7 +1011,7 @@ FILES = [
       "<cov>_cells_abs_z_gt_2": "the cells with |z| > 2, space-separated (empty when none): a list, not a count",
       "<cov>_max_abs_z": "the largest |z| over the cells",
       "<cov>_n_pseudo_experiments": "pseudo-experiments averaged; 1 marks a noise-free closure"},
-     ["f0b", "f0"], "fd16"),
+     ["f0b", "f0b-nopl", "f0"], "fd16"),
     ("sec-fd16_tunes.csv", "sec:fd16", "The two held-out GENIE v3 tunes, under the reported covariance.",
      {"tune": "the GENIE v3 tune", "record": "the test: an ensemble of pseudo-experiments, or a noise-free closure",
       "matrix, chi2, ndf, p, cells_abs_z_gt_2, max_abs_z, n_pseudo_experiments": "as in tab-fd16.csv",
@@ -1059,7 +1074,7 @@ def assemble():
     d, raw = load_sources()
     mv = load_producer()
     for k, (rel, pin) in SOURCES.items():   # the producer pins the same files: same path, its short pin a prefix
-        theirs = mv.NOPL_READOUTS.get("g") if k == "g-nopl" else mv.READOUTS.get(k)
+        theirs = mv.NOPL_READOUTS.get(k[:-5]) if k.endswith("-nopl") else mv.READOUTS.get(k)
         if theirs:
             need(theirs[0] == rel and pin.startswith(theirs[1]),
                  f"source {k}: make_values_fived16.py pins {theirs[0]} {theirs[1]}, the package {rel} {pin[:8]}")
@@ -1091,6 +1106,8 @@ def assemble():
         for where, q in quotes:
             hay = dp_label if where == "dp" else c.flat[where]
             need(norm(q) in hay, f"glossary: the {where} does not hold {q!r}")
+            if where != "dp":
+                need(hay.count(norm(q)) == 1, f"glossary: {q!r} occurs {hay.count(norm(q))} times in the {where}")
     need(fv["f0b-all-truths"] == str(len(FD16_ROWS)), "the paper's count of graded truths is not tab-fd16's rows")
     need(list(TRUTH_ROWS) == FD16_ROWS, "TRUTH_ROWS is not tab-fd16's row order")
     for t, row in TRUTH_ROWS.items():
@@ -1274,6 +1291,13 @@ def provenance(c, out, pending):
                    "+ stat + c08, exactly.", 110):
         w(f"  {l_}")
     w("")
+    w("REMOVED ROWS")
+    for l_ in wrap("sec-repro2d_benchmark.csv no longer carries chi2_73_directions_over_205 (0.662) or "
+                   "chi2_139_directions_over_205 (1.391): the paper no longer prints chi^2/205 for the truncated sums, "
+                   "and every value here is checked against the paper. The chi^2 values themselves remain "
+                   "(chi2_73_directions, chi2_139_directions).", 110):
+        w(f"  {l_}")
+    w("")
     w("STATEMENTS EACH SCOPE RESTS ON (quoted verbatim; the build stops if a quote is not in its record)")
     fams = []
     for *_, fam in FILES:
@@ -1344,6 +1368,10 @@ def self_test():
         ("a label missing from the paper", lambda: PLANT.__setitem__("paper", (r"\label{tab:gen16}",
                                                                                r"\label{tab:genX}"))),
         ("a licence quote missing from its record", lambda: LIC["fd16"][0][2].append("a sentence no record holds")),
+        ("a quoted sentence that occurs twice in the paper", lambda: PLANT.__setitem__("paper", (
+            "The source of the shape difference has not been identified.",
+            "The source of the shape difference has not been identified. "
+            "The source of the shape difference has not been identified."))),
     ]
     for what, plant in cases:
         pins, lic = dict(PINS), {k: [(a, b, list(q)) for a, b, q in v] for k, v in LIC.items()}

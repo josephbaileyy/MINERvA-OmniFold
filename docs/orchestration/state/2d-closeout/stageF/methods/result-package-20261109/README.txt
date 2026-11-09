@@ -42,6 +42,7 @@ GLOSSARY
   C_e, C_total
       C_e holds the statistical, flux, interaction, detector, lateral and normalization groups (and a
       training-seed block that is zero); C_total = C_e + C_model.
+      Paper: "whose sum is C_e, and C_model"
       Supplement: "C_e is the sum of the first six groups and the training-seed block (zero in every cell);
       C_total=C_e+C_model."
   lateral
@@ -154,9 +155,11 @@ FILES (package/)
     Scope: see "the per-group uncertainties" below.
 
 * tab-fd16.csv   [paper table 2; label tab:fd16]
-    Fake-data tests at the 12 graded truths (see TRUTHS), under the reported covariance and under C_total.
+    Fake-data tests at the 12 graded truths (see TRUTHS), under the reported covariance, under it without
+    C_PL,5D, and under C_total.
     - truth: the truth's id (see TRUTHS)
-    - <cov>_matrix: the covariance the test uses; <cov> is reported or C_total
+    - <cov>_matrix: the covariance the test uses; <cov> is reported, C_total_plus_C_resp (without C_PL,5D) or
+      C_total
     - <cov>_without_component: when the truth is a generator that also enters C_model, that generator's
       component is removed from the covariance; this names it (empty otherwise)
     - <cov>_chi2, _ndf, _p: chi^2 of the mean unfolded result against the truth on the 16 cells, its degrees
@@ -284,8 +287,9 @@ SCOPE OF USE, BY FILE
       truths or the detector response.
     - No reading of the difference between the two covariance columns.
   the held-out tunes:
-    - A bias test at two held-out GENIE v3 tunes, not a coverage test. The paper's status for it: "Pass; not
-      independent".
+    - A bias test at two held-out GENIE v3 tunes, not a coverage test. The paper: "They are partial evidence
+      on the bias at truths held out of the analysis, and they are not independent of each other or of
+      C_model."
   the per-cell validity rules:
     - Per-cell diagnostics of the estimator at simulated truths: not a measurement and not a coverage
       statement; no reported value changes, and a cell that is not valid is not thereby excluded, wrong or
@@ -302,7 +306,8 @@ SCOPE OF USE, BY FILE
       under-covers jointly (0 of 300 pseudo-experiments in the joint region at each). Neither test measures
       the reported intervals at the data's point.
     - It does not show that the five-observable result reproduces the full distribution, beyond this benchmark
-      with its stated limits. The paper's status for the comparison: "Descriptive; source not identified".
+      with its stated limits. The paper's status for the comparison is "Descriptive", and Sec. 4.1: "The
+      source of the shape difference has not been identified."
     - The run-period rows do not say which period is right, nor the cause of the shape difference or of the
       run-period step.
   the 2D result per bin and its covariance:
