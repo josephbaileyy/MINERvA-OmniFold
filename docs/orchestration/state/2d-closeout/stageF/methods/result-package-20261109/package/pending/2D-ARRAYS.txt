@@ -1,3 +1,0 @@
-PENDING: 2D-ARRAYS
-Waits for: the 2D per-bin result E_R and its 205 x 205 covariance Q_R with blocks (cov2d_Q_205.npz, sha256 7153b194...), on pscratch and in the HPSS bundle re2-2d-rebuild-partc-20261024; a read-only copy needs the director's go
-Nothing in this package stands in for it.

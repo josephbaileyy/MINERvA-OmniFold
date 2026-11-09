@@ -1,3 +1,1 @@
-PENDING: FD-PRR
-Waits for: the FD-PRR outcome record and its committed readout (FD-PRR-DECLARATION.md, FD-PRR-BINDING-1.md); the plan's step 2, within its 27.0 node-h cap
-Nothing in this package stands in for it.
+Not yet available: a study in simulation of what moves the estimator's retained prior on the 16 cells, with binned unfolding (IBU) on the same fake data; to be added in a later version.

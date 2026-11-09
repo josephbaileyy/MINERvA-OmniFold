@@ -1,14 +1,14 @@
-id,printed_at,value,printed,record,note
-m-sigTwoD,values.tex \sigTwoD,3.0687381668997114e-38,3.069e-38,values_table.tsv,area-weighted total on the 205 reported cells
-m-ratioTot,values.tex \ratioTot,1.00978172454241,1.010,values_table.tsv,the '~1 %' claim: ours/published total
-m-chiPaper,values.tex \chiPaper,2.27,2.27,values_table.tsv,chi2/ndf against the published covariance
-m-pullRMS,values.tex \pullRMS,0.535,0.535,values_table.tsv,
-m-uqMedian,values.tex \uqMedian,6.413665927768751,6.41,values_table.tsv,bound by check_sec4_receipts.py:120
-m-uqIntegral,values.tex \uqIntegral,4.759173209888885,4.76,values_table.tsv,bound by check_sec4_receipts.py:121
-m-fluxBand,values.tex \fluxBand,3.7124503352159897,3.71,values_table.tsv,
-tens-chi2-shape,N/sec_results.tex:224,465.23,465,values_table.tsv,chi2_shape 544.13
-tens-chi2-norm,N/sec_results.tex:223,0.04,0.04,values_table.tsv,
-tens-73-modes,N/sec_results.tex:228,73.0,73,values_table.tsv,modes kept by pinv at rcond 1e-4
-tens-73-chi2,N/sec_results.tex:229,0.662,0.66,values_table.tsv,"chi2/ndf keeping the 73 best-measured directions (rcond 1e-4, 0.806)"
-period-R5-K73-resolved_3sigma,tab:outcomes,0.2881016776639168,0.29,per-period readout.json,class: no change
-period-R5-K132-delta,tab:outcomes,-0.6926719974612343,0.69,per-period readout.json,class: farther without 1G-1M; the paper prints -delta
+quantity,description,value,printed,unit
+total_cross_section,this analysis's 2D cross section integrated over the 205 reported bins,3.0687381668997114e-38,3.069e-38,cm^2/nucleon
+ratio_to_published_total,that integral divided by the published one,1.00978172454241,1.010,1
+chi2_over_205,"chi^2 of the difference from the published result under the published covariance, divided by 205 (the reported bins; nothing is fitted, so 205 is the ndf)",2.27,2.27,1
+chi2_shape_part,the shape part of that chi^2 (normalization along the published spectrum removed),465.23,465,1
+chi2_normalization_part,the normalization part of that chi^2,0.04,0.04,1
+n_best_determined_directions,the number of best-determined eigen-directions of the published covariance kept (eigenvalues above 1e-4 of the largest),73.0,73,1
+chi2_best_determined_over_205,"the chi^2 carried by those directions, divided by 205 (the paper's 0.66 x 205)",0.662,0.66,1
+pull_rms,RMS of the bin differences divided by the published uncertainties,0.535,0.535,1
+median_relative_uncertainty,median over the 205 bins of this analysis's relative uncertainty (four-block covariance),6.413665927768751,6.41,percent
+integral_relative_uncertainty,relative uncertainty of the integrated cross section (four-block covariance),4.759173209888885,4.76,percent
+flux_band_median,median relative uncertainty from the leading flux band,3.7124503352159897,3.71,percent
+run_periods_73_directions_smallest_resolved_change,"in the 73 best-determined directions, removing the run periods 1G-1M changes the distance from the published result by no more than noise; this is the smallest change resolvable (3 sigma), per direction",0.2881016776639168,0.29,chi^2 per direction
+run_periods_132_directions_distance_increase,"in the other 132 directions, the distance from the published result without 1G-1M minus the distance with all run periods (positive: farther without them)",0.6926719974612343,0.69,chi^2 per direction

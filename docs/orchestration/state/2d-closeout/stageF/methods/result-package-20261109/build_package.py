@@ -24,10 +24,12 @@ formats committed values, and computes only what the producer computes from them
 Python 3 standard library only.
 """
 import csv
+import gzip
 import hashlib
 import importlib.util
 import io
 import json
+import math
 import re
 import subprocess
 import sys
@@ -43,6 +45,7 @@ ROOT = Path(_top.stdout.strip())
 NOTE = ROOT / "docs/analysis-note"
 FD = "docs/orchestration/state/measurement-paper/5d-community-20261024"
 RE2 = "docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2"
+C2A_DIR = "docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/receipts/c2a-20261109/transcription"
 
 # The paper whose labels and printed text the package is keyed to. bc867318 is the methods draft, round 5
 # (draft/methods-round5-20261108), which director-helper-3's restructure (PR #977) starts from. When the restructure
@@ -92,9 +95,30 @@ SOURCES = {
                "7f5a9ce4da8f59f3284715ff6f14f8106034b42c0301ad04979a8ed6b461ad99"),
     "ens1s2": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage2-a1-analysis/ens1_stage2.json",
                "c2ee701d7c23643b257f633410c8416d4ca4e8ce5eb8b8ad38ff3afd244c01fd"),
+    "proj2d": ("2d-unfolding/pv2d/ratios/projections.json",
+               "8241807f4dddf678a5b1473112f6f36b614d43cc5a4b3e932bb2d3f7d32f05c3"),
+    "export2d": (f"{RE2}/outA/cov2d_Q_205.json.gz",
+                 "16f663e103afeffd4cb335d9536974974243e6e310f47187517567082700d629"),
+    "budget2d": (f"{RE2}/outA/budget_Q.json.gz",
+                 "971e8a9d648e186212bedbfaec49642a24e0fe7f65a5e514e2a70ca78c4a5920"),
+    "fig67": (f"{RE2}/fig67/fig67_projections.json",
+              "85f8a194bdfd01b60abc6783e74bdeb504a3d78de20be77b6fb1b926beb30bb9"),
+    "c2a-x": (f"{C2A_DIR}/cov2d_x.csv",
+              "f0612bcc3bc432e90b6a1546a106043a7c525d4cae69e29ebdcec6a4505df723"),
+    "c2a-Q": (f"{C2A_DIR}/cov2d_Q.csv",
+              "4f07aa887c5896161f82297431a12cbdd30bdc3e11d86befb3c76648078b2d74"),
+    "c2a-universe": (f"{C2A_DIR}/cov2d_universe.csv",
+                     "69a0737b476866770cd27b6ca9f5e391b3e86e10ce2681f2318d2bf216cb0cb4"),
+    "c2a-stat": (f"{C2A_DIR}/cov2d_stat.csv",
+                 "e5f376e8f222c4ef17305ef6ba2c9b2e887d30d4e23a22109d4fc90d812e7944"),
+    "c2a-c08": (f"{C2A_DIR}/cov2d_c08.csv",
+                "e63cf0077477d20bc0df19fa3374bd7b983f4bac1a8fe9d678be289f95732a64"),
+    "c2a-C_PL": (f"{C2A_DIR}/cov2d_C_PL.csv",
+                 "6f59d683feba557c9b8fe1c035c8d208e0244ccb3e5a54b374f6124f96177483"),
+    "c2a-s5_total": (f"{C2A_DIR}/cov2d_s5_total.csv",
+                     "9279482548e0cd58921209cd3b9d51a98eec3e538cf2e7f215ff1f1afdb5a153"),
 }
 PINS = {k: v[1] for k, v in SOURCES.items()}
-TEXT_SOURCES = {"e2sens", "vt2d", "tension"}
 CELLS = [f"R{i:02d}" for i in range(16)]
 DP_CSV = {  # the data product's own CSVs, copied byte for byte; each is pinned by the product's files_sha256
     "cells": "fd_data_product_cpl_cells.csv",
@@ -135,7 +159,12 @@ def load_sources():
         got = sha256(b)
         need(got == PINS[k], f"source {rel}: sha256 {got[:16]}, pinned {PINS[k][:16]}")
         raw[k] = b
-        d[k] = b.decode() if k in TEXT_SOURCES else json.loads(b)
+        if rel.endswith(".json.gz"):
+            d[k] = json.loads(gzip.decompress(b))
+        elif rel.endswith(".json"):
+            d[k] = json.loads(b)
+        else:
+            d[k] = b.decode()
     return d, raw
 
 
@@ -294,6 +323,9 @@ def build_groups16(c):
         cols[grp] = vals
     for src in ("s1", "cresp"):
         need(c.d[src]["meta"]["cells"] == CELLS, f"{fn}: {src}'s cells are not R00-R15")
+    cm = c.d["dp"]["relative_sigma"]["C_model_abs"]
+    need(max(abs(a_ / b_ - 1) for a_, b_ in zip(cm, cols["C_model"])) < 1e-12,
+         f"{fn}: C_model's relative sigma differs from the data product's C_model_abs")
     rows = [[cell] + [num(cols[g][i]) for g, _ in GROUPS] for i, cell in enumerate(CELLS)]
     return {fn: write_csv(rows, ["cell"] + [f"rel_sigma_{g}" for g, _ in GROUPS])}
 
@@ -393,48 +425,150 @@ def build_validity(c):
     return {fn: write_csv(rows, hdr)}
 
 
-VT_MACROS = ["sigTwoD", "ratioTot", "chiPaper", "pullRMS", "uqMedian", "uqIntegral", "fluxBand"]
-VT_PRINTED = ["tens-chi2-shape", "tens-chi2-norm", "tens-73-modes", "tens-73-chi2"]
+# (quantity id, values_table row, description, unit, check): the 2D benchmark's scalars as the paper prints them
+BENCH = [
+    ("total_cross_section", "m-sigTwoD", "this analysis's 2D cross section integrated over the 205 reported bins",
+     "cm^2/nucleon", ("macro", "sigTwoD")),
+    ("ratio_to_published_total", "m-ratioTot", "that integral divided by the published one", "1",
+     ("macro", "ratioTot")),
+    ("chi2_over_205", "m-chiPaper", "chi^2 of the difference from the published result under the published covariance, "
+     "divided by 205 (the reported bins; nothing is fitted, so 205 is the ndf)", "1", ("macro", "chiPaper")),
+    ("chi2_shape_part", "tens-chi2-shape", "the shape part of that chi^2 (normalization along the published spectrum "
+     "removed)", "1", ("printed", None)),
+    ("chi2_normalization_part", "tens-chi2-norm", "the normalization part of that chi^2", "1", ("printed", None)),
+    ("n_best_determined_directions", "tens-73-modes", "the number of best-determined eigen-directions of the published "
+     "covariance kept (eigenvalues above 1e-4 of the largest)", "1", ("printed", None)),
+    ("chi2_best_determined_over_205", "tens-73-chi2", "the chi^2 carried by those directions, divided by 205 "
+     "(the paper's 0.66 x 205)", "1", ("printed", None)),
+    ("pull_rms", "m-pullRMS", "RMS of the bin differences divided by the published uncertainties", "1",
+     ("macro", "pullRMS")),
+    ("median_relative_uncertainty", "m-uqMedian", "median over the 205 bins of this analysis's relative uncertainty "
+     "(four-block covariance)", "percent", ("macro", "uqMedian")),
+    ("integral_relative_uncertainty", "m-uqIntegral", "relative uncertainty of the integrated cross section "
+     "(four-block covariance)", "percent", ("macro", "uqIntegral")),
+    ("flux_band_median", "m-fluxBand", "median relative uncertainty from the leading flux band", "percent",
+     ("macro", "fluxBand")),
+]
 
 
 def build_benchmark2d(c):
-    """sec:repro2d and tab:outcomes: the 2D benchmark's scalars (the per-bin result and its covariance are not in the
-    repository; see README)."""
+    """sec:repro2d and tab:outcomes: the 2D benchmark's scalars and the run-period rows."""
     fn = "sec-repro2d_benchmark.csv"
     vt = {r["id"]: r for r in csv.DictReader(io.StringIO(c.d["vt2d"]), delimiter="\t")}
     rows = []
-    for m in VT_MACROS:
-        r = vt[f"m-{m}"]
-        need(r["status"] == "control PASS", f"{fn}: m-{m} status is {r['status']!r}")
-        need(r["where"] == f"N/values.tex:\\{m}", f"{fn}: m-{m} is not the row for \\{m}")
-        c.macro(fn, m, r["refined_rendered"])
-        rows.append([f"m-{m}", f"values.tex \\{m}", r["refined_value"], r["refined_rendered"], "values_table.tsv",
-                     r["note"]])
-    for k in VT_PRINTED:
-        r = vt[k]
-        need(r["status"] == "control PASS", f"{fn}: {k} status is {r['status']!r}")
-        rows.append([k, r["where"], r["refined_value"], r["refined_rendered"], "values_table.tsv", r["note"]])
-    v = {k: vt[k]["refined_rendered"] for k in VT_PRINTED}
+    for qid, row, desc, unit, (kind, m) in BENCH:
+        r = vt[row]
+        need(r["status"] == "control PASS", f"{fn}: {row} status is {r['status']!r}")
+        if kind == "macro":
+            need(r["where"] == f"N/values.tex:\\{m}", f"{fn}: {row} is not the row for \\{m}")
+            c.macro(fn, m, r["refined_rendered"])
+        rows.append([qid, desc, r["refined_value"], r["refined_rendered"], unit])
+    v = {k: vt[k]["refined_rendered"] for k in ("tens-chi2-shape", "tens-chi2-norm", "tens-73-modes", "tens-73-chi2")}
     c.printed(fn, rf"shape part {v['tens-chi2-shape']}, normalization part {v['tens-chi2-norm']}; the "
                   rf"{v['tens-73-modes']} best-determined directions hold ${v['tens-73-chi2']}\times205$")
     c.printed(fn, rf"$\chi^2/\mathrm{{ndf}}=\chiPaper$ over 205 bins")
-    # the 73-direction chi2/ndf is the tension report's own rank-truncation row (rcond 1e-4)
     m = re.search(r"^\s*1e-04\s+([\d.]+)\s+(\d+)\s*$", c.d["tension"], re.M)
-    need(m and float(m[1]) == float(vt["tens-73-chi2"]["refined_value"]) and m[2] == vt["tens-73-modes"]["refined_rendered"],
+    need(m and float(m[1]) == float(vt["tens-73-chi2"]["refined_value"]) and m[2] == v["tens-73-modes"],
          f"{fn}: the tension report's rcond 1e-4 row does not give the 73-direction values")
-    # the per-period benchmark's R5 (replica noise model), as Table I prints it
     pr = c.d["period"]["readings"]["by_model"]["replica"]
     k73, kbar = pr["R5"], pr["R5bar"]
-    need(k73["class"] == "no change" and kbar["class"].startswith("farther without"), f"{fn}: R5's classes changed")
-    need(k73["ABC"]["k"] == 73 and kbar["ABC"]["k"] == 132, f"{fn}: R5's direction counts changed")
+    need(k73["class"] == "no change" and kbar["class"].startswith("farther without"), f"{fn}: the classes changed")
+    need(k73["ABC"]["k"] == 73 and kbar["ABC"]["k"] == 132, f"{fn}: the direction counts changed")
     s73, dbar = f"{k73['resolved_3sigma']:.2f}", f"{-kbar['delta']:.2f}"
     c.printed(fn, f"no change without 1G--1M (smallest resolved change {s73} per direction); other 132: farther "
                   f"without it, by {dbar}")
-    rows.append(["period-R5-K73-resolved_3sigma", "tab:outcomes", num(k73["resolved_3sigma"]), s73,
-                 "per-period readout.json", f"class: {k73['class']}"])
-    rows.append(["period-R5-K132-delta", "tab:outcomes", num(kbar["delta"]), dbar, "per-period readout.json",
-                 f"class: {kbar['class']}; the paper prints -delta"])
-    return {fn: write_csv(rows, ["id", "printed_at", "value", "printed", "record", "note"])}
+    rows.append(["run_periods_73_directions_smallest_resolved_change",
+                 "in the 73 best-determined directions, removing the run periods 1G-1M changes the distance from the "
+                 "published result by no more than noise; this is the smallest change resolvable (3 sigma), per "
+                 "direction", num(k73["resolved_3sigma"]), s73, "chi^2 per direction"])
+    rows.append(["run_periods_132_directions_distance_increase",
+                 "in the other 132 directions, the distance from the published result without 1G-1M minus the distance "
+                 "with all run periods (positive: farther without them)", num(-kbar["delta"]), dbar,
+                 "chi^2 per direction"])
+    return {fn: write_csv(rows, ["quantity", "description", "value", "printed", "unit"])}
+
+
+C2A = "docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/receipts/c2a-20261109/transcription"
+MAT2D = [("Q", "the four-block covariance: universe + stat + training seed + run period"),
+         ("universe", "systematic universes (including the normalization)"), ("stat", "statistical"),
+         ("c08", "training seed"), ("C_PL", "run period"),
+         ("s5_total", "universe + stat + training seed, the covariance without the run-period block")]
+BUDGET_NAME = {"Q": "Q", "s5_total": "S5_total", "universe": "universe", "stat": "stat", "c08": "c08", "C_PL": "C_PL"}
+
+
+def build_arrays2d(c):
+    """fig:validation, fig:tension2d and sec:uq2d: the 2D result per bin and its covariance blocks, from the lossless
+    transcription of cov2d_Q_205.npz, checked against the committed export, budget and projections."""
+    mats = {}
+    out = {}
+    raw_x = c.raw["c2a-x"]
+    rows = read_csv_bytes(raw_x)
+    need(rows[0] == ["global_id", "x"], "cov2d_x.csv: unexpected header")
+    ids = [int(r[0]) for r in rows[1:]]
+    x = [float(r[1]) for r in rows[1:]]
+    proj = c.d["proj2d"]
+    pe, ze = proj["pt_edges"], proj["pz_edges"]
+    need(ids == list(proj["reported_cells"]), "the 2D cells differ from projections.json's reported cells")
+    need(len(pe) == 15 and len(ze) == 17, "the 2D grid is not 14 x 16 bins")
+    n = len(ids)
+    for k, _ in MAT2D:
+        b = c.raw[f"c2a-{k}"]
+        r_ = read_csv_bytes(b)
+        need([int(v) for v in r_[0][1:]] == ids and [int(q[0]) for q in r_[1:]] == ids, f"cov2d_{k}.csv: ids")
+        mats[k] = [[float(v) for v in q[1:]] for q in r_[1:]]
+        out[f"sec-uq2d_{k}.csv"] = b
+    exp, bud = c.d["export2d"], c.d["budget2d"]
+    fnx = "sec-repro2d_result2d.csv"
+    for k, _ in MAT2D:
+        fn = f"sec-uq2d_{k}.csv"
+        M = mats[k]
+        st = math.sqrt(sum(M[i][i] for i in range(n)))
+        need(abs(st / exp["arrays"][k]["sqrt_trace"] - 1) < 1e-12, f"{fn}: sqrt(trace) differs from the export's")
+        rel = sorted(100 * math.sqrt(M[i][i]) / x[i] for i in range(n))
+        bk = bud[BUDGET_NAME[k]]
+        med = (rel[n // 2] if n % 2 else (rel[n // 2 - 1] + rel[n // 2]) / 2)
+        for name, got in (("median_pct", med), ("min_pct", rel[0]), ("max_pct", rel[-1])):
+            need(abs(got / bk[name] - 1) < 1e-12, f"{fn}: {name} {got!r} differs from budget_Q's {bk[name]!r}")
+        c.n_checked[fn] = c.n_checked.get(fn, 0) + 4
+    # Q is the sum of its blocks, s5_total of its three, exactly as the export built them
+    Q, S5 = mats["Q"], mats["s5_total"]
+    need(all(Q[i][j] == S5[i][j] + mats["C_PL"][i][j] for i in range(n) for j in range(n)),
+         "Q is not s5_total + C_PL")
+    need(all(S5[i][j] == mats["universe"][i][j] + mats["stat"][i][j] + mats["c08"][i][j]
+             for i in range(n) for j in range(n)), "s5_total is not universe + stat + c08")
+    # the area row, the integral and the projections against the budget, fig67 and values.tex
+    pt = [i // 16 for i in ids]
+    pz = [i % 16 for i in ids]
+    dpt = [pe[a + 1] - pe[a] for a in pt]
+    dpz = [ze[b + 1] - ze[b] for b in pz]
+
+    def quad(f, M):
+        return sum(f[i] * M[i][j] * f[j] for i in range(n) for j in range(n) if f[i] and f[j])
+
+    area = [a * b for a, b in zip(dpt, dpz)]
+    tot = sum(a * v for a, v in zip(area, x))
+    vt = {r["id"]: r for r in csv.DictReader(io.StringIO(c.d["vt2d"]), delimiter="\t")}
+    need(abs(tot / float(vt["m-sigTwoD"]["refined_value"]) - 1) < 1e-12, f"{fnx}: the area-weighted total differs")
+    c.macro(fnx, "sigTwoD", f"{tot:.3e}")
+    integ = 100 * math.sqrt(quad(area, Q)) / tot
+    need(abs(integ / bud["Q"]["integral_sigma_pct"] - 1) < 1e-12, f"{fnx}: the integral sigma differs from budget_Q's")
+    c.macro(fnx, "uqIntegral", f"{integ:.2f}")
+    relq = sorted(100 * math.sqrt(Q[i][i]) / x[i] for i in range(n))
+    c.macro(fnx, "uqMedian", f"{relq[n // 2]:.2f}")
+    fig = c.d["fig67"]
+    for axis, nb, sel, w, key in (("pt", 14, pt, dpz, "pt_sigma_pct"), ("pz", 16, pz, dpt, "pz_sigma_pct")):
+        for k_ in range(nb):
+            f = [w[i] if sel[i] == k_ else 0.0 for i in range(n)]
+            if not any(f):
+                continue
+            s = 100 * math.sqrt(quad(f, Q)) / sum(a * v for a, v in zip(f, x))
+            need(abs(s / bud["Q"][key][k_] - 1) < 1e-12, f"{fnx}: {axis} projection {k_} differs from budget_Q's")
+            need(abs(s / (100 * fig[axis]["Total"][k_]) - 1) < 1e-12, f"{fnx}: {axis} projection {k_} differs from fig67")
+            c.n_checked[fnx] = c.n_checked.get(fnx, 0) + 2
+    rows = [[g, a, b, pe[a], pe[a + 1], ze[b], ze[b + 1], num(v)] for g, a, b, v in zip(ids, pt, pz, x)]
+    out[fnx] = write_csv(rows, ["global_id", "pt_bin", "ppar_bin", "pt_lo", "pt_hi", "ppar_lo", "ppar_hi",
+                                "d2sigma_dpt_dppar"])
+    return out
 
 
 GEN = ["genie_cv", "genie_mec", "nuwro", "mnvtune_v1", "gibuu"]   # tab:gen16's row order
@@ -538,21 +672,69 @@ def build_ens1(c):
 
 
 PENDING = [
-    ("FD-PRR", "the FD-PRR outcome record and its committed readout (FD-PRR-DECLARATION.md, FD-PRR-BINDING-1.md); "
-               "the plan's step 2, within its 27.0 node-h cap"),
-    ("LL5D", "the LL5D outcome record and its committed readout (LL5D-DECLARATION.md); the plan's step 3, within its "
-             "148.0 node-h cap"),
-    ("V-HALF", "the V-HALF declaration and its committed readout (DECISION-20261109-joseph-bias-half-rule.md: "
-               "|bias| <= 1/2 x the truth's departure from the prior, per cell)"),
-    ("2D-ARRAYS", "the 2D per-bin result E_R and its 205 x 205 covariance Q_R with blocks (cov2d_Q_205.npz, sha256 "
-                  "7153b194...), on pscratch and in the HPSS bundle re2-2d-rebuild-partc-20261024; a read-only copy "
-                  "needs the director's go"),
+    ("FD-PRR", "a study in simulation of what moves the estimator's retained prior on the 16 cells, with binned "
+               "unfolding (IBU) on the same fake data"),
+    ("LL5D", "the like-for-like five-observable coverage test at the two held-out GENIE v3 tunes"),
+    ("V-HALF", "a per-cell validity rule: the bias at most half of the truth's departure from the prior"),
 ]
+ENS1_PENDING = ("ENS1", "the ensemble-averaged variant of the estimator (96 fits): its stability and bias results")
 
-# ----------------------------------------------------------------------------------------------------- licences
-# Each file's licence, quoted from its record. Every quote must occur verbatim (whitespace and markdown emphasis
-# aside) in the record named, or the build stops.
-LIC = {
+
+def pending_text(what):
+    return f"Not yet available: {what}; to be added in a later version.\n"
+
+
+# ------------------------------------------------------------------------------------------------- scope of use
+# SCOPE: what the README tells a reader, per file family. PROV: the verbatim lines each rests on, with the record they
+# are quoted from; the build stops if a quote is not in its record (or, for the paper, in the paper at PAPER_REF).
+P_ = PAPER_PATH
+SCOPE = {
+    "cov16": [
+        "Illustrative output of the estimator on data, not a measurement; not for fitting or for constraining models.",
+        "Not a coverage or calibration statement: interval coverage has not been validated.",
+        "C_PL,5D was added after the data were seen and is given with and without; its size is not validated, since a "
+        "block built from the observed differences contains them by construction.",
+        "No statement of the cause of the run-period difference, or of which period is right."],
+    "groups16": [
+        "As for the 16-cell result above.",
+        "C_resp does not shift neutron or muon energy deposits."],
+    "fd16": [
+        "Bias tests on simulated pseudo-data: no statement about data against generators, coverage, held-out truths "
+        "or the detector response.",
+        "No reading of the difference between the two covariance columns."],
+    "tunes": [
+        "A bias test at two held-out GENIE v3 tunes, not a coverage test. The paper's status for it: \"Pass; not "
+        "independent\"."],
+    "validity": [
+        "Per-cell diagnostics of the estimator at simulated truths: not a measurement and not a coverage statement; no "
+        "reported value changes, and a cell that is not valid is not thereby excluded, wrong or unreported.",
+        "A1-A3 (the atlas_* columns) are this analysis's implementation of the ATLAS User Guide's thresholds, the usage "
+        "recommendations the paper cites (ATLAS Collaboration, Phys. Rev. Lett. 133, 261803 (2024), arXiv:2405.20041). "
+        "The guide's recommended test of correlation assumptions on pseudo-data (its item 5) is not met here.",
+        "The prior_* rule and its threshold of 0.5 are this analysis's own, not ATLAS's."],
+    "benchmark2d": [
+        "The adopted two-dimensional result; no coverage validation is claimed for it.",
+        "It does not show that the five-observable result reproduces the full distribution, beyond this benchmark with "
+        "its stated limits. The paper's status for the comparison: \"Descriptive; source not identified\".",
+        "The run-period rows do not say which period is right, nor the cause of the shape difference or of the "
+        "run-period step."],
+    "arrays2d": [
+        "As for the 2D benchmark above.",
+        "The four-block covariance does not include the generator-shape dependence C_model, which the paper reports as "
+        "a separate covariance."],
+    "illustrative": [
+        "Illustrative, descriptive; not for fitting or constraining models.",
+        "Not a validation of the reported covariance or of C_model, and not a generator exclusion; no reading of the "
+        "figure.",
+        "NuWro: the part of its free-proton sample generated at 50-100 GeV is flagged, because the events lost to "
+        "generator aborts there were not shown to be negligible. GiBUU: corrected to CH with its own free-proton sample, "
+        "which failed its sampling-closure check."],
+    "ens1": [
+        "The variant meets the stability requirement and is worse in bias at one of 17 truths, so it is not adopted; "
+        "the reported estimator is unchanged. It is not a stabilised variant, and the rounding instability of the "
+        "reported result is not fixed."],
+}
+PROV = {
     "cov16": [
         (f"{FD}/FD-CT-5B-ADDITION-REPORT.md", "CITABLE FOR", [
             "the revised products and their digests;",
@@ -563,15 +745,17 @@ LIC = {
             "the cause of a period difference, or which period is right",
             "a coverage or calibration statement"]),
         (f"{FD}/fd/with-cpl/data-product/fd_data_product_cpl.json", "LABEL", [
-            "no reading, claim or release text; whether it ships is Joseph's",
             "added after the data were seen; published with and without"]),
-        (PAPER_PATH, "THE PAPER'S OWN SCOPE (at PAPER_REF)", [
+        (P_, "THE PAPER", [
             "The sixteen-cell cross section the estimator gives on the data is therefore not a measurement",
             "Illustrative output on data: not for fitting or for constraining models"]),
     ],
     "groups16": [
         ("docs/orchestration/state/measurement-scoping/assigned-uncertainties/cresp/cresp.json", "LABEL (C_resp)", [
             "neutron and muon energy deposits are not shifted (D1: neutrons out)"]),
+        (P_, "THE PAPER", [
+            "$C_{\\mathrm{resp}}$ does not cover neutron or muon deposits, nor species, energy-dependence or resolution "
+            "effects beyond a scale."]),
     ],
     "fd16": [
         (f"{FD}/FD-F0b-REPORT.md", "CITABLE FOR", ["the counts, χ² and p below, each beside its matrix"]),
@@ -581,9 +765,8 @@ LIC = {
             "any reading of the difference between the two columns."]),
     ],
     "tunes": [
-        (f"{FD}/FD-F1-REPORT.md", "WHAT THIS IS", [
-            "a bias test at two held-out GENIE v3 truths, not a coverage test",
-            "CANNOT AUTHORIZE: a reading, a claim, paper text, or any statement about coverage."]),
+        (f"{FD}/FD-F1-REPORT.md", "WHAT THIS IS", ["a bias test at two held-out GENIE v3 truths, not a coverage test"]),
+        (P_, "THE PAPER (Table tab:outcomes, status)", ["Pass; not independent"]),
     ],
     "validity": [
         ("docs/orchestration/OUTCOME-20261107-valid-region.md", "CITABLE FOR", [
@@ -594,6 +777,9 @@ LIC = {
             "V-PRIOR, or its threshold of 0.5, as ATLAS's, or as the advisor's own formulation;",
             "a non-valid cell as excluded, wrong or unreported;",
             "ATLAS guide item 5, which is not met;"]),
+        (P_, "THE PAPER", [
+            "The second rule is ours, not taken from Ref.~\\cite{ATLAS:2024jets}",
+            "its recommended test of correlation assumptions on pseudo-data is not met here"]),
     ],
     "benchmark2d": [
         ("docs/orchestration/DECISION-20261024-joseph-adopt-re2-2d-refined.md", "DECIDED", [
@@ -601,28 +787,28 @@ LIC = {
             "No coverage validation is claimed for them."]),
         ("docs/orchestration/DECISION-20261109-joseph-methods-baseline-and-plan.md", "THE PAPER DOES NOT CLAIM", [
             "that 5D validates the full distribution, beyond the 2D benchmark with its stated limits;"]),
-        ("docs/orchestration/OUTCOME-20261107-per-period-2d-benchmark.md", "NOT CITABLE FOR (the per-period rows)", [
+        ("docs/orchestration/OUTCOME-20261107-per-period-2d-benchmark.md", "NOT CITABLE FOR (the run-period rows)", [
             "which run period is right, that 1G–1M is wrong, or that the published result is right;",
             "a cause of the 2D shape difference or of the run-period step;"]),
+        (P_, "THE PAPER (Table tab:outcomes, status)", ["Descriptive; source not identified"]),
+    ],
+    "arrays2d": [
+        (P_, "THE PAPER", [
+            "We report the dependence on the prior's generator shape as a separate covariance beside the four-block "
+            "covariance"]),
     ],
     "illustrative": [
-        (PAPER_PATH, "THE PAPER'S OWN SCOPE (at PAPER_REF)", [
-            "Illustrative output on data: not for fitting or for constraining models"]),
+        (P_, "THE PAPER", ["Illustrative output on data: not for fitting or for constraining models"]),
         (f"{FD}/FD-GENCMP-AMENDMENT-E-REPORT.md", "NOT CITABLE FOR", [
             "a validation of the reported covariance or of Q_R;", "a generator exclusion;"]),
         (f"{FD}/FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-REPORT.md", "NOT CITABLE FOR", [
             "a new C_model;", "a validation of C_model's coverage;"]),
         (f"{FD}/FD-G-FIGURES-REPORT.md", "NOT CITABLE FOR (the figure)", ["any reading of a figure;"]),
-        (PAPER_PATH, "THE PAPER'S FOOTNOTES ON TWO PREDICTIONS (at PAPER_REF)", [
+        (P_, "THE PAPER'S FOOTNOTES ON TWO PREDICTIONS", [
             "In NuWro's free-proton sample, the supplement generated at neutrino energies of 50--100~GeV is flagged: "
             "the events lost to generator aborts there were not shown to be negligible",
             "Corrected to CH with GiBUU's own free-proton sample",
             "That sample failed its sampling-closure check"]),
-    ],
-    "every": [
-        (PAPER_PATH, "THE PAPER (at PAPER_REF)", [
-            "Interval coverage has not been validated.",
-            "The sixteen-cell cross section the estimator gives on the data is therefore not a measurement"]),
     ],
     "ens1": [
         ("docs/orchestration/OUTCOME-20261109-ens1-stab-pass-bias-worse.md", "CITABLE FOR", [
@@ -631,61 +817,170 @@ LIC = {
             "That E₉₆ is a stabilised variant",
             "That the rounding instability is fixed or removed for the reported result."]),
     ],
+    "every": [
+        (P_, "THE PAPER", [
+            "Interval coverage has not been validated.",
+            "The sixteen-cell cross section the estimator gives on the data is therefore not a measurement"]),
+    ],
 }
-DESCRIPTIVE = "illustrative, descriptive; not for fitting or constraining models"
-LIC_TITLE = {"cov16": "the 16-cell result and its covariance", "groups16": "the per-group uncertainties",
-             "fd16": "the fake-data tests", "tunes": "the held-out tunes", "validity": "the per-cell validity rules",
-             "benchmark2d": "the 2D benchmark", "illustrative": "the generator comparisons (descriptive)",
-             "ens1": "the ensemble-averaged variant", "every": "every file"}
+LIC = PROV          # the self-test plants a quote here
+SCOPE_TITLE = {"cov16": "the 16-cell result and its covariance", "groups16": "the per-group uncertainties",
+               "fd16": "the fake-data tests", "tunes": "the held-out tunes", "validity": "the per-cell validity rules",
+               "benchmark2d": "the 2D benchmark", "arrays2d": "the 2D result per bin and its covariance",
+               "illustrative": "the generator comparisons", "ens1": "the ensemble-averaged variant"}
+DESCRIPTIVE = "Illustrative, descriptive; not for fitting or constraining models."
 
 
 def check_licences(paper):
-    for blocks in LIC.values():
+    for blocks in PROV.values():
         for rel, _, quotes in blocks:
-            need(rel == PAPER_PATH or (ROOT / rel).is_file(), f"licence record missing from this checkout: {rel}")
+            need(rel == PAPER_PATH or (ROOT / rel).is_file(), f"record missing from this checkout: {rel}")
             hay = norm(paper if rel == PAPER_PATH else (ROOT / rel).read_text())
             for q in quotes:
-                need(norm(q) in hay, f"licence quote not found in {rel}: {q!r}")
+                need(norm(q) in hay, f"scope quote not found in {rel}: {q!r}")
 
 
-# Each package file: its label at PAPER_REF, a description, its sources and its licence block.
-FILES = [
-    ("tab-result16_cells.csv", "tab:result16", "the 16 cells: box edges (GeV/c for pT, p_par, q3; GeV for E_avail, "
-     "W), f in cm^2/nucleon (an integral over the box), and each matrix's relative sigma sqrt(diag)/f; the "
-     "data product's own cells CSV", ["dp"], "cov16"),
-    ("sec-cov16_reported.csv", "sec:cov16", "the reported covariance C_total + C_resp + C_PL,5D, (cm^2/nucleon)^2",
-     ["dp"], "cov16"),
-    ("sec-cov16_C_total_plus_C_resp.csv", "sec:cov16", "the covariance without C_PL,5D (published with and without)",
-     ["dp"], "cov16"),
-    ("sec-cov16_C_e.csv", "sec:cov16", "C_e, the sum of the statistical, flux, interaction, detector, lateral and "
-     "normalization groups", ["dp"], "cov16"),
-    ("sec-cov16_C_model_abs.csv", "sec:cov16", "C_model, the generator-model component", ["dp"], "cov16"),
-    ("sec-cov16_C_resp.csv", "sec:cov16", "C_resp, the calorimetric response component", ["dp"], "cov16"),
-    ("sec-cov16_C_PL5D.csv", "sec:cov16", "C_PL,5D, the run-period block, added after the data were seen", ["dp"],
-     "cov16"),
-    ("tab-corr16.csv", "tab:corr16", "the correlation matrix of the reported covariance", ["dp"], "cov16"),
-    ("tab-groups16.csv", "tab:groups16", "each group's relative sigma sqrt(diag)/f per cell (fraction, not %)",
-     ["s1", "cresp", "dp"], "groups16"),
-    ("tab-fd16.csv", "tab:fd16", "fake-data grades at 12 truths: chi2 (16 dof), p, cells with |z| > 2 and max |z|, "
-     "under the reported covariance (F0b) and under C_total (F0), each without the truth's own generator component "
-     "where without_component names it", ["f0b", "f0"], "fd16"),
-    ("sec-fd16_tunes.csv", "sec:fd16", "the two held-out GENIE v3 tunes: ensemble and noise-free closure grades",
-     ["f1", "f1meta-g18", "f1meta-ar23"], "tunes"),
-    ("sec-fd16_validity.csv", "sec:fd16", "per-cell validity: V-ATLAS (A1-A3 and class) and V-PRIOR (S_b, S_g, rho "
-     "and class)", ["valid"], "validity"),
-    ("sec-repro2d_benchmark.csv", "sec:repro2d", "the 2D benchmark's scalars against the published result, and the "
-     "per-period R5 rows", ["vt2d", "tension", "period"], "benchmark2d"),
-    ("tab-gen16.csv", "tab:gen16", "chi2 of each generator prediction, total and shape-only, with and without "
-     f"C_PL,5D, each plus V_g. {DESCRIPTIVE}", ["g", "g-nopl", "gdefs"], "illustrative"),
-    ("tab-cmodel16.csv", "tab:cmodel16", "chi2 under C_model with CH shape ratios, doubled and removed. "
-     f"{DESCRIPTIVE}", ["e2", "e2sens"], "illustrative"),
-    ("fig-ratio16.csv", "fig:ratio16", f"the data behind the ratio figure: f, g, f/g and the bar (f/g) sigma/f. "
-     f"{DESCRIPTIVE}", ["g", "figratio"], "illustrative"),
-    ("sec-cov5d_ens1.csv", "sec:cov5d", "the ensemble-averaged variant (96 fits): stability and bias verdicts",
-     ["ens1s1", "ens1s2"], "ens1"),
+# --------------------------------------------------------------------------------------------------- glossary
+# (term, the README's sentence, the paper's own sentence(s) it rests on, verified at PAPER_REF)
+GLOSSARY = [
+    ("cell (R00-R15)", "one of the 16 reporting cells: a box in the five observables p_T, p_par, E_avail, q3 and W. "
+     "The cells are boxes, not a product grid; tab-result16_cells.csv gives each box.",
+     ["The largest edge on each axis is the outer edge of the analysis grid, which contains every signal event"]),
+    ("f", "a cell's cross section integrated over its box, in cm^2/nucleon.",
+     ["the cell-integrated cross section $f$ (an integral over the box, not a differential density)"]),
+    ("g", "a generator's prediction for the same cell and quantity as f; f/g is data over prediction.",
+     ["Data over prediction, $f/g$"]),
+    ("C_e, C_total", "C_e holds the statistical, flux, interaction, detector, lateral and normalization groups; C_total "
+     "= C_e + C_model.",
+     ["The statistical, flux, interaction, detector, lateral and normalization groups, with a training-seed block that "
+      "is zero in every cell, form $C_{\\mathrm{e}}$, and $C_{\\mathrm{total}}=C_{\\mathrm{e}}+C_{\\mathrm{model}}$."]),
+    ("lateral", "uncertainties that shift the reconstructed muon kinematics and beam angle instead of reweighting events.",
+     ["the lateral uncertainties shift the reconstructed muon kinematics and beam angle rather than reweighting events"]),
+    ("C_model (C_model_abs)", "the dependence on the prior's generator shape. The data product names the matrix "
+     "C_model_abs (an absolute covariance, like every matrix here); tab-groups16.csv's rel_sigma_C_model is the same "
+     "matrix (checked by the build).",
+     ["The model term $C_{\\mathrm{model}}$ is built from the change in the unfolded data when the prior is reweighted "
+      "to GENIE + MEC, NuWro and GiBUU in turn."]),
+    ("C_resp", "the response to a one-standard-deviation scale of the reconstructed recoil energy.",
+     ["The response term $C_{\\mathrm{resp}}$ is the response of the result to a one-standard-deviation scale of the "
+      "reconstructed recoil energy in the simulation."]),
+    ("C_PL,5D", "the run-period block, added after the data were seen; files are given with and without it.",
+     ["The run-period block $C_{\\mathrm{PL,5D}}$ includes this inconsistency in the reported covariance."]),
+    ("reported", "the reported covariance, C_total + C_resp + C_PL,5D.",
+     ["The reported covariance of the sixteen-cell result is "
+      "$C_{\\mathrm{total}}+C_{\\mathrm{resp}}+C_{\\mathrm{PL,5D}}$."]),
+    ("V_g", "a prediction's own finite-sample covariance (diagonal), added in every comparison with a prediction.",
+     ["$V_g$, the diagonal covariance from the finite size of the prediction's own simulated sample"]),
+    ("shape-only", "a chi^2 with the normalization freed (one fewer degree of freedom).",
+     ["Shape-only $\\chi^2$ frees the normalization"]),
+    ("fake-data chi^2, z", "the mean unfolded result at a truth against that truth, on the 16 cells; z is a cell's "
+     "bias over its uncertainty under the same covariance. A truth is flagged at p < 0.01 or a cell with |z| > 2.",
+     ["compare the mean unfolded result with each truth on the 16 cells through $\\chi^2$ with 16 degrees of freedom",
+      "where $z$ is the cell's bias divided by its uncertainty under the same covariance"]),
+    ("2D four-block covariance", "the two-dimensional result's covariance: systematic universes (with the "
+     "normalization), statistical, run period and training seed.",
+     ["The two-dimensional covariance is the sum of four blocks, each from LightGBM unfoldings with the central value's "
+      "estimator: systematic universes (187 universes, including the normalization), statistical (300 bootstrap "
+      "replicas), run period (three period groups), and training seed (five seed settings, so that its own size is "
+      "poorly determined)."]),
 ]
-BUILDERS = [build_cov16, build_groups16, build_fd16, build_tunes, build_validity, build_benchmark2d, build_gen16,
-            build_cmodel16, build_ratio16]
+
+# the tab-fd16 truths: each row's name as the paper's table prints it (verified); * marks the paper's closure tests
+TRUTH_ROWS = {"nominal": r"simulation prior$^{*}$", "A7_mnvtune": r"Tune~v1, hybrid$^{*}$",
+              "A7_genie_cv": "GENIE CV, hybrid", "A7_genie_mec": "GENIE + MEC, hybrid",
+              "W2": r"GENIE + MEC, $(\Eavail,W)$ shape", "A7_nuwro": "NuWro, hybrid", "W1": r"NuWro, $\Eavail$ shape",
+              "W3": r"NuWro, $(\pT,\pPar,\Eavail)$ shape", "closure_nuwro": "NuWro shape, noise-free closure",
+              "stage0c_gibuu": r"GiBUU, $\Eavail$ shape", "A7_gibuu": "GiBUU, hybrid", "q3": r"synthetic $q_3$ tilt"}
+CLOSURE = {"nominal", "A7_mnvtune"}
+
+# ---------------------------------------------------------------------------------------------- the file list
+# (file, label, what it is, columns {name: meaning}, sources, scope family)
+CELL_HDR = {"cell": "R00-R15", "pt_lo, pt_hi; pz_lo, pz_hi; q3_lo, q3_hi": "box edges in GeV/c (pz is p_par)",
+            "eavail_lo, eavail_hi; W_lo, W_hi": "box edges in GeV",
+            "f": "cell-integrated cross section, cm^2/nucleon",
+            "rel_sigma_<M>": "sqrt(diag M)/f for each matrix M (fraction)"}
+MAT_HDR = {"cell, R00-R15": "a 16 x 16 matrix in (cm^2/nucleon)^2, rows and columns in the order R00-R15"}
+FILES = [
+    ("tab-result16_cells.csv", "tab:result16", "The 16 cells: each box, f, and each matrix's relative uncertainty.",
+     CELL_HDR, ["dp"], "cov16"),
+    ("sec-cov16_reported.csv", "sec:cov16", "The reported covariance C_total + C_resp + C_PL,5D.", MAT_HDR, ["dp"],
+     "cov16"),
+    ("sec-cov16_C_total_plus_C_resp.csv", "sec:cov16", "The covariance without C_PL,5D.", MAT_HDR, ["dp"], "cov16"),
+    ("sec-cov16_C_e.csv", "sec:cov16", "C_e.", MAT_HDR, ["dp"], "cov16"),
+    ("sec-cov16_C_model_abs.csv", "sec:cov16", "C_model.", MAT_HDR, ["dp"], "cov16"),
+    ("sec-cov16_C_resp.csv", "sec:cov16", "C_resp.", MAT_HDR, ["dp"], "cov16"),
+    ("sec-cov16_C_PL5D.csv", "sec:cov16", "C_PL,5D.", MAT_HDR, ["dp"], "cov16"),
+    ("tab-corr16.csv", "tab:corr16", "The correlation matrix of the reported covariance.",
+     {"cell, R00-R15": "a dimensionless 16 x 16 matrix, rows and columns in the order R00-R15"}, ["dp"], "cov16"),
+    ("tab-groups16.csv", "tab:groups16", "Each group's relative uncertainty per cell.",
+     {"cell": "R00-R15", "rel_sigma_<group>": "sqrt(diag)/f of that group (fraction; the paper prints percent); "
+      "reported = C_total + C_resp + C_PL,5D"}, ["s1", "cresp", "dp"], "groups16"),
+    ("tab-fd16.csv", "tab:fd16", "Fake-data tests at the 12 graded truths (see TRUTHS), under the reported covariance "
+     "and under C_total.",
+     {"truth": "the truth's id (see TRUTHS)",
+      "<cov>_matrix": "the covariance the test uses; <cov> is reported or C_total",
+      "<cov>_without_component": "when the truth is a generator that also enters C_model, that generator's component is "
+                                 "removed from the covariance; this names it (empty otherwise)",
+      "<cov>_chi2, _ndf, _p": "chi^2 of the mean unfolded result against the truth on the 16 cells, its degrees of "
+                              "freedom and p-value",
+      "<cov>_cells_abs_z_gt_2": "the cells with |z| > 2, space-separated (empty when none): a list, not a count",
+      "<cov>_max_abs_z": "the largest |z| over the cells",
+      "<cov>_n_pseudo_experiments": "pseudo-experiments averaged; 1 marks a noise-free closure"},
+     ["f0b", "f0"], "fd16"),
+    ("sec-fd16_tunes.csv", "sec:fd16", "The two held-out GENIE v3 tunes, under the reported covariance.",
+     {"tune": "the GENIE v3 tune", "record": "the test: an ensemble of pseudo-experiments, or a noise-free closure",
+      "matrix, chi2, ndf, p, cells_abs_z_gt_2, max_abs_z, n_pseudo_experiments": "as in tab-fd16.csv",
+      "max_abs_z_cell": "the cell with the largest |z| (tab-fd16.csv has no such column)"},
+     ["f1", "f1meta-g18", "f1meta-ar23"], "tunes"),
+    ("sec-fd16_validity.csv", "sec:fd16", "Each cell's class under the two validity rules.",
+     {"atlas_A1": "at least 5000 effective simulated events (here those of the simulation's weights)",
+      "atlas_A2": "a data statistical uncertainty below 15 %",
+      "atlas_A3": "|z| <= 2 at each of the 12 graded truths under the reported covariance",
+      "atlas_mc_neff_truth, atlas_stat_rel": "the effective number of simulated events, and the data's relative "
+                                             "statistical uncertainty (fraction), behind A1 and A2",
+      "atlas_class": "valid if A1, A2 and A3 hold, else not valid",
+      "prior_S_b, prior_S_g (_raw, _sub)": "the spread of the cell's fake-data bias over the graded truths (S_b) and of "
+                                           "the generator predictions (S_g), each in two noise treatments",
+      "prior_rho_<b>_over_<g>": "S_b / S_g in the four combinations of the two treatments",
+      "prior_class": "valid if rho < 0.5 in all four, else not valid"},
+     ["valid"], "validity"),
+    ("sec-repro2d_benchmark.csv", "sec:repro2d", "The two-dimensional benchmark against the published result, and the "
+     "run-period rows.",
+     {"quantity": "an id", "description": "what it is", "value": "the full-precision value",
+      "printed": "the value as the paper prints it", "unit": "its unit (1 is dimensionless)"},
+     ["vt2d", "tension", "period"], "benchmark2d"),
+    ("sec-repro2d_result2d.csv", "fig:validation", "The two-dimensional result on the 205 reported bins.",
+     {"global_id": "pt_bin * 16 + ppar_bin", "pt_bin, ppar_bin": "bin indices from 0",
+      "pt_lo, pt_hi, ppar_lo, ppar_hi": "bin edges in GeV/c",
+      "d2sigma_dpt_dppar": "d^2 sigma / (dp_T dp_par) in cm^2/nucleon per (GeV/c)^2"},
+     ["c2a-x", "proj2d", "export2d", "budget2d", "fig67", "vt2d"], "arrays2d"),
+    *[(f"sec-uq2d_{k}.csv", "sec:uq2d", f"2D covariance block: {d}.",
+       {"global_id, then the 205 ids": "a 205 x 205 matrix in (cm^2/nucleon per (GeV/c)^2)^2, rows and columns in "
+                                       "the order of sec-repro2d_result2d.csv"},
+       [f"c2a-{k}", "export2d", "budget2d"], "arrays2d") for k, d in MAT2D],
+    ("tab-gen16.csv", "tab:gen16", f"chi^2 of each generator prediction. {DESCRIPTIVE}",
+     {"prediction, label": "the prediction", "<cov>_<kind>_chi2, _ndf, _p": "<cov> is reported or without_C_PL5D; "
+      "<kind> is total or shape_only (normalization freed); V_g is added to the covariance in every chi^2",
+      "n_cells": "cells compared (GiBUU: the 8 cells below p_par 4.5 GeV/c)"},
+     ["g", "g-nopl", "gdefs"], "illustrative"),
+    ("tab-cmodel16.csv", "tab:cmodel16", f"How each prediction's chi^2 changes with C_model. {DESCRIPTIVE}",
+     {"matrix, prediction, chi2_kind": "as in tab-gen16.csv",
+      "chi2_carbon_ratios": "the chi^2 as reported: C_model's NuWro and GiBUU shape ratios taken from carbon (equals "
+                            "tab-gen16.csv's chi^2)",
+      "chi2_CH_ratios, chi2_C_model_doubled, chi2_C_model_removed": "the chi^2 with those ratios from CH, with "
+                                                                    "C_model doubled, and with C_model removed",
+      "delta_CH, delta_doubled, delta_removed": "each minus chi2_carbon_ratios"},
+     ["e2", "e2sens"], "illustrative"),
+    ("fig-ratio16.csv", "fig:ratio16", f"The data behind the ratio figure. {DESCRIPTIVE}",
+     {"f_data, g_prediction": "cm^2/nucleon", "f_over_g": "data over prediction",
+      "sigma_reported_over_f": "sqrt(diag reported)/f (fraction)",
+      "bar_half_width": "f_over_g x sigma_reported_over_f: the data's reported uncertainty only, without V_g"},
+     ["g", "figratio"], "illustrative"),
+    ("sec-cov5d_ens1.csv", "sec:cov5d", "The ensemble-averaged variant (96 fits): stability and bias results.",
+     {"quantity, value": "one result per row"}, ["ens1s1", "ens1s2"], "ens1"),
+]
+BUILDERS = [build_cov16, build_groups16, build_fd16, build_tunes, build_validity, build_benchmark2d, build_arrays2d,
+            build_gen16, build_cmodel16, build_ratio16]
 
 
 # ------------------------------------------------------------------------------------------------------ assemble
@@ -693,8 +988,7 @@ def assemble():
     """Return ({package path: bytes}, [pending], ctx). Raises Mismatch on any disagreement."""
     d, raw = load_sources()
     mv = load_producer()
-    # the producer pins the same files: same path, and its short pin a prefix of the full one here
-    for k, (rel, pin) in SOURCES.items():
+    for k, (rel, pin) in SOURCES.items():   # the producer pins the same files: same path, its short pin a prefix
         theirs = mv.NOPL_READOUTS.get("g") if k == "g-nopl" else mv.READOUTS.get(k)
         if theirs:
             need(theirs[0] == rel and pin.startswith(theirs[1]),
@@ -715,110 +1009,202 @@ def assemble():
     for _, label, *_ in FILES:
         need(f"\\label{{{label}}}" in paper, f"the paper at {PAPER_REF[:8]} has no \\label{{{label}}}")
     check_licences(paper)
+    for _, _, quotes in GLOSSARY:
+        for q in quotes:
+            need(norm(q) in c.paper_flat, f"glossary: the paper at {PAPER_REF[:8]} does not hold {q!r}")
+    need(fv["f0b-all-truths"] == str(len(FD16_ROWS)), "the paper's count of graded truths is not tab-fd16's rows")
+    need(list(TRUTH_ROWS) == FD16_ROWS, "TRUTH_ROWS is not tab-fd16's row order")
+    for t, row in TRUTH_ROWS.items():
+        need(f"\n{row} & " in paper, f"the paper's tab:fd16 has no row {row!r}")
+    need(fv["trig-p"] == "0.01" and fv["trig-z"] == "2", "the flagging thresholds the README states changed")
     out = {}
     for b in BUILDERS:
         out.update(b(c))
     files, pend = build_ens1(c)
     out.update(files)
-    pending = [p for p in [pend] if p] + PENDING
+    pending = ([ENS1_PENDING] if pend else []) + PENDING
     for name, what in pending:
-        out[f"pending/{name}.txt"] = (f"PENDING: {name}\nWaits for: {what}\nNothing in this package stands in for "
-                                      f"it.\n").encode()
+        out[f"pending/{name}.txt"] = pending_text(what).encode()
     pkg = {f"package/{k}": v for k, v in out.items()}
     pkg["README.txt"] = readme(c, out, pending).encode()
+    pkg["PROVENANCE.txt"] = provenance(c, out, pending).encode()
     return pkg, pending, c
 
 
+def detex(s):
+    s = re.sub(r"\$C_\{\\mathrm\{([^}]*)\}\}\$?", r"C_\1", s)
+    s = re.sub(r"C_\{\\mathrm\{([^}]*)\}\}", r"C_\1", s)
+    for a, b in ((r"\Eavail", "E_avail"), (r"\pT", "p_T"), (r"\pPar", "p_par"), ("$q_3$", "q3"), ("$q_{3}$", "q3"),
+                 (r"\chi^2", "chi^2"), (r"\leq", " <= "), ("Ref.~\\cite{ATLAS:2024jets}", "the ATLAS reference"),
+                 ("~", " "), ("--", "-"), ("$", ""), (r"\mathsf{T}", "T")):
+        s = s.replace(a, b)
+    s = re.sub(r"\\SI\{([^}]*)\}\{\\percent\}", r"\1 %", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
 def readme(c, out, pending):
+    L = []
+    w = L.append
+    w("RESULT PACKAGE: the tables and figures of the five-observable OmniFold methods paper, as data files")
+    w("")
+    w("A five-observable unbinned unfolding of MINERvA medium-energy muon-neutrino data, with a two-dimensional "
+      "benchmark")
+    w("against the published (p_T, p_par) result (arXiv:2106.16210). Version 1." + (
+        f" Not yet included: {len(pending)} results (see pending/)." if pending else ""))
+    w("")
+    w("SCOPE OF USE (read first)")
+    for line in wrap("The paper: \"" + detex(PROV["every"][0][2][0]) + "\" and \"" + detex(PROV["every"][0][2][1])
+                     + ".\" No file in this package is a coverage statement, and no file makes a measurement claim beyond"
+                     " the paper's. Each file's own scope is given with it below.", 112):
+        w(f"  {line}")
+    w("")
+    w("LICENCE")
+    w("  To be set at deposit.")
+    w("")
+    w("CONVENTIONS")
+    for line in (
+            "Cells R00-R15 are always in that order, in rows and columns alike.",
+            "p_par (the muon momentum along the beam) is written pz in tab-result16_cells.csv and ppar elsewhere; momenta "
+            "are in GeV/c, E_avail and W in GeV.",
+            "Every rel_sigma_* and *_over_f column is a fraction, not a percent. In sec-repro2d_benchmark.csv the unit "
+            "column gives each row's unit.",
+            "The largest edge on each axis of a cell (4.5 GeV/c for p_T, 60 GeV/c for p_par, 100 for E_avail, q3 and W) "
+            "is the outer edge of the analysis grid, which contains every signal event; it is not a cut.",
+            "Numbers are written at full float64 precision. Values such as p = 1.0000000000000002 and matrices that are "
+            "symmetric only to about 3e-16 of sqrt(C_ii C_jj) are floating-point rounding in the source records, kept "
+            "as they are.",
+            "Files are named by the paper's LaTeX label; the label-to-number map is below, to be completed at release."):
+        for i, l_ in enumerate(wrap(line, 108)):
+            w(f"  {'- ' if i == 0 else '  '}{l_}")
+    w("")
+    w("GLOSSARY")
+    for term, plain, quotes in GLOSSARY:
+        w(f"  {term}")
+        for l_ in wrap(plain, 106):
+            w(f"      {l_}")
+        for q in quotes:
+            for i, l_ in enumerate(wrap(f"Paper: \"{detex(q)}\"", 106)):
+                w(f"      {l_}")
+    w("")
+    w("TRUTHS (tab-fd16.csv; * marks the paper's closure tests, where the truth is the simulation's own)")
+    for t in FD16_ROWS:
+        w(f"  {t:<15} {detex(TRUTH_ROWS[t]).replace('^{*}', '')}{' *' if t in CLOSURE else ''}")
+    w("  All 12 are the paper's graded truths.")
+    w("")
+    w("FILES (package/)")
+    for fn, label, what, cols, _, fam in FILES:
+        if fn not in out:
+            continue
+        w("")
+        w(f"* {fn}   [paper label {label}; table or figure number: to be completed at release]")
+        for l_ in wrap(what, 108):
+            w(f"    {l_}")
+        for col, meaning in cols.items():
+            for i, l_ in enumerate(wrap(f"{col}: {meaning}", 104)):
+                w(f"    {'- ' if i == 0 else '  '}{l_}")
+        w(f"    Scope: see \"{SCOPE_TITLE[fam]}\" below.")
+    w("")
+    w("SCOPE OF USE, BY FILE")
+    seen = []
+    for *_, fam in FILES:
+        if fam in seen or not any(f[0] in out for f in FILES if f[5] == fam):
+            continue
+        seen.append(fam)
+        w(f"  {SCOPE_TITLE[fam]}:")
+        for line in SCOPE[fam]:
+            for i, l_ in enumerate(wrap(line, 104)):
+                w(f"    {'- ' if i == 0 else '  '}{l_}")
+    w("")
+    w("NOT INCLUDED")
+    for line in ("The published MINERvA result, which is cited, not redistributed.",
+                 "The paper's validation-programme table (tab:outcomes) as a table: it is a text table, and its "
+                 "numerical entries are in the files above.",
+                 "Per-group 16 x 16 matrices for the groups inside C_e: the source records give their relative "
+                 "uncertainties only (tab-groups16.csv)."):
+        for i, l_ in enumerate(wrap(line, 108)):
+            w(f"  {'- ' if i == 0 else '  '}{l_}")
+    if pending:
+        w("")
+        w("NOT YET AVAILABLE (pending/)")
+        for name, what in pending:
+            for i, l_ in enumerate(wrap(f"{name}.txt: {what}.", 108)):
+                w(f"  {'- ' if i == 0 else '  '}{l_}")
+    w("")
+    w("REBUILD AND CHECK")
+    w("  From the root of the source repository, at the version that holds this package:")
+    w("    python3 docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/build_package.py --check")
+    for l_ in wrap("This rebuilds every file from the source records and requires each to equal the file here byte for "
+                   "byte, and every value to equal the paper's printed value. It is a transcription check, not a test of "
+                   "the results; it recomputes no physics. --self-test plants a wrong value in each kind of check and "
+                   "confirms that the build refuses it. Python 3, standard library only. PROVENANCE.txt lists the source "
+                   "records, their sha256 digests and the statements each scope rests on. SHA256SUMS lists every file.",
+                   108):
+        w(f"  {l_}")
+    return "\n".join(L) + "\n"
+
+
+def provenance(c, out, pending):
     code = {p: sha256((ROOT / p).read_bytes()) for p in (
         "docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/build_package.py",
         "docs/analysis-note/make_values_fived16.py", "docs/analysis-note/values_fived16.tex",
         "docs/analysis-note/values.tex")}
-    status = "INCOMPLETE" if pending else "COMPLETE"
     L = []
     w = L.append
-    w("RESULT PACKAGE: the methods paper's tables and figures as data (generated by build_package.py; do not edit)")
+    w("PROVENANCE: where every file of this package comes from (generated by build_package.py)")
     w("")
-    w(f"STATUS: {status}." + (f" Pending: {', '.join(p for p, _ in pending)} (package/pending/)." if pending else ""))
-    w("Nothing here is deposited, tagged or uploaded. Whether and where it is released is Joseph's decision.")
+    w(f"PAPER: {PAPER_PATH} at commit {PAPER_REF}; file names follow its LaTeX labels.")
     w("")
-    w("WHAT THIS IS")
-    w("  Every file is written by build_package.py from committed records only. The build contacts no cluster and")
-    w("  recomputes no result. Each record is pinned by sha256, and every written value is checked against the")
-    w("  paper's own values: its \\fvval key in docs/analysis-note/values_fived16.tex (which must equal a fresh run of")
-    w("  make_values_fived16.py), its macro in docs/analysis-note/values.tex, or, for a value with no key, the paper's")
-    w(f"  printed text at {PAPER_REF}. Any disagreement stops the build.")
-    w(f"  Files are named by the paper's LaTeX \\label at {PAPER_REF[:8]} (':' written '-'), not by table number,")
-    w("  because the restructure renumbers the tables. The label map moves with the restructure (PR #977).")
-    w("")
-    w("REPRODUCE (from the repository root, at the commit that holds this README)")
-    w("  python3 docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/build_package.py --check")
-    w("  It exits 0 only if a rebuild equals every committed file here byte for byte; --self-test plants a wrong")
-    w("  value in each check family and confirms that the build refuses it. Python 3, standard library only; git is")
-    w(f"  needed to read the paper at {PAPER_REF[:8]}.")
+    w("HOW EACH VALUE IS CHECKED")
+    for l_ in wrap("Each source record is pinned by sha256. Every value written is checked against the paper's values: "
+                   "its \\fvval key in docs/analysis-note/values_fived16.tex, which must equal a fresh run of "
+                   "make_values_fived16.py; its macro in docs/analysis-note/values.tex; or, for a value with no key, the "
+                   "paper's printed text at the commit above. The 2D arrays are also checked against the committed "
+                   "export's sqrt-traces, the per-block uncertainty summary, and the pT and p_par projection "
+                   "uncertainties.", 110):
+        w(f"  {l_}")
     w("")
     w("CODE (sha256)")
     for p, h in code.items():
         w(f"  {h}  {p}")
-    w("  The records name the code that produced them (e.g. fd_data_product_cpl.json code_sha256:")
+    w("  The 16-cell data product names the code that produced it:")
     for k, h in c.d["dp"]["code_sha256"].items():
         w(f"    {h}  {k}")
-    w("  ).")
     w("")
-    w("FILES (package/; each with its paper label, its sources, the values checked and its licence block)")
-    srcmap = {k: SOURCES[k][0] for k in SOURCES}
-    used = []
-    for fn, label, desc, srcs, lic in FILES:
+    w("FILES")
+    for fn, label, _, _, srcs, fam in FILES:
         if fn not in out:
             continue
-        used += [lic] if lic not in used else []
-        w("")
-        w(f"* {fn}  [{label}]")
-        for line in wrap(desc, 108):
-            w(f"    {line}")
-        for s_ in srcs:
-            w(f"    source: {srcmap[s_]}")
-            w(f"            sha256 {PINS[s_]}")
         n = c.n_checked.get(fn, 0)
-        w(f"    checked: {n} value{'s' if n != 1 else ''} against the paper (see WHAT THIS IS)")
+        w(f"* {fn}  [{label}]  {n} value{'s' if n != 1 else ''} checked; scope: {SCOPE_TITLE[fam]}")
+        for s_ in srcs:
+            w(f"    {PINS[s_]}  {SOURCES[s_][0]}")
         if c.asym.get(fn):
-            w(f"    symmetric to {c.asym[fn]:.1e} of sqrt(C_ii C_jj): floating-point rounding in the record, kept as "
-              "committed")
-        w(f"    licence: L-{lic}, {LIC_TITLE[lic]}")
+            w(f"    symmetric to within {c.asym[fn]:.1e}, as |C_ij - C_ji| / sqrt(C_ii C_jj)")
     w("")
-    w("LICENCES (each line quoted verbatim from the record named; the build stops if a quote is not there)")
-    for lic in used + ["every"]:
+    w("THE 2D ARRAYS")
+    for l_ in wrap("sec-repro2d_result2d.csv and sec-uq2d_*.csv come from cov2d_Q_205.npz (sha256 "
+                   "7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2), the two-dimensional analysis's "
+                   "export of the result and its covariance blocks on the 205 reported bins. Its lossless CSV "
+                   "transcription (Python repr of each float64; every array bitwise equal after the round trip) is "
+                   f"committed at {C2A}/ and pinned above. The bin edges are those of "
+                   "2d-unfolding/pv2d/ratios/projections.json. Q equals s5_total + C_PL, and s5_total equals universe "
+                   "+ stat + c08, exactly.", 110):
+        w(f"  {l_}")
+    w("")
+    w("STATEMENTS EACH SCOPE RESTS ON (quoted verbatim; the build stops if a quote is not in its record)")
+    fams = []
+    for *_, fam in FILES:
+        if fam not in fams and any(f[0] in out for f in FILES if f[5] == fam):
+            fams.append(fam)
+    for fam in fams + ["every"]:
         w("")
-        w(f"L-{lic}: {LIC_TITLE[lic]}")
-        for rel, head, quotes in LIC[lic]:
+        w(f"{SCOPE_TITLE.get(fam, 'every file')}:")
+        for rel, head, quotes in PROV[fam]:
             where = f"{rel} at {PAPER_REF[:8]}" if rel == PAPER_PATH else rel
-            w(f"  {head}")
-            w(f"    {where}")
+            w(f"  {head} -- {where}")
             for q in quotes:
-                for i, line in enumerate(wrap(q, 102)):
-                    w(f"      {'- ' if i == 0 else '  '}{line}")
-    w("")
-    w("IN EVERY FILE (L-every)")
-    w("  No file is a coverage statement, and no file makes a measurement claim beyond the paper's.")
-    w("")
-    w("NOT IN THIS PACKAGE")
-    w("  - The 2D per-bin result and its 205 x 205 covariance. The committed export (re2/run/partc_r2/partc-r2/outA/")
-    w("    cov2d_Q_205.json.gz) holds only their shapes and sqrt-traces; the arrays are in cov2d_Q_205.npz (sha256")
-    w("    7153b194b95c27f80db5997bdde35fe2475f2b1c40c9ff456edd409850cf47d2) on pscratch and in the HPSS bundle")
-    w("    re2-2d-rebuild-partc-20261024. A read-only copy is drafted separately and waits for the director's go.")
-    w("  - The published MINERvA result (arXiv:2106.16210), which is cited, not redistributed.")
-    w("  - Table tab:outcomes as a table: it is prose drawn from about twenty records. Its numeric rows come from the")
-    w("    files above.")
-    w("  - Per-group 16 x 16 matrices: the committed records hold each group's relative sigma only (tab-groups16.csv).")
-    w("  - Figure PDFs, and anything not committed.")
-    if pending:
-        w("")
-        w("PENDING")
-        for name, what in pending:
-            for i, line in enumerate(wrap(f"{name}: {what}", 106)):
-                w(f"  {'- ' if i == 0 else '  '}{line}")
-    w("")
-    w("SHA256SUMS lists every file here, this README and build_package.py.")
+                for i, l_ in enumerate(wrap(q, 104)):
+                    w(f"    {'- ' if i == 0 else '  '}{l_}")
     return "\n".join(L) + "\n"
 
 
@@ -852,7 +1238,7 @@ def committed_tree():
     for p in sorted((HERE / "package").rglob("*")):
         if p.is_file():
             got[str(p.relative_to(HERE))] = p.read_bytes()
-    for k in ("README.txt", "SHA256SUMS"):
+    for k in ("README.txt", "PROVENANCE.txt", "SHA256SUMS"):
         if (HERE / k).exists():
             got[k] = (HERE / k).read_bytes()
     return got
@@ -915,7 +1301,7 @@ def main(argv):
         if diff:
             print(f"RESULT-PACKAGE :: FAIL (the committed package differs from a rebuild: {diff[:6]})")
             return 1
-        print(f"RESULT-PACKAGE :: PASS ({len(pkg) - 1} files equal a rebuild; {n} values checked) :: {status}")
+        print(f"RESULT-PACKAGE :: PASS ({len(pkg)} files equal a rebuild; {n} values checked) :: {status}")
         return 0
     if argv:
         print(__doc__)
@@ -924,7 +1310,7 @@ def main(argv):
         if k.startswith("package/") and k not in pkg:
             (HERE / k).unlink()
     write_tree(HERE, pkg)
-    print(f"RESULT-PACKAGE :: wrote {len(pkg) - 1} files and README.txt; {n} values checked :: {status}")
+    print(f"RESULT-PACKAGE :: wrote {len(pkg)} files (package/, README.txt, PROVENANCE.txt); {n} values checked :: {status}")
     return 0
 
 
