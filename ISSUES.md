@@ -493,7 +493,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-7 [T]** — **Purity and stability terminology confusion.**  
   *Finding:* "Diagonal purity" vs "reconstruction stability" used inconsistently.  
   *Evidence:* Fig. 3 caption, `sec_fived16.tex:30`.  
-  *Resolution:* Standardize terminology throughout text and figure captions.
+  *Resolution:* This row authorizes no tex edit. Do not replace one term with the other until a record says they are the same quantity.
 
 * **S1-PRES-8 [T]** — **Exponents of statistics in §3.2.**  
   *Finding:* Standard errors quoted on $\\sigma$ (4.1%) and variance (71%) without distinction.  
