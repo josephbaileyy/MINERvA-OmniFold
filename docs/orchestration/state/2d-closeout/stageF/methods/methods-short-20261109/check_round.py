@@ -41,16 +41,16 @@ NEW_NUMERALS = {"285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55,
                 "99.7": "L-28: r5:176's bar 39.04 at the null's 0.997 quantile, printed as the 99.7th percentile (round 6, the editor's B8)"}
 ONCE = [
     "and their cross-covariance is not available, so no difference between them can be given a calibrated significance.",
-    "The joint-test estimator is the baseline this study characterizes",
+    "The five-observable estimator is the baseline this study characterizes",
     "It is a tested mitigation of the instability, not a replacement.",
     "These results bound what the study shows.",
-    "That test is the natural next step.",
-    "Every criterion was fixed before the results it grades were seen.",
+    "That test is a next step.",
+    "The grading rules and their timing are stated with the individual tests; comparisons without a grading rule are descriptive.",
 ]
 GONE = [r"stabili[sz]ed variant", r"validat\w* the (full|five-observable) distribution", r"detector[- ]inadequa",
         r"locali[sz]ed in", r"\bE_?\{?96", r"\bFD-PRR\b", r"\bLL5D\b", r"\bV-HALF\b", r"\bV-ATLAS\b", r"\bV-PRIOR\b",
         r"\bCOV2D\b", r"\bRS1\b", r"\bENS1\b", r"\bFD-STAB\b", r"BIAS_WORSE", r"Stage~?0c", r"\bPR-[123]",
-        r"\bdeclared\b"]
+        r"\bdeclared\b", r"joint-test estimator", r"\\chi\^\{2\}/205", r"tracks the same bias", r"natural next step"]
 
 
 def load_mv(wt):

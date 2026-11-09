@@ -7,8 +7,10 @@ Left column, s5n family N (state/s5n/stage1/dev_receipt.json): s5c F2 determinis
 The injected per-cell truth change of C4 is from state/s5n/stage1/truth_check.json (M1_ratio - 1).
 Right column, s5e candidate R = the joint-test estimator (state/s5e/cand/assess_receipt.json): family N with the
 refinement classifier at 400 trees / 31 leaves; fresh assessment seeds, 40 nominal experiments (A1) and 20 per
-withheld truth W1 (NuWro E_avail), W2 (GENIE MEC, (E_avail,W)), W3 (NuWro (pT,p||,E_avail)). The band is the
-adopted C_EW total sigma per cell that A4 compares with (assess_receipt A4.adopted_total_sigma_pct).
+withheld truth W1 (NuWro E_avail), W2 (GENIE MEC, (E_avail,W)), W3 (NuWro (pT,p||,E_avail)). The adopted C_EW total
+sigma per cell (assess_receipt A4.adopted_total_sigma_pct) is no longer drawn: that covariance fails its acceptance
+criteria, so a comparison with it says nothing about the reported uncertainty (the short methods paper's W-15, the
+director's decision of 2026-11-09 on IR-sol, #988). It stays in the numbers file as a record.
 Residual = mean over experiments of (unfolded - truth) / truth, truth = the deformed truth of each experiment.
 
   python3 fig_m3_deformation.py [--repo CHECKOUT] [--outdir DIR]
@@ -59,7 +61,7 @@ def main() -> None:
                  round(float(np.max(np.abs(rw["W1"][0]))), 0) == 31, amax(rw["W1"][0])),
         mc.check("R, W3 (NuWro 3D): max |residual| over EW inside 16-31%, %",
                  16 <= float(np.max(np.abs(rw["W3"][0]))) <= 31.5, amax(rw["W3"][0])),
-        mc.check("R: cells with max_W |residual| <= adopted total sigma (paper 'about half'), of 42",
+        mc.check("R: cells with max_W |residual| <= adopted total sigma (a record only: no longer printed, W-15), of 42",
                  int(np.sum(md <= sig_adopt + 1e-9)) == len(s5e["A4"]["cells_model_dependence_within_adopted_sigma"]) == 20,
                  int(np.sum(md <= sig_adopt + 1e-9))),
     ]
@@ -80,9 +82,6 @@ def main() -> None:
                 label=r"injected truth change (deformed/nominal $-$ 1)")
     a_ng.errorbar(x, ng, ng_se, fmt="o", ms=3.0, color=mc.PURPLE, lw=0.7,
                   label=r"residual, GiBUU/GENIE $E_{\rm avail}$ (60 exp.)")
-    edges = np.arange(mc.N_EW + 1) - 0.5
-    a_rw.stairs(sig_adopt, edges, baseline=-sig_adopt, fill=True, color="0.88", lw=0,
-                label=r"$\pm$ quoted total $\sigma$ of the $(E_{\rm avail},W)$ projection")
     for (w, lab, fmt, col), dx in zip((("W1", r"NuWro $E_{\rm avail}$", "o", mc.BLUE),
                                         ("W2", r"GENIE MEC $(E_{\rm avail},W)$", "^", mc.GREEN),
                                         ("W3", r"NuWro $(p_T,p_\parallel,E_{\rm avail})$", "D", mc.PURPLE)),
@@ -99,7 +98,7 @@ def main() -> None:
         ax.set_xlabel(r"$(E_{\rm avail},W)$ cell: $W$ bin 1–6 within each $E_{\rm avail}$ bin (GeV, top)", fontsize=7.2)
     a_ng.set_title("(a) with unbinned background refinement,\nrefinement classifier 100 trees, 8 leaves",
                    fontsize=7.2, loc="left", pad=11)
-    a_rw.set_title("(b) joint-test estimator: as (a), with refinement\nclassifier 400 trees, 31 leaves",
+    a_rw.set_title("(b) five-observable estimator: as (a), with refinement\nclassifier 400 trees, 31 leaves",
                    fontsize=7.2, loc="left", pad=11)
     # (X5 Gm9: the in-plot estimator header moved to the article caption.)
     mc.save(fig, a.outdir, "m3_fig2_deformation")

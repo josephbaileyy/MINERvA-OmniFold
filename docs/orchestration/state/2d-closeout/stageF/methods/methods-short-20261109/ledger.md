@@ -82,3 +82,53 @@ line's evidence route. The full list is in OUTLINE.md's revision note.
 | W-8 | descriptive register in approved sentences | the B0 sentences and RS1's licensed clauses are kept verbatim; elsewhere "declared" became "specified in advance" | the same change inside the approved sentences, which would need Joseph |
 | W-9 | the article type and the analysis-note citation (the editor's C4 and C6) | not changed | for Joseph: regular paper or technical report; a resolvable identifier for ref. [14] |
 | W-10 | authorship and the data-use statement (the editor's C8) | the title says "of MINERvA open data"; the acknowledgments are unchanged | for Joseph, per the release's terms |
+
+## Decided, batch 1 (the director, 2026-11-09, under Joseph's away delegation)
+
+**Every decision in this batch is reversible by Joseph on his return.**
+
+- **The read they rest on:** "IR-sol", an independent read by a fresh gpt-6-sol session, read-only at `f51d22c8b`
+  with the round-6 reports. Its answer is
+  `state/2d-closeout/stageF/methods/secondary-results/independent-read-w-items-20261109/answer.txt` (#988 at `e146861b`),
+  verbatim, and each row cites its lines.
+- **What the director checked:** IR-sol's W-12 sources (`sec_5d.tex:196-204`, `sec_joint.tex:165`) and its W-14 count
+  (`valid-region-20261107/source/SM_section2_lines25-75.txt:34`, item 1 the jet threshold).
+- **Where it applies:** in `paper_body.tex`, `main_paper.tex`, `main_supplement.tex` and `supplemental_body.tex`, at
+  this batch's commit.
+
+| W | decision | what prints now | read and records |
+|---|---|---|---|
+| W-1 | IR-sol "other"; **the director wants Joseph to look at it first on return** | title: "Five-observable unbinned unfolding of MINERvA open data with OmniFold: a benchmark and diagnostic study"; §1: "a benchmark and diagnostic study"; the Supplement's title to match | IR-sol `:7-10`; decision `943d5f97:…:49-51` |
+| W-2 | option 1's cuts plus option 2's clause | the abstract drops "over many eigenmodes …" and the criteria in parentheses, and adds "and by a median of 0.133 % of the cross section on the 16 reported cells" | IR-sol `:12-15`. **0.133 %'s source:** `state/measurement-paper/5d-community-20261024/FD-1B-INV-I0-REPORT.md:66-67` ("σ_J/f on the data has median 0.133 %, range 0.055–0.252 %"), the source r5:238 records for §6.1's same number |
+| W-3 | 1 | §5.4: "All three rules classify the bias under simulated truths: none is a coverage statement, none assesses the detector model, and none excludes a cell from the output."; S11: "neither excludes a cell from the output" | IR-sol `:17-20`; `OUTCOME-20261107-valid-region.md:21-36`; `DECISION-20261109-joseph-bias-half-rule.md:28-40` |
+| W-4 | 3, not named in the paper; my option 1 is banked for Joseph as a scope question (REPORT.md) | nothing | IR-sol `:22-25`; decision `943d5f97:…:59-64` |
+| W-5 | 1, with "a next step" | "That test is a next step." | IR-sol `:27-30` |
+| W-6 | 1 | unchanged | IR-sol `:32-35` |
+| W-7 | 1 | unchanged | IR-sol `:37-40` |
+| W-8 | 1 | unchanged | IR-sol `:42-45` |
+| W-11 | IR-sol's wording, with the paper's term for COV2D's object | "The procedure's two-dimensional covariance, rebuilt at each of two held-out generator tunes, under-covers at both; coverage of the reported five-observable intervals is not established." The pending like-for-like sentence stays separate | IR-sol `:47-50`; COV2D `:97-106`, `:108-115`. **The term:** the paper's "the two-dimensional covariance" (§3.2) is the reported 2D covariance, while COV2D graded the procedure's covariance remade at each tune, which §6.2 calls "the procedure's two-dimensional covariance". This sentence supersedes the per-outcome W-11 entry and the editor's wording, and holds under every like-for-like outcome |
+| W-12 | the director's wording | §7: "The second is on the data. When the simulation's prior is changed, the data result shifts in correlation with minus the noise-free residual at the same truth (ref. [14], section 9.4); these shifts are sensitivities, not a measured bias on data." The 11.5 sentence is in S7: "The null distributions of the note's calibrated joint tests reproduce the estimator's pull toward its prior" | IR-sol `:52-55`; `sec_5d.tex:196-204`; `sec_joint.tex:165-168` |
+| W-13 | 1 | §7 ¶1 ends the list "within the reported uncertainty", then: "and the data show a run-period inconsistency, present before unfolding, of unknown cause" | IR-sol `:57-60`; `period-unfold-20261014/REPORT.md:63-67` |
+| W-14 | 2 | "one based on the usage recommendations of ref. [5]"; no count of recommendations; S11 keeps the unmet correlation condition | IR-sol `:62-65`; `valid-region-20261107/source/SM_section2_lines25-75.txt:10-45` (five numbered items; item 5 unmet) |
+| W-15 | 1 | §5.1 keeps "it is 16–31 % in the most affected (E_avail, W) cell", with the estimator named, and drops the comparison sentence. Fig. 3(b)'s band is removed in its producer (below) | IR-sol `:67-70`; `sec_5d.tex:247-253` (the covariance fails its specification) |
+| W-16 | 1, without option 2's causal clause | abstract: "bitwise independent of its training seed in the unfolds we ran" | IR-sol `:72-75` |
+| W-17 | 1 | the three-dimensions sentence follows the IBU sentence in §1's context paragraph | IR-sol `:77-80` |
+| W-18 | 1 and 1 | Limitation 3 moves to S7. "the five-observable estimator" replaces "the joint-test estimator" in the printed paper, the Supplement and Fig. 3's panel title. §3.1's sentence reads "…; the note's calibrated joint tests of generator predictions use it too". Round 5's "an earlier five-observable estimator" (a different estimator) becomes "an earlier estimator of the five observables" | IR-sol `:82-85`. **Registry:** a new ALIASES row for "five-observable estimator" (`paper_body.tex:68`, digest `47a08982ce2219c5`); row 38 re-cited to the note's own definition (`sec_method.tex:100`, `ab43c270c1c00b9b`); row 47 and ATTRIBUTION row 17 re-cited to `:68`. check_registry: 67 aliases, PASS |
+| W-20 | IR-sol's wording | §3.3: "The grading rules and their timing are stated with the individual tests; comparisons without a grading rule are descriptive."; "Pass" loses its global "fixed in advance". **Kept** "specified/fixed in advance" only for the FD triggers, FD-STAB, ENS1, COV2D, LL5D, REF-C2C1, REF-G1, the per-period benchmark and the FD-1B gate and its staged rules. **Removed** for the prior-retention study (three phrases) and RS1's mechanism study; none attaches to V-ATLAS, V-PRIOR or V-HALF. The two after-the-fact disclosures are kept (§4.1 background adoption; §3.2 "added after these differences were seen"), and the first coverage test's gate is one sentence pointing to S9 | IR-sol `:87-90` and its source list |
+| W-22 | IR-sol's wording (it supersedes option 0) | §1: "Event weights let the same unfolded sample be histogrammed in projections or cells chosen afterwards. An uncertainty for a new choice must be constructed and checked for that choice; this study does not establish a practical gain over binned unfolding." | IR-sol `:92-95` |
+| W-23 | 1, with the new name | §3.2: "…lateral and normalization uncertainties of the five-observable estimator, whose sum is $C_{\mathrm{e}}$, and $C_{\mathrm{model}}$" | IR-sol `:97-100`; S5 |
+| W-24 | the neutral form. **IR-sol did not see it; the director takes it on the record alone** | §4.1: "The published covariance has a condition number of 1.5×10¹², and 73 of its 205 eigenvalues exceed 10⁻⁴ of the largest."; Table 1: "against a covariance of condition number 1.5×10¹²" | the note's `sec_results.tex:128`; re2 `tension_report.txt:55-56`; r5:151 |
+| reader item 1 | **this reverses the director's divisor ruling of 2026-11-09**, on IR-sol's advice: dividing by 205 after keeping only 73 or 139 modes obscures the per-direction scale, and the per-period declaration already uses the per-direction convention | §4.1: "Keeping the 73 directions with λ/λmax > 10⁻⁴ gives χ² = 136, and the 139 with λ/λmax > 10⁻⁶ give χ² = 285." Both χ²/205 ratios and the divisor clause are gone, and no per-direction ratio is printed. The full χ²/ndf with ndf = 205 is unchanged | IR-sol `:104`; `per-period-benchmark-20261106/DECLARATION.md:143-148` |
+| reader items 2–4 | no change; item 2's answer is in REPORT.md | — | IR-sol `:106-110` |
+
+**Retired with W-15:** `check_sec4_receipts.py`'s VERBAL row "about half of those cells (VL154: 20 of 42)", retired
+because the sentence no longer prints. Its self-test loops over VERBAL, now empty. VL154's count stays in the figure
+producer's numbers file as a record.
+
+**Fig. 3's producer is `figures/methods_m3/fig_m3_deformation.py`.** Before the change, it reproduced the committed
+`paper_fig_deformation.pdf` byte for byte (sha256 `92544d1f…`), which settles the figure-diagnosis report's "no producer
+found" for this figure. The band and its legend entry are removed there, and panel (b)'s title names the
+five-observable estimator. The PDF is regenerated, not edited (new sha256 `53598045…`).
+
+**Two test cases fixed:** `test_check_sec4_receipts.py` had two stale cases from earlier commits of this branch. The
+0.676 % now prints in the Supplement, and "16–31 %" prints twice. 17 of 17 pass.

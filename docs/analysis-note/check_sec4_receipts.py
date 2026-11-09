@@ -179,8 +179,13 @@ CHECKS = [
     ("other fixed shapes, most affected cell (VL154)", "paper_body.tex", r"it is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the most affected",
      shapes_range, "round"),
 ]
-VERBAL = [("about half of those cells (VL154: 20 of 42)", "paper_body.tex", r"within the quoted total uncertainty in about half of those cells",
-           half_of_cells, 0.40, 0.60)]
+# The short methods paper (methods-short-20261109, W-15, the director's decision of 2026-11-09 on IR-sol, #988) dropped
+# the comparison of the residual with an earlier covariance that fails its acceptance criteria, so the "about half of
+# those cells" phrase no longer prints and its verbal check is retired. VL154's 20 of 42 stays in the figure producer's
+# numbers file (figures/methods_m3/fig_m3_deformation.py) as a record. The retired row was:
+# VERBAL = [("about half of those cells (VL154: 20 of 42)", "paper_body.tex", r"within the quoted total uncertainty in about half of those cells",
+#            half_of_cells, 0.40, 0.60)]
+VERBAL = []
 
 
 def half_ulp(printed: str) -> float:
@@ -276,12 +281,13 @@ def self_test() -> int:
                     continue
                 caught += 1
                 print(f"  caught      {label}: {p} -> {bad}")
-    trial = dict(base)
-    trial["paper_body.tex"] = text("paper_body.tex", base).replace("about half of those cells", "about a third of those cells")
-    if dict((r[0], r[1]) for r in evaluate(trial))[VERBAL[0][0]]:
-        print("  NOT CAUGHT  verbal phrase removal"); ok = False
-    else:
-        caught += 1; print("  caught      verbal phrase changed")
+    for label, src, pat, fn, lo, hi in VERBAL:   # none since W-15; the loop is kept for a future verbal row
+        trial = dict(base)
+        trial[src] = text(src, base).replace(pat.replace("\\", ""), "")
+        if dict((r[0], r[1]) for r in evaluate(trial))[label]:
+            print(f"  NOT CAUGHT  verbal phrase removal: {label}"); ok = False
+        else:
+            caught += 1; print(f"  caught      verbal phrase changed: {label}")
     print(f"SELF-TEST :: {'PASS' if ok else 'FAIL'} ({caught} perturbations rejected)")
     return 0 if ok else 1
 
