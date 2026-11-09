@@ -767,7 +767,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. The cited 209.6 and 205.8 are not in the note. Table 3 does not quote a run-period chi-squared. Do not reconcile a run-period chi-squared to a value from values.tex.
 * **G1-ACC-3 [T]** — **Inconsistent degrees of freedom in held-out-tune test.** Same finding as S2-ACC-8.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S2-ACC-8. Do not write that a kinematically inaccessible cell was excluded. The two ndf macros already print 204 and 205.
-* **G1-ACC-4 [T]** — **Marginal normalization check agreement overstated in Executive Summary.** Same finding as S1-ACC-7 / S2-ACC-17.
+* **G1-ACC-4 [T]** — **Marginal normalization check agreement overstated in Executive Summary.** Same finding as S1-ACC-7 / S2-ACC-17.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S2-ACC-17. The executive summary no longer says the marginal checks pass to 1-2%. Do not add further marginal percentages to the executive summary.
 * **G1-ACC-5 [T]** — **Discrepancy between systematic median uncertainty in text and Table 8.**  
   *Finding:* Systematic median uncertainty quoted as 5.14% in §4.1 vs 5.38% in Table 8.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:45`, Table 8.  
