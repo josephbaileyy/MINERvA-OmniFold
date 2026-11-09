@@ -362,7 +362,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-15 [T]** — **Reproducibility tolerances and archival completeness.**  
   *Finding:* Quoted central values reproducible only within float32 rounding spread (≈0.8 median, 2.6 max statistical SD under perturbations, §9.3); rerun tolerance should be stated. App. G package not deposited, repository/snapshot placeholders unfilled, 2D uncertainty and coverage figures not reproduced by it, 489 simulation AnaTuples have no preservation copy. Release schema marks 5-axis covariance as fixed identity despite failing criteria.  
   *Evidence:* `docs/analysis-note/sec_5d.tex:95`, `app_release.tex:25`.  
-  *Resolution:* State numerical reproducibility tolerance explicitly; replace placeholders with formal archival deposit statements.
+  *Resolution:* Do not edit app_release.tex. Do not add a reproducibility tolerance until a record states it. This row authorizes no tex edit.
 
 ### Section 5: Self-Containment
 
