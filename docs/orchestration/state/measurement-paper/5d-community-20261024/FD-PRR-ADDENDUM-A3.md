@@ -97,6 +97,14 @@ New mutants, each killed by its named test:
 - **With A2.** A2 (#980) adds one test and one mutant to the same two files. Whichever of A2 and A3 merges second
   takes the union: 110 tests and 71 mutants. That PR's suite and mutation run are then rerun at its new head (the
   director's ruling).
+  - **What happened.** A2 merged first, as `cf76aec7cdff4e86f375ffe945f4d22f4799c4e0`. This PR then merged main into
+    its branch with a merge commit, `08848a768b684164ebde74a7cd24fac4369cf8e9` (parents `a310064a` and `cf76aec7`).
+  - **The one code conflict** was the `EXPECTED_TESTS` line, now 110 (A2's 105 plus A3's 5).
+  - **What merged cleanly.** The rest of `prr_mutation.py` (71 mutants: A2's "d over the truth, not the prior" and
+    A3's seven) and all of `test_prr.py`.
+  - **The check.** Relative to main at `cf76aec7`, the union's `test_prr.py` adds exactly A3's lines over M_A1. Its
+    `prr_mutation.py` does too, except that `EXPECTED_TESTS` reads 110 for 109.
+  - **A2's test** is in `EndToEnd`, so the `JobScript` class still holds 15 tests and every other class 95.
 
 ## 6. The new digests (sha256; the other three files are M_A1's)
 
@@ -107,6 +115,13 @@ New mutants, each killed by its named test:
 | `prr_mutation.py` | `4666aa06…` | `f996908e3abe07b1cfc8afc55f91993554af0b363af5fe6dd66b9802a23c1c79` |
 | `prr_probe.py`, `prr_ibu.py`, `prr_read.py` | unchanged | `f87ee90c…`, `17acad82…`, `f35bc328…` |
 
+**The union with A2, at `08848a76`.**
+- `sbatch_prr.sh`, `prr_probe.py` and `prr_ibu.py` are as in the table above.
+- `prr_read.py` is A2's, `d7c7c2c0d6cbe4a13d445a779335699de3d5275c4bcd3efc9f4e84a166868fbe`, identical to main at
+  `cf76aec7`. A3 does not change it.
+- `test_prr.py` is `c600e4b1c291eabb1c4083539df557cba5f35e1f081e04fd4dbe46b9216a0b8e`.
+- `prr_mutation.py` is `dfa994667f4afe8133aab77849e13594ca4d420beb29b22bc41f8d0202cc8337`.
+
 ## 7. Receipts
 
 - **Where they are made.** In a clean clone at this addendum's code commit, which the receipt README names. A following
@@ -116,7 +131,10 @@ New mutants, each killed by its named test:
   - the `JobScript` class alone;
   - `JobScript` against M_A1's `sbatch_prr.sh`;
   - the 70-mutant run.
-- **Where:** `fd/receipts-prr/a3/`.
+- **Where:** `fd/receipts-prr/a3/`, made at the code commit `9de365e7`.
+- **The union's receipts:** `fd/receipts-prr/a3/union/`, made the same way in a clean clone at the merge commit
+  `08848a76`. The runs are the same four, at 110 tests and 71 mutants, and the M_A1 control is again `JobScript`
+  against M_A1's `sbatch_prr.sh`.
 
 ## 8. Attempt 2 (the director's ruling; not part of this addendum's code)
 
