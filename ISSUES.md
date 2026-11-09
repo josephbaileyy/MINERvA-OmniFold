@@ -844,7 +844,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 ### Section 7: Minor Issues and Presentation
 
-* **G1-PRES-1 [T]** — **Anomalous and future dates.** Same finding as S1-PRES-3.
+* **G1-PRES-1 [T]** — **Anomalous and future dates.** Same finding as S1-PRES-3.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-PRES-3. Do not move provenance sentences out of the body until a later instruction names them.
 * **G1-PRES-2 [T]** — **Patchwork presentation of configurations.** Same finding as S1-PRES-4.
 * **G1-PRES-3 [T]** — **Misleading error bar conventions in figures.** Same finding as S2-PRES-5.
 * **G1-PRES-4 [T]** — **Hadronic catch bin compression.**  
