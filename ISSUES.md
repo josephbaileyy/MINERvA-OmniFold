@@ -352,7 +352,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-13 [T]** — **Extended-fiducial study uncertainties and envelope.**  
   *Finding:* No covariance; central value uses purity subtraction, not designated treatment. Three-prior envelope depends on NuWro-shaped prior built from flux-mis-sampled sample, not rebuilt after flux repair (§12.2). 28% of rate in tier 2 has only prior-spread envelope (±1.5% total cross section spread). Total uncertainty for $\\sigma_{\\text{ext}} = 4.502 \\times 10^{-38}$ is unquantified.  
   *Evidence:* `docs/analysis-note/sec_fps.tex:45-90`.  
-  *Resolution:* Explicitly document that extended-fiducial central value is exploratory and unbinned tier-2 rate has unquantified covariance.
+  *Resolution:* That matrix row is already in sec_execsummary.tex. Do not type 4.502\times10^{-38}. This row authorizes no tex edit.
 
 * **S1-COM-14 [T]** — **Ascencio et al. comparison uncertainties.**  
   *Finding:* Central values are 9.2% and 6.0% above Ascencio on two super-cells. Note says comparison "neither refutes nor validates". Ascencio's covariance is in hand, yet no uncertainty on the difference is given. At minimum, give Ascencio's own uncertainty on the two super-cells.  
