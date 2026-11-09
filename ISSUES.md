@@ -421,7 +421,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CLM-4 [T]** — **Generator $\\chi^2$ values sensitivity and interpretation.**  
   *Finding:* Generator $\\chi^2$ values presented as definitive tests despite extreme correlation sensitivity and circularity with $C_{\\text{model}}$.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:17`, `sec_fived16.tex:190`.  
-  *Resolution:* Present $\\chi^2$ values as purely descriptive metrics under assumed correlation models.
+  *Resolution:* Those statements are already in sec_execsummary.tex and sec_fived16.tex. Do not add "purely" or "assumed correlation models". This row authorizes no tex edit.
 
 * **S1-CLM-5 [T]** — **"Calibrated joint tests reject all ten" scoping.**  
   *Finding:* Claiming tests are "calibrated" overlooks sub-grid non-convergence, omitted hadronic response, and target composition differences.  
