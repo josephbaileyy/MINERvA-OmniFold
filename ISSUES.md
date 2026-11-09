@@ -832,7 +832,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-CLM-2 [T]** — **Claim that native OmniFold miss handling requires no efficiency correction.**  
   *Finding:* OmniFold handles misses via Step 1 reweighting without explicit efficiency divisor.  
   *Evidence:* `docs/analysis-note/sec_method.tex:60`.  
-  *Resolution:* Clarify mathematical foundation of OmniFold miss handling.
+  *Resolution:* This row authorizes no tex edit. The method section already says misses receive step-1 weights from a regressor, that this requires no separate efficiency correction, and that a later efficiency-histogram division would double-correct. Do not add a further derivation.
 * **G1-CLM-3 [T]** — **Claim that GBDTs match or outperform neural networks for this application.**  
   *Finding:* Claim that GBDTs outperform neural networks is supported only by limited MLP checks.  
   *Evidence:* `docs/analysis-note/sec_method.tex:80`, `sec_3d.tex:135`.  
