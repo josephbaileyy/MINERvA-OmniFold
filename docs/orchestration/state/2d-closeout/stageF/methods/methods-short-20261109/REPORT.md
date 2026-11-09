@@ -213,6 +213,11 @@ style-baseline.json: 11 human-written papers before November 2022, 78,599 words.
 - **Also kept by design:** §1's "illustrates the method and is not a measurement". It states the paper's scope (Joseph's
   plan decision keeps the measurement as a separate objective), and the result package's scope lines rest on it. It
   is in the same class as the five correctives above; the director restored it on 2026-11-09.
+- **The Supplement** (the blind Supplement; check 8 runs on it since e464546c). It stays above the field max on
+  ", not", "rather than", corrective, semicolon chains, triads, fragments and very short sentences. These are physics
+  contrasts the reader needs ("subtracts 135 MeV rather than the charged-pion mass"), genuine lists, three claim
+  correctives, and table and caption debris in the blind text. The style pass stopped there rather than tune to the
+  metric (the director, 2026-11-09).
 
 ## Banked for Joseph
 
