@@ -5894,6 +5894,11 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/SEARCHES.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/component-accounting-20261104/SOURCE-INVENTORY.tsv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-astra-publishable-path-20261109/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-astra-publishable-path-20261109/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-astra-publishable-path-20261109/answer.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-astra-publishable-path-20261109/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/consult-astra-publishable-path-20261109/run-header.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/REPORT.md	tracked	LIVE	state-artifact	2d-closeout		open		route-only	no
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/REVIEW-ANSWER.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/diagnosis-three-items-20261104/REVIEW-DISPOSITION.md	tracked	ARCHIVAL	state-artifact	2d-closeout		terminal		exact-path-only	yes
