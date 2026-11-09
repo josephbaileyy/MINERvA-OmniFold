@@ -894,7 +894,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G2-ACC-5 [T]** — **Discrepancy in Total Cross-Section Values.**  
   *Finding:* Total cross section quoted as $3.073 \\times 10^{-38}\\text{ cm}^2$ vs $3.07 \\times 10^{-38}\\text{ cm}^2$.  
   *Evidence:* `docs/analysis-note/sec_results.tex:80`, `sec_execsummary.tex:5`.  
-  *Resolution:* Quote exact macro value everywhere.
+  *Resolution:* This row authorizes no tex edit. Do not quote one macro for both numbers. The cited lines do not contain them. The quoted 2D total is \sigTwoD, which prints 3.069e-38. The purity-subtracted control is \sigTwoDPurity, which prints 3.073e-38, and the note already says they differ. The 3.07e-38 figures in the 3D and (E_avail, W) comparisons stay as printed. Do not replace one with another.
 * **G2-ACC-6 [T]** — **Inconsistent Degrees of Freedom in Held-Out Coverage Tests.** Same finding as S2-ACC-8 / G1-ACC-3.
 * **G2-ACC-7 [T]** — **Unexplained Higher-Dimensional Bin Count.** Same finding as S2-ACC-18.
 * **G2-ACC-8 [T]** — **Face-Invalid $\\chi^2$ Annotations in Figures 9 and 10.** Same finding as S2-PRES-4.
