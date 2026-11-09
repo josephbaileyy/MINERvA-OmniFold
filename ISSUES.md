@@ -827,7 +827,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 ### Section 6: Support for Claims
 
-* **G1-CLM-1 [T]** — **Claim of "reproducing" the published cross section.** Same finding as S1-CLM-1.
+* **G1-CLM-1 [T]** — **Claim of "reproducing" the published cross section.** Same finding as S1-CLM-1.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CLM-1. Do not add the broader claim that the background treatment was selected with the published result known.
 * **G1-CLM-2 [T]** — **Claim that native OmniFold miss handling requires no efficiency correction.**  
   *Finding:* OmniFold handles misses via Step 1 reweighting without explicit efficiency divisor.  
   *Evidence:* `docs/analysis-note/sec_method.tex:60`.  
