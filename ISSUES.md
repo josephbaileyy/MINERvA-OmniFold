@@ -605,7 +605,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-22 [T]** — **App. C.5 vs Table 8 ensemble variance.**  
   *Finding:* Negative-weight rebuild has $\\sqrt{\\text{Tr} C} = 2.98 \\times 10^{-39}$ vs Table 8 $2.69 \\times 10^{-39}$.  
   *Evidence:* `docs/analysis-note/app_negweight.tex:85`, Table 8.  
-  *Resolution:* Specify which ensemble configuration corresponds to each table.
+  *Resolution:* This row authorizes no tex edit. The two traces already name different ensembles. Do not identify them.
 * **S2-ACC-23 [T]** — **Terminology mismatch across sections.** Same finding as S1-ACC-15.
 * **S2-ACC-24 [T]** — **Minor numerical mismatches.**  
   *Finding:* Reconcile $p_T$ peak ranges (0.7 vs 0.55–0.70 vs ~0.6), GiBUU carbon $\\chi^2$ (45.49 vs 45.25), and 1G–1M $p_\\parallel$ $\\chi^2$ (34.4 vs 34.8).  
