@@ -349,6 +349,14 @@ availability, the B0 sentences, RS1's paragraph, the LISTED_CLAIMS anchors). It 
   - EMPTY: ll5d-abs-close's scope class, and ll5d-anyunder is retired;
   - the no-number check now skips section pointers (\ssec{S9}…).
 
+**A revert after the director's review of 46ed923d** (2026-11-09):
+- §1's scope sentence now reads "The sixteen-cell cross section that the estimator gives on the data illustrates the
+  method and is not a measurement; …", in the director's wording.
+- The style pass had dropped "is therefore not a measurement". That denial carries a claim: Joseph's plan decision
+  keeps the measurement as a separate conditional objective, and the result package's scope lines rest on it.
+- It sits with the five corrective claims kept by design.
+<!-- absence-ok: quotes the restored scope sentence; states no finding that a result does not exist -->
+
 **Triads, read by hand** (style_metrics' 43 hits in the integrated blind manuscript):
 - 25 are lists the physics or the definitions need: the five observables, the uncertainty blocks, the generators,
   the deposit species, the settings varied, the terms not drawn, and the problems still open in §7.

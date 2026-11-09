@@ -210,6 +210,9 @@ style-baseline.json: 11 human-written papers before November 2022, 78,599 words.
   - §6.2's and §6.3's R5 sentence, "the result concerns the procedure's covariance at those tunes, not the reported
     intervals at the data", is Joseph's required wording;
   - B0's "not the typical one" is approved verbatim.
+- **Also kept by design:** §1's "illustrates the method and is not a measurement". It states the paper's scope (Joseph's
+  plan decision keeps the measurement as a separate objective), and the result package's scope lines rest on it. It
+  is in the same class as the five correctives above; the director restored it on 2026-11-09.
 
 ## Banked for Joseph
 
