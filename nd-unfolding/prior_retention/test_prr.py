@@ -1091,6 +1091,23 @@ class EndToEnd(unittest.TestCase):
         self.assertAlmostEqual(out["ibu"]["K5/A7_gibuu/s994003"]["rho"], 0.15)
         self.assertEqual(rd["PR-3_label"], RD.LABELS["pr3"])
 
+    def test_the_table_carries_each_truths_departure_d(self):
+        """Addendum A2 (REQUIRED): every table entry carries d = (X - P)/P on R00-R15, with P the nominal truth's X at
+        the entry's own split; it is 0 at the prior, and it is the departure, not the bias or the relative bias."""
+        self.build(self.floor_plant())
+        out, rc = self.read()
+        self.assertEqual(rc, 0)
+        for (lv, t, s) in P.all_tasks():
+            x, p = self.M @ self.truth_x(t, s), self.M @ self.truth_x(P.PRIOR, s)
+            rec = out["table"][f"{lv}/{t}/s{s}"]
+            np.testing.assert_allclose(rec["d"], (x - p) / p, rtol=1e-12, atol=1e-15)
+            self.assertEqual(len(rec["d"]), 16)
+        np.testing.assert_array_equal(out["table"][f"B0/{P.PRIOR}/s{P.PRIMARY_SEED}"]["d"], np.zeros(16))
+        rec = out["table"][f"B0/A7_gibuu/s{P.PRIMARY_SEED}"]
+        self.assertGreater(max(abs(v) for v in rec["d"]), 0.01)
+        np.testing.assert_allclose(np.array(rec["b"]), -0.3 * np.array(rec["d"]), rtol=1e-9)  # planted rho 0.3
+        self.assertEqual([k for k in rec if k not in ("rho", "n_S", "b", "rms_b", "r", "grade")], ["d"])
+
     def test_a_large_floor_raises_the_bar_and_silences_a_change(self):
         plant = self.floor_plant(delta_sd=0.05)
         plant[("K50", "A7_gibuu")] = 0.1
