@@ -89,3 +89,25 @@ pass. Ruff, Black and mypy are not installed in the available plotting environme
 were attempted and could not run. The repository's scientific test suite does not import this
 standalone plotting script, which imports only NumPy/Matplotlib and the pure prior reduction;
 no scientific implementation changed.
+
+## Referee repair, 2026-11-09
+
+Applied journal-editor's read of 364c7da0e/5db5a5ca0:
+
+- Bias label/caption use r-bar instead of the paper's prior-normalized b. Caption identifies q3's
+  joint-p-only flag explicitly; outlines encode only per-cell flags. Threshold is read from trig-z
+  and compared to the pinned numerical producer's Z_TRIGGER. Outlined z are printed. Caption states
+  N=0 for noise-free closure (fd_f0_regrade.py line 743), names panels and excludes the total-only arm.
+- Prior caption defines both axes, explicitly states signal-only/no-refinement comparator versus
+  refined data estimator, identifies y=x as reference/no fit, and states no panel is the sixteen-cell
+  result. Panel letters and grid names agree. Counts and the undefined word "supported" removed
+  from printed captions/titles. Grid definitions are cited in the note's section and appendix,
+  app_statmethods_nd.tex sec:gbdt-diagnostic-definitions (which also states the >=1000 expected
+  reconstructed signal AND selected truth-weight selection). Correlation and fraction diagnostics
+  remain in numbers.json only, not in printed text.
+- Both regenerated PNGs visually inspected. Numerical assertions unchanged and passing. Snippets
+  compile from docs/analysis-note using their relative asset paths, and both floats/captions appear
+  in extracted text of a standalone caption-check build. This checks asset resolution and TeX syntax,
+  not the integrated manuscript or blinded rater copy. director-helper-3 must check those on integration.
+
+No numerical analysis or manuscript source was changed in this repair.

@@ -63,6 +63,12 @@ def bias_figure() -> dict:
     arms = [read(FD + p) for p in (
         "with-cpl/readout/fd_f0b_readout.json", "readout/fd_f0b_readout.json")]
     values = checked("docs/analysis-note/values_fived16.tex").read_text()
+    threshold_match = re.search(r"\\@namedef\{fv@trig-z\}\{([^}]+)\}", values)
+    assert threshold_match
+    threshold = float(threshold_match[1])
+    producer = checked("nd-unfolding/fd_f0_regrade.py").read_text()
+    producer_threshold = re.search(r"Z_TRIGGER, P_TRIGGER = ([0-9.]+)", producer)
+    assert producer_threshold and threshold == float(producer_threshold[1])
     paper = checked("docs/analysis-note/paper_body.tex").read_text()
     table = paper.split(r"\label{tab:fd16}", 1)[1].split(r"\end{table*}", 1)[0]
     assert re.findall(r"\\fvval\{f0b-(\w+)-chi2int\}", table) == [k for k, _ in TRUTHS]
@@ -77,7 +83,7 @@ def bias_figure() -> dict:
         assert all(truths[k]["grade"]["cells"] == [f"R{i:02}" for i in range(16)] for k, _ in TRUTHS)
         for k, _ in TRUTHS:
             grade = truths[k]["grade"]
-            flagged = [f"R{i:02}" for i, z in enumerate(grade["z"]) if abs(z) > 2]
+            flagged = [f"R{i:02}" for i, z in enumerate(grade["z"]) if abs(z) > threshold]
             assert flagged == grade["cells_abs_z_gt_2"]
             suffix = "-nopl" if index else ""
             match = re.search(r"\\@namedef\{fv@f0b-" + k + r"-zmax" + suffix + r"\}\{([^}]+)\}", values)
@@ -92,13 +98,16 @@ def bias_figure() -> dict:
         r"Reported: $C_{\rm total}+C_{\rm resp}+C_{\rm PL,5D}$",
         r"Without run-period block: $C_{\rm total}+C_{\rm resp}$"), strict=True):
         artist = ax.imshow(data, cmap="RdBu_r", vmin=-limit, vmax=limit, aspect="auto")
-        for row, col in np.argwhere(np.abs(data) > 2):
+        for row, col in np.argwhere(np.abs(data) > threshold):
             ax.add_patch(Rectangle((col-.5, row-.5), 1, 1, fill=False, ec="black", lw=1.4))
         ax.set_title(title, fontsize=9)
+        for row, col in np.argwhere(np.abs(data) > threshold):
+            ax.text(col, row, f"{data[row, col]:.2f}", ha="center", va="center",
+                    fontsize=6, color="white" if abs(data[row, col]) > 3 else "black")
         ax.set_xticks(range(16), [f"R{i:02}" for i in range(16)], rotation=90)
         ax.set_xlabel("Reported cell")
     axes[0].set_yticks(range(12), [label for _, label in TRUTHS])
-    fig.colorbar(artist, ax=axes, label=r"Signed residual $z=b/\sqrt{\mathrm{diag}(C+N)}$", shrink=.85)
+    fig.colorbar(artist, ax=axes, label=r"Signed residual $z=\bar r/\sqrt{\mathrm{diag}(C+N)}$", shrink=.85)
     save(fig, "paper_bias_cells")
     return {"checks": checks, "z_reported": arrays[0].tolist(), "z_without_period": arrays[1].tolist()}
 
@@ -125,14 +134,15 @@ def prior_figure() -> dict:
             np.testing.assert_equal(row[key], float(frozen[key]))
     fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.7), layout="constrained")
     result = {}
-    for ax, group, label in zip(axes, ("J", "H2", "EW"), ("Joint cells", "Coarser joint cells", r"$(E_{\rm avail},W)$ cells"), strict=True):
+    for ax, group, label in zip(axes, ("J", "H2", "EW"), ("(a) Fine joint cells", "(b) Coarser joint cells", r"(c) $(E_{\rm avail},W)$ cells"), strict=True):
         use = [r for r in rows if r["map"] == group]
         x = np.array([-r["W3_bias_pct"] for r in use])
         y = np.array([r["d4_shift_pct"] for r in use])
         ax.scatter(x, y, s=10, color="#2878a5", alpha=.7)
         lo, hi = min(x.min(), y.min()), max(x.max(), y.max())
-        ax.plot([lo, hi], [lo, hi], color=".4", ls=":", lw=.8)
-        ax.set_title(f"{label} ({len(x)})", fontsize=8)
+        ax.plot([lo, hi], [lo, hi], color=".4", ls=":", lw=.8, label=r"$y=x$ (reference; no fit)")
+        ax.legend(fontsize=6, frameon=False, loc="lower right")
+        ax.set_title(label, fontsize=8)
         ax.set_xlabel("Minus noise-free residual (%)")
         ax.grid(alpha=.15)
         result[group] = {"minus_residual_pct": x.tolist(), "prior_shift_pct": y.tolist(), "correlation": float(np.corrcoef(x,y)[0,1]), "fraction_shift_ge_residual": float(np.mean(abs(y) >= abs(x)))}
