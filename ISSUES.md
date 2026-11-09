@@ -337,7 +337,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-10 [T]** — **Own-covariance $\\chi^2$ vs publication.**  
   *Finding:* State $\\chi^2/\\text{ndf} = 22.29$ with own covariance against published result, alongside 2.27 with published covariance.  
   *Evidence:* `docs/analysis-note/sec_results.tex:125`, `app_statmethods.tex:520`.  
-  *Resolution:* Clarify in §6 that while direct inversion without regularisation yields 22.29, a defensible single own-covariance $\\chi^2$ is out of reach (`app_statmethods.tex:458`); quote the paper-covariance distance strictly through the macro `\\chiPaper` without hardcoding.
+  *Resolution:* The published-covariance distance is already \chiPaper. Do not type 22.29. This row authorizes no tex edit until an own-covariance distance is bound through a checked-values macro and a record says it may be quoted.
 
 * **S1-COM-11 [T]** — **Correlation sensitivity of 16-cell generator $\\chi^2$.**  
   *Finding:* Generator $\\chi^2$ drops sharply when flux correlations are shrunk or removed.  
