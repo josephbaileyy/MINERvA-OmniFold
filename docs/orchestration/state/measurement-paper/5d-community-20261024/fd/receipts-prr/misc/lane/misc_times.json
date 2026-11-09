@@ -1,0 +1,81 @@
+{
+ "levels": {
+  "B0": {
+   "n": 18,
+   "mean_s": 563.1,
+   "min_s": 484.7,
+   "max_s": 659.8,
+   "dry_rate_s": 512.1,
+   "mean_over_dry": 1.1
+  },
+  "C1000": {
+   "n": 4,
+   "mean_s": 2597.6,
+   "min_s": 2510.0,
+   "max_s": 2629.4,
+   "dry_rate_s": 2531.1,
+   "mean_over_dry": 1.026
+  },
+  "C400": {
+   "n": 4,
+   "mean_s": 1312.3,
+   "min_s": 1257.1,
+   "max_s": 1388.3,
+   "dry_rate_s": 1254.3,
+   "mean_over_dry": 1.046
+  },
+  "K20": {
+   "n": 4,
+   "mean_s": 1692.0,
+   "min_s": 1660.3,
+   "max_s": 1772.0,
+   "dry_rate_s": 1417.9,
+   "mean_over_dry": 1.193
+  },
+  "MCq": {
+   "n": 15,
+   "mean_s": 431.2,
+   "min_s": 353.7,
+   "max_s": 539.6,
+   "dry_rate_s": 283.3,
+   "mean_over_dry": 1.522
+  },
+  "O2": {
+   "n": 15,
+   "mean_s": 533.9,
+   "min_s": 459.1,
+   "max_s": 632.2,
+   "dry_rate_s": 497.4,
+   "mean_over_dry": 1.073
+  },
+  "O3": {
+   "n": 11,
+   "mean_s": 552.2,
+   "min_s": 471.3,
+   "max_s": 659.6,
+   "dry_rate_s": 440.4,
+   "mean_over_dry": 1.254
+  },
+  "O4": {
+   "n": 11,
+   "mean_s": 585.3,
+   "min_s": 458.8,
+   "max_s": 723.6,
+   "dry_rate_s": 433.4,
+   "mean_over_dry": 1.351
+  },
+  "O4r": {
+   "n": 11,
+   "mean_s": 588.9,
+   "min_s": 549.6,
+   "max_s": 673.5,
+   "dry_rate_s": 394.7,
+   "mean_over_dry": 1.492
+  }
+ },
+ "queue_span_s": 8628.5,
+ "queue_span_h": 2.3968,
+ "projected_h_at_t0": 1.9468,
+ "span_over_projection": 1.231,
+ "gate_h": 6.525
+}
