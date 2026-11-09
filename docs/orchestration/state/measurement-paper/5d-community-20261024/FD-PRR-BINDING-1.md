@@ -89,3 +89,29 @@ test kills the mutant alone; 104 tests and 63 of 63 mutants reproduce at the hea
 2. **The connects carry the audit's two lows:** the login-side `prr_probe.py limit` call that sets `--time` runs under
    root_6_28's python3 after sourcing, in a subshell, as the job does; and the source's rc is checked with its own STOP
    message before any limit call.
+
+## Binding 1, erratum E1: ruling 4's per-job limits (director, 2026-11-09)
+
+**The defect.** Ruling 4 lists the job limits as prr_dry 4:45:00, prr_iter 7:30:00, prr_cap 9:00:00, prr_misc 4:45:00
+and prr_ibu 0:30:00. Those are rev 1's limits, and they sum to 26.5, not the 27.0 the same ruling states. director-helper-2
+found it while drafting the prr_iter connect.
+
+**What is bound, and always was:** the declaration rev 2, §10.3 (`FD-PRR-DECLARATION.md`:506–513 at M_A1), and
+`prr_probe.py`'s `JOB_LIMIT_H` (line 201 at M_A1 `6727020a`), which set `--time` in every connect and job:
+
+| job | --time | node-h |
+|---|---|---:|
+| `prr_dry` | 5:15:00 | 5.25 |
+| `prr_iter` | 7:30:00 | 7.50 |
+| `prr_cap` | 6:30:00 | 6.50 |
+| `prr_misc` | 7:15:00 | 7.25 |
+| `prr_ibu` | 0:30:00 | 0.50 |
+| **total, the cap** | | **27.00** |
+
+Ruling 4's per-job list should read as this table. The cap, 27.0 CPU node-h, the 0.9 × `--time` gate and every
+other ruling are unchanged. No job ran under the wrong limits: prr_dry (61022062) ran at 5:15:00, and prr_iter
+(61024185) was submitted at 07:30:00 against this file's earlier bytes (`e3d8724b`), with the same limits.
+
+**For the connects:** prr_cap, prr_misc and prr_ibu pin this file's sha256 as it is on main after this erratum merges.
+
+Nothing is submitted, deposited or tagged.
