@@ -141,13 +141,14 @@ def bias_figure() -> dict:
         for row, col in np.argwhere(np.abs(data) > threshold):
             ax.add_patch(Rectangle((col-.5, row-.5), 1, 1, fill=False, ec="black", lw=1.4))
         ax.set_title(title, fontsize=9)
-        for row, col in np.argwhere(np.abs(data) > threshold):
-            ax.text(col, row, f"{data[row, col]:.2f}", ha="center", va="center",
-                    fontsize=6, color="white" if abs(data[row, col]) > 3 else "black")
+        for row, col in enumerate(np.argmax(np.abs(data), axis=1)):
+            if abs(data[row, col]) > threshold:
+                ax.text(col, row, f"{data[row, col]:.2f}", ha="center", va="center",
+                        fontsize=5.5, color="white" if abs(data[row, col]) > 3 else "black")
         ax.set_xticks(range(16), [f"R{i:02}" for i in range(16)], rotation=90)
         ax.set_xlabel("Reported cell")
     axes[0].set_yticks(range(12), [label for _, label in TRUTHS])
-    fig.colorbar(artist, ax=axes, label="Signed mean fractional residual over its uncertainty", shrink=.85)
+    fig.colorbar(artist, ax=axes, label="z: signed mean fractional residual / uncertainty", shrink=.85)
     save(fig, "paper_bias_cells")
     return {"checks": checks, "z_reported": arrays[0].tolist(), "z_without_period": arrays[1].tolist()}
 

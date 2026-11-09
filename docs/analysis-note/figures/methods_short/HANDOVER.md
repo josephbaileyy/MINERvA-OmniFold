@@ -142,3 +142,11 @@ Source: committed sec_5d.tex:198 and :204, sec:gbdt-model-dependence, explicitly
 guarantee bias bounds and correlation supplies no per-cell bound. The canonical analyze.py prior plot
 also prints this limitation. No correlation or fraction numbers enter the caption. This supersedes
 the earlier omission of the bias-bound clause. No plotted numbers or PDF assets changed.
+
+
+Second referee read repairs: removed X_changed/X_nominal notation from the prior caption (X is
+already truth in the paper); retained the cited correlation limitation; mapped grids explicitly to
+J/H2/EW in the caption. Only the cell of maximum |z| in an outlined row now receives a numerical
+label, at two decimals as in the table. Thus every printed maximum is covered by check_against;
+no nonmaximum cell is numerically annotated. The hard-to-read negative nonmaximum label is removed.
+Colourbar starts with z. Inputs, plotted coordinates and scientific claims unchanged.
