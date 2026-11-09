@@ -928,7 +928,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-CONT-1. Do not inline those values until each one is bound through a checked-values macro and a record says it may be quoted.
 * **G2-CONT-2 [T]** — **Circular Dependency on the Companion Methods Paper.** Same finding as S1-CONT-3.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-3. Do not copy article text into the note. The observable definitions are already in the note's table.
-* **G2-CONT-3 [T]** — **Reliance on Private Communication for Modeling Choices.** Same finding as S1-CONT-5.
+* **G2-CONT-3 [T]** — **Reliance on Private Communication for Modeling Choices.** Same finding as S1-CONT-5.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-5. Do not replace a private-communication citation with a rationale the note does not already state.
 
 ### Section 6: Support for Claims
 
