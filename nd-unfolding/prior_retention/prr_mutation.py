@@ -21,7 +21,7 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("prr_probe.py", "prr_ibu.py", "prr_read.py", "sbatch_prr.sh", "test_prr.py")
 PB, IB, RD, SB = FILES[:4]
-EXPECTED_TESTS = 109
+EXPECTED_TESTS = 110
 MUTATIONS = [
     # --- the probe: the mask, the guard, the pins, the columns
     ("mask columns swapped", PB, "return orig(MCgen[:, gi], MCreco[:, ri], measured[:, ri], *args, **kwargs)",
@@ -142,6 +142,9 @@ MUTATIONS = [
     # --- Addendum A1 (REQUIRED): the environment is sourced before every python3 call
     ("limit above the source", SB, 'source "$D/setup_salloc_env.sh" > /dev/null 2>&1\n', "",
      "test_every_python3_call_runs_after_the_environment_is_sourced"),
+    # --- Addendum A2 (REQUIRED): the readout emits the truth's departure d beside b and r
+    ("d over the truth, not the prior", RD, "        d = (x - p) / p  # Addendum A2", "        d = (x - p) / x  # Addendum A2",
+     "test_the_table_carries_each_truths_departure_d"),
     ("a failed task still DONE", SB, '[ "$rc" -eq 0 ] || { echo "rc=$rc" > "$L/FAILED"; echo "[prr] STOP: a task failed',
      'true || { echo "rc=$rc" > "$L/FAILED"; echo "[prr] STOP: a task failed',
      "test_a_failed_task_leaves_no_done"),
