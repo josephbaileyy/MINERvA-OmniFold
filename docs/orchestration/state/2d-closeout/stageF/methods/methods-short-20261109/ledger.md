@@ -132,3 +132,31 @@ five-observable estimator. The PDF is regenerated, not edited (new sha256 `53598
 
 **Two test cases fixed:** `test_check_sec4_receipts.py` had two stale cases from earlier commits of this branch. The
 0.676 % now prints in the Supplement, and "16–31 %" prints twice. 17 of 17 pass.
+
+**After batch 1 (the director, 2026-11-09, verified at `2c0f6c5d1`):**
+- **W-11, an applied adaptation of the decision, accepted by the director.** The decision's "the two-dimensional
+  covariance" prints as "the procedure's two-dimensional covariance, rebuilt at each of two held-out generator tunes".
+  That is §6.2's term for COV2D's remade covariance, and it is closer to COV2D's CITABLE FOR (`:97-106`) than "the
+  two-dimensional covariance", which §3.2 uses for the reported 2D covariance.
+- **W-20, two restorations under the director's rule** (restore only where the declaration shows a date before the
+  run):
+  - **The prior-retention study.** "A study specified in advance", "a bar fixed in advance" and "labels fixed in
+    advance" are restored. The record: `state/measurement-paper/5d-community-20261024/FD-PRR-DECLARATION.md:1` (rev 2,
+    2026-11-08, "for coverage-5b-audit; nothing runs") and `FD-PRR-BINDING-1.md:1` (bound 2026-11-08). The study has
+    not reported, so its declaration precedes any run.
+  - **The mechanism study.** "A study of the mechanism specified in advance" is restored. The record:
+    `state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/RS1-DECLARATION.md:1-4` (2026-11-06,
+    "Nothing has run, and nothing runs before the binding"; committed in `e5f700b2c`, 2026-11-06T18:17-08:00). Its
+    outcome, `OUTCOME-20261108-rs1-rounding-mechanism.md`, was added in `9f0bf8ea6`, 2026-11-07T19:25-08:00.
+- **Reader item 2, applied as approved.** Table 2 gains a middle column group, C_total + C_resp (without C_PL,5D): χ²,
+  p and cells per truth.
+  - **Source:** only the pinned `-nopl` keys of `make_values_fived16.py` (`fd_f0b_readout.json` `b9db935a` in
+    `NOPL_READOUTS`). No new number is computed.
+  - **Caption:** "The reported covariance … is primary; the readings without the run-period block … and under C_total
+    alone are shown for sensitivity."
+  - **Fit:** the table fits at `\footnotesize`, with no `\resizebox`. The truth and covariance columns wrap, which
+    needs `\usepackage{array}` in `main_paper.tex`. The build shows no overfull box, and the page was checked by eye.
+  - **§5.2** now reads "(the middle columns of table 2)", in place of "which table 2 does not show".
+  - **A new figure in print:** without the block, the GiBUU hybrid truth also flags R07. It is the committed readout's
+    own value.
+- **check_round now runs `test_check_sec4_receipts.py`** (check 6), so stale cases fail loudly.

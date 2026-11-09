@@ -13,7 +13,8 @@
      pointer arguments removed) is printed by the base (round 5, BASE) too, or is in NEW_NUMERALS with its source.
   5. ONCE / GONE. The new sentences the ledger records print exactly once (ONCE); the claims the decision excludes,
      and the internal labels the editor's read lists, print nowhere in the paper (GONE).
-  6. FILL TEST (--fill-test, slow). The paper is built once per class index: every pending key set to its i-th
+  6. SEC4 TESTS. test_check_sec4_receipts.py passes (the director, 2026-11-09; the hook does not run it).
+  7. FILL TEST (--fill-test, slow). The paper is built once per class index: every pending key set to its i-th
      class (cyclically), so that every variant is typeset at least once; each build must succeed with no
      "[PENDING", no "??" and no undefined reference.
 usage: check_round.py <worktree> [--base SHA] [--fill-test]   (exit 1 on any failure)
@@ -186,6 +187,14 @@ def check_dates(texts):
     return fails
 
 
+def check_sec4_tests(wt):
+    """The director, 2026-11-09: test_check_sec4_receipts.py's cases bind printed sentences of the paper and the
+    Supplement, and the pre-commit hook does not run them, so two went stale unnoticed. Run them here."""
+    r = subprocess.run([sys.executable, "-m", "pytest", "-q", "test_check_sec4_receipts.py"], cwd=wt / NOTE,
+                       capture_output=True, text=True, errors="replace")
+    return [] if r.returncode == 0 else [f"test_check_sec4_receipts.py fails: {r.stdout.strip().splitlines()[-1]}"]
+
+
 def run(wt, base):
     mv = load_mv(wt)
     cur = {f: (wt / NOTE / f).read_text() for f in FILES}
@@ -196,7 +205,8 @@ def run(wt, base):
              + check_keys({**cur, "supplemental_body.tex": supp}, (wt / NOTE / "values_fived16.tex").read_text())
              + check_numerals(cur, old) + check_once_gone(cur)
              + check_printed_names((wt / NOTE / "values_fived16.tex").read_text())
-             + check_dates({**cur, "supplemental_body.tex": supp}))
+             + check_dates({**cur, "supplemental_body.tex": supp})
+             + check_sec4_tests(wt))
     return fails
 
 
