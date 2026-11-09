@@ -1,0 +1,58 @@
+V-HALF code receipt: the mutation run; its output goes to a file outside the clone, then is compared with the committed mutants.txt
+date_utc: 2026-11-09T16:51:01Z  host: DN0a1f6baa
+clone: a clean clone, HEAD 10f33bcc48dee4b692c9af7e733c3463296d6168, porcelain lines before: 0
+python: 3.12.2  numpy: 1.26.4
+thread caps: OMP=1 MKL=1 OPENBLAS=1 NUMEXPR=1 VECLIB=1; nice -n 19; one serial process
+ce07a6f0429e155902d4da0532dea48f4031b4d17239fdff7e775453f4499cf5  v_half.py
+1a5160491e650c4a2b84d69f24ae385d5c1b20f55c2748ab030e6926154cf41c  test_v_half.py
+72a5d7adfa337ab06bbcab4362ead17928bde998cc399da44308326d627d2270  mutate_v_half.py
+7ee797131963da0e11838a4b3fdb09d863d9631a1a3564626af630cd300f76cc  INPUTS.sha256
+8c1247c9d54e13e08035084215c91afb036f11cc82758574be8a348863e87f16  mutants.txt
+command (in docs/orchestration/state/2d-closeout/valid-region-20261107/v-half): nice -n 19 python3 -B mutate_v_half.py > <out>/mutants-rerun.txt
+----
+target v_half.py sha256 ce07a6f0429e155902d4da0532dea48f4031b4d17239fdff7e775453f4499cf5
+suite test_v_half.py sha256 1a5160491e650c4a2b84d69f24ae385d5c1b20f55c2748ab030e6926154cf41c; python 3.12.2
+baseline: rc 0, ran 33, 'OK'
+floor-0.02	KILLED	FAILED (failures=1)
+floor-strict	KILLED	FAILED (failures=1)
+floor-one-sided	KILLED	FAILED (failures=2)
+half-0.6	KILLED	FAILED (failures=7)
+b-without-one-plus-d	KILLED	FAILED (failures=10, errors=8)
+b-not-absolute	KILLED	FAILED (failures=2)
+d-not-absolute	KILLED	FAILED (failures=2)
+k-1	KILLED	FAILED (failures=5)
+pass-side-strict	KILLED	FAILED (failures=1)
+no-band	KILLED	FAILED (failures=6)
+nu-not-scaled	KILLED	FAILED (failures=3)
+sigma-d-dropped	KILLED	FAILED (failures=1)
+sigma-d-no-derivative	KILLED	FAILED (failures=1)
+sigma-d-ddof-0	KILLED	FAILED (failures=1)
+sigma-d-four-seeds	KILLED	FAILED (failures=1)
+any-truth-not-every	KILLED	FAILED (failures=5)
+nowhere-reads-valid	KILLED	FAILED (failures=1)
+no-d-ignored	KILLED	FAILED (failures=2)
+unresolved-reads-valid	KILLED	FAILED (failures=2)
+no-d-over-fail	KILLED	FAILED (failures=1)
+no-d-as-not-applicable	KILLED	FAILED (failures=2)
+priors-dropped	KILLED	FAILED (failures=3, errors=8)
+gibuu-domain-in-verdict	KILLED	FAILED (failures=1)
+option-a-in-verdict	KILLED	FAILED (failures=6)
+option-a-uses-f0b-bias	KILLED	FAILED (failures=1)
+h-star-min	KILLED	FAILED (failures=1)
+c-pin-skipped	KILLED	FAILED (failures=1)
+c-cells-skipped	KILLED	FAILED (failures=1)
+c-truths-skipped	KILLED	FAILED (failures=1)
+c-prr-skipped	KILLED	FAILED (failures=1)
+c-prr-no-zero-check	KILLED	FAILED (failures=1)
+c-domain-skipped	KILLED	FAILED (failures=1)
+c-finite-skipped	KILLED	FAILED (failures=1)
+c-hand-skipped	KILLED	FAILED (failures=1)
+c-hand-no-alt	KILLED	FAILED (failures=1)
+stop-still-classifies	KILLED	FAILED (failures=5)
+restored sha256 ce07a6f0429e155902d4da0532dea48f4031b4d17239fdff7e775453f4499cf5 == original
+mutants 36; killed 36; survivors []
+diff against the committed mutants.txt: identical
+----
+rc=0
+porcelain lines after: 0
+date_utc: 2026-11-09T16:51:20Z
