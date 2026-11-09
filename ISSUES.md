@@ -712,7 +712,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-CLM-8 [T]** — **A.5 direct evidence of implicit regularization.**  
   *Finding:* App. A.5 claims direct evidence that ~1 $\\chi^2$ unit is due to implicit regularization rather than physics disagreement.  
   *Evidence:* `docs/analysis-note/app_statmethods.tex:545`.  
-  *Resolution:* Reframe as demonstrating estimator sensitivity of the $\\chi^2$ statistic rather than attributing physical vs algorithmic origin.
+  *Resolution:* Landed in this commit. The sentence no longer calls the estimator gap direct evidence of regularization rather than physics. The chi-squared values stay.
 * **S2-CLM-9 [T]** — **Five-dimensional unfolding adds information.**  
   *Finding:* Reconstructed $W$ is an exact algebraic function of $(p_T, p_\\parallel, q_3)$; added information of $W$ unmeasured.  
   *Evidence:* `docs/analysis-note/sec_method.tex:115`, `sec_eavailw.tex:40`.  
