@@ -134,3 +134,11 @@ Because assets now live under docs/analysis-note, director-helper-3 must synchro
 to the standalone note repository as part of its integration, build/verify it, commit/push both repositories
 and record both remote heads. This lane has neither edited that checkout nor claimed synchronization.
 The integrated paper/blinded-copy checks and standalone synchronization remain integrator work.
+
+
+Final caption qualification: restored the prior-correlation limitation with an explicit note-section
+citation, as requested by journal-editor and allowed by director-helper-3 when supported by a record.
+Source: committed sec_5d.tex:198 and :204, sec:gbdt-model-dependence, explicitly say the shifts do not
+guarantee bias bounds and correlation supplies no per-cell bound. The canonical analyze.py prior plot
+also prints this limitation. No correlation or fraction numbers enter the caption. This supersedes
+the earlier omission of the bias-bound clause. No plotted numbers or PDF assets changed.
