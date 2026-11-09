@@ -488,7 +488,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-6 [T]** — **Table layouts hard to follow (Tables 2, 6, 18).**  
   *Finding:* Ambiguous column pairings and alignments.  
   *Evidence:* Tables 2, 6, 18.  
-  *Resolution:* Clean up column alignments and add clear dividing headers.
+  *Resolution:* This row authorizes no tex edit. Do not change a column pairing until a later instruction names the pairing that is wrong and the record for the correct one.
 
 * **S1-PRES-7 [T]** — **Purity and stability terminology confusion.**  
   *Finding:* "Diagonal purity" vs "reconstruction stability" used inconsistently.  
