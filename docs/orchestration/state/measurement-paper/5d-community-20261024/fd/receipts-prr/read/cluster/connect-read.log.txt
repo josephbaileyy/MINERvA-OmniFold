@@ -1,0 +1,41 @@
+node login24 nproc=244 loadavg 113.18 160.94 195.96
+2026-11-09T23:34:29Z
+connect script sha256 42716ca4f7eee3523ad2f85f93c080ed4dec9874dc4237622cc08bc27d30ad47
+squeue --me:
+61040235 ll5d_gate_AR23 RUNNING
+61040163 ll5d_gate_G18 RUNNING
+prr_ibu attempt 3: 61057142|prr_ibu|COMPLETED|0:0|546|1
+log-dry/DONE: {"mode": "dry", "tasks": 15, "ended": 15, "rc": 0, "job": "61022062"}
+log-iter/DONE: {"mode": "iter", "tasks": 44, "ended": 44, "rc": 0, "job": "61024185"}
+log-cap/DONE: {"mode": "cap", "tasks": 29, "ended": 29, "rc": 0, "job": "61028298"}
+log-misc/DONE: {"mode": "misc", "tasks": 93, "ended": 93, "rc": 0, "job": "61030122"}
+log-ibu/DONE: {"mode": "ibu", "rc": 0, "job": "61057142"}
+HEAD cb13a6443a457bd3887d1c421723dfcdb1909ec8; porcelain --ignored lines before: 0
+prr_probe.py: OK
+prr_ibu.py: OK
+prr_read.py: OK
+sbatch_prr.sh: OK
+test_prr.py: OK
+prr_mutation.py: OK
+FD-PRR-DECLARATION.md sha256 5be1e19cb8db67064cb0f90382ed7ac2365a2ed4841d9b498f323ed2761b64ce
+FD-PRR-ADDENDUM-A1.md sha256 ca6b8457e74c9323fcb985766a88f404038f6f16c3e822a67bf2606af223f38b
+FD-PRR-ADDENDUM-A2.md sha256 41e53237ceacb99e7310f922bc70df777dd9c0a04cb005e2aafa7a0c75a73a73
+FD-PRR-ADDENDUM-A3.md sha256 48641cf9ba6a6e30856dc3447412cca777bcc0b75f84566db9f4463d9e646db1
+FD-PRR-ADDENDUM-A4.md sha256 3ba2f47ba0d9b40155d6840ca22f665051a4f6cdaf15fd0efe24564929bdc6a8
+FD-PRR-BINDING-1.md at origin/main 4ad8b8584eaae4bd8a815327473d7390daa6b96a sha256 634cded38a1780286d24941ce567c174ff17ccc1b6af640f24129c5e6275b613
+route2/route2.npz: OK
+route2/route2.json: OK
+threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1 VECLIB=1; nice 19; ionice idle; python 3.11.14
+{"verdict": "COMPLETE"}
+prr_read rc 0
+read rc=0
+total 9
+drwx------  2 josephrb josephrb   4096 Nov  9 15:35 .
+drwx------ 28 josephrb josephrb   4096 Nov  9 15:35 ..
+-rw-------  1 josephrb josephrb 372128 Nov  9 15:35 readout.json
+-rw-------  1 josephrb josephrb  34386 Nov  9 15:35 readout.txt
+readout.json sha256 9238f22bfe29685e33c1d5bb46da3938a3ebfdc93a54575a4fe99de3a7af9ead bytes 372128
+readout.txt sha256 8175033c7fcbd61e73b93defec7aceb484d30cc3757f4b089b21a3b0b32809e3 bytes 34386
+porcelain --ignored lines after: 0
+prr read rc=0
+2026-11-09T23:35:49Z

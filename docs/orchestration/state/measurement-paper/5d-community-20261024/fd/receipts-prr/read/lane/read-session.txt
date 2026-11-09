@@ -1,0 +1,49 @@
+session node login24 2026-11-09T23:34:28Z
+staged sha256 42716ca4f7eee3523ad2f85f93c080ed4dec9874dc4237622cc08bc27d30ad47
+== iris (m3246)
+m3246               2447.7            10000.0     18376.1      20000.0
+connect rc=0; staged copy removed: yes
+== connect-read.done
+0
+== connect-read.log
+     1	node login24 nproc=244 loadavg 113.18 160.94 195.96
+     2	2026-11-09T23:34:29Z
+     3	connect script sha256 42716ca4f7eee3523ad2f85f93c080ed4dec9874dc4237622cc08bc27d30ad47
+     4	squeue --me:
+     5	61040235 ll5d_gate_AR23 RUNNING
+     6	61040163 ll5d_gate_G18 RUNNING
+     7	prr_ibu attempt 3: 61057142|prr_ibu|COMPLETED|0:0|546|1
+     8	log-dry/DONE: {"mode": "dry", "tasks": 15, "ended": 15, "rc": 0, "job": "61022062"}
+     9	log-iter/DONE: {"mode": "iter", "tasks": 44, "ended": 44, "rc": 0, "job": "61024185"}
+    10	log-cap/DONE: {"mode": "cap", "tasks": 29, "ended": 29, "rc": 0, "job": "61028298"}
+    11	log-misc/DONE: {"mode": "misc", "tasks": 93, "ended": 93, "rc": 0, "job": "61030122"}
+    12	log-ibu/DONE: {"mode": "ibu", "rc": 0, "job": "61057142"}
+    13	HEAD cb13a6443a457bd3887d1c421723dfcdb1909ec8; porcelain --ignored lines before: 0
+    14	prr_probe.py: OK
+    15	prr_ibu.py: OK
+    16	prr_read.py: OK
+    17	sbatch_prr.sh: OK
+    18	test_prr.py: OK
+    19	prr_mutation.py: OK
+    20	FD-PRR-DECLARATION.md sha256 5be1e19cb8db67064cb0f90382ed7ac2365a2ed4841d9b498f323ed2761b64ce
+    21	FD-PRR-ADDENDUM-A1.md sha256 ca6b8457e74c9323fcb985766a88f404038f6f16c3e822a67bf2606af223f38b
+    22	FD-PRR-ADDENDUM-A2.md sha256 41e53237ceacb99e7310f922bc70df777dd9c0a04cb005e2aafa7a0c75a73a73
+    23	FD-PRR-ADDENDUM-A3.md sha256 48641cf9ba6a6e30856dc3447412cca777bcc0b75f84566db9f4463d9e646db1
+    24	FD-PRR-ADDENDUM-A4.md sha256 3ba2f47ba0d9b40155d6840ca22f665051a4f6cdaf15fd0efe24564929bdc6a8
+    25	FD-PRR-BINDING-1.md at origin/main 4ad8b8584eaae4bd8a815327473d7390daa6b96a sha256 634cded38a1780286d24941ce567c174ff17ccc1b6af640f24129c5e6275b613
+    26	route2/route2.npz: OK
+    27	route2/route2.json: OK
+    28	threads: OMP=1 OPENBLAS=1 MKL=1 NUMEXPR=1 VECLIB=1; nice 19; ionice idle; python 3.11.14
+    29	{"verdict": "COMPLETE"}
+    30	prr_read rc 0
+    31	read rc=0
+    32	total 9
+    33	drwx------  2 josephrb josephrb   4096 Nov  9 15:35 .
+    34	drwx------ 28 josephrb josephrb   4096 Nov  9 15:35 ..
+    35	-rw-------  1 josephrb josephrb 372128 Nov  9 15:35 readout.json
+    36	-rw-------  1 josephrb josephrb  34386 Nov  9 15:35 readout.txt
+    37	readout.json sha256 9238f22bfe29685e33c1d5bb46da3938a3ebfdc93a54575a4fe99de3a7af9ead bytes 372128
+    38	readout.txt sha256 8175033c7fcbd61e73b93defec7aceb484d30cc3757f4b089b21a3b0b32809e3 bytes 34386
+    39	porcelain --ignored lines after: 0
+    40	prr read rc=0
+    41	2026-11-09T23:35:49Z
