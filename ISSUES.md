@@ -245,7 +245,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-11 [T]** — **Two $\\chi^2$ values for same quantity in §4.5.**  
   *Finding:* §4.5 reports $p_\\parallel$ $\\chi^2 = 34.4$ against earlier 2D budget, then $34.8$ against other blocks alone.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:168`.  
-  *Resolution:* Distinguish the two baseline comparators explicitly in text.
+  *Resolution:* The two comparators are already distinguished in sec_systematics.tex: 34.4 against the earlier 2D budget, and 34.8 against the other blocks alone. This row authorizes no tex edit.
 
 * **S1-ACC-12 [R]** — **Suspicious duplicate numbers.**  
   *Finding:* Check 0.141% 3D marginal difference vs QA $d/S_{2D}$; 3.71% $C_{\\text{model}}$ vs flux band median; identical $r_c$ ratios (0.923/0.963) for NuWro and GiBUU.  
