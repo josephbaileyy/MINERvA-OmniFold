@@ -411,7 +411,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CLM-2 [T]** — **"Comparable" uncertainty budget wording in §6.3.**  
   *Finding:* Claiming uncertainty budget is "comparable" to publication overlooks post hoc run-period addition and smaller bootstrap block.  
   *Evidence:* `docs/analysis-note/sec_results.tex:95`.  
-  *Resolution:* Describe budget as "a distinct construction with differing composition, not independently validated".
+  *Resolution:* Landed at 0da1dc3f7b4ab7b5bed1d851c2da45b22b81e30a. The budget sentence now says the combined budget differs from the published total in both directions. Do not add "not independently validated". No further tex edit.
 
 * **S1-CLM-3 [T]** — **$(E_{\\text{avail}}, W)$ excess localization without covariance.**  
   *Finding:* Localizing excess at high $E_{\\text{avail}}$ and $W$ rests on biased purity estimator without evaluated joint covariance.  
