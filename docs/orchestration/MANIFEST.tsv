@@ -5826,6 +5826,8 @@ docs/orchestration/state/2d-closeout/stageF/methods/register-retrospective-20261
 docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/README.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/build_package.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/connect/cov2d_arrays_login.sh	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/connect/decode_c2a.py	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/package/fig-ratio16.csv	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/package/pending/2D-ARRAYS.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/package/pending/ENS1.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
