@@ -81,6 +81,6 @@ Search: `git show ef9411a3:<queue> | awk -F'\t' '!/^#/ && NF>4 {for(i=1;i<=NF;i+
   into `$OUT/stage/s5p-nullsF/`. Stat records are taken before and after, and each copy's sha256 is checked against
   its json. The staging is recorded in a stage-A4 record beside `stage.json`. prr_ibu's capture then reads the staged
   copies. The json files and `s5p_truths.py` are unchanged.
-- **This record decides nothing about the four completed jobs' products.** It records the deviation and its extent.
-  The content pin above is why it makes no claim that a product is affected. The compliance row at
-  `FD-PRR-DECLARATION.md:673` is not rewritten. This record points at it.
+- **The director's ruling (2026-11-09):** the four completed jobs' products stand and are not rerun; each of these
+  reads was sha-verified against the committed hypothesis, so the deviation concerns the staging and atime rule only.
+- **The compliance row** at `FD-PRR-DECLARATION.md:673` is not rewritten. This record points at it.
