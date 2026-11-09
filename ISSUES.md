@@ -764,7 +764,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-ACC-2 [T]** — **Discrepancy in raw run-period $\\chi^2$.**  
   *Finding:* Raw run-period $\\chi^2 = 209.6$ in §4.5 vs $205.8$ in Table 3.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:165`, Table 3.  
-  *Resolution:* Reconcile text and Table 3 to reflect the exact value from `values.tex`.
+  *Resolution:* This row authorizes no tex edit. The cited 209.6 and 205.8 are not in the note. Table 3 does not quote a run-period chi-squared. Do not reconcile a run-period chi-squared to a value from values.tex.
 * **G1-ACC-3 [T]** — **Inconsistent degrees of freedom in held-out-tune test.** Same finding as S2-ACC-8.
 * **G1-ACC-4 [T]** — **Marginal normalization check agreement overstated in Executive Summary.** Same finding as S1-ACC-7 / S2-ACC-17.
 * **G1-ACC-5 [T]** — **Discrepancy between systematic median uncertainty in text and Table 8.**  
