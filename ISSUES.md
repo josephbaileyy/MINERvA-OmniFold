@@ -518,7 +518,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-12 [T]** — **Dense figures and missing uncertainty labels in captions.**  
   *Finding:* Descriptive figures (Figs. 19–23) lack error bars without explicit explanation in captions.  
   *Evidence:* Captions to Figs. 19–23.  
-  *Resolution:* Explicitly note in captions that figures display central value distributions without evaluated covariance.
+  *Resolution:* This row authorizes no tex edit. The first four captions already say uncertainties are not drawn because no covariance is quoted. The fifth is a ratio map, and the section already says no 4D uncertainty is reported. Do not add the proposed sentence.
 
 * **S1-PRES-13 [T]** — **Mixed 2D and N-D degrees of freedom labeling.**  
   *Finding:* Clarify ndf = 205 in 2D vs retained rank in N-D at each quoted $\\chi^2$.  
