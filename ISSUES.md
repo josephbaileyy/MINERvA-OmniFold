@@ -498,7 +498,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-8 [T]** — **Exponents of statistics in §3.2.**  
   *Finding:* Standard errors quoted on $\\sigma$ (4.1%) and variance (71%) without distinction.  
   *Evidence:* `docs/analysis-note/sec_method.tex:92`.  
-  *Resolution:* Explicitly identify whether uncertainty applies to cross section or variance.
+  *Resolution:* This row authorizes no tex edit. The cited line is a comment. The 4.1% and 71% sentences already name the quantity each percentage applies to. Do not add an identification.
 
 * **S1-PRES-9 [T]** — **Pseudo-inverse cutoff conventions (A.1 vs A.4).**  
   *Finding:* Cutoff quoted as $10^{-15} \\sigma_{\\max}$ in A.1 vs $10^{-10} \\lambda_{\\max}$ in A.4.  
