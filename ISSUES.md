@@ -716,7 +716,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-CLM-9 [T]** — **Five-dimensional unfolding adds information.**  
   *Finding:* Reconstructed $W$ is an exact algebraic function of $(p_T, p_\\parallel, q_3)$; added information of $W$ unmeasured.  
   *Evidence:* `docs/analysis-note/sec_method.tex:115`, `sec_eavailw.tex:40`.  
-  *Resolution:* State explicitly that $W$ is kinematically redundant with $(p_T, p_\\parallel, q_3)$ and added information has not been quantified.
+  *Resolution:* This row authorizes no tex edit. The kinematic relation and the unmeasured added information are already stated, including the clamp. Do not drop the clamp.
 
 ### Section 7: Minor Issues and Presentation
 
