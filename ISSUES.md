@@ -553,7 +553,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-7 [T]** — **Band counts and classifications across sections.**  
   *Finding:* 44 evaluated systematic bands plus 1 global normalization; clarify GEANT FSI lateral treatment.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:35`, `app_statmethods.tex:210`.  
-  *Resolution:* Harmonize band counts and classifications across sections.
+  *Resolution:* This row authorizes no tex edit. The two band counts and the GEANT FSI laterals are already distinguished. Do not collapse the counts into one number.
 * **S2-ACC-8 [T]** — **ndf in held-out-tune test (204 vs 205).**  
   *Finding:* §5.3 gives $\\chi^2/\\text{ndf}$ "(ndf = 204)" at AR23 and "(ndf = 205)" at G18 without explanation.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:198`.  
