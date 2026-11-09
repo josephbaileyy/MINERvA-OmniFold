@@ -292,6 +292,68 @@ def synthetic_stage(d: Path):
     return a, inp
 
 
+@contextlib.contextmanager
+def route2_fixture(d: Path):
+    """Route 2's inputs laid out as on the cluster (Addendum A4), on synthetic rows: the stage directory, the four
+    queues, stage.json and stage-a4.json side by side under ``d`` (as under $OUT), the fine-ratio rho arrays staged
+    under stage/s5p-nullsF. FD-STAB's closure rows are read, never retyped, so each fine-ratio row's hypothesis is
+    copied into the stage directory with its rho_npz still naming the real shared path but carrying the synthetic
+    array's sha256; closure_spec, the namespace check and rho_manifest() then all read that copy. The synthetic inputs'
+    pins replace the real ones only in the queues (the runner's --expect-*-sha256)."""
+    a, _ = synthetic_stage(d)
+    stage = a.npz.parent
+    z = dict(np.load(a.npz, allow_pickle=True))
+    z["pass_truth"] = np.ones_like(z["pass_truth"])  # IBU-1's World refuses a reco row outside every truth cell
+    z["MCgen"][40:60], z["MCreco"][40:60] = z["MCgen"][100:120], z["MCreco"][100:120]
+    np.savez(a.npz, **z)
+    npz_sha = P.sha256_path(a.npz)
+    bz = dict(np.load(a.bkg, allow_pickle=True))
+    bz["meta"] = json.dumps({"npz_sha256": npz_sha})
+    np.savez(a.bkg, **bz)
+    (stage / R.STAGE_A4_DEST).mkdir()
+    (stage / "hyp").mkdir()
+    rng, rows = np.random.default_rng(11), []
+    for row in esp.CLOSURES:
+        h = json.loads((REPO / row[1]).read_text())
+        if h.get("schema") == R.FINE_SCHEMA:
+            copy = stage / R.STAGE_A4_DEST / Path(h["rho_npz"]["path"]).name
+            if not copy.exists():
+                np.savez(copy, rho=1.0 + 0.05 * rng.standard_normal(int(np.prod([len(x) - 1 for x in h["fine_edges"]]))))
+            h["rho_npz"] = {"path": h["rho_npz"]["path"], "sha256": P.sha256_path(copy)}
+            (stage / "hyp" / Path(row[1]).name).write_text(json.dumps(h))
+            row = (row[0], str(stage / "hyp" / Path(row[1]).name)) + tuple(row[2:])
+        rows.append(row)
+    saved = esp.CLOSURES
+    esp.CLOSURES = tuple(rows)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            P.main(["tasks", "--out", str(d / "queues"), "--stage-dir", str(stage), "--runs", str(a.runs)])
+        pin = {e["role"]: e["sha256"] for e in P.SOURCES}
+        for q in (d / "queues").glob("*.tsv"):
+            q.write_text(q.read_text().replace(pin["of_inputs_5d"], npz_sha).replace(pin["bkg_dump"], P.sha256_path(a.bkg)))
+        files = [{"role": e["role"], "copy": str(stage / e["name"]), "sha256": P.sha256_path(stage / e["name"])}
+                 for e in P.SOURCES if (stage / e["name"]).exists()]
+        (d / "stage.json").write_text(json.dumps({"dest": str(stage), "files": files}))
+        a4 = [{**e, "copy": str(stage / R.STAGE_A4_DEST / e["name"])} for e in R.rho_manifest()]
+        (d / R.STAGE_A4).write_text(json.dumps({"schema": "prr-stage/1", "dest": str(stage / R.STAGE_A4_DEST),
+                                                "files": a4}))
+        yield types.SimpleNamespace(a=a, stage=stage, npz_sha=npz_sha, files=files, a4=a4)
+    finally:
+        esp.CLOSURES = saved
+
+
+def route2_main(d: Path, out: Path) -> tuple:
+    """prr_ibu.main on ``route2_fixture``'s layout, from the repository root; (rc, stdout, stderr)."""
+    so, se, cwd = io.StringIO(), io.StringIO(), os.getcwd()
+    os.chdir(REPO)
+    try:
+        with contextlib.redirect_stdout(so), contextlib.redirect_stderr(se):
+            rc = R.main(["run", "--queue-dir", str(d / "queues"), "--stage", str(d / "stage.json"), "--out", str(out)])
+    finally:
+        os.chdir(cwd)
+    return rc, so.getvalue(), se.getvalue()
+
+
 class RealParser(unittest.TestCase):
     """Every queue line, through prr_probe.run into s5p_nullexp's own argparse, stopped once the namespace and column
     checks pass. Any SystemExit fails."""
@@ -789,25 +851,133 @@ class Route2Unfold(unittest.TestCase):
 
 
 class Route2Run(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.d = Path(self.tmp.name).resolve()
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
     def test_unpinned_inputs_are_refused_before_any_unfold(self):
-        with tempfile.TemporaryDirectory() as d:
-            a, _ = synthetic_stage(Path(d))
-            with contextlib.redirect_stdout(io.StringIO()):
-                P.main(["tasks", "--out", str(Path(d) / "queues"), "--stage-dir", str(a.npz.parent), "--runs", str(a.runs)])
-            files = [{"role": e["role"], "copy": str(a.npz.parent / e["name"]), "sha256": P.sha256_path(a.npz.parent / e["name"])}
-                     for e in P.SOURCES if (a.npz.parent / e["name"]).exists()]
-            (Path(d) / "stage.json").write_text(json.dumps({"dest": str(a.npz.parent), "files": files}))
+        with route2_fixture(self.d):
+            rc, _, err = route2_main(self.d, self.d / "route2")
+        self.assertEqual(rc, 2)
+        self.assertIn("digest", err)
+        self.assertFalse((self.d / "route2" / "route2.npz").exists())
+
+    def test_the_run_path_end_to_end_with_every_path_protected(self):
+        """REQUIRED (Addendum A4). On the cluster every input is under /pscratch, which REF-G1's read guard protects:
+        prr_ibu 61043652 refused its plain re-read of $OUT/stage.json inside the guard, and the A4 trace found the
+        runner's plain reads of the fine-ratio rho arrays at their shared path. Here ref_g1.PROTECTED also covers the
+        test's temp root, so every path is protected as there, and main runs end to end: the 20 experiments, C-IBU
+        and both products. Only content pins are substituted (the synthetic inputs' digests for REF-G1's and IBU-1's
+        config, and the alignment check); no read is. Fails at M_A3 (stage.json) and with stage.json fixed alone (the
+        rho arrays)."""
+        import ibu1
+        import ref_g1
+        import s5p_truths
+        import s5p_universe
+        loaded = []
+        real_rho = s5p_truths.load_fine_rho
+
+        def spy(ratio):
+            loaded.append(ratio["rho_npz"]["path"])
+            return real_rho(ratio)
+        with route2_fixture(self.d) as fx:
+            cfg = json.loads(ref_g1.CONFIG.read_text())
+            cfg["ratios"]["sha256"][R.CIBU["ratio"]] = next(f["sha256"] for f in fx.files
+                                                             if f["role"] == "closure_ratio_nuwro")
+            cfg_copy = fx.stage / "ref_g1_config.json"
+            cfg_copy.write_text(json.dumps(cfg))
+            real_load = ibu1.load_inputs
+
+            def load_inputs(prod, icfg, npz, bkg):
+                pins = {**icfg["inputs"], "of_inputs_5d_sha256": fx.npz_sha, "bkg_dump_sha256": P.sha256_path(bkg)}
+                return real_load(prod, {**icfg, "inputs": pins}, npz, bkg)
+            saved = (ref_g1.PROTECTED, ref_g1.CONFIG, ibu1.load_inputs, s5p_universe.check_alignment,
+                     s5p_truths.load_fine_rho)
+            ref_g1.PROTECTED = tuple(saved[0]) + (self.d,)
+            ref_g1.CONFIG, ibu1.load_inputs = cfg_copy, load_inputs
+            s5p_universe.check_alignment, s5p_truths.load_fine_rho = (lambda *x, **k: {}), spy
+            try:
+                rc, out, err = route2_main(self.d, self.d / "route2")
+            finally:
+                (ref_g1.PROTECTED, ref_g1.CONFIG, ibu1.load_inputs, s5p_universe.check_alignment,
+                 s5p_truths.load_fine_rho) = saved
+        self.assertNotIn("refusing", err)
+        self.assertIn(rc, (0, 1))  # C-IBU's committed value is REF-G1's real one, so it fails on synthetic rows: rc 1
+        self.assertEqual(json.loads(out.strip().splitlines()[-1])["experiments"], 20)
+        rec = json.loads((self.d / "route2" / "route2.json").read_text())
+        self.assertEqual(sorted(rec["experiments"]), sorted(f"{t}_s{s}" for t, s in R.experiments()))
+        self.assertTrue((self.d / "route2" / "route2.npz").is_file())
+        self.assertFalse((self.d / "route2" / "scratch").exists())
+        self.assertEqual(len(loaded), 8)  # A7_genie_cv, A7_genie_mec, A7_nuwro once, A7_gibuu at its five splits
+        self.assertTrue(all(Path(p).parent == fx.stage / R.STAGE_A4_DEST for p in loaded), loaded)
+
+    def test_without_the_stage_a4_record_the_run_is_refused(self):
+        with route2_fixture(self.d):
+            (self.d / R.STAGE_A4).unlink()
+            rc, _, err = route2_main(self.d, self.d / "route2")
+        self.assertEqual(rc, 2)
+        self.assertIn(f"no {R.STAGE_A4}", err)
+
+    def test_a_changed_rho_copy_is_refused_inside_the_run(self):
+        with route2_fixture(self.d) as fx:
+            p = Path(fx.a4[0]["copy"])
+            p.write_bytes(p.read_bytes() + b"\0")
+            rc, _, err = route2_main(self.d, self.d / "route2")
+        self.assertEqual(rc, 2)
+        self.assertIn("no longer carries its pin", err)
+
+
+class Route2StageA4(unittest.TestCase):
+    """Addendum A4: the fine-ratio rho arrays, staged once like every other input, and read from their copies."""
+
+    def test_the_manifest_is_the_committed_fine_hypotheses_rho_arrays(self):
+        fine = {}
+        for t in P.TRUTHS:
+            h = json.loads((REPO / P.closure_spec(t)[1]).read_text())
+            if h.get("schema") == R.FINE_SCHEMA:
+                fine[h["rho_npz"]["path"]] = h["rho_npz"]["sha256"]
+        self.assertEqual(len(fine), 4)
+        man = R.rho_manifest()
+        self.assertEqual({e["src"]: e["sha256"] for e in man}, fine)
+        self.assertEqual(sorted(e["name"] for e in man), sorted(Path(k).name for k in fine))
+        self.assertTrue(all(e["src"].startswith("/pscratch/") for e in man))
+        with contextlib.redirect_stdout(io.StringIO()) as so:
+            self.assertEqual(R.main(["stage-a4-manifest"]), 0)
+        self.assertEqual(json.loads(so.getvalue()), man)
+
+    def test_the_stage_a4_record_must_stage_exactly_the_manifest_under_its_directory(self):
+        stage = Path("/x/stage")
+        good = [{**e, "copy": str(stage / R.STAGE_A4_DEST / e["name"])} for e in R.rho_manifest()]
+        self.assertEqual(sorted(R.rho_copies({"files": good}, stage)), sorted(e["sha256"] for e in good))
+        with self.assertRaises(P.Refused):
+            R.rho_copies({"files": good[1:]}, stage)
+        with self.assertRaises(P.Refused):
+            R.rho_copies({"files": good + [{**good[0], "sha256": "0" * 64}]}, stage)
+        with self.assertRaises(P.Refused):
+            R.rho_copies({"files": [{**good[0], "src": "/elsewhere/rho.npz"}] + good[1:]}, stage)
+        with self.assertRaises(P.Refused):
+            R.rho_copies({"files": [{**good[0], "copy": str(stage / good[0]["name"])}] + good[1:]}, stage)
+
+    def test_a_fine_hypothesis_without_a_staged_copy_is_refused_in_the_capture(self):
+        import s5p_universe
+        with tempfile.TemporaryDirectory() as d, route2_fixture(Path(d)) as fx:
+            align, s5p_universe.check_alignment = s5p_universe.check_alignment, (lambda *x, **k: {})
             cwd = os.getcwd()
             os.chdir(REPO)
             try:
-                with quiet() as err:
-                    rc = R.main(["run", "--queue-dir", str(Path(d) / "queues"), "--stage", str(Path(d) / "stage.json"),
-                                 "--out", str(Path(d) / "route2")])
+                line = R.b0_lines(Path(d) / "queues")[("A7_gibuu", P.PRIMARY_SEED)]
+                with quiet(), self.assertRaises(P.Refused) as cm:
+                    R.capture("A7_gibuu", line, {}, Path(d) / "scratch", {})
+                self.assertIn("no staged copy", str(cm.exception))
+                seen = R.capture("A7_gibuu", line, {}, Path(d) / "scratch2",
+                                 {e["sha256"]: Path(e["copy"]) for e in fx.a4})
+                self.assertFalse(np.allclose(seen["r"], 1.0))
             finally:
+                s5p_universe.check_alignment = align
                 os.chdir(cwd)
-            self.assertEqual(rc, 2)
-            self.assertIn("digest", err.getvalue())
-            self.assertFalse((Path(d) / "route2" / "route2.npz").exists())
 
 
 class Route2Helpers(unittest.TestCase):
