@@ -740,7 +740,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Mislabeled denominator on Fig. 23 colorbar.  
   *Evidence:* Fig. 23 graphic and caption.  
   *Resolution:* This row authorizes no tex edit. Do not relabel the figure. The caption already says the ratio is data/Tune v1 and that the figure prints data/GENIE. The denominator is the tune-weighted prior.
-* **S2-PRES-7 [T]** — **Statements citing AI agent session replay.** Same finding as S1-CONT-7.
+* **S2-PRES-7 [T]** — **Statements citing AI agent session replay.** Same finding as S1-CONT-7.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-7. Do not edit app_release.tex while AUD-N4 is held. Do not replace the session citation with a claim of an automated verification pipeline.
 * **S2-PRES-8 [T]** — **Dates, internal job labels, file names in text.** Same finding as S1-PRES-3.
 * **S2-PRES-9 [T]** — **Terminology used before defined.** Same finding as S1-PRES-4.
 * **S2-PRES-10 [T]** — **Figure-based numbers cited without tables.**  
