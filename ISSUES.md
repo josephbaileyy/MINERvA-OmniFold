@@ -597,7 +597,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-20 [T]** — **GiBUU domain cutoffs.**  
   *Finding:* $p_\\parallel < 4.5\\text{ GeV/c}$ in 16-cell vs $< 6\\text{ GeV/c}$ in joint tests.  
   *Evidence:* `docs/analysis-note/sec_fived16.tex:165`, `sec_joint.tex:55`.  
-  *Resolution:* Explain rationale for domain restrictions (sample coverage limits).
+  *Resolution:* This row authorizes no tex edit. Each section already states its GiBUU domain and the neutrino-energy limit. Do not treat the two edges as one cutoff.
 * **S2-ACC-21 [T]** — **Extended fiducial bin counts and fractions.**  
   *Finding:* 185 vs 205 published cells; $\\sigma_{\\text{ext}}/\\text{control} = 4.502/3.073 = 68\\%$ vs 66.4% MC.  
   *Evidence:* `docs/analysis-note/sec_fps.tex:45-80`.  
