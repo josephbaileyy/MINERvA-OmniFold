@@ -810,7 +810,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-COM-8 [T]** — **NormDISCC systematic category carried as unverified zero.**  
   *Finding:* NormDISCC carried as zero without confirmation.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:198`.  
-  *Resolution:* State transparently that NormDISCC is supplied as zero in MAT inputs and carried as zero.
+  *Resolution:* This row authorizes no tex edit. The systematics section already says NormDISCC is identically zero, that it is carried as zero, and that this has not been confirmed as intended. Do not add a further sentence.
 * **G1-COM-9 [T]** — **Numerical instability under float32 rounding.** Same finding as S2-COM-3 / AUD-E6.
 
 ### Section 5: Self-Containment
