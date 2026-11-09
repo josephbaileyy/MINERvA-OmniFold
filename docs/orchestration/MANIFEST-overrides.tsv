@@ -261,6 +261,7 @@ docs/orchestration/DECISION-20261106-joseph-relax-12h-job-limit.md	LIVE	open	""
 docs/orchestration/DECISION-20261108-joseph-5d-coverage-and-parallel-studies.md	LIVE	open	""
 docs/orchestration/DECISION-20261108-joseph-ll5d-stop-rule.md	LIVE	open	""
 docs/orchestration/DECISION-20261108-joseph-note-framing-and-estimator-dependence.md	LIVE	open	""
+docs/orchestration/DECISION-20261109-joseph-bias-half-rule.md	LIVE	open	""
 docs/orchestration/DECISION-INPUT-20260911-named-projections-and-the-tolerance-choice.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20260918-scalar5d-publication-blockers.md	LIVE	open	
 docs/orchestration/DECISION-PACKET-20261029-oi53-clm-row-ownership.md	ARCHIVAL	terminal	""
@@ -404,6 +405,8 @@ docs/orchestration/OUTCOME-20261107-valid-region.md	LIVE	open	""
 docs/orchestration/OUTCOME-20261108-1b-precheck-part1.md	LIVE	open	""
 docs/orchestration/OUTCOME-20261108-cov2d-both-tunes-under-cover.md	LIVE	open	""
 docs/orchestration/OUTCOME-20261108-rs1-rounding-mechanism.md	LIVE	open	""
+docs/orchestration/OUTCOME-20261109-band-diagnosis.md	LIVE	open	""
+docs/orchestration/OUTCOME-20261109-ens1-stab-pass-bias-worse.md	LIVE	open	""
 docs/orchestration/P5-P6-20260822-entrypoint-set-and-blind-spots.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round10-oi136-runtime-violation-repair.md	LIVE	open	
 docs/orchestration/PACKET-20260823-round5-f2a-f17a-repair.md	LIVE	open	
@@ -1246,6 +1249,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-DEC
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-X-REPORT.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-GENCMP-XCOV-SCOPING.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PLAN.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PRR-ADDENDUM-A1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PRR-BINDING-1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PRR-DECLARATION.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PSCRATCH-RETENTION-PROPOSAL.md	LIVE	open	""
@@ -1291,6 +1295,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-r
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/consult-1b-receipt-stop-20261106/AGY-PROMPT.txt	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/deposit-candidate/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/readout/fd_g_followup_readout/README.md	LIVE	open	""
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/dry/README.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/RS1-ADDENDUM-A1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/RS1-BINDING-1.md	LIVE	open	""
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/rounding-stability-20261106/RS1-BINDING-2.md	LIVE	open	""

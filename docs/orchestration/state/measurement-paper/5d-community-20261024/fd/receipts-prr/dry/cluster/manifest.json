@@ -1,0 +1,38 @@
+[
+ {
+  "role": "of_inputs_5d",
+  "src": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz",
+  "sha256": "07fccc1abc7204bc29349b4ba96850986fe91e909e83fc54e8d1a6b3922a649f",
+  "name": "of_inputs_5d.npz"
+ },
+ {
+  "role": "bkg_dump",
+  "src": "/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz",
+  "sha256": "2addac8f26055c5ed69862e7afe29e12ac51dbe23a8d6eeed79d71bec9d82955",
+  "name": "bkg_dump.npz"
+ },
+ {
+  "role": "bank_cv",
+  "src": "/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz",
+  "sha256": "072643e1e86ed0f359fa2dc94b87eebe5c9437615c05df5fbeb65e7d89ce9e3b",
+  "name": "bank/cv.npz"
+ },
+ {
+  "role": "closure_ratio_nuwro",
+  "src": "/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json",
+  "sha256": "38e47eb6b6ac63f6657022ae0cc5a2b5eaffc6a2e503735ce7222275771fea6e",
+  "name": "pvl/prep/ratios/L-5D-PV/nuwro.json"
+ },
+ {
+  "role": "fd_stab_control_nominal",
+  "src": "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/nominal/stab_control_nominal_s991000.npz",
+  "sha256": "3753f4149fdcda5b7a67fad0eddb5b783e4642636d1574849743b9eb733f6cf4",
+  "name": "fd-stab/stab_control_nominal_s991000.npz"
+ },
+ {
+  "role": "fd_stab_control_A7_gibuu",
+  "src": "/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_gibuu/stab_control_A7_gibuu_s991000.npz",
+  "sha256": "b4d2ba5c34199352f90aab36b3a3c1cc9ad55c3cab79b375eb2c398746435179",
+  "name": "fd-stab/stab_control_A7_gibuu_s991000.npz"
+ }
+]

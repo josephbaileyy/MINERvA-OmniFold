@@ -30,6 +30,9 @@ case "$MODE" in
     dry|iter|cap|misc|ibu) ;;
     *) echo "[prr] refusing: mode $MODE" >&2; exit 2 ;;
 esac
+# Addendum A1: the environment first. The login node's /usr/bin/python3 is 3.6.15, where prr_probe.py's
+# `from __future__ import annotations` is a SyntaxError (RS1 A1, #905), so every python3 call runs after this source.
+source "$D/setup_salloc_env.sh" > /dev/null 2>&1
 # The job's identity and limit, as Slurm holds them (a smoke test outside Slurm sets PRR_SMOKE and PRR_TIMELIMIT)
 LIMIT=$(python3 "$PY" limit "$MODE") || { echo "[prr] refusing: no declared limit for $MODE" >&2; exit 2; }
 if [ -n "$SLURM_JOB_ID" ]; then

@@ -1,0 +1,6 @@
+node login30 2026-11-09T05:56:46Z
+staged sha256 9a957fb8d002a79aefda87d8a73e935f1133781ba1e026a222b6ff1851e203d4
+post_rc=0
+ls: cannot access '/dev/shm/prr_dry_post.1536155.sh': No such file or directory
+--- stale-copy check on login30
+absent: /dev/shm/prr_dry_submit.sh

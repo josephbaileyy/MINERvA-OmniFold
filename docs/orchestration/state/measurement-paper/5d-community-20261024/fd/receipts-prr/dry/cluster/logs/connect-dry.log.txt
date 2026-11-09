@@ -1,0 +1,52 @@
+node login40 nproc=244 loadavg 227.61 214.00 220.25
+2026-11-09T04:51:49Z
+connect script sha256 934c9c2f45acd91a751135476ad063d9addd29e40463a048a93926102afd646d
+squeue --me before:
+== iris
+m3246               2426.5            10000.0     18344.1      20000.0
+balance_node_h=1655.9 half=828.0 cap=27.0
+HEAD 6727020a7c58b00dd00806151c627c8a24f72402; porcelain --ignored lines before: 0
+prr_probe.py: OK
+prr_ibu.py: OK
+prr_read.py: OK
+sbatch_prr.sh: OK
+test_prr.py: OK
+prr_mutation.py: OK
+declaration sha256 5be1e19cb8db67064cb0f90382ed7ac2365a2ed4841d9b498f323ed2761b64ce
+addendum A1 sha256 ca6b8457e74c9323fcb985766a88f404038f6f16c3e822a67bf2606af223f38b
+47c27fff34e8ade7490aae79b1e9c15a49b0ccb2a09b48a9d83dbd87c102c548  /pscratch/sd/j/josephrb/fd-prr-20261108/manifest.json
+role	sha256_ok	stat_unmoved	size	atime_before_ns	atime_after_ns	src
+of_inputs_5d	True	True	1548438020	1794179838000000000	1794179838000000000	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+bkg_dump	True	True	16017201	1794179838000000000	1794179838000000000	/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+bank_cv	True	True	2163648810	1794179841000000000	1794179841000000000	/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/bank_sweep_5d_bkgaware/cv.npz
+closure_ratio_nuwro	True	True	547429	1794169508000000000	1794169508000000000	/pscratch/sd/j/josephrb/pv-ladder-20261024/prep/ratios/L-5D-PV/nuwro.json
+fd_stab_control_nominal	True	True	184571	1793873922000000000	1793873922000000000	/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/nominal/stab_control_nominal_s991000.npz
+fd_stab_control_A7_gibuu	True	True	184716	1793873922000000000	1793873922000000000	/pscratch/sd/j/josephrb/fd-stab-a1r-20261104/runs/control/closure/A7_gibuu/stab_control_A7_gibuu_s991000.npz
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+{"tasks": {"dry": 15, "iter": 44, "cap": 29, "misc": 93}, "out": "/pscratch/sd/j/josephrb/fd-prr-20261108/queues"}
+queue dry: 15 tasks
+queue iter: 44 tasks
+queue cap: 29 tasks
+queue misc: 93 tasks
+480b124df882d6df2df6e3b6815d97d2f81055246cc65e735b11e7a8636945c6  /pscratch/sd/j/josephrb/fd-prr-20261108/queues/cap.tsv
+9fb47269c466f908c815702e90a3d41b714b7311031b3a937fe37afab13e2825  /pscratch/sd/j/josephrb/fd-prr-20261108/queues/dry.tsv
+e0f02c1c817175bd7ceaa9a92bb815c486569264b5acc33aa8e17c30d816d357  /pscratch/sd/j/josephrb/fd-prr-20261108/queues/iter.tsv
+4ed1579298adb43b0ef4f7d4595c179696018c6245474a6c7dc37b597521d969  /pscratch/sd/j/josephrb/fd-prr-20261108/queues/misc.tsv
+plain python3 (not used by any call below): /usr/bin/python3 Python 3.6.15
+sourced python3: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14
+root_6_28 python3 prr_probe.py limit dry -> '5:15:00' (rc 0)
+--time=05:15:00
+2026-11-09T04:53:57Z
+sbatch rc=0
+Submitted batch job 61022062
+dry run job 61022062
+scontrol TimeLimit=05:15:00 (declared 05:15:00)
+61022062 prr_dry PENDING 0:00 5:15:00 1 regular_1 m3246
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=05:15:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login40:936472
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+porcelain --ignored lines after: 0
+prr dry submit rc=0
+2026-11-09T04:54:05Z
