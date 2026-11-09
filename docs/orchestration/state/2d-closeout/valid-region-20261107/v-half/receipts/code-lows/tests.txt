@@ -1,0 +1,63 @@
+V-HALF follow-up (the audit's lows) receipt: the suite
+date_utc: 2026-11-09T18:02:12Z  host: Josephs-MacBook-Pro-9
+clone: a clean clone, HEAD b4e6d11881822b9ae1d72df5531064ec873c7e12, porcelain lines before: 0
+python: 3.12.2  numpy: 1.26.4
+thread caps: OMP=1 MKL=1 OPENBLAS=1 NUMEXPR=1 VECLIB=1; nice -n 19; one serial process
+8a1cdbe7da7d8af4cbf50f941a40ac0754255e19ced04e913ad5d3ddb107932d  v_half.py
+d2d28b9f38f422c9e350c407d76c1307795a0ac1348e0f232b87520ebfbd1df7  test_v_half.py
+09a10bc79152f1988ca4eb8cb81488080e6fa3d5613e92794bb9a4a4a34f99e7  mutate_v_half.py
+7ee797131963da0e11838a4b3fdb09d863d9631a1a3564626af630cd300f76cc  INPUTS.sha256
+36696b3920deed16a0f2a2919f8f0f22555d175156bad67d0eef965f01224eba  mutants.txt
+command (in docs/orchestration/state/2d-closeout/valid-region-20261107/v-half): nice -n 19 python3 -B -m unittest -v test_v_half
+----
+test_a_cell_where_the_rule_applies_nowhere_is_not_valid (test_v_half.Cells.test_a_cell_where_the_rule_applies_nowhere_is_not_valid) ... ok
+test_a_truth_without_d_is_no_d_not_valid (test_v_half.Cells.test_a_truth_without_d_is_no_d_not_valid) ... ok
+test_all_pass_is_valid (test_v_half.Cells.test_all_pass_is_valid) ... ok
+test_gibuu_is_graded_on_all_sixteen_cells_and_the_exclusion_is_print_only (test_v_half.Cells.test_gibuu_is_graded_on_all_sixteen_cells_and_the_exclusion_is_print_only) ... ok
+test_k_sensitivity_is_print_only (test_v_half.Cells.test_k_sensitivity_is_print_only) ... ok
+test_one_failing_truth_makes_the_cell_not_valid (test_v_half.Cells.test_one_failing_truth_makes_the_cell_not_valid) ... ok
+test_option_a_is_print_only_and_uses_the_prr_bias (test_v_half.Cells.test_option_a_is_print_only_and_uses_the_prr_bias) ... ok
+test_precedence_fail_over_no_d_over_unresolved (test_v_half.Cells.test_precedence_fail_over_no_d_over_unresolved) ... ok
+test_the_boundaries (test_v_half.Cells.test_the_boundaries) ... ok
+test_the_licence_is_carried (test_v_half.Cells.test_the_licence_is_carried) ... ok
+test_the_licence_is_section_10_in_full (test_v_half.Cells.test_the_licence_is_section_10_in_full)
+LICENCE carries DECLARATION.md section 10's CITABLE FOR and every NOT CITABLE FOR item, held-out truths ... ok
+test_the_prior_truths_count_where_the_rule_applies (test_v_half.Cells.test_the_prior_truths_count_where_the_rule_applies) ... ok
+test_c_cells (test_v_half.Controls.test_c_cells) ... ok
+test_c_domain (test_v_half.Controls.test_c_domain) ... ok
+test_c_finite (test_v_half.Controls.test_c_finite) ... ok
+test_c_form_fails_where_the_two_forms_disagree (test_v_half.Controls.test_c_form_fails_where_the_two_forms_disagree)
+The two forms differ only where 1 + d <= 0, which C-FINITE also refuses; C-FORM is called directly on such ... ok
+test_c_form_on_the_fixture (test_v_half.Controls.test_c_form_on_the_fixture) ... ok
+test_c_hand (test_v_half.Controls.test_c_hand) ... ok
+test_c_pin (test_v_half.Controls.test_c_pin) ... ok
+test_c_prr (test_v_half.Controls.test_c_prr) ... ok
+test_c_prr_refuses_an_h2_entry_not_sixteen_long (test_v_half.Controls.test_c_prr_refuses_an_h2_entry_not_sixteen_long)
+d, b and r carry one value per cell. Seventeen values would pass every other control and be cut to 16 ... ok
+test_c_truths (test_v_half.Controls.test_c_truths) ... ok
+test_clean_controls_pass (test_v_half.Controls.test_clean_controls_pass) ... ok
+test_a_pair_within_the_band_is_unresolved (test_v_half.Noise.test_a_pair_within_the_band_is_unresolved) ... ok
+test_sigma_d_is_the_five_split_sd (test_v_half.Noise.test_sigma_d_is_the_five_split_sd) ... ok
+test_the_band_is_k_sigma_inclusive_on_the_pass_side (test_v_half.Noise.test_the_band_is_k_sigma_inclusive_on_the_pass_side) ... ok
+test_the_bias_noise_is_scaled_by_one_plus_d (test_v_half.Noise.test_the_bias_noise_is_scaled_by_one_plus_d) ... ok
+test_the_departure_noise_derivative_holds_in_every_sign_quadrant (test_v_half.Noise.test_the_departure_noise_derivative_holds_in_every_sign_quadrant)
+The d-term of sigma_m is |dm/dd| sigma_d with m = 0.5|d| - |r (1 + d)|, checked against a central finite ... ok
+test_the_departure_noise_enters_with_its_derivative (test_v_half.Noise.test_the_departure_noise_enters_with_its_derivative) ... ok
+test_a_wrong_h1_path_refuses (test_v_half.Refusals.test_a_wrong_h1_path_refuses) ... ok
+test_an_existing_out_refuses (test_v_half.Refusals.test_an_existing_out_refuses) ... ok
+test_no_prr_pin_refuses (test_v_half.Refusals.test_no_prr_pin_refuses) ... ok
+test_b_carries_the_factor_one_plus_d (test_v_half.Rule.test_b_carries_the_factor_one_plus_d) ... ok
+test_half_is_inclusive_at_the_boundary (test_v_half.Rule.test_half_is_inclusive_at_the_boundary) ... ok
+test_signs_enter_only_through_magnitudes (test_v_half.Rule.test_signs_enter_only_through_magnitudes) ... ok
+test_the_floor_is_inclusive_and_two_sided (test_v_half.Rule.test_the_floor_is_inclusive_and_two_sided) ... ok
+test_the_two_forms_agree (test_v_half.Rule.test_the_two_forms_agree)
+REQUIRED (the director's ruling 1): |b| <= 0.5|d| with b = r(1 + d) iff |r| <= 0.5|d|/(1 + d). ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 0.338s
+
+OK
+----
+rc=0
+porcelain lines after: 0
+date_utc: 2026-11-09T18:02:13Z

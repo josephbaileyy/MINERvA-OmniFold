@@ -205,6 +205,19 @@ class Noise(Case):
         self.assertEqual(vh.pair((0.5 * d - 0.005) / (1.0 + d), 0.0, d, sd)["class"], vh.UNRES)
         self.assertEqual(vh.pair((0.5 * d - 0.005) / (1.0 + d), 0.0, d, 0.0)["class"], vh.PASS)
 
+    def test_the_departure_noise_derivative_holds_in_every_sign_quadrant(self):
+        """The d-term of sigma_m is |dm/dd| sigma_d with m = 0.5|d| - |r (1 + d)|, checked against a central finite
+        difference at d < 0 and d > 0 with r < 0 and r > 0 (the noise-free sign cases kill "sgn(d) dropped" and
+        "|r| -> r", which agree with the code when d > 0 and r > 0)."""
+        sd, h = 0.01, 1e-7
+        for r, d in ((0.02, 0.2), (0.02, -0.2), (-0.02, 0.2), (-0.02, -0.2)):
+            m = (lambda dd: 0.5 * abs(dd) - abs(r * (1.0 + dd)))
+            fd = (m(d + h) - m(d - h)) / (2 * h)
+            p = vh.pair(r, 0.0, d, sd)
+            self.assertAlmostEqual(p["sigma_m"], abs(fd) * sd, places=9, msg=(r, d))
+        self.assertAlmostEqual(vh.pair(0.02, 0.0, -0.2, sd)["sigma_m"], 0.52 * sd, places=15)
+        self.assertAlmostEqual(vh.pair(-0.02, 0.0, 0.2, sd)["sigma_m"], 0.48 * sd, places=15)
+
     def test_sigma_d_is_the_five_split_sd(self):
         h2 = self.fx.h2()
         sd = vh.sigma_d(h2)
@@ -308,6 +321,22 @@ class Cells(Case):
         self.assertTrue(any("ATLAS" in s for s in js["licence"]["not_citable_for"]))
 
 
+    def test_the_licence_is_section_10_in_full(self):
+        """LICENCE carries DECLARATION.md section 10's CITABLE FOR and every NOT CITABLE FOR item, held-out truths
+        among them."""
+        rc, js = self.read()
+        self.assertEqual(js["licence"], {
+            "citable_for": ["each cell's V-HALF class, with its inputs, as declared"],
+            "not_citable_for": [
+                "coverage", "a measurement", "the cause of any failure",
+                "V-HALF as ATLAS's rule, or as the advisor's exact formulation (the 1 % floor, the noise treatment "
+                "and the hybrid source of d are this record's additions)",
+                "a failing cell as excluded, wrong or unreported",
+                "held-out truths (the truths are not held out)",
+                "any paper or note sentence without the PRD-referee read and Joseph",
+                "the print-only sections, which change no class"]})
+
+
 class Controls(Case):
     def stop(self, h1=None, h2=None, name=None):
         rc, js = self.read(h1, h2)
@@ -388,6 +417,32 @@ class Controls(Case):
         c = vh.ctl_form(D)
         self.assertTrue(c["pass"])
         self.assertEqual(c["detail"]["pairs_checked"], 10 * 16)
+
+
+    def test_c_prr_refuses_an_h2_entry_not_sixteen_long(self):
+        """d, b and r carry one value per cell. Seventeen values would pass every other control and be cut to 16
+        cells; one value would pass C-PRR's b = r (1 + d) by broadcasting."""
+        for n in (17, 1):
+            h2 = self.fx.h2()
+            e = h2["table"][f"B0/q3/s{vh.PRIMARY_SEED}"]
+            for k in ("b", "r", "d"):
+                e[k] = (e[k] + e[k])[:n]
+            js = self.stop(h2=h2, name="C-PRR")
+            self.assertEqual(next(c for c in js["controls"] if c["control"] == "C-PRR")["detail"]["not_16_long"],
+                             [f"B0/q3/s{vh.PRIMARY_SEED}"])
+        h2 = self.fx.h2()
+        h2["table"]["B0/nominal/s994004"]["r"] = h2["table"]["B0/nominal/s994004"]["r"][:15]
+        self.stop(h2=h2, name="C-PRR")
+
+    def test_c_form_fails_where_the_two_forms_disagree(self):
+        """The two forms differ only where 1 + d <= 0, which C-FINITE also refuses; C-FORM is called directly on such
+        a pair, so that it is shown to be able to fail."""
+        D = {"H1": self.fx.h1(), "H2": self.fx.h2()}
+        D["H2"]["table"][f"B0/q3/s{vh.PRIMARY_SEED}"]["d"][5] = -1.5
+        D["H1"]["truths"][4]["bias"][5] = 0.1
+        c = vh.ctl_form(D)
+        self.assertFalse(c["pass"])
+        self.assertEqual(c["detail"]["disagree"], ["R05/q3"])
 
 
 class Refusals(Case):
