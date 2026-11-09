@@ -20,52 +20,53 @@ from pathlib import Path
 
 NOTE = "docs/analysis-note"
 
-LL5D_TUNES = ("g18", "ar23")
-LL5D_READ = ("minus2", "all")
-
-
-def ll5d(campaign, per, abstract, cells=None):
-    """per[(tune, reading)] -> class; cells[(tune, reading)] -> stand-in text."""
-    v = {"ll5d-campaign": campaign, "ll5d-abstract": abstract}
-    for t in LL5D_TUNES:
-        for r in LL5D_READ:
-            v[f"ll5d-{t}-{r}"] = per.get((t, r), "na")
-            v[f"ll5d-{t}-{r}-cells"] = (cells or {}).get((t, r), "[cells R..]")
-    return v
-
-
-def every(cls):
-    return {(t, r): cls for t in LL5D_TUNES for r in LL5D_READ}
-
-
 C1 = "[cells R03, R11]"
 C2 = "[cells R06]"
-CASES = {
-    "cov-both-cover": ll5d("graded", every("covers"), "both-cover"),
-    "cov-one-under-cells": ll5d("graded", {("g18", "minus2"): "covers", ("ar23", "minus2"): "under-cells",
-                                           ("g18", "all"): "covers", ("ar23", "all"): "under-cells"},
-                                "one-under", {("ar23", "minus2"): C1, ("ar23", "all"): C1}),
-    "cov-both-under-joint": ll5d("graded", every("under-joint"), "both-under",
-                                 {("g18", "minus2"): C2, ("g18", "all"): C2, ("ar23", "minus2"): C1, ("ar23", "all"): C1}),
-    "cov-invalid": ll5d("graded", every("invalid"), "invalid"),
-    "cov-mixed-primary-covers": ll5d("graded", {("g18", "minus2"): "covers", ("ar23", "minus2"): "covers",
-                                                ("g18", "all"): "covers", ("ar23", "all"): "under-cells"},
-                                     "both-cover", {("ar23", "all"): C1}),
-    "cov-gate-failed": ll5d("gate-failed", {}, "not-graded"),
-    "cov-to-joseph": ll5d("to-joseph", {}, "not-graded"),
-    "cov-stop": ll5d("stop", {}, "not-graded"),
+CHECK = "[the check]"
+
+
+def P(g, a, bg=None, ba=None):
+    """The four (tune, reading) classes: primary at G18 and AR23, then with the bands (default: the same)."""
+    return {("g18", "minus2"): g, ("ar23", "minus2"): a, ("g18", "all"): bg or g, ("ar23", "all"): ba or a}
+
+
+CELLS = {(t, r): C1 if t == "ar23" else C2 for t in ("g18", "ar23") for r in ("minus2", "all")}
+CELLS.update({(t, r, x): C1 if t == "ar23" else C2 for t in ("g18", "ar23") for r in ("minus2", "all")
+              for x in ("weak", "over", "clip")})
+# case -> the like-for-like group's arguments for make_values_fived16.ll5d_case (campaign, per, route, flags)
+LL5D_CASES = {
+    "cov-both-cover": ("graded", P("covers", "covers"), "direct", {}),
+    "cov-both-cover-qualified": ("graded", P("covers", "covers"), "direct",
+                                 {("g18", "minus2", "weak"): "some", ("ar23", "minus2", "over"): "some"}),
+    "cov-bands-under-one": ("graded", P("covers", "covers", "covers", "under-cells"), "direct", {}),
+    "cov-bands-under-both": ("graded", P("covers", "covers", "under-cells", "under-joint"), "direct", {}),
+    "cov-bands-invalid-one": ("graded", P("covers", "covers", "covers", "invalid"), "direct", {}),
+    "cov-bands-invalid-both": ("graded", P("covers", "covers", "invalid", "invalid"), "direct", {}),
+    "cov-one-under-cells": ("graded", P("covers", "under-cells"), "direct", {}),
+    "cov-one-under-clip": ("graded", P("covers", "under-cells"), "direct", {("ar23", "minus2", "clip"): "some"}),
+    "cov-one-under-joint-only": ("graded", P("covers", "under-joint-only"), "direct", {}),
+    "cov-both-under-joint": ("graded", P("under-joint", "under-joint"), "direct", {}),
+    "cov-invalid-one-covers": ("graded", P("invalid", "covers"), "direct", {}),
+    "cov-invalid-one-under": ("graded", P("invalid", "under-cells"), "direct", {}),
+    "cov-invalid-both": ("graded", P("invalid", "invalid"), "direct", {}),
+    "cov-offset-proceeded": ("graded", P("covers", "covers"), "offset-proceeded", {}),
+    "cov-repaired": ("graded", P("covers", "covers"), "repaired", {}),
+    "cov-gate-failed": ("gate-failed", None, "direct", {}),
+    "cov-offset-stopped": ("offset-stopped", None, "direct", {}),
+    "cov-stop": ("stop", None, "direct", {}),
 }
 
 
-def prr(ibu):
+def prr(ibu, k):
+    """The prior-retention group at one IBU class (both truths), with the longer-iteration class k. Only the labels the
+    IBU class forces are set (FD-PRR §5.4: the implementation-specific share when the IBU retains less)."""
     v = {}
     for t in ("gibuu", "q3"):
         for f in ("F1", "F2", "F3", "F4"):
-            v[f"prr-pr1-{f}-{t}"] = "no-effect"
+            v[f"prr-pr1-{f}-{t}"] = "undefined" if ibu == "undefined" else "no-effect"
         v[f"prr-pr2a-{t}"] = ibu
-        v[f"prr-pr2b-{t}"] = "flat"          # replaced by a bracketed stand-in in the passage (another reading)
+        v[f"prr-pr2b-{t}"] = k
         for lab in ("fir", "info", "impl", "obs", "stat", "unattr"):
-            # FD-PRR §5.4: "implementation-specific share" holds when PR-2a = IBU retains less; nothing else follows
             v[f"prr-label-{lab}-{t}"] = "holds" if (lab == "impl" and ibu == "less") else "not"
     v["prr-pr3-any"] = "not"
     v["prr-pr3-ibu"] = "not"
@@ -73,16 +74,35 @@ def prr(ibu):
     return v
 
 
-for _c in ("less", "same", "more"):
-    CASES[f"ibu-{_c}"] = prr(_c)
+PRR_CASES = {"ibu-less": ("less", "falls"), "ibu-same": ("same", "flat"), "ibu-more": ("more", "rises"),
+             "ibu-undefined": ("undefined", "undefined")}
+
+
+def cases(mv):
+    out = {}
+    for name, (camp, per, route, flags) in LL5D_CASES.items():
+        out[name] = mv.ll5d_case(camp, per, route, flags, CELLS, CHECK)
+    for name, (ibu, k) in PRR_CASES.items():
+        out[name] = prr(ibu, k)
+    return out
+
 
 # anchors: fixed text around each changed passage, as pdftotext prints it (whitespace normalized)
 PASSAGES = {
-    "abstract-coverage": ("A like-for-like five-observable coverage test at the same tunes", "The five-observable output on data is therefore"),
-    "sec-coverage": ("or on the ensemble average.", "7. DISCUSSION AND CONCLUSIONS"),
-    "abstract-ibu": ("At the GiBUU-like truth, a binned iterative unfolding", "The estimator is reproducible"),
-    "sec-ibu": ("At the GiBUU hybrid truth, the IBU at five iterations", "No tested level clears both flagged truths."),
+    "abstract-coverage": ("intervals is not established.", "The five-observable output on data is therefore", "text"),
+    "sec-coverage": ("one of the generators of Cmodel .", "7. DISCUSSION AND CONCLUSIONS", "text"),
+    "abstract-ibu": ("At the GiBUU-like truth, a binned iterative unfolding", "The estimator is reproducible", "text"),
+    "sec-ibu": ("At the GiBUU hybrid truth, the IBU at five iterations", "No tested level clears both flagged truths.", "text"),
+    # Table 1's row, from pdftotext -raw (content order keeps a table row together)
+    "table-coverage": ("Like-for-like five-observable coverage test 5D 6.3", "Run-period consistency", "raw"),
 }
+
+
+def load_mod(path, name):
+    spec = importlib.util.spec_from_file_location(name, path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 
 def load_mv(wt):
@@ -115,11 +135,12 @@ def cut(txt, a, b):
 def recut(out):
     """Re-cut passages.json from the saved <case>.txt builds, without rebuilding."""
     res = {}
-    for name in CASES:
+    for name in sorted(LL5D_CASES.keys() | PRR_CASES.keys()):
         txt = norm((out / f"{name}.txt").read_text())
+        rawt = norm((out / f"{name}.raw.txt").read_text())
         res[name] = {"pending_markers": txt.count("[PENDING"), "unresolved": txt.count("??"), "passages": {}}
-        for p, (a, b) in PASSAGES.items():
-            c = cut(txt, a, b)
+        for p, (a, b, src) in PASSAGES.items():
+            c = cut(rawt if src == "raw" else txt, a, b)
             if c is not None:
                 res[name]["passages"][p] = c
     (out / "passages.json").write_text(json.dumps(res, indent=1, ensure_ascii=False) + "\n")
@@ -129,11 +150,12 @@ def main(argv):
     wt, out = Path(argv[1]).resolve(), Path(argv[2]).resolve()
     out.mkdir(parents=True, exist_ok=True)
     mv = load_mv(wt)
+    cr = load_mod(Path(__file__).resolve().parent.parent / "check_round.py", "check_round")
+    CASES = cases(mv)
     for name, ver in CASES.items():
         for k, v in ver.items():
             g, cls = mv.PENDING[k]
             assert cls is None or v in cls, (name, k, v)
-    res = {}
     with tempfile.TemporaryDirectory() as td:
         d = Path(td) / NOTE
         shutil.copytree(wt / NOTE, d, ignore=shutil.ignore_patterns("archive", "main_*.pdf", "*.aux", "*.log", "*.fls",
@@ -164,14 +186,14 @@ def main(argv):
             raw = subprocess.run(["pdftotext", "main_paper.pdf", "-"], cwd=d, capture_output=True, text=True,
                                  errors="replace").stdout
             (out / f"{name}.txt").write_text(raw)
+            (out / f"{name}.raw.txt").write_text(subprocess.run(["pdftotext", "-raw", "main_paper.pdf", "-"], cwd=d,
+                                                                capture_output=True, text=True, errors="replace").stdout)
+            bad = cr.printed_class_names(raw, mv)                 # check_round check 8, on every case build
+            if bad:
+                sys.exit(f"{name}: a class name prints: {bad}")
             txt = norm(raw)
-            res[name] = {"pending_markers": txt.count("[PENDING"), "unresolved": txt.count("??"), "passages": {}}
-            for p, (a, b) in PASSAGES.items():
-                c = cut(txt, a, b)
-                if c is not None:
-                    res[name]["passages"][p] = c
-            print(f"{name}: built; {len(txt.split())} words; passages {sorted(res[name]['passages'])}")
-    (out / "passages.json").write_text(json.dumps(res, indent=1, ensure_ascii=False) + "\n")
+            print(f"{name}: built; {len(txt.split())} words; {txt.count('[PENDING')} pending markers")
+    recut(out)
 
 
 if __name__ == "__main__":

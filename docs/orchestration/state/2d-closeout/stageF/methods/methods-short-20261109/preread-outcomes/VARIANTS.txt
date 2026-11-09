@@ -1,4 +1,4 @@
-PRE-WRITTEN OUTCOME CASES OF THE MANUSCRIPT
+THE MANUSCRIPT'S PRE-WRITTEN CASES FOR RESULTS STILL TO COME
 
 Some results in the manuscript have not come in yet. Where the manuscript shows "[PENDING: ...]", the text for each
 possible outcome is already written, and one version will print when the result arrives. This file gives each
@@ -6,11 +6,11 @@ version as it would print, under a plain-language label for its outcome.
 
 How the text was made: the manuscript was built once per outcome, and each passage below was copied from that build.
 
-Square brackets mark placeholders. Any text in square brackets, such as "[cells R03, R11]" or "[falls / rises / does
-not change]", is a made-up stand-in for a value that does not exist yet. It is not a result.
+Square brackets mark placeholders. Any text in square brackets, such as "[cells R03, R11]" or "[the check]", is a
+made-up stand-in for a value that does not exist yet. It is not a result.
 
-The manuscript and its Supplement accompany this file. Apart from Table 1 (Part 4), no sentence that is not shown
-here changes with these outcomes.
+The manuscript and its Supplement accompany this file. No sentence that is not shown here changes with these
+outcomes (Part 5 lists the other pending text).
 
 
 ======================================================================================================================
@@ -19,127 +19,255 @@ PART 1. THE ABSTRACT: THE SENTENCE ON THE FIVE-OBSERVABLE COVERAGE TEST
 
 It follows this sentence, which prints in every outcome: "The procedure's two-dimensional covariance, rebuilt at each
 of two held-out generator tunes, under-covers at both; coverage of the reported five-observable intervals is not
-established."
+established." The test has two variants: a primary one, without two bands of the detector simulation's
+uncertainties, and one with them.
 
-A1. The test covers at both tunes
 
-    A like-for-like five-observable coverage test at the same tunes covers at both.
+AB1. Both tunes covered, in both variants
 
-A2. The test under-covers at one of the two tunes
+    In a like-for-like five-observable coverage test at the same tunes, the procedure’s covariance, rebuilt at each tune, covers at both, in the test’s primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, and with those bands; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
 
-    A like-for-like five-observable coverage test at the same tunes under-covers at one.
+AB2. The primary variant covers at both tunes; with the bands, it under-covers at one
 
-A3. The test under-covers at both tunes
+    In a like-for-like five-observable coverage test at the same tunes, the procedure’s covariance, rebuilt at each tune, covers at both in the test’s primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, and under-covers at one with those bands; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
 
-    A like-for-like five-observable coverage test at the same tunes under-covers at both.
+AB3. The primary variant covers at both tunes; with the bands, it under-covers at both
 
-A4. The test is invalid by its own controls
+    In a like-for-like five-observable coverage test at the same tunes, the procedure’s covariance, rebuilt at each tune, covers at both in the test’s primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, and under-covers at both with those bands; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+
+AB4. The primary variant covers at both tunes; with the bands, the test is invalid at one
+
+    In a like-for-like five-observable coverage test at the same tunes, the procedure’s covariance, rebuilt at each tune, covers at both in the test’s primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, and with those bands the test is invalid by its own controls at one; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+
+AB5. The primary variant covers at both tunes; with the bands, the test is invalid at both
+
+    In a like-for-like five-observable coverage test at the same tunes, the procedure’s covariance, rebuilt at each tune, covers at both in the test’s primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, and with those bands the test is invalid by its own controls at both; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+
+AB6. The primary variant under-covers at one tune
+
+    In a like-for-like five-observable coverage test at the same tunes, the procedure’s covariance, rebuilt at each tune, under-covers at one, in the test’s primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector.
+
+AB7. The primary variant under-covers at both tunes
+
+    In a like-for-like five-observable coverage test at the same tunes, the procedure’s covariance, rebuilt at each tune, under-covers at both, in the test’s primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector.
+
+AB8. The test is invalid at one tune, and the primary variant covers at the other
+
+    A like-for-like five-observable coverage test at the same tunes is invalid by its own controls at one tune; at the other, the procedure’s covariance, rebuilt at that tune, covers in the test’s primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector, a result about the procedure at that tune, not the reported intervals at the data.
+
+AB9. The test is invalid at one tune, and the primary variant under-covers at the other
+
+    A like-for-like five-observable coverage test at the same tunes is invalid by its own controls at one tune; at the other, the procedure’s covariance, rebuilt at that tune, under-covers in the test’s primary variant, which omits the uncertainty bands for neutron and proton interactions in the detector.
+
+AB10. The test is invalid at both tunes
 
     A like-for-like five-observable coverage test at the same tunes is invalid by its own controls.
 
-A5. The test stopped before any pseudo-experiment ran
+AB11. The test stopped before any pseudo-experiment ran
 
     A like-for-like five-observable coverage test at the same tunes stopped before its pseudo-experiments.
 
-In A1 to A4, "covers" and "under-covers" refer to the test's primary variant, the one without the two GEANT4
-bands (section 6.3).
+AB12. The test stopped after a check, before most of its pseudo-experiments ran
+
+    A like-for-like five-observable coverage test at the same tunes stopped before the bulk of its pseudo-experiments.
 
 
 ======================================================================================================================
 PART 2. SECTION 6.3, "A LIKE-FOR-LIKE FIVE-OBSERVABLE COVERAGE TEST": THE RESULT
 ======================================================================================================================
 
-The text below follows the section's fixed paragraph, which ends "...and neither outcome bears on the reported
-intervals at the data or on the ensemble average." It ends the section. G18_10a_02_11b and AR23_20i_00_000 are the
-two held-out tunes. "Without the two bands" is the test's primary variant.
+The text below follows the section's fixed paragraph, which ends "...shares its 2p2h model family with one of the
+generators of Cmodel." It ends the section. G18_10a_02_11b and AR23_20i_00_000 are the two held-out tunes.
+"Without the two bands" is the test's primary variant.
 
 The test ran to a result:
 
-B1. Both tunes covered, in both variants
 
-    Without the two bands, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it covers.
+SC1. Both tunes covered, in both variants
 
-B2. One tune under-covers in some cells; the other covers (both variants alike)
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it covers. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
 
-    Without the two bands, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it under-covers in cells [cells R03, R11]. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it under-covers in cells [cells R03, R11].
+SC2. Both tunes covered, in both variants, with some passes weakened and some over-coverage
 
-B3. Both tunes under-cover, jointly and in some cells (both variants alike)
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it covers. Without the two bands, at G18_10a_02_11b, the passes in cells [cells R06] count as weakened: their variance ratio after clipping is below a bound fixed in advance. Without the two bands, at AR23_20i_00_000, it over-covers in cells [cells R03, R11]; the test reports over-coverage and does not count it as a failure. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
 
-    Without the two bands, at G18_10a_02_11b it under-covers jointly and in cells [cells R06], and at AR23_20i_00_000 it under-covers jointly and in cells [cells R03, R11]. With them, at G18_10a_02_11b it under-covers jointly and in cells [cells R06], and at AR23_20i_00_000 it under-covers jointly and in cells [cells R03, R11].
+SC3. The primary variant covers at both tunes; with the bands, it under-covers in some cells at one
 
-B4. The test is invalid by its own controls (both tunes, both variants)
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it under-covers in cells [cells R03, R11]. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
 
-    Without the two bands, at G18_10a_02_11b it is invalid by its own controls, and at AR23_20i_00_000 it is invalid by its own controls. With them, at G18_10a_02_11b it is invalid by its own controls, and at AR23_20i_00_000 it is invalid by its own controls.
+SC4. The primary variant covers at both tunes; with the bands, it under-covers at both
 
-B5. The primary variant covers at both tunes; the variant with the bands under-covers in some cells at one tune
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it under-covers in cells [cells R06], and at AR23_20i_00_000 it under-covers jointly and in cells [cells R03, R11]. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
 
-    Without the two bands, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it under-covers in cells [cells R03, R11].
+SC5. The primary variant covers at both tunes; with the bands, the test is invalid at one
 
-The abstract prints A1 in case B5.
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it is not graded, the test being invalid by its own controls there. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
 
-The test stopped before any pseudo-experiment ran (the abstract prints A5 in each of these):
+SC6. The primary variant covers at both tunes; with the bands, the test is invalid at both
 
-B6. Stopped at a gate
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it is not graded, the test being invalid by its own controls there, and at AR23_20i_00_000 it is not graded, the test being invalid by its own controls there. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
 
-    It stopped before its pseudo-experiments, at a gate fixed in advance, and gives no coverage reading.
+SC7. One tune under-covers in some cells; the other covers (both variants alike)
 
-B7. Stopped when a check of the clipping offset exceeded its bound
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it under-covers in cells [cells R03, R11]. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it under-covers in cells [cells R03, R11]. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
 
-    It stopped before its pseudo-experiments, when its check of the clipping offset exceeded the bound fixed in advance, and gives no coverage reading.
+SC8. As SC7, where a flag may be an artefact of clipping
 
-B8. Stopped at another stopping point
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it under-covers in cells [cells R03, R11]. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it under-covers in cells [cells R03, R11]. Without the two bands, at AR23_20i_00_000, the flags in cells [cells R03, R11] may be the clipping artefact, a reading that does not remove them. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
 
-    It stopped under a stopping rule fixed in advance and gives no coverage reading.
+SC9. One tune under-covers jointly, with no single cell flagged; the other covers
+
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it under-covers jointly, with no cell flagged. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it under-covers jointly, with no cell flagged. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+
+SC10. Both tunes under-cover, jointly and in some cells (both variants alike)
+
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance under-covers jointly and in cells [cells R06], and at AR23_20i_00_000 it under-covers jointly and in cells [cells R03, R11]. With them, at G18_10a_02_11b it under-covers jointly and in cells [cells R06], and at AR23_20i_00_000 it under-covers jointly and in cells [cells R03, R11]. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+
+SC11. The test is invalid at one tune; the other covers
+
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance is not graded, the test being invalid by its own controls there, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it is not graded, the test being invalid by its own controls there, and at AR23_20i_00_000 it covers. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+
+SC12. The test is invalid at one tune; the other under-covers in some cells
+
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance is not graded, the test being invalid by its own controls there, and at AR23_20i_00_000 it under-covers in cells [cells R03, R11]. With them, at G18_10a_02_11b it is not graded, the test being invalid by its own controls there, and at AR23_20i_00_000 it under-covers in cells [cells R03, R11]. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+
+SC13. The test is invalid at both tunes
+
+    Without the two bands, at G18_10a_02_11b the rebuilt covariance is not graded, the test being invalid by its own controls there, and at AR23_20i_00_000 it is not graded, the test being invalid by its own controls there. With them, at G18_10a_02_11b it is not graded, the test being invalid by its own controls there, and at AR23_20i_00_000 it is not graded, the test being invalid by its own controls there. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+
+SC14. Both tunes covered, after a check of the clipping offset exceeded its bound and the test went on
+
+    Its check of the clipping offset exceeded the bound fixed in advance, and it proceeded by a decision made after that check was seen. Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it covers. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+
+SC15. Both tunes covered, after the test had stopped and was repaired
+
+    It first stopped at a check fixed in advance, [the check]; the repair with which it then ran was chosen after that stop was seen. Without the two bands, at G18_10a_02_11b the rebuilt covariance covers, and at AR23_20i_00_000 it covers. With them, at G18_10a_02_11b it covers, and at AR23_20i_00_000 it covers. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data.
+
+In SC14 and SC15 the abstract prints AB1; in SC7 to SC9, AB6; in SC10, AB7.
+
+The test stopped (the abstract prints AB11, or AB12 for SC17):
+
+SC16. Stopped at a gate
+
+    It stopped at a gate fixed in advance, before its pseudo-experiments, and gives no coverage reading.
+
+SC17. Stopped after a check of the clipping offset exceeded its bound
+
+    Its check of the clipping offset exceeded the bound fixed in advance, and it was stopped there, before the bulk of its pseudo-experiments, by a decision made after that check was seen; it gives no coverage reading.
+
+SC18. Stopped at another check
+
+    It stopped before its pseudo-experiments, at a check fixed in advance, [the check], and gives no coverage reading.
 
 
 ======================================================================================================================
-PART 3. THE STUDY OF WHAT CHANGES THE RETAINED PRIOR: THE BINNED ITERATIVE UNFOLDING (IBU) AGAINST THE ESTIMATOR
+PART 3. TABLE 1: THE ROW FOR THE FIVE-OBSERVABLE COVERAGE TEST
 ======================================================================================================================
 
-Each case is shown at both flagged truths, the GiBUU hybrid truth and the q3 tilt. The two truths are read separately,
-so they can differ. Within each sentence, "[falls / rises / does not change]" is a separate reading with three
-pre-written forms.
+The row's "Result" and "Status" cells, for a selection of the cases above; the other cases follow the same pattern.
+The table caption defines the status words.
+
+
+AB1 / SC1
+
+    Like-for-like five-observable coverage test 5D 6.3 without the neutron and proton bands, covers and covers at the two tunes; with them, covers and covers Covers
+
+AB2 / SC3
+
+    Like-for-like five-observable coverage test 5D 6.3 without the neutron and proton bands, covers and covers at the two tunes; with them, covers and under-covers in cells Covers
+
+AB6 / SC7
+
+    Like-for-like five-observable coverage test 5D 6.3 without the neutron and proton bands, covers and under-covers in cells at the two tunes; with them, covers and under-covers in cells Under-covers
+
+SC9
+
+    Like-for-like five-observable coverage test 5D 6.3 without the neutron and proton bands, covers and under-covers jointly at the two tunes; with them, covers and under-covers jointly Under-covers
+
+AB7 / SC10
+
+    Like-for-like five-observable coverage test 5D 6.3 without the neutron and proton bands, under-covers jointly and in cells and under-covers jointly and in cells at the two tunes; with them, under-covers jointly and in cells and under-covers jointly and in cells Under-covers
+
+AB8 / SC11
+
+    Like-for-like five-observable coverage test 5D 6.3 without the neutron and proton bands, invalid and covers at the two tunes; with them, invalid and covers Invalid
+
+AB10 / SC13
+
+    Like-for-like five-observable coverage test 5D 6.3 without the neutron and proton bands, invalid and invalid at the two tunes; with them, invalid and invalid Invalid
+
+AB11 / SC16
+
+    Like-for-like five-observable coverage test 5D 6.3 Stopped at a gate, before its pseudo-experiments Stopped
+
+AB12 / SC17
+
+    Like-for-like five-observable coverage test 5D 6.3 Stopped after its clipping-offset check, before the bulk of its pseudo-experiments Stopped
+
+AB11 / SC18
+
+    Like-for-like five-observable coverage test 5D 6.3 Stopped at a check fixed in advance, before its pseudo-experiments Stopped
+
+
+======================================================================================================================
+PART 4. THE STUDY OF WHAT CHANGES THE RETAINED PRIOR: THE BINNED ITERATIVE UNFOLDING (IBU) AGAINST THE ESTIMATOR
+======================================================================================================================
+
+Each case is shown at both flagged truths, the GiBUU hybrid truth and the q3 tilt. The two truths are read
+separately, so they can differ. The clause on longer iteration ("and its retention ...") is a separate reading
+with four forms; each case below shows one of them, and any form can go with any case.
+
 
 C1. The IBU retains less of the prior than the estimator
 
   Abstract:
 
-    At the GiBUU-like truth, a binned iterative unfolding of the same noise-free pseudo-data retains less of the prior than the estimator.
+    At the GiBUU-like truth, a binned iterative unfolding of noise-free pseudo-data retains less of the prior than the estimator.
 
   Section 5.3, end of the section:
 
-    At the GiBUU hybrid truth, the IBU at five iterations retains less of the prior than the five-observable estimator, and its retention [falls / rises / does not change] with longer iteration; at the q3 tilt, it retains less, and its retention [falls / rises / does not change]. At the GiBUU hybrid truth, the readings are consistent with a share specific to the implementation. At the q3 tilt, the readings are consistent with a share specific to the implementation.
+    At the GiBUU hybrid truth, the IBU at five iterations retains less of the prior than the five-observable estimator, and its retention falls by that margin with longer iteration; at the q3 tilt, it retains less, and its retention falls by that margin. At the GiBUU hybrid truth, the readings are consistent with a share specific to the implementation. At the q3 tilt, the readings are consistent with a share specific to the implementation.
 
-C2. The IBU retains as much of the prior as the estimator
+C2. The IBU's retention differs from the estimator's by less than the bar fixed in advance
 
   Abstract:
 
-    At the GiBUU-like truth, a binned iterative unfolding of the same noise-free pseudo-data retains as much of the prior as the estimator.
+    At the GiBUU-like truth, a binned iterative unfolding of noise-free pseudo-data retains a share of the prior that differs from the estimator’s by less than a bar fixed in advance.
 
   Section 5.3, end of the section:
 
-    At the GiBUU hybrid truth, the IBU at five iterations retains as much of the prior as the five-observable estimator, and its retention [falls / rises / does not change] with longer iteration; at the q3 tilt, it retains as much, and its retention [falls / rises / does not change].
+    At the GiBUU hybrid truth, the IBU at five iterations retains a share of the prior that differs from the five-observable estimator’s by less than its bar, and its retention neither falls nor rises by that margin with longer iteration; at the q3 tilt, it retains a share that differs by less than its bar, and its retention neither falls nor rises by that margin.
 
 C3. The IBU retains more of the prior than the estimator
 
   Abstract:
 
-    At the GiBUU-like truth, a binned iterative unfolding of the same noise-free pseudo-data retains more of the prior than the estimator.
+    At the GiBUU-like truth, a binned iterative unfolding of noise-free pseudo-data retains more of the prior than the estimator.
 
   Section 5.3, end of the section:
 
-    At the GiBUU hybrid truth, the IBU at five iterations retains more of the prior than the five-observable estimator, and its retention [falls / rises / does not change] with longer iteration; at the q3 tilt, it retains more, and its retention [falls / rises / does not change].
+    At the GiBUU hybrid truth, the IBU at five iterations retains more of the prior than the five-observable estimator, and its retention rises by that margin with longer iteration; at the q3 tilt, it retains more, and its retention rises by that margin.
+
+C4. The retained share is undefined at a truth, so the comparison is not made
+
+  Abstract:
+
+    At the GiBUU-like truth, a binned iterative unfolding of noise-free pseudo-data is not compared with the estimator, because a retained fraction is undefined there.
+
+  Section 5.3, end of the section:
+
+    At the GiBUU hybrid truth, the IBU at five iterations is not compared with the five-observable estimator, because a retained fraction is undefined at this truth, and its retention at longer iteration is undefined; at the q3 tilt, it is not compared, because a retained fraction is undefined there, and its retention at longer iteration is undefined.
 
 In C1, the last two sentences print because, by the study's rule fixed in advance, a lower retention for the IBU
-means its readings are consistent with a share specific to the implementation. In C2 and C3, those sentences print
+means its readings are consistent with a share specific to the implementation. In C2 to C4, those sentences print
 only if another reading of the study gives the same label.
 
 
 ======================================================================================================================
-PART 4. OTHER SENTENCES
+PART 5. OTHER SENTENCES
 ======================================================================================================================
 
-No sentence of the Discussion and conclusions (section 7), and no other sentence of the manuscript's prose, changes
-with the outcomes shown here. Table 1's rows for these two studies also change with them; they are not part of this
-read. Two other pending results have their own pre-written text, which is not part of this read either: the other
-readings of the prior-retention study (section 5.3), and a per-cell validity rule (section 5.4).
+No sentence of the Discussion and conclusions (section 7), and no other sentence of the manuscript's prose,
+changes with the outcomes shown here. Two other pending results have their own pre-written text, which is not part
+of this read: the other readings of the prior-retention study (section 5.3 and its Table 1 row), and a per-cell
+validity rule (section 5.4 and its Table 1 row).

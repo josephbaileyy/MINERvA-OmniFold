@@ -397,9 +397,10 @@ against a null 95th percentile of 123.6 and maximum of
 TABLE 1. The tests and their results: each test, the estimator it tests (2D: the two-observable estimator; 5D: the five-observable
 estimator, the baseline), the section that reports it, its result and its status. The status words mean: Pass and Fail, the test’s
 criterion is or is not met; Flagged, the fake-data bias meets the flagging criterion of section 3.3 under the reported covariance;
-Agree, the two results agree within the test’s noise; Differ, a difference is detectable at the test’s noise, which does not mean that
-it is large; Partial, the truth change is recovered only in part; Under-covers, fewer pseudo-experiments lie within the intervals
-than the test’s threshold requires; Stopped, the test stopped before any coverage pseudo-experiment ran; Not adopted, the variant
+Agree, the two results agree within the test’s noise; Differ, a difference is detectable at the test’s noise, which does not mean
+that it is large; Partial, the truth change is recovered only in part; Covers, in the test’s primary variant no cell and no joint
+reading under-covers at either truth; Under-covers, fewer pseudo-experiments lie within the intervals than the test’s threshold
+requires; Invalid, a control of the test fails; Stopped, the test stopped before it gave a coverage result; Not adopted, the variant
 was tested and is not used; Reproducible, repeated unfolds give bitwise-identical results; In data, the effect is present in the
 reconstructed data before unfolding; Descriptive, no criterion applies; Pending, the result has not yet been reported.
 Test
@@ -562,10 +563,11 @@ Run periods and the five-observable quadrant
 sums
 
 In the two-dimensional result, data from different run
-periods are not mutually consistent within the other uncertainties: one period group’s unfolded p∥ distribution,
+periods are not mutually consistent within the other un-
 
 Agree
 
+certainties: one period group’s unfolded p∥ distribution,
 relative to its own simulation, differs from that of the
 earliest periods by a step of about 7 % near 8 GeV/c,
 of unknown cause. The step is already in the reconstructed data: there, the 1G–1M group against 1A–1E,
@@ -583,8 +585,6 @@ does not account for the distance in the best-determined
 directions, at the resolved size (section S6).
 Summed over each of the four (pT , p∥ ) quadrants, the
 sixteen-cell result agrees with the two-dimensional result:
-the sums differ by −1.5 to +0.7 per cent, and with the
-covariance between the two results evaluated from the
 
 d¾=dp ∥ (10 ¡39 cm 2 (GeV/c) ¡1 nucleon ¡1 )
 
@@ -725,6 +725,8 @@ analysis is the four-block covariance of section 3.2, without Cmodel . Here the 
 compatibility test. Bottom left: (OmniFold − published)/σpublished per reported bin, with cells drawn at equal size (grey: not
 reported). Bottom right: median relative uncertainties and residual summary.
 
+the sums differ by −1.5 to +0.7 per cent, and with the
+covariance between the two results evaluated from the
 systematic variations they share, the four differences give
 χ2 ≤ 1.25 for four degrees of freedom (p ≥ 0.87), with
 no quadrant beyond one standard deviation. The statistical correlation, and that of four systematic terms
@@ -1161,18 +1163,21 @@ same pseudo-data. At the two flagged truths, each setting
 is classed by whether some level reduces or increases ρ by
 more than a bar fixed in advance, the larger of 0.05 and
 
-9.03 times the standard deviation of the paired change of
-ρ over five splits of the simulation (9.03 is the two-sided
-Student-t quantile on four degrees of freedom at a familywise rate of 0.01 over the study’s twelve primary readings),
-and the IBU by whether it retains less of the prior than
-the five-observable estimator. A level clears a flagged
-truth if the truth is no longer flagged, by the criterion
-of section 3.3 applied to the noise-free pseudo-data. The
-readings are combined into labels fixed in advance: consistent with finite-iteration regularization (more iterations
-reduce ρ, and so do longer IBU runs); consistent with an
-information limit at these settings (neither more iterations
-nor more capacity reduces ρ, nor do longer IBU runs);
-and consistent with a share specific to the implementation
+9.03 times the standard deviation of the paired change
+of ρ over five splits of the simulation (9.03 is the twosided Student-t quantile on four degrees of freedom at a
+familywise rate of 0.01 over the study’s twelve primary
+readings), and the IBU at five iterations by whether it
+retains less or more of the prior than the five-observable
+estimator, by the same rule with its own bar, and by
+whether its retention falls or rises by at least 0.05 when it
+runs to 200 iterations. A level clears a flagged truth if the
+truth is no longer flagged, by the criterion of section 3.3
+applied to the noise-free pseudo-data. The readings are
+combined into labels fixed in advance: consistent with
+finite-iteration regularization (more iterations reduce ρ,
+and so do longer IBU runs); consistent with an information limit at these settings (neither more iterations nor
+more capacity reduces ρ, nor do longer IBU runs); and
+consistent with a share specific to the implementation
 (the IBU retains less of the prior, or more capacity reduces
 ρ). The study selects no estimator, and its readings are
 descriptive of these truths, not held-out results (supplementary material, section S9). [PENDING: the study
@@ -1337,11 +1342,11 @@ without the GEANT4 neutron and proton bands, and one
 with them. Its covariance is rebuilt once per truth, not per
 pseudo-experiment; the response and run-period terms
 are not drawn, and the lateral uncertainties are carried
-by a surrogate. It tests coverage at each of the two truths,
-for each variant; it does not estimate a rate over truths,
-and neither outcome bears on the reported intervals at
-the data or on the ensemble average. [PENDING: the
-like-for-like five-observable coverage test]
+by a surrogate. It grades each of the two truths and each
+variant separately, and it tests the reported estimator, not
+the ensemble average. The tunes are held out of the analysis but not independent of it: they share a quasielastic
+model, and G18_10a_02_11b shares its 2p2h model family with one of the generators of Cmodel . [PENDING:
+the like-for-like five-observable coverage test]
 
 7.
 
@@ -1376,9 +1381,9 @@ muon-kinematic regions, with their joint uncertainty and
 a treatment of multiplicity, and a demonstration that
 plausible changes of the unfolding and of the detector
 response cannot produce the observed pattern. That test
+
 is a next step.
 The studies of section 3–6 and of the companion note
-
 show what must be checked before unfolded intervals
 are interpreted: closure with the backgrounds included;
 truth changes of generator size, not only nominal closure;
@@ -1395,17 +1400,16 @@ Limitations
 1. No reported interval has validated coverage. The
 fake-data tests assess bias, not coverage; the first
 coverage test of the five-observable covariance did
-not run to a result; the like-for-like test of section 6.3,
-whatever its outcome, grades the procedure at two
-truths, not the reported intervals; and the procedure’s two-dimensional covariance under-covers at
-both held-out tunes, a result about the procedure’s
-covariance at those tunes, not the reported intervals
-at the data (section 6.2). Neither the coverage of
-Cmodel at truths held out of its construction nor
-the size of either run-period block is independently
-validated (supplementary material, section S5, and
-section S6). The coverage tests cited are pointwise, for each reported quantity separately, not the
-stronger simultaneous coverage of all of them.
+not run to a result; the like-for-like test of section 6.3, whatever its outcome, grades the procedure at two truths, not the reported intervals; and
+the procedure’s two-dimensional covariance undercovers at both held-out tunes, a result about the
+procedure’s covariance at those tunes, not the reported intervals at the data (section 6.2). Neither
+the coverage of Cmodel at truths held out of its construction nor the size of either run-period block is
+independently validated (supplementary material,
+section S5, and section S6). The per-cell coverage readings cited are pointwise, for each reported
+quantity separately, not the stronger simultaneous
+coverage of all of them; the joint readings grade the
+fraction of pseudo-experiments whose χ2 lies in a
+region fixed in advance.
 2. Four of the sixteen cells, R02, R06, R10 and R15,
 have a diagonal fraction (section 2) of only 0.16–
 0.25.

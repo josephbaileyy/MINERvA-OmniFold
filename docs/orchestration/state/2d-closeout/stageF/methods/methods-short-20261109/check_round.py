@@ -15,8 +15,13 @@
      and the internal labels the editor's read lists, print nowhere in the paper (GONE).
   6. SEC4 TESTS. test_check_sec4_receipts.py passes (the director, 2026-11-09; the hook does not run it).
   7. FILL TEST (--fill-test, slow). The paper is built once per class index: every pending key set to its i-th
-     class (cyclically), so that every variant is typeset at least once; each build must succeed with no
-     "[PENDING", no "??" and no undefined reference.
+     class (cyclically), and the like-for-like group to the i-th of make_values_fived16.ll5d_fill_cases(), which
+     are consistent with its derived keys and between them reach every class; so every variant is typeset at least
+     once. Each build must succeed with no "[PENDING", no "??", no undefined reference, and no printed class name
+     (check 8).
+  8. NO CLASS NAME IN PRINT (printed_class_names; run by the fill test and by preread-outcomes/build_cases.py on
+     every build). A filled build prints no raw class name (any class with a hyphen, in either spelling, or "na"),
+     and never "joseph" outside the author line, the email and the repository URL (the director, 2026-11-09, item 8).
 usage: check_round.py <worktree> [--base SHA] [--fill-test]   (exit 1 on any failure)
        check_round.py <worktree> --self-test                  (each planted defect must be caught)"""
 import importlib.util
@@ -32,7 +37,10 @@ NOTE = "docs/analysis-note"
 FILES = ["paper_body.tex", "main_paper.tex"]
 # classes that print nothing by design (variants.md, the rows marked EMPTY)
 EMPTY = {**{f"prr-label-{l}-{t}": {"not"} for l in ("fir", "info", "impl", "obs", "stat", "unattr") for t in ("gibuu", "q3")},
-         **{f"ll5d-{t}-{r}": {"na"} for t in ("g18", "ar23") for r in ("minus2", "all")}}
+         **{f"ll5d-{t}-{r}": {"na"} for t in ("g18", "ar23") for r in ("minus2", "all")},
+         **{f"ll5d-{t}-{r}-{x}": {"none", "na"} for t in ("g18", "ar23") for r in ("minus2", "all")
+            for x in ("weak", "over", "clip")},
+         "ll5d-route": {"direct", "na"}}
 # numerals the paper prints that the base does not, each with its source (ledger rows)
 NEW_NUMERALS = {"285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55, 1.391 x 205 = 285.2 (in [285.05, 285.26])",
                 "136": "L-12b: the note's sec_results.tex:128 (chi2 = 136 on the 73 best-determined directions)",
@@ -210,6 +218,24 @@ def run(wt, base):
     return fails
 
 
+IDENT = ("Joseph Bailey", "josephrb@stanford.edu", "josephbaileyy")   # the author line, the email, the repository URL
+
+
+def printed_class_names(txt, mv):
+    """Check 8 on one build's pdftotext: the raw class names and 'joseph' that print, if any."""
+    t = re.sub(r"-\n(?=[a-z])", "-", txt)                 # keep a compound's hyphen at a line break
+    t = re.sub(r"\s+", " ", t)
+    for s in IDENT:
+        t = t.replace(s, " ")
+    words = {w for k in getattr(mv, "WORDS", {}) for w in mv.WORDS[k].values()}
+    names = {c for _, cls in mv.PENDING.values() if cls for c in cls if "-" in c}
+    pats = sorted({re.escape(s) for c in names for s in (c, c.replace("-", " ")) if s not in words})
+    found = [m.group(0) for p in pats for m in re.finditer(r"(?<![\w-])" + p + r"(?![\w-])", t)]
+    found += re.findall(r"(?<![\w-])na(?![\w-])", t)
+    found += re.findall(r"(?i)joseph", t)
+    return sorted(set(found))
+
+
 def fill_test(wt):
     """Build the paper once per class index, every pending key at its i-th class; every build must be clean."""
     mv = load_mv(wt)
@@ -226,10 +252,12 @@ def fill_test(wt):
             return [f"fill test: main_note build failed ({r.returncode})"]
         base_vals = (d / "values_fived16.tex").read_text()
         head = base_vals.split("\n")
-        for i in range(n):
+        ll5d = mv.ll5d_fill_cases()
+        for i in range(max(n, len(ll5d))):
             ver = {}
             for k, (g, cls) in mv.PENDING.items():
                 ver[k] = cls[i % len(cls)] if cls else f"X{k.split('-')[-1]}"
+            ver.update(ll5d[i % len(ll5d)])
             lines = [l for l in head if not re.match(r"\\@namedef\{fv(g|gd|c)@", l)
                      and not any(l.startswith(rf"\@namedef{{fv@{k}}}") for k in mv.PENDING)]
             end = lines.index(r"\makeatother")
@@ -250,6 +278,9 @@ def fill_test(wt):
                     fails.append(f"fill test {i}: the text prints {what}")
             if re.search(r"undefined (references|citations)|Reference .* undefined", log):
                 fails.append(f"fill test {i}: undefined references")
+            bad = printed_class_names(txt, mv)
+            if bad:
+                fails.append(f"fill test {i}: a class name prints: {bad}")
             print(f"fill test {i}: built, {len(txt.split())} words")
     return fails
 
@@ -284,6 +315,14 @@ def self_test():
         print("self-test: the date check is wrong"); ok = False
     if not check_once_gone({"f": " ".join(ONCE[1:])}):
         print("self-test: NOT CAUGHT a missing ONCE sentence"); ok = False
+    class _MV:
+        PENDING = {"k": ("g", ("under-cells", "no-effect", "covers"))}
+        WORDS = {"k": {"no-effect": "no effect"}}
+    if printed_class_names("the test covers; the factor has no effect. Joseph Bailey, josephrb@stanford.edu", _MV):
+        print("self-test: check 8 flags a printed word or the author line"); ok = False
+    for planted in ("it under cells here", "it under-\ncells here", "the status to joseph", "na, na", "under-cells"):
+        if not printed_class_names(planted, _MV):
+            print("self-test: NOT CAUGHT a printed class name:", repr(planted)); ok = False
     del EMPTY["e"]
     print("self-test:", "PASS" if ok else "FAIL")
     return 0 if ok else 1

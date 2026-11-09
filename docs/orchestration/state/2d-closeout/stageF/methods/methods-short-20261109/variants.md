@@ -22,15 +22,20 @@ sentence of the paper. Filling a group needs that group's record and its CITABLE
 | key(s) | classes | source | sites |
 |---|---|---|---|
 | `prr-pr1-{F1..F4}-{gibuu,q3}` | reduces, increases, both, no-effect, undefined | FD-PRR §5.1, `:287-292` | Table 1 (printed as words) |
-| `prr-pr2a-{gibuu,q3}` | less, more, same | FD-PRR §5.2, `:297-298` | Table 1; §5.3; abstract (gibuu) |
-| `prr-pr2b-{gibuu,q3}` | falls, rises, flat | FD-PRR §5.2, `:299-300` | §5.3 |
+| `prr-pr2a-{gibuu,q3}` | less, more, same, undefined | FD-PRR §5.2, `:297-298`; "undefined" is what `prr_read.ibu_class` emits when ρ is undefined (`nd-unfolding/prior_retention/prr_read.py` @ `cf76aec7`, `:308-311`) | §5.3; abstract (gibuu) |
+| `prr-pr2b-{gibuu,q3}` | falls, rises, flat, undefined | FD-PRR §5.2, `:299-300`; "undefined": `prr_read.ibu_k_class` @ `cf76aec7`, `:314-317` | §5.3 |
 | `prr-pr3-any`, `prr-pr3-ibu` | clears, not | FD-PRR §5.3, `:307-310` ("clears / does not clear at these truths", the director's ruling 2) | §5.3 |
 | `prr-label-{fir,info,impl,obs,stat,unattr}-{gibuu,q3}` | holds, not (EMPTY: not) | FD-PRR §5.4, `:321-332` | §5.3 |
 | `prr-pr3-levels` | printed value (the levels that clear) | FD-PRR §5.3 | §5.3 |
-| `ll5d-campaign` | graded, gate-failed, to-joseph, stop | LL5D §5.2 `:427` (gate), §5.3 `:439-440` (clipcheck), `:233` (STOP) | §6.3 |
-| `ll5d-{g18,ar23}-{minus2,all}` | covers, under-cells, under-joint, invalid, na (EMPTY: na) | LL5D §6, `:473-475` | §6.3; Table 1 (printed) |
+| `ll5d-campaign` | graded, gate-failed, offset-stopped, stop | LL5D §5.2 `:427` (gate); §5.3 `:439-440` and §11 `:692` (the clipping-offset routing to Joseph, when the decision after it stops the test); §5.1 `:333-335` and `:684` (the STOP triggers). What follows a STOP is decided after it (`:66-71`; `DECISION-20261108-joseph-ll5d-stop-rule.md:28-35`) | §6.3; Table 1 |
+| `ll5d-route` | direct, offset-proceeded, repaired, na (EMPTY: direct, na) | how a graded campaign got there: directly; past the offset routing by a decision to proceed (`:439-440`); or with a repair chosen after a STOP was seen, which the paper discloses (`:71`; the stop-rule decision item 4). na: not graded | §6.3 |
+| `ll5d-stop-check` | printed value (the STOP's check) | `:333-335`, `:684` | §6.3 (stop; repaired) |
+| `ll5d-{g18,ar23}-{minus2,all}` | covers, under-cells, under-joint, under-joint-only, invalid, na (EMPTY: na) | LL5D §6, `:473-475` | §6.3; Table 1 (printed through `WORDS`) |
+| `ll5d-{g18,ar23}-{minus2,all}-{weak,over,clip}` | none, some, na (EMPTY: none, na) | LL5D §6: weakened passes `:478`; over-coverage, reported and not a failure, `:477`; "the flag may be the clipping artefact", which cannot un-flag, `:480-481`. na on an invalid or ungraded reading; clip is some only on a reading with a flagged cell | §6.3 |
+| `ll5d-{g18,ar23}-{minus2,all}-{weak,over,clip}-cells` | printed value (the cells) | the same lines | §6.3 |
 | `ll5d-{g18,ar23}-{minus2,all}-cells` | printed value (the flagged cells) | LL5D §6, `:474` ("each cell is named") | §6.3 |
-| `ll5d-abstract` | both-cover, one-under, both-under, invalid, not-graded | derived from the two primary (`minus2`) keys and `ll5d-campaign` (rule below) | abstract |
+| `ll5d-abstract` | both-cover, both-cover-bands-under-{one,both}, both-cover-bands-invalid-{one,both}, one-under, both-under, invalid-one-covers, invalid-one-under, invalid-both, stopped-early, stopped-offset | derived by `make_values_fived16.ll5d_derived()` (rule below); `pending_lines` refuses a filling that disagrees | abstract |
+| `ll5d-status` | covers, under, invalid, stopped | derived the same way | Table 1's status (its caption's words) |
 | `vhalf-outcome` | none-fail, some-fail | `DECISION-20261109-joseph-bias-half-rule.md` item 1, `:31-35` | §5.4 |
 | `vhalf-n-{valid,notvalid,notassessed,unresolved}`, `vhalf-cells-notvalid` | printed values | the same item, and item 3, `:38-40` | §5.4; Table 1 |
 
@@ -39,14 +44,20 @@ sentence of the paper. Filling a group needs that group's record and its CITABLE
   names: "each cell is named, with whether the joint fraction is under too".
   - `under-joint`: the joint fraction is under.
   - `under-cells`: only cells are flagged.
-- **`na`:** the per-tune keys take `na` exactly when `ll5d-campaign` is not `graded`. Their sentences sit inside the
-  `graded` variant, so `na` prints nothing.
-- **`ll5d-abstract`:**
-  - `not-graded` if the campaign is not `graded`;
-  - `invalid` if either primary key is `invalid`;
-  - `both-cover` if both primary keys are `covers`;
-  - `both-under` if both are `under-*`;
-  - `one-under` otherwise.
+- **`under-joint-only`** (round 6 pre-read): the joint fraction is under and no cell is flagged, which `:474` allows.
+  `under-joint` would print an empty cell list.
+- **`na`:** the per-tune keys, their flags and `ll5d-route` take `na` exactly when `ll5d-campaign` is not `graded`;
+  a flag is also `na` on an `invalid` reading. Their sentences sit inside the `graded` variant, so `na` prints nothing.
+  `ll5d_derived()` asserts all of this.
+- **`ll5d-abstract`** (`ll5d_derived()`; round 6 pre-read, the director's items 3-5):
+  - `stopped-offset` if the campaign is `offset-stopped`, and `stopped-early` if it is `gate-failed` or `stop`;
+  - if both primary keys are `covers`: `both-cover-bands-invalid-{one,both}` if a with-bands key is `invalid`, else
+    `both-cover-bands-under-{one,both}` if one is `under-*`, else `both-cover`;
+  - `invalid-both` if both primary keys are `invalid`; `invalid-one-under` or `invalid-one-covers` if one is, by the
+    other's class;
+  - `both-under` if both are `under-*`, else `one-under`.
+- **`ll5d-status`:** `stopped` if not graded; else `under` if a primary key is `under-*`, else `invalid` if one is
+  `invalid`, else `covers`.
 - **`prr-pr3-any`:** `clears` if some level is "clears at these truths" in FD-PRR §5.3. The IBU is not counted here;
   its reading is `prr-pr3-ibu`.
 
@@ -59,17 +70,18 @@ sentence of the paper. Filling a group needs that group's record and its CITABLE
 
 | id | site | key(s) | what each class prints |
 |---|---|---|---|
-| V-A1 | abstract | `prr-pr2a-gibuu` | ", and at the GiBUU-like truth a binned iterative unfolding of the same noise-free pseudo-data retains less / more / as much of the prior" |
-| V-A2 | abstract | `ll5d-abstract` | ", and a like-for-like five-observable coverage test at the same tunes covers at both / under-covers at one / under-covers at both / is invalid by its own controls / stopped before its pseudo-experiments" |
+| V-A1 | abstract | `prr-pr2a-gibuu` | one sentence per class: "retains less / more of the prior than the estimator"; "retains a share of the prior that differs from the estimator's by less than a bar fixed in advance"; "is not compared with the estimator, because a retained fraction is undefined there" |
+| V-A2 | abstract | `ll5d-abstract` | one full sentence per class. The covering classes name the object, the procedure's covariance rebuilt at each tune, and the primary variant, and end "the result concerns the procedure's covariance at those tunes, not the reported intervals at the data" (`:52`, `:768-769`, R5 `:512`). Pending Joseph (#993 item 4) |
 | V-T1 | Table 1 | `prr-pr1-*`, `prr-pr2a-*` | the class words |
 | V-T2 | Table 1 | `vhalf-n-*` | the four counts |
-| V-T3 | Table 1 | `ll5d-*-minus2`, `ll5d-*-all`, `ll5d-campaign` | the class words, and the campaign class as the status |
-| V-P1, V-P2 | §5.3 | `prr-pr2a-{gibuu,q3}`, `prr-pr2b-{gibuu,q3}` | IBU at five iterations "retains less / more / as much of the prior than the joint-test estimator"; its retention "falls / rises / does not change with longer iteration" |
+| V-T3 | Table 1 | `ll5d-*-minus2`, `ll5d-*-all` (through `WORDS`), `ll5d-campaign`, `ll5d-status` | graded: the four readings in words; otherwise "Stopped …"; the status Covers / Under-covers / Invalid / Stopped. No raw class name prints (check_round check 8) |
+| V-P1, V-P2 | §5.3 | `prr-pr2a-{gibuu,q3}`, `prr-pr2b-{gibuu,q3}` | IBU at five iterations "retains less / more of the prior than the five-observable estimator", "retains a share of the prior that differs from the five-observable estimator's by less than its bar", or "is not compared …, because a retained fraction is undefined at this truth"; its retention "falls / rises by that margin", "neither falls nor rises by that margin" (the margin, 0.05, in the fixed text) or "at longer iteration is undefined" |
 | V-P3 to V-P5 | §5.3 | `prr-label-*` | one "consistent with …" or "sensitive to …" sentence per label that holds, per truth, in FD-PRR §5.4's own wording; `unattr` prints "no reading attributes the retained prior to a tested setting" |
 | V-P6 | §5.3 | `prr-pr3-any`, `prr-pr3-levels` | "Some tested levels, ⟨levels⟩, clear both flagged truths at these truths … not a new estimator." / "No tested level clears both flagged truths at these truths …" |
 | V-P7 | §5.3 | `prr-pr3-ibu` | "clears" / "does not clear" |
-| V-L1 | §6.3 | `ll5d-campaign` | graded: the four per-(tune, reading) clauses; gate-failed, to-joseph, stop: one sentence each, "gives no coverage reading" |
-| V-L3 | §6.3 | `ll5d-{g18,ar23}-{minus2,all}` | covers / under-covers in cells ⟨cells⟩ / under-covers jointly and in cells ⟨cells⟩ / is invalid by its own controls |
+| V-L1 | §6.3 | `ll5d-campaign`, `ll5d-route` | graded: the four per-(tune, reading) clauses, the flag sentences, and "The result concerns the procedure's covariance at those tunes, not the reported intervals at the data."; a route sentence first for offset-proceeded and repaired; gate-failed, offset-stopped, stop: one sentence each, "gives no coverage reading", with "before the bulk of its pseudo-experiments" for offset-stopped (the pilot unfolds one toy, `:558`) |
+| V-L3 | §6.3 | `ll5d-{g18,ar23}-{minus2,all}` | covers / under-covers in cells ⟨cells⟩ / under-covers jointly and in cells ⟨cells⟩ / under-covers jointly, with no cell flagged / "is not graded, the test being invalid by its own controls there" (the test, not the covariance, is invalid) |
+| V-L4 | §6.3 | `ll5d-*-{weak,over,clip}` | one sentence per reading with a flag: weakened passes, over-coverage "reported and not counted as a failure", "may be the clipping artefact, a reading that does not remove them" |
 | V-V1 | §5.4 | `vhalf-n-*` | the four counts |
 | V-V2 | §5.4 | `vhalf-outcome` | some-fail adds the failing cells' list; none-fail adds nothing |
 
@@ -105,3 +117,9 @@ outcome:
 - **The abstract (the editor's second read, item 1): no fixed calibration sentence is true for every outcome.** The
   current "The uncertainties are not calibrated" contradicts a both-cover variant. This is W-11, for the director,
   with per-class options in W-OPTIONS.md. It is the one C3 failure found, and it stays open until W-11 is decided.
+
+**Round 6 pre-read (2026-11-09, the director's fix list on `preread-outcomes/NOTES.txt`):** the class sets, derived
+rules and variant rows above are the ones the fixes introduced. `make_values_fived16.ll5d_fill_cases()` lists fillings
+that reach every class of every like-for-like key, and the fill test uses them. The C3 check above was re-read for the
+new classes: §1, §7 ¶1 and Limitation 1 stay true in each, and every covering abstract class now names the procedure's
+rebuilt covariance and says the result is not about the reported intervals.
