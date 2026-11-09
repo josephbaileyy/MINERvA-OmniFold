@@ -4,146 +4,122 @@
       {
         "truth": "nominal",
         "arm": 0,
-        "max_abs_z": 0.009146473637381141,
-        "table_precision_match": true
+        "max_abs_z": 0.009146473637381141
       },
       {
         "truth": "A7_mnvtune",
         "arm": 0,
-        "max_abs_z": 0.007681852864160504,
-        "table_precision_match": true
+        "max_abs_z": 0.007681852864160504
       },
       {
         "truth": "A7_genie_cv",
         "arm": 0,
-        "max_abs_z": 0.3524077889527416,
-        "table_precision_match": true
+        "max_abs_z": 0.3524077889527416
       },
       {
         "truth": "A7_genie_mec",
         "arm": 0,
-        "max_abs_z": 0.2871368364326742,
-        "table_precision_match": true
+        "max_abs_z": 0.2871368364326742
       },
       {
         "truth": "W2",
         "arm": 0,
-        "max_abs_z": 0.1222468525218312,
-        "table_precision_match": true
+        "max_abs_z": 0.1222468525218312
       },
       {
         "truth": "A7_nuwro",
         "arm": 0,
-        "max_abs_z": 1.2648343191028177,
-        "table_precision_match": true
+        "max_abs_z": 1.2648343191028177
       },
       {
         "truth": "W1",
         "arm": 0,
-        "max_abs_z": 0.6276372211913408,
-        "table_precision_match": true
+        "max_abs_z": 0.6276372211913408
       },
       {
         "truth": "W3",
         "arm": 0,
-        "max_abs_z": 1.0245879204693686,
-        "table_precision_match": true
+        "max_abs_z": 1.0245879204693686
       },
       {
         "truth": "closure_nuwro",
         "arm": 0,
-        "max_abs_z": 0.5365362093407354,
-        "table_precision_match": true
+        "max_abs_z": 0.5365362093407354
       },
       {
         "truth": "stage0c_gibuu",
         "arm": 0,
-        "max_abs_z": 1.7616939799537183,
-        "table_precision_match": true
+        "max_abs_z": 1.7616939799537183
       },
       {
         "truth": "A7_gibuu",
         "arm": 0,
-        "max_abs_z": 4.534280456368059,
-        "table_precision_match": true
+        "max_abs_z": 4.534280456368059
       },
       {
         "truth": "q3",
         "arm": 0,
-        "max_abs_z": 1.5527483767402723,
-        "table_precision_match": true
+        "max_abs_z": 1.5527483767402723
       },
       {
         "truth": "nominal",
         "arm": 1,
-        "max_abs_z": 0.009788863415256881,
-        "table_precision_match": true
+        "max_abs_z": 0.009788863415256881
       },
       {
         "truth": "A7_mnvtune",
         "arm": 1,
-        "max_abs_z": 0.007689496029676299,
-        "table_precision_match": true
+        "max_abs_z": 0.007689496029676299
       },
       {
         "truth": "A7_genie_cv",
         "arm": 1,
-        "max_abs_z": 0.3815322224943251,
-        "table_precision_match": true
+        "max_abs_z": 0.3815322224943251
       },
       {
         "truth": "A7_genie_mec",
         "arm": 1,
-        "max_abs_z": 0.32230414333700624,
-        "table_precision_match": true
+        "max_abs_z": 0.32230414333700624
       },
       {
         "truth": "W2",
         "arm": 1,
-        "max_abs_z": 0.12237193860552703,
-        "table_precision_match": true
+        "max_abs_z": 0.12237193860552703
       },
       {
         "truth": "A7_nuwro",
         "arm": 1,
-        "max_abs_z": 1.3431675769938485,
-        "table_precision_match": true
+        "max_abs_z": 1.3431675769938485
       },
       {
         "truth": "W1",
         "arm": 1,
-        "max_abs_z": 0.6997180169829725,
-        "table_precision_match": true
+        "max_abs_z": 0.6997180169829725
       },
       {
         "truth": "W3",
         "arm": 1,
-        "max_abs_z": 1.0362341900760061,
-        "table_precision_match": true
+        "max_abs_z": 1.0362341900760061
       },
       {
         "truth": "closure_nuwro",
         "arm": 1,
-        "max_abs_z": 0.5403130968871469,
-        "table_precision_match": true
+        "max_abs_z": 0.5403130968871469
       },
       {
         "truth": "stage0c_gibuu",
         "arm": 1,
-        "max_abs_z": 2.0096397893661155,
-        "table_precision_match": true
+        "max_abs_z": 2.0096397893661155
       },
       {
         "truth": "A7_gibuu",
         "arm": 1,
-        "max_abs_z": 5.172347143056736,
-        "table_precision_match": true
+        "max_abs_z": 5.172347143056736
       },
       {
         "truth": "q3",
         "arm": 1,
-        "max_abs_z": 1.6203487400295948,
-        "table_precision_match": true
+        "max_abs_z": 1.6203487400295948
       }
     ],
     "z_reported": [

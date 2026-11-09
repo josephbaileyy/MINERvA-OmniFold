@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Rectangle
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[4]
 OUT = Path(__file__).resolve().parent
 FD = "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/"
 GBDT = "nd-unfolding/gbdt_model_dependence/"
@@ -58,20 +58,62 @@ def save(fig: plt.Figure, name: str) -> None:
     plt.close(fig)
 
 
+def outline_threshold() -> float:
+    """Read the threshold from the pinned numerical producer."""
+    producer = checked("nd-unfolding/fd_f0_regrade.py").read_text()
+    match = re.search(r"Z_TRIGGER, P_TRIGGER = ([0-9.]+)", producer)
+    if not match:
+        raise ValueError("Numerical producer no longer declares Z_TRIGGER")
+    return float(match[1])
+
+
+def check_against(paper_body: str, values_tex: str) -> list[str]:
+    """Check current manuscript text against the frozen plotted data.
+
+    Parameters
+    ----------
+    paper_body : str
+        Contents of the current paper_body.tex, not a path.
+    values_tex : str
+        Contents of the current values_fived16.tex, not a path.
+
+    Returns
+    -------
+    list[str]
+        Failures for the integrator's check_round; an empty list means agreement.
+        Input identity failures still raise ValueError.
+    """
+    failures = []
+    label = r"\label{tab:fd16}"
+    if label not in paper_body:
+        failures.append("Table 2 label tab:fd16 missing")
+    else:
+        table = paper_body.split(label, 1)[1].split(r"\end{table*}", 1)[0]
+        order = re.findall(r"\\fvval\{f0b-(\w+)-chi2int\}", table)
+        if order != [k for k, _ in TRUTHS]:
+            failures.append("Table 2 truth order differs from plotted order")
+    match = re.search(r"\\@namedef\{fv@trig-z\}\{([^}]+)\}", values_tex)
+    if not match or float(match[1]) != outline_threshold():
+        failures.append("trig-z differs from plotted outline threshold")
+    for index, path in enumerate(("with-cpl/readout/fd_f0b_readout.json",
+                                  "readout/fd_f0b_readout.json")):
+        truths = {t["name"]: t for t in read(FD + path)["truths"] if t["graded"]}
+        suffix = "-nopl" if index else ""
+        for key, _ in TRUTHS:
+            maximum = max(abs(z) for z in truths[key]["grade"]["z"])
+            pattern = (r"\\@namedef\{fv@f0b-" + key
+                       + r"-zmax" + suffix + r"\}\{([^}]+)\}")
+            printed = re.search(pattern, values_tex)
+            if not printed or printed[1] != f"{maximum:.2f}":
+                failures.append(f"Maximum z differs for {key}{suffix}")
+    return failures
+
+
 def bias_figure() -> dict:
-    """Plot signed b/sqrt(diag(C+N)); preserve the producer's leave-out grading."""
+    """Plot the mean fractional residual over its uncertainty; preserve the producer's leave-out grading."""
     arms = [read(FD + p) for p in (
         "with-cpl/readout/fd_f0b_readout.json", "readout/fd_f0b_readout.json")]
-    values = checked("docs/analysis-note/values_fived16.tex").read_text()
-    threshold_match = re.search(r"\\@namedef\{fv@trig-z\}\{([^}]+)\}", values)
-    assert threshold_match
-    threshold = float(threshold_match[1])
-    producer = checked("nd-unfolding/fd_f0_regrade.py").read_text()
-    producer_threshold = re.search(r"Z_TRIGGER, P_TRIGGER = ([0-9.]+)", producer)
-    assert producer_threshold and threshold == float(producer_threshold[1])
-    paper = checked("docs/analysis-note/paper_body.tex").read_text()
-    table = paper.split(r"\label{tab:fd16}", 1)[1].split(r"\end{table*}", 1)[0]
-    assert re.findall(r"\\fvval\{f0b-(\w+)-chi2int\}", table) == [k for k, _ in TRUTHS]
+    threshold = outline_threshold()
     arrays, checks = [], []
     selected = []
     for index, arm in enumerate(arms):
@@ -85,10 +127,8 @@ def bias_figure() -> dict:
             grade = truths[k]["grade"]
             flagged = [f"R{i:02}" for i, z in enumerate(grade["z"]) if abs(z) > threshold]
             assert flagged == grade["cells_abs_z_gt_2"]
-            suffix = "-nopl" if index else ""
-            match = re.search(r"\\@namedef\{fv@f0b-" + k + r"-zmax" + suffix + r"\}\{([^}]+)\}", values)
-            assert match and match[1] == f"{max(abs(z) for z in grade['z']):.2f}"
-            checks.append({"truth": k, "arm": index, "max_abs_z": max(abs(z) for z in grade["z"]), "table_precision_match": True})
+            checks.append({"truth": k, "arm": index,
+                           "max_abs_z": max(abs(z) for z in grade["z"])})
         arrays.append(data)
     for k, _ in TRUTHS:
         np.testing.assert_array_equal(selected[0][k]["bias"], selected[1][k]["bias"])
@@ -107,7 +147,7 @@ def bias_figure() -> dict:
         ax.set_xticks(range(16), [f"R{i:02}" for i in range(16)], rotation=90)
         ax.set_xlabel("Reported cell")
     axes[0].set_yticks(range(12), [label for _, label in TRUTHS])
-    fig.colorbar(artist, ax=axes, label=r"Signed residual $z=\bar r/\sqrt{\mathrm{diag}(C+N)}$", shrink=.85)
+    fig.colorbar(artist, ax=axes, label="Signed mean fractional residual over its uncertainty", shrink=.85)
     save(fig, "paper_bias_cells")
     return {"checks": checks, "z_reported": arrays[0].tolist(), "z_without_period": arrays[1].tolist()}
 
@@ -134,13 +174,13 @@ def prior_figure() -> dict:
             np.testing.assert_equal(row[key], float(frozen[key]))
     fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.7), layout="constrained")
     result = {}
-    for ax, group, label in zip(axes, ("J", "H2", "EW"), ("(a) Fine joint cells", "(b) Coarser joint cells", r"(c) $(E_{\rm avail},W)$ cells"), strict=True):
+    for ax, group, label in zip(axes, ("J", "H2", "EW"), ("(a) Joint cells", "(b) Coarser joint cells", r"(c) $(E_{\rm avail},W)$ cells"), strict=True):
         use = [r for r in rows if r["map"] == group]
         x = np.array([-r["W3_bias_pct"] for r in use])
         y = np.array([r["d4_shift_pct"] for r in use])
         ax.scatter(x, y, s=10, color="#2878a5", alpha=.7)
         lo, hi = min(x.min(), y.min()), max(x.max(), y.max())
-        ax.plot([lo, hi], [lo, hi], color=".4", ls=":", lw=.8, label=r"$y=x$ (reference; no fit)")
+        ax.plot([lo, hi], [lo, hi], color=".4", ls=":", lw=.8, label=r"Reference $y=x$, not a fit")
         ax.legend(fontsize=6, frameon=False, loc="lower right")
         ax.set_title(label, fontsize=8)
         ax.set_xlabel("Minus noise-free residual (%)")
@@ -155,6 +195,12 @@ def main() -> None:
     """Verify frozen inputs, then render figures and their numerical audit."""
     for relative in PINS:
         checked(relative)
+    failures = check_against(
+        (ROOT / "docs/analysis-note/paper_body.tex").read_text(),
+        (ROOT / "docs/analysis-note/values_fived16.tex").read_text(),
+    )
+    if failures:
+        raise ValueError("; ".join(failures))
     plt.rcParams.update({"font.family": "serif", "mathtext.fontset": "cm", "font.size": 8,
                          "axes.labelsize": 8, "xtick.labelsize": 7, "ytick.labelsize": 8,
                          "axes.linewidth": .6, "pdf.fonttype": 42})

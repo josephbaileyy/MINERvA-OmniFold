@@ -1,0 +1,16 @@
+% Integration snippets for director-helper-3; paths resolve from docs/analysis-note, including its blinded copies.
+\begin{figure*}[tb]
+\centering
+\includegraphics[width=\textwidth]{figures/methods_short/paper_bias_cells.pdf}
+\caption{Fake-data bias of the reported five-observable estimator on the sixteen cells, at the twelve graded truths of table~\ref{tab:fd16}, in the same order. Colour gives the signed residual $z$, the mean fractional residual, (unfolded $-$ true)/true, divided by its uncertainty $\sqrt{\mathrm{diag}(C+N)}$, where $N$ is the noise covariance of that mean. The noise-free closure uses its single residual and $N=0$. Left panel: the reported covariance, $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$. Right panel: the covariance without the run-period block. The table's $C_{\mathrm{total}}$-only reading is not shown. Each covariance omits the truth's own generator component as in the table. Black outlines show only the per-cell criterion, $|z|>\fvval{trig-z}$. A truth can also be flagged by its $\chi^2$ $p$ value (table~\ref{tab:fd16}), as the synthetic $q_3$ tilt is under the reported covariance. The bias is identical in both panels; only the covariance differs. An asterisk marks the simulation's own truth. These tests assess only bias.}
+\label{fig:bias-cells}
+\end{figure*}
+% Proposed citation: section 5.3, immediately before Table 2, retaining the complete table.
+
+\begin{figure*}[tb]
+\centering
+\includegraphics[width=\textwidth]{figures/methods_short/paper_prior_response.pdf}
+\caption{Sensitivity to the prior of the reported five-observable estimator at five iterations. The vertical axis uses the reported estimator with its background refinement and gives the fractional change of the data result, $(X_{\mathrm{changed}}-X_{\mathrm{nominal}})/X_{\mathrm{nominal}}$, when the simulation prior is reweighted to the NuWro $(p_T,p_\parallel,E_{\mathrm{avail}})$ shape. The horizontal axis is minus the noise-free residual, (unfolded $-$ true)/true, at that changed truth: this comparator uses signal-only simulation, with no background refinement, whereas the data result uses the reported estimator's background refinement. Panels (a), (b) and (c) use the joint, coarser joint and $(E_{\mathrm{avail}},W)$ cells defined in the companion note (\nsec{sec:gbdt-model-dependence}; \napp{sec:gbdt-diagnostic-definitions}); no panel is the sixteen-cell result. Points are cells, not independent repeated experiments. The dotted line is $y=x$, for reference, with no fit. The shifts measure sensitivity to the prior, not a measured bias of the data result.}
+\label{fig:prior-response}
+\end{figure*}
+% Proposed citation: section 7, after the sentence saying these shifts measure sensitivity to the prior.

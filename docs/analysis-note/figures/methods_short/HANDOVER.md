@@ -11,7 +11,7 @@ pass and at most two focused repair cycles. This is figure preparation, not scie
 `make_figures.py` is the plotting producer. Run with a Python containing NumPy, SciPy and Matplotlib:
 
 ```
-MPLCONFIGDIR=/private/tmp/minerva-mpl /Users/josephbailey/miniconda3/bin/python3 publication/methods-figures/make_figures.py
+MPLCONFIGDIR=/private/tmp/minerva-mpl /Users/josephbailey/miniconda3/bin/python3 docs/analysis-note/figures/methods_short/make_figures.py
 ```
 
 Every input is SHA256-pinned in `inputs.json`; changes fail closed. The output PDFs and PNG previews
@@ -77,7 +77,7 @@ or new compute was run to fill this gap. Director notified over bridge before re
 ## Validation and integration
 
 Both PNGs visually inspected: labels visible, no clipping. Plot script completes with all assertions.
-Only plotting and handover files under publication/methods-figures are changed; scientific analysis
+Only figure assets, plotting code and handover files under docs/analysis-note/figures/methods_short are changed; scientific analysis
 modules, manuscript sources, hash-bound numerical producers and note sources are untouched. Integration
 must include the paper builds/check_round/check_restyle/check_registry and the repository's standalone
 note synchronization rule for any source/assets director-helper-3 adds under docs/analysis-note.
@@ -111,3 +111,26 @@ Applied journal-editor's read of 364c7da0e/5db5a5ca0:
   not the integrated manuscript or blinded rater copy. director-helper-3 must check those on integration.
 
 No numerical analysis or manuscript source was changed in this repair.
+
+
+## Integrator repair: portable assets and live manuscript checks
+
+The package now lives in docs/analysis-note/figures/methods_short, so make_rater_copy.sh's
+analysis-note rsync includes the PDFs and captions. Captions use figures/methods_short paths.
+Only data products and numerical producer source are pinned. paper_body.tex and values_fived16.tex
+are deliberately NOT pinned. make_figures.check_against(paper_body, values_tex) accepts their
+current text contents and returns a list of failures (empty on agreement). It checks truth order,
+all 24 maximum-z values at generated precision, and trig-z against the plotted threshold read from
+the pinned numerical producer. main() calls it; check_round can import and call it without drawing.
+Normal prose edits do not invalidate the producer. Mutation checks reject changed threshold,
+maximum-z and truth order. Input-byte failures still raise ValueError.
+
+Final printed captions use words for the mean fractional residual, state “These tests assess only
+bias”, identify the data estimator's background refinement explicitly, and omit the bias-bound clause.
+The plots' population counts remain in the numerical audit, with their original note definition route,
+not in printed labels. This update supersedes earlier packaging/path and manuscript-pin descriptions.
+
+Because assets now live under docs/analysis-note, director-helper-3 must synchronize these sources/assets
+to the standalone note repository as part of its integration, build/verify it, commit/push both repositories
+and record both remote heads. This lane has neither edited that checkout nor claimed synchronization.
+The integrated paper/blinded-copy checks and standalone synchronization remain integrator work.
