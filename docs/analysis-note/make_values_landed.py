@@ -51,6 +51,7 @@ REC = {
     "keepblock": f"{OR}/DECISION-20261101-joseph-1b-keep-block-redesign-test.md",
     "stop": f"{OR}/OUTCOME-20261106-1b-stage1-receipt-stop.md",
     "cov2d": f"{OR}/OUTCOME-20261108-cov2d-both-tunes-under-cover.md",
+    "re2partc": "docs/orchestration/state/2d-closeout/stageF/methods/re2/RE2-PARTC-REPORT.md",
     "fpsledger": "docs/orchestration/state/2d-closeout/stageF/methods/note-b8/ledger.md",
 }
 WORDS = {1: "one", 2: "two", 3: "three", 4: "four"}
@@ -197,6 +198,8 @@ def build(R):
     V["rg1-r3-hi"] = record("refg1", 36, f"{max(r3):.2f}")
     # --- the rounding-level shift, as the methods-study decision states it (:20; FD-STAB's NONE_PASS)
     V["stab-max"] = record("methods", 20, "2.6")
+    # --- adopted 2D uncertainty Q_R cell count (RE2-PARTC-REPORT.md line 134)
+    V["q-ncells"] = record("re2partc", 134, "205")
     # --- extended-fiducial tier shares (note-b8/ledger.md row E7)
     V["fps-tier1-pct"] = record("fpsledger", 81, "6")
     V["fps-tier2-pct"] = record("fpsledger", 81, "28")
