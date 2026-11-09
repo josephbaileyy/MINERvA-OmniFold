@@ -857,7 +857,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-PRES-5 [T]** — **Inconsistent kinematic notation ($p_\\parallel$ vs $p_z$).**  
   *Finding:* Longitudinal momentum denoted interchangeably as $p_\\parallel$, $p_z$, `p_||`.  
   *Evidence:* Figures 5, 17, 18, text.  
-  *Resolution:* Standardize to $p_\\parallel$ across all LaTeX sources.
+  *Resolution:* This row authorizes no tex edit. Do not run a global notation sweep. The note body already uses \pPar. The Cartesian p_z in sec_pet.tex is a particle momentum component and must not be renamed. The mismatches are inside the installed figures: Figure 5 uses $p_{||}$ and "row-major pT,pz", Figure 17 prints "p_|| bin", and Figure 18 titles a panel "(b) pz". Do not regenerate those figures in this commit.
 * **G1-PRES-6 [T]** — **Incomplete table entries.**  
   *Finding:* Missing entries or blank cells in summary tables.  
   *Evidence:* Table 2, Table 6.  
