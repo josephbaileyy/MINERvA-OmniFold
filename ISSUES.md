@@ -674,7 +674,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-1. Do not inline those values until each one is a checked macro and a record says it may be quoted.
 * **S2-CONT-3 [T]** — **Companion journal article dependencies.** Same finding as S1-CONT-3.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-3. Do not copy article text into the note.
-* **S2-CONT-4 [T]** — **Numbers quoted from superseded/retired material.** Same finding as S1-CONT-4.
+* **S2-CONT-4 [T]** — **Numbers quoted from superseded/retired material.** Same finding as S1-CONT-4.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-4. Do not remove or replace those figures until a named record identifies each as superseded and the replacement is a checked macro.
 * **S2-CONT-5 [T]** — **Internal design review factor derivation.** Same finding as S1-CONT-2.
 * **S2-CONT-6 [T]** — **Repository paths and file names in text.** Same finding as S1-CONT-6.
 * **S2-CONT-7 [T]** — **Citations to private communications.** Same finding as S1-CONT-5.
