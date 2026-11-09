@@ -454,3 +454,40 @@ The rest stay above the field by design or for structural reasons:
 - the triads are lists.
 They are not pushed further, to avoid overfitting the metric.
 - **:174:** "No effective sample size of the unfolded ensemble is computed" is restored, since the hook flagged the draft's "is not computed" as a bare absence claim. <!-- absence-ok: quotes the restored method-scope sentence (what is computed); states no finding that a result does not exist -->
+
+## Figures 1 and 2 of the figures lane (the director, 2026-11-09), integrated
+
+The figures lane's branch (06ba96d12, after its repair cycle) is merged as aec48fb91. Its producer,
+`figures/methods_short/make_figures.py`, reproduces the committed PDFs byte for byte. The paper prints both
+figures with the lane's captions (`captions.tex`), changed only in "Colour" -> "Color" (US spelling, as in the
+rest of the paper). `captions.tex` itself is the lane's file and is not edited.
+
+| Item | Where | Source |
+|---|---|---|
+| Fig. `fig:bias-cells` | section 5.2, cited after Table 2's lead sentence, placed `[tb]` before the table | F0b readouts with and without C_PL,5D (make_values READOUTS / NOPL_READOUTS); HANDOVER.md "Bias by reported cell" |
+| Fig. `fig:prior-response` | end of section 6.1, `[t]`; cited in section 7 ("these shifts measure the result's sensitivity to the prior") | the note's gbdt_prior_response diagnostic (sec_5d.tex:196-204) |
+| 5.17, printed in the figure only | the bias figure's right panel, GiBUU hybrid truth | `f0b-A7_gibuu-zmax-nopl` (values_fived16.tex:1171), from the pinned NOPL readout; numbers.json max_abs_z 5.172...; Table 2 does not print this key |
+| 109 / 27 / 39 supported cells | the prior-response caption | app_statmethods_nd.tex:25 ("109 J, 27 H2 and 39 EW cells") |
+
+Placement. The prior-response figure was first placed before section 7. There the normal build's long section 7
+hold ("A citable home for records ...") crossed a page break with the figure's text extracted inside it, and the
+blind rater copy failed its hold-diff check (`make_rater_copy.sh`: "differs from the normal build in more than
+hold text"). `[b]` before section 7 and `[p]` also failed. Before section 6.2, `[t]` passes: multiset VERDICT
+PASS, 14 pages in both builds, and the blind copy prints FIG. 4 (bias) and FIG. 5 (prior response) in full.
+
+`check_round.py` gains check 9, `check_figures`, which calls the producer's `check_against(paper_body,
+values_fived16)`: Table 2's truth order, `trig-z` and the plotted maxima. It passes on this tree and fails on a
+swapped truth order or a changed `trig-z`.
+
+Checks at this commit: `check_round.py . --fill-test` PASS (0 failures; 16 fill builds), `--self-test` PASS,
+`check_registry.py` PASS, `check_sec4_receipts.py` 16/16 and its pytest 17 passed, `check_supp_pointers.py` 35
+pointers and 0 failures. `check_restyle.py` against e97d2b20 fails only on the additions this commit makes
+(labels `fig:bias-cells` and `fig:prior-response`, their refs and the captions' refs, one `\fvval{trig-z}`, the
+caption macros). No protected span, LISTED_CLAIMS anchor, numeral or Supplement inventory changed. Check 8 (report
+only) on the new blind manuscript: 7,649 words, against 7,595 in the pack's blind copy (531fefe42). Triads are 41 in
+both (5.36 and 5.40 per 1,000 words). Semicolon chains are now 6, against 5 (0.78 per 1,000 words), just above the field
+maximum of 0.67. The captions are not restyled here.
+
+Fig. 3 (rounding shifts) is not in this commit. It waits on director-helper-2's extraction of r2_cache.npz, with
+provenance pinned and the reproduction of median 0.8, maximum 2.6 and argmax J145. It is then integrated in its
+own commit.

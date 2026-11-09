@@ -27,6 +27,10 @@
      field's per-paper maximum in style-baseline.json (11 human-written papers before November 2022, 78,599 words).
      A pattern above the field maximum is marked ABOVE. It runs on the round's blind manuscript, the blind Supplement and VARIANTS.txt
      (preread-outcomes/, or --printed FILE ...).
+  9. FIGURES. The bias-by-cell figure agrees with the current paper: figures/methods_short/make_figures.py's
+     check_against(paper_body, values_tex), the figures lane's own function, checks Table 2's truth order, the
+     outline threshold (trig-z) and every plotted maximum |z| against values_fived16.tex. A changed figure input
+     (its sha256 pins) fails too.
 usage: check_round.py <worktree> [--base SHA] [--fill-test] [--printed FILE ...]   (exit 1 on any failure)
        check_round.py <worktree> --self-test                  (each planted defect must be caught)"""
 import importlib.util
@@ -226,7 +230,7 @@ def run(wt, base):
              + check_numerals(cur, old) + check_once_gone(cur)
              + check_printed_names((wt / NOTE / "values_fived16.tex").read_text())
              + check_dates({**cur, "supplemental_body.tex": supp})
-             + check_sec4_tests(wt))
+             + check_sec4_tests(wt) + check_figures(wt))
     return fails
 
 
@@ -276,6 +280,21 @@ def style_report_text(text):
     mod = importlib.util.module_from_spec(sm)
     sm.loader.exec_module(mod)
     return {k: e["count"] for k, e in mod.score(text)["patterns"].items()}
+
+
+def check_figures(wt):
+    """Check 9: the figures lane's check of its plotted data against the current paper."""
+    path = wt / NOTE / "figures/methods_short/make_figures.py"
+    if not path.exists():
+        return ["figures/methods_short/make_figures.py is missing"]
+    try:
+        spec = importlib.util.spec_from_file_location("make_figures", path)
+        mf = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mf)
+        return [f"figures: {f}" for f in mf.check_against((wt / NOTE / "paper_body.tex").read_text(),
+                                                          (wt / NOTE / "values_fived16.tex").read_text())]
+    except Exception as exc:                       # a changed pinned input raises ValueError
+        return [f"figures: {exc}"]
 
 
 def fill_test(wt):
