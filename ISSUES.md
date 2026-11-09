@@ -221,7 +221,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-6 [T]** — **Unusable covariance used as a benchmark yardstick.**  
   *Finding:* Configuration-(a) 5D covariance is marked "not to be used" (§9.6), yet is used as a scale in §5.1, §8.4, §9.2, §9.3, Table 5, App. G.2.  
   *Evidence:* `docs/analysis-note/sec_5d.tex:225`, `sec_eavailw.tex:162`, `app_release.tex:72`.  
-  *Resolution:* Governed by S2-COM-2: disclosure in §9.6 and citability matrix is that configuration-(a) covariance is adopted under the §6.4 exception; $s_{\text{proj}} = 6.145\%$ against the 5% limit; five bands unmeasured; the pre-production null bound not met; not a yardstick and not an uncertainty product. The release checklist stays unedited while `app_release.tex` is held under AUD-N4.
+  *Resolution:* Governed by S2-COM-2. Do not type 6.145 and do not write "five bands unmeasured." The release checklist stays unedited while app_release.tex is held under AUD-N4. This row authorizes no tex edit.
 
 * **S1-ACC-7 [T]** — **Executive summary marginalization claim (1–2%) vs body.**  
   *Finding:* Executive summary claims 4D and 5D marginalization passes to 1–2%, but §8.1 gives 0.11% total and 0.3–1.5% median per axis; §7.8 gives no number for 4D→3D.  
@@ -610,7 +610,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-COM-2 [R]** — **Configuration-(a) 5D covariance exceeds seed-sensitivity limit.**  
   *Finding:* Configuration-(a) 5D covariance exceeds its predeclared stability limit ($s_{\\text{proj}} = 6.145\\%$ against the $5\\%$ bound, with 5 of 45 seed-pinned bands unmeasured in either direction, and pre-production null bound not met).  
   *Evidence:* `VALIDATION_LEDGER.md` `VL142`–`VL144`, `docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md`, `CORRECTION-20260920-lower-bound-inference-withdrawn.md`, `OPERATIVE-SHEET-scalar5d.md`.  
-  *Resolution:* Explicitly disclose in §9.6 and citability matrix: adopted under exception (§6.4); measures $s_{\\text{proj}} = 6.145\\%$ against 5% limit; 5 bands unmeasured; pre-production null bound not met; unusable as yardstick or uncertainty product.
+  *Resolution:* The disclosure, when it is drafted, uses the adoption's words. M1 is s_proj = 6.145% against a 5% bound (DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md:57). M3 (:73-79) says the seed variation does not probe those five bands, and the effect on the total when they also vary has not been measured. The lower-bound reading is withdrawn (CORRECTION-20260920-lower-bound-inference-withdrawn.md). The note must not say "five bands unmeasured" and must not type 6.145. This row authorizes no tex edit.
 * **S2-COM-3 [T]** — **Learner and configuration dependence table.**  
   *Finding:* Consolidate algorithmic variations (exact-split vs LightGBM, seed shifts, MLP vs GBDT) into a unified summary table.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:115`.  
