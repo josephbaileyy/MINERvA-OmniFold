@@ -760,7 +760,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-ACC-1 [T]** — **Inconsistent fiducial nucleon count.**  
   *Finding:* Fiducial target nucleon count is quoted as $N = 4.123 \\times 10^{30}$ in §3.4 and $4.128 \\times 10^{30}$ in §8.2.  
   *Evidence:* `docs/analysis-note/sec_method.tex:128`, `sec_eavailw.tex:50`.  
-  *Resolution:* Harmonize target nucleon count across all sections to the standard MINERvA value.
+  *Resolution:* This row authorizes no tex edit. The cited 4.123e30 and 4.128e30 are not in the note. The printed counts are 3.2353e30 and 3.235e30, two roundings of the same tracker-geometry constant. Do not harmonize them to a typed standard value.
 * **G1-ACC-2 [T]** — **Discrepancy in raw run-period $\\chi^2$.**  
   *Finding:* Raw run-period $\\chi^2 = 209.6$ in §4.5 vs $205.8$ in Table 3.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:165`, Table 3.  
