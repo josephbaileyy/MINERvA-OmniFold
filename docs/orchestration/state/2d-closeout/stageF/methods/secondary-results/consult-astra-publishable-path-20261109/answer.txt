@@ -1,0 +1,69 @@
+**I recommend a short methods-and-validation paper, aimed at an experimental-methods journal such as JINST, with the measurement remaining a separate conditional objective.** A month is a reasonable writing target; it is not a defensible deadline for obtaining a validated measurement. The useful scientific contribution is a controlled account of what this implementation recovers, where it retains its prior, and what numerical stabilization does—and does not—improve.
+
+I read the eight referee reports, but their agreement is not my reason for this recommendation. Several prescribe adopting the ensemble too readily. The underlying records support a more careful distinction between stability, bias and coverage.
+
+Citations below use repository-relative `file:line` paths. For brevity, **O** means `docs/orchestration/`, **M** means `O/state/measurement-paper/5d-community-20261024/`, and **R** means `O/state/2d-closeout/stageF/methods/secondary-results/referee-methods-round5-20261109/`.
+
+1. **The paper needs a narrower scientific claim.**
+
+There is an important version distinction: round 5 reviewed an **unmerged methods draft**, whereas the checked-out paper and note still announce a measurement. Thus the referee reports are not reviews of exactly the manuscript files named in the brief. (`R/README.md:3`; `docs/analysis-note/main_paper.tex:36,47`; `docs/analysis-note/main_note.tex:73`.)
+
+I would build the short paper around three findings: a qualified external benchmark; controlled truth-recovery and prior-retention studies; and the distinction between reproducibility, numerical stability and uncertainty calibration. Keep the failed tests prominent where they establish those findings. Move development history, procedural stopping rules, superseded configurations and extensive generator-comparison tables into the technical record. In particular, the current generator comparisons already disclaim physical exclusions, while the conclusion still calls the cross section and its covariance the principal result. That combination obscures what readers can use. (`docs/analysis-note/paper_body.tex:272,284`.)
+
+My assessment of the advisor’s story is:
+
+- **“The 5D result reproduces the published 2D”: only partially supported.** The committed 5D comparison establishes agreement with this project’s 2D result in four muon-kinematic quadrants. The comparison against the publication is a separate 2D analysis, with an unexplained correlated shape difference and implementation choices made with that comparison visible. The safe claim is normalization consistency plus a qualified benchmark—not validation of the full 5D distribution. (`docs/analysis-note/paper_body.tex:114,117,139`.)
+- **“Fake-data closure identifies regions where detector response is inadequate”: the proposed interpretation is stronger than the evidence.** Existing validity rules grade estimator bias under specified simulated truths; they explicitly establish neither coverage nor a cause. Their accepted cell sets also differ. (`O/OUTCOME-20261107-valid-region.md:27–37,84–95`.) I found no committed V-HALF declaration or result in the searched records, consistent with your warning. Treat it as a development rule until its definition, inputs and cell-by-truth results are committed.
+- **“5D localizes the 2D data–simulation mismatch”: not established.** The existing contrasts were computed after the pulls were seen, and the outcome explicitly licenses no localization conclusion in either direction. (`O/OUTCOME-20261107-valid-region.md:23,36,98–124`.) A supporting record would need specified conditional contrasts within fixed muon regions, their joint uncertainty and multiplicity treatment, and demonstrations that plausible unfolding bias and response changes cannot generate the observed pattern.
+
+V-HALF has an understandable interpretation: recover enough of a departure to halve the prior’s error. But it is **not a detector-resolution criterion or a confidence statement**. A 20% truth–prior difference permits 10% residual bias. Passing may therefore be inadequate for interpreting a smaller physics contrast. The 1% cutoff also needs an explicit “not assessed” category, rather than allowing unevaluated cases to look validated.
+
+2. **For a replacement estimator, choose a strengthened C—not immediate B.**
+
+ENS1’s failure should stand. Its stability statistic passes, but its RMS fractional bias at Stage-0c GiBUU changes from 0.055955 to 0.056467, exceeding its declared worsening floor. That is a small absolute change, yet neither “negligible” nor “noise” follows from the record. (`O/OUTCOME-20261109-ens1-stab-pass-bias-worse.md:19–45,68–70`.)
+
+I disagree with treating “no worse anywhere” as the only scientifically defensible objective forever. A useful estimator can trade a small bias increase for a substantial variance or stability improvement. **The legitimate next test would evaluate that tradeoff prospectively**, using absolute bias, variance, mean squared error and the size of the intended physics contrasts. Fresh random seeds alone are insufficient: use genuinely reserved truth deformations and independent simulation partitions where feasible. Preserve the ENS1 failure as development evidence.
+
+A pass would qualify a candidate for further validation, not automatically qualify its measurement. ENS1 used configuration (e)’s statistical uncertainty as its stability denominator, tested one stability input, and did not bootstrap the ensemble itself. (`M/fd/rounding-stability-20261106/ensemble/ENS1-DECLARATION.md:347–360`.)
+
+For the **methods paper**, retaining (e) as the studied baseline is legitimate, provided its instability is a result of the study rather than an endorsed measurement property. Show E₉₆ as the tested mitigation with mixed outcomes. Publication of a failure analysis does not require curing every failure.
+
+I would not start another broad numerical search. RS1 already found that simply increasing histogram resolution or converting the unperturbed inputs to float64 did not help on its tested input. Its mechanism conclusion remains restricted to that pseudo-experiment. (`O/OUTCOME-20261108-rs1-rounding-mechanism.md:56–81`.)
+
+3. **LL5D is worthwhile for the methods paper, but cannot settle measurement readiness.**
+
+COV2D is serious evidence against assuming the uncertainty procedure works: both tunes give zero of 300 toys inside the joint region. Yet only one or two cells are individually flagged; median marginal containment is much higher. This distinction makes a blanket error inflation scientifically premature. The record expressly does not identify the joint failure’s cause or measure coverage of the reported data-point intervals. (`O/OUTCOME-20261108-cov2d-both-tunes-under-cover.md:36–69,108–116`.)
+
+COV2D does **not mathematically imply** LL5D will fail: the reporting space and covariance differ. LL5D can deliver a useful positive or negative result about configuration (e)’s procedure at two specified truths. However:
+
+- its primary reading excludes the neutron and proton bands;
+- its covariance is rebuilt at each truth, rather than recomputed for every toy;
+- the response and run-period terms are excluded, and laterals are carried through a surrogate;
+- neither outcome validates the reported data-point intervals or E₉₆.  
+  (`M/LL5D-DECLARATION.md:78–94,274–324,754–769`.)
+
+Therefore, **freeze (e) as the methods baseline and complete LL5D within its existing cap**, accepting either scientific outcome. Its expected cost is approximately 60–96 node-hours; 148 is the ceiling. If Joseph instead commits to replacing the measurement estimator immediately, make that decision before purchasing (e)’s bulk validation: its products cannot become ensemble coverage evidence. (`M/LL5D-DECLARATION.md:82–85,554–593`.)
+
+The brief’s live-state claims remain unverified. The committed LL5D receipt I found records an invalid calibration attempt before any replicate and a balance of 1,659.6 node-hours; FD-PRR’s receipt establishes a successful dry run, not a completed scientific result. Your 1,653.7 balance and “running now” descriptions may be newer. (`M/fd/receipts-ll5d/calib-1-invalid/README.md:6–7,34`; `M/fd/receipts-prr/dry/README.md:7–11`.)
+
+The **500-node-hour estimate is plausible but incomplete**. I found no committed production quote supporting it. My arithmetic from the recorded 227 unfolds per covariance rebuild, 96 fits and 0.022828 node-hours per fit gives about **497 node-hours for one such rebuild**. Applying the same scaling to LL5D’s 1,662 unfolds gives approximately **3,642 node-hours before its other work**. These are extrapolations, not prices. A complete production-and-validation manifest must precede adoption. (`M/LL5D-DECLARATION.md:291–303,549–552`; `M/fd/rounding-stability-20261106/ensemble/ENS1-DECLARATION.md:283,359`.)
+
+4. **My ranked plan is the following.** Days and new-study budgets are my planning estimates; existing campaign caps are recorded.
+
+| Priority | Work and referee issue answered | Cost | Principal risk |
+|---|---|---|---|
+| 1 | Freeze the methods claim; audit V-HALF and the proposed localization claim. Answers validity-rule and mixed-framing objections. | 0 node-hours; 2–3 days | No defensible localization survives. Report that outcome. |
+| 2 | Finish FD-PRR and show matched OmniFold–IBU truth recovery. Answers prior retention, iteration/capacity and redundant-observable questions. | Existing 27-node-hour cap; allow 2–4 days for interpretation | It is diagnostic, not held-out estimator selection. |
+| 3 | Finish LL5D for the frozen baseline. Answers the missing executable coverage evaluation. | Existing 148-node-hour cap; allow 3–7 days including review | Another stop or a result too conditional for measurement claims. |
+| 4 | If pursuing a replacement, declare one bounded C study of E₉₆’s bias–variance tradeoff. | Provisional 60–100 node-hours; about one week; price before launch | Candidate fails, or subsequent coverage is unaffordable. |
+| 5 | Produce a short, self-contained paper and reproducible result package; have Joseph and a human experimental/statistical reviewer assess it. | 0 new production node-hours; 7–10 days | Essential claims still depend on unavailable material. |
+
+FD-PRR already targets the relevant factors and binned comparison, while explicitly forbidding adoption or held-out claims from its results. (`M/FD-PRR-DECLARATION.md:24–55`.) The table addresses round-5 requests for controlled prior studies, stability, coverage and self-containment. (`R/sonnet-jinst-methods-r5-2.txt:27–47,82–90`.)
+
+Use one scientific owner and one independent reviewer, with two review cycles and a fixed manuscript scope. Stop broad hyperparameter searches, repeated wording-only referee rounds, attempts to obtain a preferred coverage verdict, and further band-mechanism studies without a decision they could change. Do not select “good” run periods by proximity to the publication: removing 1G–1M did not improve the best-determined directions at the study’s resolution. (`O/OUTCOME-20261107-per-period-2d-benchmark.md:55–87`.)
+
+5. **The biggest underweighted risk is mistaking simulation-conditional recoverability for information supplied by the detector.**
+
+The closure programme largely preserves the simulated response, hybrid truths preserve nominal composition within fine cells, and the added response term omits neutron deposits and broader response-shape effects. (`docs/analysis-note/paper_body.tex:75,81,168`.) Consequently, a V-HALF pass could coexist with a confidently plotted, prior-driven hadronic pattern.
+
+Before calling that pattern physics, the decisive evidence is a **validated conditional contrast** that remains distinguishable under plausible response and regularization changes. Without it, numerical stability and additional compute could make the result more reproducible without making its physical interpretation more reliable.
