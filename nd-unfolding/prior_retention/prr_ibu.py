@@ -266,12 +266,13 @@ def c_ibu(lib, gw, inputs: dict, ratio_path: Path, ratio_sha: str, repo: Path = 
 
 
 # ------------------------------------------------------------------------------------------- the run
-def run(queue_dir: Path, stage_json: Path, out: Path) -> int:
+def run(queue_dir: Path, stage_rec: dict, out: Path) -> int:
+    """Route 2 on the B0 lines. ``stage_rec`` is the stage record ``main`` read before entering the read guard
+    (Addendum A4: $OUT/stage.json is under none of the guard's allowed roots, so it is not read again here)."""
     import ibu1
     import ref_g1
     P.check_pins()
     P.check_pins(CODE_PINS)
-    stage_rec = json.loads(stage_json.read_text())
     P.verify_stage(stage_rec)
     copies = {e["role"]: Path(e["copy"]) for e in stage_rec["files"]}
     sha = {e["role"]: e["sha256"] for e in stage_rec["files"]}
@@ -334,10 +335,11 @@ def main(argv=None) -> int:
         print(f"refusing: {a.out} exists", file=sys.stderr)
         return 2
     import ref_g1
-    stage_dir = Path(json.loads(a.stage.read_text())["dest"])
+    stage_rec = json.loads(a.stage.read_text())  # Addendum A4: read once, before the guard, and passed to run()
+    stage_dir = Path(stage_rec["dest"])
     try:
         with ref_g1.read_guards(ref_g1.PROTECTED, (REPO, a.out, stage_dir, a.queue_dir), root=False):
-            return run(a.queue_dir, a.stage, a.out)
+            return run(a.queue_dir, stage_rec, a.out)
     except (P.Refused, ref_g1.GateFailure) as e:
         print(f"refusing: {e}", file=sys.stderr)
         return 2
