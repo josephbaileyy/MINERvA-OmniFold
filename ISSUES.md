@@ -374,7 +374,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CONT-2 [T]** — **Dependence on internal joint test specification [52].**  
   *Finding:* Specification and decisions of joint tests cited from internal Ref. [52].  
   *Evidence:* `docs/analysis-note/sec_joint.tex:40`.  
-  *Resolution:* Self-contain all governing criteria, stopping rules, and metric definitions within §11.
+  *Resolution:* This row authorizes no tex edit. Do not copy that specification into the note. The joint-test counts stay in the table.
 
 * **S1-CONT-3 [T]** — **Dependencies on companion journal article definitions.**  
   *Finding:* Note invokes "companion journal article" for classifier definitions (Table 10), recovery figures, and printed values.  
