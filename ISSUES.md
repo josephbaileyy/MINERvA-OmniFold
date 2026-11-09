@@ -805,7 +805,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Global exposure ratio induces $-1.83\\%$ to $+3.78\\%$ single-cell pooling bias.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:202`.  
   *Resolution:* This row authorizes no tex edit. The systematics section already says the twelve playlists are combined with one global exposure ratio, that the resulting bias is not corrected, and that single cells differ by -1.83% to +3.78%. Do not add a further disclosure.
-* **G1-COM-7 [R]** — **Ad hoc construction of run-period covariance block ($C_{\\text{PL}}$).** Same finding as S1-COM-8.
+* **G1-COM-7 [R]** — **Ad hoc construction of run-period covariance block ($C_{\\text{PL}}$).** Same finding as S1-COM-8.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-COM-8. The 6.45% clause is superseded. The headline uncertainty is Q_R, already printed by the median and integral macros. Do not put 6.45 back into the note.
 * **G1-COM-8 [T]** — **NormDISCC systematic category carried as unverified zero.**  
   *Finding:* NormDISCC carried as zero without confirmation.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:198`.  
