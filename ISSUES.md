@@ -837,7 +837,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Claim that GBDTs outperform neural networks is supported only by limited MLP checks.  
   *Evidence:* `docs/analysis-note/sec_method.tex:80`, `sec_3d.tex:135`.  
   *Resolution:* This row authorizes no tex edit. The method sentence cites the tabular-data result for match or outperform, and it already says the trees train deterministically and far faster on CPU. The 3D cross-check reports agreement between the two families. Do not add a claim that the GBDT was superior in this analysis.
-* **G1-CLM-4 [T]** — **Claim that low-$E_{\\text{avail}}$ excess confirms established low-recoil excess.** Same finding as S1-CLM-3 / S2-CLM-3.
+* **G1-CLM-4 [T]** — **Claim that low-$E_{\\text{avail}}$ excess confirms established low-recoil excess.** Same finding as S1-CLM-3 / S2-CLM-3.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S2-CLM-3. Do not restore the corner sentence, and do not add a localization claim.
 * **G1-CLM-5 [T]** — **Claim of rejecting generator predictions in §11.** Same finding as S1-CLM-5.
 
 ### Section 7: Minor Issues and Presentation
