@@ -700,7 +700,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-CLM-4 [T]** — **Closure validation claims.**  
   *Finding:* §5 claims "These closure tests validate the estimator", but 5D generator closure fails and hidden-variable closure fails at $A = 0.30$.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:30`.  
-  *Resolution:* Qualify closure tests as technical feature checks rather than general statistical validation.
+  *Resolution:* This row authorizes no tex edit. The sentence already says the closure tests are not a formal statistical validation. Do not restore "validate the estimator," and do not add a new failure claim.
 * **S2-CLM-5 [T]** — **$n=5$ iterations justified empirically.**  
   *Finding:* $n=5$ empirical justification based only on total cross section is incomplete given shape drift.  
   *Evidence:* `docs/analysis-note/sec_method.tex:85`.  
