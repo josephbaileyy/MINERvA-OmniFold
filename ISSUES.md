@@ -399,7 +399,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CONT-7 [T]** — **Reference to AI agent session replay for verification.**  
   *Finding:* Verification claim cites replay by "a separate AI agent session (Opus 5.5)".  
   *Evidence:* `docs/analysis-note/app_release.tex:45`.  
-  *Resolution:* Replace AI agent attribution with objective descriptions of automated reproducibility test pipelines and verification scripts.
+  *Resolution:* Do not edit app_release.tex while AUD-N4 is held. Do not replace the session citation with a claim of an automated verification pipeline. This row authorizes no tex edit.
 
 ### Section 6: Support for Claims
 
