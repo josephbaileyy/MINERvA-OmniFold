@@ -463,7 +463,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-1 [T]** — **Length and executive summary organization.**  
   *Finding:* Document is ~130 pages; executive summary is overly dense with inline citations.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:1-30`.  
-  *Resolution:* Streamline executive summary; anchor it with the comprehensive citability table.
+  *Resolution:* Do not rewrite the executive summary in this row. The citability matrix stays. This row authorizes no tex edit.
 
 * **S1-PRES-2 [T]** — **Repeated limitation lists across sections.**  
   *Finding:* Identical limitation paragraphs repeated verbatim in Introduction, ES, §10, and §13.  
