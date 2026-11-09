@@ -44,7 +44,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* The 5D coverage pre-check fail-closed rule and exact draw counts (892 of 900 draws with non-positive composite denominator; up to 62 cells) must be explicitly stated.  
   *Record:* `OUTCOME-20261106-1b-stage1-receipt-stop.md:27-30`, `:101-104`.  
   *Target:* `docs/analysis-note/sec_fived16.tex:253`, `sec_5d.tex:216`.  
-  *Status:* Drafted in round 1; verify exact wording matches record.
+  *Resolution:* This row authorizes no tex edit. The fail-closed rule and the counts are already stated through the macros stop-flagged, stop-draws, and stop-maxcells, which print 892, 900, and 62. The sentence already says the stop says nothing about whether the intervals cover, in either direction. Do not type 892. Do not add a further sentence.
 
 * **AUD-E3 [R]** — **1B pre-check Part 1 (flux and detector groups).**  
   *Finding:* State Part 1 pre-check outcome: both flux and detector groups reproduce within the [0.9, 1.1] window; GEANT neutron and proton bands depart in named cells.  
