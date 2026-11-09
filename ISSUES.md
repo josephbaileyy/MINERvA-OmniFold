@@ -347,7 +347,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-12 [T]** — **Joint tests condition and nuisance model disclosure.**  
   *Finding:* Fine-grid convergence has not shown convergence (condition (i)). No hadronic-response nuisance band in declared nuisance model (§11.8; ±4% study moves observed statistics by up to ≈11% without regenerating null; compare the ≈11% hadronic-response shift with the NuWro total margin of observed 7427 against a null median 6324, and the GiBUU total margin of 2867 against 1791, table cells at `sec_joint.tex:287-288`). No rejection rate measured for null pseudo-data processed like data (§11.3). A1/A2 unproven. Calibration conditional on data-derived inputs (§11.2). CH-target correction makes NuWro total rejection not robust (§11.9).  
   *Evidence:* `docs/analysis-note/sec_joint.tex:120`, `:165`, `:210`, `:287-288`.  
-  *Resolution:* State all conditions and limitations transparently in §11; add target condition to list in §11.4 and executive summary.
+  *Resolution:* This row authorizes no tex edit. Do not type 7427, 6324, 2867, or 1791 into new prose. Each condition keeps the status the note already gives it.
 
 * **S1-COM-13 [T]** — **Extended-fiducial study uncertainties and envelope.**  
   *Finding:* No covariance; central value uses purity subtraction, not designated treatment. Three-prior envelope depends on NuWro-shaped prior built from flux-mis-sampled sample, not rebuilt after flux repair (§12.2). 28% of rate in tier 2 has only prior-spread envelope (±1.5% total cross section spread). Total uncertainty for $\\sigma_{\\text{ext}} = 4.502 \\times 10^{-38}$ is unquantified.  
