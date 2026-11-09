@@ -655,7 +655,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Config-(a) 5D value retains known purity background bias (8–12$\\sigma$ stat at high $W$).  
   *Evidence:* `docs/analysis-note/sec_eavailw.tex:130`, App. C.8.  
   *Resolution:* This row authorizes no tex edit. The purity bias in the highest-W column is already stated, as 0.36--1.07 standard deviations of the configuration-(a) total uncertainty. Do not type 8--12.
-* **S2-COM-12 [T]** — **Unverified items admitted in text.** Same finding as S1-COM-7.
+* **S2-COM-12 [T]** — **Unverified items admitted in text.** Same finding as S1-COM-7.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-COM-7. Do not add those three statements until a record states each one.
 * **S2-COM-13 [T]** — **Reproduction is not possible.** Same finding as S1-CONT-6.
 * **S2-COM-14 [T]** — **Fake-data tests are not held-out truths.** Same finding as S1-COM-3.
 * **S2-COM-15 [T]** — **Extended fiducial prior envelope.**  
