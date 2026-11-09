@@ -1,0 +1,49 @@
+You are an independent reader for a short methods paper submitted to JINST. You read as a careful referee who also
+checks every sentence against the project's records. You are not bound by any recommendation in the files: give your
+own judgement.
+
+The working directory is a clean, read-only checkout at commit f51d22c8b. Read files; do not write, run jobs, or use
+the network.
+
+THE PAPER: docs/analysis-note/main_paper.tex with docs/analysis-note/paper_body.tex (values in values.tex and the
+\fvval/\fvgroup macros; "[PENDING ...]" placeholders are results still running and are not in scope). The Supplement is
+docs/analysis-note/supplemental_body.tex.
+
+THE TASK: docs/orchestration/state/2d-closeout/stageF/methods/methods-short-20261109/W-OPTIONS.md lists wording items
+W-1 to W-8, W-11 to W-18, W-20, W-22 and W-23. For each, it quotes the current text and gives options, the drafter's
+recommendation first, with the records each rests on. The four round-6 referee reports it cites are under
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-round6-20261109/ (they were
+merged to main after this commit and are added to the checkout as untracked files, copied from main).
+
+The rule the decision must follow: wording may not claim more than the records license. Each OUTCOME, DECISION and
+BINDING record under docs/orchestration/ carries "CITABLE FOR" and "NOT CITABLE FOR"; a sentence that goes beyond its
+record's CITABLE FOR is wrong however well it reads. Joseph's decision records (DECISION-*-joseph-*.md) fix the
+paper's scope; in particular DECISION-20261109-joseph-methods-baseline-and-plan.md items 4 and 6, and
+DECISION-20261109-joseph-bias-half-rule.md.
+
+FOR EACH ITEM, answer in this form:
+  W-n: <option number, or "other" with your exact wording>
+  Why: two to four sentences.
+  Record check: the file:line you read that licenses the chosen wording, and whether any option on the list exceeds
+  its record (say which, and why).
+  Risk: what a referee would still object to, in one line, or "none".
+
+Items that need you to read the source, not the drafter's summary:
+  - W-12: open the note's sections it names (docs/analysis-note/, labels sec:gbdt-model-dependence and
+    sec:joint5d-results) and their records, and say which verb they support.
+  - W-14: the usage recommendations of ref. [5] — find how the project's records count them
+    (docs/orchestration/OUTCOME-20261107-valid-region.md and anything it cites), and say whether "fourth" or another
+    count is right, or whether the count should not be printed.
+  - W-20: for each result in sections 4-6 that the paper says had its criterion fixed in advance, find the record that
+    shows the criterion was fixed before the result, and list any you cannot confirm.
+  - W-11 and W-4: check against the COV2D outcome (OUTCOME-20261108-cov2d-both-tunes-under-cover.md) and the ENS1
+    outcome (OUTCOME-20261109-ens1-stab-pass-bias-worse.md).
+
+THEN, separately: the file ends with four "reader items that are not W-items yet". For each, say in two or three
+sentences whether a JINST referee would make it a condition of acceptance, and whether it can be answered in wording
+alone or needs new computation. For the chi-squared divisor, say which form you would print and why.
+
+Last: any sentence in the paper (outside the placeholders) that you think exceeds its record and that no W-item
+covers, with file:line. At most five.
+
+Be direct and concise; about 2,500 words in all. Cite file:line for every fact you rely on.
