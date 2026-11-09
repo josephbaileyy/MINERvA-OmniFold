@@ -862,7 +862,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Missing entries or blank cells in summary tables.  
   *Evidence:* Table 2, Table 6.  
   *Resolution:* This row authorizes no tex edit. Tables 2 and 6 have no blank cells. Do not populate them. The em dashes in Table 3 (tab:pl-added) stay. Do not fill them with numbers. No record quoted in the note gives a variance share for those two maximum rows. Do not add a footnote that states a cause for the dashes.
-* **G1-PRES-7 [T]** — **Confusing label conventions in Figure 23.** Same finding as S2-PRES-6.
+* **G1-PRES-7 [T]** — **Confusing label conventions in Figure 23.** Same finding as S2-PRES-6.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S2-PRES-6. Do not relabel the figure. The caption already says the ratio is data/Tune v1 and that the figure prints data/GENIE. The denominator is the tune-weighted prior.
 * **G1-PRES-8 [T]** — **Missing units on corner plot axes.**  
   *Finding:* Figure 2 lacks units on several sub-axes.  
   *Evidence:* Fig. 2 graphic.  
