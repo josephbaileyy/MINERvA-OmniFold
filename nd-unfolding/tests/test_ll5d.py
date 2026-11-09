@@ -55,13 +55,18 @@ OWN_SEED_FILES = ("nd-unfolding/ll5d.py", "nd-unfolding/tests/test_ll5d.py", "nd
                                                     "tests-numpy126-seed2.txt", "tests-numpy2-seed0.txt"))
 
 
+OWN_RECEIPT_PREFIX = _RCPT + "fd/receipts-ll5d/"     # LL5D's own receipt tree (the director, 2026-11-09)
+
+
 def seed_collisions(lines: list[str]) -> list[str]:
     """git grep -n -o lines (path:line:token) whose token is an integer in section 3.6's range, outside LL5D's own
-    files (exact paths); a token ending in a decimal fraction is a float literal, not a seed."""
+    files (OWN_SEED_FILES, exact paths) and LL5D's own receipt tree (OWN_RECEIPT_PREFIX, an exact path prefix: its
+    receipts name LL5D's own products, which are not collisions); a token ending in a decimal fraction is a float
+    literal, not a seed."""
     bad = []
     for line in lines:
         path, _, tok = line.split(":", 2)
-        if path in OWN_SEED_FILES or re.search(r"\.[0-9]$", tok):
+        if path in OWN_SEED_FILES or path.startswith(OWN_RECEIPT_PREFIX) or re.search(r"\.[0-9]$", tok):
             continue
         if 4_751_000 <= int(re.sub(r"[,_]", "", tok)) <= 4_770_999:
             bad.append(line)
@@ -960,6 +965,12 @@ class Seeds(unittest.TestCase):
                  "nd-unfolding/y.py:9:4_770_999", f"copy/{own}:1:4751001", "data/z.json:4:4755555.5",
                  "nd-unfolding/w.py:1:4771000"]
         self.assertEqual(seed_collisions(lines), lines[1:5])
+        ours = OWN_RECEIPT_PREFIX + "pilot/unfold.log.txt:12:4751000"
+        other_campaign = _RCPT + "fd/receipts-1b/staged/x.txt:3:4751000"
+        look_alike = _RCPT + "fd/receipts-ll5d-copy/x.txt:4:4751000"
+        nested = "elsewhere/" + OWN_RECEIPT_PREFIX + "x.txt:5:4751000"
+        self.assertEqual(seed_collisions([ours, other_campaign, look_alike, nested]), [other_campaign, look_alike, nested])
+        self.assertTrue(OWN_RECEIPT_PREFIX.endswith("/fd/receipts-ll5d/"))
         self.assertTrue(re.fullmatch(SEED_PATTERN, "4751000") and re.fullmatch(SEED_PATTERN, "4,751,000"))
 
 
