@@ -615,7 +615,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 ### Section 4: Completeness as a Citable Record
 
-* **S2-COM-1 [T]** — **Unquantified "methodological finding" on nonlinear cross-terms.** Same finding as S1-COM-5.
+* **S2-COM-1 [T]** — **Unquantified "methodological finding" on nonlinear cross-terms.** Same finding as S1-COM-5.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-COM-5. Do not quote a trace ratio until it is a checked macro.
 * **S2-COM-2 [R]** — **Configuration-(a) 5D covariance exceeds seed-sensitivity limit.**  
   *Finding:* Configuration-(a) 5D covariance exceeds its predeclared stability limit ($s_{\\text{proj}} = 6.145\\%$ against the $5\\%$ bound, with 5 of 45 seed-pinned bands unmeasured in either direction, and pre-production null bound not met).  
   *Evidence:* `VALIDATION_LEDGER.md` `VL142`–`VL144`, `docs/orchestration/DECISION-20260920-joseph-adopts-z-cv-under-the-6.4-exception.md`, `CORRECTION-20260920-lower-bound-inference-withdrawn.md`, `OPERATIVE-SHEET-scalar5d.md`.  
