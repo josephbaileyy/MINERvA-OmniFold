@@ -1,0 +1,10 @@
+# test_ll5d.py (A1a's suite) at PYTHONHASHSEED=0, with A1b tracked
+# date 2026-11-08T20:24:39Z  made at HEAD cfe67afb280ef162f412a0747dd9b0eaaa2731f0, a clean checkout (porcelain 0)
+# python 3.12.2 numpy 1.26.4
+# 24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb  ll5d_b.py
+# 9dbf9cf499f2c709ed7cffe809336a9dfd2122d34185d433036944c6927bf8fc  ll5d.py
+# 642a45b84fd2b70103f5180203c4ade8302eb7ed3d0cec77df8ac86a116936ab  tests/test_ll5d_b.py
+# f5e683bb1892b7f6661ef1037c5b7c7c9c08dad87d55e8c6b35a2b9640da807f  tests/ll5d_a1b_mutation.py
+# f7ee9aed4bf666f29185c0cd1252b7cfe3256fc0c701f1eadf077dd456a05f3a  tests/test_ll5d.py
+Ran 69 tests in 164.340s
+OK
