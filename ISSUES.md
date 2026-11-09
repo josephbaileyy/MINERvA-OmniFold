@@ -917,7 +917,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. The approximation is already disclosed. The systematic-universe unfolds approximate the weighting of events that fail reconstruction, the approximation is not corrected, and its effect has not been measured beyond the two-universe test. Do not add a further sentence. Do not add the internal label miss-weight.
 * **G2-COM-5 [T]** — **Pending Detector-Response Mismatch Closure Test.** Same finding as S2-ACC-5 / G1-COM-2.  
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-COM-2. The rescaling test and the shifted-response closures already have separate statuses. Do not call the shifted-response closures exploratory, and do not say they did not run.
-* **G2-COM-6 [T]** — **Missing Configuration Records and Run Logs.** Same finding as S2-COM-3 / G1-CONT-3.
+* **G2-COM-6 [T]** — **Missing Configuration Records and Run Logs.** Same finding as S2-COM-3 / G1-CONT-3.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as G1-CONT-3. Do not apply the S2-COM-3 table instruction. The exact-split paragraph already says the seed was not fixed and the run log was not found. Do not add a further sentence. Do not add a second estimator table.
 * **G2-COM-7 [T]** — **Unverified Systematics (Zeroed DIS and Inferred POT).** Same finding as S2-COM-12 / G1-COM-8.
 
 ### Section 5: Self-Containment
