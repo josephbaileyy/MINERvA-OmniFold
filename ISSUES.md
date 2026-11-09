@@ -528,7 +528,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-14 [T]** — **Inconsistent rounding across sections.**  
   *Finding:* Inconsistent precision (e.g., 0.13% vs 0.14%, 6.41% vs 6.414%).  
   *Evidence:* Global text.  
-  *Resolution:* Standardize decimal precision across all sections.
+  *Resolution:* This row authorizes no tex edit. Do not change a printed precision until a later instruction names the two occurrences and the record for each rounding.
 
 ---
 
