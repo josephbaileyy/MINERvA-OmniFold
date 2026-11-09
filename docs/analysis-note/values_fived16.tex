@@ -7,8 +7,10 @@
 \providecommand{\fvpending}[1]{\textbf{[PENDING: #1]}}
 % \fvgroup{group}{text} prints text once the group's record has landed, else one [PENDING: ...]; inside it,
 % \fvcase{key}{class}{text} prints text only when key has that class (methods-short-20261109/variants.md).
+% \fvgroupalt{group}{pending text}{filled text} prints the first while the group is pending, with no marker.
 \def\fv@PENDING{PENDING}
 \providecommand{\fvgroup}[2]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING\fvpending{\@nameuse{fvgd@#1}}\else#2\fi}}
+\providecommand{\fvgroupalt}[3]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING#2\else#3\fi}}
 \providecommand{\fvcase}[3]{\@ifundefined{fvc@#1}{\errmessage{values_fived16: no verdict key '#1'}}{\def\fv@tmp{#2}\expandafter\ifx\csname fvc@#1\endcsname\fv@tmp#3\fi}}
 \@namedef{fv@box-R00-W}{0--100}
 \@namedef{fv@box-R00-eavail}{0--0.8}
@@ -3636,11 +3638,11 @@
 \@namedef{fv@x-qr-zmax}{0.720}
 \@namedef{fv@x-zmax}{0.985}
 \@namedef{fvg@prr}{PENDING}
-\@namedef{fvgd@prr}{FD-PRR, the prior-retention study (PR-1 to PR-3, the composite labels)}
+\@namedef{fvgd@prr}{the study of what changes the retained prior}
 \@namedef{fvg@ll5d}{PENDING}
-\@namedef{fvgd@ll5d}{LL5D, the like-for-like five-observable coverage test}
+\@namedef{fvgd@ll5d}{the like-for-like five-observable coverage test}
 \@namedef{fvg@vhalf}{PENDING}
-\@namedef{fvgd@vhalf}{V-HALF, the per-cell bias-half validity rule}
+\@namedef{fvgd@vhalf}{the per-cell bias-half validity rule}
 \@namedef{fvc@ll5d-abstract}{PENDING}
 \@namedef{fv@ll5d-abstract}{\fvpending{ll5d-abstract}}
 \@namedef{fvc@ll5d-ar23-all}{PENDING}

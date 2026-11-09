@@ -91,3 +91,14 @@ sentence of the paper. Filling a group needs that group's record and its CITABLE
   - a failing cell is not to be read as excluded, wrong or unreported. The fixed sentence says the rule "grades bias
     under simulated truths; it does not assess the detector model, and it is not a coverage statement" (decision
     item 6 of `DECISION-20261109-joseph-methods-baseline-and-plan.md`).
+
+**Round 6, the editor's C3: does every outcome leave the fixed sentences true?** Checked for each LL5D and FD-PRR
+outcome:
+- **§1, "the third is not established":** true under every LL5D outcome. A COVERS at both tunes is coverage at two
+  truths, of the procedure, not of the reported intervals (`LL5D-DECLARATION.md:88`, `:76-94`).
+- **§7 ¶1, "It does not yet provide validated interval coverage":** true for the same reason.
+- **Limitation 1:** a fixed clause now says "the like-for-like test …, whatever its outcome, grades the procedure at
+  two truths, not the reported intervals", which is true in every class.
+- **The prior-retention finding (§1, §5):** it rests on Table 2, which no FD-PRR outcome changes (FD-PRR NOT CITABLE
+  FOR: "Table II or its grades").
+- **The abstract (C1):** each pending clause is now its own sentence, and every variant is grammatical alone.

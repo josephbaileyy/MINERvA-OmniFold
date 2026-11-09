@@ -202,9 +202,10 @@ LL5D_T = ("covers", "under-cells", "under-joint", "invalid", "na")         # LL5
 LL5D_C = ("graded", "gate-failed", "to-joseph", "stop")                    # LL5D-DECLARATION.md:427, :439-440, :233
 VHALF_O = ("none-fail", "some-fail")                  # DECISION-20261109-joseph-bias-half-rule.md item 1 (counts below)
 PENDING_GROUPS = {
-    "prr": "FD-PRR, the prior-retention study (PR-1 to PR-3, the composite labels)",
-    "ll5d": "LL5D, the like-for-like five-observable coverage test",
-    "vhalf": "V-HALF, the per-cell bias-half validity rule",
+    # printed inside [PENDING: ...]: descriptive names only, no internal study labels (round 6, the editor's C4)
+    "prr": "the study of what changes the retained prior",
+    "ll5d": "the like-for-like five-observable coverage test",
+    "vhalf": "the per-cell bias-half validity rule",
 }
 PENDING = {}                                         # key -> (group, class set, or None for a printed value)
 for _t in ("gibuu", "q3"):
@@ -1173,8 +1174,10 @@ def render(v):
              r"\providecommand{\fvpending}[1]{\textbf{[PENDING: #1]}}",
              "% \\fvgroup{group}{text} prints text once the group's record has landed, else one [PENDING: ...]; inside it,",
              "% \\fvcase{key}{class}{text} prints text only when key has that class (methods-short-20261109/variants.md).",
+             "% \\fvgroupalt{group}{pending text}{filled text} prints the first while the group is pending, with no marker.",
              r"\def\fv@PENDING{PENDING}",
              r"\providecommand{\fvgroup}[2]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING\fvpending{\@nameuse{fvgd@#1}}\else#2\fi}}",
+             r"\providecommand{\fvgroupalt}[3]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING#2\else#3\fi}}",
              r"\providecommand{\fvcase}[3]{\@ifundefined{fvc@#1}{\errmessage{values_fived16: no verdict key '#1'}}{\def\fv@tmp{#2}\expandafter\ifx\csname fvc@#1\endcsname\fv@tmp#3\fi}}"]
     for k in sorted(v):
         lines.append(rf"\@namedef{{fv@{k}}}{{{v[k]}}}")

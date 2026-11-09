@@ -127,3 +127,33 @@ line for each; `variants.md` holds one row per site.
   above the paper". The paper's 3.069e-38 and ratio 1.010 are the refined estimate (`values.tex:8`, RE-2 E_R/Q_R);
   3.073e-38 is the purity-subtracted one (`values.tex:79`). The editor raised it as E1. AGENTS.md is the front
   door's owner's to change.
+
+## Round 6 and the fixes after it (2026-11-09)
+
+**The reads.** The round-6 blind JINST reads (#982) scored `e3b99c82b` at 4, 4 (Sonnet) and 5, 5 (Gemini), a mean of
+4.5. All four recommend major revision. Their README records my two defects in the text they read:
+- the placeholders printed internal labels;
+- the abstract's calibration sentence overclaimed (W-11).
+
+**What this commit does:**
+- **Applied:** the editor's presentation fixes, C4, A2, and the director's items 1–5. Each is listed in
+  `QUEUE-editor-1.md`, with what was not applied and why.
+- **Table 1:** moved to §3.3 as a test map, one row per test, every status word defined in its caption. Each pending row
+  prints one marker, with the status "Pending" (`\fvgroupalt`).
+- **The supplement:** S4's internal date is gone. check_round now refuses ISO dates in the printed paper and
+  Supplement, and internal labels in the printed pending-group names.
+- **Fig. 3:** the caption and §5.1 name each panel's estimator. The 74 % is always named with its variant, and the
+  reported estimator's result at that truth (Table 2) is cited beside it.
+- **§4.1:** states the near-singular published covariance, its condition number and its 73 well-determined directions
+  next to χ²/ndf. "Validation" is gone from the method's section titles and from Table 1's caption. The paper's title
+  and its "methods and validation study" phrase are W-1.
+- **The telegraphic phrases the reads quoted** are rewritten, along with the S4 jargon (MAT, PPFX, "H2 grid").
+- **W-22's recommended draft** is in §1.
+- **W-OPTIONS.md** gives the director's W-items with options, recommendations and records.
+
+**Counts:** 13 pages, 8,696 blind words, up from 8,463. The status definitions, the symbols, the bar and the W-22
+sentence add words, and the presentation cuts take some out. No new rater copy is built for a round, per the director.
+
+**One check found during the round:** the Data availability first sentence is protected text (the rater script
+refuses a change to it). My gloss there was reverted, and goes to Joseph with W-19.
+- **Registry:** ALIASES rows 38 and 47 and ATTRIBUTION row 17 are re-cited to `paper_body.tex:68` (digest `824f4ce05ad1b7b0`), the estimators paragraph after the table moved; `records_estimators.tex` is regenerated. **The label map** is regenerated (`label-map.tsv`).

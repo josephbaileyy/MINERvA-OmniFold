@@ -48,7 +48,13 @@ Joseph.
 | L-25 | §4.2 | "The five-observable result therefore agrees with the two-dimensional normalization in each muon-kinematic quadrant; the benchmark does not test its distribution in the three hadronic observables." | r5:208 (the quadrant sums); decision item 6 | "agrees with", not "inherits" |
 | L-26 | abstract | the abstract, rewritten; LISTED_CLAIMS's anchor "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find" kept | r5's abstract; L-18; COV2D CITABLE FOR (`:97-106`); variants V-A1 and V-A2 | **W-2, W-6** |
 
-**Numerals new to the base** (`check_round.py` NEW_NUMERALS): 136 and 285, both in row L-12b. Every other numeral
+| L-27 | §5.3 | the prior-retention bar, printed: "the larger of 0.05 and 9.03 times the standard deviation of the paired change of ρ over five splits of the simulation"; ρ, b_c and d_c as symbols | `FD-PRR-DECLARATION.md:281-286` (§5.1, δ_F = max(0.05, 9.03 s_F)), `:217-224` (§3.5, s over five splits), `:236-246` (§4.1) @ `c120e0d07` | round 6, the editor's C2 and B3 |
+| L-28 | §5.4, Table 1 | the IBU bars as "the 95th and 99.7th percentiles of its null, 28.12 and 39.04" | r5:176 ("28.12 (0.95) and 39.04 (0.997)") | the editor's B8 |
+| L-29 | §1 | **W-22 draft:** the motivation for the joint unbinned approach, with "this study does not test whether that gain is realized" | the intro (r5:13); S4 `sec:method-algo` ("any binning chosen afterwards") | motivation only; see W-OPTIONS.md |
+| L-30 | §5.1, Fig. 3 | panel (a)'s estimator named, with why: the configuration with which the generator-sized-change study ran; the reported estimator's result at the same truth, the sixteen cells: largest \|z\| 1.76, flagged without C_PL,5D | S4 (configurations (c) and (d) "serve the … generator-sized-change … studies"); Table 2's GiBUU E_avail shape row (`f0b-stage0c_gibuu-*`); r5:272 | the director's round-6 item 3. The note gives no reported-estimator (E_avail, W) residual at this change (`sec_5d.tex:57-63`), so none is printed |
+| L-31 | §2, §5.2, §7 | "diagonal fraction" in place of "reconstruction stability", defined in §2; the three run-period groups defined in §2; the publication reports 205 of the 224 bins | `h2_definition.json` via `h2-lowstab-*` (r5:339); S5 (`sec:fived16-pl`, "playlists 1A–1F, 1G–1M and 1N–1P"); S3 (the note's `sec:205bins`) | the editor's B2 and B6 |
+
+**Numerals new to the base** (`check_round.py` NEW_NUMERALS): 136 and 285 (row L-12b), 0.05 and 9.03 (L-27), and 99.7 (L-28). Every other numeral
 the paper prints is printed by `bc8673186` too.
 
 **Moved text.** Every paragraph moved to the Supplement carries a comment naming its round-5 line, and it keeps that
@@ -57,7 +63,11 @@ line's evidence route. The full list is in OUTLINE.md's revision note.
 **One check changed:** `check_sec4_receipts.py` now finds the statistical-block median (0.676 %) in
 `supplemental_body.tex`, where it moved (S6).
 
-## Wording choices (W-rows): for the PRD-referee read at the end, then Joseph
+## Wording choices (W-rows)
+
+**Round 6 (2026-11-09):** W-1 to W-8, W-11 to W-18, W-20, W-22 and W-23 are the director's, under Joseph's away delegation. Their options are in W-OPTIONS.md. Each will be logged here as decided, with its independent read. W-9, W-10, W-19 and W-21 are banked for Joseph.
+
+**The original rows:**
 
 | id | choice | the draft | alternatives |
 |---|---|---|---|

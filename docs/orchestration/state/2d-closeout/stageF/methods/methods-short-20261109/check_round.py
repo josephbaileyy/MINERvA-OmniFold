@@ -34,11 +34,14 @@ EMPTY = {**{f"prr-label-{l}-{t}": {"not"} for l in ("fir", "info", "impl", "obs"
          **{f"ll5d-{t}-{r}": {"na"} for t in ("g18", "ar23") for r in ("minus2", "all")}}
 # numerals the paper prints that the base does not, each with its source (ledger rows)
 NEW_NUMERALS = {"285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55, 1.391 x 205 = 285.2 (in [285.05, 285.26])",
-                "136": "L-12b: the note's sec_results.tex:128 (chi2 = 136 on the 73 best-determined directions)"}
+                "136": "L-12b: the note's sec_results.tex:128 (chi2 = 136 on the 73 best-determined directions)",
+                "0.05": "L-27: FD-PRR-DECLARATION.md:281-286, the bar delta_F = max(0.05, 9.03 s_F)",
+                "9.03": "L-27: FD-PRR-DECLARATION.md:281-286 (the two-sided Student-t quantile on 4 degrees of freedom at 0.01/12)",
+                "99.7": "L-28: r5:176's bar 39.04 at the null's 0.997 quantile, printed as the 99.7th percentile (round 6, the editor's B8)"}
 ONCE = [
     "and their cross-covariance is not available, so no difference between them can be given a calibrated significance.",
     "The joint-test estimator is the baseline this study characterizes",
-    "It is a tested mitigation of the instability, not a replacement:",
+    "It is a tested mitigation of the instability, not a replacement.",
     "These results bound what the study shows.",
     "That test is the natural next step.",
     "Every criterion was fixed before the results it grades were seen.",
@@ -160,6 +163,28 @@ def check_once_gone(cur):
     return fails
 
 
+LABELS = GONE[4:]   # the internal labels (not the claim phrases): checked in the printed pending-group names too
+
+
+def check_printed_names(values_tex):
+    """Round 6 (the editor's C4): the pending groups' names print in the paper, so the internal labels must not be in them."""
+    fails = []
+    for g, name in re.findall(r"\\@namedef\{fvgd@([^}]+)\}\{([^}]*)\}", values_tex):
+        for pat in LABELS:
+            if re.search(pat, name):
+                fails.append(f"values_fived16.tex: the pending group {g} prints the internal label {pat!r}: {name!r}")
+    return fails
+
+
+def check_dates(texts):
+    """Round 6 (the director's item 2): no ISO date in the printed paper or Supplement (comments stripped)."""
+    fails = []
+    for f, t in texts.items():
+        for m in re.finditer(r"\b(19|20)\d\d-\d\d-\d\d\b", strip_comments(t)):
+            fails.append(f"{f}: an internal date prints: {m.group(0)}")
+    return fails
+
+
 def run(wt, base):
     mv = load_mv(wt)
     cur = {f: (wt / NOTE / f).read_text() for f in FILES}
@@ -168,7 +193,9 @@ def run(wt, base):
     supp = (wt / NOTE / "supplemental_body.tex").read_text()
     fails = (check_variants(cur, mv.PENDING, mv.PENDING_GROUPS) + check_no_number(cur)
              + check_keys({**cur, "supplemental_body.tex": supp}, (wt / NOTE / "values_fived16.tex").read_text())
-             + check_numerals(cur, old) + check_once_gone(cur))
+             + check_numerals(cur, old) + check_once_gone(cur)
+             + check_printed_names((wt / NOTE / "values_fived16.tex").read_text())
+             + check_dates({**cur, "supplemental_body.tex": supp}))
     return fails
 
 
@@ -240,6 +267,10 @@ def self_test():
         print("self-test: NOT CAUGHT a new numeral"); ok = False
     if not check_once_gone({"f": "the stabilised variant " + " ".join(ONCE)}):
         print("self-test: NOT CAUGHT a GONE phrase"); ok = False
+    if not check_printed_names(r"\@namedef{fvgd@x}{LL5D, the test}"):
+        print("self-test: NOT CAUGHT an internal label in a printed group name"); ok = False
+    if not check_dates({"f": "until 2026-10-11; "}) or check_dates({"f": "% 2026-10-11 in a comment"}):
+        print("self-test: the date check is wrong"); ok = False
     if not check_once_gone({"f": " ".join(ONCE[1:])}):
         print("self-test: NOT CAUGHT a missing ONCE sentence"); ok = False
     del EMPTY["e"]
