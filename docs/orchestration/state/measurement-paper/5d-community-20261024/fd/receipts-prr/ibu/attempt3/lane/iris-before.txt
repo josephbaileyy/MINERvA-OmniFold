@@ -1,0 +1,20 @@
+login20
+2026-11-09T22:48:42Z
+m3246               2445.7            10000.0     18372.6      20000.0
+61040235 ll5d_gate_AR23 RUNNING
+61040163 ll5d_gate_G18 RUNNING
+== must be absent
+ls: cannot access '/pscratch/sd/j/josephrb/fd-prr-20261108/route2': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/fd-prr-20261108/log-ibu': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/fd-prr-20261108/deploy-ibu-3': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/fd-prr-20261108/logs/connect-ibu-3.log': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/fd-prr-20261108/logs/connect-ibu-3.done': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/fd-prr-20261108/logs/ibu-3.jobid': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/fd-prr-20261108/post-ibu': No such file or directory
+ls: cannot access '/pscratch/sd/j/josephrb/fd-prr-20261108/post-ibu.tar.gz': No such file or directory
+== must be present
+/pscratch/sd/j/josephrb/fd-prr-20261108/ibu-attempt2/log-ibu
+/pscratch/sd/j/josephrb/fd-prr-20261108/ibu-attempt2/route2
+/pscratch/sd/j/josephrb/fd-prr-20261108/stage-a4.json
+/pscratch/sd/j/josephrb/fd-prr-20261108/stage/s5p-nullsF
+00457e58f135c6bff0207901f9bb977ce6338d9b01971df376d2fe333750d7df  /pscratch/sd/j/josephrb/fd-prr-20261108/stage-a4.json
