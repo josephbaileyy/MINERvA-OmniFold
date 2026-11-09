@@ -64,6 +64,7 @@ import fd_1b_inv as inv  # noqa: E402
 import fd_1b_mc as mc  # noqa: E402
 import fd_1b_toys as toys  # noqa: E402
 import s1_assemble as sa  # noqa: E402
+import s5e_candidate  # noqa: E402
 import s5p_universe  # noqa: E402
 
 SCHEMA_CAL = "ll5d-calibration/1"
@@ -505,6 +506,14 @@ def one_set(job: tuple[str, int]) -> tuple[str, int, dict]:
     return t, s, out
 
 
+def install_config() -> dict:
+    """Amendment A1a.1: configuration (e)'s candidate, installed once at a job's entry exactly as fd_1b_mc.run_unfold
+    does (fd_1b_mc.py:507 at dbaaf09d46f7bfcf671b04cc161cfd57c16222f7). It registers the "ratio_nd" truth model that
+    fd_1b_mc.truth_weight dispatches to (s5e_deform.install_ratio_truth); without it truths_r raised ValueError
+    ("ratio_nd"), ll5d_calib run 1 (job 61014290)."""
+    return s5e_candidate.install(toys.CONFIG)
+
+
 def require_threads() -> dict:
     """The gate and the calibration run at one BLAS thread (A2.1 ruling (a); section 9): every THREAD_VARS entry is
     "1" (VECLIB_MAXIMUM_THREADS may be unset off macOS)."""
@@ -553,6 +562,7 @@ def calib_main(a) -> dict:
     import multiprocessing
     t0 = time.time()
     threads = require_threads()
+    install_config()                                  # A1a.1, before anything reads a truth
     check_n(a.draws)
     inv.OPENED.clear()
     world, d1 = load_world(a)
@@ -912,6 +922,7 @@ def gate_main(a) -> dict:
     a.out.parent.mkdir(parents=True, exist_ok=True)
     line = PROJECTION_SHARE * a.time_limit_seconds
     threads = require_threads()
+    install_config()                                  # A1a.1, before anything reads a truth
     inv.OPENED.clear()
     world, d1 = load_world(a)
     load = lambda tag: verified_weights(world, a, tag)  # noqa: E731
