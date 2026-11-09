@@ -250,7 +250,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-12 [R]** — **Suspicious duplicate numbers.**  
   *Finding:* Check 0.141% 3D marginal difference vs QA $d/S_{2D}$; 3.71% $C_{\\text{model}}$ vs flux band median; identical $r_c$ ratios (0.923/0.963) for NuWro and GiBUU.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:170`, `sec_3d.tex:112`, `sec_fived16.tex:85`, `sec_joint.tex:180`.  
-  *Resolution:* Verify each duplicate against source data / readouts and clarify independent origin.
+  *Resolution:* This row authorizes no tex edit. The listed pairs stay as written until a readout shows that the two numbers in a pair are the same quantity.
 
 * **S1-ACC-13 [T]** — **Configuration mismatch in 3D/4D closures vs reported values.**  
   *Finding:* 3D/4D central values quoted from configuration (e), while closures use configuration (a).  
