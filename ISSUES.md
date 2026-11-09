@@ -593,7 +593,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-19 [T]** — **Model-dependence magnitudes.**  
   *Finding:* Table 5 quotes median 2–6% for held-out shapes, §9.4 quotes prior dependence of 10–13% per coarse cell.  
   *Evidence:* `docs/analysis-note/sec_5d.tex:145`, Table 5.  
-  *Resolution:* Clarify that Table 5 describes synthetic shape shifts while §9.4 describes unregularized prior sensitivity.
+  *Resolution:* This row authorizes no tex edit. The two percentages already name different studies. Do not add a further label.
 * **S2-ACC-20 [T]** — **GiBUU domain cutoffs.**  
   *Finding:* $p_\\parallel < 4.5\\text{ GeV/c}$ in 16-cell vs $< 6\\text{ GeV/c}$ in joint tests.  
   *Evidence:* `docs/analysis-note/sec_fived16.tex:165`, `sec_joint.tex:55`.  
