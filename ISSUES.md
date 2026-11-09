@@ -280,7 +280,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-18 [T]** — **Iteration stability justification.**  
   *Finding:* Justifying $n=5$ iterations via 0.026% total cross section stability overlooks 1.54% per-bin shape variation in §5.4 and iteration drift in 5D.  
   *Evidence:* `docs/analysis-note/sec_method.tex:85`, `sec_validation.tex:210`.  
-  *Resolution:* State that $n=5$ optimizes the bias-variance trade-off on the 2D benchmark; disclose shape sensitivity openly.
+  *Resolution:* The shape figure is already next to the total-agreement figure in sec_validation.tex, and the method paragraph cites that section. Do not add a bias-variance claim. This row authorizes no tex edit.
 
 * **S1-ACC-19 [T]** — **2p2h standard magnitude arithmetic in §7.7.**  
   *Finding:* Reconcile statement that closing deficit requires 2p2h at ~45% of QE with $f_{\\text{MEC}} = 2.87\\%$ of CC total and $\\text{QE} = 11\\%$.  
