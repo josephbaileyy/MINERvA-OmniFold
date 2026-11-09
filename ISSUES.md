@@ -672,7 +672,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-2. Do not copy that specification into the note. The joint-test counts stay in the table.
 * **S2-CONT-2 [T]** — **Diagnostic record cited for definitions.** Same finding as S1-CONT-1.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-1. Do not inline those values until each one is a checked macro and a record says it may be quoted.
-* **S2-CONT-3 [T]** — **Companion journal article dependencies.** Same finding as S1-CONT-3.
+* **S2-CONT-3 [T]** — **Companion journal article dependencies.** Same finding as S1-CONT-3.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-3. Do not copy article text into the note.
 * **S2-CONT-4 [T]** — **Numbers quoted from superseded/retired material.** Same finding as S1-CONT-4.
 * **S2-CONT-5 [T]** — **Internal design review factor derivation.** Same finding as S1-CONT-2.
 * **S2-CONT-6 [T]** — **Repository paths and file names in text.** Same finding as S1-CONT-6.
