@@ -523,7 +523,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-13 [T]** — **Mixed 2D and N-D degrees of freedom labeling.**  
   *Finding:* Clarify ndf = 205 in 2D vs retained rank in N-D at each quoted $\\chi^2$.  
   *Evidence:* `docs/analysis-note/sec_results.tex:120`, `sec_5d.tex:190`.  
-  *Resolution:* State exact ndf and rank definition at every $\\chi^2$ citation.
+  *Resolution:* This row authorizes no tex edit. The cited lines are not chi-squared statements. The 2D and sixteen-cell sections already state what their divisors count. Do not add an ndf sentence at every chi-squared citation.
 
 * **S1-PRES-14 [T]** — **Inconsistent rounding across sections.**  
   *Finding:* Inconsistent precision (e.g., 0.13% vs 0.14%, 6.41% vs 6.414%).  
