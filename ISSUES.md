@@ -557,7 +557,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-ACC-8 [T]** — **ndf in held-out-tune test (204 vs 205).**  
   *Finding:* §5.3 gives $\\chi^2/\\text{ndf}$ "(ndf = 204)" at AR23 and "(ndf = 205)" at G18 without explanation.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:198`.  
-  *Resolution:* Clarify that one kinematically inaccessible cell was excluded at AR23.
+  *Resolution:* This row authorizes no tex edit. Do not write that a kinematically inaccessible cell was excluded. The two ndf macros already print 204 and 205.
 * **S2-ACC-9 [R]** — **Positive control window in §5.2.**  
   *Finding:* 0.955 lies inside stated window $C_2 \\in [0.928, 0.972]$; check window endpoint arithmetic.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:155`.  
