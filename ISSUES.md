@@ -566,7 +566,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* §6.3 states run-period block raises per-bin median from 5.98% to 6.41% (+7%), while Table 3 says median ratio is 5.8%.  
   *Evidence:* `docs/analysis-note/sec_results.tex:90`, Table 3.  
   *Resolution:* This row authorizes no tex edit. The two medians and the median of the per-bin increases are already stated separately. Do not add a ratio of the two medians.
-* **S2-ACC-11 [T]** — **Repeated numbers that may be copy errors.** Same finding as S1-ACC-12.
+* **S2-ACC-11 [T]** — **Repeated numbers that may be copy errors.** Same finding as S1-ACC-12.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-ACC-12. The listed pairs stay as written until a readout shows that the two numbers in a pair are the same quantity.
 * **S2-ACC-12 [T]** — **2p2h closure arithmetic in §7.7.** Same finding as S1-ACC-19.
 * **S2-ACC-13 [T]** — **Size of background correction.** Same finding as S1-COM-9.
 * **S2-ACC-14 [T]** — **Flux units and integration bounds.**  
