@@ -787,7 +787,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **G1-ACC-9 [T]** — **GiBUU cell count reconciliation.**  
   *Finding:* 8 cells in §10 vs 72 cells in Table 11.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:18`, Table 11.  
-  *Resolution:* Clarify in text: GiBUU covers 8 of the 16 reporting cells in §10, and 72 of the 109 joint cells in §11.
+  *Resolution:* This row authorizes no tex edit. The 8 cells are the sixteen-cell comparison below the mid-p_parallel cut. The 72 cells are the joint-test domain with p_parallel below 6 GeV/c. They are not one grid. Do not call 72 the full grid.
 
 ### Section 4: Completeness as a Citable Record
 
