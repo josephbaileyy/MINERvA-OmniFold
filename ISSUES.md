@@ -426,7 +426,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CLM-5 [T]** — **"Calibrated joint tests reject all ten" scoping.**  
   *Finding:* Claiming tests are "calibrated" overlooks sub-grid non-convergence, omitted hadronic response, and target composition differences.  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:16`, `sec_joint.tex:150`.  
-  *Resolution:* Scope claim: "calibrated within the simulated model assumptions, subject to stated convergence and nuisance limitations".
+  *Resolution:* Those statements are already in sec_execsummary.tex. Do not replace the six conditions with a new scope sentence. This row authorizes no tex edit.
 
 * **S1-CLM-6 [T]** — **Joint tests as methodological illustration vs power measurement.**  
   *Finding:* Tests do not demonstrate added power over coarse projections; represent methodological demonstration.  
