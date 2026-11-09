@@ -17,7 +17,8 @@ Every item is assigned a single, unambiguous class:
 
 | Source | [T] Textual | [R] Record | [A] Analysis | [D] Dispute/Void | Total |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Part 1: Currency Audit (`AUDIT.txt`)** | 12 | 10 | 0 | 0 | **22** |
+| **Part 1: Currency Audit (`AUDIT.txt`)** | 12 | 9 | 0 | 0 | **21** |
+| **Post-Audit Record Items (`AUD-L5`)** | 0 | 1 | 0 | 0 | **1** |
 | **Part 2: Sonnet Report 1 (`sonnet-note-r1-1.txt`)** | 61 | 4 | 0 | 1 | **66** |
 | **Part 3: Sonnet Report 2 (`sonnet-note-r1-2.txt`)** | 63 | 3 | 0 | 1 | **67** |
 | **Part 4: Gemini Report 1 (`gemini-note-r1-1.txt`)** | 34 | 2 | 0 | 1 | **37** |
@@ -162,10 +163,28 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Target:* `docs/analysis-note/sec_method.tex:150`.  
   *Resolution:* Clarify distinction between seed variance and floating-point rounding sensitivity.
 
+---
+
+## Post-Audit Record Items
+
 * **AUD-L5 [R]** — **Audit of `\uqMedian` and `\uqIntegral` uses across deliverables.**  
   *Finding:* In `values.tex`, `\uqMedian` and `\uqIntegral` expand to 6.41 and 4.76 at the round-1 cut ($Q_R$). The adopted 2D uncertainty $Q = S_5 + C_{\mathrm{PL}}$ has median 6.45% and integral 4.75% (`DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md:45-46`), now bound through `make_values_landed.py` as `\lrval{q-median}` and `\lrval{q-integral}`. Every other use of `\uqMedian` and `\uqIntegral` across the note, paper, and primer must be checked to distinguish between $Q_R$ and adopted $Q$.  
   *Record:* `DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md:45-46`.  
   *Target:* `docs/analysis-note/sec_results.tex`, `sec_systematics.tex`, `paper_body.tex`, `primer_body.tex`.  
+  *Sites (use-by-use list at cf1b504):*  
+  * `docs/analysis-note/paper_body.tex:126` — both macros; live sentence.  
+  * `docs/analysis-note/primer_body.tex:107` — both macros; live sentence.  
+  * `docs/analysis-note/primer_body.tex:114` — `\uqMedian`; comment.  
+  * `docs/analysis-note/primer_body.tex:120` — `\uqIntegral`; comment.  
+  * `docs/analysis-note/primer_body.tex:130` — `\uqMedian`; live sentence.  
+  * `docs/analysis-note/sec_results.tex:88` — both macros; live sentence.  
+  * `docs/analysis-note/sec_systematics.tex:40` — `\uqMedian`; live sentence.  
+  * `docs/analysis-note/sec_systematics.tex:227` — `\uqIntegral`; live sentence.  
+  * `docs/analysis-note/values.tex:4` — `\uqMedian`; comment.  
+  * `docs/analysis-note/values.tex:60` — `\uqMedian`; definition.  
+  * `docs/analysis-note/values.tex:64` — `\uqIntegral`; definition.  
+  * `docs/analysis-note/app_history.tex:50` — `\uqMedian`; historical mention.  
+  * `docs/analysis-note/app_history.tex:84` — `\uqMedian`; historical mention.  
   *Resolution:* Pinned macros `\lrval{q-median}` and `\lrval{q-integral}` provide the adopted figures in the citability matrix (`Table~\ref{tab:result-status}`). Other uses across the note are flagged for subsequent batch review and must not be altered in this commit.
 
 ---
