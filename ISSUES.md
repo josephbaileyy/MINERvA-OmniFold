@@ -317,7 +317,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-COM-6 [T]** — **Unexecuted or incomplete tests.**  
   *Finding:* Clarify status of tests that did not run (App. D response mismatch, §5.2 re-test, §10.5 16-cell coverage, §10.3 reco info).  
   *Evidence:* `docs/analysis-note/sec_validation.tex:160`, `app_response_mismatch.tex:4`.  
-  *Resolution:* Explicitly document these protocols as unexecuted and state their implications.
+  *Resolution:* Do not label all four unexecuted. Each protocol keeps the status the note already gives it. This row authorizes no tex edit.
 
 * **S1-COM-7 [T]** — **Unresolved items in 2D covariance.**  
   *Finding:* Document bounds: only 7 of 187 universes reproduced by committed code, NormDISCC zero, POT counting inferred.  
