@@ -659,7 +659,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-COM-7. Do not add those three statements until a record states each one.
 * **S2-COM-13 [T]** — **Reproduction is not possible.** Same finding as S1-CONT-6.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-6. Do not edit app_release.tex while AUD-N4 is held.
-* **S2-COM-14 [T]** — **Fake-data tests are not held-out truths.** Same finding as S1-COM-3.
+* **S2-COM-14 [T]** — **Fake-data tests are not held-out truths.** Same finding as S1-COM-3.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-COM-3. Do not type per-cell bias values, and do not add a sentence that the fake-data tests are not held-out truths.
 * **S2-COM-15 [T]** — **Extended fiducial prior envelope.**  
   *Finding:* Tier-2 prior envelope has median 7.9% (90th percentile 62%) with no covariance.  
   *Evidence:* `docs/analysis-note/sec_fps.tex:85`.  
