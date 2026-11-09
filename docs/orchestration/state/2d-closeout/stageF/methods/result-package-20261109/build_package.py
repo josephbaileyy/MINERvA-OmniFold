@@ -718,7 +718,9 @@ PENDING = [
     ("LL5D", "the like-for-like five-observable coverage test at the two held-out GENIE v3 tunes"),
     ("V-HALF", "a per-cell validity rule: the bias at most half of the truth's departure from the prior"),
 ]
-ENS1_PENDING = ("ENS1", "the ensemble-averaged variant of the estimator (96 fits): its stability and bias results")
+ENS1_PENDING = ("ENS1", "the data file for the ensemble-averaged variant of the estimator (96 fits), whose result is final "
+                        "and reported in the paper")
+ENS1_RECORD = "docs/orchestration/OUTCOME-20261109-ens1-stab-pass-bias-worse.md"
 
 
 def pending_text(what):
@@ -1118,6 +1120,9 @@ def assemble():
         out.update(b(c))
     files, pend = build_ens1(c)
     out.update(files)
+    if pend:   # the README says the ENS1 result is final and in the paper: hold it to that
+        need((ROOT / ENS1_RECORD).is_file(), f"ENS1's outcome record is missing: {ENS1_RECORD}")
+        need("\\fvval{ens1-" in paper["paper"], f"the paper at {PAPER_REF[:8]} no longer prints ENS1's values")
     pending = ([ENS1_PENDING] if pend else []) + PENDING
     for name, what in pending:
         out[f"pending/{name}.txt"] = pending_text(what).encode()
@@ -1291,6 +1296,14 @@ def provenance(c, out, pending):
                    "+ stat + c08, exactly.", 110):
         w(f"  {l_}")
     w("")
+    if any(name == "ENS1" for name, _ in pending):
+        w("ENS1")
+        for l_ in wrap(f"The ENS1 result is final ({ENS1_RECORD}) and the paper prints its values. "
+                       "sec-cov5d_ens1.csv is checked against values_fived16.tex's ens1-* keys, which reach this "
+                       "checkout with the paper's values producer; until then the file is pending, and it fills with "
+                       "no other change.", 110):
+            w(f"  {l_}")
+        w("")
     w("REMOVED ROWS")
     for l_ in wrap("sec-repro2d_benchmark.csv no longer carries chi2_73_directions_over_205 (0.662) or "
                    "chi2_139_directions_over_205 (1.391): the paper no longer prints chi^2/205 for the truncated sums, "

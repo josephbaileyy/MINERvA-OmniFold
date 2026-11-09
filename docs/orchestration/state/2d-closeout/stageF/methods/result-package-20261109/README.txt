@@ -330,7 +330,8 @@ NOT INCLUDED
     only (tab-fived16-groups.csv).
 
 NOT YET AVAILABLE (pending/)
-  - ENS1.txt: the ensemble-averaged variant of the estimator (96 fits): its stability and bias results.
+  - ENS1.txt: the data file for the ensemble-averaged variant of the estimator (96 fits), whose result is final
+    and reported in the paper.
   - FD-PRR.txt: a study in simulation of what moves the estimator's retained prior on the 16 cells, with binned
     unfolding (IBU) on the same fake data.
   - LL5D.txt: the like-for-like five-observable coverage test at the two held-out GENIE v3 tunes.

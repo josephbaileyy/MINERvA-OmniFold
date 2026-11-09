@@ -11,7 +11,7 @@ HOW EACH VALUE IS CHECKED
   summary, and the pT and p_par projection uncertainties.
 
 CODE (sha256)
-  2cf1aa9674dfebb9957677214548d146fbf3d030e6e5821335dbddc2e5b37730  docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/build_package.py
+  eba9e45370a86b17a01eff1a1cfee9702013009fe49e15c94595d5965fa2729c  docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/build_package.py
   5414b123eaebc426ce7cd2dc9acc897c8c679b0349332c9d9dc056d46d2bfcec  docs/analysis-note/make_values_fived16.py
   2d7744155df3e802ce9ec4619931bea8b5d442e8eb5c857e9f03a6ac3bc3dada  docs/analysis-note/values_fived16.tex
   168d9b569d572daef5a862b7039426cf0e348a7452d5b8392c99b1bfef4ec4c9  docs/analysis-note/values.tex
@@ -107,6 +107,11 @@ THE 2D ARRAYS
   docs/orchestration/state/2d-closeout/stageF/methods/result-package-20261109/receipts/c2a-20261109/transcription/
   and pinned above. The bin edges are those of 2d-unfolding/pv2d/ratios/projections.json. Q equals s5_total +
   C_PL, and s5_total equals universe + stat + c08, exactly.
+
+ENS1
+  The ENS1 result is final (docs/orchestration/OUTCOME-20261109-ens1-stab-pass-bias-worse.md) and the paper
+  prints its values. sec-cov5d_ens1.csv is checked against values_fived16.tex's ens1-* keys, which reach this
+  checkout with the paper's values producer; until then the file is pending, and it fills with no other change.
 
 REMOVED ROWS
   sec-repro2d_benchmark.csv no longer carries chi2_73_directions_over_205 (0.662) or
