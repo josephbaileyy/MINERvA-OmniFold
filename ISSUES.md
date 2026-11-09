@@ -468,7 +468,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-2 [T]** — **Repeated limitation lists across sections.**  
   *Finding:* Identical limitation paragraphs repeated verbatim in Introduction, ES, §10, and §13.  
   *Evidence:* Global text.  
-  *Resolution:* Consolidate limitations in central locations and use cross-references.
+  *Resolution:* This row authorizes no tex edit. Do not consolidate limitation paragraphs until a later instruction names two paragraphs that are the same text.
 
 * **S1-PRES-3 [T]** — **Provenance narrative reading like a lab notebook.**  
   *Finding:* Chronological forensic notes ("decided during production", specific calendar dates) clutter physics text.  
