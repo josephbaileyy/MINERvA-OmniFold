@@ -1,0 +1,252 @@
+node login27 2026-11-08T23:58:08Z
+connect script sha256 6ac2eee9fd1710f1f125b65c942fac1b3eaef36ead1fe0a6fc16f101da0202f9
+== 1. fence (ruling 4, BRANCH SHARED: only fd1b_bdg_* allowed; anything else refuses)
+squeue rc=0; rows:
+
+-- end rows
+refusing rows: []
+FENCE: clear
+== 2. fresh clone at 83ac32fb5024026ac6c51c0621d5ae9ff9073370
+HEAD 83ac32fb5024026ac6c51c0621d5ae9ff9073370; porcelain lines 0
+module sha256 658ca91849a8151a4fb801e41004102f0ba621c367f1c23146a8fc3a580484df (expected 658ca91849a8151a4fb801e41004102f0ba621c367f1c23146a8fc3a580484df)
+Part 1 readout.json sha256 8e05ca9bc2d0f2142b5c8d2bff28f05176c48f27454218390f09658344cea7b0 (expected 8e05ca9bc2d0f2142b5c8d2bff28f05176c48f27454218390f09658344cea7b0)
+== 3. thread variables as inherited (as Part 1's P4; none exported): OMP_NUM_THREADS=<unset> OPENBLAS_NUM_THREADS=<unset> MKL_NUM_THREADS=<unset> NUMEXPR_NUM_THREADS=<unset>
+== 4. the new root
+created /pscratch/sd/j/josephrb/fd-1b-band-diag-20261109
+== 5. section 5's before-stat of the 73 sources, 2026-11-08T23:58:23Z
+stat-before.txt: 73 lines; missing 0; sha256 7986e2bf31aac583c03273f96804c2adaac85bcfdde5bd4b3da5b0f834c95b22
+== 6. same, 2026-11-08T23:58:24Z
+thread variables (python): {'OMP_NUM_THREADS': '<unset>', 'OPENBLAS_NUM_THREADS': '<unset>', 'MKL_NUM_THREADS': '<unset>', 'NUMEXPR_NUM_THREADS': '<unset>'} numpy 1.26.4
+{"out": "/pscratch/sd/j/josephrb/fd-1b-band-diag-20261109/same.json", "step": "same", "verdict": null, "rc": 0}
+same rc=0 2026-11-08T23:58:25Z
+== 7. the 73 sources re-stat'd after same, against the before-stat
+stat-after-p1.txt: 73 lines; sha256 7986e2bf31aac583c03273f96804c2adaac85bcfdde5bd4b3da5b0f834c95b22
+sources: byte-identical before and after same
+== 8. records
+sha256 7986e2bf31aac583c03273f96804c2adaac85bcfdde5bd4b3da5b0f834c95b22 stat-before.txt
+sha256 7986e2bf31aac583c03273f96804c2adaac85bcfdde5bd4b3da5b0f834c95b22 stat-after-p1.txt
+sha256 15418f80ed0b3b0b42f38e03a9008a3687ad9a525d479774c758322c6ad7c9bc same.json
+== stat-before.txt
+regular file|882727307716864427|1|106273|1794033543|1794127395|1794033543|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/staged.json
+regular file|882727307716864070|1|189270|1794033541|1794127392|1794033541|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_CV.npz
+regular file|882727307716864206|1|189336|1794033542|1794127393|1794033542|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Neutron_0.npz
+regular file|882727307716864207|1|189297|1794033542|1794127393|1794033542|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Neutron_1.npz
+regular file|882727307716864208|1|189315|1794033542|1794127393|1794033542|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Pion_0.npz
+regular file|882727307716864209|1|189285|1794033542|1794127393|1794033542|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Pion_1.npz
+regular file|882727307716864210|1|189332|1794033542|1794127393|1794033542|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Proton_0.npz
+regular file|882727307716864211|1|189300|1794033542|1794127393|1794033542|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Proton_1.npz
+regular file|882727307716864226|1|189368|1794033542|1794127393|1794033542|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_MinosEfficiency_0.npz
+regular file|882727307716864227|1|189325|1794033542|1794127393|1794033542|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_MinosEfficiency_1.npz
+regular file|882727307716864424|1|119273|1794033543|1794127392|1794033543|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/s1/s1_assembly.npz
+regular file|882727252352041530|1|189463|1794119381|1794126667|1794119381|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_CV.npz
+regular file|882727287382926431|1|189562|1794124467|1794126667|1794124467|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Neutron_0.npz
+regular file|882727287382926439|1|189585|1794125153|1794126667|1794125153|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Neutron_1.npz
+regular file|882727287382926409|1|189606|1794122349|1794126667|1794122349|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Pion_0.npz
+regular file|882727287382926416|1|189555|1794123072|1794126667|1794123072|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Pion_1.npz
+regular file|882727287382926425|1|189567|1794123782|1794126667|1794123782|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Proton_0.npz
+regular file|882727287382926433|1|189598|1794124494|1794126667|1794124494|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Proton_1.npz
+regular file|882727252352041534|1|189596|1794119442|1794126667|1794119442|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_MinosEfficiency_0.npz
+regular file|882727287382926443|1|189586|1794125186|1794126667|1794125186|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_MinosEfficiency_1.npz
+regular file|882727252352041526|1|189466|1794119379|1794126667|1794119379|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_CV.npz
+regular file|882727313957978504|1|189468|1794124378|1794126667|1794124378|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Neutron_0.npz
+regular file|882727313957978512|1|189484|1794125063|1794126667|1794125063|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Neutron_1.npz
+regular file|882727313957978481|1|189524|1794122301|1794126667|1794122301|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Pion_0.npz
+regular file|882727313957978490|1|189460|1794123023|1794126667|1794123023|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Pion_1.npz
+regular file|882727313957978499|1|189502|1794123733|1794126667|1794123733|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Proton_0.npz
+regular file|882727313957978506|1|189508|1794124443|1794126667|1794124443|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Proton_1.npz
+regular file|882727252352041538|1|189536|1794119443|1794126667|1794119443|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_MinosEfficiency_0.npz
+regular file|882727313957978515|1|189521|1794125134|1794126667|1794125134|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_MinosEfficiency_1.npz
+regular file|882727252352041523|1|189465|1794119378|1794126667|1794119378|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_CV.npz
+regular file|882727260623210445|1|189625|1794124465|1794126667|1794124465|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Neutron_0.npz
+regular file|882727260623210451|1|189583|1794125163|1794126667|1794125163|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Neutron_1.npz
+regular file|882727260623210460|1|189598|1794125872|1794126667|1794125872|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Pion_0.npz
+regular file|882727260623210427|1|189564|1794122354|1794126667|1794122354|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Pion_1.npz
+regular file|882727260623210433|1|189624|1794123062|1794126667|1794123062|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Proton_0.npz
+regular file|882727260623210440|1|189593|1794123786|1794126667|1794123786|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Proton_1.npz
+regular file|882727260623210446|1|189615|1794124485|1794126667|1794124485|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_MinosEfficiency_0.npz
+regular file|882727260623210452|1|189569|1794125187|1794126667|1794125187|/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_MinosEfficiency_1.npz
+regular file|882725251803251539|1|1548438020|1782610308|1794179838|1782610308|/pscratch/sd/j/josephrb/MINERvA-OmniFold/nd-unfolding/of_inputs_5d.npz
+regular file|882726729389460450|1|16017201|1790319104|1794179838|1790319104|/pscratch/sd/j/josephrb/s5c-20260924/runs/p2/bkg_dump.npz
+regular file|882727246161324166|1|170298|1793473279|1793496788|1793473279|/pscratch/sd/j/josephrb/fd-1b-20261030/pins.json
+regular file|882726727141294705|1|131396540|1790522804|1793890109|1790522804|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_wt.npy
+regular file|882726727141294706|1|131396540|1790522805|1793890109|1790522805|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_wr.npy
+regular file|882726727141294708|1|526976|1790522805|1793890109|1790522805|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_denom_nd.npy
+regular file|882726727141294707|1|2486316|1790522805|1793890109|1790522805|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_0_bkgw.npy
+regular file|882726727141294709|1|131396540|1790522816|1793890109|1790522816|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_wt.npy
+regular file|882726727141294710|1|131396540|1790522816|1793890109|1790522816|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_wr.npy
+regular file|882726727141294712|1|526976|1790522817|1793890109|1790522817|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_denom_nd.npy
+regular file|882726727141294711|1|2486316|1790522817|1793890109|1790522817|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Neutron_1_bkgw.npy
+regular file|882726727141294713|1|131396540|1790522828|1793890146|1790522828|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_wt.npy
+regular file|882726727141294714|1|131396540|1790522828|1793890146|1790522828|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_wr.npy
+regular file|882726727141294716|1|526976|1790522828|1793890147|1790522828|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_denom_nd.npy
+regular file|882726727141294715|1|2486316|1790522828|1793890147|1790522828|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_0_bkgw.npy
+regular file|882726727141294717|1|131396540|1790522840|1793890136|1790522840|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_wt.npy
+regular file|882726727141294718|1|131396540|1790522840|1793890137|1790522840|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_wr.npy
+regular file|882726727141294720|1|526976|1790522840|1793890137|1790522840|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_denom_nd.npy
+regular file|882726727141294719|1|2486316|1790522840|1793890137|1790522840|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Pion_1_bkgw.npy
+regular file|882726727141294721|1|131396540|1790522852|1793890146|1790522852|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_wt.npy
+regular file|882726727141294722|1|131396540|1790522852|1793890146|1790522852|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_wr.npy
+regular file|882726727141294724|1|526976|1790522852|1793890147|1790522852|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_denom_nd.npy
+regular file|882726727141294723|1|2486316|1790522852|1793890147|1790522852|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_0_bkgw.npy
+regular file|882726727141294725|1|131396540|1790522864|1793890132|1790522864|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_wt.npy
+regular file|882726727141294726|1|131396540|1790522864|1793890133|1790522864|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_wr.npy
+regular file|882726727141294728|1|526976|1790522864|1793890133|1790522864|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_denom_nd.npy
+regular file|882726727141294727|1|2486316|1790522864|1793890133|1790522864|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/GEANT_Proton_1_bkgw.npy
+regular file|882726727141294697|1|131396540|1790522781|1793890160|1790522781|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_wt.npy
+regular file|882726727141294698|1|131396540|1790522781|1793890160|1790522781|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_wr.npy
+regular file|882726727141294700|1|526976|1790522781|1793890160|1790522781|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_denom_nd.npy
+regular file|882726727141294699|1|2486316|1790522781|1793890160|1790522781|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_0_bkgw.npy
+regular file|882726727141294701|1|131396540|1790522792|1793890145|1790522792|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_wt.npy
+regular file|882726727141294702|1|131396540|1790522793|1793890146|1790522793|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_wr.npy
+regular file|882726727141294704|1|526976|1790522793|1793890146|1790522793|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_denom_nd.npy
+regular file|882726727141294703|1|2486316|1790522793|1793890146|1790522793|/pscratch/sd/j/josephrb/s5p-20260926/bank_detector/MinosEfficiency_1_bkgw.npy
+== same.json
+{
+ "schema": "fd-1b-band-diag/1",
+ "step": "same",
+ "label": "DERIVATION",
+ "cells": [
+  "R00",
+  "R01",
+  "R02",
+  "R03",
+  "R04",
+  "R05",
+  "R06",
+  "R07",
+  "R08",
+  "R09",
+  "R10",
+  "R11",
+  "R12",
+  "R13",
+  "R14",
+  "R15"
+ ],
+ "bands": {
+  "GEANT_Neutron": {
+   "HK": {
+    "verdict": "SAME COMPARISON",
+    "cells_outside": [],
+    "max_abs_ln_g2Dnom_over_E": 2.2204460492503128e-16,
+    "max_abs_ln_B_over_A": 1.2076949403707816e-07,
+    "n_resolved": 14
+   },
+   "per_universe": {
+    "GEANT_Neutron_0": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    },
+    "GEANT_Neutron_1": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    }
+   }
+  },
+  "GEANT_Pion": {
+   "HK": {
+    "verdict": "SAME COMPARISON",
+    "cells_outside": [],
+    "max_abs_ln_g2Dnom_over_E": 0.0,
+    "max_abs_ln_B_over_A": 3.3437662309606903e-08,
+    "n_resolved": 16
+   },
+   "per_universe": {
+    "GEANT_Pion_0": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    },
+    "GEANT_Pion_1": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    }
+   }
+  },
+  "GEANT_Proton": {
+   "HK": {
+    "verdict": "SAME COMPARISON",
+    "cells_outside": [],
+    "max_abs_ln_g2Dnom_over_E": 2.2204460492503128e-16,
+    "max_abs_ln_B_over_A": 3.1161353061103836e-07,
+    "n_resolved": 14
+   },
+   "per_universe": {
+    "GEANT_Proton_0": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    },
+    "GEANT_Proton_1": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    }
+   }
+  },
+  "MinosEfficiency": {
+   "HK": {
+    "verdict": "SAME COMPARISON",
+    "cells_outside": [],
+    "max_abs_ln_g2Dnom_over_E": 2.2204460492503136e-16,
+    "max_abs_ln_B_over_A": 5.292099189299157e-09,
+    "n_resolved": 16
+   },
+   "per_universe": {
+    "MinosEfficiency_0": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    },
+    "MinosEfficiency_1": {
+     "max_rel_UxE_minus_UxDnom": 0.0,
+     "max_rel_UTu_minus_UTcv": 1.476576475290907e-16
+    }
+   }
+  }
+ },
+ "reproduced": {
+  "part1_readout_sha256": "8e05ca9bc2d0f2142b5c8d2bff28f05176c48f27454218390f09658344cea7b0",
+  "F_src_kappa_bitwise": true
+ },
+ "digests": {
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/s1/s1_assembly.npz": "db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_CV.npz": "44f22acfb6e38b60a450a2aa4881437b9911e61cdba792a3df9b75a6080ee6ed",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Neutron_0.npz": "148902b3872e8495af0fa6d0a7a4deb9464f1fe4787e2fba8180c1f69cacf297",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Neutron_1.npz": "0c224c12a687cc24ff5476f5742de3e5b866259bc6822684a231fc1a3a85223f",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Pion_0.npz": "d2a89cd6d7beed576469e672c79aac5dbdaa4fa519924476d127b4a55a45138b",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Pion_1.npz": "6bfdecfb8f341c03155ff9cf3eade23c087e7ff4ccc80b3b5725e7d02cdd4734",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Proton_0.npz": "a519bd4e04093ad05776a99d3609a6a725f7f7d89f876a2b9b22d52ba97a7df8",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_GEANT_Proton_1.npz": "b171b1ce4a83a555a8a17eb3545ff26a9d249f004b9ab20ef7c490f341619b98",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_MinosEfficiency_0.npz": "b2ff18e89eafc4ce1f92a6175eded857cdde538f2df66c76fa8fd5bc35210e1d",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/stage/derivation/fd1b_derivation_MinosEfficiency_1.npz": "3195cea120698bea719a85582e0c5eb8e6bfce85814d68c6a41d922e3eca4107",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_CV.npz": "0876f73e6c337c9bb649d45d8b590baba1600dc48859e8298bca9b4ede9f93a4",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Neutron_0.npz": "3a30c98ef5db0f65c6de12ff7d66649f05b2ae201de2c74eee022472ca484c74",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Neutron_1.npz": "70f4e7e450ae5a6da0de96dce870b510dd277ced4d576f309ce53741cfb7d359",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Pion_0.npz": "dd864941949ad0b7ab0272617e4745ec8ee4775596c671300f652256923e5c19",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Pion_1.npz": "ec672bcbaa05d83a349944ba3d49ad1cb95d0d350717202886a184804abbb291",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Proton_0.npz": "4c69e3e7371981e2dcc8626632639dc60642b356a370cc6693e8a0fbda14c6bd",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_GEANT_Proton_1.npz": "db81e3e674a62862b02a03f8f586e3dbacbc16a42bd5087ac8398d2a86e071ed",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_MinosEfficiency_0.npz": "1dcc2952e4155f2082286fe1ab55d4a76813995a83fad7b2c35237ab1db9d755",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_A_MinosEfficiency_1.npz": "52f5fcc5e1e0bb7b8d5b2f0dd055390bc4fe91512305da27d4babf3c145d145d",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_CV.npz": "dfc186f96c3a7f0bad1b0121218c1a22567b65ad91a9c0aa027aafece302bb06",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Neutron_0.npz": "fee2f0dcfd799335701c98c31c1c104a423dbe3cf57c1623399960c7d083f4e5",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Neutron_1.npz": "32c1ca2acfc226cbf135c2692489abf06d814ed9de692546c82e24d1ad93b604",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Pion_0.npz": "e7544fdf5e0e86d9efb91e9cb1ba89e02be424a739329084c4c4bb9b77cd0ed2",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Pion_1.npz": "7ccbc6fea08e01ce8bafb94c53e9925a57ecfa569bdceacd9fb2284cb5903595",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Proton_0.npz": "89156322e9f0d6d94ddf8e8d3be4bab0660e5bbd3ce2c01950db0f77775df182",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_GEANT_Proton_1.npz": "36c52f36c0e092e55d89481dda8fe2ff99d9142da9b81af0c503dc8cadaf46ca",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_MinosEfficiency_0.npz": "5d95cd1029674d5c753136e31ec9fa43ee297b25625b6d9d1f90919d87dd841a",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_B_MinosEfficiency_1.npz": "4bae927e3f908794bb6d39aaf597111c78b1503430441b5c9eee6f3ed588feae",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_CV.npz": "ecea5e258b0692bcb69aec222e908fecc8c8be32970643d801a78d74c705e67c",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Neutron_0.npz": "80bc1372a763c717fe6e8af0451f56138511e30b7e009ff6f6aa04a61ac767b5",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Neutron_1.npz": "a17494a19f4b384cee7ce95b73d80f3fbbadb23c46a582a522fbd6d7a8cb2890",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Pion_0.npz": "4e66e1bf015bf915d32071f66a46a1a16b6e78cf7ae278f5ba4c9446f699124d",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Pion_1.npz": "64843b511de500c09073276bda1a641f105e3564b2d7b7de551aec2d8158018c",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Proton_0.npz": "3c250dc330ff2b2ba962fc843e558e664b3effae434fec5acba19f5f2a43d03e",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_GEANT_Proton_1.npz": "a874647752210d264a58d0ec4ea8d019c3c3917b24e183d1976fb0b54aa5e1c3",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_MinosEfficiency_0.npz": "a0119a2d52db00bcaaca71cf4eeb0443d0e9cfe5b34838d5fd700349fd28fe69",
+  "/pscratch/sd/j/josephrb/fd-1b-precheck-fd-20261107/unf/fd1b_pfd_Dnom_MinosEfficiency_1.npz": "0ef9bd8a8b40e38e820ea46deb29c7a5ee6fda4e5fa25759629f5ad02d6d7043"
+ },
+ "code_sha256": {
+  "fd_1b_band_diag.py": "658ca91849a8151a4fb801e41004102f0ba621c367f1c23146a8fc3a580484df"
+ }
+}
+== end of records
+== bdg-p1 rc=0 2026-11-08T23:58:25Z
