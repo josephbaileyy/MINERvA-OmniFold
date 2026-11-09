@@ -680,7 +680,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-2. Do not copy that specification into the note, and do not add a derived factor. The joint-test counts stay in the table.
 * **S2-CONT-6 [T]** — **Repository paths and file names in text.** Same finding as S1-CONT-6.  
   *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-6. Do not edit app_release.tex while AUD-N4 is held.
-* **S2-CONT-7 [T]** — **Citations to private communications.** Same finding as S1-CONT-5.
+* **S2-CONT-7 [T]** — **Citations to private communications.** Same finding as S1-CONT-5.  
+  *Resolution:* This row authorizes no tex edit. Same disposition as S1-CONT-5. Do not replace a private-communication citation with a rationale the note does not already state.
 * **S2-CONT-8 [T]** — **Internal stage/date jargon.**  
   *Finding:* Avoid internal milestone dates and phrases ("Stage 0", "condition set in July 2026").  
   *Evidence:* `docs/analysis-note/sec_5d.tex:135`, `sec_fived16.tex:210`.  
