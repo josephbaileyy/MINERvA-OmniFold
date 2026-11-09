@@ -1,0 +1,27 @@
+2c2,4
+< # LL5D section 11 step 3: ll5d_calib (LL5D BINDING 2, A1a at M_A1a = e92e9467). One exclusive regular CPU node,
+---
+> # LL5D section 11 step 3: ll5d_calib RUN 2, the INVALID rerun of job 61014290 (LL5D BINDING 2 ruling 5 and its addendum,
+> # #987: A1a.1 at M_A1a.1 = a95cc39f, the candidate installed at calib_main's entry). The same declared seeds and N.
+> # One exclusive regular CPU node,
+15c17
+< M=e92e946759772d13e21055b21c69189c8b007183
+---
+> M=a95cc39f7437170af0b65ba042934fad079e0ee2
+17c19
+< W=$P/ll5d-calib-20261108; DD=$W/deploy
+---
+> W=$P/ll5d-calib-2-20261109; DD=$W/deploy
+22c24
+< exec >> "$W/logs/connect-calib.log" 2>&1
+---
+> exec >> "$W/logs/connect-calib-2.log" 2>&1
+41c43
+< 9dbf9cf499f2c709ed7cffe809336a9dfd2122d34185d433036944c6927bf8fc  nd-unfolding/ll5d.py
+---
+> b49f5d5f793265ef0cf569abe1912838cce9280e692f4dd61100d05c133aec1f  nd-unfolding/ll5d.py
+52a55,56
+> bda8c48ce2365e173bbba083b18233d6f6b7c2dfbab5179156073860c8281ec7  nd-unfolding/s5e_candidate.py
+> 6726ff99c7787d1ee6dff7fa5d08df88f9df76285d98c4c462f964ac6164779f  nd-unfolding/s5e_deform.py
+88a93
+> exit $rc      # A1a.1 round: sacct's state is the step's (run 1 read COMPLETED 0:0 on rc 1)
