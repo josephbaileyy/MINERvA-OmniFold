@@ -1,0 +1,41 @@
+{
+ "levels": {
+  "K10": {
+   "n": 11,
+   "mean_s": 896.9,
+   "min_s": 778.6,
+   "max_s": 1064.1,
+   "dry_rate_s": 860.5,
+   "mean_over_dry": 1.042
+  },
+  "K2": {
+   "n": 11,
+   "mean_s": 290.8,
+   "min_s": 255.5,
+   "max_s": 373.4,
+   "dry_rate_s": 215.9,
+   "mean_over_dry": 1.347
+  },
+  "K20": {
+   "n": 11,
+   "mean_s": 1564.8,
+   "min_s": 1373.6,
+   "max_s": 1758.5,
+   "dry_rate_s": 1417.9,
+   "mean_over_dry": 1.104
+  },
+  "K50": {
+   "n": 11,
+   "mean_s": 3668.3,
+   "min_s": 3313.6,
+   "max_s": 3850.9,
+   "dry_rate_s": 3596.9,
+   "mean_over_dry": 1.02
+  }
+ },
+ "queue_span_s": 8995.8,
+ "queue_span_h": 2.4988,
+ "projected_h_at_t0": 2.3573,
+ "span_over_projection": 1.06,
+ "gate_h": 6.75
+}

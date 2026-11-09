@@ -121,6 +121,17 @@ the limit bounds only a hang.
   login19 refused logins with pam_nologin (summary line 19). This receipt says nothing about /dev/shm on those three.
   The copy found on login27 matches the scp's minute, so it is the incident's copy.
 
+## Added later: the final post.log and post.done (2026-11-09)
+
+- **Why.** `cluster/post.log.txt` is the tarball's copy. The tar is made while post.log is still the post's open
+  stdout, so that copy lacks the last 3 lines: the tarball's sha256, "prr dry post rc=0" and the time. post.done
+  is absent from the tarball for the same reason. This is the director's low on the iter post.
+- **What was added.** Both files were fetched read-only from $OUT/post-dry, each with its sha256 matching on both
+  sides, into `cluster-final/`:
+  - post.log.txt is f8f0f970…. Its diff from `cluster/post.log.txt` is those 3 lines only;
+  - post.done is 9a271f2a… and reads "0".
+- **Nothing above is changed.** The fetch is recorded in `../iter/README.md`.
+
 ## Files
 
 - `cluster/`: $OUT/post-dry as extracted, with the renames in `RENAMES.tsv`.
