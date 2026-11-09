@@ -260,7 +260,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-14 [T]** — **Matched-projection claim in executive summary.**  
   *Finding:* Executive summary states matched coarse projections reject as well, but GENIE 2.12.10 is not rejected in $(p_T, p_\\parallel)$ ($p = 0.48$ total, $0.63$ shape).  
   *Evidence:* `docs/analysis-note/sec_execsummary.tex:16`, Table 29.  
-  *Resolution:* Qualify statement: matched coarse projections reject four of five models, but do not reject GENIE 2.12.10 in muon kinematics.
+  *Resolution:* Landed at 3394f20971b995e83309cc3c7476f899b3cf190a. The executive summary now says each matched coarse projection rejects in at least one of the two projections, and that GENIE 2.12.10 is not rejected in the muon-only projection. No p-value was added. No further tex edit.
 
 * **S1-ACC-15 [T]** — **Terminology of $J$ (109 cells).**  
   *Finding:* Reconcile §9.4 / Table 12 ("109 supported fine joint cells") with §11.1 ("coarse $3^5$ grid").  
