@@ -473,7 +473,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-PRES-3 [T]** — **Provenance narrative reading like a lab notebook.**  
   *Finding:* Chronological forensic notes ("decided during production", specific calendar dates) clutter physics text.  
   *Evidence:* `docs/analysis-note/sec_method.tex:95`, `sec_systematics.tex:190`.  
-  *Resolution:* Migrate historical narratives to a dedicated provenance appendix; keep body text formal and objective.
+  *Resolution:* This row authorizes no tex edit. Do not move provenance sentences out of the body until a later instruction names them.
 
 * **S1-PRES-4 [T]** — **Proliferation of configuration labels and unclear tables.**  
   *Finding:* Confusing proliferation of labels ((a)–(f), R, J, H2, EW, RD1–3, P1–P3).  
