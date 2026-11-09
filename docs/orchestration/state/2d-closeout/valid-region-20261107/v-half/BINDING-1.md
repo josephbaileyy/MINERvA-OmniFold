@@ -57,3 +57,24 @@ addenda A2 (the readout emits d) and A3 (M_A3 = `06657cff`).
    any wrong-length b that V-HALF reads) is on the follow-up list.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum R1: H2 named; the read may run (director, 2026-11-09)
+
+**Names H2** (ruling 1): [`PRR-READOUT.sha256`](PRR-READOUT.sha256) is committed with one line, the FD-PRR read's
+committed readout by path and sha256:
+
+`9238f22bfe29685e33c1d5bb46da3938a3ebfdc93a54575a4fe99de3a7af9ead  docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json`
+
+**What the director checked:**
+- The readout was made by `prr_read.py` at M_A4 `cb13a644` (FD-PRR BINDING 1 addendum A4, ruling 1; its bytes
+  `d7c7c2c0…` are A2's). It ran from a fresh clone, verdict COMPLETE, after prr_ibu attempt 3 (61057142) completed with
+  C-IBU true. The receipt is PR #1006, merged at `64ec2061`. The file on main hashes to `9238f22b…`, as the session
+  recorded.
+- **Ruling 4's re-check:** `nd-unfolding/pv-ladder/readouts/h2_definition.json` is `b67907615fe2e903…` at M_A4 and on
+  main, the pin above, so prr_read's M16 and F0b's cell definition are the same file.
+- No other readout is named, and none may be.
+
+**Ruling:** the V-HALF read runs as ruling 2 states: local, at 0 node-h, from a fresh clone at this addendum's merge,
+with empty porcelain. Its output and receipts go in as a PR, and the report goes to the director and then to Joseph.
+
+Nothing is submitted, deposited or tagged.
