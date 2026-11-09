@@ -749,7 +749,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-PRES-10 [T]** — **Figure-based numbers cited without tables.**  
   *Finding:* Text quotes numbers read from figures (e.g., Fig. 23 ratios) without supporting tables.  
   *Evidence:* `docs/analysis-note/sec_eavailw.tex:150`.  
-  *Resolution:* Provide tabulated values or cite explicitly as visual estimates.
+  *Resolution:* This row authorizes no tex edit. Do not add a table of the figure ratios, and do not relabel them as visual estimates. The cited line is a source comment. The named ratios stay until each is a checked macro.
 
 ---
 
