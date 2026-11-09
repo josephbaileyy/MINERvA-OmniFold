@@ -1,0 +1,124 @@
+# Referee Report: "Unbinned unfolding with OmniFold of MINERvA medium-energy open data in five observables"
+
+## 1. Summary of the paper
+
+The authors apply OmniFold (LightGBM, five iterations) to MINERvA ME open-data νμ CC inclusive events. They unfold simultaneously in pT, p∥, Eavail, q3 and W, and benchmark the muon-kinematic projection against the published d²σ/(dpT dp∥). The 2D integral agrees to 1.0%, but the shape differs from the published result (χ²/ndf = 2.27 over 205 bins) for an unidentified reason. A binned IBU of the same inputs differs from the method in 2D and on the sixteen five-observable cells. The paper reports a battery of pre-declared tests, and many fail or are stopped. These include fake-data bias at the GiBUU hybrid and a q3 tilt, instability under rounding-level input changes (up to 2.6σ_stat), an unexplained run-period step, a stopped coverage test, and under-coverage of the 2D covariance at two held-out tunes. A sixteen-cell cross section is given only as "illustrative output", not as a measurement.
+
+## 2. Recommendation: major revision
+
+The paper's candour is exemplary, and a negative-results validation study of OmniFold on real neutrino data would be valuable. In its current form, though, it is neither a measurement nor a clean methods paper. Its central deliverable (the sixteen-cell result) is disclaimed by the authors themselves. Several failures are either diagnosed only partially or left as open questions that the authors could answer with modest further work. Examples are the 2D shape difference, the rounding sensitivity, and the coverage test, which was designed so that its gate compares unlike objects. The manuscript also leans on a companion note the reader cannot see for most of the substantive evidence, and it is organised as a ledger of test outcomes rather than an argument. I would want a resubmission that (a) resolves or sharply narrows the open questions below, and (b) is restructured around a few clear findings, with the rest moved to the note.
+
+## 3. Major issues
+
+**1. The 2D benchmark does not validate the method, and its shape discrepancy is unexplained.**
+- χ²/ndf = 2.27 with the pseudo-inverse over 205 bins (condition number 1.5×10¹²) is a weak statistic. The paper itself shows that most of the χ² lies in poorly determined eigenmodes, which are the modes most sensitive to the covariance's numerical conditioning.
+- The authors chose the learner implementation and the background treatment with the comparison in view, and adopted the refined treatment after seeing the distance (2.65 → 2.27). They concede this is "not a blind validation".
+- The IBU comparison does not localise the discrepancy: ρ = 0.452, 90% interval 0.701–1.128 straddling the class boundary, and the point lies outside its own interval "for a reason not tested".
+- The authors need to localise the discrepancy. Options are:
+  - Run the same OmniFold pipeline on a simulated pseudo-dataset reweighted to a known truth and compare to a binned unfolding of that same pseudo-data, to see whether the published-style unfolding and OmniFold differ in the same eigenmodes.
+  - Check whether the input difference is responsible (the earlier AnaTuple production, the background treatment, the flux, and the 1.17 recoil-energy scaling).
+  - Evaluate the χ² with a regularised or truncated covariance that is stable, and report the p-value.
+- Without this, the sentence "reproduces the published integral within about 1%" carries little weight, since the normalization part is nearly trivial.
+
+**2. Prior dependence is the central scientific result and is left unresolved.**
+- The abstract says "retains part of its prior". The GiBUU-like Eavail change is recovered only partly (residuals up to 74% in one cell, 16–31% for other shapes).
+- The GiBUU hybrid gives χ² = 171/16, and the synthetic q3 tilt gives p < 10⁻⁵.
+- Exact binned iteration at five iterations gives similar residuals. Longer iteration helps for some shapes but not others, and the paper says "no single cause is established".
+- This is the physics that matters for multidifferential neutrino measurements. The authors must choose the iteration count and regularisation by a pre-specified criterion on fake data. They should show how the bias scales with iterations and classifier capacity for the reported estimator, and show that a regularisation exists that passes the pre-declared criteria. Alternatively they should demonstrate that the bias is an irreducible information limit, using the Cramér–Rao argument they gesture at, but carried through for the actual five-observable cells.
+- The remark that 121 of 144 residuals lie in weakly constrained quantities needs to be translated into the reported sixteen cells. Currently it is a statement about a different set of quantities.
+
+**3. Numerical instability is a defect in the estimator, not a feature of the study.**
+- Rounding-level input changes move results by up to 2.6σ_stat (median 0.8σ_stat against a requirement of 0.3σ). The mechanism study identifies ties among float32 values altering LightGBM histogram bins, but it was done on one pseudo-experiment. It finds that the refinement stage is a sufficient entry, but does not test whether ties act there.
+- That such a trivial perturbation produces a 2.6σ shift suggests that the classifier is fitting noise (full-sample training, no early stopping, no cross-fitting). The paper's own cross-fitting probe did not fix it.
+- The stability requirement is being missed by a factor of 2.6. It is also unclear that the ensemble average of 96 fits, which passes stability, was rejected on the strength of a single truth (Stage 0c GiBUU).
+- Required: a root-cause analysis on more than one pseudo-experiment (bin-edge quantisation via `max_bin`, float32 tie breaking, and bagging/feature-subsampling settings). The authors should also either adopt a stable estimator (the ensemble average is the obvious candidate), or show that the instability is subdominant for the reported cells.
+- Claiming that the statistical block "includes" the rounding scatter by construction conflates two things. Bootstrapped statistical variance and a deterministic numerical artefact are not the same thing, and the artefact does not average down with more data.
+
+**4. The uncertainty model is unvalidated, and the coverage programme did not run.**
+- The paper's statement is that "No reported interval has validated coverage". The staged redesign stopped at its first stage (892 of 900 draws gave non-positive denominators), and the original gate compared unlike objects. That is two design failures in one validation programme.
+- The 2D covariance under-covers at both held-out tunes (χ²/ndf 16.6 and 24.2, and no pseudo-experiment lies in the joint region).
+- Cmodel is an unscaled sum of three generator shifts, 89% of which is GiBUU applied only below p∥ = 10 GeV/c, from a sample lacking Eν > 20 GeV and with an acknowledged energy-conservation problem in its DIS events.
+- The run-period block is built from the observed differences, so it fits them by construction. It has rank 2, is not noise-debiased, has a 68% interval of 0.73–2.56 on its size, and was added post hoc.
+- Cresp covers only a recoil energy scale and omits neutron deposits, which are central to Eavail.
+- I would require a coverage test that actually runs. A simple version would use a fixed-truth toy with only the linearly propagated groups drawn, and compare to the linear covariance. The nonlinear universes can be tested separately. The present gate demands agreement between objects that differ by construction, which is a design error. This is fixable.
+
+**5. The run-period inconsistency is a data-quality finding that could be investigated rather than absorbed.**
+- A step of about +7% in p∥ near 8 GeV/c is present at reconstruction level (+6.10%) and survives unfolding (+6.94 ± 0.41%). This points to a data or simulation input, not the unfolding.
+- Some candidate causes that are checkable with the open data: the flux per playlist, the MINOS matching or momentum scale per playlist, the playlist POT accounting, the use of an earlier production for 1A–1E against the current release, and the simulation per playlist.
+- Folding an unexplained 7% effect into the covariance, then discussing generator χ² with and without it (which changes χ² by up to 29–40%), makes the output sensitive to a post hoc choice. At minimum, repeat the analysis on a run-period subset without the step as a cross-check, and compare 1A–1F with 1N–1P alone.
+
+**6. The Eavail definition and the target comparison depart from the literature in ways that limit use of the result.**
+- The charged-pion constant is 135 MeV, neutrons and kaons are omitted, and electrons and positrons are excluded. The authors quantify a 0.42σ coherent effect for the pion constant, which is acceptable. Beyond that, no reconstructed Eavail comparison with published MINERvA distributions is shown, and the 1.17 factor is a MINERvA-internal calorimetric scale.
+- NuWro and GiBUU are on carbon and are "corrected" to CH by adding free-proton predictions at weight 1/13. The paper notes an 8.3% carbon–CH difference for W < 1.1 GeV in GENIE. The free-proton NuWro supplement is flagged for aborts, and GiBUU's sample fails a sampling check. The generator χ² values in Table VI therefore rest on shaky predictions.
+- Since the authors say the output is not for fitting, this matters less. But then Table VI should be cut or moved to the note.
+
+**7. The five-observable construction contains redundancy that is acknowledged but not measured.**
+- Reconstructed W is an exact function of (pT, p∥, q3) (apart from a clamp). Truth W is nearly so. The classifier effectively sees four independent inputs.
+- The paper says "the information added by W has not been measured". This is easy to measure: unfold with and without W and compare the cells and their uncertainty.
+- The title and abstract speak of five observables. A four-observable unfolding with W derived afterwards would be an equivalent result, which the paper should show or refute.
+
+**8. The reporting cells were chosen after the fact and the unfolding does not need them.**
+- Sixteen cells come from one edge per axis, with a purity threshold of 0.1 and merges. Four of the sixteen have stability 0.16–0.25 and two fail the validity rules.
+- The cells are very coarse (a 2×2×2×2×2 grid), which discards what motivated an unbinned five-dimensional unfolding. The claim that OmniFold avoids a response tensor "for every projection" is not tested by showing a multidimensional result the binned approach could not have produced. IBU on 16 cells is possible because the cells are coarse, so IBU is a fair competitor here, and the paper finds them different (T = 194 against bars 28/39) without saying which is closer to truth.
+- To say which, run both on the fake-data truths of Table II and compare bias and variance. That would turn "differs" into a result.
+
+## 4. Stated limitations and qualifications: classification
+
+| # | Limitation | Class | Reasoning / required analysis |
+|---|---|---|---|
+| 1 | Coverage of reported intervals not validated | (a) | The central claim of a "cross section with uncertainties" depends on this. A coverage test that runs, even on a subset of uncertainty groups, would resolve it (see Major 4). If it cannot be done, the result must be labelled a method demonstration throughout, as the authors in effect do. |
+| 2 | Stopped coverage test / failed redesign | (a) for the failure of the validation, (c) for the diagnostics | The gate's design error is fixable. The detailed non-additivity diagnosis (per-band ratios, GEANT4 neutron/proton cells) belongs in the note. |
+| 3 | 2D covariance under-covers at both tunes | (a) | A real finding about the procedure. Resolve by diagnosing which block drives it. Cell 29 and 56 flags are attributed to bias, which points back to prior dependence (Major 2). |
+| 4 | Fake-data bias exceeding thresholds (GiBUU hybrid, q3 tilt) | (a) | The core physics limitation. The paper may state that a stress test exceeds the bias budget, but it should show how the bias depends on iteration and capacity, and what a user should do about it. |
+| 5 | Rounding-level instability, 2.6σ_stat | (a) | An estimator defect. See Major 3. |
+| 6 | Run-period inconsistency, unknown cause | (a) for investigation; (b) for the residual if it remains unexplained | Open-data checks listed in Major 5 are feasible. If the cause truly cannot be found, an honest statement is acceptable, but the post hoc block should then be removed from the headline covariance. |
+| 7 | Low-stability cells (R02, R06, R10, R15; stability 0.16–0.25) | (b) | A property of the chosen cells. Honest flagging is adequate. Better still, merge them or drop them from the reported set, since there is no stability criterion in cell formation. |
+| 8 | Target differences (carbon vs CH, hydrogen correction) | (b) for stating it; (c) for the details | The comparison is descriptive. The 1/13 correction details and generator-sample problems belong in the note. |
+| 9 | Definitional departures (Eavail 135 MeV, W, pT about beam axis) | (b) | Stated and quantified (≤0.19σ per cell, 0.42σ coherent, ≤0.07 of a cell's uncertainty for the angle convention). Acceptable. |
+| 10 | 2D shape difference from published result unexplained | (a) | Major 1. A benchmark whose failure is not understood cannot support the claim that the method works on real data. |
+| 11 | Choice of learner and background treatment made with the comparison in view | (b) | Honestly stated. A held-out version would be better, but this is acceptable if the benchmark is reported as descriptive, which it is. |
+| 12 | IBU comparison does not localise the difference | (a) partial | Add the fake-data bias comparison (Major 8). The "differ" outcome is uninformative alone. |
+| 13 | Cmodel is not a calibrated bound; GiBUU dominated | (a) | 89% of the trace comes from one flawed sample applied over a limited range. Either calibrate it against the held-out tunes or present it as a sensitivity study separate from the uncertainty. |
+| 14 | Cresp omits neutrons and other effects | (b) | A stated scope limit, though the recoil-response omission matters for Eavail. A neutron-response variation would be a worthwhile addition. |
+| 15 | Low-dimensional redundancy (W fixed by pT, p∥, q3) | (a) | Cheap to measure (Major 7). |
+| 16 | Full-sample training, no cross-fitting/early stopping | (a) | Plausibly connected to items 4 and 5. The cross-fitting probe was done only on simulated pseudo-data and failed stability. Resolve with the study in Major 3. |
+| 17 | Fine-grid convergence for joint tests not shown (refinement ratio 0.50–0.86) | (c) | Concerns the note's generator tests only, which the paper disclaims. If those tests stay in the paper at all, this is (a). |
+| 18 | Truths not held out, and only two tunes are held out and not independent (shared QE and Valencia-family MEC) | (b) | Acknowledged. The two tunes pass the bias criteria, and the authors do say this is partial evidence. |
+| 19 | Pointwise, not simultaneous, coverage | (b) | A standard caveat. |
+| 20 | Data availability: the release package is "not yet deposited" | (a) for publication | Most paper numbers need the archived products. Deposit before acceptance. |
+
+## 5. Resolve or move out?
+
+I would prefer a hybrid. The limitations in class (a) that go to the method's usefulness are items 1, 3, 4, 5, 10, 12, 13, 15 and 16. The authors should resolve those, or at least narrow each to a quantified statement. The diagnostic detail in (c), together with the generator-test machinery (Tables VI–VII, the joint-test calibration of Sec. S7), should leave the paper. Those tests are disclaimed as non-exclusionary, depend on conditions the authors say are unverified, and make the manuscript read as two papers.
+
+Is the paper publishable in PRD as the kind of paper it presents itself as (a methods and validation study)? Not with the present set, but no single limitation disqualifies it. The combination is the problem. A validation study whose validation programme fails or stops at nearly every stage must at least explain why. Right now it explains little: two design failures in the coverage programme, an unlocated shape difference, an unfound cause of the run-period step, and a numerical instability whose mechanism is established on one pseudo-experiment. If the authors resolve the stability issue, run a working coverage test (even a reduced one), and show how prior dependence scales with the regularisation, the remaining open items (run-period cause, low-stability cells, target differences) are acceptable as honestly stated limitations. In that case I would support publication. If none of this is feasible, the paper would be better placed elsewhere (see §7).
+
+## 6. Minor issues and presentation
+
+1. The abstract is a dense list of outcomes, almost none of which a reader can interpret without Table I. State the single main finding, followed by two or three supporting results.
+2. Register: very heavy use of qualifiers ("declared", "fixed in advance", "fail-closed", "by construction", "unlike objects"). Much is process narrative. PRD readers want the outcome and its implication.
+3. Terminology is internal to the project: "joint-test estimator", "Stage 0c", "claim variants", "support rule", "configuration (a)–(f)". Table S3 has six configurations, and the paper text uses only two names. Simplify to two.
+4. Table I is 20 rows and hard to scan. Group it, and drop the rows whose results are "descriptive" or "kept".
+5. The paper refers constantly to the note ("Ref. [14], Sec. 9.4") for essential content. A referee and reader cannot check these. The note should be deposited (arXiv) with the paper, and the paper should stand without it for its main claims.
+6. Several quantities are quoted at inconsistent precision or with inconsistent status. For instance, the Introduction says "differs… for a reason not identified" five times.
+7. Section references are broken or confusing: the Introduction cites "Sec. VI A" and "Sec. V" in an order that does not match the section list, and Sec. A 3 is cited for the comparison. The supplement uses "Ref. [1]" for the companion note while the paper uses [14], and has "Sec. S5 and S5" in a caption.
+8. Figure 1's caption says bands are "correlated, so their overlap is not a compatibility test", but then shows them overlapping. Fig. 2's use of an "earlier purity-subtracted covariance" for the grey band is confusing, since neither panel shows the reported result. Fig. 4 would be clearer with the χ² annotated.
+9. Table V (correlation matrix) is partially garbled in the layout. Table VII's heading "ratios from CH doubled removed" is unclear.
+10. The Supplement states the exact-split central value "was the quoted 2D central value until 2026-10-11", a project-log detail that does not belong in a paper.
+11. The Supplement gives different values of the statistical-uncertainty entries for the same quantities in Tables III/IV and S2/S4 (for example R00 stat 0.2 vs 0.20), which is only rounding, but the "median" rows differ slightly between the two (reported median 7.86 in both, Ctotal median 6.74 vs 6.45 for different definitions of the group). Please check consistency.
+12. Define the purity-weight and negative-weight constructions in a single place. The main text and S4 duplicate them.
+13. The 2D benchmark should show the full published and unfolded matrices, or at least the five largest standardised eigenmodes, in the main text, rather than only a verbal summary.
+14. "Fake-data" and "closure" are used for different things. Define once.
+15. The comparison with H1 and ATLAS OmniFold results in the introduction would benefit from saying what validation those papers did (iteration choice, bias, coverage), so the reader can judge what is new here.
+16. Equation (1) mixes kinetic energy for protons, total-minus-135 MeV for charged pions, and total energy for π⁰ and γ. A table of species and their contribution would be clearer than the sentence about "4.57 MeV per pion above".
+17. The title and authors are not provided here, but the paper should state its relation to the MINERvA collaboration, since the analysis uses the open data and reports on the collaboration's published result while departing from its selection and inputs.
+
+## 7. Scores
+
+**(i) Publishability in PRD as submitted**
+
+SCORE: 4/10
+
+**(ii) Main contribution as I read it:** A documented, largely negative validation of one OmniFold implementation on real MINERvA open data, showing that a five-observable unbinned unfolding reproduces the published muon-kinematic integral but shows residual prior dependence, numerical instability under input rounding, and unvalidated uncertainty coverage.
+
+**(iii) Better-suited venue:** With the same content tightened, a computing and methods journal such as *Machine Learning: Science and Technology*, or *Computer Physics Communications*, or the *Journal of Instrumentation* methods section, would suit it better. PRD would be appropriate after the unfolding is stabilised and the coverage question is answered.
