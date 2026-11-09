@@ -632,7 +632,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S2-COM-5 [T]** — **Joint tests omit hadronic response nuisance.**  
   *Finding:* Response model not shown to be complete; $\\pm 4\\%$ study did not regenerate nulls.  
   *Evidence:* `docs/analysis-note/sec_joint.tex:165`.  
-  *Resolution:* Disclose hadronic response omission and implications in §11.
+  *Resolution:* This row authorizes no tex edit. The omission of a hadronic-response band, and the fact that the 4% study did not regenerate the nulls, are already stated. Do not add a further disclosure.
 * **S2-COM-6 [T]** — **Offset control check failure disclosure.**  
   *Finding:* Offset check gives $\\chi^2 = 245.74$ for 16 ndf; disclose failure and implications.  
   *Evidence:* `docs/analysis-note/sec_fived16.tex:240`.  
