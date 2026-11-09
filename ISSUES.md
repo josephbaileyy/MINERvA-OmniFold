@@ -18,12 +18,12 @@ Every item is assigned a single, unambiguous class:
 | Source | [T] Textual | [R] Record | [A] Analysis | [D] Dispute/Void | Total |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Part 1: Currency Audit (`AUDIT.txt`)** | 12 | 9 | 0 | 0 | **21** |
-| **Post-Audit Record Items (`AUD-L5`)** | 0 | 1 | 0 | 0 | **1** |
+| **Post-Audit Record Items (`AUD-L5`)** | 0 | 0 | 0 | 1 | **1** |
 | **Part 2: Sonnet Report 1 (`sonnet-note-r1-1.txt`)** | 61 | 4 | 0 | 1 | **66** |
 | **Part 3: Sonnet Report 2 (`sonnet-note-r1-2.txt`)** | 63 | 3 | 0 | 1 | **67** |
 | **Part 4: Gemini Report 1 (`gemini-note-r1-1.txt`)** | 34 | 2 | 0 | 1 | **37** |
 | **Part 5: Gemini Report 2 (`gemini-note-r1-2.txt`)** | 27 | 0 | 0 | 3 | **30** |
-| **Total Enumerated Findings** | **197** | **19** | **0** | **6** | **222** |
+| **Total Enumerated Findings** | **197** | **18** | **0** | **7** | **222** |
 
 ---
 
@@ -167,9 +167,9 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 
 ## Post-Audit Record Items
 
-* **AUD-L5 [R]** — **Audit of `\uqMedian` and `\uqIntegral` uses across deliverables.**  
-  *Finding:* In `values.tex`, `\uqMedian` and `\uqIntegral` expand to 6.41 and 4.76 at the round-1 cut ($Q_R$). The adopted 2D uncertainty $Q = S_5 + C_{\mathrm{PL}}$ has median 6.45% and integral 4.75% (`DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md:45-46`), now bound through `make_values_landed.py` as `\lrval{q-median}` and `\lrval{q-integral}`. Every other use of `\uqMedian` and `\uqIntegral` across the note, paper, and primer must be checked to distinguish between $Q_R$ and adopted $Q$.  
-  *Record:* `DECISION-20261017-joseph-2d-adopt-s5-plus-playlist.md:45-46`.  
+* **AUD-L5 [D]** — **Audit of `\uqMedian` and `\uqIntegral` uses across deliverables.**  
+  *Finding:* Prior hypothesis that `\uqMedian` (6.41) and `\uqIntegral` (4.76) were stale round-1 cut values that conflicted with adopted 2D uncertainty $Q$ (6.45% and 4.75%).  
+  *Record:* `DECISION-20261024-joseph-adopt-re2-2d-refined.md:9, 30`; `values.tex:60, 64`.  
   *Target:* `docs/analysis-note/sec_results.tex`, `sec_systematics.tex`, `paper_body.tex`, `primer_body.tex`.  
   *Sites (use-by-use list at cf1b504):*  
   * `docs/analysis-note/paper_body.tex:126` — both macros; live sentence.  
@@ -185,7 +185,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   * `docs/analysis-note/values.tex:64` — `\uqIntegral`; definition.  
   * `docs/analysis-note/app_history.tex:50` — `\uqMedian`; historical mention.  
   * `docs/analysis-note/app_history.tex:84` — `\uqMedian`; historical mention.  
-  *Resolution:* Pinned macros `\lrval{q-median}` and `\lrval{q-integral}` provide the adopted figures in the citability matrix (`Table~\ref{tab:result-status}`). Other uses across the note are flagged for subsequent batch review and must not be altered in this commit.
+  *Resolution:* **DISPUTE / WITHDRAWN.** Class [D]. `\uqMedian = 6.41` and `\uqIntegral = 4.76` are not stale; they are the current adopted values for the refined 2D covariance $Q_R$ under `DECISION-20261024-joseph-adopt-re2-2d-refined.md:9, 30` ("The adopted 2D result is $E_R$, with $Q_R$ as its headline uncertainty. This replaces $E_U$ and $Q$"). DECISION-20261017's 6.45% and 4.75% belong to the superseded $Q$. The 13 sites in the deliverables using `\uqMedian` and `\uqIntegral` are correct and must not change. In the citability matrix (`Table~\ref{tab:result-status}`), the 2D uncertainty row states $Q_R$ through `\uqMedian` and `\uqIntegral`.
 
 ---
 
