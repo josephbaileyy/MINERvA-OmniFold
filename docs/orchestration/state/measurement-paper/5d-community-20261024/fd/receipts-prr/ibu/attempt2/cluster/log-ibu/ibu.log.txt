@@ -1,0 +1,1 @@
+refusing: a plain read of /pscratch/sd/j/josephrb/fd-prr-20261108/stage.json: files under ['/pscratch', '/global/cfs'] are read only through O_NOATIME
