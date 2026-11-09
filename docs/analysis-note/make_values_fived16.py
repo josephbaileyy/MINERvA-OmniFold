@@ -221,7 +221,7 @@ _TO = ("c", "uc", "uj", "ujc", "i")
 LL5D_PAIR = tuple(f"{a}-{b}" for i, a in enumerate(_TO) for b in _TO[i:]) + ("na",)
 LL5D_SOME = ("some", "none", "na")
 LL5D_CLOSE = ("scope", "none", "na")    # "none" when no reading was graded; the scope itself is stated once (the style pass)
-LL5D_STATUS = ("covers", "mixed", "under", "invalid", "stopped")            # Table 1's status words (its caption)
+LL5D_STATUS = ("graded", "descriptive", "invalid", "stopped")   # Table 1's status (its caption); no outcome summary: DECISION-20261109-joseph-coverage-case-wording.md item 3
 VHALF_O = ("none-fail", "some-fail")                  # DECISION-20261109-joseph-bias-half-rule.md item 1 (counts below)
 PENDING_GROUPS = {
     # printed inside [PENDING: ...]: descriptive names only, no internal study labels (round 6, the editor's C4)
@@ -248,6 +248,7 @@ PENDING["ll5d-stop-what"] = ("ll5d", None)          # the gate or check a STOP f
 PENDING["ll5d-repair"] = ("ll5d", None)             # the repair, as the record names it (repaired)
 PENDING["ll5d-offset"] = ("ll5d", None)             # clipcheck's largest |o_c|, its cell and the bound (offset routes)
 PENDING["ll5d-clip-record"] = ("ll5d", None)        # the Supplement S9 clipping record (the director's option (a))
+PENDING["ll5d-route-record"] = ("ll5d", None)       # S9, adaptive routes: the exceeded quantity and its bound, what was visible, the reason, every repair (DECISION-20261109-joseph-coverage-case-wording.md item 2)
 for _t in ("g18", "ar23"):
     for _r in ("minus2", "all"):
         PENDING[f"ll5d-{_t}-{_r}"] = ("ll5d", LL5D_T)
@@ -272,9 +273,10 @@ PENDING["vhalf-cells-notvalid"] = ("vhalf", None)
 WORDS = {
     **{k: {"reduces": "reduces", "increases": "increases", "both": "reduces and increases", "no-effect": "no effect",
            "undefined": "undefined"} for k, (_, c) in PENDING.items() if c is PR1},
-    **{k: {"covers": "no under-coverage", "under-cells": "cells under", "under-joint": "joint and cells under",
-           "under-joint-only": "joint under", "invalid": "invalid", "na": ""}
-       for k, (_, c) in PENDING.items() if c is LL5D_T},
+    # Table 1's entry per tune and variant (DECISION-20261109-joseph-coverage-case-wording.md item 3)
+    **{k: {"covers": "no under-coverage detected", "under-cells": "under-coverage flagged",
+           "under-joint": "under-coverage flagged", "under-joint-only": "under-coverage flagged", "invalid": "invalid",
+           "na": ""} for k, (_, c) in PENDING.items() if c is LL5D_T},
 }
 # filled when a record lands: key -> class (or printed value); a group is filled only when every key has one
 VERDICTS = {}
@@ -315,9 +317,9 @@ def ll5d_derived(v):
     out["ll5d-cellflags"] = some(any(c in ("under-cells", "under-joint") for c in cls))
     out["ll5d-anyweak"] = some(any(v[f"ll5d-{t}-{r}-weak"] == "some" for t, r in tr))
     out["ll5d-anyover"] = some(any(v[f"ll5d-{t}-{r}-over"] == "some" for t, r in tr))
-    out["ll5d-status"] = ("covers" if all(c == "covers" for c in cls) else
-                          "under" if all(c.startswith("under") for c in cls) else
-                          "invalid" if all(c == "invalid" for c in cls) else "mixed")
+    # an adaptive route is Descriptive whatever its readings; otherwise no outcome is summarized (the decision, items 2-3)
+    out["ll5d-status"] = ("descriptive" if v["ll5d-route"] in ("offset-proceeded", "repaired") else
+                          "invalid" if all(c == "invalid" for c in cls) else "graded")
     return out
 
 
@@ -333,7 +335,8 @@ def ll5d_case(campaign, per=None, route="direct", flags=None, cells=None, text=N
     v = {"ll5d-campaign": campaign, "ll5d-route": route if graded else "na",
          "ll5d-stop-what": text.get("stop-what", "[the gate or check]"), "ll5d-repair": text.get("repair", "[the repair]"),
          "ll5d-offset": text.get("offset", "[the largest offset, its cell, and the bound]"),
-         "ll5d-clip-record": text.get("clip-record", "[the clipping record]")}
+         "ll5d-clip-record": text.get("clip-record", "[the clipping record]"),
+         "ll5d-route-record": text.get("route-record", "[the exceeded quantity and its bound, what was visible when the decision was made, its reason, and every repair]")}
     for t in ("g18", "ar23"):
         for r in ("minus2", "all"):
             c = per.get((t, r), "covers") if graded else "na"

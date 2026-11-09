@@ -369,3 +369,22 @@ availability, the B0 sentences, RS1's paragraph, the LISTED_CLAIMS anchors). It 
   cut, and is kept.
 - **Reflexive triads: 3 at cb87c1832, 0 now.** The field-maximum flag stays on this pattern, because the needed lists
   remain.
+
+## Joseph's coverage-case decision (2026-11-09), applied
+
+**Record:** `DECISION-20261109-joseph-coverage-case-wording.md` (#1002 at `c68ec3b97`), Joseph's "yes lets apply it". It
+rests on the independent gpt-6.1-sol read (`secondary-results/independent-read-coverage-status-20261109/answer.txt`).
+**Nothing is locked** (item 4). A coverage sentence prints only from the test's outcome record.
+
+| item | what prints now | record |
+|---|---|---|
+| 1, the pass wording | The integrated text at `9b6f5cb2`, with: (i) "The graded covariance includes the model term, whose role is to cover each tune's departure from the simulation", already in §6.3's fixed paragraph, followed by "and leaves out the response and run-period terms"; (ii) "The data result remains an illustration.", once, closing §6.3, after the case text; (iii) the carry-over sentence in the declaration's terms: "a cell that passes at a tune also passes under the procedure's full covariance there, and the joint reading carries over only if both matrices have 16 degrees of freedom". The pass cases print their numbers through `-stats` and `-cells`, as sol asks | decision item 1; LL5D `:318-319` ("The χ² region carries over only if both matrices have ndf = 16"; §6's ndf is the rank above 10⁻¹²) |
+| 2, adaptive routes | Table 1's status is **Descriptive** whenever `ll5d-route` is offset-proceeded or repaired, whatever the readings (`ll5d_derived()`). The readings print in the Result cell, which says "The run continued past a check by a later decision" or "The run was repaired after a stop". The caption's Descriptive gains a second clause: "for the second five-observable coverage test, the criteria fixed in advance were applied, but the run continued, or was repaired, by a decision made after a check was seen". The abstract and §6.3 keep their disclosure. **S9** prints "The gate sample's first 300 draws are the coverage pseudo-experiments' draws, at the same seeds." in every case, and for these routes a new pending key, `ll5d-route-record`: the exceeded quantity and its bound, what was visible when the decision was made, its reason, and every repair. No value is drafted | decision item 2; LL5D `:252` |
+| 3, no "Mixed" | Table 1's Result cell gives one entry per tune and variant, primary first: "primary, without the two bands: G18, ⟨entry⟩; AR23, ⟨entry⟩. With them: G18, ⟨entry⟩; AR23, ⟨entry⟩". Each entry is *no under-coverage detected*, *under-coverage flagged* or *invalid*, through `WORDS`. **No outcome summary:** the status column gives only the run's standing, *Graded*, *Descriptive*, *Invalid* (every entry invalid) or *Stopped*, and the caption defines each. *Covers* and *Mixed* are retired. The abstract's per-variant wording stays | decision item 3 |
+
+**A layout choice, for the director:** the 2×2 is in the Result cell, the only column wide enough (8.6 cm).
+- **Table 1 is now \footnotesize throughout** (it was \scriptsize from round 6), as the decision's "at \footnotesize or
+  larger" asks.
+- It is checked on the pending build and on the longest filled case: no overfull box, no "Float too large", 13 pages.
+  No \resizebox. The status cell carries only Graded / Descriptive / Invalid / Stopped, which says how
+the run stands, not what it found.

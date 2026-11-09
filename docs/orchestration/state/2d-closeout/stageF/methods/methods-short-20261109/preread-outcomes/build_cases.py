@@ -94,7 +94,7 @@ PASSAGES = {
     "abstract-coverage": ("intervals is not established.", "We therefore present the five-observable output", "text"),
     # the end: section 7's heading, or what pdftotext puts before it in some layouts (a hold, or "7.1.")
     "sec-coverage": ("the checks made on it before the main run, are given in supplementary material, section S9.",
-                     ("7. DISCUSSION AND CONCLUSIONS", "[HOLD:", " 7.1. "), "text"),
+                     ("@The data result remains an illustration.", "7. DISCUSSION AND CONCLUSIONS", "[HOLD:", " 7.1. "), "text"),
     "abstract-ibu": ("fixed before the tests were graded.", "The estimator is reproducible", "text"),
     "sec-ibu": ("At the GiBUU hybrid truth, the IBU at five iterations", "No tested level clears both flagged truths.", "text"),
     # Table 1's row, from pdftotext -raw (content order keeps a table row together)
@@ -117,12 +117,13 @@ def load_mv(wt):
 
 
 def norm(txt):
-    txt = re.sub(r"\f\s*\d+\s*\n", " ", txt)        # a page break and the next page's number
+    txt = re.sub(r"\s*\f\s*\d+\s*\n", "\n", txt)       # a page break and the next page's number (a line break, so a
+    #                                                   word hyphenated across the page is rejoined below)
     # pdftotext's end-of-line hyphenation; a break at a compound's own hyphen keeps it (under-covers, five-observable)
     txt = re.sub(r"\b(under|five|two|pseudo|noise|like|for|run|held|well|non)-\n(?=[a-z])", r"\1-", txt)
     txt = re.sub(r"-\n(?=[a-z])", "", txt)
     # pdftotext also drops the hyphen of a compound it rejoins on one line; the source prints only "under-cover..."
-    txt = txt.replace("undercover", "under-cover").replace("runperiod", "run-period").replace("pseudodata", "pseudo-data")
+    txt = txt.replace("undercover", "under-cover").replace("runperiod", "run-period").replace("pseudodata", "pseudo-data").replace("overcover", "over-cover")
     txt = re.sub(r"\f", " ", txt)
     return re.sub(r"\s+", " ", txt)
 
@@ -133,7 +134,11 @@ def cut(txt, a, b):
         return None
     if a.endswith("."):
         i += len(a)
-    ends = [k for k in (txt.find(e, i + 1) for e in ((b,) if isinstance(b, str) else b)) if k > 0]
+    ends = []
+    for e in ((b,) if isinstance(b, str) else b):       # an end anchor starting "@" is kept in the passage
+        k = txt.find(e.lstrip("@"), i + 1)
+        if k > 0:
+            ends.append(k + len(e) - 1 if e.startswith("@") else k)
     return txt[i:min(ends)].strip() if ends else None
 
 

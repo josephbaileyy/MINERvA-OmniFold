@@ -8,6 +8,20 @@ FD-PRR-DECLARATION.md are under state/measurement-paper/5d-community-20261024/. 
 commit, where both files are byte-identical to main 5a028842a.
 
 ======================================================================================================================
+FIFTH BUILD OF THE PACK: JOSEPH'S COVERAGE-CASE DECISION (DECISION-20261109-joseph-coverage-case-wording.md, #1002)
+======================================================================================================================
+
+Applied, and logged in the ledger's "Joseph's coverage-case decision" section:
+- (a) the pass wording, with the carry-over sentence in the declaration's terms (LL5D :318-319) and "The data result
+  remains an illustration." closing section 6.3;
+- (b) the adaptive routes' Table 1 status is Descriptive, with its own caption clause. S9 prints the shared seeds
+  (:252) and the route record as a pending key;
+- (c) Table 1 gives one entry per tune and variant, primary first: no under-coverage detected, under-coverage flagged
+  or invalid. The status column says how the run stands (Graded, Descriptive, Invalid or Stopped), never what it
+  found. Covers and Mixed are retired.
+Table 1 is set at \footnotesize throughout. VARIANTS.txt keeps its ids (CV1-CV22, IB1-IB6).
+
+======================================================================================================================
 FOURTH BUILD OF THE PACK: THE STYLE INTEGRATION (wording only)
 ======================================================================================================================
 
