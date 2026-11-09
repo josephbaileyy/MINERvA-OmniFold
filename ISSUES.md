@@ -909,7 +909,8 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Resolution:* **DISPUTE / VOID.** Truncation occurred on the reader's side at 31,717 words. The rater copy `note-r1.blind.txt` was verified complete at 69,536 words (139 pp). Void per director's instructions.
 * **G2-COM-2 [T]** — **Complete Absence of 3D and 4D Covariance Matrices.** Same finding as S2-COM-8 / G1-COM-3.  
   *Resolution:* This row authorizes no tex edit. Same disposition as G1-COM-3. The comparisons are already called descriptive central values, with no 3D or 4D covariance and no generator chi-squared. Do not add purely.
-* **G2-COM-3 [T]** — **Unvalidated and Failing Statistical Coverage.** Same finding as S1-COM-1.
+* **G2-COM-3 [T]** — **Unvalidated and Failing Statistical Coverage.** Same finding as S1-COM-1.  
+  *Resolution:* This row authorizes no tex edit. The pointer to S1-COM-1 is the citability matrix and is not this row. Same disposition as G1-COM-1. The abstract already names the two coverage tests separately. Do not merge them. Do not edit the abstract.
 * **G2-COM-4 [T]** — **Uncorrected Miss-Weight Approximation in Systematics.**  
   *Finding:* Miss weights evaluated on central MC without reweighting under systematic universes.  
   *Evidence:* `docs/analysis-note/sec_systematics.tex:190`.  
