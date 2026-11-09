@@ -25,7 +25,7 @@
   8. STYLE REPORT (printed, never a failure; the director, 2026-11-09). The rate per 1,000 words of each pattern of
      style_metrics.py, vendored unchanged from the director's field baseline (sha256 8bf224280556ea41), against the
      field's per-paper maximum in style-baseline.json (11 human-written papers before November 2022, 78,599 words).
-     A pattern above the field maximum is marked ABOVE. It runs on the round's blind manuscript and VARIANTS.txt
+     A pattern above the field maximum is marked ABOVE. It runs on the round's blind manuscript, the blind Supplement and VARIANTS.txt
      (preread-outcomes/, or --printed FILE ...).
 usage: check_round.py <worktree> [--base SHA] [--fill-test] [--printed FILE ...]   (exit 1 on any failure)
        check_round.py <worktree> --self-test                  (each planted defect must be caught)"""
@@ -384,7 +384,7 @@ def main(argv):
         printed = [a for a in argv[argv.index("--printed") + 1:] if not a.startswith("--")]
     else:
         po = HERE / "preread-outcomes"
-        printed = [po / "manuscript.blind.txt", po / "VARIANTS.txt"]
+        printed = [po / "manuscript.blind.txt", po / "supplement.blind.txt", po / "VARIANTS.txt"]
     for line in style_report([p for p in printed if Path(p).exists()]):
         print(line)
     if "--fill-test" in argv:

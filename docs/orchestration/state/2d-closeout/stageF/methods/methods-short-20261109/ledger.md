@@ -388,3 +388,69 @@ rests on the independent gpt-6.1-sol read (`secondary-results/independent-read-c
 - It is checked on the pending build and on the longest filled case: no overfull box, no "Float too large", 13 pages.
   No \resizebox. The status cell carries only Graded / Descriptive / Invalid / Stopped, which says how
 the run stands, not what it found.
+
+## The Supplement's style integration (the director, 2026-11-09): wording only
+
+**The draft:** a gpt-6.1-sol restyle of supplemental_body.tex under the same general brief, on a copy at `531fefe4`
+(the director's run, `restyle-supp/`; work file sha256 `b95f3dd3…`). It was integrated through check_restyle.py,
+which is extended to the Supplement:
+- its inventories;
+- the 35 paper pointers, run through check_supp_pointers in both trees;
+- the ``…'' record quotes;
+- the 23 strings #981's build checks (`supp-quotes.tsv`, limitation-resolver's list, counted the way #981 counts
+  them).
+
+**The draft as delivered failed it on Q09, Q10, Q19 and Q20**, all in S11's validity paragraph.
+
+**Reverted to the base, with the reason:**
+- **:634, S11's validity paragraph:** #981's quotes.
+- **:279, the rounding-mechanism lines:** RS1's licensed clauses (W-8). The draft had replaced the licensed "sufficient
+  entry".
+- **:496:** it dropped "The extrapolation assumes geometric convergence.", a stated assumption.
+- **:507:** "show no evidence of additional discrimination" had become "do not demonstrate". That changes absence of
+  evidence into "not demonstrated".
+- **:605:** it dropped the claim that the χ² values "establish no exclusion of a generator".
+- **:560:** my S9 paragraph, whose route sentence the draft garbled.
+
+**Patched:**
+- **:235:** "We do not adopt that recommendation." is restored.
+- **:387 and :627:** the plain forms are restored ("so it carries no information about its coverage…"; "and no exclusion
+  of a generator follows") in place of the draft's "does not establish" framings.
+- **US spelling (B15):** the draft's new "labelled", "centres", "centring" and "standardised" are reverted. The base's
+  own "labelled" at :634 is untouched, since that line reverts whole.
+
+**Kept from the draft, read against their records:**
+- the chronology rewrites at :196 and :275 (the closure test decided the background change before the distance was
+  computed; LightGBM was chosen after the comparisons), which match §4.1's record;
+- :504, which fixes the base's garbled "It is the simulation's per event";
+- the plain descriptions in place of process labels ("matched block-sum comparator").
+
+**Provenance (the director's ruling):** each of the 29 restyled paragraphs under a "verbatim" comment now says so.
+- "(restyled 2026-11-09, wording only; the note keeps the original; comments stripped; …)", for note copies;
+- "…restyled 2026-11-09 from that text, wording only…", for passages moved from round 5's paper.
+check_restyle reports none left unmarked.
+
+**Checks:**
+- check_restyle: PASS (23 quotes; 35 pointers, 0 failures);
+- check_sec4_receipts: 16/16, and its tests pass (S6's 0.676 % anchor holds);
+- check_round: PASS; check_registry: PASS.
+
+**check 8 on the blind Supplement, per 1,000 words** (field max in brackets; 531fefe4 → now):
+
+| pattern | before | after |
+|---|---:|---:|
+| ", not" [0.30] | 0.98 | 0.33 |
+| rather than [0.45] | 0.90 | 0.82 |
+| corrective [0.12] | 0.25 | 0.25 |
+| semicolon chains [0.67] | 1.23 | 1.07 |
+| triads [2.34] | 4.35 | 3.88 |
+| fragments [1.08] | 1.97 | 2.06 |
+| sentences ≤ 5 words [1.00] | 1.89 | 1.98 |
+
+The rest stay above the field by design or for structural reasons:
+- most "rather than" hits are physics contrasts the reader needs ("subtracts 135 MeV rather than the charged-pion
+  mass", "measured from a fixed beam axis rather than from the true neutrino direction");
+- the fragment and short-sentence counts are table and caption debris in the blind text;
+- the triads are lists.
+They are not pushed further, to avoid overfitting the metric.
+- **:174:** "No effective sample size of the unfolded ensemble is computed" is restored, since the hook flagged the draft's "is not computed" as a bare absence claim. <!-- absence-ok: quotes the restored method-scope sentence (what is computed); states no finding that a result does not exist -->
