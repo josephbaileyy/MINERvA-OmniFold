@@ -1,0 +1,20 @@
+{
+  "parent": "c8a29cdbc",
+  "paper_body_identical_to_verified_06a3438f1": true,
+  "paper_body_sha256": "7f1d6ff757c20f731651cb129c5ae80f74eb3b8a109be1d568f88820d9112e45",
+  "headers_cells_values_and_keys_unchanged": true,
+  "table1_widths_and_padding_retained": true,
+  "table2_only_truth_wraps": true,
+  "table2_covariance_and_flag_columns_natural_left_aligned": true,
+  "table2_p_columns_left_aligned": true,
+  "main_paper_log": {
+    "overfull_total": 0,
+    "overfull_table1": 0,
+    "overfull_table2": 0,
+    "oversized_floats": 0
+  },
+  "cell_content_sha256": [
+    "d698b8a5783202bfb554132e805aa3191f41b2731ee421ef2ba3a1e8957704cd",
+    "d5c9940ea6bf80f9d242a00a915998c5019c370f88ff9fec5acf11af41139d12"
+  ]
+}
