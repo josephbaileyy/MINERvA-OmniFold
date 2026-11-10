@@ -130,7 +130,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Resync note abstract to match reframed paper abstract per `DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:57-59`.  
   *Record:* `DECISION-20261108-joseph-note-framing-and-estimator-dependence.md`.  
   *Target:* `docs/analysis-note/main_note.tex:73`.  
-  *Status:* Already drafted at `b1da7ba8` (commit `8cd2a974`); Round 2 verifies implementation and cross-section alignment.
+  *Resolution:* This row authorizes no tex edit. The abstract already contains the licensed fake-data sentence. The criteria print through the existing macros, 0.01 and 2. The two coverage statements stay separate. Do not copy the paper abstract into the note. Do not type 0.01 or 2. Do not merge the two coverage tests. Do not add a further sentence.
 
 * **AUD-N7 [T]** — **Second post hoc choice in Executive Summary.**  
   *Finding:* Background treatment choice documented under AUD-E10.  
