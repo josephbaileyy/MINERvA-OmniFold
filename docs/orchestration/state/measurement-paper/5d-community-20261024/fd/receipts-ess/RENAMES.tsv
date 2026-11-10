@@ -1,0 +1,9 @@
+original	committed
+cluster/logs/clone.log	cluster/logs/clone.log.txt
+cluster/logs/connect.log	cluster/logs/connect.log.txt
+cluster/logs/env-precheck.log	cluster/logs/env-precheck.log.txt
+cluster/logs/ess_e_61082774.out	cluster/logs/ess_e_61082774.out.txt
+cluster/logs/ess-run-61082774.log	cluster/logs/ess-run-61082774.log.txt
+cluster/logs/job-env-61082774.log	cluster/logs/job-env-61082774.log.txt
+cluster/logs/submit.out	cluster/logs/submit.out.txt
+cluster/post.log	cluster/post.log.txt
