@@ -101,7 +101,7 @@ def main() -> None:
     a_ng.errorbar(x, ng, ng_se, fmt="o", ms=3.0, color=mc.PURPLE, lw=0.7,
                   label=r"residual, GiBUU/GENIE $E_{\rm avail}$ (60 exp.)")
     for (w, lab, fmt, col), dx in zip((("W1", r"NuWro $E_{\rm avail}$", "o", mc.BLUE),
-                                        ("W2", r"GENIE MEC $(E_{\rm avail},W)$", "^", mc.GREEN),
+                                        ("W2", r"GENIE + MEC $(E_{\rm avail},W)$", "^", mc.GREEN),
                                         ("W3", r"NuWro $(p_T,p_\parallel,E_{\rm avail})$", "D", mc.PURPLE)),
                                        (-0.22, 0.0, 0.22)):
         m, se = rw[w]
