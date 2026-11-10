@@ -659,3 +659,47 @@ Checks:
   LISTED_CLAIMS, the sec4 receipts, the restyle spans). The blind copy now prints no "gate". The section 7 hold's
   "pre-check's gate" leaves with the hold. Checks: the rater copy, check_round with the fill test, the self-test,
   registry, sec4 (16/16, 17 passed), pointers (35/0) and check_restyle against 506c74581 all pass.
+
+## journal-editor's JINST read of the Supplement (f51d22c8b -> 8cc26c0ee), applied
+
+The Supplement's restyle, which I integrated as wording only, changed meaning in these hunks. That was my integration
+error: check_restyle guards the inventories, not the sense of a sentence. Each fix below is a revert to the base or
+a narrowing.
+1. **Timing:** "fixed before any test was evaluated" -> "fixed before any of the tests was graded against them"
+   (base). "A truth fails when" -> "A truth is flagged when" (the paper's term).
+2. **S9 clipping paragraph.**
+   - "checks fixed in advance bound the effect of the clipping" -> "test the effect". "Bound" asserts that the
+     checks succeeded, which is false if the offset-proceeded route continued past a clipping check.
+   - "The gate sample's first 300 draws are ..." -> "..., on a sample whose first 300 draws are the coverage
+     pseudo-experiments' draws, at the same seeds". This keeps the fact that Joseph's #1002 item 2 requires (the
+     shared first 300 seeds).
+   - "Its clipping record, from the readout:" -> "The clipping checks gave the following:".
+   - The two values, `ll5d-clip-record` and `ll5d-route-record`, are free text written at the fill. Their declared
+     content: the passes weakened by clipping, the flags meeting the clipping-artefact condition, and the largest
+     clipping offset with its cell; and the exceeded quantity and its bound, what was visible, the reason, and every
+     repair. Their printed sentences get a read at the fill.
+3. **"Gate".**
+   - S6 diagnosis: "the departure from the gate" -> "the departure from the window" (the preliminary check's window,
+     named in that paragraph).
+   - The two remaining printed uses (S4 :291 and S6 :551, "the ratio's statistical gate") are the note's statistical
+     requirement on the reweighting ratio, a different object, and are in the base. They are kept. Defining them as
+     "the preliminary check of section 6.2" would be false.
+4. "..., so the distance depends on the estimator" -> "and the distance ..." (base).
+5. "flags three failures, all attributed to bias" -> "raises three flags, each attributed to bias" (paper :237).
+6. "The audit establishes neither" -> "Passing the audit establishes neither" (base).
+7. "Production retains the inherited constant." -> "The analysis code retains the inherited constant."
+8. At (e)'s definition: "(e), the five-observable estimator (the joint-test estimator of Ref. [note])", so readers
+   following the \nsec pointers find the note's name. This adds one \cite, check_restyle's only failure. The paper
+   still never prints "joint-test estimator" (GONE).
+9. **The director's W-batch sentences (S7), copy only.** "conditionally on" -> "conditional on"; "They are not
+   physical exclusions" -> "The rejections are not physical exclusions"; "(this section)" dropped.
+10. S1: "comprises" -> "is in". S2: "by construction rather than by truncation" restored. S4: "is appropriate for" ->
+    "the natural treatment for" (base).
+
+Checks:
+- `check_restyle.py` against 8cc26c0ee fails only on item 8's \cite. The 23 #981 quotes and the 35 paper pointers
+  hold.
+- `make_supp_rater_copy.sh`: rc 0, 25 pages, 8 of 8 table captions. Every fix prints in the blind Supplement; the S9
+  clipping sentence is in the pending ll5d group.
+- `check_round.py`: PASS, its style report run on the new blind Supplement. `check_registry.py`: PASS.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
