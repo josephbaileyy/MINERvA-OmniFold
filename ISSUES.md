@@ -1032,3 +1032,110 @@ The companion note is restructured into a coherent methods-and-benchmark narrati
 4. **Step 4:** Execute editorial and wording reconciliations ([T] items, excluding held items AUD-N4 and AUD-N5) across all sections, replacing hardcoded numbers with `values*.tex` macros and removing overclaims. Held items (AUD-N4 [T] and AUD-N5 [R]) remain unedited without director/Joseph authorization.
 5. **Step 5:** Inline essential mathematical definitions from internal records ([R] items, excluding held item AUD-N5) into self-contained appendices and text. Held item AUD-N5 [R] remains unedited without director/Joseph authorization.
 6. **Step 6:** Verify entire test suite (`test_build_all.py`, `check_body_pointers.py`, `check_note_records.py pin .`), ensure clean PDF builds, and submit for rater review.
+
+
+---
+
+## Part 7: Round 3 Referee Audit Ledger Index (Blind Reads #1023)
+
+Base commit: `1a16763347b9a17224f9e943f722b1cfa4c12810`  
+Reports: `docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/note-round2-blind-reads-20261110/gpt.txt` and `gemini.txt` (PR #1023, commit `5d324d0ed`).  
+Scope: Index of referee findings for Round 3 resolution. Resolution column remains pending; no text changes authorized by this index.
+
+### Section 7.1: GPT Report Findings (§3, §4, §5, §6)
+
+| Item | Source (#1023) | Referee Claim (One Sentence) | Note Target (1a167633) | Resolution |
+| :--- | :--- | :--- | :--- | :--- |
+| **GPT-3.1** | `gpt.txt:11` | Table 1 5D covariance row cites non-resolving '§6.4 exception' for adoption. | `docs/analysis-note/sec_execsummary.tex:25` | pending |
+| **GPT-3.2** | `gpt.txt:13` | Table 1 transfers companion covariances' stability failure to adopted covariance C_Z where criterion was uncomputed. | `docs/analysis-note/sec_execsummary.tex:25` | pending |
+| **GPT-3.3** | `gpt.txt:15` | Table 1 incorrectly labels configuration-(a) central value as 'unregularized'. | `docs/analysis-note/sec_execsummary.tex:23` | pending |
+| **GPT-3.4** | `gpt.txt:17` | Table 1 assigns passing injected-shape closures to configuration (e) when tested under (a) without threshold. | `docs/analysis-note/sec_execsummary.tex:21` | pending |
+| **GPT-3.5** | `gpt.txt:19` | Main text claims negative-weight injection targets identical continuous density (D-B)/S contrary to App. C.1. | `docs/analysis-note/sec_method.tex:28` | pending |
+| **GPT-3.6** | `gpt.txt:21` | Section 2.3 asserts 'neither prediction carries an uncertainty' while background variation is propagated in ensembles. | `docs/analysis-note/sec_experiment.tex:26` | pending |
+| **GPT-3.7** | `gpt.txt:23` | Section 3.5 describes reconstructed q3 as built from Eavail rather than calorimetric recoil estimate q0_reco. | `docs/analysis-note/sec_method.tex:198` | pending |
+| **GPT-3.8** | `gpt.txt:25` | Figure 3 and §3.5 label truth-bin-conditional reconstruction probabilities as purity rather than stability. | `docs/analysis-note/sec_method.tex:196-203` | pending |
+| **GPT-3.9** | `gpt.txt:27` | Flux extraction formula includes 10^4 factor for m^-2 without indicating how higher-dimensional cm^-2 flux enters. | `docs/analysis-note/sec_method.tex:181-188` | pending |
+| **GPT-3.10** | `gpt.txt:29` | Section 7.4 quotes Eavail-marginal recovered/truth ratio spread (0.0006) alongside 1.84% residual without defining the latter. | `docs/analysis-note/sec_3d.tex:104` | pending |
+| **GPT-3.11** | `gpt.txt:31` | Section 7.8 states 44-cell Ascencio comparison requires re-unfolding, contradicting claim that reporting edges need no re-unfolding. | `docs/analysis-note/sec_3d.tex:40` | pending |
+| **GPT-3.12** | `gpt.txt:33` | Section 9.4 states budget allowed 5 iterations max at that capacity while Fig. 26 caption probes to 10. | `docs/analysis-note/sec_5d.tex:142` | pending |
+| **GPT-3.13** | `gpt.txt:35` | Section 12.2 cites agreement over all 185 reported cells while analysis reports 205 cells (185 being interior mask). | `docs/analysis-note/sec_fps.tex:26` | pending |
+| **GPT-3.14** | `gpt.txt:37` | Section 11.6 states 'no assignment of lost draws changes any decision' before recovering actual assignment. | `docs/analysis-note/sec_joint.tex:222` | pending |
+| **GPT-3.15** | `gpt.txt:39` | Figure 15 annotation states 29 of 30 measurements at 2 simultaneous variables while Table 36 has 19 2D, 10 1D, 1 3D. | `docs/analysis-note/sec_3d.tex:15` | pending |
+| **GPT-3.16** | `gpt.txt:41` | Section 4.6 defines s_k as relative change and adds outer product C_model = sum s_k s_k^T to dimensional cross section without diagonal scaling. | `docs/analysis-note/sec_systematics.tex:222` | pending |
+| **GPT-3.17** | `gpt.txt:43` | Section 9.6 states diagonal inflation G C_vert G 'never falls below block baseline' while GCG-C is not guaranteed PSD. | `docs/analysis-note/sec_5d.tex:289` | pending |
+| **GPT-3.18** | `gpt.txt:45` | Appendix A.3.4 calls 'all-bins-up' direction the kernel of J = (I - s w^T)/T instead of the right-null direction proportional to s. | `docs/analysis-note/app_statmethods.tex:435` | pending |
+| **GPT-3.19** | `gpt.txt:47` | Section 10.7 calls shape-only normalization 'free' while §10.3 adds finite 100 f f^T penalty. | `docs/analysis-note/sec_fived16.tex:183` | pending |
+| **GPT-3.20** | `gpt.txt:49` | Section 9.6 conflates algebraic matrix rank with numerical cutoff rank by stating 'Rank is a property of the cutoff'. | `docs/analysis-note/sec_5d.tex:306` | pending |
+| **GPT-3.21** | `gpt.txt:51` | Appendix A.1 asserts N=300 > 205 bootstrap replicas guarantees full rank without citing measured rank. | `docs/analysis-note/app_statmethods.tex:20` | pending |
+| **GPT-3.22** | `gpt.txt:53` | Appendix A.2.4 claims mean-centering gives near-zero variance for asymmetric pairs while half-difference can remain large. | `docs/analysis-note/app_statmethods.tex:146` | pending |
+| **GPT-3.23** | `gpt.txt:55` | Appendix A.6.2 hidden-variable closure changes reco weights leaving truth unchanged, altering effective response despite §5 claim. | `docs/analysis-note/sec_validation.tex:12` | pending |
+| **GPT-3.24** | `gpt.txt:57` | Table 32 and §A.2 claim matching seed means 'ML noise cancels' while weights change tree construction and retraining scatter rivals shifts. | `docs/analysis-note/app_statmethods.tex:61` | pending |
+| **GPT-3.25** | `gpt.txt:59` | Section 5.3 categorically asserts omitted covariance terms 'can only lower the flag rate' despite non-monotonic bias effects. | `docs/analysis-note/sec_validation.tex:206` | pending |
+| **GPT-3.26** | `gpt.txt:61` | Appendix C.8 equates |t| > 3.6 to Bonferroni-corrected 5% level without qualifying normal vs Student-t reference. | `docs/analysis-note/app_negweight.tex:168` | pending |
+| **GPT-4.1** | `gpt.txt:65` | Give definitive validation inventory listing exact tests, configurations, and outcomes for all quoted results. | `docs/analysis-note/sec_method.tex:128` | pending |
+| **GPT-4.2** | `gpt.txt:67` | Held-out-tune test cannot be reconstructed from §5.3 without statistical model, scoring equations, and C08 definition. | `docs/analysis-note/sec_validation.tex:206` | pending |
+| **GPT-4.3** | `gpt.txt:69` | Provide complete mathematical construction of C_model including grid, pooling, gating, boundaries, and unit scaling. | `docs/analysis-note/sec_systematics.tex:222` | pending |
+| **GPT-4.4** | `gpt.txt:71` | Explain statistical target and derivation of training-seed block constructed from 5 means of 20 replicas. | `docs/analysis-note/sec_systematics.tex:162` | pending |
+| **GPT-4.5** | `gpt.txt:73` | Complete description of unified-throw investigation with throw count, composition law, and mean shifts. | `docs/analysis-note/sec_systematics.tex:140` | pending |
+| **GPT-4.6** | `gpt.txt:75` | Define 5D covariance diagnostics s_proj, s_agg, s_med with explicit formulas, functionals, and band partitions. | `docs/analysis-note/sec_5d.tex:314` | pending |
+| **GPT-4.7** | `gpt.txt:77` | Resolve whether acceptance correction is needed at destination binning for the displayed 5D projection. | `docs/analysis-note/app_history.tex:270` | pending |
+| **GPT-4.8** | `gpt.txt:79` | Specify the missing-event systematic approximation for reconstruction failures through completeness. | `docs/analysis-note/sec_systematics.tex:180` | pending |
+| **GPT-4.9** | `gpt.txt:81` | Provide complete nuisance inventory defining all 45 bands, counts, amplitudes, centering, and zero NormDISCC band. | `docs/analysis-note/sec_systematics.tex:85` | pending |
+| **GPT-4.10** | `gpt.txt:83` | Specify recoil-response covariance numerically with category magnitudes, cross-talk terms, and observable mapping. | `docs/analysis-note/sec_fived16.tex:189` | pending |
+| **GPT-4.11** | `gpt.txt:85` | Provide explicit run-period covariance equations with period exposures, reliability weights, and offsets. | `docs/analysis-note/sec_systematics.tex:198` | pending |
+| **GPT-4.12** | `gpt.txt:87` | Assign compact documentary statuses to stopped and incomplete studies rather than active internal workflow. | `docs/analysis-note/sec_fived16.tex:210` | pending |
+| **GPT-4.13** | `gpt.txt:89` | Explain the statistical mechanism and denominator formula behind the 892/900 non-positive composite draws. | `docs/analysis-note/sec_fived16.tex:253` | pending |
+| **GPT-4.14** | `gpt.txt:91` | Define joint-test calibration as an explicit probability law with universe weights, nuisance laws, and residual models. | `docs/analysis-note/sec_joint.tex:150` | pending |
+| **GPT-4.15** | `gpt.txt:93` | Clarify joint-test shift uncertainty set and whether simultaneous simulation-size and below-grid shifts were evaluated. | `docs/analysis-note/sec_joint.tex:178` | pending |
+| **GPT-4.16** | `gpt.txt:95` | Disclose malformed third truth in 5D coverage experiment up front in text and define Bonferroni family scope. | `docs/analysis-note/sec_5d.tex:225` | pending |
+| **GPT-4.17** | `gpt.txt:97` | Reconcile generator normalization between MEC event fraction (2.87%) and no-catch-bin deficit shift (7.2% to 2.7%). | `docs/analysis-note/sec_3d.tex:161` | pending |
+| **GPT-4.18** | `gpt.txt:99` | Complete extended-fiducial reporting definitions including grid, anchor mask, partially accepted cells, and tier metrics. | `docs/analysis-note/sec_fps.tex:15` | pending |
+| **GPT-4.19** | `gpt.txt:101` | Provide full GBDT and Keras-MLP learner configurations, architectures, determinism settings, and tie handling. | `docs/analysis-note/sec_method.tex:150` | pending |
+| **GPT-4.20** | `gpt.txt:103` | Distinguish genuine background from out-of-phase-space subtraction quantitatively across full analysis sample. | `docs/analysis-note/sec_experiment.tex:26` | pending |
+| **GPT-5.1** | `gpt.txt:107` | Ensure standard literature citations adequately ground foundational methods and external tools. | `docs/analysis-note/main_note.tex:1` | pending |
+| **GPT-5.2** | `gpt.txt:109` | Embed indispensable scientific definitions directly in note rather than delegating them to internal repository records. | `docs/analysis-note/sec_5d.tex:180` | pending |
+| **GPT-5.3** | `gpt.txt:111` | Fully describe learned-estimator configurations rather than delegating specifications to code names. | `docs/analysis-note/sec_method.tex:150` | pending |
+| **GPT-5.4** | `gpt.txt:113` | Provide complete operational definition of reconstructed calorimetric recoil estimator q0_reco. | `docs/analysis-note/sec_3d.tex:24` | pending |
+| **GPT-5.5** | `gpt.txt:115` | Define or replace internal control labels (C08, B3, Stage 0, natures) with self-contained scientific descriptions. | `docs/analysis-note/sec_validation.tex:206` | pending |
+| **GPT-5.6** | `gpt.txt:117` | Embed necessary recovery figures or evidence locally rather than relying solely on companion paper. | `docs/analysis-note/sec_5d.tex:142` | pending |
+| **GPT-5.7** | `gpt.txt:119` | Provide in-note mathematical construction of data-derived lateral surrogate and its draw law. | `docs/analysis-note/sec_joint.tex:110` | pending |
+| **GPT-5.8** | `gpt.txt:121` | Accompany recomputation claims with precise targets and boundaries in note text rather than bare checksums. | `docs/analysis-note/sec_execsummary.tex:1` | pending |
+| **GPT-6.1** | `gpt.txt:125` | Align abstract caveats with body text regarding 2.6 sigma rounding shifts and malformed third coverage truth. | `docs/analysis-note/sec_execsummary.tex:1` | pending |
+| **GPT-6.2** | `gpt.txt:127` | Narrow broad 'validated' and 'pass' language to performance on specific diagnostic tests. | `docs/analysis-note/sec_method.tex:150` | pending |
+| **GPT-6.3** | `gpt.txt:129` | Restrict five-iteration justification to stability of tested diagnostics rather than asserting general convergence. | `docs/analysis-note/sec_method.tex:152` | pending |
+| **GPT-6.4** | `gpt.txt:131` | Qualify assertion that simulation prior describes shapes well to acknowledge specific normalization and shape trends. | `docs/analysis-note/sec_experiment.tex:45` | pending |
+| **GPT-6.5** | `gpt.txt:133` | Reframe C2ST from demonstrating 'removal' of mismatch to a descriptive training-sample discrimination diagnostic. | `docs/analysis-note/sec_validation.tex:223` | pending |
+| **GPT-6.6** | `gpt.txt:135` | Restrict 2D Tune-v1 conclusion to descriptive quadratic distance under covariance rather than calibrated exclusion. | `docs/analysis-note/sec_results.tex:145` | pending |
+| **GPT-6.7** | `gpt.txt:137` | Restrict higher-dimensional validation language to measured marginal normalization checks rather than full distribution recovery. | `docs/analysis-note/sec_execsummary.tex:21` | pending |
+| **GPT-6.8** | `gpt.txt:139` | Reframe background-covariance agreement as close aggregate size rather than absence of method bias. | `docs/analysis-note/app_negweight.tex:153` | pending |
+| **GPT-6.9** | `gpt.txt:141` | Narrow claim of cross-estimator subtraction robustness to removal of tested pathology on evaluated backends. | `docs/analysis-note/app_negweight.tex:40` | pending |
+| **GPT-6.10** | `gpt.txt:143` | Reframe comparable seed-scan and split-varied band sizes as comparable magnitudes rather than seed dominance. | `docs/analysis-note/sec_systematics.tex:162` | pending |
+| **GPT-6.11** | `gpt.txt:145` | Qualify exact-versus-histogram difference as backend-associated difference among available runs rather than ruling out seed effects. | `docs/analysis-note/app_statmethods.tex:350` | pending |
+| **GPT-6.12** | `gpt.txt:147` | Preserve restrictions of binned-response diagnostic to eligible residuals and signal-only calculation in summaries. | `docs/analysis-note/sec_5d.tex:180` | pending |
+| **GPT-6.13** | `gpt.txt:149` | State familywise error guarantee as conditional on stated assumptions rather than experimentally demonstrated validity. | `docs/analysis-note/app_statmethods.tex:500` | pending |
+| **GPT-6.14** | `gpt.txt:151` | Restrict ten joint-test rejections to original hybrid hypotheses rather than physical generator exclusions. | `docs/analysis-note/sec_joint.tex:150` | pending |
+| **GPT-6.15** | `gpt.txt:153` | Limit response robustness claim to sensitivity under coherent variation rather than full calibration robustness. | `docs/analysis-note/sec_joint.tex:260` | pending |
+| **GPT-6.16** | `gpt.txt:155` | Designate extended-fiducial tier 1 as an acceptance-supported central estimate rather than a qualified measurement. | `docs/analysis-note/sec_fps.tex:1` | pending |
+| **GPT-6.17** | `gpt.txt:157` | Narrow appendicial claims regarding alternative-model robustness and small standardized differences to direct test metrics. | `docs/analysis-note/app_statmethods.tex:600` | pending |
+
+### Section 7.2: Gemini Report Findings (§3, §6, and Structural Requests)
+
+| Item | Source (#1023) | Referee Claim (One Sentence) | Note Target (1a167633) | Resolution |
+| :--- | :--- | :--- | :--- | :--- |
+| **GEM-3.1** | `gemini.txt:23` | Reconcile contradictory statements in §5.3 regarding whether C_model was included or excluded in held-out-tune draws. | `docs/analysis-note/sec_validation.tex:206` | pending |
+| **GEM-3.2** | `gemini.txt:28` | Harmonize target nucleon count between 2D (3.2353e30) and higher-dimensional extractions (3.235e30). | `docs/analysis-note/sec_method.tex:184-188` | pending |
+| **GEM-3.3** | `gemini.txt:33` | Provide structural accounting for clashing bin counts (10,976 vs 10,694 vs 10,499 vs 4,830). | `docs/analysis-note/sec_method.tex:192` | pending |
+| **GEM-3.4** | `gemini.txt:39` | Correct Table 1 non-existent '§6.4 exception' cross-reference for 5D covariance adoption. | `docs/analysis-note/sec_execsummary.tex:25` | pending |
+| **GEM-3.5** | `gemini.txt:44` | Reconcile Table 1 designating configuration (e) for 3D/4D central values with Figs. 17 and 23 using configuration (a). | `docs/analysis-note/sec_execsummary.tex:21` | pending |
+| **GEM-3.6** | `gemini.txt:49` | Correct degrees-of-freedom normalization in truncated subspace chi^2 (136 on 73 modes is chi^2/73=1.86, not chi^2/205=0.66). | `docs/analysis-note/sec_results.tex:120` | pending |
+| **GEM-3.7** | `gemini.txt:54` | Reconcile 0.35% genuine background with ~3% total subtraction by explicitly quantifying out-of-phase-space signal. | `docs/analysis-note/sec_experiment.tex:26` | pending |
+| **GEM-3.8** | `gemini.txt:59` | Reconcile exclusion of negative W^2 events (0.15%) with claim of exact completeness c = 1.000000. | `docs/analysis-note/sec_method.tex:184` | pending |
+| **GEM-3.9** | `gemini.txt:64` | Disclose and justify inherited 135 MeV subtraction for charged pions in true available energy definition Eq. (1). | `docs/analysis-note/sec_3d.tex:24` | pending |
+| **GEM-6.1** | `gemini.txt:118` | Narrow claim that unbinned unfolding 'reproduces' published cross section to integrated rate with correlated shape tension. | `docs/analysis-note/sec_execsummary.tex:17` | pending |
+| **GEM-6.2** | `gemini.txt:122` | Narrow claim that joint 5D tests reject generator predictions to synthetic hybrid nulls under stated target and phase-space limits. | `docs/analysis-note/sec_joint.tex:150` | pending |
+| **GEM-6.3** | `gemini.txt:126` | Clarify that 5D simultaneous unfolding unfolds four independent kinematic variables with algebraically redundant W. | `docs/analysis-note/sec_execsummary.tex:40` | pending |
+| **GEM-6.4** | `gemini.txt:130` | Reframe reduced bootstrap statistical variance as regularization shrinkage rather than demonstrated precision gain given tail undercoverage. | `docs/analysis-note/sec_systematics.tex:50` | pending |
+| **GEM-6.5** | `gemini.txt:134` | Reframe 1D Gaussian bump recovery as insensitive marginal feature recovery rather than validation of multidimensional fidelity. | `docs/analysis-note/sec_execsummary.tex:21` | pending |
+| **GEM-REQ-1** | `gemini.txt:159` | State scope and technical rationale for distinct estimator configurations (a)-(f) rather than unifying analysis. | `docs/analysis-note/sec_method.tex:128` | pending |
+| **GEM-REQ-2** | `gemini.txt:160` | State scope and diagnostic status of higher-dimensional uncertainty covariances rather than constructing new 3D/4D matrices. | `docs/analysis-note/sec_3d.tex:10` | pending |
+| **GEM-REQ-3** | `gemini.txt:161` | State scope, hybrid-null framing, and material-correction sensitivity of generator tests rather than retracting them. | `docs/analysis-note/sec_joint.tex:150` | pending |
