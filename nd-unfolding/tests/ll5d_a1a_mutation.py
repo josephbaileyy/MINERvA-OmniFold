@@ -20,7 +20,7 @@ ND = Path(__file__).resolve().parents[1]
 TESTS = ND / "tests"
 TEST = TESTS / "test_ll5d.py"
 SRC = ND / "ll5d.py"
-EXPECTED_TESTS = 69
+EXPECTED_TESTS = 72
 
 MUTATIONS = [
     # --- section 12's REQUIRED list (A1a's part)
@@ -132,6 +132,12 @@ MUTATIONS = [
      "                sig_neg[reco] += np.maximum(lam, 0.0)", "Receipt.test_the_clip_prep_products_equal_a_direct_computation"),
     ("CP the unclipped truth is the clipped one", "                t_unclip.append(U_full @ unclipped_truth(comp, r, geo, phi, const_full))",
      "                t_unclip.append(T16)", "Receipt.test_the_clip_prep_products_equal_a_direct_computation"),
+    ("A1a.1 the calibration installs no candidate", "    threads = require_threads()\n    install_config()                                  # A1a.1, before anything reads a truth\n    check_n(a.draws)",
+     "    threads = require_threads()\n    check_n(a.draws)", "RealChain.test_calib_main_runs_the_real_chain"),
+    ("A1a.1 the gate installs no candidate", "    threads = require_threads()\n    install_config()                                  # A1a.1, before anything reads a truth\n    inv.OPENED.clear()\n    world, d1 = load_world(a)\n    load = lambda tag: verified_weights(world, a, tag)  # noqa: E731\n    rec = {",
+     "    threads = require_threads()\n    inv.OPENED.clear()\n    world, d1 = load_world(a)\n    load = lambda tag: verified_weights(world, a, tag)  # noqa: E731\n    rec = {", "RealChain.test_gate_main_runs_the_real_chain"),
+    ("A1a.1 install_config installs nothing", "    return s5e_candidate.install(toys.CONFIG)\n", "    return {}\n",
+     "RealChain.test_truths_r_runs_the_real_truth_weight_after_the_install"),
     ("the merge passes on one truth", "    verdict = (\"PASS\" if all(v == \"PASS\" for v in verdicts.values()) else",
      "    verdict = (\"PASS\" if any(v == \"PASS\" for v in verdicts.values()) else", "Merge.test_pass_needs_both"),
 ]

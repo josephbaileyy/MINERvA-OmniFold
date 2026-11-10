@@ -1,0 +1,33 @@
+{
+ "levels": {
+  "C1000": {
+   "n": 7,
+   "mean_s": 2451.2,
+   "min_s": 2338.8,
+   "max_s": 2560.2,
+   "dry_rate_s": 2531.1,
+   "mean_over_dry": 0.968
+  },
+  "C25": {
+   "n": 11,
+   "mean_s": 375.5,
+   "min_s": 333.2,
+   "max_s": 446.6,
+   "dry_rate_s": 254.1,
+   "mean_over_dry": 1.478
+  },
+  "C400": {
+   "n": 11,
+   "mean_s": 1364.2,
+   "min_s": 1213.6,
+   "max_s": 1605.2,
+   "dry_rate_s": 1254.3,
+   "mean_over_dry": 1.088
+  }
+ },
+ "queue_span_s": 5187.8,
+ "queue_span_h": 1.441,
+ "projected_h_at_t0": 1.3937,
+ "span_over_projection": 1.034,
+ "gate_h": 5.85
+}

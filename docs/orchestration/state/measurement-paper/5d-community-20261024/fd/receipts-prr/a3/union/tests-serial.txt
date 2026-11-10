@@ -1,0 +1,119 @@
+FD-PRR addendum A3 (the union with A2, at its merge of main): every test class but JobScript (selected by the loader)
+date_utc: 2026-11-09T15:51:25Z  host: DN0a1f6baa
+clone: a clean clone, HEAD 08848a768b684164ebde74a7cd24fac4369cf8e9, porcelain lines before: 0
+python: 3.12.2  numpy: 1.26.4  scipy: 1.15.2  bash: GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25)
+thread caps: OMP=1 MKL=1 OPENBLAS=1 NUMEXPR=1 VECLIB=1; nice -n 19; one serial process
+f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232  prr_probe.py
+17acad82bad7c43f45c423e41039eb81381f5acab15ecdf983ad0d023848d046  prr_ibu.py
+d7c7c2c0d6cbe4a13d445a779335699de3d5275c4bcd3efc9f4e84a166868fbe  prr_read.py
+4493aad5dff0a8a0316c0f8b4d159c8f08c7666856474b5cf9c4c963a3a7e975  sbatch_prr.sh
+c600e4b1c291eabb1c4083539df557cba5f35e1f081e04fd4dbe46b9216a0b8e  test_prr.py
+dfa994667f4afe8133aab77849e13594ca4d420beb29b22bc41f8d0202cc8337  prr_mutation.py
+command: echo nojob | nice -n 19 python3 -B -c "<the loader selection: every class but JobScript>"
+----
+collected 110, selected 95
+test_bar (test_prr.Classes.test_bar) ... ok
+test_clears (test_prr.Classes.test_clears) ... ok
+test_factor_class_both_directions (test_prr.Classes.test_factor_class_both_directions) ... ok
+test_floor_needs_five_defined_splits (test_prr.Classes.test_floor_needs_five_defined_splits) ... ok
+test_ibu_classes (test_prr.Classes.test_ibu_classes) ... ok
+test_labels (test_prr.Classes.test_labels) ... ok
+test_spearman (test_prr.Classes.test_spearman) ... ok
+test_the_input_columns_are_checked_not_assumed (test_prr.Columns.test_the_input_columns_are_checked_not_assumed) ... ok
+test_a_large_floor_raises_the_bar_and_silences_a_change (test_prr.EndToEnd.test_a_large_floor_raises_the_bar_and_silences_a_change) ... ok
+test_a_missed_mask_refuses (test_prr.EndToEnd.test_a_missed_mask_refuses) ... ok
+test_a_noisy_product_refuses (test_prr.EndToEnd.test_a_noisy_product_refuses) ... ok
+test_a_product_made_by_other_code_refuses (test_prr.EndToEnd.test_a_product_made_by_other_code_refuses) ... ok
+test_a_split_off_its_seed_refuses (test_prr.EndToEnd.test_a_split_off_its_seed_refuses) ... ok
+test_a_wrong_truth_file_refuses (test_prr.EndToEnd.test_a_wrong_truth_file_refuses) ... ok
+test_c_cap_on_the_recorded_iters (test_prr.EndToEnd.test_c_cap_on_the_recorded_iters) ... ok
+test_c_ibu_truths_must_be_es (test_prr.EndToEnd.test_c_ibu_truths_must_be_es) ... ok
+test_c_mask_on_the_products (test_prr.EndToEnd.test_c_mask_on_the_products) ... ok
+test_c_pair_and_c_ibu_records_gate (test_prr.EndToEnd.test_c_pair_and_c_ibu_records_gate) ... ok
+test_columns_and_runner_digest_refuse (test_prr.EndToEnd.test_columns_and_runner_digest_refuse) ... ok
+test_incomplete_runs_read_nothing (test_prr.EndToEnd.test_incomplete_runs_read_nothing) ... ok
+test_planted_classes (test_prr.EndToEnd.test_planted_classes) ... ok
+test_the_main_writes_a_stop_and_no_readout (test_prr.EndToEnd.test_the_main_writes_a_stop_and_no_readout) ... ok
+test_the_product_checks_refuse (test_prr.EndToEnd.test_the_product_checks_refuse) ... ok
+test_the_readout_carries_no_absolute_value (test_prr.EndToEnd.test_the_readout_carries_no_absolute_value) ... ok
+test_the_table_carries_each_truths_departure_d (test_prr.EndToEnd.test_the_table_carries_each_truths_departure_d)
+Addendum A2 (REQUIRED): every table entry carries d = (X - P)/P on R00-R15, with P the nominal truth's X at ... ok
+test_a_full_job_refuses_an_unmeasured_level (test_prr.Gate.test_a_full_job_refuses_an_unmeasured_level) ... ok
+test_a_full_job_runs_on_measured_rates (test_prr.Gate.test_a_full_job_runs_on_measured_rates) ... ok
+test_a_projection_over_0_9_of_the_limit_stops (test_prr.Gate.test_a_projection_over_0_9_of_the_limit_stops) ... ok
+test_an_ended_task_is_skipped_and_an_unknown_one_stops (test_prr.Gate.test_an_ended_task_is_skipped_and_an_unknown_one_stops) ... ok
+test_measured_rates_move_the_projection_both_ways (test_prr.Gate.test_measured_rates_move_the_projection_both_ways) ... ok
+test_the_0_9_rule_is_exact (test_prr.Gate.test_the_0_9_rule_is_exact) ... ok
+test_the_dry_gate_admits_within_the_limit (test_prr.Gate.test_the_dry_gate_admits_within_the_limit) ... ok
+test_the_tail_is_projected (test_prr.Gate.test_the_tail_is_projected) ... ok
+test_a_moved_vertex_fails_c_ct (test_prr.GradeMatrices.test_a_moved_vertex_fails_c_ct) ... ok
+test_c_ct_reproduces_f0b (test_prr.GradeMatrices.test_c_ct_reproduces_f0b) ... ok
+test_table_ii_flags_by_p_and_by_z (test_prr.GradeMatrices.test_table_ii_flags_by_p_and_by_z) ... ok
+test_the_own_vertex_is_f0s (test_prr.GradeMatrices.test_the_own_vertex_is_f0s) ... ok
+test_every_product_carries_its_level (test_prr.Install.test_every_product_carries_its_level) ... ok
+test_names_are_restored_after_an_error (test_prr.Install.test_names_are_restored_after_an_error) ... ok
+test_no_product_without_the_check_or_with_a_missed_mask (test_prr.Install.test_no_product_without_the_check_or_with_a_missed_mask) ... ok
+test_b0_is_configuration_e (test_prr.Levels.test_b0_is_configuration_e) ... ok
+test_each_level_changes_one_factor (test_prr.Levels.test_each_level_changes_one_factor) ... ok
+test_the_floor_levels_belong_to_their_factors (test_prr.Levels.test_the_floor_levels_belong_to_their_factors) ... ok
+test_the_masks (test_prr.Levels.test_the_masks) ... ok
+test_a_dropped_column_changes_the_result (test_prr.Mask.test_a_dropped_column_changes_the_result) ... ok
+test_each_mask_hands_the_loop_its_columns_and_the_histogram_all_five (test_prr.Mask.test_each_mask_hands_the_loop_its_columns_and_the_histogram_all_five) ... ok
+test_the_five_column_mask_is_a_bitwise_pass_through (test_prr.Mask.test_the_five_column_mask_is_a_bitwise_pass_through) ... ok
+test_the_loop_is_restored_and_a_wrong_shape_refused (test_prr.Mask.test_the_loop_is_restored_and_a_wrong_shape_refused) ... ok
+test_a_mask_that_moves_b0_fails_c_mask (test_prr.Pair.test_a_mask_that_moves_b0_fails_c_mask) ... ok
+test_an_unpinned_reference_fails (test_prr.Pair.test_an_unpinned_reference_fails) ... ok
+test_bitwise_pairs_pass (test_prr.Pair.test_bitwise_pairs_pass) ... ok
+test_one_ulp_fails_c_pair (test_prr.Pair.test_one_ulp_fails_c_pair) ... ok
+test_a_changed_input_stops_the_reader (test_prr.Pins.test_a_changed_input_stops_the_reader) ... ok
+test_a_changed_module_is_refused (test_prr.Pins.test_a_changed_module_is_refused) ... ok
+test_every_bound_module_is_its_pinned_file (test_prr.Pins.test_every_bound_module_is_its_pinned_file) ... ok
+test_each_limit_passes_the_gate_at_the_conservative_unit (test_prr.Price.test_each_limit_passes_the_gate_at_the_conservative_unit) ... ok
+test_limit_prints_h_mm_ss (test_prr.Price.test_limit_prints_h_mm_ss) ... ok
+test_pack_is_list_scheduling_with_its_tail (test_prr.Price.test_pack_is_list_scheduling_with_its_tail) ... ok
+test_the_cap_is_the_sum_of_the_limits_and_each_is_under_12_h (test_prr.Price.test_the_cap_is_the_sum_of_the_limits_and_each_is_under_12_h) ... ok
+test_the_expected_cost (test_prr.Price.test_the_expected_cost) ... ok
+test_every_queue_line_parses_and_passes_under_the_real_runner (test_prr.RealParser.test_every_queue_line_parses_and_passes_under_the_real_runner) ... ok
+test_the_refusal_is_on_the_parsed_namespace (test_prr.RealParser.test_the_refusal_is_on_the_parsed_namespace) ... ok
+test_the_refusals_fire_on_the_runners_parse (test_prr.RealParser.test_the_refusals_fire_on_the_runners_parse) ... ok
+test_bias_orthogonal_to_the_departure_does_not_enter (test_prr.Rho.test_bias_orthogonal_to_the_departure_does_not_enter) ... ok
+test_t_quantile (test_prr.Rho.test_t_quantile) ... ok
+test_the_prior_retains_one_and_the_truth_zero (test_prr.Rho.test_the_prior_retains_one_and_the_truth_zero) ... ok
+test_undefined_below_two_cells (test_prr.Rho.test_undefined_below_two_cells) ... ok
+test_a_line_that_is_not_b0s_is_refused (test_prr.Route2Capture.test_a_line_that_is_not_b0s_is_refused) ... ok
+test_a_truths_reweight_reaches_the_capture (test_prr.Route2Capture.test_a_truths_reweight_reaches_the_capture) ... ok
+test_the_capture_is_the_runners_experiment_and_writes_nothing (test_prr.Route2Capture.test_the_capture_is_the_runners_experiment_and_writes_nothing) ... ok
+test_the_queues_carry_every_route2_line (test_prr.Route2Capture.test_the_queues_carry_every_route2_line) ... ok
+test_c_ibu_compares_to_the_committed_value (test_prr.Route2Helpers.test_c_ibu_compares_to_the_committed_value) ... ok
+test_fine_to_cell_refuses_an_overlap (test_prr.Route2Helpers.test_fine_to_cell_refuses_an_overlap) ... ok
+test_r_sup (test_prr.Route2Helpers.test_r_sup) ... ok
+test_unpinned_inputs_are_refused_before_any_unfold (test_prr.Route2Run.test_unpinned_inputs_are_refused_before_any_unfold) ... ok
+test_c_ibu_passes_on_the_committed_value_and_fails_off_it (test_prr.Route2Unfold.test_c_ibu_passes_on_the_committed_value_and_fails_off_it) ... ok
+test_every_k_on_the_sixteen_cells (test_prr.Route2Unfold.test_every_k_on_the_sixteen_cells) ... ok
+test_k5_is_ref_g1s_unfold_bitwise (test_prr.Route2Unfold.test_k5_is_ref_g1s_unfold_bitwise) ... ok
+test_r_id_reads_the_fold_problem (test_prr.Route2Unfold.test_r_id_reads_the_fold_problem) ... ok
+test_the_response_is_half_a (test_prr.Route2Unfold.test_the_response_is_half_a) ... ok
+test_the_truth_is_es_cell_truth (test_prr.Route2Unfold.test_the_truth_is_es_cell_truth) ... ok
+test_a_moved_atime_is_refused (test_prr.Stage.test_a_moved_atime_is_refused) ... ok
+test_a_staged_copy_carries_its_pin_and_stat_records (test_prr.Stage.test_a_staged_copy_carries_its_pin_and_stat_records) ... ok
+test_a_wrong_pin_or_a_used_destination_is_refused (test_prr.Stage.test_a_wrong_pin_or_a_used_destination_is_refused) ... ok
+test_the_manifest_names_every_shared_read (test_prr.Stage.test_the_manifest_names_every_shared_read) ... ok
+test_jobs_partition_the_tasks (test_prr.Tasks.test_jobs_partition_the_tasks) ... ok
+test_queue_columns (test_prr.Tasks.test_queue_columns) ... ok
+test_the_declared_task_list (test_prr.Tasks.test_the_declared_task_list) ... ok
+test_the_dry_run_measures_every_level_and_completes_c_pair (test_prr.Tasks.test_the_dry_run_measures_every_level_and_completes_c_pair) ... ok
+test_the_queue_is_longest_first (test_prr.Tasks.test_the_queue_is_longest_first) ... ok
+test_each_truth_is_fd_stabs_closure_row_unchanged (test_prr.Truths.test_each_truth_is_fd_stabs_closure_row_unchanged) ... ok
+test_every_committed_truth_file_carries_f0s_pin (test_prr.Truths.test_every_committed_truth_file_carries_f0s_pin) ... ok
+test_the_flagged_truths_are_table_iis_flags (test_prr.Truths.test_the_flagged_truths_are_table_iis_flags) ... ok
+test_the_floor_seeds_are_no_campaigns (test_prr.Truths.test_the_floor_seeds_are_no_campaigns) ... ok
+test_the_truths_are_table_iis_twelve_in_f0s_order (test_prr.Truths.test_the_truths_are_table_iis_twelve_in_f0s_order) ... ok
+
+----------------------------------------------------------------------
+Ran 95 tests in 9.171s
+
+OK
+----
+rc=0
+porcelain lines after: 0
+date_utc: 2026-11-09T15:51:35Z

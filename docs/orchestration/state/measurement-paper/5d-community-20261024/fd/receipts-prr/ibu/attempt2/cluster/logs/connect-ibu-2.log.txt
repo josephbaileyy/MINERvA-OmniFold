@@ -1,0 +1,57 @@
+node login23 nproc=244 loadavg 82.23 59.78 86.19
+2026-11-09T17:57:58Z
+connect script sha256 c9246a83736661b31548b95061f20d6601a0dacbbcaa4858464c7009d81d09fa
+squeue --me before:
+61040235 ll5d_gate_AR23 RUNNING
+61040163 ll5d_gate_G18 RUNNING
+other lanes' families (listed, not refused; this job reads nothing outside $OUT and the deploy):
+ll5d_gate_AR23
+ll5d_gate_G18
+== iris
+m3246               2437.7            10000.0     18361.5      20000.0
+balance_node_h=1638.5 half=819.2 cap=27.0
+== the study's charge so far (sacct, prr_* jobs since 2026-11-08)
+61022062|prr_dry|COMPLETED|3648|1
+61024185|prr_iter|COMPLETED|9038|1
+61028298|prr_cap|COMPLETED|5220|1
+61030122|prr_misc|COMPLETED|8657|1
+61035510|prr_ibu|FAILED|41|1
+charged_node_h=7.3900 this_job_limit_h=0.5000 sum=7.8900 cap=27.0
+HEAD 06657cff7a6ed6c9832fe27957899125e6cac4ad; porcelain --ignored lines before: 0
+prr_probe.py: OK
+prr_ibu.py: OK
+prr_read.py: OK
+sbatch_prr.sh: OK
+test_prr.py: OK
+prr_mutation.py: OK
+declaration sha256 5be1e19cb8db67064cb0f90382ed7ac2365a2ed4841d9b498f323ed2761b64ce
+addendum A1 sha256 ca6b8457e74c9323fcb985766a88f404038f6f16c3e822a67bf2606af223f38b
+addendum A3 sha256 48641cf9ba6a6e30856dc3447412cca777bcc0b75f84566db9f4463d9e646db1
+FD-PRR-BINDING-1.md at origin/main cd8e16feb33fa402a1d9b13ebda33e3e48623e11 sha256 b691d95630c40656f82291d548ca9bbadebfc99c2dc3e9f03644654399d71637
+queues/dry.tsv: OK
+queues/iter.tsv: OK
+queues/cap.tsv: OK
+queues/misc.tsv: OK
+stage.json: OK
+log-dry/DONE: OK
+B0 lines in the four queues: 20
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+plain python3 (not used by any call below): /usr/bin/python3 Python 3.6.15
+sourced python3: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14
+LIMIT 0:30:00
+root_6_28 python3 prr_probe.py limit ibu -> '0:30:00'
+--time=00:30:00
+2026-11-09T17:58:50Z
+sbatch rc=0
+Submitted batch job 61043652
+ibu-2 job 61043652
+scontrol TimeLimit=00:30:00 (declared 00:30:00)
+61043652 prr_ibu PENDING 0:00 30:00 1 regular_1 m3246
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login23:222805
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+porcelain --ignored lines after: 0
+prr ibu-2 submit rc=0
+2026-11-09T17:58:56Z

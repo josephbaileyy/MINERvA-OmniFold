@@ -47,3 +47,13 @@ The director ran `test_ll5d_b.py` from a `git archive` of M_A1b (one thread, `PY
    follow-up list.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 3, note: two test files move under binding 2's addendum A1a.1 (director, 2026-11-09)
+
+Amendment A1a.1 (PR #967, merged at `a95cc39f`) changes `nd-unfolding/tests/test_ll5d_b.py` (to `918d75bfd9c2c89f`,
+adding `RealUnfold`) and `nd-unfolding/tests/ll5d_a1b_mutation.py` (to `1b09bf22969b2698`, adding the install mutant),
+and `ll5d.py` (to `b49f5d5f793265ef`). It leaves `ll5d_b.py` unchanged. Those digests are bound in
+[`LL5D-BINDING-2.md`](LL5D-BINDING-2.md), addendum A1a.1, and supersede the three rows above for the pilot and bulk
+connects. Rulings 1–6 stand.
+
+Nothing is submitted, deposited or tagged.

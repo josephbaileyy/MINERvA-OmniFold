@@ -1,0 +1,266 @@
+### Evaluation of Pre-Written Cases
+
+---
+
+#### Abstract Cases (AB1–AB12)
+
+**Case AB1: REVISE**
+* **Claim check:** The phrase *"the procedure’s covariance... covers at both"* overreaches. The tested covariance omits response ($C_{\text{resp}}$) and run-period ($C_{\text{PL,5D}}$) uncertainties, uses a surrogate for lateral bands, and is rebuilt once per truth rather than per pseudo-experiment.
+* **Missing:** Explicit mention that response and run-period uncertainties are omitted, and specification of whether coverage holds jointly, pointwise per cell, or both.
+* **Suggested wording:** "In a like-for-like five-observable coverage test at the same tunes (omitting response and run-period variations), the procedure’s rebuilt covariance achieves joint and per-cell coverage at both tunes, both in the primary variant omitting detector hadron-interaction bands and with those bands; the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data."
+
+**Case AB2: REVISE**
+* **Claim check:** No overreach in the claim of under-coverage.
+* **Missing:** Identification of which tune under-covers with the bands, and whether the failure is joint or restricted to individual cells.
+* **Suggested wording:** "In a like-for-like five-observable coverage test at the same tunes, the procedure’s rebuilt covariance covers at both in the primary variant, but under-covers in individual cells at one tune when detector hadron-interaction bands are included; the result concerns the procedure at those tunes, not the reported data intervals."
+
+**Case AB3: REVISE**
+* **Claim check:** No overreach.
+* **Missing:** Fails to specify whether under-coverage with the bands is joint, per-cell, or both (main-text case SC4 distinguishes per-cell under-coverage at G18 from joint and per-cell under-coverage at AR23).
+* **Suggested wording:** "In a like-for-like five-observable coverage test at the same tunes, the procedure’s rebuilt covariance covers at both in the primary variant, but under-covers at both tunes (jointly and in individual cells) when detector hadron-interaction bands are included; the result concerns the procedure at those tunes, not the reported data intervals."
+
+**Case AB4: REVISE**
+* **Claim check:** No overreach.
+* **Missing:** Fails to state what happened at the other tune when bands are included (in SC5, it covers at G18). Reporting only that one tune was invalid suppresses the valid result at the companion tune.
+* **Suggested wording:** "In a like-for-like five-observable coverage test at the same tunes, the rebuilt covariance covers at both in the primary variant; with detector hadron-interaction bands included, it covers at one tune and is invalid by internal controls at the other."
+
+**Case AB5: ACCEPT**
+* **Claim check:** No overreach; accurately balances the primary variant pass against complete invalidation of the secondary variant.
+* **Missing:** Nothing critical for an abstract summary.
+
+**Case AB6: REVISE**
+* **Claim check:** Overreaches by selective suppression: it completely suppresses the outcome of the secondary variant (with hadron bands), which was run and evaluated (SC7–SC9). Furthermore, it drops the essential scoping disclaimer (*"the result concerns the procedure’s covariance at those tunes, not the reported intervals at the data"*).
+* **Missing:** The outcome of the variant with neutron and proton bands, and the scoping disclaimer.
+* **Suggested wording:** "In a like-for-like five-observable coverage test at the same tunes, the procedure’s rebuilt covariance covers at one tune but under-covers at the other in both the primary variant and the variant with detector hadron-interaction bands; this evaluates the procedure at these tunes, not the reported data intervals."
+
+**Case AB7: REVISE**
+* **Claim check:** Suppresses the outcome of the secondary variant with hadron bands (which also under-covers in SC10) and drops the scoping limitation sentence present in AB1–AB5.
+* **Missing:** Outcome of the with-bands variant and the scoping disclaimer.
+* **Suggested wording:** "In a like-for-like five-observable coverage test at the same tunes, the procedure’s rebuilt covariance under-covers at both tunes, both in the primary variant and with detector hadron-interaction bands included, demonstrating procedure under-coverage at these tunes rather than calibrated interval coverage on data."
+
+**Case AB8: REVISE**
+* **Claim check:** Omits the outcome of the secondary variant with bands at the valid tune (which covers in SC11).
+* **Missing:** Statement of whether the valid tune covered with hadron interaction bands included.
+* **Suggested wording:** "A like-for-like five-observable coverage test at the same tunes is invalid by its own controls at one tune; at the other, the procedure’s rebuilt covariance covers both without and with detector hadron-interaction bands, a result about the procedure at that tune, not the reported data intervals."
+
+**Case AB9: REVISE**
+* **Claim check:** Suppresses the with-bands variant result and omits the scoping disclaimer.
+* **Missing:** Reporting of the secondary variant and the scoping disclaimer.
+* **Suggested wording:** "A like-for-like five-observable coverage test at the same tunes is invalid by its own controls at one tune; at the other, the procedure’s rebuilt covariance under-covers in both variants, reflecting procedure performance at that tune rather than data interval coverage."
+
+**Case AB10: ACCEPT**
+* **Claim check:** No overreach; accurately reports that internal controls invalidated the test at both tunes.
+* **Missing:** Nothing critical for an abstract.
+
+**Case AB11: REVISE**
+* **Claim check:** No overreach.
+* **Missing:** Needs to state that the stoppage was triggered by a pre-defined validity gate.
+* **Suggested wording:** "A like-for-like five-observable coverage test at the same tunes was stopped prior to generating pseudo-experiments upon failing a pre-registered validity gate."
+
+**Case AB12: REVISE**
+* **Claim check:** The phrase *"stopped before the bulk of its pseudo-experiments"* is vague and conceals that the stoppage followed an unblinded post-check decision after exceeding a numerical bound (SC17).
+* **Missing:** Explicit mention that an interim check exceeded its bound.
+* **Suggested wording:** "A like-for-like five-observable coverage test at the same tunes was halted before completing its pseudo-experiments after an interim check on clipping offsets exceeded its pre-set bound."
+
+---
+
+#### Section 6.3 Cases (SC1–SC18)
+
+**Case SC1: REVISE**
+* **Claim check:** The absolute statement *"the rebuilt covariance covers"* overreaches by omitting that the tested covariance excludes response and run-period systematics and is rebuilt only once per tune.
+* **Missing:** Quantitative coverage figures: the number of pseudo-experiments run, the observed joint coverage fraction/$\chi^2$, and the range of per-cell empirical coverage rates.
+* **Suggested wording:** "Without the two bands, the rebuilt covariance covers both jointly and per cell at G18_10a_02_11b ([coverage rate]) and AR23_20i_00_000 ([coverage rate]), and likewise covers in both respects when detector hadron-interaction bands are included. The result demonstrates procedure coverage at these specific generator tunes under the tested uncertainty subsets, not coverage of the reported intervals on data."
+
+**Case SC2: REVISE**
+* **Claim check:** No direct overreach, but reporting weakened passes and over-coverage only *"Without the two bands"* leaves the behavior with bands uncharacterized.
+* **Missing:** Quantitative coverage rates and an explicit statement of whether weakened passes or over-coverage persist when hadron bands are added.
+* **Suggested wording:** "Without the two bands, the rebuilt covariance covers at both tunes, though passes in [cells R06] are weakened at G18_10a_02_11b and over-coverage occurs in [cells R03, R11] at AR23_20i_00_000; with the bands, coverage behavior in these cells is [behavior]. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data."
+
+**Case SC3: REVISE**
+* **Claim check:** No overreach.
+* **Missing:** Observed empirical coverage rate in the under-covering cells, and whether joint coverage still passed at AR23_20i_00_000 with the bands.
+* **Suggested wording:** "Without the two bands, the rebuilt covariance covers at both tunes; with them, it covers at G18_10a_02_11b but under-covers in cells [cells R03, R11] at AR23_20i_00_000 (observed coverage [fraction]), while joint coverage [passes/fails]. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data."
+
+**Case SC4: REVISE**
+* **Claim check:** Accurately distinguishes per-cell from joint under-coverage across tunes.
+* **Missing:** Quantitative empirical coverage percentages for the failing cells and the joint test statistic.
+* **Suggested wording:** "Without the two bands, the rebuilt covariance covers at both tunes; with them, it under-covers in cell [cells R06] at G18_10a_02_11b and under-covers both jointly and in cells [cells R03, R11] at AR23_20i_00_000, with observed per-cell coverage of [fractions]. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data."
+
+**Case SC5: REVISE**
+* **Claim check:** No overreach.
+* **Missing:** The specific control that failed at AR23_20i_00_000.
+* **Suggested wording:** "Without the two bands, the rebuilt covariance covers at both tunes; with them, it covers at G18_10a_02_11b but is not graded at AR23_20i_00_000 because the [specific control] control failed. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data."
+
+**Case SC6: REVISE**
+* **Claim check:** No overreach.
+* **Missing:** The identity and nature of the failed internal control.
+* **Suggested wording:** "Without the two bands, the rebuilt covariance covers at both tunes; with them, the test is not graded at either tune due to a failure of [specific control]. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data."
+
+**Case SC7: REVISE**
+* **Claim check:** Accurately reports cell under-coverage across both variants.
+* **Missing:** Observed coverage rates in failing cells and the status of the joint coverage test at AR23_20i_00_000.
+* **Suggested wording:** "Across both variants, the rebuilt covariance covers at G18_10a_02_11b but under-covers in cells [cells R03, R11] at AR23_20i_00_000 (coverage [fraction]), while joint coverage [passes/fails]. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data."
+
+**Case SC8: REVISE**
+* **Claim check:** The phrase *"the flags in cells [cells R03, R11] may be the clipping artefact"* introduces speculative attribution without diagnostic proof.
+* **Missing:** Diagnostic evidence demonstrating whether clipping offsets are quantitatively capable of producing the observed under-coverage, and whether the effect persists with bands.
+* **Suggested wording:** "In both variants, the rebuilt covariance covers at G18_10a_02_11b and under-covers in cells [cells R03, R11] at AR23_20i_00_000; an unverified hypothesis attributes these flags to clipping artefacts, but this reading does not remove the failure. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data."
+
+**Case SC9: REVISE**
+* **Claim check:** Properly distinguishes joint from per-cell coverage.
+* **Missing:** The observed joint $\chi^2$ distribution or number of pseudo-experiments falling within the joint acceptance window.
+* **Suggested wording:** "In both variants, the rebuilt covariance covers at G18_10a_02_11b but under-covers jointly at AR23_20i_00_000 ([N] of [B] pseudo-experiments in the joint region vs threshold [T]), despite no individual cell being flagged. The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data."
+
+**Case SC10: REVISE**
+* **Claim check:** Clearly reports widespread failure.
+* **Missing:** Quantitative joint acceptance counts and per-cell empirical coverage percentages.
+* **Suggested wording:** "In both variants, the rebuilt covariance under-covers both jointly and in individual cells at both tunes ([cells R06] at G18_10a_02_11b; [cells R03, R11] at AR23_20i_00_000), yielding empirical coverage rates of [values]. The result demonstrates procedure covariance under-coverage at both tested tunes."
+
+**Case SC11: REVISE**
+* **Claim check:** No overreach.
+* **Missing:** Identification of the failed control at G18_10a_02_11b.
+* **Suggested wording:** "In both variants, the test is invalid by its own controls at G18_10a_02_11b due to [failed control], while at AR23_20i_00_000 the rebuilt covariance covers. The valid outcome concerns procedure performance at AR23_20i_00_000 only, not reported data intervals."
+
+**Case SC12: REVISE**
+* **Claim check:** No overreach.
+* **Missing:** Name of the failed control at G18_10a_02_11b and coverage fractions in the failing cells at AR23_20i_00_000.
+* **Suggested wording:** "In both variants, the test is invalidated by controls at G18_10a_02_11b due to [failed control], while at AR23_20i_00_000 the rebuilt covariance under-covers in cells [cells R03, R11] (coverage [fraction]). The result concerns the procedure’s covariance at AR23_20i_00_000, not reported intervals on data."
+
+**Case SC13: REVISE**
+* **Claim check:** The concluding sentence *"The result concerns the procedure’s covariance at those tunes, not the reported intervals at the data"* overreaches; when all tests are invalidated by controls, there is no coverage result.
+* **Missing:** Identification of the failing control and an explicit statement that coverage could not be evaluated.
+* **Suggested wording:** "Across both variants, the test is not graded at either tune because the [control name] control failed. Because internal validity controls failed throughout, no coverage assessment of the procedure was obtained."
+
+**Case SC14: REJECT**
+* **Claim check:** Severe methodological overreach. The words *"proceeded by a decision made after that check was seen"* followed by unblemished claims that the covariance *"covers"* assert a valid pre-registered pass despite an unblinded post-hoc override of a failed pre-set tolerance.
+* **Missing:** Justification for overriding the pre-fixed bound, analysis of the impact of the excessive clipping offset, and explicit qualification that the pass is post-hoc and non-blind.
+* **Suggested wording:** "Although the check of the clipping offset exceeded its pre-declared bound, the test was continued via an unblinded post-hoc decision. Under this modified protocol the rebuilt covariance covers across both tunes and variants, but this outcome represents a post-hoc exploration rather than a validated blind test."
+
+**Case SC15: REVISE**
+* **Claim check:** Claiming that the covariance *"covers"* without qualifying the headline finding overreaches, as the test failed its pre-fixed check and required an unblinded post-hoc repair.
+* **Missing:** Identification of `[the check]`, description of the repair mechanism, and acknowledgment that post-hoc repairs compromise error-rate control.
+* **Suggested wording:** "Following an initial stoppage at [the check], the test was resumed under a post-hoc repair chosen after inspecting the failure. Under this repaired setup the rebuilt covariance covers at both tunes in both variants, though this outcome cannot be graded as an independent pre-registered validation."
+
+**Case SC16: REVISE**
+* **Claim check:** Accurate and concise.
+* **Missing:** Identification of the specific gate that halted execution.
+* **Suggested wording:** "The test stopped at a pre-registered gate, [gate name], before pseudo-experiments ran, and gives no coverage reading."
+
+**Case SC17: REVISE**
+* **Claim check:** Accurate description of a manual stop following an interim check failure.
+* **Missing:** The numerical bound and observed clipping offset value, along with the number of pseudo-experiments run prior to termination.
+* **Suggested wording:** "The check of the clipping offset exceeded the bound fixed in advance ([observed] vs [bound]), and the test was halted before the bulk of its pseudo-experiments by an unblinded decision; it gives no coverage reading."
+
+**Case SC18: REVISE**
+* **Claim check:** Accurate.
+* **Missing:** Description of the failure criterion triggering the stop.
+* **Suggested wording:** "The test stopped before its pseudo-experiments upon failing the pre-registered check [the check], giving no coverage reading."
+
+---
+
+#### Table 1 Rows (Part 3)
+
+**Table 1 row (AB1 / SC1): ACCEPT**
+* **Claim check:** Matches the pre-declared definition of status word "Covers".
+* **Missing:** Nothing within the compact conventions of Table 1.
+
+**Table 1 row (AB2 / SC3): REJECT**
+* **Claim check:** High-level claim overreach. The Status cell reports **"Covers"** even though the Result column explicitly states *"with them, covers and under-covers in cells"*. Labeling the overall test status as "Covers" based solely on the primary variant when a pre-declared secondary variant under-covers is misleading.
+* **Missing:** A status designation that reflects the failure of the secondary variant.
+* **Suggested wording:** Change Status from "Covers" to "Under-covers" (or "Partial"). Result text is acceptable as written.
+
+**Table 1 row (AB6 / SC7): REVISE**
+* **Claim check:** No overreach; status "Under-covers" is appropriate.
+* **Missing:** Identification of which tune under-covered and which covered.
+* **Suggested wording:** Result: "without the neutron and proton bands, covers at G18 and under-covers in cells at AR23; with them, covers at G18 and under-covers in cells at AR23". Status: "Under-covers".
+
+**Table 1 row (SC9): REVISE**
+* **Claim check:** Accurately reflects joint failure.
+* **Missing:** Specification of which tune under-covered jointly.
+* **Suggested wording:** Result: "without the neutron and proton bands, covers at G18 and under-covers jointly at AR23; with them, covers at G18 and under-covers jointly at AR23". Status: "Under-covers".
+
+**Table 1 row (AB7 / SC10): REVISE**
+* **Claim check:** No overreach.
+* **Missing:** Phrasing is unnecessarily redundant (*"under-covers jointly and in cells and under-covers jointly and in cells at the two tunes"*).
+* **Suggested wording:** Result: "under-covers jointly and in cells at both tunes, both without and with the neutron and proton bands". Status: "Under-covers".
+
+**Table 1 row (AB8 / SC11): REVISE**
+* **Claim check:** No overreach; status "Invalid" matches table definitions.
+* **Missing:** Identification of which tune was invalid and which covered.
+* **Suggested wording:** Result: "at G18 invalid by controls, at AR23 covers, both without and with neutron and proton bands". Status: "Invalid".
+
+**Table 1 row (AB10 / SC13): REVISE**
+* **Claim check:** No overreach.
+* **Missing:** Needs streamlining to eliminate repetitive phrasing.
+* **Suggested wording:** Result: "invalid by internal controls at both tunes, both without and with neutron and proton bands". Status: "Invalid".
+
+**Table 1 row (AB11 / SC16): REVISE**
+* **Claim check:** Accurate.
+* **Missing:** Identity of the gate.
+* **Suggested wording:** Result: "Stopped at pre-registered gate [gate name], before pseudo-experiments ran". Status: "Stopped".
+
+**Table 1 row (AB12 / SC17): REVISE**
+* **Claim check:** Accurate.
+* **Missing:** Clarity that stoppage was decided post-check rather than automated.
+* **Suggested wording:** Result: "Stopped by post-check decision after clipping-offset check exceeded bound". Status: "Stopped".
+
+**Table 1 row (AB11 / SC18): REVISE**
+* **Claim check:** Accurate.
+* **Missing:** Name of `[the check]`.
+* **Suggested wording:** Result: "Stopped before pseudo-experiments at pre-fixed check [the check]". Status: "Stopped".
+
+---
+
+#### Prior-Retention Study Cases (C1–C4)
+
+**Case C1: REVISE**
+* **Claim check:** In the Abstract, claiming that IBU retains less of the prior overreaches by selective reporting: it quotes only the GiBUU-like truth and suppresses the result at the synthetic $q_3$ tilt (where Section 5.3 also tested it). In Section 5.3, the text adheres to pre-registered interpretive labels.
+* **Missing:** The Abstract is missing the outcome at the synthetic $q_3$ tilt. Section 5.3 is missing the quantitative values of $\rho$ and the significance threshold bar.
+* **Suggested wording:** Abstract: "At both flagged truths (GiBUU-like and synthetic $q_3$ tilt), a binned iterative unfolding of noise-free pseudo-data retains less of the prior than the five-observable estimator." Section 5.3: "At the GiBUU hybrid truth, IBU at five iterations retains less of the prior ($\rho = \text{[val]}$) than the estimator ($\rho = \text{[val]}$), and retention decreases with longer iteration; similar reduction occurs at the $q_3$ tilt, consistent with an implementation-specific share."
+
+**Case C2: REVISE**
+* **Claim check:** Abstract overreaches by omitting the $q_3$ tilt.
+* **Missing:** Abstract misses the $q_3$ tilt. Section 5.3 misses the quantitative retained fractions $\rho$, the numerical threshold bar, and the final synthesized diagnostic classification (e.g., whether it indicates an information limit).
+* **Suggested wording:** Abstract: "At both flagged truths, binned iterative unfolding of noise-free pseudo-data retains a share of the prior differing from the estimator by less than a pre-fixed tolerance." Section 5.3: "At both flagged truths, the IBU retained fraction differs from the estimator's by less than the threshold bar of [val] and remains stable with longer iteration, consistent with an information limit at these settings."
+
+**Case C3: REVISE**
+* **Claim check:** Abstract omits the $q_3$ tilt. In Section 5.3, the claim that IBU prior retention *"rises by that margin with longer iteration"* describes anomalous mathematical behavior for iterative Bayesian unfolding that requires physical or technical justification.
+* **Missing:** Abstract misses the $q_3$ tilt. Section 5.3 misses quantitative $\rho$ values, the bar value, and an explanation for why IBU retention would increase with iteration.
+* **Suggested wording:** Abstract: "At both flagged truths, binned iterative unfolding of noise-free pseudo-data retains more of the prior than the five-observable estimator." Section 5.3: "At both flagged truths, the IBU retains more of the prior than the estimator, with retention unexpectedly increasing with longer iteration; this points to [diagnosed cause/label]."
+
+**Case C4: REJECT**
+* **Claim check:** The claim that *"a retained fraction is undefined there"* is mathematically impossible under the study's own definitions. Section 5.3 defines $\rho = -\sum b_c d_c / \sum d_c^2$ over cells with $|d_c| \ge 1\%$. Both the GiBUU hybrid truth ($p < 10^{-27}$, $\chi^2 = 171$) and the $q_3$ tilt ($p < 10^{-5}$, $\chi^2 = 52$) exhibit large departures ($|d_c| \gg 1\%$) across multiple cells. The denominator cannot be zero.
+* **Missing:** An explanation of how $\rho$ could be undefined, or acknowledgment of a software crash/numerical exception.
+* **Suggested wording:** "The comparison between the IBU and the estimator could not be evaluated at the flagged truths due to a computational failure in calculating the retained fraction, which must be resolved prior to publication."
+
+---
+
+### Separate Inquiries
+
+#### A. Scoping When Coverage Passes
+Even if the rebuilt covariance achieves nominal coverage at both tunes in both variants (AB1 / SC1), the scoping remains objectionable for four reasons:
+1. **Incomplete Error Budget in Pseudo-Data:** Section 6.3 explicitly reveals that the like-for-like coverage pseudo-experiments do *not* draw the recoil-energy scale response term ($C_{\text{resp}}$) or the run-period term ($C_{\text{PL,5D}}$), and lateral uncertainties are handled via a linear surrogate. Testing coverage of a covariance against pseudo-data generated without major systematic variations does not validate the procedure's covariance.
+2. **Static Covariance Rebuilding:** The procedure covariance is rebuilt once per truth rather than independently for each pseudo-experiment. This omits the sample variance of the covariance estimator itself.
+3. **Lack of Model Independence:** Both test truths are GENIE v3 tunes sharing identical quasielastic models with each other and with Tune v1, and G18 shares its 2p2h model with $C_{\text{model}}$. Neither tune embodies the severe kinematic distortions where the estimator failed bias tests (GiBUU and $q_3$ tilt).
+4. **2D vs. 5D Incoherence:** The manuscript establishes that the 2D procedure under-covers catastrophically at both tunes ($\chi^2/\text{ndf} = 16.55$ and $24.17$; 0 of 300 pseudo-experiments in the joint region). A passing 5D coverage test on identical tunes implies that coarse 16-cell binning or massive uncalibrated $C_{\text{model}}$ inflation is masking underlying miscoverage.
+
+The text must explicitly state that the passing test validates only a restricted subset of uncertainties against closely related generator tunes.
+
+#### B. Disclosure of Stoppages, Overrides, and Repairs in the Abstract
+The Abstract **must** disclose when a test stopped, was repaired, or proceeded via an unblinded post-check override.
+* Assigning Case AB1 to SC14 (where a pre-registered clipping-offset bound was exceeded and overridden post hoc) and SC15 (where the test stopped and was repaired post hoc) is unacceptable. It presents an unblinded, non-pre-registered protocol modification as a clean, pre-registered pass.
+* In methods papers establishing validation protocols, the boundary between automated pre-registered gates and post-hoc human intervention is a headline finding. Presenting a repaired or overridden pass as an unqualified "covers" in the Abstract misleads the majority of readers who do not inspect the technical narrative of Section 6.3.
+
+#### C. Mutual Consistency Across Abstract, Main Text, and Table 1
+Several direct contradictions and reporting asymmetries exist among the cases:
+1. **AB1 vs. SC14 / SC15:** SC14 and SC15 describe protocol violations (post-hoc override and post-hoc repair), yet the paper maps both to AB1, which asserts an unqualified coverage pass without mentioning any override or repair.
+2. **Table 1 Row (AB2 / SC3) vs. SC3 / AB2:** In SC3 and AB2, the variant with detector hadron bands under-covers at one tune. However, Table 1 assigns this outcome the headline status **"Covers"**, directly contradicting the presence of cell-level under-coverage.
+3. **Suppression of Secondary Variant in AB6, AB7, AB8, AB9:** While the main text (SC7–SC12) and Table 1 report outcomes for both variants (with and without hadron bands), Abstract cases AB6–AB9 omit the secondary variant entirely.
+4. **Abstract Omission of the $q_3$ Tilt in C1–C4:** While Section 5.3 reports prior retention for both flagged truths (GiBUU hybrid and synthetic $q_3$ tilt), all Abstract cases (C1–C4) mention only the GiBUU-like truth.
+
+#### D. Expected Outcomes Lacking Pre-Written Cases
+A reader or referee would expect cases covering the following plausible outcomes:
+1. **Primary Variant Under-Covers, Secondary Variant Covers:** Detector hadron-interaction bands add substantial variance. Adding them could easily elevate an under-covering cell or joint statistic into nominal coverage. No case exists for this standard statistical scenario.
+2. **Mixed Outcomes Between Flagged Truths in C1–C4:** Cases C1–C4 assume identical behavior at both flagged truths. A split outcome—for example, implementation-specific retention at the GiBUU hybrid truth but an information limit at the synthetic $q_3$ tilt—has no pre-written text.
+3. **Tune-Asymmetric Variant Invalidation:** A scenario where the primary variant is invalidated by controls at one tune while the secondary variant is valid (or vice versa) is completely omitted.
+4. **Algorithmic Numerical Failure:** Execution halts during pseudo-experiment unfolding due to non-convergence, unbounded tree leaf weights, or NaN density ratios in LightGBM, as opposed to pre-set diagnostic gate stops.

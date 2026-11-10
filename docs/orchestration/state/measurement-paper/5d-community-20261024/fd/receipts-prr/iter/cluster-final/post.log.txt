@@ -1,0 +1,22 @@
+node login02
+2026-11-09T08:52:51Z
+post script sha256 f97dfe4388945de4474b50d3805188231a4ca3c4bdfbf9236f1dfe0891da7f67
+job 61024185 state COMPLETED
+JobID|JobName|State|ExitCode|Elapsed|ElapsedRaw|NNodes|AllocCPUS|Start|End|TimelimitRaw|Timelimit
+61024185|prr_iter|COMPLETED|0:0|02:30:38|9038|1|256|2026-11-08T22:19:28|2026-11-09T00:50:06|450|07:30:00
+61024185.batch|batch|COMPLETED|0:0|02:30:38|9038|1|256|2026-11-08T22:19:28|2026-11-09T00:50:06||
+61024185.extern|extern|COMPLETED|0:0|02:30:38|9038|1|256|2026-11-08T22:19:28|2026-11-09T00:50:06||
+charge_node_h=2.5106 (ElapsedRaw x NNodes / 3600; the iter limit is 7.5)
+61022062|prr_dry|COMPLETED|3648|1
+61024185|prr_iter|COMPLETED|9038|1
+study_charged_node_h=3.5239 (cap 27.0)
+copied: 227 files
+total 516
+drwx------  3 josephrb josephrb 12288 Nov  9 00:50 .
+drwx------ 12 josephrb josephrb  4096 Nov  9 00:52 ..
+-rw-------  1 josephrb josephrb    71 Nov  9 00:50 DONE
+-rw-------  1 josephrb josephrb   384 Nov  8 22:19 env.log
+log-iter entries: 123; tasks/: 88
+bd6f59c59e3e6b0e5fed564d838927ee81ce5b6602adc0345265c8902ac147dd  post-iter.tar.gz
+prr iter post rc=0
+2026-11-09T08:52:53Z

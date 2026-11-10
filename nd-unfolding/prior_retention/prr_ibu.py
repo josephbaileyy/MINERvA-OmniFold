@@ -68,6 +68,39 @@ CODE_PINS = {
 }
 
 
+STAGE_A4 = "stage-a4.json"  # Addendum A4: the fine-ratio rho arrays' staging record, beside stage.json
+STAGE_A4_DEST = "s5p-nullsF"  # ... and their copies, under the stage directory (prr_probe.py stage --dest)
+FINE_SCHEMA = "s5p-fine-ratio/1"
+
+
+def rho_manifest(repo: Path = REPO) -> list[dict]:
+    """Addendum A4: the staging manifest (``prr_probe.py stage``'s {role, src, sha256, name}) of every rho array a
+    route-2 truth's hypothesis names. Each comes from the committed fine-ratio json's own ``rho_npz``, which
+    ``s5p_truths.load_fine_rho`` reads in place by its absolute path (shared pscratch, outside every guard root)."""
+    out = {}
+    for truth in P.TRUTHS:
+        hyp = json.loads((repo / P.closure_spec(truth)[1]).read_text())
+        if hyp.get("schema") == FINE_SCHEMA:
+            src = hyp["rho_npz"]["path"]
+            out[src] = {"role": Path(src).stem.replace("rho-", "rho_", 1), "src": src,
+                        "sha256": hyp["rho_npz"]["sha256"], "name": Path(src).name}
+    return list(out.values())
+
+
+def rho_copies(a4_rec: dict, stage_dir: Path, repo: Path = REPO) -> dict[str, Path]:
+    """The staged copy of each rho array, by its sha256, from the stage-A4 record. Refuses unless the record stages
+    exactly ``rho_manifest()``'s entries, each copy under the stage directory."""
+    want = {e["sha256"]: e for e in rho_manifest(repo)}
+    got = {e["sha256"]: e for e in a4_rec.get("files", [])}
+    if set(got) != set(want) or any(got[k]["src"] != want[k]["src"] for k in want):
+        raise P.Refused(f"{STAGE_A4} does not stage exactly the rho arrays the route-2 hypotheses name")
+    root = (stage_dir / STAGE_A4_DEST).resolve()
+    for e in got.values():
+        if root not in Path(e["copy"]).resolve().parents:
+            raise P.Refused(f"{STAGE_A4}: {e['copy']} is not under {stage_dir / STAGE_A4_DEST}")
+    return {k: Path(e["copy"]) for k, e in got.items()}
+
+
 def experiments() -> list[tuple[str, int]]:
     """(truth, seed) of every IBU unfold: the 12 truths at the primary split, and the floor truth and the prior at each
     floor split (s_IBU, §3.5)."""
@@ -110,16 +143,19 @@ def _restored(module, names):
             setattr(module, n, v)
 
 
-def capture(truth: str, argv: list[str], cache: dict, scratch: Path) -> dict:
+def capture(truth: str, argv: list[str], cache: dict, scratch: Path, rho: dict[str, Path] | None = None) -> dict:
     """Run B0's line through ``s5p_nullexp.main`` and stop where ``build`` returns. Returns the experiment, x_true,
     the split key and the per-row truth weight r the experiment handed ``s5n_pseudo.true_xsec``. ``cache`` holds the
     loaded inputs across truths (``s5c_unfold.load_inputs``, the runner's own loader, memoized for this call). The
     runner makes its --out directory before it builds, so --out is moved to ``scratch``, which must be empty or
-    absent and is left empty: B0's own output directory is never touched."""
+    absent and is left empty: B0's own output directory is never touched. ``rho`` (Addendum A4) maps a fine-ratio
+    hypothesis's rho_npz sha256 to its staged copy: the runner's ``s5p_truths.load_fine_rho`` then reads the copy, with
+    its own sha256 check, in place of the shared path the json names."""
     import estimator_stability_probe as esp
     import s5c_unfold
     import s5n_pseudo
     import s5p_nullexp
+    import s5p_truths
     argv = list(argv)
     if scratch.exists() and any(scratch.iterdir()):
         raise P.Refused(f"the scratch directory {scratch} is not empty")
@@ -129,6 +165,7 @@ def capture(truth: str, argv: list[str], cache: dict, scratch: Path) -> dict:
         argv[i] = esp.closure_truth_kind(Path(argv[argv.index("--alternative") + 1]), argv[i])
     seen: dict = {}
     real_build, real_true, real_load = s5p_nullexp.build, s5n_pseudo.true_xsec, s5c_unfold.load_inputs
+    real_rho = s5p_truths.load_fine_rho
 
     def build(ui, ub, split, seed, expectation, mc_fraction):
         exp, x_true, info = real_build(ui, ub, split, seed, expectation, mc_fraction)
@@ -146,10 +183,19 @@ def capture(truth: str, argv: list[str], cache: dict, scratch: Path) -> dict:
             cache[key] = real_load(path)
         return cache[key]
 
+    def load_fine_rho(ratio):
+        copy = rho.get(ratio["rho_npz"]["sha256"])
+        if copy is None:
+            raise P.Refused(f"{ratio['rho_npz']['path']}: no staged copy carries its sha256 ({STAGE_A4})")
+        return real_rho({**ratio, "rho_npz": {**ratio["rho_npz"], "path": str(copy)}})
+
     state = {"checked": False, "columns": None}
     with _restored(s5n_pseudo, ("refine_params", "code_digests", "truth_weight", "TRUTHS", "true_xsec")), \
-            _restored(s5p_nullexp, ("build",)), _restored(s5c_unfold, ("load_inputs",)):
+            _restored(s5p_nullexp, ("build",)), _restored(s5c_unfold, ("load_inputs",)), \
+            _restored(s5p_truths, ("load_fine_rho",)):
         s5p_nullexp.build, s5n_pseudo.true_xsec, s5c_unfold.load_inputs = build, true_xsec, load_inputs
+        if rho is not None:
+            s5p_truths.load_fine_rho = load_fine_rho
         try:
             with P.namespace_guard("B0", truth, state), esp.pvl_truth():
                 rc = s5p_nullexp.main(argv)
@@ -266,13 +312,16 @@ def c_ibu(lib, gw, inputs: dict, ratio_path: Path, ratio_sha: str, repo: Path = 
 
 
 # ------------------------------------------------------------------------------------------- the run
-def run(queue_dir: Path, stage_json: Path, out: Path) -> int:
+def run(queue_dir: Path, stage_rec: dict, out: Path, a4_rec: dict, rho: dict[str, Path]) -> int:
+    """Route 2 on the B0 lines. ``stage_rec`` and ``a4_rec`` are the stage records ``main`` read before entering the
+    read guard, and ``rho`` the staged rho arrays by sha256 (Addendum A4: $OUT/stage.json and $OUT/stage-a4.json are
+    under none of the guard's allowed roots, so neither is read here)."""
     import ibu1
     import ref_g1
     P.check_pins()
     P.check_pins(CODE_PINS)
-    stage_rec = json.loads(stage_json.read_text())
     P.verify_stage(stage_rec)
+    P.verify_stage(a4_rec)
     copies = {e["role"]: Path(e["copy"]) for e in stage_rec["files"]}
     sha = {e["role"]: e["sha256"] for e in stage_rec["files"]}
     lines = b0_lines(queue_dir)
@@ -295,7 +344,7 @@ def run(queue_dir: Path, stage_json: Path, out: Path) -> int:
     cache = {str(Path(copies["of_inputs_5d"]).resolve()): inputs}
     import s5c_pseudo
     for truth, seed in experiments():
-        seen = capture(truth, lines[(truth, seed)], cache, out / "scratch")
+        seen = capture(truth, lines[(truth, seed)], cache, out / "scratch", rho)
         is_b = s5c_pseudo.half_mask(inputs["MCgen"].shape[0], seen["split"])
         half = ibu1.half_from_experiment(gw, seen["exp"], is_b)
         sink: list = []
@@ -322,6 +371,10 @@ def run(queue_dir: Path, stage_json: Path, out: Path) -> int:
 
 
 def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv == ["stage-a4-manifest"]:  # Addendum A4: the staging manifest, for ``prr_probe.py stage --manifest``
+        print(json.dumps(rho_manifest(), indent=1))
+        return 0
     ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0], allow_abbrev=False)
     ap.add_argument("cmd", choices=("run",))
     ap.add_argument("--queue-dir", type=Path, required=True)
@@ -334,10 +387,16 @@ def main(argv=None) -> int:
         print(f"refusing: {a.out} exists", file=sys.stderr)
         return 2
     import ref_g1
-    stage_dir = Path(json.loads(a.stage.read_text())["dest"])
-    try:
+    try:  # Addendum A4: both stage records are read once, here, before the guard, and passed to run()
+        stage_rec = json.loads(a.stage.read_text())
+        stage_dir = Path(stage_rec["dest"])
+        a4_path = a.stage.with_name(STAGE_A4)
+        if not a4_path.is_file():
+            raise P.Refused(f"no {STAGE_A4} beside {a.stage}: the rho arrays are not staged")
+        a4_rec = json.loads(a4_path.read_text())
+        rho = rho_copies(a4_rec, stage_dir)
         with ref_g1.read_guards(ref_g1.PROTECTED, (REPO, a.out, stage_dir, a.queue_dir), root=False):
-            return run(a.queue_dir, a.stage, a.out)
+            return run(a.queue_dir, stage_rec, a.out, a4_rec, rho)
     except (P.Refused, ref_g1.GateFailure) as e:
         print(f"refusing: {e}", file=sys.stderr)
         return 2

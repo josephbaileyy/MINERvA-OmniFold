@@ -1,0 +1,44 @@
+node login29 2026-11-09T13:54:15Z
+staged sha256 053204df80f71b9f71ee1f995ddbe55a9b4f697bdd52fc50d97a5e79a2adefca
+logs/*misc* before the post:
+-rw------- 1 josephrb josephrb   103 Nov  9 03:25 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/charge-before-misc.txt
+-rw------- 1 josephrb josephrb     0 Nov  9 03:25 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/clone-misc.log
+-rw------- 1 josephrb josephrb     2 Nov  9 03:26 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/connect-misc.done
+-rw------- 1 josephrb josephrb  2171 Nov  9 03:26 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/connect-misc.log
+-rw------- 1 josephrb josephrb   384 Nov  9 03:26 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/connect-source-misc.log
+-rw------- 1 josephrb josephrb   384 Nov  9 03:26 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/env-precheck-misc.log
+-rw------- 1 josephrb josephrb     9 Nov  9 03:26 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/misc.jobid
+-rw------- 1 josephrb josephrb   191 Nov  9 05:51 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/prr_misc_61030122.out
+-rw------- 1 josephrb josephrb 13486 Nov  9 03:25 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/prr_misc_submit.sh
+-rw------- 1 josephrb josephrb     0 Nov  9 03:26 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/sourced-python-misc.err
+-rw------- 1 josephrb josephrb    29 Nov  9 03:26 /pscratch/sd/j/josephrb/fd-prr-20261108/logs/submit-misc.out
+post_rc=0
+ls: cannot access '/dev/shm/prr_misc_post.1186759.sh': No such file or directory
+8aef01eea45c74f0ab9b85df9a6b63e4149c5b018293eef011ee122fc9f13d78  post-misc.tar.gz
+8aef01eea45c74f0ab9b85df9a6b63e4149c5b018293eef011ee122fc9f13d78  post-misc.tar.gz
+-rw------- 1 josephrb josephrb 80706 Nov  9 05:54 /pscratch/sd/j/josephrb/fd-prr-20261108/post-misc.tar.gz
+post-misc/logs entries:
+total 13
+drwx------ 2 josephrb josephrb  4096 Nov  9 05:54 .
+drwx------ 5 josephrb josephrb  4096 Nov  9 05:54 ..
+-rw------- 1 josephrb josephrb   103 Nov  9 03:25 charge-before-misc.txt
+-rw------- 1 josephrb josephrb     0 Nov  9 03:25 clone-misc.log
+-rw------- 1 josephrb josephrb     2 Nov  9 03:26 connect-misc.done
+-rw------- 1 josephrb josephrb  2171 Nov  9 03:26 connect-misc.log
+-rw------- 1 josephrb josephrb   384 Nov  9 03:26 connect-source-misc.log
+-rw------- 1 josephrb josephrb   384 Nov  9 03:26 env-precheck-misc.log
+-rw------- 1 josephrb josephrb     9 Nov  9 03:26 misc.jobid
+-rw------- 1 josephrb josephrb   191 Nov  9 05:51 prr_misc_61030122.out
+-rw------- 1 josephrb josephrb 13486 Nov  9 03:25 prr_misc_submit.sh
+-rw------- 1 josephrb josephrb     0 Nov  9 03:26 sourced-python-misc.err
+-rw------- 1 josephrb josephrb    29 Nov  9 03:26 submit-misc.out
+tasks entries:
+     93 log
+     93 time
+post.done: 0
+200ae3fbcf0dfbd088aea661b365a867647176743829742a0e7241f1fc6caa35  post.log
+9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  post.done
+direct sha256 of log-misc/SHA256SUMS:
+90f6531dd496d0d9b878c95f4fb058ab0bc7ff8af155ce0ed8a3c8858fe5de6d  /pscratch/sd/j/josephrb/fd-prr-20261108/log-misc/SHA256SUMS
+90f6531dd496d0d9b878c95f4fb058ab0bc7ff8af155ce0ed8a3c8858fe5de6d  /pscratch/sd/j/josephrb/fd-prr-20261108/post-misc/log-misc/SHA256SUMS
+181

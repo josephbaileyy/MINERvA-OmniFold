@@ -1,0 +1,31 @@
+FD-PRR addendum A2: the fixture comparison against a clean clone at M_A1 (6727020a7c58b00dd00806151c627c8a24f72402, porcelain 0)
+date_utc: 2026-11-09T07:27:24Z  host: DN0a1f6baa
+clone: a clean clone, HEAD db0e801f1fc4a928deaa3331d438758dac29837c, porcelain lines before: 0
+python: 3.12.2  numpy: 1.26.4  scipy: 1.15.2  bash: GNU bash, version 3.2.57(1)-release (arm64-apple-darwin25)
+thread caps: OMP=1 MKL=1 OPENBLAS=1 NUMEXPR=1 VECLIB=1; nice -n 19; one serial process
+f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232  prr_probe.py
+17acad82bad7c43f45c423e41039eb81381f5acab15ecdf983ad0d023848d046  prr_ibu.py
+d7c7c2c0d6cbe4a13d445a779335699de3d5275c4bcd3efc9f4e84a166868fbe  prr_read.py
+10290087cdd57d972a4df5289f1910161373e8def3f44c15ba0682f9d14a0b85  sbatch_prr.sh
+59e6fcf8d6a56c05fde47e3c1bc2aab96d7af81f18f70115eadbe34c74c31154  test_prr.py
+a6f673cdc4ab8bcb6b873bfd82ca20a886cfb7fae570a363cdc5230acb1bd3ad  prr_mutation.py
+command: PYTHONHASHSEED=0 python3 -B docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/a2/fixture_read.py <clone> <dir> at each commit; python3 -I docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/a2/compare.py
+----
+{"verdict": "COMPLETE"}
+M_A1 read rc=0
+{"verdict": "COMPLETE"}
+A2 read rc=0
+3be1e11717321de447b7da384da7d8f374563b408a520bb304fb32380bde5d21  m_a1/readout.json
+6c920311da684a3865272b09f71e11857b23dec6c843ac1bc9c28a5ffbc76302  m_a1/readout.txt
+8781f6331839c348bf993d19d7c0954b479f785ef65b557adb56b61783be4278  a2/readout.json
+6c920311da684a3865272b09f71e11857b23dec6c843ac1bc9c28a5ffbc76302  a2/readout.txt
+readout.txt: M_A1 32707 bytes, A2 32707 bytes, identical True
+M_A1 readout.json: 252119 bytes, verdict COMPLETE, 'd' keys 0
+A2 readout.json: 320704 bytes, 'd' keys 181, table entries 181, with 16-value d 181, 'd' keys outside table entries 0
+A2 readout.json with each table entry's 'd' deleted: 252119 bytes, identical to M_A1's True
+A2 FIXTURE COMPARISON :: PASS
+M_A1 clone porcelain after: 0
+----
+rc=0
+porcelain lines after: 0
+date_utc: 2026-11-09T07:27:27Z
