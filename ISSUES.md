@@ -1123,7 +1123,7 @@ Scope: Index of referee findings for Round 3 resolution. Resolution column remai
 | Item | Source (#1023) | Referee Claim (One Sentence) | Note Target (1a167633) | Resolution |
 | :--- | :--- | :--- | :--- | :--- |
 | **GEM-3.1** | `gemini.txt:23` | Reconcile contradictory statements in §5.3 regarding whether C_model was included or excluded in held-out-tune draws. | `docs/analysis-note/sec_validation.tex:206` | The limits sentence says the model term is in the remade covariance and is not drawn in the pseudo-experiments. |
-| **GEM-3.2** | `gemini.txt:28` | Harmonize target nucleon count between 2D (3.2353e30) and higher-dimensional extractions (3.235e30). | `docs/analysis-note/sec_method.tex:184-188` | pending |
+| **GEM-3.2** | `gemini.txt:28` | Harmonize target nucleon count between 2D (3.2353e30) and higher-dimensional extractions (3.235e30). | `docs/analysis-note/sec_method.tex:187` | The higher-dimensional sentence uses the fiducial nucleon count already printed in the formula. It does not print a second rounding. |
 | **GEM-3.3** | `gemini.txt:33` | Provide structural accounting for clashing bin counts (10,976 vs 10,694 vs 10,499 vs 4,830). | `docs/analysis-note/sec_method.tex:192` | pending |
 | **GEM-3.4** | `gemini.txt:39` | Correct Table 1 non-existent '§6.4 exception' cross-reference for 5D covariance adoption. | `docs/analysis-note/sec_execsummary.tex:25` | pending |
 | **GEM-3.5** | `gemini.txt:44` | Reconcile Table 1 designating configuration (e) for 3D/4D central values with Figs. 17 and 23 using configuration (a). | `docs/analysis-note/sec_execsummary.tex:21` | pending |
