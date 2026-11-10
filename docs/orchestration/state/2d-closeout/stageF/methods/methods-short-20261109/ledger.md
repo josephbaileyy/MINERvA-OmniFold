@@ -1877,3 +1877,51 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - check_restyle against 74affb297 shows only the intended additions, the keyed numerals, and Q11–Q22 as before. Q23
     matches.
   - check_round with the fill test runs on the committed head before the push.
+
+## 2026-11-10 — note round 3 against the Supplement (check 12, read-only); Tier 1 batch T1-4 (the additions)
+
+- **Check 12 against note round 3** (the director's request). check_supp_sync.py with --note-rev acf934d71 (#952) at
+  f433cd9f7. It is read-only: the tool reads the note through git show, so no worktree or archive was made, and #977 was
+  not changed. Result: NOTE-CHANGED 8, explained 34, same 11, seed-adapted 1, synced 4. **UNEXPLAINED none.** The full
+  texts of the 8 pairs went to the director (scratchpad sync-acf-pairs.md, sha256 8a22e490).
+  - Rulings:
+    - item 2 (supp:176, the ESS sentence) is explained: the Supplement's own ESS paragraph covers it under the same
+      licence;
+    - item 8 (supp:457, S7's joint throws) is explained: it moves to the note in T1-5;
+    - items 1, 3, 4, 5, 6 and 7 are to be synced to the note's round-3 text as their own small batch after T1-4.
+- **T1-4** (the director's Tier 1 item 5):
+  - **S4: "The reported estimator, step by step"**, after the history table. Configuration (e) is written from the code
+    at abdc88c5, the ESS record's code_pin. Each module's sha256 prefix equals ess_capture.py's pin:
+    omnifold_nn_core.py 24f87f11, s5c_unfold.py 510d749a, s5n_pseudo.py 8981f97b, s5e_candidate.py bda8c48c,
+    unfold_2d_omnifold_unbinned.py 8ebe0277, xsec_nd.py 454001f3. s1_assemble.py is cited at fe5d79c61; it does not
+    exist at abdc88c5 (Search: git show abdc88c5:nd-unfolding/s1_assemble.py, empty output @ abdc88c5). The producer's argv (ess.json) is --config R --iters 5 --construction data.
+    - The refinement: s5n_pseudo.py:222-229 signed sample, :264-282 refine; refine_stay_positive
+      unfold_2d_omnifold_unbinned.py:409-454, ν = |w| max(0, 2g−1) with g clipped; R's 400/31 at s5e_candidate.py:33;
+      seed + 3 (REFINE_SEED_OFFSET); deterministic through s5c_unfold.config_params.
+    - The loop: omnifold_nn_core.py:248-266; make_estimators :143-148 (100 trees, 8 leaves, learning rate 0.1);
+      _reweight :152-155; the regressor :258-260; the pull :261; step 2 :263-266.
+    - The cross section: s5c_unfold.py:136-146, extract_cross_section_nd xsec_nd.py:54. The cells: s1_assemble.py:119-122.
+  - **The limitations list gains a seventh item.** The two-dimensional covariance's universe unfoldings approximate the
+    weighting of events that fail reconstruction. The approximation is not corrected, and its two-universe test excludes
+    only an effect above twice an earlier seed block's spread (the note's sec_systematics.tex sec:uq-2d-scope; §3.2
+    already states the omission). It carries an absence-ok waiver. No text counts the items.
+  - **S5, C_model's carbon component.** One sentence: the NuWro and GiBUU ratios are built from the generators' carbon
+    samples without a correction to CH, so their shifts include the target difference as well as the generator
+    difference, and the reported C_model keeps them on carbon. Source: FD-GENCMP-AMENDMENT-E-DECLARATION.md:82;
+    DECISION-20261102-joseph-cmodel-keep-carbon-state-effect.md item 1 (#680).
+    - The component's measured size with CH ratios (FD-GENCMP-AMENDMENT-E-ADDENDUM-E2-REPORT.md) is **not printed**.
+      Its CH ratios use the free-proton samples that the paper withholds (B5; the V-PRIOR decision). Raised with the
+      director.
+    - The sentence does not say whether the GENIE CV reference sample is on CH; the records read do not state it.
+  - **The held-out tunes** as gated, normalized shape deformations:
+    - §3.3: "each enters as a gated, normalized shape deformation of the simulated truth: the ratio … to GENIE CV in each
+      fine cell, kept where its relative statistical uncertainty is at most \fvval{f1-statmax}, pooled over the coarse cell
+      or set to 1 otherwise, and normalized so that it changes the shape only (S9)";
+    - S9's tunes paragraph names them the same way.
+- **Pairs** (base f433cd9f7): t1-4-read/pairs.tsv (18 rows).
+- **Checks:**
+  - both rater copies PASS; 0 Overfull and 0 undefined in both;
+  - check_round PASS (the fill test runs on the committed head before the push);
+  - make_values PASS (4134); sec4 17/17; pointers 42; registry PASS; check 12 unchanged;
+  - check_restyle against f433cd9f7: only the additions (the code line numbers and settings are new numerals in the
+    Supplement), and Q11–Q22 as before.
