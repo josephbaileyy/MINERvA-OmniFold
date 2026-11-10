@@ -271,6 +271,7 @@ docs/orchestration/DECISION-20261109-joseph-methods-baseline-and-plan.md	tracked
 docs/orchestration/DECISION-20261109-joseph-placeholder-draft-reads.md	tracked	LIVE	document		20261109	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-bv96-stop-defer.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-confirm-round-scope.md	tracked	LIVE	document		20261110	open		route-only	no
+docs/orchestration/DECISION-20261110-joseph-ens1-deficit-licence.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-ll5d-rerun-16-cells.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-paper-asap-vhalf-diagnostic.md	tracked	LIVE	document		20261110	open		route-only	no
 docs/orchestration/DECISION-20261110-joseph-vprior-withhold.md	tracked	LIVE	document		20261110	open		route-only	no
@@ -6010,7 +6011,9 @@ docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-ji
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-jinst-test-20261106/sonnet-jinst-methods-r2-2.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-confirm-20261110/README.md	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-confirm-20261110/SHA256SUMS	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-confirm-20261110/claude-followup-ens1.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-confirm-20261110/claude.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
+docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-confirm-20261110/followup-ens1.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-confirm-20261110/gpt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-confirm-20261110/manuscript-confirm.blind.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes
 docs/orchestration/state/2d-closeout/stageF/methods/secondary-results/referee-methods-confirm-20261110/prompt.txt	tracked	MACHINE	state-artifact	2d-closeout		generated		exact-path-only	yes

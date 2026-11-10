@@ -18,6 +18,11 @@ compare directly.
 major revision. Both judge the paper publishable in JINST as a diagnostic methods study after revision, and neither
 finds any limitation disqualifying for that kind of paper.
 
+**Follow-up (2026-11-10, at Joseph's request):** the director resumed the Claude referee's saved session
+(`407b8304…`, same flags) with `followup-ens1.txt`, a neutral question on its item M5 giving both options for the
+ensemble deficit's size. Its answer is `claude-followup-ens1.txt`. Decided in
+`DECISION-20261110-joseph-ens1-deficit-licence.md`.
+
 ## CITABLE FOR / NOT CITABLE FOR
 
 - **Citable for:** what each reader reported.

@@ -1,0 +1,9 @@
+**(a)** Option (1) answers M5. I asked for the magnitude of the ensemble average's one deficit, and (1) gives it: an RMS closure-bias excess of 0.000512 on 0.056, which is 1.23 times its floor, while the maximum-bias excess stays within its floor. Readers can judge the size themselves. The authors need not say whether the excess is noise, or rank the two estimators. Reporting the numbers is consistent with the pre-specification. That record limits which decisions and readings may be made. It does not forbid publishing measured values that are already labelled descriptive.
+
+Option (2) would leave the request unmet. Telling the referee that the magnitudes were declared descriptive explains why the authors draw no conclusion from them. It does not put them in the paper, so the reader still sees only "worse at one of 17". I also withdraw my suggestion that the decision rule needed a stronger justification. The pre-specified verdict stands, and with the numbers printed next to it, it needs no further defence.
+
+**(b)** I accept that there is no data result in this revision. In place of it, I would require two things:
+- A sentence saying the ensemble average was evaluated only on simulated pseudo-data. Its claim to meet the stability requirement is therefore a pseudo-data statement. The illustrative data output uses the baseline estimator, which fails that requirement.
+- In Sec. 7.1, item 3, a note that the instability of the data result itself is not mitigated.
+
+A data run is not a condition of acceptance. The data output is an illustration, and the conclusions do not depend on it. If the authors plan a data run, they may say so in one clause.
