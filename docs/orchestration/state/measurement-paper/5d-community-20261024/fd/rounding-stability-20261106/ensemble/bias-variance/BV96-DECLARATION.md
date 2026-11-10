@@ -332,6 +332,30 @@ E₉₆'s statistical σ relative to F's is printed. ENS1 assumed it unchanged a
 - **M = 30 is declared (the director's ruling).** If the simulation gives P(E-better at both) < 0.8 under the model "E₉₆
   removes F's rounding variance and leaves its bias unchanged", BV96 returns to the director for M before the binding.
 
+**The O1 result (2026-11-10; `power/receipts-o1/`, `power/bv96_power_sim.out.txt`). The power is far below 0.8 at
+every M simulated, so M returns to the director.**
+- The inputs are FD-STAB's 70 control products, read on login40 under O_NOATIME, each digest equal to its committed
+  line. `bv96_power_derive.py` reproduces fd_stab.json's sd51 (0.5813 / 2.5153) and cell_sd.
+- **The headline**, the minimum over ρ of the median over the 136 truth pairs of P(E-better at both): **0.001 at
+  M = 20, 30, 40 and 60.** Without the two GiBUU truths, it is 0.0007 at M = 30 over the 105 remaining pairs.
+- FD-STAB §5.3 keeps the GiBUU truths' bias magnitudes out of every criterion, and ENS1's licence keeps them out of any
+  use beyond "no worse". The simulation's inputs include FD-STAB's control closures at A7 GiBUU and Stage 0c GiBUU, as
+  development inputs for power planning only. The figures quoted below exclude them. Whether they may enter at all is
+  the director's to rule (O6).
+- Per truth at M = 30, P(E-better) is 1.000 at the nominal truth. At the 14 other non-GiBUU truths it is 0.015–0.12:
+  at the false-claim level, except W2 (0.10–0.12) and P3r (0.05).
+- **Why.** At F0b's non-nominal truths, (e)'s noise-free bias on the 153 functionals is large in σ_rel units: median
+  |b_j| from 4.5 (W2) to 62 (A7 NuWro), against 0.46 at the nominal truth. E₉₆'s gain is at most mean sd51² = 0.78
+  σ_rel². Its noise is about 2|b_j|·sd_j per experiment: SD(d_m) is 4.1–53 at those truths, against 0.55 at the nominal
+  truth.
+  - So §1.1's scale argument holds on the 153 functionals as well, once the truth's bias is many statistical σ.
+  - Power 0.8 at one truth would need about 350 (W2) to about 28,000 (P1g) experiments, with a median over the 14 of
+    about 5,800. That is about 700 to 55,000 node-h per truth.
+- **What it means for BV96.** At generator-shape truths like F0b's, and so very likely at R1 and R2, an MSE comparison
+  of E₉₆ with (e) reads NO_PREFERENCE by construction at any affordable M. The MSE preference there is decided by the
+  bias term, which the estimator's own rounding draw prevents resolving at the second-order scale of the gain. The
+  director decides how BV96 proceeds (O6, §12).
+
 ## 9. Compute
 
 **The unit is ENS1 stage 2's measured charge:** 32.9389 node-h over its 1,626 full-run unfolds, **0.020258 node-h per
@@ -433,6 +457,8 @@ The director's rulings of 2026-11-10 (in correspondence; recorded with the bindi
   through `s5p_nullexp`'s alternative, where F1 used `s5e_candidate` and LL5D `fd_1b_toys.truth_ratio`. **REQUIRED
   test:** the weight equals F1's definition on a fixture, as FD-STAB's addendum A1 checked for `closure_nuwro`
   (`estimator_stability_probe.py:614`).
+- **O6, the O1 power result (§8): open, for the director.** At M = 30 the headline is 0.001, and no M up to 60
+  reaches 0.8. The lane does not change the design; the director decides.
 - **Sequencing.** BV96 goes to `coverage-5b-audit` after LL5D's fix A1a.2, routed by the director. Per item 4, it is
   bound and launched only after LL5D ends. Its cap is under half the balance, so the launch is the director's after the
   binding, with Joseph told first.
