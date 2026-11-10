@@ -201,7 +201,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-2 [R]** — **Tune v1 normalization deficit quoted four ways.**  
   *Finding:* Deficit quoted as ~9% (ratio 0.91) in §6.5; 0.883 (10–28%) in §7.6; integrated data/Tune = 1.13 (0.885) in §7.8; ~12% in §2.5.  
   *Evidence:* `docs/analysis-note/sec_experiment.tex:45`, `sec_results.tex:85`, `sec_3d.tex:138`, `sec_eavailw.tex:148`.  
-  *Resolution:* Reconcile all text to quote the exact values through `values.tex` / `values_fived16.tex` macros and specify phase-space definitions (reco vs truth fiducial vs $E_{\\text{avail}}$ marginal).
+  *Resolution:* This row authorizes no tex edit. The four quotes are different quantities and already name their phase spaces: the reconstructed signal-plus-background excess of about 12 percent, the 2D total ratio 0.91, the 3D full-phase-space range of 10 to 28 percent, and the E_avail-marginal data/Tune ratio 1.13. Do not replace them with one macro. Do not add a sentence that equates them.
 
 * **S1-ACC-3 [T]** — **Location of Tune v1 deficit in $p_T$.**  
   *Finding:* §2.5 says data/MC rises with $p_T$ (0.88 to 1.2), §6.5 says deficit is concentrated in low-$p_T$ peak, Fig. 14 says ratios below unity at lowest $p_T$.  
