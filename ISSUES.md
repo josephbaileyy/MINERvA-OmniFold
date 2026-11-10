@@ -143,7 +143,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Descriptive central-value excesses must not be claimed as physical model localization in higher dimensions without covariance.  
   *Record:* `OUTCOME-20261107-valid-region.md:36` (`NOT CITABLE FOR localization in either direction`).  
   *Target:* `docs/analysis-note/sec_execsummary.tex:13`, `sec_3d.tex:140`, `sec_eavailw.tex:151`, `sec_joint.tex:237`.  
-  *Resolution:* Strip physical localization wording; qualify as exploratory central comparisons.
+  *Resolution:* Two localization clauses are removed. The 3D sentence no longer says the high-E_avail excess is localized on the (E_avail, W) plane. The shallow-inelastic sentence no longer says the same localized excess or that a location was identified. The named-bin ratios and the Valencia paragraph stay. Do not add the word exploratory. Do not restore the deleted corner sentence.
 
 * **AUD-L2 [T]** — **Tension anatomy run-period cause statement.**  
   *Finding:* Remove causal attribution for the 2D shape tension; state that run period accounts for variance only in poorly determined modes and cause remains unknown.  
