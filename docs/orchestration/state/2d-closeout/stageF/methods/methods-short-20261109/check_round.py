@@ -494,6 +494,8 @@ def self_test():
         print("self-test: the date check is wrong"); ok = False
     if not check_once_gone({"f": "the benchmark validates the five-observable distribution " + " ".join(ONCE)}):
         print("self-test: NOT CAUGHT an affirmative validation claim"); ok = False
+    if not check_once_gone({"f": "the test not only validates the five-observable distribution " + " ".join(ONCE)}):
+        print("self-test: NOT CAUGHT 'not only validates', an affirmative claim behind a 'not'"); ok = False
     if check_once_gone({"f": "it does not validate the five-observable distribution. " + " ".join(ONCE)}):
         print("self-test: GONE flags the denial that decision item 6 asks for"); ok = False
     if not check_once_gone({"f": " ".join(ONCE[1:])}):

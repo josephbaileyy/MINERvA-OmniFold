@@ -782,3 +782,6 @@ Checks:
     self-test plants both forms: the affirmative is caught, and the denial passes.
   - Checks: the rater copy PASS (the denial prints once), check_round with the fill test PASS, the self-test PASS,
     and registry, sec4, pointers, and check_restyle against 1bf524e53 PASS.
+  - The director's addition: the self-test also plants "not only validates the five-observable distribution", which
+    is caught (an affirmative claim behind a "not"). Measured on the guard: "not only validates" is caught, "does
+    not validate" passes, "validates" is caught, and "never validates" is caught, a safe false positive.
