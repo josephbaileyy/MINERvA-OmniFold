@@ -93,7 +93,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Executive summary must state background-treatment choice beside learner choice.  
   *Record:* `AUDIT.txt` row E10; `sec_method.tex:79`, `:103`; `DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:61-63`.  
   *Target:* `docs/analysis-note/sec_execsummary.tex:9`.  
-  *Resolution:* Add sentence ending "the comparison with the publication is therefore not an independent test of the method".
+  *Resolution:* This row authorizes no tex edit. The executive summary already states the learner choice and the background-treatment choice beside it. The background sentence says the treatment was decided on a closure test before the rebuilt result's distance from the published result was computed, and that the rebuilt result was adopted after that distance was known, and it ends with the clause that the comparison with the publication is therefore not an independent test of the method. Do not add a second sentence. Do not add the broader claim that the background treatment was selected with the published result known. Do not copy article text into the note. Do not edit the status-table cell. AUD-N7 is a later row.
 
 ### HELD and NOT DRAFTED in Round 1 (Status in Round 2)
 
