@@ -1,0 +1,46 @@
+{
+  "parent": "06a3438f1",
+  "changes_limited_to_span_labels_and_ll5d_line_break": true,
+  "normalized_paper_body_sha256": "7f1d6ff757c20f731651cb129c5ae80f74eb3b8a109be1d568f88820d9112e45",
+  "table_cells_keys_order_captions_glossary_unchanged": true,
+  "values_file_unchanged": true,
+  "check_round_9_failures": [],
+  "geometry": {
+    "normal_table1": {
+      "page": 5,
+      "body_height_pt": 434.105,
+      "width_pt": 508.095
+    },
+    "normal_table2": {
+      "page": 8,
+      "body_height_pt": 197.93,
+      "width_pt": 508.095
+    },
+    "reported_header": {
+      "width_pt": 34.224,
+      "four_column_cmidrule_width_pt": 114.836,
+      "strictly_inside_trimmed_cmidrule": true
+    },
+    "filled_dummy_table1": {
+      "page": 6,
+      "body_height_pt": 481.428,
+      "width_pt": 508.095
+    },
+    "filled_dummy_table2": {
+      "page": 8,
+      "body_height_pt": 197.93,
+      "width_pt": 508.095
+    }
+  },
+  "rejected_all_natural_truth_trial_overflow_pt": 30.37039,
+  "dummy_case": {
+    "campaign": "graded",
+    "route": "offset-proceeded",
+    "readings": "covers in all four entries (longest printed label)",
+    "anyover": "some",
+    "result_lines_before_break": 5,
+    "result_lines_after_break": 6,
+    "scratch_values_committed": false
+  },
+  "normal_and_dummy_build_clean": true
+}
