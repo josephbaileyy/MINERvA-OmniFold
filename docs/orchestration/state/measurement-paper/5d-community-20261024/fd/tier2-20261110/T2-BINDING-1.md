@@ -48,3 +48,28 @@ computed and read once, under the director's binding, from existing products onl
    repaired into it.
 
 Nothing is submitted, deposited or tagged.
+
+## Addendum 1: T2A's control A1 tolerance, and a numerical-precision readout (director, 2026-11-10, before any reading of E)
+
+**What led to it.** Before the split script ran on E, the valid-region lane measured how `fd_1b_null.chi2_nonnull`'s
+mean χ² responds to the linear-algebra build, on the committed C_T with 300 synthetic vectors and no toy data:
+- a different LAPACK driver on the same C moves it by 4.0e-9 (AR23) and 9.0e-10 (G18), relative;
+- an eps-level symmetric perturbation of C moves it by up to 8e-8 (AR23) and 1.3e-6 (G18).
+C_T's λ_min/λ_max is 9.99e-13 (AR23) and 1.05e-12 (G18), so the smallest retained directions carry eigenvalue errors
+of order eps·λ_max. A1's 1e-12 χ² comparison between the Mac and the login node's build would fail on numerics alone.
+
+**Rulings:**
+1. **A1's χ² comparison** uses COV2D's own A5 rule: relative tolerance max(1e-9, 10·κ₂(C_T)·eps), about 2.1e-3 at
+   these tunes. The pulls (1e-12), the counts (exact) and ndf (exact) are unchanged. A0, which regenerated each score
+   field for field from this E and pins E's sha256, carries the claim that E is the graded E.
+2. **A2** (the split's identity) stays at 1e-12, because both sides use one decomposition.
+3. **A numerical-precision readout is added, descriptive only.** The whitened components and the truncated counts are
+   computed with two LAPACK drivers (numpy `eigh` and scipy `eigh(driver="evr")`). Per rank k, the readout reports
+   the larger of the two drivers' differences in b_k and f_k, and whether the truncated counts at 73 and 139 agree.
+   Ranks whose components differ by more than 1 % between the drivers are marked "numerically unresolved" in the
+   table and figure. No reading is made from them.
+4. **The measurement above** is recorded in the receipt.
+
+This changes no licence and adds no criterion. Nothing in E had been read.
+
+Nothing is submitted, deposited or tagged.
