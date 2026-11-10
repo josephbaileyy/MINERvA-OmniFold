@@ -1,0 +1,7 @@
+2026-11-10T05:52:39Z
+note #952 at 1a167633; blind 69,598 words; readers: gemini-3.8-flash-high (agy --sandbox) and gpt-6.1-sol high (codex-school, read-only, note.blind.txt in its dir)
+cf8b985d4c111cbc7cfe95fe2295afa9acd80abbd664e2e20d4a9bcdffbadabc  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/note-r2-blind/reads/prompt.txt
+dc84b771330051806dc1c128a95d14010810750fedc02d6b5ffc2f1ae5a8515c  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/note-r2-blind/note.blind.txt
+gemini rc=0
+gpt rc=0
+gemini retry rc=0
