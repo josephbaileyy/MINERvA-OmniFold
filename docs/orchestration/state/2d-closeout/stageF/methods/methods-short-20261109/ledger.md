@@ -1404,3 +1404,57 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - no Overfull in either build;
   - check_round with the fill test PASS; make_values --check PASS (4026 values) and its self-test PASS;
   - sec4 17/17 (17 passed); pointers 37; registry PASS.
+
+## 2026-11-10 — group C: main merged, the ESS paragraph, V-ATLAS rule 1, B1 row 1's counts (director's rulings 1-4)
+
+- **Main merged** (ruling 1): a3da98a2a, `merge --no-ff origin/main` (12 commits through b18426156, PR #1027), no
+  rebase, no cherry-pick. 1a015eef, 3c3a6f74 and 4580caf5c are ancestors of the merge. None of the merged commits
+  touches docs/analysis-note.
+- **S4, the ESS paragraph** (ruling 2), at the end of supp:estimators. Source: fd/receipts-ess/cluster/ess/ess.json
+  (sha256 d4f1268d…, pin "ess"), under its README's CITABLE FOR and NOT CITABLE FOR. Keys: make_values ess_values.
+  - (B), each event's contribution to the cell integral, is the printed definition. make_values asserts that (A),
+    the final weight wpush·w_truth, gives the same n_eff/n and max share at the printed figures and n_eff to 1e-6, so
+    the text names both.
+  - "14 of 16 ≥ 0.903" is computed. The cells split at 0.9, and make_values asserts the gap: exactly two cells (R04
+    0.612, R00 0.638) are below 0.9, and both are below 0.7. ess-nhigh and ess-high-min are counted from the others.
+  - Asserted: every (A) and (B) weight is positive (n_negative and n_zero are 0) in every cell and globally; verdict
+    PASS; xsec_flat bound; 0 events in zero-denominator cells.
+  - NOT CITABLE FOR is one clause: "describe the weights of this one result and are not an uncertainty, coverage or
+    validity statement".
+  - **S4's Training details** said "No effective sample size of the unfolded ensemble is computed." The ESS record has
+    made that false for the reported result, so the sentence now points to the new paragraph (one content fix,
+    source comment amended). The note's sec_method.tex:15 still says it. That is not this lane's file; reported to the
+    director.
+- **S11, V-ATLAS rule 1** (ruling 3). The deviation statement is kept. 331 614 (R07) and 0.368 % (R05) are now keys
+  (vatlas-*, from the valid-region read readout.json 91bb604e, pin "vregion").
+  - make_values asserts that V-ATLAS's mc_neff_truth equals the ESS record's prior_w_truth n_eff in every cell, to
+    1e-9 relative. So the two records measure the same quantity on the same events.
+  - One clause is added: the final-weight n_eff is at least \fvval{ess-neff-min} (325 119, R07) in every cell, so the
+    first condition also holds under the definition of Ref. [ATLAS:2024jets]. The 5000 threshold is asserted under both
+    definitions.
+  - Rule 2 (V-PRIOR) is untouched in this commit.
+- **B1 row 1 and §3.2** (ruling 4). Traced in the adopted 2D covariance Q's records (RE-2 part C r2):
+  - 300 bootstrap replicas: s5.json.gz (5c489837, pin "s5q") counts 300 production outputs 2dc_P_S1_*, equal to
+    budget_Q.json.gz's (971e8a9d, pin "budgetq") derived count stat_replicas_S1. Key cov2d-nstat. This is Q's statistical
+    block at seed 42, not VL170's superseded seed-1 set; both have 300.
+  - five seed settings: budget_Q's seed_triplets_S4B_seeds_plus_seed42 = 5, which make_values checks against S5's S4B
+    seeds {45, 48, 51, 54} plus seed 42. Key cov2d-nseed-word.
+  - three period groups: playlist_term.json (5b023478, pin "plterm"; its npz c1723cb5 is the C_PL that Q adopted) has
+    period unfoldings PA, PB and PC at seed 42. Key cov2d-nperiod-word.
+  - make_values now reads a pinned .gz readout decompressed. The pin is on the committed .gz bytes.
+  - **187 universes is NOT keyed, and the record does not support it as worded.** S5's checks give the refined arm
+    (Q's) "refined_j2_38_bands_175_universes" [38, 175]: 175 weight universes in 38 bands. Its production outputs add
+    five lateral bands (BeamAngleX/Y, MuonResolution, Muon_Energy_MINERvA/MINOS) with 2 each, which makes 185, plus
+    the flat normalization ("universe_bands_43_plus_norm"). 187 matches "may_44_bands_187_universes", the July
+    sweep's count, which still includes Rvp1pi (2 universes, dropped from Q). The note words it consistently:
+    sec_results.tex:123 "43 of the 44 bands of the systematic-universe sweep (187 universes) with the normalization".
+    The paper's "(187 universes, including the normalization)" reads as the block's own count. Left unrepaired, per
+    the stop rule, and reported to the director. Until the ruling, both sites keep the literal, and check_round's new
+    LITERAL_PAIRS / check_literal_pairs (with a self-test) fails if §3.2 and Table S8 row 1 differ or either is missing.
+    The literal predates this round.
+- **Checks on the working tree:**
+  - both rater copies PASS (16 of 16 table captions); no Overfull in either final log;
+  - check_round with the fill test PASS, and its self-test PASS; make_values --check PASS (4048 values);
+  - sec4 17/17; pointers 37; registry PASS;
+  - check_restyle against 4580caf5c fails only on the added keys, the cite and ref, the three numerals now keyed,
+    and Q11–Q13 (the B5 removals already reported; the re-pin is limitation-resolver's).

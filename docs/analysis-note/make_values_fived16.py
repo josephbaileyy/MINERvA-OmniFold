@@ -12,6 +12,7 @@ with the suffix "-nopl", and a key outside the matrix-dependent families that di
 values_fived16.tex equals a fresh generation (the build and CI run it, as for records_entry_numbers.tex).
 """
 import ast
+import gzip
 import hashlib
 import json
 import math
@@ -123,6 +124,15 @@ READOUTS = {
     "cov2dg18": (f"{FD}/fd/receipts-cov2d/readout/G18/score_G18.json", "84976694"),
     "stabdecl": (f"{FD}/FD-STAB-DECLARATION.md", "6c91c0cc"),
     "fd1bdecl": (f"{FD}/FD-1B-STAGED-DECLARATION.md", "50d9e883"),
+    # group C (#1027): the Kish effective sample size of configuration (e)'s final weights on the sixteen cells
+    "ess": (f"{FD}/fd/receipts-ess/cluster/ess/ess.json", "d4f1268d"),
+    # the two validity rules' read (valid-region lane): V-ATLAS's per-cell effective number and statistical uncertainty
+    "vregion": ("docs/orchestration/state/2d-closeout/valid-region-20261107/receipts/read/readout.json", "91bb604e"),
+    # B1 row 1 and section 3.2: the adopted 2D covariance Q's block sizes. S5's record (statistical replicas, seeds) and
+    # Q's budget (its derived counts), both RE-2 part C r2; the run-period term's record (its period unfoldings)
+    "s5q": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/s5/s5.json.gz", "5c489837"),
+    "budgetq": ("docs/orchestration/state/2d-closeout/stageF/methods/re2/run/partc_r2/partc-r2/outA/budget_Q.json.gz", "971e8a9d"),
+    "plterm": ("docs/orchestration/state/2d-closeout/playlist-term/outputs/playlist_term.json", "5b023478"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -556,6 +566,8 @@ def load(readouts=None):
         sha = hashlib.sha256(raw).hexdigest()
         if not sha.startswith(pin):
             sys.exit(f"make_values_fived16: {rel} has sha256 {sha[:12]}, pinned {pin}: refusing")
+        if rel.endswith(".gz"):          # pinned as the committed .gz bytes, read decompressed
+            raw = gzip.decompress(raw)
         data[key] = raw.decode() if key in TEXT_READOUTS else json.loads(raw)
     return data
 
@@ -1481,6 +1493,7 @@ def values(d, arm="with"):
     se_lc = max(100 * x for x in d["s5ndev"]["grid"]["C4_eavail_shape"]["per_functional"]["se_rel"][:42])
     v["s5e-shapes-semax"], v["s5n-gibuu-semax"] = f"{se_e:.2f}", f"{se_lc:.2f}"
     v.update(groupb_values(d))
+    v.update(ess_values(d))
     rp = a["A3"]["data_rounding_probe_over_data_sigma"]
     v["s5e-round-median"], v["s5e-round-max"] = f"{rp['median']:.1f}", f"{rp['max']:.1f}"
     return v
@@ -1650,6 +1663,84 @@ def groupb_values(d):
     v["prr-sibu"], v["prr-tq"] = f"{fl['s_IBU']:.4f}", f"{fl['T_Q']:.2f}"
     assert f"{fl['bars']['IBU']:g}" == f"{max(fl['bar_floor'], fl['T_Q'] * fl['s_IBU']):g}" and "a transfer" in fl["transfer"]
     return v
+
+
+def ess_values(d):
+    """Group C: the Kish n_eff = (sum w)^2 / sum w^2 of the reported result's simulated events in each of R00-R15
+    (fd/receipts-ess README; CITABLE FOR the per-cell and global numbers, NOT CITABLE FOR an uncertainty, coverage or
+    validity statement). The printed definition is (B), each event's contribution to the cell integral; (A), the final
+    weight wpush * w_truth, must agree with it to the printed figures, so the text may name both."""
+    e = d["ess"]
+    assert e["schema"] == "ess-e-central/1" and e["verdict"].startswith("PASS"), e["verdict"]
+    assert e["binding"]["xsec_flat_bytes_equal"] and e["checks"]["events_in_cells_with_zero_denominator"] == 0
+    cells = e["cells"]
+    assert sorted(cells) == [f"R{i:02d}" for i in range(16)]
+    g = e["global"]["reported_16_cells"]
+    for c in list(cells.values()) + [g]:
+        a, b = c["A_final_weight"], c["B_contribution"]
+        assert a["n_negative"] == b["n_negative"] == 0 and a["n_zero"] == b["n_zero"] == 0, "the text says every weight is positive"
+        assert f"{a['n_eff_over_n']:.3f}" == f"{b['n_eff_over_n']:.3f}" and abs(a["n_eff"] / b["n_eff"] - 1) < 1e-6
+        assert f"{a['max_share']:.1e}" == f"{b['max_share']:.1e}"
+    fr = {k: c["B_contribution"]["n_eff_over_n"] for k, c in cells.items()}
+    v = {}
+    # the cells split at 0.9 with a gap: the two low cells are below 0.7, every other cell is at least 0.9
+    low = sorted((k for k in fr if fr[k] < 0.9), key=lambda k: fr[k])
+    high = [k for k in fr if fr[k] >= 0.9]
+    assert len(low) == 2 and max(fr[k] for k in low) < 0.7, low
+    v["ess-low1-cell"], v["ess-low1"] = low[0], f"{fr[low[0]]:.3f}"
+    v["ess-low2-cell"], v["ess-low2"] = low[1], f"{fr[low[1]]:.3f}"
+    v["ess-nhigh"] = str(len(high))
+    v["ess-high-min"] = f"{min(fr[k] for k in high):.3f}"
+    kmax = max(fr, key=fr.get)
+    v["ess-max-cell"], v["ess-max"] = kmax, f"{fr[kmax]:.3f}"
+    ne = {k: c["B_contribution"]["n_eff"] for k, c in cells.items()}
+    kmin = min(ne, key=ne.get)
+    assert round(cells[kmin]["A_final_weight"]["n_eff"]) == round(ne[kmin]), "the smallest n_eff prints the same under (A)"
+    v["ess-neff-min-cell"], v["ess-neff-min"] = kmin, f"{round(ne[kmin]):,}".replace(",", "\\,")
+    ms = max(c["B_contribution"]["max_share"] for c in cells.values())
+    mant, ex = f"{ms:.1e}".split("e")
+    v["ess-maxshare"] = f"{mant}\\times10^{{{int(ex)}}}"
+    v["ess-global"] = f"{g['B_contribution']['n_eff_over_n']:.3f}"
+    v["ess-global-prior"] = f"{g['prior_w_truth']['n_eff_over_n']:.3f}"
+    nrp = [100 * c["no_reco_partner"]["share_of_sum_B"] for c in cells.values()]
+    v["ess-nrp-min"], v["ess-nrp-max"] = f"{min(nrp):.1f}", f"{max(nrp):.1f}"
+    # V-ATLAS's first condition (S11) read the prior weights' n_eff; the ESS record's prior_w_truth is the same quantity
+    # on the same events, so the two records must agree cell by cell before S11 sets them side by side
+    r = d["vregion"]
+    assert r["schema"] == "valid-region-readout/1"
+    va = r["readings"]["V-ATLAS"]["cells"]
+    assert sorted(va) == sorted(cells)
+    for k in cells:
+        assert abs(va[k]["mc_neff_truth"] / cells[k]["prior_w_truth"]["n_eff"] - 1) < 1e-9, k
+    kp = min(va, key=lambda k: va[k]["mc_neff_truth"])
+    v["vatlas-neff-min-cell"], v["vatlas-neff-min"] = kp, f"{round(va[kp]['mc_neff_truth']):,}".replace(",", "\\,")
+    ks = max(va, key=lambda k: va[k]["stat_rel"])
+    v["vatlas-stat-max-cell"], v["vatlas-stat-max"] = ks, f"{100 * va[ks]['stat_rel']:.3f}"
+    # the guide's threshold, 5000 effective events, holds under both definitions in every cell
+    assert min(ne.values()) > 5000 and va[kp]["mc_neff_truth"] > 5000
+    v.update(cov2d_block_values(d))
+    return v
+
+
+def cov2d_block_values(d):
+    """B1 row 1 and section 3.2: the sizes of the adopted 2D covariance's statistical, training-seed and run-period
+    blocks. The universe count (187) is not keyed: S5's record gives the refined arm 38 weight bands with 175 universes
+    plus five lateral bands, and 187 is the July sweep's count (may_44_bands_187_universes), so it stays a literal
+    pending the director (ledger, group C); check_round tests that the table's literal equals section 3.2's."""
+    s5, bq, pl = d["s5q"], d["budgetq"], d["plterm"]
+    assert s5["arm"] == "refined" and bq["arm"] == "refined"
+    po = s5["inputs"]["production_outputs"]
+    nstat = sum(1 for k in po if re.fullmatch(r"2dc_P_S1_\d{3}", k))
+    dc = bq["s5_copied"]["derived_counts_not_copied"]
+    assert nstat == dc["stat_replicas_S1"] == 300
+    seeds = {re.match(r"2dc_P_S4B_s(\d+)_\d+$", k).group(1) for k in po if k.startswith("2dc_P_S4B_")}
+    assert len(seeds) + 1 == dc["seed_triplets_S4B_seeds_plus_seed42"], seeds   # the S4B seeds and seed 42
+    periods = {m.group(1) for k in pl["runs"] for m in [re.search(r"/pu_(P[A-Z])_s42/", k)] if m}
+    assert pl["checks_passed"] and pl["npz"]["sha256"].startswith("c1723cb5")      # C_PL as Q adopted it
+    words = {3: "three", 5: "five"}
+    return {"cov2d-nstat": str(nstat),
+            "cov2d-nseed-word": words[dc["seed_triplets_S4B_seeds_plus_seed42"]],
+            "cov2d-nperiod-word": words[len(periods)]}
 
 
 def all_values(d=None, d_nopl=None):
