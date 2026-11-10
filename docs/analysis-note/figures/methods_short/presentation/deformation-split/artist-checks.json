@@ -1,0 +1,22 @@
+{
+  "baseline": "8320315bd",
+  "paper_axis_count": 1,
+  "supplement_axis_count": 1,
+  "paper_artist_arrays_equal_previous_panel_b": true,
+  "supplement_artist_arrays_equal_previous_panel_a": true,
+  "paper_plot_sha256": "f9b3a9516d3a39a1f2c6aa7715c9b114d9bd8ad941260a1c066d6f1627d572a9",
+  "supplement_plot_sha256": "43e6e6bb6b6d8e3ed659763ef97607e36d01d7bec465077299568b6c6bce1ffd",
+  "axis_limits_ticks_offsets_colors_markers_sizes_and_error_segments_equal": true,
+  "all_new_text_within_canvas": true,
+  "no_legend_overlaps_data_marker": true,
+  "geometry": {
+    "m3_fig2_deformation": {
+      "width_pt": 508.0,
+      "height_pt": 201.6
+    },
+    "m3_fig2_deformation_lowcap": {
+      "width_pt": 468.0,
+      "height_pt": 201.6
+    }
+  }
+}

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""M3 figure 2: fractional recovery residual by (E_avail, W) cell, nominal truth and generator-sized deformations.
+"""Fractional recovery residuals for reported and lower-capacity estimators.
 
-Left column, s5n family N (state/s5n/stage1/dev_receipt.json): s5c F2 deterministic LightGBM (5 iterations,
+Supplement figure, s5n family N (state/s5n/stage1/dev_receipt.json): s5c F2 deterministic LightGBM (5 iterations,
 100 trees, 8 leaves) with the negweight-refined measured side, refinement classifier 100 trees / 8 leaves;
 60 background-inclusive development experiments per truth (C3 nominal, C4 GiBUU/GENIE E_avail shape).
 The injected per-cell truth change of C4 is from state/s5n/stage1/truth_check.json (M1_ratio - 1).
-Right column, s5e candidate R = the joint-test estimator (state/s5e/cand/assess_receipt.json): family N with the
+Paper figure, s5e candidate R = the joint-test estimator (state/s5e/cand/assess_receipt.json): family N with the
 refinement classifier at 400 trees / 31 leaves; fresh assessment seeds, 40 nominal experiments (A1) and 20 per
 withheld truth W1 (NuWro E_avail), W2 (GENIE MEC, (E_avail,W)), W3 (NuWro (pT,p||,E_avail)). The adopted C_EW total
 sigma per cell (assess_receipt A4.adopted_total_sigma_pct) is no longer drawn: that covariance fails its acceptance
@@ -35,6 +35,7 @@ def per(point: dict) -> tuple[np.ndarray, np.ndarray]:
 def main() -> None:
     a = mc.parse_args(__doc__, Path(__file__).resolve().parent / "out")
     s5n, truth, s5e = mc.load(a.repo, "s5n_dev"), mc.load(a.repo, "s5n_truth"), mc.load(a.repo, "s5e_assess")
+    assert s5e["candidate"] == "R", "paper figure requires the reported estimator"
     names = s5n["functional_names"]
     assert s5e["functional_names"] == names and names[: mc.N_EW] == [f"EW{i}" for i in range(mc.N_EW)]
     n_nom, n_gib = s5n["grid"]["C3_nominal"], s5n["grid"]["C4_eavail_shape"]
@@ -84,10 +85,10 @@ def main() -> None:
     plt.rcParams.update({"font.size": 8.5, "axes.labelsize": 9.3,
                          "xtick.labelsize": 8.3, "ytick.labelsize": 8.3,
                          "legend.fontsize": 8.3})
-    # Layout (methods rewrite, fix round 1, REVIEW-1 P3): the nominal-truth row is not drawn; its maxima are in the
-    # numbers file and the caption (the (d) nominal squares are Fig. 2(a)'s refinement arm).
-    fig, (a_ng, a_rw) = plt.subplots(2, 1, figsize=(508 / 72, 5.2), sharex=True)
-    fig.subplots_adjust(left=0.085, right=0.99, top=0.86, bottom=0.13, hspace=0.55)
+    fig_paper, a_rw = plt.subplots(figsize=(508 / 72, 2.8))
+    fig_lowcap, a_ng = plt.subplots(figsize=(468 / 72, 2.8))
+    for fig, width_pt in ((fig_paper, 508), (fig_lowcap, 468)):
+        fig.subplots_adjust(left=43.18 / width_pt, right=0.99, top=0.77, bottom=0.20)
     x = np.arange(mc.N_EW)
     for ax in (a_ng, a_rw):
         ax.axhline(0, color="k", lw=0.6)
@@ -112,15 +113,30 @@ def main() -> None:
     a_rw.legend(loc="upper left", frameon=False)
     for ax in (a_ng, a_rw):
         ax.set_ylabel("(unfolded $-$ truth)/truth (%)")
+        ax.set_xlabel(
+            r"$(E_{\rm avail},W)$ cell: $W$ bin 1–6 within each "
+            r"$E_{\rm avail}$ bin (GeV, top)",
+            fontsize=9.3,
+        )
     a_rw.tick_params(labelleft=True)
-    a_rw.set_xlabel(r"$(E_{\rm avail},W)$ cell: $W$ bin 1–6 within each $E_{\rm avail}$ bin (GeV, top)",
-                    fontsize=9.3)
-    a_ng.set_title("(a) with unbinned background refinement,\nrefinement classifier 100 trees, 8 leaves",
-                   fontsize=8.3, loc="left", y=1.16, pad=0)
-    a_rw.set_title("(b) five-observable estimator: as (a), with refinement\nclassifier 400 trees, 31 leaves",
-                   fontsize=8.3, loc="left", y=1.16, pad=0)
-    # (X5 Gm9: the in-plot estimator header moved to the article caption.)
-    mc.save(fig, a.outdir, "m3_fig2_deformation")
+    a_ng.set_title(
+        "Lower-capacity variant with background refinement,\n"
+        "refinement classifier 100 trees, 8 leaves",
+        fontsize=8.3,
+        loc="left",
+        y=1.16,
+        pad=0,
+    )
+    a_rw.set_title(
+        "Reported estimator with background refinement,\n"
+        "refinement classifier 400 trees, 31 leaves",
+        fontsize=8.3,
+        loc="left",
+        y=1.16,
+        pad=0,
+    )
+    mc.save(fig_paper, a.outdir, "m3_fig2_deformation")
+    mc.save(fig_lowcap, a.outdir, "m3_fig2_deformation_lowcap")
     (a.outdir / "m3_fig2_deformation_numbers.json").write_text(json.dumps(nums, indent=1) + "\n")
 
 
