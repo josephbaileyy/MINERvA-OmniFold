@@ -1,0 +1,27 @@
+2c2
+< # LL5D section 11 step 4: ll5d_gate_<T> for ONE truth (argument 1: g18 or ar23), LL5D BINDING 2, A1a at M_A1a. One
+---
+> # LL5D section 11 step 4: ll5d_gate_<T> for ONE truth (argument 1: g18 or ar23), LL5D BINDING 2, A1a.1 at M_A1a.1. One
+7c7
+< # this job's 31.0, a fresh clone at M_A1a with the bound blobs, the job script and an atime snapshot, sbatch, TimeLimit.
+---
+> # this job's 31.0, a fresh clone at M_A1a.1 with the bound blobs, the job script and an atime snapshot, sbatch, TimeLimit.
+12c12
+< M=e92e946759772d13e21055b21c69189c8b007183
+---
+> M=a95cc39f7437170af0b65ba042934fad079e0ee2
+15,17c15,17
+< CAL=$P/ll5d-calib-20261108/calibration.json
+< CALSHA=FILL-FROM-THE-CALIBRATION-RECEIPT
+< CALNPZSHA=FILL-FROM-THE-CALIBRATION-RECEIPT
+---
+> CAL=$P/ll5d-calib-2-20261109/calibration.json
+> CALSHA=ea039893e8ec98a9cd3da15dd7811a82a99563da8fbb253e6fc0766eb960fb17
+> CALNPZSHA=b31ddd12d050163396b4811705777fc1fa28f77757575af73c8dc5976b3c1a7c
+44c44
+< 9dbf9cf499f2c709ed7cffe809336a9dfd2122d34185d433036944c6927bf8fc  nd-unfolding/ll5d.py
+---
+> b49f5d5f793265ef0cf569abe1912838cce9280e692f4dd61100d05c133aec1f  nd-unfolding/ll5d.py
+56a57,58
+> bda8c48ce2365e173bbba083b18233d6f6b7c2dfbab5179156073860c8281ec7  nd-unfolding/s5e_candidate.py
+> 6726ff99c7787d1ee6dff7fa5d08df88f9df76285d98c4c462f964ac6164779f  nd-unfolding/s5e_deform.py
