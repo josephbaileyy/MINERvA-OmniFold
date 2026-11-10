@@ -101,7 +101,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Title, abstract, executive summary, `sec_fived16.tex`, and appendices must be unfrozen and reframed to the methods study. Ruled by Joseph in `DECISION-20261108` (#947).  
   *Record:* `DECISION-20261108-joseph-note-framing-and-estimator-dependence.md` item 1.  
   *Target:* `docs/analysis-note/main_note.tex:73`, `sec_execsummary.tex:6`, `sec_fived16.tex:1`, `app_landscape.tex:59`, `app_statmethods.tex:5`.  
-  *Status:* Already drafted at `b1da7ba8` (commit `8cd2a974`); Round 2 verifies implementation and cross-section alignment.
+  *Resolution:* This row authorizes no tex edit. The note is already reframed as the technical record of a methods and benchmark study. The abstract, the executive summary, and the sixteen-cell section say the sixteen-cell output is illustrative and not for fitting or for constraining models. The landscape row for that output says illustrative output. The statistics appendix opens on this note's results and the 2D comparison. The measurement-framed note is archived. Do not change the title. Do not sweep the remaining "this measurement" phrases that name the 2D result. Do not copy article text into the note.
 
 * **AUD-N2 [T]** — **REF-G1 algorithm dependence as a stated limitation.**  
   *Finding:* The IBU vs OmniFold 16-cell difference ($T = 194.4$ against calibrated bar 28.12) must enter as a stated limitation with no new covariance block. Ruled by Joseph in `DECISION-20261108` (#947).  
