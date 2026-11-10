@@ -155,3 +155,38 @@ Colourbar starts with z. Inputs, plotted coordinates and scientific claims uncha
 Integrator's final count request: caption now prints J/H2/EW with 109/27/39, explicitly sourced to
 app_statmethods_nd.tex:25 and verified by the pinned reduction. This supersedes earlier count removal.
 The caption source comment quotes sec_5d.tex:204 verbatim for the correlation/bias limitation.
+
+
+## Rounding figure delivered from committed CSV (supersedes operand gap)
+
+Merged main's authorized receipt #1008 at 13d714bf by merge commit 0e23c6632. The actual route
+was the original producer's four lines on the 103 inputs, not a read of r2_cache.npz; see receipt
+README.md. No cluster access by figures lane. New data source is
+`docs/orchestration/state/s5e/cand/a3-rounding-shifts-20261109/cluster/a3_rounding_shifts.csv`,
+sha256 `9ac8f7d8b74f090c28efc9023a21729ef5505090864ee1459fd998667e2c3987`.
+The JSON is also pinned and binds the 103 inputs for the first time (not retrospectively).
+
+`make_figures.py:rounding_figure` draws an empirical cumulative distribution from CSV alone.
+Every quantity contributes its larger absolute shift under edge-safe perturbations 1 and 2,
+relative to the upcast data baseline, divided by SD of 100 refitted data bootstrap replicas
+(ddof=1). Exact float comparisons reproduce the assess receipt and new extraction JSON:
+median 0.7829505732456221; maximum 2.5837789197284393; argmax J145. Indices 0–152 and all
+quantity names match the original assess receipt in order: 42 EW quantities, EW_all_ones,
+109 J integrals, total_integrated. No H2/sixteen-cell quantities or later jitters substituted.
+
+Configuration (e) check: frozen amendment 3 defines R with data rounding through s5e_trace
+--refine-capacity 400,31. The original committed review2/r2_integrity.json records all 103
+products' metadata and is now pinned: each is five iterations, seed 42, OmniFold 100/8,
+refinement 400/31 at seed 45; the two jitters record float64 edge_safe seeds 1 and 2.
+The extraction's exact summary match is its stated identity test, not an earlier input-digest
+measurement. Numeric points in the plot come only from CSV; metadata and JSON validate provenance.
+
+Vertical lines use amendment 3's frozen limits, 0.3 for median and 1.0 for maximum. The median
+and maximum J145 are labeled at two decimals. This is a distribution over different quantities,
+not coverage or repeated experiments. Caption facts come from producer lines 147–154, amendment
+3, the extraction's CITABLE FOR, and the original perturbation implementation. US spelling.
+
+Deliverables: paper_rounding_shifts.pdf, PNG preview, added rounding block in numbers.json,
+new pins, producer function and final captions.tex snippet. Proposed citation position is §6.1
+immediately after the median/max instability statement. director-helper-3 chooses float placement,
+runs integrated/blinded checks, and owns standalone note synchronization/remote-head record.

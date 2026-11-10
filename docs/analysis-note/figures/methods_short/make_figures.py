@@ -192,6 +192,78 @@ def prior_figure() -> dict:
     return result
 
 
+def rounding_figure() -> dict:
+    """Draw the A3 distribution solely from the committed per-quantity CSV."""
+    base = "docs/orchestration/state/s5e/"
+    csv_path = base + "cand/a3-rounding-shifts-20261109/cluster/a3_rounding_shifts.csv"
+    record = read(base + "cand/a3-rounding-shifts-20261109/cluster/a3_rounding_shifts.json")
+    assessment = read(base + "cand/assess_receipt.json")
+    contract = read(base + "contract-amendment-3-candidate-R-and-assessment.json")
+    assert contract["candidate"]["name"] == assessment["candidate"] == "R"
+    assert "--refine-capacity 400,31" in contract["candidate"]["implementation"]
+    assert record["csv"]["sha256"] == PINS[csv_path]
+    assert record["gate"] and all(record["match"].values())
+    integrity = read(base + "cand/review2/r2_integrity.json")
+    used_keys = {"assess/data/data_R_upcast", "assess/data/data_R_jitteredge1",
+                 "assess/data/data_R_jitteredge2"}
+    used_keys.update(f"assess/data/boot/boot_b{i}" for i in range(1, 101))
+    metadata = {row["key"]: row for row in integrity["rows"] if row["key"] in used_keys}
+    assert set(metadata) == used_keys and len(record["inputs"]) == len(used_keys)
+    for row in metadata.values():
+        assert (row["iters"], row["est_seed"]) == (5, 42)
+        assert row["est_nest"] == [100] and row["est_leaves"] == [8]
+        assert (row["ref_n_est"], row["ref_leaves"], row["ref_rs"]) == (400, 31, 45)
+    for seed in (1, 2):
+        meta = metadata[f"assess/data/data_R_jitteredge{seed}"]["meta_excerpt"]
+        assert (meta["jitter_f32"], meta["jitter_mode"], meta["coords"]) == (seed, "edge_safe", "float64")
+    with checked(csv_path).open() as stream:
+        rows = list(csv.DictReader(stream))
+    names = [row["name"] for row in rows]
+    assert [int(row["index"]) for row in rows] == list(range(153))
+    assert names == assessment["functional_names"]
+    assert names[:42] == [f"EW{i}" for i in range(42)]
+    assert names[42] == "EW_all_ones" and names[-1] == "total_integrated"
+    assert all(name.startswith("J") for name in names[43:-1])
+    shifts = np.array([float(row["shift_over_data_sigma"]) for row in rows])
+    assert np.isfinite(shifts).all() and (shifts >= 0).all()
+    measured = {"median": float(np.median(shifts)), "max": float(shifts.max()),
+                "argmax": names[int(shifts.argmax())]}
+    expected = assessment["A3"]["data_rounding_probe_over_data_sigma"]
+    assert measured == expected == record["computed"]
+    criteria = contract["criteria"]
+    median_limit = criteria["rounding_median_max_sigma"]
+    maximum_limit = criteria["rounding_max_sigma"]
+    ordered = np.sort(shifts)
+    fraction = np.arange(1, len(shifts) + 1) / len(shifts)
+    fig, ax = plt.subplots(figsize=(4.4, 3.2), layout="constrained")
+    ax.step(np.r_[0, ordered], np.r_[0, fraction], where="post", color="#2878a5", lw=1.3)
+    ax.axvline(median_limit, color="#a85420", ls="--", lw=1,
+               label=f"Median requirement: ≤ {median_limit:g}")
+    ax.axvline(maximum_limit, color="#63529a", ls=":", lw=1.2,
+               label=f"Maximum requirement: ≤ {maximum_limit:.1f}")
+    middle = len(shifts) // 2
+    ax.plot(ordered[middle], fraction[middle], "o", color="#2878a5", ms=4)
+    ax.annotate(f"Median {measured['median']:.2f}",
+                xy=(ordered[middle], fraction[middle]), xytext=(16, -29),
+                textcoords="offset points", fontsize=8,
+                arrowprops={"arrowstyle": "-", "color": "0.4", "lw": .6})
+    ax.plot(measured["max"], 1, "o", color="#2878a5", ms=4)
+    ax.annotate(f"Largest shift: {measured['argmax']}\n{measured['max']:.2f}",
+                xy=(measured["max"], 1), xytext=(-8, -39),
+                textcoords="offset points", ha="right", fontsize=8,
+                arrowprops={"arrowstyle": "-", "color": "0.4", "lw": .6})
+    ax.set(xlim=(0, measured["max"] * 1.15), ylim=(0, 1.055),
+           xlabel="Maximum absolute shift / statistical σ",
+           ylabel="Fraction of 153 quantities")
+    ax.legend(loc="upper left", fontsize=7, frameon=True,
+              facecolor="white", edgecolor="none", framealpha=.95)
+    ax.grid(alpha=.15)
+    save(fig, "paper_rounding_shifts")
+    return {"summary": measured, "median_limit": median_limit,
+            "maximum_limit": maximum_limit, "names": names,
+            "shift_over_data_sigma": shifts.tolist()}
+
+
 def main() -> None:
     """Verify frozen inputs, then render figures and their numerical audit."""
     for relative in PINS:
@@ -205,7 +277,7 @@ def main() -> None:
     plt.rcParams.update({"font.family": "serif", "mathtext.fontset": "cm", "font.size": 8,
                          "axes.labelsize": 8, "xtick.labelsize": 7, "ytick.labelsize": 8,
                          "axes.linewidth": .6, "pdf.fonttype": 42})
-    numbers = {"bias": bias_figure(), "prior": prior_figure()}
+    numbers = {"bias": bias_figure(), "prior": prior_figure(), "rounding": rounding_figure()}
     (OUT / "numbers.json").write_text(json.dumps(numbers, indent=2) + "\n")
 
 
