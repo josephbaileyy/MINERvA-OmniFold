@@ -69,7 +69,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Report numerical precision / float32 rounding findings (shifts up to 2.6σ_stat, median 0.8σ; separate tie-break vs refinement legs).  
   *Record:* `OUTCOME-20261108-rs1-rounding-mechanism.md:128-135`.  
   *Target:* `docs/analysis-note/sec_5d.tex:91`.  
-  *Status:* Drafted in round 1.
+  *Resolution:* This row authorizes no tex edit. The float32 paragraph in sec_5d.tex already reports the 0.8 and 2.6 shifts and states the tie-breaking leg and the refinement leg separately, in the outcome's licensed wording. It already says neither finding is about the data's spread and that equal float32 values are not a defect of the inputs. Do not add a second account. Do not add K2, K3, K4, or K6. Do not join the two findings into one mechanism. Do not say either stage alone suffices. Do not add a remedy. Do not edit "40 fresh pseudo-experiments." Do not add an estimator table.
 
 * **AUD-E7 [T]** — **OVERCLAIM: The 2D comparison called a validation.**  
   *Finding:* Note called 2D comparison a validation (`sec_intro.tex:18`, `:30`, `sec_method.tex:25`, `sec_results.tex:1`, `sec_execsummary.tex:3`, `tab:validation-questions`).  
