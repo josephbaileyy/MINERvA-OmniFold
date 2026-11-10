@@ -785,3 +785,44 @@ Checks:
   - The director's addition: the self-test also plants "not only validates the five-observable distribution", which
     is caught (an affirmative claim behind a "not"). Measured on the guard: "not only validates" is caught, "does
     not validate" passes, "validates" is caught, and "never validates" is caught, a safe false positive.
+
+## The 200-250-word abstract (Joseph, 2026-11-09, via the director), draft for an independent read
+
+Joseph's decision: the typical length, 200-250 words, and content may be cut if it still makes sense. The director's
+structure, kept in order: the method; the benchmark; the prior-retention finding; the stability finding with the
+ensemble in one clause; W-11; the coverage test per variant only; the illustration line.
+- **Cut:** "Three findings follow."; the observables list (section 1 keeps it); the seed sentence (section 6.1 keeps
+  it); the 0.133% sentence (section 6.1 keeps it); "medium-energy" (sections 1-2).
+- **The prior-retention comparison (prr-abs) is now one clause of the fake-data sentence:** binned iterative unfolding
+  of noise-free pseudo-data at five iterations "retains less / more / a similar share of the prior" at each truth, or
+  an undefined share. The threshold's detail ("by more than a threshold fixed in advance") is in section 5.3. This is
+  the director's "detail beyond one clause waits for the fill".
+- **The coverage test (ll5d), per variant only:**
+  - one sentence: "The same coverage test, applied to the procedure's five-observable covariance at those tunes, where
+    the fake-data bias is not flagged, without drawing the model, response and run-period terms, finds X (primary
+    variant, without two detector bands) and Y (with them); [the route disclosure]";
+  - X and Y in Table 1's per-tune terms: no under-coverage, under-coverage or an invalid reading, at one tune, both
+    or either. The per-cell and joint detail is in section 6.3.
+  - "The same coverage test" replaces "A five-observable test built the same way as the two-dimensional one" (item
+    5's antecedent), to fit the limit. The R5 object, "the procedure's ... covariance", is kept.
+  - The stop cases read "The same coverage test of the procedure's five-observable covariance stopped ...".
+- **Kept verbatim:** the benchmark, W-11 and the illustration line.
+- **The LISTED_CLAIMS anchor** "at a GiBUU-like truth and at a synthetic momentum-transfer tilt find" is kept verbatim
+  and does not move. The rest of that sentence is shortened ("residual bias beyond uncertainty-based criteria fixed
+  before grading"). `make_values_fived16.py --check` passes: 10 listed-truth sentences agree.
+- **The stability sentence:** "The five-observable estimator is numerically unstable: rounding-level input changes
+  shift results by up to 2.6 statistical standard deviations, beyond a requirement fixed in advance; an average of 96
+  fits meets it but has greater bias at one of 17 truths." This is now the abstract's first "estimator", so it names
+  it.
+- **check 10 is now a word limit.** Every rendered case (all 10,848 before the fill, the built one after) must be at
+  most 250 words, and characters are reported. Now: 181 to 250 words, 1,248 to 1,660 characters. The 36 cases under
+  200 are all stopped campaigns. The ce565239d-era abstract fails the new limit in all 10,848 cases (longest 367
+  words). The self-test plants a 260-word case.
+- **Checks:**
+  - the rater copy PASS (14 and 14 pages);
+  - check_round with the fill test PASS, and the self-test PASS;
+  - registry, sec4 and pointers PASS;
+  - make_values `--check` and `--self-test` PASS;
+  - check_restyle against 58fdb8cf2 fails only on the cut 0.133% sentence (the numerals 0.133 and 20, and its
+    \SI{}{\percent}).
+- The coverage clauses stay pending Joseph. The director runs a fresh reader on the longest and shortest cases.

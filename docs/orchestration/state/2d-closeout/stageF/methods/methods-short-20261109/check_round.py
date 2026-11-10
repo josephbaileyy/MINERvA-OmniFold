@@ -31,10 +31,10 @@
      check_against(paper_body, values_tex), the figures lane's own function, checks Table 2's truth order, the
      outline threshold (trig-z) and every plotted maximum |z| against values_fived16.tex. A changed figure input
      (its sha256 pins) fails too.
-  10. ABSTRACT LENGTH (the director, 2026-11-09). Once every pending key of the abstract is filled (VERDICTS), the
-     printed abstract (abstract_text: the source with \\fvgroup/\\fvcase resolved and \\fvval from the values) must be at
-     most ABSTRACT_PDF_MAX = 2,000 characters, until Joseph sets a limit. Before then, the range over every consistent case
-     is reported, without failing. arXiv's 1,920 characters apply to a separate metadata abstract, written at
+  10. ABSTRACT LENGTH (Joseph, 2026-11-09, via the director: the typical length, 200-250 words). Every rendered case of
+     the abstract (abstract_text: the source with \\fvgroup/\\fvcase resolved and \\fvval from the values), all of them
+     before the fill and the built one after it, must print at most ABSTRACT_MAX_WORDS = 250 words. The range in words
+     and characters is reported. arXiv's 1,920 characters apply to a separate metadata abstract, written at
      submission (REPORT.md, "Follow-up: before submission"). No rendered case may print a phrase of ABSTRACT_BANNED
      (" only at ", which attaches a restriction to the tunes rather than to the noun).
   11. FREE TEXT (journal-editor, 2026-11-09). A filled free-text value (a PENDING key with no class set, such as
@@ -331,7 +331,7 @@ def check_figures(wt):
         return [f"figures: {exc}"]
 
 
-ABSTRACT_PDF_MAX = 2000  # characters, the printed abstract after the fill, until Joseph sets a limit (the director, 2026-11-09)
+ABSTRACT_MAX_WORDS = 250  # words, on every rendered case (Joseph, 2026-11-09, via the director: the typical length, 200-250 words)
 ARXIV_ABSTRACT_MAX = 1920  # arXiv's metadata field: a separate abstract written at submission (REPORT.md, before submission)
 # phrases no rendered case may print: "only at" attaches the restriction to the tunes, not the noun (journal-editor, 2026-11-09)
 ABSTRACT_BANNED = (" only at ",)
@@ -385,24 +385,25 @@ def abstract_cases(mv):
 
 
 def abstract_gate(main_tex, values_tex, cases, verdicts):
-    """(failures, report lines). Filled (every \\fvcase key of the abstract in verdicts): the printed abstract must be at
-    most ABSTRACT_PDF_MAX characters. Not yet filled: the range over the cases consistent with what is filled, reported."""
+    """(failures, report lines). Every rendered case consistent with what is filled (all of them before the fill, the
+    one built case after it) must print at most ABSTRACT_MAX_WORDS words and no ABSTRACT_BANNED phrase. The report
+    gives the range in words and characters."""
     s = strip_comments(main_tex)
     keys = {a[0] for _, _, a in macro_calls(s[s.index(r"\begin{abstract}"):s.index(r"\end{abstract}")], "fvcase", 3)}
-    bad = sorted({p for c in cases for p in ABSTRACT_BANNED if p in abstract_text(main_tex, values_tex, c)})
-    if bad:
-        return [f"a rendered abstract case contains {p!r}" for p in bad], []
-    if keys <= set(verdicts):
-        t = abstract_text(main_tex, values_tex, verdicts)
-        line = f"ABSTRACT (filled) {len(t)} characters, {len(t.split())} words (fails above {ABSTRACT_PDF_MAX})"
-        return ([f"the filled abstract is {len(t)} characters, over {ABSTRACT_PDF_MAX}"] if len(t) > ABSTRACT_PDF_MAX else []), [line]
-    live = [c for c in cases if all(verdicts.get(k, v) == v for k, v in c.items())]
-    n = sorted(((len(abstract_text(main_tex, values_tex, c)), i) for i, c in enumerate(live)))
-    (lo, _), (hi, ih) = n[0], n[-1]
-    words = len(abstract_text(main_tex, values_tex, live[ih]).split())
-    return [], [f"ABSTRACT (pending: {', '.join(sorted(keys - set(verdicts)))}) over {len(live)} consistent cases: {lo} to "
-                f"{hi} characters ({words} words at the longest, {live[ih]}); gated at {ABSTRACT_PDF_MAX} once filled. The "
-                f"arXiv metadata abstract ({ARXIV_ABSTRACT_MAX}) is written at submission."]
+    live = [verdicts] if keys <= set(verdicts) else [c for c in cases if all(verdicts.get(k, v) == v for k, v in c.items())]
+    texts = [abstract_text(main_tex, values_tex, c) for c in live]
+    fails = sorted({f"a rendered abstract case contains {p!r}" for x in texts for p in ABSTRACT_BANNED if p in x})
+    w = [len(x.split()) for x in texts]
+    ch = [len(x) for x in texts]
+    over = [i for i, n in enumerate(w) if n > ABSTRACT_MAX_WORDS]
+    if over:
+        k = max(over, key=lambda i: w[i])
+        fails.append(f"{len(over)} rendered abstract case(s) over {ABSTRACT_MAX_WORDS} words; the longest, {w[k]} words: {live[k]}")
+    k = max(range(len(w)), key=lambda i: w[i])
+    state = "filled" if keys <= set(verdicts) else f"pending: {', '.join(sorted(keys - set(verdicts)))}"
+    return fails, [f"ABSTRACT ({state}) over {len(live)} rendered case(s): {min(w)} to {max(w)} words, {min(ch)} to "
+                   f"{max(ch)} characters (fails above {ABSTRACT_MAX_WORDS} words; the longest is {live[k]}). The arXiv "
+                   f"metadata abstract ({ARXIV_ABSTRACT_MAX} characters) is written at submission."]
 
 
 def check_abstract(wt):
@@ -511,12 +512,14 @@ def self_test():
     sr = style_report_text("The test grades bias, not coverage. It holds.")
     if sr.get("1_comma_not") != 1:
         print("self-test: the style report misses a ', not' contrast"); ok = False
-    am = r"\begin{abstract}A test. \fvgroup{g}{\fvcase{k}{a}{" + "x" * 2100 + r"}\fvcase{k}{b}{short}} \fvval{v} fits.\end{abstract}"
+    am = r"\begin{abstract}A test. \fvgroup{g}{\fvcase{k}{a}{" + "word " * 260 + r"}\fvcase{k}{b}{short}} \fvval{v} fits.\end{abstract}"
     av = r"\@namedef{fv@v}{96}"
     if not abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {"k": "a"})[0]:
         print("self-test: NOT CAUGHT a filled abstract over the limit"); ok = False
-    if abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {"k": "b"})[0] or abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {})[0]:
-        print("self-test: the abstract gate fails a short filled case or an unfilled one"); ok = False
+    if abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {"k": "b"})[0]:
+        print("self-test: the abstract gate fails a short filled case"); ok = False
+    if not abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {})[0]:
+        print("self-test: NOT CAUGHT an unfilled case over the word limit"); ok = False
     if not abstract_gate(am.replace("{short}", "{cells only at one tune}"), av, [{"k": "a"}, {"k": "b"}], {})[0]:
         print("self-test: NOT CAUGHT an 'only at' in a rendered case"); ok = False
     if abstract_text(am, av, {"k": "b"}) != "A test. short 96 fits.":
