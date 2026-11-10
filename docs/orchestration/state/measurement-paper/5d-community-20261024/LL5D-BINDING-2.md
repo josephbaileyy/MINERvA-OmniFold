@@ -108,3 +108,53 @@ could inform a choice, so this is an implementation defect, not a STOP under #93
    for the follow-up list.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 2, addendum A1a.2: vi keys both sides at float32 (director, 2026-11-10)
+
+**Binds** [`LL5D-AMENDMENT-A1A2.md`](LL5D-AMENDMENT-A1A2.md) and its code, as merged in PR #1019 at
+**M_A1a.2 = `639ef907250a2a7909b7b9ba89b2e85e70c9b767`**. The audited head is `12d37105` (code `9d906bf4`); the
+amendment and every file below are identical at the two commits. This **supersedes M_A1a.1** for the vicheck,
+calibration and gate jobs.
+
+| file | sha256 (prefix) |
+|---|---|
+| `LL5D-AMENDMENT-A1A2.md` | `ac909e63535493b6` |
+| `nd-unfolding/ll5d.py` | `2b0224c6fe52c5bb` |
+| `nd-unfolding/tests/test_ll5d.py` | `6fa5510efd8fde01` |
+| `nd-unfolding/tests/test_ll5d_b.py` | `5391a42f82d5690c` |
+| `nd-unfolding/tests/ll5d_a1a_mutation.py` | `5842163487612480` |
+| `nd-unfolding/tests/ll5d_a1b_mutation.py` (unchanged) | `1b09bf22969b2698` |
+| `nd-unfolding/ll5d_b.py` (unchanged) | `24312ca86f9e70ed` |
+| `nd-unfolding/fd_1b_c2.py` (vendored, unchanged) | `522d7edd71643df6` |
+
+**What led to it.** Both gates of 2026-11-10 STOPped (receipts #1013 and #1014): every reading was overridden to option
+(3) because c2_vi reported 100 % of rows unmatched. The diagnosis (#1015) found an implementation defect. vi keys each
+row on its coordinates and weight together, the signal side holds the weight in float64 and the bank's denominator in
+float32, so no key can match. A local reproduction with both controls confirmed it.
+
+**What the director checked:**
+- coverage-5b-audit's GO at `12d37105`, with no blockers
+  (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/1019#issuecomment-6760011626):
+  - rounding does not weaken vi: a ±1 float32 ulp bank-weight change, a signal weight just outside its float32
+    interval, and a 1-ulp coordinate change all stay unmatched;
+  - the REQUIRED MatchedRows test uses the writers' dtypes and fails at `a95cc39f`;
+  - the vendored `fd_1b_c2.py` is byte-identical;
+  - vicheck opens no truth, draws or flux constraint;
+  - 82 and 29 tests pass on numpy 1.26 and 2; 58 of 58 and 27 of 27 mutants are killed.
+- The director ran both suites from a `git archive` of M_A1a.2 (one thread, `PYTHONHASHSEED=0`, own TMPDIR):
+  test_ll5d 81 passed and 1 skipped (the git-checkout seed test, as before); test_ll5d_b 29 passed.
+
+**Rulings:**
+1. **The rerun** authorized by `DECISION-20261110-joseph-ll5d-rerun-16-cells.md` runs from M_A1a.2 on R00–R15, in
+   order:
+   - `ll5d.py vicheck`, the preflight, part of that rerun. A PASS within MISMATCH_BOUND continues; a STOP goes to the
+     director and Joseph unrepaired, as a genuine-mismatch finding;
+   - `ll5d_calib`, required because read_calibration refuses a calibration made by other code. It reports whether its
+     numbers reproduce run 2's bitwise;
+   - both gates, back to back.
+   Each connect pins M_A1a.2 and `ll5d.py` at `2b0224c6…`, and goes to the director with its sha256 before launch.
+2. **The price** is about 23.4 node-h measured, with a peak projection of about 86.5 against LL5D's 148.0 node-h cap.
+3. Rulings 1–8 of binding 2, and its addenda, stand otherwise. The seal on clip-prep products is unchanged.
+4. The audit's lows L-1019-a to d (vicheck's edges, which gate nothing) are on the follow-up list.
+
+Nothing is submitted, deposited or tagged.
