@@ -1768,3 +1768,55 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - make_values PASS (4066); sec4 17/17; pointers 38 (one new \stab); registry PASS; check 12 unchanged;
   - check_restyle: the protected spans are unchanged. It reports the intended additions and Q11–Q22 as before.
   - The new table and §5.3 were inspected on the rendered page (paper p. 10).
+
+## 2026-11-10 — Tier 1 batch T1-2 (coverage: one section, the target once, fractions from keys, Tier 2 (a))
+
+- **Main merged** (030c1b43f, the director's ruling 1): a --no-ff merge of origin/main (27 commits) with a message file,
+  so the T2a records are in the branch's tree. d6c1cd7b0, 1a015eef and 3c3a6f74 are ancestors, and the merge changes
+  nothing under docs/analysis-note.
+- **One coverage section.** §6.2 and §6.3 are merged under "Calibration of the uncertainties". The second test is a
+  \paragraph of it. Its label sec:ll5d now sits beside sec:calib, because a label after revtex's \paragraph printed
+  "6.2.0a" and overfilled Table 2's Sec. column by 12 pt.
+- **The target, stated once** (item 4), opening the section: per cell, the fraction of errors with |e_c| ≤ σ_c (P0 =
+  \fvval{null-p0} for a Gaussian error); jointly, the fraction with χ² below its null's quantile. Each test uses a
+  content matched to its draws and a binomial threshold, flags only under-coverage, and reports over-coverage (S9's
+  design; fd_1b_null.py:111-122). The second test's repeat of "Only under-coverage counts as a failure; over-coverage
+  is reported" is removed.
+- **The 2D paragraph's numbers are keys** from the score records (fe5263e9, 84976694): k_joint, ndf, χ²/ndf ± SE,
+  and the size (per_truth_union_bound). The typed 190, 192, 204, 205, 16.55 ± 0.17, 24.17 ± 0.37, 0.0348 and 0.0363 are
+  gone. "none … lies" stays as worded; make_values asserts both joint counts are 0.
+- **The actual coverage, from keys** (the director's ruling 2):
+  - Joint: the null's expected count is 300·q_joint (207.6 and 209.2), from the graded null "null" in null_<T>.json
+    (80274e52, 6bd5259d). make_values asserts each score's null_digest is its null file's sha256. "null_minus" serves
+    leave_out_mec only (COV2D-ADDENDUM-A4.md:40, :190).
+  - Per cell, from grade.counts and k_cell: the range of counts (148–300 at both tunes), the thresholds (145–176 and
+    144–178), and the median count (229 and 219) against the median draw-matched expectation 300·p_c (203.7 and
+    203.9). The nominal Gaussian 205 = round(300·erf(1/√2)) is printed only beside it.
+  - The number of cells at or below their threshold equals the flagged cells (2 and 1; asserted).
+  - Over-covering cells: 90 and 67. over_covers is fd_1b_mc.py:684-685 at b25918fbd: the same binomial rule applied the
+    other way at alpha_cell.
+- **Tier 2 (a)** (the director's reading of 2026-11-10; t2a_AR23.json 33b7fd40 and t2a_G18.json 6757055e, #1041; keys
+  t2a-*, make_values t2a_values).
+  - The paper, after the 2D paragraph: the split (82 % and 87 % mean-error part; 13.6 and 21.0 per ndf against 2.94 and
+    3.21 for the spread), by rank (the 32 largest directions carry under 1 %, beyond the 73 largest 77 % and 87 %), and
+    the truncated tests (none of 300 at 73 or 139). It closes with the licensed sentence: "dominated by mean bias
+    concentrated in the poorly determined directions of C_T, with the spread also exceeding C_T's prediction, and
+    truncation to the better-determined directions does not remove it; the decomposition does not establish the cause".
+  - S9.4 adds "Where the two-dimensional test's χ² sits", at the end of the subsection: the same, plus the spread's mean
+    square per component (1.6 and 1.5 over ranks 1–73, 3.0 and 3.6 over ranks 74–139, 4.4 and 4.7 beyond), the
+    truncated nulls' thresholds (193 and 190 at AR23; 193 and 191 at G18) and the solver agreement (≤ 1.5×10⁻⁶, no
+    unresolved rank, truncated counts agree).
+  - Asserted: every control passes; the score pin matches; Σb_k and Σf_k reproduce split.*; the eigenvalues are
+    ordered; the top-32 share is under 1 %; the truncated counts are 0 of 300 and at or below k_joint; n_unresolved is 0.
+  - "32" is the director's fixed reading. C_T_counts above 1e-4 is 32 at AR23 and 33 at G18; the text says "the 32
+    directions with the largest eigenvalues".
+  - The director's "about 1.5" for ranks 1–73 is 1.6 (AR23) and 1.5 (G18). Both are printed from keys.
+  - The optional figure is not included: the record's figure path is a scratch path, not a committed file.
+- **Pairs** (base d6c1cd7b0): t1-2-read/pairs.tsv (29 rows).
+- **Checks:**
+  - check_round with the fill test PASS on the tree before the last two edits: the sec:ll5d label move and the
+    "none … lies" wording. check_round without the fill test PASS after them.
+  - The paper's rater copy PASS, with 0 Overfull, after them. The Supplement's rater copy PASS, with 0 Overfull, before
+    them; neither edit touches the Supplement.
+  - make_values PASS (4117); sec4 17/17; pointers 40; registry PASS; check 12 unchanged.
+  - check_restyle against d6c1cd7b0: only the intended additions and keyed numerals, and Q11–Q22 as before.

@@ -122,6 +122,12 @@ READOUTS = {
     "refg1bars": (f"{FD}/fd/receipts-ref-g1/a1-connect1/bars.json", "ba4b6985"),
     "cov2dar23": (f"{FD}/fd/receipts-cov2d/readout/AR23/score_AR23.json", "fe5263e9"),
     "cov2dg18": (f"{FD}/fd/receipts-cov2d/readout/G18/score_G18.json", "84976694"),
+    # T1-2: the two-dimensional test's draw-matched nulls (each score's null_digest is asserted to be its file's sha256)
+    "cov2dnullar23": (f"{FD}/fd/receipts-cov2d/readout/AR23/null_AR23.json", "80274e52"),
+    "cov2dnullg18": (f"{FD}/fd/receipts-cov2d/readout/G18/null_G18.json", "6bd5259d"),
+    # T1-2: Tier 2 (a), the descriptive split of the two-dimensional test's chi2 (#1041; T2A declaration, T2-BINDING-1)
+    "t2aar23": (f"{FD}/fd/tier2-20261110/t2a/t2a_AR23.json", "33b7fd40"),
+    "t2ag18": (f"{FD}/fd/tier2-20261110/t2a/t2a_G18.json", "6757055e"),
     "stabdecl": (f"{FD}/FD-STAB-DECLARATION.md", "6c91c0cc"),
     "fd1bdecl": (f"{FD}/FD-1B-STAGED-DECLARATION.md", "50d9e883"),
     # group C (#1027): the Kish effective sample size of configuration (e)'s final weights on the sixteen cells
@@ -1538,6 +1544,7 @@ def groupb_values(d):
         v[f"prr-chi2-e-{t}"], v[f"prr-chi2-ibu-{t}"] = f"{e['grade']['chi2']:.1f}", f"{i5['grade']['chi2']:.1f}"
         assert i5["rho"] < e["rho"], "the text says IBU at five iterations retains less"
     v.update(tier1_values(d))
+    v.update(t2a_values(d))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
     q = d["s5ntruth"]["departures"]["q3_given_eavail_w"]
@@ -1654,9 +1661,37 @@ def groupb_values(d):
         fc = gr["flagged_cells"]
         v[f"cov2d-flags-{t}"] = " and ".join(str(c) for c in fc) if len(fc) <= 2 else ", ".join(str(c) for c in fc)
         v[f"cov2d-nflags-{t}"] = {1: "one", 2: "two", 3: "three"}[len(fc)]
+        # T1-2: the section 6.2 paragraph's numbers, read from the same score record (were typed at r5:202)
+        assert gr["verdict"] == "UNDER-COVERS" and len(gr["counts"]) == len(gr["k_cell"]) == 205
+        v[f"cov2d-kjoint-{t}"], v[f"cov2d-ndf-{t}"] = str(gr["k_joint"]), str(gr["ndf"])
+        v[f"cov2d-chi2ndf-{t}"], v[f"cov2d-chi2ndf-se-{t}"] = f"{gr['chi2_mean_over_ndf']:.2f}", f"{gr['chi2_mean_over_ndf_se']:.2f}"
+        v[f"cov2d-size-{t}"] = f"{gr['size']['per_truth_union_bound']:.4f}"
+        v[f"cov2d-kcell-lo-{t}"], v[f"cov2d-kcell-hi-{t}"] = str(min(gr["k_cell"])), str(max(gr["k_cell"]))
+        v[f"cov2d-count-lo-{t}"], v[f"cov2d-count-hi-{t}"] = str(min(gr["counts"])), str(max(gr["counts"]))
+        v[f"cov2d-nover-{t}"] = str(sum(1 for x in gr["over_covers"] if x))
+        v[f"cov2d-nunder-{t}"] = str(sum(1 for c, k in zip(gr["counts"], gr["k_cell"]) if c <= k))
+        assert int(v[f"cov2d-nunder-{t}"]) == len(fc), "the flagged cells are those at or below their threshold"
+        # the median count beside the median draw-matched expectation (the director, 2026-11-10: the test's reference is
+        # the draw-matched content p_c, not P0); the graded null is "null" ("null_minus" serves leave_out_mec only,
+        # COV2D-ADDENDUM-A4.md:40, :190)
+        nk = "cov2dnull" + t
+        nf = ROOT / READOUTS[nk][0]
+        assert hashlib.sha256(nf.read_bytes()).hexdigest() == d[key]["null_digest"], "the score was graded on another null"
+        nl = d[nk]["null"]
+        assert len(nl["p_cell"]) == 205 and nl["ndf"] == gr["ndf"]
+        nt = int(one(r"### 5\.1 Statistics per tune, over its (\d+) toys", d["cov2ddecl"], "COV2D's toys"))
+        assert max(gr["counts"]) <= nt
+        c, pc = sorted(gr["counts"]), sorted(nl["p_cell"])
+        v[f"cov2d-count-med-{t}"] = str(c[102])
+        v[f"cov2d-pexp-med-{t}"] = f"{nt * pc[102]:.1f}"
+        v[f"cov2d-jexp-{t}"] = f"{nt * nl['q_joint']:.1f}"
+    assert (v["cov2d-ndf-ar23"], v["cov2d-ndf-g18"]) == ("204", "205"), "the text says the rank drops one direction at AR23"
     # the first five-observable coverage test's declared toys
     v["fd1b-ntoys"] = one(r"\*\*Toys:\*\* (\d+) per truth", d["fd1bdecl"], "FD-1B's toys")
     v["cov2d-ntoys"] = one(r"### 5\.1 Statistics per tune, over its (\d+) toys", d["cov2ddecl"], "COV2D's toys")
+    # the nominal Gaussian content of the 300 toys, P0 = erf(1/sqrt 2) (fd_1b_null.py:42-52), printed only beside the
+    # draw-matched expectation
+    v["cov2d-nominal"] = f"{int(v['cov2d-ntoys']) * math.erf(2 ** -0.5):.0f}"
     assert {d[k]["grade"]["joint_count"] for k in ("cov2dar23", "cov2dg18")} == {0}, "B1 row 8 says no error lies in the region"
     v["prr-floor"] = f"{r['readings']['floor']['bar_floor']:g}"
     # F0b's repetitions as B1 row 3a states them: 20 at each shape change and the q3 tilt, 16 at each hybrid
@@ -1835,6 +1870,46 @@ def tier1_values(d):
     v["ens1-g-ratio"] = f"{(bw['rms'] - bw['rms_control']) / bw['delta_rms']:.2f}"
     v["ens1-g-dmax"], v["ens1-g-maxfloor"] = f"{bw['max'] - bw['max_control']:.6f}", f"{bw['delta_max']:.6f}"
     assert (v["ens1-g-drms"], v["ens1-g-ratio"], v["ens1-g-dmax"], v["ens1-g-maxfloor"]) == ("0.000512", "1.23", "0.000929", "0.001783")
+    return v
+
+
+def t2a_values(d):
+    """Tier 2 (a): where the two-dimensional coverage test's chi2 sits, at each tune (descriptive; its label: no new
+    verdict, no cause, no coverage statement at the data's point). split.*: mean chi2 = ebar' C+ ebar + tr(C+ S). by_rank:
+    b_k, f_k in C_T's eigenbasis by decreasing eigenvalue; the shares and per-rank means are sums of the recorded
+    components. truncated.*: the joint test at the 73 and 139 largest-eigenvalue directions. precision.*: two solvers."""
+    v = {}
+    ntop = 32          # the director's reading of 2026-11-10: "the 32 largest-eigenvalue directions"
+    v["t2a-ntop"] = str(ntop)
+    dmax = []
+    for t, key in (("ar23", "t2aar23"), ("g18", "t2ag18")):
+        x = d[key]
+        assert x["schema"] == "t2a/1" and all(c["pass"] for c in x["controls"].values())
+        assert x["inputs_sha256"]["score"].startswith(READOUTS["cov2d" + t][1])
+        sp, br, tr, pr = x["split"], x["by_rank"], x["truncated"], x["precision"]
+        b, f, lam = br["b_k"], br["f_k"], br["lambda_over_lambda1"]
+        n = len(b)
+        assert n == sp["ndf"] and all(lam[i] >= lam[i + 1] for i in range(n - 1))
+        assert abs(sum(b) - sp["ebar_Cplus_ebar"]) < 1e-9 * sp["ebar_Cplus_ebar"] and abs(sum(f) - sp["trace_Cplus_S"]) < 1e-9 * sp["trace_Cplus_S"]
+        v[f"t2a-bias-share-{t}"] = f"{100 * sp['share_of_ebar_Cplus_ebar']:.0f}"
+        v[f"t2a-bias-ndf-{t}"], v[f"t2a-spread-ndf-{t}"] = f"{sp['ebar_Cplus_ebar_over_ndf']:.1f}", f"{sp['trace_Cplus_S_over_ndf']:.2f}"
+        top = sum(b[:ntop]) / sum(b)
+        assert top < 0.01, "the text says under 1 %"
+        r1, r2 = sorted(int(k) for k in tr)
+        assert (r1, r2) == (73, 139)
+        v[f"t2a-beyond1-{t}"] = f"{100 * sum(b[r1:]) / sum(b):.0f}"
+        v[f"t2a-flow-{t}"] = f"{sum(f[:r1]) / r1:.1f}"
+        v[f"t2a-fmid-{t}"] = f"{sum(f[r1:r2]) / (r2 - r1):.1f}"
+        v[f"t2a-fhigh-{t}"] = f"{sum(f[r2:]) / (n - r2):.1f}"
+        for r in (r1, r2):
+            z = tr[str(r)]
+            assert z["in_region_count"] == 0 and z["of"] == 300 and z["at_or_below_k_joint"]
+            v[f"t2a-kj{r}-{t}"] = str(z["k_joint"])
+        assert pr["n_unresolved"] == 0 and all(c["agree"] for c in pr["truncated_counts"].values())
+        dmax.append(pr["max_d"])
+    v["t2a-r1"], v["t2a-r2"] = "73", "139"
+    m, e = f"{max(dmax):.1e}".split("e")
+    v["t2a-dmax"] = f"{m}\\times10^{{{int(e)}}}"
     return v
 
 
