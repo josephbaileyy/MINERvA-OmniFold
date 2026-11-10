@@ -1,0 +1,34 @@
+{
+  "tab:outcomes": {
+    "before_cells_sha256": "019121fa1a76d69d7256f4af4ce5ed01fa298f8e40235ad249b551aae1ba8c83",
+    "after_cells_sha256": "019121fa1a76d69d7256f4af4ce5ed01fa298f8e40235ad249b551aae1ba8c83",
+    "before": {
+      "page": 5,
+      "width_pt": 499.36999999999995,
+      "rule_to_rule_height_pt": 398.46500000000003,
+      "median_font_pt": 7.970100000000002
+    },
+    "after": {
+      "page": 5,
+      "width_pt": 508.095,
+      "rule_to_rule_height_pt": 389.39300000000003,
+      "median_font_pt": 7.970100000000002
+    }
+  },
+  "tab:fd16": {
+    "before_cells_sha256": "8dd00a64ac3b92ce696c4dd53227b0bcf7e549a2e0eb2ba0d9853a6634fab94f",
+    "after_cells_sha256": "8dd00a64ac3b92ce696c4dd53227b0bcf7e549a2e0eb2ba0d9853a6634fab94f",
+    "before": {
+      "page": 8,
+      "width_pt": 461.14,
+      "rule_to_rule_height_pt": 223.44000000000003,
+      "median_font_pt": 7.970100000000002
+    },
+    "after": {
+      "page": 8,
+      "width_pt": 508.095,
+      "rule_to_rule_height_pt": 195.047,
+      "median_font_pt": 7.970100000000002
+    }
+  }
+}
