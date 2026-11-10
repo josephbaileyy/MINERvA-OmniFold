@@ -1,0 +1,163 @@
+# Referee Report
+
+**Document under review:** Technical record of methods and benchmark study of unbinned unfolding with OmniFold on MINERvA neutrino data.
+
+---
+
+### 1. Summary of What the Note Documents and Claims
+
+This technical note documents an application of unbinned machine-learning unfolding using the OmniFold algorithm—implemented via gradient-boosted decision trees (LightGBM)—to MINERvA medium-energy forward-horn-current neutrino-nucleus scattering data ($1.057 \times 10^{21}$ protons on target). The authors benchmark the method in two dimensions against the published binned iterative Bayesian unfolding of muon kinematics, $d^2\sigma/(dp_T dp_\parallel)$, claiming to reproduce the published integrated cross section within approximately 1.0% ($3.069 \times 10^{-38}$ vs. $3.039 \times 10^{-38}\text{ cm}^2/\text{nucleon}$) while observing an unexplained correlated shape difference ($\chi^2/\text{ndf} = 2.27$ under the published covariance). The pipeline is subsequently extended to simultaneously unfold up to five kinematic variables ($p_T, p_\parallel, E_\text{avail}, q_3, W$), comparing an unbinned negative-weight background subtraction against a binned purity correction. In five dimensions, the authors extract an illustrative 16-cell cross section with a reported median per-cell relative uncertainty of 7.86%, which includes an empirical, ad-hoc run-period block added to absorb observed playlist discrepancies. The note details extensive closure, coverage, and stress tests, identifying substantial regularization bias (residuals up to 74% in $(E_\text{avail}, W)$ under generator-sized truth changes) and numerical instability under floating-point rounding (shifts up to 2.6 statistical standard deviations). The authors also conduct calibrated joint hypothesis tests against five external neutrino event generator predictions, reporting rejections of all ten tested hypotheses while noting these do not constitute physical exclusions. Ultimately, the note claims to provide the definitive, citable technical record of methods, validations, and limitations supporting a companion journal paper, explicitly documenting where its uncertainty intervals fail to demonstrate statistical coverage.
+
+---
+
+### 2. Recommendation and Executive Justification
+
+**Recommendation: Major revision**
+
+The note represents a commendable and transparent technical effort to deploy unbinned machine-learning unfolding on real accelerator neutrino data across multiple kinematic dimensions. The authors deserve substantial credit for documenting negative results, coverage failures, and estimator limitations that are frequently glossed over in machine-learning literature. However, the note is not ready to be posted as an archival citable record beside a methods paper. First and foremost, the provided text abruptly terminates in §9.4, leaving §10 (the headline 16-cell result), §11 (the generator tests), §12 (the extended-fiducial study), §13, and Appendices A through J completely absent. Second, interval coverage has not been validated for any multidimensional result, with declared tests failing their futility criteria, showing $0/300$ joint containment, or remaining unfinished. Third, the headline generator hypothesis tests are scientifically compromised by uncorrected target-material mismatches (carbon vs. hydrocarbon), uncorrected generator phase-space truncations, and severe estimator regularization bias. Fourth, the work relies on a fragile patchwork of six distinct estimator configurations ((a)–(f)), where critical algorithmic choices and background subtractions were decided post hoc after inspecting comparisons against the published data. Finally, pervasive internal inconsistencies, undefined mathematical symbols, and frequent citations to inaccessible internal review tags (`Ref. [33], R1.xx`) and private communications prevent the note from functioning as a self-contained public record.
+
+---
+
+### 3. Accuracy and Internal Inconsistencies
+
+1. **Contradiction regarding whether $C_\text{model}$ was included or excluded in the held-out-tune coverage test:**
+   - *Side A (§5.3, paragraph 1):* "...with 300 pseudo-experiments each and the analysis procedure’s 2D covariance remade at each tune’s truth (model term included, run-period term excluded), the declared test reads under-covers."
+   - *Side B (§5.3, paragraph 2 under "Limits"):* "...and three terms of the covariance are not drawn ($C_{08}$, $C_\text{model}$ and the simulation-statistics part of the statistical term), which can only lower the flag rate."
+   - *Critique:* These statements directly contradict each other within two consecutive paragraphs of §5.3. Either $C_\text{model}$ was remade and included in the test draws, or it was not drawn.
+
+2. **Fiducial target nucleon count discrepancy:**
+   - *Side A (§2.3 and §3.4, paragraph 1):* "...contains $3.2353 \times 10^{30}$ nucleons, the fixed tracker-geometry constant" and "$N$ the fiducial nucleon count ($3.2353 \times 10^{30}$)..."
+   - *Side B (§3.4, paragraph 2):* "For the higher-dimensional extractions the integrated flux is $\Phi = 6.243 \times 10^{-8}\text{ cm}^{-2}$ per proton on target... and the target contains $3.235 \times 10^{30}$ nucleons."
+   - *Critique:* The fiducial nucleon constant differs between the 2D and higher-dimensional extractions by $3 \times 10^{26}$ nucleons (~0.01%). In a citable benchmark record, geometry constants must be exact and consistent.
+
+3. **Inconsistency in total reported and occupied bin counts:**
+   - *Side A (§7.8):* "...giving $14 \times 16 \times 7 \times 7 = 10\,976$ four-dimensional bins (4830 populated)."
+   - *Side B (§4.7):* "Across the 10 694 reported bins the per-bin ratio of re-selected to single-pass standard deviation runs 0.177 to 3.062..."
+   - *Side C (§9.3):* "...binned in the 10,499 occupied five-dimensional reconstructed cells..."
+   - *Critique:* Section 4.7 introduces "10 694 reported bins" without defining what kinematic space or projection this corresponds to (a 4D grid with 19 diagonal 2D bins removed yields $205 \times 49 = 10\,045$ bins; $10\,976 - 10\,694 = 282$). The numbers 10,976, 10,694, 10,499, and 4,830 clash without a clear structural accounting.
+
+4. **Non-existent "§6.4 exception" cited for 5D covariance adoption:**
+   - *Side A (Table 1, row 5, "5D covariance ($C_Z$)"):* "Adopted under the §6.4 exception; non-passing under the predeclared stability comparison (§9.6)."
+   - *Side B (§6.4):* Section 6.4 is titled "Eigenmode analysis of the published-covariance tension, $\chi^2 = 2.27$" and is exclusively devoted to the 2D muon kinematic cross-section comparison with the published paper.
+   - *Critique:* Section 6.4 does not mention $C_Z$, 5D covariance, or any adoption "exception." The cross-reference in Table 1 is erroneous.
+
+5. **Clashing configuration designations for 3D/4D central values and figures:**
+   - *Side A (Executive Summary / Table 1):* "3D and 4D central values ($E_\text{avail}$, $q_3$): Deterministic LightGBM, 5 iterations, refined negative-weight subtraction (configuration (e))."
+   - *Side B (Table 10 and §7.3):* "Figs. 17 and 23 and numbers read from them; 3D closure; classifier-family cross-check: (a), LightGBM" and "Figure 17 (configuration (a)) gives 4.98."
+   - *Critique:* The text claims the 3D and 4D central values are established by configuration (e), but the primary validation figures (Figs. 17 and 23) and reported tension numbers are generated using the superseded, purity-subtracted configuration (a), which suffers from known background bias.
+
+6. **Misleading degrees-of-freedom normalization in truncated subspace $\chi^2$:**
+   - *Side A (§6.4):* "Restricted to the 73 best-measured directions, $\chi^2 = 136$ ($\chi^2/205 = 0.66$; the divisor is the number of reported bins, not the number of directions kept)."
+   - *Side B (Table 8 and Fig. 8):* "Indicative $\chi^2/\text{bin}$, published covariance: 2.27", labeled in Fig. 8 as "$\chi^2/\text{ndf}_\text{paper} = 2.27$".
+   - *Critique:* Dividing a $\chi^2$ of 136 evaluated on 73 retained eigenmodes by 205 reported bins to report 0.66 is mathematically misleading. The reduced chi-squared on that subspace is $136 / 73 = 1.86$. Conflating $\chi^2/N_\text{bins}$ with $\chi^2/\text{ndf}$ obscures the fact that tension remains elevated even in the well-measured subspace.
+
+7. **Discrepancy between background scale and purity-correction impact:**
+   - *Side A (§2.3):* "Their predicted rate is 0.35 % of selected events, evaluated on playlist 1A. This is the same sub-percent scale as the 8655 (0.2 %) predicted background events of Ref. [3]..."
+   - *Side B (§3.1):* "Before the final histogramming, binning enters, by design, only through this multiplicative correction, an $\sim 3\%$ effect overall, largest where backgrounds concentrate (§2.3)."
+   - *Critique:* If genuine backgrounds are 0.35%, the tenfold increase to an "~3% effect overall" must be driven entirely by out-of-phase-space signal. However, §2.3 provides no quantitative prediction or event count for the out-of-phase-space signal, leaving the two statements in apparent contradiction.
+
+8. **Unitarity and completeness violation by discarding negative $W^2$ events:**
+   - *Side A (§3.4):* "...every truth event enters and $c \equiv 1$ bin-by-bin."
+   - *Side B (§8.2):* "The analysis excludes events with negative truth $W^2$, a weight fraction of $4.9 \times 10^{-5}$, from its five-observable truth sample and normalization... 0.15 % have no real solution."
+   - *Critique:* Discarding events with unphysical or negative invariant mass from the truth sample directly violates the claim that truth-level completeness $c \equiv 1.000000$ strictly by construction.
+
+9. **Implementation error in the operational definition of true available energy:**
+   - *Side A (§7.1, Eq. 1):* "$E_\text{avail}^\text{true} = \sum_p (E - 938.27) + \sum_{\pi^\pm} (E - 135) + \sum_{\pi^0} E + \sum_\gamma E$."
+   - *Side B (§7.1):* "The charged-pion term subtracts the inherited constant 135 MeV rather than the charged-pion mass of about 139.57 MeV, and the production keeps that constant."
+   - *Critique:* Subtracting $135\text{ MeV}$ (the $\pi^0$ mass) instead of $139.57\text{ MeV}$ (the $\pi^\pm$ mass) is a physical error in the analysis code. While the text notes that this shifts 0.65% of simulated signal events across bin boundaries, retaining an erroneous physical constant because it was "inherited" undermines the rigor expected of a citable benchmark.
+
+---
+
+### 4. Completeness as a Citable Record
+
+1. **Complete absence of 3D and 4D uncertainty covariances:**
+   Sections 7 and 7.8 state that no 3D or 4D covariance matrix was constructed or quoted. Consequently, the 3D ($E_\text{avail}$) and 4D ($q_3$) cross-section results cannot be cited by the community as physical measurements or used in quantitative model fits. The note must explicitly construct and publish covariance matrices for these extensions or formally downgrade them to unquantified proof-of-concept distributions.
+
+2. **Incomplete, aborted, and failed coverage tests:**
+   In §9.5, the 5D coverage test over 1,200 pseudo-experiments "failed its futility criterion." In §10.5, the declared coverage test of the 16-cell result "did not run to a result." In §5.2, the 2D statistical band undercovered in the tails ($C_2 = 0.912$ vs. 0.954 nominal), and the rebuilt band was only rescored post hoc. A technical record cited for interval validity cannot leave coverage tests aborted or failing futility thresholds; proper coverage tests must be designed, executed to completion, and documented.
+
+3. **Detector-response mismatch test left unexecuted:**
+   A central premise of OmniFold is that the learned reweighting is robust to detector mismodeling. Table 6 and §8.4 cite Appendix D for a detector-response-mismatch closure test (scaling reconstructed $E_\text{avail}$ in pseudo-data), but note: "Protocol implemented, not run" and "It has not yet produced a result." Citing a critical diagnostic that has not produced a result leaves the detector-dependence of the hadronic unfolding unverified.
+
+4. **Unresolved 2D shape discrepancy ($\chi^2 = 2.27$):**
+   The large tension with the published binned measurement ($\chi^2 = 465$ over 205 bins, $\chi^2/\text{ndf} = 2.27$) is left completely unresolved ("with a correlated shape difference whose source has not been identified"). The note demonstrates that the discrepancy is spread across multiple eigenmodes and cannot be explained by run-period differences or GBDT choice alone. A citable record cannot leave a severe shape disagreement with its primary validation benchmark in an unexplained state.
+
+5. **Ad-hoc and unvalidated run-period uncertainty block ($C_\text{PL}$):**
+   Section 4.5 introduces $C_\text{PL}$ to absorb an unexplained $6.89\%$ step in $p_\parallel$ observed between playlist groups ME1A–1F and ME1G–1M. The block is constructed post hoc from only three playlist groupings (rank 2), yet it accounts for up to 39.1% of the per-bin variance and 17.1% of the integral variance. The authors admit that because $C_\text{PL}$ is constructed directly from the observed spread, "it contains them by construction; this carries no information about its coverage." Introducing an empirical covariance block without identifying its physical origin or validating its coverage leaves the uncertainty budget on fragile ground.
+
+6. **Unquantified and approximated systematic uncertainties:**
+   In §4.6, the systematic category `NormDISCC` is observed to be identically zero in the input files and is propagated as zero without verifying if this was intended. Furthermore, POT normalization carries no separate uncertainty based on an unverified inference that it is absorbed by the flux constraint, and the weighting of unreconstructed events in systematic universes is approximated without bounding sub-noise bias. These omissions must be quantified and resolved.
+
+7. **Unresolved floating-point rounding instability:**
+   In §9.3, the authors document that input perturbations within floating-point rounding move unfolding functionals by up to 2.6 statistical standard deviations, violating a predeclared stability threshold. This instability originates from tie-breaking among identical float32 values in LightGBM histogram binning. While the data bootstrap captures this variation in variance, the central value remains non-deterministic at the level of 2.6 statistical standard deviations, preventing exact numerical citation of central values.
+
+8. **Truncation of §10 through §13 and Appendices:**
+   The submitted text cuts off in §9.4. Sections 10 (16-cell result), 11 (generator tests), 12 (extended fiducial study), 13 (summary), and all technical appendices (A–J) are completely missing. A document cannot be evaluated for public archival release when half of its technical sections and all of its mathematical appendices are absent.
+
+---
+
+### 5. Self-Containment
+
+**Acceptable citations to external literature:**
+- Citing foundational methodological papers for OmniFold (Refs. [1, 2, 14]) and standard machine learning toolkits.
+- Citing published experimental papers for the MINERvA detector (Ref. [4]), NuMI flux predictions (Ref. [5]), and the reference binned cross-section measurement (Ref. [3]).
+- Citing public generator releases (GENIE [29], NuWro [39], GiBUU [40]).
+
+**Unacceptable reliance on missing, internal, or non-public material:**
+1. **Inaccessible internal review tags:** The note repeatedly justifies critical technical findings by citing internal tracking tags: `Ref. [33], R1.1` (coverage design), `R1.3` (flux repair), `R1.12` (seed-42 rerun), `R1.13` (flux universe indexing), `R1.14` (binned response diagnostic record), `R1.16` (July sweep reproduction), and `R1.18` (coordinate conventions). A reader outside the collaboration cannot access Ref. [33].
+2. **Inaccessible internal memos:** Section 4.6 and §5.2 cite "the earlier 2D budget [38]" and "the follow-up assessment [38]" to describe historical bugs and coverage frameworks. These internal memos must either be incorporated into the appendices or replaced with self-contained text.
+3. **Private communications:** Footnote 1 cites a "private communication from the collaboration, 2026" to justify disabling the `FrInel_pi` systematic dial. Archival technical records cannot justify analysis choices via private personal communications.
+4. **Deferring definitions to the methods paper:** In §1, the authors state that "this note gives the detail it [the methods paper] omits," yet in §8.2, they state: "as used in the companion journal article... The companion journal article distinguishes the five classifier inputs...". The technical note must provide the full, rigorous mathematical definitions independently.
+5. **Missing run logs and software configurations:** Section 3.2 admits that for the exact-split estimator, "its seed was not fixed, and its run log was not found," and that the purity-subtracted seed-42 central value "has no recorded run configuration." Similarly, in §4.6, the May systematic sweep cannot be fully diagnosed because "the May input and code revision are not available." An archival technical record cannot rely on unrecorded runs or lost code revisions.
+6. **Undefined mathematical symbols:** In §5.3 ("Limits"), the text references a covariance component "$C_{08}$" that is never defined. In Table 1, the 2D uncertainty is denoted "$Q_R$" without definition. In §9.4, cell spaces "J", "H2", "EW", and deformations "D1, W1–W3" are introduced with definitions deferred to missing appendices or diagnostic records.
+
+---
+
+### 6. Support for Claims
+
+1. **Claim that unbinned unfolding "reproduces" the published cross section:**
+   - *Claim (Abstract & Table 1):* "The unfolding reproduces the published muon-kinematic cross-section integral within about one percent, with a correlated shape difference whose source has not been identified."
+   - *What the evidence supports instead:* The evidence supports only that the method reproduces the *integrated scalar cross section* to 1.0%. The double-differential shape disagrees with the published result at $\chi^2/\text{ndf} = 2.27$ ($\chi^2 = 465$ across 205 bins, corresponding to $p \ll 10^{-15}$ under the published covariance). Furthermore, because the learner and background subtraction were selected after the published comparison was known (§3.2), the result cannot be claimed as an independent reproduction or validation.
+
+2. **Claim that joint 5D tests reject generator predictions:**
+   - *Claim (Abstract & Executive Summary):* "Calibrated joint five-dimensional tests of hybrid null hypotheses for five predictions, in total (rate and shape) and in shape, reject all ten under six stated conditions (§11.4)."
+   - *What the evidence supports instead:* The evidence supports only that an uncorrected test statistic rejected synthetic, carbon-only Monte Carlo predictions when confronted with hydrocarbon detector data. The note concedes in §11.9 that NuWro's rejection is *not robust* to the target material correction, that GiBUU was generated only up to $20\text{ GeV}$ (omitting up to 15% of the phase-space rate), that GENIE and NuWro initially had corrupted flux weighting, and that the estimator has up to 74% regularization bias. Claiming hypothesis "rejection" under these conditions is scientifically unsupported.
+
+3. **Claim of a "five-dimensional simultaneous" unfolding:**
+   - *Claim (Abstract & §7):* "MINERvA medium-energy open data are unfolded without binning, simultaneously in five observables: muon transverse and longitudinal momenta, available hadronic energy, three-momentum transfer and hadronic invariant mass."
+   - *What the evidence supports instead:* Section 8.2 demonstrates that reconstructed $W$ is an exact deterministic algebraic function of $(p_T, p_\parallel, q_3)$ via $W_\text{reco}^2 = (\bar{M} + q_0)^2 - q_{3,\text{reco}}^2$, and truth $W$ is fixed by the same quantities up to a ~1 mrad beam tilt. The analysis unfolds four independent kinematic quantities with an algebraically redundant fifth coordinate included in the GBDT feature space.
+
+4. **Claim that statistical uncertainty is reduced relative to the publication:**
+   - *Claim (§4.2 & Table 9):* The statistical bootstrap block has a square-root trace ratio of 0.407 relative to the published statistical block, yielding a per-bin median statistical uncertainty of 0.676%.
+   - *What the evidence supports instead:* The note admits in §4.2 that this statistical block has had *no coverage test*. When an earlier statistical band was tested (§5.2), it severely undercovered in the tails ($C_2 = 0.912$ vs. 0.954 nominal), and held-out tune tests (§5.3) resulted in $0/300$ joint containment. The evidence suggests that the smaller bootstrap variance reflects regularization shrinkage (pulling events toward the simulation prior) rather than an authentic increase in experimental precision.
+
+5. **Claim that 1D injected bump recovery validates multidimensional unfolding:**
+   - *Claim (Table 1 & §7.4):* Injected-shape closures "pass" and validate the higher-dimensional extensions.
+   - *What the evidence supports instead:* Section 5.1 and §9.2 reveal that recovering a smooth 1D Gaussian bump in a marginal projection is an insensitive test that masks large multidimensional distortions. Under generator-sized truth departures (GiBUU/GENIE), the estimator exhibits residuals up to 74% in $(E_\text{avail}, W)$ and up to 37% under hidden $q_3$ shifts. The 1D closures do not validate multidimensional fidelity.
+
+---
+
+### 7. Minor Issues and Presentation
+
+1. **Forensic / Autopsy register:** The manuscript frequently reads like an internal forensic investigation rather than an archival technical paper (e.g., "seed was not fixed, and its run log was not found", "adopted after that distance was known", "decided on computing cost", "until 2026-10-11"). While transparency is commendable, the tone should be revised to maintain an objective, formal scientific register.
+2. **Proliferation of estimator configurations:** The paper defines six different estimator configurations ((a) through (f) in Table 3). Headline results are scattered across them (2D uses (f), 3D/4D uses (e), 5D central value uses (a), exact-split uses (b), 16-cell uses (e)). The authors should unify the analysis around a single, finalized configuration.
+3. **Discrepancy between Figure 4 groupings and Table 9 rows:** Figure 4 displays systematic uncertainties broken down into eight categories ("Models", "Normalization", "Hadronic response", "Muon reconstruction", "Flux", "Statistical", "Training seed", "Run period"). Table 9 collapses all detector and model systematics into a single "Systematic" row. Table 9 should provide the exact sub-block breakdown corresponding to Figure 4.
+4. **Non-standard error bars in cross-section figures:** In Figures 7, 9, and 10, the vertical error bars on unfolded data points represent the Monte Carlo weight statistics of the reweighted simulation ($\sqrt{\sum w^2}$), rather than the data's statistical uncertainty or the reported covariance diagonal. This is highly non-standard and misleading for cross-section plots; standard experimental uncertainties should be plotted.
+5. **Ineffective presentation in Figure 14:** Figure 14 plots two side-by-side heatmaps of the ratio to MINERvA Tune v1 for this work and the published data. The subtle differences between them are impossible to discern by eye. The authors should replace this with a single heatmap displaying the direct bin-by-bin ratio (This Work / Published Data).
+6. **Undefined acronyms and confusing visual notation:** Acronyms such as RPA, MEC, C2ST, CART, PPFX, MAT, FHC, and ME are introduced without definition. In Figure 1, the compression of wide catch bins is indicated using "//" on the axis, which should be explicitly defined in the caption.
+7. **Incomplete entries in Table 4:** Table 4 lists empty dashes ("—") for "Per bin, maximum" and "$p_\parallel$ projections, maximum" under "Block's share of total variance." These values should either be computed and inserted or the omissions justified.
+8. **Dimensional and normalization formatting:** Axis units are formatted inconsistently across plots (e.g., $\text{cm}^2/\text{nucleon}/\text{GeV}$ vs. $\text{cm}^2/(\text{GeV}/c)^2/\text{nucleon}$ vs. $10^{-38}\text{ cm}^2/\dots$). Standardize all axis labels and cross-section units.
+9. **Physical text truncation:** Ensure that the manuscript is compiled in its entirety without truncated text before re-submitting for review.
+
+---
+
+### 8. Scores and Concluding Evaluation
+
+SCORE: 3/10
+
+The note establishes that unbinned OmniFold unfolding using gradient-boosted decision trees can be executed on real MINERvA neutrino data to reproduce the total integrated double-differential muon cross section of a traditional binned analysis to within 1%, but it also demonstrates that extending the method to five dimensions exposes severe regularization bias, extreme sensitivity to input numerical rounding, unvalidated interval coverage, and an unresolved shape tension with published results.
+
+**Three changes that would most improve it:**
+1. Unify the analysis around a single, finalized estimator configuration across all dimensions and provide complete, validated uncertainty covariance matrices for the 3D, 4D, and 5D results.
+2. Retract or thoroughly reconstruct the generator hypothesis rejections to properly account for target-material differences (carbon vs. hydrocarbon), phase-space coverage limits, and estimator regularization bias.
+3. Complete the missing sections and appendices while removing all citations to inaccessible internal tracking records, lost run logs, and private communications.
