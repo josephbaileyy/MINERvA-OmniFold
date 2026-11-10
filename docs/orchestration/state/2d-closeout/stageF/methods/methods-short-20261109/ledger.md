@@ -620,3 +620,6 @@ Checks:
 - `check_supp_pointers.py`: 35 pointers, 0 failures.
 - `check_restyle.py` against 0bc36ce87 fails only on `\Eavail` (item 9a) and the numeral 20 (item 4). No protected
   span, anchor or Supplement inventory changed.
+- **Superseded (the director, 2026-11-09):** after the multiset check's page-number fix (REPORT.md, "The rater
+  copy's multiset check"), Fig. 3 is back at `\linewidth`. The rater copy passes at 15 and 14 pages.
+

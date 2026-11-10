@@ -485,6 +485,10 @@ def self_test():
         print("self-test: the abstract gate fails a short filled case or an unfilled one"); ok = False
     if abstract_text(am, av, {"k": "b"}) != "A test. short 96 fits.":
         print("self-test: abstract_text misrenders:", repr(abstract_text(am, av, {"k": "b"}))); ok = False
+    ms = subprocess.run([sys.executable, "-I", str(HERE.parent / "rater-calibration/tools/multiset_check.py"), "--self-test"],
+                        capture_output=True, text=True)
+    if ms.returncode:
+        print("self-test: the rater copy's multiset_check.py fails its own self-test:", ms.stdout.strip()[-200:]); ok = False
     del EMPTY["e"]
     print("self-test:", "PASS" if ok else "FAIL")
     return 0 if ok else 1

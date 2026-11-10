@@ -243,3 +243,22 @@ style-baseline.json: 11 human-written papers before November 2022, 78,599 words.
 - It adds no number that is not already in `values_fived16.tex`.
 - §5.2's sentence would then point to the column.
 - **Its cost:** Table 2 widens from 9 to 12 numeric columns. It can stay `table*`, at `\scriptsize`.
+
+## The rater copy's multiset check: page-number lines (the director, 2026-11-09)
+
+`rater-calibration/tools/multiset_check.py` now removes page-number lines before comparing, by position only. On each
+form-feed-separated page of pdftotext's output, it removes the first or last non-empty line when that line is nothing
+but the page's own number. Numerals in the text are kept.
+
+- **The reason.** The normal build carries the hold text, so it can run one page longer than the rater copy. The
+  extra page number alone then failed the check's letter-multiset equality. That happened for Fig. 3 at full width
+  (15 pages against 14; ledger "Figure 3"), and it would recur at the fill.
+- **Its self-test** (`multiset_check.py --self-test`, run by `check_round.py --self-test`):
+  - two builds that differ only in page count PASS;
+  - a changed word, a changed numeral and a dropped in-text numeral each FAIL;
+  - an in-text "2" on page 2 is kept.
+  The hook is tested too: a planted failing copy makes check_round's self-test fail.
+- **A limit it does not fix.** The check compares letter multisets, with up to 6 re-tokenized words, so a digit
+  permutation inside one numeral (16 -> 61) still passes. That was true before this change.
+- **Fig. 3 is back at full width.** Normal build 15 pages, rater 14, multiset PASS, FIGS. 1-6 in the blind copy.
+
