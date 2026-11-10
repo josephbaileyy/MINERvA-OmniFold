@@ -1458,3 +1458,69 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - sec4 17/17; pointers 37; registry PASS;
   - check_restyle against 4580caf5c fails only on the added keys, the cite and ref, the three numerals now keyed,
     and Q11–Q13 (the B5 removals already reported; the re-pin is limitation-resolver's).
+
+## 2026-11-10 — the group B read's two items, the universe count, V-PRIOR withheld
+
+- **M108** (the director's group B read): S10's replacement sentence keeps both facts of GiBUU's record. Its
+  free-proton sample "failed its sampling-closure check, and its deep-inelastic events, \fvval{g-gibuu-hlab-dis}\,% of
+  it, do not conserve energy". That is the existing key, 46. The note's sec_joint.tex:327 says 46 % of its hydrogen
+  sample.
+- **M107/M118: the old-against-new values diff.** Each B5 key at this head, against its pre-B5 counterpart (key
+  without "-b5") in values_fived16.tex at 78ab386e0:
+
+  | key (new) | old key | old | new |
+  |---|---|---:|---:|
+  | fb-b5-edge-max (-nopl) | fb-edge-max (-nopl) | 3.8 (6.2) | 3.8 (6.2) |
+  | fb-b5-offset-relmax (-nopl) | fb-offset-relmax (-nopl) | 0.4 (1.0) | 0.4 (1.0) |
+  | gdef-b5-dmax, -bound | gdef-dmax, -bound | 0.063, 0.07 | 0.063, 0.07 |
+  | pl-chi2fall-b5-total-lo / -hi | pl-chi2fall-total-lo / -hi | 3.6 / 29.3 | 3.6 / **30.6** |
+  | pl-chi2fall-b5-shape_only-lo / -hi | pl-chi2fall-shape_only-lo / -hi | 7.4 / 40.4 | 7.4 / **39.7** |
+  | sens-b5-detlat-fall-max | sens-detlat-fall-max | 18 | 18 |
+  | sens-b5-detlat-fall-max-nopl | sens-detlat-fall-max-nopl | 19 | **16** |
+  | sens-b5-flux-fall-lo / -hi (-nopl) | sens-flux-fall-lo / -hi (-nopl) | 23 / 38 (24 / 48) | 23 / 38 (24 / 48) |
+  | sens-b5-joint-chi2-min (-nopl) | sens-joint-chi2-min (-nopl) | 41 (45) | 41 (45) |
+
+  - The group B entry's "unchanged except pl-chi2fall" holds for every printed key.
+  - One unprinted key also moved: sens-b5-detlat-fall-max-nopl went from 19 to 16. It is the automatic without-block
+    copy (MATRIX_KEYS), and neither the paper nor the Supplement prints it (grep: the only detlat use is
+    supplemental_body.tex's \fvval{sens-b5-detlat-fall-max}). The group B entry above is corrected by this row.
+- **The universe count** (the director's ruling, option (i)). §3.2 and Table S8 row 1 now print "\fvval{cov2d-nuniv}
+  universes in \fvval{cov2d-nunivbands} bands, plus the normalization", that is 185 in 43. The keys are in
+  make_values cov2d_block_values, and each piece has its own record field:
+  - 38 bands with 175 universes: S5's check refined_j2_38_bands_175_universes, cross-checked against the 175 U_*
+    production outputs in 38 bands;
+  - 5 lateral bands with 2 universes each: S5's production outputs 2dc_P_S3_<band>{0,1};
+  - 43 bands plus the normalization: budget_Q's bands (44 entries, equal to its bands_in_npz), which make_values
+    asserts are exactly the weight bands and the laterals, plus __Normalization_flat.
+  - The asserts are 175 + 10 = 185 and 38 + 5 = 43.
+  - check_round's LITERAL_PAIRS is replaced by the shared key, and GONE gains r"\b187 universes".
+  - This corrects a factual error. Its pairs go in the meaning read with the V-PRIOR pairs.
+- **V-PRIOR withheld.** Source: DECISION-20261110-joseph-vprior-withhold.md, on main at fc847d825 (#1028), items 1
+  and 4. The reason is the consult's: secondary-results/consult-sol-vprior-20261110/.
+  - Paper §5.4. The rules sentence now gives V-ATLAS alone ("leaves 14 of the 16 cells valid"). One sentence
+    withholds V-PRIOR's results, with the consult's reason intact, and keeps its one-line definition inside that
+    sentence, because the reason needs it: "about the analysis prior", and "its CH-corrected NuWro and GiBUU inputs".
+    "12 under both" is removed. The third rule (V-HALF) and the closing "All three rules …" are unchanged; the latter
+    still holds for the three rules as defined.
+  - S11:
+    - its opening says the second rule's results are withheld;
+    - V-ATLAS is unchanged;
+    - removed: V-PRIOR's 14 of 16, R08 (η = 0.522–0.534), R15 (0.564–0.565), the largest valid η (0.444, R10), the
+      threshold sensitivity (11 at 1/3, 16 at 1) and "Twelve cells are valid under both rules";
+    - the contrast that only V-PRIOR selected ("the two rules test different things …") is removed. Its V-ATLAS half
+      is kept as "The first rule grades one truth's closure pull", with the no-interval and no-exclusion clauses;
+    - the withholding sentence points to S10's app:gendefs, where the carbon-only reasons are stated.
+  - **The sweep was by claim.** The patterns were: under both, generator spread, spread of the generator, bias
+    spread, \eta, cells valid / are valid / valid under, validity rule, two rules, second rule, half the spread,
+    fourteen, twelve, 0.444, R08, R15, supp:validity, V-PRIOR. They were run over paper_body.tex, supplemental_body.tex
+    and main_paper.tex (the abstract), comments excluded.
+    - V-PRIOR's claims occur only at paper §5.4 and S11. Every other R08/R15/twelve hit is about cells or playlists.
+    - The abstract, tab:outcomes (whose validity row is V-HALF), B1's tables (row 6 is V-HALF; no row cites V-PRIOR),
+      the captions, and §7's limitations ("The validity rules grade the estimator's bias …", which still holds of
+      V-ATLAS and V-HALF) carry no V-PRIOR result.
+    - V-PRIOR had no value keys: its numbers were literals. So no key is removed. η is no longer printed anywhere,
+      so the symbol inventory's η entry above now has no use.
+  - **Check 12** (SUPP-SYNC): S11 is "Moved from the paper", not note-copied, so the sync check pairs nothing there.
+    Its report is unchanged: 58 paragraphs, explained 43, same 14, seed-adapted 1. The intended divergence is that
+    the note keeps V-PRIOR (decision item 5) while the Supplement withholds it. S4's Training details paragraph is
+    "explained" (adapted 2026-11-10).

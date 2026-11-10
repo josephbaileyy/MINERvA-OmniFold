@@ -96,7 +96,8 @@ ONCE = [
 GONE = [r"stabili[sz]ed variant", r"(?<!not )validat\w* the (full|five-observable) distribution", r"detector[- ]inadequa",
         r"locali[sz]ed in", r"\bE_?\{?96", r"\bFD-PRR\b", r"\bLL5D\b", r"\bV-HALF\b", r"\bV-ATLAS\b", r"\bV-PRIOR\b",
         r"\bCOV2D\b", r"\bRS1\b", r"\bENS1\b", r"\bFD-STAB\b", r"BIAS_WORSE", r"Stage~?0c", r"\bPR-[123]",
-        r"\bdeclared\b", r"joint-test estimator", r"\\chi\^\{2\}/205", r"tracks the same bias", r"natural next step"]
+        r"\bdeclared\b", r"joint-test estimator", r"\\chi\^\{2\}/205", r"tracks the same bias", r"natural next step",
+        r"\b187 universes"]   # the July sweep's count; Q's universe block is the key cov2d-nuniv (director, 2026-11-10)
 
 
 def load_mv(wt):
@@ -260,28 +261,6 @@ def check_literal_keys(texts, values_tex):
     return fails
 
 
-# Literals with no record to key, typed in two places: each pair must be found once in each file and agree. The 2D
-# universe count is the July sweep's (S5's may_44_bands_187_universes); the adopted block's count is pending the
-# director (ledger, group C), so the section 3.2 literal and Table S8's row 1 must move together.
-LITERAL_PAIRS = [("the 2D universe count",
-                  ("paper_body.tex", r"systematic universes \(([0-9]+) universes, including the normalization\)"),
-                  ("supplemental_body.tex", r"covariance from ([0-9]+) universes, \\fvval\{cov2d-nstat\} bootstrap replicas"))]
-
-
-def check_literal_pairs(texts):
-    fails = []
-    for what, *sites in LITERAL_PAIRS:
-        got = []
-        for f, pat in sites:
-            hit = re.findall(pat, re.sub(r"\s+", " ", strip_comments(texts[f])))
-            if len(hit) != 1:
-                fails.append(f"{f}: {what} is found {len(hit)} times (expected 1)")
-            got.extend(hit)
-        if len(got) == len(sites) and len(set(got)) != 1:
-            fails.append(f"{what}: the two literals differ ({' vs '.join(got)})")
-    return fails
-
-
 def run(wt, base):
     mv = load_mv(wt)
     cur = {f: (wt / NOTE / f).read_text() for f in FILES}
@@ -295,8 +274,7 @@ def run(wt, base):
              + check_dates({**cur, "supplemental_body.tex": supp})
              + check_sec4_tests(wt) + check_figures(wt) + check_abstract(wt)
              + check_free_text(mv.PENDING, mv.VERDICTS)
-             + check_literal_keys(cur, (wt / NOTE / "values_fived16.tex").read_text())
-             + check_literal_pairs({**cur, "supplemental_body.tex": supp}))
+             + check_literal_keys(cur, (wt / NOTE / "values_fived16.tex").read_text()))
     return fails
 
 
@@ -569,12 +547,6 @@ def self_test():
     if check_literal_keys({"paper_body.tex": lit % "2.6"}, vt) or not check_literal_keys({"paper_body.tex": lit % "2.5"}, vt) \
             or not check_literal_keys({"paper_body.tex": "no literal"}, vt):
         print("self-test: the literal-key check is wrong"); ok = False
-    pa = "systematic universes (%s universes, including the normalization)"
-    pb = "covariance from %s universes, \\fvval{cov2d-nstat} bootstrap replicas"
-    if check_literal_pairs({"paper_body.tex": pa % "187", "supplemental_body.tex": pb % "187"}) \
-            or not check_literal_pairs({"paper_body.tex": pa % "187", "supplemental_body.tex": pb % "185"}) \
-            or not check_literal_pairs({"paper_body.tex": pa % "187", "supplemental_body.tex": "no row"}):
-        print("self-test: the literal-pair check is wrong"); ok = False
     if not check_once_gone({"f": "the benchmark validates the five-observable distribution " + " ".join(ONCE)}):
         print("self-test: NOT CAUGHT an affirmative validation claim"); ok = False
     if not check_once_gone({"f": "the test not only validates the five-observable distribution " + " ".join(ONCE)}):

@@ -1723,13 +1723,30 @@ def ess_values(d):
 
 
 def cov2d_block_values(d):
-    """B1 row 1 and section 3.2: the sizes of the adopted 2D covariance's statistical, training-seed and run-period
-    blocks. The universe count (187) is not keyed: S5's record gives the refined arm 38 weight bands with 175 universes
-    plus five lateral bands, and 187 is the July sweep's count (may_44_bands_187_universes), so it stays a literal
-    pending the director (ledger, group C); check_round tests that the table's literal equals section 3.2's."""
+    """B1 row 1 and section 3.2: the sizes of the adopted 2D covariance Q's blocks. The universe block (the director's
+    ruling, option (i), 2026-11-10): S5's check refined_j2_38_bands_175_universes gives the weight bands and their
+    universes; S5's production outputs 2dc_P_S3_<band><i> give the lateral bands, two universes each; Q's budget lists
+    the 43 bands plus the flat normalization. 187 was the July sweep's count (may_44_bands_187_universes), Rvp1pi
+    included."""
     s5, bq, pl = d["s5q"], d["budgetq"], d["plterm"]
     assert s5["arm"] == "refined" and bq["arm"] == "refined"
     po = s5["inputs"]["production_outputs"]
+    chk = s5["checks"]["refined_j2_38_bands_175_universes"]
+    assert chk["ok"] and s5["checks"]["universe_bands_43_plus_norm"]["ok"]
+    nwb, nwu = chk["value"]
+    wbands = {re.match(r"U_(.+)_\d+$", k).group(1) for k in po if k.startswith("U_")}
+    assert len(wbands) == nwb and sum(1 for k in po if k.startswith("U_")) == nwu
+    lat = {}
+    for k in po:
+        m = re.fullmatch(r"2dc_P_S3_(.+?)(\d)", k)
+        if m:
+            lat.setdefault(m.group(1), set()).add(m.group(2))
+    assert all(u == {"0", "1"} for u in lat.values()), lat
+    nlu = sum(len(u) for u in lat.values())
+    qb = {b.replace("_", "") for b in bq["bands"]} - {"Normalizationflat"}
+    assert "__Normalization_flat" in bq["bands"] and len(bq["bands"]) == bq["s5_copied"]["derived_counts_not_copied"]["bands_in_npz"]
+    assert qb == {b.replace("_", "") for b in wbands | set(lat)}, "Q's bands are the weight bands and the laterals"
+    assert (nwb, nwu, len(lat), nlu) == (38, 175, 5, 10) and nwu + nlu == 185 and nwb + len(lat) == 43 == len(qb)
     nstat = sum(1 for k in po if re.fullmatch(r"2dc_P_S1_\d{3}", k))
     dc = bq["s5_copied"]["derived_counts_not_copied"]
     assert nstat == dc["stat_replicas_S1"] == 300
@@ -1738,7 +1755,8 @@ def cov2d_block_values(d):
     periods = {m.group(1) for k in pl["runs"] for m in [re.search(r"/pu_(P[A-Z])_s42/", k)] if m}
     assert pl["checks_passed"] and pl["npz"]["sha256"].startswith("c1723cb5")      # C_PL as Q adopted it
     words = {3: "three", 5: "five"}
-    return {"cov2d-nstat": str(nstat),
+    return {"cov2d-nuniv": str(nwu + nlu), "cov2d-nunivbands": str(nwb + len(lat)),
+            "cov2d-nstat": str(nstat),
             "cov2d-nseed-word": words[dc["seed_triplets_S4B_seeds_plus_seed42"]],
             "cov2d-nperiod-word": words[len(periods)]}
 
