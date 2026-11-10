@@ -1,0 +1,10 @@
+Follow-up from the editor to you as referee, on your item M5 (the ensemble average). The authors respond as follows and ask which response you would accept.
+
+The measured values at the one truth where the ensemble average was judged worse (the GiBUU-based Eavail shape), from the authors' committed record, are: RMS closure bias over the 16 cells, ensemble 0.056467 against the reported estimator 0.055955. The excess is 0.000512, which is 1.23 times the declared resolution floor of 0.000418. The maximum-bias excess is 0.000929, within its floor of 0.001783. The other 16 judged truths are no worse, and one is better.
+
+The authors' pre-specified study fixed two things before it ran. First, no decision may use a GiBUU bias magnitude: the comparison is a pass/fail "no worse" test against the floor. Second, its outcome record declared the magnitudes descriptive and excluded any reading of whether the one excess is noise or of a ranking of the two estimators. The authors can either:
+(1) report the sentence above, the numbers only, with no reading of noise or ranking; or
+(2) keep the verdict sentence only ("worse at one of 17 truths by the criterion fixed before the test, so not adopted"), and state in the response that the magnitudes were declared descriptive before the test.
+They also cannot report the ensemble average's result on data in this revision: the study ran on simulated pseudo-data only, and a data run would be new work.
+
+Questions: (a) Which of (1) or (2) answers your M5 request, and would (2) leave a requirement unmet? (b) Given that there is no data result, what would you require, or accept, regarding "report its sixteen-cell result on data next to the baseline"? Answer in under 250 words.
