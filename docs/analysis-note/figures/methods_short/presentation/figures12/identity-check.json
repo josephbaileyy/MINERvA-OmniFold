@@ -1,0 +1,24 @@
+{
+  "figure1": {
+    "status": "STOP: base archive does not reproduce printed figure",
+    "printed_pdf_sha256": "71a2ea488ab758a466d40b7d5a7a061ebd95b1cdb90a79427c3da968238b6427",
+    "printed_summary": {
+      "mean": "0.060",
+      "sd": "0.535"
+    },
+    "base_archive_summary": {
+      "mean": 0.08894542701552118,
+      "sd": 0.5981211651164514,
+      "bins": 205
+    },
+    "base_archive_has_cov_ours": false,
+    "required_entry_point": "2d-unfolding/re2/partc/re2c_fig1.py --arm refined"
+  },
+  "figure2": {
+    "status": "STOP: fetched estimator differs from printed asset producer input",
+    "printed_pdf_sha256": "7161ded1a2a6666de6c04d55652c00bf2435a72a38e8ef0e422a6105c002ef08",
+    "required_ours_path": "/pscratch/sd/j/josephrb/2d-closeout-re2-20261023/partb/out/ER/xsec.root",
+    "required_ours_sha256": "a5c13fc38d64242bc9ee459fac87568a2f97fddf7a3ac97cc6f91eb4c2a31cef",
+    "fetched_ours_sha256": "142a45b0efc753d91e95376c28ac3f6a477d582014a919e49d6d71079a127fd5"
+  }
+}
