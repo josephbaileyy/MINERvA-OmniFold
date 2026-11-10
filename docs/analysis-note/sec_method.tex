@@ -4,7 +4,7 @@
 \subsection{Algorithm}
 \label{sec:method-algo}
 
-OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} unfolds by iterated reweighting with machine-learned likelihood ratios, operating on per-event observables rather than on a fixed histogram binning. Each iteration has two steps:
+OmniFold~\cite{Andreassen:2019cjw,Andreassen:2021zzk} unfolds by iterated reweighting with machine-learned likelihood ratios on per-event observables without requiring a fixed histogram binning. Each iteration has two steps:
 \begin{enumerate}[itemsep=2pt]
   \item \textbf{Step 1 (detector space).} A classifier separates measured data from reconstructed simulation weighted by the current push-weights. Its calibrated output $p$ gives the likelihood-ratio reweight $w = p/(1-p)$ for each reconstructed simulated event. Each simulated event is a (truth, reco) pair, allowing the weight to be \emph{pulled back} directly to its truth record. Truth events without a reconstructed partner (``misses'') receive step-1 weights from a regressor trained on the reconstructed subsample, $w(\mathrm{truth\ features})$. This native OmniFold acceptance treatment requires no separate efficiency correction.
   \item \textbf{Step 2 (truth space).} A second classifier separates the original truth-level simulation from the same sample carrying the pulled-back step-1 weights. Its smooth truth-space reweight becomes the next iteration's push-weight.
