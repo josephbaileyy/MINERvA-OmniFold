@@ -17,7 +17,7 @@ Equation~\eqref{eq:chi2} requires inverting $\mathbf{C}$.
 \end{equation}
 twelve orders below the mean diagonal, far below any real signal in $\mathbf{C}$ and safely above floating-point round-off.
 
-\paragraph{Rank deficiency at $N \le n$.} A sample covariance from $N\le n$ replicas in $n$ bins has rank at most $N-1$. The 300-replica bootstrap ($N=300 > 205$) is full-rank. The rank of the systematic block is limited at any universe count (\S\ref{sec:rank}).
+\paragraph{Rank deficiency at $N \le n$.} A sample covariance from $N\le n$ replicas in $n$ bins has rank at most $N-1$. The 300-replica bootstrap ($N=300 > 205$) has more replicas than bins, which permits full rank and does not establish it. The rank of the systematic block is limited at any universe count (\S\ref{sec:rank}).
 
 \paragraph{Pseudo-inverse.} For the $\chi^{2}$ against the paper covariance, the comparison replaces $\mathbf{C}^{-1}$ with the Moore--Penrose pseudo-inverse computed via SVD, $\mathbf{C}=\mathbf{U}\Sigma\mathbf{V}\T$ with $\Sigma=\diag(\sigma_{1},\dots,\sigma_{n})$:
 % (\texttt{compare\_to\_paper\_fullcov.py})
