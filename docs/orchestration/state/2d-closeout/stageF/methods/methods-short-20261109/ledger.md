@@ -623,3 +623,34 @@ Checks:
 - **Superseded (the director, 2026-11-09):** after the multiset check's page-number fix (REPORT.md, "The rater
   copy's multiset check"), Fig. 3 is back at `\linewidth`. The rater copy passes at 15 and 14 pages.
 
+### journal-editor's read of ce565239d, applied (wording only; the coverage clauses stay pending Joseph)
+
+- **Item 1, a misreading I introduced.** "only" before the tune phrase attached to the tunes: for example uc-ujc
+  printed "under-coverage in some cells only at one tune", although the cells under-cover at both. My ledger's
+  "they say the same" above was false as printed.
+  - The pair words are now "per-cell but not joint under-coverage", "joint but not per-cell under-coverage", "joint
+    and per-cell under-coverage", "no under-coverage" and "fails its own controls".
+  - check 10 now fails any rendered case that prints " only at " (ABSTRACT_BANNED). It fails the ce565239d abstract
+    and passes this one, and its self-test plants the phrase.
+- **Item 2.** The prr "same" classes read as equality, and "within it" had no referent. They now say "differs from
+  the [five-observable] estimator's retained fraction of the prior by less than a threshold fixed in advance", or
+  "... by less than that threshold" after a threshold is named.
+- **Item 3.** The gate-failed case reads "stopped at an entry condition fixed in advance" in the abstract, Table 1 and
+  section 6.3, which keeps it distinct from the stop case's "a check fixed in advance". Section 6.2's "one of its
+  gates" (the first test, r5:283) and the section 7 hold are unchanged.
+- **Item 4.** "where the bias tests pass" -> "where the estimator's fake-data bias is not flagged". This is the
+  wording of section 6.3 ("at tunes where the bias is not flagged"), and section 5.2 (:233) supports it: "Both tunes
+  satisfy the bias criteria", under the reported covariance.
+- **Item 5:** "with them, it" -> "with those bands, it".
+- **Item 6:** the abstract's first "estimator" is now "the five-observable estimator", in every prr class.
+- **Item 8 (optional):** not applied. The section 3 sentence is already the body's first use of both names.
+- **Length.** These fixes lengthen the worst case from 2,343 to 2,420 characters (prr same-more, ll5d uc-uj in both
+  variants, offset-proceeded). The cut is Joseph's decision (option B) before any filled case can pass check 10.
+
+Checks:
+- `make_rater_copy.sh`: PASS (15 and 14 pages).
+- `check_round.py . --fill-test`: PASS. `--self-test`: PASS.
+- `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- `check_restyle.py` against 7960906a2: PASS.
+

@@ -35,7 +35,8 @@
      printed abstract (abstract_text: the source with \\fvgroup/\\fvcase resolved and \\fvval from the values) must be at
      most ABSTRACT_PDF_MAX = 2,000 characters, until Joseph sets a limit. Before then, the range over every consistent case
      is reported, without failing. arXiv's 1,920 characters apply to a separate metadata abstract, written at
-     submission (REPORT.md, "Follow-up: before submission").
+     submission (REPORT.md, "Follow-up: before submission"). No rendered case may print a phrase of ABSTRACT_BANNED
+     (" only at ", which attaches a restriction to the tunes rather than to the noun).
 NOTE (printed on every run; not checked here). The figures sit where the blind rater copy passes its hold-diff check
 (rater-calibration/make_rater_copy.sh). A float near section 7 split the long section 7 hold ("A citable home ...")
 across a page break, and the copy failed. Any reflow of sections 6-7 (a float moved, a caption or paragraph
@@ -310,6 +311,8 @@ def check_figures(wt):
 
 ABSTRACT_PDF_MAX = 2000  # characters, the printed abstract after the fill, until Joseph sets a limit (the director, 2026-11-09)
 ARXIV_ABSTRACT_MAX = 1920  # arXiv's metadata field: a separate abstract written at submission (REPORT.md, before submission)
+# phrases no rendered case may print: "only at" attaches the restriction to the tunes, not the noun (journal-editor, 2026-11-09)
+ABSTRACT_BANNED = (" only at ",)
 
 
 def abstract_text(main_tex, values_tex, ver):
@@ -364,6 +367,9 @@ def abstract_gate(main_tex, values_tex, cases, verdicts):
     most ABSTRACT_PDF_MAX characters. Not yet filled: the range over the cases consistent with what is filled, reported."""
     s = strip_comments(main_tex)
     keys = {a[0] for _, _, a in macro_calls(s[s.index(r"\begin{abstract}"):s.index(r"\end{abstract}")], "fvcase", 3)}
+    bad = sorted({p for c in cases for p in ABSTRACT_BANNED if p in abstract_text(main_tex, values_tex, c)})
+    if bad:
+        return [f"a rendered abstract case contains {p!r}" for p in bad], []
     if keys <= set(verdicts):
         t = abstract_text(main_tex, values_tex, verdicts)
         line = f"ABSTRACT (filled) {len(t)} characters, {len(t.split())} words (fails above {ABSTRACT_PDF_MAX})"
@@ -483,6 +489,8 @@ def self_test():
         print("self-test: NOT CAUGHT a filled abstract over the limit"); ok = False
     if abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {"k": "b"})[0] or abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {})[0]:
         print("self-test: the abstract gate fails a short filled case or an unfilled one"); ok = False
+    if not abstract_gate(am.replace("{short}", "{cells only at one tune}"), av, [{"k": "a"}, {"k": "b"}], {})[0]:
+        print("self-test: NOT CAUGHT an 'only at' in a rendered case"); ok = False
     if abstract_text(am, av, {"k": "b"}) != "A test. short 96 fits.":
         print("self-test: abstract_text misrenders:", repr(abstract_text(am, av, {"k": "b"}))); ok = False
     ms = subprocess.run([sys.executable, "-I", str(HERE.parent / "rater-calibration/tools/multiset_check.py"), "--self-test"],
