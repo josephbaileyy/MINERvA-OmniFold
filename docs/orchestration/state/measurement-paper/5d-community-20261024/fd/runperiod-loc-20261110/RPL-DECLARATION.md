@@ -1,4 +1,4 @@
-# RPL DECLARATION: locating the run-period step, three referee checks (2026-11-10, revision 2, DRAFT for the director's binding)
+# RPL DECLARATION: locating the run-period step, three referee checks (2026-11-10, revision 3, DRAFT for the director's binding)
 
 **By** the valid-region lane (director-helper-2), for the director, on Joseph's go relayed by the director
 (2026-11-10). This is a draft: nothing here runs before a binding and each connect's go.
@@ -122,7 +122,9 @@ RPL stays its own declaration; it is not folded into RPD-RECO.
     parabola through the three fine points nearest the minimum. α̂ is the parabola's vertex, and the fine-grid minimum
     is reported beside it (audit m1).
   - χ²(α, k) = Σ_b (k·D_PB,α(b) − 1)² / σ_b². **σ_b is RPD-RECO's paired-bootstrap σ of D_PB(b) evaluated at α = 0,
-    and held fixed over α** (audit m1). Its change with α is second order in α, and α̂'s σ below does not use it.
+    and held fixed over α** (audit m1). This is a declared estimator, not an approximation claim: N_b, and so σ_b, move
+    at first order in α, about α times the spectral slope. α̂'s σ below does not use σ_b.
+  - **ndf** = the number of bins used, the overflow bins included, after RPD-RECO's P ≥ 25 rule, minus 2 (α and k).
 - **The errors:** σ_α is the SD of α̂ refitted on each of RPD-RECO's 200 paired-bootstrap replicas (its seeds), with
   the same scans.
 - **Reported:** α̂ ± σ_α; χ²_0 (α = 0) and χ²(α̂), each with ndf; α̂_PC and α̂_X (descriptive); and the published
@@ -130,7 +132,10 @@ RPL stays its own declaration; it is not folded into RPD-RECO.
 
 **The comparator, the band's size.**
 - σ_band is the ±1σ fractional p_μ shift of `Muon_Energy_MINOS`: the **`w_reco`-weighted** median of
-  |p_μ,shifted / p_μ − 1| over `pass_reco` rows, overall and in the p_∥ < 8 and ≥ 8 strata (audit m2).
+  |p_μ,shifted / p_μ − 1| over `pass_reco` rows (audit m2).
+  - **The value that decides outcomes 4–6 is the overall one, over all `pass_reco` rows** (recheck R1).
+  - The p_∥ < 8 and ≥ 8 strata are reported as descriptions. MINOS range and curvature uncertainties differ, so the
+    strata can differ.
 - `Muon_Energy_MINERvA`'s shift is measured the same way and **is descriptive only**; only MINOS's enters the outcomes
   (audit m2).
 - **What the band is** (audit M3): the band shifts every playlist alike (`playlist-spread-20261014/coverage/REPORT.md`
@@ -160,6 +165,15 @@ common to all playlists.
   - If range ∪ curvature covers less than 99.9 % of the selected weight on either side, or "both" exceeds 0.1 %, that
     is a STOP: (ii-a) is not made.
   - The counts are reported.
+- **The join check** (recheck R2). This runs with the join, before P-RPD, and forms no data/MC quantity.
+  - For every joined pair, the AnaTuple's `MasterAnaDev_muon_P` must agree with the zero loop's reconstructed muon
+    momentum, |p| = √(p_T² + p_∥²) from `measured`/`measured_pz` (data) or `sim`/`sim_pz` (MC), to 10⁻³ relative.
+  - At least 99.9 % of the pairs' weight must pass, in data and MC separately. Otherwise it is a STOP and (ii-a) is not
+    made.
+  - A mis-join scrambles the flags and pulls Δ toward 0. The reproduction control below cannot see that, because it
+    ignores the flags.
+  - If the dry run's one file per tier shows a uniform offset (a correction applied in the event loop), the run
+    returns to the director before the join job, with the offset named. No reading is made from it.
 - **The reproduction control** (audit M7). On the joined zero-loop rows, unrestricted by method, the R-d1.0 statistic
   must reproduce RPD-RECO's recorded s_PB within 0.1 σ_s, where σ_s is RPD-RECO's.
   - It is not to 10⁻¹², because the dumps are not the zero loops row for row. The dumps dropped 33–511 rows per
@@ -188,7 +202,13 @@ common to all playlists.
   - s_1N and s_PC;
   - s_PB.
 - **Every difference's σ comes from the same replicas,** so the shared PA reference is carried.
-- **The control:** RPL's per-playlist steps equal RPD-RECO's recorded s_obs,X to 10⁻¹² relative. A failure is a STOP.
+- **RPL calls RPD-RECO's own functions** (`nd-unfolding/fd_rpd_reco.py` at its record's commit) for the steps and the
+  bootstrap, not a reimplementation, so the arithmetic order and the Poisson draws are RPD-RECO's (recheck R9).
+- **The control** (recheck R3). Before any (ii-b) reading, these must equal RPD-RECO's recorded values to 10⁻¹²
+  relative, or the run is a STOP:
+  - all 12 per-playlist s_obs,X and σ_X;
+  - the group step s_PB and its σ.
+  - The σ match is what licenses RPL's replicas for σ_d, σ(s_X) and σ(e_X). They are the same draws by construction.
 - limitation-resolver is told that RPL recomputes the replicas itself, so RPD-RECO need not store them.
 
 **Readings, each with the magnitudes printed beside it** (audit M4, m4).
@@ -197,6 +217,8 @@ common to all playlists.
   - otherwise **NOT-ALIGNED**, with the playlists that break it.
   - The per-playlist s_obs,X and σ_X are printed beside the reading, because at these statistics a 1 % step elsewhere
     breaks a significance-only rule.
+  - **1L holds 0.13 × 10²⁰ POT** (recheck R8). NOT-ALIGNED can come from 1L's lack of power alone; the printed σ_1L
+    shows whether it does.
   - The step group is exactly the tilted-horn set, so horn and period cannot be separated.
 - **1G against 1L+1M** (water empty against water full, inside the tilted-horn set). With d = s_1G − s_1LM and σ_d
   from the replicas:
@@ -210,7 +232,9 @@ common to all playlists.
   - **X-SHOWS-NO-STEP-OF-1G–1M's-SIZE** if |s_X| < 2σ(s_X) **and** |e_X| ≥ 3σ(e_X). It is consistent with 0 and
     inconsistent with the full step;
   - **X-SHOWS-A-STEP-OF-1G–1M's-SIZE** if |s_X| ≥ 3σ(s_X) **and** |e_X| < 2σ(e_X);
-  - **UNRESOLVED** otherwise, including when s_X is consistent with both 0 and s_PB.
+  - **X-SHOWS-A-STEP-OF-A-DIFFERENT-SIZE** if |s_X| ≥ 3σ(s_X) **and** |e_X| ≥ 3σ(e_X). It differs from both 0 and the
+    full step (recheck R4);
+  - **UNRESOLVED** otherwise: the genuinely undecided cases, including when s_X is consistent with both 0 and s_PB.
   - **These names describe the playlists, not a condition** (audit M4). 1N and 1N–1P differ from PA in water,
     helium, slip stacking and flux file at once (the conditions table; flux files 1D, 1M and 1N).
 
@@ -255,10 +279,15 @@ The committed search output is re-read under this rule; no new search is run (th
     reason; it is not widened after a failure.
 - (i): at α = 0 the code reproduces RPD-RECO's R-d1.0 s_PB to 10⁻¹² relative;
 - (i): **the planted scale** (audit M2). The pseudo-data are built as the data are:
-  - RPD-RECO's own C-0 recipe splits PB's pooled MC rows at random into a pseudo-data half and a prediction half, with
-    seed `SeedSequence([20261110, 17, 1])`, and the same for PA;
-  - the pseudo-data half's momentum is scaled by a planted α_true = +1.0 % **before binning**, over the whole set,
+  - **RPL's own construction** (recheck R5; RPD-RECO's C-0 partitions differently). For PB and for PA separately, the
+    MC signal rows and the background rows are each split at random, 50/50, into a pseudo-data half and a prediction
+    half, with seed `SeedSequence([20261110, 17, 1])`.
+    - The pseudo-data "counts" are the `w_reco`-weighted sums of the pseudo-data half's signal plus the `bkg_w`-weighted
+      sums of its background, × 2.
+    - The prediction is the same sums over the other half, × 2.
+  - In PB's pseudo-data half, the momentum is scaled by a planted α_true **before binning**, over the whole set,
     overflow included, so rows move in and out of the window as the selection would;
+  - **two plants,** α_true = +1.0 % and +3.0 %, so recovery is tested away from zero;
   - the fit runs with its bootstrap on those rows.
   - **The tolerance:** |α̂ − α_true| ≤ 3.5 σ_α. The derivation of the false-STOP rate:
     - α̂ − α_true is close to Gaussian with SD σ_α;
@@ -268,9 +297,12 @@ The committed search output is re-read under this rule; no new search is run (th
     - at 0.9, two standard errors low, it is 1.6 × 10⁻³;
     - at 0.8, a 20 % underestimate (four standard errors), it is 5.1 × 10⁻³.
     - So it is under 1 % even at a 20 % underestimate of σ_α, against about 32 % for the first draft's 1σ.
+    - With two plants, the union is under 2 × 5.1 × 10⁻³ ≈ 1.0 % in that worst case, and under 3.3 × 10⁻³ at
+      σ̂_α/σ_α = 0.9.
 - (ii-a): the key is unique on both sides. The unmatched selected weight is reported, and above 0.1 % it is a STOP. The
   method partition and the reproduction control are as above;
-- (ii-b): RPL's per-playlist steps equal RPD-RECO's recorded s_obs,X.
+- (ii-b): RPL's per-playlist steps and σ, and s_PB with its σ, equal RPD-RECO's recorded values (recheck R3);
+- (ii-a): the per-pair muon-momentum join check (recheck R2).
 
 ## Licence
 
@@ -289,6 +321,22 @@ descriptions of the reconstruction-level step.
   not consider time or intensity dependence** (audit m7). (iii-b) quotes the modelling it states.
 
 **A finding enters the paper only by Joseph's decision,** through the paper lane and a PRD-referee read.
+
+## Revision 3 (2026-11-10): the recheck
+
+coverage-5b-audit's recheck of revision 2 (`56ee6e28…`) resolved B1 and B2 and found 4 major and 5 minor issues. All
+are folded in:
+- **R1:** the overall σ_band decides.
+- **R2:** a per-pair muon-momentum join check, as a STOP.
+- **R3:** the control also compares σ_X and s_PB, named.
+- **R4:** X-SHOWS-A-STEP-OF-A-DIFFERENT-SIZE.
+- **R5:** the planted pseudo-data are RPL's own construction, stated, with two plants.
+- **R6:** the σ_b sentence is corrected, and ndf is stated.
+- **R7:** in `iii/README.md`.
+- **R8:** the note on 1L's power.
+- **R9:** RPL calls RPD-RECO's own functions.
+
+limitation-resolver's caution on arithmetic order is in the Controls section.
 
 ## Revision 2 (2026-11-10): the audit and the director's rulings
 

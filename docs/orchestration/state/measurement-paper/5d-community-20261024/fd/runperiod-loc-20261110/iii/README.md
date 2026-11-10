@@ -21,7 +21,8 @@ was run.
 states three such treatments:
 - an overlay of accidental activity "appropriate to the time periods in the simulation";
 - a MINOS matching efficiency determined "as a function of instantaneous neutrino beam intensity";
-- an energy scale set "as a function of time", with a 1 % muon energy scale uncertainty.
+- MINERvA's calorimetric energy scale, set from through-going muons "as a function of time" (quote 3a);
+- a muon energy scale uncertainty of 1 %, from the low-recoil fit (quote 3b).
 
 They are quoted below. They are not read as a treatment of the step. Quote 3a bears on (i)'s hypothesis only on its
 MINERvA (dE/dx) side.
