@@ -826,3 +826,43 @@ ensemble in one clause; W-11; the coverage test per variant only; the illustrati
   - check_restyle against 58fdb8cf2 fails only on the cut 0.133% sentence (the numerals 0.133 and 20, and its
     \SI{}{\percent}).
 - The coverage clauses stay pending Joseph. The director runs a fresh reader on the longest and shortest cases.
+
+## The prior-retention fill (FD-PRR; DECISION-20261109-joseph-abstract-length-prr-fill.md item 2, #1010)
+
+- **The readout.** `fd/receipts-prr/read/cluster/readout.json` (#1006), sha256 9238f22bfe29685e…, is pinned in
+  make_values' READOUTS as `prr`. Its verdict is COMPLETE, schema prr-readout/1.
+- **The mapping.** `prr_verdicts()` maps readout keys only to the declared classes. It uses prr_read.py's own strings
+  at db0e801f1: factor_class :300-306, ibu_class :309-312, ibu_k_class :315-318, labels_for :321-333, clears :336-340.
+  VERDICTS holds the result, and `make_values --check` now fails if VERDICTS differs from a fresh mapping of the
+  pinned readout.
+- **The classes**, at A7_gibuu and q3, both flagged truths:
+  - PR-1: F1 no effect / increases; F2 increases / increases; F3 no effect / no effect; F4 increases / increases.
+  - PR-2a: "IBU retains less" at both, so less. PR-2b: falls at both.
+  - The labels: "consistent with an implementation-specific share" and "sensitive to the observable set" at both
+    (impl and obs hold; fir, info, stat and unattr do not).
+  - PR-3: every level, IBU_K5 included, "does not clear at these truths", so prr-pr3-any and prr-pr3-ibu are not.
+  - prr-pr3-levels is "none". It is not printed anywhere.
+  - prr-ibu-bar is 0.05, the readout's floor.bars.IBU.
+  - prr-abs, from prr_derived: less-less.
+  These agree with the director's report of the readout.
+- **What prints.**
+  - §5.3: the pre-written cases, unchanged as the decision requires. The readings are descriptive and no level is
+    adopted (FD-PRR BINDING 1 rulings 2-3).
+  - Table 1's row: the PR-1 classes per truth, status Descriptive.
+  - The abstract's clause: "binned iterative unfolding of noise-free pseudo-data at five iterations retains less of
+    the prior at both".
+  - The Supplement prints no prr group.
+- **Checks:**
+  - the rater copy PASS (15 and 14 pages); the Supplement's rater copy rc 0, 25 pages, 8 of 8 captions;
+  - the blind copies print no prr placeholder and no class name, and the manuscript no GONE term;
+  - check 11 finds no internal term in the filled values;
+  - check_round with the fill test PASS, and the self-test PASS;
+  - check 10 over the 678 cases still open (the coverage test's): 183-239 words;
+  - make_values `--check` and `--self-test` PASS;
+  - registry, sec4 (16/16, 17 passed) and pointers (35/0) PASS;
+  - check_restyle against the pre-fill head 74db4ea97 PASS (no .tex source changed).
+- **Style, for the director.** §5.3's four label sentences read repetitively as filled ("At the GiBUU hybrid truth,
+  the results are consistent with … At the GiBUU hybrid truth, the retained prior is …"). They are kept as
+  pre-written.
+- The director's five abstract fixes are not in this commit. As ruled, with the run-period clause dropped first, 261
+  of the 678 open cases still exceed 250 words. That went to the director for a decision.
