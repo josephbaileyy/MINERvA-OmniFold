@@ -416,7 +416,7 @@ summarized by mean, RMS, a $14\times16$ heatmap and histogram. The combined cova
 % exact-split pair was restored on review F1, because Q4 covers superseded values only).
 % PHASE2 Q3: "No reported bin has |pull| > 3" removed; the Q receipts give no maximum.
 
-The paper covariance alone gives mean $\pullMean$ (similar, no bias) and RMS $\pullRMS$, slightly wider before our uncertainties are added.
+The paper covariance alone gives mean $\pullMean$ and RMS $\pullRMS$. The mean is a small difference between two estimates of the same data. It is not a finding of no bias. The RMS is slightly wider before our uncertainties are added.
 
 \subsubsection{Shape-only $\chi^{2}$ with Jacobian propagation}
 \label{sec:shape}
@@ -591,7 +591,7 @@ The OmniFold response is trained on the CV weights and the pseudo-data are built
 X^{\CV,\text{truth}}_{i}\cdot
 \frac{X^{\text{alt},\text{in-acc}}_{i}}{X^{\CV,\text{in-acc}}_{i}},
 \end{equation}
-scaling the CV truth marginal by the alternative-to-CV in-acceptance count ratio to isolate model-shape response from acceptance/efficiency effects. In-acceptance biases are $-1.68\%$ for \texttt{MaCCQE:0}, removed by extrapolation, and $-7.32\%$ for \texttt{Flux:50}. Both residuals are below the $2.0\%$ bound by at least a factor of $5$, showing robustness to model variations of order $\pm 1\sigma$ GENIE and full PPFX flux universes.
+scaling the CV truth marginal by the alternative-to-CV in-acceptance count ratio to isolate model-shape response from acceptance/efficiency effects. In-acceptance biases are $-1.68\%$ for \texttt{MaCCQE:0}, removed by extrapolation, and $-7.32\%$ for \texttt{Flux:50}. Both residuals are below the $2.0\%$ bound by at least a factor of $5$. Those residuals are the recovery relative to the constructed reference above. They do not establish robustness to model variations in general.
 
 \subsection{Summary of the 2D comparison numbers}
 \label{sec:assemble}
