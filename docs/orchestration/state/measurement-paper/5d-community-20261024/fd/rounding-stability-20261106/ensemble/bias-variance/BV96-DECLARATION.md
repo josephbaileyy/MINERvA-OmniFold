@@ -1,7 +1,11 @@
-# BV96 DECLARATION: the bias–variance (mean-squared-error) trade-off of E₉₆ against configuration (e), at two reserved truths (DRAFT, 2026-11-10)
-
-**For audit by `coverage-5b-audit` (after the director's review of 2026-11-10, §12) and binding by the director.**
-Nothing has run, and nothing runs before the binding.
+# BV96 DECLARATION: the bias–variance (mean-squared-error) trade-off of E₉₆ against configuration (e), at two reserved truths (ARCHIVED DESIGN, NEVER RUN, 2026-11-10)
+<!-- absence-ok: states that this study's own plan was not executed (Joseph's decision of 2026-11-10), not that a result is absent elsewhere -->
+**NEVER RUN. This is an archived design, kept as written apart from the corrections marked "Corrected" below.** Its O1
+power check (§8) found the MSE comparison unresolvable at any affordable M. On a fresh independent review
+(`consult-astra/`), Joseph decided on 2026-11-10 that BV96 stops as an MSE study and that nothing launches. The decision
+is recorded by the director. The findings record is `BV96-OUTCOME.md`. No audit, binding or launch follows. A
+re-targeted, held-out bias comparison is deferred to the follow-up paper's planning.
+<!-- absence-ok: states that this study's own plan was not executed (Joseph's decision of 2026-11-10), not that a result is absent elsewhere -->
 
 **Written by** the `limitation-resolver` lane (a Claude session), at the director's request of 2026-11-10 (in
 correspondence). All repository citations are at `origin/main` `fd107364` unless stated.
@@ -68,8 +72,11 @@ records:
   710 node-h per truth.
 - Put another way: E₉₆ is MSE-better in a cell only if its bias moves by less than s_F² / (2|b|). At |b| = 1 % that is
   **5.2 × 10⁻⁶**. ENS1's 96-fit floors resolve differences of about 4 × 10⁻⁴.
-- So at any reserved truth whose bias is not tiny, a 16-cell MSE comparison reads NO PREFERENCE whatever the estimators
-  do. The illustrative |b| = 1 % uses no ENS1 GiBUU magnitude, which ENS1's licence forbids.
+- So at any reserved truth whose bias is not tiny, a 16-cell MSE comparison has essentially no sensitivity to the
+  equal-bias, variance-only gain. The illustrative |b| = 1 % uses no ENS1 GiBUU magnitude, which ENS1's licence
+  forbids.
+- **Corrected (consult-astra/answer.txt):** the first version said it "reads NO PREFERENCE whatever the estimators do".
+  That overstates it. A large bias change between the estimators could still be detectable.
 
 **1.2 Where the trade-off is real: s5e's 153 functionals.**
 - These are the functionals on which (e)'s instability was found and graded: FD-STAB §4.3, ENS1 §4.1. They are finer
@@ -241,10 +248,16 @@ seeds 808001–808030 (R1) or 809001–809030 (R2). Per pseudo-experiment m:
 - A_T estimates MSE_E − MSE_F averaged over the 153 functionals. Negative means E₉₆ has the lower MSE.
 - **Bounds:** L_T = A_T − 2.241·SE_T and U_T = A_T + 2.241·SE_T. 2.241 is the one-sided normal quantile at 0.0125: four
   one-sided claims (two truths, two directions) share a familywise 0.05.
+  - **Corrected:** normal critical values with standard errors estimated from M = 30 experiments do not guarantee that
+    familywise rate, and the harm threshold of §6.3 itself contains an estimated variance. Any future use would
+    calibrate the procedure before asserting those rates (consult-astra/answer.txt).
 - **Materiality margin m = 0.05 σ_rel².** That is 5 % of a functional's statistical variance, about one seventh of the
   median functional's rounding variance (§1.2). A smaller difference is not material, even when resolved.
-  **A-priori ground:** a 5 % change in mean squared error is a change of under 2.5 % in the root-mean-square error
-  (√1.05 = 1.025). That is below what an uncertainty quoted to two significant figures resolves.
+  **A-priori ground:** 0.05 σ_rel² is 5 % of a functional's statistical variance. It is a floor on the variance term
+  and on the MSE difference in σ_rel² units, not a relative change in MSE.
+  - **Corrected:** the first version read it as "a 5 % change in mean squared error", which is a change of under
+    2.5 % in the root-mean-square error. That holds only where MSE is about one statistical variance. At a truth with
+    large bias, MSE is dominated by b², so adding 0.05 σ_rel² is a far smaller relative change (consult-astra/answer.txt).
 
 **6.3 The harm guard, on the 16 cells.**
 - **Harm** means that E₉₆ makes a reported cell's mean squared error worse than F's by more than a quarter of that cell's
@@ -256,9 +269,12 @@ seeds 808001–808030 (R1) or 809001–809030 (R2). Per pseudo-experiment m:
     16 cells.
 - By §1.1, the rounding gain in a cell is at most 4.5 % of its variance. The guard can therefore trigger only on a bias
   increase that matters at the statistical level, and never on the rounding term.
-- **A-priori ground:** a 25 % increase in a cell's mean squared error is a 12 % increase in its root-mean-square error
-  (√1.25 = 1.118), large enough to change the cell's quoted uncertainty visibly. The one-sided 0.05/32 keeps the chance
-  of a false harm flag at any of the 32 truth-cells at or below 5 %.
+- **A-priori ground:** the guard compares E₉₆'s MSE excess in a cell with a quarter of that cell's pseudo-experiment
+  variance, an absolute yardstick at the statistical scale. The one-sided 0.05/32 is meant to keep the chance of a false
+  harm flag at any of the 32 truth-cells near 5 %, subject to the calibration caveat of §6.2.
+  - **Corrected:** the first version read it as "a 25 % increase in a cell's mean squared error, a 12 % increase in
+    its root-mean-square error". The excess is measured against the variance, not the MSE, so that RMS reading holds
+    only where the bias is small.
 
 **6.4 The verdict.**
 - At truth T: **E-better** if U_T < −m; **F-better** if L_T > +m; otherwise **unresolved**.
@@ -281,7 +297,10 @@ seeds 808001–808030 (R1) or 809001–809030 (R2). Per pseudo-experiment m:
 **7.1 The decomposition, per functional and per cell, for both estimators.**
 - Bias: the mean over experiments of e (or r), and the noise-free closure's error (§5.1).
 - Variance: the sample variance over experiments.
-- MSE as bias² plus variance, beside the direct mean of squares of §6.
+- MSE beside the direct mean of squares of §6. With the experiments' mean error ē and sample variance s² (ddof 1),
+  the direct mean of squares equals ē² + (M − 1)s²/M exactly.
+  - **Corrected:** the first version wrote "bias² plus variance", which is ē² + s², not the direct mean of squares
+    (consult-astra/answer.txt).
 
 E₉₆'s statistical σ relative to F's is printed. ENS1 assumed it unchanged and did not check it (ENS1 §10).
 
@@ -349,12 +368,24 @@ every M simulated, so M returns to the director.**
   σ_rel². Its noise is about 2|b_j|·sd_j per experiment: SD(d_m) is 4.1–53 at those truths, against 0.55 at the nominal
   truth.
   - So §1.1's scale argument holds on the 153 functionals as well, once the truth's bias is many statistical σ.
-  - Power 0.8 at one truth would need about 350 (W2) to about 28,000 (P1g) experiments, with a median over the 14 of
-    about 5,800. That is about 700 to 55,000 node-h per truth.
+  - **Corrected** (consult-astra/answer.txt; `power/bv96_m80.py`, `bv96_m80.out.txt`): power 0.8 at one truth would
+    need about 310 (W2) to about 53,000 (A7 NuWro) experiments, with a median over the 14 of about 7,800. That is about
+    600 to 104,000 node-h per truth. The first version gave a maximum of about 28,000 (P1g), because it divided by
+    each truth's simulated gain, which is noisy, instead of the model's expected gain G = 0.77077. The consult's own
+    figure for A7 NuWro is about 52,200.
 - **What it means for BV96.** At generator-shape truths like F0b's, and so very likely at R1 and R2, an MSE comparison
-  of E₉₆ with (e) reads NO_PREFERENCE by construction at any affordable M. The MSE preference there is decided by the
-  bias term, which the estimator's own rounding draw prevents resolving at the second-order scale of the gain. The
-  director decides how BV96 proceeds (O6, §12).
+  of E₉₆ with (e) has essentially no sensitivity to the equal-bias, variance-only gain at any affordable M. The bias
+  term carries the MSE there, and the estimator's own rounding draw prevents resolving it at the second-order scale of
+  the gain.
+- **Corrected:** 0.001 is a planning summary under the model's assumptions, not a measured power at R1 and R2. The
+  assumptions are:
+  - one closure supplies each truth's bias;
+  - one stability input supplies the rounding behaviour everywhere;
+  - shared statistical fluctuations cancel exactly;
+  - E₉₆'s residual is an independent row over √96.
+  The simulation also did not combine E-better with the absence of harm, so it does not estimate the full PREFER_E96
+  probability (consult-astra/answer.txt).
+- **Decided (O6):** BV96 stops. See the header and `BV96-OUTCOME.md`.
 
 ## 9. Compute
 
@@ -457,8 +488,11 @@ The director's rulings of 2026-11-10 (in correspondence; recorded with the bindi
   through `s5p_nullexp`'s alternative, where F1 used `s5e_candidate` and LL5D `fd_1b_toys.truth_ratio`. **REQUIRED
   test:** the weight equals F1's definition on a fixture, as FD-STAB's addendum A1 checked for `closure_nuwro`
   (`estimator_stability_probe.py:614`).
-- **O6, the O1 power result (§8): open, for the director.** At M = 30 the headline is 0.001, and no M up to 60
-  reaches 0.8. The lane does not change the design; the director decides.
+- **O6, the O1 power result (§8): decided by Joseph, 2026-11-10,** after a fresh independent review (`consult-astra/`).
+  BV96 stops as an MSE study and nothing launches. The re-targeted held-out bias comparison is deferred to the follow-up
+  paper's planning, where the physics contrasts and the acceptable absolute bias are defined, with V-HALF-R's
+  minimum-cell basis. The GiBUU closures stand as a disclosed planning sensitivity input, with the non-GiBUU 0.0007 as
+  the primary basis.
 - **Sequencing.** BV96 goes to `coverage-5b-audit` after LL5D's fix A1a.2, routed by the director. Per item 4, it is
   bound and launched only after LL5D ends. Its cap is under half the balance, so the launch is the director's after the
   binding, with Joseph told first.
