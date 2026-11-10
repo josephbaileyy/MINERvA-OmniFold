@@ -17,7 +17,7 @@ row order and names survive unchanged. No detail moved to a note; no rows added,
 
 - Both remain Revtex table*, booktabs, footnotesize. tabular* fills textwidth with flexible gaps.
 - Table 1: ragged-right Test 5.0cm, Result 9.0cm and Status 1.8cm; estimator categorical left;
-  section references right-aligned. tabcolsep stays 3pt. Original Test width retained; modest Result
+  section references right-aligned. tabcolsep is 2.25pt (from 3pt). Original Test width retained; modest Result
   widening reduces wrapping without squeezing Test into many more lines. Ragged right removes
   stretched word spacing in the original justified text columns. It remains a dense table.
 - Table 2: ragged-right Truth 3.1cm and covariance 1.65cm; three flagged-cell columns 1.25cm each;
@@ -42,3 +42,10 @@ numeric entries detected. make_values_fived16 --check passes (3811 values and al
 sentences). Both cell blocks and captions have exact identical SHA256 before/after. No package
 additions: booktabs, array and siunitx were already loaded; only booktabs/array formatting is used.
 The original table captions/status definitions were not shortened or reworded in this commit.
+
+
+Final resolved-reference proof: the selected text widths needed 4.85pt more than the table width
+once all section references resolved. Reducing Table 1 padding from 3pt to 2.25pt fixed that overflow
+without changing the selected text widths, row height, font or any cell. Both the normal paper and
+a full-paper print proof using the proposed Figure 3 asset/width now compile without any overfull
+box or too-large-float warning. Table renders were inspected again after this correction.

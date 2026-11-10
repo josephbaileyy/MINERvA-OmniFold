@@ -83,3 +83,17 @@ No ours/covariance ROOT files were found in those local roots. No producer run, 
 paper-only tension variant or edit of the note's tension_chi2_map.pdf was made. Paths identify what
 the default producer expects, not an assertion that these defaults are the current paper's live inputs;
 resuming needs verified operands for the printed asset, including its estimator identity.
+
+
+## Full-paper confirmation
+
+After the captions/table drafts, built main_note.tex cleanly (137 pages) and main_paper.tex with
+latexmk. Biber's pre-existing unpack-cache execution error was avoided with an isolated
+PAR_GLOBAL_TMPDIR; no TeX/Biber code or user cache was modified. For the final print proof, only the
+Figure 3 inclusion in a temporary copy of paper_body was changed to the new methods_short asset
+at textwidth; this leaves the integrator in control of the committed inclusion path/width.
+The exact supplied figtext.py on that full paper gives the same four improved medians as the
+controlled proof, with captions 9.0pt; see after-main-paper-font-sizes.txt. No overfull box or
+large-float warning remains after the Table 1 padding correction. Figure 3's full page and both
+tables were rendered and visually rechecked. The actual integrated/blinded check and standalone
+note synchronization still belong to director-helper-3, and are not claimed here.
