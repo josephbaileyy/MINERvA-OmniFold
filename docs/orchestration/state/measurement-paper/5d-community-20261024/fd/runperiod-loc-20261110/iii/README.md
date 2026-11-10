@@ -4,13 +4,27 @@
 with its fixed search terms, as the director ruled on 2026-11-10: "(iii): fine as a local read now, at 0 cost, under
 your fixed search terms". The declaration is not yet bound. This check reads a published paper only.
 
-**Outcome: NOT-MENTIONED.**
-- Neither the paper nor its arXiv data release mentions playlists, run periods, the tilted horn, slip stacking, MINOS
-  range or curvature, or a per-playlist or playlist-dependent treatment.
-- The paper describes three treatments that depend on time or beam intensity in general. They are quoted below.
-- None of them is stated as a correction or an uncertainty for differences between run periods.
-- The data release's covariance has a total block, a statistical block, a flux block and a muon-energy-scale block. It
-  has no run-period block.
+**Under RPL revision 2's rule (audit B2), there are two readings.** This record was first read under revision 1's
+single rule as NOT-MENTIONED. The audit found that rule did not separate the step from time-dependent modelling in
+general. The committed search output is re-read here under revision 2's rule, as the director ruled; no new search
+was run.
+
+**(iii-a) This step, a difference between run periods or playlists in the data: STEP-NOT-MENTIONED.**
+- No hit in the paper or its arXiv ancillary README states a difference between run periods or playlists in the data,
+  or a correction or uncertainty for one.
+- There are no hits at all for playlist, run period, 1G, 1M, tilted, slip, MINOS range, curvature, pile-up,
+  per-playlist or playlist-dependent.
+- The release's covariances are a total block, a statistical block, a flux block and a muon-energy-scale block. None
+  is for run periods.
+
+**(iii-b) Time- or intensity-dependent modelling of conditions in general** (descriptive; no outcome name). The paper
+states three such treatments:
+- an overlay of accidental activity "appropriate to the time periods in the simulation";
+- a MINOS matching efficiency determined "as a function of instantaneous neutrino beam intensity";
+- an energy scale set "as a function of time", with a 1 % muon energy scale uncertainty.
+
+They are quoted below. They are not read as a treatment of the step. Quote 3a bears on (i)'s hypothesis only on its
+MINERvA (dE/dx) side.
 
 ## CITABLE FOR / NOT CITABLE FOR
 
@@ -18,7 +32,9 @@ your fixed search terms". The declaration is not yet bound. This check reads a p
   - what the published text and its arXiv ancillary README state, and do not state, under the search below;
   - the three quotes, as the paper's own words.
 - **Not citable for:**
-  - what the published analysis did internally beyond its text;
+  - what the published analysis did internally beyond its text, including that it did not consider time or intensity
+    dependence (RPL revision 2, audit m7);
+  - (iii-b)'s quotes as a treatment of this step;
   - whether its result carries the step;
   - any cause;
   - any change to C_PL or to a result.
@@ -31,7 +47,7 @@ your fixed search terms". The declaration is not yet bound. This check reads a p
 | version read | the latest, v4: the unversioned `https://arxiv.org/pdf/2106.16210` at 2026-11-10T21:44:19Z. The arXiv API lists `http://arxiv.org/abs/2106.16210v4`, updated 2022-11-02, DOI 10.1103/PhysRevD.104.092007 |
 | PDF sha256 (not committed) | `39b6b8f1e6a59007ce31f4da4ab1af50dd07b491f537a3bbd898d57e2271ef69`, 1,030,517 B, 21 pages |
 | text | `pdftotext` (Homebrew poppler) without `-layout`. sha256 `1101b9f3cbb861a1346fb9ff6350f3fbd1b19b74bdbd931c328d8866e62f4905` (not committed) |
-| supplemental | the arXiv ancillary files `https://arxiv.org/src/2106.16210v4/anc/`. Their `README` is committed as [`arxiv_anc_README.txt`](arxiv_anc_README.txt) (`715fd56e…`). The other ancillary files are numeric tables: the data, five covariances, a bin map and model predictions |
+| supplemental (RPL's "supplemental material": the arXiv ancillary set, not the journal's) | the arXiv ancillary files `https://arxiv.org/src/2106.16210v4/anc/`. Their `README` is committed as [`arxiv_anc_README.txt`](arxiv_anc_README.txt) (`715fd56e…`). The other ancillary files are numeric tables: the data, five covariances, a bin map and model predictions |
 
 The files were downloaded into a new empty directory and read only by `pdftotext` and the script below, under
 `python3 -I`.
