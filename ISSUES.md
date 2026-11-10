@@ -81,7 +81,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Executive summary stated CH correction without restricting it to joint cells.  
   *Record:* `AUDIT.txt` row E8; `sec_joint.tex:145-148`.  
   *Target:* `docs/analysis-note/sec_execsummary.tex:17`.  
-  *Resolution:* Scope CH correction explicitly to joint cells.
+  *Resolution:* This row authorizes no tex edit. The executive summary already says the CH correction moves both predictions toward the data on the joint cells, and that on the sixteen cells GiBUU's total chi-squared rises. The joint section already says that rise is on GiBUU's eight cells. Do not add a second sentence. Do not type a chi-squared value. Do not change "sixteen cells" to "eight" in the summary. Do not edit the paper or sec_joint.tex under this row.
 
 * **AUD-E9 [R]** — **Response-only sensitivity ($N_3$) in `sec_fived16.tex`.**  
   *Finding:* Include Joseph's response-only sensitivity, median 1.65× interaction block σ (range 0.42–6.50), grid-dependent and not a bound.  
