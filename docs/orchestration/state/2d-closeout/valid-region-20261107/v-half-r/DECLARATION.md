@@ -195,7 +195,7 @@ The rule:
 - **The MC npz.** `07fccc1a`, needed by step 1, was not in the purge check. It is an unverified dependency until step 0.
   <!-- absence-ok: a stated dependency, not a claim that a file is absent -->
 
-**The LL5D coupling.** The LL5D gate rerun after amendment A1a.2 is about to be decided. Both gates of 2026-11-10 ended
+**The LL5D coupling.** The cells the LL5D gate rerun after amendment A1a.2 tests are now decided: option (i), below. Both gates of 2026-11-10 ended
 verdict=STOP. They ran 11:00:23 and 10:52:09 (`fd/receipts-ll5d/gate-ar23/README.md:8`, `gate-g18/README.md:8`), 21.9
 node-h for the pair. Priced per option at the measured gate time per definition [INF]:
 
@@ -216,11 +216,17 @@ node-h for the pair. Priced per option at the measured gate time per definition 
   - "the χ² region carries over only if both matrices have ndf = 16" (:320).
 - **What LL5D does and does not test.** LL5D transfers to the procedure's covariance at the tested truth. It does not
   certify the reported data covariance (`LL5D-DECLARATION.md:317-324`, :758-769, as the reviewer notes).
-- **The recommendation now before Joseph.** The reviewer recommends option (i): keep the 16-cell study, and add a merged
-  test later only if a scientifically useful merged candidate survives. A test of both would carry separate claims and
-  a declared comparison, never a selection of whichever passes. The director has put this to Joseph.
-- **Totals.** V-HALF-R's own pipeline is about 0.15 node-h. With LL5D: (i) or (ii) about 22-23 node-h, (iii) about
-  44-46, plus pilot and bulk if the gates pass. The m3246 balance was 1,627.4 on 2026-11-09
+- **Decided: option (i)** (Joseph, 2026-11-10, `DECISION-20261110-joseph-ll5d-rerun-16-cells.md`, #1018 at
+  `799e16c7`; his answer "yes I agree").
+  - The LL5D gates rerun on R00-R15 once amendment A1a.2 is audited and bound, at about 22 node-h for the two gates
+    plus a calibration rerun if A1a.2 requires one.
+  - A merged-cell LL5D run is conditional and later. It is considered only if V-HALF-R is declared, bound and run, and
+    only if a scientifically useful merged candidate survives. It would then carry separate claims and a declared
+    comparison, never a selection of whichever passes. The reviewer recommended the same.
+  - LL5D does not wait on rebinning. Options (ii) and (iii) above are kept as priced alternatives and are not chosen.
+- **Totals.** V-HALF-R's own pipeline is about 0.15 node-h. LL5D's decided rerun (i) is priced under its own decision
+  and cap, not here. A conditional merged run later would add about 22-23 node-h, plus pilot and bulk if its gates
+  pass. The m3246 balance was 1,627.4 on 2026-11-09
   (`fd/receipts-prr/ibu/attempt3/cluster/logs/connect-ibu-3.log.txt:12`), less the two gates [INF].
 
 ## 5. Code that must change before any of this runs (written, tested and audited after Joseph's review)
@@ -246,9 +252,10 @@ node-h for the pair. Priced per option at the measured gate time per definition 
 - **V-HALF's 16-cell controls.** `CELLS` (`v_half.py:35`), C-CELLS (:239-241), C-PRR (:264), C-DOMAIN's 8 GiBUU cells
   (:284) and C-HAND on R06 (:323) become functions of the merged definition, and C-HAND is re-declared on a merged
   cell. §3's cancellation listing is added as a print-only section.
-- **LL5D, only for option (ii) or (iii).** Its dimension-dependent rules (§4) are re-declared for the merged count.
-- **The binding path.** Each changed study (S1, F0b, FD-PRR, V-HALF, and LL5D for (ii) or (iii)) gets an addendum,
-  coverage-5b-audit's read and the director's bind.
+- **LL5D, only for a conditional merged-cell run later** (option (i) is decided). Its dimension-dependent rules (§4)
+  are re-declared for the merged count before that run.
+- **The binding path.** Each changed study (S1, F0b, FD-PRR, V-HALF, and LL5D only for a later merged run) gets an
+  addendum, coverage-5b-audit's read and the director's bind.
 - **[INF] Calendar:** several days.
 
 ## 6. Decisions for Joseph (and the advisor) before audit
@@ -260,6 +267,9 @@ node-h for the pair. Priced per option at the measured gate time per definition 
 
 Also before Joseph:
 - **The lane's recommendation that purity ≥ τ_R be a final requirement for outcome A** (§1.2, outcome T3).
-- **The LL5D option,** put to him by the director with the reviewer's recommendation (i) (§4).
+
+Decided:
+- **The LL5D option: (i)** (Joseph, 2026-11-10, #1018 at `799e16c7`). LL5D reruns on the 16 cells; a merged-cell run
+  is conditional and later (§4).
 
 Declared here, with the reviewer's concurrence: unions of R-cells, no p_∥ joins, and unreported boxes excluded (§1.2).
