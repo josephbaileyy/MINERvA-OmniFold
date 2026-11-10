@@ -231,6 +231,24 @@ Configuration (c) is the deterministic variant with purity-based subtraction, an
   \end{tabular}
 \end{table}
 
+% New (the interim round #1025, A1; the director's ruling on row 2, 2026-11-10): the paper's former figure 3(a), with its
+% "not the reported estimator". Producer: figures/methods_m3/fig_m3_deformation.py (Codex 12dbe081c), the s5n family N
+% of the dev receipt (state/s5n/stage1/dev_receipt.json C4), 60 experiments; the variant is configuration (d) above.
+\paragraph{The lower-capacity variant at a generator-sized truth change.} Figure~\ref{fig:supp-lowcap} shows the
+$(\Eavail,W)$ residuals of configuration~(d), the lower-capacity variant of the paper's section on generator-sized truth
+changes, when the true $\Eavail$ shape is reweighted by the GiBUU-to-GENIE ratio.
+\begin{figure}[tb]
+\centering
+\includegraphics[width=\textwidth]{figures/methods_short/m3_fig2_deformation_lowcap.pdf}
+\caption{Fractional residuals, (unfolded $-$ truth)/truth, per $(\Eavail,W)$ cell, at the changed truth, with backgrounds,
+for the lower-capacity variant, configuration~(d), not the reported estimator (refinement 100 trees, 8 leaves; the
+configuration of the generator-sized-change study): GiBUU/GENIE $\Eavail$ shape, 60 pseudo-experiments; gray step:
+injected change. The standard errors of the mean are smaller than the markers; ``exp.'': pseudo-experiments. $W$ bin 6 is
+$W\ge\SI{3}{GeV}$. The reported estimator at this truth: the paper's section on generator-sized truth changes, and the GiBUU
+$\Eavail$ shape row of its fake-data table.}
+\label{fig:supp-lowcap}
+\end{figure}
+
 % source: sec_method.tex, note label sec:method-config, paragraph 7 (restyled 2026-11-09, wording only; the note keeps the original; comments stripped; its search record or waiver carried from the note)
 \paragraph{Hyperparameter choice.} The learner settings were fixed \emph{a priori}; no hyperparameter search was performed on data, so the settings were not tuned to the result. They are the scikit-learn \texttt{GradientBoosting} defaults: 100 trees, learning rate $0.1$, and depth-3 capacity. The LightGBM learner of the central value and its ensembles uses matched capacity ($\texttt{num\_leaves}=8=2^{3}$), giving every learner the same modest capacity, one of OmniFold's regularizers (Sec.~\ref{sec:method-algo}). The configuration was subsequently validated by closure and classifier-calibration tests (Ref.~\cite{AnalysisNote2026}, Sec.~\ref*{N-sec:validation}, Ref.~\cite{AnalysisNote2026}, Sec.~\ref*{N-sec:3d-classifier}), insensitivity to doubling the iteration count, measured for the exact-split cross-check (below), backend agreement in method-dependence studies (Ref.~\cite{AnalysisNote2026}, Sec.~\ref*{N-sec:results-tension}), and a training-seed variation band for residual ML stochasticity (Ref.~\cite{AnalysisNote2026}, Sec.~\ref*{N-sec:systematics}).
 
@@ -561,6 +579,11 @@ On the eight cells with $\pPar<\fvval{h2-mid-pz}$~GeV/$c$, which exclude R06, th
 
 % The director's option (a), 2026-11-09 (ledger.md "Style integration", ruling 1): the second test's clipping record is out of the paper's main text and here, in its own Supplement; reversible by Joseph, whose R5 (DECISION-20261102-joseph-1b-redesign.md:88) names the note. ll5d-clip-record is filled from the readout (ll5d_b @ ffbbb7455): each graded reading's weakened passes (weakened.weakened_cells), the flags meeting the clipping-artefact condition (clipping_artefact_reading), and clipcheck's largest |o_c| with its cell and the bound.
 \paragraph{The second five-observable coverage test.} Negative expected counts in its pseudo-data are clipped to zero, and checks fixed in advance test the effect of the clipping before the main run, on a sample whose first 300 draws are the coverage pseudo-experiments' draws, at the same seeds. \fvgroup{ll5d}{The clipping checks gave the following: \fvval{ll5d-clip-record}.\fvcase{ll5d-route}{offset-proceeded}{ The run continued past a check fixed in advance by a decision made after the check was seen: \fvval{ll5d-route-record}.}\fvcase{ll5d-route}{repaired}{ The run was repaired after a stop, with the repair chosen after the stop was seen: \fvval{ll5d-route-record}.}}
+
+% Moved from the paper (methods-short-20261109; the interim round #1025, A3: section 5.3 leads with its result): paper_body.tex at 8320315bd, the FD-PRR paragraph's sentences 7, 8, 9, 10 and 12, verbatim; the first is repeated in the paper, with its opening adapted here. Their source is the paper's comment there (FD-PRR-DECLARATION.md sec. 5.1-5.4 :279-332; check_round NEW_NUMERALS L-27).
+\paragraph{The prior-retention study's thresholds.}
+\label{supp:prr}
+In the prior-retention study of the paper's section on what moves the retained prior, at the two flagged truths, each setting is classified according to whether any tested level reduces or increases $\rho$ by more than a threshold fixed in advance. This threshold is the larger of 0.05 and 9.03 times the standard deviation of the paired change of $\rho$ over five splits of the simulation. The factor 9.03 is the two-sided Student-$t$ quantile on four degrees of freedom at a familywise rate of 0.01 over the study's twelve primary comparisons. The IBU at five iterations is classified according to whether it retains less or more of the prior than the five-observable estimator, using the same rule with its own threshold. The retained fraction is undefined at a truth where fewer than two cells depart from the prior by at least \SI{1}{\percent}.
 
 \section{Illustrative output on data: not for fitting or for constraining models}
 \label{supp:output}

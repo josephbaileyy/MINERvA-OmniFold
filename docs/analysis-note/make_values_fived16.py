@@ -98,6 +98,8 @@ READOUTS = {
     # (#940) and stage 2's bias readout (#957), each computed once, so both arms read the same files
     "ens1s1": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage1-a1-analysis/ens1_stage1.json", "7f5a9ce4"),
     "ens1s2": (f"{FD}/fd/rounding-stability-20261106/ensemble/receipts/stage2-a1-analysis/ens1_stage2.json", "c2ee701d"),
+    # s5e's assessment of candidate R, the reported estimator (e): the generator-sized change and the rounding probe
+    "s5e": ("docs/orchestration/state/s5e/cand/assess_receipt.json", "84266e30"),
 }
 # the committed readouts without the run-period block, for the "-nopl" keys
 NOPL_READOUTS = dict(READOUTS, **{
@@ -1410,6 +1412,19 @@ def values(d, arm="with"):
     v["ens1-ntruths"] = str(len(e2["truths_judged"]))
     v["ens1-nnoworse"] = str(len(e2["truths_judged"]) - len(e2["worse"]))
     v["ens1-rms-ratio"] = f"{(bw['rms'] - bw['rms_control']) / bw['delta_rms']:.2f}"
+    # s5e's assessment of the reported estimator, candidate R = (e) (OUTCOME-20260926-s5e-oi192:68,85; the director's
+    # ruling of 2026-11-10 on the interim round's row 2): at the GiBUU-to-GENIE E_avail change, (e)'s largest (E_avail,W)
+    # residual and that of the lower-capacity variant (the s5n reference), both in EW29, the cell 0.8 <= E_avail < 1.5 GeV,
+    # W >= 3 GeV that the text names; and EW7, the record's "largest cells", several percent off (fig_m3_deformation.py's
+    # own test, -10 < r < -2). Then the data rounding probe's median and largest shift, in data sigma (paper and Fig 5)
+    a = d["s5e"]
+    assert a["candidate"] == "R"
+    eg, lc = a["points"]["eavail_gibuu"], a["B0_reference_s5n"]["eavail"]
+    assert eg["ew_argmax"] == lc["ew_argmax"] == "EW29"
+    assert -10 < 100 * eg["per_functional"]["mean_rel"][7] < -2
+    v["s5e-gibuu-ewmax"], v["s5e-gibuu-ewmax-lowcap"] = f"{eg['ew_max_abs_pct']:.0f}", f"{lc['ew_max_abs_pct']:.0f}"
+    rp = a["A3"]["data_rounding_probe_over_data_sigma"]
+    v["s5e-round-median"], v["s5e-round-max"] = f"{rp['median']:.1f}", f"{rp['max']:.1f}"
     return v
 
 

@@ -132,6 +132,10 @@ def regularization_max():  # VL151: GiBUU/GENIE E_avail shape, largest high-W de
     return max(abs(v["mean_rel_pct"]) for v in dev()["grid"]["C4_eavail_shape"]["high_W"].values())
 
 
+def e_gibuu_max():  # s5e: the reported estimator (e) at the GiBUU/GENIE E_avail shape, its largest (E_avail, W) residual
+    return receipt("s5e/cand/assess_receipt.json")["points"]["eavail_gibuu"]["ew_max_abs_pct"]
+
+
 def shapes_range():  # VL154 A4: worst (E_avail, W) cell for each withheld shape, joint-test estimator
     pts = receipt("s5e/cand/assess_receipt.json")["points"]
     v = [pts[w]["ew_max_abs_pct"] for w in ("W1", "W2", "W3")]
@@ -172,8 +176,12 @@ CHECKS = [
      r"Some joint cells remain up to \\SI\{([0-9.]+)\}\{\\percent\} high", negweight_joint_max, "round"),
     ("treatments on data (VL152)", "sec_5d.tex", r"and at most \\SI\{([0-9.]+)\}\{\\percent\} over the reported functionals",
      data_method_diff, "round"),
-    ("regularization bias at high W (VL151)", "paper_body.tex", r"by up to \\SI\{([0-9.]+)\}\{\\percent\} at high \$W\$",
-     regularization_max, "round"),
+    # the interim round (#1025) A1: section 5.1 leads with the reported estimator (e) at this truth; the lower-capacity
+    # variant of VL151 (the Supplement's figure) is one clause after it
+    ("the reported estimator at the GiBUU/GENIE shape, high W (s5e)", "paper_body.tex",
+     r"by up to \\SI\{([0-9.]+)\}\{\\percent\} at high \$W\$", e_gibuu_max, "round"),
+    ("regularization bias at high W, the lower-capacity variant (VL151)", "paper_body.tex",
+     r"gives the same \\SI\{([0-9.]+)\}\{\\percent\} in that cell", regularization_max, "round"),
     ("an earlier estimator's 68% coverage under the rate reduction (s5c tier S)", "paper_body.tex",
      r"with coverage as low as ([0-9.]+) for 68\\% intervals", tilt_coverage68_min, "round"),
     ("other fixed shapes, most affected cell (VL154)", "paper_body.tex", r"(?:it|the residual) is \\SIrange\{([0-9.]+)\}\{([0-9.]+)\}\{\\percent\} in the most affected",
@@ -192,9 +200,23 @@ def half_ulp(printed: str) -> float:
     return 0.5 * 10.0 ** -(len(printed.split(".")[1]) if "." in printed else 0)
 
 
+_FV: dict[str, str] | None = None
+
+
+def fv_values() -> dict[str, str]:
+    """The build-checked values of values_fived16.tex (make_values_fived16.py), key -> printed text."""
+    global _FV
+    if _FV is None:
+        f = HERE / "values_fived16.tex"
+        _FV = dict(re.findall(r"\\@namedef\{fv@([^}]+)\}\{([^{}]*)\}", f.read_text())) if f.exists() else {}
+    return _FV
+
+
 def text(name: str, sources: dict[str, str]) -> str:
-    """The source with LaTeX comments (an unescaped % to the end of the line) removed and whitespace collapsed."""
-    return re.sub(r"\s+", " ", re.sub(r"(?<!\\)%[^\n]*", "", sources[name]))
+    """The source with LaTeX comments (an unescaped % to the end of the line) removed, each \\fvval{key} replaced by its
+    printed value from values_fived16.tex (an unknown key is left as written), and whitespace collapsed."""
+    t = re.sub(r"\s+", " ", re.sub(r"(?<!\\)%[^\n]*", "", sources[name]))
+    return re.sub(r"\\fvval\{([^}]+)\}", lambda m: fv_values().get(m.group(1), m.group(0)), t)
 
 
 def evaluate(sources: dict[str, str]) -> list[tuple[str, bool, str]]:

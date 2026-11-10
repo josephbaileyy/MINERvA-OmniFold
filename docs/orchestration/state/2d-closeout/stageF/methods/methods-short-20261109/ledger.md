@@ -1183,3 +1183,74 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - check_restyle against a0d69f5b6 fails only on the intended changes (f0b-all-truths, the \ref moved into the
     caption, \SI{0.37}).
 - The typeset captions of Figs 2–5 were read back from the PDF.
+
+## The interim referee round (#1025), group A, batch 2 (the director, 2026-11-10)
+
+- **A1 (Fig 3) and §5.1**, under the director's ruling on limitation-resolver's row-2 finding:
+  - (e) itself gives 73.86% in EW29 at the GiBUU-to-GENIE change (assess_receipt.json points.eavail_gibuu;
+    OUTCOME-20260926-s5e-oi192:68,85). The lower-capacity variant gives 74.07% in the same cell (B0_reference_s5n.eavail).
+  - The paper's Fig 3 shows the reported estimator only (Codex 12dbe081c, merged at c03d5554c; legend "GENIE + MEC",
+    faf7c35fc, merged at 1c46477d5).
+  - Panel (a) is the new Supplement figure fig:supp-lowcap in S4, configuration (d), and keeps "not the reported
+    estimator".
+  - §5.1 leads with (e): "the five-observable estimator deviate[s] … by several percent in the largest cells and by up to
+    74 % at high W …; a lower-capacity variant, not the reported estimator, with a 100-tree, 8-leaf refinement, gives
+    the same 74 % in that cell (supplementary material, figure S1)".
+  - "Several percent in the largest cells" holds for (e) by fig_m3_deformation.py's own test (EW7, -10 < r < -2): EW7 is
+    -6.79 ± 0.07% for (e) and -6.66% for the variant. The two differ by at most 0.84 points in any of the 42 cells.
+  - Table 2's generator-sized row reads "at the GiBUU-to-GENIE change: up to 74 %", with no variant attribution.
+  - The Fig 3 caption follows journal-editor's read of the split (items 1, 2 and 5):
+    - the injected changes are not drawn;
+    - "Sixteen-cell results at these truths: table 3";
+    - the standard errors are smaller than the markers: SE ≤ 0.22% for (e) (W1–W3) and ≤ 0.12% for the variant, from
+      the receipts, against 2.6–3.0 pt markers.
+  - New keys (make_values, the new READOUTS "s5e", assess_receipt.json 84266e30):
+    - s5e-gibuu-ewmax and s5e-gibuu-ewmax-lowcap (74 and 74), with both argmaxes asserted EW29 and EW7's sign test;
+    - s5e-round-median and s5e-round-max (0.8 and 2.6, A3.data_rounding_probe_over_data_sigma 0.783 and 2.584), used in
+      §6.1's observation sentence and Table 2's rounding row. The third use, B1's row 7, comes with group B.
+    - The "2.6" inside the protected B0 sentences stays a literal: check_restyle protects that span.
+  - check_sec4_receipts:
+    - text() now resolves \fvval{key} from values_fived16.tex;
+    - a new row checks (e)'s printed 74 against assess_receipt (73.86);
+    - VL151's row now reads the variant's clause ("gives the same … in that cell", 74.07).
+  - check_supp_pointers gains \sfig (figure environments counted in order), with a self-test. There are 37 pointers:
+    the caption's S4 pointer went with panel (a), and §5.1 and the figure's text add one \sfig.
+- **A2:** Fig 6 (prior response) and "Two findings indicate that the unfolded result retains part of its prior …" move
+  from §6.1 and §7 to the head of §5.3, verbatim.
+- **A3 §5.3:**
+  - The design paragraph keeps sentences 1–6 (the study, ρ and its terms, the settings, the IBU). The results follow.
+  - Sentences 7, 11, 13, 14 and 15 (the classification, the IBU's margin, "clears", the labels, the scope) follow the
+    results.
+  - Sentences 8, 9, 10 and 12 (the threshold, the Student-t factor, the IBU's own rule, the undefined case) move to S9
+    verbatim, as \paragraph{The prior-retention study's thresholds} (label supp:prr). Sentence 7 is repeated there with
+    an adapted opening.
+  - The two closing sentences ("No tested level clears at these truths. The IBU at five iterations does not clear at
+    these truths.") are one sentence in every case of prr-pr3-any × prr-pr3-ibu. It renders "Neither a tested level
+    nor the IBU at five iterations clears at these truths."
+- **A3 §6.1:**
+  - observation (the instability, the 153-quantity shifts, the requirement; Fig 5);
+  - the B0 sentences (protected, contiguous): reproducibility, scale and inclusion in the statistical block;
+  - the mechanism (RS1, one line, unchanged);
+  - mitigation: the ensemble average, then the probe of cross-fitting and tree regularizations, moved verbatim from
+    the first paragraph.
+- **A4 §6.2:** the two one-sentence paragraphs (the earlier estimator's miscoverage; the stopped first test) are
+  merged.
+- **A5 §4.1:** the paragraph on how the learner and the background treatment were chosen ("chosen after three had been
+  compared …", "adopted it in the analysis only after that comparison was known") moves verbatim before the
+  covariance-weighted distance.
+- **A7 §7:**
+  - The first paragraph ends with the one statement of applicability ("Until the coverage, … the sixteen-cell output
+    is an illustration of the method; its limitations are listed in section 7.1"). Its former last sentence
+    ("has not achieved validated interval coverage, numerical stability or recovery …") goes to the list.
+  - The limitations list is complete: coverage (item 1, unchanged); truth recovery and the retained prior;
+    instability (with ENS1's scope: it meets the requirement on the pseudo-data used to test stability, is worse at
+    one truth and is not adopted); the run-period inconsistency; tests that change only the truth and use the
+    simulation's detector response (§3.3's statement); low diagonal fractions (unchanged).
+- **Checks:**
+  - the rater copy PASS (15 and 15 pages); the paper has no Overfull. The Supplement's one Overfull (3.2 pt, Table
+    S6's right table) predates this batch; Codex's 4035c769f fixes it.
+  - check_round with the fill test PASS; make_values --check PASS (3847 values);
+  - registry, sec4 (17/17, 17 passed) and pointers (37/0) PASS;
+  - check_restyle against 8320315bd fails only on the moves and additions above.
+- Meaning read: `interim-b2-read/pairs-read.tsv` (37 rows) and `moved-verbatim.tsv` (58 rows, identical base-only and
+  current-only sentences).
