@@ -1,0 +1,117 @@
+You are checking that text filled into a physics paper states exactly what its result record says, no more and no less.
+
+Below: (1) the record's readings, as a JSON summary from the study's readout; (2) the study's declared definitions of
+its readings and labels (an excerpt of its declaration); (3) a table of three passages, each before (with the
+alternatives for every outcome) and after the fill.
+
+For each passage: does the filled text state each reading and label exactly as the record and the definitions give
+them? Flag any word that claims more (for example, a cause, an equality where the class means "below a threshold", an
+adoption or a held-out claim), less, or something different, quoting the words and the record entry they should match.
+The study's readings are descriptive at these truths and the study adopts no setting: flag anything that implies
+otherwise. Output only the flags, then "FLAGGED n of 3"; if none, say so.
+
+=== (1) RECORD SUMMARY ===
+{
+ "readout": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json (sha256 9238f22bfe29685e...)",
+ "PR-1": {
+  "A7_gibuu": {
+   "F1": "no effect",
+   "F2": "increases",
+   "F3": "no effect",
+   "F4": "increases"
+  },
+  "q3": {
+   "F1": "increases",
+   "F2": "increases",
+   "F3": "no effect",
+   "F4": "increases"
+  }
+ },
+ "PR-2a": {
+  "A7_gibuu": "IBU retains less",
+  "q3": "IBU retains less"
+ },
+ "PR-2b": {
+  "A7_gibuu": "falls",
+  "q3": "falls"
+ },
+ "labels": {
+  "A7_gibuu": [
+   "consistent with an implementation-specific share",
+   "sensitive to the observable set"
+  ],
+  "q3": [
+   "consistent with an implementation-specific share",
+   "sensitive to the observable set"
+  ]
+ },
+ "PR-3": {
+  "B0": "does not clear at these truths",
+  "K2": "does not clear at these truths",
+  "K10": "does not clear at these truths",
+  "K20": "does not clear at these truths",
+  "K50": "does not clear at these truths",
+  "C25": "does not clear at these truths",
+  "C400": "does not clear at these truths",
+  "C1000": "does not clear at these truths",
+  "MCq": "does not clear at these truths",
+  "O4r": "does not clear at these truths",
+  "O4": "does not clear at these truths",
+  "O3": "does not clear at these truths",
+  "O2": "does not clear at these truths",
+  "IBU_K5": "does not clear at these truths"
+ },
+ "floor.bars.IBU": 0.05
+}
+=== (2) DECLARED DEFINITIONS (excerpt) ===
+  - **both** if each happens at some level;
+  - **no effect** if every |ρ_L − ρ_B0| < δ_F;
+  - **undefined** if ρ is undefined at T. That truth's χ² of §5.3 is printed instead.
+
+### 5.2 PR-2: IBU against (e) on the same pseudo-data (4 readings)
+
+At each flagged truth T:
+- **PR-2a.** At K = 5, Δ = ρ_IBU(5) − ρ_B0 against δ_IBU = max(0.05, 9.03 s_IBU). The classes are **IBU retains
+  less**, **IBU retains more** and **same**.
+- **PR-2b.** IBU's retention against K: **falls** if ρ_IBU(200) ≤ ρ_IBU(5) − 0.05; **rises** if ρ_IBU(200) ≥
+  ρ_IBU(5) + 0.05; otherwise **flat**.
+  - IBU here is noise-free and exact given the binned response, so its only noise is the split, which PR-2b holds
+    fixed. The 0.05 is the bar.
+  - ρ_IBU at every K is printed.
+
+### 5.3 PR-3: does a level clear the flagged truths at these truths? (descriptive, one reading per level)
+
+At each level L, and for IBU at K = 5:
+- **"clears at these truths"** if neither A7 GiBUU nor q3 is flagged under §4.2's rule; otherwise **"does not clear
+  at these truths"**. Those are the only wordings (the director's ruling 2);
+- **without new flags** if, in addition, no graded truth unflagged at B0 is flagged at L.
+- A level that clears is a finding about the mechanism. It is not a new estimator, and it is not evidence that the
+  level would pass a held-out test (§6).
+
+The full 12 × levels table of χ², p and max |z| is printed.
+
+**This reading answers Sonnet PRD's "whether IBU would pass or fail the same criteria", on the noise-free analogue
+only.**
+
+### 5.4 Composite labels, per flagged truth (descriptive; "consistent with" only)
+
+Each label holds if its condition holds. Several can hold at once, and none excludes another:
+
+| label | condition |
+|---|---|
+| **consistent with finite-iteration regularization** | PR-1 F1 = reduces **and** PR-2b = falls |
+| **consistent with an information limit at these settings** | PR-1 F1 and F2 ∈ {no effect, increases} **and** PR-2b ∈ {flat, rises} |
+| **consistent with an implementation-specific share** | PR-2a = IBU retains less, **or** PR-1 F2 = reduces |
+| **sensitive to the observable set** | PR-1 F4 ∈ {reduces, increases, both} |
+| **sensitive to training statistics** | PR-1 F3 ∈ {reduces, increases, both} |
+| **unattributed** | none of the above |
+
+R-ID and R-SUP are printed beside these labels and enter none of them.
+
+### 5.5 Multiplicity
+
+=== (3) PASSAGES ===
+id	where	before (pending build)	after (filled build)
+F1	abstract, fake-data sentence	In controlled studies the result retains part of its prior: fake-data studies at a GiBUU-like truth and at a synthetic momentumtransfer tilt find residual bias beyond uncertainty-based criteria fixed before grading [PENDING: the study of what changes the retained prior]	In controlled studies the result retains part of its prior: fake-data studies at a GiBUU-like truth and at a synthetic momentum-transfer tilt find residual bias beyond uncertainty-based criteria fixed before grading; binned iterative unfolding of noise-free pseudo-data at five iterations retains less of the prior at both.
+F2	Table 1, the prior-retention row	What changes the retained prior, at the two flagged truths | 5D | 5.3 | [PENDING: the study of what changes the retained prior] | Pending	What changes the retained prior, at the 5D | 5.3 | iterations no effect, increases; capacity increases, increases; training | Descriptive two flagged truths | statistics no effect, no effect; observables increases, increases
+F3	section 5.3, after the design paragraph	[PENDING: the study of what changes the retained prior]	At the GiBUU hybrid truth, the IBU at five iterations retains less of the prior than the five-observable estimator, by more than its threshold of 0.05. Its retention falls by at least the fixed margin with more iterations. At the q3 tilt, it retains less, by more than its threshold, and its retention falls by at least that margin. At the GiBUU hybrid truth, the results are consistent with a share specific to the implementation. At the GiBUU hybrid truth, the retained prior is sensitive to the observable set. At the q3 tilt, the results are consistent with a share specific to the implementation. At the q3 tilt, the retained prior is sensitive to the observable set. No tested level clears both flagged truths. The IBU at five iterations does not clear them.

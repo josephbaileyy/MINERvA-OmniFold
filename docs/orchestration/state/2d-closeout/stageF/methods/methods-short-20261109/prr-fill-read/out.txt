@@ -1,0 +1,16 @@
+**F1 (abstract):** "binned iterative unfolding of noise-free pseudo-data at five iterations retains less of the prior at both."
+- The definitions put the noise-freeness on the IBU, not the data: "IBU here is noise-free and exact given the binned response, so its only noise is the split." PR-2 is run "on the same pseudo-data" as the other studies. "Noise-free pseudo-data" is therefore a different claim.
+- "Retains less" has no comparator. PR-2a is Δ = ρ_IBU(5) − ρ_B0, so IBU retains less than the B0 estimator, by more than δ_IBU. As written it could mean less than the prior or less than the result just described.
+- It also drops the "noise-free analogue only" scope of §5.3.
+
+**F2 (Table 1, prior-retention row):** the filled cells are scrambled.
+- The label reads "at the 5D | 5.3 | …". The words "two flagged truths" have moved into a later cell ("training | Descriptive two flagged truths | statistics …"), splitting "training statistics".
+- The values are correct if the order is A7 GiBUU then q3: iterations (F1) no effect, increases; capacity (F2) increases, increases; training statistics (F3) no effect, no effect; observables (F4) increases, increases. The row never says which value belongs to which truth, so the pairing is not fixed by the text.
+- If this is only a rendering artifact, fix the cell order. As filled, the row does not state its readings unambiguously.
+
+**F3 (§5.3 paragraph):**
+- "by more than its threshold of 0.05" (stated for both truths): PR-2a's threshold is δ_IBU = max(0.05, 9.03 s_IBU). The record gives only floor.bars.IBU = 0.05. 0.05 is the floor, not necessarily the threshold. Say "its threshold (floor 0.05)", or confirm that 9.03 s_IBU < 0.05 at these truths.
+- "No tested level clears both flagged truths. The IBU at five iterations does not clear them." The only permitted wording is "does not clear at these truths", which means at least one of A7 GiBUU or q3 is flagged. The fill drops "at these truths". "Does not clear them" also reads as failing at each truth. Together these read as a general pass/fail verdict on the levels and on IBU, not a descriptive reading on the noise-free analogue. §5.3 says a level that clears is "not evidence that the level would pass a held-out test", and the same restraint applies to failing. Restore "at these truths".
+- The retention-falls sentences (PR-2b "falls" at both truths) and the two labels ("consistent with", "sensitive to the observable set") match the record. The record also supports no other labels: F3 is no effect and PR-2b is falls, so those conditions fail.
+
+FLAGGED 3 of 3

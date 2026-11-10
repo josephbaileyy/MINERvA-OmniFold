@@ -912,3 +912,36 @@ declaration's reading and label definitions (:290-335). The rulings:
   - make_values `--check` PASS; registry, sec4 (16/16, 17 passed) and pointers (35/0) PASS;
   - check_restyle against a1129402e fails only on the changes above: \fvlist/\fvitem, the dropped ensemble keys
     ens1-n and ens1-ntruths, the nested \fvcase, and 0.8.
+
+### The second reads of 3290ae70e, applied (the director, 2026-11-09)
+
+The director's readers: Sonnet on the fill's pairs (`prr-fill-read/out2.txt`, its input `in2.txt`) and Gemini on the
+abstract against a fresh build of the body (`abstract-read/gemini2.txt`, `prompt2.txt`, `input2.txt`). The first
+round's fill read is in the same record (`prr-fill-read/in.txt`, `out.txt`, the pairs files, `readout-summary.json`,
+`decl-readings.txt`). The rulings:
+- **The prr clause.** The reader read the noise-freeness as belonging to the IBU analogue. The director proposed "the
+  same noise-free pseudo-data", but in the abstract "the same" would point back to the fake-data studies, which are
+  graded on Poisson pseudo-experiments as well as noise-free pseudo-data (§3). So the condition now leads the
+  comparison instead: "; on noise-free pseudo-data, binned iterative unfolding at five iterations retains less of the
+  prior than the five-observable estimator at both". This scopes both methods, with no antecedent.
+- **§5.3:** "by more than its threshold (0.05 at these truths)", and likewise in the "same" case, so that 0.05 reads
+  as the value and not the definition. The arithmetic above stands.
+- **The abstract:**
+  - "As a descriptive benchmark" (§4.1, "descriptive, not a blind validation"), not the reader's "tuned";
+  - "the sixteen reported cells". "Its" would point back to binned unfolding in that sentence, so it is not used;
+  - "a failed test control" (Table 1's caption) for "an invalid reading";
+  - "with pseudo-data that omit the model, response and run-period variations";
+  - "where the fake-data bias is not flagged" kept, already right after "at those tunes";
+  - "We test unbinned OmniFold unfolding of MINERvA open data …" (one word, to stay within 250).
+  The readers' coverage rewrites ("failed pre-check", "exploratory study", "pre-specified validation check") are not
+  used: the director ruled them inaccurate.
+- **Over the 678 open cases:** 196-248 words, 1,400-1,727 characters, no 8-word repeat.
+- **The run-period step** is decided at the fill, on the one built case: add "The data also show a run-period step
+  present before unfolding (section 4.2)" if it keeps the built abstract at 250 words or fewer. The built abstract
+  then gets its own read, and its coverage sentence may be rephrased within the approved content before Joseph signs
+  off.
+- **Checks:**
+  - the rater copy PASS (15 and 15 pages), and each change prints;
+  - check_round with the fill test PASS, and the self-test PASS;
+  - make_values `--check` PASS; registry, sec4 and pointers PASS;
+  - check_restyle against 3290ae70e PASS.

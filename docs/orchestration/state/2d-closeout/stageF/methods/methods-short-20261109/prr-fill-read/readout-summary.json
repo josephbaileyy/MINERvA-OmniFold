@@ -1,0 +1,52 @@
+{
+ "readout": "docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-prr/read/cluster/readout.json (sha256 9238f22bfe29685e...)",
+ "PR-1": {
+  "A7_gibuu": {
+   "F1": "no effect",
+   "F2": "increases",
+   "F3": "no effect",
+   "F4": "increases"
+  },
+  "q3": {
+   "F1": "increases",
+   "F2": "increases",
+   "F3": "no effect",
+   "F4": "increases"
+  }
+ },
+ "PR-2a": {
+  "A7_gibuu": "IBU retains less",
+  "q3": "IBU retains less"
+ },
+ "PR-2b": {
+  "A7_gibuu": "falls",
+  "q3": "falls"
+ },
+ "labels": {
+  "A7_gibuu": [
+   "consistent with an implementation-specific share",
+   "sensitive to the observable set"
+  ],
+  "q3": [
+   "consistent with an implementation-specific share",
+   "sensitive to the observable set"
+  ]
+ },
+ "PR-3": {
+  "B0": "does not clear at these truths",
+  "K2": "does not clear at these truths",
+  "K10": "does not clear at these truths",
+  "K20": "does not clear at these truths",
+  "K50": "does not clear at these truths",
+  "C25": "does not clear at these truths",
+  "C400": "does not clear at these truths",
+  "C1000": "does not clear at these truths",
+  "MCq": "does not clear at these truths",
+  "O4r": "does not clear at these truths",
+  "O4": "does not clear at these truths",
+  "O3": "does not clear at these truths",
+  "O2": "does not clear at these truths",
+  "IBU_K5": "does not clear at these truths"
+ },
+ "floor.bars.IBU": 0.05
+}
