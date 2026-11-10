@@ -64,11 +64,13 @@ import fd_1b_inv as inv  # noqa: E402
 import fd_1b_mc as mc  # noqa: E402
 import fd_1b_toys as toys  # noqa: E402
 import s1_assemble as sa  # noqa: E402
+import s5e_candidate  # noqa: E402
 import s5p_universe  # noqa: E402
 
 SCHEMA_CAL = "ll5d-calibration/1"
 SCHEMA_GATE = "ll5d-gate/1"
 SCHEMA_MERGED = "ll5d-gate-merged/1"
+SCHEMA_VICHECK = "ll5d-vicheck/1"            # A1a.2's preflight
 TRUTHS = ("g18", "ar23")                      # fd_1b_mc.TRUTHS keys: G18_10a_02_11b and AR23_20i_00_000 (section 3.1)
 READINGS = ("minus2", "all")                  # primary first (decision 2026-11-08 item 1)
 REMOVED = ("GEANT_Neutron", "GEANT_Proton")
@@ -445,6 +447,27 @@ def c2_inputs(P: dict, s1: dict, fm: np.ndarray) -> tuple:
     return rel, geo, V, cv
 
 
+VI_KEY_DTYPE = np.float32                     # A1a.2: the coarser of the two stored precisions
+TD_KEYS = ("td_pt", "td_pz", "td_ea", "td_q3", "td_w")
+
+
+def vi_inputs(P: dict, cv: dict) -> tuple[dict, dict]:
+    """A1a.2: the (P, cv) that fd_1b_c2.c2_vi reads (fd_1b_c2.py:1090-1098, its keys only), with all six row-key
+    columns of both sides rounded to VI_KEY_DTYPE, so that row_match's bitwise key compares like with like. The two
+    sides are written at different precisions: the npz's MCgen is float32 (nn_dump_inputs.py:84) and its w_truth a
+    float64 product (unfold_nd_omnifold_unbinned.py:438,466); the bank's td_* and every *_tdw.npy are float32
+    (sweep_bank_5d.py:114,165,185). At those precisions the weight never matches and vi reads every row unmatched
+    (the gates' STOP of 2026-11-10, receipts-ll5d/gate-vi-diagnosis/). Rounding is idempotent on what is already
+    float32, so the denominator side is unchanged. The weights are handed on in float64 holding float32 values, so
+    the per-cell shares sum in float64 as before. Nothing outside vi reads these views."""
+    world = P["world"]
+    f32 = lambda x: np.asarray(x, VI_KEY_DTYPE)  # noqa: E731
+    inputs = {"MCgen": f32(world["inputs"]["MCgen"]), "pass_truth": world["inputs"]["pass_truth"]}
+    bank_cv = {k: f32(world["bank_cv"][k]) for k in TD_KEYS}
+    view = {"inputs": inputs, "bank_cv": bank_cv, "tdw_cv": f32(world["tdw_cv"]).astype(np.float64)}
+    return {"world": view, "cells": P["cells"]}, {"wt": f32(cv["wt"]).astype(np.float64)}
+
+
 # ------------------------------------------------------------------------------------------- the calibration
 
 
@@ -505,6 +528,14 @@ def one_set(job: tuple[str, int]) -> tuple[str, int, dict]:
     return t, s, out
 
 
+def install_config() -> dict:
+    """Amendment A1a.1: configuration (e)'s candidate, installed once at a job's entry exactly as fd_1b_mc.run_unfold
+    does (fd_1b_mc.py:507 at dbaaf09d46f7bfcf671b04cc161cfd57c16222f7). It registers the "ratio_nd" truth model that
+    fd_1b_mc.truth_weight dispatches to (s5e_deform.install_ratio_truth); without it truths_r raised ValueError
+    ("ratio_nd"), ll5d_calib run 1 (job 61014290)."""
+    return s5e_candidate.install(toys.CONFIG)
+
+
 def require_threads() -> dict:
     """The gate and the calibration run at one BLAS thread (A2.1 ruling (a); section 9): every THREAD_VARS entry is
     "1" (VECLIB_MAXIMUM_THREADS may be unset off macOS)."""
@@ -553,6 +584,7 @@ def calib_main(a) -> dict:
     import multiprocessing
     t0 = time.time()
     threads = require_threads()
+    install_config()                                  # A1a.1, before anything reads a truth
     check_n(a.draws)
     inv.OPENED.clear()
     world, d1 = load_world(a)
@@ -912,6 +944,7 @@ def gate_main(a) -> dict:
     a.out.parent.mkdir(parents=True, exist_ok=True)
     line = PROJECTION_SHARE * a.time_limit_seconds
     threads = require_threads()
+    install_config()                                  # A1a.1, before anything reads a truth
     inv.OPENED.clear()
     world, d1 = load_world(a)
     load = lambda tag: verified_weights(world, a, tag)  # noqa: E731
@@ -960,7 +993,7 @@ def gate_main(a) -> dict:
     terms = c2.c2_terms(V, cv)
     seeds_n = gate_seeds(t, n)
     draws_n = draws300 + [mc.draw_universes(toys.draw_for_seed(sd, flux_p, groups)) for sd in seeds_n[BACKSTOP_N:]]
-    vi = c2.c2_vi(P, cv, fm, geo)
+    vi = c2.c2_vi(*vi_inputs(P, cv), fm, geo)        # A1a.2: one key precision on both sides
     blocks_left = len(READINGS) * (BACKSTOP_N + n) // DRAW_BLOCK
     readings, gate_rec, back = {}, {}, {}
     for reading in READINGS:
@@ -1012,6 +1045,58 @@ def config_hash(code: dict, inputs: dict) -> str:
     doc = {"code": code, "inputs": inputs, "clip_rule": "LL5D section 3.4, per row", "draw_salt": toys.DRAW_SALT,
            "toy_seeds": {t: [int(x) for x in TOY_SEEDS[t]] for t in TRUTHS}, "removed": list(REMOVED)}
     return hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest()
+
+
+def vi_terms(inputs: dict, cells: np.ndarray, edges, td_cell: np.ndarray) -> dict:
+    """The phase-space rows term by term (A1a.2, the 2,801 rows): the npz's signal rows, those passing truth, those in
+    the 5D cells (c2_vi's signal set), and the truth-passing rows outside the cells by the axes they leave (each axis
+    alone, as flat_cells bins it, closed last edge); the truth-denominator rows and those outside the cells."""
+    gen = np.asarray(inputs["MCgen"], float)
+    ptru = np.asarray(inputs["pass_truth"], bool)
+    out_axis = {}
+    for dim, (name, e) in enumerate(zip(("pt", "pz", "eavail", "q3", "W"), edges)):
+        e = np.asarray(e, float)
+        x = gen[:, dim]
+        out_axis[name] = ~((x >= e[0]) & ((x < e[-1]) | (x == e[-1])))
+    n_out = np.sum(np.column_stack(list(out_axis.values())), axis=1)
+    off = ptru & (cells < 0)
+    return {"signal_rows": int(gen.shape[0]), "pass_truth": int(ptru.sum()),
+            "in_phase_space": int((ptru & (cells >= 0)).sum()), "pass_truth_outside_cells": int(off.sum()),
+            "pass_truth_outside_by_axis_alone": {k: int((off & v & (n_out == 1)).sum()) for k, v in out_axis.items()},
+            "pass_truth_outside_on_two_or_more_axes": int((off & (n_out >= 2)).sum()),
+            "inside_cells_not_pass_truth": int((~ptru & (cells >= 0)).sum()),
+            "truth_rows": int(td_cell.size), "truth_rows_outside_cells": int((td_cell < 0).sum())}
+
+
+def vicheck_main(a) -> dict:
+    """A1a.2's priced preflight (a regular CPU job, before any gate rerun): C2's (vi) on the real inputs exactly
+    as the gate computes it now (vi_inputs), beside the unrounded call the gates of 2026-11-10 made, and the 2,801
+    rows' terms (vi_terms). It reads the world through load_world (the same digests, pins and O_NOATIME), the H2
+    definition's map, and nothing else: no universe weights, no truth, no draws. PASS when vi's largest cell share is
+    within clip_probe2's MISMATCH_BOUND, as reading_1b reads it; STOP otherwise (a genuine mismatch, for Joseph)."""
+    t0 = time.time()
+    threads = require_threads()
+    inv.OPENED.clear()
+    world, d1 = load_world(a)
+    inputs = world["inputs"]
+    edges = inputs["edges"]
+    fm = np.asarray(sa.fine_map(a.definition))
+    P = {"world": world, "cells": flat_cells(np.asarray(inputs["MCgen"], float), edges)}
+    geo = {"td": td_cells(world["bank_cv"], edges)}
+    cv = {"wt": np.asarray(inputs["w_truth"], float)}
+    vi = c2.c2_vi(*vi_inputs(P, cv), fm, geo)
+    vi_raw = c2.c2_vi(P, cv, fm, geo)
+    worst = vi["largest_cell_unmatched_share"]
+    bounded = worst is not None and worst <= c2.cp2.MISMATCH_BOUND
+    rec = {"schema": SCHEMA_VICHECK, "step": "ll5d-vicheck", "threads": threads, "code_sha256": code_digests(),
+           "inputs": inputs_record(world, a), "d1": d1, "mismatch_bound": c2.cp2.MISMATCH_BOUND,
+           "vi": vi, "vi_unrounded": vi_raw, "terms": vi_terms(inputs, P["cells"], edges, geo["td"]),
+           "npz_dtypes": {k: str(np.asarray(v).dtype) for k, v in (
+               ("MCgen", inputs["MCgen"]), ("w_truth", inputs["w_truth"]), ("td_pt", world["bank_cv"]["td_pt"]))},
+           "float32_exact": {k: float(np.mean(np.asarray(v, np.float32).astype(np.float64) == np.asarray(v, float)))
+                             for k, v in (("w_truth", inputs["w_truth"]), ("tdw_ref", world["tdw_ref"]))}}
+    why = None if bounded else "vi is not bounded on the real inputs"
+    return finish(a, rec, "PASS" if bounded else "STOP", why, t0)
 
 
 def finish(a, rec: dict, verdict: str, why: str | None, t0: float) -> dict:
@@ -1077,6 +1162,8 @@ def main(argv=None) -> int:
     p.add_argument("--calibration", type=Path, required=True)
     p.add_argument("--expect-calibration-sha256", required=True)
     p.add_argument("--expect-calibration-npz-sha256", required=True)
+    p = sub.add_parser("vicheck")                    # A1a.2: vi on the real inputs, before any gate rerun
+    _common(p)
     p = sub.add_parser("gate-merge")
     p.add_argument("--part", type=Path, action="append", required=True)
     p.add_argument("--expect-part-sha256", action="append", required=True)
@@ -1100,11 +1187,12 @@ def main(argv=None) -> int:
         a.out.write_text(json.dumps(g, indent=1, sort_keys=True))
         print(f"LL5D-GATE-MERGED verdict={g['verdict']} verdicts={json.dumps(g['verdicts'], sort_keys=True)}")
         return RC[g["verdict"]]
-    step = "CALIBRATION" if a.cmd == "calib" else f"GATE {a.truth}"
+    step = {"calib": "CALIBRATION", "vicheck": "VICHECK"}.get(a.cmd) or f"GATE {a.truth}"
     try:
-        rec = calib_main(a) if a.cmd == "calib" else gate_main(a)
+        rec = {"calib": calib_main, "vicheck": vicheck_main}.get(a.cmd, gate_main)(a)
     except (Refusal, c2.Refusal, inv.Refusal, mc.Refusal, toys.Refusal) as exc:
-        bad = {"schema": SCHEMA_CAL if a.cmd == "calib" else SCHEMA_GATE, "verdict": "INVALID", "why": str(exc),
+        schema = {"calib": SCHEMA_CAL, "vicheck": SCHEMA_VICHECK}.get(a.cmd, SCHEMA_GATE)
+        bad = {"schema": schema, "verdict": "INVALID", "why": str(exc),
                "atime": inv.atime_check()}
         a.out.with_suffix(".invalid.json").write_text(json.dumps(bad, indent=1, sort_keys=True))
         print(f"LL5D-{step} INVALID ({exc})")

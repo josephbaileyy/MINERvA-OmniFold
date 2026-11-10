@@ -1,0 +1,112 @@
+**Referee judgment:** This is a credible methods paper after substantial revision, but the present draft still gives some diagnostics more authority than their records allow. The main corrections are to scope the coverage claim, remove the comparison with an unaccepted covariance, and distinguish the reported sixteen-cell covariance from the flexibility of the event weights. The four round-six reads also call for major revision; my decisions below rest on the paper and records rather than their votes (`referee-methods-round6-20261109/README.md:31-50`).
+
+For brevity, `PB` means `docs/analysis-note/paper_body.tex`, `MP` means `docs/analysis-note/main_paper.tex`, and `SUP` means `docs/analysis-note/supplemental_body.tex`. The methods-baseline decision is absent from the checkout as a file; I read it from the local Git object `943d5f97`, cited below as `943d5f97:DECISION-20261109-joseph-methods-baseline-and-plan.md:line`.
+
+### Wording decisions
+
+**W-1: other — “Five-observable unbinned unfolding of MINERvA open data with OmniFold: a benchmark and diagnostic study.”**  
+**Why:** This identifies the paper’s scope without suggesting that the published-result comparison independently validates the method. Option 1 is defensible but makes a long title out of the three findings; option 2’s “uncertainty calibration” may sound like an achieved result.  
+**Record check:** Joseph chose a short methods paper (`943d5f97:DECISION-20261109-joseph-methods-baseline-and-plan.md:49-51`); the learner and background choices make the benchmark descriptive (`PB:157`). **Option 3 exceeds that record** by retaining “validation” without qualification.  
+**Risk:** The introduction must use the same restrained description (`PB:17`).
+
+**W-2: 2.**  
+**Why:** Keep the main finding sentences and add the median rounding effect on the *reported* cells. The abstract’s 2.6-statistical-standard-deviation maximum concerns 153 quantities under two perturbations, so the sixteen-cell scale helps a referee interpret it.  
+**Record check:** The two scales and the maximum’s population are stated at `PB:256`; the reported median total uncertainty is 7.86% (`values_fived16.tex:3543`). **Option 3 risks overstatement by presentation**, though its numbers are recorded: it gives the extreme without the reported-cell scale.  
+**Risk:** One extra number leaves an already dense abstract (`MP:55`).
+
+**W-3: 1.**  
+**Why:** Keep the two completed classifications beside V-HALF, with the full definitions in S11. Make clear that all three classify bias under simulated truths; none validates coverage or excludes a cell.  
+**Record check:** The 14/14/12 counts and the distinct rules are licensed by `OUTCOME-20261107-valid-region.md:21-36,47-60,84-96`; V-HALF’s domain and treatment of unassessed cells are fixed at `DECISION-20261109-joseph-bias-half-rule.md:28-40,46-51`. **No listed option inherently exceeds the records** if those limits remain attached.  
+**Risk:** “Valid” may still be read as permission to use a cell for measurement (`PB:246`).
+
+**W-4: 3 — do not name the future bias–variance study in this paper.**  
+**Why:** The ENS1 result supports the narrow statement already in §6.1: the 96-fit average passes the stability bar and is worse by its declared bias criterion at one of 17 truths. A referee can reasonably question the adoption rule, but a promised study cannot supply its missing trade-off result.  
+**Record check:** ENS1 licenses only that verdict and explicitly bars a broader ranking (`OUTCOME-20261109-ens1-stab-pass-bias-worse.md:53-70`). Joseph says nothing about the future study enters this initial paper without a new decision (`943d5f97:DECISION-20261109-joseph-methods-baseline-and-plan.md:59-64`). **Options 1 and 2 exceed that scope**, even as promises rather than findings.  
+**Risk:** A referee may still require a quantitative adoption rationale before acceptance.
+
+**W-5: 1.**  
+**Why:** Keep the exclusions in prose and the localization test as a next step. The present valid-region calculation does not determine whether the two-dimensional discrepancy is localized in the added observables.  
+**Record check:** That limit is explicit in `OUTCOME-20261107-valid-region.md:27-37,114-124`; Joseph reserves localization for a declared test (`943d5f97:DECISION-20261109-joseph-methods-baseline-and-plan.md:73-78`). **No option exceeds the record**, although option 3 would omit a next step Joseph explicitly permits.  
+**Risk:** “Natural” could imply that the test’s result is predictable (`PB:301`).
+
+**W-6: 1.**  
+**Why:** “Illustration only” is a useful abstract-level limit on the data output. It agrees with the introduction’s explicit statement that the sixteen-cell result is not presented as a measurement.  
+**Record check:** `MP:55` and `PB:19-20,307` give that scope. **Neither option exceeds the record.**  
+**Risk:** Readers may ask why a covariance and generator comparisons accompany an illustration (`PB:77`).
+
+**W-7: 1.**  
+**Why:** Keep the three learner distances in §4.1: they show how much a methodological choice moves the descriptive benchmark. They also help prevent the final 2.27 comparison from reading as an independent validation.  
+**Record check:** The values and the conditional selection are at `PB:157`, with 3.66 and 2.65 defined in `values.tex:48,81`; the underlying comparison is described at `REF-C2C1-DECLARATION.md:31-44`. **Neither option exceeds the record** if “descriptive” remains.  
+**Risk:** A reader may mistake the smallest χ² for an optimization target.
+
+**W-8: 1.**  
+**Why:** Preserve the approved, scoped B0 sentences and RS1 wording. The RS1 mechanism sentence says “on this pseudo-experiment,” which is essential to its licence.  
+**Record check:** Joseph approved the B0 sentences at `DECISION-20261106-joseph-b0-reconciliation-sentence.md:21-35`; RS1 permits the tie mechanism only on its tested pseudo-experiment (`OUTCOME-20261108-rs1-rounding-mechanism.md:54-69,126-129`). **Neither listed option exceeds those records**; deleting the scope qualifier would.  
+**Risk:** “Specified in advance” needs the declaration to remain accessible (`RS1-DECLARATION.md:1-4`).
+
+**W-11: other — “The two-dimensional covariance under-covers at two held-out generator tunes; coverage of the reported five-observable intervals is not established.”**  
+**Why:** This remains accurate whichever way the pending like-for-like test reads: that test concerns a procedure at two truths, not intervals constructed at the data point. The current general claim that “the uncertainties are not calibrated” is too broad.  
+**Record check:** COV2D licenses under-coverage of the remade **2D procedure covariance at those tunes** (`OUTCOME-20261108-cov2d-both-tunes-under-cover.md:97-106`) and excludes the reported intervals and other truths (`:108-115`); the paper itself limits the five-observable test (`PB:283`). **Option 3 exceeds COV2D; options 1 and 2 may become stale** if the pending test reports a result.  
+**Risk:** The abstract must keep the pending result separate from the 2D finding (`MP:55`).
+
+**W-12: other — “Changing the simulated prior shifts the data result in a direction correlated with the simulated residual at the corresponding truth (ref. [14], section 9.4). The note’s joint-test null distributions incorporate the estimator’s pull toward its prior (ref. [14], section 11.5).”**  
+**Why:** Section 9.4 measures a correlation with a *simulated* residual; it expressly says that the shift does not measure unknown real-data bias. Section 11.5 describes how prior pull enters calibrated null distributions, not a second measurement of the same bias on data.  
+**Record check:** `sec_5d.tex:196-204` and `sec_joint.tex:47-50,165-168,339-342` support these verbs; the joint result is not a measured cross section (`RECORD-20261005-s5p-joint-5d-inference-result.md:3-18`). **Options 1 and 3 exceed the source** by saying “the same bias” or “consistent with it” as though real-data bias were known. Option 2 is safe but loses useful, carefully qualified evidence.  
+**Risk:** The note must be available to a reader following these claims.
+
+**W-13: 1.**  
+**Why:** Separate a data-level run-period inconsistency from properties the unfolding method has not established. The step is visible before unfolding, survives it, and has no established cause.  
+**Record check:** The reconstructed +6.10% and unfolded +6.94% ± 0.41% are at `period-unfold-20261014/REPORT.md:63-67`; the cause is excluded at `:13-15`. **Option 2 risks exceeding the causal implication of the list** by making “run-period consistency” sound like an output the method could itself provide.  
+**Risk:** A referee may request checks of exposure, selection, and detector conditions by period.
+
+**W-14: 2.**  
+**Why:** Do not print a recommendation count. The project applies three per-cell thresholds, but the guide itself has **five numbered recommendations**: the jet-threshold item precedes the three relevant items, and correlation treatment is item **5**, not a “fourth recommendation.”  
+**Record check:** The retained guide excerpt numbers items 1–5 at `valid-region-20261107/source/SM_section2_lines25-75.txt:10-45`; the outcome labels the applied checks A1–A3 and says guide item 5 is unmet (`OUTCOME-20261107-valid-region.md:39-56`). **Option 1 is wrong on the count** and overstates “implementing” the guide: the simulation effective-count definition is a disclosed deviation (`:43`).  
+**Risk:** S11 must retain the unmet correlation-assumption condition (`SUP:625-628`).
+
+**W-15: 1.**  
+**Why:** Remove the uncertainty comparison and the band in Fig. 3(b); keep the residual’s size and identify its estimator. A failed-acceptance, purity-subtracted covariance supplies no uncertainty statement for the reported estimator.  
+**Record check:** The draft identifies the band and its different estimator (`PB:185,189-190`); the note says that covariance fails its specification (`sec_5d.tex:247-253`). **Options 2 and 3 risk exceeding its licence** by inviting a comparison with the reported uncertainty, even with “for scale” added.  
+**Risk:** The figure needs a redraw, and the verbal check tied to “about half” needs updating (`W-OPTIONS.md:210-216`).
+
+**W-16: 1.**  
+**Why:** Add “in the unfolds we ran.” Bitwise seed independence is an observed property of those runs; the abstract should not make it a universal property of the estimator.  
+**Record check:** `PB:256` states the qualification, and `RS1-DECLARATION.md:34-43` identifies the observed seed and rounding behaviour. **The unqualified current wording exceeds the record**; option 2’s proposed causal explanation is not established by these lines.  
+**Risk:** Readers may still confuse seed reproducibility with numerical stability.
+
+**W-17: 1.**  
+**Why:** The three-dimensional comparison belongs in background context, away from the paper’s five-observable scope sentence. Moving it prevents adjacency from suggesting a “first” claim.  
+**Record check:** The current placement is `PB:14-17`; Joseph’s methods scope is `943d5f97:DECISION-20261109-joseph-methods-baseline-and-plan.md:49-51`. **No listed option exceeds the record** solely by placement.  
+**Risk:** The cited prior measurements must substantiate the dimension claim.
+
+**W-18: 1 for Limitation 3; 1 for the name.**  
+**Why:** Move the detailed calibrated-joint-test limitation to S7 and call configuration (e) “the five-observable estimator” in the paper. Its current name depends on tests this short paper does not report, while the two-versus-five-observable distinction is immediately intelligible.  
+**Record check:** The estimator roles are stated at `PB:67-68`; the joint tests are conditional simple-hypothesis tests, not measurements (`RECORD-20261005-s5p-joint-5d-inference-result.md:3-18`; `sec_joint.tex:339-342`). **Option 2 for the limitation risks promoting those tests into a fourth paper finding** unless their six conditions accompany it. The naming options do not themselves exceed a record.  
+**Risk:** Update cross-references consistently in the paper and Supplement.
+
+**W-20: other — replace the blanket §3.3 sentence with “The grading rules and their timing are stated with the individual tests; comparisons without a grading rule are descriptive.”**  
+**Why:** I can confirm advance rules for the sixteen-cell fake-data triggers, stability and ENS1, COV2D and LL5D, the IBU comparisons, and the per-period benchmark. I cannot confirm a single *unqualified* “every criterion” claim for §§4–6: the validity rules use already committed fake-data inputs, with some per-cell values seen before those rules were selected. Keep the explicit post-result background-adoption and run-period-block disclosures.  
+**Record check:** Advance sources are `FD-DIRECTOR-RULINGS.md:35-45`, `FD-STAB-DECLARATION.md:137-165`, `ENS1-DECLARATION.md:1-6,203-225`, `COV2D-DECLARATION.md:26-32,257-273`, `LL5D-DECLARATION.md:444-485`, `REF-C2C1-DECLARATION.md:142-163`, `REF-G1-DECLARATION.md:128-140`, and `per-period-benchmark-20261106/DECLARATION.md:32-40,138-148,231-240`. The first five-observable coverage gate has an advance grading declaration (`FD-1B-STAGED-DECLARATION.md:335-365`). **I cannot confirm advance blindness for V-ATLAS/V-PRIOR relative to the underlying fake-data results**: their declaration discloses prior inspection (`valid-region-20261107/DECLARATION.md:35-68`); V-HALF was declared before *its class* was read, but after the earlier classifications and fake-data products (`DECISION-20261109-joseph-bias-half-rule.md:5-19,38-40`). **Options 1–3 all retain the overbroad §3.3 sentence** (`PB:93`); option 1 merely removes repetitions.  
+**Risk:** Table 1’s “Pass” definition also says “fixed in advance” globally and needs the same qualification (`PB:97`).
+
+**W-22: other — “Event weights let the same unfolded sample be histogrammed in subsequently chosen projections or cells. An uncertainty for a new choice must be constructed and checked for that choice; this study does not establish a practical gain over binned unfolding.”**  
+**Why:** The event-weight flexibility is real, but the paper reports a covariance for specified sixteen cells. Neither listed sentence establishes that one covariance can be reused for *any* later projection or cell definition.  
+**Record check:** The method supports later histogramming (`SUP:165-171`); the reported covariance is tied to the sixteen-cell result (`PB:53,73-83`; `SUP:283-287`). **Options 1 and 2 exceed that scope** by promising arbitrary cells “from one result and one covariance.”  
+**Risk:** The paper still cannot claim an observed performance advantage over IBU (`PB:242-243`).
+
+**W-23: 1, with “five-observable estimator” substituted if W-18 is adopted.**  
+**Why:** Naming \(C_{\mathrm e}\) makes the covariance decomposition in §3.2 match S5 and gives the reader a clear referent for later discussion. It adds no numerical or validation claim.  
+**Record check:** S5 defines \(C_{\mathrm{total}}=C_{\mathrm e}+C_{\mathrm{model}}\) and the contents of \(C_{\mathrm e}\) (`SUP:283-287`); the present omission is at `PB:77`. **Neither option exceeds the record.**  
+**Risk:** None.
+
+### Four further reader items
+
+1. **The χ²/205 divisor.** I would make correction a condition of acceptance, achievable by wording and existing numbers. Print **“χ² = 136 in 73 retained directions; χ² = 285 in 139 retained directions”**, without truncated χ²/205 ratios or a new derived statistic. Dividing by 205 after retaining only 73 or 139 modes obscures the scale per tested direction; the per-direction convention is already used in the per-period declaration (`PB:145-146`; `per-period-benchmark-20261106/DECLARATION.md:143-148`). This form also avoids introducing new ledger values for 136/73 and 285/139 (`W-OPTIONS.md:326-329`).
+
+2. **Making \(C_{\mathrm{PL,5D}}\) non-primary.** I would **not** require a primary-covariance switch for acceptance. I would require a plainly displayed sensitivity with and without the block, because it was added after the differences and its size is poorly determined; existing fake-data readings already compare those choices, so this presentation need not launch a new campaign (`PB:77,196-205,221-222`; `sec_fived16.tex:181-184`). Changing which covariance is reported is a substantive adoption decision, beyond wording (`PB:73-77`).
+
+3. **A four-observable run without \(W\).** I would not make it an acceptance condition for a candid methods paper that claims no measured gain from \(W\). The paper already states reconstructed \(W\)’s redundancy; a claim that \(W\) adds information or improves the result **would** require the requested new computation (`PB:43-44`; `referee-methods-round6-20261109/sonnet-jinst-short-r6-1.txt:80-84`). W-22’s narrower motivation can be resolved in wording.
+
+4. **More mechanism pseudo-experiments and a refinement-only tie test.** I would not require them if the mechanism is stated strictly as a result on **one** simulated pseudo-experiment, and the refinement is described only as a sufficient entry point. Generalizing either conclusion would require new computation: RS1 explicitly does not establish the data’s cause or which stage contains the ties (`OUTCOME-20261108-rs1-rounding-mechanism.md:54-69,126-129`). The current §6.1 sentence mostly maintains that scope (`PB:258-259`).
+
+**Additional sentences outside the W-items:** None that I can substantiate as exceeding a record after the qualifications above. This does not resolve the substantive referee concern that the reported five-observable intervals lack validated coverage (`PB:20,283,313-314`).

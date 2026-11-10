@@ -1,0 +1,3 @@
+[ess] job=61082774 host=nid004964 start=2026-11-10T10:56:08Z pin=abdc88c52b909cfc1eb658ae97bd9defc8f640e7
+[ess] setup_salloc_env.sh rc=0 python3=/global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3
+[ess] done rc=0 end=2026-11-10T11:09:15Z

@@ -21,7 +21,7 @@ ND = HERE.parent
 REPO = ND.parent
 FILES = ("prr_probe.py", "prr_ibu.py", "prr_read.py", "sbatch_prr.sh", "test_prr.py")
 PB, IB, RD, SB = FILES[:4]
-EXPECTED_TESTS = 104
+EXPECTED_TESTS = 116
 MUTATIONS = [
     # --- the probe: the mask, the guard, the pins, the columns
     ("mask columns swapped", PB, "return orig(MCgen[:, gi], MCreco[:, ri], measured[:, ri], *args, **kwargs)",
@@ -127,7 +127,7 @@ MUTATIONS = [
     # --- the job script
     ("pair does not gate", SB, '    [ "$pc" -eq 0 ] || {', '    [ "$pc" -eq "$pc" ] || {',
      "test_a_failed_pair_stops_the_dry_run_and_every_full_job"),
-    ("TimeLimit unchecked", SB, "sys.exit(0 if sec(sys.argv[1]) <= sec(sys.argv[2]) else 1)", "sys.exit(0)",
+    ("TimeLimit unchecked", SB, "sys.exit(0 if tl <= lim else 4)", "sys.exit(0)",
      "test_a_limit_above_the_declared_is_refused"),
     ("full without the dry run's DONE", SB, '    [ -s "$OUT/log-dry/DONE" ] && [ ! -e "$OUT/log-dry/STOP" ] ||',
      "    true ||", "test_a_failed_pair_stops_the_dry_run_and_every_full_job"),
@@ -142,9 +142,54 @@ MUTATIONS = [
     # --- Addendum A1 (REQUIRED): the environment is sourced before every python3 call
     ("limit above the source", SB, 'source "$D/setup_salloc_env.sh" > /dev/null 2>&1\n', "",
      "test_every_python3_call_runs_after_the_environment_is_sourced"),
+    # --- Addendum A2 (REQUIRED): the readout emits the truth's departure d beside b and r
+    ("d over the truth, not the prior", RD, "        d = (x - p) / p  # Addendum A2", "        d = (x - p) / x  # Addendum A2",
+     "test_the_table_carries_each_truths_departure_d"),
     ("a failed task still DONE", SB, '[ "$rc" -eq 0 ] || { echo "rc=$rc" > "$L/FAILED"; echo "[prr] STOP: a task failed',
      'true || { echo "rc=$rc" > "$L/FAILED"; echo "[prr] STOP: a task failed',
      "test_a_failed_task_leaves_no_done"),
+    # --- Addendum A3 (REQUIRED: the first two): every form Slurm prints a limit in; an unreadable one is not "exceeds"
+    ("two fields read as H:M", SB, "        return f[0] * 60 + f[1]\n", "        return f[0] * 3600 + f[1] * 60\n",
+     "test_a_sub_hour_limit_in_squeues_m_ss_form_is_read"),
+    ("a parse error reported as exceeds", SB, "    sys.exit(3)\n", "    sys.exit(4)\n",
+     "test_an_unreadable_limit_is_refused_as_unreadable_not_as_exceeding"),
+    ("one field read as hours", SB, "        return f[0] * 60\n", "        return f[0] * 3600\n",
+     "test_one_field_is_minutes_and_a_limit_equal_to_the_declared_passes"),
+    ("the day dropped", SB, "        return int(d) * 86400 + h * 3600 + m * 60 + s", "        return h * 3600 + m * 60 + s",
+     "test_the_day_forms_are_read"),
+    ("a limit equal to the declared refused", SB, "sys.exit(0 if tl <= lim else 4)", "sys.exit(0 if tl < lim else 4)",
+     "test_one_field_is_minutes_and_a_limit_equal_to_the_declared_passes"),
+    ("the unreadable branch removed", SB, '[ "$trc" -ne 3 ] || {', 'true || {',
+     "test_an_unreadable_limit_is_refused_as_unreadable_not_as_exceeding"),
+    ("exceeds reported as a failed check", SB, '[ "$trc" -ne 4 ] || {', 'true || {',
+     "test_two_fields_are_minutes_and_seconds"),
+    # --- Addendum A4 (REQUIRED: the first three): no read inside REF-G1's guard falls outside its four allowed roots
+    ("the stage record re-read inside the guard", IB, "            return run(a.queue_dir, stage_rec, a.out, a4_rec, rho)",
+     "            return run(a.queue_dir, json.loads(a.stage.read_text()), a.out, a4_rec, rho)",
+     "test_the_run_path_end_to_end_with_every_path_protected"),
+    ("the rho arrays read at their shared path", IB, "        if rho is not None:\n            s5p_truths.load_fine_rho = load_fine_rho\n",
+     "", "test_the_run_path_end_to_end_with_every_path_protected"),
+    ("the stage-A4 record re-read inside the guard", IB, "            return run(a.queue_dir, stage_rec, a.out, a4_rec, rho)",
+     "            return run(a.queue_dir, stage_rec, a.out, json.loads(a4_path.read_text()), rho)",
+     "test_the_run_path_end_to_end_with_every_path_protected"),
+    ("the run hands the capture no staged rho", IB, 'cache, out / "scratch", rho)', 'cache, out / "scratch")',
+     "test_the_run_path_end_to_end_with_every_path_protected"),
+    ("a staged rho copy not re-verified in the run", IB, "    P.verify_stage(a4_rec)\n", "",
+     "test_a_changed_rho_copy_is_refused_inside_the_run"),
+    ("no stage-A4 record needed", IB, "        if not a4_path.is_file():\n", "        if False:\n",
+     "test_without_the_stage_a4_record_the_run_is_refused"),
+    ("the stage-A4 record not checked against the manifest", IB,
+     "    if set(got) != set(want) or any(got[k][\"src\"] != want[k][\"src\"] for k in want):\n", "    if False:\n",
+     "test_the_stage_a4_record_must_stage_exactly_the_manifest_under_its_directory"),
+    ("a rho copy outside the stage directory accepted", IB,
+     "        if root not in Path(e[\"copy\"]).resolve().parents:\n", "        if False:\n",
+     "test_the_stage_a4_record_must_stage_exactly_the_manifest_under_its_directory"),
+    ("a fine hypothesis left out of the manifest", IB, "        if hyp.get(\"schema\") == FINE_SCHEMA:\n",
+     "        if hyp.get(\"schema\") == FINE_SCHEMA and truth != \"A7_nuwro\":\n",
+     "test_the_manifest_is_the_committed_fine_hypotheses_rho_arrays"),
+    ("a missing staged copy read in place", IB,
+     "        if copy is None:\n            raise P.Refused(", "        if copy is None:\n            return real_rho(ratio)\n            raise P.Refused(",
+     "test_a_fine_hypothesis_without_a_staged_copy_is_refused_in_the_capture"),
 ]
 
 

@@ -55,17 +55,33 @@ OWN_SEED_FILES = ("nd-unfolding/ll5d.py", "nd-unfolding/tests/test_ll5d.py", "nd
                                                     "tests-numpy126-seed2.txt", "tests-numpy2-seed0.txt"))
 
 
+OWN_RECEIPT_PREFIX = _RCPT + "fd/receipts-ll5d/"     # LL5D's own receipt tree (the director, 2026-11-09)
+
+
 def seed_collisions(lines: list[str]) -> list[str]:
     """git grep -n -o lines (path:line:token) whose token is an integer in section 3.6's range, outside LL5D's own
-    files (exact paths); a token ending in a decimal fraction is a float literal, not a seed."""
+    files (OWN_SEED_FILES, exact paths) and LL5D's own receipt tree (OWN_RECEIPT_PREFIX, an exact path prefix: its
+    receipts name LL5D's own products, which are not collisions); a token ending in a decimal fraction is a float
+    literal, not a seed."""
     bad = []
     for line in lines:
         path, _, tok = line.split(":", 2)
-        if path in OWN_SEED_FILES or re.search(r"\.[0-9]$", tok):
+        if path in OWN_SEED_FILES or path.startswith(OWN_RECEIPT_PREFIX) or re.search(r"\.[0-9]$", tok):
             continue
         if 4_751_000 <= int(re.sub(r"[,_]", "", tok)) <= 4_770_999:
             bad.append(line)
     return bad
+
+
+def law_control_computed(tc: unittest.TestCase, law: dict) -> None:
+    """The law control was computed for every evaluation and cell (finite z, a boolean verdict). Whether it holds on
+    a toy null of a few dozen sets is chance: 64 z-values at 4 SE from 20-40 sets fail about 2-5 % of worlds by the t
+    distribution (PYTHONHASHSEED=17 showed it). The rule itself is fd_1b_c2.control, verbatim from 342c0ce5."""
+    tc.assertIsInstance(law["holds"], bool)
+    for e in ll5d.EVALUATIONS:
+        z = np.asarray(law[e]["z"], float)
+        tc.assertEqual(z.shape, (sa.N_CELLS,))
+        tc.assertTrue(np.all(np.isfinite(z)), e)
 
 
 def git_blob(data: bytes) -> str:
@@ -931,9 +947,9 @@ class Seeds(unittest.TestCase):
                     ll5d.check_n(n)
 
     def test_no_other_tracked_file_uses_the_seed_range(self):
-        """Section 3.6's collision check, repeated at this sha: integer tokens in 4,751,000-4,770,999 in tracked
-        .py/.sh/.tsv/.json/.md/.txt files appear only in LL5D's own files, named exactly (OWN_SEED_FILES), or as float
-        literals."""
+        """Section 3.6's collision check, repeated at this sha: integer tokens in section 3.6's seed range, in tracked
+        .py/.sh/.tsv/.json/.md/.txt files, appear only in LL5D's own files, named exactly (OWN_SEED_FILES), or as float
+        literals. (The range is not written in this docstring, which a verbose test log prints.)"""
         if not (REPO / ".git").exists():
             self.skipTest("not a git checkout")
         out = subprocess.run(["git", "grep", "-I", "-n", "-o", "-P", SEED_PATTERN + r"(\.[0-9])?", "--", "*.py", "*.sh",
@@ -949,6 +965,12 @@ class Seeds(unittest.TestCase):
                  "nd-unfolding/y.py:9:4_770_999", f"copy/{own}:1:4751001", "data/z.json:4:4755555.5",
                  "nd-unfolding/w.py:1:4771000"]
         self.assertEqual(seed_collisions(lines), lines[1:5])
+        ours = OWN_RECEIPT_PREFIX + "pilot/unfold.log.txt:12:4751000"
+        other_campaign = _RCPT + "fd/receipts-1b/staged/x.txt:3:4751000"
+        look_alike = _RCPT + "fd/receipts-ll5d-copy/x.txt:4:4751000"
+        nested = "elsewhere/" + OWN_RECEIPT_PREFIX + "x.txt:5:4751000"
+        self.assertEqual(seed_collisions([ours, other_campaign, look_alike, nested]), [other_campaign, look_alike, nested])
+        self.assertTrue(OWN_RECEIPT_PREFIX.endswith("/fd/receipts-ll5d/"))
         self.assertTrue(re.fullmatch(SEED_PATTERN, "4751000") and re.fullmatch(SEED_PATTERN, "4,751,000"))
 
 
@@ -1111,7 +1133,7 @@ class Jobs(Fixture):
         self.assertEqual(rec["evaluations"], list(ll5d.EVALUATIONS))
         self.assertEqual(rec["draws_per_set"], 300)
         self.assertEqual(set(rec["sd300_per_cell"]), set(ll5d.EVALUATIONS))
-        self.assertTrue(rec["control_law"]["holds"])
+        law_control_computed(self, rec["control_law"])
         self.assertTrue(rec["checks"]["D1"]["passes"])
         self.assertEqual(rec["code_sha256"], ll5d.code_digests())
         self.assertEqual(rec["fd_1b_c2_source"], ll5d.FD_1B_C2_SOURCE)
@@ -1237,6 +1259,276 @@ class Jobs(Fixture):
             self.gate(cal_rec=self.calibrated(), time_limit_seconds=1e-3)
 
 
+# ------------------------------------------------------------------- the real chain (amendment A1a.1)
+
+
+def pristine_s5n():
+    """s5n_pseudo's own definitions, loaded afresh from its source: the state of a fresh process, before any
+    s5e_candidate.install. Patched over the shared module, it makes a test independent of what earlier tests installed."""
+    from importlib.machinery import SourceFileLoader
+    pr = SourceFileLoader("s5n_pseudo_pristine", str(ND / "s5n_pseudo.py")).load_module()
+    import s5n_pseudo
+    return mock.patch.multiple(s5n_pseudo, truth_weight=pr.truth_weight, TRUTHS=pr.TRUTHS,
+                               refine_params=pr.refine_params, code_digests=pr.code_digests)
+
+
+TD_KEYS = ("td_pt", "td_pz", "td_ea", "td_q3", "td_w")      # the bank's truth-denominator columns (fd_1b_c2.py:1097)
+
+
+class RealChain(unittest.TestCase):
+    """Amendment A1a.1 (the director's ruling on ll5d_calib run 1): the entry points over real files, with nothing in
+    the fd_1b_mc / s5n_pseudo / s5c_pseudo chain mocked. A2.1's toy world, rewritten so its files agree as the real
+    bank's do (the bank's td_* rows in cv.npz, every bank tdw about tdw_ref within 2 %, the six bank GEANT tdw equal
+    to tdw_ref, the npz's and every detector universe's denom_nd hist(tdw_ref)), then re-pinned (detector receipt,
+    sf1-style manifest, pins) and given a staged flux table. Outside the chain only: the H2 definition's map and S1's
+    functional (s1_assemble, the toy grid), S1's assembly and reported matrix (fd_1b_score, gate only), the input
+    digests and F1 sums (the world's own patches), O_NOATIME off (macOS), and the thread variables."""
+
+    TDW_DTYPE = None                                   # the bank tdw files' dtype (None: as computed)
+    VICHECK = "STOP"                                   # A1a.2's preflight here: td rows drawn apart, so vi is unbounded
+
+    @classmethod
+    def denominator_rows(cls, zi: dict, z: dict, edges: list, rng) -> tuple[dict, np.ndarray]:
+        """The bank's 50 truth-denominator rows (td_*) and tdw_ref, drawn apart from the signal rows. (A1a.2: these rows
+        are not the signal rows, so this world's vi is all-unmatched by construction; MatchedRows overrides this.)"""
+        td = {k: rng.uniform(e[0], e[-1], 50) for k, e in zip(TD_KEYS, edges)}
+        return td, rng.uniform(0.95, 1.05, 50)
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = Path(tempfile.mkdtemp(prefix="ll5d-real-"))
+        w = cls.w = ToyWorld(cls.tmp)
+        w.constraint.write_text("".join(f"Flux {i} {float(w.flux_w[i])!r}\n" for i in range(100)) + "Other 0 1.0\n")
+        rng = np.random.default_rng(9)                 # the constraint in plain floats: numpy 2's repr is np.float64(...)
+        z = dict(np.load(w.bank / "cv.npz", allow_pickle=False))
+        edges = [np.asarray(np.load(w.inputs)[f"edges_{i}"], float) for i in range(5)]
+        zi = dict(np.load(w.inputs, allow_pickle=False))
+        td, cls.tdw_ref = cls.denominator_rows(zi, z, edges, rng)
+        z.update(td)
+        np.savez(w.bank / "cv.npz", **z)
+        for p in sorted(w.bank.glob("*_tdw.npy")):
+            tag = p.name[:-len("_tdw.npy")]
+            v = cls.tdw_ref if tag in ll5d.GEANT_BANK_TAGS else \
+                cls.tdw_ref * np.random.default_rng(zlib.crc32(tag.encode())).uniform(0.98, 1.02, cls.tdw_ref.size)
+            np.save(p, np.asarray(v, cls.TDW_DTYPE or np.asarray(v).dtype))
+        dn = s5p_universe.denominator(z, cls.tdw_ref, edges)
+        zi["denom_nd"] = dn
+        np.savez(w.inputs, **zi)
+        zb = dict(np.load(w.bkg, allow_pickle=True))
+        zb["meta"] = json.dumps({"npz_sha256": digest(w.inputs)})
+        np.savez(w.bkg, **zb)
+        for p in sorted(w.det.glob("*_denom_nd.npy")):
+            np.save(p, dn)
+        w.receipt.write_text(json.dumps({"files_sha256": {p.name: digest(p) for p in sorted(w.det.iterdir())}}))
+        w.manifest.write_text("".join(f"{digest(p)}  {p}\n" for p in sorted(w.bank.iterdir()))
+                              + f"{digest(w.receipt)}  {w.receipt}\n")
+        w.pins.write_text(json.dumps(toys.make_pins(w.bank, w.det, w.manifest, w.receipt)))
+        flux = np.asarray(zi["flux"], float)
+        cls.flux_table = cls.tmp / "flux_universes.npz"
+        np.savez(cls.flux_table, hFluxCV=flux, hFluxUniv=flux[None] * rng.uniform(0.9, 1.1, (100, flux.size)))
+        n_bins = int(np.prod([e.size - 1 for e in edges]))
+        cells = ll5d.flat_cells(np.asarray(zi["MCgen"], float), edges)
+        live = np.unique(cells[(cells >= 0) & np.asarray(zi["pass_truth"], bool)])
+        fm = np.full(n_bins, -1)
+        fm[live] = np.arange(live.size) % sa.N_CELLS
+        cls.fm = fm
+        cls.U = np.vstack([np.where(fm == c, 1.0 + 0.1 * c, 0.0) for c in range(sa.N_CELLS)])
+        f = np.linspace(1.0, 2.0, sa.N_CELLS)
+        cls.s1 = {"U": cls.U.astype(np.float32), "f": f}
+        cls.reported = np.diag((0.05 * f) ** 2)
+        cls.cal = cls.tmp / "cal" / "calibration.json"
+        cls.gate_out = cls.tmp / "gate" / "gate-g18.json"
+        (cls.tmp / "s1").mkdir()
+        (cls.tmp / "s1" / "s1_assembly.npz").write_bytes(b"S1's assembly stands in: fd_1b_score.load_s1 is patched")
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp)
+
+    def setUp(self):
+        self.ps = self.w.patches() + [plain(), mock.patch.dict(os.environ, ONES),
+                                      mock.patch.object(ll5d, "TDW_REF_SHA256", digest(self.w.bank / "GEANT_Neutron_0_tdw.npy")),
+                                      mock.patch.object(sa, "fine_map", lambda p: self.fm),
+                                      mock.patch.object(sa, "functional_matrix", lambda fm: self.U),
+                                      mock.patch.object(fs, "load_s1", lambda p: self.s1),
+                                      mock.patch.object(fs, "reported_matrix", lambda s1: self.reported),
+                                      pristine_s5n()]
+        for p in self.ps:
+            p.start()
+
+    def tearDown(self):
+        for p in reversed(self.ps):
+            p.stop()
+
+    def args(self, **kw):
+        w = self.w
+        base = dict(npz=w.inputs, bkg=w.bkg, bank=w.bank, detector_dir=w.det, pins=w.pins, expect_pins_sha256=digest(w.pins),
+                    flux_constraint=w.constraint, flux_table=self.flux_table,
+                    expect_flux_table_sha256=digest(self.flux_table), definition=self.tmp / "definition.json",
+                    prep=w.prep, manifest=w.manifest, expect_manifest_sha256=digest(w.manifest), time_limit_seconds=1e7)
+        base.update(kw)
+        return argparse.Namespace(**base)
+
+    def calibrate(self):
+        if not self.cal.exists():
+            ll5d.calib_main(self.args(out=self.cal, draws=300, sets=20, workers=2, budget_seconds=1e7))
+        rec = json.loads(self.cal.read_text())
+        return rec
+
+    def gate(self, out: Path | None = None):
+        if out is None and self.gate_out.exists():
+            return json.loads(self.gate_out.read_text())
+        rec = json.loads(json.dumps(self.calibrate()))
+        rec["verdict"] = "CALIBRATED"
+        rec["rule"]["s"] = 1.0
+        for e in ll5d.EVALUATIONS:
+            rec["rule"]["thresholds"][e].update(ii_mean_log=10.0, iii_alpha_multiple=100.0)
+        cal = self.tmp / "cal" / "calibrated.json"
+        cal.write_text(json.dumps(rec))
+        shutil.copy(self.cal.with_suffix(".npz"), cal.with_suffix(".npz"))
+        with pristine_s5n():                           # the gate installs on its own, whatever the calibration did
+            return ll5d.gate_main(self.args(out=out or self.gate_out, truth="g18", staged=self.tmp, calibration=cal,
+                                            expect_calibration_sha256=digest(cal),
+                                            expect_calibration_npz_sha256=digest(cal.with_suffix(".npz"))))
+
+    def test_truths_r_runs_the_real_truth_weight_after_the_install(self):
+        """REQUIRED (A1a.1): truths_r over the world's real F1 prep ratios with fd_1b_mc.truth_weight unmocked. In a
+        fresh process's state it raises ValueError("ratio_nd"), ll5d_calib run 1's crash; after install_config it
+        returns r_T, finite and positive here, and different for the two truths."""
+        world = mc._load_world(self.args())
+        with self.assertRaisesRegex(ValueError, "ratio_nd"):
+            ll5d.truths_r(world, self.w.prep, ["g18"])
+        ll5d.install_config()
+        r, ctl = ll5d.truths_r(world, self.w.prep, list(ll5d.TRUTHS))
+        self.assertTrue(all(c["passes"] for c in ctl.values()))
+        self.assertFalse(np.array_equal(r["g18"], r["ar23"]))
+        self.assertFalse(np.all(r["g18"] == 1.0))
+
+    def test_calib_main_runs_the_real_chain(self):
+        """The calibration's entry point over real files, nothing in the chain mocked: it installs the candidate
+        itself, loads the world, reads tdw_ref with D1, the truths, every universe, and writes its record."""
+        rec = self.calibrate()
+        self.assertEqual(rec["schema"], ll5d.SCHEMA_CAL)
+        self.assertTrue(rec["checks"]["D1"]["passes"])
+        self.assertTrue(all(v["passes"] for v in rec["checks"]["r_positive"].values()))
+        law_control_computed(self, rec["control_law"])
+        self.assertEqual(rec["atime"]["moved"], [])
+
+    def test_gate_main_runs_the_real_chain(self):
+        """The gate's entry point over real files, nothing in the chain mocked: the controls, the receipt over the
+        declared draws in both readings, the sealed clip-prep file, the gate."""
+        g = self.gate()
+        self.assertTrue(g["controls"]["denominator"]["passes"], g["controls"])
+        self.assertTrue(g["controls"]["r_positive"]["passes"])
+        self.assertEqual(g["receipt"]["verdict"], "PASS", g["receipt"].get("stop"))
+        self.assertIn(g["verdict"], ("PASS", "STOP"))
+        self.assertTrue((self.gate_out.parent / g["clip_prep"]["path"]).exists())
+
+    def test_the_vi_preflight_over_the_real_chain(self):
+        """A1a.2's preflight (ll5d.py vicheck) over real files: vi as the gate now computes it, the unrounded call beside
+        it, and the phase-space terms, which must add up. PASS exactly when vi is within the mismatch bound."""
+        out = self.tmp / "vicheck" / f"vicheck-{type(self).__name__}.json"
+        rec = ll5d.vicheck_main(self.args(out=out))
+        self.assertEqual(rec["schema"], ll5d.SCHEMA_VICHECK)
+        self.assertEqual(rec["verdict"], self.VICHECK)
+        bounded = rec["vi"]["largest_cell_unmatched_share"] <= rec["mismatch_bound"]
+        self.assertEqual(rec["verdict"], "PASS" if bounded else "STOP")
+        t = rec["terms"]
+        self.assertEqual(t["in_phase_space"], rec["vi"]["signal_rows_in_phase_space"])
+        self.assertEqual(t["truth_rows"], rec["vi"]["truth_rows"])
+        self.assertEqual(t["pass_truth"], t["in_phase_space"] + t["pass_truth_outside_cells"])
+        self.assertEqual(t["pass_truth_outside_cells"], sum(t["pass_truth_outside_by_axis_alone"].values())
+                         + t["pass_truth_outside_on_two_or_more_axes"])
+        self.assertEqual(rec["atime"]["moved"], [])
+        self.assertEqual(json.loads(out.read_text())["verdict"], rec["verdict"])
+
+
+class MatchedRows(RealChain):
+    """REQUIRED (A1a.2, after the gates' STOP of 2026-11-10): RealChain's world with the bank's truth-denominator rows
+    BEING the npz's truth-passing signal rows in the phase space, stored as the real writers store them: MCgen and
+    td_* float32 (nn_dump_inputs.py:84; sweep_bank_5d.py:114,165), the npz's w_truth float64, every bank tdw float32
+    (sweep_bank_5d.py:185) with tdw_ref = float32(w_truth). vi must then find every row, and the read must not be
+    forced to option (3). At a95cc39f (vi keyed on the unrounded weight) it reads every row unmatched."""
+
+    TDW_DTYPE = np.float32
+    VICHECK = "PASS"
+
+    @classmethod
+    def denominator_rows(cls, zi: dict, z: dict, edges: list, rng) -> tuple[dict, np.ndarray]:
+        gen = np.asarray(zi["MCgen"], np.float32)
+        zi["MCgen"] = gen
+        z["MCgen"] = np.asarray(z["MCgen"], np.float32)      # the bank's copy, float32 too (its sentinel rows stay NaN)
+        in_ps = np.asarray(zi["pass_truth"], bool) & (ll5d.flat_cells(np.asarray(gen, float), edges) >= 0)
+        td = {k: gen[in_ps, i] for i, k in enumerate(TD_KEYS)}
+        return td, np.asarray(zi["w_truth"], np.float64)[in_ps].astype(np.float32)
+
+    def test_the_world_is_stored_as_the_writers_store_it(self):
+        """The precondition of the test below: float64 signal weights that float32 cannot hold exactly, float32 tdw."""
+        zi = np.load(self.w.inputs)
+        self.assertEqual(zi["MCgen"].dtype, np.float32)
+        self.assertEqual(zi["w_truth"].dtype, np.float64)
+        self.assertEqual(np.load(self.w.bank / "GEANT_Neutron_0_tdw.npy").dtype, np.float32)
+        wt = zi["w_truth"]
+        self.assertFalse(np.any(wt.astype(np.float32).astype(np.float64) == wt))
+
+    def test_vi_finds_every_matched_row_and_the_read_is_not_forced(self):
+        """REQUIRED (A1a.2): every matched row found on both sides, mismatch_bounded, no read forced to option (3), and
+        this world's gate reads option (1) and PASSes. Fails at a95cc39f: (2980, 2980) unmatched, share 1.0, STOP."""
+        g = self.gate()
+        vi = g["record"]["vi"]
+        self.assertGreater(vi["truth_rows"], 0)
+        self.assertEqual(vi["signal_rows_in_phase_space"], vi["truth_rows"])
+        self.assertEqual((vi["signal_rows_unmatched"], vi["truth_rows_unmatched"]), (0, 0))
+        self.assertEqual(vi["largest_cell_unmatched_share"], 0.0)
+        for e, d in g["reading_detail"].items():
+            self.assertTrue(d["mismatch_bounded"], e)
+            self.assertFalse(d["option_3_applies"], e)
+            self.assertNotEqual(d["reads"], "option (3)", e)
+        self.assertEqual(set(g["reads"].values()), {"option (1)"})     # this world's read, with vi bounded, is PASS-able
+        self.assertEqual(g["verdict"], "PASS")
+
+    def test_the_vi_preflight_reads_both_keys(self):
+        """On this world the preflight finds every row with the gate's key and none with the unrounded one (the call the
+        gates of 2026-11-10 made), and reports the npz dtypes and the share of each weight that float32 holds exactly."""
+        rec = ll5d.vicheck_main(self.args(out=self.tmp / "vicheck" / "both-keys.json"))
+        self.assertEqual(rec["vi"]["largest_cell_unmatched_share"], 0.0)
+        self.assertEqual(rec["vi_unrounded"]["largest_cell_unmatched_share"], 1.0)
+        self.assertEqual(rec["npz_dtypes"], {"MCgen": "float32", "w_truth": "float64", "td_pt": "float32"})
+        self.assertEqual(rec["float32_exact"], {"w_truth": 0.0, "tdw_ref": 1.0})
+
+    def test_the_unrounded_key_cannot_match_here(self):
+        """The control that makes the test above discriminating: vi on the inputs as given (a95cc39f's call) reads every
+        row of this world unmatched, so the read is forced to option (3)."""
+        with mock.patch.object(ll5d, "vi_inputs", lambda P, cv: (P, cv)):
+            g = self.gate(out=self.tmp / "gate" / "gate-g18-unrounded.json")
+        self.assertEqual(g["record"]["vi"]["largest_cell_unmatched_share"], 1.0)
+        self.assertTrue(all(v == "option (3)" for v in g["reads"].values()))
+
+    def test_vi_inputs_rounds_the_key_and_nothing_else(self):
+        """vi_inputs hands c2_vi only the keys it reads, each key column at VI_KEY_DTYPE's values, and leaves P and cv."""
+        w = np.array([0.1, 1.0 / 3.0])
+        P = {"world": {"inputs": {"MCgen": np.full((2, 5), 1.0 / 3.0), "pass_truth": np.ones(2, bool), "w_truth": w},
+                       "bank_cv": {**{k: np.full(2, 1.0 / 3.0) for k in TD_KEYS}, "other": 1},
+                       "tdw_cv": w.copy()}, "cells": np.zeros(2, int), "rows": "kept"}
+        cv = {"wt": w.copy(), "wr": w.copy()}
+        Pv, cvv = ll5d.vi_inputs(P, cv)
+        self.assertEqual(set(Pv), {"world", "cells"})
+        self.assertEqual(set(Pv["world"]), {"inputs", "bank_cv", "tdw_cv"})
+        self.assertEqual(set(cvv), {"wt"})
+        self.assertEqual(ll5d.TD_KEYS, TD_KEYS)
+        f = lambda x: np.asarray(x, np.float32).astype(np.float64)  # noqa: E731
+        np.testing.assert_array_equal(cvv["wt"], f(w))
+        np.testing.assert_array_equal(Pv["world"]["tdw_cv"], f(w))
+        self.assertEqual(cvv["wt"].dtype, np.float64)
+        for k in TD_KEYS:
+            np.testing.assert_array_equal(np.asarray(Pv["world"]["bank_cv"][k], np.float64), f(np.full(2, 1.0 / 3.0)))
+        np.testing.assert_array_equal(np.asarray(Pv["world"]["inputs"]["MCgen"], np.float64), f(np.full((2, 5), 1.0 / 3.0)))
+        self.assertIs(Pv["world"]["inputs"]["pass_truth"], P["world"]["inputs"]["pass_truth"])
+        self.assertIs(Pv["cells"], P["cells"])
+        np.testing.assert_array_equal(cv["wt"], w)
+        np.testing.assert_array_equal(P["world"]["tdw_cv"], w)
+
+
 # --------------------------------------------------------------------------------- the all-path equality
 
 
@@ -1304,6 +1596,11 @@ class A21Equality(Fixture):
             np.testing.assert_array_equal(mine[k], ref[k], err_msg=k)
         self.assertEqual(json.loads(str(ref["json"])), json.loads(json.dumps({"blocks": blocks, "vi": vi},
                                                                              sort_keys=True)))
+        # A1a.2: the equality above is of the BUILDERS (A2.1's c2_vi call on the inputs ll5d builds); it says nothing about
+        # vi itself. This fixture's td rows are drawn apart from its signal rows, so vi is all-unmatched here on any key,
+        # and the reference pins exactly that. Stated, so that it cannot be read as vi coverage (that is MatchedRows').
+        self.assertEqual(vi["largest_cell_unmatched_share"], 1.0)
+        self.assertEqual(vi["truth_rows_unmatched"], vi["truth_rows"])
 
 
 # ------------------------------------------------------------------------------------------------- the merge

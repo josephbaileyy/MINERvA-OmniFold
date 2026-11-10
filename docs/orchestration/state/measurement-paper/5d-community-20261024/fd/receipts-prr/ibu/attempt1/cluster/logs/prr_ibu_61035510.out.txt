@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+  File "<stdin>", line 4, in sec
+ValueError: not enough values to unpack (expected 3, got 2)
+[prr] refusing: Slurm TimeLimit 30:00 exceeds the declared 0:30:00

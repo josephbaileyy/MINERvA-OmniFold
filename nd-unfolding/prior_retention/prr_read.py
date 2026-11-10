@@ -280,8 +280,9 @@ def quantities(X: dict, mats: dict) -> dict:
         p = X[("B0", P.PRIOR, s)][1]
         r_, n_s = rho(xh, x, p)
         b = (xh - x) / p
+        d = (x - p) / p  # Addendum A2: the truth's departure from the prior, §4.1's d, emitted for V-HALF (dimensionless)
         out[(lv, t, s)] = {"rho": r_, "n_S": n_s, "b": b.tolist(), "rms_b": float(np.sqrt(np.mean(b ** 2))),
-                           "r": (xh / x - 1).tolist(), "grade": table_ii(xh / x - 1, mats[t])}
+                           "r": (xh / x - 1).tolist(), "grade": table_ii(xh / x - 1, mats[t]), "d": d.tolist()}
     return out
 
 

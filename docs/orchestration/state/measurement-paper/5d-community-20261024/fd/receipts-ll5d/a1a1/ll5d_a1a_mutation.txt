@@ -1,0 +1,64 @@
+# ll5d_a1a_mutation.py
+# date 2026-11-09T01:30:36Z  made at HEAD eeed15993831f4f2b352595b98842ed05f62097c, a clean checkout (porcelain 0)
+# python 3.12.2 numpy 1.26.4
+# b49f5d5f793265ef0cf569abe1912838cce9280e692f4dd61100d05c133aec1f  ll5d.py
+# 24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb  ll5d_b.py
+# 9ef0f23838e5dd0eb3bffca9ed02c702281ba103174518cb245393650bc0aa35  tests/test_ll5d.py
+# 918d75bfd9c2c89faa0250918e52fdbccb2e9dd2e83bc2353b5d4b86ddebc0c2  tests/test_ll5d_b.py
+# b5849b1d9a9a795b4975f177ba737aaa76fbfdb9bfebee48b09d36a2db3c544d  tests/ll5d_a1a_mutation.py
+# 1b09bf22969b26984cac245d30d734e654088e61af43bedd3add341911389f61  tests/ll5d_a1b_mutation.py
+ll5d.py sha256 b49f5d5f793265ef0cf569abe1912838cce9280e692f4dd61100d05c133aec1f
+test_ll5d.py sha256 9ef0f23838e5dd0eb3bffca9ed02c702281ba103174518cb245393650bc0aa35
+UNMUTATED PASS tests=72 expected=72 rc=0
+MUTATION KILLED REQ per-row first order drops the reference [Composition.test_first_order_in_draw_order] sha256=5393986ee80122ec
+MUTATION KILLED REQ k = 1 aliases the universe [Composition.test_k1_is_the_universe_bitwise] sha256=cce5bdb750635760
+MUTATION KILLED REQ the tdw reference is not tdw_ref [Builders.test_detector_rows_carry_tdw_ref_and_enter_with_zero_departure] sha256=a4050dfc2b02c274
+MUTATION KILLED REQ the denominator tree is not clipped [Clip.test_each_tree_is_clipped_on_its_own_composite_and_nowhere_else] sha256=89c7f55d704ced62
+MUTATION KILLED REQ the denominator can go negative [Clip.test_the_denominator_is_never_negative_under_adversarial_composites] sha256=60231668adf7126e
+MUTATION KILLED REQ D1 tolerates one ULP [Denominator.test_d1_fires_on_one_ulp] sha256=efd4529777475dcf
+MUTATION KILLED REQ D2 total edge widened [Denominator.test_d2_at_its_total_edge] sha256=817da48014887723
+MUTATION KILLED REQ D2 cell edge widened [Denominator.test_d2_at_its_cell_edge] sha256=08027b58700bd761
+MUTATION KILLED REQ D2 ignores the support [Denominator.test_d2_fails_on_the_support_alone] sha256=ee0597b69e0d751c
+MUTATION KILLED REQ D3 tolerates one ULP [Denominator.test_d3_fires_on_one_ulp] sha256=02135916fa2318c4
+MUTATION KILLED REQ T <= 0 misses T = 0 [Receipt.test_t_le_0_stops_and_halts_at_the_first] sha256=c2a24c5c745b0a94
+MUTATION KILLED REQ T <= 0 keeps BLAS's clip sign near zero [Receipt.test_t_le_0_takes_composes_clip_sign_on_near_zero_rows] sha256=ce9ead302a10bde0
+MUTATION KILLED REQ the N1 screen hides a pair past the bound [Receipt.test_n1_stops] sha256=c9c7d514eab210d3
+MUTATION KILLED REQ the receipt runs on after a STOP [Receipt.test_t_le_0_stops_and_halts_at_the_first] sha256=9b918d985686f225
+MUTATION KILLED REQ N1 bound loosened [Receipt.test_n1_stops] sha256=37d38f85c3f6d66f
+MUTATION KILLED REQ the truth takes the CV's flux [Receipt.test_each_reading_composes_its_own_draw_and_the_truth_takes_phi_u] sha256=5ec47d1e0b892822
+MUTATION KILLED REQ the rule's union is not joint [Rule.test_the_union_is_measured_jointly_per_replicate] sha256=c80097a172ce9e45
+MUTATION KILLED REQ the rule takes any evaluation set [Rule.test_the_rule_is_over_exactly_the_four_paired_evaluations] sha256=a95820ec89ff3b3c
+MUTATION KILLED REQ a toy seed moved [Seeds.test_the_declared_seeds] sha256=ad91514198aa1153
+MUTATION KILLED REQ the gate sample skips the toys [Seeds.test_the_gate_sample_extends_the_toys_and_cannot_overlap] sha256=bedbb9d21161c33a
+MUTATION KILLED REQ a pinned array read plainly [NoAtime.test_tdw_ref_the_manifest_and_the_universes_are_read_with_o_noatime_only] sha256=62e0b8c4f93af43c
+MUTATION KILLED REQ the calibration read plainly [NoAtime.test_the_calibration_record_is_read_with_o_noatime_only] sha256=a72168d4f9fea6a4
+MUTATION KILLED REQ an atime move does not set 8 [ExitCodes.test_an_atime_move_sets_8] sha256=3196df23601e9b24
+MUTATION KILLED REQ more than one BLAS thread accepted [ExitCodes.test_one_blas_thread_is_required] sha256=22c97526232f201e
+MUTATION KILLED m2-a minus2 keeps the removed tags [Layouts.test_m2a_minus2_is_s1s_layout_less_exactly_two_bands] sha256=710fb1c4561c62ca
+MUTATION KILLED m2-a removes GEANT_Pion instead [Layouts.test_m2a_minus2_is_s1s_layout_less_exactly_two_bands] sha256=ca4adf1ebacd02f9
+MUTATION KILLED m2-b drop2 keeps one band [Selection.test_m2b_selection_accepts_drop2_and_refuses_a_kept_band] sha256=6a9b5925c5d2ae99
+MUTATION KILLED m2-c the receipt composes minus2 from the all draw [Receipt.test_each_reading_composes_its_own_draw_and_the_truth_takes_phi_u] sha256=fc860e9188ac22fa
+MUTATION KILLED m2-d the minus2 reference over every band [Builders.test_m2d_the_minus2_reference_is_all_less_the_two_bands_variances] sha256=97a7b526b0289505
+MUTATION KILLED m2-e an independent minus2 stream [Calibration.test_m2e_each_minus2_replicate_is_the_all_replicates_draws_less_two] sha256=f36b034e23ad69f7
+MUTATION KILLED m2-f the product composition on the nature path [SourceFactors.test_m2f_the_product_composition_is_off_the_nature_path] sha256=6b0434845dda1a58
+MUTATION KILLED m2-g restrict copies the row arrays [Builders.test_m2g_restrict_copies_no_row_array_and_the_zero_columns_are_the_selected_form] sha256=d5d0cffaaea231fc
+MUTATION KILLED XT the product drops the reference [CrossTerms.test_the_streamed_product_equals_a21s_crossterm] sha256=3bb06786263137e8
+MUTATION KILLED XT a_CV = 0 not first order [CrossTerms.test_the_streamed_product_equals_a21s_crossterm] sha256=ed7d46d64af86ce5
+MUTATION KILLED EQ a Flux universe's Phi_u misplaced [A21Equality.test_the_all_path_equals_a21s_bitwise] sha256=71f816adb90cefda
+MUTATION KILLED EQ reco cells without the reco pass [A21Equality.test_the_all_path_equals_a21s_bitwise] sha256=35bc75af21c4b3a1
+MUTATION KILLED a failed r_T control read on [Jobs.test_a_failed_control_is_invalid_before_anything_is_read] sha256=b2f815e148102e5e
+MUTATION KILLED an incomplete calibration accepted [Jobs.test_the_gate_refuses_an_uncalibrated_or_foreign_calibration] sha256=5dee9bb63150cf68
+MUTATION KILLED a failing reading passes [Jobs.test_a_failing_gate_reading_is_a_stop] sha256=b984b32af845af84
+MUTATION KILLED the receipt's projection never reprices [Jobs.test_the_receipt_reprices_past_its_line] sha256=b63e1211e57a3bfb
+MUTATION KILLED the gate's projection never reprices [Jobs.test_the_gate_reprices_past_its_line] sha256=a20900863e029bcb
+MUTATION KILLED the first-300 check skipped [Jobs.test_a_gate_sample_whose_first_300_differ_is_refused] sha256=4555d73ca382f69d
+MUTATION KILLED N1 stops at exactly the bound [Receipt.test_n1_at_exactly_the_bound_does_not_stop] sha256=4ac4ee7f42a04c22
+MUTATION KILLED a reading takes the other reading's thresholds [Jobs.test_each_evaluation_reads_its_own_thresholds] sha256=03cadc812bbc71e4
+MUTATION KILLED CP the clipmean sums lambda+ [Receipt.test_the_clip_prep_products_equal_a_direct_computation] sha256=a67955f6d8290690
+MUTATION KILLED CP the unclipped truth is the clipped one [Receipt.test_the_clip_prep_products_equal_a_direct_computation] sha256=809ca22bf6149ea8
+MUTATION KILLED A1a.1 the calibration installs no candidate [RealChain.test_calib_main_runs_the_real_chain] sha256=bb236138409a6bc9
+MUTATION KILLED A1a.1 the gate installs no candidate [RealChain.test_gate_main_runs_the_real_chain] sha256=c9426623d47a3aaa
+MUTATION KILLED A1a.1 install_config installs nothing [RealChain.test_truths_r_runs_the_real_truth_weight_after_the_install] sha256=6f373684b0d9a79c
+MUTATION KILLED the merge passes on one truth [Merge.test_pass_needs_both] sha256=1d7a919f6e7b2f0e
+ALL-KILLED
+# rc=0

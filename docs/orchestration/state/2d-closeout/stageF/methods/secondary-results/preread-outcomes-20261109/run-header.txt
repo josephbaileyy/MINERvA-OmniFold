@@ -1,0 +1,4 @@
+2026-11-09T18:24:00Z
+inputs: #977 de5d5507 preread-outcomes/{manuscript.blind,supplement.blind,VARIANTS}.txt; sonnet via claude-school -p --tools ''; gemini via agy --sandbox gemini-3.8-flash-high
+sonnet rc=0
+gemini rc=0

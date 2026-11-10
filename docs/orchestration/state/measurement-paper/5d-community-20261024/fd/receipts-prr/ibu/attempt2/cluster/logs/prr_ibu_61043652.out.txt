@@ -1,0 +1,2 @@
+[prr] mode=ibu job=61043652 host=nid004495 pin=06657cff7a6ed6c9832fe27957899125e6cac4ad start=2026-11-09T18:11:23Z
+[prr] STOP: route 2 failed (rc=2)

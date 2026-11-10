@@ -18,7 +18,7 @@ ND = Path(__file__).resolve().parents[1]
 TESTS = ND / "tests"
 TEST = TESTS / "test_ll5d_b.py"
 SRC = ND / "ll5d_b.py"
-EXPECTED_TESTS = 28
+EXPECTED_TESTS = 29
 
 MUTATIONS = [
     # --- the weakened label (the director's REQUIRED mutants)
@@ -78,6 +78,8 @@ MUTATIONS = [
      "    ok = fin(k) and fin(tol) and fin(mrd) and mrd <= tol", "CholeskyRule.test_the_rule_both_ways"),
     ("EX a refusal is not INVALID", "    except (Refusal, ll5d.Refusal, mc.Refusal, inv.Refusal, toys.Refusal) as exc:",
      "    except (KeyError,) as exc:", "ExitCodes.test_a_refusal_is_invalid_with_its_record"),
+    ("A1a.1 run_unfold installs no candidate", "    s5e_candidate.install(toys.CONFIG)\n", "",
+     "RealUnfold.test_run_unfold_runs_every_role_over_the_real_chain"),
     ("GR A5's tolerance without its factor 10", "\"tol\": max(1e-9, 10 * kappa * eps)}",
      "\"tol\": max(1e-9, kappa * eps)}", "CholeskyRule.test_the_tolerance_is_a5s"),
 ]

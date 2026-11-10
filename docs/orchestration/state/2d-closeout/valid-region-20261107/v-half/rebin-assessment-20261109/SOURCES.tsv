@@ -1,0 +1,50 @@
+# file:line references cited in README.md, at main 58719d4b91924aedd8fd32397c524d8cbb8d2641 (bare ':N' continuations
+# in the README refer to the file named just before them). Spot-checked by the lane: see README 'Sources'.
+file	lines
+nd-unfolding/ref_g1/ref_g1.py	132
+nd-unfolding/s5p_stage1_inspect.py	47-48
+nd-unfolding/pv-ladder/readouts/h2_definition.json	
+nd-unfolding/s1_assemble.py	103-116
+s1_assemble.py	43-44
+prr_read.py	61
+fd_f0_regrade.py	67
+prior_retention/prr_probe.py	147
+fd_cpl_addition.py	44
+fd_data_product.py	42
+fd_ct_periods.py	54
+v_half.py	35
+h2_definition.py	
+docs/orchestration/state/2d-closeout/stageF/methods/m2-archive/inputs_sha256.tsv	32-33
+s1_assemble.py	313
+fd_f0_regrade.py	560-584
+FD-F0b-REPORT.md	41
+prior_retention/prr_read.py	172-174
+prr_probe.py	633-634
+prr_ibu.py	14-15
+s1_assemble.py	316-321
+build_cresp.py	108-114
+pv-ladder/build_cmodel5d.py	
+fd_ct_periods.py	411
+fd/readout/fd_ct_5b_periods.json	
+fd/receipts-ct/5b/5b-inputs-steps.tsv	
+S1-REPORT.md	222-225
+prr_read.py	223-257
+estimator_stability_analyze.py	282-298
+fd/receipts-stab-a1r/README-full-readout.txt	9-10
+LL5D-DECLARATION.md	570-574
+LL5D-AMENDMENT-A1A.md	155-168
+fd/receipts-ll5d/calib-2/README.md	9-10
+LL5D-DECLARATION.md	589-593
+LL5D-BINDING-3.md	42-43
+fd/receipts-prr/ibu/attempt3/cluster/logs/connect-ibu-3.log.txt	12
+S1-REPORT.md	132-135
+FD-PRR-DECLARATION.md	465-477
+LL5D-DECLARATION.md	276
+FD-1B-DECLARATION.md	99
+s5p_stage1_inspect.py	47-48
+fd_ct_periods.py	405-436
+fd_f0_regrade.py	207-224
+LL5D-DECLARATION.md	274-284
+calib-2/README.md	9-10
+README-full-readout.txt	9-10
+prr_ibu.py	12-16

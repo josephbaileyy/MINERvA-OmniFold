@@ -1,0 +1,137 @@
+# Referee Report for the Journal of Instrumentation (JINST)
+
+**Manuscript Title:** *[Omitted for Blind Review]*  
+**Topic:** Validation and methodology study of five-observable unbinned unfolding with OmniFold on MINERvA medium-energy open data  
+
+---
+
+### 1. Summary of What the Paper Claims and Does
+
+The manuscript presents a methods and validation study testing unbinned machine-learning unfolding with OmniFold (using gradient-boosted decision trees) applied to MINERvA medium-energy neutrino open data across five simultaneous kinematic observables: $p_T$, $p_\parallel$, $E_\text{avail}$, $q_3$, and $W$. Benchmarking the two-dimensional $(p_T, p_\parallel)$ projection against MINERvA’s published cross section reproduces the integrated normalization to within 1.0%, but uncovers a substantial, correlated shape difference ($\chi^2/\text{ndf} = 2.27$ across 205 bins) whose physical or algorithmic origin remains unidentified. In controlled pseudo-data studies, the five-observable estimator retains part of its simulation prior, failing pre-registered bias criteria ($p < 0.01$ or $|z| > 2$) at two evaluated generator truths (a GiBUU hybrid and a synthetic $q_3$ tilt). Furthermore, while the estimator is bitwise reproducible across training seeds, it is numerically unstable under float32 rounding-level input perturbations (shifting outputs by up to $2.6\sigma_\text{stat}$), and its reported uncertainties lack validated coverage, with severe undercoverage in two dimensions and five-dimensional coverage tests either halted or pending. Consequently, the authors refrain from reporting a physics measurement, presenting their sixteen-cell five-observable result strictly as an illustrative output and cautionary methodological baseline.
+
+---
+
+### 2. Recommendation
+
+**Major Revision.**  
+This manuscript represents a rigorous, transparent, and timely critique of machine-learning unfolding in neutrino scattering physics. In an era where unbinned neural and tree-based unfolding algorithms are frequently treated as turnkey solutions, the authors' commitment to pre-registered validation gates, fail-closed testing, and honest reporting of negative results is exemplary and directly aligns with the instrumentation and methodology mission of JINST. Nevertheless, the paper is not publishable in its current submission form. Key validation outcomes remain uncompleted and are marked with placeholder tags (`[PENDING: ...]`), most critically the like-for-like five-observable coverage test (LL5D). In addition, the paper introduces an ad-hoc, post-hoc rank-2 run-period covariance block ($C_\text{PL,5D}$) to absorb an unexplained ~7% physical drift between run periods, which artificially dilutes fake-data test sensitivity and generator comparisons. The benchmark comparison against published data involves post-hoc estimator choices, and the numerical instability stemming from floating-point tie-breaking requires actionable guidance rather than mere documentation. Once the pending analyses are completed, the ad-hoc covariance is properly treated, and these methodological issues are resolved, this paper will be a landmark contribution to data-unfolding methodology in high-energy and nuclear physics.
+
+---
+
+### 3. Major Issues
+
+#### 1. Completion and Structural Dependencies of Pending Analyses (`[PENDING: LL5D]`, `[PENDING: FD-PRR]`, `[PENDING: V-HALF]`)
+* **What is wrong or missing:** The manuscript leaves three validation milestones unfinished, represented by text placeholders: the like-for-like five-observable coverage test across held-out GENIE v3 tunes (LL5D in Section 6.3), the prior-retention study (FD-PRR in Section 5.3), and the per-cell bias-half validity rule (V-HALF in Section 5.4).
+* **Why it matters physically:** The central narrative and conclusions of the paper depend heavily on the outcome of these tests:
+  * If **LL5D** demonstrates severe undercoverage (consistent with the 2D test, where 0 of 300 pseudo-experiments lay in the joint region), it establishes definitively that OmniFold's uncertainty propagation in multidimensional phase space fails to calibrate coverage under model variations. If LL5D instead demonstrates valid coverage, the abstract’s assertion that *"uncertainties are not calibrated"* must be substantially qualified to distinguish 2D from 5D behavior.
+  * For **FD-PRR**, if increasing tree capacity or iteration counts reduces the retained prior fraction $\rho$, prior retention is merely an issue of hyperparameter optimization; if $\rho$ remains rigid across architectures, prior retention is an inherent regularization ceiling of density-ratio estimation in sparse spaces.
+  * For **V-HALF**, the number of valid reporting cells dictates how much of the five-dimensional phase space can be considered reliable even for illustrative purposes.
+* **What the authors must do:** Execute and incorporate the results of all three pending tests. The abstract, Table 1, and Sections 5, 6, and 7 must be updated to reflect the actual numerical outcomes, and the narrative must address whether the 5D covariance undercovers or passes.
+
+#### 2. Ad-Hoc Construction and Masking Effect of the Run-Period Covariance ($C_\text{PL,5D}$)
+* **What is wrong or missing:** Data from run periods 1G–1M show a $+6.10\%$ step at reconstruction level and $+(6.94 \pm 0.41)\%$ after unfolding in $p_\parallel$ near 8 GeV/c compared to earlier periods (Section 4.2). The authors handle this by adding an empirical rank-2 covariance matrix ($C_\text{PL,5D}$) constructed post hoc directly from the observed double ratios across three period groups. Its scale is highly uncertain (the 68% interval on the ratio of true to estimated $\sigma$ is 0.73–2.56), and in cells R00 and R08 it is dominated by replica noise.
+* **Why it matters physically:** A discrete ~7% jump between run periods indicates an unmodelled physical or instrumental drift over time (e.g., beam horn tilt, target degradation, scintillator aging, or MINOS tracking/magnetic field shifts). Constructing an empirical covariance block post hoc that contains the observed discrepancy by definition does not validate the measurement. Crucially, adding $C_\text{PL,5D}$ masks methodological failure modes: as noted in Section 5.2, the GiBUU $E_\text{avail}$ truth fails the pre-registered bias threshold ($z = 2.01$) without $C_\text{PL,5D}$, but passes ($z = 1.76$) when $C_\text{PL,5D}$ is added. It also depresses generator $\chi^2$ values by up to 40% (Table S7).
+* **What the authors must do:** The authors must make the systematic covariance *without* $C_\text{PL,5D}$ ($C_\text{total} + C_\text{resp}$) the primary baseline for all fake-data tests and generator comparisons. The run-period variation must be presented separately as an unresolved data/detector quality issue rather than a standard unfolding uncertainty. The authors should state whether this run-period step was present in the published 2021 MINERvA PRD dataset [13] or if it is an artifact of the open-data production.
+
+#### 3. Unresolved Correlated 2D Shape Discrepancy Against the Published Benchmark ($\chi^2/\text{ndf} = 2.27$)
+* **What is wrong or missing:** In the two-dimensional benchmark against the published result on the identical dataset, the normalization agrees within 1.0% ($\chi^2_\text{norm} = 0.04$), but the shape differs drastically ($\chi^2_\text{shape} = 465$ over 205 bins; $\chi^2 = 136$ in the 73 best-determined modes). The manuscript reports that the *"source of the shape difference has not been identified"* and the localization is *"unresolved"*.
+* **Why it matters physically:** The published MINERvA measurement [13] was unfolded with 10 iterations of binned D'Agostini IBU, whereas this work uses 5 iterations of OmniFold with LightGBM. If two mathematically valid unfolding pipelines applied to the exact same dataset yield cross sections differing at $\chi^2/\text{ndf} = 2.27$, physics extractions (e.g., nuclear 2p2h components, RPA suppression, axial form factors) will directly depend on which unfolding software an experiment selects.
+* **What the authors must do:** The authors must isolate the source of this discrepancy. Specifically, they must:
+  1. Test whether the difference is caused by the background subtraction method (binned purity vs unbinned negative-weight with refinement) by running binned IBU and OmniFold with identical background treatments;
+  2. Test whether the depth-3 decision trees over-smooth real physical structures present in the binned IBU result;
+  3. Run a synthetic closure test where mock data generated from the published cross section is passed through the OmniFold pipeline to verify whether the published shape can be recovered.
+
+#### 4. Post-Hoc Selection of Estimator Architecture and Background Treatment
+* **What is wrong or missing:** The authors disclose in Sections 4.1 and S4 that the choice of LightGBM over scikit-learn exact-split ($\chi^2/\text{ndf} = 3.66$) and histogram ($\chi^2/\text{ndf} = 2.70$) was made after comparing each against the published data. Similarly, refined negative-weight background subtraction was adopted after observing that it lowered the 2D benchmark $\chi^2/\text{ndf}$ from 2.65 to 2.27.
+* **Why it matters physically:** Choosing algorithms and hyperparameters based on agreement with the benchmark invalidates the benchmark as an independent, blind validation. If the default scikit-learn exact-split algorithm had been retained, the 2D benchmark would have been seen as severely discrepant ($\chi^2/\text{ndf} = 3.66$).
+* **What the authors must do:** Transparently acknowledge in the main text of Section 4 (not only in the Supplement) that the benchmark is conditional on post-hoc architectural selection. Show the comparison for the a priori baseline learner alongside LightGBM, and provide a quantitative discussion on the sensitivity of unbinned unfolding to underlying ML library implementations.
+
+#### 5. Numerical Instability and the Rejection of the 96-Fit Ensemble
+* **What is wrong or missing:** The joint-test estimator fails the pre-registered numerical stability threshold ($\le 0.3\sigma_\text{stat}$ median, $\le 1.0\sigma_\text{stat}$ maximum), shifting by up to $2.6\sigma_\text{stat}$ under float32 rounding-level perturbations. The authors trace this to tie-breaking among identical float32 kinematic values altering LightGBM histogram bins during background refinement. An ensemble average of 96 fits cures the instability (median $0.08\sigma_\text{stat}$, max $0.76\sigma_\text{stat}$), but the authors reject it because its bias is slightly worse at 1 of 17 tested truths (the GiBUU $E_\text{avail}$ shape). Curiously, Section S4 notes that *"float32 and float64 inputs give bitwise-equal results"*.
+* **Why it matters physically:** An estimator that shifts by up to $2.6\sigma_\text{stat}$ simply due to floating-point rounding or event ordering is hazardous for experimental science, where minor changes in computing architecture (GPU vs CPU, multi-threading, compiler optimizations) could alter physical conclusions. Furthermore, rejecting an ensembling mitigation that stabilizes 16 of 17 truths based on a single failure in an extreme synthetic stress test seems counterproductive.
+* **What the authors must do:** Resolve the apparent contradiction regarding why float64 inputs yield bitwise-equal results if float32 tie-breaking is the mechanism. Re-evaluate whether the 96-fit ensemble (or an input-dithering / rank-transform scheme) should be recommended as the robust standard for unbinned tree-based unfolding.
+
+#### 6. Kinematic Redundancy of $W$ and Justification for 5D Unfolding
+* **What is wrong or missing:** As stated in Section 2 and Table S1, reconstructed $W$ is an exact algebraic function of $(p_T, p_\parallel, q_3)$ via $W_\text{reco} = \sqrt{(\bar{M} + q_0)^2 - q_{3,\text{reco}}^2}$ (clamped at $W^2 = 0$), and truth $W$ is fixed up to a ~1 mrad beam-angle tilt and nucleon mass choice. The five observables therefore reside on an essentially four-dimensional manifold.
+* **Why it matters physically:** Feeding algebraically collinear features into decision trees can cause split-finding algorithms to partition along arbitrary noise boundaries or produce near-singular correlation structures (as seen in Section S7, where 80 of 109 correlation directions had to be floored by Ledoit–Wolf shrinkage). It also inflates the dimensionality without providing new physical information.
+* **What the authors must do:** Explicitly explain why $W$ was unfolded simultaneously rather than evaluated deterministically post-unfolding from $(p_T, p_\parallel, q_3)$. Assess whether removing $W$ from the training features resolves the numerical instability and ill-conditioned covariance modes.
+
+---
+
+### 4. Evaluation of Stated Limitations and Qualifications
+
+#### 1. Unvalidated Coverage and 2D Undercoverage
+* **Classification:** **(a)** Real deficiency regarding the pending LL5D test; **(b)** Acceptable limitation for the 2D undercoverage and lack of general coverage.
+* **Why:** Leaving the five-dimensional coverage test pending (`[PENDING: LL5D]`) while claiming in the abstract that uncertainties are uncalibrated is an incomplete analysis that must be resolved prior to publication (a). Once LL5D is completed, reporting that coverage undercovers or is uncalibrated across held-out models is an acceptable, highly valuable finding for JINST (b), as the paper explicitly presents the 16-cell result as an illustrative demonstration rather than a physics measurement.
+
+#### 2. The Run-Period Uncertainty ($C_\text{PL,5D}$)
+* **Classification:** **(a)** Real deficiency.
+* **Why:** Constructing an empirical rank-2 covariance matrix post hoc directly from observed double ratios without replica noise debiasing, with an enormous scale uncertainty ([0.73, 2.56]), and using it to absorb a ~7% physical shift in $p_\parallel$, is methodologically unsound. It masks fake-data bias failures (e.g., at the GiBUU $E_\text{avail}$ truth) and distorts $\chi^2$ goodness-of-fit. To resolve it, the authors must remove $C_\text{PL,5D}$ from the baseline covariance, report fake-data tests against the standard systematic covariance, and isolate whether the run-period shift is an artifact of the open-data production or a known beam/detector effect.
+
+#### 3. Fake-Data Bias Exceeding Thresholds (GiBUU Hybrid and Synthetic $q_3$ Tilt)
+* **Classification:** **(b)** Acceptable, honestly stated limitation.
+* **Why:** The failure of the joint-test estimator on the GiBUU hybrid truth ($p < 10^{-27}$) and the synthetic $q_3$ tilt ($p < 10^{-5}$) under pre-registered criteria ($p < 0.01$, $|z| > 2$) is a genuine negative result demonstrating prior retention. Documenting that unbinned unfolding retains memory of the simulation prior when the true distribution departs significantly from it is a primary, highly valuable scientific contribution to instrumentation and methodology literature.
+
+#### 4. The Stopped Coverage Tests (First Test Gated; Redesign Stopped Under Fail-Closed Rules)
+* **Classification:** **(c)** Detail that belongs in the companion note, Ref. [14].
+* **Why:** The detailed forensic post-mortem of why the first test compared unlike objects (response-only vs full-universe draws) and why the redesign stopped twice at gate 1 under fail-closed rules is internal diagnostic history. The JINST manuscript only needs a concise summary stating that early test designs failed technical pre-flight verification; the detailed operational post-mortem belongs in Ref. [14].
+
+#### 5. Low-Stability Cells (R02, R06, R10, R15 with Reconstruction Stability 0.16–0.25)
+* **Classification:** **(b)** Acceptable, honestly stated limitation.
+* **Why:** In a 5D kinematic space with migrations, low purity/stability in extreme corners is expected. The authors honestly report the stability values, note that R02 and R06 are the exact cells flagged in fake-data tests, and refrain from publishing cross sections for model fits. (Though a recommendation to merge these cells could be offered).
+
+#### 6. Target Differences (Carbon vs CH in NuWro and GiBUU)
+* **Classification:** **(c)** Detail that belongs in the companion note, Ref. [14].
+* **Why:** The details of correcting Carbon predictions to CH by adding free-proton samples (and noting that GiBUU's DIS free-proton sample fails energy conservation) pertain to descriptive generator overlays on illustrative data in Section S10. Because the paper explicitly disclaims any physical model exclusion or parameter fitting, the exhaustive bookkeeping of target corrections and hydrogen-sample generator aborts belongs in the analysis note.
+
+#### 7. Definitional Departures (135 MeV Constant in $E_\text{avail}$, Massless $Q^2$ in $W$, Beam Axis Tilt)
+* **Classification:** **(b)** Acceptable, honestly stated limitation.
+* **Why:** The authors evaluate the exact impact of subtracting 135 MeV instead of $m_{\pi^\pm}$ (showing it moves the 16-cell result by at most $0.19\sigma$ in any cell and $0.42\sigma$ coherently) and show that angular tilt effects shift predictions by $< 0.07\sigma$. Because the definition is applied consistently across data, simulation, and generator comparisons, this is an acceptable, well-quantified convention for this methodology study.
+
+#### 8. Kinematic Redundancy of $W$
+* **Classification:** **(b)** Acceptable limitation, but requires **(a)** clarification in analysis.
+* **Why:** Reconstructed $W$ being an exact algebraic function of $(p_T, p_\parallel, q_3)$ means the unfolding is effectively 4D. While presenting 5 observables is acceptable, the authors must clarify why $W$ was retained in the classifier training and verify that this redundancy does not induce numerical instabilities or ill-conditioned covariance directions.
+
+#### 9. Incomplete Hadronic Recoil Scale and Covariance Non-Additivity ($C_\text{resp}$)
+* **Classification:** **(a)** Real deficiency.
+* **Why:** The recoil response scale uncertainty ($C_\text{resp}$) was evaluated post hoc by scaling four deposit categories, omitting neutrons, muons, and energy dependence, and was added linearly despite known non-additivity with other blocks. The authors must either incorporate the hadronic recoil response into the unified systematic throw ensemble or explicitly evaluate the non-additivity impact on the test statistics.
+
+#### 10. Post-Hoc Selection of Learner Architecture and Background Subtraction
+* **Classification:** **(a)** Real deficiency.
+* **Why:** Selecting LightGBM and refined negative-weight subtraction based on their performance against the published benchmark undermines the benchmark's objectivity. The authors must resolve this by reporting the benchmark for the a priori baseline learner and discussing the implications of learner dependence.
+
+---
+
+### 5. Synthesis: Handling of Limitations and JINST Suitability
+
+* **Resolve vs. Move Out:**  
+  The authors must **not** move their substantive negative results or methodological limitations out of the paper. The core value of this work to JINST readers lies precisely in its unvarnished catalog of failure modes: prior retention, numerical instability, covariance undercoverage, and algorithm sensitivity. Sanitizing the paper by hiding these negative findings would turn it into a misleading endorsement of unvalidated ML unfolding. However, procedural post-mortems of aborted test setups (such as the detailed gating failures of the initial coverage tests) and generator-specific accounting details (such as Carbon-to-CH ratio fixes and generator abort tallies) should be relegated to the companion note (Ref. [14]) to streamline readability. The real deficiencies—completing the pending tests, removing the ad-hoc run-period covariance masking, and testing the impact of kinematic redundancy—must be actively resolved.
+
+* **Publishability in JINST:**  
+  Yes, the manuscript is fundamentally publishable in JINST as a methods and instrumentation study. JINST exists to document detector physics, measurement methods, and data analysis algorithms. An exhaustive, pre-registered critique showing where and why a novel algorithm breaks down on real experimental data is just as valuable to the experimental community as a successful physics measurement.
+
+* **Disqualifying Limitations:**  
+  None of the limitations are disqualifying **for JINST as a methodology paper**, provided the authors maintain their strict stance that the 16-cell data output is an illustrative demonstration and not a physics measurement. If this manuscript were submitted to a physics journal (such as PRD or PRL) purporting to measure cross sections for neutrino event generator tuning, the lack of coverage, severe prior retention, numerical instability, and ad-hoc run-period covariance would be immediately disqualifying. In JINST, however, these limitations constitute the central scientific findings of the paper.
+
+---
+
+### 6. Minor Issues and Presentation
+
+1. **Telegraphic and Compressed Syntax:** Throughout the manuscript, the text frequently lapses into dense, telegraphic shorthand that hinders comprehension (e.g., in Table 1: *"Differ; localisation unresolved"*, *"Step does not account for the distance in the best-determined directions"*; and in Section 6.1: *"Ties among equal float32 values; the refinement a sufficient entry"*). The authors should revise these phrases into complete, grammatically standard sentences.
+2. **Leftover Internal Project Timestamps:** In Section S4, the text states: *"The exact-split central value was the quoted 2D central value until 2026-10-11..."* Internal analysis dates and project log timestamps must be removed and replaced with standard descriptions of the analysis versions.
+3. **Inconsistency in Figure 3 Comparisons:** Figure 3 compares the recovery of truth changes, but panel (a) shows a *"lower-capacity variant"* (100 trees, 8 leaves refinement) evaluated on the GiBUU truth, whereas panel (b) shows the *"joint-test estimator"* (400 trees, 31 leaves refinement) evaluated on NuWro and GENIE+MEC. Showing different estimator configurations in panels (a) and (b) prevents a direct visual comparison of how capacity affects prior retention. Panel (a) should display the joint-test estimator on the GiBUU truth.
+4. **Table 1 Notation and Layout:** Table 1 is overloaded. Column headers like *"Est."*, *"Sec."*, and shorthand status values (*"Pass"*, *"Fail"*, *"Differ"*, *"Flagged"*) should be defined explicitly in the caption. The Hotelling-like statistic $T$ and its replica-based threshold should be briefly defined so the table can be interpreted independently of Section S8.
+5. **Clarification of Negative Contributions in Figure 2:** Figure 2 plots the per-bin contribution $\Delta_i (C^{-1} \Delta)_i$ to the published-covariance $\chi^2$. Because off-diagonal covariance elements can produce negative values in a positive-definite quadratic form, readers unfamiliar with non-diagonal metrics may find this confusing. A clarifying sentence should be added to the caption explaining the geometric meaning of negative bin contributions.
+6. **Figure 1 Readability and Bin Edges:** In Figure 1 (bottom left), the standardized residuals are displayed on an irregular 2D bin grid where the text labels for bin edges in $p_T$ and $p_\parallel$ overlap and are difficult to read. The color scale should also be explicitly verified for color-blind accessibility.
+7. **Jargon in Covariance Regularization (Section S7):** Phrases such as *"whitened trace of about 47 rather than 109"* and *"Ledoit–Wolf-shrunk covariance"* should include a brief sentence or mathematical definition explaining the whitening metric and the impact of the 0.015 shrinkage intensity on effective degrees of freedom.
+8. **Consolidation of $W$ Discussion:** The explanation that reconstructed $W$ is algebraically fixed by $(p_T, p_\parallel, q_3)$ is split across Section 2, Section S2, and Table S1. This discussion should be consolidated early in Section 2 to clarify the true dimensionality of the feature space.
+
+---
+
+### 7. Scores and Concluding Statements
+
+SCORE: 5/10
+
+The paper's main contribution is a rigorous, pre-registered methodological demonstration that multidimensional unbinned machine-learning unfolding (OmniFold) on real neutrino data exhibits significant prior retention, numerical instability under floating-point precision, and uncalibrated interval coverage, establishing vital validation requirements before such techniques can be safely deployed for physics measurements.
+
+No other journal would suit the manuscript better than JINST, as it is fundamentally an instrumentation and data-analysis methodology study whose primary scientific value lies in its exhaustive validation protocols, diagnostic techniques, and documented failure modes rather than in a physics cross-section measurement.

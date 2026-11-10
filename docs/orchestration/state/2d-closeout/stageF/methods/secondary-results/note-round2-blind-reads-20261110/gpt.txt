@@ -1,0 +1,191 @@
+**1. Summary**
+
+The note documents an implementation of scalar-observable OmniFold unfolding on MINERvA medium-energy charged-current inclusive data, beginning with a two-dimensional muon-kinematics benchmark and extending to five recorded observables. It reports a two-dimensional integrated cross section within about one percent of the published result, together with a correlated shape difference whose origin remains unresolved. Several estimator configurations are used, differing in learner, seed treatment and background subtraction; their results and validation histories are not interchangeable. The note constructs uncertainty products, documents background-subtraction bias and substantial prior dependence, and reports unsuccessful coverage and stability assessments. Its sixteen-cell five-observable output is explicitly illustrative, with a reported median relative uncertainty of 7.86%, rather than a qualified measurement for fitting. Separately, it reports ten rejections of specified hybrid generator hypotheses using simulation-calibrated tests, conditional on a restricted nuisance model and other stated assumptions. An extended-fiducial study provides preliminary central values and prior-sensitivity diagnostics, including a substantial contribution from regions with little or no acceptance.
+
+**2. Recommendation: major revision**
+
+This could become a useful, citable account of a methods study, including its negative findings. Successful measurement validation is not a prerequisite for publishing such a record. However, the present document does not consistently distinguish demonstrated results, diagnostic constructions, assumptions and unfinished investigations. There are substantive contradictions between the status matrix and the body, incorrect statistical statements in the appendices, unresolved definitions behind important tests, and claims that exceed the demonstrated scope. The extensive qualifications are valuable, but they do not repair stronger statements elsewhere. I recommend major revision directed primarily at making the scientific record internally consistent and self-contained; I do not require every deferred research programme to be completed. I have excluded the held release wording, placeholder release identities and event-loop paths from this assessment.
+
+**3. Accuracy**
+
+1. **The covariance-adoption cross-reference does not resolve.** Table 1 says the five-dimensional covariance was “Adopted under the §6.4 exception.” Section 6.4 is instead “Eigenmode analysis of the published-covariance tension” and contains no such exception. Section 9.6 states that the covariance fails its specification and that “This note nevertheless uses this covariance and its projection.” Replace the erroneous reference with a direct scientific explanation of its permitted diagnostic use.
+
+2. **Table 1 transfers a companion covariance’s stability result to the adopted covariance.** Its five-dimensional covariance row calls \(C_Z\) “non-passing under the predeclared stability comparison.” Section 9.6 concludes: “The estimator-seed magnitude criterion specified before production has not been computed for this covariance,” and the companion covariances’ “outcomes do not transfer to this covariance.” These are different statuses. The table must distinguish the adopted object’s untested criterion from the measured failure of the companions.
+
+3. **“Unregularized” is incorrect.** Table 1 describes the configuration-(a) central value as “an exploratory unregularized five-observable central value.” Section 3.1 states that “The iteration count and learner capacity regularize the unfolding,” and §9.3 identifies “a regularization (unfolding-model) bias.” The estimator is regularized even if no subsequent regularization is applied to a displayed histogram.
+
+4. **The three- and four-dimensional closure status is overstated and assigned to the wrong configuration.** Table 1 lists configuration (e) and says “injected-shape closures pass.” Section 7.4 says the Eavail closure uses configuration (a), “has no pass or fail verdict,” and “does not extend to (e).” Table 6 likewise gives no predeclared threshold for the q3 bump. Report these as descriptive recovery results for configuration (a), with their actual metrics.
+
+5. **The main text incorrectly identifies the continuous subtraction targets.** Section 3.1 says negative-weight injection targets “the identical background-subtracted density \((D-B)/S\).” Appendix C.1 correctly states that the two constructions “do not share the continuous estimand,” except when \(B/D\) is constant within a bin. They agree on bin-integrated targets under the stated sieve, not generally on the unbinned density.
+
+6. **The background-uncertainty statement conflicts with the implemented propagation, or is at least seriously ambiguous.** Section 2.3 says that “neither prediction carries an uncertainty.” Section 4.2 resamples background simulation, while §C.5 says the systematic ensemble “varied genuine background consistently within each universe.” If §2.3 means that no error is printed beside the quoted background fractions, say that. It presently reads as an assertion that background uncertainty is absent.
+
+7. **The description of reconstructed q3 uses the wrong energy input.** Section 3.5 calls q3 “built from Eavail and the muon.” Section 7.1 explicitly says that the recoil estimate \(q_0^{\rm reco}\) “differs from” reconstructed Eavail, and Eq. (3) builds q3 from that recoil estimate. This distinction is central to the claim that the inputs contain separate information.
+
+8. **Figure 3 calls stability “purity.”** Its maps are “column-normalized,” and the lower panels give \(P(\text{reco bin}=\text{truth bin})\) “per truth bin.” This is a diagonal reconstruction probability conditional on the truth bin, conventionally stability. Purity conditions on the reconstructed bin. Section 10.1 correctly defines reconstruction stability in the former way. Correct the terminology throughout §3.5 and Fig. 3.
+
+9. **The flux units are inconsistent as written.** Section 3.4 multiplies the extraction formula by \(10^4\) because the flux is “tabulated per square meter.” The same section then supplies the higher-dimensional flux as \(6.243\times10^{-8}\ {\rm cm}^{-2}\) per POT. A reader cannot insert that value into the displayed formula without applying an extra conversion. Give explicitly equivalent values in both unit systems and state which enters the formula.
+
+10. **Two Eavail-closure residual summaries appear incompatible.** Section 7.4 reports Eavail-marginal recovered/truth ratios with median 0.9999 and standard deviation 0.0006, but then reports an Eavail-projection residual of 1.84%. Those cannot describe the same seven ratios with the same target and definition. If the latter is a feature-recovery statistic, give its formula, selected bins and denominator; otherwise reconcile the numbers.
+
+11. **The Ascencio comparison contradicts the stated benefit of unbinned reporting.** Section 3.5 says reporting bins can be changed “without re-running the unfolding.” Section 7.8 says the 44-cell comparison “requires re-unfolding on the Ascencio edges.” Explain whether this is actually re-histogramming existing event weights, recomputing uncertainty projections, or a deliberate estimator change. A new systematic calculation may be needed; new central unfolding solely because reporting edges changed is not implied by the stated method.
+
+12. **The capacity-scan extent differs between text and caption.** Section 9.4 says five iterations were “the most the computing budget allowed at that capacity.” Figure 26 says “capacity probes to 10.” Identify which capacity runs reached which iteration and which were admissible in the selection procedure.
+
+13. **The extended-domain anchor uses an unexplained different cell count.** Section 12.2 describes agreement “over all 185 reported cells.” Sections 3.5 and A.3.1 identify 205 reported cells, with 185 belonging to a separate strict-interior sensitivity mask. If the anchor excludes the twenty boundary cells, state this and restrict the claimed published-region agreement accordingly.
+
+14. **The lost-draw conclusion contains a logical error.** Section 11.6 first says “every decision could change under a realizable assignment” of lost outcomes. After recovery it says “no assignment of the lost draws changes any decision.” Recovery establishes the actual assignment; it does not eliminate the previously possible counterfactual assignments. The supported statement is that the recovered outcomes change no decision.
+
+15. **Figure 15’s survey annotation disagrees with Table 36.** The figure says “29 of 30 measurements at 2 simultaneously unfolded variables.” The thirty historical rows of Table 36 contain nineteen entries of dimension two, ten of dimension one, and one of dimension three. If the intended statement is “29 of 30 at no more than two variables,” write that.
+
+16. **The displayed model covariance has the wrong dimensions for its stated addition.** Section 4.6 defines \(s_k\) as a “per-cell relative change” and writes \(C_{\rm model}=\sum_k s_ks_k^\top\), then adds it to the dimensional cross-section covariance. Section 10.3 repeats the relative-shift definition. A fractional covariance must be converted using the central-value diagonal matrix before that addition. Write the actual dimensional construction explicitly.
+
+17. **Diagonal inflation does not guarantee covariance domination.** Section 9.6 says the transfer \(C_{\rm vert}\mapsto G C_{\rm vert}G\) “never falls below the block baseline.” It preserves positive semidefiniteness of a positive-semidefinite block and increases its diagonal when \(g_i\geq1\), but \(GCG-C\) need not be positive semidefinite. Some projected variances can decrease. Restrict the statement to the property actually guaranteed.
+
+18. **The shape-normalization Jacobian has the wrong stated kernel.** Appendix A.3.4 calls the “‘all-bins-up’ direction” the kernel of \(J=(I-sw^\top)/T\). Its kernel is the multiplicative normalization direction, proportional to \(x\) or \(s\), rather than a constant additive vector. Also distinguish \(w^\top J=0\), a left-null relation, from the right kernel.
+
+19. **A large normalization covariance is not exactly a free normalization.** Section 10.7 calls the shape-only normalization “free”; §10.3 implements it by adding \(100ff^\top\). A finite coefficient is a finite normalization penalty. It approximates profiling out that direction in the large-coefficient limit. Either implement exact profiling/projection or demonstrate numerical convergence and label the approximation.
+
+20. **Algebraic rank and numerical rank are conflated.** Section 9.6 says “Rank is a property of the cutoff, not of the matrix.” Algebraic rank is a matrix property; estimated numerical rank depends on tolerance and precision. The appropriate conclusion is that no stable numerical-rank plateau is resolved.
+
+21. **Replica count alone does not establish full rank.** Appendix A.1 states: “The 300-replica bootstrap (\(N=300>205\)) is full-rank.” The inequality permits full rank but does not guarantee it. Cite the measured spectrum/rank instead. The maximum-rank statement immediately preceding it is correct.
+
+22. **Mean-centering does not generally give near-zero variance for asymmetric pairs.** Appendix A.2.4 says it “correctly” gives “near-zero variance for a one-sided or asymmetric pair.” Equation (14) gives \((X_+-X_-)(X_+-X_-)^\top/4\), which can be large. Mean-centering removes a common displacement; asymmetry alone does not make the half-difference small. Nor does matching a software convention by itself establish statistical correctness.
+
+23. **The hidden-variable closure changes the effective response.** Section 5 says none of its tests uses pseudo-data whose response differs from the unfolding response. Appendix A.6.2, however, changes only reconstructed weights by a function of \(p_T^{\rm reco}-p_T^{\rm truth}\), leaving truth weights unchanged. This alters the effective selected reconstructed distribution conditional on truth, or produces an inconsistently reweighted joint sample unless further normalization is specified. Distinguish this from a physical detector-response variation, but do not describe the effective response as unchanged.
+
+24. **Fixing a seed does not make training noise cancel.** Table 32 says matching backend and seed means “ML noise cancels.” Section 4.6 explicitly measures universe shifts changing under retraining, including cases where that variability rivals the shift. A common seed can correlate numerical responses; different weights can still change tree construction. Replace the cancellation claim with the measured limitation.
+
+25. **The asserted direction of omitted-draw effects is not generally guaranteed.** Section 5.3 says omitted covariance terms “can only lower the flag rate.” With a biased estimator and a containment criterion, reducing scatter need not reduce noncontainment: fluctuations can sometimes move a biased estimate into the interval. Noncentring and clipping further complicate the direction. Present this as a demonstrated sensitivity if it was measured, or remove the categorical claim.
+
+26. **The nominal-closure threshold needs a distributional qualification.** Appendix C.8 identifies \(|t|>3.6\) with “the two-sided 5% level, Bonferroni-corrected over the 153.” Approximately 3.6 is the normal-reference threshold. It is not the finite-degree-of-freedom Student-t threshold when the standard error is estimated from the small ensembles described here. State the reference distribution and whether this was an approximate fixed diagnostic rule.
+
+**4. Completeness as a citable record**
+
+1. **Give a definitive validation inventory for the quoted configurations.** Table 3 identifies configurations, but the positive validation language still mixes results from them. For every quoted product, list the exact test, configuration, sample relation, statistic, criterion and outcome, including “not tested.” This is particularly necessary for configuration-(f) two-dimensional results and configuration-(e) three- and four-dimensional central values. Matching validation need not be newly performed if the corresponding claims are narrowed.
+
+2. **The two-dimensional held-out-tune test cannot be reconstructed from §5.3.** The note gives striking results—zero joint in-region counts out of 300—but does not sufficiently define the generated estimates, joint region, nuisance draws, centring, clipping, covariance rebuilding or threshold derivation. “C08” is undefined. Add the statistical model and scoring equations, and explain precisely why this is called a coverage test while its scope paragraph says it “is not a coverage rate.”
+
+3. **Provide the complete construction of \(C_{\rm model}\).** Specify the ratio grid, normalization, statistical gate, pooling rule, unchanged-prior regions, boundary handling and conversion from fractional shifts to covariance. These are scientifically consequential: §4.6 attributes 59.4% of the trace to cells beside ratio discontinuities, and §10.3 says 77–100% of prior weight in every cell lies beside such discontinuities. The record needs enough information to distinguish generator sensitivity from sensitivity to the ratio-construction prescription.
+
+4. **Explain the statistical target of the training-seed block.** The quoted block is the covariance of five means, each averaged over twenty bootstrap replicas. It is not simply the seed spread of the central unfolding on fixed data. Derive why that construction estimates the component intended for the quoted fixed-seed central value, and state how the bootstrap interaction is allocated without duplication.
+
+5. **Finish the description of the unified-throw investigation.** Sections 4.5 and A.2.4 discuss a corrected test, but give no quantitative two-dimensional joint-versus-block result. For every ensemble used to support a methodological finding, supply its configuration, number of throws, included sources, interpolation/composition law, mean shift and comparison statistic. If no two-dimensional result exists, say so directly. “Stores the joint mean shift separately” does not report that shift.
+
+6. **Define the five-dimensional covariance diagnostics.** Section 9.6 supplies \(s_{\rm proj}=6.145\%\), but not a sufficiently explicit formula and functional set for reproducing it. Give the formulas for \(s_{\rm proj},s_{\rm agg},s_{\rm med}\), the projection set and all ensemble sizes. Separate actual measurements on \(C_Z\) from companion-object measurements, and provide the actual partition of its 45 bands.
+
+7. **Close the scientific acceptance question for the displayed projection.** Appendix G.4 records that it was undecided whether an acceptance correction is needed at destination binning. Sections 3.1 and 3.3 say acceptance is already corrected and a further correction would double-correct. This is a scientific-definition issue, distinct from the held release wording. Explain whether it is merely stale bookkeeping, a support/truncation issue, or a substantive unresolved correction to Fig. 24.
+
+8. **Specify the missing-event systematic approximation.** Section 4.6 says the universe treatment approximates weights for reconstruction failures “through each universe’s completeness.” Give the actual approximation and where it enters the estimator. The central completeness statement \(c=1\) does not explain it. The two-universe low-sensitivity check should remain clearly limited; it does not quantify the approximation across all sources.
+
+9. **Provide a complete nuisance inventory and its interpretation.** A reader needs the included bands, universe counts, amplitudes, centring conventions, clipping, duplications removed and distinctions among the two-dimensional, \(C_Z\), sixteen-cell and joint-test constructions. Resolve or explicitly quantify the consequences of the unexplained zero NormDISCC band and the inferred POT-counting treatment. Referring to the “standard” MAT set is insufficient for a complete technical record with several modified constructions.
+
+10. **Specify the recoil-response covariance numerically.** Section 10.3 says four deposit categories are varied by “one standard deviation,” but does not provide the category-dependent magnitudes and full mapping into reconstructed observables. Define the cross-talk term and explain its exclusion. The omissions of neutron deposits, energy dependence and resolution are clearly stated, but the implemented component itself must be reproducible.
+
+11. **Give the run-period covariance equation.** The narrative is informative, but the exposure weights, “reliability-weight factor,” application of fractional offsets to central values and assumptions behind the interval 0.73–2.56 need explicit equations. Report the period exposures and period-level offsets needed to reproduce the construction. A block built to contain observed differences must remain an assigned sensitivity component, not acquire validation status from its subsequent containment of them.
+
+12. **The stopped and incomplete studies need final documentary statuses.** Section 10.3 says the reconstruction-information test “ended incomplete, neither passing nor stopping.” Section 10.5 describes multiple coverage attempts and subsequent investigations. Provide one compact account of each attempt: target, gate, numerical outcome, reason for termination, retained conclusion and outstanding question. An unfinished study may remain unfinished; the public record should not read as an active internal workflow.
+
+13. **Explain the failed coverage-generating law.** The 892 non-positive composite denominators among 900 declared draws are potentially important, but “composition of the natures” does not define a statistical model. Give the denominator equation, nuisance supports and mechanism producing non-positivity. Explain what parts of the intended uncertainty model could not be represented. Correctly, this is not itself evidence of either undercoverage or overcoverage.
+
+14. **Make the joint-test calibration reproducible as a probability law.** State the probability assigned to each universe, distributions for continuous and surrogate draws, nuisance composition and clipping rules, background source/template relation, rounding-noise law and prediction-residual law. Explain how finite prediction normalization is treated; disjoint cell membership alone does not guarantee independent Monte Carlo bin errors.
+
+15. **Clarify the joint-test shift uncertainty set.** Figure 31 lists separate shifts \(\{0,D/2,D,+2\delta_{\rm fine},-2\delta_{\rm fine}\}\). State whether simultaneous simulation-size and below-grid shifts were assessed. Taking the largest p value over individual shifts does not automatically bound combinations of them, or shifts in other directions. The assumed geometric refinement rate also needs its derivation, or an unmistakable designation as an unvalidated design assumption.
+
+16. **Report the admissible scope of the five-dimensional coverage experiment up front.** Section 9.5 advertises 1,200 experiments over three truths; only Fig. 36 explains that the third truth did not implement its intended deformation. Give that fact in §9.5 and distinguish generated experiments from interpretable truth tests. Define the family over which the Bonferroni statement applies, including whether the 68% and 95% assessments are separate families.
+
+17. **Provide the missing generator-normalization reconciliation.** Section 7.7 quotes \(f_{\rm MEC}=2.87\%\), implying a full-sample factor \(1/(1-f_{\rm MEC})=1.02955\), while the no-catch-bin deficit changes from 7.2% to 2.7%. These can coexist if weighting and integration domains differ, but the note must supply the weighted fractions and normalization chain that connect them. State explicitly whether the quoted event fractions precede flux repair.
+
+18. **Make the extended-fiducial reporting definition complete.** Supply its grid, anchor mask, numerical supported/extrapolated rates and treatment of partially accepted cells. Explain whether the quoted low-\(p_\parallel\) and angular fractions are mutually exclusive categories. The three-prior envelope has no coverage interpretation; tier 1 also lacks a qualified uncertainty product. Neither tier should be presented as a completed measurement.
+
+19. **Give the full configurations needed to reproduce learner comparisons.** The main LightGBM capacity is reported, but important implementation settings remain unspecified, particularly histogram construction and deterministic options. The Keras comparison also needs architecture, optimization, training duration, preprocessing and seed treatment. These are essential to interpreting its agreement, especially given the demonstrated sensitivity to float32 ties.
+
+20. **Distinguish genuine background from out-of-phase-space subtraction quantitatively.** The former is quoted only for playlist 1A, whereas the total correction is about 3% and can be much larger locally. Give their contributions for the full analysis sample and their relevant kinematic concentration. This also limits conclusions repeatedly justified by the “sub-percent genuine-background scale.”
+
+**5. Self-containment**
+
+1. **Standard references are acceptable supporting material.** Citations for OmniFold, IBU, generator models, detector construction and established statistical methods need not be reproduced in full. The note does give useful algorithmic descriptions, observables, reporting edges and the sequential-testing argument. The deliberately removed reference list is not itself a fault assessed here.
+
+2. **Repository records are acceptable for provenance, but cannot supply indispensable scientific definitions.** Ref. [33] entries support numerous numerical and historical statements. That is acceptable where the note already reports the method, result and limitation. It is insufficient where the record alone defines classifications or selection decisions—for example, “identified quantities” and excluded cases in the binned-response diagnostic of §9.3. Embed those definitions and rules.
+
+3. **The learned-estimator configuration cannot be delegated to code names.** Function and backend names help readers locate implementations. They do not replace the full settings needed to understand which estimator produced a result. In particular, the histogram/tie mechanism makes default learner settings scientifically relevant.
+
+4. **The reconstructed recoil estimator is an essential missing definition.** Eavail is defined explicitly, but \(q_0^{\rm reco}\), which determines q3 and W, is described as a separate calorimetric estimate without a comparable operational definition. Provide its constituents, calibration and relevant selection treatment. A MAT function name alone is not enough.
+
+5. **Internal control labels do not resolve into public explanations.** “C08,” “B3,” numbered control checks, “Stage 0,” “natures,” and references to an audit’s “stopping condition” require definitions where they affect conclusions. Supporting records may preserve their internal names; the note must explain the scientific question and rule independently of those names.
+
+6. **The methods paper cannot be the sole location of evidence cited by this note.** Section 9.3 refers to “the paper’s recovery figure.” Provide a local figure/table reference or the numerical evidence and precise configuration. Conversely, §8.2 is acceptable where it says definitions also appear in the article, because Table 11 supplies them here.
+
+7. **The data-derived lateral surrogate needs an in-note construction.** Section 11.2 states that its endpoints come from data unfoldings and acknowledges unvalidated conditioning. Give the endpoint-to-shift transformation and draw law explicitly. This is part of the hypothesis-test model, not ancillary implementation detail.
+
+8. **Recomputation and verification claims need clear boundaries.** The note generally distinguishes arithmetic replay from scientific validation well. Preserve that distinction, but ensure that every scientifically material number is accompanied by its target and method in the note. A checksum or successful verifier cannot substitute for those definitions.
+
+**6. Support for claims**
+
+1. **The abstract is substantially more careful than several later passages.** Its statements that coverage is unvalidated and the sixteen-cell result is illustrative are supported by the body. Preserve them. However, identify the configuration and functionals underlying the “2.6 statistical standard deviations” statement, and disclose the malformed third truth when summarizing the 1,200-experiment study.
+
+2. **“Validated” and “pass” are used too broadly.** Section 3.2 says “The configuration is instead validated after the fact,” followed by closure, calibration, iteration and backend checks. The evidence supports performance on specified diagnostics, not validation of the quoted estimator and intervals generally. Some checks concern another configuration, and the note documents substantial failures.
+
+3. **Five iterations are not shown to imply convergence or accuracy.** Section 3.2 justifies five iterations partly through integral stability and agreement with the publication. Appendix A.5 goes further: “OmniFold is well-converged at 5 iters and the tension is not an under-iteration artifact.” Stability of an integral or one comparison statistic does not establish convergence of all functionals. The supported finding is small movement of those particular diagnostics between five and ten iterations for the stated configurations.
+
+4. **The assertion that the prior describes the shapes well needs restriction.** Section 2.5 says “The simulation describes the shapes well,” while also reporting a pT ratio rising from 0.88 to approximately 1.2. Similar Pearson correlations do not establish agreement of joint distributions, and near-chance classification can conceal consequential local differences. The evidence supports broad visual similarity with specific normalization and shape discrepancies.
+
+5. **The C2ST does not establish removal of the mismatch.** Section 5.4 calls the AUC change “indicating removal” of the reconstructed mismatch, then acknowledges training and evaluation on the same sample without cross-fitting. Report it as a training-sample discrimination diagnostic. It is not evidence of generalization or calibrated agreement.
+
+6. **The two-dimensional Tune-v1 conclusion exceeds the covariance’s qualification.** Section 6.5 says “The data covariance strongly disfavors the tune.” Section 4.6 says this covariance gives “no calibrated significance” for generator comparisons. The note supports a large descriptive quadratic distance under the stated covariance, alongside similar discrepancies in the published analysis; it does not establish a new calibrated exclusion through this comparison.
+
+7. **Marginal agreement does not validate the higher-dimensional distribution.** Table 1’s dimensional-consistency language should be restricted to measured normalization and projection checks. Sections 5.1 and 9 show that marginal agreement can coexist with substantial joint-cell bias. For some checks the configurations differ as well. The note establishes those specific marginal relations, not general higher-dimensional recovery.
+
+8. **The cause of the background-covariance differences is not established.** Appendix C.5 declares the 1.4% and 1.8% differences to be “bootstrap and classifier-seed sampling noise, with no method bias.” Two aggregate trace ratios do not establish that attribution or absence of bias. The supported result is close aggregate covariance size for the tested constructions; the appendix itself correctly says per-bin, correlation and eigenmode equivalence are unestablished.
+
+9. **The cross-estimator subtraction robustness claim is too general.** Appendix C.1 says clipped refinement “makes the unbinned subtraction robust across estimators.” The reported examples support removal of a severe pathology on tested backends and samples. They do not establish robustness across estimators or background regimes generally.
+
+10. **Seed and split dominance are not demonstrated by comparable trace sizes.** Section 4.7 concludes that estimator stochasticity “therefore dominates the split-varied band,” based on a separate seed scan with 87.5% of its square-root trace. Those are not an orthogonal variance decomposition, and the text does not assume their responses uncorrelated. The evidence supports comparable aggregate magnitudes, not that dominance conclusion.
+
+11. **The exact-versus-histogram difference is not conclusively separated from seed effects.** Appendix A.5 says the gap “is attributable to the estimator, not to seed noise.” Section 3.2 says the exact-split seed spread is unmeasured. Histogram-seed variability alone cannot exclude variability of the exact-split comparator. The evidence supports a backend-associated difference among the available runs.
+
+12. **The binned diagnostic supports a restricted explanation, not a general causal conclusion.** Section 9.3 appropriately restricts its interpretation to 144 eligible residuals, a signal-only noise-free calculation and particular deformations. Retain all those restrictions whenever this result is summarized. The excluded 62% of residual combinations prevent a general claim that tree approximation is unimportant throughout the unfolding.
+
+13. **The familywise guarantee is conditional, not an observed calibration result.** The §B.5 argument is useful and should not be dismissed merely because sampling stops sequentially. However, its guarantee requires A1 and A2; the note explicitly lacks a measured rejection rate for null pseudo-data processed like data and uses data-derived surrogate inputs. “Calibrated tests” should consistently mean calibration within the implemented model, conditional on those assumptions, rather than demonstrated frequentist validity for the experiment.
+
+14. **The ten rejections apply to the original hybrid hypotheses.** They should not become physical generator exclusions, exclusions of corrected CH hypotheses, or evidence of uniquely five-dimensional discrimination. Sections 11.4, 11.7–11.9 correctly limit all three interpretations. The evidence supports rejection of the specified original hybrids under the implemented calibration, with the reported target-correction sensitivity and no demonstrated additional discrimination beyond the matched projections.
+
+15. **Response robustness has only been tested in a limited sense.** Survival under a ±4% re-unfolding with the old null distributions supports sensitivity of the observed decisions to that coherent variation. It does not demonstrate robustness to adding a hadronic-response nuisance to the calibration. Section 11.8 explains this correctly; stronger summaries must not erase that distinction.
+
+16. **Acceptance support alone does not qualify tier 1 as a measurement.** The executive summary calls it part of “the interpreted measurement,” and §12.3 interprets tier 1 as an “acceptance-supported measurement.” The study supplies central values, a restricted prior envelope and statistical containment diagnostics, without a total covariance or validated coverage. “Acceptance-supported central estimate” is supported; a qualified measurement is not.
+
+17. **Several appendicial interpretations are stronger than their tests.** Appendix A.6.3 claims “robustness to model variations” using an acceptance-extrapolated reference rather than simply the alternative generator truth. Appendix A.3.3 calls a small standardized-difference mean “no bias,” although the comparator is another estimate from the same data. These support, respectively, recovery relative to the explicitly constructed reference and a small mean difference—not general model robustness or absence of bias.
+
+**7. Minor issues and presentation**
+
+1. **Reduce the internal-process register.** Terms such as FREE, CARRIES, PARTIAL, “fail-closed,” “claim variants,” “audit,” and “revisit is open” repeatedly obscure straightforward scientific statements. Define necessary labels once and otherwise state the result in ordinary language.
+
+2. **Give configurations descriptive names.** The six letters are useful identifiers but burdensome as the primary explanation. Pair each consistently with its learner and subtraction treatment; avoid calling historical configuration (a) simply the “central-value estimator” when (f) is the quoted two-dimensional estimator.
+
+3. **Separate results from development history.** Several sections recount successive repairs and abandoned constructions before explaining the final product. Put the current construction and outcome first, then retain history only where it affects interpretation.
+
+4. **Shorten repeated caveats without weakening them.** The document is roughly 70,000 words and repeatedly states the same coverage and configuration limitations. A corrected status table, consistently referenced, would permit substantial compression.
+
+5. **Improve the main result figures’ uncertainty presentation.** Figures 7, 9 and 10 display reweighted-simulation weight errors rather than data statistical or reported total uncertainty. Although disclosed, this invites visual misinterpretation, especially alongside the enormous panel χ² annotations. Use the relevant uncertainty product where appropriate, or make the diagnostic nature unmistakable in the figure itself.
+
+6. **Avoid “this measurement” for explicitly illustrative products.** This terminology occurs in text and captions where the scientific status is narrower. Use “estimate,” “benchmark result” or “illustrative output” consistently.
+
+7. **Define each residual metric once.** “Residual,” “spread,” “RMS,” “recovery proxy,” “bias,” and “model dependence” denote different operations. Provide formulas and distinguish standard deviation from root-mean-square, percentage from percentage point, and cell-to-cell variation from repeated-experiment variation.
+
+8. **Make figure comparators explicit.** “GENIE” sometimes means Tune v1 and sometimes untuned GENIE CV. Figure 23 requires its caption to correct “data/GENIE.” Put the actual prediction and configuration in each figure.
+
+9. **Clarify projection coverage and omitted cells.** Every projected comparison should state the retained domain and whether unsupported cells, catch bins or boundary cells are included. These choices are scattered among main text, captions and appendices.
+
+10. **Explain simultaneous observables without implying independent dimensional information.** Section 8.2 handles the redundancy carefully. Carry that terminology into the landscape figure and general motivation.
+
+11. **Check the public rendering separately from this text extraction.** Some equations and labels are visibly damaged here. I do not count extraction artifacts as manuscript errors, but equations, units and cross-references need a final visual proofread.
+
+**8. Scores and priorities**
+
+SCORE: 4/10
+
+The note establishes a reproducible integral-level benchmark and several informative recovery, subtraction, stability and conditional-testing results, while showing that the reported unfolding uncertainty products are not validated measurement intervals.
+
+1. Reconcile the status matrix, configuration-specific claims, cross-references, numerical discrepancies and incorrect statistical statements throughout the document.
+2. Supply the missing definitions and probability laws for covariance construction, held-out tests, nuisance composition and stopped coverage studies.
+3. Rewrite conclusions around demonstrated benchmark and diagnostic results, consistently preserving the limits on coverage, physical interpretation and generator inference.
