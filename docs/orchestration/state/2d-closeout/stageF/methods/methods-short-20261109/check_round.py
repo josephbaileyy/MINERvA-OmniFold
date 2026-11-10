@@ -73,7 +73,8 @@ EMPTY = {**{f"prr-label-{l}-{t}": {"not"} for l in ("fir", "info", "impl", "obs"
          "ll5d-abs-minus2": {"na"}, "ll5d-abs-all": {"na"}, "ll5d-abs-close": {"scope", "na"},
          **{f"ll5d-{x}": {"none", "na"} for x in ("anypass", "cellflags", "anyweak", "anyover")}}
 # numerals the paper prints that the base does not, each with its source (ledger rows)
-NEW_NUMERALS = {"42": "ledger Figure 3: a3_rounding_shifts.csv (PR #1008, sha256 9ac8f7d8), 42 EW rows of its 153 (109 J, 42 EW, two totals)",
+NEW_NUMERALS = {"4.5": "group A item 6 (#1025): the signal phase space, pT < 4.5 GeV/c, Supplement S1 (sec:selection) and ref. MINERvA:2021owq",
+                "42": "ledger Figure 3: a3_rounding_shifts.csv (PR #1008, sha256 9ac8f7d8), 42 EW rows of its 153 (109 J, 42 EW, two totals)",
                 "39": "ledger Figures: app_statmethods_nd.tex:25, the 39 EW cells of the prior-response figure (J 109 and H2 27 are in the base)",
                 "285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55, 1.391 x 205 = 285.2 (in [285.05, 285.26])",
                 "136": "L-12b: the note's sec_results.tex:128 (chi2 = 136 on the 73 best-determined directions)",

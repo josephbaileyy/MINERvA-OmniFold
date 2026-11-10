@@ -1189,6 +1189,12 @@ def values(d, arm="with"):
     rest = [stab[k] for k in stab if k not in lowstab]                 # the note prints the other twelve's range beside them
     assert len(rest) == 12
     v["h2-stab-rest-min"], v["h2-stab-rest-max"] = f"{min(rest):.2f}", f"{max(rest):.2f}"
+    # the paper's compact cell table (the interim referee round, #1025, group A item 6; the director: purity and the
+    # diagonal fraction, the record's "stability", only): per reported cell, from the pinned record, two decimals
+    for c in h2["reporting_cells"]:
+        if c["reported"]:
+            v[f"cell-purity-R{c['id']:02d}"] = f"{c['purity']:.2f}"
+            v[f"cell-diag-R{c['id']:02d}"] = f"{c['stability']:.2f}"
     # C_model,5D: its vertices' trace shares, and the numbers its labels state (parsed, so a changed label stops here)
     for k, x in d["cmodel"]["trace_share_by_vertex"].items():
         v[f"cmodel-trace-{k}"] = f"{x:.3f}"

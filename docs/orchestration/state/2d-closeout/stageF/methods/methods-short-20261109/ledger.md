@@ -1101,3 +1101,44 @@ each hit was read against its record. The mapping table went to the director, wh
   - Y09: the narrowing to the integrated cross section, which matches the paper's benchmark.
   No MORE or DIFF flags. The 7 pre-531fefe42 edits (Y01-Y07) are thereby read, and their source comments now say
   so. d61bb9ad1 is accepted.
+
+## The interim referee round (#1025), group A, batch 1 (the director, 2026-11-10)
+
+GPT gave 5/10 and Gemini 4/10, both major revision (`secondary-results/referee-methods-interim-20261110/`). The director
+put the scope to Joseph and released group A: points both readers make, within the existing records, with no new
+claim. Batch 1 takes the items that don't touch the paragraphs Codex's caption repair edits:
+- **A4 (§1):** the orphan paragraph "Interval coverage has not been validated. …" is merged into the paragraph above. <!-- absence-ok: quotes the paper's existing scoping sentence, unchanged -->
+- **A3 (§3.1):** the two-estimator paragraph is split into (i) common settings, how the two estimators differ, and
+  "not combined"; (ii) the two estimators and their uses. "This estimator removes most of the bias …" moves to the
+  background paragraph as "With the refinement classifier, the negative-weight treatment removes most of the bias …",
+  the attribution of S4 and the note's sec:val-negweight.
+- **A3 (§3.2):** split into the ordinary components, C_model and C_resp, and the run-period block. No word changes.
+- **A6 (§2):** the section opens with the signal phase space, from S1 and ref. MINERvA:2021owq. The sixteen-cell
+  paragraph moves before the diagnostic grids and defines the support rule itself.
+  - A compact cell table (tab:cells) gives each cell's box, purity and diagonal fraction. The director approved
+    purity and diagonal fraction only, with no efficiency, since no committed record defines one, and one name for
+    the diagonal fraction, as defined in §2.
+  - Its values are new make_values keys (cell-purity-Rxx, cell-diag-Rxx), two decimals, from the pinned
+    h2_definition.json reporting_cells; the record calls the diagonal fraction "stability". The boxes reuse Table
+    S2's keys.
+  - The new table prints as Table 1, so the test map and the fake-data table become Tables 2 and 3; every reference
+    is a \ref.
+  - 4.5 (p_T < 4.5 GeV/c) is in NEW_NUMERALS with its source.
+- **A8 (Table 1, the test map):** its source already follows the test definitions. The key is shortened by moving the
+  status glossary, word for word, to a note under the table; the caption is now 39 words.
+- **A10:** "best-determined directions" -> "the 73 largest-eigenvalue directions" (three uses and Table 1's row), using
+  the paper's definition λ/λmax > 1e-4. The note's sec_results "best-measured" (:128, :134) is queued for the note
+  lane by the director.
+- **A11 (§6.3):** the LL5D null (nd-unfolding/fd_1b_null.py:111-122) defines the joint region one-sided, χ² ≤
+  F⁻¹_χ²(ndf)(P0), so adding positive-semidefinite terms can only lower χ², and the carry-over holds whenever ndf is
+  equal. The sentence now names the region: "the joint reading, the fraction with χ² below a cut fixed in advance,
+  carries over only if both matrices have 16 degrees of freedom". It stays pending Joseph.
+- **Checks:**
+  - the rater copy PASS (16 and 16 pages); no Overfull;
+  - check_round with the fill test PASS; make_values --check PASS (3843 values);
+  - registry, sec4 (16/16, 17 passed) and pointers (37/0) PASS;
+  - check_restyle against 7de6c6031 fails only on the additions (the cell table's keys, label and refs, the S1
+    pointer and its \cite, 4.5).
+- The registry: ALIASES rows 39 and 48 and ATTRIBUTION row 17 cited paper_body.tex:68, which the §3.1 split changed; re-cited by
+  hand to :103 (the five-observable estimator, its joint-test use) and :100 (the refinement capacity).
+- The pairs (`interim/batch1-pairs/pairs.tsv`) go to the director's meaning read.
