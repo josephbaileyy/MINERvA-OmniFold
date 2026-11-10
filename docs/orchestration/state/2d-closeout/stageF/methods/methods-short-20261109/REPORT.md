@@ -186,6 +186,11 @@ The director, 2026-11-09:
   per-period benchmark, the rounding studies, the 2D held-out-tune coverage test and the validity rules. These are
   banked for Joseph with W-19 and W-21: the deposit, and what the note must carry.
 - **The AGENTS.md refresh** (the stale 2D value and Q's 6.45/4.75) is on the director's follow-up list, not on #977.
+- **The arXiv metadata abstract, at most 1,920 characters** (arXiv's abstract field; the director, 2026-11-09, on
+  journal-editor's item 6). It is written at submission, separately from the PDF abstract. The PDF abstract's longest
+  pending case is 2,343 characters (`check_round.py`'s ABSTRACT line). After the fill, check_round fails the printed
+  abstract above 2,000 characters until Joseph sets a limit; he also decides whether the abstract cuts content at the
+  fill (the director's option B).
 
 - **The note must carry the second coverage test's clipping record when it resumes** (the director's option (a),
   2026-11-09). The paper's Supplement S9 carries it, as the pending key `ll5d-clip-record`, filled from the readout: the passes weakened by

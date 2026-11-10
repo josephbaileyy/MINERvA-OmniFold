@@ -568,3 +568,55 @@ Checks at this commit:
 - `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
 - `check_supp_pointers.py`: 35 pointers, 0 failures.
 - The producer reruns with no change to any committed asset.
+
+## The abstract's compression and journal-editor's items 4, 5, 7, 8 and 9a (the director, 2026-11-09)
+
+On journal-editor's read of a97e6e10c, the director's rulings, after my measurement showed that the first ruling (the
+longest case under 1,920 characters by compressing prr and ll5d only) could not be met:
+- **Length: options (C) and (A).** The compression is committed. It is wording only, and the coverage clauses stay
+  pending Joseph (#993 item 4).
+  - check_round check 10 gates the printed abstract once it is filled: it fails above 2,000 characters until Joseph
+    sets a limit. Before the fill, it reports the range over every consistent case. Now: 10,848 cases, 1,802 to
+    2,343 characters.
+  - The 1,920 characters apply to a separate arXiv metadata abstract, written at submission (REPORT.md, "Follow-up:
+    before submission").
+  - Joseph also decides whether the abstract cuts content at the fill (the director's option B).
+- **The measurement.** `abstract_text` renders the source with `\fvgroup`/`\fvcase` resolved and `\fvval` from the
+  values. On a built long case (prr same-more, ll5d uc-ujc in both variants, offset-proceeded) it gave 2,286
+  characters against pdftotext's 2,287. The letters are identical; the difference is the space in "0.133 %".
+- **V-A1 (prr-abs):** one sentence per class, generated from one phrase table. Every class keeps:
+  - the comparator, "a binned iterative unfolding of noise-free pseudo-data at five iterations";
+  - the direction at each truth;
+  - "a threshold fixed in advance";
+  - for "undefined", "the retained fraction is undefined, and no comparison is made".
+- **V-A2 (ll5d), graded:** one sentence. It names the object ("grades the procedure's covariance at the same tunes"),
+  and keeps the scope clause (where the bias tests pass; pseudo-data that do not draw the model, response and
+  run-period terms), the primary variant, both per-variant pairs and the route clause, which is now a clause after a
+  semicolon.
+  - "under-coverage in some cells, but not jointly" -> "under-coverage in some cells only".
+  - "joint under-coverage, with no cell flagged" -> "joint under-coverage only".
+  - "under-coverage in some cells at both tunes, and jointly at one" (uc-ujc) and "joint under-coverage at both
+    tunes, and under-coverage in some cells at one" (uj-ujc) now take the general one-tune/other-tune form. They say
+    the same.
+  - My first draft dropped the verb and object ("grades the procedure's covariance"), and its short forms "in cells
+    only" and "per-cell" lost "some". I restored both before this commit.
+- **Item 4:** "On the 16 reported cells, these changes move the results by a median of 0.133%" -> "On the 16
+  reported cells, the spread under 20 such perturbations is a median of 0.133% of the cross section" (the body,
+  sec:cov5d: "over 20 rounding-level perturbations of the data, it is a median 0.133%"). This adds the numeral 20 to
+  the abstract.
+- **Item 5:** "A second five-observable test" -> "A five-observable test built the same way as the two-dimensional
+  one", in the graded case and the three stop cases. Table 1 and sections 6.2-6.3 keep first and second.
+- **Item 7:** the abstract keeps its terms, which are a LISTED_CLAIMS anchor. Section 3, after its list of truths,
+  now says "The abstract calls the GiBUU hybrid truth GiBUU-like and the $q_3$ tilt the synthetic momentum-transfer
+  tilt."
+- **Item 8:** Table 1, "Its gate compared unlike objects" -> "A preliminary check compared unlike quantities".
+- **Item 9a:** section 6.1, "Over the 153 quantities defined below" -> "Over 153 quantities (the joint cells, the
+  $(\Eavail,W)$ cells and two totals)". The B0 sentences, which repeat the definition, are protected and unchanged.
+
+Checks:
+- `make_rater_copy.sh`: PASS, 14 pages in both builds, FIGS. 1-6.
+- `check_round.py . --fill-test`: PASS. `--self-test`: PASS, with check 10's three planted cases.
+- `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- `check_restyle.py` against 0bc36ce87 fails only on `\Eavail` (item 9a) and the numeral 20 (item 4). No protected
+  span, anchor or Supplement inventory changed.

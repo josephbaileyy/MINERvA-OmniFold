@@ -31,6 +31,11 @@
      check_against(paper_body, values_tex), the figures lane's own function, checks Table 2's truth order, the
      outline threshold (trig-z) and every plotted maximum |z| against values_fived16.tex. A changed figure input
      (its sha256 pins) fails too.
+  10. ABSTRACT LENGTH (the director, 2026-11-09). Once every pending key of the abstract is filled (VERDICTS), the
+     printed abstract (abstract_text: the source with \\fvgroup/\\fvcase resolved and \\fvval from the values) must be at
+     most ABSTRACT_PDF_MAX = 2,000 characters, until Joseph sets a limit. Before then, the range over every consistent case
+     is reported, without failing. arXiv's 1,920 characters apply to a separate metadata abstract, written at
+     submission (REPORT.md, "Follow-up: before submission").
 NOTE (printed on every run; not checked here). The figures sit where the blind rater copy passes its hold-diff check
 (rater-calibration/make_rater_copy.sh). A float near section 7 split the long section 7 hold ("A citable home ...")
 across a page break, and the copy failed. Any reflow of sections 6-7 (a float moved, a caption or paragraph
@@ -236,7 +241,7 @@ def run(wt, base):
              + check_numerals(cur, old) + check_once_gone(cur)
              + check_printed_names((wt / NOTE / "values_fived16.tex").read_text())
              + check_dates({**cur, "supplemental_body.tex": supp})
-             + check_sec4_tests(wt) + check_figures(wt))
+             + check_sec4_tests(wt) + check_figures(wt) + check_abstract(wt))
     return fails
 
 
@@ -301,6 +306,84 @@ def check_figures(wt):
                                                           (wt / NOTE / "values_fived16.tex").read_text())]
     except Exception as exc:                       # a changed pinned input raises ValueError
         return [f"figures: {exc}"]
+
+
+ABSTRACT_PDF_MAX = 2000  # characters, the printed abstract after the fill, until Joseph sets a limit (the director, 2026-11-09)
+ARXIV_ABSTRACT_MAX = 1920  # arXiv's metadata field: a separate abstract written at submission (REPORT.md, before submission)
+
+
+def abstract_text(main_tex, values_tex, ver):
+    """The abstract as it prints for the classes ver: \\fvgroup and \\fvcase resolved, \\fvval from ver or values."""
+    vals = dict(re.findall(r"\\@namedef\{fv@([^}]+)\}\{(.*)\}\s*$", values_tex, re.M))
+    s = strip_comments(main_tex)
+    s = s[s.index(r"\begin{abstract}") + len(r"\begin{abstract}"):s.index(r"\end{abstract}")]
+    assert r"\fvgroupalt" not in s, "abstract_text does not resolve \\fvgroupalt"
+    pat = re.compile(r"\\(fvgroup|fvcase|fvval)(?![A-Za-z])")
+
+    def render(t):
+        out, i = [], 0
+        while True:
+            m = pat.search(t, i)
+            if not m:
+                return "".join(out + [t[i:]])
+            out.append(t[i:m.start()])
+            j, args = m.end(), []
+            for _ in range({"fvgroup": 2, "fvcase": 3, "fvval": 1}[m.group(1)]):
+                a, j = braced(t, j)
+                args.append(a)
+            if m.group(1) == "fvgroup":
+                out.append(render(args[1]))
+            elif m.group(1) == "fvcase":
+                out.append(render(args[2]) if ver[args[0]] == args[1] else "")
+            else:
+                out.append(str(ver.get(args[0], vals[args[0]])))
+            i = j
+
+    t = render(s)
+    t = re.sub(r"\\SI\{([^}]*)\}\{\\percent\}", r"\1%", t).replace(r"\%", "%").replace("~", " ")
+    t = re.sub(r"\\[A-Za-z]+\*?", "", t).replace("{", "").replace("}", "")
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def abstract_cases(mv):
+    """Every consistent filling of the abstract's pending keys: each PR-2a pair; each ll5d campaign, and on a graded
+    campaign each route and each pair of per-variant pairs (ll5d-abs-close derived as ll5d_derived derives it)."""
+    pairs = [p for p in mv.LL5D_PAIR if p != "na"]
+    ll5d = [{"ll5d-campaign": c, "ll5d-route": "na", "ll5d-abs-minus2": "na", "ll5d-abs-all": "na", "ll5d-abs-close": "na"}
+            for c in mv.LL5D_C if c != "graded"]
+    for route in (r for r in mv.LL5D_ROUTE if r != "na"):
+        for a in pairs:
+            for b in pairs:
+                ll5d.append({"ll5d-campaign": "graded", "ll5d-route": route, "ll5d-abs-minus2": a, "ll5d-abs-all": b,
+                             "ll5d-abs-close": "none" if a == b == "i-i" else "scope"})
+    return [{"prr-abs": p, **v} for p in mv.PRR_ABS for v in ll5d]
+
+
+def abstract_gate(main_tex, values_tex, cases, verdicts):
+    """(failures, report lines). Filled (every \\fvcase key of the abstract in verdicts): the printed abstract must be at
+    most ABSTRACT_PDF_MAX characters. Not yet filled: the range over the cases consistent with what is filled, reported."""
+    s = strip_comments(main_tex)
+    keys = {a[0] for _, _, a in macro_calls(s[s.index(r"\begin{abstract}"):s.index(r"\end{abstract}")], "fvcase", 3)}
+    if keys <= set(verdicts):
+        t = abstract_text(main_tex, values_tex, verdicts)
+        line = f"ABSTRACT (filled) {len(t)} characters, {len(t.split())} words (fails above {ABSTRACT_PDF_MAX})"
+        return ([f"the filled abstract is {len(t)} characters, over {ABSTRACT_PDF_MAX}"] if len(t) > ABSTRACT_PDF_MAX else []), [line]
+    live = [c for c in cases if all(verdicts.get(k, v) == v for k, v in c.items())]
+    n = sorted(((len(abstract_text(main_tex, values_tex, c)), i) for i, c in enumerate(live)))
+    (lo, _), (hi, ih) = n[0], n[-1]
+    words = len(abstract_text(main_tex, values_tex, live[ih]).split())
+    return [], [f"ABSTRACT (pending: {', '.join(sorted(keys - set(verdicts)))}) over {len(live)} consistent cases: {lo} to "
+                f"{hi} characters ({words} words at the longest, {live[ih]}); gated at {ABSTRACT_PDF_MAX} once filled. The "
+                f"arXiv metadata abstract ({ARXIV_ABSTRACT_MAX}) is written at submission."]
+
+
+def check_abstract(wt):
+    mv = load_mv(wt)
+    fails, lines = abstract_gate((wt / NOTE / "main_paper.tex").read_text(), (wt / NOTE / "values_fived16.tex").read_text(),
+                                 abstract_cases(mv), dict(mv.VERDICTS))
+    for line in lines:
+        print(line)
+    return fails
 
 
 def fill_test(wt):
@@ -394,6 +477,14 @@ def self_test():
     sr = style_report_text("The test grades bias, not coverage. It holds.")
     if sr.get("1_comma_not") != 1:
         print("self-test: the style report misses a ', not' contrast"); ok = False
+    am = r"\begin{abstract}A test. \fvgroup{g}{\fvcase{k}{a}{" + "x" * 2100 + r"}\fvcase{k}{b}{short}} \fvval{v} fits.\end{abstract}"
+    av = r"\@namedef{fv@v}{96}"
+    if not abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {"k": "a"})[0]:
+        print("self-test: NOT CAUGHT a filled abstract over the limit"); ok = False
+    if abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {"k": "b"})[0] or abstract_gate(am, av, [{"k": "a"}, {"k": "b"}], {})[0]:
+        print("self-test: the abstract gate fails a short filled case or an unfilled one"); ok = False
+    if abstract_text(am, av, {"k": "b"}) != "A test. short 96 fits.":
+        print("self-test: abstract_text misrenders:", repr(abstract_text(am, av, {"k": "b"}))); ok = False
     del EMPTY["e"]
     print("self-test:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
