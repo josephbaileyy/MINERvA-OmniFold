@@ -118,7 +118,7 @@ hold only 16-cell numbers.
   - [INF] A cell-level redo is about 1.2 + 2·(11.3-11.8) ≈ 24-25 node-h, against a reservation of 67 (5 + 62).
   - The full LL5D is about 62-63 expected under its 148 cap (`LL5D-DECLARATION.md:589-593`, with A1a). Its pilot and
     bulk have not run; they wait for the gates (`LL5D-BINDING-3.md:42-43`).
-    <!-- absence-ok: no ll5d pilot or bulk receipt exists under fd/receipts-ll5d/ at 58719d4b (only calib-1-invalid and calib-2); the binding gates them on the gate jobs -->
+    <!-- absence-ok: no ll5d pilot or bulk receipt exists under fd/receipts-ll5d/ at 58719d4b (its directories are a1a, a1a1, a1b, calib-1-invalid, calib-2 and ovl); the binding gates them on the gate jobs -->
   - The 16-cell gates 61040235 and 61040163 were RUNNING at 2026-11-09T23:34Z (`fd/receipts-prr/read/`). [INF] They
     end around 04:00Z on 2026-11-10.
 
