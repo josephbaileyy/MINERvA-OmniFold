@@ -107,7 +107,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* The IBU vs OmniFold 16-cell difference ($T = 194.4$ against calibrated bar 28.12) must enter as a stated limitation with no new covariance block. Ruled by Joseph in `DECISION-20261108` (#947).  
   *Record:* `DECISION-20261108-joseph-note-framing-and-estimator-dependence.md` item 3, `OUTCOME-20261106-ref-g1-r1-differ.md:40-41`.  
   *Target:* `docs/analysis-note/sec_fived16.tex:280-320` (`sec:fived16-ibu`), `sec_execsummary.tex`.  
-  *Status:* Already drafted at `b1da7ba8` (commit `12186634` as `sec:fived16-ibu`); Round 2 verifies implementation and cross-section alignment.
+  *Resolution:* This row authorizes no tex edit. The algorithm dependence is already a stated limitation in sec:fived16-ibu. T and the calibrated bars print through the existing macros. The paragraph says no uncertainty block is added and the reported cells and covariance are unchanged, and that a reading of differ does not show that either method is correct. The executive summary already lists the dependence. Do not type 194.4 or 28.12. Do not add a new uncertainty block. Do not add the per-cell percentages. Do not add a second sentence.
 
 * **AUD-N3 [R]** — **Response-only sensitivity.**  
   *Finding:* Response-only sensitivity ($N_3$) documented under AUD-E9.  
