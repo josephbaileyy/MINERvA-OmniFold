@@ -206,7 +206,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-3 [T]** — **Location of Tune v1 deficit in $p_T$.**  
   *Finding:* §2.5 says data/MC rises with $p_T$ (0.88 to 1.2), §6.5 says deficit is concentrated in low-$p_T$ peak, Fig. 14 says ratios below unity at lowest $p_T$.  
   *Evidence:* `docs/analysis-note/sec_experiment.tex:48`, `sec_results.tex:88`.  
-  *Resolution:* Reconcile text: data/MC deficit is concentrated at lowest $p_T$ (< 0.4 GeV/c), rising above unity at $p_T > 1.0\\text{ GeV/c}$.
+  *Resolution:* This row authorizes no tex edit. The reconstructed comparison, the 2D comparison, and the ratio-map caption already agree: the ratio is below unity at the lowest pT, the deficit is concentrated in the low-pT peak, and the ratio rises above unity at higher pT. Do not add a boundary at 0.4 GeV/c. Do not add a further sentence. Do not equate the reconstructed excess with the 2D total.
 
 * **S1-ACC-4 [T]** — **5D coverage test conflation.**  
   *Finding:* Abstract says 5D coverage test "did not run to a result", conflating the 1,200-pseudo-experiment futility test (§9.5, ran, failed) with the staged 16-cell test (§10.5, stopped at 892/900 non-positive draws).  
