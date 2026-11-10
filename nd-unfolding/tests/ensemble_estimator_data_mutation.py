@@ -17,10 +17,18 @@ from pathlib import Path
 ND = Path(__file__).resolve().parents[1]
 TEST = ND / "tests" / "test_ensemble_estimator_data.py"
 M = "ensemble_estimator_data.py"
-EXPECTED_TESTS = 20
+S = "sbatch_e96data.sh"
+EXPECTED_TESTS = 22
 
-# (label, old, new, the test that must fail)
+# (label, old, new, the test that must fail[, file]); the file is the module unless named
 MUTATIONS = [
+    # --- the job script (the test runs the copy through E96D_SBATCH)
+    ("REQ the full run without the dry DONE", '    [ -s "$OUT/log-dry/DONE" ] && [ ! -e "$OUT/log-dry/FAILED" ] ||', "    true ||",
+     "test_full_needs_the_dry_done_at_this_pin_and_dry_then_full_run", S),
+    ("the deploy pin unchecked", 'if [ "$head_sha" != "$PIN" ] || [ "$dirty" -ne 0 ]; then', "if false; then",
+     "test_it_refuses_a_deploy_off_the_pin_and_a_bad_mode", S),
+    ("an existing log resumed", '[ ! -e "$L" ] || { echo "[e96data] refusing: $L exists" >&2; exit 2; }', "true",
+     "test_full_needs_the_dry_done_at_this_pin_and_dry_then_full_run", S),
     # --- REQUIRED: the data role's own refusals and the float64 base
     ("REQ a pseudo construction admitted", '    if getattr(ns, "construction", None) != "data":',
      "    if False:", "test_a_pseudo_construction_is_refused"),
@@ -55,8 +63,10 @@ MUTATIONS = [
     ("CLI accepts an undeclared k", 'if mode == "ensemble" and (len(set(ks)) != len(ks) or',
      'if False and (len(set(ks)) != len(ks) or', "test_cli_refuses_an_undeclared_k_before_any_runner"),
     # --- the queue
-    ("queue misses the last pair", "    for i in range(0, N_ENS, CHUNK):", "    for i in range(0, N_ENS - CHUNK, CHUNK):",
+    ("queue misses the last pair", "    for i in range(0, len(ks), CHUNK):", "    for i in range(0, len(ks) - CHUNK, CHUNK):",
      "test_the_queue"),
+    ("the full run repeats the dry k", "    ks = [k for k in range(1, N_ENS + 1) if k not in DRY_KS]",
+     "    ks = list(range(1, N_ENS + 1))", "test_the_queue"),
     # --- the analysis
     ("A-D0 f unchecked", 'bool(np.allclose(f_e, f_dp, rtol=1e-12, atol=0))', "True", "test_an_f_that_is_not_es_stops"),
     ("A-D2 a missing fit accepted", "            not missing and not probs and len(codes) == 1 and len(digests) == N_ENS,",
@@ -70,10 +80,13 @@ MUTATIONS = [
 ]
 
 
-def run_suite(first: Path | None) -> tuple[int, str]:
+def run_suite(first: Path | None, script: Path | None = None) -> tuple[int, str]:
     boot = ("import sys, runpy; sys.argv = ['t']; " + (f"sys.path.insert(0, {str(first)!r}); " if first else "")
             + f"runpy.run_path({str(TEST)!r}, run_name='__main__')")
     env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
+    env.pop("E96D_SBATCH", None)
+    if script is not None:
+        env["E96D_SBATCH"] = str(script)
     p = subprocess.run([sys.executable, "-B", "-c", boot], capture_output=True, text=True, cwd=str(ND.parent), env=env)
     return p.returncode, p.stdout + p.stderr
 
@@ -92,13 +105,17 @@ def main() -> int:
     from concurrent.futures import ThreadPoolExecutor
 
     def one(m):
-        label, old, new, test = m
-        src = (ND / M).read_text()
+        label, old, new, test = m[:4]
+        fname = m[4] if len(m) > 4 else M
+        src = (ND / fname).read_text()
         if src.count(old) != 1:
             return f"MUTATION NOT APPLIED  {label}: anchor occurs {src.count(old)} times", False
         with tempfile.TemporaryDirectory() as d:
-            (Path(d) / M).write_text(src.replace(old, new))
-            rc, out = run_suite(Path(d))
+            (Path(d) / fname).write_text(src.replace(old, new))
+            if fname == S:
+                rc, out = run_suite(None, Path(d) / S)
+            else:
+                rc, out = run_suite(Path(d))
         fails = failing(out)
         killed = test in fails
         return (f"{'KILLED' if killed else 'SURVIVED':8s}  {label:46s} by {test}"

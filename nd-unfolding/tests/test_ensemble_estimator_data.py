@@ -226,21 +226,23 @@ class Declared(unittest.TestCase):
 
     def test_the_queue(self):
         a = type("A", (), {"runs": Path("/R"), "npz": Path("/n.npz"), "bkg": Path("/b.npz")})()
-        lines = eed.task_lines(a)
-        self.assertEqual(len(lines), 50)
-        self.assertEqual(sum(int(l.split("\t")[1]) for l in lines), eed.N_ENS + 2)
-        self.assertTrue(all(l.split("\t")[0].startswith(eed.FAMILY) for l in lines))
+        dry, full = eed.task_lines(a)
+        self.assertEqual((len(dry), len(full)), (2, 49))
+        n = lambda ls: sum(int(l.split("\t")[1]) for l in ls)  # noqa: E731
+        self.assertEqual((n(dry), n(full)), (2, 96))
+        self.assertTrue(all(l.split("\t")[0].startswith(eed.FAMILY) for l in dry + full))
         ks = []
-        for l in lines[2:]:
+        for l in dry + full:
             cols = l.split("\t")
-            ks += [int(v) for v in cols[cols.index("--k") + 1].split(",")]
-        self.assertEqual(ks, list(range(1, eed.N_ENS + 1)))
-        self.assertIn("--pairs=-:-", lines[0])
-        self.assertIn("--pairs=-:0", lines[1])
-        argv = lines[2].split("\t")[3:]
-        self.assertEqual(eed.expected_outputs(argv), [Path("/R/ensemble/e96data_k001_b-_j0.npz"),
-                                                      Path("/R/ensemble/e96data_k002_b-_j0.npz")])
-        self.assertEqual(eed.expected_outputs(lines[0].split("\t")[3:]), [Path("/R/control/e96data_E_b-_j-.npz")])
+            if "--k" in cols:
+                ks += [int(v) for v in cols[cols.index("--k") + 1].split(",")]
+        self.assertEqual(sorted(ks), list(range(1, eed.N_ENS + 1)))      # every k exactly once over dry and full
+        self.assertIn("--pairs=-:-", dry[0])
+        self.assertIn("--pairs=-:0", full[0])
+        argv = full[1].split("\t")[3:]
+        self.assertEqual(eed.expected_outputs(argv), [Path("/R/ensemble/e96data_k002_b-_j0.npz"),
+                                                      Path("/R/ensemble/e96data_k003_b-_j0.npz")])
+        self.assertEqual(eed.expected_outputs(dry[0].split("\t")[3:]), [Path("/R/control/e96data_E_b-_j-.npz")])
 
 
 # --------------------------------------------------------------------------------------------- the analysis
@@ -333,6 +335,77 @@ class Analysis(unittest.TestCase):
         rc, rec, _ = self.run_analysis("f")
         self.assertEqual(rc, 8)
         self.assertFalse(rec["controls"]["A-D0 U @ (e)'s xsec_flat equals the data product's f to 1e-12"]["pass"])
+
+
+# --------------------------------------------------------------------------------------------- the job script
+SBATCH = Path(__import__("os").environ.get("E96D_SBATCH") or ND / "sbatch_e96data.sh")   # the mutation check substitutes a copy
+STUB_TASK = """import json, sys
+from pathlib import Path
+argv = sys.argv[1:]
+if argv[:1] == ["expect"]:
+    print(Path(argv[argv.index("--runs") + 1]) / f"{argv[1]}.out")
+    sys.exit(0)
+out = Path(argv[argv.index("--runs") + 1]); out.mkdir(parents=True, exist_ok=True)
+(out / f"{argv[0]}.out").write_text(json.dumps(argv))
+sys.exit(0)
+"""
+
+
+class JobScript(unittest.TestCase):
+    def setUp(self):
+        import subprocess
+        self.sp = subprocess
+        self.tmp = tempfile.TemporaryDirectory()
+        r = Path(self.tmp.name)
+        self.D, self.OUT = r / "deploy", r / "out"
+        (self.D / "nd-unfolding").mkdir(parents=True)
+        (self.D / "nd-unfolding" / "ensemble_estimator_data.py").write_text(STUB_TASK)
+        stub = r / "stubmods"                 # the cluster environment's lightgbm, as a stand-in for the env check only
+        stub.mkdir()
+        (stub / "lightgbm.py").write_text("__version__ = 'stand-in'\n")
+        (self.D / "setup_salloc_env.sh").write_text(f"export PYTHONPATH={stub}\n")
+        for c in (["init", "-q"], ["add", "."], ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "x"]):
+            subprocess.run(["git", "-C", str(self.D), *c], check=True, capture_output=True)
+        self.pin = subprocess.run(["git", "-C", str(self.D), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+        self.OUT.mkdir()
+        head = "# q"
+        (self.OUT / "dry.tsv").write_text(f"{head}\ne96data_E\t1\tensemble_estimator_data.py\tcontrol\t--runs\t{self.OUT}/runs\t--\t--x\n")
+        (self.OUT / "full.tsv").write_text(f"{head}\ne96data_F64\t1\tensemble_estimator_data.py\tbase\t--runs\t{self.OUT}/runs\t--\t--x\n")
+        tb = r / "time"
+        tb.write_text('#!/bin/bash\nshift 3; exec "$@"\n')
+        tb.chmod(0o755)
+        self.env = {**__import__("os").environ, "E96D_TIME_BIN": str(tb)}
+        self.env.pop("PYTHONPATH", None)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def run_script(self, *args):
+        return self.sp.run(["bash", str(SBATCH), *args], capture_output=True, text=True, env=self.env)
+
+    def test_it_refuses_a_deploy_off_the_pin_and_a_bad_mode(self):
+        p = self.run_script("dry", str(self.D), "0" * 40, str(self.OUT))
+        self.assertEqual(p.returncode, 2, p.stderr)
+        self.assertIn("refusing: deploy HEAD", p.stderr)
+        p = self.run_script("shard", str(self.D), self.pin, str(self.OUT))
+        self.assertEqual(p.returncode, 2)
+        self.assertFalse((self.OUT / "log-dry").exists())
+
+    def test_full_needs_the_dry_done_at_this_pin_and_dry_then_full_run(self):
+        p = self.run_script("full", str(self.D), self.pin, str(self.OUT))
+        self.assertEqual(p.returncode, 2, p.stderr)
+        self.assertIn("no DONE receipt from the dry run", p.stderr)
+        self.assertFalse((self.OUT / "log-full").exists())
+        p = self.run_script("dry", str(self.D), self.pin, str(self.OUT))
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        done = json.loads((self.OUT / "log-dry" / "DONE").read_text())
+        self.assertEqual((done["mode"], done["tasks"], done["ended"], done["pin"]), ("dry", 1, 1, self.pin))
+        p = self.run_script("dry", str(self.D), self.pin, str(self.OUT))
+        self.assertEqual(p.returncode, 2)
+        self.assertIn("exists", p.stderr)
+        p = self.run_script("full", str(self.D), self.pin, str(self.OUT))
+        self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
+        self.assertTrue((self.OUT / "runs" / "base.out").exists())
 
 
 if __name__ == "__main__":

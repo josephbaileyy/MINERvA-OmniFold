@@ -196,20 +196,26 @@ def data_args(a, mode: str) -> list[str]:
             "--threads", str(DATA["threads"]), "--construction", "data", f"--pairs={PAIR_TEXT[mode]}"]
 
 
-def task_lines(a) -> list[str]:
-    """id, unfolds, script, argv: the control, the F64 base, then the 96 fits in tasks of CHUNK."""
+DRY_KS = (1,)                            # the dry run: the control and k = 1, one unfold each (E96D §Price)
+
+
+def task_lines(a) -> tuple[list[str], list[str]]:
+    """(dry, full); each line: id, unfolds, script, argv. Dry: the control and k = 1. Full: the F64 base, then k = 2..96
+    in tasks of CHUNK (the dry run's products carry in, so the full run never repeats them)."""
     common = ["--runs", str(a.runs)]
 
     def line(tid, n, argv):
         return "\t".join([tid, str(n), "ensemble_estimator_data.py", *argv])
-    lines = [line(f"{FAMILY}_E", 1, ["control", *common, "--", *data_args(a, "control")]),
-             line(f"{FAMILY}_F64", 1, ["base", *common, "--", *data_args(a, "base")])]
-    ks = list(range(1, N_ENS + 1))
-    for i in range(0, N_ENS, CHUNK):
-        grp = ks[i:i + CHUNK]
-        lines.append(line(f"{FAMILY}_k{grp[0]:03d}", len(grp), ["ensemble", "--k", ",".join(map(str, grp)), *common,
-                                                                  "--", *data_args(a, "ensemble")]))
-    return lines
+
+    def ens(grp):
+        return line(f"{FAMILY}_k{grp[0]:03d}", len(grp), ["ensemble", "--k", ",".join(map(str, grp)), *common,
+                                                          "--", *data_args(a, "ensemble")])
+    dry = [line(f"{FAMILY}_E", 1, ["control", *common, "--", *data_args(a, "control")])] + [ens([k]) for k in DRY_KS]
+    full = [line(f"{FAMILY}_F64", 1, ["base", *common, "--", *data_args(a, "base")])]
+    ks = [k for k in range(1, N_ENS + 1) if k not in DRY_KS]
+    for i in range(0, len(ks), CHUNK):
+        full.append(ens(ks[i:i + CHUNK]))
+    return dry, full
 
 
 def parse_task(argv: list[str]):
@@ -354,10 +360,13 @@ def main(argv=None) -> int:
         for opt in ("--out-dir", "--runs", "--npz", "--bkg"):
             ap.add_argument(opt, type=Path, required=True)
         a = ap.parse_args(argv[1:])
-        lines = task_lines(a)
+        dry, full = task_lines(a)
         a.out_dir.mkdir(parents=True, exist_ok=True)
-        (a.out_dir / "tasks.tsv").write_text("\n".join(["# E96-DATA; columns: id, unfolds, script, argv", *lines]) + "\n")
-        print(json.dumps({"tasks": len(lines), "unfolds": sum(int(l.split("\t")[1]) for l in lines)}))
+        head = "# E96-DATA (E96D-DECLARATION.md); columns: id, unfolds, script, argv"
+        for name, lines in (("dry.tsv", dry), ("full.tsv", full)):
+            (a.out_dir / name).write_text("\n".join([head, *lines]) + "\n")
+        n = lambda ls: sum(int(l.split("\t")[1]) for l in ls)  # noqa: E731
+        print(json.dumps({"dry_tasks": len(dry), "dry_unfolds": n(dry), "full_tasks": len(full), "full_unfolds": n(full)}))
         return 0
     if argv[:1] == ["expect"]:
         try:
