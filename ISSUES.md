@@ -446,7 +446,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-CLM-9 [T]** — **Validation language vs descriptive feature recovery.**  
   *Finding:* Closure tests describe recovery of injected features, not formal statistical validation of the estimator.  
   *Evidence:* `docs/analysis-note/sec_validation.tex:40`.  
-  *Resolution:* Replace "validation" with "feature-recovery closure tests".
+  *Resolution:* This row authorizes no tex edit. The closure sentence already says these tests recover injected features and are not a formal statistical validation of the estimator, and that no non-closure uncertainty is assigned from them. Do not replace "validation" with "feature-recovery closure tests". Do not change that sentence. Do not restore "validate the estimator".
 
 * **S1-CLM-10 [T]** — **Pion-FSI variation limits.**  
   *Finding:* Claim that pion-FSI cannot explain excess should be scoped strictly to the two dials varied.  
