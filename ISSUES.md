@@ -135,7 +135,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **AUD-N7 [T]** — **Second post hoc choice in Executive Summary.**  
   *Finding:* Background treatment choice documented under AUD-E10.  
   *Record:* `AUDIT.txt` row N7; `DECISION-20261105-joseph-765-abstract-and-2d-disclosure.md:61-63`.  
-  *Status:* Drafted as AUD-E10.
+  *Resolution:* This row authorizes no tex edit. Same disposition as AUD-E10. The executive summary already states the learner choice and the background-treatment choice beside it, and the background sentence already ends with the clause that the comparison with the publication is therefore not an independent test of the method. Do not add a second sentence. Do not add the broader claim that the background treatment was selected with the published result known. Do not copy article text into the note. Do not edit the status-table cell. Do not edit the AUD-E10 resolution.
 
 ### FLAGGED in Round 1 (No Record Contradicts; For Referee Read)
 
