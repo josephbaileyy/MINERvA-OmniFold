@@ -1,0 +1,36 @@
+***************************************************************************
+                          NOTICE TO USERS
+
+Lawrence Berkeley National Laboratory operates this computer system under 
+contract to the U.S. Department of Energy.  This computer system is the 
+property of the United States Government and is for authorized use only.
+Users (authorized or unauthorized) have no explicit or implicit 
+expectation of privacy.
+
+Any or all uses of this system and all files on this system may be
+intercepted, monitored, recorded, copied, audited, inspected, and disclosed
+to authorized site, Department of Energy, and law enforcement personnel,
+as well as authorized officials of other agencies, both domestic and foreign.
+By using this system, the user consents to such interception, monitoring,
+recording, copying, auditing, inspection, and disclosure at the discretion
+of authorized site or Department of Energy personnel.
+
+Unauthorized or improper use of this system may result in administrative
+disciplinary action and civil and criminal penalties. By continuing to use
+this system you indicate your awareness of and consent to these terms and
+conditions of use. LOG OFF IMMEDIATELY if you do not agree to the conditions
+stated in this warning.
+
+*****************************************************************************
+
+Login connection to host x3115c0s15b0n0:
+
+node login27 staged sha256 b407d055376cdf473598146c847f445e9353fda588e60c41b3613018fd666034
+fetch host=login27 utc=2026-11-10T17:26:16Z
+FILE /pscratch/sd/j/josephrb/s1-20261024/s1_assembly.npz bytes=119273 sha256=db000707780d4d6da65389be9adedfd9a3ba6552a255f6ce81ccbdd0b8eb72a4 stat_unchanged=True whole=True atime_ns=1793891896000000000
+FILE /pscratch/sd/j/josephrb/cmodel5d-20261024/out/cmodel_5d.npz bytes=5956 sha256=3008d8f6b1f295cdd648f14e1ab2c20d864ce054a19f97e90e1620d22484e882 stat_unchanged=True whole=True atime_ns=1793480514000000000
+FILE /pscratch/sd/j/josephrb/cresp-20261026/out/cresp.npz bytes=12952 sha256=4d8b579732b79cbbb8e6c9a4f6335c4bda4eae6dd4194241a0d8cd6e7ea8a20a stat_unchanged=True whole=True atime_ns=1793480457000000000
+FILE /pscratch/sd/j/josephrb/fd-f1-20261027/grade/fd_f1_experiments.npz bytes=1075668 sha256=997c7dae34ef9703291baece51eed05f3dd7d38a043630cac9667efaad2775bc stat_unchanged=True whole=True atime_ns=1793191469000000000
+FILE /pscratch/sd/j/josephrb/fd-f0b-20261026/fd_f0b_experiments.npz bytes=1068642 sha256=7384c6518aa0f59bd4964170fcc9b652f1c31958f422f1e1b597cd3e59219ad9 stat_unchanged=True whole=True atime_ns=1793239474000000000
+FETCH OK
+script rc=0

@@ -1,0 +1,14 @@
+# test_ll5d_ctl.py at PYTHONHASHSEED=0, numpy 2
+# date 2026-11-10T16:41:49Z  made at HEAD dd90a0d702e0016f9a45b523f88dd899eb3ec4ae, a clean checkout (porcelain 0)
+# python 3.13.7 numpy 2.4.4
+# a9f09557ec1b6022b1205f14e8d2241257336d9028b166061a3b33118243a936  nd-unfolding/ll5d_ctl.py
+# fb91b93edef2f37c96ab88200d6c22caa75dd05f943769424b87c55fd50a1f1d  nd-unfolding/tests/test_ll5d_ctl.py
+# aa7c3abed4f9b529e3976097531dd4ddcce524b943c4c61083241579dfec397f  nd-unfolding/tests/ll5d_a1b1_mutation.py
+# 24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb  nd-unfolding/ll5d_b.py
+# 2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14  nd-unfolding/ll5d.py
+................
+----------------------------------------------------------------------
+Ran 16 tests in 0.196s
+
+OK
+# rc=0
