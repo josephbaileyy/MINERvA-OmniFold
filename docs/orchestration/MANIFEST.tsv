@@ -7042,6 +7042,7 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-AMENDMENT-
 docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-AMENDMENT-A1A1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-AMENDMENT-A1A2.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-AMENDMENT-A1B.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
+docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-AMENDMENT-A1B1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-BINDING-1.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-BINDING-2.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
 docs/orchestration/state/measurement-paper/5d-community-20261024/LL5D-BINDING-3.md	tracked	LIVE	state-artifact	measurement-paper		open		route-only	no
@@ -9822,6 +9823,14 @@ docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b/tests-b-numpy126-seed1.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b/tests-b-numpy126-seed2.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b/tests-b-numpy2-seed0.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b1/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b1/mutation-a1b1.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b1/test_ll5d-numpy126-seed0-with-a1b1.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b1/test_ll5d_b-numpy126-seed0-with-a1b1.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b1/test_ll5d_ctl-numpy126-seed0.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b1/test_ll5d_ctl-numpy126-seed1.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b1/test_ll5d_ctl-numpy126-seed2.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
+docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/a1b1/test_ll5d_ctl-numpy2-seed0.txt	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/calib-1-invalid/README.md	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/calib-1-invalid/atime-post.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes
 docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-ll5d/calib-1-invalid/atime-pre.tsv	tracked	MACHINE	state-artifact	measurement-paper		generated		exact-path-only	yes

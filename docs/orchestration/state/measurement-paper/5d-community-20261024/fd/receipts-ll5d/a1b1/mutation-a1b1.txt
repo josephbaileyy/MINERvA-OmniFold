@@ -1,0 +1,25 @@
+# ll5d_a1b1_mutation.py at PYTHONHASHSEED=0, numpy 1.26
+# date 2026-11-10T16:41:51Z  made at HEAD dd90a0d702e0016f9a45b523f88dd899eb3ec4ae, a clean checkout (porcelain 0)
+# python 3.12.2 numpy 1.26.4
+# a9f09557ec1b6022b1205f14e8d2241257336d9028b166061a3b33118243a936  nd-unfolding/ll5d_ctl.py
+# fb91b93edef2f37c96ab88200d6c22caa75dd05f943769424b87c55fd50a1f1d  nd-unfolding/tests/test_ll5d_ctl.py
+# aa7c3abed4f9b529e3976097531dd4ddcce524b943c4c61083241579dfec397f  nd-unfolding/tests/ll5d_a1b1_mutation.py
+# 24312ca86f9e70ed86699772d634c19d9bcacb2bb87bff5aaa8c9f7c2661f3cb  nd-unfolding/ll5d_b.py
+# 2b0224c6fe52c5bb2d3fe64d461ac9edb80ebd191b0ab2f892dec605a0b56a14  nd-unfolding/ll5d.py
+ll5d_ctl.py sha256 a9f09557ec1b6022b1205f14e8d2241257336d9028b166061a3b33118243a936
+test_ll5d_ctl.py sha256 fb91b93edef2f37c96ab88200d6c22caa75dd05f943769424b87c55fd50a1f1d
+UNMUTATED PASS tests=16 expected=16 skipped=False rc=0
+MUTATION KILLED BW a tolerance in place of the bytes [Bitwise.test_one_flipped_ulp_fails] sha256=09a9ee508146a876
+MUTATION KILLED BW the dtype unchecked [Bitwise.test_a_dtype_change_fails_even_with_equal_values] sha256=d93a6c6ff655b303
+MUTATION KILLED BW the shape unchecked [Bitwise.test_a_shape_change_fails_with_the_same_bytes] sha256=b82e6ed2d5e2634d
+MUTATION KILLED BW one control enough [Bitwise.test_one_flipped_ulp_fails] sha256=529e25168a0e2257
+MUTATION KILLED BW the product compared with itself [Bitwise.test_one_flipped_ulp_fails] sha256=23160a86cdde1e19
+MUTATION KILLED RF the reference digest unchecked [Refusals.test_a_reference_digest_mismatch_is_invalid] sha256=c241fa7da6e66761
+MUTATION KILLED RF the control list unchecked [Refusals.test_the_references_must_be_exactly_the_declared_controls] sha256=33e2ea3ec4f60f73
+MUTATION KILLED RF MaRES_0 against MaRES_1 [Pins.test_the_pins_are_the_committed_files_and_s1s_sha256sums] sha256=77df470c9f74ff51
+MUTATION KILLED RF set A at replica 2 [Pins.test_the_set_a_reference_is_replica_1_at_jitter_101] sha256=7a3443ea98ea5ef0
+MUTATION KILLED EX FAIL exits 0 [ExitCodes.test_pass_fail_and_invalid_codes_and_records] sha256=d3a446cf74ebc1bb
+MUTATION KILLED EX the atime move dropped [ExitCodes.test_an_atime_move_ors_in_8] sha256=b86ff0891eb9ccc4
+MUTATION KILLED NA a plain read [NoAtime.test_every_read_goes_through_o_noatime] sha256=e9c06f2efba9cd1a
+ALL-KILLED
+# rc=0
