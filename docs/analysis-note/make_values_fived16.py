@@ -127,6 +127,8 @@ READOUTS = {
     # group C (#1027): the Kish effective sample size of configuration (e)'s final weights on the sixteen cells
     "ess": (f"{FD}/fd/receipts-ess/cluster/ess/ess.json", "d4f1268d"),
     # the two validity rules' read (valid-region lane): V-ATLAS's per-cell effective number and statistical uncertainty
+    # T1-1: RS1's R0 read, sigma_J/f on the sixteen cells over the data jitters (the paper's 0.133 % and its range)
+    "rs1r0": (f"{FD}/fd/rounding-stability-20261106/receipts/full-a1/read/rs1_r0.json", "724f0c3a"),
     "vregion": ("docs/orchestration/state/2d-closeout/valid-region-20261107/receipts/read/readout.json", "91bb604e"),
     # B1 row 1 and section 3.2: the adopted 2D covariance Q's block sizes. S5's record (statistical replicas, seeds) and
     # Q's budget (its derived counts), both RE-2 part C r2; the run-period term's record (its period unfoldings)
@@ -1535,6 +1537,7 @@ def groupb_values(d):
         v[f"prr-rms-e-{t}"], v[f"prr-rms-ibu-{t}"] = f"{e['rms_b']:.3f}", f"{i5['rms_b']:.3f}"
         v[f"prr-chi2-e-{t}"], v[f"prr-chi2-ibu-{t}"] = f"{e['grade']['chi2']:.1f}", f"{i5['grade']['chi2']:.1f}"
         assert i5["rho"] < e["rho"], "the text says IBU at five iterations retains less"
+    v.update(tier1_values(d))
     # B3a: the synthetic q3 tilt, r = 1 + a z~ (s5c_pseudo.py truth_weight "q3_given_eavail_w"); a and the clip from the
     # code, the event count, the range and in-cell spread of the weight and the two preservation checks from the truth check
     q = d["s5ntruth"]["departures"]["q3_given_eavail_w"]
@@ -1760,6 +1763,79 @@ def cov2d_block_values(d):
             "cov2d-nstat": str(nstat),
             "cov2d-nseed-word": words[dc["seed_triplets_S4B_seeds_plus_seed42"]],
             "cov2d-nperiod-word": words[len(periods)]}
+
+
+# T1-1 (the confirming round): FD-PRR's levels (FD-PRR-DECLARATION.md:165-172) in the order "reduced, B0, more"
+PRR_LEVELS = {"F1": (["K2"], ["K10", "K20", "K50"]), "F2": (["C25"], ["C400", "C1000"]),
+              "F3": (["MCq"], []), "F4": (["O4r", "O4", "O3", "O2"], [])}
+PRR_FACTOR = {"F1": "iterations", "F2": "capacity", "F3": "training statistics", "F4": "observables"}
+
+
+def tier1_values(d):
+    """T1-1's keys. (i) PR-1's classes with their direction: FD-PRR section 5.1 classes a factor "increases" when some
+    level raises rho by at least the bar and none lowers it by the bar, so the class names no direction of "more". Here
+    every "increases" is asserted to come from a reduced setting (fewer iterations, lower capacity, fewer observables or a
+    quarter of the training statistics), and every higher iteration count and capacity is asserted to lower rho, by less
+    than the bar; the summary and the largest such fall are printed. (ii) IBU at five iterations against (e): its rho is
+    asserted negative at both truths, and the root-mean-square bias and the chi2 asserted to move the same way, so one word
+    per truth says which way. (iii) RS1 R0's sixteen-cell rounding spread. (iv) ENS1's one deficit, under the amended
+    licence (DECISION-20261110-joseph-ens1-deficit-licence.md item 1): every number of its one sentence."""
+    v, r = {}, d["prr"]
+    rd = r["readings"]
+    bar = {f: rd["floor"]["bars"][f] for f in PRR_FACTOR}
+    cls = {t: rd["PR-1"][T] for t, T in PRR_TRUTHS.items()}
+    falls = []
+    for t, T in PRR_TRUTHS.items():
+        b0 = r["table"][f"B0/{T}/s991000"]["rho"]
+        for f, (reduced, more) in PRR_LEVELS.items():
+            dl = {L: r["table"][f"{L}/{T}/s991000"]["rho"] - b0 for L in reduced + more}
+            up = [L for L, x in dl.items() if x >= bar[f]]
+            down = [L for L, x in dl.items() if x <= -bar[f]]
+            assert not down, (f, T, down)
+            assert (cls[t][f] == "increases") == bool(up) and (cls[t][f] == "no effect") == (not up), (f, T, cls[t][f])
+            assert set(up) <= set(reduced), (f, T, up)
+            for L in more:
+                assert -bar[f] < dl[L] < 0, (f, T, L, dl[L])
+                falls.append(-dl[L])
+    v["prr-more-dmax"] = f"{max(falls):.3f}"
+    # the summary, grouped by class: "both truths" when the two agree
+    parts = {}
+    for c in ("increases", "no effect"):
+        items = []
+        for f in PRR_FACTOR:
+            on = (cls["gibuu"][f] == c, cls["q3"][f] == c)
+            if any(on):
+                items.append(f"{PRR_FACTOR[f]} " + {(True, True): "at both truths", (True, False): "at the GiBUU hybrid truth",
+                                                  (False, True): "at the $q_3$ tilt"}[on])
+        parts[c] = items
+    assert {c for t in cls for c in cls[t].values()} <= {"increases", "no effect"}
+    join = lambda xs: xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and " + xs[-1]
+    v["prr-pr1-increases"], v["prr-pr1-noeffect"] = join(parts["increases"]), join(parts["no effect"])
+    kinds = {"F1": "fewer iterations", "F2": "lower capacity", "F3": "a quarter of the training statistics", "F4": "fewer observables"}
+    inc = [f for f in PRR_FACTOR if "increases" in (cls["gibuu"][f], cls["q3"][f])]
+    v["prr-pr1-reduced-kinds"] = join([kinds[f] for f in inc]).replace(" and ", " or ") if len(inc) > 1 else kinds[inc[0]]
+    # (ii) IBU at five iterations against (e)
+    for t, T in PRR_TRUTHS.items():
+        e, i5 = r["table"][f"B0/{T}/s991000"], r["ibu"][f"K5/{T}/s991000"]
+        assert i5["rho"] < 0 < e["rho"], "the text says IBU's rho is negative: it moves past the truth"
+        sr, sc = i5["rms_b"] > e["rms_b"], i5["grade"]["chi2"] > e["grade"]["chi2"]
+        assert sr == sc, "the root-mean-square bias and the chi2 must move the same way for one word to say it"
+        v[f"prr-cmp-{t}"] = "larger" if sr else "smaller"
+    # (iii) RS1 R0
+    r0 = d["rs1r0"]
+    assert r0["controls"]["sigma_J_over_f_pct_reproduces"] == [0.133, 0.055, 0.252] and len(r0["sigma_J_over_f"]) == 16
+    sj = sorted(r0["sigma_J_over_f"])
+    v["rnd16-median"] = f"{100 * (sj[7] + sj[8]) / 2:.3f}"
+    v["rnd16-min"], v["rnd16-max"] = f"{100 * sj[0]:.3f}", f"{100 * sj[-1]:.3f}"
+    assert (v["rnd16-median"], v["rnd16-min"], v["rnd16-max"]) == ("0.133", "0.055", "0.252")
+    # (iv) ENS1's one deficit
+    bw = d["ens1s2"]["bias"]["stage0c_gibuu"]
+    v["ens1-g-rms"], v["ens1-g-rmsc"] = f"{bw['rms']:.6f}", f"{bw['rms_control']:.6f}"
+    v["ens1-g-drms"], v["ens1-g-floor"] = f"{bw['rms'] - bw['rms_control']:.6f}", f"{bw['delta_rms']:.6f}"
+    v["ens1-g-ratio"] = f"{(bw['rms'] - bw['rms_control']) / bw['delta_rms']:.2f}"
+    v["ens1-g-dmax"], v["ens1-g-maxfloor"] = f"{bw['max'] - bw['max_control']:.6f}", f"{bw['delta_max']:.6f}"
+    assert (v["ens1-g-drms"], v["ens1-g-ratio"], v["ens1-g-dmax"], v["ens1-g-maxfloor"]) == ("0.000512", "1.23", "0.000929", "0.001783")
+    return v
 
 
 def all_values(d=None, d_nopl=None):

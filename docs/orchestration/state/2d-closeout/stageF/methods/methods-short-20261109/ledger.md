@@ -1690,3 +1690,81 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
 - **Checks:** both rater copies PASS; 0 Overfull and 0 undefined in both; check_round with the fill test PASS;
   make_values PASS (4050); sec4 17/17; pointers 37; registry PASS. Check 12: explained 44, same 13, seed-adapted 1, no
   UNEXPLAINED.
+
+## 2026-11-10 — Tier 1 batch T1-1 (claims: ρ and PR-1's classes, instability, κ, ENS1's deficit)
+
+- **ρ and PR-1's classes** (the director's Tier 1 item 1 and the addition on PR-1's class labels).
+  - FD-PRR-DECLARATION.md §5.1 (:286-291) classes a factor "increases" when some level raises ρ by at least the bar
+    and none lowers it by the bar. The class names no direction of the setting. Both referees read the bare classes as
+    a direction.
+  - New keys (make_values tier1_values, FD-PRR readout 9238f22b at split s991000):
+    - prr-pr1-increases, prr-pr1-noeffect and prr-pr1-reduced-kinds, the classes grouped by truth;
+    - prr-more-dmax, 0.031: the largest fall of ρ at a higher iteration count (K10, K20, K50) or capacity (C400,
+      C1000), over both truths.
+  - Asserts:
+    - every "increases" comes only from reduced levels (K2; C25; O4r/O4/O3/O2; MCq);
+    - no level lowers ρ by the bar;
+    - every higher iteration count and capacity lowers ρ at both truths, by less than the bar.
+    At these truths the raising levels are K2 at the q3 tilt (+0.057), C25 at both, and O2 at both.
+  - §5.3 now opens with ρ's definition and the study design, then the classes and labels, then the results, the new
+    table and the two other findings with the figure. "Two findings" became "Two other findings".
+  - The classes paragraph says a class names no direction. The label glosses follow FD-PRR's table (:323-329): "some
+    tested iteration count reduces ρ" and "some tested capacity reduces ρ", replacing "more iterations / more capacity
+    reduce ρ", which read the classes as directions.
+  - The results open with the classes and their direction: "For …, a reduced setting (fewer iterations, lower capacity
+    or fewer observables) raises ρ by more than the threshold, so these are classed increases; … have no effect.
+    Every higher iteration count and capacity tested lowers ρ at both truths, by at most 0.031, less than the
+    threshold."
+  - The IBU, swept by claim for "IBU is better" and "retains less":
+    - PR-2a's printed branches now say "has a lower / higher retained fraction"; the declared names "IBU retains
+      less/more" appear only in quotes in S9.3.
+    - PR-2b: "its retained fraction falls".
+    - A new sentence: IBU's ρ is negative at both truths (−0.116, −0.130; −0.247 and −0.377 at 200 iterations), so it
+      moves past the truth, away from the prior. Its RMS bias and χ² are "larger" than (e)'s at the GiBUU hybrid truth
+      and "smaller" at the q3 tilt, from the keys prr-cmp-*. make_values asserts that ρ is negative at both and that
+      the RMS bias and χ² move the same way at each truth.
+    - Note: the director's "its larger RMS bias and χ²" holds at the GiBUU hybrid truth only. At the q3 tilt IBU's are
+      smaller (0.054 against 0.060; 31.6 against 54.9), so the text gives each truth and ranks nothing.
+  - The new paper table tab:prr16 holds Table S13's essentials: ρ, RMS bias and χ² for 5D and IBU-5 at both truths.
+    It points to \stab{S13}{tab:prr-rho}.
+  - Table 2's PRR row, S10 row 4 and S9.3's classification sentence say the same in short form. The unprinted
+    alternative branches of the abstract's prr-abs case are reworded the same way.
+- **The abstract** (250-word ceiling, Joseph 2026-11-09). The longest rendered case was 248 words at 4b12493ce. As first
+  drafted the additions reached 283, so the abstract carries:
+  - "on noise-free pseudo-data, binned iterative unfolding moves past the truth at both". "at five iterations" is
+    dropped: ρ is negative at 5 and at 200 iterations. The per-truth RMS/χ² comparison does not fit, and is in §5.3
+    and tab:prr16. This is flagged to the director.
+  - "…; the sixteen cells' spread is a median 0.133%". A separate clause: as a parenthetical beside 0.8/2.6 σ, the two
+    different measures read as equal.
+  - The longest case is now 248 words. The abstract's 0.8 and 2.6 are now the keys s5e-round-*.
+- **Instability** (item 2). §6.1 already gives both scales: 0.8 / 2.6 σ in its first paragraph, and 0.133 % on the
+  sixteen cells inside the protected B0 span, which stays verbatim.
+  - New keys rnd16-median/min/max come from RS1's R0 read, rs1_r0.json (724f0c3a, pin "rs1r0"): the median, minimum and
+    maximum of sigma_J_over_f, asserted equal to the record's own reproduction control [0.133, 0.055, 0.252].
+  - check_round's LITERAL_KEYS gains the three typed literals of the protected span. check_literal_keys takes its entry
+    list as a parameter, so the self-test checks the first entry alone.
+  - §3.2, where the statistical block is defined: "Each bootstrap replica of the statistical block refits the whole
+    unfolding with its own rounding-level perturbation of the inputs, so the block includes the estimator's
+    sensitivity to such perturbations (section 6.1)." There is no numeral; §6.1 keeps the 50.
+- **κ** (item 3), §4.1. "The central 90 % range of the same ratio over the paired replicas … describes its spread over
+  resampled datasets and is not a confidence interval for the ratio; it straddles a class boundary fixed in advance, so
+  the reading fixed in advance is unresolved." "so the source of the difference is unresolved" is dropped.
+  REF-C2C1-DECLARATION.md:182-190 names the reading "unresolved", and :208 licenses only reporting ρ (κ here), its
+  interval and T_δ.
+- **ENS1** (DECISION-20261110-joseph-ens1-deficit-licence.md item 3, PR #1035).
+  - §6.1 carries the licence's one sentence, in the paper's terms: "the floor fixed in advance" for "the declared
+    floor", and "the 16 cells". Its numbers are the keys ens1-g-*, from ens1_stage2.json (c2ee701d) bias.stage0c_gibuu:
+    the excess is rms − rms_control and the floor is delta_rms. All are asserted equal to the licensed figures.
+  - The referee's two sentences:
+    - §6.1: "It was evaluated only on simulated pseudo-data, so its meeting the stability requirement is a statement
+      about pseudo-data; the illustrative data output uses the reported estimator, which fails that requirement."
+      Source: ENS1-DECLARATION.md:105-107, as cited by the T2C licence note.
+    - §7.1 item 3: "…so the instability of the data result itself is not mitigated".
+  - The text reads no noise and ranks nothing.
+- **Pairs** (base 4b12493ce): t1-1-read/pairs.tsv (58 rows).
+- **Checks:**
+  - both rater copies PASS; 0 Overfull and 0 undefined in both;
+  - check_round with the fill test PASS (abstract 196–248 words over 678 cases), and its self-test PASS;
+  - make_values PASS (4066); sec4 17/17; pointers 38 (one new \stab); registry PASS; check 12 unchanged;
+  - check_restyle: the protected spans are unchanged. It reports the intended additions and Q11–Q22 as before.
+  - The new table and §5.3 were inspected on the rendered page (paper p. 10).
