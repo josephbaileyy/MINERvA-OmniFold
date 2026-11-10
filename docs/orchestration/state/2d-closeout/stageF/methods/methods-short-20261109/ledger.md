@@ -945,3 +945,29 @@ round's fill read is in the same record (`prr-fill-read/in.txt`, `out.txt`, the 
   - check_round with the fill test PASS, and the self-test PASS;
   - make_values `--check` PASS; registry, sec4 and pointers PASS;
   - check_restyle against 3290ae70e PASS.
+
+## The presentation round (Joseph, via the director, 2026-11-09): figures
+
+Joseph's five presentation points, routed to the Codex figures lane to save Claude usage: caption length, figure
+fonts, Fig. 6's legend, Fig. 5's label overlap, and the tables. I integrate and check; journal-editor reviews the
+layout.
+- **Fonts.** The baseline is my `figtext.py` (pdfminer: the characters inside each LTFigure of the built
+  main_paper.pdf, at print scale). Median printed text was 6.5, 4.8, 5.9, 5.6, 6.2 and 7.8pt for Figs 1-6, against
+  9.0pt captions.
+- **Figs 3-6 (merged as cbe533a66; its presentation/REPORT.md).** On my own measure of the built paper after the
+  merge, the medians are 8.3, 8.3, 8.3 and 8.6pt, with axis labels 9.3pt.
+  - The lane asserts the plotted numbers equal to frozen copies: Fig. 3's arrays exactly, and Figs 4-6's
+    numbers.json byte-identical. Both producers rerun here with no change to any committed asset.
+  - Fig. 3 is a new stacked-panel asset, `figures/methods_short/m3_fig2_deformation.pdf`, included at \textwidth.
+    The old `figures/paper_fig_deformation.pdf` is no longer printed by the paper and is left in place.
+  - Fig. 6's legend reads "y = x". Fig. 5's median label is clear of the line.
+  - I read the rendered pages at print size and found no overlaps. Captions are unchanged by this commit; "(a)/(b)"
+    still fits Fig. 3, and "left/right panel" Fig. 4.
+- **Figs 1-2:** held for their operands (the director). director-helper-2 has since fetched and sha-verified them;
+  Codex regenerates both in a separate commit.
+- **Checks:**
+  - the rater copy PASS (16 and 15 pages; a first attempt failed in biber's binary extraction, an environment race,
+    and the retry passed);
+  - check_round with the fill test (check 9 included) PASS, and the self-test PASS;
+  - make_values `--check` PASS; registry, sec4 and pointers PASS;
+  - check_restyle against d1d60e74f PASS; no Overfull \hbox.
