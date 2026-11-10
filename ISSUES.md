@@ -149,7 +149,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
   *Finding:* Remove causal attribution for the 2D shape tension; state that run period accounts for variance only in poorly determined modes and cause remains unknown.  
   *Record:* `OUTCOME-20261107-per-period-2d-benchmark.md:18-25`.  
   *Target:* `docs/analysis-note/app_statmethods.tex:536`, `:554`, `:559`.  
-  *Resolution:* Reconcile with per-period outcome record.
+  *Resolution:* This row authorizes no tex edit. The audit says no record contradicts the earlier exact-split statements in the tension anatomy, and those statements stay. The results section already says the source of the shape difference has not been identified and already carries the licensed run-period sentences. Do not add a second copy. Do not say which period is right or that a period caused the difference. Do not edit the conclusion paragraph.
 
 * **AUD-L3 [T]** — **5D estimator validation claim qualification.**  
   *Finding:* `sec_validation.tex:41` at base `b1da7ba8` claims "The five-dimensional estimator is validated", which conflicts with 1B STOP and unvalidated coverage.  
