@@ -1652,3 +1652,41 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
 - **Checks:** both rater copies PASS; 0 Overfull and 0 undefined in both; check_round with the fill test PASS;
   make_values PASS (4050); sec4 17/17; pointers 37; registry PASS. Tables S8 and S11 were inspected on their
   rendered pages.
+
+## 2026-11-10 — the JE batch read's two checks; Tier 1 batch T1-0 (editorial)
+
+- **JE read** (f311d805, 52 rows, 5 flagged; M004, M034, M045 and M051 accepted). The two checks:
+  - **M038.** The 42 (Eavail,W) "functionals" are the cell cross sections, so the new wording stands. Source:
+    nd-unfolding/s5n_truth_check.py:5-7 at f3ab74f78 ("every (E_avail, W) M1 functional of the analysis's own
+    projection (the s5c reported functionals' first 43 rows, cross sections through the analysis extraction)"). Its
+    :61-62 take M1 = U[:43] from s5c_coverage.reported_functionals, whose :43 projection M maps the fine grid onto the
+    (Eavail,W) cells. Row 43 is the non-physical EW_all_ones (OUTCOME-20260925-s5n-stage1-development-fail.md:44), and
+    the 42 are the cells. The outcome record's own wording is "42 physical (E_avail,W) cross-section functionals".
+  - **M049.** "(row 6)" becomes "(test 6)". The tables number tests 1, 2, 3a, 3b, 4, …, so "row" was ambiguous. The
+    test numbers are typed labels in the tables' first column, so no \label can carry them.
+- **T1-0** (the director's Tier 1 item 9; the referees' lists: Claude 2, 10, 13, 14 and GPT 13 in
+  referee-methods-confirm-20261110/):
+  - Broken references:
+    - Table S2's caption "(Sec. S5 and S5)": the two labels both name S5, so it becomes one pointer,
+      Sec. \ref{supp:cov16}. Its source comment now says "adapted 2026-11-10 (T1-0)".
+    - "App. S4" becomes "Sec. S4" (app:negweight sits inside S4).
+    - "Ref. [1], App. G (Ref. [1], Sec. G.3)" becomes "Ref. [1], Sec. G.3".
+  - S4's garbled range: "(from 3.5–4.1 % to 0.11–0.24 %, …)". Two \SIrange inside "from … to …" had printed
+    "3.5 % to 4.1 % to 0.11 % to 0.24 %".
+  - Duplicated text:
+    - S2's second beam-axis sentence (moved from r5:79) is removed. The note-copied paragraph before it, from
+      sec:eavailw-definitions, says the same thing with the tilt and residuals.
+    - S4: the purity weight's formula appeared both in "Background subtraction" and in app:negweight's paragraph 1.
+      The second now reads "the purity weight w_pur(b) defined above".
+    - S4: "The nominal settings are the scikit-learn defaults, with LightGBM matched to their capacity" repeated
+      "Hyperparameter choice" and is removed from the moved r5:95 paragraph.
+    - Each source comment is amended.
+  - Numerals at sentence start, §3.3: "…one set of truths, of which \fvval{f0b-all-truths} are graded…" and "The
+    note gives \fvval{f0b-nungraded} further truths, which are descriptive."
+  - Table 1: checked on the rendered page (paper p. 2). The columns are aligned: pT 0–0.7 and 0.7–4.5, then p∥, Eavail,
+    q3, W, purity and diag. The referee read the blind pdftotext copy, whose column order is an extraction artefact.
+    No change.
+- **Pairs** (base 10b88ad9b): t1-0-read/pairs.tsv.
+- **Checks:** both rater copies PASS; 0 Overfull and 0 undefined in both; check_round with the fill test PASS;
+  make_values PASS (4050); sec4 17/17; pointers 37; registry PASS. Check 12: explained 44, same 13, seed-adapted 1, no
+  UNEXPLAINED.
