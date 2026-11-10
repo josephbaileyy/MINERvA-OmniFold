@@ -1,0 +1,8 @@
+2026-11-10T16:29:01Z
+confirming round on #977 at 53514740938452b230debe132fe4ae6b16e4ddb0; paper.blind     9946 words, supp.blind    16704; readers gpt-6.1-sol high (codex-school) and claude opus (claude-school, blind)
+27024dccefa78e6ce853a2a434b6f5c1a1bfbdc926d334ed74369f8dcfeeff7f  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/confirm/prompt.txt
+f046a17d2fc15a87d9bede69c0b9d8e195e3ac8d2ae41643bb73a0d325d90f50  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/confirm/input.txt
+56d7c6f821a84d79cc2c70507e59f71b9120add89d5ca3efd43176c4afd7144d  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/confirm/out/paper.blind.txt
+8518812b058f5b3bbb3da37393df47f011519ceceb8b04251450a8b76c0a4947  /private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/confirm/out/supp.blind.txt
+gpt rc=0
+claude rc=0
