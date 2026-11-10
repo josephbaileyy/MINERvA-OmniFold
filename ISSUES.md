@@ -1179,3 +1179,21 @@ bytes. The corresponding standalone draft had all 161 source files byte-identica
 to those sources, passed its five builds, and matched all five canonical PDFs in
 extracted text. The standalone sync must also be committed and pushed before
 this note work is declared complete; both remote heads are recorded at delivery.
+
+### Records guard repair
+
+The draft's records-checks run 42909307047 exposed three stale preservation
+bindings from the sentence edits: the Stage-2 rank paragraph (GPT-3.21), the
+mode-decomposition caption, and the response-diagnostic citation sentence. The
+records-move ledger now pins the current caption and retained citation. R-FIX-2
+records the rank paragraph's old and current digests under the existing in-place
+correction rule, DECISION-20261027-joseph-absence-audit-items-3-4.md item 3.
+No reviewed note sentence changes in this repair.
+
+The rank paragraph was also the self-test's fixed input for pointer and word
+mutations. Temporary plant copies now restore its frozen input and remove only
+that input's live correction binding. The delivered documents are checked first
+without that restoration; the frozen inventory and production probe rules are
+unchanged. The repaired self-test passes: the delivered move is silent, all 41
+planted defects fire their required probes, all four controls stay silent, and
+the digest-message check prints two distinct full digests.
