@@ -459,8 +459,9 @@ They are not pushed further, to avoid overfitting the metric.
 
 The figures lane's branch (06ba96d12, after its repair cycle) is merged as aec48fb91. Its producer,
 `figures/methods_short/make_figures.py`, reproduces the committed PDFs byte for byte. The paper prints both
-figures with the lane's captions (`captions.tex`), changed only in "Colour" -> "Color" (US spelling, as in the
-rest of the paper). `captions.tex` itself is the lane's file and is not edited.
+figures with the lane's captions (`captions.tex`). `captions.tex` itself is the lane's file and is not edited.
+(Corrected below: the first version of this paragraph, at a97e6e10c, said the only change was "Colour" -> "Color".
+That was false.)
 
 | Item | Where | Source |
 |---|---|---|
@@ -491,3 +492,42 @@ maximum of 0.67. The captions are not restyled here.
 Fig. 3 (rounding shifts) is not in this commit. It waits on director-helper-2's extraction of r2_cache.npz, with
 provenance pinned and the reproduction of median 0.8, maximum 2.6 and argmax J145. It is then integrated in its
 own commit.
+
+### Corrections and follow-up (journal-editor's read of a97e6e10c, item 1; the director, 2026-11-09)
+
+- **My error at a97e6e10c.** The paper's prior-response caption dropped the lane's limiting clause ", not a measured
+  bias of the data result" (licensed by sec_5d.tex:204, "shifts do not measure unknown real-data bias"), and the
+  paragraph above misstated the changes. The caption is now the lane's final caption, verbatim.
+- **The lane's last commit is merged.** 532f079b0 adds the J/H2/EW counts (109/27/39, app_statmethods_nd.tex:25) to
+  the prior-response caption, so the table row above is now true. 39 is in check_round's NEW_NUMERALS with that
+  source; 109 and 27 are in the base.
+- **The bias caption's changes, all recorded.**
+  - "Colour" -> "Color".
+  - "to two decimals as in the table" -> "to two decimals; in the left panel they are those of table 2". Table 2
+    prints max |z| for all 12 truths under the reported covariance, and only there. The right panel's maxima
+    (without C_PL,5D) are figure-only: one of them is the 5.17 above.
+- **The section 7 hold item, dropped.** The item read "Fig. 3 for the reported estimator: its per-cell fake-data
+  residuals against C_total+C_resp+C_PL,5D are not yet drawn". It was added in 0de103f7d, beside the deformation
+  figure, which plotted a development variant. The director asked whether "residuals" there means fractional
+  residuals or any per-cell view.
+  - My read: "against C" is the paper's usage for grading under that covariance (section 5.2, "the estimator's bias
+    against the reported covariance"). So the item asked for the per-cell residuals graded under that covariance.
+    That is the per-cell z that Fig. bias-cells plots, at every graded truth.
+  - The item is dropped. Its "Fig. 3" also clashed with the printed numbering (the bias figure prints as FIG. 4).
+  - The long section 7 hold, "A citable home ...", is Joseph's banked item and stays.
+- **The placement note.** check_round now prints a NOTE on every run: a reflow of sections 6-7 can split the
+  section 7 hold across a page break and fail the blind rater copy; rebuild it after any such change.
+- **Semicolon chains (the director's item 3).** The one new chain against the pack's blind copy that came with the
+  figures is not prose. It is the bias figure's y-axis tick labels, which pdftotext extracts as "(Eavail ; W)" and
+  "(pT ; p∥ ; Eavail)". Nothing is split. The other new chain is section 6.1's rounding sentence (:264), which
+  predates the figures.
+
+Checks after these changes:
+- `make_rater_copy.sh`: multiset VERDICT PASS, 14 pages in both builds. The blind copy prints FIG. 4 and FIG. 5,
+  with "not a measured bias of the data result", "J, 109" and "those of table 2".
+- `check_round.py . --fill-test`: PASS. `--self-test`: PASS.
+- `check_registry.py`: PASS. `check_sec4_receipts.py`: 16/16, and its pytest: 17 passed.
+- `check_supp_pointers.py`: 35 pointers, 0 failures.
+- `check_restyle.py` against e97d2b20 fails only on the figure additions, as above, plus the numerals 27 and 39 and
+  the one `\pubhold` removed.
+

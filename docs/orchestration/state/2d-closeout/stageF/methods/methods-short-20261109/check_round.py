@@ -31,6 +31,10 @@
      check_against(paper_body, values_tex), the figures lane's own function, checks Table 2's truth order, the
      outline threshold (trig-z) and every plotted maximum |z| against values_fived16.tex. A changed figure input
      (its sha256 pins) fails too.
+NOTE (printed on every run; not checked here). The figures sit where the blind rater copy passes its hold-diff check
+(rater-calibration/make_rater_copy.sh). A float near section 7 split the long section 7 hold ("A citable home ...")
+across a page break, and the copy failed. Any reflow of sections 6-7 (a float moved, a caption or paragraph
+lengthened) can split it again: rebuild the rater copy after one (ledger.md, "Figures 1 and 2").
 usage: check_round.py <worktree> [--base SHA] [--fill-test] [--printed FILE ...]   (exit 1 on any failure)
        check_round.py <worktree> --self-test                  (each planted defect must be caught)"""
 import importlib.util
@@ -55,7 +59,8 @@ EMPTY = {**{f"prr-label-{l}-{t}": {"not"} for l in ("fir", "info", "impl", "obs"
          "ll5d-abs-minus2": {"na"}, "ll5d-abs-all": {"na"}, "ll5d-abs-close": {"scope", "na"},
          **{f"ll5d-{x}": {"none", "na"} for x in ("anypass", "cellflags", "anyweak", "anyover")}}
 # numerals the paper prints that the base does not, each with its source (ledger rows)
-NEW_NUMERALS = {"285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55, 1.391 x 205 = 285.2 (in [285.05, 285.26])",
+NEW_NUMERALS = {"39": "ledger Figures: app_statmethods_nd.tex:25, the 39 EW cells of the prior-response figure (J 109 and H2 27 are in the base)",
+                "285": "L-12b: re2 partc-r2 receipts/figs/tension_report.txt:55, 1.391 x 205 = 285.2 (in [285.05, 285.26])",
                 "136": "L-12b: the note's sec_results.tex:128 (chi2 = 136 on the 73 best-determined directions)",
                 "0.05": "L-27: FD-PRR-DECLARATION.md:281-286, the bar delta_F = max(0.05, 9.03 s_F)",
                 "9.03": "L-27: FD-PRR-DECLARATION.md:281-286 (the two-sided Student-t quantile on 4 degrees of freedom at 0.01/12)",
@@ -408,6 +413,8 @@ def main(argv):
         print(line)
     if "--fill-test" in argv:
         fails += fill_test(wt)
+    print("NOTE a reflow of sections 6-7 can split the section 7 hold across a page break and fail the blind rater"
+          " copy's hold-diff check: rebuild it (make_rater_copy.sh) after any such change")
     for f in fails:
         print("FAIL", f)
     print(f"CHECK-ROUND methods-short :: {'PASS' if not fails else 'FAIL'} ({len(fails)} failures)")
