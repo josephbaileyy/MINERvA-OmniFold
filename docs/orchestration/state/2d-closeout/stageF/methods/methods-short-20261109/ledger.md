@@ -993,3 +993,12 @@ layout.
     to journal-editor. Not accepted until they report.
 - **Tables:** held. be76b8310 meets journal-editor's five constraints, but their review found five zero-word
   defects, and the lane is making a repair pass. c8a29cdbc is only Table 1's tabcolsep overflow fix.
+- **Figs 1-2: LaTeX-only resize (the director, 2026-11-10).** The fetched operands do not reproduce the printed
+  figures (the lane's finding; REPORT.md, before submission), so the regeneration stopped and the committed PDFs
+  stay. Fig. 1 is now at \textwidth (median printed text 6.5 -> 7.6pt) and Fig. 2 at \columnwidth (4.8 -> 5.9pt). The
+  rater copy passes (15 and 15 pages); no Overfull; check_round and check_restyle pass.
+- **The caption meaning read.** The director's reader on pairs.tsv (`caption-read/out-captions.txt`; the pairs are
+  `caption-read/pairs.tsv`) agrees with journal-editor's and adds five flags (M010, M011, M018, M026, M032 and
+  M035; M021, M024 and M036 overlap the editor's). journal-editor found four clauses lost outright; my spot check
+  had missed two of them (Fig. 4's outline note and the q3 tilt's p-value flag). All of these went to the lane for a
+  caption repair commit. The captions are not accepted until the rerun read.

@@ -186,6 +186,12 @@ The director, 2026-11-09:
   per-period benchmark, the rounding studies, the 2D held-out-tune coverage test and the validity rules. These are
   banked for Joseph with W-19 and W-21: the deposit, and what the note must carry.
 - **The AGENTS.md refresh** (the stale 2D value and Q's 6.45/4.75) is on the director's follow-up list, not on #977.
+- **A typography-only redraw of Figs 1 and 2** (the director, 2026-11-10) waits on pinning their full operand chains.
+  The fetched operands (director-helper-2's verified read of the release manifest's sources) do not reproduce the
+  printed figures. Fig. 1 needs re2c_fig1.py's refined arm with E_R and Q_R, and Fig. 2's receipt pins a different
+  xsec.root. limitation-resolver notes that cov2d_Q_205.npz is one of the operands. Until then the committed PDFs
+  stay, enlarged in LaTeX only: Fig. 1 at \textwidth (was 0.86) and Fig. 2 at \columnwidth (was 0.82). Their printed
+  text is still below the caption size.
 - **The arXiv metadata abstract, at most 1,920 characters** (arXiv's abstract field; the director, 2026-11-09, on
   journal-editor's item 6). It is written at submission, separately from the PDF abstract. The PDF abstract's longest
   pending case is 2,343 characters (`check_round.py`'s ABSTRACT line). After the fill, check_round fails the printed
