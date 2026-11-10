@@ -791,7 +791,11 @@ Applied to the data, the five-observable estimator gives a cross section on the 
 \begin{figure}[tb]
 \centering
 \includegraphics[width=\textwidth]{fd_g_fig_ratio}
-\caption{Illustrative output (Sec.~\ref{supp:output}). Data over prediction, $f/g$, on the sixteen cells for the five predictions of Table~\ref{tab:gen16}, all in the analysis definitions, with NuWro and GiBUU corrected to CH. Each error bar is $(f/g)\,\sigma/f$, with $\sigma$ the square root of the diagonal of $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$, and the predictions' finite-sample uncertainties are not drawn. GiBUU (lower panel) is shown on its 8 cells with $\pPar<\fvval{h2-mid-pz}$~GeV/$c$ only. The key below the axes gives each cell's box. The $\chi^2$ of Table~\ref{tab:gen16} uses the full covariance, whose correlations the error bars do not show.}
+% Caption amended 2026-11-10 (B5; the director's approval of Codex e825c47cb): the figure's producer, nd-unfolding/fd_g_ratio_carbon.py
+% through fd_g_figures.ratio_model (fd/gencmp/carbon-figure/REPORT.md, PDF 1e6d550e), takes NuWro's and GiBUU's g from defs.json
+% generators.{nuwro,gibuu}.carbon.analysis_definitions.chi2.reported.g, with f and the error bars' sigma_total_over_f the E-A2
+% readout's; GiBUU on its 8 cells (h2_definition.json boxes). The reasons are S10's sentence, word for word (app:gendefs).
+\caption{Illustrative output (Sec.~\ref{supp:output}). Data over prediction, $f/g$, on the sixteen cells for the five predictions of Table~\ref{tab:gen16}, all in the analysis definitions. NuWro and GiBUU are on carbon only, without a correction to CH: in NuWro's free-proton sample, the events lost to generator aborts in the supplement generated at neutrino energies of 50--100~GeV were not shown to be negligible, and GiBUU's free-proton sample failed its sampling-closure check, and its deep-inelastic events, \fvval{g-gibuu-hlab-dis}\,\% of it, do not conserve energy (Sec.~\ref{app:gendefs}). Each error bar is $(f/g)\,\sigma/f$, with $\sigma$ the square root of the diagonal of $C_{\mathrm{total}}+C_{\mathrm{resp}}+C_{\mathrm{PL,5D}}$, and the predictions' finite-sample uncertainties are not drawn. GiBUU (lower panel) is shown on its 8 cells with $\pPar<\fvval{h2-mid-pz}$~GeV/$c$ only. The key below the axes gives each cell's box. The $\chi^2$ of Table~\ref{tab:gen16} uses the full covariance, whose correlations the error bars do not show.}
 \label{fig:ratio16}
 \end{figure}
 

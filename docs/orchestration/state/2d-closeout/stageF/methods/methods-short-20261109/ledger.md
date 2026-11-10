@@ -1524,3 +1524,31 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
     Its report is unchanged: 58 paragraphs, explained 43, same 14, seed-adapted 1. The intended divergence is that
     the note keeps V-PRIOR (decision item 5) while the Supplement withholds it. S4's Training details paragraph is
     "explained" (adapted 2026-11-10).
+
+## 2026-11-10 — fig:ratio16 on carbon only (B5's figure), its caption, the read pairs, the push
+
+- **Merged** e931f8ad8: Codex's e825c47cb (figures/methods-ratio-b5-20261110), approved by the director. It is a
+  --no-ff merge with no conflicts.
+  - The printed PDF is docs/analysis-note/figures/fd_g_fig_ratio.pdf, sha256 1e6d550e…. It equals
+    fd/gencmp/carbon-figure/fd_g_fig_ratio.pdf, and make_values' FIGURES pin passes.
+  - The producer is nd-unfolding/fd_g_ratio_carbon.py, through fd_g_figures.ratio_model, paint and render
+    (carbon-figure/REPORT.md). NuWro's and GiBUU's g are defs.json generators.{nuwro,gibuu}.carbon.analysis_definitions
+    .chi2.reported.g. f and the error bars' sigma_total_over_f are the E-A2 readout's.
+  - verify_hash_bindings.py has 169 → 178 bindings, with no removal (the director checked binding-delta.txt).
+  - The figure is the Supplement's only. No note .tex file includes fd_g_fig_ratio (grep at this head), so the note
+    prints no copy here. **Check 12:** the sync check pairs paragraphs, not figures. The note's lane keeps its own
+    CH-corrected comparison, which is out of B5's scope. That divergence is recorded here and in the B5 entry.
+- **The caption** (Supp fig:ratio16) drops "with NuWro and GiBUU corrected to CH". It now says they "are on carbon
+  only, without a correction to CH", with S10's reasons word for word (M108's GiBUU clause included) and a pointer to
+  app:gendefs. The GiBUU 8-cell sentence was already there. The source comment names the producer and its fields.
+  The rendered page (Supplement p. 33) was checked by eye: the legend reads "NuWro 21.09: carbon only" and "GiBUU
+  2019: carbon only; p∥ < 4.5 cells only", and the lower panel has 8 GiBUU points.
+- **Meaning-read pairs**, 5c15753dc → this head: vprior-read/pairs.tsv (sha256 644da5e8…, 17 rows: §3.2, §5.4 ×2, Table
+  S8 row 1, the caption ×2, S10, S11 ×10). The exporter is vprior-read/export.py (groupb-pairs' exporter with base
+  5c15753dc).
+- **Checks at this head:**
+  - both rater copies PASS (16 of 16 table captions); 0 Overfull and 0 undefined references in both final logs;
+  - check_round with the fill test PASS; make_values --check PASS (4050 values; 2 figures equal their sources);
+  - sec4 17/17; pointers 37; registry PASS;
+  - check_restyle against 716ce04ca fails only on the caption's key and ref, and on #981's quotes Q11–Q13 (B5) and
+    Q20–Q22 (V-PRIOR), which the decision removes; the re-pin is limitation-resolver's.
