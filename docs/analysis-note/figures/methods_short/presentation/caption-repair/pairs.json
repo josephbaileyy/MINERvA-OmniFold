@@ -1,0 +1,87 @@
+{
+  "baseline": "d53af941a",
+  "items": [
+    {
+      "item": 1,
+      "target": "fig:bias-cells",
+      "purpose": "Restore p-only q3 flag and per-cell-only outline reading.",
+      "before": "Signed per-cell residuals $z$ of the reported estimator at the truths of table~\\ref{tab:fd16}. Left: reported covariance $C_{\\mathrm{total}}+C_{\\mathrm{resp}}+C_{\\mathrm{PL,5D}}$; right: without the run-period block. Outlines: $|z|>\\fvval{trig-z}$. Numbers: row maxima to two decimals; left-panel values are those of the table. Asterisks: simulation truth. The bias is identical in both panels; only the covariance differs.",
+      "after": "Signed per-cell bias over its uncertainty, $z$ (section~\\ref{sec:fd16}), of the reported estimator at the truths of table~\\ref{tab:fd16}, in the same order. Left: reported covariance $C_{\\mathrm{total}}+C_{\\mathrm{resp}}+C_{\\mathrm{PL,5D}}$; right: without the run-period block; each omits the truth's own generator component, as in the table. Outlines mark only the per-cell criterion, $|z|>\\fvval{trig-z}$; the synthetic $q_3$ tilt is flagged by its $p$ value (table~\\ref{tab:fd16}). Numbers: row maxima to two decimals; left-panel values are those of the table. Asterisks: simulation truth. The bias is identical in both panels; only the covariance differs."
+    },
+    {
+      "item": 2,
+      "target": "fig:bias-cells",
+      "purpose": "Restore leave-own-generator-out covariance scope.",
+      "before": "Signed per-cell residuals $z$ of the reported estimator at the truths of table~\\ref{tab:fd16}. Left: reported covariance $C_{\\mathrm{total}}+C_{\\mathrm{resp}}+C_{\\mathrm{PL,5D}}$; right: without the run-period block. Outlines: $|z|>\\fvval{trig-z}$. Numbers: row maxima to two decimals; left-panel values are those of the table. Asterisks: simulation truth. The bias is identical in both panels; only the covariance differs.",
+      "after": "Signed per-cell bias over its uncertainty, $z$ (section~\\ref{sec:fd16}), of the reported estimator at the truths of table~\\ref{tab:fd16}, in the same order. Left: reported covariance $C_{\\mathrm{total}}+C_{\\mathrm{resp}}+C_{\\mathrm{PL,5D}}$; right: without the run-period block; each omits the truth's own generator component, as in the table. Outlines mark only the per-cell criterion, $|z|>\\fvval{trig-z}$; the synthetic $q_3$ tilt is flagged by its $p$ value (table~\\ref{tab:fd16}). Numbers: row maxima to two decimals; left-panel values are those of the table. Asterisks: simulation truth. The bias is identical in both panels; only the covariance differs."
+    },
+    {
+      "item": 3,
+      "target": "fig:rounding-shifts",
+      "purpose": "Restore frozen-before-test timing.",
+      "before": "Rounding-level shifts of the reported estimator: cumulative distribution of the larger absolute shift under two rounding-level data perturbations, per quantity, divided by the study's statistical standard deviation (100 refitted replicas; the reported block uses 50, section~\\ref{sec:cov5d}). Vertical lines mark the median and maximum requirements, 0.3 and 1.0 statistical standard deviations. Markers show the observed median and largest shift. Points are different quantities, not repeated experiments.",
+      "after": "Rounding-level shifts of the reported estimator: cumulative distribution of the larger absolute shift under two rounding-level data perturbations, per quantity, divided by the study's statistical standard deviation (100 refitted replicas; the reported block uses 50, section~\\ref{sec:cov5d}). Vertical lines mark the requirements fixed before the test: 0.3 (median) and 1.0 (maximum) statistical standard deviations. Markers show the observed median and largest shift. Points are different quantities, not repeated experiments."
+    },
+    {
+      "item": 4,
+      "target": "fig:prior-response",
+      "purpose": "Restore horizontal comparator truth.",
+      "before": "Prior sensitivity of the reported estimator at five iterations. Vertical: fractional data shift under the NuWro $(p_T,p_\\parallel,E_{\\mathrm{avail}})$ prior, with background refinement. Horizontal: minus the noise-free (unfolded $-$ true)/true, in signal-only simulation without refinement. Panels: joint (J, 109), coarser joint (H2, 27) and $(E_{\\mathrm{avail}},W)$ (EW, 39) cells (\\nsec{sec:gbdt-model-dependence}; \\napp{sec:gbdt-diagnostic-definitions}). No panel is the sixteen-cell result. Dotted line: $y=x$, for reference, with no fit.",
+      "after": "Prior sensitivity of the reported estimator at five iterations. Vertical: fractional data shift under the NuWro $(p_T,p_\\parallel,E_{\\mathrm{avail}})$ prior, with background refinement. Horizontal: minus the noise-free (unfolded $-$ true)/true at the NuWro-shape truth, in signal-only simulation without refinement. Panels: joint (J, 109), coarser joint (H2, 27) and $(E_{\\mathrm{avail}},W)$ (EW, 39) cells (\\nsec{sec:gbdt-model-dependence}; \\napp{sec:gbdt-diagnostic-definitions}). No panel is the sixteen-cell result. Dotted line: $y=x$, for reference, with no fit. Points are cells, not independent repeated experiments."
+    },
+    {
+      "item": 5,
+      "target": "fig:deformation",
+      "purpose": "Restore changed-truth lead, lower-capacity/not-reported distinction and named sixteen-cell comparator.",
+      "before": "Fractional residuals, (unfolded $-$ truth)/truth, per $(\\Eavail,W)$ cell with backgrounds. (a) Lower-capacity refinement (100 trees, 8 leaves), GiBUU/GENIE $\\Eavail$ shape, 60 pseudo-experiments (\\ssec{S4}{supp:estimators}); gray step: injected change. (b) Reported estimator, NuWro $\\Eavail$, GENIE + MEC $(\\Eavail,W)$ and NuWro $(\\pT,\\pPar,\\Eavail)$ shapes, 20 pseudo-experiments each (\\nsec{sec:eavailw-adopted}). Bars: standard errors of the mean; ``exp.'': pseudo-experiments. $W$ bin 6 is $W\\ge\\SI{3}{GeV}$. Sixteen-cell comparison: table~\\ref{tab:fd16}.",
+      "after": "Fractional residuals, (unfolded $-$ truth)/truth, at the changed truth per $(\\Eavail,W)$ cell with backgrounds. (a) Lower-capacity variant, not the reported estimator (refinement 100 trees, 8 leaves), GiBUU/GENIE $\\Eavail$ shape, 60 pseudo-experiments (\\ssec{S4}{supp:estimators}); gray step: injected change. (b) Reported estimator, NuWro $\\Eavail$, GENIE + MEC $(\\Eavail,W)$ and NuWro $(\\pT,\\pPar,\\Eavail)$ shapes, 20 pseudo-experiments each (\\nsec{sec:eavailw-adopted}). Bars: standard errors of the mean; ``exp.'': pseudo-experiments. $W$ bin 6 is $W\\ge\\SI{3}{GeV}$. The reported estimator at this truth: table~\\ref{tab:fd16}, GiBUU $\\Eavail$ shape."
+    },
+    {
+      "item": 6,
+      "target": "fig:bias-cells",
+      "purpose": "Define z as bias divided by uncertainty, with section pointer and table order.",
+      "before": "Signed per-cell residuals $z$ of the reported estimator at the truths of table~\\ref{tab:fd16}. Left: reported covariance $C_{\\mathrm{total}}+C_{\\mathrm{resp}}+C_{\\mathrm{PL,5D}}$; right: without the run-period block. Outlines: $|z|>\\fvval{trig-z}$. Numbers: row maxima to two decimals; left-panel values are those of the table. Asterisks: simulation truth. The bias is identical in both panels; only the covariance differs.",
+      "after": "Signed per-cell bias over its uncertainty, $z$ (section~\\ref{sec:fd16}), of the reported estimator at the truths of table~\\ref{tab:fd16}, in the same order. Left: reported covariance $C_{\\mathrm{total}}+C_{\\mathrm{resp}}+C_{\\mathrm{PL,5D}}$; right: without the run-period block; each omits the truth's own generator component, as in the table. Outlines mark only the per-cell criterion, $|z|>\\fvval{trig-z}$; the synthetic $q_3$ tilt is flagged by its $p$ value (table~\\ref{tab:fd16}). Numbers: row maxima to two decimals; left-panel values are those of the table. Asterisks: simulation truth. The bias is identical in both panels; only the covariance differs."
+    },
+    {
+      "item": 7,
+      "target": "fig:validation",
+      "purpose": "Scope four-block covariance to the unfolded band; name ratio denominator.",
+      "before": "Comparison with the published result~\\cite{MINERvA:2021owq}. Top: published and unfolded $\\pT$ and $\\pPar$ projections with total $\\pm1\\sigma$ bands, the MINERvA Tune~v1 curve, and ratios below. This analysis uses the four-block covariance of section~\\ref{sec:cov16}, without $C_{\\mathrm{model}}$. Bottom left: $(\\mathrm{OmniFold}-\\mathrm{published})/\\sigma_{\\mathrm{published}}$ on equal-size cells (gray: not reported). Bottom right: median relative uncertainties and residual summary.",
+      "after": "Comparison with the published result~\\cite{MINERvA:2021owq}. Top: published and unfolded $\\pT$ and $\\pPar$ projections with total $\\pm1\\sigma$ bands, the MINERvA Tune~v1 curve, and ratios to the published result below. The unfolded band is the four-block covariance of section~\\ref{sec:cov16}, without $C_{\\mathrm{model}}$. Bottom left: $(\\mathrm{OmniFold}-\\mathrm{published})/\\sigma_{\\mathrm{published}}$ on equal-size cells (gray: not reported). Bottom right: median relative uncertainties and residual summary."
+    },
+    {
+      "item": 8,
+      "target": "fig:tension2d",
+      "purpose": "Name two-dimensional result as the source of Delta.",
+      "before": "Per-bin contribution $\\Delta_i(\\mathbf C^+\\boldsymbol\\Delta)_i$ to the published-covariance $\\chi^2$, with $\\boldsymbol\\Delta$ the difference from the published result and $\\mathbf C$ its covariance. Reported $(\\pT,\\pPar)$ bins are numbered upward in momentum. Contributions sum to $\\chi^2$ and can be negative.",
+      "after": "Per-bin contribution $\\Delta_i(\\mathbf C^+\\boldsymbol\\Delta)_i$ to the published-covariance $\\chi^2$, with $\\boldsymbol\\Delta$ the two-dimensional result's difference from the published result and $\\mathbf C$ its covariance. Reported $(\\pT,\\pPar)$ bins are numbered upward in momentum. Contributions sum to $\\chi^2$ and can be negative."
+    },
+    {
+      "item": 9,
+      "target": "text",
+      "purpose": "Fold four exact clause blocks into their first citing paragraphs without changing their words.",
+      "before": {
+        "fig:validation": "standalone paragraph: The two bands in figure~\\ref{fig:validation} are correlated, so their overlap is not a compatibility test.",
+        "fig:deformation": "standalone paragraph: Neither panel of figure~\\ref{fig:deformation} shows the sixteen-cell result or its reported covariance. The three shape changes in panel (b) were not used while the estimator was chosen.",
+        "fig:bias-cells": "standalone paragraph: In figure~\\ref{fig:bias-cells}, $z$ is the mean fractional residual, (unfolded $-$ true)/true, divided by $\\sqrt{\\mathrm{diag}(C+N)}$, where $N$ is the noise covariance of the mean. The noise-free closure uses its single residual and $N=0$. The $C_{\\mathrm{total}}$-only reading is given in table~\\ref{tab:fd16}.",
+        "fig:rounding-shifts": "standalone paragraph: Figure~\\ref{fig:rounding-shifts} includes the 109 supported joint (J) cell integrals, all 42 $(E_{\\mathrm{avail}},W)$ cells, including the three outside the support rule used in figure~\\ref{fig:prior-response}, and two totals. The edge-safe perturbations hold values on an analysis-grid edge fixed and move other inputs by at most half a float32 unit in the last place; the reference is the unperturbed inputs in float64."
+      },
+      "after": {
+        "fig:validation": "The standardized bin differences formed with the published uncertainties have an RMS of $\\pullRMS$ (figure~\\ref{fig:validation}). The two bands in figure~\\ref{fig:validation} are correlated, so their overlap is not a compatibility test.",
+        "fig:deformation": "Figure~\\ref{fig:deformation} shows that the unfolding recovers only part of a change of the $\\Eavail$ shape as large as the difference between generators. Neither panel of figure~\\ref{fig:deformation} shows the sixteen-cell result or its reported covariance. The three shape changes in panel (b) were not used while the estimator was chosen.",
+        "fig:bias-cells": "Figure~\\ref{fig:bias-cells} shows the per-cell bias at every graded truth, with and without the run-period block. In figure~\\ref{fig:bias-cells}, $z$ is the mean fractional residual, (unfolded $-$ true)/true, divided by $\\sqrt{\\mathrm{diag}(C+N)}$, where $N$ is the noise covariance of the mean. The noise-free closure uses its single residual and $N=0$. The $C_{\\mathrm{total}}$-only reading is given in table~\\ref{tab:fd16}.",
+        "fig:rounding-shifts": "Cross-fitting also gives a larger fake-data bias than the current estimator at three of the 17 truths it was graded on. Figure~\\ref{fig:rounding-shifts} includes the 109 supported joint (J) cell integrals, all 42 $(E_{\\mathrm{avail}},W)$ cells, including the three outside the support rule used in figure~\\ref{fig:prior-response}, and two totals. The edge-safe perturbations hold values on an analysis-grid edge fixed and move other inputs by at most half a float32 unit in the last place; the reference is the unperturbed inputs in float64."
+      }
+    },
+    {
+      "item": 10,
+      "target": "fig:prior-response",
+      "purpose": "Return points/non-independent-experiments qualification to caption; retain other two qualification sentences in section7.",
+      "before": "Prior sensitivity of the reported estimator at five iterations. Vertical: fractional data shift under the NuWro $(p_T,p_\\parallel,E_{\\mathrm{avail}})$ prior, with background refinement. Horizontal: minus the noise-free (unfolded $-$ true)/true, in signal-only simulation without refinement. Panels: joint (J, 109), coarser joint (H2, 27) and $(E_{\\mathrm{avail}},W)$ (EW, 39) cells (\\nsec{sec:gbdt-model-dependence}; \\napp{sec:gbdt-diagnostic-definitions}). No panel is the sixteen-cell result. Dotted line: $y=x$, for reference, with no fit.",
+      "after": "Prior sensitivity of the reported estimator at five iterations. Vertical: fractional data shift under the NuWro $(p_T,p_\\parallel,E_{\\mathrm{avail}})$ prior, with background refinement. Horizontal: minus the noise-free (unfolded $-$ true)/true at the NuWro-shape truth, in signal-only simulation without refinement. Panels: joint (J, 109), coarser joint (H2, 27) and $(E_{\\mathrm{avail}},W)$ (EW, 39) cells (\\nsec{sec:gbdt-model-dependence}; \\napp{sec:gbdt-diagnostic-definitions}). No panel is the sixteen-cell result. Dotted line: $y=x$, for reference, with no fit. Points are cells, not independent repeated experiments.",
+      "text_removed": "The points of figure~\\ref{fig:prior-response} are cells, not independent repeated experiments. ",
+      "text_retained": "The shifts are not a measured bias of the data result. The correlation supplies no per-cell bias bound (\\nsec{sec:gbdt-model-dependence})."
+    }
+  ]
+}
