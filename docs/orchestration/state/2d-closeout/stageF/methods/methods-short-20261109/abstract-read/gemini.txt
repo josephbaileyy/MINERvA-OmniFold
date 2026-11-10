@@ -1,0 +1,78 @@
+### Evaluation of Abstract 1: LONGEST
+
+#### 1. Scope, Strength, and Body Support
+- **"the unfolding reproduces the published muon-kinematic cross-section integral within about 1%"**: Overstates scope. In the body ([Section 3.1](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L130-L148), [Section 4.1](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L173-L200)), this benchmark was evaluated using a separate *two-observable estimator*, with model and subtraction choices made knowing the published result ("not an independent test of the method"). A reader will assume the five-observable unfolding achieved this benchmark.
+- **"shift results by up to 2.6 statistical standard deviations"**: Misleadingly highlights only the single worst outlier among 153 quantities over two perturbations. [Section 6.1](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L326-L346) notes the median shift is $0.8\sigma$ (and a median of 0.133% of the cross section on reported cells).
+- **"without two detector bands"**: Claims technical details not established in the abstract. In the body ([Table 1](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L206-L238), [Section 6.3](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L380-L403)), these are the GEANT4 neutron and proton systematic bands.
+
+#### 2. Coherence and JINST Style
+- **"The same coverage test"**: Confusing antecedent. Sentence 5 discusses a 2D coverage test over 204–205 bins with full covariance rebuilding. Sentence 6 discusses a 5D coverage test on 16 cells with omitted systematic terms and different diagnostic controls. It is an adapted/analogous test, not "the same" test.
+- **Sentence 6 readability**: At 76 words, Sentence 6 is an ungrammatical run-on that duplicates text verbatim (*"finds no under-coverage at one tune and an invalid reading at the other... and no under-coverage at one tune and an invalid reading at the other"*).
+- **Undefined terms**: "primary variant", "two detector bands", and "a check fixed in advance" are introduced without context.
+
+#### 3. Missing Central Findings
+- **Run-period inconsistency**: An unexplained ~6–7% step in $p_\parallel$ is present in reconstructed data and survives unfolding ([Section 4.2](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L239-L260), [Section 7](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L405-L417)), requiring an ad-hoc covariance block.
+- **Algorithm dependence on data**: 5D OmniFold differs significantly from 5D binned iterative unfolding on data ($T = 194.4$, $p < 0.003$; [Section 5.4](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L313-L325)).
+
+---
+
+### Evaluation of Abstract 2: SHORTEST
+
+#### 1. Scope, Strength, and Body Support
+- **"the unfolding reproduces..."**: Same overstatement as LONGEST; fails to specify that the benchmark used a two-dimensional estimator.
+- **"the share of the prior retained by binned iterative unfolding is undefined"**: Strictly follows the rule in [Section 5.3](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L305-L312) ($|d_c| \ge 1\%$ in fewer than two cells), but without context, a reader could mistake "undefined" for an algorithmic crash.
+- **"shift results by up to 2.6 statistical standard deviations"**: Same omission of typical/median scale as LONGEST.
+
+#### 2. Coherence and JINST Style
+- **"The same coverage test"**: Confusing antecedent. The 2D test in Sentence 5 completed 300 pseudo-experiments; the test in Sentence 6 refers to the *first* 5D test ([Section 6.2](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L373-L379)), which stopped during pre-checks.
+- Otherwise, transitions are clear, concise, and logical.
+
+#### 3. Missing Central Findings
+- Identical to LONGEST: omits the run-period inconsistency ([Section 4.2](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L239-L260)) and algorithm dependence on data ([Section 5.4](file:///private/tmp/claude-501/-Users-josephbailey-local-research-MINERvA-OmniFold/be6e903d-7ae7-440f-b5aa-de78760f31e0/scratchpad/abs-read/empty#L313-L325)).
+
+---
+
+### Overall Verdict
+
+Both abstracts honestly state the primary diagnostic conclusions: unbinned unfolding retains part of its prior, exhibits numerical instability under rounding, and lacks validated coverage. 
+
+However, **LONGEST is unacceptable for publication** due to Sentence 6, which is an incoherent 76-word run-on riddled with accidental repetition and unexplained jargon. **SHORTEST is far more cohesive**, though both versions need minor revisions to distinguish 2D benchmark choices from 5D results, clarify the coverage test transitions, and mention data-level run-period and algorithmic discrepancies.
+
+---
+
+### Five Concrete Fixes
+
+#### Fix 1: Disambiguate the 2D benchmark estimator (Both versions, Sentence 2)
+*Current:*
+> "As a benchmark, the unfolding reproduces the published muon-kinematic cross-section integral within about 1%, but differs in shape for an unidentified reason."
+
+*Replacement:*
+> "As a benchmark, a two-observable unfolding reproduces the published muon-kinematic cross-section integral within about 1%, but differs in shape for an unidentified reason."
+
+#### Fix 2: Contextualize numerical instability (Both versions, Sentence 4)
+*Current:*
+> "The five-observable estimator is numerically unstable: rounding-level input changes shift results by up to 2.6 statistical standard deviations, beyond a requirement fixed in advance..."
+
+*Replacement:*
+> "The five-observable estimator is numerically unstable: rounding-level input changes shift results by a median of 0.8 and up to 2.6 statistical standard deviations, exceeding preset tolerance..."
+
+#### Fix 3: Clarify the coverage test transition (Both versions, Sentence 6)
+*Current:*
+> "The same coverage test..."
+
+*Replacement:*
+> "A corresponding test of the procedure's five-observable covariance..."
+
+#### Fix 4: Restructure Sentence 6 of LONGEST (LONGEST only)
+*Current:*
+> "The same coverage test, applied to the procedure's five-observable covariance at those tunes, where the fake-data bias is not flagged, without drawing the model, response and run-period terms, finds no under-coverage at one tune and an invalid reading at the other (primary variant, without two detector bands) and no under-coverage at one tune and an invalid reading at the other (with them); it continued past a check fixed in advance, by a decision taken after seeing it, and is descriptive."
+
+*Replacement:*
+> "When adapted to the five-observable covariance at these tunes (omitting model, response, and run-period variations), the test detects no under-coverage at one tune but yields an invalid control diagnostic at the other, both with and without proton and neutron detector bands. Because execution continued past a planned diagnostic stop, this five-observable coverage assessment is descriptive."
+
+#### Fix 5: Acknowledge data discrepancies (Both versions, before concluding sentence)
+*Current:*
+> *(Omitted)*
+
+*Replacement (insert before "We therefore present..."):*
+> "Results on data also reveal an unexplained ~7% run-period discrepancy and differ significantly from binned iterative unfolding."

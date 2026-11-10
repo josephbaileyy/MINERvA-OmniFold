@@ -866,3 +866,8 @@ ensemble in one clause; W-11; the coverage test per variant only; the illustrati
   pre-written.
 - The director's five abstract fixes are not in this commit. As ruled, with the run-period clause dropped first, 261
   of the 678 open cases still exceed 250 words. That went to the director for a decision.
+- **The independent abstract read (the director, 2026-11-09).** The director ran a fresh Gemini on the longest and
+  shortest cases of 74db4ea97's abstract against the full body. Its record is `abstract-read/`: `gemini.txt`, the
+  output; `prompt.txt`; `input.txt`, the prompt with the cases and the body. Verdict: the claims are honest, but the
+  longest case's coverage sentence is a 76-word run-on with duplicated text. The director's five rulings on it wait
+  on one further cut (see the prior-retention fill section above).
