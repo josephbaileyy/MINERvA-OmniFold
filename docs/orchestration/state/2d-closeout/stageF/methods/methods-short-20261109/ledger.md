@@ -871,3 +871,44 @@ ensemble in one clause; W-11; the coverage test per variant only; the illustrati
   output; `prompt.txt`; `input.txt`, the prompt with the cases and the body. Verdict: the claims are honest, but the
   longest case's coverage sentence is a 76-word run-on with duplicated text. The director's five rulings on it wait
   on one further cut (see the prior-retention fill section above).
+
+### The fill's meaning read and the abstract rulings, applied (the director, 2026-11-09)
+
+The director's fresh reader saw the fill's three pairs (`prr-fill-pairs.tsv`) against the readout summary and the
+declaration's reading and label definitions (:290-335). The rulings:
+- **§5.3's threshold of 0.05 is correct (dismissed).** The IBU's threshold is max(0.05, 9.03 s_IBU). The readout gives
+  s_IBU = 0.0011129, so 9.03 s_IBU = 0.0100 < 0.05 and the threshold is 0.05. The readout's floor.bars.IBU = 0.05 is
+  that value.
+- **§5.3, PR-3:** the declaration's text, "does not clear at these truths". It now reads "No tested level clears at
+  these truths. The IBU at five iterations does not clear at these truths." The clears case reads "Some tested levels,
+  …, clear at these truths; …".
+- **§5.3, the labels: merged per truth, wording only.**
+  - Each truth's labels print in one sentence, "At the GiBUU hybrid truth, ⟨label⟩; ⟨label⟩." Each label keeps its
+    exact pre-written words, one \fvcase per label class.
+  - The separators come from `\fvlist` and `\fvitem`, new in values_fived16.tex's generated header (make_values
+    render()). They print "; " between whichever items print, so any subset of labels reads correctly.
+- **Table 1's row:** "GiBUU hybrid, $q_3$ tilt:" now heads the result, so each value's truth is stated. On the
+  rendered page (page 5, read as an image) the test name stays in its cell. The reader's "scrambled" row was
+  pdftotext's reading order.
+- **The abstract's prr clause** names its comparator: "retains less of the prior than the five-observable estimator
+  at both". "Noise-free pseudo-data" stays (FD-PRR BINDING 1 ruling 1: route 2 runs on the same noise-free closures).
+- **The abstract, on the independent read of 74db4ea97** (`abstract-read/`):
+  - "the two-observable unfolding" in the benchmark;
+  - the stability median, "by a median of 0.8 and up to 2.6";
+  - "A corresponding five-observable test of the procedure's covariance at those tunes";
+  - the bands named once, "the detector's neutron and proton interaction bands";
+  - one clause when both variants read the same ("… in each variant, with and without …");
+  - the IBU-on-data sentence (§5.4's "differs", "depend on the unfolding algorithm");
+  - the ensemble clause and the run-period clause dropped, both in the body, as the director chose.
+  The scope clause "where the fake-data bias is not flagged" is kept. To keep any 8-word clause from repeating,
+  the coverage entries are stated once as per tune ("finds, for its two tunes, A and B …").
+- **check 10 gains the repeated-clause check.** No rendered case may repeat a run of 8 words. It is self-tested on a
+  planted repeat and a 7-word near-repeat, and it fails 74db4ea97's abstract ("at one tune and an invalid reading
+  at", 7 runs). Over the 678 open cases: 195-243 words, 1,384-1,689 characters, no repeat.
+- **Checks:**
+  - the rater copy PASS (15 and 15 pages);
+  - check_round with the fill test PASS, and the self-test PASS;
+  - the blind copy prints no class name or GONE term, and no internal term in a free-text value;
+  - make_values `--check` PASS; registry, sec4 (16/16, 17 passed) and pointers (35/0) PASS;
+  - check_restyle against a1129402e fails only on the changes above: \fvlist/\fvitem, the dropped ensemble keys
+    ens1-n and ens1-ntruths, the nested \fvcase, and 0.8.

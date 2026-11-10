@@ -8,6 +8,10 @@
 % \fvgroup{group}{text} prints text once the group's record has landed, else one [PENDING: ...]; inside it,
 % \fvcase{key}{class}{text} prints text only when key has that class (methods-short-20261109/variants.md).
 % \fvgroupalt{group}{pending text}{filled text} prints the first while the group is pending, with no marker.
+% \fvlist{...\fvitem{a}...\fvitem{b}...} prints the items that print, separated by '; ' (a list of \fvcase items).
+\newif\iffv@listfirst
+\providecommand{\fvlist}[1]{\fv@listfirsttrue#1}
+\providecommand{\fvitem}[1]{\iffv@listfirst\fv@listfirstfalse\else; \fi#1}
 \def\fv@PENDING{PENDING}
 \providecommand{\fvgroup}[2]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING\fvpending{\@nameuse{fvgd@#1}}\else#2\fi}}
 \providecommand{\fvgroupalt}[3]{\@ifundefined{fvg@#1}{\errmessage{values_fived16: no group '#1'}}{\expandafter\ifx\csname fvg@#1\endcsname\fv@PENDING#2\else#3\fi}}

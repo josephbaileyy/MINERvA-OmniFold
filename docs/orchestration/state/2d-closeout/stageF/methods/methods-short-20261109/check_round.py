@@ -34,7 +34,8 @@
   10. ABSTRACT LENGTH (Joseph, 2026-11-09, via the director: the typical length, 200-250 words). Every rendered case of
      the abstract (abstract_text: the source with \\fvgroup/\\fvcase resolved and \\fvval from the values), all of them
      before the fill and the built one after it, must print at most ABSTRACT_MAX_WORDS = 250 words. The range in words
-     and characters is reported. arXiv's 1,920 characters apply to a separate metadata abstract, written at
+     and characters is reported, and no case may repeat a run of ABSTRACT_REPEAT = 8 words (the director, on the
+     independent read of 74db4ea97). arXiv's 1,920 characters apply to a separate metadata abstract, written at
      submission (REPORT.md, "Follow-up: before submission"). No rendered case may print a phrase of ABSTRACT_BANNED
      (" only at ", which attaches a restriction to the tunes rather than to the noun).
   11. FREE TEXT (journal-editor, 2026-11-09). A filled free-text value (a PENDING key with no class set, such as
@@ -333,6 +334,20 @@ def check_figures(wt):
 
 ABSTRACT_MAX_WORDS = 250  # words, on every rendered case (Joseph, 2026-11-09, via the director: the typical length, 200-250 words)
 ARXIV_ABSTRACT_MAX = 1920  # arXiv's metadata field: a separate abstract written at submission (REPORT.md, before submission)
+ABSTRACT_REPEAT = 8   # no rendered case may repeat a run of this many words (the director, 2026-11-09, on the 74db4ea97 read)
+
+
+def repeated_clauses(text, n=None):
+    """Every run of n (ABSTRACT_REPEAT) words, case and punctuation ignored, that occurs twice or more in text."""
+    n = n or ABSTRACT_REPEAT
+    w = re.findall(r"[a-z0-9%.]+(?:[-'’][a-z0-9]+)*", text.lower())
+    seen, out = set(), set()
+    for i in range(len(w) - n + 1):
+        g = " ".join(w[i:i + n])
+        (out if g in seen else seen).add(g)
+    return out
+
+
 # phrases no rendered case may print: "only at" attaches the restriction to the tunes, not the noun (journal-editor, 2026-11-09)
 ABSTRACT_BANNED = (" only at ",)
 
@@ -393,6 +408,10 @@ def abstract_gate(main_tex, values_tex, cases, verdicts):
     live = [verdicts] if keys <= set(verdicts) else [c for c in cases if all(verdicts.get(k, v) == v for k, v in c.items())]
     texts = [abstract_text(main_tex, values_tex, c) for c in live]
     fails = sorted({f"a rendered abstract case contains {p!r}" for x in texts for p in ABSTRACT_BANNED if p in x})
+    rep = sorted({g for x in texts for g in repeated_clauses(x)})
+    if rep:
+        fails.append(f"a rendered abstract case repeats a clause of {ABSTRACT_REPEAT} or more words: {rep[0]!r}"
+                     + (f" (and {len(rep) - 1} more)" if len(rep) > 1 else ""))
     w = [len(x.split()) for x in texts]
     ch = [len(x) for x in texts]
     over = [i for i, n in enumerate(w) if n > ABSTRACT_MAX_WORDS]
@@ -522,6 +541,11 @@ def self_test():
         print("self-test: NOT CAUGHT an unfilled case over the word limit"); ok = False
     if not abstract_gate(am.replace("{short}", "{cells only at one tune}"), av, [{"k": "a"}, {"k": "b"}], {})[0]:
         print("self-test: NOT CAUGHT an 'only at' in a rendered case"); ok = False
+    rp = r"\begin{abstract}It finds no under-coverage at one tune and an invalid reading here and no under-coverage at one tune and an invalid reading there.\end{abstract}"
+    if not abstract_gate(rp, av, [{}], {})[0]:
+        print("self-test: NOT CAUGHT a repeated 8-word clause"); ok = False
+    if repeated_clauses("one two three four five six seven, then one two three four five six eight"):
+        print("self-test: the repeated-clause check flags a 7-word repeat"); ok = False
     if abstract_text(am, av, {"k": "b"}) != "A test. short 96 fits.":
         print("self-test: abstract_text misrenders:", repr(abstract_text(am, av, {"k": "b"}))); ok = False
     ms = subprocess.run([sys.executable, "-I", str(HERE.parent / "rater-calibration/tools/multiset_check.py"), "--self-test"],
