@@ -129,3 +129,21 @@ completeness or flux is responsible.
 the three tool digests as above), with python 3.11.15, numpy 1.26.4 and lightgbm 4.6.0. It ran a synthetic PASS, a
 one-ulp STOP (rc 8), a wrong pin (rc 9), the read guard, and --fixture refused in Slurm. The result was ALL PASS,
 test rc 0.
+
+## OI-136 classification (added after the run, on the director's ruling)
+
+The record-checks of #1027 failed on `nd-unfolding/tests/test_oi136_rooted_insert_ratchet.py`. Its rooted-insert
+scanner reported `nd-unfolding/ess_e/ess_capture.py` and this receipt's byte-identical copy,
+`cluster/tool/ess_capture.py`. The scanner is a scope-blind, name-based dataflow:
+- the canonical literal at `:48` is a data path in `SHARED`, read only through O_NOATIME;
+- it roots `cfg` (`:456`) and `run()`'s local `argv` (`:280`);
+- `main()`'s unrelated parameter `argv` (`:455`) then roots `a`, `deploy` (`:232`) and `p` (`:242`), so the insert at
+  `:243` is reached.
+
+The insert's actual target is the required `--deploy` clone, checked before the insert (`:236-241`) and after the run
+(`:293-298`). On the director's ruling, `ess_capture.py` is unchanged: its bytes are the approved, run record. Both
+paths are classified in the ratchet's named set under the new class `ess_record` ("FALSE POSITIVE BY SCOPE: …"),
+named set 21 → 23 (the docstring's 10 is its 2026-09-03 figure; the live count is the dict). That test file is the
+only guard edited. The scope-blindness is recorded as an OI-136 follow-up in `docs/OPEN_ITEMS.md`, not fixed here.
+`test_oi136_failopen_inventory_ratchet.py` passes unchanged (7 of 7).
+
