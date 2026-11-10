@@ -1376,7 +1376,8 @@ def values(d, arm="with"):
     sig = f1[A["f1sig"]]["C_total"]          # the per-cell relative sigma of the reported matrix
     zmax, bsig, mo = [], [], []
     for tune in ("g18", "ar23"):
-        v[f"f1-tune-{tune}"] = d[f"f1meta-{tune}"]["generator"].removeprefix("genie_v3_").replace("_", r"\_")
+        # in \mbox, so that a tune name never breaks at a hyphenation point (journal-editor, 2026-11-10)
+        v[f"f1-tune-{tune}"] = r"\mbox{" + d[f"f1meta-{tune}"]["generator"].removeprefix("genie_v3_").replace("_", r"\_") + "}"
         for rec, k in ((f"F1_genie_v3_{tune}", f"f1-{tune}"), (f"F1_closure_genie_v3_{tune}", f"f1-closure-{tune}")):
             t = held.pop(rec)
             assert t["graded"] and t["own_vertex"] is None and t["grade_matrix"] == A["rep"]
@@ -1628,7 +1629,7 @@ def groupb_values(d):
     v["s5e-nom-tmax"], v["s5e-nom-ewmax"] = f"{pts['nominal']['max_abs_t']:.1f}", f"{pts['nominal']['ew_max_abs_pct']:.2f}"
     sh = [pts[w]["ew_max_abs_pct"] for w in ("W1", "W2", "W3")]
     v["s5e-shapes-ewmax-lo"], v["s5e-shapes-ewmax-hi"] = f"{min(sh):.0f}", f"{max(sh):.0f}"
-    v["s5e-q3-ewmax"] = f"{pts['q3']['ew_max_abs_pct']:.1f}"
+    v["s5e-q3-ewmax"] = f"{pts['q3']['ew_max_abs_pct']:.0f}"     # whole percent, as the other residuals of Table S10's row 2 (journal-editor, 2026-11-10)
     # REF-G1's thresholds (bars.json: the parametric bootstrap's 0.95 and 0.997 quantiles) and replicas
     b = d["refg1bars"]
     assert b["schema"] == "ref-g1-bars/1" and b["quantile_levels"] == [0.95, 0.997] and b["norm_fraction"] == 0.014

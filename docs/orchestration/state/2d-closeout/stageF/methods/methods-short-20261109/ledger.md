@@ -1596,3 +1596,59 @@ was the mislabel. The director accepted bd08582ee, the hand re-cites of ALIASES 
   - check_round with the fill test PASS; make_values PASS (4050); sec4 17/17; pointers 37; registry PASS;
   - check 12 reports 58 paragraphs, explained 43, same 14, seed-adapted 1. The two sec:method-config paragraphs are
     "adapted 2026-11-10", so they are explained.
+
+## 2026-11-10 — batch 3's read fixes, journal-editor's review of 535147409, the withholding sentence moved to S11
+
+- **Batch 3 read** (the director: moved-verbatim 28/28 identical, 27 rows read, 5 flagged):
+  - M006/M016/M017: the history table's caption is now "The four configurations that give none of this paper's
+    reported results". (a)'s row says it "gave the companion note's five-observable central value … and its five-axis
+    covariance", and the lead-in says "The other four give none of this paper's reported results".
+  - M015: (e)'s three uses from the dropped row (the generator tests, the generator shapes held out of development,
+    the precision study) are all in (e)'s item, verbatim. Confirmed by grep; nothing added.
+  - The prior-retention subsection is accepted as a sixth label.
+- **journal-editor's review** (no blockers, 12 items). The director's rulings: items 1 and 4–12 approved as a
+  presentation batch; item 2 in the director's form; item 3 by Joseph (DECISION-20261110-joseph-confirm-round-scope.md,
+  PR #1030).
+  - 1: Table S11 row 8 now uses the paper's wording, "no pseudo-experiment of 300 lies in the joint region at either
+    tune".
+  - 2: Fig. S2's caption now reads "because their free-proton samples have unresolved validation problems (Sec.
+    S10.1); their ratios therefore contain a target difference (Sec. S10.1)". The reason is given in the V-PRIOR
+    sentence's terms, and S10.1 already states the target difference (GENIE 8.3 % for W < 1.1 GeV). The caption also
+    adds "on its own vertical scale", which is visible in the rendered panel. S10.1 changes "supplement" to
+    "supplementary sample".
+  - 3: the withholding sentence moves from paper §5.4 to S11, in JE's wording: "… because it uses NuWro and GiBUU
+    predictions corrected from carbon to CH with free-proton samples whose validation problems are unresolved (Sec.
+    S10.1)". §5.4 now gives only the rules with results: "One per-cell validity rule … A second rule asks …", and
+    "Both rules …; neither …" in place of "All three rules …; none …".
+  - 4: S11's heading is "The first two per-cell validity rules". Its opener: "Two of the three per-cell validity rules
+    are defined here; the third, the bias-half rule, is graded in the paper's section on per-cell validity and in
+    Table S11 (row 6)." "labelled separately" and "measured since" are deleted.
+  - 5:
+    - (a) "natures" in Table S9 rows 8 and 10 becomes "pseudo-experiments drawn from the full simulation's universes".
+    - (b) The Estimator column is widened from 0.11 to 0.13 and Truth(s) narrowed from 0.19 to 0.17; 0.16 overfilled
+      by 4 pt with the \mbox tune names. "2D" and "IBU-n" are defined in S9's lead-in and used in rows 1, 5 and 8.
+    - (c) \addlinespace between rows in the four B1 tables. (d) 4 pt under each B1 caption.
+    - (e) Row 9's "were declared" becomes "specified in advance". JE's "none ran" is not used: the staged redesign's
+      first stage did run, and its record was not reopened here to say what it ran.
+  - 6: Table S10.
+    - Row 1: "ratio of integrated cross sections, 2D to published".
+    - Row 3b: each χ² names its tune, "for 16 degrees of freedom".
+    - Row 4: each result is labelled with its truth.
+    - Row 5: "95th and 99.7th percentiles" (the paper's form).
+    - Row 2, a **precision change for the director's read**: s5e-q3-ewmax prints 37 (was 36.8), whole percent like
+      the row's 16, 31 and 74. It prints only in this row (grep: no other use).
+  - 7: row 6 adds "\fvval{vhalf-n-notassessed} not assessed", as §5.4 prints.
+  - 8: the ESS paragraph adds "with n the number of those events".
+  - 9: Table S13 uses x̂ → x̂ + Σ_b s_bΔ_b(T)/2. The lead-in gains "with a_u an event's weight in universe u".
+    \addlinespace between its rows.
+  - 10: "only the range's end points were retained"; "the reading specified in advance"; "a stress amplitude chosen
+    in advance"; "the cross sections of the 42 (Eavail,W) cells" (the record's 42 functionals are those cells);
+    "the joint (J) grid". Table S7's "declared statistic" becomes "the statistic specified in advance".
+  - 11: the key f1-tune-* is now \mbox{…} in make_values, so every use in the paper and the Supplement is
+    unbreakable. 0 Overfull in either build.
+  - 12: Table S7's caption adds "with f the five-observable result in the cell".
+- **Pairs** (base cbb997d60): je-read/pairs.tsv, 52 rows. Many rows are table rows whose only change is the
+  \addlinespace line ending.
+- **Checks:** both rater copies PASS; 0 Overfull and 0 undefined in both; check_round with the fill test PASS;
+  make_values PASS (4050); sec4 17/17; pointers 37; registry PASS. Tables S8 and S11 were inspected on their
+  rendered pages.
