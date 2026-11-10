@@ -211,7 +211,7 @@ Base commit: `b1da7ba8372348d9600d043eb381f676db25e1df`
 * **S1-ACC-4 [T]** — **5D coverage test conflation.**  
   *Finding:* Abstract says 5D coverage test "did not run to a result", conflating the 1,200-pseudo-experiment futility test (§9.5, ran, failed) with the staged 16-cell test (§10.5, stopped at 892/900 non-positive draws).  
   *Evidence:* `docs/analysis-note/main_note.tex:73`, `sec_5d.tex:216`, `sec_fived16.tex:253`.  
-  *Resolution:* Disentangle the two tests explicitly in the abstract, §9.5, and §10.5.
+  *Resolution:* This row authorizes no tex edit. The abstract, the five-dimensional section, and the sixteen-cell section already name the two tests separately. The 1,200-pseudo-experiment test failed its futility criterion. The declared sixteen-cell coverage test did not run to a result. Do not merge them. Do not edit the abstract. Do not type 892. Do not add a further sentence.
 
 * **S1-ACC-5 [T]** — **"Fresh" versus reused pseudo-experiments.**  
   *Finding:* §9.3 and App. C.8 say "40 fresh pseudo-experiments", while §9.4 states they "were used during development".  
