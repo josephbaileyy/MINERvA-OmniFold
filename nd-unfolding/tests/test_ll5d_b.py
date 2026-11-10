@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import builtins
+import contextlib
 import functools
 import hashlib
 import io
@@ -616,6 +617,41 @@ class ExitCodes(unittest.TestCase):
         self.assertEqual(rec["verdict"], "INVALID")
         self.assertIn("seed check", rec["why"])
         self.assertFalse((d / "null.json").exists())
+
+
+import test_ll5d as tl  # noqa: E402  (by module, so RealChain's own tests are not collected here a second time)
+
+
+class RealUnfold(tl.RealChain):
+    """Amendment A1a.1, A1b's entry point: ll5d_b.run_unfold over A1a's real-file world for every role, with nothing in
+    the fd_1b_mc / s5n_pseudo / s5c_pseudo chain mocked except the estimator (``unfold_fn``: OmniFold is not run here;
+    the pilot's walls and procedure controls meet it first). The clipmean reads the real gate's sealed clip-prep file
+    by its recorded sha256. run_unfold installs the candidate itself, from a fresh process's state."""
+    test_truths_r_runs_the_real_truth_weight_after_the_install = None
+    test_calib_main_runs_the_real_chain = None
+    test_gate_main_runs_the_real_chain = None
+
+    def test_run_unfold_runs_every_role_over_the_real_chain(self):
+        g = self.gate()
+        cp = self.gate_out.parent / g["clip_prep"]["path"]
+        out = self.tmp / "unf"
+        s0 = ll5d.TOY_SEEDS["g18"][0]
+        jobs = (("g18", "central", "T"), ("g18", "seed", "T"), ("g18", "block", "MaRES_0,Flux_3,GEANT_Pion_1"),
+                ("g18", "stat", "1"), ("g18", "toy", f"minus2_{s0},all_{s0}"), ("g18", "clipmean", "minus2,all"),
+                ("data", "control", "MaRES_0,GEANT_Pion_0,setA_b1"))
+        for truth, role, its in jobs:
+            a = self.args(truth=truth, role=role, items=its, out=out, threads=1, clip_prep=cp,
+                          expect_clip_prep_sha256=g["clip_prep"]["sha256"])
+            with tl.pristine_s5n(), contextlib.redirect_stdout(io.StringIO()):   # its own install; its product
+                self.assertEqual(b.run_unfold(a, unfold_fn=fake_unfold), 0, (truth, role))   # names stay out of logs
+        made = sorted(p.name for p in out.glob(f"{b.TAG}_*.npz"))
+        self.assertEqual(len(made), 13, made)
+        z = np.load(out / b.product_name("g18", "toy", f"minus2_{s0}"), allow_pickle=False)
+        m = json.loads(str(z["meta"]))
+        self.assertFalse([t for t in m["universes"] if t.rpartition("_")[0] in ll5d.REMOVED])
+        self.assertTrue(np.all(np.isfinite(z["xtrue_flat"])))
+        self.assertEqual(json.loads(str(np.load(out / b.product_name("g18", "clipmean", "all"))["meta"]))["clip_prep_sha256"],
+                         g["clip_prep"]["sha256"])
 
 
 class Module(unittest.TestCase):

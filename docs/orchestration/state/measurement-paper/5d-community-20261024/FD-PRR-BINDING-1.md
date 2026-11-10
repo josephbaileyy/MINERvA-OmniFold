@@ -115,3 +115,147 @@ other ruling are unchanged. No job ran under the wrong limits: prr_dry (61022062
 **For the connects:** prr_cap, prr_misc and prr_ibu pin this file's sha256 as it is on main after this erratum merges.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A2: the readout emits d (director, 2026-11-09)
+
+**Binds** [`FD-PRR-ADDENDUM-A2.md`](FD-PRR-ADDENDUM-A2.md) and its code, as merged in PR #980 at
+**M_A2 = `cf76aec7cdff4e86f375ffe945f4d22f4799c4e0`**. The audited head is `ded09733`. The branch's later commit
+`227b982d` merged main and changed only the index files; the addendum and every file under
+`nd-unfolding/prior_retention/` are identical at `ded09733` and M_A2.
+
+| file | sha256 (prefix) |
+|---|---|
+| `FD-PRR-ADDENDUM-A2.md` | `41e53237ceacb99e` |
+| `nd-unfolding/prior_retention/prr_read.py` | `d7c7c2c0d6cbe4a1` |
+| `nd-unfolding/prior_retention/test_prr.py` | `59e6fcf8d6a56c05` |
+| `nd-unfolding/prior_retention/prr_mutation.py` | `a6f673cdc4ab8bcb` |
+
+`prr_probe.py` (`f87ee90c58d2b890`), `prr_ibu.py` (`17acad82bad7c43f`) and `sbatch_prr.sh` (`10290087cdd57d97`) are
+M_A1's bytes. No job script changes, so every FD-PRR job still runs from M_A1 (addendum A1, ruling 1) until addendum
+A3 is bound.
+
+**What led to it.** V-HALF (`DECISION-20261109-joseph-bias-half-rule.md`) needs each graded truth's departure from the
+prior, d = (X − P)/P, on R00–R15. The director ruled option B for V-HALF's input: the bias from F0b's committed readout,
+and d from FD-PRR's own computation, which the readout computed inside `rho()` but did not emit.
+
+**What the director checked:**
+- coverage-5b-audit's GO at `ded09733`, with no lows
+  (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/980#issuecomment-6744156227):
+  - the diff is the d line, its key, the REQUIRED test and its mutant, with EXPECTED_TESTS 105;
+  - d is (X − P)/P with P the prior at the entry's own split, and the denominator-swap mutant is killed by the named
+    test;
+  - the fixture comparison reproduces in the auditor's own clean worktrees at M_A1 and at the head: readout.txt is
+    identical, and readout.json less its 181 d keys is byte-identical;
+  - the leak guard refuses d emitted as x − p, p or x, and the readout stays a set of ratios;
+  - 105 tests pass and 64 of 64 mutants are killed at the head.
+- The director ran `test_prr.py` from a `git archive` of M_A2 (one thread, `PYTHONHASHSEED=0`, own TMPDIR): 105 passed.
+
+**Rulings:**
+1. **The PRR read runs from M_A2's `prr_read.py`.** Binding 1's rulings 1–8 and addendum A1's rulings stand otherwise.
+   No reading, class, control, label or licence reads d.
+2. **d is an input to V-HALF only,** declared and licensed separately under its own declaration and binding. Its
+   CITABLE FOR here is the emitted value with FD-PRR §4.1's definition.
+3. **Addendum A3 (#989)** merges main by union, and the union head is what is audited and bound. The PRR read then runs
+   from the later of the two merge commits.
+
+Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A3: the job script reads every TimeLimit form Slurm prints (director, 2026-11-09)
+
+**Binds** [`FD-PRR-ADDENDUM-A3.md`](FD-PRR-ADDENDUM-A3.md) and its code, as merged in PR #989 at
+**M_A3 = `06657cff7a6ed6c9832fe27957899125e6cac4ad`**. The audited head is `a09437c3`, the union of A3 with A2 (merge
+commit `08848a76`); the addendum and every file under `nd-unfolding/prior_retention/` are identical at `a09437c3` and
+M_A3. This **supersedes M_A1** for every FD-PRR job from here on, and M_A2 for the PRR read.
+
+| file | sha256 (prefix) |
+|---|---|
+| `FD-PRR-ADDENDUM-A3.md` | `48641cf9ba6a6e30` |
+| `nd-unfolding/prior_retention/sbatch_prr.sh` | `4493aad5dff0a8a0` |
+| `nd-unfolding/prior_retention/test_prr.py` | `c600e4b1c291eabb` |
+| `nd-unfolding/prior_retention/prr_mutation.py` | `dfa994667f4afe81` |
+| `nd-unfolding/prior_retention/prr_read.py` (A2's) | `d7c7c2c0d6cbe4a1` |
+| `nd-unfolding/prior_retention/prr_probe.py` (M's) | `f87ee90c58d2b890` |
+| `nd-unfolding/prior_retention/prr_ibu.py` (M's) | `17acad82bad7c43f` |
+
+**What led to it.** prr_ibu attempt 1 (job 61035510, FAILED after 41 s, 0.0114 node-h; receipt #986) refused at its
+own TimeLimit check. squeue's `%l` prints a limit under one hour as M:SS ("30:00"), while `sec()` (`sbatch_prr.sh:48-50`
+at M_A1) read only H:M:S, and the parse error was reported as "exceeds". No test used the M:SS form. dry, iter, cap and
+misc (limits ≥ 1 h) were unaffected.
+
+**What the director checked:**
+- coverage-5b-audit's GO at `a09437c3`, with no blockers
+  (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/989#issuecomment-6747168382):
+  - the union is exactly A2 plus A3, with EXPECTED_TESTS at 110 the only difference;
+  - 110 tests pass; the control against M_A1's `sbatch_prr.sh` fails exactly A3's five tests;
+  - 71 of 71 mutants are killed, among them "TimeLimit unchecked", both A3 REQUIRED mutants and A2's REQUIRED mutant;
+  - in a static check over about 30 forms, every unreadable input (UNLIMITED, INVALID, NOT_SET, empty, padded, four
+    fields) exits 3, and every other rc reaches the catch-all refusal;
+  - the six digests match the addendum's §6.
+- The director ran `test_prr.py` from a `git archive` of M_A3 (one thread, `PYTHONHASHSEED=0`, own TMPDIR): 110 passed.
+
+**Rulings:**
+1. **Every FD-PRR job from here on runs from M_A3,** prr_ibu attempt 2 first among them. Binding 1's rulings 1–8 and
+   addenda A1 and A2 stand otherwise. No limit, the cap or any reading changes.
+2. **prr_ibu attempt 2** follows the director's layout of 2026-11-09:
+   - the connect side gets the -2 suffix: `deploy-ibu-2`, `logs/connect-ibu-2.log/.done`, `logs/ibu-2.jobid`;
+   - the job keeps the name `prr_ibu` and writes `log-ibu` and `route2`;
+   - the connect pins `61035510|prr_ibu|FAILED|41|1` in its sacct check;
+   - the post reads `logs/ibu-2.jobid`.
+   Its connect and post pin this file's sha256 as it is on main after this addendum merges, and both shas go to the
+   director before launch.
+3. **The PRR read** runs from M_A3's `prr_read.py` (A2's bytes) once prr_ibu has completed.
+
+Nothing is submitted, deposited or tagged.
+
+## Binding 1, addendum A4: route 2 reads its stage record once and the shared rho files through a staged copy (director, 2026-11-09)
+
+**Binds** [`FD-PRR-ADDENDUM-A4.md`](FD-PRR-ADDENDUM-A4.md) and its code, as merged in PR #1000 at
+**M_A4 = `cb13a6443a457bd3887d1c421723dfcdb1909ec8`**. The audited head is `ea1742b4`; the addendum and every file
+under `nd-unfolding/prior_retention/` are identical at `ea1742b4` and M_A4. This **supersedes M_A3** for prr_ibu and
+the PRR read.
+
+| file | sha256 (prefix) |
+|---|---|
+| `FD-PRR-ADDENDUM-A4.md` | `3ba2f47ba0d9b401` |
+| `nd-unfolding/prior_retention/prr_ibu.py` | `fa91394507c0e6a3` |
+| `nd-unfolding/prior_retention/test_prr.py` | `fad928d85c9183ac` |
+| `nd-unfolding/prior_retention/prr_mutation.py` | `e088406cd47ef88c` |
+| `nd-unfolding/prior_retention/prr_read.py` (A2's) | `d7c7c2c0d6cbe4a1` |
+| `nd-unfolding/prior_retention/sbatch_prr.sh` (A3's) | `4493aad5dff0a8a0` |
+| `nd-unfolding/prior_retention/prr_probe.py` (M's) | `f87ee90c58d2b890` |
+
+**What led to it.** prr_ibu attempt 2 (job 61043652, FAILED after 132 s; receipt #997, move #1001) refused a plain
+read of `$OUT/stage.json` inside `prr_ibu.py`'s read guard. The director ordered a full static trace of the run path
+before any fix went to audit. It found the next cluster-only defect: the four fine-ratio hypotheses' `rho_npz` files
+under `/pscratch/sd/j/josephrb/s5p-20260926/` are read in place, plainly. The same reads by dry, iter, cap and misc are
+recorded in `OUTCOME-20261109-fd-prr-104-plain-reads.md`, whose products stand.
+
+**What the director checked:**
+- coverage-5b-audit's GO at `ea1742b4`, with no blockers
+  (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/1000#issuecomment-6753163443):
+  - 116 tests pass;
+  - the REQUIRED end-to-end test runs route 2 with `ref_g1.PROTECTED` over the test's temp root. It fails at M_A3 (on
+    stage.json) and at `0d6656be` (on the shared rho path), and passes at A4 with products written;
+  - the trace finds 0 reads the guard would refuse;
+  - 81 of 81 mutants are killed, and the kill table is identical to the receipt;
+  - 5 of the auditor's 6 own mutants are killed. The survivor removes `verify_stage(stage_rec)` from `run()`; it is held
+    as a low, since sbatch's tested verify-stage step runs just before it.
+- The director ran `test_prr.py` from a `git archive` of M_A4 (one thread, `PYTHONHASHSEED=0`, own TMPDIR): 116 passed.
+
+**Rulings:**
+1. **prr_ibu attempt 3 and the PRR read run from M_A4.** Binding 1's rulings and addenda A1–A3 stand otherwise. No
+   limit, the cap or any reading changes.
+2. **The A4 staging step** copies exactly the four `rho-*-F.npz` through O_NOATIME into `$OUT/stage/s5p-nullsF/`, by
+   the bound `prr_probe.py stage`, with stat records before and after and each copy's sha256 checked against its
+   committed hypothesis. It writes `$OUT/stage-a4.json` beside `stage.json`. Its filled script pins M_A4 and this file's
+   sha256 as it is on main after this addendum merges. It goes to the director before it runs, and it runs only while
+   no other lane is copying from `s5p-20260926`.
+3. **Attempt 3** uses TAG=`ibu-3` on the connect side. It pins both earlier attempts in sacct (61035510 FAILED 41;
+   61043652 FAILED 132) and requires `$OUT/log-ibu`, `$OUT/route2` and `deploy-ibu-3` to be absent and
+   `$OUT/stage-a4.json` present. Its post reads `logs/ibu-3.jobid`. The study is then at most 7.4267 + 0.5 = 7.9267 of
+   27.0 node-h.
+4. The audit's lows L-1000-a (`verify_stage` in `run()` untested) and L-1000-b (the staging template reaches A2 only
+   through BIND_SHA) are on the follow-up list.
+   <!-- absence-ok: the audit's own low, quoted as it held it (#1000 verdict); not a claim that a result does not exist -->
+
+Nothing is submitted, deposited or tagged.

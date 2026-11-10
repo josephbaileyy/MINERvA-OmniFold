@@ -1,0 +1,64 @@
+node login31 nproc=244 loadavg 136.96 146.66 134.55
+2026-11-09T22:48:53Z
+connect script sha256 17fbafb9a85d44f2d3a19055e8eb64d3c3f0faee83c3b918c85b74abbee77c6b
+squeue --me before:
+61040235 ll5d_gate_AR23 RUNNING
+61040163 ll5d_gate_G18 RUNNING
+other lanes' families (listed, not refused; this job reads nothing outside $OUT and the deploy):
+ll5d_gate_AR23
+ll5d_gate_G18
+== iris
+m3246               2445.7            10000.0     18372.6      20000.0
+balance_node_h=1627.4 half=813.7 cap=27.0
+== the study's charge so far (sacct, prr_* jobs since 2026-11-08)
+61022062|prr_dry|COMPLETED|3648|1
+61024185|prr_iter|COMPLETED|9038|1
+61028298|prr_cap|COMPLETED|5220|1
+61030122|prr_misc|COMPLETED|8657|1
+61035510|prr_ibu|FAILED|41|1
+61043652|prr_ibu|FAILED|132|1
+charged_node_h=7.4267 this_job_limit_h=0.5000 sum=7.9267 cap=27.0
+HEAD cb13a6443a457bd3887d1c421723dfcdb1909ec8; porcelain --ignored lines before: 0
+prr_probe.py: OK
+prr_ibu.py: OK
+prr_read.py: OK
+sbatch_prr.sh: OK
+test_prr.py: OK
+prr_mutation.py: OK
+declaration sha256 5be1e19cb8db67064cb0f90382ed7ac2365a2ed4841d9b498f323ed2761b64ce
+addendum A1 sha256 ca6b8457e74c9323fcb985766a88f404038f6f16c3e822a67bf2606af223f38b
+addendum A3 sha256 48641cf9ba6a6e30856dc3447412cca777bcc0b75f84566db9f4463d9e646db1
+addendum A4 sha256 3ba2f47ba0d9b40155d6840ca22f665051a4f6cdaf15fd0efe24564929bdc6a8
+FD-PRR-BINDING-1.md at origin/main 65875111b9c913cc1b1c3696b3f896139a4abe51 sha256 634cded38a1780286d24941ce567c174ff17ccc1b6af640f24129c5e6275b613
+queues/dry.tsv: OK
+queues/iter.tsv: OK
+queues/cap.tsv: OK
+queues/misc.tsv: OK
+stage.json: OK
+log-dry/DONE: OK
+stage-a4.json: OK
+stage/s5p-nullsF/rho-genie_cv-F.npz: OK
+stage/s5p-nullsF/rho-genie_mec-F.npz: OK
+stage/s5p-nullsF/rho-gibuu_cv-F.npz: OK
+stage/s5p-nullsF/rho-nuwro_cv-F.npz: OK
+B0 lines in the four queues: 20
+python 3.11.14 lightgbm 4.6.0 scipy 1.16.3 numpy 1.26.4
+plain python3 (not used by any call below): /usr/bin/python3 Python 3.6.15
+sourced python3: /global/homes/j/josephrb/.conda/envs/root_6_28/bin/python3 Python 3.11.14
+LIMIT 0:30:00
+root_6_28 python3 prr_probe.py limit ibu -> '0:30:00'
+--time=00:30:00
+2026-11-09T22:49:52Z
+sbatch rc=0
+Submitted batch job 61057142
+ibu-3 job 61057142
+scontrol TimeLimit=00:30:00 (declared 00:30:00)
+61057142 prr_ibu PENDING 0:00 30:00 1 regular_1 m3246
+   Priority=67679 Nice=0 Account=m3246 QOS=regular_1
+   JobState=PENDING Reason=Priority Dependency=(null)
+   RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A
+   Partition=regular_milan_ss11 AllocNode:Sid=login31:950004
+   NumNodes=1-1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+porcelain --ignored lines after: 0
+prr ibu-3 submit rc=0
+2026-11-09T22:49:59Z

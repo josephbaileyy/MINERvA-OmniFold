@@ -1,0 +1,122 @@
+#!/bin/bash
+# FD-PRR addendum A4, the staging step: on a Perlmutter login node, after the director's go for this connect, while no
+# other lane is copying from s5p-20260926 (the director's ruling of 2026-11-09). It stages exactly the four fine-ratio
+# rho arrays the route-2 hypotheses name, once each, through O_NOATIME, with the bound `prr_probe.py stage` unchanged:
+# stat before and after, the copy's sha256 taken in the same pass and refused unless it is the committed json's
+# rho_npz sha256. The record goes to $OUT/stage-a4.json, beside stage.json, which is not touched. In order, each failure a
+# final stop before anything is copied:
+#   preconditions: $OUT, stage.json and the dry run's DONE exist; $OUT/stage-a4.json, $OUT/stage/s5p-nullsF and this
+#     connect's deploy, log and done are absent; no prr_* job queued or running (squeue --me; fails closed); no process
+#     on this node names s5p-20260926 (listed and refused);
+#   a fresh clone at M_A4 into $OUT/deploy-stage-a4, clean (porcelain --ignored 0), the six FD-PRR files at their bound
+#     sha256, the declaration, addendums A1, A3 and A4 and BINDING 1 at theirs;
+#   the manifest from the deploy's own `prr_ibu.py stage-a4-manifest` (root_6_28's python3, after sourcing), which must
+#     list exactly the four sources and digests pinned below, each equal to its committed json's rho_npz;
+#   then `prr_probe.py stage --manifest ... --dest $OUT/stage/s5p-nullsF --out $OUT/stage-a4.json`; then each copy's
+#     sha256 against its pin, and the record's four stat_before == stat_after.
+# Writes only under $OUT. Launched from a /dev/shm copy of itself, whose path is $1; it deletes that copy at exit.
+SELF=$1
+TAG=stage-a4
+M=cb13a6443a457bd3887d1c421723dfcdb1909ec8
+OUT=/pscratch/sd/j/josephrb/fd-prr-20261108
+D=$OUT/deploy-$TAG
+DECL_SHA=5be1e19cb8db67064cb0f90382ed7ac2365a2ed4841d9b498f323ed2761b64ce
+A1_SHA=ca6b8457e74c9323fcb985766a88f404038f6f16c3e822a67bf2606af223f38b
+A3_SHA=48641cf9ba6a6e30856dc3447412cca777bcc0b75f84566db9f4463d9e646db1
+A4_SHA=3ba2f47ba0d9b40155d6840ca22f665051a4f6cdaf15fd0efe24564929bdc6a8
+BIND_SHA=634cded38a1780286d24941ce567c174ff17ccc1b6af640f24129c5e6275b613   # FD-PRR-BINDING-1.md at main, with A4 bound
+NULLS=/pscratch/sd/j/josephrb/s5p-20260926/ratios/nullsF
+bail() { rm -f -- "$SELF"; exit 9; }                # a precondition failed: nothing written
+[ -d "$OUT" ] && [ -s "$OUT/stage.json" ] && [ -s "$OUT/log-dry/DONE" ] || bail
+for p in "$OUT/stage-a4.json" "$OUT/stage/s5p-nullsF" "$D" "$OUT/logs/connect-$TAG.log" "$OUT/logs/connect-$TAG.done"; do
+  [ ! -e "$p" ] || bail
+done
+q=$(squeue --me -h -o '%j') || bail                 # fails closed
+[ -z "$(printf '%s\n' "$q" | grep -E '^prr_')" ] || bail
+LOG=$OUT/logs/connect-$TAG.log
+exec > "$LOG" 2>&1
+finish() { echo "prr $TAG rc=$1"; date -u +%FT%TZ; echo "$1" > "$OUT/logs/connect-$TAG.done"; rm -f -- "$SELF"; exit "$1"; }
+echo "node $(hostname) nproc=$(nproc) loadavg $(cut -d' ' -f1-3 /proc/loadavg)"
+date -u +%FT%TZ
+echo "connect script sha256 $(sha256sum "$SELF" | cut -d' ' -f1)"
+cp "$SELF" "$OUT/logs/prr_${TAG}.sh"
+echo "squeue --me:"; squeue --me -h -o "%i %j %T"
+echo "processes on this node naming s5p-20260926 (refused if any but this listing):"
+others=$(pgrep -u "$USER" -af 's5p-20260926' | grep -v -e "pgrep" -e "$SELF" || true)
+echo "${others:-  none}"
+[ -z "$others" ] || { echo "STOP: a process on this node names s5p-20260926: to the director"; finish 9; }
+echo "other lanes on s5p-20260926 (asked before this connect was made; the director's condition: no other lane copying from it):"
+echo "  cov2d, 2026-11-09, by message: its LL5D gates ll5d_gate_G18 61040163 and ll5d_gate_AR23 61040235 (PENDING when asked)"
+echo "  read and list only under s5p-20260926/bank_detector (connect-gate.sh 21f0a573...:79, :100; code at a95cc39f), never"
+echo "  ratios/ or nullsF; none of its steps copies anything from s5p-20260926. cov2d was the lane the director named to ask."
+
+# ---- the deploy: a fresh clone at M_A4, clean, the bound bytes
+git clone -q https://github.com/josephbaileyy/MINERvA-OmniFold.git "$D" > "$OUT/logs/clone-$TAG.log" 2>&1 || { echo "STOP: clone"; finish 3; }
+git -C "$D" -c advice.detachedHead=false checkout -q "$M" || { echo "STOP: checkout"; finish 3; }
+[ "$(git -C "$D" rev-parse HEAD)" = "$M" ] || { echo "STOP: HEAD is not M_A4"; finish 9; }
+n=$(git -C "$D" status --porcelain --ignored | wc -l); echo "HEAD $M; porcelain --ignored lines before: $n"
+[ "$n" -eq 0 ] || { echo "STOP: the deploy is not clean"; finish 9; }
+( cd "$D/nd-unfolding/prior_retention" && sha256sum -c ) <<SUMS || { echo "STOP: the FD-PRR files are not the bound ones"; finish 9; }
+f87ee90c58d2b8904fe881931edc61966a6adda8be7eb503da6644797a3d1232  prr_probe.py
+fa91394507c0e6a32486af25fa52f7e162135cf6483519ccf15510e1c9473cb0  prr_ibu.py
+d7c7c2c0d6cbe4a13d445a779335699de3d5275c4bcd3efc9f4e84a166868fbe  prr_read.py
+4493aad5dff0a8a0316c0f8b4d159c8f08c7666856474b5cf9c4c963a3a7e975  sbatch_prr.sh
+fad928d85c9183ac525ffabcd809d6968afab6aead4a2ad2aa13202b788eef40  test_prr.py
+e088406cd47ef88c8e47b988e7f684f8c29b74a620fa65d101ac790ca7892d5f  prr_mutation.py
+SUMS
+S=$D/docs/orchestration/state/measurement-paper/5d-community-20261024
+for pair in "FD-PRR-DECLARATION.md $DECL_SHA" "FD-PRR-ADDENDUM-A1.md $A1_SHA" "FD-PRR-ADDENDUM-A3.md $A3_SHA" "FD-PRR-ADDENDUM-A4.md $A4_SHA"; do
+  set -- $pair; got=$(sha256sum "$S/$1" | cut -d' ' -f1); echo "$1 sha256 $got"
+  [ "$got" = "$2" ] || { echo "STOP: $1 is not the bound one"; finish 9; }
+done
+bmain=$(git -C "$D" show origin/main:docs/orchestration/state/measurement-paper/5d-community-20261024/FD-PRR-BINDING-1.md | sha256sum | cut -d' ' -f1)
+echo "FD-PRR-BINDING-1.md at origin/main $(git -C "$D" rev-parse origin/main) sha256 $bmain"
+[ "$bmain" = "$BIND_SHA" ] || { echo "STOP: BINDING 1 on main is not the one this connect was made against: to the director"; finish 9; }
+# the committed jsons' rho_npz, read from the deploy, against this connect's own pins
+( cd "$D/docs/orchestration/state/s5p/ratios/nullsF" && for h in genie_cv genie_mec gibuu_cv nuwro_cv; do
+    python3 -c 'import json,sys; d=json.load(open(sys.argv[1]))["rho_npz"]; print(d["sha256"] + "  " + d["path"])' "null-$h-F.json"; done ) \
+  2>&1 | LC_ALL=C sort > "$OUT/logs/stage-a4-json-pins.txt"; [ "${PIPESTATUS[0]}" -eq 0 ] || { echo "STOP: could not read the committed jsons"; cat "$OUT/logs/stage-a4-json-pins.txt"; finish 9; }
+cat "$OUT/logs/stage-a4-json-pins.txt"
+diff - "$OUT/logs/stage-a4-json-pins.txt" <<PINS || { echo "STOP: the committed jsons' rho_npz are not this connect's pins"; finish 9; }
+124e726163b38d24735bacfc67e2d88bec1e47634dc5d294f6460fe4223efb8b  $NULLS/rho-genie_cv-F.npz
+2945a15a54dcf71f7ff495555f3cd0efb6c486232c2ddc18d6bbad46579e09b3  $NULLS/rho-genie_mec-F.npz
+c5e10bd0edf70b8aced95ab8214630998fd1c903683570be30b85e25c12637fd  $NULLS/rho-nuwro_cv-F.npz
+d8f52112b010e5adb6a56fa4aa3629b4c98ab62a1cea3b4190af77c3ac33491b  $NULLS/rho-gibuu_cv-F.npz
+PINS
+
+# ---- the manifest and the copy, with root_6_28's python3 after sourcing (in a subshell; rc checked on its own)
+out=$( source "$D/setup_salloc_env.sh" > "$OUT/logs/connect-source-$TAG.log" 2>&1; rc=$?
+       [ "$rc" -eq 0 ] || { echo "SOURCE_RC=$rc" >&2; exit 97; }
+       [ "$(command -v python3)" = "$HOME/.conda/envs/root_6_28/bin/python3" ] || { echo "NOT_ROOT628" >&2; exit 98; }
+       export PYTHONDONTWRITEBYTECODE=1
+       python3 "$D/nd-unfolding/prior_retention/prr_ibu.py" stage-a4-manifest > "$OUT/logs/stage-a4-manifest.json" || exit 96
+       python3 -c 'import json,sys; m=json.load(open(sys.argv[1])); print("\n".join(sorted(e["sha256"]+"  "+e["src"] for e in m))); sys.exit(0 if len(m)==4 else 95)' \
+         "$OUT/logs/stage-a4-manifest.json" > "$OUT/logs/stage-a4-manifest-pins.txt" || exit 95
+       diff "$OUT/logs/stage-a4-json-pins.txt" "$OUT/logs/stage-a4-manifest-pins.txt" >&2 || exit 94
+       echo "MANIFEST OK"
+       python3 "$D/nd-unfolding/prior_retention/prr_probe.py" stage --manifest "$OUT/logs/stage-a4-manifest.json" \
+         --dest "$OUT/stage/s5p-nullsF" --out "$OUT/stage-a4.json" || exit 93
+       echo "STAGED"
+     ) 2> "$OUT/logs/stage-a4-python.err"
+src=$?
+cat "$OUT/logs/stage-a4-python.err"; echo "$out"
+[ "$src" -ne 97 ] || { echo "STOP: setup_salloc_env.sh failed to source"; finish 7; }
+[ "$src" -ne 98 ] || { echo "STOP: after sourcing, python3 is not root_6_28's"; finish 7; }
+[ "$src" -ne 96 ] || { echo "STOP: prr_ibu.py stage-a4-manifest failed"; finish 7; }
+[ "$src" -ne 95 ] || { echo "STOP: the manifest does not hold four entries"; finish 7; }
+[ "$src" -ne 94 ] || { echo "STOP: the manifest is not the committed jsons' rho_npz"; finish 7; }
+[ "$src" -ne 93 ] || { echo "STOP: prr_probe.py stage refused (a pin or a stat): nothing staged is used"; finish 5; }
+[ "$src" -eq 0 ] || { echo "STOP: the staging failed (rc $src)"; finish 7; }
+
+# ---- after: each copy at its pin; the record's stat_before == stat_after (prr_probe.stage already refuses otherwise)
+( cd "$OUT/stage/s5p-nullsF" && sha256sum -c ) <<SUMS || { echo "STOP: a staged copy is not its pin"; finish 5; }
+124e726163b38d24735bacfc67e2d88bec1e47634dc5d294f6460fe4223efb8b  rho-genie_cv-F.npz
+2945a15a54dcf71f7ff495555f3cd0efb6c486232c2ddc18d6bbad46579e09b3  rho-genie_mec-F.npz
+d8f52112b010e5adb6a56fa4aa3629b4c98ab62a1cea3b4190af77c3ac33491b  rho-gibuu_cv-F.npz
+c5e10bd0edf70b8aced95ab8214630998fd1c903683570be30b85e25c12637fd  rho-nuwro_cv-F.npz
+SUMS
+echo "stage-a4.json sha256 $(sha256sum "$OUT/stage-a4.json" | cut -d' ' -f1)"
+cat "$OUT/stage-a4.json"
+n=$(git -C "$D" status --porcelain --ignored | wc -l); echo "porcelain --ignored lines after: $n"
+[ "$n" -eq 0 ] || { echo "STOP: the deploy changed"; finish 9; }
+finish 0

@@ -1,0 +1,21 @@
+node login29
+2026-11-09T13:54:15Z
+post script sha256 053204df80f71b9f71ee1f995ddbe55a9b4f697bdd52fc50d97a5e79a2adefca
+job 61030122 state COMPLETED
+JobID|JobName|State|ExitCode|Elapsed|ElapsedRaw|NNodes|AllocCPUS|Start|End|TimelimitRaw|Timelimit
+61030122|prr_misc|COMPLETED|0:0|02:24:17|8657|1|256|2026-11-09T03:27:13|2026-11-09T05:51:30|435|07:15:00
+61030122.batch|batch|COMPLETED|0:0|02:24:17|8657|1|256|2026-11-09T03:27:13|2026-11-09T05:51:30||
+61030122.extern|extern|COMPLETED|0:0|02:24:17|8657|1|256|2026-11-09T03:27:13|2026-11-09T05:51:30||
+charge_node_h=2.4047 (ElapsedRaw x NNodes / 3600; the misc limit is 7.25)
+61022062|prr_dry|COMPLETED|3648|1
+61024185|prr_iter|COMPLETED|9038|1
+61028298|prr_cap|COMPLETED|5220|1
+61030122|prr_misc|COMPLETED|8657|1
+study_charged_node_h=7.3786 (cap 27.0)
+copied: 423 files
+total 936
+drwx------  3 josephrb josephrb 20480 Nov  9 05:51 .
+drwx------ 18 josephrb josephrb  4096 Nov  9 05:54 ..
+-rw-------  1 josephrb josephrb    71 Nov  9 05:51 DONE
+-rw-------  1 josephrb josephrb   384 Nov  9 03:27 env.log
+log-misc entries: 221; tasks/: 186

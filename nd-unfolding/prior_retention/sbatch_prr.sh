@@ -43,14 +43,35 @@ else
     echo "[prr] refusing: not inside a Slurm job" >&2; exit 2
 fi
 [ "$NAME" = "prr_$MODE" ] || { echo "[prr] refusing: job name $NAME is not prr_$MODE" >&2; exit 2; }
-python3 - "$TL" "$LIMIT" <<'EOF' || { echo "[prr] refusing: Slurm TimeLimit $TL exceeds the declared $LIMIT" >&2; exit 2; }
+# Addendum A3: the limit in every form Slurm prints it (squeue's %l gives "30:00" for half an hour), and an unreadable
+# limit refused as such: 0 within the limit, 4 above it, 3 unreadable; any other rc is a failed check.
+python3 - "$TL" "$LIMIT" <<'EOF'
 import sys
 def sec(t):
-    d, _, t = t.rpartition("-")
-    h, m, s = (int(x) for x in t.split(":"))
-    return (int(d) if d else 0) * 86400 + h * 3600 + m * 60 + s
-sys.exit(0 if sec(sys.argv[1]) <= sec(sys.argv[2]) else 1)
+    """Seconds in a Slurm time: M, M:SS or H:MM:SS without a day; D-H, D-H:MM or D-H:MM:SS with one."""
+    d, dash, rest = t.partition("-")
+    f = rest.split(":") if dash else t.split(":")
+    if (dash and not d.isdigit()) or not all(x.isdigit() for x in f) or len(f) > 3:
+        raise ValueError(t)
+    f = [int(x) for x in f]
+    if dash:  # D-H, D-H:MM, D-H:MM:SS
+        h, m, s = f + [0] * (3 - len(f))
+        return int(d) * 86400 + h * 3600 + m * 60 + s
+    if len(f) == 1:  # M
+        return f[0] * 60
+    if len(f) == 2:  # M:SS
+        return f[0] * 60 + f[1]
+    return f[0] * 3600 + f[1] * 60 + f[2]  # H:MM:SS
+try:
+    tl, lim = sec(sys.argv[1]), sec(sys.argv[2])
+except ValueError:
+    sys.exit(3)
+sys.exit(0 if tl <= lim else 4)
 EOF
+trc=$?
+[ "$trc" -ne 3 ] || { echo "[prr] refusing: could not read the Slurm TimeLimit '$TL'" >&2; exit 2; }
+[ "$trc" -ne 4 ] || { echo "[prr] refusing: Slurm TimeLimit $TL exceeds the declared $LIMIT" >&2; exit 2; }
+[ "$trc" -eq 0 ] || { echo "[prr] refusing: the TimeLimit check failed (rc $trc)" >&2; exit 2; }
 LIMIT_H=$(python3 -c "import sys; h,m,s=(int(x) for x in sys.argv[1].split(':')); print(h+m/60+s/3600)" "$LIMIT")
 L="$OUT/log-$MODE"
 [ ! -e "$L" ] || { echo "[prr] refusing: $L exists" >&2; exit 2; }

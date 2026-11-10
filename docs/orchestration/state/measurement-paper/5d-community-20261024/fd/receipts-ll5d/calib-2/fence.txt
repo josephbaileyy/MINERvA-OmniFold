@@ -1,0 +1,4 @@
+fence host=login02 utc=2026-11-09T15:01:56Z
+squeue:
+sacct unended cov2d:
+fence end

@@ -504,8 +504,16 @@ FIXTURE_SET_SHA256 = "36355204b4b82fa4f901740b75667ee1efd0152864067196f17e23e3ed
 #:   ADDED   docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/staged/stage0/readout.json 05be73ee
 #: Power-tested after the bump: one flipped hex digit in each of the five pins gives MISMATCH on that path, rc 1.
 #: Delta and controls: docs/orchestration/state/measurement-paper/5d-community-20261024/fd/receipts-1b/precheck-attribution/binding-delta.txt.
-RECEIPT_BINDING_COUNT = 166
-RECEIPT_BINDING_SHA256 = "6a2ac9747880c12033efe4ab152ba023e67406a75ec055400beb71951a1f1f74"
+#: 166 -> 167, digest 6a2ac974 -> 18818a17 (2026-11-09, the s5e A3 rounding-shift extraction, PR #1008; the
+#: director's ruling (a), after the 107233af precedent). Its record
+#: (state/s5e/cand/a3-rounding-shifts-20261109/cluster/a3_rounding_shifts.json, written on the cluster) pins the
+#: producer it ran. Enumerated before the constant moved (receipt_inventory() rows with and without that record on the
+#: branch): one ADDED, nothing removed or repointed, OK:
+#:   ADDED   nd-unfolding/s5e_analyze_candidate.py cc00829e
+#: Power-tested after the bump: one flipped hex digit in that pin gives MISMATCH on that path, rc 1.
+#: Delta and controls: docs/orchestration/state/s5e/cand/a3-rounding-shifts-20261109/binding-delta.txt.
+RECEIPT_BINDING_COUNT = 167
+RECEIPT_BINDING_SHA256 = "18818a17805efb7d230532627c17580e20c91572460a800759cab0483e568482"
 
 
 FIELD_PIN_FILE = "docs/orchestration/state/canonical-namespace-field-pins-20260817.json"

@@ -58,3 +58,53 @@ git checkout; the auditor ran it in one and it passed.
    goes in as a PR.
 
 Nothing is submitted, deposited or tagged.
+
+## Binding 2, addendum A1a.1: the candidate's install at the entry points (director, 2026-11-09)
+
+**Binds** [`LL5D-AMENDMENT-A1A1.md`](LL5D-AMENDMENT-A1A1.md) and its code, as merged in PR #967 at
+**M_A1a.1 = `a95cc39f7437170af0b65ba042934fad079e0ee2`**. The audited head is `7e6172e9`; the amendment and every file
+below are identical at the two commits. This **supersedes M_A1a above** for the calibration and gate jobs.
+
+| file | sha256 (prefix) |
+|---|---|
+| `LL5D-AMENDMENT-A1A1.md` | `59850812f83bd816` |
+| `nd-unfolding/ll5d.py` | `b49f5d5f793265ef` |
+| `nd-unfolding/tests/test_ll5d.py` | `9ef0f23838e5dd0e` |
+| `nd-unfolding/tests/ll5d_a1a_mutation.py` | `b5849b1d9a9a795b` |
+| `nd-unfolding/tests/test_ll5d_b.py` | `918d75bfd9c2c89f` |
+| `nd-unfolding/tests/ll5d_a1b_mutation.py` | `1b09bf22969b2698` |
+| `nd-unfolding/ll5d_b.py` (unchanged since binding 3) | `24312ca86f9e70ed` |
+| `nd-unfolding/fd_1b_c2.py` (unchanged) | `522d7edd71643df6` |
+
+**What led to it.** ll5d_calib run 1 (job 61014290, receipt #963) was INVALID: `calibration.json` was never written.
+The cause is that A1a's entry points never installed configuration (e)'s candidate, so the "ratio_nd" truth model was
+unregistered, and A1a's tests mocked `fd_1b_mc.truth_weight`, so no test ran the real path. Nothing was computed that
+could inform a choice, so this is an implementation defect, not a STOP under #939 (ruling 5).
+<!-- absence-ok: run 1's receipt #963 records that calibration.json was never written; this restates that record, not a search result -->
+
+**What the director checked:**
+- coverage-5b-audit's GO at `7e6172e9` (https://github.com/josephbaileyy/MINERvA-OmniFold/pull/967#issuecomment-6742995391):
+  - test_ll5d 72 at hash seeds 0 and 17, test_ll5d_b 29, A1a's 50 of 50 and A1b's 27 of 27 mutants killed, every
+    install mutant killed by its named test;
+  - `RealChain` mocks nothing in `fd_1b_mc`, `s5n_pseudo` or `s5c_pseudo`, and `pristine_s5n` restores exactly the
+    four attributes the install rebinds;
+  - the §3 mock inventory is complete;
+  - the install precedes every path to `truths_r`, and the calibration's fork pool inherits it;
+  - the receipt-tree exclusion hides none of today's seed-range hits.
+- The director ran both suites from a `git archive` of M_A1a.1 (one thread, `PYTHONHASHSEED=0`, own TMPDIR):
+  test_ll5d 71 passed and 1 skipped (the tracked-file seed check, which needs a git checkout, as before); test_ll5d_b
+  29 passed.
+
+**Rulings:**
+1. **The calibration and both gate jobs run from M_A1a.1.** Rulings 1–8 above stand otherwise, and the design is
+   unchanged: the rerun uses the same declared seeds and N = 3,000.
+2. **The rerun is an INVALID rerun under ruling 5,** inside the director's authority. Run 1's charge counts against
+   LL5D's 148.0 CPU node-h cap.
+3. **Each connect** pins M_A1a.1 and `ll5d.py`'s digest above, ends its job step with `exit $rc` so sacct's state is
+   the step's (the amendment §1, and the audit's low), and sends its sha256 and path to the director before launch.
+4. **The LL5D receipt-tree exclusion** from the seed collision check (`OWN_RECEIPT_PREFIX`) is bound as written,
+   with its positive control.
+5. The audit's other lows (the vendored-copy note; the deprecated `load_module`; install wrappers stacking) are held
+   for the follow-up list.
+
+Nothing is submitted, deposited or tagged.

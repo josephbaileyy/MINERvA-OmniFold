@@ -1,0 +1,2 @@
+{"calibration": "timing", "fine_cells_kept": 10693, "set_seconds_measured": 4.214205980300903, "workers": 64, "projected_seconds": 2657.711823195219, "budget_seconds": 16200.0, "projection_line_seconds": 16200.0}
+LL5D-CALIBRATION verdict=CALIBRATED
