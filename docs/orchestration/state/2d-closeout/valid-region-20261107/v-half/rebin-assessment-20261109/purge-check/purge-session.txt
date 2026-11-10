@@ -1,0 +1,16 @@
+session node login37 2026-11-10T04:16:05Z
+staged sha256 9503563ff189373f9c9543e60b6be0aa6a033cb607cdaeee4e0916ca83edcb9e
+node login37 2026-11-10T04:16:05Z
+script sha256 9503563ff189373f9c9543e60b6be0aa6a033cb607cdaeee4e0916ca83edcb9e
+group       listed  found missing    bytes found atime max d atime min d
+cpl             38     38      0        3898100       10.6       10.3
+central          1      1      0          95564        4.5        4.5
+f0b_pow       1147   1147      0      212457483        9.3        9.3
+f0b_cal       7176   7176      0     1328190614        9.3        9.3
+f0b_floor        1      1      0         188532        4.5        4.5
+f0b_graded     221    221      0       40677480        9.3        4.5
+prr            181    181      0       33324255        0.2        0.2
+cstat           30     30      0        2821266        4.5        4.5
+awk rc=0
+2026-11-10T04:17:55Z
+check rc=0; staged copy removed: yes
