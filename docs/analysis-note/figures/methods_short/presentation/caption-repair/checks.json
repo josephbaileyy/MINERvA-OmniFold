@@ -7,7 +7,13 @@
     "table_blocks_byte_identical": true,
     "protected_stability_paragraph_byte_identical": true,
     "prior_bias_qualifications_retained_in_section7": true,
-    "no_new_numeric_literal": true
+    "no_new_numeric_literal": true,
+    "all_12_meaning_pairs_present": true,
+    "all_new_meaning_clauses_present_once": true,
+    "all_clause_location_lines_match": true,
+    "deformation_assets_unchanged_since_5406ceee7": true,
+    "all_meaning_old_clauses_in_committed_d1d60e74f": true,
+    "restored_twelve_matches_f0b_all_truths": true
   },
   "table_sha256": [
     "083af983bf39c42be8aaef8d99c347b93060488996ffedbddbf3a02f86bf0285",
@@ -17,7 +23,7 @@
     {
       "figure": "fig:bias-cells",
       "before": "51",
-      "after": "86"
+      "after": "105"
     },
     {
       "figure": "fig:rounding-shifts",
@@ -32,7 +38,7 @@
     {
       "figure": "fig:deformation",
       "before": "64",
-      "after": "80"
+      "after": "90"
     },
     {
       "figure": "fig:validation",
@@ -44,5 +50,6 @@
       "before": "35",
       "after": "37"
     }
-  ]
+  ],
+  "meaning_repair_parent": "5406ceee7"
 }

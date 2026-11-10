@@ -32,13 +32,13 @@ when the sentence returns to the caption; its figure target remains cited in sec
 |---|---:|---:|
 | 1 | 52 | 57 |
 | 2 | 35 | 37 |
-| 3 | 64 | 80 |
-| 4 | 51 | 86 |
+| 3 | 64 | 90 |
+| 4 | 51 | 105 |
 | 5 | 65 | 68 |
 | 6 | 65 | 76 |
 
-Counts use texcount -sum -brief on standalone caption fragments. Figure 4 is longer
-than the earlier approximate 80-word target because the requested self-contained
+Counts use texcount -sum -brief on standalone caption fragments. Figures 3 and 4
+exceed the earlier approximate 80-word target because the requested self-contained
 qualifications are restored.
 
 Validation: make_values_fived16.py --check passes all 3811 values, its two source-figure
@@ -48,3 +48,21 @@ note auxiliary file and bibliography were copied as untracked build aids from th
 previously built figures worktree. Rendered figure/caption pages were inspected for
 clipping, overlap and paragraph placement. Final check_round, check_restyle, blind-copy
 verification and standalone-note synchronization remain with the paper integrator.
+
+## Meaning flags
+
+The follow-up to 5406ceee7 maps each requested meaning flag to the original caption
+at d1d60e74f and its final caption or citing-text location. The original text is also
+preserved in presentation/captions/pairs.json. Every entry in the current pairs.json
+has old, new and location fields; the meaning_flags list contains M010, M011, M018,
+M021, M024, M026, M032, M035 and M036, plus the changed-truth, z-definition and
+cells-not-repeats qualifications. Overlapping requests use the same final clause.
+Each exact new clause occurs once in the manuscript source.
+
+The additional wording makes the study/configuration connection explicit, names all
+twelve graded truths, specifies black outlines and the chi-square p criterion,
+states that the total-only covariance reading is absent from the figure, restores
+the bias-only assessment statement, and defines the whole rounding population with
+“are”. The already-restored clauses remain in place. This follow-up changes no figure
+producer, asset, table, value or protected stability sentence. It builds both the
+ordinary paper and a full-paper proof with the compact Figure 3 at 508pt.
