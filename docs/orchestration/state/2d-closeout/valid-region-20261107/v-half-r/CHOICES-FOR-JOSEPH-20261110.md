@@ -6,7 +6,7 @@ recommendation and what the choice commits the follow-up paper to.
 
 **Citations.** **D** is `v-half-r/DECLARATION.md` at #1016's head `b7d7ac2dc`. **A** is `v-half-r/consult-astra/answer.txt`
 at the same head. **T3** is `fd/tier3-20261110/T3-PIPELINE-TESTS-DECLARATION.md` at #1038's head `cbb7278e5`. Other
-paths are at main `88bf25892`, relative to `docs/orchestration/` unless they start with `nd-unfolding/` or
+paths are at main `7c1e5440d`, relative to `docs/orchestration/` unless they start with `nd-unfolding/` or
 `docs/analysis-note/`.
 
 ## Summary
@@ -15,7 +15,7 @@ paths are at main `88bf25892`, relative to `docs/orchestration/` unless they sta
 |---|---|---|
 | 1 | the binning criterion and τ_R | min(purity, diagonal fraction) ≥ 0.5 (the draft recommends purity alone) |
 | 2 | the candidate list | C0-C8 as drafted |
-| 3 | the candidates the follow-up must include | C6 (p_T, p_∥) and C7 (E_avail, q3), if Joseph confirms C7's physics reason |
+| 3 | the candidates the follow-up must include | **decided** (Joseph, 2026-11-10): C6 (p_T, p_∥) and C7 (E_avail, q3), with C7's physics reason confirmed |
 | 4 | the phase space | the 16-cell reported domain |
 | 5 | the disclosure | the draft's text, plus one sentence on what else was known |
 | 6 | whether the criterion is a final requirement | yes |
@@ -43,17 +43,19 @@ grading and read) should run only after Tier 3 reports and Joseph has decided wh
      draft calls stability: same / truth_reco (`nd-unfolding/pv-ladder/h2_definition.py:72`; D:102).
    - The H2 cells were merged on purity alone, at τ = 0.1 (`nd-unfolding/pv-ladder/h2_definition.py:7-8`, :35).
    - **How it bears here:** choices 1 and 6.
-3. **T2A (#1041).** The director's reading is that the two-dimensional coverage test's bias sits in the poorly
-   determined directions of C_T.
-   - The receipt describes the split and names no cause (`state/measurement-paper/5d-community-20261024/fd/tier2-20261110/t2a/README.md:50-57`).
+3. **T2A (#1041).** The director's reading: "the joint failure is dominated by the mean error, which is concentrated
+   in the poorly determined directions of C_T". Truncating to the better-determined directions brings no experiment
+   into the region (`state/measurement-paper/5d-community-20261024/fd/tier2-20261110/READING-T2-20261110.md:40-43`).
+   - The reading is citable for no cause (`state/measurement-paper/5d-community-20261024/fd/tier2-20261110/READING-T2-20261110.md:48`).
    - **How it bears here.** V-HALF-R's grading reads no covariance (D:184), so T2A changes no grading choice. It bears
      on a coverage test of any candidate reported as a measurement, C6 especially, because C6 has the same axes as the
      two-dimensional test (choice 3).
-4. **T2B (#1039).** The director's reading is that the fake-data passes do not depend on C_model, cell by cell.
+4. **T2B (#1039).** The director's reading: "removing C_model hardly moves the per-cell grading"
+   (`state/measurement-paper/5d-community-20261024/fd/tier2-20261110/READING-T2-20261110.md:22-24`).
    - V-HALF reads F0b's bias and noise. It does not read F0b's grades or any covariance (D:157-168, :184), so T2B
      changes no V-HALF-R choice.
-   - The per-candidate covariance (D §3) still includes C_model. T2B is not citable for C_model being redundant
-     (`state/measurement-paper/5d-community-20261024/fd/tier2-20261110/t2b/README.md:34-35`).
+   - The per-candidate covariance (D §3) still includes C_model. The reading is not citable for C_model being
+     redundant (`state/measurement-paper/5d-community-20261024/fd/tier2-20261110/READING-T2-20261110.md:49`).
 5. **Tier 3 (#1038, rev 1, a draft).** Its corrected question is where configuration (e)'s retained prior stops
    falling, and which pipeline component sets that limit (T3:177-190).
    - A Tier 3 reading changes no estimator by itself. Adopting a changed arm would need Joseph's decision and its own
@@ -110,13 +112,16 @@ reported outcomes.
 | (b) C6 only | half the coverage cost. It keeps comparability and drops the physics contrast. |
 | (c) none | the most freedom. The follow-up's observables would then be whichever pass, which is the selection the declaration tries to constrain (D:26-27). |
 
+**Decided (Joseph, 2026-11-10, relayed by the director): (a), with C7's physics reason (the E_avail–q3 contrast)
+confirmed.**
+
 **Recommendation: (a), if Joseph confirms C7's physics reason.** The draft marks that reason as an inference
 (D:131-132, :148-149), so it is Joseph's or Ben's to confirm. Option (a) also supplies the physics basis that two
 open questions wait on: V-HALF-R's minimum-bin count, and BV96's deferred physics contrasts (D:152-153;
 `DECISION-20261110-joseph-bv96-stop-defer.md:31-34`).
 
-**On T2A.** C6 has the axes of the two-dimensional coverage test, whose bias the director reads as lying in C_T's
-poorly determined directions. A C6 binning made under choice 1 would be a new binning on the 5D fine grid. If C6 is
+**On T2A.** C6 has the axes of the two-dimensional coverage test, whose mean error the director's reading places in
+C_T's poorly determined directions (`state/measurement-paper/5d-community-20261024/fd/tier2-20261110/READING-T2-20261110.md:40-43`). A C6 binning made under choice 1 would be a new binning on the 5D fine grid. If C6 is
 reported and goes to a coverage test, that test should declare the T2A split (the mean χ² by eigenvalue rank) as a
 print-only output, so the two can be compared.
 
@@ -200,5 +205,5 @@ R-cells.
 - It did not tabulate any cell's purity or diagonal fraction against a V-HALF class, and it used no class in any
   recommendation.
   <!-- absence-ok: a statement of this packet's own process -->
-- The readings of T2A and T2B are the director's (each receipt's binding ruling 4). This packet quotes them as the
-  director's.
+- The readings of T2A and T2B are the director's, recorded in `READING-T2-20261110.md` under T2-BINDING-1 ruling 4.
+  This packet quotes them from that record.
